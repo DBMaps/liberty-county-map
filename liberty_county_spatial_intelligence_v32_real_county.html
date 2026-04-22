@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Liberty County Spatial Intelligence System — V3.2 Real County Boundary</title>
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <style>
+    :root{
+      --bg:#f4f7fb; --panel:#ffffff; --line:#dde5ef; --text:#1f2937; --muted:#5b6470;
+      --blue:#1f4a7c; --blue2:#365f8f; --green:#1f7a3d; --gold:#c96a16;
+      --shadow:0 8px 24px rgba(15,23,42,.12); --radius:16px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin:0; padding:0; height:100%; background:var(--bg); color:var(--text); font-family:Arial, Helvetica, sans-serif; }
+    .app { display:grid; grid-template-columns: 420px 1fr; height:100vh; }
+    .sidebar { background:var(--panel); border-right:1px solid var(--line); overflow-y:auto; padding:18px; }
+    h1 { margin:0 0 8px 0; font-size:28px; line-height:1.05; letter-spacing:-0.02em; }
+    h2, h3 { margin:0 0 8px 0; line-height:1.2; }
+    p { margin:0 0 12px 0; line-height:1.5; font-size:14px; }
+    .section { margin-top:18px; padding-top:16px; border-top:1px solid #edf1f5; }
+    .hero { padding:16px; border:1px solid var(--line); background:linear-gradient(180deg,#ffffff 0%, #f7fbff 100%); border-radius:var(--radius); box-shadow: var(--shadow); }
+    .pill { display:inline-block; margin:4px 6px 0 0; padding:6px 10px; border-radius:999px; border:1px solid #d7e4f3; background:#eff6ff; color:#18467f; font-size:12px; font-weight:700; }
+    .grid2 { display:grid; gap:10px; grid-template-columns: 1fr 1fr; }
+    .btn, button { appearance:none; border:none; cursor:pointer; border-radius:12px; padding:11px 12px; font-weight:700; font-size:14px; line-height:1.2; text-align:left; transition:transform .08s ease, opacity .2s ease; }
+    .btn:hover, button:hover { transform:translateY(-1px); }
+    .btn-primary { background:var(--blue); color:#fff; }
+    .btn-secondary { background:var(--blue2); color:#fff; }
+    .btn-light { background:#eef4fa; color:#17354f; border:1px solid #d7e1ec; }
+    .btn-ghost { background:#fff; color:#18344f; border:1px solid #cad4df; }
+    a.btn { display:block; text-decoration:none; }
+    .toolbar { display:grid; grid-template-columns: 1fr auto; gap:8px; margin-top:10px; }
+    .toolbar input { width:100%; border:1px solid #cfd8e3; border-radius:12px; padding:11px 12px; font-size:14px; outline:none; }
+    .tiny { font-size:12px; color:var(--muted); line-height:1.45; }
+    .status-grid { display:grid; gap:8px; }
+    .status-row { display:grid; grid-template-columns: 20px 1fr auto; align-items:center; gap:10px; padding:10px; border-radius:12px; background:#f8fafc; border:1px solid #edf2f7; font-size:13px; }
+    .dot { width:12px; height:12px; border-radius:50%; border:1px solid rgba(0,0,0,.18); background:#9ca3af; }
+    .dot.live { background:#22c55e; }
+    .dot.link { background:#3b82f6; }
+    .dot.future { background:#f59e0b; }
+    .tag { display:inline-block; padding:4px 8px; border-radius:999px; font-size:11px; border:1px solid #d7dfe8; background:#fff; color:#475569; font-weight:700; }
+    .legend-row { display:flex; align-items:center; gap:8px; margin:7px 0; font-size:13px; }
+    .swatch { width:18px; height:18px; border-radius:4px; border:1px solid rgba(0,0,0,.35); flex:0 0 18px; }
+    .saved-list { display:grid; gap:8px; margin-top:10px; }
+    .saved-item { border:1px solid #e5ebf2; background:#fbfdff; border-radius:12px; padding:10px; }
+    .saved-item strong { display:block; margin-bottom:4px; }
+    .saved-actions { display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
+    .mini-btn { font-size:12px; border-radius:10px; padding:7px 9px; font-weight:700; background:#eef4fa; border:1px solid #d7e1ec; color:#1b3d5e; cursor:pointer; }
+    .map-wrap { position:relative; height:100%; }
+    #map { width:100%; height:100%; }
+    .floating { position:absolute; z-index:800; background:rgba(255,255,255,.96); border:1px solid rgba(221,229,239,.9); box-shadow: var(--shadow); border-radius:16px; padding:12px 14px; max-width:360px; font-size:13px; line-height:1.45; }
+    .floating.top { top:14px; right:14px; }
+    .floating.bottom { right:14px; bottom:14px; max-width:380px; }
+    .floating.left { left:14px; bottom:14px; max-width:360px; }
+    .insight { display:grid; gap:8px; margin-top:8px; }
+    .insight-block { background:#f8fbff; border:1px solid #e3edf7; border-radius:12px; padding:10px; font-size:13px; line-height:1.45; }
+    .metric { display:grid; grid-template-columns: 1fr auto; gap:10px; padding:8px 0; border-bottom:1px solid #edf2f7; font-size:13px; }
+    .metric:last-child { border-bottom:none; }
+    .list-tight { margin:8px 0 0 18px; padding:0; line-height:1.5; font-size:13px; }
+    @media (max-width: 1100px) {
+      .app { grid-template-columns: 1fr; grid-template-rows: 430px 1fr; }
+      .sidebar { border-right:none; border-bottom:1px solid var(--line); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="hero">
+        <h1>Liberty County Spatial Intelligence System</h1>
+        <p><strong>V3.2 real county boundary</strong> — this build uses the official TxDOT county-boundary-detailed service for the Liberty County outline, with a stable fallback if the live request fails.</p>
+        <div>
+          <span class="pill">Real county outline</span>
+          <span class="pill">Hosted-friendly</span>
+          <span class="pill">Search</span>
+          <span class="pill">Saved places</span>
+          <span class="pill">Ready for reports</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Find a place</h3>
+        <p>Search Liberty County addresses or place names, then save them as reusable project waypoints.</p>
+        <div class="toolbar">
+          <input id="searchInput" type="text" placeholder="Search address or place (example: Dayton or Liberty, TX)" />
+          <button id="searchBtn" class="btn btn-primary">Search</button>
+        </div>
+        <p class="tiny">Search uses OpenStreetMap geocoding. Official parcel and zoning verification still stays with Liberty CAD and the City of Dayton tools.</p>
+      </div>
+
+      <div class="section">
+        <h3>Jump views</h3>
+        <div class="grid2">
+          <button id="fitCountyBtn" class="btn btn-secondary">Fit Liberty County</button>
+          <button id="fitDaytonBtn" class="btn btn-light">Focus Dayton</button>
+          <button id="fitSavedBtn" class="btn btn-light">Fit Saved Places</button>
+          <button id="clearTempBtn" class="btn btn-ghost">Clear Search Result</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Layer registry</h3>
+        <div class="status-grid">
+          <div class="status-row">
+            <span class="dot live"></span>
+            <div><strong>Liberty County boundary</strong><br><span class="tiny">Loads from the official TxDOT County Boundary Detailed service, with fallback if needed.</span></div>
+            <span class="tag">Live + fallback</span>
+          </div>
+          <div class="status-row">
+            <span class="dot live"></span>
+            <div><strong>Dayton reference area</strong><br><span class="tiny">Light embedded area for stable city-focused interaction around Dayton.</span></div>
+            <span class="tag">Embedded</span>
+          </div>
+          <div class="status-row">
+            <span class="dot link"></span>
+            <div><strong>Liberty CAD parcels / property</strong><br><span class="tiny">Official county parcel workflow kept as a trusted linked source.</span></div>
+            <span class="tag">Linked</span>
+          </div>
+          <div class="status-row">
+            <span class="dot link"></span>
+            <div><strong>Dayton GIS / zoning</strong><br><span class="tiny">Official Dayton map viewer for zoning and city reference.</span></div>
+            <span class="tag">Linked</span>
+          </div>
+          <div class="status-row">
+            <span class="dot future"></span>
+            <div><strong>Train delay reports</strong><br><span class="tiny">Next phase: live community reporting with a backend.</span></div>
+            <span class="tag">Next</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Official tools</h3>
+        <div class="grid2">
+          <a class="btn btn-primary" href="https://gis.bisclient.com/libertycad/" target="_blank" rel="noopener noreferrer">Liberty CAD GIS Map</a>
+          <a class="btn btn-secondary" href="https://esearch.libertycad.com/" target="_blank" rel="noopener noreferrer">Liberty CAD Property Search</a>
+          <a class="btn btn-light" href="https://maps.viewprogis.com/vp/dayton-tx" target="_blank" rel="noopener noreferrer">Dayton GIS Viewer</a>
+          <a class="btn btn-ghost" href="https://www.cityofdaytontx.com/government/departments/development-and-planning-services/maps" target="_blank" rel="noopener noreferrer">Dayton Maps Page</a>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Saved places</h3>
+        <p>Click the map, generate an insight card, and save locations into a reusable local workspace.</p>
+        <div id="savedList" class="saved-list"></div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+          <button id="exportSavedBtn" class="btn btn-light">Export saved places</button>
+          <button id="clearSavedBtn" class="btn btn-ghost">Clear saved places</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Legend</h3>
+        <div class="legend-row"><span class="swatch" style="background:#ffebe9; border-color:#b42318;"></span> Dayton anchor</div>
+        <div class="legend-row"><span class="swatch" style="background:rgba(30,144,255,.12); border-color:#1d4ed8;"></span> Liberty County outline</div>
+        <div class="legend-row"><span class="swatch" style="background:rgba(46,125,50,.12); border-color:#1f7a3d;"></span> Dayton reference area</div>
+        <div class="legend-row"><span class="swatch" style="background:#fff6e5; border-color:#c96a16;"></span> Saved place markers</div>
+      </div>
+    </aside>
+
+    <div class="map-wrap">
+      <div id="map"></div>
+      <div class="floating top">
+        <strong>V3.2 real county boundary</strong><br>
+        This version attempts to load the detailed Liberty County boundary from TxDOT and falls back to a reference outline only if the live request fails.
+      </div>
+      <div class="floating left" id="systemStatus">
+        <strong>System status</strong><br>
+        Loading county boundary…
+      </div>
+      <div class="floating bottom" id="insightPanel">
+        <strong>Location insight</strong><br>
+        Click the map to inspect a location.
+      </div>
+    </div>
+  </div>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+  <script>
+    const DAYTON = { name: 'Dayton, Texas', lat: 30.049934, lng: -94.89399 };
+
+    // Stable fallback only if the official live service fails.
+    const libertyCountyFallback = {
+      "type": "Feature",
+      "properties": { "name": "Liberty County Fallback Boundary" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-95.175, 30.735], [-94.640, 30.735], [-94.615, 30.610], [-94.585, 30.500],
+          [-94.555, 30.405], [-94.520, 30.300], [-94.515, 30.190], [-94.555, 30.070],
+          [-94.635, 29.970], [-94.740, 29.900], [-94.860, 29.855], [-95.005, 29.845],
+          [-95.120, 29.900], [-95.175, 30.015], [-95.190, 30.150], [-95.190, 30.320],
+          [-95.180, 30.520], [-95.175, 30.735]
+        ]]
+      }
+    };
+
+    const daytonReference = {
+      "type": "Feature",
+      "properties": { "name": "Dayton Reference Area" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-94.925, 30.075], [-94.860, 30.075], [-94.860, 30.020], [-94.925, 30.020], [-94.925, 30.075]
+        ]]
+      }
+    };
+
+    const systemStatus = document.getElementById('systemStatus');
+    const insightPanel = document.getElementById('insightPanel');
+    const savedListEl = document.getElementById('savedList');
+
+    const map = L.map('map', { center: [30.10, -94.95], zoom: 10 });
+
+    const cartoLight = L.tileLayer(
+      'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+      { maxZoom: 20, attribution: '&copy; OpenStreetMap contributors &copy; CARTO' }
+    );
+
+    const esriImagery = L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      { maxZoom: 19, attribution: 'Tiles &copy; Esri' }
+    );
+
+    const cartoPositronNoLabels = L.tileLayer(
+      'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',
+      { maxZoom: 20, attribution: '&copy; OpenStreetMap contributors &copy; CARTO' }
+    );
+
+    cartoLight.addTo(map);
+
+    const daytonMarker = L.marker([DAYTON.lat, DAYTON.lng]).addTo(map);
+    daytonMarker.bindPopup('<strong>Dayton, Texas</strong><br>Starting anchor for the Liberty County system.');
+
+    const layerControl = L.control.layers(
+      {
+        'CARTO Light': cartoLight,
+        'Satellite (Esri)': esriImagery,
+        'CARTO Light (No Labels)': cartoPositronNoLabels
+      },
+      {
+        'Dayton Anchor': daytonMarker
+      },
+      { collapsed: false }
+    ).addTo(map);
+
+    L.control.scale({ imperial: true, metric: true }).addTo(map);
+
+    let countyLayer = null;
+    let countyGeometry = libertyCountyFallback.geometry;
+    const daytonLayer = L.geoJSON(daytonReference, {
+      style: { color: '#1f7a3d', weight: 3, fillColor: '#4ade80', fillOpacity: 0.12 }
+    }).addTo(map);
+    daytonLayer.bindPopup('<strong>Dayton reference area</strong><br>Embedded for stable city-focused interaction.');
+    layerControl.addOverlay(daytonLayer, 'Dayton Reference Area');
+
+    let tempSearchMarker = null;
+    let clickMarker = null;
+    const savedLayerGroup = L.layerGroup().addTo(map);
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+    function formatCoord(n) { return Number(n).toFixed(6); }
+
+    function distanceMiles(lat1, lon1, lat2, lon2) {
+      const R = 3958.8, toRad = d => d * Math.PI / 180;
+      const dLat = toRad(lat2-lat1), dLon = toRad(lon2-lon1);
+      const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+      return 2 * R * Math.asin(Math.sqrt(a));
+    }
+
+    function pointInRing(point, ring) {
+      const x = point[0], y = point[1];
+      let inside = false;
+      for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+        const xi = ring[i][0], yi = ring[i][1];
+        const xj = ring[j][0], yj = ring[j][1];
+        const intersect = ((yi > y) !== (yj > y)) &&
+          (x < ((xj - xi) * (y - yi)) / ((yj - yi) || 1e-12) + xi);
+        if (intersect) inside = !inside;
+      }
+      return inside;
+    }
+
+    function pointInPolygon(point, geometry) {
+      if (!geometry) return false;
+      if (geometry.type === 'Polygon') {
+        const outer = geometry.coordinates[0] && pointInRing(point, geometry.coordinates[0]);
+        const holes = geometry.coordinates.slice(1).some(ring => pointInRing(point, ring));
+        return outer && !holes;
+      }
+      if (geometry.type === 'MultiPolygon') {
+        return geometry.coordinates.some(poly => {
+          const outer = poly[0] && pointInRing(point, poly[0]);
+          const holes = poly.slice(1).some(ring => pointInRing(point, ring));
+          return outer && !holes;
+        });
+      }
+      return false;
+    }
+
+    function setStatus(html) {
+      systemStatus.innerHTML = '<strong>System status</strong><br>' + html;
+    }
+
+    function drawCounty(featureCollection, isFallback) {
+      if (countyLayer) map.removeLayer(countyLayer);
+      countyLayer = L.geoJSON(featureCollection, {
+        style: {
+          color: '#1d4ed8',
+          weight: 4,
+          fillColor: '#60a5fa',
+          fillOpacity: isFallback ? 0.08 : 0.10
+        }
+      }).addTo(map);
+
+      layerControl.addOverlay(countyLayer, 'Liberty County Boundary');
+      countyLayer.bindPopup(
+        isFallback
+          ? '<strong>Liberty County fallback outline</strong><br>Used because the live county service did not return in this session.'
+          : '<strong>Liberty County detailed boundary</strong><br>Loaded from the TxDOT detailed county-boundary service.'
+      );
+
+      const firstFeature = featureCollection.features && featureCollection.features[0];
+      if (firstFeature && firstFeature.geometry) countyGeometry = firstFeature.geometry;
+      if (countyLayer.getBounds().isValid()) map.fitBounds(countyLayer.getBounds(), { padding: [20, 20] });
+    }
+
+    async function loadRealCountyBoundary() {
+      const queryUrl = "https://maps.txdot.gov/arcgis/rest/services/TxDOT_County_Boundary_Detailed/FeatureServer/0/query?where=CNTY_NM%3D%27Liberty%27&outFields=*&returnGeometry=true&f=geojson";
+      try {
+        const res = await fetch(queryUrl);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        if (!data.features || !data.features.length) throw new Error('No features returned');
+        drawCounty(data, false);
+        setStatus('Loaded the detailed Liberty County outline from the official TxDOT county-boundary-detailed service.');
+      } catch (err) {
+        console.error(err);
+        const fallbackFC = { type: 'FeatureCollection', features: [libertyCountyFallback] };
+        drawCounty(fallbackFC, true);
+        setStatus('The live TxDOT county service did not load in this session, so the map fell back to the embedded county outline.');
+      }
+    }
+
+    function currentLocationInsight(lat, lng) {
+      const point = [lng, lat];
+      const inCounty = pointInPolygon(point, countyGeometry);
+      const inDaytonArea = pointInPolygon(point, daytonReference.geometry);
+      const distToDayton = distanceMiles(lat, lng, DAYTON.lat, DAYTON.lng);
+      const narrative = [];
+
+      narrative.push(inCounty
+        ? 'This point falls inside the current Liberty County boundary geometry being used by the map.'
+        : 'This point falls outside the current Liberty County boundary geometry being used by the map.');
+
+      narrative.push(inDaytonArea
+        ? 'It also falls inside the Dayton reference area.'
+        : 'It does not fall inside the Dayton reference area.');
+
+      narrative.push(`This point is approximately ${distToDayton.toFixed(1)} miles from central Dayton.`);
+      narrative.push('For parcel ownership, legal descriptions, zoning verification, and development-grade decisions, use the official Liberty CAD and Dayton GIS links in the sidebar.');
+
+      return { inCounty, inDaytonArea, distToDayton, narrative };
+    }
+
+    function renderInsight(lat, lng, title = 'Selected location') {
+      const insight = currentLocationInsight(lat, lng);
+      insightPanel.innerHTML = `
+        <strong>Location insight</strong><br>
+        <div class="insight">
+          <div class="insight-block">
+            <strong>${escapeHtml(title)}</strong><br>
+            ${formatCoord(lat)}, ${formatCoord(lng)}
+          </div>
+          <div class="insight-block">
+            <div class="metric"><span>Inside Liberty County</span><strong>${insight.inCounty ? 'Yes' : 'No'}</strong></div>
+            <div class="metric"><span>Inside Dayton reference area</span><strong>${insight.inDaytonArea ? 'Yes' : 'No'}</strong></div>
+            <div class="metric"><span>Distance to Dayton anchor</span><strong>${insight.distToDayton.toFixed(1)} mi</strong></div>
+          </div>
+          <div class="insight-block">
+            ${insight.narrative.map(x => '• ' + escapeHtml(x)).join('<br>')}
+          </div>
+          <button class="btn btn-light" onclick="savePlacePrompt(${lat}, ${lng}, ${JSON.stringify(title)})">Save this location</button>
+        </div>
+      `;
+    }
+
+    function setClickMarker(lat, lng, title = 'Selected location') {
+      if (clickMarker) map.removeLayer(clickMarker);
+      clickMarker = L.circleMarker([lat, lng], {
+        radius: 8, color: '#c93c3c', weight: 2, fillColor: '#fca5a5', fillOpacity: 0.9
+      }).addTo(map);
+      clickMarker.bindPopup(`<strong>${escapeHtml(title)}</strong><br>${formatCoord(lat)}, ${formatCoord(lng)}`).openPopup();
+      renderInsight(lat, lng, title);
+    }
+
+    const STORAGE_KEY = 'liberty_county_v32_saved_places';
+    function getSavedPlaces() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; } }
+    function setSavedPlaces(items) { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); drawSavedPlaces(); }
+
+    function savePlacePrompt(lat, lng, suggestedTitle = 'Saved place') {
+      const name = prompt('Name this saved place:', suggestedTitle || 'Saved place');
+      if (!name) return;
+      const note = prompt('Add a short note (optional):', '') || '';
+      const items = getSavedPlaces();
+      items.push({ id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()), name, note, lat, lng, createdAt: new Date().toISOString() });
+      setSavedPlaces(items);
+    }
+    window.savePlacePrompt = savePlacePrompt;
+
+    function drawSavedPlaces() {
+      savedLayerGroup.clearLayers();
+      const items = getSavedPlaces();
+      savedListEl.innerHTML = '';
+      if (!items.length) {
+        savedListEl.innerHTML = '<div class="tiny">No saved places yet.</div>';
+        return;
+      }
+      items.forEach(item => {
+        const marker = L.circleMarker([item.lat, item.lng], {
+          radius: 7, color: '#c96a16', weight: 2, fillColor: '#fcd34d', fillOpacity: 0.9
+        }).addTo(savedLayerGroup);
+        marker.bindPopup(`<strong>${escapeHtml(item.name)}</strong><br>${formatCoord(item.lat)}, ${formatCoord(item.lng)}${item.note ? `<br><br>${escapeHtml(item.note)}` : ''}`);
+
+        const div = document.createElement('div');
+        div.className = 'saved-item';
+        div.innerHTML = `
+          <strong>${escapeHtml(item.name)}</strong>
+          <div class="tiny">${formatCoord(item.lat)}, ${formatCoord(item.lng)}</div>
+          ${item.note ? `<div style="margin-top:6px; font-size:13px; line-height:1.45;">${escapeHtml(item.note)}</div>` : ''}
+          <div class="saved-actions">
+            <button class="mini-btn" data-action="zoom" data-id="${item.id}">Zoom</button>
+            <button class="mini-btn" data-action="inspect" data-id="${item.id}">Inspect</button>
+            <button class="mini-btn" data-action="delete" data-id="${item.id}">Delete</button>
+          </div>
+        `;
+        savedListEl.appendChild(div);
+      });
+    }
+
+    savedListEl.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-id]');
+      if (!btn) return;
+      const id = btn.dataset.id, action = btn.dataset.action;
+      const items = getSavedPlaces(), item = items.find(x => x.id === id);
+      if (!item) return;
+      if (action === 'zoom') map.setView([item.lat, item.lng], 15);
+      else if (action === 'inspect') { setClickMarker(item.lat, item.lng, item.name); map.setView([item.lat, item.lng], 15); }
+      else if (action === 'delete') setSavedPlaces(items.filter(x => x.id !== id));
+    });
+
+    document.getElementById('clearSavedBtn').addEventListener('click', () => { if (confirm('Clear all saved places?')) setSavedPlaces([]); });
+    document.getElementById('exportSavedBtn').addEventListener('click', () => {
+      const items = getSavedPlaces();
+      const blob = new Blob([JSON.stringify(items, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'liberty-county-saved-places.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+
+    document.getElementById('fitDaytonBtn').addEventListener('click', () => { map.setView([DAYTON.lat, DAYTON.lng], 13); });
+    document.getElementById('fitCountyBtn').addEventListener('click', () => { if (countyLayer && countyLayer.getBounds().isValid()) map.fitBounds(countyLayer.getBounds(), { padding: [20, 20] }); });
+    document.getElementById('fitSavedBtn').addEventListener('click', () => {
+      const items = getSavedPlaces();
+      if (!items.length) return alert('No saved places yet.');
+      const bounds = L.latLngBounds(items.map(x => [x.lat, x.lng]));
+      map.fitBounds(bounds.pad(0.25));
+    });
+    document.getElementById('clearTempBtn').addEventListener('click', () => { if (tempSearchMarker) { map.removeLayer(tempSearchMarker); tempSearchMarker = null; } });
+
+    async function searchPlace() {
+      const query = document.getElementById('searchInput').value.trim();
+      if (!query) return;
+      const url = 'https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=us&q=' + encodeURIComponent(query + ' Liberty County Texas');
+      try {
+        const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+        if (!res.ok) throw new Error('Search failed');
+        const results = await res.json();
+        if (!results.length) { alert('No result found. Try a fuller address or place name.'); return; }
+        const r = results[0], lat = Number(r.lat), lng = Number(r.lon);
+        if (tempSearchMarker) map.removeLayer(tempSearchMarker);
+        tempSearchMarker = L.marker([lat, lng]).addTo(map);
+        tempSearchMarker.bindPopup('<strong>Search result</strong><br>' + escapeHtml(r.display_name)).openPopup();
+        map.setView([lat, lng], 15);
+        setClickMarker(lat, lng, 'Search result');
+      } catch (e) {
+        console.error(e); alert('Search failed in this browser session.');
+      }
+    }
+
+    document.getElementById('searchBtn').addEventListener('click', searchPlace);
+    document.getElementById('searchInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') searchPlace(); });
+    map.on('click', (e) => { setClickMarker(e.latlng.lat, e.latlng.lng, 'Clicked location'); });
+
+    async function init() {
+      drawSavedPlaces();
+      renderInsight(DAYTON.lat, DAYTON.lng, 'Dayton anchor');
+      await loadRealCountyBoundary();
+    }
+    init();
+  </script>
+</body>
+</html>
