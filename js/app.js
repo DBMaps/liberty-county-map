@@ -1,11 +1,24 @@
 const LIBERTY_BOUNDARY_FILE = './data/liberty-county-boundary.geojson';
-const SAVED_PLACES_KEY = 'liberty_county_saved_places_v36';
-const TRAIN_DELAY_STORE_KEY = 'liberty_train_delay_reports_v36';
+const RAIL_CROSSINGS_FILE = './data/liberty-county-rail-crossings.geojson';
+
+const SAVED_PLACES_KEY = 'liberty_county_saved_places_v39_locked';
+const CROSSING_EVENTS_KEY = 'liberty_crossing_events_v39_locked';
 
 const DAYTON_ANCHOR = {
   name: 'Dayton, TX',
   lat: 30.046605,
   lng: -94.885202
+};
+
+const CROSSING_MATCH_RADIUS_MILES = 0.08;
+const KNOWN_CROSSING_MATCH_RADIUS_MILES = 0.20;
+
+const CROSSING_NICKNAMES = {
+  'LC-003': 'The Damn Dayton Train',
+  'LC-001': 'Downtown Crossing',
+  'LC-002': 'Clayton Crossing',
+  'LC-004': 'Backroad Crossing',
+  'LC-005': '1960 Crossing'
 };
 
 let map;
@@ -16,12 +29,15 @@ let libertyBoundaryFeature = null;
 let searchMarker = null;
 let clickMarker = null;
 let savedPlacesLayer = null;
-let trainReportsLayer = null;
+let crossingEventsLayer = null;
+let knownCrossingsLayer = null;
 
 let savedPlaces = [];
-let trainReports = [];
-let filteredTrainReports = [];
-let selectedReportLatLng = null;
+let crossingEvents = [];
+let filteredCrossingEvents = [];
+let knownCrossings = [];
+let selectedExistingCrossingId = null;
+let selectedKnownCrossing = null;
 
 const debugState = {
   filePath: LIBERTY_BOUNDARY_FILE,
@@ -39,9 +55,11 @@ async function init() {
   initUi();
   renderDebugPanel();
   setSystemStatus('Loading Liberty County boundary from local GeoJSON...');
+
   loadSavedPlaces();
-  loadTrainReports();
-  applyTrainReportFilters();
+  loadCrossingEvents();
+  await loadKnownCrossings();
+  applyCrossingFilters();
   await loadBoundary();
 }
 
@@ -71,7 +89,8 @@ function initMap() {
   cartoLayer.addTo(map);
 
   savedPlacesLayer = L.layerGroup().addTo(map);
-  trainReportsLayer = L.layerGroup().addTo(map);
+  crossingEventsLayer = L.layerGroup().addTo(map);
+  knownCrossingsLayer = L.layerGroup().addTo(map);
 
   const daytonMarker = L.circleMarker([DAYTON_ANCHOR.lat, DAYTON_ANCHOR.lng], {
     radius: 7,
@@ -81,7 +100,9 @@ function initMap() {
     fillOpacity: 0.95
   }).addTo(map);
 
-  daytonMarker.bindPopup(`<strong>${DAYTON_ANCHOR.name}</strong><br />Reference anchor for distance calculations.`);
+  daytonMarker.bindPopup(
+    `<strong>${DAYTON_ANCHOR.name}</strong><br />Reference anchor for distance calculations.`
+  );
 
   map.on('click', handleMapClick);
 }
@@ -102,17 +123,17 @@ function initUi() {
   byId('exportSavedBtn')?.addEventListener('click', exportSavedPlaces);
   byId('clearSavedBtn')?.addEventListener('click', clearSavedPlaces);
 
-  byId('submitTrainReportBtn')?.addEventListener('click', handleSubmitTrainReport);
-  byId('clearTrainFormBtn')?.addEventListener('click', clearTrainReportForm);
-  byId('fitTrainReportsBtn')?.addEventListener('click', fitTrainReportsView);
-  byId('clearTrainReportsBtn')?.addEventListener('click', clearAllTrainReports);
+  byId('submitCrossingReportBtn')?.addEventListener('click', handleSubmitCrossingReport);
+  byId('clearTrainFormBtn')?.addEventListener('click', clearCrossingForm);
+  byId('fitTrainReportsBtn')?.addEventListener('click', fitVisibleCrossingsView);
+  byId('clearTrainReportsBtn')?.addEventListener('click', clearAllCrossingEvents);
 
-  byId('applyFiltersBtn')?.addEventListener('click', applyTrainReportFilters);
-  byId('resetFiltersBtn')?.addEventListener('click', resetTrainReportFilters);
+  byId('applyFiltersBtn')?.addEventListener('click', applyCrossingFilters);
+  byId('resetFiltersBtn')?.addEventListener('click', resetCrossingFilters);
 
-  byId('filterSeverity')?.addEventListener('change', applyTrainReportFilters);
-  byId('filterStatus')?.addEventListener('change', applyTrainReportFilters);
-  byId('filterCounty')?.addEventListener('change', applyTrainReportFilters);
+  byId('filterSeverity')?.addEventListener('change', applyCrossingFilters);
+  byId('filterStatus')?.addEventListener('change', applyCrossingFilters);
+  byId('filterCounty')?.addEventListener('change', applyCrossingFilters);
 
   byId('cartoBtn')?.addEventListener('click', () => switchBasemap('carto'));
   byId('esriBtn')?.addEventListener('click', () => switchBasemap('esri'));
@@ -124,9 +145,8 @@ function byId(id) {
 
 function setSystemStatus(message) {
   const el = byId('systemStatus');
-  if (el) {
-    el.innerHTML = `<strong>System status</strong><br />${escapeHtml(message)}`;
-  }
+  if (!el) return;
+  el.innerHTML = `<strong>System status</strong><br />${escapeHtml(message)}`;
 }
 
 function renderDebugPanel() {
@@ -150,7 +170,7 @@ async function loadBoundary() {
     }
 
     const data = await response.json();
-    validateGeoJson(data);
+    validateBoundaryGeoJson(data);
 
     const selectedFeature = chooseBoundaryFeature(data.features);
     if (!selectedFeature) {
@@ -176,15 +196,17 @@ async function loadBoundary() {
     const bounds = libertyBoundaryLayer.getBounds();
 
     debugState.featureCount = data.features.length;
-    debugState.selectedFeature = getFeatureName(selectedFeature);
+    debugState.selectedFeature = getBoundaryFeatureName(selectedFeature);
     debugState.geometryType = selectedFeature.geometry?.type || '--';
     debugState.bounds = formatBounds(bounds);
     debugState.loadStatus = 'Loaded successfully';
 
     renderDebugPanel();
-    redrawTrainReportMarkers();
-    renderTrainReports();
+    redrawKnownCrossingMarkers();
+    redrawCrossingMarkers();
+    renderCrossingRegistry();
     updateFilterSummary();
+
     setSystemStatus('Liberty County boundary loaded successfully.');
     map.fitBounds(bounds, { padding: [20, 20] });
   } catch (error) {
@@ -201,7 +223,87 @@ async function loadBoundary() {
   }
 }
 
-function validateGeoJson(data) {
+async function loadKnownCrossings() {
+  try {
+    const response = await fetch(RAIL_CROSSINGS_FILE, { cache: 'no-store' });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!data || data.type !== 'FeatureCollection' || !Array.isArray(data.features)) {
+      throw new Error('Known crossings file is not a valid FeatureCollection.');
+    }
+
+    knownCrossings = data.features
+      .filter((feature) => feature?.geometry?.type === 'Point')
+      .map((feature) => {
+        const props = feature.properties || {};
+        const coords = feature.geometry.coordinates || [];
+        const lng = Number(coords[0]);
+        const lat = Number(coords[1]);
+        const crossingId = props.crossing_id || cryptoRandomId();
+        const crossingName = props.name || props.road_name || 'Unnamed Crossing';
+
+        return {
+          crossingId,
+          crossingName,
+          crossingRoadName: props.road_name || '',
+          crossingRailroad: props.railroad || '',
+          crossingNickname: CROSSING_NICKNAMES[crossingId] || '',
+          lat,
+          lng
+        };
+      })
+      .filter((crossing) => Number.isFinite(crossing.lat) && Number.isFinite(crossing.lng));
+
+    redrawKnownCrossingMarkers();
+  } catch (error) {
+    console.error('Known crossings load error:', error);
+    setSystemStatus(`Known crossings load failed: ${error.message}`);
+  }
+}
+
+function redrawKnownCrossingMarkers() {
+  if (!knownCrossingsLayer) return;
+
+  knownCrossingsLayer.clearLayers();
+
+  knownCrossings.forEach((crossing) => {
+    const marker = L.circleMarker([crossing.lat, crossing.lng], {
+      radius: 4,
+      color: '#9cdcff',
+      weight: 1,
+      fillColor: '#9cdcff',
+      fillOpacity: 0.45
+    });
+
+    marker.bindPopup(`
+      <strong>${escapeHtml(crossing.crossingName)}</strong><br />
+      ${crossing.crossingNickname ? `"${escapeHtml(crossing.crossingNickname)}"<br />` : ''}
+      ${crossing.crossingRoadName ? `${escapeHtml(crossing.crossingRoadName)}<br />` : ''}
+      ${crossing.crossingRailroad ? `Railroad: ${escapeHtml(crossing.crossingRailroad)}` : ''}
+    `);
+
+    marker.on('click', () => {
+      selectedKnownCrossing = crossing;
+      selectedExistingCrossingId = null;
+      populateCrossingFormLocation(crossing.lat, crossing.lng);
+      setSystemStatus(`Known crossing selected: ${crossing.crossingName}${crossing.crossingNickname ? ` ("${crossing.crossingNickname}")` : ''}.`);
+      renderInsight({
+        lat: crossing.lat,
+        lng: crossing.lng,
+        title: crossing.crossingName,
+        subtitle: crossing.crossingNickname || crossing.crossingRoadName || 'Known crossing selected'
+      });
+    });
+
+    marker.addTo(knownCrossingsLayer);
+  });
+}
+
+function validateBoundaryGeoJson(data) {
   if (!data || data.type !== 'FeatureCollection') {
     throw new Error('Boundary file is not a valid FeatureCollection.');
   }
@@ -229,13 +331,13 @@ function chooseBoundaryFeature(features) {
   if (!validFeatures.length) return null;
 
   const namedLiberty = validFeatures.find((feature) =>
-    getFeatureName(feature).toLowerCase().includes('liberty')
+    getBoundaryFeatureName(feature).toLowerCase().includes('liberty')
   );
 
   return namedLiberty || validFeatures[0];
 }
 
-function getFeatureName(feature) {
+function getBoundaryFeatureName(feature) {
   if (!feature?.properties) return 'Unnamed feature';
 
   return (
@@ -276,13 +378,13 @@ function fitSavedPlacesView() {
   map.fitBounds(bounds, { padding: [30, 30] });
 }
 
-function fitTrainReportsView() {
-  if (!filteredTrainReports.length) {
-    alert('No visible train reports found.');
+function fitVisibleCrossingsView() {
+  if (!filteredCrossingEvents.length) {
+    alert('No visible crossing events found.');
     return;
   }
 
-  const bounds = L.latLngBounds(filteredTrainReports.map((r) => [r.lat, r.lng]));
+  const bounds = L.latLngBounds(filteredCrossingEvents.map((event) => [event.lat, event.lng]));
   map.fitBounds(bounds, { padding: [30, 30] });
 }
 
@@ -309,9 +411,7 @@ async function handleSearch() {
   try {
     const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(query)}`;
     const response = await fetch(url, {
-      headers: {
-        Accept: 'application/json'
-      }
+      headers: { Accept: 'application/json' }
     });
 
     if (!response.ok) {
@@ -340,6 +440,7 @@ async function handleSearch() {
     ).openPopup();
 
     map.setView([lat, lng], 14);
+
     renderInsight({
       lat,
       lng,
@@ -357,28 +458,45 @@ async function handleSearch() {
 
 function handleMapClick(e) {
   const { lat, lng } = e.latlng;
-  selectedReportLatLng = { lat, lng };
 
   if (clickMarker) {
     map.removeLayer(clickMarker);
   }
 
   clickMarker = L.marker([lat, lng]).addTo(map);
-  clickMarker.bindPopup(`<strong>Selected location</strong><br />${lat.toFixed(6)}, ${lng.toFixed(6)}`).openPopup();
+  clickMarker.bindPopup(
+    `<strong>Selected location</strong><br />${lat.toFixed(6)}, ${lng.toFixed(6)}`
+  ).openPopup();
 
-  populateTrainReportLocation(lat, lng);
+  populateCrossingFormLocation(lat, lng);
+
+  const nearbyKnownCrossing = findNearbyKnownCrossing(lat, lng);
+  const nearbyEvent = findNearbyCrossingEvent(lat, lng);
+
+  selectedKnownCrossing = nearbyKnownCrossing || null;
+  selectedExistingCrossingId = nearbyEvent ? nearbyEvent.id : null;
+
+  if (nearbyEvent) {
+    setSystemStatus(
+      `Existing crossing event selected: ${getCrossingDisplayTitle(nearbyEvent)} (${nearbyEvent.reportCount} reports).`
+    );
+  } else if (nearbyKnownCrossing) {
+    setSystemStatus(
+      `Known crossing selected: ${nearbyKnownCrossing.crossingName}${nearbyKnownCrossing.crossingNickname ? ` ("${nearbyKnownCrossing.crossingNickname}")` : ''}.`
+    );
+  } else {
+    setSystemStatus('No nearby known crossing matched. Click a known crossing marker before saving.');
+  }
 
   renderInsight({
     lat,
     lng,
-    title: 'Clicked location',
-    subtitle: 'Interactive map inspection'
+    title: nearbyKnownCrossing ? nearbyKnownCrossing.crossingName : 'Clicked location',
+    subtitle: getNearestCrossingInsightText(lat, lng)
   });
-
-  setSystemStatus('Map point selected. Ready to create train delay report.');
 }
 
-function populateTrainReportLocation(lat, lng) {
+function populateCrossingFormLocation(lat, lng) {
   const latEl = byId('reportLat');
   const lngEl = byId('reportLng');
 
@@ -386,45 +504,202 @@ function populateTrainReportLocation(lat, lng) {
   if (lngEl) lngEl.value = Number(lng).toFixed(6);
 }
 
-function clearTrainReportForm() {
-  selectedReportLatLng = null;
+function clearCrossingForm() {
+  selectedExistingCrossingId = null;
+  selectedKnownCrossing = null;
+
   if (byId('reportLat')) byId('reportLat').value = '';
   if (byId('reportLng')) byId('reportLng').value = '';
-  if (byId('reportSeverity')) byId('reportSeverity').value = 'medium';
-  if (byId('reportStatus')) byId('reportStatus').value = 'reported';
+  if (byId('reportActionType')) byId('reportActionType').value = 'blocked';
   if (byId('reportDescription')) byId('reportDescription').value = '';
 
-  setSystemStatus('Train report form cleared.');
+  setSystemStatus('Crossing event form cleared.');
 }
 
-function handleSubmitTrainReport() {
+function handleSubmitCrossingReport() {
   const lat = Number(byId('reportLat')?.value);
   const lng = Number(byId('reportLng')?.value);
-  const severity = byId('reportSeverity')?.value || 'medium';
-  const status = byId('reportStatus')?.value || 'reported';
+  const reportType = byId('reportActionType')?.value || 'blocked';
   const description = (byId('reportDescription')?.value || '').trim();
 
   if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-    alert('Click the map first to choose a train report location.');
+    alert('Click the map or a known crossing marker first.');
     return;
   }
 
-  const report = {
-    id: cryptoRandomId(),
+  let crossingEvent = null;
+
+  if (selectedExistingCrossingId) {
+    crossingEvent =
+      crossingEvents.find((event) => event.id === selectedExistingCrossingId) || null;
+  }
+
+  if (!crossingEvent) {
+    crossingEvent = findNearbyCrossingEvent(lat, lng);
+  }
+
+  const matchedKnownCrossing = selectedKnownCrossing || findNearbyKnownCrossing(lat, lng);
+
+  if (!crossingEvent && !matchedKnownCrossing) {
+    alert('No known crossing matched this location. Please click a known crossing marker before saving a report.');
+    setSystemStatus('Report blocked: no known crossing matched this location.');
+    return;
+  }
+
+  const insideCounty = isInsideLibertyCounty({ lat, lng });
+
+  if (!crossingEvent) {
+    crossingEvent = createCrossingEvent(lat, lng, insideCounty, matchedKnownCrossing);
+    crossingEvents.unshift(crossingEvent);
+  }
+
+  addReportToCrossingEvent(crossingEvent, {
     lat,
     lng,
-    severity,
-    status,
-    description,
-    insideCounty: isInsideLibertyCounty({ lat, lng }),
+    reportType,
+    description
+  });
+
+  recalculateCrossingEvent(crossingEvent);
+  persistCrossingEvents();
+  clearCrossingForm();
+  applyCrossingFilters();
+
+  setSystemStatus(
+    reportType === 'cleared'
+      ? `Cleared update saved to ${getCrossingDisplayTitle(crossingEvent)}.`
+      : `Blocked update saved to ${getCrossingDisplayTitle(crossingEvent)}.`
+  );
+}
+
+function createCrossingEvent(lat, lng, insideCounty, knownCrossing) {
+  const now = new Date().toISOString();
+
+  return {
+    id: cryptoRandomId(),
+    lat: Number(knownCrossing.lat),
+    lng: Number(knownCrossing.lng),
+    insideCounty: Boolean(insideCounty),
+    createdAt: now,
+    firstReportedAt: now,
+    lastReportedAt: now,
+    reportCount: 0,
+    blockedCount: 0,
+    clearedCount: 0,
+    severity: 'low',
+    status: 'active',
+    latestNote: '',
+    reports: [],
+    crossingId: knownCrossing.crossingId,
+    crossingName: knownCrossing.crossingName,
+    crossingRoadName: knownCrossing.crossingRoadName || '',
+    crossingRailroad: knownCrossing.crossingRailroad || '',
+    crossingNickname: knownCrossing.crossingNickname || ''
+  };
+}
+
+function addReportToCrossingEvent(crossingEvent, report) {
+  const entry = {
+    id: cryptoRandomId(),
+    lat: Number(report.lat),
+    lng: Number(report.lng),
+    type: report.reportType,
+    description: report.description,
     createdAt: new Date().toISOString()
   };
 
-  trainReports.unshift(report);
-  persistTrainReports();
-  clearTrainReportForm();
-  applyTrainReportFilters();
-  setSystemStatus('Train delay report saved and added to the live map layer.');
+  crossingEvent.reports.unshift(entry);
+  crossingEvent.lastReportedAt = entry.createdAt;
+
+  if (!crossingEvent.firstReportedAt) {
+    crossingEvent.firstReportedAt = entry.createdAt;
+  }
+}
+
+function recalculateCrossingEvent(crossingEvent) {
+  const reports = crossingEvent.reports || [];
+
+  crossingEvent.reportCount = reports.length;
+  crossingEvent.blockedCount = reports.filter((r) => r.type === 'blocked').length;
+  crossingEvent.clearedCount = reports.filter((r) => r.type === 'cleared').length;
+
+  const latestReport = reports[0] || null;
+
+  if (latestReport) {
+    crossingEvent.latestNote = latestReport.description || '';
+    crossingEvent.status = latestReport.type === 'cleared' ? 'cleared' : 'active';
+    crossingEvent.lastReportedAt = latestReport.createdAt;
+  }
+
+  crossingEvent.severity = deriveSeverityFromCount(crossingEvent.reportCount);
+}
+
+function deriveSeverityFromCount(reportCount) {
+  if (reportCount >= 6) return 'high';
+  if (reportCount >= 3) return 'medium';
+  return 'low';
+}
+
+function findNearbyCrossingEvent(lat, lng) {
+  let bestMatch = null;
+  let bestDistance = Infinity;
+
+  for (const event of crossingEvents) {
+    const distance = getDistanceMiles(lat, lng, event.lat, event.lng);
+    if (distance <= CROSSING_MATCH_RADIUS_MILES && distance < bestDistance) {
+      bestDistance = distance;
+      bestMatch = event;
+    }
+  }
+
+  return bestMatch;
+}
+
+function findNearbyKnownCrossing(lat, lng) {
+  let bestMatch = null;
+  let bestDistance = Infinity;
+
+  for (const crossing of knownCrossings) {
+    const distance = getDistanceMiles(lat, lng, crossing.lat, crossing.lng);
+    if (distance <= KNOWN_CROSSING_MATCH_RADIUS_MILES && distance < bestDistance) {
+      bestDistance = distance;
+      bestMatch = crossing;
+    }
+  }
+
+  return bestMatch;
+}
+
+function getNearestCrossingInsightText(lat, lng) {
+  const nearest = findNearbyKnownCrossing(lat, lng);
+  if (!nearest) return 'No nearby known crossing found';
+
+  const distance = getDistanceMiles(lat, lng, nearest.lat, nearest.lng);
+
+  return `${nearest.crossingName}${nearest.crossingNickname ? ` — "${nearest.crossingNickname}"` : ''} | ${distance.toFixed(2)} mi away`;
+}
+
+function getCrossingDisplayTitle(event) {
+  return event.crossingName || 'Unnamed Crossing';
+}
+
+function getCrossingDisplaySubtitle(event) {
+  if (event.crossingNickname) {
+    return `"${event.crossingNickname}"`;
+  }
+
+  if (event.crossingRoadName) {
+    return event.crossingRoadName;
+  }
+
+  return `${event.lat.toFixed(6)}, ${event.lng.toFixed(6)}`;
+}
+
+function getCrossingStatusNote(event) {
+  if (event.status === 'cleared') {
+    return 'Traffic flowing again.';
+  }
+  return event.latestNote || 'Crossing still blocked.';
 }
 
 function loadSavedPlaces() {
@@ -454,22 +729,20 @@ function renderSavedPlaces() {
   }
 
   list.innerHTML = savedPlaces
-    .map((place) => {
-      return `
-        <div class="saved-item">
-          <div class="saved-item-title">${escapeHtml(place.name)}</div>
-          <div class="saved-item-meta">
-            ${place.lat.toFixed(6)}, ${place.lng.toFixed(6)}<br />
-            ${place.insideCounty ? 'Inside Liberty County' : 'Outside Liberty County'}<br />
-            ${new Date(place.createdAt).toLocaleString()}
-          </div>
-          <div class="saved-item-actions">
-            <button class="btn btn-light btn-small" data-action="zoom" data-id="${place.id}">Zoom</button>
-            <button class="btn btn-ghost btn-small" data-action="delete" data-id="${place.id}">Delete</button>
-          </div>
+    .map((place) => `
+      <div class="saved-item">
+        <div class="saved-item-title">${escapeHtml(place.name)}</div>
+        <div class="saved-item-meta">
+          ${place.lat.toFixed(6)}, ${place.lng.toFixed(6)}<br />
+          ${place.insideCounty ? 'Inside Liberty County' : 'Outside Liberty County'}<br />
+          ${new Date(place.createdAt).toLocaleString()}
         </div>
-      `;
-    })
+        <div class="saved-item-actions">
+          <button class="btn btn-light btn-small" data-action="zoom" data-id="${place.id}">Zoom</button>
+          <button class="btn btn-ghost btn-small" data-action="delete" data-id="${place.id}">Delete</button>
+        </div>
+      </div>
+    `)
     .join('');
 
   list.querySelectorAll('[data-action="zoom"]').forEach((btn) => {
@@ -578,18 +851,34 @@ function redrawSavedPlaceMarkers() {
   });
 }
 
-function loadTrainReports() {
+function loadCrossingEvents() {
   try {
-    const raw = localStorage.getItem(TRAIN_DELAY_STORE_KEY);
-    trainReports = raw ? JSON.parse(raw) : [];
+    const raw = localStorage.getItem(CROSSING_EVENTS_KEY);
+    crossingEvents = raw ? JSON.parse(raw) : [];
   } catch (error) {
-    console.warn('Could not load train reports.', error);
-    trainReports = [];
+    console.warn('Could not load crossing events.', error);
+    crossingEvents = [];
   }
+
+  crossingEvents = crossingEvents.filter((event) => {
+    return (
+      Number.isFinite(Number(event.lat)) &&
+      Number.isFinite(Number(event.lng)) &&
+      Number(event.lat) !== 0 &&
+      Number(event.lng) !== 0 &&
+      event.crossingId
+    );
+  });
+
+  for (const event of crossingEvents) {
+    recalculateCrossingEvent(event);
+  }
+
+  persistCrossingEvents();
 }
 
-function persistTrainReports() {
-  localStorage.setItem(TRAIN_DELAY_STORE_KEY, JSON.stringify(trainReports));
+function persistCrossingEvents() {
+  localStorage.setItem(CROSSING_EVENTS_KEY, JSON.stringify(crossingEvents));
 }
 
 function getActiveFilters() {
@@ -600,156 +889,207 @@ function getActiveFilters() {
   };
 }
 
-function applyTrainReportFilters() {
+function applyCrossingFilters() {
   const filters = getActiveFilters();
 
-  filteredTrainReports = trainReports.filter((report) => {
-    const severityMatch = filters.severity === 'all' || report.severity === filters.severity;
-    const statusMatch = filters.status === 'all' || report.status === filters.status;
-    const countyMatch =
-      filters.county === 'all' ||
-      (filters.county === 'inside' && report.insideCounty) ||
-      (filters.county === 'outside' && !report.insideCounty);
+  filteredCrossingEvents = crossingEvents
+    .filter((event) => {
+      const severityMatch = filters.severity === 'all' || event.severity === filters.severity;
+      const statusMatch = filters.status === 'all' || event.status === filters.status;
+      const countyMatch =
+        filters.county === 'all' ||
+        (filters.county === 'inside' && event.insideCounty) ||
+        (filters.county === 'outside' && !event.insideCounty);
 
-    return severityMatch && statusMatch && countyMatch;
-  });
+      return severityMatch && statusMatch && countyMatch;
+    })
+    .sort((a, b) => new Date(b.lastReportedAt).getTime() - new Date(a.lastReportedAt).getTime());
 
-  renderTrainReports();
-  redrawTrainReportMarkers();
+  renderCrossingRegistry();
+  redrawCrossingMarkers();
   updateFilterSummary();
 }
 
-function resetTrainReportFilters() {
+function resetCrossingFilters() {
   if (byId('filterSeverity')) byId('filterSeverity').value = 'all';
   if (byId('filterStatus')) byId('filterStatus').value = 'all';
   if (byId('filterCounty')) byId('filterCounty').value = 'all';
 
-  applyTrainReportFilters();
-  setSystemStatus('Train report filters reset.');
+  applyCrossingFilters();
+  setSystemStatus('Crossing filters reset.');
 }
 
 function updateFilterSummary() {
   const el = byId('filterSummary');
   if (!el) return;
-
-  el.textContent = `Showing ${filteredTrainReports.length} of ${trainReports.length} train reports.`;
+  el.textContent = `Showing ${filteredCrossingEvents.length} of ${crossingEvents.length} crossing events.`;
 }
 
-function renderTrainReports() {
+function renderCrossingRegistry() {
   const list = byId('trainReportList');
   if (!list) return;
 
-  if (!filteredTrainReports.length) {
-    list.innerHTML = `<div class="tiny">No train delay reports match the current filters.</div>`;
+  if (!filteredCrossingEvents.length) {
+    list.innerHTML = `<div class="tiny">No crossing events match the current filters.</div>`;
     return;
   }
 
-  list.innerHTML = filteredTrainReports
-    .map((report) => {
+  list.innerHTML = filteredCrossingEvents
+    .map((event) => {
+      const duration = getDurationText(event.firstReportedAt, event.lastReportedAt, event.status);
+
       return `
         <div class="saved-item">
-          <div class="saved-item-title">Train Delay Report</div>
+          <div class="saved-item-title">${escapeHtml(getCrossingDisplayTitle(event))}</div>
           <div class="saved-item-meta">
-            ${report.lat.toFixed(6)}, ${report.lng.toFixed(6)}<br />
-            ${report.insideCounty ? 'Inside Liberty County' : 'Outside Liberty County'}<br />
-            ${new Date(report.createdAt).toLocaleString()}<br />
-            ${escapeHtml(report.description || 'No description provided.')}
+            ${escapeHtml(getCrossingDisplaySubtitle(event))}<br />
+            ${event.crossingRailroad ? `${escapeHtml(event.crossingRailroad)}<br />` : ''}
+            ${event.insideCounty ? 'Inside Liberty County' : 'Outside Liberty County'}<br />
+            ${escapeHtml(getCrossingStatusNote(event))}
           </div>
+
           <div class="badge-row">
-            <span class="badge badge-${escapeHtml(report.severity)}">${escapeHtml(report.severity.toUpperCase())}</span>
-            <span class="badge badge-status">${escapeHtml(report.status.toUpperCase())}</span>
-            <span class="badge badge-county">${report.insideCounty ? 'INSIDE COUNTY' : 'OUTSIDE COUNTY'}</span>
+            <span class="badge badge-${escapeHtml(event.severity)}">${escapeHtml(event.severity.toUpperCase())}</span>
+            <span class="badge badge-status">${escapeHtml(event.status.toUpperCase())}</span>
+            <span class="badge badge-county">${event.insideCounty ? 'INSIDE COUNTY' : 'OUTSIDE COUNTY'}</span>
           </div>
+
+          <div class="summary-grid">
+            <div class="summary-cell">
+              <div class="summary-label">Reports</div>
+              <div class="summary-value">${event.reportCount}</div>
+            </div>
+            <div class="summary-cell">
+              <div class="summary-label">Duration</div>
+              <div class="summary-value">${escapeHtml(duration)}</div>
+            </div>
+            <div class="summary-cell">
+              <div class="summary-label">First reported</div>
+              <div class="summary-value">${formatShortDateTime(event.firstReportedAt)}</div>
+            </div>
+            <div class="summary-cell">
+              <div class="summary-label">Last update</div>
+              <div class="summary-value">${formatShortDateTime(event.lastReportedAt)}</div>
+            </div>
+          </div>
+
           <div class="saved-item-actions">
-            <button class="btn btn-light btn-small" data-report-action="zoom" data-id="${report.id}">Zoom</button>
-            <button class="btn btn-ghost btn-small" data-report-action="delete" data-id="${report.id}">Delete</button>
+            <button class="btn btn-light btn-small" data-crossing-action="zoom" data-id="${event.id}">Zoom</button>
+            <button class="btn btn-light btn-small" data-crossing-action="blocked" data-id="${event.id}">Confirm Blocked</button>
+            <button class="btn btn-light btn-small" data-crossing-action="cleared" data-id="${event.id}">Report Cleared</button>
           </div>
         </div>
       `;
     })
     .join('');
 
-  list.querySelectorAll('[data-report-action="zoom"]').forEach((btn) => {
+  list.querySelectorAll('[data-crossing-action="zoom"]').forEach((btn) => {
     btn.addEventListener('click', () => {
-      const report = trainReports.find((r) => r.id === btn.dataset.id);
-      if (!report) return;
-      map.setView([report.lat, report.lng], 15);
+      const event = crossingEvents.find((item) => item.id === btn.dataset.id);
+      if (!event) return;
+
+      map.setView([event.lat, event.lng], 16);
       renderInsight({
-        lat: report.lat,
-        lng: report.lng,
-        title: 'Train delay report',
-        subtitle: report.description || 'Reported train delay location'
+        lat: event.lat,
+        lng: event.lng,
+        title: getCrossingDisplayTitle(event),
+        subtitle: `${event.reportCount} reports | ${event.status}`
       });
     });
   });
 
-  list.querySelectorAll('[data-report-action="delete"]').forEach((btn) => {
+  list.querySelectorAll('[data-crossing-action="blocked"]').forEach((btn) => {
     btn.addEventListener('click', () => {
-      deleteTrainReport(btn.dataset.id);
+      quickUpdateCrossing(btn.dataset.id, 'blocked');
+    });
+  });
+
+  list.querySelectorAll('[data-crossing-action="cleared"]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      quickUpdateCrossing(btn.dataset.id, 'cleared');
     });
   });
 }
 
-function redrawTrainReportMarkers() {
-  trainReportsLayer.clearLayers();
+function quickUpdateCrossing(eventId, reportType) {
+  const event = crossingEvents.find((item) => item.id === eventId);
+  if (!event) return;
 
-  filteredTrainReports.forEach((report) => {
-    const colors = getTrainSeverityColors(report.severity);
-    const isCleared = report.status === 'cleared';
+  const now = new Date().toISOString();
 
-    const marker = L.circleMarker([report.lat, report.lng], {
-      radius: isCleared ? 9 : 8,
-      color: isCleared ? '#9cdcff' : colors.stroke,
-      weight: isCleared ? 3 : 2,
-      fillColor: colors.fill,
-      fillOpacity: isCleared ? 0.18 : 0.9,
-      opacity: 1
+  event.status = reportType === 'cleared' ? 'cleared' : 'active';
+  event.lastReportedAt = now;
+  event.latestNote =
+    reportType === 'cleared' ? 'Traffic flowing again.' : 'Crossing still blocked.';
+
+  persistCrossingEvents();
+  applyCrossingFilters();
+
+  setSystemStatus(
+    reportType === 'cleared'
+      ? `${getCrossingDisplayTitle(event)} marked cleared.`
+      : `${getCrossingDisplayTitle(event)} blockage confirmed.`
+  );
+}
+
+function redrawCrossingMarkers() {
+  crossingEventsLayer.clearLayers();
+
+  filteredCrossingEvents.forEach((event) => {
+    const icon = L.divIcon({
+      className: '',
+      html: `
+        <div class="crossing-marker ${escapeHtml(event.severity)} ${event.status === 'cleared' ? 'cleared' : ''}">
+          <span>${escapeHtml(String(Math.min(event.reportCount, 99)))}</span>
+        </div>
+      `,
+      iconSize: [34, 34],
+      iconAnchor: [17, 17]
     });
 
-    marker.bindPopup(`
-      <strong>Train Delay Report</strong><br />
-      ${escapeHtml(report.severity.toUpperCase())} severity<br />
-      Status: ${escapeHtml(report.status.toUpperCase())}<br />
-      County: ${report.insideCounty ? 'Inside Liberty County' : 'Outside Liberty County'}<br />
-      ${escapeHtml(report.description || 'No description provided.')}<br />
-      ${report.lat.toFixed(6)}, ${report.lng.toFixed(6)}
-    `);
+    const marker = L.marker([event.lat, event.lng], { icon });
 
-    marker.addTo(trainReportsLayer);
+    marker.bindPopup(buildCrossingPopupHtml(event));
+    marker.on('click', () => {
+      selectedExistingCrossingId = event.id;
+      selectedKnownCrossing = knownCrossings.find((crossing) => crossing.crossingId === event.crossingId) || null;
+      populateCrossingFormLocation(event.lat, event.lng);
+      setSystemStatus(`${getCrossingDisplayTitle(event)} selected: ${event.reportCount} total reports.`);
+    });
+
+    marker.addTo(crossingEventsLayer);
   });
 }
 
-function getTrainSeverityColors(severity) {
-  if (severity === 'low') {
-    return { stroke: '#60d394', fill: '#60d394' };
-  }
+function buildCrossingPopupHtml(event) {
+  const duration = getDurationText(event.firstReportedAt, event.lastReportedAt, event.status);
 
-  if (severity === 'high') {
-    return { stroke: '#ff6b6b', fill: '#ff6b6b' };
-  }
-
-  return { stroke: '#ffd166', fill: '#ffd166' };
+  return `
+    <strong>${escapeHtml(getCrossingDisplayTitle(event))}</strong><br />
+    ${event.crossingNickname ? `"${escapeHtml(event.crossingNickname)}"<br />` : ''}
+    ${event.crossingRoadName ? `${escapeHtml(event.crossingRoadName)}<br />` : ''}
+    ${event.crossingRailroad ? `Railroad: ${escapeHtml(event.crossingRailroad)}<br />` : ''}
+    Status: ${escapeHtml(event.status.toUpperCase())}<br />
+    Severity: ${escapeHtml(event.severity.toUpperCase())}<br />
+    Reports: ${event.reportCount}<br />
+    Duration: ${escapeHtml(duration)}<br />
+    Last update: ${formatShortDateTime(event.lastReportedAt)}<br />
+    ${escapeHtml(getCrossingStatusNote(event))}
+  `;
 }
 
-function deleteTrainReport(id) {
-  trainReports = trainReports.filter((r) => r.id !== id);
-  persistTrainReports();
-  applyTrainReportFilters();
-  setSystemStatus('Train delay report removed.');
-}
-
-function clearAllTrainReports() {
-  if (!trainReports.length) {
-    alert('No train reports to clear.');
+function clearAllCrossingEvents() {
+  if (!crossingEvents.length) {
+    alert('No crossing events to clear.');
     return;
   }
 
-  if (!confirm('Clear all train delay reports?')) return;
+  if (!confirm('Clear all crossing events?')) return;
 
-  trainReports = [];
-  persistTrainReports();
-  applyTrainReportFilters();
-  setSystemStatus('All train delay reports cleared.');
+  crossingEvents = [];
+  persistCrossingEvents();
+  applyCrossingFilters();
+  setSystemStatus('All crossing events cleared.');
 }
 
 function switchBasemap(mode) {
@@ -777,12 +1117,21 @@ function renderInsight({ lat, lng, title, subtitle }) {
 
   const insideCounty = isInsideLibertyCounty({ lat, lng });
   const milesFromDayton = getDistanceMiles(lat, lng, DAYTON_ANCHOR.lat, DAYTON_ANCHOR.lng);
+  const nearest = findNearbyKnownCrossing(lat, lng);
+  const nearestDistance = nearest ? getDistanceMiles(lat, lng, nearest.lat, nearest.lng) : null;
 
   insightPanel.innerHTML = `
     <strong>Location insight</strong><br />
     <div style="margin-top:8px;">
       <div><strong>${escapeHtml(title)}</strong></div>
       <div class="tiny">${escapeHtml(subtitle)}</div>
+      ${
+        nearest
+          ? `<div style="margin-top:8px;"><strong>Nearest crossing:</strong> ${escapeHtml(nearest.crossingName)}</div>
+             <div>${nearest.crossingNickname ? `"${escapeHtml(nearest.crossingNickname)}"` : escapeHtml(nearest.crossingRoadName || '')}</div>
+             <div><strong>Match distance:</strong> ${nearestDistance.toFixed(2)} miles</div>`
+          : `<div style="margin-top:8px;"><strong>Nearest crossing:</strong> None matched</div>`
+      }
       <div style="margin-top:8px;"><strong>Latitude:</strong> ${lat.toFixed(6)}</div>
       <div><strong>Longitude:</strong> ${lng.toFixed(6)}</div>
       <div><strong>County status:</strong> ${insideCounty ? 'Inside Liberty County' : 'Outside Liberty County'}</div>
@@ -864,6 +1213,34 @@ function pointInRing(point, ring) {
   }
 
   return inside;
+}
+
+function getDurationText(firstReportedAt, lastReportedAt, status) {
+  if (!firstReportedAt) return '--';
+
+  const start = new Date(firstReportedAt).getTime();
+  const end = status === 'active' ? Date.now() : new Date(lastReportedAt).getTime();
+  const minutes = Math.max(0, Math.round((end - start) / 60000));
+
+  if (minutes < 1) return 'Just started';
+  if (minutes < 60) return `${minutes} min`;
+
+  const hours = Math.floor(minutes / 60);
+  const remainder = minutes % 60;
+
+  if (remainder === 0) return `${hours} hr`;
+  return `${hours} hr ${remainder} min`;
+}
+
+function formatShortDateTime(isoString) {
+  if (!isoString) return '--';
+
+  return new Date(isoString).toLocaleString([], {
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit'
+  });
 }
 
 function getDistanceMiles(lat1, lng1, lat2, lng2) {

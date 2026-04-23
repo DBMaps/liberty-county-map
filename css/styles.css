@@ -330,7 +330,7 @@ textarea {
 }
 
 .saved-item-title {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   margin-bottom: 6px;
 }
@@ -338,7 +338,7 @@ textarea {
 .saved-item-meta {
   font-size: 12px;
   color: var(--muted);
-  line-height: 1.45;
+  line-height: 1.5;
 }
 
 .saved-item-actions {
@@ -395,6 +395,34 @@ textarea {
   color: var(--text);
 }
 
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.summary-cell {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+}
+
+.summary-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.summary-value {
+  font-size: 13px;
+  margin-top: 4px;
+  font-weight: 700;
+}
+
 .map-wrap {
   position: relative;
   min-width: 0;
@@ -446,7 +474,7 @@ textarea {
   right: 12px;
   bottom: 12px;
   z-index: 700;
-  min-width: 180px;
+  min-width: 200px;
   background: rgba(10, 16, 28, 0.9);
   color: var(--text);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -478,11 +506,14 @@ textarea {
 }
 
 .legend-dot,
-.legend-ring {
+.legend-ring,
+.legend-count {
   width: 12px;
   height: 12px;
   border-radius: 999px;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .legend-low {
@@ -502,6 +533,16 @@ textarea {
   border: 2px solid #9cdcff;
 }
 
+.legend-count {
+  width: 22px;
+  height: 22px;
+  background: #0f1728;
+  border: 2px solid #9cdcff;
+  color: #e8eef8;
+  font-size: 10px;
+  font-weight: 700;
+}
+
 .basemap-box {
   display: grid;
   gap: 8px;
@@ -518,6 +559,47 @@ textarea {
 .basemap-actions {
   display: flex;
   gap: 8px;
+}
+
+.crossing-marker {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 11px;
+  color: #08121f;
+  border: 2px solid rgba(0, 0, 0, 0.18);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.crossing-marker.low {
+  background: #60d394;
+}
+
+.crossing-marker.medium {
+  background: #ffd166;
+}
+
+.crossing-marker.high {
+  background: #ff6b6b;
+}
+
+.crossing-marker.cleared {
+  border: 3px solid #9cdcff;
+  box-shadow: 0 0 0 3px rgba(156, 220, 255, 0.14);
+}
+
+.crossing-marker span {
+  line-height: 1;
+}
+
+.leaflet-div-icon {
+  background: transparent;
+  border: none;
 }
 
 .leaflet-popup-content-wrapper,
@@ -566,7 +648,8 @@ code {
     font-size: 24px;
   }
 
-  .grid2 {
+  .grid2,
+  .summary-grid {
     grid-template-columns: 1fr;
   }
 

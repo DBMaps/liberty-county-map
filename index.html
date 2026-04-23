@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Liberty County Spatial Intelligence System — V3.6</title>
+  <title>Liberty County Spatial Intelligence System — V3.7</title>
 
   <link
     rel="stylesheet"
@@ -19,17 +19,17 @@
       <div class="hero">
         <h1>Liberty County Spatial Intelligence System</h1>
         <p>
-          <strong>V3.6 reporting intelligence build</strong> — this version adds live filtering,
-          stronger marker styling, and a clear legend so train delay reports become easier to scan,
-          understand, and manage in real time.
+          <strong>V3.7 crossing event aggregation build</strong> — this version groups multiple
+          reports into a single crossing event, shows summary cards instead of repeated entries,
+          tracks duration, and allows blocked or cleared confirmations at the same crossing.
         </p>
         <div class="pill-row">
+          <span class="pill">Crossing events</span>
+          <span class="pill">Duration tracking</span>
+          <span class="pill">Blocked / cleared</span>
           <span class="pill">Live filters</span>
           <span class="pill">Map legend</span>
-          <span class="pill">Train reports</span>
-          <span class="pill">Debug-ready</span>
           <span class="pill">Local GeoJSON</span>
-          <span class="pill">Saved places</span>
         </div>
       </div>
 
@@ -66,10 +66,10 @@
       </section>
 
       <section class="section">
-        <h3>Train delay reporting</h3>
+        <h3>Crossing event reporting</h3>
         <p>
-          Click the map to select a location, then create a train delay report. Reports save locally
-          and render as a separate map layer.
+          Click a crossing location on the map. If a nearby crossing event already exists, your update
+          will be added to that same crossing event instead of creating a duplicate event marker.
         </p>
 
         <div class="report-card">
@@ -84,20 +84,10 @@
           </div>
 
           <div class="report-row">
-            <label for="reportSeverity">Severity</label>
-            <select id="reportSeverity">
-              <option value="low">Low</option>
-              <option value="medium" selected>Medium</option>
-              <option value="high">High</option>
-            </select>
-          </div>
-
-          <div class="report-row">
-            <label for="reportStatus">Status</label>
-            <select id="reportStatus">
-              <option value="reported" selected>Reported</option>
-              <option value="active">Active</option>
-              <option value="cleared">Cleared</option>
+            <label for="reportActionType">Report type</label>
+            <select id="reportActionType">
+              <option value="blocked" selected>Blocked / still blocked</option>
+              <option value="cleared">Cleared / traffic flowing</option>
             </select>
           </div>
 
@@ -106,19 +96,19 @@
             <textarea
               id="reportDescription"
               rows="4"
-              placeholder="Example: Train stopped at crossing causing major delay on FM route."
+              placeholder="Example: Train still blocking crossing, traffic backed up heavily."
             ></textarea>
           </div>
 
           <div class="grid2">
-            <button id="submitTrainReportBtn" class="btn btn-primary">Save Train Report</button>
+            <button id="submitCrossingReportBtn" class="btn btn-primary">Save Crossing Update</button>
             <button id="clearTrainFormBtn" class="btn btn-ghost">Clear Form</button>
           </div>
         </div>
       </section>
 
       <section class="section">
-        <h3>Live report filters</h3>
+        <h3>Live crossing filters</h3>
 
         <div class="report-card">
           <div class="report-row">
@@ -135,7 +125,6 @@
             <label for="filterStatus">Status filter</label>
             <select id="filterStatus">
               <option value="all" selected>All statuses</option>
-              <option value="reported">Reported only</option>
               <option value="active">Active only</option>
               <option value="cleared">Cleared only</option>
             </select>
@@ -157,15 +146,15 @@
         </div>
 
         <div class="filter-summary" id="filterSummary">
-          Showing 0 of 0 train reports.
+          Showing 0 of 0 crossing events.
         </div>
       </section>
 
       <section class="section">
-        <h3>Train report registry</h3>
+        <h3>Crossing event registry</h3>
         <div class="saved-actions">
-          <button id="fitTrainReportsBtn" class="btn btn-light">Fit Visible Reports</button>
-          <button id="clearTrainReportsBtn" class="btn btn-ghost">Clear All Reports</button>
+          <button id="fitTrainReportsBtn" class="btn btn-light">Fit Visible Crossings</button>
+          <button id="clearTrainReportsBtn" class="btn btn-ghost">Clear All Crossing Events</button>
         </div>
         <div id="trainReportList" class="saved-list"></div>
       </section>
@@ -194,8 +183,8 @@
           <div class="status-row">
             <span class="dot live"></span>
             <div>
-              <strong>Train delay reports</strong><br />
-              <span class="tiny">User-generated map events with live filtering, styled markers, and separate layer visibility.</span>
+              <strong>Crossing events</strong><br />
+              <span class="tiny">Aggregated crossing summaries with duration, report count, derived severity, and cleared state.</span>
             </div>
             <span class="tag">Active</span>
           </div>
@@ -227,8 +216,8 @@
       <div id="map"></div>
 
       <div class="floating top">
-        <strong>V3.6 live report intelligence</strong><br />
-        Filter visible train delay reports instantly and read the map using the new report legend.
+        <strong>V3.7 crossing event aggregation</strong><br />
+        One smart marker per crossing event, with grouped reports, duration tracking, and blocked / cleared updates.
       </div>
 
       <div class="floating right">
@@ -252,7 +241,7 @@
       </div>
 
       <div class="map-legend" id="mapLegend">
-        <div class="legend-title">Train Report Legend</div>
+        <div class="legend-title">Crossing Event Legend</div>
         <div class="legend-row">
           <span class="legend-dot legend-low"></span>
           <span>Low severity</span>
@@ -267,7 +256,11 @@
         </div>
         <div class="legend-row">
           <span class="legend-ring"></span>
-          <span>Cleared report</span>
+          <span>Cleared crossing</span>
+        </div>
+        <div class="legend-row">
+          <span class="legend-count">12</span>
+          <span>Report count label</span>
         </div>
       </div>
     </main>
