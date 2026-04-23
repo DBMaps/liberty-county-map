@@ -1,6 +1,6 @@
 const LIBERTY_BOUNDARY_FILE = './data/liberty-county-boundary.geojson';
-const SAVED_PLACES_KEY = 'liberty_county_saved_places_v35';
-const TRAIN_DELAY_STORE_KEY = 'liberty_train_delay_reports_v35';
+const SAVED_PLACES_KEY = 'liberty_county_saved_places_v36';
+const TRAIN_DELAY_STORE_KEY = 'liberty_train_delay_reports_v36';
 
 const DAYTON_ANCHOR = {
   name: 'Dayton, TX',
@@ -13,7 +13,6 @@ let cartoLayer;
 let esriLayer;
 let libertyBoundaryLayer = null;
 let libertyBoundaryFeature = null;
-let libertyBoundaryData = null;
 let searchMarker = null;
 let clickMarker = null;
 let savedPlacesLayer = null;
@@ -21,6 +20,7 @@ let trainReportsLayer = null;
 
 let savedPlaces = [];
 let trainReports = [];
+let filteredTrainReports = [];
 let selectedReportLatLng = null;
 
 const debugState = {
@@ -41,6 +41,7 @@ async function init() {
   setSystemStatus('Loading Liberty County boundary from local GeoJSON...');
   loadSavedPlaces();
   loadTrainReports();
+  applyTrainReportFilters();
   await loadBoundary();
 }
 
@@ -106,6 +107,13 @@ function initUi() {
   byId('fitTrainReportsBtn')?.addEventListener('click', fitTrainReportsView);
   byId('clearTrainReportsBtn')?.addEventListener('click', clearAllTrainReports);
 
+  byId('applyFiltersBtn')?.addEventListener('click', applyTrainReportFilters);
+  byId('resetFiltersBtn')?.addEventListener('click', resetTrainReportFilters);
+
+  byId('filterSeverity')?.addEventListener('change', applyTrainReportFilters);
+  byId('filterStatus')?.addEventListener('change', applyTrainReportFilters);
+  byId('filterCounty')?.addEventListener('change', applyTrainReportFilters);
+
   byId('cartoBtn')?.addEventListener('click', () => switchBasemap('carto'));
   byId('esriBtn')?.addEventListener('click', () => switchBasemap('esri'));
 }
@@ -149,7 +157,6 @@ async function loadBoundary() {
       throw new Error('No valid Polygon or MultiPolygon feature found.');
     }
 
-    libertyBoundaryData = data;
     libertyBoundaryFeature = selectedFeature;
 
     if (libertyBoundaryLayer) {
@@ -175,6 +182,9 @@ async function loadBoundary() {
     debugState.loadStatus = 'Loaded successfully';
 
     renderDebugPanel();
+    redrawTrainReportMarkers();
+    renderTrainReports();
+    updateFilterSummary();
     setSystemStatus('Liberty County boundary loaded successfully.');
     map.fitBounds(bounds, { padding: [20, 20] });
   } catch (error) {
@@ -267,12 +277,12 @@ function fitSavedPlacesView() {
 }
 
 function fitTrainReportsView() {
-  if (!trainReports.length) {
-    alert('No train reports found.');
+  if (!filteredTrainReports.length) {
+    alert('No visible train reports found.');
     return;
   }
 
-  const bounds = L.latLngBounds(trainReports.map((r) => [r.lat, r.lng]));
+  const bounds = L.latLngBounds(filteredTrainReports.map((r) => [r.lat, r.lng]));
   map.fitBounds(bounds, { padding: [30, 30] });
 }
 
@@ -412,10 +422,9 @@ function handleSubmitTrainReport() {
 
   trainReports.unshift(report);
   persistTrainReports();
-  renderTrainReports();
-  redrawTrainReportMarkers();
   clearTrainReportForm();
-  setSystemStatus('Train delay report saved.');
+  applyTrainReportFilters();
+  setSystemStatus('Train delay report saved and added to the live map layer.');
 }
 
 function loadSavedPlaces() {
@@ -577,25 +586,65 @@ function loadTrainReports() {
     console.warn('Could not load train reports.', error);
     trainReports = [];
   }
-
-  renderTrainReports();
-  redrawTrainReportMarkers();
 }
 
 function persistTrainReports() {
   localStorage.setItem(TRAIN_DELAY_STORE_KEY, JSON.stringify(trainReports));
 }
 
+function getActiveFilters() {
+  return {
+    severity: byId('filterSeverity')?.value || 'all',
+    status: byId('filterStatus')?.value || 'all',
+    county: byId('filterCounty')?.value || 'all'
+  };
+}
+
+function applyTrainReportFilters() {
+  const filters = getActiveFilters();
+
+  filteredTrainReports = trainReports.filter((report) => {
+    const severityMatch = filters.severity === 'all' || report.severity === filters.severity;
+    const statusMatch = filters.status === 'all' || report.status === filters.status;
+    const countyMatch =
+      filters.county === 'all' ||
+      (filters.county === 'inside' && report.insideCounty) ||
+      (filters.county === 'outside' && !report.insideCounty);
+
+    return severityMatch && statusMatch && countyMatch;
+  });
+
+  renderTrainReports();
+  redrawTrainReportMarkers();
+  updateFilterSummary();
+}
+
+function resetTrainReportFilters() {
+  if (byId('filterSeverity')) byId('filterSeverity').value = 'all';
+  if (byId('filterStatus')) byId('filterStatus').value = 'all';
+  if (byId('filterCounty')) byId('filterCounty').value = 'all';
+
+  applyTrainReportFilters();
+  setSystemStatus('Train report filters reset.');
+}
+
+function updateFilterSummary() {
+  const el = byId('filterSummary');
+  if (!el) return;
+
+  el.textContent = `Showing ${filteredTrainReports.length} of ${trainReports.length} train reports.`;
+}
+
 function renderTrainReports() {
   const list = byId('trainReportList');
   if (!list) return;
 
-  if (!trainReports.length) {
-    list.innerHTML = `<div class="tiny">No train delay reports yet.</div>`;
+  if (!filteredTrainReports.length) {
+    list.innerHTML = `<div class="tiny">No train delay reports match the current filters.</div>`;
     return;
   }
 
-  list.innerHTML = trainReports
+  list.innerHTML = filteredTrainReports
     .map((report) => {
       return `
         <div class="saved-item">
@@ -609,6 +658,7 @@ function renderTrainReports() {
           <div class="badge-row">
             <span class="badge badge-${escapeHtml(report.severity)}">${escapeHtml(report.severity.toUpperCase())}</span>
             <span class="badge badge-status">${escapeHtml(report.status.toUpperCase())}</span>
+            <span class="badge badge-county">${report.insideCounty ? 'INSIDE COUNTY' : 'OUTSIDE COUNTY'}</span>
           </div>
           <div class="saved-item-actions">
             <button class="btn btn-light btn-small" data-report-action="zoom" data-id="${report.id}">Zoom</button>
@@ -643,21 +693,24 @@ function renderTrainReports() {
 function redrawTrainReportMarkers() {
   trainReportsLayer.clearLayers();
 
-  trainReports.forEach((report) => {
+  filteredTrainReports.forEach((report) => {
     const colors = getTrainSeverityColors(report.severity);
+    const isCleared = report.status === 'cleared';
 
     const marker = L.circleMarker([report.lat, report.lng], {
-      radius: 8,
-      color: colors.stroke,
-      weight: 2,
+      radius: isCleared ? 9 : 8,
+      color: isCleared ? '#9cdcff' : colors.stroke,
+      weight: isCleared ? 3 : 2,
       fillColor: colors.fill,
-      fillOpacity: 0.9
+      fillOpacity: isCleared ? 0.18 : 0.9,
+      opacity: 1
     });
 
     marker.bindPopup(`
       <strong>Train Delay Report</strong><br />
       ${escapeHtml(report.severity.toUpperCase())} severity<br />
-      Status: ${escapeHtml(report.status)}<br />
+      Status: ${escapeHtml(report.status.toUpperCase())}<br />
+      County: ${report.insideCounty ? 'Inside Liberty County' : 'Outside Liberty County'}<br />
       ${escapeHtml(report.description || 'No description provided.')}<br />
       ${report.lat.toFixed(6)}, ${report.lng.toFixed(6)}
     `);
@@ -681,8 +734,7 @@ function getTrainSeverityColors(severity) {
 function deleteTrainReport(id) {
   trainReports = trainReports.filter((r) => r.id !== id);
   persistTrainReports();
-  renderTrainReports();
-  redrawTrainReportMarkers();
+  applyTrainReportFilters();
   setSystemStatus('Train delay report removed.');
 }
 
@@ -696,8 +748,7 @@ function clearAllTrainReports() {
 
   trainReports = [];
   persistTrainReports();
-  renderTrainReports();
-  redrawTrainReportMarkers();
+  applyTrainReportFilters();
   setSystemStatus('All train delay reports cleared.');
 }
 

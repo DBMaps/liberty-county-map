@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Liberty County Spatial Intelligence System — V3.5</title>
+  <title>Liberty County Spatial Intelligence System — V3.6</title>
 
   <link
     rel="stylesheet"
@@ -19,16 +19,16 @@
       <div class="hero">
         <h1>Liberty County Spatial Intelligence System</h1>
         <p>
-          <strong>V3.5 train delay reporting build</strong> — this version adds the first
-          interactive community reporting workflow while keeping the hardened local boundary,
-          debug visibility, and simple HTML/CSS/JS architecture.
+          <strong>V3.6 reporting intelligence build</strong> — this version adds live filtering,
+          stronger marker styling, and a clear legend so train delay reports become easier to scan,
+          understand, and manage in real time.
         </p>
         <div class="pill-row">
+          <span class="pill">Live filters</span>
+          <span class="pill">Map legend</span>
           <span class="pill">Train reports</span>
           <span class="pill">Debug-ready</span>
           <span class="pill">Local GeoJSON</span>
-          <span class="pill">Basemap switch</span>
-          <span class="pill">Search</span>
           <span class="pill">Saved places</span>
         </div>
       </div>
@@ -118,9 +118,53 @@
       </section>
 
       <section class="section">
+        <h3>Live report filters</h3>
+
+        <div class="report-card">
+          <div class="report-row">
+            <label for="filterSeverity">Severity filter</label>
+            <select id="filterSeverity">
+              <option value="all" selected>All severities</option>
+              <option value="low">Low only</option>
+              <option value="medium">Medium only</option>
+              <option value="high">High only</option>
+            </select>
+          </div>
+
+          <div class="report-row">
+            <label for="filterStatus">Status filter</label>
+            <select id="filterStatus">
+              <option value="all" selected>All statuses</option>
+              <option value="reported">Reported only</option>
+              <option value="active">Active only</option>
+              <option value="cleared">Cleared only</option>
+            </select>
+          </div>
+
+          <div class="report-row">
+            <label for="filterCounty">County filter</label>
+            <select id="filterCounty">
+              <option value="all" selected>All locations</option>
+              <option value="inside">Inside Liberty County</option>
+              <option value="outside">Outside Liberty County</option>
+            </select>
+          </div>
+
+          <div class="grid2">
+            <button id="applyFiltersBtn" class="btn btn-primary">Apply Filters</button>
+            <button id="resetFiltersBtn" class="btn btn-ghost">Reset Filters</button>
+          </div>
+        </div>
+
+        <div class="filter-summary" id="filterSummary">
+          Showing 0 of 0 train reports.
+        </div>
+      </section>
+
+      <section class="section">
         <h3>Train report registry</h3>
         <div class="saved-actions">
-          <button id="fitTrainReportsBtn" class="btn btn-light">Fit Train Reports</button>
+          <button id="fitTrainReportsBtn" class="btn btn-light">Fit Visible Reports</button>
           <button id="clearTrainReportsBtn" class="btn btn-ghost">Clear All Reports</button>
         </div>
         <div id="trainReportList" class="saved-list"></div>
@@ -151,7 +195,7 @@
             <span class="dot live"></span>
             <div>
               <strong>Train delay reports</strong><br />
-              <span class="tiny">User-generated map events stored locally and displayed as a separate live layer.</span>
+              <span class="tiny">User-generated map events with live filtering, styled markers, and separate layer visibility.</span>
             </div>
             <span class="tag">Active</span>
           </div>
@@ -183,8 +227,8 @@
       <div id="map"></div>
 
       <div class="floating top">
-        <strong>V3.5 train delay reporting</strong><br />
-        Click the map, create a delay report, and manage reports directly from the sidebar.
+        <strong>V3.6 live report intelligence</strong><br />
+        Filter visible train delay reports instantly and read the map using the new report legend.
       </div>
 
       <div class="floating right">
@@ -205,6 +249,26 @@
       <div class="floating bottom" id="insightPanel">
         <strong>Location insight</strong><br />
         Click the map to inspect a location.
+      </div>
+
+      <div class="map-legend" id="mapLegend">
+        <div class="legend-title">Train Report Legend</div>
+        <div class="legend-row">
+          <span class="legend-dot legend-low"></span>
+          <span>Low severity</span>
+        </div>
+        <div class="legend-row">
+          <span class="legend-dot legend-medium"></span>
+          <span>Medium severity</span>
+        </div>
+        <div class="legend-row">
+          <span class="legend-dot legend-high"></span>
+          <span>High severity</span>
+        </div>
+        <div class="legend-row">
+          <span class="legend-ring"></span>
+          <span>Cleared report</span>
+        </div>
       </div>
     </main>
   </div>
