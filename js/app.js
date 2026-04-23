@@ -1,6 +1,6 @@
 const LIBERTY_BOUNDARY_FILE = './data/liberty-county-boundary.geojson';
-const SAVED_PLACES_KEY = 'liberty_county_saved_places_v34';
-const TRAIN_DELAY_STORE_KEY = 'liberty_train_delay_reports_v1';
+const SAVED_PLACES_KEY = 'liberty_county_saved_places_v35';
+const TRAIN_DELAY_STORE_KEY = 'liberty_train_delay_reports_v35';
 
 const DAYTON_ANCHOR = {
   name: 'Dayton, TX',
@@ -17,9 +17,11 @@ let libertyBoundaryData = null;
 let searchMarker = null;
 let clickMarker = null;
 let savedPlacesLayer = null;
-let tempSearchLatLng = null;
+let trainReportsLayer = null;
 
 let savedPlaces = [];
+let trainReports = [];
+let selectedReportLatLng = null;
 
 const debugState = {
   filePath: LIBERTY_BOUNDARY_FILE,
@@ -38,6 +40,7 @@ async function init() {
   renderDebugPanel();
   setSystemStatus('Loading Liberty County boundary from local GeoJSON...');
   loadSavedPlaces();
+  loadTrainReports();
   await loadBoundary();
 }
 
@@ -67,6 +70,7 @@ function initMap() {
   cartoLayer.addTo(map);
 
   savedPlacesLayer = L.layerGroup().addTo(map);
+  trainReportsLayer = L.layerGroup().addTo(map);
 
   const daytonMarker = L.circleMarker([DAYTON_ANCHOR.lat, DAYTON_ANCHOR.lng], {
     radius: 7,
@@ -84,9 +88,7 @@ function initMap() {
 function initUi() {
   byId('searchBtn')?.addEventListener('click', handleSearch);
   byId('searchInput')?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
+    if (e.key === 'Enter') handleSearch();
   });
 
   byId('fitCountyBtn')?.addEventListener('click', fitCountyView);
@@ -98,6 +100,11 @@ function initUi() {
 
   byId('exportSavedBtn')?.addEventListener('click', exportSavedPlaces);
   byId('clearSavedBtn')?.addEventListener('click', clearSavedPlaces);
+
+  byId('submitTrainReportBtn')?.addEventListener('click', handleSubmitTrainReport);
+  byId('clearTrainFormBtn')?.addEventListener('click', clearTrainReportForm);
+  byId('fitTrainReportsBtn')?.addEventListener('click', fitTrainReportsView);
+  byId('clearTrainReportsBtn')?.addEventListener('click', clearAllTrainReports);
 
   byId('cartoBtn')?.addEventListener('click', () => switchBasemap('carto'));
   byId('esriBtn')?.addEventListener('click', () => switchBasemap('esri'));
@@ -209,9 +216,7 @@ function chooseBoundaryFeature(features) {
     return type === 'Polygon' || type === 'MultiPolygon';
   });
 
-  if (!validFeatures.length) {
-    return null;
-  }
+  if (!validFeatures.length) return null;
 
   const namedLiberty = validFeatures.find((feature) =>
     getFeatureName(feature).toLowerCase().includes('liberty')
@@ -261,12 +266,21 @@ function fitSavedPlacesView() {
   map.fitBounds(bounds, { padding: [30, 30] });
 }
 
+function fitTrainReportsView() {
+  if (!trainReports.length) {
+    alert('No train reports found.');
+    return;
+  }
+
+  const bounds = L.latLngBounds(trainReports.map((r) => [r.lat, r.lng]));
+  map.fitBounds(bounds, { padding: [30, 30] });
+}
+
 function clearSearchResult() {
   if (searchMarker) {
     map.removeLayer(searchMarker);
     searchMarker = null;
   }
-  tempSearchLatLng = null;
   setSystemStatus('Temporary search result cleared.');
 }
 
@@ -305,7 +319,6 @@ async function handleSearch() {
     const result = results[0];
     const lat = Number(result.lat);
     const lng = Number(result.lon);
-    tempSearchLatLng = { lat, lng };
 
     if (searchMarker) {
       map.removeLayer(searchMarker);
@@ -334,6 +347,7 @@ async function handleSearch() {
 
 function handleMapClick(e) {
   const { lat, lng } = e.latlng;
+  selectedReportLatLng = { lat, lng };
 
   if (clickMarker) {
     map.removeLayer(clickMarker);
@@ -342,64 +356,66 @@ function handleMapClick(e) {
   clickMarker = L.marker([lat, lng]).addTo(map);
   clickMarker.bindPopup(`<strong>Selected location</strong><br />${lat.toFixed(6)}, ${lng.toFixed(6)}`).openPopup();
 
+  populateTrainReportLocation(lat, lng);
+
   renderInsight({
     lat,
     lng,
     title: 'Clicked location',
     subtitle: 'Interactive map inspection'
   });
+
+  setSystemStatus('Map point selected. Ready to create train delay report.');
 }
 
-function renderInsight({ lat, lng, title, subtitle }) {
-  const insightPanel = byId('insightPanel');
-  if (!insightPanel) return;
+function populateTrainReportLocation(lat, lng) {
+  const latEl = byId('reportLat');
+  const lngEl = byId('reportLng');
 
-  const insideCounty = isInsideLibertyCounty({ lat, lng });
-  const milesFromDayton = getDistanceMiles(lat, lng, DAYTON_ANCHOR.lat, DAYTON_ANCHOR.lng);
+  if (latEl) latEl.value = Number(lat).toFixed(6);
+  if (lngEl) lngEl.value = Number(lng).toFixed(6);
+}
 
-  insightPanel.innerHTML = `
-    <strong>Location insight</strong><br />
-    <div style="margin-top:8px;">
-      <div><strong>${escapeHtml(title)}</strong></div>
-      <div class="tiny">${escapeHtml(subtitle)}</div>
-      <div style="margin-top:8px;"><strong>Latitude:</strong> ${lat.toFixed(6)}</div>
-      <div><strong>Longitude:</strong> ${lng.toFixed(6)}</div>
-      <div><strong>County status:</strong> ${insideCounty ? 'Inside Liberty County' : 'Outside Liberty County'}</div>
-      <div><strong>Distance from Dayton anchor:</strong> ${milesFromDayton.toFixed(2)} miles</div>
-      <div style="margin-top:10px;">
-        <button id="saveCurrentPlaceBtn" class="btn btn-primary btn-small">Save this place</button>
-      </div>
-    </div>
-  `;
+function clearTrainReportForm() {
+  selectedReportLatLng = null;
+  if (byId('reportLat')) byId('reportLat').value = '';
+  if (byId('reportLng')) byId('reportLng').value = '';
+  if (byId('reportSeverity')) byId('reportSeverity').value = 'medium';
+  if (byId('reportStatus')) byId('reportStatus').value = 'reported';
+  if (byId('reportDescription')) byId('reportDescription').value = '';
 
-  const saveBtn = byId('saveCurrentPlaceBtn');
-  if (saveBtn) {
-    saveBtn.addEventListener('click', () => {
-      savePlace({
-        name: title === 'Search result' ? subtitle : `Saved Place ${savedPlaces.length + 1}`,
-        lat,
-        lng,
-        insideCounty
-      });
-    });
+  setSystemStatus('Train report form cleared.');
+}
+
+function handleSubmitTrainReport() {
+  const lat = Number(byId('reportLat')?.value);
+  const lng = Number(byId('reportLng')?.value);
+  const severity = byId('reportSeverity')?.value || 'medium';
+  const status = byId('reportStatus')?.value || 'reported';
+  const description = (byId('reportDescription')?.value || '').trim();
+
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+    alert('Click the map first to choose a train report location.');
+    return;
   }
-}
 
-function savePlace(place) {
-  const entry = {
+  const report = {
     id: cryptoRandomId(),
-    name: place.name || `Saved Place ${savedPlaces.length + 1}`,
-    lat: Number(place.lat),
-    lng: Number(place.lng),
-    insideCounty: Boolean(place.insideCounty),
+    lat,
+    lng,
+    severity,
+    status,
+    description,
+    insideCounty: isInsideLibertyCounty({ lat, lng }),
     createdAt: new Date().toISOString()
   };
 
-  savedPlaces.unshift(entry);
-  persistSavedPlaces();
-  renderSavedPlaces();
-  redrawSavedPlaceMarkers();
-  setSystemStatus(`Saved place: ${entry.name}`);
+  trainReports.unshift(report);
+  persistTrainReports();
+  renderTrainReports();
+  redrawTrainReportMarkers();
+  clearTrainReportForm();
+  setSystemStatus('Train delay report saved.');
 }
 
 function loadSavedPlaces() {
@@ -468,6 +484,23 @@ function renderSavedPlaces() {
   });
 }
 
+function savePlace(place) {
+  const entry = {
+    id: cryptoRandomId(),
+    name: place.name || `Saved Place ${savedPlaces.length + 1}`,
+    lat: Number(place.lat),
+    lng: Number(place.lng),
+    insideCounty: Boolean(place.insideCounty),
+    createdAt: new Date().toISOString()
+  };
+
+  savedPlaces.unshift(entry);
+  persistSavedPlaces();
+  renderSavedPlaces();
+  redrawSavedPlaceMarkers();
+  setSystemStatus(`Saved place: ${entry.name}`);
+}
+
 function deleteSavedPlace(id) {
   savedPlaces = savedPlaces.filter((p) => p.id !== id);
   persistSavedPlaces();
@@ -482,8 +515,7 @@ function clearSavedPlaces() {
     return;
   }
 
-  const confirmed = confirm('Clear all saved places?');
-  if (!confirmed) return;
+  if (!confirm('Clear all saved places?')) return;
 
   savedPlaces = [];
   persistSavedPlaces();
@@ -537,6 +569,138 @@ function redrawSavedPlaceMarkers() {
   });
 }
 
+function loadTrainReports() {
+  try {
+    const raw = localStorage.getItem(TRAIN_DELAY_STORE_KEY);
+    trainReports = raw ? JSON.parse(raw) : [];
+  } catch (error) {
+    console.warn('Could not load train reports.', error);
+    trainReports = [];
+  }
+
+  renderTrainReports();
+  redrawTrainReportMarkers();
+}
+
+function persistTrainReports() {
+  localStorage.setItem(TRAIN_DELAY_STORE_KEY, JSON.stringify(trainReports));
+}
+
+function renderTrainReports() {
+  const list = byId('trainReportList');
+  if (!list) return;
+
+  if (!trainReports.length) {
+    list.innerHTML = `<div class="tiny">No train delay reports yet.</div>`;
+    return;
+  }
+
+  list.innerHTML = trainReports
+    .map((report) => {
+      return `
+        <div class="saved-item">
+          <div class="saved-item-title">Train Delay Report</div>
+          <div class="saved-item-meta">
+            ${report.lat.toFixed(6)}, ${report.lng.toFixed(6)}<br />
+            ${report.insideCounty ? 'Inside Liberty County' : 'Outside Liberty County'}<br />
+            ${new Date(report.createdAt).toLocaleString()}<br />
+            ${escapeHtml(report.description || 'No description provided.')}
+          </div>
+          <div class="badge-row">
+            <span class="badge badge-${escapeHtml(report.severity)}">${escapeHtml(report.severity.toUpperCase())}</span>
+            <span class="badge badge-status">${escapeHtml(report.status.toUpperCase())}</span>
+          </div>
+          <div class="saved-item-actions">
+            <button class="btn btn-light btn-small" data-report-action="zoom" data-id="${report.id}">Zoom</button>
+            <button class="btn btn-ghost btn-small" data-report-action="delete" data-id="${report.id}">Delete</button>
+          </div>
+        </div>
+      `;
+    })
+    .join('');
+
+  list.querySelectorAll('[data-report-action="zoom"]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const report = trainReports.find((r) => r.id === btn.dataset.id);
+      if (!report) return;
+      map.setView([report.lat, report.lng], 15);
+      renderInsight({
+        lat: report.lat,
+        lng: report.lng,
+        title: 'Train delay report',
+        subtitle: report.description || 'Reported train delay location'
+      });
+    });
+  });
+
+  list.querySelectorAll('[data-report-action="delete"]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      deleteTrainReport(btn.dataset.id);
+    });
+  });
+}
+
+function redrawTrainReportMarkers() {
+  trainReportsLayer.clearLayers();
+
+  trainReports.forEach((report) => {
+    const colors = getTrainSeverityColors(report.severity);
+
+    const marker = L.circleMarker([report.lat, report.lng], {
+      radius: 8,
+      color: colors.stroke,
+      weight: 2,
+      fillColor: colors.fill,
+      fillOpacity: 0.9
+    });
+
+    marker.bindPopup(`
+      <strong>Train Delay Report</strong><br />
+      ${escapeHtml(report.severity.toUpperCase())} severity<br />
+      Status: ${escapeHtml(report.status)}<br />
+      ${escapeHtml(report.description || 'No description provided.')}<br />
+      ${report.lat.toFixed(6)}, ${report.lng.toFixed(6)}
+    `);
+
+    marker.addTo(trainReportsLayer);
+  });
+}
+
+function getTrainSeverityColors(severity) {
+  if (severity === 'low') {
+    return { stroke: '#60d394', fill: '#60d394' };
+  }
+
+  if (severity === 'high') {
+    return { stroke: '#ff6b6b', fill: '#ff6b6b' };
+  }
+
+  return { stroke: '#ffd166', fill: '#ffd166' };
+}
+
+function deleteTrainReport(id) {
+  trainReports = trainReports.filter((r) => r.id !== id);
+  persistTrainReports();
+  renderTrainReports();
+  redrawTrainReportMarkers();
+  setSystemStatus('Train delay report removed.');
+}
+
+function clearAllTrainReports() {
+  if (!trainReports.length) {
+    alert('No train reports to clear.');
+    return;
+  }
+
+  if (!confirm('Clear all train delay reports?')) return;
+
+  trainReports = [];
+  persistTrainReports();
+  renderTrainReports();
+  redrawTrainReportMarkers();
+  setSystemStatus('All train delay reports cleared.');
+}
+
 function switchBasemap(mode) {
   if (mode === 'carto') {
     if (map.hasLayer(esriLayer)) map.removeLayer(esriLayer);
@@ -556,6 +720,41 @@ function switchBasemap(mode) {
   }
 }
 
+function renderInsight({ lat, lng, title, subtitle }) {
+  const insightPanel = byId('insightPanel');
+  if (!insightPanel) return;
+
+  const insideCounty = isInsideLibertyCounty({ lat, lng });
+  const milesFromDayton = getDistanceMiles(lat, lng, DAYTON_ANCHOR.lat, DAYTON_ANCHOR.lng);
+
+  insightPanel.innerHTML = `
+    <strong>Location insight</strong><br />
+    <div style="margin-top:8px;">
+      <div><strong>${escapeHtml(title)}</strong></div>
+      <div class="tiny">${escapeHtml(subtitle)}</div>
+      <div style="margin-top:8px;"><strong>Latitude:</strong> ${lat.toFixed(6)}</div>
+      <div><strong>Longitude:</strong> ${lng.toFixed(6)}</div>
+      <div><strong>County status:</strong> ${insideCounty ? 'Inside Liberty County' : 'Outside Liberty County'}</div>
+      <div><strong>Distance from Dayton anchor:</strong> ${milesFromDayton.toFixed(2)} miles</div>
+      <div style="margin-top:10px;">
+        <button id="saveCurrentPlaceBtn" class="btn btn-primary btn-small">Save this place</button>
+      </div>
+    </div>
+  `;
+
+  const saveBtn = byId('saveCurrentPlaceBtn');
+  if (saveBtn) {
+    saveBtn.addEventListener('click', () => {
+      savePlace({
+        name: title === 'Search result' ? subtitle : `Saved Place ${savedPlaces.length + 1}`,
+        lat,
+        lng,
+        insideCounty
+      });
+    });
+  }
+}
+
 function getCountyStatusText(latlng) {
   return isInsideLibertyCounty(latlng) ? 'Inside Liberty County' : 'Outside Liberty County';
 }
@@ -563,7 +762,11 @@ function getCountyStatusText(latlng) {
 function isInsideLibertyCounty(latlng) {
   if (!libertyBoundaryFeature?.geometry) return false;
 
-  const point = [Number(latlng.lng ?? latlng.lon ?? latlng[1]), Number(latlng.lat ?? latlng[0])];
+  const point = [
+    Number(latlng.lng ?? latlng.lon ?? latlng[1]),
+    Number(latlng.lat ?? latlng[0])
+  ];
+
   const geometry = libertyBoundaryFeature.geometry;
 
   if (geometry.type === 'Polygon') {
@@ -643,33 +846,4 @@ function escapeHtml(value) {
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#039;');
-}
-
-/* -----------------------------------------
-   Train delay prep scaffold for next phase
------------------------------------------- */
-
-function getStoredTrainDelayReports() {
-  try {
-    return JSON.parse(localStorage.getItem(TRAIN_DELAY_STORE_KEY) || '[]');
-  } catch (error) {
-    console.warn('Could not parse train delay reports.', error);
-    return [];
-  }
-}
-
-function saveStoredTrainDelayReports(reports) {
-  localStorage.setItem(TRAIN_DELAY_STORE_KEY, JSON.stringify(reports));
-}
-
-function createTrainDelayReport({ lat, lng, description = '', severity = 'medium' }) {
-  return {
-    id: cryptoRandomId(),
-    lat: Number(lat),
-    lng: Number(lng),
-    description: String(description).trim(),
-    severity,
-    status: 'reported',
-    createdAt: new Date().toISOString()
-  };
 }

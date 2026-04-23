@@ -42,8 +42,14 @@ a {
 }
 
 button,
-input {
+input,
+select,
+textarea {
   font: inherit;
+}
+
+textarea {
+  resize: vertical;
 }
 
 .app {
@@ -139,9 +145,13 @@ input {
   outline: none;
 }
 
-.toolbar input:focus {
+.toolbar input:focus,
+.report-card input:focus,
+.report-card select:focus,
+.report-card textarea:focus {
   border-color: rgba(92, 200, 255, 0.45);
   box-shadow: 0 0 0 3px rgba(92, 200, 255, 0.12);
+  outline: none;
 }
 
 .grid2 {
@@ -230,6 +240,39 @@ input {
   white-space: pre-line;
 }
 
+.report-card {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.report-row {
+  display: grid;
+  gap: 6px;
+}
+
+.report-row label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.report-card input,
+.report-card select,
+.report-card textarea {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #0f1728;
+  color: var(--text);
+  padding: 10px 12px;
+}
+
 .status-grid {
   display: grid;
   gap: 10px;
@@ -313,7 +356,42 @@ input {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.badge-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid var(--border);
+}
+
+.badge-low {
+  background: rgba(96, 211, 148, 0.14);
+  color: #9ae6b4;
+}
+
+.badge-medium {
+  background: rgba(255, 209, 102, 0.14);
+  color: #ffe08a;
+}
+
+.badge-high {
+  background: rgba(255, 107, 107, 0.14);
+  color: #ff9b9b;
+}
+
+.badge-status {
+  background: rgba(92, 200, 255, 0.14);
+  color: #9cdcff;
 }
 
 .map-wrap {
@@ -408,12 +486,12 @@ code {
   }
 
   .sidebar {
-    height: 48vh;
+    height: 52vh;
     min-height: 360px;
   }
 
   .map-wrap {
-    height: 52vh;
+    height: 48vh;
   }
 }
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Liberty County Spatial Intelligence System — V3.4</title>
+  <title>Liberty County Spatial Intelligence System — V3.5</title>
 
   <link
     rel="stylesheet"
@@ -19,17 +19,17 @@
       <div class="hero">
         <h1>Liberty County Spatial Intelligence System</h1>
         <p>
-          <strong>V3.4 debug-ready build</strong> — this version is structured for local
-          development, stable boundary loading, stronger validation, and better visibility
-          into exactly what geometry the map is using.
+          <strong>V3.5 train delay reporting build</strong> — this version adds the first
+          interactive community reporting workflow while keeping the hardened local boundary,
+          debug visibility, and simple HTML/CSS/JS architecture.
         </p>
         <div class="pill-row">
+          <span class="pill">Train reports</span>
           <span class="pill">Debug-ready</span>
           <span class="pill">Local GeoJSON</span>
           <span class="pill">Basemap switch</span>
           <span class="pill">Search</span>
           <span class="pill">Saved places</span>
-          <span class="pill">Ready for reports</span>
         </div>
       </div>
 
@@ -66,6 +66,67 @@
       </section>
 
       <section class="section">
+        <h3>Train delay reporting</h3>
+        <p>
+          Click the map to select a location, then create a train delay report. Reports save locally
+          and render as a separate map layer.
+        </p>
+
+        <div class="report-card">
+          <div class="report-row">
+            <label for="reportLat">Latitude</label>
+            <input id="reportLat" type="text" readonly placeholder="Click map to set location" />
+          </div>
+
+          <div class="report-row">
+            <label for="reportLng">Longitude</label>
+            <input id="reportLng" type="text" readonly placeholder="Click map to set location" />
+          </div>
+
+          <div class="report-row">
+            <label for="reportSeverity">Severity</label>
+            <select id="reportSeverity">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+
+          <div class="report-row">
+            <label for="reportStatus">Status</label>
+            <select id="reportStatus">
+              <option value="reported" selected>Reported</option>
+              <option value="active">Active</option>
+              <option value="cleared">Cleared</option>
+            </select>
+          </div>
+
+          <div class="report-row">
+            <label for="reportDescription">Description</label>
+            <textarea
+              id="reportDescription"
+              rows="4"
+              placeholder="Example: Train stopped at crossing causing major delay on FM route."
+            ></textarea>
+          </div>
+
+          <div class="grid2">
+            <button id="submitTrainReportBtn" class="btn btn-primary">Save Train Report</button>
+            <button id="clearTrainFormBtn" class="btn btn-ghost">Clear Form</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h3>Train report registry</h3>
+        <div class="saved-actions">
+          <button id="fitTrainReportsBtn" class="btn btn-light">Fit Train Reports</button>
+          <button id="clearTrainReportsBtn" class="btn btn-ghost">Clear All Reports</button>
+        </div>
+        <div id="trainReportList" class="saved-list"></div>
+      </section>
+
+      <section class="section">
         <h3>Layer registry</h3>
         <div class="status-grid">
           <div class="status-row">
@@ -87,21 +148,12 @@
           </div>
 
           <div class="status-row">
-            <span class="dot link"></span>
-            <div>
-              <strong>Liberty CAD parcels / property</strong><br />
-              <span class="tiny">Official county parcel workflow remains a trusted linked source.</span>
-            </div>
-            <span class="tag">Linked</span>
-          </div>
-
-          <div class="status-row">
-            <span class="dot future"></span>
+            <span class="dot live"></span>
             <div>
               <strong>Train delay reports</strong><br />
-              <span class="tiny">Next phase: user-reported events and backend-powered live reporting.</span>
+              <span class="tiny">User-generated map events stored locally and displayed as a separate live layer.</span>
             </div>
-            <span class="tag">Next</span>
+            <span class="tag">Active</span>
           </div>
         </div>
       </section>
@@ -131,9 +183,8 @@
       <div id="map"></div>
 
       <div class="floating top">
-        <strong>V3.4 debug-ready build</strong><br />
-        This version shows exactly what boundary file loaded, which geometry type it used,
-        and how many features were present.
+        <strong>V3.5 train delay reporting</strong><br />
+        Click the map, create a delay report, and manage reports directly from the sidebar.
       </div>
 
       <div class="floating right">
