@@ -1,9 +1,9 @@
-/* Liberty County Spatial Intelligence System — V3.9
+/* Liberty County Spatial Intelligence System — V3.9.1
    Pure HTML/CSS/JS + Leaflet
    Boundary file is loaded but never modified.
 */
 
-const APP_VERSION = "3.9";
+const APP_VERSION = "3.9.1";
 
 const DATA_PATHS = {
   boundary: "data/liberty-county-boundary.geojson",
@@ -30,6 +30,8 @@ let selectedCrossing = null;
 
 let crossings = [];
 let crossingMarkers = new Map();
+let recentlyCleared = new Map();
+
 let events = loadFromStorage(STORAGE_KEYS.events, []);
 let savedLocations = loadFromStorage(STORAGE_KEYS.savedLocations, []);
 
@@ -133,46 +135,28 @@ async function loadCrossings() {
     const geojson = await response.json();
 
     crossings = normalizeCrossings(geojson);
-
-    crossingLayer = L.layerGroup().addTo(map);
-
-    crossings.forEach((crossing) => {
-      const marker = L.circleMarker([crossing.lat, crossing.lng], {
-        radius: 8,
-        color: "#1d4ed8",
-        weight: 2,
-        fillColor: "#2563eb",
-        fillOpacity: 0.85
-      });
-
-      marker.bindPopup(buildCrossingPopup(crossing));
-      marker.on("click", () => selectCrossing(crossing.asset.assetId));
-      marker.addTo(crossingLayer);
-
-      crossingMarkers.set(crossing.asset.assetId, marker);
-    });
   } catch (error) {
     console.error("Crossing load failed:", error);
     crossings = getFallbackCrossings();
-
-    crossingLayer = L.layerGroup().addTo(map);
-
-    crossings.forEach((crossing) => {
-      const marker = L.circleMarker([crossing.lat, crossing.lng], {
-        radius: 8,
-        color: "#1d4ed8",
-        weight: 2,
-        fillColor: "#2563eb",
-        fillOpacity: 0.85
-      });
-
-      marker.bindPopup(buildCrossingPopup(crossing));
-      marker.on("click", () => selectCrossing(crossing.asset.assetId));
-      marker.addTo(crossingLayer);
-
-      crossingMarkers.set(crossing.asset.assetId, marker);
-    });
   }
+
+  crossingLayer = L.layerGroup().addTo(map);
+
+  crossings.forEach((crossing) => {
+    const marker = L.circleMarker([crossing.lat, crossing.lng], {
+      radius: 8,
+      color: "#1d4ed8",
+      weight: 2,
+      fillColor: "#2563eb",
+      fillOpacity: 0.85
+    });
+
+    marker.bindPopup(buildCrossingPopup(crossing));
+    marker.on("click", () => selectCrossing(crossing.asset.assetId));
+    marker.addTo(crossingLayer);
+
+    crossingMarkers.set(crossing.asset.assetId, marker);
+  });
 }
 
 function normalizeCrossings(geojson) {
@@ -320,7 +304,6 @@ function useMyLocation() {
       }
 
       userLocationMarker.bindPopup("<strong>Your Location</strong>").openPopup();
-
       map.setView(latlng, 15);
 
       const nearest = findNearestCrossing(lat, lng);
@@ -349,11 +332,9 @@ function useMyLocation() {
 
 function getLocationErrorMessage(error) {
   if (!error) return "Unable to get location.";
-
   if (error.code === 1) return "Location permission denied.";
   if (error.code === 2) return "Location unavailable.";
   if (error.code === 3) return "Location request timed out.";
-
   return "Unable to get location.";
 }
 
@@ -392,6 +373,8 @@ function createObservation(type) {
   );
 
   if (type === "blocked") {
+    recentlyCleared.delete(assetId);
+
     if (!event) {
       event = {
         id: `evt_${assetId}_${Date.now()}`,
@@ -447,6 +430,16 @@ function createObservation(type) {
       event.lastReportedAt = now;
       event.resolvedAt = now;
     }
+
+    recentlyCleared.set(assetId, Date.now());
+
+    els.locationStatus.textContent =
+      `${selectedCrossing.asset.communityName} marked cleared. Active event removed from summary.`;
+
+    setTimeout(() => {
+      recentlyCleared.delete(assetId);
+      refreshCrossingMarkerStyles();
+    }, 12000);
   }
 
   saveToStorage(STORAGE_KEYS.events, events);
@@ -543,6 +536,8 @@ function refreshCrossingMarkerStyles() {
       selectedCrossing &&
       selectedCrossing.asset.assetId === assetId;
 
+    const wasRecentlyCleared = recentlyCleared.has(assetId);
+
     if (activeEvent) {
       marker.setStyle({
         radius: isSelected ? 12 : 10,
@@ -551,13 +546,21 @@ function refreshCrossingMarkerStyles() {
         fillOpacity: 0.9,
         weight: isSelected ? 4 : 3
       });
+    } else if (wasRecentlyCleared) {
+      marker.setStyle({
+        radius: 12,
+        color: "#14532d",
+        fillColor: "#22c55e",
+        fillOpacity: 0.92,
+        weight: 4
+      });
     } else {
       marker.setStyle({
-        radius: isSelected ? 11 : 8,
+        radius: isSelected ? 10 : 8,
         color: isSelected ? "#5f3c1d" : "#1d4ed8",
         fillColor: isSelected ? "#f59e0b" : "#2563eb",
         fillOpacity: 0.85,
-        weight: isSelected ? 4 : 2
+        weight: isSelected ? 3 : 2
       });
     }
 
@@ -575,13 +578,24 @@ function buildCrossingPopup(crossing) {
       event.status === "active"
   );
 
-  const statusHtml = activeEvent
-    ? `
+  const wasRecentlyCleared = recentlyCleared.has(crossing.asset.assetId);
+
+  let statusHtml = `<p><strong>Status:</strong> No active blockage</p>`;
+
+  if (activeEvent) {
+    statusHtml = `
       <p><strong>Status:</strong> Active blockage</p>
       <p><strong>Impact:</strong> ${escapeHtml(activeEvent.impact)}</p>
       <p><strong>Reports:</strong> ${activeEvent.reportCount}</p>
-    `
-    : `<p><strong>Status:</strong> No active blockage</p>`;
+    `;
+  }
+
+  if (wasRecentlyCleared) {
+    statusHtml = `
+      <p><strong>Status:</strong> Recently cleared</p>
+      <p><strong>Result:</strong> Active blockage resolved</p>
+    `;
+  }
 
   return `
     <div class="crossingPopup">
@@ -826,6 +840,7 @@ window.LCSI = {
 
   clearLocalEvents() {
     events = [];
+    recentlyCleared.clear();
     saveToStorage(STORAGE_KEYS.events, events);
     renderEventSummary();
     refreshCrossingMarkerStyles();
