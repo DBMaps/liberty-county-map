@@ -1,6 +1,6 @@
 # Liberty County Spatial Intelligence System
 
-Version: V4.3
+Version: V5.0
 
 Live site:
 
@@ -10,21 +10,22 @@ https://dbmaps.github.io/liberty-county-map/
 
 The Liberty County Spatial Intelligence System is a local-first rail crossing blockage reporting map.
 
-The current focus is Liberty County, Texas, with a fast reporting workflow for known railroad/street crossings.
+The current focus is Liberty County, Texas.
 
-V4.3 adds official public crossing data from the U.S. Department of Transportation FRA Crossing Inventory dataset so reports attach to official crossing IDs instead of manually maintained or inaccurate crossing points.
+V5.0 adds shared live reporting so blocked/cleared reports can be seen across multiple phones and devices instead of staying only on one browser.
 
 ## Current Stack
 
-This project intentionally uses only:
+This project intentionally uses:
 
 - HTML
 - CSS
 - Vanilla JavaScript
 - Leaflet
-- Local GeoJSON for the Liberty County boundary
-- Official USDOT FRA crossing GeoJSON API
 - GitHub Pages
+- Local GeoJSON for the Liberty County boundary
+- USDOT FRA Crossing Inventory GeoJSON API
+- Supabase for shared reports
 
 Do not introduce:
 
@@ -33,7 +34,7 @@ Do not introduce:
 - Angular
 - TypeScript
 - Build tools
-- Backend servers
+- Full backend server
 - Frameworks
 
 ## File Structure

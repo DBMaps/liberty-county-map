@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <title>Liberty County Spatial Intelligence — V4.4</title>
+  <title>Liberty County Spatial Intelligence — V5.0</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <link rel="stylesheet" href="css/styles.css"/>
@@ -16,21 +16,19 @@
   <header class="topbar">
     <div>
       <h1>Liberty County Spatial Intelligence</h1>
-      <p>Rail blockage reporting • Official FRA data • Cleaned public crossings</p>
+      <p>Rail blockage reporting • Official FRA data • Shared live reports</p>
     </div>
-    <div class="versionBadge">V4.4</div>
+    <div class="versionBadge">V5.0</div>
   </header>
 
   <main class="layout">
 
-    <!-- SIDEBAR -->
     <aside class="sidebar">
 
-      <!-- FAST REPORT -->
       <section class="panel">
         <div class="panelHeader">
           <h2>Fast Report</h2>
-          <span class="miniBadge">3–5 sec flow</span>
+          <span class="miniBadge">Live</span>
         </div>
 
         <p class="muted">Use your location or select a crossing.</p>
@@ -67,7 +65,36 @@
         </div>
       </section>
 
-      <!-- DATA SOURCE PANEL -->
+      <section class="panel">
+        <div class="panelHeader">
+          <h2>Live Report Sync</h2>
+          <span id="liveSyncBadge" class="miniBadge">Connecting</span>
+        </div>
+
+        <div id="liveSyncStatus" class="sourceStatusBox">
+          Connecting to shared report database...
+        </div>
+
+        <div class="sourceGrid">
+          <div>
+            <span>Backend</span>
+            <strong>Supabase</strong>
+          </div>
+          <div>
+            <span>Mode</span>
+            <strong id="liveSyncMode">Shared</strong>
+          </div>
+          <div>
+            <span>Active Reports</span>
+            <strong id="liveActiveCount">0</strong>
+          </div>
+          <div>
+            <span>Last Sync</span>
+            <strong id="lastSyncTime">Not yet</strong>
+          </div>
+        </div>
+      </section>
+
       <section class="panel">
         <div class="panelHeader">
           <h2>Crossing Data</h2>
@@ -93,36 +120,115 @@
           </div>
           <div>
             <span>Use</span>
-            <strong>Filtered public crossings</strong>
+            <strong>Open FRA crossings</strong>
           </div>
         </div>
 
-        <!-- NEW V4.4 -->
         <div id="crossingCounts" class="sourceStatusBox" style="margin-top:10px;">
           Calculating crossing quality...
         </div>
       </section>
 
-      <!-- IMPACT -->
       <section class="panel">
-        <h2>Impact Intelligence</h2>
+        <div class="panelHeader">
+          <h2>Impact Intelligence</h2>
+          <span class="miniBadge">V5.0</span>
+        </div>
+
         <div id="impactInsight" class="impactInsight">
           No crossing selected.
         </div>
       </section>
 
+      <section class="panel">
+        <div class="panelHeader">
+          <h2>Active Event Summary</h2>
+          <button id="refreshReportsBtn" class="tinyBtn">Refresh</button>
+        </div>
+
+        <div id="eventSummary" class="eventSummary">
+          No active reports yet.
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Search</h2>
+
+        <div class="searchRow">
+          <input
+            id="searchInput"
+            type="text"
+            placeholder="Search a road, city, or address"
+          />
+          <button id="searchBtn">Search</button>
+        </div>
+
+        <div id="searchStatus" class="muted smallText"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Saved Locations</h2>
+
+        <button id="saveViewBtn" class="secondaryBtn">
+          Save Current Map View
+        </button>
+
+        <div id="savedLocationsList" class="savedList"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panelHeader">
+          <h2>Alerts</h2>
+          <span id="alertsBadge" class="miniBadge">Local</span>
+        </div>
+
+        <p class="muted">
+          Local browser alert foundation. No account required.
+        </p>
+
+        <div class="toggleRow">
+          <div>
+            <strong>Local visual alerts</strong>
+            <small>Shows high-impact notices while this page is open.</small>
+          </div>
+
+          <label class="switch">
+            <input id="localAlertsToggle" type="checkbox" checked />
+            <span></span>
+          </label>
+        </div>
+
+        <button id="enableBrowserAlertsBtn" class="secondaryBtn">
+          Enable Browser Notifications
+        </button>
+
+        <div id="alertStatus" class="statusBox">
+          Browser notifications not enabled.
+        </div>
+
+        <div class="alertCapabilityGrid">
+          <div>
+            <span>Local visual alerts</span>
+            <strong id="localVisualAlertStatus">On</strong>
+          </div>
+          <div>
+            <span>Browser notifications</span>
+            <strong id="browserNotificationStatus">Not enabled</strong>
+          </div>
+        </div>
+      </section>
+
     </aside>
 
-    <!-- MAP -->
     <section class="mapWrap">
       <div id="map"></div>
 
       <div id="toastStack" class="toastStack"></div>
 
       <div class="mapLegend">
-        <div><span class="dot normal"></span> Public Crossing</div>
-        <div><span class="dot active"></span> Active Blockage</div>
-        <div><span class="dot cleared"></span> Cleared</div>
+        <div><span class="dot normal"></span> FRA Crossing</div>
+        <div><span class="dot active"></span> Shared Active Blockage</div>
+        <div><span class="dot cleared"></span> Recently Cleared</div>
         <div><span class="dot user"></span> You</div>
       </div>
     </section>
@@ -131,6 +237,7 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
