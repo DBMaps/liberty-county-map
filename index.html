@@ -3,274 +3,102 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Liberty County Spatial Intelligence System — V3.7</title>
+  <title>Liberty County Spatial Intelligence System — V3.9</title>
 
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""
   />
-  <link rel="stylesheet" href="./css/styles.css" />
+
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
+
 <body>
-  <div class="app">
-    <aside class="sidebar">
-      <div class="hero">
-        <h1>Liberty County Spatial Intelligence System</h1>
-        <p>
-          <strong>V3.7 crossing event aggregation build</strong> — this version groups multiple
-          reports into a single crossing event, shows summary cards instead of repeated entries,
-          tracks duration, and allows blocked or cleared confirmations at the same crossing.
-        </p>
-        <div class="pill-row">
-          <span class="pill">Crossing events</span>
-          <span class="pill">Duration tracking</span>
-          <span class="pill">Blocked / cleared</span>
-          <span class="pill">Live filters</span>
-          <span class="pill">Map legend</span>
-          <span class="pill">Local GeoJSON</span>
-        </div>
+  <div id="appShell">
+    <header class="topbar">
+      <div>
+        <h1>Liberty County Spatial Intelligence</h1>
+        <p>Rail blockage reporting • Local-first • National-ready data structure</p>
       </div>
 
-      <section class="section">
-        <h3>Find a place</h3>
-        <p>Search Liberty County addresses or place names, then save them as reusable project waypoints.</p>
-        <div class="toolbar">
-          <input
-            id="searchInput"
-            type="text"
-            placeholder="Search address or place (example: Dayton or Liberty, TX)"
-          />
-          <button id="searchBtn" class="btn btn-primary">Search</button>
-        </div>
-        <p class="tiny">
-          Search uses OpenStreetMap geocoding. Official parcel and zoning verification still stays
-          with Liberty CAD and City of Dayton tools.
-        </p>
-      </section>
+      <div class="versionBadge">V3.9</div>
+    </header>
 
-      <section class="section">
-        <h3>Jump views</h3>
-        <div class="grid2">
-          <button id="fitCountyBtn" class="btn btn-secondary">Fit Liberty County</button>
-          <button id="fitDaytonBtn" class="btn btn-light">Focus Dayton</button>
-          <button id="fitSavedBtn" class="btn btn-light">Fit Saved Places</button>
-          <button id="clearTempBtn" class="btn btn-ghost">Clear Search Result</button>
-        </div>
-      </section>
+    <main class="layout">
+      <aside class="sidebar">
+        <section class="panel">
+          <h2>Fast Report</h2>
+          <p class="muted">
+            Use your location or select a crossing on the map.
+          </p>
 
-      <section class="section">
-        <h3>Boundary debug</h3>
-        <div class="debug-card" id="debugPanel">Waiting for boundary file…</div>
-      </section>
+          <button id="useLocationBtn" class="primaryBtn">
+            📍 Use My Location
+          </button>
 
-      <section class="section">
-        <h3>Crossing event reporting</h3>
-        <p>
-          Click a crossing location on the map. If a nearby crossing event already exists, your update
-          will be added to that same crossing event instead of creating a duplicate event marker.
-        </p>
-
-        <div class="report-card">
-          <div class="report-row">
-            <label for="reportLat">Latitude</label>
-            <input id="reportLat" type="text" readonly placeholder="Click map to set location" />
+          <div id="locationStatus" class="statusBox">
+            Location not active.
           </div>
 
-          <div class="report-row">
-            <label for="reportLng">Longitude</label>
-            <input id="reportLng" type="text" readonly placeholder="Click map to set location" />
+          <div class="selectedCrossingBox">
+            <span class="label">Selected Crossing</span>
+            <strong id="selectedCrossingName">None selected</strong>
+            <small id="selectedCrossingMeta">Tap a crossing or use your location.</small>
           </div>
 
-          <div class="report-row">
-            <label for="reportActionType">Report type</label>
-            <select id="reportActionType">
-              <option value="blocked" selected>Blocked / still blocked</option>
-              <option value="cleared">Cleared / traffic flowing</option>
-            </select>
+          <div class="quickActions">
+            <button id="confirmBlockedBtn" class="dangerBtn" disabled>
+              Confirm Blocked
+            </button>
+
+            <button id="reportClearedBtn" class="successBtn" disabled>
+              Report Cleared
+            </button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Search</h2>
+
+          <div class="searchRow">
+            <input
+              id="searchInput"
+              type="text"
+              placeholder="Search a road, city, or address"
+            />
+            <button id="searchBtn">Search</button>
           </div>
 
-          <div class="report-row">
-            <label for="reportDescription">Description</label>
-            <textarea
-              id="reportDescription"
-              rows="4"
-              placeholder="Example: Train still blocking crossing, traffic backed up heavily."
-            ></textarea>
+          <div id="searchStatus" class="muted smallText"></div>
+        </section>
+
+        <section class="panel">
+          <h2>Active Event Summary</h2>
+          <div id="eventSummary" class="eventSummary">
+            No active reports yet.
           </div>
+        </section>
 
-          <div class="grid2">
-            <button id="submitCrossingReportBtn" class="btn btn-primary">Save Crossing Update</button>
-            <button id="clearTrainFormBtn" class="btn btn-ghost">Clear Form</button>
-          </div>
-        </div>
-      </section>
+        <section class="panel">
+          <h2>Saved Locations</h2>
+          <button id="saveViewBtn" class="secondaryBtn">Save Current Map View</button>
+          <div id="savedLocationsList" class="savedList"></div>
+        </section>
+      </aside>
 
-      <section class="section">
-        <h3>Live crossing filters</h3>
+      <section class="mapWrap">
+        <div id="map"></div>
 
-        <div class="report-card">
-          <div class="report-row">
-            <label for="filterSeverity">Severity filter</label>
-            <select id="filterSeverity">
-              <option value="all" selected>All severities</option>
-              <option value="low">Low only</option>
-              <option value="medium">Medium only</option>
-              <option value="high">High only</option>
-            </select>
-          </div>
-
-          <div class="report-row">
-            <label for="filterStatus">Status filter</label>
-            <select id="filterStatus">
-              <option value="all" selected>All statuses</option>
-              <option value="active">Active only</option>
-              <option value="cleared">Cleared only</option>
-            </select>
-          </div>
-
-          <div class="report-row">
-            <label for="filterCounty">County filter</label>
-            <select id="filterCounty">
-              <option value="all" selected>All locations</option>
-              <option value="inside">Inside Liberty County</option>
-              <option value="outside">Outside Liberty County</option>
-            </select>
-          </div>
-
-          <div class="grid2">
-            <button id="applyFiltersBtn" class="btn btn-primary">Apply Filters</button>
-            <button id="resetFiltersBtn" class="btn btn-ghost">Reset Filters</button>
-          </div>
-        </div>
-
-        <div class="filter-summary" id="filterSummary">
-          Showing 0 of 0 crossing events.
+        <div class="mapLegend">
+          <div><span class="dot normal"></span> Known Crossing</div>
+          <div><span class="dot active"></span> Active Blockage</div>
+          <div><span class="dot user"></span> Your Location</div>
         </div>
       </section>
-
-      <section class="section">
-        <h3>Crossing event registry</h3>
-        <div class="saved-actions">
-          <button id="fitTrainReportsBtn" class="btn btn-light">Fit Visible Crossings</button>
-          <button id="clearTrainReportsBtn" class="btn btn-ghost">Clear All Crossing Events</button>
-        </div>
-        <div id="trainReportList" class="saved-list"></div>
-      </section>
-
-      <section class="section">
-        <h3>Layer registry</h3>
-        <div class="status-grid">
-          <div class="status-row">
-            <span class="dot live"></span>
-            <div>
-              <strong>Liberty County boundary</strong><br />
-              <span class="tiny">Loaded from <code>data/liberty-county-boundary.geojson</code> with stronger validation and debug output.</span>
-            </div>
-            <span class="tag">Local file</span>
-          </div>
-
-          <div class="status-row">
-            <span class="dot live"></span>
-            <div>
-              <strong>Dayton anchor reference</strong><br />
-              <span class="tiny">Used for distance calculations and quick recentering.</span>
-            </div>
-            <span class="tag">Embedded</span>
-          </div>
-
-          <div class="status-row">
-            <span class="dot live"></span>
-            <div>
-              <strong>Crossing events</strong><br />
-              <span class="tiny">Aggregated crossing summaries with duration, report count, derived severity, and cleared state.</span>
-            </div>
-            <span class="tag">Active</span>
-          </div>
-        </div>
-      </section>
-
-      <section class="section">
-        <h3>Official tools</h3>
-        <div class="grid2">
-          <a class="btn btn-primary" href="https://gis.bisclient.com/libertycad/" target="_blank" rel="noopener noreferrer">Liberty CAD GIS Map</a>
-          <a class="btn btn-secondary" href="https://esearch.libertycad.com/" target="_blank" rel="noopener noreferrer">Liberty CAD Property Search</a>
-          <a class="btn btn-light" href="https://maps.viewprogis.com/vp/dayton-tx" target="_blank" rel="noopener noreferrer">Dayton GIS Viewer</a>
-          <a class="btn btn-ghost" href="https://www.cityofdaytontx.com/government/departments/development-and-planning-services/maps" target="_blank" rel="noopener noreferrer">Dayton Maps Page</a>
-        </div>
-      </section>
-
-      <section class="section">
-        <h3>Saved places</h3>
-        <p>Click the map, generate an insight card, and save locations into a reusable local workspace.</p>
-        <div id="savedList" class="saved-list"></div>
-        <div class="saved-actions">
-          <button id="exportSavedBtn" class="btn btn-light">Export saved places</button>
-          <button id="clearSavedBtn" class="btn btn-ghost">Clear saved places</button>
-        </div>
-      </section>
-    </aside>
-
-    <main class="map-wrap">
-      <div id="map"></div>
-
-      <div class="floating top">
-        <strong>V3.7 crossing event aggregation</strong><br />
-        One smart marker per crossing event, with grouped reports, duration tracking, and blocked / cleared updates.
-      </div>
-
-      <div class="floating right">
-        <div class="basemap-box">
-          <div class="basemap-title">Basemap</div>
-          <div class="basemap-actions">
-            <button id="cartoBtn" class="btn btn-light btn-small active-map-btn">CARTO</button>
-            <button id="esriBtn" class="btn btn-light btn-small">Esri</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="floating left" id="systemStatus">
-        <strong>System status</strong><br />
-        Waiting for county boundary file…
-      </div>
-
-      <div class="floating bottom" id="insightPanel">
-        <strong>Location insight</strong><br />
-        Click the map to inspect a location.
-      </div>
-
-      <div class="map-legend" id="mapLegend">
-        <div class="legend-title">Crossing Event Legend</div>
-        <div class="legend-row">
-          <span class="legend-dot legend-low"></span>
-          <span>Low severity</span>
-        </div>
-        <div class="legend-row">
-          <span class="legend-dot legend-medium"></span>
-          <span>Medium severity</span>
-        </div>
-        <div class="legend-row">
-          <span class="legend-dot legend-high"></span>
-          <span>High severity</span>
-        </div>
-        <div class="legend-row">
-          <span class="legend-ring"></span>
-          <span>Cleared crossing</span>
-        </div>
-        <div class="legend-row">
-          <span class="legend-count">12</span>
-          <span>Report count label</span>
-        </div>
-      </div>
     </main>
   </div>
 
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""
-  ></script>
-  <script src="./js/app.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
