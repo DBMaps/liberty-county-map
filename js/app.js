@@ -1,17 +1,16 @@
-/* Liberty County Spatial Intelligence System — V4.3
+/* Liberty County Spatial Intelligence System — V4.4
    Pure HTML/CSS/JS + Leaflet
    Boundary file is loaded but never modified.
 
-   V4.3 goals:
-   - Preserve stable V4.2 behavior
-   - Replace manually maintained/inaccurate crossings with official USDOT FRA crossing assets
-   - Fetch Liberty County crossings from the DOT Socrata GeoJSON API
-   - Use crossingid as the permanent assetId when available
-   - Keep reports attached to official crossing IDs
-   - Keep duplicate protection, timestamps, impact intelligence, alerts, search, saved locations, and mobile polish
+   V4.4 goals:
+   - Preserve stable V4.3 official FRA data loading
+   - Add public-reportable crossing filtering
+   - Hide private / weak-name / non-public-use records by default
+   - Keep official FRA records preserved in memory for audit/review
+   - Keep reports attached to official FRA crossing IDs
 */
 
-const APP_VERSION = "4.3.0";
+const APP_VERSION = "4.4.0";
 
 const FRA_CROSSING_DATASET_ID = "m2f8-22s6";
 const FRA_CROSSING_SOURCE_LABEL = "USDOT FRA Crossing Inventory";
@@ -50,21 +49,21 @@ const DATA_PATHS = {
 };
 
 const STORAGE_KEYS = {
-  events: "lcsi_v43_events",
-  savedLocations: "lcsi_v43_saved_locations",
-  alertPrefs: "lcsi_v43_alert_preferences",
+  events: "lcsi_v44_events",
+  savedLocations: "lcsi_v44_saved_locations",
+  alertPrefs: "lcsi_v44_alert_preferences",
 
-  legacyEvents: "lcsi_v42_events",
-  legacySavedLocations: "lcsi_v42_saved_locations",
-  legacyAlertPrefs: "lcsi_v42_alert_preferences",
+  legacyEvents: "lcsi_v43_events",
+  legacySavedLocations: "lcsi_v43_saved_locations",
+  legacyAlertPrefs: "lcsi_v43_alert_preferences",
 
-  olderEvents: "lcsi_v41_events",
-  olderSavedLocations: "lcsi_v41_saved_locations",
-  olderAlertPrefs: "lcsi_v41_alert_preferences",
+  olderEvents: "lcsi_v42_events",
+  olderSavedLocations: "lcsi_v42_saved_locations",
+  olderAlertPrefs: "lcsi_v42_alert_preferences",
 
-  oldestEvents: "lcsi_v40_events",
-  oldestSavedLocations: "lcsi_v40_saved_locations",
-  oldestAlertPrefs: "lcsi_v40_alert_preferences"
+  oldestEvents: "lcsi_v41_events",
+  oldestSavedLocations: "lcsi_v41_saved_locations",
+  oldestAlertPrefs: "lcsi_v41_alert_preferences"
 };
 
 const REGION_DEFAULT = {
@@ -88,10 +87,22 @@ let crossingLayer;
 let userLocationMarker;
 let selectedCrossing = null;
 
+let allOfficialCrossings = [];
+let hiddenOfficialCrossings = [];
 let crossings = [];
 let crossingMarkers = new Map();
 let recentlyCleared = new Map();
 let recentReportActions = new Map();
+
+let crossingQualityCounts = {
+  totalOfficial: 0,
+  reportable: 0,
+  hidden: 0,
+  privateHidden: 0,
+  needsReviewHidden: 0,
+  closedHidden: 0,
+  fallback: 0
+};
 
 let crossingSourceState = {
   mode: "loading",
@@ -137,6 +148,7 @@ const els = {
 
   crossingSourceBadge: document.getElementById("crossingSourceBadge"),
   crossingSourceStatus: document.getElementById("crossingSourceStatus"),
+  crossingCounts: document.getElementById("crossingCounts"),
 
   impactInsight: document.getElementById("impactInsight"),
 
@@ -169,6 +181,7 @@ async function init() {
   bindUi();
   hydrateAlertUi();
   renderCrossingSourceStatus();
+  renderCrossingCounts();
 
   await loadBoundary();
   await loadOfficialCrossings();
@@ -282,24 +295,30 @@ async function loadOfficialCrossings() {
     }
 
     const geojson = await response.json();
-    crossings = normalizeFraCrossings(geojson);
+    const normalized = normalizeFraCrossings(geojson);
+
+    allOfficialCrossings = normalized.allCrossings;
+    hiddenOfficialCrossings = normalized.hiddenCrossings;
+    crossings = normalized.reportableCrossings;
+    crossingQualityCounts = normalized.counts;
 
     if (!crossings.length) {
-      throw new Error("No active FRA crossings returned after filtering.");
+      throw new Error("No reportable public FRA crossings returned after filtering.");
     }
 
     setCrossingSourceState({
       mode: "official",
       loadedCount: crossings.length,
       fallback: false,
-      message: `${crossings.length} official FRA crossings loaded for ${currentRegion.label}.`
+      message: `${crossings.length} public-reportable crossings shown for ${currentRegion.label}.`
     });
 
     renderCrossingMarkers();
+    renderCrossingCounts();
 
     showToast(
-      "Official crossing data loaded",
-      `${crossings.length} active FRA crossings loaded for Liberty County.`
+      "Cleaned crossing data loaded",
+      `${crossings.length} public-reportable crossings shown. ${hiddenOfficialCrossings.length} records hidden by filter.`
     );
   } catch (error) {
     console.error("Official crossing load failed:", error);
@@ -327,6 +346,16 @@ async function loadFallbackCrossings() {
       throw new Error("No fallback crossings returned after filtering.");
     }
 
+    crossingQualityCounts = {
+      totalOfficial: 0,
+      reportable: crossings.length,
+      hidden: 0,
+      privateHidden: 0,
+      needsReviewHidden: 0,
+      closedHidden: 0,
+      fallback: crossings.length
+    };
+
     setCrossingSourceState({
       mode: "fallback",
       loadedCount: crossings.length,
@@ -335,6 +364,7 @@ async function loadFallbackCrossings() {
     });
 
     renderCrossingMarkers();
+    renderCrossingCounts();
 
     showToast(
       "Crossing fallback loaded",
@@ -345,6 +375,16 @@ async function loadFallbackCrossings() {
 
     crossings = getFallbackCrossings();
 
+    crossingQualityCounts = {
+      totalOfficial: 0,
+      reportable: crossings.length,
+      hidden: 0,
+      privateHidden: 0,
+      needsReviewHidden: 0,
+      closedHidden: 0,
+      fallback: crossings.length
+    };
+
     setCrossingSourceState({
       mode: "fallback",
       loadedCount: crossings.length,
@@ -353,6 +393,7 @@ async function loadFallbackCrossings() {
     });
 
     renderCrossingMarkers();
+    renderCrossingCounts();
 
     showToast(
       "Emergency fallback loaded",
@@ -388,145 +429,348 @@ function renderCrossingMarkers() {
 }
 
 function normalizeFraCrossings(geojson) {
+  const counts = {
+    totalOfficial: 0,
+    reportable: 0,
+    hidden: 0,
+    privateHidden: 0,
+    needsReviewHidden: 0,
+    closedHidden: 0,
+    fallback: 0
+  };
+
   if (!geojson || !Array.isArray(geojson.features)) {
-    return [];
+    return {
+      allCrossings: [],
+      reportableCrossings: [],
+      hiddenCrossings: [],
+      counts
+    };
   }
 
-  return geojson.features
-    .map((feature, index) => {
-      const p = feature.properties || {};
-      const coords = feature.geometry && feature.geometry.coordinates;
+  const allCrossings = [];
+  const reportableCrossings = [];
+  const hiddenCrossings = [];
 
-      if (!coords || coords.length < 2) return null;
+  geojson.features.forEach((feature, index) => {
+    counts.totalOfficial += 1;
 
-      const lng = Number(coords[0]);
-      const lat = Number(coords[1]);
+    const crossing = normalizeFraFeature(feature, index);
 
-      if (!isValidCoordinate(lat, lng)) return null;
+    if (!crossing) {
+      counts.hidden += 1;
+      counts.needsReviewHidden += 1;
+      return;
+    }
 
-      const closedValue = cleanText(
-        p.crossingclosed ||
-        p.crossing_closed ||
-        p.closed ||
-        ""
-      ).toLowerCase();
+    allCrossings.push(crossing);
 
-      if (
-        closedValue === "yes" ||
-        closedValue === "y" ||
-        closedValue === "true" ||
-        closedValue === "closed"
-      ) {
-        return null;
+    if (crossing.dataQuality.status === "reportable_public") {
+      reportableCrossings.push(crossing);
+      counts.reportable += 1;
+    } else {
+      hiddenCrossings.push(crossing);
+      counts.hidden += 1;
+
+      if (crossing.dataQuality.status === "private_hidden") {
+        counts.privateHidden += 1;
+      } else if (crossing.dataQuality.status === "closed_hidden") {
+        counts.closedHidden += 1;
+      } else {
+        counts.needsReviewHidden += 1;
       }
+    }
+  });
 
-      const crossingId = cleanText(
-        p.crossingid ||
-        p.crossing_id ||
-        p.crossingnumber ||
-        p.dotnumber ||
-        p.crossing ||
-        `FRA-${String(index + 1).padStart(5, "0")}`
-      );
+  return {
+    allCrossings,
+    reportableCrossings,
+    hiddenCrossings,
+    counts
+  };
+}
 
-      if (!crossingId) return null;
+function normalizeFraFeature(feature, index) {
+  const p = feature.properties || {};
+  const coords = feature.geometry && feature.geometry.coordinates;
 
-      const roadName = cleanText(
-        p.highwayname ||
-        p.street ||
-        p.roadname ||
-        p.road ||
-        p.streetname ||
-        p.crossingstreet ||
-        "Unknown Road"
-      );
+  if (!coords || coords.length < 2) return null;
 
-      const railroadName = cleanText(
-        p.railroadname ||
-        p.railroad ||
-        p.railroadcompany ||
-        p.rrname ||
-        "Unknown Railroad"
-      );
+  const lng = Number(coords[0]);
+  const lat = Number(coords[1]);
 
-      const cityName = cleanText(p.cityname || p.city || currentRegion.defaultCity);
-      const countyName = cleanText(p.countyname || p.county || currentRegion.county);
-      const stateName = cleanText(p.statename || p.state || currentRegion.state);
+  if (!isValidCoordinate(lat, lng)) return null;
 
-      const crossingType = cleanText(
-        p.crossingtype ||
-        p.crossing_type ||
-        p.type ||
-        "N/A"
-      );
+  const crossingId = cleanText(
+    p.crossingid ||
+    p.crossing_id ||
+    p.crossingnumber ||
+    p.dotnumber ||
+    p.crossing ||
+    `FRA-${String(index + 1).padStart(5, "0")}`
+  );
 
-      const publicPrivate = cleanText(
-        p.publicprivate ||
-        p.public_private ||
-        p.publicorprivate ||
-        p.public_private_indicator ||
-        "N/A"
-      );
+  if (!crossingId) return null;
 
-      const aadt = cleanText(
-        p.annualaveragedailytrafficcount ||
-        p.aadt ||
-        p.trafficcount ||
-        "N/A"
-      );
+  const roadName = cleanText(
+    p.highwayname ||
+    p.street ||
+    p.roadname ||
+    p.road ||
+    p.streetname ||
+    p.crossingstreet ||
+    "Unknown Road"
+  );
 
-      const officialName =
-        roadName && roadName !== "Unknown Road"
-          ? `${roadName} Crossing`
-          : `FRA Crossing ${crossingId}`;
+  const railroadName = cleanText(
+    p.railroadname ||
+    p.railroad ||
+    p.railroadcompany ||
+    p.rrname ||
+    "Unknown Railroad"
+  );
 
-      return {
-        id: crossingId,
-        lat,
-        lng,
-        region: {
-          country: "US",
-          state: stateName,
-          county: countyName,
-          city: cityName
-        },
-        asset: {
-          assetId: crossingId,
-          fraCrossingId: crossingId,
-          assetType: "rail_crossing",
-          officialName,
-          communityName: officialName,
-          roadName,
-          railroad: railroadName,
-          city: cityName,
-          county: countyName,
-          state: stateName,
-          country: "US",
-          crossingType,
-          publicPrivate,
-          annualAverageDailyTraffic: aadt,
-          crossingClosed: cleanText(p.crossingclosed || ""),
-          source: {
-            type: "official",
-            provider: FRA_CROSSING_SOURCE_LABEL,
-            datasetId: FRA_CROSSING_DATASET_ID,
-            sourceId: crossingId
-          }
-        },
-        dataQuality: {
-          status: "official_unreviewed",
-          coordinateSource: "FRA",
-          reviewedByLocalUser: false,
-          lastReviewedAt: ""
-        },
-        expansion: {
-          regionId: currentRegionId,
-          scaleReady: true,
-          hierarchy: "Region → Asset → Event → Observation"
-        }
-      };
-    })
-    .filter(Boolean);
+  const cityName = cleanText(p.cityname || p.city || currentRegion.defaultCity);
+  const countyName = cleanText(p.countyname || p.county || currentRegion.county);
+  const stateName = cleanText(p.statename || p.state || currentRegion.state);
+
+  const crossingType = cleanText(
+    p.crossingtype ||
+    p.crossing_type ||
+    p.type ||
+    "N/A"
+  );
+
+  const publicPrivate = cleanText(
+    p.publicprivate ||
+    p.public_private ||
+    p.publicorprivate ||
+    p.public_private_indicator ||
+    "N/A"
+  );
+
+  const aadt = cleanText(
+    p.annualaveragedailytrafficcount ||
+    p.aadt ||
+    p.trafficcount ||
+    "N/A"
+  );
+
+  const closedValue = cleanText(
+    p.crossingclosed ||
+    p.crossing_closed ||
+    p.closed ||
+    ""
+  );
+
+  const classification = classifyFraCrossing({
+    crossingId,
+    roadName,
+    railroadName,
+    crossingType,
+    publicPrivate,
+    closedValue,
+    rawProperties: p
+  });
+
+  const officialName =
+    roadName && roadName !== "Unknown Road"
+      ? `${roadName} Crossing`
+      : `FRA Crossing ${crossingId}`;
+
+  return {
+    id: crossingId,
+    lat,
+    lng,
+    region: {
+      country: "US",
+      state: stateName,
+      county: countyName,
+      city: cityName
+    },
+    asset: {
+      assetId: crossingId,
+      fraCrossingId: crossingId,
+      assetType: "rail_crossing",
+      officialName,
+      communityName: officialName,
+      roadName,
+      railroad: railroadName,
+      city: cityName,
+      county: countyName,
+      state: stateName,
+      country: "US",
+      crossingType,
+      publicPrivate,
+      annualAverageDailyTraffic: aadt,
+      crossingClosed: closedValue,
+      source: {
+        type: "official",
+        provider: FRA_CROSSING_SOURCE_LABEL,
+        datasetId: FRA_CROSSING_DATASET_ID,
+        sourceId: crossingId
+      }
+    },
+    dataQuality: {
+      status: classification.status,
+      reason: classification.reason,
+      reportable: classification.reportable,
+      visibleByDefault: classification.visibleByDefault,
+      coordinateSource: "FRA",
+      reviewedByLocalUser: false,
+      lastReviewedAt: ""
+    },
+    expansion: {
+      regionId: currentRegionId,
+      scaleReady: true,
+      hierarchy: "Region → Asset → Event → Observation"
+    }
+  };
+}
+
+function classifyFraCrossing({ roadName, publicPrivate, closedValue, crossingType }) {
+  const road = normalizeForClassification(roadName);
+  const access = normalizeForClassification(publicPrivate);
+  const closed = normalizeForClassification(closedValue);
+  const type = normalizeForClassification(crossingType);
+
+  if (
+    closed === "yes" ||
+    closed === "y" ||
+    closed === "true" ||
+    closed === "closed"
+  ) {
+    return {
+      status: "closed_hidden",
+      reportable: false,
+      visibleByDefault: false,
+      reason: "Crossing marked closed"
+    };
+  }
+
+  const isPrivate =
+    access.includes("private") ||
+    access === "p" ||
+    access === "priv" ||
+    road.includes("private");
+
+  if (isPrivate) {
+    return {
+      status: "private_hidden",
+      reportable: false,
+      visibleByDefault: false,
+      reason: "Private crossing"
+    };
+  }
+
+  const weakRoadName =
+    !road ||
+    road === "unknown road" ||
+    road === "unknown" ||
+    road === "n/a" ||
+    road === "na" ||
+    road === "none" ||
+    road === "st 0000" ||
+    road === "street 0000" ||
+    /^st\s*0+$/i.test(road) ||
+    /^street\s*0+$/i.test(road) ||
+    /^rd\s*0+$/i.test(road) ||
+    /^road\s*0+$/i.test(road);
+
+  const accessLikeName =
+    road.includes("driveway") ||
+    road.includes("drive way") ||
+    road.includes("private drive") ||
+    road.includes("farm entrance") ||
+    road.includes("field") ||
+    road.includes("yard") ||
+    road.includes("plant") ||
+    road.includes("spur") ||
+    road.includes("access") ||
+    road.includes("lease road") ||
+    road.includes("oil field") ||
+    road.includes("pipeline") ||
+    road.includes("industrial") ||
+    road.includes("industry") ||
+    road.includes("entrance") ||
+    road.includes("trail") ||
+    road.includes("path");
+
+  if (weakRoadName || accessLikeName) {
+    return {
+      status: "needs_review_hidden",
+      reportable: false,
+      visibleByDefault: false,
+      reason: weakRoadName ? "Weak or unclear road name" : "Likely access/private/industrial crossing"
+    };
+  }
+
+  const likelyPublicRoad =
+    road.includes("hwy") ||
+    road.includes("highway") ||
+    road.includes("us ") ||
+    road.includes("fm ") ||
+    road.includes("tx ") ||
+    road.includes("state") ||
+    road.includes("county road") ||
+    road.includes("cr ") ||
+    road.includes("road") ||
+    road.includes("street") ||
+    road.includes("st ") ||
+    road.includes("avenue") ||
+    road.includes("ave") ||
+    road.includes("boulevard") ||
+    road.includes("blvd") ||
+    road.includes("lane") ||
+    road.includes("ln") ||
+    road.includes("drive") ||
+    road.includes("dr") ||
+    road.includes("parkway") ||
+    road.includes("pkwy") ||
+    road.includes("circle") ||
+    road.includes("court") ||
+    road.includes("ct") ||
+    road.includes("way");
+
+  const typeLooksPublic =
+    type.includes("public") ||
+    access.includes("public") ||
+    access === "n/a" ||
+    access === "na" ||
+    access === "";
+
+  if (likelyPublicRoad && typeLooksPublic) {
+    return {
+      status: "reportable_public",
+      reportable: true,
+      visibleByDefault: true,
+      reason: "Public/reportable crossing"
+    };
+  }
+
+  if (likelyPublicRoad) {
+    return {
+      status: "reportable_public",
+      reportable: true,
+      visibleByDefault: true,
+      reason: "Likely public road crossing"
+    };
+  }
+
+  return {
+    status: "needs_review_hidden",
+    reportable: false,
+    visibleByDefault: false,
+    reason: "Record needs local review"
+  };
+}
+
+function normalizeForClassification(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[._-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function normalizeLegacyCrossings(geojson) {
@@ -596,7 +840,10 @@ function normalizeLegacyCrossings(geojson) {
           }
         },
         dataQuality: {
-          status: "local_fallback",
+          status: "fallback_local",
+          reason: "Local fallback record",
+          reportable: true,
+          visibleByDefault: true,
           coordinateSource: "local",
           reviewedByLocalUser: false,
           lastReviewedAt: ""
@@ -658,6 +905,9 @@ function makeCrossing(assetId, lat, lng, officialName, communityName, roadName) 
     },
     dataQuality: {
       status: "emergency_fallback",
+      reason: "Built-in fallback record",
+      reportable: true,
+      visibleByDefault: true,
       coordinateSource: "built_in",
       reviewedByLocalUser: false,
       lastReviewedAt: ""
@@ -705,7 +955,21 @@ function renderCrossingSourceStatus() {
     <strong>${escapeHtml(crossingSourceState.message)}</strong><br>
     Provider: ${escapeHtml(crossingSourceState.provider)}<br>
     Dataset ID: ${escapeHtml(crossingSourceState.datasetId)}<br>
-    Loaded crossings: ${Number(crossingSourceState.loadedCount || 0)}
+    Reportable shown: ${Number(crossingSourceState.loadedCount || 0)}
+  `;
+}
+
+function renderCrossingCounts() {
+  if (!els.crossingCounts) return;
+
+  els.crossingCounts.innerHTML = `
+    <strong>Crossing quality filter</strong><br>
+    Official records loaded: ${Number(crossingQualityCounts.totalOfficial || 0)}<br>
+    Public/reportable shown: ${Number(crossingQualityCounts.reportable || 0)}<br>
+    Hidden by cleanup: ${Number(crossingQualityCounts.hidden || 0)}<br>
+    Private hidden: ${Number(crossingQualityCounts.privateHidden || 0)}<br>
+    Needs review hidden: ${Number(crossingQualityCounts.needsReviewHidden || 0)}<br>
+    Closed hidden: ${Number(crossingQualityCounts.closedHidden || 0)}
   `;
 }
 
@@ -714,24 +978,40 @@ function bindUi() {
   els.confirmBlockedBtn.addEventListener("click", () => createObservation("blocked"));
   els.reportClearedBtn.addEventListener("click", () => createObservation("cleared"));
 
-  els.searchBtn.addEventListener("click", runSearch);
-  els.searchInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") runSearch();
-  });
+  if (els.searchBtn) {
+    els.searchBtn.addEventListener("click", runSearch);
+  }
 
-  els.saveViewBtn.addEventListener("click", saveCurrentView);
-  els.clearEventsBtn.addEventListener("click", clearLocalEvents);
+  if (els.searchInput) {
+    els.searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") runSearch();
+    });
+  }
 
-  els.localAlertsToggle.addEventListener("change", () => {
-    alertPrefs.localVisualAlerts = els.localAlertsToggle.checked;
-    saveToStorage(STORAGE_KEYS.alertPrefs, alertPrefs);
-    hydrateAlertUi();
-  });
+  if (els.saveViewBtn) {
+    els.saveViewBtn.addEventListener("click", saveCurrentView);
+  }
 
-  els.enableBrowserAlertsBtn.addEventListener("click", requestBrowserNotifications);
+  if (els.clearEventsBtn) {
+    els.clearEventsBtn.addEventListener("click", clearLocalEvents);
+  }
+
+  if (els.localAlertsToggle) {
+    els.localAlertsToggle.addEventListener("change", () => {
+      alertPrefs.localVisualAlerts = els.localAlertsToggle.checked;
+      saveToStorage(STORAGE_KEYS.alertPrefs, alertPrefs);
+      hydrateAlertUi();
+    });
+  }
+
+  if (els.enableBrowserAlertsBtn) {
+    els.enableBrowserAlertsBtn.addEventListener("click", requestBrowserNotifications);
+  }
 }
 
 function hydrateAlertUi() {
+  if (!els.localAlertsToggle) return;
+
   els.localAlertsToggle.checked = Boolean(alertPrefs.localVisualAlerts);
 
   if (els.localVisualAlertStatus) {
@@ -740,8 +1020,11 @@ function hydrateAlertUi() {
 
   if (!("Notification" in window)) {
     alertPrefs.browserNotifications = false;
-    els.alertStatus.textContent =
-      "Browser notifications: Not supported. Local visual alerts can still work while this page is open.";
+
+    if (els.alertStatus) {
+      els.alertStatus.textContent =
+        "Browser notifications: Not supported. Local visual alerts can still work while this page is open.";
+    }
 
     if (els.browserNotificationStatus) {
       els.browserNotificationStatus.textContent = "Not supported";
@@ -753,24 +1036,33 @@ function hydrateAlertUi() {
 
   if (Notification.permission === "granted") {
     alertPrefs.browserNotifications = true;
-    els.alertStatus.textContent =
-      "Browser notifications: Enabled for this browser. Server push alerts are a future phase.";
+
+    if (els.alertStatus) {
+      els.alertStatus.textContent =
+        "Browser notifications: Enabled for this browser. Server push alerts are a future phase.";
+    }
 
     if (els.browserNotificationStatus) {
       els.browserNotificationStatus.textContent = "Enabled";
     }
   } else if (Notification.permission === "denied") {
     alertPrefs.browserNotifications = false;
-    els.alertStatus.textContent =
-      "Browser notifications: Blocked in browser settings. Local visual alerts can still work while this page is open.";
+
+    if (els.alertStatus) {
+      els.alertStatus.textContent =
+        "Browser notifications: Blocked in browser settings. Local visual alerts can still work while this page is open.";
+    }
 
     if (els.browserNotificationStatus) {
       els.browserNotificationStatus.textContent = "Blocked";
     }
   } else {
     alertPrefs.browserNotifications = false;
-    els.alertStatus.textContent =
-      "Browser notifications: Not enabled. Local visual alerts only work while this page is open.";
+
+    if (els.alertStatus) {
+      els.alertStatus.textContent =
+        "Browser notifications: Not enabled. Local visual alerts only work while this page is open.";
+    }
 
     if (els.browserNotificationStatus) {
       els.browserNotificationStatus.textContent = "Not enabled";
@@ -782,8 +1074,11 @@ function hydrateAlertUi() {
 
 function requestBrowserNotifications() {
   if (!("Notification" in window)) {
-    els.alertStatus.textContent =
-      "Browser notifications are not supported in this browser.";
+    if (els.alertStatus) {
+      els.alertStatus.textContent =
+        "Browser notifications are not supported in this browser.";
+    }
+
     hydrateAlertUi();
     return;
   }
@@ -848,14 +1143,14 @@ function useMyLocation() {
       const nearest = findNearestCrossing(lat, lng);
 
       if (!nearest) {
-        els.locationStatus.textContent = "Location found, but no known crossings are loaded.";
+        els.locationStatus.textContent = "Location found, but no reportable public crossings are loaded.";
         return;
       }
 
       selectCrossing(nearest.crossing.asset.assetId);
 
       els.locationStatus.textContent =
-        `Nearest official crossing selected: ${nearest.crossing.asset.communityName} ` +
+        `Nearest public crossing selected: ${nearest.crossing.asset.communityName} ` +
         `(${nearest.distanceMiles.toFixed(2)} mi away).`;
     },
     (error) => {
@@ -909,6 +1204,15 @@ function selectCrossing(assetId) {
 
 function createObservation(type) {
   if (!selectedCrossing) return;
+
+  if (
+    selectedCrossing.dataQuality &&
+    selectedCrossing.dataQuality.reportable === false
+  ) {
+    showToast("Report blocked", "This crossing is not marked reportable.");
+    updateLastReportStatus("Report blocked because this crossing is not marked reportable.", "warning");
+    return;
+  }
 
   const nowMs = Date.now();
   const now = new Date(nowMs).toISOString();
@@ -1093,6 +1397,7 @@ function createEventRecord(crossing, timestamp) {
     lng: crossing.lng,
     region: { ...crossing.region },
     asset: JSON.parse(JSON.stringify(crossing.asset)),
+    dataQuality: crossing.dataQuality ? JSON.parse(JSON.stringify(crossing.dataQuality)) : {},
     status: "active",
     severity: "moderate",
     impact: "moderate",
@@ -1105,7 +1410,7 @@ function createEventRecord(crossing, timestamp) {
     reportCount: 0,
     reports: [],
     impactModel: {
-      version: "V4.3",
+      version: "V4.4",
       factors: {
         reportCount: 0,
         durationMinutes: 0,
@@ -1185,7 +1490,7 @@ function applyImpactModel(event) {
   event.confidence = "community";
   event.confidenceLabel = confidenceLabel;
   event.impactModel = {
-    version: "V4.3",
+    version: "V4.4",
     factors: {
       reportCount: blockedReports,
       durationMinutes,
@@ -1308,6 +1613,8 @@ function triggerAlertsForEvent(event) {
 }
 
 function renderEventSummary() {
+  if (!els.eventSummary) return;
+
   const activeEvents = events
     .filter((event) => event.status === "active")
     .sort((a, b) => new Date(b.lastReportedAt) - new Date(a.lastReportedAt));
@@ -1366,8 +1673,10 @@ function renderEventSummary() {
 }
 
 function renderImpactInsight() {
+  if (!els.impactInsight) return;
+
   if (!selectedCrossing) {
-    els.impactInsight.innerHTML = "No current crossing selected.";
+    els.impactInsight.innerHTML = "No crossing selected.";
     return;
   }
 
@@ -1414,7 +1723,7 @@ function renderImpactInsight() {
 
       <div class="impactExplanation">
         <strong>Why this status?</strong>
-        No active local event exists for this crossing. Reporting will attach to asset ID ${escapeHtml(sourceId)}.
+        No active local event exists for this public-reportable crossing. Reporting will attach to asset ID ${escapeHtml(sourceId)}.
       </div>
 
       <div class="impactDetails">
@@ -1423,8 +1732,8 @@ function renderImpactInsight() {
           <strong>${escapeHtml(routeImportance)}</strong>
         </div>
         <div class="metricBox">
-          <span>Spillover</span>
-          <strong>localized</strong>
+          <span>Quality</span>
+          <strong>${escapeHtml(selectedCrossing.dataQuality.status)}</strong>
         </div>
         <div class="metricBox">
           <span>Source</span>
@@ -1608,6 +1917,7 @@ function buildCrossingPopup(crossing) {
       <p><strong>Crossing Type:</strong> ${escapeHtml(crossing.asset.crossingType || "N/A")}</p>
       <p><strong>Public/Private:</strong> ${escapeHtml(crossing.asset.publicPrivate || "N/A")}</p>
       <p><strong>AADT:</strong> ${escapeHtml(crossing.asset.annualAverageDailyTraffic || "N/A")}</p>
+      <p><strong>Quality:</strong> ${escapeHtml(crossing.dataQuality.status)} — ${escapeHtml(crossing.dataQuality.reason)}</p>
       ${statusHtml}
       <div class="popupSource">
         Source: ${escapeHtml(source.provider || "Unknown")} ${source.datasetId ? `• Dataset ${escapeHtml(source.datasetId)}` : ""}
@@ -1644,6 +1954,8 @@ function findNearestCrossing(lat, lng) {
 }
 
 async function runSearch() {
+  if (!els.searchInput || !els.searchStatus) return;
+
   const query = els.searchInput.value.trim();
 
   if (!query) {
@@ -1692,7 +2004,7 @@ async function runSearch() {
       selectCrossing(nearest.crossing.asset.assetId);
 
       els.searchStatus.textContent =
-        `Nearest official crossing selected: ${nearest.crossing.asset.communityName} ` +
+        `Nearest public crossing selected: ${nearest.crossing.asset.communityName} ` +
         `(${nearest.distanceMiles.toFixed(2)} mi away).`;
     } else {
       els.searchStatus.textContent = "Search complete. No nearby known crossing auto-selected.";
@@ -1723,6 +2035,8 @@ function saveCurrentView() {
 }
 
 function renderSavedLocations() {
+  if (!els.savedLocationsList) return;
+
   if (!savedLocations.length) {
     els.savedLocationsList.innerHTML = `<div class="muted">No saved locations yet.</div>`;
     return;
@@ -1995,6 +2309,18 @@ window.LCSI = {
 
   getCrossings() {
     return crossings;
+  },
+
+  getAllOfficialCrossings() {
+    return allOfficialCrossings;
+  },
+
+  getHiddenOfficialCrossings() {
+    return hiddenOfficialCrossings;
+  },
+
+  getCrossingQualityCounts() {
+    return crossingQualityCounts;
   },
 
   getCrossingSourceState() {

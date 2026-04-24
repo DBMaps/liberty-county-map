@@ -2,231 +2,135 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <title>Liberty County Spatial Intelligence — V4.3</title>
+  <title>Liberty County Spatial Intelligence — V4.4</title>
 
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  />
-
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link rel="stylesheet" href="css/styles.css"/>
 </head>
 
 <body>
-  <div id="appShell">
-    <header class="topbar">
-      <div>
-        <h1>Liberty County Spatial Intelligence</h1>
-        <p>Rail blockage reporting • Official FRA crossing data • Local-first UX</p>
-      </div>
+<div id="appShell">
 
-      <div class="versionBadge">V4.3</div>
-    </header>
+  <header class="topbar">
+    <div>
+      <h1>Liberty County Spatial Intelligence</h1>
+      <p>Rail blockage reporting • Official FRA data • Cleaned public crossings</p>
+    </div>
+    <div class="versionBadge">V4.4</div>
+  </header>
 
-    <main class="layout">
-      <aside class="sidebar">
-        <section class="panel">
-          <div class="panelHeader">
-            <h2>Fast Report</h2>
-            <span class="miniBadge">3–5 sec flow</span>
-          </div>
+  <main class="layout">
 
-          <p class="muted">Use your location or select an official crossing on the map.</p>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
 
-          <button id="useLocationBtn" class="primaryBtn">
-            📍 Use My Location
+      <!-- FAST REPORT -->
+      <section class="panel">
+        <div class="panelHeader">
+          <h2>Fast Report</h2>
+          <span class="miniBadge">3–5 sec flow</span>
+        </div>
+
+        <p class="muted">Use your location or select a crossing.</p>
+
+        <button id="useLocationBtn" class="primaryBtn">
+          📍 Use My Location
+        </button>
+
+        <div id="locationStatus" class="statusBox">
+          Location not active.
+        </div>
+
+        <div id="reportQualityStatus" class="reportQualityStatus">
+          Reports attach to official FRA crossing IDs.
+        </div>
+
+        <div class="selectedCrossingBox">
+          <span class="label">Selected Crossing</span>
+          <strong id="selectedCrossingName">None selected</strong>
+          <small id="selectedCrossingMeta">Tap a crossing or use your location.</small>
+        </div>
+
+        <div class="quickActions">
+          <button id="confirmBlockedBtn" class="dangerBtn" disabled>
+            Confirm Blocked
           </button>
-
-          <div id="locationStatus" class="statusBox">
-            Location not active.
-          </div>
-
-          <div id="reportQualityStatus" class="reportQualityStatus">
-            Reports attach to official FRA crossing IDs when available.
-          </div>
-
-          <div class="selectedCrossingBox">
-            <span class="label">Selected Crossing</span>
-            <strong id="selectedCrossingName">None selected</strong>
-            <small id="selectedCrossingMeta">Tap a crossing or use your location.</small>
-          </div>
-
-          <div class="quickActions">
-            <button id="confirmBlockedBtn" class="dangerBtn" disabled>
-              Confirm Blocked
-            </button>
-
-            <button id="reportClearedBtn" class="successBtn" disabled>
-              Report Cleared
-            </button>
-          </div>
-
-          <div id="lastReportStatus" class="lastReportStatus">
-            No report submitted this session.
-          </div>
-        </section>
-
-        <section class="panel">
-          <div class="panelHeader">
-            <h2>Official Crossing Source</h2>
-            <span id="crossingSourceBadge" class="miniBadge">Loading</span>
-          </div>
-
-          <div id="crossingSourceStatus" class="sourceStatusBox">
-            Loading official USDOT FRA crossing data...
-          </div>
-
-          <div class="sourceGrid">
-            <div>
-              <span>Provider</span>
-              <strong>USDOT FRA</strong>
-            </div>
-            <div>
-              <span>Dataset</span>
-              <strong>m2f8-22s6</strong>
-            </div>
-            <div>
-              <span>Region</span>
-              <strong>Liberty County, TX</strong>
-            </div>
-            <div>
-              <span>Use</span>
-              <strong>Official asset IDs</strong>
-            </div>
-          </div>
-        </section>
-
-        <section class="panel">
-          <div class="panelHeader">
-            <h2>Impact Intelligence</h2>
-            <span id="impactModeBadge" class="miniBadge">V4.3</span>
-          </div>
-
-          <div id="impactInsight" class="impactInsight">
-            No current crossing selected.
-          </div>
-        </section>
-
-        <section class="panel">
-          <div class="panelHeader">
-            <h2>Alerts</h2>
-            <span id="alertsBadge" class="miniBadge">Local</span>
-          </div>
-
-          <p class="muted">
-            Local browser alert foundation. No account required.
-          </p>
-
-          <div class="toggleRow">
-            <div>
-              <strong>Local visual alerts</strong>
-              <small>Shows high-impact notices while this page is open.</small>
-            </div>
-
-            <label class="switch">
-              <input id="localAlertsToggle" type="checkbox" checked />
-              <span></span>
-            </label>
-          </div>
-
-          <button id="enableBrowserAlertsBtn" class="secondaryBtn">
-            Enable Browser Notifications
+          <button id="reportClearedBtn" class="successBtn" disabled>
+            Report Cleared
           </button>
+        </div>
 
-          <div id="alertStatus" class="statusBox">
-            Browser notifications not enabled.
-          </div>
-
-          <div class="alertCapabilityGrid">
-            <div>
-              <span>Local visual alerts</span>
-              <strong id="localVisualAlertStatus">On</strong>
-            </div>
-            <div>
-              <span>Browser notifications</span>
-              <strong id="browserNotificationStatus">Not enabled</strong>
-            </div>
-            <div>
-              <span>Account-based alerts</span>
-              <strong>Future phase</strong>
-            </div>
-            <div>
-              <span>Server push alerts</span>
-              <strong>Future phase</strong>
-            </div>
-          </div>
-        </section>
-
-        <section class="panel">
-          <h2>Search</h2>
-
-          <div class="searchRow">
-            <input
-              id="searchInput"
-              type="text"
-              placeholder="Search a road, city, or address"
-            />
-            <button id="searchBtn">Search</button>
-          </div>
-
-          <div id="searchStatus" class="muted smallText"></div>
-        </section>
-
-        <section class="panel">
-          <div class="panelHeader">
-            <h2>Active Event Summary</h2>
-            <button id="clearEventsBtn" class="tinyBtn">Clear Local</button>
-          </div>
-
-          <div id="eventSummary" class="eventSummary">
-            No active reports yet.
-          </div>
-        </section>
-
-        <section class="panel">
-          <h2>Saved Locations</h2>
-
-          <button id="saveViewBtn" class="secondaryBtn">
-            Save Current Map View
-          </button>
-
-          <div id="savedLocationsList" class="savedList"></div>
-        </section>
-
-        <section class="panel">
-          <h2>Expansion Status</h2>
-
-          <div class="expansionGrid">
-            <div class="expansionItem active">Liberty County</div>
-            <div class="expansionItem">Surrounding Areas</div>
-            <div class="expansionItem">Texas</div>
-            <div class="expansionItem">Nationwide</div>
-          </div>
-
-          <p class="muted smallText">
-            V4.3 uses Liberty County as the default region while preparing the FRA data loader for future county/state filters.
-          </p>
-        </section>
-      </aside>
-
-      <section class="mapWrap">
-        <div id="map"></div>
-
-        <div id="toastStack" class="toastStack"></div>
-
-        <div class="mapLegend">
-          <div><span class="dot normal"></span> Official FRA Crossing</div>
-          <div><span class="dot active"></span> Active Blockage</div>
-          <div><span class="dot cleared"></span> Recently Cleared</div>
-          <div><span class="dot user"></span> Your Location</div>
+        <div id="lastReportStatus" class="lastReportStatus">
+          No report submitted this session.
         </div>
       </section>
-    </main>
-  </div>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="js/app.js"></script>
+      <!-- DATA SOURCE PANEL -->
+      <section class="panel">
+        <div class="panelHeader">
+          <h2>Crossing Data</h2>
+          <span id="crossingSourceBadge" class="miniBadge">Loading</span>
+        </div>
+
+        <div id="crossingSourceStatus" class="sourceStatusBox">
+          Loading crossing data...
+        </div>
+
+        <div class="sourceGrid">
+          <div>
+            <span>Provider</span>
+            <strong>USDOT FRA</strong>
+          </div>
+          <div>
+            <span>Dataset</span>
+            <strong>m2f8-22s6</strong>
+          </div>
+          <div>
+            <span>Region</span>
+            <strong>Liberty County, TX</strong>
+          </div>
+          <div>
+            <span>Use</span>
+            <strong>Filtered public crossings</strong>
+          </div>
+        </div>
+
+        <!-- NEW V4.4 -->
+        <div id="crossingCounts" class="sourceStatusBox" style="margin-top:10px;">
+          Calculating crossing quality...
+        </div>
+      </section>
+
+      <!-- IMPACT -->
+      <section class="panel">
+        <h2>Impact Intelligence</h2>
+        <div id="impactInsight" class="impactInsight">
+          No crossing selected.
+        </div>
+      </section>
+
+    </aside>
+
+    <!-- MAP -->
+    <section class="mapWrap">
+      <div id="map"></div>
+
+      <div id="toastStack" class="toastStack"></div>
+
+      <div class="mapLegend">
+        <div><span class="dot normal"></span> Public Crossing</div>
+        <div><span class="dot active"></span> Active Blockage</div>
+        <div><span class="dot cleared"></span> Cleared</div>
+        <div><span class="dot user"></span> You</div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
