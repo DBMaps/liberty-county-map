@@ -163,6 +163,24 @@ input:focus {
   white-space: nowrap;
 }
 
+.miniBadge.good {
+  background: #dcfce7;
+  border-color: #86efac;
+  color: #166534;
+}
+
+.miniBadge.warn {
+  background: #fffbeb;
+  border-color: #fcd34d;
+  color: #92400e;
+}
+
+.miniBadge.error {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #991b1b;
+}
+
 .muted {
   color: var(--muted);
   font-size: 14px;
@@ -227,7 +245,8 @@ input:focus {
 }
 
 .reportQualityStatus,
-.lastReportStatus {
+.lastReportStatus,
+.sourceStatusBox {
   margin-top: 10px;
   padding: 10px 12px;
   border-radius: 12px;
@@ -236,6 +255,24 @@ input:focus {
   color: #475569;
   font-size: 12px;
   line-height: 1.35;
+}
+
+.sourceStatusBox.good {
+  background: #f0fdf4;
+  border-color: #86efac;
+  color: #166534;
+}
+
+.sourceStatusBox.warn {
+  background: #fffbeb;
+  border-color: #fcd34d;
+  color: #92400e;
+}
+
+.sourceStatusBox.error {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #991b1b;
 }
 
 .lastReportStatus.success {
@@ -334,21 +371,24 @@ input:focus {
   margin-bottom: 4px;
 }
 
-.impactDetails {
+.impactDetails,
+.sourceGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
   margin-top: 10px;
 }
 
-.metricBox {
+.metricBox,
+.sourceGrid div {
   border: 1px solid #e5e7eb;
   background: #fff;
   border-radius: 12px;
   padding: 10px;
 }
 
-.metricBox span {
+.metricBox span,
+.sourceGrid span {
   display: block;
   font-size: 11px;
   color: var(--muted);
@@ -357,10 +397,12 @@ input:focus {
   letter-spacing: 0.4px;
 }
 
-.metricBox strong {
+.metricBox strong,
+.sourceGrid strong {
   display: block;
   margin-top: 4px;
   color: var(--ink);
+  font-size: 13px;
 }
 
 .alertCapabilityGrid {
@@ -559,6 +601,11 @@ input:focus {
   color: #166534;
 }
 
+.pill.official {
+  background: #e0f2fe;
+  color: #075985;
+}
+
 .savedList {
   display: grid;
   gap: 8px;
@@ -662,6 +709,14 @@ input:focus {
 
 .crossingPopup p {
   margin: 4px 0;
+}
+
+.crossingPopup .popupSource {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #e5e7eb;
+  color: #475569;
+  font-size: 12px;
 }
 
 .popupActions {
@@ -793,7 +848,8 @@ input:focus {
   }
 
   .impactDetails,
-  .eventTimeGrid {
+  .eventTimeGrid,
+  .sourceGrid {
     grid-template-columns: 1fr;
   }
 
