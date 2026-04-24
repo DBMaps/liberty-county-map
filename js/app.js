@@ -1,9 +1,9 @@
-/* Liberty County Spatial Intelligence System — V3.9.1
+/* Liberty County Spatial Intelligence System — V4
    Pure HTML/CSS/JS + Leaflet
    Boundary file is loaded but never modified.
 */
 
-const APP_VERSION = "3.9.1";
+const APP_VERSION = "4.0.0";
 
 const DATA_PATHS = {
   boundary: "data/liberty-county-boundary.geojson",
@@ -11,8 +11,9 @@ const DATA_PATHS = {
 };
 
 const STORAGE_KEYS = {
-  events: "lcsi_v39_events",
-  savedLocations: "lcsi_v39_saved_locations"
+  events: "lcsi_v40_events",
+  savedLocations: "lcsi_v40_saved_locations",
+  alertPrefs: "lcsi_v40_alert_preferences"
 };
 
 const REGION_DEFAULT = {
@@ -20,6 +21,11 @@ const REGION_DEFAULT = {
   state: "TX",
   county: "Liberty",
   city: "Dayton"
+};
+
+const ALERT_DEFAULTS = {
+  localVisualAlerts: true,
+  browserNotifications: false
 };
 
 let map;
@@ -34,6 +40,7 @@ let recentlyCleared = new Map();
 
 let events = loadFromStorage(STORAGE_KEYS.events, []);
 let savedLocations = loadFromStorage(STORAGE_KEYS.savedLocations, []);
+let alertPrefs = loadFromStorage(STORAGE_KEYS.alertPrefs, ALERT_DEFAULTS);
 
 const els = {
   useLocationBtn: document.getElementById("useLocationBtn"),
@@ -42,12 +49,24 @@ const els = {
   selectedCrossingMeta: document.getElementById("selectedCrossingMeta"),
   confirmBlockedBtn: document.getElementById("confirmBlockedBtn"),
   reportClearedBtn: document.getElementById("reportClearedBtn"),
+
+  impactInsight: document.getElementById("impactInsight"),
+
+  localAlertsToggle: document.getElementById("localAlertsToggle"),
+  enableBrowserAlertsBtn: document.getElementById("enableBrowserAlertsBtn"),
+  alertStatus: document.getElementById("alertStatus"),
+
   searchInput: document.getElementById("searchInput"),
   searchBtn: document.getElementById("searchBtn"),
   searchStatus: document.getElementById("searchStatus"),
+
   eventSummary: document.getElementById("eventSummary"),
+  clearEventsBtn: document.getElementById("clearEventsBtn"),
+
   saveViewBtn: document.getElementById("saveViewBtn"),
-  savedLocationsList: document.getElementById("savedLocationsList")
+  savedLocationsList: document.getElementById("savedLocationsList"),
+
+  toastStack: document.getElementById("toastStack")
 };
 
 init();
@@ -55,12 +74,16 @@ init();
 async function init() {
   initMap();
   bindUi();
+  hydrateAlertUi();
 
   await loadBoundary();
   await loadCrossings();
 
+  normalizeStoredEvents();
+
   renderSavedLocations();
   renderEventSummary();
+  renderImpactInsight();
   refreshCrossingMarkerStyles();
 }
 
@@ -74,11 +97,6 @@ function initMap() {
     attribution: "&copy; OpenStreetMap contributors"
   });
 
-  const topo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
-    maxZoom: 17,
-    attribution: "&copy; OpenTopoMap contributors"
-  });
-
   const cartoLight = L.tileLayer(
     "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
     {
@@ -86,6 +104,11 @@ function initMap() {
       attribution: "&copy; OpenStreetMap &copy; CARTO"
     }
   );
+
+  const topo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
+    maxZoom: 17,
+    attribution: "&copy; OpenTopoMap contributors"
+  });
 
   osm.addTo(map);
 
@@ -101,6 +124,7 @@ function initMap() {
 
   map.on("click", (e) => {
     const nearest = findNearestCrossing(e.latlng.lat, e.latlng.lng);
+
     if (nearest && nearest.distanceMiles <= 0.75) {
       selectCrossing(nearest.crossing.asset.assetId);
     }
@@ -126,6 +150,7 @@ async function loadBoundary() {
     });
   } catch (error) {
     console.error("Boundary load failed:", error);
+    showToast("Boundary warning", "The Liberty County boundary file did not load.");
   }
 }
 
@@ -138,6 +163,7 @@ async function loadCrossings() {
   } catch (error) {
     console.error("Crossing load failed:", error);
     crossings = getFallbackCrossings();
+    showToast("Crossing fallback loaded", "Using built-in crossing examples because the crossing file did not load.");
   }
 
   crossingLayer = L.layerGroup().addTo(map);
@@ -148,7 +174,7 @@ async function loadCrossings() {
       color: "#1d4ed8",
       weight: 2,
       fillColor: "#2563eb",
-      fillOpacity: 0.85
+      fillOpacity: 0.86
     });
 
     marker.bindPopup(buildCrossingPopup(crossing));
@@ -220,6 +246,10 @@ function normalizeCrossings(geojson) {
             provider: cleanText(p.provider || "liberty-county-map"),
             sourceId: cleanText(p.sourceId || assetId)
           }
+        },
+        expansion: {
+          scaleReady: true,
+          hierarchy: "Region → Asset → Event → Observation"
         }
       };
     })
@@ -254,6 +284,10 @@ function makeCrossing(assetId, lat, lng, officialName, communityName, roadName) 
         provider: "liberty-county-map",
         sourceId: assetId
       }
+    },
+    expansion: {
+      scaleReady: true,
+      hierarchy: "Region → Asset → Event → Observation"
     }
   };
 }
@@ -269,6 +303,57 @@ function bindUi() {
   });
 
   els.saveViewBtn.addEventListener("click", saveCurrentView);
+  els.clearEventsBtn.addEventListener("click", clearLocalEvents);
+
+  els.localAlertsToggle.addEventListener("change", () => {
+    alertPrefs.localVisualAlerts = els.localAlertsToggle.checked;
+    saveToStorage(STORAGE_KEYS.alertPrefs, alertPrefs);
+    hydrateAlertUi();
+  });
+
+  els.enableBrowserAlertsBtn.addEventListener("click", requestBrowserNotifications);
+}
+
+function hydrateAlertUi() {
+  els.localAlertsToggle.checked = Boolean(alertPrefs.localVisualAlerts);
+
+  if (!("Notification" in window)) {
+    els.alertStatus.textContent = "Browser notifications are not supported in this browser.";
+    return;
+  }
+
+  if (Notification.permission === "granted") {
+    alertPrefs.browserNotifications = true;
+    els.alertStatus.textContent = "Browser notifications enabled.";
+  } else if (Notification.permission === "denied") {
+    alertPrefs.browserNotifications = false;
+    els.alertStatus.textContent = "Browser notifications blocked in browser settings.";
+  } else {
+    alertPrefs.browserNotifications = false;
+    els.alertStatus.textContent = "Browser notifications not enabled.";
+  }
+
+  saveToStorage(STORAGE_KEYS.alertPrefs, alertPrefs);
+}
+
+function requestBrowserNotifications() {
+  if (!("Notification" in window)) {
+    els.alertStatus.textContent = "Browser notifications are not supported in this browser.";
+    return;
+  }
+
+  Notification.requestPermission().then((permission) => {
+    if (permission === "granted") {
+      alertPrefs.browserNotifications = true;
+      els.alertStatus.textContent = "Browser notifications enabled.";
+      showToast("Alerts enabled", "This browser can now show local rail blockage alerts.");
+    } else {
+      alertPrefs.browserNotifications = false;
+      els.alertStatus.textContent = "Browser notifications were not enabled.";
+    }
+
+    saveToStorage(STORAGE_KEYS.alertPrefs, alertPrefs);
+  });
 }
 
 function useMyLocation() {
@@ -299,7 +384,7 @@ function useMyLocation() {
           color: "#166534",
           weight: 3,
           fillColor: "#22c55e",
-          fillOpacity: 0.85
+          fillOpacity: 0.88
         }).addTo(map);
       }
 
@@ -357,6 +442,7 @@ function selectCrossing(assetId) {
     map.panTo(marker.getLatLng());
   }
 
+  renderImpactInsight();
   refreshCrossingMarkerStyles();
 }
 
@@ -376,51 +462,30 @@ function createObservation(type) {
     recentlyCleared.delete(assetId);
 
     if (!event) {
-      event = {
-        id: `evt_${assetId}_${Date.now()}`,
-        lat: selectedCrossing.lat,
-        lng: selectedCrossing.lng,
-        region: { ...selectedCrossing.region },
-        asset: JSON.parse(JSON.stringify(selectedCrossing.asset)),
-        status: "active",
-        severity: "moderate",
-        impact: "moderate",
-        firstReportedAt: now,
-        lastReportedAt: now,
-        reportCount: 0,
-        reports: []
-      };
-
+      event = createEventRecord(selectedCrossing, now);
       events.push(event);
     }
 
     event.reports.push(makeObservation(type, now));
-    event.reportCount = event.reports.filter((r) => r.type === "blocked").length;
+    event.reportCount = event.reports.filter((report) => report.type === "blocked").length;
     event.lastReportedAt = now;
 
-    const impact = calculateImpact(event);
-    event.impact = impact.impact;
-    event.severity = impact.severity;
+    applyImpactModel(event);
+
+    els.locationStatus.textContent =
+      `${selectedCrossing.asset.communityName} marked blocked. Impact: ${event.impact}.`;
+
+    triggerAlertsForEvent(event);
   }
 
   if (type === "cleared") {
     if (!event) {
-      event = {
-        id: `evt_${assetId}_${Date.now()}`,
-        lat: selectedCrossing.lat,
-        lng: selectedCrossing.lng,
-        region: { ...selectedCrossing.region },
-        asset: JSON.parse(JSON.stringify(selectedCrossing.asset)),
-        status: "resolved",
-        severity: "low",
-        impact: "cleared",
-        firstReportedAt: now,
-        lastReportedAt: now,
-        resolvedAt: now,
-        reportCount: 0,
-        reports: [makeObservation(type, now)]
-      };
-
+      event = createEventRecord(selectedCrossing, now);
+      event.status = "resolved";
+      event.severity = "low";
+      event.impact = "cleared";
+      event.resolvedAt = now;
+      event.reports.push(makeObservation(type, now));
       events.push(event);
     } else {
       event.reports.push(makeObservation(type, now));
@@ -429,6 +494,11 @@ function createObservation(type) {
       event.severity = "low";
       event.lastReportedAt = now;
       event.resolvedAt = now;
+      event.resolution = {
+        clearedBy: "community_report",
+        clearedAt: now,
+        method: "quick_report"
+      };
     }
 
     recentlyCleared.set(assetId, Date.now());
@@ -436,14 +506,18 @@ function createObservation(type) {
     els.locationStatus.textContent =
       `${selectedCrossing.asset.communityName} marked cleared. Active event removed from summary.`;
 
+    showToast("Crossing cleared", `${selectedCrossing.asset.communityName} is now marked recently cleared.`);
+
     setTimeout(() => {
       recentlyCleared.delete(assetId);
       refreshCrossingMarkerStyles();
+      renderImpactInsight();
     }, 12000);
   }
 
   saveToStorage(STORAGE_KEYS.events, events);
   renderEventSummary();
+  renderImpactInsight();
   refreshCrossingMarkerStyles();
 
   const marker = crossingMarkers.get(assetId);
@@ -451,6 +525,37 @@ function createObservation(type) {
     marker.setPopupContent(buildCrossingPopup(selectedCrossing));
     marker.openPopup();
   }
+}
+
+function createEventRecord(crossing, timestamp) {
+  return {
+    id: `evt_${crossing.asset.assetId}_${Date.now()}`,
+    lat: crossing.lat,
+    lng: crossing.lng,
+    region: { ...crossing.region },
+    asset: JSON.parse(JSON.stringify(crossing.asset)),
+    status: "active",
+    severity: "moderate",
+    impact: "moderate",
+    confidence: "community",
+    firstReportedAt: timestamp,
+    lastReportedAt: timestamp,
+    reportCount: 0,
+    reports: [],
+    impactModel: {
+      version: "V4",
+      factors: {
+        reportCount: 0,
+        durationMinutes: 0,
+        spilloverRisk: "localized",
+        routeImportance: getRouteImportance(crossing.asset.roadName)
+      }
+    },
+    expansion: {
+      hierarchy: "Region → Asset → Event → Observation",
+      nationalReady: true
+    }
+  };
 }
 
 function makeObservation(type, timestamp) {
@@ -464,18 +569,22 @@ function makeObservation(type, timestamp) {
   };
 }
 
-function calculateImpact(event) {
-  const blockedReports = event.reports.filter((r) => r.type === "blocked").length;
+function applyImpactModel(event) {
+  const blockedReports = event.reports.filter((report) => report.type === "blocked").length;
   const durationMinutes = getDurationMinutes(event.firstReportedAt, event.lastReportedAt);
+  const routeImportance = getRouteImportance(event.asset.roadName);
+  const spilloverRisk = calculateSpilloverRisk(event.asset.roadName, blockedReports, durationMinutes);
 
   let impact = "moderate";
   let severity = "moderate";
 
+  if (blockedReports >= 2) {
+    impact = "heavy";
+    severity = "high";
+  }
+
   if (blockedReports >= 4) {
     impact = "severe";
-    severity = "high";
-  } else if (blockedReports >= 2) {
-    impact = "heavy";
     severity = "high";
   }
 
@@ -484,12 +593,109 @@ function calculateImpact(event) {
     severity = "high";
   }
 
-  if (durationMinutes >= 60) {
+  if (durationMinutes >= 60 || blockedReports >= 6) {
+    impact = "critical";
+    severity = "critical";
+  }
+
+  if (routeImportance === "major" && impact === "heavy" && durationMinutes >= 20) {
     impact = "severe";
     severity = "high";
   }
 
-  return { impact, severity };
+  event.reportCount = blockedReports;
+  event.impact = impact;
+  event.severity = severity;
+  event.impactModel = {
+    version: "V4",
+    factors: {
+      reportCount: blockedReports,
+      durationMinutes,
+      spilloverRisk,
+      routeImportance
+    },
+    explanation: buildImpactExplanation(impact, blockedReports, durationMinutes, spilloverRisk, routeImportance)
+  };
+}
+
+function buildImpactExplanation(impact, reportCount, durationMinutes, spilloverRisk, routeImportance) {
+  const parts = [];
+
+  parts.push(`${reportCount} blocked ${reportCount === 1 ? "report" : "reports"}`);
+
+  if (durationMinutes > 0) {
+    parts.push(`${durationMinutes} min duration`);
+  }
+
+  if (routeImportance === "major") {
+    parts.push("major road crossing");
+  }
+
+  if (spilloverRisk !== "localized") {
+    parts.push(`${spilloverRisk} spillover risk`);
+  }
+
+  return `${capitalize(impact)} impact based on ${parts.join(", ")}.`;
+}
+
+function getRouteImportance(roadName) {
+  const road = String(roadName || "").toLowerCase();
+
+  if (
+    road.includes("hwy") ||
+    road.includes("highway") ||
+    road.includes("us ") ||
+    road.includes("fm ") ||
+    road.includes("state")
+  ) {
+    return "major";
+  }
+
+  return "local";
+}
+
+function calculateSpilloverRisk(roadName, reportCount, durationMinutes) {
+  const routeImportance = getRouteImportance(roadName);
+
+  if (routeImportance === "major" && (reportCount >= 4 || durationMinutes >= 30)) {
+    return "regional";
+  }
+
+  if (routeImportance === "major" || reportCount >= 2 || durationMinutes >= 15) {
+    return "nearby-road";
+  }
+
+  return "localized";
+}
+
+function triggerAlertsForEvent(event) {
+  if (!event || event.status !== "active") return;
+
+  const shouldAlert =
+    event.impact === "severe" ||
+    event.impact === "critical" ||
+    event.impactModel.factors.spilloverRisk === "regional";
+
+  if (!shouldAlert) return;
+
+  const title = `${capitalize(event.impact)} rail blockage`;
+  const message =
+    `${event.asset.communityName} may affect ${event.asset.roadName}. ` +
+    `${event.impactModel.explanation}`;
+
+  if (alertPrefs.localVisualAlerts) {
+    showToast(title, message);
+  }
+
+  if (
+    alertPrefs.browserNotifications &&
+    "Notification" in window &&
+    Notification.permission === "granted"
+  ) {
+    new Notification(title, {
+      body: message
+    });
+  }
 }
 
 function renderEventSummary() {
@@ -503,8 +709,13 @@ function renderEventSummary() {
   }
 
   els.eventSummary.innerHTML = activeEvents.map((event) => {
+    applyImpactModel(event);
+
     const duration = formatDuration(event.firstReportedAt, new Date().toISOString());
     const reportLabel = event.reportCount === 1 ? "report" : "reports";
+    const explanation = event.impactModel && event.impactModel.explanation
+      ? event.impactModel.explanation
+      : "";
 
     return `
       <article class="eventCard">
@@ -517,11 +728,94 @@ function renderEventSummary() {
           <div><strong>${event.reportCount}</strong> ${reportLabel}</div>
           <div>Duration: ${duration}</div>
           <div>Road: ${escapeHtml(event.asset.roadName)}</div>
+          <div>Spillover: ${escapeHtml(event.impactModel.factors.spilloverRisk)}</div>
+          <div>${escapeHtml(explanation)}</div>
           <div>Last report: ${formatTime(event.lastReportedAt)}</div>
         </div>
       </article>
     `;
   }).join("");
+
+  saveToStorage(STORAGE_KEYS.events, events);
+}
+
+function renderImpactInsight() {
+  if (!selectedCrossing) {
+    els.impactInsight.innerHTML = "No current crossing selected.";
+    return;
+  }
+
+  const event = events.find(
+    (item) =>
+      item.asset.assetId === selectedCrossing.asset.assetId &&
+      item.status === "active"
+  );
+
+  const wasRecentlyCleared = recentlyCleared.has(selectedCrossing.asset.assetId);
+
+  if (wasRecentlyCleared) {
+    els.impactInsight.innerHTML = `
+      <div class="impactTitle">
+        <strong>${escapeHtml(selectedCrossing.asset.communityName)}</strong>
+        <span class="pill cleared">Cleared</span>
+      </div>
+      This crossing was recently marked cleared. Active impact has been removed.
+    `;
+    return;
+  }
+
+  if (!event) {
+    const routeImportance = getRouteImportance(selectedCrossing.asset.roadName);
+
+    els.impactInsight.innerHTML = `
+      <div class="impactTitle">
+        <strong>${escapeHtml(selectedCrossing.asset.communityName)}</strong>
+        <span class="pill moderate">Ready</span>
+      </div>
+      No active blockage reported.
+      <div class="impactDetails">
+        <div class="metricBox">
+          <span>Road Type</span>
+          <strong>${escapeHtml(routeImportance)}</strong>
+        </div>
+        <div class="metricBox">
+          <span>Spillover</span>
+          <strong>localized</strong>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  applyImpactModel(event);
+
+  els.impactInsight.innerHTML = `
+    <div class="impactTitle">
+      <strong>${escapeHtml(event.asset.communityName)}</strong>
+      <span class="pill ${escapeHtml(event.impact)}">${escapeHtml(event.impact)}</span>
+    </div>
+
+    ${escapeHtml(event.impactModel.explanation)}
+
+    <div class="impactDetails">
+      <div class="metricBox">
+        <span>Reports</span>
+        <strong>${event.reportCount}</strong>
+      </div>
+      <div class="metricBox">
+        <span>Duration</span>
+        <strong>${formatDuration(event.firstReportedAt, new Date().toISOString())}</strong>
+      </div>
+      <div class="metricBox">
+        <span>Route</span>
+        <strong>${escapeHtml(event.impactModel.factors.routeImportance)}</strong>
+      </div>
+      <div class="metricBox">
+        <span>Spillover</span>
+        <strong>${escapeHtml(event.impactModel.factors.spilloverRisk)}</strong>
+      </div>
+    </div>
+  `;
 }
 
 function refreshCrossingMarkerStyles() {
@@ -539,11 +833,15 @@ function refreshCrossingMarkerStyles() {
     const wasRecentlyCleared = recentlyCleared.has(assetId);
 
     if (activeEvent) {
+      applyImpactModel(activeEvent);
+
+      const color = getImpactColor(activeEvent.impact);
+
       marker.setStyle({
-        radius: isSelected ? 12 : 10,
-        color: "#7f1d1d",
-        fillColor: "#dc2626",
-        fillOpacity: 0.9,
+        radius: isSelected ? 13 : 10,
+        color: color.stroke,
+        fillColor: color.fill,
+        fillOpacity: 0.92,
         weight: isSelected ? 4 : 3
       });
     } else if (wasRecentlyCleared) {
@@ -551,24 +849,42 @@ function refreshCrossingMarkerStyles() {
         radius: 12,
         color: "#14532d",
         fillColor: "#22c55e",
-        fillOpacity: 0.92,
-        weight: 4
+        fillOpacity: 0.94,
+        weight: 4,
+        className: "clearedPulse"
       });
     } else {
       marker.setStyle({
         radius: isSelected ? 10 : 8,
         color: isSelected ? "#5f3c1d" : "#1d4ed8",
         fillColor: isSelected ? "#f59e0b" : "#2563eb",
-        fillOpacity: 0.85,
+        fillOpacity: 0.86,
         weight: isSelected ? 3 : 2
       });
     }
 
     const crossing = crossings.find((item) => item.asset.assetId === assetId);
+
     if (crossing) {
       marker.setPopupContent(buildCrossingPopup(crossing));
     }
   });
+}
+
+function getImpactColor(impact) {
+  if (impact === "critical") {
+    return { stroke: "#4c1d95", fill: "#7c3aed" };
+  }
+
+  if (impact === "severe") {
+    return { stroke: "#991b1b", fill: "#ef4444" };
+  }
+
+  if (impact === "heavy") {
+    return { stroke: "#9a3412", fill: "#f97316" };
+  }
+
+  return { stroke: "#92400e", fill: "#f59e0b" };
 }
 
 function buildCrossingPopup(crossing) {
@@ -583,10 +899,13 @@ function buildCrossingPopup(crossing) {
   let statusHtml = `<p><strong>Status:</strong> No active blockage</p>`;
 
   if (activeEvent) {
+    applyImpactModel(activeEvent);
+
     statusHtml = `
       <p><strong>Status:</strong> Active blockage</p>
       <p><strong>Impact:</strong> ${escapeHtml(activeEvent.impact)}</p>
       <p><strong>Reports:</strong> ${activeEvent.reportCount}</p>
+      <p><strong>Spillover:</strong> ${escapeHtml(activeEvent.impactModel.factors.spilloverRisk)}</p>
     `;
   }
 
@@ -677,6 +996,7 @@ async function runSearch() {
 
     if (nearest && nearest.distanceMiles <= 1.5) {
       selectCrossing(nearest.crossing.asset.assetId);
+
       els.searchStatus.textContent =
         `Nearest crossing selected: ${nearest.crossing.asset.communityName} ` +
         `(${nearest.distanceMiles.toFixed(2)} mi away).`;
@@ -726,9 +1046,65 @@ function renderSavedLocations() {
 
 function goToSavedLocation(id) {
   const item = savedLocations.find((location) => location.id === id);
+
   if (!item) return;
 
   map.setView([item.lat, item.lng], item.zoom || 14);
+}
+
+function clearLocalEvents() {
+  events = [];
+  recentlyCleared.clear();
+
+  saveToStorage(STORAGE_KEYS.events, events);
+
+  renderEventSummary();
+  renderImpactInsight();
+  refreshCrossingMarkerStyles();
+
+  showToast("Local events cleared", "All locally stored crossing events have been cleared.");
+}
+
+function normalizeStoredEvents() {
+  events = events.filter((event) => {
+    return (
+      event &&
+      event.asset &&
+      event.asset.assetId &&
+      isValidCoordinate(Number(event.lat), Number(event.lng))
+    );
+  });
+
+  events.forEach((event) => {
+    if (!event.region) event.region = { ...REGION_DEFAULT };
+    if (!event.reports) event.reports = [];
+    if (!event.status) event.status = "active";
+    if (!event.firstReportedAt) event.firstReportedAt = new Date().toISOString();
+    if (!event.lastReportedAt) event.lastReportedAt = event.firstReportedAt;
+
+    if (event.status === "active") {
+      applyImpactModel(event);
+    }
+  });
+
+  saveToStorage(STORAGE_KEYS.events, events);
+}
+
+function showToast(title, message) {
+  if (!els.toastStack) return;
+
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.innerHTML = `
+    <strong>${escapeHtml(title)}</strong>
+    <small>${escapeHtml(message)}</small>
+  `;
+
+  els.toastStack.appendChild(toast);
+
+  setTimeout(() => {
+    toast.remove();
+  }, 5200);
 }
 
 function isValidCoordinate(lat, lng) {
@@ -799,6 +1175,12 @@ function cleanText(value) {
   return String(value).trim();
 }
 
+function capitalize(value) {
+  const text = String(value || "");
+  if (!text) return "";
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 function escapeHtml(value) {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -815,10 +1197,12 @@ function escapeAttr(value) {
 function loadFromStorage(key, fallback) {
   try {
     const raw = localStorage.getItem(key);
-    if (!raw) return fallback;
+
+    if (!raw) return JSON.parse(JSON.stringify(fallback));
+
     return JSON.parse(raw);
   } catch {
-    return fallback;
+    return JSON.parse(JSON.stringify(fallback));
   }
 }
 
@@ -838,12 +1222,10 @@ window.LCSI = {
     return events;
   },
 
-  clearLocalEvents() {
-    events = [];
-    recentlyCleared.clear();
-    saveToStorage(STORAGE_KEYS.events, events);
-    renderEventSummary();
-    refreshCrossingMarkerStyles();
+  clearLocalEvents,
+
+  getCrossings() {
+    return crossings;
   },
 
   version: APP_VERSION

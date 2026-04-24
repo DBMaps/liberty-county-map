@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Liberty County Spatial Intelligence System — V3.9</title>
+
+  <title>Liberty County Spatial Intelligence — V4</title>
 
   <link
     rel="stylesheet"
@@ -18,19 +19,21 @@
     <header class="topbar">
       <div>
         <h1>Liberty County Spatial Intelligence</h1>
-        <p>Rail blockage reporting • Local-first • National-ready data structure</p>
+        <p>Rail blockage reporting • Local-first UX • National-ready architecture</p>
       </div>
 
-      <div class="versionBadge">V3.9</div>
+      <div class="versionBadge">V4</div>
     </header>
 
     <main class="layout">
       <aside class="sidebar">
         <section class="panel">
-          <h2>Fast Report</h2>
-          <p class="muted">
-            Use your location or select a crossing on the map.
-          </p>
+          <div class="panelHeader">
+            <h2>Fast Report</h2>
+            <span class="miniBadge">3–5 sec flow</span>
+          </div>
+
+          <p class="muted">Use your location or select a crossing on the map.</p>
 
           <button id="useLocationBtn" class="primaryBtn">
             📍 Use My Location
@@ -58,6 +61,48 @@
         </section>
 
         <section class="panel">
+          <div class="panelHeader">
+            <h2>Impact Intelligence</h2>
+            <span id="impactModeBadge" class="miniBadge">V4</span>
+          </div>
+
+          <div id="impactInsight" class="impactInsight">
+            No current crossing selected.
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panelHeader">
+            <h2>Alerts</h2>
+            <span id="alertsBadge" class="miniBadge">Local</span>
+          </div>
+
+          <p class="muted">
+            Browser-ready alert foundation. No account required.
+          </p>
+
+          <div class="toggleRow">
+            <div>
+              <strong>Local visual alerts</strong>
+              <small>Show high-impact notices in this browser.</small>
+            </div>
+
+            <label class="switch">
+              <input id="localAlertsToggle" type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+
+          <button id="enableBrowserAlertsBtn" class="secondaryBtn">
+            Enable Browser Notifications
+          </button>
+
+          <div id="alertStatus" class="statusBox">
+            Browser notifications not enabled.
+          </div>
+        </section>
+
+        <section class="panel">
           <h2>Search</h2>
 
           <div class="searchRow">
@@ -73,7 +118,11 @@
         </section>
 
         <section class="panel">
-          <h2>Active Event Summary</h2>
+          <div class="panelHeader">
+            <h2>Active Event Summary</h2>
+            <button id="clearEventsBtn" class="tinyBtn">Clear Local</button>
+          </div>
+
           <div id="eventSummary" class="eventSummary">
             No active reports yet.
           </div>
@@ -81,17 +130,39 @@
 
         <section class="panel">
           <h2>Saved Locations</h2>
-          <button id="saveViewBtn" class="secondaryBtn">Save Current Map View</button>
+
+          <button id="saveViewBtn" class="secondaryBtn">
+            Save Current Map View
+          </button>
+
           <div id="savedLocationsList" class="savedList"></div>
+        </section>
+
+        <section class="panel">
+          <h2>Expansion Status</h2>
+
+          <div class="expansionGrid">
+            <div class="expansionItem active">Liberty County</div>
+            <div class="expansionItem">Surrounding Areas</div>
+            <div class="expansionItem">Texas</div>
+            <div class="expansionItem">Nationwide</div>
+          </div>
+
+          <p class="muted smallText">
+            Data structure is national-ready. User experience remains local-first.
+          </p>
         </section>
       </aside>
 
       <section class="mapWrap">
         <div id="map"></div>
 
+        <div id="toastStack" class="toastStack"></div>
+
         <div class="mapLegend">
           <div><span class="dot normal"></span> Known Crossing</div>
           <div><span class="dot active"></span> Active Blockage</div>
+          <div><span class="dot cleared"></span> Recently Cleared</div>
           <div><span class="dot user"></span> Your Location</div>
         </div>
       </section>
