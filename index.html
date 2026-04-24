@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Liberty County Spatial Intelligence — V4.1</title>
+  <title>Liberty County Spatial Intelligence — V4.2</title>
 
   <link
     rel="stylesheet"
@@ -22,7 +22,7 @@
         <p>Rail blockage reporting • Local-first UX • National-ready architecture</p>
       </div>
 
-      <div class="versionBadge">V4.1</div>
+      <div class="versionBadge">V4.2</div>
     </header>
 
     <main class="layout">
@@ -43,6 +43,10 @@
             Location not active.
           </div>
 
+          <div id="reportQualityStatus" class="reportQualityStatus">
+            Reports attach only to known crossings.
+          </div>
+
           <div class="selectedCrossingBox">
             <span class="label">Selected Crossing</span>
             <strong id="selectedCrossingName">None selected</strong>
@@ -58,12 +62,16 @@
               Report Cleared
             </button>
           </div>
+
+          <div id="lastReportStatus" class="lastReportStatus">
+            No report submitted this session.
+          </div>
         </section>
 
         <section class="panel">
           <div class="panelHeader">
             <h2>Impact Intelligence</h2>
-            <span id="impactModeBadge" class="miniBadge">V4.1</span>
+            <span id="impactModeBadge" class="miniBadge">V4.2</span>
           </div>
 
           <div id="impactInsight" class="impactInsight">
@@ -168,7 +176,7 @@
           </div>
 
           <p class="muted smallText">
-            V4.1 keeps Liberty County as the active region while preparing the code structure for future multi-county expansion.
+            V4.2 keeps Liberty County as the active region while preserving the national-ready data structure.
           </p>
         </section>
       </aside>

@@ -1,17 +1,17 @@
-/* Liberty County Spatial Intelligence System — V4.1
+/* Liberty County Spatial Intelligence System — V4.2
    Pure HTML/CSS/JS + Leaflet
    Boundary file is loaded but never modified.
 
-   V4.1 goals:
-   - Preserve working V4 reporting flow
-   - Add region registry prep
-   - Improve localStorage migration safety
-   - Improve impact explanation and confidence scoring
-   - Improve alerts panel wording/status
-   - Keep GitHub Pages compatibility
+   V4.2 goals:
+   - Preserve stable V4.1 behavior
+   - Improve report quality feedback
+   - Add duplicate protection / cooldown handling
+   - Improve event timestamps and age labels
+   - Improve active-event card detail
+   - Keep mobile-first reporting clean
 */
 
-const APP_VERSION = "4.1.0";
+const APP_VERSION = "4.2.0";
 
 const REGIONS = {
   "US-TX-Liberty": {
@@ -41,13 +41,17 @@ const DATA_PATHS = {
 };
 
 const STORAGE_KEYS = {
-  events: "lcsi_v41_events",
-  savedLocations: "lcsi_v41_saved_locations",
-  alertPrefs: "lcsi_v41_alert_preferences",
+  events: "lcsi_v42_events",
+  savedLocations: "lcsi_v42_saved_locations",
+  alertPrefs: "lcsi_v42_alert_preferences",
 
-  legacyEvents: "lcsi_v40_events",
-  legacySavedLocations: "lcsi_v40_saved_locations",
-  legacyAlertPrefs: "lcsi_v40_alert_preferences"
+  legacyEvents: "lcsi_v41_events",
+  legacySavedLocations: "lcsi_v41_saved_locations",
+  legacyAlertPrefs: "lcsi_v41_alert_preferences",
+
+  olderEvents: "lcsi_v40_events",
+  olderSavedLocations: "lcsi_v40_saved_locations",
+  olderAlertPrefs: "lcsi_v40_alert_preferences"
 };
 
 const REGION_DEFAULT = {
@@ -62,6 +66,9 @@ const ALERT_DEFAULTS = {
   browserNotifications: false
 };
 
+const REPORT_COOLDOWN_MS = 2500;
+const SAME_ACTION_COOLDOWN_MS = 10000;
+
 let map;
 let boundaryLayer;
 let crossingLayer;
@@ -71,25 +78,33 @@ let selectedCrossing = null;
 let crossings = [];
 let crossingMarkers = new Map();
 let recentlyCleared = new Map();
+let recentReportActions = new Map();
 
-let events = loadWithMigration(STORAGE_KEYS.events, STORAGE_KEYS.legacyEvents, []);
-let savedLocations = loadWithMigration(
-  STORAGE_KEYS.savedLocations,
+let events = loadWithMigrationChain(STORAGE_KEYS.events, [
+  STORAGE_KEYS.legacyEvents,
+  STORAGE_KEYS.olderEvents
+], []);
+
+let savedLocations = loadWithMigrationChain(STORAGE_KEYS.savedLocations, [
   STORAGE_KEYS.legacySavedLocations,
-  []
-);
+  STORAGE_KEYS.olderSavedLocations
+], []);
+
 let alertPrefs = {
   ...ALERT_DEFAULTS,
-  ...loadWithMigration(
-    STORAGE_KEYS.alertPrefs,
+  ...loadWithMigrationChain(STORAGE_KEYS.alertPrefs, [
     STORAGE_KEYS.legacyAlertPrefs,
-    ALERT_DEFAULTS
-  )
+    STORAGE_KEYS.olderAlertPrefs
+  ], ALERT_DEFAULTS)
 };
+
+let lastReportSubmittedAt = null;
 
 const els = {
   useLocationBtn: document.getElementById("useLocationBtn"),
   locationStatus: document.getElementById("locationStatus"),
+  reportQualityStatus: document.getElementById("reportQualityStatus"),
+  lastReportStatus: document.getElementById("lastReportStatus"),
   selectedCrossingName: document.getElementById("selectedCrossingName"),
   selectedCrossingMeta: document.getElementById("selectedCrossingMeta"),
   confirmBlockedBtn: document.getElementById("confirmBlockedBtn"),
@@ -135,6 +150,11 @@ async function init() {
   renderEventSummary();
   renderImpactInsight();
   refreshCrossingMarkerStyles();
+
+  setInterval(() => {
+    renderEventSummary();
+    renderImpactInsight();
+  }, 60000);
 }
 
 function initMap() {
@@ -546,6 +566,8 @@ function selectCrossing(assetId) {
   els.confirmBlockedBtn.disabled = false;
   els.reportClearedBtn.disabled = false;
 
+  updateReportQualityStatus(`Ready to report for ${crossing.asset.communityName}.`);
+
   const marker = crossingMarkers.get(assetId);
   if (marker) {
     marker.openPopup();
@@ -559,13 +581,27 @@ function selectCrossing(assetId) {
 function createObservation(type) {
   if (!selectedCrossing) return;
 
-  const now = new Date().toISOString();
+  const nowMs = Date.now();
+  const now = new Date(nowMs).toISOString();
   const assetId = selectedCrossing.asset.assetId;
 
   if (!assetId || !isValidCoordinate(selectedCrossing.lat, selectedCrossing.lng)) {
     showToast("Report blocked", "This crossing is missing a valid asset ID or coordinate.");
+    updateLastReportStatus("Report blocked because this crossing is missing valid data.", "warning");
     return;
   }
+
+  const duplicateCheck = checkDuplicateReport(assetId, type, nowMs);
+
+  if (!duplicateCheck.allowed) {
+    updateLastReportStatus(duplicateCheck.message, "warning");
+    showToast("Duplicate prevented", duplicateCheck.message);
+    brieflyDisableReportButtons();
+    return;
+  }
+
+  rememberReportAction(assetId, type, nowMs);
+  brieflyDisableReportButtons();
 
   let event = events.find(
     (item) =>
@@ -585,11 +621,17 @@ function createObservation(type) {
     event.reports.push(makeObservation(type, now));
     event.reportCount = event.reports.filter((report) => report.type === "blocked").length;
     event.lastReportedAt = now;
+    event.updatedAt = now;
 
     applyImpactModel(event);
 
-    els.locationStatus.textContent =
-      `${selectedCrossing.asset.communityName} marked blocked. Impact: ${event.impact}. Confidence: ${event.confidenceLabel}.`;
+    const statusMessage =
+      `Blocked report submitted for ${selectedCrossing.asset.communityName} at ${formatClockTime(now)}. ` +
+      `Impact: ${event.impact}. Confidence: ${event.confidenceLabel}.`;
+
+    els.locationStatus.textContent = statusMessage;
+    updateLastReportStatus(statusMessage, "success");
+    showToast("Blocked report submitted", `${selectedCrossing.asset.communityName} • ${event.confidenceLabel}`);
 
     triggerAlertsForEvent(event);
   }
@@ -603,6 +645,7 @@ function createObservation(type) {
       event.confidence = "community";
       event.confidenceLabel = "Community report";
       event.resolvedAt = now;
+      event.updatedAt = now;
       event.reports.push(makeObservation(type, now));
       events.push(event);
     } else {
@@ -611,6 +654,7 @@ function createObservation(type) {
       event.impact = "cleared";
       event.severity = "low";
       event.lastReportedAt = now;
+      event.updatedAt = now;
       event.resolvedAt = now;
       event.resolution = {
         clearedBy: "community_report",
@@ -619,10 +663,14 @@ function createObservation(type) {
       };
     }
 
-    recentlyCleared.set(assetId, Date.now());
+    recentlyCleared.set(assetId, nowMs);
 
-    els.locationStatus.textContent =
-      `${selectedCrossing.asset.communityName} marked cleared. Active event removed from summary.`;
+    const statusMessage =
+      `Cleared report submitted for ${selectedCrossing.asset.communityName} at ${formatClockTime(now)}. ` +
+      `Active event removed from summary.`;
+
+    els.locationStatus.textContent = statusMessage;
+    updateLastReportStatus(statusMessage, "success");
 
     showToast(
       "Crossing cleared",
@@ -636,6 +684,7 @@ function createObservation(type) {
     }, 12000);
   }
 
+  lastReportSubmittedAt = now;
   saveToStorage(STORAGE_KEYS.events, events);
   renderEventSummary();
   renderImpactInsight();
@@ -645,6 +694,66 @@ function createObservation(type) {
   if (marker) {
     marker.setPopupContent(buildCrossingPopup(selectedCrossing));
     marker.openPopup();
+  }
+}
+
+function checkDuplicateReport(assetId, type, nowMs) {
+  const globalLast = lastReportSubmittedAt
+    ? new Date(lastReportSubmittedAt).getTime()
+    : 0;
+
+  if (globalLast && nowMs - globalLast < REPORT_COOLDOWN_MS) {
+    return {
+      allowed: false,
+      message: "Report held for a moment to prevent accidental double-clicks."
+    };
+  }
+
+  const actionKey = `${assetId}:${type}`;
+  const lastSameAction = recentReportActions.get(actionKey) || 0;
+
+  if (lastSameAction && nowMs - lastSameAction < SAME_ACTION_COOLDOWN_MS) {
+    return {
+      allowed: false,
+      message: "Same report was just submitted. Wait a few seconds before sending it again."
+    };
+  }
+
+  return {
+    allowed: true,
+    message: ""
+  };
+}
+
+function rememberReportAction(assetId, type, nowMs) {
+  recentReportActions.set(`${assetId}:${type}`, nowMs);
+}
+
+function brieflyDisableReportButtons() {
+  els.confirmBlockedBtn.disabled = true;
+  els.reportClearedBtn.disabled = true;
+
+  setTimeout(() => {
+    if (selectedCrossing) {
+      els.confirmBlockedBtn.disabled = false;
+      els.reportClearedBtn.disabled = false;
+    }
+  }, REPORT_COOLDOWN_MS);
+}
+
+function updateReportQualityStatus(message) {
+  if (!els.reportQualityStatus) return;
+  els.reportQualityStatus.textContent = message;
+}
+
+function updateLastReportStatus(message, state = "") {
+  if (!els.lastReportStatus) return;
+
+  els.lastReportStatus.textContent = message;
+  els.lastReportStatus.className = "lastReportStatus";
+
+  if (state) {
+    els.lastReportStatus.classList.add(state);
   }
 }
 
@@ -662,10 +771,12 @@ function createEventRecord(crossing, timestamp) {
     confidenceLabel: "Low confidence",
     firstReportedAt: timestamp,
     lastReportedAt: timestamp,
+    createdAt: timestamp,
+    updatedAt: timestamp,
     reportCount: 0,
     reports: [],
     impactModel: {
-      version: "V4.1",
+      version: "V4.2",
       factors: {
         reportCount: 0,
         durationMinutes: 0,
@@ -690,7 +801,8 @@ function makeObservation(type, timestamp) {
     reportedAt: timestamp,
     source: "user_report",
     confidence: "community",
-    notes: ""
+    notes: "",
+    submittedLabel: formatRelativeTime(timestamp)
   };
 }
 
@@ -744,7 +856,7 @@ function applyImpactModel(event) {
   event.confidence = "community";
   event.confidenceLabel = confidenceLabel;
   event.impactModel = {
-    version: "V4.1",
+    version: "V4.2",
     factors: {
       reportCount: blockedReports,
       durationMinutes,
@@ -892,12 +1004,23 @@ function renderEventSummary() {
 
         <div class="eventMeta">
           <div><strong>${event.reportCount}</strong> ${reportLabel}</div>
-          <div>Duration: ${duration}</div>
           <div>Road: ${escapeHtml(event.asset.roadName)}</div>
+          <div>Duration: ${duration}</div>
+          <div>Age: ${escapeHtml(formatRelativeTime(event.firstReportedAt))}</div>
           <div>Spillover: ${escapeHtml(event.impactModel.factors.spilloverRisk)}</div>
           <div>Confidence: ${escapeHtml(event.confidenceLabel)}</div>
           <div>Why: ${escapeHtml(explanation)}</div>
-          <div>Last report: ${formatTime(event.lastReportedAt)}</div>
+
+          <div class="eventTimeGrid">
+            <div class="eventTimeBox">
+              <span>First reported</span>
+              <strong>${escapeHtml(formatClockTime(event.firstReportedAt))}</strong>
+            </div>
+            <div class="eventTimeBox">
+              <span>Last report</span>
+              <strong>${escapeHtml(formatClockTime(event.lastReportedAt))}</strong>
+            </div>
+          </div>
         </div>
       </article>
     `;
@@ -922,6 +1045,8 @@ function renderImpactInsight() {
   const wasRecentlyCleared = recentlyCleared.has(selectedCrossing.asset.assetId);
 
   if (wasRecentlyCleared) {
+    const clearedAt = recentlyCleared.get(selectedCrossing.asset.assetId);
+
     els.impactInsight.innerHTML = `
       <div class="impactTitle">
         <strong>${escapeHtml(selectedCrossing.asset.communityName)}</strong>
@@ -930,7 +1055,7 @@ function renderImpactInsight() {
 
       <div class="impactExplanation">
         <strong>Result</strong>
-        This crossing was recently marked cleared. Active impact has been removed from the local event summary.
+        This crossing was recently marked cleared ${escapeHtml(formatRelativeTime(new Date(clearedAt).toISOString()))}. Active impact has been removed from the local event summary.
       </div>
     `;
     return;
@@ -995,6 +1120,14 @@ function renderImpactInsight() {
       <div class="metricBox">
         <span>Duration</span>
         <strong>${formatDuration(event.firstReportedAt, new Date().toISOString())}</strong>
+      </div>
+      <div class="metricBox">
+        <span>Age</span>
+        <strong>${escapeHtml(formatRelativeTime(event.firstReportedAt))}</strong>
+      </div>
+      <div class="metricBox">
+        <span>Last Report</span>
+        <strong>${escapeHtml(formatRelativeTime(event.lastReportedAt))}</strong>
       </div>
       <div class="metricBox">
         <span>Route</span>
@@ -1107,6 +1240,7 @@ function buildCrossingPopup(crossing) {
       <p><strong>Status:</strong> Active blockage</p>
       <p><strong>Impact:</strong> ${escapeHtml(activeEvent.impact)}</p>
       <p><strong>Reports:</strong> ${activeEvent.reportCount}</p>
+      <p><strong>Age:</strong> ${escapeHtml(formatRelativeTime(activeEvent.firstReportedAt))}</p>
       <p><strong>Confidence:</strong> ${escapeHtml(activeEvent.confidenceLabel)}</p>
       <p><strong>Spillover:</strong> ${escapeHtml(activeEvent.impactModel.factors.spilloverRisk)}</p>
     `;
@@ -1271,6 +1405,7 @@ function clearLocalEvents() {
   renderImpactInsight();
   refreshCrossingMarkerStyles();
 
+  updateLastReportStatus("All locally stored crossing events have been cleared.", "success");
   showToast("Local events cleared", "All locally stored crossing events have been cleared.");
 }
 
@@ -1290,6 +1425,8 @@ function normalizeStoredEvents() {
     if (!event.status) event.status = "active";
     if (!event.firstReportedAt) event.firstReportedAt = new Date().toISOString();
     if (!event.lastReportedAt) event.lastReportedAt = event.firstReportedAt;
+    if (!event.createdAt) event.createdAt = event.firstReportedAt;
+    if (!event.updatedAt) event.updatedAt = event.lastReportedAt;
     if (!event.expansion) {
       event.expansion = {
         regionId: currentRegionId,
@@ -1386,6 +1523,44 @@ function formatDuration(startIso, endIso) {
   return remainder ? `${hours} hr ${remainder} min` : `${hours} hr`;
 }
 
+function formatRelativeTime(iso) {
+  const then = new Date(iso).getTime();
+  const now = Date.now();
+
+  if (!Number.isFinite(then)) return "unknown time";
+
+  const diffSeconds = Math.max(0, Math.round((now - then) / 1000));
+
+  if (diffSeconds < 10) return "just now";
+  if (diffSeconds < 60) return `${diffSeconds} sec ago`;
+
+  const diffMinutes = Math.round(diffSeconds / 60);
+
+  if (diffMinutes < 60) {
+    return `${diffMinutes} min ago`;
+  }
+
+  const diffHours = Math.round(diffMinutes / 60);
+
+  if (diffHours < 24) {
+    return `${diffHours} hr ago`;
+  }
+
+  const diffDays = Math.round(diffHours / 24);
+  return `${diffDays} day${diffDays === 1 ? "" : "s"} ago`;
+}
+
+function formatClockTime(iso) {
+  try {
+    return new Date(iso).toLocaleTimeString([], {
+      hour: "numeric",
+      minute: "2-digit"
+    });
+  } catch {
+    return "Unknown";
+  }
+}
+
 function formatTime(iso) {
   try {
     return new Date(iso).toLocaleString();
@@ -1434,18 +1609,20 @@ function loadFromStorage(key, fallback) {
   }
 }
 
-function loadWithMigration(newKey, legacyKey, fallback) {
+function loadWithMigrationChain(newKey, legacyKeys, fallback) {
   const current = loadFromStorage(newKey, null);
 
   if (current !== null) {
     return current;
   }
 
-  const legacy = loadFromStorage(legacyKey, null);
+  for (const key of legacyKeys) {
+    const legacy = loadFromStorage(key, null);
 
-  if (legacy !== null) {
-    saveToStorage(newKey, legacy);
-    return legacy;
+    if (legacy !== null) {
+      saveToStorage(newKey, legacy);
+      return legacy;
+    }
   }
 
   return cloneFallback(fallback);

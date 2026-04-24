@@ -226,6 +226,30 @@ input:focus {
   line-height: 1.35;
 }
 
+.reportQualityStatus,
+.lastReportStatus {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  color: #475569;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.lastReportStatus.success {
+  background: #f0fdf4;
+  border-color: #86efac;
+  color: #166534;
+}
+
+.lastReportStatus.warning {
+  background: #fffbeb;
+  border-color: #fcd34d;
+  color: #92400e;
+}
+
 .selectedCrossingBox {
   margin-top: 14px;
   padding: 14px;
@@ -458,6 +482,36 @@ input:focus {
   color: var(--muted);
   font-size: 12px;
   line-height: 1.45;
+}
+
+.eventTimeGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 9px;
+}
+
+.eventTimeBox {
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 11px;
+  padding: 8px;
+}
+
+.eventTimeBox span {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  font-weight: 900;
+  letter-spacing: 0.35px;
+}
+
+.eventTimeBox strong {
+  display: block;
+  margin-top: 3px;
+  color: var(--ink);
+  font-size: 12px;
 }
 
 .pill {
@@ -709,6 +763,12 @@ input:focus {
     order: 2;
     border-right: none;
     border-top: 1px solid var(--line);
+    padding: 12px;
+  }
+
+  .panel {
+    padding: 14px;
+    margin-bottom: 12px;
   }
 
   .mapWrap {
@@ -716,14 +776,65 @@ input:focus {
   }
 
   #map {
-    min-height: 60vh;
+    min-height: 58vh;
   }
 
   .topbar {
     align-items: flex-start;
+    padding: 16px;
   }
 
-  .impactDetails {
+  .topbar h1 {
+    font-size: 20px;
+  }
+
+  .topbar p {
+    font-size: 13px;
+  }
+
+  .impactDetails,
+  .eventTimeGrid {
     grid-template-columns: 1fr;
+  }
+
+  .quickActions {
+    grid-template-columns: 1fr;
+  }
+
+  .quickActions button {
+    padding: 14px;
+    font-size: 16px;
+  }
+
+  .mapLegend {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .toastStack {
+    top: 12px;
+    right: 12px;
+    left: 12px;
+    width: auto;
+  }
+}
+
+@media (max-width: 520px) {
+  .topbar {
+    flex-direction: column;
+  }
+
+  .versionBadge {
+    align-self: flex-start;
+  }
+
+  .searchRow {
+    grid-template-columns: 1fr;
+  }
+
+  .mapLegend {
+    font-size: 11px;
   }
 }

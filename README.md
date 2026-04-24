@@ -1,29 +1,51 @@
 # Liberty County Spatial Intelligence System
 
-## Current Version
+Version: V4.2
 
-V4
+Live site:
+
+https://dbmaps.github.io/liberty-county-map/
 
 ## Purpose
 
-The Liberty County Spatial Intelligence System is a local-first geospatial reporting platform for infrastructure events.
+The Liberty County Spatial Intelligence System is a local-first rail crossing blockage reporting map.
 
-The current focus is rail crossing blockage reporting in Liberty County, Texas, with a data structure designed for future multi-county, statewide, and nationwide expansion.
+The current focus is Liberty County, Texas, with a fast reporting workflow for known rail crossings.
 
-## Current Tech Stack
+The long-term architecture is national-ready, but the user experience remains local-first.
 
-- Leaflet
-- Vanilla JavaScript
+## Current Stack
+
+This project intentionally uses only:
+
 - HTML
 - CSS
+- Vanilla JavaScript
+- Leaflet
 - Local GeoJSON
 - GitHub Pages
 
-No frameworks are used.
+Do not introduce:
 
-## Important File Rule
+- React
+- Vue
+- Angular
+- TypeScript
+- Build tools
+- Backend servers
+- Frameworks
 
-Do not modify:
+## File Structure
 
 ```text
-data/liberty-county-boundary.geojson
+liberty-county-map/
+│
+├── index.html
+├── README.md
+├── css/
+│   └── styles.css
+├── js/
+│   └── app.js
+├── data/
+│   ├── liberty-county-boundary.geojson
+│   └── liberty-county-rail-crossings.geojson
