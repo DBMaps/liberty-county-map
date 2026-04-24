@@ -465,16 +465,22 @@ function normalizeFraCrossings(geojson) {
 
     allCrossings.push(crossing);
 
-    if (crossing.dataQuality.status === "reportable_public") {
+    if (crossing.dataQuality.visibleByDefault) {
       reportableCrossings.push(crossing);
       counts.reportable += 1;
+
+      if (crossing.dataQuality.status === "private_visible") {
+        counts.privateHidden += 1;
+      }
+
+      if (crossing.dataQuality.status === "needs_review_visible") {
+        counts.needsReviewHidden += 1;
+      }
     } else {
       hiddenCrossings.push(crossing);
       counts.hidden += 1;
 
-      if (crossing.dataQuality.status === "private_hidden") {
-        counts.privateHidden += 1;
-      } else if (crossing.dataQuality.status === "closed_hidden") {
+      if (crossing.dataQuality.status === "closed_hidden") {
         counts.closedHidden += 1;
       } else {
         counts.needsReviewHidden += 1;
@@ -632,7 +638,6 @@ function classifyFraCrossing({ roadName, publicPrivate, closedValue, crossingTyp
   const road = normalizeForClassification(roadName);
   const access = normalizeForClassification(publicPrivate);
   const closed = normalizeForClassification(closedValue);
-  const type = normalizeForClassification(crossingType);
 
   if (
     closed === "yes" ||
@@ -654,15 +659,6 @@ function classifyFraCrossing({ roadName, publicPrivate, closedValue, crossingTyp
     access === "priv" ||
     road.includes("private");
 
-  if (isPrivate) {
-    return {
-      status: "private_hidden",
-      reportable: false,
-      visibleByDefault: false,
-      reason: "Private crossing"
-    };
-  }
-
   const weakRoadName =
     !road ||
     road === "unknown road" ||
@@ -677,17 +673,7 @@ function classifyFraCrossing({ roadName, publicPrivate, closedValue, crossingTyp
     /^rd\s*0+$/i.test(road) ||
     /^road\s*0+$/i.test(road);
 
-  if (weakRoadName) {
-    return {
-      status: "needs_review_hidden",
-      reportable: false,
-      visibleByDefault: false,
-      reason: "Weak or unclear road name"
-    };
-  }
-
-  const obviousNonPublicAccess =
-    road.includes("private drive") ||
+  const accessLikeName =
     road.includes("driveway") ||
     road.includes("drive way") ||
     road.includes("farm entrance") ||
@@ -703,19 +689,26 @@ function classifyFraCrossing({ roadName, publicPrivate, closedValue, crossingTyp
     road.includes("oil field") ||
     road.includes("pipeline access");
 
-  if (obviousNonPublicAccess) {
+  if (isPrivate) {
     return {
-      status: "needs_review_hidden",
-      reportable: false,
-      visibleByDefault: false,
-      reason: "Likely private/access/industrial crossing"
+      status: "private_visible",
+      reportable: true,
+      visibleByDefault: true,
+      reason: "Private crossing shown for map completeness"
     };
   }
 
-  // Softer V4.4 rule:
-  // If it has a usable road name and is not clearly closed/private/junk,
-  // show it as reportable. This avoids hiding good FRA records that have
-  // odd or incomplete public/private field values.
+  if (weakRoadName || accessLikeName) {
+    return {
+      status: "needs_review_visible",
+      reportable: true,
+      visibleByDefault: true,
+      reason: weakRoadName
+        ? "Weak road name but shown for map completeness"
+        : "Access-like crossing shown for review"
+    };
+  }
+
   return {
     status: "reportable_public",
     reportable: true,
@@ -724,6 +717,233 @@ function classifyFraCrossing({ roadName, publicPrivate, closedValue, crossingTyp
   };
 }
 
+function normalizeForClassification(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[._-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+function normalizeFraFeature(feature, index) {
+  const p = feature.properties || {};
+  const coords = feature.geometry && feature.geometry.coordinates;
+
+  if (!coords || coords.length < 2) return null;
+
+  const lng = Number(coords[0]);
+  const lat = Number(coords[1]);
+
+  if (!isValidCoordinate(lat, lng)) return null;
+
+  const crossingId = cleanText(
+    p.crossingid ||
+    p.crossing_id ||
+    p.crossingnumber ||
+    p.dotnumber ||
+    p.crossing ||
+    `FRA-${String(index + 1).padStart(5, "0")}`
+  );
+
+  if (!crossingId) return null;
+
+  const roadName = cleanText(
+    p.highwayname ||
+    p.street ||
+    p.roadname ||
+    p.road ||
+    p.streetname ||
+    p.crossingstreet ||
+    "Unknown Road"
+  );
+
+  const railroadName = cleanText(
+    p.railroadname ||
+    p.railroad ||
+    p.railroadcompany ||
+    p.rrname ||
+    "Unknown Railroad"
+  );
+
+  const cityName = cleanText(p.cityname || p.city || currentRegion.defaultCity);
+  const countyName = cleanText(p.countyname || p.county || currentRegion.county);
+  const stateName = cleanText(p.statename || p.state || currentRegion.state);
+
+  const crossingType = cleanText(
+    p.crossingtype ||
+    p.crossing_type ||
+    p.type ||
+    "N/A"
+  );
+
+  const publicPrivate = cleanText(
+    p.publicprivate ||
+    p.public_private ||
+    p.publicorprivate ||
+    p.public_private_indicator ||
+    "N/A"
+  );
+
+  const aadt = cleanText(
+    p.annualaveragedailytrafficcount ||
+    p.aadt ||
+    p.trafficcount ||
+    "N/A"
+  );
+
+  const closedValue = cleanText(
+    p.crossingclosed ||
+    p.crossing_closed ||
+    p.closed ||
+    ""
+  );
+
+  const classification = classifyFraCrossing({
+    crossingId,
+    roadName,
+    railroadName,
+    crossingType,
+    publicPrivate,
+    closedValue,
+    rawProperties: p
+  });
+
+  const officialName =
+    roadName && roadName !== "Unknown Road"
+      ? `${roadName} Crossing`
+      : `FRA Crossing ${crossingId}`;
+
+  return {
+    id: crossingId,
+    lat,
+    lng,
+    region: {
+      country: "US",
+      state: stateName,
+      county: countyName,
+      city: cityName
+    },
+    asset: {
+      assetId: crossingId,
+      fraCrossingId: crossingId,
+      assetType: "rail_crossing",
+      officialName,
+      communityName: officialName,
+      roadName,
+      railroad: railroadName,
+      city: cityName,
+      county: countyName,
+      state: stateName,
+      country: "US",
+      crossingType,
+      publicPrivate,
+      annualAverageDailyTraffic: aadt,
+      crossingClosed: closedValue,
+      source: {
+        type: "official",
+        provider: FRA_CROSSING_SOURCE_LABEL,
+        datasetId: FRA_CROSSING_DATASET_ID,
+        sourceId: crossingId
+      }
+    },
+    dataQuality: {
+      status: classification.status,
+      reason: classification.reason,
+      reportable: classification.reportable,
+      visibleByDefault: classification.visibleByDefault,
+      coordinateSource: "FRA",
+      reviewedByLocalUser: false,
+      lastReviewedAt: ""
+    },
+    expansion: {
+      regionId: currentRegionId,
+      scaleReady: true,
+      hierarchy: "Region → Asset → Event → Observation"
+    }
+  };
+}
+
+function classifyFraCrossing({ roadName, publicPrivate, closedValue, crossingType }) {
+  const road = normalizeForClassification(roadName);
+  const access = normalizeForClassification(publicPrivate);
+  const closed = normalizeForClassification(closedValue);
+
+  if (
+    closed === "yes" ||
+    closed === "y" ||
+    closed === "true" ||
+    closed === "closed"
+  ) {
+    return {
+      status: "closed_hidden",
+      reportable: false,
+      visibleByDefault: false,
+      reason: "Crossing marked closed"
+    };
+  }
+
+  const isPrivate =
+    access.includes("private") ||
+    access === "p" ||
+    access === "priv" ||
+    road.includes("private");
+
+  const weakRoadName =
+    !road ||
+    road === "unknown road" ||
+    road === "unknown" ||
+    road === "n/a" ||
+    road === "na" ||
+    road === "none" ||
+    road === "st 0000" ||
+    road === "street 0000" ||
+    /^st\s*0+$/i.test(road) ||
+    /^street\s*0+$/i.test(road) ||
+    /^rd\s*0+$/i.test(road) ||
+    /^road\s*0+$/i.test(road);
+
+  const accessLikeName =
+    road.includes("driveway") ||
+    road.includes("drive way") ||
+    road.includes("farm entrance") ||
+    road.includes("field entrance") ||
+    road.includes("yard track") ||
+    road.includes("rail yard") ||
+    road.includes("plant entrance") ||
+    road.includes("plant access") ||
+    road.includes("industrial access") ||
+    road.includes("industry track") ||
+    road.includes("spur track") ||
+    road.includes("lease road") ||
+    road.includes("oil field") ||
+    road.includes("pipeline access");
+
+  if (isPrivate) {
+    return {
+      status: "private_visible",
+      reportable: true,
+      visibleByDefault: true,
+      reason: "Private crossing shown for map completeness"
+    };
+  }
+
+  if (weakRoadName || accessLikeName) {
+    return {
+      status: "needs_review_visible",
+      reportable: true,
+      visibleByDefault: true,
+      reason: weakRoadName
+        ? "Weak road name but shown for map completeness"
+        : "Access-like crossing shown for review"
+    };
+  }
+
+  return {
+    status: "reportable_public",
+    reportable: true,
+    visibleByDefault: true,
+    reason: "Open crossing with usable road name"
+  };
+}
 function normalizeForClassification(value) {
   return String(value || "")
     .toLowerCase()
