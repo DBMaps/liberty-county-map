@@ -677,91 +677,50 @@ function classifyFraCrossing({ roadName, publicPrivate, closedValue, crossingTyp
     /^rd\s*0+$/i.test(road) ||
     /^road\s*0+$/i.test(road);
 
-  const accessLikeName =
-    road.includes("driveway") ||
-    road.includes("drive way") ||
-    road.includes("private drive") ||
-    road.includes("farm entrance") ||
-    road.includes("field") ||
-    road.includes("yard") ||
-    road.includes("plant") ||
-    road.includes("spur") ||
-    road.includes("access") ||
-    road.includes("lease road") ||
-    road.includes("oil field") ||
-    road.includes("pipeline") ||
-    road.includes("industrial") ||
-    road.includes("industry") ||
-    road.includes("entrance") ||
-    road.includes("trail") ||
-    road.includes("path");
-
-  if (weakRoadName || accessLikeName) {
+  if (weakRoadName) {
     return {
       status: "needs_review_hidden",
       reportable: false,
       visibleByDefault: false,
-      reason: weakRoadName ? "Weak or unclear road name" : "Likely access/private/industrial crossing"
+      reason: "Weak or unclear road name"
     };
   }
 
-  const likelyPublicRoad =
-    road.includes("hwy") ||
-    road.includes("highway") ||
-    road.includes("us ") ||
-    road.includes("fm ") ||
-    road.includes("tx ") ||
-    road.includes("state") ||
-    road.includes("county road") ||
-    road.includes("cr ") ||
-    road.includes("road") ||
-    road.includes("street") ||
-    road.includes("st ") ||
-    road.includes("avenue") ||
-    road.includes("ave") ||
-    road.includes("boulevard") ||
-    road.includes("blvd") ||
-    road.includes("lane") ||
-    road.includes("ln") ||
-    road.includes("drive") ||
-    road.includes("dr") ||
-    road.includes("parkway") ||
-    road.includes("pkwy") ||
-    road.includes("circle") ||
-    road.includes("court") ||
-    road.includes("ct") ||
-    road.includes("way");
+  const obviousNonPublicAccess =
+    road.includes("private drive") ||
+    road.includes("driveway") ||
+    road.includes("drive way") ||
+    road.includes("farm entrance") ||
+    road.includes("field entrance") ||
+    road.includes("yard track") ||
+    road.includes("rail yard") ||
+    road.includes("plant entrance") ||
+    road.includes("plant access") ||
+    road.includes("industrial access") ||
+    road.includes("industry track") ||
+    road.includes("spur track") ||
+    road.includes("lease road") ||
+    road.includes("oil field") ||
+    road.includes("pipeline access");
 
-  const typeLooksPublic =
-    type.includes("public") ||
-    access.includes("public") ||
-    access === "n/a" ||
-    access === "na" ||
-    access === "";
-
-  if (likelyPublicRoad && typeLooksPublic) {
+  if (obviousNonPublicAccess) {
     return {
-      status: "reportable_public",
-      reportable: true,
-      visibleByDefault: true,
-      reason: "Public/reportable crossing"
+      status: "needs_review_hidden",
+      reportable: false,
+      visibleByDefault: false,
+      reason: "Likely private/access/industrial crossing"
     };
   }
 
-  if (likelyPublicRoad) {
-    return {
-      status: "reportable_public",
-      reportable: true,
-      visibleByDefault: true,
-      reason: "Likely public road crossing"
-    };
-  }
-
+  // Softer V4.4 rule:
+  // If it has a usable road name and is not clearly closed/private/junk,
+  // show it as reportable. This avoids hiding good FRA records that have
+  // odd or incomplete public/private field values.
   return {
-    status: "needs_review_hidden",
-    reportable: false,
-    visibleByDefault: false,
-    reason: "Record needs local review"
+    status: "reportable_public",
+    reportable: true,
+    visibleByDefault: true,
+    reason: "Open crossing with usable road name"
   };
 }
 
