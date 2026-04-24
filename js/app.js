@@ -1,26 +1,60 @@
-/* Liberty County Spatial Intelligence System — V4
+/* Liberty County Spatial Intelligence System — V4.1
    Pure HTML/CSS/JS + Leaflet
    Boundary file is loaded but never modified.
+
+   V4.1 goals:
+   - Preserve working V4 reporting flow
+   - Add region registry prep
+   - Improve localStorage migration safety
+   - Improve impact explanation and confidence scoring
+   - Improve alerts panel wording/status
+   - Keep GitHub Pages compatibility
 */
 
-const APP_VERSION = "4.0.0";
+const APP_VERSION = "4.1.0";
+
+const REGIONS = {
+  "US-TX-Liberty": {
+    id: "US-TX-Liberty",
+    label: "Liberty County, Texas",
+    country: "US",
+    state: "TX",
+    county: "Liberty",
+    defaultCity: "Dayton",
+    mapCenter: [30.0466, -94.8852],
+    defaultZoom: 11,
+    boundaryPath: "data/liberty-county-boundary.geojson",
+    crossingsPath: "data/liberty-county-rail-crossings.geojson"
+  }
+};
+
+let currentRegionId = "US-TX-Liberty";
+let currentRegion = REGIONS[currentRegionId];
 
 const DATA_PATHS = {
-  boundary: "data/liberty-county-boundary.geojson",
-  crossings: "data/liberty-county-rail-crossings.geojson"
+  get boundary() {
+    return currentRegion.boundaryPath;
+  },
+  get crossings() {
+    return currentRegion.crossingsPath;
+  }
 };
 
 const STORAGE_KEYS = {
-  events: "lcsi_v40_events",
-  savedLocations: "lcsi_v40_saved_locations",
-  alertPrefs: "lcsi_v40_alert_preferences"
+  events: "lcsi_v41_events",
+  savedLocations: "lcsi_v41_saved_locations",
+  alertPrefs: "lcsi_v41_alert_preferences",
+
+  legacyEvents: "lcsi_v40_events",
+  legacySavedLocations: "lcsi_v40_saved_locations",
+  legacyAlertPrefs: "lcsi_v40_alert_preferences"
 };
 
 const REGION_DEFAULT = {
-  country: "US",
-  state: "TX",
-  county: "Liberty",
-  city: "Dayton"
+  country: currentRegion.country,
+  state: currentRegion.state,
+  county: currentRegion.county,
+  city: currentRegion.defaultCity
 };
 
 const ALERT_DEFAULTS = {
@@ -38,9 +72,20 @@ let crossings = [];
 let crossingMarkers = new Map();
 let recentlyCleared = new Map();
 
-let events = loadFromStorage(STORAGE_KEYS.events, []);
-let savedLocations = loadFromStorage(STORAGE_KEYS.savedLocations, []);
-let alertPrefs = loadFromStorage(STORAGE_KEYS.alertPrefs, ALERT_DEFAULTS);
+let events = loadWithMigration(STORAGE_KEYS.events, STORAGE_KEYS.legacyEvents, []);
+let savedLocations = loadWithMigration(
+  STORAGE_KEYS.savedLocations,
+  STORAGE_KEYS.legacySavedLocations,
+  []
+);
+let alertPrefs = {
+  ...ALERT_DEFAULTS,
+  ...loadWithMigration(
+    STORAGE_KEYS.alertPrefs,
+    STORAGE_KEYS.legacyAlertPrefs,
+    ALERT_DEFAULTS
+  )
+};
 
 const els = {
   useLocationBtn: document.getElementById("useLocationBtn"),
@@ -55,6 +100,8 @@ const els = {
   localAlertsToggle: document.getElementById("localAlertsToggle"),
   enableBrowserAlertsBtn: document.getElementById("enableBrowserAlertsBtn"),
   alertStatus: document.getElementById("alertStatus"),
+  localVisualAlertStatus: document.getElementById("localVisualAlertStatus"),
+  browserNotificationStatus: document.getElementById("browserNotificationStatus"),
 
   searchInput: document.getElementById("searchInput"),
   searchBtn: document.getElementById("searchBtn"),
@@ -69,7 +116,10 @@ const els = {
   toastStack: document.getElementById("toastStack")
 };
 
-init();
+init().catch((error) => {
+  console.error("App initialization failed:", error);
+  showToast("Startup warning", "The app loaded with a recoverable startup issue.");
+});
 
 async function init() {
   initMap();
@@ -90,7 +140,7 @@ async function init() {
 function initMap() {
   map = L.map("map", {
     zoomControl: true
-  }).setView([30.0466, -94.8852], 11);
+  }).setView(currentRegion.mapCenter, currentRegion.defaultZoom);
 
   const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 20,
@@ -134,6 +184,8 @@ function initMap() {
 async function loadBoundary() {
   try {
     const response = await fetch(DATA_PATHS.boundary);
+    if (!response.ok) throw new Error(`Boundary HTTP ${response.status}`);
+
     const geojson = await response.json();
 
     boundaryLayer = L.geoJSON(geojson, {
@@ -157,13 +209,18 @@ async function loadBoundary() {
 async function loadCrossings() {
   try {
     const response = await fetch(DATA_PATHS.crossings);
+    if (!response.ok) throw new Error(`Crossings HTTP ${response.status}`);
+
     const geojson = await response.json();
 
     crossings = normalizeCrossings(geojson);
   } catch (error) {
     console.error("Crossing load failed:", error);
     crossings = getFallbackCrossings();
-    showToast("Crossing fallback loaded", "Using built-in crossing examples because the crossing file did not load.");
+    showToast(
+      "Crossing fallback loaded",
+      "Using built-in crossing examples because the crossing file did not load."
+    );
   }
 
   crossingLayer = L.layerGroup().addTo(map);
@@ -209,6 +266,8 @@ function normalizeCrossings(geojson) {
         `LC-${String(index + 1).padStart(3, "0")}`
       );
 
+      if (!assetId) return null;
+
       const officialName = cleanText(
         p.officialName ||
         p.name ||
@@ -228,12 +287,7 @@ function normalizeCrossings(geojson) {
         id: assetId,
         lat,
         lng,
-        region: {
-          country: cleanText(p.country || REGION_DEFAULT.country),
-          state: cleanText(p.state || REGION_DEFAULT.state),
-          county: cleanText(p.county || REGION_DEFAULT.county),
-          city: cleanText(p.city || REGION_DEFAULT.city)
-        },
+        region: normalizeRegion(p),
         asset: {
           assetId,
           assetType: "rail_crossing",
@@ -241,6 +295,10 @@ function normalizeCrossings(geojson) {
           communityName,
           roadName: cleanText(p.roadName || p.road || officialName),
           railroad: cleanText(p.railroad || p.railroadName || "Unknown Railroad"),
+          city: cleanText(p.city || currentRegion.defaultCity),
+          county: cleanText(p.county || currentRegion.county),
+          state: cleanText(p.state || currentRegion.state),
+          country: cleanText(p.country || currentRegion.country),
           source: {
             type: cleanText(p.sourceType || "local"),
             provider: cleanText(p.provider || "liberty-county-map"),
@@ -248,12 +306,22 @@ function normalizeCrossings(geojson) {
           }
         },
         expansion: {
+          regionId: currentRegionId,
           scaleReady: true,
           hierarchy: "Region → Asset → Event → Observation"
         }
       };
     })
     .filter(Boolean);
+}
+
+function normalizeRegion(properties = {}) {
+  return {
+    country: cleanText(properties.country || currentRegion.country),
+    state: cleanText(properties.state || currentRegion.state),
+    county: cleanText(properties.county || currentRegion.county),
+    city: cleanText(properties.city || currentRegion.defaultCity)
+  };
 }
 
 function getFallbackCrossings() {
@@ -279,6 +347,10 @@ function makeCrossing(assetId, lat, lng, officialName, communityName, roadName) 
       communityName,
       roadName,
       railroad: "Unknown Railroad",
+      city: REGION_DEFAULT.city,
+      county: REGION_DEFAULT.county,
+      state: REGION_DEFAULT.state,
+      country: REGION_DEFAULT.country,
       source: {
         type: "local",
         provider: "liberty-county-map",
@@ -286,6 +358,7 @@ function makeCrossing(assetId, lat, lng, officialName, communityName, roadName) 
       }
     },
     expansion: {
+      regionId: currentRegionId,
       scaleReady: true,
       hierarchy: "Region → Asset → Event → Observation"
     }
@@ -317,20 +390,47 @@ function bindUi() {
 function hydrateAlertUi() {
   els.localAlertsToggle.checked = Boolean(alertPrefs.localVisualAlerts);
 
+  if (els.localVisualAlertStatus) {
+    els.localVisualAlertStatus.textContent = alertPrefs.localVisualAlerts ? "On" : "Off";
+  }
+
   if (!("Notification" in window)) {
-    els.alertStatus.textContent = "Browser notifications are not supported in this browser.";
+    alertPrefs.browserNotifications = false;
+    els.alertStatus.textContent =
+      "Browser notifications: Not supported. Local visual alerts can still work while this page is open.";
+
+    if (els.browserNotificationStatus) {
+      els.browserNotificationStatus.textContent = "Not supported";
+    }
+
+    saveToStorage(STORAGE_KEYS.alertPrefs, alertPrefs);
     return;
   }
 
   if (Notification.permission === "granted") {
     alertPrefs.browserNotifications = true;
-    els.alertStatus.textContent = "Browser notifications enabled.";
+    els.alertStatus.textContent =
+      "Browser notifications: Enabled for this browser. Server push alerts are a future phase.";
+
+    if (els.browserNotificationStatus) {
+      els.browserNotificationStatus.textContent = "Enabled";
+    }
   } else if (Notification.permission === "denied") {
     alertPrefs.browserNotifications = false;
-    els.alertStatus.textContent = "Browser notifications blocked in browser settings.";
+    els.alertStatus.textContent =
+      "Browser notifications: Blocked in browser settings. Local visual alerts can still work while this page is open.";
+
+    if (els.browserNotificationStatus) {
+      els.browserNotificationStatus.textContent = "Blocked";
+    }
   } else {
     alertPrefs.browserNotifications = false;
-    els.alertStatus.textContent = "Browser notifications not enabled.";
+    els.alertStatus.textContent =
+      "Browser notifications: Not enabled. Local visual alerts only work while this page is open.";
+
+    if (els.browserNotificationStatus) {
+      els.browserNotificationStatus.textContent = "Not enabled";
+    }
   }
 
   saveToStorage(STORAGE_KEYS.alertPrefs, alertPrefs);
@@ -338,21 +438,31 @@ function hydrateAlertUi() {
 
 function requestBrowserNotifications() {
   if (!("Notification" in window)) {
-    els.alertStatus.textContent = "Browser notifications are not supported in this browser.";
+    els.alertStatus.textContent =
+      "Browser notifications are not supported in this browser.";
+    hydrateAlertUi();
     return;
   }
 
   Notification.requestPermission().then((permission) => {
     if (permission === "granted") {
       alertPrefs.browserNotifications = true;
-      els.alertStatus.textContent = "Browser notifications enabled.";
-      showToast("Alerts enabled", "This browser can now show local rail blockage alerts.");
+      showToast(
+        "Browser notifications enabled",
+        "This browser can now show local rail blockage notices while allowed by the browser."
+      );
+    } else if (permission === "denied") {
+      alertPrefs.browserNotifications = false;
+      showToast(
+        "Browser notifications blocked",
+        "You can still use local visual alerts while the page is open."
+      );
     } else {
       alertPrefs.browserNotifications = false;
-      els.alertStatus.textContent = "Browser notifications were not enabled.";
     }
 
     saveToStorage(STORAGE_KEYS.alertPrefs, alertPrefs);
+    hydrateAlertUi();
   });
 }
 
@@ -452,8 +562,14 @@ function createObservation(type) {
   const now = new Date().toISOString();
   const assetId = selectedCrossing.asset.assetId;
 
+  if (!assetId || !isValidCoordinate(selectedCrossing.lat, selectedCrossing.lng)) {
+    showToast("Report blocked", "This crossing is missing a valid asset ID or coordinate.");
+    return;
+  }
+
   let event = events.find(
     (item) =>
+      item.asset &&
       item.asset.assetId === assetId &&
       item.status === "active"
   );
@@ -473,7 +589,7 @@ function createObservation(type) {
     applyImpactModel(event);
 
     els.locationStatus.textContent =
-      `${selectedCrossing.asset.communityName} marked blocked. Impact: ${event.impact}.`;
+      `${selectedCrossing.asset.communityName} marked blocked. Impact: ${event.impact}. Confidence: ${event.confidenceLabel}.`;
 
     triggerAlertsForEvent(event);
   }
@@ -484,6 +600,8 @@ function createObservation(type) {
       event.status = "resolved";
       event.severity = "low";
       event.impact = "cleared";
+      event.confidence = "community";
+      event.confidenceLabel = "Community report";
       event.resolvedAt = now;
       event.reports.push(makeObservation(type, now));
       events.push(event);
@@ -506,7 +624,10 @@ function createObservation(type) {
     els.locationStatus.textContent =
       `${selectedCrossing.asset.communityName} marked cleared. Active event removed from summary.`;
 
-    showToast("Crossing cleared", `${selectedCrossing.asset.communityName} is now marked recently cleared.`);
+    showToast(
+      "Crossing cleared",
+      `${selectedCrossing.asset.communityName} is now marked recently cleared.`
+    );
 
     setTimeout(() => {
       recentlyCleared.delete(assetId);
@@ -538,20 +659,24 @@ function createEventRecord(crossing, timestamp) {
     severity: "moderate",
     impact: "moderate",
     confidence: "community",
+    confidenceLabel: "Low confidence",
     firstReportedAt: timestamp,
     lastReportedAt: timestamp,
     reportCount: 0,
     reports: [],
     impactModel: {
-      version: "V4",
+      version: "V4.1",
       factors: {
         reportCount: 0,
         durationMinutes: 0,
         spilloverRisk: "localized",
-        routeImportance: getRouteImportance(crossing.asset.roadName)
-      }
+        routeImportance: getRouteImportance(crossing.asset.roadName),
+        confidenceLabel: "Low confidence"
+      },
+      explanation: "Moderate impact based on initial community report."
     },
     expansion: {
+      regionId: currentRegionId,
       hierarchy: "Region → Asset → Event → Observation",
       nationalReady: true
     }
@@ -573,7 +698,12 @@ function applyImpactModel(event) {
   const blockedReports = event.reports.filter((report) => report.type === "blocked").length;
   const durationMinutes = getDurationMinutes(event.firstReportedAt, event.lastReportedAt);
   const routeImportance = getRouteImportance(event.asset.roadName);
-  const spilloverRisk = calculateSpilloverRisk(event.asset.roadName, blockedReports, durationMinutes);
+  const spilloverRisk = calculateSpilloverRisk(
+    event.asset.roadName,
+    blockedReports,
+    durationMinutes
+  );
+  const confidenceLabel = getConfidenceLabel(blockedReports);
 
   let impact = "moderate";
   let severity = "moderate";
@@ -588,8 +718,18 @@ function applyImpactModel(event) {
     severity = "high";
   }
 
+  if (durationMinutes >= 20 && routeImportance === "major" && impact === "moderate") {
+    impact = "heavy";
+    severity = "high";
+  }
+
   if (durationMinutes >= 30 && impact === "moderate") {
     impact = "heavy";
+    severity = "high";
+  }
+
+  if (routeImportance === "major" && impact === "heavy" && durationMinutes >= 20) {
+    impact = "severe";
     severity = "high";
   }
 
@@ -598,44 +738,70 @@ function applyImpactModel(event) {
     severity = "critical";
   }
 
-  if (routeImportance === "major" && impact === "heavy" && durationMinutes >= 20) {
-    impact = "severe";
-    severity = "high";
-  }
-
   event.reportCount = blockedReports;
   event.impact = impact;
   event.severity = severity;
+  event.confidence = "community";
+  event.confidenceLabel = confidenceLabel;
   event.impactModel = {
-    version: "V4",
+    version: "V4.1",
     factors: {
       reportCount: blockedReports,
       durationMinutes,
       spilloverRisk,
-      routeImportance
+      routeImportance,
+      confidenceLabel
     },
-    explanation: buildImpactExplanation(impact, blockedReports, durationMinutes, spilloverRisk, routeImportance)
+    explanation: buildImpactExplanation(
+      impact,
+      blockedReports,
+      durationMinutes,
+      spilloverRisk,
+      routeImportance,
+      confidenceLabel
+    )
   };
 }
 
-function buildImpactExplanation(impact, reportCount, durationMinutes, spilloverRisk, routeImportance) {
+function buildImpactExplanation(
+  impact,
+  reportCount,
+  durationMinutes,
+  spilloverRisk,
+  routeImportance,
+  confidenceLabel
+) {
   const parts = [];
 
   parts.push(`${reportCount} blocked ${reportCount === 1 ? "report" : "reports"}`);
 
   if (durationMinutes > 0) {
-    parts.push(`${durationMinutes} min duration`);
+    parts.push(`${durationMinutes} min active duration`);
+  } else {
+    parts.push("newly reported");
   }
 
   if (routeImportance === "major") {
     parts.push("major road crossing");
+  } else {
+    parts.push("local road crossing");
   }
 
   if (spilloverRisk !== "localized") {
     parts.push(`${spilloverRisk} spillover risk`);
+  } else {
+    parts.push("localized spillover risk");
   }
 
-  return `${capitalize(impact)} impact based on ${parts.join(", ")}.`;
+  parts.push(`${confidenceLabel.toLowerCase()}`);
+
+  return `${capitalize(impact)} impact because of ${parts.join(", ")}.`;
+}
+
+function getConfidenceLabel(reportCount) {
+  if (reportCount >= 4) return "High confidence";
+  if (reportCount >= 2) return "Medium confidence";
+  return "Low confidence";
 }
 
 function getRouteImportance(roadName) {
@@ -729,7 +895,8 @@ function renderEventSummary() {
           <div>Duration: ${duration}</div>
           <div>Road: ${escapeHtml(event.asset.roadName)}</div>
           <div>Spillover: ${escapeHtml(event.impactModel.factors.spilloverRisk)}</div>
-          <div>${escapeHtml(explanation)}</div>
+          <div>Confidence: ${escapeHtml(event.confidenceLabel)}</div>
+          <div>Why: ${escapeHtml(explanation)}</div>
           <div>Last report: ${formatTime(event.lastReportedAt)}</div>
         </div>
       </article>
@@ -747,6 +914,7 @@ function renderImpactInsight() {
 
   const event = events.find(
     (item) =>
+      item.asset &&
       item.asset.assetId === selectedCrossing.asset.assetId &&
       item.status === "active"
   );
@@ -759,7 +927,11 @@ function renderImpactInsight() {
         <strong>${escapeHtml(selectedCrossing.asset.communityName)}</strong>
         <span class="pill cleared">Cleared</span>
       </div>
-      This crossing was recently marked cleared. Active impact has been removed.
+
+      <div class="impactExplanation">
+        <strong>Result</strong>
+        This crossing was recently marked cleared. Active impact has been removed from the local event summary.
+      </div>
     `;
     return;
   }
@@ -770,9 +942,16 @@ function renderImpactInsight() {
     els.impactInsight.innerHTML = `
       <div class="impactTitle">
         <strong>${escapeHtml(selectedCrossing.asset.communityName)}</strong>
-        <span class="pill moderate">Ready</span>
+        <span class="pill ready">Ready</span>
       </div>
+
       No active blockage reported.
+
+      <div class="impactExplanation">
+        <strong>Why this status?</strong>
+        No active local event exists for this crossing. Reporting will attach to this known crossing asset.
+      </div>
+
       <div class="impactDetails">
         <div class="metricBox">
           <span>Road Type</span>
@@ -781,6 +960,14 @@ function renderImpactInsight() {
         <div class="metricBox">
           <span>Spillover</span>
           <strong>localized</strong>
+        </div>
+        <div class="metricBox">
+          <span>Confidence</span>
+          <strong>No active report</strong>
+        </div>
+        <div class="metricBox">
+          <span>Region</span>
+          <strong>${escapeHtml(currentRegion.label)}</strong>
         </div>
       </div>
     `;
@@ -795,7 +982,10 @@ function renderImpactInsight() {
       <span class="pill ${escapeHtml(event.impact)}">${escapeHtml(event.impact)}</span>
     </div>
 
-    ${escapeHtml(event.impactModel.explanation)}
+    <div class="impactExplanation">
+      <strong>Why this impact?</strong>
+      ${escapeHtml(event.impactModel.explanation)}
+    </div>
 
     <div class="impactDetails">
       <div class="metricBox">
@@ -814,6 +1004,14 @@ function renderImpactInsight() {
         <span>Spillover</span>
         <strong>${escapeHtml(event.impactModel.factors.spilloverRisk)}</strong>
       </div>
+      <div class="metricBox">
+        <span>Confidence</span>
+        <strong>${escapeHtml(event.confidenceLabel)}</strong>
+      </div>
+      <div class="metricBox">
+        <span>Model</span>
+        <strong>${escapeHtml(event.impactModel.version)}</strong>
+      </div>
     </div>
   `;
 }
@@ -822,6 +1020,7 @@ function refreshCrossingMarkerStyles() {
   crossingMarkers.forEach((marker, assetId) => {
     const activeEvent = events.find(
       (event) =>
+        event.asset &&
         event.asset.assetId === assetId &&
         event.status === "active"
     );
@@ -842,7 +1041,8 @@ function refreshCrossingMarkerStyles() {
         color: color.stroke,
         fillColor: color.fill,
         fillOpacity: 0.92,
-        weight: isSelected ? 4 : 3
+        weight: isSelected ? 4 : 3,
+        className: ""
       });
     } else if (wasRecentlyCleared) {
       marker.setStyle({
@@ -859,7 +1059,8 @@ function refreshCrossingMarkerStyles() {
         color: isSelected ? "#5f3c1d" : "#1d4ed8",
         fillColor: isSelected ? "#f59e0b" : "#2563eb",
         fillOpacity: 0.86,
-        weight: isSelected ? 3 : 2
+        weight: isSelected ? 3 : 2,
+        className: ""
       });
     }
 
@@ -890,6 +1091,7 @@ function getImpactColor(impact) {
 function buildCrossingPopup(crossing) {
   const activeEvent = events.find(
     (event) =>
+      event.asset &&
       event.asset.assetId === crossing.asset.assetId &&
       event.status === "active"
   );
@@ -905,6 +1107,7 @@ function buildCrossingPopup(crossing) {
       <p><strong>Status:</strong> Active blockage</p>
       <p><strong>Impact:</strong> ${escapeHtml(activeEvent.impact)}</p>
       <p><strong>Reports:</strong> ${activeEvent.reportCount}</p>
+      <p><strong>Confidence:</strong> ${escapeHtml(activeEvent.confidenceLabel)}</p>
       <p><strong>Spillover:</strong> ${escapeHtml(activeEvent.impactModel.factors.spilloverRisk)}</p>
     `;
   }
@@ -921,6 +1124,7 @@ function buildCrossingPopup(crossing) {
       <h3>${escapeHtml(crossing.asset.communityName)}</h3>
       <p><strong>Official:</strong> ${escapeHtml(crossing.asset.officialName)}</p>
       <p><strong>Road:</strong> ${escapeHtml(crossing.asset.roadName)}</p>
+      <p><strong>Region:</strong> ${escapeHtml(crossing.region.county)}, ${escapeHtml(crossing.region.state)}</p>
       ${statusHtml}
       <div class="popupActions">
         <button onclick="window.LCSI.selectAndReport('${escapeAttr(crossing.asset.assetId)}','blocked')">
@@ -974,6 +1178,10 @@ async function runSearch() {
       }
     });
 
+    if (!response.ok) {
+      throw new Error(`Search HTTP ${response.status}`);
+    }
+
     const results = await response.json();
 
     if (!Array.isArray(results) || results.length === 0) {
@@ -1016,6 +1224,7 @@ function saveCurrentView() {
   const item = {
     id: `view_${Date.now()}`,
     label: `Saved View ${savedLocations.length + 1}`,
+    regionId: currentRegionId,
     lat: center.lat,
     lng: center.lng,
     zoom,
@@ -1081,6 +1290,21 @@ function normalizeStoredEvents() {
     if (!event.status) event.status = "active";
     if (!event.firstReportedAt) event.firstReportedAt = new Date().toISOString();
     if (!event.lastReportedAt) event.lastReportedAt = event.firstReportedAt;
+    if (!event.expansion) {
+      event.expansion = {
+        regionId: currentRegionId,
+        hierarchy: "Region → Asset → Event → Observation",
+        nationalReady: true
+      };
+    }
+
+    if (!event.asset.source) {
+      event.asset.source = {
+        type: "local",
+        provider: "liberty-county-map",
+        sourceId: event.asset.assetId
+      };
+    }
 
     if (event.status === "active") {
       applyImpactModel(event);
@@ -1194,20 +1418,45 @@ function escapeAttr(value) {
   return escapeHtml(value).replaceAll("`", "&#096;");
 }
 
+function cloneFallback(fallback) {
+  return JSON.parse(JSON.stringify(fallback));
+}
+
 function loadFromStorage(key, fallback) {
   try {
     const raw = localStorage.getItem(key);
 
-    if (!raw) return JSON.parse(JSON.stringify(fallback));
+    if (!raw) return cloneFallback(fallback);
 
     return JSON.parse(raw);
   } catch {
-    return JSON.parse(JSON.stringify(fallback));
+    return cloneFallback(fallback);
   }
 }
 
+function loadWithMigration(newKey, legacyKey, fallback) {
+  const current = loadFromStorage(newKey, null);
+
+  if (current !== null) {
+    return current;
+  }
+
+  const legacy = loadFromStorage(legacyKey, null);
+
+  if (legacy !== null) {
+    saveToStorage(newKey, legacy);
+    return legacy;
+  }
+
+  return cloneFallback(fallback);
+}
+
 function saveToStorage(key, value) {
-  localStorage.setItem(key, JSON.stringify(value));
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    console.error(`Unable to save ${key}:`, error);
+  }
 }
 
 window.LCSI = {
@@ -1226,6 +1475,14 @@ window.LCSI = {
 
   getCrossings() {
     return crossings;
+  },
+
+  getRegions() {
+    return REGIONS;
+  },
+
+  getCurrentRegion() {
+    return currentRegion;
   },
 
   version: APP_VERSION

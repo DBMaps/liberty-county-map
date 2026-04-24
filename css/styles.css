@@ -295,6 +295,21 @@ input:focus {
   color: var(--ink);
 }
 
+.impactExplanation {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 13px;
+  padding: 10px;
+  margin-top: 10px;
+  color: #374151;
+}
+
+.impactExplanation strong {
+  display: block;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
 .impactDetails {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -322,6 +337,36 @@ input:focus {
   display: block;
   margin-top: 4px;
   color: var(--ink);
+}
+
+.alertCapabilityGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.alertCapabilityGrid div {
+  border: 1px solid #e5e7eb;
+  background: #fafafa;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.alertCapabilityGrid span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+}
+
+.alertCapabilityGrid strong {
+  display: block;
+  margin-top: 4px;
+  color: var(--ink);
+  font-size: 13px;
 }
 
 .toggleRow {
@@ -427,16 +472,24 @@ input:focus {
   white-space: nowrap;
 }
 
+.pill.ready {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.pill.low,
 .pill.moderate {
   background: #fef3c7;
   color: #92400e;
 }
 
+.pill.medium,
 .pill.heavy {
   background: #ffedd5;
   color: #9a3412;
 }
 
+.pill.high,
 .pill.severe {
   background: #fee2e2;
   color: #991b1b;
@@ -569,6 +622,16 @@ input:focus {
   font-size: 12px;
 }
 
+.popupActions button:first-child {
+  background: var(--danger);
+  color: #fff;
+}
+
+.popupActions button:last-child {
+  background: var(--success);
+  color: #fff;
+}
+
 .toastStack {
   position: absolute;
   top: 16px;
@@ -658,5 +721,9 @@ input:focus {
 
   .topbar {
     align-items: flex-start;
+  }
+
+  .impactDetails {
+    grid-template-columns: 1fr;
   }
 }
