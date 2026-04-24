@@ -177,4 +177,49 @@ async function loadReports() {
   }
 
   console.log("Reports loaded:", data.length);
+
+  activeReports = {};
+
+  data.forEach((report) => {
+    if (!report.crossing_id) return;
+
+    if (!activeReports[report.crossing_id]) {
+      activeReports[report.crossing_id] = report;
+    }
+  });
+
+  if (reportLayer) {
+    map.removeLayer(reportLayer);
+  }
+
+  reportLayer = L.layerGroup();
+
+  Object.values(activeReports).forEach((report) => {
+    if (!report.lat || !report.lng) return;
+
+    const isResolved =
+      report.status === "resolved" || report.report_type === "cleared";
+
+    const marker = L.circleMarker([report.lat, report.lng], {
+      radius: 9,
+      color: "#111827",
+      weight: 2,
+      fillColor: isResolved ? "#22c55e" : "#ef4444",
+      fillOpacity: 0.92,
+    });
+
+    marker.bindPopup(`
+      <strong>${report.road_name || "Railroad Crossing"}</strong><br>
+      Crossing ID: ${report.crossing_id}<br>
+      Status: ${isResolved ? "Cleared" : "Blocked"}<br>
+      Report Type: ${report.report_type}<br>
+      Railroad: ${report.railroad || "N/A"}<br>
+      Reported: ${new Date(report.created_at).toLocaleString()}
+    `);
+
+    reportLayer.addLayer(marker);
+  });
+
+  reportLayer.addTo(map);
+}
 }
