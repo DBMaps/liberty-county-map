@@ -1,91 +1,143 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Liberty County Spatial Intelligence System</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ0K0Cfz6pIiw6rEjh7zVU4uXOVB9Ec=" crossorigin="" />
+  <title>Gridly | Know Before You Go</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="css/styles.css" />
+
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="js/app.js"></script>
 </head>
+
 <body>
+  <div class="grid-glow"></div>
+
   <div class="app-shell">
     <header class="topbar">
-      <div>
-        <p class="eyebrow">V5.1 Shared Live Reporting Cleanup</p>
-        <h1>Liberty County Spatial Intelligence System</h1>
-        <p class="subtitle">Rail crossing visibility, public reports, and local impact awareness for Liberty County, Texas.</p>
+      <div class="brand-lockup">
+        <div class="brand-mark">
+          <span class="pin-core"></span>
+          <span class="pin-grid"></span>
+        </div>
+
+        <div>
+          <div class="version-tag">Gridly V6.0 Launch Preview</div>
+          <h1>GRIDLY</h1>
+          <p>Know before you go.</p>
+        </div>
       </div>
+
       <div class="topbar-actions">
-        <button id="locateBtn" class="button button-secondary" type="button">Use My Location</button>
-        <button id="refreshReportsBtn" class="button button-primary" type="button">Refresh Reports</button>
+        <button id="locateBtn" class="primary-btn">Use My Location</button>
+        <button id="refreshReportsBtn" class="secondary-btn">Refresh Reports</button>
       </div>
     </header>
 
-    <main class="layout">
-      <section class="map-card">
-        <div id="map" aria-label="Liberty County rail crossing map"></div>
-        <div class="legend" aria-label="Map legend">
-          <div><span class="legend-dot legend-open"></span>Open FRA crossing</div>
-          <div><span class="legend-dot legend-review"></span>Needs review / visible</div>
-          <div><span class="legend-dot legend-private"></span>Private / visible</div>
-          <div><span class="legend-dot legend-active"></span>Active blocked report</div>
-          <div><span class="legend-line"></span>Liberty County boundary</div>
+    <section class="mission-card">
+      <div>
+        <span class="eyebrow">Live mobility intelligence</span>
+        <h2>Road, rail, and hazard visibility — built for real-world movement.</h2>
+      </div>
+      <div class="coverage-pill">Pilot Coverage: Liberty County, Texas</div>
+    </section>
+
+    <section class="status-strip">
+      <div class="status-card">
+        <span>Live Crossings</span>
+        <strong id="openCrossingCount">0</strong>
+      </div>
+
+      <div class="status-card alert">
+        <span>Active Reports</span>
+        <strong id="activeReportCount">0</strong>
+      </div>
+
+      <div class="status-card caution">
+        <span>Community Review</span>
+        <strong id="reviewCount">0</strong>
+      </div>
+
+      <div class="status-card muted">
+        <span>Hidden Closed</span>
+        <strong id="hiddenCount">0</strong>
+      </div>
+    </section>
+
+    <main class="main-grid">
+      <section class="map-panel">
+        <div class="map-header">
+          <div>
+            <span class="eyebrow">Live operating map</span>
+            <h2>Gridly Intelligence Layer</h2>
+          </div>
+
+          <div class="map-status-pill">
+            FRA + Community Reports
+          </div>
+        </div>
+
+        <div class="map-wrap">
+          <div id="map"></div>
+
+          <div class="legend">
+            <div class="legend-title">Live Layer Legend</div>
+            <div class="legend-row"><span class="legend-dot dot-blue"></span>Open crossing</div>
+            <div class="legend-row"><span class="legend-dot dot-gold"></span>Community review</div>
+            <div class="legend-row"><span class="legend-dot dot-purple"></span>Private visible</div>
+            <div class="legend-row"><span class="legend-dot dot-red"></span>Active blocked report</div>
+            <div class="legend-row"><span class="legend-dot dot-green"></span>Coverage boundary</div>
+          </div>
         </div>
       </section>
 
-      <aside class="side-panel" aria-label="Reporting and summary panel">
-        <section class="panel-card summary-card">
-          <div class="metric-grid">
-            <div class="metric">
-              <span class="metric-label">Open Crossings</span>
-              <strong id="openCrossingCount">0</strong>
+      <aside class="command-panel">
+        <section class="side-card selected-card">
+          <div class="card-title-row">
+            <div>
+              <span class="eyebrow">Community report console</span>
+              <h2>Selected Location</h2>
             </div>
-            <div class="metric alert">
-              <span class="metric-label">Active Reports</span>
-              <strong id="activeReportCount">0</strong>
-            </div>
-            <div class="metric">
-              <span class="metric-label">Needs Review</span>
-              <strong id="reviewCount">0</strong>
-            </div>
-            <div class="metric">
-              <span class="metric-label">Hidden Closed</span>
-              <strong id="hiddenCount">0</strong>
-            </div>
-          </div>
-        </section>
-
-        <section class="panel-card">
-          <div class="section-heading">
-            <h2>Selected Crossing</h2>
             <span id="selectedBadge" class="badge">None selected</span>
           </div>
-          <div id="selectedCrossing" class="selected-empty">
-            Select a crossing on the map, use your location, or choose a crossing from the active summary.
+
+          <div id="selectedCrossing" class="empty-state">
+            Select a map marker, use your location, or choose an active event to report current conditions.
           </div>
-          <div class="report-actions">
-            <button id="reportBlockedBtn" class="button button-danger" type="button" disabled>Report Blocked</button>
-            <button id="reportClearedBtn" class="button button-success" type="button" disabled>Report Cleared</button>
+
+          <div class="button-row">
+            <button id="reportBlockedBtn" class="blocked-btn" disabled>Report Blocked</button>
+            <button id="reportClearedBtn" class="cleared-btn" disabled>Report Cleared</button>
           </div>
-          <textarea id="reportNotes" placeholder="Optional note: train stopped, gates down, road backed up, etc." rows="3"></textarea>
-          <p id="reportStatus" class="status-line" role="status"></p>
+
+          <textarea id="reportNotes" placeholder="Optional note: train stopped, gates down, traffic backed up, water over road, etc."></textarea>
+
+          <div id="reportStatus" class="status-line">Gridly is ready for community reports.</div>
         </section>
 
-        <section class="panel-card">
-          <div class="section-heading">
-            <h2>Active Event Summary</h2>
-            <span id="lastUpdated" class="small-muted">Not loaded</span>
+        <section class="side-card">
+          <div class="card-title-row">
+            <div>
+              <span class="eyebrow">Current conditions</span>
+              <h2>Active Event Summary</h2>
+            </div>
+            <span id="lastUpdated" class="badge">Not loaded</span>
           </div>
+
           <div id="activeSummary" class="active-summary empty-state">
             No active blocked crossings loaded yet.
           </div>
         </section>
 
-        <section class="panel-card debug-card">
-          <button id="toggleDebugBtn" class="debug-toggle" type="button">Show Diagnostics</button>
+        <section class="side-card diagnostics-card">
+          <button id="toggleDebugBtn" class="ghost-btn">Show Diagnostics</button>
+
           <div id="debugPanel" class="debug-panel" hidden>
-            <div><strong>App:</strong> <span id="debugVersion">—</span></div>
+            <div><strong>App:</strong> <span id="debugVersion">Waiting</span></div>
             <div><strong>FRA:</strong> <span id="debugFra">Waiting</span></div>
             <div><strong>Boundary:</strong> <span id="debugBoundary">Waiting</span></div>
             <div><strong>Supabase:</strong> <span id="debugSupabase">Waiting</span></div>
@@ -95,9 +147,5 @@
       </aside>
     </main>
   </div>
-
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/app.js"></script>
 </body>
 </html>

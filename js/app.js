@@ -4,7 +4,7 @@
   Pure HTML/CSS/Vanilla JS/Leaflet
 */
 
-const APP_VERSION = "V5.1.1 stable + overrides support";
+const APP_VERSION = "Gridly V6.0 WOW dark launch";
 const FRA_URL = "https://data.transportation.gov/resource/m2f8-22s6.geojson?$limit=5000&statename=TEXAS&countyname=LIBERTY";
 const BOUNDARY_URL = "data/liberty-county-boundary.geojson";
 const OVERRIDES_URL = "data/crossing-overrides.json";
