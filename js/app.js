@@ -1,10 +1,10 @@
 /*
-  Liberty County Spatial Intelligence System
-  V5.1.1 stable + crossing overrides support
+  Gridly
+  V7 Hybrid Dashboard
   Pure HTML/CSS/Vanilla JS/Leaflet
 */
 
-const APP_VERSION = "Gridly V6.1 premium polish";
+const APP_VERSION = "Gridly V7 Hybrid Dashboard";
 const FRA_URL = "https://data.transportation.gov/resource/m2f8-22s6.geojson?$limit=5000&statename=TEXAS&countyname=LIBERTY";
 const BOUNDARY_URL = "data/liberty-county-boundary.geojson";
 const OVERRIDES_URL = "data/crossing-overrides.json";
@@ -23,11 +23,17 @@ const state = {
   activeByCrossingId: new Map(),
   selectedCrossing: null,
   hiddenClosedCount: 0,
+  savedPlaces: {
+    home: null,
+    work: null,
+    school: null,
+  },
   layers: {
     boundary: null,
     crossings: null,
     activeReports: null,
     userLocation: null,
+    savedPlaces: null,
   },
 };
 
@@ -36,6 +42,17 @@ const el = {
   activeReportCount: document.getElementById("activeReportCount"),
   reviewCount: document.getElementById("reviewCount"),
   hiddenCount: document.getElementById("hiddenCount"),
+
+  routeRiskBadge: document.getElementById("routeRiskBadge"),
+  routeHeadline: document.getElementById("routeHeadline"),
+  routeSubtext: document.getElementById("routeSubtext"),
+
+  saveHomeBtn: document.getElementById("saveHomeBtn"),
+  saveWorkBtn: document.getElementById("saveWorkBtn"),
+  saveSchoolBtn: document.getElementById("saveSchoolBtn"),
+  clearPlacesBtn: document.getElementById("clearPlacesBtn"),
+  savedPlacesList: document.getElementById("savedPlacesList"),
+
   selectedBadge: document.getElementById("selectedBadge"),
   selectedCrossing: document.getElementById("selectedCrossing"),
   reportBlockedBtn: document.getElementById("reportBlockedBtn"),
@@ -70,17 +87,25 @@ function init() {
 
   state.layers.crossings = L.layerGroup().addTo(state.map);
   state.layers.activeReports = L.layerGroup().addTo(state.map);
+  state.layers.savedPlaces = L.layerGroup().addTo(state.map);
 
   initSupabase();
+  loadSavedPlaces();
   bindEvents();
 
   loadBoundary();
   loadOverrides()
     .then(loadFraCrossings)
     .then(loadReports)
+    .then(() => {
+      renderSavedPlaces();
+      updateRouteDashboard();
+    })
     .catch((error) => {
       console.error("Startup load sequence failed:", error);
       loadReports();
+      renderSavedPlaces();
+      updateRouteDashboard();
     });
 }
 
@@ -104,6 +129,11 @@ function bindEvents() {
   el.reportClearedBtn.addEventListener("click", () => submitReport("cleared"));
   el.refreshReportsBtn.addEventListener("click", loadReports);
   el.locateBtn.addEventListener("click", locateUser);
+
+  el.saveHomeBtn.addEventListener("click", () => saveCurrentLocationAs("home"));
+  el.saveWorkBtn.addEventListener("click", () => saveCurrentLocationAs("work"));
+  el.saveSchoolBtn.addEventListener("click", () => saveCurrentLocationAs("school"));
+  el.clearPlacesBtn.addEventListener("click", clearSavedPlaces);
 
   el.toggleDebugBtn.addEventListener("click", () => {
     el.debugPanel.hidden = !el.debugPanel.hidden;
@@ -155,10 +185,10 @@ async function loadBoundary() {
 
     state.layers.boundary = L.geoJSON(geojson, {
       style: {
-        color: "#38c172",
+        color: "#35d07f",
         weight: 3,
         opacity: 0.95,
-        fillColor: "#38c172",
+        fillColor: "#35d07f",
         fillOpacity: 0.04,
       },
     }).addTo(state.map);
@@ -307,10 +337,7 @@ function applyOverrideValue(crossing, value, reason) {
 
   const updated = { ...crossing };
 
-  if (override === "verified_public") {
-    updated.visibility = "open_visible";
-    updated.needsReviewReason = reason || "";
-  } else if (override === "open_visible") {
+  if (override === "verified_public" || override === "open_visible") {
     updated.visibility = "open_visible";
     updated.needsReviewReason = reason || "";
   } else if (override === "private_visible") {
@@ -415,7 +442,7 @@ function renderCrossings() {
 function getCrossingColor(crossing) {
   if (crossing.visibility === "private_visible") return "#b589ff";
   if (crossing.visibility === "needs_review_visible") return "#f5b942";
-  return "#46a3ff";
+  return "#35a7ff";
 }
 
 function buildCrossingPopup(crossing) {
@@ -439,8 +466,8 @@ function buildCrossingPopup(crossing) {
       ${reviewHtml}
       ${activeHtml}
       <div class="popup-actions">
-        <button onclick="window.reportCrossingFromPopup('${escapeJs(crossing.id)}','blocked')" style="background:#ff4d4f;color:white;">Blocked</button>
-        <button onclick="window.reportCrossingFromPopup('${escapeJs(crossing.id)}','cleared')" style="background:#38c172;color:white;">Cleared</button>
+        <button onclick="window.reportCrossingFromPopup('${escapeJs(crossing.id)}','blocked')" style="background:#ff4655;color:white;">Blocked</button>
+        <button onclick="window.reportCrossingFromPopup('${escapeJs(crossing.id)}','cleared')" style="background:#35d07f;color:white;">Cleared</button>
       </div>
     </div>
   `;
@@ -456,6 +483,7 @@ async function loadReports() {
     renderActiveReports();
     renderActiveSummary();
     updateDashboardCounts();
+    updateRouteDashboard();
 
     el.debugSupabase.textContent = "Offline fallback: no Supabase client";
     el.reportStatus.textContent = "Shared reports unavailable. Map is running in local fallback mode.";
@@ -484,6 +512,7 @@ async function loadReports() {
     renderActiveReports();
     renderActiveSummary();
     updateDashboardCounts();
+    updateRouteDashboard();
   } catch (error) {
     console.error("Reports load failed:", error);
 
@@ -492,6 +521,7 @@ async function loadReports() {
     renderActiveReports();
     renderActiveSummary();
     updateDashboardCounts();
+    updateRouteDashboard();
 
     el.debugSupabase.textContent = "Read failed; fallback active";
     el.reportStatus.textContent = "Shared report read failed. Map is still usable.";
@@ -535,7 +565,7 @@ function renderActiveReports() {
       radius: 11,
       color: "#ffffff",
       weight: 2,
-      fillColor: "#ff4d4f",
+      fillColor: "#ff4655",
       fillOpacity: 0.94,
     });
 
@@ -656,9 +686,7 @@ async function submitReport(type) {
 
   if (!state.supabase) {
     applyLocalReport({ ...payload, id: `local-${Date.now()}`, created_at: now });
-
     console.warn("Insert failure: Supabase unavailable. Applied local fallback report.");
-
     el.reportStatus.textContent = "Supabase unavailable. Local fallback applied for this browser session.";
     return;
   }
@@ -685,9 +713,7 @@ async function submitReport(type) {
     await loadReports();
   } catch (error) {
     console.error("Insert failure:", error);
-
     applyLocalReport({ ...payload, id: `local-${Date.now()}`, created_at: now });
-
     el.reportStatus.textContent = "Report could not be saved to Supabase. Local fallback applied temporarily.";
   }
 }
@@ -700,6 +726,7 @@ function applyLocalReport(report) {
   renderActiveSummary();
   renderCrossings();
   updateDashboardCounts();
+  updateRouteDashboard();
 
   if (state.selectedCrossing) {
     selectCrossing(state.selectedCrossing, false);
@@ -717,6 +744,206 @@ function getClientId() {
 
   return id;
 }
+
+/* Saved route intelligence */
+
+function loadSavedPlaces() {
+  try {
+    const stored = JSON.parse(localStorage.getItem("gridly_saved_places") || "{}");
+    state.savedPlaces = {
+      home: stored.home || null,
+      work: stored.work || null,
+      school: stored.school || null,
+    };
+  } catch {
+    state.savedPlaces = { home: null, work: null, school: null };
+  }
+}
+
+function persistSavedPlaces() {
+  localStorage.setItem("gridly_saved_places", JSON.stringify(state.savedPlaces));
+}
+
+function saveCurrentLocationAs(type) {
+  if (!navigator.geolocation) {
+    el.reportStatus.textContent = "Location is not available in this browser.";
+    return;
+  }
+
+  el.reportStatus.textContent = `Saving current location as ${capitalize(type)}...`;
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      const nearest = findNearestCrossing(lat, lng);
+
+      state.savedPlaces[type] = {
+        label: capitalize(type),
+        lat,
+        lng,
+        nearestCrossingId: nearest?.crossing?.id || null,
+        nearestCrossingName: nearest?.crossing?.roadName || null,
+        savedAt: new Date().toISOString(),
+      };
+
+      persistSavedPlaces();
+      renderSavedPlaces();
+      renderSavedPlaceMarkers();
+      updateRouteDashboard();
+
+      el.reportStatus.textContent = `${capitalize(type)} saved. Gridly route intelligence updated.`;
+    },
+    (error) => {
+      console.warn("Save location failed:", error);
+      el.reportStatus.textContent = "Could not access location. Check browser permissions.";
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
+  );
+}
+
+function clearSavedPlaces() {
+  state.savedPlaces = {
+    home: null,
+    work: null,
+    school: null,
+  };
+
+  persistSavedPlaces();
+  renderSavedPlaces();
+  renderSavedPlaceMarkers();
+  updateRouteDashboard();
+
+  el.reportStatus.textContent = "Saved places cleared.";
+}
+
+function renderSavedPlaces() {
+  const entries = Object.entries(state.savedPlaces).filter(([, place]) => place);
+
+  if (!entries.length) {
+    el.savedPlacesList.className = "saved-places empty-state";
+    el.savedPlacesList.textContent = "No saved places yet.";
+    return;
+  }
+
+  el.savedPlacesList.className = "saved-places";
+  el.savedPlacesList.innerHTML = entries
+    .map(([type, place]) => {
+      const nearest = place.nearestCrossingName
+        ? `Nearest crossing: ${escapeHtml(place.nearestCrossingName)}`
+        : "Nearest crossing not available";
+
+      return `
+        <div class="saved-place-item">
+          <strong>${escapeHtml(capitalize(type))}</strong>
+          <span>${nearest}</span>
+          <span>${Number(place.lat).toFixed(4)}, ${Number(place.lng).toFixed(4)}</span>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+function renderSavedPlaceMarkers() {
+  state.layers.savedPlaces.clearLayers();
+
+  Object.entries(state.savedPlaces).forEach(([type, place]) => {
+    if (!place || !isValidLatLng(place.lat, place.lng)) return;
+
+    const marker = L.circleMarker([place.lat, place.lng], {
+      radius: 8,
+      color: "#ffffff",
+      weight: 2,
+      fillColor: type === "home" ? "#39e6c1" : type === "work" ? "#35a7ff" : "#f5b942",
+      fillOpacity: 0.9,
+    });
+
+    marker.bindPopup(`
+      <div class="crossing-popup">
+        <h3>${escapeHtml(capitalize(type))}</h3>
+        <p>Saved Gridly place</p>
+      </div>
+    `);
+
+    marker.addTo(state.layers.savedPlaces);
+  });
+}
+
+function updateRouteDashboard() {
+  const home = state.savedPlaces.home;
+  const work = state.savedPlaces.work;
+  const school = state.savedPlaces.school;
+
+  renderSavedPlaces();
+  renderSavedPlaceMarkers();
+
+  if (!home && !work && !school) {
+    setRouteStatus("neutral", "Set Home and Work to unlock route intelligence.", "Gridly will compare saved places with active community reports and nearby crossing data.");
+    return;
+  }
+
+  const activeReports = Array.from(state.activeByCrossingId.entries()).map(([crossingId, report]) => ({
+    crossingId,
+    report,
+    crossing: state.crossingById.get(String(crossingId)),
+  }));
+
+  if (!activeReports.length) {
+    setRouteStatus("clear", "No active blocked reports near your saved places.", "Gridly is watching your saved places and nearby crossings.");
+    return;
+  }
+
+  const saved = Object.entries(state.savedPlaces).filter(([, place]) => place);
+  const impacted = [];
+
+  activeReports.forEach(({ crossingId, report, crossing }) => {
+    const lat = Number(report.lat || crossing?.lat);
+    const lng = Number(report.lng || crossing?.lng);
+
+    if (!isValidLatLng(lat, lng)) return;
+
+    saved.forEach(([type, place]) => {
+      const miles = haversineMiles(place.lat, place.lng, lat, lng);
+
+      if (miles <= 5) {
+        impacted.push({
+          type,
+          miles,
+          crossingId,
+          road: report.road_name || crossing?.roadName || "Unknown road",
+        });
+      }
+    });
+  });
+
+  if (!impacted.length) {
+    setRouteStatus("watch", `${activeReports.length} active report${activeReports.length === 1 ? "" : "s"} in the coverage area.`, "No active blocked report appears within 5 miles of your saved places.");
+    return;
+  }
+
+  impacted.sort((a, b) => a.miles - b.miles);
+  const closest = impacted[0];
+
+  setRouteStatus(
+    "blocked",
+    `${capitalize(closest.type)} may be impacted by ${closest.road}.`,
+    `Active blocked report approximately ${closest.miles.toFixed(1)} miles from your saved ${capitalize(closest.type)} location.`
+  );
+}
+
+function setRouteStatus(type, headline, subtext) {
+  el.routeRiskBadge.className = `risk-badge ${type}`;
+  el.routeRiskBadge.textContent =
+    type === "clear" ? "Clear" :
+    type === "watch" ? "Watch" :
+    type === "blocked" ? "Impact" :
+    "Set route";
+
+  el.routeHeadline.textContent = headline;
+  el.routeSubtext.textContent = subtext;
+}
+
+/* Location */
 
 function locateUser() {
   if (!navigator.geolocation) {
@@ -738,7 +965,7 @@ function locateUser() {
         radius: 8,
         color: "#ffffff",
         weight: 2,
-        fillColor: "#38c172",
+        fillColor: "#35d07f",
         fillOpacity: 0.85,
       })
         .addTo(state.map)
@@ -812,6 +1039,11 @@ function formatDateTime(value) {
   });
 }
 
+function capitalize(value) {
+  const text = String(value || "");
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -828,13 +1060,3 @@ function escapeJs(value) {
 }
 
 document.addEventListener("DOMContentLoaded", init);
-/* Gridly V6.1 premium polish behavior */
-window.addEventListener("load", () => {
-  document.body.classList.add("gridly-loaded");
-
-  setTimeout(() => {
-    if (window.dispatchEvent) {
-      window.dispatchEvent(new Event("resize"));
-    }
-  }, 350);
-});

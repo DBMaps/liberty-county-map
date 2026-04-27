@@ -31,12 +31,21 @@
       </div>
     </header>
 
-    <section class="mission-card">
-      <div>
-        <span class="eyebrow">Live mobility intelligence</span>
-        <h2>Road, rail, and hazard visibility — built for real-world movement.</h2>
+    <section class="hero-dashboard">
+      <div class="hero-copy">
+        <span class="eyebrow">Hybrid mobility intelligence</span>
+        <h1>Know what could slow you down before you leave.</h1>
+        <p>Save daily routes, monitor nearby reports, and view live crossing intelligence from the Gridly map.</p>
       </div>
-      <div class="coverage-pill">Pilot Coverage: Liberty County, Texas</div>
+
+      <div class="route-card primary-route">
+        <div class="route-card-top">
+          <span class="eyebrow">Daily route status</span>
+          <span id="routeRiskBadge" class="risk-badge neutral">Set route</span>
+        </div>
+        <h2 id="routeHeadline">Set Home and Work to unlock route intelligence.</h2>
+        <p id="routeSubtext">Gridly will compare saved places with active community reports and nearby crossing data.</p>
+      </div>
     </section>
 
     <section class="status-strip">
@@ -87,6 +96,27 @@
       </section>
 
       <aside class="command-panel">
+        <section class="side-card route-panel">
+          <div class="card-title-row">
+            <div>
+              <span class="eyebrow">Saved route intelligence</span>
+              <h2>Your Places</h2>
+            </div>
+            <span class="badge">Local device</span>
+          </div>
+
+          <div class="saved-place-grid">
+            <button id="saveHomeBtn" class="place-btn">Save Current as Home</button>
+            <button id="saveWorkBtn" class="place-btn">Save Current as Work</button>
+            <button id="saveSchoolBtn" class="place-btn">Save Current as School</button>
+            <button id="clearPlacesBtn" class="place-btn danger-lite">Clear Places</button>
+          </div>
+
+          <div id="savedPlacesList" class="saved-places empty-state">
+            No saved places yet.
+          </div>
+        </section>
+
         <section class="side-card selected-card">
           <div class="card-title-row">
             <div>
