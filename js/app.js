@@ -1,12 +1,13 @@
 /*
   Liberty County Spatial Intelligence System
-  V5.1 shared live reporting cleanup
+  V5.1.1 stable + crossing overrides support
   Pure HTML/CSS/Vanilla JS/Leaflet
 */
 
-const APP_VERSION = "V5.1 shared report display cleanup";
+const APP_VERSION = "V5.1.1 stable + overrides support";
 const FRA_URL = "https://data.transportation.gov/resource/m2f8-22s6.geojson?$limit=5000&statename=TEXAS&countyname=LIBERTY";
 const BOUNDARY_URL = "data/liberty-county-boundary.geojson";
+const OVERRIDES_URL = "data/crossing-overrides.json";
 const SUPABASE_URL = "https://nhwhkbkludzkuyxmkkcj.supabase.co";
 const SUPABASE_KEY = "sb_publishable_T33dpOj4M3TioSqFcVxf2Q_YTmhkPdO";
 
@@ -17,9 +18,11 @@ const state = {
   supabase: null,
   crossings: [],
   crossingById: new Map(),
+  crossingOverrides: {},
   reports: [],
   activeByCrossingId: new Map(),
   selectedCrossing: null,
+  hiddenClosedCount: 0,
   layers: {
     boundary: null,
     crossings: null,
@@ -53,7 +56,7 @@ const el = {
 };
 
 function init() {
-  el.debugVersion.textContent = APP_VERSION;
+  if (el.debugVersion) el.debugVersion.textContent = APP_VERSION;
 
   state.map = L.map("map", {
     zoomControl: true,
@@ -70,9 +73,15 @@ function init() {
 
   initSupabase();
   bindEvents();
+
   loadBoundary();
-  loadFraCrossings();
-  loadReports();
+  loadOverrides()
+    .then(loadFraCrossings)
+    .then(loadReports)
+    .catch((error) => {
+      console.error("Startup load sequence failed:", error);
+      loadReports();
+    });
 }
 
 function initSupabase() {
@@ -80,6 +89,7 @@ function initSupabase() {
     if (!window.supabase || !window.supabase.createClient) {
       throw new Error("Supabase CDN client not available");
     }
+
     state.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     el.debugSupabase.textContent = "Client ready";
   } catch (error) {
@@ -94,6 +104,7 @@ function bindEvents() {
   el.reportClearedBtn.addEventListener("click", () => submitReport("cleared"));
   el.refreshReportsBtn.addEventListener("click", loadReports);
   el.locateBtn.addEventListener("click", locateUser);
+
   el.toggleDebugBtn.addEventListener("click", () => {
     el.debugPanel.hidden = !el.debugPanel.hidden;
     el.toggleDebugBtn.textContent = el.debugPanel.hidden ? "Show Diagnostics" : "Hide Diagnostics";
@@ -113,10 +124,33 @@ function bindEvents() {
   };
 }
 
+async function loadOverrides() {
+  try {
+    const response = await fetch(OVERRIDES_URL, { cache: "no-store" });
+
+    if (!response.ok) {
+      throw new Error(`Overrides HTTP ${response.status}`);
+    }
+
+    const overrides = await response.json();
+
+    if (!overrides || typeof overrides !== "object" || Array.isArray(overrides)) {
+      throw new Error("Overrides file must be a JSON object");
+    }
+
+    state.crossingOverrides = overrides;
+    console.log("Crossing overrides loaded:", Object.keys(overrides).length);
+  } catch (error) {
+    state.crossingOverrides = {};
+    console.warn("Crossing overrides not loaded. Using empty fallback.", error);
+  }
+}
+
 async function loadBoundary() {
   try {
     const response = await fetch(BOUNDARY_URL, { cache: "no-store" });
     if (!response.ok) throw new Error(`Boundary HTTP ${response.status}`);
+
     const geojson = await response.json();
 
     state.layers.boundary = L.geoJSON(geojson, {
@@ -140,87 +174,160 @@ async function loadBoundary() {
 async function loadFraCrossings() {
   try {
     el.debugFra.textContent = "Loading";
+    console.log("Loading FRA crossings");
+
     const response = await fetch(FRA_URL, { cache: "no-store" });
     if (!response.ok) throw new Error(`FRA HTTP ${response.status}`);
+
     const geojson = await response.json();
 
-    const normalized = (geojson.features || []).map(normalizeFraFeature).filter(Boolean);
+    const normalized = (geojson.features || [])
+      .map(normalizeFraFeature)
+      .filter(Boolean);
+
     const visible = [];
     let hiddenClosed = 0;
 
     normalized.forEach((crossing) => {
-      if (crossing.visibility === "closed_hidden") hiddenClosed += 1;
-      else visible.push(crossing);
+      if (crossing.visibility === "closed_hidden" || crossing.visibility === "hidden_closed") {
+        hiddenClosed += 1;
+      } else {
+        visible.push(crossing);
+      }
     });
 
     state.crossings = visible;
+    state.hiddenClosedCount = hiddenClosed;
     state.crossingById = new Map(visible.map((crossing) => [crossing.id, crossing]));
 
     renderCrossings();
-    updateDashboardCounts(hiddenClosed);
+    updateDashboardCounts();
+
     el.debugFra.textContent = `Loaded ${visible.length} visible / ${hiddenClosed} hidden closed`;
+    console.log("FRA crossings loaded:", visible.length, "visible,", hiddenClosed, "hidden");
   } catch (error) {
     console.error("FRA crossings load failed:", error);
     el.debugFra.textContent = "Failed to load";
+    updateDashboardCounts();
   }
 }
 
 function normalizeFraFeature(feature, index) {
   const p = feature.properties || {};
   const coords = extractCoordinates(feature, p);
-  const id = firstText(p, ["crossingid", "crossing_id", "crossing", "crossingnumber", "crossing_no", "objectid"]) || `fra-${index}`;
-  const roadName = firstText(p, ["street", "streetname", "roadname", "highway", "crossingstreet", "publicroadname"]) || "Unnamed Road";
-  const railroad = firstText(p, ["railroad", "rrname", "railroadname", "company", "operatingrr"] ) || "Railroad not listed";
+
+  const id =
+    firstText(p, ["crossingid", "crossing_id", "crossing", "crossingnumber", "crossing_no", "objectid"]) ||
+    `fra-${index}`;
+
+  const crossingId = String(id);
+
+  const roadName =
+    firstText(p, ["street", "streetname", "roadname", "highway", "crossingstreet", "publicroadname"]) ||
+    "Unnamed Road";
+
+  const railroad =
+    firstText(p, ["railroad", "rrname", "railroadname", "company", "operatingrr"]) ||
+    "Railroad not listed";
+
   const city = firstText(p, ["city", "cityname"]) || "Liberty County";
   const county = firstText(p, ["countyname", "county"]) || "LIBERTY";
   const stateName = firstText(p, ["statename", "state"]) || "TEXAS";
 
   const statusText = firstText(p, ["crossingstatus", "status", "positionalaccuracy", "recordstatus", "crossingposition"]);
   const typeText = firstText(p, ["crossingtype", "type", "publicprivate", "public_private"]);
-  const isClosed = containsAny(statusText, ["closed", "abandoned", "out of service", "inactive"]) || containsAny(typeText, ["closed", "abandoned"]);
 
-  if (isClosed) {
-    return { id: String(id), visibility: "closed_hidden" };
-  }
+  const isClosed =
+    containsAny(statusText, ["closed", "abandoned", "out of service", "inactive"]) ||
+    containsAny(typeText, ["closed", "abandoned"]);
 
-  if (!coords) {
-    return {
-      id: String(id),
-      visibility: "needs_review_visible",
-      needsReviewReason: "Missing valid coordinates",
-      roadName,
-      railroad,
-      city,
-      county,
-      stateName,
-      raw: p,
-    };
-  }
-
-  let visibility = "open_visible";
-  let needsReviewReason = "";
-
-  if (containsAny(typeText, ["private"])) {
-    visibility = "private_visible";
-    needsReviewReason = "Private crossing visible for review";
-  } else if (containsAny(statusText, ["unknown", "pending", "review", "unverified"])) {
-    visibility = "needs_review_visible";
-    needsReviewReason = "FRA status needs review";
-  }
-
-  return {
-    id: String(id),
+  let crossing = {
+    id: crossingId,
     roadName,
     railroad,
     city,
     county,
     stateName,
-    lat: coords.lat,
-    lng: coords.lng,
-    visibility,
-    needsReviewReason,
+    lat: coords ? coords.lat : null,
+    lng: coords ? coords.lng : null,
+    visibility: "open_visible",
+    needsReviewReason: "",
     raw: p,
   };
+
+  if (isClosed) {
+    crossing.visibility = "closed_hidden";
+    crossing.needsReviewReason = "FRA record appears closed or inactive";
+  } else if (!coords) {
+    crossing.visibility = "needs_review_visible";
+    crossing.needsReviewReason = "Missing valid coordinates";
+  } else if (containsAny(typeText, ["private"])) {
+    crossing.visibility = "private_visible";
+    crossing.needsReviewReason = "Private crossing visible for review";
+  } else if (containsAny(statusText, ["unknown", "pending", "review", "unverified"])) {
+    crossing.visibility = "needs_review_visible";
+    crossing.needsReviewReason = "FRA status needs review";
+  }
+
+  crossing = applyCrossingOverride(crossing);
+
+  return crossing;
+}
+
+function applyCrossingOverride(crossing) {
+  const override = state.crossingOverrides[String(crossing.id)];
+
+  if (!override) return crossing;
+
+  if (typeof override === "string") {
+    return applyOverrideValue(crossing, override, "");
+  }
+
+  if (typeof override === "object") {
+    const visibility = override.visibility || override.status || override.display;
+    const reason = override.reason || override.notes || "Manual override applied";
+    const updated = applyOverrideValue(crossing, visibility, reason);
+
+    if (override.roadName) updated.roadName = override.roadName;
+    if (override.railroad) updated.railroad = override.railroad;
+    if (override.city) updated.city = override.city;
+    if (Number.isFinite(Number(override.lat))) updated.lat = Number(override.lat);
+    if (Number.isFinite(Number(override.lng))) updated.lng = Number(override.lng);
+
+    return updated;
+  }
+
+  return crossing;
+}
+
+function applyOverrideValue(crossing, value, reason) {
+  const override = String(value || "").trim();
+
+  if (!override) return crossing;
+
+  const updated = { ...crossing };
+
+  if (override === "verified_public") {
+    updated.visibility = "open_visible";
+    updated.needsReviewReason = reason || "";
+  } else if (override === "open_visible") {
+    updated.visibility = "open_visible";
+    updated.needsReviewReason = reason || "";
+  } else if (override === "private_visible") {
+    updated.visibility = "private_visible";
+    updated.needsReviewReason = reason || "Manual override: private crossing visible";
+  } else if (override === "needs_review_visible") {
+    updated.visibility = "needs_review_visible";
+    updated.needsReviewReason = reason || "Manual override: needs review";
+  } else if (override === "relocate_needed") {
+    updated.visibility = "needs_review_visible";
+    updated.needsReviewReason = reason || "Manual override: coordinates need review";
+  } else if (override === "hidden_closed" || override === "closed_hidden") {
+    updated.visibility = "hidden_closed";
+    updated.needsReviewReason = reason || "Manual override: hidden from public map";
+  }
+
+  return updated;
 }
 
 function extractCoordinates(feature, properties) {
@@ -231,29 +338,46 @@ function extractCoordinates(feature, properties) {
 
   const lat = firstNumber(properties, ["latitude", "lat", "y", "position_y"]);
   const lng = firstNumber(properties, ["longitude", "lon", "lng", "x", "position_x"]);
+
   if (isValidLatLng(lat, lng)) return { lat: Number(lat), lng: Number(lng) };
+
   return null;
 }
 
 function isValidLatLng(lat, lng) {
   const nLat = Number(lat);
   const nLng = Number(lng);
-  return Number.isFinite(nLat) && Number.isFinite(nLng) && nLat >= -90 && nLat <= 90 && nLng >= -180 && nLng <= 180 && !(nLat === 0 && nLng === 0);
+
+  return (
+    Number.isFinite(nLat) &&
+    Number.isFinite(nLng) &&
+    nLat >= -90 &&
+    nLat <= 90 &&
+    nLng >= -180 &&
+    nLng <= 180 &&
+    !(nLat === 0 && nLng === 0)
+  );
 }
 
 function firstText(obj, keys) {
   for (const key of keys) {
     const found = findCaseInsensitive(obj, key);
-    if (found !== undefined && found !== null && String(found).trim() !== "") return String(found).trim();
+    if (found !== undefined && found !== null && String(found).trim() !== "") {
+      return String(found).trim();
+    }
   }
+
   return "";
 }
 
 function firstNumber(obj, keys) {
   for (const key of keys) {
     const found = findCaseInsensitive(obj, key);
-    if (found !== undefined && found !== null && String(found).trim() !== "") return Number(found);
+    if (found !== undefined && found !== null && String(found).trim() !== "") {
+      return Number(found);
+    }
   }
+
   return NaN;
 }
 
@@ -296,8 +420,14 @@ function getCrossingColor(crossing) {
 
 function buildCrossingPopup(crossing) {
   const active = state.activeByCrossingId.get(crossing.id);
-  const activeHtml = active ? `<p><strong>Active status:</strong> Blocked since ${formatDateTime(active.created_at)}</p>` : "";
-  const reviewHtml = crossing.needsReviewReason ? `<p><strong>Review flag:</strong> ${escapeHtml(crossing.needsReviewReason)}</p>` : "";
+
+  const activeHtml = active
+    ? `<p><strong>Active status:</strong> Blocked since ${formatDateTime(active.created_at)}</p>`
+    : "";
+
+  const reviewHtml = crossing.needsReviewReason
+    ? `<p><strong>Review flag:</strong> ${escapeHtml(crossing.needsReviewReason)}</p>`
+    : "";
 
   return `
     <div class="crossing-popup">
@@ -325,8 +455,11 @@ async function loadReports() {
     buildActiveReportState();
     renderActiveReports();
     renderActiveSummary();
+    updateDashboardCounts();
+
     el.debugSupabase.textContent = "Offline fallback: no Supabase client";
     el.reportStatus.textContent = "Shared reports unavailable. Map is running in local fallback mode.";
+
     console.warn("Reports loaded: 0 - Supabase unavailable");
     return;
   }
@@ -340,7 +473,9 @@ async function loadReports() {
     if (error) throw error;
 
     state.reports = Array.isArray(data) ? data : [];
+
     console.log("Reports loaded:", state.reports.length);
+
     el.debugSupabase.textContent = `Reports loaded: ${state.reports.length}`;
     el.reportStatus.textContent = `Shared reports loaded: ${state.reports.length}`;
     el.lastUpdated.textContent = `Updated ${new Date().toLocaleTimeString()}`;
@@ -351,11 +486,13 @@ async function loadReports() {
     updateDashboardCounts();
   } catch (error) {
     console.error("Reports load failed:", error);
+
     state.reports = [];
     buildActiveReportState();
     renderActiveReports();
     renderActiveSummary();
     updateDashboardCounts();
+
     el.debugSupabase.textContent = "Read failed; fallback active";
     el.reportStatus.textContent = "Shared report read failed. Map is still usable.";
   }
@@ -363,7 +500,10 @@ async function loadReports() {
 
 function buildActiveReportState() {
   const active = new Map();
-  const ordered = [...state.reports].sort((a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0));
+
+  const ordered = [...state.reports].sort((a, b) => {
+    return new Date(a.created_at || 0) - new Date(b.created_at || 0);
+  });
 
   ordered.forEach((report) => {
     const crossingId = String(report.crossing_id || "");
@@ -388,6 +528,7 @@ function renderActiveReports() {
     const crossing = state.crossingById.get(String(crossingId));
     const lat = Number(report.lat || crossing?.lat);
     const lng = Number(report.lng || crossing?.lng);
+
     if (!isValidLatLng(lat, lng)) return;
 
     const marker = L.circleMarker([lat, lng], {
@@ -411,6 +552,7 @@ function renderActiveReports() {
     marker.on("click", () => {
       if (crossing) selectCrossing(crossing, false);
     });
+
     marker.addTo(state.layers.activeReports);
   });
 }
@@ -431,11 +573,13 @@ function renderActiveSummary() {
   }
 
   el.activeSummary.className = "active-summary";
+
   el.activeSummary.innerHTML = activeReports
     .sort((a, b) => new Date(b.report.created_at || 0) - new Date(a.report.created_at || 0))
     .map(({ crossingId, report, crossing }) => {
       const road = report.road_name || crossing?.roadName || "Unknown road";
       const railroad = report.railroad || crossing?.railroad || "Railroad not listed";
+
       return `
         <button class="summary-item" type="button" onclick="window.selectCrossingById('${escapeJs(crossingId)}')">
           <strong>${escapeHtml(road)}</strong>
@@ -446,25 +590,29 @@ function renderActiveSummary() {
     .join("");
 }
 
-function updateDashboardCounts(hiddenClosedOverride) {
+function updateDashboardCounts() {
   const visible = state.crossings.length;
-  const review = state.crossings.filter((crossing) => crossing.visibility === "needs_review_visible" || crossing.visibility === "private_visible").length;
-  const hiddenClosed = Number.isFinite(hiddenClosedOverride) ? hiddenClosedOverride : Number(el.hiddenCount.textContent || 0);
+
+  const review = state.crossings.filter((crossing) => {
+    return crossing.visibility === "needs_review_visible" || crossing.visibility === "private_visible";
+  }).length;
 
   el.openCrossingCount.textContent = String(visible);
   el.reviewCount.textContent = String(review);
-  el.hiddenCount.textContent = String(hiddenClosed);
+  el.hiddenCount.textContent = String(state.hiddenClosedCount);
   el.activeReportCount.textContent = String(state.activeByCrossingId.size);
 }
 
 function selectCrossing(crossing, panTo) {
   state.selectedCrossing = crossing;
+
   el.selectedBadge.textContent = crossing.visibility;
   el.debugSelected.textContent = crossing.id;
   el.reportBlockedBtn.disabled = false;
   el.reportClearedBtn.disabled = false;
 
   const active = state.activeByCrossingId.get(crossing.id);
+
   el.selectedCrossing.className = "";
   el.selectedCrossing.innerHTML = `
     <strong>${escapeHtml(crossing.roadName)}</strong><br />
@@ -485,6 +633,7 @@ async function submitReport(type) {
   if (!crossing) return;
 
   const now = new Date().toISOString();
+
   const payload = {
     crossing_id: crossing.id,
     report_type: type,
@@ -507,7 +656,9 @@ async function submitReport(type) {
 
   if (!state.supabase) {
     applyLocalReport({ ...payload, id: `local-${Date.now()}`, created_at: now });
+
     console.warn("Insert failure: Supabase unavailable. Applied local fallback report.");
+
     el.reportStatus.textContent = "Supabase unavailable. Local fallback applied for this browser session.";
     return;
   }
@@ -522,35 +673,48 @@ async function submitReport(type) {
     if (error) throw error;
 
     console.log("Insert success:", data);
-    el.reportStatus.textContent = type === "blocked" ? "Report sent! Crossing marked blocked." : "Report sent! Crossing marked cleared.";
+
+    el.reportStatus.textContent =
+      type === "blocked"
+        ? "Report sent! Crossing marked blocked."
+        : "Report sent! Crossing marked cleared.";
+
     el.reportNotes.value = "";
 
     applyLocalReport(data || { ...payload, id: `fallback-${Date.now()}`, created_at: now });
     await loadReports();
   } catch (error) {
     console.error("Insert failure:", error);
+
     applyLocalReport({ ...payload, id: `local-${Date.now()}`, created_at: now });
+
     el.reportStatus.textContent = "Report could not be saved to Supabase. Local fallback applied temporarily.";
   }
 }
 
 function applyLocalReport(report) {
   state.reports.push(report);
+
   buildActiveReportState();
   renderActiveReports();
   renderActiveSummary();
   renderCrossings();
   updateDashboardCounts();
-  if (state.selectedCrossing) selectCrossing(state.selectedCrossing, false);
+
+  if (state.selectedCrossing) {
+    selectCrossing(state.selectedCrossing, false);
+  }
 }
 
 function getClientId() {
   const key = "lcsi_client_id";
   let id = localStorage.getItem(key);
+
   if (!id) {
     id = `client-${crypto.randomUUID ? crypto.randomUUID() : Date.now()}`;
     localStorage.setItem(key, id);
   }
+
   return id;
 }
 
@@ -561,6 +725,7 @@ function locateUser() {
   }
 
   el.reportStatus.textContent = "Finding your location...";
+
   navigator.geolocation.getCurrentPosition(
     (position) => {
       const lat = position.coords.latitude;
@@ -568,13 +733,16 @@ function locateUser() {
       const nearest = findNearestCrossing(lat, lng);
 
       if (state.layers.userLocation) state.layers.userLocation.remove();
+
       state.layers.userLocation = L.circleMarker([lat, lng], {
         radius: 8,
         color: "#ffffff",
         weight: 2,
         fillColor: "#38c172",
         fillOpacity: 0.85,
-      }).addTo(state.map).bindPopup("Your location");
+      })
+        .addTo(state.map)
+        .bindPopup("Your location");
 
       state.map.setView([lat, lng], 14);
 
@@ -589,34 +757,59 @@ function locateUser() {
       console.warn("Location failed:", error);
       el.reportStatus.textContent = "Could not access location. Check browser permissions.";
     },
-    { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
+    {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 30000,
+    }
   );
 }
 
 function findNearestCrossing(lat, lng) {
   let best = null;
+
   state.crossings.forEach((crossing) => {
     if (!isValidLatLng(crossing.lat, crossing.lng)) return;
+
     const miles = haversineMiles(lat, lng, crossing.lat, crossing.lng);
-    if (!best || miles < best.distanceMiles) best = { crossing, distanceMiles: miles };
+
+    if (!best || miles < best.distanceMiles) {
+      best = { crossing, distanceMiles: miles };
+    }
   });
+
   return best;
 }
 
 function haversineMiles(lat1, lng1, lat2, lng2) {
   const radius = 3958.8;
-  const toRad = (degree) => degree * Math.PI / 180;
+  const toRad = (degree) => (degree * Math.PI) / 180;
+
   const dLat = toRad(lat2 - lat1);
   const dLng = toRad(lng2 - lng1);
-  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) *
+      Math.cos(toRad(lat2)) *
+      Math.sin(dLng / 2) ** 2;
+
   return radius * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 function formatDateTime(value) {
   if (!value) return "unknown time";
+
   const date = new Date(value);
+
   if (Number.isNaN(date.getTime())) return "unknown time";
-  return date.toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+
+  return date.toLocaleString([], {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
 }
 
 function escapeHtml(value) {
@@ -629,7 +822,9 @@ function escapeHtml(value) {
 }
 
 function escapeJs(value) {
-  return String(value ?? "").replaceAll("\\", "\\\\").replaceAll("'", "\\'");
+  return String(value ?? "")
+    .replaceAll("\\", "\\\\")
+    .replaceAll("'", "\\'");
 }
 
 document.addEventListener("DOMContentLoaded", init);
