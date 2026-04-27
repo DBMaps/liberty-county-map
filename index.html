@@ -3,156 +3,202 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gridly | Know Before You Go.</title>
 
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  />
+  <title>Gridly | Know Before You Go</title>
 
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 
 <body>
-<header class="app-header">
-  <div class="brand-wrap">
-    <div class="brand-logo-frame">
-      <img
-        class="brand-logo-img"
-        src="assets/gridly-logo-primary.png"
-        alt="Gridly logo"
-      />
+  <header class="app-header">
+    <div class="brand-wrap">
+      <div class="brand-logo-frame">
+        <img class="brand-logo-img" src="assets/gridly-logo-primary.png" alt="Gridly logo" />
+      </div>
+
+      <span class="beta-pill">Liberty County Beta</span>
     </div>
 
-    <span class="beta-pill">Liberty County Beta</span>
-  </div>
-
-  <nav class="top-nav">
-    <button class="nav-btn active" data-section="dashboard">Dashboard</button>
-    <button class="nav-btn" data-section="map">Map</button>
-    <button class="nav-btn" data-section="routes">Routes</button>
-    <button class="nav-btn" data-section="report">Report</button>
-    <button class="nav-btn" data-section="alerts">Alerts</button>
-  </nav>
-</header>
+    <nav class="top-nav">
+      <button class="nav-btn active" data-section="dashboard">Dashboard</button>
+      <button class="nav-btn" data-section="map">Map</button>
+      <button class="nav-btn" data-section="routes">Routes</button>
+      <button class="nav-btn" data-section="report">Report</button>
+      <button class="nav-btn" data-section="alerts">Alerts</button>
+    </nav>
+  </header>
 
   <main class="app-shell">
-    <section class="hero-card">
-      <div>
-        <p class="eyebrow">MIDDAY MOBILITY CHECK</p>
-        <h1>Good Afternoon</h1>
-        <p class="subtext">
-          Heading out soon? Gridly checks nearby crossings, slowdowns,
-          and active road issues.
-        </p>
-        <p class="last-updated">Last updated: 4:30 PM</p>
+    <section class="dashboard" id="dashboardSection">
+      <div class="hero-card">
+        <div>
+          <p class="eyebrow" id="timeContext">Daily Route Intelligence</p>
+          <h1 id="greetingTitle">Checking Gridly</h1>
+          <p class="subtext" id="greetingSubtitle">
+            Gridly checks nearby crossings, route risk, reported delays, and departure timing before you leave.
+          </p>
+          <p class="last-updated" id="lastUpdated">Last updated: checking...</p>
+        </div>
+
+        <div class="route-status-card delayed" id="routeStatusCard">
+          <span class="status-label" id="routeCardLabel">Saved Route</span>
+          <strong id="routeStatus">Checking...</strong>
+          <span id="routeEta">ETA calculating</span>
+        </div>
       </div>
 
-      <div class="route-status-card">
-        <span class="status-label">Current Route</span>
-        <strong class="danger-text">Delayed</strong>
-        <span>ETA 32 min (+11)</span>
+      <div class="setup-card" id="setupCard">
+        <div>
+          <h2>Set your daily route</h2>
+          <p>Save Home and Work to unlock personalized route alerts.</p>
+        </div>
+
+        <div class="setup-grid">
+          <label>
+            Home
+            <input id="homeInput" type="text" placeholder="Example: Dayton, TX" />
+          </label>
+
+          <label>
+            Work
+            <input id="workInput" type="text" placeholder="Example: Crosby, TX" />
+          </label>
+
+          <button id="saveRouteBtn" class="primary-btn">Save Route</button>
+          <button id="useLocationBtn" class="secondary-btn">Use My Location</button>
+        </div>
       </div>
-    </section>
 
-    <section class="setup-card">
-      <div>
-        <h2>Set your daily route</h2>
-        <p>Save Home and Work to unlock personalized route alerts.</p>
+      <div class="insight-grid">
+        <article class="insight-card">
+          <span>Recommended Departure</span>
+          <strong id="departureTime">Leave now</strong>
+          <p id="departureReason">Based on current route risk and nearby reports.</p>
+        </article>
+
+        <article class="insight-card">
+          <span>Delay Risk</span>
+          <strong id="delayRisk">Moderate</strong>
+          <p id="delayReason">Nearby railroad crossing activity may affect travel.</p>
+        </article>
+
+        <article class="insight-card">
+          <span>Nearby Alerts</span>
+          <strong id="nearbyAlertCount">0</strong>
+          <p>Live reports near your saved or current location.</p>
+        </article>
+
+        <article class="insight-card">
+          <span>Best Alternate</span>
+          <strong id="alternateRoute">Checking</strong>
+          <p id="alternateReason">Gridly recommends detours when crossing impact is high.</p>
+        </article>
       </div>
-
-      <div class="setup-grid">
-        <label>
-          Home
-          <input type="text" value="274 County Road 677, Dayton, Texas 77535" />
-        </label>
-
-        <label>
-          Work
-          <input type="text" value="Crosby, Texas" />
-        </label>
-
-        <button class="primary-btn">Save Route</button>
-        <button class="secondary-btn">Use My Location</button>
-      </div>
-    </section>
-
-    <section class="insight-grid">
-      <article class="insight-card">
-        <span>Recommended Departure</span>
-        <strong>Leave now</strong>
-        <p>High route impact detected near your commute window.</p>
-      </article>
-
-      <article class="insight-card">
-        <span>Delay Risk</span>
-        <strong>High</strong>
-        <p>Multiple reports or one major crossing blockage detected.</p>
-      </article>
-
-      <article class="insight-card">
-        <span>Nearby Alerts</span>
-        <strong>2</strong>
-        <p>Live reports near your saved or current location.</p>
-      </article>
-
-      <article class="insight-card">
-        <span>Best Alternate</span>
-        <strong>Use alternate</strong>
-        <p>Avoid the highest-impact crossing if possible.</p>
-      </article>
     </section>
 
     <section class="main-grid">
-      <section class="map-card">
+      <section class="map-card" id="mapSection">
         <div class="section-header">
           <div>
-            <p class="eyebrow">LIVE MOBILITY MAP</p>
+            <p class="eyebrow">Live Mobility Map</p>
             <h2>Click a crossing to report it</h2>
           </div>
 
           <div class="actions">
-            <button class="secondary-btn">Refresh Reports</button>
-            <button class="primary-btn">Simulate Delay</button>
+            <button id="refreshBtn" class="secondary-btn">Refresh Reports</button>
+            <button id="simulateDelayBtn" class="primary-btn">Simulate Delay</button>
           </div>
         </div>
 
         <div id="map"></div>
       </section>
 
-      <aside class="side-panel">
+      <aside class="side-panel" id="alertsSection">
         <section class="panel-card">
-          <p class="eyebrow">SAVED ROUTE</p>
+          <p class="eyebrow">Saved Route</p>
           <h2>Daily Commute</h2>
 
           <div class="route-summary">
             <div>
               <span>Home</span>
-              <strong>274 County Road 677, Dayton, Texas</strong>
+              <strong id="savedHome">Not saved</strong>
             </div>
 
             <div>
               <span>Work</span>
-              <strong>Crosby, Texas</strong>
+              <strong id="savedWork">Not saved</strong>
             </div>
           </div>
         </section>
+
+        <section class="panel-card">
+          <p class="eyebrow">Impact Score</p>
+          <div class="impact-meter">
+            <div class="impact-fill" id="impactFill"></div>
+          </div>
+          <strong id="impactScore">42 / 100</strong>
+          <p id="impactText">Moderate route impact detected.</p>
+        </section>
+
+        <section class="panel-card">
+          <p class="eyebrow">Live Alerts</p>
+          <div id="alertsList" class="alerts-list"></div>
+        </section>
       </aside>
+    </section>
+
+    <section class="report-card" id="reportSection">
+      <div class="report-copy">
+        <p class="eyebrow">Report Fallback</p>
+        <h2>Search or manually report a crossing</h2>
+        <p>
+          Primary reporting happens from the map popup. Use this section only when you need to find a crossing manually.
+        </p>
+
+        <div class="confirmation-box" id="reportConfirmation">
+          Click a crossing marker on the map to report Blocked, Delay, Cleared, or Other.
+        </div>
+      </div>
+
+      <div class="report-tools">
+        <label>
+          Search crossing
+          <input id="crossingSearch" type="text" placeholder="Search street, crossing, or railroad..." />
+        </label>
+
+        <label>
+          Manual crossing
+          <select id="crossingSelect">
+            <option value="">Loading crossings...</option>
+          </select>
+        </label>
+
+        <label>
+          Report type
+          <select id="manualReportType">
+            <option value="blocked">Blocked</option>
+            <option value="heavy">Heavy Delay</option>
+            <option value="cleared">Cleared</option>
+            <option value="other">Other Issue</option>
+          </select>
+        </label>
+
+        <div class="report-buttons">
+          <button id="manualReportBtn" class="primary-btn">Submit Manual Report</button>
+          <button id="clearReportsBtn" class="secondary-btn">Clear My Reports</button>
+        </div>
+
+        <div class="search-results" id="searchResults"></div>
+      </div>
     </section>
   </main>
 
+  <footer class="app-footer">
+    Gridly V8.4 Map-First Reporting Cleanup · Local-first mobility intelligence
+  </footer>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-  <script>
-    const map = L.map("map").setView([30.0466, -94.8852], 11);
-
-    L.tileLayer(
-      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      {
-        maxZoom: 19,
-        attribution: "&copy; OpenStreetMap contributors"
-      }
-    ).addTo(map);
-  </script>
+  <script src="js/app.js"></script>
 </body>
 </html>
