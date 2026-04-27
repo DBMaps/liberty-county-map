@@ -1,7 +1,6 @@
 :root {
   --bg: #070b12;
   --card: rgba(18, 27, 42, 0.9);
-  --card-2: rgba(24, 35, 52, 0.92);
   --border: rgba(255, 255, 255, 0.09);
   --text: #f8fbff;
   --muted: #9fb2c9;
@@ -32,13 +31,14 @@ select {
   font: inherit;
 }
 
+/* HEADER */
 .app-header {
   position: sticky;
   top: 0;
   z-index: 1000;
-  min-height: 74px;
-  padding: 14px 28px;
-  background: rgba(6, 10, 17, 0.9);
+  height: 112px;
+  padding: 0 28px;
+  background: rgba(6, 10, 17, 0.94);
   backdrop-filter: blur(18px);
   border-bottom: 1px solid var(--border);
   display: flex;
@@ -47,52 +47,49 @@ select {
 }
 
 .brand-wrap {
+  height: 100%;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 22px;
+  flex-shrink: 0;
 }
 
-.logo-mark {
-  width: 44px;
-  height: 44px;
-  border-radius: 15px;
-  background: linear-gradient(135deg, #43e6a0, #47b7ff);
-  display: grid;
-  place-items: center;
-  color: #061017;
-  font-weight: 950;
-  font-size: 1.35rem;
-  box-shadow: 0 12px 32px rgba(67, 230, 160, 0.24);
+/* This crops the oversized transparent canvas around the logo */
+.brand-logo-frame {
+  width: 320px;
+  height: 96px;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
 }
 
-.brand-name {
-  font-weight: 950;
-  letter-spacing: -0.055em;
-  font-size: 1.45rem;
-  line-height: 1;
+.brand-logo-img {
+  width: 610px;
+  max-width: none;
+  height: auto;
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 54%;
+  transform: translate(-50%, -50%);
 }
-
-.brand-tagline {
-  margin-top: 4px;
-  font-size: 0.78rem;
-  color: var(--muted);
-}
-
 .beta-pill {
-  margin-left: 10px;
-  padding: 7px 11px;
+  padding: 8px 13px;
   border-radius: 999px;
   color: var(--accent);
   background: rgba(67, 230, 160, 0.08);
   border: 1px solid rgba(67, 230, 160, 0.32);
   font-size: 0.75rem;
   font-weight: 850;
+  white-space: nowrap;
 }
 
 .top-nav {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 .nav-btn,
@@ -109,7 +106,7 @@ select {
 .nav-btn {
   background: transparent;
   color: var(--muted);
-  padding: 10px 14px;
+  padding: 10px 13px;
 }
 
 .nav-btn.active,
@@ -560,9 +557,33 @@ select:focus {
 
 @media (max-width: 1100px) {
   .app-header {
-    align-items: flex-start;
-    gap: 16px;
+    height: auto;
+    min-height: 118px;
+    padding: 10px 20px;
     flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .brand-wrap {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .brand-logo-frame {
+    width: 330px;
+    height: 88px;
+  }
+
+  .brand-logo-img {
+    width: 710px;
+  }
+
+  .top-nav {
+    width: 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 4px;
   }
 
   .hero-card,
@@ -583,9 +604,38 @@ select:focus {
 }
 
 @media (max-width: 700px) {
+  .app-header {
+    padding: 10px 16px;
+  }
+
+  .brand-wrap {
+    gap: 10px;
+  }
+
+  .brand-logo-frame {
+    width: 250px;
+    height: 72px;
+  }
+
+  .brand-logo-img {
+    width: 540px;
+  }
+
+  .beta-pill {
+    font-size: 0.7rem;
+    padding: 6px 10px;
+  }
+
   .top-nav {
     width: 100%;
+    gap: 6px;
     overflow-x: auto;
+  }
+
+  .nav-btn {
+    padding: 9px 12px;
+    font-size: 0.9rem;
+    white-space: nowrap;
   }
 
   .setup-grid,
