@@ -3,170 +3,200 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <title>Gridly | Know Before You Go</title>
 
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="css/styles.css" />
-
-  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script defer src="js/app.js"></script>
 </head>
 
 <body>
-  <div class="grid-glow"></div>
-
-  <div class="app-shell">
-    <header class="topbar">
-      <div class="brand-lockup">
-        <img src="assets/gridly-logo-primary.png" alt="Gridly" class="gridly-logo" />
+  <header class="app-header">
+    <div class="brand-wrap">
+      <div class="logo-mark">G</div>
+      <div class="brand-text">
+        <div class="brand-name">Gridly</div>
+        <div class="brand-tagline">Know Before You Go.</div>
       </div>
+      <span class="beta-pill">Liberty County Beta</span>
+    </div>
 
-      <div class="nav-pill">Liberty County Beta</div>
+    <nav class="top-nav">
+      <button class="nav-btn active" data-section="dashboard">Dashboard</button>
+      <button class="nav-btn" data-section="map">Map</button>
+      <button class="nav-btn" data-section="routes">Routes</button>
+      <button class="nav-btn" data-section="report">Report</button>
+      <button class="nav-btn" data-section="alerts">Alerts</button>
+    </nav>
+  </header>
 
-      <div class="topbar-actions">
-        <button id="locateBtn" class="primary-btn">Use My Location</button>
-        <button id="refreshReportsBtn" class="secondary-btn">Refresh Reports</button>
-      </div>
-    </header>
-
-    <section class="hero-dashboard">
-      <div class="hero-copy">
-        <span class="eyebrow">Hybrid mobility intelligence</span>
-        <h1>Know what could slow you down before you leave.</h1>
-        <p>Save daily routes, monitor nearby reports, and view live crossing intelligence from the Gridly map.</p>
-      </div>
-
-      <div class="route-card primary-route">
-        <div class="route-card-top">
-          <span class="eyebrow">Daily route status</span>
-          <span id="routeRiskBadge" class="risk-badge neutral">Set route</span>
+  <main class="app-shell">
+    <section class="dashboard" id="dashboardSection">
+      <div class="hero-card">
+        <div>
+          <p class="eyebrow" id="timeContext">Daily Route Intelligence</p>
+          <h1 id="greetingTitle">Checking Gridly</h1>
+          <p class="subtext" id="greetingSubtitle">
+            Gridly checks nearby crossings, route risk, reported delays, and departure timing before you leave.
+          </p>
+          <p class="last-updated" id="lastUpdated">Last updated: checking...</p>
         </div>
-        <h2 id="routeHeadline">Set Home and Work to unlock route intelligence.</h2>
-        <p id="routeSubtext">Gridly will compare saved places with active community reports and nearby crossing data.</p>
+
+        <div class="route-status-card delayed" id="routeStatusCard">
+          <span class="status-label" id="routeCardLabel">Saved Route</span>
+          <strong id="routeStatus">Checking...</strong>
+          <span id="routeEta">ETA calculating</span>
+        </div>
+      </div>
+
+      <div class="setup-card" id="setupCard">
+        <div>
+          <h2>Set your daily route</h2>
+          <p>Save Home and Work to unlock personalized route alerts.</p>
+        </div>
+
+        <div class="setup-grid">
+          <label>
+            Home
+            <input id="homeInput" type="text" placeholder="Example: Dayton, TX" />
+          </label>
+
+          <label>
+            Work
+            <input id="workInput" type="text" placeholder="Example: Crosby, TX" />
+          </label>
+
+          <button id="saveRouteBtn" class="primary-btn">Save Route</button>
+          <button id="useLocationBtn" class="secondary-btn">Use My Location</button>
+        </div>
+      </div>
+
+      <div class="insight-grid">
+        <article class="insight-card">
+          <span>Recommended Departure</span>
+          <strong id="departureTime">Leave now</strong>
+          <p id="departureReason">Based on current route risk and nearby reports.</p>
+        </article>
+
+        <article class="insight-card">
+          <span>Delay Risk</span>
+          <strong id="delayRisk">Moderate</strong>
+          <p id="delayReason">Nearby railroad crossing activity may affect travel.</p>
+        </article>
+
+        <article class="insight-card">
+          <span>Nearby Alerts</span>
+          <strong id="nearbyAlertCount">0</strong>
+          <p>Live reports near your saved or current location.</p>
+        </article>
+
+        <article class="insight-card">
+          <span>Best Alternate</span>
+          <strong id="alternateRoute">Checking</strong>
+          <p id="alternateReason">Gridly recommends detours when crossing impact is high.</p>
+        </article>
       </div>
     </section>
 
-    <section class="status-strip">
-      <div class="status-card">
-        <span>Live Crossings</span>
-        <strong id="openCrossingCount">0</strong>
-      </div>
-
-      <div class="status-card alert">
-        <span>Active Reports</span>
-        <strong id="activeReportCount">0</strong>
-      </div>
-
-      <div class="status-card caution">
-        <span>Community Review</span>
-        <strong id="reviewCount">0</strong>
-      </div>
-
-      <div class="status-card muted">
-        <span>Hidden Closed</span>
-        <strong id="hiddenCount">0</strong>
-      </div>
-    </section>
-
-    <main class="main-grid">
-      <section class="map-panel">
-        <div class="map-header">
+    <section class="main-grid">
+      <section class="map-card" id="mapSection">
+        <div class="section-header">
           <div>
-            <span class="eyebrow">Live operating map</span>
-            <h2>Gridly Intelligence Layer</h2>
+            <p class="eyebrow">Live Mobility Map</p>
+            <h2>Click a crossing to report it</h2>
           </div>
 
-          <div class="map-status-pill">FRA + Community Reports</div>
-        </div>
-
-        <div class="map-wrap">
-          <div id="map"></div>
-
-          <div class="legend">
-            <div class="legend-title">Live Layer Legend</div>
-            <div class="legend-row"><span class="legend-dot dot-blue"></span>Open crossing</div>
-            <div class="legend-row"><span class="legend-dot dot-gold"></span>Community review</div>
-            <div class="legend-row"><span class="legend-dot dot-purple"></span>Private visible</div>
-            <div class="legend-row"><span class="legend-dot dot-red"></span>Active blocked report</div>
-            <div class="legend-row"><span class="legend-dot dot-green"></span>Coverage boundary</div>
+          <div class="actions">
+            <button id="refreshBtn" class="secondary-btn">Refresh Reports</button>
+            <button id="simulateDelayBtn" class="primary-btn">Simulate Delay</button>
           </div>
         </div>
+
+        <div id="map"></div>
       </section>
 
-      <aside class="command-panel">
-        <section class="side-card route-panel">
-          <div class="card-title-row">
+      <aside class="side-panel" id="alertsSection">
+        <section class="panel-card">
+          <p class="eyebrow">Saved Route</p>
+          <h2>Daily Commute</h2>
+
+          <div class="route-summary">
             <div>
-              <span class="eyebrow">Saved route intelligence</span>
-              <h2>Your Places</h2>
+              <span>Home</span>
+              <strong id="savedHome">Not saved</strong>
             </div>
-            <span class="badge">Local device</span>
-          </div>
-
-          <div class="saved-place-grid">
-            <button id="saveHomeBtn" class="place-btn">Save Current as Home</button>
-            <button id="saveWorkBtn" class="place-btn">Save Current as Work</button>
-            <button id="saveSchoolBtn" class="place-btn">Save Current as School</button>
-            <button id="clearPlacesBtn" class="place-btn danger-lite">Clear Places</button>
-          </div>
-
-          <div id="savedPlacesList" class="saved-places empty-state">
-            No saved places yet.
+            <div>
+              <span>Work</span>
+              <strong id="savedWork">Not saved</strong>
+            </div>
           </div>
         </section>
 
-        <section class="side-card selected-card">
-          <div class="card-title-row">
-            <div>
-              <span class="eyebrow">Community report console</span>
-              <h2>Selected Location</h2>
-            </div>
-            <span id="selectedBadge" class="badge">None selected</span>
+        <section class="panel-card">
+          <p class="eyebrow">Impact Score</p>
+          <div class="impact-meter">
+            <div class="impact-fill" id="impactFill"></div>
           </div>
-
-          <div id="selectedCrossing" class="empty-state">
-            Select a map marker, use your location, or choose an active event to report current conditions.
-          </div>
-
-          <div class="button-row">
-            <button id="reportBlockedBtn" class="blocked-btn" disabled>Report Blocked</button>
-            <button id="reportClearedBtn" class="cleared-btn" disabled>Report Cleared</button>
-          </div>
-
-          <textarea id="reportNotes" placeholder="Optional note: train stopped, gates down, traffic backed up, water over road, etc."></textarea>
-
-          <div id="reportStatus" class="status-line">Gridly is ready for community reports.</div>
+          <strong id="impactScore">42 / 100</strong>
+          <p id="impactText">Moderate route impact detected.</p>
         </section>
 
-        <section class="side-card">
-          <div class="card-title-row">
-            <div>
-              <span class="eyebrow">Current conditions</span>
-              <h2>Active Event Summary</h2>
-            </div>
-            <span id="lastUpdated" class="badge">Not loaded</span>
-          </div>
-
-          <div id="activeSummary" class="active-summary empty-state">
-            No active blocked crossings loaded yet.
-          </div>
-        </section>
-
-        <section class="side-card diagnostics-card">
-          <button id="toggleDebugBtn" class="ghost-btn">Show Diagnostics</button>
-
-          <div id="debugPanel" class="debug-panel" hidden>
-            <div><strong>App:</strong> <span id="debugVersion">Waiting</span></div>
-            <div><strong>FRA:</strong> <span id="debugFra">Waiting</span></div>
-            <div><strong>Boundary:</strong> <span id="debugBoundary">Waiting</span></div>
-            <div><strong>Supabase:</strong> <span id="debugSupabase">Waiting</span></div>
-            <div><strong>Selected ID:</strong> <span id="debugSelected">None</span></div>
-          </div>
+        <section class="panel-card">
+          <p class="eyebrow">Live Alerts</p>
+          <div id="alertsList" class="alerts-list"></div>
         </section>
       </aside>
-    </main>
-  </div>
+    </section>
+
+    <section class="report-card" id="reportSection">
+      <div class="report-copy">
+        <p class="eyebrow">Report Fallback</p>
+        <h2>Search or manually report a crossing</h2>
+        <p>
+          Primary reporting happens from the map popup. Use this section only when you need to find a crossing manually.
+        </p>
+        <div class="confirmation-box" id="reportConfirmation">
+          Click a crossing marker on the map to report Blocked, Delay, Cleared, or Other.
+        </div>
+      </div>
+
+      <div class="report-tools">
+        <label>
+          Search crossing
+          <input id="crossingSearch" type="text" placeholder="Search street, crossing, or railroad..." />
+        </label>
+
+        <label>
+          Manual crossing
+          <select id="crossingSelect">
+            <option value="">Loading crossings...</option>
+          </select>
+        </label>
+
+        <label>
+          Report type
+          <select id="manualReportType">
+            <option value="blocked">Blocked</option>
+            <option value="heavy">Heavy Delay</option>
+            <option value="cleared">Cleared</option>
+            <option value="other">Other Issue</option>
+          </select>
+        </label>
+
+        <div class="report-buttons">
+          <button id="manualReportBtn" class="primary-btn">Submit Manual Report</button>
+          <button id="clearReportsBtn" class="secondary-btn">Clear My Reports</button>
+        </div>
+
+        <div class="search-results" id="searchResults"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    Gridly V8.4 Map-First Reporting Cleanup · Local-first mobility intelligence
+  </footer>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
