@@ -322,3 +322,132 @@ textarea {
   #map, .map-card { min-height: 520px; }
   .legend { right: 10px; left: 10px; bottom: 10px; }
 }
+/* V5.1 Leaflet tile/render safety fix */
+.leaflet-container {
+  position: relative;
+  overflow: hidden;
+  background: #07111f;
+}
+
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-tile-container,
+.leaflet-pane > svg,
+.leaflet-pane > canvas,
+.leaflet-zoom-box,
+.leaflet-image-layer,
+.leaflet-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.leaflet-tile {
+  width: 256px;
+  height: 256px;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.leaflet-tile-container {
+  transform-origin: 0 0;
+}
+
+.leaflet-control-container .leaflet-top,
+.leaflet-control-container .leaflet-bottom {
+  position: absolute;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.leaflet-control {
+  position: relative;
+  z-index: 1000;
+  pointer-events: auto;
+  float: left;
+  clear: both;
+}
+
+.leaflet-top {
+  top: 0;
+}
+
+.leaflet-left {
+  left: 0;
+}
+
+.leaflet-right {
+  right: 0;
+}
+
+.leaflet-bottom {
+  bottom: 0;
+}
+
+.leaflet-top.leaflet-left {
+  top: 10px;
+  left: 10px;
+}
+
+.leaflet-top.leaflet-right {
+  top: 10px;
+  right: 10px;
+}
+
+.leaflet-bottom.leaflet-left {
+  bottom: 10px;
+  left: 10px;
+}
+
+.leaflet-bottom.leaflet-right {
+  bottom: 10px;
+  right: 10px;
+}
+
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+  display: block;
+}
+
+.leaflet-interactive {
+  cursor: pointer;
+}
+
+.leaflet-popup {
+  position: absolute;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.leaflet-popup-content-wrapper {
+  background: #fff;
+  color: #111827;
+  border-radius: 12px;
+  padding: 1px;
+}
+
+.leaflet-popup-content {
+  margin: 13px 18px;
+  line-height: 1.4;
+}
+
+.leaflet-popup-tip-container {
+  width: 40px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  margin-left: -20px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.leaflet-popup-tip {
+  background: #fff;
+  width: 17px;
+  height: 17px;
+  padding: 1px;
+  margin: -10px auto 0;
+  transform: rotate(45deg);
+}
