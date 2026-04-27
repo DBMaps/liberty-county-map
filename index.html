@@ -38,7 +38,11 @@
           <p class="subtext" id="greetingSubtitle">
             Gridly checks nearby crossings, route risk, reported delays, and departure timing before you leave.
           </p>
-          <p class="last-updated" id="lastUpdated">Last updated: checking...</p>
+
+          <div class="trust-row">
+            <span id="lastUpdated">Last updated: checking...</span>
+            <span id="dataStatus">Crossing data: loading</span>
+          </div>
         </div>
 
         <div class="route-status-card delayed" id="routeStatusCard">
@@ -84,9 +88,9 @@
         </article>
 
         <article class="insight-card">
-          <span>Nearby Alerts</span>
+          <span>Active Alerts</span>
           <strong id="nearbyAlertCount">0</strong>
-          <p>Live reports near your saved or current location.</p>
+          <p id="activeAlertText">Live reports near your saved or current location.</p>
         </article>
 
         <article class="insight-card">
@@ -103,6 +107,7 @@
           <div>
             <p class="eyebrow">Live Mobility Map</p>
             <h2>Click a crossing to report it</h2>
+            <p class="map-note" id="mapTrustNote">Loading known public crossings from FRA data...</p>
           </div>
 
           <div class="actions">
@@ -139,6 +144,24 @@
           </div>
           <strong id="impactScore">42 / 100</strong>
           <p id="impactText">Moderate route impact detected.</p>
+        </section>
+
+        <section class="panel-card">
+          <p class="eyebrow">Trust Status</p>
+          <div class="trust-list">
+            <div>
+              <span>Known crossings</span>
+              <strong id="crossingCount">Loading</strong>
+            </div>
+            <div>
+              <span>Report aging</span>
+              <strong id="reportDecayStatus">Active</strong>
+            </div>
+            <div>
+              <span>Last report</span>
+              <strong id="lastReportTime">None yet</strong>
+            </div>
+          </div>
         </section>
 
         <section class="panel-card">
@@ -195,7 +218,7 @@
   </main>
 
   <footer class="app-footer">
-    Gridly V8.4 Map-First Reporting Cleanup · Local-first mobility intelligence
+    Gridly V8.5 Stability + Trust · Local-first mobility intelligence
   </footer>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

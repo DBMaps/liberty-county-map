@@ -2,6 +2,8 @@ const FRA_URL =
   "https://data.transportation.gov/resource/m2f8-22s6.geojson?$limit=5000&statename=TEXAS&countyname=LIBERTY";
 
 const defaultCenter = [30.0466, -94.8852];
+const REPORT_EXPIRATION_MINUTES = 90;
+const REPORT_STALE_MINUTES = 45;
 
 let map;
 let crossingLayer;
@@ -10,53 +12,67 @@ let crossings = [];
 let activeReports = [];
 let userLocation = null;
 
-const els = {
-  greetingTitle: document.getElementById("greetingTitle"),
-  greetingSubtitle: document.getElementById("greetingSubtitle"),
-  timeContext: document.getElementById("timeContext"),
-  routeCardLabel: document.getElementById("routeCardLabel"),
-  routeStatusCard: document.getElementById("routeStatusCard"),
-  routeStatus: document.getElementById("routeStatus"),
-  routeEta: document.getElementById("routeEta"),
-  departureTime: document.getElementById("departureTime"),
-  departureReason: document.getElementById("departureReason"),
-  delayRisk: document.getElementById("delayRisk"),
-  delayReason: document.getElementById("delayReason"),
-  nearbyAlertCount: document.getElementById("nearbyAlertCount"),
-  alternateRoute: document.getElementById("alternateRoute"),
-  alternateReason: document.getElementById("alternateReason"),
-  savedHome: document.getElementById("savedHome"),
-  savedWork: document.getElementById("savedWork"),
-  homeInput: document.getElementById("homeInput"),
-  workInput: document.getElementById("workInput"),
-  saveRouteBtn: document.getElementById("saveRouteBtn"),
-  useLocationBtn: document.getElementById("useLocationBtn"),
-  refreshBtn: document.getElementById("refreshBtn"),
-  simulateDelayBtn: document.getElementById("simulateDelayBtn"),
-  alertsList: document.getElementById("alertsList"),
-  impactFill: document.getElementById("impactFill"),
-  impactScore: document.getElementById("impactScore"),
-  impactText: document.getElementById("impactText"),
-  crossingSelect: document.getElementById("crossingSelect"),
-  crossingSearch: document.getElementById("crossingSearch"),
-  searchResults: document.getElementById("searchResults"),
-  manualReportType: document.getElementById("manualReportType"),
-  manualReportBtn: document.getElementById("manualReportBtn"),
-  clearReportsBtn: document.getElementById("clearReportsBtn"),
-  reportConfirmation: document.getElementById("reportConfirmation"),
-  lastUpdated: document.getElementById("lastUpdated")
-};
+const els = {};
 
 document.addEventListener("DOMContentLoaded", () => {
+  hydrateElements();
   initGreeting();
   updateLastUpdated();
   initMap();
   loadSavedRoute();
   loadStoredReports();
-  loadCrossings();
+  expireOldReports();
   bindEvents();
+  loadCrossings();
   updateRouteIntelligence();
 });
+
+function hydrateElements() {
+  [
+    "greetingTitle",
+    "greetingSubtitle",
+    "timeContext",
+    "routeCardLabel",
+    "routeStatusCard",
+    "routeStatus",
+    "routeEta",
+    "departureTime",
+    "departureReason",
+    "delayRisk",
+    "delayReason",
+    "nearbyAlertCount",
+    "activeAlertText",
+    "alternateRoute",
+    "alternateReason",
+    "savedHome",
+    "savedWork",
+    "homeInput",
+    "workInput",
+    "saveRouteBtn",
+    "useLocationBtn",
+    "refreshBtn",
+    "simulateDelayBtn",
+    "alertsList",
+    "impactFill",
+    "impactScore",
+    "impactText",
+    "crossingSelect",
+    "crossingSearch",
+    "searchResults",
+    "manualReportType",
+    "manualReportBtn",
+    "clearReportsBtn",
+    "reportConfirmation",
+    "lastUpdated",
+    "dataStatus",
+    "crossingCount",
+    "reportDecayStatus",
+    "lastReportTime",
+    "mapTrustNote"
+  ].forEach((id) => {
+    els[id] = document.getElementById(id);
+  });
+}
 
 window.reportCrossingFromPopup = function (crossingId, reportType) {
   const crossing = crossings.find((item) => item.id === crossingId);
@@ -72,7 +88,11 @@ window.zoomToCrossing = function (crossingId) {
 
   crossingLayer.eachLayer((layer) => {
     const latLng = layer.getLatLng();
-    if (latLng.lat === crossing.lat && latLng.lng === crossing.lng) {
+
+    if (
+      Number(latLng.lat).toFixed(6) === Number(crossing.lat).toFixed(6) &&
+      Number(latLng.lng).toFixed(6) === Number(crossing.lng).toFixed(6)
+    ) {
       layer.openPopup();
     }
   });
@@ -82,29 +102,53 @@ function initGreeting() {
   const hour = new Date().getHours();
 
   if (hour >= 5 && hour < 12) {
-    setGreeting("Good Morning", "Morning Route Intelligence", "Check your work route before leaving. Gridly watches crossings, route risk, and delay reports.", "Work Route");
+    setGreeting(
+      "Good Morning",
+      "Morning Route Intelligence",
+      "Check your work route before leaving. Gridly watches crossings, route risk, and delay reports.",
+      "Work Route"
+    );
   } else if (hour >= 12 && hour < 17) {
-    setGreeting("Good Afternoon", "Midday Mobility Check", "Heading out soon? Gridly checks nearby crossings, slowdowns, and active road issues.", "Current Route");
+    setGreeting(
+      "Good Afternoon",
+      "Midday Mobility Check",
+      "Heading out soon? Gridly checks nearby crossings, slowdowns, and active road issues.",
+      "Current Route"
+    );
   } else if (hour >= 17 && hour < 22) {
-    setGreeting("Good Evening", "Evening Commute Intelligence", "Check your route home before you leave. Gridly watches for crossing delays and local traffic impacts.", "Commute Home");
+    setGreeting(
+      "Good Evening",
+      "Evening Commute Intelligence",
+      "Check your route home before you leave. Gridly watches for crossing delays and local traffic impacts.",
+      "Commute Home"
+    );
   } else {
-    setGreeting("Late Night Check", "After-Hours Route Watch", "Quiet roads are still worth checking. Gridly looks for late-night rail delays and blocked crossings.", "Night Route");
+    setGreeting(
+      "Late Night Check",
+      "After-Hours Route Watch",
+      "Quiet roads are still worth checking. Gridly looks for late-night rail delays and blocked crossings.",
+      "Night Route"
+    );
   }
 }
 
 function setGreeting(title, context, subtitle, routeLabel) {
-  els.greetingTitle.textContent = title;
-  els.timeContext.textContent = context;
-  els.greetingSubtitle.textContent = subtitle;
-  els.routeCardLabel.textContent = routeLabel;
+  safeText("greetingTitle", title);
+  safeText("timeContext", context);
+  safeText("greetingSubtitle", subtitle);
+  safeText("routeCardLabel", routeLabel);
 }
 
 function updateLastUpdated() {
   const now = new Date();
-  els.lastUpdated.textContent = `Last updated: ${now.toLocaleTimeString([], {
-    hour: "numeric",
-    minute: "2-digit"
-  })}`;
+
+  safeText(
+    "lastUpdated",
+    `Last updated: ${now.toLocaleTimeString([], {
+      hour: "numeric",
+      minute: "2-digit"
+    })}`
+  );
 }
 
 function initMap() {
@@ -122,19 +166,36 @@ function initMap() {
 
 async function loadCrossings() {
   try {
+    safeText("dataStatus", "Crossing data: loading");
+    safeText("mapTrustNote", "Loading known public crossings from FRA data...");
+
     const response = await fetch(FRA_URL);
+
+    if (!response.ok) {
+      throw new Error(`FRA feed returned ${response.status}`);
+    }
+
     const data = await response.json();
 
-    crossings = data.features
+    crossings = (data.features || [])
       .filter((feature) => feature.geometry && feature.geometry.coordinates)
       .map((feature, index) => {
         const [lng, lat] = feature.geometry.coordinates;
         const props = feature.properties || {};
 
         return {
-          id: props.crossingid || `crossing-${index}`,
-          name: props.street || props.roadwayname || props.highwayname || "Railroad Crossing",
-          railroad: props.railroad || props.railroadname || "Rail line",
+          id: props.crossingid || props.crossing_id || `crossing-${index}`,
+          name:
+            props.street ||
+            props.roadwayname ||
+            props.highwayname ||
+            props.road ||
+            "Railroad Crossing",
+          railroad:
+            props.railroad ||
+            props.railroadname ||
+            props.railroad_company ||
+            "Rail line",
           lat,
           lng,
           risk: calculateBaseRisk(props, index),
@@ -145,22 +206,33 @@ async function loadCrossings() {
     populateCrossingSelect();
     renderCrossings();
 
-    if (!activeReports.length) seedDemoReports();
+    if (!activeReports.length) {
+      seedDemoReports();
+    }
 
     renderAlerts();
     updateRouteIntelligence();
+    updateTrustStats();
     updateLastUpdated();
+
+    safeText("dataStatus", `Crossing data: ${crossings.length} known crossings loaded`);
+    safeText("crossingCount", `${crossings.length}`);
+    safeText("mapTrustNote", `${crossings.length} known public crossings loaded from FRA data.`);
   } catch (error) {
-    console.error(error);
+    console.error("Gridly crossing load failed:", error);
     showFallbackAlert();
+
+    safeText("dataStatus", "Crossing data: unavailable");
+    safeText("crossingCount", "Unavailable");
+    safeText("mapTrustNote", "Unable to load FRA crossing data. Try refreshing.");
   }
 }
 
 function calculateBaseRisk(props, index) {
   let score = 18;
 
-  const traffic = Number(props.aadt || props.avgdailytraffic || 0);
-  const trains = Number(props.daythrutrain || props.totaltrains || 0);
+  const traffic = Number(props.aadt || props.avgdailytraffic || props.traffic || 0);
+  const trains = Number(props.daythrutrain || props.totaltrains || props.trains || 0);
 
   if (traffic > 5000) score += 20;
   if (traffic > 10000) score += 12;
@@ -173,6 +245,8 @@ function calculateBaseRisk(props, index) {
 }
 
 function populateCrossingSelect() {
+  if (!els.crossingSelect) return;
+
   const sorted = [...crossings].sort((a, b) => a.name.localeCompare(b.name));
 
   els.crossingSelect.innerHTML = `
@@ -190,31 +264,36 @@ function renderCrossings() {
   crossingLayer.clearLayers();
 
   crossings.forEach((crossing) => {
-    const report = activeReports.find((item) => item.crossingId === crossing.id);
-    const hasActiveIssue = report && report.type !== "cleared";
+    const report = getReportForCrossing(crossing.id);
+    const hasActiveIssue = report && report.type !== "cleared" && !report.expired;
     const isCleared = report && report.type === "cleared";
+    const isExpired = report && report.expired;
 
     const icon = L.divIcon({
       className: "",
-      html: `<div class="gridly-marker ${hasActiveIssue ? "alert" : ""} ${isCleared ? "cleared" : ""}"></div>`,
+      html: `<div class="gridly-marker ${hasActiveIssue ? "alert" : ""} ${isCleared ? "cleared" : ""} ${isExpired ? "expired" : ""}"></div>`,
       iconSize: [24, 24],
       iconAnchor: [12, 12]
     });
 
     L.marker([crossing.lat, crossing.lng], { icon })
-      .bindPopup(buildPopup(crossing, report), { maxWidth: 320 })
+      .bindPopup(buildPopup(crossing, report), { maxWidth: 330 })
       .addTo(crossingLayer);
   });
 }
 
 function buildPopup(crossing, report) {
   const status = report
-    ? report.type === "cleared"
+    ? report.expired
+      ? "Expired report"
+      : report.type === "cleared"
       ? "Recently cleared"
       : report.title
     : "No active report";
 
   const source = report ? getSourceLabel(report.source) : "FRA crossing inventory";
+  const age = report ? `${report.minutesAgo} min ago` : "No recent report";
+  const freshness = report ? getFreshnessLabel(report) : "Verified crossing";
 
   return `
     <div class="gridly-popup">
@@ -222,7 +301,8 @@ function buildPopup(crossing, report) {
       <span>${sanitizeText(crossing.railroad)}</span><br />
       <span>Status: ${sanitizeText(status)}</span><br />
       <span>Risk Score: ${crossing.risk}/100</span><br />
-      <span>Source: ${sanitizeText(source)}</span>
+      <span>Source: ${sanitizeText(source)}</span><br />
+      <span>Freshness: ${sanitizeText(freshness)} · ${sanitizeText(age)}</span>
 
       <div class="popup-report-grid">
         <button class="popup-report-btn danger" onclick="reportCrossingFromPopup('${crossing.id}', 'blocked')">Blocked</button>
@@ -245,11 +325,13 @@ function seedDemoReports() {
       crossingId: crossing.id,
       type: index === 0 ? "blocked" : "heavy",
       title: index === 0 ? `${crossing.name} blocked` : `${crossing.name} heavy delay`,
-      detail: index === 0
-        ? "Demo report: possible blockage affecting local traffic."
-        : "Demo report: slowdown near rail crossing.",
+      detail:
+        index === 0
+          ? "Demo report: possible blockage affecting local traffic."
+          : "Demo report: slowdown near rail crossing.",
       severity: index === 0 ? "high" : "moderate",
-      minutesAgo: 4 + index * 6,
+      submittedAt: new Date(Date.now() - (index + 1) * 8 * 60000).toISOString(),
+      minutesAgo: 8 + index * 8,
       source: "demo"
     }));
 
@@ -257,13 +339,13 @@ function seedDemoReports() {
 }
 
 function bindEvents() {
-  els.saveRouteBtn.addEventListener("click", saveRoute);
-  els.useLocationBtn.addEventListener("click", useMyLocation);
-  els.refreshBtn.addEventListener("click", refreshReports);
-  els.simulateDelayBtn.addEventListener("click", simulateDelay);
-  els.manualReportBtn.addEventListener("click", submitManualReport);
-  els.clearReportsBtn.addEventListener("click", clearUserReports);
-  els.crossingSearch.addEventListener("input", handleCrossingSearch);
+  els.saveRouteBtn?.addEventListener("click", saveRoute);
+  els.useLocationBtn?.addEventListener("click", useMyLocation);
+  els.refreshBtn?.addEventListener("click", refreshReports);
+  els.simulateDelayBtn?.addEventListener("click", simulateDelay);
+  els.manualReportBtn?.addEventListener("click", submitManualReport);
+  els.clearReportsBtn?.addEventListener("click", clearUserReports);
+  els.crossingSearch?.addEventListener("input", handleCrossingSearch);
 
   document.querySelectorAll(".nav-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -278,7 +360,11 @@ function bindEvents() {
         alerts: "alertsSection"
       };
 
-      document.getElementById(targets[btn.dataset.section]).scrollIntoView({ behavior: "smooth" });
+      const target = document.getElementById(targets[btn.dataset.section]);
+
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     });
   });
 }
@@ -305,13 +391,13 @@ function loadSavedRoute() {
   const work = localStorage.getItem("gridlyWork");
 
   if (home) {
-    els.savedHome.textContent = home;
-    els.homeInput.value = home;
+    safeText("savedHome", home);
+    if (els.homeInput) els.homeInput.value = home;
   }
 
   if (work) {
-    els.savedWork.textContent = work;
-    els.workInput.value = work;
+    safeText("savedWork", work);
+    if (els.workInput) els.workInput.value = work;
   }
 }
 
@@ -344,16 +430,20 @@ function useMyLocation() {
       const nearest = findNearestCrossings(userLocation.lat, userLocation.lng, 5);
       updateRouteIntelligence(nearest);
 
-      els.reportConfirmation.textContent =
+      safeText(
+        "reportConfirmation",
         nearest.length > 0
           ? `Location found. Nearest crossing: ${nearest[0].name}.`
-          : "Location found, but no nearby crossing was matched.";
+          : "Location found, but no nearby crossing was matched."
+      );
 
       flashButton(els.useLocationBtn, "Location Found");
     },
     () => {
-      els.reportConfirmation.textContent =
-        "Location permission was blocked. Use map popup reporting, search, or manual fallback.";
+      safeText(
+        "reportConfirmation",
+        "Location permission was blocked. Use map popup reporting, search, or manual fallback."
+      );
       flashButton(els.useLocationBtn, "Location Blocked");
     }
   );
@@ -364,7 +454,7 @@ function submitManualReport() {
   const reportType = els.manualReportType.value;
 
   if (!crossing) {
-    els.reportConfirmation.textContent = "Choose a crossing before submitting a manual report.";
+    safeText("reportConfirmation", "Choose a crossing before submitting a manual report.");
     return;
   }
 
@@ -383,23 +473,27 @@ function createReport(crossing, reportType, confidence) {
     title: `${crossing.name} ${copy.shortTitle}`,
     detail: copy.detail,
     severity: copy.severity,
+    submittedAt: new Date().toISOString(),
     minutesAgo: 0,
     source: "user",
-    submittedAt: new Date().toISOString(),
     confidence
   });
 
-  activeReports = activeReports.slice(0, 8);
+  activeReports = activeReports.slice(0, 12);
 
   saveStoredReports();
   renderCrossings();
   renderAlerts();
   updateRouteIntelligence();
+  updateTrustStats();
   updateLastUpdated();
 
   map.setView([crossing.lat, crossing.lng], 14);
 
-  els.reportConfirmation.textContent = `Reported ${crossing.name} as ${copy.label}. Confidence: ${confidence}.`;
+  safeText(
+    "reportConfirmation",
+    `Reported ${crossing.name} as ${copy.label}. Confidence: ${confidence}.`
+  );
 }
 
 function getReportCopy(type) {
@@ -439,9 +533,10 @@ function clearUserReports() {
   renderCrossings();
   renderAlerts();
   updateRouteIntelligence();
+  updateTrustStats();
   updateLastUpdated();
 
-  els.reportConfirmation.textContent = "Your reports were cleared. Demo reports may remain and are labeled clearly.";
+  safeText("reportConfirmation", "Your reports were cleared. Demo reports may remain and are labeled clearly.");
   flashButton(els.clearReportsBtn, "Cleared");
 }
 
@@ -480,14 +575,15 @@ function handleCrossingSearch() {
 }
 
 function refreshReports() {
-  activeReports = activeReports.map((report) => ({
-    ...report,
-    minutesAgo: report.minutesAgo + 1
-  }));
+  expireOldReports();
+  recalculateReportAges();
 
   renderAlerts();
+  renderCrossings();
   updateRouteIntelligence();
+  updateTrustStats();
   updateLastUpdated();
+
   flashButton(els.refreshBtn, "Updated");
 }
 
@@ -503,17 +599,20 @@ function simulateDelay() {
     title: `${crossing.name} blocked`,
     detail: "Simulated report: train blocking traffic near this crossing.",
     severity: "high",
-    minutesAgo: 1,
+    submittedAt: new Date().toISOString(),
+    minutesAgo: 0,
     source: "simulated"
   });
 
-  activeReports = activeReports.slice(0, 8);
+  activeReports = activeReports.slice(0, 12);
 
   saveStoredReports();
   renderCrossings();
   renderAlerts();
   updateRouteIntelligence();
+  updateTrustStats();
   updateLastUpdated();
+
   flashButton(els.simulateDelayBtn, "Delay Added");
 }
 
@@ -521,7 +620,7 @@ function updateRouteIntelligence(nearest = []) {
   const savedHome = localStorage.getItem("gridlyHome");
   const savedWork = localStorage.getItem("gridlyWork");
 
-  const activeIssues = activeReports.filter((report) => report.type !== "cleared");
+  const activeIssues = activeReports.filter((report) => !report.expired && report.type !== "cleared");
   const highAlerts = activeIssues.filter((report) => report.severity === "high").length;
   const moderateAlerts = activeIssues.filter((report) => report.severity === "moderate").length;
 
@@ -529,63 +628,71 @@ function updateRouteIntelligence(nearest = []) {
     ? Math.round(nearest.reduce((sum, c) => sum + c.risk, 0) / nearest.length)
     : 28;
 
-  const impact = Math.min(100, activeIssues.length * 10 + highAlerts * 22 + moderateAlerts * 8 + Math.round(crossingRisk * 0.35));
+  const impact = Math.min(
+    100,
+    activeIssues.length * 10 + highAlerts * 22 + moderateAlerts * 8 + Math.round(crossingRisk * 0.35)
+  );
+
   const extraMinutes = Math.max(0, Math.round(impact / 7));
 
-  els.nearbyAlertCount.textContent = activeIssues.length;
-  els.impactFill.style.width = `${impact}%`;
-  els.impactScore.textContent = `${impact} / 100`;
+  safeText("nearbyAlertCount", activeIssues.length);
+  safeText("activeAlertText", activeIssues.length === 1 ? "One active report currently affecting the area." : "Live reports near your saved or current location.");
 
-  els.routeStatusCard.classList.remove("clear", "delayed", "high");
+  if (els.impactFill) els.impactFill.style.width = `${impact}%`;
+  safeText("impactScore", `${impact} / 100`);
+
+  els.routeStatusCard?.classList.remove("clear", "delayed", "high");
 
   if (!savedHome || !savedWork) {
-    els.routeStatus.textContent = "Set Route";
-    els.routeEta.textContent = "Save Home + Work";
-    els.departureTime.textContent = "Set route first";
-    els.departureReason.textContent = "Home and Work unlock personalized daily route intelligence.";
-    els.routeStatusCard.classList.add("delayed");
+    safeText("routeStatus", "Set Route");
+    safeText("routeEta", "Save Home + Work");
+    safeText("departureTime", "Set route first");
+    safeText("departureReason", "Home and Work unlock personalized daily route intelligence.");
+    els.routeStatusCard?.classList.add("delayed");
   } else if (impact >= 70) {
-    els.routeStatus.textContent = "Delayed";
-    els.routeEta.textContent = `ETA 32 min (+${extraMinutes})`;
-    els.departureTime.textContent = "Leave now";
-    els.departureReason.textContent = "High route impact detected near your commute window.";
-    els.routeStatusCard.classList.add("high");
+    safeText("routeStatus", "Delayed");
+    safeText("routeEta", `ETA 32 min (+${extraMinutes})`);
+    safeText("departureTime", "Leave now");
+    safeText("departureReason", "High route impact detected near your commute window.");
+    els.routeStatusCard?.classList.add("high");
   } else if (impact >= 40) {
-    els.routeStatus.textContent = "Watch";
-    els.routeEta.textContent = `ETA 26 min (+${extraMinutes})`;
-    els.departureTime.textContent = "Leave 8 min early";
-    els.departureReason.textContent = "Moderate risk near one or more crossings.";
-    els.routeStatusCard.classList.add("delayed");
+    safeText("routeStatus", "Watch");
+    safeText("routeEta", `ETA 26 min (+${extraMinutes})`);
+    safeText("departureTime", "Leave 8 min early");
+    safeText("departureReason", "Moderate risk near one or more crossings.");
+    els.routeStatusCard?.classList.add("delayed");
   } else {
-    els.routeStatus.textContent = "Clear";
-    els.routeEta.textContent = "ETA 21 min";
-    els.departureTime.textContent = "Normal departure";
-    els.departureReason.textContent = "No major active delay detected.";
-    els.routeStatusCard.classList.add("clear");
+    safeText("routeStatus", "Clear");
+    safeText("routeEta", "ETA 21 min");
+    safeText("departureTime", "Normal departure");
+    safeText("departureReason", "No major active delay detected.");
+    els.routeStatusCard?.classList.add("clear");
   }
 
   if (impact >= 70) {
-    els.delayRisk.textContent = "High";
-    els.delayReason.textContent = "Multiple reports or one major crossing blockage detected.";
-    els.alternateRoute.textContent = "Use alternate";
-    els.alternateReason.textContent = "Avoid the highest-impact crossing if possible.";
-    els.impactText.textContent = "High route impact. Gridly recommends leaving now or rerouting.";
+    safeText("delayRisk", "High");
+    safeText("delayReason", "Multiple reports or one major crossing blockage detected.");
+    safeText("alternateRoute", "Use alternate");
+    safeText("alternateReason", "Avoid the highest-impact crossing if possible.");
+    safeText("impactText", "High route impact. Gridly recommends leaving now or rerouting.");
   } else if (impact >= 40) {
-    els.delayRisk.textContent = "Moderate";
-    els.delayReason.textContent = "Some nearby crossing or traffic risk detected.";
-    els.alternateRoute.textContent = "Have backup";
-    els.alternateReason.textContent = "Alternate route may help if reports increase.";
-    els.impactText.textContent = "Moderate route impact. Watch your commute before leaving.";
+    safeText("delayRisk", "Moderate");
+    safeText("delayReason", "Some nearby crossing or traffic risk detected.");
+    safeText("alternateRoute", "Have backup");
+    safeText("alternateReason", "Alternate route may help if reports increase.");
+    safeText("impactText", "Moderate route impact. Watch your commute before leaving.");
   } else {
-    els.delayRisk.textContent = "Low";
-    els.delayReason.textContent = "No major live reports affecting the area.";
-    els.alternateRoute.textContent = "Not needed";
-    els.alternateReason.textContent = "Current route appears clear.";
-    els.impactText.textContent = "Low route impact. Normal travel expected.";
+    safeText("delayRisk", "Low");
+    safeText("delayReason", "No major live reports affecting the area.");
+    safeText("alternateRoute", "Not needed");
+    safeText("alternateReason", "Current route appears clear.");
+    safeText("impactText", "Low route impact. Normal travel expected.");
   }
 }
 
 function renderAlerts() {
+  recalculateReportAges();
+
   if (!activeReports.length) {
     els.alertsList.innerHTML = `
       <div class="alert-item">
@@ -599,7 +706,9 @@ function renderAlerts() {
   els.alertsList.innerHTML = activeReports
     .map((report) => {
       const label =
-        report.type === "cleared"
+        report.expired
+          ? "Expired"
+          : report.type === "cleared"
           ? "Cleared"
           : report.severity === "high"
           ? "High Impact"
@@ -610,13 +719,60 @@ function renderAlerts() {
       return `
         <div class="alert-item">
           <strong>${sanitizeText(report.title)}</strong>
-          <p>${label} · ${report.minutesAgo} min ago</p>
+          <p>${label} · ${report.minutesAgo} min ago · ${sanitizeText(getFreshnessLabel(report))}</p>
           <p>${sanitizeText(report.detail)}</p>
           <span class="source-pill">${sanitizeText(getSourceLabel(report.source))}</span>
         </div>
       `;
     })
     .join("");
+}
+
+function recalculateReportAges() {
+  activeReports = activeReports.map((report) => {
+    const submittedAt = report.submittedAt ? new Date(report.submittedAt).getTime() : Date.now();
+    const minutesAgo = Math.max(0, Math.floor((Date.now() - submittedAt) / 60000));
+
+    return {
+      ...report,
+      minutesAgo,
+      expired: minutesAgo >= REPORT_EXPIRATION_MINUTES
+    };
+  });
+
+  saveStoredReports();
+}
+
+function expireOldReports() {
+  recalculateReportAges();
+
+  activeReports = activeReports.filter((report) => {
+    if (report.source === "demo") return true;
+    return report.minutesAgo < REPORT_EXPIRATION_MINUTES + 30;
+  });
+
+  saveStoredReports();
+}
+
+function updateTrustStats() {
+  const active = activeReports.filter((report) => !report.expired);
+  const lastReport = [...activeReports].sort((a, b) => {
+    return new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0);
+  })[0];
+
+  safeText("reportDecayStatus", `${REPORT_EXPIRATION_MINUTES} min expiry`);
+  safeText("lastReportTime", lastReport ? `${lastReport.minutesAgo} min ago` : "None yet");
+}
+
+function getFreshnessLabel(report) {
+  if (report.expired) return "Expired";
+  if (report.minutesAgo >= REPORT_STALE_MINUTES) return "Stale soon";
+  if (report.minutesAgo >= 15) return "Recent";
+  return "Fresh";
+}
+
+function getReportForCrossing(crossingId) {
+  return activeReports.find((report) => report.crossingId === crossingId);
 }
 
 function findNearestCrossings(lat, lng, count = 5) {
@@ -668,6 +824,8 @@ function saveStoredReports() {
 }
 
 function showFallbackAlert() {
+  if (!els.alertsList) return;
+
   els.alertsList.innerHTML = `
     <div class="alert-item">
       <strong>Crossing data unavailable</strong>
@@ -677,12 +835,18 @@ function showFallbackAlert() {
 }
 
 function flashButton(button, message) {
+  if (!button) return;
+
   const original = button.textContent;
   button.textContent = message;
 
   setTimeout(() => {
     button.textContent = original;
   }, 1300);
+}
+
+function safeText(id, value) {
+  if (els[id]) els[id].textContent = value;
 }
 
 function sanitizeText(value) {
