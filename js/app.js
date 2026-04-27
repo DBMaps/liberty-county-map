@@ -4,7 +4,7 @@
   Pure HTML/CSS/Vanilla JS/Leaflet
 */
 
-const APP_VERSION = "Gridly V6.0 WOW dark launch";
+const APP_VERSION = "Gridly V6.1 premium polish";
 const FRA_URL = "https://data.transportation.gov/resource/m2f8-22s6.geojson?$limit=5000&statename=TEXAS&countyname=LIBERTY";
 const BOUNDARY_URL = "data/liberty-county-boundary.geojson";
 const OVERRIDES_URL = "data/crossing-overrides.json";
@@ -828,3 +828,13 @@ function escapeJs(value) {
 }
 
 document.addEventListener("DOMContentLoaded", init);
+/* Gridly V6.1 premium polish behavior */
+window.addEventListener("load", () => {
+  document.body.classList.add("gridly-loaded");
+
+  setTimeout(() => {
+    if (window.dispatchEvent) {
+      window.dispatchEvent(new Event("resize"));
+    }
+  }, 350);
+});

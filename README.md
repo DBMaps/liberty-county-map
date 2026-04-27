@@ -8,7 +8,7 @@ This pilot release currently focuses on Liberty County, Texas, using public FRA 
 
 ## Current Version
 
-**Gridly V6.0 WOW Dark Launch**
+**Gridly V6.1 Premium Polish**
 
 ## Pilot Coverage
 
