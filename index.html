@@ -7,7 +7,7 @@
   <title>Gridly | Know Before You Go</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="css/styles.css?v=115" />
+  <link rel="stylesheet" href="css/styles.css?v=120" />
 </head>
 
 <body>
@@ -16,7 +16,6 @@
       <div class="brand-logo-frame">
         <img class="brand-logo-img" src="assets/gridly-logo-primary.png" alt="Gridly logo" />
       </div>
-
       <span class="beta-pill">Liberty County Beta</span>
     </div>
 
@@ -33,13 +32,17 @@
     <section class="dashboard" id="dashboardSection">
       <div class="hero-card driver-hero">
         <div class="hero-main-copy">
-          <p class="eyebrow" id="timeContext">Daily Route Intelligence</p>
-
+          <p class="eyebrow" id="timeContext">Daily Habit Mode</p>
           <h1 id="greetingTitle">Checking Gridly</h1>
-
           <p class="subtext" id="greetingSubtitle">
-            Know which crossings are blocked, delayed, or clear before you leave.
+            Your morning rail-delay check for Liberty County. Know the risk before you leave.
           </p>
+
+          <div class="habit-status-strip" id="habitStatusStrip">
+            <span id="habitStatusPill">Checking</span>
+            <strong id="habitStatusHeadline">Building today’s route picture...</strong>
+            <p id="habitStatusDetail">Gridly is checking active reports, confirmations, and crossing freshness.</p>
+          </div>
 
           <div class="trust-row">
             <span id="lastUpdated">Updated: checking...</span>
@@ -48,13 +51,8 @@
           </div>
 
           <div class="hero-actions">
-            <button class="primary-btn hero-map-btn" data-section-jump="map">
-              Open Live Map
-            </button>
-
-            <button class="secondary-btn hero-report-btn" id="desktopReportNearMeBtn">
-              Report Near Me
-            </button>
+            <button class="primary-btn hero-map-btn" data-section-jump="map">Check Live Map</button>
+            <button class="secondary-btn hero-report-btn" id="desktopReportNearMeBtn">Report Near Me</button>
           </div>
         </div>
 
@@ -154,9 +152,7 @@
           <div>
             <p class="eyebrow">Live Mobility Map</p>
             <h2>Tap a crossing to report it</h2>
-            <p class="map-note" id="mapTrustNote">
-              Loading known public crossings from FRA data...
-            </p>
+            <p class="map-note" id="mapTrustNote">Loading known public crossings from FRA data...</p>
           </div>
 
           <div class="actions">
@@ -166,7 +162,7 @@
 
         <div class="report-mode-banner" id="reportModeBanner">
           <strong>Report mode is ready.</strong>
-          <span>Tap the crossing marker closest to you, then choose Blocked, Delay, Cleared, or Other.</span>
+          <span>Gridly will open the nearest crossing when GPS is available. Confirm it is correct, then report.</span>
         </div>
 
         <div id="map"></div>
@@ -198,7 +194,6 @@
               <span>Home</span>
               <strong id="savedHome">Not saved</strong>
             </div>
-
             <div>
               <span>Work</span>
               <strong id="savedWork">Not saved</strong>
@@ -219,7 +214,6 @@
           <p class="eyebrow">Live Alerts</p>
           <h2>What drivers are reporting</h2>
         </div>
-
         <button class="secondary-btn compact-btn" data-section-jump="alerts">View</button>
       </div>
 
@@ -232,9 +226,7 @@
       <div class="report-copy">
         <p class="eyebrow">Manual Fallback</p>
         <h2>Search or manually report a crossing</h2>
-        <p>
-          Most drivers should report from the map. This fallback is useful when you need to search for a specific crossing manually.
-        </p>
+        <p>Most drivers should report from the map. This fallback is useful when searching for a specific crossing manually.</p>
 
         <div class="confirmation-box" id="reportConfirmation">
           Tap Report Near Me to zoom to your location, then select the closest crossing marker.
@@ -288,22 +280,18 @@
     <section class="desktop-business-note">
       <p class="eyebrow">Future Business Portal</p>
       <h2>Desktop command center coming later</h2>
-      <p>
-        Gridly can later separate driver mode from business, city, and operations dashboards using login-based roles.
-      </p>
+      <p>Gridly can later separate driver mode from business, city, and operations dashboards using login-based roles.</p>
     </section>
   </main>
 
-  <button class="mobile-sticky-report" id="mobileReportBtn">
-    Report Near Me
-  </button>
+  <button class="mobile-sticky-report" id="mobileReportBtn">Report Near Me</button>
 
   <footer class="app-footer">
-    Gridly V11.5 · Mobile Reporting + Premium Desktop
+    Gridly V12 · Daily Habit Mode
   </footer>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/app.js?v=115"></script>
+  <script src="js/app.js?v=120"></script>
 </body>
 </html>

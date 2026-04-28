@@ -230,6 +230,57 @@ h2 {
   color: var(--muted);
 }
 
+.habit-status-strip {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.055);
+  display: grid;
+  gap: 5px;
+}
+
+.habit-status-strip span {
+  width: fit-content;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #061017;
+  background: var(--accent);
+}
+
+.habit-status-strip strong {
+  font-size: 1.08rem;
+}
+
+.habit-status-strip p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.habit-status-strip.delayed span {
+  background: var(--warning);
+}
+
+.habit-status-strip.high span {
+  background: var(--danger);
+  color: #fff;
+}
+
+.habit-status-strip.high {
+  border-color: rgba(255, 92, 122, 0.4);
+  background: rgba(255, 92, 122, 0.08);
+}
+
+.habit-status-strip.delayed {
+  border-color: rgba(255, 209, 102, 0.4);
+  background: rgba(255, 209, 102, 0.08);
+}
+
 .trust-row {
   display: flex;
   gap: 12px;
@@ -260,7 +311,6 @@ h2 {
 .insight-card span,
 .mobile-priority-card span,
 .route-summary span,
-.trust-list span,
 .growth-card span {
   color: var(--muted);
   font-size: 0.82rem;
@@ -434,10 +484,6 @@ select:focus {
   gap: 4px;
 }
 
-.report-mode-banner strong {
-  font-size: 0.95rem;
-}
-
 .report-mode-banner span {
   color: var(--muted);
   line-height: 1.35;
@@ -470,7 +516,6 @@ select:focus {
 }
 
 .route-summary,
-.trust-list,
 .trending-list {
   display: grid;
   gap: 14px;
@@ -478,15 +523,13 @@ select:focus {
 }
 
 .route-summary div,
-.trust-list div,
 .trend-item {
   padding: 14px;
   border-radius: 18px;
   background: var(--card-soft);
 }
 
-.route-summary strong,
-.trust-list strong {
+.route-summary strong {
   display: block;
   margin-top: 6px;
 }
@@ -876,7 +919,6 @@ select:focus {
   }
 }
 
-/* Tablet / small desktop */
 @media (max-width: 1100px) {
   .app-header {
     height: auto;
@@ -932,7 +974,6 @@ select:focus {
   }
 }
 
-/* Phone-first driver experience */
 @media (max-width: 700px) {
   .app-header {
     min-height: 92px;
@@ -986,15 +1027,6 @@ select:focus {
     -webkit-overflow-scrolling: touch;
   }
 
-  .top-nav::-webkit-scrollbar {
-    height: 4px;
-  }
-
-  .top-nav::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.12);
-    border-radius: 999px;
-  }
-
   .nav-btn {
     white-space: nowrap;
     padding: 8px 12px;
@@ -1003,7 +1035,6 @@ select:focus {
   }
 
   .desktop-only-nav,
-  .desktop-only-action,
   .desktop-command-strip,
   .desktop-route-setup,
   .desktop-insights,
@@ -1013,8 +1044,8 @@ select:focus {
   }
 
   .app-shell {
-    width: calc(100% - 18px);
-    margin: 12px auto 88px;
+    width: calc(100% - 20px);
+    margin: 12px auto 92px;
   }
 
   .dashboard {
@@ -1023,118 +1054,114 @@ select:focus {
   }
 
   .hero-card {
+    min-height: auto;
+    padding: 18px;
+    border-radius: 24px;
     grid-template-columns: 1fr;
     gap: 14px;
-    padding: 20px;
-    min-height: auto;
   }
 
-  .hero-card h1 {
-    font-size: clamp(2.15rem, 9vw, 3.2rem);
-    line-height: 0.98;
+  h1 {
+    font-size: 2.5rem;
   }
 
-  .subtext,
-  .trust-row span {
-    font-size: 0.94rem;
+  .subtext {
+    font-size: 0.95rem;
+    margin-bottom: 0;
   }
 
   .hero-actions {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
+    display: none;
   }
 
-  .hero-map-btn,
-  .hero-report-btn {
-    width: 100%;
+  .habit-status-strip {
+    margin-top: 14px;
+  }
+
+  .trust-row {
+    gap: 8px;
+  }
+
+  .trust-row span {
+    font-size: 0.72rem;
   }
 
   .route-status-card {
-    width: 100%;
+    padding: 18px;
+  }
+
+  .route-status-card strong {
+    font-size: 1.65rem;
   }
 
   .mobile-priority-strip {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+  }
+
+  .mobile-priority-card {
+    padding: 15px;
+    border-radius: 22px;
+  }
+
+  .mobile-priority-card strong {
+    font-size: 1.45rem;
+  }
+
+  .mobile-priority-card p {
+    font-size: 0.83rem;
   }
 
   .mobile-map-first {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
+    display: block;
     margin-bottom: 12px;
   }
 
   .map-card {
-    padding: 14px;
+    padding: 12px;
     border-radius: 24px;
   }
 
-  .map-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .actions {
-    width: 100%;
+  .section-header {
     display: grid;
-    grid-template-columns: 1fr;
     gap: 10px;
+    margin-bottom: 12px;
   }
 
-  .primary-btn,
-  .secondary-btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .report-mode-banner.visible {
-    display: grid;
+  .section-header .actions {
+    display: none;
   }
 
   #map {
-    height: min(66vh, 560px);
-    min-height: 430px;
+    height: 520px;
     border-radius: 20px;
   }
 
   .mobile-alerts-panel {
     display: block;
-  }
-
-  .mobile-alerts-note {
-    padding: 12px;
-    border-radius: 16px;
-    background: var(--card-soft);
-    border: 1px solid var(--border);
+    border-radius: 24px;
   }
 
   .report-card {
     grid-template-columns: 1fr;
-    gap: 14px;
-    padding: 18px;
+    padding: 16px;
+    border-radius: 24px;
   }
 
   .report-tools {
     grid-template-columns: 1fr;
-    gap: 12px;
   }
 
   .report-buttons {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
   }
 
-  .popup-report-btn {
-    min-height: 42px;
-    font-size: 0.9rem;
+  .primary-btn,
+  .secondary-btn {
+    width: 100%;
   }
 
-  .gridly-popup {
-    min-width: 230px;
+  .compact-btn {
+    width: auto;
   }
 
   .mobile-sticky-report {
@@ -1142,29 +1169,23 @@ select:focus {
     left: 14px;
     right: 14px;
     bottom: 14px;
-    z-index: 1200;
+    z-index: 2000;
     display: block;
+    padding: 16px 18px;
     border: 0;
     border-radius: 999px;
-    padding: 15px 18px;
-    font-weight: 950;
-    color: #061017;
     background: linear-gradient(135deg, var(--accent), var(--blue));
-    box-shadow: 0 18px 46px rgba(0, 0, 0, 0.5);
-    cursor: pointer;
+    color: #061017;
+    font-weight: 950;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.38);
   }
 
   .mobile-sticky-report.clear-mode {
     background: linear-gradient(135deg, var(--warning), var(--accent));
   }
 
-  .mobile-sticky-report:active {
-    transform: scale(0.98);
-  }
-
   .app-footer {
-    width: calc(100% - 18px);
-    margin: 0 auto 18px;
-    font-size: 0.8rem;
+    margin-bottom: 86px;
+    width: calc(100% - 20px);
   }
 }
