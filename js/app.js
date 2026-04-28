@@ -926,9 +926,9 @@ function updateGrowthWidgets(nearest = []) {
 function renderAlerts() {
   if (!els.alertsList) return;
 
-  const latestReports = getLatestReportsByCrossing();
+  const incidents = getConsolidatedIncidents();
 
-  if (!latestReports.length) {
+  if (!incidents.length) {
     els.alertsList.innerHTML = `
       <div class="alert-item">
         <strong>No active shared alerts</strong>
@@ -938,34 +938,37 @@ function renderAlerts() {
     return;
   }
 
-  els.alertsList.innerHTML = latestReports
+  els.alertsList.innerHTML = incidents
     .slice(0, 8)
-    .map((report) => {
-      const trustCount = getReportCountForCrossing(report.crossingId);
+    .map((incident) => {
+      const latest = incident.latestReport;
 
       const label =
-        report.type === "cleared"
+        latest.type === "cleared"
           ? "Cleared"
-          : report.severity === "high"
+          : latest.severity === "high"
           ? "High Impact"
-          : report.severity === "moderate"
+          : latest.severity === "moderate"
           ? "Moderate"
           : "Watch";
 
       const itemClass =
-        report.type === "cleared"
+        latest.type === "cleared"
           ? "cleared"
-          : report.severity === "high"
+          : latest.severity === "high"
           ? "high"
           : "";
 
       return `
         <div class="alert-item ${itemClass}">
-          <strong>${sanitizeText(report.title)}</strong>
-          <p>${label} · ${report.minutesAgo} min ago</p>
-          <p>${sanitizeText(report.detail)}</p>
-          <span class="trust-pill">${trustCount} confirmation${trustCount === 1 ? "" : "s"}</span>
-          <span class="source-pill">Shared report</span>
+          <strong>${sanitizeText(incident.crossingName)}</strong>
+          <p>${label} · newest ${incident.newestMinutes} min ago</p>
+          <p>${sanitizeText(latest.detail)}</p>
+
+          <div class="alert-meta">
+            <span class="alert-count-pill">${incident.count} confirmation${incident.count === 1 ? "" : "s"}</span>
+            <span class="source-pill">First reported ${incident.oldestMinutes} min ago</span>
+          </div>
         </div>
       `;
     })
@@ -975,62 +978,84 @@ function renderAlerts() {
 function renderTrendingCrossings() {
   if (!els.trendingList) return;
 
-  const grouped = new Map();
+  const incidents = getConsolidatedIncidents().slice(0, 5);
 
-  activeReports
-    .filter((report) => !report.expired)
-    .forEach((report) => {
-      const existing = grouped.get(report.crossingId) || {
-        crossingId: report.crossingId,
-        crossingName: report.crossingName,
-        type: report.type,
-        severity: report.severity,
-        count: 0,
-        newestMinutes: report.minutesAgo
-      };
-
-      existing.count += 1;
-      existing.newestMinutes = Math.min(existing.newestMinutes, report.minutesAgo);
-
-      if (report.severity === "high") {
-        existing.severity = "high";
-      }
-
-      if (report.type === "cleared") {
-        existing.type = "cleared";
-      }
-
-      grouped.set(report.crossingId, existing);
-    });
-
-  const trending = [...grouped.values()]
-    .sort((a, b) => b.count - a.count || a.newestMinutes - b.newestMinutes)
-    .slice(0, 5);
-
-  if (!trending.length) {
+  if (!incidents.length) {
     els.trendingList.innerHTML = `
       <div class="trend-item muted">Waiting for shared reports...</div>
     `;
     return;
   }
 
-  els.trendingList.innerHTML = trending
-    .map((item) => {
+  els.trendingList.innerHTML = incidents
+    .map((incident) => {
+      const latest = incident.latestReport;
+
       const className =
-        item.type === "cleared"
+        latest.type === "cleared"
           ? "clear"
-          : item.severity === "high"
+          : latest.severity === "high"
           ? "hot"
           : "";
 
       return `
-        <button class="trend-item ${className}" type="button" onclick="zoomToCrossing('${sanitizeText(item.crossingId)}')">
-          <strong>${sanitizeText(item.crossingName)}</strong>
-          <p>${item.count} report${item.count === 1 ? "" : "s"} · newest ${item.newestMinutes} min ago</p>
+        <button class="trend-item ${className}" type="button" onclick="zoomToCrossing('${sanitizeText(incident.crossingId)}')">
+          <strong>${sanitizeText(incident.crossingName)}</strong>
+          <p>${incident.count} confirmation${incident.count === 1 ? "" : "s"} · newest ${incident.newestMinutes} min ago</p>
         </button>
       `;
     })
     .join("");
+}
+function getConsolidatedIncidents() {
+  const grouped = new Map();
+
+  activeReports
+    .filter((report) => !report.expired)
+    .forEach((report) => {
+      const key = String(report.crossingId);
+
+      if (!grouped.has(key)) {
+        grouped.set(key, {
+          crossingId: key,
+          crossingName: report.crossingName,
+          reports: []
+        });
+      }
+
+      grouped.get(key).reports.push(report);
+    });
+
+  return [...grouped.values()]
+    .map((incident) => {
+      const sorted = incident.reports.sort(
+        (a, b) => new Date(b.submittedAt) - new Date(a.submittedAt)
+      );
+
+      return {
+        crossingId: incident.crossingId,
+        crossingName: incident.crossingName,
+        count: sorted.length,
+        latestReport: sorted[0],
+        newestMinutes: Math.min(...sorted.map((r) => r.minutesAgo)),
+        oldestMinutes: Math.max(...sorted.map((r) => r.minutesAgo))
+      };
+    })
+    .sort((a, b) => {
+      const severityScore = (incident) => {
+        const report = incident.latestReport;
+        if (report.type === "cleared") return 0;
+        if (report.severity === "high") return 3;
+        if (report.severity === "moderate") return 2;
+        return 1;
+      };
+
+      return (
+        severityScore(b) - severityScore(a) ||
+        b.count - a.count ||
+        a.newestMinutes - b.newestMinutes
+      );
+    });
 }
 
 function updateTrustStats() {

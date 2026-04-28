@@ -1042,3 +1042,62 @@ select:focus {
     font-size: 0.8rem;
   }
 }
+/* Gridly V11.1 alert consolidation */
+
+.desktop-command-panel {
+  align-self: start;
+  max-height: 660px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.alerts-list,
+.trending-list {
+  max-height: 360px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.alerts-list::-webkit-scrollbar,
+.trending-list::-webkit-scrollbar,
+.desktop-command-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.alerts-list::-webkit-scrollbar-thumb,
+.trending-list::-webkit-scrollbar-thumb,
+.desktop-command-panel::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+}
+
+.alert-item .alert-meta {
+  margin-top: 6px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.alert-count-pill {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  color: #dfffee;
+  background: rgba(67, 230, 160, 0.13);
+  border: 1px solid rgba(67, 230, 160, 0.24);
+}
+
+@media (max-width: 700px) {
+  .desktop-command-panel {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .alerts-list,
+  .trending-list {
+    max-height: 300px;
+  }
+}
