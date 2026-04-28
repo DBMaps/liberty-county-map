@@ -7,6 +7,7 @@ const FRA_URL =
 const defaultCenter = [30.0466, -94.8852];
 const REPORT_EXPIRATION_MINUTES = 90;
 const LIVE_REFRESH_MS = 15000;
+const APP_BUILD = "V9.2";
 
 let supabaseClient = null;
 let realtimeChannel = null;
@@ -16,7 +17,10 @@ let crossings = [];
 let activeReports = [];
 let userLocation = null;
 let userMarker = null;
-let deviceId = localStorage.getItem("gridlyDeviceId") || `device-${Date.now()}`;
+
+let deviceId =
+  localStorage.getItem("gridlyDeviceId") ||
+  `device-${crypto.randomUUID ? crypto.randomUUID() : Date.now()}`;
 
 localStorage.setItem("gridlyDeviceId", deviceId);
 
@@ -87,16 +91,20 @@ function hydrateElements() {
 
 function initSupabase() {
   if (!window.supabase) {
-    setSync("Supabase missing");
+    setSync(`Supabase missing · Build ${APP_BUILD}`);
     return;
   }
 
   try {
-    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY);
-    setSync("Supabase connected");
+    supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLIC_KEY
+    );
+
+    setSync(`Supabase connected · Build ${APP_BUILD}`);
 
     realtimeChannel = supabaseClient
-      .channel("gridly-live-reports-v91")
+      .channel("gridly-live-reports-v92")
       .on(
         "postgres_changes",
         {
@@ -104,14 +112,18 @@ function initSupabase() {
           schema: "public",
           table: "reports"
         },
-        () => loadSharedReports()
+        () => {
+          loadSharedReports();
+        }
       )
       .subscribe((status) => {
-        if (status === "SUBSCRIBED") setSync("Realtime connected");
+        if (status === "SUBSCRIBED") {
+          setSync(`Realtime connected · Build ${APP_BUILD}`);
+        }
       });
   } catch (error) {
     console.error("Supabase init failed:", error);
-    setSync("Supabase failed");
+    setSync(`Supabase failed · Build ${APP_BUILD}`);
   }
 }
 
@@ -168,6 +180,7 @@ function updateLastUpdated() {
 
 function initMap() {
   map = L.map("map", { zoomControl: false }).setView(defaultCenter, 11);
+
   L.control.zoom({ position: "bottomright" }).addTo(map);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -184,7 +197,10 @@ async function loadCrossings() {
     safeText("mapTrustNote", "Loading known public crossings from FRA data...");
 
     const response = await fetch(FRA_URL);
-    if (!response.ok) throw new Error(`FRA feed returned ${response.status}`);
+
+    if (!response.ok) {
+      throw new Error(`FRA feed returned ${response.status}`);
+    }
 
     const data = await response.json();
 
@@ -201,7 +217,12 @@ async function loadCrossings() {
         const props = feature.properties || {};
 
         return {
-          id: String(props.crossingid || props.crossing_id || props.crossing || `crossing-${index}`),
+          id: String(
+            props.crossingid ||
+              props.crossing_id ||
+              props.crossing ||
+              `crossing-${index}`
+          ),
           name:
             props.street ||
             props.roadwayname ||
@@ -228,9 +249,15 @@ async function loadCrossings() {
     updateTrustStats();
     updateLastUpdated();
 
-    safeText("dataStatus", `Crossing data: ${crossings.length} known crossings loaded`);
+    safeText(
+      "dataStatus",
+      `Crossing data: ${crossings.length} known crossings loaded`
+    );
     safeText("crossingCount", crossings.length);
-    safeText("mapTrustNote", `${crossings.length} known public crossings loaded from FRA data.`);
+    safeText(
+      "mapTrustNote",
+      `${crossings.length} known public crossings loaded from FRA data.`
+    );
   } catch (error) {
     console.error("Gridly crossing load failed:", error);
     safeText("dataStatus", "Crossing data: failed");
@@ -241,7 +268,7 @@ async function loadCrossings() {
 
 async function loadSharedReports() {
   if (!supabaseClient) {
-    setSync("Read skipped: no Supabase");
+    setSync(`Read skipped: no Supabase · Build ${APP_BUILD}`);
     return;
   }
 
@@ -267,7 +294,7 @@ async function loadSharedReports() {
     updateTrustStats();
     updateLastUpdated();
 
-    setSync(`Reports synced: ${activeReports.length}`);
+    setSync(`Reports synced: ${activeReports.length} · Build ${APP_BUILD}`);
   } catch (error) {
     console.error("Gridly report sync failed:", error);
     setSync(`Read failed: ${error.message || "permission denied"}`);
@@ -277,7 +304,10 @@ async function loadSharedReports() {
 function normalizeReports(rows) {
   return rows.map((row) => {
     const createdAt = row.created_at || new Date().toISOString();
-    const minutesAgo = Math.max(0, Math.floor((Date.now() - new Date(createdAt).getTime()) / 60000));
+    const minutesAgo = Math.max(
+      0,
+      Math.floor((Date.now() - new Date(createdAt).getTime()) / 60000)
+    );
 
     return {
       id: row.id,
@@ -288,7 +318,9 @@ function normalizeReports(rows) {
       lng: Number(row.lng),
       type: row.report_type || "other",
       severity: row.severity || getReportCopy(row.report_type).severity,
-      title: `${row.crossing_name || "Crossing"} ${getReportCopy(row.report_type).shortTitle}`,
+      title: `${row.crossing_name || "Crossing"} ${
+        getReportCopy(row.report_type).shortTitle
+      }`,
       detail: row.detail || getReportCopy(row.report_type).detail,
       source: row.source || "user",
       confidence: row.confidence || "shared live report",
@@ -296,7 +328,9 @@ function normalizeReports(rows) {
       submittedAt: createdAt,
       expiresAt: row.expires_at,
       minutesAgo,
-      expired: row.expires_at ? new Date(row.expires_at).getTime() <= Date.now() : false
+      expired: row.expires_at
+        ? new Date(row.expires_at).getTime() <= Date.now()
+        : false
     };
   });
 }
@@ -311,7 +345,9 @@ function populateCrossingSelect() {
     ${sorted
       .map(
         (crossing) =>
-          `<option value="${sanitizeText(crossing.id)}">${sanitizeText(crossing.name)} · ${sanitizeText(crossing.railroad)}</option>`
+          `<option value="${sanitizeText(crossing.id)}">${sanitizeText(
+            crossing.name
+          )} · ${sanitizeText(crossing.railroad)}</option>`
       )
       .join("")}
   `;
@@ -329,13 +365,15 @@ function renderCrossings() {
 
     const icon = L.divIcon({
       className: "",
-      html: `<div class="gridly-marker ${hasActiveIssue ? "alert" : ""} ${isCleared ? "cleared" : ""}"></div>`,
+      html: `<div class="gridly-marker ${hasActiveIssue ? "alert" : ""} ${
+        isCleared ? "cleared" : ""
+      }"></div>`,
       iconSize: [24, 24],
       iconAnchor: [12, 12]
     });
 
     L.marker([crossing.lat, crossing.lng], { icon })
-      .bindPopup(buildPopup(crossing, report), { maxWidth: 330 })
+      .bindPopup(buildPopup(crossing, report), { maxWidth: 340 })
       .addTo(crossingLayer);
   });
 }
@@ -347,18 +385,29 @@ function buildPopup(crossing, report) {
       : report.title
     : "No active report";
 
+  const freshness = report ? `${report.minutesAgo} min ago` : "No recent report";
+
   return `
     <div class="gridly-popup">
       <strong>${sanitizeText(crossing.name)}</strong>
       <span>${sanitizeText(crossing.railroad)}</span><br />
       <span>Status: ${sanitizeText(status)}</span><br />
-      <span>Risk Score: ${crossing.risk}/100</span><br />
+      <span>Freshness: ${sanitizeText(freshness)}</span><br />
+      <span>Risk Score: ${crossing.risk}/100</span>
 
       <div class="popup-report-grid">
-        <button class="popup-report-btn danger" onclick="reportCrossingFromPopup('${sanitizeText(crossing.id)}', 'blocked')">Blocked</button>
-        <button class="popup-report-btn warning" onclick="reportCrossingFromPopup('${sanitizeText(crossing.id)}', 'heavy')">Delay</button>
-        <button class="popup-report-btn blue" onclick="reportCrossingFromPopup('${sanitizeText(crossing.id)}', 'cleared')">Cleared</button>
-        <button class="popup-report-btn neutral" onclick="reportCrossingFromPopup('${sanitizeText(crossing.id)}', 'other')">Other</button>
+        <button class="popup-report-btn danger" onclick="reportCrossingFromPopup('${sanitizeText(
+          crossing.id
+        )}', 'blocked')">Blocked</button>
+        <button class="popup-report-btn warning" onclick="reportCrossingFromPopup('${sanitizeText(
+          crossing.id
+        )}', 'heavy')">Delay</button>
+        <button class="popup-report-btn blue" onclick="reportCrossingFromPopup('${sanitizeText(
+          crossing.id
+        )}', 'cleared')">Cleared</button>
+        <button class="popup-report-btn neutral" onclick="reportCrossingFromPopup('${sanitizeText(
+          crossing.id
+        )}', 'other')">Other</button>
       </div>
     </div>
   `;
@@ -366,6 +415,7 @@ function buildPopup(crossing, report) {
 
 window.reportCrossingFromPopup = async function (crossingId, reportType) {
   const crossing = crossings.find((item) => String(item.id) === String(crossingId));
+
   if (!crossing) {
     safeText("reportConfirmation", "Crossing not found. Try refreshing.");
     return;
@@ -378,16 +428,23 @@ window.zoomToCrossing = function (crossingId) {
   const crossing = crossings.find((item) => String(item.id) === String(crossingId));
   if (!crossing) return;
 
+  scrollToSection("mapSection");
   map.setView([crossing.lat, crossing.lng], 15);
+
+  setTimeout(() => {
+    if (map) map.invalidateSize();
+  }, 250);
 };
 
 function bindEvents() {
   els.saveRouteBtn?.addEventListener("click", saveRoute);
   els.useLocationBtn?.addEventListener("click", useMyLocation);
+
   els.refreshBtn?.addEventListener("click", async () => {
     await loadSharedReports();
     flashButton(els.refreshBtn, "Updated");
   });
+
   els.simulateDelayBtn?.addEventListener("click", simulateDelay);
   els.manualReportBtn?.addEventListener("click", submitManualReport);
   els.clearReportsBtn?.addEventListener("click", loadSharedReports);
@@ -406,14 +463,37 @@ function bindEvents() {
         alerts: "alertsSection"
       };
 
-      const target = document.getElementById(targets[btn.dataset.section]);
-      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+      scrollToSection(targets[btn.dataset.section]);
+
+      if (btn.dataset.section === "map") {
+        setTimeout(() => {
+          if (map) map.invalidateSize();
+        }, 350);
+      }
     });
   });
 }
 
+function scrollToSection(id) {
+  const target = document.getElementById(id);
+  if (!target) return;
+
+  const headerOffset = 120;
+  const y =
+    target.getBoundingClientRect().top +
+    window.pageYOffset -
+    headerOffset;
+
+  window.scrollTo({
+    top: Math.max(0, y),
+    behavior: "smooth"
+  });
+}
+
 function submitManualReport() {
-  const crossing = crossings.find((item) => String(item.id) === String(els.crossingSelect?.value));
+  const crossing = crossings.find(
+    (item) => String(item.id) === String(els.crossingSelect?.value)
+  );
   const reportType = els.manualReportType?.value || "blocked";
 
   if (!crossing) {
@@ -431,7 +511,9 @@ async function createSharedReport(crossing, reportType, confidence) {
   }
 
   const copy = getReportCopy(reportType);
-  const expiresAt = new Date(Date.now() + REPORT_EXPIRATION_MINUTES * 60000).toISOString();
+  const expiresAt = new Date(
+    Date.now() + REPORT_EXPIRATION_MINUTES * 60000
+  ).toISOString();
 
   const row = {
     crossing_id: String(crossing.id),
@@ -452,14 +534,22 @@ async function createSharedReport(crossing, reportType, confidence) {
     setSync("Sending report...");
 
     const { error } = await supabaseClient.from("reports").insert(row);
+
     if (error) throw error;
 
-    safeText("reportConfirmation", `Shared report submitted: ${crossing.name} as ${copy.label}.`);
+    safeText(
+      "reportConfirmation",
+      `Shared report submitted: ${crossing.name} as ${copy.label}.`
+    );
+
     setSync("Write success");
 
     await loadSharedReports();
 
-    if (map) map.setView([crossing.lat, crossing.lng], 14);
+    if (map) {
+      map.setView([crossing.lat, crossing.lng], 14);
+      map.closePopup();
+    }
   } catch (error) {
     console.error("Gridly report insert failed:", error);
     safeText("reportConfirmation", `Report failed: ${error.message || "permission denied"}`);
@@ -565,6 +655,7 @@ function useMyLocation() {
         .bindPopup("Your current location")
         .addTo(map);
 
+      scrollToSection("mapSection");
       map.setView([userLocation.lat, userLocation.lng], 13);
 
       const nearest = findNearestCrossings(userLocation.lat, userLocation.lng, 5);
@@ -572,7 +663,9 @@ function useMyLocation() {
 
       safeText(
         "reportConfirmation",
-        nearest.length ? `Location found. Nearest crossing: ${nearest[0].name}.` : "Location found."
+        nearest.length
+          ? `Location found. Nearest crossing: ${nearest[0].name}.`
+          : "Location found."
       );
 
       flashButton(els.useLocationBtn, "Location Found");
@@ -589,9 +682,13 @@ function updateRouteIntelligence(nearest = []) {
   const savedWork = localStorage.getItem("gridlyWork");
 
   const latestReports = getLatestReportsByCrossing();
-  const activeIssues = latestReports.filter((report) => !report.expired && report.type !== "cleared");
+  const activeIssues = latestReports.filter(
+    (report) => !report.expired && report.type !== "cleared"
+  );
   const highAlerts = activeIssues.filter((report) => report.severity === "high").length;
-  const moderateAlerts = activeIssues.filter((report) => report.severity === "moderate").length;
+  const moderateAlerts = activeIssues.filter(
+    (report) => report.severity === "moderate"
+  ).length;
 
   const crossingRisk = nearest.length
     ? Math.round(nearest.reduce((sum, c) => sum + c.risk, 0) / nearest.length)
@@ -599,7 +696,10 @@ function updateRouteIntelligence(nearest = []) {
 
   const impact = Math.min(
     100,
-    activeIssues.length * 10 + highAlerts * 22 + moderateAlerts * 8 + Math.round(crossingRisk * 0.35)
+    activeIssues.length * 10 +
+      highAlerts * 22 +
+      moderateAlerts * 8 +
+      Math.round(crossingRisk * 0.35)
   );
 
   const extraMinutes = Math.max(0, Math.round(impact / 7));
@@ -761,7 +861,9 @@ function handleCrossingSearch() {
   }
 
   const matches = crossings
-    .filter((crossing) => `${crossing.name} ${crossing.railroad}`.toLowerCase().includes(query))
+    .filter((crossing) =>
+      `${crossing.name} ${crossing.railroad}`.toLowerCase().includes(query)
+    )
     .slice(0, 6);
 
   if (!matches.length) {
@@ -777,7 +879,9 @@ function handleCrossingSearch() {
   els.searchResults.innerHTML = matches
     .map(
       (crossing) => `
-        <button class="search-result-btn" type="button" onclick="zoomToCrossing('${sanitizeText(crossing.id)}')">
+        <button class="search-result-btn" type="button" onclick="zoomToCrossing('${sanitizeText(
+          crossing.id
+        )}')">
           ${sanitizeText(crossing.name)}
           <span>${sanitizeText(crossing.railroad)} · Click to zoom and report from map</span>
         </button>
