@@ -1,89 +1,102 @@
-/* =========================================================
-   GRIDLY V9.1
-   Full Replacement js/app.js
-   Focus: Report Buttons + Shared Sync + Strong Debug
-   Pure HTML / CSS / JS
-========================================================= */
-
-/* -----------------------------
-   CONFIG
------------------------------ */
 const SUPABASE_URL = "https://nhwhkbkludzkuyxmkkcj.supabase.co";
 const SUPABASE_PUBLIC_KEY = "sb_publishable_T33dpOj4M3TioSqFcVxf2Q_YTmhkPdO";
 
-const REPORT_EXP_MINUTES = 90;
-const POLL_MS = 15000;
+const FRA_URL =
+  "https://data.transportation.gov/resource/m2f8-22s6.geojson?$limit=5000&statename=TEXAS&countyname=LIBERTY";
 
-/* -----------------------------
-   GLOBALS
------------------------------ */
+const defaultCenter = [30.0466, -94.8852];
+const REPORT_EXPIRATION_MINUTES = 90;
+const LIVE_REFRESH_MS = 15000;
+
 let supabaseClient = null;
 let realtimeChannel = null;
+let map;
+let crossingLayer;
 let crossings = [];
-let reports = [];
-let map = null;
-let crossingLayer = null;
+let activeReports = [];
+let userLocation = null;
+let userMarker = null;
+let deviceId = localStorage.getItem("gridlyDeviceId") || `device-${Date.now()}`;
+
+localStorage.setItem("gridlyDeviceId", deviceId);
 
 const els = {};
 
-/* -----------------------------
-   STARTUP
------------------------------ */
 document.addEventListener("DOMContentLoaded", async () => {
-  hydrate();
-  initSupabase();
+  hydrateElements();
+  initGreeting();
+  updateLastUpdated();
   initMap();
-  bindButtons();
-  setDebug("Booting Gridly V9.1");
+  initSupabase();
+  bindEvents();
+  loadSavedRoute();
 
   await loadCrossings();
-  await loadReports();
-  startPolling();
+  await loadSharedReports();
+
+  setInterval(loadSharedReports, LIVE_REFRESH_MS);
 });
 
-/* -----------------------------
-   ELEMENTS
------------------------------ */
-function hydrate() {
+function hydrateElements() {
   [
-    "reportConfirmation",
+    "greetingTitle",
+    "greetingSubtitle",
+    "timeContext",
+    "routeCardLabel",
+    "routeStatusCard",
+    "routeStatus",
+    "routeEta",
+    "departureTime",
+    "departureReason",
+    "delayRisk",
+    "delayReason",
+    "nearbyAlertCount",
+    "activeAlertText",
+    "alternateRoute",
+    "alternateReason",
+    "savedHome",
+    "savedWork",
+    "homeInput",
+    "workInput",
+    "saveRouteBtn",
+    "useLocationBtn",
+    "refreshBtn",
+    "simulateDelayBtn",
+    "alertsList",
+    "impactFill",
+    "impactScore",
+    "impactText",
     "crossingSelect",
+    "crossingSearch",
+    "searchResults",
     "manualReportType",
     "manualReportBtn",
     "clearReportsBtn",
+    "reportConfirmation",
+    "lastUpdated",
+    "dataStatus",
     "syncStatus",
-    "alertsList"
-  ].forEach(id => {
+    "crossingCount",
+    "reportDecayStatus",
+    "lastReportTime",
+    "mapTrustNote"
+  ].forEach((id) => {
     els[id] = document.getElementById(id);
   });
 }
 
-/* -----------------------------
-   DEBUG
------------------------------ */
-function setDebug(msg) {
-  if (els.syncStatus) els.syncStatus.textContent = msg;
-}
-
-/* -----------------------------
-   SUPABASE
------------------------------ */
 function initSupabase() {
+  if (!window.supabase) {
+    setSync("Supabase missing");
+    return;
+  }
+
   try {
-    if (!window.supabase) {
-      setDebug("Supabase JS missing");
-      return;
-    }
-
-    supabaseClient = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_PUBLIC_KEY
-    );
-
-    setDebug("Supabase connected");
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY);
+    setSync("Supabase connected");
 
     realtimeChannel = supabaseClient
-      .channel("gridly-reports-live")
+      .channel("gridly-live-reports-v91")
       .on(
         "postgres_changes",
         {
@@ -91,307 +104,740 @@ function initSupabase() {
           schema: "public",
           table: "reports"
         },
-        payload => {
-          console.log("Realtime event:", payload);
-          loadReports();
-        }
+        () => loadSharedReports()
       )
-      .subscribe(status => {
-        setDebug("Realtime: " + status);
+      .subscribe((status) => {
+        if (status === "SUBSCRIBED") setSync("Realtime connected");
       });
-
-  } catch (err) {
-    console.error(err);
-    setDebug("Supabase failed");
+  } catch (error) {
+    console.error("Supabase init failed:", error);
+    setSync("Supabase failed");
   }
 }
 
-/* -----------------------------
-   MAP
------------------------------ */
-function initMap() {
-  map = L.map("map").setView([30.0466, -94.8852], 11);
+function initGreeting() {
+  const hour = new Date().getHours();
 
-  L.tileLayer(
-    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    {
-      maxZoom: 19,
-      attribution: "&copy; OpenStreetMap"
-    }
-  ).addTo(map);
+  if (hour >= 5 && hour < 12) {
+    setGreeting(
+      "Good Morning",
+      "Morning Route Intelligence",
+      "Check your work route before leaving. Gridly watches crossings, route risk, and shared live reports.",
+      "Work Route"
+    );
+  } else if (hour >= 12 && hour < 17) {
+    setGreeting(
+      "Good Afternoon",
+      "Midday Mobility Check",
+      "Heading out soon? Gridly checks nearby crossings, slowdowns, and active road issues.",
+      "Current Route"
+    );
+  } else if (hour >= 17 && hour < 22) {
+    setGreeting(
+      "Good Evening",
+      "Evening Commute Intelligence",
+      "Check your route home before you leave. Gridly watches for crossing delays and local traffic impacts.",
+      "Commute Home"
+    );
+  } else {
+    setGreeting(
+      "Late Night Check",
+      "After-Hours Route Watch",
+      "Quiet roads are still worth checking. Gridly looks for late-night rail delays and blocked crossings.",
+      "Night Route"
+    );
+  }
+}
+
+function setGreeting(title, context, subtitle, routeLabel) {
+  safeText("greetingTitle", title);
+  safeText("timeContext", context);
+  safeText("greetingSubtitle", subtitle);
+  safeText("routeCardLabel", routeLabel);
+}
+
+function updateLastUpdated() {
+  safeText(
+    "lastUpdated",
+    `Last updated: ${new Date().toLocaleTimeString([], {
+      hour: "numeric",
+      minute: "2-digit"
+    })}`
+  );
+}
+
+function initMap() {
+  map = L.map("map", { zoomControl: false }).setView(defaultCenter, 11);
+  L.control.zoom({ position: "bottomright" }).addTo(map);
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: "&copy; OpenStreetMap contributors"
+  }).addTo(map);
 
   crossingLayer = L.layerGroup().addTo(map);
 }
 
-/* -----------------------------
-   LOAD CROSSINGS
------------------------------ */
 async function loadCrossings() {
   try {
-    const url =
-      "https://data.transportation.gov/resource/m2f8-22s6.geojson?$limit=5000&statename=TEXAS&countyname=LIBERTY";
+    safeText("dataStatus", "Crossing data: loading");
+    safeText("mapTrustNote", "Loading known public crossings from FRA data...");
 
-    const res = await fetch(url);
-    const data = await res.json();
+    const response = await fetch(FRA_URL);
+    if (!response.ok) throw new Error(`FRA feed returned ${response.status}`);
+
+    const data = await response.json();
 
     crossings = (data.features || [])
-  .filter(f =>
-    f &&
-    f.geometry &&
-    Array.isArray(f.geometry.coordinates)
-  )
-  .map((f, i) => {
-      const p = f.properties || {};
-      const [lng, lat] = f.geometry.coordinates;
+      .filter((feature) => {
+        if (!feature || !feature.geometry) return false;
+        if (!Array.isArray(feature.geometry.coordinates)) return false;
 
-      return {
-        id: p.crossingid || "x" + i,
-        name:
-          p.street ||
-          p.roadwayname ||
-          "Crossing",
-        railroad:
-          p.railroad ||
-          "Railroad",
-        lat,
-        lng
-      };
-    });
+        const [lng, lat] = feature.geometry.coordinates;
+        return Number.isFinite(Number(lat)) && Number.isFinite(Number(lng));
+      })
+      .map((feature, index) => {
+        const [lng, lat] = feature.geometry.coordinates;
+        const props = feature.properties || {};
+
+        return {
+          id: String(props.crossingid || props.crossing_id || props.crossing || `crossing-${index}`),
+          name:
+            props.street ||
+            props.roadwayname ||
+            props.highwayname ||
+            props.road ||
+            props.crossingname ||
+            "Railroad Crossing",
+          railroad:
+            props.railroad ||
+            props.railroadname ||
+            props.railroad_company ||
+            props.rrname ||
+            "Rail line",
+          lat: Number(lat),
+          lng: Number(lng),
+          risk: calculateBaseRisk(props, index),
+          props
+        };
+      });
 
     populateCrossingSelect();
     renderCrossings();
+    updateRouteIntelligence();
+    updateTrustStats();
+    updateLastUpdated();
 
-  } catch (err) {
-    console.error(err);
-    setDebug("Crossings failed");
+    safeText("dataStatus", `Crossing data: ${crossings.length} known crossings loaded`);
+    safeText("crossingCount", crossings.length);
+    safeText("mapTrustNote", `${crossings.length} known public crossings loaded from FRA data.`);
+  } catch (error) {
+    console.error("Gridly crossing load failed:", error);
+    safeText("dataStatus", "Crossing data: failed");
+    safeText("crossingCount", "Failed");
+    safeText("mapTrustNote", "Unable to load FRA crossing data. Refresh and try again.");
   }
 }
 
-/* -----------------------------
-   SELECT MENU
------------------------------ */
-function populateCrossingSelect() {
-  if (!els.crossingSelect) return;
+async function loadSharedReports() {
+  if (!supabaseClient) {
+    setSync("Read skipped: no Supabase");
+    return;
+  }
 
-  els.crossingSelect.innerHTML =
-    `<option value="">Choose crossing</option>` +
-    crossings.map(c =>
-      `<option value="${c.id}">
-        ${escapeHtml(c.name)} · ${escapeHtml(c.railroad)}
-      </option>`
-    ).join("");
+  try {
+    setSync("Reading reports...");
+
+    const nowIso = new Date().toISOString();
+
+    const { data, error } = await supabaseClient
+      .from("reports")
+      .select("*")
+      .gt("expires_at", nowIso)
+      .order("created_at", { ascending: false })
+      .limit(150);
+
+    if (error) throw error;
+
+    activeReports = normalizeReports(data || []);
+
+    renderAlerts();
+    renderCrossings();
+    updateRouteIntelligence();
+    updateTrustStats();
+    updateLastUpdated();
+
+    setSync(`Reports synced: ${activeReports.length}`);
+  } catch (error) {
+    console.error("Gridly report sync failed:", error);
+    setSync(`Read failed: ${error.message || "permission denied"}`);
+  }
 }
 
-/* -----------------------------
-   RENDER MAP MARKERS
------------------------------ */
-function renderCrossings() {
-  if (!crossingLayer) return;
+function normalizeReports(rows) {
+  return rows.map((row) => {
+    const createdAt = row.created_at || new Date().toISOString();
+    const minutesAgo = Math.max(0, Math.floor((Date.now() - new Date(createdAt).getTime()) / 60000));
 
-  crossingLayer.clearLayers();
-
-  crossings.forEach(c => {
-    const report = latestReport(c.id);
-
-    const marker = L.circleMarker(
-      [c.lat, c.lng],
-      {
-        radius: 8,
-        color: reportColor(report),
-        fillColor: reportColor(report),
-        fillOpacity: 0.9
-      }
-    );
-
-    marker.bindPopup(buildPopup(c, report));
-    marker.addTo(crossingLayer);
+    return {
+      id: row.id,
+      crossingId: String(row.crossing_id),
+      crossingName: row.crossing_name || "Unknown crossing",
+      railroad: row.railroad || "Rail line",
+      lat: Number(row.lat),
+      lng: Number(row.lng),
+      type: row.report_type || "other",
+      severity: row.severity || getReportCopy(row.report_type).severity,
+      title: `${row.crossing_name || "Crossing"} ${getReportCopy(row.report_type).shortTitle}`,
+      detail: row.detail || getReportCopy(row.report_type).detail,
+      source: row.source || "user",
+      confidence: row.confidence || "shared live report",
+      deviceId: row.device_id,
+      submittedAt: createdAt,
+      expiresAt: row.expires_at,
+      minutesAgo,
+      expired: row.expires_at ? new Date(row.expires_at).getTime() <= Date.now() : false
+    };
   });
 }
 
-/* -----------------------------
-   POPUP HTML
------------------------------ */
-function buildPopup(c, report) {
+function populateCrossingSelect() {
+  if (!els.crossingSelect) return;
+
+  const sorted = [...crossings].sort((a, b) => a.name.localeCompare(b.name));
+
+  els.crossingSelect.innerHTML = `
+    <option value="">Choose a crossing</option>
+    ${sorted
+      .map(
+        (crossing) =>
+          `<option value="${sanitizeText(crossing.id)}">${sanitizeText(crossing.name)} · ${sanitizeText(crossing.railroad)}</option>`
+      )
+      .join("")}
+  `;
+}
+
+function renderCrossings() {
+  if (!crossingLayer || !crossings.length) return;
+
+  crossingLayer.clearLayers();
+
+  crossings.forEach((crossing) => {
+    const report = getLatestReportForCrossing(crossing.id);
+    const hasActiveIssue = report && report.type !== "cleared" && !report.expired;
+    const isCleared = report && report.type === "cleared";
+
+    const icon = L.divIcon({
+      className: "",
+      html: `<div class="gridly-marker ${hasActiveIssue ? "alert" : ""} ${isCleared ? "cleared" : ""}"></div>`,
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
+    });
+
+    L.marker([crossing.lat, crossing.lng], { icon })
+      .bindPopup(buildPopup(crossing, report), { maxWidth: 330 })
+      .addTo(crossingLayer);
+  });
+}
+
+function buildPopup(crossing, report) {
+  const status = report
+    ? report.type === "cleared"
+      ? "Recently cleared"
+      : report.title
+    : "No active report";
+
   return `
-    <div style="min-width:220px">
-      <strong>${escapeHtml(c.name)}</strong><br>
-      <small>${escapeHtml(c.railroad)}</small><br><br>
+    <div class="gridly-popup">
+      <strong>${sanitizeText(crossing.name)}</strong>
+      <span>${sanitizeText(crossing.railroad)}</span><br />
+      <span>Status: ${sanitizeText(status)}</span><br />
+      <span>Risk Score: ${crossing.risk}/100</span><br />
 
-      Status:
-      ${report ? report.report_type : "No active report"}<br><br>
-
-      <button onclick="popupReport('${c.id}','blocked')">Blocked</button>
-      <button onclick="popupReport('${c.id}','heavy')">Delay</button>
-      <button onclick="popupReport('${c.id}','cleared')">Cleared</button>
-      <button onclick="popupReport('${c.id}','other')">Other</button>
+      <div class="popup-report-grid">
+        <button class="popup-report-btn danger" onclick="reportCrossingFromPopup('${sanitizeText(crossing.id)}', 'blocked')">Blocked</button>
+        <button class="popup-report-btn warning" onclick="reportCrossingFromPopup('${sanitizeText(crossing.id)}', 'heavy')">Delay</button>
+        <button class="popup-report-btn blue" onclick="reportCrossingFromPopup('${sanitizeText(crossing.id)}', 'cleared')">Cleared</button>
+        <button class="popup-report-btn neutral" onclick="reportCrossingFromPopup('${sanitizeText(crossing.id)}', 'other')">Other</button>
+      </div>
     </div>
   `;
 }
 
-/* -----------------------------
-   GLOBAL POPUP HANDLER
------------------------------ */
-window.popupReport = async function(id, type) {
-  const crossing = crossings.find(x => x.id === id);
-  if (!crossing) return;
-
-  await submitReport(crossing, type);
-};
-
-/* -----------------------------
-   BUTTONS
------------------------------ */
-function bindButtons() {
-  els.manualReportBtn?.addEventListener("click", async () => {
-    const id = els.crossingSelect.value;
-    const type = els.manualReportType.value;
-
-    const crossing = crossings.find(x => x.id === id);
-
-    if (!crossing) {
-      confirmMsg("Choose a crossing first");
-      return;
-    }
-
-    await submitReport(crossing, type);
-  });
-
-  els.clearReportsBtn?.addEventListener("click", loadReports);
-}
-
-/* -----------------------------
-   SUBMIT REPORT
------------------------------ */
-async function submitReport(crossing, type) {
-  if (!supabaseClient) {
-    confirmMsg("Supabase not connected");
+window.reportCrossingFromPopup = async function (crossingId, reportType) {
+  const crossing = crossings.find((item) => String(item.id) === String(crossingId));
+  if (!crossing) {
+    safeText("reportConfirmation", "Crossing not found. Try refreshing.");
     return;
   }
 
+  await createSharedReport(crossing, reportType, "exact map marker");
+};
+
+window.zoomToCrossing = function (crossingId) {
+  const crossing = crossings.find((item) => String(item.id) === String(crossingId));
+  if (!crossing) return;
+
+  map.setView([crossing.lat, crossing.lng], 15);
+};
+
+function bindEvents() {
+  els.saveRouteBtn?.addEventListener("click", saveRoute);
+  els.useLocationBtn?.addEventListener("click", useMyLocation);
+  els.refreshBtn?.addEventListener("click", async () => {
+    await loadSharedReports();
+    flashButton(els.refreshBtn, "Updated");
+  });
+  els.simulateDelayBtn?.addEventListener("click", simulateDelay);
+  els.manualReportBtn?.addEventListener("click", submitManualReport);
+  els.clearReportsBtn?.addEventListener("click", loadSharedReports);
+  els.crossingSearch?.addEventListener("input", handleCrossingSearch);
+
+  document.querySelectorAll(".nav-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".nav-btn").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      const targets = {
+        dashboard: "dashboardSection",
+        map: "mapSection",
+        routes: "setupCard",
+        report: "reportSection",
+        alerts: "alertsSection"
+      };
+
+      const target = document.getElementById(targets[btn.dataset.section]);
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+}
+
+function submitManualReport() {
+  const crossing = crossings.find((item) => String(item.id) === String(els.crossingSelect?.value));
+  const reportType = els.manualReportType?.value || "blocked";
+
+  if (!crossing) {
+    safeText("reportConfirmation", "Choose a crossing before submitting a report.");
+    return;
+  }
+
+  createSharedReport(crossing, reportType, "manual fallback");
+}
+
+async function createSharedReport(crossing, reportType, confidence) {
+  if (!supabaseClient) {
+    safeText("reportConfirmation", "Live report sync is unavailable.");
+    return;
+  }
+
+  const copy = getReportCopy(reportType);
+  const expiresAt = new Date(Date.now() + REPORT_EXPIRATION_MINUTES * 60000).toISOString();
+
+  const row = {
+    crossing_id: String(crossing.id),
+    crossing_name: crossing.name,
+    railroad: crossing.railroad,
+    lat: crossing.lat,
+    lng: crossing.lng,
+    report_type: reportType,
+    severity: copy.severity,
+    detail: copy.detail,
+    source: "user",
+    confidence,
+    device_id: deviceId,
+    expires_at: expiresAt
+  };
+
   try {
-    setDebug("Sending report...");
+    setSync("Sending report...");
 
-    const expires = new Date(
-      Date.now() + REPORT_EXP_MINUTES * 60000
-    ).toISOString();
-
-    const row = {
-      crossing_id: crossing.id,
-      crossing_name: crossing.name,
-      railroad: crossing.railroad,
-      lat: crossing.lat,
-      lng: crossing.lng,
-      report_type: type,
-      created_at: new Date().toISOString(),
-      expires_at: expires
-    };
-
-    const { error } =
-      await supabaseClient
-        .from("reports")
-        .insert(row);
-
+    const { error } = await supabaseClient.from("reports").insert(row);
     if (error) throw error;
 
-    confirmMsg(
-      `${crossing.name}: ${type} submitted`
-    );
+    safeText("reportConfirmation", `Shared report submitted: ${crossing.name} as ${copy.label}.`);
+    setSync("Write success");
 
-    setDebug("Write success");
+    await loadSharedReports();
 
-    await loadReports();
-
-  } catch (err) {
-    console.error(err);
-    confirmMsg("Submit failed");
-    setDebug("Write failed");
+    if (map) map.setView([crossing.lat, crossing.lng], 14);
+  } catch (error) {
+    console.error("Gridly report insert failed:", error);
+    safeText("reportConfirmation", `Report failed: ${error.message || "permission denied"}`);
+    setSync(`Write failed: ${error.message || "permission denied"}`);
   }
 }
 
-/* -----------------------------
-   LOAD REPORTS
------------------------------ */
-async function loadReports() {
-  if (!supabaseClient) return;
+function getReportCopy(type) {
+  const types = {
+    blocked: {
+      label: "Blocked",
+      shortTitle: "blocked",
+      detail: "Shared report: crossing or road appears blocked.",
+      severity: "high"
+    },
+    heavy: {
+      label: "Heavy Delay",
+      shortTitle: "heavy delay",
+      detail: "Shared report: traffic is moving slowly near this crossing.",
+      severity: "moderate"
+    },
+    cleared: {
+      label: "Cleared",
+      shortTitle: "cleared",
+      detail: "Shared report: previous issue appears cleared.",
+      severity: "low"
+    },
+    other: {
+      label: "Other Issue",
+      shortTitle: "issue",
+      detail: "Shared report: local road issue may affect travel.",
+      severity: "moderate"
+    }
+  };
 
-  try {
-    const now = new Date().toISOString();
+  return types[type] || types.other;
+}
 
-    const { data, error } =
-      await supabaseClient
-        .from("reports")
-        .select("*")
-        .gt("expires_at", now)
-        .order("created_at", {
-          ascending: false
-        });
+async function simulateDelay() {
+  if (!crossings.length) {
+    safeText("reportConfirmation", "Crossings are not loaded yet.");
+    return;
+  }
 
-    if (error) throw error;
+  const crossing = crossings[Math.floor(Math.random() * crossings.length)];
+  await createSharedReport(crossing, "blocked", "simulated demo action");
+  flashButton(els.simulateDelayBtn, "Delay Added");
+}
 
-    reports = data || [];
+function saveRoute() {
+  const home = els.homeInput?.value.trim();
+  const work = els.workInput?.value.trim();
 
-    renderAlerts();
-    renderCrossings();
+  if (!home || !work) {
+    flashButton(els.saveRouteBtn, "Add Home + Work");
+    return;
+  }
 
-    setDebug(
-      "Reports synced: " + reports.length
-    );
+  localStorage.setItem("gridlyHome", home);
+  localStorage.setItem("gridlyWork", work);
 
-  } catch (err) {
-    console.error(err);
-    setDebug("Read failed");
+  loadSavedRoute();
+  updateRouteIntelligence();
+  flashButton(els.saveRouteBtn, "Route Saved");
+}
+
+function loadSavedRoute() {
+  const home = localStorage.getItem("gridlyHome");
+  const work = localStorage.getItem("gridlyWork");
+
+  if (home) {
+    safeText("savedHome", home);
+    if (els.homeInput) els.homeInput.value = home;
+  }
+
+  if (work) {
+    safeText("savedWork", work);
+    if (els.workInput) els.workInput.value = work;
   }
 }
 
-/* -----------------------------
-   ALERT PANEL
------------------------------ */
+function useMyLocation() {
+  if (!navigator.geolocation) {
+    flashButton(els.useLocationBtn, "Unavailable");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      userLocation = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      };
+
+      if (userMarker) map.removeLayer(userMarker);
+
+      userMarker = L.circleMarker([userLocation.lat, userLocation.lng], {
+        radius: 9,
+        color: "#43e6a0",
+        fillColor: "#43e6a0",
+        fillOpacity: 0.85
+      })
+        .bindPopup("Your current location")
+        .addTo(map);
+
+      map.setView([userLocation.lat, userLocation.lng], 13);
+
+      const nearest = findNearestCrossings(userLocation.lat, userLocation.lng, 5);
+      updateRouteIntelligence(nearest);
+
+      safeText(
+        "reportConfirmation",
+        nearest.length ? `Location found. Nearest crossing: ${nearest[0].name}.` : "Location found."
+      );
+
+      flashButton(els.useLocationBtn, "Location Found");
+    },
+    () => {
+      safeText("reportConfirmation", "Location permission was blocked.");
+      flashButton(els.useLocationBtn, "Location Blocked");
+    }
+  );
+}
+
+function updateRouteIntelligence(nearest = []) {
+  const savedHome = localStorage.getItem("gridlyHome");
+  const savedWork = localStorage.getItem("gridlyWork");
+
+  const latestReports = getLatestReportsByCrossing();
+  const activeIssues = latestReports.filter((report) => !report.expired && report.type !== "cleared");
+  const highAlerts = activeIssues.filter((report) => report.severity === "high").length;
+  const moderateAlerts = activeIssues.filter((report) => report.severity === "moderate").length;
+
+  const crossingRisk = nearest.length
+    ? Math.round(nearest.reduce((sum, c) => sum + c.risk, 0) / nearest.length)
+    : 28;
+
+  const impact = Math.min(
+    100,
+    activeIssues.length * 10 + highAlerts * 22 + moderateAlerts * 8 + Math.round(crossingRisk * 0.35)
+  );
+
+  const extraMinutes = Math.max(0, Math.round(impact / 7));
+
+  safeText("nearbyAlertCount", activeIssues.length);
+  safeText(
+    "activeAlertText",
+    activeIssues.length === 1
+      ? "One active shared report currently affecting the area."
+      : "Live shared reports near your saved or current location."
+  );
+
+  if (els.impactFill) els.impactFill.style.width = `${impact}%`;
+  safeText("impactScore", `${impact} / 100`);
+
+  els.routeStatusCard?.classList.remove("clear", "delayed", "high");
+
+  if (!savedHome || !savedWork) {
+    safeText("routeStatus", "Set Route");
+    safeText("routeEta", "Save Home + Work");
+    safeText("departureTime", "Set route first");
+    safeText("departureReason", "Home and Work unlock personalized route intelligence.");
+    els.routeStatusCard?.classList.add("delayed");
+  } else if (impact >= 70) {
+    safeText("routeStatus", "Delayed");
+    safeText("routeEta", `ETA 32 min (+${extraMinutes})`);
+    safeText("departureTime", "Leave now");
+    safeText("departureReason", "High shared route impact detected.");
+    els.routeStatusCard?.classList.add("high");
+  } else if (impact >= 40) {
+    safeText("routeStatus", "Watch");
+    safeText("routeEta", `ETA 26 min (+${extraMinutes})`);
+    safeText("departureTime", "Leave 8 min early");
+    safeText("departureReason", "Moderate shared report risk detected.");
+    els.routeStatusCard?.classList.add("delayed");
+  } else {
+    safeText("routeStatus", "Clear");
+    safeText("routeEta", "ETA 21 min");
+    safeText("departureTime", "Normal departure");
+    safeText("departureReason", "No major active shared delay detected.");
+    els.routeStatusCard?.classList.add("clear");
+  }
+
+  if (impact >= 70) {
+    safeText("delayRisk", "High");
+    safeText("delayReason", "Major crossing blockage detected.");
+    safeText("alternateRoute", "Use alternate");
+    safeText("alternateReason", "Avoid highest-impact crossing if possible.");
+    safeText("impactText", "High route impact. Leave now or reroute.");
+  } else if (impact >= 40) {
+    safeText("delayRisk", "Moderate");
+    safeText("delayReason", "Some crossing or traffic risk detected.");
+    safeText("alternateRoute", "Have backup");
+    safeText("alternateReason", "Alternate route may help if reports increase.");
+    safeText("impactText", "Moderate route impact. Watch before leaving.");
+  } else {
+    safeText("delayRisk", "Low");
+    safeText("delayReason", "No major live reports affecting the area.");
+    safeText("alternateRoute", "Not needed");
+    safeText("alternateReason", "Current route appears clear.");
+    safeText("impactText", "Low route impact. Normal travel expected.");
+  }
+}
+
 function renderAlerts() {
   if (!els.alertsList) return;
 
-  if (!reports.length) {
-    els.alertsList.innerHTML =
-      "<div>No active reports</div>";
+  const latestReports = getLatestReportsByCrossing();
+
+  if (!latestReports.length) {
+    els.alertsList.innerHTML = `
+      <div class="alert-item">
+        <strong>No active shared alerts</strong>
+        <p>Your saved route looks quiet right now.</p>
+      </div>
+    `;
     return;
   }
 
-  els.alertsList.innerHTML =
-    reports.slice(0, 8).map(r => `
-      <div class="alert-item">
-        <strong>${escapeHtml(r.crossing_name)}</strong>
-        <p>${r.report_type}</p>
-      </div>
-    `).join("");
+  els.alertsList.innerHTML = latestReports
+    .slice(0, 8)
+    .map((report) => {
+      const label =
+        report.type === "cleared"
+          ? "Cleared"
+          : report.severity === "high"
+          ? "High Impact"
+          : report.severity === "moderate"
+          ? "Moderate"
+          : "Watch";
+
+      return `
+        <div class="alert-item">
+          <strong>${sanitizeText(report.title)}</strong>
+          <p>${label} · ${report.minutesAgo} min ago</p>
+          <p>${sanitizeText(report.detail)}</p>
+          <span class="source-pill">Shared report</span>
+        </div>
+      `;
+    })
+    .join("");
 }
 
-/* -----------------------------
-   HELPERS
------------------------------ */
-function latestReport(id) {
-  return reports.find(r => r.crossing_id === id);
+function updateTrustStats() {
+  const latestReports = getLatestReportsByCrossing();
+  const active = latestReports.filter((report) => !report.expired);
+  const lastReport = [...activeReports].sort((a, b) => {
+    return new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0);
+  })[0];
+
+  safeText("reportDecayStatus", `${REPORT_EXPIRATION_MINUTES} min expiry`);
+  safeText("lastReportTime", lastReport ? `${lastReport.minutesAgo} min ago` : "None yet");
+  safeText("nearbyAlertCount", active.filter((report) => report.type !== "cleared").length);
 }
 
-function reportColor(r) {
-  if (!r) return "#4da3ff";
-  if (r.report_type === "blocked") return "#ff5c7a";
-  if (r.report_type === "cleared") return "#43e6a0";
-  if (r.report_type === "heavy") return "#ffd166";
-  return "#999";
+function getLatestReportForCrossing(crossingId) {
+  return activeReports
+    .filter((report) => String(report.crossingId) === String(crossingId))
+    .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))[0];
 }
 
-function confirmMsg(msg) {
-  if (els.reportConfirmation) {
-    els.reportConfirmation.textContent = msg;
+function getLatestReportsByCrossing() {
+  const mapByCrossing = new Map();
+
+  activeReports
+    .filter((report) => !report.expired)
+    .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))
+    .forEach((report) => {
+      if (!mapByCrossing.has(report.crossingId)) {
+        mapByCrossing.set(report.crossingId, report);
+      }
+    });
+
+  return [...mapByCrossing.values()];
+}
+
+function calculateBaseRisk(props, index) {
+  let score = 18;
+  const traffic = Number(props.aadt || props.avgdailytraffic || props.traffic || 0);
+  const trains = Number(props.daythrutrain || props.totaltrains || props.trains || 0);
+
+  if (traffic > 5000) score += 20;
+  if (traffic > 10000) score += 12;
+  if (trains > 5) score += 14;
+  if (trains > 15) score += 14;
+
+  score += index % 7;
+  return Math.min(score, 82);
+}
+
+function handleCrossingSearch() {
+  if (!els.crossingSearch || !els.searchResults) return;
+
+  const query = els.crossingSearch.value.trim().toLowerCase();
+
+  if (!query) {
+    els.searchResults.innerHTML = "";
+    return;
   }
+
+  const matches = crossings
+    .filter((crossing) => `${crossing.name} ${crossing.railroad}`.toLowerCase().includes(query))
+    .slice(0, 6);
+
+  if (!matches.length) {
+    els.searchResults.innerHTML = `
+      <button class="search-result-btn" type="button">
+        No matching crossing found
+        <span>Try a street name, crossing name, or railroad.</span>
+      </button>
+    `;
+    return;
+  }
+
+  els.searchResults.innerHTML = matches
+    .map(
+      (crossing) => `
+        <button class="search-result-btn" type="button" onclick="zoomToCrossing('${sanitizeText(crossing.id)}')">
+          ${sanitizeText(crossing.name)}
+          <span>${sanitizeText(crossing.railroad)} · Click to zoom and report from map</span>
+        </button>
+      `
+    )
+    .join("");
 }
 
-function startPolling() {
-  setInterval(loadReports, POLL_MS);
+function findNearestCrossings(lat, lng, count = 5) {
+  return crossings
+    .map((crossing) => ({
+      ...crossing,
+      distance: haversineDistance(lat, lng, crossing.lat, crossing.lng)
+    }))
+    .sort((a, b) => a.distance - b.distance)
+    .slice(0, count);
 }
 
-function escapeHtml(v) {
-  return String(v || "")
+function haversineDistance(lat1, lng1, lat2, lng2) {
+  const r = 3958.8;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) *
+      Math.cos(toRad(lat2)) *
+      Math.sin(dLng / 2) ** 2;
+
+  return 2 * r * Math.asin(Math.sqrt(a));
+}
+
+function toRad(value) {
+  return (value * Math.PI) / 180;
+}
+
+function flashButton(button, message) {
+  if (!button) return;
+
+  const original = button.textContent;
+  button.textContent = message;
+
+  setTimeout(() => {
+    button.textContent = original;
+  }, 1300);
+}
+
+function setSync(value) {
+  safeText("syncStatus", value);
+}
+
+function safeText(id, value) {
+  if (els[id]) els[id].textContent = value;
+}
+
+function sanitizeText(value) {
+  return String(value || "")
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;");
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
