@@ -395,9 +395,10 @@ select:focus {
 
 .mobile-map-first {
   display: grid;
-  grid-template-columns: 1fr 370px;
+  grid-template-columns: minmax(0, 1fr) 370px;
   gap: 18px;
   margin-bottom: 18px;
+  align-items: start;
 }
 
 .map-card {
@@ -418,6 +419,30 @@ select:focus {
   flex-wrap: wrap;
 }
 
+.report-mode-banner {
+  display: none;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(67, 230, 160, 0.34);
+  background: rgba(67, 230, 160, 0.1);
+  color: #dfffee;
+}
+
+.report-mode-banner.visible {
+  display: grid;
+  gap: 4px;
+}
+
+.report-mode-banner strong {
+  font-size: 0.95rem;
+}
+
+.report-mode-banner span {
+  color: var(--muted);
+  line-height: 1.35;
+}
+
 #map {
   height: 660px;
   border-radius: 24px;
@@ -430,6 +455,14 @@ select:focus {
   display: grid;
   gap: 14px;
   align-content: start;
+}
+
+.desktop-command-panel {
+  height: 660px;
+  max-height: 660px;
+  overflow-y: auto;
+  padding-right: 4px;
+  align-self: start;
 }
 
 .panel-card {
@@ -490,13 +523,6 @@ select:focus {
 
 .trend-item.muted {
   color: var(--muted);
-}
-
-.desktop-command-panel {
-  align-self: start;
-  max-height: 660px;
-  overflow-y: auto;
-  padding-right: 4px;
 }
 
 .alerts-list,
@@ -650,26 +676,39 @@ select:focus {
   background: rgba(255, 92, 122, 0.1);
 }
 
-.share-card {
+.share-card,
+.quick-clear-card {
   display: none;
   margin-top: 14px;
   padding: 14px;
   border-radius: 20px;
+}
+
+.share-card {
   border: 1px solid rgba(77, 163, 255, 0.28);
   background: rgba(77, 163, 255, 0.08);
 }
 
-.share-card.visible {
+.quick-clear-card {
+  border: 1px solid rgba(67, 230, 160, 0.32);
+  background: rgba(67, 230, 160, 0.1);
+}
+
+.share-card.visible,
+.quick-clear-card.visible {
   display: grid;
   gap: 8px;
 }
 
-.share-card strong {
+.share-card strong,
+.quick-clear-card strong {
   font-size: 1rem;
 }
 
-.share-card p {
+.share-card p,
+.quick-clear-card p {
   margin: 0;
+  color: var(--muted);
 }
 
 .report-tools {
@@ -726,6 +765,12 @@ select:focus {
 .gridly-marker.cleared {
   background: var(--accent);
   box-shadow: 0 0 0 8px rgba(67, 230, 160, 0.22);
+}
+
+.gridly-marker.nearby {
+  box-shadow:
+    0 0 0 8px rgba(67, 230, 160, 0.24),
+    0 0 0 18px rgba(67, 230, 160, 0.1);
 }
 
 .gridly-popup {
@@ -879,6 +924,11 @@ select:focus {
 
   .report-tools {
     grid-template-columns: 1fr;
+  }
+
+  .desktop-command-panel {
+    height: auto;
+    max-height: none;
   }
 }
 
@@ -1040,6 +1090,10 @@ select:focus {
     justify-content: center;
   }
 
+  .report-mode-banner.visible {
+    display: grid;
+  }
+
   #map {
     height: min(66vh, 560px);
     min-height: 430px;
@@ -1100,6 +1154,10 @@ select:focus {
     cursor: pointer;
   }
 
+  .mobile-sticky-report.clear-mode {
+    background: linear-gradient(135deg, var(--warning), var(--accent));
+  }
+
   .mobile-sticky-report:active {
     transform: scale(0.98);
   }
@@ -1109,22 +1167,4 @@ select:focus {
     margin: 0 auto 18px;
     font-size: 0.8rem;
   }
-}
-.quick-clear-card {
-  display: none;
-  margin-top: 14px;
-  padding: 14px;
-  border-radius: 20px;
-  border: 1px solid rgba(67,230,160,.32);
-  background: rgba(67,230,160,.10);
-}
-
-.quick-clear-card.visible {
-  display: grid;
-  gap: 8px;
-}
-
-.quick-clear-card p {
-  margin: 0;
-  color: var(--muted);
 }

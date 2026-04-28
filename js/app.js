@@ -7,7 +7,7 @@ const FRA_URL =
 const defaultCenter = [30.0466, -94.8852];
 const REPORT_EXPIRATION_MINUTES = 90;
 const LIVE_REFRESH_MS = 15000;
-const APP_BUILD = "V10.1";
+const APP_BUILD = "V11.5";
 
 let supabaseClient = null;
 let realtimeChannel = null;
@@ -17,7 +17,10 @@ let crossings = [];
 let activeReports = [];
 let userLocation = null;
 let userMarker = null;
+let reportModeActive = false;
+let nearbyReportCrossingIds = new Set();
 let lastSubmittedCrossing = null;
+let lastSubmittedReportType = null;
 
 let deviceId =
   localStorage.getItem("gridlyDeviceId") ||
@@ -66,7 +69,6 @@ function hydrateElements() {
     "saveRouteBtn",
     "useLocationBtn",
     "refreshBtn",
-    "simulateDelayBtn",
     "alertsList",
     "impactFill",
     "impactScore",
@@ -94,9 +96,12 @@ function hydrateElements() {
     "trendingList",
     "shareCard",
     "shareGridlyBtn",
-    "mobileReportBtn",
     "quickClearCard",
-    "quickClearBtn"
+    "quickClearBtn",
+    "mobileReportBtn",
+    "desktopReportNearMeBtn",
+    "reportModeBanner",
+    "mobileAlertsMirror"
   ].forEach((id) => {
     els[id] = document.getElementById(id);
   });
@@ -117,7 +122,7 @@ function initSupabase() {
     setSync(`Live sync connected · Build ${APP_BUILD}`);
 
     realtimeChannel = supabaseClient
-      .channel("gridly-live-reports-v101")
+      .channel("gridly-live-reports-v115")
       .on(
         "postgres_changes",
         {
@@ -147,8 +152,8 @@ function initGreeting() {
     setGreeting(
       "Good Morning",
       "Morning Route Intelligence",
-      "Check your work route before leaving. Gridly watches crossings, route risk, and shared live reports.",
-      "Work Route"
+      "Check your route before leaving. Gridly watches crossings, live reports, and local impact.",
+      "Route Status"
     );
   } else if (hour >= 12 && hour < 17) {
     setGreeting(
@@ -161,7 +166,7 @@ function initGreeting() {
     setGreeting(
       "Good Evening",
       "Evening Commute Intelligence",
-      "Check your route home before you leave. Gridly watches for crossing delays and local traffic impacts.",
+      "Check your route home before you leave. Gridly watches for crossing delays and local impacts.",
       "Commute Home"
     );
   } else {
@@ -263,16 +268,12 @@ async function loadCrossings() {
     updateGrowthWidgets();
     updateLastUpdated();
 
-    safeText(
-      "dataStatus",
-      `${crossings.length} known crossings loaded`
-    );
-
+    safeText("dataStatus", `${crossings.length} known crossings loaded`);
     safeText("crossingCount", crossings.length);
 
     safeText(
       "mapTrustNote",
-      `${crossings.length} known public crossings loaded from FRA data. Live reports appear as red, yellow, or green markers.`
+      `${crossings.length} known public crossings loaded from FRA data. Tap a marker to report or clear a crossing.`
     );
   } catch (error) {
     console.error("Gridly crossing load failed:", error);
@@ -305,17 +306,18 @@ async function loadSharedReports() {
     activeReports = normalizeReports(data || []);
 
     renderAlerts();
-    renderCrossings();
     renderTrendingCrossings();
+    renderCrossings();
     updateRouteIntelligence();
     updateTrustStats();
     updateGrowthWidgets();
+    updateMobileAlertsMirror();
     updateLastUpdated();
 
     setSync(`${activeReports.length} live reports synced`);
   } catch (error) {
     console.error("Gridly report sync failed:", error);
-    setSync(`Live sync read failed`);
+    setSync("Live sync read failed");
   }
 }
 
@@ -381,12 +383,13 @@ function renderCrossings() {
     const report = getLatestReportForCrossing(crossing.id);
     const hasActiveIssue = report && report.type !== "cleared" && !report.expired;
     const isCleared = report && report.type === "cleared";
+    const isNearby = nearbyReportCrossingIds.has(String(crossing.id));
 
     const icon = L.divIcon({
       className: "",
       html: `<div class="gridly-marker ${hasActiveIssue ? "alert" : ""} ${
         isCleared ? "cleared" : ""
-      }"></div>`,
+      } ${isNearby ? "nearby" : ""}"></div>`,
       iconSize: [24, 24],
       iconAnchor: [12, 12]
     });
@@ -406,6 +409,7 @@ function buildPopup(crossing, report) {
 
   const freshness = report ? `${report.minutesAgo} min ago` : "No recent report";
   const trustCount = getReportCountForCrossing(crossing.id);
+
   const trustLabel =
     trustCount >= 3
       ? `${trustCount} confirmations`
@@ -471,31 +475,36 @@ window.zoomToCrossing = function (crossingId) {
 function bindEvents() {
   els.saveRouteBtn?.addEventListener("click", saveRoute);
   els.useLocationBtn?.addEventListener("click", useMyLocation);
-  els.quickClearBtn?.addEventListener("click", async () => {
-  if (!lastSubmittedCrossing) {
-    setConfirmation("No recent crossing selected.", "error");
-    return;
-  }
 
-  await createSharedReport(
-    lastSubmittedCrossing,
-    "cleared",
-    "quick clear",
-    els.quickClearBtn
-  );
-
-  els.quickClearCard?.classList.remove("visible");
-  });
   els.refreshBtn?.addEventListener("click", async () => {
     await loadSharedReports();
     flashButton(els.refreshBtn, "Updated");
   });
 
-  els.simulateDelayBtn?.addEventListener("click", simulateDelay);
   els.manualReportBtn?.addEventListener("click", submitManualReport);
   els.clearReportsBtn?.addEventListener("click", loadSharedReports);
   els.crossingSearch?.addEventListener("input", handleCrossingSearch);
   els.shareGridlyBtn?.addEventListener("click", shareGridly);
+
+  els.mobileReportBtn?.addEventListener("click", handleSmartReportButton);
+  els.desktopReportNearMeBtn?.addEventListener("click", handleReportNearMe);
+
+  els.quickClearBtn?.addEventListener("click", async () => {
+    if (!lastSubmittedCrossing) {
+      setConfirmation("No recent crossing selected to clear.", "error");
+      return;
+    }
+
+    await createSharedReport(
+      lastSubmittedCrossing,
+      "cleared",
+      "quick clear follow-up",
+      els.quickClearBtn
+    );
+
+    els.quickClearCard?.classList.remove("visible");
+    resetSmartReportButton();
+  });
 
   document.querySelectorAll(".nav-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -522,46 +531,162 @@ function bindEvents() {
       }
     });
   });
-document.querySelectorAll("[data-section-jump]").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const targets = {
-      dashboard: "dashboardSection",
-      map: "mapSection",
-      routes: "setupCard",
-      report: "reportSection",
-      alerts: "alertsSection"
-    };
 
-    const targetId = targets[btn.dataset.sectionJump];
+  document.querySelectorAll("[data-section-jump]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const targets = {
+        dashboard: "dashboardSection",
+        map: "mapSection",
+        routes: "setupCard",
+        report: "reportSection",
+        alerts: "alertsSection"
+      };
 
-    if (!targetId) return;
+      const targetId = targets[btn.dataset.sectionJump];
 
-    scrollToSection(targetId);
+      if (!targetId) return;
 
-    if (btn.dataset.sectionJump === "map") {
+      scrollToSection(targetId);
+
+      if (btn.dataset.sectionJump === "map") {
+        setTimeout(() => {
+          if (map) map.invalidateSize();
+        }, 350);
+      }
+    });
+  });
+}
+
+function handleSmartReportButton() {
+  if (
+    lastSubmittedCrossing &&
+    (lastSubmittedReportType === "blocked" || lastSubmittedReportType === "heavy")
+  ) {
+    createSharedReport(
+      lastSubmittedCrossing,
+      "cleared",
+      "mobile quick clear",
+      els.mobileReportBtn
+    );
+
+    return;
+  }
+
+  handleReportNearMe();
+}
+
+function handleReportNearMe() {
+  activateReportMode();
+
+  if (!navigator.geolocation) {
+    setConfirmation(
+      "Location is unavailable. Tap the closest crossing marker on the map, then choose a report type.",
+      "error"
+    );
+    return;
+  }
+
+  setConfirmation("Finding your location so you can report the nearest crossing...", "success");
+  safeText("mapTrustNote", "Report mode: finding your location...");
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      userLocation = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      };
+
+      if (userMarker) map.removeLayer(userMarker);
+
+      userMarker = L.circleMarker([userLocation.lat, userLocation.lng], {
+        radius: 9,
+        color: "#43e6a0",
+        fillColor: "#43e6a0",
+        fillOpacity: 0.85
+      })
+        .bindPopup("Your current location")
+        .addTo(map);
+
+      const nearest = findNearestCrossings(userLocation.lat, userLocation.lng, 5);
+      nearbyReportCrossingIds = new Set(nearest.map((crossing) => String(crossing.id)));
+
+      renderCrossings();
+      scrollToSection("mapSection");
+
+      map.setView([userLocation.lat, userLocation.lng], 14);
+
+      setTimeout(() => {
+        if (map) map.invalidateSize();
+      }, 350);
+
+      if (nearest.length) {
+        setConfirmation(
+          `Report mode ready. Tap the closest crossing marker. Nearest: ${nearest[0].name}.`,
+          "success"
+        );
+
+        safeText(
+          "mapTrustNote",
+          `Report mode: tap the correct crossing marker. Nearest match: ${nearest[0].name}.`
+        );
+      } else {
+        setConfirmation(
+          "Location found, but no nearby crossing was matched. Tap a crossing marker manually.",
+          "error"
+        );
+      }
+    },
+    () => {
+      scrollToSection("mapSection");
+
+      setConfirmation(
+        "Location permission was blocked. Tap the closest crossing marker on the map instead.",
+        "error"
+      );
+
+      safeText(
+        "mapTrustNote",
+        "Report mode: location blocked. Tap the closest crossing marker on the map."
+      );
+
       setTimeout(() => {
         if (map) map.invalidateSize();
       }, 350);
     }
-  });
-});
-els.mobileReportBtn?.addEventListener("click", () => {
-  scrollToSection("mapSection");
-
-  setConfirmation(
-    "Tap the crossing marker closest to you, then choose Blocked, Delay, Cleared, or Other.",
-    "success"
   );
+}
+
+function activateReportMode() {
+  reportModeActive = true;
+  els.reportModeBanner?.classList.add("visible");
+
+  scrollToSection("mapSection");
 
   safeText(
     "mapTrustNote",
-    "Report mode: tap the crossing marker closest to you."
+    "Report mode: tap the crossing marker closest to you, then choose Blocked, Delay, Cleared, or Other."
   );
 
   setTimeout(() => {
     if (map) map.invalidateSize();
   }, 350);
-});
+}
+
+function resetSmartReportButton() {
+  lastSubmittedReportType = null;
+  els.mobileReportBtn?.classList.remove("clear-mode");
+
+  if (els.mobileReportBtn) {
+    els.mobileReportBtn.textContent = "Report Near Me";
+  }
+}
+
+function setSmartReportButtonToClear() {
+  els.mobileReportBtn?.classList.add("clear-mode");
+
+  if (els.mobileReportBtn) {
+    els.mobileReportBtn.textContent = "Report Cleared";
+  }
 }
 
 function scrollToSection(id) {
@@ -654,15 +779,20 @@ async function createSharedReport(
 
     setSync("Live report shared");
     showShareCard();
+
     lastSubmittedCrossing = crossing;
+    lastSubmittedReportType = reportType;
 
     if (reportType === "blocked" || reportType === "heavy") {
-    els.quickClearCard?.classList.add("visible");
-}
+      els.quickClearCard?.classList.add("visible");
+      setSmartReportButtonToClear();
+    }
 
     if (reportType === "cleared") {
-    els.quickClearCard?.classList.remove("visible");
-}
+      els.quickClearCard?.classList.remove("visible");
+      resetSmartReportButton();
+    }
+
     await loadSharedReports();
 
     if (map) {
@@ -676,7 +806,16 @@ async function createSharedReport(
     if (buttonEl) {
       setTimeout(() => {
         buttonEl.classList.remove("is-success");
-        buttonEl.textContent = originalButtonText;
+
+        if (buttonEl === els.mobileReportBtn) {
+          if (reportType === "blocked" || reportType === "heavy") {
+            buttonEl.textContent = "Report Cleared";
+          } else {
+            buttonEl.textContent = "Report Near Me";
+          }
+        } else {
+          buttonEl.textContent = originalButtonText;
+        }
       }, 1400);
     }
   } catch (error) {
@@ -733,23 +872,6 @@ function getReportCopy(type) {
   return types[type] || types.other;
 }
 
-async function simulateDelay() {
-  if (!crossings.length) {
-    setConfirmation("Crossings are not loaded yet.", "error");
-    return;
-  }
-
-  const crossing = crossings[Math.floor(Math.random() * crossings.length)];
-  await createSharedReport(
-    crossing,
-    "blocked",
-    "simulated demo action",
-    els.simulateDelayBtn
-  );
-
-  flashButton(els.simulateDelayBtn, "Delay Added");
-}
-
 function saveRoute() {
   const home = els.homeInput?.value.trim();
   const work = els.workInput?.value.trim();
@@ -784,50 +906,7 @@ function loadSavedRoute() {
 }
 
 function useMyLocation() {
-  if (!navigator.geolocation) {
-    flashButton(els.useLocationBtn, "Unavailable");
-    return;
-  }
-
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      userLocation = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
-      };
-
-      if (userMarker) map.removeLayer(userMarker);
-
-      userMarker = L.circleMarker([userLocation.lat, userLocation.lng], {
-        radius: 9,
-        color: "#43e6a0",
-        fillColor: "#43e6a0",
-        fillOpacity: 0.85
-      })
-        .bindPopup("Your current location")
-        .addTo(map);
-
-      scrollToSection("mapSection");
-      map.setView([userLocation.lat, userLocation.lng], 13);
-
-      const nearest = findNearestCrossings(userLocation.lat, userLocation.lng, 5);
-      updateRouteIntelligence(nearest);
-      updateGrowthWidgets(nearest);
-
-      setConfirmation(
-        nearest.length
-          ? `Location found. Nearest crossing: ${nearest[0].name}.`
-          : "Location found.",
-        "success"
-      );
-
-      flashButton(els.useLocationBtn, "Location Found");
-    },
-    () => {
-      setConfirmation("Location permission was blocked.", "error");
-      flashButton(els.useLocationBtn, "Location Blocked");
-    }
-  );
+  handleReportNearMe();
 }
 
 function updateRouteIntelligence(nearest = []) {
@@ -923,8 +1002,9 @@ function updateRouteIntelligence(nearest = []) {
   }
 }
 
-function updateGrowthWidgets(nearest = []) {
+function updateGrowthWidgets() {
   const latestReports = getLatestReportsByCrossing();
+
   const activeIssues = latestReports.filter(
     (report) => !report.expired && report.type !== "cleared"
   );
@@ -1073,6 +1153,60 @@ function renderTrendingCrossings() {
     })
     .join("");
 }
+
+function updateMobileAlertsMirror() {
+  if (!els.mobileAlertsMirror) return;
+
+  const incidents = getConsolidatedIncidents();
+
+  if (!incidents.length) {
+    els.mobileAlertsMirror.textContent =
+      "No active shared alerts right now. Tap the map if you see a blocked crossing.";
+    return;
+  }
+
+  const top = incidents[0];
+  const latest = top.latestReport;
+
+  els.mobileAlertsMirror.textContent =
+    `${top.crossingName}: ${getReportCopy(latest.type).label} · ${top.count} confirmation${top.count === 1 ? "" : "s"} · newest ${top.newestMinutes} min ago.`;
+}
+
+function updateTrustStats() {
+  const latestReports = getLatestReportsByCrossing();
+
+  const active = latestReports.filter((report) => !report.expired);
+
+  const lastReport = [...activeReports].sort((a, b) => {
+    return new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0);
+  })[0];
+
+  safeText("reportDecayStatus", `${REPORT_EXPIRATION_MINUTES} min expiry`);
+  safeText("lastReportTime", lastReport ? `${lastReport.minutesAgo} min ago` : "None yet");
+  safeText("nearbyAlertCount", active.filter((report) => report.type !== "cleared").length);
+}
+
+function getLatestReportForCrossing(crossingId) {
+  return activeReports
+    .filter((report) => String(report.crossingId) === String(crossingId))
+    .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))[0];
+}
+
+function getLatestReportsByCrossing() {
+  const mapByCrossing = new Map();
+
+  activeReports
+    .filter((report) => !report.expired)
+    .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))
+    .forEach((report) => {
+      if (!mapByCrossing.has(report.crossingId)) {
+        mapByCrossing.set(report.crossingId, report);
+      }
+    });
+
+  return [...mapByCrossing.values()];
+}
+
 function getConsolidatedIncidents() {
   const grouped = new Map();
 
@@ -1122,41 +1256,6 @@ function getConsolidatedIncidents() {
         a.newestMinutes - b.newestMinutes
       );
     });
-}
-
-function updateTrustStats() {
-  const latestReports = getLatestReportsByCrossing();
-
-  const active = latestReports.filter((report) => !report.expired);
-
-  const lastReport = [...activeReports].sort((a, b) => {
-    return new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0);
-  })[0];
-
-  safeText("reportDecayStatus", `${REPORT_EXPIRATION_MINUTES} min expiry`);
-  safeText("lastReportTime", lastReport ? `${lastReport.minutesAgo} min ago` : "None yet");
-  safeText("nearbyAlertCount", active.filter((report) => report.type !== "cleared").length);
-}
-
-function getLatestReportForCrossing(crossingId) {
-  return activeReports
-    .filter((report) => String(report.crossingId) === String(crossingId))
-    .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))[0];
-}
-
-function getLatestReportsByCrossing() {
-  const mapByCrossing = new Map();
-
-  activeReports
-    .filter((report) => !report.expired)
-    .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))
-    .forEach((report) => {
-      if (!mapByCrossing.has(report.crossingId)) {
-        mapByCrossing.set(report.crossingId, report);
-      }
-    });
-
-  return [...mapByCrossing.values()];
 }
 
 function getReportCountForCrossing(crossingId) {
