@@ -50,6 +50,26 @@
         </div>
       </div>
 
+      <div class="growth-strip">
+        <article class="growth-card">
+          <span>Route Recommendation</span>
+          <strong id="routeRecommendation">Checking local crossings...</strong>
+          <p id="routeRecommendationReason">Gridly is watching live reports and crossing risk.</p>
+        </article>
+
+        <article class="growth-card">
+          <span>Community Trust</span>
+          <strong id="communityTrust">Building signal</strong>
+          <p id="communityTrustReason">Shared reports become stronger when more drivers confirm them.</p>
+        </article>
+
+        <article class="growth-card">
+          <span>Freshest Report</span>
+          <strong id="freshestReport">None yet</strong>
+          <p id="freshestReportReason">Live reports auto-expire so old information does not linger.</p>
+        </article>
+      </div>
+
       <div class="setup-card" id="setupCard">
         <div>
           <h2>Set your daily route</h2>
@@ -127,6 +147,13 @@
         </section>
 
         <section class="panel-card">
+          <p class="eyebrow">Trending Crossings</p>
+          <div id="trendingList" class="trending-list">
+            <div class="trend-item muted">Waiting for shared reports...</div>
+          </div>
+        </section>
+
+        <section class="panel-card">
           <p class="eyebrow">Trust Status</p>
           <div class="trust-list">
             <div><span>Known crossings</span><strong id="crossingCount">Loading</strong></div>
@@ -147,8 +174,15 @@
         <p class="eyebrow">Report Fallback</p>
         <h2>Search or manually report a crossing</h2>
         <p>Primary reporting happens from the map popup. Use this section only when you need to find a crossing manually.</p>
+
         <div class="confirmation-box" id="reportConfirmation">
           Click a crossing marker on the map to report Blocked, Delay, Cleared, or Other.
+        </div>
+
+        <div class="share-card" id="shareCard">
+          <strong>Help nearby drivers</strong>
+          <p>Share Gridly so more people can confirm blocked crossings faster.</p>
+          <button id="shareGridlyBtn" class="secondary-btn">Share Gridly</button>
         </div>
       </div>
 
@@ -181,7 +215,7 @@
   </main>
 
   <footer class="app-footer">
-    Gridly V9.2.2 · Live shared crossing reports
+    Gridly V10.1 · Trust + Trending Growth Mode
   </footer>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

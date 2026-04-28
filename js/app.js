@@ -7,7 +7,7 @@ const FRA_URL =
 const defaultCenter = [30.0466, -94.8852];
 const REPORT_EXPIRATION_MINUTES = 90;
 const LIVE_REFRESH_MS = 15000;
-const APP_BUILD = "V9.2.1";
+const APP_BUILD = "V10.1";
 
 let supabaseClient = null;
 let realtimeChannel = null;
@@ -83,7 +83,16 @@ function hydrateElements() {
     "crossingCount",
     "reportDecayStatus",
     "lastReportTime",
-    "mapTrustNote"
+    "mapTrustNote",
+    "routeRecommendation",
+    "routeRecommendationReason",
+    "communityTrust",
+    "communityTrustReason",
+    "freshestReport",
+    "freshestReportReason",
+    "trendingList",
+    "shareCard",
+    "shareGridlyBtn"
   ].forEach((id) => {
     els[id] = document.getElementById(id);
   });
@@ -91,7 +100,7 @@ function hydrateElements() {
 
 function initSupabase() {
   if (!window.supabase) {
-    setSync(`Supabase missing · Build ${APP_BUILD}`);
+    setSync(`Live sync unavailable · Build ${APP_BUILD}`);
     return;
   }
 
@@ -101,10 +110,10 @@ function initSupabase() {
       SUPABASE_PUBLIC_KEY
     );
 
-    setSync(`Supabase connected · Build ${APP_BUILD}`);
+    setSync(`Live sync connected · Build ${APP_BUILD}`);
 
     realtimeChannel = supabaseClient
-      .channel("gridly-live-reports-v921")
+      .channel("gridly-live-reports-v101")
       .on(
         "postgres_changes",
         {
@@ -118,12 +127,12 @@ function initSupabase() {
       )
       .subscribe((status) => {
         if (status === "SUBSCRIBED") {
-          setSync(`Realtime connected · Build ${APP_BUILD}`);
+          setSync(`Live sync active · Build ${APP_BUILD}`);
         }
       });
   } catch (error) {
     console.error("Supabase init failed:", error);
-    setSync(`Supabase failed · Build ${APP_BUILD}`);
+    setSync(`Live sync failed · Build ${APP_BUILD}`);
   }
 }
 
@@ -171,7 +180,7 @@ function setGreeting(title, context, subtitle, routeLabel) {
 function updateLastUpdated() {
   safeText(
     "lastUpdated",
-    `Last updated: ${new Date().toLocaleTimeString([], {
+    `Updated ${new Date().toLocaleTimeString([], {
       hour: "numeric",
       minute: "2-digit"
     })}`
@@ -247,20 +256,23 @@ async function loadCrossings() {
     renderCrossings();
     updateRouteIntelligence();
     updateTrustStats();
+    updateGrowthWidgets();
     updateLastUpdated();
 
     safeText(
       "dataStatus",
-      `Crossing data: ${crossings.length} known crossings loaded`
+      `${crossings.length} known crossings loaded`
     );
+
     safeText("crossingCount", crossings.length);
+
     safeText(
       "mapTrustNote",
-      `${crossings.length} known public crossings loaded from FRA data.`
+      `${crossings.length} known public crossings loaded from FRA data. Live reports appear as red, yellow, or green markers.`
     );
   } catch (error) {
     console.error("Gridly crossing load failed:", error);
-    safeText("dataStatus", "Crossing data: failed");
+    safeText("dataStatus", "Crossing data failed");
     safeText("crossingCount", "Failed");
     safeText("mapTrustNote", "Unable to load FRA crossing data. Refresh and try again.");
   }
@@ -268,12 +280,12 @@ async function loadCrossings() {
 
 async function loadSharedReports() {
   if (!supabaseClient) {
-    setSync(`Read skipped: no Supabase · Build ${APP_BUILD}`);
+    setSync(`Live sync unavailable · Build ${APP_BUILD}`);
     return;
   }
 
   try {
-    setSync("Reading reports...");
+    setSync("Reading live reports...");
 
     const nowIso = new Date().toISOString();
 
@@ -282,7 +294,7 @@ async function loadSharedReports() {
       .select("*")
       .gt("expires_at", nowIso)
       .order("created_at", { ascending: false })
-      .limit(150);
+      .limit(200);
 
     if (error) throw error;
 
@@ -290,20 +302,23 @@ async function loadSharedReports() {
 
     renderAlerts();
     renderCrossings();
+    renderTrendingCrossings();
     updateRouteIntelligence();
     updateTrustStats();
+    updateGrowthWidgets();
     updateLastUpdated();
 
-    setSync(`Reports synced: ${activeReports.length} · Build ${APP_BUILD}`);
+    setSync(`${activeReports.length} live reports synced`);
   } catch (error) {
     console.error("Gridly report sync failed:", error);
-    setSync(`Read failed: ${error.message || "permission denied"}`);
+    setSync(`Live sync read failed`);
   }
 }
 
 function normalizeReports(rows) {
   return rows.map((row) => {
     const createdAt = row.created_at || new Date().toISOString();
+
     const minutesAgo = Math.max(
       0,
       Math.floor((Date.now() - new Date(createdAt).getTime()) / 60000)
@@ -373,7 +388,7 @@ function renderCrossings() {
     });
 
     L.marker([crossing.lat, crossing.lng], { icon })
-      .bindPopup(buildPopup(crossing, report), { maxWidth: 340 })
+      .bindPopup(buildPopup(crossing, report), { maxWidth: 350 })
       .addTo(crossingLayer);
   });
 }
@@ -386,6 +401,15 @@ function buildPopup(crossing, report) {
     : "No active report";
 
   const freshness = report ? `${report.minutesAgo} min ago` : "No recent report";
+  const trustCount = getReportCountForCrossing(crossing.id);
+  const trustLabel =
+    trustCount >= 3
+      ? `${trustCount} confirmations`
+      : trustCount === 1
+      ? "1 shared report"
+      : trustCount > 1
+      ? `${trustCount} shared reports`
+      : "No community reports yet";
 
   return `
     <div class="gridly-popup">
@@ -393,6 +417,7 @@ function buildPopup(crossing, report) {
       <span>${sanitizeText(crossing.railroad)}</span><br />
       <span>Status: ${sanitizeText(status)}</span><br />
       <span>Freshness: ${sanitizeText(freshness)}</span><br />
+      <span>Trust: ${sanitizeText(trustLabel)}</span><br />
       <span>Risk Score: ${crossing.risk}/100</span>
 
       <div class="popup-report-grid">
@@ -420,7 +445,7 @@ window.reportCrossingFromPopup = async function (crossingId, reportType, buttonE
   const crossing = crossings.find((item) => String(item.id) === String(crossingId));
 
   if (!crossing) {
-    safeText("reportConfirmation", "Crossing not found. Try refreshing.");
+    setConfirmation("Crossing not found. Try refreshing.", "error");
     return;
   }
 
@@ -452,6 +477,7 @@ function bindEvents() {
   els.manualReportBtn?.addEventListener("click", submitManualReport);
   els.clearReportsBtn?.addEventListener("click", loadSharedReports);
   els.crossingSearch?.addEventListener("input", handleCrossingSearch);
+  els.shareGridlyBtn?.addEventListener("click", shareGridly);
 
   document.querySelectorAll(".nav-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -550,7 +576,7 @@ async function createSharedReport(
       buttonEl.textContent = "Sending...";
     }
 
-    setSync("Sending report...");
+    setSync("Sending live report...");
     setConfirmation(`Sending ${copy.label} report for ${crossing.name}...`, "success");
 
     const { error } = await supabaseClient.from("reports").insert(row);
@@ -568,7 +594,8 @@ async function createSharedReport(
       "success"
     );
 
-    setSync("Write success");
+    setSync("Live report shared");
+    showShareCard();
 
     await loadSharedReports();
 
@@ -577,14 +604,14 @@ async function createSharedReport(
 
       setTimeout(() => {
         map.closePopup();
-      }, 750);
+      }, 850);
     }
 
     if (buttonEl) {
       setTimeout(() => {
         buttonEl.classList.remove("is-success");
         buttonEl.textContent = originalButtonText;
-      }, 1200);
+      }, 1400);
     }
   } catch (error) {
     console.error("Gridly report insert failed:", error);
@@ -599,7 +626,7 @@ async function createSharedReport(
       "error"
     );
 
-    setSync(`Write failed: ${error.message || "permission denied"}`);
+    setSync("Live report failed");
 
     if (buttonEl) {
       setTimeout(() => {
@@ -671,6 +698,7 @@ function saveRoute() {
 
   loadSavedRoute();
   updateRouteIntelligence();
+  updateGrowthWidgets();
   flashButton(els.saveRouteBtn, "Route Saved");
 }
 
@@ -718,6 +746,7 @@ function useMyLocation() {
 
       const nearest = findNearestCrossings(userLocation.lat, userLocation.lng, 5);
       updateRouteIntelligence(nearest);
+      updateGrowthWidgets(nearest);
 
       setConfirmation(
         nearest.length
@@ -828,6 +857,72 @@ function updateRouteIntelligence(nearest = []) {
   }
 }
 
+function updateGrowthWidgets(nearest = []) {
+  const latestReports = getLatestReportsByCrossing();
+  const activeIssues = latestReports.filter(
+    (report) => !report.expired && report.type !== "cleared"
+  );
+
+  const highCount = activeIssues.filter((report) => report.severity === "high").length;
+  const lastReport = activeReports[0];
+
+  if (highCount > 0) {
+    safeText("routeRecommendation", "Leave early or reroute");
+    safeText(
+      "routeRecommendationReason",
+      `${highCount} high-impact shared report${highCount === 1 ? "" : "s"} active right now.`
+    );
+  } else if (activeIssues.length > 0) {
+    safeText("routeRecommendation", "Watch your route");
+    safeText(
+      "routeRecommendationReason",
+      `${activeIssues.length} active shared report${activeIssues.length === 1 ? "" : "s"} may affect travel.`
+    );
+  } else {
+    safeText("routeRecommendation", "Route looks clear");
+    safeText(
+      "routeRecommendationReason",
+      "No major active shared delays detected right now."
+    );
+  }
+
+  const confirmationCount = activeReports.length;
+
+  if (confirmationCount >= 5) {
+    safeText("communityTrust", "Strong local signal");
+    safeText(
+      "communityTrustReason",
+      `${confirmationCount} fresh reports are helping drivers right now.`
+    );
+  } else if (confirmationCount > 0) {
+    safeText("communityTrust", "Early signal active");
+    safeText(
+      "communityTrustReason",
+      `${confirmationCount} fresh report${confirmationCount === 1 ? "" : "s"} currently active.`
+    );
+  } else {
+    safeText("communityTrust", "Waiting for reports");
+    safeText(
+      "communityTrustReason",
+      "The first shared report helps everyone nearby."
+    );
+  }
+
+  if (lastReport) {
+    safeText("freshestReport", `${lastReport.minutesAgo} min ago`);
+    safeText(
+      "freshestReportReason",
+      `${lastReport.crossingName} was marked ${getReportCopy(lastReport.type).label}.`
+    );
+  } else {
+    safeText("freshestReport", "None yet");
+    safeText(
+      "freshestReportReason",
+      "Reports appear here as soon as drivers submit them."
+    );
+  }
+}
+
 function renderAlerts() {
   if (!els.alertsList) return;
 
@@ -846,6 +941,8 @@ function renderAlerts() {
   els.alertsList.innerHTML = latestReports
     .slice(0, 8)
     .map((report) => {
+      const trustCount = getReportCountForCrossing(report.crossingId);
+
       const label =
         report.type === "cleared"
           ? "Cleared"
@@ -855,13 +952,82 @@ function renderAlerts() {
           ? "Moderate"
           : "Watch";
 
+      const itemClass =
+        report.type === "cleared"
+          ? "cleared"
+          : report.severity === "high"
+          ? "high"
+          : "";
+
       return `
-        <div class="alert-item">
+        <div class="alert-item ${itemClass}">
           <strong>${sanitizeText(report.title)}</strong>
           <p>${label} · ${report.minutesAgo} min ago</p>
           <p>${sanitizeText(report.detail)}</p>
+          <span class="trust-pill">${trustCount} confirmation${trustCount === 1 ? "" : "s"}</span>
           <span class="source-pill">Shared report</span>
         </div>
+      `;
+    })
+    .join("");
+}
+
+function renderTrendingCrossings() {
+  if (!els.trendingList) return;
+
+  const grouped = new Map();
+
+  activeReports
+    .filter((report) => !report.expired)
+    .forEach((report) => {
+      const existing = grouped.get(report.crossingId) || {
+        crossingId: report.crossingId,
+        crossingName: report.crossingName,
+        type: report.type,
+        severity: report.severity,
+        count: 0,
+        newestMinutes: report.minutesAgo
+      };
+
+      existing.count += 1;
+      existing.newestMinutes = Math.min(existing.newestMinutes, report.minutesAgo);
+
+      if (report.severity === "high") {
+        existing.severity = "high";
+      }
+
+      if (report.type === "cleared") {
+        existing.type = "cleared";
+      }
+
+      grouped.set(report.crossingId, existing);
+    });
+
+  const trending = [...grouped.values()]
+    .sort((a, b) => b.count - a.count || a.newestMinutes - b.newestMinutes)
+    .slice(0, 5);
+
+  if (!trending.length) {
+    els.trendingList.innerHTML = `
+      <div class="trend-item muted">Waiting for shared reports...</div>
+    `;
+    return;
+  }
+
+  els.trendingList.innerHTML = trending
+    .map((item) => {
+      const className =
+        item.type === "cleared"
+          ? "clear"
+          : item.severity === "high"
+          ? "hot"
+          : "";
+
+      return `
+        <button class="trend-item ${className}" type="button" onclick="zoomToCrossing('${sanitizeText(item.crossingId)}')">
+          <strong>${sanitizeText(item.crossingName)}</strong>
+          <p>${item.count} report${item.count === 1 ? "" : "s"} · newest ${item.newestMinutes} min ago</p>
+        </button>
       `;
     })
     .join("");
@@ -900,6 +1066,12 @@ function getLatestReportsByCrossing() {
     });
 
   return [...mapByCrossing.values()];
+}
+
+function getReportCountForCrossing(crossingId) {
+  return activeReports.filter(
+    (report) => String(report.crossingId) === String(crossingId) && !report.expired
+  ).length;
 }
 
 function calculateBaseRisk(props, index) {
@@ -1007,6 +1179,35 @@ function setConfirmation(message, type = "success") {
   }
 
   els.reportConfirmation.textContent = message;
+}
+
+function showShareCard() {
+  els.shareCard?.classList.add("visible");
+}
+
+async function shareGridly() {
+  const shareData = {
+    title: "Gridly",
+    text: "Check live railroad crossing reports before you go.",
+    url: "https://dbmaps.github.io/liberty-county-map/"
+  };
+
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData);
+      setConfirmation("Thanks for sharing Gridly.", "success");
+      return;
+    } catch {
+      return;
+    }
+  }
+
+  try {
+    await navigator.clipboard.writeText(shareData.url);
+    setConfirmation("Gridly link copied to clipboard.", "success");
+  } catch {
+    setConfirmation("Share link: https://dbmaps.github.io/liberty-county-map/", "success");
+  }
 }
 
 function setSync(value) {
