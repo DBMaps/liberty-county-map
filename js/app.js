@@ -504,6 +504,29 @@ function bindEvents() {
       }
     });
   });
+document.querySelectorAll("[data-section-jump]").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const targets = {
+      dashboard: "dashboardSection",
+      map: "mapSection",
+      routes: "setupCard",
+      report: "reportSection",
+      alerts: "alertsSection"
+    };
+
+    const targetId = targets[btn.dataset.sectionJump];
+
+    if (!targetId) return;
+
+    scrollToSection(targetId);
+
+    if (btn.dataset.sectionJump === "map") {
+      setTimeout(() => {
+        if (map) map.invalidateSize();
+      }, 350);
+    }
+  });
+});
 }
 
 function scrollToSection(id) {
