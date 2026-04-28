@@ -31,3 +31,50 @@
   border-color: rgba(255, 92, 122, 0.6);
   background: rgba(255, 92, 122, 0.1);
 }
+/* Gridly V9.2.2 premium desktop click feedback */
+
+.popup-report-btn {
+  position: relative;
+  transition:
+    transform 0.14s ease,
+    opacity 0.14s ease,
+    box-shadow 0.14s ease,
+    filter 0.14s ease;
+}
+
+.popup-report-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.popup-report-btn:active {
+  transform: scale(0.9);
+  filter: brightness(1.18);
+}
+
+.popup-report-btn.is-submitting {
+  opacity: 0.8;
+  pointer-events: none;
+  transform: scale(0.94);
+  box-shadow: 0 0 0 5px rgba(77, 163, 255, 0.32);
+}
+
+.popup-report-btn.is-success {
+  opacity: 1;
+  pointer-events: none;
+  transform: scale(1.05);
+  box-shadow: 0 0 0 6px rgba(67, 230, 160, 0.42);
+  filter: brightness(1.15);
+}
+
+.confirmation-box.success {
+  color: #43e6a0;
+  border-color: rgba(67, 230, 160, 0.55);
+  background: rgba(67, 230, 160, 0.12);
+}
+
+.confirmation-box.error {
+  color: #ff8fa3;
+  border-color: rgba(255, 92, 122, 0.6);
+  background: rgba(255, 92, 122, 0.1);
+}

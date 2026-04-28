@@ -7,12 +7,16 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
+
 <body>
   <header class="app-header">
     <div class="brand-wrap">
-      <div class="brand-logo-frame"><img class="brand-logo-img" src="assets/gridly-logo-primary.png" alt="Gridly logo" /></div>
+      <div class="brand-logo-frame">
+        <img class="brand-logo-img" src="assets/gridly-logo-primary.png" alt="Gridly logo" />
+      </div>
       <span class="beta-pill">Liberty County Beta</span>
     </div>
+
     <nav class="top-nav">
       <button class="nav-btn active" data-section="dashboard">Dashboard</button>
       <button class="nav-btn" data-section="map">Map</button>
@@ -28,14 +32,17 @@
         <div>
           <p class="eyebrow" id="timeContext">Daily Route Intelligence</p>
           <h1 id="greetingTitle">Checking Gridly</h1>
-          <p class="subtext" id="greetingSubtitle">Gridly checks nearby crossings, route risk, reported delays, and departure timing before you leave.</p>
+          <p class="subtext" id="greetingSubtitle">
+            Gridly checks nearby crossings, route risk, reported delays, and departure timing before you leave.
+          </p>
+
           <div class="trust-row">
             <span id="lastUpdated">Last updated: checking...</span>
             <span id="dataStatus">Crossing data: loading</span>
-            <span id="syncStatus">Live reports: connecting</span>
-            <span id="buildStatus">Build: V9.1</span>
+            <span id="syncStatus">Live sync: connecting</span>
           </div>
         </div>
+
         <div class="route-status-card delayed" id="routeStatusCard">
           <span class="status-label" id="routeCardLabel">Saved Route</span>
           <strong id="routeStatus">Checking...</strong>
@@ -44,7 +51,11 @@
       </div>
 
       <div class="setup-card" id="setupCard">
-        <div><h2>Set your daily route</h2><p>Home and Work are saved locally on this device. Shared reports sync across all devices.</p></div>
+        <div>
+          <h2>Set your daily route</h2>
+          <p>Home and Work are saved locally on this device. Shared reports sync across all devices.</p>
+        </div>
+
         <div class="setup-grid">
           <label>Home<input id="homeInput" type="text" placeholder="Example: Dayton, TX" /></label>
           <label>Work<input id="workInput" type="text" placeholder="Example: Crosby, TX" /></label>
@@ -54,51 +65,125 @@
       </div>
 
       <div class="insight-grid">
-        <article class="insight-card"><span>Recommended Departure</span><strong id="departureTime">Leave now</strong><p id="departureReason">Based on current route risk and nearby reports.</p></article>
-        <article class="insight-card"><span>Delay Risk</span><strong id="delayRisk">Moderate</strong><p id="delayReason">Nearby railroad crossing activity may affect travel.</p></article>
-        <article class="insight-card"><span>Active Alerts</span><strong id="nearbyAlertCount">0</strong><p id="activeAlertText">Live shared reports near your saved or current location.</p></article>
-        <article class="insight-card"><span>Best Alternate</span><strong id="alternateRoute">Checking</strong><p id="alternateReason">Gridly recommends detours when crossing impact is high.</p></article>
-      </div>
-    </section>
+        <article class="insight-card">
+          <span>Recommended Departure</span>
+          <strong id="departureTime">Leave now</strong>
+          <p id="departureReason">Based on current route risk and nearby reports.</p>
+        </article>
 
-    <section class="debug-strip" id="debugStrip">
-      <div><span>Supabase</span><strong id="debugSupabase">Checking</strong></div>
-      <div><span>Read</span><strong id="debugRead">Waiting</strong></div>
-      <div><span>Write</span><strong id="debugWrite">Waiting</strong></div>
-      <div><span>Realtime</span><strong id="debugRealtime">Waiting</strong></div>
-      <div><span>Device</span><strong id="debugDevice">Local</strong></div>
+        <article class="insight-card">
+          <span>Delay Risk</span>
+          <strong id="delayRisk">Moderate</strong>
+          <p id="delayReason">Nearby railroad crossing activity may affect travel.</p>
+        </article>
+
+        <article class="insight-card">
+          <span>Active Alerts</span>
+          <strong id="nearbyAlertCount">0</strong>
+          <p id="activeAlertText">Live shared reports near your saved or current location.</p>
+        </article>
+
+        <article class="insight-card">
+          <span>Best Alternate</span>
+          <strong id="alternateRoute">Checking</strong>
+          <p id="alternateReason">Gridly recommends detours when crossing impact is high.</p>
+        </article>
+      </div>
     </section>
 
     <section class="main-grid">
       <section class="map-card" id="mapSection">
         <div class="section-header">
-          <div><p class="eyebrow">Live Mobility Map</p><h2>Click a crossing to report it</h2><p class="map-note" id="mapTrustNote">Loading known public crossings from FRA data...</p></div>
-          <div class="actions"><button id="refreshBtn" class="secondary-btn">Refresh Live Reports</button><button id="simulateDelayBtn" class="primary-btn">Simulate Delay</button></div>
+          <div>
+            <p class="eyebrow">Live Mobility Map</p>
+            <h2>Click a crossing to report it</h2>
+            <p class="map-note" id="mapTrustNote">Loading known public crossings from FRA data...</p>
+          </div>
+
+          <div class="actions">
+            <button id="refreshBtn" class="secondary-btn">Refresh Live Reports</button>
+            <button id="simulateDelayBtn" class="primary-btn">Simulate Delay</button>
+          </div>
         </div>
+
         <div id="map"></div>
       </section>
 
       <aside class="side-panel" id="alertsSection">
-        <section class="panel-card"><p class="eyebrow">Saved Route</p><h2>Daily Commute</h2><div class="route-summary"><div><span>Home</span><strong id="savedHome">Not saved</strong></div><div><span>Work</span><strong id="savedWork">Not saved</strong></div></div></section>
-        <section class="panel-card"><p class="eyebrow">Impact Score</p><div class="impact-meter"><div class="impact-fill" id="impactFill"></div></div><strong id="impactScore">42 / 100</strong><p id="impactText">Moderate route impact detected.</p></section>
-        <section class="panel-card"><p class="eyebrow">Trust Status</p><div class="trust-list"><div><span>Known crossings</span><strong id="crossingCount">Loading</strong></div><div><span>Report aging</span><strong id="reportDecayStatus">90 min expiry</strong></div><div><span>Last live report</span><strong id="lastReportTime">None yet</strong></div></div></section>
-        <section class="panel-card"><p class="eyebrow">Live Alerts</p><div id="alertsList" class="alerts-list"></div></section>
+        <section class="panel-card">
+          <p class="eyebrow">Saved Route</p>
+          <h2>Daily Commute</h2>
+          <div class="route-summary">
+            <div><span>Home</span><strong id="savedHome">Not saved</strong></div>
+            <div><span>Work</span><strong id="savedWork">Not saved</strong></div>
+          </div>
+        </section>
+
+        <section class="panel-card">
+          <p class="eyebrow">Impact Score</p>
+          <div class="impact-meter"><div class="impact-fill" id="impactFill"></div></div>
+          <strong id="impactScore">42 / 100</strong>
+          <p id="impactText">Moderate route impact detected.</p>
+        </section>
+
+        <section class="panel-card">
+          <p class="eyebrow">Trust Status</p>
+          <div class="trust-list">
+            <div><span>Known crossings</span><strong id="crossingCount">Loading</strong></div>
+            <div><span>Report aging</span><strong id="reportDecayStatus">90 min expiry</strong></div>
+            <div><span>Last live report</span><strong id="lastReportTime">None yet</strong></div>
+          </div>
+        </section>
+
+        <section class="panel-card">
+          <p class="eyebrow">Live Alerts</p>
+          <div id="alertsList" class="alerts-list"></div>
+        </section>
       </aside>
     </section>
 
     <section class="report-card" id="reportSection">
-      <div class="report-copy"><p class="eyebrow">Report Fallback</p><h2>Search or manually report a crossing</h2><p>Primary reporting happens from the map popup. Use this section only when you need to find a crossing manually.</p><div class="confirmation-box" id="reportConfirmation">Click a crossing marker on the map to report Blocked, Delay, Cleared, or Other.</div></div>
+      <div class="report-copy">
+        <p class="eyebrow">Report Fallback</p>
+        <h2>Search or manually report a crossing</h2>
+        <p>Primary reporting happens from the map popup. Use this section only when you need to find a crossing manually.</p>
+        <div class="confirmation-box" id="reportConfirmation">
+          Click a crossing marker on the map to report Blocked, Delay, Cleared, or Other.
+        </div>
+      </div>
+
       <div class="report-tools">
         <label>Search crossing<input id="crossingSearch" type="text" placeholder="Search street, crossing, or railroad..." /></label>
-        <label>Manual crossing<select id="crossingSelect"><option value="">Loading crossings...</option></select></label>
-        <label>Report type<select id="manualReportType"><option value="blocked">Blocked</option><option value="heavy">Heavy Delay</option><option value="cleared">Cleared</option><option value="other">Other Issue</option></select></label>
-        <div class="report-buttons"><button id="manualReportBtn" class="primary-btn">Submit Shared Report</button><button id="clearReportsBtn" class="secondary-btn">Reload Live Reports</button></div>
+
+        <label>Manual crossing
+          <select id="crossingSelect">
+            <option value="">Loading crossings...</option>
+          </select>
+        </label>
+
+        <label>Report type
+          <select id="manualReportType">
+            <option value="blocked">Blocked</option>
+            <option value="heavy">Heavy Delay</option>
+            <option value="cleared">Cleared</option>
+            <option value="other">Other Issue</option>
+          </select>
+        </label>
+
+        <div class="report-buttons">
+          <button id="manualReportBtn" class="primary-btn">Submit Shared Report</button>
+          <button id="clearReportsBtn" class="secondary-btn">Reload Live Reports</button>
+        </div>
+
         <div class="search-results" id="searchResults"></div>
       </div>
     </section>
   </main>
 
-  <footer class="app-footer">Gridly V9.1 Shared Live Reports · Device-to-device sync hardened</footer>
+  <footer class="app-footer">
+    Gridly V9.2.2 · Live shared crossing reports
+  </footer>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/app.js"></script>
