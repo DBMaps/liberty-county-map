@@ -601,10 +601,20 @@ async function createSharedReport(crossing, reportType, confidence) {
     );
 
     safeText("syncStatus", "Live reports: synced");
-  } catch (error) {
+   } catch (error) {
     console.error("Gridly report insert failed:", error);
+
+    const message =
+      error?.message ||
+      error?.details ||
+      error?.hint ||
+      JSON.stringify(error);
+
     safeText("syncStatus", "Live reports: submit failed");
-    safeText("reportConfirmation", "Report could not be submitted. Check Supabase table policies and try again.");
+    safeText(
+      "reportConfirmation",
+      `Report submit failed: ${message}`
+    );
   }
 }
 
