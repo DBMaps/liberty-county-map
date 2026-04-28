@@ -134,7 +134,13 @@ async function loadCrossings() {
     const res = await fetch(url);
     const data = await res.json();
 
-    crossings = (data.features || []).map((f, i) => {
+    crossings = (data.features || [])
+  .filter(f =>
+    f &&
+    f.geometry &&
+    Array.isArray(f.geometry.coordinates)
+  )
+  .map((f, i) => {
       const p = f.properties || {};
       const [lng, lat] = f.geometry.coordinates;
 
