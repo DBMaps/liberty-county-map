@@ -17,6 +17,7 @@ let crossings = [];
 let activeReports = [];
 let userLocation = null;
 let userMarker = null;
+let lastSubmittedCrossing = null;
 
 let deviceId =
   localStorage.getItem("gridlyDeviceId") ||
@@ -92,7 +93,10 @@ function hydrateElements() {
     "freshestReportReason",
     "trendingList",
     "shareCard",
-    "shareGridlyBtn"
+    "shareGridlyBtn",
+    "mobileReportBtn",
+    "quickClearCard",
+    "quickClearBtn"
   ].forEach((id) => {
     els[id] = document.getElementById(id);
   });
@@ -467,7 +471,21 @@ window.zoomToCrossing = function (crossingId) {
 function bindEvents() {
   els.saveRouteBtn?.addEventListener("click", saveRoute);
   els.useLocationBtn?.addEventListener("click", useMyLocation);
+  els.quickClearBtn?.addEventListener("click", async () => {
+  if (!lastSubmittedCrossing) {
+    setConfirmation("No recent crossing selected.", "error");
+    return;
+  }
 
+  await createSharedReport(
+    lastSubmittedCrossing,
+    "cleared",
+    "quick clear",
+    els.quickClearBtn
+  );
+
+  els.quickClearCard?.classList.remove("visible");
+  });
   els.refreshBtn?.addEventListener("click", async () => {
     await loadSharedReports();
     flashButton(els.refreshBtn, "Updated");
@@ -526,6 +544,23 @@ document.querySelectorAll("[data-section-jump]").forEach((btn) => {
       }, 350);
     }
   });
+});
+els.mobileReportBtn?.addEventListener("click", () => {
+  scrollToSection("mapSection");
+
+  setConfirmation(
+    "Tap the crossing marker closest to you, then choose Blocked, Delay, Cleared, or Other.",
+    "success"
+  );
+
+  safeText(
+    "mapTrustNote",
+    "Report mode: tap the crossing marker closest to you."
+  );
+
+  setTimeout(() => {
+    if (map) map.invalidateSize();
+  }, 350);
 });
 }
 
@@ -619,7 +654,15 @@ async function createSharedReport(
 
     setSync("Live report shared");
     showShareCard();
+    lastSubmittedCrossing = crossing;
 
+    if (reportType === "blocked" || reportType === "heavy") {
+    els.quickClearCard?.classList.add("visible");
+}
+
+    if (reportType === "cleared") {
+    els.quickClearCard?.classList.remove("visible");
+}
     await loadSharedReports();
 
     if (map) {
