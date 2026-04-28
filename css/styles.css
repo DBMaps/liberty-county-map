@@ -492,6 +492,33 @@ select:focus {
   color: var(--muted);
 }
 
+.desktop-command-panel {
+  align-self: start;
+  max-height: 660px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.alerts-list,
+.trending-list {
+  max-height: 360px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.alerts-list::-webkit-scrollbar,
+.trending-list::-webkit-scrollbar,
+.desktop-command-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.alerts-list::-webkit-scrollbar-thumb,
+.trending-list::-webkit-scrollbar-thumb,
+.desktop-command-panel::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+}
+
 .impact-meter {
   height: 12px;
   border-radius: 999px;
@@ -546,8 +573,16 @@ select:focus {
   line-height: 1.4;
 }
 
+.alert-item .alert-meta {
+  margin-top: 6px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
 .source-pill,
-.trust-pill {
+.trust-pill,
+.alert-count-pill {
   display: inline-block;
   margin-top: 8px;
   margin-right: 6px;
@@ -559,7 +594,8 @@ select:focus {
   color: var(--muted);
 }
 
-.trust-pill {
+.trust-pill,
+.alert-count-pill {
   color: #dfffee;
   background: rgba(67, 230, 160, 0.13);
   border: 1px solid rgba(67, 230, 160, 0.24);
@@ -773,6 +809,10 @@ select:focus {
   margin-top: 18px;
 }
 
+.mobile-sticky-report {
+  display: none;
+}
+
 .app-footer {
   width: min(1460px, calc(100% - 36px));
   margin: 0 auto 28px;
@@ -924,7 +964,7 @@ select:focus {
 
   .app-shell {
     width: calc(100% - 18px);
-    margin: 12px auto;
+    margin: 12px auto 88px;
   }
 
   .dashboard {
@@ -1010,6 +1050,13 @@ select:focus {
     display: block;
   }
 
+  .mobile-alerts-note {
+    padding: 12px;
+    border-radius: 16px;
+    background: var(--card-soft);
+    border: 1px solid var(--border);
+  }
+
   .report-card {
     grid-template-columns: 1fr;
     gap: 14px;
@@ -1036,68 +1083,30 @@ select:focus {
     min-width: 230px;
   }
 
+  .mobile-sticky-report {
+    position: fixed;
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+    z-index: 1200;
+    display: block;
+    border: 0;
+    border-radius: 999px;
+    padding: 15px 18px;
+    font-weight: 950;
+    color: #061017;
+    background: linear-gradient(135deg, var(--accent), var(--blue));
+    box-shadow: 0 18px 46px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+  }
+
+  .mobile-sticky-report:active {
+    transform: scale(0.98);
+  }
+
   .app-footer {
     width: calc(100% - 18px);
     margin: 0 auto 18px;
     font-size: 0.8rem;
-  }
-}
-/* Gridly V11.1 alert consolidation */
-
-.desktop-command-panel {
-  align-self: start;
-  max-height: 660px;
-  overflow-y: auto;
-  padding-right: 4px;
-}
-
-.alerts-list,
-.trending-list {
-  max-height: 360px;
-  overflow-y: auto;
-  padding-right: 4px;
-}
-
-.alerts-list::-webkit-scrollbar,
-.trending-list::-webkit-scrollbar,
-.desktop-command-panel::-webkit-scrollbar {
-  width: 6px;
-}
-
-.alerts-list::-webkit-scrollbar-thumb,
-.trending-list::-webkit-scrollbar-thumb,
-.desktop-command-panel::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.16);
-  border-radius: 999px;
-}
-
-.alert-item .alert-meta {
-  margin-top: 6px;
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.alert-count-pill {
-  display: inline-block;
-  margin-top: 8px;
-  padding: 5px 8px;
-  border-radius: 999px;
-  font-size: 0.72rem;
-  font-weight: 900;
-  color: #dfffee;
-  background: rgba(67, 230, 160, 0.13);
-  border: 1px solid rgba(67, 230, 160, 0.24);
-}
-
-@media (max-width: 700px) {
-  .desktop-command-panel {
-    max-height: none;
-    overflow: visible;
-  }
-
-  .alerts-list,
-  .trending-list {
-    max-height: 300px;
   }
 }

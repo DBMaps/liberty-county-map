@@ -7,7 +7,7 @@
   <title>Gridly | Know Before You Go</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/styles.css?v=112" />
 </head>
 
 <body>
@@ -152,7 +152,6 @@
 
           <div class="actions">
             <button id="refreshBtn" class="secondary-btn">Refresh Reports</button>
-            <button id="simulateDelayBtn" class="primary-btn desktop-only-action">Simulate Delay</button>
           </div>
         </div>
 
@@ -200,7 +199,7 @@
       </aside>
     </section>
 
-    <section class="mobile-alerts-panel">
+    <section class="mobile-alerts-panel" id="mobileAlertsPanel">
       <div class="mobile-panel-header">
         <div>
           <p class="eyebrow">Live Alerts</p>
@@ -275,12 +274,16 @@
     </section>
   </main>
 
+  <button class="mobile-sticky-report" data-section-jump="report">
+    Report Crossing
+  </button>
+
   <footer class="app-footer">
-    Gridly V11 · Responsive Split UX
+    Gridly V11.2 · Cache + Mobile Polish
   </footer>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/app.js"></script>
+  <script src="js/app.js?v=112"></script>
 </body>
 </html>
