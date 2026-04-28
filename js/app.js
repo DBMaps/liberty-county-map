@@ -7,7 +7,7 @@ const FRA_URL =
 const defaultCenter = [30.0466, -94.8852];
 const REPORT_EXPIRATION_MINUTES = 90;
 const LIVE_REFRESH_MS = 15000;
-const APP_BUILD = "V9.2";
+const APP_BUILD = "V9.2.1";
 
 let supabaseClient = null;
 let realtimeChannel = null;
@@ -104,7 +104,7 @@ function initSupabase() {
     setSync(`Supabase connected · Build ${APP_BUILD}`);
 
     realtimeChannel = supabaseClient
-      .channel("gridly-live-reports-v92")
+      .channel("gridly-live-reports-v921")
       .on(
         "postgres_changes",
         {
@@ -398,22 +398,25 @@ function buildPopup(crossing, report) {
       <div class="popup-report-grid">
         <button class="popup-report-btn danger" onclick="reportCrossingFromPopup('${sanitizeText(
           crossing.id
-        )}', 'blocked')">Blocked</button>
+        )}', 'blocked', this)">Blocked</button>
+
         <button class="popup-report-btn warning" onclick="reportCrossingFromPopup('${sanitizeText(
           crossing.id
-        )}', 'heavy')">Delay</button>
+        )}', 'heavy', this)">Delay</button>
+
         <button class="popup-report-btn blue" onclick="reportCrossingFromPopup('${sanitizeText(
           crossing.id
-        )}', 'cleared')">Cleared</button>
+        )}', 'cleared', this)">Cleared</button>
+
         <button class="popup-report-btn neutral" onclick="reportCrossingFromPopup('${sanitizeText(
           crossing.id
-        )}', 'other')">Other</button>
+        )}', 'other', this)">Other</button>
       </div>
     </div>
   `;
 }
 
-window.reportCrossingFromPopup = async function (crossingId, reportType) {
+window.reportCrossingFromPopup = async function (crossingId, reportType, buttonEl) {
   const crossing = crossings.find((item) => String(item.id) === String(crossingId));
 
   if (!crossing) {
@@ -421,7 +424,7 @@ window.reportCrossingFromPopup = async function (crossingId, reportType) {
     return;
   }
 
-  await createSharedReport(crossing, reportType, "exact map marker");
+  await createSharedReport(crossing, reportType, "exact map marker", buttonEl);
 };
 
 window.zoomToCrossing = function (crossingId) {
@@ -452,7 +455,10 @@ function bindEvents() {
 
   document.querySelectorAll(".nav-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
-      document.querySelectorAll(".nav-btn").forEach((b) => b.classList.remove("active"));
+      document.querySelectorAll(".nav-btn").forEach((b) =>
+        b.classList.remove("active")
+      );
+
       btn.classList.add("active");
 
       const targets = {
@@ -494,23 +500,31 @@ function submitManualReport() {
   const crossing = crossings.find(
     (item) => String(item.id) === String(els.crossingSelect?.value)
   );
+
   const reportType = els.manualReportType?.value || "blocked";
 
   if (!crossing) {
-    safeText("reportConfirmation", "Choose a crossing before submitting a report.");
+    setConfirmation("Choose a crossing before submitting a report.", "error");
     return;
   }
 
-  createSharedReport(crossing, reportType, "manual fallback");
+  createSharedReport(crossing, reportType, "manual fallback", els.manualReportBtn);
 }
 
-async function createSharedReport(crossing, reportType, confidence) {
+async function createSharedReport(
+  crossing,
+  reportType,
+  confidence,
+  buttonEl = null
+) {
   if (!supabaseClient) {
-    safeText("reportConfirmation", "Live report sync is unavailable.");
+    setConfirmation("Live report sync is unavailable.", "error");
     return;
   }
 
+  const originalButtonText = buttonEl ? buttonEl.textContent : "";
   const copy = getReportCopy(reportType);
+
   const expiresAt = new Date(
     Date.now() + REPORT_EXPIRATION_MINUTES * 60000
   ).toISOString();
@@ -531,15 +545,27 @@ async function createSharedReport(crossing, reportType, confidence) {
   };
 
   try {
+    if (buttonEl) {
+      buttonEl.classList.add("is-submitting");
+      buttonEl.textContent = "Sending...";
+    }
+
     setSync("Sending report...");
+    setConfirmation(`Sending ${copy.label} report for ${crossing.name}...`, "success");
 
     const { error } = await supabaseClient.from("reports").insert(row);
 
     if (error) throw error;
 
-    safeText(
-      "reportConfirmation",
-      `Shared report submitted: ${crossing.name} as ${copy.label}.`
+    if (buttonEl) {
+      buttonEl.classList.remove("is-submitting");
+      buttonEl.classList.add("is-success");
+      buttonEl.textContent = "Shared ✓";
+    }
+
+    setConfirmation(
+      `Shared report submitted: ${crossing.name} as ${copy.label}.`,
+      "success"
     );
 
     setSync("Write success");
@@ -548,12 +574,38 @@ async function createSharedReport(crossing, reportType, confidence) {
 
     if (map) {
       map.setView([crossing.lat, crossing.lng], 14);
-      map.closePopup();
+
+      setTimeout(() => {
+        map.closePopup();
+      }, 750);
+    }
+
+    if (buttonEl) {
+      setTimeout(() => {
+        buttonEl.classList.remove("is-success");
+        buttonEl.textContent = originalButtonText;
+      }, 1200);
     }
   } catch (error) {
     console.error("Gridly report insert failed:", error);
-    safeText("reportConfirmation", `Report failed: ${error.message || "permission denied"}`);
+
+    if (buttonEl) {
+      buttonEl.classList.remove("is-submitting", "is-success");
+      buttonEl.textContent = "Failed";
+    }
+
+    setConfirmation(
+      `Report failed: ${error.message || "permission denied"}`,
+      "error"
+    );
+
     setSync(`Write failed: ${error.message || "permission denied"}`);
+
+    if (buttonEl) {
+      setTimeout(() => {
+        buttonEl.textContent = originalButtonText;
+      }, 1300);
+    }
   }
 }
 
@@ -590,12 +642,18 @@ function getReportCopy(type) {
 
 async function simulateDelay() {
   if (!crossings.length) {
-    safeText("reportConfirmation", "Crossings are not loaded yet.");
+    setConfirmation("Crossings are not loaded yet.", "error");
     return;
   }
 
   const crossing = crossings[Math.floor(Math.random() * crossings.length)];
-  await createSharedReport(crossing, "blocked", "simulated demo action");
+  await createSharedReport(
+    crossing,
+    "blocked",
+    "simulated demo action",
+    els.simulateDelayBtn
+  );
+
   flashButton(els.simulateDelayBtn, "Delay Added");
 }
 
@@ -661,17 +719,17 @@ function useMyLocation() {
       const nearest = findNearestCrossings(userLocation.lat, userLocation.lng, 5);
       updateRouteIntelligence(nearest);
 
-      safeText(
-        "reportConfirmation",
+      setConfirmation(
         nearest.length
           ? `Location found. Nearest crossing: ${nearest[0].name}.`
-          : "Location found."
+          : "Location found.",
+        "success"
       );
 
       flashButton(els.useLocationBtn, "Location Found");
     },
     () => {
-      safeText("reportConfirmation", "Location permission was blocked.");
+      setConfirmation("Location permission was blocked.", "error");
       flashButton(els.useLocationBtn, "Location Blocked");
     }
   );
@@ -682,10 +740,15 @@ function updateRouteIntelligence(nearest = []) {
   const savedWork = localStorage.getItem("gridlyWork");
 
   const latestReports = getLatestReportsByCrossing();
+
   const activeIssues = latestReports.filter(
     (report) => !report.expired && report.type !== "cleared"
   );
-  const highAlerts = activeIssues.filter((report) => report.severity === "high").length;
+
+  const highAlerts = activeIssues.filter(
+    (report) => report.severity === "high"
+  ).length;
+
   const moderateAlerts = activeIssues.filter(
     (report) => report.severity === "moderate"
   ).length;
@@ -705,6 +768,7 @@ function updateRouteIntelligence(nearest = []) {
   const extraMinutes = Math.max(0, Math.round(impact / 7));
 
   safeText("nearbyAlertCount", activeIssues.length);
+
   safeText(
     "activeAlertText",
     activeIssues.length === 1
@@ -805,7 +869,9 @@ function renderAlerts() {
 
 function updateTrustStats() {
   const latestReports = getLatestReportsByCrossing();
+
   const active = latestReports.filter((report) => !report.expired);
+
   const lastReport = [...activeReports].sort((a, b) => {
     return new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0);
   })[0];
@@ -838,6 +904,7 @@ function getLatestReportsByCrossing() {
 
 function calculateBaseRisk(props, index) {
   let score = 18;
+
   const traffic = Number(props.aadt || props.avgdailytraffic || props.traffic || 0);
   const trains = Number(props.daythrutrain || props.totaltrains || props.trains || 0);
 
@@ -847,6 +914,7 @@ function calculateBaseRisk(props, index) {
   if (trains > 15) score += 14;
 
   score += index % 7;
+
   return Math.min(score, 82);
 }
 
@@ -927,6 +995,18 @@ function flashButton(button, message) {
   setTimeout(() => {
     button.textContent = original;
   }, 1300);
+}
+
+function setConfirmation(message, type = "success") {
+  if (!els.reportConfirmation) return;
+
+  els.reportConfirmation.classList.remove("success", "error");
+
+  if (type) {
+    els.reportConfirmation.classList.add(type);
+  }
+
+  els.reportConfirmation.textContent = message;
 }
 
 function setSync(value) {
