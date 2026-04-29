@@ -4,12 +4,45 @@ const SUPABASE_PUBLIC_KEY = "sb_publishable_T33dpOj4M3TioSqFcVxf2Q_YTmhkPdO";
 const FRA_URL =
   "https://data.transportation.gov/resource/m2f8-22s6.geojson?$limit=5000&statename=TEXAS&countyname=LIBERTY";
 const CROSSING_REVIEW_OVERRIDES_URL = "data/gridly-crossing-review-overrides.json";
+const HAZARD_REPORT_EXPIRATION_MINUTES = 180;
 
+const HAZARD_TYPES = {
+  flooding: {
+    label: "Flooding",
+    icon: "🌊",
+    severity: "high",
+    detail: "Shared report: flooding may affect travel."
+  },
+  debris: {
+    label: "Debris",
+    icon: "⚠️",
+    severity: "moderate",
+    detail: "Shared report: debris may affect the road."
+  },
+  crash: {
+    label: "Crash",
+    icon: "🚗",
+    severity: "high",
+    detail: "Shared report: crash may affect traffic."
+  },
+  construction: {
+    label: "Construction",
+    icon: "🚧",
+    severity: "moderate",
+    detail: "Shared report: construction may slow travel."
+  },
+  other_hazard: {
+    label: "Other Hazard",
+    icon: "❗",
+    severity: "moderate",
+    detail: "Shared report: road hazard may affect travel."
+  }
+};
 let crossingReviewOverrides = {};
 const defaultCenter = [30.0466, -94.8852];
 const REPORT_EXPIRATION_MINUTES = 90;
 const LIVE_REFRESH_MS = 15000;
-const APP_BUILD = "V12.4";
+const APP_BUILD = "5A";
 
 let supabaseClient = null;
 let realtimeChannel = null;
@@ -18,6 +51,8 @@ let crossingLayer;
 let crossingMarkers = new Map();
 let crossings = [];
 let activeReports = [];
+let activeHazards = [];
+let hazardLayer;
 let userLocation = null;
 let userMarker = null;
 let nearbyReportCrossingIds = new Set();
@@ -39,6 +74,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initMap();
   initSupabase();
   bindEvents();
+  injectHazardReportUI();
   loadSavedRoute();
 
   await loadCrossings();
@@ -208,6 +244,7 @@ function initMap() {
   }).addTo(map);
 
   crossingLayer = L.layerGroup().addTo(map);
+  hazardLayer = L.layerGroup().addTo(map);
 }
 
 async function loadCrossings() {
@@ -346,15 +383,19 @@ async function loadSharedReports() {
       .select("*")
       .gt("expires_at", nowIso)
       .order("created_at", { ascending: false })
-      .limit(200);
+      .limit(300);
 
     if (error) throw error;
 
-    activeReports = normalizeReports(data || []);
+    const normalized = normalizeReports(data || []);
+
+    activeHazards = normalized.filter((report) => report.reportKind === "hazard");
+    activeReports = normalized.filter((report) => report.reportKind !== "hazard");
 
     renderAlerts();
     renderTrendingCrossings();
     renderCrossings();
+    renderHazards();
     updateRouteIntelligence();
     updateTrustStats();
     updateGrowthWidgets();
@@ -362,11 +403,12 @@ async function loadSharedReports() {
     updateMobileAlertsMirror();
     updateLastUpdated();
 
-    setSync(`${activeReports.length} live reports synced`);
+    setSync(`${activeReports.length} crossing reports · ${activeHazards.length} hazards synced`);
   } catch (error) {
     console.error("Gridly report sync failed:", error);
     setSync("Live sync read failed");
   }
+
 }
 
 function normalizeReports(rows) {
@@ -377,17 +419,25 @@ function normalizeReports(rows) {
       Math.floor((Date.now() - new Date(createdAt).getTime()) / 60000)
     );
 
+    const reportType = row.report_type || "other";
+    const isHazard = Object.prototype.hasOwnProperty.call(HAZARD_TYPES, reportType);
+    const copy = isHazard ? HAZARD_TYPES[reportType] : getReportCopy(reportType);
+
     return {
       id: row.id,
       crossingId: String(row.crossing_id),
-      crossingName: row.crossing_name || "Unknown crossing",
-      railroad: row.railroad || "Rail line",
+      crossingName: row.crossing_name || (isHazard ? copy.label : "Unknown crossing"),
+      railroad: row.railroad || (isHazard ? "Road hazard" : "Rail line"),
       lat: Number(row.lat),
       lng: Number(row.lng),
-      type: row.report_type || "other",
-      severity: row.severity || getReportCopy(row.report_type).severity,
-      title: `${row.crossing_name || "Crossing"} ${getReportCopy(row.report_type).shortTitle}`,
-      detail: row.detail || getReportCopy(row.report_type).detail,
+      type: reportType,
+      reportKind: isHazard ? "hazard" : "crossing",
+      icon: isHazard ? copy.icon : "",
+      severity: row.severity || copy.severity,
+      title: isHazard
+        ? `${copy.icon} ${copy.label}`
+        : `${row.crossing_name || "Crossing"} ${copy.shortTitle}`,
+      detail: row.detail || copy.detail,
       source: row.source || "user",
       confidence: row.confidence || "shared live report",
       deviceId: row.device_id,
@@ -440,6 +490,329 @@ function renderCrossings() {
 
     crossingMarkers.set(String(crossing.id), marker);
   });
+}
+function renderHazards() {
+  if (!hazardLayer) return;
+
+  hazardLayer.clearLayers();
+
+  activeHazards
+    .filter((hazard) => !hazard.expired)
+    .forEach((hazard) => {
+      if (!Number.isFinite(hazard.lat) || !Number.isFinite(hazard.lng)) return;
+
+      const icon = L.divIcon({
+        className: "",
+        html: `
+          <div class="gridly-hazard-marker ${sanitizeText(hazard.severity)}">
+            <span>${sanitizeText(hazard.icon || "❗")}</span>
+            <small>${hazard.minutesAgo}m</small>
+          </div>
+        `,
+        iconSize: [42, 42],
+        iconAnchor: [21, 21]
+      });
+
+      L.marker([hazard.lat, hazard.lng], { icon })
+        .bindPopup(buildHazardPopup(hazard), { maxWidth: 320 })
+        .addTo(hazardLayer);
+    });
+}
+
+function buildHazardPopup(hazard) {
+  return `
+    <div class="gridly-popup">
+      <strong>${sanitizeText(hazard.title)}</strong>
+      <span>${sanitizeText(hazard.detail)}</span><br />
+      <span>Reported: ${hazard.minutesAgo} min ago</span><br />
+      <span>Confidence: ${sanitizeText(hazard.confidence)}</span><br />
+
+      <div class="popup-report-grid">
+        <button class="popup-report-btn blue" onclick="zoomToHazard(${hazard.lat}, ${hazard.lng})">View Area</button>
+      </div>
+    </div>
+  `;
+}
+
+window.zoomToHazard = function (lat, lng) {
+  if (!map) return;
+  map.setView([lat, lng], 16);
+};
+
+function injectHazardReportUI() {
+  if (document.getElementById("gridlyHazardLauncher")) return;
+
+  const launcher = document.createElement("button");
+  launcher.id = "gridlyHazardLauncher";
+  launcher.className = "gridly-hazard-launcher";
+  launcher.type = "button";
+  launcher.textContent = "Report Road Hazard";
+  launcher.addEventListener("click", openHazardPanel);
+
+  const panel = document.createElement("div");
+  panel.id = "gridlyHazardPanel";
+  panel.className = "gridly-hazard-panel";
+  panel.innerHTML = `
+    <div class="hazard-panel-header">
+      <strong>Report Road Hazard</strong>
+      <button type="button" onclick="closeHazardPanel()">×</button>
+    </div>
+    <p>Gridly will use your current GPS location for the hazard report.</p>
+    <div class="hazard-choice-grid">
+      <button type="button" onclick="submitHazardNearMe('flooding')">🌊 Flooding</button>
+      <button type="button" onclick="submitHazardNearMe('debris')">⚠️ Debris</button>
+      <button type="button" onclick="submitHazardNearMe('crash')">🚗 Crash</button>
+      <button type="button" onclick="submitHazardNearMe('construction')">🚧 Construction</button>
+      <button type="button" onclick="submitHazardNearMe('other_hazard')">❗ Other</button>
+    </div>
+  `;
+
+  document.body.appendChild(launcher);
+  document.body.appendChild(panel);
+  injectHazardStyles();
+}
+
+function openHazardPanel() {
+  document.getElementById("gridlyHazardPanel")?.classList.add("visible");
+}
+
+window.closeHazardPanel = function () {
+  document.getElementById("gridlyHazardPanel")?.classList.remove("visible");
+};
+
+window.submitHazardNearMe = function (hazardType) {
+  if (!navigator.geolocation) {
+    setConfirmation("Location is unavailable. Hazard reports need GPS for V12.5A.", "error");
+    return;
+  }
+
+  const hazardCopy = HAZARD_TYPES[hazardType] || HAZARD_TYPES.other_hazard;
+
+  setConfirmation(`Finding your location for ${hazardCopy.label} report...`, "success");
+
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+
+      await createSharedHazardReport(hazardType, lat, lng, "gps hazard report");
+
+      if (map) {
+        map.setView([lat, lng], 16);
+      }
+
+      closeHazardPanel();
+    },
+    () => {
+      setConfirmation("Location permission was blocked. Hazard report not submitted.", "error");
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 15000
+    }
+  );
+};
+
+async function createSharedHazardReport(hazardType, lat, lng, confidence) {
+  if (!supabaseClient) {
+    setConfirmation("Live hazard sync is unavailable.", "error");
+    return;
+  }
+
+  const copy = HAZARD_TYPES[hazardType] || HAZARD_TYPES.other_hazard;
+  const expiresAt = new Date(Date.now() + HAZARD_REPORT_EXPIRATION_MINUTES * 60000).toISOString();
+
+  const row = {
+    crossing_id: `hazard-${deviceId}-${Date.now()}`,
+    crossing_name: copy.label,
+    railroad: "Road hazard",
+    lat,
+    lng,
+    report_type: hazardType,
+    severity: copy.severity,
+    detail: copy.detail,
+    source: "user",
+    confidence,
+    device_id: deviceId,
+    expires_at: expiresAt
+  };
+
+  try {
+    setSync("Sending hazard report...");
+    setConfirmation(`Sending ${copy.label} hazard report...`, "success");
+
+    const { error } = await supabaseClient.from("reports").insert(row);
+
+    if (error) throw error;
+
+    setConfirmation(`${copy.icon} ${copy.label} hazard report shared.`, "success");
+    setSync("Hazard report shared");
+
+    await loadSharedReports();
+  } catch (error) {
+    console.error("Gridly hazard insert failed:", error);
+    setConfirmation(`Hazard report failed: ${error.message || "permission denied"}`, "error");
+    setSync("Hazard report failed");
+  }
+}
+
+function injectHazardStyles() {
+  if (document.getElementById("gridlyHazardStyles")) return;
+
+  const style = document.createElement("style");
+  style.id = "gridlyHazardStyles";
+  style.textContent = `
+    .gridly-hazard-marker {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      position: relative;
+      background: rgba(255, 255, 255, 0.96);
+      border: 3px solid rgba(255, 209, 102, 0.95);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.34);
+      animation: gridlyHazardPulse 1.8s infinite;
+    }
+
+    .gridly-hazard-marker.high {
+      border-color: rgba(255, 88, 88, 0.95);
+    }
+
+    .gridly-hazard-marker.moderate {
+      border-color: rgba(255, 209, 102, 0.95);
+    }
+
+    .gridly-hazard-marker span {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .gridly-hazard-marker small {
+      position: absolute;
+      right: -8px;
+      bottom: -8px;
+      background: #06111f;
+      color: #fff;
+      border-radius: 999px;
+      padding: 2px 5px;
+      font-size: 9px;
+      font-weight: 900;
+      border: 1px solid rgba(255,255,255,0.24);
+    }
+
+    @keyframes gridlyHazardPulse {
+      0% { transform: scale(1); box-shadow: 0 10px 30px rgba(0,0,0,0.34); }
+      50% { transform: scale(1.08); box-shadow: 0 14px 40px rgba(255,88,88,0.32); }
+      100% { transform: scale(1); box-shadow: 0 10px 30px rgba(0,0,0,0.34); }
+    }
+
+    .gridly-hazard-launcher {
+      position: fixed;
+      right: 18px;
+      bottom: 92px;
+      z-index: 9998;
+      border: 0;
+      border-radius: 999px;
+      padding: 13px 16px;
+      background: linear-gradient(135deg, #ffd166, #ff7a59);
+      color: #08111f;
+      font-weight: 950;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.28);
+      cursor: pointer;
+    }
+
+    .gridly-hazard-panel {
+      position: fixed;
+      right: 18px;
+      bottom: 150px;
+      width: 320px;
+      max-width: calc(100vw - 36px);
+      z-index: 9999;
+      display: none;
+      background: rgba(9, 18, 32, 0.97);
+      color: #fff;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.14);
+      box-shadow: 0 22px 70px rgba(0,0,0,0.42);
+      padding: 14px;
+      backdrop-filter: blur(16px);
+    }
+
+    .gridly-hazard-panel.visible {
+      display: block;
+    }
+
+    .hazard-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .hazard-panel-header strong {
+      font-size: 16px;
+    }
+
+    .hazard-panel-header button {
+      border: 0;
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .gridly-hazard-panel p {
+      margin: 0 0 12px;
+      color: rgba(255,255,255,0.72);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .hazard-choice-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .hazard-choice-grid button {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px;
+      text-align: left;
+      font-weight: 900;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .hazard-choice-grid button:hover {
+      background: rgba(255,255,255,0.16);
+    }
+
+    @media (max-width: 760px) {
+      .gridly-hazard-launcher {
+        left: 14px;
+        right: 14px;
+        bottom: 150px;
+        width: calc(100vw - 28px);
+      }
+
+      .gridly-hazard-panel {
+        left: 14px;
+        right: 14px;
+        bottom: 210px;
+        width: auto;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
 }
 
 function buildPopup(crossing, report) {
