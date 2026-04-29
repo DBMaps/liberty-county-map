@@ -1334,3 +1334,294 @@ function sanitizeText(value) {
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 }
+/* =========================================================
+   GRIDLY V12.3 — CROSSING REVIEW MODE
+   Safe temporary review tool
+   Activate with: ?review=1
+========================================================= */
+
+const REVIEW_MODE_ACTIVE = new URLSearchParams(window.location.search).get("review") === "1";
+const REVIEW_STORAGE_KEY = "gridlyCrossingReviewDecisionsV123";
+
+let crossingReviewDecisions = JSON.parse(localStorage.getItem(REVIEW_STORAGE_KEY) || "{}");
+
+const originalLoadCrossingsV123 = loadCrossings;
+
+loadCrossings = async function () {
+  await originalLoadCrossingsV123();
+
+  if (REVIEW_MODE_ACTIVE) {
+    initCrossingReviewMode();
+  }
+};
+
+function initCrossingReviewMode() {
+  injectCrossingReviewStyles();
+  buildCrossingReviewPanel();
+  safeText("mapTrustNote", "Crossing Review Mode is active. Normal users do not see this.");
+}
+
+function buildCrossingReviewPanel() {
+  const existing = document.getElementById("crossingReviewPanel");
+  if (existing) existing.remove();
+
+  const panel = document.createElement("div");
+  panel.id = "crossingReviewPanel";
+  panel.className = "crossing-review-panel";
+
+  panel.innerHTML = `
+    <div class="review-header">
+      <div>
+        <strong>Gridly V12.3 Review Mode</strong>
+        <span>${crossings.length} FRA crossings loaded</span>
+      </div>
+      <button type="button" onclick="exportCrossingReviewDecisions()">Export JSON</button>
+    </div>
+
+    <div class="review-help">
+      Mark crossings as Keep, Hide, Rename, or Needs Check. Nothing is permanently changed.
+    </div>
+
+    <div class="review-list">
+      ${crossings
+        .slice()
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map((crossing) => renderReviewCrossingItem(crossing))
+        .join("")}
+    </div>
+  `;
+
+  document.body.appendChild(panel);
+}
+
+function renderReviewCrossingItem(crossing) {
+  const decision = crossingReviewDecisions[String(crossing.id)] || {};
+  const status = decision.action || "unreviewed";
+  const nickname = decision.localName || "";
+
+  return `
+    <div class="review-item ${status}" id="review-${sanitizeText(crossing.id)}">
+      <div class="review-title">
+        <strong>${sanitizeText(crossing.name)}</strong>
+        <span>${sanitizeText(crossing.railroad)}</span>
+      </div>
+
+      <div class="review-meta">
+        ID: ${sanitizeText(crossing.id)}<br>
+        ${crossing.lat.toFixed(6)}, ${crossing.lng.toFixed(6)}
+      </div>
+
+      <input
+        type="text"
+        placeholder="Local nickname / better name"
+        value="${sanitizeText(nickname)}"
+        onchange="setCrossingNickname('${sanitizeText(crossing.id)}', this.value)"
+      />
+
+      <div class="review-actions">
+        <button onclick="setCrossingReview('${sanitizeText(crossing.id)}', 'keep')">Keep</button>
+        <button onclick="setCrossingReview('${sanitizeText(crossing.id)}', 'hide')">Hide</button>
+        <button onclick="setCrossingReview('${sanitizeText(crossing.id)}', 'rename')">Rename</button>
+        <button onclick="setCrossingReview('${sanitizeText(crossing.id)}', 'needs_check')">Needs Check</button>
+        <button onclick="zoomToCrossing('${sanitizeText(crossing.id)}')">Zoom</button>
+      </div>
+
+      <div class="review-status">Status: ${sanitizeText(status)}</div>
+    </div>
+  `;
+}
+
+window.setCrossingReview = function (crossingId, action) {
+  crossingReviewDecisions[String(crossingId)] = {
+    ...(crossingReviewDecisions[String(crossingId)] || {}),
+    action,
+    reviewedAt: new Date().toISOString()
+  };
+
+  localStorage.setItem(REVIEW_STORAGE_KEY, JSON.stringify(crossingReviewDecisions, null, 2));
+  buildCrossingReviewPanel();
+};
+
+window.setCrossingNickname = function (crossingId, value) {
+  crossingReviewDecisions[String(crossingId)] = {
+    ...(crossingReviewDecisions[String(crossingId)] || {}),
+    localName: value.trim(),
+    reviewedAt: new Date().toISOString()
+  };
+
+  localStorage.setItem(REVIEW_STORAGE_KEY, JSON.stringify(crossingReviewDecisions, null, 2));
+};
+
+window.exportCrossingReviewDecisions = function () {
+  const output = JSON.stringify(crossingReviewDecisions, null, 2);
+
+  navigator.clipboard
+    .writeText(output)
+    .then(() => setConfirmation("Crossing review JSON copied to clipboard.", "success"))
+    .catch(() => {
+      console.log("Gridly Crossing Review Export:", output);
+      setConfirmation("Export printed to console. Open DevTools to copy it.", "success");
+    });
+};
+
+function injectCrossingReviewStyles() {
+  if (document.getElementById("crossingReviewStyles")) return;
+
+  const style = document.createElement("style");
+  style.id = "crossingReviewStyles";
+
+  style.textContent = `
+    .crossing-review-panel {
+      position: fixed;
+      top: 92px;
+      right: 16px;
+      width: 380px;
+      max-width: calc(100vw - 32px);
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+      z-index: 99999;
+      background: rgba(9, 18, 32, 0.96);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 18px;
+      box-shadow: 0 22px 70px rgba(0, 0, 0, 0.45);
+      color: #ffffff;
+      padding: 14px;
+      backdrop-filter: blur(16px);
+    }
+
+    .review-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .review-header strong {
+      display: block;
+      font-size: 15px;
+    }
+
+    .review-header span {
+      display: block;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.65);
+      margin-top: 2px;
+    }
+
+    .review-header button,
+    .review-actions button {
+      border: 0;
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-weight: 800;
+      cursor: pointer;
+      background: #43e6a0;
+      color: #041018;
+      font-size: 11px;
+    }
+
+    .review-help {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .review-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .review-item {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.055);
+    }
+
+    .review-item.keep {
+      border-color: rgba(67, 230, 160, 0.65);
+    }
+
+    .review-item.hide {
+      border-color: rgba(255, 88, 88, 0.75);
+      opacity: 0.78;
+    }
+
+    .review-item.rename {
+      border-color: rgba(88, 166, 255, 0.75);
+    }
+
+    .review-item.needs_check {
+      border-color: rgba(255, 204, 102, 0.8);
+    }
+
+    .review-title strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .review-title span,
+    .review-meta,
+    .review-status {
+      display: block;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.65);
+      margin-top: 4px;
+      line-height: 1.35;
+    }
+
+    .review-item input {
+      width: 100%;
+      margin-top: 8px;
+      margin-bottom: 8px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(0, 0, 0, 0.22);
+      color: #fff;
+      padding: 8px;
+      font-size: 12px;
+    }
+
+    .review-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .review-actions button:nth-child(2) {
+      background: #ff6868;
+      color: #fff;
+    }
+
+    .review-actions button:nth-child(3) {
+      background: #58a6ff;
+      color: #041018;
+    }
+
+    .review-actions button:nth-child(4) {
+      background: #ffd166;
+      color: #041018;
+    }
+
+    .review-actions button:nth-child(5) {
+      background: rgba(255,255,255,0.16);
+      color: #fff;
+    }
+
+    @media (max-width: 760px) {
+      .crossing-review-panel {
+        top: auto;
+        bottom: 88px;
+        left: 12px;
+        right: 12px;
+        width: auto;
+        max-height: 46vh;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
