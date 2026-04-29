@@ -42,7 +42,7 @@ let crossingReviewOverrides = {};
 const defaultCenter = [30.0466, -94.8852];
 const REPORT_EXPIRATION_MINUTES = 90;
 const LIVE_REFRESH_MS = 15000;
-const APP_BUILD = "6C1";
+const APP_BUILD = "6C2";
 
 let supabaseClient = null;
 let realtimeChannel = null;
@@ -2954,6 +2954,48 @@ function injectCommunitySidebarPolishV126C1() {
       }
 
       #gridlyCommunityToolsCard.community-tools-sidebar-card button {
+        width: 100% !important;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+/* =========================================================
+   GRIDLY V12.6C2 — STABLE COMMUNITY TOOLS POSITION
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    stabilizeCommunityToolsV126C2();
+  }, 2600);
+});
+
+function stabilizeCommunityToolsV126C2() {
+  const tools = document.getElementById("gridlyCommunityToolsCard");
+  if (!tools) return;
+
+  tools.classList.add("gridly-community-stable");
+
+  injectStableCommunityToolsStylesV126C2();
+}
+
+function injectStableCommunityToolsStylesV126C2() {
+  if (document.getElementById("stableCommunityToolsStylesV126C2")) return;
+
+  const style = document.createElement("style");
+  style.id = "stableCommunityToolsStylesV126C2";
+
+  style.textContent = `
+    @media (min-width: 761px) {
+      #gridlyCommunityToolsCard {
+        max-width: 420px !important;
+        margin: 16px 0 10px auto !important;
+        padding: 14px !important;
+        transition: none !important;
+      }
+
+      #gridlyCommunityToolsCard button {
         width: 100% !important;
       }
     }
