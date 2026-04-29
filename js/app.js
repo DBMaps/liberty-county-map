@@ -42,7 +42,7 @@ let crossingReviewOverrides = {};
 const defaultCenter = [30.0466, -94.8852];
 const REPORT_EXPIRATION_MINUTES = 90;
 const LIVE_REFRESH_MS = 15000;
-const APP_BUILD = "6C";
+const APP_BUILD = "6C1";
 
 let supabaseClient = null;
 let realtimeChannel = null;
@@ -2902,6 +2902,59 @@ function injectDesktopPremiumStylesV126C() {
         background: rgba(255,255,255,0.1);
         color: #fff;
         border: 1px solid rgba(255,255,255,0.14);
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+/* =========================================================
+   GRIDLY V12.6C1 — COMMUNITY TOOLS SIDEBAR POLISH
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    moveCommunityToolsToSidebarV126C1();
+    injectCommunitySidebarPolishV126C1();
+  }, 1800);
+});
+
+function moveCommunityToolsToSidebarV126C1() {
+  if (window.innerWidth <= 760) return;
+
+  const tools = document.getElementById("gridlyCommunityToolsCard");
+  if (!tools) return;
+
+  const rightColumn =
+    tools.closest(".desktop-command-panel") ||
+    [...document.querySelectorAll("aside, .sidebar, .right-panel, .desktop-panel, div")]
+      .find((el) =>
+        el.textContent.includes("LIVE ALERTS") &&
+        el.getBoundingClientRect().width < 420
+      );
+
+  if (!rightColumn) return;
+
+  rightColumn.appendChild(tools);
+  tools.classList.add("community-tools-sidebar-card");
+}
+
+function injectCommunitySidebarPolishV126C1() {
+  if (document.getElementById("communitySidebarPolishV126C1")) return;
+
+  const style = document.createElement("style");
+  style.id = "communitySidebarPolishV126C1";
+
+  style.textContent = `
+    @media (min-width: 761px) {
+      #gridlyCommunityToolsCard.community-tools-sidebar-card {
+        width: 100% !important;
+        margin-top: 16px !important;
+        padding: 14px !important;
+      }
+
+      #gridlyCommunityToolsCard.community-tools-sidebar-card button {
+        width: 100% !important;
       }
     }
   `;
