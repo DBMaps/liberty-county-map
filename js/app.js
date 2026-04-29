@@ -3,11 +3,13 @@ const SUPABASE_PUBLIC_KEY = "sb_publishable_T33dpOj4M3TioSqFcVxf2Q_YTmhkPdO";
 
 const FRA_URL =
   "https://data.transportation.gov/resource/m2f8-22s6.geojson?$limit=5000&statename=TEXAS&countyname=LIBERTY";
+const CROSSING_REVIEW_OVERRIDES_URL = "data/gridly-crossing-review-overrides.json";
 
+let crossingReviewOverrides = {};
 const defaultCenter = [30.0466, -94.8852];
 const REPORT_EXPIRATION_MINUTES = 90;
 const LIVE_REFRESH_MS = 15000;
-const APP_BUILD = "V12.2";
+const APP_BUILD = "V12.4";
 
 let supabaseClient = null;
 let realtimeChannel = null;
@@ -211,7 +213,9 @@ function initMap() {
 async function loadCrossings() {
   try {
     safeText("dataStatus", "Crossing data: loading");
-    safeText("mapTrustNote", "Loading known public crossings from FRA data...");
+    safeText("mapTrustNote", "Loading curated Gridly crossing dataset...");
+
+    crossingReviewOverrides = await loadCrossingReviewOverrides();
 
     const response = await fetch(FRA_URL);
 
@@ -221,7 +225,7 @@ async function loadCrossings() {
 
     const data = await response.json();
 
-    crossings = (data.features || [])
+    const rawCrossings = (data.features || [])
       .filter((feature) => {
         if (!feature || !feature.geometry) return false;
         if (!Array.isArray(feature.geometry.coordinates)) return false;
@@ -233,20 +237,28 @@ async function loadCrossings() {
         const [lng, lat] = feature.geometry.coordinates;
         const props = feature.properties || {};
 
+        const id = String(
+          props.crossingid ||
+            props.crossing_id ||
+            props.crossing ||
+            `crossing-${index}`
+        );
+
+        const originalName =
+          props.street ||
+          props.roadwayname ||
+          props.highwayname ||
+          props.road ||
+          props.crossingname ||
+          "Railroad Crossing";
+
+        const override = crossingReviewOverrides[id] || {};
+        const localName = String(override.localName || "").trim();
+
         return {
-          id: String(
-            props.crossingid ||
-              props.crossing_id ||
-              props.crossing ||
-              `crossing-${index}`
-          ),
-          name:
-            props.street ||
-            props.roadwayname ||
-            props.highwayname ||
-            props.road ||
-            props.crossingname ||
-            "Railroad Crossing",
+          id,
+          name: localName || originalName,
+          originalName,
           railroad:
             props.railroad ||
             props.railroadname ||
@@ -256,9 +268,14 @@ async function loadCrossings() {
           lat: Number(lat),
           lng: Number(lng),
           risk: calculateBaseRisk(props, index),
+          review: override,
           props
         };
       });
+
+    crossings = rawCrossings.filter((crossing) => {
+      return shouldShowCrossingInLaunchMode(crossing);
+    });
 
     populateCrossingSelect();
     renderCrossings();
@@ -268,21 +285,51 @@ async function loadCrossings() {
     updateDailyHabitStatus();
     updateLastUpdated();
 
-    safeText("dataStatus", `${crossings.length} known crossings loaded`);
+    safeText("dataStatus", `${crossings.length} curated crossings loaded`);
     safeText("crossingCount", crossings.length);
 
     safeText(
       "mapTrustNote",
-      `${crossings.length} known public crossings loaded from FRA data. Tap a marker to report or clear a crossing.`
+      `${crossings.length} curated public crossings loaded for Gridly launch mode. Tap a marker to report road issues.`
     );
   } catch (error) {
     console.error("Gridly crossing load failed:", error);
     safeText("dataStatus", "Crossing data failed");
     safeText("crossingCount", "Failed");
-    safeText("mapTrustNote", "Unable to load FRA crossing data. Refresh and try again.");
+    safeText("mapTrustNote", "Unable to load curated crossing data. Refresh and try again.");
+  }
+}
+async function loadCrossingReviewOverrides() {
+  try {
+    const response = await fetch(CROSSING_REVIEW_OVERRIDES_URL, {
+      cache: "no-store"
+    });
+
+    if (!response.ok) {
+      console.warn("Crossing review override file not found. Falling back to raw FRA data.");
+      return {};
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.warn("Unable to load crossing review overrides:", error);
+    return {};
   }
 }
 
+function shouldShowCrossingInLaunchMode(crossing) {
+  const review = crossing.review || {};
+  const visibility = review.visibility || "unreviewed";
+  const localName = String(review.localName || "").trim();
+
+  if (visibility === "hide") return false;
+
+  if (visibility === "keep") return true;
+
+  if (localName.length > 0) return true;
+
+  return false;
+}
 async function loadSharedReports() {
   if (!supabaseClient) {
     setSync(`Live sync unavailable · Build ${APP_BUILD}`);
