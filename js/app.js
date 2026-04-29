@@ -1335,20 +1335,20 @@ function sanitizeText(value) {
     .replaceAll("'", "&#039;");
 }
 /* =========================================================
-   GRIDLY V12.3 — CROSSING REVIEW MODE
-   Safe temporary review tool
+   GRIDLY V12.3.1 — SMART CROSSING REVIEW MODE
+   Multi-decision review tool
    Activate with: ?review=1
 ========================================================= */
 
 const REVIEW_MODE_ACTIVE = new URLSearchParams(window.location.search).get("review") === "1";
-const REVIEW_STORAGE_KEY = "gridlyCrossingReviewDecisionsV123";
+const REVIEW_STORAGE_KEY = "gridlyCrossingReviewDecisionsV1231";
 
 let crossingReviewDecisions = JSON.parse(localStorage.getItem(REVIEW_STORAGE_KEY) || "{}");
 
-const originalLoadCrossingsV123 = loadCrossings;
+const originalLoadCrossingsV1231 = loadCrossings;
 
 loadCrossings = async function () {
-  await originalLoadCrossingsV123();
+  await originalLoadCrossingsV1231();
 
   if (REVIEW_MODE_ACTIVE) {
     initCrossingReviewMode();
@@ -1361,9 +1361,36 @@ function initCrossingReviewMode() {
   safeText("mapTrustNote", "Crossing Review Mode is active. Normal users do not see this.");
 }
 
+function getReviewDecision(crossingId) {
+  return crossingReviewDecisions[String(crossingId)] || {
+    visibility: "unreviewed",
+    renameNeeded: false,
+    needsCheck: false,
+    localName: "",
+    notes: ""
+  };
+}
+
+function saveReviewDecision(crossingId, updates) {
+  crossingReviewDecisions[String(crossingId)] = {
+    ...getReviewDecision(crossingId),
+    ...updates,
+    reviewedAt: new Date().toISOString()
+  };
+
+  localStorage.setItem(REVIEW_STORAGE_KEY, JSON.stringify(crossingReviewDecisions, null, 2));
+  buildCrossingReviewPanel();
+}
+
 function buildCrossingReviewPanel() {
   const existing = document.getElementById("crossingReviewPanel");
   if (existing) existing.remove();
+
+  const reviewed = Object.values(crossingReviewDecisions);
+  const keepCount = reviewed.filter((d) => d.visibility === "keep").length;
+  const hideCount = reviewed.filter((d) => d.visibility === "hide").length;
+  const renameCount = reviewed.filter((d) => d.renameNeeded).length;
+  const checkCount = reviewed.filter((d) => d.needsCheck).length;
 
   const panel = document.createElement("div");
   panel.id = "crossingReviewPanel";
@@ -1372,14 +1399,21 @@ function buildCrossingReviewPanel() {
   panel.innerHTML = `
     <div class="review-header">
       <div>
-        <strong>Gridly V12.3 Review Mode</strong>
+        <strong>Gridly V12.3.1 Review Mode</strong>
         <span>${crossings.length} FRA crossings loaded</span>
       </div>
       <button type="button" onclick="exportCrossingReviewDecisions()">Export JSON</button>
     </div>
 
+    <div class="review-counts">
+      <span>Keep: ${keepCount}</span>
+      <span>Hide: ${hideCount}</span>
+      <span>Rename: ${renameCount}</span>
+      <span>Check: ${checkCount}</span>
+    </div>
+
     <div class="review-help">
-      Mark crossings as Keep, Hide, Rename, or Needs Check. Nothing is permanently changed.
+      Visibility and rename are now separate. You can mark a crossing as Hidden + Rename, Kept + Rename, or Needs Check.
     </div>
 
     <div class="review-list">
@@ -1395,12 +1429,21 @@ function buildCrossingReviewPanel() {
 }
 
 function renderReviewCrossingItem(crossing) {
-  const decision = crossingReviewDecisions[String(crossing.id)] || {};
-  const status = decision.action || "unreviewed";
-  const nickname = decision.localName || "";
+  const decision = getReviewDecision(crossing.id);
+
+  const statusParts = [];
+
+  if (decision.visibility === "keep") statusParts.push("Kept");
+  if (decision.visibility === "hide") statusParts.push("Hidden");
+  if (decision.visibility === "unreviewed") statusParts.push("Unreviewed");
+  if (decision.renameNeeded) statusParts.push("Rename");
+  if (decision.needsCheck) statusParts.push("Needs Check");
+  if (decision.localName) statusParts.push("Local Name Added");
+
+  const statusText = statusParts.join(" + ");
 
   return `
-    <div class="review-item ${status}" id="review-${sanitizeText(crossing.id)}">
+    <div class="review-item ${sanitizeText(decision.visibility)} ${decision.renameNeeded ? "rename" : ""} ${decision.needsCheck ? "needs_check" : ""}" id="review-${sanitizeText(crossing.id)}">
       <div class="review-title">
         <strong>${sanitizeText(crossing.name)}</strong>
         <span>${sanitizeText(crossing.railroad)}</span>
@@ -1413,43 +1456,56 @@ function renderReviewCrossingItem(crossing) {
 
       <input
         type="text"
-        placeholder="Local nickname / better name"
-        value="${sanitizeText(nickname)}"
+        placeholder="Local nickname / better public name"
+        value="${sanitizeText(decision.localName || "")}"
         onchange="setCrossingNickname('${sanitizeText(crossing.id)}', this.value)"
       />
 
+      <textarea
+        placeholder="Notes, reason, local context"
+        onchange="setCrossingNotes('${sanitizeText(crossing.id)}', this.value)"
+      >${sanitizeText(decision.notes || "")}</textarea>
+
       <div class="review-actions">
-        <button onclick="setCrossingReview('${sanitizeText(crossing.id)}', 'keep')">Keep</button>
-        <button onclick="setCrossingReview('${sanitizeText(crossing.id)}', 'hide')">Hide</button>
-        <button onclick="setCrossingReview('${sanitizeText(crossing.id)}', 'rename')">Rename</button>
-        <button onclick="setCrossingReview('${sanitizeText(crossing.id)}', 'needs_check')">Needs Check</button>
+        <button onclick="setCrossingVisibility('${sanitizeText(crossing.id)}', 'keep')">Keep</button>
+        <button onclick="setCrossingVisibility('${sanitizeText(crossing.id)}', 'hide')">Hide</button>
+        <button onclick="toggleCrossingRename('${sanitizeText(crossing.id)}')">Rename</button>
+        <button onclick="toggleNeedsCheck('${sanitizeText(crossing.id)}')">Needs Check</button>
         <button onclick="zoomToCrossing('${sanitizeText(crossing.id)}')">Zoom</button>
       </div>
 
-      <div class="review-status">Status: ${sanitizeText(status)}</div>
+      <div class="review-status">Status: ${sanitizeText(statusText)}</div>
     </div>
   `;
 }
 
-window.setCrossingReview = function (crossingId, action) {
-  crossingReviewDecisions[String(crossingId)] = {
-    ...(crossingReviewDecisions[String(crossingId)] || {}),
-    action,
-    reviewedAt: new Date().toISOString()
-  };
+window.setCrossingVisibility = function (crossingId, visibility) {
+  saveReviewDecision(crossingId, { visibility });
+};
 
-  localStorage.setItem(REVIEW_STORAGE_KEY, JSON.stringify(crossingReviewDecisions, null, 2));
-  buildCrossingReviewPanel();
+window.toggleCrossingRename = function (crossingId) {
+  const decision = getReviewDecision(crossingId);
+  saveReviewDecision(crossingId, { renameNeeded: !decision.renameNeeded });
+};
+
+window.toggleNeedsCheck = function (crossingId) {
+  const decision = getReviewDecision(crossingId);
+  saveReviewDecision(crossingId, { needsCheck: !decision.needsCheck });
 };
 
 window.setCrossingNickname = function (crossingId, value) {
-  crossingReviewDecisions[String(crossingId)] = {
-    ...(crossingReviewDecisions[String(crossingId)] || {}),
-    localName: value.trim(),
-    reviewedAt: new Date().toISOString()
-  };
+  const trimmed = value.trim();
 
-  localStorage.setItem(REVIEW_STORAGE_KEY, JSON.stringify(crossingReviewDecisions, null, 2));
+  saveReviewDecision(crossingId, {
+    localName: trimmed,
+    renameNeeded: trimmed.length > 0 ? true : getReviewDecision(crossingId).renameNeeded
+  });
+};
+
+window.setCrossingNotes = function (crossingId, value) {
+  saveReviewDecision(crossingId, {
+    notes: value.trim()
+  });
 };
 
 window.exportCrossingReviewDecisions = function () {
@@ -1475,7 +1531,7 @@ function injectCrossingReviewStyles() {
       position: fixed;
       top: 92px;
       right: 16px;
-      width: 380px;
+      width: 400px;
       max-width: calc(100vw - 32px);
       max-height: calc(100vh - 120px);
       overflow-y: auto;
@@ -1507,6 +1563,22 @@ function injectCrossingReviewStyles() {
       font-size: 12px;
       color: rgba(255, 255, 255, 0.65);
       margin-top: 2px;
+    }
+
+    .review-counts {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .review-counts span {
+      border-radius: 999px;
+      background: rgba(255,255,255,0.1);
+      padding: 6px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 800;
     }
 
     .review-header button,
@@ -1546,15 +1618,15 @@ function injectCrossingReviewStyles() {
 
     .review-item.hide {
       border-color: rgba(255, 88, 88, 0.75);
-      opacity: 0.78;
+      opacity: 0.82;
     }
 
     .review-item.rename {
-      border-color: rgba(88, 166, 255, 0.75);
+      box-shadow: inset 4px 0 0 rgba(88, 166, 255, 0.85);
     }
 
     .review-item.needs_check {
-      border-color: rgba(255, 204, 102, 0.8);
+      box-shadow: inset 4px 0 0 rgba(255, 209, 102, 0.95);
     }
 
     .review-title strong {
@@ -1572,16 +1644,23 @@ function injectCrossingReviewStyles() {
       line-height: 1.35;
     }
 
-    .review-item input {
+    .review-item input,
+    .review-item textarea {
       width: 100%;
       margin-top: 8px;
-      margin-bottom: 8px;
       border-radius: 10px;
       border: 1px solid rgba(255, 255, 255, 0.14);
       background: rgba(0, 0, 0, 0.22);
       color: #fff;
       padding: 8px;
       font-size: 12px;
+    }
+
+    .review-item textarea {
+      min-height: 58px;
+      resize: vertical;
+      margin-bottom: 8px;
+      font-family: inherit;
     }
 
     .review-actions {
