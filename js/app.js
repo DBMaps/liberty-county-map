@@ -42,7 +42,7 @@ let crossingReviewOverrides = {};
 const defaultCenter = [30.0466, -94.8852];
 const REPORT_EXPIRATION_MINUTES = 90;
 const LIVE_REFRESH_MS = 15000;
-const APP_BUILD = "5B1";
+const APP_BUILD = "5B2";
 
 let supabaseClient = null;
 let realtimeChannel = null;
@@ -2301,6 +2301,86 @@ function injectCrossingReviewStyles() {
         right: 12px;
         width: auto;
         max-height: 46vh;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+/* =========================================================
+   GRIDLY V12.5B2 — MOBILE CTA CLEANUP
+   One smart mobile issue button
+========================================================= */
+
+const originalInjectHazardReportUIV125B2 = injectHazardReportUI;
+
+injectHazardReportUI = function () {
+  originalInjectHazardReportUIV125B2();
+  upgradeMobileIssueCTA();
+};
+
+function upgradeMobileIssueCTA() {
+  const launcher = document.getElementById("gridlyHazardLauncher");
+  const choiceGrid = document.querySelector("#gridlyHazardPanel .hazard-choice-grid");
+
+  if (launcher) {
+    launcher.textContent = "Report Issue Near Me";
+  }
+
+  if (choiceGrid && !document.getElementById("gridlyRailIssueChoice")) {
+    const railButton = document.createElement("button");
+    railButton.id = "gridlyRailIssueChoice";
+    railButton.type = "button";
+    railButton.textContent = "🚆 Rail Crossing Issue";
+    railButton.addEventListener("click", startRailIssueFromUnifiedPanel);
+
+    choiceGrid.prepend(railButton);
+  }
+
+  injectMobileCTACleanupStyles();
+}
+
+function startRailIssueFromUnifiedPanel() {
+  closeHazardPanel();
+  handleReportNearMe();
+}
+
+function injectMobileCTACleanupStyles() {
+  if (document.getElementById("gridlyMobileCTACleanupStyles")) return;
+
+  const style = document.createElement("style");
+  style.id = "gridlyMobileCTACleanupStyles";
+
+  style.textContent = `
+    @media (max-width: 760px) {
+      #mobileReportBtn {
+        display: none !important;
+      }
+
+      .gridly-hazard-launcher {
+        left: 14px !important;
+        right: 14px !important;
+        bottom: 94px !important;
+        width: calc(100vw - 28px) !important;
+        padding: 16px 18px !important;
+        font-size: 17px !important;
+        border-radius: 999px !important;
+      }
+
+      .gridly-hazard-counter {
+        left: 14px !important;
+        right: 14px !important;
+        bottom: 154px !important;
+        text-align: center !important;
+        font-size: 12px !important;
+        padding: 9px 12px !important;
+      }
+
+      .gridly-hazard-panel {
+        left: 14px !important;
+        right: 14px !important;
+        bottom: 164px !important;
+        width: auto !important;
       }
     }
   `;
