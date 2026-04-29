@@ -42,7 +42,7 @@ let crossingReviewOverrides = {};
 const defaultCenter = [30.0466, -94.8852];
 const REPORT_EXPIRATION_MINUTES = 90;
 const LIVE_REFRESH_MS = 15000;
-const APP_BUILD = "5B2";
+const APP_BUILD = "6A";
 
 let supabaseClient = null;
 let realtimeChannel = null;
@@ -2381,6 +2381,246 @@ function injectMobileCTACleanupStyles() {
         right: 14px !important;
         bottom: 164px !important;
         width: auto !important;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+/* =========================================================
+   GRIDLY V12.6A — BETA LAUNCH PACK
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    initGridlyBetaLaunchPack();
+  }, 900);
+});
+
+function initGridlyBetaLaunchPack() {
+  injectBetaLaunchUI();
+  maybeShowWelcomeModal();
+}
+
+function injectBetaLaunchUI() {
+  if (document.getElementById("gridlyBetaLaunchWrap")) return;
+
+  const wrap = document.createElement("div");
+  wrap.id = "gridlyBetaLaunchWrap";
+
+  wrap.innerHTML = `
+    <div class="gridly-mission-banner">
+      Help Liberty County avoid delays. Report issues when you see them.
+    </div>
+
+    <button class="gridly-share-btn" type="button">
+      Share Gridly
+    </button>
+
+    <button class="gridly-feedback-btn" type="button">
+      Feedback
+    </button>
+  `;
+
+  document.body.appendChild(wrap);
+
+  wrap.querySelector(".gridly-share-btn")
+    .addEventListener("click", shareGridlyApp);
+
+  wrap.querySelector(".gridly-feedback-btn")
+    .addEventListener("click", openFeedbackPrompt);
+
+  injectBetaLaunchStyles();
+}
+
+function maybeShowWelcomeModal() {
+  if (localStorage.getItem("gridlyWelcomeSeenV126A")) return;
+
+  localStorage.setItem("gridlyWelcomeSeenV126A", "yes");
+
+  const modal = document.createElement("div");
+  modal.id = "gridlyWelcomeModal";
+  modal.className = "gridly-welcome-modal";
+
+  modal.innerHTML = `
+    <div class="gridly-welcome-card">
+      <h2>Welcome to Gridly Beta</h2>
+      <p>
+        Know before you go. See local crossing issues, road hazards,
+        and help your community move faster.
+      </p>
+
+      <div class="gridly-welcome-actions">
+        <button onclick="closeGridlyWelcome()">Get Started</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+}
+
+window.closeGridlyWelcome = function () {
+  document.getElementById("gridlyWelcomeModal")?.remove();
+};
+
+async function shareGridlyApp() {
+  const shareData = {
+    title: "Gridly",
+    text: "Know before you go. Live road hazards + crossing alerts.",
+    url: window.location.href
+  };
+
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+    } else {
+      await navigator.clipboard.writeText(window.location.href);
+      setConfirmation("Gridly link copied to clipboard.", "success");
+    }
+  } catch (error) {
+    console.log("Share cancelled.");
+  }
+}
+
+function openFeedbackPrompt() {
+  const feedback = prompt(
+    "Send Gridly feedback:\n\nIdeas, bugs, bad crossing names, feature requests..."
+  );
+
+  if (!feedback) return;
+
+  const existing = localStorage.getItem("gridlyFeedbackLog") || "[]";
+  const rows = JSON.parse(existing);
+
+  rows.push({
+    feedback,
+    createdAt: new Date().toISOString(),
+    build: APP_BUILD
+  });
+
+  localStorage.setItem("gridlyFeedbackLog", JSON.stringify(rows));
+
+  setConfirmation("Thanks for helping improve Gridly.", "success");
+}
+
+function injectBetaLaunchStyles() {
+  if (document.getElementById("gridlyBetaLaunchStyles")) return;
+
+  const style = document.createElement("style");
+  style.id = "gridlyBetaLaunchStyles";
+
+  style.textContent = `
+    #gridlyBetaLaunchWrap {
+      position: fixed;
+      left: 16px;
+      bottom: 18px;
+      z-index: 9997;
+      display: grid;
+      gap: 8px;
+      width: 220px;
+    }
+
+    .gridly-mission-banner {
+      background: rgba(9,18,32,0.94);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 18px;
+      padding: 12px;
+      font-size: 12px;
+      line-height: 1.45;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.28);
+      backdrop-filter: blur(14px);
+    }
+
+    .gridly-share-btn,
+    .gridly-feedback-btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 11px 14px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.24);
+    }
+
+    .gridly-share-btn {
+      background: linear-gradient(135deg,#43e6a0,#45b8ff);
+      color: #041018;
+    }
+
+    .gridly-feedback-btn {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.16);
+    }
+
+    .gridly-welcome-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100000;
+      display: grid;
+      place-items: center;
+      background: rgba(0,0,0,0.55);
+      padding: 18px;
+    }
+
+    .gridly-welcome-card {
+      width: 100%;
+      max-width: 420px;
+      background: #08111f;
+      color: #fff;
+      border-radius: 24px;
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,0.14);
+      box-shadow: 0 24px 70px rgba(0,0,0,0.34);
+      text-align: center;
+    }
+
+    .gridly-welcome-card h2 {
+      margin: 0 0 10px;
+      font-size: 28px;
+    }
+
+    .gridly-welcome-card p {
+      margin: 0;
+      color: rgba(255,255,255,0.78);
+      line-height: 1.55;
+      font-size: 15px;
+    }
+
+    .gridly-welcome-actions {
+      margin-top: 18px;
+    }
+
+    .gridly-welcome-actions button {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 900;
+      background: linear-gradient(135deg,#43e6a0,#45b8ff);
+      color: #041018;
+      cursor: pointer;
+    }
+
+    @media (max-width: 760px) {
+      #gridlyBetaLaunchWrap {
+        left: 14px;
+        right: 14px;
+        width: auto;
+        bottom: 162px;
+      }
+
+      .gridly-mission-banner {
+        font-size: 12px;
+        text-align: center;
+      }
+
+      .gridly-share-btn,
+      .gridly-feedback-btn {
+        width: 100%;
+      }
+
+      .gridly-welcome-card h2 {
+        font-size: 24px;
       }
     }
   `;
