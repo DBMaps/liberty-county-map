@@ -42,7 +42,7 @@ let crossingReviewOverrides = {};
 const defaultCenter = [30.0466, -94.8852];
 const REPORT_EXPIRATION_MINUTES = 90;
 const LIVE_REFRESH_MS = 15000;
-const APP_BUILD = "6A";
+const APP_BUILD = "6B";
 
 let supabaseClient = null;
 let realtimeChannel = null;
@@ -2621,6 +2621,136 @@ function injectBetaLaunchStyles() {
 
       .gridly-welcome-card h2 {
         font-size: 24px;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+/* =========================================================
+   GRIDLY V12.6B — UI INTEGRATION PASS
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    runGridlyUIIntegrationPass();
+  }, 1200);
+});
+
+function runGridlyUIIntegrationPass() {
+  moveDesktopLaunchActions();
+  cleanMobileLaunchPack();
+  addHazardChipToCTA();
+}
+
+function moveDesktopLaunchActions() {
+  if (window.innerWidth <= 760) return;
+
+  const wrap = document.getElementById("gridlyBetaLaunchWrap");
+  if (!wrap) return;
+
+  const alertsPanel =
+    [...document.querySelectorAll("section, div")].find((el) =>
+      el.textContent.includes("LIVE ALERTS")
+    ) || null;
+
+  if (!alertsPanel) return;
+
+  const dock = document.createElement("div");
+  dock.id = "gridlyDesktopLaunchDock";
+  dock.innerHTML = `
+    <button class="gridly-mini-action" onclick="shareGridlyApp()">Share Gridly</button>
+    <button class="gridly-mini-action alt" onclick="openFeedbackPrompt()">Feedback</button>
+  `;
+
+  alertsPanel.appendChild(dock);
+
+  wrap.style.display = "none";
+
+  injectGridlyIntegrationStyles();
+}
+
+function cleanMobileLaunchPack() {
+  if (window.innerWidth > 760) return;
+
+  const wrap = document.getElementById("gridlyBetaLaunchWrap");
+
+  if (wrap) {
+    wrap.style.display = "none";
+  }
+
+  injectGridlyIntegrationStyles();
+}
+
+function addHazardChipToCTA() {
+  const launcher = document.getElementById("gridlyHazardLauncher");
+  const counter = document.getElementById("gridlyHazardCounter");
+
+  if (!launcher || !counter) return;
+
+  const text = counter.textContent.trim();
+
+  if (!launcher.querySelector(".gridly-inline-chip")) {
+    const chip = document.createElement("span");
+    chip.className = "gridly-inline-chip";
+    chip.textContent = text;
+    launcher.prepend(chip);
+  } else {
+    launcher.querySelector(".gridly-inline-chip").textContent = text;
+  }
+
+  counter.style.display = "none";
+}
+
+function injectGridlyIntegrationStyles() {
+  if (document.getElementById("gridlyIntegrationStyles")) return;
+
+  const style = document.createElement("style");
+  style.id = "gridlyIntegrationStyles";
+
+  style.textContent = `
+    #gridlyDesktopLaunchDock {
+      margin-top: 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .gridly-mini-action {
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 12px;
+      font-weight: 900;
+      cursor: pointer;
+      background: linear-gradient(135deg,#43e6a0,#45b8ff);
+      color: #041018;
+      width: 100%;
+    }
+
+    .gridly-mini-action.alt {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.14);
+    }
+
+    .gridly-inline-chip {
+      display: block;
+      font-size: 11px;
+      font-weight: 900;
+      margin-bottom: 3px;
+      opacity: 0.82;
+      line-height: 1.1;
+    }
+
+    @media (max-width: 760px) {
+      .gridly-hazard-launcher {
+        bottom: 92px !important;
+        padding-top: 12px !important;
+        padding-bottom: 14px !important;
+      }
+
+      .gridly-inline-chip {
+        font-size: 10px;
+        margin-bottom: 2px;
       }
     }
   `;
