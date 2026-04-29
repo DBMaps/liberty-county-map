@@ -42,7 +42,7 @@ let crossingReviewOverrides = {};
 const defaultCenter = [30.0466, -94.8852];
 const REPORT_EXPIRATION_MINUTES = 90;
 const LIVE_REFRESH_MS = 15000;
-const APP_BUILD = "5A";
+const APP_BUILD = "5B1";
 
 let supabaseClient = null;
 let realtimeChannel = null;
@@ -420,8 +420,20 @@ function normalizeReports(rows) {
     );
 
     const reportType = row.report_type || "other";
-    const isHazard = Object.prototype.hasOwnProperty.call(HAZARD_TYPES, reportType);
-    const copy = isHazard ? HAZARD_TYPES[reportType] : getReportCopy(reportType);
+    const isHazard =
+  Object.prototype.hasOwnProperty.call(HAZARD_TYPES, reportType) ||
+  reportType === "hazard_cleared";
+    const copy =
+  reportType === "hazard_cleared"
+    ? {
+        label: "Hazard Cleared",
+        icon: "✅",
+        severity: "low",
+        detail: row.detail || "Shared report: road hazard appears cleared."
+      }
+    : isHazard
+    ? HAZARD_TYPES[reportType]
+    : getReportCopy(reportType);
 
     return {
       id: row.id,
@@ -496,44 +508,116 @@ function renderHazards() {
 
   hazardLayer.clearLayers();
 
-  activeHazards
-    .filter((hazard) => !hazard.expired)
-    .forEach((hazard) => {
-      if (!Number.isFinite(hazard.lat) || !Number.isFinite(hazard.lng)) return;
+  const liveHazards = getLiveHazardIncidents();
 
-      const icon = L.divIcon({
-        className: "",
-        html: `
-          <div class="gridly-hazard-marker ${sanitizeText(hazard.severity)}">
-            <span>${sanitizeText(hazard.icon || "❗")}</span>
-            <small>${hazard.minutesAgo}m</small>
-          </div>
-        `,
-        iconSize: [42, 42],
-        iconAnchor: [21, 21]
-      });
+  liveHazards.forEach((incident) => {
+    const hazard = incident.latestReport;
 
-      L.marker([hazard.lat, hazard.lng], { icon })
-        .bindPopup(buildHazardPopup(hazard), { maxWidth: 320 })
-        .addTo(hazardLayer);
+    if (!Number.isFinite(hazard.lat) || !Number.isFinite(hazard.lng)) return;
+
+    const ageClass =
+      hazard.minutesAgo <= 15 ? "fresh" : hazard.minutesAgo <= 60 ? "aging" : "old";
+
+    const icon = L.divIcon({
+      className: "",
+      html: `
+        <div class="gridly-hazard-marker ${sanitizeText(hazard.severity)} ${ageClass}">
+          <span>${sanitizeText(hazard.icon || "❗")}</span>
+          <small>${hazard.minutesAgo}m</small>
+          ${incident.count > 1 ? `<b>${incident.count}</b>` : ""}
+        </div>
+      `,
+      iconSize: [46, 46],
+      iconAnchor: [23, 23]
     });
+
+    L.marker([hazard.lat, hazard.lng], { icon })
+      .bindPopup(buildHazardPopup(incident), { maxWidth: 340 })
+      .addTo(hazardLayer);
+  });
+
+  updateHazardCounter(liveHazards);
 }
 
-function buildHazardPopup(hazard) {
+function buildHazardPopup(incident) {
+  const hazard = incident.latestReport;
+
   return `
     <div class="gridly-popup">
       <strong>${sanitizeText(hazard.title)}</strong>
       <span>${sanitizeText(hazard.detail)}</span><br />
       <span>Reported: ${hazard.minutesAgo} min ago</span><br />
-      <span>Confidence: ${sanitizeText(hazard.confidence)}</span><br />
+      <span>Confirmations: ${incident.count}</span><br />
+      <span>Confidence: ${sanitizeText(getHazardConfidenceLabel(incident.count))}</span><br />
 
       <div class="popup-report-grid">
-        <button class="popup-report-btn blue" onclick="zoomToHazard(${hazard.lat}, ${hazard.lng})">View Area</button>
+        <button class="popup-report-btn warning" onclick="confirmHazardStillThere('${sanitizeText(hazard.type)}', ${hazard.lat}, ${hazard.lng})">Still There</button>
+        <button class="popup-report-btn blue" onclick="clearHazard('${sanitizeText(hazard.type)}', ${hazard.lat}, ${hazard.lng})">Cleared</button>
+        <button class="popup-report-btn neutral" onclick="zoomToHazard(${hazard.lat}, ${hazard.lng})">View Area</button>
       </div>
     </div>
   `;
 }
+function getLiveHazardIncidents() {
+  const grouped = new Map();
 
+  activeHazards
+    .filter((hazard) => !hazard.expired && hazard.type !== "hazard_cleared")
+    .forEach((hazard) => {
+      const key = getHazardClusterKey(hazard);
+
+      if (!grouped.has(key)) {
+        grouped.set(key, {
+          key,
+          reports: []
+        });
+      }
+
+      grouped.get(key).reports.push(hazard);
+    });
+
+  return [...grouped.values()]
+    .map((incident) => {
+      const sorted = incident.reports.sort(
+        (a, b) => new Date(b.submittedAt) - new Date(a.submittedAt)
+      );
+
+      return {
+        key: incident.key,
+        count: sorted.length,
+        latestReport: sorted[0],
+        oldestMinutes: Math.max(...sorted.map((r) => r.minutesAgo)),
+        newestMinutes: Math.min(...sorted.map((r) => r.minutesAgo))
+      };
+    })
+    .sort((a, b) => b.count - a.count || a.newestMinutes - b.newestMinutes);
+}
+
+function getHazardClusterKey(hazard) {
+  const lat = Number(hazard.lat).toFixed(3);
+  const lng = Number(hazard.lng).toFixed(3);
+  return `${hazard.type}-${lat}-${lng}`;
+}
+
+function getHazardConfidenceLabel(count) {
+  if (count >= 4) return "Community verified";
+  if (count >= 2) return "Likely active";
+  return "Single live report";
+}
+
+function updateHazardCounter(liveHazards) {
+  const existing = document.getElementById("gridlyHazardCounter");
+
+  if (!existing) return;
+
+  const count = liveHazards.length;
+  const confirmed = liveHazards.filter((hazard) => hazard.count >= 2).length;
+
+  existing.textContent =
+    count === 0
+      ? "No live road hazards"
+      : `${count} live hazard${count === 1 ? "" : "s"} · ${confirmed} confirmed`;
+}
 window.zoomToHazard = function (lat, lng) {
   if (!map) return;
   map.setView([lat, lng], 16);
@@ -547,6 +631,10 @@ function injectHazardReportUI() {
   launcher.className = "gridly-hazard-launcher";
   launcher.type = "button";
   launcher.textContent = "Report Road Hazard";
+  const counter = document.createElement("div");
+counter.id = "gridlyHazardCounter";
+counter.className = "gridly-hazard-counter";
+counter.textContent = "No live road hazards";
   launcher.addEventListener("click", openHazardPanel);
 
   const panel = document.createElement("div");
@@ -567,6 +655,7 @@ function injectHazardReportUI() {
     </div>
   `;
 
+  document.body.appendChild(counter);
   document.body.appendChild(launcher);
   document.body.appendChild(panel);
   injectHazardStyles();
@@ -656,7 +745,52 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence) {
     setSync("Hazard report failed");
   }
 }
+window.confirmHazardStillThere = async function (hazardType, lat, lng) {
+  await createSharedHazardReport(hazardType, lat, lng, "hazard confirmed still there");
+};
 
+window.clearHazard = async function (hazardType, lat, lng) {
+  if (!supabaseClient) {
+    setConfirmation("Live hazard sync is unavailable.", "error");
+    return;
+  }
+
+  const copy = HAZARD_TYPES[hazardType] || HAZARD_TYPES.other_hazard;
+  const expiresAt = new Date(Date.now() + 30 * 60000).toISOString();
+
+  const row = {
+    crossing_id: `hazard-cleared-${deviceId}-${Date.now()}`,
+    crossing_name: `${copy.label} Cleared`,
+    railroad: "Road hazard",
+    lat,
+    lng,
+    report_type: "hazard_cleared",
+    severity: "low",
+    detail: `Shared report: ${copy.label} appears cleared.`,
+    source: "user",
+    confidence: "hazard cleared by user",
+    device_id: deviceId,
+    expires_at: expiresAt
+  };
+
+  try {
+    setSync("Sending hazard clear report...");
+    setConfirmation(`Clearing ${copy.label} hazard...`, "success");
+
+    const { error } = await supabaseClient.from("reports").insert(row);
+
+    if (error) throw error;
+
+    setConfirmation(`${copy.label} marked cleared.`, "success");
+    setSync("Hazard cleared");
+
+    await loadSharedReports();
+  } catch (error) {
+    console.error("Gridly hazard clear failed:", error);
+    setConfirmation(`Clear failed: ${error.message || "permission denied"}`, "error");
+    setSync("Hazard clear failed");
+  }
+};
 function injectHazardStyles() {
   if (document.getElementById("gridlyHazardStyles")) return;
 
@@ -707,7 +841,51 @@ function injectHazardStyles() {
       50% { transform: scale(1.08); box-shadow: 0 14px 40px rgba(255,88,88,0.32); }
       100% { transform: scale(1); box-shadow: 0 10px 30px rgba(0,0,0,0.34); }
     }
+    .gridly-hazard-counter {
+      position: fixed;
+      right: 18px;
+      bottom: 146px;
+      z-index: 9998;
+      background: rgba(9, 18, 32, 0.92);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 900;
+      box-shadow: 0 12px 34px rgba(0,0,0,0.24);
+      backdrop-filter: blur(14px);
+    }
 
+    .gridly-hazard-marker.fresh {
+      opacity: 1;
+    }
+
+    .gridly-hazard-marker.aging {
+      opacity: 0.78;
+      animation-duration: 2.6s;
+    }
+
+    .gridly-hazard-marker.old {
+      opacity: 0.55;
+      animation: none;
+    }
+
+    .gridly-hazard-marker b {
+      position: absolute;
+      left: -8px;
+      top: -8px;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: #ff5858;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 950;
+      border: 2px solid #fff;
+    }
     .gridly-hazard-launcher {
       position: fixed;
       right: 18px;
@@ -802,7 +980,12 @@ function injectHazardStyles() {
         bottom: 150px;
         width: calc(100vw - 28px);
       }
-
+      .gridly-hazard-counter {
+        left: 14px;
+        right: 14px;
+        bottom: 205px;
+        text-align: center;
+      }
       .gridly-hazard-panel {
         left: 14px;
         right: 14px;
