@@ -527,7 +527,13 @@ select:focus {
   max-height: 610px;
   overflow-y: auto;
   padding-right: 2px;
-  align-self: start;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+}
+
+.desktop-command-panel .panel-card:last-child {
+  flex: 1;
 }
 
 .panel-card {
