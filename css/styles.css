@@ -1226,3 +1226,26 @@ select:focus {
     width: calc(100% - 20px);
   }
 }
+/* V12.2 desktop sidebar full-height fix */
+@media (min-width: 1101px) {
+  .command-center {
+    align-items: stretch;
+  }
+
+  .map-card {
+    height: 100%;
+  }
+
+  .desktop-command-panel {
+    height: auto;
+    max-height: none;
+    align-self: stretch;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .desktop-command-panel .panel-card:last-child {
+    flex: 1;
+  }
+}
