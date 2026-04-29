@@ -42,7 +42,7 @@ let crossingReviewOverrides = {};
 const defaultCenter = [30.0466, -94.8852];
 const REPORT_EXPIRATION_MINUTES = 90;
 const LIVE_REFRESH_MS = 15000;
-const APP_BUILD = "6B";
+const APP_BUILD = "6C";
 
 let supabaseClient = null;
 let realtimeChannel = null;
@@ -2751,6 +2751,157 @@ function injectGridlyIntegrationStyles() {
       .gridly-inline-chip {
         font-size: 10px;
         margin-bottom: 2px;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+/* =========================================================
+   GRIDLY V12.6C — DESKTOP PREMIUM PASS
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    runDesktopPremiumPassV126C();
+  }, 1500);
+});
+
+function runDesktopPremiumPassV126C() {
+  fixDesktopHazardCTA();
+  upgradeDesktopCommunityTools();
+  injectDesktopPremiumStylesV126C();
+}
+
+function fixDesktopHazardCTA() {
+  const launcher = document.getElementById("gridlyHazardLauncher");
+  const counter = document.getElementById("gridlyHazardCounter");
+
+  if (!launcher || !counter) return;
+  if (window.innerWidth <= 760) return;
+
+  launcher.classList.add("desktop-premium-cta");
+
+  const text = counter.textContent.trim();
+
+  if (!launcher.querySelector(".desktop-hazard-chip")) {
+    const chip = document.createElement("span");
+    chip.className = "desktop-hazard-chip";
+    chip.textContent = text;
+    launcher.prepend(chip);
+  } else {
+    launcher.querySelector(".desktop-hazard-chip").textContent = text;
+  }
+
+  counter.style.display = "none";
+}
+
+function upgradeDesktopCommunityTools() {
+  if (window.innerWidth <= 760) return;
+
+  const oldWrap = document.getElementById("gridlyBetaLaunchWrap");
+  if (oldWrap) oldWrap.style.display = "none";
+
+  if (document.getElementById("gridlyCommunityToolsCard")) return;
+
+  const cards = [...document.querySelectorAll(".card, .panel, section, div")];
+  const target =
+    cards.find((el) => el.textContent.includes("LIVE ALERTS")) ||
+    cards.find((el) => el.textContent.includes("Live Alerts"));
+
+  if (!target) return;
+
+  const card = document.createElement("div");
+  card.id = "gridlyCommunityToolsCard";
+  card.innerHTML = `
+    <div class="community-tools-eyebrow">COMMUNITY TOOLS</div>
+    <div class="community-tools-title">Help improve Gridly</div>
+    <p>Share the beta or send quick feedback about crossings, hazards, or layout issues.</p>
+    <button type="button" onclick="shareGridlyApp()">Share Gridly</button>
+    <button type="button" class="secondary" onclick="openFeedbackPrompt()">Send Feedback</button>
+  `;
+
+  target.appendChild(card);
+}
+
+function injectDesktopPremiumStylesV126C() {
+  if (document.getElementById("desktopPremiumStylesV126C")) return;
+
+  const style = document.createElement("style");
+  style.id = "desktopPremiumStylesV126C";
+
+  style.textContent = `
+    @media (min-width: 761px) {
+      #gridlyBetaLaunchWrap {
+        display: none !important;
+      }
+
+      .desktop-premium-cta {
+        display: grid !important;
+        gap: 4px !important;
+        place-items: center !important;
+        min-width: 190px !important;
+        padding: 12px 18px !important;
+        line-height: 1.1 !important;
+      }
+
+      .desktop-premium-cta .gridly-inline-chip {
+        display: none !important;
+      }
+
+      .desktop-hazard-chip {
+        display: block;
+        font-size: 11px;
+        font-weight: 950;
+        opacity: 0.85;
+        margin-bottom: 2px;
+        white-space: nowrap;
+      }
+
+      #gridlyCommunityToolsCard {
+        margin-top: 16px;
+        padding: 14px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.065);
+        border: 1px solid rgba(255,255,255,0.12);
+        display: grid;
+        gap: 8px;
+      }
+
+      .community-tools-eyebrow {
+        color: #43e6a0;
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        font-weight: 950;
+      }
+
+      .community-tools-title {
+        color: #fff;
+        font-size: 18px;
+        font-weight: 950;
+      }
+
+      #gridlyCommunityToolsCard p {
+        margin: 0;
+        color: rgba(255,255,255,0.68);
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      #gridlyCommunityToolsCard button {
+        border: 0;
+        border-radius: 999px;
+        padding: 10px 12px;
+        font-weight: 950;
+        cursor: pointer;
+        background: linear-gradient(135deg,#43e6a0,#45b8ff);
+        color: #041018;
+      }
+
+      #gridlyCommunityToolsCard button.secondary {
+        background: rgba(255,255,255,0.1);
+        color: #fff;
+        border: 1px solid rgba(255,255,255,0.14);
       }
     }
   `;
