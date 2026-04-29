@@ -7,7 +7,7 @@ const FRA_URL =
 const defaultCenter = [30.0466, -94.8852];
 const REPORT_EXPIRATION_MINUTES = 90;
 const LIVE_REFRESH_MS = 15000;
-const APP_BUILD = "V12.1";
+const APP_BUILD = "V12.2";
 
 let supabaseClient = null;
 let realtimeChannel = null;

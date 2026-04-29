@@ -7,7 +7,7 @@
   <title>Gridly | Know Before You Go</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="css/styles.css?v=121" />
+  <link rel="stylesheet" href="css/styles.css?v=122" />
 </head>
 
 <body>
@@ -49,17 +49,19 @@
             <span id="dataStatus">Crossing data: loading</span>
             <span id="syncStatus">Live sync: connecting</span>
           </div>
+        </div>
+
+        <div class="hero-command-card">
+          <div class="route-status-card delayed" id="routeStatusCard">
+            <span class="status-label" id="routeCardLabel">Route Status</span>
+            <strong id="routeStatus">Checking...</strong>
+            <span id="routeEta">ETA calculating</span>
+          </div>
 
           <div class="hero-actions">
             <button class="primary-btn hero-map-btn" data-section-jump="map">Check Live Map</button>
             <button class="secondary-btn hero-report-btn" id="desktopReportNearMeBtn">Report Near Me</button>
           </div>
-        </div>
-
-        <div class="route-status-card delayed" id="routeStatusCard">
-          <span class="status-label" id="routeCardLabel">Route Status</span>
-          <strong id="routeStatus">Checking...</strong>
-          <span id="routeEta">ETA calculating</span>
         </div>
       </div>
 
@@ -77,7 +79,7 @@
         </article>
       </div>
 
-      <div class="growth-strip desktop-command-strip">
+      <div class="command-summary-grid desktop-command-strip">
         <article class="growth-card">
           <span>Route Recommendation</span>
           <strong id="routeRecommendation">Checking local crossings...</strong>
@@ -98,9 +100,10 @@
       </div>
 
       <div class="setup-card desktop-route-setup" id="setupCard">
-        <div>
-          <h2>Save your daily route</h2>
-          <p>Home and Work are saved locally on this device. Shared reports sync across all devices.</p>
+        <div class="setup-copy">
+          <p class="eyebrow">Daily Route</p>
+          <h2>Save your commute</h2>
+          <p>Home and Work stay on this device. Shared reports still sync live across devices.</p>
         </div>
 
         <div class="setup-grid">
@@ -146,7 +149,7 @@
       </div>
     </section>
 
-    <section class="mobile-map-first" id="mapSection">
+    <section class="command-center" id="mapSection">
       <section class="map-card">
         <div class="section-header map-header">
           <div>
@@ -287,11 +290,11 @@
   <button class="mobile-sticky-report" id="mobileReportBtn">Report Near Me</button>
 
   <footer class="app-footer">
-    Gridly V12.1 · Live Community Rail Intelligence
+    Gridly V12.2 · Desktop Command Center Polish
   </footer>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/app.js?v=121"></script>
+  <script src="js/app.js?v=122"></script>
 </body>
 </html>
