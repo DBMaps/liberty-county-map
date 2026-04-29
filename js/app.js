@@ -42,7 +42,7 @@ let crossingReviewOverrides = {};
 const defaultCenter = [30.0466, -94.8852];
 const REPORT_EXPIRATION_MINUTES = 90;
 const LIVE_REFRESH_MS = 15000;
-const APP_BUILD = "6C2";
+const APP_BUILD = "6C3";
 
 let supabaseClient = null;
 let realtimeChannel = null;
@@ -2997,6 +2997,38 @@ function injectStableCommunityToolsStylesV126C2() {
 
       #gridlyCommunityToolsCard button {
         width: 100% !important;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+/* =========================================================
+   GRIDLY V12.6C3 — HIDE DESKTOP COMMUNITY TOOLS
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    hideDesktopCommunityToolsV126C3();
+  }, 3000);
+});
+
+function hideDesktopCommunityToolsV126C3() {
+  injectHideDesktopCommunityToolsStylesV126C3();
+}
+
+function injectHideDesktopCommunityToolsStylesV126C3() {
+  if (document.getElementById("hideDesktopCommunityToolsStylesV126C3")) return;
+
+  const style = document.createElement("style");
+  style.id = "hideDesktopCommunityToolsStylesV126C3";
+
+  style.textContent = `
+    @media (min-width: 761px) {
+      #gridlyCommunityToolsCard,
+      #gridlyDesktopLaunchDock,
+      #gridlyBetaLaunchWrap {
+        display: none !important;
       }
     }
   `;
