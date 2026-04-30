@@ -138,6 +138,10 @@ button {
   padding: 10px 13px;
 }
 
+.mobile-share-nav {
+  display: none;
+}
+
 .nav-btn.active,
 .nav-btn:hover {
   background: rgba(255, 255, 255, 0.09);
@@ -1070,9 +1074,12 @@ select:focus {
   }
 
   .header-share-btn {
+    display: none;
+  }
+
+  .mobile-share-nav {
     display: inline-flex;
     align-items: center;
-    margin-left: auto;
   }
 
   .top-nav {
