@@ -43,6 +43,8 @@ const defaultCenter = [30.0466, -94.8852];
 const REPORT_EXPIRATION_MINUTES = 90;
 const LIVE_REFRESH_MS = 15000;
 const APP_BUILD = "6C4";
+const CROSSING_FETCH_RETRY_ATTEMPTS = 3;
+const CROSSING_FETCH_RETRY_DELAY_MS = 700;
 
 let supabaseClient = null;
 let realtimeChannel = null;
@@ -58,6 +60,7 @@ let userMarker = null;
 let nearbyReportCrossingIds = new Set();
 let lastSubmittedCrossing = null;
 let lastSubmittedReportType = null;
+let crossingLoadFailed = false;
 
 let deviceId =
   localStorage.getItem("gridlyDeviceId") ||
@@ -250,16 +253,13 @@ function initMap() {
 
 async function loadCrossings() {
   try {
+    crossingLoadFailed = false;
     safeText("dataStatus", "Crossing data: loading");
     safeText("mapTrustNote", "Loading curated Gridly crossing dataset...");
 
     crossingReviewOverrides = await loadCrossingReviewOverrides();
 
-    const response = await fetch(FRA_URL);
-
-    if (!response.ok) {
-      throw new Error(`FRA feed returned ${response.status}`);
-    }
+    const response = await fetchFraCrossingsWithRetry();
 
     const data = await response.json();
 
@@ -331,11 +331,43 @@ async function loadCrossings() {
       `${crossings.length} curated public crossings loaded for Gridly launch mode. Tap a marker to report road issues.`
     );
   } catch (error) {
+    crossingLoadFailed = true;
     console.error("Gridly crossing load failed:", error);
     safeText("dataStatus", "Crossing data failed");
     safeText("crossingCount", "Failed");
-    safeText("mapTrustNote", "Unable to load curated crossing data. Refresh and try again.");
+    safeText("mapTrustNote", "Unable to load curated crossing data. Tap Refresh Reports to retry.");
   }
+}
+
+async function fetchFraCrossingsWithRetry() {
+  let lastError = null;
+
+  for (let attempt = 1; attempt <= CROSSING_FETCH_RETRY_ATTEMPTS; attempt += 1) {
+    try {
+      const response = await fetch(FRA_URL);
+
+      if (!response.ok) {
+        throw new Error(`FRA feed returned ${response.status}`);
+      }
+
+      return response;
+    } catch (error) {
+      lastError = error;
+      if (attempt < CROSSING_FETCH_RETRY_ATTEMPTS) {
+        console.warn(
+          `FRA crossing fetch attempt ${attempt} failed. Retrying...`,
+          error
+        );
+        await wait(CROSSING_FETCH_RETRY_DELAY_MS * attempt);
+      }
+    }
+  }
+
+  throw lastError || new Error("FRA crossing fetch failed");
+}
+
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 async function loadCrossingReviewOverrides() {
   try {
@@ -1066,6 +1098,9 @@ function bindEvents() {
   els.useLocationBtn?.addEventListener("click", handleReportNearMe);
 
   els.refreshBtn?.addEventListener("click", async () => {
+    if (crossingLoadFailed) {
+      await loadCrossings();
+    }
     await loadSharedReports();
     flashButton(els.refreshBtn, "Updated");
   });
