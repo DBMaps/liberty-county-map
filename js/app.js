@@ -152,6 +152,7 @@ function hydrateElements() {
     "reportDecayStatus",
     "lastReportTime",
     "mapTrustNote",
+    "geoFilterStatus",
     "routeRecommendation",
     "routeRecommendationReason",
     "communityTrust",
@@ -587,6 +588,7 @@ function renderCrossings() {
   if (!crossingLayer || !crossings.length) return;
 
   const visibleCrossings = getVisibleCrossingsForFilter();
+  updateGeoFilterStatus(visibleCrossings);
 
   crossingLayer.clearLayers();
   crossingMarkers.clear();
@@ -610,6 +612,30 @@ function renderCrossings() {
 
     crossingMarkers.set(String(crossing.id), marker);
   });
+}
+
+
+function updateGeoFilterStatus(visibleCrossings = []) {
+  if (!els.geoFilterStatus) return;
+
+  const count = visibleCrossings.length;
+  const crossingLabel = count === 1 ? "crossing" : "crossings";
+  let message = "Showing all Liberty County crossings";
+
+  if (activeGeoFilter === "nearby") {
+    message = count ? `Showing ${count} nearby ${crossingLabel}` : "No crossings found for this filter";
+  } else if (activeGeoFilter === "town") {
+    message = count ? `Showing Dayton ${crossingLabel}` : "No crossings found for this filter";
+  } else if (activeGeoFilter === "county") {
+    message = count ? "Showing Liberty County crossings" : "No crossings found for this filter";
+  } else if (activeGeoFilter === "active-delays") {
+    const delayLabel = count === 1 ? "delay" : "delays";
+    message = count ? `Showing ${count} active ${delayLabel}` : "No crossings found for this filter";
+  } else if (activeGeoFilter === "all") {
+    message = "Showing all Liberty County crossings";
+  }
+
+  els.geoFilterStatus.textContent = message;
 }
 
 function getVisibleCrossingsForFilter() {
