@@ -69,6 +69,7 @@ const APP_BUILD = "6C4";
 const CROSSING_FETCH_RETRY_ATTEMPTS = 3;
 const CROSSING_FETCH_RETRY_DELAY_MS = 700;
 const SMART_ALERTS_STORAGE_KEY = "gridlySmartAlertsV1";
+const SMART_ALERTS_DRAWER_SEEN_KEY = "gridlySmartAlertsDrawerSeenV1";
 
 let supabaseClient = null;
 let realtimeChannel = null;
@@ -181,6 +182,7 @@ function hydrateElements() {
     "reportSection",
     "trendingDrawer",
     "liveAlertsDrawer",
+    "smartAlertsDrawer",
     "mobileAlertsMirror",
     "habitStatusStrip",
     "habitStatusPill",
@@ -1684,7 +1686,17 @@ function loadSmartAlertsPreferences() {
   if (els.smartAlertRouteDelay) els.smartAlertRouteDelay.checked = Boolean(prefs.routeDelay);
   if (els.smartAlertUs90Clear) els.smartAlertUs90Clear.checked = Boolean(prefs.us90Clear);
   if (els.smartAlertNeedsConfirm) els.smartAlertNeedsConfirm.checked = Boolean(prefs.needsConfirm);
+  openSmartAlertsDrawerOnFirstVisit();
   updateSmartAlertsStatus(prefs);
+}
+
+function openSmartAlertsDrawerOnFirstVisit() {
+  if (!els.smartAlertsDrawer) return;
+  const hasSeen = localStorage.getItem(SMART_ALERTS_DRAWER_SEEN_KEY) === "1";
+  if (!hasSeen) {
+    els.smartAlertsDrawer.open = true;
+    localStorage.setItem(SMART_ALERTS_DRAWER_SEEN_KEY, "1");
+  }
 }
 
 function saveSmartAlertsPreferences() {
@@ -1707,7 +1719,7 @@ function saveSmartAlertsPreferences() {
 
   updateSmartAlertsStatus(prefs);
   evaluateSmartAlertsBanner(prefs);
-  safeText("smartAlertsConfirmation", "Smart Alerts saved on this device.");
+  safeText("smartAlertsConfirmation", "✅ Smart Alerts saved.");
 }
 
 function updateSmartAlertsStatus(prefs = getSmartAlertsPreferences()) {

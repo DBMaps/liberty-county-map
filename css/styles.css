@@ -168,15 +168,20 @@ button {
 
 .smart-alert-option {
   display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  margin-bottom: 10px;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 6px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  background: rgba(10, 20, 34, 0.35);
   color: #d2dfec;
-  font-size: 0.92rem;
+  font-size: 0.89rem;
+  line-height: 1.2;
 }
 
 .smart-alert-option input {
-  margin-top: 2px;
+  margin: 0;
+  flex: 0 0 auto;
 }
 
 .smart-alerts-confirmation {
