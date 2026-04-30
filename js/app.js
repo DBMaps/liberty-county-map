@@ -38,6 +38,29 @@ const HAZARD_TYPES = {
     detail: "Shared report: road hazard may affect travel."
   }
 };
+
+const LOCATION_DEFAULTS = {
+  country: "USA",
+  state: "Texas",
+  county: "Liberty County"
+};
+
+const LIBERTY_COUNTY_CITY_RULES = [
+  { city: "Dayton", patterns: ["dayton"] },
+  { city: "Liberty", patterns: ["liberty"] },
+  { city: "Cleveland", patterns: ["cleveland"] },
+  { city: "Ames", patterns: ["ames"] },
+  { city: "Daisetta", patterns: ["daisetta"] },
+  { city: "Hardin", patterns: ["hardin"] },
+  { city: "Hull", patterns: ["hull"] },
+  { city: "Kenefick", patterns: ["kenefick"] },
+  { city: "Moss Hill", patterns: ["moss hill"] },
+  { city: "Romayor", patterns: ["romayor"] },
+  { city: "Raywood", patterns: ["raywood"] },
+  { city: "Sour Lake", patterns: ["sour lake"] },
+  { city: "Plum Grove", patterns: ["plum grove"] },
+  { city: "Devers", patterns: ["devers"] }
+];
 let crossingReviewOverrides = {};
 const defaultCenter = [30.0466, -94.8852];
 const REPORT_EXPIRATION_MINUTES = 90;
@@ -292,10 +315,18 @@ async function loadCrossings() {
 
         const override = crossingReviewOverrides[id] || {};
         const localName = String(override.localName || "").trim();
+        const resolvedName = localName || originalName;
+        const city = inferCrossingCity(resolvedName, props);
+        const regionKey = buildRegionKey({
+          country: LOCATION_DEFAULTS.country,
+          state: LOCATION_DEFAULTS.state,
+          county: LOCATION_DEFAULTS.county,
+          city
+        });
 
         return {
           id,
-          name: localName || originalName,
+          name: resolvedName,
           originalName,
           railroad:
             props.railroad ||
@@ -305,6 +336,11 @@ async function loadCrossings() {
             "Rail line",
           lat: Number(lat),
           lng: Number(lng),
+          country: LOCATION_DEFAULTS.country,
+          state: LOCATION_DEFAULTS.state,
+          county: LOCATION_DEFAULTS.county,
+          city,
+          regionKey,
           risk: calculateBaseRisk(props, index),
           review: override,
           props
@@ -369,6 +405,42 @@ async function fetchFraCrossingsWithRetry() {
 function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+function inferCrossingCity(crossingName, props = {}) {
+  const valuePool = [
+    crossingName,
+    props.city,
+    props.cityname,
+    props.community,
+    props.place,
+    props.inc_city,
+    props.nearcity,
+    props.municipality
+  ]
+    .filter(Boolean)
+    .map((value) => String(value).toLowerCase());
+
+  for (const rule of LIBERTY_COUNTY_CITY_RULES) {
+    if (rule.patterns.some((pattern) => valuePool.some((value) => value.includes(pattern)))) {
+      return rule.city;
+    }
+  }
+
+  return "Unassigned";
+}
+
+function buildRegionKey({ country, state, county, city }) {
+  return [country, state, county, city].map(toRegionSlug).join(".");
+}
+
+function toRegionSlug(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 async function loadCrossingReviewOverrides() {
   try {
     const response = await fetch(CROSSING_REVIEW_OVERRIDES_URL, {
