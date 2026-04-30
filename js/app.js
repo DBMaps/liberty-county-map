@@ -177,6 +177,8 @@ function hydrateElements() {
     "desktopReportNearMeBtn",
     "reportModeBanner",
     "reportSection",
+    "trendingDrawer",
+    "liveAlertsDrawer",
     "mobileAlertsMirror",
     "habitStatusStrip",
     "habitStatusPill",
@@ -1739,29 +1741,31 @@ function updateDailyHabitStatus() {
   const activeIssues = latestReports.filter((report) => !report.expired && report.type !== "cleared");
   const highIssues = activeIssues.filter((report) => report.severity === "high");
   const moderateIssues = activeIssues.filter((report) => report.severity === "moderate");
+  const activeCount = activeIssues.length;
+  const confirmationCount = activeReports.length;
 
   const freshest = [...activeReports].sort(
     (a, b) => new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0)
   )[0];
 
   let pill = "All Clear";
-  let headline = "No major rail delays reported right now";
-  let detail = "Gridly is quiet. Check again before you leave, and report anything you see.";
+  let headline = "0 active reports · 0 crossings impacted";
+  let detail = "No active reports right now. Live watch remains on for new driver confirmations.";
   let cardClass = "clear";
 
   if (highIssues.length > 0) {
     pill = "Major Delay Active";
-    headline = `${highIssues.length} high-impact crossing alert${highIssues.length === 1 ? "" : "s"} active`;
+    headline = `${highIssues.length} high-impact alert${highIssues.length === 1 ? "" : "s"} · ${activeCount} active report${activeCount === 1 ? "" : "s"}`;
     detail = freshest
-      ? `Freshest report: ${freshest.crossingName} · ${freshest.minutesAgo} min ago.`
-      : "High-impact shared reports are active. Check the map before leaving.";
+      ? `${freshest.crossingName} reported ${freshest.minutesAgo} min ago · ${confirmationCount} live confirmation${confirmationCount === 1 ? "" : "s"}.`
+      : `High-impact shared reports are active · ${confirmationCount} live confirmation${confirmationCount === 1 ? "" : "s"}.`;
     cardClass = "high";
   } else if (moderateIssues.length > 0 || activeIssues.length > 0) {
     pill = "Use Caution";
-    headline = `${activeIssues.length} active crossing report${activeIssues.length === 1 ? "" : "s"} nearby`;
+    headline = `${activeCount} active report${activeCount === 1 ? "" : "s"} · ${moderateIssues.length} moderate impact`;
     detail = freshest
-      ? `Latest driver signal: ${freshest.crossingName} · ${freshest.minutesAgo} min ago.`
-      : "There is some live report activity. Check the map before choosing your route.";
+      ? `${freshest.crossingName} updated ${freshest.minutesAgo} min ago · ${confirmationCount} live confirmation${confirmationCount === 1 ? "" : "s"}.`
+      : `There is live report activity · ${confirmationCount} live confirmation${confirmationCount === 1 ? "" : "s"}.`;
     cardClass = "delayed";
   }
 
@@ -1825,6 +1829,9 @@ function renderAlerts() {
   if (!els.alertsList) return;
 
   const incidents = getConsolidatedIncidents();
+  if (els.liveAlertsDrawer) {
+    els.liveAlertsDrawer.open = incidents.length > 0;
+  }
 
   if (!incidents.length) {
     els.alertsList.innerHTML = `
