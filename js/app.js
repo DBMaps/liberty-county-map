@@ -84,6 +84,7 @@ let nearbyReportCrossingIds = new Set();
 let lastSubmittedCrossing = null;
 let lastSubmittedReportType = null;
 let crossingLoadFailed = false;
+let activeGeoFilter = "nearby";
 
 let deviceId =
   localStorage.getItem("gridlyDeviceId") ||
@@ -585,10 +586,12 @@ function populateCrossingSelect() {
 function renderCrossings() {
   if (!crossingLayer || !crossings.length) return;
 
+  const visibleCrossings = getVisibleCrossingsForFilter();
+
   crossingLayer.clearLayers();
   crossingMarkers.clear();
 
-  crossings.forEach((crossing) => {
+  visibleCrossings.forEach((crossing) => {
     const report = getLatestReportForCrossing(crossing.id);
     const hasActiveIssue = report && report.type !== "cleared" && !report.expired;
     const isCleared = report && report.type === "cleared";
@@ -607,6 +610,63 @@ function renderCrossings() {
 
     crossingMarkers.set(String(crossing.id), marker);
   });
+}
+
+function getVisibleCrossingsForFilter() {
+  const fallbackToAll = () => {
+    debugGeoFilter(activeGeoFilter, crossings.length);
+    return crossings;
+  };
+
+  if (activeGeoFilter === "all") {
+    debugGeoFilter("All", crossings.length);
+    return crossings;
+  }
+
+  if (activeGeoFilter === "active-delays") {
+    const filtered = crossings.filter((crossing) => {
+      const report = getLatestReportForCrossing(crossing.id);
+      return Boolean(report && !report.expired && (report.type === "blocked" || report.type === "heavy"));
+    });
+    debugGeoFilter("Active Delays", filtered.length);
+    return filtered;
+  }
+
+  if (activeGeoFilter === "county") {
+    const filtered = crossings.filter(
+      (crossing) => String(crossing.county || "").toLowerCase() === "liberty county"
+    );
+    debugGeoFilter("My County", filtered.length);
+    return filtered;
+  }
+
+  if (activeGeoFilter === "town") {
+    const filtered = crossings.filter(
+      (crossing) => String(crossing.city || "").toLowerCase() === "dayton"
+    );
+
+    if (!filtered.length) {
+      debugGeoFilter("My Town", crossings.length);
+      return crossings;
+    }
+
+    debugGeoFilter("My Town", filtered.length);
+    return filtered;
+  }
+
+  if (activeGeoFilter === "nearby") {
+    const center = userLocation || { lat: defaultCenter[0], lng: defaultCenter[1] };
+    const nearest = findNearestCrossings(center.lat, center.lng, 10);
+    debugGeoFilter("Nearby", nearest.length);
+    return nearest;
+  }
+
+  return fallbackToAll();
+}
+
+function debugGeoFilter(label, visibleCount) {
+  console.debug(`Filter applied: ${label}`);
+  console.debug(`Visible crossings: ${visibleCount}`);
 }
 function renderHazards() {
   if (!hazardLayer) return;
@@ -1245,6 +1305,8 @@ function bindEvents() {
         pill.classList.remove("selected");
       });
       btn.classList.add("selected");
+      activeGeoFilter = btn.dataset.geoFilter || "all";
+      renderCrossings();
     });
   });
 }
