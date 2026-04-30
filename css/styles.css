@@ -1247,7 +1247,8 @@ select:focus {
     display: grid;
   }
 
-  .share-card {
+  .share-card,
+  .share-card.visible {
     display: none;
   }
 
