@@ -741,6 +741,71 @@ select:focus {
   color: var(--muted);
 }
 
+.combined-module-block + .combined-module-block {
+  margin-top: 12px;
+}
+
+.combined-module-block h3 {
+  margin: 0 0 8px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.route-summary-inline {
+  margin-top: 0;
+}
+
+.route-summary-inline p {
+  margin: 0;
+  padding: 11px;
+  border-radius: 15px;
+  background: var(--card-soft);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.smart-alerts-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 3200;
+}
+
+.smart-alerts-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(3, 10, 20, 0.62);
+}
+
+.smart-alerts-modal-card {
+  position: relative;
+  width: min(560px, calc(100% - 24px));
+  margin: 8vh auto 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.42);
+}
+
+.smart-alerts-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+.rail-manage-alerts-btn {
+  margin-top: 10px;
+  width: 100%;
+}
+
 .alerts-list,
 .trending-list {
   max-height: 292px;
@@ -1307,7 +1372,9 @@ select:focus {
     bottom: 28px;
     z-index: 1900;
     width: auto;
-    min-width: 186px;
+    min-width: 164px;
+    padding: 10px 14px;
+    font-size: 0.88rem;
     box-shadow: 0 18px 40px rgba(0, 0, 0, 0.42);
   }
 
@@ -1658,7 +1725,7 @@ select:focus {
     bottom: calc(4px + env(safe-area-inset-bottom, 0px));
     z-index: 2000;
     display: block;
-    padding: 15px 17px;
+    padding: 13px 15px;
     border: 0;
     border-radius: 999px;
     background: linear-gradient(135deg, var(--accent), var(--blue));
