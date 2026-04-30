@@ -91,6 +91,27 @@ button {
   white-space: nowrap;
 }
 
+
+.header-share-btn {
+  display: none;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 7px 11px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.header-share-btn:hover,
+.header-share-btn:focus-visible {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.2);
+  outline: none;
+}
 .top-nav {
   display: flex;
   align-items: center;
@@ -1048,6 +1069,12 @@ select:focus {
     white-space: nowrap;
   }
 
+  .header-share-btn {
+    display: inline-flex;
+    align-items: center;
+    margin-left: auto;
+  }
+
   .top-nav {
     width: 100%;
     overflow-x: auto;
@@ -1198,13 +1225,16 @@ select:focus {
   }
 
   .confirmation-box,
-  .share-card,
   .quick-clear-card {
     margin-top: 10px;
   }
 
   .report-buttons {
     display: grid;
+  }
+
+  .share-card {
+    display: none;
   }
 
   .primary-btn,
