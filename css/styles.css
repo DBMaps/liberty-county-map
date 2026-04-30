@@ -850,6 +850,12 @@ select:focus {
   color: var(--muted);
 }
 
+/* Legacy in-content Share card is retired; Share now lives in header/nav. */
+#reportSection #shareCard,
+#reportSection #shareCard.visible {
+  display: none !important;
+}
+
 .report-tools {
   display: grid;
   grid-template-columns: 1fr 1fr 165px;
