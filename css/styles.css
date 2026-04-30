@@ -166,6 +166,37 @@ button {
   width: auto;
 }
 
+.smart-alert-option {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  color: #d2dfec;
+  font-size: 0.92rem;
+}
+
+.smart-alert-option input {
+  margin-top: 2px;
+}
+
+.smart-alerts-confirmation {
+  min-height: 20px;
+  margin: 8px 0 0;
+  color: var(--accent);
+  font-size: 0.86rem;
+}
+
+.smart-alerts-banner {
+  margin-bottom: 12px;
+  border: 1px solid rgba(255, 209, 102, 0.35);
+  background: rgba(255, 209, 102, 0.12);
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: #ffe4a4;
+  font-size: 0.88rem;
+  line-height: 1.35;
+}
+
 .app-shell {
   width: min(1500px, calc(100% - 28px));
   margin: 16px auto;
