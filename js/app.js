@@ -68,6 +68,7 @@ const LIVE_REFRESH_MS = 15000;
 const APP_BUILD = "6C4";
 const CROSSING_FETCH_RETRY_ATTEMPTS = 3;
 const CROSSING_FETCH_RETRY_DELAY_MS = 700;
+const SMART_ALERTS_STORAGE_KEY = "gridlySmartAlertsV1";
 
 let supabaseClient = null;
 let realtimeChannel = null;
@@ -104,6 +105,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   bindEvents();
   injectHazardReportUI();
   loadSavedRoute();
+  loadSmartAlertsPreferences();
 
   await loadCrossings();
   await loadSharedReports();
@@ -183,7 +185,15 @@ function hydrateElements() {
     "habitStatusStrip",
     "habitStatusPill",
     "habitStatusHeadline",
-    "habitStatusDetail"
+    "habitStatusDetail",
+    "smartAlertsStatus",
+    "smartAlertNearbyBlocked",
+    "smartAlertRouteDelay",
+    "smartAlertUs90Clear",
+    "smartAlertNeedsConfirm",
+    "saveSmartAlertsBtn",
+    "smartAlertsConfirmation",
+    "smartAlertsBanner"
   ].forEach((id) => {
     els[id] = document.getElementById(id);
   });
@@ -519,6 +529,7 @@ async function loadSharedReports() {
     updateGrowthWidgets();
     updateDailyHabitStatus();
     updateMobileAlertsMirror();
+    evaluateSmartAlertsBanner();
     updateLastUpdated();
 
     setSync(`${activeReports.length} crossing reports · ${activeHazards.length} hazards synced`);
@@ -1284,6 +1295,7 @@ function bindEvents() {
 
   els.mobileReportBtn?.addEventListener("click", handleSmartReportButton);
   els.desktopReportNearMeBtn?.addEventListener("click", handleReportNearMe);
+  els.saveSmartAlertsBtn?.addEventListener("click", saveSmartAlertsPreferences);
 
   els.quickClearBtn?.addEventListener("click", async () => {
     if (!lastSubmittedCrossing) {
@@ -1652,6 +1664,92 @@ function loadSavedRoute() {
     safeText("savedWork", work);
     if (els.workInput) els.workInput.value = work;
   }
+}
+
+function getDefaultSmartAlertsPreferences() {
+  return { enabled: false, nearbyBlocked: false, routeDelay: false, us90Clear: false, needsConfirm: false };
+}
+
+function getSmartAlertsPreferences() {
+  try {
+    return { ...getDefaultSmartAlertsPreferences(), ...JSON.parse(localStorage.getItem(SMART_ALERTS_STORAGE_KEY) || "{}") };
+  } catch (error) {
+    return getDefaultSmartAlertsPreferences();
+  }
+}
+
+function loadSmartAlertsPreferences() {
+  const prefs = getSmartAlertsPreferences();
+  if (els.smartAlertNearbyBlocked) els.smartAlertNearbyBlocked.checked = Boolean(prefs.nearbyBlocked);
+  if (els.smartAlertRouteDelay) els.smartAlertRouteDelay.checked = Boolean(prefs.routeDelay);
+  if (els.smartAlertUs90Clear) els.smartAlertUs90Clear.checked = Boolean(prefs.us90Clear);
+  if (els.smartAlertNeedsConfirm) els.smartAlertNeedsConfirm.checked = Boolean(prefs.needsConfirm);
+  updateSmartAlertsStatus(prefs);
+}
+
+function saveSmartAlertsPreferences() {
+  const prefs = {
+    nearbyBlocked: Boolean(els.smartAlertNearbyBlocked?.checked),
+    routeDelay: Boolean(els.smartAlertRouteDelay?.checked),
+    us90Clear: Boolean(els.smartAlertUs90Clear?.checked),
+    needsConfirm: Boolean(els.smartAlertNeedsConfirm?.checked)
+  };
+  prefs.enabled = prefs.nearbyBlocked || prefs.routeDelay || prefs.us90Clear || prefs.needsConfirm;
+
+  try {
+    localStorage.setItem(SMART_ALERTS_STORAGE_KEY, JSON.stringify(prefs));
+  } catch (error) {
+    updateSmartAlertsStatus(prefs);
+    evaluateSmartAlertsBanner(prefs);
+    safeText("smartAlertsConfirmation", "Could not save Smart Alerts on this device.");
+    return;
+  }
+
+  updateSmartAlertsStatus(prefs);
+  evaluateSmartAlertsBanner(prefs);
+  safeText("smartAlertsConfirmation", "Smart Alerts saved on this device.");
+}
+
+function updateSmartAlertsStatus(prefs = getSmartAlertsPreferences()) {
+  safeText("smartAlertsStatus", prefs.enabled ? "Smart Alerts: On" : "Smart Alerts: Off");
+}
+
+function evaluateSmartAlertsBanner(prefs = getSmartAlertsPreferences()) {
+  if (!els.smartAlertsBanner) return;
+  if (!prefs.enabled) {
+    els.smartAlertsBanner.hidden = true;
+    els.smartAlertsBanner.textContent = "";
+    return;
+  }
+
+  const latestByCrossing = getLatestReportsByCrossing().filter((report) => !report.expired);
+  const nearest = userLocation ? findNearestCrossings(userLocation.lat, userLocation.lng, 10) : [];
+  const nearbyCrossingIds = new Set(nearest.map((crossing) => String(crossing.id)));
+  const hasNearbyBlocked = latestByCrossing.some(
+    (report) => nearbyCrossingIds.has(String(report.crossingId)) && report.type === "blocked"
+  );
+  const hasRouteDelay =
+    Boolean(localStorage.getItem("gridlyHome") && localStorage.getItem("gridlyWork")) &&
+    latestByCrossing.some((report) => report.type === "blocked" || report.type === "heavy");
+  const hasUs90Cleared = activeReports.some(
+    (report) => report.type === "cleared" && String(report.crossingName || "").toLowerCase().includes("us 90")
+  );
+  const needsConfirmation = activeReports.some((report) => report.minutesAgo >= 75);
+
+  const matches = [];
+  if (prefs.nearbyBlocked && hasNearbyBlocked) matches.push("Nearby blocked crossing reported.");
+  if (prefs.routeDelay && hasRouteDelay) matches.push("Saved-route delay is active.");
+  if (prefs.us90Clear && hasUs90Cleared) matches.push("US 90 has a recent cleared report.");
+  if (prefs.needsConfirm && needsConfirmation) matches.push("Reports need confirmation or are near expiry.");
+
+  if (!matches.length) {
+    els.smartAlertsBanner.hidden = true;
+    els.smartAlertsBanner.textContent = "";
+    return;
+  }
+
+  els.smartAlertsBanner.hidden = false;
+  els.smartAlertsBanner.textContent = matches.slice(0, 2).join(" ");
 }
 
 function updateRouteIntelligence(nearest = []) {
