@@ -1208,14 +1208,12 @@ function buildPopup(crossing, report) {
   const freshness = report ? `${report.minutesAgo} min ago` : "No recent report";
   const trustCount = getReportCountForCrossing(crossing.id);
 
-  const trustLabel =
-    trustCount >= 3
-      ? `${trustCount} confirmations`
-      : trustCount === 1
-      ? "1 shared report"
-      : trustCount > 1
-      ? `${trustCount} shared reports`
-      : "No community reports yet";
+  const trustLabel = getDriverConfirmationLabel(trustCount);
+  const confidenceLabel = getCrossingConfidenceLabel(report, trustCount);
+  const trustFreshness = report
+    ? `Last confirmed ${report.minutesAgo} min ago`
+    : "Needs confirmation";
+  const reportState = getReportStateLabel(report);
 
   return `
     <div class="gridly-popup">
@@ -1224,6 +1222,10 @@ function buildPopup(crossing, report) {
       <span>Status: ${sanitizeText(status)}</span><br />
       <span>Freshness: ${sanitizeText(freshness)}</span><br />
       <span>Trust: ${sanitizeText(trustLabel)}</span><br />
+      <span>${sanitizeText(trustFreshness)}</span><br />
+      <span>Confidence: ${sanitizeText(confidenceLabel)}</span><br />
+      <span>${sanitizeText(reportState)}</span><br />
+      <span>Auto-expires after ${REPORT_EXPIRATION_MINUTES} min</span><br />
       <span>Risk Score: ${crossing.risk}/100</span>
 
       <div class="popup-report-grid">
@@ -1838,6 +1840,10 @@ function renderAlerts() {
     .slice(0, 8)
     .map((incident) => {
       const latest = incident.latestReport;
+      const confidenceLabel = getCrossingConfidenceLabel(latest, incident.count);
+      const freshnessLabel = getFreshnessLabel(latest);
+      const confirmationLabel = getDriverConfirmationLabel(incident.count);
+      const reportState = getReportStateLabel(latest);
 
       const label =
         latest.type === "cleared"
@@ -1860,8 +1866,10 @@ function renderAlerts() {
           <strong>${sanitizeText(incident.crossingName)}</strong>
           <p>${label} · newest ${incident.newestMinutes} min ago</p>
           <p>${sanitizeText(latest.detail)}</p>
+          <p>${sanitizeText(freshnessLabel)} · Confidence: ${sanitizeText(confidenceLabel)}</p>
           <div class="alert-meta">
-            <span class="alert-count-pill">${incident.count} confirmation${incident.count === 1 ? "" : "s"}</span>
+            <span class="alert-count-pill">${sanitizeText(confirmationLabel)}</span>
+            <span class="trust-pill">${sanitizeText(reportState)}</span>
             <span class="source-pill">First reported ${incident.oldestMinutes} min ago</span>
           </div>
         </div>
@@ -1883,6 +1891,9 @@ function renderTrendingCrossings() {
   els.trendingList.innerHTML = incidents
     .map((incident) => {
       const latest = incident.latestReport;
+      const confidenceLabel = getCrossingConfidenceLabel(latest, incident.count);
+      const freshnessLabel = getFreshnessLabel(latest);
+      const confirmationLabel = getDriverConfirmationLabel(incident.count);
 
       const className =
         latest.type === "cleared"
@@ -1894,7 +1905,8 @@ function renderTrendingCrossings() {
       return `
         <button class="trend-item ${className}" type="button" onclick="zoomToCrossing('${sanitizeText(incident.crossingId)}')">
           <strong>${sanitizeText(incident.crossingName)}</strong>
-          <p>${incident.count} confirmation${incident.count === 1 ? "" : "s"} · newest ${incident.newestMinutes} min ago</p>
+          <p>${sanitizeText(freshnessLabel)} · ${sanitizeText(confirmationLabel)}</p>
+          <p>Confidence: ${sanitizeText(confidenceLabel)} · Auto-expires after ${REPORT_EXPIRATION_MINUTES} min</p>
         </button>
       `;
     })
@@ -2004,6 +2016,34 @@ function getReportCountForCrossing(crossingId) {
   return activeReports.filter(
     (report) => String(report.crossingId) === String(crossingId) && !report.expired
   ).length;
+}
+
+function getDriverConfirmationLabel(count) {
+  if (count <= 0) return "Needs confirmation";
+  if (count === 1) return "1 driver confirmation";
+  return `${count} driver confirmations`;
+}
+
+function getCrossingConfidenceLabel(report, count) {
+  if (!report) return "Low";
+  if (report.type === "cleared") return "Cleared";
+  if (count >= 3 && report.minutesAgo <= 30) return "High";
+  if (count >= 2 && report.minutesAgo <= 60) return "Medium";
+  if (report.minutesAgo > REPORT_EXPIRATION_MINUTES) return "Stale";
+  return "Low";
+}
+
+function getFreshnessLabel(report) {
+  if (!report) return "Needs confirmation";
+  if (report.minutesAgo <= 1) return "Last confirmed just now";
+  return `Last confirmed ${report.minutesAgo} min ago`;
+}
+
+function getReportStateLabel(report) {
+  if (!report) return "Needs confirmation";
+  if (report.expired) return "Expired report";
+  if (report.type === "cleared") return "Cleared by drivers";
+  return "Active shared report";
 }
 
 function calculateBaseRisk(props, index) {
