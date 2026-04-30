@@ -194,42 +194,48 @@
       </section>
 
       <aside class="side-panel desktop-command-panel" id="alertsSection">
-        <section class="panel-card">
-          <p class="eyebrow">Trending Crossings</p>
-          <div id="trendingList" class="trending-list">
-            <div class="trend-item muted">Waiting for shared reports...</div>
-          </div>
-        </section>
-
-        <section class="panel-card">
-          <p class="eyebrow">Impact Score</p>
-          <div class="impact-meter">
-            <div class="impact-fill" id="impactFill"></div>
-          </div>
-          <strong id="impactScore">42 / 100</strong>
-          <p id="impactText">Moderate route impact detected.</p>
-        </section>
-
-        <section class="panel-card">
-          <p class="eyebrow">Saved Route</p>
-          <h2>Daily Commute</h2>
-
-          <div class="route-summary">
-            <div>
-              <span>Home</span>
-              <strong id="savedHome">Not saved</strong>
-            </div>
-            <div>
-              <span>Work</span>
-              <strong id="savedWork">Not saved</strong>
+        <details class="panel-card drawer-panel" open>
+          <summary class="drawer-summary"><span class="eyebrow">Trending Crossings</span></summary>
+          <div class="drawer-body">
+            <div id="trendingList" class="trending-list">
+              <div class="trend-item muted">Waiting for shared reports...</div>
             </div>
           </div>
-        </section>
+        </details>
 
-        <section class="panel-card">
-          <p class="eyebrow">Live Alerts</p>
-          <div id="alertsList" class="alerts-list"></div>
-        </section>
+        <details class="panel-card drawer-panel">
+          <summary class="drawer-summary"><span class="eyebrow">Impact Score</span></summary>
+          <div class="drawer-body">
+            <div class="impact-meter">
+              <div class="impact-fill" id="impactFill"></div>
+            </div>
+            <strong id="impactScore">42 / 100</strong>
+            <p id="impactText">Moderate route impact detected.</p>
+          </div>
+        </details>
+
+        <details class="panel-card drawer-panel">
+          <summary class="drawer-summary"><span class="eyebrow">Saved Route</span><h2>Daily Commute</h2></summary>
+          <div class="drawer-body">
+            <div class="route-summary">
+              <div>
+                <span>Home</span>
+                <strong id="savedHome">Not saved</strong>
+              </div>
+              <div>
+                <span>Work</span>
+                <strong id="savedWork">Not saved</strong>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details class="panel-card drawer-panel" open>
+          <summary class="drawer-summary"><span class="eyebrow">Live Alerts</span></summary>
+          <div class="drawer-body">
+            <div id="alertsList" class="alerts-list"></div>
+          </div>
+        </details>
       </aside>
     </section>
 
