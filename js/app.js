@@ -134,6 +134,7 @@ function hydrateElements() {
     "trendingList",
     "shareCard",
     "shareGridlyBtn",
+    "headerShareGridlyBtn",
     "quickClearCard",
     "quickClearBtn",
     "mobileReportBtn",
@@ -1073,6 +1074,7 @@ function bindEvents() {
   els.clearReportsBtn?.addEventListener("click", loadSharedReports);
   els.crossingSearch?.addEventListener("input", handleCrossingSearch);
   els.shareGridlyBtn?.addEventListener("click", shareGridly);
+  els.headerShareGridlyBtn?.addEventListener("click", shareGridly);
 
   els.mobileReportBtn?.addEventListener("click", handleSmartReportButton);
   els.desktopReportNearMeBtn?.addEventListener("click", handleReportNearMe);
