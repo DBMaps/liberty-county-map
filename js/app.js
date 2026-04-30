@@ -1731,17 +1731,18 @@ function saveSmartAlertsPreferences() {
   } catch (error) {
     updateSmartAlertsStatus(prefs);
     evaluateSmartAlertsBanner(prefs);
-    safeText("smartAlertsConfirmation", "Could not save Smart Alerts on this device.");
+    safeText("smartAlertsConfirmation", "⚠️ Could not save premium alert settings on this device.");
     return;
   }
 
   updateSmartAlertsStatus(prefs);
   evaluateSmartAlertsBanner(prefs);
-  safeText("smartAlertsConfirmation", "✅ Smart Alerts saved.");
+  const savedAt = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  safeText("smartAlertsConfirmation", `✅ Premium alert settings saved at ${savedAt}.`);
 }
 
 function updateSmartAlertsStatus(prefs = getSmartAlertsPreferences()) {
-  safeText("smartAlertsStatus", prefs.enabled ? "Smart Alerts: On" : "Smart Alerts: Off");
+  safeText("smartAlertsStatus", prefs.enabled ? "Premium Smart Alerts: On" : "Premium Smart Alerts: Off");
 }
 
 function evaluateSmartAlertsBanner(prefs = getSmartAlertsPreferences()) {
