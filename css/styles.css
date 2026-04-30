@@ -842,6 +842,14 @@ select:focus {
   align-items: start;
 }
 
+.report-drawer-summary {
+  display: none;
+}
+
+.report-drawer-summary h2 {
+  font-size: 1.02rem;
+}
+
 .confirmation-box {
   margin-top: 14px;
   padding: 12px 13px;
@@ -1207,6 +1215,106 @@ select:focus {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.06);
   }
+
+  .hero-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    min-height: 0;
+    padding: 10px 14px;
+  }
+
+  .hero-main-copy {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  #timeContext,
+  #greetingTitle,
+  #greetingSubtitle,
+  #habitStatusDetail,
+  .hero-command-card {
+    display: none;
+  }
+
+  .habit-status-strip {
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 999px;
+  }
+
+  .habit-status-strip strong {
+    font-size: 0.88rem;
+  }
+
+  .trust-row {
+    margin: 0;
+  }
+
+  .trust-row span {
+    padding: 5px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  #desktopReportNearMeBtn {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    z-index: 1900;
+    width: auto;
+    min-width: 178px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.42);
+  }
+
+  .desktop-business-note {
+    display: none;
+  }
+
+  .report-drawer {
+    display: block;
+    padding: 0;
+  }
+
+  .report-drawer-summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .report-drawer-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .report-drawer-summary::after {
+    content: "▾";
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .report-drawer:not([open]) .report-drawer-summary::after {
+    content: "▸";
+  }
+
+  .report-drawer .report-copy,
+  .report-drawer .report-tools {
+    padding: 0 16px 16px;
+  }
+
+  .report-drawer .report-copy {
+    padding-top: 2px;
+  }
 }
 @media (max-width: 1100px) {
   .app-header {
@@ -1459,6 +1567,15 @@ select:focus {
     grid-template-columns: 1fr;
     padding: 14px;
     border-radius: 24px;
+  }
+
+  .report-drawer-summary {
+    display: none;
+  }
+
+  .report-drawer .report-copy,
+  .report-drawer .report-tools {
+    padding: 0;
   }
 
   .report-tools {

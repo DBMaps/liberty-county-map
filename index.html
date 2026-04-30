@@ -253,10 +253,9 @@
       </div>
     </section>
 
-    <section class="report-card" id="reportSection">
+    <details class="report-card report-drawer" id="reportSection" open>
+      <summary class="report-drawer-summary"><span class="eyebrow">Manual Fallback</span><h2>Search or manually report a crossing</h2></summary>
       <div class="report-copy">
-        <p class="eyebrow">Manual Fallback</p>
-        <h2>Search or manually report a crossing</h2>
         <p>Most drivers should report from the map. This fallback is useful when searching for a specific crossing manually.</p>
 
         <div class="confirmation-box" id="reportConfirmation">
@@ -306,9 +305,9 @@
 
         <div class="search-results" id="searchResults"></div>
       </div>
-    </section>
+    </details>
 
-    <section class="desktop-business-note">
+    <section class="desktop-business-note" hidden>
       <p class="eyebrow">Future Business Portal</p>
       <h2>Desktop command center coming later</h2>
       <p>Gridly can later separate driver mode from business, city, and operations dashboards using login-based roles.</p>
