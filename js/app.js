@@ -181,8 +181,10 @@ function hydrateElements() {
     "reportModeBanner",
     "reportSection",
     "trendingDrawer",
-    "liveAlertsDrawer",
-    "smartAlertsDrawer",
+    "smartAlertsModal",
+    "smartAlertsModalBackdrop",
+    "closeSmartAlertsModalBtn",
+    "openSmartAlertsBtn",
     "mobileAlertsMirror",
     "habitStatusStrip",
     "habitStatusPill",
@@ -1298,6 +1300,9 @@ function bindEvents() {
   els.mobileReportBtn?.addEventListener("click", handleSmartReportButton);
   els.desktopReportNearMeBtn?.addEventListener("click", handleReportNearMe);
   els.saveSmartAlertsBtn?.addEventListener("click", saveSmartAlertsPreferences);
+  els.closeSmartAlertsModalBtn?.addEventListener("click", closeSmartAlertsModal);
+  els.smartAlertsModalBackdrop?.addEventListener("click", closeSmartAlertsModal);
+  els.openSmartAlertsBtn?.addEventListener("click", openSmartAlertsModal);
 
   els.quickClearBtn?.addEventListener("click", async () => {
     if (!lastSubmittedCrossing) {
@@ -1324,6 +1329,10 @@ function bindEvents() {
       };
 
       scrollToSection(targets[btn.dataset.section]);
+
+      if (btn.dataset.section === "alerts") {
+        openSmartAlertsModal();
+      }
 
       if (btn.dataset.section === "map") {
         setTimeout(() => map?.invalidateSize(), 350);
@@ -1362,6 +1371,19 @@ function bindEvents() {
       renderCrossings();
     });
   });
+}
+
+
+function openSmartAlertsModal() {
+  if (!els.smartAlertsModal) return;
+  els.smartAlertsModal.hidden = false;
+  document.body.classList.add("modal-open");
+}
+
+function closeSmartAlertsModal() {
+  if (!els.smartAlertsModal) return;
+  els.smartAlertsModal.hidden = true;
+  document.body.classList.remove("modal-open");
 }
 
 function handleSmartReportButton() {
@@ -1686,17 +1708,13 @@ function loadSmartAlertsPreferences() {
   if (els.smartAlertRouteDelay) els.smartAlertRouteDelay.checked = Boolean(prefs.routeDelay);
   if (els.smartAlertUs90Clear) els.smartAlertUs90Clear.checked = Boolean(prefs.us90Clear);
   if (els.smartAlertNeedsConfirm) els.smartAlertNeedsConfirm.checked = Boolean(prefs.needsConfirm);
-  openSmartAlertsDrawerOnFirstVisit();
+  markSmartAlertsSeenOnFirstVisit();
   updateSmartAlertsStatus(prefs);
 }
 
-function openSmartAlertsDrawerOnFirstVisit() {
-  if (!els.smartAlertsDrawer) return;
+function markSmartAlertsSeenOnFirstVisit() {
   const hasSeen = localStorage.getItem(SMART_ALERTS_DRAWER_SEEN_KEY) === "1";
-  if (!hasSeen) {
-    els.smartAlertsDrawer.open = true;
-    localStorage.setItem(SMART_ALERTS_DRAWER_SEEN_KEY, "1");
-  }
+  if (!hasSeen) localStorage.setItem(SMART_ALERTS_DRAWER_SEEN_KEY, "1");
 }
 
 function saveSmartAlertsPreferences() {
@@ -1939,10 +1957,6 @@ function renderAlerts() {
   if (!els.alertsList) return;
 
   const incidents = getConsolidatedIncidents();
-  if (els.liveAlertsDrawer) {
-    els.liveAlertsDrawer.open = incidents.length > 0;
-  }
-
   if (!incidents.length) {
     els.alertsList.innerHTML = `
       <div class="alert-item">
