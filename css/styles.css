@@ -532,6 +532,45 @@ select:focus {
   line-height: 1.35;
 }
 
+.geo-filter-shell {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 2px;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.geo-filter-pill {
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.geo-filter-pill:hover,
+.geo-filter-pill:focus-visible {
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.09);
+  outline: none;
+}
+
+.geo-filter-pill.selected {
+  color: #061017;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--accent), var(--blue));
+}
+
 #map {
   height: 610px;
   border-radius: 20px;
@@ -1207,6 +1246,10 @@ select:focus {
 
   .section-header .actions {
     display: none;
+  }
+
+  .geo-filter-shell {
+    margin-bottom: 12px;
   }
 
   #map {

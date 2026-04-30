@@ -1166,6 +1166,15 @@ function bindEvents() {
       }
     });
   });
+
+  document.querySelectorAll(".geo-filter-pill").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".geo-filter-pill").forEach((pill) => {
+        pill.classList.remove("selected");
+      });
+      btn.classList.add("selected");
+    });
+  });
 }
 
 function handleSmartReportButton() {
