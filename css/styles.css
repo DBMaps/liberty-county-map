@@ -1009,7 +1009,7 @@ select:focus {
 @media (max-width: 700px) {
   .app-header {
     min-height: 92px;
-    padding: 10px 14px;
+    padding: 8px 14px;
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
@@ -1024,15 +1024,15 @@ select:focus {
   }
 
   .brand-logo-frame {
-    width: 220px;
-    height: 70px;
+    width: 206px;
+    height: 64px;
     overflow: hidden;
     position: relative;
     flex-shrink: 0;
   }
 
   .brand-logo-img {
-    width: 385px;
+    width: 360px;
     max-width: none;
     height: auto;
     display: block;
@@ -1053,16 +1053,16 @@ select:focus {
     overflow-x: auto;
     overflow-y: hidden;
     justify-content: flex-start;
-    gap: 6px;
-    padding-bottom: 4px;
+    gap: 5px;
+    padding-bottom: 2px;
     flex-wrap: nowrap;
     -webkit-overflow-scrolling: touch;
   }
 
   .nav-btn {
     white-space: nowrap;
-    padding: 8px 12px;
-    font-size: 0.88rem;
+    padding: 7px 11px;
+    font-size: 0.84rem;
     flex-shrink: 0;
   }
 
@@ -1077,7 +1077,7 @@ select:focus {
 
   .app-shell {
     width: calc(100% - 20px);
-    margin: 12px auto 92px;
+    margin: 10px auto 104px;
   }
 
   .dashboard {
@@ -1154,7 +1154,7 @@ select:focus {
   }
 
   .map-card {
-    padding: 12px;
+    padding: 11px;
     border-radius: 24px;
   }
 
@@ -1169,7 +1169,7 @@ select:focus {
   }
 
   #map {
-    height: 520px;
+    height: clamp(360px, 52svh, 500px);
     border-radius: 20px;
   }
 
@@ -1180,12 +1180,27 @@ select:focus {
 
   .report-card {
     grid-template-columns: 1fr;
-    padding: 16px;
+    padding: 14px;
     border-radius: 24px;
   }
 
   .report-tools {
     grid-template-columns: 1fr;
+    gap: 9px;
+  }
+
+  .report-copy h2 {
+    margin-top: 4px;
+  }
+
+  .report-copy p {
+    margin-top: 8px;
+  }
+
+  .confirmation-box,
+  .share-card,
+  .quick-clear-card {
+    margin-top: 10px;
   }
 
   .report-buttons {
@@ -1205,10 +1220,10 @@ select:focus {
     position: fixed;
     left: 14px;
     right: 14px;
-    bottom: 14px;
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
     z-index: 2000;
     display: block;
-    padding: 16px 18px;
+    padding: 15px 17px;
     border: 0;
     border-radius: 999px;
     background: linear-gradient(135deg, var(--accent), var(--blue));
@@ -1222,8 +1237,21 @@ select:focus {
   }
 
   .app-footer {
-    margin-bottom: 86px;
+    margin-bottom: 96px;
     width: calc(100% - 20px);
+  }
+}
+
+@media (max-width: 760px) {
+  #gridlyBetaLaunchWrap {
+    margin: 8px 14px 6px !important;
+  }
+
+  #gridlyBetaLaunchWrap .gridly-share-btn {
+    padding: 10px 14px !important;
+    font-size: 0.92rem !important;
+    border-radius: 999px !important;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2) !important;
   }
 }
 /* V12.2 desktop sidebar full-height fix */
