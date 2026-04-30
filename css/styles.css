@@ -1080,6 +1080,13 @@ select:focus {
   .mobile-share-nav {
     display: inline-flex;
     align-items: center;
+    color: rgba(220, 229, 245, 0.72);
+    font-weight: 800;
+  }
+
+  .mobile-share-nav:hover,
+  .mobile-share-nav:focus-visible {
+    color: var(--text);
   }
 
   .top-nav {
