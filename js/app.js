@@ -96,6 +96,7 @@ const els = {};
 
 document.addEventListener("DOMContentLoaded", async () => {
   hydrateElements();
+  setManualFallbackDefaultState();
   initGreeting();
   updateLastUpdated();
   initMap();
@@ -109,6 +110,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   setInterval(loadSharedReports, LIVE_REFRESH_MS);
 });
+
+
+function setManualFallbackDefaultState() {
+  if (!els.reportSection) return;
+  const isDesktop = window.matchMedia("(min-width: 1101px)").matches;
+  els.reportSection.open = !isDesktop;
+}
 
 function hydrateElements() {
   [
@@ -168,6 +176,7 @@ function hydrateElements() {
     "mobileReportBtn",
     "desktopReportNearMeBtn",
     "reportModeBanner",
+    "reportSection",
     "mobileAlertsMirror",
     "habitStatusStrip",
     "habitStatusPill",
