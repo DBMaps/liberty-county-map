@@ -766,18 +766,33 @@ function renderHazards() {
 
 function buildHazardPopup(incident) {
   const hazard = incident.latestReport;
+  const isFresh = hazard.minutesAgo <= REPORT_EXPIRATION_MINUTES;
+  const reportStateLabel = isFresh ? "Live community report" : "Needs new confirmation";
+  const reportedLabel = isFresh
+    ? `Reported ${hazard.minutesAgo} min ago`
+    : `Last reported ${hazard.minutesAgo} min ago`;
+  const stateNote = isFresh
+    ? "Drivers can confirm if this hazard is still active."
+    : "This report is stale. Treat as unverified until a new driver confirms it.";
+  const actionButtons = isFresh
+    ? `
+        <button class="popup-report-btn warning" onclick="confirmHazardStillThere('${sanitizeText(hazard.type)}', ${hazard.lat}, ${hazard.lng})">Still There</button>
+        <button class="popup-report-btn blue" onclick="clearHazard('${sanitizeText(hazard.type)}', ${hazard.lat}, ${hazard.lng})">Cleared</button>
+      `
+    : "";
 
   return `
     <div class="gridly-popup">
       <strong>${sanitizeText(hazard.title)}</strong>
       <span>${sanitizeText(hazard.detail)}</span><br />
-      <span>Reported: ${hazard.minutesAgo} min ago</span><br />
+      <span>${sanitizeText(reportedLabel)}</span><br />
+      <span>State: ${sanitizeText(reportStateLabel)}</span><br />
       <span>Confirmations: ${incident.count}</span><br />
       <span>Confidence: ${sanitizeText(getHazardConfidenceLabel(incident.count))}</span><br />
+      <span>${sanitizeText(stateNote)}</span><br />
 
       <div class="popup-report-grid">
-        <button class="popup-report-btn warning" onclick="confirmHazardStillThere('${sanitizeText(hazard.type)}', ${hazard.lat}, ${hazard.lng})">Still There</button>
-        <button class="popup-report-btn blue" onclick="clearHazard('${sanitizeText(hazard.type)}', ${hazard.lat}, ${hazard.lng})">Cleared</button>
+        ${actionButtons}
         <button class="popup-report-btn neutral" onclick="zoomToHazard(${hazard.lat}, ${hazard.lng})">View Area</button>
       </div>
     </div>
