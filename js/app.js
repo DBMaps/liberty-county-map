@@ -1407,12 +1407,14 @@ function openRouteSetupModal() {
   if (!els.routeSetupModal) return;
   els.routeSetupModal.hidden = false;
   document.body.classList.add("modal-open");
+  document.body.classList.add("route-setup-open");
 }
 
 function closeRouteSetupModal() {
   if (!els.routeSetupModal) return;
   els.routeSetupModal.hidden = true;
   document.body.classList.remove("modal-open");
+  document.body.classList.remove("route-setup-open");
 }
 
 function openSmartAlertsModal() {
