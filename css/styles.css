@@ -1218,7 +1218,10 @@ body.modal-open {
 
   
 @media (max-width: 760px) {
-  body.mobile-daily-home-visible #gridlyHazardLauncher,
+  body.mobile-daily-home-visible #gridlyHazardLauncher {
+    display: none !important;
+  }
+
   body.mobile-daily-home-visible #gridlyHazardCounter {
     opacity: 0 !important;
     pointer-events: none !important;
