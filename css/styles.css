@@ -2400,3 +2400,13 @@ body.modal-open {
     display: none !important;
   }
 }
+
+/* V15A mobile hard kill: hide the live Good Morning hero containing #greetingTitle */
+@media (max-width: 760px) {
+  .hero-main-copy,
+  .hero-main-copy:has(#greetingTitle),
+  .hero-card:has(#greetingTitle),
+  #greetingTitle {
+    display: none !important;
+  }
+}
