@@ -649,6 +649,33 @@ function renderCrossings() {
 }
 
 
+
+function getFilterFitPadding() {
+  const isMobile = window.matchMedia && window.matchMedia("(max-width: 768px)").matches;
+  return isMobile ? { topLeft: [28, 28], bottomRight: [28, 180] } : { topLeft: [24, 24], bottomRight: [24, 96] };
+}
+
+function fitMapToCrossingsForActiveFilter(visibleCrossings = []) {
+  if (!map) return;
+  if (!Array.isArray(visibleCrossings) || !visibleCrossings.length) return;
+
+  const latLngs = visibleCrossings
+    .map((crossing) => [Number(crossing.lat), Number(crossing.lng)])
+    .filter(([lat, lng]) => Number.isFinite(lat) && Number.isFinite(lng));
+
+  if (!latLngs.length) return;
+
+  const bounds = L.latLngBounds(latLngs);
+  if (!bounds.isValid()) return;
+
+  map.fitBounds(bounds, {
+    ...getFilterFitPadding(),
+    animate: true,
+    duration: 0.55,
+    maxZoom: 15
+  });
+}
+
 function updateGeoFilterStatus(visibleCrossings = []) {
   if (!els.geoFilterStatus) return;
 
@@ -1460,6 +1487,10 @@ function bindEvents() {
       btn.classList.add("selected");
       activeGeoFilter = btn.dataset.geoFilter || "all";
       renderCrossings();
+
+      const visibleCrossings = getVisibleCrossingsForFilter();
+      if (activeGeoFilter === "active-delays" && !visibleCrossings.length) return;
+      fitMapToCrossingsForActiveFilter(visibleCrossings);
     });
   });
 }
