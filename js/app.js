@@ -204,7 +204,8 @@ function hydrateElements() {
     "mobileUseLocationBtn",
     "routeSetupModal",
     "routeSetupModalBackdrop",
-    "closeRouteSetupModalBtn"
+    "closeRouteSetupModalBtn",
+    "mobileEditRouteBtn"
   ].forEach((id) => {
     els[id] = document.getElementById(id);
   });
@@ -1287,17 +1288,9 @@ window.zoomToCrossing = function (crossingId) {
 };
 
 function bindEvents() {
-  const bindTapSafeClose = (element, handler, { allowPointer = true } = {}) => {
+  const bindTapSafeClose = (element, handler) => {
     if (!element) return;
-    const wrappedHandler = (event) => {
-      event?.preventDefault?.();
-      handler();
-    };
-    element.addEventListener("click", wrappedHandler);
-    element.addEventListener("touchend", wrappedHandler, { passive: false });
-    if (allowPointer && window.PointerEvent) {
-      element.addEventListener("pointerup", wrappedHandler);
-    }
+    element.addEventListener("click", handler);
   };
 
   els.saveRouteBtn?.addEventListener("click", saveRoute);
@@ -1331,6 +1324,11 @@ function bindEvents() {
   els.routeSetupModal?.addEventListener("click", (event) => {
     if (event.target === els.routeSetupModal) closeRouteSetupModal();
   });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !els.routeSetupModal?.hidden) {
+      closeRouteSetupModal();
+    }
+  });
   els.smartAlertsModalBackdrop?.addEventListener("click", closeSmartAlertsModal);
   els.openSmartAlertsBtn?.addEventListener("click", openSmartAlertsModal);
 
@@ -1347,13 +1345,21 @@ function bindEvents() {
 
   const handleRouteCardInteraction = () => {
     const hasSavedRoute = Boolean(localStorage.getItem("gridlyHome") && localStorage.getItem("gridlyWork"));
-    if (!hasSavedRoute && window.matchMedia("(max-width: 1100px)").matches) {
-      openRouteSetupModal();
+    const isMobile = window.matchMedia("(max-width: 1100px)").matches;
+
+    if (isMobile) {
+      if (!hasSavedRoute) openRouteSetupModal();
       return;
     }
 
     scrollToSection("setupCard");
   };
+
+  els.mobileEditRouteBtn?.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    openRouteSetupModal();
+  });
 
   els.routeStatusCard?.addEventListener("click", handleRouteCardInteraction);
   els.routeStatusCard?.addEventListener("keydown", (event) => {
@@ -1753,7 +1759,7 @@ function saveRoute(source = "desktop") {
   flashButton(button, "Route Saved");
 
   if (source === "mobile") {
-    setTimeout(closeRouteSetupModal, 250);
+    closeRouteSetupModal();
   }
 }
 
@@ -1909,19 +1915,19 @@ function updateRouteIntelligence(nearest = []) {
     safeText("departureReason", "Home and Work unlock personalized route intelligence.");
     els.routeStatusCard?.classList.add("delayed");
   } else if (impact >= 70) {
-    safeText("routeStatus", "Delayed");
+    safeText("routeStatus", "Saved · Delayed");
     safeText("routeEta", `ETA 32 min (+${extraMinutes})`);
     safeText("departureTime", "Leave now");
     safeText("departureReason", "High shared route impact detected.");
     els.routeStatusCard?.classList.add("high");
   } else if (impact >= 40) {
-    safeText("routeStatus", "Watch");
+    safeText("routeStatus", "Saved · Watch");
     safeText("routeEta", `ETA 26 min (+${extraMinutes})`);
     safeText("departureTime", "Leave 8 min early");
     safeText("departureReason", "Moderate shared report risk detected.");
     els.routeStatusCard?.classList.add("delayed");
   } else {
-    safeText("routeStatus", "Clear");
+    safeText("routeStatus", "Saved · Clear");
     safeText("routeEta", "ETA 21 min");
     safeText("departureTime", "Normal departure");
     safeText("departureReason", "No major active shared delay detected.");
