@@ -2346,3 +2346,43 @@ body.modal-open {
     display: none !important;
   }
 }
+
+/* V15A emergency hard override: mobile hero stack */
+@media (max-width: 760px) {
+  .driver-hero {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .driver-hero > * {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    position: static !important;
+    transform: none !important;
+  }
+
+  .hero-main-copy,
+  .hero-command-card,
+  .route-status-card,
+  .hero-actions,
+  .hero-command-card .route-status-card,
+  .hero-command-card button,
+  .hero-command-card a {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    position: static !important;
+    transform: none !important;
+    box-sizing: border-box !important;
+  }
+
+  .hero-actions {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+}
