@@ -785,6 +785,57 @@ select:focus {
   text-overflow: ellipsis;
 }
 
+
+.route-status-card {
+  cursor: pointer;
+}
+
+.route-status-card:focus-visible {
+  outline: 2px solid rgba(77, 163, 255, 0.8);
+  outline-offset: 2px;
+}
+
+.route-setup-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1400;
+  display: grid;
+  place-items: end center;
+}
+
+.route-setup-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(3, 8, 15, 0.62);
+}
+
+.route-setup-modal-card {
+  position: relative;
+  width: min(560px, 100%);
+  border-radius: 22px 22px 0 0;
+  border: 1px solid var(--border);
+  background: rgba(8, 14, 24, 0.98);
+  padding: 18px;
+  box-shadow: 0 -22px 60px rgba(0, 0, 0, 0.5);
+}
+
+.route-setup-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.route-setup-grid-mobile {
+  margin-top: 12px;
+}
+
+@media (min-width: 1101px) {
+  .route-setup-modal {
+    display: none !important;
+  }
+}
+
 .smart-alerts-modal {
   position: fixed;
   inset: 0;

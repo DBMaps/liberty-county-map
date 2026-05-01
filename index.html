@@ -62,7 +62,7 @@
         </div>
 
         <div class="hero-command-card">
-          <div class="route-status-card delayed" id="routeStatusCard">
+          <div class="route-status-card delayed" id="routeStatusCard" role="button" tabindex="0" aria-label="Set or review route">
             <span class="status-label" id="routeCardLabel">Route Status</span>
             <strong id="routeStatus">Checking...</strong>
             <span id="routeEta">ETA calculating</span>
@@ -309,6 +309,33 @@
   </main>
 
   <button class="mobile-sticky-report" id="mobileReportBtn">Report Near Me</button>
+
+
+  <div class="route-setup-modal" id="routeSetupModal" hidden>
+    <div class="route-setup-modal-backdrop" id="routeSetupModalBackdrop"></div>
+    <div class="route-setup-modal-card" role="dialog" aria-modal="true" aria-labelledby="routeSetupTitle">
+      <div class="route-setup-modal-head">
+        <span class="eyebrow">Daily Route</span>
+        <button type="button" class="secondary-btn compact-btn" id="closeRouteSetupModalBtn">Close</button>
+      </div>
+      <h2 id="routeSetupTitle">Save Home + Work</h2>
+      <p class="smart-alerts-subtitle">Your commute stays on this device and powers personalized route intelligence.</p>
+      <div class="setup-grid route-setup-grid-mobile">
+        <label>
+          Home
+          <input id="mobileHomeInput" type="text" placeholder="Example: Dayton, TX" autocomplete="address-line1" />
+        </label>
+
+        <label>
+          Work
+          <input id="mobileWorkInput" type="text" placeholder="Example: Crosby, TX" autocomplete="organization" />
+        </label>
+
+        <button id="mobileSaveRouteBtn" class="primary-btn" type="button">Save Route</button>
+        <button id="mobileUseLocationBtn" class="secondary-btn" type="button">Use My Location</button>
+      </div>
+    </div>
+  </div>
 
   <div class="smart-alerts-modal" id="smartAlertsModal" hidden>
     <div class="smart-alerts-modal-backdrop" id="smartAlertsModalBackdrop"></div>

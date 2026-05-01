@@ -197,7 +197,14 @@ function hydrateElements() {
     "smartAlertNeedsConfirm",
     "saveSmartAlertsBtn",
     "smartAlertsConfirmation",
-    "smartAlertsBanner"
+    "smartAlertsBanner",
+    "mobileHomeInput",
+    "mobileWorkInput",
+    "mobileSaveRouteBtn",
+    "mobileUseLocationBtn",
+    "routeSetupModal",
+    "routeSetupModalBackdrop",
+    "closeRouteSetupModalBtn"
   ].forEach((id) => {
     els[id] = document.getElementById(id);
   });
@@ -1282,6 +1289,7 @@ window.zoomToCrossing = function (crossingId) {
 function bindEvents() {
   els.saveRouteBtn?.addEventListener("click", saveRoute);
   els.useLocationBtn?.addEventListener("click", handleReportNearMe);
+  els.mobileUseLocationBtn?.addEventListener("click", handleReportNearMe);
 
   els.refreshBtn?.addEventListener("click", async () => {
     if (crossingLoadFailed) {
@@ -1301,6 +1309,9 @@ function bindEvents() {
   els.desktopReportNearMeBtn?.addEventListener("click", handleReportNearMe);
   els.saveSmartAlertsBtn?.addEventListener("click", saveSmartAlertsPreferences);
   els.closeSmartAlertsModalBtn?.addEventListener("click", closeSmartAlertsModal);
+  els.mobileSaveRouteBtn?.addEventListener("click", () => saveRoute("mobile"));
+  els.closeRouteSetupModalBtn?.addEventListener("click", closeRouteSetupModal);
+  els.routeSetupModalBackdrop?.addEventListener("click", closeRouteSetupModal);
   els.smartAlertsModalBackdrop?.addEventListener("click", closeSmartAlertsModal);
   els.openSmartAlertsBtn?.addEventListener("click", openSmartAlertsModal);
 
@@ -1313,6 +1324,24 @@ function bindEvents() {
     await createSharedReport(lastSubmittedCrossing, "cleared", "quick clear follow-up", els.quickClearBtn);
     els.quickClearCard?.classList.remove("visible");
     resetSmartReportButton();
+  });
+
+  const handleRouteCardInteraction = () => {
+    const hasSavedRoute = Boolean(localStorage.getItem("gridlyHome") && localStorage.getItem("gridlyWork"));
+    if (!hasSavedRoute && window.matchMedia("(max-width: 1100px)").matches) {
+      openRouteSetupModal();
+      return;
+    }
+
+    scrollToSection("setupCard");
+  };
+
+  els.routeStatusCard?.addEventListener("click", handleRouteCardInteraction);
+  els.routeStatusCard?.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handleRouteCardInteraction();
+    }
   });
 
   document.querySelectorAll(".nav-btn").forEach((btn) => {
@@ -1373,6 +1402,18 @@ function bindEvents() {
   });
 }
 
+
+function openRouteSetupModal() {
+  if (!els.routeSetupModal) return;
+  els.routeSetupModal.hidden = false;
+  document.body.classList.add("modal-open");
+}
+
+function closeRouteSetupModal() {
+  if (!els.routeSetupModal) return;
+  els.routeSetupModal.hidden = true;
+  document.body.classList.remove("modal-open");
+}
 
 function openSmartAlertsModal() {
   if (!els.smartAlertsModal) return;
@@ -1657,12 +1698,27 @@ function getReportCopy(type) {
   return types[type] || types.other;
 }
 
-function saveRoute() {
-  const home = els.homeInput?.value.trim();
-  const work = els.workInput?.value.trim();
+function getRouteInputValues(source = "desktop") {
+  if (source === "mobile") {
+    return {
+      home: els.mobileHomeInput?.value.trim(),
+      work: els.mobileWorkInput?.value.trim(),
+      button: els.mobileSaveRouteBtn
+    };
+  }
+
+  return {
+    home: els.homeInput?.value.trim(),
+    work: els.workInput?.value.trim(),
+    button: els.saveRouteBtn
+  };
+}
+
+function saveRoute(source = "desktop") {
+  const { home, work, button } = getRouteInputValues(source);
 
   if (!home || !work) {
-    flashButton(els.saveRouteBtn, "Add Home + Work");
+    flashButton(button, "Add Home + Work");
     return;
   }
 
@@ -1672,7 +1728,11 @@ function saveRoute() {
   loadSavedRoute();
   updateRouteIntelligence();
   updateGrowthWidgets();
-  flashButton(els.saveRouteBtn, "Route Saved");
+  flashButton(button, "Route Saved");
+
+  if (source === "mobile") {
+    setTimeout(closeRouteSetupModal, 250);
+  }
 }
 
 function loadSavedRoute() {
@@ -1682,11 +1742,13 @@ function loadSavedRoute() {
   if (home) {
     safeText("savedHome", home);
     if (els.homeInput) els.homeInput.value = home;
+    if (els.mobileHomeInput) els.mobileHomeInput.value = home;
   }
 
   if (work) {
     safeText("savedWork", work);
     if (els.workInput) els.workInput.value = work;
+    if (els.mobileWorkInput) els.mobileWorkInput.value = work;
   }
 }
 
