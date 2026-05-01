@@ -78,17 +78,36 @@
         </div>
       </div>
 
-      <div class="mobile-priority-strip">
-        <article class="mobile-priority-card">
-          <span>Delay Risk</span>
+      <div class="mobile-home-cards" aria-label="Today quick view">
+        <article class="mobile-home-card live-status-card">
+          <span>Live Rail Status</span>
           <strong id="delayRisk">Moderate</strong>
           <p id="delayReason">Nearby railroad crossing activity may affect travel.</p>
         </article>
 
-        <article class="mobile-priority-card">
-          <span>Active Alerts</span>
-          <strong id="nearbyAlertCount">0</strong>
+        <div class="mobile-quick-actions" aria-label="Quick actions">
+          <button class="secondary-btn" id="mobileQuickReportBtn" type="button">Report Delay</button>
+          <button class="secondary-btn" id="mobileQuickClearedBtn" type="button">Cleared</button>
+          <button class="secondary-btn" id="mobileQuickRouteBtn" type="button">My Route</button>
+          <button class="secondary-btn" id="mobileQuickFavoritesBtn" type="button">Favorites</button>
+        </div>
+
+        <article class="mobile-home-card">
+          <span>Commute + Risk</span>
+          <strong id="routeRecommendation">Checking local crossings...</strong>
+          <p id="routeRecommendationReason">Gridly is watching live reports and crossing risk.</p>
+        </article>
+
+        <article class="mobile-home-card">
+          <span>Most Active Crossings</span>
+          <strong id="nearbyAlertCount">0 active now</strong>
           <p id="activeAlertText">Live shared reports near your saved or current location.</p>
+        </article>
+
+        <article class="mobile-home-card">
+          <span>Community Impact</span>
+          <strong id="communityTrust">Building signal</strong>
+          <p id="communityTrustReason">Shared reports become stronger when more drivers confirm them.</p>
         </article>
       </div>
 
@@ -246,19 +265,6 @@
       </aside>
     </section>
 
-    <section class="mobile-alerts-panel" id="mobileAlertsPanel">
-      <div class="mobile-panel-header">
-        <div>
-          <p class="eyebrow">Live Alerts</p>
-          <h2>What drivers are reporting</h2>
-        </div>
-        <button class="secondary-btn compact-btn" data-section-jump="alerts">View</button>
-      </div>
-
-      <div id="mobileAlertsMirror" class="mobile-alerts-note">
-        Live reports appear in the alerts panel and on the map.
-      </div>
-    </section>
 
     <details class="report-card report-drawer" id="reportSection">
       <summary class="report-drawer-summary"><span class="eyebrow">Report Search</span><h2>Search or manually report a crossing</h2></summary>
