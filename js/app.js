@@ -1287,6 +1287,19 @@ window.zoomToCrossing = function (crossingId) {
 };
 
 function bindEvents() {
+  const bindTapSafeClose = (element, handler, { allowPointer = true } = {}) => {
+    if (!element) return;
+    const wrappedHandler = (event) => {
+      event?.preventDefault?.();
+      handler();
+    };
+    element.addEventListener("click", wrappedHandler);
+    element.addEventListener("touchend", wrappedHandler, { passive: false });
+    if (allowPointer && window.PointerEvent) {
+      element.addEventListener("pointerup", wrappedHandler);
+    }
+  };
+
   els.saveRouteBtn?.addEventListener("click", saveRoute);
   els.useLocationBtn?.addEventListener("click", handleReportNearMe);
   els.mobileUseLocationBtn?.addEventListener("click", () => {
@@ -1313,9 +1326,8 @@ function bindEvents() {
   els.saveSmartAlertsBtn?.addEventListener("click", saveSmartAlertsPreferences);
   els.closeSmartAlertsModalBtn?.addEventListener("click", closeSmartAlertsModal);
   els.mobileSaveRouteBtn?.addEventListener("click", () => saveRoute("mobile"));
-  els.closeRouteSetupModalBtn?.addEventListener("click", closeRouteSetupModal);
-  els.routeSetupModalBackdrop?.addEventListener("click", closeRouteSetupModal);
-  els.routeSetupModalBackdrop?.addEventListener("touchend", closeRouteSetupModal, { passive: true });
+  bindTapSafeClose(els.closeRouteSetupModalBtn, closeRouteSetupModal);
+  bindTapSafeClose(els.routeSetupModalBackdrop, closeRouteSetupModal);
   els.routeSetupModal?.addEventListener("click", (event) => {
     if (event.target === els.routeSetupModal) closeRouteSetupModal();
   });
