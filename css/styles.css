@@ -275,6 +275,11 @@ button {
   gap: 8px;
 }
 
+.hero-route-btn,
+.hero-alerts-btn {
+  display: none;
+}
+
 .eyebrow {
   margin: 0 0 7px;
   color: var(--accent);
@@ -1490,6 +1495,11 @@ body.modal-open {
     background: rgba(255, 255, 255, 0.03);
   }
 
+  .hero-route-btn,
+  .hero-alerts-btn {
+    display: none;
+  }
+
   #desktopReportNearMeBtn {
     position: fixed;
     right: 28px;
@@ -1717,7 +1727,15 @@ body.modal-open {
   }
 
   .hero-actions {
-    display: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .hero-route-btn,
+  .hero-alerts-btn {
+    display: inline-flex;
+    justify-content: center;
   }
 
   .habit-status-strip {
@@ -1734,6 +1752,10 @@ body.modal-open {
 
   .route-status-card {
     padding: 18px;
+  }
+
+  .hero-command-card {
+    gap: 12px;
   }
 
   .route-status-card strong {
