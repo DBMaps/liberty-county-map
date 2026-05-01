@@ -2073,24 +2073,30 @@ function updateRouteIntelligence(nearest = []) {
     els.routeStatusCard?.classList.add("clear");
   }
 
+  const liveStatusCard = document.querySelector(".mobile-live-hero");
+  liveStatusCard?.classList.remove("clear-status", "delay-status", "blocked-status");
+
   if (impact >= 70) {
     safeText("delayRisk", "Delays Active");
     safeText("delayReason", "Major crossing blockage detected.");
     safeText("alternateRoute", "Use alternate");
     safeText("alternateReason", "Avoid highest-impact crossing if possible.");
     safeText("impactText", "High route impact. Leave now or reroute.");
+    liveStatusCard?.classList.add("blocked-status");
   } else if (impact >= 40) {
     safeText("delayRisk", "Delays Active");
     safeText("delayReason", "Some crossing or traffic risk detected.");
     safeText("alternateRoute", "Have backup");
     safeText("alternateReason", "Alternate route may help if reports increase.");
     safeText("impactText", "Moderate route impact. Watch before leaving.");
+    liveStatusCard?.classList.add("delay-status");
   } else {
     safeText("delayRisk", "All Clear");
     safeText("delayReason", "No delays reported nearby");
     safeText("alternateRoute", "Not needed");
     safeText("alternateReason", "Current route appears clear.");
     safeText("impactText", "Low route impact. Normal travel expected.");
+    liveStatusCard?.classList.add("clear-status");
   }
 }
 
