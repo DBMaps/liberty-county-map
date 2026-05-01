@@ -1519,6 +1519,10 @@ function bindEvents() {
     });
   });
 
+  window.addEventListener("scroll", syncMobileDailyHomeOverlayState, { passive: true });
+  window.addEventListener("resize", syncMobileDailyHomeOverlayState);
+  syncMobileDailyHomeOverlayState();
+
   document.querySelectorAll(".geo-filter-pill").forEach((btn) => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".geo-filter-pill").forEach((pill) => {
@@ -1535,6 +1539,26 @@ function bindEvents() {
   });
 }
 
+
+function syncMobileDailyHomeOverlayState() {
+  const isMobile = window.matchMedia("(max-width: 760px)").matches;
+  const dashboard = document.getElementById("dashboardSection");
+  const dailyHome = document.getElementById("dailyHomeMobile");
+
+  if (!isMobile || !dashboard || !dailyHome) {
+    document.body.classList.remove("mobile-daily-home-visible");
+    return;
+  }
+
+  const viewportTop = window.pageYOffset;
+  const viewportBottom = viewportTop + window.innerHeight;
+  const cardTop = dailyHome.offsetTop;
+  const cardBottom = cardTop + dailyHome.offsetHeight;
+  const isDashboardVisible = dashboard.getBoundingClientRect().top < window.innerHeight;
+  const inDailyHomeViewport = cardTop < viewportBottom && cardBottom > viewportTop;
+
+  document.body.classList.toggle("mobile-daily-home-visible", isDashboardVisible && inDailyHomeViewport);
+}
 
 function openRouteSetupModal() {
   if (!els.routeSetupModal) return;

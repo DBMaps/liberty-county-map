@@ -1216,7 +1216,17 @@ body.modal-open {
     display: none !important;
   }
 
-  #gridlyHazardLauncher.gridly-hazard-launcher {
+  
+@media (max-width: 760px) {
+  body.mobile-daily-home-visible #gridlyHazardLauncher,
+  body.mobile-daily-home-visible #gridlyHazardCounter {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateY(18px) !important;
+  }
+}
+
+#gridlyHazardLauncher.gridly-hazard-launcher {
     right: auto !important;
     left: 22px !important;
     bottom: 26px !important;
