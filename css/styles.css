@@ -2140,11 +2140,17 @@ body.modal-open {
   }
 
   .hero-card {
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 12px;
     align-items: stretch;
     padding: 16px;
+    overflow: hidden;
+  }
+
+  .driver-hero {
+    display: flex;
+    flex-direction: column;
   }
 
   .hero-main-copy,
@@ -2153,6 +2159,10 @@ body.modal-open {
     width: 100%;
     max-width: 100%;
     min-width: 0;
+  }
+
+  .route-status-card {
+    width: 100%;
   }
 
   .hero-command-card {
