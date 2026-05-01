@@ -238,6 +238,7 @@ button {
 .report-card,
 .growth-card,
 .mobile-priority-card,
+.mobile-home-card,
 .mobile-alerts-panel,
 .desktop-business-note {
   background: var(--card);
@@ -443,6 +444,11 @@ h2 {
   margin: 0;
   color: var(--muted);
   line-height: 1.35;
+}
+
+
+.mobile-home-cards {
+  display: none;
 }
 
 .command-summary-grid {
@@ -1959,20 +1965,43 @@ body.modal-open {
   }
 
   .mobile-priority-strip {
-    display: grid;
+    display: none;
   }
 
-  .mobile-priority-card {
+  .mobile-home-cards {
+    display: grid;
+    gap: 10px;
+  }
+
+  .mobile-home-card {
     padding: 15px;
     border-radius: 22px;
   }
 
-  .mobile-priority-card strong {
-    font-size: 1.45rem;
+  .mobile-home-card strong {
+    display: block;
+    font-size: 1.2rem;
+    margin: 6px 0;
   }
 
-  .mobile-priority-card p {
+  .mobile-home-card p {
+    margin: 0;
+    color: var(--muted);
     font-size: 0.83rem;
+  }
+
+  .mobile-quick-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .mobile-quick-actions .secondary-btn {
+    border-radius: 16px;
+    border-color: rgba(77,163,255,0.38);
+    background: rgba(77,163,255,0.1);
+    color: #d9ebff;
+    min-height: 48px;
   }
 
   .command-center {
@@ -2005,8 +2034,7 @@ body.modal-open {
   }
 
   .mobile-alerts-panel {
-    display: block;
-    border-radius: 24px;
+    display: none;
   }
 
   .report-card {
@@ -2078,6 +2106,13 @@ body.modal-open {
 
   .mobile-sticky-report.clear-mode {
     background: linear-gradient(135deg, var(--warning), var(--accent));
+  }
+
+
+  #gridlyHazardLauncher,
+  #gridlyHazardCounter,
+  #gridlyHazardPanel {
+    display: none !important;
   }
 
   .app-footer {
