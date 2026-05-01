@@ -1218,11 +1218,16 @@ body.modal-open {
 
   
 @media (max-width: 760px) {
-  body.mobile-daily-home-visible #gridlyHazardLauncher {
+  #gridlyHazardLauncher,
+  #gridlyHazardCounter,
+  #gridlyHazardLauncher .gridly-inline-chip,
+  #gridlyHazardLauncher .desktop-hazard-chip {
     display: none !important;
   }
 
+  body.mobile-daily-home-visible #gridlyHazardLauncher,
   body.mobile-daily-home-visible #gridlyHazardCounter {
+    display: none !important;
     opacity: 0 !important;
     pointer-events: none !important;
     transform: translateY(18px) !important;
@@ -1230,11 +1235,10 @@ body.modal-open {
 }
 
 #gridlyHazardLauncher.gridly-hazard-launcher {
-    right: auto !important;
-    left: 22px !important;
-    bottom: 26px !important;
-    max-width: min(360px, calc(100vw - 44px));
-  }
+  right: auto !important;
+  left: 22px !important;
+  bottom: 26px !important;
+  max-width: min(360px, calc(100vw - 44px));
 }
 
 .source-pill,
