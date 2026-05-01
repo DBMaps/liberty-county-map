@@ -2386,3 +2386,17 @@ body.modal-open {
     gap: 10px !important;
   }
 }
+
+
+/* V15A mobile rollback: remove broken morning hero surfaces */
+@media (max-width: 760px) {
+  #dailyHeroCard,
+  .driver-hero {
+    display: none !important;
+  }
+
+  #gridlyHazardLauncher,
+  #gridlyHazardCounter {
+    display: none !important;
+  }
+}
