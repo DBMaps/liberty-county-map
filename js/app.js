@@ -1489,6 +1489,8 @@ function bindEvents() {
       if (btn.dataset.section === "map") {
         setTimeout(() => map?.invalidateSize(), 350);
       }
+
+      syncMobileTodayHazardLauncherVisibility();
     });
   });
 
@@ -1510,8 +1512,13 @@ function bindEvents() {
       if (btn.dataset.sectionJump === "map") {
         setTimeout(() => map?.invalidateSize(), 350);
       }
+
+      syncMobileTodayHazardLauncherVisibility();
     });
   });
+
+  window.addEventListener("resize", syncMobileTodayHazardLauncherVisibility);
+  syncMobileTodayHazardLauncherVisibility();
 
   document.querySelectorAll(".geo-filter-pill").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -3051,6 +3058,28 @@ function injectMobileCTACleanupStyles() {
   `;
 
   document.head.appendChild(style);
+}
+
+function syncMobileTodayHazardLauncherVisibility() {
+  const launcher = document.getElementById("gridlyHazardLauncher");
+  const counter = document.getElementById("gridlyHazardCounter");
+  const panel = document.getElementById("gridlyHazardPanel");
+
+  if (!launcher) return;
+
+  const isMobile = window.matchMedia("(max-width: 760px)").matches;
+  const activeSection = document.querySelector(".nav-btn.active")?.dataset.section;
+  const hideOnTodayMobile = isMobile && activeSection === "dashboard";
+
+  launcher.style.display = hideOnTodayMobile ? "none" : "";
+
+  if (counter) {
+    counter.style.display = hideOnTodayMobile ? "none" : "";
+  }
+
+  if (hideOnTodayMobile) {
+    panel?.classList.remove("visible");
+  }
 }
 /* =========================================================
    GRIDLY V12.6A — BETA LAUNCH PACK
