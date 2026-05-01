@@ -1948,3 +1948,9 @@ body.modal-open {
     font-size: 0.81rem;
   }
 }
+
+@media (max-width: 1100px) {
+  #gridlyBetaLaunchWrap .gridly-share-btn {
+    display: none !important;
+  }
+}
