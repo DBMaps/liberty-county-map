@@ -3069,15 +3069,15 @@ function syncMobileTodayHazardLauncherVisibility() {
 
   const isMobile = window.matchMedia("(max-width: 760px)").matches;
   const activeSection = document.querySelector(".nav-btn.active")?.dataset.section;
-  const hideOnTodayMobile = isMobile && activeSection === "dashboard";
+  const hideOnMobileSections = isMobile && (activeSection === "dashboard" || activeSection === "map");
 
-  launcher.style.display = hideOnTodayMobile ? "none" : "";
+  launcher.style.display = hideOnMobileSections ? "none" : "";
 
   if (counter) {
-    counter.style.display = hideOnTodayMobile ? "none" : "";
+    counter.style.display = hideOnMobileSections ? "none" : "";
   }
 
-  if (hideOnTodayMobile) {
+  if (hideOnMobileSections) {
     panel?.classList.remove("visible");
   }
 }
