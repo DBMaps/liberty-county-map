@@ -699,9 +699,10 @@ select:focus {
 }
 
 .desktop-command-panel {
-  height: 610px;
-  max-height: 610px;
-  overflow-y: auto;
+  height: auto;
+  min-height: 610px;
+  max-height: none;
+  overflow: visible;
   align-self: stretch;
 }
 
@@ -850,6 +851,12 @@ select:focus {
   text-decoration: underline;
 }
 
+
+@media (min-width: 1101px) {
+  .desktop-route-watch-rail {
+    display: none;
+  }
+}
 @media (max-width: 1100px) {
   .desktop-route-watch-strip {
     display: none;
