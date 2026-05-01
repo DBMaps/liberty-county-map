@@ -2139,9 +2139,36 @@ body.modal-open {
     padding-right: 10px;
   }
 
+  .hero-card {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    align-items: stretch;
+    padding: 16px;
+  }
+
+  .hero-main-copy,
+  .hero-command-card,
+  .route-status-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .hero-command-card {
+    display: grid;
+    gap: 12px;
+    align-content: start;
+  }
+
   .hero-actions,
   .daily-quick-actions {
     grid-template-columns: 1fr;
+  }
+
+  .hero-actions {
+    display: grid;
+    gap: 10px;
   }
 
   .hero-actions .primary-btn,
