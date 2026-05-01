@@ -1971,12 +1971,7 @@ function updateRouteIntelligence(nearest = []) {
   const moderateAlerts = activeIssues.filter((report) => report.severity === "moderate").length;
   const confirmedIncidents = getConsolidatedIncidents().filter((incident) => {
     const reports = Array.isArray(incident?.reports) ? incident.reports : [];
-
-    if (!Array.isArray(incident?.reports)) {
-      console.warn("Route intelligence incident is missing a reports array; skipping incident.", incident);
-    }
-
-    const latest = [...reports].sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))[0];
+    const latest = reports[0] || [...reports].sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))[0];
     return latest && latest.type !== "cleared" && reports.length >= 2;
   }).length;
   const desktopRouteSummary = `${activeIssues.length} live hazard${activeIssues.length === 1 ? "" : "s"} · ${confirmedIncidents} confirmed`;
@@ -2295,10 +2290,19 @@ function getLatestReportsByCrossing() {
 
 function getConsolidatedIncidents() {
   const grouped = new Map();
+  let warnedMalformedReport = false;
 
   activeReports
     .filter((report) => !report.expired)
     .forEach((report) => {
+      if (report?.crossingId == null) {
+        if (!warnedMalformedReport) {
+          console.warn("Consolidated incidents received malformed report data (missing crossingId).", report);
+          warnedMalformedReport = true;
+        }
+        return;
+      }
+
       const key = String(report.crossingId);
 
       if (!grouped.has(key)) {
@@ -2314,17 +2318,19 @@ function getConsolidatedIncidents() {
 
   return [...grouped.values()]
     .map((incident) => {
-      const sorted = incident.reports.sort(
+      const reports = Array.isArray(incident.reports) ? incident.reports : [];
+      const sorted = [...reports].sort(
         (a, b) => new Date(b.submittedAt) - new Date(a.submittedAt)
       );
 
       return {
         crossingId: incident.crossingId,
         crossingName: incident.crossingName,
+        reports: sorted,
         count: sorted.length,
         latestReport: sorted[0],
-        newestMinutes: Math.min(...sorted.map((r) => r.minutesAgo)),
-        oldestMinutes: Math.max(...sorted.map((r) => r.minutesAgo))
+        newestMinutes: sorted.length ? Math.min(...sorted.map((r) => r.minutesAgo)) : 0,
+        oldestMinutes: sorted.length ? Math.max(...sorted.map((r) => r.minutesAgo)) : 0
       };
     })
     .sort((a, b) => {
