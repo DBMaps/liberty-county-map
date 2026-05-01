@@ -2282,7 +2282,30 @@ function renderTrendingCrossings() {
   const incidents = getConsolidatedIncidents().slice(0, 3);
 
   if (!incidents.length) {
-    els.trendingList.innerHTML = `<div class="trend-item muted">Waiting for shared reports...</div>`;
+    // V15A Trending Crossings Fallback
+    const fallbackCrossings = getTrendingFallbackCrossings();
+
+    if (!fallbackCrossings.length) {
+      els.trendingList.innerHTML = `<div class="trend-item muted">Monitoring curated crossings...</div>`;
+      return;
+    }
+
+    els.trendingList.innerHTML = fallbackCrossings
+      .map((crossing) => {
+        const statusLabel = crossing.distanceLabel ? "No active reports" : "Monitoring";
+        const detailLabel = crossing.distanceLabel
+          ? `${crossing.distanceLabel} · Calm conditions`
+          : `${crossing.railroad} · Calm conditions`;
+
+        return `
+          <button class="trend-item" type="button" onclick="zoomToCrossing('${sanitizeText(crossing.id)}')">
+            <strong>${sanitizeText(crossing.name)}</strong>
+            <p>${sanitizeText(statusLabel)} · ${sanitizeText(detailLabel)}</p>
+            <p>Live updates appear automatically when shared reports are submitted.</p>
+          </button>
+        `;
+      })
+      .join("");
     return;
   }
 
@@ -2309,6 +2332,26 @@ function renderTrendingCrossings() {
       `;
     })
     .join("");
+}
+
+function getTrendingFallbackCrossings() {
+  // V15A Rail Pulse Fallback
+  if (!crossings.length) return [];
+
+  if (userLocation) {
+    return findNearestCrossings(userLocation.lat, userLocation.lng, 3).map((crossing) => ({
+      ...crossing,
+      distanceLabel: `${crossing.distance.toFixed(1)} mi away`
+    }));
+  }
+
+  return [...crossings]
+    .sort((a, b) => (b.risk || 0) - (a.risk || 0) || a.name.localeCompare(b.name))
+    .slice(0, 3)
+    .map((crossing) => ({
+      ...crossing,
+      distanceLabel: ""
+    }));
 }
 
 function updateMobileAlertsMirror() {
