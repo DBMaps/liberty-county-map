@@ -556,6 +556,40 @@ select:focus {
   min-width: 0;
 }
 
+.desktop-route-watch-strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(94, 236, 186, 0.3);
+  background: linear-gradient(135deg, rgba(67, 230, 160, 0.12), rgba(96, 185, 255, 0.08));
+}
+
+.route-watch-strip-copy {
+  min-width: 0;
+}
+
+.route-watch-strip-copy strong,
+.route-watch-strip-copy p {
+  display: block;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.route-watch-strip-copy strong {
+  margin: 3px 0 4px;
+}
+
+.route-watch-strip-copy p {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
 .section-header {
   display: flex;
   justify-content: space-between;
@@ -790,6 +824,11 @@ select:focus {
   text-overflow: ellipsis;
 }
 
+.route-watch-secondary-note {
+  font-size: 0.78rem;
+  opacity: 0.82;
+}
+
 
 .route-status-card {
   cursor: pointer;
@@ -812,6 +851,10 @@ select:focus {
 }
 
 @media (max-width: 1100px) {
+  .desktop-route-watch-strip {
+    display: none;
+  }
+
   .route-edit-link {
     display: inline-flex;
     align-self: flex-start;

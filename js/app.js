@@ -140,6 +140,11 @@ function hydrateElements() {
     "alternateReason",
     "savedHome",
     "savedWork",
+    "desktopRouteHome",
+    "desktopRouteWork",
+    "desktopRouteStatus",
+    "desktopManageRouteBtn",
+    "sideRouteWatchHint",
     "homeInput",
     "workInput",
     "saveRouteBtn",
@@ -1424,6 +1429,9 @@ function bindEvents() {
     event.stopPropagation();
     openRouteSetupModal();
   });
+  els.desktopManageRouteBtn?.addEventListener("click", () => {
+    scrollToSection("setupCard");
+  });
 
   els.routeStatusCard?.addEventListener("click", handleRouteCardInteraction);
   els.routeStatusCard?.addEventListener("keydown", (event) => {
@@ -1841,12 +1849,14 @@ function loadSavedRoute() {
 
   if (home) {
     safeText("savedHome", home);
+    safeText("desktopRouteHome", home);
     if (els.homeInput) els.homeInput.value = home;
     if (els.mobileHomeInput) els.mobileHomeInput.value = home;
   }
 
   if (work) {
     safeText("savedWork", work);
+    safeText("desktopRouteWork", work);
     if (els.workInput) els.workInput.value = work;
     if (els.mobileWorkInput) els.mobileWorkInput.value = work;
   }
@@ -1954,6 +1964,11 @@ function updateRouteIntelligence(nearest = []) {
 
   const highAlerts = activeIssues.filter((report) => report.severity === "high").length;
   const moderateAlerts = activeIssues.filter((report) => report.severity === "moderate").length;
+  const confirmedIncidents = getConsolidatedIncidents().filter((incident) => {
+    const latest = incident.reports.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))[0];
+    return latest && latest.type !== "cleared" && incident.reports.length >= 2;
+  }).length;
+  const desktopRouteSummary = `${activeIssues.length} live hazard${activeIssues.length === 1 ? "" : "s"} · ${confirmedIncidents} confirmed`;
 
   const crossingRisk = nearest.length
     ? Math.round(nearest.reduce((sum, c) => sum + c.risk, 0) / nearest.length)
@@ -1983,6 +1998,8 @@ function updateRouteIntelligence(nearest = []) {
   if (!savedHome || !savedWork) {
     safeText("routeStatus", "Set Route");
     safeText("routeEta", "Save Home + Work");
+    safeText("desktopRouteStatus", "Set Home + Work to monitor live hazards and confirmations.");
+    safeText("sideRouteWatchHint", "Primary route watch is pinned above the live map.");
     safeText("departureTime", "Set route first");
     safeText("departureReason", "Home and Work unlock personalized route intelligence.");
     els.routeStatusCard?.classList.add("delayed");
@@ -1991,18 +2008,24 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeEta", `ETA 32 min (+${extraMinutes})`);
     safeText("departureTime", "Leave now");
     safeText("departureReason", "High shared route impact detected.");
+    safeText("desktopRouteStatus", desktopRouteSummary);
+    safeText("sideRouteWatchHint", "Route summary shown in desktop command area.");
     els.routeStatusCard?.classList.add("high");
   } else if (impact >= 40) {
     safeText("routeStatus", "Saved · Watch");
     safeText("routeEta", `ETA 26 min (+${extraMinutes})`);
     safeText("departureTime", "Leave 8 min early");
     safeText("departureReason", "Moderate shared report risk detected.");
+    safeText("desktopRouteStatus", desktopRouteSummary);
+    safeText("sideRouteWatchHint", "Route summary shown in desktop command area.");
     els.routeStatusCard?.classList.add("delayed");
   } else {
     safeText("routeStatus", "Saved · Clear");
     safeText("routeEta", "ETA 21 min");
     safeText("departureTime", "Normal departure");
     safeText("departureReason", "No major active shared delay detected.");
+    safeText("desktopRouteStatus", desktopRouteSummary);
+    safeText("sideRouteWatchHint", "Route summary shown in desktop command area.");
     els.routeStatusCard?.classList.add("clear");
   }
 
