@@ -78,17 +78,43 @@
         </div>
       </div>
 
-      <div class="mobile-priority-strip">
-        <article class="mobile-priority-card">
-          <span>Delay Risk</span>
+      <div class="mobile-priority-strip premium-mobile-home">
+        <article class="mobile-priority-card live-status-card">
+          <div class="mobile-card-head">
+            <span>Live County Status</span>
+            <span class="live-dot">Live</span>
+          </div>
           <strong id="delayRisk">Moderate</strong>
           <p id="delayReason">Nearby railroad crossing activity may affect travel.</p>
+          <p class="live-status-meta"><span id="nearbyAlertCount">0</span> active alerts · <span id="activeAlertText">Live shared reports near your saved or current location.</span></p>
+        </article>
+
+        <article class="mobile-priority-card quick-actions-card">
+          <span>Quick Actions</span>
+          <div class="quick-actions-grid" role="group" aria-label="Quick actions">
+            <button class="secondary-btn" data-section-jump="report">Report Delay</button>
+            <button class="secondary-btn" data-section-jump="report">Cleared</button>
+            <button class="secondary-btn" data-section-jump="dashboard">My Route</button>
+            <button class="secondary-btn" data-section-jump="alerts">Favorites</button>
+          </div>
         </article>
 
         <article class="mobile-priority-card">
-          <span>Active Alerts</span>
-          <strong id="nearbyAlertCount">0</strong>
-          <p id="activeAlertText">Live shared reports near your saved or current location.</p>
+          <span>Commute + Risk</span>
+          <strong>Checking local crossings...</strong>
+          <p>Gridly is watching live reports and crossing risk.</p>
+        </article>
+
+        <article class="mobile-priority-card">
+          <span>Most Active Crossings</span>
+          <strong>None yet</strong>
+          <p>Trending crossing activity updates in real time from driver reports.</p>
+        </article>
+
+        <article class="mobile-priority-card">
+          <span>Community Impact</span>
+          <strong>Building signal</strong>
+          <p>Shared reports become stronger when more drivers confirm them.</p>
         </article>
       </div>
 
