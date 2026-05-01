@@ -104,6 +104,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initMap();
   initSupabase();
   bindEvents();
+  closeRouteSetupModal({ restoreFocus: false });
   injectHazardReportUI();
   loadSavedRoute();
   loadSmartAlertsPreferences();
@@ -1402,7 +1403,7 @@ function bindEvents() {
 
     setConfirmation("No recent crossing selected to clear.", "error");
   });
-  els.mobileQuickRouteBtn?.addEventListener("click", openRouteSetupModal);
+  els.mobileQuickRouteBtn?.addEventListener("click", (event) => openRouteSetupModal(event.currentTarget));
   els.mobileQuickFavoritesBtn?.addEventListener("click", () => {
     openSmartAlertsModal();
     setConfirmation("Favorites is coming soon. Alerts are open for now.", "success");
@@ -1450,11 +1451,12 @@ function bindEvents() {
   els.mobileEditRouteBtn?.addEventListener("click", (event) => {
     event.preventDefault();
     event.stopPropagation();
-    openRouteSetupModal();
+    openRouteSetupModal(event.currentTarget);
   });
-  els.desktopManageRouteBtn?.addEventListener("click", () => {
-    openRouteSetupModal();
+  els.desktopManageRouteBtn?.addEventListener("click", (event) => {
+    openRouteSetupModal(event.currentTarget);
   });
+
 
   els.routeStatusCard?.addEventListener("click", handleRouteCardInteraction);
   els.routeStatusCard?.addEventListener("keydown", (event) => {
@@ -1490,7 +1492,16 @@ function bindEvents() {
   });
 
   document.querySelectorAll("[data-section-jump]").forEach((btn) => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", (event) => {
+      if (
+        window.matchMedia("(max-width: 1100px)").matches &&
+        (btn.classList.contains("hero-route-btn") || btn.id === "mobileCommuteRouteBtn")
+      ) {
+        event.preventDefault();
+        openRouteSetupModal(btn);
+        return;
+      }
+
       const targets = {
         dashboard: "dashboardSection",
         map: "mapSection",
@@ -1527,8 +1538,11 @@ function bindEvents() {
 }
 
 
-function openRouteSetupModal() {
+let lastRouteSetupTrigger = null;
+
+function openRouteSetupModal(triggerEl = null) {
   if (!els.routeSetupModal) return;
+  lastRouteSetupTrigger = triggerEl || document.activeElement || null;
   loadSavedRoute();
   els.routeSetupModal.hidden = false;
   els.routeSetupModal.style.display = "";
@@ -1537,13 +1551,19 @@ function openRouteSetupModal() {
   document.body.classList.add("route-setup-open");
 }
 
-function closeRouteSetupModal() {
+function closeRouteSetupModal(options = {}) {
   if (!els.routeSetupModal) return;
+  const { restoreFocus = true } = options;
   els.routeSetupModal.hidden = true;
   els.routeSetupModal.style.display = "none";
   els.routeSetupModal.setAttribute("aria-hidden", "true");
   document.body.classList.remove("modal-open");
   document.body.classList.remove("route-setup-open");
+
+  if (restoreFocus && lastRouteSetupTrigger && typeof lastRouteSetupTrigger.focus === "function") {
+    lastRouteSetupTrigger.focus();
+  }
+  lastRouteSetupTrigger = null;
 }
 
 function openSmartAlertsModal() {
@@ -2054,20 +2074,20 @@ function updateRouteIntelligence(nearest = []) {
   }
 
   if (impact >= 70) {
-    safeText("delayRisk", "High");
+    safeText("delayRisk", "Delays Active");
     safeText("delayReason", "Major crossing blockage detected.");
     safeText("alternateRoute", "Use alternate");
     safeText("alternateReason", "Avoid highest-impact crossing if possible.");
     safeText("impactText", "High route impact. Leave now or reroute.");
   } else if (impact >= 40) {
-    safeText("delayRisk", "Moderate");
+    safeText("delayRisk", "Delays Active");
     safeText("delayReason", "Some crossing or traffic risk detected.");
     safeText("alternateRoute", "Have backup");
     safeText("alternateReason", "Alternate route may help if reports increase.");
     safeText("impactText", "Moderate route impact. Watch before leaving.");
   } else {
-    safeText("delayRisk", "Low");
-    safeText("delayReason", "No major live reports affecting the area.");
+    safeText("delayRisk", "All Clear");
+    safeText("delayReason", "No delays reported nearby");
     safeText("alternateRoute", "Not needed");
     safeText("alternateReason", "Current route appears clear.");
     safeText("impactText", "Low route impact. Normal travel expected.");
