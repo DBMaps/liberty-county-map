@@ -79,21 +79,32 @@
       </div>
 
       <div class="mobile-home-cards" aria-label="Today quick view">
-        <article class="mobile-home-card live-status-card">
-          <span>Live Rail Status</span>
+        <article class="mobile-home-card mobile-premium-status-bar">
+          <div>
+            <span>Today • Liberty County</span>
+            <strong>Live Operations</strong>
+          </div>
+          <p>Real-time community visibility for rail crossing delays, clears, and route risk.</p>
+        </article>
+
+        <article class="mobile-home-card mobile-live-hero live-status-card">
+          <span>Live Crossing Status</span>
           <strong id="delayRisk">Moderate</strong>
           <p id="delayReason">Nearby railroad crossing activity may affect travel.</p>
         </article>
 
-        <div class="mobile-quick-actions" aria-label="Quick actions">
-          <button class="secondary-btn" id="mobileQuickReportBtn" type="button">Report Delay</button>
-          <button class="secondary-btn" id="mobileQuickClearedBtn" type="button">Cleared</button>
-          <button class="secondary-btn" id="mobileQuickRouteBtn" type="button">My Route</button>
-          <button class="secondary-btn" id="mobileQuickFavoritesBtn" type="button">Favorites</button>
-        </div>
+        <article class="mobile-home-card mobile-quick-actions-card" aria-label="Quick actions">
+          <span>Quick Actions</span>
+          <div class="mobile-quick-actions">
+            <button class="secondary-btn" id="mobileQuickReportBtn" type="button">Report Delay</button>
+            <button class="secondary-btn" id="mobileQuickClearedBtn" type="button">Cleared</button>
+            <button class="secondary-btn" id="mobileQuickRouteBtn" type="button">My Route</button>
+            <button class="secondary-btn" id="mobileQuickFavoritesBtn" type="button">Favorites</button>
+          </div>
+        </article>
 
         <article class="mobile-home-card">
-          <span>Commute + Risk</span>
+          <span>Your Commute Today</span>
           <strong id="routeRecommendation">Checking local crossings...</strong>
           <p id="routeRecommendationReason">Gridly is watching live reports and crossing risk.</p>
         </article>
