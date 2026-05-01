@@ -211,6 +211,21 @@ function hydrateElements() {
     "routeSetupModalBackdrop",
     "closeRouteSetupModalBtn",
     "mobileEditRouteBtn"
+    ,
+    "dailyHeroCard",
+    "dailyHomeHeaderStatus",
+    "dailyHeroPill",
+    "dailyHeroHeadline",
+    "dailyHeroDetail",
+    "dailyCommuteTitle",
+    "dailyCommuteDetail",
+    "dailyActiveCrossingsTitle",
+    "dailyActiveCrossingsDetail",
+    "dailyImpactTitle",
+    "dailyImpactDetail",
+    "dailyQuickCleared",
+    "dailyQuickRoute",
+    "dailyQuickFavorites"
   ].forEach((id) => {
     els[id] = document.getElementById(id);
   });
@@ -1416,6 +1431,11 @@ function bindEvents() {
     els.quickClearCard?.classList.remove("visible");
     resetSmartReportButton();
   });
+  els.dailyQuickCleared?.addEventListener("click", () => els.quickClearBtn?.click());
+  els.dailyQuickRoute?.addEventListener("click", () => openRouteSetupModal());
+  els.dailyQuickFavorites?.addEventListener("click", () => {
+    setConfirmation("Favorites are coming soon. Save Route for personalized daily guidance.", "success");
+  });
 
   const handleRouteCardInteraction = () => {
     const hasSavedRoute = Boolean(localStorage.getItem("gridlyHome") && localStorage.getItem("gridlyWork"));
@@ -2095,6 +2115,61 @@ function updateDailyHabitStatus() {
 
   els.habitStatusStrip?.classList.remove("clear", "delayed", "high");
   els.habitStatusStrip?.classList.add(cardClass);
+  updateV15AMobileDailyHome();
+}
+
+function updateV15AMobileDailyHome() {
+  const latestReports = getLatestReportsByCrossing();
+  const activeIssues = latestReports.filter((report) => !report.expired && report.type !== "cleared");
+  const blockedCount = activeIssues.filter((report) => report.type === "blocked").length;
+  const delayCount = activeIssues.filter((report) => report.type === "heavy" || report.severity === "moderate").length;
+  const hasData = crossings.length > 0 || activeReports.length > 0;
+
+  let tone = "checking";
+  let pill = "Checking local rail activity…";
+  let headline = "Preparing your daily crossing snapshot";
+  let detail = "We’re syncing the latest shared crossing reports and confirmations.";
+  let headerStatus = "Daily rail status loading…";
+
+  if (hasData) {
+    if (blockedCount > 0) {
+      tone = "danger";
+      pill = "Red · Blocked crossing active";
+      headline = `${blockedCount} blocked crossing${blockedCount === 1 ? "" : "s"} reported`;
+      detail = "Plan extra time and review nearby markers before driving.";
+      headerStatus = "High-impact crossing activity now";
+    } else if (delayCount > 0 || activeIssues.length > 0) {
+      tone = "warning";
+      pill = "Yellow · Delays reported";
+      headline = `${activeIssues.length} active delay report${activeIssues.length === 1 ? "" : "s"} nearby`;
+      detail = "Slow movement reported. Check your route before you leave.";
+      headerStatus = "Moderate rail delay activity";
+    } else {
+      tone = "clear";
+      pill = "Green · All clear";
+      headline = "No active crossing delays reported";
+      detail = "Local crossings look clear right now. Keep watch for new updates.";
+      headerStatus = "Rail movement looks normal";
+    }
+  }
+
+  safeText("dailyHomeHeaderStatus", headerStatus);
+  safeText("dailyHeroPill", pill);
+  safeText("dailyHeroHeadline", headline);
+  safeText("dailyHeroDetail", detail);
+  els.dailyHeroCard?.classList.remove("checking", "danger", "warning", "clear");
+  els.dailyHeroCard?.classList.add(tone);
+
+  safeText("dailyCommuteTitle", savedHome && savedWork ? "Route Watch is active for your commute." : "Set your route to personalize commute guidance.");
+  safeText("dailyCommuteDetail", savedHome && savedWork ? `${savedHome} → ${savedWork}. Gridly is monitoring crossing delays near this path.` : "Use My Route to save Home + Work and get smarter timing alerts.");
+
+  const trending = getConsolidatedIncidents().slice(0, 1)[0];
+  safeText("dailyActiveCrossingsTitle", trending ? trending.crossingName : "No active crossings right now");
+  safeText("dailyActiveCrossingsDetail", trending ? `${trending.totalReports} shared report${trending.totalReports === 1 ? "" : "s"} · latest ${trending.latestReport.minutesAgo} min ago.` : "Top crossings with shared driver updates will appear here.");
+
+  const impactCount = activeReports.length;
+  safeText("dailyImpactTitle", impactCount > 0 ? `${impactCount} live community report${impactCount === 1 ? "" : "s"}` : "Community signal building");
+  safeText("dailyImpactDetail", impactCount > 0 ? "Thanks for reporting. Your updates help nearby drivers reroute faster." : "Every report helps Liberty County drivers avoid delays and plan better routes.");
 }
 
 function updateGrowthWidgets() {
