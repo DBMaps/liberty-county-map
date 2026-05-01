@@ -1988,6 +1988,25 @@ function evaluateSmartAlertsBanner(prefs = getSmartAlertsPreferences()) {
   els.smartAlertsBanner.textContent = matches.slice(0, 2).join(" ");
 }
 
+
+function getCleanRouteName(value) {
+  const normalized = typeof value === "string" ? value.trim() : "";
+  if (!normalized) return "";
+  const lower = normalized.toLowerCase();
+  if (lower === "[object htmlelement]" || lower === "[object htmlinputelement]") return "";
+  return normalized;
+}
+
+function getTodayRouteCopy(homeValue, workValue) {
+  const home = getCleanRouteName(homeValue);
+  const work = getCleanRouteName(workValue);
+
+  if (!home || !work) {
+    return "Route details unavailable right now. Open My Route to save Home + Work.";
+  }
+
+  return `${home} → ${work}. Gridly is monitoring crossing delays near this path.`;
+}
 function updateRouteIntelligence(nearest = []) {
   const savedHome = localStorage.getItem("gridlyHome");
   const savedWork = localStorage.getItem("gridlyWork");
@@ -2169,7 +2188,7 @@ function updateV15AMobileDailyHome() {
   els.dailyHeroCard?.classList.add(tone);
 
   safeText("dailyCommuteTitle", savedHome && savedWork ? "Route Watch is active for your commute." : "Set your route to personalize commute guidance.");
-  safeText("dailyCommuteDetail", savedHome && savedWork ? `${savedHome} → ${savedWork}. Gridly is monitoring crossing delays near this path.` : "Use My Route to save Home + Work and get smarter timing alerts.");
+  safeText("dailyCommuteDetail", getTodayRouteCopy(savedHome, savedWork));
 
   const trending = getConsolidatedIncidents().slice(0, 1)[0];
   safeText("dailyActiveCrossingsTitle", trending ? trending.crossingName : "No active crossings right now");
