@@ -104,6 +104,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initMap();
   initSupabase();
   bindEvents();
+  closeRouteSetupModal();
   injectHazardReportUI();
   loadSavedRoute();
   loadSmartAlertsPreferences();
