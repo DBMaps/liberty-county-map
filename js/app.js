@@ -2160,7 +2160,7 @@ function renderAlerts() {
   }
 
   els.alertsList.innerHTML = incidents
-    .slice(0, 8)
+    .slice(0, 2)
     .map((incident) => {
       const latest = incident.latestReport;
       const confidenceLabel = getCrossingConfidenceLabel(latest, incident.count);
@@ -2204,7 +2204,7 @@ function renderAlerts() {
 function renderTrendingCrossings() {
   if (!els.trendingList) return;
 
-  const incidents = getConsolidatedIncidents().slice(0, 5);
+  const incidents = getConsolidatedIncidents().slice(0, 3);
 
   if (!incidents.length) {
     els.trendingList.innerHTML = `<div class="trend-item muted">Waiting for shared reports...</div>`;

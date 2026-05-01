@@ -1060,9 +1060,9 @@ body.modal-open {
 
 .alerts-list,
 .trending-list {
-  max-height: 292px;
-  overflow-y: auto;
-  padding-right: 4px;
+  max-height: none;
+  overflow: visible;
+  padding-right: 0;
 }
 
 .alerts-list::-webkit-scrollbar,
@@ -1112,7 +1112,7 @@ body.modal-open {
 }
 
 .alert-item {
-  padding: 11px;
+  padding: 9px 10px;
   border-radius: 15px;
   background: rgba(255, 255, 255, 0.055);
   border: 1px solid var(--border);
@@ -1136,15 +1136,88 @@ body.modal-open {
 .alert-item p {
   margin: 0;
   color: var(--muted);
-  font-size: 0.86rem;
-  line-height: 1.32;
+  font-size: 0.8rem;
+  line-height: 1.24;
 }
 
 .alert-item .alert-meta {
-  margin-top: 6px;
+  margin-top: 5px;
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
+}
+
+@media (min-width: 1101px) {
+  .desktop-command-panel {
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .desktop-command-panel .panel-card {
+    border-radius: 16px;
+  }
+
+  .desktop-command-panel .drawer-summary {
+    padding: 10px 11px;
+  }
+
+  .desktop-command-panel .drawer-body {
+    padding: 0 11px 11px;
+  }
+
+  .desktop-command-panel .combined-module-block + .combined-module-block {
+    margin-top: 10px;
+  }
+
+  .desktop-command-panel .combined-module-block h3 {
+    margin: 0 0 6px;
+    font-size: 0.76rem;
+  }
+
+  .desktop-command-panel .trend-item,
+  .desktop-command-panel .route-summary div,
+  .desktop-command-panel .route-summary-inline p {
+    padding: 8px 9px;
+    border-radius: 12px;
+  }
+
+  .desktop-command-panel .trend-item strong {
+    font-size: 0.86rem;
+    margin-bottom: 2px;
+  }
+
+  .desktop-command-panel .trend-item p {
+    font-size: 0.75rem;
+    line-height: 1.2;
+  }
+
+  .desktop-command-panel .alerts-list {
+    gap: 6px;
+  }
+
+  .desktop-command-panel .alert-item strong {
+    font-size: 0.84rem;
+    margin-bottom: 2px;
+  }
+
+  .desktop-command-panel .alert-meta {
+    gap: 4px;
+  }
+
+  .desktop-command-panel .rail-manage-alerts-btn {
+    margin-top: 8px;
+  }
+
+  .desktop-route-watch-rail {
+    display: none !important;
+  }
+
+  #gridlyHazardLauncher.gridly-hazard-launcher {
+    right: auto !important;
+    left: 22px !important;
+    bottom: 26px !important;
+    max-width: min(360px, calc(100vw - 44px));
+  }
 }
 
 .source-pill,
