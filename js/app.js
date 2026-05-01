@@ -210,7 +210,11 @@ function hydrateElements() {
     "routeSetupModal",
     "routeSetupModalBackdrop",
     "closeRouteSetupModalBtn",
-    "mobileEditRouteBtn"
+    "mobileEditRouteBtn",
+    "mobileQuickReportBtn",
+    "mobileQuickClearedBtn",
+    "mobileQuickRouteBtn",
+    "mobileQuickFavoritesBtn"
   ].forEach((id) => {
     els[id] = document.getElementById(id);
   });
@@ -1389,6 +1393,20 @@ function bindEvents() {
   els.headerShareGridlyBtn?.addEventListener("click", shareGridly);
 
   els.mobileReportBtn?.addEventListener("click", handleSmartReportButton);
+  els.mobileQuickReportBtn?.addEventListener("click", handleReportNearMe);
+  els.mobileQuickClearedBtn?.addEventListener("click", () => {
+    if (lastSubmittedCrossing) {
+      createSharedReport(lastSubmittedCrossing, "cleared", "quick clear action", els.mobileQuickClearedBtn);
+      return;
+    }
+
+    setConfirmation("No recent crossing selected to clear.", "error");
+  });
+  els.mobileQuickRouteBtn?.addEventListener("click", openRouteSetupModal);
+  els.mobileQuickFavoritesBtn?.addEventListener("click", () => {
+    openSmartAlertsModal();
+    setConfirmation("Favorites is coming soon. Alerts are open for now.", "success");
+  });
   els.desktopReportNearMeBtn?.addEventListener("click", handleReportNearMe);
   els.saveSmartAlertsBtn?.addEventListener("click", saveSmartAlertsPreferences);
   els.closeSmartAlertsModalBtn?.addEventListener("click", closeSmartAlertsModal);
