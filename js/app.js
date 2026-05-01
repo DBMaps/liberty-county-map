@@ -1282,22 +1282,16 @@ function injectHazardStyles() {
     }
 
     @media (max-width: 760px) {
-      .gridly-hazard-launcher {
-        left: 14px;
-        right: 14px;
-        bottom: 150px;
-        width: calc(100vw - 28px);
-      }
-      .gridly-hazard-counter {
-        left: 14px;
-        right: 14px;
-        bottom: 205px;
-        text-align: center;
+      .gridly-hazard-launcher,
+      .gridly-hazard-counter,
+      #gridlyHazardLauncher,
+      #gridlyHazardCounter {
+        display: none !important;
       }
       .gridly-hazard-panel {
         left: 14px;
         right: 14px;
-        bottom: 210px;
+        bottom: 94px;
         width: auto;
       }
     }
@@ -3095,29 +3089,17 @@ function injectMobileCTACleanupStyles() {
         display: none !important;
       }
 
-      .gridly-hazard-launcher {
-        left: 14px !important;
-        right: 14px !important;
-        bottom: 94px !important;
-        width: calc(100vw - 28px) !important;
-        padding: 16px 18px !important;
-        font-size: 17px !important;
-        border-radius: 999px !important;
-      }
-
-      .gridly-hazard-counter {
-        left: 14px !important;
-        right: 14px !important;
-        bottom: 154px !important;
-        text-align: center !important;
-        font-size: 12px !important;
-        padding: 9px 12px !important;
+      .gridly-hazard-launcher,
+      .gridly-hazard-counter,
+      #gridlyHazardLauncher,
+      #gridlyHazardCounter {
+        display: none !important;
       }
 
       .gridly-hazard-panel {
         left: 14px !important;
         right: 14px !important;
-        bottom: 164px !important;
+        bottom: 94px !important;
         width: auto !important;
       }
     }
@@ -3479,15 +3461,10 @@ function injectGridlyIntegrationStyles() {
     }
 
     @media (max-width: 760px) {
-      .gridly-hazard-launcher {
-        bottom: 92px !important;
-        padding-top: 12px !important;
-        padding-bottom: 14px !important;
-      }
-
-      .gridly-inline-chip {
-        font-size: 10px;
-        margin-bottom: 2px;
+      .gridly-hazard-launcher,
+      .gridly-inline-chip,
+      .desktop-hazard-chip {
+        display: none !important;
       }
     }
   `;
