@@ -215,7 +215,15 @@ function hydrateElements() {
     "mobileQuickReportBtn",
     "mobileQuickClearedBtn",
     "mobileQuickRouteBtn",
-    "mobileQuickFavoritesBtn"
+    "mobileQuickFavoritesBtn",
+    "mobileTownSelectorBtn",
+    "mobileWeatherChipBtn",
+    "mobileBellBtn",
+    "mobileAvatarBtn",
+    "mobileOpenLiveMapBtn",
+    "mobileCommuteRouteBtn",
+    "mobileCrossingReportBtn",
+    "mobileHazardReportBtn"
   ].forEach((id) => {
     els[id] = document.getElementById(id);
   });
@@ -946,9 +954,9 @@ counter.textContent = "No live road hazards";
     <div class="hazard-choice-grid">
       <button type="button" onclick="submitHazardNearMe('flooding')">🌊 Flooding</button>
       <button type="button" onclick="submitHazardNearMe('debris')">⚠️ Debris</button>
-      <button type="button" onclick="submitHazardNearMe('crash')">🚗 Crash</button>
+      <button type="button" onclick="submitHazardNearMe('crash')">🚗 Crash / Wreck</button>
       <button type="button" onclick="submitHazardNearMe('construction')">🚧 Construction</button>
-      <button type="button" onclick="submitHazardNearMe('other_hazard')">❗ Other</button>
+      <button type="button" onclick="submitHazardNearMe('other_hazard')">❗ Other Hazard</button>
     </div>
   `;
 
@@ -1359,6 +1367,11 @@ window.zoomToCrossing = function (crossingId) {
   }, 350);
 };
 
+
+function handleMobileSoon(label, detail = "Coming soon") {
+  setConfirmation(`${label}: ${detail}.`, "success");
+}
+
 function bindEvents() {
   const bindTapSafeClose = (element, handler) => {
     if (!element) return;
@@ -1407,6 +1420,33 @@ function bindEvents() {
   els.mobileQuickFavoritesBtn?.addEventListener("click", () => {
     openSmartAlertsModal();
     setConfirmation("Favorites is coming soon. Alerts are open for now.", "success");
+  });
+  els.mobileTownSelectorBtn?.addEventListener("click", () => {
+    handleMobileSoon("Dayton, TX", "city switching is coming soon");
+  });
+  els.mobileWeatherChipBtn?.addEventListener("click", () => {
+    handleMobileSoon("Weather", "full weather panel is coming soon");
+  });
+  els.mobileBellBtn?.addEventListener("click", () => {
+    openSmartAlertsModal();
+    setConfirmation("Alerts opened.", "success");
+  });
+  els.mobileAvatarBtn?.addEventListener("click", () => {
+    handleMobileSoon("Profile", "account features are coming soon");
+  });
+  els.mobileOpenLiveMapBtn?.addEventListener("click", () => {
+    setConfirmation("Opening Live Map.", "success");
+  });
+  els.mobileCommuteRouteBtn?.addEventListener("click", () => {
+    setConfirmation("Opening Route Watch.", "success");
+  });
+  els.mobileCrossingReportBtn?.addEventListener("click", () => {
+    setConfirmation("Railroad crossing report mode is active below.", "success");
+    els.reportSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  els.mobileHazardReportBtn?.addEventListener("click", () => {
+    document.getElementById("gridlyHazardLauncher")?.click();
+    setConfirmation("Road hazard reporting opened.", "success");
   });
   els.desktopReportNearMeBtn?.addEventListener("click", handleReportNearMe);
   els.saveSmartAlertsBtn?.addEventListener("click", saveSmartAlertsPreferences);
