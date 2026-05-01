@@ -164,6 +164,15 @@
 
     <section class="command-center" id="mapSection">
       <section class="map-card">
+        <article class="desktop-route-watch-strip" aria-label="Saved route watch status">
+          <div class="route-watch-strip-copy">
+            <p class="eyebrow">Route Watch</p>
+            <strong><span id="desktopRouteHome">Not saved</span> → <span id="desktopRouteWork">Not saved</span></strong>
+            <p id="desktopRouteStatus">Set Home + Work to monitor live hazards and confirmations.</p>
+          </div>
+          <button id="desktopManageRouteBtn" class="secondary-btn compact-btn" type="button">Manage Route</button>
+        </article>
+
         <div class="section-header map-header">
           <div>
             <p class="eyebrow">Live Mobility Map</p>
@@ -230,6 +239,7 @@
           <div class="drawer-body">
             <div class="route-summary route-summary-inline">
               <p><strong id="savedHome">Not saved</strong> → <strong id="savedWork">Not saved</strong></p>
+              <p class="route-watch-secondary-note" id="sideRouteWatchHint">Primary route watch is pinned above the live map.</p>
             </div>
           </div>
         </details>
