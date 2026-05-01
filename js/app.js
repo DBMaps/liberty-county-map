@@ -1430,7 +1430,7 @@ function bindEvents() {
     openRouteSetupModal();
   });
   els.desktopManageRouteBtn?.addEventListener("click", () => {
-    scrollToSection("setupCard");
+    openRouteSetupModal();
   });
 
   els.routeStatusCard?.addEventListener("click", handleRouteCardInteraction);
