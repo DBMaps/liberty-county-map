@@ -2108,6 +2108,50 @@ body.modal-open {
 }
 
 @media (max-width: 760px) {
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  .app-shell,
+  .dashboard,
+  .daily-home-mobile,
+  .daily-home-header,
+  .daily-home-card,
+  .daily-hero-card,
+  .hero-card,
+  .hero-command-card,
+  .route-status-card,
+  .hero-actions,
+  .daily-quick-actions {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .app-shell {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .hero-actions,
+  .daily-quick-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-actions .primary-btn,
+  .hero-actions .secondary-btn,
+  .daily-quick-actions .secondary-btn,
+  .daily-hero-cta {
+    width: 100%;
+    min-width: 0;
+  }
+
   .daily-home-mobile {
     display: grid;
     gap: 10px;
