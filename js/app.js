@@ -767,28 +767,30 @@ function renderHazards() {
 function buildHazardPopup(incident) {
   const hazard = incident.latestReport;
   const isFresh = hazard.minutesAgo <= REPORT_EXPIRATION_MINUTES;
+  const reportedAgo = humanizeMinutesAgo(hazard.minutesAgo);
+  const driverLabel = `${incident.count} driver${incident.count === 1 ? "" : "s"}`;
   const reportStateLabel = isFresh ? "Live community report" : "Needs new confirmation";
   const reportedLabel = isFresh
-    ? `Reported ${hazard.minutesAgo} min ago`
-    : `Last reported ${hazard.minutesAgo} min ago`;
+    ? `Reported ${reportedAgo} by ${driverLabel}.`
+    : `Last reported ${reportedAgo} by ${driverLabel}.`;
   const stateNote = isFresh
     ? "Drivers can confirm if this hazard is still active."
-    : "This report is stale. Treat as unverified until a new driver confirms it.";
+    : "This may no longer be active.";
   const actionButtons = isFresh
     ? `
         <button class="popup-report-btn warning" onclick="confirmHazardStillThere('${sanitizeText(hazard.type)}', ${hazard.lat}, ${hazard.lng})">Still There</button>
         <button class="popup-report-btn blue" onclick="clearHazard('${sanitizeText(hazard.type)}', ${hazard.lat}, ${hazard.lng})">Cleared</button>
       `
-    : "";
+    : `
+        <button class="popup-report-btn warning" onclick="confirmHazardStillThere('${sanitizeText(hazard.type)}', ${hazard.lat}, ${hazard.lng})">Confirm Now</button>
+      `
+    ;
 
   return `
     <div class="gridly-popup">
-      <strong>${sanitizeText(hazard.title)}</strong>
-      <span>${sanitizeText(hazard.detail)}</span><br />
+      <strong>${sanitizeText(isFresh ? hazard.title : "Crash Report")}</strong>
+      <span>${sanitizeText(reportStateLabel)}</span><br />
       <span>${sanitizeText(reportedLabel)}</span><br />
-      <span>State: ${sanitizeText(reportStateLabel)}</span><br />
-      <span>Confirmations: ${incident.count}</span><br />
-      <span>Confidence: ${sanitizeText(getHazardConfidenceLabel(incident.count))}</span><br />
       <span>${sanitizeText(stateNote)}</span><br />
 
       <div class="popup-report-grid">
@@ -797,6 +799,19 @@ function buildHazardPopup(incident) {
       </div>
     </div>
   `;
+}
+
+function humanizeMinutesAgo(totalMinutes) {
+  const minutes = Math.max(0, Number(totalMinutes) || 0);
+
+  if (minutes <= 1) return "just now";
+  if (minutes < 60) return `${minutes}m ago`;
+
+  const roundedHours = Math.round(minutes / 60);
+  if (roundedHours < 24) return `${roundedHours}h ago`;
+
+  const roundedDays = Math.round(roundedHours / 24);
+  return `${roundedDays}d ago`;
 }
 function getLiveHazardIncidents() {
   const grouped = new Map();
