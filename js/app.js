@@ -2947,22 +2947,11 @@ function injectMobileCTACleanupStyles() {
       }
 
       .gridly-hazard-launcher {
-        left: 14px !important;
-        right: 14px !important;
-        bottom: 94px !important;
-        width: calc(100vw - 28px) !important;
-        padding: 16px 18px !important;
-        font-size: 17px !important;
-        border-radius: 999px !important;
+        display: none !important;
       }
 
       .gridly-hazard-counter {
-        left: 14px !important;
-        right: 14px !important;
-        bottom: 154px !important;
-        text-align: center !important;
-        font-size: 12px !important;
-        padding: 9px 12px !important;
+        display: none !important;
       }
 
       .gridly-hazard-panel {
