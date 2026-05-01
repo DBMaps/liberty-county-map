@@ -532,7 +532,12 @@ async function loadSharedReports() {
 
     if (error) throw error;
 
-    const normalized = normalizeReports(data || []);
+    const rawRows = Array.isArray(data) ? data : [];
+    if (!Array.isArray(data)) {
+      console.warn("Gridly report sync returned a non-array payload; defaulting to empty reports.", data);
+    }
+
+    const normalized = normalizeReports(rawRows);
 
     activeHazards = normalized.filter((report) => report.reportKind === "hazard");
     activeReports = normalized.filter((report) => report.reportKind !== "hazard");
@@ -1965,8 +1970,14 @@ function updateRouteIntelligence(nearest = []) {
   const highAlerts = activeIssues.filter((report) => report.severity === "high").length;
   const moderateAlerts = activeIssues.filter((report) => report.severity === "moderate").length;
   const confirmedIncidents = getConsolidatedIncidents().filter((incident) => {
-    const latest = incident.reports.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))[0];
-    return latest && latest.type !== "cleared" && incident.reports.length >= 2;
+    const reports = Array.isArray(incident?.reports) ? incident.reports : [];
+
+    if (!Array.isArray(incident?.reports)) {
+      console.warn("Route intelligence incident is missing a reports array; skipping incident.", incident);
+    }
+
+    const latest = [...reports].sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))[0];
+    return latest && latest.type !== "cleared" && reports.length >= 2;
   }).length;
   const desktopRouteSummary = `${activeIssues.length} live hazard${activeIssues.length === 1 ? "" : "s"} · ${confirmedIncidents} confirmed`;
 
