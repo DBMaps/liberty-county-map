@@ -142,6 +142,23 @@ button {
   display: none;
 }
 
+.mobile-premium-header {
+  display: none;
+}
+
+.mobile-quick-actions .secondary-btn svg,
+.mobile-location-chip svg,
+.mobile-icon-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: 0 0 auto;
+}
+
 .nav-btn.active,
 .nav-btn:hover {
   background: rgba(255, 255, 255, 0.09);
@@ -1976,6 +1993,34 @@ body.modal-open {
   .mobile-priority-strip {
     display: none;
   }
+
+  .mobile-premium-header {
+    display: grid;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 18px;
+    border: 1px solid rgba(128, 177, 247, 0.28);
+    background: linear-gradient(140deg, rgba(12, 23, 40, 0.95), rgba(10, 18, 34, 0.96));
+    box-shadow: 0 14px 28px rgba(4, 8, 16, 0.34);
+  }
+  .mobile-premium-location { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .mobile-location-chip,
+  .mobile-weather-chip { border-radius:999px; border:1px solid rgba(141, 189, 255, 0.4); background: rgba(48, 104, 183, 0.22); color:#e8f2ff; font-size:.78rem; font-weight:700; letter-spacing:.01em; padding:7px 11px; }
+  .mobile-location-chip { display:inline-flex; align-items:center; gap:6px; }
+  .mobile-premium-actions { display:flex; gap:8px; justify-content:flex-end; }
+  .mobile-icon-btn,
+  .mobile-avatar-btn { width:36px; height:36px; border-radius:999px; border:1px solid rgba(141, 189, 255, 0.4); background: rgba(56, 115, 195, 0.18); color:#e8f2ff; display:grid; place-items:center; transition:transform .2s ease, background .2s ease, border-color .2s ease; }
+  .mobile-avatar-btn span { width:14px; height:14px; border-radius:50%; background: linear-gradient(160deg,#b8d6ff,#7faeff); display:block; box-shadow:0 0 0 5px rgba(184,214,255,.2); }
+  .mobile-home-card > span { font-weight:700; letter-spacing:.01em; color:#d5e8ff; font-size:.8rem; text-transform:uppercase; }
+  .mobile-home-card strong { font-weight:850; }
+  .mobile-live-hero.clear-status { border-color: rgba(112, 233, 183, 0.58); box-shadow: 0 0 0 1px rgba(112,233,183,.14),0 0 26px rgba(67,230,160,.2),0 18px 34px rgba(3,9,20,.45); }
+  .mobile-live-hero.delay-status { border-color: rgba(255, 209, 111, 0.64); background: radial-gradient(circle at 86% 16%, rgba(255, 204, 102, 0.28), transparent 38%), linear-gradient(160deg, rgba(104, 78, 18, 0.58), rgba(25, 22, 16, 0.94)); }
+  .mobile-live-hero.blocked-status { border-color: rgba(255, 109, 139, 0.75); background: radial-gradient(circle at 84% 18%, rgba(255, 111, 142, 0.35), transparent 40%), linear-gradient(160deg, rgba(102, 27, 42, 0.72), rgba(30, 12, 20, 0.95)); }
+  .mobile-quick-actions .secondary-btn { transition: transform .2s ease, box-shadow .2s ease, background .2s ease; }
+  .mobile-quick-actions .secondary-btn:active,
+  .mobile-icon-btn:active,
+  .mobile-avatar-btn:active,
+  .mobile-location-chip:active { transform: translateY(1px) scale(0.985); }
 
   .mobile-home-cards {
     display: grid;
