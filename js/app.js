@@ -3087,8 +3087,9 @@ function syncMobileTodayHazardLauncherVisibility() {
   if (!launcher) return;
 
   const isMobile = window.matchMedia("(max-width: 760px)").matches;
-  const activeSection = document.querySelector(".nav-btn.active")?.dataset.section;
-  const hideOnMobileSections = isMobile && (activeSection === "dashboard" || activeSection === "map");
+  // Legacy floating launcher UI is disabled globally on mobile surfaces.
+  // Desktop behavior remains unchanged.
+  const hideOnMobileSections = isMobile;
 
   launcher.style.display = hideOnMobileSections ? "none" : "";
 
