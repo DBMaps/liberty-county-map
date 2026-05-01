@@ -835,6 +835,17 @@ body.route-setup-open #gridlyHazardLauncher {
 
 .route-setup-grid-mobile {
   margin-top: 12px;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+}
+
+.route-setup-grid-mobile label {
+  width: 100%;
+}
+
+.route-setup-grid-mobile .primary-btn,
+.route-setup-grid-mobile .secondary-btn {
+  width: 100%;
 }
 
 @media (min-width: 1101px) {
