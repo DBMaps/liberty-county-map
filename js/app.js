@@ -1320,7 +1320,14 @@ window.zoomToCrossing = function (crossingId) {
 function bindEvents() {
   const bindTapSafeClose = (element, handler) => {
     if (!element) return;
-    element.addEventListener("click", handler);
+    const invoke = (event) => {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      handler();
+    };
+    element.addEventListener("click", invoke);
+    element.addEventListener("touchend", invoke, { passive: false });
+    element.addEventListener("pointerup", invoke);
   };
 
   els.saveRouteBtn?.addEventListener("click", saveRoute);
@@ -1462,6 +1469,8 @@ function openRouteSetupModal() {
   if (!els.routeSetupModal) return;
   loadSavedRoute();
   els.routeSetupModal.hidden = false;
+  els.routeSetupModal.style.display = "";
+  els.routeSetupModal.setAttribute("aria-hidden", "false");
   document.body.classList.add("modal-open");
   document.body.classList.add("route-setup-open");
 }
@@ -1469,6 +1478,8 @@ function openRouteSetupModal() {
 function closeRouteSetupModal() {
   if (!els.routeSetupModal) return;
   els.routeSetupModal.hidden = true;
+  els.routeSetupModal.style.display = "none";
+  els.routeSetupModal.setAttribute("aria-hidden", "true");
   document.body.classList.remove("modal-open");
   document.body.classList.remove("route-setup-open");
 }
@@ -2912,6 +2923,7 @@ function initGridlyBetaLaunchPack() {
 function injectBetaLaunchUI() {
   if (document.getElementById("gridlyBetaLaunchWrap")) return;
 
+  const isMobileLayout = window.matchMedia("(max-width: 1100px)").matches;
   const wrap = document.createElement("div");
   wrap.id = "gridlyBetaLaunchWrap";
 
@@ -2920,9 +2932,7 @@ function injectBetaLaunchUI() {
       Help Liberty County avoid delays. Report issues when you see them.
     </div>
 
-    <button class="gridly-share-btn" type="button">
-      Share Gridly
-    </button>
+    ${isMobileLayout ? "" : `<button class="gridly-share-btn" type="button">Share Gridly</button>`}
 
     <button class="gridly-feedback-btn" type="button">
       Feedback
@@ -2931,8 +2941,7 @@ function injectBetaLaunchUI() {
 
   document.body.appendChild(wrap);
 
-  wrap.querySelector(".gridly-share-btn")
-    .addEventListener("click", shareGridlyApp);
+  wrap.querySelector(".gridly-share-btn")?.addEventListener("click", shareGridlyApp);
 
   wrap.querySelector(".gridly-feedback-btn")
     .addEventListener("click", openFeedbackPrompt);
@@ -3178,11 +3187,12 @@ function moveDesktopLaunchActions() {
 }
 
 function cleanMobileLaunchPack() {
-  if (window.innerWidth > 760) return;
+  if (!window.matchMedia("(max-width: 1100px)").matches) return;
 
   const wrap = document.getElementById("gridlyBetaLaunchWrap");
 
   if (wrap) {
+    wrap.querySelector(".gridly-share-btn")?.remove();
     wrap.style.display = "none";
   }
 
