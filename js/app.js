@@ -103,6 +103,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   updateLastUpdated();
   initMap();
   initSupabase();
+  initializeRouteSetupModalState();
   bindEvents();
   injectHazardReportUI();
   loadSavedRoute();
@@ -1368,6 +1369,12 @@ window.zoomToCrossing = function (crossingId) {
     crossingMarkers.get(String(crossing.id))?.openPopup();
   }, 350);
 };
+
+
+function initializeRouteSetupModalState() {
+  // V15A Mobile Daily Home: keep route setup drawer closed until explicit user action.
+  closeRouteSetupModal();
+}
 
 function bindEvents() {
   const bindTapSafeClose = (element, handler) => {
