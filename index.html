@@ -40,6 +40,50 @@
 
   <main class="app-shell">
     <section class="dashboard" id="dashboardSection">
+      <!-- V15A Mobile Daily Home -->
+      <section class="daily-home-mobile" id="dailyHomeMobile" aria-label="Daily Home">
+        <div class="daily-home-header">
+          <p class="eyebrow">GRIDLY · Liberty County</p>
+          <strong id="dailyHomeHeaderStatus">Daily rail status loading…</strong>
+        </div>
+
+        <!-- V15A Hero Status -->
+        <article class="daily-hero-card checking" id="dailyHeroCard">
+          <span class="daily-hero-pill" id="dailyHeroPill">Checking local rail activity…</span>
+          <h2 id="dailyHeroHeadline">Preparing your daily crossing snapshot</h2>
+          <p id="dailyHeroDetail">We’re syncing the latest shared crossing reports and confirmations.</p>
+          <button class="primary-btn daily-hero-cta" type="button" data-section-jump="map">Open Live Map</button>
+        </article>
+
+        <!-- V15A Quick Actions -->
+        <div class="daily-quick-actions" aria-label="Quick actions">
+          <button class="secondary-btn" type="button" id="dailyQuickReport" data-section-jump="report">Report Delay</button>
+          <button class="secondary-btn" type="button" id="dailyQuickCleared">Cleared</button>
+          <button class="secondary-btn" type="button" id="dailyQuickRoute">My Route</button>
+          <button class="secondary-btn" type="button" id="dailyQuickFavorites">Favorites</button>
+        </div>
+
+        <!-- V15A Commute Card -->
+        <article class="daily-home-card">
+          <span>Your Commute Today</span>
+          <strong id="dailyCommuteTitle">Set your route to personalize commute guidance.</strong>
+          <p id="dailyCommuteDetail">Use My Route to save Home + Work and get smarter timing alerts.</p>
+        </article>
+
+        <article class="daily-home-card">
+          <span>Most Active Crossings</span>
+          <strong id="dailyActiveCrossingsTitle">Checking active crossing reports…</strong>
+          <p id="dailyActiveCrossingsDetail">Top crossings with shared driver updates will appear here.</p>
+        </article>
+
+        <!-- V15A Community Impact -->
+        <article class="daily-home-card daily-community-impact">
+          <span>You’re Making an Impact</span>
+          <strong id="dailyImpactTitle">Community signal building</strong>
+          <p id="dailyImpactDetail">Every report helps Liberty County drivers avoid delays and plan better routes.</p>
+        </article>
+      </section>
+
       <div class="hero-card driver-hero">
         <div class="hero-main-copy">
           <p class="eyebrow" id="timeContext">Daily Habit Mode</p>

@@ -230,6 +230,10 @@ button {
   margin-bottom: 11px;
 }
 
+.daily-home-mobile {
+  display: none;
+}
+
 .hero-card,
 .setup-card,
 .map-card,
@@ -2087,6 +2091,67 @@ body.modal-open {
 }
 
 @media (max-width: 760px) {
+  .daily-home-mobile {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .daily-home-header,
+  .daily-home-card,
+  .daily-hero-card {
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: linear-gradient(145deg, rgba(13, 24, 38, 0.95), rgba(8, 16, 27, 0.96));
+    padding: 12px;
+  }
+
+  .daily-home-header strong,
+  .daily-home-card strong {
+    display: block;
+    margin-top: 4px;
+  }
+
+  .daily-home-card span,
+  .daily-home-header .eyebrow {
+    color: var(--muted);
+    font-size: 0.76rem;
+  }
+
+  .daily-hero-card h2 {
+    margin: 8px 0 6px;
+    font-size: 1.14rem;
+  }
+
+  .daily-hero-pill {
+    display: inline-flex;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.74rem;
+    font-weight: 900;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .daily-hero-card.warning .daily-hero-pill { background: rgba(255, 209, 102, 0.2); color: #ffd166; }
+  .daily-hero-card.danger .daily-hero-pill { background: rgba(255, 92, 122, 0.2); color: #ff95ab; }
+  .daily-hero-card.clear .daily-hero-pill { background: rgba(67, 230, 160, 0.2); color: #89f6c8; }
+  .daily-hero-card.checking .daily-hero-pill { color: #b8c9dd; }
+
+  .daily-quick-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .daily-quick-actions .secondary-btn,
+  .daily-hero-cta {
+    min-height: 46px;
+  }
+
+  .daily-community-impact {
+    margin-bottom: 4px;
+  }
+
   .smart-alerts-modal-card {
     width: calc(100% - 14px);
     margin-top: 10px;
