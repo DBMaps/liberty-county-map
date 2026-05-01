@@ -2006,6 +2006,7 @@ body.modal-open {
   .mobile-premium-location { display:flex; align-items:center; justify-content:space-between; gap:10px; }
   .mobile-location-chip,
   .mobile-weather-chip { border-radius:999px; border:1px solid rgba(141, 189, 255, 0.4); background: rgba(48, 104, 183, 0.22); color:#e8f2ff; font-size:.78rem; font-weight:700; letter-spacing:.01em; padding:7px 11px; }
+  .mobile-weather-chip { appearance:none; -webkit-appearance:none; }
   .mobile-location-chip { display:inline-flex; align-items:center; gap:6px; }
   .mobile-premium-actions { display:flex; gap:8px; justify-content:flex-end; }
   .mobile-icon-btn,
@@ -2348,5 +2349,33 @@ body.modal-open {
 @media (max-width: 1100px) {
   #gridlyBetaLaunchWrap .gridly-share-btn {
     display: none !important;
+  }
+}
+
+
+.mobile-report-mode-card {
+  display: none;
+}
+
+@media (max-width: 1100px) {
+  .mobile-report-mode-card {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding: 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(110, 168, 255, 0.25);
+    background: rgba(9, 20, 41, 0.45);
+  }
+
+  .mobile-report-mode-actions {
+    display: grid;
+    gap: 8px;
+  }
+
+  .mobile-report-mode-card p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #d7e6ff;
   }
 }
