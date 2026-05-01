@@ -2091,36 +2091,64 @@ body.modal-open {
 }
 
 @media (max-width: 760px) {
+  #dashboardSection {
+    gap: 12px;
+  }
+
   .daily-home-mobile {
     display: grid;
-    gap: 10px;
-    margin-bottom: 12px;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+
+  #dashboardSection > :not(.daily-home-mobile) {
+    display: none !important;
   }
 
   .daily-home-header,
   .daily-home-card,
   .daily-hero-card {
-    border-radius: 16px;
+    border-radius: 18px;
     border: 1px solid var(--border);
     background: linear-gradient(145deg, rgba(13, 24, 38, 0.95), rgba(8, 16, 27, 0.96));
-    padding: 12px;
+    padding: 14px;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .daily-home-header {
+    padding: 13px 14px;
   }
 
   .daily-home-header strong,
   .daily-home-card strong {
     display: block;
-    margin-top: 4px;
+    margin-top: 6px;
+    line-height: 1.35;
+    font-size: 1.02rem;
   }
 
   .daily-home-card span,
   .daily-home-header .eyebrow {
     color: var(--muted);
     font-size: 0.76rem;
+    letter-spacing: 0.08em;
   }
 
   .daily-hero-card h2 {
-    margin: 8px 0 6px;
-    font-size: 1.14rem;
+    margin: 10px 0 8px;
+    font-size: 1.2rem;
+    line-height: 1.26;
+    letter-spacing: -0.02em;
+  }
+
+  .daily-hero-card p,
+  .daily-home-card p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.42;
+    color: #c1d2e5;
   }
 
   .daily-hero-pill {
@@ -2140,16 +2168,25 @@ body.modal-open {
   .daily-quick-actions {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
+    gap: 9px;
   }
 
   .daily-quick-actions .secondary-btn,
   .daily-hero-cta {
     min-height: 46px;
+    padding: 12px 10px;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
   }
 
   .daily-community-impact {
     margin-bottom: 4px;
+  }
+
+  .daily-community-impact p {
+    margin-bottom: 2px;
   }
 
   .smart-alerts-modal-card {
