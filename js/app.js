@@ -1289,7 +1289,10 @@ window.zoomToCrossing = function (crossingId) {
 function bindEvents() {
   els.saveRouteBtn?.addEventListener("click", saveRoute);
   els.useLocationBtn?.addEventListener("click", handleReportNearMe);
-  els.mobileUseLocationBtn?.addEventListener("click", handleReportNearMe);
+  els.mobileUseLocationBtn?.addEventListener("click", () => {
+    closeRouteSetupModal();
+    handleReportNearMe();
+  });
 
   els.refreshBtn?.addEventListener("click", async () => {
     if (crossingLoadFailed) {
@@ -1312,6 +1315,10 @@ function bindEvents() {
   els.mobileSaveRouteBtn?.addEventListener("click", () => saveRoute("mobile"));
   els.closeRouteSetupModalBtn?.addEventListener("click", closeRouteSetupModal);
   els.routeSetupModalBackdrop?.addEventListener("click", closeRouteSetupModal);
+  els.routeSetupModalBackdrop?.addEventListener("touchend", closeRouteSetupModal, { passive: true });
+  els.routeSetupModal?.addEventListener("click", (event) => {
+    if (event.target === els.routeSetupModal) closeRouteSetupModal();
+  });
   els.smartAlertsModalBackdrop?.addEventListener("click", closeSmartAlertsModal);
   els.openSmartAlertsBtn?.addEventListener("click", openSmartAlertsModal);
 
@@ -1405,6 +1412,7 @@ function bindEvents() {
 
 function openRouteSetupModal() {
   if (!els.routeSetupModal) return;
+  loadSavedRoute();
   els.routeSetupModal.hidden = false;
   document.body.classList.add("modal-open");
   document.body.classList.add("route-setup-open");
