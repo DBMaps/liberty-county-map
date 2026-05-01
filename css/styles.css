@@ -2151,6 +2151,16 @@ body.modal-open {
   .driver-hero {
     display: flex;
     flex-direction: column;
+    grid-template-columns: 1fr;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .driver-hero > .hero-main-copy,
+  .driver-hero > .hero-command-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
   }
 
   .hero-main-copy,
@@ -2160,6 +2170,7 @@ body.modal-open {
     max-width: 100%;
     min-width: 0;
   }
+
 
   .route-status-card {
     width: 100%;
