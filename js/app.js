@@ -2738,6 +2738,7 @@ function getLatestReportsByCrossing() {
 function getConsolidatedIncidents() {
   const grouped = new Map();
   let warnedMalformedReport = false;
+  const latestByLocation = getLatestReportStateByLocation();
 
   activeReports
     .filter((report) => !report.expired)
@@ -2766,16 +2767,15 @@ function getConsolidatedIncidents() {
   return [...grouped.values()]
     .map((incident) => {
       const reports = Array.isArray(incident.reports) ? incident.reports : [];
-      const sorted = [...reports].sort(
-        (a, b) => new Date(b.submittedAt) - new Date(a.submittedAt)
-      );
+      const sorted = [...reports].sort(compareReportsByRecency);
+      const latestReport = latestByLocation.get(incident.key) || sorted[0];
 
       return {
         crossingId: incident.crossingId,
         crossingName: incident.crossingName,
         reports: sorted,
         count: sorted.length,
-        latestReport: sorted[0],
+        latestReport,
         newestMinutes: sorted.length ? Math.min(...sorted.map((r) => r.minutesAgo)) : 0,
         oldestMinutes: sorted.length ? Math.max(...sorted.map((r) => r.minutesAgo)) : 0
       };
