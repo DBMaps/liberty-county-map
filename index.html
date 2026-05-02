@@ -38,7 +38,17 @@
     </nav>
   </header>
 
-  <main class="app-shell">
+  <main class="app-shell premium-layout">
+    <aside class="desktop-left-rail" aria-label="Operations navigation">
+      <div class="rail-brand">GRIDLY OPS</div>
+      <button class="rail-nav-btn nav-btn active" data-section="dashboard" type="button">Today</button>
+      <button class="rail-nav-btn nav-btn" data-section="map" type="button">Map Center</button>
+      <button class="rail-nav-btn nav-btn" data-section="report" type="button">Report</button>
+      <button class="rail-nav-btn nav-btn" data-section="alerts" type="button">Alerts</button>
+      <button class="rail-nav-btn nav-btn" data-section="dashboard" type="button">Routes</button>
+      <div class="rail-status-chip">Live County Mode</div>
+    </aside>
+    <div class="main-column">
     <section class="dashboard" id="dashboardSection">
       <div class="hero-card driver-hero">
         <div class="hero-main-copy">
@@ -365,6 +375,7 @@
       <h2>Desktop command center coming later</h2>
       <p>Gridly can later separate driver mode from business, city, and operations dashboards using login-based roles.</p>
     </section>
+    </div>
   </main>
 
   <button class="mobile-sticky-report" id="mobileReportBtn">Report Near Me</button>
@@ -420,6 +431,13 @@
   <footer class="app-footer">
     Gridly Beta • Liberty County
   </footer>
+
+  <nav class="mobile-bottom-app-nav" aria-label="Mobile app navigation">
+    <button class="mobile-bottom-nav-btn nav-btn active" data-section="dashboard" type="button">Home</button>
+    <button class="mobile-bottom-nav-btn nav-btn" data-section="map" type="button">Map</button>
+    <button class="mobile-bottom-nav-btn nav-btn" data-section="report" type="button">Report</button>
+    <button class="mobile-bottom-nav-btn nav-btn" data-section="alerts" type="button">Alerts</button>
+  </nav>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
