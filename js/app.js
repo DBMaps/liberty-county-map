@@ -1704,19 +1704,14 @@ function bindEvents() {
   });
 
   const mobileHeaderTapState = { town: 0, avatar: 0 };
-  const showMobileTodayConfirmation = (message, type = "success") => {
+  const showMobileHeaderConfirmation = (message, type = "success") => {
     setConfirmation(message, type);
-
-    const isMobileViewport = window.matchMedia("(max-width: 1100px)").matches;
-    if (!isMobileViewport || !els.reportSection) return;
-
-    els.reportSection.open = true;
-    els.reportSection.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const showTownSelectorConfirmation = () => {
     applyGeoFilterFromPill("town");
-    showMobileTodayConfirmation("Showing Dayton crossings.", "success");
+    scrollToSection("mapSection");
+    showMobileHeaderConfirmation("Showing Dayton crossings.", "success");
   };
 
   const handleMobileHeaderDelegateTap = (event) => {
@@ -1743,7 +1738,7 @@ function bindEvents() {
       return;
     }
 
-    showMobileTodayConfirmation("Profile/account options coming soon.", "success");
+    showMobileHeaderConfirmation("Profile/account options coming soon.", "success");
   };
 
   document.addEventListener("pointerup", handleMobileHeaderDelegateTap);
