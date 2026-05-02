@@ -2813,3 +2813,206 @@ body.modal-open {
     padding: 0 14px 14px;
   }
 }
+
+/* V17.2 final premium conversion pass: launch polish */
+@media (max-width: 700px) {
+  .app-header {
+    padding: 7px 12px 6px;
+    gap: 6px;
+    min-height: 0;
+  }
+
+  .brand-wrap {
+    gap: 7px;
+  }
+
+  .brand-logo-frame {
+    width: 176px;
+    height: 44px;
+  }
+
+  .brand-logo-img {
+    width: 300px;
+    top: 52%;
+  }
+
+  .beta-pill {
+    padding: 5px 10px;
+    font-size: 0.62rem;
+  }
+
+  .mobile-premium-header {
+    padding: 12px;
+    gap: 10px;
+    border-radius: 18px;
+  }
+
+  .mobile-location-chip,
+  .mobile-weather-chip {
+    min-height: 28px;
+    padding: 5px 10px;
+    font-size: 0.7rem;
+    letter-spacing: 0.02em;
+  }
+
+  .mobile-icon-btn,
+  .mobile-avatar-btn {
+    width: 31px;
+    height: 31px;
+  }
+
+  .mobile-home-cards {
+    gap: 12px;
+  }
+
+  .mobile-home-card {
+    border-radius: 20px;
+  }
+
+  .mobile-live-hero {
+    min-height: 0;
+    padding: 22px 18px 18px;
+    border-radius: 22px;
+  }
+
+  .mobile-live-hero > span,
+  .mobile-home-card > span {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+  }
+
+  .mobile-live-hero strong,
+  .mobile-home-card strong {
+    letter-spacing: -0.015em;
+  }
+
+  .mobile-home-card strong {
+    font-size: 1.25rem;
+    margin: 8px 0 6px;
+  }
+
+  .mobile-live-hero p,
+  .mobile-home-card p {
+    font-size: 0.88rem;
+    line-height: 1.48;
+  }
+
+  .mobile-quick-actions {
+    gap: 9px;
+    padding-top: 12px;
+  }
+
+  .mobile-quick-actions .secondary-btn {
+    min-height: 50px;
+    border-radius: 14px;
+    padding: 10px 11px;
+    border-color: rgba(141, 197, 255, 0.52);
+    background: linear-gradient(150deg, rgba(90, 171, 255, 0.28), rgba(41, 90, 165, 0.22));
+    box-shadow: 0 12px 24px rgba(2, 9, 21, 0.4), inset 0 1px 0 rgba(225, 239, 255, 0.18);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+  }
+
+  .mobile-quick-actions .secondary-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2;
+  }
+
+  .mobile-premium-status-bar {
+    gap: 6px;
+    padding: 15px;
+  }
+
+  .map-card {
+    margin-top: 4px;
+    padding: 11px;
+    border-radius: 22px;
+  }
+}
+
+@media (min-width: 1101px) {
+  .app-shell {
+    width: min(1750px, calc(100% - 30px));
+    margin-top: 12px;
+  }
+
+  .dashboard {
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .hero-card {
+    padding: 16px 18px;
+    gap: 16px;
+    border-radius: 22px;
+    grid-template-columns: minmax(0, 1fr) 330px;
+  }
+
+  .command-center {
+    grid-template-columns: minmax(0, 1fr) 350px;
+    gap: 10px;
+  }
+
+  .map-card {
+    padding: 12px;
+    border-radius: 24px;
+  }
+
+  #map {
+    height: 760px;
+    border-radius: 20px;
+  }
+
+  .desktop-command-panel {
+    padding: 9px;
+    gap: 8px;
+    border-radius: 22px;
+  }
+
+  .desktop-command-panel .panel-card {
+    padding: 13px;
+    border-radius: 14px;
+  }
+
+  .desktop-command-panel .drawer-summary {
+    padding: 10px 11px;
+    min-height: 34px;
+  }
+
+  .desktop-command-panel .drawer-body {
+    padding: 0 11px 11px;
+  }
+
+  .desktop-command-panel .route-summary,
+  .desktop-command-panel .trending-list,
+  .desktop-command-panel .alerts-list {
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .desktop-command-panel .trend-item,
+  .desktop-command-panel .route-summary div,
+  .desktop-command-panel .route-summary-inline p,
+  .desktop-command-panel .alert-item {
+    padding: 8px 9px;
+    border-radius: 12px;
+  }
+
+  .desktop-command-panel .trend-item strong,
+  .desktop-command-panel .alert-item strong {
+    font-size: 0.82rem;
+  }
+
+  .desktop-command-panel .trend-item p,
+  .desktop-command-panel .alert-item p,
+  .desktop-command-panel .route-summary-inline p {
+    font-size: 0.74rem;
+    line-height: 1.26;
+  }
+
+  .desktop-command-panel .combined-module-block h3 {
+    font-size: 0.73rem;
+    letter-spacing: 0.06em;
+  }
+}
