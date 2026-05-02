@@ -1603,8 +1603,8 @@ function bindEvents() {
   });
   els.mobileQuickRouteBtn?.addEventListener("click", (event) => openRouteSetupModal(event.currentTarget));
   els.mobileQuickFavoritesBtn?.addEventListener("click", () => {
-    openSmartAlertsModal();
-    setConfirmation("Favorites is coming soon. Alerts are open for now.", "success");
+    console.debug("Favorites clicked");
+    setConfirmation("Favorites coming soon.", "success");
   });
   const townSelectorBtn = els.mobileTownSelectorBtn || document.querySelector("#mobileTownSelectorBtn, .mobile-location-chip");
   const weatherChipBtn = els.mobileWeatherChipBtn || document.querySelector("#mobileWeatherChipBtn, .mobile-weather-chip");
@@ -1625,7 +1625,7 @@ function bindEvents() {
     setConfirmation("Smart Alerts opened.", "success");
   });
   bindMobileTap(avatarBtn, () => {
-    console.debug("Avatar clicked");
+    console.debug("Profile clicked");
     setConfirmation("Driver profile coming soon.", "success");
   });
 
@@ -1644,6 +1644,27 @@ function bindEvents() {
 
   document.addEventListener("click", handlePopupReportTap);
   document.addEventListener("touchend", handlePopupReportTap, { passive: false });
+
+  map?.on("popupopen", (event) => {
+    const popupElement = event?.popup?.getElement?.();
+    if (!popupElement) return;
+    const popupButtons = popupElement.querySelectorAll(".popup-report-btn[data-crossing-id][data-report-type]");
+    popupButtons.forEach((button) => {
+      if (button.dataset.popupBound === "true") return;
+      const triggerPopupReport = (innerEvent) => {
+        innerEvent.preventDefault();
+        innerEvent.stopPropagation();
+        const crossingId = button.getAttribute("data-crossing-id");
+        const reportType = button.getAttribute("data-report-type");
+        if (!crossingId || !reportType || typeof window.reportCrossingFromPopup !== "function") return;
+        console.debug("Popup report clicked", crossingId, reportType);
+        window.reportCrossingFromPopup(crossingId, reportType, button);
+      };
+      button.addEventListener("click", triggerPopupReport);
+      button.addEventListener("touchend", triggerPopupReport, { passive: false });
+      button.dataset.popupBound = "true";
+    });
+  });
   els.mobileOpenLiveMapBtn?.addEventListener("click", () => {
     setConfirmation("Opening Live Map.", "success");
   });
