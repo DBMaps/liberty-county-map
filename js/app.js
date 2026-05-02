@@ -2005,6 +2005,7 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
 
   const originalButtonText = buttonEl ? buttonEl.textContent : "";
   const copy = getReportCopy(reportType);
+  const sourceTag = "community_report";
 
   const expiresAt = new Date(Date.now() + REPORT_EXPIRATION_MINUTES * 60000).toISOString();
 
