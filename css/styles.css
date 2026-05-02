@@ -2577,3 +2577,239 @@ body.modal-open {
     align-items: center;
   }
 }
+
+/* V17.1 visual architecture pass: stronger hierarchy + command center */
+@media (max-width: 700px) {
+  .app-shell {
+    width: calc(100% - 16px);
+    margin: 6px auto 108px;
+  }
+
+  .top-nav {
+    display: none;
+  }
+
+  .mobile-premium-header {
+    margin-bottom: 2px;
+  }
+
+  .mobile-home-cards {
+    gap: 16px;
+  }
+
+  .mobile-live-hero {
+    padding: 24px 20px 20px;
+    border-radius: 24px;
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .mobile-live-hero > span {
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+  }
+
+  .mobile-live-hero strong {
+    font-size: clamp(2rem, 8.6vw, 2.65rem);
+    line-height: 0.98;
+    margin: 8px 0 6px;
+    max-width: 11ch;
+  }
+
+  .mobile-live-hero p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #e2efff;
+    max-width: 34ch;
+  }
+
+  .mobile-hero-map-cta {
+    min-height: 56px;
+    margin-top: 16px;
+    font-size: 1.02rem;
+    border-radius: 16px;
+    box-shadow: 0 20px 34px rgba(2, 9, 24, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.23);
+  }
+
+  .mobile-quick-actions-card {
+    background: rgba(11, 20, 34, 0.68);
+    border-style: dashed;
+    border-color: rgba(124, 173, 245, 0.32);
+  }
+
+  .mobile-quick-actions-card > span,
+  .mobile-community-card,
+  .mobile-active-crossings-card,
+  .mobile-premium-status-bar {
+    opacity: 0.92;
+  }
+
+  .mobile-home-card:not(.mobile-live-hero):not(.mobile-commute-card) {
+    padding: 14px 14px;
+  }
+
+  .mobile-commute-card {
+    padding: 18px 16px;
+    border-width: 1px;
+    border-color: rgba(98, 220, 178, 0.42);
+  }
+
+  .mobile-home-card strong {
+    font-size: 1.3rem;
+    margin: 7px 0 6px;
+  }
+
+  .mobile-home-card p {
+    font-size: 0.88rem;
+  }
+
+  .map-card {
+    margin-top: 6px;
+    padding: 12px;
+    border-radius: 24px;
+  }
+
+  .section-header h2 {
+    font-size: 1.38rem;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  .section-header .map-note {
+    font-size: 0.9rem;
+  }
+}
+
+@media (min-width: 1101px) {
+  .app-shell {
+    width: min(1660px, calc(100% - 34px));
+    margin-top: 16px;
+  }
+
+  .dashboard {
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .hero-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    padding: 22px 24px;
+    gap: 22px;
+    border-radius: 28px;
+    border: 1px solid rgba(108, 171, 255, 0.34);
+    background:
+      radial-gradient(circle at 88% 16%, rgba(114, 175, 255, 0.2), transparent 40%),
+      linear-gradient(165deg, rgba(17, 31, 52, 0.94), rgba(8, 17, 30, 0.94));
+  }
+
+  #timeContext,
+  #greetingTitle,
+  #greetingSubtitle,
+  #habitStatusDetail {
+    display: block;
+  }
+
+  #greetingTitle {
+    font-size: clamp(2.15rem, 2.8vw, 3.1rem);
+    line-height: 0.98;
+  }
+
+  .subtext {
+    display: block;
+    font-size: 1rem;
+  }
+
+  .habit-status-strip {
+    margin-top: 12px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(14, 29, 49, 0.78);
+  }
+
+  .trust-row {
+    margin-top: 12px;
+  }
+
+  .trust-row span {
+    font-size: 0.78rem;
+  }
+
+  .hero-command-card {
+    display: grid;
+    gap: 12px;
+    align-content: stretch;
+  }
+
+  .route-status-card {
+    padding: 18px;
+    border-radius: 18px;
+    min-height: 142px;
+  }
+
+  .route-status-card strong {
+    font-size: 2rem;
+  }
+
+  .hero-actions {
+    gap: 10px;
+  }
+
+  .hero-actions .primary-btn,
+  .hero-actions .secondary-btn {
+    min-height: 46px;
+    font-size: 0.92rem;
+  }
+
+  .hero-route-btn,
+  .hero-alerts-btn {
+    display: inline-flex;
+    justify-content: center;
+  }
+
+  #desktopReportNearMeBtn {
+    position: static;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .command-center {
+    grid-template-columns: minmax(0, 1fr) 380px;
+    gap: 16px;
+  }
+
+  .map-card {
+    padding: 16px;
+    border-radius: 28px;
+  }
+
+  .map-header h2 {
+    font-size: 1.5rem;
+  }
+
+  #map {
+    height: 720px;
+    border-radius: 24px;
+  }
+
+  .desktop-command-panel {
+    padding: 12px;
+    border-radius: 28px;
+    gap: 12px;
+  }
+
+  .desktop-command-panel .panel-card {
+    border-radius: 18px;
+    padding: 16px;
+  }
+
+  .desktop-command-panel .drawer-summary {
+    padding: 12px 14px;
+  }
+
+  .desktop-command-panel .drawer-body {
+    padding: 0 14px 14px;
+  }
+}
