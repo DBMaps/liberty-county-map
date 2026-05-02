@@ -988,7 +988,8 @@ function getUnifiedIncidents() {
       created_at: latest.submittedAt,
       confidence: latest.confidence,
       reports_count: incident.count,
-      age_minutes: latest.minutesAgo
+      age_minutes: latest.minutesAgo,
+      report_type: latest.type
     });
   });
 
@@ -1008,7 +1009,8 @@ function getUnifiedIncidents() {
       created_at: latest.submittedAt,
       confidence: latest.confidence,
       reports_count: incident.count,
-      age_minutes: latest.minutesAgo
+      age_minutes: latest.minutesAgo,
+      report_type: latest.type
     });
   });
 
@@ -1031,8 +1033,75 @@ function getUnifiedIncidentIcon(incident){
 }
 
 function buildUnifiedIncidentPopup(incident){
-  return `<div class="gridly-popup"><strong>${sanitizeText(incident.title)}</strong><span>${sanitizeText(incident.description || "Live incident")}</span><br /><span>${incident.reports_count} report${incident.reports_count===1?"":"s"} · ${incident.status}</span></div>`;
+  const isActive = incident.status === "active";
+  const typeCategory = incident.id?.startsWith("rail-") ? "rail" : "road";
+  const details = `<span>${incident.reports_count} report${incident.reports_count===1?"":"s"} · ${incident.status}</span>`;
+
+  if (!isActive) {
+    return `<div class="gridly-popup"><strong>${sanitizeText(incident.title)}</strong><span>${sanitizeText(incident.description || "Live incident")}</span><br />${details}</div>`;
+  }
+
+  return `<div class="gridly-popup"><strong>${sanitizeText(incident.title)}</strong><span>${sanitizeText(incident.description || "Live incident")}</span><br />${details}<div class="popup-report-grid"><button class="popup-report-btn warning" type="button" data-unified-action="confirm" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Confirm Still Active</button><button class="popup-report-btn blue" type="button" data-unified-action="cleared" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Mark Cleared</button><button class="popup-report-btn neutral" type="button" data-unified-action="view-area" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">View Area</button></div></div>`;
 }
+
+function mapUnifiedRailConfirmType(reportType) {
+  if (reportType === "blocked" || reportType === "heavy" || reportType === "other") return reportType;
+  if (reportType === "cleared") return "heavy";
+  return "heavy";
+}
+
+async function handleUnifiedIncidentAction(button) {
+  const action = button?.dataset?.unifiedAction;
+  const category = button?.dataset?.incidentCategory;
+  const reportType = button?.dataset?.reportType || "";
+  const crossingId = button?.dataset?.crossingId || "";
+  const lat = Number(button?.dataset?.lat);
+  const lng = Number(button?.dataset?.lng);
+
+  if (action === "view-area") {
+    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      window.zoomToHazard?.(lat, lng);
+    }
+    return;
+  }
+
+  if (action === "confirm") {
+    console.debug("Unified incident confirm clicked", category, reportType, crossingId);
+    if (category === "rail") {
+      const crossing = crossings.find((item) => String(item.id) === String(crossingId));
+      if (!crossing) {
+        setConfirmation("Crossing not found for this incident.", "error");
+        return;
+      }
+      await createSharedReport(crossing, mapUnifiedRailConfirmType(reportType), "unified incident confirm");
+      return;
+    }
+
+    await createSharedHazardReport(reportType || "other_hazard", lat, lng, "unified incident confirm still active");
+    return;
+  }
+
+  if (action === "cleared") {
+    console.debug("Unified incident cleared clicked", category, reportType, crossingId);
+    if (category === "rail") {
+      const crossing = crossings.find((item) => String(item.id) === String(crossingId));
+      if (!crossing) {
+        setConfirmation("Crossing not found for this incident.", "error");
+        return;
+      }
+      await createSharedReport(crossing, "cleared", "unified incident cleared");
+      return;
+    }
+
+    if (typeof window.clearHazard === "function") {
+      await window.clearHazard(reportType || "other_hazard", lat, lng);
+      return;
+    }
+
+    setConfirmation("Hazard clear is not supported yet for this incident.", "success");
+  }
+}
+
 function getHazardConfidenceLabel(count) {
   if (count >= 4) return "Community verified";
   if (count >= 2) return "Likely active";
@@ -1664,6 +1733,20 @@ function bindEvents() {
       button.addEventListener("touchend", triggerPopupReport, { passive: false });
       button.dataset.popupBound = "true";
     });
+
+    const unifiedActionButtons = popupElement.querySelectorAll(".popup-report-btn[data-unified-action]");
+    unifiedActionButtons.forEach((button) => {
+      if (button.dataset.popupBoundUnified === "true") return;
+      const triggerUnifiedAction = async (innerEvent) => {
+        innerEvent.preventDefault();
+        innerEvent.stopPropagation();
+        await handleUnifiedIncidentAction(button);
+      };
+      button.addEventListener("click", triggerUnifiedAction);
+      button.addEventListener("touchend", triggerUnifiedAction, { passive: false });
+      button.dataset.popupBoundUnified = "true";
+    });
+
   });
   els.mobileOpenLiveMapBtn?.addEventListener("click", () => {
     setConfirmation("Opening Live Map.", "success");
