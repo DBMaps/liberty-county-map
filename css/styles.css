@@ -1830,19 +1830,20 @@ body.modal-open {
 
 @media (max-width: 700px) {
   .app-header {
-    min-height: 92px;
-    padding: 10px 14px 9px;
+    min-height: 98px;
+    padding: 12px 14px 10px;
     background: linear-gradient(180deg, rgba(5, 12, 22, 0.98), rgba(5, 11, 19, 0.92));
-    border-bottom: 1px solid rgba(125, 173, 245, 0.25);
+    border-bottom: 1px solid rgba(125, 173, 245, 0.26);
+    box-shadow: 0 10px 24px rgba(2, 7, 15, 0.42);
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    gap: 10px;
+    gap: 11px;
   }
 
   .brand-wrap {
     width: 100%;
-    gap: 10px;
+    gap: 9px;
     flex-wrap: wrap;
     align-items: center;
   }
@@ -1867,9 +1868,14 @@ body.modal-open {
   }
 
   .beta-pill {
-    font-size: 0.68rem;
-    padding: 6px 10px;
+    font-size: 0.66rem;
+    padding: 6px 11px;
     white-space: nowrap;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-color: rgba(67, 230, 160, 0.44);
+    background: linear-gradient(145deg, rgba(67, 230, 160, 0.12), rgba(67, 230, 160, 0.04));
+    box-shadow: inset 0 1px 0 rgba(160, 255, 214, 0.22);
   }
 
   .header-share-btn {
@@ -1893,17 +1899,26 @@ body.modal-open {
     overflow-x: auto;
     overflow-y: hidden;
     justify-content: flex-start;
-    gap: 5px;
-    padding-bottom: 2px;
+    gap: 6px;
+    padding: 1px 1px 3px;
     flex-wrap: nowrap;
     -webkit-overflow-scrolling: touch;
   }
 
   .nav-btn {
     white-space: nowrap;
-    padding: 7px 11px;
-    font-size: 0.84rem;
+    padding: 7px 12px;
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+    font-weight: 820;
     flex-shrink: 0;
+    border: 1px solid transparent;
+  }
+
+  .nav-btn.active {
+    border-color: rgba(141, 189, 255, 0.4);
+    box-shadow: inset 0 1px 0 rgba(214, 234, 255, 0.2);
+    background: linear-gradient(145deg, rgba(77, 163, 255, 0.26), rgba(58, 114, 197, 0.16));
   }
 
   .desktop-only-nav,
@@ -1996,21 +2011,21 @@ body.modal-open {
 
   .mobile-premium-header {
     display: grid;
-    gap: 10px;
-    padding: 12px 14px;
-    border-radius: 18px;
-    border: 1px solid rgba(128, 177, 247, 0.28);
-    background: linear-gradient(140deg, rgba(12, 23, 40, 0.95), rgba(10, 18, 34, 0.96));
-    box-shadow: 0 14px 28px rgba(4, 8, 16, 0.34);
+    gap: 12px;
+    padding: 13px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(128, 177, 247, 0.3);
+    background: linear-gradient(140deg, rgba(12, 23, 40, 0.96), rgba(10, 18, 34, 0.97));
+    box-shadow: 0 16px 30px rgba(4, 8, 16, 0.38), inset 0 1px 0 rgba(187, 220, 255, 0.08);
   }
   .mobile-premium-location { display:flex; align-items:center; justify-content:space-between; gap:10px; }
   .mobile-location-chip,
-  .mobile-weather-chip { border-radius:999px; border:1px solid rgba(141, 189, 255, 0.4); background: rgba(48, 104, 183, 0.22); color:#e8f2ff; font-size:.78rem; font-weight:700; letter-spacing:.01em; padding:7px 11px; }
+  .mobile-weather-chip { border-radius:999px; border:1px solid rgba(141, 189, 255, 0.44); background: linear-gradient(145deg, rgba(61, 125, 211, 0.28), rgba(32, 80, 153, 0.2)); color:#e8f2ff; font-size:.78rem; font-weight:760; letter-spacing:.01em; padding:7px 11px; min-height: 34px; }
   .mobile-weather-chip { appearance:none; -webkit-appearance:none; }
   .mobile-location-chip { display:inline-flex; align-items:center; gap:6px; }
-  .mobile-premium-actions { display:flex; gap:8px; justify-content:flex-end; }
+  .mobile-premium-actions { display:flex; gap:9px; justify-content:flex-end; }
   .mobile-icon-btn,
-  .mobile-avatar-btn { width:36px; height:36px; border-radius:999px; border:1px solid rgba(141, 189, 255, 0.4); background: rgba(56, 115, 195, 0.18); color:#e8f2ff; display:grid; place-items:center; transition:transform .2s ease, background .2s ease, border-color .2s ease; }
+  .mobile-avatar-btn { width:37px; height:37px; border-radius:999px; border:1px solid rgba(141, 189, 255, 0.45); background: linear-gradient(145deg, rgba(56, 115, 195, 0.27), rgba(43, 89, 163, 0.18)); color:#e8f2ff; display:grid; place-items:center; transition:transform .2s ease, background .2s ease, border-color .2s ease; box-shadow: inset 0 1px 0 rgba(212, 233, 255, 0.14); }
   .mobile-avatar-btn span { width:14px; height:14px; border-radius:50%; background: linear-gradient(160deg,#b8d6ff,#7faeff); display:block; box-shadow:0 0 0 5px rgba(184,214,255,.2); }
   .mobile-home-card > span { font-weight:700; letter-spacing:.01em; color:#d5e8ff; font-size:.8rem; text-transform:uppercase; }
   .mobile-home-card strong { font-weight:850; }
@@ -2033,15 +2048,15 @@ body.modal-open {
 
   .mobile-home-cards {
     display: grid;
-    gap: 12px;
+    gap: 13px;
   }
 
   .mobile-home-card {
-    padding: 16px;
-    border-radius: 20px;
-    border: 1px solid rgba(128, 177, 247, 0.24);
-    background: linear-gradient(155deg, rgba(16, 28, 46, 0.94), rgba(11, 21, 35, 0.93));
-    box-shadow: 0 14px 28px rgba(4, 8, 16, 0.32);
+    padding: 17px 16px;
+    border-radius: 21px;
+    border: 1px solid rgba(128, 177, 247, 0.26);
+    background: linear-gradient(155deg, rgba(16, 28, 46, 0.95), rgba(11, 21, 35, 0.94));
+    box-shadow: 0 16px 30px rgba(4, 8, 16, 0.34), inset 0 1px 0 rgba(194, 223, 255, 0.06);
   }
 
   .mobile-premium-status-bar {
@@ -2064,7 +2079,7 @@ body.modal-open {
   }
 
   .mobile-live-hero {
-    padding: 18px;
+    padding: 19px 18px;
     border-radius: 24px;
     background:
       radial-gradient(circle at 88% 18%, rgba(255, 212, 120, 0.2), transparent 36%),
@@ -2074,13 +2089,16 @@ body.modal-open {
   }
 
   .mobile-live-hero strong {
-    font-size: 1.9rem;
-    margin-top: 8px;
-    letter-spacing: -0.015em;
+    font-size: 2rem;
+    margin-top: 9px;
+    letter-spacing: -0.02em;
+    line-height: 1.03;
   }
 
   .mobile-live-hero p {
-    color: #d4e6ff;
+    color: #d8e9ff;
+    margin-top: 8px;
+    line-height: 1.45;
   }
 
   .mobile-quick-actions-card {
