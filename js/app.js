@@ -1533,10 +1533,10 @@ function buildPopup(crossing, report) {
       <span>Risk Score: ${crossing.risk}/100</span>
 
       <div class="popup-report-grid">
-        <button class="popup-report-btn danger" type="button" data-crossing-id="${sanitizeText(crossing.id)}" data-report-type="blocked" onclick="reportCrossingFromPopup('${sanitizeText(crossing.id)}', 'blocked', this)">Blocked</button>
-        <button class="popup-report-btn warning" type="button" data-crossing-id="${sanitizeText(crossing.id)}" data-report-type="heavy" onclick="reportCrossingFromPopup('${sanitizeText(crossing.id)}', 'heavy', this)">Delay</button>
-        <button class="popup-report-btn blue" type="button" data-crossing-id="${sanitizeText(crossing.id)}" data-report-type="cleared" onclick="reportCrossingFromPopup('${sanitizeText(crossing.id)}', 'cleared', this)">Cleared</button>
-        <button class="popup-report-btn neutral" type="button" data-crossing-id="${sanitizeText(crossing.id)}" data-report-type="other" onclick="reportCrossingFromPopup('${sanitizeText(crossing.id)}', 'other', this)">Other</button>
+        <button class="popup-report-btn danger" type="button" data-crossing-id="${sanitizeText(crossing.id)}" data-report-type="blocked">Blocked</button>
+        <button class="popup-report-btn warning" type="button" data-crossing-id="${sanitizeText(crossing.id)}" data-report-type="heavy">Delay</button>
+        <button class="popup-report-btn blue" type="button" data-crossing-id="${sanitizeText(crossing.id)}" data-report-type="cleared">Cleared</button>
+        <button class="popup-report-btn neutral" type="button" data-crossing-id="${sanitizeText(crossing.id)}" data-report-type="other">Other</button>
       </div>
     </div>
   `;
@@ -1698,56 +1698,29 @@ function bindEvents() {
     setConfirmation("Driver profile coming soon.", "success");
   });
 
-  const handlePopupReportTap = (event) => {
-    const button = event.target.closest(".popup-report-btn[data-crossing-id][data-report-type]");
-    if (!button) return;
+  const handlePopupAction = async (event) => {
+    const crossingButton = event.target.closest(".popup-report-btn[data-crossing-id][data-report-type]");
+    if (crossingButton) {
+      const crossingId = crossingButton.getAttribute("data-crossing-id");
+      const reportType = crossingButton.getAttribute("data-report-type");
+      if (!crossingId || !reportType || typeof window.reportCrossingFromPopup !== "function") return;
 
-    const crossingId = button.getAttribute("data-crossing-id");
-    const reportType = button.getAttribute("data-report-type");
-    if (!crossingId || !reportType || typeof window.reportCrossingFromPopup !== "function") return;
+      event.preventDefault();
+      event.stopPropagation();
+      console.debug("Popup report clicked", crossingId, reportType);
+      await window.reportCrossingFromPopup(crossingId, reportType, crossingButton);
+      return;
+    }
 
-    console.debug("Popup report clicked", crossingId, reportType);
+    const unifiedButton = event.target.closest(".popup-report-btn[data-unified-action]");
+    if (!unifiedButton) return;
+
     event.preventDefault();
-    window.reportCrossingFromPopup(crossingId, reportType, button);
+    event.stopPropagation();
+    await handleUnifiedIncidentAction(unifiedButton);
   };
 
-  document.addEventListener("click", handlePopupReportTap);
-  document.addEventListener("touchend", handlePopupReportTap, { passive: false });
-
-  map?.on("popupopen", (event) => {
-    const popupElement = event?.popup?.getElement?.();
-    if (!popupElement) return;
-    const popupButtons = popupElement.querySelectorAll(".popup-report-btn[data-crossing-id][data-report-type]");
-    popupButtons.forEach((button) => {
-      if (button.dataset.popupBound === "true") return;
-      const triggerPopupReport = (innerEvent) => {
-        innerEvent.preventDefault();
-        innerEvent.stopPropagation();
-        const crossingId = button.getAttribute("data-crossing-id");
-        const reportType = button.getAttribute("data-report-type");
-        if (!crossingId || !reportType || typeof window.reportCrossingFromPopup !== "function") return;
-        console.debug("Popup report clicked", crossingId, reportType);
-        window.reportCrossingFromPopup(crossingId, reportType, button);
-      };
-      button.addEventListener("click", triggerPopupReport);
-      button.addEventListener("touchend", triggerPopupReport, { passive: false });
-      button.dataset.popupBound = "true";
-    });
-
-    const unifiedActionButtons = popupElement.querySelectorAll(".popup-report-btn[data-unified-action]");
-    unifiedActionButtons.forEach((button) => {
-      if (button.dataset.popupBoundUnified === "true") return;
-      const triggerUnifiedAction = async (innerEvent) => {
-        innerEvent.preventDefault();
-        innerEvent.stopPropagation();
-        await handleUnifiedIncidentAction(button);
-      };
-      button.addEventListener("click", triggerUnifiedAction);
-      button.addEventListener("touchend", triggerUnifiedAction, { passive: false });
-      button.dataset.popupBoundUnified = "true";
-    });
-
-  });
+  document.addEventListener("click", handlePopupAction);
   els.mobileOpenLiveMapBtn?.addEventListener("click", () => {
     setConfirmation("Opening Live Map.", "success");
   });
