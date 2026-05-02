@@ -39,6 +39,32 @@ const HAZARD_TYPES = {
   }
 };
 
+const REPORT_MODES = {
+  rail: "rail",
+  roadHazard: "road_hazard"
+};
+
+const ROAD_HAZARD_TYPE_OPTIONS = [
+  { value: "crash", label: "Wreck / Crash" },
+  { value: "flooding", label: "Flooding" },
+  { value: "debris", label: "Debris" },
+  { value: "construction", label: "Construction" },
+  { value: "road_closed", label: "Road Closed" },
+  { value: "disabled_vehicle", label: "Disabled Vehicle" },
+  { value: "other_hazard", label: "Other Hazard" }
+];
+
+// TxDOT-ready mapping for future ingestion. No external API calls yet.
+const ROAD_HAZARD_SOURCE_MAP = {
+  crash: "txdot_incident",
+  disabled_vehicle: "txdot_incident",
+  debris: "community_report",
+  flooding: "txdot_flooding",
+  construction: "txdot_construction",
+  road_closed: "txdot_closure",
+  other_hazard: "community_report"
+};
+
 const LOCATION_DEFAULTS = {
   country: "USA",
   state: "Texas",
@@ -87,6 +113,7 @@ let lastSubmittedCrossing = null;
 let lastSubmittedReportType = null;
 let crossingLoadFailed = false;
 let activeGeoFilter = "nearby";
+let activeReportMode = REPORT_MODES.rail;
 
 let deviceId =
   localStorage.getItem("gridlyDeviceId") ||
@@ -104,6 +131,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initMap();
   initSupabase();
   bindEvents();
+  setReportMode(REPORT_MODES.rail);
   closeRouteSetupModal({ restoreFocus: false });
   injectHazardReportUI();
   loadSavedRoute();
@@ -160,6 +188,9 @@ function hydrateElements() {
     "searchResults",
     "manualReportType",
     "manualReportBtn",
+    "reportSearchLabel",
+    "reportSelectLabel",
+    "reportTypeLabel",
     "clearReportsBtn",
     "reportConfirmation",
     "lastUpdated",
@@ -1008,24 +1039,25 @@ window.submitHazardNearMe = function (hazardType) {
   );
 };
 
-async function createSharedHazardReport(hazardType, lat, lng, confidence) {
+async function createSharedHazardReport(hazardType, lat, lng, confidence, locationName = "") {
   if (!supabaseClient) {
     setConfirmation("Live hazard sync is unavailable.", "error");
     return;
   }
 
   const copy = HAZARD_TYPES[hazardType] || HAZARD_TYPES.other_hazard;
+  const sourceTag = ROAD_HAZARD_SOURCE_MAP[hazardType] || "community_report";
   const expiresAt = new Date(Date.now() + HAZARD_REPORT_EXPIRATION_MINUTES * 60000).toISOString();
 
   const row = {
     crossing_id: `hazard-${deviceId}-${Date.now()}`,
-    crossing_name: copy.label,
+    crossing_name: locationName ? `${copy.label} · ${locationName}` : copy.label,
     railroad: "Road hazard",
     lat,
     lng,
     report_type: hazardType,
     severity: copy.severity,
-    detail: copy.detail,
+    detail: `${copy.detail} (future_source: ${sourceTag})`,
     source: "user",
     confidence,
     device_id: deviceId,
@@ -1372,6 +1404,52 @@ function handleMobileSoon(label, detail = "Coming soon") {
   setConfirmation(`${label}: ${detail}.`, "success");
 }
 
+
+function setReportMode(mode) {
+  activeReportMode = mode === REPORT_MODES.roadHazard ? REPORT_MODES.roadHazard : REPORT_MODES.rail;
+
+  const isRoadHazardMode = activeReportMode === REPORT_MODES.roadHazard;
+
+  if (els.mobileCrossingReportBtn) {
+    els.mobileCrossingReportBtn.classList.toggle("active", !isRoadHazardMode);
+    els.mobileCrossingReportBtn.setAttribute("aria-pressed", String(!isRoadHazardMode));
+  }
+
+  if (els.mobileHazardReportBtn) {
+    els.mobileHazardReportBtn.classList.toggle("active", isRoadHazardMode);
+    els.mobileHazardReportBtn.setAttribute("aria-pressed", String(isRoadHazardMode));
+  }
+
+  safeText("reportSearchLabel", isRoadHazardMode ? "Search hazard area" : "Search crossing");
+  safeText("reportSelectLabel", isRoadHazardMode ? "Road hazard location" : "Manual crossing");
+  safeText("reportTypeLabel", isRoadHazardMode ? "Hazard type" : "Report type");
+
+  if (els.crossingSearch) {
+    els.crossingSearch.placeholder = isRoadHazardMode
+      ? "Search road, area, or landmark..."
+      : "Search street, crossing, or railroad...";
+  }
+
+  if (els.manualReportType) {
+    if (isRoadHazardMode) {
+      els.manualReportType.innerHTML = ROAD_HAZARD_TYPE_OPTIONS.map(
+        (option) => `<option value="${option.value}">${option.label}</option>`
+      ).join("");
+    } else {
+      els.manualReportType.innerHTML = `
+        <option value="blocked">Blocked</option>
+        <option value="heavy">Heavy Delay</option>
+        <option value="cleared">Cleared</option>
+        <option value="other">Other Issue</option>
+      `;
+    }
+  }
+
+  if (els.manualReportBtn) {
+    els.manualReportBtn.textContent = isRoadHazardMode ? "Submit Road Hazard" : "Submit Shared Report";
+  }
+}
+
 function bindEvents() {
   const bindTapSafeClose = (element, handler) => {
     if (!element) return;
@@ -1441,12 +1519,14 @@ function bindEvents() {
     setConfirmation("Opening Route Watch.", "success");
   });
   els.mobileCrossingReportBtn?.addEventListener("click", () => {
+    setReportMode(REPORT_MODES.rail);
     setConfirmation("Railroad crossing report mode is active below.", "success");
     els.reportSection?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
   els.mobileHazardReportBtn?.addEventListener("click", () => {
-    document.getElementById("gridlyHazardLauncher")?.click();
-    setConfirmation("Road hazard reporting opened.", "success");
+    setReportMode(REPORT_MODES.roadHazard);
+    setConfirmation("Road hazard report mode is active below.", "success");
+    els.reportSection?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
   els.desktopReportNearMeBtn?.addEventListener("click", handleReportNearMe);
   els.saveSmartAlertsBtn?.addEventListener("click", saveSmartAlertsPreferences);
@@ -1747,7 +1827,17 @@ function submitManualReport() {
   const reportType = els.manualReportType?.value || "blocked";
 
   if (!crossing) {
-    setConfirmation("Choose a crossing before submitting a report.", "error");
+    setConfirmation(
+      activeReportMode === REPORT_MODES.roadHazard
+        ? "Choose a location before submitting a road hazard."
+        : "Choose a crossing before submitting a report.",
+      "error"
+    );
+    return;
+  }
+
+  if (activeReportMode === REPORT_MODES.roadHazard) {
+    createSharedHazardReport(reportType, crossing.lat, crossing.lng, "manual road hazard", crossing.name);
     return;
   }
 
@@ -1773,7 +1863,7 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
     lng: crossing.lng,
     report_type: reportType,
     severity: copy.severity,
-    detail: copy.detail,
+    detail: `${copy.detail} (future_source: ${sourceTag})`,
     source: "user",
     confidence,
     device_id: deviceId,

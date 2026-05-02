@@ -329,26 +329,26 @@
           <span>Report Options</span>
           <p>Report a railroad crossing issue or a road hazard.</p>
           <div class="mobile-report-mode-actions">
-            <button id="mobileCrossingReportBtn" class="secondary-btn" type="button">Railroad Crossing Report</button>
-            <button id="mobileHazardReportBtn" class="secondary-btn" type="button">Report Road Hazard</button>
+            <button id="mobileCrossingReportBtn" class="secondary-btn active" type="button" aria-pressed="true">Railroad Crossing Report</button>
+            <button id="mobileHazardReportBtn" class="secondary-btn" type="button" aria-pressed="false">Report Road Hazard</button>
           </div>
         </div>
 
       <div class="report-tools">
         <label>
-          Search crossing
+          <span id="reportSearchLabel">Search crossing</span>
           <input id="crossingSearch" type="text" placeholder="Search street, crossing, or railroad..." />
         </label>
 
         <label>
-          Manual crossing
+          <span id="reportSelectLabel">Manual crossing</span>
           <select id="crossingSelect">
             <option value="">Loading crossings...</option>
           </select>
         </label>
 
         <label>
-          Report type
+          <span id="reportTypeLabel">Report type</span>
           <select id="manualReportType">
             <option value="blocked">Blocked</option>
             <option value="heavy">Heavy Delay</option>
