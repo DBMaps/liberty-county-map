@@ -1729,29 +1729,58 @@ function bindEvents() {
     setConfirmation("Smart Alerts opened.", "success");
   });
   const mobileHeaderTapState = { town: 0, avatar: 0 };
+  // TEMP diagnostic block: mobile Dayton/avatar event tracing only.
+  const logMobileHeaderDiagnostic = (phase, event) => {
+    const rawTarget = event?.target || null;
+    const elementTarget = rawTarget && rawTarget.nodeType === Node.ELEMENT_NODE ? rawTarget : rawTarget?.parentElement || null;
+    const townClosest = elementTarget?.closest?.("#mobileTownSelectorBtn, .mobile-location-chip") || null;
+    const avatarClosest = elementTarget?.closest?.("#mobileAvatarBtn, .mobile-avatar-btn") || null;
+    console.debug("[mobile-header-diagnostic]", phase, {
+      type: event?.type || null,
+      target: rawTarget,
+      targetTag: elementTarget?.tagName || null,
+      townClosest,
+      avatarClosest,
+      defaultPrevented: Boolean(event?.defaultPrevented),
+      cancelBubble: Boolean(event?.cancelBubble),
+      phase: event?.eventPhase || null
+    });
+    return { townClosest, avatarClosest, elementTarget };
+  };
+
   const handleMobileHeaderDelegateTap = (event) => {
-    const townTarget = event.target.closest("#mobileTownSelectorBtn, .mobile-location-chip");
-    const avatarTarget = event.target.closest("#mobileAvatarBtn, .mobile-avatar-btn");
+    const { townClosest: townTarget, avatarClosest: avatarTarget } = logMobileHeaderDiagnostic("delegate-entry", event);
     const targetType = townTarget ? "town" : avatarTarget ? "avatar" : null;
     if (!targetType) return;
 
     const now = Date.now();
-    if (now - mobileHeaderTapState[targetType] < 350) return;
+    if (now - mobileHeaderTapState[targetType] < 350) {
+      console.debug("[mobile-header-diagnostic] duplicate-suppressed", { targetType, eventType: event.type });
+      return;
+    }
     mobileHeaderTapState[targetType] = now;
 
     event.preventDefault();
     event.stopPropagation();
 
     if (targetType === "town") {
+      console.debug("[mobile-header-diagnostic] action-call", { targetType, eventType: event.type });
       showTownSelectorConfirmation({ currentTarget: townTarget });
       return;
     }
 
+    console.debug("[mobile-header-diagnostic] action-call", { targetType, eventType: event.type });
     console.debug("Profile action", { id: avatarTarget.id || null, className: avatarTarget.className || null });
     openRouteSetupModal(avatarTarget);
     setConfirmation("Profile/account is not available yet. Opening route setup as a safe fallback.", "success");
   };
 
+  const mobileHeaderCaptureProbe = (event) => {
+    logMobileHeaderDiagnostic("document-capture", event);
+  };
+
+  document.addEventListener("pointerup", mobileHeaderCaptureProbe, true);
+  document.addEventListener("click", mobileHeaderCaptureProbe, true);
   document.addEventListener("pointerup", handleMobileHeaderDelegateTap);
   document.addEventListener("click", handleMobileHeaderDelegateTap);
 
