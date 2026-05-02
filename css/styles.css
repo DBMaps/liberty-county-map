@@ -3043,3 +3043,72 @@ body.modal-open {
     letter-spacing: 0.06em;
   }
 }
+
+/* V17 strict visual match pass */
+:root {
+  --bg: #030303;
+  --bg-panel: #0a0b0d;
+  --card: rgba(18, 19, 22, 0.8);
+  --border: rgba(255, 255, 255, 0.12);
+  --muted: #9ba3ad;
+}
+body { background: radial-gradient(circle at 12% -8%, rgba(255,255,255,0.05), transparent 34%), #030303; }
+.app-shell.premium-layout { max-width: 1600px; display: block; }
+.desktop-left-rail { display:none; }
+.main-column { min-width: 0; }
+.hero-card, .map-card, .panel-card, .report-card, .growth-card, .insight-card, .setup-card, .mobile-home-card {
+  background: linear-gradient(175deg, rgba(20,22,26,0.72), rgba(13,14,16,0.8));
+  border: 1px solid rgba(255,255,255,0.11);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+}
+.primary-btn { background: linear-gradient(135deg,#33d98b,#2bb874); color:#03150c; }
+.secondary-btn { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.14); }
+.hero-report-btn, #quickClearBtn, #mobileQuickReportBtn { background: linear-gradient(135deg,#ff7a4f,#ff4f4f); color: #fff; border: 0; }
+#mobileQuickClearedBtn { background: linear-gradient(135deg,#38d98e,#28b976); color: #042013; border: 0; }
+#mobileQuickRouteBtn { background: rgba(79,170,255,0.18); border-color: rgba(120,198,255,0.45); }
+#map {
+  border: 1px solid rgba(255,255,255,0.16);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03), 0 18px 36px rgba(0,0,0,0.55);
+  filter: saturate(0.78) brightness(0.72) contrast(1.1);
+}
+.leaflet-tile { filter: grayscale(0.52) brightness(0.62) contrast(1.2) saturate(0.35) hue-rotate(160deg); }
+.mobile-bottom-app-nav { display:none; }
+
+@media (min-width:1101px){
+  .app-header { padding-left: 24px; background: rgba(3,3,3,0.95); }
+  .top-nav { gap: 8px; }
+  .premium-layout { display: grid !important; grid-template-columns: 98px minmax(0,1fr); gap: 14px; }
+  .desktop-left-rail {
+    display:flex; flex-direction:column; gap:10px; position: sticky; top: 96px; align-self:start;
+    background: rgba(12,13,15,0.8); border:1px solid rgba(255,255,255,0.13); border-radius: 24px; padding: 14px 10px;
+    box-shadow: 0 18px 34px rgba(0,0,0,0.5);
+  }
+  .rail-brand { font-size: .62rem; letter-spacing: .14em; color:#7f8792; text-align:center; font-weight:800; }
+  .rail-nav-btn { border:1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color:#dbe3ec; border-radius:14px; padding:10px 6px; font-size:.72rem; font-weight:800; }
+  .rail-nav-btn.active { background: rgba(68,220,146,0.2); color:#a7ffd0; border-color: rgba(68,220,146,0.5); }
+  .rail-status-chip { margin-top:auto; color:#8be7bb; font-size:.67rem; text-align:center; border:1px solid rgba(68,220,146,0.34); border-radius: 12px; padding:8px 6px; }
+  .command-center { display:grid; grid-template-columns: minmax(0,1fr) 370px; gap:12px; }
+  .map-card { min-height: 720px; }
+  #map { min-height: 560px; }
+}
+
+@media (max-width:1100px){
+  .app-header { min-height:64px; padding:0 14px; background: rgba(3,3,3,0.94); }
+  .brand-logo-frame { width: 180px; height: 60px; }
+  .beta-pill { display:none; }
+  .hero-card { grid-template-columns: 1fr; padding: 14px; }
+  .mobile-premium-header { display:flex; justify-content:space-between; align-items:center; background:#090909; border:1px solid rgba(255,255,255,0.12); border-radius:16px; padding:10px 12px; }
+  .mobile-home-cards { display:grid; gap:10px; }
+  .mobile-home-card { border-radius: 18px; }
+  .mobile-active-crossings-card { order: 4; }
+  .mobile-community-card { order: 5; }
+  .mobile-bottom-app-nav {
+    position: fixed; left: 10px; right: 10px; bottom: 8px; z-index: 1200;
+    display:grid; grid-template-columns:repeat(4,1fr); gap:8px; padding:8px;
+    border-radius: 18px; border:1px solid rgba(255,255,255,0.14); background: rgba(9,10,12,0.94); backdrop-filter: blur(16px);
+  }
+  .mobile-bottom-nav-btn { border:1px solid rgba(255,255,255,0.09); background: rgba(255,255,255,0.03); color:#dde3ea; border-radius: 12px; padding: 10px 4px; font-size:.73rem; font-weight:800; }
+  .mobile-bottom-nav-btn.active { color:#9dffcb; border-color: rgba(68,220,146,0.5); background: rgba(68,220,146,0.17); }
+  .mobile-sticky-report { bottom: 88px; }
+  .app-footer { padding-bottom: 90px; }
+}
