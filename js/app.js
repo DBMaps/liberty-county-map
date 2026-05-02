@@ -1723,6 +1723,7 @@ function bindEvents() {
   const mobileHeaderTapState = { town: 0, avatar: 0 };
   const showTownSelectorConfirmation = (townControl) => {
     console.debug("Town selector action", { id: townControl?.id || null, className: townControl?.className || null });
+    setConfirmation("DEBUG: Dayton tap reached handler.", "success");
     openRouteSetupModal(townControl || null);
     setConfirmation("Town selector opened. Liberty County is active.", "success");
   };
@@ -1752,6 +1753,7 @@ function bindEvents() {
     }
 
     console.debug("Profile action", { id: avatarTarget?.id || null, className: avatarTarget?.className || null });
+    setConfirmation("DEBUG: Avatar tap reached handler.", "success");
     openRouteSetupModal(avatarTarget || null);
     setConfirmation("Profile/account is not available yet. Opening route setup as a safe fallback.", "success");
   };
