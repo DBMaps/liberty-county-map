@@ -1704,8 +1704,28 @@ function bindEvents() {
   });
 
   const mobileHeaderTapState = { town: 0, avatar: 0 };
-  const showMobileHeaderConfirmation = (message, type = "success") => {
+  const showMobileHeaderConfirmation = (message, type = "success", { forceVisible = false } = {}) => {
     setConfirmation(message, type);
+
+    if (!forceVisible) return;
+
+    const confirmationEl = els.reportConfirmation;
+    const rect = confirmationEl?.getBoundingClientRect?.();
+    const isVisible = Boolean(
+      confirmationEl &&
+      rect &&
+      rect.width > 0 &&
+      rect.height > 0 &&
+      rect.bottom > 0 &&
+      rect.top < window.innerHeight &&
+      getComputedStyle(confirmationEl).display !== "none" &&
+      getComputedStyle(confirmationEl).visibility !== "hidden" &&
+      getComputedStyle(confirmationEl).opacity !== "0"
+    );
+
+    if (!isVisible) {
+      window.alert(message);
+    }
   };
 
   const showTownSelectorConfirmation = () => {
@@ -1738,7 +1758,7 @@ function bindEvents() {
       return;
     }
 
-    showMobileHeaderConfirmation("Profile/account options coming soon.", "success");
+    showMobileHeaderConfirmation("Profile/account options coming soon.", "success", { forceVisible: true });
   };
 
   document.addEventListener("pointerup", handleMobileHeaderDelegateTap);
