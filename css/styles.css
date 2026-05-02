@@ -2048,7 +2048,7 @@ body.modal-open {
 
   .mobile-home-cards {
     display: grid;
-    gap: 10px;
+    gap: 12px;
   }
 
   .mobile-home-card {
@@ -2079,7 +2079,7 @@ body.modal-open {
   }
 
   .mobile-live-hero {
-    padding: 16px 15px;
+    padding: 18px 16px 16px;
     border-radius: 20px;
     background:
       radial-gradient(circle at 88% 18%, rgba(255, 212, 120, 0.2), transparent 36%),
@@ -2089,7 +2089,7 @@ body.modal-open {
   }
 
   .mobile-live-hero strong {
-    font-size: 1.9rem;
+    font-size: 2rem;
     margin-top: 6px;
     letter-spacing: -0.02em;
     line-height: 1.03;
@@ -2099,6 +2099,14 @@ body.modal-open {
     color: #d8e9ff;
     margin-top: 6px;
     line-height: 1.45;
+  }
+  .mobile-hero-map-cta {
+    width: 100%;
+    margin-top: 12px;
+    min-height: 48px;
+    border-radius: 14px;
+    font-size: .96rem;
+    box-shadow: 0 12px 24px rgba(2, 8, 20, 0.4), inset 0 1px 0 rgba(255,255,255,.18);
   }
 
   .mobile-quick-actions-card {
@@ -2146,6 +2154,10 @@ body.modal-open {
   .mobile-home-cards > .mobile-home-card.mobile-commute-card {
     border-color: rgba(69, 204, 164, 0.34);
     background: linear-gradient(160deg, rgba(15, 40, 47, 0.96), rgba(10, 24, 35, 0.94));
+  }
+  .mobile-community-card {
+    border-color: rgba(118, 165, 225, 0.4);
+    background: linear-gradient(160deg, rgba(20, 41, 70, 0.94), rgba(11, 26, 45, 0.95));
   }
 
   .mobile-home-cards > .mobile-home-card.mobile-commute-card strong {

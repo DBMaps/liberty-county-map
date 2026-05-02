@@ -97,9 +97,10 @@
 
       <div class="mobile-home-cards" aria-label="Today quick view">
         <article class="mobile-home-card mobile-live-hero live-status-card">
-          <span>Live Incident Status</span>
-          <strong id="delayRisk">Moderate</strong>
-          <p id="delayReason">Route pulse: moderate activity nearby. Keep an alternate in mind for the next 30 minutes.</p>
+          <span>Today Intelligence</span>
+          <strong id="delayRisk">Morning Commute Watch</strong>
+          <p id="delayReason">Gridly is scanning nearby rail crossings and live reports to guide your next move.</p>
+          <button class="primary-btn mobile-hero-map-cta" id="mobileOpenLiveMapBtn" type="button" data-section-jump="map">Check Live Map</button>
         </article>
 
         <article class="mobile-home-card mobile-quick-actions-card" aria-label="Quick actions">
@@ -108,15 +109,8 @@
             <button class="secondary-btn" id="mobileQuickReportBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9l-8 14A1 1 0 0 0 3.2 19h17.6a1 1 0 0 0 .9-1.5l-8-14a1 1 0 0 0-1.7 0z"/></svg> Report Delay</button>
             <button class="secondary-btn" id="mobileQuickClearedBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Cleared</button>
             <button class="secondary-btn" id="mobileQuickRouteBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg> My Route</button>
-            <button class="secondary-btn" id="mobileQuickFavoritesBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 17.3-6.2 3.5 1.6-6.9L2 9.1l7-.6L12 2l3 6.5 7 .6-5.4 4.8 1.6 6.9z"/></svg> Favorites</button>
+            <button class="secondary-btn" id="mobileQuickFavoritesBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 17h5l-1.4-1.4a2 2 0 0 1-.6-1.4V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5"/><path d="M10 20a2 2 0 0 0 4 0"/></svg> Alerts</button>
           </div>
-        </article>
-
-        <article class="mobile-home-card mobile-open-map-cta-card">
-          <span>Live Map Access</span>
-          <strong>Open Live Map</strong>
-          <p>Jump into active crossings and route risk with one tap.</p>
-          <button class="secondary-btn" id="mobileOpenLiveMapBtn" type="button" data-section-jump="map">Open Live Map</button>
         </article>
 
         <article class="mobile-home-card mobile-commute-card">
@@ -126,16 +120,16 @@
           <button class="secondary-btn mobile-commute-cta" id="mobileCommuteRouteBtn" type="button" data-section-jump="map">Open Route Watch</button>
         </article>
 
-        <article class="mobile-home-card mobile-active-crossings-card">
-          <span>Most Active Crossings</span>
-          <strong id="nearbyAlertCount">0 active now</strong>
-          <p id="activeAlertText">No fresh delay reports yet. You are all clear right now—check map if your route changes.</p>
-        </article>
-
         <article class="mobile-home-card mobile-community-card">
           <span><span aria-hidden="true">👥</span> Community Impact</span>
           <strong id="communityTrust">Building signal</strong>
           <p id="communityTrustReason">Shared reports become stronger when more drivers confirm them.</p>
+        </article>
+
+        <article class="mobile-home-card mobile-active-crossings-card">
+          <span>Most Active</span>
+          <strong id="nearbyAlertCount">0 active now</strong>
+          <p id="activeAlertText">No fresh delay reports yet. You are all clear right now—check map if your route changes.</p>
         </article>
 
         <article class="mobile-home-card mobile-premium-status-bar">
