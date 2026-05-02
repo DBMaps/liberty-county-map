@@ -131,6 +131,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initMap();
   initSupabase();
   bindEvents();
+  debugMobileClickTargets();
   setReportMode(REPORT_MODES.rail);
   closeRouteSetupModal({ restoreFocus: false });
   injectHazardReportUI();
@@ -143,6 +144,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   setInterval(loadSharedReports, LIVE_REFRESH_MS);
 });
 
+
+
+function debugMobileClickTargets() {
+  const townSelectorBtn = document.querySelector("#mobileTownSelectorBtn, .mobile-location-chip");
+  const weatherChipBtn = document.querySelector("#mobileWeatherChipBtn, .mobile-weather-chip");
+  const bellBtn = document.querySelector("#mobileBellBtn, .mobile-icon-btn");
+  const avatarBtn = document.querySelector("#mobileAvatarBtn, .mobile-avatar-btn");
+  const popupReportButtons = document.querySelectorAll(".popup-report-btn[data-crossing-id][data-report-type]");
+
+  console.debug("[click-diagnostic] mobileTownSelectorBtn exists:", Boolean(townSelectorBtn), townSelectorBtn);
+  console.debug("[click-diagnostic] mobileWeatherChipBtn exists:", Boolean(weatherChipBtn), weatherChipBtn);
+  console.debug("[click-diagnostic] mobileBellBtn exists:", Boolean(bellBtn), bellBtn);
+  console.debug("[click-diagnostic] mobileAvatarBtn exists:", Boolean(avatarBtn), avatarBtn);
+  console.debug("[click-diagnostic] popup report buttons found:", popupReportButtons.length);
+}
 
 function setManualFallbackDefaultState() {
   if (!els.reportSection) return;
@@ -1590,21 +1606,30 @@ function bindEvents() {
     openSmartAlertsModal();
     setConfirmation("Favorites is coming soon. Alerts are open for now.", "success");
   });
-  bindMobileTap(els.mobileTownSelectorBtn || document.querySelector("#mobileTownSelectorBtn, .mobile-location-chip"), () => {
+  const townSelectorBtn = els.mobileTownSelectorBtn || document.querySelector("#mobileTownSelectorBtn, .mobile-location-chip");
+  const weatherChipBtn = els.mobileWeatherChipBtn || document.querySelector("#mobileWeatherChipBtn, .mobile-weather-chip");
+  const bellBtn = els.mobileBellBtn || document.querySelector("#mobileBellBtn, .mobile-icon-btn");
+  const avatarBtn = els.mobileAvatarBtn || document.querySelector("#mobileAvatarBtn, .mobile-avatar-btn");
+
+  bindMobileTap(townSelectorBtn, () => {
+    console.debug("Town clicked");
     setConfirmation("Town selector coming soon. Liberty County is active.", "success");
   });
-  bindMobileTap(els.mobileWeatherChipBtn || document.querySelector("#mobileWeatherChipBtn, .mobile-weather-chip"), () => {
+  bindMobileTap(weatherChipBtn, () => {
+    console.debug("Weather clicked");
     setConfirmation("Weather-aware road alerts coming soon.", "success");
   });
-  bindMobileTap(els.mobileBellBtn || document.querySelector("#mobileBellBtn, .mobile-icon-btn"), () => {
+  bindMobileTap(bellBtn, () => {
+    console.debug("Bell clicked");
     openSmartAlertsModal();
     setConfirmation("Smart Alerts opened.", "success");
   });
-  bindMobileTap(els.mobileAvatarBtn || document.querySelector("#mobileAvatarBtn, .mobile-avatar-btn"), () => {
+  bindMobileTap(avatarBtn, () => {
+    console.debug("Avatar clicked");
     setConfirmation("Driver profile coming soon.", "success");
   });
 
-  document.addEventListener("click", (event) => {
+  const handlePopupReportTap = (event) => {
     const button = event.target.closest(".popup-report-btn[data-crossing-id][data-report-type]");
     if (!button) return;
 
@@ -1612,9 +1637,13 @@ function bindEvents() {
     const reportType = button.getAttribute("data-report-type");
     if (!crossingId || !reportType || typeof window.reportCrossingFromPopup !== "function") return;
 
+    console.debug("Popup report clicked", crossingId, reportType);
     event.preventDefault();
     window.reportCrossingFromPopup(crossingId, reportType, button);
-  });
+  };
+
+  document.addEventListener("click", handlePopupReportTap);
+  document.addEventListener("touchend", handlePopupReportTap, { passive: false });
   els.mobileOpenLiveMapBtn?.addEventListener("click", () => {
     setConfirmation("Opening Live Map.", "success");
   });
