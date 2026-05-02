@@ -1689,19 +1689,16 @@ function bindEvents() {
   });
   els.mobileQuickRouteBtn?.addEventListener("click", (event) => openRouteSetupModal(event.currentTarget));
   els.mobileQuickFavoritesBtn?.addEventListener("click", () => {
-    console.debug("Favorites clicked");
     setConfirmation("Favorites coming soon.", "success");
   });
   const weatherChipBtn = els.mobileWeatherChipBtn || document.querySelector("#mobileWeatherChipBtn, .mobile-weather-chip");
   const bellBtn = els.mobileBellBtn || document.querySelector("#mobileBellBtn, .mobile-icon-btn");
 
   bindMobileTap(weatherChipBtn, () => {
-    console.debug("Weather clicked");
     scrollToSection("mapSection");
     setConfirmation("Weather context is not wired yet. Opening live map as a safe fallback.", "success");
   });
   bindMobileTap(bellBtn, () => {
-    console.debug("Bell clicked");
     openSmartAlertsModal();
     setConfirmation("Smart Alerts opened.", "success");
   });
@@ -1718,7 +1715,7 @@ function bindEvents() {
   };
 
   const showTownSelectorConfirmation = () => {
-    applyGeoFilter("town");
+    applyGeoFilterFromPill("town");
     showMobileTodayConfirmation("Showing Dayton crossings.", "success");
   };
 
@@ -1903,18 +1900,25 @@ function bindEvents() {
     });
   });
 
+  const applyGeoFilterFromPill = (filterKey) => {
+    const selectedFilter = filterKey || "all";
+    const matchingPill = document.querySelector(`.geo-filter-pill[data-geo-filter="${selectedFilter}"]`);
+
+    document.querySelectorAll(".geo-filter-pill").forEach((pill) => {
+      pill.classList.toggle("selected", pill === matchingPill);
+    });
+
+    activeGeoFilter = selectedFilter;
+    renderCrossings();
+
+    const visibleCrossings = getVisibleCrossingsForFilter();
+    if (activeGeoFilter === "active-delays" && !visibleCrossings.length) return;
+    fitMapToCrossingsForActiveFilter(visibleCrossings);
+  };
+
   document.querySelectorAll(".geo-filter-pill").forEach((btn) => {
     btn.addEventListener("click", () => {
-      document.querySelectorAll(".geo-filter-pill").forEach((pill) => {
-        pill.classList.remove("selected");
-      });
-      btn.classList.add("selected");
-      activeGeoFilter = btn.dataset.geoFilter || "all";
-      renderCrossings();
-
-      const visibleCrossings = getVisibleCrossingsForFilter();
-      if (activeGeoFilter === "active-delays" && !visibleCrossings.length) return;
-      fitMapToCrossingsForActiveFilter(visibleCrossings);
+      applyGeoFilterFromPill(btn.dataset.geoFilter || "all");
     });
   });
 }
