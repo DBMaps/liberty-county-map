@@ -1721,11 +1721,25 @@ function bindEvents() {
   });
 
   const mobileHeaderTapState = { town: 0, avatar: 0 };
+  const showMobileTodayConfirmation = (message, type = "success") => {
+    setConfirmation(message, type);
+
+    const isMobileViewport = window.matchMedia("(max-width: 1100px)").matches;
+    if (!isMobileViewport || !els.reportSection) return;
+
+    els.reportSection.open = true;
+    els.reportSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   const showTownSelectorConfirmation = (townControl) => {
     console.debug("Town selector action", { id: townControl?.id || null, className: townControl?.className || null });
-    setConfirmation("DEBUG: Dayton tap reached handler.", "success");
-    openRouteSetupModal(townControl || null);
-    setConfirmation("Town selector opened. Liberty County is active.", "success");
+
+    if (els.routeSetupModal) {
+      openRouteSetupModal(townControl || null);
+      return;
+    }
+
+    showMobileTodayConfirmation("Town selector is ready. Route setup is unavailable right now.", "error");
   };
 
   const handleMobileHeaderDelegateTap = (event) => {
@@ -1753,9 +1767,7 @@ function bindEvents() {
     }
 
     console.debug("Profile action", { id: avatarTarget?.id || null, className: avatarTarget?.className || null });
-    setConfirmation("DEBUG: Avatar tap reached handler.", "success");
-    openRouteSetupModal(avatarTarget || null);
-    setConfirmation("Profile/account is not available yet. Opening route setup as a safe fallback.", "success");
+    showMobileTodayConfirmation("Profile/account options coming soon.", "success");
   };
 
   document.addEventListener("pointerup", handleMobileHeaderDelegateTap);
