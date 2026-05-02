@@ -1482,11 +1482,6 @@ window.zoomToCrossing = function (crossingId) {
 };
 
 
-function handleMobileSoon(label, detail = "Coming soon") {
-  setConfirmation(`${label}: ${detail}.`, "success");
-}
-
-
 function setReportMode(mode) {
   activeReportMode = mode === REPORT_MODES.roadHazard ? REPORT_MODES.roadHazard : REPORT_MODES.rail;
 
@@ -1582,17 +1577,17 @@ function bindEvents() {
     setConfirmation("Favorites is coming soon. Alerts are open for now.", "success");
   });
   els.mobileTownSelectorBtn?.addEventListener("click", () => {
-    handleMobileSoon("Dayton, TX", "city switching is coming soon");
+    setConfirmation("Town selector coming soon. Liberty County is active.", "success");
   });
   els.mobileWeatherChipBtn?.addEventListener("click", () => {
-    handleMobileSoon("Weather", "full weather panel is coming soon");
+    setConfirmation("Weather-aware road alerts coming soon.", "success");
   });
   els.mobileBellBtn?.addEventListener("click", () => {
     openSmartAlertsModal();
-    setConfirmation("Alerts opened.", "success");
+    setConfirmation("Smart Alerts opened.", "success");
   });
   els.mobileAvatarBtn?.addEventListener("click", () => {
-    handleMobileSoon("Profile", "account features are coming soon");
+    setConfirmation("Driver profile coming soon.", "success");
   });
   els.mobileOpenLiveMapBtn?.addEventListener("click", () => {
     setConfirmation("Opening Live Map.", "success");
