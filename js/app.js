@@ -90,6 +90,7 @@ const LIBERTY_COUNTY_CITY_RULES = [
 let crossingReviewOverrides = {};
 const defaultCenter = [30.0466, -94.8852];
 const REPORT_EXPIRATION_MINUTES = 90;
+const RECENTLY_CLEARED_WINDOW_MINUTES = 20;
 const LIVE_REFRESH_MS = 15000;
 const APP_BUILD = "6C4";
 const CROSSING_FETCH_RETRY_ATTEMPTS = 3;
@@ -710,8 +711,9 @@ function renderCrossings() {
 
   visibleCrossings.forEach((crossing) => {
     const report = getLatestReportForCrossing(crossing.id);
-    const hasActiveIssue = report && report.type !== "cleared" && !report.expired;
-    const isCleared = report && report.type === "cleared";
+    const lifecycleState = getIncidentLifecycleState(report);
+    const hasActiveIssue = lifecycleState === "active";
+    const isCleared = lifecycleState === "recently_cleared";
     const isNearby = nearbyReportCrossingIds.has(String(crossing.id));
 
     const icon = L.divIcon({
@@ -794,7 +796,7 @@ function getVisibleCrossingsForFilter() {
   if (activeGeoFilter === "active-delays") {
     const filtered = crossings.filter((crossing) => {
       const report = getLatestReportForCrossing(crossing.id);
-      return Boolean(report && !report.expired && (report.type === "blocked" || report.type === "heavy"));
+      return getIncidentLifecycleState(report) === "active";
     });
     debugGeoFilter("Active Delays", filtered.length);
     return filtered;
@@ -990,8 +992,11 @@ function getUnifiedIncidents() {
       type: mapRailReportType(latest.type),
       source: "community",
       severity: latest.severity === "moderate" ? "medium" : latest.severity || "medium",
-      status: latest.type === "cleared" ? "cleared" : "active",
-      title: latest.type === "cleared" ? `✅ ${incident.crossingName} Cleared` : `${incident.crossingName} Rail Update`,
+      status: getIncidentLifecycleState(latest) === "active" ? "active" : "cleared",
+      title:
+        getIncidentLifecycleState(latest) === "active"
+          ? `${incident.crossingName} Rail Update`
+          : `✅ ${incident.crossingName} Cleared`,
       description: latest.detail,
       lat: latest.lat,
       lng: latest.lng,
@@ -1518,8 +1523,9 @@ function injectHazardStyles() {
 }
 
 function buildPopup(crossing, report) {
+  const lifecycleState = getIncidentLifecycleState(report);
   const status = report
-    ? report.type === "cleared"
+    ? lifecycleState === "recently_cleared" || lifecycleState === "cleared"
       ? "Recently cleared"
       : report.title
     : "No active report";
@@ -2339,9 +2345,11 @@ function evaluateSmartAlertsBanner(prefs = getSmartAlertsPreferences()) {
   );
   const hasRouteDelay =
     Boolean(localStorage.getItem("gridlyHome") && localStorage.getItem("gridlyWork")) &&
-    latestByCrossing.some((report) => report.type === "blocked" || report.type === "heavy");
+    latestByCrossing.some((report) => getIncidentLifecycleState(report) === "active");
   const hasUs90Cleared = activeReports.some(
-    (report) => report.type === "cleared" && String(report.crossingName || "").toLowerCase().includes("us 90")
+    (report) =>
+      (getIncidentLifecycleState(report) === "recently_cleared" || getIncidentLifecycleState(report) === "cleared") &&
+      String(report.crossingName || "").toLowerCase().includes("us 90")
   );
   const needsConfirmation = activeReports.some((report) => report.minutesAgo >= 75);
 
@@ -2374,7 +2382,7 @@ function updateRouteIntelligence(nearest = []) {
   const confirmedIncidents = getConsolidatedIncidents().filter((incident) => {
     const reports = Array.isArray(incident?.reports) ? incident.reports : [];
     const latest = reports[0] || [...reports].sort(compareReportsByRecency)[0];
-    return latest && latest.type !== "cleared" && reports.length >= 2;
+    return latest && getIncidentLifecycleState(latest) === "active" && reports.length >= 2;
   }).length;
   const desktopRouteSummary = `${unifiedActive.length} live incidents · ${confirmedIncidents} confirmed`;
 
@@ -2674,7 +2682,7 @@ function updateTrustStats() {
 
   safeText("reportDecayStatus", `${REPORT_EXPIRATION_MINUTES} min expiry`);
   safeText("lastReportTime", lastReport ? `${lastReport.minutesAgo} min ago` : "None yet");
-  safeText("nearbyAlertCount", active.filter((report) => report.type !== "cleared").length);
+  safeText("nearbyAlertCount", active.filter((report) => getIncidentLifecycleState(report) === "active").length);
 }
 
 function compareReportsByRecency(a, b) {
@@ -2783,7 +2791,7 @@ function getConsolidatedIncidents() {
     .sort((a, b) => {
       const severityScore = (incident) => {
         const report = incident.latestReport;
-        if (report.type === "cleared") return 0;
+        if (getIncidentLifecycleState(report) !== "active") return 0;
         if (report.severity === "high") return 3;
         if (report.severity === "moderate") return 2;
         return 1;
@@ -2808,7 +2816,7 @@ function getDriverConfirmationLabel(count) {
 
 function getCrossingConfidenceLabel(report, count) {
   if (!report) return "Low";
-  if (report.type === "cleared") return "Cleared";
+  if (isClearedReportType(report.type)) return "Cleared";
   if (count >= 3 && report.minutesAgo <= 30) return "High";
   if (count >= 2 && report.minutesAgo <= 60) return "Medium";
   if (report.minutesAgo > REPORT_EXPIRATION_MINUTES) return "Stale";
@@ -2824,8 +2832,34 @@ function getFreshnessLabel(report) {
 function getReportStateLabel(report) {
   if (!report) return "Needs confirmation";
   if (report.expired) return "Expired report";
-  if (report.type === "cleared") return "Cleared by drivers";
+  const lifecycleState = getIncidentLifecycleState(report);
+  if (lifecycleState === "recently_cleared" || lifecycleState === "cleared") return "Cleared by drivers";
   return "Active shared report";
+}
+
+function isActiveReportType(type) {
+  return ["blocked", "heavy", "other"].includes(String(type || "").trim().toLowerCase());
+}
+
+function isClearedReportType(type) {
+  const normalized = String(type || "").trim().toLowerCase();
+  return normalized === "cleared" || normalized === "hazard_cleared";
+}
+
+function isRecentlyCleared(report, now = Date.now()) {
+  if (!report || report.expired || !isClearedReportType(report.type)) return false;
+  const submittedAtMs = new Date(report.submittedAt || 0).getTime();
+  if (!Number.isFinite(submittedAtMs) || submittedAtMs <= 0) return false;
+  return now - submittedAtMs <= RECENTLY_CLEARED_WINDOW_MINUTES * 60000;
+}
+
+function getIncidentLifecycleState(report, now = Date.now()) {
+  if (!report || report.expired) return "inactive";
+  if (isActiveReportType(report.type)) return "active";
+  if (isClearedReportType(report.type)) {
+    return isRecentlyCleared(report, now) ? "recently_cleared" : "cleared";
+  }
+  return "inactive";
 }
 
 function calculateBaseRisk(props, index) {
