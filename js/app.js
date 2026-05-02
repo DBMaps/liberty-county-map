@@ -1583,14 +1583,19 @@ window.reportCrossingFromPopup = async function (crossingId, reportType, buttonE
 function bindMobileTap(element, handler) {
   if (!element || typeof handler !== "function") return;
 
+  let lastTapAt = 0;
   const invoke = (event) => {
+    const now = Date.now();
+    if (now - lastTapAt < 350) return;
+    lastTapAt = now;
+
     event?.preventDefault?.();
     event?.stopPropagation?.();
     handler(event);
   };
 
+  element.addEventListener("pointerup", invoke);
   element.addEventListener("click", invoke);
-  element.addEventListener("touchend", invoke, { passive: false });
 }
 
 window.zoomToCrossing = function (crossingId) {
@@ -1713,6 +1718,7 @@ function bindEvents() {
 
   bindMobileTap(townSelectorBtn, showTownSelectorConfirmation);
   bindMobileTap(document.querySelector(".mobile-premium-location"), showTownSelectorConfirmation);
+  bindMobileTap(document.querySelector(".mobile-premium-header"), showTownSelectorConfirmation);
   bindMobileTap(weatherChipBtn, () => {
     console.debug("Weather clicked");
     setConfirmation("Weather-aware road alerts coming soon.", "success");
