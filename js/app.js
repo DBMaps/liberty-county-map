@@ -1712,12 +1712,12 @@ function bindEvents() {
   const avatarBtn = els.mobileAvatarBtn || document.querySelector("#mobileAvatarBtn, .mobile-avatar-btn");
 
   const showTownSelectorConfirmation = (event) => {
-    console.debug("Town selector clicked");
-    openRouteSetupModal(event?.currentTarget || townSelectorBtn || null);
+    const townControl = event?.currentTarget?.closest?.("#mobileTownSelectorBtn, .mobile-location-chip") || townSelectorBtn || null;
+    console.debug("Town selector action", { id: townControl?.id || null, className: townControl?.className || null });
+    openRouteSetupModal(townControl);
     setConfirmation("Town selector opened. Liberty County is active.", "success");
   };
 
-  bindMobileTap(townSelectorBtn, showTownSelectorConfirmation);
   bindMobileTap(weatherChipBtn, () => {
     console.debug("Weather clicked");
     scrollToSection("mapSection");
@@ -1728,11 +1728,32 @@ function bindEvents() {
     openSmartAlertsModal();
     setConfirmation("Smart Alerts opened.", "success");
   });
-  bindMobileTap(avatarBtn, () => {
-    console.debug("Profile clicked");
-    openRouteSetupModal(avatarBtn || null);
+  const mobileHeaderTapState = { town: 0, avatar: 0 };
+  const handleMobileHeaderDelegateTap = (event) => {
+    const townTarget = event.target.closest("#mobileTownSelectorBtn, .mobile-location-chip");
+    const avatarTarget = event.target.closest("#mobileAvatarBtn, .mobile-avatar-btn");
+    const targetType = townTarget ? "town" : avatarTarget ? "avatar" : null;
+    if (!targetType) return;
+
+    const now = Date.now();
+    if (now - mobileHeaderTapState[targetType] < 350) return;
+    mobileHeaderTapState[targetType] = now;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (targetType === "town") {
+      showTownSelectorConfirmation({ currentTarget: townTarget });
+      return;
+    }
+
+    console.debug("Profile action", { id: avatarTarget.id || null, className: avatarTarget.className || null });
+    openRouteSetupModal(avatarTarget);
     setConfirmation("Profile/account is not available yet. Opening route setup as a safe fallback.", "success");
-  });
+  };
+
+  document.addEventListener("pointerup", handleMobileHeaderDelegateTap);
+  document.addEventListener("click", handleMobileHeaderDelegateTap);
 
   const handlePopupAction = async (event) => {
     const unifiedButton = event.target.closest(".popup-report-btn[data-unified-action]");
