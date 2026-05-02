@@ -989,7 +989,8 @@ function getUnifiedIncidents() {
       confidence: latest.confidence,
       reports_count: incident.count,
       age_minutes: latest.minutesAgo,
-      report_type: latest.type
+      report_type: latest.type,
+      crossing_id: incident.crossingId
     });
   });
 
@@ -1010,7 +1011,8 @@ function getUnifiedIncidents() {
       confidence: latest.confidence,
       reports_count: incident.count,
       age_minutes: latest.minutesAgo,
-      report_type: latest.type
+      report_type: latest.type,
+      crossing_id: incident.crossingId
     });
   });
 
@@ -1052,11 +1054,13 @@ function mapUnifiedRailConfirmType(reportType) {
 
 async function handleUnifiedIncidentAction(button) {
   const action = button?.dataset?.unifiedAction;
-  const category = button?.dataset?.incidentCategory;
-  const reportType = button?.dataset?.reportType || "";
-  const crossingId = button?.dataset?.crossingId || "";
-  const lat = Number(button?.dataset?.lat);
-  const lng = Number(button?.dataset?.lng);
+  const incidentId = button?.dataset?.incidentId || "";
+  const incident = getUnifiedIncidents().find((item) => String(item.id) === String(incidentId));
+  const category = button?.dataset?.incidentCategory || (incidentId.startsWith("rail-") ? "rail" : "road");
+  const reportType = button?.dataset?.reportType || incident?.report_type || "";
+  const crossingId = button?.dataset?.crossingId || incident?.crossing_id || (incidentId.startsWith("rail-") ? incidentId.replace("rail-", "") : "");
+  const lat = Number(button?.dataset?.lat ?? incident?.lat);
+  const lng = Number(button?.dataset?.lng ?? incident?.lng);
 
   if (action === "view-area") {
     if (Number.isFinite(lat) && Number.isFinite(lng)) {
@@ -1066,7 +1070,7 @@ async function handleUnifiedIncidentAction(button) {
   }
 
   if (action === "confirm") {
-    console.debug("Unified incident confirm clicked", category, reportType, crossingId);
+    console.debug("Unified confirm action", { category, reportType, crossingId, incidentId });
     if (category === "rail") {
       const crossing = crossings.find((item) => String(item.id) === String(crossingId));
       if (!crossing) {
@@ -1082,7 +1086,7 @@ async function handleUnifiedIncidentAction(button) {
   }
 
   if (action === "cleared") {
-    console.debug("Unified incident cleared clicked", category, reportType, crossingId);
+    console.debug("Unified cleared action", { category, reportType, crossingId, incidentId });
     if (category === "rail") {
       const crossing = crossings.find((item) => String(item.id) === String(crossingId));
       if (!crossing) {
@@ -1543,6 +1547,7 @@ function buildPopup(crossing, report) {
 }
 
 window.reportCrossingFromPopup = async function (crossingId, reportType, buttonEl) {
+  const normalizedType = String(reportType || "").trim().toLowerCase();
   const crossing = crossings.find((item) => String(item.id) === String(crossingId));
 
   if (!crossing) {
@@ -1550,7 +1555,11 @@ window.reportCrossingFromPopup = async function (crossingId, reportType, buttonE
     return;
   }
 
-  await createSharedReport(crossing, reportType, "exact map marker", buttonEl);
+  if (normalizedType === "cleared") {
+    console.debug("Cleared crossing action", { crossingId, normalizedType, crossingName: crossing.name });
+  }
+
+  await createSharedReport(crossing, normalizedType || "other", "exact map marker", buttonEl);
 };
 
 
