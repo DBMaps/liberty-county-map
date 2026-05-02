@@ -1722,25 +1722,25 @@ function bindEvents() {
   });
 
   const handlePopupAction = async (event) => {
-    const crossingButton = event.target.closest(".popup-report-btn[data-crossing-id][data-report-type]");
-    if (crossingButton) {
-      const crossingId = crossingButton.getAttribute("data-crossing-id");
-      const reportType = crossingButton.getAttribute("data-report-type");
-      if (!crossingId || !reportType || typeof window.reportCrossingFromPopup !== "function") return;
-
+    const unifiedButton = event.target.closest(".popup-report-btn[data-unified-action]");
+    if (unifiedButton) {
       event.preventDefault();
       event.stopPropagation();
-      console.debug("Popup report clicked", crossingId, reportType);
-      await window.reportCrossingFromPopup(crossingId, reportType, crossingButton);
+      await handleUnifiedIncidentAction(unifiedButton);
       return;
     }
 
-    const unifiedButton = event.target.closest(".popup-report-btn[data-unified-action]");
-    if (!unifiedButton) return;
+    const crossingButton = event.target.closest(".popup-report-btn[data-crossing-id][data-report-type]");
+    if (!crossingButton) return;
+
+    const crossingId = crossingButton.getAttribute("data-crossing-id");
+    const reportType = crossingButton.getAttribute("data-report-type");
+    if (!crossingId || !reportType || typeof window.reportCrossingFromPopup !== "function") return;
 
     event.preventDefault();
     event.stopPropagation();
-    await handleUnifiedIncidentAction(unifiedButton);
+    console.debug("Popup report clicked", crossingId, reportType);
+    await window.reportCrossingFromPopup(crossingId, reportType, crossingButton);
   };
 
   document.addEventListener("click", handlePopupAction);
