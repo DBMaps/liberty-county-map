@@ -1308,48 +1308,50 @@ function injectHazardStyles() {
   style.id = "gridlyHazardStyles";
   style.textContent = `
     .gridly-hazard-marker {
-      width: 42px;
-      height: 42px;
+      width: 28px;
+      height: 28px;
       border-radius: 999px;
       display: grid;
       place-items: center;
       position: relative;
-      background: rgba(255, 255, 255, 0.96);
-      border: 3px solid rgba(255, 209, 102, 0.95);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.34);
-      animation: gridlyHazardPulse 1.8s infinite;
+      background: rgba(8, 16, 24, 0.96);
+      border: 2px solid rgba(255, 209, 102, 0.95);
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.18), 0 0 16px rgba(255, 209, 102, 0.34);
+      animation: gridlyHazardPulse 1.7s infinite;
     }
 
     .gridly-hazard-marker.high {
-      border-color: rgba(255, 88, 88, 0.95);
+      border-color: rgba(255, 78, 111, 0.98);
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.16), 0 0 18px rgba(255, 78, 111, 0.48);
     }
 
     .gridly-hazard-marker.moderate {
-      border-color: rgba(255, 209, 102, 0.95);
+      border-color: rgba(57, 200, 255, 0.95);
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.16), 0 0 18px rgba(57, 200, 255, 0.5);
     }
 
     .gridly-hazard-marker span {
-      font-size: 20px;
+      font-size: 0;
       line-height: 1;
     }
 
     .gridly-hazard-marker small {
       position: absolute;
-      right: -8px;
-      bottom: -8px;
-      background: #06111f;
+      right: -10px;
+      bottom: -9px;
+      background: #02080f;
       color: #fff;
       border-radius: 999px;
       padding: 2px 5px;
       font-size: 9px;
       font-weight: 900;
-      border: 1px solid rgba(255,255,255,0.24);
+      border: 1px solid rgba(185, 236, 255, 0.34);
     }
 
     @keyframes gridlyHazardPulse {
-      0% { transform: scale(1); box-shadow: 0 10px 30px rgba(0,0,0,0.34); }
-      50% { transform: scale(1.08); box-shadow: 0 14px 40px rgba(255,88,88,0.32); }
-      100% { transform: scale(1); box-shadow: 0 10px 30px rgba(0,0,0,0.34); }
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1); }
     }
     .gridly-hazard-counter {
       position: fixed;
