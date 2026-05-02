@@ -1706,17 +1706,8 @@ function bindEvents() {
     console.debug("Favorites clicked");
     setConfirmation("Favorites coming soon.", "success");
   });
-  const townSelectorBtn = els.mobileTownSelectorBtn || document.querySelector("#mobileTownSelectorBtn, .mobile-location-chip");
   const weatherChipBtn = els.mobileWeatherChipBtn || document.querySelector("#mobileWeatherChipBtn, .mobile-weather-chip");
   const bellBtn = els.mobileBellBtn || document.querySelector("#mobileBellBtn, .mobile-icon-btn");
-  const avatarBtn = els.mobileAvatarBtn || document.querySelector("#mobileAvatarBtn, .mobile-avatar-btn");
-
-  const showTownSelectorConfirmation = (event) => {
-    const townControl = event?.currentTarget?.closest?.("#mobileTownSelectorBtn, .mobile-location-chip") || townSelectorBtn || null;
-    console.debug("Town selector action", { id: townControl?.id || null, className: townControl?.className || null });
-    openRouteSetupModal(townControl);
-    setConfirmation("Town selector opened. Liberty County is active.", "success");
-  };
 
   bindMobileTap(weatherChipBtn, () => {
     console.debug("Weather clicked");
@@ -1728,34 +1719,26 @@ function bindEvents() {
     openSmartAlertsModal();
     setConfirmation("Smart Alerts opened.", "success");
   });
+
   const mobileHeaderTapState = { town: 0, avatar: 0 };
-  // TEMP diagnostic block: mobile Dayton/avatar event tracing only.
-  const logMobileHeaderDiagnostic = (phase, event) => {
-    const rawTarget = event?.target || null;
-    const elementTarget = rawTarget && rawTarget.nodeType === Node.ELEMENT_NODE ? rawTarget : rawTarget?.parentElement || null;
-    const townClosest = elementTarget?.closest?.("#mobileTownSelectorBtn, .mobile-location-chip") || null;
-    const avatarClosest = elementTarget?.closest?.("#mobileAvatarBtn, .mobile-avatar-btn") || null;
-    console.debug("[mobile-header-diagnostic]", phase, {
-      type: event?.type || null,
-      target: rawTarget,
-      targetTag: elementTarget?.tagName || null,
-      townClosest,
-      avatarClosest,
-      defaultPrevented: Boolean(event?.defaultPrevented),
-      cancelBubble: Boolean(event?.cancelBubble),
-      phase: event?.eventPhase || null
-    });
-    return { townClosest, avatarClosest, elementTarget };
+  const showTownSelectorConfirmation = (townControl) => {
+    console.debug("Town selector action", { id: townControl?.id || null, className: townControl?.className || null });
+    openRouteSetupModal(townControl || null);
+    setConfirmation("Town selector opened. Liberty County is active.", "success");
   };
 
   const handleMobileHeaderDelegateTap = (event) => {
-    const { townClosest: townTarget, avatarClosest: avatarTarget } = logMobileHeaderDiagnostic("delegate-entry", event);
+    const target = event?.target;
+    const elementTarget = target && target.nodeType === Node.ELEMENT_NODE ? target : target?.parentElement || null;
+    const townTarget = elementTarget?.closest?.("#mobileTownSelectorBtn, .mobile-location-chip") || null;
+    const avatarTarget = townTarget
+      ? null
+      : elementTarget?.closest?.("#mobileAvatarBtn, .mobile-avatar-btn") || null;
     const targetType = townTarget ? "town" : avatarTarget ? "avatar" : null;
     if (!targetType) return;
 
     const now = Date.now();
     if (now - mobileHeaderTapState[targetType] < 350) {
-      console.debug("[mobile-header-diagnostic] duplicate-suppressed", { targetType, eventType: event.type });
       return;
     }
     mobileHeaderTapState[targetType] = now;
@@ -1764,25 +1747,16 @@ function bindEvents() {
     event.stopPropagation();
 
     if (targetType === "town") {
-      console.debug("[mobile-header-diagnostic] action-call", { targetType, eventType: event.type });
-      showTownSelectorConfirmation({ currentTarget: townTarget });
+      showTownSelectorConfirmation(townTarget);
       return;
     }
 
-    console.debug("[mobile-header-diagnostic] action-call", { targetType, eventType: event.type });
-    console.debug("Profile action", { id: avatarTarget.id || null, className: avatarTarget.className || null });
-    openRouteSetupModal(avatarTarget);
+    console.debug("Profile action", { id: avatarTarget?.id || null, className: avatarTarget?.className || null });
+    openRouteSetupModal(avatarTarget || null);
     setConfirmation("Profile/account is not available yet. Opening route setup as a safe fallback.", "success");
   };
 
-  const mobileHeaderCaptureProbe = (event) => {
-    logMobileHeaderDiagnostic("document-capture", event);
-  };
-
-  document.addEventListener("pointerup", mobileHeaderCaptureProbe, true);
-  document.addEventListener("click", mobileHeaderCaptureProbe, true);
   document.addEventListener("pointerup", handleMobileHeaderDelegateTap);
-  document.addEventListener("click", handleMobileHeaderDelegateTap);
 
   const handlePopupAction = async (event) => {
     const unifiedButton = event.target.closest(".popup-report-btn[data-unified-action]");
