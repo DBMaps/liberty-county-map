@@ -105,7 +105,7 @@ let crossingMarkers = new Map();
 let crossings = [];
 let activeReports = [];
 let activeHazards = [];
-let hazardLayer;
+let unifiedIncidentLayer;
 let userLocation = null;
 let userMarker = null;
 let nearbyReportCrossingIds = new Set();
@@ -355,7 +355,7 @@ function initMap() {
   }).addTo(map);
 
   crossingLayer = L.layerGroup().addTo(map);
-  hazardLayer = L.layerGroup().addTo(map);
+  unifiedIncidentLayer = L.layerGroup().addTo(map);
 }
 
 async function loadCrossings() {
@@ -589,7 +589,7 @@ async function loadSharedReports() {
     renderAlerts();
     renderTrendingCrossings();
     renderCrossings();
-    renderHazards();
+    renderUnifiedIncidents();
     updateRouteIntelligence();
     updateTrustStats();
     updateGrowthWidgets();
@@ -809,40 +809,38 @@ function debugGeoFilter(label, visibleCount) {
   console.debug(`Filter applied: ${label}`);
   console.debug(`Visible crossings: ${visibleCount}`);
 }
-function renderHazards() {
-  if (!hazardLayer) return;
+function renderUnifiedIncidents() {
+  if (!unifiedIncidentLayer) return;
 
-  hazardLayer.clearLayers();
+  unifiedIncidentLayer.clearLayers();
 
-  const liveHazards = getLiveHazardIncidents();
+  const incidents = getUnifiedIncidents();
 
-  liveHazards.forEach((incident) => {
-    const hazard = incident.latestReport;
-
-    if (!Number.isFinite(hazard.lat) || !Number.isFinite(hazard.lng)) return;
+  incidents.forEach((incident) => {
+    if (!Number.isFinite(incident.lat) || !Number.isFinite(incident.lng)) return;
 
     const ageClass =
-      hazard.minutesAgo <= 15 ? "fresh" : hazard.minutesAgo <= 60 ? "aging" : "old";
+      incident.age_minutes <= 15 ? "fresh" : incident.age_minutes <= 60 ? "aging" : "old";
 
     const icon = L.divIcon({
       className: "",
       html: `
-        <div class="gridly-hazard-marker ${sanitizeText(hazard.severity)} ${ageClass}">
-          <span>${sanitizeText(hazard.icon || "❗")}</span>
-          <small>${hazard.minutesAgo}m</small>
-          ${incident.count > 1 ? `<b>${incident.count}</b>` : ""}
+        <div class="gridly-hazard-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass}">
+          <span>${sanitizeText(getUnifiedIncidentIcon(incident))}</span>
+          <small>${incident.age_minutes}m</small>
+          ${incident.reports_count > 1 ? `<b>${incident.reports_count}</b>` : ""}
         </div>
       `,
       iconSize: [46, 46],
       iconAnchor: [23, 23]
     });
 
-    L.marker([hazard.lat, hazard.lng], { icon })
-      .bindPopup(buildHazardPopup(incident), { maxWidth: 340 })
-      .addTo(hazardLayer);
+    L.marker([incident.lat, incident.lng], { icon })
+      .bindPopup(buildUnifiedIncidentPopup(incident), { maxWidth: 340 })
+      .addTo(unifiedIncidentLayer);
   });
 
-  updateHazardCounter(liveHazards);
+  updateHazardCounter(incidents);
 }
 
 function buildHazardPopup(incident) {
@@ -935,6 +933,90 @@ function getHazardClusterKey(hazard) {
   return `${hazard.type}-${lat}-${lng}`;
 }
 
+
+
+function futureTxdotIncidents() { return []; }
+function futureTxdotConstruction() { return []; }
+function futureFloodAlerts() { return []; }
+
+function mapRailReportType(type) {
+  if (type === "blocked") return "rail_blocked";
+  if (type === "heavy") return "rail_delay";
+  if (type === "cleared") return "rail_cleared";
+  return "rail_delay";
+}
+
+function mapRoadHazardType(type) {
+  const map = { crash: "wreck", flooding: "flooding", construction: "construction", debris: "debris", road_closed: "closure", disabled_vehicle: "wreck", hazard_cleared: "cleared" };
+  return map[type] || "debris";
+}
+
+function normalizeUnifiedIncident(base) {
+  return { ...base, updated_at: base.updated_at || base.created_at, confidence: base.confidence || "community", reports_count: Number(base.reports_count || 1) };
+}
+
+function getUnifiedIncidents() {
+  const railIncidents = getConsolidatedIncidents().map((incident) => {
+    const latest = incident.latestReport;
+    return normalizeUnifiedIncident({
+      id: `rail-${incident.crossingId}`,
+      type: mapRailReportType(latest.type),
+      source: "community",
+      severity: latest.severity === "moderate" ? "medium" : latest.severity || "medium",
+      status: latest.type === "cleared" ? "cleared" : "active",
+      title: latest.type === "cleared" ? `✅ ${incident.crossingName} Cleared` : `${incident.crossingName} Rail Update`,
+      description: latest.detail,
+      lat: latest.lat,
+      lng: latest.lng,
+      area: incident.crossingName,
+      created_at: latest.submittedAt,
+      confidence: latest.confidence,
+      reports_count: incident.count,
+      age_minutes: latest.minutesAgo
+    });
+  });
+
+  const roadIncidents = getLiveHazardIncidents().map((incident) => {
+    const latest = incident.latestReport;
+    return normalizeUnifiedIncident({
+      id: `road-${incident.key}`,
+      type: mapRoadHazardType(latest.type),
+      source: latest.source || "community",
+      severity: latest.severity === "moderate" ? "medium" : latest.severity || "medium",
+      status: latest.type === "hazard_cleared" ? "cleared" : "active",
+      title: latest.title,
+      description: latest.detail,
+      lat: latest.lat,
+      lng: latest.lng,
+      area: "Liberty County",
+      created_at: latest.submittedAt,
+      confidence: latest.confidence,
+      reports_count: incident.count,
+      age_minutes: latest.minutesAgo
+    });
+  });
+
+  return [...railIncidents, ...roadIncidents, ...futureTxdotIncidents(), ...futureTxdotConstruction(), ...futureFloodAlerts()]
+    .sort((a,b)=>new Date(b.updated_at)-new Date(a.updated_at));
+}
+
+function getMapSeverityClass(incident){
+  if (incident.status === "cleared") return "low";
+  if (incident.type === "flooding") return "high";
+  if (["rail_blocked","wreck","closure"].includes(incident.type)) return "high";
+  if (["rail_delay","construction"].includes(incident.type)) return "moderate";
+  return "low";
+}
+
+function getUnifiedIncidentIcon(incident){
+  if (incident.status === "cleared") return "✅";
+  const m={rail_blocked:"⛔", rail_delay:"🚦", wreck:"🚗", flooding:"🌊", construction:"🚧", closure:"⛔", debris:"⚠️", cleared:"✅"};
+  return m[incident.type]||"❗";
+}
+
+function buildUnifiedIncidentPopup(incident){
+  return `<div class="gridly-popup"><strong>${sanitizeText(incident.title)}</strong><span>${sanitizeText(incident.description || "Live incident")}</span><br /><span>${incident.reports_count} report${incident.reports_count===1?"":"s"} · ${incident.status}</span></div>`;
+}
 function getHazardConfidenceLabel(count) {
   if (count >= 4) return "Community verified";
   if (count >= 2) return "Likely active";
@@ -947,12 +1029,12 @@ function updateHazardCounter(liveHazards) {
   if (!existing) return;
 
   const count = liveHazards.length;
-  const confirmed = liveHazards.filter((hazard) => hazard.count >= 2).length;
+  const confirmed = liveHazards.filter((hazard) => (hazard.count || hazard.reports_count || 0) >= 2).length;
 
   existing.textContent =
     count === 0
-      ? "No live road hazards"
-      : `${count} live hazard${count === 1 ? "" : "s"} · ${confirmed} confirmed`;
+      ? "No live incidents"
+      : `${count} live incident${count === 1 ? "" : "s"} · ${confirmed} confirmed`;
 }
 window.zoomToHazard = function (lat, lng) {
   if (!map) return;
@@ -2132,17 +2214,18 @@ function updateRouteIntelligence(nearest = []) {
   const savedHome = localStorage.getItem("gridlyHome");
   const savedWork = localStorage.getItem("gridlyWork");
 
-  const latestReports = getLatestReportsByCrossing();
-  const activeIssues = latestReports.filter((report) => !report.expired && report.type !== "cleared");
+  const unifiedActive = getUnifiedIncidents().filter((incident) => incident.status === "active");
+  const railActive = unifiedActive.filter((incident) => incident.type.startsWith("rail_"));
+  const activeIssues = railActive;
 
-  const highAlerts = activeIssues.filter((report) => report.severity === "high").length;
-  const moderateAlerts = activeIssues.filter((report) => report.severity === "moderate").length;
+  const highAlerts = unifiedActive.filter((report) => report.severity === "high").length;
+  const moderateAlerts = unifiedActive.filter((report) => report.severity === "medium").length;
   const confirmedIncidents = getConsolidatedIncidents().filter((incident) => {
     const reports = Array.isArray(incident?.reports) ? incident.reports : [];
     const latest = reports[0] || [...reports].sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))[0];
     return latest && latest.type !== "cleared" && reports.length >= 2;
   }).length;
-  const desktopRouteSummary = `${activeIssues.length} live hazard${activeIssues.length === 1 ? "" : "s"} · ${confirmedIncidents} confirmed`;
+  const desktopRouteSummary = `${unifiedActive.length} live incidents · ${confirmedIncidents} confirmed`;
 
   const crossingRisk = nearest.length
     ? Math.round(nearest.reduce((sum, c) => sum + c.risk, 0) / nearest.length)
@@ -2155,7 +2238,7 @@ function updateRouteIntelligence(nearest = []) {
 
   const extraMinutes = Math.max(0, Math.round(impact / 7));
 
-  safeText("nearbyAlertCount", activeIssues.length);
+  safeText("nearbyAlertCount", `${activeIssues.length} active now`);
 
   safeText(
     "activeAlertText",
@@ -2222,7 +2305,7 @@ function updateRouteIntelligence(nearest = []) {
     liveStatusCard?.classList.add("delay-status");
   } else {
     safeText("delayRisk", "All Clear");
-    safeText("delayReason", "No delays reported nearby");
+    safeText("delayReason", "No rail or road incidents reported nearby");
     safeText("alternateRoute", "Not needed");
     safeText("alternateReason", "Current route appears clear.");
     safeText("impactText", "Low route impact. Normal travel expected.");
@@ -2231,12 +2314,13 @@ function updateRouteIntelligence(nearest = []) {
 }
 
 function updateDailyHabitStatus() {
-  const latestReports = getLatestReportsByCrossing();
-  const activeIssues = latestReports.filter((report) => !report.expired && report.type !== "cleared");
+  const unifiedActive = getUnifiedIncidents().filter((incident) => incident.status === "active");
+  const railActive = unifiedActive.filter((incident) => incident.type.startsWith("rail_"));
+  const activeIssues = railActive;
   const highIssues = activeIssues.filter((report) => report.severity === "high");
   const moderateIssues = activeIssues.filter((report) => report.severity === "moderate");
   const activeCount = activeIssues.length;
-  const confirmationCount = activeReports.length;
+  const confirmationCount = getUnifiedIncidents().reduce((sum,i)=>sum+i.reports_count,0);
 
   const freshest = [...activeReports].sort(
     (a, b) => new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0)
@@ -2272,8 +2356,9 @@ function updateDailyHabitStatus() {
 }
 
 function updateGrowthWidgets() {
-  const latestReports = getLatestReportsByCrossing();
-  const activeIssues = latestReports.filter((report) => !report.expired && report.type !== "cleared");
+  const unifiedActive = getUnifiedIncidents().filter((incident) => incident.status === "active");
+  const railActive = unifiedActive.filter((incident) => incident.type.startsWith("rail_"));
+  const activeIssues = railActive;
   const highCount = activeIssues.filter((report) => report.severity === "high").length;
   const lastReport = activeReports[0];
 
@@ -2294,7 +2379,7 @@ function updateGrowthWidgets() {
     safeText("routeRecommendationReason", "No major active shared delays detected right now.");
   }
 
-  const confirmationCount = activeReports.length;
+  const confirmationCount = getUnifiedIncidents().reduce((sum,i)=>sum+i.reports_count,0);
 
   if (confirmationCount >= 5) {
     safeText("communityTrust", "Strong local signal");
