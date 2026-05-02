@@ -2685,25 +2685,54 @@ function compareReportsByRecency(a, b) {
   return String(b.id || "").localeCompare(String(a.id || ""));
 }
 
+function normalizeCrossingName(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+function getReportLocationKey(report) {
+  if (!report || typeof report !== "object") return "";
+
+  if (report.crossingId != null && String(report.crossingId).trim()) {
+    return `id:${String(report.crossingId).trim()}`;
+  }
+
+  const normalizedName = normalizeCrossingName(report.crossingName || report.crossing || report.locationName);
+  if (normalizedName) return `name:${normalizedName}`;
+
+  const lat = Number(report.lat);
+  const lng = Number(report.lng);
+  if (Number.isFinite(lat) && Number.isFinite(lng)) {
+    return `ll:${lat.toFixed(4)},${lng.toFixed(4)}`;
+  }
+
+  return "";
+}
+
+function getLatestReportStateByLocation(reports = activeReports) {
+  const latestByLocation = new Map();
+
+  (Array.isArray(reports) ? reports : [])
+    .filter((report) => report && !report.expired)
+    .sort(compareReportsByRecency)
+    .forEach((report) => {
+      const key = getReportLocationKey(report);
+      if (!key || latestByLocation.has(key)) return;
+      latestByLocation.set(key, report);
+    });
+
+  return latestByLocation;
+}
+
 function getLatestReportForCrossing(crossingId) {
-  return activeReports
-    .filter((report) => String(report.crossingId) === String(crossingId))
-    .sort(compareReportsByRecency)[0];
+  const locationKey = getReportLocationKey({ crossingId });
+  return getLatestReportStateByLocation().get(locationKey);
 }
 
 function getLatestReportsByCrossing() {
-  const mapByCrossing = new Map();
-
-  activeReports
-    .filter((report) => !report.expired)
-    .sort(compareReportsByRecency)
-    .forEach((report) => {
-      if (!mapByCrossing.has(report.crossingId)) {
-        mapByCrossing.set(report.crossingId, report);
-      }
-    });
-
-  return [...mapByCrossing.values()];
+  return [...getLatestReportStateByLocation().values()];
 }
 
 function getConsolidatedIncidents() {
@@ -2713,20 +2742,20 @@ function getConsolidatedIncidents() {
   activeReports
     .filter((report) => !report.expired)
     .forEach((report) => {
-      if (report?.crossingId == null) {
+      const key = getReportLocationKey(report);
+      if (!key) {
         if (!warnedMalformedReport) {
-          console.warn("Consolidated incidents received malformed report data (missing crossingId).", report);
+          console.warn("Consolidated incidents received malformed report data (missing grouping key).", report);
           warnedMalformedReport = true;
         }
         return;
       }
 
-      const key = String(report.crossingId);
-
       if (!grouped.has(key)) {
         grouped.set(key, {
-          crossingId: key,
-          crossingName: report.crossingName,
+          key,
+          crossingId: report.crossingId != null ? String(report.crossingId) : key,
+          crossingName: report.crossingName || "Unknown Crossing",
           reports: []
         });
       }
@@ -2765,8 +2794,9 @@ function getConsolidatedIncidents() {
 }
 
 function getReportCountForCrossing(crossingId) {
+  const locationKey = getReportLocationKey({ crossingId });
   return activeReports.filter(
-    (report) => String(report.crossingId) === String(crossingId) && !report.expired
+    (report) => !report.expired && getReportLocationKey(report) === locationKey
   ).length;
 }
 
