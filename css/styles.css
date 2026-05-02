@@ -2021,7 +2021,15 @@ body.modal-open {
   .mobile-quick-actions .secondary-btn:active,
   .mobile-icon-btn:active,
   .mobile-avatar-btn:active,
-  .mobile-location-chip:active { transform: translateY(1px) scale(0.985); }
+  .mobile-location-chip:active,
+  .mobile-weather-chip:active { transform: translateY(1px) scale(0.985); }
+  .mobile-location-chip:focus-visible,
+  .mobile-weather-chip:focus-visible,
+  .mobile-icon-btn:focus-visible,
+  .mobile-avatar-btn:focus-visible {
+    outline: 2px solid rgba(161, 208, 255, 0.95);
+    outline-offset: 2px;
+  }
 
   .mobile-home-cards {
     display: grid;
