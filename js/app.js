@@ -572,6 +572,17 @@ function shouldShowCrossingInLaunchMode(crossing) {
 
   return false;
 }
+async function runPostSubmitRefresh() {
+  console.debug("Post-submit refresh started");
+  await loadSharedReports();
+  renderUnifiedIncidents();
+  renderCrossings();
+  updateRouteIntelligence();
+  updateMobileAlertsMirror();
+  updateLastUpdated();
+  console.debug("Post-submit refresh complete");
+}
+
 async function loadSharedReports() {
   if (!supabaseClient) {
     setSync(`Live sync unavailable · Build ${APP_BUILD}`);
@@ -1246,7 +1257,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     setConfirmation(`${copy.icon} ${copy.label} hazard report shared.`, "success");
     setSync("Hazard report shared");
 
-    await loadSharedReports();
+    await runPostSubmitRefresh();
   } catch (error) {
     console.error("Gridly hazard insert failed:", error);
     setConfirmation(`Hazard report failed: ${error.message || "permission denied"}`, "error");
@@ -1292,7 +1303,7 @@ window.clearHazard = async function (hazardType, lat, lng) {
     setConfirmation(`${copy.label} marked cleared.`, "success");
     setSync("Hazard cleared");
 
-    await loadSharedReports();
+    await runPostSubmitRefresh();
   } catch (error) {
     console.error("Gridly hazard clear failed:", error);
     setConfirmation(`Clear failed: ${error.message || "permission denied"}`, "error");
@@ -1659,7 +1670,7 @@ function bindEvents() {
     if (crossingLoadFailed) {
       await loadCrossings();
     }
-    await loadSharedReports();
+    await runPostSubmitRefresh();
     flashButton(els.refreshBtn, "Updated");
   });
 
@@ -1689,10 +1700,13 @@ function bindEvents() {
   const bellBtn = els.mobileBellBtn || document.querySelector("#mobileBellBtn, .mobile-icon-btn");
   const avatarBtn = els.mobileAvatarBtn || document.querySelector("#mobileAvatarBtn, .mobile-avatar-btn");
 
-  bindMobileTap(townSelectorBtn, () => {
-    console.debug("Town clicked");
+  const showTownSelectorConfirmation = () => {
+    console.debug("Town selector clicked");
     setConfirmation("Town selector coming soon. Liberty County is active.", "success");
-  });
+  };
+
+  bindMobileTap(townSelectorBtn, showTownSelectorConfirmation);
+  bindMobileTap(document.querySelector(".mobile-premium-location"), showTownSelectorConfirmation);
   bindMobileTap(weatherChipBtn, () => {
     console.debug("Weather clicked");
     setConfirmation("Weather-aware road alerts coming soon.", "success");
@@ -2126,7 +2140,7 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
       resetSmartReportButton();
     }
 
-    await loadSharedReports();
+    await runPostSubmitRefresh();
 
     if (map) {
       map.setView([crossing.lat, crossing.lng], 14);
@@ -2359,7 +2373,7 @@ function updateRouteIntelligence(nearest = []) {
   const moderateAlerts = unifiedActive.filter((report) => report.severity === "medium").length;
   const confirmedIncidents = getConsolidatedIncidents().filter((incident) => {
     const reports = Array.isArray(incident?.reports) ? incident.reports : [];
-    const latest = reports[0] || [...reports].sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))[0];
+    const latest = reports[0] || [...reports].sort(compareReportsByRecency)[0];
     return latest && latest.type !== "cleared" && reports.length >= 2;
   }).length;
   const desktopRouteSummary = `${unifiedActive.length} live incidents · ${confirmedIncidents} confirmed`;
@@ -2663,10 +2677,18 @@ function updateTrustStats() {
   safeText("nearbyAlertCount", active.filter((report) => report.type !== "cleared").length);
 }
 
+function compareReportsByRecency(a, b) {
+  const timeDiff = new Date(b.submittedAt || 0).getTime() - new Date(a.submittedAt || 0).getTime();
+  if (timeDiff !== 0) return timeDiff;
+  if (a.type === "cleared" && b.type !== "cleared") return -1;
+  if (b.type === "cleared" && a.type !== "cleared") return 1;
+  return String(b.id || "").localeCompare(String(a.id || ""));
+}
+
 function getLatestReportForCrossing(crossingId) {
   return activeReports
     .filter((report) => String(report.crossingId) === String(crossingId))
-    .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))[0];
+    .sort(compareReportsByRecency)[0];
 }
 
 function getLatestReportsByCrossing() {
@@ -2674,7 +2696,7 @@ function getLatestReportsByCrossing() {
 
   activeReports
     .filter((report) => !report.expired)
-    .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))
+    .sort(compareReportsByRecency)
     .forEach((report) => {
       if (!mapByCrossing.has(report.crossingId)) {
         mapByCrossing.set(report.crossingId, report);
