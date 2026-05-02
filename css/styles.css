@@ -1,16 +1,16 @@
 :root {
   --bg: #050505;
-  --bg-elev: #0d0f12;
-  --bg-panel: #13161b;
-  --card: rgba(19, 22, 27, 0.82);
-  --card-soft: rgba(255, 255, 255, 0.045);
-  --border: rgba(255, 255, 255, 0.11);
+  --bg-elev: #08090b;
+  --bg-panel: #0d0f12;
+  --card: rgba(16, 18, 21, 0.86);
+  --card-soft: rgba(255, 255, 255, 0.03);
+  --border: rgba(255, 255, 255, 0.14);
   --text: #ffffff;
   --muted: #a4acb8;
   --accent: #39f3a4;
   --warning: #ffbf47;
   --danger: #ff5c3d;
-  --blue: #2de2ff;
+  --blue: #66e8ff;
   --shadow: 0 26px 60px rgba(0, 0, 0, 0.72);
 }
 
@@ -26,10 +26,9 @@ body {
   margin: 0;
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background:
-    radial-gradient(circle at top left, rgba(45, 226, 255, 0.06), transparent 28%),
-    radial-gradient(circle at top right, rgba(57, 243, 164, 0.05), transparent 28%),
-    radial-gradient(circle at 50% 110%, rgba(0, 0, 0, 0.82), transparent 56%),
-    linear-gradient(180deg, var(--bg), var(--bg-elev) 55%, var(--bg-panel));
+    radial-gradient(circle at 20% -10%, rgba(255, 255, 255, 0.035), transparent 34%),
+    radial-gradient(circle at 80% 0%, rgba(255, 255, 255, 0.02), transparent 28%),
+    linear-gradient(180deg, #050505 0%, #060708 42%, #090b0d 100%);
   color: var(--text);
 }
 
@@ -169,7 +168,7 @@ button {
 }
 
 .primary-btn {
-  background: linear-gradient(135deg, var(--blue), #68f4ff);
+  background: linear-gradient(135deg, #66e8ff, #3dcfe8);
   color: #02070a;
   padding: 12px 16px;
 }
@@ -195,7 +194,7 @@ button {
   padding: 12px 14px;
   border-radius: 14px;
   border: 1px solid rgba(67, 230, 160, 0.2);
-  background: linear-gradient(140deg, rgba(57, 243, 164, 0.11), rgba(45, 226, 255, 0.08));
+  background: linear-gradient(140deg, rgba(57, 243, 164, 0.11), rgba(255, 255, 255, 0.03));
   color: #e9f6ff;
   font-size: 0.95rem;
   line-height: 1.32;
@@ -261,7 +260,7 @@ button {
 .mobile-home-card,
 .mobile-alerts-panel,
 .desktop-business-note {
-  background: var(--card);
+  background: linear-gradient(180deg, rgba(12, 14, 17, 0.95), rgba(17, 19, 22, 0.93));
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
   border-radius: 24px;
@@ -270,6 +269,8 @@ button {
 
 .hero-card {
   min-height: 150px;
+  background: linear-gradient(155deg, rgba(4, 4, 4, 0.95), rgba(17, 19, 22, 0.9));
+  border-color: rgba(255, 255, 255, 0.16);
   padding: 20px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 270px;
@@ -581,6 +582,8 @@ select:focus {
 .map-card {
   padding: 10px;
   min-width: 0;
+  background: linear-gradient(180deg, rgba(10, 11, 13, 0.95), rgba(16, 18, 21, 0.92));
+  border-color: rgba(255, 255, 255, 0.18);
 }
 
 .desktop-route-watch-strip {
@@ -591,8 +594,8 @@ select:focus {
   margin-bottom: 10px;
   padding: 12px 14px;
   border-radius: 16px;
-  border: 1px solid rgba(94, 236, 186, 0.3);
-  background: linear-gradient(135deg, rgba(57, 243, 164, 0.12), rgba(45, 226, 255, 0.08));
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: linear-gradient(135deg, rgba(15, 18, 21, 0.95), rgba(24, 29, 34, 0.88));
 }
 
 .route-watch-strip-copy {
@@ -687,16 +690,16 @@ select:focus {
 .geo-filter-pill.selected {
   color: #02070a;
   border-color: transparent;
-  background: linear-gradient(135deg, var(--blue), #68f4ff);
+  background: linear-gradient(135deg, #66e8ff, #3dcfe8);
 }
 
 .geo-filter-status {
   margin: 4px 0 12px;
   padding: 10px 14px;
   border-radius: 14px;
-  border: 1px solid rgba(94, 236, 186, 0.28);
-  background: linear-gradient(145deg, rgba(16, 58, 45, 0.45), rgba(13, 57, 66, 0.34));
-  color: #e8f9ff;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: linear-gradient(145deg, rgba(14, 16, 19, 0.94), rgba(22, 27, 31, 0.9));
+  color: #eef8ff;
   font-size: 0.88rem;
   font-weight: 700;
   letter-spacing: 0.01em;
@@ -879,7 +882,7 @@ select:focus {
 }
 
 .route-status-card:focus-visible {
-  outline: 2px solid rgba(77, 163, 255, 0.8);
+  outline: 2px solid rgba(102, 232, 255, 0.7);
   outline-offset: 2px;
 }
 
@@ -956,8 +959,8 @@ select:focus {
 
 .route-modal-close:hover,
 .route-modal-close:focus-visible {
-  background: rgba(77, 163, 255, 0.2);
-  border-color: rgba(77, 163, 255, 0.45);
+  background: rgba(102, 232, 255, 0.12);
+  border-color: rgba(102, 232, 255, 0.35);
 }
 
 body.route-setup-open #gridlyHazardLauncher {
@@ -1028,7 +1031,7 @@ body.route-setup-open #gridlyHazardLauncher {
   }
 
   .route-setup-grid-mobile .primary-btn {
-    box-shadow: 0 10px 24px rgba(77, 163, 255, 0.26);
+    box-shadow: 0 10px 24px rgba(102, 232, 255, 0.12);
   }
 
   .route-setup-grid-mobile .secondary-btn {
@@ -1350,8 +1353,8 @@ body.modal-open {
 }
 
 .share-card {
-  border: 1px solid rgba(77, 163, 255, 0.28);
-  background: rgba(77, 163, 255, 0.08);
+  border: 1px solid rgba(102, 232, 255, 0.2);
+  background: rgba(102, 232, 255, 0.08);
 }
 
 .quick-clear-card {
@@ -1496,7 +1499,7 @@ body.modal-open {
   opacity: 0.8;
   pointer-events: none;
   transform: scale(0.94);
-  box-shadow: 0 0 0 5px rgba(77, 163, 255, 0.32);
+  box-shadow: 0 0 0 5px rgba(102, 232, 255, 0.2);
 }
 
 .popup-report-btn.is-success {
@@ -1559,7 +1562,7 @@ body.modal-open {
     margin-bottom: 8px;
   }
 
-  .hero-card {
+ .hero-card {
     min-height: 0;
     padding: 10px 14px;
     gap: 10px;
@@ -1660,7 +1663,7 @@ body.modal-open {
 
   .map-card {
     padding: 12px;
-    border: 1px solid rgba(77, 163, 255, 0.38);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 26px 58px rgba(2, 8, 17, 0.52);
   }
 
@@ -1680,7 +1683,7 @@ body.modal-open {
     height: 650px;
   }
 
-  .side-panel {
+ .side-panel {
     background: rgba(13, 20, 33, 0.86);
   }
 
@@ -1690,7 +1693,7 @@ body.modal-open {
     box-shadow: none;
   }
 
-  .hero-card {
+ .hero-card {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1940,9 +1943,9 @@ body.modal-open {
   }
 
   .nav-btn.active {
-    border-color: rgba(141, 189, 255, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
     box-shadow: inset 0 1px 0 rgba(214, 234, 255, 0.2);
-    background: linear-gradient(145deg, rgba(77, 163, 255, 0.26), rgba(58, 114, 197, 0.16));
+    background: linear-gradient(145deg, rgba(102, 232, 255, 0.12), rgba(255, 255, 255, 0.04));
   }
 
   .desktop-only-nav,
@@ -1964,7 +1967,7 @@ body.modal-open {
     margin-bottom: 10px;
   }
 
-  .hero-card {
+ .hero-card {
     display: none;
   }
 
@@ -2044,12 +2047,12 @@ body.modal-open {
   }
   .mobile-premium-location { display:flex; align-items:center; justify-content:space-between; gap:10px; }
   .mobile-location-chip,
-  .mobile-weather-chip { border-radius:999px; border:1px solid rgba(141, 189, 255, 0.44); background: linear-gradient(145deg, rgba(61, 125, 211, 0.28), rgba(32, 80, 153, 0.2)); color:#e8f2ff; font-size:.74rem; font-weight:760; letter-spacing:.01em; padding:6px 10px; min-height: 30px; }
+  .mobile-weather-chip { border-radius:999px; border:1px solid rgba(255, 255, 255, 0.24); background: linear-gradient(145deg, rgba(21, 24, 29, 0.92), rgba(13, 15, 19, 0.92)); color:#e9eef5; font-size:.74rem; font-weight:760; letter-spacing:.01em; padding:6px 10px; min-height: 30px; }
   .mobile-weather-chip { appearance:none; -webkit-appearance:none; }
   .mobile-location-chip { display:inline-flex; align-items:center; gap:6px; }
   .mobile-premium-actions { display:flex; gap:7px; justify-content:flex-end; }
   .mobile-icon-btn,
-  .mobile-avatar-btn { width:33px; height:33px; border-radius:999px; border:1px solid rgba(141, 189, 255, 0.45); background: linear-gradient(145deg, rgba(56, 115, 195, 0.27), rgba(43, 89, 163, 0.18)); color:#e8f2ff; display:grid; place-items:center; transition:transform .2s ease, background .2s ease, border-color .2s ease; box-shadow: inset 0 1px 0 rgba(212, 233, 255, 0.14); }
+  .mobile-avatar-btn { width:33px; height:33px; border-radius:999px; border:1px solid rgba(255, 255, 255, 0.26); background: linear-gradient(145deg, rgba(24, 27, 32, 0.9), rgba(14, 16, 20, 0.94)); color:#e9eef5; display:grid; place-items:center; transition:transform .2s ease, background .2s ease, border-color .2s ease; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1); }
   .mobile-avatar-btn span { width:14px; height:14px; border-radius:50%; background: linear-gradient(160deg,#b8d6ff,#7faeff); display:block; box-shadow:0 0 0 5px rgba(184,214,255,.2); }
   .mobile-home-card > span { font-weight:700; letter-spacing:.01em; color:#d5e8ff; font-size:.8rem; text-transform:uppercase; }
   .mobile-home-card strong { font-weight:850; }
@@ -2166,8 +2169,8 @@ body.modal-open {
     gap: 8px;
     text-align: left;
     border-radius: 14px;
-    border-color: rgba(121, 178, 255, 0.42);
-    background: linear-gradient(145deg, rgba(77, 163, 255, 0.26), rgba(58, 113, 198, 0.14));
+    border-color: rgba(255, 255, 255, 0.28);
+    background: linear-gradient(145deg, rgba(102, 232, 255, 0.12), rgba(255, 255, 255, 0.035));
     color: #e7f1ff;
     min-height: 46px;
     font-weight: 850;
@@ -2717,7 +2720,7 @@ body.modal-open {
     margin-bottom: 14px;
   }
 
-  .hero-card {
+ .hero-card {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 360px;
     padding: 22px 24px;
@@ -2966,7 +2969,7 @@ body.modal-open {
     margin-bottom: 10px;
   }
 
-  .hero-card {
+ .hero-card {
     padding: 16px 18px;
     gap: 16px;
     border-radius: 22px;
