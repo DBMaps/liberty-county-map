@@ -132,7 +132,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   initMap();
   initSupabase();
   bindEvents();
-  debugMobileClickTargets();
   setReportMode(REPORT_MODES.rail);
   closeRouteSetupModal({ restoreFocus: false });
   injectHazardReportUI();
@@ -147,19 +146,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
-function debugMobileClickTargets() {
-  const townSelectorBtn = document.querySelector("#mobileTownSelectorBtn, .mobile-location-chip");
-  const weatherChipBtn = document.querySelector("#mobileWeatherChipBtn, .mobile-weather-chip");
-  const bellBtn = document.querySelector("#mobileBellBtn, .mobile-icon-btn");
-  const avatarBtn = document.querySelector("#mobileAvatarBtn, .mobile-avatar-btn");
-  const popupReportButtons = document.querySelectorAll(".popup-report-btn[data-crossing-id][data-report-type]");
-
-  console.debug("[click-diagnostic] mobileTownSelectorBtn exists:", Boolean(townSelectorBtn), townSelectorBtn);
-  console.debug("[click-diagnostic] mobileWeatherChipBtn exists:", Boolean(weatherChipBtn), weatherChipBtn);
-  console.debug("[click-diagnostic] mobileBellBtn exists:", Boolean(bellBtn), bellBtn);
-  console.debug("[click-diagnostic] mobileAvatarBtn exists:", Boolean(avatarBtn), avatarBtn);
-  console.debug("[click-diagnostic] popup report buttons found:", popupReportButtons.length);
-}
 
 function setManualFallbackDefaultState() {
   if (!els.reportSection) return;
@@ -1731,15 +1717,9 @@ function bindEvents() {
     els.reportSection.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const showTownSelectorConfirmation = (townControl) => {
-    console.debug("Town selector action", { id: townControl?.id || null, className: townControl?.className || null });
-
-    if (els.routeSetupModal) {
-      openRouteSetupModal(townControl || null);
-      return;
-    }
-
-    showMobileTodayConfirmation("Town selector is ready. Route setup is unavailable right now.", "error");
+  const showTownSelectorConfirmation = () => {
+    applyGeoFilter("town");
+    showMobileTodayConfirmation("Showing Dayton crossings.", "success");
   };
 
   const handleMobileHeaderDelegateTap = (event) => {
@@ -1762,11 +1742,10 @@ function bindEvents() {
     event.stopPropagation();
 
     if (targetType === "town") {
-      showTownSelectorConfirmation(townTarget);
+      showTownSelectorConfirmation();
       return;
     }
 
-    console.debug("Profile action", { id: avatarTarget?.id || null, className: avatarTarget?.className || null });
     showMobileTodayConfirmation("Profile/account options coming soon.", "success");
   };
 
