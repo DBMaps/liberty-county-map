@@ -1711,17 +1711,17 @@ function bindEvents() {
   const bellBtn = els.mobileBellBtn || document.querySelector("#mobileBellBtn, .mobile-icon-btn");
   const avatarBtn = els.mobileAvatarBtn || document.querySelector("#mobileAvatarBtn, .mobile-avatar-btn");
 
-  const showTownSelectorConfirmation = () => {
+  const showTownSelectorConfirmation = (event) => {
     console.debug("Town selector clicked");
-    setConfirmation("Town selector coming soon. Liberty County is active.", "success");
+    openRouteSetupModal(event?.currentTarget || townSelectorBtn || null);
+    setConfirmation("Town selector opened. Liberty County is active.", "success");
   };
 
   bindMobileTap(townSelectorBtn, showTownSelectorConfirmation);
-  bindMobileTap(document.querySelector(".mobile-premium-location"), showTownSelectorConfirmation);
-  bindMobileTap(document.querySelector(".mobile-premium-header"), showTownSelectorConfirmation);
   bindMobileTap(weatherChipBtn, () => {
     console.debug("Weather clicked");
-    setConfirmation("Weather-aware road alerts coming soon.", "success");
+    scrollToSection("mapSection");
+    setConfirmation("Weather context is not wired yet. Opening live map as a safe fallback.", "success");
   });
   bindMobileTap(bellBtn, () => {
     console.debug("Bell clicked");
@@ -1730,7 +1730,8 @@ function bindEvents() {
   });
   bindMobileTap(avatarBtn, () => {
     console.debug("Profile clicked");
-    setConfirmation("Driver profile coming soon.", "success");
+    openRouteSetupModal(avatarBtn || null);
+    setConfirmation("Profile/account is not available yet. Opening route setup as a safe fallback.", "success");
   });
 
   const handlePopupAction = async (event) => {
