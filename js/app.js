@@ -1448,10 +1448,10 @@ function buildPopup(crossing, report) {
       <span>Risk Score: ${crossing.risk}/100</span>
 
       <div class="popup-report-grid">
-        <button class="popup-report-btn danger" onclick="reportCrossingFromPopup('${sanitizeText(crossing.id)}', 'blocked', this)">Blocked</button>
-        <button class="popup-report-btn warning" onclick="reportCrossingFromPopup('${sanitizeText(crossing.id)}', 'heavy', this)">Delay</button>
-        <button class="popup-report-btn blue" onclick="reportCrossingFromPopup('${sanitizeText(crossing.id)}', 'cleared', this)">Cleared</button>
-        <button class="popup-report-btn neutral" onclick="reportCrossingFromPopup('${sanitizeText(crossing.id)}', 'other', this)">Other</button>
+        <button class="popup-report-btn danger" type="button" data-crossing-id="${sanitizeText(crossing.id)}" data-report-type="blocked" onclick="reportCrossingFromPopup('${sanitizeText(crossing.id)}', 'blocked', this)">Blocked</button>
+        <button class="popup-report-btn warning" type="button" data-crossing-id="${sanitizeText(crossing.id)}" data-report-type="heavy" onclick="reportCrossingFromPopup('${sanitizeText(crossing.id)}', 'heavy', this)">Delay</button>
+        <button class="popup-report-btn blue" type="button" data-crossing-id="${sanitizeText(crossing.id)}" data-report-type="cleared" onclick="reportCrossingFromPopup('${sanitizeText(crossing.id)}', 'cleared', this)">Cleared</button>
+        <button class="popup-report-btn neutral" type="button" data-crossing-id="${sanitizeText(crossing.id)}" data-report-type="other" onclick="reportCrossingFromPopup('${sanitizeText(crossing.id)}', 'other', this)">Other</button>
       </div>
     </div>
   `;
@@ -1467,6 +1467,20 @@ window.reportCrossingFromPopup = async function (crossingId, reportType, buttonE
 
   await createSharedReport(crossing, reportType, "exact map marker", buttonEl);
 };
+
+
+function bindMobileTap(element, handler) {
+  if (!element || typeof handler !== "function") return;
+
+  const invoke = (event) => {
+    event?.preventDefault?.();
+    event?.stopPropagation?.();
+    handler(event);
+  };
+
+  element.addEventListener("click", invoke);
+  element.addEventListener("touchend", invoke, { passive: false });
+}
 
 window.zoomToCrossing = function (crossingId) {
   const crossing = crossings.find((item) => String(item.id) === String(crossingId));
@@ -1576,18 +1590,30 @@ function bindEvents() {
     openSmartAlertsModal();
     setConfirmation("Favorites is coming soon. Alerts are open for now.", "success");
   });
-  els.mobileTownSelectorBtn?.addEventListener("click", () => {
+  bindMobileTap(els.mobileTownSelectorBtn || document.querySelector("#mobileTownSelectorBtn, .mobile-location-chip"), () => {
     setConfirmation("Town selector coming soon. Liberty County is active.", "success");
   });
-  els.mobileWeatherChipBtn?.addEventListener("click", () => {
+  bindMobileTap(els.mobileWeatherChipBtn || document.querySelector("#mobileWeatherChipBtn, .mobile-weather-chip"), () => {
     setConfirmation("Weather-aware road alerts coming soon.", "success");
   });
-  els.mobileBellBtn?.addEventListener("click", () => {
+  bindMobileTap(els.mobileBellBtn || document.querySelector("#mobileBellBtn, .mobile-icon-btn"), () => {
     openSmartAlertsModal();
     setConfirmation("Smart Alerts opened.", "success");
   });
-  els.mobileAvatarBtn?.addEventListener("click", () => {
+  bindMobileTap(els.mobileAvatarBtn || document.querySelector("#mobileAvatarBtn, .mobile-avatar-btn"), () => {
     setConfirmation("Driver profile coming soon.", "success");
+  });
+
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest(".popup-report-btn[data-crossing-id][data-report-type]");
+    if (!button) return;
+
+    const crossingId = button.getAttribute("data-crossing-id");
+    const reportType = button.getAttribute("data-report-type");
+    if (!crossingId || !reportType || typeof window.reportCrossingFromPopup !== "function") return;
+
+    event.preventDefault();
+    window.reportCrossingFromPopup(crossingId, reportType, button);
   });
   els.mobileOpenLiveMapBtn?.addEventListener("click", () => {
     setConfirmation("Opening Live Map.", "success");
