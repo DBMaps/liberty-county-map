@@ -1689,7 +1689,8 @@ function bindEvents() {
   });
   els.mobileQuickRouteBtn?.addEventListener("click", (event) => openRouteSetupModal(event.currentTarget));
   els.mobileQuickFavoritesBtn?.addEventListener("click", () => {
-    setConfirmation("Favorites coming soon.", "success");
+    openSmartAlertsModal();
+    setConfirmation("Smart Alerts opened.", "success");
   });
   const weatherChipBtn = els.mobileWeatherChipBtn || document.querySelector("#mobileWeatherChipBtn, .mobile-weather-chip");
   const bellBtn = els.mobileBellBtn || document.querySelector("#mobileBellBtn, .mobile-icon-btn");
@@ -2492,22 +2493,23 @@ function updateRouteIntelligence(nearest = []) {
   liveStatusCard?.classList.remove("clear-status", "delay-status", "blocked-status");
 
   if (impact >= 70) {
-    safeText("delayRisk", "Delays Active");
-    safeText("delayReason", "Major crossing blockage detected.");
+    safeText("delayRisk", "Delay Risk Rising");
+    safeText("delayReason", "Major crossing blockage detected. Check the live map before departure.");
     safeText("alternateRoute", "Use alternate");
     safeText("alternateReason", "Avoid highest-impact crossing if possible.");
     safeText("impactText", "High route impact. Leave now or reroute.");
     liveStatusCard?.classList.add("blocked-status");
   } else if (impact >= 40) {
-    safeText("delayRisk", "Delays Active");
-    safeText("delayReason", "Some crossing or traffic risk detected.");
+    safeText("delayRisk", "Morning Commute Watch");
+    safeText("delayReason", "Crossing activity is building. Keep a backup route ready.");
     safeText("alternateRoute", "Have backup");
     safeText("alternateReason", "Alternate route may help if reports increase.");
     safeText("impactText", "Moderate route impact. Watch before leaving.");
     liveStatusCard?.classList.add("delay-status");
   } else {
-    safeText("delayRisk", "All Clear");
-    safeText("delayReason", "No rail or road incidents reported nearby");
+    const hour = new Date().getHours();
+    safeText("delayRisk", hour >= 21 || hour < 5 ? "Late Night Check" : "All Clear");
+    safeText("delayReason", "No rail or road incidents reported nearby. Live watch stays on if conditions change.");
     safeText("alternateRoute", "Not needed");
     safeText("alternateReason", "Current route appears clear.");
     safeText("impactText", "Low route impact. Normal travel expected.");
