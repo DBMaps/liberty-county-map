@@ -40,13 +40,13 @@
 
   <main class="app-shell premium-layout">
     <aside class="desktop-left-rail" aria-label="Operations navigation">
-      <div class="rail-brand">GRIDLY OPS</div>
+      <div class="rail-brand">GRIDLY</div>
       <button class="rail-nav-btn nav-btn active" data-section="dashboard" type="button">Today</button>
-      <button class="rail-nav-btn nav-btn" data-section="map" type="button">Map Center</button>
+      <button class="rail-nav-btn nav-btn" data-section="map" type="button">Live Map</button>
       <button class="rail-nav-btn nav-btn" data-section="report" type="button">Report</button>
       <button class="rail-nav-btn nav-btn" data-section="alerts" type="button">Alerts</button>
       <button class="rail-nav-btn nav-btn" data-section="dashboard" type="button">Routes</button>
-      <div class="rail-status-chip">Command Center · Live</div>
+      <div class="rail-status-chip">Live Driver Feed</div>
     </aside>
     <div class="main-column">
     <section class="dashboard" id="dashboardSection">
@@ -153,10 +153,10 @@
         </article>
 
         <article class="mobile-home-card mobile-commute-card">
-          <span>Your Commute Today</span>
+          <span>Actionable Commute Card</span>
           <strong id="routeRecommendation">Checking local crossings...</strong>
           <p id="routeRecommendationReason">Gridly is watching live reports and crossing risk.</p>
-          <button class="secondary-btn mobile-commute-cta" id="mobileCommuteRouteBtn" type="button" data-section-jump="map">Open Route Watch</button>
+          <button class="secondary-btn mobile-commute-cta" id="mobileCommuteRouteBtn" type="button" data-section-jump="map">Open Commute Plan</button>
         </article>
 
         <article class="mobile-home-card mobile-community-card">
@@ -277,9 +277,9 @@
         </div>
 
         <div class="map-ux-strip"><div class="geo-filter-shell" role="group" aria-label="Map filters">
-          <button class="geo-filter-pill selected" type="button" data-geo-filter="nearby">Nearby</button>
-          <button class="geo-filter-pill" type="button" data-geo-filter="town">My Town</button>
-          <button class="geo-filter-pill" type="button" data-geo-filter="county">My County</button>
+          <button class="geo-filter-pill selected" type="button" data-geo-filter="nearby">Near Me</button>
+          <button class="geo-filter-pill" type="button" data-geo-filter="town">My Route</button>
+          <button class="geo-filter-pill" type="button" data-geo-filter="county">Dayton</button>
           <button class="geo-filter-pill" type="button" data-geo-filter="active-delays">Delays</button>
           <button class="geo-filter-pill" type="button" data-geo-filter="all">All</button>
         </div></div>
@@ -407,7 +407,7 @@
     </div>
   </main>
 
-  <button class="mobile-sticky-report" id="mobileReportBtn">🚨 Report Issue Now</button>
+  <button class="mobile-sticky-report" id="mobileReportBtn">🚨 Report Near Me</button>
 
 
   <div class="route-setup-modal" id="routeSetupModal" hidden>

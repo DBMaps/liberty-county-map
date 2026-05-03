@@ -438,9 +438,30 @@ function centerMapOnUserIfAllowed() {
       map.setView([userLocation.lat, userLocation.lng], 14);
       renderCrossings();
       renderUnifiedIncidents();
+      updateNearestContext();
     },
     () => {}
   );
+}
+
+function updateNearestContext() {
+  if (!userLocation) return;
+  const nearestCrossing = findNearestCrossings(userLocation.lat, userLocation.lng, 1)[0];
+  const nearestIssue = getUnifiedIncidents()
+    .filter((incident) => incident.status === "active")
+    .map((incident) => ({
+      incident,
+      distance: getDistanceMiles(userLocation.lat, userLocation.lng, incident.lat, incident.lng)
+    }))
+    .sort((a, b) => a.distance - b.distance)[0];
+
+  if (nearestCrossing && els.geoFilterStatus) {
+    const crossingDistance = Number.isFinite(nearestCrossing.distance) ? nearestCrossing.distance.toFixed(1) : "nearby";
+    const issueText = nearestIssue
+      ? `${nearestIssue.incident.title} · ${nearestIssue.distance.toFixed(1)} mi`
+      : "No active issues nearby";
+    els.geoFilterStatus.textContent = `Nearest crossing: ${nearestCrossing.name} (${crossingDistance} mi) · Nearest issue: ${issueText}`;
+  }
 }
 
 function renderUserLocationDot() {
@@ -1005,6 +1026,10 @@ function fitMapToCrossingsForActiveFilter(visibleCrossings = []) {
 
 function updateGeoFilterStatus(visibleCrossings = []) {
   if (!els.geoFilterStatus) return;
+  if (activeGeoFilter === "nearby" && userLocation) {
+    updateNearestContext();
+    return;
+  }
 
   const count = visibleCrossings.length;
   const crossingLabel = count === 1 ? "crossing" : "crossings";
@@ -1013,9 +1038,9 @@ function updateGeoFilterStatus(visibleCrossings = []) {
   if (activeGeoFilter === "nearby") {
     message = count ? `Act now: review ${count} nearby ${crossingLabel} before departure.` : "Action needed: switch filters or zoom to find crossings.";
   } else if (activeGeoFilter === "town") {
-    message = count ? `Dayton focus: check ${count} ${crossingLabel} for delays.` : "No Dayton crossings in view. Try County or All.";
+    message = count ? `Route focus: check ${count} likely commute ${crossingLabel}.` : "No route crossings in view. Try Dayton or Delays.";
   } else if (activeGeoFilter === "county") {
-    message = count ? "County sweep: scan crossings and tap any issue marker." : "No county crossings visible. Reset map view.";
+    message = count ? "Dayton area: scan crossings and tap any issue marker." : "No Dayton crossings visible. Reset map view.";
   } else if (activeGeoFilter === "active-delays") {
     const delayLabel = count === 1 ? "delay" : "delays";
     message = count ? `Priority: resolve ${count} active ${delayLabel} affecting routes.` : "Good news: no active delays in this view.";
@@ -2306,6 +2331,7 @@ function handleReportNearMe() {
       nearbyReportCrossingIds = new Set(nearest.map((crossing) => String(crossing.id)));
 
       renderCrossings();
+      updateNearestContext();
       scrollToSection("mapSection");
 
       if (nearest.length) {
@@ -2778,7 +2804,7 @@ function updateRouteIntelligence(nearest = []) {
   if (!savedHome || !savedWork) {
     safeText("routeStatus", "Set Route");
     safeText("routeEta", "Save Home + Work");
-    safeText("desktopRouteStatus", "Set Home + Work to monitor live hazards and confirmations.");
+    safeText("desktopRouteStatus", "Add Home + Work to unlock an actionable commute card with reroute guidance.");
     safeText("sideRouteWatchHint", "Primary route watch is pinned above the live map.");
     safeText("departureTime", "Set route first");
     safeText("departureReason", "Home and Work unlock personalized route intelligence.");
@@ -2835,6 +2861,8 @@ function updateRouteIntelligence(nearest = []) {
     safeText("impactText", "Low route impact. Normal travel expected.");
     liveStatusCard?.classList.add("clear-status");
   }
+
+  safeText("mobileCommuteRouteBtn", impact >= 70 ? "Open Reroute Plan" : "Open Commute Plan");
 }
 
 function updateDailyHabitStatus() {
