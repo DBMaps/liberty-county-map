@@ -809,6 +809,8 @@ function renderCrossings() {
   crossingLayer.clearLayers();
   crossingMarkers.clear();
 
+  const smartClusterState = buildSmartIncidentClusters(visibleCrossings);
+
   visibleCrossings.forEach((crossing) => {
     const report = getLatestReportForCrossing(crossing.id);
     const lifecycleState = getIncidentLifecycleState(report);
@@ -824,12 +826,15 @@ function renderCrossings() {
           : "state-normal";
     const isNearby = nearbyReportCrossingIds.has(String(crossing.id));
     const markerLabel = getMarkerLabel(report, markerStateClass, lifecycleState);
+    const clusterCount = smartClusterState.leadCounts.get(String(crossing.id)) || 0;
+    if (smartClusterState.hiddenIds.has(String(crossing.id))) return;
     const markerMinutes = hasActiveIssue && report?.minutesAgo <= REPORT_EXPIRATION_MINUTES ? `${report.minutesAgo}m` : "";
 
     const icon = L.divIcon({
       className: "",
       html: `<div class="gridly-marker-wrap">
-        <div class="gridly-marker ${markerStateClass} ${hasActiveIssue ? "alert" : ""} ${isCleared ? "cleared" : ""} ${isNearby ? "nearby" : ""}">${markerLabel}</div>
+        <div class="gridly-marker ${markerStateClass} ${hasActiveIssue ? "alert" : ""} ${isCleared ? "cleared" : ""} ${isNearby ? "nearby" : ""} ${clusterCount > 1 ? "cluster-lead" : ""}">${markerLabel}</div>
+        ${clusterCount > 1 ? `<span class="gridly-marker-cluster-badge">${clusterCount}</span>` : ""}
         ${markerMinutes ? `<span class="gridly-marker-minutes">${markerMinutes}</span>` : ""}
       </div>`,
       iconSize: [58, 38],
@@ -849,8 +854,46 @@ function renderCrossings() {
 function getMarkerLabel(report, markerStateClass, lifecycleState) {
   if (lifecycleState === "recently_cleared" || markerStateClass === "state-cleared") return "✓";
   if (markerStateClass === "state-blocked") return "⛔";
-  if (markerStateClass === "state-delay") return "⚠";
+  if (markerStateClass === "state-delay") return "⏱";
   return "◦";
+}
+
+function buildSmartIncidentClusters(visibleCrossings = []) {
+  const candidates = visibleCrossings
+    .map((crossing) => {
+      const report = getLatestReportForCrossing(crossing.id);
+      const lifecycleState = getIncidentLifecycleState(report);
+      if (!report || lifecycleState !== "active") return null;
+      const reportType = String(report?.type || "").toLowerCase();
+      const severity = reportType === "blocked" ? 2 : reportType === "heavy" ? 1 : 0;
+      const candidate = { crossing, report, severity };
+      return candidate;
+    })
+    .filter(Boolean);
+
+  const hiddenIds = new Set();
+  const leadCounts = new Map();
+  const groupedIds = new Set();
+
+  candidates.forEach((seed) => {
+    const seedId = String(seed.crossing.id);
+    if (groupedIds.has(seedId)) return;
+    const group = candidates.filter((candidate) => {
+      if (groupedIds.has(String(candidate.crossing.id))) return false;
+      return getDistanceMiles(seed.crossing.lat, seed.crossing.lng, candidate.crossing.lat, candidate.crossing.lng) <= 0.42;
+    });
+    group.forEach((entry) => groupedIds.add(String(entry.crossing.id)));
+    if (group.length <= 1) return;
+
+    const leader = group.sort((a, b) => b.severity - a.severity || a.report.minutesAgo - b.report.minutesAgo)[0];
+    leadCounts.set(String(leader.crossing.id), group.length);
+    group.forEach((entry) => {
+      const id = String(entry.crossing.id);
+      if (id !== String(leader.crossing.id)) hiddenIds.add(id);
+    });
+  });
+
+  return { leadCounts, hiddenIds };
 }
 
 
