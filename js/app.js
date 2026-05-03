@@ -99,6 +99,7 @@ const CROSSING_FETCH_RETRY_ATTEMPTS = 3;
 const CROSSING_FETCH_RETRY_DELAY_MS = 700;
 const SMART_ALERTS_STORAGE_KEY = "gridlySmartAlertsV1";
 const SMART_ALERTS_DRAWER_SEEN_KEY = "gridlySmartAlertsDrawerSeenV1";
+const MAP_FIRST_HINT_SEEN_KEY = "gridlyMapFirstHintSeenV1";
 
 let supabaseClient = null;
 let realtimeChannel = null;
@@ -265,6 +266,8 @@ function hydrateElements() {
   ].forEach((id) => {
     els[id] = document.getElementById(id);
   });
+
+  highlightNearestCrossingOnFirstLoad();
 }
 
 function initSupabase() {
@@ -375,7 +378,7 @@ function initMap() {
     subdomains: "abcd",
     maxZoom: 20,
     pane: "roadsPane",
-    opacity: 0.5,
+    opacity: 0.62,
     attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
   });
 
@@ -383,7 +386,7 @@ function initMap() {
     subdomains: "abc",
     maxZoom: 19,
     pane: "roadsPane",
-    opacity: 0.52,
+    opacity: 0.58,
     attribution: "&copy; OpenStreetMap contributors"
   });
 
@@ -399,7 +402,7 @@ function initMap() {
     subdomains: "abcd",
     maxZoom: 20,
     pane: "labelsPane",
-    opacity: 0.32,
+    opacity: 0.54,
     attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
   });
 
@@ -416,6 +419,8 @@ function initMap() {
     if (!crossings.length) return;
     renderCrossings();
   });
+
+  highlightNearestCrossingOnFirstLoad();
 }
 
 async function loadCrossings() {
@@ -725,6 +730,8 @@ function normalizeReports(rows) {
       expired: row.expires_at ? new Date(row.expires_at).getTime() <= Date.now() : false
     };
   });
+
+  highlightNearestCrossingOnFirstLoad();
 }
 
 function populateCrossingSelect() {
@@ -777,6 +784,8 @@ function getDefaultRelevantCrossings() {
     if (showAllCrossingsLayer) return true;
     return false;
   });
+
+  highlightNearestCrossingOnFirstLoad();
 }
 
 function shouldShowDistantInactiveCrossing(crossing) {
@@ -805,11 +814,19 @@ function renderCrossings() {
     const lifecycleState = getIncidentLifecycleState(report);
     const hasActiveIssue = lifecycleState === "active";
     const isCleared = lifecycleState === "recently_cleared";
+    const reportType = String(report?.type || "").toLowerCase();
+    const markerStateClass = isCleared
+      ? "state-cleared"
+      : reportType === "blocked"
+        ? "state-blocked"
+        : reportType === "heavy"
+          ? "state-delay"
+          : "state-normal";
     const isNearby = nearbyReportCrossingIds.has(String(crossing.id));
 
     const icon = L.divIcon({
       className: "",
-      html: `<div class="gridly-marker ${hasActiveIssue ? "alert" : ""} ${isCleared ? "cleared" : ""} ${isNearby ? "nearby" : ""}"></div>`,
+      html: `<div class="gridly-marker ${markerStateClass} ${hasActiveIssue ? "alert" : ""} ${isCleared ? "cleared" : ""} ${isNearby ? "nearby" : ""}"></div>`,
       iconSize: [24, 24],
       iconAnchor: [12, 12]
     });
@@ -820,9 +837,42 @@ function renderCrossings() {
 
     crossingMarkers.set(String(crossing.id), marker);
   });
+
+  highlightNearestCrossingOnFirstLoad();
 }
 
 
+
+
+function highlightNearestCrossingOnFirstLoad() {
+  if (!map || !crossings.length) return;
+  if (localStorage.getItem(MAP_FIRST_HINT_SEEN_KEY)) return;
+
+  const center = userLocation || { lat: defaultCenter[0], lng: defaultCenter[1] };
+  const nearest = findNearestCrossings(center.lat, center.lng, 1)[0];
+  if (!nearest) return;
+
+  const marker = crossingMarkers.get(String(nearest.id));
+  if (!marker) return;
+
+  const markerEl = marker.getElement?.();
+  markerEl?.classList.add("pulse-nearest");
+
+  marker.bindTooltip("Tap marker to report status", {
+    direction: "top",
+    offset: [0, -12],
+    className: "gridly-map-hint",
+    opacity: 0.96
+  });
+
+  marker.openTooltip();
+  localStorage.setItem(MAP_FIRST_HINT_SEEN_KEY, "1");
+
+  setTimeout(() => {
+    marker.closeTooltip();
+    markerEl?.classList.remove("pulse-nearest");
+  }, 4200);
+}
 
 function getFilterFitPadding() {
   const isMobile = window.matchMedia && window.matchMedia("(max-width: 768px)").matches;
@@ -848,6 +898,8 @@ function fitMapToCrossingsForActiveFilter(visibleCrossings = []) {
     duration: 0.55,
     maxZoom: 15
   });
+
+  highlightNearestCrossingOnFirstLoad();
 }
 
 function updateGeoFilterStatus(visibleCrossings = []) {
@@ -1894,7 +1946,7 @@ function bindEvents() {
     await window.reportCrossingFromPopup(crossingId, reportType, crossingButton);
   };
 
-  document.addEventListener("click", handlePopupAction);
+  document.addEventListener("pointerup", handlePopupAction);
   els.mobileOpenLiveMapBtn?.addEventListener("click", () => {
     setConfirmation("Opening Live Map.", "success");
   });
@@ -2055,6 +2107,8 @@ function bindEvents() {
     showAllCrossingsLayer = Boolean(event?.target?.checked);
     renderCrossings();
   });
+
+  highlightNearestCrossingOnFirstLoad();
 }
 
 
@@ -2197,7 +2251,7 @@ function resetSmartReportButton() {
   els.mobileReportBtn?.classList.remove("clear-mode");
 
   if (els.mobileReportBtn) {
-    els.mobileReportBtn.textContent = "Report Near Me";
+    els.mobileReportBtn.textContent = "Report Crossing Near Me";
   }
 }
 
@@ -2220,6 +2274,8 @@ function scrollToSection(id) {
     top: Math.max(0, y),
     behavior: "smooth"
   });
+
+  highlightNearestCrossingOnFirstLoad();
 }
 
 function submitManualReport() {
@@ -2962,6 +3018,8 @@ function getConsolidatedIncidents() {
 
       return severityScore(b) - severityScore(a) || b.count - a.count || a.newestMinutes - b.newestMinutes;
     });
+
+  highlightNearestCrossingOnFirstLoad();
 }
 
 function getReportCountForCrossing(crossingId) {
@@ -3341,12 +3399,16 @@ window.setCrossingNickname = function (crossingId, value) {
     localName: trimmed,
     renameNeeded: trimmed.length > 0 ? true : getReviewDecision(crossingId).renameNeeded
   });
+
+  highlightNearestCrossingOnFirstLoad();
 };
 
 window.setCrossingNotes = function (crossingId, value) {
   saveReviewDecision(crossingId, {
     notes: value.trim()
   });
+
+  highlightNearestCrossingOnFirstLoad();
 };
 
 window.exportCrossingReviewDecisions = function () {
@@ -3359,6 +3421,8 @@ window.exportCrossingReviewDecisions = function () {
       console.log("Gridly Crossing Review Export:", output);
       setConfirmation("Export printed to console. Open DevTools to copy it.", "success");
     });
+
+  highlightNearestCrossingOnFirstLoad();
 };
 
 function injectCrossingReviewStyles() {
