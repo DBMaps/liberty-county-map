@@ -260,7 +260,8 @@ function hydrateElements() {
     "mobileOpenLiveMapBtn",
     "mobileCommuteRouteBtn",
     "mobileCrossingReportBtn",
-    "mobileHazardReportBtn"
+    "mobileHazardReportBtn",
+    "mapReportShortcutBtn"
   ].forEach((id) => {
     els[id] = document.getElementById(id);
   });
@@ -1910,6 +1911,7 @@ function bindEvents() {
     setConfirmation("Road hazard report mode is active below.", "success");
     els.reportSection?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
+  els.mapReportShortcutBtn?.addEventListener("click", handleReportNearMe);
   els.desktopReportNearMeBtn?.addEventListener("click", handleReportNearMe);
   els.saveSmartAlertsBtn?.addEventListener("click", saveSmartAlertsPreferences);
   els.closeSmartAlertsModalBtn?.addEventListener("click", closeSmartAlertsModal);

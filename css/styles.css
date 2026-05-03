@@ -2313,9 +2313,40 @@ body.modal-open {
     box-shadow: 0 18px 40px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.34);
   }
 
-  .mobile-sticky-report.clear-mode {
-    background: linear-gradient(135deg, var(--warning), var(--accent));
+.mobile-sticky-report.clear-mode {
+  background: linear-gradient(135deg, var(--warning), var(--accent));
+}
+
+.map-report-shortcut {
+  display: none;
+}
+
+@media (min-width: 1101px) {
+  .map-card {
+    position: relative;
   }
+
+  .map-report-shortcut {
+    display: inline-flex;
+    position: absolute;
+    right: 24px;
+    bottom: 24px;
+    z-index: 800;
+    border: 1px solid rgba(88, 212, 162, 0.45);
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-size: 0.83rem;
+    font-weight: 800;
+    color: #d8ffef;
+    background: rgba(4, 16, 30, 0.82);
+    backdrop-filter: blur(6px);
+  }
+
+  .map-report-shortcut:hover {
+    border-color: rgba(88, 212, 162, 0.85);
+    transform: translateY(-1px);
+  }
+}
 
 
   #gridlyHazardLauncher,
