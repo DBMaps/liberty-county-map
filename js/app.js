@@ -378,7 +378,7 @@ function initMap() {
     subdomains: "abcd",
     maxZoom: 20,
     pane: "roadsPane",
-    opacity: 0.62,
+    opacity: 0.78,
     attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
   });
 
@@ -386,7 +386,7 @@ function initMap() {
     subdomains: "abcd",
     maxZoom: 20,
     pane: "roadsPane",
-    opacity: 0.92,
+    opacity: 0.98,
     attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
   });
 
@@ -402,7 +402,7 @@ function initMap() {
     subdomains: "abcd",
     maxZoom: 20,
     pane: "labelsPane",
-    opacity: 0.54,
+    opacity: 0.78,
     attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
   });
 
@@ -852,8 +852,8 @@ function renderCrossings() {
 }
 
 function getMarkerLabel(report, markerStateClass, lifecycleState) {
-  if (lifecycleState === "recently_cleared" || markerStateClass === "state-cleared") return "✓";
-  if (markerStateClass === "state-blocked") return "⛔";
+  if (lifecycleState === "recently_cleared" || markerStateClass === "state-cleared") return "✅";
+  if (markerStateClass === "state-blocked") return "🛑";
   if (markerStateClass === "state-delay") return "⏱";
   return "◦";
 }
@@ -962,19 +962,19 @@ function updateGeoFilterStatus(visibleCrossings = []) {
 
   const count = visibleCrossings.length;
   const crossingLabel = count === 1 ? "crossing" : "crossings";
-  let message = "Showing all Liberty County crossings";
+  let message = "All crossings visible: tap markers to confirm route status.";
 
   if (activeGeoFilter === "nearby") {
-    message = count ? `Showing ${count} nearby ${crossingLabel}` : "No crossings found for this filter";
+    message = count ? `Act now: review ${count} nearby ${crossingLabel} before departure.` : "Action needed: switch filters or zoom to find crossings.";
   } else if (activeGeoFilter === "town") {
-    message = count ? `Showing Dayton ${crossingLabel}` : "No crossings found for this filter";
+    message = count ? `Dayton focus: check ${count} ${crossingLabel} for delays.` : "No Dayton crossings in view. Try County or All.";
   } else if (activeGeoFilter === "county") {
-    message = count ? "Showing Liberty County crossings" : "No crossings found for this filter";
+    message = count ? "County sweep: scan crossings and tap any issue marker." : "No county crossings visible. Reset map view.";
   } else if (activeGeoFilter === "active-delays") {
     const delayLabel = count === 1 ? "delay" : "delays";
-    message = count ? `Showing ${count} active ${delayLabel}` : "No crossings found for this filter";
+    message = count ? `Priority: resolve ${count} active ${delayLabel} affecting routes.` : "Good news: no active delays in this view.";
   } else if (activeGeoFilter === "all") {
-    message = "Showing all Liberty County crossings";
+    message = "All crossings visible: tap markers to confirm route status.";
   }
 
   els.geoFilterStatus.textContent = message;
@@ -2317,7 +2317,7 @@ function resetSmartReportButton() {
   els.mobileReportBtn?.classList.remove("clear-mode");
 
   if (els.mobileReportBtn) {
-    els.mobileReportBtn.textContent = "Report Crossing Near Me";
+    els.mobileReportBtn.textContent = "🚨 Report Crossing Near Me";
   }
 }
 
@@ -2445,7 +2445,7 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
           if (reportType === "blocked" || reportType === "heavy") {
             buttonEl.textContent = "Report Cleared";
           } else {
-            buttonEl.textContent = "Report Near Me";
+            buttonEl.textContent = "🚨 Report Near Me";
           }
         } else {
           buttonEl.textContent = originalButtonText;
@@ -2708,24 +2708,24 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeEta", `ETA 32 min (+${extraMinutes})`);
     safeText("departureTime", "Leave now");
     safeText("departureReason", "High shared route impact detected.");
-    safeText("desktopRouteStatus", desktopRouteSummary);
-    safeText("sideRouteWatchHint", "Route summary shown in desktop command area.");
+    safeText("desktopRouteStatus", `${desktopRouteSummary} · Warning: major crossing impact detected.`);
+    safeText("sideRouteWatchHint", `Route Watch alert: add about ${extraMinutes} minutes and consider reroute.`);
     els.routeStatusCard?.classList.add("high");
   } else if (impact >= 40) {
     safeText("routeStatus", "Saved · Watch");
     safeText("routeEta", `ETA 26 min (+${extraMinutes})`);
     safeText("departureTime", "Leave 8 min early");
     safeText("departureReason", "Moderate shared report risk detected.");
-    safeText("desktopRouteStatus", desktopRouteSummary);
-    safeText("sideRouteWatchHint", "Route summary shown in desktop command area.");
+    safeText("desktopRouteStatus", `${desktopRouteSummary} · Caution: moderate crossing risk.`);
+    safeText("sideRouteWatchHint", `Route Watch caution: expect about +${extraMinutes} minutes.`);
     els.routeStatusCard?.classList.add("delayed");
   } else {
     safeText("routeStatus", "Saved · Clear");
     safeText("routeEta", "ETA 21 min");
     safeText("departureTime", "Normal departure");
     safeText("departureReason", "No major active shared delay detected.");
-    safeText("desktopRouteStatus", desktopRouteSummary);
-    safeText("sideRouteWatchHint", "Route summary shown in desktop command area.");
+    safeText("desktopRouteStatus", `${desktopRouteSummary} · No active route warnings.`);
+    safeText("sideRouteWatchHint", "Route Watch clear: no added minutes right now.");
     els.routeStatusCard?.classList.add("clear");
   }
 

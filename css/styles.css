@@ -2304,13 +2304,14 @@ body.modal-open {
     z-index: 2000;
     display: block;
     padding: 14px 16px;
-    border: 1px solid rgba(58, 200, 156, 0.38);
+    border: 1px solid rgba(255, 233, 161, 0.72);
     border-radius: 999px;
-    background: linear-gradient(135deg, #48e0ab, #4da3ff);
-    color: #041018;
+    background: linear-gradient(135deg, #ff7a4f, #ff4242);
+    color: #fff6f2;
     letter-spacing: 0.01em;
     font-weight: 950;
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.34);
+    box-shadow: 0 22px 50px rgba(0, 0, 0, 0.45), 0 0 0 3px rgba(255, 104, 104, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.34);
+    animation: report-cta-pulse 1.9s ease-in-out infinite;
   }
 
 .mobile-sticky-report.clear-mode {
@@ -2332,20 +2333,25 @@ body.modal-open {
     right: 24px;
     bottom: 24px;
     z-index: 800;
-    border: 1px solid rgba(88, 212, 162, 0.45);
+    border: 1px solid rgba(255, 213, 145, 0.68);
     border-radius: 999px;
-    padding: 10px 14px;
-    font-size: 0.83rem;
-    font-weight: 800;
-    color: #d8ffef;
-    background: rgba(4, 16, 30, 0.82);
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    font-weight: 900;
+    color: #fff5ee;
+    background: linear-gradient(135deg, rgba(255, 122, 79, 0.96), rgba(255, 66, 66, 0.94));
     backdrop-filter: blur(6px);
   }
 
   .map-report-shortcut:hover {
-    border-color: rgba(88, 212, 162, 0.85);
+    border-color: rgba(255, 245, 215, 0.9);
     transform: translateY(-1px);
   }
+}
+
+@keyframes report-cta-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
 }
 
 
@@ -3447,7 +3453,7 @@ h2 { font-weight: 820; letter-spacing: -0.025em; }
 #map {
   background: radial-gradient(circle at 50% 46%, #111c2a 0%, #0a121d 38%, #060b13 72%, #04070c 100%);
   border: 1px solid rgba(140, 175, 215, 0.28);
-  filter: saturate(0.95) contrast(1.16) brightness(0.82);
+  filter: saturate(1.02) contrast(1.26) brightness(0.76);
 }
 
 #map::before {
@@ -4224,11 +4230,11 @@ h1, h2, h3, .future-metric-headline {
 
 /* V36 usability clarity updates */
 #map .leaflet-roadsPane-pane .leaflet-tile {
-  filter: saturate(1.26) brightness(0.98) contrast(1.18) hue-rotate(182deg);
+  filter: saturate(1.38) brightness(1.14) contrast(1.28) hue-rotate(182deg);
 }
 
 #map .leaflet-labelsPane-pane .leaflet-tile {
-  filter: grayscale(0.02) brightness(1.02) contrast(1.2);
+  filter: grayscale(0) brightness(1.2) contrast(1.32);
 }
 
 .gridly-marker.state-normal { background: #4bc7ff; border-color: rgba(214, 246, 255, 0.9); }
