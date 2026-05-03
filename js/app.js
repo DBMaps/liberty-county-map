@@ -92,7 +92,7 @@ const defaultCenter = [30.0466, -94.8852];
 const REPORT_EXPIRATION_MINUTES = 90;
 const RECENTLY_CLEARED_WINDOW_MINUTES = 20;
 const LIVE_REFRESH_MS = 15000;
-const APP_BUILD = "6C4";
+const APP_BUILD = "6D0";
 const DEFAULT_NEARBY_RADIUS_MILES = 8;
 const DISTANT_CROSSING_MIN_ZOOM = 14;
 const CROSSING_FETCH_RETRY_ATTEMPTS = 3;
@@ -382,12 +382,12 @@ function initMap() {
     attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
   });
 
-  const highwayLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    subdomains: "abc",
-    maxZoom: 19,
+  const highwayLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+    subdomains: "abcd",
+    maxZoom: 20,
     pane: "roadsPane",
-    opacity: 0.72,
-    attribution: "&copy; OpenStreetMap contributors"
+    opacity: 0.45,
+    attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
   });
 
   const railCorridorLayer = L.tileLayer("https://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png", {
@@ -849,8 +849,8 @@ function renderCrossings() {
 function getMarkerLabel(report, markerStateClass, lifecycleState) {
   if (lifecycleState === "recently_cleared" || markerStateClass === "state-cleared") return "✓";
   if (markerStateClass === "state-blocked") return "⛔";
-  if (markerStateClass === "state-delay") return "!";
-  return "•";
+  if (markerStateClass === "state-delay") return "⚠";
+  return "◦";
 }
 
 
@@ -2607,7 +2607,7 @@ function evaluateSmartAlertsBanner(prefs = getSmartAlertsPreferences()) {
   }
 
   els.smartAlertsBanner.hidden = false;
-  els.smartAlertsBanner.textContent = matches.slice(0, 2).join(" ");
+  els.smartAlertsBanner.textContent = matches.slice(0, 3).join(" ");
 }
 
 function updateRouteIntelligence(nearest = []) {
@@ -2820,7 +2820,7 @@ function renderAlerts() {
   }
 
   els.alertsList.innerHTML = incidents
-    .slice(0, 2)
+    .slice(0, 3)
     .map((incident) => {
       const latest = incident.latestReport;
       const confidenceLabel = getCrossingConfidenceLabel(latest, incident.count);
