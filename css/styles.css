@@ -4971,3 +4971,13 @@ h1, h2, h3, .future-metric-headline {
   max-width: 100%;
   margin-top: 8px;
 }
+
+.leaflet-marker-icon.route-priority {
+  z-index: 690 !important;
+  filter: drop-shadow(0 0 8px rgba(46, 204, 113, 0.55));
+}
+
+.leaflet-marker-icon.off-route-faded {
+  opacity: 0.48;
+  transform: scale(0.92);
+}
