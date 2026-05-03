@@ -101,6 +101,8 @@ const CROSSING_FETCH_RETRY_DELAY_MS = 700;
 const SMART_ALERTS_STORAGE_KEY = "gridlySmartAlertsV1";
 const SMART_ALERTS_DRAWER_SEEN_KEY = "gridlySmartAlertsDrawerSeenV1";
 const MAP_FIRST_HINT_SEEN_KEY = "gridlyMapFirstHintSeenV1";
+const SAVED_PLACES_STORAGE_KEY = "gridlySavedPlacesV1";
+const SELECTED_PLACE_STORAGE_KEY = "gridlySelectedPlaceIdV1";
 
 let supabaseClient = null;
 let realtimeChannel = null;
@@ -186,6 +188,7 @@ function hydrateElements() {
     "sideRouteWatchHint",
     "homeInput",
     "workInput",
+    "savedDestinationSelect",
     "saveRouteBtn",
     "useLocationBtn",
     "refreshBtn",
@@ -247,6 +250,7 @@ function hydrateElements() {
     "smartAlertsBanner",
     "mobileHomeInput",
     "mobileWorkInput",
+    "mobileSavedDestinationSelect",
     "mobileSaveRouteBtn",
     "mobileUseLocationBtn",
     "routeSetupModal",
@@ -2181,6 +2185,15 @@ function bindEvents() {
   els.saveSmartAlertsBtn?.addEventListener("click", saveSmartAlertsPreferences);
   els.closeSmartAlertsModalBtn?.addEventListener("click", closeSmartAlertsModal);
   els.mobileSaveRouteBtn?.addEventListener("click", () => saveRoute("mobile"));
+  [els.savedDestinationSelect, els.mobileSavedDestinationSelect].forEach((selectEl) => {
+    selectEl?.addEventListener("change", (event) => {
+      const nextId = event.target.value;
+      if (!nextId) return;
+      setSelectedPlaceId(nextId);
+      loadSavedRoute();
+      updateRouteIntelligence();
+    });
+  });
   bindTapSafeClose(els.closeRouteSetupModalBtn, closeRouteSetupModal);
   bindTapSafeClose(els.routeSetupModalBackdrop, closeRouteSetupModal);
   els.routeSetupModal?.addEventListener("click", (event) => {
@@ -2206,7 +2219,7 @@ function bindEvents() {
   });
 
   const handleRouteCardInteraction = () => {
-    const hasSavedRoute = Boolean(localStorage.getItem("gridlyHome") && localStorage.getItem("gridlyWork"));
+    const hasSavedRoute = getSavedPlaces().length > 0;
     const isMobile = window.matchMedia("(max-width: 1100px)").matches;
 
     if (isMobile) {
@@ -2657,15 +2670,68 @@ function getRouteInputValues(source = "desktop") {
   };
 }
 
+function getSavedPlaces() {
+  try {
+    const places = JSON.parse(localStorage.getItem(SAVED_PLACES_STORAGE_KEY) || "[]");
+    return Array.isArray(places) ? places : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveSavedPlaces(places) {
+  localStorage.setItem(SAVED_PLACES_STORAGE_KEY, JSON.stringify(places));
+}
+
+function getSelectedPlaceId() {
+  return localStorage.getItem(SELECTED_PLACE_STORAGE_KEY) || "";
+}
+
+function setSelectedPlaceId(placeId) {
+  localStorage.setItem(SELECTED_PLACE_STORAGE_KEY, placeId);
+}
+
+function getSelectedPlace() {
+  const places = getSavedPlaces();
+  const selectedId = getSelectedPlaceId();
+  return places.find((place) => place.id === selectedId) || places[0] || null;
+}
+
+function renderSavedPlacesSelectOptions() {
+  const places = getSavedPlaces();
+  const selectedId = getSelectedPlaceId();
+  [els.savedDestinationSelect, els.mobileSavedDestinationSelect].forEach((selectEl) => {
+    if (!selectEl) return;
+    selectEl.innerHTML = "";
+    if (!places.length) {
+      const option = document.createElement("option");
+      option.value = "";
+      option.textContent = "No saved places yet";
+      selectEl.appendChild(option);
+      return;
+    }
+    places.forEach((place) => {
+      const option = document.createElement("option");
+      option.value = place.id;
+      option.textContent = place.name;
+      option.selected = place.id === selectedId;
+      selectEl.appendChild(option);
+    });
+  });
+}
+
 function saveRoute(source = "desktop") {
   const { home, work, button } = getRouteInputValues(source);
-
   if (!home || !work) {
-    flashButton(button, "Add Home + Work");
+    flashButton(button, "Add name + place");
     return;
   }
-
-  localStorage.setItem("gridlyHome", home);
+  const places = getSavedPlaces();
+  const id = `place-${Date.now()}`;
+  places.push({ id, name: home, address: work });
+  saveSavedPlaces(places);
+  setSelectedPlaceId(id);
+  localStorage.setItem("gridlyHome", home); // legacy compatibility
   localStorage.setItem("gridlyWork", work);
 
   loadSavedRoute();
@@ -2679,8 +2745,10 @@ function saveRoute(source = "desktop") {
 }
 
 function loadSavedRoute() {
-  const home = localStorage.getItem("gridlyHome");
-  const work = localStorage.getItem("gridlyWork");
+  const selectedPlace = getSelectedPlace();
+  const home = selectedPlace?.name || localStorage.getItem("gridlyHome");
+  const work = selectedPlace?.address || localStorage.getItem("gridlyWork");
+  renderSavedPlacesSelectOptions();
 
   if (home) {
     safeText("savedHome", home);
@@ -2690,8 +2758,8 @@ function loadSavedRoute() {
   }
 
   if (work) {
-    safeText("savedWork", work);
-    safeText("desktopRouteWork", work);
+    safeText("savedWork", "Route Watch");
+    safeText("desktopRouteWork", "Route Watch");
     if (els.workInput) els.workInput.value = work;
     if (els.mobileWorkInput) els.mobileWorkInput.value = work;
   }
@@ -2829,8 +2897,9 @@ function getRouteWatchIntelligence(activeIssues = []) {
 }
 
 function updateRouteIntelligence(nearest = []) {
-  const savedHome = localStorage.getItem("gridlyHome");
-  const savedWork = localStorage.getItem("gridlyWork");
+  const selectedPlace = getSelectedPlace();
+  const savedHome = selectedPlace?.name || localStorage.getItem("gridlyHome");
+  const savedWork = selectedPlace?.address || localStorage.getItem("gridlyWork");
 
   const unifiedActive = getUnifiedIncidents().filter((incident) => incident.status === "active");
   const railActive = unifiedActive.filter((incident) => incident.type.startsWith("rail_"));
@@ -2873,11 +2942,11 @@ function updateRouteIntelligence(nearest = []) {
 
   if (!savedHome || !savedWork) {
     safeText("routeStatus", "Set Route");
-    safeText("routeEta", "Save Home + Work");
-    safeText("desktopRouteStatus", "Add Home + Work to unlock an actionable commute card with reroute guidance.");
+    safeText("routeEta", "Save a place");
+    safeText("desktopRouteStatus", "Add a saved place to unlock destination-aware Route Watch.");
     safeText("sideRouteWatchHint", "Primary route watch is pinned above the live map.");
-    safeText("departureTime", "Set route first");
-    safeText("departureReason", "Home and Work unlock personalized route intelligence.");
+    safeText("departureTime", "Set destination first");
+    safeText("departureReason", "Saved places unlock personalized route intelligence.");
     els.routeStatusCard?.classList.add("delayed");
   } else if (impact >= 70) {
     safeText("routeStatus", "Saved · Delayed");

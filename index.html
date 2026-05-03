@@ -204,18 +204,21 @@
         <div class="setup-copy">
           <p class="eyebrow">Route Watch</p>
           <h2>Set up Route Watch</h2>
-          <p>Monitor your saved Home + Work route for nearby rail delays and road disruptions.</p>
+          <p>Save common destinations and pick one for today's Route Watch.</p>
         </div>
 
         <div class="setup-grid">
           <label>
-            Home
-            <input id="homeInput" type="text" placeholder="Example: Dayton, TX" />
+            Place name
+            <input id="homeInput" type="text" placeholder="Example: Home, Work, School" />
           </label>
-
           <label>
-            Work
-            <input id="workInput" type="text" placeholder="Example: Crosby, TX" />
+            Location / address
+            <input id="workInput" type="text" placeholder="Example: Dayton, TX" />
+          </label>
+          <label>
+            Where are you headed?
+            <select id="savedDestinationSelect"></select>
           </label>
 
           <button id="saveRouteBtn" class="primary-btn">Save Route</button>
@@ -255,7 +258,7 @@
         <article class="desktop-route-watch-strip" aria-label="Saved route watch status">
           <div class="route-watch-strip-copy">
             <p class="eyebrow">Route Watch</p>
-            <strong><span id="desktopRouteHome">Not saved</span> → <span id="desktopRouteWork">Not saved</span></strong>
+            <strong><span id="desktopRouteHome">No destination selected</span> → <span id="desktopRouteWork">Route Watch</span></strong>
             <p id="desktopRouteStatus">Route status and next action for your saved commute.</p>
           </div>
           <button id="desktopManageRouteBtn" class="secondary-btn compact-btn" type="button">Manage Route</button>
@@ -421,17 +424,21 @@
         <span class="eyebrow">Daily Route</span>
         <button type="button" class="secondary-btn compact-btn route-modal-close" id="closeRouteSetupModalBtn" aria-label="Close Save Route modal">×</button>
       </div>
-      <h2 id="routeSetupTitle">Save Home + Work</h2>
-      <p class="smart-alerts-subtitle">Your commute stays on this device and powers personalized route intelligence.</p>
+      <h2 id="routeSetupTitle">Save places</h2>
+      <p class="smart-alerts-subtitle">Saved places stay on this device. Pick one destination for today.</p>
       <div class="setup-grid route-setup-grid-mobile">
         <label>
-          Home
-          <input id="mobileHomeInput" type="text" placeholder="Example: Dayton, TX" autocomplete="address-line1" />
+          Place name
+          <input id="mobileHomeInput" type="text" placeholder="Example: Home, Work, Restaurant" autocomplete="organization-title" />
         </label>
 
         <label>
-          Work
-          <input id="mobileWorkInput" type="text" placeholder="Example: Crosby, TX" autocomplete="organization" />
+          Location / address
+          <input id="mobileWorkInput" type="text" placeholder="Example: Crosby, TX" autocomplete="address-line1" />
+        </label>
+        <label>
+          Where are you headed?
+          <select id="mobileSavedDestinationSelect"></select>
         </label>
 
         <button id="mobileSaveRouteBtn" class="primary-btn" type="button">Save Route</button>
