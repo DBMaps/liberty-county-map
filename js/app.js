@@ -2653,18 +2653,40 @@ function evaluateSmartAlertsBanner(prefs = getSmartAlertsPreferences()) {
   els.smartAlertsBanner.textContent = matches.slice(0, 3).join(" ");
 }
 
+
+function getUrgentBlockedCount(activeIssues = []) {
+  return activeIssues.filter((issue) => String(issue.type || "") === "rail_blocked" && Number(issue.age_minutes ?? issue.minutesAgo ?? 999) <= 10).length;
+}
+
+function getFreshnessTier(minutesAgo) {
+  if (typeof minutesAgo !== "number" || Number.isNaN(minutesAgo)) return "Unknown";
+  if (minutesAgo <= 15) return "Fresh";
+  if (minutesAgo <= 45) return "Aging";
+  return "Stale";
+}
+
 function getRouteWatchIntelligence(activeIssues = []) {
   const blocked = activeIssues.filter((issue) => String(issue.type || "").includes("blocked"));
   const delayed = activeIssues.filter((issue) => String(issue.type || "").includes("delay"));
   const blockedCount = blocked.length;
   const estimatedDelayMinutes = Math.max(0, blockedCount * 7 + delayed.length * 4);
   const confidence = blockedCount >= 2 ? "High" : blockedCount === 1 || delayed.length >= 2 ? "Medium" : "Low";
-  const reroute = blockedCount > 0
-    ? "Use your backup route and avoid the blocked crossings."
-    : delayed.length > 0
-      ? "Keep your route, but leave a few minutes early."
-      : "Stay on your normal route.";
-  return { blockedCount, estimatedDelayMinutes, confidence, reroute };
+  const urgentBlockedCount = getUrgentBlockedCount(activeIssues);
+  const reroute = urgentBlockedCount > 0
+    ? "Immediate reroute recommended: blocked report is within 10 minutes."
+    : blockedCount > 0
+      ? "Use your backup route and avoid the blocked crossings."
+      : delayed.length > 0
+        ? "Keep your route, but leave a few minutes early."
+        : "Stay on your normal route.";
+  const advice = urgentBlockedCount > 0
+    ? "Avoid the crossing nearest your Home→Work midpoint and reroute now."
+    : blockedCount > 0
+      ? "Take your backup route and confirm crossings before departure."
+      : delayed.length > 0
+        ? "Leave 5–8 minutes early and monitor Route Watch."
+        : "Stay on your normal route and check again before leaving.";
+  return { blockedCount, urgentBlockedCount, estimatedDelayMinutes, confidence, reroute, advice };
 }
 
 function updateRouteIntelligence(nearest = []) {
@@ -2723,7 +2745,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeEta", `ETA 32 min (+${extraMinutes})`);
     safeText("departureTime", "Leave now");
     safeText("departureReason", `${routeIntel.blockedCount} blocked crossing${routeIntel.blockedCount === 1 ? "" : "s"} on route watch · est +${routeIntel.estimatedDelayMinutes} min.`);
-    safeText("desktopRouteStatus", `${desktopRouteSummary} · Warning: major crossing impact detected.`);
+    safeText("desktopRouteStatus", `${desktopRouteSummary} · ${routeIntel.advice}`);
     safeText("sideRouteWatchHint", `Route Watch: ${routeIntel.blockedCount} blocked · est +${routeIntel.estimatedDelayMinutes} min · ${routeIntel.reroute} Confidence ${routeIntel.confidence}.`);
     els.routeStatusCard?.classList.add("high");
   } else if (impact >= 40) {
@@ -2731,7 +2753,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeEta", `ETA 26 min (+${extraMinutes})`);
     safeText("departureTime", "Leave 8 min early");
     safeText("departureReason", `${routeIntel.blockedCount} blocked crossing${routeIntel.blockedCount === 1 ? "" : "s"} on route watch · est +${routeIntel.estimatedDelayMinutes} min.`);
-    safeText("desktopRouteStatus", `${desktopRouteSummary} · Caution: moderate crossing risk.`);
+    safeText("desktopRouteStatus", `${desktopRouteSummary} · ${routeIntel.advice}`);
     safeText("sideRouteWatchHint", `Route Watch: ${routeIntel.blockedCount} blocked · est +${routeIntel.estimatedDelayMinutes} min · ${routeIntel.reroute} Confidence ${routeIntel.confidence}.`);
     els.routeStatusCard?.classList.add("delayed");
   } else {
@@ -2739,7 +2761,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeEta", "ETA 21 min");
     safeText("departureTime", "Normal departure");
     safeText("departureReason", "No major active shared delay detected.");
-    safeText("desktopRouteStatus", `${desktopRouteSummary} · No active route warnings.`);
+    safeText("desktopRouteStatus", `${desktopRouteSummary} · ${routeIntel.advice}`);
     safeText("sideRouteWatchHint", `Route Watch: ${routeIntel.blockedCount} blocked · est +${routeIntel.estimatedDelayMinutes} min · ${routeIntel.reroute} Confidence ${routeIntel.confidence}.`);
     els.routeStatusCard?.classList.add("clear");
   }
@@ -2748,8 +2770,8 @@ function updateRouteIntelligence(nearest = []) {
   liveStatusCard?.classList.remove("clear-status", "delay-status", "blocked-status");
 
   if (impact >= 70) {
-    safeText("delayRisk", "Delay Risk Rising");
-    safeText("delayReason", "Major crossing blockage detected. Check the live map before departure.");
+    safeText("delayRisk", routeIntel.urgentBlockedCount > 0 ? "Urgent Blocked Now" : "Delay Risk Rising");
+    safeText("delayReason", routeIntel.urgentBlockedCount > 0 ? `${routeIntel.urgentBlockedCount} blocked report${routeIntel.urgentBlockedCount === 1 ? "" : "s"} posted within 10 min. Reroute immediately.` : "Major crossing blockage detected. Check the live map before departure.");
     safeText("alternateRoute", "Use alternate");
     safeText("alternateReason", "Avoid highest-impact crossing if possible.");
     safeText("impactText", "High route impact. Leave now or reroute.");
@@ -2840,15 +2862,17 @@ function updateGrowthWidgets() {
 
   const confirmationCount = getUnifiedIncidents().reduce((sum,i)=>sum+i.reports_count,0);
 
+  const newestMinutes = typeof lastReport?.minutesAgo === "number" ? lastReport.minutesAgo : null;
+  const freshnessTier = getFreshnessTier(newestMinutes);
   if (confirmationCount >= 5) {
-    safeText("communityTrust", "Strong local signal");
-    safeText("communityTrustReason", `${confirmationCount} fresh reports are helping drivers right now.`);
+    safeText("communityTrust", `${freshnessTier} · Strong local signal`);
+    safeText("communityTrustReason", `${confirmationCount} reports live. Confidence is ${freshnessTier.toLowerCase()}.`);
   } else if (confirmationCount > 0) {
-    safeText("communityTrust", "Early signal active");
-    safeText("communityTrustReason", `${confirmationCount} fresh report${confirmationCount === 1 ? "" : "s"} currently active.`);
+    safeText("communityTrust", `${freshnessTier} · Early signal`);
+    safeText("communityTrustReason", `${confirmationCount} active report${confirmationCount === 1 ? "" : "s"}. Confidence is ${freshnessTier.toLowerCase()}.`);
   } else {
-    safeText("communityTrust", "Waiting for reports");
-    safeText("communityTrustReason", "The first shared report helps everyone nearby.");
+    safeText("communityTrust", "Fresh · Waiting for reports");
+    safeText("communityTrustReason", "No active reports yet. Confidence will increase as drivers report.");
   }
 
   if (lastReport) {
@@ -2905,9 +2929,8 @@ function renderAlerts() {
       return `
         <div class="alert-item ${itemClass}">
           <strong>${sanitizeText(incident.crossingName)}</strong>
-          <p>${label} · newest ${incident.newestMinutes} min ago</p>
-          <p>${sanitizeText(latest.detail)}</p>
-          <p>${sanitizeText(freshnessLabel)} · Confidence: ${sanitizeText(confidenceLabel)}</p>
+          <p>${label} · ${incident.newestMinutes}m · ${sanitizeText(confidenceLabel)}</p>
+          <p>${sanitizeText(freshnessLabel)} · ${sanitizeText(latest.detail)}</p>
           <div class="alert-meta">
             <span class="alert-count-pill">${sanitizeText(confirmationLabel)}</span>
             <span class="trust-pill">${sanitizeText(reportState)}</span>
@@ -2946,8 +2969,7 @@ function renderTrendingCrossings() {
       return `
         <button class="trend-item ${className}" type="button" onclick="zoomToCrossing('${sanitizeText(incident.crossingId)}')">
           <strong>${sanitizeText(incident.crossingName)}</strong>
-          <p>${sanitizeText(freshnessLabel)} · ${sanitizeText(confirmationLabel)}</p>
-          <p>Confidence: ${sanitizeText(confidenceLabel)} · Auto-expires after ${REPORT_EXPIRATION_MINUTES} min</p>
+          <p>${sanitizeText(freshnessLabel)} · ${sanitizeText(confidenceLabel)} · ${sanitizeText(confirmationLabel)}</p>
         </button>
       `;
     })

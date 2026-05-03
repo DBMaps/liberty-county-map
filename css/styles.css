@@ -4822,3 +4822,21 @@ h1, h2, h3, .future-metric-headline {
     min-height: 62vh;
   }
 }
+
+
+/* Gridly beta polish sprint */
+@media (max-width: 760px) {
+  .gridly-hazard-launcher {
+    bottom: 88px !important;
+    box-shadow: 0 14px 34px rgba(0,0,0,.5), 0 0 0 1px rgba(255,95,61,.45) !important;
+  }
+}
+.trend-item p, .alert-item p {
+  line-height: 1.25;
+}
+.gridly-marker.state-blocked.alert {
+  box-shadow: 0 0 0 3px rgba(255, 170, 155, 0.82), 0 0 26px rgba(255, 49, 49, 0.85);
+}
+.gridly-marker-minutes {
+  font-weight: 900;
+}
