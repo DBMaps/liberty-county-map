@@ -280,10 +280,10 @@
           <button class="geo-filter-pill selected" type="button" data-geo-filter="nearby">Nearby</button>
           <button class="geo-filter-pill" type="button" data-geo-filter="town">My Town</button>
           <button class="geo-filter-pill" type="button" data-geo-filter="county">My County</button>
-          <button class="geo-filter-pill" type="button" data-geo-filter="active-delays">Active Delays</button>
+          <button class="geo-filter-pill" type="button" data-geo-filter="active-delays">Delays</button>
           <button class="geo-filter-pill" type="button" data-geo-filter="all">All</button>
         </div></div>
-        <label class="all-crossings-toggle"><input id="allCrossingsLayerToggle" type="checkbox" /> All Crossings layer</label>
+        <details class="all-crossings-advanced"><summary>Advanced</summary><label class="all-crossings-toggle"><input id="allCrossingsLayerToggle" type="checkbox" /> Show all crossings layer</label></details>
 
         <div class="geo-filter-status" id="geoFilterStatus" role="status" aria-live="polite" aria-atomic="true">
           Act now: review nearby crossings before departure
@@ -335,12 +335,12 @@
 
 
     <details class="report-card report-drawer" id="reportSection">
-      <summary class="report-drawer-summary"><span class="eyebrow">Report Search</span><h2>Report a crossing in 2 quick steps</h2></summary>
+      <summary class="report-drawer-summary"><span class="eyebrow">Quick Report</span><h2>Report near me, then tap map marker</h2></summary>
       <div class="report-copy">
-        <p>Start on the map: tap <strong>Report Crossing Near Me</strong>, then tap the marker and choose its status. Use manual search only if you already know the crossing name.</p>
+        <p><strong>Primary flow:</strong> tap <strong>Report Near Me</strong>, then tap the crossing marker on the map. Reporting should take seconds while parked safely.</p>
 
         <div class="confirmation-box" id="reportConfirmation">
-          1) Tap <strong>Report Crossing Near Me</strong>. 2) Tap the nearest marker and choose <strong>Blocked</strong>, <strong>Delay</strong>, <strong>Cleared</strong>, or <strong>Other</strong>.
+          1) Tap <strong>Report Near Me</strong>. 2) Tap a marker and choose <strong>Blocked</strong>, <strong>Delay</strong>, <strong>Cleared</strong>, or <strong>Other</strong>.
         </div>
 
         <div class="share-card" id="shareCard">
@@ -366,7 +366,7 @@
           </div>
         </div>
 
-      <div class="report-tools">
+      <details class="report-tools-advanced"><summary>Manual / advanced reporting</summary><div class="report-tools">
         <label>
           <span id="reportSearchLabel">Search crossing</span>
           <input id="crossingSearch" type="text" placeholder="Search street, crossing, or railroad..." />
@@ -396,6 +396,7 @@
 
         <div class="search-results" id="searchResults"></div>
       </div>
+      </details>
     </details>
 
     <section class="desktop-business-note" hidden>

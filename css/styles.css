@@ -4856,3 +4856,60 @@ h1, h2, h3, .future-metric-headline {
 .leaflet-interactive[stroke="#56a8ff"] {
   filter: drop-shadow(0 0 10px rgba(72, 145, 255, 0.9));
 }
+
+/* UX simplification overrides */
+.map-ux-strip {
+  justify-content: flex-start;
+}
+
+.geo-filter-shell {
+  border-radius: 14px;
+  width: 100%;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.all-crossings-advanced {
+  margin: 8px 0 0;
+}
+
+.all-crossings-advanced summary,
+.report-tools-advanced summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.all-crossings-advanced:not([open]) .all-crossings-toggle {
+  display: none;
+}
+
+.report-tools-advanced {
+  margin-top: 12px;
+}
+
+.report-tools-advanced:not([open]) .report-tools {
+  display: none;
+}
+
+@media (min-width: 1101px) {
+  .all-crossings-advanced {
+    display: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  .mobile-sticky-report {
+    bottom: max(14px, env(safe-area-inset-bottom));
+    min-height: 58px;
+    padding: 14px 20px;
+    font-size: 1rem;
+    font-weight: 900;
+    letter-spacing: 0.01em;
+  }
+
+  .report-drawer-summary h2 {
+    font-size: 1.12rem;
+  }
+}
