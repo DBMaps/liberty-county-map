@@ -4972,6 +4972,65 @@ h1, h2, h3, .future-metric-headline {
   margin-top: 8px;
 }
 
+/* Gridly V18 daily destination */
+.destination-hero-card,
+.desktop-destination-strip,
+.route-watch-badge {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: linear-gradient(160deg, rgba(11, 17, 26, 0.95), rgba(14, 18, 24, 0.92));
+  border-radius: 18px;
+}
+.destination-hero-card {
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+}
+.destination-hero-copy strong { font-size: 1.05rem; }
+.destination-hero-copy p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+.destination-chip-row,
+.desktop-destination-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.destination-chip {
+  padding: 9px 13px;
+  font-size: 0.83rem;
+}
+.destination-empty-note {
+  margin: 0;
+  color: #ffd480;
+  font-size: 0.8rem;
+}
+.desktop-destination-strip {
+  padding: 12px 14px;
+  margin-top: 10px;
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.route-watch-badge {
+  position: absolute;
+  top: 142px;
+  right: 14px;
+  z-index: 40;
+  padding: 8px 12px;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+.route-watch-badge.route-green { border-color: rgba(70, 218, 142, 0.62); color: #95ffcd; }
+.route-watch-badge.route-amber { border-color: rgba(255, 191, 71, 0.62); color: #ffd99a; }
+.route-watch-badge.route-red { border-color: rgba(255, 92, 61, 0.72); color: #ffb1a1; }
+@media (min-width: 1101px) {
+  .destination-hero-card { display: none; }
+  .desktop-destination-strip { display: flex; }
+}
+
 .leaflet-marker-icon.route-priority {
   z-index: 690 !important;
   filter: drop-shadow(0 0 8px rgba(46, 204, 113, 0.55));
