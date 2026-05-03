@@ -371,7 +371,7 @@ function initMap() {
     subdomains: "abcd",
     maxZoom: 20,
     pane: "roadsPane",
-    opacity: 0.22,
+    opacity: 0.44,
     attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
   });
 
@@ -379,7 +379,7 @@ function initMap() {
     subdomains: "abc",
     maxZoom: 19,
     pane: "roadsPane",
-    opacity: 0.16,
+    opacity: 0.38,
     attribution: "&copy; OpenStreetMap contributors"
   });
 
@@ -387,7 +387,7 @@ function initMap() {
     subdomains: "abc",
     maxZoom: 19,
     pane: "railPane",
-    opacity: 0.48,
+    opacity: 0.22,
     attribution: "Map style: OpenRailwayMap"
   });
 
