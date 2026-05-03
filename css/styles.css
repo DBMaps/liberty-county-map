@@ -4748,3 +4748,77 @@ h1, h2, h3, .future-metric-headline {
     z-index: 1400;
   }
 }
+
+/* UX simplification pass: map-first hierarchy */
+.desktop-route-watch-strip {
+  padding: 10px 14px;
+  border-radius: 14px;
+}
+.desktop-route-watch-strip .eyebrow { margin-bottom: 3px; }
+.desktop-route-watch-strip strong { font-size: 0.95rem; }
+.desktop-route-watch-strip p { margin: 2px 0 0; font-size: 0.78rem; color: var(--muted); }
+
+.map-header {
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.map-header .actions { display: none; }
+.map-note { max-width: 54ch; }
+
+.map-ux-strip {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-start;
+}
+.geo-filter-shell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 999px;
+  background: rgba(10, 12, 15, 0.72);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+.geo-filter-pill {
+  border-radius: 999px;
+  padding: 8px 13px;
+  font-size: 0.78rem;
+}
+
+#map {
+  margin-top: 10px;
+  border-radius: 16px;
+}
+
+@media (min-width: 1101px) {
+  .all-crossings-toggle,
+  .geo-filter-status {
+    margin-top: 8px;
+    margin-bottom: 0;
+  }
+  .mobile-sticky-report { display: none !important; }
+}
+
+@media (max-width: 1100px) {
+  .map-card {
+    padding: 12px;
+    border-radius: 16px;
+  }
+  .desktop-route-watch-strip {
+    padding: 9px 11px;
+    border-radius: 12px;
+  }
+  .desktop-route-watch-strip .secondary-btn { display: none; }
+  .geo-filter-shell {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    width: 100%;
+  }
+  .geo-filter-pill {
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+  #map {
+    min-height: 62vh;
+  }
+}

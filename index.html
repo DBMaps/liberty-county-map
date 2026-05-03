@@ -256,7 +256,7 @@
           <div class="route-watch-strip-copy">
             <p class="eyebrow">Route Watch</p>
             <strong><span id="desktopRouteHome">Not saved</span> → <span id="desktopRouteWork">Not saved</span></strong>
-            <p id="desktopRouteStatus">Set Home + Work to monitor live hazards and confirmations.</p>
+            <p id="desktopRouteStatus">Route status for your saved commute.</p>
           </div>
           <button id="desktopManageRouteBtn" class="secondary-btn compact-btn" type="button">Manage Route</button>
         </article>
@@ -264,8 +264,8 @@
         <div class="section-header map-header">
           <div>
             <p class="eyebrow">Live Mobility Map</p>
-            <h2>Driver-first Live Map</h2>
-            <p class="map-note" id="mapTrustNote">Road-first map with live crossing and hazard intelligence updates.</p>
+            <h2>Live Map Center</h2>
+            <p class="map-note" id="mapTrustNote">Route clarity first. Tap markers for nearby blocks and reports.</p>
             <div class="crossing-status-legend" aria-label="Crossing status legend">
               <span class="legend-pill blocked">Blocked</span><span class="legend-pill delayed">Delayed</span><span class="legend-pill cleared">Cleared</span><span class="legend-pill inactive">Inactive</span>
             </div>
@@ -274,11 +274,6 @@
           <div class="actions">
             <button id="refreshBtn" class="secondary-btn">Refresh Reports</button>
           </div>
-        </div>
-
-        <div class="report-mode-banner" id="reportModeBanner">
-          <strong>Report mode is ready.</strong>
-          <span>Gridly will open the nearest crossing when GPS is available. Confirm it is correct, then report.</span>
         </div>
 
         <div class="map-ux-strip"><div class="geo-filter-shell" role="group" aria-label="Map filters">
@@ -293,10 +288,6 @@
         <div class="geo-filter-status" id="geoFilterStatus" role="status" aria-live="polite" aria-atomic="true">
           Act now: review nearby crossings before departure
         </div>
-
-        <button id="mapReportShortcutBtn" class="map-report-shortcut" type="button" aria-label="Report a crossing near you">
-          🚨 Report Near Me
-        </button>
 
         <div id="map"></div>
       </section>
