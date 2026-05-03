@@ -378,7 +378,7 @@ function initMap() {
     subdomains: "abcd",
     maxZoom: 20,
     pane: "roadsPane",
-    opacity: 0.62,
+    opacity: 0.74,
     attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
   });
 
@@ -386,7 +386,7 @@ function initMap() {
     subdomains: "abc",
     maxZoom: 19,
     pane: "roadsPane",
-    opacity: 0.58,
+    opacity: 0.72,
     attribution: "&copy; OpenStreetMap contributors"
   });
 
@@ -394,7 +394,7 @@ function initMap() {
     subdomains: "abc",
     maxZoom: 19,
     pane: "railPane",
-    opacity: 0.1,
+    opacity: 0.04,
     attribution: "Map style: OpenRailwayMap"
   });
 
@@ -823,12 +823,17 @@ function renderCrossings() {
           ? "state-delay"
           : "state-normal";
     const isNearby = nearbyReportCrossingIds.has(String(crossing.id));
+    const markerLabel = getMarkerLabel(report, markerStateClass, lifecycleState);
+    const markerMinutes = hasActiveIssue && report?.minutesAgo <= REPORT_EXPIRATION_MINUTES ? `${report.minutesAgo}m` : "";
 
     const icon = L.divIcon({
       className: "",
-      html: `<div class="gridly-marker ${markerStateClass} ${hasActiveIssue ? "alert" : ""} ${isCleared ? "cleared" : ""} ${isNearby ? "nearby" : ""}"></div>`,
-      iconSize: [24, 24],
-      iconAnchor: [12, 12]
+      html: `<div class="gridly-marker-wrap">
+        <div class="gridly-marker ${markerStateClass} ${hasActiveIssue ? "alert" : ""} ${isCleared ? "cleared" : ""} ${isNearby ? "nearby" : ""}">${markerLabel}</div>
+        ${markerMinutes ? `<span class="gridly-marker-minutes">${markerMinutes}</span>` : ""}
+      </div>`,
+      iconSize: [58, 38],
+      iconAnchor: [18, 18]
     });
 
     const marker = L.marker([crossing.lat, crossing.lng], { icon })
@@ -839,6 +844,13 @@ function renderCrossings() {
   });
 
   highlightNearestCrossingOnFirstLoad();
+}
+
+function getMarkerLabel(report, markerStateClass, lifecycleState) {
+  if (lifecycleState === "recently_cleared" || markerStateClass === "state-cleared") return "✓";
+  if (markerStateClass === "state-blocked") return "⛔";
+  if (markerStateClass === "state-delay") return "!";
+  return "•";
 }
 
 
@@ -1685,6 +1697,7 @@ function buildPopup(crossing, report) {
     ? `Last confirmed ${report.minutesAgo} min ago`
     : "Needs confirmation";
   const reportState = getReportStateLabel(report);
+  const routeImpact = getRouteImpactSummary(report, crossing);
 
   return `
     <div class="gridly-popup">
@@ -1696,6 +1709,7 @@ function buildPopup(crossing, report) {
       <span>${sanitizeText(trustFreshness)}</span><br />
       <span>Confidence: ${sanitizeText(confidenceLabel)}</span><br />
       <span>${sanitizeText(reportState)}</span><br />
+      <span>Route impact: ${sanitizeText(routeImpact)}</span><br />
       <span>Auto-expires after ${REPORT_EXPIRATION_MINUTES} min</span><br />
       <span>Risk Score: ${crossing.risk}/100</span>
 
@@ -1707,6 +1721,15 @@ function buildPopup(crossing, report) {
       </div>
     </div>
   `;
+}
+
+function getRouteImpactSummary(report, crossing) {
+  const lifecycleState = getIncidentLifecycleState(report);
+  if (!report || lifecycleState === "cleared" || lifecycleState === "recently_cleared") return "Low · stay on route";
+  if (report.type === "blocked") return "High · reroute recommended";
+  if (report.type === "heavy") return "Moderate · expect delay";
+  if ((crossing?.risk || 0) >= 70) return "Moderate · monitor crossing";
+  return "Low · monitor conditions";
 }
 
 window.reportCrossingFromPopup = async function (crossingId, reportType, buttonEl) {
