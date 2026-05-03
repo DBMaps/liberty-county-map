@@ -107,6 +107,7 @@ let realtimeChannel = null;
 let map;
 let crossingLayer;
 let crossingMarkers = new Map();
+let savedRouteLayer;
 let crossings = [];
 let activeReports = [];
 let activeHazards = [];
@@ -120,6 +121,7 @@ let crossingLoadFailed = false;
 let activeGeoFilter = "nearby";
 let activeReportMode = REPORT_MODES.rail;
 let showAllCrossingsLayer = false;
+let savedRouteCrossingIds = new Set();
 
 let deviceId =
   localStorage.getItem("gridlyDeviceId") ||
@@ -415,6 +417,7 @@ function initMap() {
   premiumLabelLayer.addTo(map);
 
   crossingLayer = L.layerGroup().addTo(map);
+  savedRouteLayer = L.layerGroup().addTo(map);
   unifiedIncidentLayer = L.layerGroup().addTo(map);
 
   map.on("zoomend moveend", () => {
@@ -854,6 +857,7 @@ function shouldShowDistantInactiveCrossing(crossing) {
 }
 function renderCrossings() {
   if (!crossingLayer || !crossings.length) return;
+  renderSavedRouteLine();
 
   const bounds = map?.getBounds?.();
   const visibleCrossings = getVisibleCrossingsForFilter().filter((crossing) => {
@@ -877,6 +881,7 @@ function renderCrossings() {
   crossingMarkers.clear();
 
   const smartClusterState = buildSmartIncidentClusters(prioritizedVisibleCrossings);
+  const hasSavedRoute = savedRouteCrossingIds.size >= 2;
 
   prioritizedVisibleCrossings.forEach((crossing) => {
     const report = getLatestReportForCrossing(crossing.id);
@@ -892,6 +897,8 @@ function renderCrossings() {
           ? "state-delay"
           : "state-normal";
     const isNearby = nearbyReportCrossingIds.has(String(crossing.id));
+    const isOnSavedRoute = savedRouteCrossingIds.has(String(crossing.id));
+    const isOffRouteFaded = hasSavedRoute && !isOnSavedRoute;
     const markerLabel = getMarkerLabel(report, markerStateClass, lifecycleState);
     const clusterCount = smartClusterState.leadCounts.get(String(crossing.id)) || 0;
     if (smartClusterState.hiddenIds.has(String(crossing.id))) return;
@@ -911,11 +918,74 @@ function renderCrossings() {
     const marker = L.marker([crossing.lat, crossing.lng], { icon })
       .bindPopup(buildPopup(crossing, report), { maxWidth: 350 })
       .addTo(crossingLayer);
+    const markerEl = marker.getElement?.();
+    if (markerEl) {
+      markerEl.classList.toggle("route-priority", isOnSavedRoute);
+      markerEl.classList.toggle("off-route-faded", isOffRouteFaded);
+    }
 
     crossingMarkers.set(String(crossing.id), marker);
   });
 
   highlightNearestCrossingOnFirstLoad();
+}
+
+function getRouteStatusColor() {
+  const routeReports = activeReports.filter((report) => savedRouteCrossingIds.has(String(report.crossingId)));
+  const hasBlocked = routeReports.some(
+    (report) => getIncidentLifecycleState(report) === "active" && String(report.type || "").toLowerCase() === "blocked"
+  );
+  if (hasBlocked) return "#e53935";
+  const hasDelay = routeReports.some(
+    (report) => getIncidentLifecycleState(report) === "active" && String(report.type || "").toLowerCase() === "heavy"
+  );
+  if (hasDelay) return "#ffb020";
+  return "#1fbf68";
+}
+
+function inferSavedRouteCrossings() {
+  const savedHome = String(localStorage.getItem("gridlyHome") || "").toLowerCase();
+  const savedWork = String(localStorage.getItem("gridlyWork") || "").toLowerCase();
+  if (!savedHome || !savedWork || !crossings.length) return [];
+  const homeCandidates = crossings.filter((crossing) => savedHome.includes(String(crossing.city || "").toLowerCase()));
+  const workCandidates = crossings.filter((crossing) => savedWork.includes(String(crossing.city || "").toLowerCase()));
+  const from = (homeCandidates.length ? homeCandidates : crossings).slice(0, 80);
+  const to = (workCandidates.length ? workCandidates : crossings).slice(0, 80);
+  let bestPair = null;
+  from.forEach((a) => {
+    to.forEach((b) => {
+      const d = getDistanceMiles(a.lat, a.lng, b.lat, b.lng);
+      if (!bestPair || d < bestPair.distance) bestPair = { a, b, distance: d };
+    });
+  });
+  if (!bestPair) return [];
+  const corridor = crossings
+    .map((crossing) => {
+      const da = getDistanceMiles(crossing.lat, crossing.lng, bestPair.a.lat, bestPair.a.lng);
+      const db = getDistanceMiles(crossing.lat, crossing.lng, bestPair.b.lat, bestPair.b.lng);
+      return { crossing, metric: da + db };
+    })
+    .sort((x, y) => x.metric - y.metric)
+    .slice(0, 12)
+    .map((entry) => entry.crossing)
+    .sort((x, y) => getDistanceMiles(x.lat, x.lng, bestPair.a.lat, bestPair.a.lng) - getDistanceMiles(y.lat, y.lng, bestPair.a.lat, bestPair.a.lng));
+  return corridor;
+}
+
+function renderSavedRouteLine() {
+  if (!savedRouteLayer) return;
+  savedRouteLayer.clearLayers();
+  const routeCrossings = inferSavedRouteCrossings();
+  savedRouteCrossingIds = new Set(routeCrossings.map((c) => String(c.id)));
+  if (routeCrossings.length < 2) return;
+  const latLngs = routeCrossings.map((crossing) => [crossing.lat, crossing.lng]);
+  L.polyline(latLngs, {
+    color: getRouteStatusColor(),
+    weight: 6,
+    opacity: 0.9,
+    lineJoin: "round",
+    dashArray: "1,0"
+  }).addTo(savedRouteLayer);
 }
 
 function getMarkerLabel(report, markerStateClass, lifecycleState) {
