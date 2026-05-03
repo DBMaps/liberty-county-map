@@ -124,6 +124,7 @@ let activeGeoFilter = "nearby";
 let activeReportMode = REPORT_MODES.rail;
 let showAllCrossingsLayer = false;
 let savedRouteCrossingIds = new Set();
+let activeDestinationPlace = null;
 
 let deviceId =
   localStorage.getItem("gridlyDeviceId") ||
@@ -146,6 +147,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   injectHazardReportUI();
   loadSavedRoute();
   loadSmartAlertsPreferences();
+  initDailyDestinationHero();
 
   await loadCrossings();
   await loadSharedReports();
@@ -270,7 +272,18 @@ function hydrateElements() {
     "mobileCommuteRouteBtn",
     "mobileCrossingReportBtn",
     "mobileHazardReportBtn",
-    "mapReportShortcutBtn"
+    "mapReportShortcutBtn",
+    "destinationHomeBtn",
+    "destinationWorkBtn",
+    "destinationFavoriteBtn",
+    "destinationAddBtn",
+    "desktopDestinationHomeBtn",
+    "desktopDestinationWorkBtn",
+    "desktopDestinationFavoriteBtn",
+    "desktopDestinationAddBtn",
+    "destinationEmptyNote",
+    "destinationHabitCopy",
+    "routeWatchBadge"
   ].forEach((id) => {
     els[id] = document.getElementById(id);
   });
@@ -2185,6 +2198,10 @@ function bindEvents() {
   els.saveSmartAlertsBtn?.addEventListener("click", saveSmartAlertsPreferences);
   els.closeSmartAlertsModalBtn?.addEventListener("click", closeSmartAlertsModal);
   els.mobileSaveRouteBtn?.addEventListener("click", () => saveRoute("mobile"));
+  [els.destinationAddBtn, els.desktopDestinationAddBtn].forEach((btn) => btn?.addEventListener("click", () => openRouteSetupModal(btn)));
+  [els.destinationHomeBtn, els.desktopDestinationHomeBtn].forEach((btn) => btn?.addEventListener("click", () => activateDestinationByType("home")));
+  [els.destinationWorkBtn, els.desktopDestinationWorkBtn].forEach((btn) => btn?.addEventListener("click", () => activateDestinationByType("work")));
+  [els.destinationFavoriteBtn, els.desktopDestinationFavoriteBtn].forEach((btn) => btn?.addEventListener("click", () => activateDestinationByType("favorite")));
   [els.savedDestinationSelect, els.mobileSavedDestinationSelect].forEach((selectEl) => {
     selectEl?.addEventListener("change", (event) => {
       const nextId = event.target.value;
@@ -2673,7 +2690,17 @@ function getRouteInputValues(source = "desktop") {
 function getSavedPlaces() {
   try {
     const places = JSON.parse(localStorage.getItem(SAVED_PLACES_STORAGE_KEY) || "[]");
-    return Array.isArray(places) ? places : [];
+    if (Array.isArray(places)) return places;
+    if (places && typeof places === "object") {
+      const normalized = [];
+      if (places.home) normalized.push({ id: "home", name: places.home.label || "Home", address: places.home.address || "" });
+      if (places.work) normalized.push({ id: "work", name: places.work.label || "Work", address: places.work.address || "" });
+      if (Array.isArray(places.custom)) {
+        places.custom.forEach((p) => normalized.push({ id: p.id || `custom-${Date.now()}`, name: p.label || "Favorite", address: p.address || "" }));
+      }
+      return normalized;
+    }
+    return [];
   } catch (error) {
     return [];
   }
@@ -2728,13 +2755,16 @@ function saveRoute(source = "desktop") {
   }
   const places = getSavedPlaces();
   const id = `place-${Date.now()}`;
-  places.push({ id, name: home, address: work });
+  places.push({ id, name: home, address: work, type: "custom" });
   saveSavedPlaces(places);
   setSelectedPlaceId(id);
   localStorage.setItem("gridlyHome", home); // legacy compatibility
   localStorage.setItem("gridlyWork", work);
+  savePlaceType("home", home, work);
+  savePlaceType("work", work, work);
 
   loadSavedRoute();
+  initDailyDestinationHero();
   updateRouteIntelligence();
   updateGrowthWidgets();
   flashButton(button, "Route Saved");
@@ -2742,6 +2772,87 @@ function saveRoute(source = "desktop") {
   if (source === "mobile") {
     closeRouteSetupModal();
   }
+}
+
+function getSavedPlacesState() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(SAVED_PLACES_STORAGE_KEY) || "{}");
+    return { home: raw.home || null, work: raw.work || null, custom: Array.isArray(raw.custom) ? raw.custom : [] };
+  } catch (error) {
+    return { home: null, work: null, custom: [] };
+  }
+}
+
+function saveSavedPlacesState(nextState) {
+  localStorage.setItem(SAVED_PLACES_STORAGE_KEY, JSON.stringify(nextState));
+}
+
+function savePlaceType(type, label, address = "") {
+  const state = getSavedPlacesState();
+  const place = inferPlaceFromMap(label, address);
+  if (type === "home" || type === "work") {
+    state[type] = { ...place, label: type === "home" ? "Home" : "Work" };
+  } else {
+    state.custom.push({ id: `custom-${Date.now()}`, ...place, label: label || "Favorite Place" });
+  }
+  saveSavedPlacesState(state);
+}
+
+function inferPlaceFromMap(label, address = "") {
+  const center = map?.getCenter?.();
+  return {
+    label: label || "Saved Place",
+    lat: userLocation?.lat || center?.lat || defaultCenter[0],
+    lng: userLocation?.lng || center?.lng || defaultCenter[1],
+    address: address || "Map center"
+  };
+}
+
+function initDailyDestinationHero() {
+  const state = getSavedPlacesState();
+  const hasAny = Boolean(state.home || state.work || state.custom.length);
+  if (els.destinationEmptyNote) els.destinationEmptyNote.hidden = hasAny;
+  const copy = ["Check route before you go.", "Any delays today?", "Beat the backup.", "Know before you go."];
+  safeText("destinationHabitCopy", copy[new Date().getDate() % copy.length]);
+}
+
+function activateDestinationByType(type) {
+  const state = getSavedPlacesState();
+  const target = type === "favorite" ? state.custom[0] : state[type];
+  if (!target) {
+    setConfirmation("No saved place yet. Add a place first.", "error");
+    openRouteSetupModal();
+    return;
+  }
+  activeDestinationPlace = target;
+  map?.setView([target.lat, target.lng], 14);
+  renderDestinationRoute(target);
+  scrollToSection("mapSection");
+  setConfirmation(`Route Watch set: ${target.label}.`, "success");
+}
+
+function renderDestinationRoute(target) {
+  if (!savedRouteLayer || !target) return;
+  savedRouteLayer.clearLayers();
+  const from = userLocation ? [userLocation.lat, userLocation.lng] : [defaultCenter[0], defaultCenter[1]];
+  const to = [target.lat, target.lng];
+  L.polyline([from, to], { color: "#66e8ff", weight: 5, opacity: 0.9, dashArray: "6,6" }).addTo(savedRouteLayer);
+  savedRouteCrossingIds = new Set(crossings.filter((c) => getDistanceMiles(c.lat, c.lng, target.lat, target.lng) <= 3.5).map((c) => String(c.id)));
+  renderCrossings();
+  updateRouteWatchBadge(target.label);
+}
+
+function updateRouteWatchBadge(routeLabel = "Route") {
+  if (!els.routeWatchBadge) return;
+  const routeReports = activeReports.filter((r) => savedRouteCrossingIds.has(String(r.crossingId)));
+  const blocked = routeReports.some((r) => String(r.type).toLowerCase() === "blocked" && getIncidentLifecycleState(r) === "active");
+  const delays = routeReports.filter((r) => String(r.type).toLowerCase() === "heavy" && getIncidentLifecycleState(r) === "active").length;
+  const tone = blocked ? "route-red" : delays ? "route-amber" : "route-green";
+  const status = blocked ? "Impacted Route" : delays ? "Some Delays" : "Clear Route";
+  els.routeWatchBadge.hidden = false;
+  els.routeWatchBadge.classList.remove("route-green", "route-amber", "route-red");
+  els.routeWatchBadge.classList.add(tone);
+  els.routeWatchBadge.textContent = `Route Watch: ${routeLabel} · ${status}`;
 }
 
 function loadSavedRoute() {

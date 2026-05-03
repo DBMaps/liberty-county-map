@@ -134,6 +134,21 @@
         </div>
       </div>
 
+      <article class="destination-hero-card" aria-label="Daily destination quick chooser">
+        <div class="destination-hero-copy">
+          <span class="eyebrow">Daily Destination</span>
+          <strong>Where are you headed today?</strong>
+          <p id="destinationHabitCopy">Check route before you go.</p>
+        </div>
+        <div class="destination-chip-row">
+          <button class="secondary-btn destination-chip" id="destinationHomeBtn" type="button">Home</button>
+          <button class="secondary-btn destination-chip" id="destinationWorkBtn" type="button">Work</button>
+          <button class="secondary-btn destination-chip" id="destinationFavoriteBtn" type="button">Favorite</button>
+          <button class="secondary-btn destination-chip" id="destinationAddBtn" type="button">Add Place</button>
+        </div>
+        <p class="destination-empty-note" id="destinationEmptyNote" hidden>Save Home, Save Work, or Add Place to get started.</p>
+      </article>
+
       <div class="mobile-home-cards" aria-label="Today quick view">
         <article class="mobile-home-card mobile-live-hero live-status-card">
           <span>Near you now</span>
@@ -263,6 +278,18 @@
           </div>
           <button id="desktopManageRouteBtn" class="secondary-btn compact-btn" type="button">Manage Route</button>
         </article>
+
+        <article class="desktop-destination-strip" aria-label="Desktop destination quick chooser">
+          <strong>Where are you headed?</strong>
+          <div class="desktop-destination-actions">
+            <button class="secondary-btn compact-btn destination-chip" id="desktopDestinationHomeBtn" type="button">Home</button>
+            <button class="secondary-btn compact-btn destination-chip" id="desktopDestinationWorkBtn" type="button">Work</button>
+            <button class="secondary-btn compact-btn destination-chip" id="desktopDestinationFavoriteBtn" type="button">Favorites</button>
+            <button class="secondary-btn compact-btn destination-chip" id="desktopDestinationAddBtn" type="button">Add Place</button>
+          </div>
+        </article>
+
+        <div class="route-watch-badge" id="routeWatchBadge" hidden>Route Watch: Off</div>
 
         <div class="section-header map-header">
           <div>
