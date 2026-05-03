@@ -4221,3 +4221,37 @@ h1, h2, h3, .future-metric-headline {
     font-size: 0.8rem;
   }
 }
+
+/* V36 usability clarity updates */
+#map .leaflet-roadsPane-pane .leaflet-tile {
+  filter: saturate(1.22) brightness(0.94) contrast(1.12) hue-rotate(184deg);
+}
+
+#map .leaflet-labelsPane-pane .leaflet-tile {
+  filter: grayscale(0.02) brightness(1.02) contrast(1.2);
+}
+
+.gridly-marker.state-normal { background: #4bc7ff; border-color: rgba(214, 246, 255, 0.9); }
+.gridly-marker.state-blocked { background: #ff5c3d; border-color: rgba(255, 208, 201, 0.95); }
+.gridly-marker.state-delay { background: #ffbf47; border-color: rgba(255, 236, 195, 0.95); }
+.gridly-marker.state-cleared { background: #43e6a0; border-color: rgba(202, 255, 232, 0.95); }
+
+.gridly-marker.pulse-nearest,
+.pulse-nearest .gridly-marker {
+  animation: marker-nearest-pulse 1.05s ease-in-out 4;
+}
+
+.leaflet-tooltip.gridly-map-hint {
+  background: rgba(8, 16, 26, 0.95);
+  color: #eaf4ff;
+  border: 1px solid rgba(102, 232, 255, 0.58);
+  border-radius: 12px;
+  font-weight: 700;
+  padding: 8px 10px;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.45);
+}
+
+@keyframes marker-nearest-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.28); }
+}
