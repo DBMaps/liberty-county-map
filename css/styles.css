@@ -4131,3 +4131,12 @@ h1, h2, h3, .future-metric-headline {
   mask-composite: exclude;
   pointer-events: none;
 }
+
+.all-crossings-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 10px;
+  color: var(--text-muted, #b9bfd6);
+  font-size: 0.9rem;
+}
