@@ -348,9 +348,18 @@ function updateLastUpdated() {
 }
 
 function initMap() {
-  map = L.map("map", { zoomControl: false }).setView(defaultCenter, 11);
+  map = L.map("map", { zoomControl: false, preferCanvas: true }).setView(defaultCenter, 11);
 
   L.control.zoom({ position: "bottomright" }).addTo(map);
+
+  map.createPane("roadsPane");
+  map.getPane("roadsPane").style.zIndex = 410;
+
+  map.createPane("railPane");
+  map.getPane("railPane").style.zIndex = 420;
+
+  map.createPane("labelsPane");
+  map.getPane("labelsPane").style.zIndex = 640;
 
   const darkBaseLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png", {
     subdomains: "abcd",
@@ -358,24 +367,43 @@ function initMap() {
     attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
   });
 
-  const whiteLabelLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png", {
+  const secondaryRoadLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png", {
     subdomains: "abcd",
     maxZoom: 20,
-    pane: "overlayPane",
-    opacity: 0.85,
+    pane: "roadsPane",
+    opacity: 0.22,
     attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
+  });
+
+  const highwayLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    subdomains: "abc",
+    maxZoom: 19,
+    pane: "roadsPane",
+    opacity: 0.16,
+    attribution: "&copy; OpenStreetMap contributors"
   });
 
   const railCorridorLayer = L.tileLayer("https://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png", {
     subdomains: "abc",
     maxZoom: 19,
-    opacity: 0.52,
+    pane: "railPane",
+    opacity: 0.48,
     attribution: "Map style: OpenRailwayMap"
   });
 
+  const premiumLabelLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png", {
+    subdomains: "abcd",
+    maxZoom: 20,
+    pane: "labelsPane",
+    opacity: 0.58,
+    attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
+  });
+
   darkBaseLayer.addTo(map);
+  secondaryRoadLayer.addTo(map);
+  highwayLayer.addTo(map);
   railCorridorLayer.addTo(map);
-  whiteLabelLayer.addTo(map);
+  premiumLabelLayer.addTo(map);
 
   crossingLayer = L.layerGroup().addTo(map);
   unifiedIncidentLayer = L.layerGroup().addTo(map);
