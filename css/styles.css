@@ -4590,74 +4590,56 @@ h1, h2, h3, .future-metric-headline {
     position: relative;
     min-height: calc(100vh - 132px);
     padding: 10px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
 
   .map-card .section-header.map-header {
-    position: absolute;
-    top: 14px;
-    left: 14px;
-    z-index: 650;
-    width: min(460px, calc(100% - 28px));
-    margin: 0;
-    padding: 12px 14px;
-    border-radius: 16px;
-    background: rgba(9, 12, 16, 0.86);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    backdrop-filter: blur(14px);
+    display: none;
   }
 
   .desktop-route-watch-strip {
-    position: absolute;
-    top: 14px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 700;
-    width: min(520px, calc(100% - 520px));
-    min-width: 360px;
+    position: static;
+    transform: none;
+    z-index: auto;
+    width: 100%;
+    min-width: 0;
     margin: 0;
-    padding: 10px 14px;
-    border-radius: 16px;
-    background: rgba(10, 14, 18, 0.9);
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: rgba(10, 14, 18, 0.72);
     border: 1px solid rgba(102, 232, 255, 0.24);
-    box-shadow: 0 18px 34px rgba(0, 0, 0, 0.45);
+    box-shadow: none;
   }
 
   .map-ux-strip {
     position: absolute;
-    left: 14px;
-    top: 166px;
+    right: 14px;
+    top: 14px;
+    left: auto;
     z-index: 680;
     margin: 0;
-    max-width: calc(100% - 28px);
+    max-width: min(52%, 580px);
   }
 
   .geo-filter-shell {
-    padding: 8px;
-    border-radius: 14px;
-    background: rgba(5, 9, 13, 0.84);
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    padding: 6px;
+    border-radius: 999px;
+    background: rgba(5, 9, 13, 0.66);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     backdrop-filter: blur(10px);
   }
 
   .all-crossings-toggle,
   .geo-filter-status,
   .report-mode-banner {
-    position: absolute;
-    z-index: 670;
-    left: 14px;
-    background: rgba(8, 11, 15, 0.82);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 12px;
-    padding: 7px 10px;
+    display: none;
   }
-
-  .all-crossings-toggle { top: 232px; }
-  .geo-filter-status { top: 274px; }
-  .report-mode-banner { left: auto; right: 14px; top: 14px; max-width: 340px; }
 
   #map {
     min-height: calc(100vh - 158px);
-    height: calc(100vh - 158px);
+    height: calc(100vh - 200px);
     margin-top: 0;
     border-radius: 18px;
   }
