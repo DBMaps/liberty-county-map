@@ -4944,3 +4944,30 @@ h1, h2, h3, .future-metric-headline {
     font-size: 1.12rem;
   }
 }
+
+/* Hotfix: keep map filter UI above map and prevent clipped edge overlays */
+.map-card .map-ux-strip .geo-filter-shell {
+  position: static !important;
+  inset: auto !important;
+  width: 100% !important;
+  max-width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0;
+}
+
+.map-card .map-ux-strip .geo-filter-pill {
+  width: auto;
+  min-width: max-content;
+  text-align: center;
+}
+
+.map-card .geo-filter-status {
+  position: static !important;
+  inset: auto !important;
+  max-width: 100%;
+  margin-top: 8px;
+}
