@@ -3087,6 +3087,10 @@ function findNearestCrossings(lat, lng, count = 5) {
     .slice(0, count);
 }
 
+function getDistanceMiles(lat1, lng1, lat2, lng2) {
+  return haversineDistance(lat1, lng1, lat2, lng2);
+}
+
 function haversineDistance(lat1, lng1, lat2, lng2) {
   const r = 3958.8;
   const dLat = toRad(lat2 - lat1);
