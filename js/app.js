@@ -374,19 +374,19 @@ function initMap() {
     attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
   });
 
-  const secondaryRoadLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png", {
+  const secondaryRoadLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png", {
     subdomains: "abcd",
     maxZoom: 20,
     pane: "roadsPane",
-    opacity: 0.74,
+    opacity: 0.62,
     attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
   });
 
-  const highwayLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+  const highwayLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png", {
     subdomains: "abcd",
     maxZoom: 20,
     pane: "roadsPane",
-    opacity: 0.45,
+    opacity: 0.92,
     attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
   });
 
@@ -828,7 +828,7 @@ function renderCrossings() {
     const markerLabel = getMarkerLabel(report, markerStateClass, lifecycleState);
     const clusterCount = smartClusterState.leadCounts.get(String(crossing.id)) || 0;
     if (smartClusterState.hiddenIds.has(String(crossing.id))) return;
-    const markerMinutes = hasActiveIssue && report?.minutesAgo <= REPORT_EXPIRATION_MINUTES ? `${report.minutesAgo}m` : "";
+    const markerMinutes = hasActiveIssue && report?.minutesAgo <= REPORT_EXPIRATION_MINUTES ? `${report.minutesAgo}m ago` : "";
 
     const icon = L.divIcon({
       className: "",
@@ -837,8 +837,8 @@ function renderCrossings() {
         ${clusterCount > 1 ? `<span class="gridly-marker-cluster-badge">${clusterCount}</span>` : ""}
         ${markerMinutes ? `<span class="gridly-marker-minutes">${markerMinutes}</span>` : ""}
       </div>`,
-      iconSize: [58, 38],
-      iconAnchor: [18, 18]
+      iconSize: [72, 44],
+      iconAnchor: [24, 22]
     });
 
     const marker = L.marker([crossing.lat, crossing.lng], { icon })
@@ -931,7 +931,7 @@ function highlightNearestCrossingOnFirstLoad() {
 
 function getFilterFitPadding() {
   const isMobile = window.matchMedia && window.matchMedia("(max-width: 768px)").matches;
-  return isMobile ? { topLeft: [28, 28], bottomRight: [28, 180] } : { topLeft: [24, 24], bottomRight: [24, 96] };
+  return isMobile ? { topLeft: [20, 16], bottomRight: [20, 132] } : { topLeft: [24, 24], bottomRight: [24, 96] };
 }
 
 function fitMapToCrossingsForActiveFilter(visibleCrossings = []) {
@@ -951,7 +951,7 @@ function fitMapToCrossingsForActiveFilter(visibleCrossings = []) {
     ...getFilterFitPadding(),
     animate: true,
     duration: 0.55,
-    maxZoom: 15
+    maxZoom: window.matchMedia && window.matchMedia("(max-width: 768px)").matches ? 16 : 15
   });
 
   highlightNearestCrossingOnFirstLoad();
