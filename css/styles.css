@@ -4331,6 +4331,16 @@ h1, h2, h3, .future-metric-headline {
 .legend-pill.cleared { color: #53e6a5; border-color: rgba(83, 230, 165, 0.4); background: rgba(50, 220, 140, 0.12);}
 .legend-pill.inactive { color: #a9b7cb; }
 
+
+.map-header .crossing-status-legend {
+  margin-top: 10px;
+}
+
+.map-header .legend-pill {
+  font-size: 0.7rem;
+  padding: 5px 10px;
+}
+
 #map {
   border-radius: 20px;
   border: 1px solid rgba(113, 163, 255, 0.22);
