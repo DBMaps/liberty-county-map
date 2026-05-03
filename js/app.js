@@ -880,10 +880,10 @@ function buildSmartIncidentClusters(visibleCrossings = []) {
     if (groupedIds.has(seedId)) return;
     const group = candidates.filter((candidate) => {
       if (groupedIds.has(String(candidate.crossing.id))) return false;
-      return getDistanceMiles(seed.crossing.lat, seed.crossing.lng, candidate.crossing.lat, candidate.crossing.lng) <= 0.42;
+      return getDistanceMiles(seed.crossing.lat, seed.crossing.lng, candidate.crossing.lat, candidate.crossing.lng) <= 0.34;
     });
     group.forEach((entry) => groupedIds.add(String(entry.crossing.id)));
-    if (group.length <= 1) return;
+    if (group.length <= 2) return;
 
     const leader = group.sort((a, b) => b.severity - a.severity || a.report.minutesAgo - b.report.minutesAgo)[0];
     leadCounts.set(String(leader.crossing.id), group.length);
@@ -1748,11 +1748,11 @@ function buildPopup(crossing, report) {
       <span>${sanitizeText(crossing.railroad)}</span><br />
       <span>Status: ${sanitizeText(status)}</span><br />
       <span>Freshness: ${sanitizeText(freshness)}</span><br />
-      <span>Trust: ${sanitizeText(trustLabel)}</span><br />
+      <span>Driver confirmations: ${sanitizeText(trustLabel)}</span><br />
       <span>${sanitizeText(trustFreshness)}</span><br />
-      <span>Confidence: ${sanitizeText(confidenceLabel)}</span><br />
+      <span>How sure this is current: ${sanitizeText(confidenceLabel)}</span><br />
       <span>${sanitizeText(reportState)}</span><br />
-      <span>Route impact: ${sanitizeText(routeImpact)}</span><br />
+      <span>What this means for your drive: ${sanitizeText(routeImpact)}</span><br />
       <span>Auto-expires after ${REPORT_EXPIRATION_MINUTES} min</span><br />
       <span>Risk Score: ${crossing.risk}/100</span>
 
@@ -2317,7 +2317,7 @@ function resetSmartReportButton() {
   els.mobileReportBtn?.classList.remove("clear-mode");
 
   if (els.mobileReportBtn) {
-    els.mobileReportBtn.textContent = "🚨 Report Crossing Near Me";
+    els.mobileReportBtn.textContent = "🚨 Report Issue Now";
   }
 }
 
@@ -2653,6 +2653,20 @@ function evaluateSmartAlertsBanner(prefs = getSmartAlertsPreferences()) {
   els.smartAlertsBanner.textContent = matches.slice(0, 3).join(" ");
 }
 
+function getRouteWatchIntelligence(activeIssues = []) {
+  const blocked = activeIssues.filter((issue) => String(issue.type || "").includes("blocked"));
+  const delayed = activeIssues.filter((issue) => String(issue.type || "").includes("delay"));
+  const blockedCount = blocked.length;
+  const estimatedDelayMinutes = Math.max(0, blockedCount * 7 + delayed.length * 4);
+  const confidence = blockedCount >= 2 ? "High" : blockedCount === 1 || delayed.length >= 2 ? "Medium" : "Low";
+  const reroute = blockedCount > 0
+    ? "Use your backup route and avoid the blocked crossings."
+    : delayed.length > 0
+      ? "Keep your route, but leave a few minutes early."
+      : "Stay on your normal route.";
+  return { blockedCount, estimatedDelayMinutes, confidence, reroute };
+}
+
 function updateRouteIntelligence(nearest = []) {
   const savedHome = localStorage.getItem("gridlyHome");
   const savedWork = localStorage.getItem("gridlyWork");
@@ -2680,6 +2694,7 @@ function updateRouteIntelligence(nearest = []) {
   );
 
   const extraMinutes = Math.max(0, Math.round(impact / 7));
+  const routeIntel = getRouteWatchIntelligence(activeIssues);
 
   safeText("nearbyAlertCount", `${activeIssues.length} active now`);
 
@@ -2707,17 +2722,17 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeStatus", "Saved · Delayed");
     safeText("routeEta", `ETA 32 min (+${extraMinutes})`);
     safeText("departureTime", "Leave now");
-    safeText("departureReason", "High shared route impact detected.");
+    safeText("departureReason", `${routeIntel.blockedCount} blocked crossing${routeIntel.blockedCount === 1 ? "" : "s"} on route watch · est +${routeIntel.estimatedDelayMinutes} min.`);
     safeText("desktopRouteStatus", `${desktopRouteSummary} · Warning: major crossing impact detected.`);
-    safeText("sideRouteWatchHint", `Route Watch alert: add about ${extraMinutes} minutes and consider reroute.`);
+    safeText("sideRouteWatchHint", `Route Watch: ${routeIntel.blockedCount} blocked · est +${routeIntel.estimatedDelayMinutes} min · ${routeIntel.reroute} Confidence ${routeIntel.confidence}.`);
     els.routeStatusCard?.classList.add("high");
   } else if (impact >= 40) {
     safeText("routeStatus", "Saved · Watch");
     safeText("routeEta", `ETA 26 min (+${extraMinutes})`);
     safeText("departureTime", "Leave 8 min early");
-    safeText("departureReason", "Moderate shared report risk detected.");
+    safeText("departureReason", `${routeIntel.blockedCount} blocked crossing${routeIntel.blockedCount === 1 ? "" : "s"} on route watch · est +${routeIntel.estimatedDelayMinutes} min.`);
     safeText("desktopRouteStatus", `${desktopRouteSummary} · Caution: moderate crossing risk.`);
-    safeText("sideRouteWatchHint", `Route Watch caution: expect about +${extraMinutes} minutes.`);
+    safeText("sideRouteWatchHint", `Route Watch: ${routeIntel.blockedCount} blocked · est +${routeIntel.estimatedDelayMinutes} min · ${routeIntel.reroute} Confidence ${routeIntel.confidence}.`);
     els.routeStatusCard?.classList.add("delayed");
   } else {
     safeText("routeStatus", "Saved · Clear");
@@ -2725,7 +2740,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("departureTime", "Normal departure");
     safeText("departureReason", "No major active shared delay detected.");
     safeText("desktopRouteStatus", `${desktopRouteSummary} · No active route warnings.`);
-    safeText("sideRouteWatchHint", "Route Watch clear: no added minutes right now.");
+    safeText("sideRouteWatchHint", `Route Watch: ${routeIntel.blockedCount} blocked · est +${routeIntel.estimatedDelayMinutes} min · ${routeIntel.reroute} Confidence ${routeIntel.confidence}.`);
     els.routeStatusCard?.classList.add("clear");
   }
 
@@ -2819,7 +2834,7 @@ function updateGrowthWidgets() {
       `${activeIssues.length} active shared report${activeIssues.length === 1 ? "" : "s"} may affect travel.`
     );
   } else {
-    safeText("routeRecommendation", "Route looks clear");
+    safeText("routeRecommendation", "You can drive now");
     safeText("routeRecommendationReason", "No major active shared delays detected right now.");
   }
 
