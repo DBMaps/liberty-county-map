@@ -2290,7 +2290,7 @@ function handleReportNearMe() {
     return;
   }
 
-  setConfirmation("Finding your location so you can report the nearest crossing...", "success");
+  setConfirmation("Finding your location for a one-tap nearby report...", "success");
   safeText("mapTrustNote", "Report mode: finding your location...");
 
   navigator.geolocation.getCurrentPosition(
@@ -2488,7 +2488,7 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
           if (reportType === "blocked" || reportType === "heavy") {
             buttonEl.textContent = "Report Cleared";
           } else {
-            buttonEl.textContent = "🚨 Report Near Me";
+            buttonEl.textContent = "📍 Report Near Me";
           }
         } else {
           buttonEl.textContent = originalButtonText;
