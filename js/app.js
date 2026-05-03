@@ -352,10 +352,30 @@ function initMap() {
 
   L.control.zoom({ position: "bottomright" }).addTo(map);
 
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  const darkBaseLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png", {
+    subdomains: "abcd",
+    maxZoom: 20,
+    attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
+  });
+
+  const whiteLabelLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png", {
+    subdomains: "abcd",
+    maxZoom: 20,
+    pane: "overlayPane",
+    opacity: 0.85,
+    attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
+  });
+
+  const railCorridorLayer = L.tileLayer("https://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png", {
+    subdomains: "abc",
     maxZoom: 19,
-    attribution: "&copy; OpenStreetMap contributors"
-  }).addTo(map);
+    opacity: 0.52,
+    attribution: "Map style: OpenRailwayMap"
+  });
+
+  darkBaseLayer.addTo(map);
+  railCorridorLayer.addTo(map);
+  whiteLabelLayer.addTo(map);
 
   crossingLayer = L.layerGroup().addTo(map);
   unifiedIncidentLayer = L.layerGroup().addTo(map);
