@@ -264,8 +264,8 @@
         <div class="section-header map-header">
           <div>
             <p class="eyebrow">Live Mobility Map</p>
-            <h2>Tap a crossing to report it</h2>
-            <p class="map-note" id="mapTrustNote">Loading known public crossings from FRA data...</p>
+            <h2>Driver-first Live Map</h2>
+            <p class="map-note" id="mapTrustNote">Road-first map with live crossing and hazard intelligence updates.</p>
           </div>
 
           <div class="actions">
@@ -278,13 +278,13 @@
           <span>Gridly will open the nearest crossing when GPS is available. Confirm it is correct, then report.</span>
         </div>
 
-        <div class="geo-filter-shell" role="group" aria-label="Map filters">
+        <div class="map-ux-strip"><div class="crossing-status-legend" aria-label="Crossing status legend"><span class="legend-pill blocked">Blocked</span><span class="legend-pill delayed">Delayed</span><span class="legend-pill cleared">Cleared</span><span class="legend-pill inactive">Inactive</span></div><div class="geo-filter-shell" role="group" aria-label="Map filters">
           <button class="geo-filter-pill selected" type="button" data-geo-filter="nearby">Nearby</button>
           <button class="geo-filter-pill" type="button" data-geo-filter="town">My Town</button>
           <button class="geo-filter-pill" type="button" data-geo-filter="county">My County</button>
           <button class="geo-filter-pill" type="button" data-geo-filter="active-delays">Active Delays</button>
           <button class="geo-filter-pill" type="button" data-geo-filter="all">All</button>
-        </div>
+        </div></div>
         <label class="all-crossings-toggle"><input id="allCrossingsLayerToggle" type="checkbox" /> All Crossings layer</label>
 
         <div class="geo-filter-status" id="geoFilterStatus" role="status" aria-live="polite" aria-atomic="true">
