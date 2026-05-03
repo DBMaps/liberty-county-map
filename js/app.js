@@ -94,6 +94,7 @@ const RECENTLY_CLEARED_WINDOW_MINUTES = 20;
 const LIVE_REFRESH_MS = 15000;
 const APP_BUILD = "6D0";
 const DEFAULT_NEARBY_RADIUS_MILES = 8;
+const PRIORITY_NEARBY_MILES = 3;
 const DISTANT_CROSSING_MIN_ZOOM = 14;
 const CROSSING_FETCH_RETRY_ATTEMPTS = 3;
 const CROSSING_FETCH_RETRY_DELAY_MS = 700;
@@ -251,6 +252,7 @@ function hydrateElements() {
     "closeRouteSetupModalBtn",
     "mobileEditRouteBtn",
     "mobileQuickReportBtn",
+    "mobileQuickReportSmallBtn",
     "mobileQuickClearedBtn",
     "mobileQuickRouteBtn",
     "mobileQuickFavoritesBtn",
@@ -355,7 +357,7 @@ function updateLastUpdated() {
 }
 
 function initMap() {
-  map = L.map("map", { zoomControl: false, preferCanvas: true }).setView(defaultCenter, 11);
+  map = L.map("map", { zoomControl: false, preferCanvas: true }).setView(defaultCenter, 13);
 
   L.control.zoom({ position: "bottomright" }).addTo(map);
 
@@ -378,7 +380,7 @@ function initMap() {
     subdomains: "abcd",
     maxZoom: 20,
     pane: "roadsPane",
-    opacity: 0.78,
+    opacity: 0.9,
     attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
   });
 
@@ -386,7 +388,7 @@ function initMap() {
     subdomains: "abcd",
     maxZoom: 20,
     pane: "roadsPane",
-    opacity: 0.98,
+    opacity: 1,
     attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
   });
 
@@ -394,7 +396,7 @@ function initMap() {
     subdomains: "abc",
     maxZoom: 19,
     pane: "railPane",
-    opacity: 0.04,
+    opacity: 0.02,
     attribution: "Map style: OpenRailwayMap"
   });
 
@@ -420,7 +422,39 @@ function initMap() {
     renderCrossings();
   });
 
+  centerMapOnUserIfAllowed();
   highlightNearestCrossingOnFirstLoad();
+}
+
+function centerMapOnUserIfAllowed() {
+  if (!navigator.geolocation || !map) return;
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      userLocation = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      };
+      renderUserLocationDot();
+      map.setView([userLocation.lat, userLocation.lng], 14);
+      renderCrossings();
+      renderUnifiedIncidents();
+    },
+    () => {}
+  );
+}
+
+function renderUserLocationDot() {
+  if (!map || !userLocation) return;
+  if (userMarker) map.removeLayer(userMarker);
+  userMarker = L.circleMarker([userLocation.lat, userLocation.lng], {
+    radius: 10,
+    color: "#56a8ff",
+    fillColor: "#2f86ff",
+    fillOpacity: 0.96,
+    weight: 3
+  })
+    .bindPopup("You are here")
+    .addTo(map);
 }
 
 async function loadCrossings() {
@@ -800,18 +834,30 @@ function shouldShowDistantInactiveCrossing(crossing) {
 function renderCrossings() {
   if (!crossingLayer || !crossings.length) return;
 
+  const bounds = map?.getBounds?.();
   const visibleCrossings = getVisibleCrossingsForFilter().filter((crossing) => {
     const inDefaultSet = getDefaultRelevantCrossings().some((item) => String(item.id) === String(crossing.id));
-    return inDefaultSet || shouldShowDistantInactiveCrossing(crossing);
+    const inView = bounds ? bounds.contains([crossing.lat, crossing.lng]) : true;
+    return (inDefaultSet || shouldShowDistantInactiveCrossing(crossing)) && inView;
   });
-  updateGeoFilterStatus(visibleCrossings);
+  const prioritizedVisibleCrossings = userLocation
+    ? visibleCrossings
+        .map((crossing) => ({
+          crossing,
+          distance: getDistanceMiles(userLocation.lat, userLocation.lng, crossing.lat, crossing.lng)
+        }))
+        .sort((a, b) => a.distance - b.distance)
+        .slice(0, 120)
+        .map((entry) => entry.crossing)
+    : visibleCrossings;
+  updateGeoFilterStatus(prioritizedVisibleCrossings);
 
   crossingLayer.clearLayers();
   crossingMarkers.clear();
 
-  const smartClusterState = buildSmartIncidentClusters(visibleCrossings);
+  const smartClusterState = buildSmartIncidentClusters(prioritizedVisibleCrossings);
 
-  visibleCrossings.forEach((crossing) => {
+  prioritizedVisibleCrossings.forEach((crossing) => {
     const report = getLatestReportForCrossing(crossing.id);
     const lifecycleState = getIncidentLifecycleState(report);
     const hasActiveIssue = lifecycleState === "active";
@@ -1047,13 +1093,18 @@ function renderUnifiedIncidents() {
   incidents.forEach((incident) => {
     if (!Number.isFinite(incident.lat) || !Number.isFinite(incident.lng)) return;
 
+    const distanceFromUser = userLocation
+      ? getDistanceMiles(userLocation.lat, userLocation.lng, incident.lat, incident.lng)
+      : null;
+    const isNearbyPriority = Number.isFinite(distanceFromUser) && distanceFromUser <= PRIORITY_NEARBY_MILES;
     const ageClass =
       incident.age_minutes <= 15 ? "fresh" : incident.age_minutes <= 60 ? "aging" : "old";
+    const proximityClass = isNearbyPriority ? "nearby-priority" : "far-faded";
 
     const icon = L.divIcon({
       className: "",
       html: `
-        <div class="gridly-hazard-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass}">
+        <div class="gridly-hazard-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass} ${proximityClass}">
           <span>${sanitizeText(getUnifiedIncidentIcon(incident))}</span>
           <small>${incident.age_minutes}m</small>
           ${incident.reports_count > 1 ? `<b>${incident.reports_count}</b>` : ""}
@@ -1905,6 +1956,7 @@ function bindEvents() {
 
   els.mobileReportBtn?.addEventListener("click", handleSmartReportButton);
   els.mobileQuickReportBtn?.addEventListener("click", handleReportNearMe);
+  els.mobileQuickReportSmallBtn?.addEventListener("click", handleReportNearMe);
   els.mobileQuickClearedBtn?.addEventListener("click", () => {
     if (lastSubmittedCrossing) {
       createSharedReport(lastSubmittedCrossing, "cleared", "quick clear action", els.mobileQuickClearedBtn);
@@ -2248,16 +2300,7 @@ function handleReportNearMe() {
         lng: position.coords.longitude
       };
 
-      if (userMarker) map.removeLayer(userMarker);
-
-      userMarker = L.circleMarker([userLocation.lat, userLocation.lng], {
-        radius: 9,
-        color: "#43e6a0",
-        fillColor: "#43e6a0",
-        fillOpacity: 0.85
-      })
-        .bindPopup("Your current location")
-        .addTo(map);
+      renderUserLocationDot();
 
       const nearest = findNearestCrossings(userLocation.lat, userLocation.lng, 5);
       nearbyReportCrossingIds = new Set(nearest.map((crossing) => String(crossing.id)));

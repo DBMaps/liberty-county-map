@@ -4840,3 +4840,19 @@ h1, h2, h3, .future-metric-headline {
 .gridly-marker-minutes {
   font-weight: 900;
 }
+
+
+.gridly-hazard-marker.nearby-priority {
+  transform: scale(1.08);
+  box-shadow: 0 0 0 3px rgba(80, 155, 255, 0.35), 0 10px 24px rgba(47, 134, 255, 0.35);
+  opacity: 1;
+}
+
+.gridly-hazard-marker.far-faded {
+  opacity: 0.36;
+  filter: saturate(0.72);
+}
+
+.leaflet-interactive[stroke="#56a8ff"] {
+  filter: drop-shadow(0 0 10px rgba(72, 145, 255, 0.9));
+}
