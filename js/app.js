@@ -137,58 +137,83 @@ localStorage.setItem("gridlyDeviceId", deviceId);
 
 const els = {};
 
+function persistHomeFromSetup() {
+  console.log("Save Home handler fired");
+
+  let existingState = {};
+  try {
+    existingState = JSON.parse(localStorage.getItem("gridlySavedPlaces") || "{}");
+  } catch (error) {
+    existingState = {};
+  }
+
+  const existingWork = existingState && typeof existingState === "object" ? (existingState.work || null) : null;
+  const existingCustom = Array.isArray(existingState?.custom) ? existingState.custom : [];
+  const detected = lastDetectedTown || resolveZipCode(String(els.setupZipInput?.value || gridlyUserProfile?.zipCode || "").trim());
+  const city = String(els.setupTownInput?.value || detected?.city || gridlyUserProfile?.homeTown || "").trim();
+  const state = String(els.setupStateInput?.value || detected?.state || gridlyUserProfile?.state || "").trim();
+  const fallbackAddress = String(gridlyUserProfile?.homeTownLabel || [city, state].filter(Boolean).join(", ") || "Saved from setup").trim();
+
+  const nextState = {
+    version: 1,
+    home: {
+      id: "home",
+      label: "Home",
+      type: "home",
+      lat: detected?.lat ?? gridlyUserProfile?.homeTownLat ?? null,
+      lng: detected?.lng ?? gridlyUserProfile?.homeTownLng ?? null,
+      address: fallbackAddress,
+      createdAt: new Date().toISOString()
+    },
+    work: existingWork,
+    custom: existingCustom
+  };
+
+  localStorage.setItem("gridlySavedPlaces", JSON.stringify(nextState));
+  setConfirmation("Home saved.", "success");
+
+  setupPlacesSummary.home = true;
+  refreshSetupSummary();
+  loadSavedRoute();
+  initDailyDestinationHero();
+}
+
 function bindDirectSetupSaveHomeHandler() {
   const btn = document.getElementById("setupSaveHomeBtn");
+  console.log("setupSaveHomeBtn found:", !!btn);
   if (!btn || btn.dataset.gridlyDirectHomeBound === "1") return;
   btn.dataset.gridlyDirectHomeBound = "1";
 
   btn.addEventListener("click", (event) => {
     event.preventDefault();
     event.stopPropagation();
-    console.log("Gridly Save Home clicked");
-
-    let existingState = {};
-    try {
-      existingState = JSON.parse(localStorage.getItem("gridlySavedPlaces") || "{}");
-    } catch (error) {
-      existingState = {};
-    }
-
-    const existingWork = existingState && typeof existingState === "object" ? (existingState.work || null) : null;
-    const existingCustom = Array.isArray(existingState?.custom) ? existingState.custom : [];
-    const detected = lastDetectedTown || resolveZipCode(String(els.setupZipInput?.value || gridlyUserProfile?.zipCode || "").trim());
-    const city = String(els.setupTownInput?.value || detected?.city || gridlyUserProfile?.homeTown || "").trim();
-    const state = String(els.setupStateInput?.value || detected?.state || gridlyUserProfile?.state || "").trim();
-    const fallbackAddress = String(gridlyUserProfile?.homeTownLabel || [city, state].filter(Boolean).join(", ") || "Saved from setup").trim();
-
-    const nextState = {
-      version: 1,
-      home: {
-        id: "home",
-        label: "Home",
-        type: "home",
-        lat: detected?.lat ?? gridlyUserProfile?.homeTownLat ?? null,
-        lng: detected?.lng ?? gridlyUserProfile?.homeTownLng ?? null,
-        address: fallbackAddress,
-        createdAt: new Date().toISOString()
-      },
-      work: existingWork,
-      custom: existingCustom
-    };
-
-    localStorage.setItem("gridlySavedPlaces", JSON.stringify(nextState));
-    setConfirmation("Home saved.", "success");
-
-    setupPlacesSummary.home = true;
-    refreshSetupSummary();
-    loadSavedRoute();
-    initDailyDestinationHero();
+    persistHomeFromSetup();
   });
+}
+
+function bindDelegatedSetupSaveHomeHandler() {
+  if (document.body?.dataset.gridlyDelegatedHomeBound === "1") return;
+  if (document.body) document.body.dataset.gridlyDelegatedHomeBound = "1";
+
+  document.addEventListener("click", (event) => {
+    const target = event.target instanceof Element ? event.target : null;
+    if (!target) return;
+
+    const matchedButton = target.closest('#setupSaveHomeBtn, [data-setup-action="save-home"]');
+    const textButton = target.closest('button');
+    const textMatches = Boolean(textButton && /save\s*home/i.test((textButton.textContent || "").trim()));
+    if (!matchedButton && !textMatches) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    persistHomeFromSetup();
+  }, true);
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
   hydrateElements();
   bindDirectSetupSaveHomeHandler();
+  bindDelegatedSetupSaveHomeHandler();
   gridlyHealthCheck();
   setManualFallbackDefaultState();
   initGreeting();
