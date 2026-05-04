@@ -489,7 +489,7 @@ function closeFirstRunSetupModal() {
     focusedElement.blur();
   }
   els.firstRunSetupModal.hidden = true;
-  els.firstRunSetupModal.removeAttribute("aria-hidden");
+  els.firstRunSetupModal.setAttribute("aria-hidden", "true");
   document.querySelector(".app-shell")?.removeAttribute("inert");
   syncModalScrollLock();
 }
@@ -2618,16 +2618,13 @@ function bindEvents() {
 
   const bindSetupAction = (element, handler) => {
     if (!element || typeof handler !== "function") return;
-    let lastTouchTs = 0;
-    element.addEventListener("pointerup", (event) => {
-      if (event.pointerType !== "touch") return;
-      lastTouchTs = Date.now();
+    const runHandler = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
       handler(event);
-    });
-    element.addEventListener("click", (event) => {
-      if (Date.now() - lastTouchTs < 500) return;
-      handler(event);
-    });
+    };
+    element.addEventListener("click", runHandler);
+    element.addEventListener("touchend", runHandler, { passive: false });
   };
 
   bindSetupAction(els.firstRunSetupBackdrop, closeFirstRunSetupModal);

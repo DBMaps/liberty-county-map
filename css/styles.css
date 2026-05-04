@@ -5395,3 +5395,19 @@ body.modal-open {
   z-index: 1;
   pointer-events: auto;
 }
+
+/* Mobile onboarding tap safety regression fix (PR #152 follow-up) */
+#firstRunSetupModal .first-run-modal-card {
+  z-index: 2601;
+  padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+}
+
+#firstRunSetupModal .setup-step[hidden] {
+  display: none !important;
+}
+
+body.route-setup-open .mobile-sticky-report,
+body.route-setup-open .mobile-bottom-app-nav {
+  pointer-events: none !important;
+  opacity: 0 !important;
+}
