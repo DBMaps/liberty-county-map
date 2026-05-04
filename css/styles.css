@@ -4336,6 +4336,117 @@ h1, h2, h3, .future-metric-headline {
   background: rgba(255,255,255,0.06);
 }
 
+/* V18.5 critical UI cleanup hotfixes */
+html,
+body {
+  overflow-x: clip;
+}
+
+body {
+  overflow-y: auto;
+  min-height: 100%;
+}
+
+body.modal-open {
+  overflow: hidden !important;
+}
+
+.map-tools-overlay {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: auto;
+  z-index: 820;
+  display: grid;
+  gap: 8px;
+  width: auto;
+  max-width: min(94%, 640px);
+  pointer-events: none;
+}
+
+.map-tools-overlay .geo-filter-shell,
+.map-tools-overlay .geo-filter-status,
+.map-tools-overlay .crossing-status-legend,
+.map-tools-overlay .all-crossings-advanced {
+  pointer-events: auto;
+}
+
+.map-tools-overlay .geo-filter-shell {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center;
+  gap: 8px;
+  width: auto !important;
+  max-width: fit-content;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 6px;
+  border-radius: 999px;
+}
+
+.map-tools-overlay .geo-filter-pill {
+  flex: 0 0 auto;
+  width: auto !important;
+  min-width: 0;
+  white-space: nowrap;
+  display: inline-flex;
+  padding: 8px 14px;
+  border-radius: 999px;
+}
+
+#firstRunSetupModal .first-run-modal-card {
+  width: min(560px, calc(100vw - 28px));
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+#firstRunSetupModal .route-setup-grid-mobile {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+#firstRunSetupModal .route-setup-grid-mobile .primary-btn,
+#firstRunSetupModal .route-setup-grid-mobile .secondary-btn {
+  width: 100%;
+  min-height: 44px;
+}
+
+.setup-detected-town {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 860px) {
+  .map-tools-overlay {
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    max-width: calc(100% - 24px);
+  }
+
+  .map-tools-overlay .geo-filter-shell {
+    max-width: 100%;
+    padding-right: 4px;
+  }
+
+  #firstRunSetupModal {
+    align-items: flex-end;
+  }
+
+  #firstRunSetupModal .first-run-modal-card {
+    width: min(100vw - 12px, 560px);
+    border-radius: 20px 20px 14px 14px;
+    margin: 0 auto 8px;
+    padding: 18px 16px 20px;
+    max-height: 88vh;
+  }
+
+  #firstRunSetupModal .route-setup-grid-mobile {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
 .legend-pill.blocked { color: #ff6b6b; border-color: rgba(255, 80, 80, 0.42); background: rgba(255, 60, 60, 0.12);}
 .legend-pill.delayed { color: #ffc45a; border-color: rgba(255, 176, 51, 0.42); background: rgba(255, 180, 50, 0.12);}
 .legend-pill.cleared { color: #53e6a5; border-color: rgba(83, 230, 165, 0.4); background: rgba(50, 220, 140, 0.12);}
