@@ -470,6 +470,7 @@ function setSetupStep(step = 1) {
   document.querySelectorAll("[data-setup-step]").forEach((node) => {
     const isActive = Number(node.dataset.setupStep) === step;
     node.hidden = !isActive;
+    node.setAttribute("aria-hidden", isActive ? "false" : "true");
     node.classList.toggle("is-active", isActive);
   });
 }
@@ -2618,19 +2619,28 @@ function bindEvents() {
 
   const bindSetupAction = (element, handler) => {
     if (!element || typeof handler !== "function") return;
+    let lastPointerHandledAt = 0;
     const runHandler = (event) => {
       event.preventDefault();
       event.stopPropagation();
       handler(event);
     };
-    element.addEventListener("click", runHandler);
-    element.addEventListener("touchend", runHandler, { passive: false });
+    element.addEventListener("pointerup", (event) => {
+      if (event.pointerType === "mouse" && event.button !== 0) return;
+      lastPointerHandledAt = Date.now();
+      runHandler(event);
+    });
+    element.addEventListener("click", (event) => {
+      if (Date.now() - lastPointerHandledAt < 500) return;
+      runHandler(event);
+    });
   };
 
   bindSetupAction(els.firstRunSetupBackdrop, closeFirstRunSetupModal);
   bindSetupAction(els.skipSetupBtn, () => {
     saveGridlyUserProfile({ setupComplete: true, setupSkipped: true });
     closeFirstRunSetupModal();
+    setConfirmation("Setup skipped. You can re-open setup any time.", "success");
   });
   bindSetupAction(els.setupStartBtn, () => setSetupStep(2));
   bindSetupAction(els.setupNameContinueBtn, () => setSetupStep(3));
@@ -2673,6 +2683,7 @@ function bindEvents() {
     });
     initGreeting();
     closeFirstRunSetupModal();
+    setConfirmation("Setup complete. Route Watch is ready.", "success");
   });
   bindSetupAction(els.setupSaveHomeBtn, () => {
     saveSetupPlace("home");
