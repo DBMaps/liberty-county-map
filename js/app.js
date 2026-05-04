@@ -2665,11 +2665,21 @@ function bindEvents() {
   };
 
   bindSetupAction(els.firstRunSetupBackdrop, runFirstRunSetupClose);
-  bindSetupAction(els.skipSetupBtn, () => {
-    saveGridlyUserProfile({ setupComplete: true, setupSkipped: true });
-    runFirstRunSetupClose();
-    setConfirmation("Setup skipped. You can re-open setup any time.", "success");
-  });
+  if (els.skipSetupBtn) {
+    els.skipSetupBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      console.log("Gridly setup skipped");
+      saveGridlyUserProfile({ setupSkipped: true, setupComplete: false });
+      if (els.firstRunSetupModal) {
+        els.firstRunSetupModal.hidden = true;
+        els.firstRunSetupModal.setAttribute("aria-hidden", "true");
+      }
+      document.body.classList.remove("modal-open", "route-setup-open");
+      document.querySelector(".app-shell")?.removeAttribute("inert");
+      setConfirmation("Setup skipped. You can re-open setup any time.", "success");
+    });
+  }
   bindSetupAction(els.setupStartBtn, () => setSetupStep(2));
   bindSetupAction(els.setupNameContinueBtn, () => setSetupStep(3));
   els.setupZipInput?.addEventListener("input", () => {
