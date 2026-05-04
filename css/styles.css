@@ -5040,3 +5040,28 @@ h1, h2, h3, .future-metric-headline {
   opacity: 0.48;
   transform: scale(0.92);
 }
+
+/* GRIDLY V18.1: route trust + control stacking safety */
+#map .leaflet-pane.leaflet-routePane-pane {
+  z-index: 630 !important;
+}
+
+#map .leaflet-popup-pane {
+  z-index: 700 !important;
+}
+
+.destination-hero-card {
+  position: relative;
+  z-index: 25;
+  margin-bottom: 14px;
+}
+
+.mobile-sticky-report {
+  z-index: 1100;
+}
+
+@media (max-width: 960px) {
+  .map-report-shortcut {
+    display: none !important;
+  }
+}

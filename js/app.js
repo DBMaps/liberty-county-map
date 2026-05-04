@@ -103,6 +103,7 @@ const SMART_ALERTS_DRAWER_SEEN_KEY = "gridlySmartAlertsDrawerSeenV1";
 const MAP_FIRST_HINT_SEEN_KEY = "gridlyMapFirstHintSeenV1";
 const SAVED_PLACES_STORAGE_KEY = "gridlySavedPlacesV1";
 const SELECTED_PLACE_STORAGE_KEY = "gridlySelectedPlaceIdV1";
+const OSRM_ROUTE_API = "https://router.project-osrm.org/route/v1/driving";
 
 let supabaseClient = null;
 let realtimeChannel = null;
@@ -388,6 +389,9 @@ function initMap() {
 
   map.createPane("labelsPane");
   map.getPane("labelsPane").style.zIndex = 640;
+
+  map.createPane("routePane");
+  map.getPane("routePane").style.zIndex = 630;
 
   const darkBaseLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png", {
     subdomains: "abcd",
@@ -989,20 +993,66 @@ function inferSavedRouteCrossings() {
   return corridor;
 }
 
-function renderSavedRouteLine() {
+async function fetchRoadRouteCoordinates(from, to) {
+  if (!Array.isArray(from) || !Array.isArray(to)) return null;
+  const [fromLat, fromLng] = from;
+  const [toLat, toLng] = to;
+  if (![fromLat, fromLng, toLat, toLng].every((n) => Number.isFinite(n))) return null;
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 4500);
+
+  try {
+    const response = await fetch(
+      `${OSRM_ROUTE_API}/${fromLng},${fromLat};${toLng},${toLat}?overview=full&geometries=geojson&alternatives=false&steps=false`,
+      { signal: controller.signal }
+    );
+    if (!response.ok) return null;
+    const data = await response.json();
+    const coordinates = data?.routes?.[0]?.geometry?.coordinates;
+    if (!Array.isArray(coordinates) || coordinates.length < 2) return null;
+    return coordinates.map(([lng, lat]) => [lat, lng]).filter((pt) => Number.isFinite(pt[0]) && Number.isFinite(pt[1]));
+  } catch (error) {
+    return null;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+function drawPremiumRouteLine(latLngs, color = getRouteStatusColor()) {
+  if (!savedRouteLayer || !Array.isArray(latLngs) || latLngs.length < 2) return;
+
+  L.polyline(latLngs, {
+    pane: "routePane",
+    color,
+    weight: 14,
+    opacity: 0.22,
+    lineCap: "round",
+    lineJoin: "round"
+  }).addTo(savedRouteLayer);
+
+  L.polyline(latLngs, {
+    pane: "routePane",
+    color,
+    weight: 7,
+    opacity: 0.96,
+    lineCap: "round",
+    lineJoin: "round"
+  }).addTo(savedRouteLayer);
+}
+
+async function renderSavedRouteLine() {
   if (!savedRouteLayer) return;
   savedRouteLayer.clearLayers();
   const routeCrossings = inferSavedRouteCrossings();
   savedRouteCrossingIds = new Set(routeCrossings.map((c) => String(c.id)));
   if (routeCrossings.length < 2) return;
-  const latLngs = routeCrossings.map((crossing) => [crossing.lat, crossing.lng]);
-  L.polyline(latLngs, {
-    color: getRouteStatusColor(),
-    weight: 6,
-    opacity: 0.9,
-    lineJoin: "round",
-    dashArray: "1,0"
-  }).addTo(savedRouteLayer);
+
+  const from = [routeCrossings[0].lat, routeCrossings[0].lng];
+  const to = [routeCrossings[routeCrossings.length - 1].lat, routeCrossings[routeCrossings.length - 1].lng];
+  const osrmPath = await fetchRoadRouteCoordinates(from, to);
+  const fallbackPath = routeCrossings.map((crossing) => [crossing.lat, crossing.lng]);
+  drawPremiumRouteLine(osrmPath?.length > 1 ? osrmPath : fallbackPath);
 }
 
 function getMarkerLabel(report, markerStateClass, lifecycleState) {
@@ -2831,12 +2881,13 @@ function activateDestinationByType(type) {
   setConfirmation(`Route Watch set: ${target.label}.`, "success");
 }
 
-function renderDestinationRoute(target) {
+async function renderDestinationRoute(target) {
   if (!savedRouteLayer || !target) return;
   savedRouteLayer.clearLayers();
   const from = userLocation ? [userLocation.lat, userLocation.lng] : [defaultCenter[0], defaultCenter[1]];
   const to = [target.lat, target.lng];
-  L.polyline([from, to], { color: "#66e8ff", weight: 5, opacity: 0.9, dashArray: "6,6" }).addTo(savedRouteLayer);
+  const osrmPath = await fetchRoadRouteCoordinates(from, to);
+  drawPremiumRouteLine(osrmPath?.length > 1 ? osrmPath : [from, to], "#66e8ff");
   savedRouteCrossingIds = new Set(crossings.filter((c) => getDistanceMiles(c.lat, c.lng, target.lat, target.lng) <= 3.5).map((c) => String(c.id)));
   renderCrossings();
   updateRouteWatchBadge(target.label);
