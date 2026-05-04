@@ -450,12 +450,34 @@ function syncModalScrollLock() {
     )
   );
 }
+
+function getFocusableElements(container) {
+  if (!container) return [];
+  return Array.from(
+    container.querySelectorAll(
+      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )
+  ).filter((el) => !el.hidden && el.getAttribute("aria-hidden") !== "true" && el.offsetParent !== null);
+}
+function moveFocusBeforeHide(container, fallbackEl = null) {
+  const active = document.activeElement;
+  if (!container || !active || !container.contains(active)) return;
+  const target =
+    (fallbackEl && typeof fallbackEl.focus === "function" && fallbackEl) ||
+    document.querySelector(".app-shell") ||
+    document.body;
+  if (target && typeof target.focus === "function") {
+    if (target === document.body && !document.body.hasAttribute("tabindex")) document.body.setAttribute("tabindex", "-1");
+    target.focus({ preventScroll: true });
+  } else if (typeof active.blur === "function") {
+    active.blur();
+  }
+}
+
 function openFirstRunSetupModal() {
   if (!els.firstRunSetupModal) return;
-  els.firstRunSetupModal.hidden = false;
-  els.firstRunSetupModal.removeAttribute("aria-hidden");
+  openModal(els.firstRunSetupModal);
   document.querySelector(".app-shell")?.setAttribute("inert", "");
-  syncModalScrollLock();
   if (els.setupNameInput) els.setupNameInput.value = gridlyUserProfile.name || "";
   if (els.setupZipInput) els.setupZipInput.value = gridlyUserProfile.zipCode || "";
   if (els.setupTownInput) els.setupTownInput.value = gridlyUserProfile.homeTown || "";
@@ -467,12 +489,18 @@ let setupStep = 1;
 let setupPlacesSummary = { home: false, work: false };
 function setSetupStep(step = 1) {
   setupStep = step;
+  const nextStepNode = document.querySelector(`[data-setup-step="${step}"]`);
   document.querySelectorAll("[data-setup-step]").forEach((node) => {
     const isActive = Number(node.dataset.setupStep) === step;
+    if (!isActive) moveFocusBeforeHide(node, nextStepNode ? getFocusableElements(nextStepNode)[0] : null);
     node.hidden = !isActive;
     node.setAttribute("aria-hidden", isActive ? "false" : "true");
     node.classList.toggle("is-active", isActive);
   });
+  const nextFocusable = getFocusableElements(nextStepNode)[0];
+  if (nextFocusable && typeof nextFocusable.focus === "function") {
+    requestAnimationFrame(() => nextFocusable.focus({ preventScroll: true }));
+  }
 }
 function refreshSetupSummary() {
   const town = String(els.setupTownInput?.value || "").trim();
@@ -485,14 +513,13 @@ function refreshSetupSummary() {
 }
 function closeFirstRunSetupModal() {
   if (!els.firstRunSetupModal) return;
-  const focusedElement = document.activeElement;
-  if (focusedElement && els.firstRunSetupModal.contains(focusedElement) && typeof focusedElement.blur === "function") {
-    focusedElement.blur();
-  }
-  els.firstRunSetupModal.hidden = true;
-  els.firstRunSetupModal.setAttribute("aria-hidden", "true");
+  const fallbackFocus =
+    (els.firstRunSetupModal.__opener && typeof els.firstRunSetupModal.__opener.focus === "function" && els.firstRunSetupModal.__opener) ||
+    document.querySelector(".app-shell") ||
+    document.body;
+  moveFocusBeforeHide(els.firstRunSetupModal, fallbackFocus);
+  closeModal(els.firstRunSetupModal, { restoreFocus: false });
   document.querySelector(".app-shell")?.removeAttribute("inert");
-  syncModalScrollLock();
 }
 function openModal(modalEl, opener = null) {
   if (!modalEl) return;
