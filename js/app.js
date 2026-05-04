@@ -451,21 +451,11 @@ function syncModalScrollLock() {
   );
 }
 
-function getFocusableElements(container) {
-  if (!container) return [];
-  return Array.from(
-    container.querySelectorAll(
-      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-    )
-  ).filter((el) => !el.hidden && el.getAttribute("aria-hidden") !== "true" && el.offsetParent !== null);
-}
+
 function moveFocusBeforeHide(container, fallbackEl = null) {
   const active = document.activeElement;
   if (!container || !active || !container.contains(active)) return;
-  const target =
-    (fallbackEl && typeof fallbackEl.focus === "function" && fallbackEl) ||
-    document.querySelector(".app-shell") ||
-    document.body;
+  const target = (fallbackEl && typeof fallbackEl.focus === "function" && fallbackEl) || document.body;
   if (target && typeof target.focus === "function") {
     if (target === document.body && !document.body.hasAttribute("tabindex")) document.body.setAttribute("tabindex", "-1");
     target.focus({ preventScroll: true });
@@ -473,35 +463,20 @@ function moveFocusBeforeHide(container, fallbackEl = null) {
     active.blur();
   }
 }
-function resolveSafeFocusTarget(preferredTargets = []) {
-  const targets = [...preferredTargets, document.getElementById("dashboardSection"), document.querySelector(".app-shell"), document.body];
-  for (const target of targets) {
-    if (!target || typeof target.focus !== "function") continue;
-    if (target === document.body) return target;
-    if (target.hidden || target.getAttribute("aria-hidden") === "true") continue;
-    return target;
-  }
-  return document.body;
-}
 function closeModalWithFocusSafety(modalEl, { restoreFocus = false } = {}) {
   if (!modalEl) return;
   const opener = modalEl.__opener && typeof modalEl.__opener.focus === "function" ? modalEl.__opener : null;
-  const activeElement = document.activeElement;
-  if (activeElement && typeof activeElement.blur === "function") activeElement.blur();
-  const safeTarget = resolveSafeFocusTarget([opener]);
-  if (safeTarget === document.body && !document.body.hasAttribute("tabindex")) document.body.setAttribute("tabindex", "-1");
-  safeTarget?.focus?.({ preventScroll: true });
-  requestAnimationFrame(() => {
-    moveFocusBeforeHide(modalEl, safeTarget);
-    closeModal(modalEl, { restoreFocus: false });
-    if (restoreFocus && opener && opener !== safeTarget) requestAnimationFrame(() => opener.focus({ preventScroll: true }));
-  });
+  moveFocusBeforeHide(modalEl, opener || document.body);
+  closeModal(modalEl, { restoreFocus: false });
+  if (restoreFocus && opener) requestAnimationFrame(() => opener.focus({ preventScroll: true }));
 }
 
 function openFirstRunSetupModal() {
   if (!els.firstRunSetupModal) return;
-  openModal(els.firstRunSetupModal);
+  els.firstRunSetupModal.hidden = false;
+  els.firstRunSetupModal.removeAttribute("aria-hidden");
   document.querySelector(".app-shell")?.setAttribute("inert", "");
+  syncModalScrollLock();
   if (els.setupNameInput) els.setupNameInput.value = gridlyUserProfile.name || "";
   if (els.setupZipInput) els.setupZipInput.value = gridlyUserProfile.zipCode || "";
   if (els.setupTownInput) els.setupTownInput.value = gridlyUserProfile.homeTown || "";
@@ -511,45 +486,13 @@ function openFirstRunSetupModal() {
 }
 let setupStep = 1;
 let setupPlacesSummary = { home: false, work: false };
-function getSetupStepFocusTarget(stepNode) {
-  if (!stepNode) return null;
-  const preferredSelectors = ["#setupNameInput", "#setupZipInput", "#setupNameContinueBtn", "#setupZipContinueBtn", "#setupPlacesContinueBtn", "#completeSetupBtn", "#skipSetupBtn"];
-  for (const selector of preferredSelectors) {
-    const target = stepNode.querySelector(selector);
-    if (target && !target.hidden && target.getAttribute("aria-hidden") !== "true" && !target.disabled) return target;
-  }
-  return getFocusableElements(stepNode)[0] || null;
-}
-function hideSetupStepSafely(stepNode) {
-  if (!stepNode) return;
-  if (stepNode.contains(document.activeElement)) {
-    requestAnimationFrame(() => hideSetupStepSafely(stepNode));
-    return;
-  }
-  stepNode.hidden = true;
-  stepNode.setAttribute("aria-hidden", "true");
-  stepNode.classList.remove("is-active");
-}
 function setSetupStep(step = 1) {
   setupStep = step;
-  const nextStepNode = document.querySelector(`[data-setup-step="${step}"]`);
-  if (!nextStepNode) return;
-  const prevStepNodes = Array.from(document.querySelectorAll("[data-setup-step]")).filter((node) => Number(node.dataset.setupStep) !== step);
-  const active = document.activeElement;
-  if (active && typeof active.blur === "function") active.blur();
-
-  nextStepNode.hidden = false;
-  nextStepNode.setAttribute("aria-hidden", "false");
-  nextStepNode.classList.add("is-active");
-
-  const nextFocusable = getSetupStepFocusTarget(nextStepNode);
-  const focusAndHidePrevious = () => {
-    if (nextFocusable && typeof nextFocusable.focus === "function") nextFocusable.focus({ preventScroll: true });
-    requestAnimationFrame(() => {
-      prevStepNodes.forEach((node) => hideSetupStepSafely(node));
-    });
-  };
-  requestAnimationFrame(focusAndHidePrevious);
+  document.querySelectorAll("[data-setup-step]").forEach((node) => {
+    const isActive = Number(node.dataset.setupStep) === step;
+    node.hidden = !isActive;
+    node.classList.toggle("is-active", isActive);
+  });
 }
 function refreshSetupSummary() {
   const town = String(els.setupTownInput?.value || "").trim();
@@ -562,16 +505,17 @@ function refreshSetupSummary() {
 }
 function closeFirstRunSetupModal() {
   if (!els.firstRunSetupModal) return;
-  closeModalWithFocusSafety(els.firstRunSetupModal);
-  requestAnimationFrame(() => {
-    document.querySelector(".app-shell")?.removeAttribute("inert");
-  });
+  const focusedElement = document.activeElement;
+  if (focusedElement && els.firstRunSetupModal.contains(focusedElement) && typeof focusedElement.blur === "function") {
+    focusedElement.blur();
+  }
+  els.firstRunSetupModal.hidden = true;
+  els.firstRunSetupModal.setAttribute("aria-hidden", "true");
+  document.querySelector(".app-shell")?.removeAttribute("inert");
+  syncModalScrollLock();
 }
 function runFirstRunSetupClose() {
-  closeModalWithFocusSafety(els.firstRunSetupModal);
-  requestAnimationFrame(() => {
-    document.querySelector(".app-shell")?.removeAttribute("inert");
-  });
+  closeFirstRunSetupModal();
 }
 function openModal(modalEl, opener = null) {
   if (!modalEl) return;
@@ -2723,16 +2667,7 @@ function bindEvents() {
   bindSetupAction(els.firstRunSetupBackdrop, runFirstRunSetupClose);
   bindSetupAction(els.skipSetupBtn, () => {
     saveGridlyUserProfile({ setupComplete: true, setupSkipped: true });
-    const activeElement = document.activeElement;
-    if (activeElement && typeof activeElement.blur === "function") activeElement.blur();
-    const safeTarget = resolveSafeFocusTarget([
-      document.getElementById("dashboardSection"),
-      document.querySelector(".app-shell"),
-      document.body
-    ]);
-    if (safeTarget === document.body && !document.body.hasAttribute("tabindex")) document.body.setAttribute("tabindex", "-1");
-    safeTarget?.focus?.({ preventScroll: true });
-    requestAnimationFrame(() => runFirstRunSetupClose());
+    runFirstRunSetupClose();
     setConfirmation("Setup skipped. You can re-open setup any time.", "success");
   });
   bindSetupAction(els.setupStartBtn, () => setSetupStep(2));
