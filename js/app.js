@@ -946,15 +946,7 @@ async function loadCrossingReviewOverrides() {
 function shouldShowCrossingInLaunchMode(crossing) {
   const review = crossing.review || {};
   const visibility = review.visibility || "unreviewed";
-  const localName = String(review.localName || "").trim();
-
-  if (visibility === "hide") return false;
-
-  if (visibility === "keep") return true;
-
-  if (localName.length > 0) return true;
-
-  return false;
+  return visibility !== "hide";
 }
 async function runPostSubmitRefresh() {
   console.debug("Post-submit refresh started");
