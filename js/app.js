@@ -511,20 +511,45 @@ function openFirstRunSetupModal() {
 }
 let setupStep = 1;
 let setupPlacesSummary = { home: false, work: false };
+function getSetupStepFocusTarget(stepNode) {
+  if (!stepNode) return null;
+  const preferredSelectors = ["#setupNameInput", "#setupZipInput", "#setupNameContinueBtn", "#setupZipContinueBtn", "#setupPlacesContinueBtn", "#completeSetupBtn", "#skipSetupBtn"];
+  for (const selector of preferredSelectors) {
+    const target = stepNode.querySelector(selector);
+    if (target && !target.hidden && target.getAttribute("aria-hidden") !== "true" && !target.disabled) return target;
+  }
+  return getFocusableElements(stepNode)[0] || null;
+}
+function hideSetupStepSafely(stepNode) {
+  if (!stepNode) return;
+  if (stepNode.contains(document.activeElement)) {
+    requestAnimationFrame(() => hideSetupStepSafely(stepNode));
+    return;
+  }
+  stepNode.hidden = true;
+  stepNode.setAttribute("aria-hidden", "true");
+  stepNode.classList.remove("is-active");
+}
 function setSetupStep(step = 1) {
   setupStep = step;
   const nextStepNode = document.querySelector(`[data-setup-step="${step}"]`);
-  document.querySelectorAll("[data-setup-step]").forEach((node) => {
-    const isActive = Number(node.dataset.setupStep) === step;
-    if (!isActive) moveFocusBeforeHide(node, nextStepNode ? getFocusableElements(nextStepNode)[0] : null);
-    node.hidden = !isActive;
-    node.setAttribute("aria-hidden", isActive ? "false" : "true");
-    node.classList.toggle("is-active", isActive);
-  });
-  const nextFocusable = getFocusableElements(nextStepNode)[0];
-  if (nextFocusable && typeof nextFocusable.focus === "function") {
-    requestAnimationFrame(() => nextFocusable.focus({ preventScroll: true }));
-  }
+  if (!nextStepNode) return;
+  const prevStepNodes = Array.from(document.querySelectorAll("[data-setup-step]")).filter((node) => Number(node.dataset.setupStep) !== step);
+  const active = document.activeElement;
+  if (active && typeof active.blur === "function") active.blur();
+
+  nextStepNode.hidden = false;
+  nextStepNode.setAttribute("aria-hidden", "false");
+  nextStepNode.classList.add("is-active");
+
+  const nextFocusable = getSetupStepFocusTarget(nextStepNode);
+  const focusAndHidePrevious = () => {
+    if (nextFocusable && typeof nextFocusable.focus === "function") nextFocusable.focus({ preventScroll: true });
+    requestAnimationFrame(() => {
+      prevStepNodes.forEach((node) => hideSetupStepSafely(node));
+    });
+  };
+  requestAnimationFrame(focusAndHidePrevious);
 }
 function refreshSetupSummary() {
   const town = String(els.setupTownInput?.value || "").trim();
