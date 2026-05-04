@@ -288,8 +288,8 @@ function hydrateElements() {
     "desktopDestinationAddBtn",
     "destinationEmptyNote",
     "destinationHabitCopy",
-    "routeWatchBadge"
-    ,"firstRunSetupModal","firstRunSetupBackdrop","setupNameInput","setupTownInput","completeSetupBtn","skipSetupBtn","setupSaveHomeBtn","setupSaveWorkBtn","editSetupBtn","firstRunEditSetupBtn"
+    "routeWatchBadge",
+    "firstRunSetupModal","firstRunSetupBackdrop","setupNameInput","setupZipInput","setupTownInput","setupStateInput","setupDetectedTown","completeSetupBtn","skipSetupBtn","setupSaveHomeBtn","setupSaveWorkBtn","editSetupBtn","firstRunEditSetupBtn"
   ].forEach((id) => {
     els[id] = document.getElementById(id);
   });
@@ -336,21 +336,21 @@ function initGreeting() {
 
   if (hour >= 5 && hour < 12) {
     setGreeting(
-      `Good Morning${namePrefix}`,
+      `Good morning${namePrefix}`,
       "My Town route watch",
       "Check your route before leaving. Gridly watches crossings, live reports, and local impact.",
       "Route Status"
     );
   } else if (hour >= 12 && hour < 17) {
     setGreeting(
-      `Good Afternoon${namePrefix}`,
+      `Good afternoon${namePrefix}`,
       "Midday Mobility Check",
       "Heading out soon? Gridly checks nearby crossings, slowdowns, and active road issues.",
       "Current Route"
     );
   } else if (hour >= 17 && hour < 22) {
     setGreeting(
-      `Good Evening${namePrefix}`,
+      `Good evening${namePrefix}`,
       "Evening Commute Intelligence",
       "Check your route home before you leave. Gridly watches for crossing delays and local impacts.",
       "Commute Home"
@@ -365,8 +365,24 @@ function initGreeting() {
   }
 }
 
+const ZIP_FALLBACK_LOOKUP = {
+  "77535": { city: "Dayton", state: "TX" },
+  "77575": { city: "Liberty", state: "TX" },
+  "77327": { city: "Cleveland", state: "TX" },
+  "77564": { city: "Hull", state: "TX" },
+  "77582": { city: "Raywood", state: "TX" }
+};
+
 function getDefaultGridlyProfile() {
-  return { name: "", homeTown: "Dayton", homeTownLabel: "Dayton", setupComplete: false };
+  return {
+    name: "",
+    zipCode: "",
+    homeTown: "",
+    state: "",
+    homeTownLabel: "",
+    setupComplete: false,
+    setupSkipped: false
+  };
 }
 function getGridlyUserProfile() {
   try {
@@ -381,10 +397,10 @@ function saveGridlyUserProfile(nextProfile = {}) {
   updateProfileUI();
 }
 function getMyTownKey() {
-  return String(gridlyUserProfile?.homeTown || "Dayton").trim().toLowerCase() || "dayton";
+  return String(gridlyUserProfile?.homeTown || "Liberty County").trim().toLowerCase() || "liberty county";
 }
 function updateProfileUI() {
-  const townLabel = gridlyUserProfile?.homeTownLabel || gridlyUserProfile?.homeTown || "Dayton";
+  const townLabel = gridlyUserProfile?.homeTownLabel || gridlyUserProfile?.homeTown || "My Town";
   if (els.mobileTownSelectorBtn) {
     els.mobileTownSelectorBtn.setAttribute("aria-label", `Selected town ${townLabel}, Texas`);
     els.mobileTownSelectorBtn.innerHTML = `My Town<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg>`;
@@ -397,14 +413,57 @@ function maybeOpenFirstRunSetup() {
 function openFirstRunSetupModal() {
   if (!els.firstRunSetupModal) return;
   els.firstRunSetupModal.hidden = false;
+  els.firstRunSetupModal.setAttribute("aria-hidden", "false");
   document.body.classList.add("modal-open");
+  document.body.classList.add("route-setup-open");
   if (els.setupNameInput) els.setupNameInput.value = gridlyUserProfile.name || "";
-  if (els.setupTownInput) els.setupTownInput.value = gridlyUserProfile.homeTownLabel || "Dayton";
+  if (els.setupZipInput) els.setupZipInput.value = gridlyUserProfile.zipCode || "";
+  if (els.setupTownInput) els.setupTownInput.value = gridlyUserProfile.homeTown || "";
+  if (els.setupStateInput) els.setupStateInput.value = gridlyUserProfile.state || "";
+  updateDetectedTownFromZip();
 }
 function closeFirstRunSetupModal() {
   if (!els.firstRunSetupModal) return;
   els.firstRunSetupModal.hidden = true;
+  els.firstRunSetupModal.setAttribute("aria-hidden", "true");
   document.body.classList.remove("modal-open");
+  document.body.classList.remove("route-setup-open");
+}
+
+
+function resolveZipCode(zipCode = "") {
+  const normalized = String(zipCode || "").trim();
+  return ZIP_FALLBACK_LOOKUP[normalized] || null;
+}
+
+function updateDetectedTownFromZip() {
+  if (!els.setupDetectedTown) return null;
+  const zip = String(els.setupZipInput?.value || "").trim();
+  const detected = resolveZipCode(zip);
+  if (detected) {
+    els.setupDetectedTown.textContent = `Detected town: ${detected.city}, ${detected.state}`;
+    if (els.setupTownInput) els.setupTownInput.value = detected.city;
+    if (els.setupStateInput) els.setupStateInput.value = detected.state;
+    return detected;
+  }
+  els.setupDetectedTown.textContent = zip ? "ZIP not recognized. Enter city/state manually." : "Enter ZIP to detect your town.";
+  return null;
+}
+
+function saveSetupPlace(type = "home") {
+  const fallbackLabel = type === "home" ? "Home" : "Work";
+  const customLabel = type === "home" ? fallbackLabel : (prompt("Label this place", "Work") || "Work");
+  const center = map?.getCenter?.();
+  const target = {
+    lat: userLocation?.lat || center?.lat || defaultCenter[0],
+    lng: userLocation?.lng || center?.lng || defaultCenter[1],
+    address: "Saved from setup"
+  };
+  savePlaceType(type === "home" ? "home" : "work", customLabel, target.address);
+  localStorage.setItem(type === "home" ? "gridlyHome" : "gridlyWork", customLabel);
+  loadSavedRoute();
+  initDailyDestinationHero();
+  setConfirmation(`${fallbackLabel} saved from ${userLocation ? "GPS" : "map center"}.`, "success");
 }
 
 function setGreeting(title, context, subtitle, routeLabel) {
@@ -2428,31 +2487,29 @@ function bindEvents() {
   });
   els.firstRunSetupBackdrop?.addEventListener("click", closeFirstRunSetupModal);
   els.skipSetupBtn?.addEventListener("click", () => {
-    saveGridlyUserProfile({ setupComplete: false });
+    saveGridlyUserProfile({ setupComplete: true, setupSkipped: true });
     closeFirstRunSetupModal();
   });
+  els.setupZipInput?.addEventListener("input", updateDetectedTownFromZip);
   els.completeSetupBtn?.addEventListener("click", () => {
-    const town = String(els.setupTownInput?.value || "Dayton").trim() || "Dayton";
+    const zipCode = String(els.setupZipInput?.value || "").trim();
+    const detected = resolveZipCode(zipCode);
+    const town = String(els.setupTownInput?.value || detected?.city || "").trim();
+    const state = String(els.setupStateInput?.value || detected?.state || "").trim();
     saveGridlyUserProfile({
       name: String(els.setupNameInput?.value || "").trim(),
+      zipCode,
       homeTown: town,
-      homeTownLabel: town,
-      setupComplete: true
+      state,
+      homeTownLabel: town ? `${town}${state ? `, ${state}` : ""}` : "",
+      setupComplete: true,
+      setupSkipped: false
     });
     initGreeting();
     closeFirstRunSetupModal();
   });
-  els.setupSaveHomeBtn?.addEventListener("click", () => {
-    const town = String(els.setupTownInput?.value || "Dayton").trim() || "Dayton";
-    localStorage.setItem("gridlyHome", town);
-    loadSavedRoute();
-    setConfirmation("Home saved.", "success");
-  });
-  els.setupSaveWorkBtn?.addEventListener("click", () => {
-    localStorage.setItem("gridlyWork", "Work / School / Jobsite");
-    loadSavedRoute();
-    setConfirmation("Work place saved.", "success");
-  });
+  els.setupSaveHomeBtn?.addEventListener("click", () => saveSetupPlace("home"));
+  els.setupSaveWorkBtn?.addEventListener("click", () => saveSetupPlace("work"));
   els.editSetupBtn?.addEventListener("click", openFirstRunSetupModal);
   els.firstRunEditSetupBtn?.addEventListener("click", () => {
     closeFirstRunSetupModal();
