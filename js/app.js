@@ -367,12 +367,12 @@ function initGreeting() {
 }
 
 const ZIP_FALLBACK_LOOKUP = {
-  "77535": { city: "Dayton", state: "TX" },
-  "77575": { city: "Liberty", state: "TX" },
-  "77327": { city: "Cleveland", state: "TX" },
+  "77535": { city: "Dayton", state: "TX", lat: 30.0474, lng: -94.8852 },
+  "77575": { city: "Liberty", state: "TX", lat: 30.0574, lng: -94.7955 },
+  "77327": { city: "Cleveland", state: "TX", lat: 30.3413, lng: -95.0858 },
   "77564": { city: "Hull", state: "TX" },
   "77582": { city: "Raywood", state: "TX" },
-  "77532": { city: "Crosby", state: "TX" },
+  "77532": { city: "Crosby", state: "TX", lat: 29.9111, lng: -95.0627 },
   "77336": { city: "Huffman", state: "TX" },
   "77520": { city: "Baytown", state: "TX" },
   "77521": { city: "Baytown", state: "TX" },
@@ -596,16 +596,45 @@ function resolveSetupPlaceTarget() {
 function saveSetupPlace(type = "home", explicitLabel = "") {
   const fallbackLabel = type === "home" ? "Home" : "Work";
   const customLabel = String(explicitLabel || (type === "home" ? fallbackLabel : "Work")).trim() || fallbackLabel;
-  const target = resolveSetupPlaceTarget();
-  if (!target) {
-    setConfirmation("Unable to save home yet. Open the map or allow location.", "error");
-    return false;
+  setConfirmation("Trying GPS...", "info");
+  let target = null;
+  if (userLocation?.lat != null && userLocation?.lng != null) {
+    target = { lat: userLocation.lat, lng: userLocation.lng, source: "GPS" };
+  } else {
+    setConfirmation("Using map center...", "info");
+    const center = map?.getCenter?.();
+    if (center?.lat != null && center?.lng != null) {
+      target = { lat: center.lat, lng: center.lng, source: "map center" };
+    } else if (gridlyUserProfile?.homeTownLat != null && gridlyUserProfile?.homeTownLng != null) {
+      target = { lat: gridlyUserProfile.homeTownLat, lng: gridlyUserProfile.homeTownLng, source: "profile hometown" };
+    }
   }
-  savePlaceType(type === "home" ? "home" : "work", customLabel, "Saved from setup", target.lat, target.lng);
+  if (!target && type === "home") {
+    setConfirmation("Using ZIP town coordinates...", "info");
+    const zipCode = String(els.setupZipInput?.value || gridlyUserProfile?.zipCode || "").trim();
+    const zipDetected = lastDetectedTown || resolveZipCode(zipCode);
+    if (zipDetected?.lat != null && zipDetected?.lng != null) {
+      target = { lat: zipDetected.lat, lng: zipDetected.lng, source: "zip town coordinates" };
+    }
+  }
+  if (!target) {
+    setConfirmation("No location available.", "warning");
+  }
+  console.log("Save Home source:", target?.source || "placeholder", target?.lat ?? null, target?.lng ?? null);
+  const placeAddress = String(
+    gridlyUserProfile?.homeTownLabel
+      || `${String(els.setupTownInput?.value || lastDetectedTown?.city || "").trim()}${String(els.setupStateInput?.value || lastDetectedTown?.state || "").trim() ? `, ${String(els.setupStateInput?.value || lastDetectedTown?.state || "").trim()}` : ""}`
+      || "Saved from setup"
+  ).trim() || "Saved from setup";
+  savePlaceType(type === "home" ? "home" : "work", customLabel, placeAddress, target?.lat ?? null, target?.lng ?? null);
   localStorage.setItem(type === "home" ? "gridlyHome" : "gridlyWork", customLabel);
   loadSavedRoute();
   initDailyDestinationHero();
-  setConfirmation(`${fallbackLabel} saved from ${target.source}.`, "success");
+  if (target) {
+    setConfirmation("Home saved.", "success");
+  } else {
+    setConfirmation("Home saved without coordinates. Add exact location later.", "success");
+  }
   return true;
 }
 
@@ -2719,7 +2748,6 @@ function bindEvents() {
     const saved = saveSetupPlace("home");
     if (!saved) return;
     setupPlacesSummary.home = true;
-    setConfirmation("Home saved.", "success");
     refreshSetupSummary();
   });
   bindSetupAction(els.editSetupBtn, openFirstRunSetupModal);
