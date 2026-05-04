@@ -575,20 +575,38 @@ async function updateDetectedTownFromZip() {
   return null;
 }
 
+function resolveSetupPlaceTarget() {
+  if (userLocation?.lat != null && userLocation?.lng != null) {
+    return { lat: userLocation.lat, lng: userLocation.lng, source: "GPS" };
+  }
+  const center = map?.getCenter?.();
+  if (center?.lat != null && center?.lng != null) {
+    return { lat: center.lat, lng: center.lng, source: "map center" };
+  }
+  if (gridlyUserProfile?.homeTownLat != null && gridlyUserProfile?.homeTownLng != null) {
+    return {
+      lat: gridlyUserProfile.homeTownLat,
+      lng: gridlyUserProfile.homeTownLng,
+      source: "profile hometown"
+    };
+  }
+  return null;
+}
+
 function saveSetupPlace(type = "home", explicitLabel = "") {
   const fallbackLabel = type === "home" ? "Home" : "Work";
   const customLabel = String(explicitLabel || (type === "home" ? fallbackLabel : "Work")).trim() || fallbackLabel;
-  const center = map?.getCenter?.();
-  const target = {
-    lat: userLocation?.lat || center?.lat || defaultCenter[0],
-    lng: userLocation?.lng || center?.lng || defaultCenter[1],
-    address: "Saved from setup"
-  };
-  savePlaceType(type === "home" ? "home" : "work", customLabel, target.address);
+  const target = resolveSetupPlaceTarget();
+  if (!target) {
+    setConfirmation("Unable to save home yet. Open the map or allow location.", "error");
+    return false;
+  }
+  savePlaceType(type === "home" ? "home" : "work", customLabel, "Saved from setup", target.lat, target.lng);
   localStorage.setItem(type === "home" ? "gridlyHome" : "gridlyWork", customLabel);
   loadSavedRoute();
   initDailyDestinationHero();
-  setConfirmation(`${fallbackLabel} saved from ${userLocation ? "GPS" : "map center"}.`, "success");
+  setConfirmation(`${fallbackLabel} saved from ${target.source}.`, "success");
+  return true;
 }
 
 function openPlaceNameModal(defaultValue = "Work") {
@@ -2698,7 +2716,8 @@ function bindEvents() {
     setConfirmation("Setup complete. Route Watch is ready.", "success");
   });
   bindSetupAction(els.setupSaveHomeBtn, () => {
-    saveSetupPlace("home");
+    const saved = saveSetupPlace("home");
+    if (!saved) return;
     setupPlacesSummary.home = true;
     setConfirmation("Home saved.", "success");
     refreshSetupSummary();
@@ -3158,9 +3177,9 @@ function saveSavedPlacesState(nextState) {
   localStorage.setItem(SAVED_PLACES_STORAGE_KEY, JSON.stringify({ version: 1, home: null, work: null, custom: [], ...nextState }));
 }
 
-function savePlaceType(type, label, address = "") {
+function savePlaceType(type, label, address = "", lat = null, lng = null) {
   const state = getSavedPlacesState();
-  const place = inferPlaceFromMap(label, address);
+  const place = inferPlaceFromMap(label, address, lat, lng);
   if (type === "home" || type === "work") {
     state[type] = { ...place, label: type === "home" ? "Home" : "Work" };
   } else {
@@ -3169,12 +3188,14 @@ function savePlaceType(type, label, address = "") {
   saveSavedPlacesState(state);
 }
 
-function inferPlaceFromMap(label, address = "") {
+function inferPlaceFromMap(label, address = "", lat = null, lng = null) {
   const center = map?.getCenter?.();
+  const resolvedLat = lat ?? userLocation?.lat ?? center?.lat ?? defaultCenter[0];
+  const resolvedLng = lng ?? userLocation?.lng ?? center?.lng ?? defaultCenter[1];
   return {
     label: label || "Saved Place",
-    lat: userLocation?.lat || center?.lat || defaultCenter[0],
-    lng: userLocation?.lng || center?.lng || defaultCenter[1],
+    lat: resolvedLat,
+    lng: resolvedLng,
     address: address || "Map center"
   };
 }
