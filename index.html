@@ -450,25 +450,34 @@
         <span class="eyebrow">Daily Route</span>
         <button type="button" class="secondary-btn compact-btn route-modal-close" id="closeRouteSetupModalBtn" aria-label="Close Save Route modal">×</button>
       </div>
-      <h2 id="routeSetupTitle">Save places</h2>
-      <p class="smart-alerts-subtitle">Saved places stay on this device. Pick one destination for today.</p>
+      <h2 id="routeSetupTitle">Save a Place</h2>
+      <p class="smart-alerts-subtitle">Manage Home, Work, and Favorites for Route Watch.</p>
       <div class="setup-grid route-setup-grid-mobile">
         <label>
           Place name
-          <input id="mobileHomeInput" type="text" placeholder="Example: Home, Work, Restaurant" autocomplete="organization-title" />
-        </label>
-
-        <label>
-          Location / address
-          <input id="mobileWorkInput" type="text" placeholder="Example: Crosby, TX" autocomplete="address-line1" />
+          <input id="mobilePlaceLabelInput" type="text" placeholder="Home, Work, School, Los Compadres" autocomplete="organization-title" />
         </label>
         <label>
-          Where are you headed?
+          Type
+          <select id="mobilePlaceTypeSelect">
+            <option value="home">Home</option>
+            <option value="work">Work</option>
+            <option value="custom">Favorite</option>
+          </select>
+        </label>
+        <label>
+          City / place (fallback)
+          <input id="mobilePlaceAddressInput" type="text" placeholder="Dayton, TX" autocomplete="address-line1" />
+        </label>
+        <label>
+          Saved places
           <select id="mobileSavedDestinationSelect"></select>
         </label>
 
-        <button id="mobileSaveRouteBtn" class="primary-btn" type="button">Save Route</button>
         <button id="mobileUseLocationBtn" class="secondary-btn" type="button">Use My Location</button>
+        <button id="mobileUseMapCenterBtn" class="secondary-btn" type="button">Use Map Center</button>
+        <button id="mobileSaveRouteBtn" class="primary-btn" type="button">Save Place</button>
+        <button id="mobileCancelPlaceBtn" class="secondary-btn" type="button">Cancel</button>
       </div>
     </div>
   </div>

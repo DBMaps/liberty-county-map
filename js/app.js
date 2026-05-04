@@ -256,11 +256,14 @@ function hydrateElements() {
     "saveSmartAlertsBtn",
     "smartAlertsConfirmation",
     "smartAlertsBanner",
-    "mobileHomeInput",
-    "mobileWorkInput",
+    "mobilePlaceLabelInput",
+    "mobilePlaceTypeSelect",
+    "mobilePlaceAddressInput",
     "mobileSavedDestinationSelect",
     "mobileSaveRouteBtn",
     "mobileUseLocationBtn",
+    "mobileUseMapCenterBtn",
+    "mobileCancelPlaceBtn",
     "routeSetupModal",
     "routeSetupModalBackdrop",
     "closeRouteSetupModalBtn",
@@ -2394,9 +2397,21 @@ function bindEvents() {
   els.saveRouteBtn?.addEventListener("click", saveRoute);
   els.useLocationBtn?.addEventListener("click", handleReportNearMe);
   els.mobileUseLocationBtn?.addEventListener("click", () => {
-    closeRouteSetupModal();
-    handleReportNearMe();
+    if (!navigator.geolocation) {
+      setConfirmation("Location unavailable. Save with city/place fallback.", "error");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition((position) => {
+      pendingPlaceCoordinates = { lat: position.coords.latitude, lng: position.coords.longitude };
+      setConfirmation("Using your current location.", "success");
+    }, () => setConfirmation("Could not get GPS location. You can still save fallback.", "error"), { enableHighAccuracy: true, timeout: 9000, maximumAge: 60000 });
   });
+  els.mobileUseMapCenterBtn?.addEventListener("click", () => {
+    const center = map?.getCenter?.();
+    pendingPlaceCoordinates = center ? { lat: center.lat, lng: center.lng } : null;
+    setConfirmation(center ? "Using map center." : "Map center unavailable. Save fallback instead.", center ? "success" : "error");
+  });
+  els.mobileCancelPlaceBtn?.addEventListener("click", () => closeRouteSetupModal());
 
   els.refreshBtn?.addEventListener("click", async () => {
     if (crossingLoadFailed) {
@@ -2757,6 +2772,7 @@ function bindEvents() {
 
 
 let lastRouteSetupTrigger = null;
+let pendingPlaceCoordinates = null;
 
 function openRouteSetupModal(triggerEl = null) {
   if (!els.routeSetupModal) return;
@@ -3071,8 +3087,9 @@ function getReportCopy(type) {
 function getRouteInputValues(source = "desktop") {
   if (source === "mobile") {
     return {
-      home: els.mobileHomeInput?.value.trim(),
-      work: els.mobileWorkInput?.value.trim(),
+      home: els.mobilePlaceLabelInput?.value.trim(),
+      work: els.mobilePlaceAddressInput?.value.trim(),
+      type: String(els.mobilePlaceTypeSelect?.value || "custom"),
       button: els.mobileSaveRouteBtn
     };
   }
@@ -3145,26 +3162,30 @@ function renderSavedPlacesSelectOptions() {
 }
 
 function saveRoute(source = "desktop") {
-  const { home, work, button } = getRouteInputValues(source);
+  const { home, work, type, button } = getRouteInputValues(source);
   if (!home || !work) {
     flashButton(button, "Add name + place");
     return;
   }
-  const places = getSavedPlaces();
-  const id = `place-${Date.now()}`;
-  places.push({ id, name: home, address: work, type: "custom" });
-  saveSavedPlaces(places);
-  setSelectedPlaceId(id);
-  localStorage.setItem("gridlyHome", home); // legacy compatibility
-  localStorage.setItem("gridlyWork", work);
-  savePlaceType("home", home, work);
-  savePlaceType("work", work, work);
+  const selectedType = source === "mobile" ? type : "custom";
+  const finalLabel = home || (selectedType === "home" ? "Home" : selectedType === "work" ? "Work" : "Favorite");
+  const fallbackAddress = work || "Saved. Add exact location later.";
+  const mapCenter = map?.getCenter?.();
+  const lat = pendingPlaceCoordinates?.lat ?? null;
+  const lng = pendingPlaceCoordinates?.lng ?? null;
+  savePlaceType(selectedType, finalLabel, fallbackAddress, lat ?? mapCenter?.lat ?? null, lng ?? mapCenter?.lng ?? null);
+  const targetId = selectedType === "home" ? "home" : selectedType === "work" ? "work" : "";
+  if (targetId) setSelectedPlaceId(targetId);
+  localStorage.setItem("gridlyHome", finalLabel);
+  localStorage.setItem("gridlyWork", fallbackAddress);
+  pendingPlaceCoordinates = null;
 
   loadSavedRoute();
   initDailyDestinationHero();
   updateRouteIntelligence();
   updateGrowthWidgets();
-  flashButton(button, "Route Saved");
+  flashButton(button, "Place Saved");
+  setConfirmation((lat == null || lng == null) ? "Saved. Add exact location later." : "Saved place updated.", "success");
 
   if (source === "mobile") {
     closeRouteSetupModal();
@@ -3280,14 +3301,14 @@ function loadSavedRoute() {
     safeText("savedHome", home);
     safeText("desktopRouteHome", home);
     if (els.homeInput) els.homeInput.value = home;
-    if (els.mobileHomeInput) els.mobileHomeInput.value = home;
+    if (els.mobilePlaceLabelInput) els.mobilePlaceLabelInput.value = home;
   }
 
   if (work) {
     safeText("savedWork", "Route Watch");
     safeText("desktopRouteWork", "Route Watch");
     if (els.workInput) els.workInput.value = work;
-    if (els.mobileWorkInput) els.mobileWorkInput.value = work;
+    if (els.mobilePlaceAddressInput) els.mobilePlaceAddressInput.value = work;
   }
 }
 
