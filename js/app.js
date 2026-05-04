@@ -567,6 +567,12 @@ function closeFirstRunSetupModal() {
     document.querySelector(".app-shell")?.removeAttribute("inert");
   });
 }
+function runFirstRunSetupClose() {
+  closeModalWithFocusSafety(els.firstRunSetupModal);
+  requestAnimationFrame(() => {
+    document.querySelector(".app-shell")?.removeAttribute("inert");
+  });
+}
 function openModal(modalEl, opener = null) {
   if (!modalEl) return;
   modalEl.__opener = opener || document.activeElement;
@@ -2574,6 +2580,11 @@ function bindEvents() {
     if (event.target === els.routeSetupModal) closeRouteSetupModal();
   });
   document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !els.firstRunSetupModal?.hidden) {
+      event.preventDefault();
+      runFirstRunSetupClose();
+      return;
+    }
     if (event.key === "Escape" && !els.routeSetupModal?.hidden) {
       closeRouteSetupModal();
     }
@@ -2709,10 +2720,19 @@ function bindEvents() {
     });
   };
 
-  bindSetupAction(els.firstRunSetupBackdrop, closeFirstRunSetupModal);
+  bindSetupAction(els.firstRunSetupBackdrop, runFirstRunSetupClose);
   bindSetupAction(els.skipSetupBtn, () => {
     saveGridlyUserProfile({ setupComplete: true, setupSkipped: true });
-    closeFirstRunSetupModal();
+    const activeElement = document.activeElement;
+    if (activeElement && typeof activeElement.blur === "function") activeElement.blur();
+    const safeTarget = resolveSafeFocusTarget([
+      document.getElementById("dashboardSection"),
+      document.querySelector(".app-shell"),
+      document.body
+    ]);
+    if (safeTarget === document.body && !document.body.hasAttribute("tabindex")) document.body.setAttribute("tabindex", "-1");
+    safeTarget?.focus?.({ preventScroll: true });
+    requestAnimationFrame(() => runFirstRunSetupClose());
     setConfirmation("Setup skipped. You can re-open setup any time.", "success");
   });
   bindSetupAction(els.setupStartBtn, () => setSetupStep(2));
@@ -2755,7 +2775,7 @@ function bindEvents() {
       setupSkipped: false
     });
     initGreeting();
-    closeFirstRunSetupModal();
+    runFirstRunSetupClose();
     setConfirmation("Setup complete. Route Watch is ready.", "success");
   });
   bindSetupAction(els.setupSaveHomeBtn, () => {
