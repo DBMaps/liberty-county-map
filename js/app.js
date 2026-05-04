@@ -436,7 +436,7 @@ function maybeOpenFirstRunSetup() {
 function syncModalScrollLock() {
   const hasPlaceNameModal = Boolean(document.querySelector(".place-name-modal"));
   const hasOpenModal = Boolean(
-    (els.firstRunSetupModal && !els.firstRunSetupModal.hidden) ||
+    (els.firstRunSetupModal && els.firstRunSetupModal.style.display !== "none") ||
     (els.routeSetupModal && !els.routeSetupModal.hidden) ||
     (els.smartAlertsModal && !els.smartAlertsModal.hidden) ||
     hasPlaceNameModal
@@ -445,7 +445,7 @@ function syncModalScrollLock() {
   document.body.classList.toggle(
     "route-setup-open",
     Boolean(
-      (els.firstRunSetupModal && !els.firstRunSetupModal.hidden) ||
+      (els.firstRunSetupModal && els.firstRunSetupModal.style.display !== "none") ||
       (els.routeSetupModal && !els.routeSetupModal.hidden)
     )
   );
@@ -473,9 +473,7 @@ function closeModalWithFocusSafety(modalEl, { restoreFocus = false } = {}) {
 
 function openFirstRunSetupModal() {
   if (!els.firstRunSetupModal) return;
-  els.firstRunSetupModal.hidden = false;
-  els.firstRunSetupModal.removeAttribute("aria-hidden");
-  document.querySelector(".app-shell")?.setAttribute("inert", "");
+  els.firstRunSetupModal.style.display = "flex";
   syncModalScrollLock();
   if (els.setupNameInput) els.setupNameInput.value = gridlyUserProfile.name || "";
   if (els.setupZipInput) els.setupZipInput.value = gridlyUserProfile.zipCode || "";
@@ -490,7 +488,7 @@ function setSetupStep(step = 1) {
   setupStep = step;
   document.querySelectorAll("[data-setup-step]").forEach((node) => {
     const isActive = Number(node.dataset.setupStep) === step;
-    node.hidden = !isActive;
+    node.style.display = isActive ? "flex" : "none";
     node.classList.toggle("is-active", isActive);
   });
 }
@@ -505,13 +503,7 @@ function refreshSetupSummary() {
 }
 function closeFirstRunSetupModal() {
   if (!els.firstRunSetupModal) return;
-  const focusedElement = document.activeElement;
-  if (focusedElement && els.firstRunSetupModal.contains(focusedElement) && typeof focusedElement.blur === "function") {
-    focusedElement.blur();
-  }
-  els.firstRunSetupModal.hidden = true;
-  els.firstRunSetupModal.setAttribute("aria-hidden", "true");
-  document.querySelector(".app-shell")?.removeAttribute("inert");
+  els.firstRunSetupModal.style.display = "none";
   syncModalScrollLock();
 }
 function runFirstRunSetupClose() {
@@ -2524,7 +2516,7 @@ function bindEvents() {
     if (event.target === els.routeSetupModal) closeRouteSetupModal();
   });
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && !els.firstRunSetupModal?.hidden) {
+    if (event.key === "Escape" && els.firstRunSetupModal?.style.display !== "none") {
       event.preventDefault();
       runFirstRunSetupClose();
       return;
@@ -2671,17 +2663,11 @@ function bindEvents() {
       event.stopPropagation();
       console.log("Gridly setup skipped");
       saveGridlyUserProfile({ setupSkipped: true, setupComplete: false });
-      if (els.firstRunSetupModal) {
-        els.firstRunSetupModal.hidden = true;
-        els.firstRunSetupModal.setAttribute("aria-hidden", "true");
-      }
-      document.body.classList.remove("modal-open", "route-setup-open");
-      document.querySelector(".app-shell")?.removeAttribute("inert");
+      closeFirstRunSetupModal();
       setConfirmation("Setup skipped. You can re-open setup any time.", "success");
     });
   }
   bindSetupAction(els.setupStartBtn, () => setSetupStep(2));
-  bindSetupAction(els.setupNameContinueBtn, () => setSetupStep(3));
   els.setupZipInput?.addEventListener("input", () => {
     clearTimeout(zipLookupDebounceTimer);
     zipLookupDebounceTimer = setTimeout(async () => {
@@ -2690,18 +2676,6 @@ function bindEvents() {
       await updateDetectedTownFromZip();
       if (token !== latestZipLookupToken) return;
     }, 250);
-  });
-  bindSetupAction(els.setupZipContinueBtn, async () => {
-    await updateDetectedTownFromZip();
-    setSetupStep(4);
-  });
-  bindSetupAction(els.setupSkipPlacesBtn, () => {
-    refreshSetupSummary();
-    setSetupStep(5);
-  });
-  bindSetupAction(els.setupPlacesContinueBtn, () => {
-    refreshSetupSummary();
-    setSetupStep(5);
   });
   bindSetupAction(els.completeSetupBtn, () => {
     const zipCode = String(els.setupZipInput?.value || "").trim();
@@ -2729,18 +2703,7 @@ function bindEvents() {
     setConfirmation("Home saved.", "success");
     refreshSetupSummary();
   });
-  bindSetupAction(els.setupSaveWorkBtn, async () => {
-    const customLabel = await openPlaceNameModal("Work");
-    if (!customLabel) return;
-    saveSetupPlace("work", customLabel);
-    setupPlacesSummary.work = true;
-    setConfirmation("Work / School / Jobsite saved.", "success");
-    refreshSetupSummary();
-  });
   bindSetupAction(els.editSetupBtn, openFirstRunSetupModal);
-  bindSetupAction(els.firstRunEditSetupBtn, () => {
-    setSetupStep(1);
-  });
 
   const allCrossingsToggle = document.getElementById("allCrossingsLayerToggle");
   allCrossingsToggle?.addEventListener("change", (event) => {
