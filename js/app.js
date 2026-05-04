@@ -426,13 +426,16 @@ function updateProfileUI() {
   }
 }
 function maybeOpenFirstRunSetup() {
-  if (!gridlyUserProfile.setupComplete) openFirstRunSetupModal();
+  if (gridlyUserProfile.setupComplete || gridlyUserProfile.setupSkipped) return;
+  openFirstRunSetupModal();
 }
 function syncModalScrollLock() {
+  const hasPlaceNameModal = Boolean(document.querySelector(".place-name-modal"));
   const hasOpenModal = Boolean(
     (els.firstRunSetupModal && !els.firstRunSetupModal.hidden) ||
     (els.routeSetupModal && !els.routeSetupModal.hidden) ||
-    (els.smartAlertsModal && !els.smartAlertsModal.hidden)
+    (els.smartAlertsModal && !els.smartAlertsModal.hidden) ||
+    hasPlaceNameModal
   );
   document.body.classList.toggle("modal-open", hasOpenModal);
   document.body.classList.toggle(
@@ -534,9 +537,9 @@ async function updateDetectedTownFromZip() {
   return null;
 }
 
-function saveSetupPlace(type = "home") {
+function saveSetupPlace(type = "home", explicitLabel = "") {
   const fallbackLabel = type === "home" ? "Home" : "Work";
-  const customLabel = type === "home" ? fallbackLabel : (prompt("Label this place", "Work") || "Work");
+  const customLabel = String(explicitLabel || (type === "home" ? fallbackLabel : "Work")).trim() || fallbackLabel;
   const center = map?.getCenter?.();
   const target = {
     lat: userLocation?.lat || center?.lat || defaultCenter[0],
@@ -548,6 +551,46 @@ function saveSetupPlace(type = "home") {
   loadSavedRoute();
   initDailyDestinationHero();
   setConfirmation(`${fallbackLabel} saved from ${userLocation ? "GPS" : "map center"}.`, "success");
+}
+
+function openPlaceNameModal(defaultValue = "Work") {
+  return new Promise((resolve) => {
+    const modal = document.createElement("div");
+    modal.className = "route-setup-modal place-name-modal";
+    modal.innerHTML = `
+      <div class="route-setup-modal-backdrop"></div>
+      <div class="route-setup-modal-card place-name-modal-card" role="dialog" aria-modal="true" aria-labelledby="placeNameModalTitle">
+        <div class="route-setup-modal-head">
+          <h2 id="placeNameModalTitle">Name this place</h2>
+        </div>
+        <div class="route-setup-grid-mobile">
+          <label>Place name
+            <input id="placeNameInput" type="text" placeholder="Work, School, Jobsite, etc." />
+          </label>
+          <button type="button" class="primary-btn" id="savePlaceNameBtn">Save Place</button>
+          <button type="button" class="secondary-btn" id="cancelPlaceNameBtn">Cancel</button>
+        </div>
+      </div>`;
+
+    const cleanup = (value = null) => {
+      modal.remove();
+      syncModalScrollLock();
+      resolve(value);
+    };
+    document.body.appendChild(modal);
+    const input = modal.querySelector("#placeNameInput");
+    if (input) {
+      input.value = defaultValue;
+      requestAnimationFrame(() => input.focus());
+    }
+    syncModalScrollLock();
+    modal.querySelector(".route-setup-modal-backdrop")?.addEventListener("click", () => cleanup(null));
+    modal.querySelector("#cancelPlaceNameBtn")?.addEventListener("click", () => cleanup(null));
+    modal.querySelector("#savePlaceNameBtn")?.addEventListener("click", () => {
+      const value = String(input?.value || "").trim() || defaultValue;
+      cleanup(value);
+    });
+  });
 }
 
 function setGreeting(title, context, subtitle, routeLabel) {
@@ -2637,16 +2680,17 @@ function bindEvents() {
     setConfirmation("Home saved.", "success");
     refreshSetupSummary();
   });
-  bindSetupAction(els.setupSaveWorkBtn, () => {
-    saveSetupPlace("work");
+  bindSetupAction(els.setupSaveWorkBtn, async () => {
+    const customLabel = await openPlaceNameModal("Work");
+    if (!customLabel) return;
+    saveSetupPlace("work", customLabel);
     setupPlacesSummary.work = true;
     setConfirmation("Work / School / Jobsite saved.", "success");
     refreshSetupSummary();
   });
   bindSetupAction(els.editSetupBtn, openFirstRunSetupModal);
   bindSetupAction(els.firstRunEditSetupBtn, () => {
-    closeFirstRunSetupModal();
-    openRouteSetupModal(els.firstRunEditSetupBtn);
+    setSetupStep(1);
   });
 
   const allCrossingsToggle = document.getElementById("allCrossingsLayerToggle");
@@ -4488,6 +4532,13 @@ function maybeShowWelcomeModal() {
 
 window.closeGridlyWelcome = function () {
   document.getElementById("gridlyWelcomeModal")?.remove();
+};
+
+window.resetGridlySetup = function resetGridlySetup() {
+  localStorage.removeItem(GRIDLY_PROFILE_STORAGE_KEY);
+  gridlyUserProfile = getGridlyUserProfile();
+  closeFirstRunSetupModal();
+  openFirstRunSetupModal();
 };
 
 async function shareGridlyApp() {
