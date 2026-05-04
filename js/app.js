@@ -410,12 +410,26 @@ function updateProfileUI() {
 function maybeOpenFirstRunSetup() {
   if (!gridlyUserProfile.setupComplete) openFirstRunSetupModal();
 }
+function syncModalScrollLock() {
+  const hasOpenModal = Boolean(
+    (els.firstRunSetupModal && !els.firstRunSetupModal.hidden) ||
+    (els.routeSetupModal && !els.routeSetupModal.hidden) ||
+    (els.smartAlertsModal && !els.smartAlertsModal.hidden)
+  );
+  document.body.classList.toggle("modal-open", hasOpenModal);
+  document.body.classList.toggle(
+    "route-setup-open",
+    Boolean(
+      (els.firstRunSetupModal && !els.firstRunSetupModal.hidden) ||
+      (els.routeSetupModal && !els.routeSetupModal.hidden)
+    )
+  );
+}
 function openFirstRunSetupModal() {
   if (!els.firstRunSetupModal) return;
   els.firstRunSetupModal.hidden = false;
   els.firstRunSetupModal.setAttribute("aria-hidden", "false");
-  document.body.classList.add("modal-open");
-  document.body.classList.add("route-setup-open");
+  syncModalScrollLock();
   if (els.setupNameInput) els.setupNameInput.value = gridlyUserProfile.name || "";
   if (els.setupZipInput) els.setupZipInput.value = gridlyUserProfile.zipCode || "";
   if (els.setupTownInput) els.setupTownInput.value = gridlyUserProfile.homeTown || "";
@@ -426,8 +440,7 @@ function closeFirstRunSetupModal() {
   if (!els.firstRunSetupModal) return;
   els.firstRunSetupModal.hidden = true;
   els.firstRunSetupModal.setAttribute("aria-hidden", "true");
-  document.body.classList.remove("modal-open");
-  document.body.classList.remove("route-setup-open");
+  syncModalScrollLock();
 }
 
 
@@ -446,7 +459,7 @@ function updateDetectedTownFromZip() {
     if (els.setupStateInput) els.setupStateInput.value = detected.state;
     return detected;
   }
-  els.setupDetectedTown.textContent = zip ? "ZIP not recognized. Enter city/state manually." : "Enter ZIP to detect your town.";
+  els.setupDetectedTown.textContent = zip ? "ZIP not recognized. Enter city and state manually." : "Enter ZIP to detect your town.";
   return null;
 }
 
@@ -2535,8 +2548,7 @@ function openRouteSetupModal(triggerEl = null) {
   els.routeSetupModal.hidden = false;
   els.routeSetupModal.style.display = "";
   els.routeSetupModal.setAttribute("aria-hidden", "false");
-  document.body.classList.add("modal-open");
-  document.body.classList.add("route-setup-open");
+  syncModalScrollLock();
 }
 
 function closeRouteSetupModal(options = {}) {
@@ -2545,8 +2557,7 @@ function closeRouteSetupModal(options = {}) {
   els.routeSetupModal.hidden = true;
   els.routeSetupModal.style.display = "none";
   els.routeSetupModal.setAttribute("aria-hidden", "true");
-  document.body.classList.remove("modal-open");
-  document.body.classList.remove("route-setup-open");
+  syncModalScrollLock();
 
   if (restoreFocus && lastRouteSetupTrigger && typeof lastRouteSetupTrigger.focus === "function") {
     lastRouteSetupTrigger.focus();
@@ -2557,13 +2568,13 @@ function closeRouteSetupModal(options = {}) {
 function openSmartAlertsModal() {
   if (!els.smartAlertsModal) return;
   els.smartAlertsModal.hidden = false;
-  document.body.classList.add("modal-open");
+  syncModalScrollLock();
 }
 
 function closeSmartAlertsModal() {
   if (!els.smartAlertsModal) return;
   els.smartAlertsModal.hidden = true;
-  document.body.classList.remove("modal-open");
+  syncModalScrollLock();
 }
 
 function handleSmartReportButton() {
