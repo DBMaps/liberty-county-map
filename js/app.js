@@ -473,6 +473,30 @@ function moveFocusBeforeHide(container, fallbackEl = null) {
     active.blur();
   }
 }
+function resolveSafeFocusTarget(preferredTargets = []) {
+  const targets = [...preferredTargets, document.getElementById("dashboardSection"), document.querySelector(".app-shell"), document.body];
+  for (const target of targets) {
+    if (!target || typeof target.focus !== "function") continue;
+    if (target === document.body) return target;
+    if (target.hidden || target.getAttribute("aria-hidden") === "true") continue;
+    return target;
+  }
+  return document.body;
+}
+function closeModalWithFocusSafety(modalEl, { restoreFocus = false } = {}) {
+  if (!modalEl) return;
+  const opener = modalEl.__opener && typeof modalEl.__opener.focus === "function" ? modalEl.__opener : null;
+  const activeElement = document.activeElement;
+  if (activeElement && typeof activeElement.blur === "function") activeElement.blur();
+  const safeTarget = resolveSafeFocusTarget([opener]);
+  if (safeTarget === document.body && !document.body.hasAttribute("tabindex")) document.body.setAttribute("tabindex", "-1");
+  safeTarget?.focus?.({ preventScroll: true });
+  requestAnimationFrame(() => {
+    moveFocusBeforeHide(modalEl, safeTarget);
+    closeModal(modalEl, { restoreFocus: false });
+    if (restoreFocus && opener && opener !== safeTarget) requestAnimationFrame(() => opener.focus({ preventScroll: true }));
+  });
+}
 
 function openFirstRunSetupModal() {
   if (!els.firstRunSetupModal) return;
@@ -513,13 +537,10 @@ function refreshSetupSummary() {
 }
 function closeFirstRunSetupModal() {
   if (!els.firstRunSetupModal) return;
-  const fallbackFocus =
-    (els.firstRunSetupModal.__opener && typeof els.firstRunSetupModal.__opener.focus === "function" && els.firstRunSetupModal.__opener) ||
-    document.querySelector(".app-shell") ||
-    document.body;
-  moveFocusBeforeHide(els.firstRunSetupModal, fallbackFocus);
-  closeModal(els.firstRunSetupModal, { restoreFocus: false });
-  document.querySelector(".app-shell")?.removeAttribute("inert");
+  closeModalWithFocusSafety(els.firstRunSetupModal);
+  requestAnimationFrame(() => {
+    document.querySelector(".app-shell")?.removeAttribute("inert");
+  });
 }
 function openModal(modalEl, opener = null) {
   if (!modalEl) return;
@@ -2756,15 +2777,14 @@ function openRouteSetupModal(triggerEl = null) {
 function closeRouteSetupModal(options = {}) {
   if (!els.routeSetupModal) return;
   const { restoreFocus = true } = options;
-  els.routeSetupModal.hidden = true;
-  els.routeSetupModal.style.display = "none";
-  els.routeSetupModal.setAttribute("aria-hidden", "true");
-  syncModalScrollLock();
-
-  if (restoreFocus && lastRouteSetupTrigger && typeof lastRouteSetupTrigger.focus === "function") {
-    lastRouteSetupTrigger.focus();
-  }
-  lastRouteSetupTrigger = null;
+  closeModalWithFocusSafety(els.routeSetupModal, { restoreFocus: false });
+  requestAnimationFrame(() => {
+    els.routeSetupModal.style.display = "none";
+    if (restoreFocus && lastRouteSetupTrigger && typeof lastRouteSetupTrigger.focus === "function") {
+      lastRouteSetupTrigger.focus({ preventScroll: true });
+    }
+    lastRouteSetupTrigger = null;
+  });
 }
 
 function openSmartAlertsModal() {
@@ -2775,8 +2795,7 @@ function openSmartAlertsModal() {
 
 function closeSmartAlertsModal() {
   if (!els.smartAlertsModal) return;
-  els.smartAlertsModal.hidden = true;
-  syncModalScrollLock();
+  closeModalWithFocusSafety(els.smartAlertsModal);
 }
 
 function handleSmartReportButton() {
