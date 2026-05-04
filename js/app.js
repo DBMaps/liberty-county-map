@@ -1894,7 +1894,16 @@ counter.textContent = "No live road hazards";
   document.body.appendChild(counter);
   document.body.appendChild(launcher);
   document.body.appendChild(panel);
+  requestAnimationFrame(() => {
+    setTimeout(() => launcher.classList.add("is-visible"), 1400);
+  });
   injectHazardStyles();
+}
+
+function updateReportCtaContext({ dim = false } = {}) {
+  const launcher = document.getElementById("gridlyHazardLauncher");
+  if (!launcher) return;
+  launcher.classList.toggle("context-muted", Boolean(dim));
 }
 
 function openHazardPanel() {
@@ -2127,8 +2136,9 @@ function injectHazardStyles() {
     }
     .gridly-hazard-launcher {
       position: fixed;
-      right: 18px;
-      bottom: 92px;
+      left: 32px;
+      right: auto;
+      bottom: 32px;
       z-index: 9998;
       border: 0;
       border-radius: 999px;
@@ -2138,7 +2148,15 @@ function injectHazardStyles() {
       font-weight: 950;
       box-shadow: 0 16px 40px rgba(0,0,0,0.28);
       cursor: pointer;
+      max-width: 220px;
+      opacity: 0;
+      transform: scale(0.98);
+      transition: opacity 0.25s ease, transform 0.22s ease;
     }
+    .gridly-hazard-launcher.is-visible { opacity: 0.95; }
+    .gridly-hazard-launcher.context-muted { opacity: 0.6; }
+    .gridly-hazard-launcher:hover,
+    .gridly-hazard-launcher:focus-visible { opacity: 1; transform: scale(1.03); }
 
     .gridly-hazard-panel {
       position: fixed;
@@ -2216,8 +2234,11 @@ function injectHazardStyles() {
       .gridly-hazard-launcher {
         left: 14px;
         right: 14px;
-        bottom: 150px;
+        bottom: calc(96px + env(safe-area-inset-bottom));
         width: calc(100vw - 28px);
+        max-width: none;
+        padding: 11px 14px;
+        font-size: 14px;
       }
       .gridly-hazard-counter {
         left: 14px;
@@ -2686,6 +2707,7 @@ function bindEvents() {
     });
 
     activeGeoFilter = selectedFilter;
+    updateReportCtaContext({ dim: selectedFilter !== "nearby" && selectedFilter !== "all" });
     renderCrossings();
 
     const visibleCrossings = getVisibleCrossingsForFilter().filter((crossing) => {
@@ -3278,6 +3300,7 @@ function activateDestinationByType(type) {
     return;
   }
   activeDestinationPlace = target;
+  updateReportCtaContext({ dim: true });
   map?.setView([target.lat, target.lng], 14);
   renderDestinationRoute(target);
   scrollToSection("mapSection");
