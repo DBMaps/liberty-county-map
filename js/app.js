@@ -282,6 +282,7 @@ function hydrateElements() {
     "mobileCrossingReportBtn",
     "mobileHazardReportBtn",
     "mapReportShortcutBtn",
+    "mapCenterPulse",
     "destinationHomeBtn",
     "destinationWorkBtn",
     "destinationFavoriteBtn",
@@ -508,6 +509,7 @@ function closeFirstRunSetupModal() {
   if (!els.firstRunSetupModal) return;
   els.firstRunSetupModal.style.display = "none";
   syncModalScrollLock();
+  triggerMapCenterHintPulse();
 }
 function runFirstRunSetupClose() {
   closeFirstRunSetupModal();
@@ -518,6 +520,7 @@ function openModal(modalEl, opener = null) {
   modalEl.hidden = false;
   modalEl.setAttribute("aria-hidden", "false");
   syncModalScrollLock();
+  triggerMapCenterHintPulse();
 }
 function closeModal(modalEl, { restoreFocus = true } = {}) {
   if (!modalEl) return;
@@ -2774,6 +2777,16 @@ function bindEvents() {
 let lastRouteSetupTrigger = null;
 let pendingPlaceCoordinates = null;
 
+function triggerMapCenterHintPulse() {
+  const pulseEl = els.mapCenterPulse;
+  if (!pulseEl) return;
+  pulseEl.classList.remove("is-active");
+  void pulseEl.offsetWidth;
+  pulseEl.classList.add("is-active");
+  setTimeout(() => pulseEl.classList.remove("is-active"), 2600);
+}
+
+
 function openRouteSetupModal(triggerEl = null) {
   if (!els.routeSetupModal) return;
   lastRouteSetupTrigger = triggerEl || document.activeElement || null;
@@ -2782,6 +2795,7 @@ function openRouteSetupModal(triggerEl = null) {
   els.routeSetupModal.style.display = "";
   els.routeSetupModal.setAttribute("aria-hidden", "false");
   syncModalScrollLock();
+  triggerMapCenterHintPulse();
 }
 
 function closeRouteSetupModal(options = {}) {
@@ -3185,7 +3199,11 @@ function saveRoute(source = "desktop") {
   updateRouteIntelligence();
   updateGrowthWidgets();
   flashButton(button, "Place Saved");
-  setConfirmation((lat == null || lng == null) ? "Saved. Add exact location later." : "Saved place updated.", "success");
+  if (source === "mobile" && selectedType === "work") {
+    setConfirmation("Work saved at selected location", "success");
+  } else {
+    setConfirmation((lat == null || lng == null) ? "Saved. Add exact location later." : "Saved place updated.", "success");
+  }
 
   if (source === "mobile") {
     closeRouteSetupModal();
