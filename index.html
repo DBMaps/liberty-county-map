@@ -112,6 +112,7 @@
             <button class="primary-btn hero-map-btn" data-section-jump="map">Check Live Map</button>
             <button class="secondary-btn hero-report-btn" id="desktopReportNearMeBtn">Report Crossing Near Me</button>
             <button class="secondary-btn hero-route-btn" data-section-jump="dashboard">Save Route</button>
+            <button class="secondary-btn compact-btn" id="editSetupBtn" type="button">Edit Setup</button>
             <button class="secondary-btn hero-alerts-btn" data-section-jump="alerts">Alerts</button>
           </div>
         </div>
@@ -119,7 +120,7 @@
 
       <div class="mobile-premium-header" aria-label="Premium today header">
         <div class="mobile-premium-location">
-          <button id="mobileTownSelectorBtn" class="mobile-location-chip" type="button" aria-label="Selected town Dayton, Texas">Dayton, TX
+          <button id="mobileTownSelectorBtn" class="mobile-location-chip" type="button" aria-label="Selected town">My Town
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg>
           </button>
           <button id="mobileWeatherChipBtn" class="mobile-weather-chip" type="button" aria-label="Current weather">74° · Clear</button>
@@ -307,7 +308,7 @@
           <div class="geo-filter-shell" role="group" aria-label="Map filters">
             <button class="geo-filter-pill selected" type="button" data-geo-filter="nearby">Near Me</button>
             <button class="geo-filter-pill" type="button" data-geo-filter="town">My Route</button>
-            <button class="geo-filter-pill" type="button" data-geo-filter="county">Dayton</button>
+            <button class="geo-filter-pill" type="button" data-geo-filter="county">My Town</button>
             <button class="geo-filter-pill" type="button" data-geo-filter="active-delays">Delays</button>
             <button class="geo-filter-pill" type="button" data-geo-filter="all">All</button>
           </div>
@@ -469,6 +470,26 @@
         <button id="mobileSaveRouteBtn" class="primary-btn" type="button">Save Route</button>
         <button id="mobileUseLocationBtn" class="secondary-btn" type="button">Use My Location</button>
       </div>
+    </div>
+  </div>
+
+  <div class="route-setup-modal" id="firstRunSetupModal" hidden>
+    <div class="route-setup-modal-backdrop" id="firstRunSetupBackdrop"></div>
+    <div class="route-setup-modal-card first-run-modal-card" role="dialog" aria-modal="true" aria-labelledby="firstRunSetupTitle">
+      <div class="route-setup-modal-head">
+        <span class="eyebrow">Premium Setup</span>
+      </div>
+      <h2 id="firstRunSetupTitle">Welcome to Gridly</h2>
+      <p class="smart-alerts-subtitle">Know before you go.</p>
+      <div class="setup-grid route-setup-grid-mobile">
+        <label>Your name (optional)<input id="setupNameInput" type="text" placeholder="Name" /></label>
+        <label>Home town (optional)<input id="setupTownInput" type="text" placeholder="Dayton" /></label>
+        <button type="button" class="secondary-btn" id="setupSaveHomeBtn">Save Home</button>
+        <button type="button" class="secondary-btn" id="setupSaveWorkBtn">Save Work / School / Jobsite</button>
+        <button type="button" class="primary-btn" id="completeSetupBtn">Finish setup</button>
+        <button type="button" class="secondary-btn" id="skipSetupBtn">Skip for Now</button>
+      </div>
+      <button type="button" class="secondary-btn compact-btn" id="firstRunEditSetupBtn">Edit Setup</button>
     </div>
   </div>
 
