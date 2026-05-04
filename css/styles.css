@@ -5323,24 +5323,29 @@ body.modal-open {
 
   .map-card .desktop-route-watch-strip {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 4px;
+    gap: 16px;
+    margin-bottom: 12px;
+    flex-wrap: nowrap;
   }
 
   .map-card .desktop-destination-strip {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 2px;
+    gap: 14px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
   }
 
   .map-card .desktop-destination-actions {
-    justify-content: flex-end;
-    gap: 8px;
-    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    max-width: 100%;
+    padding-bottom: 2px;
   }
 
   .map-card .map-tools-overlay {
@@ -5348,21 +5353,28 @@ body.modal-open {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 8px;
+    gap: 10px;
     max-width: 100%;
-    margin: 0 0 8px;
+    margin: 0 0 10px;
     pointer-events: auto;
   }
 
   .map-card .map-tools-overlay .geo-filter-shell {
-    align-self: flex-start;
+    align-self: stretch;
     max-width: 100%;
     overflow-x: auto;
+    padding: 6px 8px;
   }
 
   .map-card .desktop-map-legend-row {
     justify-content: flex-start;
-    align-self: flex-start;
+    align-self: stretch;
+    row-gap: 8px;
+  }
+
+  .map-card #desktopManageRouteBtn {
+    flex: 0 0 auto;
+    margin-left: auto;
   }
 }
 
