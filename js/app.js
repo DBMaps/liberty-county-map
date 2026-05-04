@@ -139,6 +139,7 @@ const els = {};
 
 document.addEventListener("DOMContentLoaded", async () => {
   hydrateElements();
+  gridlyHealthCheck();
   setManualFallbackDefaultState();
   initGreeting();
   updateLastUpdated();
@@ -391,6 +392,7 @@ const ZIP_FALLBACK_LOOKUP = {
 
 function getDefaultGridlyProfile() {
   return {
+    version: 1,
     name: "",
     zipCode: "",
     homeTown: "",
@@ -409,11 +411,13 @@ function getGridlyUserProfile() {
     return getDefaultGridlyProfile();
   }
 }
+function getGridlyProfile() { return getGridlyUserProfile(); }
 function saveGridlyUserProfile(nextProfile = {}) {
   gridlyUserProfile = { ...getDefaultGridlyProfile(), ...gridlyUserProfile, ...nextProfile };
   localStorage.setItem(GRIDLY_PROFILE_STORAGE_KEY, JSON.stringify(gridlyUserProfile));
   updateProfileUI();
 }
+function saveGridlyProfile(profile = {}) { saveGridlyUserProfile(profile); }
 function getMyTownKey() {
   return String(gridlyUserProfile?.homeTown || "Liberty County").trim().toLowerCase() || "liberty county";
 }
@@ -438,6 +442,7 @@ function syncModalScrollLock() {
     hasPlaceNameModal
   );
   document.body.classList.toggle("modal-open", hasOpenModal);
+  document.querySelector(".app-shell")?.toggleAttribute("inert", hasOpenModal);
   document.body.classList.toggle(
     "route-setup-open",
     Boolean(
@@ -448,10 +453,7 @@ function syncModalScrollLock() {
 }
 function openFirstRunSetupModal() {
   if (!els.firstRunSetupModal) return;
-  els.firstRunSetupModal.hidden = false;
-  els.firstRunSetupModal.removeAttribute("aria-hidden");
-  document.querySelector(".app-shell")?.setAttribute("inert", "");
-  syncModalScrollLock();
+  openModal(els.firstRunSetupModal);
   if (els.setupNameInput) els.setupNameInput.value = gridlyUserProfile.name || "";
   if (els.setupZipInput) els.setupZipInput.value = gridlyUserProfile.zipCode || "";
   if (els.setupTownInput) els.setupTownInput.value = gridlyUserProfile.homeTown || "";
@@ -479,15 +481,25 @@ function refreshSetupSummary() {
   if (els.setupSummaryPlaces) els.setupSummaryPlaces.textContent = `Saved places: ${items.length ? items.join(", ") : "None yet"}`;
 }
 function closeFirstRunSetupModal() {
-  if (!els.firstRunSetupModal) return;
-  const focusedElement = document.activeElement;
-  if (focusedElement && els.firstRunSetupModal.contains(focusedElement) && typeof focusedElement.blur === "function") {
-    focusedElement.blur();
-  }
-  els.firstRunSetupModal.hidden = true;
-  els.firstRunSetupModal.removeAttribute("aria-hidden");
-  document.querySelector(".app-shell")?.removeAttribute("inert");
+  closeModal(els.firstRunSetupModal, { restoreFocus: false });
+}
+function openModal(modalEl, opener = null) {
+  if (!modalEl) return;
+  modalEl.__opener = opener || document.activeElement;
+  modalEl.hidden = false;
+  modalEl.setAttribute("aria-hidden", "false");
   syncModalScrollLock();
+}
+function closeModal(modalEl, { restoreFocus = true } = {}) {
+  if (!modalEl) return;
+  const focusedElement = document.activeElement;
+  if (focusedElement && modalEl.contains(focusedElement) && typeof focusedElement.blur === "function") focusedElement.blur();
+  modalEl.hidden = true;
+  modalEl.setAttribute("aria-hidden", "true");
+  syncModalScrollLock();
+  if (restoreFocus && modalEl.__opener && typeof modalEl.__opener.focus === "function") {
+    requestAnimationFrame(() => modalEl.__opener.focus());
+  }
 }
 
 
@@ -555,6 +567,7 @@ function saveSetupPlace(type = "home", explicitLabel = "") {
 
 function openPlaceNameModal(defaultValue = "Work") {
   return new Promise((resolve) => {
+    const previousActive = document.activeElement;
     const modal = document.createElement("div");
     modal.className = "route-setup-modal place-name-modal";
     modal.innerHTML = `
@@ -573,8 +586,9 @@ function openPlaceNameModal(defaultValue = "Work") {
       </div>`;
 
     const cleanup = (value = null) => {
+      closeModal(modal);
       modal.remove();
-      syncModalScrollLock();
+      if (previousActive && typeof previousActive.focus === "function") requestAnimationFrame(() => previousActive.focus());
       resolve(value);
     };
     document.body.appendChild(modal);
@@ -583,12 +597,18 @@ function openPlaceNameModal(defaultValue = "Work") {
       input.value = defaultValue;
       requestAnimationFrame(() => input.focus());
     }
-    syncModalScrollLock();
+    openModal(modal);
     modal.querySelector(".route-setup-modal-backdrop")?.addEventListener("click", () => cleanup(null));
     modal.querySelector("#cancelPlaceNameBtn")?.addEventListener("click", () => cleanup(null));
     modal.querySelector("#savePlaceNameBtn")?.addEventListener("click", () => {
       const value = String(input?.value || "").trim() || defaultValue;
       cleanup(value);
+    });
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) cleanup(null);
+    });
+    modal.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") cleanup(null);
     });
   });
 }
@@ -1516,11 +1536,11 @@ function buildHazardPopup(incident) {
     : "This may no longer be active.";
   const actionButtons = isFresh
     ? `
-        <button class="popup-report-btn warning" onclick="confirmHazardStillThere('${sanitizeText(hazard.type)}', ${hazard.lat}, ${hazard.lng})">Still There</button>
-        <button class="popup-report-btn blue" onclick="clearHazard('${sanitizeText(hazard.type)}', ${hazard.lat}, ${hazard.lng})">Cleared</button>
+        <button class="popup-report-btn warning" data-action="confirm-hazard" data-hazard-type="${sanitizeText(hazard.type)}" data-lat="${hazard.lat}" data-lng="${hazard.lng}">Still There</button>
+        <button class="popup-report-btn blue" data-action="clear-hazard" data-hazard-type="${sanitizeText(hazard.type)}" data-lat="${hazard.lat}" data-lng="${hazard.lng}">Cleared</button>
       `
     : `
-        <button class="popup-report-btn warning" onclick="confirmHazardStillThere('${sanitizeText(hazard.type)}', ${hazard.lat}, ${hazard.lng})">Confirm Now</button>
+        <button class="popup-report-btn warning" data-action="confirm-hazard" data-hazard-type="${sanitizeText(hazard.type)}" data-lat="${hazard.lat}" data-lng="${hazard.lng}">Confirm Now</button>
       `
     ;
 
@@ -1533,7 +1553,7 @@ function buildHazardPopup(incident) {
 
       <div class="popup-report-grid">
         ${actionButtons}
-        <button class="popup-report-btn neutral" onclick="zoomToHazard(${hazard.lat}, ${hazard.lng})">View Area</button>
+        <button class="popup-report-btn neutral" data-action="zoom-hazard" data-lat="${hazard.lat}" data-lng="${hazard.lng}">View Area</button>
       </div>
     </div>
   `;
@@ -1796,15 +1816,15 @@ counter.textContent = "No live road hazards";
   panel.innerHTML = `
     <div class="hazard-panel-header">
       <strong>Report Road Hazard</strong>
-      <button type="button" onclick="closeHazardPanel()">×</button>
+      <button type="button" data-action="close-hazard-panel">×</button>
     </div>
     <p>Gridly will use your current GPS location for the hazard report.</p>
     <div class="hazard-choice-grid">
-      <button type="button" onclick="submitHazardNearMe('flooding')">🌊 Flooding</button>
-      <button type="button" onclick="submitHazardNearMe('debris')">⚠️ Debris</button>
-      <button type="button" onclick="submitHazardNearMe('crash')">🚗 Crash / Wreck</button>
-      <button type="button" onclick="submitHazardNearMe('construction')">🚧 Construction</button>
-      <button type="button" onclick="submitHazardNearMe('other_hazard')">❗ Other Hazard</button>
+      <button type="button" data-action="submit-hazard" data-hazard-type="flooding">🌊 Flooding</button>
+      <button type="button" data-action="submit-hazard" data-hazard-type="debris">⚠️ Debris</button>
+      <button type="button" data-action="submit-hazard" data-hazard-type="crash">🚗 Crash / Wreck</button>
+      <button type="button" data-action="submit-hazard" data-hazard-type="construction">🚧 Construction</button>
+      <button type="button" data-action="submit-hazard" data-hazard-type="other_hazard">❗ Other Hazard</button>
     </div>
   `;
 
@@ -2301,6 +2321,7 @@ function setReportMode(mode) {
 }
 
 function bindEvents() {
+  migrateLegacyStorage();
   const bindTapSafeClose = (element, handler) => {
     if (!element) return;
     const invoke = (event) => {
@@ -2445,6 +2466,42 @@ function bindEvents() {
   };
 
   document.addEventListener("pointerup", handlePopupAction);
+  const handleDataActionClick = (event) => {
+    const actionEl = event.target.closest("[data-action]");
+    if (!actionEl) return;
+    const action = actionEl.dataset.action;
+    if (!action) return;
+    if (action === "confirm-hazard") {
+      event.preventDefault();
+      confirmHazardStillThere(actionEl.dataset.hazardType, Number(actionEl.dataset.lat), Number(actionEl.dataset.lng));
+      return;
+    }
+    if (action === "clear-hazard") {
+      event.preventDefault();
+      clearHazard(actionEl.dataset.hazardType, Number(actionEl.dataset.lat), Number(actionEl.dataset.lng));
+      return;
+    }
+    if (action === "zoom-hazard") {
+      event.preventDefault();
+      zoomToHazard(Number(actionEl.dataset.lat), Number(actionEl.dataset.lng));
+      return;
+    }
+    if (action === "close-hazard-panel") {
+      event.preventDefault();
+      closeHazardPanel();
+      return;
+    }
+    if (action === "submit-hazard") {
+      event.preventDefault();
+      submitHazardNearMe(actionEl.dataset.hazardType);
+      return;
+    }
+    if (action === "zoom-crossing") {
+      event.preventDefault();
+      zoomToCrossing(actionEl.dataset.crossingId);
+    }
+  };
+  document.addEventListener("click", handleDataActionClick);
   els.mobileOpenLiveMapBtn?.addEventListener("click", () => {
     setConfirmation("Opening Live Map.", "success");
   });
@@ -2533,28 +2590,31 @@ function bindEvents() {
     }
   });
 
-  document.querySelectorAll(".nav-btn").forEach((btn) => {
+  const navTargets = {
+    dashboard: "dashboardSection",
+    map: "mapSection",
+    routes: "setupCard",
+    report: "reportSection",
+    alerts: "alertsSection",
+    "live-feed": "alertsSection"
+  };
+  const routeNavSection = (section) => {
+    const target = navTargets[section];
+    if (!target) return;
+    scrollToSection(target);
+    if (section === "alerts" || section === "live-feed") openSmartAlertsModal();
+    if (section === "map") setTimeout(() => map?.invalidateSize(), 350);
+    if (section === "report") setReportMode(activeReportMode || REPORT_MODES.rail);
+    if (section === "routes" && window.matchMedia("(max-width: 1100px)").matches) {
+      openRouteSetupModal();
+    }
+  };
+  document.querySelectorAll(".nav-btn[data-section]").forEach((btn) => {
     btn.addEventListener("click", () => {
-      document.querySelectorAll(".nav-btn").forEach((b) => b.classList.remove("active"));
+      const scope = btn.closest(".top-nav, .left-rail, .mobile-bottom-nav");
+      scope?.querySelectorAll(".nav-btn").forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
-
-      const targets = {
-        dashboard: "dashboardSection",
-        map: "mapSection",
-        routes: "setupCard",
-        report: "reportSection",
-        alerts: "alertsSection"
-      };
-
-      scrollToSection(targets[btn.dataset.section]);
-
-      if (btn.dataset.section === "alerts") {
-        openSmartAlertsModal();
-      }
-
-      if (btn.dataset.section === "map") {
-        setTimeout(() => map?.invalidateSize(), 350);
-      }
+      routeNavSection(btn.dataset.section);
     });
   });
 
@@ -2569,22 +2629,7 @@ function bindEvents() {
         return;
       }
 
-      const targets = {
-        dashboard: "dashboardSection",
-        map: "mapSection",
-        routes: "setupCard",
-        report: "reportSection",
-        alerts: "alertsSection"
-      };
-
-      const targetId = targets[btn.dataset.sectionJump];
-      if (!targetId) return;
-
-      scrollToSection(targetId);
-
-      if (btn.dataset.sectionJump === "map") {
-        setTimeout(() => map?.invalidateSize(), 350);
-      }
+      routeNavSection(btn.dataset.sectionJump);
     });
   });
 
@@ -2709,36 +2754,25 @@ function openRouteSetupModal(triggerEl = null) {
   if (!els.routeSetupModal) return;
   lastRouteSetupTrigger = triggerEl || document.activeElement || null;
   loadSavedRoute();
-  els.routeSetupModal.hidden = false;
   els.routeSetupModal.style.display = "";
-  els.routeSetupModal.setAttribute("aria-hidden", "false");
-  syncModalScrollLock();
+  openModal(els.routeSetupModal, lastRouteSetupTrigger);
 }
 
 function closeRouteSetupModal(options = {}) {
   if (!els.routeSetupModal) return;
   const { restoreFocus = true } = options;
-  els.routeSetupModal.hidden = true;
   els.routeSetupModal.style.display = "none";
-  els.routeSetupModal.setAttribute("aria-hidden", "true");
-  syncModalScrollLock();
-
-  if (restoreFocus && lastRouteSetupTrigger && typeof lastRouteSetupTrigger.focus === "function") {
-    lastRouteSetupTrigger.focus();
-  }
+  closeModal(els.routeSetupModal, { restoreFocus });
   lastRouteSetupTrigger = null;
 }
 
 function openSmartAlertsModal() {
   if (!els.smartAlertsModal) return;
-  els.smartAlertsModal.hidden = false;
-  syncModalScrollLock();
+  openModal(els.smartAlertsModal);
 }
 
 function closeSmartAlertsModal() {
-  if (!els.smartAlertsModal) return;
-  els.smartAlertsModal.hidden = true;
-  syncModalScrollLock();
+  closeModal(els.smartAlertsModal);
 }
 
 function handleSmartReportButton() {
@@ -3128,9 +3162,24 @@ function getSavedPlacesState() {
     return { home: null, work: null, custom: [] };
   }
 }
+function migrateLegacyStorage() {
+  const state = getSavedPlacesState();
+  let changed = false;
+  const legacyHome = localStorage.getItem("gridlyHome");
+  const legacyWork = localStorage.getItem("gridlyWork");
+  if (!state.home && legacyHome) {
+    state.home = { id: "home", type: "home", createdAt: new Date().toISOString(), ...inferPlaceFromMap(legacyHome, "Legacy migrated"), label: "Home" };
+    changed = true;
+  }
+  if (!state.work && legacyWork) {
+    state.work = { id: "work", type: "work", createdAt: new Date().toISOString(), ...inferPlaceFromMap(legacyWork, "Legacy migrated"), label: "Work" };
+    changed = true;
+  }
+  if (changed) saveSavedPlacesState(state);
+}
 
 function saveSavedPlacesState(nextState) {
-  localStorage.setItem(SAVED_PLACES_STORAGE_KEY, JSON.stringify(nextState));
+  localStorage.setItem(SAVED_PLACES_STORAGE_KEY, JSON.stringify({ version: 1, home: null, work: null, custom: [], ...nextState }));
 }
 
 function savePlaceType(type, label, address = "") {
@@ -3635,7 +3684,7 @@ function renderTrendingCrossings() {
           : "";
 
       return `
-        <button class="trend-item ${className}" type="button" onclick="zoomToCrossing('${sanitizeText(incident.crossingId)}')">
+        <button class="trend-item ${className}" type="button" data-action="zoom-crossing" data-crossing-id="${sanitizeText(incident.crossingId)}">
           <strong>${sanitizeText(incident.crossingName)}</strong>
           <p>${sanitizeText(freshnessLabel)} · ${sanitizeText(confidenceLabel)} · ${sanitizeText(confirmationLabel)}</p>
         </button>
@@ -3897,7 +3946,7 @@ function handleCrossingSearch() {
   els.searchResults.innerHTML = matches
     .map(
       (crossing) => `
-        <button class="search-result-btn" type="button" onclick="zoomToCrossing('${sanitizeText(crossing.id)}')">
+        <button class="search-result-btn" type="button" data-action="zoom-crossing" data-crossing-id="${sanitizeText(crossing.id)}">
           ${sanitizeText(crossing.name)}
           <span>${sanitizeText(crossing.railroad)} · Click to zoom and report from map</span>
         </button>
@@ -3994,7 +4043,20 @@ function setSync(value) {
 
 function safeText(id, value) {
   if (els[id]) els[id].textContent = value;
+  document.querySelectorAll(`[data-bind-text="${id}"]`).forEach((node) => {
+    node.textContent = value;
+  });
 }
+
+function gridlyHealthCheck() {
+  const ids = [...document.querySelectorAll("[id]")].map((node) => node.id);
+  const dupes = ids.filter((id, index) => ids.indexOf(id) !== index);
+  if (dupes.length) console.warn("[Gridly health] Duplicate IDs:", [...new Set(dupes)]);
+  ["map", "dashboardSection", "reportSection", "alertsSection"].forEach((id) => {
+    if (!document.getElementById(id)) console.warn(`[Gridly health] Missing required element #${id}`);
+  });
+}
+window.gridlyHealthCheck = gridlyHealthCheck;
 
 function sanitizeText(value) {
   return String(value || "")

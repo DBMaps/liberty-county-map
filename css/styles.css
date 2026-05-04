@@ -5395,3 +5395,108 @@ body.modal-open {
   z-index: 1;
   pointer-events: auto;
 }
+
+/* V18.7 stabilization: CSS conflict reduction for modal/nav/map/layout reliability */
+.route-setup-modal,
+.smart-alerts-modal,
+#firstRunSetupModal {
+  z-index: 3200 !important;
+}
+
+.route-setup-modal-backdrop,
+.smart-alerts-modal-backdrop,
+#firstRunSetupModal .route-setup-modal-backdrop {
+  z-index: 0;
+}
+
+.route-setup-modal-card,
+.smart-alerts-modal-card,
+#firstRunSetupModal .first-run-modal-card {
+  position: relative;
+  z-index: 1;
+  width: min(560px, calc(100vw - 32px));
+  max-width: min(560px, calc(100vw - 32px));
+  max-height: min(88vh, 760px);
+  overflow-y: auto;
+}
+
+@media (max-width: 1100px) {
+  #firstRunSetupModal .first-run-modal-card {
+    width: calc(100vw - 12px);
+    max-width: calc(100vw - 12px);
+    max-height: 86vh;
+    border-radius: 20px 20px 0 0;
+  }
+}
+
+body.modal-open {
+  overflow: hidden !important;
+}
+
+.app-shell {
+  overflow-x: clip;
+}
+
+@media (min-width: 1101px) {
+  .desktop-left-rail {
+    position: sticky !important;
+    top: 88px !important;
+    align-self: flex-start;
+    max-height: calc(100vh - 104px);
+    overflow-y: auto;
+    z-index: 55;
+  }
+}
+
+.map-card .map-tools-overlay {
+  position: relative;
+  z-index: 20;
+  max-width: 100%;
+}
+
+.map-card .desktop-map-legend-row {
+  position: relative;
+  z-index: 19;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.map-card .map-ux-strip .geo-filter-shell {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.map-card .map-ux-strip .geo-filter-pill {
+  flex: 0 0 auto;
+  min-height: 34px;
+  padding: 8px 12px;
+}
+
+@media (max-width: 1100px) {
+  .mobile-bottom-nav {
+    left: 10px;
+    right: 10px;
+    bottom: 8px;
+    z-index: 1200;
+    padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
+    gap: 6px;
+  }
+
+  .mobile-bottom-nav-btn {
+    min-height: 42px;
+    padding: 10px 6px;
+  }
+
+  #mobileReportBtn.mobile-sticky-report {
+    bottom: 82px;
+    z-index: 1190;
+  }
+
+  .hero-card {
+    overflow: visible;
+  }
+}
