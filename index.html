@@ -483,7 +483,10 @@
       <p class="smart-alerts-subtitle">Know before you go.</p>
       <div class="setup-grid route-setup-grid-mobile">
         <label>Your name (optional)<input id="setupNameInput" type="text" placeholder="Name" /></label>
-        <label>Home town (optional)<input id="setupTownInput" type="text" placeholder="Dayton" /></label>
+        <label>ZIP Code<input id="setupZipInput" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="5" placeholder="77535" /></label>
+        <p id="setupDetectedTown" class="setup-detected-town" aria-live="polite">Enter ZIP to detect your town.</p>
+        <label>City (fallback)<input id="setupTownInput" type="text" placeholder="City" /></label>
+        <label>State (fallback)<input id="setupStateInput" type="text" maxlength="2" placeholder="TX" /></label>
         <button type="button" class="secondary-btn" id="setupSaveHomeBtn">Save Home</button>
         <button type="button" class="secondary-btn" id="setupSaveWorkBtn">Save Work / School / Jobsite</button>
         <button type="button" class="primary-btn" id="completeSetupBtn">Finish setup</button>
