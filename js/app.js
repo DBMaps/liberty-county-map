@@ -103,6 +103,7 @@ const SMART_ALERTS_DRAWER_SEEN_KEY = "gridlySmartAlertsDrawerSeenV1";
 const MAP_FIRST_HINT_SEEN_KEY = "gridlyMapFirstHintSeenV1";
 const SAVED_PLACES_STORAGE_KEY = "gridlySavedPlacesV1";
 const SELECTED_PLACE_STORAGE_KEY = "gridlySelectedPlaceIdV1";
+const GRIDLY_PROFILE_STORAGE_KEY = "gridlyUserProfileV1";
 const OSRM_ROUTE_API = "https://router.project-osrm.org/route/v1/driving";
 
 let supabaseClient = null;
@@ -126,6 +127,7 @@ let activeReportMode = REPORT_MODES.rail;
 let showAllCrossingsLayer = false;
 let savedRouteCrossingIds = new Set();
 let activeDestinationPlace = null;
+let gridlyUserProfile = getGridlyUserProfile();
 
 let deviceId =
   localStorage.getItem("gridlyDeviceId") ||
@@ -149,6 +151,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   loadSavedRoute();
   loadSmartAlertsPreferences();
   initDailyDestinationHero();
+  updateProfileUI();
+  maybeOpenFirstRunSetup();
 
   await loadCrossings();
   await loadSharedReports();
@@ -285,6 +289,7 @@ function hydrateElements() {
     "destinationEmptyNote",
     "destinationHabitCopy",
     "routeWatchBadge"
+    ,"firstRunSetupModal","firstRunSetupBackdrop","setupNameInput","setupTownInput","completeSetupBtn","skipSetupBtn","setupSaveHomeBtn","setupSaveWorkBtn","editSetupBtn","firstRunEditSetupBtn"
   ].forEach((id) => {
     els[id] = document.getElementById(id);
   });
@@ -326,37 +331,80 @@ function initSupabase() {
 }
 
 function initGreeting() {
+  const namePrefix = gridlyUserProfile?.name ? `, ${gridlyUserProfile.name}` : "";
   const hour = new Date().getHours();
 
   if (hour >= 5 && hour < 12) {
     setGreeting(
-      "Good Morning",
-      "Morning Route Intelligence",
+      `Good Morning${namePrefix}`,
+      "My Town route watch",
       "Check your route before leaving. Gridly watches crossings, live reports, and local impact.",
       "Route Status"
     );
   } else if (hour >= 12 && hour < 17) {
     setGreeting(
-      "Good Afternoon",
+      `Good Afternoon${namePrefix}`,
       "Midday Mobility Check",
       "Heading out soon? Gridly checks nearby crossings, slowdowns, and active road issues.",
       "Current Route"
     );
   } else if (hour >= 17 && hour < 22) {
     setGreeting(
-      "Good Evening",
+      `Good Evening${namePrefix}`,
       "Evening Commute Intelligence",
       "Check your route home before you leave. Gridly watches for crossing delays and local impacts.",
       "Commute Home"
     );
   } else {
     setGreeting(
-      "Late Night Check",
+      `Late Night Check${namePrefix}`,
       "After-Hours Route Watch",
       "Quiet roads are still worth checking. Gridly looks for late-night rail delays and blocked crossings.",
       "Night Route"
     );
   }
+}
+
+function getDefaultGridlyProfile() {
+  return { name: "", homeTown: "Dayton", homeTownLabel: "Dayton", setupComplete: false };
+}
+function getGridlyUserProfile() {
+  try {
+    return { ...getDefaultGridlyProfile(), ...JSON.parse(localStorage.getItem(GRIDLY_PROFILE_STORAGE_KEY) || "{}") };
+  } catch (error) {
+    return getDefaultGridlyProfile();
+  }
+}
+function saveGridlyUserProfile(nextProfile = {}) {
+  gridlyUserProfile = { ...getDefaultGridlyProfile(), ...gridlyUserProfile, ...nextProfile };
+  localStorage.setItem(GRIDLY_PROFILE_STORAGE_KEY, JSON.stringify(gridlyUserProfile));
+  updateProfileUI();
+}
+function getMyTownKey() {
+  return String(gridlyUserProfile?.homeTown || "Dayton").trim().toLowerCase() || "dayton";
+}
+function updateProfileUI() {
+  const townLabel = gridlyUserProfile?.homeTownLabel || gridlyUserProfile?.homeTown || "Dayton";
+  if (els.mobileTownSelectorBtn) {
+    els.mobileTownSelectorBtn.setAttribute("aria-label", `Selected town ${townLabel}, Texas`);
+    els.mobileTownSelectorBtn.innerHTML = `My Town<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg>`;
+    els.mobileTownSelectorBtn.title = townLabel;
+  }
+}
+function maybeOpenFirstRunSetup() {
+  if (!gridlyUserProfile.setupComplete) openFirstRunSetupModal();
+}
+function openFirstRunSetupModal() {
+  if (!els.firstRunSetupModal) return;
+  els.firstRunSetupModal.hidden = false;
+  document.body.classList.add("modal-open");
+  if (els.setupNameInput) els.setupNameInput.value = gridlyUserProfile.name || "";
+  if (els.setupTownInput) els.setupTownInput.value = gridlyUserProfile.homeTownLabel || "Dayton";
+}
+function closeFirstRunSetupModal() {
+  if (!els.firstRunSetupModal) return;
+  els.firstRunSetupModal.hidden = true;
+  document.body.classList.remove("modal-open");
 }
 
 function setGreeting(title, context, subtitle, routeLabel) {
@@ -1159,9 +1207,9 @@ function updateGeoFilterStatus(visibleCrossings = []) {
   if (activeGeoFilter === "nearby") {
     message = count ? `Act now: review ${count} nearby ${crossingLabel} before departure.` : "Action needed: switch filters or zoom to find crossings.";
   } else if (activeGeoFilter === "town") {
-    message = count ? `Route focus: check ${count} likely commute ${crossingLabel}.` : "No route crossings in view. Try Dayton or Delays.";
+    message = count ? `Route focus: check ${count} likely commute ${crossingLabel}.` : "No route crossings in view. Try My Town or Delays.";
   } else if (activeGeoFilter === "county") {
-    message = count ? "Dayton area: scan crossings and tap any issue marker." : "No Dayton crossings visible. Reset map view.";
+    message = count ? "My Town area: scan crossings and tap any issue marker." : "No My Town crossings visible. Reset map view.";
   } else if (activeGeoFilter === "active-delays") {
     const delayLabel = count === 1 ? "delay" : "delays";
     message = count ? `Priority: resolve ${count} active ${delayLabel} affecting routes.` : "Good news: no active delays in this view.";
@@ -1203,7 +1251,7 @@ function getVisibleCrossingsForFilter() {
 
   if (activeGeoFilter === "town") {
     const filtered = crossings.filter(
-      (crossing) => String(crossing.city || "").toLowerCase() === "dayton"
+      (crossing) => String(crossing.city || "").toLowerCase() === getMyTownKey()
     );
 
     if (!filtered.length) {
@@ -2156,7 +2204,7 @@ function bindEvents() {
   const showTownSelectorConfirmation = () => {
     applyGeoFilterFromPill("town");
     scrollToSection("mapSection");
-    showMobileHeaderConfirmation("Showing Dayton crossings.", "success");
+    showMobileHeaderConfirmation("Showing My Town crossings.", "success");
   };
 
   const handleMobileHeaderDelegateTap = (event) => {
@@ -2377,6 +2425,38 @@ function bindEvents() {
     btn.addEventListener("click", () => {
       applyGeoFilterFromPill(btn.dataset.geoFilter || "all");
     });
+  });
+  els.firstRunSetupBackdrop?.addEventListener("click", closeFirstRunSetupModal);
+  els.skipSetupBtn?.addEventListener("click", () => {
+    saveGridlyUserProfile({ setupComplete: false });
+    closeFirstRunSetupModal();
+  });
+  els.completeSetupBtn?.addEventListener("click", () => {
+    const town = String(els.setupTownInput?.value || "Dayton").trim() || "Dayton";
+    saveGridlyUserProfile({
+      name: String(els.setupNameInput?.value || "").trim(),
+      homeTown: town,
+      homeTownLabel: town,
+      setupComplete: true
+    });
+    initGreeting();
+    closeFirstRunSetupModal();
+  });
+  els.setupSaveHomeBtn?.addEventListener("click", () => {
+    const town = String(els.setupTownInput?.value || "Dayton").trim() || "Dayton";
+    localStorage.setItem("gridlyHome", town);
+    loadSavedRoute();
+    setConfirmation("Home saved.", "success");
+  });
+  els.setupSaveWorkBtn?.addEventListener("click", () => {
+    localStorage.setItem("gridlyWork", "Work / School / Jobsite");
+    loadSavedRoute();
+    setConfirmation("Work place saved.", "success");
+  });
+  els.editSetupBtn?.addEventListener("click", openFirstRunSetupModal);
+  els.firstRunEditSetupBtn?.addEventListener("click", () => {
+    closeFirstRunSetupModal();
+    openRouteSetupModal(els.firstRunEditSetupBtn);
   });
 
   const allCrossingsToggle = document.getElementById("allCrossingsLayerToggle");
