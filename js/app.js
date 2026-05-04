@@ -2561,16 +2561,21 @@ function bindEvents() {
     map: "mapSection",
     routes: "setupCard",
     report: "reportSection",
-    alerts: "alertsSection"
+    alerts: "alertsSection",
+    "live-feed": "alertsSection"
   };
   const routeNavSection = (section) => {
     const target = navTargets[section];
     if (!target) return;
     scrollToSection(target);
-    if (section === "alerts") openSmartAlertsModal();
+    if (section === "alerts" || section === "live-feed") openSmartAlertsModal();
     if (section === "map") setTimeout(() => map?.invalidateSize(), 350);
+    if (section === "report") setReportMode(activeReportMode || REPORT_MODES.rail);
+    if (section === "routes" && window.matchMedia("(max-width: 1100px)").matches) {
+      openRouteSetupModal();
+    }
   };
-  document.querySelectorAll(".nav-btn").forEach((btn) => {
+  document.querySelectorAll(".nav-btn[data-section]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const scope = btn.closest(".top-nav, .left-rail, .mobile-bottom-nav");
       scope?.querySelectorAll(".nav-btn").forEach((b) => b.classList.remove("active"));
@@ -2590,22 +2595,7 @@ function bindEvents() {
         return;
       }
 
-      const targets = {
-        dashboard: "dashboardSection",
-        map: "mapSection",
-        routes: "setupCard",
-        report: "reportSection",
-        alerts: "alertsSection"
-      };
-
-      const targetId = targets[btn.dataset.sectionJump];
-      if (!targetId) return;
-
-      scrollToSection(targetId);
-
-      if (btn.dataset.sectionJump === "map") {
-        setTimeout(() => map?.invalidateSize(), 350);
-      }
+      routeNavSection(btn.dataset.sectionJump);
     });
   });
 
