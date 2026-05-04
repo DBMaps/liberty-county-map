@@ -370,7 +370,23 @@ const ZIP_FALLBACK_LOOKUP = {
   "77575": { city: "Liberty", state: "TX" },
   "77327": { city: "Cleveland", state: "TX" },
   "77564": { city: "Hull", state: "TX" },
-  "77582": { city: "Raywood", state: "TX" }
+  "77582": { city: "Raywood", state: "TX" },
+  "77532": { city: "Crosby", state: "TX" },
+  "77336": { city: "Huffman", state: "TX" },
+  "77520": { city: "Baytown", state: "TX" },
+  "77521": { city: "Baytown", state: "TX" },
+  "77523": { city: "Baytown / Mont Belvieu", state: "TX" },
+  "77580": { city: "Mont Belvieu", state: "TX" },
+  "77530": { city: "Channelview", state: "TX" },
+  "77346": { city: "Humble / Atascocita", state: "TX" },
+  "77338": { city: "Humble", state: "TX" },
+  "77339": { city: "Kingwood", state: "TX" },
+  "77345": { city: "Kingwood", state: "TX" },
+  "77365": { city: "Porter", state: "TX" },
+  "77357": { city: "New Caney", state: "TX" },
+  "77372": { city: "Splendora", state: "TX" },
+  "77351": { city: "Livingston", state: "TX" },
+  "77331": { city: "Coldspring", state: "TX" }
 };
 
 function getDefaultGridlyProfile() {
@@ -2498,13 +2514,28 @@ function bindEvents() {
       applyGeoFilterFromPill(btn.dataset.geoFilter || "all");
     });
   });
-  els.firstRunSetupBackdrop?.addEventListener("click", closeFirstRunSetupModal);
-  els.skipSetupBtn?.addEventListener("click", () => {
+
+  const bindSetupAction = (element, handler) => {
+    if (!element || typeof handler !== "function") return;
+    let lastTouchTs = 0;
+    element.addEventListener("pointerup", (event) => {
+      if (event.pointerType !== "touch") return;
+      lastTouchTs = Date.now();
+      handler(event);
+    });
+    element.addEventListener("click", (event) => {
+      if (Date.now() - lastTouchTs < 500) return;
+      handler(event);
+    });
+  };
+
+  bindSetupAction(els.firstRunSetupBackdrop, closeFirstRunSetupModal);
+  bindSetupAction(els.skipSetupBtn, () => {
     saveGridlyUserProfile({ setupComplete: true, setupSkipped: true });
     closeFirstRunSetupModal();
   });
   els.setupZipInput?.addEventListener("input", updateDetectedTownFromZip);
-  els.completeSetupBtn?.addEventListener("click", () => {
+  bindSetupAction(els.completeSetupBtn, () => {
     const zipCode = String(els.setupZipInput?.value || "").trim();
     const detected = resolveZipCode(zipCode);
     const town = String(els.setupTownInput?.value || detected?.city || "").trim();
@@ -2521,10 +2552,10 @@ function bindEvents() {
     initGreeting();
     closeFirstRunSetupModal();
   });
-  els.setupSaveHomeBtn?.addEventListener("click", () => saveSetupPlace("home"));
-  els.setupSaveWorkBtn?.addEventListener("click", () => saveSetupPlace("work"));
-  els.editSetupBtn?.addEventListener("click", openFirstRunSetupModal);
-  els.firstRunEditSetupBtn?.addEventListener("click", () => {
+  bindSetupAction(els.setupSaveHomeBtn, () => saveSetupPlace("home"));
+  bindSetupAction(els.setupSaveWorkBtn, () => saveSetupPlace("work"));
+  bindSetupAction(els.editSetupBtn, openFirstRunSetupModal);
+  bindSetupAction(els.firstRunEditSetupBtn, () => {
     closeFirstRunSetupModal();
     openRouteSetupModal(els.firstRunEditSetupBtn);
   });

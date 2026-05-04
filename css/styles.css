@@ -5289,3 +5289,93 @@ body.modal-open {
     -webkit-overflow-scrolling: touch;
   }
 }
+
+/* V18.6 stabilization: desktop rail stickiness, control stacking, map readability, onboarding tap safety */
+@media (min-width: 1101px) {
+  .app-shell.premium-layout {
+    align-items: start;
+  }
+
+  .desktop-left-rail {
+    position: sticky !important;
+    top: 88px !important;
+    align-self: start;
+    max-height: calc(100vh - 104px);
+    overflow-y: auto;
+    z-index: 40;
+  }
+
+  .map-card .desktop-route-watch-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+
+  .map-card .desktop-destination-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 2px;
+  }
+
+  .map-card .desktop-destination-actions {
+    justify-content: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .map-card .map-tools-overlay {
+    position: static !important;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    max-width: 100%;
+    margin: 0 0 8px;
+    pointer-events: auto;
+  }
+
+  .map-card .map-tools-overlay .geo-filter-shell {
+    align-self: flex-start;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .map-card .desktop-map-legend-row {
+    justify-content: flex-start;
+    align-self: flex-start;
+  }
+}
+
+#map {
+  filter: saturate(0.96) brightness(0.92) contrast(1.16) !important;
+}
+
+.map-card::before {
+  opacity: 0.06 !important;
+}
+
+#map .leaflet-tile-pane .leaflet-tile {
+  filter: grayscale(0.14) brightness(0.9) contrast(1.12) saturate(0.78) hue-rotate(182deg) !important;
+}
+
+#map .leaflet-roadsPane-pane .leaflet-tile {
+  filter: saturate(1.1) brightness(1.02) contrast(1.08) hue-rotate(186deg) !important;
+}
+
+#map .leaflet-labelsPane-pane .leaflet-tile {
+  filter: grayscale(0.02) brightness(1.08) contrast(1.2) !important;
+}
+
+#firstRunSetupModal .route-setup-modal-backdrop {
+  pointer-events: auto;
+}
+
+#firstRunSetupModal .first-run-modal-card {
+  position: relative;
+  z-index: 1;
+  pointer-events: auto;
+}
