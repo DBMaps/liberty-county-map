@@ -1020,25 +1020,9 @@ async function fetchRoadRouteCoordinates(from, to) {
 }
 
 function drawPremiumRouteLine(latLngs, color = getRouteStatusColor()) {
-  if (!savedRouteLayer || !Array.isArray(latLngs) || latLngs.length < 2) return;
-
-  L.polyline(latLngs, {
-    pane: "routePane",
-    color,
-    weight: 14,
-    opacity: 0.22,
-    lineCap: "round",
-    lineJoin: "round"
-  }).addTo(savedRouteLayer);
-
-  L.polyline(latLngs, {
-    pane: "routePane",
-    color,
-    weight: 7,
-    opacity: 0.96,
-    lineCap: "round",
-    lineJoin: "round"
-  }).addTo(savedRouteLayer);
+  if (!savedRouteLayer) return;
+  // Gridly V18.2 trust patch: keep routing hooks intact, but disable placeholder visual route lines.
+  return;
 }
 
 async function renderSavedRouteLine() {

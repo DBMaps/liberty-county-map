@@ -296,9 +296,6 @@
             <p class="eyebrow">Live Mobility Map</p>
             <h2>Live Map Center</h2>
             <p class="map-note" id="mapTrustNote">Route clarity first. Tap markers for nearby blocks and reports.</p>
-            <div class="crossing-status-legend mobile-map-legend" aria-label="Crossing status legend">
-              <span class="legend-pill blocked">Blocked</span><span class="legend-pill delayed">Delayed</span><span class="legend-pill cleared">Cleared</span><span class="legend-pill inactive">Inactive</span>
-            </div>
           </div>
 
           <div class="actions">
@@ -306,18 +303,19 @@
           </div>
         </div>
 
-        <div class="desktop-map-legend-row" aria-label="Crossing status legend">
-          <span class="legend-pill blocked">Blocked</span><span class="legend-pill delayed">Delayed</span><span class="legend-pill cleared">Cleared</span><span class="legend-pill inactive">Inactive</span>
+        <div class="map-tools-overlay" aria-label="Map controls">
+          <div class="geo-filter-shell" role="group" aria-label="Map filters">
+            <button class="geo-filter-pill selected" type="button" data-geo-filter="nearby">Near Me</button>
+            <button class="geo-filter-pill" type="button" data-geo-filter="town">My Route</button>
+            <button class="geo-filter-pill" type="button" data-geo-filter="county">Dayton</button>
+            <button class="geo-filter-pill" type="button" data-geo-filter="active-delays">Delays</button>
+            <button class="geo-filter-pill" type="button" data-geo-filter="all">All</button>
+          </div>
+          <div class="crossing-status-legend desktop-map-legend-row" aria-label="Crossing status legend">
+            <span class="legend-pill blocked">Blocked</span><span class="legend-pill delayed">Delayed</span><span class="legend-pill cleared">Cleared</span><span class="legend-pill inactive">Inactive</span>
+          </div>
+          <details class="all-crossings-advanced"><summary>Advanced</summary><label class="all-crossings-toggle"><input id="allCrossingsLayerToggle" type="checkbox" /> Show all crossings layer</label></details>
         </div>
-
-        <div class="map-ux-strip"><div class="geo-filter-shell" role="group" aria-label="Map filters">
-          <button class="geo-filter-pill selected" type="button" data-geo-filter="nearby">Near Me</button>
-          <button class="geo-filter-pill" type="button" data-geo-filter="town">My Route</button>
-          <button class="geo-filter-pill" type="button" data-geo-filter="county">Dayton</button>
-          <button class="geo-filter-pill" type="button" data-geo-filter="active-delays">Delays</button>
-          <button class="geo-filter-pill" type="button" data-geo-filter="all">All</button>
-        </div></div>
-        <details class="all-crossings-advanced"><summary>Advanced</summary><label class="all-crossings-toggle"><input id="allCrossingsLayerToggle" type="checkbox" /> Show all crossings layer</label></details>
 
         <div class="geo-filter-status" id="geoFilterStatus" role="status" aria-live="polite" aria-atomic="true">
           Act now: review nearby crossings before departure
