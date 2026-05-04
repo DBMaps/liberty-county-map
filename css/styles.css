@@ -5254,13 +5254,18 @@ body.modal-open {
 }
 
 .setup-detected-town { margin: 0; color: #9ad9ff; font-size: 0.92rem; }
+#firstRunSetupModal .first-run-modal-card { max-height: 88vh; }
+#firstRunSetupModal .setup-wizard { display: block; }
+#firstRunSetupModal .setup-step { display: grid; gap: 12px; }
+#firstRunSetupModal .setup-step .primary-btn,
+#firstRunSetupModal .setup-step .secondary-btn { min-height: 48px; width: 100%; }
 
 @media (max-width: 1100px) {
   #firstRunSetupModal { align-items: end; }
   #firstRunSetupModal .first-run-modal-card {
     width: 100%;
     max-width: 100%;
-    max-height: 92vh;
+    max-height: 88vh;
     border-radius: 20px 20px 0 0;
     padding-bottom: 28px;
   }

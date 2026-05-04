@@ -289,7 +289,7 @@ function hydrateElements() {
     "destinationEmptyNote",
     "destinationHabitCopy",
     "routeWatchBadge",
-    "firstRunSetupModal","firstRunSetupBackdrop","setupNameInput","setupZipInput","setupTownInput","setupStateInput","setupDetectedTown","completeSetupBtn","skipSetupBtn","setupSaveHomeBtn","setupSaveWorkBtn","editSetupBtn","firstRunEditSetupBtn"
+    "firstRunSetupModal","firstRunSetupBackdrop","setupNameInput","setupZipInput","setupTownInput","setupStateInput","setupDetectedTown","completeSetupBtn","skipSetupBtn","setupSaveHomeBtn","setupSaveWorkBtn","editSetupBtn","firstRunEditSetupBtn","setupStartBtn","setupNameContinueBtn","setupZipContinueBtn","setupSkipPlacesBtn","setupPlacesContinueBtn","setupSummaryTown","setupSummaryPlaces","setupTownFallbackLabel","setupStateFallbackLabel"
   ].forEach((id) => {
     els[id] = document.getElementById(id);
   });
@@ -395,6 +395,8 @@ function getDefaultGridlyProfile() {
     zipCode: "",
     homeTown: "",
     state: "",
+    homeTownLat: null,
+    homeTownLng: null,
     homeTownLabel: "",
     setupComplete: false,
     setupSkipped: false
@@ -444,18 +446,44 @@ function syncModalScrollLock() {
 function openFirstRunSetupModal() {
   if (!els.firstRunSetupModal) return;
   els.firstRunSetupModal.hidden = false;
-  els.firstRunSetupModal.setAttribute("aria-hidden", "false");
+  els.firstRunSetupModal.removeAttribute("aria-hidden");
+  document.querySelector(".app-shell")?.setAttribute("inert", "");
   syncModalScrollLock();
   if (els.setupNameInput) els.setupNameInput.value = gridlyUserProfile.name || "";
   if (els.setupZipInput) els.setupZipInput.value = gridlyUserProfile.zipCode || "";
   if (els.setupTownInput) els.setupTownInput.value = gridlyUserProfile.homeTown || "";
   if (els.setupStateInput) els.setupStateInput.value = gridlyUserProfile.state || "";
+  setSetupStep(1);
   updateDetectedTownFromZip();
+}
+let setupStep = 1;
+let setupPlacesSummary = { home: false, work: false };
+function setSetupStep(step = 1) {
+  setupStep = step;
+  document.querySelectorAll("[data-setup-step]").forEach((node) => {
+    const isActive = Number(node.dataset.setupStep) === step;
+    node.hidden = !isActive;
+    node.classList.toggle("is-active", isActive);
+  });
+}
+function refreshSetupSummary() {
+  const town = String(els.setupTownInput?.value || "").trim();
+  const state = String(els.setupStateInput?.value || "").trim();
+  if (els.setupSummaryTown) els.setupSummaryTown.textContent = `My Town: ${town ? `${town}${state ? `, ${state}` : ""}` : "Not set"}`;
+  const items = [];
+  if (setupPlacesSummary.home) items.push("Home");
+  if (setupPlacesSummary.work) items.push("Work / School / Jobsite");
+  if (els.setupSummaryPlaces) els.setupSummaryPlaces.textContent = `Saved places: ${items.length ? items.join(", ") : "None yet"}`;
 }
 function closeFirstRunSetupModal() {
   if (!els.firstRunSetupModal) return;
+  const focusedElement = document.activeElement;
+  if (focusedElement && els.firstRunSetupModal.contains(focusedElement) && typeof focusedElement.blur === "function") {
+    focusedElement.blur();
+  }
   els.firstRunSetupModal.hidden = true;
-  els.firstRunSetupModal.setAttribute("aria-hidden", "true");
+  els.firstRunSetupModal.removeAttribute("aria-hidden");
+  document.querySelector(".app-shell")?.removeAttribute("inert");
   syncModalScrollLock();
 }
 
@@ -464,18 +492,45 @@ function resolveZipCode(zipCode = "") {
   const normalized = String(zipCode || "").trim();
   return ZIP_FALLBACK_LOOKUP[normalized] || null;
 }
+let zipLookupDebounceTimer = null;
+let latestZipLookupToken = 0;
+let lastDetectedTown = null;
+async function resolveZipCodeWithApi(zipCode = "") {
+  const normalized = String(zipCode || "").trim();
+  if (!/^\d{5}$/.test(normalized)) return null;
+  try {
+    const response = await fetch(`https://api.zippopotam.us/us/${normalized}`);
+    if (!response.ok) throw new Error("zip lookup failed");
+    const payload = await response.json();
+    const firstPlace = payload?.places?.[0];
+    if (!firstPlace) throw new Error("zip missing place");
+    return {
+      city: firstPlace["place name"] || "",
+      state: firstPlace["state abbreviation"] || "",
+      lat: firstPlace.latitude ? Number(firstPlace.latitude) : null,
+      lng: firstPlace.longitude ? Number(firstPlace.longitude) : null
+    };
+  } catch (error) {
+    return resolveZipCode(normalized);
+  }
+}
 
-function updateDetectedTownFromZip() {
+async function updateDetectedTownFromZip() {
   if (!els.setupDetectedTown) return null;
   const zip = String(els.setupZipInput?.value || "").trim();
-  const detected = resolveZipCode(zip);
+  const detected = await resolveZipCodeWithApi(zip);
+  const hasManualFallback = Boolean(zip && !detected);
+  if (els.setupTownFallbackLabel) els.setupTownFallbackLabel.hidden = !hasManualFallback;
+  if (els.setupStateFallbackLabel) els.setupStateFallbackLabel.hidden = !hasManualFallback;
   if (detected) {
+    lastDetectedTown = detected;
     els.setupDetectedTown.textContent = `Detected town: ${detected.city}, ${detected.state}`;
     if (els.setupTownInput) els.setupTownInput.value = detected.city;
     if (els.setupStateInput) els.setupStateInput.value = detected.state;
     return detected;
   }
   els.setupDetectedTown.textContent = zip ? "ZIP not recognized. Enter city and state manually." : "Enter ZIP to detect your town.";
+  lastDetectedTown = null;
   return null;
 }
 
@@ -2534,10 +2589,32 @@ function bindEvents() {
     saveGridlyUserProfile({ setupComplete: true, setupSkipped: true });
     closeFirstRunSetupModal();
   });
-  els.setupZipInput?.addEventListener("input", updateDetectedTownFromZip);
+  bindSetupAction(els.setupStartBtn, () => setSetupStep(2));
+  bindSetupAction(els.setupNameContinueBtn, () => setSetupStep(3));
+  els.setupZipInput?.addEventListener("input", () => {
+    clearTimeout(zipLookupDebounceTimer);
+    zipLookupDebounceTimer = setTimeout(async () => {
+      latestZipLookupToken += 1;
+      const token = latestZipLookupToken;
+      await updateDetectedTownFromZip();
+      if (token !== latestZipLookupToken) return;
+    }, 250);
+  });
+  bindSetupAction(els.setupZipContinueBtn, async () => {
+    await updateDetectedTownFromZip();
+    setSetupStep(4);
+  });
+  bindSetupAction(els.setupSkipPlacesBtn, () => {
+    refreshSetupSummary();
+    setSetupStep(5);
+  });
+  bindSetupAction(els.setupPlacesContinueBtn, () => {
+    refreshSetupSummary();
+    setSetupStep(5);
+  });
   bindSetupAction(els.completeSetupBtn, () => {
     const zipCode = String(els.setupZipInput?.value || "").trim();
-    const detected = resolveZipCode(zipCode);
+    const detected = lastDetectedTown || resolveZipCode(zipCode);
     const town = String(els.setupTownInput?.value || detected?.city || "").trim();
     const state = String(els.setupStateInput?.value || detected?.state || "").trim();
     saveGridlyUserProfile({
@@ -2545,6 +2622,8 @@ function bindEvents() {
       zipCode,
       homeTown: town,
       state,
+      homeTownLat: detected?.lat ?? null,
+      homeTownLng: detected?.lng ?? null,
       homeTownLabel: town ? `${town}${state ? `, ${state}` : ""}` : "",
       setupComplete: true,
       setupSkipped: false
@@ -2552,8 +2631,18 @@ function bindEvents() {
     initGreeting();
     closeFirstRunSetupModal();
   });
-  bindSetupAction(els.setupSaveHomeBtn, () => saveSetupPlace("home"));
-  bindSetupAction(els.setupSaveWorkBtn, () => saveSetupPlace("work"));
+  bindSetupAction(els.setupSaveHomeBtn, () => {
+    saveSetupPlace("home");
+    setupPlacesSummary.home = true;
+    setConfirmation("Home saved.", "success");
+    refreshSetupSummary();
+  });
+  bindSetupAction(els.setupSaveWorkBtn, () => {
+    saveSetupPlace("work");
+    setupPlacesSummary.work = true;
+    setConfirmation("Work / School / Jobsite saved.", "success");
+    refreshSetupSummary();
+  });
   bindSetupAction(els.editSetupBtn, openFirstRunSetupModal);
   bindSetupAction(els.firstRunEditSetupBtn, () => {
     closeFirstRunSetupModal();
