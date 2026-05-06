@@ -1599,6 +1599,12 @@ function renderCrossings() {
     const marker = L.marker([crossing.lat, crossing.lng], { icon })
       .bindPopup(buildPopup(crossing, report), { maxWidth: 350 })
       .addTo(crossingLayer);
+
+    marker.on("popupopen", () => {
+      const popupEl = marker.getPopup()?.getElement?.();
+      if (popupEl) wirePopupReportButtons(popupEl);
+    });
+
     const markerEl = marker.getElement?.();
     if (markerEl) {
       markerEl.classList.toggle("route-priority", isOnSavedRoute);
@@ -2630,6 +2636,33 @@ function injectHazardStyles() {
   document.head.appendChild(style);
 }
 
+
+function wirePopupReportButtons(popupRoot) {
+  if (!popupRoot) return;
+
+  popupRoot.querySelectorAll(".popup-report-btn[data-crossing-id][data-report-type]").forEach((button) => {
+    if (button.dataset.boundPopupHandler === "1") return;
+
+    let lastSubmittedAt = 0;
+    const submitFromPopup = async (event) => {
+      const now = Date.now();
+      if (now - lastSubmittedAt < 350) return;
+      lastSubmittedAt = now;
+
+      event.preventDefault();
+      event.stopPropagation();
+      const crossingId = button.getAttribute("data-crossing-id");
+      const reportType = button.getAttribute("data-report-type");
+      if (!crossingId || !reportType || typeof window.reportCrossingFromPopup !== "function") return;
+      await window.reportCrossingFromPopup(crossingId, reportType, button);
+    };
+
+    button.addEventListener("click", submitFromPopup);
+    button.addEventListener("pointerup", submitFromPopup);
+    button.dataset.boundPopupHandler = "1";
+  });
+}
+
 function buildPopup(crossing, report) {
   const lifecycleState = getIncidentLifecycleState(report);
   const status = report
@@ -2921,7 +2954,8 @@ function bindEvents() {
     await window.reportCrossingFromPopup(crossingId, reportType, crossingButton);
   };
 
-  document.addEventListener("pointerup", handlePopupAction);
+  document.addEventListener("pointerup", handlePopupAction, true);
+  document.addEventListener("click", handlePopupAction, true);
   const handleDataActionClick = (event) => {
     const actionEl = event.target.closest("[data-action]");
     if (!actionEl) return;
