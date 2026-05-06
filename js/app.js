@@ -2523,10 +2523,22 @@ function bindEvents() {
   els.saveSmartAlertsBtn?.addEventListener("click", saveSmartAlertsPreferences);
   els.closeSmartAlertsModalBtn?.addEventListener("click", closeSmartAlertsModal);
   els.mobileSaveRouteBtn?.addEventListener("click", () => saveRoute("mobile"));
-  [els.destinationAddBtn, els.desktopDestinationAddBtn].forEach((btn) => btn?.addEventListener("click", () => openRouteSetupModal(btn)));
-  [els.destinationHomeBtn, els.desktopDestinationHomeBtn].forEach((btn) => btn?.addEventListener("click", () => activateDestinationByType("home")));
-  [els.destinationWorkBtn, els.desktopDestinationWorkBtn].forEach((btn) => btn?.addEventListener("click", () => activateDestinationByType("work")));
-  [els.destinationFavoriteBtn, els.desktopDestinationFavoriteBtn].forEach((btn) => btn?.addEventListener("click", () => activateDestinationByType("favorite")));
+  [els.destinationAddBtn, els.desktopDestinationAddBtn].forEach((btn) => btn?.addEventListener("click", () => {
+    console.log("Route Watch Add Place clicked");
+    openRouteSetupModalForType("custom");
+  }));
+  [els.destinationHomeBtn, els.desktopDestinationHomeBtn].forEach((btn) => btn?.addEventListener("click", () => {
+    console.log("Route Watch Home clicked");
+    activateDestinationByType("home");
+  }));
+  [els.destinationWorkBtn, els.desktopDestinationWorkBtn].forEach((btn) => btn?.addEventListener("click", () => {
+    console.log("Route Watch Work clicked");
+    activateDestinationByType("work");
+  }));
+  [els.destinationFavoriteBtn, els.desktopDestinationFavoriteBtn].forEach((btn) => btn?.addEventListener("click", () => {
+    console.log("Route Watch Favorites clicked");
+    activateDestinationByType("favorite");
+  }));
   [els.savedDestinationSelect, els.mobileSavedDestinationSelect].forEach((selectEl) => {
     selectEl?.addEventListener("change", (event) => {
       const nextId = event.target.value;
@@ -2578,6 +2590,7 @@ function bindEvents() {
     openRouteSetupModal(event.currentTarget);
   });
   els.desktopManageRouteBtn?.addEventListener("click", (event) => {
+    console.log("Manage Route clicked");
     openRouteSetupModal(event.currentTarget);
   });
 
@@ -2679,6 +2692,8 @@ function bindEvents() {
   });
   bindSetupAction(els.setupStartBtn, () => setSetupStep(2));
   bindSetupAction(els.setupNameContinueBtn, () => setSetupStep(3));
+  els.setupStartBtn?.addEventListener("click", () => setSetupStep(2));
+  els.setupNameContinueBtn?.addEventListener("click", () => setSetupStep(3));
   els.setupZipInput?.addEventListener("input", () => {
     clearTimeout(zipLookupDebounceTimer);
     zipLookupDebounceTimer = setTimeout(async () => {
@@ -3291,7 +3306,7 @@ function activateDestinationByType(type) {
   const target = type === "favorite" ? state.custom[0] : state[type];
   if (!target) {
     setConfirmation("No saved place yet. Add a place first.", "error");
-    openRouteSetupModal();
+    openRouteSetupModalForType(type);
     return;
   }
   activeDestinationPlace = target;
@@ -3299,6 +3314,20 @@ function activateDestinationByType(type) {
   renderDestinationRoute(target);
   scrollToSection("mapSection");
   setConfirmation(`Route Watch set: ${target.label}.`, "success");
+}
+
+function openRouteSetupModalForType(type) {
+  openRouteSetupModal();
+  if (!els.routeSetupModal) return;
+  const normalizedType = type === "favorite" ? "custom" : type;
+  els.routeSetupModal.dataset.prefillType = normalizedType;
+  if (normalizedType === "home") {
+    els.mobileHomeInput?.focus();
+    return;
+  }
+  if (normalizedType === "work" || normalizedType === "custom") {
+    els.mobileWorkInput?.focus();
+  }
 }
 
 async function renderDestinationRoute(target) {
