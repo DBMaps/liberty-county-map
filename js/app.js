@@ -1600,7 +1600,13 @@ function renderCrossings() {
       .bindPopup(buildPopup(crossing, report), { maxWidth: 350 })
       .addTo(crossingLayer);
 
+    marker.on("click", () => {
+      console.log("Crossing marker clicked", String(crossing.id));
+      marker.openPopup();
+    });
+
     marker.on("popupopen", () => {
+      console.log("Crossing popup opened", String(crossing.id));
       const popupEl = marker.getPopup()?.getElement?.();
       if (popupEl) wirePopupReportButtons(popupEl);
     });
@@ -2653,6 +2659,7 @@ function wirePopupReportButtons(popupRoot) {
       event.stopPropagation();
       const crossingId = button.getAttribute("data-crossing-id");
       const reportType = button.getAttribute("data-report-type");
+      console.log("Crossing report button clicked", { type: reportType, crossingId });
       if (!crossingId || !reportType || typeof window.reportCrossingFromPopup !== "function") return;
       await window.reportCrossingFromPopup(crossingId, reportType, button);
     };
@@ -2717,6 +2724,7 @@ function getRouteImpactSummary(report, crossing) {
 
 window.reportCrossingFromPopup = async function (crossingId, reportType, buttonEl) {
   const normalizedType = String(reportType || "").trim().toLowerCase();
+  console.log("Submitting crossing report:", normalizedType || "other", String(crossingId));
   const crossing = crossings.find((item) => String(item.id) === String(crossingId));
 
   if (!crossing) {
@@ -2941,17 +2949,7 @@ function bindEvents() {
       return;
     }
 
-    const crossingButton = event.target.closest(".popup-report-btn[data-crossing-id][data-report-type]");
-    if (!crossingButton) return;
-
-    const crossingId = crossingButton.getAttribute("data-crossing-id");
-    const reportType = crossingButton.getAttribute("data-report-type");
-    if (!crossingId || !reportType || typeof window.reportCrossingFromPopup !== "function") return;
-
-    event.preventDefault();
-    event.stopPropagation();
-    console.debug("Popup report clicked", crossingId, reportType);
-    await window.reportCrossingFromPopup(crossingId, reportType, crossingButton);
+    return;
   };
 
   document.addEventListener("pointerup", handlePopupAction, true);
@@ -3494,6 +3492,7 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
     }
 
     setConfirmation(`Shared report submitted: ${crossing.name} as ${copy.label}.`, "success");
+    console.log("Crossing report saved", { crossingId: String(crossing.id), type: reportType });
 
     setSync("Live report shared");
     showShareCard();
