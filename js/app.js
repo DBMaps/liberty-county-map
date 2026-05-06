@@ -113,6 +113,8 @@ let map;
 let crossingLayer;
 let crossingMarkers = new Map();
 let savedRouteLayer;
+let lastRenderedRouteKey = "";
+let routeFocusArmed = true;
 let crossings = [];
 let activeReports = [];
 let activeHazards = [];
@@ -1170,6 +1172,7 @@ function renderCrossings() {
           : "state-normal";
     const isNearby = nearbyReportCrossingIds.has(String(crossing.id));
     const isOnSavedRoute = savedRouteCrossingIds.has(String(crossing.id));
+    const isImpactedOnRoute = isOnSavedRoute && hasActiveIssue;
     const isOffRouteFaded = hasSavedRoute && !isOnSavedRoute;
     const markerLabel = getMarkerLabel(report, markerStateClass, lifecycleState);
     const clusterCount = smartClusterState.leadCounts.get(String(crossing.id)) || 0;
@@ -1194,6 +1197,7 @@ function renderCrossings() {
     if (markerEl) {
       markerEl.classList.toggle("route-priority", isOnSavedRoute);
       markerEl.classList.toggle("off-route-faded", isOffRouteFaded);
+      markerEl.classList.toggle("route-impacted", isImpactedOnRoute);
     }
 
     crossingMarkers.set(String(crossing.id), marker);
@@ -1271,20 +1275,69 @@ async function fetchRoadRouteCoordinates(from, to) {
 }
 
 function drawPremiumRouteLine(latLngs, color = getRouteStatusColor()) {
-  if (!savedRouteLayer) return;
-  // Gridly V18.2 trust patch: keep routing hooks intact, but disable placeholder visual route lines.
-  return;
+  if (!savedRouteLayer || !Array.isArray(latLngs) || latLngs.length < 2) return;
+
+  const glow = L.polyline(latLngs, {
+    pane: "routePane",
+    color: "#3cf2ff",
+    weight: 10,
+    opacity: 0.18,
+    lineJoin: "round",
+    lineCap: "round",
+    interactive: false
+  });
+
+  const core = L.polyline(latLngs, {
+    pane: "routePane",
+    color,
+    weight: 4,
+    opacity: 0.88,
+    lineJoin: "round",
+    lineCap: "round",
+    interactive: false
+  });
+
+  const accent = L.polyline(latLngs, {
+    pane: "routePane",
+    color: "#9efaff",
+    weight: 2,
+    opacity: 0.68,
+    lineJoin: "round",
+    lineCap: "round",
+    interactive: false
+  });
+
+  savedRouteLayer.addLayer(glow);
+  savedRouteLayer.addLayer(core);
+  savedRouteLayer.addLayer(accent);
+
+  if (map && routeFocusArmed) {
+    const bounds = L.latLngBounds(latLngs);
+    if (bounds.isValid()) {
+      map.fitBounds(bounds, { paddingTopLeft: [24, 120], paddingBottomRight: [24, 80], maxZoom: 13, animate: false });
+      routeFocusArmed = false;
+    }
+  }
 }
 
 async function renderSavedRouteLine() {
   if (!savedRouteLayer) return;
-  savedRouteLayer.clearLayers();
   const routeCrossings = inferSavedRouteCrossings();
   savedRouteCrossingIds = new Set(routeCrossings.map((c) => String(c.id)));
-  if (routeCrossings.length < 2) return;
+  if (routeCrossings.length < 2) {
+    lastRenderedRouteKey = "";
+    routeFocusArmed = true;
+    savedRouteLayer.clearLayers();
+    return;
+  }
 
   const from = [routeCrossings[0].lat, routeCrossings[0].lng];
   const to = [routeCrossings[routeCrossings.length - 1].lat, routeCrossings[routeCrossings.length - 1].lng];
+  const routeKey = `${from.join(",")}|${to.join(",")}|${getRouteStatusColor()}`;
+  if (routeKey === lastRenderedRouteKey) return;
+  lastRenderedRouteKey = routeKey;
+
+  savedRouteLayer.clearLayers();
   const osrmPath = await fetchRoadRouteCoordinates(from, to);
   const fallbackPath = routeCrossings.map((crossing) => [crossing.lat, crossing.lng]);
   drawPremiumRouteLine(osrmPath?.length > 1 ? osrmPath : fallbackPath);
@@ -3328,7 +3381,11 @@ function updateRouteWatchBadge(routeLabel = "Route") {
   const blocked = routeReports.some((r) => String(r.type).toLowerCase() === "blocked" && getIncidentLifecycleState(r) === "active");
   const delays = routeReports.filter((r) => String(r.type).toLowerCase() === "heavy" && getIncidentLifecycleState(r) === "active").length;
   const tone = blocked ? "route-red" : delays ? "route-amber" : "route-green";
-  const status = blocked ? "Impacted Route" : delays ? "Some Delays" : "Clear Route";
+  const status = blocked
+    ? "High impact crossing detected"
+    : delays
+      ? "Minor delay risk"
+      : "Route clear";
   els.routeWatchBadge.hidden = false;
   els.routeWatchBadge.classList.remove("route-green", "route-amber", "route-red");
   els.routeWatchBadge.classList.add(tone);
@@ -3336,6 +3393,7 @@ function updateRouteWatchBadge(routeLabel = "Route") {
 }
 
 function loadSavedRoute() {
+  routeFocusArmed = true;
   const selectedPlace = getSelectedPlace();
   const home = selectedPlace?.name || localStorage.getItem("gridlyHome");
   const work = selectedPlace?.address || localStorage.getItem("gridlyWork");
