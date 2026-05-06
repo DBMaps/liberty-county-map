@@ -29,11 +29,11 @@
     </div>
 
     <nav class="top-nav command-top-nav">
-      <span class="live-data-pill">● Live Data</span>
+      <button class="live-data-pill top-command-btn" id="desktopLiveDataBtn" type="button">● Live Data</button>
       <button class="nav-btn" data-section="alerts">Alerts</button>
       <button class="nav-btn" data-section="report">Reports</button>
       <button class="nav-btn" data-section="settings">Settings</button>
-      <span class="profile-chip">Dispatcher</span>
+      <button class="profile-chip top-command-btn" id="desktopDispatcherBtn" type="button">Dispatcher</button>
     </nav>
   </header>
 
@@ -309,7 +309,7 @@
               <button class="geo-filter-pill" type="button" data-geo-filter="all">All</button>
             </div>
             <div class="crossing-status-legend desktop-map-legend-row" aria-label="Crossing status legend">
-              <span class="legend-pill blocked">Blocked</span><span class="legend-pill delayed">Delayed</span><span class="legend-pill cleared">Cleared</span><span class="legend-pill inactive">Inactive</span>
+              <button class="legend-pill blocked desktop-legend-btn" id="desktopLegendBlockedBtn" type="button" data-geo-filter="active-delays">Blocked</button><button class="legend-pill delayed desktop-legend-btn" id="desktopLegendDelayedBtn" type="button" data-geo-filter="active-delays">Delayed</button><button class="legend-pill cleared desktop-legend-btn" id="desktopLegendClearedBtn" type="button" data-geo-filter="all">Cleared</button><span class="legend-pill inactive">Inactive</span>
             </div>
             <details class="all-crossings-advanced"><summary>Advanced</summary><label class="all-crossings-toggle"><input id="allCrossingsLayerToggle" type="checkbox" /> Show all crossings layer</label></details>
           </div>

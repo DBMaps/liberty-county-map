@@ -2672,6 +2672,33 @@ function bindEvents() {
       openRouteSetupModal();
     }
   };
+
+  const isDesktopViewport = () => !window.matchMedia("(max-width: 1100px)").matches;
+  const handleDesktopCommandAction = (section) => {
+    const fallbackMessages = {
+      weather: "Weather coming soon",
+      settings: "Settings coming soon",
+      dispatcher: "Dispatcher profile coming soon"
+    };
+    if (section === "crossings") {
+      routeNavSection("map");
+      setConfirmation("Opening map crossings.", "success");
+      return;
+    }
+    if (section === "analytics") {
+      document.getElementById("alertsSection")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      const impactDrawer = document.querySelector(".desktop-command-panel .panel-card.drawer-panel:nth-of-type(2)");
+      if (impactDrawer) impactDrawer.open = true;
+      setConfirmation("Opening Impact Score.", "success");
+      return;
+    }
+    if (fallbackMessages[section]) {
+      setConfirmation(fallbackMessages[section], "info");
+      return;
+    }
+    routeNavSection(section);
+  };
+
   const leftRailLogBySection = {
     dashboard: "Left rail Today clicked",
     map: "Left rail Map clicked",
@@ -2686,11 +2713,42 @@ function bindEvents() {
       const scope = btn.closest(".top-nav, .left-rail, .desktop-left-rail, .mobile-bottom-nav");
       scope?.querySelectorAll(".nav-btn").forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
+      const isDesktopCommand = Boolean(btn.closest(".top-nav, .desktop-left-rail")) && !btn.closest(".mobile-bottom-nav");
+      if (isDesktopCommand && isDesktopViewport()) {
+        console.log(`Desktop command button clicked: ${section}`);
+      }
       if (btn.closest(".desktop-left-rail")) {
         const logMessage = leftRailLogBySection[section];
         if (logMessage) console.log(logMessage);
       }
+      if (isDesktopCommand && isDesktopViewport()) {
+        handleDesktopCommandAction(section);
+        return;
+      }
       routeNavSection(section);
+    });
+  });
+
+
+  document.getElementById("desktopLiveDataBtn")?.addEventListener("click", () => {
+    if (!isDesktopViewport()) return;
+    console.log("Desktop command button clicked: live-data");
+    routeNavSection("map");
+    setConfirmation("Live data map opened.", "success");
+  });
+
+  document.getElementById("desktopDispatcherBtn")?.addEventListener("click", () => {
+    if (!isDesktopViewport()) return;
+    console.log("Desktop command button clicked: dispatcher");
+    handleDesktopCommandAction("dispatcher");
+  });
+
+  ["desktopLegendBlockedBtn", "desktopLegendDelayedBtn", "desktopLegendClearedBtn"].forEach((id) => {
+    document.getElementById(id)?.addEventListener("click", (event) => {
+      if (!isDesktopViewport()) return;
+      const filterKey = event.currentTarget?.dataset?.geoFilter || "all";
+      console.log(`Desktop map legend button clicked: ${id}`);
+      applyGeoFilterFromPill(filterKey);
     });
   });
 
