@@ -26,26 +26,31 @@
         <img class="brand-logo-img" src="assets/gridly-logo-primary.png" alt="Gridly logo" />
       </div>
       <span class="beta-pill">Liberty County Beta</span>
-      </div>
+    </div>
 
-    <nav class="top-nav">
-      <button class="nav-btn active" data-section="dashboard">Today</button>
-      <button class="nav-btn" data-section="map">Map</button>
-      <button class="nav-btn" data-section="report">Report</button>
+    <nav class="top-nav command-top-nav">
+      <span class="live-data-pill">● Live Data</span>
       <button class="nav-btn" data-section="alerts">Alerts</button>
-      <button class="nav-btn desktop-only-nav" data-section="routes">Routes</button>
+      <button class="nav-btn" data-section="report">Reports</button>
+      <button class="nav-btn" data-section="settings">Settings</button>
+      <span class="profile-chip">Dispatcher</span>
     </nav>
   </header>
 
   <main class="app-shell premium-layout">
     <aside class="desktop-left-rail" aria-label="Operations navigation">
       <div class="rail-brand">GRIDLY</div>
-      <button class="rail-nav-btn nav-btn active" data-section="dashboard" type="button">Today</button>
+      <button class="rail-nav-btn nav-btn active" data-section="dashboard" type="button">Home</button>
       <button class="rail-nav-btn nav-btn" data-section="map" type="button">Map</button>
-      <button class="rail-nav-btn nav-btn" data-section="report" type="button">Report</button>
       <button class="rail-nav-btn nav-btn" data-section="alerts" type="button">Alerts</button>
       <button class="rail-nav-btn nav-btn" data-section="routes" type="button">Routes</button>
-          </aside>
+      <button class="rail-nav-btn nav-btn" data-section="report" type="button">Reports</button>
+      <button class="rail-nav-btn nav-btn" data-section="crossings" type="button">Crossings</button>
+      <button class="rail-nav-btn nav-btn" data-section="analytics" type="button">Analytics</button>
+      <button class="rail-nav-btn nav-btn" data-section="weather" type="button">Weather</button>
+      <button class="rail-nav-btn nav-btn" data-section="settings" type="button">Settings</button>
+      <button class="rail-cta-btn secondary-btn" id="desktopReportNearMeBtnRail" type="button">Report Issue Near Me</button>
+    </aside>
     <div class="main-column">
     <section class="dashboard" id="dashboardSection">
     <section class="future-map-hero" aria-label="Live route intelligence hero">
