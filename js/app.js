@@ -624,61 +624,51 @@ function initMap() {
 
   L.control.zoom({ position: "bottomright" }).addTo(map);
 
-  map.createPane("roadsPane");
-  map.getPane("roadsPane").style.zIndex = 410;
-
-  map.createPane("railPane");
-  map.getPane("railPane").style.zIndex = 420;
-
-  map.createPane("labelsPane");
-  map.getPane("labelsPane").style.zIndex = 640;
-
   map.createPane("routePane");
   map.getPane("routePane").style.zIndex = 630;
+  map.createPane("satLabelsPane");
+  map.getPane("satLabelsPane").style.zIndex = 640;
 
-  const darkBaseLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png", {
-    subdomains: "abcd",
-    maxZoom: 20,
-    attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
-  });
-
-  const secondaryRoadLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png", {
-    subdomains: "abcd",
-    maxZoom: 20,
-    pane: "roadsPane",
-    opacity: 0.9,
-    attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
-  });
-
-  const highwayLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png", {
-    subdomains: "abcd",
-    maxZoom: 20,
-    pane: "roadsPane",
-    opacity: 1,
-    attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
-  });
-
-  const railCorridorLayer = L.tileLayer("https://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png", {
+  const standardLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     subdomains: "abc",
-    maxZoom: 19,
-    pane: "railPane",
-    opacity: 0.02,
-    attribution: "Map style: OpenRailwayMap"
+    maxZoom: 20,
+    attribution: "&copy; OpenStreetMap contributors"
   });
 
-  const premiumLabelLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png", {
+  const darkLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
     subdomains: "abcd",
     maxZoom: 20,
-    pane: "labelsPane",
-    opacity: 0.78,
     attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
   });
 
-  darkBaseLayer.addTo(map);
-  secondaryRoadLayer.addTo(map);
-  highwayLayer.addTo(map);
-  railCorridorLayer.addTo(map);
-  premiumLabelLayer.addTo(map);
+  const satelliteLayer = L.tileLayer(
+    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    {
+      maxZoom: 20,
+      attribution: "Tiles &copy; Esri"
+    }
+  );
+
+  const satelliteLabelsLayer = L.tileLayer(
+    "https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png",
+    {
+      subdomains: "abcd",
+      maxZoom: 20,
+      pane: "satLabelsPane",
+      opacity: 0.95,
+      attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
+    }
+  );
+
+  const satelliteHybrid = L.layerGroup([satelliteLayer, satelliteLabelsLayer]);
+  const baseLayers = {
+    Standard: standardLayer,
+    Dark: darkLayer,
+    Satellite: satelliteHybrid
+  };
+
+  darkLayer.addTo(map);
+  L.control.layers(baseLayers, null, { position: "topright", collapsed: true }).addTo(map);
 
   crossingLayer = L.layerGroup().addTo(map);
   savedRouteLayer = L.layerGroup().addTo(map);

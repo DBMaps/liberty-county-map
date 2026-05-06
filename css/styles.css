@@ -903,6 +903,32 @@ select:focus {
     display: none;
   }
 }
+
+/* Gridly V18 style fix: keep basemap color true-to-source for command-center readability. */
+#map,
+#map::before,
+#map::after,
+#map .leaflet-pane,
+#map .leaflet-layer,
+#map .leaflet-tile-pane .leaflet-tile,
+#map .leaflet-roadsPane-pane .leaflet-tile,
+#map .leaflet-railPane-pane .leaflet-tile,
+#map .leaflet-labelsPane-pane .leaflet-tile,
+#map .leaflet-control-zoom,
+#map .leaflet-control-attribution,
+.leaflet-tile,
+.map-card::before {
+  filter: none !important;
+  mix-blend-mode: normal !important;
+}
+
+#map::before,
+#map::after,
+.map-card::before {
+  content: none !important;
+  background: none !important;
+  opacity: 0 !important;
+}
 @media (max-width: 1100px) {
   .desktop-route-watch-strip {
     display: none;
