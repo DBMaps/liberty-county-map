@@ -4555,11 +4555,7 @@ function getSelectedCorridorId() {
 }
 
 function selectFocusedCorridor(corridorStats = []) {
-  const valid = (Array.isArray(corridorStats) ? corridorStats : []).filter((item) => {
-    const corridor = item?.corridor || {};
-    const severityRank = getCorridorSeverityRank(item?.status?.severityLabel || "Clear");
-    return hasValidCorridorCoordinates(corridor) && severityRank > 0;
-  });
+  const valid = (Array.isArray(corridorStats) ? corridorStats : []).filter((item) => hasValidCorridorCoordinates(item?.corridor || {}));
   if (!valid.length) return null;
 
   const selectedCorridorId = getSelectedCorridorId();
@@ -4568,13 +4564,7 @@ function selectFocusedCorridor(corridorStats = []) {
     if (selected) return selected;
   }
 
-  const ranked = valid.sort((a, b) => {
-    const severityDiff = getCorridorSeverityRank(b?.status?.severityLabel || "Clear") - getCorridorSeverityRank(a?.status?.severityLabel || "Clear");
-    if (severityDiff !== 0) return severityDiff;
-    return (b?.status?.delayScore || 0) - (a?.status?.delayScore || 0);
-  });
-
-  return ranked[0] || null;
+  return null;
 }
 
 function getCorridorGuidanceMessage(severityLabel = "Clear") {
@@ -4601,10 +4591,11 @@ function isRouteWatchActive() {
   return Boolean(activeDestinationPlace) || savedRouteCrossingIds.size >= 2;
 }
 
-function shouldRenderCorridorLine({ severityLabel = "Clear", selectedCorridorId = "" } = {}) {
+function shouldRenderCorridorLine({ selectedCorridorId = "", hasSavedRouteSelection = false } = {}) {
   if (selectedCorridorId) return true;
+  if (hasSavedRouteSelection) return true;
   if (isRouteWatchActive()) return true;
-  return severityLabel === "Blocked";
+  return false;
 }
 
 function drawCorridorIntelLines(corridorStats = []) {
@@ -4614,8 +4605,10 @@ function drawCorridorIntelLines(corridorStats = []) {
   const corridor = item?.corridor || {};
   const state = item?.status || {};
   const severityLabel = state.severityLabel || "Clear";
+  const selectedCorridorId = getSelectedCorridorId();
+  const hasSavedRouteSelection = Boolean(activeDestinationPlace) || savedRouteCrossingIds.size >= 2;
   if (!hasValidCorridorCoordinates(corridor)) return;
-  if (!shouldRenderCorridorLine({ severityLabel, selectedCorridorId: getSelectedCorridorId() })) return;
+  if (!shouldRenderCorridorLine({ selectedCorridorId, hasSavedRouteSelection })) return;
 
   const latLngs = [
     [Number(corridor.startLat), Number(corridor.startLng)],

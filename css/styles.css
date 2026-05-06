@@ -5984,28 +5984,57 @@ body.modal-open {
 
 /* GRIDLY Phase 3C: desktop map control visibility hardening */
 @media (min-width: 1101px) {
-  .map-card,
-  .map-card .map-frame {
-    overflow: visible;
-  }
-
   .map-card .map-frame {
     position: relative;
-    padding-top: 4px;
+    overflow: hidden;
+    padding-top: 0;
   }
 
   .map-card .map-tools-overlay {
+    position: absolute;
     top: 16px;
     left: 16px;
+    right: auto;
+    bottom: auto;
     z-index: 1200;
-    pointer-events: auto;
-    max-width: min(calc(100% - 32px), 760px);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 10px;
+    pointer-events: none;
+    max-width: min(calc(100% - 32px), 340px);
+    width: max-content;
+    overflow: visible;
   }
 
-  .map-card .map-tools-overlay .geo-filter-shell,
-  .map-card .map-tools-overlay .crossing-status-legend,
-  .map-card .map-tools-overlay .geo-filter-pill,
-  .map-card .map-tools-overlay .desktop-legend-btn {
+  .map-card .map-tools-overlay > * {
     pointer-events: auto;
+    max-width: 100%;
+  }
+
+  .map-card .map-tools-overlay .geo-filter-shell {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
+    max-width: 340px;
+    overflow: visible;
+    padding: 10px;
+  }
+
+  .map-card .map-tools-overlay .geo-filter-pill {
+    flex: 0 1 auto;
+    min-width: fit-content;
+    white-space: nowrap;
+  }
+
+  .map-card .map-tools-overlay .crossing-status-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
+    max-width: 340px;
+    overflow: visible;
   }
 }
