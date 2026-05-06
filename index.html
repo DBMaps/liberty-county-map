@@ -33,7 +33,6 @@
       <button class="nav-btn" data-section="map">Map</button>
       <button class="nav-btn" data-section="report">Report</button>
       <button class="nav-btn" data-section="alerts">Alerts</button>
-      <button id="headerShareGridlyBtn" class="nav-btn mobile-share-nav" type="button" aria-label="Share Gridly">Share</button>
       <button class="nav-btn desktop-only-nav" data-section="routes">Routes</button>
     </nav>
   </header>
@@ -42,12 +41,11 @@
     <aside class="desktop-left-rail" aria-label="Operations navigation">
       <div class="rail-brand">GRIDLY</div>
       <button class="rail-nav-btn nav-btn active" data-section="dashboard" type="button">Today</button>
-      <button class="rail-nav-btn nav-btn" data-section="map" type="button">Live Map</button>
+      <button class="rail-nav-btn nav-btn" data-section="map" type="button">Map</button>
       <button class="rail-nav-btn nav-btn" data-section="report" type="button">Report</button>
       <button class="rail-nav-btn nav-btn" data-section="alerts" type="button">Alerts</button>
       <button class="rail-nav-btn nav-btn" data-section="routes" type="button">Routes</button>
-      <button class="rail-nav-btn nav-btn" data-section="live-feed" type="button">Live Driver Feed</button>
-    </aside>
+          </aside>
     <div class="main-column">
     <section class="dashboard" id="dashboardSection">
     <section class="future-map-hero" aria-label="Live route intelligence hero">
@@ -109,10 +107,7 @@
           </div>
 
           <div class="hero-actions">
-            <button class="primary-btn hero-map-btn" data-section-jump="map">Check Live Map</button>
             <button class="secondary-btn hero-report-btn" id="desktopReportNearMeBtn">Report Crossing Near Me</button>
-            <button class="secondary-btn hero-route-btn" data-section-jump="dashboard">Save Route</button>
-            <button class="secondary-btn compact-btn" id="editSetupBtn" type="button">Edit Setup</button>
             <button class="secondary-btn hero-alerts-btn" data-section-jump="alerts">Alerts</button>
           </div>
         </div>
@@ -123,7 +118,6 @@
           <button id="mobileTownSelectorBtn" class="mobile-location-chip" type="button" aria-label="Selected town">My Town
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg>
           </button>
-          <button id="mobileWeatherChipBtn" class="mobile-weather-chip" type="button" aria-label="Current weather">74° · Clear</button>
         </div>
         <div class="mobile-premium-actions" aria-label="Header actions">
           <button id="mobileBellBtn" class="mobile-icon-btn" type="button" aria-label="Alerts">
@@ -161,7 +155,6 @@
         <article class="mobile-home-card mobile-quick-actions-card" aria-label="Quick actions">
           <span>Quick Actions</span>
           <div class="mobile-quick-actions">
-            <button class="secondary-btn" id="mobileQuickReportSmallBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9l-8 14A1 1 0 0 0 3.2 19h17.6a1 1 0 0 0 .9-1.5l-8-14a1 1 0 0 0-1.7 0z"/></svg> Report Delay</button>
             <button class="secondary-btn" id="mobileQuickClearedBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Cleared</button>
             <button class="secondary-btn" id="mobileQuickRouteBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg> My Route</button>
             <button class="secondary-btn" id="mobileQuickFavoritesBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 17h5l-1.4-1.4a2 2 0 0 1-.6-1.4V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5"/><path d="M10 20a2 2 0 0 0 4 0"/></svg> Alerts</button>
@@ -285,7 +278,7 @@
           <div class="desktop-destination-actions">
             <button class="secondary-btn compact-btn destination-chip" id="desktopDestinationHomeBtn" type="button">Home</button>
             <button class="secondary-btn compact-btn destination-chip" id="desktopDestinationWorkBtn" type="button">Work</button>
-            <button class="secondary-btn compact-btn destination-chip" id="desktopDestinationFavoriteBtn" type="button">Favorites</button>
+            <button class="secondary-btn compact-btn destination-chip" id="desktopDestinationFavoriteBtn" type="button">Favorite</button>
             <button class="secondary-btn compact-btn destination-chip" id="desktopDestinationAddBtn" type="button">Add Place</button>
           </div>
         </article>
@@ -498,8 +491,8 @@
     Gridly Beta • Liberty County
   </footer>
 
-  <nav class="mobile-bottom-app-nav" aria-label="Mobile app navigation">
-    <button class="mobile-bottom-nav-btn nav-btn active" data-section="dashboard" type="button">Home</button>
+  <nav class="mobile-bottom-nav" aria-label="Mobile app navigation">
+    <button class="mobile-bottom-nav-btn nav-btn active" data-section="dashboard" type="button">Today</button>
     <button class="mobile-bottom-nav-btn nav-btn" data-section="map" type="button">Map</button>
     <button class="mobile-bottom-nav-btn nav-btn" data-section="report" type="button">Report</button>
     <button class="mobile-bottom-nav-btn nav-btn" data-section="alerts" type="button">Alerts</button>
