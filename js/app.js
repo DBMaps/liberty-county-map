@@ -333,7 +333,6 @@ function hydrateElements() {
     "desktopDestinationAddBtn",
     "destinationEmptyNote",
     "destinationHabitCopy",
-    "routeWatchBadge",
     "routeWatchLivePill",
     "liveOpsStatus",
     "liveOpsDetail",
@@ -4191,31 +4190,14 @@ async function renderDestinationRoute(target) {
 }
 
 function updateRouteWatchBadge(routeLabel = "Route") {
-  if (!els.routeWatchBadge) return;
   const activation = getLineActivationContext();
   if (!activation.hasActivation) {
-    els.routeWatchBadge.hidden = false;
-    els.routeWatchBadge.classList.remove("route-green", "route-amber", "route-red");
-    els.routeWatchBadge.textContent = "Route Watch: OFF · Select Active Route";
     if (els.routeWatchLivePill) {
       els.routeWatchLivePill.textContent = "Monitoring OFF";
       els.routeWatchLivePill.classList.remove("is-on");
     }
     return;
   }
-  const routeReports = activeReports.filter((r) => savedRouteCrossingIds.has(String(r.crossingId)));
-  const blocked = routeReports.some((r) => String(r.type).toLowerCase() === "blocked" && getIncidentLifecycleState(r) === "active");
-  const delays = routeReports.filter((r) => String(r.type).toLowerCase() === "heavy" && getIncidentLifecycleState(r) === "active").length;
-  const tone = blocked ? "route-red" : delays ? "route-amber" : "route-green";
-  const status = blocked
-    ? "High impact crossing detected"
-    : delays
-      ? "Minor delay risk"
-      : "Route clear";
-  els.routeWatchBadge.hidden = false;
-  els.routeWatchBadge.classList.remove("route-green", "route-amber", "route-red");
-  els.routeWatchBadge.classList.add(tone);
-  els.routeWatchBadge.textContent = `Route Watch: ON · ${routeLabel} · ${status}`;
   if (els.routeWatchLivePill) {
     els.routeWatchLivePill.textContent = "Monitoring ON";
     els.routeWatchLivePill.classList.add("is-on");
