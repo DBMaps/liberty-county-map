@@ -608,6 +608,15 @@ function ensureSeededMovementIntelligence() {
   return saveMovementIntelligence(seeded);
 }
 
+function getReportFreshnessMultiplier(minutesAgo = 0) {
+  const age = Math.max(0, Number(minutesAgo) || 0);
+  if (age <= 10) return 1;
+  if (age <= 20) return 0.75;
+  if (age <= 45) return 0.5;
+  if (age <= 90) return 0.25;
+  return 0;
+}
+
 function computeCorridorStatus(corridor = {}) {
   const normalized = normalizeMovementIntelligence({ corridors: [corridor] }).corridors[0] || {};
   const hasValidCoordinates =
@@ -623,6 +632,11 @@ function computeCorridorStatus(corridor = {}) {
       delayScore: 0,
       confidence: 0,
       freshness: 0,
+      weightedScore: 0,
+      freshnessMultiplier: 0,
+      stackedReportCount: 0,
+      computedSeverity: "Clear",
+      computedConfidence: 0,
       severityLabel: "Clear",
       hasValidCoordinates,
       warning: "Missing baselineMinutes or currentMinutes."
@@ -635,24 +649,46 @@ function computeCorridorStatus(corridor = {}) {
   const linkedCorridor = (Array.isArray(window.__gridlyMovementReportLinks) ? window.__gridlyMovementReportLinks : []).find((item) => item.corridorId === normalized.id);
   const linkedReports = Array.isArray(linkedCorridor?.linkedReports) ? linkedCorridor.linkedReports : [];
 
-  const now = Date.now();
-  const reportWeights = linkedReports.map((report) => {
+  const incidentsByLocation = getUnifiedIncidents();
+  const activeReports = linkedReports.filter((report) => ["active", "recently_cleared", "cleared"].includes(getIncidentLifecycleState(report)));
+  let weightedScore = 0;
+  let weightedFreshness = 0;
+  let confirmationScore = 0;
+  const uniqueUsers = new Set();
+
+  activeReports.forEach((report) => {
+    const type = String(report.type || "").toLowerCase();
     const minutesAgo = Math.max(0, Number(report.minutesAgo) || 0);
-    const freshnessWeight = Math.max(0.08, 1 - minutesAgo / REPORT_EXPIRATION_MINUTES);
-    return { minutesAgo, freshnessWeight };
+    const freshnessMultiplier = getReportFreshnessMultiplier(minutesAgo);
+    if (!freshnessMultiplier) return;
+
+    const incident = incidentsByLocation.find((item) => getReportLocationKey(item.latestReport) === getReportLocationKey(report));
+    const confirmations = Math.max(1, Number(incident?.reports_count || incident?.count || 1));
+    const uniqueUserCount = Math.max(1, Number(incident?.users_count || 1));
+    const reportBase = type === "blocked" ? 70 : type === "heavy" ? 40 : type === "delayed" ? 20 : type === "cleared" || type === "hazard_cleared" ? -35 : 12;
+
+    weightedScore += reportBase * freshnessMultiplier;
+    weightedFreshness += freshnessMultiplier;
+    confirmationScore += Math.max(0, confirmations - 1) * 6 * freshnessMultiplier;
+    Array.from({ length: uniqueUserCount }).forEach((_, idx) => uniqueUsers.add(`${report.id || report.crossingId || report.crossingName || 'unknown'}-${idx}`));
   });
 
-  const freshness = reportWeights.length
-    ? Math.max(0, Math.min(100, Math.round((reportWeights.reduce((sum, item) => sum + item.freshnessWeight, 0) / reportWeights.length) * 100)))
-    : 0;
-  const confirmations = Math.max(0, linkedReports.length - 1);
-  const confirmationFactor = Math.min(1, confirmations / 4);
-  const countFactor = Math.min(1, linkedReports.length / 5);
-  const ageFactor = freshness / 100;
-  const confidence = Math.round((countFactor * 0.45 + confirmationFactor * 0.3 + ageFactor * 0.25) * 100);
+  const stackedReportCount = activeReports.filter((report) => getReportFreshnessMultiplier(report.minutesAgo) > 0).length;
+  const freshness = stackedReportCount ? Math.round((weightedFreshness / stackedReportCount) * 100) : 0;
+  const freshnessMultiplier = stackedReportCount ? Number((weightedFreshness / stackedReportCount).toFixed(2)) : 0;
 
-  const delayScore = Math.max(0, Math.min(100, Math.round((delayMinutes * 9 + (delayRatio ? (delayRatio - 1) * 28 : 0)) * (0.65 + confidence / 250))));
-  const severityLabel = delayScore >= 80 ? "Blocked" : delayScore >= 55 ? "Heavy Delay" : delayScore >= 25 ? "Minor Delay" : "Clear";
+  const weightedSeverity = Math.max(0, weightedScore);
+  const delayScore = Math.max(0, Math.min(100, Math.round(weightedSeverity + confirmationScore)));
+  const severityLabel = delayScore >= 60 ? "Blocked" : delayScore >= 30 ? "Heavy Delay" : delayScore >= 10 ? "Minor Delay" : "Clear";
+
+  const blockedCount = activeReports.filter((r) => String(r.type || "").toLowerCase() === "blocked" && getReportFreshnessMultiplier(r.minutesAgo) > 0).length;
+  const heavyCount = activeReports.filter((r) => String(r.type || "").toLowerCase() === "heavy" && getReportFreshnessMultiplier(r.minutesAgo) > 0).length;
+  const delayedCount = activeReports.filter((r) => String(r.type || "").toLowerCase() === "delayed" && getReportFreshnessMultiplier(r.minutesAgo) > 0).length;
+
+  const confidenceBase = blockedCount * 40 + heavyCount * 25 + delayedCount * 15;
+  const multiUserBoost = Math.min(25, uniqueUsers.size * 4);
+  const reportCountBoost = Math.min(20, stackedReportCount * 4);
+  const confidence = Math.max(0, Math.min(100, Math.round((confidenceBase + confirmationScore + multiUserBoost + reportCountBoost) * (freshnessMultiplier || 0))));
 
   return {
     status,
@@ -661,10 +697,15 @@ function computeCorridorStatus(corridor = {}) {
     delayScore,
     confidence,
     freshness,
+    weightedScore: Math.round(weightedSeverity),
+    freshnessMultiplier,
+    stackedReportCount,
+    computedSeverity: severityLabel,
+    computedConfidence: confidence,
     severityLabel,
     hasValidCoordinates,
     warning: hasValidCoordinates ? "" : "Invalid or missing corridor coordinates.",
-    lastComputedAt: new Date(now).toISOString()
+    lastComputedAt: new Date().toISOString()
   };
 }
 
@@ -4462,6 +4503,27 @@ function updateCorridorSummaryCards() {
     if (!node) return;
     node.innerHTML = badges.map((badge) => `<span class="trust-pill">${sanitizeText(badge)}</span>`).join("");
   });
+
+  const theme = getCorridorSeverityTheme(state.severityLabel);
+  [document.querySelector('.corridor-intel-card'), document.querySelector('.mobile-corridor-intel-card')].forEach((card) => {
+    if (!card) return;
+    card.style.borderColor = theme.border;
+    card.style.boxShadow = `0 0 0 1px ${theme.border} inset, 0 16px 28px ${theme.glow}`;
+  });
+  [els.corridorSummaryBadges, els.mobileCorridorBadges].forEach((node) => {
+    if (!node) return;
+    node.querySelectorAll('.trust-pill').forEach((pill) => {
+      pill.style.background = theme.badge;
+      pill.style.borderColor = theme.border;
+    });
+  });
+}
+
+function getCorridorSeverityTheme(severityLabel = "Clear") {
+  if (severityLabel === "Blocked") return { border: "rgba(249, 115, 22, 0.75)", glow: "rgba(239, 68, 68, 0.22)", badge: "rgba(239, 68, 68, 0.2)" };
+  if (severityLabel === "Heavy Delay") return { border: "rgba(245, 158, 11, 0.75)", glow: "rgba(245, 158, 11, 0.2)", badge: "rgba(251, 191, 36, 0.22)" };
+  if (severityLabel === "Minor Delay") return { border: "rgba(59, 130, 246, 0.75)", glow: "rgba(234, 179, 8, 0.18)", badge: "rgba(59, 130, 246, 0.2)" };
+  return { border: "rgba(34, 197, 94, 0.65)", glow: "rgba(34, 197, 94, 0.14)", badge: "rgba(34, 197, 94, 0.2)" };
 }
 
 function renderAlerts() {
