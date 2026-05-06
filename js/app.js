@@ -612,27 +612,59 @@ function computeCorridorStatus(corridor = {}) {
   const normalized = normalizeMovementIntelligence({ corridors: [corridor] }).corridors[0] || {};
   const hasValidCoordinates =
     [normalized.startLat, normalized.startLng, normalized.endLat, normalized.endLng].every((coord) => Number.isFinite(coord));
+  const baselineMinutes = Number(normalized.baselineMinutes);
+  const currentMinutes = Number(normalized.currentMinutes);
 
-  if (!Number.isFinite(normalized.baselineMinutes) || !Number.isFinite(normalized.currentMinutes)) {
+  if (!Number.isFinite(baselineMinutes) || !Number.isFinite(currentMinutes)) {
     return {
       status: "insufficient-data",
       delayMinutes: null,
       delayRatio: null,
+      delayScore: 0,
+      confidence: 0,
+      freshness: 0,
+      severityLabel: "Clear",
       hasValidCoordinates,
       warning: "Missing baselineMinutes or currentMinutes."
     };
   }
 
-  const delayMinutes = normalized.currentMinutes - normalized.baselineMinutes;
-  const delayRatio = normalized.baselineMinutes > 0 ? normalized.currentMinutes / normalized.baselineMinutes : null;
+  const delayMinutes = Math.max(0, currentMinutes - baselineMinutes);
+  const delayRatio = baselineMinutes > 0 ? currentMinutes / baselineMinutes : null;
   const status = delayMinutes <= 2 ? "on-time" : delayMinutes <= 7 ? "slowed" : "delayed";
+  const linkedCorridor = (Array.isArray(window.__gridlyMovementReportLinks) ? window.__gridlyMovementReportLinks : []).find((item) => item.corridorId === normalized.id);
+  const linkedReports = Array.isArray(linkedCorridor?.linkedReports) ? linkedCorridor.linkedReports : [];
+
+  const now = Date.now();
+  const reportWeights = linkedReports.map((report) => {
+    const minutesAgo = Math.max(0, Number(report.minutesAgo) || 0);
+    const freshnessWeight = Math.max(0.08, 1 - minutesAgo / REPORT_EXPIRATION_MINUTES);
+    return { minutesAgo, freshnessWeight };
+  });
+
+  const freshness = reportWeights.length
+    ? Math.max(0, Math.min(100, Math.round((reportWeights.reduce((sum, item) => sum + item.freshnessWeight, 0) / reportWeights.length) * 100)))
+    : 0;
+  const confirmations = Math.max(0, linkedReports.length - 1);
+  const confirmationFactor = Math.min(1, confirmations / 4);
+  const countFactor = Math.min(1, linkedReports.length / 5);
+  const ageFactor = freshness / 100;
+  const confidence = Math.round((countFactor * 0.45 + confirmationFactor * 0.3 + ageFactor * 0.25) * 100);
+
+  const delayScore = Math.max(0, Math.min(100, Math.round((delayMinutes * 9 + (delayRatio ? (delayRatio - 1) * 28 : 0)) * (0.65 + confidence / 250))));
+  const severityLabel = delayScore >= 80 ? "Blocked" : delayScore >= 55 ? "Heavy Delay" : delayScore >= 25 ? "Minor Delay" : "Clear";
 
   return {
     status,
     delayMinutes,
     delayRatio,
+    delayScore,
+    confidence,
+    freshness,
+    severityLabel,
     hasValidCoordinates,
-    warning: hasValidCoordinates ? "" : "Invalid or missing corridor coordinates."
+    warning: hasValidCoordinates ? "" : "Invalid or missing corridor coordinates.",
+    lastComputedAt: new Date(now).toISOString()
   };
 }
 
@@ -832,6 +864,11 @@ function getGridlyMovementDebugSnapshot() {
 function attachGridlyMovementDebugGlobal() {
   window.gridlyMovementDebug = function () {
     return getGridlyMovementDebugSnapshot();
+  };
+  window.gridlyMovementDebugVerbose = function () {
+    const snapshot = getGridlyMovementDebugSnapshot();
+    console.info("[Gridly] verbose corridor snapshot", snapshot.corridorStatuses);
+    return snapshot;
   };
 }
 
@@ -1396,6 +1433,7 @@ async function runPostSubmitRefresh() {
   updateMobileAlertsMirror();
   updateLastUpdated();
   recomputeMovementIntelligence();
+  updateCorridorSummaryCards();
   console.debug("Post-submit refresh complete");
 }
 
@@ -1441,6 +1479,7 @@ async function loadSharedReports() {
     evaluateSmartAlertsBanner();
     updateLastUpdated();
     recomputeMovementIntelligence();
+    updateCorridorSummaryCards();
 
     setSync(`${activeReports.length} crossing reports · ${activeHazards.length} hazards synced`);
   } catch (error) {
@@ -4394,6 +4433,35 @@ function updateGrowthWidgets() {
     safeText("freshestReport", "None yet");
     safeText("freshestReportReason", "Reports appear here as soon as drivers submit them.");
   }
+}
+
+
+function updateCorridorSummaryCards() {
+  const normalized = getMovementIntelligence();
+  const corridorStats = normalized.corridors.map((corridor) => ({ corridor, status: computeCorridorStatus(corridor) }));
+  const ranked = corridorStats.sort((a, b) => (b.status.delayScore || 0) - (a.status.delayScore || 0));
+  const lead = ranked[0];
+  if (!lead) return;
+
+  const state = lead.status;
+  const summaryLine = `${lead.corridor.label || "Unnamed Corridor"} · ${state.severityLabel}`;
+  const detailLine = `Delay +${Math.round(state.delayMinutes || 0)} min · Confidence ${state.confidence}% · Freshness ${state.freshness}%`;
+  safeText("corridorSummaryHeadline", summaryLine);
+  safeText("corridorSummaryDetail", detailLine);
+  safeText("mobileCorridorSummaryHeadline", summaryLine);
+  safeText("mobileCorridorSummaryDetail", detailLine);
+
+  const badges = [
+    "LIVE",
+    state.freshness < 35 ? "STALE" : null,
+    state.confidence >= 70 ? "HIGH CONFIDENCE" : null,
+    state.confidence >= 55 && state.freshness >= 45 ? "COMMUNITY VERIFIED" : null
+  ].filter(Boolean);
+
+  [els.corridorSummaryBadges, els.mobileCorridorBadges].forEach((node) => {
+    if (!node) return;
+    node.innerHTML = badges.map((badge) => `<span class="trust-pill">${sanitizeText(badge)}</span>`).join("");
+  });
 }
 
 function renderAlerts() {

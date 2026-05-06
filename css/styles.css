@@ -496,6 +496,18 @@ h2 {
   font-size: 0.9rem;
 }
 
+.corridor-badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.corridor-intel-card .trust-pill,
+.mobile-corridor-intel-card .trust-pill {
+  font-size: 0.68rem;
+}
+
 .setup-card {
   padding: 16px;
   display: grid;
