@@ -3393,6 +3393,67 @@ function inferPlaceFromMap(label, address = "") {
   };
 }
 
+function parseValidCoordinatePair(lat, lng) {
+  const parsedLat = Number(lat);
+  const parsedLng = Number(lng);
+  if (!Number.isFinite(parsedLat) || !Number.isFinite(parsedLng)) return null;
+  if (parsedLat === 0 && parsedLng === 0) return null;
+  if (parsedLat < -90 || parsedLat > 90 || parsedLng < -180 || parsedLng > 180) return null;
+  return { lat: parsedLat, lng: parsedLng };
+}
+
+function normalizeCoordinatePair(lat, lng) {
+  const direct = parseValidCoordinatePair(lat, lng);
+  if (direct) return direct;
+  const swapped = parseValidCoordinatePair(lng, lat);
+  if (swapped) return swapped;
+  return null;
+}
+
+function hasValidPlaceCoordinates(place) {
+  return Boolean(normalizeCoordinatePair(place?.lat, place?.lng));
+}
+
+function scrubInvalidSavedPlacesState() {
+  const state = getSavedPlacesState();
+  let changed = false;
+  const nextState = { ...state, custom: [] };
+
+  ["home", "work"].forEach((type) => {
+    const place = state[type];
+    if (!place) return;
+    const normalizedCoords = normalizeCoordinatePair(place.lat, place.lng);
+    if (!normalizedCoords) {
+      nextState[type] = null;
+      changed = true;
+      return;
+    }
+    if (place.lat !== normalizedCoords.lat || place.lng !== normalizedCoords.lng) {
+      nextState[type] = { ...place, lat: normalizedCoords.lat, lng: normalizedCoords.lng };
+      changed = true;
+      return;
+    }
+    nextState[type] = place;
+  });
+
+  nextState.custom = state.custom
+    .map((place) => {
+      const normalizedCoords = normalizeCoordinatePair(place?.lat, place?.lng);
+      if (!normalizedCoords) {
+        changed = true;
+        return null;
+      }
+      if (place.lat !== normalizedCoords.lat || place.lng !== normalizedCoords.lng) {
+        changed = true;
+        return { ...place, lat: normalizedCoords.lat, lng: normalizedCoords.lng };
+      }
+      return place;
+    })
+    .filter(Boolean);
+
+  if (changed) saveSavedPlacesState(nextState);
+}
+
 function initDailyDestinationHero() {
   const state = getSavedPlacesState();
   const hasAny = Boolean(state.home || state.work || state.custom.length);
@@ -3414,9 +3475,14 @@ function activateDestinationByType(type) {
     openRouteSetupModalForType(type);
     return;
   }
+  const targetCoords = normalizeCoordinatePair(target.lat, target.lng);
+  if (!targetCoords) {
+    setConfirmation("Add exact Home and Work locations to show route.", "error");
+    return;
+  }
   activeDestinationPlace = target;
-  map?.setView([target.lat, target.lng], 14);
-  renderDestinationRoute(target);
+  map?.setView([targetCoords.lat, targetCoords.lng], 14);
+  renderDestinationRoute({ ...target, lat: targetCoords.lat, lng: targetCoords.lng });
   scrollToSection("mapSection");
   setConfirmation(`Route Watch set: ${target.label}.`, "success");
 }
@@ -3466,8 +3532,17 @@ function configureRouteSetupModal({ mode = "add", prefillType = "custom" } = {})
 async function renderDestinationRoute(target) {
   if (!savedRouteLayer || !target) return;
   savedRouteLayer.clearLayers();
-  const from = userLocation ? [userLocation.lat, userLocation.lng] : [defaultCenter[0], defaultCenter[1]];
-  const to = [target.lat, target.lng];
+  const fromCandidate = userLocation ? [userLocation.lat, userLocation.lng] : [defaultCenter[0], defaultCenter[1]];
+  const fromCoords = normalizeCoordinatePair(fromCandidate[0], fromCandidate[1]);
+  const toCoords = normalizeCoordinatePair(target.lat, target.lng);
+  if (!fromCoords || !toCoords) {
+    setConfirmation("Add exact Home and Work locations to show route.", "error");
+    savedRouteCrossingIds = new Set();
+    renderCrossings();
+    return;
+  }
+  const from = [fromCoords.lat, fromCoords.lng];
+  const to = [toCoords.lat, toCoords.lng];
   const osrmPath = await fetchRoadRouteCoordinates(from, to);
   drawPremiumRouteLine(osrmPath?.length > 1 ? osrmPath : [from, to], "#66e8ff");
   savedRouteCrossingIds = new Set(crossings.filter((c) => getDistanceMiles(c.lat, c.lng, target.lat, target.lng) <= 3.5).map((c) => String(c.id)));
@@ -3493,6 +3568,7 @@ function updateRouteWatchBadge(routeLabel = "Route") {
 }
 
 function loadSavedRoute() {
+  scrubInvalidSavedPlacesState();
   routeFocusArmed = true;
   const selectedPlace = getSelectedPlace();
   const home = selectedPlace?.name || localStorage.getItem("gridlyHome");
