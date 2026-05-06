@@ -5424,25 +5424,6 @@ body.modal-open {
   }
 }
 
-#map {
-  filter: saturate(0.96) brightness(0.92) contrast(1.16) !important;
-}
-
-.map-card::before {
-  opacity: 0.06 !important;
-}
-
-#map .leaflet-tile-pane .leaflet-tile {
-  filter: grayscale(0.14) brightness(0.9) contrast(1.12) saturate(0.78) hue-rotate(182deg) !important;
-}
-
-#map .leaflet-roadsPane-pane .leaflet-tile {
-  filter: saturate(1.1) brightness(1.02) contrast(1.08) hue-rotate(186deg) !important;
-}
-
-#map .leaflet-labelsPane-pane .leaflet-tile {
-  filter: grayscale(0.02) brightness(1.08) contrast(1.2) !important;
-}
 
 #firstRunSetupModal .route-setup-modal-backdrop {
   pointer-events: auto;
@@ -5803,4 +5784,77 @@ body.modal-open {
     margin-left: auto;
     opacity: 0.93;
   }
+}
+
+
+/* GRIDLY V18 clean map style controls: readable basemaps and premium layer switcher */
+#map,
+#map .leaflet-pane,
+#map .leaflet-layer {
+  filter: none !important;
+}
+
+#map .leaflet-tile-pane .leaflet-tile,
+#map .leaflet-roadsPane-pane .leaflet-tile,
+#map .leaflet-railPane-pane .leaflet-tile,
+#map .leaflet-labelsPane-pane .leaflet-tile,
+#map.map-style-standard .leaflet-tile,
+#map.map-style-dark .leaflet-tile,
+#map.map-style-satellite .leaflet-tile {
+  filter: none !important;
+}
+
+#map.map-style-standard {
+  filter: saturate(0.97) brightness(0.98) contrast(1.02) !important;
+}
+
+#map.map-style-dark {
+  filter: saturate(1.06) brightness(1.08) contrast(1.05) !important;
+}
+
+#map.map-style-satellite {
+  filter: saturate(1.04) brightness(1.07) contrast(1.03) !important;
+}
+
+#map .leaflet-control-layers {
+  margin-top: 10px;
+  margin-right: 10px;
+  border: 1px solid rgba(116, 214, 255, 0.34);
+  border-radius: 12px;
+  background: linear-gradient(160deg, rgba(10, 17, 26, 0.94), rgba(7, 12, 20, 0.92));
+  color: #dff5ff;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.42), inset 0 0 0 1px rgba(140, 231, 255, 0.1);
+  backdrop-filter: blur(6px);
+}
+
+#map .leaflet-control-layers-toggle {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background-color: rgba(13, 21, 33, 0.96);
+}
+
+#map .leaflet-control-layers-expanded {
+  padding: 10px 12px;
+  min-width: 148px;
+}
+
+#map .leaflet-control-layers-list,
+#map .leaflet-control-layers-base {
+  margin: 0;
+}
+
+#map .leaflet-control-layers-base label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #e9f8ff;
+  margin: 0;
+  padding: 4px 0;
+}
+
+#map .leaflet-control-layers-selector {
+  accent-color: #66e8ff;
 }
