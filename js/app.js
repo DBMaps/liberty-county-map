@@ -2646,7 +2646,10 @@ function injectHazardStyles() {
 function wirePopupReportButtons(popupRoot) {
   if (!popupRoot) return;
 
-  popupRoot.querySelectorAll(".popup-report-btn[data-crossing-id][data-report-type]").forEach((button) => {
+  const buttons = popupRoot.querySelectorAll(".popup-report-btn[data-crossing-id][data-report-type]");
+  console.log("Wiring crossing popup buttons", buttons.length);
+
+  buttons.forEach((button) => {
     if (button.dataset.boundPopupHandler === "1") return;
 
     let lastSubmittedAt = 0;
@@ -2665,9 +2668,23 @@ function wirePopupReportButtons(popupRoot) {
     };
 
     button.addEventListener("click", submitFromPopup);
-    button.addEventListener("pointerup", submitFromPopup);
     button.dataset.boundPopupHandler = "1";
   });
+
+  if (!popupRoot.dataset.boundCrossingDelegate) {
+    popupRoot.addEventListener("click", async (event) => {
+      const button = event.target.closest(".popup-report-btn[data-crossing-id][data-report-type]");
+      if (!button) return;
+      const crossingId = button.getAttribute("data-crossing-id");
+      const reportType = button.getAttribute("data-report-type");
+      console.log("Crossing popup delegate clicked", { type: reportType, crossingId });
+      if (!crossingId || !reportType || typeof window.reportCrossingFromPopup !== "function") return;
+      event.preventDefault();
+      event.stopPropagation();
+      await window.reportCrossingFromPopup(crossingId, reportType, button);
+    });
+    popupRoot.dataset.boundCrossingDelegate = "1";
+  }
 }
 
 function buildPopup(crossing, report) {
