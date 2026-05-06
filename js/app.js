@@ -101,6 +101,7 @@ const CROSSING_FETCH_RETRY_DELAY_MS = 700;
 const SMART_ALERTS_STORAGE_KEY = "gridlySmartAlertsV1";
 const SMART_ALERTS_DRAWER_SEEN_KEY = "gridlySmartAlertsDrawerSeenV1";
 const MAP_FIRST_HINT_SEEN_KEY = "gridlyMapFirstHintSeenV1";
+const MAP_STYLE_STORAGE_KEY = "gridlyMapStyleV1";
 const SAVED_PLACES_STORAGE_KEY = "gridlySavedPlacesV1";
 const SELECTED_PLACE_STORAGE_KEY = "gridlySelectedPlaceIdV1";
 const GRIDLY_PROFILE_STORAGE_KEY = "gridlyUserProfileV1";
@@ -655,7 +656,7 @@ function initMap() {
       subdomains: "abcd",
       maxZoom: 20,
       pane: "satLabelsPane",
-      opacity: 0.95,
+      opacity: 1,
       attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
     }
   );
@@ -667,8 +668,25 @@ function initMap() {
     Satellite: satelliteHybrid
   };
 
-  darkLayer.addTo(map);
+  const styleClassByName = {
+    Standard: "map-style-standard",
+    Dark: "map-style-dark",
+    Satellite: "map-style-satellite"
+  };
+  const savedStyle = localStorage.getItem(MAP_STYLE_STORAGE_KEY);
+  const initialStyle = baseLayers[savedStyle] ? savedStyle : "Standard";
+  baseLayers[initialStyle].addTo(map);
+  map.getContainer().classList.add(styleClassByName[initialStyle]);
+
   L.control.layers(baseLayers, null, { position: "topright", collapsed: true }).addTo(map);
+
+  map.on("baselayerchange", (event) => {
+    const selectedName = event?.name;
+    if (!styleClassByName[selectedName]) return;
+    Object.values(styleClassByName).forEach((className) => map.getContainer().classList.remove(className));
+    map.getContainer().classList.add(styleClassByName[selectedName]);
+    localStorage.setItem(MAP_STYLE_STORAGE_KEY, selectedName);
+  });
 
   crossingLayer = L.layerGroup().addTo(map);
   savedRouteLayer = L.layerGroup().addTo(map);
