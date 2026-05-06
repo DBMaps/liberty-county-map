@@ -5242,6 +5242,23 @@ body.modal-open {
   z-index: 700 !important;
 }
 
+/* GRIDLY V18.2 crossing report click safety */
+#map .leaflet-marker-pane {
+  z-index: 650 !important;
+  pointer-events: auto !important;
+}
+
+#map .leaflet-popup-pane {
+  pointer-events: auto !important;
+}
+
+#map .leaflet-marker-pane .leaflet-marker-icon,
+#map .leaflet-marker-pane .leaflet-interactive,
+#map .leaflet-popup-pane .popup-report-btn,
+#map .leaflet-popup-pane .leaflet-popup-content {
+  pointer-events: auto !important;
+}
+
 .destination-hero-card {
   position: relative;
   z-index: 25;
