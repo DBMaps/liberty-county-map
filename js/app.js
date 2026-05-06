@@ -436,7 +436,6 @@ function maybeOpenFirstRunSetup() {
 function syncModalScrollLock() {
   const hasPlaceNameModal = Boolean(document.querySelector(".place-name-modal"));
   const hasOpenModal = Boolean(
-    (els.firstRunSetupModal && !els.firstRunSetupModal.hidden) ||
     (els.routeSetupModal && !els.routeSetupModal.hidden) ||
     (els.smartAlertsModal && !els.smartAlertsModal.hidden) ||
     hasPlaceNameModal
@@ -445,21 +444,11 @@ function syncModalScrollLock() {
   document.querySelector(".app-shell")?.toggleAttribute("inert", hasOpenModal);
   document.body.classList.toggle(
     "route-setup-open",
-    Boolean(
-      (els.firstRunSetupModal && !els.firstRunSetupModal.hidden) ||
-      (els.routeSetupModal && !els.routeSetupModal.hidden)
-    )
+    Boolean(els.routeSetupModal && !els.routeSetupModal.hidden)
   );
 }
 function openFirstRunSetupModal() {
-  if (!els.firstRunSetupModal) return;
-  openModal(els.firstRunSetupModal);
-  if (els.setupNameInput) els.setupNameInput.value = gridlyUserProfile.name || "";
-  if (els.setupZipInput) els.setupZipInput.value = gridlyUserProfile.zipCode || "";
-  if (els.setupTownInput) els.setupTownInput.value = gridlyUserProfile.homeTown || "";
-  if (els.setupStateInput) els.setupStateInput.value = gridlyUserProfile.state || "";
-  setSetupStep(1);
-  updateDetectedTownFromZip();
+  return;
 }
 let setupStep = 1;
 let setupPlacesSummary = { home: false, work: false };
@@ -481,7 +470,7 @@ function refreshSetupSummary() {
   if (els.setupSummaryPlaces) els.setupSummaryPlaces.textContent = `Saved places: ${items.length ? items.join(", ") : "None yet"}`;
 }
 function closeFirstRunSetupModal() {
-  closeModal(els.firstRunSetupModal, { restoreFocus: false });
+  return;
 }
 function openModal(modalEl, opener = null) {
   if (!modalEl) return;
@@ -2671,88 +2660,8 @@ function bindEvents() {
     });
   });
 
-  const bindSetupAction = (element, handler) => {
-    if (!element || typeof handler !== "function") return;
-    let lastTouchTs = 0;
-    element.addEventListener("pointerup", (event) => {
-      if (event.pointerType !== "touch") return;
-      lastTouchTs = Date.now();
-      handler(event);
-    });
-    element.addEventListener("click", (event) => {
-      if (Date.now() - lastTouchTs < 500) return;
-      handler(event);
-    });
-  };
-
-  bindSetupAction(els.firstRunSetupBackdrop, closeFirstRunSetupModal);
-  bindSetupAction(els.skipSetupBtn, () => {
-    saveGridlyUserProfile({ setupComplete: true, setupSkipped: true });
-    closeFirstRunSetupModal();
-  });
-  bindSetupAction(els.setupStartBtn, () => setSetupStep(2));
-  bindSetupAction(els.setupNameContinueBtn, () => setSetupStep(3));
-  els.setupStartBtn?.addEventListener("click", () => setSetupStep(2));
-  els.setupNameContinueBtn?.addEventListener("click", () => setSetupStep(3));
-  els.setupZipInput?.addEventListener("input", () => {
-    clearTimeout(zipLookupDebounceTimer);
-    zipLookupDebounceTimer = setTimeout(async () => {
-      latestZipLookupToken += 1;
-      const token = latestZipLookupToken;
-      await updateDetectedTownFromZip();
-      if (token !== latestZipLookupToken) return;
-    }, 250);
-  });
-  bindSetupAction(els.setupZipContinueBtn, async () => {
-    await updateDetectedTownFromZip();
-    setSetupStep(4);
-  });
-  bindSetupAction(els.setupSkipPlacesBtn, () => {
-    refreshSetupSummary();
-    setSetupStep(5);
-  });
-  bindSetupAction(els.setupPlacesContinueBtn, () => {
-    refreshSetupSummary();
-    setSetupStep(5);
-  });
-  bindSetupAction(els.completeSetupBtn, () => {
-    const zipCode = String(els.setupZipInput?.value || "").trim();
-    const detected = lastDetectedTown || resolveZipCode(zipCode);
-    const town = String(els.setupTownInput?.value || detected?.city || "").trim();
-    const state = String(els.setupStateInput?.value || detected?.state || "").trim();
-    saveGridlyUserProfile({
-      name: String(els.setupNameInput?.value || "").trim(),
-      zipCode,
-      homeTown: town,
-      state,
-      homeTownLat: detected?.lat ?? null,
-      homeTownLng: detected?.lng ?? null,
-      homeTownLabel: town ? `${town}${state ? `, ${state}` : ""}` : "",
-      setupComplete: true,
-      setupSkipped: false
-    });
-    initGreeting();
-    closeFirstRunSetupModal();
-  });
-  bindSetupAction(els.setupSaveHomeBtn, () => {
-    saveSetupPlace("home");
-    setupPlacesSummary.home = true;
-    setConfirmation("Home saved.", "success");
-    refreshSetupSummary();
-  });
-  bindSetupAction(els.setupSaveWorkBtn, async () => {
-    const customLabel = await openPlaceNameModal("Work");
-    if (!customLabel) return;
-    saveSetupPlace("work", customLabel);
-    setupPlacesSummary.work = true;
-    setConfirmation("Work / School / Jobsite saved.", "success");
-    refreshSetupSummary();
-  });
-  bindSetupAction(els.editSetupBtn, () => {
+  els.editSetupBtn?.addEventListener("click", () => {
     setConfirmation("Setup editing coming soon.", "info");
-  });
-  bindSetupAction(els.firstRunEditSetupBtn, () => {
-    setSetupStep(1);
   });
 
   const allCrossingsToggle = document.getElementById("allCrossingsLayerToggle");
@@ -4703,10 +4612,18 @@ window.closeGridlyWelcome = function () {
 };
 
 window.resetGridlySetup = function resetGridlySetup() {
-  localStorage.removeItem(GRIDLY_PROFILE_STORAGE_KEY);
-  gridlyUserProfile = getGridlyUserProfile();
-  closeFirstRunSetupModal();
-  setConfirmation("Setup editing coming soon.", "info");
+  saveGridlyUserProfile({
+    name: "",
+    zipCode: "",
+    homeTown: "",
+    state: "",
+    homeTownLat: null,
+    homeTownLng: null,
+    homeTownLabel: "",
+    setupComplete: false,
+    setupSkipped: false
+  });
+  setConfirmation("Setup reset. Reload when setup returns.", "info");
 };
 
 async function shareGridlyApp() {

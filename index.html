@@ -473,47 +473,6 @@
     </div>
   </div>
 
-  <div class="route-setup-modal" id="firstRunSetupModal" hidden>
-    <div class="route-setup-modal-backdrop" id="firstRunSetupBackdrop"></div>
-    <div class="route-setup-modal-card first-run-modal-card" role="dialog" aria-modal="true" aria-labelledby="firstRunSetupTitle">
-      <div class="route-setup-modal-head">
-        <span class="eyebrow">Premium Setup</span>
-      </div>
-      <h2 id="firstRunSetupTitle">Welcome to Gridly</h2>
-      <p class="smart-alerts-subtitle">Know before you go.</p>
-      <div class="setup-grid route-setup-grid-mobile setup-wizard" id="setupWizard">
-        <section class="setup-step is-active" data-setup-step="1">
-          <button type="button" class="primary-btn" id="setupStartBtn">Start Setup</button>
-          <button type="button" class="secondary-btn" id="skipSetupBtn">Skip for Now</button>
-        </section>
-        <section class="setup-step" data-setup-step="2" hidden>
-          <label>What should we call you?<input id="setupNameInput" type="text" placeholder="Name" /></label>
-          <button type="button" class="primary-btn" id="setupNameContinueBtn">Continue</button>
-        </section>
-        <section class="setup-step" data-setup-step="3" hidden>
-          <label>Where is your home base?<input id="setupZipInput" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="5" placeholder="77535" /></label>
-          <p id="setupDetectedTown" class="setup-detected-town" aria-live="polite">Enter ZIP to detect your town.</p>
-          <label id="setupTownFallbackLabel" hidden>City (fallback)<input id="setupTownInput" type="text" placeholder="City" /></label>
-          <label id="setupStateFallbackLabel" hidden>State (fallback)<input id="setupStateInput" type="text" maxlength="2" placeholder="TX" /></label>
-          <button type="button" class="primary-btn" id="setupZipContinueBtn">Continue</button>
-        </section>
-        <section class="setup-step" data-setup-step="4" hidden>
-          <p class="setup-detected-town">Save your places</p>
-          <button type="button" class="secondary-btn" id="setupSaveHomeBtn">Save Home</button>
-          <button type="button" class="secondary-btn" id="setupSaveWorkBtn">Save Work / School / Jobsite</button>
-          <button type="button" class="secondary-btn" id="setupSkipPlacesBtn">Skip Places</button>
-          <button type="button" class="primary-btn" id="setupPlacesContinueBtn">Continue</button>
-        </section>
-        <section class="setup-step" data-setup-step="5" hidden>
-          <p id="setupSummaryTown" class="setup-detected-town">My Town: Not set</p>
-          <p id="setupSummaryPlaces" class="setup-detected-town">Saved places: None yet</p>
-          <button type="button" class="primary-btn" id="completeSetupBtn">Finish Setup</button>
-        </section>
-      </div>
-      <button type="button" class="secondary-btn compact-btn" id="firstRunEditSetupBtn">Edit Setup</button>
-    </div>
-  </div>
-
   <div class="smart-alerts-modal" id="smartAlertsModal" hidden>
     <div class="smart-alerts-modal-backdrop" id="smartAlertsModalBackdrop"></div>
     <div class="smart-alerts-modal-card" role="dialog" aria-modal="true" aria-labelledby="smartAlertsStatus">
