@@ -114,6 +114,7 @@ let map;
 let crossingLayer;
 let crossingMarkers = new Map();
 let savedRouteLayer;
+let corridorIntelLayer;
 let lastRenderedRouteKey = "";
 let routeFocusArmed = true;
 let crossings = [];
@@ -268,6 +269,8 @@ function hydrateElements() {
     "communityTrustReason",
     "freshestReport",
     "freshestReportReason",
+    "corridorSummaryHeadline",
+    "mobileCorridorSummaryHeadline",
     "trendingList",
     "shareCard",
     "shareGridlyBtn",
@@ -331,6 +334,8 @@ function hydrateElements() {
     "destinationEmptyNote",
     "destinationHabitCopy",
     "routeWatchBadge",
+    "liveOpsStatus",
+    "liveOpsDetail",
     "firstRunSetupModal","firstRunSetupBackdrop","setupNameInput","setupZipInput","setupTownInput","setupStateInput","setupDetectedTown","completeSetupBtn","skipSetupBtn","setupSaveHomeBtn","setupSaveWorkBtn","editSetupBtn","firstRunEditSetupBtn","setupStartBtn","setupNameContinueBtn","setupZipContinueBtn","setupSkipPlacesBtn","setupPlacesContinueBtn","setupSummaryTown","setupSummaryPlaces","setupTownFallbackLabel","setupStateFallbackLabel"
   ].forEach((id) => {
     els[id] = document.getElementById(id);
@@ -1189,6 +1194,7 @@ function initMap() {
 
   crossingLayer = L.layerGroup().addTo(map);
   savedRouteLayer = L.layerGroup().addTo(map);
+  corridorIntelLayer = L.layerGroup().addTo(map);
   unifiedIncidentLayer = L.layerGroup().addTo(map);
 
   map.on("zoomend moveend", () => {
@@ -4485,12 +4491,17 @@ function updateCorridorSummaryCards() {
   if (!lead) return;
 
   const state = lead.status;
-  const summaryLine = `${lead.corridor.label || "Unnamed Corridor"} · ${state.severityLabel}`;
-  const detailLine = `Delay +${Math.round(state.delayMinutes || 0)} min · Confidence ${state.confidence}% · Freshness ${state.freshness}%`;
+  const summaryLine = `${lead.corridor.label || "Unnamed Corridor"}`;
+  const guidanceLine = getCorridorGuidanceMessage(state.severityLabel);
+  const reportCountLabel = `${state.stackedReportCount || 0} active report${state.stackedReportCount === 1 ? "" : "s"}`;
+  const freshnessLabel = state.freshness >= 70 ? "Fresh" : state.freshness >= 40 ? "Recent" : "Stale";
+  const detailLine = `${state.severityLabel} · ${guidanceLine} · ~${Math.round(state.delayMinutes || 0)} min delay · ${state.confidence}% confidence · ${freshnessLabel} · ${reportCountLabel}`;
   safeText("corridorSummaryHeadline", summaryLine);
   safeText("corridorSummaryDetail", detailLine);
   safeText("mobileCorridorSummaryHeadline", summaryLine);
   safeText("mobileCorridorSummaryDetail", detailLine);
+  safeText("liveOpsStatus", `${state.severityLabel} · ~${Math.round(state.delayMinutes || 0)} min`);
+  safeText("liveOpsDetail", `${guidanceLine} · ${state.confidence}% confidence · ${reportCountLabel}`);
 
   const badges = [
     "LIVE",
@@ -4510,6 +4521,10 @@ function updateCorridorSummaryCards() {
     card.style.borderColor = theme.border;
     card.style.boxShadow = `0 0 0 1px ${theme.border} inset, 0 16px 28px ${theme.glow}`;
   });
+  [els.corridorSummaryHeadline, els.mobileCorridorSummaryHeadline, els.liveOpsStatus].forEach((node) => {
+    if (!node) return;
+    node.style.color = theme.text;
+  });
   [els.corridorSummaryBadges, els.mobileCorridorBadges].forEach((node) => {
     if (!node) return;
     node.querySelectorAll('.trust-pill').forEach((pill) => {
@@ -4517,13 +4532,60 @@ function updateCorridorSummaryCards() {
       pill.style.borderColor = theme.border;
     });
   });
+
+  drawCorridorIntelLines(ranked.slice(0, 3));
+}
+
+function getCorridorGuidanceMessage(severityLabel = "Clear") {
+  if (severityLabel === "Blocked") return "Avoid this corridor";
+  if (severityLabel === "Heavy Delay") return "Consider alternate route";
+  if (severityLabel === "Minor Delay") return "Expect a small delay";
+  return "You can drive now";
+}
+
+function hasValidCorridorCoordinates(corridor = {}) {
+  const values = [corridor.startLat, corridor.startLng, corridor.endLat, corridor.endLng];
+  const allFinite = values.every((n) => Number.isFinite(Number(n)));
+  if (!allFinite) return false;
+  const startLat = Number(corridor.startLat);
+  const startLng = Number(corridor.startLng);
+  const endLat = Number(corridor.endLat);
+  const endLng = Number(corridor.endLng);
+  if (Math.abs(startLat) > 90 || Math.abs(endLat) > 90 || Math.abs(startLng) > 180 || Math.abs(endLng) > 180) return false;
+  const spanKm = calculateDistanceKm(startLat, startLng, endLat, endLng);
+  return Number.isFinite(spanKm) && spanKm > 0.05 && spanKm <= 60;
+}
+
+function drawCorridorIntelLines(corridorStats = []) {
+  if (!corridorIntelLayer) return;
+  corridorIntelLayer.clearLayers();
+  corridorStats.forEach((item, index) => {
+    const corridor = item?.corridor || {};
+    const state = item?.status || {};
+    if (!hasValidCorridorCoordinates(corridor)) return;
+    const latLngs = [
+      [Number(corridor.startLat), Number(corridor.startLng)],
+      [Number(corridor.endLat), Number(corridor.endLng)]
+    ];
+    const theme = getCorridorSeverityTheme(state.severityLabel || "Clear");
+    const polyline = L.polyline(latLngs, {
+      pane: "routePane",
+      color: theme.border,
+      weight: index === 0 ? 4 : 3,
+      opacity: index === 0 ? 0.78 : 0.5,
+      lineCap: "round",
+      dashArray: index === 0 ? null : "6 8",
+      interactive: false
+    });
+    polyline.addTo(corridorIntelLayer);
+  });
 }
 
 function getCorridorSeverityTheme(severityLabel = "Clear") {
-  if (severityLabel === "Blocked") return { border: "rgba(249, 115, 22, 0.75)", glow: "rgba(239, 68, 68, 0.22)", badge: "rgba(239, 68, 68, 0.2)" };
-  if (severityLabel === "Heavy Delay") return { border: "rgba(245, 158, 11, 0.75)", glow: "rgba(245, 158, 11, 0.2)", badge: "rgba(251, 191, 36, 0.22)" };
-  if (severityLabel === "Minor Delay") return { border: "rgba(59, 130, 246, 0.75)", glow: "rgba(234, 179, 8, 0.18)", badge: "rgba(59, 130, 246, 0.2)" };
-  return { border: "rgba(34, 197, 94, 0.65)", glow: "rgba(34, 197, 94, 0.14)", badge: "rgba(34, 197, 94, 0.2)" };
+  if (severityLabel === "Blocked") return { border: "rgba(249, 115, 22, 0.75)", glow: "rgba(239, 68, 68, 0.22)", badge: "rgba(239, 68, 68, 0.2)", text: "#fdba74" };
+  if (severityLabel === "Heavy Delay") return { border: "rgba(245, 158, 11, 0.75)", glow: "rgba(245, 158, 11, 0.2)", badge: "rgba(251, 191, 36, 0.22)", text: "#fbbf24" };
+  if (severityLabel === "Minor Delay") return { border: "rgba(59, 130, 246, 0.75)", glow: "rgba(234, 179, 8, 0.18)", badge: "rgba(59, 130, 246, 0.2)", text: "#93c5fd" };
+  return { border: "rgba(34, 197, 94, 0.65)", glow: "rgba(34, 197, 94, 0.14)", badge: "rgba(34, 197, 94, 0.2)", text: "#86efac" };
 }
 
 function renderAlerts() {
