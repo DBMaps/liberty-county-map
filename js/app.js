@@ -2705,14 +2705,12 @@ function openRouteSetupModal(triggerEl = null) {
   if (!els.routeSetupModal) return;
   lastRouteSetupTrigger = triggerEl || document.activeElement || null;
   loadSavedRoute();
-  els.routeSetupModal.style.display = "";
   openModal(els.routeSetupModal, lastRouteSetupTrigger);
 }
 
 function closeRouteSetupModal(options = {}) {
   if (!els.routeSetupModal) return;
   const { restoreFocus = true } = options;
-  els.routeSetupModal.style.display = "none";
   closeModal(els.routeSetupModal, { restoreFocus });
   lastRouteSetupTrigger = null;
 }
