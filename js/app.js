@@ -4533,7 +4533,48 @@ function updateCorridorSummaryCards() {
     });
   });
 
-  drawCorridorIntelLines(ranked.slice(0, 3));
+  const focusCorridor = selectFocusedCorridor(corridorStats);
+  drawCorridorIntelLines(focusCorridor ? [focusCorridor] : []);
+}
+
+function getCorridorSeverityRank(severityLabel = "Clear") {
+  if (severityLabel === "Blocked") return 3;
+  if (severityLabel === "Heavy Delay") return 2;
+  if (severityLabel === "Minor Delay") return 1;
+  return 0;
+}
+
+function getSelectedCorridorId() {
+  const candidates = [
+    window.__gridlySelectedCorridorId,
+    window.__gridlyActiveCorridorId,
+    window.__gridlyMovementSelectedCorridorId
+  ];
+  const selected = candidates.find((value) => value !== undefined && value !== null && String(value).trim());
+  return selected ? String(selected).trim() : "";
+}
+
+function selectFocusedCorridor(corridorStats = []) {
+  const valid = (Array.isArray(corridorStats) ? corridorStats : []).filter((item) => {
+    const corridor = item?.corridor || {};
+    const severityRank = getCorridorSeverityRank(item?.status?.severityLabel || "Clear");
+    return hasValidCorridorCoordinates(corridor) && severityRank > 0;
+  });
+  if (!valid.length) return null;
+
+  const selectedCorridorId = getSelectedCorridorId();
+  if (selectedCorridorId) {
+    const selected = valid.find((item) => String(item?.corridor?.id || "") === selectedCorridorId);
+    if (selected) return selected;
+  }
+
+  const ranked = valid.sort((a, b) => {
+    const severityDiff = getCorridorSeverityRank(b?.status?.severityLabel || "Clear") - getCorridorSeverityRank(a?.status?.severityLabel || "Clear");
+    if (severityDiff !== 0) return severityDiff;
+    return (b?.status?.delayScore || 0) - (a?.status?.delayScore || 0);
+  });
+
+  return ranked[0] || null;
 }
 
 function getCorridorGuidanceMessage(severityLabel = "Clear") {
@@ -4559,25 +4600,48 @@ function hasValidCorridorCoordinates(corridor = {}) {
 function drawCorridorIntelLines(corridorStats = []) {
   if (!corridorIntelLayer) return;
   corridorIntelLayer.clearLayers();
-  corridorStats.forEach((item, index) => {
-    const corridor = item?.corridor || {};
-    const state = item?.status || {};
-    if (!hasValidCorridorCoordinates(corridor)) return;
-    const latLngs = [
-      [Number(corridor.startLat), Number(corridor.startLng)],
-      [Number(corridor.endLat), Number(corridor.endLng)]
-    ];
-    const theme = getCorridorSeverityTheme(state.severityLabel || "Clear");
-    const polyline = L.polyline(latLngs, {
-      pane: "routePane",
-      color: theme.border,
-      weight: index === 0 ? 4 : 3,
-      opacity: index === 0 ? 0.78 : 0.5,
-      lineCap: "round",
-      dashArray: index === 0 ? null : "6 8",
-      interactive: false
-    });
-    polyline.addTo(corridorIntelLayer);
+  const item = Array.isArray(corridorStats) ? corridorStats[0] : null;
+  const corridor = item?.corridor || {};
+  const state = item?.status || {};
+  const severityLabel = state.severityLabel || "Clear";
+  if (!hasValidCorridorCoordinates(corridor)) return;
+  if (getCorridorSeverityRank(severityLabel) <= 0 && !getSelectedCorridorId()) return;
+
+  const latLngs = [
+    [Number(corridor.startLat), Number(corridor.startLng)],
+    [Number(corridor.endLat), Number(corridor.endLng)]
+  ];
+  const theme = getCorridorSeverityTheme(severityLabel);
+
+  const glow = L.polyline(latLngs, {
+    pane: "routePane",
+    color: theme.glow,
+    weight: 6,
+    opacity: 0.18,
+    lineCap: "round",
+    interactive: false
+  });
+  glow.addTo(corridorIntelLayer);
+
+  const core = L.polyline(latLngs, {
+    pane: "routePane",
+    color: theme.border,
+    weight: 3,
+    opacity: 0.62,
+    lineCap: "round",
+    interactive: false
+  });
+  core.addTo(corridorIntelLayer);
+
+  const from = corridor.startLabel || "Start";
+  const to = corridor.endLabel || "End";
+  const label = `${from} ↔ ${to} · ${severityLabel}`;
+  core.bindTooltip(sanitizeText(label), {
+    permanent: false,
+    sticky: true,
+    direction: "top",
+    opacity: 0.92,
+    className: "corridor-intel-tooltip"
   });
 }
 
