@@ -2611,7 +2611,7 @@ function bindEvents() {
   };
   document.querySelectorAll(".nav-btn[data-section]").forEach((btn) => {
     btn.addEventListener("click", () => {
-      const scope = btn.closest(".top-nav, .left-rail, .mobile-bottom-nav");
+      const scope = btn.closest(".top-nav, .left-rail, .desktop-left-rail, .mobile-bottom-nav");
       scope?.querySelectorAll(".nav-btn").forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
       routeNavSection(btn.dataset.section);
@@ -3068,26 +3068,45 @@ function getRouteInputValues(source = "desktop") {
 }
 
 function getSavedPlaces() {
-  try {
-    const places = JSON.parse(localStorage.getItem(SAVED_PLACES_STORAGE_KEY) || "[]");
-    if (Array.isArray(places)) return places;
-    if (places && typeof places === "object") {
-      const normalized = [];
-      if (places.home) normalized.push({ id: "home", name: places.home.label || "Home", address: places.home.address || "" });
-      if (places.work) normalized.push({ id: "work", name: places.work.label || "Work", address: places.work.address || "" });
-      if (Array.isArray(places.custom)) {
-        places.custom.forEach((p) => normalized.push({ id: p.id || `custom-${Date.now()}`, name: p.label || "Favorite", address: p.address || "" }));
-      }
-      return normalized;
-    }
-    return [];
-  } catch (error) {
-    return [];
-  }
+  const state = normalizeSavedPlaces();
+  const places = [];
+  if (state.home) places.push({ id: "home", name: state.home.label || "Home", address: state.home.address || "" });
+  if (state.work) places.push({ id: "work", name: state.work.label || "Work", address: state.work.address || "" });
+  state.custom.forEach((place) => {
+    places.push({
+      id: place.id || `custom-${Date.now()}`,
+      name: place.label || "Favorite",
+      address: place.address || ""
+    });
+  });
+  return places;
 }
 
 function saveSavedPlaces(places) {
-  localStorage.setItem(SAVED_PLACES_STORAGE_KEY, JSON.stringify(places));
+  const state = normalizeSavedPlaces();
+  const nextState = { ...state, custom: [] };
+  (Array.isArray(places) ? places : []).forEach((place) => {
+    if (!place || typeof place !== "object") return;
+    const id = String(place.id || "");
+    const normalizedPlace = {
+      id: id || `custom-${Date.now()}`,
+      type: id === "home" || place.type === "home" ? "home" : id === "work" || place.type === "work" ? "work" : "custom",
+      label: String(place.name || place.label || "Saved Place"),
+      address: String(place.address || ""),
+      lat: Number.isFinite(Number(place.lat)) ? Number(place.lat) : null,
+      lng: Number.isFinite(Number(place.lng)) ? Number(place.lng) : null
+    };
+    if (normalizedPlace.type === "home") {
+      nextState.home = { ...normalizedPlace, id: "home", label: "Home" };
+      return;
+    }
+    if (normalizedPlace.type === "work") {
+      nextState.work = { ...normalizedPlace, id: "work", label: "Work" };
+      return;
+    }
+    nextState.custom.push(normalizedPlace);
+  });
+  saveSavedPlacesState(nextState);
 }
 
 function getSelectedPlaceId() {
@@ -3155,12 +3174,8 @@ function saveRoute(source = "desktop") {
 }
 
 function getSavedPlacesState() {
-  try {
-    const raw = JSON.parse(localStorage.getItem(SAVED_PLACES_STORAGE_KEY) || "{}");
-    return { home: raw.home || null, work: raw.work || null, custom: Array.isArray(raw.custom) ? raw.custom : [] };
-  } catch (error) {
-    return { home: null, work: null, custom: [] };
-  }
+  const state = normalizeSavedPlaces();
+  return { home: state.home, work: state.work, custom: [...state.custom] };
 }
 function migrateLegacyStorage() {
   const state = getSavedPlacesState();
@@ -3179,7 +3194,8 @@ function migrateLegacyStorage() {
 }
 
 function saveSavedPlacesState(nextState) {
-  localStorage.setItem(SAVED_PLACES_STORAGE_KEY, JSON.stringify({ version: 1, home: null, work: null, custom: [], ...nextState }));
+  const normalized = normalizeSavedPlaces(nextState);
+  localStorage.setItem(SAVED_PLACES_STORAGE_KEY, JSON.stringify(normalized));
 }
 
 function savePlaceType(type, label, address = "") {
@@ -3191,6 +3207,65 @@ function savePlaceType(type, label, address = "") {
     state.custom.push({ id: `custom-${Date.now()}`, ...place, label: label || "Favorite Place" });
   }
   saveSavedPlacesState(state);
+}
+
+function normalizeSavedPlaces(input = null) {
+  const canonical = { version: 1, home: null, work: null, custom: [] };
+  let raw = input;
+  if (raw == null) {
+    try {
+      raw = JSON.parse(localStorage.getItem(SAVED_PLACES_STORAGE_KEY) || "null");
+    } catch (error) {
+      raw = null;
+    }
+  }
+
+  const makeCanonicalPlace = (place, fallback = {}) => {
+    if (!place || typeof place !== "object") return null;
+    const id = String(place.id || fallback.id || "").trim();
+    const type = String(place.type || fallback.type || (id === "home" || id === "work" ? id : "custom")).trim();
+    const label = String(place.label || place.name || fallback.label || "Saved Place").trim();
+    const address = String(place.address || fallback.address || "").trim();
+    const lat = Number(place.lat);
+    const lng = Number(place.lng);
+    return {
+      ...place,
+      id: id || (type === "home" || type === "work" ? type : `custom-${Date.now()}`),
+      type: type || "custom",
+      label: label || "Saved Place",
+      address,
+      lat: Number.isFinite(lat) ? lat : null,
+      lng: Number.isFinite(lng) ? lng : null
+    };
+  };
+
+  if (Array.isArray(raw)) {
+    raw.forEach((place) => {
+      const id = String(place?.id || "").trim();
+      if (id === "home") {
+        canonical.home = makeCanonicalPlace(place, { id: "home", type: "home", label: "Home" });
+      } else if (id === "work") {
+        canonical.work = makeCanonicalPlace(place, { id: "work", type: "work", label: "Work" });
+      } else {
+        const normalized = makeCanonicalPlace(place);
+        if (normalized) canonical.custom.push(normalized);
+      }
+    });
+    return canonical;
+  }
+
+  if (raw && typeof raw === "object") {
+    canonical.version = Number(raw.version) || 1;
+    canonical.home = makeCanonicalPlace(raw.home, { id: "home", type: "home", label: "Home" });
+    canonical.work = makeCanonicalPlace(raw.work, { id: "work", type: "work", label: "Work" });
+    canonical.custom = Array.isArray(raw.custom)
+      ? raw.custom
+          .map((place) => makeCanonicalPlace(place))
+          .filter(Boolean)
+      : [];
+  }
+
+  return canonical;
 }
 
 function inferPlaceFromMap(label, address = "") {
