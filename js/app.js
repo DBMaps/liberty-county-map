@@ -1196,6 +1196,7 @@ function initMap() {
   savedRouteLayer = L.layerGroup().addTo(map);
   corridorIntelLayer = L.layerGroup().addTo(map);
   unifiedIncidentLayer = L.layerGroup().addTo(map);
+  installGridlyMapLineDebugHelper();
 
   map.on("zoomend moveend", () => {
     if (!crossings.length) return;
@@ -1206,6 +1207,35 @@ function initMap() {
   highlightNearestCrossingOnFirstLoad();
 }
 
+
+
+function installGridlyMapLineDebugHelper() {
+  window.gridlyMapLineDebug = function gridlyMapLineDebug() {
+    const mapPolylineLayers = [];
+    if (map && typeof map.eachLayer === "function") {
+      map.eachLayer((layer) => {
+        if (layer instanceof L.Polyline) mapPolylineLayers.push(layer);
+      });
+    }
+    const knownLayerCounts = {
+      savedRouteLayer: savedRouteLayer && typeof savedRouteLayer.getLayers === "function" ? savedRouteLayer.getLayers().length : 0,
+      corridorIntelLayer: corridorIntelLayer && typeof corridorIntelLayer.getLayers === "function" ? corridorIntelLayer.getLayers().length : 0
+    };
+    const activation = getLineActivationContext();
+    return {
+      selectedCorridorId: window.__gridlySelectedCorridorId,
+      activeCorridorId: window.__gridlyActiveCorridorId,
+      movementSelectedCorridorId: window.__gridlyMovementSelectedCorridorId,
+      selectedRouteId: window.__gridlySelectedRouteId,
+      routeWatchActive: window.__gridlyRouteWatchActive,
+      knownLineLayerCounts: knownLayerCounts,
+      hasAnyLeafletPolylineLayers: mapPolylineLayers.length > 0,
+      leafletPolylineLayerCount: mapPolylineLayers.length,
+      knownLayerNames: Object.keys(knownLayerCounts),
+      renderReason: activation.selectedCorridorId ? "selected-corridor-id" : activation.selectedRouteId ? "selected-route-id" : activation.routeWatchActive ? "route-watch-active" : "none"
+    };
+  };
+}
 
 function ensureMapStylePersistence(sourceLabel = "unknown") {
   if (!map || !currentMapStyle || !mapBaseLayersByName[currentMapStyle]) return;
@@ -1812,8 +1842,13 @@ async function fetchRoadRouteCoordinates(from, to) {
   }
 }
 
-function drawPremiumRouteLine(latLngs, color = getRouteStatusColor()) {
+function drawPremiumRouteLine(latLngs, color = getRouteStatusColor(), renderFunction = "drawPremiumRouteLine") {
   if (!savedRouteLayer || !Array.isArray(latLngs) || latLngs.length < 2) return;
+  const activation = getLineActivationContext();
+  if (!activation.hasActivation) {
+    savedRouteLayer.clearLayers();
+    return;
+  }
 
   const glow = L.polyline(latLngs, {
     pane: "routePane",
@@ -1848,6 +1883,12 @@ function drawPremiumRouteLine(latLngs, color = getRouteStatusColor()) {
   savedRouteLayer.addLayer(glow);
   savedRouteLayer.addLayer(core);
   savedRouteLayer.addLayer(accent);
+  logGridlyMapLineRendered({
+    renderFunction,
+    routeId: activation.selectedRouteId,
+    activationReason: activation.selectedRouteId ? "selected-route-id" : activation.routeWatchActive ? "route-watch-active" : "selected-corridor-id",
+    coordinates: latLngs
+  });
 
   if (map && routeFocusArmed) {
     const bounds = L.latLngBounds(latLngs);
@@ -1860,6 +1901,12 @@ function drawPremiumRouteLine(latLngs, color = getRouteStatusColor()) {
 
 async function renderSavedRouteLine() {
   if (!savedRouteLayer) return;
+  const activation = getLineActivationContext();
+  if (!activation.hasActivation) {
+    savedRouteLayer.clearLayers();
+    lastRenderedRouteKey = "";
+    return;
+  }
   const routeCrossings = inferSavedRouteCrossings();
   savedRouteCrossingIds = new Set(routeCrossings.map((c) => String(c.id)));
   if (routeCrossings.length < 2) {
@@ -1878,7 +1925,7 @@ async function renderSavedRouteLine() {
   savedRouteLayer.clearLayers();
   const osrmPath = await fetchRoadRouteCoordinates(from, to);
   const fallbackPath = routeCrossings.map((crossing) => [crossing.lat, crossing.lng]);
-  drawPremiumRouteLine(osrmPath?.length > 1 ? osrmPath : fallbackPath);
+  drawPremiumRouteLine(osrmPath?.length > 1 ? osrmPath : fallbackPath, getRouteStatusColor(), "renderSavedRouteLine");
 }
 
 function getMarkerLabel(report, markerStateClass, lifecycleState) {
@@ -4104,7 +4151,7 @@ async function renderDestinationRoute(target) {
   const from = [fromCoords.lat, fromCoords.lng];
   const to = [toCoords.lat, toCoords.lng];
   const osrmPath = await fetchRoadRouteCoordinates(from, to);
-  drawPremiumRouteLine(osrmPath?.length > 1 ? osrmPath : [from, to], "#66e8ff");
+  drawPremiumRouteLine(osrmPath?.length > 1 ? osrmPath : [from, to], "#66e8ff", "renderDestinationRoute");
   savedRouteCrossingIds = new Set(crossings.filter((c) => getDistanceMiles(c.lat, c.lng, target.lat, target.lng) <= 3.5).map((c) => String(c.id)));
   renderCrossings();
   updateRouteWatchBadge(target.label);
@@ -4554,6 +4601,27 @@ function getSelectedCorridorId() {
   return selected ? String(selected).trim() : "";
 }
 
+function getSelectedRouteId() {
+  const selected = window.__gridlySelectedRouteId;
+  if (selected === undefined || selected === null) return "";
+  return String(selected).trim();
+}
+
+function getRouteWatchActivationState() {
+  return window.__gridlyRouteWatchActive === true;
+}
+
+function getLineActivationContext() {
+  const selectedCorridorId = getSelectedCorridorId();
+  const selectedRouteId = getSelectedRouteId();
+  const routeWatchActive = getRouteWatchActivationState();
+  return { selectedCorridorId, selectedRouteId, routeWatchActive, hasActivation: Boolean(selectedCorridorId || selectedRouteId || routeWatchActive) };
+}
+
+function logGridlyMapLineRendered({ renderFunction = "unknown", corridorId = "", routeId = "", activationReason = "", coordinates = [] } = {}) {
+  console.info("Gridly map line rendered", { renderFunction, corridorId, routeId, activationReason, coordinates });
+}
+
 function selectFocusedCorridor(corridorStats = []) {
   const valid = (Array.isArray(corridorStats) ? corridorStats : []).filter((item) => {
     const corridor = item?.corridor || {};
@@ -4597,14 +4665,8 @@ function hasValidCorridorCoordinates(corridor = {}) {
   return Number.isFinite(spanKm) && spanKm > 0.05 && spanKm <= 60;
 }
 
-function isRouteWatchActive() {
-  return Boolean(activeDestinationPlace) || savedRouteCrossingIds.size >= 2;
-}
-
-function shouldRenderCorridorLine({ severityLabel = "Clear", selectedCorridorId = "" } = {}) {
-  if (selectedCorridorId) return true;
-  if (isRouteWatchActive()) return true;
-  return severityLabel === "Blocked";
+function shouldRenderCorridorLine() {
+  return getLineActivationContext().hasActivation;
 }
 
 function drawCorridorIntelLines(corridorStats = []) {
@@ -4615,7 +4677,7 @@ function drawCorridorIntelLines(corridorStats = []) {
   const state = item?.status || {};
   const severityLabel = state.severityLabel || "Clear";
   if (!hasValidCorridorCoordinates(corridor)) return;
-  if (!shouldRenderCorridorLine({ severityLabel, selectedCorridorId: getSelectedCorridorId() })) return;
+  if (!shouldRenderCorridorLine()) return;
 
   const latLngs = [
     [Number(corridor.startLat), Number(corridor.startLng)],
@@ -4642,6 +4704,14 @@ function drawCorridorIntelLines(corridorStats = []) {
     interactive: false
   });
   core.addTo(corridorIntelLayer);
+  const activation = getLineActivationContext();
+  logGridlyMapLineRendered({
+    renderFunction: "drawCorridorIntelLines",
+    corridorId: String(corridor.id || ""),
+    routeId: activation.selectedRouteId,
+    activationReason: activation.selectedCorridorId ? "selected-corridor-id" : activation.selectedRouteId ? "selected-route-id" : "route-watch-active",
+    coordinates: latLngs
+  });
 
   const from = corridor.startLabel || "Start";
   const to = corridor.endLabel || "End";
