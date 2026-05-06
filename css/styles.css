@@ -6029,3 +6029,98 @@ body.modal-open {
   color: #9dffd0;
   background: rgba(42, 182, 116, 0.15);
 }
+
+/* GRIDLY Phase 4C: rebuild desktop top-left map control dock */
+@media (min-width: 1101px) {
+  .map-card .map-frame {
+    overflow: hidden;
+  }
+
+  .map-card .map-tools-overlay {
+    position: absolute !important;
+    top: 18px;
+    left: 18px;
+    right: auto;
+    inset: 18px auto auto 18px;
+    z-index: 1300;
+    width: min(420px, calc(100% - 36px));
+    max-width: calc(100% - 36px);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 12px;
+    border-radius: 16px;
+    background: linear-gradient(165deg, rgba(5, 14, 25, 0.94), rgba(7, 16, 28, 0.9));
+    border: 1px solid rgba(111, 177, 230, 0.32);
+    box-shadow: 0 10px 24px rgba(2, 7, 14, 0.45);
+    backdrop-filter: blur(8px);
+    pointer-events: auto;
+  }
+
+  .map-card .map-view-label {
+    display: block;
+    margin: 0;
+    font-size: 0.7rem;
+    line-height: 1.2;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: #c0d9ef;
+    font-weight: 800;
+  }
+
+  .map-card .map-tools-overlay .geo-filter-shell {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    padding: 0;
+    overflow: visible;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .map-card .map-tools-overlay .geo-filter-pill {
+    min-height: 38px;
+    padding: 8px 10px;
+    font-size: 0.78rem;
+    line-height: 1.15;
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .map-card .desktop-map-legend-row {
+    position: static;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .map-card .legend-pill {
+    min-height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 7px 8px;
+    width: 100%;
+    font-size: 0.73rem;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .map-card .map-tools-overlay .all-crossings-advanced {
+    margin-top: 2px;
+    align-self: start;
+  }
+}
