@@ -5728,31 +5728,39 @@ body.modal-open {
   }
 
   .map-card .map-tools-overlay {
-    top: 8px;
-    left: 8px;
+    top: 12px;
+    left: 12px;
     right: auto;
-    max-width: min(72%, 680px);
-    padding: 7px 9px;
-    gap: 4px;
-    border-radius: 12px;
-    border-color: rgba(138, 214, 255, 0.25);
-    background: linear-gradient(145deg, rgba(7, 12, 18, 0.78), rgba(11, 17, 24, 0.7));
-    backdrop-filter: blur(14px) saturate(130%);
+    max-width: min(92%, 920px);
+    padding: 10px 12px;
+    gap: 8px;
+    border-radius: 16px;
+    border-color: rgba(151, 215, 255, 0.28);
+    background: linear-gradient(145deg, rgba(7, 12, 18, 0.76), rgba(11, 17, 24, 0.62));
+    box-shadow: 0 12px 28px rgba(2, 6, 12, 0.48), 0 0 0 1px rgba(214, 234, 255, 0.08) inset;
+    backdrop-filter: blur(16px) saturate(136%);
   }
 
   .map-card .map-tools-overlay .geo-filter-shell {
-    overflow-x: hidden;
-    flex-wrap: wrap;
-    gap: 5px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 9px;
+    padding: 2px;
+    scrollbar-width: thin;
   }
 
   .map-card .map-tools-overlay .geo-filter-pill {
-    padding: 5px 10px;
-    min-height: 28px;
-    font-size: 0.72rem;
-    letter-spacing: 0.015em;
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.16);
+    flex: 0 0 auto;
+    white-space: nowrap;
+    padding: 7px 14px;
+    min-height: 34px;
+    font-size: 0.8rem;
+    line-height: 1;
+    letter-spacing: 0.01em;
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.2);
   }
 
   .map-card .desktop-map-legend-row {
