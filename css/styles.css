@@ -5143,13 +5143,16 @@ body.modal-open {
   gap: 12px;
 }
 .route-watch-badge {
-  position: absolute;
-  top: 142px;
-  right: 14px;
-  z-index: 40;
-  padding: 8px 12px;
-  font-size: 0.78rem;
+  position: static;
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  margin: 8px 0 10px;
+  padding: 7px 11px;
+  font-size: 0.76rem;
+  line-height: 1.2;
   font-weight: 800;
+  z-index: 1;
 }
 .route-watch-badge.route-green { border-color: rgba(70, 218, 142, 0.62); color: #95ffcd; }
 .route-watch-badge.route-amber { border-color: rgba(255, 191, 71, 0.62); color: #ffd99a; }
