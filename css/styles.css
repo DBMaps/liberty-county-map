@@ -5623,3 +5623,135 @@ body.modal-open {
     padding-top: 48px;
   }
 }
+
+/* V18 command-center desktop polish */
+@media (min-width: 1101px) {
+  .app-shell {
+    align-items: start;
+    gap: 14px;
+  }
+
+  .desktop-left-rail {
+    position: sticky;
+    top: 12px;
+    align-self: start;
+    max-height: calc(100vh - 24px);
+    overflow-y: auto;
+  }
+
+  .command-center {
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+    align-items: start;
+    gap: 10px;
+  }
+
+  .map-card {
+    padding: 12px;
+    min-height: 0;
+  }
+
+  .map-card .section-header.map-header {
+    padding: 0 2px 4px;
+    margin-bottom: 6px;
+  }
+
+  .map-card .section-header.map-header h2 {
+    font-size: 1.02rem;
+    margin: 2px 0;
+  }
+
+  .map-card .section-header.map-header .map-note {
+    font-size: 0.78rem;
+    margin: 0;
+  }
+
+  .map-card .desktop-route-watch-strip {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+  }
+
+  .map-card .desktop-route-watch-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+
+  .map-card .desktop-destination-strip {
+    display: none;
+  }
+
+  .map-card .map-frame {
+    min-height: 0;
+  }
+
+  .map-card .map-tools-overlay {
+    top: 10px;
+    left: 10px;
+    right: auto;
+    max-width: min(70%, 640px);
+    padding: 6px 8px;
+    gap: 5px;
+  }
+
+  .map-card .map-tools-overlay .geo-filter-shell {
+    overflow-x: hidden;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .map-card .map-tools-overlay .geo-filter-pill {
+    padding: 6px 10px;
+    min-height: 30px;
+  }
+
+  .map-card .desktop-map-legend-row {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 421;
+    margin: 0;
+    max-width: 44%;
+    justify-content: flex-end;
+    gap: 5px;
+  }
+
+  .map-card .legend-pill { font-size: 0.66rem; padding: 4px 8px; }
+
+  #map {
+    margin-top: 0;
+    height: clamp(580px, 74vh, 820px);
+    min-height: 580px;
+  }
+
+  .desktop-command-panel {
+    display: grid;
+    gap: 8px;
+    max-height: clamp(580px, 74vh, 820px);
+    overflow-y: auto;
+    padding-right: 2px;
+  }
+
+  .desktop-command-panel .panel-card {
+    margin: 0;
+    border-radius: 12px;
+  }
+
+  .desktop-command-panel .drawer-summary {
+    padding: 10px 12px;
+  }
+
+  .desktop-command-panel .drawer-body {
+    padding: 10px 12px 12px;
+  }
+
+  .report-drawer {
+    max-width: 430px;
+    margin-left: auto;
+    opacity: 0.93;
+  }
+}
