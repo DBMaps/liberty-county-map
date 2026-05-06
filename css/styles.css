@@ -5432,6 +5432,32 @@ body.modal-open {
   }
 }
 
+
+/* Interaction safety: hidden overlays must never intercept clicks */
+.route-setup-modal[hidden],
+.smart-alerts-modal[hidden],
+.place-name-modal[hidden],
+#firstRunSetupModal[hidden] {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+.route-setup-modal:not([hidden]),
+.smart-alerts-modal:not([hidden]),
+.place-name-modal:not([hidden]),
+#firstRunSetupModal:not([hidden]) {
+  pointer-events: auto;
+}
+
+/* Desktop must never render mobile bottom nav */
+@media (min-width: 1101px) {
+  .mobile-bottom-app-nav {
+    display: none !important;
+    pointer-events: none !important;
+    visibility: hidden;
+  }
+}
+
 body.modal-open {
   overflow: hidden !important;
 }
