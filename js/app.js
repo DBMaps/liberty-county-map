@@ -2579,7 +2579,7 @@ function bindEvents() {
     openRouteSetupModal(event.currentTarget);
   });
   els.desktopManageRouteBtn?.addEventListener("click", (event) => {
-    console.log("Manage Route clicked");
+    console.log("Route Watch Manage Route clicked");
     openRouteSetupModal(event.currentTarget);
   });
 
@@ -2611,12 +2611,26 @@ function bindEvents() {
       openRouteSetupModal();
     }
   };
+  const leftRailLogBySection = {
+    dashboard: "Left rail Today clicked",
+    map: "Left rail Map clicked",
+    report: "Left rail Report clicked",
+    alerts: "Left rail Alerts clicked",
+    routes: "Left rail Routes clicked",
+    "live-feed": "Left rail Live Driver Feed clicked"
+  };
+
   document.querySelectorAll(".nav-btn[data-section]").forEach((btn) => {
     btn.addEventListener("click", () => {
+      const section = btn.dataset.section;
       const scope = btn.closest(".top-nav, .left-rail, .desktop-left-rail, .mobile-bottom-nav");
       scope?.querySelectorAll(".nav-btn").forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
-      routeNavSection(btn.dataset.section);
+      if (btn.closest(".desktop-left-rail")) {
+        const logMessage = leftRailLogBySection[section];
+        if (logMessage) console.log(logMessage);
+      }
+      routeNavSection(section);
     });
   });
 
@@ -2654,9 +2668,20 @@ function bindEvents() {
     fitMapToCrossingsForActiveFilter(visibleCrossings);
   };
 
+  const routeWatchLogByFilter = {
+    nearby: "Route Watch Near Me clicked",
+    town: "Route Watch My Route clicked",
+    county: "Route Watch My Town clicked",
+    "active-delays": "Route Watch Delays clicked",
+    all: "Route Watch All clicked"
+  };
+
   document.querySelectorAll(".geo-filter-pill").forEach((btn) => {
     btn.addEventListener("click", () => {
-      applyGeoFilterFromPill(btn.dataset.geoFilter || "all");
+      const filterKey = btn.dataset.geoFilter || "all";
+      const logMessage = routeWatchLogByFilter[filterKey];
+      if (logMessage) console.log(logMessage);
+      applyGeoFilterFromPill(filterKey);
     });
   });
 
