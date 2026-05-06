@@ -2702,6 +2702,7 @@ function openRouteSetupModal(triggerEl = null) {
   if (!els.routeSetupModal) return;
   lastRouteSetupTrigger = triggerEl || document.activeElement || null;
   loadSavedRoute();
+  configureRouteSetupModal({ mode: "manage" });
   openModal(els.routeSetupModal, lastRouteSetupTrigger);
 }
 
@@ -3099,20 +3100,27 @@ function saveRoute(source = "desktop") {
     return;
   }
   const places = getSavedPlaces();
-  const id = `place-${Date.now()}`;
-  places.push({ id, name: home, address: work, type: "custom" });
+  const modalMode = source === "mobile" ? (els.routeSetupModal?.dataset.mode || "add") : "add";
+  const prefillType = source === "mobile" ? (els.routeSetupModal?.dataset.prefillType || "custom") : "custom";
+  const normalizedType = prefillType === "favorite" ? "custom" : prefillType;
+  let id = `place-${Date.now()}`;
+  if (normalizedType === "home" || normalizedType === "work") {
+    id = normalizedType;
+  }
+  const existingIdx = places.findIndex((place) => place.id === id);
+  const nextPlace = { id, name: home, address: work, type: normalizedType };
+  if (existingIdx >= 0) places[existingIdx] = nextPlace;
+  else places.push(nextPlace);
   saveSavedPlaces(places);
   setSelectedPlaceId(id);
-  localStorage.setItem("gridlyHome", home); // legacy compatibility
-  localStorage.setItem("gridlyWork", work);
-  savePlaceType("home", home, work);
-  savePlaceType("work", work, work);
+  if (normalizedType === "home") localStorage.setItem("gridlyHome", home);
+  if (normalizedType === "work") localStorage.setItem("gridlyWork", work);
 
   loadSavedRoute();
   initDailyDestinationHero();
   updateRouteIntelligence();
   updateGrowthWidgets();
-  flashButton(button, "Route Saved");
+  flashButton(button, modalMode === "manage" ? "Saved" : "Place Saved");
 
   if (source === "mobile") {
     closeRouteSetupModal();
@@ -3255,15 +3263,43 @@ function activateDestinationByType(type) {
 function openRouteSetupModalForType(type) {
   openRouteSetupModal();
   if (!els.routeSetupModal) return;
-  const normalizedType = type === "favorite" ? "custom" : type;
+  const state = getSavedPlacesState();
+  if (type === "home" && state.home) return activateDestinationByType("home");
+  if (type === "work" && state.work) return activateDestinationByType("work");
+  if (type === "favorite" && state.custom?.length) return activateDestinationByType("favorite");
+  configureRouteSetupModal({ mode: "add", prefillType: type });
+}
+
+function configureRouteSetupModal({ mode = "add", prefillType = "custom" } = {}) {
+  if (!els.routeSetupModal) return;
+  const state = getSavedPlacesState();
+  const normalizedType = prefillType === "favorite" ? "custom" : prefillType;
+  els.routeSetupModal.dataset.mode = mode;
   els.routeSetupModal.dataset.prefillType = normalizedType;
-  if (normalizedType === "home") {
-    els.mobileHomeInput?.focus();
+  const titleEl = document.getElementById("routeSetupTitle");
+  const subtitleEl = els.routeSetupModal.querySelector(".smart-alerts-subtitle");
+  if (titleEl) titleEl.textContent = mode === "manage" ? "Manage Places" : "Add Place";
+  if (subtitleEl) subtitleEl.textContent = "Saved places stay on this device. Pick one destination for today.";
+  if (els.mobileSaveRouteBtn) els.mobileSaveRouteBtn.textContent = "Save Place";
+
+  if (mode === "manage") {
+    const selected = getSelectedPlace();
+    const effectiveType = selected?.id === "home" || selected?.id === "work" ? selected.id : "custom";
+    els.routeSetupModal.dataset.prefillType = effectiveType;
+    if (els.mobileHomeInput) els.mobileHomeInput.value = selected?.name || "";
+    if (els.mobileWorkInput) els.mobileWorkInput.value = selected?.address || "";
     return;
   }
-  if (normalizedType === "work" || normalizedType === "custom") {
-    els.mobileWorkInput?.focus();
-  }
+
+  const presets = {
+    home: { name: "Home", address: "" },
+    work: { name: "Work", address: "" },
+    custom: { name: "", address: "" }
+  };
+  const preset = presets[normalizedType] || presets.custom;
+  if (els.mobileHomeInput) els.mobileHomeInput.value = preset.name;
+  if (els.mobileWorkInput) els.mobileWorkInput.value = preset.address;
+  if (els.mobileHomeInput) els.mobileHomeInput.focus();
 }
 
 async function renderDestinationRoute(target) {
