@@ -5535,3 +5535,91 @@ body.modal-open {
     overflow: visible;
   }
 }
+
+/* V18 clean stable: separate Route Watch controls from map filters */
+.map-card .desktop-route-watch-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 10px;
+}
+
+.map-card .desktop-destination-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.map-card .desktop-destination-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.map-card .map-frame {
+  position: relative;
+}
+
+.map-card .map-tools-overlay {
+  position: absolute !important;
+  top: 12px;
+  left: 12px;
+  right: auto;
+  z-index: 420;
+  max-width: min(92%, 720px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  border-radius: 12px;
+  background: rgba(8, 13, 20, 0.72);
+  border: 1px solid rgba(170, 205, 240, 0.24);
+  backdrop-filter: blur(8px);
+}
+
+.map-card .map-view-label {
+  margin: 0;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b9d2ea;
+  font-weight: 700;
+}
+
+.map-card .map-tools-overlay .geo-filter-shell {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.map-card .geo-filter-status {
+  margin-top: 10px;
+}
+
+@media (max-width: 1100px) {
+  .map-card .map-tools-overlay {
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    max-width: none;
+    padding: 7px;
+  }
+
+  .map-card .map-tools-overlay .desktop-map-legend-row,
+  .map-card .map-tools-overlay .all-crossings-advanced,
+  .map-card .map-tools-overlay .map-view-label {
+    display: none;
+  }
+
+  .map-card .map-tools-overlay .geo-filter-pill {
+    flex: 0 0 auto;
+  }
+
+  #map {
+    padding-top: 48px;
+  }
+}
