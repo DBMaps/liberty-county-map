@@ -5215,6 +5215,12 @@ body.modal-open {
 @media (min-width: 1101px) {
   .destination-hero-card { display: none; }
   .desktop-destination-strip { display: flex; }
+  .route-watch-badge {
+    margin: 4px 0 6px;
+    padding: 5px 9px;
+    font-size: 0.71rem;
+    border-radius: 12px;
+  }
 }
 
 .leaflet-marker-icon.route-priority {
@@ -5670,13 +5676,13 @@ body.modal-open {
   }
 
   .command-center {
-    grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 320px);
     align-items: start;
-    gap: 10px;
+    gap: 8px;
   }
 
   .map-card {
-    padding: 12px;
+    padding: 10px;
     min-height: 0;
   }
 
@@ -5698,9 +5704,11 @@ body.modal-open {
   .map-card .desktop-route-watch-strip {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    gap: 10px;
-    padding: 10px 12px;
-    margin-bottom: 8px;
+    gap: 8px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    border-radius: 14px;
+    background: linear-gradient(130deg, rgba(10, 15, 21, 0.9), rgba(20, 25, 30, 0.85));
   }
 
   .map-card .desktop-route-watch-actions {
@@ -5720,69 +5728,86 @@ body.modal-open {
   }
 
   .map-card .map-tools-overlay {
-    top: 10px;
-    left: 10px;
+    top: 8px;
+    left: 8px;
     right: auto;
-    max-width: min(70%, 640px);
-    padding: 6px 8px;
-    gap: 5px;
+    max-width: min(72%, 680px);
+    padding: 7px 9px;
+    gap: 4px;
+    border-radius: 12px;
+    border-color: rgba(138, 214, 255, 0.25);
+    background: linear-gradient(145deg, rgba(7, 12, 18, 0.78), rgba(11, 17, 24, 0.7));
+    backdrop-filter: blur(14px) saturate(130%);
   }
 
   .map-card .map-tools-overlay .geo-filter-shell {
     overflow-x: hidden;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 5px;
   }
 
   .map-card .map-tools-overlay .geo-filter-pill {
-    padding: 6px 10px;
-    min-height: 30px;
+    padding: 5px 10px;
+    min-height: 28px;
+    font-size: 0.72rem;
+    letter-spacing: 0.015em;
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.16);
   }
 
   .map-card .desktop-map-legend-row {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 8px;
+    right: 8px;
     z-index: 421;
     margin: 0;
-    max-width: 44%;
+    max-width: 42%;
     justify-content: flex-end;
-    gap: 5px;
+    gap: 4px;
+    padding: 5px 7px;
+    border-radius: 11px;
+    background: rgba(8, 14, 21, 0.7);
+    backdrop-filter: blur(10px);
   }
 
   .map-card .legend-pill { font-size: 0.66rem; padding: 4px 8px; }
 
   #map {
     margin-top: 0;
-    height: clamp(580px, 74vh, 820px);
-    min-height: 580px;
+    height: clamp(610px, 78vh, 860px);
+    min-height: 610px;
   }
 
   .desktop-command-panel {
     display: grid;
-    gap: 8px;
-    max-height: clamp(580px, 74vh, 820px);
+    gap: 6px;
+    max-height: clamp(610px, 78vh, 860px);
     overflow-y: auto;
-    padding-right: 2px;
+    padding: 8px;
+    border-radius: 18px;
   }
 
   .desktop-command-panel .panel-card {
     margin: 0;
-    border-radius: 12px;
+    border-radius: 11px;
+    box-shadow: none;
   }
 
   .desktop-command-panel .drawer-summary {
-    padding: 10px 12px;
+    padding: 8px 10px;
+    min-height: 38px;
   }
 
   .desktop-command-panel .drawer-body {
-    padding: 10px 12px 12px;
+    padding: 8px 10px 10px;
+    display: grid;
+    gap: 8px;
   }
 
   .report-drawer {
-    max-width: 430px;
+    max-width: 400px;
     margin-left: auto;
-    opacity: 0.93;
+    opacity: 0.89;
   }
 }
 
@@ -5809,7 +5834,7 @@ body.modal-open {
 }
 
 #map.map-style-dark {
-  filter: saturate(1.06) brightness(1.08) contrast(1.05) !important;
+  filter: saturate(1.08) brightness(1.13) contrast(1.08) !important;
 }
 
 #map.map-style-satellite {
