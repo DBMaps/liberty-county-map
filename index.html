@@ -297,25 +297,28 @@
           </div>
         </div>
 
-        <div class="map-tools-overlay" aria-label="Map controls">
-          <div class="geo-filter-shell" role="group" aria-label="Map filters">
-            <button class="geo-filter-pill selected" type="button" data-geo-filter="nearby">Near Me</button>
-            <button class="geo-filter-pill" type="button" data-geo-filter="town">My Route</button>
-            <button class="geo-filter-pill" type="button" data-geo-filter="county">My Town</button>
-            <button class="geo-filter-pill" type="button" data-geo-filter="active-delays">Delays</button>
-            <button class="geo-filter-pill" type="button" data-geo-filter="all">All</button>
+        <div class="map-frame">
+          <div class="map-tools-overlay" aria-label="Map controls">
+            <p class="map-view-label">Map View</p>
+            <div class="geo-filter-shell" role="group" aria-label="Map filters">
+              <button class="geo-filter-pill selected" type="button" data-geo-filter="nearby">Near Me</button>
+              <button class="geo-filter-pill" type="button" data-geo-filter="town">My Route</button>
+              <button class="geo-filter-pill" type="button" data-geo-filter="county">My Town</button>
+              <button class="geo-filter-pill" type="button" data-geo-filter="active-delays">Delays</button>
+              <button class="geo-filter-pill" type="button" data-geo-filter="all">All</button>
+            </div>
+            <div class="crossing-status-legend desktop-map-legend-row" aria-label="Crossing status legend">
+              <span class="legend-pill blocked">Blocked</span><span class="legend-pill delayed">Delayed</span><span class="legend-pill cleared">Cleared</span><span class="legend-pill inactive">Inactive</span>
+            </div>
+            <details class="all-crossings-advanced"><summary>Advanced</summary><label class="all-crossings-toggle"><input id="allCrossingsLayerToggle" type="checkbox" /> Show all crossings layer</label></details>
           </div>
-          <div class="crossing-status-legend desktop-map-legend-row" aria-label="Crossing status legend">
-            <span class="legend-pill blocked">Blocked</span><span class="legend-pill delayed">Delayed</span><span class="legend-pill cleared">Cleared</span><span class="legend-pill inactive">Inactive</span>
-          </div>
-          <details class="all-crossings-advanced"><summary>Advanced</summary><label class="all-crossings-toggle"><input id="allCrossingsLayerToggle" type="checkbox" /> Show all crossings layer</label></details>
+
+          <div id="map"></div>
         </div>
 
         <div class="geo-filter-status" id="geoFilterStatus" role="status" aria-live="polite" aria-atomic="true">
           Act now: review nearby crossings before departure
         </div>
-
-        <div id="map"></div>
       </section>
 
       <aside class="side-panel desktop-command-panel" id="alertsSection">
