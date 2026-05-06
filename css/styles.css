@@ -4430,6 +4430,28 @@ body.modal-open {
   pointer-events: none;
 }
 
+.map-frame,
+#map,
+#map .leaflet-pane,
+#map .leaflet-map-pane,
+#map .leaflet-overlay-pane,
+#map .leaflet-marker-pane,
+#map .leaflet-popup-pane {
+  pointer-events: auto;
+}
+
+.map-frame::before,
+.map-frame::after,
+.map-card::before,
+.map-card::after {
+  pointer-events: none !important;
+}
+
+.map-tools-overlay {
+  height: auto !important;
+  bottom: auto !important;
+}
+
 .map-tools-overlay .geo-filter-shell,
 .map-tools-overlay .geo-filter-status,
 .map-tools-overlay .crossing-status-legend,
