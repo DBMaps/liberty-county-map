@@ -2598,28 +2598,35 @@ function bindEvents() {
   els.saveSmartAlertsBtn?.addEventListener("click", saveSmartAlertsPreferences);
   els.closeSmartAlertsModalBtn?.addEventListener("click", closeSmartAlertsModal);
   els.mobileSaveRouteBtn?.addEventListener("click", () => saveRoute("mobile"));
-  [els.destinationAddBtn, els.desktopDestinationAddBtn].forEach((btn) => btn?.addEventListener("click", (event) => {
+  const routeWatchButtonSets = {
+    add: [els.desktopDestinationAddBtn, els.destinationAddBtn],
+    home: [els.desktopDestinationHomeBtn, els.destinationHomeBtn],
+    work: [els.desktopDestinationWorkBtn, els.destinationWorkBtn],
+    favorite: [els.desktopDestinationFavoriteBtn, els.destinationFavoriteBtn]
+  };
+
+  routeWatchButtonSets.add.forEach((btn) => btn?.addEventListener("click", (event) => {
     event.preventDefault();
     event.stopPropagation();
     console.log("Route Watch Add Place action");
     openRouteSetupModalForType("custom");
     ensureMapStylePersistence("Add Place");
   }));
-  [els.destinationHomeBtn, els.desktopDestinationHomeBtn].forEach((btn) => btn?.addEventListener("click", (event) => {
+  routeWatchButtonSets.home.forEach((btn) => btn?.addEventListener("click", (event) => {
     event.preventDefault();
     event.stopPropagation();
     console.log("Route Watch Home action");
     activateDestinationByType("home");
     ensureMapStylePersistence("Home");
   }));
-  [els.destinationWorkBtn, els.desktopDestinationWorkBtn].forEach((btn) => btn?.addEventListener("click", (event) => {
+  routeWatchButtonSets.work.forEach((btn) => btn?.addEventListener("click", (event) => {
     event.preventDefault();
     event.stopPropagation();
     console.log("Route Watch Work action");
     activateDestinationByType("work");
     ensureMapStylePersistence("Work");
   }));
-  [els.destinationFavoriteBtn, els.desktopDestinationFavoriteBtn].forEach((btn) => btn?.addEventListener("click", (event) => {
+  routeWatchButtonSets.favorite.forEach((btn) => btn?.addEventListener("click", (event) => {
     event.preventDefault();
     event.stopPropagation();
     console.log("Route Watch Favorite action");
@@ -2747,7 +2754,8 @@ function bindEvents() {
     settings: "Left rail Settings action"
   };
 
-  document.querySelectorAll(".nav-btn[data-section]").forEach((btn) => {
+  const navButtons = Array.from(document.querySelectorAll(".nav-btn[data-section]"));
+  navButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
       const section = btn.dataset.section;
       const scope = btn.closest(".top-nav, .left-rail, .desktop-left-rail, .mobile-bottom-nav");
