@@ -1627,12 +1627,16 @@ function renderCrossings() {
     });
 
     const marker = L.marker([crossing.lat, crossing.lng], { icon })
-      .bindPopup(buildPopup(crossing, report), { maxWidth: 350 })
+      .bindPopup(buildPopup(crossing, report), {
+        maxWidth: 350,
+        autoPan: false,
+        closeButton: true,
+        className: "gridly-crossing-popup"
+      })
       .addTo(crossingLayer);
 
     marker.on("click", () => {
       console.log("Crossing marker clicked", String(crossing.id));
-      marker.openPopup();
     });
 
     marker.on("popupopen", () => {
