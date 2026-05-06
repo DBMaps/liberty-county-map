@@ -239,6 +239,7 @@ function hydrateElements() {
     "quickClearBtn",
     "mobileReportBtn",
     "desktopReportNearMeBtn",
+    "desktopReportNearMeBtnRail",
     "reportModeBanner",
     "reportSection",
     "trendingDrawer",
@@ -2570,6 +2571,7 @@ function bindEvents() {
   });
   els.mapReportShortcutBtn?.addEventListener("click", handleReportNearMe);
   els.desktopReportNearMeBtn?.addEventListener("click", handleReportNearMe);
+  els.desktopReportNearMeBtnRail?.addEventListener("click", handleReportNearMe);
   els.saveSmartAlertsBtn?.addEventListener("click", saveSmartAlertsPreferences);
   els.closeSmartAlertsModalBtn?.addEventListener("click", closeSmartAlertsModal);
   els.mobileSaveRouteBtn?.addEventListener("click", () => saveRoute("mobile"));
