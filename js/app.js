@@ -131,6 +131,9 @@ let showAllCrossingsLayer = false;
 let savedRouteCrossingIds = new Set();
 let activeDestinationPlace = null;
 let gridlyUserProfile = getGridlyUserProfile();
+let mapBaseLayersByName = {};
+let mapStyleClassByName = {};
+let currentMapStyle = "Satellite";
 
 let deviceId =
   localStorage.getItem("gridlyDeviceId") ||
@@ -676,8 +679,12 @@ function initMap() {
     Dark: "map-style-dark",
     Satellite: "map-style-satellite"
   };
+  mapBaseLayersByName = baseLayers;
+  mapStyleClassByName = styleClassByName;
+
   const savedStyle = localStorage.getItem(MAP_STYLE_STORAGE_KEY);
   const initialStyle = baseLayers[savedStyle] ? savedStyle : "Satellite";
+  currentMapStyle = initialStyle;
   baseLayers[initialStyle].addTo(map);
   map.getContainer().classList.add(styleClassByName[initialStyle]);
 
@@ -688,6 +695,7 @@ function initMap() {
     if (!styleClassByName[selectedName]) return;
     Object.values(styleClassByName).forEach((className) => map.getContainer().classList.remove(className));
     map.getContainer().classList.add(styleClassByName[selectedName]);
+    currentMapStyle = selectedName;
     localStorage.setItem(MAP_STYLE_STORAGE_KEY, selectedName);
   });
 
@@ -702,6 +710,21 @@ function initMap() {
 
   centerMapOnUserIfAllowed();
   highlightNearestCrossingOnFirstLoad();
+}
+
+
+function ensureMapStylePersistence(sourceLabel = "unknown") {
+  if (!map || !currentMapStyle || !mapBaseLayersByName[currentMapStyle]) return;
+  const activeLayer = Object.entries(mapBaseLayersByName).find(([, layer]) => map.hasLayer(layer));
+  const activeName = activeLayer?.[0] || null;
+  if (activeName === currentMapStyle) return;
+  console.warn(`Map style drift detected after ${sourceLabel}. Restoring ${currentMapStyle}.`);
+  mapBaseLayersByName[currentMapStyle].addTo(map);
+  if (mapStyleClassByName[currentMapStyle]) {
+    Object.values(mapStyleClassByName).forEach((className) => map.getContainer().classList.remove(className));
+    map.getContainer().classList.add(mapStyleClassByName[currentMapStyle]);
+  }
+  localStorage.setItem(MAP_STYLE_STORAGE_KEY, currentMapStyle);
 }
 
 function centerMapOnUserIfAllowed() {
@@ -2575,21 +2598,33 @@ function bindEvents() {
   els.saveSmartAlertsBtn?.addEventListener("click", saveSmartAlertsPreferences);
   els.closeSmartAlertsModalBtn?.addEventListener("click", closeSmartAlertsModal);
   els.mobileSaveRouteBtn?.addEventListener("click", () => saveRoute("mobile"));
-  [els.destinationAddBtn, els.desktopDestinationAddBtn].forEach((btn) => btn?.addEventListener("click", () => {
-    console.log("Route Watch Add Place clicked");
+  [els.destinationAddBtn, els.desktopDestinationAddBtn].forEach((btn) => btn?.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    console.log("Route Watch Add Place action");
     openRouteSetupModalForType("custom");
+    ensureMapStylePersistence("Add Place");
   }));
-  [els.destinationHomeBtn, els.desktopDestinationHomeBtn].forEach((btn) => btn?.addEventListener("click", () => {
-    console.log("Route Watch Home clicked");
+  [els.destinationHomeBtn, els.desktopDestinationHomeBtn].forEach((btn) => btn?.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    console.log("Route Watch Home action");
     activateDestinationByType("home");
+    ensureMapStylePersistence("Home");
   }));
-  [els.destinationWorkBtn, els.desktopDestinationWorkBtn].forEach((btn) => btn?.addEventListener("click", () => {
-    console.log("Route Watch Work clicked");
+  [els.destinationWorkBtn, els.desktopDestinationWorkBtn].forEach((btn) => btn?.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    console.log("Route Watch Work action");
     activateDestinationByType("work");
+    ensureMapStylePersistence("Work");
   }));
-  [els.destinationFavoriteBtn, els.desktopDestinationFavoriteBtn].forEach((btn) => btn?.addEventListener("click", () => {
-    console.log("Route Watch Favorites clicked");
+  [els.destinationFavoriteBtn, els.desktopDestinationFavoriteBtn].forEach((btn) => btn?.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    console.log("Route Watch Favorite action");
     activateDestinationByType("favorite");
+    ensureMapStylePersistence("Favorite");
   }));
   [els.savedDestinationSelect, els.mobileSavedDestinationSelect].forEach((selectEl) => {
     selectEl?.addEventListener("change", (event) => {
@@ -2682,14 +2717,15 @@ function bindEvents() {
     };
     if (section === "crossings") {
       routeNavSection("map");
-      setConfirmation("Opening map crossings.", "success");
+      applyGeoFilterFromPill("all");
+      setConfirmation("Crossings filter set to all crossings.", "success");
       return;
     }
     if (section === "analytics") {
       document.getElementById("alertsSection")?.scrollIntoView({ behavior: "smooth", block: "start" });
       const impactDrawer = document.querySelector(".desktop-command-panel .panel-card.drawer-panel:nth-of-type(2)");
       if (impactDrawer) impactDrawer.open = true;
-      setConfirmation("Opening Impact Score.", "success");
+      setConfirmation("Opening Analytics / Impact Score.", "success");
       return;
     }
     if (fallbackMessages[section]) {
@@ -2700,11 +2736,15 @@ function bindEvents() {
   };
 
   const leftRailLogBySection = {
-    dashboard: "Left rail Today clicked",
-    map: "Left rail Map clicked",
-    report: "Left rail Report clicked",
-    alerts: "Left rail Alerts clicked",
-    routes: "Left rail Routes clicked"
+    dashboard: "Left rail Home action",
+    map: "Left rail Map action",
+    alerts: "Left rail Alerts action",
+    routes: "Left rail Routes action",
+    report: "Left rail Reports action",
+    crossings: "Left rail Crossings action",
+    analytics: "Left rail Analytics action",
+    weather: "Left rail Weather action",
+    settings: "Left rail Settings action"
   };
 
   document.querySelectorAll(".nav-btn[data-section]").forEach((btn) => {
