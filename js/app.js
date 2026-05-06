@@ -674,7 +674,7 @@ function initMap() {
     Satellite: "map-style-satellite"
   };
   const savedStyle = localStorage.getItem(MAP_STYLE_STORAGE_KEY);
-  const initialStyle = baseLayers[savedStyle] ? savedStyle : "Standard";
+  const initialStyle = baseLayers[savedStyle] ? savedStyle : "Satellite";
   baseLayers[initialStyle].addTo(map);
   map.getContainer().classList.add(styleClassByName[initialStyle]);
 
