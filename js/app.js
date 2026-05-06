@@ -643,6 +643,122 @@ function computeRouteReliability(corridorId = "") {
   };
 }
 
+function getActiveReportsForCorridor(corridor = {}) {
+  const normalized = normalizeMovementIntelligence({ corridors: [corridor] }).corridors[0] || {};
+  const startLat = Number(normalized.startLat);
+  const startLng = Number(normalized.startLng);
+  const endLat = Number(normalized.endLat);
+  const endLng = Number(normalized.endLng);
+  if (![startLat, startLng, endLat, endLng].every(Number.isFinite)) return [];
+
+  const corridorSpanKm = calculateDistanceKm(startLat, startLng, endLat, endLng);
+  const proximityKm = Math.max(0.8, Math.min(3.5, corridorSpanKm * 0.18));
+  const now = Date.now();
+  const sourceReports = [...(Array.isArray(activeReports) ? activeReports : []), ...(Array.isArray(activeHazards) ? activeHazards : [])];
+
+  return sourceReports.filter((report) => {
+    if (!report || report.expired) return false;
+    const lat = Number(report.lat);
+    const lng = Number(report.lng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return false;
+    const lifecycleState = getIncidentLifecycleState(report, now);
+    if (lifecycleState !== "active" && lifecycleState !== "recently_cleared" && lifecycleState !== "cleared") return false;
+    return isPointNearCorridor(lat, lng, startLat, startLng, endLat, endLng, proximityKm);
+  });
+}
+
+function updateCorridorFromReports(corridor = {}) {
+  const reportMatches = getActiveReportsForCorridor(corridor);
+  const base = normalizeMovementIntelligence({ corridors: [corridor] }).corridors[0] || {};
+  const baselineMinutes = Number(base.baselineMinutes);
+  const nowIso = new Date().toISOString();
+  if (!Number.isFinite(baselineMinutes) || baselineMinutes <= 0) {
+    return { corridor: { ...base, lastUpdated: nowIso }, linkedReports: reportMatches, delayMinutes: 0, impactLevel: "low", delayBreakdown: { blocked: 0, heavy: 0, other: 0, cleared: 0 } };
+  }
+
+  let delayMinutes = 0;
+  const delayBreakdown = { blocked: 0, heavy: 0, other: 0, cleared: 0 };
+  const incidentsByLocation = getUnifiedIncidents();
+
+  reportMatches.forEach((report) => {
+    const lifecycleState = getIncidentLifecycleState(report);
+    const type = String(report.type || "").toLowerCase();
+    const minutesAgo = Math.max(0, Number(report.minutesAgo) || 0);
+    const recencyWeight = minutesAgo <= 15 ? 1 : minutesAgo <= 45 ? 0.7 : 0.45;
+    const incident = incidentsByLocation.find((item) => getReportLocationKey(item.latestReport) === getReportLocationKey(report));
+    const confirmations = Math.max(1, Number(incident?.reports_count || incident?.count || 1));
+    const confirmationBoost = Math.min(1.35, 1 + (confirmations - 1) * 0.1);
+
+    if (lifecycleState === "active" && type === "blocked") {
+      const addition = Math.min(10, Math.max(4, 6 * recencyWeight * confirmationBoost));
+      delayMinutes += addition;
+      delayBreakdown.blocked += addition;
+    } else if (lifecycleState === "active" && type === "heavy") {
+      const addition = Math.min(5, Math.max(2, 3 * recencyWeight * confirmationBoost));
+      delayMinutes += addition;
+      delayBreakdown.heavy += addition;
+    } else if (lifecycleState === "active") {
+      const addition = Math.max(0.5, 1.2 * recencyWeight);
+      delayMinutes += addition;
+      delayBreakdown.other += addition;
+    } else if (lifecycleState === "recently_cleared" || lifecycleState === "cleared" || type === "cleared" || type === "hazard_cleared") {
+      const reduction = Math.min(3, Math.max(0.75, 2.2 * recencyWeight));
+      delayMinutes -= reduction;
+      delayBreakdown.cleared += reduction;
+    }
+  });
+
+  const boundedDelay = Math.max(0, Math.round(delayMinutes * 10) / 10);
+  const currentMinutes = Math.max(1, Math.round((baselineMinutes + boundedDelay) * 10) / 10);
+  const impactLevel = boundedDelay >= 8 ? "high" : boundedDelay >= 3 ? "moderate" : "low";
+  const nextConfidence = reportMatches.length >= 5 ? "high" : reportMatches.length >= 2 ? "medium" : base.confidence || "low";
+  return {
+    corridor: { ...base, currentMinutes, confidence: nextConfidence, lastUpdated: nowIso },
+    linkedReports: reportMatches,
+    delayMinutes: boundedDelay,
+    impactLevel,
+    delayBreakdown
+  };
+}
+
+function recomputeMovementIntelligence() {
+  const normalized = getMovementIntelligence();
+  const computed = normalized.corridors.map((corridor) => updateCorridorFromReports(corridor));
+  const updatedCorridors = computed.map((item) => item.corridor);
+  const nextCrossingImpact = computed.map((item) => ({
+    crossingId: `corridor-impact-${item.corridor.id}`,
+    corridorId: item.corridor.id,
+    impactLevel: item.impactLevel,
+    activeDelayCount: item.linkedReports.filter((report) => getIncidentLifecycleState(report) === "active").length,
+    confirmedCount: item.linkedReports.length,
+    lastImpactAt: item.corridor.lastUpdated
+  }));
+
+  const next = saveMovementIntelligence({
+    ...normalized,
+    corridors: updatedCorridors,
+    crossingImpact: nextCrossingImpact
+  });
+
+  window.__gridlyMovementReportLinks = computed.map((item) => ({
+    corridorId: item.corridor.id,
+    label: item.corridor.label,
+    linkedReports: item.linkedReports.map((report) => ({
+      id: report.id,
+      type: report.type,
+      lifecycleState: getIncidentLifecycleState(report),
+      minutesAgo: report.minutesAgo,
+      crossingId: report.crossingId,
+      crossingName: report.crossingName
+    })),
+    delayMinutes: item.delayMinutes,
+    delayBreakdown: item.delayBreakdown,
+    impactLevel: item.impactLevel
+  }));
+
+  return next;
+}
+
 function getGridlyMovementDebugSnapshot() {
   const normalized = getMovementIntelligence();
   const computedStatuses = normalized.corridors.map((corridor) => ({
@@ -678,7 +794,8 @@ function getGridlyMovementDebugSnapshot() {
         acc[corridor.id] = normalized.routeObservations.filter((obs) => obs.corridorId === corridor.id).length;
         return acc;
       }, {})
-    }
+    },
+    reportLinkedCorridors: Array.isArray(window.__gridlyMovementReportLinks) ? window.__gridlyMovementReportLinks : []
   };
 }
 
@@ -1248,6 +1365,7 @@ async function runPostSubmitRefresh() {
   updateRouteIntelligence();
   updateMobileAlertsMirror();
   updateLastUpdated();
+  recomputeMovementIntelligence();
   console.debug("Post-submit refresh complete");
 }
 
@@ -1292,6 +1410,7 @@ async function loadSharedReports() {
     updateMobileAlertsMirror();
     evaluateSmartAlertsBanner();
     updateLastUpdated();
+    recomputeMovementIntelligence();
 
     setSync(`${activeReports.length} crossing reports · ${activeHazards.length} hazards synced`);
   } catch (error) {
@@ -4568,6 +4687,23 @@ function haversineDistance(lat1, lng1, lat2, lng2) {
     Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
 
   return 2 * r * Math.asin(Math.sqrt(a));
+}
+
+function calculateDistanceKm(lat1, lng1, lat2, lng2) {
+  return haversineDistance(lat1, lng1, lat2, lng2) * 1.60934;
+}
+
+function isPointNearCorridor(lat, lng, startLat, startLng, endLat, endLng, thresholdKm = 2) {
+  const samples = 12;
+  let minDistanceKm = Infinity;
+  for (let i = 0; i <= samples; i += 1) {
+    const t = i / samples;
+    const sampleLat = startLat + (endLat - startLat) * t;
+    const sampleLng = startLng + (endLng - startLng) * t;
+    const distanceKm = calculateDistanceKm(lat, lng, sampleLat, sampleLng);
+    if (distanceKm < minDistanceKm) minDistanceKm = distanceKm;
+  }
+  return minDistanceKm <= thresholdKm;
 }
 
 function toRad(value) {
