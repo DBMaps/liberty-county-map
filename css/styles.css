@@ -5981,3 +5981,31 @@ body.modal-open {
   .desktop-command-panel .drawer-body{padding-top:8px}
   .trending-list,.alerts-list{max-height:300px;overflow:auto}
 }
+
+/* GRIDLY Phase 3C: desktop map control visibility hardening */
+@media (min-width: 1101px) {
+  .map-card,
+  .map-card .map-frame {
+    overflow: visible;
+  }
+
+  .map-card .map-frame {
+    position: relative;
+    padding-top: 4px;
+  }
+
+  .map-card .map-tools-overlay {
+    top: 16px;
+    left: 16px;
+    z-index: 1200;
+    pointer-events: auto;
+    max-width: min(calc(100% - 32px), 760px);
+  }
+
+  .map-card .map-tools-overlay .geo-filter-shell,
+  .map-card .map-tools-overlay .crossing-status-legend,
+  .map-card .map-tools-overlay .geo-filter-pill,
+  .map-card .map-tools-overlay .desktop-legend-btn {
+    pointer-events: auto;
+  }
+}

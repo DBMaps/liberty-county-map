@@ -4597,6 +4597,16 @@ function hasValidCorridorCoordinates(corridor = {}) {
   return Number.isFinite(spanKm) && spanKm > 0.05 && spanKm <= 60;
 }
 
+function isRouteWatchActive() {
+  return Boolean(activeDestinationPlace) || savedRouteCrossingIds.size >= 2;
+}
+
+function shouldRenderCorridorLine({ severityLabel = "Clear", selectedCorridorId = "" } = {}) {
+  if (selectedCorridorId) return true;
+  if (isRouteWatchActive()) return true;
+  return severityLabel === "Blocked";
+}
+
 function drawCorridorIntelLines(corridorStats = []) {
   if (!corridorIntelLayer) return;
   corridorIntelLayer.clearLayers();
@@ -4605,7 +4615,7 @@ function drawCorridorIntelLines(corridorStats = []) {
   const state = item?.status || {};
   const severityLabel = state.severityLabel || "Clear";
   if (!hasValidCorridorCoordinates(corridor)) return;
-  if (getCorridorSeverityRank(severityLabel) <= 0 && !getSelectedCorridorId()) return;
+  if (!shouldRenderCorridorLine({ severityLabel, selectedCorridorId: getSelectedCorridorId() })) return;
 
   const latLngs = [
     [Number(corridor.startLat), Number(corridor.startLng)],
