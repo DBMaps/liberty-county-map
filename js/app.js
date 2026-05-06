@@ -105,6 +105,7 @@ const MAP_STYLE_STORAGE_KEY = "gridlyMapStyleV1";
 const SAVED_PLACES_STORAGE_KEY = "gridlySavedPlacesV1";
 const SELECTED_PLACE_STORAGE_KEY = "gridlySelectedPlaceIdV1";
 const GRIDLY_PROFILE_STORAGE_KEY = "gridlyUserProfileV1";
+const MOVEMENT_INTELLIGENCE_STORAGE_KEY = "gridlyMovementIntelligenceV1";
 const OSRM_ROUTE_API = "https://router.project-osrm.org/route/v1/driving";
 
 let supabaseClient = null;
@@ -131,6 +132,7 @@ let showAllCrossingsLayer = false;
 let savedRouteCrossingIds = new Set();
 let activeDestinationPlace = null;
 let gridlyUserProfile = getGridlyUserProfile();
+let movementIntelligence = getMovementIntelligence();
 let mapBaseLayersByName = {};
 let mapStyleClassByName = {};
 let currentMapStyle = "Satellite";
@@ -425,6 +427,186 @@ function saveGridlyUserProfile(nextProfile = {}) {
   updateProfileUI();
 }
 function saveGridlyProfile(profile = {}) { saveGridlyUserProfile(profile); }
+function getDefaultMovementIntelligence() {
+  return {
+    version: 1,
+    corridors: [],
+    routeObservations: [],
+    crossingImpact: [],
+    computed: {}
+  };
+}
+
+function normalizeMovementIntelligence(input = {}) {
+  const base = getDefaultMovementIntelligence();
+  const normalized = { ...base, ...(input && typeof input === "object" ? input : {}) };
+
+  const toNumberOrNull = (value) => {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+
+  const toIsoStringOrEmpty = (value) => {
+    if (!value) return "";
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? "" : date.toISOString();
+  };
+
+  normalized.version = 1;
+  normalized.corridors = Array.isArray(normalized.corridors)
+    ? normalized.corridors.map((corridor, idx) => ({
+        id: String(corridor?.id || `corridor-${idx + 1}`),
+        label: String(corridor?.label || ""),
+        type: ["town-crossing", "commute", "custom"].includes(corridor?.type) ? corridor.type : "custom",
+        startLabel: String(corridor?.startLabel || ""),
+        endLabel: String(corridor?.endLabel || ""),
+        startLat: toNumberOrNull(corridor?.startLat),
+        startLng: toNumberOrNull(corridor?.startLng),
+        endLat: toNumberOrNull(corridor?.endLat),
+        endLng: toNumberOrNull(corridor?.endLng),
+        baselineMinutes: toNumberOrNull(corridor?.baselineMinutes),
+        currentMinutes: toNumberOrNull(corridor?.currentMinutes),
+        confidence: ["low", "medium", "high"].includes(corridor?.confidence) ? corridor.confidence : "low",
+        lastUpdated: toIsoStringOrEmpty(corridor?.lastUpdated)
+      }))
+    : [];
+
+  normalized.routeObservations = Array.isArray(normalized.routeObservations)
+    ? normalized.routeObservations.map((obs, idx) => ({
+        id: String(obs?.id || `observation-${idx + 1}`),
+        corridorId: String(obs?.corridorId || ""),
+        source: ["manual", "report", "gps", "future-api"].includes(obs?.source) ? obs.source : "manual",
+        observedMinutes: toNumberOrNull(obs?.observedMinutes),
+        delayMinutes: toNumberOrNull(obs?.delayMinutes),
+        startedAt: toIsoStringOrEmpty(obs?.startedAt),
+        endedAt: toIsoStringOrEmpty(obs?.endedAt),
+        notes: String(obs?.notes || "")
+      }))
+    : [];
+
+  normalized.crossingImpact = Array.isArray(normalized.crossingImpact)
+    ? normalized.crossingImpact.map((impact) => ({
+        crossingId: String(impact?.crossingId || ""),
+        corridorId: String(impact?.corridorId || ""),
+        impactLevel: ["none", "low", "moderate", "high"].includes(impact?.impactLevel) ? impact.impactLevel : "none",
+        activeDelayCount: Math.max(0, Number.isFinite(Number(impact?.activeDelayCount)) ? Number(impact.activeDelayCount) : 0),
+        confirmedCount: Math.max(0, Number.isFinite(Number(impact?.confirmedCount)) ? Number(impact.confirmedCount) : 0),
+        lastImpactAt: toIsoStringOrEmpty(impact?.lastImpactAt)
+      }))
+    : [];
+
+  normalized.computed = normalized.computed && typeof normalized.computed === "object" ? normalized.computed : {};
+  return normalized;
+}
+
+function getMovementIntelligence() {
+  try {
+    const raw = localStorage.getItem(MOVEMENT_INTELLIGENCE_STORAGE_KEY);
+    if (!raw) return normalizeMovementIntelligence();
+    return normalizeMovementIntelligence(JSON.parse(raw));
+  } catch {
+    return normalizeMovementIntelligence();
+  }
+}
+
+function saveMovementIntelligence(nextData = movementIntelligence) {
+  movementIntelligence = normalizeMovementIntelligence(nextData);
+  localStorage.setItem(MOVEMENT_INTELLIGENCE_STORAGE_KEY, JSON.stringify(movementIntelligence));
+  return movementIntelligence;
+}
+
+function computeCorridorStatus(corridor = {}) {
+  const normalized = normalizeMovementIntelligence({ corridors: [corridor] }).corridors[0] || {};
+  const hasValidCoordinates =
+    [normalized.startLat, normalized.startLng, normalized.endLat, normalized.endLng].every((coord) => Number.isFinite(coord));
+
+  if (!Number.isFinite(normalized.baselineMinutes) || !Number.isFinite(normalized.currentMinutes)) {
+    return {
+      status: "insufficient-data",
+      delayMinutes: null,
+      delayRatio: null,
+      hasValidCoordinates,
+      warning: "Missing baselineMinutes or currentMinutes."
+    };
+  }
+
+  const delayMinutes = normalized.currentMinutes - normalized.baselineMinutes;
+  const delayRatio = normalized.baselineMinutes > 0 ? normalized.currentMinutes / normalized.baselineMinutes : null;
+  const status = delayMinutes <= 2 ? "on-time" : delayMinutes <= 7 ? "slowed" : "delayed";
+
+  return {
+    status,
+    delayMinutes,
+    delayRatio,
+    hasValidCoordinates,
+    warning: hasValidCoordinates ? "" : "Invalid or missing corridor coordinates."
+  };
+}
+
+function computeRouteReliability(corridorId = "") {
+  const normalized = getMovementIntelligence();
+  const observations = normalized.routeObservations.filter((obs) => String(obs.corridorId) === String(corridorId));
+  if (!observations.length) {
+    return {
+      corridorId: String(corridorId || ""),
+      reliabilityScore: null,
+      confidence: "low",
+      sampleSize: 0,
+      averageDelayMinutes: null
+    };
+  }
+
+  const delays = observations
+    .map((obs) => (Number.isFinite(obs.delayMinutes) ? obs.delayMinutes : null))
+    .filter((value) => value !== null);
+
+  const averageDelayMinutes = delays.length
+    ? delays.reduce((sum, value) => sum + value, 0) / delays.length
+    : null;
+
+  const reliabilityScore =
+    averageDelayMinutes === null
+      ? null
+      : Math.max(0, Math.min(100, Math.round(100 - Math.max(0, averageDelayMinutes) * 8)));
+
+  const confidence = observations.length >= 15 ? "high" : observations.length >= 5 ? "medium" : "low";
+
+  return {
+    corridorId: String(corridorId || ""),
+    reliabilityScore,
+    confidence,
+    sampleSize: observations.length,
+    averageDelayMinutes
+  };
+}
+
+window.gridlyMovementDebug = function () {
+  const normalized = getMovementIntelligence();
+  const computedStatuses = normalized.corridors.map((corridor) => ({
+    corridorId: corridor.id,
+    label: corridor.label,
+    status: computeCorridorStatus(corridor),
+    reliability: computeRouteReliability(corridor.id)
+  }));
+
+  const warnings = [];
+  normalized.corridors.forEach((corridor) => {
+    const status = computeCorridorStatus(corridor);
+    if (!status.hasValidCoordinates) warnings.push(`Corridor ${corridor.id || "(missing id)"} has invalid/missing coordinates.`);
+    if (status.warning && status.status === "insufficient-data") warnings.push(`Corridor ${corridor.id || "(missing id)"}: ${status.warning}`);
+  });
+
+  console.group("[Gridly] Movement Intelligence Debug");
+  console.table(normalized.corridors);
+  console.table(normalized.routeObservations);
+  console.table(computedStatuses);
+  if (warnings.length) console.warn("Missing data warnings:", warnings);
+  else console.info("Missing data warnings: none");
+  console.groupEnd();
+
+  return { corridors: normalized.corridors, observations: normalized.routeObservations, computed: computedStatuses, warnings };
+};
+
 function getMyTownKey() {
   return String(gridlyUserProfile?.homeTown || "Liberty County").trim().toLowerCase() || "liberty county";
 }
