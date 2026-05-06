@@ -334,6 +334,7 @@ function hydrateElements() {
     "destinationEmptyNote",
     "destinationHabitCopy",
     "routeWatchBadge",
+    "routeWatchLivePill",
     "liveOpsStatus",
     "liveOpsDetail",
     "firstRunSetupModal","firstRunSetupBackdrop","setupNameInput","setupZipInput","setupTownInput","setupStateInput","setupDetectedTown","completeSetupBtn","skipSetupBtn","setupSaveHomeBtn","setupSaveWorkBtn","editSetupBtn","firstRunEditSetupBtn","setupStartBtn","setupNameContinueBtn","setupZipContinueBtn","setupSkipPlacesBtn","setupPlacesContinueBtn","setupSummaryTown","setupSummaryPlaces","setupTownFallbackLabel","setupStateFallbackLabel"
@@ -4138,6 +4139,8 @@ function configureRouteSetupModal({ mode = "add", prefillType = "custom" } = {})
 
 async function renderDestinationRoute(target) {
   if (!savedRouteLayer || !target) return;
+  window.__gridlyRouteWatchActive = true;
+  window.__gridlySelectedRouteId = String(target.type || target.label || "saved-route").toLowerCase();
   savedRouteLayer.clearLayers();
   const fromCandidate = userLocation ? [userLocation.lat, userLocation.lng] : [defaultCenter[0], defaultCenter[1]];
   const fromCoords = normalizeCoordinatePair(fromCandidate[0], fromCandidate[1]);
@@ -4145,6 +4148,8 @@ async function renderDestinationRoute(target) {
   if (!fromCoords || !toCoords) {
     setConfirmation("Add exact Home and Work locations to show route.", "error");
     savedRouteCrossingIds = new Set();
+    window.__gridlyRouteWatchActive = false;
+    window.__gridlySelectedRouteId = "";
     renderCrossings();
     return;
   }
@@ -4159,6 +4164,17 @@ async function renderDestinationRoute(target) {
 
 function updateRouteWatchBadge(routeLabel = "Route") {
   if (!els.routeWatchBadge) return;
+  const activation = getLineActivationContext();
+  if (!activation.hasActivation) {
+    els.routeWatchBadge.hidden = false;
+    els.routeWatchBadge.classList.remove("route-green", "route-amber", "route-red");
+    els.routeWatchBadge.textContent = "Route Watch: OFF · Select Active Route";
+    if (els.routeWatchLivePill) {
+      els.routeWatchLivePill.textContent = "Monitoring OFF";
+      els.routeWatchLivePill.classList.remove("is-on");
+    }
+    return;
+  }
   const routeReports = activeReports.filter((r) => savedRouteCrossingIds.has(String(r.crossingId)));
   const blocked = routeReports.some((r) => String(r.type).toLowerCase() === "blocked" && getIncidentLifecycleState(r) === "active");
   const delays = routeReports.filter((r) => String(r.type).toLowerCase() === "heavy" && getIncidentLifecycleState(r) === "active").length;
@@ -4171,7 +4187,11 @@ function updateRouteWatchBadge(routeLabel = "Route") {
   els.routeWatchBadge.hidden = false;
   els.routeWatchBadge.classList.remove("route-green", "route-amber", "route-red");
   els.routeWatchBadge.classList.add(tone);
-  els.routeWatchBadge.textContent = `Route Watch: ${routeLabel} · ${status}`;
+  els.routeWatchBadge.textContent = `Route Watch: ON · ${routeLabel} · ${status}`;
+  if (els.routeWatchLivePill) {
+    els.routeWatchLivePill.textContent = "Monitoring ON";
+    els.routeWatchLivePill.classList.add("is-on");
+  }
 }
 
 function loadSavedRoute() {
@@ -4190,8 +4210,8 @@ function loadSavedRoute() {
   }
 
   if (work) {
-    safeText("savedWork", "Route Watch");
-    safeText("desktopRouteWork", "Route Watch");
+    safeText("savedWork", "Work");
+    safeText("desktopRouteWork", "Work");
     if (els.workInput) els.workInput.value = work;
     if (els.mobileWorkInput) els.mobileWorkInput.value = work;
   }
@@ -4357,6 +4377,13 @@ function updateRouteIntelligence(nearest = []) {
 
   const extraMinutes = Math.max(0, Math.round(impact / 7));
   const routeIntel = getRouteWatchIntelligence(activeIssues);
+  const newestMinutes = activeIssues.length
+    ? Math.min(...activeIssues.map((issue) => Number(issue.minutesAgo)).filter((value) => Number.isFinite(value)))
+    : null;
+  const freshnessTier = getFreshnessTier(newestMinutes);
+  const freshReportCount = activeIssues.filter((issue) => Number(issue.minutesAgo) <= 30).length;
+  const monitoredRouteLabel = selectedPlace?.label || "Home → Work";
+  const routeIsConfigured = Boolean(savedHome && savedWork);
 
   safeText("nearbyAlertCount", `${activeIssues.length} active now`);
 
@@ -4372,37 +4399,37 @@ function updateRouteIntelligence(nearest = []) {
 
   els.routeStatusCard?.classList.remove("clear", "delayed", "high");
 
-  if (!savedHome || !savedWork) {
-    safeText("routeStatus", "Set Route");
-    safeText("routeEta", "Save a place");
-    safeText("desktopRouteStatus", "Add a saved place to unlock destination-aware Route Watch.");
-    safeText("sideRouteWatchHint", "Primary route watch is pinned above the live map.");
+  if (!routeIsConfigured) {
+    safeText("routeStatus", "No active route selected");
+    safeText("routeEta", "Save Home ↔ Work route");
+    safeText("desktopRouteStatus", "Save a Home ↔ Work route to monitor delays automatically.");
+    safeText("sideRouteWatchHint", "Route Watch is idle. Select Active Route to enable Monitoring.");
     safeText("departureTime", "Set destination first");
-    safeText("departureReason", "Saved places unlock personalized route intelligence.");
+    safeText("departureReason", "Active Route required for monitoring.");
     els.routeStatusCard?.classList.add("delayed");
   } else if (impact >= 70) {
-    safeText("routeStatus", "Saved · Delayed");
+    safeText("routeStatus", "Delay Detected");
     safeText("routeEta", `ETA 32 min (+${extraMinutes})`);
     safeText("departureTime", "Leave now");
-    safeText("departureReason", `${routeIntel.blockedCount} blocked crossing${routeIntel.blockedCount === 1 ? "" : "s"} on route watch · est +${routeIntel.estimatedDelayMinutes} min.`);
-    safeText("desktopRouteStatus", `${desktopRouteSummary} · ${routeIntel.advice}`);
-    safeText("sideRouteWatchHint", `Route Watch: ${routeIntel.blockedCount} blocked · est +${routeIntel.estimatedDelayMinutes} min · ${routeIntel.reroute} Confidence ${routeIntel.confidence}.`);
+    safeText("departureReason", `${routeIntel.blockedCount} blocked crossing${routeIntel.blockedCount === 1 ? "" : "s"} on Active Route · est +${routeIntel.estimatedDelayMinutes} min.`);
+    safeText("desktopRouteStatus", `${monitoredRouteLabel} · Heavy Delay · ${routeIntel.advice} · ~${routeIntel.estimatedDelayMinutes} min delay · ${freshnessTier} Reports · ${freshReportCount} active reports.`);
+    safeText("sideRouteWatchHint", `Monitoring ON · Active Route ${monitoredRouteLabel} · Delay Detected · ${routeIntel.reroute} Last Confirmed ${freshnessTier} · Confidence ${routeIntel.confidence}.`);
     els.routeStatusCard?.classList.add("high");
   } else if (impact >= 40) {
-    safeText("routeStatus", "Saved · Watch");
+    safeText("routeStatus", "Monitoring");
     safeText("routeEta", `ETA 26 min (+${extraMinutes})`);
     safeText("departureTime", "Leave 8 min early");
-    safeText("departureReason", `${routeIntel.blockedCount} blocked crossing${routeIntel.blockedCount === 1 ? "" : "s"} on route watch · est +${routeIntel.estimatedDelayMinutes} min.`);
-    safeText("desktopRouteStatus", `${desktopRouteSummary} · ${routeIntel.advice}`);
-    safeText("sideRouteWatchHint", `Route Watch: ${routeIntel.blockedCount} blocked · est +${routeIntel.estimatedDelayMinutes} min · ${routeIntel.reroute} Confidence ${routeIntel.confidence}.`);
+    safeText("departureReason", `${routeIntel.blockedCount} blocked crossing${routeIntel.blockedCount === 1 ? "" : "s"} on Active Route · est +${routeIntel.estimatedDelayMinutes} min.`);
+    safeText("desktopRouteStatus", `${monitoredRouteLabel} · Delay Detected · ${routeIntel.advice} · ~${routeIntel.estimatedDelayMinutes} min delay · ${freshnessTier} Reports · ${freshReportCount} active reports.`);
+    safeText("sideRouteWatchHint", `Monitoring ON · Active Route ${monitoredRouteLabel} · Delay Detected · Consider alternate route · Last Confirmed ${freshnessTier} · Confidence ${routeIntel.confidence}.`);
     els.routeStatusCard?.classList.add("delayed");
   } else {
-    safeText("routeStatus", "Saved · Clear");
+    safeText("routeStatus", "Clear Corridor");
     safeText("routeEta", "ETA 21 min");
     safeText("departureTime", "Normal departure");
-    safeText("departureReason", "No major active shared delay detected.");
-    safeText("desktopRouteStatus", `${desktopRouteSummary} · ${routeIntel.advice}`);
-    safeText("sideRouteWatchHint", `Route Watch: ${routeIntel.blockedCount} blocked · est +${routeIntel.estimatedDelayMinutes} min · ${routeIntel.reroute} Confidence ${routeIntel.confidence}.`);
+    safeText("departureReason", "No major active shared delay detected on Active Route.");
+    safeText("desktopRouteStatus", `${monitoredRouteLabel} · Clear Corridor · ${routeIntel.advice} · ~${routeIntel.estimatedDelayMinutes} min delay · ${freshnessTier} Reports · ${freshReportCount} active reports.`);
+    safeText("sideRouteWatchHint", `Monitoring ON · Active Route ${monitoredRouteLabel} · Clear Corridor · Last Confirmed ${freshnessTier} · Confidence ${routeIntel.confidence}.`);
     els.routeStatusCard?.classList.add("clear");
   }
 
@@ -4434,6 +4461,7 @@ function updateRouteIntelligence(nearest = []) {
   }
 
   safeText("mobileCommuteRouteBtn", impact >= 70 ? "Open Reroute Plan" : "Open Commute Plan");
+  updateRouteWatchBadge(monitoredRouteLabel);
 }
 
 function updateDailyHabitStatus() {
