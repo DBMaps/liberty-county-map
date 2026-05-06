@@ -149,6 +149,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   hydrateElements();
   gridlyHealthCheck();
   setManualFallbackDefaultState();
+  ensureSeededMovementIntelligence();
+  attachGridlyMovementDebugGlobal();
   initGreeting();
   updateLastUpdated();
   initMap();
@@ -515,6 +517,67 @@ function saveMovementIntelligence(nextData = movementIntelligence) {
   return movementIntelligence;
 }
 
+function ensureSeededMovementIntelligence() {
+  const normalized = getMovementIntelligence();
+  if (normalized.corridors.length) return normalized;
+
+  const nowIso = new Date().toISOString();
+  const seeded = normalizeMovementIntelligence({
+    ...normalized,
+    corridors: [
+      {
+        id: "dayton-west-east",
+        label: "Dayton West ↔ Dayton East",
+        type: "town-crossing",
+        startLabel: "Dayton West",
+        endLabel: "Dayton East",
+        startLat: 30.0395,
+        startLng: -94.8852,
+        endLat: 30.0468,
+        endLng: -94.8291,
+        baselineMinutes: 8,
+        currentMinutes: 11,
+        confidence: "medium",
+        lastUpdated: nowIso
+      }
+    ],
+    routeObservations: [
+      {
+        id: "dayton-west-east-obs-1",
+        corridorId: "dayton-west-east",
+        source: "manual",
+        observedMinutes: 10,
+        delayMinutes: 2,
+        startedAt: nowIso,
+        endedAt: nowIso,
+        notes: "Seed observation: light slowdown."
+      },
+      {
+        id: "dayton-west-east-obs-2",
+        corridorId: "dayton-west-east",
+        source: "report",
+        observedMinutes: 11,
+        delayMinutes: 3,
+        startedAt: nowIso,
+        endedAt: nowIso,
+        notes: "Seed observation: crossing backup."
+      }
+    ],
+    crossingImpact: [
+      {
+        crossingId: "seed-dayton-impact-1",
+        corridorId: "dayton-west-east",
+        impactLevel: "moderate",
+        activeDelayCount: 1,
+        confirmedCount: 2,
+        lastImpactAt: nowIso
+      }
+    ]
+  });
+
+  return saveMovementIntelligence(seeded);
+}
+
 function computeCorridorStatus(corridor = {}) {
   const normalized = normalizeMovementIntelligence({ corridors: [corridor] }).corridors[0] || {};
   const hasValidCoordinates =
@@ -580,7 +643,7 @@ function computeRouteReliability(corridorId = "") {
   };
 }
 
-window.gridlyMovementDebug = function () {
+function getGridlyMovementDebugSnapshot() {
   const normalized = getMovementIntelligence();
   const computedStatuses = normalized.corridors.map((corridor) => ({
     corridorId: corridor.id,
@@ -604,8 +667,26 @@ window.gridlyMovementDebug = function () {
   else console.info("Missing data warnings: none");
   console.groupEnd();
 
-  return { corridors: normalized.corridors, observations: normalized.routeObservations, computed: computedStatuses, warnings };
-};
+  return {
+    movementIntelligence: normalized,
+    corridorStatuses: computedStatuses.map((item) => ({ corridorId: item.corridorId, label: item.label, ...item.status })),
+    reliabilityCalculations: computedStatuses.map((item) => item.reliability),
+    warnings,
+    observationCounts: {
+      total: normalized.routeObservations.length,
+      byCorridor: normalized.corridors.reduce((acc, corridor) => {
+        acc[corridor.id] = normalized.routeObservations.filter((obs) => obs.corridorId === corridor.id).length;
+        return acc;
+      }, {})
+    }
+  };
+}
+
+function attachGridlyMovementDebugGlobal() {
+  window.gridlyMovementDebug = function () {
+    return getGridlyMovementDebugSnapshot();
+  };
+}
 
 function getMyTownKey() {
   return String(gridlyUserProfile?.homeTown || "Liberty County").trim().toLowerCase() || "liberty county";
