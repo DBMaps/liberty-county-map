@@ -2597,14 +2597,12 @@ function bindEvents() {
     map: "mapSection",
     routes: "setupCard",
     report: "reportSection",
-    alerts: "alertsSection",
-    "live-feed": "alertsSection"
+    alerts: "alertsSection"
   };
   const routeNavSection = (section) => {
     const target = navTargets[section];
     if (!target) return;
     scrollToSection(target);
-    if (section === "alerts" || section === "live-feed") openSmartAlertsModal();
     if (section === "map") setTimeout(() => map?.invalidateSize(), 350);
     if (section === "report") setReportMode(activeReportMode || REPORT_MODES.rail);
     if (section === "routes" && window.matchMedia("(max-width: 1100px)").matches) {
@@ -2616,8 +2614,7 @@ function bindEvents() {
     map: "Left rail Map clicked",
     report: "Left rail Report clicked",
     alerts: "Left rail Alerts clicked",
-    routes: "Left rail Routes clicked",
-    "live-feed": "Left rail Live Driver Feed clicked"
+    routes: "Left rail Routes clicked"
   };
 
   document.querySelectorAll(".nav-btn[data-section]").forEach((btn) => {
