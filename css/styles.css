@@ -1042,7 +1042,13 @@ body.route-setup-open #gridlyHazardLauncher {
 
 @media (min-width: 1101px) {
   .route-setup-modal {
-    display: none !important;
+    place-items: center;
+    padding: 32px 16px;
+  }
+
+  .route-setup-modal-card {
+    border-radius: 22px;
+    box-shadow: 0 24px 56px rgba(0, 0, 0, 0.5);
   }
 }
 

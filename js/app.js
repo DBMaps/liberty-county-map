@@ -3236,6 +3236,11 @@ function activateDestinationByType(type) {
   const state = getSavedPlacesState();
   const target = type === "favorite" ? state.custom[0] : state[type];
   if (!target) {
+    if (type === "favorite") {
+      setConfirmation("No favorite saved yet. Add a place first.", "error");
+      openRouteSetupModalForType("favorite");
+      return;
+    }
     setConfirmation("No saved place yet. Add a place first.", "error");
     openRouteSetupModalForType(type);
     return;
