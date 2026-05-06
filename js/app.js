@@ -430,8 +430,8 @@ function updateProfileUI() {
   }
 }
 function maybeOpenFirstRunSetup() {
-  if (gridlyUserProfile.setupComplete || gridlyUserProfile.setupSkipped) return;
-  openFirstRunSetupModal();
+  // First-run onboarding auto-open disabled (Gridly V18 clean stable).
+  return;
 }
 function syncModalScrollLock() {
   const hasPlaceNameModal = Boolean(document.querySelector(".place-name-modal"));
@@ -2748,7 +2748,9 @@ function bindEvents() {
     setConfirmation("Work / School / Jobsite saved.", "success");
     refreshSetupSummary();
   });
-  bindSetupAction(els.editSetupBtn, openFirstRunSetupModal);
+  bindSetupAction(els.editSetupBtn, () => {
+    setConfirmation("Setup editing coming soon.", "info");
+  });
   bindSetupAction(els.firstRunEditSetupBtn, () => {
     setSetupStep(1);
   });
@@ -4704,7 +4706,7 @@ window.resetGridlySetup = function resetGridlySetup() {
   localStorage.removeItem(GRIDLY_PROFILE_STORAGE_KEY);
   gridlyUserProfile = getGridlyUserProfile();
   closeFirstRunSetupModal();
-  openFirstRunSetupModal();
+  setConfirmation("Setup editing coming soon.", "info");
 };
 
 async function shareGridlyApp() {
