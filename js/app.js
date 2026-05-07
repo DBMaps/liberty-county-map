@@ -140,6 +140,7 @@ let routePreviewRendered = false;
 let routePreviewLayerExists = false;
 let mapHasRoutePreviewLayer = false;
 let routePreviewReason = "Route preview has not been requested.";
+let lastRoutePreviewError = null;
 const LOCAL_PLACE_LOOKUP = {
   dayton: { lat: 30.0466, lng: -94.8852 },
   crosby: { lat: 29.9111, lng: -95.0622 },
@@ -3292,7 +3293,14 @@ function bindEvents() {
   });
   els.routeWatchStartBtn?.addEventListener("click", () => startInlineRouteWatch());
   [els.routeWatchStartSelect, els.routeWatchDestinationSelect].forEach((selectEl) => {
-    selectEl?.addEventListener("change", () => loadSavedRoute());
+    selectEl?.addEventListener("change", () => {
+      console.info("Gridly route dropdown changed", {
+        changedControl: selectEl?.id || null,
+        startSelectValue: els.routeWatchStartSelect?.value || "",
+        destinationSelectValue: els.routeWatchDestinationSelect?.value || ""
+      });
+      loadSavedRoute();
+    });
   });
   [els.savedDestinationSelect, els.mobileSavedDestinationSelect].forEach((selectEl) => {
     selectEl?.addEventListener("change", (event) => {
@@ -4457,9 +4465,9 @@ function configureRouteSetupModal({ mode = "add", prefillType = "custom" } = {})
   if (titleEl) titleEl.textContent = mode === "manage" ? "Manage Places" : mode === "home" ? "Set Home" : mode === "work" ? "Set Work" : mode === "favorite" ? "Add Favorite" : "Add Place";
   if (subtitleEl) subtitleEl.textContent = "Saved places stay on this device. Pick one destination for today.";
   if (els.mobileSaveRouteBtn) els.mobileSaveRouteBtn.textContent = mode === "manage" ? "Save Place" : mode === "home" ? "Save Home" : mode === "work" ? "Save Work" : "Save Place";
-  if (destinationLabel) destinationLabel.hidden = mode !== "manage";
+  if (destinationLabel) destinationLabel.hidden = mode === "manage";
   if (els.mobileSavedDestinationSelect) {
-    els.mobileSavedDestinationSelect.disabled = mode !== "manage";
+    els.mobileSavedDestinationSelect.disabled = mode === "manage";
   }
 
   if (mode === "manage") {
@@ -4583,6 +4591,7 @@ function setRoutePreviewState(rendered, reason, options = {}) {
   routePreviewLayerExists = Boolean(options.layerExists);
   mapHasRoutePreviewLayer = Boolean(options.mapHasLayer);
   routePreviewReason = String(reason || (rendered ? "Route preview rendered" : "Route preview not rendered."));
+  lastRoutePreviewError = rendered ? null : routePreviewReason;
 }
 
 function renderRoutePreviewLine(startCoords, destinationCoords, meta = {}) {
@@ -4634,6 +4643,12 @@ function renderRoutePreviewLine(startCoords, destinationCoords, meta = {}) {
   if (map && typeof map.hasLayer === "function" && !map.hasLayer(savedRouteLayer)) {
     savedRouteLayer.addTo(map);
   }
+  const layerExists = Boolean(savedRouteLayer && savedRouteLayer.getLayers?.().length);
+  const mapHasLayer = Boolean(map && savedRouteLayer && typeof map.hasLayer === "function" && map.hasLayer(savedRouteLayer));
+  console.info("Gridly route layer added", {
+    layerExists,
+    mapHasLayer
+  });
   if (map) {
     const bounds = L.latLngBounds(latLngs);
     if (bounds.isValid()) {
@@ -4669,7 +4684,12 @@ function attachRouteWatchDebugGlobal() {
     const destinationId = els.routeWatchDestinationSelect?.value || "";
     const start = places.find((place) => place.id === startId) || null;
     const destination = places.find((place) => place.id === destinationId) || null;
+    const routeLayers = savedRouteLayer?.getLayers?.() || [];
     return {
+      startSelectValue: startId,
+      destinationSelectValue: destinationId,
+      startPlace: start,
+      destinationPlace: destination,
       selectedStart: start ? { id: start.id, label: start.name || start.label || "" } : { id: startId || null, label: null },
       selectedDestination: destination ? { id: destination.id, label: destination.name || destination.label || "" } : { id: destinationId || null, label: null },
       startCoordinates: normalizeCoordinatePair(start?.lat, start?.lng),
@@ -4678,7 +4698,11 @@ function attachRouteWatchDebugGlobal() {
       routePreviewLayerExists,
       routePreviewRendered,
       mapHasRoutePreviewLayer,
-      routePreviewReason
+      routePreviewReason,
+      routePreviewLayerOnMap: Boolean(map && savedRouteLayer && typeof map.hasLayer === "function" && map.hasLayer(savedRouteLayer)),
+      routePreviewPolylinePointCount: routeLayers.find((layer) => typeof layer?.getLatLngs === "function")?.getLatLngs?.()?.length || 0,
+      lastRoutePreviewError,
+      mapReady: Boolean(map)
     };
   };
 }
@@ -4813,6 +4837,7 @@ async function startInlineRouteWatch() {
   const places = getSavedPlaces();
   const start = places.find((place) => place.id === startId);
   const destination = places.find((place) => place.id === destinationId);
+  console.info("Gridly route selected places", { startId, destinationId, start, destination });
   if (!start || !destination) {
     setRoutePreviewState(false, "Start or destination was not selected.", { layerExists: false, mapHasLayer: false });
     setConfirmation("Choose a start and destination to begin monitoring.", "error");
@@ -4836,6 +4861,10 @@ async function startInlineRouteWatch() {
   const toPlace = destination.id === "home" ? state.home : destination.id === "work" ? state.work : state.custom.find((place) => place.id === destination.id);
   const fromCoords = normalizeCoordinatePair(fromPlace?.lat, fromPlace?.lng);
   const toCoords = normalizeCoordinatePair(toPlace?.lat, toPlace?.lng);
+  console.info("Gridly route coordinates resolved", {
+    startCoordinates: fromCoords,
+    destinationCoordinates: toCoords
+  });
   if (!fromCoords || !toCoords) {
     savedRouteLayer?.clearLayers?.();
     setRoutePreviewState(false, "Missing start or destination coordinates", { layerExists: false, mapHasLayer: false });
@@ -4864,6 +4893,9 @@ async function startInlineRouteWatch() {
     return;
   }
   savedRouteLayer?.clearLayers?.();
+  window.__gridlyRouteWatchActive = true;
+  window.__gridlySelectedRouteId = `${start.id}->${destination.id}`;
+  console.info("Gridly route preview render attempt", { startId: start.id, destinationId: destination.id });
   const routePreviewShown = renderRoutePreviewLine(fromCoords, toCoords, {
     startLabel: start.name,
     destinationLabel: destination.name
