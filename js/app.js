@@ -3291,7 +3291,19 @@ function bindEvents() {
     resetSavedPlaces();
     closeRouteSetupModal();
   });
-  els.routeWatchStartBtn?.addEventListener("click", () => startInlineRouteWatch());
+  els.routeWatchStartBtn?.addEventListener("click", (event) => {
+    event.preventDefault();
+    const buttonMeta = {
+      id: els.routeWatchStartBtn?.id || null,
+      className: els.routeWatchStartBtn?.className || null,
+      text: (els.routeWatchStartBtn?.textContent || "").trim(),
+      startSelectValue: els.routeWatchStartSelect?.value || "",
+      destinationSelectValue: els.routeWatchDestinationSelect?.value || ""
+    };
+    console.info("Gridly route CTA clicked", buttonMeta);
+    console.info("Gridly route CTA handler path", { handler: "routeWatchStartBtn.click", calls: "startInlineRouteWatch" });
+    startInlineRouteWatch();
+  });
   [els.routeWatchStartSelect, els.routeWatchDestinationSelect].forEach((selectEl) => {
     selectEl?.addEventListener("change", () => {
       console.info("Gridly route dropdown changed", {
@@ -4629,6 +4641,11 @@ function setRoutePreviewState(rendered, reason, options = {}) {
 }
 
 function renderRoutePreviewLine(startCoords, destinationCoords, meta = {}) {
+  console.info("Gridly route preview function entered", {
+    startCoords,
+    destinationCoords,
+    meta
+  });
   const start = normalizeCoordinatePair(startCoords?.lat, startCoords?.lng);
   const destination = normalizeCoordinatePair(destinationCoords?.lat, destinationCoords?.lng);
   if (!savedRouteLayer || !start || !destination) return false;
@@ -4961,6 +4978,13 @@ async function startInlineRouteWatch() {
   savedRouteLayer?.clearLayers?.();
   window.__gridlyRouteWatchActive = true;
   window.__gridlySelectedRouteId = `${start.id}->${destination.id}`;
+  console.info("Gridly selected route id set", {
+    selectedRouteId: window.__gridlySelectedRouteId,
+    routeWatchActive: window.__gridlyRouteWatchActive,
+    startId: start.id,
+    destinationId: destination.id
+  });
+  console.info("Gridly route CTA handler path", { handler: "startInlineRouteWatch", calls: "renderRoutePreviewLine" });
   console.info("Gridly route preview render attempt", { startId: start.id, destinationId: destination.id });
   const routePreviewShown = renderRoutePreviewLine(fromCoords, toCoords, {
     startLabel: start.name,
