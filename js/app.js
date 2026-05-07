@@ -4634,13 +4634,18 @@ function attachSavedPlacesDebugGlobal() {
 }
 
 function setRoutePreviewState(rendered, reason, options = {}) {
-  routePreviewRendered = Boolean(rendered);
   routePreviewPolylinePointCount = Number.isFinite(Number(options.pointCount)) ? Number(options.pointCount) : 0;
   const hasUsablePolyline = routePreviewPolylinePointCount >= 2;
-  routePreviewLayerExists = Boolean(options.layerExists) && hasUsablePolyline;
-  mapHasRoutePreviewLayer = Boolean(options.mapHasLayer) && hasUsablePolyline;
-  routePreviewReason = String(reason || (rendered ? "Route preview rendered" : "Route preview not rendered."));
-  lastRoutePreviewError = rendered ? null : routePreviewReason;
+  const layerExistsOption = Boolean(options.layerExists);
+  const mapHasLayerOption = Boolean(options.mapHasLayer);
+
+  routePreviewLayerExists = hasUsablePolyline ? true : layerExistsOption;
+  mapHasRoutePreviewLayer = hasUsablePolyline ? (mapHasLayerOption || layerExistsOption) : mapHasLayerOption;
+  routePreviewRendered = hasUsablePolyline ? true : Boolean(rendered);
+  routePreviewReason = hasUsablePolyline
+    ? "Route preview active."
+    : String(reason || (routePreviewRendered ? "Route preview rendered" : "Route preview not rendered."));
+  lastRoutePreviewError = routePreviewRendered ? null : routePreviewReason;
 }
 
 function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
@@ -4966,13 +4971,12 @@ async function startInlineRouteWatch() {
   } else {
     const layerExists = Boolean(savedRouteLayer && savedRouteLayer.getLayers?.().length);
     const mapHasLayer = Boolean(map && savedRouteLayer && typeof map.hasLayer === "function" && map.hasLayer(savedRouteLayer));
-    const hasRenderedLayer = Boolean(routePreviewPolylinePointCount >= 2 && layerExists && mapHasLayer);
-    setRoutePreviewState(hasRenderedLayer, hasRenderedLayer ? "Route preview rendered" : "Route preview layer was not added to map", {
+    setRoutePreviewState(Boolean(layerExists && mapHasLayer), "Route preview layer was not added to map", {
       layerExists,
       mapHasLayer,
       pointCount: routePreviewPolylinePointCount
     });
-    if (hasRenderedLayer) {
+    if (routePreviewRendered) {
       setConfirmation("Route preview active.", "success");
       safeText("routeWatchSetupHint", "Route preview active.");
     } else {
