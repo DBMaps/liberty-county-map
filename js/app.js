@@ -1842,6 +1842,78 @@ function renderCrossings() {
   highlightNearestCrossingOnFirstLoad();
 }
 
+
+function getRoutePolylineLatLngs() {
+  const layerLatLngs = window.__gridlyRoutePreviewLayer?.getLatLngs?.();
+  if (Array.isArray(layerLatLngs) && layerLatLngs.length >= 2) {
+    return layerLatLngs.map((pt) => ({ lat: Number(pt?.lat), lng: Number(pt?.lng) })).filter((pt) => Number.isFinite(pt.lat) && Number.isFinite(pt.lng));
+  }
+  const savedLatLngs = savedRouteLayer?.getLayers?.().find((layer) => typeof layer.getLatLngs === "function")?.getLatLngs?.();
+  if (Array.isArray(savedLatLngs) && savedLatLngs.length >= 2) {
+    return savedLatLngs.map((pt) => ({ lat: Number(pt?.lat), lng: Number(pt?.lng) })).filter((pt) => Number.isFinite(pt.lat) && Number.isFinite(pt.lng));
+  }
+  return [];
+}
+
+function getRouteHazardAssessment() {
+  const routeLatLngs = getRoutePolylineLatLngs();
+  const thresholdMiles = 0.8;
+  const nearReports = [];
+  const severityWeight = { blocked: 12, heavy: 7, delayed: 5, clear: 0, cleared: 0 };
+
+  if (routeLatLngs.length < 2) {
+    return { score: 0, level: "clear", nearbyReports: [], nearestIssue: null, recommendation: "normal", routePointCount: 0 };
+  }
+
+  activeReports.forEach((report) => {
+    const crossing = crossingById.get(String(report.crossingId));
+    if (!crossing) return;
+    const lifecycleState = getIncidentLifecycleState(report);
+    const type = String(report.type || "").toLowerCase();
+    const normalizedType = type === "delay" ? "delayed" : type;
+    const crossingDist = routeLatLngs.reduce((minDist, pt) => {
+      const d = getDistanceMiles(crossing.lat, crossing.lng, pt.lat, pt.lng);
+      return Math.min(minDist, d);
+    }, Number.POSITIVE_INFINITY);
+    if (!Number.isFinite(crossingDist) || crossingDist > thresholdMiles) return;
+
+    const ageMinutes = Number(report.minutesAgo);
+    const ageFactor = !Number.isFinite(ageMinutes) ? 0.5 : ageMinutes <= 20 ? 1 : ageMinutes <= 45 ? 0.75 : ageMinutes <= 90 ? 0.45 : 0.2;
+    const lifecycleFactor = lifecycleState === "active" ? 1 : lifecycleState === "recently_cleared" ? 0.25 : 0.1;
+    const distanceFactor = Math.max(0.2, 1 - crossingDist / thresholdMiles);
+    const rawWeight = severityWeight[normalizedType] ?? 3;
+    const impact = normalizedType === "cleared" ? 0 : rawWeight * ageFactor * lifecycleFactor * distanceFactor;
+
+    nearReports.push({
+      crossingId: String(crossing.id),
+      crossingName: crossing.name,
+      reportType: normalizedType,
+      lifecycleState,
+      minutesAgo: Number.isFinite(ageMinutes) ? ageMinutes : null,
+      distanceMiles: Number(crossingDist.toFixed(2)),
+      impact: Number(impact.toFixed(2))
+    });
+  });
+
+  nearReports.sort((a, b) => b.impact - a.impact || a.distanceMiles - b.distanceMiles);
+  const score = Number(nearReports.reduce((sum, r) => sum + r.impact, 0).toFixed(2));
+  const nearestIssue = nearReports.find((r) => r.impact > 0) || nearReports[0] || null;
+  let level = "clear";
+  if (nearReports.some((r) => r.reportType === "blocked" && r.lifecycleState === "active" && r.impact >= 3)) level = "blocked";
+  else if (score >= 11) level = "heavy";
+  else if (score >= 4) level = "caution";
+
+  const recommendation = level === "blocked"
+    ? "reroute"
+    : level === "heavy"
+      ? "leave-early-or-reroute"
+      : level === "caution"
+        ? "watch-delay"
+        : "normal";
+
+  return { score, level, nearbyReports: nearReports, nearestIssue, recommendation, routePointCount: routeLatLngs.length };
+}
+
 function getRouteStatusColor() {
   const routeReports = activeReports.filter((report) => savedRouteCrossingIds.has(String(report.crossingId)));
   const hasBlocked = routeReports.some(
@@ -4732,6 +4804,7 @@ function attachRouteWatchDebugGlobal() {
     const routeLayers = savedRouteLayer?.getLayers?.() || [];
     const startCoordinates = normalizeCoordinatePair(start?.lat, start?.lng);
     const destinationCoordinates = normalizeCoordinatePair(destination?.lat, destination?.lng);
+    const routeHazard = getRouteHazardAssessment();
     const blockedReason = !startId || !destinationId
       ? "Missing start/destination selection"
       : !start
@@ -4765,6 +4838,11 @@ function attachRouteWatchDebugGlobal() {
       routePreviewLayerOnMap: Boolean(map && savedRouteLayer && typeof map.hasLayer === "function" && map.hasLayer(savedRouteLayer) && routePreviewPolylinePointCount >= 2),
       routePreviewPolylinePointCount,
       lastRoutePreviewError,
+      routeHazardScore: routeHazard.score,
+      routeHazardLevel: routeHazard.level,
+      routeNearbyReports: routeHazard.nearbyReports,
+      routeNearestIssue: routeHazard.nearestIssue,
+      routeRecommendation: routeHazard.recommendation,
       mapReady: Boolean(map)
     };
   };
@@ -5160,6 +5238,7 @@ function updateRouteIntelligence(nearest = []) {
 
   const extraMinutes = Math.max(0, Math.round(impact / 7));
   const routeIntel = getRouteWatchIntelligence(activeIssues);
+  const routeHazard = getRouteHazardAssessment();
   const newestMinutes = activeIssues.length
     ? Math.min(...activeIssues.map((issue) => Number(issue.minutesAgo)).filter((value) => Number.isFinite(value)))
     : null;
@@ -5195,40 +5274,52 @@ function updateRouteIntelligence(nearest = []) {
     safeText("departureTime", "Set destination first");
     safeText("departureReason", "Route Watch is off until Home and a destination are selected.");
     els.routeStatusCard?.classList.add("delayed");
-  } else if (impact >= 70) {
-    safeText("routeStatus", "Delay Detected");
+  } else if (routeHazard.level === "blocked") {
+    safeText("routeStatus", "Blocked");
     safeText("routeEta", `ETA 32 min (+${extraMinutes})`);
     safeText("departureTime", "Leave now");
     safeText("departureReason", `${routeIntel.blockedCount} blocked crossing${routeIntel.blockedCount === 1 ? "" : "s"} on Active Route · est +${routeIntel.estimatedDelayMinutes} min.`);
-    safeText("desktopRouteStatus", `Monitoring ${monitoredRouteLabel}. Heavy delay on active route. ${routeIntel.advice} Fresh reports: ${freshReportCount}.`);
+    safeText("desktopRouteStatus", "Blocked crossing near your route. Consider another route.");
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", routeIntel.confidence);
-    safeText("routeReports", `${activeIssues.length} active`);
-    safeText("routeRecommendation", "Avoid corridor");
-    safeText("sideRouteWatchHint", `Monitoring ON · Active Route ${monitoredRouteLabel} · Delay Detected · ${routeIntel.reroute} Last Confirmed ${freshnessTier} · Confidence ${routeIntel.confidence}.`);
+    safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
+    safeText("routeRecommendation", "Blocked crossing near your route. Consider another route.");
+    safeText("sideRouteWatchHint", `Monitoring ON · Active Route ${monitoredRouteLabel} · Blocked crossing near your route.`);
     els.routeStatusCard?.classList.add("high");
-  } else if (impact >= 40) {
-    safeText("routeStatus", "Monitoring");
+  } else if (routeHazard.level === "heavy") {
+    safeText("routeStatus", "Heavy Delay");
     safeText("routeEta", `ETA 26 min (+${extraMinutes})`);
     safeText("departureTime", "Leave 8 min early");
     safeText("departureReason", `${routeIntel.blockedCount} blocked crossing${routeIntel.blockedCount === 1 ? "" : "s"} on Active Route · est +${routeIntel.estimatedDelayMinutes} min.`);
-    safeText("desktopRouteStatus", `Monitoring ${monitoredRouteLabel}. Delays building. ${routeIntel.advice} Fresh reports: ${freshReportCount}.`);
+    safeText("desktopRouteStatus", "Heavy delay on active route. Leave early or reroute.");
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", routeIntel.confidence);
-    safeText("routeReports", `${activeIssues.length} active`);
-    safeText("routeRecommendation", "Watch delay");
+    safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
+    safeText("routeRecommendation", "Heavy delay on active route. Leave early or reroute.");
     safeText("sideRouteWatchHint", `Monitoring ON · Active Route ${monitoredRouteLabel} · Delay Detected · Consider alternate route · Last Confirmed ${freshnessTier} · Confidence ${routeIntel.confidence}.`);
     els.routeStatusCard?.classList.add("delayed");
+  } else if (routeHazard.level === "caution") {
+    safeText("routeStatus", "Caution");
+    safeText("routeEta", `ETA 24 min (+${Math.max(extraMinutes, 3)})`);
+    safeText("departureTime", "Leave a bit early");
+    safeText("departureReason", "Possible delay near your route.");
+    safeText("desktopRouteStatus", "Possible delay near your route.");
+    safeText("routeFreshness", freshnessTier);
+    safeText("routeConfidence", routeIntel.confidence);
+    safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
+    safeText("routeRecommendation", "Possible delay near your route.");
+    safeText("sideRouteWatchHint", `Monitoring ON · Active Route ${monitoredRouteLabel} · Possible delay near your route.`);
+    els.routeStatusCard?.classList.add("delayed");
   } else {
-    safeText("routeStatus", "Clear Corridor");
+    safeText("routeStatus", "Clear");
     safeText("routeEta", "ETA 21 min");
     safeText("departureTime", "Normal departure");
     safeText("departureReason", "No major active shared delay detected on Active Route.");
-    safeText("desktopRouteStatus", freshReportCount > 0 ? `Monitoring ${monitoredRouteLabel}. No active incidents; monitoring ${freshReportCount} recent updates.` : `Monitoring ${monitoredRouteLabel}. No active incidents on this route.`);
+    safeText("desktopRouteStatus", "Your route looks clear.");
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", routeIntel.confidence);
-    safeText("routeReports", `${activeIssues.length} active`);
-    safeText("routeRecommendation", "Drive normally");
+    safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
+    safeText("routeRecommendation", "Your route looks clear.");
     safeText("sideRouteWatchHint", `Monitoring ON · Active Route ${monitoredRouteLabel} · Clear Corridor · Last Confirmed ${freshnessTier} · Confidence ${routeIntel.confidence}.`);
     els.routeStatusCard?.classList.add("clear");
   }
