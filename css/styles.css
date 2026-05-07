@@ -6880,3 +6880,23 @@ body.modal-open {
 .route-inline-field span{font-size:.72rem;color:#9db2ca;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
 .route-inline-field select{min-height:36px;border-radius:10px;padding:6px 10px;background:rgba(8,22,36,.85);color:#eaf4ff;border:1px solid rgba(126,184,232,.35)}
 .desktop-route-watch-actions{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.route-watch-start-btn{
+  min-height: 38px;
+  border: 1px solid rgba(177, 231, 255, 0.78);
+  background: linear-gradient(135deg, #1f7eb1 0%, #26b6d9 52%, #1278a9 100%);
+  color: #f4fbff;
+  text-shadow: 0 1px 2px rgba(5, 17, 28, 0.8);
+  box-shadow: 0 8px 16px rgba(6, 34, 53, 0.35), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+.route-watch-start-btn:hover:not(:disabled){
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+.route-watch-start-btn:disabled{
+  border-color: rgba(109, 137, 166, 0.5);
+  background: linear-gradient(135deg, rgba(71, 94, 120, 0.72), rgba(57, 78, 102, 0.72));
+  color: rgba(225, 238, 252, 0.68);
+  text-shadow: none;
+  box-shadow: none;
+  cursor: not-allowed;
+}
