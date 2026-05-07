@@ -147,6 +147,11 @@ let alternateRouteGeometrySource = "none";
 let alternateRouteStatus = "not_needed";
 let alternateRouteReason = "";
 let alternateRouteAvailable = false;
+let primaryRouteHazardCount = 0;
+let alternateRouteHazardCount = 0;
+let hazardsAvoidedCount = 0;
+let routeComparisonStatus = "alternate_unavailable";
+let routeComparisonSummary = "";
 let routePreviewReason = "Route preview has not been requested.";
 let lastRoutePreviewError = null;
 let routeGeometrySource = "fallback";
@@ -1922,6 +1927,44 @@ function getRouteHazardAssessment() {
         : "normal";
 
   return { score, level, nearbyReports: nearReports, nearestIssue, recommendation, routePointCount: routeLatLngs.length };
+}
+
+function getHazardCountNearRoute(routeLatLngs = []) {
+  const thresholdMiles = 0.8;
+  if (!Array.isArray(routeLatLngs) || routeLatLngs.length < 2) return 0;
+  const crossingLookup = new Map((Array.isArray(crossings) ? crossings : []).map((crossing) => [String(crossing?.id), crossing]));
+  const nearActiveCrossings = new Set();
+  (Array.isArray(activeReports) ? activeReports : []).forEach((report) => {
+    if (getIncidentLifecycleState(report) !== "active") return;
+    const crossing = crossingLookup.get(String(report?.crossingId));
+    if (!crossing || !Number.isFinite(Number(crossing?.lat)) || !Number.isFinite(Number(crossing?.lng))) return;
+    const crossingDist = routeLatLngs.reduce((minDist, pt) => {
+      const d = getDistanceMiles(crossing.lat, crossing.lng, pt.lat, pt.lng);
+      return Math.min(minDist, d);
+    }, Number.POSITIVE_INFINITY);
+    if (Number.isFinite(crossingDist) && crossingDist <= thresholdMiles) nearActiveCrossings.add(String(crossing.id));
+  });
+  return nearActiveCrossings.size;
+}
+
+function updateRouteComparisonState(routeHazard = null) {
+  const activeHazard = routeHazard || getRouteHazardAssessment();
+  primaryRouteHazardCount = Math.max(0, Number(activeHazard?.nearbyReports?.filter((report) => report.lifecycleState === "active").length || 0));
+  alternateRouteHazardCount = 0;
+  hazardsAvoidedCount = 0;
+  routeComparisonStatus = "alternate_unavailable";
+  routeComparisonSummary = "";
+  if (!alternateRouteAvailable || !alternateRouteLayer || typeof alternateRouteLayer.getLatLngs !== "function") return;
+  const alternateLatLngs = alternateRouteLayer.getLatLngs();
+  alternateRouteHazardCount = getHazardCountNearRoute(alternateLatLngs);
+  hazardsAvoidedCount = primaryRouteHazardCount - alternateRouteHazardCount;
+  if (hazardsAvoidedCount > 0) {
+    routeComparisonStatus = "alternate_safer";
+    routeComparisonSummary = `Alternate route avoids ${hazardsAvoidedCount} active issue${hazardsAvoidedCount === 1 ? "" : "s"}.`;
+    return;
+  }
+  routeComparisonStatus = "alternate_available";
+  routeComparisonSummary = "Alternate route available for review.";
 }
 
 
@@ -4846,6 +4889,11 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
   alternateRouteStatus = "not_needed";
   alternateRouteReason = "";
   alternateRouteAvailable = false;
+  primaryRouteHazardCount = 0;
+  alternateRouteHazardCount = 0;
+  hazardsAvoidedCount = 0;
+  routeComparisonStatus = "alternate_unavailable";
+  routeComparisonSummary = "";
 
   let previewPoints = fallbackPoints;
   routeGeometrySource = "fallback";
@@ -4949,6 +4997,7 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
       alternateRouteReason = "Alternate route check recommended.";
     }
   }
+  updateRouteComparisonState(getRouteHazardAssessment());
 
   const actualLatLngs = routePreviewLayer.getLatLngs();
   routePreviewPolylinePointCount = Array.isArray(actualLatLngs) ? actualLatLngs.length : 0;
@@ -5069,6 +5118,11 @@ function attachRouteWatchDebugGlobal() {
       alternateRouteVertexCount: rerouteFoundation.alternateRouteVertexCount,
       alternateRouteStatus: rerouteFoundation.alternateRouteStatus,
       routeRelevantReportCount: routeRelevantIncidents.length,
+      primaryRouteHazardCount,
+      alternateRouteHazardCount,
+      hazardsAvoidedCount,
+      routeComparisonStatus,
+      routeComparisonSummary,
       routeRelevantCrossings,
       routeContextSummary,
       mapReady: Boolean(map)
@@ -5111,6 +5165,11 @@ function attachRouteWatchDebugGlobal() {
         alternateRouteGeometrySource: "none",
         alternateRouteVertexCount: 0,
         alternateRouteStatus: "not_needed",
+        primaryRouteHazardCount: 0,
+        alternateRouteHazardCount: 0,
+        hazardsAvoidedCount: 0,
+        routeComparisonStatus: "alternate_unavailable",
+        routeComparisonSummary: "",
         mapReady: Boolean(map),
         debugError: String(error?.message || error || "Unknown debug error")
       };
@@ -5566,7 +5625,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
-    safeText("routeRecommendation", alternateRouteAvailable ? "Alternate route available." : "Alternate route check recommended.");
+    safeText("routeRecommendation", routeComparisonSummary || (alternateRouteAvailable ? "Alternate route available for review." : "Alternate route check recommended."));
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("high");
   } else if (routeHazard.level === "heavy") {
@@ -5578,7 +5637,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
-    safeText("routeRecommendation", alternateRouteAvailable ? "Alternate route available." : "Alternate route check recommended.");
+    safeText("routeRecommendation", routeComparisonSummary || (alternateRouteAvailable ? "Alternate route available for review." : "Alternate route check recommended."));
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("delayed");
   } else if (routeHazard.level === "caution") {
