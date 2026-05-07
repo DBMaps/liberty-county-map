@@ -3328,6 +3328,13 @@ function bindEvents() {
     openRouteSetupModal(event.currentTarget);
   });
 
+  [["destinationHomeBtn", "home"], ["destinationWorkBtn", "work"], ["destinationFavoriteBtn", "favorite"], ["desktopDestinationHomeBtn", "home"], ["desktopDestinationWorkBtn", "work"], ["desktopDestinationFavoriteBtn", "favorite"]].forEach(([id, type]) => {
+    els[id]?.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      openRouteSetupModalForType(type);
+    });
+  });
 
   els.routeStatusCard?.addEventListener("click", handleRouteCardInteraction);
   els.routeStatusCard?.addEventListener("keydown", (event) => {
@@ -4089,7 +4096,8 @@ async function saveRoute(source = "desktop") {
     savedPlaceId: id,
     coordinateSource: coordinateResolution?.source || "unknown"
   };
-  flashButton(button, modalMode === "manage" ? "Saved" : "Place Saved");
+  const savedButtonLabel = normalizedType === "home" ? "Home Saved" : normalizedType === "work" ? "Work Saved" : (modalMode === "manage" ? "Saved" : "Place Saved");
+  flashButton(button, savedButtonLabel);
 
   if (source === "mobile") {
     closeRouteSetupModal();
