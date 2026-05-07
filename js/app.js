@@ -3911,7 +3911,10 @@ function buildRouteWatchLabelParts() {
   const hasHome = isConfiguredPlace(state?.home);
   const hasWork = isConfiguredPlace(state?.work);
   const origin = hasHome ? "Home" : "No active route";
-  const destination = hasWork ? "Work" : "";
+  const selectedDestination = selectedPlace?.id !== "home"
+    ? (selectedPlace?.name || selectedPlace?.label || "")
+    : "";
+  const destination = selectedDestination || (hasWork ? "Work" : "");
   const activeLabel = routeWatchActivated
     ? (activeDestinationPlace?.label || selectedPlace?.name || selectedPlace?.label || destination || "Saved destination")
     : "";
