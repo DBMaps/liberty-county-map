@@ -4745,6 +4745,41 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates, labels
   savedRouteLayer.addLayer(startMarker);
   savedRouteLayer.addLayer(destinationMarker);
 
+  if (typeof map.hasLayer === "function" && !map.hasLayer(savedRouteLayer)) {
+    savedRouteLayer.addTo(map);
+  }
+
+  console.info("Gridly preview renderer info", {
+    routePaneExists: Boolean(map.getPane?.("routePane")),
+    mapRendererType: map?.options?.renderer?.constructor?.name || "default",
+    previewLayerRendererType: routePreviewLayer?.options?.renderer?.constructor?.name || "default",
+    previewLayerPane: routePreviewLayer?.options?.pane || "default"
+  });
+
+  console.info("Gridly preview layer attached", {
+    hasMap: !!routePreviewLayer._map,
+    sameMap: routePreviewLayer._map === map
+  });
+
+  const directTestLine = L.polyline(
+    [
+      [fallbackPoints[0][0], fallbackPoints[0][1]],
+      [fallbackPoints[1][0], fallbackPoints[1][1]]
+    ],
+    {
+      color: "#00ffff",
+      weight: 12,
+      opacity: 1
+    }
+  ).addTo(map);
+  window.__gridlyDirectTestLine = directTestLine;
+  console.info("Gridly direct renderer test line", {
+    hasMap: !!directTestLine._map,
+    sameMap: directTestLine._map === map,
+    pane: directTestLine?.options?.pane || "default",
+    rendererType: directTestLine?.options?.renderer?.constructor?.name || "default"
+  });
+
   const actualLatLngs = routePreviewLayer.getLatLngs();
   console.info("Gridly actual rendered latlngs", actualLatLngs);
   routePreviewPolylinePointCount = Array.isArray(actualLatLngs) ? actualLatLngs.length : 0;
@@ -4760,9 +4795,6 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates, labels
   }
 
   savedRouteLayer.addLayer(routePreviewLayer);
-  if (typeof map.hasLayer === "function" && !map.hasLayer(savedRouteLayer)) {
-    savedRouteLayer.addTo(map);
-  }
 
   if (map) {
     window.__gridlyRoutePreviewMapDebug = map;
