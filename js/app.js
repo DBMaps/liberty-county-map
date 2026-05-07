@@ -1158,7 +1158,8 @@ function initMap() {
   L.control.zoom({ position: "bottomright" }).addTo(map);
 
   map.createPane("routePane");
-  map.getPane("routePane").style.zIndex = 630;
+  map.getPane("routePane").style.zIndex = 700;
+  map.getPane("routePane").style.pointerEvents = "none";
   map.createPane("satLabelsPane");
   map.getPane("satLabelsPane").style.zIndex = 640;
 
@@ -4657,9 +4658,9 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
   savedRouteLayer.clearLayers();
   const routePreviewGlow = L.polyline(fallbackPoints, {
     pane: "routePane",
-    color: "#67e8f9",
-    weight: 16,
-    opacity: 0.20,
+    color: "#ff00ff",
+    weight: 24,
+    opacity: 0.62,
     lineJoin: "round",
     lineCap: "round",
     interactive: false
@@ -4667,9 +4668,9 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
 
   const routePreviewLayer = L.polyline(fallbackPoints, {
     pane: "routePane",
-    color: "#22d3ee",
-    weight: 8,
-    opacity: 0.98,
+    color: "#00ffff",
+    weight: 14,
+    opacity: 1,
     lineJoin: "round",
     lineCap: "round",
     interactive: false
@@ -4677,9 +4678,9 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
 
   const routePreviewAccent = L.polyline(fallbackPoints, {
     pane: "routePane",
-    color: "#ecfeff",
-    weight: 3,
-    opacity: 0.78,
+    color: "#ffffff",
+    weight: 5,
+    opacity: 0.96,
     lineJoin: "round",
     lineCap: "round",
     interactive: false
@@ -4687,10 +4688,10 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
 
   const startMarker = L.circleMarker(fallbackPoints[0], {
     pane: "routePane",
-    radius: 8,
-    color: "#042f2e",
-    weight: 2,
-    fillColor: "#34d399",
+    radius: 12,
+    color: "#ffffff",
+    weight: 4,
+    fillColor: "#00ffff",
     fillOpacity: 1,
     interactive: false
   }).bindTooltip("Start", {
@@ -4702,10 +4703,10 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
 
   const destinationMarker = L.circleMarker(fallbackPoints[1], {
     pane: "routePane",
-    radius: 8,
-    color: "#082f49",
-    weight: 2,
-    fillColor: "#fb7185",
+    radius: 12,
+    color: "#ffffff",
+    weight: 4,
+    fillColor: "#ff00ff",
     fillOpacity: 1,
     interactive: false
   }).bindTooltip("Destination", {
