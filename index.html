@@ -281,10 +281,18 @@
       <section class="map-card">
         <article class="desktop-route-watch-strip" aria-label="Saved route watch status">
           <div class="route-watch-strip-copy">
-            <p class="eyebrow">Route Watch</p>
-            <span class="route-watch-live-pill" id="routeWatchLivePill">Monitoring OFF</span>
+            <div class="route-watch-heading-row">
+              <p class="eyebrow">Route Watch</p>
+              <span class="route-watch-live-pill" id="routeWatchLivePill">Monitoring OFF</span>
+            </div>
             <strong><span id="desktopRouteHome">No destination selected</span> → <span id="desktopRouteWork">Route Watch</span></strong>
-            <p id="desktopRouteStatus">Route status and next action for your saved commute.</p>
+            <p id="desktopRouteStatus">Select a saved route to begin monitoring.</p>
+            <div class="route-watch-metrics" aria-label="Route watch intelligence">
+              <span><b>Freshness:</b> <em id="routeFreshness">Unknown</em></span>
+              <span><b>Confidence:</b> <em id="routeConfidence">--</em></span>
+              <span><b>Reports:</b> <em id="routeReports">0 active</em></span>
+              <span><b>Recommendation:</b> <em id="routeRecommendation">Awaiting route selection</em></span>
+            </div>
           </div>
           <div class="desktop-route-watch-actions" aria-label="Desktop destination quick chooser">
             <button class="secondary-btn compact-btn destination-chip" id="desktopDestinationHomeBtn" type="button">Home</button>
@@ -299,8 +307,8 @@
         <div class="section-header map-header">
           <div>
             <p class="eyebrow">Live Mobility Map</p>
-            <h2>Live Map Center</h2>
-            <p class="map-note" id="mapTrustNote">Route clarity first. Tap markers for nearby blocks and reports.</p>
+            <h2>Movement Command Map</h2>
+            <p class="map-note" id="mapTrustNote">Know before you go: scan route impact, confirm active crossings, and act with confidence.</p>
           </div>
 
           <div class="actions">
@@ -352,7 +360,7 @@
           <summary class="drawer-summary"><span class="eyebrow">Rail Pulse</span></summary>
           <div class="drawer-body">
             <div class="combined-module-block">
-              <h3>Trending Crossings</h3>
+              <h3>Trending Now</h3>
               <div id="trendingList" class="trending-list">
                 <div class="trend-item muted">Waiting for shared reports...</div>
               </div>
