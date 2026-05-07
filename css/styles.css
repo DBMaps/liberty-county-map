@@ -6902,16 +6902,16 @@ body.modal-open {
 }
 
 .gridly-route-endpoint-label {
-  background: rgba(7, 19, 28, 0.88);
-  border: 1px solid rgba(103, 232, 249, 0.68);
+  background: rgba(3, 10, 18, 0.96);
+  border: 2px solid rgba(255, 255, 255, 0.95);
   border-radius: 999px;
-  color: #ecfeff;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  padding: 2px 8px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 4px 10px;
   text-transform: uppercase;
-  box-shadow: 0 2px 8px rgba(2, 8, 23, 0.45);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.75), 0 0 14px rgba(0, 255, 255, 0.42), 0 2px 8px rgba(2, 8, 23, 0.55);
 }
 
 .gridly-route-endpoint-label::before {
