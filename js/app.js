@@ -152,6 +152,10 @@ let alternateRouteHazardCount = 0;
 let hazardsAvoidedCount = 0;
 let routeComparisonStatus = "alternate_unavailable";
 let routeComparisonSummary = "";
+let primaryRouteScore = 0;
+let alternateRouteScore = 0;
+let preferredRoute = "primary";
+let preferredRouteReason = "Primary route is selected by default.";
 let routePreviewReason = "Route preview has not been requested.";
 let lastRoutePreviewError = null;
 let routeGeometrySource = "fallback";
@@ -1947,25 +1951,93 @@ function getHazardCountNearRoute(routeLatLngs = []) {
   return nearActiveCrossings.size;
 }
 
+
+function calculateRouteScore(routeReports = []) {
+  const reports = Array.isArray(routeReports) ? routeReports : [];
+  const severityPenalty = { blocked: 20, heavy: 12, delayed: 8, caution: 5, clear: 0, cleared: 1 };
+  let score = 0;
+  reports.forEach((report) => {
+    const lifecycleState = String(report?.lifecycleState || "").toLowerCase();
+    const reportType = String(report?.reportType || "").toLowerCase();
+    const impact = Number(report?.impact);
+    const isActive = lifecycleState === "active";
+    const isRecentClear = lifecycleState === "recently_cleared";
+    const lifecycleMultiplier = isActive ? 1 : isRecentClear ? 0.45 : 0.2;
+    const basePenalty = severityPenalty[reportType] ?? 4;
+    const impactPenalty = Number.isFinite(impact) ? Math.min(8, impact * 0.6) : 0;
+    score += (basePenalty + impactPenalty) * lifecycleMultiplier;
+  });
+  const activeHazards = reports.filter((report) => String(report?.lifecycleState || "").toLowerCase() === "active").length;
+  score += activeHazards * 1.5;
+  return Number(score.toFixed(2));
+}
+
 function updateRouteComparisonState(routeHazard = null) {
   const activeHazard = routeHazard || getRouteHazardAssessment();
-  primaryRouteHazardCount = Math.max(0, Number(activeHazard?.nearbyReports?.filter((report) => report.lifecycleState === "active").length || 0));
+  const primaryReports = Array.isArray(activeHazard?.nearbyReports) ? activeHazard.nearbyReports : [];
+  primaryRouteHazardCount = Math.max(0, Number(primaryReports.filter((report) => report.lifecycleState === "active").length || 0));
+  primaryRouteScore = calculateRouteScore(primaryReports);
   alternateRouteHazardCount = 0;
+  alternateRouteScore = 0;
   hazardsAvoidedCount = 0;
+  preferredRoute = "primary";
+  preferredRouteReason = "Current route remains the best option.";
   routeComparisonStatus = "alternate_unavailable";
-  routeComparisonSummary = "";
-  if (!alternateRouteAvailable || !alternateRouteLayer || typeof alternateRouteLayer.getLatLngs !== "function") return;
-  const alternateLatLngs = alternateRouteLayer.getLatLngs();
-  alternateRouteHazardCount = getHazardCountNearRoute(alternateLatLngs);
-  hazardsAvoidedCount = primaryRouteHazardCount - alternateRouteHazardCount;
-  if (hazardsAvoidedCount > 0) {
-    routeComparisonStatus = "alternate_safer";
-    routeComparisonSummary = `Alternate route avoids ${hazardsAvoidedCount} active issue${hazardsAvoidedCount === 1 ? "" : "s"}.`;
+  routeComparisonSummary = "Current route remains the best option.";
+
+  if (!alternateRouteAvailable || !alternateRouteLayer || typeof alternateRouteLayer.getLatLngs !== "function") {
+    preferredRouteReason = "Alternate route is unavailable; primary route is selected.";
     return;
   }
-  routeComparisonStatus = "alternate_available";
-  routeComparisonSummary = "Alternate route available for review.";
+
+  const alternateLatLngs = alternateRouteLayer.getLatLngs();
+  const alternateHazardAssessment = getRouteHazardAssessmentForPath(alternateLatLngs);
+  const alternateReports = Array.isArray(alternateHazardAssessment?.nearbyReports) ? alternateHazardAssessment.nearbyReports : [];
+  alternateRouteHazardCount = getHazardCountNearRoute(alternateLatLngs);
+  alternateRouteScore = calculateRouteScore(alternateReports);
+  hazardsAvoidedCount = primaryRouteHazardCount - alternateRouteHazardCount;
+
+  if (alternateRouteScore < primaryRouteScore) {
+    preferredRoute = "alternate";
+    preferredRouteReason = "Alternate route is currently safer.";
+    routeComparisonStatus = "alternate_safer";
+    routeComparisonSummary = "Alternate route is currently safer.";
+  } else {
+    preferredRoute = "primary";
+    preferredRouteReason = "Current route remains the best option.";
+    routeComparisonStatus = "alternate_available";
+    routeComparisonSummary = "Current route remains the best option.";
+  }
+
+  if (primaryRouteScore >= 18 && alternateRouteScore >= 18) {
+    preferredRouteReason = "Both routes currently have active delays.";
+    routeComparisonSummary = "Both routes currently have active delays.";
+  }
+
+  applyRouteVisualEmphasis();
 }
+
+function getRouteHazardAssessmentForPath(routeLatLngs = []) {
+  if (!Array.isArray(routeLatLngs) || routeLatLngs.length < 2) return { nearbyReports: [] };
+  const originalLayer = window.__gridlyRoutePreviewLayer;
+  const tempLayer = { getLatLngs: () => routeLatLngs };
+  window.__gridlyRoutePreviewLayer = tempLayer;
+  const assessment = getRouteHazardAssessment();
+  window.__gridlyRoutePreviewLayer = originalLayer;
+  return assessment;
+}
+
+function applyRouteVisualEmphasis() {
+  const primaryStyle = preferredRoute === "primary"
+    ? { weight: 8, opacity: 0.96 }
+    : { weight: 6, opacity: 0.55 };
+  const alternateStyle = preferredRoute === "alternate"
+    ? { weight: 7, opacity: 0.98 }
+    : { weight: 5, opacity: 0.55 };
+  if (window.__gridlyRoutePreviewLayer?.setStyle) window.__gridlyRoutePreviewLayer.setStyle(primaryStyle);
+  if (alternateRouteLayer?.setStyle) alternateRouteLayer.setStyle({ dashArray: "12 10", ...alternateStyle });
+}
+
 
 
 function getRerouteFoundation(routeHazard = {}) {
@@ -5123,6 +5195,10 @@ function attachRouteWatchDebugGlobal() {
       hazardsAvoidedCount,
       routeComparisonStatus,
       routeComparisonSummary,
+      primaryRouteScore,
+      alternateRouteScore,
+      preferredRoute,
+      preferredRouteReason,
       routeRelevantCrossings,
       routeContextSummary,
       mapReady: Boolean(map)
@@ -5170,6 +5246,10 @@ function attachRouteWatchDebugGlobal() {
         hazardsAvoidedCount: 0,
         routeComparisonStatus: "alternate_unavailable",
         routeComparisonSummary: "",
+        primaryRouteScore: 0,
+        alternateRouteScore: 0,
+        preferredRoute: "primary",
+        preferredRouteReason: "Primary route is selected by default.",
         mapReady: Boolean(map),
         debugError: String(error?.message || error || "Unknown debug error")
       };
@@ -5625,7 +5705,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
-    safeText("routeRecommendation", routeComparisonSummary || (alternateRouteAvailable ? "Alternate route available for review." : "Alternate route check recommended."));
+    safeText("routeRecommendation", preferredRouteReason || routeComparisonSummary || (alternateRouteAvailable ? "Alternate route available for review." : "Alternate route check recommended."));
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("high");
   } else if (routeHazard.level === "heavy") {
@@ -5637,7 +5717,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
-    safeText("routeRecommendation", routeComparisonSummary || (alternateRouteAvailable ? "Alternate route available for review." : "Alternate route check recommended."));
+    safeText("routeRecommendation", preferredRouteReason || routeComparisonSummary || (alternateRouteAvailable ? "Alternate route available for review." : "Alternate route check recommended."));
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("delayed");
   } else if (routeHazard.level === "caution") {
@@ -5649,7 +5729,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
-    safeText("routeRecommendation", "Possible delay near your route.");
+    safeText("routeRecommendation", preferredRouteReason || "Possible delay near your route.");
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("delayed");
   } else {
@@ -5661,7 +5741,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
-    safeText("routeRecommendation", "Your route looks clear.");
+    safeText("routeRecommendation", preferredRouteReason || "Your route looks clear.");
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("clear");
   }
