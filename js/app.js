@@ -4400,6 +4400,69 @@ function setRoutePreviewState(rendered, reason) {
   routePreviewReason = String(reason || (rendered ? "Route preview rendered." : "Route preview not rendered."));
 }
 
+function renderRoutePreviewLine(startCoords, destinationCoords, meta = {}) {
+  const start = normalizeCoordinatePair(startCoords?.lat, startCoords?.lng);
+  const destination = normalizeCoordinatePair(destinationCoords?.lat, destinationCoords?.lng);
+  if (!savedRouteLayer || !start || !destination) return false;
+
+  savedRouteLayer.clearLayers();
+  const latLngs = [
+    [start.lat, start.lng],
+    [destination.lat, destination.lng]
+  ];
+
+  const glow = L.polyline(latLngs, {
+    pane: "routePane",
+    color: "#22d3ee",
+    weight: 12,
+    opacity: 0.32,
+    lineJoin: "round",
+    lineCap: "round",
+    interactive: false
+  });
+  const core = L.polyline(latLngs, {
+    pane: "routePane",
+    color: "#38bdf8",
+    weight: 6,
+    opacity: 0.96,
+    lineJoin: "round",
+    lineCap: "round",
+    interactive: false
+  });
+  const accent = L.polyline(latLngs, {
+    pane: "routePane",
+    color: "#e0f2fe",
+    weight: 2,
+    opacity: 0.84,
+    lineJoin: "round",
+    lineCap: "round",
+    interactive: false
+  });
+
+  savedRouteLayer.addLayer(glow);
+  savedRouteLayer.addLayer(core);
+  savedRouteLayer.addLayer(accent);
+  const rendered = Boolean(savedRouteLayer.getLayers?.().length >= 3);
+  if (!rendered) return false;
+
+  if (map && typeof map.hasLayer === "function" && !map.hasLayer(savedRouteLayer)) {
+    savedRouteLayer.addTo(map);
+  }
+  if (map) {
+    const bounds = L.latLngBounds(latLngs);
+    if (bounds.isValid()) {
+      map.fitBounds(bounds, { paddingTopLeft: [24, 120], paddingBottomRight: [24, 80], maxZoom: 13, animate: false });
+    }
+  }
+  console.info("Gridly route preview rendered", {
+    startLabel: meta.startLabel || "Start",
+    destinationLabel: meta.destinationLabel || "Destination",
+    startCoordinates: start,
+    destinationCoordinates: destination
+  });
+  return true;
+}
+
 function updateRouteWatchStartButtonLabel() {
   if (!els.routeWatchStartBtn) return;
   const startId = els.routeWatchStartSelect?.value || "";
@@ -4426,8 +4489,10 @@ function attachRouteWatchDebugGlobal() {
       startCoordinates: normalizeCoordinatePair(start?.lat, start?.lng),
       destinationCoordinates: normalizeCoordinatePair(destination?.lat, destination?.lng),
       routeWatchActive: routeWatchActivated,
+      routePreviewLayerExists: Boolean(savedRouteLayer),
       routePreviewRendered,
-      reason: routePreviewReason
+      mapHasRoutePreviewLayer: Boolean(map && savedRouteLayer && typeof map.hasLayer === "function" && map.hasLayer(savedRouteLayer)),
+      routePreviewReason
     };
   };
 }
@@ -4595,10 +4660,19 @@ async function startInlineRouteWatch() {
     return;
   }
   savedRouteLayer?.clearLayers?.();
-  drawPremiumRouteLine([[fromCoords.lat, fromCoords.lng], [toCoords.lat, toCoords.lng]], "#66e8ff", "startInlineRouteWatchPreview");
-  setRoutePreviewState(true, "Route preview rendered from selected start to destination.");
-  setConfirmation("Route preview shown. Not turn-by-turn directions.", "success");
-  safeText("routeWatchSetupHint", "Route preview shown. Not turn-by-turn directions.");
+  const routePreviewShown = renderRoutePreviewLine(fromCoords, toCoords, {
+    startLabel: start.name,
+    destinationLabel: destination.name
+  });
+  if (!routePreviewShown) {
+    setRoutePreviewState(false, "Route preview unavailable until precise locations are saved.");
+    setConfirmation("Route preview unavailable until precise locations are saved.", "error");
+    safeText("routeWatchSetupHint", "Route preview unavailable until precise locations are saved.");
+  } else {
+    setRoutePreviewState(true, "Route preview rendered from selected start to destination.");
+    setConfirmation("Route preview shown. Not turn-by-turn directions.", "success");
+    safeText("routeWatchSetupHint", "Route preview shown. Not turn-by-turn directions.");
+  }
   activeDestinationPlace = toPlace;
   lastRouteWatchSelection = { startId: start.id, destinationId: destination.id };
   updateRouteWatchBadge(destination.name);
