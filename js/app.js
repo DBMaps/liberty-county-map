@@ -3984,15 +3984,21 @@ function saveRoute(source = "desktop") {
     lastSavedPlaceResult = { ok: false, message: errorMessage, at: new Date().toISOString() };
     return;
   }
-  const places = getSavedPlaces();
   const modalMode = source === "mobile" ? (els.routeSetupModal?.dataset.mode || "add") : "add";
   const prefillType = source === "mobile" ? (els.routeSetupModal?.dataset.prefillType || "custom") : "custom";
   const normalizedType = prefillType === "favorite" ? "custom" : prefillType;
+  const current = normalizeSavedPlaces();
+  const nextState = {
+    version: 1,
+    home: current.home ?? null,
+    work: current.work ?? null,
+    custom: Array.isArray(current.custom) ? [...current.custom] : [],
+    favorites: Array.isArray(current.favorites) ? [...current.favorites] : []
+  };
   let id = `place-${Date.now()}`;
   if (normalizedType === "home" || normalizedType === "work") {
     id = normalizedType;
   }
-  const existingIdx = places.findIndex((place) => place.id === id);
   const coordinates = normalizeCoordinatePair(userLocation?.lat, userLocation?.lng) || normalizeCoordinatePair(map?.getCenter?.()?.lat, map?.getCenter?.()?.lng);
   const createdAt = new Date().toISOString();
   const placeType = normalizedType === "custom" ? "favorite" : normalizedType;
@@ -4008,9 +4014,16 @@ function saveRoute(source = "desktop") {
     lng: coordinates?.lng ?? null,
     coordinates: coordinates ? { lat: coordinates.lat, lng: coordinates.lng } : null
   };
-  if (existingIdx >= 0) places[existingIdx] = nextPlace;
-  else places.push(nextPlace);
-  saveSavedPlaces(places);
+  if (normalizedType === "home") {
+    nextState.home = nextPlace;
+  } else if (normalizedType === "work") {
+    nextState.work = nextPlace;
+  } else {
+    const existingIdx = nextState.custom.findIndex((place) => place?.id === id);
+    if (existingIdx >= 0) nextState.custom[existingIdx] = nextPlace;
+    else nextState.custom.push(nextPlace);
+  }
+  saveSavedPlacesState(nextState);
   setSelectedPlaceId(id);
 
   routeWatchActivated = false;
@@ -4034,7 +4047,7 @@ function saveRoute(source = "desktop") {
 
 function getSavedPlacesState() {
   const state = normalizeSavedPlaces();
-  return { home: state.home, work: state.work, custom: [...state.custom] };
+  return { home: state.home, work: state.work, custom: [...state.custom], favorites: [...state.favorites] };
 }
 function isLegacyPlace(place) {
   if (!place || typeof place !== "object") return false;
@@ -4079,7 +4092,7 @@ function savePlaceType(type, label, address = "") {
 }
 
 function normalizeSavedPlaces(input = null) {
-  const canonical = { version: 1, home: null, work: null, custom: [] };
+  const canonical = { version: 1, home: null, work: null, custom: [], favorites: [] };
   let raw = input;
   if (raw == null) {
     try {
@@ -4129,6 +4142,11 @@ function normalizeSavedPlaces(input = null) {
     canonical.work = makeCanonicalPlace(raw.work, { id: "work", type: "work", label: "Work" });
     canonical.custom = Array.isArray(raw.custom)
       ? raw.custom
+          .map((place) => makeCanonicalPlace(place))
+          .filter(Boolean)
+      : [];
+    canonical.favorites = Array.isArray(raw.favorites)
+      ? raw.favorites
           .map((place) => makeCanonicalPlace(place))
           .filter(Boolean)
       : [];
@@ -4270,8 +4288,11 @@ function configureRouteSetupModal({ mode = "add", prefillType = "custom" } = {})
   const destinationLabel = els.mobileSavedDestinationSelect?.closest("label");
   if (titleEl) titleEl.textContent = mode === "manage" ? "Manage Places" : mode === "home" ? "Set Home" : mode === "work" ? "Set Work" : mode === "favorite" ? "Add Favorite" : "Add Place";
   if (subtitleEl) subtitleEl.textContent = "Saved places stay on this device. Pick one destination for today.";
-  if (els.mobileSaveRouteBtn) els.mobileSaveRouteBtn.textContent = mode === "manage" ? "Start Route Watch" : "Save Place";
+  if (els.mobileSaveRouteBtn) els.mobileSaveRouteBtn.textContent = mode === "manage" ? "Start Route Watch" : mode === "home" ? "Save Home" : mode === "work" ? "Save Work" : "Save Place";
   if (destinationLabel) destinationLabel.hidden = mode !== "manage";
+  if (els.mobileSavedDestinationSelect) {
+    els.mobileSavedDestinationSelect.disabled = mode !== "manage";
+  }
 
   if (mode === "manage") {
     const selected = getSelectedPlace();
@@ -4338,7 +4359,9 @@ function attachSavedPlacesDebugGlobal() {
     return {
       modalMode: els.routeSetupModal?.dataset?.mode || null,
       lastSaveResult: lastSavedPlaceResult,
+      activeSaveMode: els.routeSetupModal?.dataset?.prefillType || null,
       savedPlaces: state,
+      dropdownOptions: getSavedPlaces().map((place) => ({ id: place.id, name: place.name })),
       localStorageRaw: rawSavedPlaces,
       parsedSavedPlaces,
       homeValidity: validity.home,
