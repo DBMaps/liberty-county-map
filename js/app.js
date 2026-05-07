@@ -4642,7 +4642,7 @@ function setRoutePreviewState(rendered, reason, options = {}) {
   lastRoutePreviewError = routePreviewRendered ? null : routePreviewReason;
 }
 
-function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
+function renderRoutePreviewLine(startCoordinates, destinationCoordinates, labels = {}) {
   // Render from saved Home/Work (or other saved place) coordinates only after coordinate validation succeeds.
   if (!savedRouteLayer || !map) return false;
 
@@ -4676,9 +4676,9 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
 
   const routePreviewGlow = L.polyline(fallbackPoints, {
     pane: "routePane",
-    color: "#ff00ff",
-    weight: 24,
-    opacity: 0.62,
+    color: "#4fb9ff",
+    weight: 18,
+    opacity: 0.24,
     lineJoin: "round",
     lineCap: "round",
     interactive: false
@@ -4686,9 +4686,9 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
 
   const routePreviewLayer = L.polyline(fallbackPoints, {
     pane: "routePane",
-    color: "#00ffff",
-    weight: 14,
-    opacity: 1,
+    color: "#5fd0ff",
+    weight: 9,
+    opacity: 0.88,
     lineJoin: "round",
     lineCap: "round",
     interactive: false
@@ -4698,23 +4698,26 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
 
   const routePreviewAccent = L.polyline(fallbackPoints, {
     pane: "routePane",
-    color: "#ffffff",
-    weight: 5,
-    opacity: 0.96,
+    color: "#eaf6ff",
+    weight: 3,
+    opacity: 0.94,
     lineJoin: "round",
     lineCap: "round",
     interactive: false
   });
+
+  const startLabel = (labels.start || "Start").trim() || "Start";
+  const destinationLabel = (labels.destination || "Destination").trim() || "Destination";
 
   const startMarker = L.circleMarker(fallbackPoints[0], {
     pane: "routePane",
     radius: 12,
     color: "#ffffff",
     weight: 4,
-    fillColor: "#00ffff",
+    fillColor: "#5fd0ff",
     fillOpacity: 1,
     interactive: false
-  }).bindTooltip("Start", {
+  }).bindTooltip(startLabel, {
     permanent: true,
     direction: "top",
     offset: [0, -12],
@@ -4726,10 +4729,10 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
     radius: 12,
     color: "#ffffff",
     weight: 4,
-    fillColor: "#ff00ff",
+    fillColor: "#4fb9ff",
     fillOpacity: 1,
     interactive: false
-  }).bindTooltip("Destination", {
+  }).bindTooltip(destinationLabel, {
     permanent: true,
     direction: "top",
     offset: [0, -12],
@@ -4761,25 +4764,6 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
     savedRouteLayer.addTo(map);
   }
 
-  const midpointLat = (fallbackPoints[0][0] + fallbackPoints[1][0]) / 2;
-  const midpointLng = (fallbackPoints[0][1] + fallbackPoints[1][1]) / 2;
-  const midpointDebugMarker = L.circleMarker([midpointLat, midpointLng], {
-    pane: "routePane",
-    radius: 22,
-    color: "#00ffff",
-    weight: 6,
-    fillColor: "#00ffff",
-    fillOpacity: 0.42,
-    interactive: false
-  }).bindTooltip("Route Midpoint Debug", {
-    permanent: true,
-    direction: "top",
-    offset: [0, -14],
-    className: "gridly-route-endpoint-label"
-  });
-  savedRouteLayer.addLayer(midpointDebugMarker);
-  window.__gridlyRouteMidpointMarker = midpointDebugMarker;
-
   if (map) {
     window.__gridlyRoutePreviewMapDebug = map;
     const bounds = routePreviewLayer.getBounds();
@@ -4798,7 +4782,6 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
         zoom: map.getZoom()
       });
       console.info("Gridly REAL preview layer", window.__gridlyRoutePreviewLayer);
-      console.info("Gridly REAL midpoint marker", window.__gridlyRouteMidpointMarker);
     }
   }
 
@@ -5051,7 +5034,10 @@ async function startInlineRouteWatch() {
   savedRouteLayer?.clearLayers?.();
   window.__gridlyRouteWatchActive = true;
   window.__gridlySelectedRouteId = `${start.id}->${destination.id}`;
-  const routePreviewShown = renderRoutePreviewLine(fromCoords, toCoords);
+  const routePreviewShown = renderRoutePreviewLine(fromCoords, toCoords, {
+    start: start.name,
+    destination: destination.name
+  });
   if (!routePreviewShown) {
     setRoutePreviewState(false, "Missing start or destination coordinates", { layerExists: false, mapHasLayer: false, pointCount: 0 });
     setConfirmation("Route preview unavailable until precise locations are saved.", "error");
@@ -5066,7 +5052,7 @@ async function startInlineRouteWatch() {
     });
     if (routePreviewRendered) {
       setConfirmation("Route preview active.", "success");
-      safeText("routeWatchSetupHint", "Route preview active.");
+      safeText("routeWatchSetupHint", `Route preview active. Monitoring ${start.name} → ${destination.name}.`);
     } else {
       setConfirmation("Route preview unavailable until precise locations are saved.", "error");
       safeText("routeWatchSetupHint", "Route preview unavailable until precise locations are saved.");
