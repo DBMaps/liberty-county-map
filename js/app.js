@@ -1873,14 +1873,13 @@ function getRoutePolylineLatLngs() {
   return [];
 }
 
-function getRouteHazardAssessment() {
-  const routeLatLngs = getRoutePolylineLatLngs();
+function buildRouteHazardAssessment(routeLatLngs = []) {
   const thresholdMiles = 0.8;
   const nearReports = [];
   const severityWeight = { blocked: 12, heavy: 7, delayed: 5, clear: 0, cleared: 0 };
   const crossingLookup = new Map((Array.isArray(crossings) ? crossings : []).map((crossing) => [String(crossing?.id), crossing]));
 
-  if (routeLatLngs.length < 2) {
+  if (!Array.isArray(routeLatLngs) || routeLatLngs.length < 2) {
     return { score: 0, level: "clear", nearbyReports: [], nearestIssue: null, recommendation: "normal", routePointCount: 0 };
   }
 
@@ -1931,6 +1930,10 @@ function getRouteHazardAssessment() {
         : "normal";
 
   return { score, level, nearbyReports: nearReports, nearestIssue, recommendation, routePointCount: routeLatLngs.length };
+}
+
+function getRouteHazardAssessment() {
+  return buildRouteHazardAssessment(getRoutePolylineLatLngs());
 }
 
 function getHazardCountNearRoute(routeLatLngs = []) {
@@ -2018,13 +2021,7 @@ function updateRouteComparisonState(routeHazard = null) {
 }
 
 function getRouteHazardAssessmentForPath(routeLatLngs = []) {
-  if (!Array.isArray(routeLatLngs) || routeLatLngs.length < 2) return { nearbyReports: [] };
-  const originalLayer = window.__gridlyRoutePreviewLayer;
-  const tempLayer = { getLatLngs: () => routeLatLngs };
-  window.__gridlyRoutePreviewLayer = tempLayer;
-  const assessment = getRouteHazardAssessment();
-  window.__gridlyRoutePreviewLayer = originalLayer;
-  return assessment;
+  return buildRouteHazardAssessment(routeLatLngs);
 }
 
 function applyRouteVisualEmphasis() {
