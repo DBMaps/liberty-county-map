@@ -5109,13 +5109,56 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
 }
 
 
+
+function ensureAlternateRouteButton() {
+  if (!els) return null;
+  if (els.useAlternateRouteBtn && document.body.contains(els.useAlternateRouteBtn)) return els.useAlternateRouteBtn;
+
+  const actionHost = els.routeWatchStartBtn?.parentElement;
+  if (!actionHost) return null;
+
+  const button = document.createElement("button");
+  button.type = "button";
+  button.id = "useAlternateRouteBtn";
+  button.className = "secondary-btn compact-btn route-watch-alt-btn";
+  button.textContent = "Use Alternate Route";
+  button.hidden = true;
+  button.setAttribute("aria-disabled", "true");
+  button.title = "Alternate route unavailable";
+
+  const startButton = els.routeWatchStartBtn;
+  if (startButton?.nextSibling) actionHost.insertBefore(button, startButton.nextSibling);
+  else actionHost.appendChild(button);
+
+  button.addEventListener("click", (event) => {
+    event.preventDefault();
+    if (button.disabled) return;
+    useAlternateRoute();
+  });
+
+  els.useAlternateRouteBtn = button;
+  return button;
+}
+
 function updateAlternateRouteActionState() {
   const switchEl = els?.alternateRoute;
-  if (!switchEl) return;
+  const switchBtn = ensureAlternateRouteButton();
   const switchAvailable = Boolean(alternateRouteAvailable && alternateRouteLayer && window.__gridlyRoutePreviewLayer && routeWatchActivated);
-  switchEl.classList.toggle("disabled", !switchAvailable);
-  switchEl.setAttribute("aria-disabled", switchAvailable ? "false" : "true");
-  switchEl.title = switchAvailable ? "Use Alternate Route" : "Alternate route unavailable";
+
+  if (switchEl) {
+    switchEl.classList.toggle("disabled", !switchAvailable);
+    switchEl.setAttribute("aria-disabled", switchAvailable ? "false" : "true");
+    switchEl.title = switchAvailable ? "Use Alternate Route" : "Alternate route unavailable";
+  }
+
+  if (switchBtn) {
+    switchBtn.hidden = !routeWatchActivated;
+    switchBtn.disabled = !switchAvailable;
+    switchBtn.classList.toggle("disabled", !switchAvailable);
+    switchBtn.setAttribute("aria-disabled", switchAvailable ? "false" : "true");
+    switchBtn.title = switchAvailable ? "Use Alternate Route" : "Alternate route unavailable";
+    switchBtn.textContent = switchAvailable ? "Use Alternate Route" : "Alternate Route Unavailable";
+  }
 }
 
 async function useAlternateRoute() {
