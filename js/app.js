@@ -140,6 +140,7 @@ let routePreviewRendered = false;
 let routePreviewLayerExists = false;
 let mapHasRoutePreviewLayer = false;
 let routePreviewPolylinePointCount = 0;
+let routePreviewCorridorLayer = null;
 let routePreviewReason = "Route preview has not been requested.";
 let lastRoutePreviewError = null;
 let routeGeometrySource = "fallback";
@@ -4736,6 +4737,10 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
   if (window.__gridlyRoutePreviewLayer && typeof map.removeLayer === "function" && map.hasLayer(window.__gridlyRoutePreviewLayer)) {
     map.removeLayer(window.__gridlyRoutePreviewLayer);
   }
+  if (routePreviewCorridorLayer && typeof map.removeLayer === "function" && map.hasLayer(routePreviewCorridorLayer)) {
+    map.removeLayer(routePreviewCorridorLayer);
+  }
+  routePreviewCorridorLayer = null;
 
   let previewPoints = fallbackPoints;
   routeGeometrySource = "fallback";
@@ -4776,12 +4781,36 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
     osrmRouteSuccess = false;
   }
 
-  const routePreviewLayer = L.polyline(previewPoints, {
-    color: "#00ffff",
-    weight: 12,
-    opacity: 1
-  }).addTo(map);
+  const corridorUnderlay = L.polyline(previewPoints, {
+    pane: "routePane",
+    color: "#6ee7ff",
+    weight: 20,
+    opacity: 0.14,
+    lineCap: "round",
+    lineJoin: "round",
+    interactive: false
+  });
 
+  const corridorBase = L.polyline(previewPoints, {
+    pane: "routePane",
+    color: "#38d8ff",
+    weight: 14,
+    opacity: 0.24,
+    lineCap: "round",
+    lineJoin: "round",
+    interactive: false
+  });
+
+  const routePreviewLayer = L.polyline(previewPoints, {
+    pane: "routePane",
+    color: "#00ffff",
+    weight: 8,
+    opacity: 0.92,
+    lineCap: "round",
+    lineJoin: "round"
+  });
+
+  routePreviewCorridorLayer = L.layerGroup([corridorUnderlay, corridorBase, routePreviewLayer]).addTo(map);
   window.__gridlyRoutePreviewLayer = routePreviewLayer;
 
   const actualLatLngs = routePreviewLayer.getLatLngs();
