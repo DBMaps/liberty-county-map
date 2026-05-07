@@ -4655,15 +4655,71 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
   if (!hasValidPoints) return false;
 
   savedRouteLayer.clearLayers();
-  const routePreviewLayer = L.polyline(fallbackPoints, {
+  const routePreviewGlow = L.polyline(fallbackPoints, {
     pane: "routePane",
-    color: "#38bdf8",
-    weight: 6,
-    opacity: 0.96,
+    color: "#67e8f9",
+    weight: 16,
+    opacity: 0.20,
     lineJoin: "round",
     lineCap: "round",
     interactive: false
-  }).addTo(map);
+  });
+
+  const routePreviewLayer = L.polyline(fallbackPoints, {
+    pane: "routePane",
+    color: "#22d3ee",
+    weight: 8,
+    opacity: 0.98,
+    lineJoin: "round",
+    lineCap: "round",
+    interactive: false
+  });
+
+  const routePreviewAccent = L.polyline(fallbackPoints, {
+    pane: "routePane",
+    color: "#ecfeff",
+    weight: 3,
+    opacity: 0.78,
+    lineJoin: "round",
+    lineCap: "round",
+    interactive: false
+  });
+
+  const startMarker = L.circleMarker(fallbackPoints[0], {
+    pane: "routePane",
+    radius: 8,
+    color: "#042f2e",
+    weight: 2,
+    fillColor: "#34d399",
+    fillOpacity: 1,
+    interactive: false
+  }).bindTooltip("Start", {
+    permanent: true,
+    direction: "top",
+    offset: [0, -12],
+    className: "gridly-route-endpoint-label"
+  });
+
+  const destinationMarker = L.circleMarker(fallbackPoints[1], {
+    pane: "routePane",
+    radius: 8,
+    color: "#082f49",
+    weight: 2,
+    fillColor: "#fb7185",
+    fillOpacity: 1,
+    interactive: false
+  }).bindTooltip("Destination", {
+    permanent: true,
+    direction: "top",
+    offset: [0, -12],
+    className: "gridly-route-endpoint-label"
+  });
+
+  savedRouteLayer.addLayer(routePreviewGlow);
+  savedRouteLayer.addLayer(routePreviewLayer);
+  savedRouteLayer.addLayer(routePreviewAccent);
+  savedRouteLayer.addLayer(startMarker);
+  savedRouteLayer.addLayer(destinationMarker);
 
   const actualLatLngs = routePreviewLayer.getLatLngs();
   routePreviewPolylinePointCount = Array.isArray(actualLatLngs) ? actualLatLngs.length : 0;
@@ -4680,7 +4736,7 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
   if (map) {
     const bounds = L.latLngBounds(actualLatLngs);
     if (bounds.isValid()) {
-      map.fitBounds(bounds, { paddingTopLeft: [24, 120], paddingBottomRight: [24, 80], maxZoom: 13, animate: false });
+      map.fitBounds(bounds, { paddingTopLeft: [56, 150], paddingBottomRight: [56, 110], padding: [56, 56], maxZoom: 14, animate: false });
     }
   }
 
