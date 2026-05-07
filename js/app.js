@@ -5300,6 +5300,16 @@ function attachRouteWatchDebugGlobal() {
       const startCoordinates = normalizeCoordinatePair(start?.lat, start?.lng);
       const destinationCoordinates = normalizeCoordinatePair(destination?.lat, destination?.lng);
       const routeHazard = getRouteHazardAssessment?.() || { score: 0, level: "clear", nearbyReports: [], nearestIssue: null, recommendation: "normal" };
+      const corridorHealth = getCorridorHealthFromScore(routeHazard?.score || 0);
+      const estimatedDelayImpact = getEstimatedDelayImpact(corridorHealth, routeHazard?.level || "");
+      const systemConfidence = getSystemConfidence(Boolean(routeWatchActivated));
+      const recommendationConfidence = getRecommendationConfidence({
+        alternateAvailable: Boolean(alternateRouteAvailable),
+        hazardsAvoided: Number(hazardsAvoidedCount || 0),
+        primaryScore: Number(primaryRouteScore || 0),
+        alternateScore: Number(alternateRouteScore || 0),
+        routeIsMonitoring: Boolean(routeWatchActivated)
+      });
       const rerouteFoundation = getRerouteFoundation(routeHazard);
           const activeIncidents = (getUnifiedIncidents?.() || []).filter((incident) => incident.status === "active");
       const routeRelevantIncidents = activeIncidents.filter((incident) => isIncidentRouteRelevant(incident, routeHazard));
@@ -5350,6 +5360,10 @@ function attachRouteWatchDebugGlobal() {
       routeNearbyReports: Array.isArray(routeHazard?.nearbyReports) ? routeHazard.nearbyReports : [],
       routeNearestIssue: routeHazard?.nearestIssue || null,
       routeRecommendation: routeHazard?.recommendation || "normal",
+      systemConfidence,
+      recommendationConfidence,
+      corridorHealth,
+      estimatedDelayImpact,
       rerouteRecommended: rerouteFoundation.rerouteRecommended,
       rerouteReason: rerouteFoundation.rerouteReason,
       rerouteTargetIssue: rerouteFoundation.rerouteTargetIssue,
@@ -5409,6 +5423,10 @@ function attachRouteWatchDebugGlobal() {
         routeNearbyReports: [],
         routeNearestIssue: null,
         routeRecommendation: "normal",
+        systemConfidence: getSystemConfidence(Boolean(routeWatchActivated)),
+        recommendationConfidence: "Low",
+        corridorHealth: "Clear",
+        estimatedDelayImpact: "No meaningful delay expected.",
         rerouteRecommended: false,
         rerouteReason: "",
         rerouteTargetIssue: null,
@@ -5805,6 +5823,45 @@ function getRouteWatchIntelligence(activeIssues = []) {
   return { blockedCount, urgentBlockedCount, estimatedDelayMinutes, confidence, reroute, advice };
 }
 
+function getCorridorHealthFromScore(score = 0) {
+  const normalized = Math.max(0, Number(score) || 0);
+  if (normalized <= 10) return "Clear";
+  if (normalized <= 30) return "Moderate";
+  if (normalized <= 60) return "Heavy";
+  return "Severe";
+}
+
+function getEstimatedDelayImpact(corridorHealth = "Clear", routeStatus = "") {
+  const normalizedHealth = String(corridorHealth || "").toLowerCase();
+  const normalizedStatus = String(routeStatus || "").toLowerCase();
+  if (normalizedStatus === "blocked" || normalizedHealth === "severe") return "High delay risk.";
+  if (normalizedHealth === "heavy") return "Likely meaningful delay.";
+  if (normalizedHealth === "moderate") return "Possible short delay.";
+  return "No meaningful delay expected.";
+}
+
+function getSystemConfidence(routeIsMonitoring = false) {
+  const checks = [
+    Boolean(map),
+    Boolean(routePreviewRendered),
+    Number(routePreviewPolylinePointCount) >= 2,
+    Boolean(map && savedRouteLayer && typeof map.hasLayer === "function" && map.hasLayer(savedRouteLayer)),
+    !routeIsMonitoring || Boolean(osrmRouteSuccess)
+  ];
+  const score = checks.filter(Boolean).length;
+  if (score >= 5) return "High";
+  if (score >= 3) return "Medium";
+  return "Low";
+}
+
+function getRecommendationConfidence({ alternateAvailable = false, hazardsAvoided = 0, primaryScore = 0, alternateScore = 0, routeIsMonitoring = false } = {}) {
+  if (!routeIsMonitoring || !alternateAvailable) return "Low";
+  const delta = Math.max(0, Number(primaryScore) - Number(alternateScore));
+  if (hazardsAvoided > 0 && delta >= 10) return "High";
+  if (delta <= 4) return "Medium";
+  return "Medium";
+}
+
 function updateRouteIntelligence(nearest = []) {
   const routeLabelParts = buildRouteWatchLabelParts();
 
@@ -5835,6 +5892,16 @@ function updateRouteIntelligence(nearest = []) {
   const extraMinutes = Math.max(0, Math.round(impact / 7));
   const routeIntel = getRouteWatchIntelligence(activeIssues);
   const routeHazard = getRouteHazardAssessment();
+  const systemConfidence = getSystemConfidence(routeIsMonitoring);
+  const recommendationConfidence = getRecommendationConfidence({
+    alternateAvailable: Boolean(alternateRouteAvailable),
+    hazardsAvoided: Number(hazardsAvoidedCount || 0),
+    primaryScore: Number(primaryRouteScore || 0),
+    alternateScore: Number(alternateRouteScore || 0),
+    routeIsMonitoring
+  });
+  const corridorHealth = getCorridorHealthFromScore(routeHazard?.score || 0);
+  const estimatedDelayImpact = getEstimatedDelayImpact(corridorHealth, routeHazard?.level || "");
   const activeUnifiedHazards = unifiedActive.filter((incident) => !String(incident.type || "").startsWith("rail_"));
   const routeRelevantHazards = routeIsMonitoring
     ? activeUnifiedHazards.filter((incident) => isIncidentRouteRelevant(incident, routeHazard))
@@ -5874,7 +5941,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeEta", routeLabelParts.hasHome ? "Choose destination" : "Set Home");
     safeText("desktopRouteStatus", routeLabelParts.hasHome ? "Choose a saved destination to start Route Watch." : "Set Home and one destination to start Route Watch.");
     safeText("routeFreshness", "Unknown");
-    safeText("routeConfidence", "--");
+    safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
     safeText("routeReports", "0 active");
     safeText("routeRecommendation", "Awaiting route selection");
     safeText("sideRouteWatchHint", routeLabelParts.hasHome ? "Choose a saved destination to start Route Watch." : "Set Home and one destination to start Route Watch.");
@@ -5885,10 +5952,10 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeStatus", "Blocked");
     safeText("routeEta", `ETA 32 min (+${extraMinutes})`);
     safeText("departureTime", "Leave now");
-    safeText("departureReason", `${routeIntel.blockedCount} blocked crossing${routeIntel.blockedCount === 1 ? "" : "s"} on Active Route · est +${routeIntel.estimatedDelayMinutes} min.`);
+    safeText("departureReason", `System Confidence: ${systemConfidence} · Recommendation Confidence: ${recommendationConfidence} · Corridor Health: ${corridorHealth} · Estimated Delay Impact: ${estimatedDelayImpact}`);
     safeText("desktopRouteStatus", "Blocked crossing detected. Consider another route.");
     safeText("routeFreshness", freshnessTier);
-    safeText("routeConfidence", routeIntel.confidence);
+    safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
     { const rec = getRouteRecommendationState(routeHazard); safeText("routeRecommendation", rec.message); }
     safeText("sideRouteWatchHint", routeContextSummary);
@@ -5897,10 +5964,10 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeStatus", "Heavy Delay");
     safeText("routeEta", `ETA 26 min (+${extraMinutes})`);
     safeText("departureTime", "Leave 8 min early");
-    safeText("departureReason", `${routeIntel.blockedCount} blocked crossing${routeIntel.blockedCount === 1 ? "" : "s"} on Active Route · est +${routeIntel.estimatedDelayMinutes} min.`);
+    safeText("departureReason", `System Confidence: ${systemConfidence} · Recommendation Confidence: ${recommendationConfidence} · Corridor Health: ${corridorHealth} · Estimated Delay Impact: ${estimatedDelayImpact}`);
     safeText("desktopRouteStatus", "Heavy delay detected. Leave early or reroute.");
     safeText("routeFreshness", freshnessTier);
-    safeText("routeConfidence", routeIntel.confidence);
+    safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
     { const rec = getRouteRecommendationState(routeHazard); safeText("routeRecommendation", rec.message); }
     safeText("sideRouteWatchHint", routeContextSummary);
@@ -5909,10 +5976,10 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeStatus", "Caution");
     safeText("routeEta", `ETA 24 min (+${Math.max(extraMinutes, 3)})`);
     safeText("departureTime", "Leave a bit early");
-    safeText("departureReason", "Possible delay near your route.");
+    safeText("departureReason", `System Confidence: ${systemConfidence} · Recommendation Confidence: ${recommendationConfidence} · Corridor Health: ${corridorHealth} · Estimated Delay Impact: ${estimatedDelayImpact}`);
     safeText("desktopRouteStatus", "Possible delay near your route.");
     safeText("routeFreshness", freshnessTier);
-    safeText("routeConfidence", routeIntel.confidence);
+    safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
     { const rec = getRouteRecommendationState(routeHazard); safeText("routeRecommendation", rec.message); }
     safeText("sideRouteWatchHint", routeContextSummary);
@@ -5921,10 +5988,10 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeStatus", "Clear");
     safeText("routeEta", "ETA 21 min");
     safeText("departureTime", "Normal departure");
-    safeText("departureReason", "No major active shared delay detected on Active Route.");
+    safeText("departureReason", `System Confidence: ${systemConfidence} · Recommendation Confidence: ${recommendationConfidence} · Corridor Health: ${corridorHealth} · Estimated Delay Impact: ${estimatedDelayImpact}`);
     safeText("desktopRouteStatus", "Your route looks clear.");
     safeText("routeFreshness", freshnessTier);
-    safeText("routeConfidence", routeIntel.confidence);
+    safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
     { const rec = getRouteRecommendationState(routeHazard); safeText("routeRecommendation", rec.message); }
     safeText("sideRouteWatchHint", routeContextSummary);
