@@ -156,6 +156,9 @@ let primaryRouteScore = 0;
 let alternateRouteScore = 0;
 let preferredRoute = "primary";
 let preferredRouteReason = "Primary route is selected by default.";
+let lastRouteSwitchAt = null;
+let routeSwitchCount = 0;
+let activeRouteSource = "primary";
 let routePreviewReason = "Route preview has not been requested.";
 let lastRoutePreviewError = null;
 let routeGeometrySource = "fallback";
@@ -3588,6 +3591,11 @@ function bindEvents() {
     console.info("Gridly route CTA handler path", { handler: "routeWatchStartBtn.click", calls: "startInlineRouteWatch" });
     startInlineRouteWatch();
   });
+  els.alternateRoute?.addEventListener("click", (event) => {
+    event.preventDefault();
+    if (!alternateRouteAvailable) return;
+    useAlternateRoute();
+  });
   [els.routeWatchStartSelect, els.routeWatchDestinationSelect].forEach((selectEl) => {
     selectEl?.addEventListener("change", () => {
       console.info("Gridly route dropdown changed", {
@@ -4963,6 +4971,7 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
   hazardsAvoidedCount = 0;
   routeComparisonStatus = "alternate_unavailable";
   routeComparisonSummary = "";
+  activeRouteSource = "primary";
 
   let previewPoints = fallbackPoints;
   routeGeometrySource = "fallback";
@@ -5100,6 +5109,80 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
 }
 
 
+function updateAlternateRouteActionState() {
+  const switchEl = els?.alternateRoute;
+  if (!switchEl) return;
+  const switchAvailable = Boolean(alternateRouteAvailable && alternateRouteLayer && window.__gridlyRoutePreviewLayer && routeWatchActivated);
+  switchEl.classList.toggle("disabled", !switchAvailable);
+  switchEl.setAttribute("aria-disabled", switchAvailable ? "false" : "true");
+  switchEl.title = switchAvailable ? "Use Alternate Route" : "Alternate route unavailable";
+}
+
+async function useAlternateRoute() {
+  if (!(alternateRouteAvailable && alternateRouteLayer && window.__gridlyRoutePreviewLayer && routeWatchActivated)) {
+    setConfirmation("Alternate route is not available yet.", "error");
+    updateAlternateRouteActionState();
+    return false;
+  }
+  try {
+    const alternateLatLngs = alternateRouteLayer.getLatLngs?.() || [];
+    if (!Array.isArray(alternateLatLngs) || alternateLatLngs.length < 2) throw new Error("invalid alternate geometry");
+    const promotedPoints = alternateLatLngs.map((point) => [Number(point.lat), Number(point.lng)]).filter((point) => Number.isFinite(point[0]) && Number.isFinite(point[1]));
+    if (promotedPoints.length < 2) throw new Error("alternate geometry conversion failed");
+
+    window.__gridlyRoutePreviewLayer.setLatLngs(promotedPoints);
+    routePreviewPolylinePointCount = promotedPoints.length;
+    routeGeometrySource = "alternate_promoted";
+    activeRouteSource = "alternate";
+    routeWatchActivated = true;
+    routePreviewRendered = true;
+    routePreviewLayerExists = true;
+    mapHasRoutePreviewLayer = true;
+    lastRouteSwitchAt = new Date().toISOString();
+    routeSwitchCount += 1;
+
+    let nextAlternate = null;
+    const places = Array.isArray(getSavedPlaces?.()) ? getSavedPlaces() : [];
+    const start = places.find((place) => place.id === (els?.routeWatchStartSelect?.value || ""));
+    const destination = places.find((place) => place.id === (els?.routeWatchDestinationSelect?.value || ""));
+    const startCoordinates = normalizeCoordinatePair(start?.lat, start?.lng);
+    const destinationCoordinates = normalizeCoordinatePair(destination?.lat, destination?.lng);
+    if (startCoordinates && destinationCoordinates) {
+      nextAlternate = await fetchAlternateRouteCoordinates([startCoordinates.lat, startCoordinates.lng], [destinationCoordinates.lat, destinationCoordinates.lng], promotedPoints);
+    }
+
+    if (alternateRouteLayer && map?.hasLayer?.(alternateRouteLayer)) map.removeLayer(alternateRouteLayer);
+    alternateRouteLayer = null;
+    alternateRouteAvailable = false;
+    alternateRouteStatus = "unavailable";
+    alternateRouteReason = "Alternate route refresh in progress.";
+    alternateRouteVertexCount = 0;
+    alternateRouteGeometrySource = "none";
+
+    if (Array.isArray(nextAlternate) && nextAlternate.length >= 2) {
+      alternateRouteLayer = L.polyline(nextAlternate, { pane: "routePane", color: "#fbbf24", weight: 6, opacity: 0.95, dashArray: "12 10", lineCap: "round", lineJoin: "round" }).addTo(map);
+      alternateRouteVertexCount = nextAlternate.length;
+      alternateRouteGeometrySource = "osrm_alternative";
+      alternateRouteStatus = "available";
+      alternateRouteReason = "Alternate route available.";
+      alternateRouteAvailable = true;
+    } else {
+      alternateRouteReason = "Alternate route unavailable after switching.";
+    }
+
+    updateRouteComparisonState(getRouteHazardAssessment());
+    updateRouteIntelligence();
+    updateRouteWatchPill();
+    updateAlternateRouteActionState();
+    setConfirmation("Now monitoring the alternate route.", "success");
+    return true;
+  } catch (error) {
+    setConfirmation("Could not switch routes right now. Keeping current monitored route.", "error");
+    updateAlternateRouteActionState();
+    return false;
+  }
+}
+
 function updateRouteWatchStartButtonLabel() {
   if (!els.routeWatchStartBtn) return;
   const startId = els.routeWatchStartSelect?.value || "";
@@ -5182,6 +5265,10 @@ function attachRouteWatchDebugGlobal() {
       originalRouteGeometrySource: rerouteFoundation.originalRouteGeometrySource,
       originalRouteVertexCount: rerouteFoundation.originalRouteVertexCount,
       alternateRouteAvailable: rerouteFoundation.alternateRouteAvailable,
+      routeSwitchAvailable: Boolean(alternateRouteAvailable && alternateRouteLayer && routeWatchActivated),
+      lastRouteSwitchAt,
+      routeSwitchCount,
+      activeRouteSource,
       alternateRouteReason: rerouteFoundation.alternateRouteReason,
       alternateRouteGeometrySource: rerouteFoundation.alternateRouteGeometrySource,
       alternateRouteVertexCount: rerouteFoundation.alternateRouteVertexCount,
@@ -5234,6 +5321,10 @@ function attachRouteWatchDebugGlobal() {
         originalRouteGeometrySource: routeGeometrySource || "fallback",
         originalRouteVertexCount: Number.isFinite(Number(routePreviewPolylinePointCount)) ? Number(routePreviewPolylinePointCount) : 0,
         alternateRouteAvailable: false,
+        routeSwitchAvailable: false,
+        lastRouteSwitchAt,
+        routeSwitchCount,
+        activeRouteSource,
         alternateRouteReason: "",
         alternateRouteGeometrySource: "none",
         alternateRouteVertexCount: 0,
@@ -5769,6 +5860,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("impactText", "Low route impact. Normal travel expected.");
     liveStatusCard?.classList.add("clear-status");
   }
+  updateAlternateRouteActionState();
 
   safeText("mobileCommuteRouteBtn", impact >= 70 ? "Open Reroute Plan" : "Open Commute Plan");
   updateRouteWatchBadge(monitoredRouteLabel);
