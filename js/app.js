@@ -1205,9 +1205,42 @@ function initMap() {
 
   centerMapOnUserIfAllowed();
   highlightNearestCrossingOnFirstLoad();
+  installMapLayoutResizeSafety();
 }
 
 
+
+
+function installMapLayoutResizeSafety() {
+  const mapEl = document.getElementById("map");
+  const mapFrame = document.querySelector(".map-frame");
+  if (!map || !mapEl || !mapFrame) return;
+
+  let rafId = null;
+  let debounceId = null;
+
+  const scheduleMapResize = () => {
+    if (rafId) cancelAnimationFrame(rafId);
+    if (debounceId) clearTimeout(debounceId);
+
+    rafId = requestAnimationFrame(() => {
+      map.invalidateSize({ pan: false, debounceMoveend: true });
+    });
+
+    debounceId = setTimeout(() => {
+      map.invalidateSize({ pan: false, debounceMoveend: true });
+    }, 180);
+  };
+
+  const observer = new ResizeObserver(() => {
+    scheduleMapResize();
+  });
+
+  observer.observe(mapFrame);
+  observer.observe(mapEl);
+  window.addEventListener("resize", scheduleMapResize, { passive: true });
+  scheduleMapResize();
+}
 
 function installGridlyMapLineDebugHelper() {
   window.gridlyMapLineDebug = function gridlyMapLineDebug() {
