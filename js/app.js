@@ -1918,6 +1918,24 @@ function getRouteHazardAssessment() {
   return { score, level, nearbyReports: nearReports, nearestIssue, recommendation, routePointCount: routeLatLngs.length };
 }
 
+
+function getRerouteFoundation(routeHazard = {}) {
+  const level = String(routeHazard?.level || "clear").toLowerCase();
+  const rerouteRecommended = level === "blocked" || level === "heavy";
+  const rerouteReason = level === "blocked"
+    ? "Blocked crossing detected. Consider another route."
+    : level === "heavy"
+      ? "Heavy delay detected. Leave early or reroute."
+      : "";
+  return {
+    rerouteRecommended,
+    rerouteReason,
+    rerouteTargetIssue: routeHazard?.nearestIssue || null,
+    originalRouteGeometrySource: routeGeometrySource || "fallback",
+    originalRouteVertexCount: Number.isFinite(Number(routePreviewPolylinePointCount)) ? Number(routePreviewPolylinePointCount) : 0
+  };
+}
+
 function isIncidentRouteRelevant(incident = {}, routeHazard = null) {
   if (!routeWatchActivated) return false;
   const routeLatLngs = getRoutePolylineLatLngs();
@@ -4910,7 +4928,8 @@ function attachRouteWatchDebugGlobal() {
       const startCoordinates = normalizeCoordinatePair(start?.lat, start?.lng);
       const destinationCoordinates = normalizeCoordinatePair(destination?.lat, destination?.lng);
       const routeHazard = getRouteHazardAssessment?.() || { score: 0, level: "clear", nearbyReports: [], nearestIssue: null, recommendation: "normal" };
-      const activeIncidents = (getUnifiedIncidents?.() || []).filter((incident) => incident.status === "active");
+      const rerouteFoundation = getRerouteFoundation(routeHazard);
+          const activeIncidents = (getUnifiedIncidents?.() || []).filter((incident) => incident.status === "active");
       const routeRelevantIncidents = activeIncidents.filter((incident) => isIncidentRouteRelevant(incident, routeHazard));
       const routeRelevantCrossings = routeHazard.nearbyReports.filter((report) => report.reportType === "blocked" && report.lifecycleState === "active");
       const routeContextSummary = routeRelevantCrossings.length > 0
@@ -4959,6 +4978,11 @@ function attachRouteWatchDebugGlobal() {
       routeNearbyReports: Array.isArray(routeHazard?.nearbyReports) ? routeHazard.nearbyReports : [],
       routeNearestIssue: routeHazard?.nearestIssue || null,
       routeRecommendation: routeHazard?.recommendation || "normal",
+      rerouteRecommended: rerouteFoundation.rerouteRecommended,
+      rerouteReason: rerouteFoundation.rerouteReason,
+      rerouteTargetIssue: rerouteFoundation.rerouteTargetIssue,
+      originalRouteGeometrySource: rerouteFoundation.originalRouteGeometrySource,
+      originalRouteVertexCount: rerouteFoundation.originalRouteVertexCount,
       routeRelevantReportCount: routeRelevantIncidents.length,
       routeRelevantCrossings,
       routeContextSummary,
@@ -4992,6 +5016,11 @@ function attachRouteWatchDebugGlobal() {
         routeNearbyReports: [],
         routeNearestIssue: null,
         routeRecommendation: "normal",
+        rerouteRecommended: false,
+        rerouteReason: "",
+        rerouteTargetIssue: null,
+        originalRouteGeometrySource: routeGeometrySource || "fallback",
+        originalRouteVertexCount: Number.isFinite(Number(routePreviewPolylinePointCount)) ? Number(routePreviewPolylinePointCount) : 0,
         mapReady: Boolean(map),
         debugError: String(error?.message || error || "Unknown debug error")
       };
@@ -5443,11 +5472,11 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeEta", `ETA 32 min (+${extraMinutes})`);
     safeText("departureTime", "Leave now");
     safeText("departureReason", `${routeIntel.blockedCount} blocked crossing${routeIntel.blockedCount === 1 ? "" : "s"} on Active Route · est +${routeIntel.estimatedDelayMinutes} min.`);
-    safeText("desktopRouteStatus", "Blocked crossing near your route. Consider another route.");
+    safeText("desktopRouteStatus", "Blocked crossing detected. Consider another route.");
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
-    safeText("routeRecommendation", "Blocked crossing near your route. Consider another route.");
+    safeText("routeRecommendation", "Reroute recommended.");
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("high");
   } else if (routeHazard.level === "heavy") {
@@ -5455,11 +5484,11 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeEta", `ETA 26 min (+${extraMinutes})`);
     safeText("departureTime", "Leave 8 min early");
     safeText("departureReason", `${routeIntel.blockedCount} blocked crossing${routeIntel.blockedCount === 1 ? "" : "s"} on Active Route · est +${routeIntel.estimatedDelayMinutes} min.`);
-    safeText("desktopRouteStatus", "Heavy delay on active route. Leave early or reroute.");
+    safeText("desktopRouteStatus", "Heavy delay detected. Leave early or reroute.");
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
-    safeText("routeRecommendation", "Heavy delay on active route. Leave early or reroute.");
+    safeText("routeRecommendation", "Reroute recommended.");
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("delayed");
   } else if (routeHazard.level === "caution") {
