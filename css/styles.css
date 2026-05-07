@@ -6900,3 +6900,20 @@ body.modal-open {
   box-shadow: none;
   cursor: not-allowed;
 }
+
+.gridly-route-endpoint-label {
+  background: rgba(7, 19, 28, 0.88);
+  border: 1px solid rgba(103, 232, 249, 0.68);
+  border-radius: 999px;
+  color: #ecfeff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 2px 8px;
+  text-transform: uppercase;
+  box-shadow: 0 2px 8px rgba(2, 8, 23, 0.45);
+}
+
+.gridly-route-endpoint-label::before {
+  display: none;
+}
