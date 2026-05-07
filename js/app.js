@@ -1154,6 +1154,7 @@ function updateLastUpdated() {
 
 function initMap() {
   map = L.map("map", { zoomControl: false, preferCanvas: true }).setView(defaultCenter, 13);
+  window.gridlyMapInstance = map;
 
   L.control.zoom({ position: "bottomright" }).addTo(map);
 
@@ -4656,6 +4657,21 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
   if (!hasValidPoints) return false;
 
   savedRouteLayer.clearLayers();
+  const routeMapInstance = map;
+  const visibleMapInstance = window.gridlyMapInstance || window.map || map;
+  console.info("Gridly route map instance", {
+    routeMapInstance,
+    routeMapContainerId: routeMapInstance?.getContainer?.()?.id || null,
+    routeMapLeafletId: routeMapInstance?._leaflet_id || null,
+    savedRouteLayerLeafletId: savedRouteLayer?._leaflet_id || null
+  });
+  console.info("Gridly visible map instance", {
+    visibleMapInstance,
+    visibleMapContainerId: visibleMapInstance?.getContainer?.()?.id || null,
+    visibleMapLeafletId: visibleMapInstance?._leaflet_id || null,
+    sameInstance: Boolean(routeMapInstance && visibleMapInstance && routeMapInstance === visibleMapInstance)
+  });
+
   const routePreviewGlow = L.polyline(fallbackPoints, {
     pane: "routePane",
     color: "#ff00ff",
@@ -4723,6 +4739,7 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
   savedRouteLayer.addLayer(destinationMarker);
 
   const actualLatLngs = routePreviewLayer.getLatLngs();
+  console.info("Gridly actual rendered latlngs", actualLatLngs);
   routePreviewPolylinePointCount = Array.isArray(actualLatLngs) ? actualLatLngs.length : 0;
   routePreviewRendered = routePreviewPolylinePointCount >= 2;
   if (!routePreviewRendered) {
@@ -4734,10 +4751,40 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
     savedRouteLayer.addTo(map);
   }
 
+  const midpointLat = (fallbackPoints[0][0] + fallbackPoints[1][0]) / 2;
+  const midpointLng = (fallbackPoints[0][1] + fallbackPoints[1][1]) / 2;
+  const midpointDebugMarker = L.circleMarker([midpointLat, midpointLng], {
+    pane: "routePane",
+    radius: 22,
+    color: "#00ffff",
+    weight: 6,
+    fillColor: "#00ffff",
+    fillOpacity: 0.42,
+    interactive: false
+  }).bindTooltip("Route Midpoint Debug", {
+    permanent: true,
+    direction: "top",
+    offset: [0, -14],
+    className: "gridly-route-endpoint-label"
+  });
+  savedRouteLayer.addLayer(midpointDebugMarker);
+
   if (map) {
-    const bounds = L.latLngBounds(actualLatLngs);
+    const bounds = routePreviewLayer.getBounds();
     if (bounds.isValid()) {
-      map.fitBounds(bounds, { paddingTopLeft: [56, 150], paddingBottomRight: [56, 110], padding: [56, 56], maxZoom: 14, animate: false });
+      map.fitBounds(bounds, {
+        paddingTopLeft: [160, 220],
+        paddingBottomRight: [160, 220],
+        padding: [180, 180],
+        maxZoom: 15,
+        animate: true,
+        duration: 0.6
+      });
+      console.info("Gridly fitBounds applied", bounds);
+      console.info("Gridly map view after fitBounds", {
+        center: map.getCenter(),
+        zoom: map.getZoom()
+      });
     }
   }
 
