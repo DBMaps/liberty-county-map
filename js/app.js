@@ -1190,7 +1190,7 @@ function initMap() {
   baseLayers[initialStyle].addTo(map);
   map.getContainer().classList.add(styleClassByName[initialStyle]);
 
-  L.control.layers(baseLayers, null, { position: "topright", collapsed: true }).addTo(map);
+  L.control.layers(baseLayers, null, { position: "bottomright", collapsed: true }).addTo(map);
 
   map.on("baselayerchange", (event) => {
     const selectedName = event?.name;
