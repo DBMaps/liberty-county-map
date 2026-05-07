@@ -139,11 +139,11 @@ let routePreviewLayerExists = false;
 let mapHasRoutePreviewLayer = false;
 let routePreviewReason = "Route preview has not been requested.";
 const LOCAL_PLACE_LOOKUP = {
-  "dayton, texas": { lat: 30.0466, lng: -94.8852 },
-  "crosby, texas": { lat: 29.9111, lng: -95.0622 },
-  "baytown, texas": { lat: 29.7355, lng: -94.9774 },
-  "liberty, texas": { lat: 30.0572, lng: -94.795 },
-  "cleveland, texas": { lat: 30.3413, lng: -95.0858 }
+  dayton: { lat: 30.0466, lng: -94.8852 },
+  crosby: { lat: 29.9111, lng: -95.0622 },
+  baytown: { lat: 29.7355, lng: -94.9774 },
+  liberty: { lat: 30.0572, lng: -94.795 },
+  cleveland: { lat: 30.3413, lng: -95.0858 }
 };
 let lastRouteWatchSelection = { startId: "", destinationId: "" };
 let gridlyUserProfile = getGridlyUserProfile();
@@ -4022,7 +4022,8 @@ async function saveRoute(source = "desktop") {
   }
   const coordinateResolution = await resolvePlaceCoordinates({
     label: home,
-    address: work
+    address: work,
+    allowGeocode: false
   });
   const coordinates = coordinateResolution?.coordinates || null;
   const createdAt = new Date().toISOString();
@@ -4037,7 +4038,8 @@ async function saveRoute(source = "desktop") {
     createdAt,
     lat: coordinates?.lat ?? null,
     lng: coordinates?.lng ?? null,
-    coordinates: coordinates ? { lat: coordinates.lat, lng: coordinates.lng } : null
+    coordinates: coordinates ? { lat: coordinates.lat, lng: coordinates.lng } : null,
+    coordinateSource: coordinateResolution?.source || "null"
   };
   if (normalizedType === "home") {
     nextState.home = nextPlace;
@@ -4058,8 +4060,8 @@ async function saveRoute(source = "desktop") {
   updateGrowthWidgets();
   const placeLabel = normalizedType === "home" ? "Home" : normalizedType === "work" ? "Work" : (home || "Favorite");
   const saveMessage = coordinates
-    ? `${placeLabel} saved with map location (${coordinateResolution.source}).`
-    : "Saved as label only — route preview needs a map location.";
+    ? `${placeLabel} saved with resolved coordinates (${coordinateResolution.source}).`
+    : "Saved as label only — no coordinates were resolved.";
   setConfirmation(saveMessage, "success");
   lastSavedPlaceResult = {
     ok: true,
@@ -4148,7 +4150,8 @@ function normalizeSavedPlaces(input = null) {
       label: label || "Saved Place",
       address,
       lat: Number.isFinite(lat) ? lat : null,
-      lng: Number.isFinite(lng) ? lng : null
+      lng: Number.isFinite(lng) ? lng : null,
+      coordinateSource: String(place.coordinateSource || fallback.coordinateSource || "unknown")
     };
   };
 
@@ -4241,24 +4244,29 @@ function lookupLocalPlaceCoordinates(...parts) {
     .map((part) => String(part || "").trim().toLowerCase())
     .filter(Boolean);
   for (const candidate of candidates) {
-    const direct = LOCAL_PLACE_LOOKUP[candidate];
+    const normalized = candidate
+      .replace(/\s+/g, " ")
+      .replace(/,\s*usa$/i, "")
+      .replace(/,\s*(texas|tx)$/i, "")
+      .trim();
+    const direct = LOCAL_PLACE_LOOKUP[normalized];
     if (direct) return normalizeCoordinatePair(direct.lat, direct.lng);
-    const normalized = candidate.replace(/\s+/g, " ").replace(/,\s*usa$/i, "").trim();
-    if (LOCAL_PLACE_LOOKUP[normalized]) return normalizeCoordinatePair(LOCAL_PLACE_LOOKUP[normalized].lat, LOCAL_PLACE_LOOKUP[normalized].lng);
   }
   return null;
 }
 
-async function resolvePlaceCoordinates({ label = "", address = "", preferGeolocation = false } = {}) {
+async function resolvePlaceCoordinates({ label = "", address = "", preferGeolocation = false, allowGeocode = true } = {}) {
   if (preferGeolocation && userLocation) {
     const gpsCoords = normalizeCoordinatePair(userLocation.lat, userLocation.lng);
     if (gpsCoords) return { coordinates: gpsCoords, source: "browser geolocation" };
   }
   const localLookup = lookupLocalPlaceCoordinates(address, label, `${address}, ${label}`.trim(), `${label}, ${address}`.trim());
   if (localLookup) return { coordinates: localLookup, source: "local lookup" };
-  const geocodedCoordinates = await geocodeAddressToCoordinates(address || label);
-  if (geocodedCoordinates) return { coordinates: geocodedCoordinates, source: "geocode" };
-  return { coordinates: null, source: "unknown" };
+  if (allowGeocode) {
+    const geocodedCoordinates = await geocodeAddressToCoordinates(address || label);
+    if (geocodedCoordinates) return { coordinates: geocodedCoordinates, source: "geocode" };
+  }
+  return { coordinates: null, source: "null" };
 }
 
 function hasValidPlaceCoordinates(place) {
@@ -4446,6 +4454,10 @@ function attachSavedPlacesDebugGlobal() {
       parsedSavedPlaces,
       homeValidity: validity.home,
       workValidity: validity.work,
+      coordinateSources: {
+        home: state.home?.coordinateSource || (state.home ? "unknown" : "null"),
+        work: state.work?.coordinateSource || (state.work ? "unknown" : "null")
+      },
       selectedDestination: {
         selectedPlaceId,
         selectedPlace
@@ -4732,8 +4744,8 @@ async function startInlineRouteWatch() {
   if (fromCoords.lat === toCoords.lat && fromCoords.lng === toCoords.lng) {
     savedRouteLayer?.clearLayers?.();
     setRoutePreviewState(false, "Start and destination coordinates are the same", { layerExists: false, mapHasLayer: false });
-    setConfirmation("Choose a different destination or update saved place locations.", "error");
-    safeText("routeWatchSetupHint", "Choose a different destination or update saved place locations.");
+    setConfirmation("Update one saved place location to view a route preview.", "error");
+    safeText("routeWatchSetupHint", "Update one saved place location to view a route preview.");
     updateRouteIntelligence();
     updateRouteWatchStartButtonLabel();
     return;
