@@ -134,6 +134,8 @@ let savedRouteCrossingIds = new Set();
 let activeDestinationPlace = null;
 let routeWatchActivated = false;
 let lastSavedPlaceResult = null;
+let lastValidationError = null;
+let saveButtonHandlerAttached = false;
 let routePreviewRendered = false;
 let routePreviewLayerExists = false;
 let mapHasRoutePreviewLayer = false;
@@ -428,6 +430,7 @@ function initGreeting() {
       "Commute Home"
     );
   } else {
+    console.info("Gridly save next state", { normalizedType, nextPlace, customCountBefore: nextState.custom.length });
     setGreeting(
       `Late Night Check${namePrefix}`,
       "After-Hours Route Watch",
@@ -1443,6 +1446,7 @@ async function loadCrossings() {
     updateRouteIntelligence();
     updateTrustStats();
     updateGrowthWidgets();
+  console.info("Gridly save UI refreshed", { source, selectedPlaceId: getSelectedPlaceId(), placeCount: getSavedPlaces().length });
     updateDailyHabitStatus();
     updateLastUpdated();
 
@@ -1609,6 +1613,7 @@ async function loadSharedReports() {
     updateRouteIntelligence();
     updateTrustStats();
     updateGrowthWidgets();
+  console.info("Gridly save UI refreshed", { source, selectedPlaceId: getSelectedPlaceId(), placeCount: getSavedPlaces().length });
     updateDailyHabitStatus();
     updateMobileAlertsMirror();
     evaluateSmartAlertsBanner();
@@ -3253,9 +3258,12 @@ function bindEvents() {
   els.desktopReportNearMeBtnRail?.addEventListener("click", handleReportNearMe);
   els.saveSmartAlertsBtn?.addEventListener("click", saveSmartAlertsPreferences);
   els.closeSmartAlertsModalBtn?.addEventListener("click", closeSmartAlertsModal);
-  els.mobileSaveRouteBtn?.addEventListener("click", () => {
-    saveRoute("mobile");
-  });
+  if (els.mobileSaveRouteBtn) {
+    saveButtonHandlerAttached = true;
+    els.mobileSaveRouteBtn.addEventListener("click", () => {
+      saveRoute("mobile");
+    });
+  }
   els.mobileResetPlacesBtn?.addEventListener("click", () => {
     if (!window.confirm("Reset saved Home, Work, and Favorite places on this device?")) return;
     resetSavedPlaces();
@@ -3860,6 +3868,7 @@ function saveSavedPlaces(places) {
     nextState.custom.push(normalizedPlace);
   });
   saveSavedPlacesState(nextState);
+  console.info("Gridly saved localStorage", { key: SAVED_PLACES_STORAGE_KEY, value: localStorage.getItem(SAVED_PLACES_STORAGE_KEY) });
 }
 
 function getSelectedPlaceId() {
@@ -3998,15 +4007,20 @@ function updateRouteSetupManageState() {
 
 async function saveRoute(source = "desktop") {
   const { home, work, button } = getRouteInputValues(source);
+  const modalMode = source === "mobile" ? (els.routeSetupModal?.dataset.mode || "add") : "add";
+  const prefillType = source === "mobile" ? (els.routeSetupModal?.dataset.prefillType || "custom") : "custom";
+  console.info("Gridly save place clicked", { source, modalMode, prefillType, home, work, hasButton: Boolean(button) });
   if (!home || !work) {
     const errorMessage = "Missing place name or address. Please fill both fields.";
+    lastValidationError = errorMessage;
+    console.info("Gridly save validation", { ok: false, error: errorMessage, source, modalMode, prefillType, home, work });
     flashButton(button, "Add name + place");
     setConfirmation(errorMessage, "error");
     lastSavedPlaceResult = { ok: false, message: errorMessage, at: new Date().toISOString() };
     return;
   }
-  const modalMode = source === "mobile" ? (els.routeSetupModal?.dataset.mode || "add") : "add";
-  const prefillType = source === "mobile" ? (els.routeSetupModal?.dataset.prefillType || "custom") : "custom";
+  lastValidationError = null;
+  console.info("Gridly save validation", { ok: true, source, modalMode, prefillType, home, work });
   const normalizedType = prefillType === "favorite" ? "custom" : prefillType;
   const current = normalizeSavedPlaces();
   const nextState = {
@@ -4023,7 +4037,7 @@ async function saveRoute(source = "desktop") {
   const coordinateResolution = await resolvePlaceCoordinates({
     label: home,
     address: work,
-    allowGeocode: false
+    allowGeocode: true
   });
   const coordinates = coordinateResolution?.coordinates || null;
   const createdAt = new Date().toISOString();
@@ -4042,8 +4056,10 @@ async function saveRoute(source = "desktop") {
     coordinateSource: coordinateResolution?.source || "null"
   };
   if (normalizedType === "home") {
+    console.info("Gridly save next state", { normalizedType, nextPlace, nextStatePreview: { ...nextState, home: nextPlace } });
     nextState.home = nextPlace;
   } else if (normalizedType === "work") {
+    console.info("Gridly save next state", { normalizedType, nextPlace, nextStatePreview: { ...nextState, work: nextPlace } });
     nextState.work = nextPlace;
   } else {
     const existingIdx = nextState.custom.findIndex((place) => place?.id === id);
@@ -4051,6 +4067,7 @@ async function saveRoute(source = "desktop") {
     else nextState.custom.push(nextPlace);
   }
   saveSavedPlacesState(nextState);
+  console.info("Gridly saved localStorage", { key: SAVED_PLACES_STORAGE_KEY, value: localStorage.getItem(SAVED_PLACES_STORAGE_KEY) });
   setSelectedPlaceId(id);
 
   routeWatchActivated = false;
@@ -4058,6 +4075,7 @@ async function saveRoute(source = "desktop") {
   initDailyDestinationHero();
   updateRouteIntelligence();
   updateGrowthWidgets();
+  console.info("Gridly save UI refreshed", { source, selectedPlaceId: getSelectedPlaceId(), placeCount: getSavedPlaces().length });
   const placeLabel = normalizedType === "home" ? "Home" : normalizedType === "work" ? "Work" : (home || "Favorite");
   const saveMessage = coordinates
     ? `${placeLabel} saved with resolved coordinates (${coordinateResolution.source}).`
@@ -4447,7 +4465,12 @@ function attachSavedPlacesDebugGlobal() {
     return {
       modalMode: els.routeSetupModal?.dataset?.mode || null,
       lastSaveResult: lastSavedPlaceResult,
+      lastValidationError,
       activeSaveMode: els.routeSetupModal?.dataset?.prefillType || null,
+      saveButtonFound: Boolean(els.mobileSaveRouteBtn),
+      saveButtonHandlerAttached,
+      currentInputName: els.mobileHomeInput?.value?.trim?.() || "",
+      currentInputAddress: els.mobileWorkInput?.value?.trim?.() || "",
       savedPlaces: state,
       dropdownOptions: getSavedPlaces().map((place) => ({ id: place.id, name: place.name })),
       localStorageRaw: rawSavedPlaces,
