@@ -4970,9 +4970,9 @@ function loadSavedRoute() {
     safeText("desktopRouteStatus", "Choose a start and destination to begin monitoring.");
   }
   safeText("routeCardLabel", routeWatchActivated && routeLabelParts.activeLabel
-    ? `Monitoring: Home → ${routeLabelParts.activeLabel}`
+    ? `Home → ${routeLabelParts.activeLabel}`
     : routeLabelParts.hasHome && routeLabelParts.destination
-      ? `Active destination: ${routeLabelParts.destination}`
+      ? `Home → ${routeLabelParts.destination}`
       : "No active route");
 
   if (!routeLabelParts.configured) {
@@ -5080,7 +5080,7 @@ async function startInlineRouteWatch() {
     });
     if (routePreviewRendered) {
       setConfirmation("Route preview active.", "success");
-      safeText("routeWatchSetupHint", `Route preview active. Monitoring ${start.name} → ${destination.name}.`);
+      safeText("routeWatchSetupHint", "Route preview active.");
     } else {
       setConfirmation("Route preview unavailable until precise locations are saved.", "error");
       safeText("routeWatchSetupHint", "Route preview unavailable until precise locations are saved.");
@@ -5275,7 +5275,6 @@ function updateRouteIntelligence(nearest = []) {
     : null;
   const freshnessTier = getFreshnessTier(newestMinutes);
   const freshReportCount = activeIssues.filter((issue) => Number(issue.minutesAgo) <= 30).length;
-  const monitoredRouteLabel = routeLabelParts.activeRouteLabel || routeLabelParts.label;
   const routeIsConfigured = routeLabelParts.configured;
   const routeIsMonitoring = routeWatchActivated && routeIsConfigured;
 
@@ -5315,7 +5314,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
     safeText("routeRecommendation", "Blocked crossing near your route. Consider another route.");
-    safeText("sideRouteWatchHint", `Monitoring ON · Active Route ${monitoredRouteLabel} · Blocked crossing near your route.`);
+    safeText("sideRouteWatchHint", "Route preview active.");
     els.routeStatusCard?.classList.add("high");
   } else if (routeHazard.level === "heavy") {
     safeText("routeStatus", "Heavy Delay");
@@ -5327,7 +5326,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
     safeText("routeRecommendation", "Heavy delay on active route. Leave early or reroute.");
-    safeText("sideRouteWatchHint", `Monitoring ON · Active Route ${monitoredRouteLabel} · Delay Detected · Consider alternate route · Last Confirmed ${freshnessTier} · Confidence ${routeIntel.confidence}.`);
+    safeText("sideRouteWatchHint", "Route preview active.");
     els.routeStatusCard?.classList.add("delayed");
   } else if (routeHazard.level === "caution") {
     safeText("routeStatus", "Caution");
@@ -5339,7 +5338,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
     safeText("routeRecommendation", "Possible delay near your route.");
-    safeText("sideRouteWatchHint", `Monitoring ON · Active Route ${monitoredRouteLabel} · Possible delay near your route.`);
+    safeText("sideRouteWatchHint", "Route preview active.");
     els.routeStatusCard?.classList.add("delayed");
   } else {
     safeText("routeStatus", "Clear");
@@ -5351,7 +5350,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
     safeText("routeRecommendation", "Your route looks clear.");
-    safeText("sideRouteWatchHint", `Monitoring ON · Active Route ${monitoredRouteLabel} · Clear Corridor · Last Confirmed ${freshnessTier} · Confidence ${routeIntel.confidence}.`);
+    safeText("sideRouteWatchHint", "Route preview active.");
     els.routeStatusCard?.classList.add("clear");
   }
 
