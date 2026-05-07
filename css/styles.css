@@ -6648,18 +6648,18 @@ body.modal-open {
 @media (min-width: 1100px) {
   .map-card .map-tools-overlay {
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-    padding: 10px 12px;
-    width: min(100%, 1080px);
+    align-items: center;
+    gap: 6px;
+    padding: 7px 10px;
+    width: fit-content;
+    max-width: calc(100% - 20px);
   }
 
   .map-toolbar-main-row {
     display: flex;
     align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
+    gap: 8px;
+    flex-wrap: nowrap;
     min-width: 0;
   }
 
@@ -6673,7 +6673,7 @@ body.modal-open {
   .map-card .map-tools-overlay .map-tools-section {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     min-width: 0;
     flex: 0 1 auto;
   }
@@ -6683,28 +6683,21 @@ body.modal-open {
     position: static;
     display: inline-flex;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 6px;
+    flex-wrap: nowrap;
+    gap: 5px;
     background: transparent;
     border: 0;
     padding: 0;
   }
 
-  .map-toolbar-divider {
-    color: rgba(166, 190, 218, 0.58);
-    font-weight: 700;
-    line-height: 1;
-  }
+  .map-toolbar-divider { display: none; }
 
-  .map-toolbar-meta-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    min-width: 0;
-  }
+  .map-card .map-tools-overlay .map-tools-section-label { font-size: 0.7rem; }
+  .map-card .map-tools-overlay .map-view-label { font-size: 0.74rem; margin-right: 2px; }
+  .map-card .map-tools-overlay .legend-pill,
+  .map-card .map-tools-overlay .geo-filter-pill { min-height: 28px; padding: 5px 9px; }
 
-  .map-card .map-tools-status { margin: 0; }
+  .map-toolbar-meta-row { display: none; }
 
   .side-panel.desktop-command-panel {
     display: flex;
@@ -6738,14 +6731,17 @@ body.modal-open {
 
 @media (min-width: 1100px) and (max-width: 1320px) {
   .map-toolbar-main-row {
-    row-gap: 8px;
+    flex-wrap: wrap;
+    row-gap: 6px;
   }
 
-  .map-toolbar-divider {
-    display: none;
+  .map-toolbar-main-row > .map-view-label,
+  .map-toolbar-main-row > .map-tools-section:first-of-type {
+    flex: 0 0 auto;
   }
 
   .map-tools-scope-section {
     flex-basis: 100%;
+    margin-left: 0;
   }
 }
