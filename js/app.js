@@ -134,6 +134,9 @@ let savedRouteCrossingIds = new Set();
 let activeDestinationPlace = null;
 let routeWatchActivated = false;
 let lastSavedPlaceResult = null;
+let routePreviewRendered = false;
+let routePreviewReason = "Route preview has not been requested.";
+let lastRouteWatchSelection = { startId: "", destinationId: "" };
 let gridlyUserProfile = getGridlyUserProfile();
 let movementIntelligence = getMovementIntelligence();
 let mapBaseLayersByName = {};
@@ -156,6 +159,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   ensureSeededMovementIntelligence();
   attachGridlyMovementDebugGlobal();
   attachSavedPlacesDebugGlobal();
+  attachRouteWatchDebugGlobal();
   initGreeting();
   updateLastUpdated();
   initMap();
@@ -4391,6 +4395,43 @@ function attachSavedPlacesDebugGlobal() {
   };
 }
 
+function setRoutePreviewState(rendered, reason) {
+  routePreviewRendered = Boolean(rendered);
+  routePreviewReason = String(reason || (rendered ? "Route preview rendered." : "Route preview not rendered."));
+}
+
+function updateRouteWatchStartButtonLabel() {
+  if (!els.routeWatchStartBtn) return;
+  const startId = els.routeWatchStartSelect?.value || "";
+  const destinationId = els.routeWatchDestinationSelect?.value || "";
+  const hasSelections = Boolean(startId && destinationId);
+  const changedSelection = Boolean(routeWatchActivated && (startId !== lastRouteWatchSelection.startId || destinationId !== lastRouteWatchSelection.destinationId));
+  els.routeWatchStartBtn.textContent = changedSelection
+    ? "Update Route Watch"
+    : routeWatchActivated && hasSelections
+      ? "Viewing Route"
+      : "Start Route Watch";
+}
+
+function attachRouteWatchDebugGlobal() {
+  window.gridlyRouteWatchDebug = function gridlyRouteWatchDebug() {
+    const places = getSavedPlaces();
+    const startId = els.routeWatchStartSelect?.value || "";
+    const destinationId = els.routeWatchDestinationSelect?.value || "";
+    const start = places.find((place) => place.id === startId) || null;
+    const destination = places.find((place) => place.id === destinationId) || null;
+    return {
+      selectedStart: start ? { id: start.id, label: start.name || start.label || "" } : { id: startId || null, label: null },
+      selectedDestination: destination ? { id: destination.id, label: destination.name || destination.label || "" } : { id: destinationId || null, label: null },
+      startCoordinates: normalizeCoordinatePair(start?.lat, start?.lng),
+      destinationCoordinates: normalizeCoordinatePair(destination?.lat, destination?.lng),
+      routeWatchActive: routeWatchActivated,
+      routePreviewRendered,
+      reason: routePreviewReason
+    };
+  };
+}
+
 async function renderDestinationRoute(target) {
   if (!savedRouteLayer || !target) return;
   window.__gridlyRouteWatchActive = true;
@@ -4462,6 +4503,7 @@ function loadSavedRoute() {
   if (els.routeWatchStartBtn) {
     els.routeWatchStartBtn.disabled = savedPlaceCount < 2 || !startId || !destinationId;
   }
+  updateRouteWatchStartButtonLabel();
   if (savedPlaceCount === 0) {
     safeText("desktopRouteStatus", "Save at least two places to start Route Watch.");
     safeText("routeWatchSetupHint", "Add Home and Work to start Route Watch.");
@@ -4512,10 +4554,13 @@ async function startInlineRouteWatch() {
   const start = places.find((place) => place.id === startId);
   const destination = places.find((place) => place.id === destinationId);
   if (!start || !destination) {
+    setRoutePreviewState(false, "Start or destination was not selected.");
     setConfirmation("Choose a start and destination to begin monitoring.", "error");
     return;
   }
   if (start.id === destination.id) {
+    savedRouteLayer?.clearLayers?.();
+    setRoutePreviewState(false, "Start and destination are the same place.");
     setConfirmation("Choose a different destination.", "error");
     return;
   }
@@ -4533,15 +4578,32 @@ async function startInlineRouteWatch() {
   const toCoords = normalizeCoordinatePair(toPlace?.lat, toPlace?.lng);
   if (!fromCoords || !toCoords) {
     savedRouteLayer?.clearLayers?.();
+    setRoutePreviewState(false, "Route preview unavailable until precise locations are saved.");
     setConfirmation("Route preview unavailable until precise locations are saved.", "error");
+    safeText("routeWatchSetupHint", "Route preview unavailable until precise locations are saved.");
     updateRouteIntelligence();
+    updateRouteWatchStartButtonLabel();
     return;
   }
-
+  if (getDistanceMiles(fromCoords.lat, fromCoords.lng, toCoords.lat, toCoords.lng) > 80) {
+    savedRouteLayer?.clearLayers?.();
+    setRoutePreviewState(false, "Route preview skipped because points are too far apart for local preview.");
+    setConfirmation("Route preview unavailable for this selection.", "error");
+    safeText("routeWatchSetupHint", "Route preview unavailable for this selection.");
+    updateRouteIntelligence();
+    updateRouteWatchStartButtonLabel();
+    return;
+  }
+  savedRouteLayer?.clearLayers?.();
+  drawPremiumRouteLine([[fromCoords.lat, fromCoords.lng], [toCoords.lat, toCoords.lng]], "#66e8ff", "startInlineRouteWatchPreview");
+  setRoutePreviewState(true, "Route preview rendered from selected start to destination.");
+  setConfirmation("Route preview shown. Not turn-by-turn directions.", "success");
+  safeText("routeWatchSetupHint", "Route preview shown. Not turn-by-turn directions.");
   activeDestinationPlace = toPlace;
-  await renderDestinationRoute({ ...toPlace, lat: toCoords.lat, lng: toCoords.lng });
+  lastRouteWatchSelection = { startId: start.id, destinationId: destination.id };
   updateRouteWatchBadge(destination.name);
   updateRouteIntelligence();
+  updateRouteWatchStartButtonLabel();
 }
 
 function resetSavedPlaces() {
@@ -4551,6 +4613,7 @@ function resetSavedPlaces() {
   localStorage.removeItem("gridlyWork");
   activeDestinationPlace = null;
   routeWatchActivated = false;
+  setRoutePreviewState(false, "Saved places were reset.");
   savedRouteCrossingIds = new Set();
   savedRouteLayer?.clearLayers?.();
   corridorIntelLayer?.clearLayers?.();
