@@ -138,6 +138,7 @@ let movementIntelligence = getMovementIntelligence();
 let mapBaseLayersByName = {};
 let mapStyleClassByName = {};
 let currentMapStyle = "Satellite";
+const LEGACY_PLACE_MARKER_TEXT = "legacy migrated";
 
 let deviceId =
   localStorage.getItem("gridlyDeviceId") ||
@@ -309,6 +310,7 @@ function hydrateElements() {
     "mobileWorkInput",
     "mobileSavedDestinationSelect",
     "mobileSaveRouteBtn",
+    "mobileResetPlacesBtn",
     "mobileUseLocationBtn",
     "routeSetupModal",
     "routeSetupModalBackdrop",
@@ -3234,6 +3236,11 @@ function bindEvents() {
   els.saveSmartAlertsBtn?.addEventListener("click", saveSmartAlertsPreferences);
   els.closeSmartAlertsModalBtn?.addEventListener("click", closeSmartAlertsModal);
   els.mobileSaveRouteBtn?.addEventListener("click", () => saveRoute("mobile"));
+  els.mobileResetPlacesBtn?.addEventListener("click", () => {
+    if (!window.confirm("Reset saved Home, Work, and Favorite places on this device?")) return;
+    resetSavedPlaces();
+    closeRouteSetupModal();
+  });
   const routeWatchButtonSets = {
     add: [els.desktopDestinationAddBtn, els.destinationAddBtn],
     home: [els.desktopDestinationHomeBtn, els.destinationHomeBtn],
@@ -3341,6 +3348,10 @@ function bindEvents() {
     alerts: "alertsSection"
   };
   const routeNavSection = (section) => {
+    if (section === "settings") {
+      setConfirmation("Settings are coming soon.", "info");
+      return;
+    }
     const target = navTargets[section];
     if (!target) return;
     scrollToSection(target);
@@ -3823,8 +3834,8 @@ function getRouteInputValues(source = "desktop") {
 function getSavedPlaces() {
   const state = normalizeSavedPlaces();
   const places = [];
-  if (state.home) places.push({ id: "home", name: state.home.label || "Home", address: state.home.address || "" });
-  if (state.work) places.push({ id: "work", name: state.work.label || "Work", address: state.work.address || "" });
+  if (isConfiguredPlace(state.home)) places.push({ id: "home", name: state.home.label || "Home", address: state.home.address || "" });
+  if (isConfiguredPlace(state.work)) places.push({ id: "work", name: state.work.label || "Work", address: state.work.address || "" });
   state.custom.forEach((place) => {
     places.push({
       id: place.id || `custom-${Date.now()}`,
@@ -3879,8 +3890,8 @@ function getSelectedPlace() {
 function buildRouteWatchLabelParts() {
   const state = getSavedPlacesState();
   const selectedPlace = getSelectedPlace();
-  const hasHome = Boolean(state?.home && hasValidPlaceCoordinates(state.home));
-  const hasWork = Boolean(state?.work && hasValidPlaceCoordinates(state.work));
+  const hasHome = isConfiguredPlace(state?.home);
+  const hasWork = isConfiguredPlace(state?.work);
   const origin = hasHome ? "Home" : "Set Home";
   const destination = hasWork ? "Work" : "Set Work";
 
@@ -3965,10 +3976,16 @@ function saveRoute(source = "desktop") {
   if (normalizedType === "home") localStorage.setItem("gridlyHome", home);
   if (normalizedType === "work") localStorage.setItem("gridlyWork", work);
 
+  routeWatchActivated = false;
   loadSavedRoute();
   initDailyDestinationHero();
   updateRouteIntelligence();
   updateGrowthWidgets();
+  if (!hasValidPlaceCoordinates(nextPlace)) {
+    setConfirmation("Saved as label only — precise route requires coordinates.", "info");
+  } else {
+    setConfirmation(`${home} saved.`, "success");
+  }
   flashButton(button, modalMode === "manage" ? "Saved" : "Place Saved");
 
   if (source === "mobile") {
@@ -3979,6 +3996,16 @@ function saveRoute(source = "desktop") {
 function getSavedPlacesState() {
   const state = normalizeSavedPlaces();
   return { home: state.home, work: state.work, custom: [...state.custom] };
+}
+function isLegacyPlace(place) {
+  if (!place || typeof place !== "object") return false;
+  const joined = `${place.label || ""} ${place.address || ""}`.toLowerCase();
+  return joined.includes(LEGACY_PLACE_MARKER_TEXT);
+}
+
+function isConfiguredPlace(place) {
+  if (!place || isLegacyPlace(place)) return false;
+  return Boolean(String(place.label || "").trim()) && hasValidPlaceCoordinates(place);
 }
 function migrateLegacyStorage() {
   const state = getSavedPlacesState();
@@ -4111,7 +4138,7 @@ function scrubInvalidSavedPlacesState() {
     const place = state[type];
     if (!place) return;
     const normalizedCoords = normalizeCoordinatePair(place.lat, place.lng);
-    if (!normalizedCoords) {
+    if (!normalizedCoords || isLegacyPlace(place)) {
       nextState[type] = null;
       changed = true;
       return;
@@ -4127,7 +4154,7 @@ function scrubInvalidSavedPlacesState() {
   nextState.custom = state.custom
     .map((place) => {
       const normalizedCoords = normalizeCoordinatePair(place?.lat, place?.lng);
-      if (!normalizedCoords) {
+      if (!normalizedCoords || isLegacyPlace(place)) {
         changed = true;
         return null;
       }
@@ -4158,7 +4185,7 @@ function activateDestinationByType(type) {
     openRouteSetupModalForType(routeLabelParts.hasHome ? "work" : "home");
     return;
   }
-  const target = type === "favorite" ? state.custom[0] : state[type];
+  const target = type === "favorite" ? state.custom.find((place) => isConfiguredPlace(place)) : state[type];
   if (!target) {
     if (type === "favorite") {
       setConfirmation("No favorite saved yet. Add a place first.", "error");
@@ -4186,8 +4213,8 @@ function openRouteSetupModalForType(type) {
   openRouteSetupModal();
   if (!els.routeSetupModal) return;
   const state = getSavedPlacesState();
-  if (type === "home" && state.home) return activateDestinationByType("home");
-  if (type === "work" && state.work) return activateDestinationByType("work");
+  if (type === "home" && isConfiguredPlace(state.home)) return activateDestinationByType("home");
+  if (type === "work" && isConfiguredPlace(state.work)) return activateDestinationByType("work");
   if (type === "favorite" && state.custom?.length) return activateDestinationByType("favorite");
   configureRouteSetupModal({ mode: "add", prefillType: type });
 }
@@ -4218,6 +4245,13 @@ function configureRouteSetupModal({ mode = "add", prefillType = "custom" } = {})
     work: { name: "Work", address: "" },
     custom: { name: "", address: "" }
   };
+  if (normalizedType === "home") {
+    if (titleEl) titleEl.textContent = "Set Home";
+    if (subtitleEl) subtitleEl.textContent = "Enter your home area or use your current location.";
+  } else if (normalizedType === "work") {
+    if (titleEl) titleEl.textContent = "Set Work";
+    if (subtitleEl) subtitleEl.textContent = "Enter your work area or use your current location.";
+  }
   const preset = presets[normalizedType] || presets.custom;
   if (els.mobileHomeInput) els.mobileHomeInput.value = preset.name;
   if (els.mobileWorkInput) els.mobileWorkInput.value = preset.address;
@@ -4251,7 +4285,7 @@ async function renderDestinationRoute(target) {
 
 function updateRouteWatchBadge(routeLabel = "Route") {
   const activation = getLineActivationContext();
-  if (!activation.hasActivation) {
+  if (!activation.hasActivation || !buildRouteWatchLabelParts().configured || !routeWatchActivated) {
     if (els.routeWatchLivePill) {
       els.routeWatchLivePill.textContent = "Monitoring OFF";
       els.routeWatchLivePill.classList.remove("is-on");
@@ -4268,8 +4302,8 @@ function loadSavedRoute() {
   scrubInvalidSavedPlacesState();
   routeFocusArmed = true;
   const routeLabelParts = buildRouteWatchLabelParts();
-  const home = routeLabelParts.origin;
-  const work = routeLabelParts.destination;
+  const home = routeLabelParts.hasHome ? routeLabelParts.origin : "Set Home";
+  const work = routeLabelParts.hasWork ? routeLabelParts.destination : "Set Work";
   renderSavedPlacesSelectOptions();
   updateRouteWatchSetupUI();
 
@@ -4292,7 +4326,34 @@ function loadSavedRoute() {
     savedRouteCrossingIds = new Set();
     savedRouteLayer?.clearLayers?.();
     updateRouteWatchBadge();
+    if (els.routeWatchSetupHint) {
+      els.routeWatchSetupHint.hidden = false;
+      els.routeWatchSetupHint.textContent = "Set up Home and Work to start Route Watch.";
+    }
+  } else if (!routeWatchActivated && els.routeWatchSetupHint) {
+    els.routeWatchSetupHint.hidden = false;
+    els.routeWatchSetupHint.textContent = "Home and Work saved. Start Route Watch to monitor this route.";
+  } else if (routeWatchActivated && els.routeWatchSetupHint) {
+    els.routeWatchSetupHint.hidden = false;
+    els.routeWatchSetupHint.textContent = "Monitoring Home → Work";
   }
+}
+
+function resetSavedPlaces() {
+  localStorage.removeItem(SAVED_PLACES_STORAGE_KEY);
+  localStorage.removeItem(SELECTED_PLACE_STORAGE_KEY);
+  localStorage.removeItem("gridlyHome");
+  localStorage.removeItem("gridlyWork");
+  activeDestinationPlace = null;
+  routeWatchActivated = false;
+  savedRouteCrossingIds = new Set();
+  savedRouteLayer?.clearLayers?.();
+  corridorIntelLayer?.clearLayers?.();
+  window.__gridlyRouteWatchActive = false;
+  window.__gridlySelectedRouteId = "";
+  loadSavedRoute();
+  renderCrossings();
+  setConfirmation("Saved places reset on this device.", "success");
 }
 
 function getDefaultSmartAlertsPreferences() {
