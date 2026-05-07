@@ -138,6 +138,13 @@ let routePreviewRendered = false;
 let routePreviewLayerExists = false;
 let mapHasRoutePreviewLayer = false;
 let routePreviewReason = "Route preview has not been requested.";
+const LOCAL_PLACE_LOOKUP = {
+  "dayton, texas": { lat: 30.0466, lng: -94.8852 },
+  "crosby, texas": { lat: 29.9111, lng: -95.0622 },
+  "baytown, texas": { lat: 29.7355, lng: -94.9774 },
+  "liberty, texas": { lat: 30.0572, lng: -94.795 },
+  "cleveland, texas": { lat: 30.3413, lng: -95.0858 }
+};
 let lastRouteWatchSelection = { startId: "", destinationId: "" };
 let gridlyUserProfile = getGridlyUserProfile();
 let movementIntelligence = getMovementIntelligence();
@@ -4013,9 +4020,11 @@ async function saveRoute(source = "desktop") {
   if (normalizedType === "home" || normalizedType === "work") {
     id = normalizedType;
   }
-  const geocodeQuery = [home, work].filter(Boolean).join(", ");
-  const geocodedCoordinates = await geocodeAddressToCoordinates(geocodeQuery);
-  const coordinates = geocodedCoordinates || null;
+  const coordinateResolution = await resolvePlaceCoordinates({
+    label: home,
+    address: work
+  });
+  const coordinates = coordinateResolution?.coordinates || null;
   const createdAt = new Date().toISOString();
   const placeType = normalizedType === "custom" ? "favorite" : normalizedType;
   const nextPlace = {
@@ -4049,10 +4058,17 @@ async function saveRoute(source = "desktop") {
   updateGrowthWidgets();
   const placeLabel = normalizedType === "home" ? "Home" : normalizedType === "work" ? "Work" : (home || "Favorite");
   const saveMessage = coordinates
-    ? `${placeLabel} saved with map location.`
+    ? `${placeLabel} saved with map location (${coordinateResolution.source}).`
     : "Saved as label only — route preview needs a map location.";
   setConfirmation(saveMessage, "success");
-  lastSavedPlaceResult = { ok: true, type: normalizedType, message: saveMessage, at: createdAt, savedPlaceId: id };
+  lastSavedPlaceResult = {
+    ok: true,
+    type: normalizedType,
+    message: saveMessage,
+    at: createdAt,
+    savedPlaceId: id,
+    coordinateSource: coordinateResolution?.source || "unknown"
+  };
   flashButton(button, modalMode === "manage" ? "Saved" : "Place Saved");
 
   if (source === "mobile") {
@@ -4218,6 +4234,31 @@ async function geocodeAddressToCoordinates(rawAddress = "") {
     console.warn("Address geocode failed:", error);
     return null;
   }
+}
+
+function lookupLocalPlaceCoordinates(...parts) {
+  const candidates = parts
+    .map((part) => String(part || "").trim().toLowerCase())
+    .filter(Boolean);
+  for (const candidate of candidates) {
+    const direct = LOCAL_PLACE_LOOKUP[candidate];
+    if (direct) return normalizeCoordinatePair(direct.lat, direct.lng);
+    const normalized = candidate.replace(/\s+/g, " ").replace(/,\s*usa$/i, "").trim();
+    if (LOCAL_PLACE_LOOKUP[normalized]) return normalizeCoordinatePair(LOCAL_PLACE_LOOKUP[normalized].lat, LOCAL_PLACE_LOOKUP[normalized].lng);
+  }
+  return null;
+}
+
+async function resolvePlaceCoordinates({ label = "", address = "", preferGeolocation = false } = {}) {
+  if (preferGeolocation && userLocation) {
+    const gpsCoords = normalizeCoordinatePair(userLocation.lat, userLocation.lng);
+    if (gpsCoords) return { coordinates: gpsCoords, source: "browser geolocation" };
+  }
+  const localLookup = lookupLocalPlaceCoordinates(address, label, `${address}, ${label}`.trim(), `${label}, ${address}`.trim());
+  if (localLookup) return { coordinates: localLookup, source: "local lookup" };
+  const geocodedCoordinates = await geocodeAddressToCoordinates(address || label);
+  if (geocodedCoordinates) return { coordinates: geocodedCoordinates, source: "geocode" };
+  return { coordinates: null, source: "unknown" };
 }
 
 function hasValidPlaceCoordinates(place) {
@@ -4432,6 +4473,7 @@ function renderRoutePreviewLine(startCoords, destinationCoords, meta = {}) {
   const start = normalizeCoordinatePair(startCoords?.lat, startCoords?.lng);
   const destination = normalizeCoordinatePair(destinationCoords?.lat, destinationCoords?.lng);
   if (!savedRouteLayer || !start || !destination) return false;
+  if (start.lat === destination.lat && start.lng === destination.lng) return false;
 
   savedRouteLayer.clearLayers();
   const latLngs = [
@@ -4687,6 +4729,15 @@ async function startInlineRouteWatch() {
     updateRouteWatchStartButtonLabel();
     return;
   }
+  if (fromCoords.lat === toCoords.lat && fromCoords.lng === toCoords.lng) {
+    savedRouteLayer?.clearLayers?.();
+    setRoutePreviewState(false, "Start and destination coordinates are the same", { layerExists: false, mapHasLayer: false });
+    setConfirmation("Choose a different destination or update saved place locations.", "error");
+    safeText("routeWatchSetupHint", "Choose a different destination or update saved place locations.");
+    updateRouteIntelligence();
+    updateRouteWatchStartButtonLabel();
+    return;
+  }
   if (getDistanceMiles(fromCoords.lat, fromCoords.lng, toCoords.lat, toCoords.lng) > 80) {
     savedRouteLayer?.clearLayers?.();
     setRoutePreviewState(false, "Route preview skipped because points are too far apart for local preview.", { layerExists: false, mapHasLayer: false });
@@ -4706,12 +4757,20 @@ async function startInlineRouteWatch() {
     setConfirmation("Route preview unavailable until precise locations are saved.", "error");
     safeText("routeWatchSetupHint", "Route preview unavailable until precise locations are saved.");
   } else {
-    setRoutePreviewState(true, "Route preview rendered", {
-      layerExists: Boolean(savedRouteLayer && savedRouteLayer.getLayers?.().length),
-      mapHasLayer: Boolean(map && savedRouteLayer && typeof map.hasLayer === "function" && map.hasLayer(savedRouteLayer))
+    const layerExists = Boolean(savedRouteLayer && savedRouteLayer.getLayers?.().length);
+    const mapHasLayer = Boolean(map && savedRouteLayer && typeof map.hasLayer === "function" && map.hasLayer(savedRouteLayer));
+    const hasRenderedLayer = Boolean(layerExists && mapHasLayer);
+    setRoutePreviewState(hasRenderedLayer, hasRenderedLayer ? "Route preview rendered" : "Route preview layer was not added to map", {
+      layerExists,
+      mapHasLayer
     });
-    setConfirmation("Route preview shown. Not turn-by-turn directions.", "success");
-    safeText("routeWatchSetupHint", "Route preview shown. Not turn-by-turn directions.");
+    if (hasRenderedLayer) {
+      setConfirmation("Route preview shown. Not turn-by-turn directions.", "success");
+      safeText("routeWatchSetupHint", "Route preview shown. Not turn-by-turn directions.");
+    } else {
+      setConfirmation("Route preview unavailable until precise locations are saved.", "error");
+      safeText("routeWatchSetupHint", "Route preview unavailable until precise locations are saved.");
+    }
   }
   activeDestinationPlace = toPlace;
   lastRouteWatchSelection = { startId: start.id, destinationId: destination.id };
