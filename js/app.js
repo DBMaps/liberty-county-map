@@ -330,6 +330,10 @@ function hydrateElements() {
     "mobileWorkInput",
     "mobileSavedDestinationSelect",
     "mobileSaveRouteBtn",
+    "managePlaceSlotRow",
+    "managePlaceHomeBtn",
+    "managePlaceWorkBtn",
+    "managePlaceFavoriteBtn",
     "mobileResetPlacesBtn",
     "mobileUseLocationBtn",
     "routeSetupModal",
@@ -3264,6 +3268,23 @@ function bindEvents() {
       saveRoute("mobile");
     });
   }
+  els.mobileHomeInput?.addEventListener("input", () => {
+    if (els.routeSetupModal?.dataset.mode !== "manage") return;
+    const nextType = getManageModalTargetType(els.mobileHomeInput.value);
+    els.routeSetupModal.dataset.prefillType = nextType;
+    syncManagePlaceSlotsAndCta(nextType);
+  });
+  [["managePlaceHomeBtn", "home"], ["managePlaceWorkBtn", "work"], ["managePlaceFavoriteBtn", "custom"]].forEach(([id, type]) => {
+    els[id]?.addEventListener("click", () => {
+      if (!els.routeSetupModal) return;
+      els.routeSetupModal.dataset.prefillType = type;
+      if (els.mobileHomeInput) {
+        els.mobileHomeInput.value = type === "home" ? "Home" : type === "work" ? "Work" : "";
+        els.mobileHomeInput.focus();
+      }
+      syncManagePlaceSlotsAndCta(type);
+    });
+  });
   els.mobileResetPlacesBtn?.addEventListener("click", () => {
     if (!window.confirm("Reset saved Home, Work, and Favorite places on this device?")) return;
     resetSavedPlaces();
@@ -4012,6 +4033,31 @@ function updateRouteSetupManageState() {
   else subtitleEl.textContent = "Select a saved destination, then start Route Watch.";
 }
 
+function getManageModalTargetType(nameValue = "") {
+  const state = getSavedPlacesState();
+  const normalizedName = String(nameValue || "").trim().toLowerCase();
+  if (normalizedName === "home") return "home";
+  if (normalizedName === "work") return "work";
+  if (!isConfiguredPlace(state.home)) return "home";
+  if (!isConfiguredPlace(state.work)) return "work";
+  return "custom";
+}
+
+function syncManagePlaceSlotsAndCta(targetType = "custom") {
+  if (els.mobileSaveRouteBtn) {
+    els.mobileSaveRouteBtn.textContent = targetType === "home" ? "Save Home" : targetType === "work" ? "Save Work" : "Save Place";
+  }
+  [["managePlaceHomeBtn", "home"], ["managePlaceWorkBtn", "work"], ["managePlaceFavoriteBtn", "custom"]].forEach(([id, type]) => {
+    const button = els[id];
+    if (!button) return;
+    button.classList.toggle("active", targetType === type);
+    if (type === "home" || type === "work") {
+      const configured = isConfiguredPlace(getSavedPlacesState()[type]);
+      button.classList.toggle("is-pending", !configured);
+    }
+  });
+}
+
 async function saveRoute(source = "desktop") {
   const { home, work, button } = getRouteInputValues(source);
   const modalMode = source === "mobile" ? (els.routeSetupModal?.dataset.mode || "add") : "add";
@@ -4432,18 +4478,18 @@ function configureRouteSetupModal({ mode = "add", prefillType = "custom" } = {})
       els.mobileHomeInput.value = selected?.name || (effectiveType === "home" ? "Home" : effectiveType === "work" ? "Work" : "");
     }
     if (els.mobileWorkInput) els.mobileWorkInput.value = selected?.address || "";
+    if (els.managePlaceSlotRow) els.managePlaceSlotRow.hidden = false;
     if (destinationLabelText) destinationLabelText.textContent = "Saved places";
     if (subtitleEl) {
       subtitleEl.textContent = !hasHome
         ? "Save Home first to start Route Watch."
         : "Manage Home, Work, and Favorite places.";
     }
-    if (els.mobileSaveRouteBtn) {
-      els.mobileSaveRouteBtn.textContent = effectiveType === "home" ? "Save Home" : effectiveType === "work" ? "Save Work" : "Save Place";
-    }
+    syncManagePlaceSlotsAndCta(effectiveType);
     updateRouteSetupManageState();
     return;
   }
+  if (els.managePlaceSlotRow) els.managePlaceSlotRow.hidden = true;
 
   const presets = {
     home: { name: "Home", address: "" },
