@@ -1153,7 +1153,7 @@ function updateLastUpdated() {
 }
 
 function initMap() {
-  map = L.map("map", { zoomControl: false, preferCanvas: true }).setView(defaultCenter, 13);
+  map = L.map("map", { zoomControl: false }).setView(defaultCenter, 13);
   window.gridlyMapInstance = map;
 
   L.control.zoom({ position: "bottomright" }).addTo(map);
@@ -4659,52 +4659,16 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates, labels
   if (!hasValidPoints) return false;
 
   savedRouteLayer.clearLayers();
-  const routeMapInstance = map;
-  const visibleMapInstance = window.gridlyMapInstance || window.map || map;
-  console.info("Gridly route map instance", {
-    routeMapInstance,
-    routeMapContainerId: routeMapInstance?.getContainer?.()?.id || null,
-    routeMapLeafletId: routeMapInstance?._leaflet_id || null,
-    savedRouteLayerLeafletId: savedRouteLayer?._leaflet_id || null
-  });
-  console.info("Gridly visible map instance", {
-    visibleMapInstance,
-    visibleMapContainerId: visibleMapInstance?.getContainer?.()?.id || null,
-    visibleMapLeafletId: visibleMapInstance?._leaflet_id || null,
-    sameInstance: Boolean(routeMapInstance && visibleMapInstance && routeMapInstance === visibleMapInstance)
-  });
-
-  const routePreviewGlow = L.polyline(fallbackPoints, {
-    pane: "routePane",
-    color: "#4fb9ff",
-    weight: 18,
-    opacity: 0.24,
-    lineJoin: "round",
-    lineCap: "round",
-    interactive: false
-  });
-
   const routePreviewLayer = L.polyline(fallbackPoints, {
-    pane: "routePane",
-    color: "#5fd0ff",
-    weight: 9,
-    opacity: 0.88,
+    color: "#00d9ff",
+    weight: 10,
+    opacity: 0.92,
     lineJoin: "round",
     lineCap: "round",
     interactive: false
   });
 
   window.__gridlyRoutePreviewLayer = routePreviewLayer;
-
-  const routePreviewAccent = L.polyline(fallbackPoints, {
-    pane: "routePane",
-    color: "#eaf6ff",
-    weight: 3,
-    opacity: 0.94,
-    lineJoin: "round",
-    lineCap: "round",
-    interactive: false
-  });
 
   const startLabel = (labels.start || "Start").trim() || "Start";
   const destinationLabel = (labels.destination || "Destination").trim() || "Destination";
@@ -4714,7 +4678,7 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates, labels
     radius: 12,
     color: "#ffffff",
     weight: 4,
-    fillColor: "#5fd0ff",
+    fillColor: "#00d9ff",
     fillOpacity: 1,
     interactive: false
   }).bindTooltip(startLabel, {
@@ -4729,7 +4693,7 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates, labels
     radius: 12,
     color: "#ffffff",
     weight: 4,
-    fillColor: "#4fb9ff",
+    fillColor: "#00b8ff",
     fillOpacity: 1,
     interactive: false
   }).bindTooltip(destinationLabel, {
@@ -4739,9 +4703,7 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates, labels
     className: "gridly-route-endpoint-label"
   });
 
-  savedRouteLayer.addLayer(routePreviewGlow);
   savedRouteLayer.addLayer(routePreviewLayer);
-  savedRouteLayer.addLayer(routePreviewAccent);
   savedRouteLayer.addLayer(startMarker);
   savedRouteLayer.addLayer(destinationMarker);
 
@@ -4749,39 +4711,7 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates, labels
     savedRouteLayer.addTo(map);
   }
 
-  console.info("Gridly preview renderer info", {
-    routePaneExists: Boolean(map.getPane?.("routePane")),
-    mapRendererType: map?.options?.renderer?.constructor?.name || "default",
-    previewLayerRendererType: routePreviewLayer?.options?.renderer?.constructor?.name || "default",
-    previewLayerPane: routePreviewLayer?.options?.pane || "default"
-  });
-
-  console.info("Gridly preview layer attached", {
-    hasMap: !!routePreviewLayer._map,
-    sameMap: routePreviewLayer._map === map
-  });
-
-  const directTestLine = L.polyline(
-    [
-      [fallbackPoints[0][0], fallbackPoints[0][1]],
-      [fallbackPoints[1][0], fallbackPoints[1][1]]
-    ],
-    {
-      color: "#00ffff",
-      weight: 12,
-      opacity: 1
-    }
-  ).addTo(map);
-  window.__gridlyDirectTestLine = directTestLine;
-  console.info("Gridly direct renderer test line", {
-    hasMap: !!directTestLine._map,
-    sameMap: directTestLine._map === map,
-    pane: directTestLine?.options?.pane || "default",
-    rendererType: directTestLine?.options?.renderer?.constructor?.name || "default"
-  });
-
   const actualLatLngs = routePreviewLayer.getLatLngs();
-  console.info("Gridly actual rendered latlngs", actualLatLngs);
   routePreviewPolylinePointCount = Array.isArray(actualLatLngs) ? actualLatLngs.length : 0;
   const hasUsablePreviewLayer = Boolean(window.__gridlyRoutePreviewLayer)
     && typeof window.__gridlyRoutePreviewLayer.getLatLngs === "function"
@@ -4793,8 +4723,6 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates, labels
   if (!routePreviewRendered) {
     return false;
   }
-
-  savedRouteLayer.addLayer(routePreviewLayer);
 
   if (map) {
     window.__gridlyRoutePreviewMapDebug = map;
@@ -4808,12 +4736,6 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates, labels
         animate: true,
         duration: 0.6
       });
-      console.info("Gridly fitBounds applied", bounds);
-      console.info("Gridly map view after fitBounds", {
-        center: map.getCenter(),
-        zoom: map.getZoom()
-      });
-      console.info("Gridly REAL preview layer", window.__gridlyRoutePreviewLayer);
     }
   }
 
