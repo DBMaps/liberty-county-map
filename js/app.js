@@ -4625,18 +4625,20 @@ function attachSavedPlacesDebugGlobal() {
 }
 
 function setRoutePreviewState(rendered, reason, options = {}) {
-  // Route preview is only considered successful when the rendered polyline has at least 2 points.
+  // Route preview is only considered successful when a real global preview layer has at least 2 points.
   routePreviewPolylinePointCount = Number.isFinite(Number(options.pointCount)) ? Number(options.pointCount) : 0;
-  const hasUsablePolyline = routePreviewPolylinePointCount >= 2;
-  const layerExistsOption = Boolean(options.layerExists);
-  const mapHasLayerOption = Boolean(options.mapHasLayer);
+  const hasUsableGlobalLayer = Boolean(window.__gridlyRoutePreviewLayer)
+    && typeof window.__gridlyRoutePreviewLayer.getLatLngs === "function"
+    && Array.isArray(window.__gridlyRoutePreviewLayer.getLatLngs())
+    && window.__gridlyRoutePreviewLayer.getLatLngs().length >= 2;
 
-  routePreviewLayerExists = hasUsablePolyline ? true : layerExistsOption;
-  mapHasRoutePreviewLayer = hasUsablePolyline ? (mapHasLayerOption || layerExistsOption) : mapHasLayerOption;
-  routePreviewRendered = hasUsablePolyline ? true : Boolean(rendered);
-  routePreviewReason = hasUsablePolyline
+  routePreviewLayerExists = hasUsableGlobalLayer;
+  mapHasRoutePreviewLayer = hasUsableGlobalLayer
+    && Boolean(map && savedRouteLayer && typeof map.hasLayer === "function" && map.hasLayer(savedRouteLayer));
+  routePreviewRendered = hasUsableGlobalLayer;
+  routePreviewReason = hasUsableGlobalLayer
     ? "Route preview active."
-    : String(reason || (routePreviewRendered ? "Route preview rendered" : "Route preview not rendered."));
+    : String(reason || (Boolean(rendered) ? "Route preview reported but layer is unavailable." : "Route preview not rendered."));
   lastRoutePreviewError = routePreviewRendered ? null : routePreviewReason;
 }
 
@@ -4692,6 +4694,8 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
     interactive: false
   });
 
+  window.__gridlyRoutePreviewLayer = routePreviewLayer;
+
   const routePreviewAccent = L.polyline(fallbackPoints, {
     pane: "routePane",
     color: "#ffffff",
@@ -4741,7 +4745,13 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
   const actualLatLngs = routePreviewLayer.getLatLngs();
   console.info("Gridly actual rendered latlngs", actualLatLngs);
   routePreviewPolylinePointCount = Array.isArray(actualLatLngs) ? actualLatLngs.length : 0;
-  routePreviewRendered = routePreviewPolylinePointCount >= 2;
+  const hasUsablePreviewLayer = Boolean(window.__gridlyRoutePreviewLayer)
+    && typeof window.__gridlyRoutePreviewLayer.getLatLngs === "function"
+    && Array.isArray(window.__gridlyRoutePreviewLayer.getLatLngs())
+    && window.__gridlyRoutePreviewLayer.getLatLngs().length >= 2;
+  routePreviewRendered = hasUsablePreviewLayer;
+  routePreviewLayerExists = hasUsablePreviewLayer;
+  mapHasRoutePreviewLayer = hasUsablePreviewLayer && Boolean(map && savedRouteLayer && typeof map.hasLayer === "function" && map.hasLayer(savedRouteLayer));
   if (!routePreviewRendered) {
     return false;
   }
@@ -4768,8 +4778,10 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
     className: "gridly-route-endpoint-label"
   });
   savedRouteLayer.addLayer(midpointDebugMarker);
+  window.__gridlyRouteMidpointMarker = midpointDebugMarker;
 
   if (map) {
+    window.__gridlyRoutePreviewMapDebug = map;
     const bounds = routePreviewLayer.getBounds();
     if (bounds.isValid()) {
       map.fitBounds(bounds, {
@@ -4785,6 +4797,8 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
         center: map.getCenter(),
         zoom: map.getZoom()
       });
+      console.info("Gridly REAL preview layer", window.__gridlyRoutePreviewLayer);
+      console.info("Gridly REAL midpoint marker", window.__gridlyRouteMidpointMarker);
     }
   }
 
