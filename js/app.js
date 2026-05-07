@@ -4642,9 +4642,9 @@ function setRoutePreviewState(rendered, reason, options = {}) {
   lastRoutePreviewError = routePreviewRendered ? null : routePreviewReason;
 }
 
-function renderRoutePreviewLine(startCoordinates, destinationCoordinates, labels = {}) {
+function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
   // Render from saved Home/Work (or other saved place) coordinates only after coordinate validation succeeds.
-  if (!savedRouteLayer || !map) return false;
+  if (!map) return false;
 
   const fallbackPoints = [
     [Number(startCoordinates?.lat), Number(startCoordinates?.lng)],
@@ -4658,58 +4658,23 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates, labels
   ));
   if (!hasValidPoints) return false;
 
-  savedRouteLayer.clearLayers();
-  const routePreviewLayer = L.polyline(fallbackPoints, {
-    color: "#00d9ff",
-    weight: 10,
-    opacity: 0.92,
-    lineJoin: "round",
-    lineCap: "round",
-    interactive: false
-  });
+  if (window.__gridlyRoutePreviewLayer && typeof map.removeLayer === "function" && map.hasLayer(window.__gridlyRoutePreviewLayer)) {
+    map.removeLayer(window.__gridlyRoutePreviewLayer);
+  }
+
+  const routePreviewLayer = L.polyline(
+    [
+      [Number(startCoordinates?.lat), Number(startCoordinates?.lng)],
+      [Number(destinationCoordinates?.lat), Number(destinationCoordinates?.lng)]
+    ],
+    {
+      color: "#00ffff",
+      weight: 12,
+      opacity: 1
+    }
+  ).addTo(map);
 
   window.__gridlyRoutePreviewLayer = routePreviewLayer;
-
-  const startLabel = (labels.start || "Start").trim() || "Start";
-  const destinationLabel = (labels.destination || "Destination").trim() || "Destination";
-
-  const startMarker = L.circleMarker(fallbackPoints[0], {
-    pane: "routePane",
-    radius: 12,
-    color: "#ffffff",
-    weight: 4,
-    fillColor: "#00d9ff",
-    fillOpacity: 1,
-    interactive: false
-  }).bindTooltip(startLabel, {
-    permanent: true,
-    direction: "top",
-    offset: [0, -12],
-    className: "gridly-route-endpoint-label"
-  });
-
-  const destinationMarker = L.circleMarker(fallbackPoints[1], {
-    pane: "routePane",
-    radius: 12,
-    color: "#ffffff",
-    weight: 4,
-    fillColor: "#00b8ff",
-    fillOpacity: 1,
-    interactive: false
-  }).bindTooltip(destinationLabel, {
-    permanent: true,
-    direction: "top",
-    offset: [0, -12],
-    className: "gridly-route-endpoint-label"
-  });
-
-  savedRouteLayer.addLayer(routePreviewLayer);
-  savedRouteLayer.addLayer(startMarker);
-  savedRouteLayer.addLayer(destinationMarker);
-
-  if (typeof map.hasLayer === "function" && !map.hasLayer(savedRouteLayer)) {
-    savedRouteLayer.addTo(map);
-  }
 
   const actualLatLngs = routePreviewLayer.getLatLngs();
   routePreviewPolylinePointCount = Array.isArray(actualLatLngs) ? actualLatLngs.length : 0;
@@ -4719,7 +4684,7 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates, labels
     && window.__gridlyRoutePreviewLayer.getLatLngs().length >= 2;
   routePreviewRendered = hasUsablePreviewLayer;
   routePreviewLayerExists = hasUsablePreviewLayer;
-  mapHasRoutePreviewLayer = hasUsablePreviewLayer && Boolean(map && savedRouteLayer && typeof map.hasLayer === "function" && map.hasLayer(savedRouteLayer));
+  mapHasRoutePreviewLayer = hasUsablePreviewLayer && Boolean(map && typeof map.hasLayer === "function" && map.hasLayer(routePreviewLayer));
   if (!routePreviewRendered) {
     return false;
   }
@@ -4997,8 +4962,8 @@ async function startInlineRouteWatch() {
     setConfirmation("Route preview unavailable until precise locations are saved.", "error");
     safeText("routeWatchSetupHint", "Route preview unavailable until precise locations are saved.");
   } else {
-    const layerExists = Boolean(savedRouteLayer && savedRouteLayer.getLayers?.().length);
-    const mapHasLayer = Boolean(map && savedRouteLayer && typeof map.hasLayer === "function" && map.hasLayer(savedRouteLayer));
+    const layerExists = Boolean(window.__gridlyRoutePreviewLayer);
+    const mapHasLayer = Boolean(map && window.__gridlyRoutePreviewLayer && typeof map.hasLayer === "function" && map.hasLayer(window.__gridlyRoutePreviewLayer));
     setRoutePreviewState(Boolean(layerExists && mapHasLayer), "Route preview layer was not added to map", {
       layerExists,
       mapHasLayer,
