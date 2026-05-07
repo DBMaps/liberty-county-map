@@ -3989,7 +3989,7 @@ function updateRouteSetupManageState() {
   else subtitleEl.textContent = "Select a saved destination, then start Route Watch.";
 }
 
-function saveRoute(source = "desktop") {
+async function saveRoute(source = "desktop") {
   const { home, work, button } = getRouteInputValues(source);
   if (!home || !work) {
     const errorMessage = "Missing place name or address. Please fill both fields.";
@@ -4013,7 +4013,9 @@ function saveRoute(source = "desktop") {
   if (normalizedType === "home" || normalizedType === "work") {
     id = normalizedType;
   }
-  const coordinates = normalizeCoordinatePair(userLocation?.lat, userLocation?.lng) || normalizeCoordinatePair(map?.getCenter?.()?.lat, map?.getCenter?.()?.lng);
+  const geocodeQuery = [home, work].filter(Boolean).join(", ");
+  const geocodedCoordinates = await geocodeAddressToCoordinates(geocodeQuery);
+  const coordinates = geocodedCoordinates || null;
   const createdAt = new Date().toISOString();
   const placeType = normalizedType === "custom" ? "favorite" : normalizedType;
   const nextPlace = {
@@ -4045,11 +4047,10 @@ function saveRoute(source = "desktop") {
   initDailyDestinationHero();
   updateRouteIntelligence();
   updateGrowthWidgets();
-  const saveMessage = normalizedType === "home"
-    ? "Home saved on this device."
-    : normalizedType === "work"
-      ? "Work saved on this device."
-      : `${home || "Favorite"} saved on this device.`;
+  const placeLabel = normalizedType === "home" ? "Home" : normalizedType === "work" ? "Work" : (home || "Favorite");
+  const saveMessage = coordinates
+    ? `${placeLabel} saved with map location.`
+    : "Saved as label only — route preview needs a map location.";
   setConfirmation(saveMessage, "success");
   lastSavedPlaceResult = { ok: true, type: normalizedType, message: saveMessage, at: createdAt, savedPlaceId: id };
   flashButton(button, modalMode === "manage" ? "Saved" : "Place Saved");
@@ -4194,6 +4195,29 @@ function normalizeCoordinatePair(lat, lng) {
   const swapped = parseValidCoordinatePair(lng, lat);
   if (swapped) return swapped;
   return null;
+}
+
+async function geocodeAddressToCoordinates(rawAddress = "") {
+  const query = String(rawAddress || "").trim();
+  if (!query) return null;
+  try {
+    const params = new URLSearchParams({
+      q: query,
+      format: "jsonv2",
+      limit: "1",
+      countrycodes: "us"
+    });
+    const response = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`, {
+      headers: { Accept: "application/json" }
+    });
+    if (!response.ok) return null;
+    const results = await response.json();
+    const first = Array.isArray(results) ? results[0] : null;
+    return normalizeCoordinatePair(first?.lat, first?.lon);
+  } catch (error) {
+    console.warn("Address geocode failed:", error);
+    return null;
+  }
 }
 
 function hasValidPlaceCoordinates(place) {
@@ -4569,6 +4593,15 @@ function loadSavedRoute() {
   const savedPlaceCount = getSavedPlaces().length;
   const startId = els.routeWatchStartSelect?.value || "";
   const destinationId = els.routeWatchDestinationSelect?.value || "";
+  const state = normalizeSavedPlaces();
+  const startPlace = startId === "home" ? state.home : startId === "work" ? state.work : state.custom.find((place) => place.id === startId);
+  const destinationPlace = destinationId === "home" ? state.home : destinationId === "work" ? state.work : state.custom.find((place) => place.id === destinationId);
+  const startCoordinates = normalizeCoordinatePair(startPlace?.lat, startPlace?.lng);
+  const destinationCoordinates = normalizeCoordinatePair(destinationPlace?.lat, destinationPlace?.lng);
+  if (startId && destinationId && (!startCoordinates || !destinationCoordinates)) {
+    savedRouteLayer?.clearLayers?.();
+    setRoutePreviewState(false, "Missing start or destination coordinates", { layerExists: false, mapHasLayer: false });
+  }
   if (els.routeWatchStartBtn) {
     els.routeWatchStartBtn.disabled = savedPlaceCount < 2 || !startId || !destinationId;
   }
