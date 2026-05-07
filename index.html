@@ -295,12 +295,17 @@
               <span><b>Recommendation:</b> <em id="routeRecommendation">Awaiting route selection</em></span>
             </div>
           </div>
-          <div class="desktop-route-watch-actions" aria-label="Desktop destination quick chooser">
-            <button class="secondary-btn compact-btn destination-chip" id="desktopDestinationHomeBtn" type="button">Home</button>
-            <button class="secondary-btn compact-btn destination-chip" id="desktopDestinationWorkBtn" type="button">Work</button>
-            <button class="secondary-btn compact-btn destination-chip" id="desktopDestinationFavoriteBtn" type="button">Favorite</button>
-            <button class="secondary-btn compact-btn destination-chip" id="desktopDestinationAddBtn" type="button">Add Place</button>
-            <button id="desktopManageRouteBtn" class="secondary-btn compact-btn" type="button">Manage Route</button>
+          <div class="desktop-route-watch-actions" aria-label="Route Watch controls">
+            <label class="route-inline-field" for="routeWatchStartSelect">
+              <span>Start</span>
+              <select id="routeWatchStartSelect"></select>
+            </label>
+            <label class="route-inline-field" for="routeWatchDestinationSelect">
+              <span>Destination</span>
+              <select id="routeWatchDestinationSelect"></select>
+            </label>
+            <button id="routeWatchStartBtn" class="primary-btn compact-btn" type="button">View Route / Start Route Watch</button>
+            <button id="desktopManageRouteBtn" class="secondary-btn compact-btn" type="button">Manage Places</button>
           </div>
         </article>
 

@@ -241,6 +241,9 @@ function hydrateElements() {
     "routeConfidence",
     "routeReports",
     "desktopManageRouteBtn",
+    "routeWatchStartSelect",
+    "routeWatchDestinationSelect",
+    "routeWatchStartBtn",
     "routeWatchSetupHint",
     "sideRouteWatchHint",
     "homeInput",
@@ -3238,20 +3241,6 @@ function bindEvents() {
   els.saveSmartAlertsBtn?.addEventListener("click", saveSmartAlertsPreferences);
   els.closeSmartAlertsModalBtn?.addEventListener("click", closeSmartAlertsModal);
   els.mobileSaveRouteBtn?.addEventListener("click", () => {
-    const mode = els.routeSetupModal?.dataset.mode || "add";
-    if (mode === "manage") {
-      const selectedId = els.mobileSavedDestinationSelect?.value || getSelectedPlaceId();
-      if (!selectedId) {
-        setConfirmation("No saved places yet. Save Home, Work, or a Favorite first.", "error");
-        return;
-      }
-      setSelectedPlaceId(selectedId);
-      const selectedPlace = getSelectedPlace();
-      const selectedType = selectedPlace?.id === "home" || selectedPlace?.id === "work" ? selectedPlace.id : "favorite";
-      activateDestinationByType(selectedType);
-      closeRouteSetupModal();
-      return;
-    }
     saveRoute("mobile");
   });
   els.mobileResetPlacesBtn?.addEventListener("click", () => {
@@ -3259,41 +3248,10 @@ function bindEvents() {
     resetSavedPlaces();
     closeRouteSetupModal();
   });
-  const routeWatchButtonSets = {
-    add: [els.desktopDestinationAddBtn, els.destinationAddBtn],
-    home: [els.desktopDestinationHomeBtn, els.destinationHomeBtn],
-    work: [els.desktopDestinationWorkBtn, els.destinationWorkBtn],
-    favorite: [els.desktopDestinationFavoriteBtn, els.destinationFavoriteBtn]
-  };
-
-  routeWatchButtonSets.add.forEach((btn) => btn?.addEventListener("click", (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    console.log("Route Watch Add Place action");
-    openRouteSetupModalForType("custom");
-    ensureMapStylePersistence("Add Place");
-  }));
-  routeWatchButtonSets.home.forEach((btn) => btn?.addEventListener("click", (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    console.log("Route Watch Home action");
-    activateDestinationByType("home");
-    ensureMapStylePersistence("Home");
-  }));
-  routeWatchButtonSets.work.forEach((btn) => btn?.addEventListener("click", (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    console.log("Route Watch Work action");
-    activateDestinationByType("work");
-    ensureMapStylePersistence("Work");
-  }));
-  routeWatchButtonSets.favorite.forEach((btn) => btn?.addEventListener("click", (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    console.log("Route Watch Favorite action");
-    activateDestinationByType("favorite");
-    ensureMapStylePersistence("Favorite");
-  }));
+  els.routeWatchStartBtn?.addEventListener("click", () => startInlineRouteWatch());
+  [els.routeWatchStartSelect, els.routeWatchDestinationSelect].forEach((selectEl) => {
+    selectEl?.addEventListener("change", () => loadSavedRoute());
+  });
   [els.savedDestinationSelect, els.mobileSavedDestinationSelect].forEach((selectEl) => {
     selectEl?.addEventListener("change", (event) => {
       const nextId = event.target.value;
@@ -3981,6 +3939,36 @@ function renderSavedPlacesSelectOptions() {
     });
   });
   updateRouteSetupManageState();
+  renderRouteWatchInlineControls();
+}
+
+function renderRouteWatchInlineControls() {
+  const places = getSavedPlaces();
+  const hasHome = places.some((place) => place.id === "home");
+  const hasWork = places.some((place) => place.id === "work");
+  const defaultStart = hasHome ? "home" : "";
+  const defaultDestination = hasWork ? "work" : "";
+  const configs = [
+    { el: els.routeWatchStartSelect, fallback: defaultStart, placeholder: "Select start" },
+    { el: els.routeWatchDestinationSelect, fallback: defaultDestination, placeholder: "Select destination" }
+  ];
+  configs.forEach(({ el, fallback, placeholder }) => {
+    if (!el) return;
+    const priorValue = el.value;
+    el.innerHTML = "";
+    const placeholderOption = document.createElement("option");
+    placeholderOption.value = "";
+    placeholderOption.textContent = placeholder;
+    el.appendChild(placeholderOption);
+    places.forEach((place) => {
+      const option = document.createElement("option");
+      option.value = place.id;
+      option.textContent = place.name;
+      el.appendChild(option);
+    });
+    if (places.length > 1) el.value = priorValue || fallback || "";
+    else el.value = "";
+  });
 }
 
 function updateRouteSetupManageState() {
@@ -4308,7 +4296,7 @@ function configureRouteSetupModal({ mode = "add", prefillType = "custom" } = {})
   const destinationLabel = els.mobileSavedDestinationSelect?.closest("label");
   if (titleEl) titleEl.textContent = mode === "manage" ? "Manage Places" : mode === "home" ? "Set Home" : mode === "work" ? "Set Work" : mode === "favorite" ? "Add Favorite" : "Add Place";
   if (subtitleEl) subtitleEl.textContent = "Saved places stay on this device. Pick one destination for today.";
-  if (els.mobileSaveRouteBtn) els.mobileSaveRouteBtn.textContent = mode === "manage" ? "Start Route Watch" : mode === "home" ? "Save Home" : mode === "work" ? "Save Work" : "Save Place";
+  if (els.mobileSaveRouteBtn) els.mobileSaveRouteBtn.textContent = mode === "manage" ? "Save Place" : mode === "home" ? "Save Home" : mode === "work" ? "Save Work" : "Save Place";
   if (destinationLabel) destinationLabel.hidden = mode !== "manage";
   if (els.mobileSavedDestinationSelect) {
     els.mobileSavedDestinationSelect.disabled = mode !== "manage";
@@ -4320,7 +4308,7 @@ function configureRouteSetupModal({ mode = "add", prefillType = "custom" } = {})
     els.routeSetupModal.dataset.prefillType = effectiveType;
     if (els.mobileHomeInput) els.mobileHomeInput.value = selected?.name || "";
     if (els.mobileWorkInput) els.mobileWorkInput.value = selected?.address || "";
-    if (subtitleEl) subtitleEl.textContent = "Select a saved destination, then start Route Watch.";
+    if (subtitleEl) subtitleEl.textContent = "Manage Home, Work, and Favorite places.";
     updateRouteSetupManageState();
     return;
   }
@@ -4468,6 +4456,21 @@ function loadSavedRoute() {
     safeText("savedWork", work);
     safeText("desktopRouteWork", work);
   }
+  const savedPlaceCount = getSavedPlaces().length;
+  const startId = els.routeWatchStartSelect?.value || "";
+  const destinationId = els.routeWatchDestinationSelect?.value || "";
+  if (els.routeWatchStartBtn) {
+    els.routeWatchStartBtn.disabled = savedPlaceCount < 2 || !startId || !destinationId;
+  }
+  if (savedPlaceCount === 0) {
+    safeText("desktopRouteStatus", "Save at least two places to start Route Watch.");
+    safeText("routeWatchSetupHint", "Add Home and Work to start Route Watch.");
+  } else if (savedPlaceCount < 2) {
+    safeText("desktopRouteStatus", "Save at least two places to start Route Watch.");
+    safeText("routeWatchSetupHint", "Choose a start and destination to begin monitoring.");
+  } else if (!startId || !destinationId) {
+    safeText("desktopRouteStatus", "Choose a start and destination to begin monitoring.");
+  }
   safeText("routeCardLabel", routeWatchActivated && routeLabelParts.activeLabel
     ? `Monitoring: Home → ${routeLabelParts.activeLabel}`
     : routeLabelParts.hasHome && routeLabelParts.destination
@@ -4500,6 +4503,45 @@ function loadSavedRoute() {
   } else if (routeLabelParts.hasHome && !routeLabelParts.hasWork && els.routeWatchSetupHint) {
     els.routeWatchSetupHint.textContent = "Home saved. Add Work to start Route Watch.";
   }
+}
+
+async function startInlineRouteWatch() {
+  const startId = els.routeWatchStartSelect?.value || "";
+  const destinationId = els.routeWatchDestinationSelect?.value || "";
+  const places = getSavedPlaces();
+  const start = places.find((place) => place.id === startId);
+  const destination = places.find((place) => place.id === destinationId);
+  if (!start || !destination) {
+    setConfirmation("Choose a start and destination to begin monitoring.", "error");
+    return;
+  }
+  if (start.id === destination.id) {
+    setConfirmation("Choose a different destination.", "error");
+    return;
+  }
+  routeWatchActivated = true;
+  safeText("desktopRouteHome", start.name);
+  safeText("desktopRouteWork", destination.name);
+  safeText("routeCardLabel", `${start.name} → ${destination.name}`);
+  safeText("desktopRouteStatus", `Monitoring ${start.name} → ${destination.name}.`);
+  safeText("routeWatchSetupHint", `Monitoring ${start.name} → ${destination.name}.`);
+
+  const state = normalizeSavedPlaces();
+  const fromPlace = start.id === "home" ? state.home : start.id === "work" ? state.work : state.custom.find((place) => place.id === start.id);
+  const toPlace = destination.id === "home" ? state.home : destination.id === "work" ? state.work : state.custom.find((place) => place.id === destination.id);
+  const fromCoords = normalizeCoordinatePair(fromPlace?.lat, fromPlace?.lng);
+  const toCoords = normalizeCoordinatePair(toPlace?.lat, toPlace?.lng);
+  if (!fromCoords || !toCoords) {
+    savedRouteLayer?.clearLayers?.();
+    setConfirmation("Route preview unavailable until precise locations are saved.", "error");
+    updateRouteIntelligence();
+    return;
+  }
+
+  activeDestinationPlace = toPlace;
+  await renderDestinationRoute({ ...toPlace, lat: toCoords.lat, lng: toCoords.lng });
+  updateRouteWatchBadge(destination.name);
+  updateRouteIntelligence();
 }
 
 function resetSavedPlaces() {
