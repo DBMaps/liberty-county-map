@@ -6874,3 +6874,9 @@ body.modal-open {
 .map-tools-overlay {
   z-index: 820 !important;
 }
+
+/* Route Watch inline selectors */
+.route-inline-field{display:flex;flex-direction:column;gap:4px;min-width:150px}
+.route-inline-field span{font-size:.72rem;color:#9db2ca;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.route-inline-field select{min-height:36px;border-radius:10px;padding:6px 10px;background:rgba(8,22,36,.85);color:#eaf4ff;border:1px solid rgba(126,184,232,.35)}
+.desktop-route-watch-actions{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
