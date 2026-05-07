@@ -6643,3 +6643,109 @@ body.modal-open {
     line-height: 1.25;
   }
 }
+
+/* GRIDLY Phase 5E: desktop map toolbar and right rail structural cleanup */
+@media (min-width: 1100px) {
+  .map-card .map-tools-overlay {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 10px 12px;
+    width: min(100%, 1080px);
+  }
+
+  .map-toolbar-main-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+
+  .map-card .map-tools-overlay .map-view-label,
+  .map-card .map-tools-overlay .map-tools-section-label {
+    display: inline-flex;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .map-card .map-tools-overlay .map-tools-section {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex: 0 1 auto;
+  }
+
+  .map-card .desktop-map-legend-row,
+  .map-card .map-tools-overlay .geo-filter-shell {
+    position: static;
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    background: transparent;
+    border: 0;
+    padding: 0;
+  }
+
+  .map-toolbar-divider {
+    color: rgba(166, 190, 218, 0.58);
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .map-toolbar-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .map-card .map-tools-status { margin: 0; }
+
+  .side-panel.desktop-command-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: visible;
+  }
+
+  .desktop-command-panel .drawer-panel,
+  .desktop-command-panel .panel-card {
+    position: static;
+    top: auto;
+    margin: 0;
+  }
+
+  #railPulseDrawer .drawer-body {
+    display: grid;
+    gap: 10px;
+  }
+
+  .desktop-command-panel .trending-list {
+    max-height: 180px;
+    overflow: auto;
+  }
+
+  .desktop-command-panel .alerts-list {
+    max-height: 240px;
+    overflow: auto;
+  }
+}
+
+@media (min-width: 1100px) and (max-width: 1320px) {
+  .map-toolbar-main-row {
+    row-gap: 8px;
+  }
+
+  .map-toolbar-divider {
+    display: none;
+  }
+
+  .map-tools-scope-section {
+    flex-basis: 100%;
+  }
+}

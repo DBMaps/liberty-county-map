@@ -310,25 +310,33 @@
 
         <div class="map-frame">
           <div class="map-tools-overlay" aria-label="Map controls">
-            <p class="map-view-label">Map View</p>
-            <section class="map-tools-section" aria-label="Incident filters">
-              <p class="map-tools-section-label">Incidents</p>
-              <div class="crossing-status-legend desktop-map-legend-row" aria-label="Crossing status legend">
-              <button class="legend-pill blocked desktop-legend-btn" id="desktopLegendBlockedBtn" type="button" data-geo-filter="active-delays">Blocked</button><button class="legend-pill delayed desktop-legend-btn" id="desktopLegendDelayedBtn" type="button" data-geo-filter="active-delays">Delayed</button><button class="legend-pill cleared desktop-legend-btn" id="desktopLegendClearedBtn" type="button" data-geo-filter="all">Cleared</button><span class="legend-pill inactive">Inactive</span>
-              </div>
-            </section>
-            <section class="map-tools-section" aria-label="Map scope filters">
-              <p class="map-tools-section-label">Scope</p>
-              <div class="geo-filter-shell" role="group" aria-label="Map filters">
-                <button class="geo-filter-pill selected" type="button" data-geo-filter="nearby">Nearby</button>
-                <button class="geo-filter-pill" type="button" data-geo-filter="town">My Route</button>
-                <button class="geo-filter-pill" type="button" data-geo-filter="county">My Town</button>
-                <button class="geo-filter-pill" type="button" data-geo-filter="active-delays">Delays</button>
-                <button class="geo-filter-pill" type="button" data-geo-filter="all">All</button>
-              </div>
-            </section>
-            <p class="map-tools-status" id="desktopMapOpsStatus">Status: scanning active reports</p>
-            <details class="all-crossings-advanced"><summary>Advanced</summary><label class="all-crossings-toggle"><input id="allCrossingsLayerToggle" type="checkbox" /> Show all crossings layer</label></details>
+            <div class="map-toolbar-main-row">
+              <p class="map-view-label">Map View</p>
+              <section class="map-tools-section" aria-label="Incident filters">
+                <p class="map-tools-section-label">Incidents:</p>
+                <div class="crossing-status-legend desktop-map-legend-row" aria-label="Crossing status legend">
+                  <button class="legend-pill blocked desktop-legend-btn" id="desktopLegendBlockedBtn" type="button" data-geo-filter="active-delays">Blocked</button>
+                  <button class="legend-pill delayed desktop-legend-btn" id="desktopLegendDelayedBtn" type="button" data-geo-filter="active-delays">Delayed</button>
+                  <button class="legend-pill cleared desktop-legend-btn" id="desktopLegendClearedBtn" type="button" data-geo-filter="all">Cleared</button>
+                  <span class="legend-pill inactive">Inactive</span>
+                </div>
+              </section>
+              <span class="map-toolbar-divider" aria-hidden="true">|</span>
+              <section class="map-tools-section map-tools-scope-section" aria-label="Map scope filters">
+                <p class="map-tools-section-label">Scope:</p>
+                <div class="geo-filter-shell" role="group" aria-label="Map filters">
+                  <button class="geo-filter-pill selected" type="button" data-geo-filter="nearby">Nearby</button>
+                  <button class="geo-filter-pill" type="button" data-geo-filter="town">My Route</button>
+                  <button class="geo-filter-pill" type="button" data-geo-filter="county">My Town</button>
+                  <button class="geo-filter-pill" type="button" data-geo-filter="active-delays">Delays</button>
+                  <button class="geo-filter-pill" type="button" data-geo-filter="all">All</button>
+                </div>
+              </section>
+            </div>
+            <div class="map-toolbar-meta-row">
+              <p class="map-tools-status" id="desktopMapOpsStatus">Status: scanning active reports</p>
+              <details class="all-crossings-advanced"><summary>Advanced</summary><label class="all-crossings-toggle"><input id="allCrossingsLayerToggle" type="checkbox" /> Show all crossings layer</label></details>
+            </div>
           </div>
 
           <div id="map"></div>
