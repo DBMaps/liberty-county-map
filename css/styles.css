@@ -5655,7 +5655,7 @@ body.modal-open {
   left: 12px;
   right: auto;
   z-index: 420;
-  max-width: min(92%, 720px);
+  max-width: min(calc(100% - 180px), 720px);
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -5685,6 +5685,17 @@ body.modal-open {
 
 .map-card .geo-filter-status {
   margin-top: 10px;
+}
+
+.route-watch-setup-hint {
+  margin: 6px 0 0;
+  font-size: 0.78rem;
+  color: #9ab3cb;
+}
+
+.destination-chip.is-pending {
+  opacity: 0.82;
+  border-style: dashed;
 }
 
 @media (max-width: 1100px) {

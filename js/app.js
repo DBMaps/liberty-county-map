@@ -132,6 +132,7 @@ let activeReportMode = REPORT_MODES.rail;
 let showAllCrossingsLayer = false;
 let savedRouteCrossingIds = new Set();
 let activeDestinationPlace = null;
+let routeWatchActivated = false;
 let gridlyUserProfile = getGridlyUserProfile();
 let movementIntelligence = getMovementIntelligence();
 let mapBaseLayersByName = {};
@@ -237,6 +238,7 @@ function hydrateElements() {
     "routeConfidence",
     "routeReports",
     "desktopManageRouteBtn",
+    "routeWatchSetupHint",
     "sideRouteWatchHint",
     "homeInput",
     "workInput",
@@ -3877,29 +3879,44 @@ function getSelectedPlace() {
 function buildRouteWatchLabelParts() {
   const state = getSavedPlacesState();
   const selectedPlace = getSelectedPlace();
-  const homeLabel = String(state?.home?.name || localStorage.getItem("gridlyHome") || "Home").trim() || "Home";
-  const workLabel = String(state?.work?.name || localStorage.getItem("gridlyWork") || "Work").trim() || "Work";
-  let origin = homeLabel;
-  let destination = workLabel;
-
-  if (!state?.home && state?.work) origin = "Current Location";
-  if (state?.home && !state?.work) destination = "Destination";
-  if (selectedPlace?.id === "home") destination = "Home";
-  if (selectedPlace?.id === "work") destination = "Work";
-  if (selectedPlace?.id && selectedPlace.id !== "home" && selectedPlace.id !== "work") {
-    destination = String(selectedPlace.name || selectedPlace.label || "Destination").trim() || "Destination";
-  }
-  if (origin === destination) {
-    if (destination !== "Work") destination = "Work";
-    else origin = "Current Location";
-  }
+  const hasHome = Boolean(state?.home && hasValidPlaceCoordinates(state.home));
+  const hasWork = Boolean(state?.work && hasValidPlaceCoordinates(state.work));
+  const origin = hasHome ? "Home" : "Set Home";
+  const destination = hasWork ? "Work" : "Set Work";
 
   return {
     origin,
     destination,
     label: `${origin} → ${destination}`,
-    configured: Boolean(state?.home || state?.work)
+    configured: hasHome && hasWork,
+    hasHome,
+    hasWork,
+    selectedType: selectedPlace?.id || ""
   };
+}
+
+function updateRouteWatchSetupUI() {
+  const routeLabelParts = buildRouteWatchLabelParts();
+  const hasFavorite = Boolean(getSavedPlacesState().custom.length);
+  const buttonState = {
+    home: routeLabelParts.hasHome,
+    work: routeLabelParts.hasWork,
+    favorite: hasFavorite
+  };
+  const labelMap = {
+    home: buttonState.home ? "Home" : "Set Home",
+    work: buttonState.work ? "Work" : "Set Work",
+    favorite: buttonState.favorite ? "Favorite" : "Add Favorite"
+  };
+
+  [["desktopDestinationHomeBtn", "home"], ["desktopDestinationWorkBtn", "work"], ["desktopDestinationFavoriteBtn", "favorite"], ["destinationHomeBtn", "home"], ["destinationWorkBtn", "work"], ["destinationFavoriteBtn", "favorite"]].forEach(([id, type]) => {
+    const btn = els[id];
+    if (!btn) return;
+    btn.textContent = labelMap[type];
+    btn.classList.toggle("is-pending", !buttonState[type]);
+  });
+
+  if (els.routeWatchSetupHint) els.routeWatchSetupHint.hidden = routeLabelParts.configured;
 }
 
 function renderSavedPlacesSelectOptions() {
@@ -4135,6 +4152,12 @@ function initDailyDestinationHero() {
 
 function activateDestinationByType(type) {
   const state = getSavedPlacesState();
+  const routeLabelParts = buildRouteWatchLabelParts();
+  if (!routeLabelParts.configured) {
+    setConfirmation("Set up Home and Work to start Route Watch.", "error");
+    openRouteSetupModalForType(routeLabelParts.hasHome ? "work" : "home");
+    return;
+  }
   const target = type === "favorite" ? state.custom[0] : state[type];
   if (!target) {
     if (type === "favorite") {
@@ -4152,6 +4175,7 @@ function activateDestinationByType(type) {
     return;
   }
   activeDestinationPlace = target;
+  routeWatchActivated = true;
   map?.setView([targetCoords.lat, targetCoords.lng], 14);
   renderDestinationRoute({ ...target, lat: targetCoords.lat, lng: targetCoords.lng });
   scrollToSection("mapSection");
@@ -4247,6 +4271,7 @@ function loadSavedRoute() {
   const home = routeLabelParts.origin;
   const work = routeLabelParts.destination;
   renderSavedPlacesSelectOptions();
+  updateRouteWatchSetupUI();
 
   if (home) {
     safeText("savedHome", home);
@@ -4260,6 +4285,13 @@ function loadSavedRoute() {
     safeText("desktopRouteWork", work);
     if (els.workInput) els.workInput.value = work;
     if (els.mobileWorkInput) els.mobileWorkInput.value = work;
+  }
+
+  if (!routeLabelParts.configured) {
+    routeWatchActivated = false;
+    savedRouteCrossingIds = new Set();
+    savedRouteLayer?.clearLayers?.();
+    updateRouteWatchBadge();
   }
 }
 
@@ -4426,8 +4458,9 @@ function updateRouteIntelligence(nearest = []) {
     : null;
   const freshnessTier = getFreshnessTier(newestMinutes);
   const freshReportCount = activeIssues.filter((issue) => Number(issue.minutesAgo) <= 30).length;
-  const monitoredRouteLabel = routeLabelParts.label;
-  const routeIsConfigured = routeLabelParts.configured && Boolean(routeLabelParts.origin && routeLabelParts.destination);
+  const monitoredRouteLabel = "Home → Work";
+  const routeIsConfigured = routeLabelParts.configured;
+  const routeIsMonitoring = routeWatchActivated && routeIsConfigured;
 
   safeText("nearbyAlertCount", `${activeIssues.length} active now`);
 
@@ -4443,24 +4476,24 @@ function updateRouteIntelligence(nearest = []) {
 
   els.routeStatusCard?.classList.remove("clear", "delayed", "high");
 
-  if (!routeIsConfigured) {
+  if (!routeIsMonitoring) {
     safeText("routeStatus", "No active route selected");
-    safeText("routeEta", monitoredRouteLabel);
-    safeText("desktopRouteStatus", "Select a saved route to begin monitoring.");
+    safeText("routeEta", "Set Home and Work");
+    safeText("desktopRouteStatus", routeIsConfigured ? "Home and Work are ready. Start Route Watch to monitor this route." : "Set up Home and Work to start Route Watch.");
     safeText("routeFreshness", "Unknown");
     safeText("routeConfidence", "--");
     safeText("routeReports", "0 active");
     safeText("routeRecommendation", "Awaiting route selection");
-    safeText("sideRouteWatchHint", "Select Home, Work, Favorite, or Manage Route.");
+    safeText("sideRouteWatchHint", routeIsConfigured ? "1. Home and Work ready · 2. Tap Home or Work · 3. Start Route Watch" : "Set up Home and Work to start Route Watch.");
     safeText("departureTime", "Set destination first");
-    safeText("departureReason", "Active Route required for monitoring.");
+    safeText("departureReason", "Route Watch is off until Home and Work are configured and activated.");
     els.routeStatusCard?.classList.add("delayed");
   } else if (impact >= 70) {
     safeText("routeStatus", "Delay Detected");
     safeText("routeEta", `ETA 32 min (+${extraMinutes})`);
     safeText("departureTime", "Leave now");
     safeText("departureReason", `${routeIntel.blockedCount} blocked crossing${routeIntel.blockedCount === 1 ? "" : "s"} on Active Route · est +${routeIntel.estimatedDelayMinutes} min.`);
-    safeText("desktopRouteStatus", `Heavy delay on active route. ${routeIntel.advice} Fresh reports: ${freshReportCount}.`);
+    safeText("desktopRouteStatus", `Monitoring Home → Work. Heavy delay on active route. ${routeIntel.advice} Fresh reports: ${freshReportCount}.`);
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${activeIssues.length} active`);
@@ -4472,7 +4505,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeEta", `ETA 26 min (+${extraMinutes})`);
     safeText("departureTime", "Leave 8 min early");
     safeText("departureReason", `${routeIntel.blockedCount} blocked crossing${routeIntel.blockedCount === 1 ? "" : "s"} on Active Route · est +${routeIntel.estimatedDelayMinutes} min.`);
-    safeText("desktopRouteStatus", `Delays building. ${routeIntel.advice} Fresh reports: ${freshReportCount}.`);
+    safeText("desktopRouteStatus", `Monitoring Home → Work. Delays building. ${routeIntel.advice} Fresh reports: ${freshReportCount}.`);
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${activeIssues.length} active`);
@@ -4484,7 +4517,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeEta", "ETA 21 min");
     safeText("departureTime", "Normal departure");
     safeText("departureReason", "No major active shared delay detected on Active Route.");
-    safeText("desktopRouteStatus", freshReportCount > 0 ? `No active incidents on this route. Monitoring ${freshReportCount} recent updates.` : "No active incidents on this route. Live monitoring remains on.");
+    safeText("desktopRouteStatus", freshReportCount > 0 ? `Monitoring Home → Work. No active incidents; monitoring ${freshReportCount} recent updates.` : "Monitoring Home → Work. No active incidents on this route.");
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${activeIssues.length} active`);
