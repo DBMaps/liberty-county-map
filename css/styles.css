@@ -5651,11 +5651,11 @@ body.modal-open {
 
 .map-card .map-tools-overlay {
   position: absolute !important;
-  top: 12px;
+  top: 8px;
   left: 12px;
   right: auto;
   z-index: 420;
-  max-width: min(calc(100% - 180px), 720px);
+  max-width: min(calc(100% - 220px), 620px);
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -6872,7 +6872,9 @@ body.modal-open {
 }
 
 .map-tools-overlay {
-  z-index: 820 !important;
+  z-index: 540 !important;
+  background: rgba(8, 13, 20, 0.56) !important;
+  backdrop-filter: blur(2px);
 }
 
 /* Route Watch inline selectors */

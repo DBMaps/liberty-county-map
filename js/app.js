@@ -1961,7 +1961,7 @@ function drawPremiumRouteLine(latLngs, color = getRouteStatusColor(), renderFunc
   if (map && routeFocusArmed) {
     const bounds = L.latLngBounds(latLngs);
     if (bounds.isValid()) {
-      map.fitBounds(bounds, { paddingTopLeft: [24, 120], paddingBottomRight: [24, 80], maxZoom: 13, animate: false });
+      map.fitBounds(bounds, { paddingTopLeft: [32, 240], paddingBottomRight: [32, 72], maxZoom: 13, animate: false });
       routeFocusArmed = false;
     }
   }
@@ -4785,9 +4785,9 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
     const bounds = routePreviewLayer.getBounds();
     if (bounds.isValid()) {
       map.fitBounds(bounds, {
-        paddingTopLeft: [160, 220],
-        paddingBottomRight: [160, 220],
-        padding: [180, 180],
+        paddingTopLeft: [180, 320],
+        paddingBottomRight: [140, 120],
+        padding: [200, 180],
         maxZoom: 15,
         animate: true,
         duration: 0.6
