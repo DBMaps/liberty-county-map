@@ -1860,14 +1860,15 @@ function getRouteHazardAssessment() {
   const thresholdMiles = 0.8;
   const nearReports = [];
   const severityWeight = { blocked: 12, heavy: 7, delayed: 5, clear: 0, cleared: 0 };
+  const crossingLookup = new Map((Array.isArray(crossings) ? crossings : []).map((crossing) => [String(crossing?.id), crossing]));
 
   if (routeLatLngs.length < 2) {
     return { score: 0, level: "clear", nearbyReports: [], nearestIssue: null, recommendation: "normal", routePointCount: 0 };
   }
 
-  activeReports.forEach((report) => {
-    const crossing = crossingById.get(String(report.crossingId));
-    if (!crossing) return;
+  (Array.isArray(activeReports) ? activeReports : []).forEach((report) => {
+    const crossing = crossingLookup.get(String(report?.crossingId));
+    if (!crossing || !Number.isFinite(Number(crossing?.lat)) || !Number.isFinite(Number(crossing?.lng))) return;
     const lifecycleState = getIncidentLifecycleState(report);
     const type = String(report.type || "").toLowerCase();
     const normalizedType = type === "delay" ? "delayed" : type;
@@ -4796,15 +4797,16 @@ function updateRouteWatchStartButtonLabel() {
 function attachRouteWatchDebugGlobal() {
   // Keep debug helpers available for field triage without reintroducing verbose console noise.
   window.gridlyRouteWatchDebug = function gridlyRouteWatchDebug() {
-    const places = getSavedPlaces();
-    const startId = els.routeWatchStartSelect?.value || "";
-    const destinationId = els.routeWatchDestinationSelect?.value || "";
-    const start = places.find((place) => place.id === startId) || null;
-    const destination = places.find((place) => place.id === destinationId) || null;
-    const routeLayers = savedRouteLayer?.getLayers?.() || [];
-    const startCoordinates = normalizeCoordinatePair(start?.lat, start?.lng);
-    const destinationCoordinates = normalizeCoordinatePair(destination?.lat, destination?.lng);
-    const routeHazard = getRouteHazardAssessment();
+    try {
+      const places = Array.isArray(getSavedPlaces?.()) ? getSavedPlaces() : [];
+      const startId = els?.routeWatchStartSelect?.value || "";
+      const destinationId = els?.routeWatchDestinationSelect?.value || "";
+      const start = places.find((place) => place.id === startId) || null;
+      const destination = places.find((place) => place.id === destinationId) || null;
+      const routeLayers = savedRouteLayer?.getLayers?.() || [];
+      const startCoordinates = normalizeCoordinatePair(start?.lat, start?.lng);
+      const destinationCoordinates = normalizeCoordinatePair(destination?.lat, destination?.lng);
+      const routeHazard = getRouteHazardAssessment?.() || { score: 0, level: "clear", nearbyReports: [], nearestIssue: null, recommendation: "normal" };
     const blockedReason = !startId || !destinationId
       ? "Missing start/destination selection"
       : !start
@@ -4838,13 +4840,42 @@ function attachRouteWatchDebugGlobal() {
       routePreviewLayerOnMap: Boolean(map && savedRouteLayer && typeof map.hasLayer === "function" && map.hasLayer(savedRouteLayer) && routePreviewPolylinePointCount >= 2),
       routePreviewPolylinePointCount,
       lastRoutePreviewError,
-      routeHazardScore: routeHazard.score,
-      routeHazardLevel: routeHazard.level,
-      routeNearbyReports: routeHazard.nearbyReports,
-      routeNearestIssue: routeHazard.nearestIssue,
-      routeRecommendation: routeHazard.recommendation,
+      routeHazardScore: Number.isFinite(Number(routeHazard?.score)) ? Number(routeHazard.score) : 0,
+      routeHazardLevel: routeHazard?.level || "clear",
+      routeNearbyReports: Array.isArray(routeHazard?.nearbyReports) ? routeHazard.nearbyReports : [],
+      routeNearestIssue: routeHazard?.nearestIssue || null,
+      routeRecommendation: routeHazard?.recommendation || "normal",
       mapReady: Boolean(map)
     };
+    } catch (error) {
+      return {
+        startSelectValue: els?.routeWatchStartSelect?.value || "",
+        destinationSelectValue: els?.routeWatchDestinationSelect?.value || "",
+        startPlace: null,
+        destinationPlace: null,
+        selectedStart: { id: null, label: null },
+        selectedDestination: { id: null, label: null },
+        startCoordinates: null,
+        destinationCoordinates: null,
+        selectedPlaceValidity: { start: false, destination: false },
+        routePreviewBlockedReason: "Route debug fallback",
+        routeWatchActive: Boolean(routeWatchActivated),
+        routePreviewLayerExists: Boolean(routePreviewLayerExists),
+        routePreviewRendered: Boolean(routePreviewRendered),
+        mapHasRoutePreviewLayer: Boolean(mapHasRoutePreviewLayer),
+        routePreviewReason: routePreviewReason || "unknown",
+        routePreviewLayerOnMap: Boolean(map && savedRouteLayer && typeof map.hasLayer === "function" && map.hasLayer(savedRouteLayer)),
+        routePreviewPolylinePointCount: Number.isFinite(Number(routePreviewPolylinePointCount)) ? Number(routePreviewPolylinePointCount) : 0,
+        lastRoutePreviewError: lastRoutePreviewError || null,
+        routeHazardScore: 0,
+        routeHazardLevel: "clear",
+        routeNearbyReports: [],
+        routeNearestIssue: null,
+        routeRecommendation: "normal",
+        mapReady: Boolean(map),
+        debugError: String(error?.message || error || "Unknown debug error")
+      };
+    }
   };
 }
 
