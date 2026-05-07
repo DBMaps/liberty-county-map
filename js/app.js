@@ -436,7 +436,6 @@ function initGreeting() {
       "Commute Home"
     );
   } else {
-    console.info("Gridly save next state", { normalizedType, nextPlace, customCountBefore: nextState.custom.length });
     setGreeting(
       `Late Night Check${namePrefix}`,
       "After-Hours Route Watch",
@@ -1452,7 +1451,6 @@ async function loadCrossings() {
     updateRouteIntelligence();
     updateTrustStats();
     updateGrowthWidgets();
-  console.info("Gridly save UI refreshed", { source, selectedPlaceId: getSelectedPlaceId(), placeCount: getSavedPlaces().length });
     updateDailyHabitStatus();
     updateLastUpdated();
 
@@ -1619,7 +1617,6 @@ async function loadSharedReports() {
     updateRouteIntelligence();
     updateTrustStats();
     updateGrowthWidgets();
-  console.info("Gridly save UI refreshed", { source, selectedPlaceId: getSelectedPlaceId(), placeCount: getSavedPlaces().length });
     updateDailyHabitStatus();
     updateMobileAlertsMirror();
     evaluateSmartAlertsBanner();
@@ -3924,7 +3921,6 @@ function saveSavedPlaces(places) {
     nextState.custom.push(normalizedPlace);
   });
   saveSavedPlacesState(nextState);
-  console.info("Gridly saved localStorage", { key: SAVED_PLACES_STORAGE_KEY, value: localStorage.getItem(SAVED_PLACES_STORAGE_KEY) });
 }
 
 function getSelectedPlaceId() {
@@ -4090,18 +4086,15 @@ async function saveRoute(source = "desktop") {
   const { home, work, button } = getRouteInputValues(source);
   const modalMode = source === "mobile" ? (els.routeSetupModal?.dataset.mode || "add") : "add";
   const prefillType = source === "mobile" ? (els.routeSetupModal?.dataset.prefillType || "custom") : "custom";
-  console.info("Gridly save place clicked", { source, modalMode, prefillType, home, work, hasButton: Boolean(button) });
   if (!home || !work) {
     const errorMessage = "Missing place name or address. Please fill both fields.";
     lastValidationError = errorMessage;
-    console.info("Gridly save validation", { ok: false, error: errorMessage, source, modalMode, prefillType, home, work });
     flashButton(button, "Add name + place");
     setConfirmation(errorMessage, "error");
     lastSavedPlaceResult = { ok: false, message: errorMessage, at: new Date().toISOString() };
     return;
   }
   lastValidationError = null;
-  console.info("Gridly save validation", { ok: true, source, modalMode, prefillType, home, work });
   let normalizedType = prefillType === "favorite" ? "custom" : prefillType;
   const current = normalizeSavedPlaces();
   if (source === "mobile" && modalMode === "manage" && normalizedType === "custom") {
@@ -4128,11 +4121,11 @@ async function saveRoute(source = "desktop") {
     address: work,
     allowGeocode: true
   });
+  // Saved places must include valid coordinates before they are eligible for Route Watch routing.
   const coordinates = coordinateResolution?.coordinates || null;
   if (!coordinates) {
     const errorMessage = "We couldn't find that location. Try a full address or use My Location.";
     lastValidationError = errorMessage;
-    console.info("Gridly save validation", { ok: false, error: errorMessage, source, modalMode, prefillType, home, work, coordinateSource: coordinateResolution?.source || "null" });
     flashButton(button, "Location not found");
     setConfirmation(errorMessage, "error");
     lastSavedPlaceResult = {
@@ -4160,10 +4153,8 @@ async function saveRoute(source = "desktop") {
     coordinateSource: coordinateResolution?.source || "null"
   };
   if (normalizedType === "home") {
-    console.info("Gridly save next state", { normalizedType, nextPlace, nextStatePreview: { ...nextState, home: nextPlace } });
     nextState.home = nextPlace;
   } else if (normalizedType === "work") {
-    console.info("Gridly save next state", { normalizedType, nextPlace, nextStatePreview: { ...nextState, work: nextPlace } });
     nextState.work = nextPlace;
   } else {
     const existingIdx = nextState.custom.findIndex((place) => place?.id === id);
@@ -4171,7 +4162,6 @@ async function saveRoute(source = "desktop") {
     else nextState.custom.push(nextPlace);
   }
   saveSavedPlacesState(nextState);
-  console.info("Gridly saved localStorage", { key: SAVED_PLACES_STORAGE_KEY, value: localStorage.getItem(SAVED_PLACES_STORAGE_KEY) });
   setSelectedPlaceId(id);
 
   routeWatchActivated = false;
@@ -4179,7 +4169,6 @@ async function saveRoute(source = "desktop") {
   initDailyDestinationHero();
   updateRouteIntelligence();
   updateGrowthWidgets();
-  console.info("Gridly save UI refreshed", { source, selectedPlaceId: getSelectedPlaceId(), placeCount: getSavedPlaces().length });
   const placeLabel = normalizedType === "home" ? "Home" : normalizedType === "work" ? "Work" : (home || "Favorite");
   const saveMessage = `${placeLabel} saved with resolved coordinates (${coordinateResolution.source}).`;
   setConfirmation(saveMessage, "success");
@@ -4634,6 +4623,7 @@ function attachSavedPlacesDebugGlobal() {
 }
 
 function setRoutePreviewState(rendered, reason, options = {}) {
+  // Route preview is only considered successful when the rendered polyline has at least 2 points.
   routePreviewPolylinePointCount = Number.isFinite(Number(options.pointCount)) ? Number(options.pointCount) : 0;
   const hasUsablePolyline = routePreviewPolylinePointCount >= 2;
   const layerExistsOption = Boolean(options.layerExists);
@@ -4649,10 +4639,7 @@ function setRoutePreviewState(rendered, reason, options = {}) {
 }
 
 function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
-  console.info("Gridly route preview function entered", {
-    startCoordinates,
-    destinationCoordinates
-  });
+  // Render from saved Home/Work (or other saved place) coordinates only after coordinate validation succeeds.
   if (!savedRouteLayer || !map) return false;
 
   const fallbackPoints = [
@@ -4697,11 +4684,6 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
     }
   }
 
-  console.info("Gridly route preview rendered", {
-    startCoordinates,
-    destinationCoordinates,
-    routePreviewPolylinePointCount
-  });
   return true;
 }
 
@@ -4720,6 +4702,7 @@ function updateRouteWatchStartButtonLabel() {
 }
 
 function attachRouteWatchDebugGlobal() {
+  // Keep debug helpers available for field triage without reintroducing verbose console noise.
   window.gridlyRouteWatchDebug = function gridlyRouteWatchDebug() {
     const places = getSavedPlaces();
     const startId = els.routeWatchStartSelect?.value || "";
@@ -4897,7 +4880,6 @@ async function startInlineRouteWatch() {
   const places = getSavedPlaces();
   const start = places.find((place) => place.id === startId);
   const destination = places.find((place) => place.id === destinationId);
-  console.info("Gridly route selected places", { startId, destinationId, start, destination });
   if (!start || !destination) {
     setRoutePreviewState(false, "Start or destination was not selected.", { layerExists: false, mapHasLayer: false, pointCount: 0 });
     setConfirmation("Choose a start and destination to begin monitoring.", "error");
@@ -4921,10 +4903,6 @@ async function startInlineRouteWatch() {
   const toPlace = destination.id === "home" ? state.home : destination.id === "work" ? state.work : state.custom.find((place) => place.id === destination.id);
   const fromCoords = normalizeCoordinatePair(fromPlace?.lat, fromPlace?.lng);
   const toCoords = normalizeCoordinatePair(toPlace?.lat, toPlace?.lng);
-  console.info("Gridly route coordinates resolved", {
-    startCoordinates: fromCoords,
-    destinationCoordinates: toCoords
-  });
   if (!fromCoords || !toCoords) {
     savedRouteLayer?.clearLayers?.();
     setRoutePreviewState(false, "Missing start or destination coordinates", { layerExists: false, mapHasLayer: false, pointCount: 0 });
@@ -4955,14 +4933,6 @@ async function startInlineRouteWatch() {
   savedRouteLayer?.clearLayers?.();
   window.__gridlyRouteWatchActive = true;
   window.__gridlySelectedRouteId = `${start.id}->${destination.id}`;
-  console.info("Gridly selected route id set", {
-    selectedRouteId: window.__gridlySelectedRouteId,
-    routeWatchActive: window.__gridlyRouteWatchActive,
-    startId: start.id,
-    destinationId: destination.id
-  });
-  console.info("Gridly route CTA handler path", { handler: "startInlineRouteWatch", calls: "renderRoutePreviewLine" });
-  console.info("Gridly route preview render attempt", { startId: start.id, destinationId: destination.id });
   const routePreviewShown = renderRoutePreviewLine(fromCoords, toCoords);
   if (!routePreviewShown) {
     setRoutePreviewState(false, "Missing start or destination coordinates", { layerExists: false, mapHasLayer: false, pointCount: 0 });
