@@ -159,6 +159,10 @@ let preferredRouteReason = "Primary route is selected by default.";
 let lastRouteSwitchAt = null;
 let routeSwitchCount = 0;
 let activeRouteSource = "primary";
+let lastRouteSwitchMessage = "";
+let routeUxState = "primary_clear";
+let routeRecommendationTone = "calm";
+let routeTransitionUntil = 0;
 let routePreviewReason = "Route preview has not been requested.";
 let lastRoutePreviewError = null;
 let routeGeometrySource = "fallback";
@@ -5140,24 +5144,66 @@ function ensureAlternateRouteButton() {
   return button;
 }
 
+function getRouteRecommendationState(routeHazard) {
+  const transitionActive = routeTransitionUntil > Date.now();
+  if (transitionActive && activeRouteSource === "alternate") {
+    routeUxState = "alternate_promoted_after_switch";
+    routeRecommendationTone = "affirming";
+    return {
+      state: routeUxState,
+      tone: routeRecommendationTone,
+      message: lastRouteSwitchMessage || "Now monitoring alternate route."
+    };
+  }
+  if (routeHazard?.level === "clear" && primaryRouteHazardCount === 0) {
+    routeUxState = "primary_route_clear";
+    routeRecommendationTone = "calm";
+    return { state: routeUxState, tone: routeRecommendationTone, message: "Primary route is clear. Route Watch is actively monitoring for changes." };
+  }
+  if ((routeHazard?.level === "blocked" || routeHazard?.level === "heavy" || routeHazard?.level === "caution") && !alternateRouteAvailable) {
+    routeUxState = "primary_hazard_no_alternate";
+    routeRecommendationTone = "urgent";
+    return { state: routeUxState, tone: routeRecommendationTone, message: "Delay risk detected on primary route. No safer alternate is available right now." };
+  }
+  if (routeComparisonStatus === "both_delayed") {
+    routeUxState = "both_routes_active_delays";
+    routeRecommendationTone = "balanced";
+    return { state: routeUxState, tone: routeRecommendationTone, message: "Both primary and alternate routes have active delays. Keep monitoring live reports before departure." };
+  }
+  if (routeComparisonStatus === "alternate_safer") {
+    routeUxState = "alternate_safer";
+    routeRecommendationTone = "advisory";
+    return { state: routeUxState, tone: routeRecommendationTone, message: "A safer alternate route is available now. Switching may reduce delay exposure." };
+  }
+  if (routeComparisonStatus === "alternate_available") {
+    routeUxState = "alternate_not_better";
+    routeRecommendationTone = "neutral";
+    return { state: routeUxState, tone: routeRecommendationTone, message: "An alternate route is available, but the primary route is still the better option." };
+  }
+  routeUxState = "primary_clear";
+  routeRecommendationTone = "calm";
+  return { state: routeUxState, tone: routeRecommendationTone, message: "Primary route remains your recommended option." };
+}
+
 function updateAlternateRouteActionState() {
   const switchEl = els?.alternateRoute;
   const switchBtn = ensureAlternateRouteButton();
   const switchAvailable = Boolean(alternateRouteAvailable && alternateRouteLayer && window.__gridlyRoutePreviewLayer && routeWatchActivated);
+  const monitoringAlternate = activeRouteSource === "alternate";
 
   if (switchEl) {
     switchEl.classList.toggle("disabled", !switchAvailable);
     switchEl.setAttribute("aria-disabled", switchAvailable ? "false" : "true");
-    switchEl.title = switchAvailable ? "Use Alternate Route" : "Alternate route unavailable";
+    switchEl.title = monitoringAlternate ? "Monitoring Alternate" : (switchAvailable ? "Use Alternate Route" : "Alternate route unavailable");
   }
 
   if (switchBtn) {
     switchBtn.hidden = !routeWatchActivated;
-    switchBtn.disabled = !switchAvailable;
+    switchBtn.disabled = monitoringAlternate ? true : !switchAvailable;
     switchBtn.classList.toggle("disabled", !switchAvailable);
-    switchBtn.setAttribute("aria-disabled", switchAvailable ? "false" : "true");
-    switchBtn.title = switchAvailable ? "Use Alternate Route" : "Alternate route unavailable";
-    switchBtn.textContent = switchAvailable ? "Use Alternate Route" : "Alternate Route Unavailable";
+    switchBtn.setAttribute("aria-disabled", (switchAvailable && !monitoringAlternate) ? "false" : "true");
+    switchBtn.title = monitoringAlternate ? "Monitoring Alternate" : (switchAvailable ? "Use Alternate Route" : "Alternate route unavailable");
+    switchBtn.textContent = monitoringAlternate ? "Monitoring Alternate" : (switchAvailable ? "Use Alternate Route" : "Alternate Route Unavailable");
   }
 }
 
@@ -5183,6 +5229,8 @@ async function useAlternateRoute() {
     mapHasRoutePreviewLayer = true;
     lastRouteSwitchAt = new Date().toISOString();
     routeSwitchCount += 1;
+    lastRouteSwitchMessage = "Now monitoring alternate route.";
+    routeTransitionUntil = Date.now() + 9000;
 
     let nextAlternate = null;
     const places = Array.isArray(getSavedPlaces?.()) ? getSavedPlaces() : [];
@@ -5217,7 +5265,7 @@ async function useAlternateRoute() {
     updateRouteIntelligence();
     updateRouteWatchPill();
     updateAlternateRouteActionState();
-    setConfirmation("Now monitoring the alternate route.", "success");
+    setConfirmation("Now monitoring alternate route.", "success");
     return true;
   } catch (error) {
     setConfirmation("Could not switch routes right now. Keeping current monitored route.", "error");
@@ -5322,6 +5370,9 @@ function attachRouteWatchDebugGlobal() {
       hazardsAvoidedCount,
       routeComparisonStatus,
       routeComparisonSummary,
+      routeUxState,
+      routeRecommendationTone,
+      lastRouteSwitchMessage,
       primaryRouteScore,
       alternateRouteScore,
       preferredRoute,
@@ -5377,6 +5428,9 @@ function attachRouteWatchDebugGlobal() {
         hazardsAvoidedCount: 0,
         routeComparisonStatus: "alternate_unavailable",
         routeComparisonSummary: "",
+        routeUxState,
+        routeRecommendationTone,
+        lastRouteSwitchMessage,
         primaryRouteScore: 0,
         alternateRouteScore: 0,
         preferredRoute: "primary",
@@ -5836,7 +5890,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
-    safeText("routeRecommendation", preferredRouteReason || routeComparisonSummary || (alternateRouteAvailable ? "Alternate route available for review." : "Alternate route check recommended."));
+    { const rec = getRouteRecommendationState(routeHazard); safeText("routeRecommendation", rec.message); }
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("high");
   } else if (routeHazard.level === "heavy") {
@@ -5848,7 +5902,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
-    safeText("routeRecommendation", preferredRouteReason || routeComparisonSummary || (alternateRouteAvailable ? "Alternate route available for review." : "Alternate route check recommended."));
+    { const rec = getRouteRecommendationState(routeHazard); safeText("routeRecommendation", rec.message); }
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("delayed");
   } else if (routeHazard.level === "caution") {
@@ -5860,7 +5914,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
-    safeText("routeRecommendation", preferredRouteReason || "Possible delay near your route.");
+    { const rec = getRouteRecommendationState(routeHazard); safeText("routeRecommendation", rec.message); }
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("delayed");
   } else {
@@ -5872,7 +5926,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
-    safeText("routeRecommendation", preferredRouteReason || "Your route looks clear.");
+    { const rec = getRouteRecommendationState(routeHazard); safeText("routeRecommendation", rec.message); }
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("clear");
   }
