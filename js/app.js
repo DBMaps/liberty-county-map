@@ -1918,6 +1918,21 @@ function getRouteHazardAssessment() {
   return { score, level, nearbyReports: nearReports, nearestIssue, recommendation, routePointCount: routeLatLngs.length };
 }
 
+function isIncidentRouteRelevant(incident = {}, routeHazard = null) {
+  if (!routeWatchActivated) return false;
+  const routeLatLngs = getRoutePolylineLatLngs();
+  if (routeLatLngs.length < 2) return false;
+  const nearbyReports = Array.isArray(routeHazard?.nearbyReports) ? routeHazard.nearbyReports : getRouteHazardAssessment().nearbyReports;
+  const nearbyCrossingIds = new Set(nearbyReports.map((report) => String(report.crossingId || "")));
+  if (incident?.crossingId && nearbyCrossingIds.has(String(incident.crossingId))) return true;
+  const incidentLat = Number(incident?.lat);
+  const incidentLng = Number(incident?.lng);
+  if (!Number.isFinite(incidentLat) || !Number.isFinite(incidentLng)) return false;
+  const thresholdMiles = 0.8;
+  const minDistance = routeLatLngs.reduce((minDist, pt) => Math.min(minDist, getDistanceMiles(incidentLat, incidentLng, pt.lat, pt.lng)), Number.POSITIVE_INFINITY);
+  return Number.isFinite(minDistance) && minDistance <= thresholdMiles;
+}
+
 function getRouteStatusColor() {
   const routeReports = activeReports.filter((report) => savedRouteCrossingIds.has(String(report.crossingId)));
   const hasBlocked = routeReports.some(
@@ -2268,6 +2283,7 @@ function renderUnifiedIncidents() {
   unifiedIncidentLayer.clearLayers();
 
   const incidents = getUnifiedIncidents();
+  const routeHazard = routeWatchActivated ? getRouteHazardAssessment() : null;
 
   incidents.forEach((incident) => {
     if (!Number.isFinite(incident.lat) || !Number.isFinite(incident.lng)) return;
@@ -2279,11 +2295,14 @@ function renderUnifiedIncidents() {
     const ageClass =
       incident.age_minutes <= 15 ? "fresh" : incident.age_minutes <= 60 ? "aging" : "old";
     const proximityClass = isNearbyPriority ? "nearby-priority" : "far-faded";
+    const routeRelevanceClass = routeWatchActivated
+      ? (isIncidentRouteRelevant(incident, routeHazard) ? "route-relevant" : "route-deemphasized")
+      : "";
 
     const icon = L.divIcon({
       className: "",
       html: `
-        <div class="gridly-hazard-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass} ${proximityClass}">
+        <div class="gridly-hazard-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass} ${proximityClass} ${routeRelevanceClass}">
           <span>${sanitizeText(getUnifiedIncidentIcon(incident))}</span>
           <small>${incident.age_minutes}m</small>
           ${incident.reports_count > 1 ? `<b>${incident.reports_count}</b>` : ""}
@@ -2824,6 +2843,26 @@ function injectHazardStyles() {
     .gridly-hazard-marker.old {
       opacity: 0.55;
       animation: none;
+    }
+
+    .gridly-hazard-marker.route-relevant {
+      transform: scale(1.08);
+      filter: saturate(1.14) brightness(1.08);
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.2), 0 0 22px rgba(255, 209, 102, 0.56);
+    }
+
+    .gridly-hazard-marker.high.route-relevant {
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.2), 0 0 24px rgba(255, 78, 111, 0.62);
+    }
+
+    .gridly-hazard-marker.moderate.route-relevant {
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.2), 0 0 24px rgba(57, 200, 255, 0.62);
+    }
+
+    .gridly-hazard-marker.route-deemphasized {
+      opacity: 0.48;
+      filter: saturate(0.78) brightness(0.9);
+      animation-duration: 3.2s;
     }
 
     .gridly-hazard-marker b {
@@ -4871,6 +4910,14 @@ function attachRouteWatchDebugGlobal() {
       const startCoordinates = normalizeCoordinatePair(start?.lat, start?.lng);
       const destinationCoordinates = normalizeCoordinatePair(destination?.lat, destination?.lng);
       const routeHazard = getRouteHazardAssessment?.() || { score: 0, level: "clear", nearbyReports: [], nearestIssue: null, recommendation: "normal" };
+      const activeIncidents = (getUnifiedIncidents?.() || []).filter((incident) => incident.status === "active");
+      const routeRelevantIncidents = activeIncidents.filter((incident) => isIncidentRouteRelevant(incident, routeHazard));
+      const routeRelevantCrossings = routeHazard.nearbyReports.filter((report) => report.reportType === "blocked" && report.lifecycleState === "active");
+      const routeContextSummary = routeRelevantCrossings.length > 0
+        ? "Blocked crossing detected along monitored corridor."
+        : routeRelevantIncidents.length > 0
+          ? `${routeRelevantIncidents.length} active issue${routeRelevantIncidents.length === 1 ? "" : "s"} affecting this route.`
+          : "No active hazards detected along this route.";
     const blockedReason = !startId || !destinationId
       ? "Missing start/destination selection"
       : !start
@@ -4912,6 +4959,9 @@ function attachRouteWatchDebugGlobal() {
       routeNearbyReports: Array.isArray(routeHazard?.nearbyReports) ? routeHazard.nearbyReports : [],
       routeNearestIssue: routeHazard?.nearestIssue || null,
       routeRecommendation: routeHazard?.recommendation || "normal",
+      routeRelevantReportCount: routeRelevantIncidents.length,
+      routeRelevantCrossings,
+      routeContextSummary,
       mapReady: Boolean(map)
     };
     } catch (error) {
@@ -5337,16 +5387,30 @@ function updateRouteIntelligence(nearest = []) {
     activeIssues.length * 10 + highAlerts * 22 + moderateAlerts * 8 + Math.round(crossingRisk * 0.35)
   );
 
+  const routeIsConfigured = routeLabelParts.configured;
+  const routeIsMonitoring = routeWatchActivated && routeIsConfigured;
   const extraMinutes = Math.max(0, Math.round(impact / 7));
   const routeIntel = getRouteWatchIntelligence(activeIssues);
   const routeHazard = getRouteHazardAssessment();
+  const activeUnifiedHazards = unifiedActive.filter((incident) => !String(incident.type || "").startsWith("rail_"));
+  const routeRelevantHazards = routeIsMonitoring
+    ? activeUnifiedHazards.filter((incident) => isIncidentRouteRelevant(incident, routeHazard))
+    : [];
+  const routeRelevantBlockedCrossings = routeIsMonitoring
+    ? routeHazard.nearbyReports.filter((report) => report.reportType === "blocked" && report.lifecycleState === "active").length
+    : 0;
+  const routeContextSummary = !routeIsMonitoring
+    ? "Route Watch is off until Home and a destination are selected."
+    : routeRelevantBlockedCrossings > 0
+      ? "Blocked crossing detected along monitored corridor."
+      : routeRelevantHazards.length > 0
+        ? `${routeRelevantHazards.length} active issue${routeRelevantHazards.length === 1 ? "" : "s"} affecting this route.`
+        : "No active hazards detected along this route.";
   const newestMinutes = activeIssues.length
     ? Math.min(...activeIssues.map((issue) => Number(issue.minutesAgo)).filter((value) => Number.isFinite(value)))
     : null;
   const freshnessTier = getFreshnessTier(newestMinutes);
   const freshReportCount = activeIssues.filter((issue) => Number(issue.minutesAgo) <= 30).length;
-  const routeIsConfigured = routeLabelParts.configured;
-  const routeIsMonitoring = routeWatchActivated && routeIsConfigured;
 
   safeText("nearbyAlertCount", `${activeIssues.length} active now`);
 
@@ -5384,7 +5448,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
     safeText("routeRecommendation", "Blocked crossing near your route. Consider another route.");
-    safeText("sideRouteWatchHint", "Route preview active.");
+    safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("high");
   } else if (routeHazard.level === "heavy") {
     safeText("routeStatus", "Heavy Delay");
@@ -5396,7 +5460,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
     safeText("routeRecommendation", "Heavy delay on active route. Leave early or reroute.");
-    safeText("sideRouteWatchHint", "Route preview active.");
+    safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("delayed");
   } else if (routeHazard.level === "caution") {
     safeText("routeStatus", "Caution");
@@ -5408,7 +5472,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
     safeText("routeRecommendation", "Possible delay near your route.");
-    safeText("sideRouteWatchHint", "Route preview active.");
+    safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("delayed");
   } else {
     safeText("routeStatus", "Clear");
@@ -5420,7 +5484,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
     safeText("routeRecommendation", "Your route looks clear.");
-    safeText("sideRouteWatchHint", "Route preview active.");
+    safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("clear");
   }
 
