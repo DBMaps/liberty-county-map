@@ -139,6 +139,7 @@ let saveButtonHandlerAttached = false;
 let routePreviewRendered = false;
 let routePreviewLayerExists = false;
 let mapHasRoutePreviewLayer = false;
+let routePreviewPolylinePointCount = 0;
 let routePreviewReason = "Route preview has not been requested.";
 let lastRoutePreviewError = null;
 const LOCAL_PLACE_LOOKUP = {
@@ -4634,53 +4635,35 @@ function attachSavedPlacesDebugGlobal() {
 
 function setRoutePreviewState(rendered, reason, options = {}) {
   routePreviewRendered = Boolean(rendered);
-  routePreviewLayerExists = Boolean(options.layerExists);
-  mapHasRoutePreviewLayer = Boolean(options.mapHasLayer);
+  routePreviewPolylinePointCount = Number.isFinite(Number(options.pointCount)) ? Number(options.pointCount) : 0;
+  const hasUsablePolyline = routePreviewPolylinePointCount >= 2;
+  routePreviewLayerExists = Boolean(options.layerExists) && hasUsablePolyline;
+  mapHasRoutePreviewLayer = Boolean(options.mapHasLayer) && hasUsablePolyline;
   routePreviewReason = String(reason || (rendered ? "Route preview rendered" : "Route preview not rendered."));
   lastRoutePreviewError = rendered ? null : routePreviewReason;
 }
 
-function renderRoutePreviewLine(startCoords, destinationCoords, meta = {}) {
+function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
   console.info("Gridly route preview function entered", {
-    startCoords,
-    destinationCoords,
-    meta
+    startCoordinates,
+    destinationCoordinates
   });
-  const start = normalizeCoordinatePair(startCoords?.lat, startCoords?.lng);
-  const destination = normalizeCoordinatePair(destinationCoords?.lat, destinationCoords?.lng);
-  if (!savedRouteLayer || !start || !destination) return false;
-  if (start.lat === destination.lat && start.lng === destination.lng) return false;
+  if (!savedRouteLayer || !map) return false;
+
+  const fallbackPoints = [
+    [Number(startCoordinates?.lat), Number(startCoordinates?.lng)],
+    [Number(destinationCoordinates?.lat), Number(destinationCoordinates?.lng)]
+  ];
+  const hasValidPoints = fallbackPoints.length >= 2 && fallbackPoints.every((point) => (
+    Array.isArray(point)
+    && point.length >= 2
+    && Number.isFinite(point[0])
+    && Number.isFinite(point[1])
+  ));
+  if (!hasValidPoints) return false;
 
   savedRouteLayer.clearLayers();
-  const rawRouteGeometry = Array.isArray(meta.routeGeometry) && meta.routeGeometry.length
-    ? meta.routeGeometry
-    : [
-      [start.lat, start.lng],
-      [destination.lat, destination.lng]
-    ];
-  console.info("Gridly raw route geometry", rawRouteGeometry);
-
-  const latLngs = rawRouteGeometry
-    .map((point) => {
-      if (!Array.isArray(point) || point.length < 2) return null;
-      const normalized = normalizeCoordinatePair(point[0], point[1]);
-      return normalized ? [normalized.lat, normalized.lng] : null;
-    })
-    .filter(Boolean);
-  console.info("Gridly normalized polyline points", latLngs);
-  console.info("Gridly polyline point count", latLngs.length);
-  if (latLngs.length < 2) return false;
-
-  const glow = L.polyline(latLngs, {
-    pane: "routePane",
-    color: "#22d3ee",
-    weight: 12,
-    opacity: 0.32,
-    lineJoin: "round",
-    lineCap: "round",
-    interactive: false
-  });
-  const core = L.polyline(latLngs, {
+  const routePreviewLayer = L.polyline(fallbackPoints, {
     pane: "routePane",
     color: "#38bdf8",
     weight: 6,
@@ -4688,46 +4671,35 @@ function renderRoutePreviewLine(startCoords, destinationCoords, meta = {}) {
     lineJoin: "round",
     lineCap: "round",
     interactive: false
-  });
-  const accent = L.polyline(latLngs, {
-    pane: "routePane",
-    color: "#e0f2fe",
-    weight: 2,
-    opacity: 0.84,
-    lineJoin: "round",
-    lineCap: "round",
-    interactive: false
-  });
+  }).addTo(map);
 
-  savedRouteLayer.addLayer(glow);
-  savedRouteLayer.addLayer(core);
-  savedRouteLayer.addLayer(accent);
-  const rendered = Boolean(savedRouteLayer.getLayers?.().length >= 3);
-  if (!rendered) return false;
+  const actualLatLngs = routePreviewLayer.getLatLngs();
+  routePreviewPolylinePointCount = Array.isArray(actualLatLngs) ? actualLatLngs.length : 0;
+  routePreviewRendered = routePreviewPolylinePointCount >= 2;
+  if (!routePreviewRendered) {
+    return false;
+  }
 
-  if (map && typeof map.hasLayer === "function" && !map.hasLayer(savedRouteLayer)) {
+  savedRouteLayer.addLayer(routePreviewLayer);
+  if (typeof map.hasLayer === "function" && !map.hasLayer(savedRouteLayer)) {
     savedRouteLayer.addTo(map);
   }
-  const layerExists = Boolean(savedRouteLayer && savedRouteLayer.getLayers?.().length);
-  const mapHasLayer = Boolean(map && savedRouteLayer && typeof map.hasLayer === "function" && map.hasLayer(savedRouteLayer));
-  console.info("Gridly polyline added to map", {
-    layerExists,
-    mapHasLayer
-  });
+
   if (map) {
-    const bounds = L.latLngBounds(latLngs);
+    const bounds = L.latLngBounds(actualLatLngs);
     if (bounds.isValid()) {
       map.fitBounds(bounds, { paddingTopLeft: [24, 120], paddingBottomRight: [24, 80], maxZoom: 13, animate: false });
     }
   }
+
   console.info("Gridly route preview rendered", {
-    startLabel: meta.startLabel || "Start",
-    destinationLabel: meta.destinationLabel || "Destination",
-    startCoordinates: start,
-    destinationCoordinates: destination
+    startCoordinates,
+    destinationCoordinates,
+    routePreviewPolylinePointCount
   });
   return true;
 }
+
 
 function updateRouteWatchStartButtonLabel() {
   if (!els.routeWatchStartBtn) return;
@@ -4782,8 +4754,8 @@ function attachRouteWatchDebugGlobal() {
       routePreviewRendered,
       mapHasRoutePreviewLayer,
       routePreviewReason,
-      routePreviewLayerOnMap: Boolean(map && savedRouteLayer && typeof map.hasLayer === "function" && map.hasLayer(savedRouteLayer)),
-      routePreviewPolylinePointCount: routeLayers.find((layer) => typeof layer?.getLatLngs === "function")?.getLatLngs?.()?.length || 0,
+      routePreviewLayerOnMap: Boolean(map && savedRouteLayer && typeof map.hasLayer === "function" && map.hasLayer(savedRouteLayer) && routePreviewPolylinePointCount >= 2),
+      routePreviewPolylinePointCount,
       lastRoutePreviewError,
       mapReady: Boolean(map)
     };
@@ -4865,7 +4837,7 @@ function loadSavedRoute() {
   const destinationCoordinates = normalizeCoordinatePair(destinationPlace?.lat, destinationPlace?.lng);
   if (startId && destinationId && (!startCoordinates || !destinationCoordinates)) {
     savedRouteLayer?.clearLayers?.();
-    setRoutePreviewState(false, "Missing start or destination coordinates", { layerExists: false, mapHasLayer: false });
+    setRoutePreviewState(false, "Missing start or destination coordinates", { layerExists: false, mapHasLayer: false, pointCount: 0 });
   }
   if (els.routeWatchStartBtn) {
     els.routeWatchStartBtn.disabled = savedPlaceCount < 2 || !startId || !destinationId;
@@ -4922,13 +4894,13 @@ async function startInlineRouteWatch() {
   const destination = places.find((place) => place.id === destinationId);
   console.info("Gridly route selected places", { startId, destinationId, start, destination });
   if (!start || !destination) {
-    setRoutePreviewState(false, "Start or destination was not selected.", { layerExists: false, mapHasLayer: false });
+    setRoutePreviewState(false, "Start or destination was not selected.", { layerExists: false, mapHasLayer: false, pointCount: 0 });
     setConfirmation("Choose a start and destination to begin monitoring.", "error");
     return;
   }
   if (start.id === destination.id) {
     savedRouteLayer?.clearLayers?.();
-    setRoutePreviewState(false, "Start and destination are the same place.", { layerExists: false, mapHasLayer: false });
+    setRoutePreviewState(false, "Start and destination are the same place.", { layerExists: false, mapHasLayer: false, pointCount: 0 });
     setConfirmation("Choose a different destination.", "error");
     return;
   }
@@ -4950,7 +4922,7 @@ async function startInlineRouteWatch() {
   });
   if (!fromCoords || !toCoords) {
     savedRouteLayer?.clearLayers?.();
-    setRoutePreviewState(false, "Missing start or destination coordinates", { layerExists: false, mapHasLayer: false });
+    setRoutePreviewState(false, "Missing start or destination coordinates", { layerExists: false, mapHasLayer: false, pointCount: 0 });
     setConfirmation("Route preview unavailable until precise locations are saved.", "error");
     safeText("routeWatchSetupHint", "Route preview unavailable until precise locations are saved.");
     updateRouteIntelligence();
@@ -4959,7 +4931,7 @@ async function startInlineRouteWatch() {
   }
   if (fromCoords.lat === toCoords.lat && fromCoords.lng === toCoords.lng) {
     savedRouteLayer?.clearLayers?.();
-    setRoutePreviewState(false, "Start and destination coordinates are the same", { layerExists: false, mapHasLayer: false });
+    setRoutePreviewState(false, "Start and destination coordinates are the same", { layerExists: false, mapHasLayer: false, pointCount: 0 });
     setConfirmation("Update one saved place location to view a route preview.", "error");
     safeText("routeWatchSetupHint", "Update one saved place location to view a route preview.");
     updateRouteIntelligence();
@@ -4968,7 +4940,7 @@ async function startInlineRouteWatch() {
   }
   if (getDistanceMiles(fromCoords.lat, fromCoords.lng, toCoords.lat, toCoords.lng) > 80) {
     savedRouteLayer?.clearLayers?.();
-    setRoutePreviewState(false, "Route preview skipped because points are too far apart for local preview.", { layerExists: false, mapHasLayer: false });
+    setRoutePreviewState(false, "Route preview skipped because points are too far apart for local preview.", { layerExists: false, mapHasLayer: false, pointCount: 0 });
     setConfirmation("Route preview unavailable for this selection.", "error");
     safeText("routeWatchSetupHint", "Route preview unavailable for this selection.");
     updateRouteIntelligence();
@@ -4986,25 +4958,23 @@ async function startInlineRouteWatch() {
   });
   console.info("Gridly route CTA handler path", { handler: "startInlineRouteWatch", calls: "renderRoutePreviewLine" });
   console.info("Gridly route preview render attempt", { startId: start.id, destinationId: destination.id });
-  const routePreviewShown = renderRoutePreviewLine(fromCoords, toCoords, {
-    startLabel: start.name,
-    destinationLabel: destination.name
-  });
+  const routePreviewShown = renderRoutePreviewLine(fromCoords, toCoords);
   if (!routePreviewShown) {
-    setRoutePreviewState(false, "Missing start or destination coordinates", { layerExists: false, mapHasLayer: false });
+    setRoutePreviewState(false, "Missing start or destination coordinates", { layerExists: false, mapHasLayer: false, pointCount: 0 });
     setConfirmation("Route preview unavailable until precise locations are saved.", "error");
     safeText("routeWatchSetupHint", "Route preview unavailable until precise locations are saved.");
   } else {
     const layerExists = Boolean(savedRouteLayer && savedRouteLayer.getLayers?.().length);
     const mapHasLayer = Boolean(map && savedRouteLayer && typeof map.hasLayer === "function" && map.hasLayer(savedRouteLayer));
-    const hasRenderedLayer = Boolean(layerExists && mapHasLayer);
+    const hasRenderedLayer = Boolean(routePreviewPolylinePointCount >= 2 && layerExists && mapHasLayer);
     setRoutePreviewState(hasRenderedLayer, hasRenderedLayer ? "Route preview rendered" : "Route preview layer was not added to map", {
       layerExists,
-      mapHasLayer
+      mapHasLayer,
+      pointCount: routePreviewPolylinePointCount
     });
     if (hasRenderedLayer) {
-      setConfirmation("Route preview shown. Not turn-by-turn directions.", "success");
-      safeText("routeWatchSetupHint", "Route preview shown. Not turn-by-turn directions.");
+      setConfirmation("Route preview active.", "success");
+      safeText("routeWatchSetupHint", "Route preview active.");
     } else {
       setConfirmation("Route preview unavailable until precise locations are saved.", "error");
       safeText("routeWatchSetupHint", "Route preview unavailable until precise locations are saved.");
