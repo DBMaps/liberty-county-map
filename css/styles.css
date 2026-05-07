@@ -6451,3 +6451,195 @@ body.modal-open {
     border-left: 2px solid rgba(76, 219, 152, 0.72);
   }
 }
+
+/* v18 premium desktop alignment refinements */
+@media (min-width: 1100px) {
+  .app-shell.premium-layout {
+    width: min(1600px, calc(100% - 40px));
+    margin: 18px auto 14px;
+  }
+
+  .app-header {
+    min-height: 86px;
+    padding: 0 34px;
+    background: linear-gradient(180deg, rgba(4, 10, 18, 0.94), rgba(6, 12, 20, 0.9));
+    border-bottom: 1px solid rgba(150, 190, 230, 0.14);
+  }
+
+  .top-nav.command-top-nav {
+    gap: 10px;
+    padding: 8px;
+    border-radius: 18px;
+    border: 1px solid rgba(116, 156, 200, 0.18);
+    background: rgba(6, 16, 28, 0.56);
+  }
+
+  .top-nav .nav-btn,
+  .top-nav .top-command-btn {
+    min-height: 42px;
+    padding: 10px 16px;
+    font-size: 0.84rem;
+    letter-spacing: 0.02em;
+    border-radius: 12px;
+    color: #b2bfd3;
+    border: 1px solid transparent;
+    background: transparent;
+  }
+
+  .top-nav .nav-btn.active,
+  .top-nav .nav-btn:hover,
+  .top-nav .top-command-btn:hover {
+    color: #e9f4ff;
+    background: rgba(71, 124, 178, 0.16);
+    border-color: rgba(122, 171, 224, 0.32);
+  }
+
+  .command-center {
+    gap: 14px;
+    grid-template-columns: minmax(0, 1fr) 360px;
+  }
+
+  .map-card {
+    padding: 14px;
+    border: 1px solid rgba(122, 161, 204, 0.2);
+    background: linear-gradient(180deg, rgba(6, 14, 24, 0.93), rgba(8, 16, 25, 0.9));
+    box-shadow: 0 22px 52px rgba(2, 7, 16, 0.58);
+  }
+
+  .desktop-route-watch-strip {
+    margin-bottom: 14px;
+    padding: 16px 18px;
+    border-radius: 18px;
+    border: 1px solid rgba(108, 155, 206, 0.22);
+    background: linear-gradient(128deg, rgba(8, 20, 35, 0.96), rgba(8, 17, 28, 0.89));
+    gap: 18px;
+  }
+
+  .route-watch-strip-copy .eyebrow { margin-bottom: 4px; }
+  .route-watch-strip-copy strong { font-size: 1.9rem; letter-spacing: -0.03em; margin: 8px 0 8px; }
+  .route-watch-strip-copy p { font-size: 0.9rem; color: #9db2ca; }
+
+  .route-watch-live-pill {
+    background: rgba(39, 153, 103, 0.12);
+    border: 1px solid rgba(79, 198, 143, 0.34);
+    color: #89efbe;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+  }
+
+  .desktop-route-watch-actions {
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  .desktop-route-watch-actions .compact-btn {
+    min-height: 38px;
+    border-radius: 11px;
+    padding: 8px 12px;
+    border-color: rgba(122, 160, 201, 0.25);
+    background: rgba(8, 22, 36, 0.48);
+  }
+
+  .map-frame {
+    border-radius: 20px;
+    border: 1px solid rgba(128, 168, 211, 0.2);
+    padding: 8px;
+    background: linear-gradient(165deg, rgba(5, 13, 22, 0.9), rgba(7, 14, 23, 0.8));
+  }
+
+  #map {
+    border-radius: 16px;
+    border-color: rgba(141, 181, 222, 0.2);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03), 0 16px 34px rgba(2, 7, 16, 0.45);
+  }
+
+  .map-card .map-tools-overlay {
+    position: absolute;
+    inset: 14px 16px auto 16px;
+    z-index: 520;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px 14px;
+    align-items: start;
+    padding: 12px 14px;
+    border-radius: 16px;
+    border: 1px solid rgba(125, 166, 210, 0.22);
+    background: rgba(6, 16, 29, 0.72);
+    backdrop-filter: blur(14px) saturate(115%);
+  }
+
+  .map-card .map-tools-section,
+  .map-card .geo-filter-shell,
+  .map-card .map-view-label,
+  .map-card .map-tools-status,
+  .map-card .all-crossings-advanced {
+    margin: 0;
+  }
+
+  .map-card .desktop-map-legend-row,
+  .map-card .geo-filter-shell {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    gap: 7px;
+  }
+
+  .map-card .legend-pill,
+  .map-card .map-tools-overlay .geo-filter-pill {
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 0.72rem;
+    letter-spacing: 0.025em;
+  }
+
+  .side-panel.desktop-command-panel {
+    padding: 12px;
+    border-radius: 22px;
+    border: 1px solid rgba(121, 162, 206, 0.2);
+    background: linear-gradient(180deg, rgba(7, 16, 28, 0.93), rgba(8, 15, 24, 0.9));
+  }
+
+  .desktop-command-panel .drawer-panel {
+    border: 1px solid rgba(114, 153, 196, 0.14);
+    background: rgba(7, 16, 28, 0.58);
+    box-shadow: none;
+  }
+
+  .desktop-command-panel .drawer-summary {
+    padding: 12px 12px 10px;
+  }
+
+  .desktop-command-panel .drawer-body {
+    padding: 0 12px 12px;
+  }
+
+  .desktop-command-panel .combined-module-block h3 {
+    margin: 0 0 10px;
+    font-size: 0.85rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #8ea7c3;
+  }
+
+  .desktop-command-panel .trending-list,
+  .desktop-command-panel .alerts-list {
+    gap: 8px;
+  }
+
+  .desktop-command-panel .trend-item {
+    padding: 10px 11px;
+    border-radius: 12px;
+    border-width: 1px;
+    background: rgba(11, 24, 39, 0.5);
+  }
+
+  .desktop-command-panel .trend-item strong {
+    font-size: 0.88rem;
+    letter-spacing: 0.02em;
+  }
+
+  .desktop-command-panel .trend-item p {
+    font-size: 0.8rem;
+    line-height: 1.25;
+  }
+}
