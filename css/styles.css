@@ -4206,6 +4206,12 @@ h1, h2, h3, .future-metric-headline {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
 }
 
+
+#map .leaflet-top,
+#map .leaflet-control-container .leaflet-top {
+  z-index: 6000 !important;
+}
+
 #map .leaflet-control-layers {
   font-size: 0.82rem;
   line-height: 1.2;
@@ -5914,7 +5920,7 @@ body.modal-open {
 #map .leaflet-control-layers {
   margin-top: 10px;
   margin-right: 10px;
-  z-index: 900 !important;
+  z-index: 5000 !important;
   border: 1px solid rgba(116, 214, 255, 0.34);
   border-radius: 12px;
   background: linear-gradient(160deg, rgba(10, 17, 26, 0.94), rgba(7, 12, 20, 0.92));
