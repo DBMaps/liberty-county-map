@@ -3867,15 +3867,22 @@ function getRouteInputValues(source = "desktop") {
 function getSavedPlaces() {
   const state = normalizeSavedPlaces();
   const places = [];
-  if (isConfiguredPlace(state.home)) places.push({ id: "home", name: state.home.label || "Home", address: state.home.address || "" });
-  if (isConfiguredPlace(state.work)) places.push({ id: "work", name: state.work.label || "Work", address: state.work.address || "" });
-  state.custom.forEach((place) => {
+  const addIfRoutable = (place, fallbackId, fallbackName) => {
+    if (!isConfiguredPlace(place)) return;
+    const coordinates = normalizeCoordinatePair(place.lat, place.lng);
+    if (!coordinates) return;
     places.push({
-      id: place.id || `custom-${Date.now()}`,
-      name: place.label || "Favorite",
-      address: place.address || ""
+      id: place.id || fallbackId,
+      name: place.label || fallbackName,
+      address: place.address || "",
+      source: place.coordinateSource || "unknown",
+      lat: coordinates.lat,
+      lng: coordinates.lng
     });
-  });
+  };
+  addIfRoutable(state.home, "home", "Home");
+  addIfRoutable(state.work, "work", "Work");
+  state.custom.forEach((place) => addIfRoutable(place, `custom-${Date.now()}`, "Favorite"));
   return places;
 }
 
@@ -4109,6 +4116,21 @@ async function saveRoute(source = "desktop") {
     allowGeocode: true
   });
   const coordinates = coordinateResolution?.coordinates || null;
+  if (!coordinates) {
+    const errorMessage = "We couldn't find that location. Try a full address or use My Location.";
+    lastValidationError = errorMessage;
+    console.info("Gridly save validation", { ok: false, error: errorMessage, source, modalMode, prefillType, home, work, coordinateSource: coordinateResolution?.source || "null" });
+    flashButton(button, "Location not found");
+    setConfirmation(errorMessage, "error");
+    lastSavedPlaceResult = {
+      ok: false,
+      type: normalizedType,
+      message: errorMessage,
+      at: new Date().toISOString(),
+      coordinateSource: coordinateResolution?.source || "null"
+    };
+    return;
+  }
   const createdAt = new Date().toISOString();
   const placeType = normalizedType === "custom" ? "favorite" : normalizedType;
   const nextPlace = {
@@ -4146,9 +4168,7 @@ async function saveRoute(source = "desktop") {
   updateGrowthWidgets();
   console.info("Gridly save UI refreshed", { source, selectedPlaceId: getSelectedPlaceId(), placeCount: getSavedPlaces().length });
   const placeLabel = normalizedType === "home" ? "Home" : normalizedType === "work" ? "Work" : (home || "Favorite");
-  const saveMessage = coordinates
-    ? `${placeLabel} saved with resolved coordinates (${coordinateResolution.source}).`
-    : "Saved as label only — no coordinates were resolved.";
+  const saveMessage = `${placeLabel} saved with resolved coordinates (${coordinateResolution.source}).`;
   setConfirmation(saveMessage, "success");
   lastSavedPlaceResult = {
     ok: true,
@@ -4561,7 +4581,21 @@ function attachSavedPlacesDebugGlobal() {
       currentInputName: els.mobileHomeInput?.value?.trim?.() || "",
       currentInputAddress: els.mobileWorkInput?.value?.trim?.() || "",
       savedPlaces: state,
-      dropdownOptions: getSavedPlaces().map((place) => ({ id: place.id, name: place.name })),
+      dropdownOptions: getSavedPlaces().map((place) => ({ id: place.id, name: place.name, lat: place.lat, lng: place.lng, source: place.source })),
+      placesWithCoordinateState: [state.home, state.work, ...(Array.isArray(state.custom) ? state.custom : [])]
+        .filter(Boolean)
+        .map((place) => {
+          const normalizedCoords = normalizeCoordinatePair(place?.lat, place?.lng);
+          return {
+            id: place.id || null,
+            label: place.label || place.name || "",
+            source: place.coordinateSource || "unknown",
+            address: place.address || "",
+            lat: Number.isFinite(Number(place?.lat)) ? Number(place.lat) : null,
+            lng: Number.isFinite(Number(place?.lng)) ? Number(place.lng) : null,
+            hasValidCoordinates: Boolean(normalizedCoords)
+          };
+        }),
       localStorageRaw: rawSavedPlaces,
       parsedSavedPlaces,
       homeValidity: validity.home,
@@ -4685,6 +4719,19 @@ function attachRouteWatchDebugGlobal() {
     const start = places.find((place) => place.id === startId) || null;
     const destination = places.find((place) => place.id === destinationId) || null;
     const routeLayers = savedRouteLayer?.getLayers?.() || [];
+    const startCoordinates = normalizeCoordinatePair(start?.lat, start?.lng);
+    const destinationCoordinates = normalizeCoordinatePair(destination?.lat, destination?.lng);
+    const blockedReason = !startId || !destinationId
+      ? "Missing start/destination selection"
+      : !start
+        ? "Selected start is not routable"
+        : !destination
+          ? "Selected destination is not routable"
+          : !startCoordinates || !destinationCoordinates
+            ? "Route preview unavailable until precise locations are saved."
+            : startCoordinates.lat === destinationCoordinates.lat && startCoordinates.lng === destinationCoordinates.lng
+              ? "Start and destination are identical"
+              : null;
     return {
       startSelectValue: startId,
       destinationSelectValue: destinationId,
@@ -4692,8 +4739,13 @@ function attachRouteWatchDebugGlobal() {
       destinationPlace: destination,
       selectedStart: start ? { id: start.id, label: start.name || start.label || "" } : { id: startId || null, label: null },
       selectedDestination: destination ? { id: destination.id, label: destination.name || destination.label || "" } : { id: destinationId || null, label: null },
-      startCoordinates: normalizeCoordinatePair(start?.lat, start?.lng),
-      destinationCoordinates: normalizeCoordinatePair(destination?.lat, destination?.lng),
+      startCoordinates,
+      destinationCoordinates,
+      selectedPlaceValidity: {
+        start: Boolean(start && startCoordinates),
+        destination: Boolean(destination && destinationCoordinates)
+      },
+      routePreviewBlockedReason: blockedReason,
       routeWatchActive: routeWatchActivated,
       routePreviewLayerExists,
       routePreviewRendered,
