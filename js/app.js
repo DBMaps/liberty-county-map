@@ -3910,22 +3910,26 @@ function buildRouteWatchLabelParts() {
   const selectedPlace = getSelectedPlace();
   const hasHome = isConfiguredPlace(state?.home);
   const hasWork = isConfiguredPlace(state?.work);
+  const hasDestination = Boolean(selectedPlace && selectedPlace.id !== "home");
   const origin = hasHome ? "Home" : "No active route";
   const selectedDestination = selectedPlace?.id !== "home"
     ? (selectedPlace?.name || selectedPlace?.label || "")
     : "";
-  const destination = selectedDestination || (hasWork ? "Work" : "");
+  const destination = selectedDestination || "";
   const activeLabel = routeWatchActivated
     ? (activeDestinationPlace?.label || selectedPlace?.name || selectedPlace?.label || destination || "Saved destination")
     : "";
+  const activeRouteLabel = hasHome && destination ? `${origin} → ${destination}` : "No active route";
 
   return {
     origin,
     destination,
-    label: destination ? `${origin} → ${destination}` : origin,
-    configured: hasHome && hasWork,
+    label: hasHome ? activeRouteLabel : "No active route",
+    activeRouteLabel,
+    configured: hasHome && hasDestination,
     hasHome,
     hasWork,
+    hasDestination,
     selectedType: selectedPlace?.id || "",
     activeLabel
   };
@@ -3976,6 +3980,19 @@ function renderSavedPlacesSelectOptions() {
       selectEl.appendChild(option);
     });
   });
+  updateRouteSetupManageState();
+}
+
+function updateRouteSetupManageState() {
+  if (!els.routeSetupModal || els.routeSetupModal.dataset.mode !== "manage") return;
+  const routeLabelParts = buildRouteWatchLabelParts();
+  const subtitleEl = els.routeSetupModal.querySelector(".smart-alerts-subtitle");
+  const canStart = routeLabelParts.hasHome && routeLabelParts.hasDestination;
+  if (els.mobileSaveRouteBtn) els.mobileSaveRouteBtn.disabled = !canStart;
+  if (!subtitleEl) return;
+  if (!routeLabelParts.hasHome) subtitleEl.textContent = "Set Home before starting Route Watch.";
+  else if (!routeLabelParts.hasDestination) subtitleEl.textContent = "Choose a saved destination.";
+  else subtitleEl.textContent = "Select a saved destination, then start Route Watch.";
 }
 
 function saveRoute(source = "desktop") {
@@ -4304,6 +4321,7 @@ function configureRouteSetupModal({ mode = "add", prefillType = "custom" } = {})
     if (els.mobileHomeInput) els.mobileHomeInput.value = selected?.name || "";
     if (els.mobileWorkInput) els.mobileWorkInput.value = selected?.address || "";
     if (subtitleEl) subtitleEl.textContent = "Select a saved destination, then start Route Watch.";
+    updateRouteSetupManageState();
     return;
   }
 
@@ -4404,7 +4422,14 @@ async function renderDestinationRoute(target) {
   const from = [fromCoords.lat, fromCoords.lng];
   const to = [toCoords.lat, toCoords.lng];
   const osrmPath = await fetchRoadRouteCoordinates(from, to);
-  drawPremiumRouteLine(osrmPath?.length > 1 ? osrmPath : [from, to], "#66e8ff", "renderDestinationRoute");
+  if (osrmPath?.length > 1) {
+    drawPremiumRouteLine(osrmPath, "#66e8ff", "renderDestinationRoute");
+    setConfirmation(`Route Watch set: ${target.label}.`, "success");
+  } else {
+    savedRouteLayer.clearLayers();
+    setConfirmation(`Route Watch set: ${target.label}. Precise route line unavailable.`, "success");
+    if (els.routeWatchSetupHint) els.routeWatchSetupHint.textContent = `Monitoring Home → ${target.label}. Precise route line unavailable.`;
+  }
   savedRouteCrossingIds = new Set(crossings.filter((c) => getDistanceMiles(c.lat, c.lng, target.lat, target.lng) <= 3.5).map((c) => String(c.id)));
   renderCrossings();
   updateRouteWatchBadge(target.label);
@@ -4430,7 +4455,7 @@ function loadSavedRoute() {
   routeFocusArmed = true;
   const routeLabelParts = buildRouteWatchLabelParts();
   const home = routeLabelParts.hasHome ? "Home" : "No active route";
-  const work = routeLabelParts.hasWork ? "Work" : "";
+  const work = routeLabelParts.destination || "";
   renderSavedPlacesSelectOptions();
   updateRouteWatchSetupUI();
 
@@ -4443,6 +4468,11 @@ function loadSavedRoute() {
     safeText("savedWork", work);
     safeText("desktopRouteWork", work);
   }
+  safeText("routeCardLabel", routeWatchActivated && routeLabelParts.activeLabel
+    ? `Monitoring: Home → ${routeLabelParts.activeLabel}`
+    : routeLabelParts.hasHome && routeLabelParts.destination
+      ? `Active destination: ${routeLabelParts.destination}`
+      : "No active route");
 
   if (!routeLabelParts.configured) {
     routeWatchActivated = false;
@@ -4451,17 +4481,19 @@ function loadSavedRoute() {
     updateRouteWatchBadge();
     if (els.routeWatchSetupHint) {
       els.routeWatchSetupHint.hidden = false;
-      els.routeWatchSetupHint.textContent = "Set up Home and Work to start Route Watch.";
+      els.routeWatchSetupHint.textContent = routeLabelParts.hasHome
+        ? "Choose a saved destination to start Route Watch."
+        : "Set Home and one destination to start Route Watch.";
     }
     if (els.sideRouteWatchHint) {
       els.sideRouteWatchHint.textContent = "1. Save Home and Work · 2. Open Manage Route · 3. Start Route Watch";
     }
   } else if (!routeWatchActivated && els.routeWatchSetupHint) {
     els.routeWatchSetupHint.hidden = false;
-    els.routeWatchSetupHint.textContent = "Home and Work saved. Start Route Watch to monitor this route.";
+    els.routeWatchSetupHint.textContent = "Choose a saved destination to start Route Watch.";
   } else if (routeWatchActivated && els.routeWatchSetupHint) {
     els.routeWatchSetupHint.hidden = false;
-    els.routeWatchSetupHint.textContent = `Monitoring ${routeLabelParts.activeLabel || "your selected destination"}.`;
+    els.routeWatchSetupHint.textContent = `Monitoring Home → ${routeLabelParts.activeLabel || "Saved destination"}.`;
   }
   if (!routeLabelParts.hasHome && routeLabelParts.hasWork && els.routeWatchSetupHint) {
     els.routeWatchSetupHint.textContent = "Work saved. Add Home to start Route Watch.";
@@ -4650,9 +4682,7 @@ function updateRouteIntelligence(nearest = []) {
     : null;
   const freshnessTier = getFreshnessTier(newestMinutes);
   const freshReportCount = activeIssues.filter((issue) => Number(issue.minutesAgo) <= 30).length;
-  const monitoredRouteLabel = routeLabelParts.activeLabel
-    ? `to ${routeLabelParts.activeLabel}`
-    : routeLabelParts.label;
+  const monitoredRouteLabel = routeLabelParts.activeRouteLabel || routeLabelParts.label;
   const routeIsConfigured = routeLabelParts.configured;
   const routeIsMonitoring = routeWatchActivated && routeIsConfigured;
 
@@ -4672,15 +4702,15 @@ function updateRouteIntelligence(nearest = []) {
 
   if (!routeIsMonitoring) {
     safeText("routeStatus", "No active route selected");
-    safeText("routeEta", "Set Home and Work");
-    safeText("desktopRouteStatus", routeIsConfigured ? "Home and Work are ready. Start Route Watch to monitor this route." : "Set up Home and Work to start Route Watch.");
+    safeText("routeEta", routeLabelParts.hasHome ? "Choose destination" : "Set Home");
+    safeText("desktopRouteStatus", routeLabelParts.hasHome ? "Choose a saved destination to start Route Watch." : "Set Home and one destination to start Route Watch.");
     safeText("routeFreshness", "Unknown");
     safeText("routeConfidence", "--");
     safeText("routeReports", "0 active");
     safeText("routeRecommendation", "Awaiting route selection");
-    safeText("sideRouteWatchHint", routeIsConfigured ? "1. Home and Work ready · 2. Tap Home or Work · 3. Start Route Watch" : "Set up Home and Work to start Route Watch.");
+    safeText("sideRouteWatchHint", routeLabelParts.hasHome ? "Choose a saved destination to start Route Watch." : "Set Home and one destination to start Route Watch.");
     safeText("departureTime", "Set destination first");
-    safeText("departureReason", "Route Watch is off until Home and Work are configured and activated.");
+    safeText("departureReason", "Route Watch is off until Home and a destination are selected.");
     els.routeStatusCard?.classList.add("delayed");
   } else if (impact >= 70) {
     safeText("routeStatus", "Delay Detected");
