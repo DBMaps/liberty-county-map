@@ -141,6 +141,12 @@ let routePreviewLayerExists = false;
 let mapHasRoutePreviewLayer = false;
 let routePreviewPolylinePointCount = 0;
 let routePreviewCorridorLayer = null;
+let alternateRouteLayer = null;
+let alternateRouteVertexCount = 0;
+let alternateRouteGeometrySource = "none";
+let alternateRouteStatus = "not_needed";
+let alternateRouteReason = "";
+let alternateRouteAvailable = false;
 let routePreviewReason = "Route preview has not been requested.";
 let lastRoutePreviewError = null;
 let routeGeometrySource = "fallback";
@@ -1934,11 +1940,11 @@ function getRerouteFoundation(routeHazard = {}) {
     rerouteTargetIssue: routeHazard?.nearestIssue || null,
     originalRouteGeometrySource: routeGeometrySource || "fallback",
     originalRouteVertexCount: Number.isFinite(Number(routePreviewPolylinePointCount)) ? Number(routePreviewPolylinePointCount) : 0,
-    alternateRouteAvailable: false,
-    alternateRouteReason: rerouteRecommended ? "Alternate route check recommended." : "",
-    alternateRouteGeometrySource: "none",
-    alternateRouteVertexCount: 0,
-    alternateRouteStatus
+    alternateRouteAvailable: rerouteRecommended ? alternateRouteAvailable : false,
+    alternateRouteReason: rerouteRecommended ? (alternateRouteReason || "Alternate route check recommended.") : "",
+    alternateRouteGeometrySource: rerouteRecommended ? (alternateRouteGeometrySource || "none") : "none",
+    alternateRouteVertexCount: rerouteRecommended ? alternateRouteVertexCount : 0,
+    alternateRouteStatus: rerouteRecommended ? (alternateRouteStatus || "unavailable") : alternateRouteStatus
   };
 }
 
@@ -2023,6 +2029,33 @@ async function fetchRoadRouteCoordinates(from, to) {
   } finally {
     clearTimeout(timeout);
   }
+}
+
+async function fetchAlternateRouteCoordinates(from, to, primaryPoints = []) {
+  if (!Array.isArray(from) || !Array.isArray(to)) return null;
+  const [fromLat, fromLng] = from;
+  const [toLat, toLng] = to;
+  if (![fromLat, fromLng, toLat, toLng].every((value) => Number.isFinite(Number(value)))) return null;
+  const primarySignature = Array.isArray(primaryPoints)
+    ? primaryPoints.map((point) => `${Number(point?.[0]).toFixed(5)},${Number(point?.[1]).toFixed(5)}`).join("|")
+    : "";
+  const osrmUrl = `${OSRM_ROUTE_API}/${Number(fromLng)},${Number(fromLat)};${Number(toLng)},${Number(toLat)}?overview=full&geometries=geojson&alternatives=true&steps=false`;
+  const response = await fetch(osrmUrl, { method: "GET" });
+  if (!response.ok) return null;
+  const payload = await response.json();
+  const alternateCandidates = Array.isArray(payload?.routes) ? payload.routes.slice(1) : [];
+  for (const route of alternateCandidates) {
+    const routeCoordinates = route?.geometry?.coordinates;
+    if (!Array.isArray(routeCoordinates) || routeCoordinates.length < 2) continue;
+    const convertedPoints = routeCoordinates
+      .map((point) => (Array.isArray(point) ? [Number(point[1]), Number(point[0])] : null))
+      .filter((point) => Array.isArray(point) && Number.isFinite(point[0]) && Number.isFinite(point[1]));
+    if (convertedPoints.length < 2) continue;
+    const signature = convertedPoints.map((point) => `${point[0].toFixed(5)},${point[1].toFixed(5)}`).join("|");
+    if (primarySignature && signature === primarySignature) continue;
+    return convertedPoints;
+  }
+  return null;
 }
 
 function drawPremiumRouteLine(latLngs, color = getRouteStatusColor(), renderFunction = "drawPremiumRouteLine") {
@@ -4803,7 +4836,16 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
   if (routePreviewCorridorLayer && typeof map.removeLayer === "function" && map.hasLayer(routePreviewCorridorLayer)) {
     map.removeLayer(routePreviewCorridorLayer);
   }
+  if (alternateRouteLayer && typeof map.removeLayer === "function" && map.hasLayer(alternateRouteLayer)) {
+    map.removeLayer(alternateRouteLayer);
+  }
   routePreviewCorridorLayer = null;
+  alternateRouteLayer = null;
+  alternateRouteVertexCount = 0;
+  alternateRouteGeometrySource = "none";
+  alternateRouteStatus = "not_needed";
+  alternateRouteReason = "";
+  alternateRouteAvailable = false;
 
   let previewPoints = fallbackPoints;
   routeGeometrySource = "fallback";
@@ -4875,6 +4917,38 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
 
   routePreviewCorridorLayer = L.layerGroup([corridorUnderlay, corridorBase, routePreviewLayer]).addTo(map);
   window.__gridlyRoutePreviewLayer = routePreviewLayer;
+
+  const rerouteFoundation = getRerouteFoundation(getRouteHazardAssessment());
+  if (rerouteFoundation.rerouteRecommended) {
+    alternateRouteStatus = "unavailable";
+    alternateRouteReason = "Alternate route check recommended.";
+    try {
+      const alternatePoints = await fetchAlternateRouteCoordinates(
+        [Number(startCoordinates?.lat), Number(startCoordinates?.lng)],
+        [Number(destinationCoordinates?.lat), Number(destinationCoordinates?.lng)],
+        previewPoints
+      );
+      if (Array.isArray(alternatePoints) && alternatePoints.length >= 2) {
+        alternateRouteLayer = L.polyline(alternatePoints, {
+          pane: "routePane",
+          color: "#fbbf24",
+          weight: 6,
+          opacity: 0.95,
+          dashArray: "12 10",
+          lineCap: "round",
+          lineJoin: "round"
+        }).addTo(map);
+        alternateRouteVertexCount = alternatePoints.length;
+        alternateRouteGeometrySource = "osrm_alternative";
+        alternateRouteStatus = "available";
+        alternateRouteReason = "Alternate route available.";
+        alternateRouteAvailable = true;
+      }
+    } catch (error) {
+      alternateRouteStatus = "unavailable";
+      alternateRouteReason = "Alternate route check recommended.";
+    }
+  }
 
   const actualLatLngs = routePreviewLayer.getLatLngs();
   routePreviewPolylinePointCount = Array.isArray(actualLatLngs) ? actualLatLngs.length : 0;
@@ -5492,7 +5566,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
-    safeText("routeRecommendation", "Alternate route check recommended.");
+    safeText("routeRecommendation", alternateRouteAvailable ? "Alternate route available." : "Alternate route check recommended.");
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("high");
   } else if (routeHazard.level === "heavy") {
@@ -5504,7 +5578,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
-    safeText("routeRecommendation", "Alternate route check recommended.");
+    safeText("routeRecommendation", alternateRouteAvailable ? "Alternate route available." : "Alternate route check recommended.");
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("delayed");
   } else if (routeHazard.level === "caution") {
