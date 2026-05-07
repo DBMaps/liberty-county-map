@@ -233,6 +233,9 @@ function hydrateElements() {
     "desktopRouteHome",
     "desktopRouteWork",
     "desktopRouteStatus",
+    "routeFreshness",
+    "routeConfidence",
+    "routeReports",
     "desktopManageRouteBtn",
     "sideRouteWatchHint",
     "homeInput",
@@ -4443,7 +4446,11 @@ function updateRouteIntelligence(nearest = []) {
   if (!routeIsConfigured) {
     safeText("routeStatus", "No active route selected");
     safeText("routeEta", monitoredRouteLabel);
-    safeText("desktopRouteStatus", "Set up this route to begin monitoring.");
+    safeText("desktopRouteStatus", "Select a saved route to begin monitoring.");
+    safeText("routeFreshness", "Unknown");
+    safeText("routeConfidence", "--");
+    safeText("routeReports", "0 active");
+    safeText("routeRecommendation", "Awaiting route selection");
     safeText("sideRouteWatchHint", "Select Home, Work, Favorite, or Manage Route.");
     safeText("departureTime", "Set destination first");
     safeText("departureReason", "Active Route required for monitoring.");
@@ -4454,6 +4461,10 @@ function updateRouteIntelligence(nearest = []) {
     safeText("departureTime", "Leave now");
     safeText("departureReason", `${routeIntel.blockedCount} blocked crossing${routeIntel.blockedCount === 1 ? "" : "s"} on Active Route · est +${routeIntel.estimatedDelayMinutes} min.`);
     safeText("desktopRouteStatus", `Heavy delay on active route. ${routeIntel.advice} Fresh reports: ${freshReportCount}.`);
+    safeText("routeFreshness", freshnessTier);
+    safeText("routeConfidence", routeIntel.confidence);
+    safeText("routeReports", `${activeIssues.length} active`);
+    safeText("routeRecommendation", "Avoid corridor");
     safeText("sideRouteWatchHint", `Monitoring ON · Active Route ${monitoredRouteLabel} · Delay Detected · ${routeIntel.reroute} Last Confirmed ${freshnessTier} · Confidence ${routeIntel.confidence}.`);
     els.routeStatusCard?.classList.add("high");
   } else if (impact >= 40) {
@@ -4462,6 +4473,10 @@ function updateRouteIntelligence(nearest = []) {
     safeText("departureTime", "Leave 8 min early");
     safeText("departureReason", `${routeIntel.blockedCount} blocked crossing${routeIntel.blockedCount === 1 ? "" : "s"} on Active Route · est +${routeIntel.estimatedDelayMinutes} min.`);
     safeText("desktopRouteStatus", `Delays building. ${routeIntel.advice} Fresh reports: ${freshReportCount}.`);
+    safeText("routeFreshness", freshnessTier);
+    safeText("routeConfidence", routeIntel.confidence);
+    safeText("routeReports", `${activeIssues.length} active`);
+    safeText("routeRecommendation", "Watch delay");
     safeText("sideRouteWatchHint", `Monitoring ON · Active Route ${monitoredRouteLabel} · Delay Detected · Consider alternate route · Last Confirmed ${freshnessTier} · Confidence ${routeIntel.confidence}.`);
     els.routeStatusCard?.classList.add("delayed");
   } else {
@@ -4470,6 +4485,10 @@ function updateRouteIntelligence(nearest = []) {
     safeText("departureTime", "Normal departure");
     safeText("departureReason", "No major active shared delay detected on Active Route.");
     safeText("desktopRouteStatus", freshReportCount > 0 ? `No active incidents on this route. Monitoring ${freshReportCount} recent updates.` : "No active incidents on this route. Live monitoring remains on.");
+    safeText("routeFreshness", freshnessTier);
+    safeText("routeConfidence", routeIntel.confidence);
+    safeText("routeReports", `${activeIssues.length} active`);
+    safeText("routeRecommendation", "Drive normally");
     safeText("sideRouteWatchHint", `Monitoring ON · Active Route ${monitoredRouteLabel} · Clear Corridor · Last Confirmed ${freshnessTier} · Confidence ${routeIntel.confidence}.`);
     els.routeStatusCard?.classList.add("clear");
   }
