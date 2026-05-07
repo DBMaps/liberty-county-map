@@ -142,6 +142,8 @@ let mapHasRoutePreviewLayer = false;
 let routePreviewPolylinePointCount = 0;
 let routePreviewReason = "Route preview has not been requested.";
 let lastRoutePreviewError = null;
+let routeGeometrySource = "fallback";
+let osrmRouteSuccess = false;
 const LOCAL_PLACE_LOOKUP = {
   dayton: { lat: 30.0466, lng: -94.8852 },
   crosby: { lat: 29.9111, lng: -95.0622 },
@@ -4715,7 +4717,7 @@ function setRoutePreviewState(rendered, reason, options = {}) {
   lastRoutePreviewError = routePreviewRendered ? null : routePreviewReason;
 }
 
-function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
+async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
   // Render from saved Home/Work (or other saved place) coordinates only after coordinate validation succeeds.
   if (!map) return false;
 
@@ -4735,17 +4737,50 @@ function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
     map.removeLayer(window.__gridlyRoutePreviewLayer);
   }
 
-  const routePreviewLayer = L.polyline(
-    [
-      [Number(startCoordinates?.lat), Number(startCoordinates?.lng)],
-      [Number(destinationCoordinates?.lat), Number(destinationCoordinates?.lng)]
-    ],
-    {
-      color: "#00ffff",
-      weight: 12,
-      opacity: 1
+  let previewPoints = fallbackPoints;
+  routeGeometrySource = "fallback";
+  osrmRouteSuccess = false;
+
+  try {
+    const startLat = Number(startCoordinates?.lat);
+    const startLng = Number(startCoordinates?.lng);
+    const destinationLat = Number(destinationCoordinates?.lat);
+    const destinationLng = Number(destinationCoordinates?.lng);
+    const osrmUrl = `${OSRM_ROUTE_API}/${startLng},${startLat};${destinationLng},${destinationLat}?overview=full&geometries=geojson`;
+    const controller = typeof AbortController === "function" ? new AbortController() : null;
+    const timeoutId = controller ? setTimeout(() => controller.abort(), 7000) : null;
+    const response = await fetch(osrmUrl, {
+      method: "GET",
+      signal: controller?.signal
+    });
+    if (timeoutId) clearTimeout(timeoutId);
+    if (!response.ok) {
+      throw new Error(`OSRM response failed (${response.status})`);
     }
-  ).addTo(map);
+    const payload = await response.json();
+    const routeCoordinates = payload?.routes?.[0]?.geometry?.coordinates;
+    if (!Array.isArray(routeCoordinates) || routeCoordinates.length < 2) {
+      throw new Error("OSRM route geometry was invalid.");
+    }
+    const convertedPoints = routeCoordinates
+      .map((point) => (Array.isArray(point) ? [Number(point[1]), Number(point[0])] : null))
+      .filter((point) => Array.isArray(point) && Number.isFinite(point[0]) && Number.isFinite(point[1]));
+    if (convertedPoints.length < 2) {
+      throw new Error("OSRM route geometry could not be converted.");
+    }
+    previewPoints = convertedPoints;
+    routeGeometrySource = "osrm";
+    osrmRouteSuccess = true;
+  } catch (error) {
+    routeGeometrySource = "fallback";
+    osrmRouteSuccess = false;
+  }
+
+  const routePreviewLayer = L.polyline(previewPoints, {
+    color: "#00ffff",
+    weight: 12,
+    opacity: 1
+  }).addTo(map);
 
   window.__gridlyRoutePreviewLayer = routePreviewLayer;
 
@@ -4839,6 +4874,9 @@ function attachRouteWatchDebugGlobal() {
       routePreviewReason,
       routePreviewLayerOnMap: Boolean(map && savedRouteLayer && typeof map.hasLayer === "function" && map.hasLayer(savedRouteLayer) && routePreviewPolylinePointCount >= 2),
       routePreviewPolylinePointCount,
+      routePolylineVertexCount: routePreviewPolylinePointCount,
+      routeGeometrySource,
+      osrmRouteSuccess,
       lastRoutePreviewError,
       routeHazardScore: Number.isFinite(Number(routeHazard?.score)) ? Number(routeHazard.score) : 0,
       routeHazardLevel: routeHazard?.level || "clear",
@@ -4866,6 +4904,9 @@ function attachRouteWatchDebugGlobal() {
         routePreviewReason: routePreviewReason || "unknown",
         routePreviewLayerOnMap: Boolean(map && savedRouteLayer && typeof map.hasLayer === "function" && map.hasLayer(savedRouteLayer)),
         routePreviewPolylinePointCount: Number.isFinite(Number(routePreviewPolylinePointCount)) ? Number(routePreviewPolylinePointCount) : 0,
+        routePolylineVertexCount: Number.isFinite(Number(routePreviewPolylinePointCount)) ? Number(routePreviewPolylinePointCount) : 0,
+        routeGeometrySource: routeGeometrySource || "fallback",
+        osrmRouteSuccess: Boolean(osrmRouteSuccess),
         lastRoutePreviewError: lastRoutePreviewError || null,
         routeHazardScore: 0,
         routeHazardLevel: "clear",
@@ -5062,7 +5103,7 @@ async function startInlineRouteWatch() {
   savedRouteLayer?.clearLayers?.();
   window.__gridlyRouteWatchActive = true;
   window.__gridlySelectedRouteId = `${start.id}->${destination.id}`;
-  const routePreviewShown = renderRoutePreviewLine(fromCoords, toCoords, {
+  const routePreviewShown = await renderRoutePreviewLine(fromCoords, toCoords, {
     start: start.name,
     destination: destination.name
   });
