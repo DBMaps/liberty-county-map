@@ -6270,3 +6270,184 @@ body.modal-open {
     border-radius: 11px;
   }
 }
+
+/* GRIDLY Phase 5D: premium desktop wow polish */
+@media (min-width: 1101px) {
+  .command-center {
+    gap: 14px;
+    align-items: stretch;
+  }
+
+  .map-card {
+    border-color: rgba(154, 196, 235, 0.26);
+    background: linear-gradient(168deg, rgba(6, 15, 25, 0.95), rgba(7, 11, 20, 0.97));
+    box-shadow: 0 26px 52px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .map-frame {
+    border: 1px solid rgba(126, 171, 219, 0.3);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.035), 0 20px 46px rgba(2, 6, 12, 0.55);
+  }
+
+  .map-card .map-tools-overlay {
+    width: min(100%, 1024px);
+    padding: 8px 12px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(8, 20, 34, 0.84), rgba(7, 15, 26, 0.72));
+    border: 1px solid rgba(131, 176, 221, 0.3);
+    box-shadow: 0 14px 34px rgba(1, 8, 15, 0.45);
+    gap: 10px;
+  }
+
+  .map-card .map-tools-overlay .map-view-label {
+    display: inline-flex;
+    margin: 0 8px 0 0;
+    padding-right: 10px;
+    border-right: 1px solid rgba(160, 187, 214, 0.28);
+    font-size: 0.64rem;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+    font-weight: 800;
+    color: #99b3d0;
+  }
+
+  .map-card .map-tools-overlay .map-tools-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .map-card .map-tools-overlay .map-tools-section + .map-tools-section {
+    margin-left: 4px;
+    padding-left: 11px;
+    border-left: 1px solid rgba(160, 187, 214, 0.24);
+  }
+
+  .map-card .map-tools-overlay .map-tools-section-label {
+    display: inline-flex;
+    margin: 0;
+    color: #8ea5bf;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-weight: 800;
+  }
+
+  .map-card .desktop-map-legend-row,
+  .map-card .map-tools-overlay .geo-filter-shell {
+    flex-wrap: nowrap;
+    gap: 7px;
+  }
+
+  .map-card .legend-pill,
+  .map-card .map-tools-overlay .geo-filter-pill {
+    min-height: 31px;
+    min-width: 78px;
+    justify-content: center;
+    text-align: center;
+    padding: 6px 12px;
+    font-size: 0.74rem;
+    font-weight: 760;
+    letter-spacing: 0.01em;
+  }
+
+  .map-card .map-tools-overlay .geo-filter-pill.selected {
+    box-shadow: 0 0 0 1px rgba(115, 200, 255, 0.52), 0 6px 14px rgba(0, 0, 0, 0.32);
+  }
+
+  .desktop-route-watch-strip {
+    border-color: rgba(116, 165, 211, 0.27);
+    background: linear-gradient(147deg, rgba(8, 16, 29, 0.92), rgba(10, 19, 29, 0.84));
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.38);
+    gap: 12px;
+  }
+
+  .route-watch-strip-copy .eyebrow { margin-bottom: 6px; }
+  .route-watch-strip-copy strong { font-size: 1.02rem; letter-spacing: -0.018em; }
+  .route-watch-strip-copy p { color: #b6c5d7; }
+
+  .route-watch-live-pill {
+    border-radius: 999px;
+    border: 1px solid rgba(117, 142, 165, 0.4);
+    background: rgba(132, 152, 170, 0.13);
+    color: #dbe7f4;
+    font-weight: 780;
+    letter-spacing: 0.07em;
+    padding: 5px 10px;
+  }
+
+  .route-watch-live-pill.is-on {
+    background: rgba(52, 198, 138, 0.17);
+    border-color: rgba(71, 223, 158, 0.44);
+    color: #93ffd0;
+  }
+
+  .desktop-route-watch-actions {
+    align-items: center;
+    gap: 8px;
+  }
+
+  .desktop-route-watch-actions .compact-btn {
+    min-height: 32px;
+    padding: 7px 11px;
+    font-size: 0.73rem;
+  }
+
+  .desktop-command-panel .panel-card {
+    border-color: rgba(141, 174, 206, 0.2);
+    background: linear-gradient(174deg, rgba(11, 16, 22, 0.96), rgba(9, 13, 18, 0.93));
+    box-shadow: 0 14px 28px rgba(2, 5, 10, 0.48);
+  }
+
+  .desktop-command-panel .drawer-summary {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .desktop-command-panel .drawer-body {
+    padding: 12px 14px 14px;
+  }
+
+  .desktop-command-panel .combined-module-block h3 {
+    font-size: 0.73rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #90a9c3;
+    margin-bottom: 8px;
+  }
+
+  .desktop-command-panel .trending-list,
+  .desktop-command-panel .alerts-list {
+    gap: 7px;
+  }
+
+  .desktop-command-panel .trend-item,
+  .desktop-command-panel .alert-item {
+    border-radius: 12px;
+    padding: 10px 11px;
+    background: rgba(16, 21, 28, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .desktop-command-panel .trend-item strong,
+  .desktop-command-panel .alert-item strong {
+    font-size: 0.86rem;
+    letter-spacing: -0.01em;
+  }
+
+  .desktop-command-panel .trend-item p,
+  .desktop-command-panel .alert-item p,
+  .desktop-command-panel .alert-meta {
+    font-size: 0.73rem;
+    color: #a9b7c7;
+  }
+
+  .desktop-command-panel .trend-item.hot {
+    border-left: 2px solid rgba(255, 110, 94, 0.72);
+  }
+
+  .desktop-command-panel .trend-item.clear {
+    border-left: 2px solid rgba(76, 219, 152, 0.72);
+  }
+}
