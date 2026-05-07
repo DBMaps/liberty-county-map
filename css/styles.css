@@ -6861,3 +6861,16 @@ body.modal-open {
   #impactScore { display: block; margin-top: 12px; font-size: 1.15rem; }
   #impactText { margin-top: 6px; color: #a9bfd6; }
 }
+
+
+/* Route layer menu stacking fix */
+#map .leaflet-control-container,
+#map .leaflet-top,
+#map .leaflet-control-layers,
+#map .leaflet-control-layers-expanded {
+  z-index: 1300 !important;
+}
+
+.map-tools-overlay {
+  z-index: 820 !important;
+}
