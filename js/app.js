@@ -4635,10 +4635,24 @@ function renderRoutePreviewLine(startCoords, destinationCoords, meta = {}) {
   if (start.lat === destination.lat && start.lng === destination.lng) return false;
 
   savedRouteLayer.clearLayers();
-  const latLngs = [
-    [start.lat, start.lng],
-    [destination.lat, destination.lng]
-  ];
+  const rawRouteGeometry = Array.isArray(meta.routeGeometry) && meta.routeGeometry.length
+    ? meta.routeGeometry
+    : [
+      [start.lat, start.lng],
+      [destination.lat, destination.lng]
+    ];
+  console.info("Gridly raw route geometry", rawRouteGeometry);
+
+  const latLngs = rawRouteGeometry
+    .map((point) => {
+      if (!Array.isArray(point) || point.length < 2) return null;
+      const normalized = normalizeCoordinatePair(point[0], point[1]);
+      return normalized ? [normalized.lat, normalized.lng] : null;
+    })
+    .filter(Boolean);
+  console.info("Gridly normalized polyline points", latLngs);
+  console.info("Gridly polyline point count", latLngs.length);
+  if (latLngs.length < 2) return false;
 
   const glow = L.polyline(latLngs, {
     pane: "routePane",
@@ -4679,7 +4693,7 @@ function renderRoutePreviewLine(startCoords, destinationCoords, meta = {}) {
   }
   const layerExists = Boolean(savedRouteLayer && savedRouteLayer.getLayers?.().length);
   const mapHasLayer = Boolean(map && savedRouteLayer && typeof map.hasLayer === "function" && map.hasLayer(savedRouteLayer));
-  console.info("Gridly route layer added", {
+  console.info("Gridly polyline added to map", {
     layerExists,
     mapHasLayer
   });
