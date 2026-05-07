@@ -1927,12 +1927,18 @@ function getRerouteFoundation(routeHazard = {}) {
     : level === "heavy"
       ? "Heavy delay detected. Leave early or reroute."
       : "";
+  const alternateRouteStatus = rerouteRecommended ? "needed" : "not_needed";
   return {
     rerouteRecommended,
     rerouteReason,
     rerouteTargetIssue: routeHazard?.nearestIssue || null,
     originalRouteGeometrySource: routeGeometrySource || "fallback",
-    originalRouteVertexCount: Number.isFinite(Number(routePreviewPolylinePointCount)) ? Number(routePreviewPolylinePointCount) : 0
+    originalRouteVertexCount: Number.isFinite(Number(routePreviewPolylinePointCount)) ? Number(routePreviewPolylinePointCount) : 0,
+    alternateRouteAvailable: false,
+    alternateRouteReason: rerouteRecommended ? "Alternate route check recommended." : "",
+    alternateRouteGeometrySource: "none",
+    alternateRouteVertexCount: 0,
+    alternateRouteStatus
   };
 }
 
@@ -4983,6 +4989,11 @@ function attachRouteWatchDebugGlobal() {
       rerouteTargetIssue: rerouteFoundation.rerouteTargetIssue,
       originalRouteGeometrySource: rerouteFoundation.originalRouteGeometrySource,
       originalRouteVertexCount: rerouteFoundation.originalRouteVertexCount,
+      alternateRouteAvailable: rerouteFoundation.alternateRouteAvailable,
+      alternateRouteReason: rerouteFoundation.alternateRouteReason,
+      alternateRouteGeometrySource: rerouteFoundation.alternateRouteGeometrySource,
+      alternateRouteVertexCount: rerouteFoundation.alternateRouteVertexCount,
+      alternateRouteStatus: rerouteFoundation.alternateRouteStatus,
       routeRelevantReportCount: routeRelevantIncidents.length,
       routeRelevantCrossings,
       routeContextSummary,
@@ -5021,6 +5032,11 @@ function attachRouteWatchDebugGlobal() {
         rerouteTargetIssue: null,
         originalRouteGeometrySource: routeGeometrySource || "fallback",
         originalRouteVertexCount: Number.isFinite(Number(routePreviewPolylinePointCount)) ? Number(routePreviewPolylinePointCount) : 0,
+        alternateRouteAvailable: false,
+        alternateRouteReason: "",
+        alternateRouteGeometrySource: "none",
+        alternateRouteVertexCount: 0,
+        alternateRouteStatus: "not_needed",
         mapReady: Boolean(map),
         debugError: String(error?.message || error || "Unknown debug error")
       };
@@ -5476,7 +5492,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
-    safeText("routeRecommendation", "Reroute recommended.");
+    safeText("routeRecommendation", "Alternate route check recommended.");
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("high");
   } else if (routeHazard.level === "heavy") {
@@ -5488,7 +5504,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", routeIntel.confidence);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
-    safeText("routeRecommendation", "Reroute recommended.");
+    safeText("routeRecommendation", "Alternate route check recommended.");
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("delayed");
   } else if (routeHazard.level === "caution") {
