@@ -7256,3 +7256,168 @@ body.modal-open {
     bottom: calc(72px + env(safe-area-inset-bottom));
   }
 }
+
+/* V36C mobile map-first hierarchy (mobile only; desktop preserved) */
+@media (max-width: 700px) {
+  .dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-bottom: calc(112px + env(safe-area-inset-bottom));
+  }
+
+  /* Keep top utility compact */
+  .mobile-premium-header {
+    order: 1;
+    position: sticky;
+    top: 8px;
+    z-index: 26;
+    padding: 8px 10px;
+    border-radius: 12px;
+  }
+
+  /* De-prioritize non-operational hero blocks on mobile */
+  .future-map-hero,
+  .driver-hero,
+  .destination-hero-card,
+  .desktop-command-strip,
+  .desktop-route-setup,
+  .desktop-insights {
+    display: none !important;
+  }
+
+  /* Allow map section placement between route decision and the rest */
+  .mobile-home-cards {
+    display: contents;
+  }
+
+  .mobile-route-decision-card {
+    order: 2;
+    min-height: 148px;
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .mobile-route-decision-card p {
+    margin: 4px 0 8px;
+    line-height: 1.25;
+    max-height: 2.5em;
+    overflow: hidden;
+  }
+
+  .mobile-route-priority-actions {
+    gap: 8px;
+  }
+
+  /* Map becomes primary content directly after route decision */
+  .command-center {
+    order: 3;
+    margin-top: 0;
+    padding: 0;
+    gap: 0;
+    background: transparent;
+    border: 0;
+  }
+
+  .map-card {
+    padding: 8px;
+    border-radius: 14px;
+    min-height: 62vh;
+  }
+
+  .map-card .section-header.map-header {
+    padding: 2px 2px 6px;
+  }
+
+  .map-card .section-header.map-header .map-note {
+    display: none;
+  }
+
+  .map-card .map-frame {
+    min-height: 58vh;
+    border-radius: 12px;
+  }
+
+  /* Float quick actions near map instead of stacked cards */
+  .mobile-fast-report-card,
+  .mobile-map-preview-card,
+  .mobile-quick-actions-card {
+    order: 4;
+    position: sticky;
+    z-index: 24;
+    margin: 0 10px;
+    border-radius: 999px;
+    padding: 6px 8px;
+    min-height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-fast-report-card { bottom: calc(162px + env(safe-area-inset-bottom)); }
+  .mobile-map-preview-card { bottom: calc(116px + env(safe-area-inset-bottom)); }
+  .mobile-quick-actions-card { bottom: calc(70px + env(safe-area-inset-bottom)); }
+
+  .mobile-fast-report-card > span,
+  .mobile-fast-report-card p,
+  .mobile-map-preview-card > span,
+  .mobile-map-preview-card p,
+  .mobile-map-preview-card strong,
+  .mobile-quick-actions-card > span {
+    display: none;
+  }
+
+  .mobile-fast-report-card .mobile-route-priority-actions,
+  .mobile-map-preview-card button,
+  .mobile-quick-actions-card .mobile-quick-actions {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .mobile-fast-report-card .secondary-btn,
+  .mobile-fast-report-card .primary-btn,
+  .mobile-map-preview-card .secondary-btn,
+  .mobile-quick-actions-card .secondary-btn {
+    min-height: 36px;
+    padding: 7px 10px;
+    border-radius: 999px;
+    font-size: 0.77rem;
+  }
+
+  /* Collapse lower-priority intelligence cards */
+  .mobile-community-card,
+  .mobile-active-crossings-card,
+  .mobile-corridor-intel-card,
+  .mobile-premium-status-bar {
+    order: 5;
+    padding: 8px 10px;
+    min-height: auto;
+  }
+
+  .mobile-community-card p,
+  .mobile-active-crossings-card p,
+  .mobile-corridor-intel-card p,
+  .mobile-premium-status-bar p,
+  .mobile-corridor-intel-card #mobileCorridorBadges {
+    display: none;
+  }
+
+  .mobile-community-card strong,
+  .mobile-active-crossings-card strong,
+  .mobile-corridor-intel-card strong,
+  .mobile-premium-status-bar strong {
+    font-size: 0.9rem;
+  }
+
+  /* Map-attached reporting and safe bottom spacing */
+  #reportSection {
+    order: 6;
+    margin-top: 6px;
+  }
+
+  #mobileReportBtn.mobile-sticky-report {
+    bottom: calc(74px + env(safe-area-inset-bottom));
+  }
+}
