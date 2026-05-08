@@ -8996,6 +8996,7 @@ body.modal-open {
     bottom: calc(176px + env(safe-area-inset-bottom, 0px));
     gap: 4px;
     justify-items: start;
+    align-items: start;
   }
 
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle,
@@ -9010,6 +9011,14 @@ body.modal-open {
     font-size: 0.66rem;
     min-height: 28px;
     padding: 5px 9px;
+    width: 86px;
+    text-align: left;
+    justify-content: flex-start;
+  }
+
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu-list {
+    justify-items: start;
+    align-items: start;
   }
 
   body[data-mobile-mode] .map-tools-overlay {
