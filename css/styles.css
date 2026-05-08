@@ -9395,3 +9395,88 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
   .hazard-panel-placement-actions{padding-top:5px!important;padding-bottom:calc(5px + env(safe-area-inset-bottom,0px))!important;gap:5px!important;margin-top:3px!important}
   .hazard-panel-placement-actions button{min-height:31px!important;padding:6px 9px!important;font-size:.74rem!important}
 }
+
+/* V48 — hard mobile layer closed-state + manage places fit */
+@media (max-width: 760px) {
+  #map .gridly-mobile-layer-menu {
+    display: none;
+    right: 12px;
+    left: auto;
+    bottom: 98px;
+    z-index: 1301;
+  }
+  #map .gridly-mobile-layer-menu.is-mobile-visible {
+    display: block !important;
+  }
+  #map .gridly-mobile-layer-menu .gridly-mobile-layer-menu-toggle {
+    display: inline-flex !important;
+  }
+  #map .gridly-mobile-layer-menu:not(.is-open) .gridly-mobile-layer-menu-list {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
+  }
+  #map .gridly-mobile-layer-menu.is-open .gridly-mobile-layer-menu-list {
+    display: flex !important;
+    flex-direction: column !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    width: 114px;
+  }
+  #map .gridly-mobile-layer-menu .gridly-mobile-layer-menu-list button {
+    width: 100% !important;
+    text-align: left !important;
+  }
+
+  .route-setup-modal-card {
+    padding: 8px 8px calc(8px + env(safe-area-inset-bottom)) !important;
+    max-height: min(78svh, 560px);
+  }
+  .route-setup-grid-mobile {
+    gap: 6px !important;
+  }
+  .manage-places-group {
+    gap: 5px !important;
+    padding: 6px 8px !important;
+  }
+  #managePlacesSavedGroup {
+    gap: 4px !important;
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+  }
+  #mobileSavedDestinationSelect {
+    min-height: 30px !important;
+    padding: 4px 8px !important;
+    font-size: 0.74rem !important;
+  }
+  .route-setup-grid-mobile #managePlacesSaveGroup .manage-places-group-label {
+    font-size: 0 !important;
+  }
+  .route-setup-grid-mobile #managePlacesSaveGroup .manage-places-group-label::before {
+    content: "SAVE";
+    font-size: .64rem;
+    letter-spacing: .1em;
+  }
+  #managePlacesSaveGroup .destination-chip-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 6px !important;
+    align-items: stretch;
+  }
+  #managePlacesSaveGroup .destination-chip-row > * {
+    min-width: 0;
+  }
+  #managePlacesSaveGroup .primary-btn,
+  #mobileResetPlacesBtn {
+    min-height: 32px !important;
+    padding: 6px 8px !important;
+    font-size: .72rem !important;
+  }
+  #mobileResetPlacesBtn {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
