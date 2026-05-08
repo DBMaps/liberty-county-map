@@ -169,6 +169,7 @@ let routeGeometrySource = "fallback";
 let osrmRouteSuccess = false;
 let monitoredRouteEtaMinutes = null;
 let monitoredRouteDelayMinutes = null;
+let monitoredRouteDurationSeconds = null;
 const LOCAL_PLACE_LOOKUP = {
   dayton: { lat: 30.0466, lng: -94.8852 },
   crosby: { lat: 29.9111, lng: -95.0622 },
@@ -4984,6 +4985,7 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
   osrmRouteSuccess = false;
   monitoredRouteEtaMinutes = null;
   monitoredRouteDelayMinutes = null;
+  monitoredRouteDurationSeconds = null;
 
   try {
     const startLat = Number(startCoordinates?.lat);
@@ -5018,6 +5020,7 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
     osrmRouteSuccess = true;
     const osrmDurationSeconds = Number(primaryRoute?.duration);
     if (Number.isFinite(osrmDurationSeconds) && osrmDurationSeconds > 0) {
+      monitoredRouteDurationSeconds = Math.round(osrmDurationSeconds);
       monitoredRouteEtaMinutes = Math.max(1, Math.round(osrmDurationSeconds / 60));
     }
   } catch (error) {
@@ -5320,6 +5323,10 @@ function attachRouteWatchDebugGlobal() {
         routeIsMonitoring: Boolean(routeWatchActivated)
       });
       const rerouteFoundation = getRerouteFoundation(routeHazard);
+      const routeEtaMetrics = getRouteEtaMetricsFromState({
+        routeHazardLevel: routeHazard?.level || "clear",
+        fallbackExtraMinutes: 0
+      });
           const activeIncidents = (getUnifiedIncidents?.() || []).filter((incident) => incident.status === "active");
       const routeRelevantIncidents = activeIncidents.filter((incident) => isIncidentRouteRelevant(incident, routeHazard));
       const routeRelevantCrossings = routeHazard.nearbyReports.filter((report) => report.reportType === "blocked" && report.lifecycleState === "active");
@@ -5373,6 +5380,9 @@ function attachRouteWatchDebugGlobal() {
       recommendationConfidence,
       corridorHealth,
       estimatedDelayImpact,
+      routeEtaText: routeEtaMetrics.routeEtaValue || "",
+      routeDelayDeltaText: routeEtaMetrics.routeDelayValue || "",
+      monitoredRouteDurationSeconds: Number.isFinite(Number(monitoredRouteDurationSeconds)) ? Number(monitoredRouteDurationSeconds) : null,
       rerouteRecommended: rerouteFoundation.rerouteRecommended,
       rerouteReason: rerouteFoundation.rerouteReason,
       rerouteTargetIssue: rerouteFoundation.rerouteTargetIssue,
@@ -5962,29 +5972,48 @@ function renderRouteWatchIntelligenceFields({
   `;
 }
 
+function renderDesktopRouteWatchMetrics({
+  freshness = "Unknown",
+  reportsNearRoute = "0 near route",
+  systemConfidence = "Unknown",
+  recommendationConfidence = "Unknown",
+  corridorHealth = "Unknown",
+  estimatedDelayImpact = "Unknown",
+  routeEtaValue = "",
+  routeDelayValue = ""
+} = {}) {
+  const desktopMetricsContainer = document.querySelector(".desktop-route-watch-strip .route-watch-metrics");
+  if (!desktopMetricsContainer) return;
+  const hasRouteEta = typeof routeEtaValue === "string" && routeEtaValue.trim().length > 0;
+  const hasRouteDelay = typeof routeDelayValue === "string" && routeDelayValue.trim().length > 0;
+  const routeEtaMarkup = hasRouteEta
+    ? `<span><b>Route ETA:</b> <em>${sanitizeText(routeEtaValue)}</em></span>`
+    : "";
+  const routeDelayMarkup = hasRouteDelay
+    ? `<span><b>Delay Impact:</b> <em>${sanitizeText(routeDelayValue)}</em></span>`
+    : "";
+  desktopMetricsContainer.innerHTML = `
+    <span><b>Freshness:</b> <em>${sanitizeText(freshness)}</em></span>
+    <span><b>Reports near route:</b> <em>${sanitizeText(reportsNearRoute)}</em></span>
+    <span><b>System Confidence:</b> <em>${sanitizeText(systemConfidence)}</em></span>
+    <span><b>Recommendation Confidence:</b> <em>${sanitizeText(recommendationConfidence)}</em></span>
+    <span><b>Corridor Health:</b> <em>${sanitizeText(corridorHealth)}</em></span>
+    <span><b>Estimated Delay Impact:</b> <em>${sanitizeText(estimatedDelayImpact)}</em></span>
+    ${routeEtaMarkup}
+    ${routeDelayMarkup}
+  `;
+}
+
 function getRouteEtaMetricsFromState({
   routeHazardLevel = "clear",
   fallbackExtraMinutes = 0
 } = {}) {
-  const etaText = String(els.routeEta?.textContent || "").trim();
-  if (etaText && /^ETA/i.test(etaText)) {
-    const match = etaText.match(/^ETA\s+([^(]+?)(?:\s*\(([^)]+)\))?$/i);
-    if (match) {
-      const routeEtaValue = String(match[1] || "").trim();
-      const routeDelayValue = String(match[2] || "").trim();
-      if (routeEtaValue) return { routeEtaValue, routeDelayValue };
-    }
-  }
-
   const etaMinutes = Number.isFinite(Number(monitoredRouteEtaMinutes))
     ? Number(monitoredRouteEtaMinutes)
     : null;
-  const fallbackDelay = routeHazardLevel !== "clear"
-    ? Math.max(0, Math.round(Number(fallbackExtraMinutes) || 0))
-    : 0;
   const delayMinutes = Number.isFinite(Number(monitoredRouteDelayMinutes))
     ? Number(monitoredRouteDelayMinutes)
-    : fallbackDelay;
+    : null;
   return {
     routeEtaValue: etaMinutes && etaMinutes > 0 ? `${etaMinutes} min` : "",
     routeDelayValue: delayMinutes && delayMinutes > 0 ? `+${delayMinutes} min` : ""
@@ -6049,6 +6078,10 @@ function updateRouteIntelligence(nearest = []) {
     ? Math.min(...activeIssues.map((issue) => Number(issue.minutesAgo)).filter((value) => Number.isFinite(value)))
     : null;
   const freshnessTier = getFreshnessTier(newestMinutes);
+  const etaMetrics = getRouteEtaMetricsFromState({
+    routeHazardLevel: routeHazard.level,
+    fallbackExtraMinutes: extraMinutes
+  });
   const freshReportCount = activeIssues.filter((issue) => Number(issue.minutesAgo) <= 30).length;
 
   safeText("nearbyAlertCount", `${activeIssues.length} active now`);
@@ -6135,6 +6168,16 @@ function updateRouteIntelligence(nearest = []) {
   if (els.routeRecommendation) {
     els.routeRecommendation.classList.add("route-watch-recommendation-emphasis");
   }
+  renderDesktopRouteWatchMetrics({
+    freshness: routeIsMonitoring ? freshnessTier : "Unknown",
+    reportsNearRoute: routeIsMonitoring ? `${routeHazard.nearbyReports.length} near route` : "0 near route",
+    systemConfidence,
+    recommendationConfidence,
+    corridorHealth: routeIsMonitoring ? corridorHealth : "Awaiting route",
+    estimatedDelayImpact: routeIsMonitoring ? estimatedDelayImpact : "Awaiting route",
+    routeEtaValue: routeIsMonitoring ? etaMetrics.routeEtaValue : "",
+    routeDelayValue: routeIsMonitoring ? etaMetrics.routeDelayValue : ""
+  });
 
   const liveStatusCard = document.querySelector(".mobile-live-hero");
   liveStatusCard?.classList.remove("clear-status", "delay-status", "blocked-status");
