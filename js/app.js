@@ -9001,9 +9001,22 @@ function injectMobileCTACleanupStyles() {
         display: none !important;
         grid-template-rows: auto auto minmax(0, 1fr) auto !important;
         gap: 0 !important;
+        padding: 12px 12px 10px !important;
+        border-radius: 16px !important;
+        border-color: rgba(142, 204, 255, 0.24) !important;
+        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.42) !important;
       }
       .gridly-hazard-panel.visible {
         display: grid !important;
+      }
+      .gridly-hazard-panel h3 {
+        margin: 0 0 4px !important;
+        font-size: 1rem !important;
+      }
+      .gridly-hazard-panel > p {
+        margin: 0 0 8px !important;
+        font-size: 0.81rem !important;
+        line-height: 1.35 !important;
       }
       .hazard-choice-grid {
         min-height: 0 !important;
@@ -9012,7 +9025,15 @@ function injectMobileCTACleanupStyles() {
         overflow-y: auto !important;
         overscroll-behavior: contain !important;
         -webkit-overflow-scrolling: touch !important;
-        padding-bottom: 8px !important;
+        padding-bottom: 14px !important;
+        gap: 8px !important;
+      }
+      .hazard-choice-grid button {
+        min-height: 40px !important;
+        padding: 9px 11px !important;
+        border-radius: 12px !important;
+        font-size: 0.85rem !important;
+        line-height: 1.2 !important;
       }
       .hazard-panel-placement-actions {
         position: sticky !important;
@@ -9020,7 +9041,23 @@ function injectMobileCTACleanupStyles() {
         flex-shrink: 0 !important;
         background: rgba(9, 18, 32, 0.98) !important;
         padding-top: 8px !important;
+        padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px)) !important;
         margin-top: 4px !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+      }
+      .hazard-panel-placement-actions .primary-btn,
+      .hazard-panel-placement-actions .secondary-btn {
+        min-height: 38px !important;
+        padding: 8px 12px !important;
+        border-radius: 10px !important;
+        font-size: 0.83rem !important;
+        font-weight: 700 !important;
+      }
+      .hazard-panel-placement-actions .secondary-btn:last-child {
+        min-height: 34px !important;
+        padding: 6px 10px !important;
+        font-size: 0.78rem !important;
+        opacity: 0.9 !important;
       }
     }
   `;
