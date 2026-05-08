@@ -9594,3 +9594,78 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
     min-width: 0 !important;
   }
 }
+
+/* V50 — final mobile layer anchor + full-width manage places save row */
+@media (max-width: 760px) {
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu {
+    right: 8px !important;
+    left: auto !important;
+    bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu-list {
+    right: 0 !important;
+    left: auto !important;
+    top: auto !important;
+    bottom: calc(100% + 6px) !important;
+    width: 112px !important;
+    max-width: 118px !important;
+    margin-top: 0 !important;
+  }
+
+  body[data-mobile-mode] .route-setup-modal-card {
+    padding: 8px 8px calc(8px + env(safe-area-inset-bottom, 0px)) !important;
+    max-height: min(86svh, 620px) !important;
+    overflow-y: auto !important;
+  }
+
+  body[data-mobile-mode] .route-setup-grid-mobile {
+    gap: 5px !important;
+  }
+
+  body[data-mobile-mode] .route-setup-modal-card > #managePlacesSaveGroup {
+    margin-top: 6px !important;
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    max-width: none !important;
+    align-self: stretch !important;
+    padding: 6px 8px !important;
+  }
+
+  body[data-mobile-mode] .route-setup-modal-card > #managePlacesSaveGroup .destination-chip-row {
+    display: flex !important;
+    flex-direction: row !important;
+    width: 100% !important;
+    max-width: none !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+
+  body[data-mobile-mode] .route-setup-modal-card > #managePlacesSaveGroup .primary-btn {
+    flex: 1.45 1 0 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    min-height: 32px !important;
+    padding: 6px 8px !important;
+  }
+
+  body[data-mobile-mode] .route-setup-modal-card > #managePlacesSaveGroup #mobileResetPlacesBtn {
+    flex: 1 1 0 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    min-height: 32px !important;
+    padding: 6px 8px !important;
+  }
+
+  body[data-mobile-mode] #managePlacesAddressGroup label,
+  body[data-mobile-mode] #managePlacesSavedGroup label {
+    gap: 3px !important;
+  }
+
+  body[data-mobile-mode] #managePlacesAddressGroup input,
+  body[data-mobile-mode] #managePlacesSavedGroup select {
+    min-height: 30px !important;
+    padding: 5px 8px !important;
+    font-size: 0.74rem !important;
+  }
+}
