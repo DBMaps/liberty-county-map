@@ -38,10 +38,19 @@
   </header>
 
   <div class="mobile-live-brand" aria-label="Gridly live brand header">
-    <div class="mobile-live-brand-logo" role="img" aria-label="Gridly">
-      <img src="assets/gridly-logo-primary.png" alt="Gridly logo" />
+    <div class="mobile-live-brand-main">
+      <div class="mobile-live-brand-logo" role="img" aria-label="Gridly">
+        <img src="assets/gridly-logo-primary.png" alt="Gridly logo" />
+      </div>
+      <div class="mobile-live-brand-copy">
+        <strong>GRIDLY</strong>
+        <span>Know Before You Go</span>
+      </div>
     </div>
-    <span>Live · Liberty County</span>
+    <div class="mobile-live-brand-status">
+      <span class="live-pulse-dot" aria-hidden="true"></span>
+      <span>LIVE · Liberty County</span>
+    </div>
   </div>
 
   <main class="app-shell premium-layout">
@@ -115,8 +124,8 @@
           </div>
 
           <div class="hero-actions">
-            <button class="secondary-btn hero-report-btn" id="desktopReportNearMeBtn">Report Crossing Near Me</button>
-            <button class="secondary-btn hero-alerts-btn" data-section-jump="alerts">Alerts</button>
+            <button class="primary-btn hero-route-btn" id="desktopReportNearMeBtn" data-section-jump="routes">Open Route Watch</button>
+            <button class="secondary-btn hero-alerts-btn" data-section-jump="alerts">Live Feed</button>
           </div>
         </div>
       </div>
@@ -251,11 +260,11 @@
 
         <div class="setup-grid">
           <label>
-            Place name
+            Address
             <input id="homeInput" type="text" placeholder="Example: Home, Work, School" />
           </label>
           <label>
-            Location / address
+            Saved place
             <input id="workInput" type="text" placeholder="Example: Dayton, TX" />
           </label>
           <label>
@@ -263,7 +272,7 @@
             <select id="savedDestinationSelect"></select>
           </label>
 
-          <button id="saveRouteBtn" class="primary-btn">Save Place</button>
+          <button id="saveRouteBtn" class="primary-btn">Save to Slot</button>
           <button id="useLocationBtn" class="secondary-btn">Use My Location</button>
         </div>
       </div>
@@ -523,10 +532,10 @@
         <button type="button" class="secondary-btn compact-btn route-modal-close" id="closeRouteSetupModalBtn" aria-label="Close Save Route modal">×</button>
       </div>
       <h2 id="routeSetupTitle">Save places</h2>
-      <p class="smart-alerts-subtitle">Saved places stay on this device. Pick one destination for today.</p>
+      <p class="smart-alerts-subtitle">Saved places stay on this device. Follow the quick flow below to set where Gridly should watch for you.</p>
       <div class="setup-grid route-setup-grid-mobile">
         <section class="manage-places-group" id="managePlacesSlotsGroup" hidden>
-          <p class="manage-places-group-label">Saved Slot</p>
+          <p class="manage-places-group-label">Step 1 · Choose slot</p>
           <div class="destination-chip-row" id="managePlaceSlotRow" hidden>
             <button class="secondary-btn destination-chip" id="managePlaceHomeBtn" type="button">Home</button>
             <button class="secondary-btn destination-chip" id="managePlaceWorkBtn" type="button">Work</button>
@@ -534,14 +543,14 @@
           </div>
         </section>
         <section class="manage-places-group">
-          <p class="manage-places-group-label">Location</p>
+          <p class="manage-places-group-label">Step 2 · Choose source</p>
           <label>
-            Place name
-            <input id="mobileHomeInput" type="text" placeholder="Example: Home, Work, Restaurant" autocomplete="organization-title" />
+            Address
+            <input id="mobileHomeInput" type="text" placeholder="Enter address, city, or place" autocomplete="street-address" />
           </label>
           <label>
-            Location / address
-            <input id="mobileWorkInput" type="text" placeholder="Enter address, city, or place" autocomplete="address-line1" />
+            Saved place
+            <input id="mobileWorkInput" type="text" placeholder="Choose from saved places" autocomplete="off" />
           </label>
           <label id="savedPlacesSelectLabel">
             Saved places
@@ -549,8 +558,8 @@
           </label>
         </section>
         <section class="manage-places-group">
-          <p class="manage-places-group-label">Primary Actions</p>
-          <button id="mobileSaveRouteBtn" class="primary-btn" type="button">Save Place</button>
+          <p class="manage-places-group-label">Step 3 · Save</p>
+          <button id="mobileSaveRouteBtn" class="primary-btn" type="button">Save to Slot</button>
           <button id="mobileUseLocationBtn" class="secondary-btn" type="button">Use My Location</button>
         </section>
         <section class="manage-places-group manage-places-group-utility">

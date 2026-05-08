@@ -9195,3 +9195,36 @@ body[data-mobile-mode] .report-drawer{border:0;background:transparent;box-shadow
 .geo-filter-shell{background:rgba(255,255,255,.01);border:1px solid rgba(255,255,255,.06)}
 .geo-filter-pill{background:rgba(255,255,255,.035)}
 body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle,body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button{background:rgba(8,14,23,.62);border-color:rgba(166,208,245,.2);box-shadow:0 3px 8px rgba(2,8,16,.16)}
+
+/* V46 premium commute intelligence refinement */
+.mobile-live-brand{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 14px;border-radius:18px;background:rgba(9,16,27,.58);border:1px solid rgba(255,255,255,.08);box-shadow:0 10px 22px rgba(2,8,18,.24)}
+.mobile-live-brand-main{display:flex;align-items:center;gap:10px;min-width:0}
+.mobile-live-brand-copy strong{display:block;font-size:.82rem;letter-spacing:.16em;color:#eaf6ff}
+.mobile-live-brand-copy span{display:block;font-size:.7rem;color:rgba(217,231,245,.75)}
+.mobile-live-brand-status{display:flex;align-items:center;gap:7px;font-size:.72rem;color:#c8ecff;letter-spacing:.08em}
+.live-pulse-dot{width:7px;height:7px;border-radius:999px;background:#56d5ff;box-shadow:0 0 0 0 rgba(86,213,255,.6);animation:livePulse 1.8s ease-out infinite}
+@keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(86,213,255,.5)}100%{box-shadow:0 0 0 10px rgba(86,213,255,0)}}
+
+.route-status-card{background:rgba(8,16,26,.62)!important;border:1px solid rgba(255,255,255,.07)!important;box-shadow:0 10px 24px rgba(3,10,18,.2)!important}
+.hero-actions{gap:10px}
+.hero-route-btn{font-weight:600}
+.hero-alerts-btn{opacity:.84}
+
+.route-setup-modal-card .setup-grid{display:grid;gap:14px}
+.manage-places-group{background:rgba(11,20,31,.45);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:12px}
+.manage-places-group-label{font-size:.74rem;letter-spacing:.11em;text-transform:uppercase;color:#8fc9e6;margin-bottom:10px}
+.manage-places-group label{gap:6px}
+.manage-places-group-utility{opacity:.86}
+
+.alerts-list{gap:8px}
+.alert-item{padding:10px 11px;border:1px solid rgba(255,255,255,.07);background:rgba(10,17,27,.48);box-shadow:none}
+.alert-row-main{gap:8px}
+.alert-severity-chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08)}
+.alert-item.high .alert-severity-chip{background:rgba(255,130,93,.17);border-color:rgba(255,160,122,.3)}
+.alert-row-time{font-size:.72rem;color:rgba(202,221,236,.78)}
+
+.geo-filter-shell{background:rgba(8,15,24,.44)!important;border-color:rgba(255,255,255,.07)!important;box-shadow:none!important}
+.geo-filter-pill{background:rgba(255,255,255,.03)!important;border:1px solid rgba(255,255,255,.04)!important;color:rgba(229,238,249,.72)!important}
+.geo-filter-pill.selected{background:linear-gradient(135deg,rgba(112,220,255,.92),rgba(77,185,239,.9))!important;color:#062331!important}
+
+.hero-card,.setup-card,.panel-card,.growth-card,.mobile-home-card,.desktop-command-panel{border-color:rgba(255,255,255,.07)!important;box-shadow:0 10px 28px rgba(3,10,16,.2)!important}

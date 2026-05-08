@@ -3546,7 +3546,7 @@ function openMobileRouteQuickPanel() {
   }
   const meta = document.getElementById("mobileRouteQuickMeta");
   if (meta) {
-    meta.textContent = `${els.routeStatus?.textContent || "Choose route"} • ${els.routeEta?.textContent || "ETA pending"} • ${els.routeRecommendation?.textContent || "Awaiting route selection"}`;
+    meta.textContent = `${els.routeStatus?.textContent || "Choose route"} • ${els.routeEta?.textContent || "ETA pending"} • ${els.routeRecommendation?.textContent || "Leave now for best commute"}`;
   }
   if (startSelect && !startSelect.dataset.gridlyRouteQuickBound) {
     startSelect.addEventListener("change", () => {
@@ -7537,13 +7537,13 @@ function updateRouteIntelligence(nearest = []) {
   els.routeStatusCard?.classList.remove("clear", "delayed", "high");
 
   if (!routeIsMonitoring) {
-    safeText("routeStatus", "No active route selected");
+    safeText("routeStatus", "Choose a route to start");
     safeText("routeEta", routeLabelParts.hasHome ? "Choose destination" : "Set Home");
     safeText("desktopRouteStatus", routeLabelParts.hasHome ? "Choose a saved destination to start Route Watch." : "Set Home and one destination to start Route Watch.");
     safeText("routeFreshness", "Unknown");
     safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
     safeText("routeReports", "0 active");
-    safeText("routeRecommendation", "Awaiting route selection");
+    safeText("routeRecommendation", "Leave now for best commute");
     safeText("sideRouteWatchHint", routeLabelParts.hasHome ? "Choose a saved destination to start Route Watch." : "Set Home and one destination to start Route Watch.");
     safeText("departureTime", "Set destination first");
     renderRouteWatchIntelligenceFields({
@@ -7566,7 +7566,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("high");
   } else if (routeHazard.level === "heavy") {
-    safeText("routeStatus", "DELAY BUILDING");
+    safeText("routeStatus", "Heavy blockage ahead");
     safeText("routeEta", `ETA 26 min (+${extraMinutes})`);
     safeText("departureTime", "LEAVE 8 MIN EARLY");
     renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, ...getRouteEtaMetricsFromState({ routeHazardLevel: routeHazard.level, fallbackExtraMinutes: extraMinutes }) });
@@ -7578,7 +7578,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("delayed");
   } else if (routeHazard.level === "caution") {
-    safeText("routeStatus", "WATCH CORRIDOR");
+    safeText("routeStatus", "Monitoring crossings nearby");
     safeText("routeEta", `ETA 24 min (+${Math.max(extraMinutes, 3)})`);
     safeText("departureTime", "LEAVE SLIGHTLY EARLY");
     renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, ...getRouteEtaMetricsFromState({ routeHazardLevel: routeHazard.level, fallbackExtraMinutes: extraMinutes }) });
@@ -7590,7 +7590,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("delayed");
   } else {
-    safeText("routeStatus", "CLEAR TO LEAVE");
+    safeText("routeStatus", "Corridor clear");
     safeText("routeEta", "ETA 21 min");
     safeText("departureTime", "ON-SCHEDULE DEPARTURE");
     renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, ...getRouteEtaMetricsFromState({ routeHazardLevel: routeHazard.level, fallbackExtraMinutes: extraMinutes }) });
@@ -7608,7 +7608,7 @@ function updateRouteIntelligence(nearest = []) {
   }
   const mobileLiveCommand = document.querySelector(".mobile-live-command");
   if (mobileLiveCommand) mobileLiveCommand.removeAttribute("data-delay-state");
-  safeText("mobileLiveRouteStatus", `${els.routeStatus?.textContent || "CLEAR TO LEAVE"} • ${els.routeEta?.textContent || "ETA pending"}`);
+  safeText("mobileLiveRouteStatus", `${els.routeStatus?.textContent || "Corridor clear"} • ${els.routeEta?.textContent || "ETA pending"}`);
   safeText("mobileLiveRouteMeta", getLiveCommuteSignalLine({ impact, urgentBlockedCount: routeIntel.urgentBlockedCount, recommendation: els.routeRecommendation?.textContent || "" }));
   renderDesktopRouteWatchMetrics({
     freshness: routeIsMonitoring ? freshnessTier : "Unknown",
@@ -7636,7 +7636,7 @@ function updateRouteIntelligence(nearest = []) {
     liveStatusCard?.classList.add("blocked-status");
   } else if (impact >= 40) {
     if (mobileLiveCommand) mobileLiveCommand.dataset.delayState = "delayed";
-    safeText("mobileLiveStatusPill", "DELAY BUILDING");
+    safeText("mobileLiveStatusPill", "Heavy blockage ahead");
     safeText("delayRisk", "Delay building near Dayton crossing");
     safeText("delayReason", "Active live signals detected · prepare backup route.");
     safeText("alternateRoute", "Have backup");
@@ -7736,13 +7736,13 @@ function updateGrowthWidgets() {
       `${highCount} high-impact shared report${highCount === 1 ? "" : "s"} active right now.`
     );
   } else if (activeIssues.length > 0) {
-    safeText("routeRecommendation", "DELAY BUILDING");
+    safeText("routeRecommendation", "Heavy blockage ahead");
     safeText(
       "routeRecommendationReason",
       `${activeIssues.length} active shared report${activeIssues.length === 1 ? "" : "s"} may affect travel.`
     );
   } else {
-    safeText("routeRecommendation", "CLEAR TO LEAVE");
+    safeText("routeRecommendation", "Corridor clear");
     safeText("routeRecommendationReason", "No major active shared delays detected right now.");
   }
 
@@ -8081,7 +8081,7 @@ function updateMobileAlertsMirror() {
 
   if (!incidents.length) {
     els.mobileAlertsMirror.textContent =
-      "No active shared alerts right now. Tap the map if you see a blocked crossing.";
+      "Active monitoring enabled. Route looks clear right now.";
     return;
   }
 
