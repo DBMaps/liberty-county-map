@@ -1665,16 +1665,57 @@ function shouldShowCrossingInLaunchMode(crossing) {
 
   return false;
 }
-async function runPostSubmitRefresh() {
-  console.debug("Post-submit refresh started");
-  await loadSharedReports();
+function refreshReportHazardViews() {
+  renderAlerts();
+  renderTrendingCrossings();
   renderUnifiedIncidents();
   renderCrossings();
   updateRouteIntelligence();
+  updateTrustStats();
+  updateGrowthWidgets();
+  updateDailyHabitStatus();
   updateMobileAlertsMirror();
+  evaluateSmartAlertsBanner();
   updateLastUpdated();
   recomputeMovementIntelligence();
   updateCorridorSummaryCards();
+}
+
+window.gridlyClearLocalTestReports = function gridlyClearLocalTestReports() {
+  const reportCountBefore = activeReports.length;
+  const hazardCountBefore = activeHazards.length;
+
+  activeReports = [];
+  activeHazards = [];
+
+  const removedLocalKeys = [];
+  const testKeyMatcher = /^gridly(?:Local)?(?:Test|Dev).*(?:Report|Hazard)/i;
+  for (let i = localStorage.length - 1; i >= 0; i -= 1) {
+    const key = localStorage.key(i);
+    if (key && testKeyMatcher.test(key)) {
+      localStorage.removeItem(key);
+      removedLocalKeys.push(key);
+    }
+  }
+
+  refreshReportHazardViews();
+
+  const summary = {
+    clearedLocalActiveReports: reportCountBefore,
+    clearedLocalActiveHazards: hazardCountBefore,
+    removedLocalStorageKeys: removedLocalKeys.sort(),
+    supabaseRowsDeleted: 0,
+    note: "Local in-memory report/hazard state cleared. Supabase production data was not deleted."
+  };
+
+  console.info("gridlyClearLocalTestReports summary", summary);
+  return summary;
+};
+
+async function runPostSubmitRefresh() {
+  console.debug("Post-submit refresh started");
+  await loadSharedReports();
+  refreshReportHazardViews();
   console.debug("Post-submit refresh complete");
 }
 
@@ -1708,19 +1749,7 @@ async function loadSharedReports() {
     activeHazards = normalized.filter((report) => report.reportKind === "hazard");
     activeReports = normalized.filter((report) => report.reportKind !== "hazard");
 
-    renderAlerts();
-    renderTrendingCrossings();
-    renderCrossings();
-    renderUnifiedIncidents();
-    updateRouteIntelligence();
-    updateTrustStats();
-    updateGrowthWidgets();
-    updateDailyHabitStatus();
-    updateMobileAlertsMirror();
-    evaluateSmartAlertsBanner();
-    updateLastUpdated();
-    recomputeMovementIntelligence();
-    updateCorridorSummaryCards();
+    refreshReportHazardViews();
 
     setSync(`${activeReports.length} crossing reports · ${activeHazards.length} hazards synced`);
   } catch (error) {
