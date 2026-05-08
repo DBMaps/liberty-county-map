@@ -1065,7 +1065,7 @@ body.route-setup-open #gridlyHazardLauncher {
   .route-setup-grid-mobile input {
     min-height: 36px;
     padding: 7px 10px;
-    border-radius: 10px;
+    border-radius: 12px;
     background: rgba(255, 255, 255, 0.07);
     border-color: rgba(255, 255, 255, 0.16);
   }
@@ -1074,7 +1074,7 @@ body.route-setup-open #gridlyHazardLauncher {
   .route-setup-grid-mobile .secondary-btn {
     min-height: 36px;
     padding: 7px 10px;
-    border-radius: 10px;
+    border-radius: 12px;
     font-size: 0.84rem;
   }
 
@@ -1637,7 +1637,7 @@ body.modal-open {
   .habit-status-strip {
     margin-top: 4px;
     padding: 6px 9px;
-    border-radius: 10px;
+    border-radius: 12px;
     gap: 3px;
   }
 
@@ -1776,7 +1776,7 @@ body.modal-open {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 6px 10px;
+    padding: 8px 12px;
     border-radius: 999px;
   }
 
@@ -1988,7 +1988,7 @@ body.modal-open {
 
   .nav-btn {
     white-space: nowrap;
-    padding: 6px 10px;
+    padding: 8px 12px;
     font-size: 0.8rem;
     letter-spacing: 0.01em;
     font-weight: 820;
@@ -2539,7 +2539,7 @@ body.modal-open {
     width: 100%;
     min-height: 38px;
     padding: 8px 12px;
-    border-radius: 10px;
+    border-radius: 12px;
     font-size: 0.84rem;
   }
 
@@ -2639,7 +2639,7 @@ body.modal-open {
     width: 100%;
     min-height: 42px;
     padding: 9px 10px;
-    border-radius: 10px;
+    border-radius: 12px;
     font-size: 0.84rem;
   }
 
@@ -6180,7 +6180,7 @@ body.modal-open {
     justify-content: flex-end;
     gap: 4px;
     padding: 5px 7px;
-    border-radius: 10px;
+    border-radius: 12px;
     background: rgba(8, 14, 21, 0.7);
     backdrop-filter: blur(10px);
   }
@@ -6204,7 +6204,7 @@ body.modal-open {
 
   .desktop-command-panel .panel-card {
     margin: 0;
-    border-radius: 10px;
+    border-radius: 12px;
     box-shadow: none;
   }
 
@@ -6271,7 +6271,7 @@ body.modal-open {
 #map .leaflet-control-layers-toggle {
   width: 34px;
   height: 34px;
-  border-radius: 10px;
+  border-radius: 12px;
   background-color: rgba(13, 21, 33, 0.96);
 }
 
@@ -6624,7 +6624,7 @@ body.modal-open {
   .map-card .geo-filter-status {
     margin: 0;
     padding: 8px 11px;
-    border-radius: 10px;
+    border-radius: 12px;
   }
 }
 
@@ -6891,7 +6891,7 @@ body.modal-open {
 
   .desktop-route-watch-actions .compact-btn {
     min-height: 34px;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 8px 12px;
     border-color: rgba(122, 160, 201, 0.25);
     background: rgba(8, 22, 36, 0.48);
@@ -6943,8 +6943,8 @@ body.modal-open {
 
   .map-card .legend-pill,
   .map-card .map-tools-overlay .geo-filter-pill {
-    border-radius: 10px;
-    padding: 6px 10px;
+    border-radius: 12px;
+    padding: 8px 12px;
     font-size: 0.72rem;
     letter-spacing: 0.025em;
   }
@@ -7197,7 +7197,7 @@ body.modal-open {
   .desktop-command-panel .combined-module-block { background: transparent; border: 0; padding: 0; }
   .desktop-command-panel .trend-item {
     border-left: 3px solid rgba(91, 166, 224, 0.75);
-    border-radius: 10px;
+    border-radius: 12px;
     background: rgba(13, 27, 45, 0.52);
     padding: 10px 10px 10px 12px;
   }
@@ -7316,7 +7316,7 @@ body.modal-open {
 
   .route-watch-metrics span {
     padding: 6px 8px;
-    border-radius: 10px;
+    border-radius: 12px;
     background: rgba(255, 255, 255, 0.03);
   }
 
@@ -7788,7 +7788,7 @@ body.modal-open {
     align-items: center;
   }
   .mobile-map-preview-card p { display: none; }
-  .mobile-map-preview-card .secondary-btn { min-height: 30px; padding: 6px 10px; font-size: .72rem; }
+  .mobile-map-preview-card .secondary-btn { min-height: 30px; padding: 8px 12px; font-size: .72rem; }
 
   /* Compact floating actions near map */
   .mobile-fast-report-card,
@@ -8102,7 +8102,7 @@ body.modal-open {
   .mobile-dock-btn {
     min-height: 34px;
     padding: 8px 10px;
-    border-radius: 10px;
+    border-radius: 12px;
     font-size: 0.72rem;
     letter-spacing: 0.08em;
     background: rgba(133, 189, 227, 0.14);
@@ -8604,35 +8604,35 @@ body.modal-open {
     position: fixed;
     --mobile-overlay-gutter: 10px;
     --mobile-brand-top: calc(env(safe-area-inset-top, 0px) + 8px);
-    --mobile-brand-height: 34px;
+    --mobile-brand-height: 42px;
     --mobile-overlay-gap: 8px;
     left: var(--mobile-overlay-gutter);
     right: var(--mobile-overlay-gutter);
     top: var(--mobile-brand-top);
     height: var(--mobile-brand-height);
     min-height: var(--mobile-brand-height);
-    padding: 6px 10px;
-    border-radius: 10px;
+    padding: 8px 12px;
+    border-radius: 12px;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
     z-index: 880;
     background: linear-gradient(155deg, rgba(7, 16, 28, 0.92), rgba(5, 12, 22, 0.88));
-    border: 1px solid rgba(132, 204, 255, 0.28);
-    box-shadow: 0 10px 24px rgba(2, 8, 18, 0.5);
+    border: 1px solid rgba(132, 204, 255, 0.2);
+    box-shadow: 0 8px 20px rgba(2, 8, 18, 0.34);
     backdrop-filter: blur(14px) saturate(132%);
   }
 
   body[data-mobile-mode] .mobile-live-brand-logo {
-    width: 138px;
-    height: 24px;
+    width: 154px;
+    height: 28px;
     overflow: hidden;
     position: relative;
     flex: 0 0 auto;
   }
 
   body[data-mobile-mode] .mobile-live-brand-logo img {
-    width: 240px;
+    width: 266px;
     max-width: none;
     position: absolute;
     left: 50%;
@@ -8641,7 +8641,7 @@ body.modal-open {
   }
 
   body[data-mobile-mode] .mobile-live-brand span {
-    font-size: 0.67rem;
+    font-size: 0.69rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: #9fd8ff;
@@ -8740,7 +8740,7 @@ body.modal-open {
 
   body[data-mobile-mode] .mobile-live-command .compact-btn {
     min-height: 32px;
-    padding: 6px 10px;
+    padding: 8px 12px;
     font-size: 0.7rem;
     font-weight: 760;
     border-color: rgba(164, 214, 255, 0.34);
@@ -8837,7 +8837,7 @@ body.modal-open {
 
   body[data-mobile-mode] .mobile-dock-btn {
     min-height: 36px;
-    border-radius: 10px;
+    border-radius: 12px;
     font-size: 0.73rem;
     font-weight: 800;
     letter-spacing: 0.015em;
@@ -8890,7 +8890,7 @@ body.modal-open {
     color: #d7e7f7;
     border-radius: 999px;
     min-height: 30px;
-    padding: 6px 10px;
+    padding: 8px 12px;
     font-size: 0.69rem;
     font-weight: 700;
   }
@@ -9097,7 +9097,7 @@ body.modal-open {
   }
   .destination-chip-row .destination-chip {
     min-height: 34px;
-    padding: 6px 10px;
+    padding: 8px 12px;
     border-radius: 9px;
     font-size: 0.76rem;
   }
@@ -9126,7 +9126,7 @@ body.modal-open {
   .route-setup-grid-mobile select,
   .smart-alerts-modal-card input,
   .smart-alerts-modal-card select {
-    border-radius: 10px;
+    border-radius: 12px;
     min-height: 38px;
     padding: 8px 10px;
     border: 1px solid rgba(255,255,255,0.2);
@@ -9141,7 +9141,7 @@ body.modal-open {
   .gridly-mobile-route-quick-panel .secondary-btn,
   .hazard-panel-placement-actions button {
     min-height: 38px;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 8px 11px;
   }
   .route-setup-grid-mobile #mobileSaveRouteBtn,
@@ -9184,3 +9184,14 @@ body.modal-open {
 
 .mobile-floating-action-dock{backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important;background:rgba(9,13,20,.74)!important;border:1px solid rgba(255,255,255,.1)!important;box-shadow:0 8px 18px rgba(0,0,0,.22)!important}
 .mobile-alerts-panel{background:rgba(10,15,23,.74)!important;border-color:rgba(255,255,255,.09)!important;box-shadow:0 9px 18px rgba(0,0,0,.2)!important}
+
+
+body[data-mobile-mode] .report-drawer-summary{display:none!important}
+body[data-mobile-mode] .report-drawer{border:0;background:transparent;box-shadow:none;padding:0}
+.manage-places-group{display:grid;gap:6px;padding:8px 0;border-top:1px solid rgba(255,255,255,.07)}
+.manage-places-group:first-child{border-top:0;padding-top:0}
+.manage-places-group-label{margin:0;color:rgba(180,205,230,.86);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;font-weight:800}
+.manage-places-group-utility .secondary-btn{opacity:.82}
+.geo-filter-shell{background:rgba(255,255,255,.01);border:1px solid rgba(255,255,255,.06)}
+.geo-filter-pill{background:rgba(255,255,255,.035)}
+body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle,body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button{background:rgba(8,14,23,.62);border-color:rgba(166,208,245,.2);box-shadow:0 3px 8px rgba(2,8,16,.16)}
