@@ -223,6 +223,10 @@ const reportingState = {
 
 function updateReportingState(patch = {}) {
   Object.assign(reportingState, patch);
+  const isReportingLive = Boolean(reportingState.reportModeActive || reportingState.placementModeActive || reportingState.submissionInProgress);
+  document.body?.classList.toggle("reporting-live", isReportingLive);
+  const mapFrame = document.querySelector(".map-frame");
+  if (mapFrame) mapFrame.dataset.reportingState = isReportingLive ? "active" : "idle";
 }
 
 window.gridlyReportingDebug = function () {
@@ -6481,23 +6485,22 @@ function updateRouteIntelligence(nearest = []) {
   liveStatusCard?.classList.remove("clear-status", "delay-status", "blocked-status");
 
   if (impact >= 70) {
-    safeText("delayRisk", routeIntel.urgentBlockedCount > 0 ? "LEAVE NOW" : "DELAY BUILDING");
-    safeText("delayReason", routeIntel.urgentBlockedCount > 0 ? `${routeIntel.urgentBlockedCount} blocked report${routeIntel.urgentBlockedCount === 1 ? "" : "s"} posted within 10 min. Reroute immediately.` : "Major crossing blockage detected. Check the live map before departure.");
+    safeText("delayRisk", routeIntel.urgentBlockedCount > 0 ? "Delay building now" : "High crossing pressure");
+    safeText("delayReason", routeIntel.urgentBlockedCount > 0 ? `${routeIntel.urgentBlockedCount} active signal${routeIntel.urgentBlockedCount === 1 ? "" : "s"} in the last 10 min · alternate route is recommended.` : "Live commute unstable · active crossing pressure is building near your corridor.");
     safeText("alternateRoute", "Use alternate");
     safeText("alternateReason", "Avoid highest-impact crossing if possible.");
     safeText("impactText", "High route impact. Leave now or reroute.");
     liveStatusCard?.classList.add("blocked-status");
   } else if (impact >= 40) {
-    safeText("delayRisk", "WATCH + PREP ALT");
-    safeText("delayReason", "Crossing activity is building. Keep a backup route ready.");
+    safeText("delayRisk", "Live commute stable");
+    safeText("delayReason", "2-3 active signals detected · keep backup route ready as delay momentum rises.");
     safeText("alternateRoute", "Have backup");
     safeText("alternateReason", "Alternate route may help if reports increase.");
     safeText("impactText", "Moderate route impact. Watch before leaving.");
     liveStatusCard?.classList.add("delay-status");
   } else {
-    const hour = new Date().getHours();
-    safeText("delayRisk", hour >= 21 || hour < 5 ? "NIGHT WATCH CLEAR" : "CLEAR TO LEAVE");
-    safeText("delayReason", "No rail or road incidents reported nearby. Live watch stays on if conditions change.");
+    safeText("delayRisk", "Live commute clear");
+    safeText("delayReason", "No active crossing pressure nearby · confidence is high and monitoring is live.");
     safeText("alternateRoute", "Not needed");
     safeText("alternateReason", "Current route appears clear.");
     safeText("impactText", "Low route impact. Normal travel expected.");
