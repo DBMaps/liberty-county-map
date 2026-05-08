@@ -208,6 +208,9 @@ let osrmRouteSuccess = false;
 let monitoredRouteEtaMinutes = null;
 let monitoredRouteDelayMinutes = null;
 let monitoredRouteDurationSeconds = null;
+let lastRouteRequest = null;
+let lastRouteGeometryPointCount = 0;
+let lastRouteError = null;
 let pendingHazardPlacement = null;
 let selectedQuickHazardType = null;
 let mobileUiMode = "live";
@@ -313,6 +316,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   attachGridlyMovementDebugGlobal();
   attachSavedPlacesDebugGlobal();
   attachRouteWatchDebugGlobal();
+  attachRouteQuickPanelDebugGlobal();
   initGreeting();
   updateLastUpdated();
   initMap();
@@ -3453,6 +3457,18 @@ function openMobileRouteQuickPanel() {
   if (meta) {
     meta.textContent = `${els.routeStatus?.textContent || "Choose route"} • ${els.routeEta?.textContent || "ETA pending"} • ${els.routeRecommendation?.textContent || "Awaiting route selection"}`;
   }
+  if (startSelect && !startSelect.dataset.gridlyRouteQuickBound) {
+    startSelect.addEventListener("change", () => {
+      console.info("Gridly route panel selection change", { control: "start", value: startSelect.value || "" });
+    });
+    startSelect.dataset.gridlyRouteQuickBound = "1";
+  }
+  if (destinationSelect && !destinationSelect.dataset.gridlyRouteQuickBound) {
+    destinationSelect.addEventListener("change", () => {
+      console.info("Gridly route panel selection change", { control: "destination", value: destinationSelect.value || "" });
+    });
+    destinationSelect.dataset.gridlyRouteQuickBound = "1";
+  }
   panel.classList.add("visible");
 }
 
@@ -4373,16 +4389,32 @@ function bindEvents() {
     }
     if (action === "view-route-quick") {
       event.preventDefault();
+      console.info("Gridly View Route quick click");
+      const startSelect = document.getElementById("mobileRouteQuickStart");
+      const destinationSelect = document.getElementById("mobileRouteQuickDestination");
+      if (els.routeWatchStartSelect && startSelect) els.routeWatchStartSelect.value = startSelect.value;
+      if (els.routeWatchDestinationSelect && destinationSelect) els.routeWatchDestinationSelect.value = destinationSelect.value;
+      const places = getSavedPlaces();
+      const resolvedStartPlace = places.find((place) => place.id === (els.routeWatchStartSelect?.value || "")) || null;
+      const resolvedDestinationPlace = places.find((place) => place.id === (els.routeWatchDestinationSelect?.value || "")) || null;
+      console.info("Gridly quick panel place resolution result", { resolvedStartPlace, resolvedDestinationPlace });
+      updateRouteWatchStartButtonState();
+      startInlineRouteWatch({ activateWatch: false });
       routeNavSection("map");
       document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
       return;
     }
     if (action === "start-route-watch-quick") {
       event.preventDefault();
+      console.info("Gridly Start Route Watch quick click");
       const startSelect = document.getElementById("mobileRouteQuickStart");
       const destinationSelect = document.getElementById("mobileRouteQuickDestination");
       if (els.routeWatchStartSelect && startSelect) els.routeWatchStartSelect.value = startSelect.value;
       if (els.routeWatchDestinationSelect && destinationSelect) els.routeWatchDestinationSelect.value = destinationSelect.value;
+      const places = getSavedPlaces();
+      const resolvedStartPlace = places.find((place) => place.id === (els.routeWatchStartSelect?.value || "")) || null;
+      const resolvedDestinationPlace = places.find((place) => place.id === (els.routeWatchDestinationSelect?.value || "")) || null;
+      console.info("Gridly quick panel place resolution result", { resolvedStartPlace, resolvedDestinationPlace });
       updateRouteWatchStartButtonState();
       startInlineRouteWatch();
       document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
@@ -5952,6 +5984,13 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
     const destinationLat = Number(destinationCoordinates?.lat);
     const destinationLng = Number(destinationCoordinates?.lng);
     const osrmUrl = `${OSRM_ROUTE_API}/${startLng},${startLat};${destinationLng},${destinationLat}?overview=full&geometries=geojson`;
+    lastRouteRequest = {
+      engine: "osrm",
+      url: osrmUrl,
+      start: { lat: startLat, lng: startLng },
+      destination: { lat: destinationLat, lng: destinationLng },
+      requestedAt: new Date().toISOString()
+    };
     const controller = typeof AbortController === "function" ? new AbortController() : null;
     const timeoutId = controller ? setTimeout(() => controller.abort(), 7000) : null;
     const response = await fetch(osrmUrl, {
@@ -5975,6 +6014,9 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
       throw new Error("OSRM route geometry could not be converted.");
     }
     previewPoints = convertedPoints;
+    lastRouteGeometryPointCount = convertedPoints.length;
+    lastRouteError = null;
+    console.info("Gridly route geometry point count", { pointCount: convertedPoints.length, source: "osrm" });
     routeGeometrySource = "osrm";
     osrmRouteSuccess = true;
     const osrmDurationSeconds = Number(primaryRoute?.duration);
@@ -5985,6 +6027,9 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
   } catch (error) {
     routeGeometrySource = "fallback";
     osrmRouteSuccess = false;
+    lastRouteError = String(error?.message || error || "OSRM route failed");
+    lastRouteGeometryPointCount = fallbackPoints.length;
+    console.info("Gridly route geometry point count", { pointCount: fallbackPoints.length, source: "fallback" });
   }
 
   const corridorUnderlay = L.polyline(previewPoints, {
@@ -6017,6 +6062,11 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
   });
 
   routePreviewCorridorLayer = L.layerGroup([corridorUnderlay, corridorBase, routePreviewLayer]).addTo(map);
+  console.info("Gridly route layer render result", {
+    routeLayerExists: Boolean(routePreviewLayer),
+    routeLayerOnMap: Boolean(map && routePreviewLayer && map.hasLayer(routePreviewLayer)),
+    routePaneZIndex: map?.getPane?.("routePane")?.style?.zIndex || null
+  });
   window.__gridlyRoutePreviewLayer = routePreviewLayer;
 
   const rerouteFoundation = getRerouteFoundation(getRouteHazardAssessment());
@@ -6451,6 +6501,37 @@ function attachRouteWatchDebugGlobal() {
   };
 }
 
+function attachRouteQuickPanelDebugGlobal() {
+  window.gridlyRouteQuickPanelDebug = function gridlyRouteQuickPanelDebug() {
+    const selectedStartValue = els?.routeWatchStartSelect?.value || "";
+    const selectedDestinationValue = els?.routeWatchDestinationSelect?.value || "";
+    const places = Array.isArray(getSavedPlaces?.()) ? getSavedPlaces() : [];
+    const resolvedStartPlace = places.find((place) => place.id === selectedStartValue) || null;
+    const resolvedDestinationPlace = places.find((place) => place.id === selectedDestinationValue) || null;
+    const resolvedStartCoords = normalizeCoordinatePair(resolvedStartPlace?.lat, resolvedStartPlace?.lng);
+    const resolvedDestinationCoords = normalizeCoordinatePair(resolvedDestinationPlace?.lat, resolvedDestinationPlace?.lng);
+    const routeBounds = window.__gridlyRoutePreviewLayer?.getBounds?.();
+    return {
+      selectedStartValue,
+      selectedDestinationValue,
+      resolvedStartPlace,
+      resolvedDestinationPlace,
+      startHasLatLng: Boolean(resolvedStartCoords),
+      destinationHasLatLng: Boolean(resolvedDestinationCoords),
+      routeWatchActive: Boolean(routeWatchActivated),
+      activeRouteName: els?.routeCardLabel?.textContent || "",
+      lastRouteRequest,
+      lastRouteGeometryPointCount: Number(lastRouteGeometryPointCount || 0),
+      routeLayerExists: Boolean(window.__gridlyRoutePreviewLayer),
+      routeLayerOnMap: Boolean(map && window.__gridlyRoutePreviewLayer && map.hasLayer(window.__gridlyRoutePreviewLayer)),
+      routeLayerBounds: routeBounds?.isValid?.() ? routeBounds.toBBoxString() : null,
+      routePaneZIndex: map?.getPane?.("routePane")?.style?.zIndex || null,
+      lastRouteError,
+      commuteStateText: els?.routeStatus?.textContent || ""
+    };
+  };
+}
+
 async function renderDestinationRoute(target) {
   if (!savedRouteLayer || !target) return;
   window.__gridlyRouteWatchActive = true;
@@ -6575,7 +6656,8 @@ function loadSavedRoute() {
   }
 }
 
-async function startInlineRouteWatch() {
+async function startInlineRouteWatch(options = {}) {
+  const { activateWatch = true } = options;
   const startId = els.routeWatchStartSelect?.value || "";
   const destinationId = els.routeWatchDestinationSelect?.value || "";
   const places = getSavedPlaces();
@@ -6592,12 +6674,12 @@ async function startInlineRouteWatch() {
     setConfirmation("Choose a different destination.", "error");
     return;
   }
-  routeWatchActivated = true;
+  routeWatchActivated = Boolean(activateWatch);
   safeText("desktopRouteHome", start.name);
   safeText("desktopRouteWork", destination.name);
   safeText("routeCardLabel", `${start.name} → ${destination.name}`);
-  safeText("desktopRouteStatus", `Monitoring ${start.name} → ${destination.name}.`);
-  safeText("routeWatchSetupHint", `Monitoring ${start.name} → ${destination.name}.`);
+  safeText("desktopRouteStatus", activateWatch ? `Monitoring ${start.name} → ${destination.name}.` : `Viewing ${start.name} → ${destination.name}.`);
+  safeText("routeWatchSetupHint", activateWatch ? `Monitoring ${start.name} → ${destination.name}.` : `Viewing ${start.name} → ${destination.name}.`);
 
   const state = normalizeSavedPlaces();
   const fromPlace = start.id === "home" ? state.home : start.id === "work" ? state.work : state.custom.find((place) => place.id === start.id);
