@@ -8290,9 +8290,12 @@ body.modal-open {
   }
 
   .mobile-floating-action-dock {
-    left: 10px;
-    right: 10px;
-    bottom: 14px;
+    position: fixed;
+    left: max(10px, env(safe-area-inset-left, 0px));
+    right: max(10px, env(safe-area-inset-right, 0px));
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    width: min(420px, calc(100vw - max(10px, env(safe-area-inset-left, 0px)) - max(10px, env(safe-area-inset-right, 0px))));
+    margin-inline: auto;
     padding: 5px;
     border-radius: 999px;
     border: 1px solid rgba(128, 193, 247, 0.32);
@@ -8300,6 +8303,7 @@ body.modal-open {
     backdrop-filter: blur(16px) saturate(138%);
     box-shadow: 0 12px 24px rgba(1, 8, 19, 0.5);
     gap: 5px;
+    box-sizing: border-box;
   }
 
   .mobile-dock-btn {
