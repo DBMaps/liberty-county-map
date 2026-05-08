@@ -416,6 +416,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   loadSavedRoute();
   loadSmartAlertsPreferences();
   initDailyDestinationHero();
+  updateMobileWatchHeader();
   updateProfileUI();
   maybeOpenFirstRunSetup();
 
@@ -7661,6 +7662,7 @@ function updateRouteIntelligence(nearest = []) {
   updateAlternateRouteActionState();
 
   updateMobileTopCommuteCta({ impact, routeIsMonitoring, alternateRouteAvailable });
+  updateMobileWatchHeader();
   updateRouteWatchBadge();
 }
 
@@ -7670,6 +7672,29 @@ function updateMobileTopCommuteCta({ routeIsMonitoring = false } = {}) {
   cta.textContent = routeIsMonitoring ? "View Route" : "Choose Route";
   cta.dataset.sectionJump = "routes";
   cta.dataset.topCtaAction = "open-route-panel";
+}
+
+function getMobileWatchAreaLabel() {
+  const selectedRouteLabel = [
+    window.__gridlySelectedRouteLabel,
+    window.__gridlyActiveRouteLabel,
+    window.__gridlyWatchedRouteLabel
+  ].find((value) => typeof value === "string" && value.trim());
+  if (selectedRouteLabel) return selectedRouteLabel.trim();
+
+  const selectedAreaLabel = [
+    window.__gridlySelectedAreaLabel,
+    window.__gridlySelectedCountyLabel,
+    window.__gridlySelectedWatchAreaLabel
+  ].find((value) => typeof value === "string" && value.trim());
+  if (selectedAreaLabel) return selectedAreaLabel.trim();
+
+  return LOCATION_DEFAULTS.county || "Liberty County";
+}
+
+function updateMobileWatchHeader() {
+  safeText("mobileWatchLabel", "WATCHING");
+  safeText("mobileWatchArea", getMobileWatchAreaLabel());
 }
 
 
