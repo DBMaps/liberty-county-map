@@ -227,6 +227,7 @@ const reportingState = {
   reportModeActive: false,
   placementModeActive: false,
   submissionInProgress: false,
+  locationLookupInProgress: false,
   lastReportMessage: "",
   lastReportError: "",
   activeReportEntryPoint: ""
@@ -3454,7 +3455,7 @@ window.submitHazardNearMe = function (hazardType) {
     return;
   }
 
-  if (reportingState.submissionInProgress) return;
+  if (reportingState.submissionInProgress || reportingState.locationLookupInProgress) return;
 
   if (!navigator.geolocation) {
     updateReportingState({ lastReportError: "Location is unavailable. Select a spot on the map to submit this hazard.", lastReportMessage: "" });
@@ -3466,6 +3467,7 @@ window.submitHazardNearMe = function (hazardType) {
 
   updateReportingState({
     activeReportEntryPoint: "hazard_use_my_location",
+    locationLookupInProgress: true,
     lastReportError: "",
     lastReportMessage: `Finding your location for ${hazardCopy.label} report...`
   });
@@ -3488,6 +3490,7 @@ window.submitHazardNearMe = function (hazardType) {
     },
     () => {
       updateReportingState({
+        locationLookupInProgress: false,
         lastReportError: "We couldn't access your location. Allow GPS or tap the map to place this hazard.",
         lastReportMessage: ""
       });
@@ -3556,7 +3559,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
   };
 
   try {
-    updateReportingState({ submissionInProgress: true });
+    updateReportingState({ submissionInProgress: true, locationLookupInProgress: false });
     setSync("Sending hazard report...");
     updateReportingState({ lastReportError: "", lastReportMessage: `Sending ${copy.label} hazard report...` });
     setConfirmation(`Sending ${copy.label} hazard report...`, "success");
@@ -3570,7 +3573,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     setSync("Hazard report shared");
 
     await runPostSubmitRefresh();
-    updateReportingState({ submissionInProgress: false, reportModeActive: false, placementModeActive: false });
+    updateReportingState({ submissionInProgress: false, locationLookupInProgress: false, reportModeActive: false, placementModeActive: false });
     if (window.matchMedia("(max-width: 760px)").matches) setMobileUiMode("live", { silent: true });
     return true;
   } catch (error) {
@@ -3578,7 +3581,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     updateReportingState({ lastReportError: `Hazard report failed: ${error.message || "permission denied"}` });
     setConfirmation(`Hazard report failed: ${error.message || "permission denied"}`, "error");
     setSync("Hazard report failed");
-    updateReportingState({ submissionInProgress: false });
+    updateReportingState({ submissionInProgress: false, locationLookupInProgress: false });
     return false;
   }
 }
