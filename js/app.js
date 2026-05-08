@@ -8366,7 +8366,27 @@ function upgradeMobileIssueCTA() {
     choiceGrid.prepend(railButton);
   }
 
+  ensureFloodingHazardChoice(choiceGrid);
   injectMobileCTACleanupStyles();
+}
+
+function ensureFloodingHazardChoice(choiceGrid) {
+  if (!choiceGrid) return;
+  const floodButton = choiceGrid.querySelector('button[data-action="open-hazard-placement"][data-hazard-type="flooding"]');
+  if (floodButton) return;
+
+  const button = document.createElement("button");
+  button.type = "button";
+  button.dataset.action = "open-hazard-placement";
+  button.dataset.hazardType = "flooding";
+  button.textContent = "🌊 Flooding";
+
+  const firstHazardButton = choiceGrid.querySelector('button[data-action="open-hazard-placement"]');
+  if (firstHazardButton) {
+    choiceGrid.insertBefore(button, firstHazardButton);
+  } else {
+    choiceGrid.appendChild(button);
+  }
 }
 
 function startRailIssueFromUnifiedPanel() {
