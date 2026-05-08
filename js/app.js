@@ -167,6 +167,8 @@ let routePreviewReason = "Route preview has not been requested.";
 let lastRoutePreviewError = null;
 let routeGeometrySource = "fallback";
 let osrmRouteSuccess = false;
+let monitoredRouteEtaMinutes = null;
+let monitoredRouteDelayMinutes = null;
 const LOCAL_PLACE_LOOKUP = {
   dayton: { lat: 30.0466, lng: -94.8852 },
   crosby: { lat: 29.9111, lng: -95.0622 },
@@ -4980,6 +4982,8 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
   let previewPoints = fallbackPoints;
   routeGeometrySource = "fallback";
   osrmRouteSuccess = false;
+  monitoredRouteEtaMinutes = null;
+  monitoredRouteDelayMinutes = null;
 
   try {
     const startLat = Number(startCoordinates?.lat);
@@ -4998,7 +5002,8 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
       throw new Error(`OSRM response failed (${response.status})`);
     }
     const payload = await response.json();
-    const routeCoordinates = payload?.routes?.[0]?.geometry?.coordinates;
+    const primaryRoute = payload?.routes?.[0] || null;
+    const routeCoordinates = primaryRoute?.geometry?.coordinates;
     if (!Array.isArray(routeCoordinates) || routeCoordinates.length < 2) {
       throw new Error("OSRM route geometry was invalid.");
     }
@@ -5011,6 +5016,10 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
     previewPoints = convertedPoints;
     routeGeometrySource = "osrm";
     osrmRouteSuccess = true;
+    const osrmDurationSeconds = Number(primaryRoute?.duration);
+    if (Number.isFinite(osrmDurationSeconds) && osrmDurationSeconds > 0) {
+      monitoredRouteEtaMinutes = Math.max(1, Math.round(osrmDurationSeconds / 60));
+    }
   } catch (error) {
     routeGeometrySource = "fallback";
     osrmRouteSuccess = false;
@@ -5953,16 +5962,32 @@ function renderRouteWatchIntelligenceFields({
   `;
 }
 
-function getRouteEtaMetricsFromHero() {
+function getRouteEtaMetricsFromState({
+  routeHazardLevel = "clear",
+  fallbackExtraMinutes = 0
+} = {}) {
   const etaText = String(els.routeEta?.textContent || "").trim();
-  if (!etaText || !/^ETA/i.test(etaText)) return { routeEtaValue: "", routeDelayValue: "" };
-  const match = etaText.match(/^ETA\s+([^(]+?)(?:\s*\(([^)]+)\))?$/i);
-  if (!match) return { routeEtaValue: "", routeDelayValue: "" };
-  const routeEtaValue = String(match[1] || "").trim();
-  const routeDelayValue = String(match[2] || "").trim();
+  if (etaText && /^ETA/i.test(etaText)) {
+    const match = etaText.match(/^ETA\s+([^(]+?)(?:\s*\(([^)]+)\))?$/i);
+    if (match) {
+      const routeEtaValue = String(match[1] || "").trim();
+      const routeDelayValue = String(match[2] || "").trim();
+      if (routeEtaValue) return { routeEtaValue, routeDelayValue };
+    }
+  }
+
+  const etaMinutes = Number.isFinite(Number(monitoredRouteEtaMinutes))
+    ? Number(monitoredRouteEtaMinutes)
+    : null;
+  const fallbackDelay = routeHazardLevel !== "clear"
+    ? Math.max(0, Math.round(Number(fallbackExtraMinutes) || 0))
+    : 0;
+  const delayMinutes = Number.isFinite(Number(monitoredRouteDelayMinutes))
+    ? Number(monitoredRouteDelayMinutes)
+    : fallbackDelay;
   return {
-    routeEtaValue,
-    routeDelayValue
+    routeEtaValue: etaMinutes && etaMinutes > 0 ? `${etaMinutes} min` : "",
+    routeDelayValue: delayMinutes && delayMinutes > 0 ? `+${delayMinutes} min` : ""
   };
 }
 
@@ -6061,7 +6086,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeStatus", "Blocked");
     safeText("routeEta", `ETA 32 min (+${extraMinutes})`);
     safeText("departureTime", "Leave now");
-    renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, ...getRouteEtaMetricsFromHero() });
+    renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, ...getRouteEtaMetricsFromState({ routeHazardLevel: routeHazard.level, fallbackExtraMinutes: extraMinutes }) });
     safeText("desktopRouteStatus", "Blocked crossing detected. Consider another route.");
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
@@ -6073,7 +6098,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeStatus", "Heavy Delay");
     safeText("routeEta", `ETA 26 min (+${extraMinutes})`);
     safeText("departureTime", "Leave 8 min early");
-    renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, ...getRouteEtaMetricsFromHero() });
+    renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, ...getRouteEtaMetricsFromState({ routeHazardLevel: routeHazard.level, fallbackExtraMinutes: extraMinutes }) });
     safeText("desktopRouteStatus", "Heavy delay detected. Leave early or reroute.");
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
@@ -6085,7 +6110,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeStatus", "Caution");
     safeText("routeEta", `ETA 24 min (+${Math.max(extraMinutes, 3)})`);
     safeText("departureTime", "Leave a bit early");
-    renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, ...getRouteEtaMetricsFromHero() });
+    renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, ...getRouteEtaMetricsFromState({ routeHazardLevel: routeHazard.level, fallbackExtraMinutes: extraMinutes }) });
     safeText("desktopRouteStatus", "Possible delay near your route.");
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
@@ -6097,7 +6122,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeStatus", "Clear");
     safeText("routeEta", "ETA 21 min");
     safeText("departureTime", "Normal departure");
-    renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, ...getRouteEtaMetricsFromHero() });
+    renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, ...getRouteEtaMetricsFromState({ routeHazardLevel: routeHazard.level, fallbackExtraMinutes: extraMinutes }) });
     safeText("desktopRouteStatus", "Your route looks clear.");
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
