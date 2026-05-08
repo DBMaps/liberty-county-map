@@ -277,6 +277,13 @@ function setMobileUiMode(mode = "live", options = {}) {
   }
 }
 
+function closeMobileRouteQuickPanel(reason = "") {
+  const panel = document.getElementById("gridlyMobileRouteQuickPanel");
+  if (!panel?.classList?.contains("visible")) return;
+  panel.classList.remove("visible");
+  if (reason) lastRoutePanelCloseReason = reason;
+}
+
 const GRIDLY_REPORT_VERBOSE_DEBUG = false;
 const GRIDLY_ROUTE_VERBOSE_DEBUG = false;
 const GRIDLY_LAYER_VERBOSE_DEBUG = false;
@@ -3611,6 +3618,13 @@ function bindDirectRouteQuickPanelButtonListeners() {
         activateWatch: action === "start-route-watch-quick",
         source: action === "start-route-watch-quick" ? "mobile_quick_panel_start_watch_direct" : "mobile_quick_panel_view_route_direct"
       });
+      const routePreviewWasSuccessful = Boolean(routeRenderSucceeded && !lastRouteEarlyReturnReason);
+      if (action === "view-route-quick" && routePreviewWasSuccessful) {
+        closeMobileRouteQuickPanel("view_route_success");
+      }
+      if (action === "start-route-watch-quick" && routePreviewWasSuccessful) {
+        closeMobileRouteQuickPanel("start_route_watch_success");
+      }
       const panelIsVisible = panel?.classList?.contains("visible") ?? false;
       if (panelWasVisible && !panelIsVisible && routeRenderSucceeded && !lastRouteEarlyReturnReason) {
         lastRoutePanelCloseReason = action === "start-route-watch-quick" ? "start_route_watch_success" : "view_route_success";
@@ -3693,15 +3707,13 @@ async function handleRouteQuickPanelAction(action, event, actionEl) {
   if (action === "view-route-quick") {
     routeNavSection("map");
     if (routePreviewWasSuccessful) {
-      document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
-      lastRoutePanelCloseReason = "view_route_success";
+      closeMobileRouteQuickPanel("view_route_success");
     }
     return;
   }
 
   if (action === "start-route-watch-quick" && routePreviewWasSuccessful) {
-    document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
-    lastRoutePanelCloseReason = "start_route_watch_success";
+    closeMobileRouteQuickPanel("start_route_watch_success");
   }
 }
 
@@ -4814,6 +4826,11 @@ function bindEvents() {
     const target = navTargets[section];
     if (!target) return;
     if (window.matchMedia("(max-width: 760px)").matches) {
+      if (section === "alerts" && mobileUiMode === "alert") {
+        setMobileUiMode("live", { silent: true });
+        scrollToSection("mapSection");
+        return;
+      }
       if (section === "map" || section === "dashboard") setMobileUiMode("live", { silent: true });
       if (section === "alerts") setMobileUiMode("alert", { silent: true });
       if (section === "routes") setMobileUiMode("route", { silent: true });
@@ -8984,10 +9001,10 @@ function injectMobileCTACleanupStyles() {
       .gridly-hazard-panel {
         left: 14px !important;
         right: 14px !important;
-        bottom: 164px !important;
+        bottom: calc(124px + env(safe-area-inset-bottom, 0px)) !important;
         top: max(10px, env(safe-area-inset-top)) !important;
         width: auto !important;
-        max-height: calc(100dvh - max(10px, env(safe-area-inset-top)) - 164px) !important;
+        max-height: calc(100dvh - max(10px, env(safe-area-inset-top)) - (124px + env(safe-area-inset-bottom, 0px))) !important;
         display: none !important;
         grid-template-rows: auto auto minmax(0, 1fr) auto !important;
         gap: 0 !important;
@@ -8997,13 +9014,18 @@ function injectMobileCTACleanupStyles() {
       }
       .hazard-choice-grid {
         min-height: 0 !important;
+        max-height: 100% !important;
         overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding-bottom: 8px !important;
       }
       .hazard-panel-placement-actions {
         position: sticky !important;
         bottom: 0 !important;
         flex-shrink: 0 !important;
         background: rgba(9, 18, 32, 0.98) !important;
+        padding-top: 8px !important;
+        margin-top: 4px !important;
       }
     }
   `;
