@@ -49,7 +49,8 @@
     </div>
     <div class="mobile-live-brand-status">
       <span class="live-pulse-dot" aria-hidden="true"></span>
-      <span>LIVE · Liberty County</span>
+      <strong>LIVE</strong>
+      <span>Liberty County</span>
     </div>
   </div>
 
@@ -536,6 +537,7 @@
       <div class="setup-grid route-setup-grid-mobile">
         <section class="manage-places-group" id="managePlacesSlotsGroup" hidden>
           <p class="manage-places-group-label">Step 1 · Choose slot</p>
+          <p class="manage-places-group-note">Where do you want to save this?</p>
           <div class="destination-chip-row" id="managePlaceSlotRow" hidden>
             <button class="secondary-btn destination-chip" id="managePlaceHomeBtn" type="button">Home</button>
             <button class="secondary-btn destination-chip" id="managePlaceWorkBtn" type="button">Work</button>
@@ -544,6 +546,7 @@
         </section>
         <section class="manage-places-group">
           <p class="manage-places-group-label">Step 2 · Choose source</p>
+          <p class="manage-places-group-note">How do you want to add it?</p>
           <label>
             Address
             <input id="mobileHomeInput" type="text" placeholder="Enter address, city, or place" autocomplete="street-address" />
@@ -559,12 +562,13 @@
         </section>
         <section class="manage-places-group">
           <p class="manage-places-group-label">Step 3 · Save</p>
+          <p class="manage-places-group-note">Save your selection to the chosen slot.</p>
           <button id="mobileSaveRouteBtn" class="primary-btn" type="button">Save to Slot</button>
-          <button id="mobileUseLocationBtn" class="secondary-btn" type="button">Use My Location</button>
+          <button id="mobileUseLocationBtn" class="secondary-btn subtle-secondary-btn" type="button">Use My Location</button>
         </section>
         <section class="manage-places-group manage-places-group-utility">
           <p class="manage-places-group-label">Utility</p>
-          <button id="mobileResetPlacesBtn" class="secondary-btn" type="button">Reset Saved Places</button>
+          <button id="mobileResetPlacesBtn" class="secondary-btn subtle-secondary-btn" type="button">Reset Saved Places</button>
         </section>
       </div>
     </div>
