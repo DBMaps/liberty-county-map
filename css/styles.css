@@ -7954,8 +7954,10 @@ body.modal-open {
 }
 
 #map .leaflet-pane.leaflet-routePane-pane path {
-  filter: drop-shadow(0 0 8px rgba(88, 177, 255, 0.3));
-  animation: gridlyRoutePulse 2.6s ease-in-out infinite;
+  filter: drop-shadow(0 0 7px rgba(88, 177, 255, 0.24));
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation: gridlyRoutePulse 3.2s ease-in-out infinite;
 }
 
 .gridly-hazard-marker {
@@ -7987,8 +7989,8 @@ body.modal-open {
 }
 
 @keyframes gridlyRoutePulse {
-  0%, 100% { stroke-opacity: 0.72; }
-  50% { stroke-opacity: 0.98; }
+  0%, 100% { stroke-opacity: 0.78; }
+  50% { stroke-opacity: 0.93; }
 }
 
 @keyframes gridlyHazardBreath {
@@ -8678,18 +8680,18 @@ body.modal-open {
     left: var(--mobile-overlay-gutter, 10px);
     right: var(--mobile-overlay-gutter, 10px);
     z-index: 760;
-    padding: 7px 9px;
-    border-radius: 14px;
-    border-color: rgba(145, 204, 255, 0.22);
-    background: linear-gradient(150deg, rgba(7, 17, 30, 0.68), rgba(5, 13, 24, 0.72));
-    box-shadow: 0 8px 22px rgba(3, 9, 22, 0.3), 0 0 20px rgba(45, 135, 255, 0.09);
-    backdrop-filter: blur(14px) saturate(122%);
-    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 15px;
+    border-color: rgba(153, 212, 255, 0.24);
+    background: linear-gradient(155deg, rgba(8, 19, 33, 0.7), rgba(5, 13, 23, 0.78));
+    box-shadow: 0 10px 24px rgba(3, 9, 22, 0.3), 0 0 16px rgba(45, 135, 255, 0.08);
+    backdrop-filter: blur(15px) saturate(124%);
+    gap: 11px;
   }
 
   body[data-mobile-mode] .mobile-live-command .eyebrow {
-    margin: 0 0 3px;
-    font-size: 0.62rem;
+    margin: 0 0 4px;
+    font-size: 0.6rem;
     letter-spacing: 0.13em;
     opacity: 0.88;
   }
@@ -8697,37 +8699,39 @@ body.modal-open {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin: 0 0 4px;
-    padding: 2px 9px;
+    margin: 0 0 5px;
+    padding: 3px 9px;
     border-radius: 999px;
     border: 1px solid rgba(116, 239, 196, 0.48);
     background: rgba(46, 188, 151, 0.2);
     color: #b8ffea;
-    font-size: 0.62rem;
+    font-size: 0.6rem;
     font-weight: 850;
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
 
   body[data-mobile-mode] .mobile-live-command strong {
-    font-size: 0.92rem;
-    line-height: 1.14;
-    letter-spacing: 0.005em;
+    font-size: 0.96rem;
+    line-height: 1.16;
+    letter-spacing: 0.002em;
   }
 
   body[data-mobile-mode] .mobile-live-command p {
-    margin: 2px 0 0;
-    font-size: 0.68rem;
-    line-height: 1.22;
-    color: #c9ddf6;
+    margin: 3px 0 0;
+    font-size: 0.69rem;
+    line-height: 1.25;
+    color: #cfe0f5;
   }
 
   body[data-mobile-mode] .mobile-live-command .compact-btn {
-    min-height: 30px;
-    padding: 6px 9px;
-    font-size: 0.68rem;
-    border-color: rgba(160, 210, 255, 0.28);
-    background: linear-gradient(145deg, rgba(91, 201, 255, 0.12), rgba(255, 255, 255, 0.03));
+    min-height: 32px;
+    padding: 6px 10px;
+    font-size: 0.7rem;
+    font-weight: 760;
+    border-color: rgba(164, 214, 255, 0.34);
+    background: linear-gradient(145deg, rgba(96, 205, 255, 0.16), rgba(255, 255, 255, 0.05));
+    box-shadow: inset 0 1px 0 rgba(224, 242, 255, 0.12);
     align-self: center;
   }
 
@@ -8753,24 +8757,24 @@ body.modal-open {
   }
 
   body[data-mobile-mode] .mobile-map-floating-chips {
-    top: calc(var(--mobile-brand-top, env(safe-area-inset-top, 0px) + 8px) + var(--mobile-brand-height, 38px) + var(--mobile-overlay-gap, 8px) + 74px);
+    top: calc(var(--mobile-brand-top, env(safe-area-inset-top, 0px) + 8px) + var(--mobile-brand-height, 38px) + var(--mobile-overlay-gap, 8px) + 80px);
     left: var(--mobile-overlay-gutter, 10px);
     right: var(--mobile-overlay-gutter, 10px);
     display: flex;
-    gap: 6px;
+    gap: 7px;
     align-items: center;
     flex-wrap: wrap;
   }
 
   body[data-mobile-mode] .map-floating-chip {
-    padding: 6px 10px;
-    min-height: 28px;
-    font-size: 0.7rem;
-    border-color: rgba(157, 209, 252, 0.24);
-    background: linear-gradient(145deg, rgba(9, 20, 34, 0.62), rgba(8, 17, 30, 0.58));
-    color: rgba(221, 236, 255, 0.75);
-    box-shadow: 0 2px 8px rgba(2, 8, 18, 0.14);
-    opacity: 0.72;
+    padding: 6px 11px;
+    min-height: 29px;
+    font-size: 0.69rem;
+    border-color: rgba(161, 212, 252, 0.28);
+    background: linear-gradient(145deg, rgba(9, 20, 34, 0.66), rgba(8, 17, 30, 0.62));
+    color: rgba(222, 236, 255, 0.82);
+    box-shadow: 0 3px 9px rgba(2, 8, 18, 0.14);
+    opacity: 0.82;
   }
   body[data-mobile-mode] .gridly-marker {
     transform: scale(0.9);
@@ -8779,21 +8783,21 @@ body.modal-open {
   }
 
   body[data-mobile-mode] .map-tools-overlay {
-    top: calc(var(--mobile-brand-top, env(safe-area-inset-top, 0px) + 8px) + var(--mobile-brand-height, 38px) + var(--mobile-overlay-gap, 8px) + 112px);
+    top: calc(var(--mobile-brand-top, env(safe-area-inset-top, 0px) + 8px) + var(--mobile-brand-height, 38px) + var(--mobile-overlay-gap, 8px) + 122px);
     left: auto;
     right: var(--mobile-overlay-gutter, 10px);
-    padding: 5px;
-    border-radius: 11px;
-    border: 1px solid rgba(132, 200, 248, 0.22);
-    background: linear-gradient(160deg, rgba(7, 18, 31, 0.64), rgba(5, 13, 23, 0.66));
-    box-shadow: 0 6px 14px rgba(2, 8, 17, 0.24);
-    backdrop-filter: blur(10px) saturate(116%);
+    padding: 6px;
+    border-radius: 12px;
+    border: 1px solid rgba(141, 206, 250, 0.26);
+    background: linear-gradient(160deg, rgba(7, 18, 31, 0.7), rgba(5, 13, 23, 0.71));
+    box-shadow: 0 7px 16px rgba(2, 8, 17, 0.24);
+    backdrop-filter: blur(11px) saturate(118%);
   }
 
   body[data-mobile-mode] .map-tools-overlay .geo-filter-pill {
-    min-height: 26px;
-    padding: 5px 8px;
-    font-size: 0.66rem;
+    min-height: 27px;
+    padding: 5px 9px;
+    font-size: 0.65rem;
   }
 
   body[data-mobile-mode] #map .leaflet-control-zoom a,
@@ -8808,29 +8812,29 @@ body.modal-open {
     left: 10px;
     right: 10px;
     bottom: calc(10px + env(safe-area-inset-bottom, 0px));
-    padding: 6px;
-    min-height: 50px;
+    padding: 5px;
+    min-height: 48px;
     border-radius: 16px;
-    border: 1px solid rgba(143, 199, 250, 0.28);
-    background: linear-gradient(145deg, rgba(8, 15, 24, 0.78), rgba(7, 12, 21, 0.82));
-    box-shadow: 0 10px 22px rgba(2, 8, 17, 0.34), 0 0 18px rgba(90, 164, 255, 0.09);
+    border: 1px solid rgba(148, 204, 251, 0.3);
+    background: linear-gradient(145deg, rgba(8, 15, 24, 0.8), rgba(7, 12, 21, 0.84));
+    box-shadow: 0 9px 20px rgba(2, 8, 17, 0.31), 0 0 16px rgba(90, 164, 255, 0.08);
     backdrop-filter: blur(15px) saturate(120%);
   }
 
   body[data-mobile-mode] .mobile-dock-btn {
-    min-height: 38px;
-    border-radius: 11px;
-    font-size: 0.74rem;
-    font-weight: 830;
+    min-height: 36px;
+    border-radius: 10px;
+    font-size: 0.73rem;
+    font-weight: 800;
     letter-spacing: 0.015em;
-    opacity: 0.84;
-    transition: transform 150ms ease, opacity 150ms ease, box-shadow 150ms ease, filter 150ms ease;
+    opacity: 0.9;
+    transition: transform 150ms ease, opacity 150ms ease, box-shadow 180ms ease, filter 180ms ease, border-color 180ms ease;
   }
 
   body[data-mobile-mode] .mobile-dock-btn.active {
     opacity: 1;
-    box-shadow: inset 0 0 0 1px rgba(233, 245, 255, 0.22), 0 5px 12px rgba(4, 11, 22, 0.28);
-    filter: saturate(1.08);
+    box-shadow: inset 0 0 0 1px rgba(233, 245, 255, 0.26), 0 6px 12px rgba(4, 11, 22, 0.28), 0 0 14px rgba(110, 191, 255, 0.18);
+    filter: saturate(1.11);
   }
 
   body[data-mobile-mode] .mobile-dock-btn:active {
@@ -8897,7 +8901,7 @@ body.modal-open {
 
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-list {
     display: grid;
-    gap: 4px;
+    gap: 5px;
     justify-items: end;
   }
 
@@ -9001,17 +9005,18 @@ body.modal-open {
 
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle,
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button {
-    background: rgba(8, 14, 23, 0.68);
-    border-color: rgba(165, 206, 243, 0.22);
-    color: rgba(219, 236, 255, 0.9);
-    box-shadow: 0 2px 8px rgba(2, 8, 16, 0.2);
+    background: linear-gradient(145deg, rgba(8, 14, 23, 0.75), rgba(9, 16, 26, 0.68));
+    border-color: rgba(166, 208, 245, 0.28);
+    color: rgba(221, 237, 255, 0.92);
+    box-shadow: 0 4px 10px rgba(2, 8, 16, 0.22);
+    backdrop-filter: blur(8px) saturate(116%);
   }
 
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button {
-    font-size: 0.66rem;
-    min-height: 28px;
-    padding: 5px 9px;
-    width: 86px;
+    font-size: 0.65rem;
+    min-height: 29px;
+    padding: 5px 10px;
+    width: 88px;
     text-align: left;
     justify-content: flex-start;
   }
@@ -9020,10 +9025,15 @@ body.modal-open {
     justify-items: start;
     align-items: start;
   }
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button.active {
+    border-color: rgba(141, 214, 255, 0.62);
+    box-shadow: inset 0 0 0 1px rgba(217, 241, 255, 0.24), 0 0 10px rgba(76, 176, 255, 0.18);
+    color: #e8f6ff;
+  }
 
   body[data-mobile-mode] .map-tools-overlay {
-    top: calc(var(--mobile-brand-top, env(safe-area-inset-top, 0px) + 8px) + var(--mobile-brand-height, 38px) + var(--mobile-overlay-gap, 8px) + 104px);
-    padding: 4px;
+    top: calc(var(--mobile-brand-top, env(safe-area-inset-top, 0px) + 8px) + var(--mobile-brand-height, 38px) + var(--mobile-overlay-gap, 8px) + 116px);
+    padding: 5px;
   }
 
   body[data-mobile-mode] #map .leaflet-control-zoom {
