@@ -3809,6 +3809,8 @@ function injectHazardStyles() {
       box-shadow: 0 22px 70px rgba(0,0,0,0.42);
       padding: 14px;
       backdrop-filter: blur(16px);
+      max-height: calc(100dvh - 24px);
+      overflow: hidden;
     }
 
     .gridly-hazard-panel.visible {
@@ -3854,6 +3856,8 @@ function injectHazardStyles() {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 8px;
+      overflow-y: auto;
+      min-height: 0;
     }
 
     .hazard-choice-grid button {
@@ -3915,9 +3919,15 @@ function injectHazardStyles() {
         left: 12px;
         right: 12px;
         bottom: 8px;
+        top: max(10px, env(safe-area-inset-top));
         transform: none;
         width: auto;
+        max-height: calc(100dvh - max(10px, env(safe-area-inset-top)) - 8px);
+        display: none;
+        grid-template-rows: auto auto minmax(0, 1fr) auto;
+        gap: 0;
       }
+      .gridly-hazard-panel.visible { display: grid; }
       .hazard-choice-grid {
         grid-template-columns: 1fr;
       }
@@ -8389,6 +8399,56 @@ function ensureFloodingHazardChoice(choiceGrid) {
   }
 }
 
+window.gridlyHazardPickerDebug = function () {
+  const picker = document.getElementById("gridlyHazardPanel");
+  const pickerRect = picker?.getBoundingClientRect?.() || null;
+  const viewportHeight = window.innerHeight || document.documentElement?.clientHeight || 0;
+  const optionButtons = picker ? Array.from(picker.querySelectorAll('.hazard-choice-grid button[data-action="open-hazard-placement"]')) : [];
+
+  const hazardOptions = optionButtons.map((btn) => {
+    const rect = btn.getBoundingClientRect();
+    return {
+      text: (btn.textContent || "").trim(),
+      hazardType: btn.dataset.hazardType || "",
+      rect: {
+        top: rect.top,
+        bottom: rect.bottom,
+        left: rect.left,
+        right: rect.right,
+        width: rect.width,
+        height: rect.height
+      },
+      visibleInViewport: rect.bottom > 0 && rect.top < viewportHeight
+    };
+  });
+
+  const floodingEntry = hazardOptions.find((option) => option.hazardType === "flooding");
+  const clippedTop = Boolean(pickerRect && pickerRect.top < 0);
+  const clippedBottom = Boolean(pickerRect && pickerRect.bottom > viewportHeight);
+
+  return {
+    pickerExists: Boolean(picker),
+    pickerRect: pickerRect
+      ? {
+          top: pickerRect.top,
+          bottom: pickerRect.bottom,
+          left: pickerRect.left,
+          right: pickerRect.right,
+          width: pickerRect.width,
+          height: pickerRect.height
+        }
+      : null,
+    pickerScrollHeight: picker?.scrollHeight ?? null,
+    pickerClientHeight: picker?.clientHeight ?? null,
+    pickerOverflowY: picker ? window.getComputedStyle(picker).overflowY : null,
+    hazardOptions,
+    floodingExists: Boolean(floodingEntry),
+    floodingVisible: Boolean(floodingEntry?.visibleInViewport),
+    clippedTop,
+    clippedBottom
+  };
+};
+
 function startRailIssueFromUnifiedPanel() {
   closeHazardPanel();
   handleReportNearMe();
@@ -8429,7 +8489,14 @@ function injectMobileCTACleanupStyles() {
         left: 14px !important;
         right: 14px !important;
         bottom: 164px !important;
+        top: max(10px, env(safe-area-inset-top)) !important;
         width: auto !important;
+        max-height: calc(100dvh - max(10px, env(safe-area-inset-top)) - 164px) !important;
+        display: none !important;
+        grid-template-rows: auto auto minmax(0, 1fr) auto !important;
+      }
+      .gridly-hazard-panel.visible {
+        display: grid !important;
       }
     }
   `;
