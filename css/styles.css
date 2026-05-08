@@ -9589,10 +9589,10 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
   body[data-mobile-mode] #map .leaflet-control-attribution {
     right: 8px;
     left: auto;
-    bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(2px + env(safe-area-inset-bottom, 0px));
     max-width: min(64vw, 230px);
     border-radius: 8px;
-    padding: 2px 5px;
+    padding: 1px 5px;
     font-size: 10px;
     line-height: 1.15;
     opacity: 0.72;
