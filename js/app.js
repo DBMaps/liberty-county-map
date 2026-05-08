@@ -733,6 +733,19 @@ function getDefaultGridlyProfile() {
 }
 function getGridlyUserProfile() {
   try {
+    const rectsOverlap = (a, b) => {
+      if (!a || !b) return false;
+      return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+    };
+    const zoomControl = document.querySelector("#map .leaflet-control-zoom");
+    const zoomIn = document.querySelector("#map .leaflet-control-zoom-in");
+    const zoomOut = document.querySelector("#map .leaflet-control-zoom-out");
+    const toggleNode = menuRoot?.querySelector(".gridly-mobile-layer-menu-toggle") || null;
+    const zoomControlRect = zoomControl?.getBoundingClientRect?.()?.toJSON?.() || null;
+    const zoomInRect = zoomIn?.getBoundingClientRect?.()?.toJSON?.() || null;
+    const zoomOutRect = zoomOut?.getBoundingClientRect?.()?.toJSON?.() || null;
+    const toggleRect = toggleNode?.getBoundingClientRect?.()?.toJSON?.() || null;
+
     return { ...getDefaultGridlyProfile(), ...JSON.parse(localStorage.getItem(GRIDLY_PROFILE_STORAGE_KEY) || "{}") };
   } catch (error) {
     return getDefaultGridlyProfile();
@@ -1603,6 +1616,8 @@ function installLayerPickerDebugDiagnostics() {
     return true;
   };
 
+  let lastLayerToggleEventMeta = null;
+
   const installGridlyMobileLayerMenu = () => {
     const controlContainer = document.querySelector("#map .leaflet-control-layers");
     if (shouldUseCompactLayerMenu()) {
@@ -1651,18 +1666,42 @@ function installLayerPickerDebugDiagnostics() {
       };
       const closeMenu = () => setMenuOpenState(false);
       const openMenu = () => setMenuOpenState(true);
+      const placeMenuBelowZoom = () => {
+        const mapNode = document.getElementById("map");
+        const zoomControl = mapNode?.querySelector(".leaflet-control-zoom");
+        if (!mapNode || !menuRoot) return;
+        const gap = 9;
+        const mapRect = mapNode.getBoundingClientRect();
+        const zoomRect = zoomControl?.getBoundingClientRect?.();
+        const nextTop = zoomRect ? Math.max(12, Math.round(zoomRect.bottom - mapRect.top + gap)) : 102;
+        menuRoot.style.top = `${nextTop}px`;
+        menuRoot.style.right = "12px";
+      };
       closeMenu();
 
-      toggle?.addEventListener("click", (event) => {
-        event.preventDefault();
-        event.stopPropagation();
+      const handleLayerToggleInteraction = (event) => {
+        const preventedDefault = typeof event.preventDefault === "function";
+        const stoppedPropagation = typeof event.stopPropagation === "function";
+        if (preventedDefault) event.preventDefault();
+        if (stoppedPropagation) event.stopPropagation();
+        if (typeof event.stopImmediatePropagation === "function") event.stopImmediatePropagation();
+        lastLayerToggleEventMeta = {
+          type: event.type || null,
+          preventedDefault,
+          stoppedPropagation
+        };
         if (!shouldUseCompactLayerMenu()) return;
         setMenuOpenState(!mobileLayerMenuOpen);
+      };
+      ["pointerdown", "touchstart", "click"].forEach((eventName) => {
+        toggle?.addEventListener(eventName, handleLayerToggleInteraction, { passive: false });
       });
+
       optionButtons.forEach((button) => {
         button.addEventListener("click", () => {
           const layerName = button.dataset.layerName;
           const didApply = applyBaseLayerByName(layerName, "gridly-mobile-menu");
+          placeMenuBelowZoom();
           syncActiveState();
           if (didApply) closeMenu();
         });
@@ -1677,6 +1716,16 @@ function installLayerPickerDebugDiagnostics() {
     }
 
     const compactMode = shouldUseCompactLayerMenu();
+    const mapNode = document.getElementById("map");
+    const zoomControl = mapNode?.querySelector(".leaflet-control-zoom");
+    if (menuRoot && compactMode) {
+      const gap = 9;
+      const mapRect = mapNode?.getBoundingClientRect?.();
+      const zoomRect = zoomControl?.getBoundingClientRect?.();
+      const nextTop = mapRect && zoomRect ? Math.max(12, Math.round(zoomRect.bottom - mapRect.top + gap)) : 102;
+      menuRoot.style.top = `${nextTop}px`;
+      menuRoot.style.right = "12px";
+    }
     menuRoot.classList.toggle("is-mobile-visible", compactMode);
     if (!compactMode) {
       mobileLayerMenuOpen = false;
@@ -1816,6 +1865,18 @@ function installLayerPickerDebugDiagnostics() {
       const insideViewport = rect.bottom > 0 && rect.right > 0 && rect.top < viewportHeight && rect.left < viewportWidth;
       return insideViewport;
     };
+    const rectsOverlap = (a, b) => {
+      if (!a || !b) return false;
+      return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+    };
+    const zoomControl = document.querySelector("#map .leaflet-control-zoom");
+    const zoomIn = document.querySelector("#map .leaflet-control-zoom-in");
+    const zoomOut = document.querySelector("#map .leaflet-control-zoom-out");
+    const toggleNode = menuRoot?.querySelector(".gridly-mobile-layer-menu-toggle") || null;
+    const zoomControlRect = zoomControl?.getBoundingClientRect?.()?.toJSON?.() || null;
+    const zoomInRect = zoomIn?.getBoundingClientRect?.()?.toJSON?.() || null;
+    const zoomOutRect = zoomOut?.getBoundingClientRect?.()?.toJSON?.() || null;
+    const toggleRect = toggleNode?.getBoundingClientRect?.()?.toJSON?.() || null;
     return {
       activeBaseLayerName,
       menuExists: Boolean(menuRoot),
@@ -1826,7 +1887,19 @@ function installLayerPickerDebugDiagnostics() {
       duplicateMenusFound: document.querySelectorAll("#map .gridly-mobile-layer-menu").length,
       activeLayer: activeBaseLayerName,
       wrapperClasses: menuRoot?.className || "",
-      toggleRect: menuRoot?.querySelector(".gridly-mobile-layer-menu-toggle")?.getBoundingClientRect?.()?.toJSON?.() || null,
+      toggleRect,
+      zoomControlRect,
+      zoomInRect,
+      zoomOutRect,
+      toggleOverlapsZoomControl: rectsOverlap(toggleRect, zoomControlRect),
+      toggleOverlapsZoomIn: rectsOverlap(toggleRect, zoomInRect),
+      toggleOverlapsZoomOut: rectsOverlap(toggleRect, zoomOutRect),
+      togglePointerEvents: toggleNode ? getComputedStyle(toggleNode).pointerEvents : null,
+      toggleZIndex: toggleNode ? getComputedStyle(toggleNode).zIndex : null,
+      menuZIndex: menuRoot ? getComputedStyle(menuRoot).zIndex : null,
+      lastLayerToggleEventType: lastLayerToggleEventMeta?.type || null,
+      lastLayerTogglePreventedDefault: Boolean(lastLayerToggleEventMeta?.preventedDefault),
+      lastLayerToggleStoppedPropagation: Boolean(lastLayerToggleEventMeta?.stoppedPropagation),
       menuRect: menuRoot?.getBoundingClientRect?.()?.toJSON?.() || null,
       listRect: menuList?.getBoundingClientRect?.()?.toJSON?.() || null,
       computedPosition: menuRoot ? (() => {
