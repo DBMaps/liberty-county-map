@@ -4137,6 +4137,9 @@ function injectHazardStyles() {
       gap: 8px;
       overflow-y: auto;
       min-height: 0;
+      max-height: clamp(180px, 42dvh, 380px);
+      padding-bottom: 64px;
+      -webkit-overflow-scrolling: touch;
     }
 
     .hazard-choice-grid button {
@@ -4169,6 +4172,7 @@ function injectHazardStyles() {
       bottom: 0;
       background: rgba(9, 18, 32, 0.98);
       padding-top: 8px;
+      padding-bottom: max(4px, env(safe-area-inset-bottom, 0px));
     }
     .hazard-panel-placement-actions button {
       border: 0;
@@ -4213,6 +4217,8 @@ function injectHazardStyles() {
       .hazard-choice-grid {
         grid-template-columns: 1fr;
         gap: 6px;
+        max-height: min(42dvh, 320px);
+        padding-bottom: 74px;
       }
       .hazard-choice-grid button {
         padding: 10px;
