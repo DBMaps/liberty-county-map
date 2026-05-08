@@ -1397,8 +1397,11 @@ function installLayerPickerDebugDiagnostics() {
   const baseLayerNames = () => Object.keys(mapBaseLayersByName || {});
   const normalizeLayerName = (name) => String(name || "").trim();
 
+  const fallbackLayerNameByIndex = ["Standard", "Dark", "Satellite"];
+
   const resolveLayerNameFromLabel = (label, index) => {
     const input = label?.querySelector("input[type='radio']");
+    const hardMappedByIndex = index >= 0 ? fallbackLayerNameByIndex[index] : null;
     const candidateNames = [
       input?.dataset?.layerName,
       input?.defaultValue,
@@ -1410,13 +1413,26 @@ function installLayerPickerDebugDiagnostics() {
       label?.querySelector("span")?.textContent,
       input?.closest("label")?.innerText,
       input?.closest("label")?.textContent,
+      hardMappedByIndex,
       baseLayerNames()[index]
     ];
     for (const candidate of candidateNames) {
-      const normalized = normalizeLayerName(candidate);
+      const normalized = normalizeLayerName(candidate).replace(/\s+/g, " ");
       if (mapBaseLayersByName[normalized]) return normalized;
     }
     return normalizeLayerName(candidateNames.find(Boolean));
+  };
+
+  const getCheckedInputLayerName = () => {
+    const inputs = Array.from(document.querySelectorAll("#map .leaflet-control-layers-base input[type='radio']"));
+    const checkedIndex = inputs.findIndex((input) => input.checked);
+    const checkedInput = checkedIndex >= 0 ? inputs[checkedIndex] : null;
+    const checkedLabel = checkedInput?.closest("label");
+    return resolveLayerNameFromLabel(checkedLabel, checkedIndex);
+  };
+
+  const logManualStandardTapDiagnostic = (payload) => {
+    console.log("[Gridly][LayerPicker][ManualStandardTap]", payload);
   };
 
   const isLayerPickerDebugEnabled = () => typeof window.gridlyLayerControlDebug === "function";
@@ -1495,15 +1511,43 @@ function installLayerPickerDebugDiagnostics() {
         input.dataset.layerIndex = String(index);
       }
       label.dataset.layerName = layerName;
-      label.addEventListener("click", () => {
+      label.addEventListener("click", (event) => {
         const clickedLayer = resolveLayerNameFromLabel(label, index);
+        const isStandardTap = clickedLayer === "Standard";
+        const diagnostic = {
+          source: "label",
+          rawClickedElement: event?.target?.tagName || null,
+          resolvedLayerName: clickedLayer,
+          applyCalled: false,
+          result: false,
+          activeBaseLayerNameAfterApply: activeBaseLayerName,
+          checkedInputAfterApply: getCheckedInputLayerName()
+        };
         console.log("[Gridly][LayerPicker] label clicked", { layerName: clickedLayer, selectedLayer: currentMapStyle });
-        applyBaseLayerByName(clickedLayer, "label-click");
+        diagnostic.applyCalled = true;
+        diagnostic.result = applyBaseLayerByName(clickedLayer, "label-click");
+        diagnostic.activeBaseLayerNameAfterApply = activeBaseLayerName;
+        diagnostic.checkedInputAfterApply = getCheckedInputLayerName();
+        if (isStandardTap) logManualStandardTapDiagnostic(diagnostic);
       });
-      input?.addEventListener("change", () => {
+      input?.addEventListener("change", (event) => {
         const clickedLayer = resolveLayerNameFromLabel(label, index);
+        const isStandardTap = clickedLayer === "Standard";
+        const diagnostic = {
+          source: "input",
+          rawClickedElement: event?.target?.tagName || null,
+          resolvedLayerName: clickedLayer,
+          applyCalled: false,
+          result: false,
+          activeBaseLayerNameAfterApply: activeBaseLayerName,
+          checkedInputAfterApply: getCheckedInputLayerName()
+        };
         console.log("[Gridly][LayerPicker] input change", { layerName: clickedLayer, selectedLayer: currentMapStyle, checked: Boolean(input.checked) });
-        applyBaseLayerByName(clickedLayer, "input-change");
+        diagnostic.applyCalled = true;
+        diagnostic.result = applyBaseLayerByName(clickedLayer, "input-change");
+        diagnostic.activeBaseLayerNameAfterApply = activeBaseLayerName;
+        diagnostic.checkedInputAfterApply = getCheckedInputLayerName();
+        if (isStandardTap) logManualStandardTapDiagnostic(diagnostic);
       });
     });
     return true;
@@ -1544,7 +1588,7 @@ function installLayerPickerDebugDiagnostics() {
         layerName: resolveLayerNameFromLabel(label, index),
         associatedLeafletLayerName: label.querySelector("input[type='radio']")?.dataset?.layerName || null
       })),
-      checkedInput: resolveLayerNameFromLabel(inputs.find((input) => input.checked)?.closest("label"), -1) || null,
+      checkedInput: getCheckedInputLayerName() || null,
       pointerEvents: {
         control: controlRoot ? getComputedStyle(controlRoot).pointerEvents : null,
         labels: labels.map((label, index) => ({ index, pointerEvents: getComputedStyle(label).pointerEvents })),
