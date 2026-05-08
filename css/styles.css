@@ -9194,7 +9194,8 @@ body[data-mobile-mode] .report-drawer{border:0;background:transparent;box-shadow
 .manage-places-group-utility .secondary-btn{opacity:.82}
 .geo-filter-shell{background:rgba(255,255,255,.01);border:1px solid rgba(255,255,255,.06)}
 .geo-filter-pill{background:rgba(255,255,255,.035)}
-body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle,body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button{background:rgba(8,14,23,.62);border-color:rgba(166,208,245,.2);box-shadow:0 3px 8px rgba(2,8,16,.16)}
+body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle,body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-layer-menu-list{display:block}
+#map .gridly-mobile-layer-menu-list button{background:rgba(8,14,23,.62);border-color:rgba(166,208,245,.2);box-shadow:0 3px 8px rgba(2,8,16,.16)}
 
 /* V46 premium commute intelligence refinement */
 .mobile-live-brand{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:11px 14px;border-radius:18px;background:rgba(9,16,27,.58);border:1px solid rgba(255,255,255,.08);box-shadow:0 10px 22px rgba(2,8,18,.24)}
@@ -9252,7 +9253,8 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle,body[data-mobile-mo
 body[data-mobile-mode] #map .gridly-mobile-layer-menu{right:12px;bottom:96px}
 body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle{padding:8px 12px;border-radius:14px;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase}
 body[data-mobile-mode] #map .gridly-mobile-layer-menu-list{margin-top:6px;border-radius:14px;overflow:hidden}
-body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button{font-size:.75rem}
+body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-layer-menu-list{display:block}
+#map .gridly-mobile-layer-menu-list button{font-size:.75rem}
 
 .manage-source-row{display:grid;grid-template-columns:1fr;gap:8px}
 .manage-source-row .destination-chip.active{background:rgba(72,164,255,.18);border-color:rgba(141,205,255,.56)}
@@ -9265,7 +9267,8 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button{font-size:.75r
 .mobile-live-brand-status{margin-left:auto}
 body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle{background:rgba(9,16,27,.54);border-color:rgba(255,255,255,.18);box-shadow:0 4px 14px rgba(2,8,18,.2)}
 body[data-mobile-mode] #map .gridly-mobile-layer-menu-list{background:rgba(9,16,27,.66);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(10px)}
-body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button{background:transparent;border:0;border-bottom:1px solid rgba(255,255,255,.08)}
+body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-layer-menu-list{display:block}
+#map .gridly-mobile-layer-menu-list button{background:transparent;border:0;border-bottom:1px solid rgba(255,255,255,.08)}
 body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button:last-child{border-bottom:0}
 .manage-places-group{display:grid;gap:10px}
 .manage-places-group-utility{margin-top:6px;opacity:.85}
@@ -9288,7 +9291,8 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button:last-child{bor
 body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:12px;font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;background:rgba(9,16,27,.5);border:1px solid rgba(255,255,255,.16);box-shadow:0 3px 10px rgba(2,8,18,.16)}
 body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle .gridly-layer-icon{font-size:.8rem;line-height:1}
 body[data-mobile-mode] #map .gridly-mobile-layer-menu-list{border-radius:12px;background:rgba(9,16,27,.6);border:1px solid rgba(255,255,255,.12)}
-body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button{min-height:34px;padding:8px 10px;font-size:.74rem}
+body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-layer-menu-list{display:block}
+#map .gridly-mobile-layer-menu-list button{min-height:34px;padding:8px 10px;font-size:.74rem}
 
 .route-setup-modal-card{border-radius:14px!important;background:rgba(10,17,28,.88)!important;border:1px solid rgba(255,255,255,.09)!important;box-shadow:0 10px 24px rgba(0,0,0,.22)!important}
 .route-setup-modal-head{margin-bottom:6px}
@@ -9326,6 +9330,7 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button{min-height:34p
   backdrop-filter:blur(8px);
 }
 #map .gridly-mobile-layer-menu-list{
+  display:none;
   margin-top:5px;
   border-radius:11px;
   overflow:hidden;
@@ -9333,6 +9338,7 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button{min-height:34p
   background:rgba(9,16,27,.56);
   backdrop-filter:blur(10px);
 }
+#map .gridly-mobile-layer-menu.is-open .gridly-mobile-layer-menu-list{display:block}
 #map .gridly-mobile-layer-menu-list button{
   width:100%;
   min-height:31px;

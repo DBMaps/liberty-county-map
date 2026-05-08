@@ -394,6 +394,7 @@ let mapBaseLayersByName = {};
 let mapStyleClassByName = {};
 let currentMapStyle = "Satellite";
 let activeBaseLayerName = "Satellite";
+let mobileLayerMenuOpen = false;
 let managePlacesSourceMode = "";
 const LEGACY_PLACE_MARKER_TEXT = "legacy migrated";
 
@@ -1638,18 +1639,21 @@ function installLayerPickerDebugDiagnostics() {
           button.setAttribute("aria-pressed", String(isActive));
         });
       };
-      const closeMenu = () => {
-        list.hidden = true;
-        toggle.setAttribute("aria-expanded", "false");
+      const setMenuOpenState = (open) => {
+        mobileLayerMenuOpen = Boolean(open);
+        menuRoot.classList.toggle("is-open", mobileLayerMenuOpen);
+        list.hidden = !mobileLayerMenuOpen;
+        toggle.setAttribute("aria-expanded", String(mobileLayerMenuOpen));
       };
-      const openMenu = () => {
-        list.hidden = false;
-        toggle.setAttribute("aria-expanded", "true");
-      };
-      toggle?.addEventListener("click", () => {
+      const closeMenu = () => setMenuOpenState(false);
+      const openMenu = () => setMenuOpenState(true);
+      closeMenu();
+
+      toggle?.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
         if (!shouldUseCompactLayerMenu()) return;
-        if (list.hidden) openMenu();
-        else closeMenu();
+        setMenuOpenState(!mobileLayerMenuOpen);
       });
       optionButtons.forEach((button) => {
         button.addEventListener("click", () => {
@@ -1660,10 +1664,24 @@ function installLayerPickerDebugDiagnostics() {
         });
       });
       map?.on?.("baselayerchange", syncActiveState);
+      document.addEventListener("pointerdown", (event) => {
+        if (!mobileLayerMenuOpen || !shouldUseCompactLayerMenu()) return;
+        if (menuRoot.contains(event.target)) return;
+        closeMenu();
+      });
       syncActiveState();
     }
 
-    menuRoot.classList.toggle("is-mobile-visible", shouldUseCompactLayerMenu());
+    const compactMode = shouldUseCompactLayerMenu();
+    menuRoot.classList.toggle("is-mobile-visible", compactMode);
+    if (!compactMode) {
+      mobileLayerMenuOpen = false;
+      menuRoot.classList.remove("is-open");
+      const list = menuRoot.querySelector(".gridly-mobile-layer-menu-list");
+      const toggle = menuRoot.querySelector(".gridly-mobile-layer-menu-toggle");
+      if (list) list.hidden = true;
+      toggle?.setAttribute("aria-expanded", "false");
+    }
   };
 
   const bindLayerOptionLogs = () => {
@@ -1775,20 +1793,27 @@ function installLayerPickerDebugDiagnostics() {
     applyBaseLayerByName(name, "debug-helper");
     return window.gridlyLayerControlDebug();
   };
-  window.gridlyMobileLayerMenuDebug = function gridlyMobileLayerMenuDebug() {
+  window.gridlyLayerMenuAuditDebug = function gridlyLayerMenuAuditDebug() {
     const menuRoot = document.querySelector("#map .gridly-mobile-layer-menu");
     const menuList = menuRoot?.querySelector(".gridly-mobile-layer-menu-list");
     const buttons = Array.from(menuRoot?.querySelectorAll("button[data-layer-name]") || []);
     return {
       activeBaseLayerName,
       menuExists: Boolean(menuRoot),
-      menuOpen: Boolean(menuList && !menuList.hidden),
-      buttons: buttons.map((button) => button.dataset.layerName),
-      standardButtonExists: Boolean(menuRoot?.querySelector('button[data-layer-name="Standard"]')),
-      darkButtonExists: Boolean(menuRoot?.querySelector('button[data-layer-name="Dark"]')),
-      satelliteButtonExists: Boolean(menuRoot?.querySelector('button[data-layer-name="Satellite"]'))
+      toggleExists: Boolean(menuRoot?.querySelector(".gridly-mobile-layer-menu-toggle")),
+      isOpen: Boolean(menuRoot?.classList.contains("is-open") && menuList && !menuList.hidden),
+      visibleButtons: buttons.filter((button) => !button.hidden && getComputedStyle(button).display !== "none" && getComputedStyle(button).visibility !== "hidden").map((button) => button.textContent.trim()),
+      layerButtons: buttons.map((button) => ({ text: button.textContent.trim(), layerName: button.dataset.layerName || "" })),
+      activeLayer: activeBaseLayerName,
+      wrapperClasses: menuRoot?.className || "",
+      toggleRect: menuRoot?.querySelector(".gridly-mobile-layer-menu-toggle")?.getBoundingClientRect?.()?.toJSON?.() || null,
+      menuRect: menuList?.getBoundingClientRect?.()?.toJSON?.() || null,
+      computedDisplay: menuList ? getComputedStyle(menuList).display : null,
+      computedVisibility: menuList ? getComputedStyle(menuList).visibility : null,
+      computedOverflow: menuList ? getComputedStyle(menuList).overflow : null
     };
   };
+window.gridlyMobileLayerMenuDebug = window.gridlyLayerMenuAuditDebug;
 
   bindLayerOptionLogs();
   setTimeout(bindLayerOptionLogs, 400);
@@ -8966,7 +8991,7 @@ function ensureFloodingHazardChoice(choiceGrid) {
   }
 }
 
-window.gridlyHazardPickerDebug = function () {
+window.gridlyHazardPickerAuditDebug = function gridlyHazardPickerAuditDebug() {
   const picker = document.getElementById("gridlyHazardPanel");
   const pickerRect = picker?.getBoundingClientRect?.() || null;
   const viewportHeight = window.innerHeight || document.documentElement?.clientHeight || 0;
@@ -9012,6 +9037,11 @@ window.gridlyHazardPickerDebug = function () {
     pickerScrollHeight: picker?.scrollHeight ?? null,
     pickerClientHeight: picker?.clientHeight ?? null,
     pickerOverflowY: picker ? window.getComputedStyle(picker).overflowY : null,
+    listContainerSelector: "#gridlyHazardPanel .hazard-choice-grid",
+    listRect: choiceList?.getBoundingClientRect?.()?.toJSON?.() || null,
+    listScrollHeight: choiceList?.scrollHeight ?? null,
+    listClientHeight: choiceList?.clientHeight ?? null,
+    listOverflowY: choiceList ? window.getComputedStyle(choiceList).overflowY : null,
     actionAreaExists: Boolean(actionArea),
     actionAreaRect: actionAreaRect
       ? {
@@ -9030,10 +9060,11 @@ window.gridlyHazardPickerDebug = function () {
       actionAreaRect.right > 0 &&
       actionAreaRect.left < viewportWidth
     ),
-    choiceListScrollHeight: choiceList?.scrollHeight ?? null,
-    choiceListClientHeight: choiceList?.clientHeight ?? null,
-    choiceListOverflowY: choiceList ? window.getComputedStyle(choiceList).overflowY : null,
-    hazardOptions,
+    footerRect: actionAreaRect?.toJSON?.() || null,
+    footerOverlapsList: Boolean(actionAreaRect && choiceList && actionAreaRect.top < choiceList.getBoundingClientRect().bottom),
+    hazardOptions: hazardOptions.map((opt) => ({ ...opt, type: opt.hazardType, visibleWithinList: Boolean(choiceList && opt.rect.bottom <= choiceList.getBoundingClientRect().bottom && opt.rect.top >= choiceList.getBoundingClientRect().top) })),
+    missingHazards: ["flooding","ice","debris","crash","construction","road_closed","disabled_vehicle","other_hazard"].filter((type) => !hazardOptions.some((opt) => opt.hazardType === type)),
+    unreachableHazards: hazardOptions.filter((opt) => choiceList && !(opt.rect.bottom <= choiceList.getBoundingClientRect().bottom && opt.rect.top >= choiceList.getBoundingClientRect().top)).map((opt) => opt.hazardType),
     floodingExists: Boolean(floodingEntry),
     floodingVisible: Boolean(floodingEntry?.visibleInViewport),
     clippedTop,
@@ -9850,3 +9881,5 @@ function injectHideDesktopCommunityToolsStylesV126C3() {
 
   document.head.appendChild(style);
 })();
+
+window.gridlyHazardPickerDebug = window.gridlyHazardPickerAuditDebug;
