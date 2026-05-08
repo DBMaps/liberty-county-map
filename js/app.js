@@ -3976,13 +3976,11 @@ function bindEvents() {
   });
   els.mobileCrossingReportBtn?.addEventListener("click", () => {
     setReportMode(REPORT_MODES.rail);
-    setConfirmation("Railroad crossing report mode is active below.", "success");
+    setConfirmation("Manual crossing report mode is active.", "success");
     els.reportSection?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
   els.mobileHazardReportBtn?.addEventListener("click", () => {
-    setReportMode(REPORT_MODES.roadHazard);
-    setConfirmation("Road hazard report mode is active below.", "success");
-    els.reportSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+    handleReportNearMe();
   });
   els.mapReportShortcutBtn?.addEventListener("click", handleReportNearMe);
   els.desktopReportNearMeBtn?.addEventListener("click", handleReportNearMe);
@@ -4324,14 +4322,6 @@ function closeSmartAlertsModal() {
 }
 
 function handleSmartReportButton() {
-  if (
-    lastSubmittedCrossing &&
-    (lastSubmittedReportType === "blocked" || lastSubmittedReportType === "heavy")
-  ) {
-    createSharedReport(lastSubmittedCrossing, "cleared", "mobile quick clear", els.mobileReportBtn);
-    return;
-  }
-
   handleReportNearMe();
 }
 
