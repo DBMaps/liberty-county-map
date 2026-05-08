@@ -271,6 +271,7 @@ window.gridlyReportingDebug = function () {
     reportModeActive: reportingState.reportModeActive,
     placementModeActive: reportingState.placementModeActive,
     submissionInProgress: reportingState.submissionInProgress,
+    locationLookupInProgress: reportingState.locationLookupInProgress,
     lastReportMessage: reportingState.lastReportMessage,
     lastReportError: reportingState.lastReportError,
     activeReportEntryPoint: reportingState.activeReportEntryPoint || ""
@@ -3573,8 +3574,15 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     setSync("Hazard report shared");
 
     await runPostSubmitRefresh();
-    updateReportingState({ submissionInProgress: false, locationLookupInProgress: false, reportModeActive: false, placementModeActive: false });
+    updateReportingState({
+      submissionInProgress: false,
+      locationLookupInProgress: false,
+      reportModeActive: false,
+      placementModeActive: false,
+      selectedHazardType: null
+    });
     if (window.matchMedia("(max-width: 760px)").matches) setMobileUiMode("live", { silent: true });
+    closeHazardPanel({ preserveLastReportMessage: true });
     return true;
   } catch (error) {
     console.error("Gridly hazard insert failed:", error);
@@ -4781,6 +4789,13 @@ window.gridlyReportClickBindingDebug = function () {
       reportDockElements: reportDockElements.map((el) => el.getBoundingClientRect().toJSON ? el.getBoundingClientRect().toJSON() : null)
     },
     listenersAttachedFlag: mobileReportEntryBindingsAttached,
+    quickReportVisible: quickReportElements.some((el) => {
+      const style = window.getComputedStyle(el);
+      const rect = el.getBoundingClientRect();
+      return style.display !== "none" && style.visibility !== "hidden" && style.opacity !== "0" && rect.width > 0 && rect.height > 0;
+    }),
+    quickReportDisplay: quickReportElements.map((el) => window.getComputedStyle(el).display),
+    quickReportRect: quickReportElements.map((el) => el.getBoundingClientRect().toJSON ? el.getBoundingClientRect().toJSON() : null),
     reportingState: window.gridlyReportingDebug()
   };
 };
