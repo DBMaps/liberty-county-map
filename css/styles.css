@@ -1034,11 +1034,14 @@ body.route-setup-open #gridlyHazardLauncher {
   }
 
   .route-setup-modal-card {
-    width: min(640px, 100%);
-    padding: 20px 16px calc(18px + env(safe-area-inset-bottom));
-    max-height: min(94svh, 760px);
+    width: min(520px, calc(100% - 10px));
+    padding: 14px 14px calc(12px + env(safe-area-inset-bottom));
+    max-height: min(82svh, 620px);
     overflow-y: auto;
     overscroll-behavior: contain;
+    border-radius: 18px 18px 0 0;
+    border-color: rgba(142, 204, 255, 0.28);
+    background: linear-gradient(180deg, rgba(10, 19, 31, 0.97), rgba(6, 12, 21, 0.98));
   }
 
   .route-setup-modal-head {
@@ -1046,26 +1049,26 @@ body.route-setup-open #gridlyHazardLauncher {
   }
 
   .route-setup-grid-mobile {
-    margin-top: 16px;
-    gap: 12px;
+    margin-top: 10px;
+    gap: 9px;
   }
 
   .route-setup-grid-mobile label {
-    gap: 8px;
-    font-size: 0.82rem;
+    gap: 5px;
+    font-size: 0.76rem;
   }
 
   .route-setup-grid-mobile input {
-    min-height: 46px;
-    padding: 12px 14px;
-    border-radius: 14px;
+    min-height: 42px;
+    padding: 10px 12px;
+    border-radius: 12px;
     background: rgba(255, 255, 255, 0.07);
     border-color: rgba(255, 255, 255, 0.16);
   }
 
   .route-setup-grid-mobile .primary-btn,
   .route-setup-grid-mobile .secondary-btn {
-    min-height: 46px;
+    min-height: 42px;
   }
 
   .route-setup-grid-mobile .primary-btn {
@@ -8328,6 +8331,20 @@ body.modal-open {
 }
 
 @media (max-width: 760px) {
+  body[data-mobile-mode] .route-setup-modal {
+    place-items: end center;
+    padding-inline: 6px;
+  }
+
+  body[data-mobile-mode] .route-setup-modal-card {
+    width: 100%;
+    max-width: 460px;
+    border-radius: 16px 16px 0 0;
+    padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
+    max-height: min(74dvh, 560px);
+    box-shadow: 0 -16px 34px rgba(2, 8, 18, 0.58);
+  }
+
   body[data-mobile-mode] .report-drawer {
     opacity: 0;
     transform: translateY(10px);
@@ -8377,6 +8394,94 @@ body.modal-open {
 
   body.report-pulse .map-frame::before {
     animation: gridlyReportPulse .85s ease;
+  }
+
+  body[data-mobile-mode] .report-drawer {
+    left: 8px;
+    right: 8px;
+    bottom: 78px;
+    max-height: 64px;
+    border-radius: 12px;
+    border-color: rgba(142, 209, 255, 0.32);
+    background: linear-gradient(165deg, rgba(7, 16, 28, 0.9), rgba(4, 10, 19, 0.9));
+  }
+
+  body[data-mobile-mode] .report-drawer[open] {
+    max-height: min(46dvh, 340px);
+  }
+
+  body[data-mobile-mode] .desktop-command-panel {
+    position: fixed;
+    left: 8px;
+    right: 8px;
+    bottom: 78px;
+    top: auto;
+    z-index: 754;
+    margin: 0;
+    max-height: min(44dvh, 320px);
+    padding: 10px 10px 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(142, 209, 255, 0.28);
+    background: linear-gradient(158deg, rgba(8, 20, 33, 0.9), rgba(5, 12, 23, 0.92));
+    backdrop-filter: blur(14px) saturate(130%);
+    box-shadow: 0 14px 28px rgba(2, 8, 18, 0.46);
+    overflow: hidden;
+  }
+
+  body[data-mobile-mode] .desktop-command-panel .panel-card {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  body[data-mobile-mode] .desktop-command-panel .alerts-list {
+    max-height: min(30dvh, 210px);
+    overflow: auto;
+    padding-right: 2px;
+  }
+
+  body[data-mobile-mode] .map-tools-overlay {
+    left: 10px;
+    right: 10px;
+    top: 86px;
+    bottom: auto;
+    width: fit-content;
+    max-width: calc(100% - 20px);
+    margin-left: auto;
+    padding: 6px;
+    border-radius: 12px;
+    background: linear-gradient(160deg, rgba(8, 20, 34, 0.86), rgba(6, 14, 24, 0.84));
+  }
+
+  body[data-mobile-mode] .map-tools-overlay .map-toolbar-main-row {
+    width: auto;
+  }
+
+  body[data-mobile-mode] .map-tools-overlay .geo-filter-shell {
+    display: flex;
+    gap: 4px;
+    width: auto;
+  }
+
+  body[data-mobile-mode] .map-tools-overlay .geo-filter-pill {
+    min-height: 28px;
+    padding: 6px 8px;
+    font-size: 0.68rem;
+  }
+
+  body[data-mobile-mode] #map .leaflet-bottom.leaflet-right {
+    right: 10px;
+    bottom: 148px;
+  }
+
+  body[data-mobile-mode] #map .leaflet-control-layers {
+    margin: 0;
+    border-radius: 12px;
+    border: 1px solid rgba(147, 213, 255, 0.28);
+    background: linear-gradient(160deg, rgba(8, 20, 34, 0.9), rgba(6, 14, 24, 0.9));
+    box-shadow: 0 8px 18px rgba(1, 8, 18, 0.4);
   }
 }
 
