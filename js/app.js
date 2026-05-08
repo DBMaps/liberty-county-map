@@ -5922,23 +5922,48 @@ function renderRouteWatchIntelligenceFields({
   systemConfidence = "Unknown",
   recommendationConfidence = "Unknown",
   corridorHealth = "Unknown",
-  estimatedDelayImpact = "Unknown"
+  estimatedDelayImpact = "Unknown",
+  routeEtaValue = "",
+  routeDelayValue = ""
 } = {}) {
   ensureRouteWatchLayoutPolishV331Styles();
   if (!els.departureReason) return;
+  const hasRouteEta = typeof routeEtaValue === "string" && routeEtaValue.trim().length > 0;
+  const hasRouteDelay = typeof routeDelayValue === "string" && routeDelayValue.trim().length > 0;
   const delayToneClass = /severe/i.test(estimatedDelayImpact)
     ? "route-watch-delay-impact-severe"
     : /high/i.test(estimatedDelayImpact)
       ? "route-watch-delay-impact-high"
       : "";
+  const routeEtaMarkup = hasRouteEta
+    ? `<div class="route-watch-intel-item"><span class="route-watch-intel-label">Route ETA</span><span class="route-watch-intel-value">${routeEtaValue}</span></div>`
+    : "";
+  const routeDelayMarkup = hasRouteDelay
+    ? `<div class="route-watch-intel-item"><span class="route-watch-intel-label">Delay Impact</span><span class="route-watch-intel-value">${routeDelayValue}</span></div>`
+    : "";
   els.departureReason.innerHTML = `
     <div class="route-watch-intel-grid" aria-label="Route Watch intelligence">
       <div class="route-watch-intel-item"><span class="route-watch-intel-label">System Confidence</span><span class="route-watch-intel-value">${systemConfidence}</span></div>
       <div class="route-watch-intel-item"><span class="route-watch-intel-label">Recommendation Confidence</span><span class="route-watch-intel-value">${recommendationConfidence}</span></div>
       <div class="route-watch-intel-item"><span class="route-watch-intel-label">Corridor Health</span><span class="route-watch-intel-value">${corridorHealth}</span></div>
+      ${routeEtaMarkup}
+      ${routeDelayMarkup}
       <div class="route-watch-intel-item ${delayToneClass}"><span class="route-watch-intel-label">Estimated Delay Impact</span><span class="route-watch-intel-value">${estimatedDelayImpact}</span></div>
     </div>
   `;
+}
+
+function getRouteEtaMetricsFromHero() {
+  const etaText = String(els.routeEta?.textContent || "").trim();
+  if (!etaText || !/^ETA/i.test(etaText)) return { routeEtaValue: "", routeDelayValue: "" };
+  const match = etaText.match(/^ETA\s+([^(]+?)(?:\s*\(([^)]+)\))?$/i);
+  if (!match) return { routeEtaValue: "", routeDelayValue: "" };
+  const routeEtaValue = String(match[1] || "").trim();
+  const routeDelayValue = String(match[2] || "").trim();
+  return {
+    routeEtaValue,
+    routeDelayValue
+  };
 }
 
 function updateRouteIntelligence(nearest = []) {
@@ -6036,7 +6061,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeStatus", "Blocked");
     safeText("routeEta", `ETA 32 min (+${extraMinutes})`);
     safeText("departureTime", "Leave now");
-    renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact });
+    renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, ...getRouteEtaMetricsFromHero() });
     safeText("desktopRouteStatus", "Blocked crossing detected. Consider another route.");
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
@@ -6048,7 +6073,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeStatus", "Heavy Delay");
     safeText("routeEta", `ETA 26 min (+${extraMinutes})`);
     safeText("departureTime", "Leave 8 min early");
-    renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact });
+    renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, ...getRouteEtaMetricsFromHero() });
     safeText("desktopRouteStatus", "Heavy delay detected. Leave early or reroute.");
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
@@ -6060,7 +6085,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeStatus", "Caution");
     safeText("routeEta", `ETA 24 min (+${Math.max(extraMinutes, 3)})`);
     safeText("departureTime", "Leave a bit early");
-    renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact });
+    renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, ...getRouteEtaMetricsFromHero() });
     safeText("desktopRouteStatus", "Possible delay near your route.");
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
@@ -6072,7 +6097,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeStatus", "Clear");
     safeText("routeEta", "ETA 21 min");
     safeText("departureTime", "Normal departure");
-    renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact });
+    renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, ...getRouteEtaMetricsFromHero() });
     safeText("desktopRouteStatus", "Your route looks clear.");
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
