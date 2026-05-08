@@ -385,6 +385,7 @@ let mapBaseLayersByName = {};
 let mapStyleClassByName = {};
 let currentMapStyle = "Satellite";
 let activeBaseLayerName = "Satellite";
+let managePlacesSourceMode = "";
 const LEGACY_PLACE_MARKER_TEXT = "legacy migrated";
 
 let deviceId =
@@ -5608,6 +5609,25 @@ function renderRouteWatchInlineControls() {
   });
 }
 
+function setManagePlacesSourceMode(mode = "") {
+  managePlacesSourceMode = mode;
+  const addressGroup = document.getElementById("managePlacesAddressGroup");
+  const savedGroup = document.getElementById("managePlacesSavedGroup");
+  const saveGroup = document.getElementById("managePlacesSaveGroup");
+  const sourceGroup = document.getElementById("managePlacesSourceGroup");
+  const useLocationBtn = els.mobileUseLocationBtn;
+  if (sourceGroup) sourceGroup.hidden = false;
+  if (addressGroup) addressGroup.hidden = mode !== "address";
+  if (savedGroup) savedGroup.hidden = mode !== "saved";
+  if (saveGroup) saveGroup.hidden = !mode;
+  if (useLocationBtn) useLocationBtn.hidden = mode !== "location";
+  [["manageSourceLocationBtn", "location"], ["manageSourceAddressBtn", "address"], ["manageSourceSavedBtn", "saved"]].forEach(([id, value]) => {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.classList.toggle("active", mode === value);
+  });
+}
+
 function updateRouteSetupManageState() {
   if (!els.routeSetupModal || els.routeSetupModal.dataset.mode !== "manage") return;
   const routeLabelParts = buildRouteWatchLabelParts();
@@ -6072,6 +6092,7 @@ function configureRouteSetupModal({ mode = "add", prefillType = "custom" } = {})
     }
     if (els.mobileWorkInput) els.mobileWorkInput.value = selected?.address || "";
     if (els.managePlaceSlotRow) els.managePlaceSlotRow.hidden = false;
+    setManagePlacesSourceMode("");
     document.getElementById("managePlacesSlotsGroup")?.removeAttribute("hidden");
     if (destinationLabelText) destinationLabelText.textContent = "Saved places";
     if (subtitleEl) {
@@ -6084,6 +6105,7 @@ function configureRouteSetupModal({ mode = "add", prefillType = "custom" } = {})
     return;
   }
   if (els.managePlaceSlotRow) els.managePlaceSlotRow.hidden = true;
+  setManagePlacesSourceMode("address");
   document.getElementById("managePlacesSlotsGroup")?.setAttribute("hidden", "hidden");
 
   const presets = {

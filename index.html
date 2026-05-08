@@ -44,7 +44,6 @@
       </div>
       <div class="mobile-live-brand-copy">
         <strong>GRIDLY</strong>
-        <span>Know Before You Go</span>
       </div>
     </div>
     <div class="mobile-live-brand-status">
@@ -543,27 +542,35 @@
             <button class="secondary-btn destination-chip" id="managePlaceFavoriteBtn" type="button">Favorite</button>
           </div>
         </section>
-        <section class="manage-places-group">
-          <p class="manage-places-group-label">Step 2 · Choose source</p>
-          <p class="manage-places-group-note">How do you want to add it?</p>
+        <section class="manage-places-group" id="managePlacesSourceGroup" hidden>
+          <p class="manage-places-group-label">Step 2 · Add source</p>
+          <p class="manage-places-group-note">How would you like to add it?</p>
+          <div class="destination-chip-row manage-source-row">
+            <button class="secondary-btn destination-chip" id="manageSourceLocationBtn" type="button" data-source="location">Use Current Location</button>
+            <button class="secondary-btn destination-chip" id="manageSourceAddressBtn" type="button" data-source="address">Enter Address</button>
+            <button class="secondary-btn destination-chip" id="manageSourceSavedBtn" type="button" data-source="saved">Choose Saved Place</button>
+          </div>
+        </section>
+        <section class="manage-places-group" id="managePlacesAddressGroup" hidden>
+          <label>
+            Place name
+            <input id="mobileHomeInput" type="text" placeholder="Home, Work, or Favorite" autocomplete="off" />
+          </label>
           <label>
             Address
-            <input id="mobileHomeInput" type="text" placeholder="Enter address, city, or place" autocomplete="street-address" />
+            <input id="mobileWorkInput" type="text" placeholder="Enter address, city, or place" autocomplete="street-address" />
           </label>
-          <label>
-            Saved place
-            <input id="mobileWorkInput" type="text" placeholder="Choose from saved places" autocomplete="off" />
-          </label>
+        </section>
+        <section class="manage-places-group" id="managePlacesSavedGroup" hidden>
           <label id="savedPlacesSelectLabel">
             Saved places
             <select id="mobileSavedDestinationSelect"></select>
           </label>
         </section>
-        <section class="manage-places-group">
+        <section class="manage-places-group" id="managePlacesSaveGroup" hidden>
           <p class="manage-places-group-label">Step 3 · Save</p>
-          <p class="manage-places-group-note">Save your selection to the chosen slot.</p>
-          <button id="mobileSaveRouteBtn" class="primary-btn" type="button">Save to Slot</button>
-          <button id="mobileUseLocationBtn" class="secondary-btn subtle-secondary-btn" type="button">Use My Location</button>
+          <button id="mobileSaveRouteBtn" class="primary-btn" type="button">Save Place</button>
+          <button id="mobileUseLocationBtn" class="secondary-btn subtle-secondary-btn" type="button" hidden>Use Current Location</button>
         </section>
         <section class="manage-places-group manage-places-group-utility">
           <p class="manage-places-group-label">Utility</p>
