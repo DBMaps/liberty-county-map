@@ -3507,6 +3507,7 @@ async function handleRouteQuickPanelAction(action, event, actionEl) {
   lastRouteButtonClickSource = actionEl?.dataset?.action || action || "";
   lastRouteButtonClickAt = new Date().toISOString();
   routeRequestTriggered = true;
+  lastRouteError = null;
 
   if (els.routeWatchStartSelect && startSelect) els.routeWatchStartSelect.value = startSelect.value;
   if (els.routeWatchDestinationSelect && destinationSelect) els.routeWatchDestinationSelect.value = destinationSelect.value;
@@ -3515,10 +3516,37 @@ async function handleRouteQuickPanelAction(action, event, actionEl) {
   const resolvedDestinationPlace = places.find((place) => place.id === (els.routeWatchDestinationSelect?.value || "")) || null;
   console.info("Gridly quick panel place resolution result", { resolvedStartPlace, resolvedDestinationPlace });
   updateRouteWatchStartButtonState();
-  await startInlineRouteWatch({
+
+  const routePipelineArgs = {
     activateWatch: action === "start-route-watch-quick",
     source: action === "start-route-watch-quick" ? "mobile_quick_panel_start_watch" : "mobile_quick_panel_view_route"
-  });
+  };
+
+  try {
+    console.info("ABOUT TO CALL startInlineRouteWatch", {
+      typeOfStartInlineRouteWatch: typeof startInlineRouteWatch,
+      routePipelineArgs
+    });
+    if (typeof startInlineRouteWatch !== "function") {
+      lastRouteEarlyReturnReason = "start_inline_route_watch_unavailable";
+      lastRouteError = "Route pipeline function startInlineRouteWatch is unavailable";
+      throw new Error(lastRouteError);
+    }
+    await startInlineRouteWatch(routePipelineArgs);
+    console.info("RETURNED FROM startInlineRouteWatch", { routePipelineArgs });
+  } catch (error) {
+    lastRouteError = String(error?.message || error || "Route pipeline invocation failed");
+    if (!lastRouteEarlyReturnReason) {
+      lastRouteEarlyReturnReason = "route_pipeline_invocation_failed";
+    }
+    console.error("Gridly quick panel route pipeline call failed", {
+      error,
+      message: lastRouteError,
+      routePipelineArgs
+    });
+    return;
+  }
+
   if (action === "view-route-quick") routeNavSection("map");
   document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
 }
