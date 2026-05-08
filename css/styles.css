@@ -8172,7 +8172,7 @@ body.modal-open {
 
   .mobile-live-command {
     position: absolute;
-    top: 10px;
+    top: calc(env(safe-area-inset-top, 0px) + 54px);
     left: 10px;
     right: 10px;
     z-index: 620;
@@ -8195,7 +8195,7 @@ body.modal-open {
   }
 
   .mobile-map-floating-chips {
-    top: 94px;
+    top: calc(env(safe-area-inset-top, 0px) + 138px);
     left: 10px;
     right: 10px;
     z-index: 630;
@@ -8450,7 +8450,7 @@ body.modal-open {
   body[data-mobile-mode] .map-tools-overlay {
     left: 10px;
     right: 10px;
-    top: 86px;
+    top: calc(env(safe-area-inset-top, 0px) + 186px);
     bottom: auto;
     width: fit-content;
     max-width: calc(100% - 20px);
@@ -8566,7 +8566,7 @@ body.modal-open {
     border-inline: 0;
     border-bottom: 0;
     box-shadow: none;
-    padding-top: 58px;
+    padding-top: 56px;
   }
 
   body[data-mobile-mode] .desktop-command-panel {
@@ -8576,12 +8576,17 @@ body.modal-open {
   body[data-mobile-mode] .mobile-live-brand {
     display: flex !important;
     position: fixed;
-    left: 10px;
-    right: 10px;
-    top: calc(env(safe-area-inset-top, 0px) + 8px);
-    min-height: 44px;
-    padding: 8px 12px;
-    border-radius: 12px;
+    --mobile-overlay-gutter: 10px;
+    --mobile-brand-top: calc(env(safe-area-inset-top, 0px) + 8px);
+    --mobile-brand-height: 38px;
+    --mobile-overlay-gap: 8px;
+    left: var(--mobile-overlay-gutter);
+    right: var(--mobile-overlay-gutter);
+    top: var(--mobile-brand-top);
+    height: var(--mobile-brand-height);
+    min-height: var(--mobile-brand-height);
+    padding: 6px 10px;
+    border-radius: 10px;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
@@ -8621,9 +8626,9 @@ body.modal-open {
   body[data-mobile-mode="alert"] .desktop-command-panel {
     display: block !important;
     position: fixed;
-    left: 10px;
-    right: 10px;
-    top: 86px;
+    left: var(--mobile-overlay-gutter, 10px);
+    right: var(--mobile-overlay-gutter, 10px);
+    top: calc(var(--mobile-brand-top, env(safe-area-inset-top, 0px) + 8px) + var(--mobile-brand-height, 38px) + var(--mobile-overlay-gap, 8px) + 38px);
     z-index: 760;
     max-height: 48dvh;
     overflow: auto;
@@ -8635,9 +8640,9 @@ body.modal-open {
 
   body[data-mobile-mode="report"] #mobileReportModeCard {
     position: fixed;
-    left: 10px;
-    right: 10px;
-    top: 88px;
+    left: var(--mobile-overlay-gutter, 10px);
+    right: var(--mobile-overlay-gutter, 10px);
+    top: calc(var(--mobile-brand-top, env(safe-area-inset-top, 0px) + 8px) + var(--mobile-brand-height, 38px) + var(--mobile-overlay-gap, 8px) + 40px);
     z-index: 780;
     display: block !important;
   }
