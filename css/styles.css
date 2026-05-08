@@ -8896,6 +8896,7 @@ body.modal-open {
   }
 
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle {
+    pointer-events: auto;
     width: 30px;
     height: 30px;
     min-height: 30px;
@@ -9498,10 +9499,12 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
     right: 12px;
     bottom: auto;
     left: auto;
-    z-index: 1301;
+    z-index: 1310;
+    pointer-events: auto;
   }
 
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle {
+    pointer-events: auto;
     width: 38px;
     min-height: 38px;
     padding: 0;
@@ -9554,12 +9557,24 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
   }
 
   #managePlacesSaveGroup .destination-chip-row {
-    grid-template-columns: 1fr !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: stretch !important;
+    gap: 8px !important;
   }
 
   #managePlacesSaveGroup .primary-btn,
   #managePlacesSaveGroup #mobileResetPlacesBtn {
-    width: 100% !important;
+    width: auto !important;
     min-height: 34px !important;
+    flex-basis: 0;
+  }
+
+  #managePlacesSaveGroup .primary-btn {
+    flex: 1.4 1 0 !important;
+  }
+
+  #managePlacesSaveGroup #mobileResetPlacesBtn {
+    flex: 1 1 0 !important;
   }
 }
