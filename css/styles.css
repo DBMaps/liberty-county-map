@@ -9586,10 +9586,14 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
     font-size: 0.7rem;
   }
 
+  body[data-mobile-mode] #map .leaflet-bottom.leaflet-right {
+    bottom: calc(4px + env(safe-area-inset-bottom, 0px)) !important;
+    right: 8px !important;
+  }
+
   body[data-mobile-mode] #map .leaflet-control-attribution {
-    right: 8px;
-    left: auto;
-    bottom: calc(2px + env(safe-area-inset-bottom, 0px));
+    margin: 0 !important;
+    bottom: auto !important;
     max-width: min(64vw, 230px);
     border-radius: 8px;
     padding: 1px 5px;
