@@ -6503,6 +6503,8 @@ function updateRouteIntelligence(nearest = []) {
   if (els.routeRecommendation) {
     els.routeRecommendation.classList.add("route-watch-recommendation-emphasis");
   }
+  const mobileLiveCommand = document.querySelector(".mobile-live-command");
+  if (mobileLiveCommand) mobileLiveCommand.removeAttribute("data-delay-state");
   safeText("mobileLiveRouteStatus", `${els.routeStatus?.textContent || "CLEAR TO LEAVE"} · ${els.routeEta?.textContent || "ETA pending"}`);
   safeText("mobileLiveRouteMeta", getLiveCommuteSignalLine({ impact, urgentBlockedCount: routeIntel.urgentBlockedCount, recommendation: els.routeRecommendation?.textContent || "" }));
   renderDesktopRouteWatchMetrics({
@@ -6520,6 +6522,7 @@ function updateRouteIntelligence(nearest = []) {
   liveStatusCard?.classList.remove("clear-status", "delay-status", "blocked-status");
 
   if (impact >= 70) {
+    if (mobileLiveCommand) mobileLiveCommand.dataset.delayState = "blocked";
     safeText("delayRisk", routeIntel.urgentBlockedCount > 0 ? "Delay building now" : "High crossing pressure");
     safeText("delayReason", routeIntel.urgentBlockedCount > 0 ? `${routeIntel.urgentBlockedCount} active signal${routeIntel.urgentBlockedCount === 1 ? "" : "s"} in the last 10 min · alternate route is recommended.` : "Live commute unstable · active crossing pressure is building near your corridor.");
     safeText("alternateRoute", "Use alternate");
@@ -6527,6 +6530,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("impactText", "High route impact. Leave now or reroute.");
     liveStatusCard?.classList.add("blocked-status");
   } else if (impact >= 40) {
+    if (mobileLiveCommand) mobileLiveCommand.dataset.delayState = "delayed";
     safeText("delayRisk", "Live commute stable");
     safeText("delayReason", "2-3 active signals detected · keep backup route ready as delay momentum rises.");
     safeText("alternateRoute", "Have backup");
@@ -6534,6 +6538,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("impactText", "Moderate route impact. Watch before leaving.");
     liveStatusCard?.classList.add("delay-status");
   } else {
+    if (mobileLiveCommand) mobileLiveCommand.dataset.delayState = "clear";
     safeText("delayRisk", "Live commute clear");
     safeText("delayReason", "No active crossing pressure nearby · confidence is high and monitoring is live.");
     safeText("alternateRoute", "Not needed");
