@@ -1611,7 +1611,11 @@ function installLayerPickerDebugDiagnostics() {
       controlContainer?.classList?.remove("gridly-mobile-layer-control-hidden");
     }
 
-    let menuRoot = document.querySelector("#map .gridly-mobile-layer-menu");
+    const existingMenus = Array.from(document.querySelectorAll("#map .gridly-mobile-layer-menu"));
+    if (existingMenus.length > 1) {
+      existingMenus.slice(1).forEach((duplicateMenu) => duplicateMenu.remove());
+    }
+    let menuRoot = existingMenus[0] || null;
     if (!menuRoot) {
       menuRoot = document.createElement("div");
       menuRoot.className = "gridly-mobile-layer-menu";
@@ -1797,13 +1801,29 @@ function installLayerPickerDebugDiagnostics() {
     const menuRoot = document.querySelector("#map .gridly-mobile-layer-menu");
     const menuList = menuRoot?.querySelector(".gridly-mobile-layer-menu-list");
     const buttons = Array.from(menuRoot?.querySelectorAll("button[data-layer-name]") || []);
+    const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+    const isActuallyVisible = (node) => {
+      if (!node) return false;
+      let current = node;
+      while (current && current !== document.documentElement) {
+        const style = getComputedStyle(current);
+        if (style.display === "none" || style.visibility === "hidden" || style.visibility === "collapse") return false;
+        current = current.parentElement;
+      }
+      const rect = node.getBoundingClientRect();
+      if (!rect || rect.width <= 0 || rect.height <= 0) return false;
+      const insideViewport = rect.bottom > 0 && rect.right > 0 && rect.top < viewportHeight && rect.left < viewportWidth;
+      return insideViewport;
+    };
     return {
       activeBaseLayerName,
       menuExists: Boolean(menuRoot),
       toggleExists: Boolean(menuRoot?.querySelector(".gridly-mobile-layer-menu-toggle")),
       isOpen: Boolean(menuRoot?.classList.contains("is-open") && menuList && !menuList.hidden),
-      visibleButtons: buttons.filter((button) => !button.hidden && getComputedStyle(button).display !== "none" && getComputedStyle(button).visibility !== "hidden").map((button) => button.textContent.trim()),
+      visibleButtons: buttons.filter((button) => isActuallyVisible(button) && menuRoot?.classList.contains("is-open")).map((button) => button.textContent.trim()),
       layerButtons: buttons.map((button) => ({ text: button.textContent.trim(), layerName: button.dataset.layerName || "" })),
+      duplicateMenusFound: document.querySelectorAll("#map .gridly-mobile-layer-menu").length,
       activeLayer: activeBaseLayerName,
       wrapperClasses: menuRoot?.className || "",
       toggleRect: menuRoot?.querySelector(".gridly-mobile-layer-menu-toggle")?.getBoundingClientRect?.()?.toJSON?.() || null,
