@@ -216,6 +216,8 @@ let osrmRequestStarted = false;
 let osrmResponseReceived = false;
 let routeRenderAttempted = false;
 let routeRenderSucceeded = false;
+let lastRoutePipelineStep = "idle";
+let lastRouteEarlyReturnReason = null;
 let lastRouteButtonClickSource = "";
 let lastRouteButtonClickAt = null;
 let routeQuickButtonDelegatedBindingActive = false;
@@ -6589,7 +6591,9 @@ function attachRouteQuickPanelDebugGlobal() {
       osrmRequestStarted: Boolean(osrmRequestStarted),
       osrmResponseReceived: Boolean(osrmResponseReceived),
       routeRenderAttempted: Boolean(routeRenderAttempted),
-      routeRenderSucceeded: Boolean(routeRenderSucceeded)
+      routeRenderSucceeded: Boolean(routeRenderSucceeded),
+      lastRoutePipelineStep,
+      lastRouteEarlyReturnReason
     };
   };
 }
@@ -6750,24 +6754,62 @@ function loadSavedRoute() {
 }
 
 async function startInlineRouteWatch(options = {}) {
+  lastRoutePipelineStep = "entered";
+  lastRouteEarlyReturnReason = null;
   const { activateWatch = true, source = "route_watch_cta" } = options;
-  console.info("Gridly route request trigger", { source, activateWatch });
+  console.info("Gridly route pipeline step", { step: lastRoutePipelineStep, source, activateWatch });
+
+  lastRoutePipelineStep = "received_source_action";
+  console.info("Gridly route pipeline step", { step: lastRoutePipelineStep, source, activateWatch });
+
   const startId = els.routeWatchStartSelect?.value || "";
+  lastRoutePipelineStep = "start_selector_read";
+  console.info("Gridly route pipeline step", { step: lastRoutePipelineStep, startId });
+
   const destinationId = els.routeWatchDestinationSelect?.value || "";
+  lastRoutePipelineStep = "destination_selector_read";
+  console.info("Gridly route pipeline step", { step: lastRoutePipelineStep, destinationId });
+
   const places = getSavedPlaces();
   const start = places.find((place) => place.id === startId);
+  lastRoutePipelineStep = "resolved_start_place";
+  console.info("Gridly route pipeline step", { step: lastRoutePipelineStep, start });
+
   const destination = places.find((place) => place.id === destinationId);
+  lastRoutePipelineStep = "resolved_destination_place";
+  console.info("Gridly route pipeline step", { step: lastRoutePipelineStep, destination });
+
+  const startCoords = normalizeCoordinatePair(start?.lat, start?.lng);
+  const destinationCoords = normalizeCoordinatePair(destination?.lat, destination?.lng);
+  lastRoutePipelineStep = "lat_lng_validated";
+  console.info("Gridly route pipeline step", {
+    step: lastRoutePipelineStep,
+    startHasLatLng: Boolean(startCoords),
+    destinationHasLatLng: Boolean(destinationCoords)
+  });
+
   if (!start || !destination) {
+    lastRouteEarlyReturnReason = "missing_start_or_destination_selection";
+    lastRoutePipelineStep = "early_return";
+    console.warn("Gridly route pipeline early return", { reason: lastRouteEarlyReturnReason, startId, destinationId });
     setRoutePreviewState(false, "Start or destination was not selected.", { layerExists: false, mapHasLayer: false, pointCount: 0 });
     setConfirmation("Choose a start and destination to begin monitoring.", "error");
     return;
   }
-  if (start.id === destination.id) {
+
+  const samePlace = start.id === destination.id;
+  lastRoutePipelineStep = "same_place_checked";
+  console.info("Gridly route pipeline step", { step: lastRoutePipelineStep, samePlace });
+  if (samePlace) {
+    lastRouteEarlyReturnReason = "same_place_selected";
+    lastRoutePipelineStep = "early_return";
+    console.warn("Gridly route pipeline early return", { reason: lastRouteEarlyReturnReason, startId, destinationId });
     savedRouteLayer?.clearLayers?.();
     setRoutePreviewState(false, "Start and destination are the same place.", { layerExists: false, mapHasLayer: false, pointCount: 0 });
     setConfirmation("Choose a different destination.", "error");
     return;
   }
+
   routeWatchActivated = Boolean(activateWatch);
   safeText("desktopRouteHome", start.name);
   safeText("desktopRouteWork", destination.name);
@@ -6775,12 +6817,10 @@ async function startInlineRouteWatch(options = {}) {
   safeText("desktopRouteStatus", activateWatch ? `Monitoring ${start.name} → ${destination.name}.` : `Viewing ${start.name} → ${destination.name}.`);
   safeText("routeWatchSetupHint", activateWatch ? `Monitoring ${start.name} → ${destination.name}.` : `Viewing ${start.name} → ${destination.name}.`);
 
-  const state = normalizeSavedPlaces();
-  const fromPlace = start.id === "home" ? state.home : start.id === "work" ? state.work : state.custom.find((place) => place.id === start.id);
-  const toPlace = destination.id === "home" ? state.home : destination.id === "work" ? state.work : state.custom.find((place) => place.id === destination.id);
-  const fromCoords = normalizeCoordinatePair(fromPlace?.lat, fromPlace?.lng);
-  const toCoords = normalizeCoordinatePair(toPlace?.lat, toPlace?.lng);
-  if (!fromCoords || !toCoords) {
+  if (!startCoords || !destinationCoords) {
+    lastRouteEarlyReturnReason = "missing_start_or_destination_coordinates";
+    lastRoutePipelineStep = "early_return";
+    console.warn("Gridly route pipeline early return", { reason: lastRouteEarlyReturnReason, start, destination });
     savedRouteLayer?.clearLayers?.();
     setRoutePreviewState(false, "Missing start or destination coordinates", { layerExists: false, mapHasLayer: false, pointCount: 0 });
     setConfirmation("Route preview unavailable until precise locations are saved.", "error");
@@ -6789,7 +6829,10 @@ async function startInlineRouteWatch(options = {}) {
     updateRouteWatchStartButtonLabel();
     return;
   }
-  if (fromCoords.lat === toCoords.lat && fromCoords.lng === toCoords.lng) {
+  if (startCoords.lat === destinationCoords.lat && startCoords.lng === destinationCoords.lng) {
+    lastRouteEarlyReturnReason = "same_coordinates";
+    lastRoutePipelineStep = "early_return";
+    console.warn("Gridly route pipeline early return", { reason: lastRouteEarlyReturnReason, startCoords, destinationCoords });
     savedRouteLayer?.clearLayers?.();
     setRoutePreviewState(false, "Start and destination coordinates are the same", { layerExists: false, mapHasLayer: false, pointCount: 0 });
     setConfirmation("Update one saved place location to view a route preview.", "error");
@@ -6798,7 +6841,10 @@ async function startInlineRouteWatch(options = {}) {
     updateRouteWatchStartButtonLabel();
     return;
   }
-  if (getDistanceMiles(fromCoords.lat, fromCoords.lng, toCoords.lat, toCoords.lng) > 80) {
+  if (getDistanceMiles(startCoords.lat, startCoords.lng, destinationCoords.lat, destinationCoords.lng) > 80) {
+    lastRouteEarlyReturnReason = "distance_exceeds_local_preview_limit";
+    lastRoutePipelineStep = "early_return";
+    console.warn("Gridly route pipeline early return", { reason: lastRouteEarlyReturnReason, startCoords, destinationCoords });
     savedRouteLayer?.clearLayers?.();
     setRoutePreviewState(false, "Route preview skipped because points are too far apart for local preview.", { layerExists: false, mapHasLayer: false, pointCount: 0 });
     setConfirmation("Route preview unavailable for this selection.", "error");
@@ -6807,14 +6853,23 @@ async function startInlineRouteWatch(options = {}) {
     updateRouteWatchStartButtonLabel();
     return;
   }
+
+  lastRoutePipelineStep = "route_engine_availability_checked";
+  console.info("Gridly route pipeline step", { step: lastRoutePipelineStep, mapReady: Boolean(map), osrmApi: OSRM_ROUTE_API });
+
   savedRouteLayer?.clearLayers?.();
   window.__gridlyRouteWatchActive = true;
   window.__gridlySelectedRouteId = `${start.id}->${destination.id}`;
-  const routePreviewShown = await renderRoutePreviewLine(fromCoords, toCoords, {
+
+  lastRoutePipelineStep = "osrm_payload_build_start";
+  console.info("Gridly route pipeline step", { step: lastRoutePipelineStep, startCoords, destinationCoords });
+
+  const routePreviewShown = await renderRoutePreviewLine(startCoords, destinationCoords, {
     start: start.name,
     destination: destination.name
   });
   if (!routePreviewShown) {
+    lastRouteEarlyReturnReason = "route_preview_renderer_returned_false";
     setRoutePreviewState(false, "Missing start or destination coordinates", { layerExists: false, mapHasLayer: false, pointCount: 0 });
     setConfirmation("Route preview unavailable until precise locations are saved.", "error");
     safeText("routeWatchSetupHint", "Route preview unavailable until precise locations are saved.");
@@ -6834,12 +6889,14 @@ async function startInlineRouteWatch(options = {}) {
       safeText("routeWatchSetupHint", "Route preview unavailable until precise locations are saved.");
     }
   }
-  activeDestinationPlace = toPlace;
+  lastRoutePipelineStep = "route_pipeline_completed";
+  activeDestinationPlace = destination;
   lastRouteWatchSelection = { startId: start.id, destinationId: destination.id };
   updateRouteWatchBadge(destination.name);
   updateRouteIntelligence();
   updateRouteWatchStartButtonLabel();
 }
+
 
 function resetSavedPlaces() {
   localStorage.removeItem(SAVED_PLACES_STORAGE_KEY);
