@@ -3015,12 +3015,74 @@ counter.textContent = "No live road hazards";
 function openHazardPanel() {
   updateReportingState({ reportModeActive: true, activeReportEntryPoint: "report_near_me" });
   document.getElementById("gridlyHazardPanel")?.classList.add("visible");
+  document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
 }
 
 window.closeHazardPanel = function () {
   updateReportingState({ reportModeActive: false, placementModeActive: false });
   document.getElementById("gridlyHazardPanel")?.classList.remove("visible");
 };
+
+function injectMobileQuickActionOverlays() {
+  if (document.getElementById("gridlyMobileRouteQuickPanel")) return;
+  const panel = document.createElement("div");
+  panel.id = "gridlyMobileRouteQuickPanel";
+  panel.className = "gridly-mobile-route-quick-panel";
+  panel.innerHTML = `
+    <div class="route-quick-head">
+      <strong>Route Quick Panel</strong>
+      <button type="button" data-action="close-route-quick">×</button>
+    </div>
+    <label>Start
+      <select id="mobileRouteQuickStart"></select>
+    </label>
+    <label>Destination
+      <select id="mobileRouteQuickDestination"></select>
+    </label>
+    <p id="mobileRouteQuickMeta">Select start and destination.</p>
+    <div class="route-quick-actions">
+      <button type="button" data-action="start-route-watch-quick">Start Route Watch</button>
+      <button type="button" data-action="view-route-quick">View Route</button>
+    </div>
+  `;
+  document.body.appendChild(panel);
+  const style = document.createElement("style");
+  style.id = "gridlyMobileQuickOverlaysStyles";
+  style.textContent = `
+    .gridly-hazard-panel,.gridly-mobile-route-quick-panel{z-index:10020!important}
+    .gridly-mobile-route-quick-panel{position:fixed;left:14px;right:14px;bottom:164px;background:rgba(7,17,31,.96);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:12px;display:none;box-shadow:0 20px 40px rgba(0,0,0,.35);backdrop-filter:blur(10px)}
+    .gridly-mobile-route-quick-panel.visible{display:grid;gap:8px}
+    .gridly-mobile-route-quick-panel label{display:grid;gap:4px;color:#d8e3f3;font-size:12px}
+    .gridly-mobile-route-quick-panel select{width:100%}
+    .route-quick-head{display:flex;justify-content:space-between;align-items:center}
+    .route-quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .route-quick-actions button{border:0;border-radius:999px;padding:10px;font-weight:800}
+    .route-quick-actions button[data-action="start-route-watch-quick"]{background:linear-gradient(135deg,#0fb8ff,#4ee3ff);color:#041018}
+  `;
+  document.head.appendChild(style);
+}
+
+function openMobileRouteQuickPanel() {
+  injectMobileQuickActionOverlays();
+  const panel = document.getElementById("gridlyMobileRouteQuickPanel");
+  if (!panel) return;
+  document.getElementById("gridlyHazardPanel")?.classList.remove("visible");
+  const startSelect = document.getElementById("mobileRouteQuickStart");
+  const destinationSelect = document.getElementById("mobileRouteQuickDestination");
+  if (startSelect && els.routeWatchStartSelect) {
+    startSelect.innerHTML = els.routeWatchStartSelect.innerHTML;
+    startSelect.value = els.routeWatchStartSelect.value || "";
+  }
+  if (destinationSelect && els.routeWatchDestinationSelect) {
+    destinationSelect.innerHTML = els.routeWatchDestinationSelect.innerHTML;
+    destinationSelect.value = els.routeWatchDestinationSelect.value || "";
+  }
+  const meta = document.getElementById("mobileRouteQuickMeta");
+  if (meta) {
+    meta.textContent = `${els.routeStatus?.textContent || "Choose route"} • ${els.routeEta?.textContent || "ETA pending"} • ${els.routeRecommendation?.textContent || "Awaiting route selection"}`;
+  }
+  panel.classList.add("visible");
+}
 
 function resetQuickHazardReportState() {
   pendingHazardPlacement = null;
@@ -3708,7 +3770,8 @@ function bindEvents() {
 
   els.mobileReportBtn?.addEventListener("click", handleSmartReportButton);
   els.mobileDockReportBtn?.addEventListener("click", handleSmartReportButton);
-  els.mobileLiveRouteActionBtn?.addEventListener("click", () => routeNavSection("map"));
+  document.querySelector('.mobile-dock-btn.route')?.addEventListener("click", openMobileRouteQuickPanel);
+  els.mobileLiveRouteActionBtn?.addEventListener("click", openMobileRouteQuickPanel);
   els.mobileQuickReportBtn?.addEventListener("click", handleReportNearMe);
   els.mobileQuickReportSmallBtn?.addEventListener("click", handleReportNearMe);
   els.mobileQuickClearedBtn?.addEventListener("click", () => {
@@ -3875,6 +3938,28 @@ function bindEvents() {
       selectedQuickHazardType = null;
       updateReportingState({ selectedHazardType: null, placementModeActive: false, activeReportEntryPoint: "hazard_cancel" });
       closeHazardPanel();
+      return;
+    }
+    if (action === "close-route-quick") {
+      event.preventDefault();
+      document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
+      return;
+    }
+    if (action === "view-route-quick") {
+      event.preventDefault();
+      routeNavSection("map");
+      document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
+      return;
+    }
+    if (action === "start-route-watch-quick") {
+      event.preventDefault();
+      const startSelect = document.getElementById("mobileRouteQuickStart");
+      const destinationSelect = document.getElementById("mobileRouteQuickDestination");
+      if (els.routeWatchStartSelect && startSelect) els.routeWatchStartSelect.value = startSelect.value;
+      if (els.routeWatchDestinationSelect && destinationSelect) els.routeWatchDestinationSelect.value = destinationSelect.value;
+      updateRouteWatchStartButtonState();
+      startInlineRouteWatch();
+      document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
       return;
     }
     if (action === "zoom-crossing") {
@@ -6549,8 +6634,11 @@ function updateRouteIntelligence(nearest = []) {
     safeText("alternateRoute", "Not needed");
     safeText("alternateReason", "Current route appears clear.");
     safeText("impactText", "Low route impact. Normal travel expected.");
-    safeText("mobileLiveRouteActionBtn", "Leave now");
+    safeText("mobileLiveRouteActionBtn", "View route");
     liveStatusCard?.classList.add("clear-status");
+  }
+  if (!routeIsMonitoring) {
+    safeText("mobileLiveRouteActionBtn", "Choose route");
   }
   updateAlternateRouteActionState();
 
