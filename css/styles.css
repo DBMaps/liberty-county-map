@@ -3460,6 +3460,140 @@ h2 { font-weight: 820; letter-spacing: -0.025em; }
   margin: 0;
 }
 
+/* V37 mobile operating system redesign: map-first live movement architecture */
+@media (max-width: 1100px) {
+  .future-map-hero,
+  .destination-hero-card,
+  .mobile-home-card:not(.mobile-priority-card),
+  .command-summary-grid,
+  .desktop-route-setup,
+  .desktop-insights {
+    display: none !important;
+  }
+
+  .dashboard {
+    display: grid;
+    gap: 8px;
+  }
+
+  .mobile-premium-header {
+    position: sticky;
+    top: 8px;
+    z-index: 920;
+    backdrop-filter: blur(16px);
+  }
+
+  .mobile-home-cards {
+    display: grid;
+    gap: 8px;
+  }
+
+  .mobile-home-card.mobile-priority-card {
+    border-radius: 16px;
+    padding: 12px;
+  }
+
+  #mapSection {
+    margin-top: 4px;
+  }
+
+  .map-card {
+    padding: 8px;
+    border-radius: 22px;
+  }
+
+  .mobile-live-command {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    padding: 12px;
+    border-radius: 16px;
+    background: linear-gradient(145deg, rgba(18, 40, 66, 0.92), rgba(12, 22, 38, 0.95));
+    border: 1px solid rgba(120, 192, 255, 0.4);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.42);
+  }
+
+  .mobile-live-command strong {
+    display: block;
+    margin: 3px 0;
+    font-size: 1.05rem;
+    color: #f2f8ff;
+  }
+
+  .mobile-live-command p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #bfd1ea;
+  }
+
+  .mobile-map-floating-chips {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    z-index: 750;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .map-floating-chip {
+    white-space: nowrap;
+    border-radius: 999px;
+    border: 1px solid rgba(168, 218, 255, 0.44);
+    background: rgba(8, 16, 28, 0.85);
+    color: #def2ff;
+    font-size: 0.73rem;
+    font-weight: 800;
+    padding: 8px 12px;
+  }
+
+  .map-tools-overlay {
+    top: 52px;
+  }
+
+  #map {
+    height: clamp(470px, 62svh, 700px);
+    border-radius: 18px;
+  }
+
+  .mobile-sticky-report {
+    display: none !important;
+  }
+
+  .mobile-floating-action-dock {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: calc(82px + env(safe-area-inset-bottom, 0px));
+    z-index: 1400;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 9px;
+  }
+
+  .mobile-dock-btn {
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 14px;
+    min-height: 50px;
+    font-weight: 900;
+    letter-spacing: 0.01em;
+    color: #ecf5ff;
+    background: rgba(8, 12, 20, 0.9);
+  }
+
+  .mobile-dock-btn.report { background: linear-gradient(135deg, #c63c33, #ff5b4d); }
+  .mobile-dock-btn.route { background: linear-gradient(135deg, #009fc9, #2fd4ff); color: #031621; }
+  .mobile-dock-btn.alerts { background: linear-gradient(135deg, #4f3cb6, #7a60e8); }
+
+  .app-footer {
+    padding-bottom: 168px;
+  }
+}
+
 .future-hero-subtext { max-width: 540px; color: #c5d5e4; font-size: 1.02rem; }
 .future-hero-actions { display: flex; gap: 10px; margin-top: 18px; }
 
