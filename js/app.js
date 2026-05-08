@@ -1666,16 +1666,11 @@ function installLayerPickerDebugDiagnostics() {
       };
       const closeMenu = () => setMenuOpenState(false);
       const openMenu = () => setMenuOpenState(true);
-      const placeMenuBelowZoom = () => {
-        const mapNode = document.getElementById("map");
-        const zoomControl = mapNode?.querySelector(".leaflet-control-zoom");
-        if (!mapNode || !menuRoot) return;
-        const gap = 9;
-        const mapRect = mapNode.getBoundingClientRect();
-        const zoomRect = zoomControl?.getBoundingClientRect?.();
-        const nextTop = zoomRect ? Math.max(12, Math.round(zoomRect.bottom - mapRect.top + gap)) : 102;
-        menuRoot.style.top = `${nextTop}px`;
-        menuRoot.style.right = "12px";
+      const placeMenuAtEdge = () => {
+        if (!menuRoot) return;
+        menuRoot.style.top = "auto";
+        menuRoot.style.right = "8px";
+        menuRoot.style.bottom = "calc(68px + env(safe-area-inset-bottom, 0px))";
       };
       closeMenu();
 
@@ -1701,7 +1696,7 @@ function installLayerPickerDebugDiagnostics() {
         button.addEventListener("click", () => {
           const layerName = button.dataset.layerName;
           const didApply = applyBaseLayerByName(layerName, "gridly-mobile-menu");
-          placeMenuBelowZoom();
+          placeMenuAtEdge();
           syncActiveState();
           if (didApply) closeMenu();
         });
@@ -1717,14 +1712,10 @@ function installLayerPickerDebugDiagnostics() {
 
     const compactMode = shouldUseCompactLayerMenu();
     const mapNode = document.getElementById("map");
-    const zoomControl = mapNode?.querySelector(".leaflet-control-zoom");
     if (menuRoot && compactMode) {
-      const gap = 9;
-      const mapRect = mapNode?.getBoundingClientRect?.();
-      const zoomRect = zoomControl?.getBoundingClientRect?.();
-      const nextTop = mapRect && zoomRect ? Math.max(12, Math.round(zoomRect.bottom - mapRect.top + gap)) : 102;
-      menuRoot.style.top = `${nextTop}px`;
-      menuRoot.style.right = "12px";
+      menuRoot.style.top = "auto";
+      menuRoot.style.right = "8px";
+      menuRoot.style.bottom = "calc(68px + env(safe-area-inset-bottom, 0px))";
     }
     menuRoot.classList.toggle("is-mobile-visible", compactMode);
     if (!compactMode) {
