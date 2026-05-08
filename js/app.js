@@ -210,6 +210,7 @@ let monitoredRouteDelayMinutes = null;
 let monitoredRouteDurationSeconds = null;
 let pendingHazardPlacement = null;
 let selectedQuickHazardType = null;
+let mobileUiMode = "live";
 
 const reportingState = {
   selectedHazardType: null,
@@ -227,6 +228,23 @@ function updateReportingState(patch = {}) {
   document.body?.classList.toggle("reporting-live", isReportingLive);
   const mapFrame = document.querySelector(".map-frame");
   if (mapFrame) mapFrame.dataset.reportingState = isReportingLive ? "active" : "idle";
+  if (window.matchMedia("(max-width: 760px)").matches) {
+    setMobileUiMode(isReportingLive ? "report" : mobileUiMode === "report" ? "live" : mobileUiMode, { silent: true });
+  }
+}
+
+function setMobileUiMode(mode = "live", options = {}) {
+  const nextMode = ["live", "route", "report", "alert"].includes(mode) ? mode : "live";
+  mobileUiMode = nextMode;
+  document.body?.setAttribute("data-mobile-mode", nextMode);
+  document.querySelectorAll(".mobile-dock-btn").forEach((btn) => {
+    const btnMode = btn.dataset.mode;
+    btn.classList.toggle("active", btnMode === nextMode);
+  });
+  if (!options.silent) {
+    const labels = { live: "Live mode active.", route: "Route mode active.", report: "Report mode active.", alert: "Alert mode active." };
+    setConfirmation(labels[nextMode], "info");
+  }
 }
 
 window.gridlyReportingDebug = function () {
@@ -477,6 +495,7 @@ function hydrateElements() {
     els[id] = document.getElementById(id);
   });
 
+  setMobileUiMode("live", { silent: true });
   highlightNearestCrossingOnFirstLoad();
 }
 
@@ -4025,6 +4044,12 @@ function bindEvents() {
     }
     const target = navTargets[section];
     if (!target) return;
+    if (window.matchMedia("(max-width: 760px)").matches) {
+      if (section === "map" || section === "dashboard") setMobileUiMode("live", { silent: true });
+      if (section === "alerts") setMobileUiMode("alert", { silent: true });
+      if (section === "routes") setMobileUiMode("route", { silent: true });
+      if (section === "report") setMobileUiMode("report", { silent: true });
+    }
     scrollToSection(target);
     if (section === "map") setTimeout(() => map?.invalidateSize(), 350);
     if (section === "report") setReportMode(activeReportMode || REPORT_MODES.rail);
@@ -4225,6 +4250,7 @@ function handleSmartReportButton() {
 }
 
 function handleReportNearMe() {
+  setMobileUiMode("report", { silent: true });
   updateReportingState({
     reportModeActive: true,
     placementModeActive: false,
@@ -4241,6 +4267,7 @@ function handleReportNearMe() {
 }
 
 function activateReportMode() {
+  setMobileUiMode("report", { silent: true });
   updateReportingState({ reportModeActive: true });
   els.reportModeBanner?.classList.add("visible");
 
@@ -4272,6 +4299,11 @@ function setSmartReportButtonToClear() {
 }
 
 function scrollToSection(id) {
+  if (window.matchMedia("(max-width: 760px)").matches) {
+    if (id === "mapSection") setMobileUiMode("live", { silent: true });
+    if (id === "alertsSection") setMobileUiMode("alert", { silent: true });
+    return;
+  }
   const target = document.getElementById(id);
   if (!target) return;
 
