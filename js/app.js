@@ -31,6 +31,24 @@ const HAZARD_TYPES = {
     severity: "moderate",
     detail: "Shared report: construction may slow travel."
   },
+  road_closed: {
+    label: "Road Closure",
+    icon: "⛔",
+    severity: "high",
+    detail: "Shared report: road closure is blocking travel."
+  },
+  disabled_vehicle: {
+    label: "Disabled Vehicle",
+    icon: "🚙",
+    severity: "moderate",
+    detail: "Shared report: disabled vehicle may slow travel."
+  },
+  rail_blockage_delay: {
+    label: "Rail Blockage / Delay",
+    icon: "🚆",
+    severity: "high",
+    detail: "Shared report: rail blockage or delay may affect travel."
+  },
   other_hazard: {
     label: "Other Hazard",
     icon: "❗",
@@ -63,6 +81,26 @@ const ROAD_HAZARD_SOURCE_MAP = {
   construction: "txdot_construction",
   road_closed: "txdot_closure",
   other_hazard: "community_report"
+};
+
+const HAZARD_CATEGORY_MAP = {
+  blocked: "rail_blockage_delay",
+  heavy: "rail_blockage_delay",
+  delayed: "rail_blockage_delay",
+  delay: "rail_blockage_delay",
+  crash: "crash",
+  wreck: "crash",
+  flooding: "flooding",
+  debris: "debris",
+  construction: "construction",
+  road_closed: "road_closed",
+  disabled_vehicle: "disabled_vehicle",
+  rail_blockage_delay: "rail_blockage_delay",
+  rail_blocked: "rail_blockage_delay",
+  rail_delay: "rail_blockage_delay",
+  other: "other_hazard",
+  other_hazard: "other_hazard",
+  hazard_cleared: "other_hazard"
 };
 
 const LOCATION_DEFAULTS = {
@@ -1670,7 +1708,8 @@ function normalizeReports(rows) {
       Math.floor((Date.now() - new Date(createdAt).getTime()) / 60000)
     );
 
-    const reportType = row.report_type || "other";
+    const incomingType = String(row.report_type || "other").toLowerCase();
+    const reportType = incomingType === "wreck" ? "crash" : incomingType;
     const isHazard =
   Object.prototype.hasOwnProperty.call(HAZARD_TYPES, reportType) ||
   reportType === "hazard_cleared";
@@ -1883,39 +1922,101 @@ function getRoutePolylineLatLngs() {
   return [];
 }
 
+function getHazardCategory(type = "") {
+  const normalizedType = String(type || "").trim().toLowerCase();
+  return HAZARD_CATEGORY_MAP[normalizedType] || "other_hazard";
+}
+
+function getHazardMetadata(type = "") {
+  return HAZARD_TYPES[getHazardCategory(type)] || HAZARD_TYPES.other_hazard;
+}
+
+function getRouteCandidateDedupeKey(report = {}, crossing = null) {
+  const normalizedType = String(report?.type || "").toLowerCase();
+  const normalizedCategory = getHazardCategory(normalizedType);
+  const normalizedCrossingId = String(report?.crossingId || crossing?.id || "").trim();
+  if (normalizedCrossingId && !normalizedCrossingId.startsWith("hazard-")) {
+    return `crossing:${normalizedCrossingId}`;
+  }
+  const lat = Number.isFinite(Number(report?.lat)) ? Number(report.lat) : Number(crossing?.lat);
+  const lng = Number.isFinite(Number(report?.lng)) ? Number(report.lng) : Number(crossing?.lng);
+  if (Number.isFinite(lat) && Number.isFinite(lng)) {
+    const latKey = lat.toFixed(3);
+    const lngKey = lng.toFixed(3);
+    return `geo:${normalizedCategory}:${latKey}:${lngKey}`;
+  }
+  return `fallback:${normalizedCategory}:${normalizedCrossingId || "unknown"}`;
+}
+
+function getRouteCandidateSeverityRank(reportType = "", hazardCategory = "") {
+  const normalizedType = String(reportType || "").toLowerCase();
+  if (normalizedType === "blocked" || hazardCategory === "road_closed" || hazardCategory === "rail_blockage_delay" || hazardCategory === "flooding" || hazardCategory === "crash") return 5;
+  if (normalizedType === "heavy" || normalizedType === "delayed" || normalizedType === "delay" || hazardCategory === "debris" || hazardCategory === "construction" || hazardCategory === "disabled_vehicle") return 4;
+  if (normalizedType === "other" || hazardCategory === "other_hazard") return 3;
+  if (normalizedType === "cleared" || normalizedType === "hazard_cleared") return 1;
+  return 2;
+}
+
 function buildRouteHazardAssessment(routeLatLngs = []) {
   const thresholdMiles = 0.8;
   const nearReports = [];
-  const severityWeight = { blocked: 12, heavy: 7, delayed: 5, clear: 0, cleared: 0 };
+  const severityWeight = {
+    blocked: 12, heavy: 7, delayed: 5, delay: 5, clear: 0, cleared: 0,
+    crash: 10, flooding: 10, debris: 6, construction: 5, road_closed: 12, disabled_vehicle: 5, rail_blockage_delay: 9, other_hazard: 4
+  };
   const crossingLookup = new Map((Array.isArray(crossings) ? crossings : []).map((crossing) => [String(crossing?.id), crossing]));
 
   if (!Array.isArray(routeLatLngs) || routeLatLngs.length < 2) {
     return { score: 0, level: "clear", nearbyReports: [], nearestIssue: null, recommendation: "normal", routePointCount: 0 };
   }
 
-  (Array.isArray(activeReports) ? activeReports : []).forEach((report) => {
+  const unifiedRouteCandidates = [...(Array.isArray(activeReports) ? activeReports : []), ...(Array.isArray(activeHazards) ? activeHazards : [])];
+  const dedupedCandidates = new Map();
+  unifiedRouteCandidates.forEach((report) => {
     const crossing = crossingLookup.get(String(report?.crossingId));
-    if (!crossing || !Number.isFinite(Number(crossing?.lat)) || !Number.isFinite(Number(crossing?.lng))) return;
-    const lifecycleState = getIncidentLifecycleState(report);
+    const anchorLat = Number.isFinite(Number(report?.lat)) ? Number(report.lat) : Number(crossing?.lat);
+    const anchorLng = Number.isFinite(Number(report?.lng)) ? Number(report.lng) : Number(crossing?.lng);
+    if (!Number.isFinite(anchorLat) || !Number.isFinite(anchorLng)) return;
     const type = String(report.type || "").toLowerCase();
     const normalizedType = type === "delay" ? "delayed" : type;
+    const hazardCategory = getHazardCategory(normalizedType);
+    const lifecycleState = getIncidentLifecycleState(report);
+    const dedupeKey = getRouteCandidateDedupeKey(report, crossing);
+    const severityRank = getRouteCandidateSeverityRank(normalizedType, hazardCategory);
+    const freshnessRank = Number.isFinite(Number(report?.minutesAgo)) ? Number(report.minutesAgo) : Number.POSITIVE_INFINITY;
+    const lifecycleRank = lifecycleState === "active" ? 3 : lifecycleState === "recently_cleared" ? 2 : lifecycleState === "cleared" ? 1 : 0;
+    const candidate = { report, crossing, anchorLat, anchorLng, normalizedType, hazardCategory, lifecycleState, severityRank, freshnessRank, lifecycleRank };
+    const existing = dedupedCandidates.get(dedupeKey);
+    if (!existing) {
+      dedupedCandidates.set(dedupeKey, candidate);
+      return;
+    }
+    const shouldReplace = severityRank > existing.severityRank
+      || (severityRank === existing.severityRank && lifecycleRank > existing.lifecycleRank)
+      || (severityRank === existing.severityRank && lifecycleRank === existing.lifecycleRank && freshnessRank < existing.freshnessRank);
+    if (shouldReplace) dedupedCandidates.set(dedupeKey, candidate);
+  });
+
+  [...dedupedCandidates.values()].forEach((candidate) => {
+    const { crossing, anchorLat, anchorLng, normalizedType, hazardCategory, lifecycleState, report } = candidate;
     const crossingDist = routeLatLngs.reduce((minDist, pt) => {
-      const d = getDistanceMiles(crossing.lat, crossing.lng, pt.lat, pt.lng);
+      const d = getDistanceMiles(anchorLat, anchorLng, pt.lat, pt.lng);
       return Math.min(minDist, d);
     }, Number.POSITIVE_INFINITY);
     if (!Number.isFinite(crossingDist) || crossingDist > thresholdMiles) return;
 
-    const ageMinutes = Number(report.minutesAgo);
+    const ageMinutes = Number(report?.minutesAgo);
     const ageFactor = !Number.isFinite(ageMinutes) ? 0.5 : ageMinutes <= 20 ? 1 : ageMinutes <= 45 ? 0.75 : ageMinutes <= 90 ? 0.45 : 0.2;
     const lifecycleFactor = lifecycleState === "active" ? 1 : lifecycleState === "recently_cleared" ? 0.25 : 0.1;
     const distanceFactor = Math.max(0.2, 1 - crossingDist / thresholdMiles);
-    const rawWeight = severityWeight[normalizedType] ?? 3;
+    const rawWeight = severityWeight[normalizedType] ?? severityWeight[hazardCategory] ?? 3;
     const impact = normalizedType === "cleared" ? 0 : rawWeight * ageFactor * lifecycleFactor * distanceFactor;
 
     nearReports.push({
-      crossingId: String(crossing.id),
-      crossingName: crossing.name,
+      crossingId: String(crossing?.id || report?.crossingId || `${anchorLat.toFixed(3)},${anchorLng.toFixed(3)}`),
+      crossingName: crossing?.name || report?.crossingName || getHazardMetadata(normalizedType).label,
       reportType: normalizedType,
+      hazardCategory,
       lifecycleState,
       minutesAgo: Number.isFinite(ageMinutes) ? ageMinutes : null,
       distanceMiles: Number(crossingDist.toFixed(2)),
@@ -1951,15 +2052,18 @@ function getHazardCountNearRoute(routeLatLngs = []) {
   if (!Array.isArray(routeLatLngs) || routeLatLngs.length < 2) return 0;
   const crossingLookup = new Map((Array.isArray(crossings) ? crossings : []).map((crossing) => [String(crossing?.id), crossing]));
   const nearActiveCrossings = new Set();
-  (Array.isArray(activeReports) ? activeReports : []).forEach((report) => {
+  const unifiedRouteCandidates = [...(Array.isArray(activeReports) ? activeReports : []), ...(Array.isArray(activeHazards) ? activeHazards : [])];
+  unifiedRouteCandidates.forEach((report) => {
     if (getIncidentLifecycleState(report) !== "active") return;
     const crossing = crossingLookup.get(String(report?.crossingId));
-    if (!crossing || !Number.isFinite(Number(crossing?.lat)) || !Number.isFinite(Number(crossing?.lng))) return;
+    const anchorLat = Number.isFinite(Number(report?.lat)) ? Number(report.lat) : Number(crossing?.lat);
+    const anchorLng = Number.isFinite(Number(report?.lng)) ? Number(report.lng) : Number(crossing?.lng);
+    if (!Number.isFinite(anchorLat) || !Number.isFinite(anchorLng)) return;
     const crossingDist = routeLatLngs.reduce((minDist, pt) => {
-      const d = getDistanceMiles(crossing.lat, crossing.lng, pt.lat, pt.lng);
+      const d = getDistanceMiles(anchorLat, anchorLng, pt.lat, pt.lng);
       return Math.min(minDist, d);
     }, Number.POSITIVE_INFINITY);
-    if (Number.isFinite(crossingDist) && crossingDist <= thresholdMiles) nearActiveCrossings.add(String(crossing.id));
+    if (Number.isFinite(crossingDist) && crossingDist <= thresholdMiles) nearActiveCrossings.add(String(crossing?.id || report?.id || `${anchorLat.toFixed(3)},${anchorLng.toFixed(3)}`));
   });
   return nearActiveCrossings.size;
 }
@@ -1967,7 +2071,10 @@ function getHazardCountNearRoute(routeLatLngs = []) {
 
 function calculateRouteScore(routeReports = []) {
   const reports = Array.isArray(routeReports) ? routeReports : [];
-  const severityPenalty = { blocked: 20, heavy: 12, delayed: 8, caution: 5, clear: 0, cleared: 1 };
+  const severityPenalty = {
+    blocked: 20, heavy: 12, delayed: 8, caution: 5, clear: 0, cleared: 1,
+    crash: 14, flooding: 14, debris: 8, construction: 7, road_closed: 18, disabled_vehicle: 7, rail_blockage_delay: 16, other_hazard: 6
+  };
   let score = 0;
   reports.forEach((report) => {
     const lifecycleState = String(report?.lifecycleState || "").toLowerCase();
@@ -1976,7 +2083,7 @@ function calculateRouteScore(routeReports = []) {
     const isActive = lifecycleState === "active";
     const isRecentClear = lifecycleState === "recently_cleared";
     const lifecycleMultiplier = isActive ? 1 : isRecentClear ? 0.45 : 0.2;
-    const basePenalty = severityPenalty[reportType] ?? 4;
+    const basePenalty = severityPenalty[reportType] ?? severityPenalty[getHazardCategory(reportType)] ?? 4;
     const impactPenalty = Number.isFinite(impact) ? Math.min(8, impact * 0.6) : 0;
     score += (basePenalty + impactPenalty) * lifecycleMultiplier;
   });
@@ -5330,6 +5437,13 @@ function attachRouteWatchDebugGlobal() {
           const activeIncidents = (getUnifiedIncidents?.() || []).filter((incident) => incident.status === "active");
       const routeRelevantIncidents = activeIncidents.filter((incident) => isIncidentRouteRelevant(incident, routeHazard));
       const routeRelevantCrossings = routeHazard.nearbyReports.filter((report) => report.reportType === "blocked" && report.lifecycleState === "active");
+      const routeImpactingHazards = (Array.isArray(routeHazard?.nearbyReports) ? routeHazard.nearbyReports : []).filter((report) => report.lifecycleState === "active");
+      const hazardCategoryCounts = routeImpactingHazards.reduce((acc, report) => {
+        const key = getHazardCategory(report?.hazardCategory || report?.reportType || "");
+        acc[key] = (acc[key] || 0) + 1;
+        return acc;
+      }, {});
+      const activeHazardTypes = Object.keys(hazardCategoryCounts);
       const routeContextSummary = routeRelevantCrossings.length > 0
         ? "Blocked crossing detected along monitored corridor."
         : routeRelevantIncidents.length > 0
@@ -5411,6 +5525,9 @@ function attachRouteWatchDebugGlobal() {
       preferredRoute,
       preferredRouteReason,
       routeRelevantCrossings,
+      activeHazardTypes,
+      routeImpactingHazards,
+      hazardCategoryCounts,
       routeContextSummary,
       mapReady: Boolean(map)
     };
@@ -5472,6 +5589,9 @@ function attachRouteWatchDebugGlobal() {
         alternateRouteScore: 0,
         preferredRoute: "primary",
         preferredRouteReason: "Primary route is selected by default.",
+        activeHazardTypes: [],
+        routeImpactingHazards: [],
+        hazardCategoryCounts: {},
         mapReady: Boolean(map),
         debugError: String(error?.message || error || "Unknown debug error")
       };
@@ -6782,7 +6902,8 @@ function getReportStateLabel(report) {
 }
 
 function isActiveReportType(type) {
-  return ["blocked", "heavy", "other"].includes(String(type || "").trim().toLowerCase());
+  const normalized = String(type || "").trim().toLowerCase();
+  return ["blocked", "heavy", "other", "delayed", "delay", "rail_delay", "rail_blocked"].includes(normalized) || Object.prototype.hasOwnProperty.call(HAZARD_TYPES, normalized);
 }
 
 function isClearedReportType(type) {
