@@ -56,6 +56,10 @@ button {
   justify-content: space-between;
 }
 
+.mobile-live-brand {
+  display: none;
+}
+
 .brand-wrap {
   display: flex;
   align-items: center;
@@ -8399,15 +8403,16 @@ body.modal-open {
   body[data-mobile-mode] .report-drawer {
     left: 8px;
     right: 8px;
-    bottom: 78px;
-    max-height: 64px;
+    bottom: 84px;
+    max-height: 72px;
     border-radius: 12px;
     border-color: rgba(142, 209, 255, 0.32);
     background: linear-gradient(165deg, rgba(7, 16, 28, 0.9), rgba(4, 10, 19, 0.9));
+    z-index: 1560;
   }
 
   body[data-mobile-mode] .report-drawer[open] {
-    max-height: min(46dvh, 340px);
+    max-height: min(62dvh, 440px);
   }
 
   body[data-mobile-mode] .desktop-command-panel {
@@ -8561,11 +8566,56 @@ body.modal-open {
     border-inline: 0;
     border-bottom: 0;
     box-shadow: none;
+    padding-top: 58px;
   }
 
-  body[data-mobile-mode] .desktop-command-panel,
-  body[data-mobile-mode] .report-drawer {
+  body[data-mobile-mode] .desktop-command-panel {
     display: none !important;
+  }
+
+  body[data-mobile-mode] .mobile-live-brand {
+    display: flex !important;
+    position: fixed;
+    left: 10px;
+    right: 10px;
+    top: calc(env(safe-area-inset-top, 0px) + 8px);
+    min-height: 44px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    z-index: 880;
+    background: linear-gradient(155deg, rgba(7, 16, 28, 0.92), rgba(5, 12, 22, 0.88));
+    border: 1px solid rgba(132, 204, 255, 0.28);
+    box-shadow: 0 10px 24px rgba(2, 8, 18, 0.5);
+    backdrop-filter: blur(14px) saturate(132%);
+  }
+
+  body[data-mobile-mode] .mobile-live-brand-logo {
+    width: 138px;
+    height: 24px;
+    overflow: hidden;
+    position: relative;
+    flex: 0 0 auto;
+  }
+
+  body[data-mobile-mode] .mobile-live-brand-logo img {
+    width: 240px;
+    max-width: none;
+    position: absolute;
+    left: 50%;
+    top: 52%;
+    transform: translate(-50%, -50%);
+  }
+
+  body[data-mobile-mode] .mobile-live-brand span {
+    font-size: 0.67rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #9fd8ff;
+    font-weight: 800;
+    white-space: nowrap;
   }
 
   body[data-mobile-mode="alert"] .desktop-command-panel {
