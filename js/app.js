@@ -4574,10 +4574,10 @@ function bindEvents() {
     }
     if (action === "cancel-hazard-placement") {
       event.preventDefault();
-      pendingHazardPlacement = null;
-      selectedQuickHazardType = null;
-      updateReportingState({ selectedHazardType: null, placementModeActive: false, reportModeActive: false, activeReportEntryPoint: "hazard_cancel" });
+      resetQuickHazardReportState();
+      updateReportingState({ activeReportEntryPoint: "hazard_cancel", lastReportMessage: "", lastReportError: "" });
       closeHazardPanel({ preserveLastReportMessage: false });
+      if (window.matchMedia("(max-width: 760px)").matches) setMobileUiMode("live", { silent: true });
       return;
     }
     if (action === "close-route-quick") {
