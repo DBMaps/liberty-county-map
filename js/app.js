@@ -6505,7 +6505,7 @@ function updateRouteIntelligence(nearest = []) {
   }
   const mobileLiveCommand = document.querySelector(".mobile-live-command");
   if (mobileLiveCommand) mobileLiveCommand.removeAttribute("data-delay-state");
-  safeText("mobileLiveRouteStatus", `${els.routeStatus?.textContent || "CLEAR TO LEAVE"} · ${els.routeEta?.textContent || "ETA pending"}`);
+  safeText("mobileLiveRouteStatus", `${els.routeStatus?.textContent || "CLEAR TO LEAVE"} • ${els.routeEta?.textContent || "ETA pending"}`);
   safeText("mobileLiveRouteMeta", getLiveCommuteSignalLine({ impact, urgentBlockedCount: routeIntel.urgentBlockedCount, recommendation: els.routeRecommendation?.textContent || "" }));
   renderDesktopRouteWatchMetrics({
     freshness: routeIsMonitoring ? freshnessTier : "Unknown",
@@ -6523,27 +6523,33 @@ function updateRouteIntelligence(nearest = []) {
 
   if (impact >= 70) {
     if (mobileLiveCommand) mobileLiveCommand.dataset.delayState = "blocked";
-    safeText("delayRisk", routeIntel.urgentBlockedCount > 0 ? "Delay building now" : "High crossing pressure");
-    safeText("delayReason", routeIntel.urgentBlockedCount > 0 ? `${routeIntel.urgentBlockedCount} active signal${routeIntel.urgentBlockedCount === 1 ? "" : "s"} in the last 10 min · alternate route is recommended.` : "Live commute unstable · active crossing pressure is building near your corridor.");
+    safeText("mobileLiveStatusPill", alternateRouteAvailable ? "ALT ROUTE READY" : "BLOCKED");
+    safeText("delayRisk", routeIntel.urgentBlockedCount > 0 ? "Heavy blockage risk on US-90" : "Alternate route recommended");
+    safeText("delayReason", routeIntel.urgentBlockedCount > 0 ? `${routeIntel.urgentBlockedCount} active signal${routeIntel.urgentBlockedCount === 1 ? "" : "s"} in the last 10 min · alternate route recommended.` : "Live corridor unstable · severe crossing pressure detected.");
     safeText("alternateRoute", "Use alternate");
     safeText("alternateReason", "Avoid highest-impact crossing if possible.");
-    safeText("impactText", "High route impact. Leave now or reroute.");
+    safeText("impactText", "High route impact. Use alternate now.");
+    safeText("mobileLiveRouteActionBtn", alternateRouteAvailable ? "Use alternate" : "Report issue");
     liveStatusCard?.classList.add("blocked-status");
   } else if (impact >= 40) {
     if (mobileLiveCommand) mobileLiveCommand.dataset.delayState = "delayed";
-    safeText("delayRisk", "Live commute stable");
-    safeText("delayReason", "2-3 active signals detected · keep backup route ready as delay momentum rises.");
+    safeText("mobileLiveStatusPill", "DELAY BUILDING");
+    safeText("delayRisk", "Delay building near Dayton crossing");
+    safeText("delayReason", "Active live signals detected · prepare backup route.");
     safeText("alternateRoute", "Have backup");
     safeText("alternateReason", "Alternate route may help if reports increase.");
-    safeText("impactText", "Moderate route impact. Watch before leaving.");
+    safeText("impactText", "Moderate route impact. Wait 10 min or leave early.");
+    safeText("mobileLiveRouteActionBtn", "Wait 10 min");
     liveStatusCard?.classList.add("delay-status");
   } else {
     if (mobileLiveCommand) mobileLiveCommand.dataset.delayState = "clear";
-    safeText("delayRisk", "Live commute clear");
-    safeText("delayReason", "No active crossing pressure nearby · confidence is high and monitoring is live.");
+    safeText("mobileLiveStatusPill", "CLEAR");
+    safeText("delayRisk", "Route clear • Leave now");
+    safeText("delayReason", "No active crossing pressure nearby · live monitoring active.");
     safeText("alternateRoute", "Not needed");
     safeText("alternateReason", "Current route appears clear.");
     safeText("impactText", "Low route impact. Normal travel expected.");
+    safeText("mobileLiveRouteActionBtn", "Leave now");
     liveStatusCard?.classList.add("clear-status");
   }
   updateAlternateRouteActionState();
@@ -6554,10 +6560,10 @@ function updateRouteIntelligence(nearest = []) {
 
 
 function getLiveCommuteSignalLine({ impact = 0, urgentBlockedCount = 0, recommendation = "" } = {}) {
-  if (impact >= 75) return urgentBlockedCount > 0 ? "Crossing pressure rising · alternate route faster." : "Live delays building · keep route options open.";
-  if (impact >= 45) return "Route holding steady · heavy activity nearby.";
-  if (impact >= 20) return "Commute stable · predictive watch is active.";
-  return recommendation || "Commute stable · route confidence remains high.";
+  if (impact >= 75) return urgentBlockedCount > 0 ? "Heavy blockage risk on US-90" : "Alternate route recommended";
+  if (impact >= 45) return "Delay building near Dayton crossing";
+  if (impact >= 20) return "Route pressure rising • monitor closely";
+  return recommendation || "Route clear • Leave now";
 }
 
 function updateDailyHabitStatus() {
