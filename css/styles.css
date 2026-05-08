@@ -9490,7 +9490,7 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
     top: auto;
     right: 8px;
     left: auto;
-    bottom: calc(112px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(68px + env(safe-area-inset-bottom, 0px));
     margin: 0;
     z-index: 1300;
   }
@@ -9508,7 +9508,7 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
   body[data-mobile-mode] #map .gridly-mobile-layer-menu {
     top: auto;
     right: 8px;
-    bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(156px + env(safe-area-inset-bottom, 0px));
     left: auto;
     z-index: 1310;
     pointer-events: auto;
@@ -9522,11 +9522,23 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
     justify-content: center;
     gap: 0;
     border-radius: 10px;
-    background: rgba(10, 13, 16, 0.62);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    box-shadow: 0 4px 12px rgba(2, 8, 18, 0.22);
+    background: rgba(10, 13, 16, 0.62) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    box-shadow: 0 4px 12px rgba(2, 8, 18, 0.22) !important;
+    opacity: 1 !important;
     color: #c5d5e7;
     letter-spacing: 0;
+  }
+
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle:hover,
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle:focus-visible {
+    background: rgba(10, 13, 16, 0.62) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    box-shadow: 0 4px 12px rgba(2, 8, 18, 0.22) !important;
+  }
+
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle:active {
+    filter: brightness(0.94);
   }
 
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle .gridly-layer-icon {
@@ -9614,7 +9626,7 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
   body[data-mobile-mode] #map .gridly-mobile-layer-menu {
     right: 8px !important;
     left: auto !important;
-    bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important;
+    bottom: calc(156px + env(safe-area-inset-bottom, 0px)) !important;
   }
 
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-list {

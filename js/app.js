@@ -1869,10 +1869,28 @@ function installLayerPickerDebugDiagnostics() {
     const zoomInRect = zoomIn?.getBoundingClientRect?.()?.toJSON?.() || null;
     const zoomOutRect = zoomOut?.getBoundingClientRect?.()?.toJSON?.() || null;
     const toggleRect = toggleNode?.getBoundingClientRect?.()?.toJSON?.() || null;
-    const layerButtonBelowZoom = Boolean(toggleRect && zoomOutRect && toggleRect.top >= zoomOutRect.bottom);
-    const verticalGapBetweenZoomAndLayer = toggleRect && zoomOutRect
-      ? Math.round((toggleRect.top - zoomOutRect.bottom) * 100) / 100
+    const layerButtonAboveZoom = Boolean(toggleRect && zoomInRect && toggleRect.bottom <= zoomInRect.top);
+    const verticalGapBetweenLayerAndZoom = toggleRect && zoomInRect
+      ? Math.round((zoomInRect.top - toggleRect.bottom) * 100) / 100
       : null;
+    const computedLayerButtonStyles = toggleNode ? (() => {
+      const style = getComputedStyle(toggleNode);
+      return {
+        background: style.backgroundColor,
+        border: style.border,
+        boxShadow: style.boxShadow,
+        opacity: style.opacity
+      };
+    })() : null;
+    const computedZoomButtonStyles = zoomIn ? (() => {
+      const style = getComputedStyle(zoomIn);
+      return {
+        background: style.backgroundColor,
+        border: style.border,
+        boxShadow: style.boxShadow,
+        opacity: style.opacity
+      };
+    })() : null;
     return {
       activeBaseLayerName,
       menuExists: Boolean(menuRoot),
@@ -1888,8 +1906,10 @@ function installLayerPickerDebugDiagnostics() {
       zoomControlRect,
       zoomInRect,
       zoomOutRect,
-      layerButtonBelowZoom,
-      verticalGapBetweenZoomAndLayer,
+      layerButtonAboveZoom,
+      verticalGapBetweenLayerAndZoom,
+      computedLayerButtonStyles,
+      computedZoomButtonStyles,
       toggleOverlapsZoomControl: rectsOverlap(toggleRect, zoomControlRect),
       toggleOverlapsZoomIn: rectsOverlap(toggleRect, zoomInRect),
       toggleOverlapsZoomOut: rectsOverlap(toggleRect, zoomOutRect),
