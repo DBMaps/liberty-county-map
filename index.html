@@ -167,10 +167,10 @@
         </article>
 
         <article class="mobile-home-card mobile-map-preview-card">
-          <span>Live Map Preview</span>
+          <span>Map Status</span>
           <strong id="nearbyAlertCount">0 active now</strong>
-          <p id="activeAlertText">No fresh delay reports yet. You are all clear right now—check map if your route changes.</p>
-          <button class="secondary-btn" type="button" data-section-jump="map">Open Live Map</button>
+          <p id="activeAlertText">Live map already active below route status.</p>
+          <button class="secondary-btn" type="button" data-section-jump="map">Map Live</button>
         </article>
 
         <article class="mobile-home-card mobile-quick-actions-card" aria-label="Quick actions">
@@ -415,12 +415,12 @@
 
 
     <details class="report-card report-drawer" id="reportSection">
-      <summary class="report-drawer-summary"><span class="eyebrow">Quick Report</span><h2>Tap Report Near Me, then tap one crossing on the map</h2></summary>
+      <summary class="report-drawer-summary"><span class="eyebrow">Quick Report</span><h2>Tap map to report</h2></summary>
       <div class="report-copy">
-        <p><strong>Fast flow:</strong> tap <strong>Report Near Me</strong>, then tap one crossing marker on the map. Submit in seconds while parked safely.</p>
+        <p><strong>Fast flow:</strong> Tap <strong>Report Near Me</strong>, then tap one marker.</p>
 
         <div class="confirmation-box" id="reportConfirmation">
-          Step 1: Tap <strong>Report Near Me</strong>. Step 2: Tap one marker. Step 3: Choose <strong>Blocked</strong>, <strong>Delay</strong>, <strong>Cleared</strong>, or <strong>Other</strong>.
+          1) Tap <strong>Report Near Me</strong> · 2) Tap marker · 3) Choose status.
         </div>
 
         <div class="share-card" id="shareCard">
@@ -439,7 +439,7 @@
 
         <div class="mobile-report-mode-card" id="mobileReportModeCard">
           <span>Report Mode</span>
-          <p>Choose the report type, then place it directly on the map.</p>
+          <p>Pick type, then tap map.</p>
           <div class="mobile-report-mode-actions">
             <button id="mobileCrossingReportBtn" class="secondary-btn active" type="button" aria-pressed="true">Railroad Crossing Report</button>
             <button id="mobileHazardReportBtn" class="secondary-btn" type="button" aria-pressed="false">Report Road Hazard</button>

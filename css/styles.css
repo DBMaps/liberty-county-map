@@ -7421,3 +7421,78 @@ body.modal-open {
     bottom: calc(74px + env(safe-area-inset-bottom));
   }
 }
+
+/* V36D mobile live map priority + reporting simplification */
+@media (max-width: 700px) {
+  .dashboard { gap: 8px; }
+
+  .mobile-route-decision-card { margin-bottom: 2px; }
+  .command-center { margin-top: -2px; }
+
+  /* Remove standalone map-launch card behavior; keep tiny status row only */
+  .mobile-map-preview-card {
+    position: static;
+    order: 4;
+    margin: 0 10px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    min-height: auto;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 8px;
+    align-items: center;
+  }
+  .mobile-map-preview-card p { display: none; }
+  .mobile-map-preview-card .secondary-btn { min-height: 30px; padding: 6px 10px; font-size: .72rem; }
+
+  /* Compact floating actions near map */
+  .mobile-fast-report-card,
+  .mobile-quick-actions-card {
+    order: 4;
+    position: sticky;
+    z-index: 24;
+    margin: 0 10px;
+    border-radius: 999px;
+    padding: 6px 8px;
+    min-height: auto;
+  }
+
+  /* Secondary intelligence collapsed by default */
+  .mobile-community-card,
+  .mobile-active-crossings-card,
+  .mobile-corridor-intel-card,
+  .mobile-premium-status-bar {
+    order: 6;
+    padding: 8px 10px;
+    min-height: auto;
+    max-height: 48px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .mobile-community-card:active,
+  .mobile-active-crossings-card:active,
+  .mobile-corridor-intel-card:active,
+  .mobile-premium-status-bar:active {
+    max-height: 180px;
+  }
+
+  /* Reporting feels map-attached */
+  #reportSection { order: 5; margin-top: 4px; }
+  .report-drawer-summary h2 { font-size: .95rem; }
+  .report-drawer .report-copy p { font-size: .8rem; margin: 4px 0; }
+
+  /* Compact route watch utility */
+  .desktop-route-watch-strip { padding: 10px; gap: 8px; }
+  .route-watch-strip-copy .eyebrow,
+  .route-watch-setup-hint,
+  .route-watch-metrics span:nth-child(1),
+  .route-watch-metrics span:nth-child(2),
+  .route-watch-metrics span:nth-child(3) { display: none; }
+  .route-watch-strip-copy strong { font-size: .9rem; margin: 0; }
+  .route-watch-strip-copy #desktopRouteStatus { margin-top: 3px; font-size: .8rem; }
+  .route-watch-metrics { margin-top: 4px; }
+
+  /* Map-first framing */
+  .map-card { padding: 6px; border-radius: 12px; min-height: 64vh; }
+  .map-card .map-frame { min-height: 60vh; }
+}
