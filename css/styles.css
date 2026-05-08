@@ -8317,6 +8317,53 @@ body.modal-open {
 }
 
 @media (max-width: 760px) {
+  body[data-mobile-mode] .report-drawer {
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+
+  body[data-mobile-mode] .desktop-command-panel {
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+
+  body[data-mobile-mode="report"] .report-drawer,
+  body[data-mobile-mode="alert"] .desktop-command-panel {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  body[data-mobile-mode="route"] .route-watch-live-pill,
+  body[data-mobile-mode="route"] .mobile-live-command {
+    box-shadow: 0 0 0 1px rgba(108, 206, 255, 0.38), 0 0 26px rgba(74, 182, 255, 0.22);
+  }
+
+  body[data-mobile-mode="route"] .map-frame::before {
+    opacity: 0.9;
+    background: radial-gradient(circle at 60% 22%, rgba(106, 228, 255, 0.34), transparent 45%),
+      radial-gradient(circle at 28% 88%, rgba(113, 170, 255, 0.22), transparent 48%);
+  }
+
+  body[data-mobile-mode="alert"] .map-floating-chip[data-geo-filter="active-delays"] {
+    border-color: rgba(255, 176, 138, 0.6);
+    background: rgba(73, 34, 24, 0.72);
+  }
+
+  body[data-mobile-mode="report"] .map-frame::before {
+    opacity: .82;
+  }
+
+  .mobile-dock-btn.active {
+    border-color: rgba(170, 224, 255, 0.68);
+    background: linear-gradient(155deg, rgba(55, 145, 230, 0.42), rgba(39, 86, 156, 0.35));
+    color: #fff;
+  }
+
   body.report-pulse .map-frame::before {
     animation: gridlyReportPulse .85s ease;
   }
