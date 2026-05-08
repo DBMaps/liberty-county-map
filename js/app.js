@@ -210,6 +210,33 @@ let monitoredRouteDelayMinutes = null;
 let monitoredRouteDurationSeconds = null;
 let pendingHazardPlacement = null;
 let selectedQuickHazardType = null;
+
+const reportingState = {
+  selectedHazardType: null,
+  reportModeActive: false,
+  placementModeActive: false,
+  submissionInProgress: false,
+  lastReportMessage: "",
+  lastReportError: "",
+  activeReportEntryPoint: ""
+};
+
+function updateReportingState(patch = {}) {
+  Object.assign(reportingState, patch);
+}
+
+window.gridlyReportingDebug = function () {
+  return {
+    selectedHazardType: reportingState.selectedHazardType,
+    reportModeActive: reportingState.reportModeActive,
+    placementModeActive: reportingState.placementModeActive,
+    submissionInProgress: reportingState.submissionInProgress,
+    lastReportMessage: reportingState.lastReportMessage,
+    lastReportError: reportingState.lastReportError,
+    activeReportEntryPoint: reportingState.activeReportEntryPoint || ""
+  };
+};
+
 const LOCAL_PLACE_LOOKUP = {
   dayton: { lat: 30.0466, lng: -94.8852 },
   crosby: { lat: 29.9111, lng: -95.0622 },
@@ -2939,6 +2966,7 @@ window.closeHazardPanel = function () {
 function resetQuickHazardReportState() {
   pendingHazardPlacement = null;
   selectedQuickHazardType = null;
+  updateReportingState({ selectedHazardType: null, placementModeActive: false });
   document.querySelectorAll("#gridlyHazardPanel .hazard-choice-grid button").forEach((btn) => {
     btn.classList.remove("selected");
   });
@@ -2948,7 +2976,7 @@ function resetQuickHazardReportState() {
 }
 
 window.submitHazardNearMe = function (hazardType) {
-  const selectedType = hazardType || selectedQuickHazardType || pendingHazardPlacement;
+  const selectedType = hazardType || reportingState.selectedHazardType || selectedQuickHazardType || pendingHazardPlacement;
   if (!selectedType) {
     setConfirmation("Choose a hazard first, then use My Location.", "error");
     return;
@@ -2961,6 +2989,7 @@ window.submitHazardNearMe = function (hazardType) {
 
   const hazardCopy = HAZARD_TYPES[selectedType] || HAZARD_TYPES.other_hazard;
 
+  updateReportingState({ activeReportEntryPoint: "hazard_use_my_location" });
   setConfirmation(`Finding your location for ${hazardCopy.label} report...`, "success");
 
   navigator.geolocation.getCurrentPosition(
@@ -2992,16 +3021,21 @@ window.submitHazardNearMe = function (hazardType) {
 function openHazardPlacement(hazardType) {
   pendingHazardPlacement = hazardType || "other_hazard";
   selectedQuickHazardType = pendingHazardPlacement;
+  updateReportingState({
+    selectedHazardType: pendingHazardPlacement,
+    placementModeActive: true,
+    activeReportEntryPoint: "hazard_tap_map"
+  });
   const copy = HAZARD_TYPES[pendingHazardPlacement] || HAZARD_TYPES.other_hazard;
   setConfirmation(`${copy.icon} ${copy.label} selected. Tap map to place or use My Location.`, "success");
 }
 
 async function handleHazardPlacementMapClick(event) {
-  if (!pendingHazardPlacement) return;
+  if (!pendingHazardPlacement && !reportingState.selectedHazardType) return;
   const lat = event?.latlng?.lat;
   const lng = event?.latlng?.lng;
   if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
-  const selectedType = pendingHazardPlacement;
+  const selectedType = pendingHazardPlacement || reportingState.selectedHazardType;
   const submitted = await createSharedHazardReport(selectedType, lat, lng, "tap map placement");
   if (!submitted) return;
   resetQuickHazardReportState();
@@ -3034,6 +3068,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
   };
 
   try {
+    updateReportingState({ submissionInProgress: true });
     setSync("Sending hazard report...");
     setConfirmation(`Sending ${copy.label} hazard report...`, "success");
 
@@ -3045,11 +3080,13 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     setSync("Hazard report shared");
 
     await runPostSubmitRefresh();
+    updateReportingState({ submissionInProgress: false });
     return true;
   } catch (error) {
     console.error("Gridly hazard insert failed:", error);
     setConfirmation(`Hazard report failed: ${error.message || "permission denied"}`, "error");
     setSync("Hazard report failed");
+    updateReportingState({ submissionInProgress: false });
     return false;
   }
 }
@@ -3514,6 +3551,7 @@ window.zoomToCrossing = function (crossingId) {
 
 function setReportMode(mode) {
   activeReportMode = mode === REPORT_MODES.roadHazard ? REPORT_MODES.roadHazard : REPORT_MODES.rail;
+  updateReportingState({ reportModeActive: true, activeReportEntryPoint: "manual_mode_toggle" });
 
   const isRoadHazardMode = activeReportMode === REPORT_MODES.roadHazard;
 
@@ -3721,7 +3759,7 @@ function bindEvents() {
     }
     if (action === "submit-hazard") {
       event.preventDefault();
-      submitHazardNearMe(actionEl.dataset.hazardType || selectedQuickHazardType || pendingHazardPlacement);
+      submitHazardNearMe(actionEl.dataset.hazardType || reportingState.selectedHazardType || selectedQuickHazardType || pendingHazardPlacement);
       return;
     }
     if (action === "open-hazard-placement") {
@@ -3737,6 +3775,7 @@ function bindEvents() {
       event.preventDefault();
       pendingHazardPlacement = null;
       selectedQuickHazardType = null;
+      updateReportingState({ selectedHazardType: null, placementModeActive: false, activeReportEntryPoint: "hazard_cancel" });
       closeHazardPanel();
       return;
     }
@@ -4105,6 +4144,7 @@ function handleSmartReportButton() {
 }
 
 function handleReportNearMe() {
+  updateReportingState({ activeReportEntryPoint: "report_near_me" });
   activateReportMode();
 
   if (!navigator.geolocation) {
@@ -4166,6 +4206,7 @@ function handleReportNearMe() {
 }
 
 function activateReportMode() {
+  updateReportingState({ reportModeActive: true });
   els.reportModeBanner?.classList.add("visible");
 
   scrollToSection("mapSection");
@@ -4260,6 +4301,7 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
   };
 
   try {
+    updateReportingState({ submissionInProgress: true });
     if (buttonEl) {
       buttonEl.classList.add("is-submitting");
       buttonEl.textContent = "Sending...";
@@ -4319,6 +4361,7 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
         }
       }, 1400);
     }
+    updateReportingState({ submissionInProgress: false });
   } catch (error) {
     console.error("Gridly report insert failed:", error);
 
@@ -4335,6 +4378,7 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
         buttonEl.textContent = originalButtonText;
       }, 1300);
     }
+    updateReportingState({ submissionInProgress: false });
   }
 }
 
@@ -7141,6 +7185,10 @@ function flashButton(button, message) {
 }
 
 function setConfirmation(message, type = "success") {
+  updateReportingState({
+    lastReportMessage: message || "",
+    lastReportError: type === "error" ? message || "" : ""
+  });
   if (!els.reportConfirmation) return;
 
   els.reportConfirmation.classList.remove("success", "error");
