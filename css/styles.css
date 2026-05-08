@@ -8855,11 +8855,20 @@ body.modal-open {
 
   body[data-mobile-mode] #map .leaflet-control-layers,
   body[data-mobile-mode] #map .leaflet-control-layers-expanded {
-    z-index: 900 !important;
+    z-index: 10060 !important;
     touch-action: manipulation;
   }
 
   body[data-mobile-mode] #map .leaflet-control-layers-base label {
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 32px;
+  }
+
+  body[data-mobile-mode] #map .leaflet-control-layers-base label *,
+  body[data-mobile-mode] #map .leaflet-control-layers-selector {
+    pointer-events: auto !important;
   }
 }
