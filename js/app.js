@@ -242,6 +242,8 @@ function updateReportingState(patch = {}) {
   if (window.matchMedia("(max-width: 760px)").matches) {
     setMobileUiMode(isReportingLive ? "report" : mobileUiMode === "report" ? "live" : mobileUiMode, { silent: true });
   }
+  syncHazardPickerUiState();
+  syncMapPlacementCursorState();
 }
 
 function setMobileUiMode(mode = "live", options = {}) {
@@ -272,6 +274,7 @@ window.gridlyReportingDebug = function () {
     placementModeActive: reportingState.placementModeActive,
     submissionInProgress: reportingState.submissionInProgress,
     locationLookupInProgress: reportingState.locationLookupInProgress,
+    mapPlacementArmed: Boolean(reportingState.placementModeActive && (pendingHazardPlacement || reportingState.selectedHazardType) && !reportingState.submissionInProgress),
     lastReportMessage: reportingState.lastReportMessage,
     lastReportError: reportingState.lastReportError,
     activeReportEntryPoint: reportingState.activeReportEntryPoint || ""
@@ -3340,15 +3343,32 @@ counter.textContent = "No live road hazards";
   injectHazardStyles();
 }
 
+
+function syncHazardPickerUiState() {
+  const picker = document.getElementById("gridlyHazardPanel");
+  if (!picker) return;
+  const disablePlacementActions = Boolean(reportingState.submissionInProgress || reportingState.locationLookupInProgress);
+  picker.querySelectorAll('[data-action="submit-hazard"], [data-action="start-map-placement"]').forEach((btn) => {
+    btn.disabled = disablePlacementActions;
+    btn.setAttribute("aria-busy", reportingState.locationLookupInProgress ? "true" : "false");
+  });
+  const cancelBtn = picker.querySelector('[data-action="cancel-hazard-placement"]');
+  if (cancelBtn) cancelBtn.disabled = Boolean(reportingState.submissionInProgress);
+}
+
+function syncMapPlacementCursorState() {
+  const mapEl = map?.getContainer?.() || document.getElementById("map");
+  if (!mapEl) return;
+  mapEl.style.cursor = reportingState.placementModeActive ? "crosshair" : "";
+}
+
 function openHazardPanel(entryPoint = reportingState.activeReportEntryPoint || "report_near_me") {
   injectHazardReportUI();
   updateReportingState({ reportModeActive: true, activeReportEntryPoint: entryPoint });
   const picker = document.getElementById("gridlyHazardPanel");
   picker?.classList.add("visible");
   document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
-  picker?.querySelectorAll('[data-action="submit-hazard"], [data-action="start-map-placement"], [data-action="cancel-hazard-placement"], .hazard-choice-grid button').forEach((btn) => {
-    btn.disabled = Boolean(reportingState.submissionInProgress);
-  });
+  syncHazardPickerUiState();
   const computed = picker ? window.getComputedStyle(picker) : null;
   reportDebugLog("[Gridly][Report] picker open path called", {
     entryPoint,
@@ -3470,9 +3490,9 @@ window.submitHazardNearMe = function (hazardType) {
     activeReportEntryPoint: "hazard_use_my_location",
     locationLookupInProgress: true,
     lastReportError: "",
-    lastReportMessage: `Finding your location for ${hazardCopy.label} report...`
+    lastReportMessage: "Getting your location..."
   });
-  setConfirmation(`Finding your location for ${hazardCopy.label} report...`, "success");
+  setConfirmation("Getting your location...", "info");
 
   navigator.geolocation.getCurrentPosition(
     async (position) => {
@@ -3515,12 +3535,14 @@ function openHazardPlacement(hazardType) {
   });
   updateReportingState({
     lastReportError: "",
-    lastReportMessage: "Tap the map where the issue is located."
+    lastReportMessage: "Tap the map to place report."
   });
-  setConfirmation("Tap the map where the issue is located.", "success");
+  document.getElementById("gridlyHazardPanel")?.classList.remove("visible");
+  setConfirmation("Tap the map to place report.", "info");
 }
 
 async function handleHazardPlacementMapClick(event) {
+  if (!reportingState.placementModeActive) return;
   if (!pendingHazardPlacement && !reportingState.selectedHazardType) return;
   const lat = event?.latlng?.lat;
   const lng = event?.latlng?.lng;
@@ -4299,7 +4321,15 @@ function bindEvents() {
         setConfirmation("Choose a hazard first, then tap map location.", "error");
         return;
       }
+      const placementBefore = reportingState.placementModeActive;
       openHazardPlacement(selectedType);
+      const mapPlacementArmed = Boolean(reportingState.placementModeActive && (pendingHazardPlacement || reportingState.selectedHazardType));
+      console.log("[Gridly][Report] Tap Map Location clicked", {
+        selectedHazardType: selectedType,
+        placementModeActiveBefore: placementBefore,
+        placementModeActiveAfter: reportingState.placementModeActive,
+        mapPlacementArmed
+      });
       return;
     }
     if (action === "cancel-hazard-placement") {
