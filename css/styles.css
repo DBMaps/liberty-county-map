@@ -9461,7 +9461,7 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
   }
   #managePlacesSaveGroup .destination-chip-row {
     display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
+    grid-template-columns: 1fr !important;
     gap: 6px !important;
     align-items: stretch;
   }
@@ -9478,5 +9478,88 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+}
+
+
+/* V49 — mobile map controls + manage places final polish */
+@media (max-width: 760px) {
+  body[data-mobile-mode] #map .leaflet-control-zoom {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    left: auto;
+    margin: 0;
+    z-index: 1300;
+  }
+
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu {
+    top: 102px;
+    right: 12px;
+    bottom: auto;
+    left: auto;
+    z-index: 1301;
+  }
+
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle {
+    width: 38px;
+    min-height: 38px;
+    padding: 0;
+    justify-content: center;
+    gap: 0;
+    border-radius: 10px;
+    background: rgba(10, 13, 16, 0.62);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 4px 12px rgba(2, 8, 18, 0.22);
+    color: #c5d5e7;
+    letter-spacing: 0;
+  }
+
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle .gridly-layer-icon {
+    font-size: 0.95rem;
+    line-height: 1;
+  }
+
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle .gridly-layer-label {
+    display: none;
+  }
+
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu-list {
+    position: absolute;
+    top: 0;
+    right: 48px;
+    margin-top: 0;
+    min-width: 126px;
+    max-width: 152px;
+    border-radius: 10px;
+  }
+
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button {
+    min-height: 34px;
+    padding: 8px 10px;
+    font-size: 0.74rem;
+  }
+
+  body[data-mobile-mode] #map .leaflet-control-attribution {
+    right: 8px;
+    left: auto;
+    bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+    max-width: min(64vw, 230px);
+    border-radius: 8px;
+    padding: 3px 6px;
+    font-size: 10px;
+    line-height: 1.2;
+    background: rgba(8, 12, 20, 0.74);
+    backdrop-filter: blur(4px);
+  }
+
+  #managePlacesSaveGroup .destination-chip-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  #managePlacesSaveGroup .primary-btn,
+  #managePlacesSaveGroup #mobileResetPlacesBtn {
+    width: 100% !important;
+    min-height: 34px !important;
   }
 }
