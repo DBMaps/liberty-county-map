@@ -8683,6 +8683,21 @@ body.modal-open {
     letter-spacing: 0.13em;
     opacity: 0.88;
   }
+  body[data-mobile-mode] .mobile-live-status-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 0 4px;
+    padding: 2px 9px;
+    border-radius: 999px;
+    border: 1px solid rgba(116, 239, 196, 0.48);
+    background: rgba(46, 188, 151, 0.2);
+    color: #b8ffea;
+    font-size: 0.62rem;
+    font-weight: 850;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
 
   body[data-mobile-mode] .mobile-live-command strong {
     font-size: 1.04rem;
@@ -8711,10 +8726,20 @@ body.modal-open {
     border-color: rgba(255, 206, 126, 0.42);
     box-shadow: 0 10px 24px rgba(30, 16, 5, 0.32), 0 0 20px rgba(255, 181, 81, 0.12);
   }
+  body[data-mobile-mode] .mobile-live-command[data-delay-state="delayed"] .mobile-live-status-pill {
+    border-color: rgba(255, 214, 124, 0.7);
+    background: rgba(255, 176, 65, 0.24);
+    color: #ffe2ad;
+  }
 
   body[data-mobile-mode] .mobile-live-command[data-delay-state="blocked"] {
     border-color: rgba(255, 122, 145, 0.54);
     box-shadow: 0 10px 26px rgba(35, 8, 15, 0.35), 0 0 22px rgba(255, 95, 119, 0.14);
+  }
+  body[data-mobile-mode] .mobile-live-command[data-delay-state="blocked"] .mobile-live-status-pill {
+    border-color: rgba(255, 146, 130, 0.8);
+    background: rgba(255, 90, 64, 0.26);
+    color: #ffd0bf;
   }
 
   body[data-mobile-mode] .mobile-map-floating-chips {
@@ -8733,8 +8758,14 @@ body.modal-open {
     font-size: 0.7rem;
     border-color: rgba(157, 209, 252, 0.24);
     background: linear-gradient(145deg, rgba(9, 20, 34, 0.62), rgba(8, 17, 30, 0.58));
-    color: rgba(221, 236, 255, 0.9);
-    box-shadow: 0 4px 12px rgba(2, 8, 18, 0.22);
+    color: rgba(221, 236, 255, 0.75);
+    box-shadow: 0 2px 8px rgba(2, 8, 18, 0.14);
+    opacity: 0.72;
+  }
+  body[data-mobile-mode] .gridly-marker {
+    transform: scale(0.9);
+    opacity: 0.84;
+    filter: saturate(0.85);
   }
 
   body[data-mobile-mode] .map-tools-overlay {
