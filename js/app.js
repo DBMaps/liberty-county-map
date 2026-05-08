@@ -1419,16 +1419,45 @@ function installLayerPickerDebugDiagnostics() {
     return normalizeLayerName(candidateNames.find(Boolean));
   };
 
+  const isLayerPickerDebugEnabled = () => typeof window.gridlyLayerControlDebug === "function";
+
+  const collapseLayerPickerOnMobile = () => {
+    const isMobileViewport = window.matchMedia?.("(max-width: 767px)")?.matches;
+    const isCoarsePointer = window.matchMedia?.("(pointer: coarse)")?.matches;
+    if (!isMobileViewport && !isCoarsePointer) return false;
+
+    const controlContainer = document.querySelector("#map .leaflet-control-layers");
+    if (!controlContainer) return false;
+
+    controlContainer.classList.remove("leaflet-control-layers-expanded");
+    controlContainer.classList.add("leaflet-control-layers-collapsed");
+
+    const toggle = controlContainer.querySelector(".leaflet-control-layers-toggle");
+    if (toggle) {
+      toggle.setAttribute("aria-expanded", "false");
+    }
+
+    const activeElement = document.activeElement;
+    if (activeElement && controlContainer.contains(activeElement) && typeof activeElement.blur === "function") {
+      activeElement.blur();
+    }
+
+    return !controlContainer.classList.contains("leaflet-control-layers-expanded");
+  };
+
   const applyBaseLayerByName = (layerName, source) => {
     const normalizedName = normalizeLayerName(layerName);
     if (!map || !mapBaseLayersByName[normalizedName]) {
       console.warn("[Gridly][LayerPicker] rejected layer change", { source, requestedLayer: layerName, normalizedName });
-      return;
+      return false;
     }
     Object.entries(mapBaseLayersByName).forEach(([, layer]) => {
       if (map.hasLayer(layer)) map.removeLayer(layer);
     });
     map.addLayer(mapBaseLayersByName[normalizedName]);
+    const applied = map.hasLayer(mapBaseLayersByName[normalizedName]);
+    if (!applied) return false;
+
     activeBaseLayerName = normalizedName;
     currentMapStyle = normalizedName;
     const controlInputs = Array.from(document.querySelectorAll("#map .leaflet-control-layers-base input[type='radio']"));
@@ -1437,12 +1466,20 @@ function installLayerPickerDebugDiagnostics() {
       input.checked = normalizedLabelText === normalizedName;
     });
     map.fire("baselayerchange", { name: normalizedName, layer: mapBaseLayersByName[normalizedName] });
+    const collapsed = collapseLayerPickerOnMobile();
+    if (isLayerPickerDebugEnabled()) {
+      console.log("[Gridly][LayerPicker] mobile collapse after selection", {
+        selectedLayer: normalizedName,
+        collapsed
+      });
+    }
     console.log("[Gridly][LayerPicker] active layer after change", {
       source,
       requestedLayer: layerName,
       normalizedLayer: normalizedName,
       activeLayer: Object.entries(mapBaseLayersByName).find(([, layer]) => map.hasLayer(layer))?.[0] || null
     });
+    return true;
   };
 
   const bindLayerOptionLogs = () => {
