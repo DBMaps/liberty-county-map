@@ -7030,4 +7030,39 @@ body.modal-open {
   .mobile-bottom-nav {
     padding-bottom: calc(10px + env(safe-area-inset-bottom));
   }
+
+  .mobile-route-decision-card,
+  .mobile-fast-report-card,
+  .mobile-map-preview-card {
+    border: 1px solid rgba(124, 192, 255, 0.3);
+    background: linear-gradient(165deg, rgba(12, 27, 45, 0.97), rgba(7, 16, 27, 0.97));
+  }
+
+  .mobile-route-priority-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .mobile-route-priority-actions .secondary-btn {
+    border-color: rgba(122, 188, 255, 0.42);
+    background: rgba(83, 148, 214, 0.14);
+  }
+
+  .mobile-route-decision-card .mobile-commute-cta {
+    font-weight: 800;
+  }
+
+  .mobile-home-card.mobile-community-card,
+  .mobile-home-card.mobile-active-crossings-card,
+  .mobile-home-card.mobile-corridor-intel-card,
+  .mobile-home-card.mobile-premium-status-bar {
+    opacity: 0.92;
+  }
+
+  .desktop-route-watch-strip .route-watch-metrics,
+  .report-tools-advanced {
+    display: none;
+  }
 }

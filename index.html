@@ -146,27 +146,38 @@
       </article>
 
       <div class="mobile-home-cards" aria-label="Today quick view">
-        <article class="mobile-home-card mobile-live-hero live-status-card">
-          <span>Near you now</span>
+        <article class="mobile-home-card mobile-route-decision-card">
+          <span>Route Decision</span>
           <strong id="delayRisk">Morning Commute Watch</strong>
           <p id="delayReason">Gridly is scanning nearby rail crossings and live reports to guide your next move.</p>
-          <button class="primary-btn mobile-hero-map-cta" id="mobileQuickReportBtn" type="button">Report What You See</button>
+          <div class="mobile-route-priority-actions">
+            <button class="primary-btn mobile-commute-cta" id="mobileCommuteRouteBtn" type="button" data-section-jump="map">View Route</button>
+            <button class="secondary-btn" id="mobileQuickRouteBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg> Start Route Watch</button>
+          </div>
+        </article>
+
+        <article class="mobile-home-card mobile-fast-report-card live-status-card">
+          <span>Fast Report</span>
+          <strong>Report Hazard Fast</strong>
+          <p>Share a live delay in seconds so nearby drivers can reroute quickly.</p>
+          <div class="mobile-route-priority-actions">
+            <button class="primary-btn mobile-hero-map-cta" id="mobileQuickReportBtn" type="button">Report Hazard Fast</button>
+            <button class="secondary-btn" id="mobileQuickClearedBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Mark Cleared</button>
+          </div>
+        </article>
+
+        <article class="mobile-home-card mobile-map-preview-card">
+          <span>Live Map Preview</span>
+          <strong id="nearbyAlertCount">0 active now</strong>
+          <p id="activeAlertText">No fresh delay reports yet. You are all clear right now—check map if your route changes.</p>
+          <button class="secondary-btn" type="button" data-section-jump="map">Open Live Map</button>
         </article>
 
         <article class="mobile-home-card mobile-quick-actions-card" aria-label="Quick actions">
           <span>Quick Actions</span>
           <div class="mobile-quick-actions">
-            <button class="secondary-btn" id="mobileQuickClearedBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Cleared</button>
-            <button class="secondary-btn" id="mobileQuickRouteBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg> My Route</button>
             <button class="secondary-btn" id="mobileQuickFavoritesBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 17h5l-1.4-1.4a2 2 0 0 1-.6-1.4V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5"/><path d="M10 20a2 2 0 0 0 4 0"/></svg> Alerts</button>
           </div>
-        </article>
-
-        <article class="mobile-home-card mobile-commute-card">
-          <span>Actionable Commute Card</span>
-          <strong data-bind-text="routeRecommendation">Checking local crossings...</strong>
-          <p data-bind-text="routeRecommendationReason">Gridly is watching live reports and crossing risk.</p>
-          <button class="secondary-btn mobile-commute-cta" id="mobileCommuteRouteBtn" type="button" data-section-jump="map">Open Commute Plan</button>
         </article>
 
         <article class="mobile-home-card mobile-community-card">
@@ -177,8 +188,8 @@
 
         <article class="mobile-home-card mobile-active-crossings-card">
           <span>Most Active</span>
-          <strong id="nearbyAlertCount">0 active now</strong>
-          <p id="activeAlertText">No fresh delay reports yet. You are all clear right now—check map if your route changes.</p>
+          <strong>Route activity</strong>
+          <p>Open map for active crossings and nearby alerts.</p>
         </article>
 
         <article class="mobile-home-card mobile-corridor-intel-card">
