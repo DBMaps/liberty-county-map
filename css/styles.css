@@ -9485,14 +9485,23 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
 
 /* V49 — mobile map controls + manage places final polish */
 @media (max-width: 760px) {
-  body[data-mobile-mode] #map .leaflet-control-zoom {
+  body[data-mobile-mode] #map .gridly-mobile-control-rail {
     position: absolute;
     top: auto;
     right: 8px;
     left: auto;
     bottom: calc(68px + env(safe-area-inset-bottom, 0px));
     margin: 0;
-    z-index: 1300;
+    z-index: 1310;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    pointer-events: auto;
+  }
+  body[data-mobile-mode] #map .leaflet-control-zoom {
+    position: static;
+    margin: 0;
   }
 
   body[data-mobile-mode] #map .leaflet-control-zoom a {
@@ -9506,10 +9515,8 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
   }
 
   body[data-mobile-mode] #map .gridly-mobile-layer-menu {
-    top: auto;
-    right: 8px;
-    bottom: calc(156px + env(safe-area-inset-bottom, 0px));
-    left: auto;
+    position: static;
+    margin: 0;
     z-index: 1310;
     pointer-events: auto;
   }
@@ -9522,6 +9529,7 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
     justify-content: center;
     gap: 0;
     border-radius: 10px;
+    height: 38px;
     background: rgba(10, 13, 16, 0.62) !important;
     border: 1px solid rgba(255, 255, 255, 0.14) !important;
     box-shadow: 0 4px 12px rgba(2, 8, 18, 0.22) !important;
@@ -9623,12 +9631,6 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
 
 /* V50 — final mobile layer anchor + full-width manage places save row */
 @media (max-width: 760px) {
-  body[data-mobile-mode] #map .gridly-mobile-layer-menu {
-    right: 8px !important;
-    left: auto !important;
-    bottom: calc(156px + env(safe-area-inset-bottom, 0px)) !important;
-  }
-
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-list {
     right: 0 !important;
     left: auto !important;

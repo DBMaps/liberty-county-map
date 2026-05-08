@@ -1620,6 +1620,13 @@ function installLayerPickerDebugDiagnostics() {
 
   const installGridlyMobileLayerMenu = () => {
     const controlContainer = document.querySelector("#map .leaflet-control-layers");
+    const mapNode = document.getElementById("map");
+    let mobileControlRail = mapNode?.querySelector(".gridly-mobile-control-rail") || null;
+    if (!mobileControlRail && mapNode) {
+      mobileControlRail = document.createElement("div");
+      mobileControlRail.className = "gridly-mobile-control-rail";
+      mapNode.appendChild(mobileControlRail);
+    }
     if (shouldUseCompactLayerMenu()) {
       controlContainer?.classList?.add("gridly-mobile-layer-control-hidden");
     } else {
@@ -1646,8 +1653,7 @@ function installLayerPickerDebugDiagnostics() {
           <button type="button" data-layer-name="Satellite">Satellite</button>
         </div>
       `;
-      const mapNode = document.getElementById("map");
-      mapNode?.appendChild(menuRoot);
+      mobileControlRail?.appendChild(menuRoot);
 
       const toggle = menuRoot.querySelector(".gridly-mobile-layer-menu-toggle");
       const list = menuRoot.querySelector(".gridly-mobile-layer-menu-list");
@@ -1667,12 +1673,6 @@ function installLayerPickerDebugDiagnostics() {
       };
       const closeMenu = () => setMenuOpenState(false);
       const openMenu = () => setMenuOpenState(true);
-      const placeMenuAtEdge = () => {
-        if (!menuRoot) return;
-        menuRoot.style.top = "auto";
-        menuRoot.style.right = "8px";
-        menuRoot.style.bottom = "calc(68px + env(safe-area-inset-bottom, 0px))";
-      };
       closeMenu();
 
       const handleLayerToggleInteraction = (event) => {
@@ -1697,7 +1697,6 @@ function installLayerPickerDebugDiagnostics() {
         button.addEventListener("click", () => {
           const layerName = button.dataset.layerName;
           const didApply = applyBaseLayerByName(layerName, "gridly-mobile-menu");
-          placeMenuAtEdge();
           syncActiveState();
           if (didApply) closeMenu();
         });
@@ -1712,11 +1711,10 @@ function installLayerPickerDebugDiagnostics() {
     }
 
     const compactMode = shouldUseCompactLayerMenu();
-    const mapNode = document.getElementById("map");
-    if (menuRoot && compactMode) {
-      menuRoot.style.top = "auto";
-      menuRoot.style.right = "8px";
-      menuRoot.style.bottom = "calc(68px + env(safe-area-inset-bottom, 0px))";
+    const zoomControl = document.querySelector("#map .leaflet-control-zoom");
+    if (compactMode) {
+      mobileControlRail?.appendChild(menuRoot);
+      if (zoomControl) mobileControlRail?.appendChild(zoomControl);
     }
     menuRoot.classList.toggle("is-mobile-visible", compactMode);
     if (!compactMode) {
@@ -1726,6 +1724,9 @@ function installLayerPickerDebugDiagnostics() {
       const toggle = menuRoot.querySelector(".gridly-mobile-layer-menu-toggle");
       if (list) list.hidden = true;
       toggle?.setAttribute("aria-expanded", "false");
+      mapNode?.appendChild(menuRoot);
+      const controlCorner = document.querySelector("#map .leaflet-bottom.leaflet-right");
+      if (zoomControl && controlCorner) controlCorner.appendChild(zoomControl);
     }
   };
 
@@ -1869,10 +1870,14 @@ function installLayerPickerDebugDiagnostics() {
     const zoomInRect = zoomIn?.getBoundingClientRect?.()?.toJSON?.() || null;
     const zoomOutRect = zoomOut?.getBoundingClientRect?.()?.toJSON?.() || null;
     const toggleRect = toggleNode?.getBoundingClientRect?.()?.toJSON?.() || null;
+    const controlRail = document.querySelector("#map .gridly-mobile-control-rail");
+    const controlRailRect = controlRail?.getBoundingClientRect?.()?.toJSON?.() || null;
     const layerButtonAboveZoom = Boolean(toggleRect && zoomInRect && toggleRect.bottom <= zoomInRect.top);
     const verticalGapBetweenLayerAndZoom = toggleRect && zoomInRect
       ? Math.round((zoomInRect.top - toggleRect.bottom) * 100) / 100
       : null;
+    const controlsShareSameParent = Boolean(toggleNode && zoomIn && toggleNode.parentElement === zoomIn.parentElement);
+    const controlsAlignedRight = Boolean(toggleRect && zoomInRect && Math.abs(toggleRect.right - zoomInRect.right) <= 1.5);
     const computedLayerButtonStyles = toggleNode ? (() => {
       const style = getComputedStyle(toggleNode);
       return {
@@ -1906,8 +1911,13 @@ function installLayerPickerDebugDiagnostics() {
       zoomControlRect,
       zoomInRect,
       zoomOutRect,
+      controlRailExists: Boolean(controlRail),
+      controlRailRect,
       layerButtonAboveZoom,
       verticalGapBetweenLayerAndZoom,
+      controlsShareSameParent,
+      controlsAlignedRight,
+      railChildrenOrder: controlRail ? Array.from(controlRail.children).map((node) => node.className || node.tagName) : [],
       computedLayerButtonStyles,
       computedZoomButtonStyles,
       toggleOverlapsZoomControl: rectsOverlap(toggleRect, zoomControlRect),
