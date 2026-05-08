@@ -13,6 +13,12 @@ const HAZARD_TYPES = {
     severity: "high",
     detail: "Shared report: flooding may affect travel."
   },
+  ice: {
+    label: "Ice",
+    icon: "🧊",
+    severity: "high",
+    detail: "Shared report: icy roadway conditions may affect travel."
+  },
   debris: {
     label: "Debris",
     icon: "⚠️",
@@ -65,6 +71,7 @@ const REPORT_MODES = {
 const ROAD_HAZARD_TYPE_OPTIONS = [
   { value: "crash", label: "Wreck / Crash" },
   { value: "flooding", label: "Flooding" },
+  { value: "ice", label: "Ice" },
   { value: "debris", label: "Debris" },
   { value: "construction", label: "Construction" },
   { value: "road_closed", label: "Road Closed" },
@@ -78,6 +85,7 @@ const ROAD_HAZARD_SOURCE_MAP = {
   disabled_vehicle: "txdot_incident",
   debris: "community_report",
   flooding: "txdot_flooding",
+  ice: "community_report",
   construction: "txdot_construction",
   road_closed: "txdot_closure",
   other_hazard: "community_report"
@@ -91,6 +99,7 @@ const HAZARD_CATEGORY_MAP = {
   crash: "crash",
   wreck: "crash",
   flooding: "flooding",
+  ice: "ice",
   debris: "debris",
   construction: "construction",
   road_closed: "road_closed",
@@ -2583,7 +2592,7 @@ function calculateRouteScore(routeReports = []) {
   const reports = Array.isArray(routeReports) ? routeReports : [];
   const severityPenalty = {
     blocked: 20, heavy: 12, delayed: 8, caution: 5, clear: 0, cleared: 1,
-    crash: 14, flooding: 14, debris: 8, construction: 7, road_closed: 18, disabled_vehicle: 7, rail_blockage_delay: 16, other_hazard: 6
+    crash: 14, flooding: 14, ice: 14, debris: 8, construction: 7, road_closed: 18, disabled_vehicle: 7, rail_blockage_delay: 16, other_hazard: 6
   };
   let score = 0;
   reports.forEach((report) => {
@@ -3220,7 +3229,8 @@ function mapRailReportType(type) {
 }
 
 function mapRoadHazardType(type) {
-  const map = { crash: "wreck", flooding: "flooding", construction: "construction", debris: "debris", road_closed: "closure", disabled_vehicle: "wreck", hazard_cleared: "cleared" };
+  const map = { crash: "wreck", flooding: "flooding",
+  ice: "ice", construction: "construction", debris: "debris", road_closed: "closure", disabled_vehicle: "wreck", hazard_cleared: "cleared" };
   return map[type] || "debris";
 }
 
@@ -3416,6 +3426,7 @@ counter.textContent = "No live road hazards";
     <p>Choose a hazard, then use your location or tap the map.</p>
     <div class="hazard-choice-grid">
       <button type="button" data-action="open-hazard-placement" data-hazard-type="flooding">🌊 Flooding</button>
+      <button type="button" data-action="open-hazard-placement" data-hazard-type="ice">🧊 Ice</button>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="debris">⚠️ Debris</button>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="crash">🚗 Crash / Wreck</button>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="construction">🚧 Construction</button>
@@ -4725,6 +4736,16 @@ function bindEvents() {
       syncManagePlaceSlotsAndCta(type);
     });
   });
+  [["manageSourceLocationBtn", "location"], ["manageSourceAddressBtn", "address"], ["manageSourceSavedBtn", "saved"]].forEach(([id, mode]) => {
+    els[id]?.addEventListener("click", () => {
+      setManagePlacesSourceMode(mode);
+      if (mode === "location") {
+        if (els.mobileWorkInput && !els.mobileWorkInput.value.trim()) els.mobileWorkInput.value = "Current location";
+      }
+      if (mode === "address") els.mobileWorkInput?.focus();
+      if (mode === "saved") els.mobileSavedDestinationSelect?.focus();
+    });
+  });
   els.mobileResetPlacesBtn?.addEventListener("click", () => {
     if (!window.confirm("Reset saved Home, Work, and Favorite places on this device?")) return;
     resetSavedPlaces();
@@ -5616,7 +5637,7 @@ function setManagePlacesSourceMode(mode = "") {
   const saveGroup = document.getElementById("managePlacesSaveGroup");
   const sourceGroup = document.getElementById("managePlacesSourceGroup");
   const useLocationBtn = els.mobileUseLocationBtn;
-  if (sourceGroup) sourceGroup.hidden = false;
+  if (sourceGroup) sourceGroup.hidden = !mode;
   if (addressGroup) addressGroup.hidden = mode !== "address";
   if (savedGroup) savedGroup.hidden = mode !== "saved";
   if (saveGroup) saveGroup.hidden = !mode;
@@ -5666,8 +5687,20 @@ function syncManagePlaceSlotsAndCta(targetType = "custom") {
 }
 
 async function saveRoute(source = "desktop") {
-  const { home, work, button } = getRouteInputValues(source);
+  let { home, work, button } = getRouteInputValues(source);
   const modalMode = source === "mobile" ? (els.routeSetupModal?.dataset.mode || "add") : "add";
+  const manageSourceMode = source === "mobile" && modalMode === "manage" ? managePlacesSourceMode : "";
+  if (manageSourceMode === "saved") {
+    const selectedSaved = getSavedPlaces().find((place) => place.id === (els.mobileSavedDestinationSelect?.value || ""));
+    if (selectedSaved) {
+      home = home || selectedSaved.name || selectedSaved.label;
+      work = work || selectedSaved.address || selectedSaved.name;
+    }
+  }
+  if (manageSourceMode === "location") {
+    home = home || (els.routeSetupModal?.dataset.prefillType === "home" ? "Home" : els.routeSetupModal?.dataset.prefillType === "work" ? "Work" : "Favorite");
+    work = work || "Current location";
+  }
   const prefillType = source === "mobile" ? (els.routeSetupModal?.dataset.prefillType || "custom") : "custom";
   if (!home || !work) {
     const errorMessage = "Missing place name or address. Please fill both fields.";
@@ -5702,7 +5735,8 @@ async function saveRoute(source = "desktop") {
   const coordinateResolution = await resolvePlaceCoordinates({
     label: home,
     address: work,
-    allowGeocode: true
+    allowGeocode: true,
+    preferGeolocation: manageSourceMode === "location"
   });
   // Saved places must include valid coordinates before they are eligible for Route Watch routing.
   const coordinates = coordinateResolution?.coordinates || null;
