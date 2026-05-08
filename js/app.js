@@ -315,6 +315,41 @@ window.gridlyReportingDebug = function () {
   };
 };
 
+window.gridlyMobileQAAuditDebug = function gridlyMobileQAAuditDebug() {
+  const isMobileViewport = window.matchMedia?.("(max-width: 760px)")?.matches === true;
+  const quickReport = document.querySelector(".mobile-quick-report-strip");
+  const bottomDock = document.querySelector(".mobile-bottom-dock");
+  const overlays = Array.from(document.querySelectorAll("body *")).filter((el) => {
+    const style = window.getComputedStyle(el);
+    if (style.display === "none" || style.visibility === "hidden" || style.opacity === "0") return false;
+    if ((style.position !== "fixed" && style.position !== "sticky") || style.pointerEvents === "none") return false;
+    const rect = el.getBoundingClientRect();
+    return rect.width > 32 && rect.height > 32;
+  });
+  return {
+    viewport: { width: window.innerWidth, height: window.innerHeight, isMobileViewport },
+    activeMobileMode: mobileUiMode,
+    routePanelOpen: Boolean(document.querySelector(".route-setup-modal.open, .route-quick-panel.open")),
+    hazardPanelOpen: Boolean(document.querySelector(".hazard-picker-panel.show, .hazard-picker.open")),
+    alertsPanelOpen: Boolean(document.querySelector(".mobile-alerts-panel.open, .alerts-drawer.open")),
+    selectedHazardType: reportingState.selectedHazardType || selectedQuickHazardType || null,
+    tapMapDisabled: !Boolean(reportingState.placementModeActive),
+    useLocationDisabled: Boolean(reportingState.locationLookupInProgress || reportingState.submissionInProgress),
+    quickReportVisible: Boolean(quickReport && window.getComputedStyle(quickReport).display !== "none"),
+    bottomDockRect: bottomDock ? bottomDock.getBoundingClientRect().toJSON() : null,
+    layerMenuState: typeof window.gridlyMobileLayerMenuDebug === "function" ? window.gridlyMobileLayerMenuDebug() : null,
+    routeLayerExists: Boolean(savedRouteLayer || window.__gridlyRoutePreviewLayer),
+    routeWatchActive: window.__gridlyRouteWatchActive === true || routeWatchActivated === true,
+    topCardButtonText: document.getElementById("mobileCommuteRouteBtn")?.textContent?.trim() || "",
+    topCardButtonTarget: document.getElementById("mobileCommuteRouteBtn")?.getAttribute("data-section-jump") || "",
+    visibleOverlays: overlays.map((el) => ({ className: el.className, id: el.id || null })),
+    possibleBlockers: overlays.filter((el) => {
+      const rect = el.getBoundingClientRect();
+      return rect.width * rect.height > (window.innerWidth * window.innerHeight * 0.2);
+    }).map((el) => ({ className: el.className, id: el.id || null }))
+  };
+};
+
 const LOCAL_PLACE_LOOKUP = {
   dayton: { lat: 30.0466, lng: -94.8852 },
   crosby: { lat: 29.9111, lng: -95.0622 },
