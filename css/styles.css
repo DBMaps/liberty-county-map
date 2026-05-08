@@ -8003,7 +8003,7 @@ body.modal-open {
 }
 
 @keyframes gridlyRoutePulse {
-  0%, 100% { stroke-opacity: 0.78; }
+  0%, 100% { stroke-opacity: 0.72; }
   50% { stroke-opacity: 0.93; }
 }
 
@@ -8964,7 +8964,7 @@ body.modal-open {
 
   body[data-mobile-mode] #map .leaflet-bottom.leaflet-left {
     left: 8px;
-    bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(100px + env(safe-area-inset-bottom, 0px));
     max-width: calc(100% - 120px);
   }
 
@@ -9490,7 +9490,7 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
     top: auto;
     right: 8px;
     left: auto;
-    bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(100px + env(safe-area-inset-bottom, 0px));
     margin: 0;
     z-index: 1310;
     display: flex;
@@ -9589,13 +9589,13 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
   body[data-mobile-mode] #map .leaflet-control-attribution {
     right: 8px;
     left: auto;
-    bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(8px + env(safe-area-inset-bottom, 0px));
     max-width: min(64vw, 230px);
     border-radius: 8px;
     padding: 2px 5px;
     font-size: 10px;
     line-height: 1.15;
-    opacity: 0.78;
+    opacity: 0.72;
     color: rgba(212, 230, 249, 0.72) !important;
     background: rgba(8, 12, 20, 0.56);
     border: 1px solid rgba(140, 192, 236, 0.14);
