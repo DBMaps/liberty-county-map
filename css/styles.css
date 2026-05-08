@@ -8847,10 +8847,11 @@ body.modal-open {
   body[data-mobile-mode] #map .gridly-mobile-layer-menu {
     position: absolute;
     right: 12px;
-    bottom: 96px;
+    bottom: 118px;
     z-index: 10070;
     display: none;
     gap: 6px;
+    justify-items: end;
   }
 
   body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-mobile-visible {
@@ -8869,9 +8870,28 @@ body.modal-open {
     font-weight: 700;
   }
 
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle {
+    width: 36px;
+    height: 36px;
+    min-height: 36px;
+    border-radius: 11px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle .gridly-layer-icon {
+    display: inline-flex;
+    transform: translateY(0.5px);
+  }
+
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-list {
     display: grid;
     gap: 6px;
+    justify-items: stretch;
   }
 
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button.active {
