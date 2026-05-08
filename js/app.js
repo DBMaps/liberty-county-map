@@ -4484,7 +4484,7 @@ function bindEvents() {
 
     setConfirmation("No recent crossing selected to clear.", "error");
   });
-  els.mobileQuickRouteBtn?.addEventListener("click", (event) => openRouteSetupModal(event.currentTarget));
+  els.mobileQuickRouteBtn?.addEventListener("click", () => openMobileRouteQuickPanel());
   els.mobileQuickFavoritesBtn?.addEventListener("click", () => {
     openSmartAlertsModal();
     setConfirmation("Smart Alerts opened.", "success");
@@ -4857,7 +4857,7 @@ function bindEvents() {
     if (section === "map") setTimeout(() => map?.invalidateSize(), 350);
     if (section === "report") setReportMode(activeReportMode || REPORT_MODES.rail);
     if (section === "routes" && window.matchMedia("(max-width: 1100px)").matches) {
-      openRouteSetupModal();
+      openMobileRouteQuickPanel();
     }
   };
 
@@ -7989,42 +7989,51 @@ function renderAlerts() {
     return;
   }
 
-  els.alertsList.innerHTML = incidents
-    .slice(0, 3)
+  const severityWeight = { high: 3, moderate: 2, low: 1, cleared: 0 };
+  const prioritized = incidents
+    .slice()
+    .sort((a, b) => {
+      const aLatest = a?.latestReport || {};
+      const bLatest = b?.latestReport || {};
+      const aKey = aLatest.type === "cleared" ? "cleared" : String(aLatest.severity || "low");
+      const bKey = bLatest.type === "cleared" ? "cleared" : String(bLatest.severity || "low");
+      const severityDelta = (severityWeight[bKey] || 0) - (severityWeight[aKey] || 0);
+      if (severityDelta !== 0) return severityDelta;
+      return Number(a.newestMinutes ?? 999) - Number(b.newestMinutes ?? 999);
+    })
+    .slice(0, 6);
+
+  els.alertsList.innerHTML = prioritized
     .map((incident) => {
       const latest = incident.latestReport;
       const confidenceLabel = getCrossingConfidenceLabel(latest, incident.count);
       const freshnessLabel = getFreshnessLabel(latest);
       const confirmationLabel = getDriverConfirmationLabel(incident.count);
       const reportState = getReportStateLabel(latest);
-
-      const label =
+      const severityLabel =
         latest.type === "cleared"
           ? "Cleared"
           : latest.severity === "high"
-          ? "High Impact"
+          ? "High"
           : latest.severity === "moderate"
           ? "Moderate"
           : "Watch";
-
-      const itemClass =
-        latest.type === "cleared"
-          ? "cleared"
-          : latest.severity === "high"
-          ? "high"
-          : "";
+      const itemClass = latest.type === "cleared" ? "cleared" : latest.severity === "high" ? "high" : "";
 
       return `
-        <div class="alert-item ${itemClass}">
-          <strong>${sanitizeText(incident.crossingName)}</strong>
-          <p>${label} · ${incident.newestMinutes}m · ${sanitizeText(confidenceLabel)}</p>
-          <p>${sanitizeText(freshnessLabel)} · ${sanitizeText(latest.detail)}</p>
-          <div class="alert-meta">
-            <span class="alert-count-pill">${sanitizeText(confirmationLabel)}</span>
-            <span class="trust-pill">${sanitizeText(reportState)}</span>
-            <span class="source-pill">First reported ${incident.oldestMinutes} min ago</span>
+        <article class="alert-item intelligence-row ${itemClass}">
+          <div class="alert-row-main">
+            <span class="alert-severity-chip">${sanitizeText(severityLabel)}</span>
+            <strong>${sanitizeText(incident.crossingName)}</strong>
+            <span class="alert-row-time">${incident.newestMinutes}m</span>
           </div>
-        </div>
+          <p class="alert-row-subline">${sanitizeText(confidenceLabel)} · ${sanitizeText(confirmationLabel)} · ${sanitizeText(reportState)}</p>
+          <details class="alert-row-details">
+            <summary>Details</summary>
+            <p>${sanitizeText(freshnessLabel)} · ${sanitizeText(latest.detail)}</p>
+            <p>First reported ${incident.oldestMinutes} min ago</p>
+          </details>
+        </article>
       `;
     })
     .join("");
