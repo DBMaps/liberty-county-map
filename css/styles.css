@@ -8965,3 +8965,70 @@ body.modal-open {
     color: rgba(198, 229, 255, 0.88) !important;
   }
 }
+
+/* V43N — mobile visual cleanup after functional stabilization */
+@media (max-width: 760px) {
+  body[data-mobile-mode] .mobile-floating-action-dock {
+    left: max(10px, env(safe-area-inset-left, 0px));
+    right: max(10px, env(safe-area-inset-right, 0px));
+    width: auto;
+    max-width: 420px;
+    margin-inline: auto;
+    transform: none;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    padding: 6px;
+    box-sizing: border-box;
+  }
+
+  body[data-mobile-mode] .mobile-dock-btn {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.72rem;
+  }
+
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu {
+    right: max(8px, env(safe-area-inset-right, 0px));
+    bottom: calc(176px + env(safe-area-inset-bottom, 0px));
+    gap: 4px;
+  }
+
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle,
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button {
+    background: rgba(8, 14, 23, 0.68);
+    border-color: rgba(165, 206, 243, 0.22);
+    color: rgba(219, 236, 255, 0.9);
+    box-shadow: 0 2px 8px rgba(2, 8, 16, 0.2);
+  }
+
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button {
+    font-size: 0.66rem;
+    min-height: 28px;
+    padding: 5px 9px;
+  }
+
+  body[data-mobile-mode] .map-tools-overlay {
+    top: calc(var(--mobile-brand-top, env(safe-area-inset-top, 0px) + 8px) + var(--mobile-brand-height, 38px) + var(--mobile-overlay-gap, 8px) + 104px);
+    padding: 4px;
+  }
+
+  body[data-mobile-mode] #map .leaflet-control-zoom {
+    margin-right: max(6px, env(safe-area-inset-right, 0px));
+    margin-top: 2px;
+  }
+
+  body[data-mobile-mode] #map .leaflet-bottom.leaflet-left {
+    left: max(8px, env(safe-area-inset-left, 0px));
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    max-width: calc(100% - 132px);
+  }
+
+  body[data-mobile-mode] #map .leaflet-control-attribution {
+    padding: 2px 5px;
+    font-size: 0.56rem;
+    opacity: 0.88;
+  }
+}
