@@ -3811,10 +3811,12 @@ function injectHazardStyles() {
       backdrop-filter: blur(16px);
       max-height: calc(100dvh - 24px);
       overflow: hidden;
+      grid-template-rows: auto auto minmax(0, 1fr) auto;
+      gap: 0;
     }
 
     .gridly-hazard-panel.visible {
-      display: block;
+      display: grid;
       animation: gridlyHazardSheetIn .18s ease-out;
     }
     @keyframes gridlyHazardSheetIn {
@@ -3885,6 +3887,11 @@ function injectHazardStyles() {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
+      flex-shrink: 0;
+      position: sticky;
+      bottom: 0;
+      background: rgba(9, 18, 32, 0.98);
+      padding-top: 8px;
     }
     .hazard-panel-placement-actions button {
       border: 0;
@@ -3918,18 +3925,27 @@ function injectHazardStyles() {
       .gridly-hazard-panel {
         left: 12px;
         right: 12px;
-        bottom: 8px;
+        bottom: calc(84px + env(safe-area-inset-bottom));
         top: max(10px, env(safe-area-inset-top));
         transform: none;
         width: auto;
-        max-height: calc(100dvh - max(10px, env(safe-area-inset-top)) - 8px);
-        display: none;
+        max-height: calc(100dvh - max(10px, env(safe-area-inset-top)) - (84px + env(safe-area-inset-bottom)));
         grid-template-rows: auto auto minmax(0, 1fr) auto;
         gap: 0;
       }
-      .gridly-hazard-panel.visible { display: grid; }
       .hazard-choice-grid {
         grid-template-columns: 1fr;
+        gap: 6px;
+      }
+      .hazard-choice-grid button {
+        padding: 10px;
+      }
+      .hazard-panel-placement-actions {
+        gap: 6px;
+        margin-top: 8px;
+      }
+      .hazard-panel-placement-actions button {
+        padding: 10px;
       }
     }
   `;
@@ -8403,6 +8419,10 @@ window.gridlyHazardPickerDebug = function () {
   const picker = document.getElementById("gridlyHazardPanel");
   const pickerRect = picker?.getBoundingClientRect?.() || null;
   const viewportHeight = window.innerHeight || document.documentElement?.clientHeight || 0;
+  const viewportWidth = window.innerWidth || document.documentElement?.clientWidth || 0;
+  const actionArea = picker?.querySelector(".hazard-panel-placement-actions") || null;
+  const actionAreaRect = actionArea?.getBoundingClientRect?.() || null;
+  const choiceList = picker?.querySelector(".hazard-choice-grid") || null;
   const optionButtons = picker ? Array.from(picker.querySelectorAll('.hazard-choice-grid button[data-action="open-hazard-placement"]')) : [];
 
   const hazardOptions = optionButtons.map((btn) => {
@@ -8441,6 +8461,27 @@ window.gridlyHazardPickerDebug = function () {
     pickerScrollHeight: picker?.scrollHeight ?? null,
     pickerClientHeight: picker?.clientHeight ?? null,
     pickerOverflowY: picker ? window.getComputedStyle(picker).overflowY : null,
+    actionAreaExists: Boolean(actionArea),
+    actionAreaRect: actionAreaRect
+      ? {
+          top: actionAreaRect.top,
+          bottom: actionAreaRect.bottom,
+          left: actionAreaRect.left,
+          right: actionAreaRect.right,
+          width: actionAreaRect.width,
+          height: actionAreaRect.height
+        }
+      : null,
+    actionAreaVisible: Boolean(
+      actionAreaRect &&
+      actionAreaRect.bottom > 0 &&
+      actionAreaRect.top < viewportHeight &&
+      actionAreaRect.right > 0 &&
+      actionAreaRect.left < viewportWidth
+    ),
+    choiceListScrollHeight: choiceList?.scrollHeight ?? null,
+    choiceListClientHeight: choiceList?.clientHeight ?? null,
+    choiceListOverflowY: choiceList ? window.getComputedStyle(choiceList).overflowY : null,
     hazardOptions,
     floodingExists: Boolean(floodingEntry),
     floodingVisible: Boolean(floodingEntry?.visibleInViewport),
@@ -8494,9 +8535,20 @@ function injectMobileCTACleanupStyles() {
         max-height: calc(100dvh - max(10px, env(safe-area-inset-top)) - 164px) !important;
         display: none !important;
         grid-template-rows: auto auto minmax(0, 1fr) auto !important;
+        gap: 0 !important;
       }
       .gridly-hazard-panel.visible {
         display: grid !important;
+      }
+      .hazard-choice-grid {
+        min-height: 0 !important;
+        overflow-y: auto !important;
+      }
+      .hazard-panel-placement-actions {
+        position: sticky !important;
+        bottom: 0 !important;
+        flex-shrink: 0 !important;
+        background: rgba(9, 18, 32, 0.98) !important;
       }
     }
   `;
