@@ -9273,3 +9273,40 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button:last-child{bor
 .route-setup-grid-mobile #managePlacesSlotsGroup .manage-places-group-label,
 .route-setup-grid-mobile #managePlacesSourceGroup .manage-places-group-label,
 .route-setup-grid-mobile #managePlacesSaveGroup .manage-places-group-label{font-size:.68rem;letter-spacing:.12em;color:rgba(194,224,242,.72)}
+
+/* V47B — system unification + overlay simplification */
+.map-toolbar-main-row{gap:8px}
+.map-toolbar-divider{opacity:.35}
+.map-card .map-tools-overlay{box-shadow:0 6px 16px rgba(2,8,16,.16)!important;border-color:rgba(255,255,255,.08)!important}
+.map-card .map-tools-overlay .map-tools-section{gap:6px}
+.map-card .map-tools-overlay .map-tools-section-label,
+.map-card .map-tools-overlay .map-view-label{color:rgba(198,221,241,.72)!important}
+.map-card .map-tools-overlay .geo-filter-shell{padding:3px!important;gap:4px!important;background:rgba(8,15,24,.34)!important}
+.map-card .map-tools-overlay .geo-filter-pill{min-height:30px;padding:5px 9px!important;font-size:.7rem!important}
+.map-card .map-tools-overlay .legend-pill{min-height:30px;padding:5px 8px}
+
+body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:12px;font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;background:rgba(9,16,27,.5);border:1px solid rgba(255,255,255,.16);box-shadow:0 3px 10px rgba(2,8,18,.16)}
+body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle .gridly-layer-icon{font-size:.8rem;line-height:1}
+body[data-mobile-mode] #map .gridly-mobile-layer-menu-list{border-radius:12px;background:rgba(9,16,27,.6);border:1px solid rgba(255,255,255,.12)}
+body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button{min-height:34px;padding:8px 10px;font-size:.74rem}
+
+.route-setup-modal-card{border-radius:14px!important;background:rgba(10,17,28,.88)!important;border:1px solid rgba(255,255,255,.09)!important;box-shadow:0 10px 24px rgba(0,0,0,.22)!important}
+.route-setup-modal-head{margin-bottom:6px}
+.route-setup-modal-head h2{font-size:1.03rem}
+.route-setup-grid-mobile{gap:8px!important}
+.manage-places-group{gap:7px!important;padding:8px 10px!important;border-radius:11px!important;background:rgba(255,255,255,.02)!important;border:1px solid rgba(255,255,255,.05)!important}
+.manage-places-group-label{font-size:.64rem!important;letter-spacing:.1em!important;color:rgba(193,220,241,.72)!important}
+.manage-places-group-note{font-size:.72rem!important;color:rgba(215,230,242,.68)!important}
+.manage-places-group .destination-chip{min-height:34px;padding:7px 10px}
+.manage-places-group-utility{margin-top:2px!important;opacity:.86!important}
+
+@media (max-width: 760px) {
+  .gridly-hazard-panel{padding:10px 10px 8px!important;border-radius:14px!important;box-shadow:0 10px 22px rgba(0,0,0,.32)!important}
+  .gridly-hazard-panel h3{font-size:.94rem!important;margin-bottom:2px!important}
+  .gridly-hazard-panel>p{font-size:.77rem!important;margin-bottom:6px!important}
+  .hazard-choice-grid{gap:6px!important;padding-bottom:6px!important}
+  .hazard-choice-grid button{min-height:36px!important;padding:7px 9px!important;font-size:.79rem!important;border-radius:10px!important}
+  .hazard-choice-grid button span,.hazard-choice-grid button svg{transform:scale(.92)}
+  .hazard-panel-placement-actions{padding-top:5px!important;padding-bottom:calc(5px + env(safe-area-inset-bottom,0px))!important;gap:5px!important;margin-top:3px!important}
+  .hazard-panel-placement-actions button{min-height:31px!important;padding:6px 9px!important;font-size:.74rem!important}
+}
