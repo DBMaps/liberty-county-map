@@ -1621,6 +1621,7 @@ function installLayerPickerDebugDiagnostics() {
       menuRoot.innerHTML = `
         <button type="button" class="gridly-mobile-layer-menu-toggle" aria-expanded="false" aria-haspopup="true" aria-label="Open map layers" title="Map layers">
           <span class="gridly-layer-icon" aria-hidden="true">🗺️</span>
+          <span class="gridly-layer-label">Layers</span>
         </button>
         <div class="gridly-mobile-layer-menu-list" hidden>
           <button type="button" data-layer-name="Standard">Standard</button>
