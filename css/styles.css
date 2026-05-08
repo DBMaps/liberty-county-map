@@ -8838,3 +8838,28 @@ body.modal-open {
     pointer-events: none;
   }
 }
+
+/* V43C — mobile map layer picker tap + stacking fixes */
+@media (max-width: 760px) {
+  body[data-mobile-mode] #map .leaflet-control-container,
+  body[data-mobile-mode] #map .leaflet-top,
+  body[data-mobile-mode] #map .leaflet-right,
+  body[data-mobile-mode] #map .leaflet-control-layers,
+  body[data-mobile-mode] #map .leaflet-control-layers-expanded,
+  body[data-mobile-mode] #map .leaflet-control-layers-list,
+  body[data-mobile-mode] #map .leaflet-control-layers-base,
+  body[data-mobile-mode] #map .leaflet-control-layers-base label,
+  body[data-mobile-mode] #map .leaflet-control-layers-selector {
+    pointer-events: auto !important;
+  }
+
+  body[data-mobile-mode] #map .leaflet-control-layers,
+  body[data-mobile-mode] #map .leaflet-control-layers-expanded {
+    z-index: 900 !important;
+    touch-action: manipulation;
+  }
+
+  body[data-mobile-mode] #map .leaflet-control-layers-base label {
+    cursor: pointer;
+  }
+}
