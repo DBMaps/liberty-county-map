@@ -1339,14 +1339,21 @@ function initMap() {
   map.getContainer().classList.add(styleClassByName[initialStyle]);
 
   L.control.layers(baseLayers, null, { position: "bottomright", collapsed: true }).addTo(map);
+  installLayerPickerDebugDiagnostics();
 
   map.on("baselayerchange", (event) => {
     const selectedName = event?.name;
+    const previousStyle = currentMapStyle;
     if (!styleClassByName[selectedName]) return;
     Object.values(styleClassByName).forEach((className) => map.getContainer().classList.remove(className));
     map.getContainer().classList.add(styleClassByName[selectedName]);
     currentMapStyle = selectedName;
     localStorage.setItem(MAP_STYLE_STORAGE_KEY, selectedName);
+    console.log("[Gridly][LayerPicker] baselayerchange fired", {
+      selectedLayer: selectedName,
+      changed: previousStyle !== selectedName,
+      previousLayer: previousStyle
+    });
   });
 
   crossingLayer = L.layerGroup().addTo(map);
@@ -1364,6 +1371,30 @@ function initMap() {
   centerMapOnUserIfAllowed();
   highlightNearestCrossingOnFirstLoad();
   installMapLayoutResizeSafety();
+}
+
+function installLayerPickerDebugDiagnostics() {
+  const bindLayerOptionLogs = () => {
+    const labels = Array.from(document.querySelectorAll("#map .leaflet-control-layers-base label"));
+    if (!labels.length) return false;
+    labels.forEach((label) => {
+      if (label.dataset.gridlyLayerBound === "true") return;
+      label.dataset.gridlyLayerBound = "true";
+      const layerName = (label.textContent || "").trim();
+      label.addEventListener("click", () => {
+        console.log("[Gridly][LayerPicker] label clicked", { layerName, selectedLayer: currentMapStyle });
+      });
+      const input = label.querySelector("input[type='radio']");
+      input?.addEventListener("change", () => {
+        const changed = currentMapStyle === layerName;
+        console.log("[Gridly][LayerPicker] input change", { layerName, selectedLayer: currentMapStyle, changed });
+      });
+    });
+    return true;
+  };
+
+  bindLayerOptionLogs();
+  setTimeout(bindLayerOptionLogs, 400);
 }
 
 
@@ -3016,6 +3047,10 @@ function openHazardPanel() {
   updateReportingState({ reportModeActive: true, activeReportEntryPoint: "report_near_me" });
   document.getElementById("gridlyHazardPanel")?.classList.add("visible");
   document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
+  console.log("[Gridly][Report] hazard panel opened", {
+    overlay: "gridlyHazardPanel",
+    reportingState: window.gridlyReportingDebug()
+  });
 }
 
 window.closeHazardPanel = function () {
@@ -4322,25 +4357,40 @@ function closeSmartAlertsModal() {
 }
 
 function handleSmartReportButton() {
-  handleReportNearMe();
+  console.log("[Gridly][Report] REPORT dock clicked", {
+    source: "handleSmartReportButton",
+    target: "quick_hazard_picker"
+  });
+  handleReportNearMe("mobile_dock_report");
 }
 
-function handleReportNearMe() {
+function handleReportNearMe(entryPoint = "report_near_me") {
   setMobileUiMode("report", { silent: true });
   updateReportingState({
     reportModeActive: true,
     placementModeActive: false,
-    activeReportEntryPoint: "report_near_me",
+    activeReportEntryPoint: entryPoint,
     lastReportError: "",
     lastReportMessage: "Choose a hazard, then use your location or tap the map."
   });
+  console.log("[Gridly][Report] handler executed", { handler: "handleReportNearMe", entryPoint });
   openHazardPanel();
   scrollToSection("mapSection");
   safeText("mapTrustNote", "Quick reporting is now map-first: select a hazard, then use My Location or Tap Map Location.");
   setConfirmation("Choose a hazard, then tap map to drop the report.", "success");
   document.body.classList.add("report-pulse");
   setTimeout(() => document.body.classList.remove("report-pulse"), 900);
+  console.log("[Gridly][Report] post-click state", {
+    openedOverlay: "gridlyHazardPanel",
+    reportingState: window.gridlyReportingDebug(),
+    activeReportEntryPoint: reportingState.activeReportEntryPoint
+  });
 }
+
+window.gridlyOpenQuickReportDebug = function () {
+  console.log("[Gridly][Report] debug helper invoked", { helper: "gridlyOpenQuickReportDebug" });
+  handleReportNearMe("window.gridlyOpenQuickReportDebug");
+};
 
 function activateReportMode() {
   setMobileUiMode("report", { silent: true });
