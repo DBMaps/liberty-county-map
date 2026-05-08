@@ -209,6 +209,7 @@ let monitoredRouteEtaMinutes = null;
 let monitoredRouteDelayMinutes = null;
 let monitoredRouteDurationSeconds = null;
 let pendingHazardPlacement = null;
+let selectedQuickHazardType = null;
 const LOCAL_PLACE_LOOKUP = {
   dayton: { lat: 30.0466, lng: -94.8852 },
   crosby: { lat: 29.9111, lng: -95.0622 },
@@ -2936,12 +2937,18 @@ window.closeHazardPanel = function () {
 };
 
 window.submitHazardNearMe = function (hazardType) {
-  if (!navigator.geolocation) {
-    setConfirmation("Location is unavailable. Hazard reports need GPS for V12.5A.", "error");
+  const selectedType = hazardType || selectedQuickHazardType || pendingHazardPlacement;
+  if (!selectedType) {
+    setConfirmation("Choose a hazard first, then use My Location.", "error");
     return;
   }
 
-  const hazardCopy = HAZARD_TYPES[hazardType] || HAZARD_TYPES.other_hazard;
+  if (!navigator.geolocation) {
+    setConfirmation("Location is unavailable. Select a spot on the map to submit this hazard.", "error");
+    return;
+  }
+
+  const hazardCopy = HAZARD_TYPES[selectedType] || HAZARD_TYPES.other_hazard;
 
   setConfirmation(`Finding your location for ${hazardCopy.label} report...`, "success");
 
@@ -2950,16 +2957,18 @@ window.submitHazardNearMe = function (hazardType) {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
 
-      await createSharedHazardReport(hazardType, lat, lng, "gps hazard report");
+      await createSharedHazardReport(selectedType, lat, lng, "gps hazard report");
 
       if (map) {
         map.setView([lat, lng], 16);
       }
 
+      pendingHazardPlacement = null;
+      selectedQuickHazardType = null;
       closeHazardPanel();
     },
     () => {
-      setConfirmation("Location permission was blocked. Hazard report not submitted.", "error");
+      setConfirmation("We couldn't access your location. Allow GPS or tap the map to place this hazard.", "error");
     },
     {
       enableHighAccuracy: true,
@@ -2971,6 +2980,7 @@ window.submitHazardNearMe = function (hazardType) {
 
 function openHazardPlacement(hazardType) {
   pendingHazardPlacement = hazardType || "other_hazard";
+  selectedQuickHazardType = pendingHazardPlacement;
   const copy = HAZARD_TYPES[pendingHazardPlacement] || HAZARD_TYPES.other_hazard;
   setConfirmation(`${copy.icon} ${copy.label} selected. Tap map to place or use My Location.`, "success");
 }
@@ -2982,6 +2992,7 @@ async function handleHazardPlacementMapClick(event) {
   if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
   const selectedType = pendingHazardPlacement;
   pendingHazardPlacement = null;
+  selectedQuickHazardType = null;
   closeHazardPanel();
   await createSharedHazardReport(selectedType, lat, lng, "tap map placement");
 }
@@ -3697,8 +3708,7 @@ function bindEvents() {
     }
     if (action === "submit-hazard") {
       event.preventDefault();
-      submitHazardNearMe(actionEl.dataset.hazardType || pendingHazardPlacement || "other_hazard");
-      pendingHazardPlacement = null;
+      submitHazardNearMe(actionEl.dataset.hazardType || selectedQuickHazardType || pendingHazardPlacement);
       return;
     }
     if (action === "open-hazard-placement") {
@@ -3713,6 +3723,7 @@ function bindEvents() {
     if (action === "cancel-hazard-placement") {
       event.preventDefault();
       pendingHazardPlacement = null;
+      selectedQuickHazardType = null;
       closeHazardPanel();
       return;
     }
