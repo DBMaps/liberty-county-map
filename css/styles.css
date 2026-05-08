@@ -8101,16 +8101,16 @@ body.modal-open {
   50% { transform: scale(1.02); filter: saturate(1.18); }
 }
 
-/* V39C mobile immersion pass */
+/* V39D command center spine restoration */
 @media (max-width: 760px) {
   .app-shell {
     width: 100%;
     margin: 0;
+    padding: 0 0 96px;
   }
 
   .dashboard > :not(.command-center),
   .mobile-home-cards,
-  .report-drawer,
   .mobile-bottom-nav,
   .mobile-sticky-report {
     display: none !important;
@@ -8128,7 +8128,6 @@ body.modal-open {
 
   .map-card .section-header,
   .desktop-route-watch-strip,
-  .geo-filter-status,
   .map-toolbar-meta-row,
   .desktop-map-legend-row,
   .map-toolbar-divider,
@@ -8139,49 +8138,83 @@ body.modal-open {
   }
 
   .map-frame {
+    position: relative;
     border: 0 !important;
-    border-radius: 0;
-    min-height: calc(100vh - 138px);
-    box-shadow: none;
+    border-radius: 22px 22px 30px 30px;
+    margin: 0 8px;
+    min-height: calc(100vh - 176px);
     overflow: hidden;
+    box-shadow: 0 18px 48px rgba(1, 8, 18, 0.7), inset 0 -40px 90px rgba(3, 12, 24, 0.45);
+    isolation: isolate;
+  }
+
+  .map-frame::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 420;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(4, 9, 16, 0.58), transparent 20%, transparent 72%, rgba(3, 9, 15, 0.72));
   }
 
   .map-frame::before {
-    opacity: .45;
-    background: radial-gradient(circle at 70% 18%, rgba(113, 226, 255, 0.22), transparent 44%),
-      linear-gradient(180deg, rgba(4, 10, 16, 0.4), rgba(4, 10, 16, 0.12) 30%, rgba(4, 10, 16, 0.45));
+    opacity: .72;
+    background: radial-gradient(circle at 72% 16%, rgba(100, 210, 255, 0.28), transparent 46%),
+      radial-gradient(circle at 28% 88%, rgba(91, 248, 182, 0.18), transparent 42%);
   }
 
   .mobile-live-command {
     position: absolute;
-    top: 12px;
-    left: 12px;
-    right: 12px;
-    z-index: 510;
-    border-radius: 20px;
-    border: 1px solid rgba(146, 218, 255, 0.25);
-    background: linear-gradient(145deg, rgba(7, 19, 33, 0.78), rgba(3, 10, 18, 0.58));
-    backdrop-filter: blur(14px) saturate(130%);
-    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.32);
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    z-index: 620;
+    border-radius: 16px;
+    border: 1px solid rgba(149, 217, 255, 0.34);
+    background: linear-gradient(148deg, rgba(9, 23, 40, 0.82), rgba(5, 13, 25, 0.88));
+    backdrop-filter: blur(15px) saturate(138%);
+    box-shadow: 0 10px 26px rgba(2, 8, 18, 0.48), inset 0 1px 0 rgba(189, 226, 255, 0.12);
     padding: 10px 12px;
   }
 
+  .mobile-live-command strong { font-size: 1.06rem; letter-spacing: .01em; }
+  .mobile-live-command p { color: #d8e8fa; }
+
   .mobile-live-command .compact-btn {
-    border-color: rgba(137, 206, 255, 0.4);
-    background: rgba(103, 186, 255, 0.16);
+    min-height: 32px;
+    padding: 7px 11px;
+    border-color: rgba(132, 204, 255, 0.44);
+    background: rgba(84, 176, 255, 0.16);
+  }
+
+  .mobile-map-floating-chips {
+    top: 94px;
+    left: 10px;
+    right: 10px;
+    z-index: 630;
+    gap: 6px;
+  }
+
+  .map-floating-chip {
+    border-radius: 999px;
+    border: 1px solid rgba(147, 213, 255, 0.27);
+    background: linear-gradient(155deg, rgba(8, 22, 36, 0.74), rgba(7, 18, 30, 0.68));
+    box-shadow: 0 8px 18px rgba(1, 8, 18, 0.34);
+    backdrop-filter: blur(10px) saturate(124%);
   }
 
   .map-tools-overlay {
-    left: 12px;
-    right: 12px;
-    bottom: 88px;
+    left: 10px;
+    right: 10px;
+    bottom: 74px;
     top: auto;
-    border-radius: 20px;
-    background: linear-gradient(155deg, rgba(6, 18, 30, 0.62), rgba(9, 18, 26, 0.46));
-    border: 1px solid rgba(146, 218, 255, 0.18);
-    backdrop-filter: blur(14px) saturate(124%);
-    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.28);
-    padding: 9px;
+    z-index: 640;
+    border-radius: 14px;
+    background: linear-gradient(160deg, rgba(8, 19, 31, 0.84), rgba(5, 12, 23, 0.86));
+    border: 1px solid rgba(138, 204, 255, 0.3);
+    backdrop-filter: blur(15px) saturate(132%);
+    box-shadow: 0 11px 26px rgba(3, 10, 21, 0.44), inset 0 1px 0 rgba(195, 228, 255, 0.08);
+    padding: 8px;
   }
 
   .map-toolbar-main-row,
@@ -8193,38 +8226,93 @@ body.modal-open {
   .geo-filter-shell {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 6px;
+    gap: 5px;
   }
 
   .geo-filter-pill {
     border-radius: 999px;
-    border-color: rgba(158, 224, 255, 0.28);
-    background: rgba(6, 20, 35, 0.48);
-    font-size: .73rem;
-    padding: 8px 6px;
+    border-color: rgba(149, 216, 255, 0.3);
+    background: rgba(8, 22, 37, 0.62);
+    font-size: .71rem;
+    padding: 7px 6px;
+    min-height: 30px;
   }
 
-  .mobile-map-floating-chips {
-    top: 106px;
-    left: 12px;
-    right: 12px;
-    gap: 7px;
-  }
-
-  .map-floating-chip {
+  .geo-filter-status {
+    display: block !important;
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 24px;
+    z-index: 610;
+    margin: 0;
+    padding: 7px 10px;
     border-radius: 999px;
-    border: 1px solid rgba(153, 223, 255, 0.28);
-    background: rgba(7, 23, 39, 0.5);
+    border: 1px solid rgba(125, 197, 255, 0.26);
+    background: rgba(6, 15, 27, 0.72);
+    color: #c6ddf5;
+    font-size: 0.71rem;
+    letter-spacing: .03em;
+    text-transform: uppercase;
     backdrop-filter: blur(10px);
   }
 
-  body.reporting-live .map-frame {
-    box-shadow: inset 0 0 0 1px rgba(93, 204, 255, 0.35), inset 0 0 85px rgba(82, 183, 255, 0.2);
+  .report-drawer {
+    display: block !important;
+    position: fixed;
+    left: 10px;
+    right: 10px;
+    bottom: 100px;
+    z-index: 760;
+    margin: 0;
+    border-radius: 14px;
+    border: 1px solid rgba(138, 205, 255, 0.24);
+    background: linear-gradient(165deg, rgba(8, 17, 30, 0.78), rgba(4, 11, 22, 0.82));
+    backdrop-filter: blur(14px);
+    max-height: 68px;
+    overflow: hidden;
   }
 
-  body.reporting-live .mobile-live-command {
-    border-color: rgba(90, 209, 255, 0.56);
-    box-shadow: 0 0 0 1px rgba(90, 209, 255, 0.2), 0 14px 36px rgba(0, 40, 67, 0.42);
+  .report-drawer[open] {
+    max-height: 242px;
+  }
+
+  .report-drawer-summary {
+    padding: 10px 12px;
+    min-height: 58px;
+  }
+
+  .mobile-report-mode-card {
+    margin-top: 6px;
+    border-radius: 12px;
+    border: 1px solid rgba(133, 201, 255, 0.24);
+    background: rgba(8, 20, 34, 0.66);
+  }
+
+  .mobile-floating-action-dock {
+    left: 10px;
+    right: 10px;
+    bottom: 14px;
+    padding: 5px;
+    border-radius: 999px;
+    border: 1px solid rgba(128, 193, 247, 0.32);
+    background: linear-gradient(155deg, rgba(9, 18, 31, 0.9), rgba(6, 13, 24, 0.88));
+    backdrop-filter: blur(16px) saturate(138%);
+    box-shadow: 0 12px 24px rgba(1, 8, 19, 0.5);
+    gap: 5px;
+  }
+
+  .mobile-dock-btn {
+    min-height: 32px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: .73rem;
+    letter-spacing: .02em;
+    border: 1px solid rgba(201, 225, 255, 0.16);
+  }
+
+  body.reporting-live .map-frame {
+    box-shadow: inset 0 0 0 1px rgba(98, 201, 255, 0.34), inset 0 0 120px rgba(84, 179, 255, 0.2), 0 18px 52px rgba(2, 9, 20, 0.74);
   }
 }
 
