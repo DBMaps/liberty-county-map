@@ -3154,7 +3154,8 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     setSync("Hazard report shared");
 
     await runPostSubmitRefresh();
-    updateReportingState({ submissionInProgress: false });
+    updateReportingState({ submissionInProgress: false, reportModeActive: false, placementModeActive: false });
+    if (window.matchMedia("(max-width: 760px)").matches) setMobileUiMode("live", { silent: true });
     return true;
   } catch (error) {
     console.error("Gridly hazard insert failed:", error);

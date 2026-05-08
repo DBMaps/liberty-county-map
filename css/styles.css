@@ -8374,3 +8374,76 @@ body.modal-open {
   40% { opacity: .82; }
   100% { opacity: .45; }
 }
+
+
+@media (max-width: 760px) {
+  body[data-mobile-mode] #dashboardSection,
+  body[data-mobile-mode] #setupCard,
+  body[data-mobile-mode] .desktop-insights,
+  body[data-mobile-mode] .desktop-route-setup,
+  body[data-mobile-mode] .section-header.map-header,
+  body[data-mobile-mode] .mobile-home-cards,
+  body[data-mobile-mode] .destination-hero-card,
+  body[data-mobile-mode] .desktop-route-watch-strip,
+  body[data-mobile-mode] .desktop-command-strip,
+  body[data-mobile-mode] .mobile-premium-header,
+  body[data-mobile-mode] .app-header,
+  body[data-mobile-mode] .desktop-left-rail,
+  body[data-mobile-mode] .geo-filter-status,
+  body[data-mobile-mode] .mobile-sticky-report {
+    display: none !important;
+  }
+
+  body[data-mobile-mode] #mapSection {
+    padding-top: 0;
+    margin-top: 0;
+  }
+
+  body[data-mobile-mode] .map-card {
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  body[data-mobile-mode] .map-frame {
+    min-height: 100dvh;
+    border-radius: 0;
+    border-inline: 0;
+    border-bottom: 0;
+  }
+
+  body[data-mobile-mode] .desktop-command-panel,
+  body[data-mobile-mode] .report-drawer {
+    display: none !important;
+  }
+
+  body[data-mobile-mode="alert"] .desktop-command-panel {
+    display: block !important;
+    position: fixed;
+    left: 10px;
+    right: 10px;
+    top: 86px;
+    z-index: 760;
+    max-height: 48dvh;
+    overflow: auto;
+    border-radius: 14px;
+    background: linear-gradient(165deg, rgba(8, 17, 30, 0.84), rgba(4, 11, 22, 0.9));
+    border: 1px solid rgba(138, 205, 255, 0.24);
+    backdrop-filter: blur(14px);
+  }
+
+  body[data-mobile-mode="report"] #mobileReportModeCard {
+    position: fixed;
+    left: 10px;
+    right: 10px;
+    top: 88px;
+    z-index: 780;
+    display: block !important;
+  }
+
+  body[data-mobile-mode]:not([data-mobile-mode="report"]) #mobileReportModeCard {
+    display: none !important;
+  }
+}
