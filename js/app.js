@@ -216,6 +216,9 @@ let osrmRequestStarted = false;
 let osrmResponseReceived = false;
 let routeRenderAttempted = false;
 let routeRenderSucceeded = false;
+let lastRouteButtonClickSource = "";
+let lastRouteButtonClickAt = null;
+let routeQuickButtonDelegatedBindingActive = false;
 let pendingHazardPlacement = null;
 let selectedQuickHazardType = null;
 let mobileUiMode = "live";
@@ -3477,6 +3480,62 @@ function openMobileRouteQuickPanel() {
   panel.classList.add("visible");
 }
 
+async function handleRouteQuickPanelAction(action, event, actionEl) {
+  const startSelect = document.getElementById("mobileRouteQuickStart");
+  const destinationSelect = document.getElementById("mobileRouteQuickDestination");
+  const selectedStartValue = startSelect?.value || "";
+  const selectedDestinationValue = destinationSelect?.value || "";
+
+  if (action === "view-route-quick") {
+    console.info("ROUTE QUICK VIEW CLICK HIT", {
+      eventTarget: event?.target || null,
+      eventCurrentTarget: event?.currentTarget || null,
+      selectedStartValue,
+      selectedDestinationValue
+    });
+  } else if (action === "start-route-watch-quick") {
+    console.info("ROUTE QUICK START CLICK HIT", {
+      eventTarget: event?.target || null,
+      eventCurrentTarget: event?.currentTarget || null,
+      selectedStartValue,
+      selectedDestinationValue
+    });
+  }
+
+  lastRouteButtonClickSource = actionEl?.dataset?.action || action || "";
+  lastRouteButtonClickAt = new Date().toISOString();
+  routeRequestTriggered = true;
+
+  if (els.routeWatchStartSelect && startSelect) els.routeWatchStartSelect.value = startSelect.value;
+  if (els.routeWatchDestinationSelect && destinationSelect) els.routeWatchDestinationSelect.value = destinationSelect.value;
+  const places = getSavedPlaces();
+  const resolvedStartPlace = places.find((place) => place.id === (els.routeWatchStartSelect?.value || "")) || null;
+  const resolvedDestinationPlace = places.find((place) => place.id === (els.routeWatchDestinationSelect?.value || "")) || null;
+  console.info("Gridly quick panel place resolution result", { resolvedStartPlace, resolvedDestinationPlace });
+  updateRouteWatchStartButtonState();
+  await startInlineRouteWatch({
+    activateWatch: action === "start-route-watch-quick",
+    source: action === "start-route-watch-quick" ? "mobile_quick_panel_start_watch" : "mobile_quick_panel_view_route"
+  });
+  if (action === "view-route-quick") routeNavSection("map");
+  document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
+}
+
+function attachRouteQuickPanelDelegatedClickHandlers() {
+  if (routeQuickButtonDelegatedBindingActive) return;
+  routeQuickButtonDelegatedBindingActive = true;
+  document.addEventListener("click", async (event) => {
+    const actionEl = event?.target?.closest?.(
+      '#gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="view-route-quick"], #gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="start-route-watch-quick"]'
+    );
+    if (!actionEl) return;
+    const action = actionEl.dataset.action || "";
+    if (!action) return;
+    event.preventDefault();
+    await handleRouteQuickPanelAction(action, event, actionEl);
+  }, true);
+}
+
 function resetQuickHazardReportState() {
   pendingHazardPlacement = null;
   selectedQuickHazardType = null;
@@ -4394,35 +4453,12 @@ function bindEvents() {
     }
     if (action === "view-route-quick") {
       event.preventDefault();
-      console.info("Gridly View Route quick click");
-      const startSelect = document.getElementById("mobileRouteQuickStart");
-      const destinationSelect = document.getElementById("mobileRouteQuickDestination");
-      if (els.routeWatchStartSelect && startSelect) els.routeWatchStartSelect.value = startSelect.value;
-      if (els.routeWatchDestinationSelect && destinationSelect) els.routeWatchDestinationSelect.value = destinationSelect.value;
-      const places = getSavedPlaces();
-      const resolvedStartPlace = places.find((place) => place.id === (els.routeWatchStartSelect?.value || "")) || null;
-      const resolvedDestinationPlace = places.find((place) => place.id === (els.routeWatchDestinationSelect?.value || "")) || null;
-      console.info("Gridly quick panel place resolution result", { resolvedStartPlace, resolvedDestinationPlace });
-      updateRouteWatchStartButtonState();
-      await startInlineRouteWatch({ activateWatch: false, source: "mobile_quick_panel_view_route" });
-      routeNavSection("map");
-      document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
+      await handleRouteQuickPanelAction(action, event, actionEl);
       return;
     }
     if (action === "start-route-watch-quick") {
       event.preventDefault();
-      console.info("Gridly Start Route Watch quick click");
-      const startSelect = document.getElementById("mobileRouteQuickStart");
-      const destinationSelect = document.getElementById("mobileRouteQuickDestination");
-      if (els.routeWatchStartSelect && startSelect) els.routeWatchStartSelect.value = startSelect.value;
-      if (els.routeWatchDestinationSelect && destinationSelect) els.routeWatchDestinationSelect.value = destinationSelect.value;
-      const places = getSavedPlaces();
-      const resolvedStartPlace = places.find((place) => place.id === (els.routeWatchStartSelect?.value || "")) || null;
-      const resolvedDestinationPlace = places.find((place) => place.id === (els.routeWatchDestinationSelect?.value || "")) || null;
-      console.info("Gridly quick panel place resolution result", { resolvedStartPlace, resolvedDestinationPlace });
-      updateRouteWatchStartButtonState();
-      await startInlineRouteWatch({ activateWatch: true, source: "mobile_quick_panel_start_watch" });
-      document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
+      await handleRouteQuickPanelAction(action, event, actionEl);
       return;
     }
     if (action === "zoom-crossing") {
@@ -4430,6 +4466,7 @@ function bindEvents() {
       zoomToCrossing(actionEl.dataset.crossingId);
     }
   };
+  attachRouteQuickPanelDelegatedClickHandlers();
   document.addEventListener("click", handleDataActionClick);
   els.mobileOpenLiveMapBtn?.addEventListener("click", () => {
     setConfirmation("Opening Live Map.", "success");
@@ -6556,6 +6593,37 @@ function attachRouteQuickPanelDebugGlobal() {
     };
   };
 }
+
+window.gridlyRouteButtonBindingDebug = function gridlyRouteButtonBindingDebug() {
+  const panel = document.getElementById("gridlyMobileRouteQuickPanel");
+  const viewButton = panel?.querySelector?.('.route-quick-actions button[data-action="view-route-quick"]') || null;
+  const startButton = panel?.querySelector?.('.route-quick-actions button[data-action="start-route-watch-quick"]') || null;
+  const viewRect = viewButton ? viewButton.getBoundingClientRect() : null;
+  const startRect = startButton ? startButton.getBoundingClientRect() : null;
+  const viewStyles = viewButton ? window.getComputedStyle(viewButton) : null;
+  const startStyles = startButton ? window.getComputedStyle(startButton) : null;
+  return {
+    viewButtonExists: Boolean(viewButton),
+    startButtonExists: Boolean(startButton),
+    visibleButtonRects: {
+      viewRoute: viewRect ? { x: viewRect.x, y: viewRect.y, width: viewRect.width, height: viewRect.height } : null,
+      startRouteWatch: startRect ? { x: startRect.x, y: startRect.y, width: startRect.width, height: startRect.height } : null
+    },
+    pointerEvents: {
+      viewRoute: viewStyles?.pointerEvents || null,
+      startRouteWatch: startStyles?.pointerEvents || null
+    },
+    disabledState: {
+      viewRoute: Boolean(viewButton?.disabled),
+      startRouteWatch: Boolean(startButton?.disabled)
+    },
+    clickHandlerAttachedFlag: Boolean(routeQuickButtonDelegatedBindingActive),
+    lastRouteButtonClickSource,
+    lastRouteButtonClickAt,
+    selectedStartValue: document.getElementById("mobileRouteQuickStart")?.value || "",
+    selectedDestinationValue: document.getElementById("mobileRouteQuickDestination")?.value || ""
+  };
+};
 
 async function renderDestinationRoute(target) {
   if (!savedRouteLayer || !target) return;
