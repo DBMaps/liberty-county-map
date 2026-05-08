@@ -3406,6 +3406,7 @@ counter.textContent = "No live road hazards";
   const panel = document.createElement("div");
   panel.id = "gridlyHazardPanel";
   panel.className = "gridly-hazard-panel";
+  panel.dataset.scrollTarget = "hazard-choice-grid";
   panel.innerHTML = `
     <div class="hazard-panel-header">
       <strong>Report Road Hazard</strong>
@@ -4942,10 +4943,6 @@ function bindEvents() {
       if (btn.id === "mobileCommuteRouteBtn" && window.matchMedia("(max-width: 1100px)").matches) {
         event.preventDefault();
         const topAction = btn.dataset.topCtaAction || "";
-        if (topAction === "open-hazard-picker") {
-          handleReportNearMe("mobile_top_cta_report");
-          return;
-        }
         if (topAction === "open-reroute-plan") {
           routeNavSection("map");
           return;
@@ -9010,8 +9007,10 @@ function injectMobileCTACleanupStyles() {
       }
       .hazard-choice-grid {
         min-height: 0 !important;
+        height: 100% !important;
         max-height: 100% !important;
         overflow-y: auto !important;
+        overscroll-behavior: contain !important;
         -webkit-overflow-scrolling: touch !important;
         padding-bottom: 8px !important;
       }

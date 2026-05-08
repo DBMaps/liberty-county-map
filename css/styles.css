@@ -236,7 +236,7 @@ button {
   border: 1px solid rgba(255, 209, 102, 0.35);
   background: rgba(255, 209, 102, 0.12);
   border-radius: 12px;
-  padding: 10px 12px;
+  padding: 8px 11px;
   color: #ffe4a4;
   font-size: 0.88rem;
   line-height: 1.35;
@@ -653,7 +653,7 @@ select:focus {
 .report-mode-banner {
   display: none;
   margin-bottom: 9px;
-  padding: 10px 12px;
+  padding: 8px 11px;
   border-radius: 16px;
   border: 1px solid rgba(67, 230, 160, 0.34);
   background: rgba(67, 230, 160, 0.1);
@@ -1063,8 +1063,8 @@ body.route-setup-open #gridlyHazardLauncher {
   }
 
   .route-setup-grid-mobile input {
-    min-height: 42px;
-    padding: 10px 12px;
+    min-height: 38px;
+    padding: 8px 11px;
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.07);
     border-color: rgba(255, 255, 255, 0.16);
@@ -1072,7 +1072,7 @@ body.route-setup-open #gridlyHazardLauncher {
 
   .route-setup-grid-mobile .primary-btn,
   .route-setup-grid-mobile .secondary-btn {
-    min-height: 42px;
+    min-height: 38px;
   }
 
   .route-setup-grid-mobile .primary-btn {
@@ -1634,7 +1634,7 @@ body.modal-open {
   .habit-status-strip {
     margin-top: 4px;
     padding: 6px 9px;
-    border-radius: 11px;
+    border-radius: 10px;
     gap: 3px;
   }
 
@@ -2090,7 +2090,7 @@ body.modal-open {
   .mobile-premium-header {
     display: grid;
     gap: 9px;
-    padding: 10px 12px;
+    padding: 8px 11px;
     border-radius: 20px;
     border: 1px solid rgba(128, 177, 247, 0.3);
     background: linear-gradient(140deg, rgba(12, 23, 40, 0.96), rgba(10, 18, 34, 0.97));
@@ -2273,8 +2273,8 @@ body.modal-open {
     bottom: 86px;
     border-radius: 16px;
     background: linear-gradient(150deg, rgba(8, 15, 28, 0.8), rgba(9, 17, 30, 0.74));
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
 
   .mobile-floating-action-dock {
@@ -2625,7 +2625,7 @@ body.modal-open {
     width: 100%;
     min-height: 48px;
     padding: 12px;
-    border-radius: 11px;
+    border-radius: 10px;
     font-size: 0.88rem;
   }
 
@@ -2636,7 +2636,7 @@ body.modal-open {
   }
 
   .smart-alerts-confirmation {
-    min-height: 40px;
+    min-height: 38px;
     margin-top: 10px;
     font-size: 0.84rem;
   }
@@ -2878,7 +2878,7 @@ body.modal-open {
   }
 
   .drawer-summary {
-    min-height: 38px;
+    min-height: 34px;
     align-items: center;
   }
 }
@@ -3824,7 +3824,7 @@ h2 { font-weight: 820; letter-spacing: -0.025em; }
   .live-chip { top: 14px; right: 14px; }
   .county-chip { display: none; }
   .top-nav { gap: 8px; padding: 4px; border-radius: 18px; background: rgba(255,255,255,0.05); }
-  .nav-btn { padding: 10px 12px; font-size: .8rem; }
+  .nav-btn { padding: 8px 11px; font-size: .8rem; }
 }
 
 .place-name-modal {
@@ -3940,9 +3940,9 @@ h2 { font-weight: 820; letter-spacing: -0.025em; }
   left: 16px;
   right: 16px;
   border-radius: 14px;
-  padding: 10px 12px;
+  padding: 8px 11px;
   background: linear-gradient(140deg, rgba(10, 16, 24, 0.82), rgba(7, 13, 20, 0.58));
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(10px);
 }
 
 .map-header {
@@ -5275,7 +5275,7 @@ body.modal-open {
     display: flex;
     margin: 0 0 8px;
     border-radius: 14px;
-    padding: 9px 11px;
+    padding: 8px 10px;
   }
 
   .map-ux-strip {
@@ -5384,7 +5384,7 @@ body.modal-open {
     border-radius: 16px;
   }
   .desktop-route-watch-strip {
-    padding: 9px 11px;
+    padding: 8px 10px;
     border-radius: 12px;
   }
   .desktop-route-watch-strip .secondary-btn { display: none; }
@@ -5940,7 +5940,7 @@ body.modal-open {
   }
 
   .mobile-bottom-nav-btn {
-    min-height: 42px;
+    min-height: 38px;
     padding: 10px 6px;
   }
 
@@ -6125,7 +6125,7 @@ body.modal-open {
     left: 12px;
     right: auto;
     max-width: min(92%, 920px);
-    padding: 10px 12px;
+    padding: 8px 11px;
     gap: 8px;
     border-radius: 16px;
     border-color: rgba(151, 215, 255, 0.28);
@@ -6166,7 +6166,7 @@ body.modal-open {
     justify-content: flex-end;
     gap: 4px;
     padding: 5px 7px;
-    border-radius: 11px;
+    border-radius: 10px;
     background: rgba(8, 14, 21, 0.7);
     backdrop-filter: blur(10px);
   }
@@ -6190,13 +6190,13 @@ body.modal-open {
 
   .desktop-command-panel .panel-card {
     margin: 0;
-    border-radius: 11px;
+    border-radius: 10px;
     box-shadow: none;
   }
 
   .desktop-command-panel .drawer-summary {
     padding: 8px 10px;
-    min-height: 38px;
+    min-height: 34px;
   }
 
   .desktop-command-panel .drawer-body {
@@ -6262,7 +6262,7 @@ body.modal-open {
 }
 
 #map .leaflet-control-layers-expanded {
-  padding: 10px 12px;
+  padding: 8px 11px;
   min-width: 148px;
 }
 
@@ -6423,7 +6423,7 @@ body.modal-open {
   }
 
   .map-card .map-tools-overlay .geo-filter-pill {
-    min-height: 38px;
+    min-height: 34px;
     padding: 8px 10px;
     font-size: 0.78rem;
     line-height: 1.15;
@@ -6515,7 +6515,7 @@ body.modal-open {
 
   .desktop-route-watch-strip {
     margin: 0;
-    padding: 10px 12px;
+    padding: 8px 11px;
     border-radius: 13px;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
@@ -6610,7 +6610,7 @@ body.modal-open {
   .map-card .geo-filter-status {
     margin: 0;
     padding: 8px 11px;
-    border-radius: 11px;
+    border-radius: 10px;
   }
 }
 
@@ -6819,7 +6819,7 @@ body.modal-open {
 
   .top-nav .nav-btn,
   .top-nav .top-command-btn {
-    min-height: 42px;
+    min-height: 38px;
     padding: 10px 16px;
     font-size: 0.84rem;
     letter-spacing: 0.02em;
@@ -6876,8 +6876,8 @@ body.modal-open {
   }
 
   .desktop-route-watch-actions .compact-btn {
-    min-height: 38px;
-    border-radius: 11px;
+    min-height: 34px;
+    border-radius: 10px;
     padding: 8px 12px;
     border-color: rgba(122, 160, 201, 0.25);
     background: rgba(8, 22, 36, 0.48);
@@ -7160,7 +7160,7 @@ body.modal-open {
     width: auto;
     display: grid;
     gap: 8px;
-    padding: 10px 12px;
+    padding: 8px 11px;
     border-radius: 14px;
     border: 1px solid rgba(115, 155, 196, 0.24);
     background: rgba(8, 19, 33, 0.78);
@@ -7214,7 +7214,7 @@ body.modal-open {
 .route-inline-field select{min-height:36px;border-radius:10px;padding:6px 10px;background:rgba(8,22,36,.85);color:#eaf4ff;border:1px solid rgba(126,184,232,.35)}
 .desktop-route-watch-actions{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
 .route-watch-start-btn{
-  min-height: 38px;
+  min-height: 34px;
   border: 1px solid rgba(177, 231, 255, 0.78);
   background: linear-gradient(135deg, #1f7eb1 0%, #26b6d9 52%, #1278a9 100%);
   color: #f4fbff;
@@ -7456,8 +7456,8 @@ body.modal-open {
   .mobile-route-priority-actions .secondary-btn,
   .mobile-map-preview-card .secondary-btn {
     width: 100%;
-    min-height: 42px;
-    padding: 10px 12px;
+    min-height: 38px;
+    padding: 8px 11px;
   }
 
   .mobile-route-priority-actions .secondary-btn svg {
@@ -7549,7 +7549,7 @@ body.modal-open {
 
   .desktop-route-watch-actions .compact-btn,
   .desktop-route-watch-actions .route-watch-start-btn {
-    min-height: 42px;
+    min-height: 38px;
   }
 
   /* hide nonessential verbose metrics on mobile */
@@ -7579,7 +7579,7 @@ body.modal-open {
   }
 
   .mobile-bottom-nav-btn {
-    min-height: 40px;
+    min-height: 38px;
     padding: 8px 4px;
   }
 
@@ -8086,7 +8086,7 @@ body.modal-open {
   }
 
   .mobile-dock-btn {
-    min-height: 38px;
+    min-height: 34px;
     padding: 8px 10px;
     border-radius: 10px;
     font-size: 0.72rem;
@@ -8186,7 +8186,7 @@ body.modal-open {
     background: linear-gradient(148deg, rgba(9, 23, 40, 0.82), rgba(5, 13, 25, 0.88));
     backdrop-filter: blur(15px) saturate(138%);
     box-shadow: 0 10px 26px rgba(2, 8, 18, 0.48), inset 0 1px 0 rgba(189, 226, 255, 0.12);
-    padding: 10px 12px;
+    padding: 8px 11px;
   }
 
   .mobile-live-command strong { font-size: 1.06rem; letter-spacing: .01em; }
@@ -8290,7 +8290,7 @@ body.modal-open {
   }
 
   .report-drawer-summary {
-    padding: 10px 12px;
+    padding: 8px 11px;
     min-height: 58px;
   }
 
@@ -8348,8 +8348,8 @@ body.modal-open {
   body[data-mobile-mode] .route-setup-modal-card {
     width: 100%;
     max-width: 460px;
-    border-radius: 16px 16px 0 0;
-    padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
+    border-radius: 14px 14px 0 0;
+    padding: 10px 10px calc(10px + env(safe-area-inset-bottom));
     max-height: min(74dvh, 560px);
     box-shadow: 0 -16px 34px rgba(2, 8, 18, 0.58);
   }
@@ -8590,7 +8590,7 @@ body.modal-open {
     position: fixed;
     --mobile-overlay-gutter: 10px;
     --mobile-brand-top: calc(env(safe-area-inset-top, 0px) + 8px);
-    --mobile-brand-height: 38px;
+    --mobile-brand-height: 34px;
     --mobile-overlay-gap: 8px;
     left: var(--mobile-overlay-gutter);
     right: var(--mobile-overlay-gutter);
@@ -9061,15 +9061,15 @@ body.modal-open {
   .smart-alerts-modal-card,
   .gridly-mobile-route-quick-panel,
   .gridly-hazard-panel {
-    border-radius: 16px 16px 0 0;
+    border-radius: 14px 14px 0 0;
     border-width: 1px;
-    box-shadow: 0 -14px 34px rgba(0,0,0,0.35);
-    backdrop-filter: blur(12px);
+    box-shadow: 0 -10px 24px rgba(0,0,0,0.28);
+    backdrop-filter: blur(10px);
   }
 
   .route-setup-modal-card {
-    padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
-    max-height: min(84svh, 620px);
+    padding: 10px 10px calc(10px + env(safe-area-inset-bottom));
+    max-height: min(82svh, 600px);
   }
 
   .route-setup-modal-head h2,
@@ -9083,10 +9083,10 @@ body.modal-open {
   .route-modal-close,
   #closeSmartAlertsModalBtn,
   .hazard-panel-header button {
-    width: 38px;
-    height: 38px;
-    min-width: 38px;
-    min-height: 38px;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    min-height: 34px;
     border-radius: 999px;
     border: 1px solid rgba(255,255,255,0.22);
     background: rgba(255,255,255,0.08);
@@ -9097,8 +9097,8 @@ body.modal-open {
   .smart-alerts-modal-card input,
   .smart-alerts-modal-card select {
     border-radius: 10px;
-    min-height: 40px;
-    padding: 9px 11px;
+    min-height: 38px;
+    padding: 8px 10px;
     border: 1px solid rgba(255,255,255,0.2);
     background: rgba(255,255,255,0.06);
   }
@@ -9110,8 +9110,8 @@ body.modal-open {
   .gridly-mobile-route-quick-panel .primary-btn,
   .gridly-mobile-route-quick-panel .secondary-btn,
   .hazard-panel-placement-actions button {
-    min-height: 42px;
-    border-radius: 11px;
-    padding: 10px 12px;
+    min-height: 38px;
+    border-radius: 10px;
+    padding: 8px 11px;
   }
 }
