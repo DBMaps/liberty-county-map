@@ -2936,6 +2936,17 @@ window.closeHazardPanel = function () {
   document.getElementById("gridlyHazardPanel")?.classList.remove("visible");
 };
 
+function resetQuickHazardReportState() {
+  pendingHazardPlacement = null;
+  selectedQuickHazardType = null;
+  document.querySelectorAll("#gridlyHazardPanel .hazard-choice-grid button").forEach((btn) => {
+    btn.classList.remove("selected");
+  });
+  const useMyLocationBtn = document.querySelector('#gridlyHazardPanel [data-action="submit-hazard"]');
+  useMyLocationBtn?.classList.remove("selected", "active", "armed");
+  useMyLocationBtn?.removeAttribute("aria-pressed");
+}
+
 window.submitHazardNearMe = function (hazardType) {
   const selectedType = hazardType || selectedQuickHazardType || pendingHazardPlacement;
   if (!selectedType) {
@@ -2957,14 +2968,14 @@ window.submitHazardNearMe = function (hazardType) {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
 
-      await createSharedHazardReport(selectedType, lat, lng, "gps hazard report");
+      const submitted = await createSharedHazardReport(selectedType, lat, lng, "gps hazard report");
+      if (!submitted) return;
 
       if (map) {
         map.setView([lat, lng], 16);
       }
 
-      pendingHazardPlacement = null;
-      selectedQuickHazardType = null;
+      resetQuickHazardReportState();
       closeHazardPanel();
     },
     () => {
@@ -2991,16 +3002,16 @@ async function handleHazardPlacementMapClick(event) {
   const lng = event?.latlng?.lng;
   if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
   const selectedType = pendingHazardPlacement;
-  pendingHazardPlacement = null;
-  selectedQuickHazardType = null;
+  const submitted = await createSharedHazardReport(selectedType, lat, lng, "tap map placement");
+  if (!submitted) return;
+  resetQuickHazardReportState();
   closeHazardPanel();
-  await createSharedHazardReport(selectedType, lat, lng, "tap map placement");
 }
 
 async function createSharedHazardReport(hazardType, lat, lng, confidence, locationName = "") {
   if (!supabaseClient) {
     setConfirmation("Live hazard sync is unavailable.", "error");
-    return;
+    return false;
   }
 
   const copy = HAZARD_TYPES[hazardType] || HAZARD_TYPES.other_hazard;
@@ -3030,14 +3041,16 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
 
     if (error) throw error;
 
-    setConfirmation(`${copy.icon} ${copy.label} hazard report shared.`, "success");
+    setConfirmation(`${copy.label} report shared.`, "success");
     setSync("Hazard report shared");
 
     await runPostSubmitRefresh();
+    return true;
   } catch (error) {
     console.error("Gridly hazard insert failed:", error);
     setConfirmation(`Hazard report failed: ${error.message || "permission denied"}`, "error");
     setSync("Hazard report failed");
+    return false;
   }
 }
 window.confirmHazardStillThere = async function (hazardType, lat, lng) {
