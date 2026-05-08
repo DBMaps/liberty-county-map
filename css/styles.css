@@ -1039,11 +1039,11 @@ body.route-setup-open #gridlyHazardLauncher {
 
   .route-setup-modal-card {
     width: min(520px, calc(100% - 10px));
-    padding: 14px 14px calc(12px + env(safe-area-inset-bottom));
+    padding: 12px 12px calc(10px + env(safe-area-inset-bottom));
     max-height: min(82svh, 620px);
     overflow-y: auto;
     overscroll-behavior: contain;
-    border-radius: 18px 18px 0 0;
+    border-radius: 16px 16px 0 0;
     border-color: rgba(142, 204, 255, 0.28);
     background: linear-gradient(180deg, rgba(10, 19, 31, 0.97), rgba(6, 12, 21, 0.98));
   }
@@ -1053,8 +1053,8 @@ body.route-setup-open #gridlyHazardLauncher {
   }
 
   .route-setup-grid-mobile {
-    margin-top: 10px;
-    gap: 9px;
+    margin-top: 8px;
+    gap: 8px;
   }
 
   .route-setup-grid-mobile label {
@@ -1063,16 +1063,19 @@ body.route-setup-open #gridlyHazardLauncher {
   }
 
   .route-setup-grid-mobile input {
-    min-height: 38px;
-    padding: 8px 11px;
-    border-radius: 12px;
+    min-height: 36px;
+    padding: 7px 10px;
+    border-radius: 10px;
     background: rgba(255, 255, 255, 0.07);
     border-color: rgba(255, 255, 255, 0.16);
   }
 
   .route-setup-grid-mobile .primary-btn,
   .route-setup-grid-mobile .secondary-btn {
-    min-height: 38px;
+    min-height: 36px;
+    padding: 7px 10px;
+    border-radius: 10px;
+    font-size: 0.84rem;
   }
 
   .route-setup-grid-mobile .primary-btn {
@@ -2481,12 +2484,15 @@ body.modal-open {
 
   .mobile-alerts-panel {
     display: none;
+    padding: 14px;
+    margin-bottom: 12px;
+    border-radius: 16px;
   }
 
   .report-card {
     grid-template-columns: 1fr;
-    padding: 14px;
-    border-radius: 24px;
+    padding: 12px;
+    border-radius: 18px;
   }
 
   .report-drawer-summary {
@@ -2500,7 +2506,7 @@ body.modal-open {
 
   .report-tools {
     grid-template-columns: 1fr;
-    gap: 9px;
+    gap: 8px;
   }
 
   .report-copy h2 {
@@ -2508,7 +2514,9 @@ body.modal-open {
   }
 
   .report-copy p {
-    margin-top: 8px;
+    margin-top: 6px;
+    line-height: 1.35;
+    font-size: 0.86rem;
   }
 
   .confirmation-box,
@@ -2518,6 +2526,7 @@ body.modal-open {
 
   .report-buttons {
     display: grid;
+    gap: 8px;
   }
 
   .share-card,
@@ -2528,6 +2537,10 @@ body.modal-open {
   .primary-btn,
   .secondary-btn {
     width: 100%;
+    min-height: 38px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 0.84rem;
   }
 
   .compact-btn {
@@ -2612,8 +2625,9 @@ body.modal-open {
   .smart-alerts-modal-card {
     width: calc(100% - 14px);
     margin-top: 10px;
-    border-radius: 16px;
-    padding: 12px;
+    border-radius: 14px;
+    padding: 10px;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.42);
   }
 
   .smart-alerts-subtitle {
@@ -2623,10 +2637,10 @@ body.modal-open {
 
   .smart-alert-option {
     width: 100%;
-    min-height: 48px;
-    padding: 12px;
+    min-height: 42px;
+    padding: 9px 10px;
     border-radius: 10px;
-    font-size: 0.88rem;
+    font-size: 0.84rem;
   }
 
   .smart-alert-options-grid {
@@ -2636,9 +2650,9 @@ body.modal-open {
   }
 
   .smart-alerts-confirmation {
-    min-height: 38px;
-    margin-top: 10px;
-    font-size: 0.84rem;
+    min-height: 30px;
+    margin-top: 8px;
+    font-size: 0.8rem;
   }
 
   #gridlyBetaLaunchWrap {
