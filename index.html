@@ -146,7 +146,7 @@
       </article>
 
       <div class="mobile-home-cards" aria-label="Today quick view">
-        <article class="mobile-home-card mobile-route-decision-card">
+        <article class="mobile-home-card mobile-route-decision-card mobile-priority-card">
           <span>Route Decision</span>
           <strong id="delayRisk">Morning Commute Watch</strong>
           <p id="delayReason">Gridly is scanning nearby rail crossings and live reports to guide your next move.</p>
@@ -156,7 +156,7 @@
           </div>
         </article>
 
-        <article class="mobile-home-card mobile-fast-report-card live-status-card">
+        <article class="mobile-home-card mobile-fast-report-card live-status-card mobile-priority-card">
           <span>Fast Report</span>
           <strong>Report Hazard Fast</strong>
           <p>Share a live delay in seconds so nearby drivers can reroute quickly.</p>
@@ -290,6 +290,14 @@
 
     <section class="command-center" id="mapSection">
       <section class="map-card">
+        <article class="mobile-live-command" aria-label="Live commute status">
+          <div class="mobile-live-command-copy">
+            <span class="eyebrow">Live Commute State</span>
+            <strong id="mobileLiveRouteStatus">Route Watch Active</strong>
+            <p id="mobileLiveRouteMeta">Checking route clarity, delay risk, and reroute options.</p>
+          </div>
+          <button class="secondary-btn compact-btn" id="mobileLiveRouteActionBtn" type="button">View Alternate</button>
+        </article>
         <article class="desktop-route-watch-strip" aria-label="Saved route watch status">
           <div class="route-watch-strip-copy">
             <div class="route-watch-heading-row">
@@ -334,6 +342,11 @@
         </div>
 
         <div class="map-frame">
+          <div class="mobile-map-floating-chips" aria-label="Map intelligence chips">
+            <button class="map-floating-chip" type="button" data-geo-filter="active-delays">Delay Risk</button>
+            <button class="map-floating-chip" type="button" data-geo-filter="nearby">Nearby Live</button>
+            <button class="map-floating-chip" type="button" data-geo-filter="all">All Signals</button>
+          </div>
           <div class="map-tools-overlay" aria-label="Map controls">
             <div class="map-toolbar-main-row">
               <p class="map-view-label">Map View</p>
@@ -488,6 +501,11 @@
   </main>
 
   <button class="mobile-sticky-report" id="mobileReportBtn">🚨 Report Near Me</button>
+  <div class="mobile-floating-action-dock" aria-label="Quick commute actions">
+    <button class="mobile-dock-btn report" type="button" id="mobileDockReportBtn">Report</button>
+    <button class="mobile-dock-btn route" type="button" data-section-jump="map">Route</button>
+    <button class="mobile-dock-btn alerts" type="button" data-section-jump="alerts">Alerts</button>
+  </div>
 
 
   <div class="route-setup-modal" id="routeSetupModal" hidden>

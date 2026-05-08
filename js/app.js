@@ -450,6 +450,10 @@ function hydrateElements() {
     "mobileCommuteRouteBtn",
     "mobileCrossingReportBtn",
     "mobileHazardReportBtn",
+    "mobileDockReportBtn",
+    "mobileLiveRouteActionBtn",
+    "mobileLiveRouteStatus",
+    "mobileLiveRouteMeta",
     "mapReportShortcutBtn",
     "destinationHomeBtn",
     "destinationWorkBtn",
@@ -3679,6 +3683,8 @@ function bindEvents() {
   els.headerShareGridlyBtn?.addEventListener("click", shareGridly);
 
   els.mobileReportBtn?.addEventListener("click", handleSmartReportButton);
+  els.mobileDockReportBtn?.addEventListener("click", handleSmartReportButton);
+  els.mobileLiveRouteActionBtn?.addEventListener("click", () => routeNavSection("map"));
   els.mobileQuickReportBtn?.addEventListener("click", handleReportNearMe);
   els.mobileQuickReportSmallBtn?.addEventListener("click", handleReportNearMe);
   els.mobileQuickClearedBtn?.addEventListener("click", () => {
@@ -4157,6 +4163,9 @@ function bindEvents() {
       if (logMessage) console.log(logMessage);
       applyGeoFilterFromPill(filterKey);
     });
+  });
+  document.querySelectorAll(".map-floating-chip[data-geo-filter]").forEach((btn) => {
+    btn.addEventListener("click", () => applyGeoFilterFromPill(btn.dataset.geoFilter || "all"));
   });
 
   els.editSetupBtn?.addEventListener("click", () => {
@@ -6455,6 +6464,8 @@ function updateRouteIntelligence(nearest = []) {
   if (els.routeRecommendation) {
     els.routeRecommendation.classList.add("route-watch-recommendation-emphasis");
   }
+  safeText("mobileLiveRouteStatus", `${els.routeStatus?.textContent || "Route Watch Active"} · ${els.routeEta?.textContent || "ETA pending"}`);
+  safeText("mobileLiveRouteMeta", els.routeRecommendation?.textContent || "Review live route intelligence and alternates.");
   renderDesktopRouteWatchMetrics({
     freshness: routeIsMonitoring ? freshnessTier : "Unknown",
     reportsNearRoute: routeIsMonitoring ? `${routeHazard.nearbyReports.length} near route` : "0 near route",
