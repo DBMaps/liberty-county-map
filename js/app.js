@@ -216,6 +216,7 @@ let osrmRequestStarted = false;
 let osrmResponseReceived = false;
 let routeRenderAttempted = false;
 let routeRenderSucceeded = false;
+let lastRoutePanelCloseReason = null;
 let lastRoutePipelineStep = "idle";
 let lastRouteEarlyReturnReason = null;
 let lastRouteButtonClickSource = "";
@@ -3615,8 +3616,20 @@ async function handleRouteQuickPanelAction(action, event, actionEl) {
     return;
   }
 
-  if (action === "view-route-quick") routeNavSection("map");
-  document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
+  const routePreviewWasSuccessful = Boolean(routeRenderSucceeded && !lastRouteEarlyReturnReason);
+  if (action === "view-route-quick") {
+    routeNavSection("map");
+    if (routePreviewWasSuccessful) {
+      document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
+      lastRoutePanelCloseReason = "view_route_success";
+    }
+    return;
+  }
+
+  if (action === "start-route-watch-quick" && routePreviewWasSuccessful) {
+    document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
+    lastRoutePanelCloseReason = "start_route_watch_success";
+  }
 }
 
 function attachRouteQuickPanelDelegatedClickHandlers() {
@@ -6689,6 +6702,7 @@ function attachRouteQuickPanelDebugGlobal() {
       osrmResponseReceived: Boolean(osrmResponseReceived),
       routeRenderAttempted: Boolean(routeRenderAttempted),
       routeRenderSucceeded: Boolean(routeRenderSucceeded),
+      lastRoutePanelCloseReason,
       lastRoutePipelineStep,
       lastRouteEarlyReturnReason,
       directListenerAttached: Boolean(routeQuickDirectListenerAttached),
