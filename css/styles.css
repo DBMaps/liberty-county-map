@@ -9259,3 +9259,17 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button{font-size:.75r
 .manage-places-group-utility{opacity:.82}
 .manage-places-group-utility .manage-places-group-label{font-size:.64rem}
 #mobileResetPlacesBtn{font-size:.72rem;padding:8px 10px}
+
+/* V47A progressive disclosure and control consolidation */
+.mobile-live-brand-main{gap:0}
+.mobile-live-brand-status{margin-left:auto}
+body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle{background:rgba(9,16,27,.54);border-color:rgba(255,255,255,.18);box-shadow:0 4px 14px rgba(2,8,18,.2)}
+body[data-mobile-mode] #map .gridly-mobile-layer-menu-list{background:rgba(9,16,27,.66);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(10px)}
+body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button{background:transparent;border:0;border-bottom:1px solid rgba(255,255,255,.08)}
+body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button:last-child{border-bottom:0}
+.manage-places-group{display:grid;gap:10px}
+.manage-places-group-utility{margin-top:6px;opacity:.85}
+.manage-places-group-utility .secondary-btn{justify-self:start}
+.route-setup-grid-mobile #managePlacesSlotsGroup .manage-places-group-label,
+.route-setup-grid-mobile #managePlacesSourceGroup .manage-places-group-label,
+.route-setup-grid-mobile #managePlacesSaveGroup .manage-places-group-label{font-size:.68rem;letter-spacing:.12em;color:rgba(194,224,242,.72)}
