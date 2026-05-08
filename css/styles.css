@@ -2594,9 +2594,12 @@ body.modal-open {
 
 
   #gridlyHazardLauncher,
-  #gridlyHazardCounter,
-  #gridlyHazardPanel {
+  #gridlyHazardCounter {
     display: none !important;
+  }
+
+  #gridlyHazardPanel.visible {
+    display: block !important;
   }
 
   .app-footer {
