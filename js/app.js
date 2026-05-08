@@ -1869,6 +1869,10 @@ function installLayerPickerDebugDiagnostics() {
     const zoomInRect = zoomIn?.getBoundingClientRect?.()?.toJSON?.() || null;
     const zoomOutRect = zoomOut?.getBoundingClientRect?.()?.toJSON?.() || null;
     const toggleRect = toggleNode?.getBoundingClientRect?.()?.toJSON?.() || null;
+    const layerButtonBelowZoom = Boolean(toggleRect && zoomOutRect && toggleRect.top >= zoomOutRect.bottom);
+    const verticalGapBetweenZoomAndLayer = toggleRect && zoomOutRect
+      ? Math.round((toggleRect.top - zoomOutRect.bottom) * 100) / 100
+      : null;
     return {
       activeBaseLayerName,
       menuExists: Boolean(menuRoot),
@@ -1884,6 +1888,8 @@ function installLayerPickerDebugDiagnostics() {
       zoomControlRect,
       zoomInRect,
       zoomOutRect,
+      layerButtonBelowZoom,
+      verticalGapBetweenZoomAndLayer,
       toggleOverlapsZoomControl: rectsOverlap(toggleRect, zoomControlRect),
       toggleOverlapsZoomIn: rectsOverlap(toggleRect, zoomInRect),
       toggleOverlapsZoomOut: rectsOverlap(toggleRect, zoomOutRect),
