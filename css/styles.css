@@ -6919,3 +6919,115 @@ body.modal-open {
 .gridly-route-endpoint-label::before {
   display: none;
 }
+
+/* V35 mobile operational UX polish */
+@media (max-width: 700px) {
+  .app-shell {
+    margin-bottom: 122px;
+  }
+
+  .map-card {
+    padding: 10px;
+  }
+
+  .map-card .map-frame {
+    min-height: 62vh;
+    border-radius: 18px;
+  }
+
+  .map-card .map-tools-overlay {
+    inset: 10px 10px auto 10px;
+    gap: 8px;
+  }
+
+  .map-card .map-tools-overlay .geo-filter-shell,
+  .map-card .map-tools-overlay .desktop-map-legend-row {
+    gap: 5px;
+  }
+
+  .map-card .map-tools-overlay .legend-pill,
+  .map-card .map-tools-overlay .geo-filter-pill,
+  .mobile-bottom-nav-btn,
+  #mobileReportBtn.mobile-sticky-report,
+  .mobile-report-mode-actions .secondary-btn,
+  .report-buttons button {
+    min-height: 44px;
+  }
+
+  .desktop-route-watch-strip {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .route-watch-strip-copy strong {
+    font-size: 1.08rem;
+    line-height: 1.3;
+  }
+
+  .route-watch-metrics {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .route-watch-metrics span {
+    padding: 6px 8px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .report-drawer {
+    margin-top: 8px;
+    border: 1px solid rgba(132, 184, 255, 0.24);
+    border-radius: 18px;
+    overflow: hidden;
+    background: linear-gradient(160deg, rgba(8, 18, 31, 0.96), rgba(6, 14, 24, 0.96));
+  }
+
+  .report-drawer-summary {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: linear-gradient(180deg, rgba(12, 24, 41, 0.98), rgba(9, 20, 34, 0.95));
+    border-bottom: 1px solid rgba(130, 179, 246, 0.2);
+  }
+
+  .report-drawer-summary h2 {
+    font-size: 0.96rem;
+    line-height: 1.28;
+  }
+
+  .report-drawer .report-copy,
+  .report-drawer .report-tools,
+  .report-drawer .mobile-report-mode-card {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .confirmation-box {
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+
+  .report-tools-advanced > summary {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  #mobileReportBtn.mobile-sticky-report {
+    left: 10px;
+    right: 10px;
+    bottom: calc(76px + env(safe-area-inset-bottom));
+    width: auto;
+    border-radius: 14px;
+  }
+
+  .mobile-bottom-nav {
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+  }
+}
