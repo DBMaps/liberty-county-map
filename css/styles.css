@@ -9495,6 +9495,16 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
     z-index: 1300;
   }
 
+  body[data-mobile-mode] #map .leaflet-control-zoom a {
+    width: 38px;
+    height: 38px;
+    line-height: 38px;
+    background: rgba(10, 13, 16, 0.62) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    box-shadow: 0 4px 12px rgba(2, 8, 18, 0.22) !important;
+    color: #c5d5e7 !important;
+  }
+
   body[data-mobile-mode] #map .gridly-mobile-layer-menu {
     top: auto;
     right: 8px;
@@ -9531,8 +9541,8 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-list {
     position: absolute;
     top: auto;
-    right: calc(100% + 4px);
-    bottom: 0;
+    right: 0;
+    bottom: calc(100% + 6px);
     margin-top: 0;
     width: 112px;
     min-width: unset;
@@ -9553,11 +9563,15 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
     bottom: calc(6px + env(safe-area-inset-bottom, 0px));
     max-width: min(64vw, 230px);
     border-radius: 8px;
-    padding: 3px 6px;
+    padding: 2px 5px;
     font-size: 10px;
-    line-height: 1.2;
-    background: rgba(8, 12, 20, 0.74);
-    backdrop-filter: blur(4px);
+    line-height: 1.15;
+    opacity: 0.78;
+    color: rgba(212, 230, 249, 0.72) !important;
+    background: rgba(8, 12, 20, 0.56);
+    border: 1px solid rgba(140, 192, 236, 0.14);
+    box-shadow: none !important;
+    backdrop-filter: blur(2px);
   }
 
   #managePlacesSaveGroup {
