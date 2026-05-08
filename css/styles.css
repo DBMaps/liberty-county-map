@@ -8844,6 +8844,47 @@ body.modal-open {
 
 /* V43C — mobile map layer picker tap + stacking fixes */
 @media (max-width: 760px) {
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu {
+    position: absolute;
+    right: 12px;
+    bottom: 96px;
+    z-index: 10070;
+    display: none;
+    gap: 6px;
+  }
+
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-mobile-visible {
+    display: grid;
+  }
+
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle,
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button {
+    border: 1px solid rgba(173, 216, 255, 0.24);
+    background: rgba(9, 16, 25, 0.82);
+    color: #d7e7f7;
+    border-radius: 10px;
+    min-height: 34px;
+    padding: 8px 10px;
+    font-size: 0.74rem;
+    font-weight: 700;
+  }
+
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu-list {
+    display: grid;
+    gap: 6px;
+  }
+
+  body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button.active {
+    border-color: rgba(141, 208, 255, 0.66);
+    box-shadow: inset 0 0 0 1px rgba(221, 242, 255, 0.26);
+  }
+
+  body[data-mobile-mode] #map .leaflet-control-layers.gridly-mobile-layer-control-hidden,
+  body[data-mobile-mode] #map .leaflet-control-layers-expanded.gridly-mobile-layer-control-hidden {
+    display: none !important;
+    pointer-events: none !important;
+  }
+
   body[data-mobile-mode] #map .leaflet-control-container,
   body[data-mobile-mode] #map .leaflet-top,
   body[data-mobile-mode] #map .leaflet-right,

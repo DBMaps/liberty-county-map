@@ -1394,6 +1394,11 @@ function initMap() {
 }
 
 function installLayerPickerDebugDiagnostics() {
+  const isMobileLayerMenuMode = () => {
+    const isMobileViewport = window.matchMedia?.("(max-width: 767px)")?.matches;
+    const isCoarsePointer = window.matchMedia?.("(pointer: coarse)")?.matches;
+    return Boolean(isMobileViewport || isCoarsePointer);
+  };
   const baseLayerNames = () => Object.keys(mapBaseLayersByName || {});
   const normalizeLayerName = (name) => String(name || "").trim();
 
@@ -1429,10 +1434,6 @@ function installLayerPickerDebugDiagnostics() {
     const checkedInput = checkedIndex >= 0 ? inputs[checkedIndex] : null;
     const checkedLabel = checkedInput?.closest("label");
     return resolveLayerNameFromLabel(checkedLabel, checkedIndex);
-  };
-
-  const logManualStandardTapDiagnostic = (payload) => {
-    console.log("[Gridly][LayerPicker][ManualStandardTap]", payload);
   };
 
   const isLayerPickerDebugEnabled = () => typeof window.gridlyLayerControlDebug === "function";
@@ -1498,6 +1499,67 @@ function installLayerPickerDebugDiagnostics() {
     return true;
   };
 
+  const installGridlyMobileLayerMenu = () => {
+    const controlContainer = document.querySelector("#map .leaflet-control-layers");
+    if (isMobileLayerMenuMode()) {
+      controlContainer?.classList?.add("gridly-mobile-layer-control-hidden");
+    } else {
+      controlContainer?.classList?.remove("gridly-mobile-layer-control-hidden");
+    }
+
+    let menuRoot = document.querySelector("#map .gridly-mobile-layer-menu");
+    if (!menuRoot) {
+      menuRoot = document.createElement("div");
+      menuRoot.className = "gridly-mobile-layer-menu";
+      menuRoot.innerHTML = `
+        <button type="button" class="gridly-mobile-layer-menu-toggle" aria-expanded="false" aria-haspopup="true">Layers</button>
+        <div class="gridly-mobile-layer-menu-list" hidden>
+          <button type="button" data-layer-name="Standard">Standard</button>
+          <button type="button" data-layer-name="Dark">Dark</button>
+          <button type="button" data-layer-name="Satellite">Satellite</button>
+        </div>
+      `;
+      const mapNode = document.getElementById("map");
+      mapNode?.appendChild(menuRoot);
+
+      const toggle = menuRoot.querySelector(".gridly-mobile-layer-menu-toggle");
+      const list = menuRoot.querySelector(".gridly-mobile-layer-menu-list");
+      const optionButtons = Array.from(menuRoot.querySelectorAll("button[data-layer-name]"));
+      const syncActiveState = () => {
+        optionButtons.forEach((button) => {
+          const isActive = button.dataset.layerName === activeBaseLayerName;
+          button.classList.toggle("active", isActive);
+          button.setAttribute("aria-pressed", String(isActive));
+        });
+      };
+      const closeMenu = () => {
+        list.hidden = true;
+        toggle.setAttribute("aria-expanded", "false");
+      };
+      const openMenu = () => {
+        list.hidden = false;
+        toggle.setAttribute("aria-expanded", "true");
+      };
+      toggle?.addEventListener("click", () => {
+        if (!isMobileLayerMenuMode()) return;
+        if (list.hidden) openMenu();
+        else closeMenu();
+      });
+      optionButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const layerName = button.dataset.layerName;
+          const didApply = applyBaseLayerByName(layerName, "gridly-mobile-menu");
+          syncActiveState();
+          if (didApply) closeMenu();
+        });
+      });
+      map?.on?.("baselayerchange", syncActiveState);
+      syncActiveState();
+    }
+
+    menuRoot.classList.toggle("is-mobile-visible", isMobileLayerMenuMode());
+  };
+
   const bindLayerOptionLogs = () => {
     const labels = Array.from(document.querySelectorAll("#map .leaflet-control-layers-base label"));
     if (!labels.length) return false;
@@ -1513,7 +1575,6 @@ function installLayerPickerDebugDiagnostics() {
       label.dataset.layerName = layerName;
       label.addEventListener("click", (event) => {
         const clickedLayer = resolveLayerNameFromLabel(label, index);
-        const isStandardTap = clickedLayer === "Standard";
         const diagnostic = {
           source: "label",
           rawClickedElement: event?.target?.tagName || null,
@@ -1528,11 +1589,12 @@ function installLayerPickerDebugDiagnostics() {
         diagnostic.result = applyBaseLayerByName(clickedLayer, "label-click");
         diagnostic.activeBaseLayerNameAfterApply = activeBaseLayerName;
         diagnostic.checkedInputAfterApply = getCheckedInputLayerName();
-        if (isStandardTap) logManualStandardTapDiagnostic(diagnostic);
+        if (!isMobileLayerMenuMode()) {
+          console.log("[Gridly][LayerPicker] label tap diagnostic", diagnostic);
+        }
       });
       input?.addEventListener("change", (event) => {
         const clickedLayer = resolveLayerNameFromLabel(label, index);
-        const isStandardTap = clickedLayer === "Standard";
         const diagnostic = {
           source: "input",
           rawClickedElement: event?.target?.tagName || null,
@@ -1547,7 +1609,9 @@ function installLayerPickerDebugDiagnostics() {
         diagnostic.result = applyBaseLayerByName(clickedLayer, "input-change");
         diagnostic.activeBaseLayerNameAfterApply = activeBaseLayerName;
         diagnostic.checkedInputAfterApply = getCheckedInputLayerName();
-        if (isStandardTap) logManualStandardTapDiagnostic(diagnostic);
+        if (!isMobileLayerMenuMode()) {
+          console.log("[Gridly][LayerPicker] input change diagnostic", diagnostic);
+        }
       });
     });
     return true;
@@ -1605,9 +1669,25 @@ function installLayerPickerDebugDiagnostics() {
     applyBaseLayerByName(name, "debug-helper");
     return window.gridlyLayerControlDebug();
   };
+  window.gridlyMobileLayerMenuDebug = function gridlyMobileLayerMenuDebug() {
+    const menuRoot = document.querySelector("#map .gridly-mobile-layer-menu");
+    const menuList = menuRoot?.querySelector(".gridly-mobile-layer-menu-list");
+    const buttons = Array.from(menuRoot?.querySelectorAll("button[data-layer-name]") || []);
+    return {
+      activeBaseLayerName,
+      menuExists: Boolean(menuRoot),
+      menuOpen: Boolean(menuList && !menuList.hidden),
+      buttons: buttons.map((button) => button.dataset.layerName),
+      standardButtonExists: Boolean(menuRoot?.querySelector('button[data-layer-name="Standard"]')),
+      darkButtonExists: Boolean(menuRoot?.querySelector('button[data-layer-name="Dark"]')),
+      satelliteButtonExists: Boolean(menuRoot?.querySelector('button[data-layer-name="Satellite"]'))
+    };
+  };
 
   bindLayerOptionLogs();
   setTimeout(bindLayerOptionLogs, 400);
+  installGridlyMobileLayerMenu();
+  window.addEventListener("resize", installGridlyMobileLayerMenu, { passive: true });
 }
 
 
