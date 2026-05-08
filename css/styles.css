@@ -9531,19 +9531,20 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-list {
     position: absolute;
     top: auto;
-    right: calc(100% + 8px);
+    right: calc(100% + 4px);
     bottom: 0;
     margin-top: 0;
-    min-width: 126px;
-    max-width: 152px;
+    width: 112px;
+    min-width: unset;
+    max-width: 118px;
     border-radius: 10px;
     z-index: 1315;
   }
 
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button {
-    min-height: 34px;
-    padding: 8px 10px;
-    font-size: 0.74rem;
+    min-height: 32px;
+    padding: 7px 8px;
+    font-size: 0.7rem;
   }
 
   body[data-mobile-mode] #map .leaflet-control-attribution {
@@ -9559,17 +9560,24 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
     backdrop-filter: blur(4px);
   }
 
+  #managePlacesSaveGroup {
+    width: 100% !important;
+    align-self: stretch !important;
+    grid-column: 1 / -1 !important;
+  }
+
   #managePlacesSaveGroup .destination-chip-row {
+    width: 100% !important;
     display: flex !important;
     flex-direction: row !important;
     align-items: stretch !important;
     gap: 8px !important;
-    width: 100% !important;
   }
 
   #managePlacesSaveGroup .primary-btn,
   #managePlacesSaveGroup #mobileResetPlacesBtn {
     width: auto !important;
+    min-width: 0 !important;
     min-height: 34px !important;
     flex-basis: 0;
   }

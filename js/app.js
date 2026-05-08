@@ -1626,9 +1626,10 @@ function installLayerPickerDebugDiagnostics() {
       controlContainer?.classList?.remove("gridly-mobile-layer-control-hidden");
     }
 
-    const existingMenus = Array.from(document.querySelectorAll("#map .gridly-mobile-layer-menu"));
+    let existingMenus = Array.from(document.querySelectorAll("#map .gridly-mobile-layer-menu"));
     if (existingMenus.length > 1) {
       existingMenus.slice(1).forEach((duplicateMenu) => duplicateMenu.remove());
+      existingMenus = Array.from(document.querySelectorAll("#map .gridly-mobile-layer-menu"));
     }
     let menuRoot = existingMenus[0] || null;
     if (!menuRoot) {
@@ -1875,7 +1876,8 @@ function installLayerPickerDebugDiagnostics() {
       isOpen: Boolean(menuRoot?.classList.contains("is-open") && menuList && !menuList.hidden),
       visibleButtons: buttons.filter((button) => isActuallyVisible(button) && menuRoot?.classList.contains("is-open")).map((button) => button.textContent.trim()),
       layerButtons: buttons.map((button) => ({ text: button.textContent.trim(), layerName: button.dataset.layerName || "" })),
-      duplicateMenusFound: document.querySelectorAll("#map .gridly-mobile-layer-menu").length,
+      totalMenusFound: document.querySelectorAll("#map .gridly-mobile-layer-menu").length,
+      duplicateMenusFound: Math.max(0, document.querySelectorAll("#map .gridly-mobile-layer-menu").length - 1),
       activeLayer: activeBaseLayerName,
       wrapperClasses: menuRoot?.className || "",
       toggleRect,
