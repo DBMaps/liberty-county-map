@@ -1501,11 +1501,7 @@ function initMap() {
 }
 
 function installLayerPickerDebugDiagnostics() {
-  const isMobileLayerMenuMode = () => {
-    const isMobileViewport = window.matchMedia?.("(max-width: 767px)")?.matches;
-    const isCoarsePointer = window.matchMedia?.("(pointer: coarse)")?.matches;
-    return Boolean(isMobileViewport || isCoarsePointer);
-  };
+  const shouldUseCompactLayerMenu = () => true;
   const baseLayerNames = () => Object.keys(mapBaseLayersByName || {});
   const normalizeLayerName = (name) => String(name || "").trim();
 
@@ -1608,7 +1604,7 @@ function installLayerPickerDebugDiagnostics() {
 
   const installGridlyMobileLayerMenu = () => {
     const controlContainer = document.querySelector("#map .leaflet-control-layers");
-    if (isMobileLayerMenuMode()) {
+    if (shouldUseCompactLayerMenu()) {
       controlContainer?.classList?.add("gridly-mobile-layer-control-hidden");
     } else {
       controlContainer?.classList?.remove("gridly-mobile-layer-control-hidden");
@@ -1651,7 +1647,7 @@ function installLayerPickerDebugDiagnostics() {
         toggle.setAttribute("aria-expanded", "true");
       };
       toggle?.addEventListener("click", () => {
-        if (!isMobileLayerMenuMode()) return;
+        if (!shouldUseCompactLayerMenu()) return;
         if (list.hidden) openMenu();
         else closeMenu();
       });
@@ -1667,7 +1663,7 @@ function installLayerPickerDebugDiagnostics() {
       syncActiveState();
     }
 
-    menuRoot.classList.toggle("is-mobile-visible", isMobileLayerMenuMode());
+    menuRoot.classList.toggle("is-mobile-visible", shouldUseCompactLayerMenu());
   };
 
   const bindLayerOptionLogs = () => {
