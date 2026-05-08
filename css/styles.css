@@ -7066,3 +7066,193 @@ body.modal-open {
     display: none;
   }
 }
+
+/* V36B mobile card compression & focus pass */
+@media (max-width: 700px) {
+  .app-shell {
+    margin-bottom: calc(132px + env(safe-area-inset-bottom));
+  }
+
+  .mobile-home-cards {
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .mobile-home-card {
+    padding: 11px 12px;
+    border-radius: 14px;
+    min-height: 0;
+  }
+
+  .mobile-home-card > span {
+    font-size: 0.7rem;
+    letter-spacing: 0.09em;
+    margin-bottom: 2px;
+  }
+
+  .mobile-home-card strong {
+    margin: 2px 0 4px;
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+
+  .mobile-home-card p {
+    margin: 0;
+    font-size: 0.81rem;
+    line-height: 1.35;
+  }
+
+  /* remove oversized decorative treatment on priority cards */
+  .mobile-route-decision-card,
+  .mobile-fast-report-card {
+    background-image: none !important;
+  }
+
+  .mobile-route-decision-card::before,
+  .mobile-route-decision-card::after,
+  .mobile-fast-report-card::before,
+  .mobile-fast-report-card::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  .mobile-route-priority-actions {
+    margin-top: 8px;
+    gap: 6px;
+  }
+
+  .mobile-route-priority-actions .primary-btn,
+  .mobile-route-priority-actions .secondary-btn,
+  .mobile-map-preview-card .secondary-btn {
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 12px;
+  }
+
+  .mobile-route-priority-actions .secondary-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* map-first flow and compressed hierarchy */
+  .mobile-map-preview-card { order: 3; }
+  .map-card {
+    margin-top: 6px;
+    padding: 10px;
+    border-radius: 16px;
+  }
+
+  .map-card .section-header.map-header {
+    padding-bottom: 4px;
+    gap: 8px;
+  }
+
+  .map-card .section-header.map-header .map-note {
+    font-size: 0.77rem;
+    line-height: 1.3;
+  }
+
+  .map-card .map-frame {
+    min-height: 60vh;
+    border-radius: 14px;
+  }
+
+  /* mobile Route Watch rebuild */
+  .desktop-route-watch-strip {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 10px;
+    margin-bottom: 8px;
+  }
+
+  .route-watch-heading-row {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .route-watch-live-pill {
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  .route-watch-strip-copy strong {
+    display: block;
+    font-size: 0.95rem;
+    line-height: 1.25;
+    word-break: break-word;
+  }
+
+  #desktopRouteStatus,
+  #routeWatchSetupHint {
+    font-size: 0.77rem;
+    line-height: 1.3;
+  }
+
+  .route-watch-metrics {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  .route-watch-metrics span {
+    padding: 5px 7px;
+    border-radius: 9px;
+    font-size: 0.77rem;
+    white-space: normal;
+  }
+
+  .desktop-route-watch-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .desktop-route-watch-actions .route-inline-field,
+  .desktop-route-watch-actions .route-inline-field select,
+  .desktop-route-watch-actions .primary-btn,
+  .desktop-route-watch-actions .secondary-btn {
+    width: 100%;
+  }
+
+  .desktop-route-watch-actions .compact-btn,
+  .desktop-route-watch-actions .route-watch-start-btn {
+    min-height: 42px;
+  }
+
+  /* hide nonessential verbose metrics on mobile */
+  .route-watch-metrics span:nth-child(1),
+  .route-watch-metrics span:nth-child(2) {
+    display: none;
+  }
+
+  /* reduce repeated helper copy */
+  .mobile-active-crossings-card p,
+  #mobileCorridorSummaryDetail,
+  .mobile-premium-status-bar p {
+    display: none;
+  }
+
+  /* compress additional intelligence cards */
+  .mobile-community-card,
+  .mobile-corridor-intel-card,
+  .mobile-premium-status-bar {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  /* bottom nav spacing / collision prevention */
+  .mobile-bottom-nav {
+    padding: 8px 10px calc(10px + env(safe-area-inset-bottom));
+  }
+
+  .mobile-bottom-nav-btn {
+    min-height: 40px;
+    padding: 8px 4px;
+  }
+
+  #mobileReportBtn.mobile-sticky-report {
+    bottom: calc(72px + env(safe-area-inset-bottom));
+  }
+}
