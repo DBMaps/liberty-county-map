@@ -221,6 +221,9 @@ let lastRouteEarlyReturnReason = null;
 let lastRouteButtonClickSource = "";
 let lastRouteButtonClickAt = null;
 let routeQuickButtonDelegatedBindingActive = false;
+let routeQuickDirectListenerAttached = false;
+let lastDirectRouteClick = null;
+let debugPipelineWrapperEntered = false;
 let pendingHazardPlacement = null;
 let selectedQuickHazardType = null;
 let mobileUiMode = "live";
@@ -3479,7 +3482,72 @@ function openMobileRouteQuickPanel() {
     });
     destinationSelect.dataset.gridlyRouteQuickBound = "1";
   }
+  bindDirectRouteQuickPanelButtonListeners();
   panel.classList.add("visible");
+}
+
+async function debugEnterRoutePipeline(args = {}) {
+  console.error("DEBUG ROUTE PIPELINE ENTER");
+  debugPipelineWrapperEntered = true;
+  lastRoutePipelineStep = "pipeline-entered";
+  console.error("DEBUG ROUTE PIPELINE TRACE", {
+    typeOfStartInlineRouteWatch: typeof startInlineRouteWatch,
+    args
+  });
+  try {
+    console.error("DEBUG ROUTE PIPELINE BEFORE AWAIT", { args });
+    const result = await startInlineRouteWatch(args);
+    console.error("DEBUG ROUTE PIPELINE AFTER AWAIT", { args });
+    return result;
+  } catch (error) {
+    console.error("DEBUG ROUTE PIPELINE CATCH ERROR", { error, args });
+    throw error;
+  }
+}
+
+function bindDirectRouteQuickPanelButtonListeners() {
+  const panel = document.getElementById("gridlyMobileRouteQuickPanel");
+  const viewRouteButton = panel?.querySelector?.('.route-quick-actions button[data-action="view-route-quick"]');
+  const startRouteWatchButton = panel?.querySelector?.('.route-quick-actions button[data-action="start-route-watch-quick"]');
+  if (!viewRouteButton || !startRouteWatchButton) return;
+  if (viewRouteButton.dataset.gridlyDirectRouteListenerAttached === "1" && startRouteWatchButton.dataset.gridlyDirectRouteListenerAttached === "1") {
+    routeQuickDirectListenerAttached = true;
+    return;
+  }
+
+  const attachDirectListener = (button, action) => {
+    if (!button || button.dataset.gridlyDirectRouteListenerAttached === "1") return;
+    button.addEventListener("click", async (event) => {
+      const startSelect = document.getElementById("mobileRouteQuickStart");
+      const destinationSelect = document.getElementById("mobileRouteQuickDestination");
+      const selectedStart = startSelect?.value || "";
+      const selectedDestination = destinationSelect?.value || "";
+      console.error("DIRECT ROUTE BUTTON CLICK", {
+        action,
+        button,
+        selectedStart,
+        selectedDestination
+      });
+      lastRoutePipelineStep = "direct-listener-hit";
+      lastDirectRouteClick = {
+        action,
+        buttonAction: button?.dataset?.action || "",
+        selectedStart,
+        selectedDestination,
+        at: new Date().toISOString()
+      };
+      event.preventDefault();
+      await debugEnterRoutePipeline({
+        activateWatch: action === "start-route-watch-quick",
+        source: action === "start-route-watch-quick" ? "mobile_quick_panel_start_watch_direct" : "mobile_quick_panel_view_route_direct"
+      });
+    }, true);
+    button.dataset.gridlyDirectRouteListenerAttached = "1";
+  };
+
+  attachDirectListener(startRouteWatchButton, "start-route-watch-quick");
+  attachDirectListener(viewRouteButton, "view-route-quick");
+  routeQuickDirectListenerAttached = true;
 }
 
 async function handleRouteQuickPanelAction(action, event, actionEl) {
@@ -3559,6 +3627,7 @@ function attachRouteQuickPanelDelegatedClickHandlers() {
       '#gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="view-route-quick"], #gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="start-route-watch-quick"]'
     );
     if (!actionEl) return;
+    if (actionEl.dataset.gridlyDirectRouteListenerAttached === "1") return;
     const action = actionEl.dataset.action || "";
     if (!action) return;
     event.preventDefault();
@@ -6621,7 +6690,10 @@ function attachRouteQuickPanelDebugGlobal() {
       routeRenderAttempted: Boolean(routeRenderAttempted),
       routeRenderSucceeded: Boolean(routeRenderSucceeded),
       lastRoutePipelineStep,
-      lastRouteEarlyReturnReason
+      lastRouteEarlyReturnReason,
+      directListenerAttached: Boolean(routeQuickDirectListenerAttached),
+      lastDirectRouteClick,
+      debugPipelineWrapperEntered: Boolean(debugPipelineWrapperEntered)
     };
   };
 }
@@ -6924,6 +6996,7 @@ async function startInlineRouteWatch(options = {}) {
   updateRouteIntelligence();
   updateRouteWatchStartButtonLabel();
 }
+window.gridlyStartInlineRouteWatch = startInlineRouteWatch;
 
 
 function resetSavedPlaces() {
