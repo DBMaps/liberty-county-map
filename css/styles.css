@@ -8291,11 +8291,13 @@ body.modal-open {
 
   .mobile-floating-action-dock {
     position: fixed;
-    left: max(12px, env(safe-area-inset-left, 0px));
-    right: max(12px, env(safe-area-inset-right, 0px));
-    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-    width: min(420px, calc(100vw - max(10px, env(safe-area-inset-left, 0px)) - max(10px, env(safe-area-inset-right, 0px))));
-    margin-inline: auto;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 14px);
+    width: calc(100% - 32px);
+    max-width: 360px;
+    margin: 0;
     padding: 5px;
     border-radius: 999px;
     border: 1px solid rgba(128, 193, 247, 0.32);
@@ -8304,15 +8306,20 @@ body.modal-open {
     box-shadow: 0 12px 24px rgba(1, 8, 19, 0.5);
     gap: 5px;
     box-sizing: border-box;
+    display: flex;
+    overflow: hidden;
   }
 
   .mobile-dock-btn {
     min-height: 32px;
-    padding: 7px 12px;
+    padding: 7px 10px;
     border-radius: 999px;
     font-size: .73rem;
     letter-spacing: .02em;
     border: 1px solid rgba(201, 225, 255, 0.16);
+    flex: 1 1 0;
+    min-width: 0;
+    white-space: nowrap;
   }
 
   body.reporting-live .map-frame {
