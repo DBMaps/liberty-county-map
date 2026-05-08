@@ -6412,11 +6412,11 @@ function updateRouteIntelligence(nearest = []) {
     });
     els.routeStatusCard?.classList.add("delayed");
   } else if (routeHazard.level === "blocked") {
-    safeText("routeStatus", "Blocked");
+    safeText("routeStatus", "ALTERNATE ROUTE RECOMMENDED");
     safeText("routeEta", `ETA 32 min (+${extraMinutes})`);
-    safeText("departureTime", "Leave now");
+    safeText("departureTime", "LEAVE NOW");
     renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, ...getRouteEtaMetricsFromState({ routeHazardLevel: routeHazard.level, fallbackExtraMinutes: extraMinutes }) });
-    safeText("desktopRouteStatus", "Blocked crossing detected. Consider another route.");
+    safeText("desktopRouteStatus", "Delay wall detected on your corridor. Switch routes now.");
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
@@ -6424,11 +6424,11 @@ function updateRouteIntelligence(nearest = []) {
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("high");
   } else if (routeHazard.level === "heavy") {
-    safeText("routeStatus", "Heavy Delay");
+    safeText("routeStatus", "DELAY BUILDING");
     safeText("routeEta", `ETA 26 min (+${extraMinutes})`);
-    safeText("departureTime", "Leave 8 min early");
+    safeText("departureTime", "LEAVE 8 MIN EARLY");
     renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, ...getRouteEtaMetricsFromState({ routeHazardLevel: routeHazard.level, fallbackExtraMinutes: extraMinutes }) });
-    safeText("desktopRouteStatus", "Heavy delay detected. Leave early or reroute.");
+    safeText("desktopRouteStatus", "Operational pressure is rising. Leave early or shift to an alternate.");
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
@@ -6436,11 +6436,11 @@ function updateRouteIntelligence(nearest = []) {
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("delayed");
   } else if (routeHazard.level === "caution") {
-    safeText("routeStatus", "Caution");
+    safeText("routeStatus", "WATCH CORRIDOR");
     safeText("routeEta", `ETA 24 min (+${Math.max(extraMinutes, 3)})`);
-    safeText("departureTime", "Leave a bit early");
+    safeText("departureTime", "LEAVE SLIGHTLY EARLY");
     renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, ...getRouteEtaMetricsFromState({ routeHazardLevel: routeHazard.level, fallbackExtraMinutes: extraMinutes }) });
-    safeText("desktopRouteStatus", "Possible delay near your route.");
+    safeText("desktopRouteStatus", "Early delay signal detected near your monitored corridor.");
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
@@ -6448,11 +6448,11 @@ function updateRouteIntelligence(nearest = []) {
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("delayed");
   } else {
-    safeText("routeStatus", "Clear");
+    safeText("routeStatus", "CLEAR TO LEAVE");
     safeText("routeEta", "ETA 21 min");
-    safeText("departureTime", "Normal departure");
+    safeText("departureTime", "ON-SCHEDULE DEPARTURE");
     renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, ...getRouteEtaMetricsFromState({ routeHazardLevel: routeHazard.level, fallbackExtraMinutes: extraMinutes }) });
-    safeText("desktopRouteStatus", "Your route looks clear.");
+    safeText("desktopRouteStatus", "Route corridor is open. Continue live monitoring.");
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
@@ -6464,7 +6464,7 @@ function updateRouteIntelligence(nearest = []) {
   if (els.routeRecommendation) {
     els.routeRecommendation.classList.add("route-watch-recommendation-emphasis");
   }
-  safeText("mobileLiveRouteStatus", `${els.routeStatus?.textContent || "Route Watch Active"} · ${els.routeEta?.textContent || "ETA pending"}`);
+  safeText("mobileLiveRouteStatus", `${els.routeStatus?.textContent || "CLEAR TO LEAVE"} · ${els.routeEta?.textContent || "ETA pending"}`);
   safeText("mobileLiveRouteMeta", els.routeRecommendation?.textContent || "Review live route intelligence and alternates.");
   renderDesktopRouteWatchMetrics({
     freshness: routeIsMonitoring ? freshnessTier : "Unknown",
@@ -6481,14 +6481,14 @@ function updateRouteIntelligence(nearest = []) {
   liveStatusCard?.classList.remove("clear-status", "delay-status", "blocked-status");
 
   if (impact >= 70) {
-    safeText("delayRisk", routeIntel.urgentBlockedCount > 0 ? "Urgent Blocked Now" : "Delay Risk Rising");
+    safeText("delayRisk", routeIntel.urgentBlockedCount > 0 ? "LEAVE NOW" : "DELAY BUILDING");
     safeText("delayReason", routeIntel.urgentBlockedCount > 0 ? `${routeIntel.urgentBlockedCount} blocked report${routeIntel.urgentBlockedCount === 1 ? "" : "s"} posted within 10 min. Reroute immediately.` : "Major crossing blockage detected. Check the live map before departure.");
     safeText("alternateRoute", "Use alternate");
     safeText("alternateReason", "Avoid highest-impact crossing if possible.");
     safeText("impactText", "High route impact. Leave now or reroute.");
     liveStatusCard?.classList.add("blocked-status");
   } else if (impact >= 40) {
-    safeText("delayRisk", "Morning Commute Watch");
+    safeText("delayRisk", "WATCH + PREP ALT");
     safeText("delayReason", "Crossing activity is building. Keep a backup route ready.");
     safeText("alternateRoute", "Have backup");
     safeText("alternateReason", "Alternate route may help if reports increase.");
@@ -6496,7 +6496,7 @@ function updateRouteIntelligence(nearest = []) {
     liveStatusCard?.classList.add("delay-status");
   } else {
     const hour = new Date().getHours();
-    safeText("delayRisk", hour >= 21 || hour < 5 ? "Late Night Check" : "All Clear");
+    safeText("delayRisk", hour >= 21 || hour < 5 ? "NIGHT WATCH CLEAR" : "CLEAR TO LEAVE");
     safeText("delayReason", "No rail or road incidents reported nearby. Live watch stays on if conditions change.");
     safeText("alternateRoute", "Not needed");
     safeText("alternateReason", "Current route appears clear.");
@@ -6559,19 +6559,19 @@ function updateGrowthWidgets() {
   const lastReport = activeReports[0];
 
   if (highCount > 0) {
-    safeText("routeRecommendation", "Leave early or reroute");
+    safeText("routeRecommendation", "LEAVE NOW OR REROUTE");
     safeText(
       "routeRecommendationReason",
       `${highCount} high-impact shared report${highCount === 1 ? "" : "s"} active right now.`
     );
   } else if (activeIssues.length > 0) {
-    safeText("routeRecommendation", "Watch your route");
+    safeText("routeRecommendation", "DELAY BUILDING");
     safeText(
       "routeRecommendationReason",
       `${activeIssues.length} active shared report${activeIssues.length === 1 ? "" : "s"} may affect travel.`
     );
   } else {
-    safeText("routeRecommendation", "You can drive now");
+    safeText("routeRecommendation", "CLEAR TO LEAVE");
     safeText("routeRecommendationReason", "No major active shared delays detected right now.");
   }
 
