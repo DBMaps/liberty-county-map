@@ -3043,13 +3043,23 @@ counter.textContent = "No live road hazards";
   injectHazardStyles();
 }
 
-function openHazardPanel() {
-  updateReportingState({ reportModeActive: true, activeReportEntryPoint: "report_near_me" });
-  document.getElementById("gridlyHazardPanel")?.classList.add("visible");
+function openHazardPanel(entryPoint = reportingState.activeReportEntryPoint || "report_near_me") {
+  injectHazardReportUI();
+  updateReportingState({ reportModeActive: true, activeReportEntryPoint: entryPoint });
+  const picker = document.getElementById("gridlyHazardPanel");
+  picker?.classList.add("visible");
   document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
-  console.log("[Gridly][Report] hazard panel opened", {
-    overlay: "gridlyHazardPanel",
-    reportingState: window.gridlyReportingDebug()
+  const computed = picker ? window.getComputedStyle(picker) : null;
+  console.log("[Gridly][Report] picker open path called", {
+    entryPoint,
+    pickerSelector: "#gridlyHazardPanel",
+    pickerExists: Boolean(picker),
+    className: picker?.className || null,
+    display: computed?.display || null,
+    visibility: computed?.visibility || null,
+    opacity: computed?.opacity || null,
+    zIndex: computed?.zIndex || null,
+    rect: picker ? picker.getBoundingClientRect() : null
   });
 }
 
@@ -4374,7 +4384,7 @@ function handleReportNearMe(entryPoint = "report_near_me") {
     lastReportMessage: "Choose a hazard, then use your location or tap the map."
   });
   console.log("[Gridly][Report] handler executed", { handler: "handleReportNearMe", entryPoint });
-  openHazardPanel();
+  openHazardPanel(entryPoint);
   scrollToSection("mapSection");
   safeText("mapTrustNote", "Quick reporting is now map-first: select a hazard, then use My Location or Tap Map Location.");
   setConfirmation("Choose a hazard, then tap map to drop the report.", "success");
@@ -4386,6 +4396,49 @@ function handleReportNearMe(entryPoint = "report_near_me") {
     activeReportEntryPoint: reportingState.activeReportEntryPoint
   });
 }
+
+
+window.gridlyReportOverlayDebug = function () {
+  const pickerSelector = "#gridlyHazardPanel";
+  const picker = document.querySelector(pickerSelector);
+  const computed = picker ? window.getComputedStyle(picker) : null;
+  const rect = picker ? picker.getBoundingClientRect() : null;
+  const parentChain = [];
+  let node = picker;
+  while (node && node !== document.documentElement) {
+    const style = window.getComputedStyle(node);
+    parentChain.push({
+      selector: node.id ? `#${node.id}` : node.className ? `.${String(node.className).trim().replace(/\s+/g, ".")}` : node.tagName.toLowerCase(),
+      display: style.display,
+      visibility: style.visibility,
+      overflow: style.overflow,
+      overflowY: style.overflowY,
+      position: style.position,
+      zIndex: style.zIndex,
+      rect: node.getBoundingClientRect()
+    });
+    node = node.parentElement;
+  }
+  const viewportWidth = window.innerWidth || 0;
+  const viewportHeight = window.innerHeight || 0;
+  const clippedOrOffscreen = !picker || !rect || rect.bottom < 0 || rect.right < 0 || rect.top > viewportHeight || rect.left > viewportWidth || computed?.display === "none" || computed?.visibility === "hidden" || Number(computed?.opacity || 1) === 0;
+  return {
+    reportModeActive: reportingState.reportModeActive,
+    selectedHazardType: reportingState.selectedHazardType,
+    activeReportEntryPoint: reportingState.activeReportEntryPoint || "",
+    pickerSelector,
+    pickerExists: Boolean(picker),
+    display: computed?.display || null,
+    visibility: computed?.visibility || null,
+    opacity: computed?.opacity || null,
+    zIndex: computed?.zIndex || null,
+    position: computed?.position || null,
+    pointerEvents: computed?.pointerEvents || null,
+    rect,
+    parentChain,
+    clippedOrOffscreen
+  };
+};
 
 window.gridlyOpenQuickReportDebug = function () {
   console.log("[Gridly][Report] debug helper invoked", { helper: "gridlyOpenQuickReportDebug" });
