@@ -211,6 +211,11 @@ let monitoredRouteDurationSeconds = null;
 let lastRouteRequest = null;
 let lastRouteGeometryPointCount = 0;
 let lastRouteError = null;
+let routeRequestTriggered = false;
+let osrmRequestStarted = false;
+let osrmResponseReceived = false;
+let routeRenderAttempted = false;
+let routeRenderSucceeded = false;
 let pendingHazardPlacement = null;
 let selectedQuickHazardType = null;
 let mobileUiMode = "live";
@@ -4303,7 +4308,7 @@ function bindEvents() {
 
   document.addEventListener("pointerup", handlePopupAction, true);
   document.addEventListener("click", handlePopupAction, true);
-  const handleDataActionClick = (event) => {
+  const handleDataActionClick = async (event) => {
     const actionEl = event.target.closest("[data-action]");
     if (!actionEl) return;
     const action = actionEl.dataset.action;
@@ -4399,7 +4404,7 @@ function bindEvents() {
       const resolvedDestinationPlace = places.find((place) => place.id === (els.routeWatchDestinationSelect?.value || "")) || null;
       console.info("Gridly quick panel place resolution result", { resolvedStartPlace, resolvedDestinationPlace });
       updateRouteWatchStartButtonState();
-      startInlineRouteWatch({ activateWatch: false });
+      await startInlineRouteWatch({ activateWatch: false, source: "mobile_quick_panel_view_route" });
       routeNavSection("map");
       document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
       return;
@@ -4416,7 +4421,7 @@ function bindEvents() {
       const resolvedDestinationPlace = places.find((place) => place.id === (els.routeWatchDestinationSelect?.value || "")) || null;
       console.info("Gridly quick panel place resolution result", { resolvedStartPlace, resolvedDestinationPlace });
       updateRouteWatchStartButtonState();
-      startInlineRouteWatch();
+      await startInlineRouteWatch({ activateWatch: true, source: "mobile_quick_panel_start_watch" });
       document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
       return;
     }
@@ -5933,6 +5938,11 @@ function setRoutePreviewState(rendered, reason, options = {}) {
 }
 
 async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) {
+  routeRequestTriggered = false;
+  osrmRequestStarted = false;
+  osrmResponseReceived = false;
+  routeRenderAttempted = false;
+  routeRenderSucceeded = false;
   // Render from saved Home/Work (or other saved place) coordinates only after coordinate validation succeeds.
   if (!map) return false;
 
@@ -5984,6 +5994,7 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
     const destinationLat = Number(destinationCoordinates?.lat);
     const destinationLng = Number(destinationCoordinates?.lng);
     const osrmUrl = `${OSRM_ROUTE_API}/${startLng},${startLat};${destinationLng},${destinationLat}?overview=full&geometries=geojson`;
+    routeRequestTriggered = true;
     lastRouteRequest = {
       engine: "osrm",
       url: osrmUrl,
@@ -5991,7 +6002,10 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
       destination: { lat: destinationLat, lng: destinationLng },
       requestedAt: new Date().toISOString()
     };
+    console.info("Gridly route request payload", lastRouteRequest);
     const controller = typeof AbortController === "function" ? new AbortController() : null;
+    osrmRequestStarted = true;
+    console.info("Gridly OSRM request start", { url: osrmUrl });
     const timeoutId = controller ? setTimeout(() => controller.abort(), 7000) : null;
     const response = await fetch(osrmUrl, {
       method: "GET",
@@ -6002,6 +6016,8 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
       throw new Error(`OSRM response failed (${response.status})`);
     }
     const payload = await response.json();
+    osrmResponseReceived = true;
+    console.info("Gridly OSRM response received", { hasRoutes: Array.isArray(payload?.routes), routeCount: Array.isArray(payload?.routes) ? payload.routes.length : 0 });
     const primaryRoute = payload?.routes?.[0] || null;
     const routeCoordinates = primaryRoute?.geometry?.coordinates;
     if (!Array.isArray(routeCoordinates) || routeCoordinates.length < 2) {
@@ -6061,6 +6077,7 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
     lineJoin: "round"
   });
 
+  routeRenderAttempted = true;
   routePreviewCorridorLayer = L.layerGroup([corridorUnderlay, corridorBase, routePreviewLayer]).addTo(map);
   console.info("Gridly route layer render result", {
     routeLayerExists: Boolean(routePreviewLayer),
@@ -6112,8 +6129,11 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
   routePreviewLayerExists = hasUsablePreviewLayer;
   mapHasRoutePreviewLayer = hasUsablePreviewLayer && Boolean(map && typeof map.hasLayer === "function" && map.hasLayer(routePreviewLayer));
   if (!routePreviewRendered) {
+    console.info("Gridly route render failure", { routePreviewRendered, pointCount: routePreviewPolylinePointCount });
     return false;
   }
+  routeRenderSucceeded = true;
+  console.info("Gridly route render success", { pointCount: routePreviewPolylinePointCount });
 
   if (map) {
     window.__gridlyRoutePreviewMapDebug = map;
@@ -6527,7 +6547,12 @@ function attachRouteQuickPanelDebugGlobal() {
       routeLayerBounds: routeBounds?.isValid?.() ? routeBounds.toBBoxString() : null,
       routePaneZIndex: map?.getPane?.("routePane")?.style?.zIndex || null,
       lastRouteError,
-      commuteStateText: els?.routeStatus?.textContent || ""
+      commuteStateText: els?.routeStatus?.textContent || "",
+      routeRequestTriggered: Boolean(routeRequestTriggered),
+      osrmRequestStarted: Boolean(osrmRequestStarted),
+      osrmResponseReceived: Boolean(osrmResponseReceived),
+      routeRenderAttempted: Boolean(routeRenderAttempted),
+      routeRenderSucceeded: Boolean(routeRenderSucceeded)
     };
   };
 }
@@ -6657,7 +6682,8 @@ function loadSavedRoute() {
 }
 
 async function startInlineRouteWatch(options = {}) {
-  const { activateWatch = true } = options;
+  const { activateWatch = true, source = "route_watch_cta" } = options;
+  console.info("Gridly route request trigger", { source, activateWatch });
   const startId = els.routeWatchStartSelect?.value || "";
   const destinationId = els.routeWatchDestinationSelect?.value || "";
   const places = getSavedPlaces();
