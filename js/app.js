@@ -211,6 +211,16 @@ let monitoredRouteDurationSeconds = null;
 let pendingHazardPlacement = null;
 let selectedQuickHazardType = null;
 let mobileUiMode = "live";
+const MOBILE_REPORT_ENTRY_SELECTORS = [
+  "#mobileDockReportBtn",
+  ".mobile-dock-btn.report",
+  "#mobileQuickReportBtn",
+  "#mobileQuickReportSmallBtn",
+  "#mobileReportBtn",
+  ".mobile-sticky-report",
+  ".report-drawer-summary"
+];
+let mobileReportEntryBindingsAttached = false;
 
 const reportingState = {
   selectedHazardType: null,
@@ -3813,12 +3823,13 @@ function bindEvents() {
   els.shareGridlyBtn?.addEventListener("click", shareGridly);
   els.headerShareGridlyBtn?.addEventListener("click", shareGridly);
 
-  els.mobileReportBtn?.addEventListener("click", handleSmartReportButton);
-  els.mobileDockReportBtn?.addEventListener("click", handleSmartReportButton);
+  bindMobileReportEntryDelegation();
+  els.mobileReportBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_sticky_report", event));
+  els.mobileDockReportBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_dock_report_button", event));
   document.querySelector('.mobile-dock-btn.route')?.addEventListener("click", openMobileRouteQuickPanel);
   els.mobileLiveRouteActionBtn?.addEventListener("click", openMobileRouteQuickPanel);
-  els.mobileQuickReportBtn?.addEventListener("click", handleReportNearMe);
-  els.mobileQuickReportSmallBtn?.addEventListener("click", handleReportNearMe);
+  els.mobileQuickReportBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_quick_report_btn", event));
+  els.mobileQuickReportSmallBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_quick_report_small_btn", event));
   els.mobileQuickClearedBtn?.addEventListener("click", () => {
     if (lastSubmittedCrossing) {
       createSharedReport(lastSubmittedCrossing, "cleared", "quick clear action", els.mobileQuickClearedBtn);
@@ -4374,6 +4385,44 @@ function handleSmartReportButton() {
   handleReportNearMe("mobile_dock_report");
 }
 
+function getMobileReportEntryElements() {
+  const quickReportElements = Array.from(document.querySelectorAll("#mobileQuickReportBtn, #mobileQuickReportSmallBtn, #mobileReportBtn, .mobile-sticky-report, .report-drawer-summary"));
+  const reportDockElements = Array.from(document.querySelectorAll("#mobileDockReportBtn, .mobile-dock-btn.report"));
+  return { quickReportElements, reportDockElements };
+}
+
+function invokeMobileReportEntry(sourceLabel, event) {
+  const target = event?.target || null;
+  const receiver = event?.currentTarget || target;
+  console.log("[Gridly][Report] mobile report entry clicked", {
+    sourceLabel,
+    eventType: event?.type || "manual",
+    targetTag: target?.tagName || null,
+    targetId: target?.id || null,
+    receiverId: receiver?.id || null,
+    receiverClass: receiver?.className || null
+  });
+  console.log("[Gridly][Report] open function path", {
+    sourceLabel,
+    called: "handleReportNearMe",
+    entryPoint: "mobile_dock_report"
+  });
+  handleReportNearMe("mobile_dock_report");
+}
+
+function bindMobileReportEntryDelegation() {
+  if (mobileReportEntryBindingsAttached) return;
+  const delegatedHandler = (event) => {
+    const target = event?.target?.closest?.(MOBILE_REPORT_ENTRY_SELECTORS.join(", "));
+    if (!target) return;
+    if (target.closest(".mobile-dock-btn.route")) return;
+    invokeMobileReportEntry("delegated_mobile_report_entry", event);
+  };
+  document.addEventListener("click", delegatedHandler);
+  document.addEventListener("touchend", delegatedHandler, { passive: true });
+  mobileReportEntryBindingsAttached = true;
+}
+
 function handleReportNearMe(entryPoint = "report_near_me") {
   setMobileUiMode("report", { silent: true });
   updateReportingState({
@@ -4396,6 +4445,39 @@ function handleReportNearMe(entryPoint = "report_near_me") {
     activeReportEntryPoint: reportingState.activeReportEntryPoint
   });
 }
+
+window.gridlyReportClickBindingDebug = function () {
+  const { quickReportElements, reportDockElements } = getMobileReportEntryElements();
+  const summarize = (el) => {
+    const rect = el.getBoundingClientRect();
+    const style = window.getComputedStyle(el);
+    return {
+      selector: el.id ? `#${el.id}` : `.${String(el.className || "").trim().replace(/\s+/g, ".")}`,
+      pointerEvents: style.pointerEvents,
+      visibleRect: {
+        width: Math.round(rect.width),
+        height: Math.round(rect.height),
+        top: Math.round(rect.top),
+        left: Math.round(rect.left)
+      }
+    };
+  };
+  return {
+    quickReportElements: quickReportElements.map(summarize),
+    reportDockElements: reportDockElements.map(summarize),
+    elementsWithSelectorsFound: quickReportElements.length + reportDockElements.length > 0,
+    pointerEvents: {
+      quickReportElements: quickReportElements.map((el) => window.getComputedStyle(el).pointerEvents),
+      reportDockElements: reportDockElements.map((el) => window.getComputedStyle(el).pointerEvents)
+    },
+    visibleRects: {
+      quickReportElements: quickReportElements.map((el) => el.getBoundingClientRect().toJSON ? el.getBoundingClientRect().toJSON() : null),
+      reportDockElements: reportDockElements.map((el) => el.getBoundingClientRect().toJSON ? el.getBoundingClientRect().toJSON() : null)
+    },
+    listenersAttachedFlag: mobileReportEntryBindingsAttached,
+    reportingState: window.gridlyReportingDebug()
+  };
+};
 
 
 window.gridlyReportOverlayDebug = function () {
