@@ -234,7 +234,6 @@ const MOBILE_REPORT_ENTRY_SELECTORS = [
   "#mobileQuickReportBtn",
   "#mobileQuickReportSmallBtn",
   "#mobileReportBtn",
-  ".mobile-sticky-report",
   ".report-drawer-summary"
 ];
 let mobileReportEntryBindingsAttached = false;
@@ -6045,7 +6044,7 @@ function configureRouteSetupModal({ mode = "add", prefillType = "custom" } = {})
   els.routeSetupModal.dataset.prefillType = normalizedType;
   const titleEl = document.getElementById("routeSetupTitle");
   const subtitleEl = els.routeSetupModal.querySelector(".smart-alerts-subtitle");
-  const destinationLabel = els.mobileSavedDestinationSelect?.closest("label");
+  const destinationLabel = document.getElementById("savedPlacesSelectLabel") || els.mobileSavedDestinationSelect?.closest("label");
   const destinationLabelText = destinationLabel ? destinationLabel.childNodes[0] : null;
   if (titleEl) titleEl.textContent = mode === "manage" ? "Manage Places" : mode === "home" ? "Set Home" : mode === "work" ? "Set Work" : mode === "favorite" ? "Add Favorite" : "Add Place";
   if (subtitleEl) subtitleEl.textContent = "Saved places stay on this device. Pick one destination for today.";
@@ -6072,6 +6071,7 @@ function configureRouteSetupModal({ mode = "add", prefillType = "custom" } = {})
     }
     if (els.mobileWorkInput) els.mobileWorkInput.value = selected?.address || "";
     if (els.managePlaceSlotRow) els.managePlaceSlotRow.hidden = false;
+    document.getElementById("managePlacesSlotsGroup")?.removeAttribute("hidden");
     if (destinationLabelText) destinationLabelText.textContent = "Saved places";
     if (subtitleEl) {
       subtitleEl.textContent = !hasHome
@@ -6083,6 +6083,7 @@ function configureRouteSetupModal({ mode = "add", prefillType = "custom" } = {})
     return;
   }
   if (els.managePlaceSlotRow) els.managePlaceSlotRow.hidden = true;
+  document.getElementById("managePlacesSlotsGroup")?.setAttribute("hidden", "hidden");
 
   const presets = {
     home: { name: "Home", address: "" },
@@ -7631,7 +7632,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("alternateRoute", "Use alternate");
     safeText("alternateReason", "Avoid highest-impact crossing if possible.");
     safeText("impactText", "High route impact. Use alternate now.");
-    safeText("mobileLiveRouteActionBtn", alternateRouteAvailable ? "Use alternate" : "Report issue");
+    safeText("mobileLiveRouteActionBtn", alternateRouteAvailable ? "Use alternate" : "Review route");
     liveStatusCard?.classList.add("blocked-status");
   } else if (impact >= 40) {
     if (mobileLiveCommand) mobileLiveCommand.dataset.delayState = "delayed";
@@ -8045,7 +8046,7 @@ function renderTrendingCrossings() {
   const incidents = getConsolidatedIncidents().slice(0, 3);
 
   if (!incidents.length) {
-    els.trendingList.innerHTML = `<div class="trend-item muted">Waiting for shared reports...</div>`;
+    els.trendingList.innerHTML = `<div class="trend-item muted">Monitoring nearby crossings...</div>`;
     return;
   }
 

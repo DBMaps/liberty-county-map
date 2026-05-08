@@ -400,7 +400,7 @@
             <div class="combined-module-block">
               <h3>Trending Now</h3>
               <div id="trendingList" class="trending-list">
-                <div class="trend-item muted">Waiting for shared reports...</div>
+                <div class="trend-item muted">Live monitoring active nearby.</div>
               </div>
             </div>
             <div class="combined-module-block">
@@ -436,7 +436,7 @@
 
 
     <details class="report-card report-drawer" id="reportSection">
-      <summary class="report-drawer-summary"><span class="eyebrow">Quick Report</span><h2>Tap · Report · Go</h2></summary>
+      <summary class="report-drawer-summary"><span class="eyebrow">Report Center</span><h2>Live Reporting</h2></summary>
       <div class="report-copy">
         <p><strong>Fast flow:</strong> Tap <strong>Report Near Me</strong>, then tap one marker.</p>
 
@@ -508,7 +508,6 @@
     </div>
   </main>
 
-  <button class="mobile-sticky-report" id="mobileReportBtn">🚨 Report Near Me</button>
   <div class="mobile-floating-action-dock" aria-label="Quick commute actions">
     <button class="mobile-dock-btn report" type="button" id="mobileDockReportBtn" data-mode="report">Report</button>
     <button class="mobile-dock-btn route" type="button" data-section-jump="routes" data-mode="route">Route</button>
@@ -526,28 +525,38 @@
       <h2 id="routeSetupTitle">Save places</h2>
       <p class="smart-alerts-subtitle">Saved places stay on this device. Pick one destination for today.</p>
       <div class="setup-grid route-setup-grid-mobile">
-        <div class="destination-chip-row" id="managePlaceSlotRow" hidden>
-          <button class="secondary-btn destination-chip" id="managePlaceHomeBtn" type="button">Home</button>
-          <button class="secondary-btn destination-chip" id="managePlaceWorkBtn" type="button">Work</button>
-          <button class="secondary-btn destination-chip" id="managePlaceFavoriteBtn" type="button">Favorite</button>
-        </div>
-        <label>
-          Place name
-          <input id="mobileHomeInput" type="text" placeholder="Example: Home, Work, Restaurant" autocomplete="organization-title" />
-        </label>
-
-        <label>
-          Location / address
-          <input id="mobileWorkInput" type="text" placeholder="Enter address, city, or place" autocomplete="address-line1" />
-        </label>
-        <label>
-          Where are you headed?
-          <select id="mobileSavedDestinationSelect"></select>
-        </label>
-
-        <button id="mobileSaveRouteBtn" class="primary-btn" type="button">Save Route</button>
-        <button id="mobileUseLocationBtn" class="secondary-btn" type="button">Use My Location</button>
-        <button id="mobileResetPlacesBtn" class="secondary-btn" type="button">Reset Saved Places</button>
+        <section class="manage-places-group" id="managePlacesSlotsGroup" hidden>
+          <p class="manage-places-group-label">Saved Slot</p>
+          <div class="destination-chip-row" id="managePlaceSlotRow" hidden>
+            <button class="secondary-btn destination-chip" id="managePlaceHomeBtn" type="button">Home</button>
+            <button class="secondary-btn destination-chip" id="managePlaceWorkBtn" type="button">Work</button>
+            <button class="secondary-btn destination-chip" id="managePlaceFavoriteBtn" type="button">Favorite</button>
+          </div>
+        </section>
+        <section class="manage-places-group">
+          <p class="manage-places-group-label">Location</p>
+          <label>
+            Place name
+            <input id="mobileHomeInput" type="text" placeholder="Example: Home, Work, Restaurant" autocomplete="organization-title" />
+          </label>
+          <label>
+            Location / address
+            <input id="mobileWorkInput" type="text" placeholder="Enter address, city, or place" autocomplete="address-line1" />
+          </label>
+          <label id="savedPlacesSelectLabel">
+            Saved places
+            <select id="mobileSavedDestinationSelect"></select>
+          </label>
+        </section>
+        <section class="manage-places-group">
+          <p class="manage-places-group-label">Primary Actions</p>
+          <button id="mobileSaveRouteBtn" class="primary-btn" type="button">Save Place</button>
+          <button id="mobileUseLocationBtn" class="secondary-btn" type="button">Use My Location</button>
+        </section>
+        <section class="manage-places-group manage-places-group-utility">
+          <p class="manage-places-group-label">Utility</p>
+          <button id="mobileResetPlacesBtn" class="secondary-btn" type="button">Reset Saved Places</button>
+        </section>
       </div>
     </div>
   </div>
