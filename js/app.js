@@ -257,6 +257,13 @@ function setMobileUiMode(mode = "live", options = {}) {
   }
 }
 
+const GRIDLY_REPORT_VERBOSE_DEBUG = false;
+
+function reportDebugLog(...args) {
+  if (!GRIDLY_REPORT_VERBOSE_DEBUG) return;
+  console.log(...args);
+}
+
 window.gridlyReportingDebug = function () {
   return {
     selectedHazardType: reportingState.selectedHazardType,
@@ -3059,8 +3066,11 @@ function openHazardPanel(entryPoint = reportingState.activeReportEntryPoint || "
   const picker = document.getElementById("gridlyHazardPanel");
   picker?.classList.add("visible");
   document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
+  picker?.querySelectorAll('[data-action="submit-hazard"], [data-action="start-map-placement"], [data-action="cancel-hazard-placement"], .hazard-choice-grid button').forEach((btn) => {
+    btn.disabled = Boolean(reportingState.submissionInProgress);
+  });
   const computed = picker ? window.getComputedStyle(picker) : null;
-  console.log("[Gridly][Report] picker open path called", {
+  reportDebugLog("[Gridly][Report] picker open path called", {
     entryPoint,
     pickerSelector: "#gridlyHazardPanel",
     pickerExists: Boolean(picker),
@@ -3073,8 +3083,15 @@ function openHazardPanel(entryPoint = reportingState.activeReportEntryPoint || "
   });
 }
 
-window.closeHazardPanel = function () {
-  updateReportingState({ reportModeActive: false, placementModeActive: false });
+window.closeHazardPanel = function (options = {}) {
+  const { preserveLastReportMessage = true } = options;
+  const updates = {
+    reportModeActive: false,
+    placementModeActive: false,
+    selectedHazardType: null
+  };
+  if (!preserveLastReportMessage) updates.lastReportMessage = "";
+  updateReportingState(updates);
   document.getElementById("gridlyHazardPanel")?.classList.remove("visible");
 };
 
@@ -3159,6 +3176,8 @@ window.submitHazardNearMe = function (hazardType) {
     return;
   }
 
+  if (reportingState.submissionInProgress) return;
+
   if (!navigator.geolocation) {
     updateReportingState({ lastReportError: "Location is unavailable. Select a spot on the map to submit this hazard.", lastReportMessage: "" });
     setConfirmation("Location is unavailable. Select a spot on the map to submit this hazard.", "error");
@@ -3232,6 +3251,8 @@ async function handleHazardPlacementMapClick(event) {
 }
 
 async function createSharedHazardReport(hazardType, lat, lng, confidence, locationName = "") {
+  if (reportingState.submissionInProgress) return false;
+
   if (!supabaseClient) {
     setConfirmation("Live hazard sync is unavailable.", "error");
     return false;
@@ -3266,8 +3287,8 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
 
     if (error) throw error;
 
-    updateReportingState({ lastReportError: "", lastReportMessage: `${copy.label} report shared.` });
-    setConfirmation(`${copy.label} report shared.`, "success");
+    updateReportingState({ lastReportError: "", lastReportMessage: "Report added" });
+    setConfirmation("Report added", "success");
     setSync("Hazard report shared");
 
     await runPostSubmitRefresh();
@@ -3934,6 +3955,10 @@ function bindEvents() {
     if (!actionEl) return;
     const action = actionEl.dataset.action;
     if (!action) return;
+    if (reportingState.submissionInProgress && ["submit-hazard", "start-map-placement", "cancel-hazard-placement", "open-hazard-placement"].includes(action)) {
+      event.preventDefault();
+      return;
+    }
     if (action === "confirm-hazard") {
       event.preventDefault();
       confirmHazardStillThere(actionEl.dataset.hazardType, Number(actionEl.dataset.lat), Number(actionEl.dataset.lng));
@@ -3992,8 +4017,8 @@ function bindEvents() {
       event.preventDefault();
       pendingHazardPlacement = null;
       selectedQuickHazardType = null;
-      updateReportingState({ selectedHazardType: null, placementModeActive: false, activeReportEntryPoint: "hazard_cancel" });
-      closeHazardPanel();
+      updateReportingState({ selectedHazardType: null, placementModeActive: false, reportModeActive: false, activeReportEntryPoint: "hazard_cancel" });
+      closeHazardPanel({ preserveLastReportMessage: false });
       return;
     }
     if (action === "close-route-quick") {
@@ -4378,7 +4403,7 @@ function closeSmartAlertsModal() {
 }
 
 function handleSmartReportButton() {
-  console.log("[Gridly][Report] REPORT dock clicked", {
+  reportDebugLog("[Gridly][Report] REPORT dock clicked", {
     source: "handleSmartReportButton",
     target: "quick_hazard_picker"
   });
@@ -4394,7 +4419,7 @@ function getMobileReportEntryElements() {
 function invokeMobileReportEntry(sourceLabel, event) {
   const target = event?.target || null;
   const receiver = event?.currentTarget || target;
-  console.log("[Gridly][Report] mobile report entry clicked", {
+  reportDebugLog("[Gridly][Report] mobile report entry clicked", {
     sourceLabel,
     eventType: event?.type || "manual",
     targetTag: target?.tagName || null,
@@ -4402,7 +4427,7 @@ function invokeMobileReportEntry(sourceLabel, event) {
     receiverId: receiver?.id || null,
     receiverClass: receiver?.className || null
   });
-  console.log("[Gridly][Report] open function path", {
+  reportDebugLog("[Gridly][Report] open function path", {
     sourceLabel,
     called: "handleReportNearMe",
     entryPoint: "mobile_dock_report"
@@ -4432,14 +4457,14 @@ function handleReportNearMe(entryPoint = "report_near_me") {
     lastReportError: "",
     lastReportMessage: "Choose a hazard, then use your location or tap the map."
   });
-  console.log("[Gridly][Report] handler executed", { handler: "handleReportNearMe", entryPoint });
+  reportDebugLog("[Gridly][Report] handler executed", { handler: "handleReportNearMe", entryPoint });
   openHazardPanel(entryPoint);
   scrollToSection("mapSection");
   safeText("mapTrustNote", "Quick reporting is now map-first: select a hazard, then use My Location or Tap Map Location.");
   setConfirmation("Choose a hazard, then tap map to drop the report.", "success");
   document.body.classList.add("report-pulse");
   setTimeout(() => document.body.classList.remove("report-pulse"), 900);
-  console.log("[Gridly][Report] post-click state", {
+  reportDebugLog("[Gridly][Report] post-click state", {
     openedOverlay: "gridlyHazardPanel",
     reportingState: window.gridlyReportingDebug(),
     activeReportEntryPoint: reportingState.activeReportEntryPoint
@@ -4523,7 +4548,7 @@ window.gridlyReportOverlayDebug = function () {
 };
 
 window.gridlyOpenQuickReportDebug = function () {
-  console.log("[Gridly][Report] debug helper invoked", { helper: "gridlyOpenQuickReportDebug" });
+  reportDebugLog("[Gridly][Report] debug helper invoked", { helper: "gridlyOpenQuickReportDebug" });
   handleReportNearMe("window.gridlyOpenQuickReportDebug");
 };
 
