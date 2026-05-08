@@ -8991,9 +8991,11 @@ body.modal-open {
   }
 
   body[data-mobile-mode] #map .gridly-mobile-layer-menu {
-    right: max(8px, env(safe-area-inset-right, 0px));
+    left: max(8px, env(safe-area-inset-left, 0px));
+    right: auto;
     bottom: calc(176px + env(safe-area-inset-bottom, 0px));
     gap: 4px;
+    justify-items: start;
   }
 
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle,
