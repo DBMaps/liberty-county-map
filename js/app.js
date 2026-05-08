@@ -6328,7 +6328,7 @@ function updateRouteIntelligence(nearest = []) {
   updateAlternateRouteActionState();
 
   safeText("mobileCommuteRouteBtn", impact >= 70 ? "Open Reroute Plan" : "Open Commute Plan");
-  updateRouteWatchBadge(monitoredRouteLabel);
+  updateRouteWatchBadge();
 }
 
 function updateDailyHabitStatus() {
