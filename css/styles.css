@@ -8678,7 +8678,7 @@ body.modal-open {
     left: var(--mobile-overlay-gutter, 10px);
     right: var(--mobile-overlay-gutter, 10px);
     z-index: 760;
-    padding: 10px 11px;
+    padding: 7px 9px;
     border-radius: 14px;
     border-color: rgba(145, 204, 255, 0.22);
     background: linear-gradient(150deg, rgba(7, 17, 30, 0.68), rgba(5, 13, 24, 0.72));
@@ -8710,22 +8710,22 @@ body.modal-open {
   }
 
   body[data-mobile-mode] .mobile-live-command strong {
-    font-size: 1.04rem;
-    line-height: 1.16;
+    font-size: 0.92rem;
+    line-height: 1.14;
     letter-spacing: 0.005em;
   }
 
   body[data-mobile-mode] .mobile-live-command p {
-    margin: 4px 0 0;
-    font-size: 0.76rem;
-    line-height: 1.3;
+    margin: 2px 0 0;
+    font-size: 0.68rem;
+    line-height: 1.22;
     color: #c9ddf6;
   }
 
   body[data-mobile-mode] .mobile-live-command .compact-btn {
-    min-height: 32px;
-    padding: 7px 10px;
-    font-size: 0.72rem;
+    min-height: 30px;
+    padding: 6px 9px;
+    font-size: 0.68rem;
     border-color: rgba(160, 210, 255, 0.28);
     background: linear-gradient(145deg, rgba(91, 201, 255, 0.12), rgba(255, 255, 255, 0.03));
     align-self: center;
@@ -8805,11 +8805,11 @@ body.modal-open {
   }
 
   body[data-mobile-mode] .mobile-floating-action-dock {
-    left: 12px;
-    right: 12px;
-    bottom: calc(8px + env(safe-area-inset-bottom, 0px));
-    padding: 5px;
-    min-height: 48px;
+    left: 10px;
+    right: 10px;
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    padding: 6px;
+    min-height: 50px;
     border-radius: 16px;
     border: 1px solid rgba(143, 199, 250, 0.28);
     background: linear-gradient(145deg, rgba(8, 15, 24, 0.78), rgba(7, 12, 21, 0.82));
@@ -8818,9 +8818,9 @@ body.modal-open {
   }
 
   body[data-mobile-mode] .mobile-dock-btn {
-    min-height: 37px;
+    min-height: 38px;
     border-radius: 11px;
-    font-size: 0.76rem;
+    font-size: 0.74rem;
     font-weight: 830;
     letter-spacing: 0.015em;
     opacity: 0.84;
@@ -8853,8 +8853,8 @@ body.modal-open {
 @media (max-width: 760px) {
   body[data-mobile-mode] #map .gridly-mobile-layer-menu {
     position: absolute;
-    right: 12px;
-    bottom: 118px;
+    right: 10px;
+    bottom: 202px;
     z-index: 10070;
     display: none;
     gap: 6px;
@@ -8870,23 +8870,23 @@ body.modal-open {
     border: 1px solid rgba(173, 216, 255, 0.24);
     background: rgba(9, 16, 25, 0.82);
     color: #d7e7f7;
-    border-radius: 10px;
-    min-height: 34px;
-    padding: 8px 10px;
-    font-size: 0.74rem;
+    border-radius: 999px;
+    min-height: 30px;
+    padding: 6px 10px;
+    font-size: 0.69rem;
     font-weight: 700;
   }
 
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle {
-    width: 36px;
-    height: 36px;
-    min-height: 36px;
-    border-radius: 11px;
+    width: 30px;
+    height: 30px;
+    min-height: 30px;
+    border-radius: 999px;
     padding: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
+    font-size: 0.86rem;
     line-height: 1;
   }
 
@@ -8897,8 +8897,8 @@ body.modal-open {
 
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-list {
     display: grid;
-    gap: 6px;
-    justify-items: stretch;
+    gap: 4px;
+    justify-items: end;
   }
 
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button.active {
@@ -8941,5 +8941,27 @@ body.modal-open {
   body[data-mobile-mode] #map .leaflet-control-layers-base label *,
   body[data-mobile-mode] #map .leaflet-control-layers-selector {
     pointer-events: auto !important;
+  }
+
+  body[data-mobile-mode] #map .leaflet-bottom.leaflet-left {
+    left: 8px;
+    bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+    max-width: calc(100% - 120px);
+  }
+
+  body[data-mobile-mode] #map .leaflet-control-attribution {
+    margin: 0;
+    padding: 2px 6px;
+    border-radius: 8px !important;
+    font-size: 0.58rem;
+    line-height: 1.2;
+    color: rgba(212, 230, 249, 0.72) !important;
+    background: rgba(6, 12, 21, 0.58) !important;
+    border: 1px solid rgba(140, 192, 236, 0.18);
+    backdrop-filter: blur(6px);
+  }
+
+  body[data-mobile-mode] #map .leaflet-control-attribution a {
+    color: rgba(198, 229, 255, 0.88) !important;
   }
 }
