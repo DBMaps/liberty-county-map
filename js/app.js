@@ -289,6 +289,7 @@ let movementIntelligence = getMovementIntelligence();
 let mapBaseLayersByName = {};
 let mapStyleClassByName = {};
 let currentMapStyle = "Satellite";
+let activeBaseLayerName = "Satellite";
 const LEGACY_PLACE_MARKER_TEXT = "legacy migrated";
 
 let deviceId =
@@ -1352,6 +1353,7 @@ function initMap() {
   const savedStyle = localStorage.getItem(MAP_STYLE_STORAGE_KEY);
   const initialStyle = baseLayers[savedStyle] ? savedStyle : "Satellite";
   currentMapStyle = initialStyle;
+  activeBaseLayerName = initialStyle;
   baseLayers[initialStyle].addTo(map);
   map.getContainer().classList.add(styleClassByName[initialStyle]);
 
@@ -1365,6 +1367,7 @@ function initMap() {
     Object.values(styleClassByName).forEach((className) => map.getContainer().classList.remove(className));
     map.getContainer().classList.add(styleClassByName[selectedName]);
     currentMapStyle = selectedName;
+    activeBaseLayerName = selectedName;
     localStorage.setItem(MAP_STYLE_STORAGE_KEY, selectedName);
     console.log("[Gridly][LayerPicker] baselayerchange fired", {
       selectedLayer: selectedName,
@@ -1392,34 +1395,53 @@ function initMap() {
 
 function installLayerPickerDebugDiagnostics() {
   const baseLayerNames = () => Object.keys(mapBaseLayersByName || {});
+  const normalizeLayerName = (name) => String(name || "").trim();
 
-  const getLayerNameForLabel = (label, index) => {
+  const resolveLayerNameFromLabel = (label, index) => {
     const input = label?.querySelector("input[type='radio']");
-    const explicit = input?.dataset?.layerName;
-    if (explicit && mapBaseLayersByName[explicit]) return explicit;
-    const fromText = (label?.textContent || "").trim();
-    if (mapBaseLayersByName[fromText]) return fromText;
-    const fallback = baseLayerNames()[index];
-    return fallback || fromText;
+    const candidateNames = [
+      input?.dataset?.layerName,
+      input?.defaultValue,
+      input?.value,
+      label?.dataset?.layerName,
+      label?.innerText,
+      label?.textContent,
+      label?.querySelector("span")?.innerText,
+      label?.querySelector("span")?.textContent,
+      input?.closest("label")?.innerText,
+      input?.closest("label")?.textContent,
+      baseLayerNames()[index]
+    ];
+    for (const candidate of candidateNames) {
+      const normalized = normalizeLayerName(candidate);
+      if (mapBaseLayersByName[normalized]) return normalized;
+    }
+    return normalizeLayerName(candidateNames.find(Boolean));
   };
 
   const applyBaseLayerByName = (layerName, source) => {
-    const targetLayer = mapBaseLayersByName[layerName];
-    if (!map || !targetLayer) return;
-    Object.entries(mapBaseLayersByName).forEach(([name, layer]) => {
-      if (name !== layerName && map.hasLayer(layer)) map.removeLayer(layer);
+    const normalizedName = normalizeLayerName(layerName);
+    if (!map || !mapBaseLayersByName[normalizedName]) {
+      console.warn("[Gridly][LayerPicker] rejected layer change", { source, requestedLayer: layerName, normalizedName });
+      return;
+    }
+    Object.entries(mapBaseLayersByName).forEach(([, layer]) => {
+      if (map.hasLayer(layer)) map.removeLayer(layer);
     });
-    if (!map.hasLayer(targetLayer)) map.addLayer(targetLayer);
+    map.addLayer(mapBaseLayersByName[normalizedName]);
+    activeBaseLayerName = normalizedName;
+    currentMapStyle = normalizedName;
     const controlInputs = Array.from(document.querySelectorAll("#map .leaflet-control-layers-base input[type='radio']"));
-    controlInputs.forEach((input) => {
-      const inputLayerName = input.dataset.layerName || baseLayerNames()[Number(input.dataset.layerIndex || -1)];
-      input.checked = inputLayerName === layerName;
+    controlInputs.forEach((input, index) => {
+      const normalizedLabelText = resolveLayerNameFromLabel(input.closest("label"), index);
+      input.checked = normalizedLabelText === normalizedName;
     });
-    const activeLayer = Object.entries(mapBaseLayersByName).find(([, layer]) => map.hasLayer(layer));
+    map.fire("baselayerchange", { name: normalizedName, layer: mapBaseLayersByName[normalizedName] });
     console.log("[Gridly][LayerPicker] active layer after change", {
       source,
       requestedLayer: layerName,
-      activeLayer: activeLayer?.[0] || null
+      normalizedLayer: normalizedName,
+      activeLayer: Object.entries(mapBaseLayersByName).find(([, layer]) => map.hasLayer(layer))?.[0] || null
     });
   };
 
@@ -1429,19 +1451,22 @@ function installLayerPickerDebugDiagnostics() {
     labels.forEach((label, index) => {
       if (label.dataset.gridlyLayerBound === "true") return;
       label.dataset.gridlyLayerBound = "true";
-      const layerName = getLayerNameForLabel(label, index);
       const input = label.querySelector("input[type='radio']");
+      const layerName = resolveLayerNameFromLabel(label, index);
       if (input) {
         input.dataset.layerName = layerName;
         input.dataset.layerIndex = String(index);
       }
+      label.dataset.layerName = layerName;
       label.addEventListener("click", () => {
-        console.log("[Gridly][LayerPicker] label clicked", { layerName, selectedLayer: currentMapStyle });
-        applyBaseLayerByName(layerName, "label-click");
+        const clickedLayer = resolveLayerNameFromLabel(label, index);
+        console.log("[Gridly][LayerPicker] label clicked", { layerName: clickedLayer, selectedLayer: currentMapStyle });
+        applyBaseLayerByName(clickedLayer, "label-click");
       });
       input?.addEventListener("change", () => {
-        console.log("[Gridly][LayerPicker] input change", { layerName, selectedLayer: currentMapStyle, checked: Boolean(input.checked) });
-        applyBaseLayerByName(layerName, "input-change");
+        const clickedLayer = resolveLayerNameFromLabel(label, index);
+        console.log("[Gridly][LayerPicker] input change", { layerName: clickedLayer, selectedLayer: currentMapStyle, checked: Boolean(input.checked) });
+        applyBaseLayerByName(clickedLayer, "input-change");
       });
     });
     return true;
@@ -1466,9 +1491,23 @@ function installLayerPickerDebugDiagnostics() {
       standardLayerExists: Boolean(mapBaseLayersByName?.Standard),
       darkLayerExists: Boolean(mapBaseLayersByName?.Dark),
       satelliteLayerExists: Boolean(mapBaseLayersByName?.Satellite),
-      controlInputs: inputs.map((input, index) => ({ index, checked: Boolean(input.checked), layerName: input.dataset.layerName || null })),
-      controlLabels: labels.map((label, index) => ({ index, text: (label.textContent || "").trim() })),
-      checkedInput: inputs.find((input) => input.checked)?.dataset?.layerName || null,
+      controlInputs: inputs.map((input, index) => ({
+        index,
+        value: input.value,
+        name: input.name,
+        checked: Boolean(input.checked),
+        layerName: input.dataset.layerName || null,
+        closestLabelText: normalizeLayerName(input.closest("label")?.textContent)
+      })),
+      controlLabels: labels.map((label, index) => ({
+        index,
+        innerText: normalizeLayerName(label.innerText),
+        textContent: normalizeLayerName(label.textContent),
+        closestLabelText: normalizeLayerName(label.closest("label")?.textContent),
+        layerName: resolveLayerNameFromLabel(label, index),
+        associatedLeafletLayerName: label.querySelector("input[type='radio']")?.dataset?.layerName || null
+      })),
+      checkedInput: resolveLayerNameFromLabel(inputs.find((input) => input.checked)?.closest("label"), -1) || null,
       pointerEvents: {
         control: controlRoot ? getComputedStyle(controlRoot).pointerEvents : null,
         labels: labels.map((label, index) => ({ index, pointerEvents: getComputedStyle(label).pointerEvents })),
@@ -1480,6 +1519,10 @@ function installLayerPickerDebugDiagnostics() {
         inputs: inputs.map((input, index) => ({ index, rect: input.getBoundingClientRect().toJSON() }))
       }
     };
+  };
+  window.gridlySetBaseLayerDebug = function gridlySetBaseLayerDebug(name) {
+    applyBaseLayerByName(name, "debug-helper");
+    return window.gridlyLayerControlDebug();
   };
 
   bindLayerOptionLogs();
