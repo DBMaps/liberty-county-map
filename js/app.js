@@ -208,6 +208,7 @@ let osrmRouteSuccess = false;
 let monitoredRouteEtaMinutes = null;
 let monitoredRouteDelayMinutes = null;
 let monitoredRouteDurationSeconds = null;
+let pendingHazardPlacement = null;
 const LOCAL_PLACE_LOOKUP = {
   dayton: { lat: 30.0466, lng: -94.8852 },
   crosby: { lat: 29.9111, lng: -95.0622 },
@@ -1303,6 +1304,7 @@ function initMap() {
     if (!crossings.length) return;
     renderCrossings();
   });
+  map.on("click", handleHazardPlacementMapClick);
 
   centerMapOnUserIfAllowed();
   highlightNearestCrossingOnFirstLoad();
@@ -2902,13 +2904,20 @@ counter.textContent = "No live road hazards";
       <strong>Report Road Hazard</strong>
       <button type="button" data-action="close-hazard-panel">×</button>
     </div>
-    <p>Gridly will use your current GPS location for the hazard report.</p>
+    <p>Choose a hazard, then submit instantly or place it on the map.</p>
     <div class="hazard-choice-grid">
-      <button type="button" data-action="submit-hazard" data-hazard-type="flooding">🌊 Flooding</button>
-      <button type="button" data-action="submit-hazard" data-hazard-type="debris">⚠️ Debris</button>
-      <button type="button" data-action="submit-hazard" data-hazard-type="crash">🚗 Crash / Wreck</button>
-      <button type="button" data-action="submit-hazard" data-hazard-type="construction">🚧 Construction</button>
-      <button type="button" data-action="submit-hazard" data-hazard-type="other_hazard">❗ Other Hazard</button>
+      <button type="button" data-action="open-hazard-placement" data-hazard-type="flooding">🌊 Flooding</button>
+      <button type="button" data-action="open-hazard-placement" data-hazard-type="debris">⚠️ Debris</button>
+      <button type="button" data-action="open-hazard-placement" data-hazard-type="crash">🚗 Crash / Wreck</button>
+      <button type="button" data-action="open-hazard-placement" data-hazard-type="construction">🚧 Construction</button>
+      <button type="button" data-action="open-hazard-placement" data-hazard-type="road_closed">⛔ Road Closed</button>
+      <button type="button" data-action="open-hazard-placement" data-hazard-type="disabled_vehicle">🚙 Disabled Vehicle</button>
+      <button type="button" data-action="open-hazard-placement" data-hazard-type="rail_blockage_delay">🚆 Rail Issue</button>
+      <button type="button" data-action="open-hazard-placement" data-hazard-type="other_hazard">❗ Other Hazard</button>
+    </div>
+    <div class="hazard-panel-placement-actions">
+      <button type="button" data-action="submit-hazard">Use My Location</button>
+      <button type="button" data-action="cancel-hazard-placement">Cancel</button>
     </div>
   `;
 
@@ -2959,6 +2968,23 @@ window.submitHazardNearMe = function (hazardType) {
     }
   );
 };
+
+function openHazardPlacement(hazardType) {
+  pendingHazardPlacement = hazardType || "other_hazard";
+  const copy = HAZARD_TYPES[pendingHazardPlacement] || HAZARD_TYPES.other_hazard;
+  setConfirmation(`${copy.icon} ${copy.label} selected. Tap map to place or use My Location.`, "success");
+}
+
+async function handleHazardPlacementMapClick(event) {
+  if (!pendingHazardPlacement) return;
+  const lat = event?.latlng?.lat;
+  const lng = event?.latlng?.lng;
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+  const selectedType = pendingHazardPlacement;
+  pendingHazardPlacement = null;
+  closeHazardPanel();
+  await createSharedHazardReport(selectedType, lat, lng, "tap map placement");
+}
 
 async function createSharedHazardReport(hazardType, lat, lng, confidence, locationName = "") {
   if (!supabaseClient) {
@@ -3183,9 +3209,10 @@ function injectHazardStyles() {
 
     .gridly-hazard-panel {
       position: fixed;
-      right: 18px;
-      bottom: 150px;
-      width: 320px;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 16px;
+      width: min(560px, calc(100vw - 24px));
       max-width: calc(100vw - 36px);
       z-index: 9999;
       display: none;
@@ -3200,6 +3227,11 @@ function injectHazardStyles() {
 
     .gridly-hazard-panel.visible {
       display: block;
+      animation: gridlyHazardSheetIn .18s ease-out;
+    }
+    @keyframes gridlyHazardSheetIn {
+      from { opacity: 0; transform: translate(-50%, 16px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
     }
 
     .hazard-panel-header {
@@ -3234,7 +3266,7 @@ function injectHazardStyles() {
 
     .hazard-choice-grid {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 8px;
     }
 
@@ -3253,24 +3285,55 @@ function injectHazardStyles() {
       background: rgba(255,255,255,0.16);
     }
 
+    .hazard-choice-grid button.selected {
+      background: rgba(255, 209, 102, 0.24);
+      outline: 2px solid rgba(255, 209, 102, 0.7);
+    }
+
+    .hazard-panel-placement-actions {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .hazard-panel-placement-actions button {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .hazard-panel-placement-actions button[data-action="submit-hazard"] {
+      background: linear-gradient(135deg, #ffd166, #ff7a59);
+      color: #08111f;
+    }
+    .hazard-panel-placement-actions button[data-action="cancel-hazard-placement"] {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+
     @media (max-width: 760px) {
       .gridly-hazard-launcher {
         left: 14px;
         right: 14px;
-        bottom: 150px;
+        bottom: 116px;
         width: calc(100vw - 28px);
       }
       .gridly-hazard-counter {
         left: 14px;
         right: 14px;
-        bottom: 205px;
+        bottom: 171px;
         text-align: center;
       }
       .gridly-hazard-panel {
-        left: 14px;
-        right: 14px;
-        bottom: 210px;
+        left: 12px;
+        right: 12px;
+        bottom: 8px;
+        transform: none;
         width: auto;
+      }
+      .hazard-choice-grid {
+        grid-template-columns: 1fr;
       }
     }
   `;
@@ -3634,7 +3697,23 @@ function bindEvents() {
     }
     if (action === "submit-hazard") {
       event.preventDefault();
-      submitHazardNearMe(actionEl.dataset.hazardType);
+      submitHazardNearMe(actionEl.dataset.hazardType || pendingHazardPlacement || "other_hazard");
+      pendingHazardPlacement = null;
+      return;
+    }
+    if (action === "open-hazard-placement") {
+      event.preventDefault();
+      const selectedType = actionEl.dataset.hazardType || "other_hazard";
+      document.querySelectorAll("#gridlyHazardPanel .hazard-choice-grid button").forEach((btn) => {
+        btn.classList.toggle("selected", btn === actionEl);
+      });
+      openHazardPlacement(selectedType);
+      return;
+    }
+    if (action === "cancel-hazard-placement") {
+      event.preventDefault();
+      pendingHazardPlacement = null;
+      closeHazardPanel();
       return;
     }
     if (action === "zoom-crossing") {
