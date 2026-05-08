@@ -2117,6 +2117,95 @@ body.modal-open {
     outline-offset: 2px;
   }
 
+  .section-header.map-header {
+    display: none;
+  }
+
+  .dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .mobile-premium-header,
+  .destination-hero-card,
+  .mobile-home-cards {
+    position: relative;
+    z-index: 6;
+  }
+
+  .map-frame {
+    order: 2;
+    margin: 2px -10px 0;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    min-height: 68vh;
+    box-shadow: 0 30px 44px rgba(2, 8, 20, 0.5);
+    overflow: hidden;
+  }
+
+  #map {
+    min-height: 68vh;
+  }
+
+  .geo-filter-status {
+    order: 3;
+    margin-top: -6px;
+    border-radius: 0 0 18px 18px;
+    border-top: none;
+    background: linear-gradient(180deg, rgba(7, 13, 23, 0.78), rgba(4, 9, 16, 0.94));
+  }
+
+  .mobile-home-cards {
+    order: 4;
+    margin-top: -22px;
+    padding: 0 10px 6px;
+    gap: 10px;
+  }
+
+  .mobile-home-card {
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    background: linear-gradient(155deg, rgba(13, 22, 37, 0.82), rgba(8, 15, 28, 0.82));
+  }
+
+  .mobile-home-card:nth-child(n + 5) {
+    display: none;
+  }
+
+  .mobile-route-decision-card {
+    border-color: rgba(255, 198, 104, 0.5);
+    box-shadow: 0 18px 32px rgba(4, 8, 16, 0.44), 0 0 0 1px rgba(255, 198, 104, 0.2);
+  }
+
+  .mobile-route-decision-card span {
+    color: #ffd489;
+  }
+
+  .mobile-map-floating-chips {
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    z-index: 500;
+  }
+
+  .map-tools-overlay {
+    left: 10px;
+    right: 10px;
+    bottom: 12px;
+    border-radius: 16px;
+    background: linear-gradient(150deg, rgba(8, 15, 28, 0.8), rgba(9, 17, 30, 0.74));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .mobile-floating-action-dock {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background: linear-gradient(145deg, rgba(9, 15, 25, 0.82), rgba(7, 13, 23, 0.84));
+  }
+
   .mobile-home-cards {
     display: grid;
     gap: 12px;
