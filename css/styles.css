@@ -9487,17 +9487,18 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
 @media (max-width: 760px) {
   body[data-mobile-mode] #map .leaflet-control-zoom {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: auto;
+    right: 8px;
     left: auto;
+    bottom: calc(112px + env(safe-area-inset-bottom, 0px));
     margin: 0;
     z-index: 1300;
   }
 
   body[data-mobile-mode] #map .gridly-mobile-layer-menu {
-    top: 102px;
-    right: 12px;
-    bottom: auto;
+    top: auto;
+    right: 8px;
+    bottom: calc(68px + env(safe-area-inset-bottom, 0px));
     left: auto;
     z-index: 1310;
     pointer-events: auto;
@@ -9529,12 +9530,14 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
 
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-list {
     position: absolute;
-    top: 0;
-    right: 48px;
+    top: auto;
+    right: calc(100% + 8px);
+    bottom: 0;
     margin-top: 0;
     min-width: 126px;
     max-width: 152px;
     border-radius: 10px;
+    z-index: 1315;
   }
 
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button {
@@ -9546,7 +9549,7 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
   body[data-mobile-mode] #map .leaflet-control-attribution {
     right: 8px;
     left: auto;
-    bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(6px + env(safe-area-inset-bottom, 0px));
     max-width: min(64vw, 230px);
     border-radius: 8px;
     padding: 3px 6px;
@@ -9561,6 +9564,7 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
     flex-direction: row !important;
     align-items: stretch !important;
     gap: 8px !important;
+    width: 100% !important;
   }
 
   #managePlacesSaveGroup .primary-btn,
@@ -9571,10 +9575,14 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
   }
 
   #managePlacesSaveGroup .primary-btn {
-    flex: 1.4 1 0 !important;
+    flex: 1.35 1 0 !important;
   }
 
   #managePlacesSaveGroup #mobileResetPlacesBtn {
     flex: 1 1 0 !important;
+  }
+
+  #managePlacesSaveGroup .destination-chip-row > * {
+    min-width: 0 !important;
   }
 }
