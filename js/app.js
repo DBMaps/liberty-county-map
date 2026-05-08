@@ -317,8 +317,23 @@ window.gridlyReportingDebug = function () {
 
 window.gridlyMobileQAAuditDebug = function gridlyMobileQAAuditDebug() {
   const isMobileViewport = window.matchMedia?.("(max-width: 760px)")?.matches === true;
-  const quickReport = document.querySelector(".mobile-quick-report-strip");
-  const bottomDock = document.querySelector(".mobile-bottom-dock");
+  const quickReportCandidates = Array.from(document.querySelectorAll("#mobileQuickReportBtn, #mobileQuickReportSmallBtn, #mobileReportBtn, .mobile-sticky-report, .report-drawer-summary"));
+  const bottomDockCandidates = Array.from(document.querySelectorAll(".mobile-bottom-dock, .mobile-bottom-nav, .mobile-dock"));
+  const isVisibleEl = (el) => {
+    if (!el) return false;
+    const style = window.getComputedStyle(el);
+    if (style.display === "none" || style.visibility === "hidden" || style.opacity === "0") return false;
+    const rect = el.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0;
+  };
+  const quickReport = quickReportCandidates.find((el) => isVisibleEl(el)) || null;
+  const bottomDock = bottomDockCandidates.find((el) => isVisibleEl(el)) || null;
+  const hazardPicker = document.getElementById("gridlyHazardPanel");
+  const selectedHazardType = reportingState.selectedHazardType || selectedQuickHazardType || null;
+  const actionBusy = Boolean(reportingState.submissionInProgress || reportingState.locationLookupInProgress);
+  const tapMapBtn = hazardPicker?.querySelector('[data-action="start-map-placement"]') || null;
+  const useLocationBtn = hazardPicker?.querySelector('[data-action="submit-hazard"]') || null;
+  const visibleTopCta = Array.from(document.querySelectorAll("#mobileCommuteRouteBtn, .mobile-commute-cta")).find((el) => isVisibleEl(el)) || null;
   const overlays = Array.from(document.querySelectorAll("body *")).filter((el) => {
     const style = window.getComputedStyle(el);
     if (style.display === "none" || style.visibility === "hidden" || style.opacity === "0") return false;
@@ -332,16 +347,16 @@ window.gridlyMobileQAAuditDebug = function gridlyMobileQAAuditDebug() {
     routePanelOpen: Boolean(document.querySelector(".route-setup-modal.open, .route-quick-panel.open")),
     hazardPanelOpen: Boolean(document.querySelector(".hazard-picker-panel.show, .hazard-picker.open")),
     alertsPanelOpen: Boolean(document.querySelector(".mobile-alerts-panel.open, .alerts-drawer.open")),
-    selectedHazardType: reportingState.selectedHazardType || selectedQuickHazardType || null,
-    tapMapDisabled: !Boolean(reportingState.placementModeActive),
-    useLocationDisabled: Boolean(reportingState.locationLookupInProgress || reportingState.submissionInProgress),
-    quickReportVisible: Boolean(quickReport && window.getComputedStyle(quickReport).display !== "none"),
+    selectedHazardType,
+    tapMapDisabled: tapMapBtn ? Boolean(tapMapBtn.disabled) : !Boolean(selectedHazardType && !actionBusy),
+    useLocationDisabled: useLocationBtn ? Boolean(useLocationBtn.disabled) : !Boolean(selectedHazardType && !actionBusy),
+    quickReportVisible: Boolean(quickReport),
     bottomDockRect: bottomDock ? bottomDock.getBoundingClientRect().toJSON() : null,
     layerMenuState: typeof window.gridlyMobileLayerMenuDebug === "function" ? window.gridlyMobileLayerMenuDebug() : null,
     routeLayerExists: Boolean(savedRouteLayer || window.__gridlyRoutePreviewLayer),
     routeWatchActive: window.__gridlyRouteWatchActive === true || routeWatchActivated === true,
-    topCardButtonText: document.getElementById("mobileCommuteRouteBtn")?.textContent?.trim() || "",
-    topCardButtonTarget: document.getElementById("mobileCommuteRouteBtn")?.getAttribute("data-section-jump") || "",
+    topCardButtonText: visibleTopCta?.textContent?.trim() || "",
+    topCardButtonTarget: visibleTopCta?.getAttribute("data-section-jump") || "",
     visibleOverlays: overlays.map((el) => ({ className: el.className, id: el.id || null })),
     possibleBlockers: overlays.filter((el) => {
       const rect = el.getBoundingClientRect();
@@ -3417,7 +3432,8 @@ counter.textContent = "No live road hazards";
 function syncHazardPickerUiState() {
   const picker = document.getElementById("gridlyHazardPanel");
   if (!picker) return;
-  const disablePlacementActions = Boolean(reportingState.submissionInProgress || reportingState.locationLookupInProgress);
+  const selectedType = reportingState.selectedHazardType || selectedQuickHazardType || pendingHazardPlacement || null;
+  const disablePlacementActions = Boolean(!selectedType || reportingState.submissionInProgress || reportingState.locationLookupInProgress);
   picker.querySelectorAll('[data-action="submit-hazard"], [data-action="start-map-placement"]').forEach((btn) => {
     btn.disabled = disablePlacementActions;
     btn.setAttribute("aria-busy", reportingState.locationLookupInProgress ? "true" : "false");
@@ -4898,6 +4914,20 @@ function bindEvents() {
 
   document.querySelectorAll("[data-section-jump]").forEach((btn) => {
     btn.addEventListener("click", (event) => {
+      if (btn.id === "mobileCommuteRouteBtn" && window.matchMedia("(max-width: 1100px)").matches) {
+        event.preventDefault();
+        const topAction = btn.dataset.topCtaAction || "";
+        if (topAction === "open-hazard-picker") {
+          handleReportNearMe("mobile_top_cta_report");
+          return;
+        }
+        if (topAction === "open-reroute-plan") {
+          routeNavSection("map");
+          return;
+        }
+        openRouteSetupModal(btn);
+        return;
+      }
       if (
         window.matchMedia("(max-width: 1100px)").matches &&
         (btn.classList.contains("hero-route-btn") || btn.id === "mobileCommuteRouteBtn")
@@ -7599,8 +7629,28 @@ function updateRouteIntelligence(nearest = []) {
   }
   updateAlternateRouteActionState();
 
-  safeText("mobileCommuteRouteBtn", impact >= 70 ? "Open Reroute Plan" : "Open Commute Plan");
+  updateMobileTopCommuteCta({ impact, routeIsMonitoring, alternateRouteAvailable });
   updateRouteWatchBadge();
+}
+
+function updateMobileTopCommuteCta({ impact = 0, routeIsMonitoring = false, alternateRouteAvailable = false } = {}) {
+  const cta = document.getElementById("mobileCommuteRouteBtn");
+  if (!cta) return;
+  if (!routeIsMonitoring) {
+    cta.textContent = "Choose Route";
+    cta.dataset.sectionJump = "routes";
+    cta.dataset.topCtaAction = "open-route-panel";
+    return;
+  }
+  if (impact >= 70 && alternateRouteAvailable) {
+    cta.textContent = "Open Reroute Plan";
+    cta.dataset.sectionJump = "map";
+    cta.dataset.topCtaAction = "open-reroute-plan";
+    return;
+  }
+  cta.textContent = "Report Issue";
+  cta.dataset.sectionJump = "report";
+  cta.dataset.topCtaAction = "open-hazard-picker";
 }
 
 
