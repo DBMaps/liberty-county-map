@@ -8366,7 +8366,14 @@ body.modal-open {
     transition: opacity 180ms ease, transform 180ms ease;
   }
 
+  body[data-mobile-mode="live"] .report-drawer,
   body[data-mobile-mode="report"] .report-drawer,
+  body[data-mobile-mode="route"] .report-drawer {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
   body[data-mobile-mode="alert"] .desktop-command-panel {
     opacity: 1;
     transform: translateY(0);
