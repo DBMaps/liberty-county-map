@@ -4235,7 +4235,9 @@ function handleReportNearMe() {
   openHazardPanel();
   scrollToSection("mapSection");
   safeText("mapTrustNote", "Quick reporting is now map-first: select a hazard, then use My Location or Tap Map Location.");
-  setConfirmation("Choose a hazard, then use My Location or Tap Map Location.", "success");
+  setConfirmation("Choose a hazard, then tap map to drop the report.", "success");
+  document.body.classList.add("report-pulse");
+  setTimeout(() => document.body.classList.remove("report-pulse"), 900);
 }
 
 function activateReportMode() {
@@ -6469,7 +6471,7 @@ function updateRouteIntelligence(nearest = []) {
     els.routeRecommendation.classList.add("route-watch-recommendation-emphasis");
   }
   safeText("mobileLiveRouteStatus", `${els.routeStatus?.textContent || "CLEAR TO LEAVE"} · ${els.routeEta?.textContent || "ETA pending"}`);
-  safeText("mobileLiveRouteMeta", els.routeRecommendation?.textContent || "Review live route intelligence and alternates.");
+  safeText("mobileLiveRouteMeta", getLiveCommuteSignalLine({ impact, urgentBlockedCount: routeIntel.urgentBlockedCount, recommendation: els.routeRecommendation?.textContent || "" }));
   renderDesktopRouteWatchMetrics({
     freshness: routeIsMonitoring ? freshnessTier : "Unknown",
     reportsNearRoute: routeIsMonitoring ? `${routeHazard.nearbyReports.length} near route` : "0 near route",
@@ -6510,6 +6512,14 @@ function updateRouteIntelligence(nearest = []) {
 
   safeText("mobileCommuteRouteBtn", impact >= 70 ? "Open Reroute Plan" : "Open Commute Plan");
   updateRouteWatchBadge();
+}
+
+
+function getLiveCommuteSignalLine({ impact = 0, urgentBlockedCount = 0, recommendation = "" } = {}) {
+  if (impact >= 75) return urgentBlockedCount > 0 ? "Crossing pressure rising · alternate route faster." : "Live delays building · keep route options open.";
+  if (impact >= 45) return "Route holding steady · heavy activity nearby.";
+  if (impact >= 20) return "Commute stable · predictive watch is active.";
+  return recommendation || "Commute stable · route confidence remains high.";
 }
 
 function updateDailyHabitStatus() {
