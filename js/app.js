@@ -2932,7 +2932,7 @@ counter.textContent = "No live road hazards";
       <strong>Report Road Hazard</strong>
       <button type="button" data-action="close-hazard-panel">×</button>
     </div>
-    <p>Choose a hazard, then submit instantly or place it on the map.</p>
+    <p>Choose a hazard, then use your location or tap the map.</p>
     <div class="hazard-choice-grid">
       <button type="button" data-action="open-hazard-placement" data-hazard-type="flooding">🌊 Flooding</button>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="debris">⚠️ Debris</button>
@@ -2945,6 +2945,7 @@ counter.textContent = "No live road hazards";
     </div>
     <div class="hazard-panel-placement-actions">
       <button type="button" data-action="submit-hazard">Use My Location</button>
+      <button type="button" data-action="start-map-placement">Tap Map Location</button>
       <button type="button" data-action="cancel-hazard-placement">Cancel</button>
     </div>
   `;
@@ -2956,17 +2957,19 @@ counter.textContent = "No live road hazards";
 }
 
 function openHazardPanel() {
+  updateReportingState({ reportModeActive: true, activeReportEntryPoint: "report_near_me" });
   document.getElementById("gridlyHazardPanel")?.classList.add("visible");
 }
 
 window.closeHazardPanel = function () {
+  updateReportingState({ reportModeActive: false, placementModeActive: false });
   document.getElementById("gridlyHazardPanel")?.classList.remove("visible");
 };
 
 function resetQuickHazardReportState() {
   pendingHazardPlacement = null;
   selectedQuickHazardType = null;
-  updateReportingState({ selectedHazardType: null, placementModeActive: false });
+  updateReportingState({ selectedHazardType: null, placementModeActive: false, reportModeActive: false });
   document.querySelectorAll("#gridlyHazardPanel .hazard-choice-grid button").forEach((btn) => {
     btn.classList.remove("selected");
   });
@@ -2978,18 +2981,24 @@ function resetQuickHazardReportState() {
 window.submitHazardNearMe = function (hazardType) {
   const selectedType = hazardType || reportingState.selectedHazardType || selectedQuickHazardType || pendingHazardPlacement;
   if (!selectedType) {
+    updateReportingState({ lastReportError: "Choose a hazard first, then use My Location.", lastReportMessage: "" });
     setConfirmation("Choose a hazard first, then use My Location.", "error");
     return;
   }
 
   if (!navigator.geolocation) {
+    updateReportingState({ lastReportError: "Location is unavailable. Select a spot on the map to submit this hazard.", lastReportMessage: "" });
     setConfirmation("Location is unavailable. Select a spot on the map to submit this hazard.", "error");
     return;
   }
 
   const hazardCopy = HAZARD_TYPES[selectedType] || HAZARD_TYPES.other_hazard;
 
-  updateReportingState({ activeReportEntryPoint: "hazard_use_my_location" });
+  updateReportingState({
+    activeReportEntryPoint: "hazard_use_my_location",
+    lastReportError: "",
+    lastReportMessage: `Finding your location for ${hazardCopy.label} report...`
+  });
   setConfirmation(`Finding your location for ${hazardCopy.label} report...`, "success");
 
   navigator.geolocation.getCurrentPosition(
@@ -3008,6 +3017,10 @@ window.submitHazardNearMe = function (hazardType) {
       closeHazardPanel();
     },
     () => {
+      updateReportingState({
+        lastReportError: "We couldn't access your location. Allow GPS or tap the map to place this hazard.",
+        lastReportMessage: ""
+      });
       setConfirmation("We couldn't access your location. Allow GPS or tap the map to place this hazard.", "error");
     },
     {
@@ -3019,15 +3032,18 @@ window.submitHazardNearMe = function (hazardType) {
 };
 
 function openHazardPlacement(hazardType) {
-  pendingHazardPlacement = hazardType || "other_hazard";
+  pendingHazardPlacement = hazardType || reportingState.selectedHazardType || selectedQuickHazardType || "other_hazard";
   selectedQuickHazardType = pendingHazardPlacement;
   updateReportingState({
     selectedHazardType: pendingHazardPlacement,
     placementModeActive: true,
     activeReportEntryPoint: "hazard_tap_map"
   });
-  const copy = HAZARD_TYPES[pendingHazardPlacement] || HAZARD_TYPES.other_hazard;
-  setConfirmation(`${copy.icon} ${copy.label} selected. Tap map to place or use My Location.`, "success");
+  updateReportingState({
+    lastReportError: "",
+    lastReportMessage: "Tap the map where the issue is located."
+  });
+  setConfirmation("Tap the map where the issue is located.", "success");
 }
 
 async function handleHazardPlacementMapClick(event) {
@@ -3070,12 +3086,14 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
   try {
     updateReportingState({ submissionInProgress: true });
     setSync("Sending hazard report...");
+    updateReportingState({ lastReportError: "", lastReportMessage: `Sending ${copy.label} hazard report...` });
     setConfirmation(`Sending ${copy.label} hazard report...`, "success");
 
     const { error } = await supabaseClient.from("reports").insert(row);
 
     if (error) throw error;
 
+    updateReportingState({ lastReportError: "", lastReportMessage: `${copy.label} report shared.` });
     setConfirmation(`${copy.label} report shared.`, "success");
     setSync("Hazard report shared");
 
@@ -3084,6 +3102,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     return true;
   } catch (error) {
     console.error("Gridly hazard insert failed:", error);
+    updateReportingState({ lastReportError: `Hazard report failed: ${error.message || "permission denied"}` });
     setConfirmation(`Hazard report failed: ${error.message || "permission denied"}`, "error");
     setSync("Hazard report failed");
     updateReportingState({ submissionInProgress: false });
@@ -3768,6 +3787,26 @@ function bindEvents() {
       document.querySelectorAll("#gridlyHazardPanel .hazard-choice-grid button").forEach((btn) => {
         btn.classList.toggle("selected", btn === actionEl);
       });
+      selectedQuickHazardType = selectedType;
+      pendingHazardPlacement = null;
+      updateReportingState({
+        selectedHazardType: selectedType,
+        placementModeActive: false,
+        activeReportEntryPoint: "hazard_select",
+        lastReportError: "",
+        lastReportMessage: `${(HAZARD_TYPES[selectedType] || HAZARD_TYPES.other_hazard).label} selected.`
+      });
+      setConfirmation("Hazard selected. Choose Use My Location or Tap Map Location.", "success");
+      return;
+    }
+    if (action === "start-map-placement") {
+      event.preventDefault();
+      const selectedType = reportingState.selectedHazardType || selectedQuickHazardType;
+      if (!selectedType) {
+        updateReportingState({ lastReportError: "Choose a hazard first, then tap map location.", lastReportMessage: "" });
+        setConfirmation("Choose a hazard first, then tap map location.", "error");
+        return;
+      }
       openHazardPlacement(selectedType);
       return;
     }
@@ -4144,65 +4183,17 @@ function handleSmartReportButton() {
 }
 
 function handleReportNearMe() {
-  updateReportingState({ activeReportEntryPoint: "report_near_me" });
-  activateReportMode();
-
-  if (!navigator.geolocation) {
-    setConfirmation("Location is unavailable. Tap the closest crossing marker on the map, then choose a report type.", "error");
-    return;
-  }
-
-  setConfirmation("Finding your location for a one-tap nearby report...", "success");
-  safeText("mapTrustNote", "Report mode: finding your location...");
-
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      userLocation = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
-      };
-
-      renderUserLocationDot();
-
-      const nearest = findNearestCrossings(userLocation.lat, userLocation.lng, 5);
-      nearbyReportCrossingIds = new Set(nearest.map((crossing) => String(crossing.id)));
-
-      renderCrossings();
-      updateNearestContext();
-      scrollToSection("mapSection");
-
-      if (nearest.length) {
-        map.setView([nearest[0].lat, nearest[0].lng], 15);
-
-        setConfirmation(`Nearest crossing opened: ${nearest[0].name}. Confirm it is correct, then report.`, "success");
-
-        safeText(
-          "mapTrustNote",
-          `Report mode: nearest crossing opened automatically. Confirm it is correct, then choose Blocked, Delay, Cleared, or Other.`
-        );
-
-        setTimeout(() => {
-          map?.invalidateSize();
-          crossingMarkers.get(String(nearest[0].id))?.openPopup();
-        }, 500);
-      } else {
-        map.setView([userLocation.lat, userLocation.lng], 14);
-        setConfirmation("Location found, but no nearby crossing was matched. Tap a crossing marker manually.", "error");
-      }
-    },
-    () => {
-      scrollToSection("mapSection");
-
-      setConfirmation("Location permission was blocked. Tap the closest crossing marker on the map instead.", "error");
-
-      safeText(
-        "mapTrustNote",
-        "Report mode: location blocked. Tap the closest crossing marker on the map."
-      );
-
-      setTimeout(() => map?.invalidateSize(), 350);
-    }
-  );
+  updateReportingState({
+    reportModeActive: true,
+    placementModeActive: false,
+    activeReportEntryPoint: "report_near_me",
+    lastReportError: "",
+    lastReportMessage: "Choose a hazard, then use your location or tap the map."
+  });
+  openHazardPanel();
+  scrollToSection("mapSection");
+  safeText("mapTrustNote", "Quick reporting is now map-first: select a hazard, then use My Location or Tap Map Location.");
+  setConfirmation("Choose a hazard, then use My Location or Tap Map Location.", "success");
 }
 
 function activateReportMode() {
