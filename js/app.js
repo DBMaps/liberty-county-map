@@ -278,9 +278,26 @@ function setMobileUiMode(mode = "live", options = {}) {
 }
 
 const GRIDLY_REPORT_VERBOSE_DEBUG = false;
+const GRIDLY_ROUTE_VERBOSE_DEBUG = false;
+const GRIDLY_LAYER_VERBOSE_DEBUG = false;
 
 function reportDebugLog(...args) {
   if (!GRIDLY_REPORT_VERBOSE_DEBUG) return;
+  console.log(...args);
+}
+
+function routeDebugLog(...args) {
+  if (!GRIDLY_ROUTE_VERBOSE_DEBUG) return;
+  console.info(...args);
+}
+
+function routeDebugError(...args) {
+  if (!GRIDLY_ROUTE_VERBOSE_DEBUG) return;
+  console.error(...args);
+}
+
+function layerDebugLog(...args) {
+  if (!GRIDLY_LAYER_VERBOSE_DEBUG) return;
   console.log(...args);
 }
 
@@ -368,7 +385,7 @@ function installMapClickDiagnostics() {
 
     const topEl = document.elementFromPoint(event.clientX, event.clientY);
     const target = event.target;
-    console.log("[Map click diagnostic]", {
+    reportDebugLog("[Map click diagnostic]", {
       targetTag: target?.tagName || null,
       targetId: target?.id || null,
       targetClass: target?.className || null,
@@ -1392,7 +1409,7 @@ function initMap() {
     currentMapStyle = selectedName;
     activeBaseLayerName = selectedName;
     localStorage.setItem(MAP_STYLE_STORAGE_KEY, selectedName);
-    console.log("[Gridly][LayerPicker] baselayerchange fired", {
+    layerDebugLog("[Gridly][LayerPicker] baselayerchange fired", {
       selectedLayer: selectedName,
       changed: previousStyle !== selectedName,
       previousLayer: previousStyle
@@ -1508,12 +1525,12 @@ function installLayerPickerDebugDiagnostics() {
     map.fire("baselayerchange", { name: normalizedName, layer: mapBaseLayersByName[normalizedName] });
     const collapsed = collapseLayerPickerOnMobile();
     if (isLayerPickerDebugEnabled()) {
-      console.log("[Gridly][LayerPicker] mobile collapse after selection", {
+      layerDebugLog("[Gridly][LayerPicker] mobile collapse after selection", {
         selectedLayer: normalizedName,
         collapsed
       });
     }
-    console.log("[Gridly][LayerPicker] active layer after change", {
+    layerDebugLog("[Gridly][LayerPicker] active layer after change", {
       source,
       requestedLayer: layerName,
       normalizedLayer: normalizedName,
@@ -1609,13 +1626,13 @@ function installLayerPickerDebugDiagnostics() {
           activeBaseLayerNameAfterApply: activeBaseLayerName,
           checkedInputAfterApply: getCheckedInputLayerName()
         };
-        console.log("[Gridly][LayerPicker] label clicked", { layerName: clickedLayer, selectedLayer: currentMapStyle });
+        layerDebugLog("[Gridly][LayerPicker] label clicked", { layerName: clickedLayer, selectedLayer: currentMapStyle });
         diagnostic.applyCalled = true;
         diagnostic.result = applyBaseLayerByName(clickedLayer, "label-click");
         diagnostic.activeBaseLayerNameAfterApply = activeBaseLayerName;
         diagnostic.checkedInputAfterApply = getCheckedInputLayerName();
         if (!isMobileLayerMenuMode()) {
-          console.log("[Gridly][LayerPicker] label tap diagnostic", diagnostic);
+          layerDebugLog("[Gridly][LayerPicker] label tap diagnostic", diagnostic);
         }
       });
       input?.addEventListener("change", (event) => {
@@ -1629,13 +1646,13 @@ function installLayerPickerDebugDiagnostics() {
           activeBaseLayerNameAfterApply: activeBaseLayerName,
           checkedInputAfterApply: getCheckedInputLayerName()
         };
-        console.log("[Gridly][LayerPicker] input change", { layerName: clickedLayer, selectedLayer: currentMapStyle, checked: Boolean(input.checked) });
+        layerDebugLog("[Gridly][LayerPicker] input change", { layerName: clickedLayer, selectedLayer: currentMapStyle, checked: Boolean(input.checked) });
         diagnostic.applyCalled = true;
         diagnostic.result = applyBaseLayerByName(clickedLayer, "input-change");
         diagnostic.activeBaseLayerNameAfterApply = activeBaseLayerName;
         diagnostic.checkedInputAfterApply = getCheckedInputLayerName();
         if (!isMobileLayerMenuMode()) {
-          console.log("[Gridly][LayerPicker] input change diagnostic", diagnostic);
+          layerDebugLog("[Gridly][LayerPicker] input change diagnostic", diagnostic);
         }
       });
     });
@@ -3488,20 +3505,20 @@ function openMobileRouteQuickPanel() {
 }
 
 async function debugEnterRoutePipeline(args = {}) {
-  console.error("DEBUG ROUTE PIPELINE ENTER");
+  routeDebugError("DEBUG ROUTE PIPELINE ENTER");
   debugPipelineWrapperEntered = true;
   lastRoutePipelineStep = "pipeline-entered";
-  console.error("DEBUG ROUTE PIPELINE TRACE", {
+  routeDebugError("DEBUG ROUTE PIPELINE TRACE", {
     typeOfStartInlineRouteWatch: typeof startInlineRouteWatch,
     args
   });
   try {
-    console.error("DEBUG ROUTE PIPELINE BEFORE AWAIT", { args });
+    routeDebugError("DEBUG ROUTE PIPELINE BEFORE AWAIT", { args });
     const result = await startInlineRouteWatch(args);
-    console.error("DEBUG ROUTE PIPELINE AFTER AWAIT", { args });
+    routeDebugError("DEBUG ROUTE PIPELINE AFTER AWAIT", { args });
     return result;
   } catch (error) {
-    console.error("DEBUG ROUTE PIPELINE CATCH ERROR", { error, args });
+    routeDebugError("DEBUG ROUTE PIPELINE CATCH ERROR", { error, args });
     throw error;
   }
 }
@@ -3523,7 +3540,7 @@ function bindDirectRouteQuickPanelButtonListeners() {
       const destinationSelect = document.getElementById("mobileRouteQuickDestination");
       const selectedStart = startSelect?.value || "";
       const selectedDestination = destinationSelect?.value || "";
-      console.error("DIRECT ROUTE BUTTON CLICK", {
+      routeDebugError("DIRECT ROUTE BUTTON CLICK", {
         action,
         button,
         selectedStart,
@@ -3538,10 +3555,15 @@ function bindDirectRouteQuickPanelButtonListeners() {
         at: new Date().toISOString()
       };
       event.preventDefault();
+      const panelWasVisible = panel?.classList?.contains("visible") ?? false;
       await debugEnterRoutePipeline({
         activateWatch: action === "start-route-watch-quick",
         source: action === "start-route-watch-quick" ? "mobile_quick_panel_start_watch_direct" : "mobile_quick_panel_view_route_direct"
       });
+      const panelIsVisible = panel?.classList?.contains("visible") ?? false;
+      if (panelWasVisible && !panelIsVisible && routeRenderSucceeded && !lastRouteEarlyReturnReason) {
+        lastRoutePanelCloseReason = action === "start-route-watch-quick" ? "start_route_watch_success" : "view_route_success";
+      }
     }, true);
     button.dataset.gridlyDirectRouteListenerAttached = "1";
   };
@@ -3558,14 +3580,14 @@ async function handleRouteQuickPanelAction(action, event, actionEl) {
   const selectedDestinationValue = destinationSelect?.value || "";
 
   if (action === "view-route-quick") {
-    console.info("ROUTE QUICK VIEW CLICK HIT", {
+    routeDebugLog("ROUTE QUICK VIEW CLICK HIT", {
       eventTarget: event?.target || null,
       eventCurrentTarget: event?.currentTarget || null,
       selectedStartValue,
       selectedDestinationValue
     });
   } else if (action === "start-route-watch-quick") {
-    console.info("ROUTE QUICK START CLICK HIT", {
+    routeDebugLog("ROUTE QUICK START CLICK HIT", {
       eventTarget: event?.target || null,
       eventCurrentTarget: event?.currentTarget || null,
       selectedStartValue,
@@ -3583,7 +3605,7 @@ async function handleRouteQuickPanelAction(action, event, actionEl) {
   const places = getSavedPlaces();
   const resolvedStartPlace = places.find((place) => place.id === (els.routeWatchStartSelect?.value || "")) || null;
   const resolvedDestinationPlace = places.find((place) => place.id === (els.routeWatchDestinationSelect?.value || "")) || null;
-  console.info("Gridly quick panel place resolution result", { resolvedStartPlace, resolvedDestinationPlace });
+  routeDebugLog("Gridly quick panel place resolution result", { resolvedStartPlace, resolvedDestinationPlace });
   updateRouteWatchStartButtonState();
 
   const routePipelineArgs = {
@@ -3592,7 +3614,7 @@ async function handleRouteQuickPanelAction(action, event, actionEl) {
   };
 
   try {
-    console.info("ABOUT TO CALL startInlineRouteWatch", {
+    routeDebugLog("ABOUT TO CALL startInlineRouteWatch", {
       typeOfStartInlineRouteWatch: typeof startInlineRouteWatch,
       routePipelineArgs
     });
@@ -3602,7 +3624,7 @@ async function handleRouteQuickPanelAction(action, event, actionEl) {
       throw new Error(lastRouteError);
     }
     await startInlineRouteWatch(routePipelineArgs);
-    console.info("RETURNED FROM startInlineRouteWatch", { routePipelineArgs });
+    routeDebugLog("RETURNED FROM startInlineRouteWatch", { routePipelineArgs });
   } catch (error) {
     lastRouteError = String(error?.message || error || "Route pipeline invocation failed");
     if (!lastRouteEarlyReturnReason) {
@@ -6871,32 +6893,32 @@ async function startInlineRouteWatch(options = {}) {
   lastRoutePipelineStep = "entered";
   lastRouteEarlyReturnReason = null;
   const { activateWatch = true, source = "route_watch_cta" } = options;
-  console.info("Gridly route pipeline step", { step: lastRoutePipelineStep, source, activateWatch });
+  routeDebugLog("Gridly route pipeline step", { step: lastRoutePipelineStep, source, activateWatch });
 
   lastRoutePipelineStep = "received_source_action";
-  console.info("Gridly route pipeline step", { step: lastRoutePipelineStep, source, activateWatch });
+  routeDebugLog("Gridly route pipeline step", { step: lastRoutePipelineStep, source, activateWatch });
 
   const startId = els.routeWatchStartSelect?.value || "";
   lastRoutePipelineStep = "start_selector_read";
-  console.info("Gridly route pipeline step", { step: lastRoutePipelineStep, startId });
+  routeDebugLog("Gridly route pipeline step", { step: lastRoutePipelineStep, startId });
 
   const destinationId = els.routeWatchDestinationSelect?.value || "";
   lastRoutePipelineStep = "destination_selector_read";
-  console.info("Gridly route pipeline step", { step: lastRoutePipelineStep, destinationId });
+  routeDebugLog("Gridly route pipeline step", { step: lastRoutePipelineStep, destinationId });
 
   const places = getSavedPlaces();
   const start = places.find((place) => place.id === startId);
   lastRoutePipelineStep = "resolved_start_place";
-  console.info("Gridly route pipeline step", { step: lastRoutePipelineStep, start });
+  routeDebugLog("Gridly route pipeline step", { step: lastRoutePipelineStep, start });
 
   const destination = places.find((place) => place.id === destinationId);
   lastRoutePipelineStep = "resolved_destination_place";
-  console.info("Gridly route pipeline step", { step: lastRoutePipelineStep, destination });
+  routeDebugLog("Gridly route pipeline step", { step: lastRoutePipelineStep, destination });
 
   const startCoords = normalizeCoordinatePair(start?.lat, start?.lng);
   const destinationCoords = normalizeCoordinatePair(destination?.lat, destination?.lng);
   lastRoutePipelineStep = "lat_lng_validated";
-  console.info("Gridly route pipeline step", {
+  routeDebugLog("Gridly route pipeline step", {
     step: lastRoutePipelineStep,
     startHasLatLng: Boolean(startCoords),
     destinationHasLatLng: Boolean(destinationCoords)
@@ -6905,7 +6927,7 @@ async function startInlineRouteWatch(options = {}) {
   if (!start || !destination) {
     lastRouteEarlyReturnReason = "missing_start_or_destination_selection";
     lastRoutePipelineStep = "early_return";
-    console.warn("Gridly route pipeline early return", { reason: lastRouteEarlyReturnReason, startId, destinationId });
+    routeDebugLog("Gridly route pipeline early return", { reason: lastRouteEarlyReturnReason, startId, destinationId });
     setRoutePreviewState(false, "Start or destination was not selected.", { layerExists: false, mapHasLayer: false, pointCount: 0 });
     setConfirmation("Choose a start and destination to begin monitoring.", "error");
     return;
@@ -6913,11 +6935,11 @@ async function startInlineRouteWatch(options = {}) {
 
   const samePlace = start.id === destination.id;
   lastRoutePipelineStep = "same_place_checked";
-  console.info("Gridly route pipeline step", { step: lastRoutePipelineStep, samePlace });
+  routeDebugLog("Gridly route pipeline step", { step: lastRoutePipelineStep, samePlace });
   if (samePlace) {
     lastRouteEarlyReturnReason = "same_place_selected";
     lastRoutePipelineStep = "early_return";
-    console.warn("Gridly route pipeline early return", { reason: lastRouteEarlyReturnReason, startId, destinationId });
+    routeDebugLog("Gridly route pipeline early return", { reason: lastRouteEarlyReturnReason, startId, destinationId });
     savedRouteLayer?.clearLayers?.();
     setRoutePreviewState(false, "Start and destination are the same place.", { layerExists: false, mapHasLayer: false, pointCount: 0 });
     setConfirmation("Choose a different destination.", "error");
@@ -6934,7 +6956,7 @@ async function startInlineRouteWatch(options = {}) {
   if (!startCoords || !destinationCoords) {
     lastRouteEarlyReturnReason = "missing_start_or_destination_coordinates";
     lastRoutePipelineStep = "early_return";
-    console.warn("Gridly route pipeline early return", { reason: lastRouteEarlyReturnReason, start, destination });
+    routeDebugLog("Gridly route pipeline early return", { reason: lastRouteEarlyReturnReason, start, destination });
     savedRouteLayer?.clearLayers?.();
     setRoutePreviewState(false, "Missing start or destination coordinates", { layerExists: false, mapHasLayer: false, pointCount: 0 });
     setConfirmation("Route preview unavailable until precise locations are saved.", "error");
@@ -6946,7 +6968,7 @@ async function startInlineRouteWatch(options = {}) {
   if (startCoords.lat === destinationCoords.lat && startCoords.lng === destinationCoords.lng) {
     lastRouteEarlyReturnReason = "same_coordinates";
     lastRoutePipelineStep = "early_return";
-    console.warn("Gridly route pipeline early return", { reason: lastRouteEarlyReturnReason, startCoords, destinationCoords });
+    routeDebugLog("Gridly route pipeline early return", { reason: lastRouteEarlyReturnReason, startCoords, destinationCoords });
     savedRouteLayer?.clearLayers?.();
     setRoutePreviewState(false, "Start and destination coordinates are the same", { layerExists: false, mapHasLayer: false, pointCount: 0 });
     setConfirmation("Update one saved place location to view a route preview.", "error");
@@ -6958,7 +6980,7 @@ async function startInlineRouteWatch(options = {}) {
   if (getDistanceMiles(startCoords.lat, startCoords.lng, destinationCoords.lat, destinationCoords.lng) > 80) {
     lastRouteEarlyReturnReason = "distance_exceeds_local_preview_limit";
     lastRoutePipelineStep = "early_return";
-    console.warn("Gridly route pipeline early return", { reason: lastRouteEarlyReturnReason, startCoords, destinationCoords });
+    routeDebugLog("Gridly route pipeline early return", { reason: lastRouteEarlyReturnReason, startCoords, destinationCoords });
     savedRouteLayer?.clearLayers?.();
     setRoutePreviewState(false, "Route preview skipped because points are too far apart for local preview.", { layerExists: false, mapHasLayer: false, pointCount: 0 });
     setConfirmation("Route preview unavailable for this selection.", "error");
@@ -6969,14 +6991,14 @@ async function startInlineRouteWatch(options = {}) {
   }
 
   lastRoutePipelineStep = "route_engine_availability_checked";
-  console.info("Gridly route pipeline step", { step: lastRoutePipelineStep, mapReady: Boolean(map), osrmApi: OSRM_ROUTE_API });
+  routeDebugLog("Gridly route pipeline step", { step: lastRoutePipelineStep, mapReady: Boolean(map), osrmApi: OSRM_ROUTE_API });
 
   savedRouteLayer?.clearLayers?.();
   window.__gridlyRouteWatchActive = true;
   window.__gridlySelectedRouteId = `${start.id}->${destination.id}`;
 
   lastRoutePipelineStep = "osrm_payload_build_start";
-  console.info("Gridly route pipeline step", { step: lastRoutePipelineStep, startCoords, destinationCoords });
+  routeDebugLog("Gridly route pipeline step", { step: lastRoutePipelineStep, startCoords, destinationCoords });
 
   const routePreviewShown = await renderRoutePreviewLine(startCoords, destinationCoords, {
     start: start.name,
