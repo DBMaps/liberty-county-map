@@ -9496,21 +9496,30 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 8px;
+    gap: 4px;
     pointer-events: auto;
+    padding: 6px;
+    border-radius: 14px;
+    background: rgba(10, 13, 16, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 8px 20px rgba(2, 8, 18, 0.28);
+    backdrop-filter: blur(6px);
   }
   body[data-mobile-mode] #map .leaflet-control-zoom {
     position: static;
     margin: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: none;
   }
 
   body[data-mobile-mode] #map .leaflet-control-zoom a {
     width: 38px;
     height: 38px;
     line-height: 38px;
-    background: rgba(10, 13, 16, 0.62) !important;
+    background: rgba(10, 13, 16, 0.72) !important;
     border: 1px solid rgba(255, 255, 255, 0.14) !important;
-    box-shadow: 0 4px 12px rgba(2, 8, 18, 0.22) !important;
+    box-shadow: none !important;
     color: #c5d5e7 !important;
   }
 
@@ -9530,9 +9539,9 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
     gap: 0;
     border-radius: 10px;
     height: 38px;
-    background: rgba(10, 13, 16, 0.62) !important;
+    background: rgba(10, 13, 16, 0.72) !important;
     border: 1px solid rgba(255, 255, 255, 0.14) !important;
-    box-shadow: 0 4px 12px rgba(2, 8, 18, 0.22) !important;
+    box-shadow: none !important;
     opacity: 1 !important;
     color: #c5d5e7;
     letter-spacing: 0;
@@ -9540,9 +9549,9 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
 
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle:hover,
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle:focus-visible {
-    background: rgba(10, 13, 16, 0.62) !important;
+    background: rgba(10, 13, 16, 0.72) !important;
     border: 1px solid rgba(255, 255, 255, 0.14) !important;
-    box-shadow: 0 4px 12px rgba(2, 8, 18, 0.22) !important;
+    box-shadow: none !important;
   }
 
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle:active {
@@ -9695,5 +9704,27 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
     min-height: 30px !important;
     padding: 5px 8px !important;
     font-size: 0.74rem !important;
+  }
+}
+
+/* V51 — final visual polish: unified control rail + safer header/logo breathing room */
+@media (max-width: 1100px) {
+  .app-header {
+    min-height: 62px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+}
+
+@media (max-width: 700px) {
+  .app-header {
+    min-height: 90px;
+    padding-top: 12px;
+    padding-bottom: 10px;
+  }
+
+  .brand-logo-frame {
+    height: 60px;
+    overflow: visible;
   }
 }
