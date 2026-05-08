@@ -9053,3 +9053,65 @@ body.modal-open {
     opacity: 0.88;
   }
 }
+
+
+/* V44B mobile modal polish */
+@media (max-width: 1100px) {
+  .route-setup-modal-card,
+  .smart-alerts-modal-card,
+  .gridly-mobile-route-quick-panel,
+  .gridly-hazard-panel {
+    border-radius: 16px 16px 0 0;
+    border-width: 1px;
+    box-shadow: 0 -14px 34px rgba(0,0,0,0.35);
+    backdrop-filter: blur(12px);
+  }
+
+  .route-setup-modal-card {
+    padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
+    max-height: min(84svh, 620px);
+  }
+
+  .route-setup-modal-head h2,
+  .gridly-mobile-route-quick-panel .panel-head h3,
+  .smart-alerts-modal-head + h2,
+  .hazard-panel-header strong {
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+  }
+
+  .route-modal-close,
+  #closeSmartAlertsModalBtn,
+  .hazard-panel-header button {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.22);
+    background: rgba(255,255,255,0.08);
+  }
+
+  .route-setup-grid-mobile input,
+  .route-setup-grid-mobile select,
+  .smart-alerts-modal-card input,
+  .smart-alerts-modal-card select {
+    border-radius: 10px;
+    min-height: 40px;
+    padding: 9px 11px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.06);
+  }
+
+  .route-setup-grid-mobile .primary-btn,
+  .route-setup-grid-mobile .secondary-btn,
+  .smart-alerts-modal-card .primary-btn,
+  .smart-alerts-modal-card .secondary-btn,
+  .gridly-mobile-route-quick-panel .primary-btn,
+  .gridly-mobile-route-quick-panel .secondary-btn,
+  .hazard-panel-placement-actions button {
+    min-height: 42px;
+    border-radius: 11px;
+    padding: 10px 12px;
+  }
+}

@@ -4138,7 +4138,7 @@ function injectHazardStyles() {
       overflow-y: auto;
       min-height: 0;
       max-height: clamp(180px, 42dvh, 380px);
-      padding-bottom: 64px;
+      padding-bottom: 8px;
       -webkit-overflow-scrolling: touch;
     }
 
@@ -4170,7 +4170,9 @@ function injectHazardStyles() {
       flex-shrink: 0;
       position: sticky;
       bottom: 0;
+      z-index: 2;
       background: rgba(9, 18, 32, 0.98);
+      border-top: 1px solid rgba(255,255,255,0.12);
       padding-top: 8px;
       padding-bottom: max(4px, env(safe-area-inset-bottom, 0px));
     }
@@ -4218,7 +4220,7 @@ function injectHazardStyles() {
         grid-template-columns: 1fr;
         gap: 6px;
         max-height: min(42dvh, 320px);
-        padding-bottom: 74px;
+        padding-bottom: 8px;
       }
       .hazard-choice-grid button {
         padding: 10px;
@@ -7656,24 +7658,12 @@ function updateRouteIntelligence(nearest = []) {
   updateRouteWatchBadge();
 }
 
-function updateMobileTopCommuteCta({ impact = 0, routeIsMonitoring = false, alternateRouteAvailable = false } = {}) {
+function updateMobileTopCommuteCta({ routeIsMonitoring = false } = {}) {
   const cta = document.getElementById("mobileCommuteRouteBtn");
   if (!cta) return;
-  if (!routeIsMonitoring) {
-    cta.textContent = "Choose Route";
-    cta.dataset.sectionJump = "routes";
-    cta.dataset.topCtaAction = "open-route-panel";
-    return;
-  }
-  if (impact >= 70 && alternateRouteAvailable) {
-    cta.textContent = "Open Reroute Plan";
-    cta.dataset.sectionJump = "map";
-    cta.dataset.topCtaAction = "open-reroute-plan";
-    return;
-  }
-  cta.textContent = "Report Issue";
-  cta.dataset.sectionJump = "report";
-  cta.dataset.topCtaAction = "open-hazard-picker";
+  cta.textContent = routeIsMonitoring ? "View Route" : "Choose Route";
+  cta.dataset.sectionJump = "routes";
+  cta.dataset.topCtaAction = "open-route-panel";
 }
 
 
