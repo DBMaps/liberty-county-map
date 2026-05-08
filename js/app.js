@@ -271,10 +271,18 @@ function updateReportingState(patch = {}) {
   syncMapPlacementCursorState();
 }
 
+function isMobileUiViewport() {
+  return window.matchMedia("(max-width: 1100px)").matches;
+}
+
 function setMobileUiMode(mode = "live", options = {}) {
   const nextMode = ["live", "route", "report", "alert"].includes(mode) ? mode : "live";
   mobileUiMode = nextMode;
-  document.body?.setAttribute("data-mobile-mode", nextMode);
+  if (isMobileUiViewport()) {
+    document.body?.setAttribute("data-mobile-mode", nextMode);
+  } else {
+    document.body?.removeAttribute("data-mobile-mode");
+  }
   document.querySelectorAll(".mobile-dock-btn").forEach((btn) => {
     const btnMode = btn.dataset.mode;
     btn.classList.toggle("active", btnMode === nextMode);
@@ -622,6 +630,7 @@ function hydrateElements() {
   });
 
   setMobileUiMode("live", { silent: true });
+  window.addEventListener("resize", () => setMobileUiMode(mobileUiMode, { silent: true }));
   highlightNearestCrossingOnFirstLoad();
 }
 
