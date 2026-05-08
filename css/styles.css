@@ -7737,3 +7737,74 @@ body.modal-open {
     box-shadow: inset 0 1px 0 rgba(210, 234, 255, 0.08);
   }
 }
+
+/* V37F living movement intelligence layer: restrained motion + operational urgency */
+#map {
+  position: relative;
+}
+
+#map::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 16% 22%, rgba(125, 203, 255, 0.12), transparent 42%),
+    radial-gradient(circle at 76% 72%, rgba(82, 166, 255, 0.1), transparent 44%);
+  mix-blend-mode: screen;
+  opacity: 0.42;
+  animation: gridlyAmbientDrift 11s ease-in-out infinite alternate;
+}
+
+#map .leaflet-pane.leaflet-routePane-pane path {
+  filter: drop-shadow(0 0 8px rgba(88, 177, 255, 0.3));
+  animation: gridlyRoutePulse 2.6s ease-in-out infinite;
+}
+
+.gridly-hazard-marker {
+  animation: gridlyHazardBreath 2.1s ease-in-out infinite;
+}
+
+.gridly-hazard-marker.high {
+  animation-duration: 1.5s;
+}
+
+.desktop-route-watch-strip,
+.mobile-live-command {
+  background:
+    radial-gradient(circle at 87% 18%, rgba(116, 206, 255, 0.14), transparent 40%),
+    linear-gradient(142deg, rgba(9, 25, 40, 0.82), rgba(7, 18, 31, 0.72));
+}
+
+.route-watch-live-pill.is-on {
+  box-shadow: 0 0 0 1px rgba(126, 211, 255, 0.42), 0 0 20px rgba(74, 182, 255, 0.2);
+  animation: gridlyConfidencePulse 1.9s ease-in-out infinite;
+}
+
+@media (max-width: 700px) {
+  .mobile-home-cards > .mobile-home-card.mobile-quick-actions-card,
+  .mobile-home-cards > .mobile-home-card.mobile-community-card,
+  .mobile-home-cards > .mobile-home-card.mobile-active-crossings-card {
+    display: none;
+  }
+}
+
+@keyframes gridlyRoutePulse {
+  0%, 100% { stroke-opacity: 0.72; }
+  50% { stroke-opacity: 0.98; }
+}
+
+@keyframes gridlyHazardBreath {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 rgba(80, 176, 255, 0.12); }
+  50% { transform: scale(1.06); box-shadow: 0 0 18px rgba(80, 176, 255, 0.26); }
+}
+
+@keyframes gridlyConfidencePulse {
+  0%, 100% { opacity: 0.92; }
+  50% { opacity: 1; }
+}
+
+@keyframes gridlyAmbientDrift {
+  0% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.35; }
+  100% { transform: translate3d(-1.2%, 1.1%, 0) scale(1.03); opacity: 0.5; }
+}
