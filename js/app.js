@@ -1622,7 +1622,7 @@ function installLayerPickerDebugDiagnostics() {
       menuRoot.innerHTML = `
         <button type="button" class="gridly-mobile-layer-menu-toggle" aria-expanded="false" aria-haspopup="true" aria-label="Open map layers" title="Map layers">
           <span class="gridly-layer-icon" aria-hidden="true">🗺️</span>
-          <span class="gridly-layer-label">Layers</span>
+          <span class="gridly-layer-label" aria-hidden="true">LAYERS</span>
         </button>
         <div class="gridly-mobile-layer-menu-list" hidden>
           <button type="button" data-layer-name="Standard">Standard</button>
@@ -1827,10 +1827,23 @@ function installLayerPickerDebugDiagnostics() {
       activeLayer: activeBaseLayerName,
       wrapperClasses: menuRoot?.className || "",
       toggleRect: menuRoot?.querySelector(".gridly-mobile-layer-menu-toggle")?.getBoundingClientRect?.()?.toJSON?.() || null,
-      menuRect: menuList?.getBoundingClientRect?.()?.toJSON?.() || null,
-      computedDisplay: menuList ? getComputedStyle(menuList).display : null,
-      computedVisibility: menuList ? getComputedStyle(menuList).visibility : null,
-      computedOverflow: menuList ? getComputedStyle(menuList).overflow : null
+      menuRect: menuRoot?.getBoundingClientRect?.()?.toJSON?.() || null,
+      listRect: menuList?.getBoundingClientRect?.()?.toJSON?.() || null,
+      computedPosition: menuRoot ? (() => {
+        const style = getComputedStyle(menuRoot);
+        return {
+          top: style.top,
+          right: style.right,
+          bottom: style.bottom,
+          left: style.left,
+          display: style.display,
+          visibility: style.visibility,
+          zIndex: style.zIndex
+        };
+      })() : null,
+      computedListDisplay: menuList ? getComputedStyle(menuList).display : null,
+      computedListVisibility: menuList ? getComputedStyle(menuList).visibility : null,
+      computedListOverflow: menuList ? getComputedStyle(menuList).overflow : null
     };
   };
 window.gridlyMobileLayerMenuDebug = window.gridlyLayerMenuAuditDebug;
