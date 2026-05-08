@@ -3420,7 +3420,6 @@ counter.textContent = "No live road hazards";
       <button type="button" data-action="open-hazard-placement" data-hazard-type="construction">🚧 Construction</button>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="road_closed">⛔ Road Closed</button>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="disabled_vehicle">🚙 Disabled Vehicle</button>
-      <button type="button" data-action="open-hazard-placement" data-hazard-type="rail_blockage_delay">🚆 Rail Issue</button>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="other_hazard">❗ Other Hazard</button>
     </div>
     <div class="hazard-panel-placement-actions">
@@ -3499,31 +3498,34 @@ function injectMobileQuickActionOverlays() {
       <strong>Route Quick Panel</strong>
       <button type="button" data-action="close-route-quick">×</button>
     </div>
-    <label>Start
+    <label class="route-quick-field">Start
       <select id="mobileRouteQuickStart"></select>
     </label>
-    <label>Destination
+    <label class="route-quick-field">Destination
       <select id="mobileRouteQuickDestination"></select>
     </label>
-    <p id="mobileRouteQuickMeta">Select start and destination.</p>
+    <p id="mobileRouteQuickMeta" class="route-quick-meta">Select start and destination.</p>
     <div class="route-quick-actions">
       <button type="button" data-action="start-route-watch-quick">Start Route Watch</button>
       <button type="button" data-action="view-route-quick">View Route</button>
     </div>
+    <button type="button" class="route-quick-manage-link" data-action="open-manage-places-quick">Manage Places</button>
   `;
   document.body.appendChild(panel);
   const style = document.createElement("style");
   style.id = "gridlyMobileQuickOverlaysStyles";
   style.textContent = `
     .gridly-hazard-panel,.gridly-mobile-route-quick-panel{z-index:10020!important}
-    .gridly-mobile-route-quick-panel{position:fixed;left:14px;right:14px;bottom:164px;background:rgba(7,17,31,.96);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:12px;display:none;box-shadow:0 20px 40px rgba(0,0,0,.35);backdrop-filter:blur(10px)}
-    .gridly-mobile-route-quick-panel.visible{display:grid;gap:8px}
-    .gridly-mobile-route-quick-panel label{display:grid;gap:4px;color:#d8e3f3;font-size:12px}
-    .gridly-mobile-route-quick-panel select{width:100%}
-    .route-quick-head{display:flex;justify-content:space-between;align-items:center}
-    .route-quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .route-quick-actions button{border:0;border-radius:999px;padding:10px;font-weight:800}
+    .gridly-mobile-route-quick-panel{position:fixed;left:14px;right:14px;bottom:160px;background:rgba(7,17,31,.97);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:10px;display:none;box-shadow:0 16px 34px rgba(0,0,0,.35);backdrop-filter:blur(10px)}
+    .gridly-mobile-route-quick-panel.visible{display:grid;gap:6px}
+    .gridly-mobile-route-quick-panel .route-quick-field{display:grid;gap:3px;color:#d8e3f3;font-size:11px;font-weight:600}
+    .gridly-mobile-route-quick-panel select{width:100%;min-height:36px;padding:7px 9px;border-radius:9px}
+    .route-quick-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
+    .route-quick-meta{margin:0;color:#afc2d8;font-size:11px;line-height:1.3}
+    .route-quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+    .route-quick-actions button{border:0;border-radius:10px;padding:8px 10px;font-weight:700;font-size:12px}
     .route-quick-actions button[data-action="start-route-watch-quick"]{background:linear-gradient(135deg,#0fb8ff,#4ee3ff);color:#041018}
+    .route-quick-manage-link{justify-self:end;border:0;background:transparent;color:#8ecfff;font-size:11px;font-weight:600;padding:2px 0}
   `;
   document.head.appendChild(style);
 }
@@ -4655,6 +4657,12 @@ function bindEvents() {
     if (action === "close-route-quick") {
       event.preventDefault();
       document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
+      return;
+    }
+    if (action === "open-manage-places-quick") {
+      event.preventDefault();
+      document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
+      openRouteSetupModalForType("manage");
       return;
     }
     if (action === "view-route-quick") {
@@ -8847,16 +8855,6 @@ function upgradeMobileIssueCTA() {
     launcher.textContent = "Report Issue Near Me";
   }
 
-  if (choiceGrid && !document.getElementById("gridlyRailIssueChoice")) {
-    const railButton = document.createElement("button");
-    railButton.id = "gridlyRailIssueChoice";
-    railButton.type = "button";
-    railButton.textContent = "🚆 Rail Crossing Issue";
-    railButton.addEventListener("click", startRailIssueFromUnifiedPanel);
-
-    choiceGrid.prepend(railButton);
-  }
-
   ensureFloodingHazardChoice(choiceGrid);
   injectMobileCTACleanupStyles();
 }
@@ -8955,11 +8953,6 @@ window.gridlyHazardPickerDebug = function () {
   };
 };
 
-function startRailIssueFromUnifiedPanel() {
-  closeHazardPanel();
-  handleReportNearMe();
-}
-
 function injectMobileCTACleanupStyles() {
   if (document.getElementById("gridlyMobileCTACleanupStyles")) return;
 
@@ -9025,7 +9018,7 @@ function injectMobileCTACleanupStyles() {
         overflow-y: auto !important;
         overscroll-behavior: contain !important;
         -webkit-overflow-scrolling: touch !important;
-        padding-bottom: 14px !important;
+        padding-bottom: 8px !important;
         gap: 8px !important;
       }
       .hazard-choice-grid button {
@@ -9040,23 +9033,23 @@ function injectMobileCTACleanupStyles() {
         bottom: 0 !important;
         flex-shrink: 0 !important;
         background: rgba(9, 18, 32, 0.98) !important;
-        padding-top: 8px !important;
-        padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px)) !important;
+        padding-top: 6px !important;
+        padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px)) !important;
         margin-top: 4px !important;
         border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr auto !important;
+        gap: 6px !important;
       }
-      .hazard-panel-placement-actions .primary-btn,
-      .hazard-panel-placement-actions .secondary-btn {
-        min-height: 38px !important;
-        padding: 8px 12px !important;
+      .hazard-panel-placement-actions button {
+        min-height: 34px !important;
+        padding: 7px 10px !important;
         border-radius: 10px !important;
-        font-size: 0.83rem !important;
+        font-size: 0.78rem !important;
         font-weight: 700 !important;
       }
-      .hazard-panel-placement-actions .secondary-btn:last-child {
-        min-height: 34px !important;
-        padding: 6px 10px !important;
-        font-size: 0.78rem !important;
+      .hazard-panel-placement-actions button[data-action="cancel-hazard-placement"] {
+        min-width: 64px !important;
         opacity: 0.9 !important;
       }
     }
