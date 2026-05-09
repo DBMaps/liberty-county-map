@@ -5235,7 +5235,7 @@ function bindEvents() {
     const focusCard = actionEl.closest?.("[data-alert-focus]");
     if (focusCard) {
       event.preventDefault();
-      focusAlertLocation(focusCard.dataset.lat, focusCard.dataset.lng);
+      focusAlertLocation(focusCard.dataset.lat, focusCard.dataset.lng, { incidentId: focusCard.dataset.incidentId, type: focusCard.closest("#roadHazardsList") ? "road" : "rail", openPopup: false });
     }
   };
   attachRouteQuickPanelDelegatedClickHandlers();
@@ -5245,7 +5245,7 @@ function bindEvents() {
     const focusCard = event.target?.closest?.("[data-alert-focus]");
     if (!focusCard) return;
     event.preventDefault();
-    focusAlertLocation(focusCard.dataset.lat, focusCard.dataset.lng);
+    focusAlertLocation(focusCard.dataset.lat, focusCard.dataset.lng, { incidentId: focusCard.dataset.incidentId, type: focusCard.closest("#roadHazardsList") ? "road" : "rail", openPopup: false });
   });
   els.mobileOpenLiveMapBtn?.addEventListener("click", () => {
     setConfirmation("Opening Live Map.", "success");
@@ -8880,27 +8880,28 @@ function buildRoadHazardDisplay(incident) {
     incident?.area
   ];
   const titleDescription = `${incident?.title || ""} ${incident?.description || ""}`;
-  const roadFromText = titleDescription.match(/\b(?:on|near|at)\s+([A-Z0-9][A-Za-z0-9 .\/-]{2,})/);
+  const roadFromText = titleDescription.match(/(?:on|near|at)\s+([A-Z0-9][A-Za-z0-9 .\/-]{2,})/i);
   if (roadFromText?.[1]) locationCandidates.unshift(roadFromText[1].trim());
   const locationName = locationCandidates.map((value) => String(value || "").trim()).find(Boolean) || "";
   const hasUsefulRoadName = locationName && !/liberty county/i.test(locationName);
-  const betweenMatch = titleDescription.match(/\bbetween\s+([A-Z0-9][A-Za-z0-9 .\/-]{2,})\s+and\s+([A-Z0-9][A-Za-z0-9 .\/-]{2,})/i);
-  const nearMatch = titleDescription.match(/\bnear\s+([A-Z0-9][A-Za-z0-9 .\/-]{2,})/i);
+  const betweenMatch = titleDescription.match(/between\s+([A-Z0-9][A-Za-z0-9 .\/-]{2,})\s+and\s+([A-Z0-9][A-Za-z0-9 .\/-]{2,})/i);
+  const nearMatch = titleDescription.match(/near\s+([A-Z0-9][A-Za-z0-9 .\/-]{2,})/i);
 
   let title = "Road Hazard";
   if (category === "flooding" && hasUsefulRoadName) title = `Flooding near ${locationName}`;
   else if (hasUsefulRoadName) title = `${hazardType} on ${locationName}`;
   else if (hazardType !== "Road Hazard") title = hazardType;
 
-  const hasCoords = Number.isFinite(Number(incident?.lat)) && Number.isFinite(Number(incident?.lng));
-  const coordinateFallback = hasCoords ? `${Number(incident.lat).toFixed(2)}, ${Number(incident.lng).toFixed(2)}` : "";
-  const areaName = [incident?.city, incident?.county, incident?.area].map((value) => String(value || "").trim()).find(Boolean) || "";
+  const coords = normalizeCoordinatePair(incident?.lat, incident?.lng);
+  const coordinateFallback = coords ? `${coords.lat.toFixed(3)}, ${coords.lng.toFixed(3)}` : "";
+  const areaName = [incident?.city, incident?.area, incident?.county].map((value) => String(value || "").trim()).find(Boolean) || "";
   let locationText = "";
   if (betweenMatch?.[1] && betweenMatch?.[2]) locationText = `Between ${betweenMatch[1].trim()} and ${betweenMatch[2].trim()}`;
-  else if (nearMatch?.[1]) locationText = `Near ${nearMatch[1].trim()}`;
+  else if (nearMatch?.[1] && !/liberty county/i.test(nearMatch[1])) locationText = `Near ${nearMatch[1].trim()}`;
   else if (hasUsefulRoadName) locationText = `Near ${locationName}`;
+  else if (coordinateFallback) locationText = `Near ${coordinateFallback}`;
   else if (areaName) locationText = `Near ${areaName}`;
-  else locationText = coordinateFallback ? `Reported near ${coordinateFallback}` : "Reported near Liberty County";
+  else locationText = "Location pending";
 
   const isCleared = String(incident?.status || "").toLowerCase() === "cleared";
   const routeRelevant = isIncidentRouteRelevant(incident);
@@ -8917,44 +8918,75 @@ function buildRoadHazardDisplay(incident) {
   };
 }
 
+function resolveRailLocationText(incident) {
+  const latest = incident?.latestReport || {};
+  const coords = normalizeCoordinatePair(latest?.lat, latest?.lng);
+  const humanRoad = [latest?.road_name, latest?.street_name, latest?.nearest_road, latest?.snapped_road_name, latest?.crossing_street, latest?.cross_street]
+    .map((value) => String(value || "").trim())
+    .find((value) => value && !/^(private|unknown)$/i.test(value)) || "";
+  const crossingName = String(incident?.crossingName || latest?.crossingName || latest?.crossing || "").trim();
+  const nearbyName = [latest?.location_name, latest?.city, latest?.area, latest?.county].map((value) => String(value || "").trim()).find(Boolean) || "";
+  const crossingId = String(latest?.crossingId || incident?.crossingId || "").trim();
+  return {
+    humanRoad,
+    crossingName,
+    nearbyName,
+    coords,
+    crossingId,
+    subtitlePrefix: humanRoad ? `Near ${humanRoad}` : nearbyName ? `Near ${nearbyName}` : coords ? `Near ${coords.lat.toFixed(3)}, ${coords.lng.toFixed(3)}` : crossingId ? `Crossing ID ${crossingId}` : "Location pending"
+  };
+}
+
 function buildRailIncidentDisplay(incident) {
   const latest = incident?.latestReport || {};
   const reportType = String(latest?.type || "").toLowerCase();
   const actionWord = reportType === "cleared" ? "Cleared" : reportType === "blocked" ? "Blocked" : "Delay";
-  const crossingName = String(incident?.crossingName || latest?.crossingName || latest?.crossing || "").trim();
-  const roadName = [latest?.road_name, latest?.street_name, latest?.nearest_road, latest?.snapped_road_name, latest?.crossing_street, latest?.cross_street]
-    .map((value) => String(value || "").trim())
-    .find(Boolean) || "";
-  const title = roadName
-    ? `${actionWord} crossing on ${roadName}`
-    : crossingName
-    ? `${actionWord} at ${crossingName}`
+  const location = resolveRailLocationText(incident);
+  const title = location.humanRoad
+    ? `${actionWord} crossing on ${location.humanRoad}`
+    : location.crossingName
+    ? `${actionWord} near ${location.crossingName}`
     : `${actionWord} crossing`;
-  const locationHint = [latest?.location_name, latest?.city, latest?.county, latest?.area].map((value) => String(value || "").trim()).find(Boolean) || "";
-  const crossingId = String(latest?.crossingId || incident?.crossingId || "").trim();
-  const coords = normalizeCoordinatePair(latest?.lat, latest?.lng);
-  const subtitlePrefix = roadName ? `Near ${roadName}` : locationHint ? `Near ${locationHint}` : crossingId ? `Crossing ID ${crossingId}` : coords ? `Near ${coords.lat.toFixed(2)}, ${coords.lng.toFixed(2)}` : "Location pending";
-  return { title, subtitlePrefix };
+  return { title, subtitlePrefix: location.subtitlePrefix };
 }
 
 function buildAlertFocusDataset(incidentLike = {}, defaults = {}) {
   const coords = normalizeCoordinatePair(incidentLike?.lat, incidentLike?.lng) || normalizeCoordinatePair(defaults?.lat, defaults?.lng);
   const incidentId = String(incidentLike?.id || incidentLike?.crossingId || defaults?.incidentId || "").trim();
-  const focusAttrs = coords ? `data-alert-focus="1" data-lat="${coords.lat}" data-lng="${coords.lng}"` : "";
+  const focusAttrs = coords ? `data-alert-focus="true" data-lat="${coords.lat}" data-lng="${coords.lng}"` : "";
   return `${focusAttrs} data-incident-id="${sanitizeText(incidentId || "unknown")}"`;
 }
 
-function focusAlertLocation(lat, lng) {
+function focusAlertLocation(lat, lng, options = {}) {
   const coords = normalizeCoordinatePair(lat, lng);
   if (!map || !coords) return false;
   map.flyTo([coords.lat, coords.lng], Math.max(14, Number(map.getZoom?.() || 14)), { duration: 0.45 });
-  const nearbyMarker = unifiedIncidentLayer?.getLayers?.().find((layer) => {
+  const incidentId = String(options?.incidentId || "").trim();
+  const tolerance = Number(options?.tolerance || 0.00025);
+  const matchedMarker = unifiedIncidentLayer?.getLayers?.().find((layer) => {
     const markerPos = layer?.getLatLng?.();
-    return markerPos && Math.abs(markerPos.lat - coords.lat) < 0.0002 && Math.abs(markerPos.lng - coords.lng) < 0.0002;
+    const markerIncidentId = String(layer?.options?.incidentId || "").trim();
+    if (incidentId && markerIncidentId && markerIncidentId === incidentId) return true;
+    return markerPos && Math.abs(markerPos.lat - coords.lat) < tolerance && Math.abs(markerPos.lng - coords.lng) < tolerance;
   });
-  if (nearbyMarker?.openPopup) setTimeout(() => nearbyMarker.openPopup(), 180);
+  const shouldOpenPopup = Boolean(options?.openPopup && matchedMarker?.openPopup);
+  if (shouldOpenPopup) setTimeout(() => matchedMarker.openPopup(), 180);
+  window.__gridlyAlertFocusDebugState = {
+    lastAlertFocusIncidentId: incidentId || null,
+    lastAlertFocusLat: coords.lat,
+    lastAlertFocusLng: coords.lng,
+    lastAlertFocusType: String(options?.type || "unknown"),
+    lastAlertFocusMatchedMarker: Boolean(matchedMarker),
+    lastAlertFocusPopupOpened: shouldOpenPopup,
+    lastAlertFocusReason: shouldOpenPopup ? "popup-opened" : matchedMarker ? "pan-only-matched-marker" : "pan-only-no-marker"
+  };
   return true;
 }
+
+
+window.gridlyAlertFocusDebug = function () {
+  return { ...(window.__gridlyAlertFocusDebugState || {}) };
+};
 
 function getRoadHazardSurfaceIncidents(limit = 3) {
   const routeHazard = routeWatchActivated ? getRouteHazardAssessment() : null;
