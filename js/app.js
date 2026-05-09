@@ -5230,10 +5230,23 @@ function bindEvents() {
     if (action === "zoom-crossing") {
       event.preventDefault();
       zoomToCrossing(actionEl.dataset.crossingId);
+      return;
+    }
+    const focusCard = actionEl.closest?.("[data-alert-focus]");
+    if (focusCard) {
+      event.preventDefault();
+      focusAlertLocation(focusCard.dataset.lat, focusCard.dataset.lng);
     }
   };
   attachRouteQuickPanelDelegatedClickHandlers();
   document.addEventListener("click", handleDataActionClick);
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    const focusCard = event.target?.closest?.("[data-alert-focus]");
+    if (!focusCard) return;
+    event.preventDefault();
+    focusAlertLocation(focusCard.dataset.lat, focusCard.dataset.lng);
+  });
   els.mobileOpenLiveMapBtn?.addEventListener("click", () => {
     setConfirmation("Opening Live Map.", "success");
   });
@@ -8871,6 +8884,8 @@ function buildRoadHazardDisplay(incident) {
   if (roadFromText?.[1]) locationCandidates.unshift(roadFromText[1].trim());
   const locationName = locationCandidates.map((value) => String(value || "").trim()).find(Boolean) || "";
   const hasUsefulRoadName = locationName && !/liberty county/i.test(locationName);
+  const betweenMatch = titleDescription.match(/\bbetween\s+([A-Z0-9][A-Za-z0-9 .\/-]{2,})\s+and\s+([A-Z0-9][A-Za-z0-9 .\/-]{2,})/i);
+  const nearMatch = titleDescription.match(/\bnear\s+([A-Z0-9][A-Za-z0-9 .\/-]{2,})/i);
 
   let title = "Road Hazard";
   if (category === "flooding" && hasUsefulRoadName) title = `Flooding near ${locationName}`;
@@ -8879,9 +8894,13 @@ function buildRoadHazardDisplay(incident) {
 
   const hasCoords = Number.isFinite(Number(incident?.lat)) && Number.isFinite(Number(incident?.lng));
   const coordinateFallback = hasCoords ? `${Number(incident.lat).toFixed(2)}, ${Number(incident.lng).toFixed(2)}` : "";
-  const locationText = hasUsefulRoadName
-    ? `Near ${locationName}`
-    : (incident?.city || incident?.county || (coordinateFallback ? `Reported near ${coordinateFallback}` : "Reported near Liberty County"));
+  const areaName = [incident?.city, incident?.county, incident?.area].map((value) => String(value || "").trim()).find(Boolean) || "";
+  let locationText = "";
+  if (betweenMatch?.[1] && betweenMatch?.[2]) locationText = `Between ${betweenMatch[1].trim()} and ${betweenMatch[2].trim()}`;
+  else if (nearMatch?.[1]) locationText = `Near ${nearMatch[1].trim()}`;
+  else if (hasUsefulRoadName) locationText = `Near ${locationName}`;
+  else if (areaName) locationText = `Near ${areaName}`;
+  else locationText = coordinateFallback ? `Reported near ${coordinateFallback}` : "Reported near Liberty County";
 
   const isCleared = String(incident?.status || "").toLowerCase() === "cleared";
   const routeRelevant = isIncidentRouteRelevant(incident);
@@ -8896,6 +8915,45 @@ function buildRoadHazardDisplay(incident) {
     meta: statusText,
     rowClass: isCleared ? "cleared" : routeRelevant ? "high" : ""
   };
+}
+
+function buildRailIncidentDisplay(incident) {
+  const latest = incident?.latestReport || {};
+  const reportType = String(latest?.type || "").toLowerCase();
+  const actionWord = reportType === "cleared" ? "Cleared" : reportType === "blocked" ? "Blocked" : "Delay";
+  const crossingName = String(incident?.crossingName || latest?.crossingName || latest?.crossing || "").trim();
+  const roadName = [latest?.road_name, latest?.street_name, latest?.nearest_road, latest?.snapped_road_name, latest?.crossing_street, latest?.cross_street]
+    .map((value) => String(value || "").trim())
+    .find(Boolean) || "";
+  const title = roadName
+    ? `${actionWord} crossing on ${roadName}`
+    : crossingName
+    ? `${actionWord} at ${crossingName}`
+    : `${actionWord} crossing`;
+  const locationHint = [latest?.location_name, latest?.city, latest?.county, latest?.area].map((value) => String(value || "").trim()).find(Boolean) || "";
+  const crossingId = String(latest?.crossingId || incident?.crossingId || "").trim();
+  const coords = normalizeCoordinatePair(latest?.lat, latest?.lng);
+  const subtitlePrefix = roadName ? `Near ${roadName}` : locationHint ? `Near ${locationHint}` : crossingId ? `Crossing ID ${crossingId}` : coords ? `Near ${coords.lat.toFixed(2)}, ${coords.lng.toFixed(2)}` : "Location pending";
+  return { title, subtitlePrefix };
+}
+
+function buildAlertFocusDataset(incidentLike = {}, defaults = {}) {
+  const coords = normalizeCoordinatePair(incidentLike?.lat, incidentLike?.lng) || normalizeCoordinatePair(defaults?.lat, defaults?.lng);
+  const incidentId = String(incidentLike?.id || incidentLike?.crossingId || defaults?.incidentId || "").trim();
+  const focusAttrs = coords ? `data-alert-focus="1" data-lat="${coords.lat}" data-lng="${coords.lng}"` : "";
+  return `${focusAttrs} data-incident-id="${sanitizeText(incidentId || "unknown")}"`;
+}
+
+function focusAlertLocation(lat, lng) {
+  const coords = normalizeCoordinatePair(lat, lng);
+  if (!map || !coords) return false;
+  map.flyTo([coords.lat, coords.lng], Math.max(14, Number(map.getZoom?.() || 14)), { duration: 0.45 });
+  const nearbyMarker = unifiedIncidentLayer?.getLayers?.().find((layer) => {
+    const markerPos = layer?.getLatLng?.();
+    return markerPos && Math.abs(markerPos.lat - coords.lat) < 0.0002 && Math.abs(markerPos.lng - coords.lng) < 0.0002;
+  });
+  if (nearbyMarker?.openPopup) setTimeout(() => nearbyMarker.openPopup(), 180);
+  return true;
 }
 
 function getRoadHazardSurfaceIncidents(limit = 3) {
@@ -8938,7 +8996,7 @@ function renderRoadHazards() {
     const display = buildRoadHazardDisplay(incident);
     const age = Number.isFinite(Number(incident.age_minutes)) ? `${Math.max(0, Math.round(Number(incident.age_minutes)))}m` : "now";
     return `
-      <article class="alert-item intelligence-row ${display.rowClass}">
+      <article class="alert-item intelligence-row ${display.rowClass}" tabindex="0" role="button" ${buildAlertFocusDataset(incident)}>
         <div class="alert-row-main">
           <span class="alert-severity-chip">${sanitizeText(display.meta)}</span>
           <strong>${sanitizeText(display.title)}</strong>
@@ -8984,6 +9042,7 @@ function renderAlerts() {
       const freshnessLabel = getFreshnessLabel(latest);
       const confirmationLabel = getDriverConfirmationLabel(incident.count);
       const reportState = getReportStateLabel(latest);
+      const railDisplay = buildRailIncidentDisplay(incident);
       const severityLabel =
         latest.type === "cleared"
           ? "Cleared"
@@ -8995,13 +9054,13 @@ function renderAlerts() {
       const itemClass = latest.type === "cleared" ? "cleared" : latest.severity === "high" ? "high" : "";
 
       return `
-        <article class="alert-item intelligence-row ${itemClass}">
+        <article class="alert-item intelligence-row ${itemClass}" tabindex="0" role="button" ${buildAlertFocusDataset(latest, { incidentId: incident.crossingId })}>
           <div class="alert-row-main">
             <span class="alert-severity-chip">${sanitizeText(severityLabel)}</span>
-            <strong>${sanitizeText(incident.crossingName)}</strong>
+            <strong>${sanitizeText(railDisplay.title)}</strong>
             <span class="alert-row-time">${incident.newestMinutes}m</span>
           </div>
-          <p class="alert-row-subline">${sanitizeText(confidenceLabel)} · ${sanitizeText(confirmationLabel)} · ${sanitizeText(reportState)}</p>
+          <p class="alert-row-subline">${sanitizeText(railDisplay.subtitlePrefix)} · ${sanitizeText(confirmationLabel)} · ${sanitizeText(reportState)}</p>
           <details class="alert-row-details">
             <summary>Details</summary>
             <p>${sanitizeText(freshnessLabel)} · ${sanitizeText(latest.detail)}</p>
