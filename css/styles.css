@@ -4413,6 +4413,26 @@ h1, h2, h3, .future-metric-headline {
   border-color: rgba(255, 79, 94, 0.65) !important;
   box-shadow: 0 0 0 1px rgba(255, 79, 94, 0.35), 0 0 24px rgba(255, 79, 94, 0.3);
 }
+.gridly-hazard-marker.route-relevant {
+  transform: scale(1.08);
+  border-width: 2px;
+  box-shadow: 0 0 0 1px rgba(163, 224, 255, 0.62), 0 0 18px rgba(86, 179, 255, 0.36);
+  z-index: 410;
+  animation: gridlyRouteRelevantPulse 2.8s ease-in-out infinite;
+}
+.gridly-hazard-marker.route-deemphasized {
+  opacity: 0.66;
+  filter: saturate(0.82);
+}
+.gridly-hazard-marker.state-cleared,
+.gridly-hazard-marker[data-state="cleared"] {
+  opacity: 0.35;
+  filter: grayscale(0.72);
+}
+@keyframes gridlyRouteRelevantPulse {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(163, 224, 255, 0.52), 0 0 12px rgba(86, 179, 255, 0.22); }
+  50% { box-shadow: 0 0 0 1px rgba(163, 224, 255, 0.72), 0 0 18px rgba(86, 179, 255, 0.34); }
+}
 
 .gridly-hazard-marker.moderate,
 .delay-status {
