@@ -8579,6 +8579,15 @@ function updateGrowthWidgets() {
   }
 
   const confirmationCount = getUnifiedIncidents().reduce((sum,i)=>sum+i.reports_count,0);
+  const routeIsMonitoring = Boolean(routeWatchActivated && routeLabelParts?.configured);
+  const routeHazard = routeIsMonitoring ? getRouteHazardAssessment() : { nearbyReports: [], level: "clear", score: 0 };
+  const activeUnifiedHazards = unifiedActive.filter((incident) => !String(incident.type || "").startsWith("rail_"));
+  const routeRelevantHazards = routeIsMonitoring
+    ? activeUnifiedHazards.filter((incident) => isIncidentRouteRelevant(incident, routeHazard))
+    : [];
+  const routeRelevantBlockedCrossings = routeIsMonitoring
+    ? (Array.isArray(routeHazard?.nearbyReports) ? routeHazard.nearbyReports : []).filter((report) => report.reportType === "blocked" && report.lifecycleState === "active").length
+    : 0;
 
   const newestMinutes = typeof lastReport?.minutesAgo === "number" ? lastReport.minutesAgo : null;
   const freshnessTier = getFreshnessTier(newestMinutes);
