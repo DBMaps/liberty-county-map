@@ -8997,8 +8997,35 @@ function normalizeRoadNameCandidate(value = "") {
     .replace(/\s+/g, " ");
 }
 
-function evaluateRoadNameCandidate(value = "") {
+function normalizeRoadwayReference(value = "") {
   const normalized = normalizeRoadNameCandidate(value);
+  if (!normalized) return "";
+
+  const compact = normalized
+    .replace(/\bwestbound\b|\beastbound\b|\bnorthbound\b|\bsouthbound\b/gi, "")
+    .replace(/\bwest\b|\beast\b|\bnorth\b|\bsouth\b/gi, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  const patterns = [
+    { re: /^(?:united\s+states\s+highway|u\.?s\.?\s*highway|us\s*highway|us)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `US ${n.toUpperCase()}` },
+    { re: /^(?:farm\s+to\s+market(?:\s+road)?|fm)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `FM ${n.toUpperCase()}` },
+    { re: /^(?:state\s+highway|sh)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `SH ${n.toUpperCase()}` },
+    { re: /^(?:interstate|ih|i)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `I-${n.toUpperCase()}` },
+    { re: /^(?:loop)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `Loop ${n.toUpperCase()}` },
+    { re: /^(?:spur)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `Spur ${n.toUpperCase()}` },
+    { re: /^(?:county\s+road|cr)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `CR ${n.toUpperCase()}` }
+  ];
+
+  for (const pattern of patterns) {
+    const match = compact.match(pattern.re);
+    if (match?.[1]) return pattern.format(match[1]);
+  }
+  return compact;
+}
+
+function evaluateRoadNameCandidate(value = "") {
+  const normalized = normalizeRoadwayReference(normalizeRoadNameCandidate(value));
   if (!normalized) return { normalized, valid: false, reason: "empty" };
   if (/^[-,.\s]+$/.test(normalized)) return { normalized, valid: false, reason: "punctuation_only" };
   if (normalized.length < 3) return { normalized, valid: false, reason: "too_short" };
@@ -9156,6 +9183,15 @@ window.gridlyRoadNameResolverDebug = function () {
     rejectedCandidates: Array.isArray(last?.rejectedCandidates) ? last.rejectedCandidates : [],
     rejectionReasons: Array.isArray(last?.rejectionReasons) ? last.rejectionReasons : [],
     normalizedCandidateSamples: Array.isArray(last?.normalizedCandidateSamples) ? last.normalizedCandidateSamples : [],
+    normalizedRoadwaySamples: [
+      "United States Highway 90 West",
+      "US Highway 90",
+      "Farm to Market Road 1960",
+      "State Highway 146",
+      "Interstate 10 West",
+      "County Road 101"
+    ].map((sample) => normalizeRoadwayReference(sample)),
+    roadwayNormalizationApplied: true,
     sampleLookupResults: last?.sampleLookup || sampleCrossing,
     fallbackBehavior: last?.fallbackBehavior || "returns null when no roadway dataset is available",
     localFallbackSourceAvailable: Boolean(Array.isArray(crossings) && crossings.length),
