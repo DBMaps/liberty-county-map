@@ -8838,12 +8838,75 @@ function getCorridorSeverityTheme(severityLabel = "Clear") {
   return { border: "rgba(34, 197, 94, 0.65)", glow: "rgba(34, 197, 94, 0.14)", badge: "rgba(34, 197, 94, 0.2)", text: "#86efac" };
 }
 
+const ROAD_HAZARD_DISPLAY_CATEGORIES = new Set(["road_closed", "flooding", "crash", "construction", "disabled_vehicle", "other_hazard"]);
+
+function formatRoadHazardCategoryLabel(category) {
+  const labels = {
+    road_closed: "Road Closure",
+    flooding: "Flooding",
+    crash: "Crash",
+    construction: "Construction",
+    disabled_vehicle: "Disabled Vehicle",
+    other_hazard: "Road Hazard"
+  };
+  return labels[category] || "Road Hazard";
+}
+
+function buildRoadHazardDisplay(incident) {
+  const category = getHazardCategory(incident?.report_type || incident?.type || "other_hazard");
+  const hazardType = formatRoadHazardCategoryLabel(category);
+  const locationCandidates = [
+    incident?.road_name,
+    incident?.street_name,
+    incident?.street,
+    incident?.nearest_road,
+    incident?.snapped_road_name,
+    incident?.crossing_street,
+    incident?.cross_street,
+    incident?.location_name,
+    incident?.area
+  ];
+  const titleDescription = `${incident?.title || ""} ${incident?.description || ""}`;
+  const roadFromText = titleDescription.match(/\b(?:on|near|at)\s+([A-Z0-9][A-Za-z0-9 .\/-]{2,})/);
+  if (roadFromText?.[1]) locationCandidates.unshift(roadFromText[1].trim());
+  const locationName = locationCandidates.map((value) => String(value || "").trim()).find(Boolean) || "";
+  const hasUsefulRoadName = locationName && !/liberty county/i.test(locationName);
+
+  let title = "Road Hazard";
+  if (category === "flooding" && hasUsefulRoadName) title = `Flooding near ${locationName}`;
+  else if (hasUsefulRoadName) title = `${hazardType} on ${locationName}`;
+  else if (hazardType !== "Road Hazard") title = hazardType;
+
+  const hasCoords = Number.isFinite(Number(incident?.lat)) && Number.isFinite(Number(incident?.lng));
+  const coordinateFallback = hasCoords ? `${Number(incident.lat).toFixed(2)}, ${Number(incident.lng).toFixed(2)}` : "";
+  const locationText = hasUsefulRoadName
+    ? `Near ${locationName}`
+    : (incident?.city || incident?.county || (coordinateFallback ? `Reported near ${coordinateFallback}` : "Reported near Liberty County"));
+
+  const isCleared = String(incident?.status || "").toLowerCase() === "cleared";
+  const routeRelevant = isIncidentRouteRelevant(incident);
+  const statusText = isCleared ? "Cleared" : routeRelevant ? "Route relevant" : "Active";
+  const ageText = Number.isFinite(Number(incident?.age_minutes))
+    ? `${Math.max(0, Math.round(Number(incident.age_minutes)))}m ago`
+    : "just now";
+
+  return {
+    title,
+    subtitle: `${locationText} · ${statusText} · ${ageText}`,
+    meta: statusText,
+    rowClass: isCleared ? "cleared" : routeRelevant ? "high" : ""
+  };
+}
 
 function getRoadHazardSurfaceIncidents(limit = 3) {
   const routeHazard = routeWatchActivated ? getRouteHazardAssessment() : null;
   const severityWeight = { high: 3, medium: 2, moderate: 2, low: 1 };
   return getUnifiedIncidents()
-    .filter((incident) => String(incident?.id || "").startsWith("road-"))
+    .filter((incident) => {
+      const idLooksRoad = String(incident?.id || "").startsWith("road-");
+      const category = getHazardCategory(incident?.report_type || incident?.type || "other_hazard");
+      return idLooksRoad && ROAD_HAZARD_DISPLAY_CATEGORIES.has(category);
+    })
     .sort((a, b) => {
       const aActive = String(a?.status || "").toLowerCase() !== "cleared";
       const bActive = String(b?.status || "").toLowerCase() !== "cleared";
@@ -8872,22 +8935,16 @@ function renderRoadHazards() {
   }
 
   els.roadHazardsList.innerHTML = hazards.map((incident) => {
-    const category = getHazardCategory(incident.report_type || incident.type || "other_hazard");
-    const copy = HAZARD_TYPES[category] || HAZARD_TYPES.other_hazard;
-    const isCleared = String(incident.status || "").toLowerCase() === "cleared";
-    const routeRelevant = isIncidentRouteRelevant(incident);
-    const chip = isCleared ? "Cleared" : routeRelevant ? "Route" : "Active";
-    const rowClass = isCleared ? "cleared" : routeRelevant ? "high" : "";
-    const area = incident.area || "Liberty County";
+    const display = buildRoadHazardDisplay(incident);
     const age = Number.isFinite(Number(incident.age_minutes)) ? `${Math.max(0, Math.round(Number(incident.age_minutes)))}m` : "now";
     return `
-      <article class="alert-item intelligence-row ${rowClass}">
+      <article class="alert-item intelligence-row ${display.rowClass}">
         <div class="alert-row-main">
-          <span class="alert-severity-chip">${sanitizeText(chip)}</span>
-          <strong>${sanitizeText(copy.label)}</strong>
+          <span class="alert-severity-chip">${sanitizeText(display.meta)}</span>
+          <strong>${sanitizeText(display.title)}</strong>
           <span class="alert-row-time">${sanitizeText(age)}</span>
         </div>
-        <p class="alert-row-subline">${sanitizeText(area)} · ${sanitizeText(isCleared ? "Resolved report" : "Roadway hazard")}</p>
+        <p class="alert-row-subline">${sanitizeText(display.subtitle)}</p>
       </article>
     `;
   }).join("");
