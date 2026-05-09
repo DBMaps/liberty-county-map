@@ -277,6 +277,14 @@ function isMobileUiViewport() {
   return window.matchMedia("(max-width: 1100px)").matches;
 }
 
+function syncMobileNavVisibilityForViewport() {
+  const shouldShowMobileNav = isMobileUiViewport();
+  document.querySelectorAll(".mobile-floating-action-dock, .mobile-bottom-nav").forEach((el) => {
+    el.hidden = !shouldShowMobileNav;
+    el.setAttribute("aria-hidden", shouldShowMobileNav ? "false" : "true");
+  });
+}
+
 function setMobileUiMode(mode = "live", options = {}) {
   const nextMode = ["live", "route", "report", "alert"].includes(mode) ? mode : "live";
   mobileUiMode = nextMode;
@@ -646,7 +654,9 @@ function hydrateElements() {
   });
 
   setMobileUiMode("live", { silent: true });
+  syncMobileNavVisibilityForViewport();
   window.addEventListener("resize", () => setMobileUiMode(mobileUiMode, { silent: true }));
+  window.addEventListener("resize", syncMobileNavVisibilityForViewport);
   highlightNearestCrossingOnFirstLoad();
 }
 
