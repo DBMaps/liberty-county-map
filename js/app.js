@@ -9038,14 +9038,24 @@ function evaluateRoadNameCandidate(value = "") {
 }
 
 
-function titleCaseRoadText(value = "") {
-  const text = String(value || "").trim();
+function normalizeRoadDisplayCase(value = "") {
+  const text = normalizeRoadNameCandidate(value);
   if (!text) return "";
-  if (/^(US|SH|FM|IH|I|TX)\s*\d+[A-Z]?$/i.test(text)) return text.toUpperCase().replace(/\s+/g, " ");
+  const normalizedReference = normalizeRoadwayReference(text);
+  if (/^(?:US|FM|SH|I-\d+[A-Z]?|CR|Loop|Spur)\b/.test(normalizedReference)) return normalizedReference;
+
   return text
-    .split(/\s+/)
-    .map((token) => (/^[A-Z0-9-]{2,}$/.test(token) ? token : token.charAt(0).toUpperCase() + token.slice(1).toLowerCase()))
-    .join(" ");
+    .split(/(\s+|[-\/])/)
+    .map((segment) => {
+      if (!segment || /^\s+$/.test(segment) || segment === "-" || segment === "/") return segment;
+      if (/^\d+[A-Z]?$/.test(segment)) return segment.toUpperCase();
+      return segment.charAt(0).toUpperCase() + segment.slice(1).toLowerCase();
+    })
+    .join("");
+}
+
+function titleCaseRoadText(value = "") {
+  return normalizeRoadDisplayCase(value);
 }
 
 function normalizeRoadComparison(value = "") {
@@ -9277,6 +9287,18 @@ window.gridlyRoadNameResolverDebug = function () {
       "County Road 101"
     ].map((sample) => normalizeRoadwayReference(sample)),
     roadwayNormalizationApplied: true,
+    displayCaseNormalizationApplied: true,
+    displayCaseSamples: [
+      "WINFREE STREET",
+      "WACO STREET",
+      "Main Street",
+      "Stilson Road",
+      "US 90",
+      "FM 1960",
+      "SH 146",
+      "I-10",
+      "CR 321"
+    ].map((sample) => normalizeRoadDisplayCase(sample)),
     sampleLookupResults: last?.sampleLookup || sampleCrossing,
     fallbackBehavior: last?.fallbackBehavior || "returns null when no roadway dataset is available",
     localFallbackSourceAvailable: Boolean(Array.isArray(crossings) && crossings.length),
