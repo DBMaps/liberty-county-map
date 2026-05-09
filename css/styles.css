@@ -9262,6 +9262,8 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle,body[data-mobile-mo
 .alert-severity-chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08)}
 .alert-item.high .alert-severity-chip{background:rgba(255,130,93,.17);border-color:rgba(255,160,122,.3)}
 .alert-row-time{font-size:.72rem;color:rgba(202,221,236,.78)}
+.alert-item[data-alert-focus]{cursor:pointer;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
+.alert-item[data-alert-focus]:hover,.alert-item[data-alert-focus]:focus-visible{transform:translateY(-1px);border-color:rgba(142,239,255,.38);box-shadow:0 6px 16px rgba(7,16,29,.28);outline:none}
 
 .geo-filter-shell{background:rgba(8,15,24,.44)!important;border-color:rgba(255,255,255,.07)!important;box-shadow:none!important}
 .geo-filter-pill{background:rgba(255,255,255,.03)!important;border:1px solid rgba(255,255,255,.04)!important;color:rgba(229,238,249,.72)!important}
