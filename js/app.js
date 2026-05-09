@@ -3748,7 +3748,7 @@ function getUnifiedIncidents() {
       description: latest.detail,
       lat: latest.lat,
       lng: latest.lng,
-      area: "Liberty County",
+      area: latest.location_name || latest.area || latest.city || incident.location_name || incident.area || incident.city || "",
       created_at: latest.submittedAt,
       confidence: latest.confidence,
       reports_count: incident.count,
@@ -9327,10 +9327,16 @@ function buildRoadHazardDisplay(incident) {
 
   const coords = normalizeCoordinatePair(incident?.lat, incident?.lng);
   const coordinateFallback = coords ? `${coords.lat.toFixed(3)}, ${coords.lng.toFixed(3)}` : "";
-  const areaName = [incident?.city, incident?.area, incident?.county].map((value) => String(value || "").trim()).find(Boolean) || "";
+  const isNonInformativeRoadArea = (value) => {
+    const normalized = String(value || "").trim().toLowerCase();
+    return normalized === "liberty county" || normalized === "county";
+  };
+  const areaName = [incident?.location_name, incident?.area, incident?.city, incident?.county]
+    .map((value) => String(value || "").trim())
+    .find((value) => value && !isNonInformativeRoadArea(value)) || "";
   let locationText = "";
   if (hasUsefulRoadName) locationText = `Near ${locationContext.phrasing}`;
-  else if (nearestKnownLocation) locationText = `Near ${nearestKnownLocation}`;
+  else if (nearestKnownLocation && !isNonInformativeRoadArea(nearestKnownLocation)) locationText = `Near ${nearestKnownLocation}`;
   else if (areaName) locationText = `Near ${areaName}`;
   else if (coordinateFallback) locationText = `Near ${coordinateFallback}`;
   else locationText = "Location pending";
