@@ -154,6 +154,7 @@ const SELECTED_PLACE_STORAGE_KEY = "gridlySelectedPlaceIdV1";
 const GRIDLY_PROFILE_STORAGE_KEY = "gridlyUserProfileV1";
 const MOVEMENT_INTELLIGENCE_STORAGE_KEY = "gridlyMovementIntelligenceV1";
 const OSRM_ROUTE_API = "https://router.project-osrm.org/route/v1/driving";
+const OSRM_NEAREST_API = "https://router.project-osrm.org/nearest/v1/driving";
 
 let supabaseClient = null;
 let realtimeChannel = null;
@@ -242,6 +243,25 @@ let debugPipelineWrapperEntered = false;
 window.gridlyLastRouteAttempt = null;
 let pendingHazardPlacement = null;
 let selectedQuickHazardType = null;
+let lastRoadSnapDebug = {
+  originalTapCoords: null,
+  snappedCoords: null,
+  snapDistanceMeters: null,
+  nearestRoadFound: false,
+  snapMethodUsed: "none",
+  fallbackUsed: false,
+  regionContext: { ...LOCATION_DEFAULTS },
+  routeImpactDetected: false
+};
+let lastMarkerAuditDebug = {
+  activeMarkerCount: 0,
+  markersByCategory: {},
+  markersAffectingRoute: 0,
+  clusteredMarkerCount: 0,
+  markerTypesRendered: [],
+  routeHighlightedMarkers: 0,
+  activeVisualStates: []
+};
 let mobileUiMode = "live";
 const MOBILE_REPORT_ENTRY_SELECTORS = [
   "#mobileDockReportBtn",
@@ -332,6 +352,14 @@ function routeDebugError(...args) {
   if (!GRIDLY_ROUTE_VERBOSE_DEBUG) return;
   console.error(...args);
 }
+window.gridlyRoadSnapDebug = function () {
+  return { ...lastRoadSnapDebug };
+};
+
+window.gridlyMarkerAuditDebug = function () {
+  return { ...lastMarkerAuditDebug };
+};
+
 function captureRouteAttempt(patch = {}) {
   lastRouteAttempt = { ...(lastRouteAttempt || {}), ...patch, timestamp: new Date().toISOString() };
   window.gridlyLastRouteAttempt = lastRouteAttempt;
@@ -3290,6 +3318,12 @@ function renderUnifiedIncidents() {
   const incidents = getUnifiedIncidents();
   const routeHazard = routeWatchActivated ? getRouteHazardAssessment() : null;
 
+  const markersByCategory = {};
+  const markerTypesRendered = new Set();
+  const activeVisualStates = new Set();
+  let markersAffectingRoute = 0;
+  let routeHighlightedMarkers = 0;
+
   incidents.forEach((incident) => {
     if (!Number.isFinite(incident.lat) || !Number.isFinite(incident.lng)) return;
 
@@ -3303,12 +3337,25 @@ function renderUnifiedIncidents() {
     const routeRelevanceClass = routeWatchActivated
       ? (isIncidentRouteRelevant(incident, routeHazard) ? "route-relevant" : "route-deemphasized")
       : "";
+    const category = getHazardCategory(incident.report_type || incident.type || "other_hazard");
+    const markerVariantClass = `marker-${category}`;
+    const confidenceClass = String(incident.confidence || "").toLowerCase().includes("community") ? "confidence-community" : "confidence-high";
+    markersByCategory[category] = (markersByCategory[category] || 0) + 1;
+    markerTypesRendered.add(markerVariantClass);
+    markerTypesRendered.add(getMapSeverityClass(incident));
+    markerTypesRendered.add(confidenceClass);
+    activeVisualStates.add(ageClass);
+    if (routeRelevanceClass) activeVisualStates.add(routeRelevanceClass);
+    if (routeRelevanceClass === "route-relevant") {
+      markersAffectingRoute += 1;
+      routeHighlightedMarkers += 1;
+    }
 
     const icon = L.divIcon({
       className: "",
       html: `
-        <div class="gridly-hazard-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass} ${proximityClass} ${routeRelevanceClass}">
-          <span>${sanitizeText(getUnifiedIncidentIcon(incident))}</span>
+        <div class="gridly-hazard-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass} ${proximityClass} ${routeRelevanceClass} ${sanitizeText(markerVariantClass)} ${sanitizeText(confidenceClass)}">
+          <span>${sanitizeText(getCategoryMarkerGlyph(category, incident))}</span>
           <small>${incident.age_minutes}m</small>
           ${incident.reports_count > 1 ? `<b>${incident.reports_count}</b>` : ""}
         </div>
@@ -3323,6 +3370,30 @@ function renderUnifiedIncidents() {
   });
 
   updateHazardCounter(incidents);
+  lastMarkerAuditDebug = {
+    activeMarkerCount: incidents.length,
+    markersByCategory,
+    markersAffectingRoute,
+    clusteredMarkerCount: getLiveHazardIncidents().length,
+    markerTypesRendered: [...markerTypesRendered],
+    routeHighlightedMarkers,
+    activeVisualStates: [...activeVisualStates]
+  };
+}
+
+function getCategoryMarkerGlyph(category, incident) {
+  if (incident?.status === "cleared" || incident?.report_type === "hazard_cleared") return "✓";
+  const glyphMap = {
+    rail_blockage_delay: "⟂",
+    delay: "◔",
+    flooding: "≈",
+    crash: "✶",
+    construction: "▧",
+    road_closed: "⛔",
+    disabled_vehicle: "◌",
+    other_hazard: "•"
+  };
+  return glyphMap[category] || "•";
 }
 
 function buildHazardPopup(incident) {
@@ -4040,13 +4111,63 @@ async function handleHazardPlacementMapClick(event) {
   const lng = event?.latlng?.lng;
   if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
   const selectedType = pendingHazardPlacement || reportingState.selectedHazardType;
-  const submitted = await createSharedHazardReport(selectedType, lat, lng, "tap map placement");
+  const snapped = await snapHazardToRoad(lat, lng);
+  const submitted = await createSharedHazardReport(selectedType, snapped.lat, snapped.lng, "tap map placement", "", snapped.originalTapCoords);
   if (!submitted) return;
+  if (map) {
+    L.circleMarker([lat, lng], { radius: 4, color: "#8fb6ff", weight: 1, fillOpacity: 0.3, opacity: 0.8 })
+      .addTo(unifiedIncidentLayer)
+      .bindTooltip("Tap", { permanent: false, direction: "top" });
+    map.flyTo([snapped.lat, snapped.lng], Math.max(map.getZoom(), 15), { duration: 0.35 });
+  }
+  setConfirmation(snapped.fallbackUsed ? "Unable to snap to roadway" : "Snapped to roadway", snapped.fallbackUsed ? "error" : "success");
   resetQuickHazardReportState();
   closeHazardPanel();
 }
 
-async function createSharedHazardReport(hazardType, lat, lng, confidence, locationName = "") {
+async function snapHazardToRoad(lat, lng) {
+  const regionContext = { ...LOCATION_DEFAULTS };
+  const debug = {
+    originalTapCoords: { lat, lng },
+    snappedCoords: { lat, lng },
+    snapDistanceMeters: 0,
+    nearestRoadFound: false,
+    snapMethodUsed: "fallback_original_tap",
+    fallbackUsed: true,
+    regionContext,
+    routeImpactDetected: false
+  };
+  try {
+    const nearestUrl = `${OSRM_NEAREST_API}/${lng},${lat}?number=1`;
+    const response = await fetch(nearestUrl);
+    if (!response.ok) throw new Error(`nearest_failed_${response.status}`);
+    const payload = await response.json();
+    const nearest = payload?.waypoints?.[0];
+    const snappedLat = nearest?.location?.[1];
+    const snappedLng = nearest?.location?.[0];
+    if (!Number.isFinite(snappedLat) || !Number.isFinite(snappedLng)) throw new Error("nearest_no_geometry");
+    const snapDistanceMeters = Number(nearest.distance || 0);
+    debug.snappedCoords = { lat: snappedLat, lng: snappedLng };
+    debug.snapDistanceMeters = snapDistanceMeters;
+    debug.nearestRoadFound = true;
+    debug.snapMethodUsed = "osrm_nearest_v1_driving";
+    debug.fallbackUsed = false;
+    debug.routeImpactDetected = routeWatchActivated && isPointNearActiveRoute(snappedLat, snappedLng);
+    lastRoadSnapDebug = debug;
+    return { lat: snappedLat, lng: snappedLng, fallbackUsed: false, originalTapCoords: debug.originalTapCoords };
+  } catch (error) {
+    lastRoadSnapDebug = debug;
+    return { lat, lng, fallbackUsed: true, originalTapCoords: debug.originalTapCoords };
+  }
+}
+
+function isPointNearActiveRoute(lat, lng) {
+  const points = savedRouteLayer?.getLatLngs?.() || [];
+  if (!Array.isArray(points) || !points.length) return false;
+  return points.some((p) => getDistanceMiles(lat, lng, p.lat, p.lng) <= 0.08);
+}
+
+async function createSharedHazardReport(hazardType, lat, lng, confidence, locationName = "", originalTapCoords = null) {
   if (reportingState.submissionInProgress) return false;
 
   if (!supabaseClient) {
@@ -4070,7 +4191,8 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     source: "user",
     confidence,
     device_id: deviceId,
-    expires_at: expiresAt
+    expires_at: expiresAt,
+    debug_meta: originalTapCoords ? JSON.stringify({ originalTapCoords }) : null
   };
 
   try {
@@ -4183,8 +4305,9 @@ function injectHazardStyles() {
     }
 
     .gridly-hazard-marker span {
-      font-size: 0;
+      font-size: 14px;
       line-height: 1;
+      font-weight: 800;
     }
 
     .gridly-hazard-marker small {
@@ -4254,6 +4377,14 @@ function injectHazardStyles() {
       filter: saturate(0.78) brightness(0.9);
       animation-duration: 3.2s;
     }
+    .gridly-hazard-marker.marker-rail_blockage_delay { border-color: rgba(255, 78, 111, 0.98); }
+    .gridly-hazard-marker.marker-flooding { border-color: rgba(71, 169, 255, 0.98); }
+    .gridly-hazard-marker.marker-crash { border-color: rgba(255, 143, 71, 0.98); }
+    .gridly-hazard-marker.marker-construction { border-color: rgba(255, 176, 46, 0.98); }
+    .gridly-hazard-marker.marker-road_closed { border-color: rgba(255, 78, 111, 0.98); box-shadow: 0 0 0 2px rgba(255,255,255,0.16), 0 0 18px rgba(255, 78, 111, 0.58); }
+    .gridly-hazard-marker.marker-disabled_vehicle { border-color: rgba(183, 197, 214, 0.95); }
+    .gridly-hazard-marker.marker-other_hazard { border-color: rgba(181, 210, 255, 0.9); }
+    .gridly-hazard-marker.confidence-high { box-shadow: 0 0 0 2px rgba(255,255,255,0.22), 0 0 18px rgba(143, 206, 255, 0.5); }
 
     .gridly-hazard-marker b {
       position: absolute;
