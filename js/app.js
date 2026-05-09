@@ -9052,6 +9052,73 @@ function normalizeRoadComparison(value = "") {
   return String(value || "").toLowerCase().replace(/[^a-z0-9]/g, "");
 }
 
+function collectNearbyRoadCandidates(lat, lng, maxDistanceMiles = 0.45, maxCandidates = 6) {
+  if (!roadwayDatasetLoaded || !Array.isArray(roadwaySegmentFeatures) || !roadwaySegmentFeatures.length) return [];
+  const bestByRoadKey = new Map();
+  for (const feature of roadwaySegmentFeatures) {
+    const props = feature?.properties || {};
+    const candidates = [props?.name, props?.ref, props?.highway].map((value) => evaluateRoadNameCandidate(value));
+    const selected = candidates.find((entry) => entry.valid);
+    if (!selected?.normalized) continue;
+    const roadName = selected.normalized;
+    const roadKey = normalizeRoadComparison(roadName);
+    if (!roadKey) continue;
+    const segments = flattenRoadGeometrySegments(feature?.geometry);
+    for (const segment of segments) {
+      const distance = distancePointToSegmentMiles(lat, lng, segment.startLat, segment.startLng, segment.endLat, segment.endLng);
+      if (!Number.isFinite(distance) || distance > maxDistanceMiles) continue;
+      const existing = bestByRoadKey.get(roadKey);
+      if (!existing || distance < existing.distanceMiles) {
+        bestByRoadKey.set(roadKey, { roadName, roadKey, distanceMiles: distance });
+      }
+    }
+  }
+  return Array.from(bestByRoadKey.values())
+    .sort((a, b) => a.distanceMiles - b.distanceMiles)
+    .slice(0, Math.max(2, maxCandidates));
+}
+
+function resolveNearbyRoadPair(lat, lng, primaryRoad = "") {
+  const primaryNormalized = evaluateRoadNameCandidate(primaryRoad);
+  const result = {
+    roadA: primaryNormalized.valid ? primaryNormalized.normalized : "",
+    roadB: "",
+    used: false,
+    distanceMiles: null,
+    rejectedReason: "",
+    samples: []
+  };
+  const coords = normalizeCoordinatePair(lat, lng);
+  if (!coords) {
+    result.rejectedReason = "invalid_coordinates";
+    return result;
+  }
+  const candidates = collectNearbyRoadCandidates(coords.lat, coords.lng, 0.45, 8);
+  result.samples = candidates.slice(0, 6).map((entry) => `${entry.roadName} (${entry.distanceMiles.toFixed(3)} mi)`);
+  if (!candidates.length) {
+    result.rejectedReason = roadwayDatasetLoaded ? "no_nearby_roads_in_radius" : "roadway_dataset_unavailable";
+    return result;
+  }
+  if (!result.roadA) result.roadA = candidates[0]?.roadName || "";
+  const primaryKey = normalizeRoadComparison(result.roadA);
+  const secondary = candidates.find((entry) => {
+    const candidateKey = normalizeRoadComparison(entry.roadName);
+    if (!candidateKey || !primaryKey) return false;
+    if (candidateKey === primaryKey) return false;
+    if (candidateKey.includes(primaryKey) || primaryKey.includes(candidateKey)) return false;
+    if (entry.distanceMiles > 0.35) return false;
+    return true;
+  });
+  if (!secondary) {
+    result.rejectedReason = "no_meaningful_secondary_road";
+    return result;
+  }
+  result.roadB = secondary.roadName;
+  result.distanceMiles = Number(secondary.distanceMiles.toFixed(4));
+  result.used = true;
+  return result;
+}
+
 function buildHumanLocationContext({ primaryRoad = "", crossingRoad = "", intersectingRoad = "", roadwayRef = "", nearbyArea = "" } = {}) {
   const ordered = [primaryRoad, crossingRoad, intersectingRoad, roadwayRef]
     .map((value) => titleCaseRoadText(normalizeRoadNameCandidate(value)))
@@ -9068,7 +9135,7 @@ function buildHumanLocationContext({ primaryRoad = "", crossingRoad = "", inters
   const primary = uniqueRoads[0] || "";
   const secondary = uniqueRoads[1] || "";
   let phrasing = "";
-  if (primary && secondary) phrasing = `${primary} near ${secondary}`;
+  if (primary && secondary) phrasing = `${primary} & ${secondary}`;
   else if (primary) phrasing = primary;
   else if (area) phrasing = area;
   return {
@@ -9108,6 +9175,10 @@ function resolveNearestRoadName(lat, lng) {
     rejectedCandidates: [],
     rejectionReasons: [],
     normalizedCandidateSamples: [],
+    pairedRoadSamples: [],
+    nearbyRoadPairingUsed: false,
+    nearbyRoadDistance: null,
+    pairingRejectedReason: "",
     sampleLookup: null,
     fallbackBehavior: "returns null when no local roadway source is available",
     coords
@@ -9133,8 +9204,13 @@ function resolveNearestRoadName(lat, lng) {
       debugState.candidateSource = "roadway_dataset";
       debugState.roadwayLookupSource = "roadway_dataset";
       debugState.fallbackBehavior = "returns nearest roadway segment label when valid";
+      const pair = resolveNearbyRoadPair(coords.lat, coords.lng, selectedSegment.normalized);
+      debugState.pairedRoadSamples = pair.samples;
+      debugState.nearbyRoadPairingUsed = pair.used;
+      debugState.nearbyRoadDistance = pair.distanceMiles;
+      debugState.pairingRejectedReason = pair.rejectedReason;
       resolveNearestRoadName.lastDebug = debugState;
-      return selectedSegment.normalized;
+      return pair.used ? `${pair.roadA} & ${pair.roadB}` : selectedSegment.normalized;
     }
     debugState.fallbackReason = "nearest_segment_unnamed_or_generic";
   } else {
@@ -9155,8 +9231,13 @@ function resolveNearestRoadName(lat, lng) {
       debugState.candidateSource = "crossing_fallback";
       debugState.roadwayLookupSource = "crossing_fallback";
       debugState.fallbackBehavior = "returns nearest crossing-linked road label when valid";
+      const pair = resolveNearbyRoadPair(coords.lat, coords.lng, selected.normalized);
+      debugState.pairedRoadSamples = pair.samples;
+      debugState.nearbyRoadPairingUsed = pair.used;
+      debugState.nearbyRoadDistance = pair.distanceMiles;
+      debugState.pairingRejectedReason = pair.rejectedReason;
       resolveNearestRoadName.lastDebug = debugState;
-      return selected.normalized;
+      return pair.used ? `${pair.roadA} & ${pair.roadB}` : selected.normalized;
     }
     debugState.fallbackReason = debugState.fallbackReason || "crossing_candidate_invalid";
   }
@@ -9183,6 +9264,10 @@ window.gridlyRoadNameResolverDebug = function () {
     rejectedCandidates: Array.isArray(last?.rejectedCandidates) ? last.rejectedCandidates : [],
     rejectionReasons: Array.isArray(last?.rejectionReasons) ? last.rejectionReasons : [],
     normalizedCandidateSamples: Array.isArray(last?.normalizedCandidateSamples) ? last.normalizedCandidateSamples : [],
+    pairedRoadSamples: Array.isArray(last?.pairedRoadSamples) ? last.pairedRoadSamples : [],
+    nearbyRoadPairingUsed: Boolean(last?.nearbyRoadPairingUsed),
+    nearbyRoadDistance: Number.isFinite(Number(last?.nearbyRoadDistance)) ? Number(last.nearbyRoadDistance) : null,
+    pairingRejectedReason: String(last?.pairingRejectedReason || ""),
     normalizedRoadwaySamples: [
       "United States Highway 90 West",
       "US Highway 90",
