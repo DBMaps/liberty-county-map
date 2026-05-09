@@ -8879,22 +8879,55 @@ function extractRoadHintFromText(text = "") {
   return near?.[1] ? near[1].trim() : "";
 }
 
+const INVALID_ROAD_NAME_TOKENS = new Set([
+  "private",
+  "unnamed",
+  "unknown",
+  "null",
+  "none",
+  "road",
+  "crossing",
+  "railroad",
+  "railroad crossing",
+  "street",
+  "n/a",
+  "na",
+  "test",
+  "temp",
+  "etc"
+]);
+
+function normalizeRoadNameCandidate(value = "") {
+  return String(value || "")
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+function evaluateRoadNameCandidate(value = "") {
+  const normalized = normalizeRoadNameCandidate(value);
+  if (!normalized) return { normalized, valid: false, reason: "empty" };
+  if (/^[-,.\s]+$/.test(normalized)) return { normalized, valid: false, reason: "punctuation_only" };
+  if (normalized.length < 3) return { normalized, valid: false, reason: "too_short" };
+  const lowered = normalized.toLowerCase();
+  if (INVALID_ROAD_NAME_TOKENS.has(lowered)) return { normalized, valid: false, reason: "generic_placeholder" };
+  if (/^[A-Z0-9\s\-/.&]+$/.test(normalized) && INVALID_ROAD_NAME_TOKENS.has(lowered.replace(/\s+/g, " "))) {
+    return { normalized, valid: false, reason: "all_caps_placeholder" };
+  }
+  return { normalized, valid: true, reason: "ok" };
+}
+
 function resolveNearbyKnownLocation(lat, lng, options = {}) {
   const coords = normalizeCoordinatePair(lat, lng);
   if (!coords) return "";
   const radiusMiles = Number.isFinite(Number(options?.radiusMiles)) ? Number(options.radiusMiles) : 1.8;
   const nearest = findNearestCrossings(coords.lat, coords.lng, 1)[0];
   if (!nearest || !Number.isFinite(Number(nearest.distance)) || Number(nearest.distance) > radiusMiles) return "";
-  const label = String(nearest.name || "").trim();
-  return label && !/^(railroad crossing|unknown|private)$/i.test(label) ? label : "";
+  const evaluation = evaluateRoadNameCandidate(nearest?.name || "");
+  return evaluation.valid ? evaluation.normalized : "";
 }
 
 function isResolvableRoadNameCandidate(value = "") {
-  const text = String(value || "").trim();
-  if (!text) return false;
-  if (/^(unknown|private|unnamed|null|none|n\/a|na|road|street|railroad crossing)$/i.test(text)) return false;
-  if (/^[-,.\s]+$/.test(text)) return false;
-  return true;
+  return evaluateRoadNameCandidate(value).valid;
 }
 
 function resolveNearestRoadName(lat, lng) {
@@ -8903,6 +8936,9 @@ function resolveNearestRoadName(lat, lng) {
     resolverExists: true,
     roadwayDatasetLoaded: false,
     candidateSource: "none",
+    rejectedCandidates: [],
+    rejectionReasons: [],
+    normalizedCandidateSamples: [],
     sampleLookup: null,
     fallbackBehavior: "returns null when no local roadway source is available",
     coords
@@ -8916,14 +8952,18 @@ function resolveNearestRoadName(lat, lng) {
   const nearest = findNearestCrossings(coords.lat, coords.lng, 1)[0];
   if (nearest && Number.isFinite(Number(nearest.distance)) && Number(nearest.distance) <= 0.8) {
     const tempCandidate = [nearest?.roadwayName, nearest?.road_name, nearest?.street_name, nearest?.crossing_street, nearest?.cross_street, nearest?.name]
-      .map((value) => String(value || "").trim())
-      .find((value) => isResolvableRoadNameCandidate(value)) || "";
+      .map((value) => evaluateRoadNameCandidate(value));
+    const selected = tempCandidate.find((entry) => entry.valid);
+    const rejected = tempCandidate.filter((entry) => entry.normalized && !entry.valid);
+    debugState.rejectedCandidates = rejected.map((entry) => entry.normalized);
+    debugState.rejectionReasons = rejected.map((entry) => entry.reason);
+    debugState.normalizedCandidateSamples = tempCandidate.map((entry) => entry.normalized).filter(Boolean).slice(0, 8);
     debugState.sampleLookup = nearest?.name || null;
-    if (tempCandidate) {
+    if (selected?.normalized) {
       debugState.candidateSource = "crossing_fallback";
       debugState.fallbackBehavior = "returns nearest crossing-linked road label when valid";
       resolveNearestRoadName.lastDebug = debugState;
-      return tempCandidate;
+      return selected.normalized;
     }
   }
 
@@ -8940,6 +8980,9 @@ window.gridlyRoadNameResolverDebug = function () {
     resolverExists: typeof resolveNearestRoadName === "function",
     roadwayDatasetLoaded: false,
     candidateSourceUsed: last?.candidateSource || "none",
+    rejectedCandidates: Array.isArray(last?.rejectedCandidates) ? last.rejectedCandidates : [],
+    rejectionReasons: Array.isArray(last?.rejectionReasons) ? last.rejectionReasons : [],
+    normalizedCandidateSamples: Array.isArray(last?.normalizedCandidateSamples) ? last.normalizedCandidateSamples : [],
     sampleLookupResults: last?.sampleLookup || sampleCrossing,
     fallbackBehavior: last?.fallbackBehavior || "returns null when no roadway dataset is available",
     localFallbackSourceAvailable: Boolean(Array.isArray(crossings) && crossings.length),
