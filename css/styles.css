@@ -9793,3 +9793,17 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
     overflow: visible;
   }
 }
+
+
+/* Hard desktop containment: prevent mobile nav leakage in desktop layout */
+@media (min-width: 1101px) {
+  .mobile-floating-action-dock,
+  .mobile-dock,
+  .mobile-dock-btn,
+  .mobile-bottom-nav,
+  .mobile-bottom-nav-btn {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}
