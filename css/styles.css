@@ -982,6 +982,10 @@ select:focus {
   box-shadow: 0 -22px 60px rgba(0, 0, 0, 0.5);
 }
 
+.route-setup-modal-card .route-setup-grid-mobile {
+  min-height: 0;
+}
+
 .route-modal-close {
   min-width: 44px;
   min-height: 44px;
@@ -9644,6 +9648,40 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
 
 /* V50 — final mobile layer anchor + full-width manage places save row */
 @media (max-width: 760px) {
+  :root {
+    --gridly-visual-vh: 100vh;
+  }
+
+  body[data-mobile-mode] .route-setup-modal-card,
+  body[data-mobile-mode] .smart-alerts-modal-card {
+    max-height: calc(100dvh - 24px) !important;
+    max-height: calc(var(--gridly-visual-vh, 100vh) - 24px) !important;
+  }
+
+  body[data-mobile-mode] .route-setup-modal-card {
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  body[data-mobile-mode] .route-setup-modal-card > .route-setup-grid-mobile {
+    flex: 1 1 auto !important;
+    overflow-y: auto !important;
+    min-height: 0 !important;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px !important;
+  }
+
+  body[data-mobile-mode] .route-setup-modal-card > #managePlacesSaveGroup {
+    position: sticky !important;
+    bottom: 0 !important;
+    flex-shrink: 0 !important;
+    background: linear-gradient(180deg, rgba(6, 12, 21, 0.92), rgba(6, 12, 21, 0.98)) !important;
+    padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px)) !important;
+    z-index: 2;
+  }
+
   body[data-mobile-mode] #map .gridly-mobile-layer-menu-list {
     right: 0 !important;
     left: auto !important;
@@ -9656,8 +9694,9 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
 
   body[data-mobile-mode] .route-setup-modal-card {
     padding: 8px 8px calc(8px + env(safe-area-inset-bottom, 0px)) !important;
-    max-height: min(86svh, 620px) !important;
-    overflow-y: auto !important;
+    max-height: calc(100dvh - 24px) !important;
+    max-height: calc(var(--gridly-visual-vh, 100vh) - 24px) !important;
+    overflow: hidden !important;
   }
 
   body[data-mobile-mode] .route-setup-grid-mobile {
@@ -9708,6 +9747,28 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
     min-height: 30px !important;
     padding: 5px 8px !important;
     font-size: 0.74rem !important;
+  }
+
+  body[data-mobile-mode] .smart-alerts-modal-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 12px 12px calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  body[data-mobile-mode] .smart-alert-options-grid {
+    gap: 8px;
+    margin-bottom: 10px;
+    overflow-y: auto;
+    min-height: 0;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body[data-mobile-mode] #saveSmartAlertsBtn {
+    flex-shrink: 0;
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
   }
 }
 

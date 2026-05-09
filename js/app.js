@@ -182,6 +182,8 @@ let activeDestinationPlace = null;
 let routeWatchActivated = false;
 let lastSavedPlaceResult = null;
 let lastValidationError = null;
+let lastManagePlacesSaveAttempt = null;
+let lastManagePlacesSaveError = null;
 let saveButtonHandlerAttached = false;
 let routePreviewRendered = false;
 let routePreviewLayerExists = false;
@@ -415,6 +417,7 @@ localStorage.setItem("gridlyDeviceId", deviceId);
 const els = {};
 
 document.addEventListener("DOMContentLoaded", async () => {
+  initVisualViewportHeightVar();
   hydrateElements();
   gridlyHealthCheck();
   setManualFallbackDefaultState();
@@ -444,6 +447,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   setInterval(loadSharedReports, LIVE_REFRESH_MS);
 });
+
+function initVisualViewportHeightVar() {
+  const setVisualViewportHeight = () => {
+    const viewportHeight = window.visualViewport?.height || window.innerHeight;
+    document.documentElement.style.setProperty("--gridly-visual-vh", `${Math.max(0, Math.round(viewportHeight))}px`);
+  };
+  setVisualViewportHeight();
+  window.addEventListener("resize", setVisualViewportHeight, { passive: true });
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", setVisualViewportHeight, { passive: true });
+    window.visualViewport.addEventListener("scroll", setVisualViewportHeight, { passive: true });
+  }
+}
 
 function installMapClickDiagnostics() {
   document.addEventListener("click", (event) => {
@@ -5856,6 +5872,16 @@ async function saveRoute(source = "desktop") {
   let { home, work, button } = getRouteInputValues(source);
   const modalMode = source === "mobile" ? (els.routeSetupModal?.dataset.mode || "add") : "add";
   const manageSourceMode = source === "mobile" && modalMode === "manage" ? managePlacesSourceMode : "";
+  lastManagePlacesSaveAttempt = {
+    at: new Date().toISOString(),
+    source,
+    modalMode,
+    manageSourceMode,
+    selectedSlot: source === "mobile" ? (els.routeSetupModal?.dataset.prefillType || "custom") : "custom",
+    placeName: String(home || "").trim(),
+    address: String(work || "").trim()
+  };
+  lastManagePlacesSaveError = null;
   if (manageSourceMode === "saved") {
     const selectedSaved = getSavedPlaces().find((place) => place.id === (els.mobileSavedDestinationSelect?.value || ""));
     if (selectedSaved) {
@@ -5874,6 +5900,7 @@ async function saveRoute(source = "desktop") {
     flashButton(button, "Add name + place");
     setConfirmation(errorMessage, "error");
     lastSavedPlaceResult = { ok: false, message: errorMessage, at: new Date().toISOString() };
+    lastManagePlacesSaveError = errorMessage;
     return;
   }
   lastValidationError = null;
@@ -5918,6 +5945,7 @@ async function saveRoute(source = "desktop") {
       at: new Date().toISOString(),
       coordinateSource: coordinateResolution?.source || "null"
     };
+    lastManagePlacesSaveError = errorMessage;
     return;
   }
   const createdAt = new Date().toISOString();
@@ -6405,6 +6433,30 @@ function attachSavedPlacesDebugGlobal() {
         legacyHome: localStorage.getItem("gridlyHome"),
         legacyWork: localStorage.getItem("gridlyWork")
       }
+    };
+  };
+  window.gridlyManagePlacesDebug = function gridlyManagePlacesDebug() {
+    const modal = els.routeSetupModal || document.getElementById("routeSetupModal");
+    const saveGroup = document.getElementById("managePlacesSaveGroup");
+    const saveButton = els.mobileSaveRouteBtn || document.getElementById("mobileSaveRouteBtn");
+    const addressInput = els.mobileWorkInput || document.getElementById("mobileWorkInput");
+    return {
+      modalOpen: Boolean(modal && !modal.hidden),
+      selectedSlot: modal?.dataset?.prefillType || null,
+      selectedSource: managePlacesSourceMode || null,
+      placeNameValue: (els.mobileHomeInput?.value || "").trim(),
+      addressValue: (addressInput?.value || "").trim(),
+      addressInputFocused: document.activeElement === addressInput,
+      saveButtonExists: Boolean(saveButton),
+      saveButtonVisible: Boolean(saveButton && saveButton.offsetParent !== null),
+      saveButtonDisabled: Boolean(saveButton?.disabled),
+      savedPlacesState: getSavedPlacesState(),
+      lastSaveAttempt: lastManagePlacesSaveAttempt,
+      lastSaveError: lastManagePlacesSaveError || lastValidationError,
+      visualViewportHeight: window.visualViewport?.height || null,
+      windowInnerHeight: window.innerHeight,
+      modalRect: modal?.getBoundingClientRect?.() || null,
+      saveGroupRect: saveGroup?.getBoundingClientRect?.() || null
     };
   };
 }
