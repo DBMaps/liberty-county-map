@@ -3937,7 +3937,7 @@ function injectHazardReportUI() {
   const counter = document.createElement("div");
 counter.id = "gridlyHazardCounter";
 counter.className = "gridly-hazard-counter";
-counter.textContent = "No live road hazards";
+counter.textContent = "Road conditions appear calm";
   launcher.addEventListener("click", openHazardPanel);
 
   const panel = document.createElement("div");
@@ -8641,7 +8641,7 @@ function updateDailyHabitStatus() {
 
   let pill = "All Clear";
   let headline = "0 active reports · 0 crossings impacted";
-  let detail = "No active reports right now. Live watch remains on for new driver confirmations.";
+  let detail = "No active community-reported hazards right now.";
   let cardClass = "clear";
 
   if (highIssues.length > 0) {
@@ -9373,8 +9373,8 @@ function renderRoadHazards() {
   if (!hazards.length) {
     els.roadHazardsList.innerHTML = `
       <div class="alert-item">
-        <strong>No live road hazards</strong>
-        <p>Road reports will appear here after submission.</p>
+        <strong>Road conditions appear calm</strong>
+        <p>No high-impact road hazards detected nearby.</p>
       </div>
     `;
     return;
@@ -9402,8 +9402,8 @@ function renderAlerts() {
   if (!incidents.length) {
     els.alertsList.innerHTML = `
       <div class="alert-item">
-        <strong>No active shared alerts</strong>
-        <p>Your saved route looks quiet right now.</p>
+        <strong>No active community alerts</strong>
+        <p>No high-impact disruptions detected nearby.</p>
       </div>
     `;
     return;
@@ -9466,7 +9466,7 @@ function renderTrendingCrossings() {
   const incidents = getConsolidatedIncidents().slice(0, 3);
 
   if (!incidents.length) {
-    els.trendingList.innerHTML = `<div class="trend-item muted">Monitoring nearby crossings...</div>`;
+    els.trendingList.innerHTML = `<div class="trend-item muted">Nearby crossings look clear right now.</div>`;
     return;
   }
 
@@ -9501,7 +9501,7 @@ function updateMobileAlertsMirror() {
 
   if (!incidents.length) {
     els.mobileAlertsMirror.textContent =
-      "Active monitoring enabled. Route looks clear right now.";
+      "Route conditions currently appear calm.";
     return;
   }
 
