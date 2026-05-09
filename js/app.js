@@ -232,10 +232,14 @@ let lastRoutePipelineStep = "idle";
 let lastRouteEarlyReturnReason = null;
 let lastRouteButtonClickSource = "";
 let lastRouteButtonClickAt = null;
+let lastRouteAttempt = null;
+let lastOsrmRequestUrl = null;
+let lastOsrmResponseStatus = null;
 let routeQuickButtonDelegatedBindingActive = false;
 let routeQuickDirectListenerAttached = false;
 let lastDirectRouteClick = null;
 let debugPipelineWrapperEntered = false;
+window.gridlyLastRouteAttempt = null;
 let pendingHazardPlacement = null;
 let selectedQuickHazardType = null;
 let mobileUiMode = "live";
@@ -327,6 +331,10 @@ function routeDebugLog(...args) {
 function routeDebugError(...args) {
   if (!GRIDLY_ROUTE_VERBOSE_DEBUG) return;
   console.error(...args);
+}
+function captureRouteAttempt(patch = {}) {
+  lastRouteAttempt = { ...(lastRouteAttempt || {}), ...patch, timestamp: new Date().toISOString() };
+  window.gridlyLastRouteAttempt = lastRouteAttempt;
 }
 
 function layerDebugLog(...args) {
@@ -3720,7 +3728,7 @@ function injectMobileQuickActionOverlays() {
   style.id = "gridlyMobileQuickOverlaysStyles";
   style.textContent = `
     .gridly-hazard-panel,.gridly-mobile-route-quick-panel{z-index:10020!important}
-    .gridly-mobile-route-quick-panel{position:fixed;left:14px;right:14px;bottom:160px;background:rgba(7,17,31,.97);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:10px;display:none;box-shadow:0 16px 34px rgba(0,0,0,.35);backdrop-filter:blur(10px)}
+    .gridly-mobile-route-quick-panel{position:fixed;left:14px;right:14px;bottom:160px;max-height:calc(var(--gridly-visual-vh, 100vh) - 24px);min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;background:rgba(7,17,31,.97);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:10px;display:none;box-shadow:0 16px 34px rgba(0,0,0,.35);backdrop-filter:blur(10px)}
     .gridly-mobile-route-quick-panel.visible{display:grid;gap:6px}
     .gridly-mobile-route-quick-panel .route-quick-field{display:grid;gap:3px;color:#d8e3f3;font-size:11px;font-weight:600}
     .gridly-mobile-route-quick-panel select{width:100%;min-height:36px;padding:7px 9px;border-radius:9px}
@@ -4968,6 +4976,7 @@ function bindEvents() {
         startSelectValue: els.routeWatchStartSelect?.value || "",
         destinationSelectValue: els.routeWatchDestinationSelect?.value || ""
       });
+      captureRouteAttempt({ source: "route_dropdown_change", selectedStart: els.routeWatchStartSelect?.value || "", selectedDestination: els.routeWatchDestinationSelect?.value || "" });
       loadSavedRoute();
     });
   });
@@ -6495,6 +6504,8 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
   osrmResponseReceived = false;
   routeRenderAttempted = false;
   routeRenderSucceeded = false;
+  lastOsrmRequestUrl = null;
+  lastOsrmResponseStatus = null;
   // Render from saved Home/Work (or other saved place) coordinates only after coordinate validation succeeds.
   if (!map) return false;
 
@@ -6546,6 +6557,7 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
     const destinationLat = Number(destinationCoordinates?.lat);
     const destinationLng = Number(destinationCoordinates?.lng);
     const osrmUrl = `${OSRM_ROUTE_API}/${startLng},${startLat};${destinationLng},${destinationLat}?overview=full&geometries=geojson`;
+    lastOsrmRequestUrl = osrmUrl;
     routeRequestTriggered = true;
     lastRouteRequest = {
       engine: "osrm",
@@ -6563,6 +6575,7 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
       method: "GET",
       signal: controller?.signal
     });
+    lastOsrmResponseStatus = Number(response?.status || 0) || null;
     if (timeoutId) clearTimeout(timeoutId);
     if (!response.ok) {
       throw new Error(`OSRM response failed (${response.status})`);
@@ -6598,6 +6611,7 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
     lastRouteError = String(error?.message || error || "OSRM route failed");
     lastRouteGeometryPointCount = fallbackPoints.length;
     console.info("Gridly route geometry point count", { pointCount: fallbackPoints.length, source: "fallback" });
+    captureRouteAttempt({ osrmCallSucceeded: false, finalFailureReason: lastRouteError });
   }
 
   const corridorUnderlay = L.polyline(previewPoints, {
@@ -7146,6 +7160,56 @@ window.gridlyRouteButtonBindingDebug = function gridlyRouteButtonBindingDebug() 
   };
 };
 
+window.gridlyRouteExecutionDebug = function gridlyRouteExecutionDebug() {
+  const places = Array.isArray(getSavedPlaces?.()) ? getSavedPlaces() : [];
+  const selectedStartValue = els?.routeWatchStartSelect?.value || "";
+  const selectedDestinationValue = els?.routeWatchDestinationSelect?.value || "";
+  const selectedStartPlace = places.find((p) => p.id === selectedStartValue) || null;
+  const selectedDestinationPlace = places.find((p) => p.id === selectedDestinationValue) || null;
+  const startCoords = normalizeCoordinatePair(selectedStartPlace?.lat, selectedStartPlace?.lng);
+  const destinationCoords = normalizeCoordinatePair(selectedDestinationPlace?.lat, selectedDestinationPlace?.lng);
+  const routeButton = document.querySelector('#routeWatchStartBtn, #gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="start-route-watch-quick"], #gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="view-route-quick"]');
+  const rect = routeButton?.getBoundingClientRect?.();
+  return {
+    savedPlacesState: normalizeSavedPlaces?.() || null,
+    routeWatchState: { routeWatchActivated, routePreviewRendered, routePreviewReason },
+    selectedStartValue, selectedDestinationValue, selectedStartPlace, selectedDestinationPlace,
+    startHasLatLng: Boolean(startCoords), destinationHasLatLng: Boolean(destinationCoords),
+    startCoords: startCoords || null, destinationCoords: destinationCoords || null,
+    routeButtonExists: Boolean(routeButton), routeButtonText: (routeButton?.textContent || "").trim(),
+    routeButtonDisabled: Boolean(routeButton?.disabled), routeButtonVisible: Boolean(routeButton && rect && rect.width > 0 && rect.height > 0),
+    routeButtonRect: rect ? { x: rect.x, y: rect.y, width: rect.width, height: rect.height } : null,
+    routeButtonClickHandlersFound: Boolean(routeQuickDirectListenerAttached || routeQuickButtonDelegatedBindingActive || els?.routeWatchStartBtn),
+    lastRouteAttempt, lastRouteError, osrmRequestUrl: lastOsrmRequestUrl, osrmResponseStatus: lastOsrmResponseStatus,
+    routePolylineExists: Boolean(window.__gridlyRoutePreviewLayer), routePolylinePointCount: Number(routePreviewPolylinePointCount || 0),
+    monitoringState: Boolean(window.__gridlyRouteWatchActive), activeRouteSource
+  };
+};
+
+window.gridlyMobileOverlayDebug = function gridlyMobileOverlayDebug() {
+  const activePanel = document.querySelector(".gridly-mobile-route-quick-panel.visible, .route-setup-modal:not([hidden]) .route-setup-modal-card, .smart-alerts-modal:not([hidden]) .smart-alerts-modal-card, .report-drawer[open]");
+  const rect = activePanel?.getBoundingClientRect?.();
+  const mapRect = document.getElementById("map")?.getBoundingClientRect?.() || null;
+  const navRect = document.querySelector(".mobile-bottom-nav")?.getBoundingClientRect?.() || null;
+  return {
+    visualViewportHeight: window.visualViewport?.height || null,
+    windowInnerHeight: window.innerHeight,
+    bodyClass: document.body?.className || "",
+    bodyDataset: { ...(document.body?.dataset || {}) },
+    bodyOverflow: window.getComputedStyle(document.body).overflow,
+    activeModalOrPanel: activePanel?.className || null,
+    activePanelRect: rect ? { x: rect.x, y: rect.y, width: rect.width, height: rect.height } : null,
+    activePanelScrollHeight: activePanel?.scrollHeight || 0,
+    activePanelClientHeight: activePanel?.clientHeight || 0,
+    activePanelOverflowY: activePanel ? window.getComputedStyle(activePanel).overflowY : null,
+    exceedsViewport: Boolean(rect && rect.height > (window.visualViewport?.height || window.innerHeight)),
+    canScrollPanel: Boolean(activePanel && activePanel.scrollHeight > activePanel.clientHeight),
+    documentScrollLocked: document.body?.classList?.contains("modal-open") || window.getComputedStyle(document.body).overflow === "hidden",
+    mapRect,
+    bottomNavRect: navRect
+  };
+};
+
 async function renderDestinationRoute(target) {
   if (!savedRouteLayer || !target) return;
   window.__gridlyRouteWatchActive = true;
@@ -7224,7 +7288,7 @@ function loadSavedRoute() {
     setRoutePreviewState(false, "Missing start or destination coordinates", { layerExists: false, mapHasLayer: false, pointCount: 0 });
   }
   if (els.routeWatchStartBtn) {
-    els.routeWatchStartBtn.disabled = savedPlaceCount < 2 || !startId || !destinationId;
+    els.routeWatchStartBtn.disabled = savedPlaceCount < 2 || !startId || !destinationId || !startCoordinates || !destinationCoordinates;
   }
   updateRouteWatchStartButtonLabel();
   if (savedPlaceCount === 0) {
@@ -7298,6 +7362,17 @@ async function startInlineRouteWatch(options = {}) {
 
   const startCoords = normalizeCoordinatePair(start?.lat, start?.lng);
   const destinationCoords = normalizeCoordinatePair(destination?.lat, destination?.lng);
+  captureRouteAttempt({
+    source,
+    selectedStart: start?.name || startId || "",
+    selectedDestination: destination?.name || destinationId || "",
+    startCoords: startCoords || null,
+    destinationCoords: destinationCoords || null,
+    validationPassed: false,
+    osrmCallStarted: false,
+    osrmCallSucceeded: false,
+    polylineRendered: false
+  });
   lastRoutePipelineStep = "lat_lng_validated";
   routeDebugLog("Gridly route pipeline step", {
     step: lastRoutePipelineStep,
@@ -7311,6 +7386,7 @@ async function startInlineRouteWatch(options = {}) {
     routeDebugLog("Gridly route pipeline early return", { reason: lastRouteEarlyReturnReason, startId, destinationId });
     setRoutePreviewState(false, "Start or destination was not selected.", { layerExists: false, mapHasLayer: false, pointCount: 0 });
     setConfirmation("Choose a start and destination to begin monitoring.", "error");
+    captureRouteAttempt({ finalFailureReason: "Missing start or destination selection" });
     return;
   }
 
@@ -7324,10 +7400,11 @@ async function startInlineRouteWatch(options = {}) {
     savedRouteLayer?.clearLayers?.();
     setRoutePreviewState(false, "Start and destination are the same place.", { layerExists: false, mapHasLayer: false, pointCount: 0 });
     setConfirmation("Choose a different destination.", "error");
+    captureRouteAttempt({ finalFailureReason: "Start and destination are the same" });
     return;
   }
 
-  routeWatchActivated = Boolean(activateWatch);
+  routeWatchActivated = false;
   safeText("desktopRouteHome", start.name);
   safeText("desktopRouteWork", destination.name);
   safeText("routeCardLabel", `${start.name} → ${destination.name}`);
@@ -7341,6 +7418,7 @@ async function startInlineRouteWatch(options = {}) {
     savedRouteLayer?.clearLayers?.();
     setRoutePreviewState(false, "Missing start or destination coordinates", { layerExists: false, mapHasLayer: false, pointCount: 0 });
     setConfirmation("Route preview unavailable until precise locations are saved.", "error");
+    captureRouteAttempt({ finalFailureReason: !startCoords ? "Missing Home coordinates" : "Missing Destination coordinates" });
     safeText("routeWatchSetupHint", "Route preview unavailable until precise locations are saved.");
     updateRouteIntelligence();
     updateRouteWatchStartButtonLabel();
@@ -7375,7 +7453,7 @@ async function startInlineRouteWatch(options = {}) {
   routeDebugLog("Gridly route pipeline step", { step: lastRoutePipelineStep, mapReady: Boolean(map), osrmApi: OSRM_ROUTE_API });
 
   savedRouteLayer?.clearLayers?.();
-  window.__gridlyRouteWatchActive = true;
+  window.__gridlyRouteWatchActive = false;
   window.__gridlySelectedRouteId = `${start.id}->${destination.id}`;
 
   lastRoutePipelineStep = "osrm_payload_build_start";
@@ -7388,7 +7466,7 @@ async function startInlineRouteWatch(options = {}) {
   if (!routePreviewShown) {
     lastRouteEarlyReturnReason = "route_preview_renderer_returned_false";
     setRoutePreviewState(false, "Missing start or destination coordinates", { layerExists: false, mapHasLayer: false, pointCount: 0 });
-    setConfirmation("Route preview unavailable until precise locations are saved.", "error");
+    setConfirmation(lastRouteError || "Route could not be drawn", "error");
     safeText("routeWatchSetupHint", "Route preview unavailable until precise locations are saved.");
   } else {
     const layerExists = Boolean(window.__gridlyRoutePreviewLayer);
@@ -7406,6 +7484,18 @@ async function startInlineRouteWatch(options = {}) {
       safeText("routeWatchSetupHint", "Route preview unavailable until precise locations are saved.");
     }
   }
+  routeWatchActivated = Boolean(activateWatch && routePreviewRendered);
+  window.__gridlyRouteWatchActive = routeWatchActivated;
+  if (!routePreviewRendered) {
+    setConfirmation(lastRouteError || "Route could not be drawn", "error");
+  }
+  captureRouteAttempt({
+    validationPassed: true,
+    osrmCallStarted: osrmRequestStarted,
+    osrmCallSucceeded: osrmRouteSuccess,
+    polylineRendered: routePreviewRendered,
+    finalFailureReason: routePreviewRendered ? "" : (lastRouteError || "Route could not be drawn")
+  });
   lastRoutePipelineStep = "route_pipeline_completed";
   activeDestinationPlace = destination;
   lastRouteWatchSelection = { startId: start.id, destinationId: destination.id };
