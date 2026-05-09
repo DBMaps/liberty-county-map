@@ -3414,10 +3414,16 @@ function renderUnifiedIncidents() {
       routeHighlightedMarkers += 1;
     }
 
+    const markerState = incident?.status === "cleared" || incident?.report_type === "hazard_cleared" ? "cleared" : "active";
     const icon = L.divIcon({
       className: "",
       html: `
-        <div class="gridly-hazard-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass} ${proximityClass} ${routeRelevanceClass} ${sanitizeText(markerVariantClass)} ${sanitizeText(confidenceClass)}">
+        <div class="gridly-hazard-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass} ${proximityClass} ${routeRelevanceClass} ${sanitizeText(markerVariantClass)} ${sanitizeText(confidenceClass)}"
+          data-category="${sanitizeText(category)}"
+          data-freshness="${sanitizeText(ageClass)}"
+          data-confidence="${sanitizeText(confidenceClass.replace("confidence-", ""))}"
+          data-route-relevance="${sanitizeText(routeRelevanceClass || "unscored")}"
+          data-state="${sanitizeText(markerState)}">
           <span>${sanitizeText(getCategoryMarkerGlyph(category, incident))}</span>
           <small>${incident.age_minutes}m</small>
           ${incident.reports_count > 1 ? `<b>${incident.reports_count}</b>` : ""}
@@ -4384,6 +4390,8 @@ function injectHazardStyles() {
   style.id = "gridlyHazardStyles";
   style.textContent = `
     .gridly-hazard-marker {
+      --gridly-marker-border: rgba(255, 209, 102, 0.95);
+      --gridly-marker-glow: rgba(255, 209, 102, 0.24);
       width: 27px;
       height: 27px;
       border-radius: 999px;
@@ -4391,8 +4399,8 @@ function injectHazardStyles() {
       place-items: center;
       position: relative;
       background: rgba(8, 16, 24, 0.96);
-      border: 2px solid rgba(255, 209, 102, 0.95);
-      box-shadow: 0 0 0 1.5px rgba(255,255,255,0.16), 0 0 10px rgba(255, 209, 102, 0.24);
+      border: 2px solid var(--gridly-marker-border);
+      box-shadow: 0 0 0 1.5px rgba(255,255,255,0.16), 0 0 10px var(--gridly-marker-glow);
       animation: gridlyHazardPulse 2.2s infinite;
     }
 
@@ -4479,13 +4487,20 @@ function injectHazardStyles() {
       filter: saturate(0.72) brightness(0.88);
       animation-duration: 3.2s;
     }
-    .gridly-hazard-marker.marker-rail_blockage_delay { border-color: rgba(255, 78, 111, 0.98); }
-    .gridly-hazard-marker.marker-flooding { border-color: rgba(71, 169, 255, 0.98); }
-    .gridly-hazard-marker.marker-crash { border-color: rgba(255, 143, 71, 0.98); }
-    .gridly-hazard-marker.marker-construction { border-color: rgba(255, 176, 46, 0.98); }
-    .gridly-hazard-marker.marker-road_closed { border-color: rgba(255, 78, 111, 0.98); box-shadow: 0 0 0 2px rgba(255,255,255,0.14), 0 0 14px rgba(255, 78, 111, 0.46); }
-    .gridly-hazard-marker.marker-disabled_vehicle { border-color: rgba(183, 197, 214, 0.95); }
-    .gridly-hazard-marker.marker-other_hazard { border-color: rgba(181, 210, 255, 0.9); }
+    .gridly-hazard-marker[data-category="rail_blockage_delay"] { --gridly-marker-border: rgba(255, 78, 111, 0.98); --gridly-marker-glow: rgba(255, 78, 111, 0.46); }
+    .gridly-hazard-marker[data-category="flooding"] { --gridly-marker-border: rgba(71, 169, 255, 0.98); --gridly-marker-glow: rgba(71, 169, 255, 0.44); }
+    .gridly-hazard-marker[data-category="crash"] { --gridly-marker-border: rgba(255, 143, 71, 0.98); --gridly-marker-glow: rgba(255, 143, 71, 0.44); }
+    .gridly-hazard-marker[data-category="construction"] { --gridly-marker-border: rgba(255, 176, 46, 0.98); --gridly-marker-glow: rgba(255, 176, 46, 0.44); }
+    .gridly-hazard-marker[data-category="road_closed"] { --gridly-marker-border: rgba(255, 78, 111, 0.98); --gridly-marker-glow: rgba(255, 78, 111, 0.52); }
+    .gridly-hazard-marker[data-category="disabled_vehicle"] { --gridly-marker-border: rgba(183, 197, 214, 0.95); --gridly-marker-glow: rgba(183, 197, 214, 0.4); }
+    .gridly-hazard-marker[data-category="other_hazard"] { --gridly-marker-border: rgba(181, 210, 255, 0.9); --gridly-marker-glow: rgba(181, 210, 255, 0.36); }
+    .gridly-hazard-marker[data-state="cleared"] {
+      opacity: 0.48;
+      filter: saturate(0.68) brightness(0.9);
+      animation: none;
+      --gridly-marker-border: rgba(80, 228, 156, 0.95);
+      --gridly-marker-glow: rgba(80, 228, 156, 0.36);
+    }
     .gridly-hazard-marker.confidence-high { box-shadow: 0 0 0 2px rgba(255,255,255,0.2), 0 0 12px rgba(143, 206, 255, 0.38); }
 
     .gridly-hazard-marker b {
