@@ -215,6 +215,11 @@ let routeRecommendationTone = "calm";
 let routePressureScore = 0;
 let routePressureBand = "Clear";
 let routeConfidence = "Low";
+let calibratedRecommendationBand = "Clear";
+let estimatedHazardReduction = 0;
+let estimatedPressureReduction = 0;
+let confidenceInputs = {};
+let confidenceReasoning = "Awaiting route monitoring data.";
 let activeMonitoringState = "standby";
 let lastRouteRecommendationMessage = "Monitoring active route conditions";
 let routeTransitionUntil = 0;
@@ -2919,6 +2924,8 @@ function updateRouteComparisonState(routeHazard = null) {
   alternateRouteHazardCount = getHazardCountNearRoute(alternateLatLngs);
   alternateRouteScore = calculateRouteScore(alternateReports);
   hazardsAvoidedCount = primaryRouteHazardCount - alternateRouteHazardCount;
+  estimatedHazardReduction = Math.max(0, hazardsAvoidedCount);
+  estimatedPressureReduction = Math.max(0, Number((primaryRouteScore - alternateRouteScore).toFixed(2)));
 
   if (alternateRouteScore < primaryRouteScore) {
     preferredRoute = "alternate";
@@ -8095,13 +8102,40 @@ function computeRoutePressureModel({ routeHazard = null, routeRelevantHazards = 
 }
 
 function buildRouteRecommendationMessage({ routeIsMonitoring = false, pressureBand = "Clear", hazardsAvoided = 0, routeRelevantCount = 0, blockedNearRoute = 0, alternateAvailable = false } = {}) {
+  const normalizedBand = String(pressureBand || "Clear").toLowerCase();
   if (!routeIsMonitoring) return "Monitoring active route conditions";
   if (alternateAvailable && hazardsAvoided > 0) return `Alternate route avoids ${hazardsAvoided} active hazard${hazardsAvoided === 1 ? "" : "s"}`;
-  if (blockedNearRoute > 0 || pressureBand === "Severe") return "Heavy congestion risk detected ahead";
-  if (pressureBand === "Heavy") return "Delay pressure rising near monitored corridor";
+  if (normalizedBand === "severe") return blockedNearRoute > 0 ? "Route heavily impacted by active incidents" : "Major corridor disruption detected";
+  if (normalizedBand === "heavy") return routeRelevantCount > 2 ? "Multiple active hazards affecting route" : "Heavy congestion risk detected ahead";
+  if (normalizedBand === "moderate") return blockedNearRoute > 0 ? "Monitor conditions near active crossings" : "Delay pressure building near your route";
   if (routeRelevantCount === 0) return "No active hazards affecting your route";
-  if (pressureBand === "Clear") return "Primary corridor currently stable";
-  return "Monitoring active route conditions";
+  return "Primary corridor currently stable";
+}
+
+function computeRouteConfidenceModel({ routeRelevantHazards = [], routeHazard = null, freshnessTier = "Unknown", routeIsMonitoring = false } = {}) {
+  if (!routeIsMonitoring) return { band: "Low", score: 0, inputs: { routeIsMonitoring: false }, reasoning: "Route Watch inactive; confidence held low until monitoring is enabled." };
+  const relevant = Array.isArray(routeRelevantHazards) ? routeRelevantHazards : [];
+  const hazardReports = Array.isArray(routeHazard?.nearbyReports) ? routeHazard.nearbyReports : [];
+  const freshReports = relevant.filter((incident) => Number(incident?.age_minutes) <= 30).length;
+  const staleReports = relevant.filter((incident) => Number(incident?.age_minutes) > 120).length;
+  const confirmations = relevant.reduce((sum, incident) => sum + Math.max(0, Number(incident?.reports_count) || 0), 0);
+  const repeatedIncidents = relevant.filter((incident) => Number(incident?.reports_count) >= 2).length;
+  const activeCoverage = hazardReports.filter((report) => report.lifecycleState === "active").length;
+  const consistency = hazardReports.length > 0 ? Math.round((activeCoverage / hazardReports.length) * 100) : 0;
+  const freshnessScore = freshnessTier === "Fresh" ? 35 : freshnessTier === "Aging" ? 24 : 12;
+  const confirmationScore = Math.min(25, confirmations * 2);
+  const repeatScore = Math.min(15, repeatedIncidents * 4);
+  const coverageScore = Math.min(15, activeCoverage * 3);
+  const consistencyScore = Math.min(10, Math.round(consistency / 10));
+  const stalePenalty = Math.min(12, staleReports * 2);
+  const score = Math.max(0, Math.min(100, freshnessScore + confirmationScore + repeatScore + coverageScore + consistencyScore - stalePenalty));
+  const band = score >= 70 ? "High" : score >= 40 ? "Moderate" : "Low";
+  const reasoning = band === "High"
+    ? "Multiple confirmations with fresh and consistent route coverage."
+    : band === "Moderate"
+      ? "Some confirmations and fresh activity; continue active monitoring."
+      : "Sparse or aging incident signal; confidence remains limited.";
+  return { band, score, inputs: { freshReports, staleReports, confirmations, repeatedIncidents, activeCoverage, consistency, freshnessTier }, reasoning };
 }
 
 function updateRouteIntelligence(nearest = []) {
@@ -8165,12 +8199,16 @@ function updateRouteIntelligence(nearest = []) {
   const pressureModel = computeRoutePressureModel({ routeHazard, routeRelevantHazards, freshnessTier });
   routePressureScore = pressureModel.score;
   routePressureBand = pressureModel.band;
-  routeConfidence = recommendationConfidence;
+  calibratedRecommendationBand = routePressureBand;
+  const confidenceModel = computeRouteConfidenceModel({ routeRelevantHazards, routeHazard, freshnessTier, routeIsMonitoring });
+  routeConfidence = confidenceModel.band;
+  confidenceInputs = confidenceModel.inputs;
+  confidenceReasoning = confidenceModel.reasoning;
   activeMonitoringState = routeIsMonitoring ? "active" : "standby";
   const alternateRouteAdvantageLabel = hazardsAvoidedCount > 0 ? `${hazardsAvoidedCount} avoided` : "None";
   const recommendationMessage = buildRouteRecommendationMessage({
     routeIsMonitoring,
-    pressureBand: routePressureBand,
+    pressureBand: calibratedRecommendationBand,
     hazardsAvoided: hazardsAvoidedCount,
     routeRelevantCount: routeRelevantHazards.length,
     blockedNearRoute: routeRelevantBlockedCrossings,
@@ -8442,12 +8480,16 @@ function updateGrowthWidgets() {
   const pressureModel = computeRoutePressureModel({ routeHazard, routeRelevantHazards, freshnessTier });
   routePressureScore = pressureModel.score;
   routePressureBand = pressureModel.band;
-  routeConfidence = recommendationConfidence;
+  calibratedRecommendationBand = routePressureBand;
+  const confidenceModel = computeRouteConfidenceModel({ routeRelevantHazards, routeHazard, freshnessTier, routeIsMonitoring });
+  routeConfidence = confidenceModel.band;
+  confidenceInputs = confidenceModel.inputs;
+  confidenceReasoning = confidenceModel.reasoning;
   activeMonitoringState = routeIsMonitoring ? "active" : "standby";
   const alternateRouteAdvantageLabel = hazardsAvoidedCount > 0 ? `${hazardsAvoidedCount} avoided` : "None";
   const recommendationMessage = buildRouteRecommendationMessage({
     routeIsMonitoring,
-    pressureBand: routePressureBand,
+    pressureBand: calibratedRecommendationBand,
     hazardsAvoided: hazardsAvoidedCount,
     routeRelevantCount: routeRelevantHazards.length,
     blockedNearRoute: routeRelevantBlockedCrossings,
@@ -10506,10 +10548,17 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     hazardsAvoidedByAlternate: Number(hazardsAvoidedCount || 0),
     routePressureScore: Number(routePressureScore || 0),
     routePressureBand,
+    calibratedRecommendationBand,
+    alternateRoutePressureScore: Number(alternateRouteScore || 0),
+    alternateRoutePressureBand: getRoutePressureBand(Math.round(Math.max(0, Number(routePressureScore || 0) - Number(estimatedPressureReduction || 0)))),
+    estimatedPressureReduction: Number(estimatedPressureReduction || 0),
+    estimatedHazardReduction: Number(estimatedHazardReduction || 0),
     routeRelevantHazards: relevant,
     routeRelevantHazardIds: relevant.map((incident) => incident.id || incident.crossingId).filter(Boolean),
     recommendationMessage: lastRouteRecommendationMessage,
     routeConfidence,
+    confidenceInputs,
+    confidenceReasoning,
     activeMonitoringState
   };
 };
