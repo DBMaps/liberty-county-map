@@ -265,6 +265,15 @@ let lastRoadSnapDebug = {
 };
 let lastMarkerAuditDebug = {
   activeMarkerCount: 0,
+  totalIncidentsInput: 0,
+  uniqueIncidentRenderCount: 0,
+  duplicateIncidentCount: 0,
+  duplicateKeysPreview: [],
+  activeRenderedCount: 0,
+  clearedRenderedCount: 0,
+  routeRelevantRenderedCount: 0,
+  lastRenderAt: null,
+  markerLayerCount: 0,
   markersByCategory: {},
   markersAffectingRoute: 0,
   clusteredMarkerCount: 0,
@@ -3380,6 +3389,21 @@ function renderUnifiedIncidents() {
 
   const incidents = getUnifiedIncidents();
   const routeHazard = routeWatchActivated ? getRouteHazardAssessment() : null;
+  const dedupedMap = new Map();
+  const duplicateCounts = new Map();
+
+  incidents.forEach((incident) => {
+    const renderKey = getUnifiedIncidentRenderKey(incident);
+    incident._gridlyRenderKey = renderKey;
+    if (!dedupedMap.has(renderKey)) {
+      dedupedMap.set(renderKey, incident);
+      duplicateCounts.set(renderKey, 1);
+      return;
+    }
+    duplicateCounts.set(renderKey, (duplicateCounts.get(renderKey) || 1) + 1);
+    dedupedMap.set(renderKey, choosePreferredIncidentCandidate(dedupedMap.get(renderKey), incident, routeHazard));
+  });
+  const dedupedIncidents = [...dedupedMap.values()];
 
   const markersByCategory = {};
   const markerTypesRendered = new Set();
@@ -3387,7 +3411,7 @@ function renderUnifiedIncidents() {
   let markersAffectingRoute = 0;
   let routeHighlightedMarkers = 0;
 
-  incidents.forEach((incident) => {
+  dedupedIncidents.forEach((incident) => {
     if (!Number.isFinite(incident.lat) || !Number.isFinite(incident.lng)) return;
 
     const distanceFromUser = userLocation
@@ -3438,9 +3462,21 @@ function renderUnifiedIncidents() {
       .addTo(unifiedIncidentLayer);
   });
 
-  updateHazardCounter(incidents);
+  const duplicateEntries = [...duplicateCounts.entries()].filter(([, count]) => count > 1);
+  const duplicateIncidentCount = duplicateEntries.reduce((sum, [, count]) => sum + (count - 1), 0);
+
+  updateHazardCounter(dedupedIncidents);
   lastMarkerAuditDebug = {
-    activeMarkerCount: incidents.length,
+    activeMarkerCount: dedupedIncidents.length,
+    totalIncidentsInput: incidents.length,
+    uniqueIncidentRenderCount: dedupedIncidents.length,
+    duplicateIncidentCount,
+    duplicateKeysPreview: duplicateEntries.slice(0, 8).map(([key, count]) => `${key}×${count}`),
+    activeRenderedCount: dedupedIncidents.filter((item) => String(item?.status || "").toLowerCase() !== "cleared").length,
+    clearedRenderedCount: dedupedIncidents.filter((item) => String(item?.status || "").toLowerCase() === "cleared").length,
+    routeRelevantRenderedCount: dedupedIncidents.filter((item) => isIncidentRouteRelevant(item, routeHazard)).length,
+    lastRenderAt: new Date().toISOString(),
+    markerLayerCount: typeof unifiedIncidentLayer?.getLayers === "function" ? unifiedIncidentLayer.getLayers().length : null,
     markersByCategory,
     markersAffectingRoute,
     clusteredMarkerCount: getLiveHazardIncidents().length,
@@ -3628,6 +3664,60 @@ function getUnifiedIncidents() {
 
   return [...railIncidents, ...roadIncidents, ...futureTxdotIncidents(), ...futureTxdotConstruction(), ...futureFloodAlerts()]
     .sort((a,b)=>new Date(b.updated_at)-new Date(a.updated_at));
+}
+
+
+function getUnifiedIncidentRenderKey(incident = {}) {
+  const explicitId = incident?.id ?? incident?.report_id ?? incident?.reportId;
+  if (explicitId !== undefined && explicitId !== null && String(explicitId).trim()) return `id:${String(explicitId).trim()}`;
+
+  const crossingId = incident?.crossing_id ?? incident?.crossingId;
+  const reportType = String(incident?.report_type || incident?.type || "other_hazard").toLowerCase();
+  const state = String(incident?.status || "").toLowerCase() === "cleared" || reportType === "hazard_cleared" ? "cleared" : "active";
+  if (crossingId !== undefined && crossingId !== null && String(crossingId).trim()) {
+    return `crossing:${String(crossingId).trim()}:${reportType}:${state}`;
+  }
+
+  const category = getHazardCategory(incident?.report_type || incident?.type || "other_hazard");
+  const lat = Number(incident?.lat);
+  const lng = Number(incident?.lng);
+  const roundedLat = Number.isFinite(lat) ? lat.toFixed(4) : "na";
+  const roundedLng = Number.isFinite(lng) ? lng.toFixed(4) : "na";
+  const sourceTime = incident?.updated_at || incident?.created_at || incident?.submittedAt;
+  const timeMs = sourceTime ? new Date(sourceTime).getTime() : Number.NaN;
+  const bucketMinutes = Number.isFinite(timeMs) ? Math.floor(timeMs / (5 * 60 * 1000)) : "na";
+  return `fallback:${category}:${roundedLat}:${roundedLng}:${bucketMinutes}:${state}`;
+}
+
+function choosePreferredIncidentCandidate(current, candidate, routeHazard) {
+  if (!current) return candidate;
+
+  const currentRelevant = isIncidentRouteRelevant(current, routeHazard);
+  const candidateRelevant = isIncidentRouteRelevant(candidate, routeHazard);
+  if (currentRelevant !== candidateRelevant) return candidateRelevant ? candidate : current;
+
+  const currentStatus = String(current?.status || "").toLowerCase();
+  const candidateStatus = String(candidate?.status || "").toLowerCase();
+  const currentActive = currentStatus !== "cleared" && String(current?.report_type || "").toLowerCase() !== "hazard_cleared";
+  const candidateActive = candidateStatus !== "cleared" && String(candidate?.report_type || "").toLowerCase() !== "hazard_cleared";
+
+  const currentUpdated = new Date(current?.updated_at || current?.created_at || 0).getTime();
+  const candidateUpdated = new Date(candidate?.updated_at || candidate?.created_at || 0).getTime();
+  if (currentActive !== candidateActive) {
+    if (!candidateActive && candidateUpdated > currentUpdated) return candidate;
+    if (candidateActive) return candidate;
+    return current;
+  }
+
+  const currentConfidence = String(current?.confidence || "").toLowerCase().includes("community") ? 1 : 2;
+  const candidateConfidence = String(candidate?.confidence || "").toLowerCase().includes("community") ? 1 : 2;
+  if (candidateConfidence !== currentConfidence) return candidateConfidence > currentConfidence ? candidate : current;
+  if (candidateUpdated !== currentUpdated) return candidateUpdated > currentUpdated ? candidate : current;
+
+  const currentReports = Number(current?.reports_count || 0);
+  const candidateReports = Number(candidate?.reports_count || 0);
+  if (candidateReports !== currentReports) return candidateReports > currentReports ? candidate : current;
+  return current;
 }
 
 function getMapSeverityClass(incident){
@@ -10552,6 +10642,10 @@ function injectHideDesktopCommunityToolsStylesV126C3() {
 
 window.gridlyHazardPickerDebug = window.gridlyHazardPickerAuditDebug;
 
+
+window.gridlyMarkerRenderDebug = function gridlyMarkerRenderDebug() {
+  return { ...lastMarkerAuditDebug };
+};
 
 window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   const routeHazard = getRouteHazardAssessment?.() || { nearbyReports: [] };
