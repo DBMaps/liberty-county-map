@@ -4179,45 +4179,58 @@ async function handleHazardPlacementMapClick(event) {
       .bindTooltip("Tap", { permanent: false, direction: "top" });
     map.flyTo([snapped.lat, snapped.lng], Math.max(map.getZoom(), 15), { duration: 0.35 });
   }
-  setConfirmation(snapped.fallbackUsed ? "Unable to snap to roadway" : "Snapped to roadway", snapped.fallbackUsed ? "error" : "success");
+  setConfirmation(snapped.fallbackUsed ? "No nearby roadway found — using tapped location" : "Snapped to roadway", snapped.fallbackUsed ? "success" : "success");
   resetQuickHazardReportState();
   closeHazardPanel();
 }
 
 async function snapHazardToRoad(lat, lng) {
   const regionContext = { ...LOCATION_DEFAULTS };
+  const snapAttemptRadii = [75, 150];
   const debug = {
     originalTapCoords: { lat, lng },
     snappedCoords: { lat, lng },
+    snapAttemptRadii: [...snapAttemptRadii],
+    finalSnapRadiusUsed: null,
     snapDistanceMeters: 0,
     nearestRoadFound: false,
     snapMethodUsed: "fallback_original_tap",
     fallbackUsed: true,
+    fallbackReason: "nearest_no_result",
+    osrmNearestUrl: "",
+    osrmNearestStatus: null,
     regionContext,
     routeImpactDetected: false
   };
-  try {
-    const nearestUrl = `${OSRM_NEAREST_API}/${lng},${lat}?number=1`;
-    const response = await fetch(nearestUrl);
-    if (!response.ok) throw new Error(`nearest_failed_${response.status}`);
-    const payload = await response.json();
-    const nearest = payload?.waypoints?.[0];
-    const snappedLat = nearest?.location?.[1];
-    const snappedLng = nearest?.location?.[0];
-    if (!Number.isFinite(snappedLat) || !Number.isFinite(snappedLng)) throw new Error("nearest_no_geometry");
-    const snapDistanceMeters = Number(nearest.distance || 0);
-    debug.snappedCoords = { lat: snappedLat, lng: snappedLng };
-    debug.snapDistanceMeters = snapDistanceMeters;
-    debug.nearestRoadFound = true;
-    debug.snapMethodUsed = "osrm_nearest_v1_driving";
-    debug.fallbackUsed = false;
-    debug.routeImpactDetected = routeWatchActivated && isPointNearActiveRoute(snappedLat, snappedLng);
-    lastRoadSnapDebug = debug;
-    return { lat: snappedLat, lng: snappedLng, fallbackUsed: false, originalTapCoords: debug.originalTapCoords };
-  } catch (error) {
-    lastRoadSnapDebug = debug;
-    return { lat, lng, fallbackUsed: true, originalTapCoords: debug.originalTapCoords };
+  for (const radiusMeters of snapAttemptRadii) {
+    try {
+      const nearestUrl = `${OSRM_NEAREST_API}/${lng},${lat}?number=1&radiuses=${radiusMeters}`;
+      debug.osrmNearestUrl = nearestUrl;
+      const response = await fetch(nearestUrl);
+      debug.osrmNearestStatus = response.status;
+      if (!response.ok) throw new Error(`nearest_failed_${response.status}`);
+      const payload = await response.json();
+      const nearest = payload?.waypoints?.[0];
+      const snappedLat = nearest?.location?.[1];
+      const snappedLng = nearest?.location?.[0];
+      if (!Number.isFinite(snappedLat) || !Number.isFinite(snappedLng)) throw new Error("nearest_no_geometry");
+      const snapDistanceMeters = Number(nearest?.distance || 0);
+      debug.snappedCoords = { lat: snappedLat, lng: snappedLng };
+      debug.snapDistanceMeters = snapDistanceMeters;
+      debug.finalSnapRadiusUsed = radiusMeters;
+      debug.nearestRoadFound = true;
+      debug.snapMethodUsed = "osrm_nearest_v1_driving";
+      debug.fallbackUsed = false;
+      debug.fallbackReason = "";
+      debug.routeImpactDetected = routeWatchActivated && isPointNearActiveRoute(snappedLat, snappedLng);
+      lastRoadSnapDebug = debug;
+      return { lat: snappedLat, lng: snappedLng, fallbackUsed: false, originalTapCoords: debug.originalTapCoords };
+    } catch (error) {
+      debug.fallbackReason = String(error?.message || error || "nearest_unknown_failure");
+    }
   }
+  lastRoadSnapDebug = debug;
+  return { lat, lng, fallbackUsed: true, originalTapCoords: debug.originalTapCoords };
 }
 
 function isPointNearActiveRoute(lat, lng) {
@@ -4359,16 +4372,16 @@ function injectHazardStyles() {
   style.id = "gridlyHazardStyles";
   style.textContent = `
     .gridly-hazard-marker {
-      width: 28px;
-      height: 28px;
+      width: 27px;
+      height: 27px;
       border-radius: 999px;
       display: grid;
       place-items: center;
       position: relative;
       background: rgba(8, 16, 24, 0.96);
       border: 2px solid rgba(255, 209, 102, 0.95);
-      box-shadow: 0 0 0 2px rgba(255,255,255,0.18), 0 0 16px rgba(255, 209, 102, 0.34);
-      animation: gridlyHazardPulse 1.7s infinite;
+      box-shadow: 0 0 0 1.5px rgba(255,255,255,0.16), 0 0 10px rgba(255, 209, 102, 0.24);
+      animation: gridlyHazardPulse 2.2s infinite;
     }
 
     .gridly-hazard-marker.high {
@@ -4431,37 +4444,37 @@ function injectHazardStyles() {
     }
 
     .gridly-hazard-marker.old {
-      opacity: 0.55;
+      opacity: 0.5;
       animation: none;
     }
 
     .gridly-hazard-marker.route-relevant {
-      transform: scale(1.08);
-      filter: saturate(1.14) brightness(1.08);
-      box-shadow: 0 0 0 3px rgba(255,255,255,0.2), 0 0 22px rgba(255, 209, 102, 0.56);
+      transform: scale(1.1);
+      filter: saturate(1.12) brightness(1.06);
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.2), 0 0 14px rgba(255, 209, 102, 0.44);
     }
 
     .gridly-hazard-marker.high.route-relevant {
-      box-shadow: 0 0 0 3px rgba(255,255,255,0.2), 0 0 24px rgba(255, 78, 111, 0.62);
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.2), 0 0 16px rgba(255, 78, 111, 0.5);
     }
 
     .gridly-hazard-marker.moderate.route-relevant {
-      box-shadow: 0 0 0 3px rgba(255,255,255,0.2), 0 0 24px rgba(57, 200, 255, 0.62);
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.2), 0 0 16px rgba(57, 200, 255, 0.48);
     }
 
     .gridly-hazard-marker.route-deemphasized {
-      opacity: 0.48;
-      filter: saturate(0.78) brightness(0.9);
+      opacity: 0.46;
+      filter: saturate(0.72) brightness(0.88);
       animation-duration: 3.2s;
     }
     .gridly-hazard-marker.marker-rail_blockage_delay { border-color: rgba(255, 78, 111, 0.98); }
     .gridly-hazard-marker.marker-flooding { border-color: rgba(71, 169, 255, 0.98); }
     .gridly-hazard-marker.marker-crash { border-color: rgba(255, 143, 71, 0.98); }
     .gridly-hazard-marker.marker-construction { border-color: rgba(255, 176, 46, 0.98); }
-    .gridly-hazard-marker.marker-road_closed { border-color: rgba(255, 78, 111, 0.98); box-shadow: 0 0 0 2px rgba(255,255,255,0.16), 0 0 18px rgba(255, 78, 111, 0.58); }
+    .gridly-hazard-marker.marker-road_closed { border-color: rgba(255, 78, 111, 0.98); box-shadow: 0 0 0 2px rgba(255,255,255,0.14), 0 0 14px rgba(255, 78, 111, 0.46); }
     .gridly-hazard-marker.marker-disabled_vehicle { border-color: rgba(183, 197, 214, 0.95); }
     .gridly-hazard-marker.marker-other_hazard { border-color: rgba(181, 210, 255, 0.9); }
-    .gridly-hazard-marker.confidence-high { box-shadow: 0 0 0 2px rgba(255,255,255,0.22), 0 0 18px rgba(143, 206, 255, 0.5); }
+    .gridly-hazard-marker.confidence-high { box-shadow: 0 0 0 2px rgba(255,255,255,0.2), 0 0 12px rgba(143, 206, 255, 0.38); }
 
     .gridly-hazard-marker b {
       position: absolute;
