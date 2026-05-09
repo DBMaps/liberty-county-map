@@ -5128,6 +5128,16 @@ function bindEvents() {
   document.addEventListener("pointerup", handlePopupAction, true);
   document.addEventListener("click", handlePopupAction, true);
   const handleDataActionClick = async (event) => {
+    const focusCard = event.target?.closest?.("[data-alert-focus]");
+    if (focusCard) {
+      event.preventDefault();
+      focusAlertLocation(focusCard.dataset.lat, focusCard.dataset.lng, {
+        incidentId: focusCard.dataset.incidentId,
+        type: focusCard.closest("#roadHazardsList") ? "road" : "rail",
+        openPopup: false
+      });
+      return;
+    }
     const actionEl = event.target.closest("[data-action]");
     if (!actionEl) return;
     const action = actionEl.dataset.action;
@@ -5231,11 +5241,6 @@ function bindEvents() {
       event.preventDefault();
       zoomToCrossing(actionEl.dataset.crossingId);
       return;
-    }
-    const focusCard = actionEl.closest?.("[data-alert-focus]");
-    if (focusCard) {
-      event.preventDefault();
-      focusAlertLocation(focusCard.dataset.lat, focusCard.dataset.lng, { incidentId: focusCard.dataset.incidentId, type: focusCard.closest("#roadHazardsList") ? "road" : "rail", openPopup: false });
     }
   };
   attachRouteQuickPanelDelegatedClickHandlers();
@@ -8865,6 +8870,25 @@ function formatRoadHazardCategoryLabel(category) {
   return labels[category] || "Road Hazard";
 }
 
+function extractRoadHintFromText(text = "") {
+  const candidate = String(text || "");
+  if (!candidate) return "";
+  const between = candidate.match(/\bbetween\s+([A-Z0-9][A-Za-z0-9 .\/-]{2,})\s+and\s+([A-Z0-9][A-Za-z0-9 .\/-]{2,})/i);
+  if (between?.[1] && between?.[2]) return `${between[1].trim()} / ${between[2].trim()}`;
+  const near = candidate.match(/\b(?:on|near|at)\s+([A-Z0-9][A-Za-z0-9 .\/-]{2,})/i);
+  return near?.[1] ? near[1].trim() : "";
+}
+
+function resolveNearbyKnownLocation(lat, lng, options = {}) {
+  const coords = normalizeCoordinatePair(lat, lng);
+  if (!coords) return "";
+  const radiusMiles = Number.isFinite(Number(options?.radiusMiles)) ? Number(options.radiusMiles) : 1.8;
+  const nearest = findNearestCrossings(coords.lat, coords.lng, 1)[0];
+  if (!nearest || !Number.isFinite(Number(nearest.distance)) || Number(nearest.distance) > radiusMiles) return "";
+  const label = String(nearest.name || "").trim();
+  return label && !/^(railroad crossing|unknown|private)$/i.test(label) ? label : "";
+}
+
 function buildRoadHazardDisplay(incident) {
   const category = getHazardCategory(incident?.report_type || incident?.type || "other_hazard");
   const hazardType = formatRoadHazardCategoryLabel(category);
@@ -8880,12 +8904,12 @@ function buildRoadHazardDisplay(incident) {
     incident?.area
   ];
   const titleDescription = `${incident?.title || ""} ${incident?.description || ""}`;
-  const roadFromText = titleDescription.match(/(?:on|near|at)\s+([A-Z0-9][A-Za-z0-9 .\/-]{2,})/i);
-  if (roadFromText?.[1]) locationCandidates.unshift(roadFromText[1].trim());
+  const roadFromText = extractRoadHintFromText(titleDescription);
+  if (roadFromText) locationCandidates.unshift(roadFromText);
+  const nearestKnownLocation = resolveNearbyKnownLocation(incident?.lat, incident?.lng);
+  if (nearestKnownLocation) locationCandidates.push(nearestKnownLocation);
   const locationName = locationCandidates.map((value) => String(value || "").trim()).find(Boolean) || "";
   const hasUsefulRoadName = locationName && !/liberty county/i.test(locationName);
-  const betweenMatch = titleDescription.match(/between\s+([A-Z0-9][A-Za-z0-9 .\/-]{2,})\s+and\s+([A-Z0-9][A-Za-z0-9 .\/-]{2,})/i);
-  const nearMatch = titleDescription.match(/near\s+([A-Z0-9][A-Za-z0-9 .\/-]{2,})/i);
 
   let title = "Road Hazard";
   if (category === "flooding" && hasUsefulRoadName) title = `Flooding near ${locationName}`;
@@ -8896,9 +8920,8 @@ function buildRoadHazardDisplay(incident) {
   const coordinateFallback = coords ? `${coords.lat.toFixed(3)}, ${coords.lng.toFixed(3)}` : "";
   const areaName = [incident?.city, incident?.area, incident?.county].map((value) => String(value || "").trim()).find(Boolean) || "";
   let locationText = "";
-  if (betweenMatch?.[1] && betweenMatch?.[2]) locationText = `Between ${betweenMatch[1].trim()} and ${betweenMatch[2].trim()}`;
-  else if (nearMatch?.[1] && !/liberty county/i.test(nearMatch[1])) locationText = `Near ${nearMatch[1].trim()}`;
-  else if (hasUsefulRoadName) locationText = `Near ${locationName}`;
+  if (hasUsefulRoadName) locationText = `Near ${locationName}`;
+  else if (nearestKnownLocation) locationText = `Near ${nearestKnownLocation}`;
   else if (coordinateFallback) locationText = `Near ${coordinateFallback}`;
   else if (areaName) locationText = `Near ${areaName}`;
   else locationText = "Location pending";
@@ -8925,7 +8948,8 @@ function resolveRailLocationText(incident) {
     .map((value) => String(value || "").trim())
     .find((value) => value && !/^(private|unknown)$/i.test(value)) || "";
   const crossingName = String(incident?.crossingName || latest?.crossingName || latest?.crossing || "").trim();
-  const nearbyName = [latest?.location_name, latest?.city, latest?.area, latest?.county].map((value) => String(value || "").trim()).find(Boolean) || "";
+  const nearbyKnownLocation = resolveNearbyKnownLocation(latest?.lat, latest?.lng);
+  const nearbyName = [nearbyKnownLocation, latest?.location_name, latest?.city, latest?.area, latest?.county].map((value) => String(value || "").trim()).find(Boolean) || "";
   const crossingId = String(latest?.crossingId || incident?.crossingId || "").trim();
   return {
     humanRoad,
