@@ -4,6 +4,7 @@ const SUPABASE_PUBLIC_KEY = "sb_publishable_T33dpOj4M3TioSqFcVxf2Q_YTmhkPdO";
 const FRA_URL =
   "https://data.transportation.gov/resource/m2f8-22s6.geojson?$limit=5000&statename=TEXAS&countyname=LIBERTY";
 const CROSSING_REVIEW_OVERRIDES_URL = "data/gridly-crossing-review-overrides.json";
+const ROADWAY_SEGMENTS_URL = "data/liberty-county-road-segments.geojson";
 const HAZARD_REPORT_EXPIRATION_MINUTES = 180;
 
 const HAZARD_TYPES = {
@@ -135,6 +136,9 @@ const LIBERTY_COUNTY_CITY_RULES = [
   { city: "Devers", patterns: ["devers"] }
 ];
 let crossingReviewOverrides = {};
+let roadwaySegmentFeatures = [];
+let roadwayDatasetLoaded = false;
+let roadwayDatasetLoadError = null;
 const defaultCenter = [30.0466, -94.8852];
 const REPORT_EXPIRATION_MINUTES = 90;
 const RECENTLY_CLEARED_WINDOW_MINUTES = 20;
@@ -557,6 +561,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   maybeOpenFirstRunSetup();
 
   await loadCrossings();
+  await loadRoadwayDataset();
   await loadSharedReports();
 
   setInterval(loadSharedReports, LIVE_REFRESH_MS);
@@ -2325,6 +2330,95 @@ async function loadCrossings() {
     safeText("crossingCount", "Failed");
     safeText("mapTrustNote", "Unable to load curated crossing data. Tap Refresh Reports to retry.");
   }
+}
+
+async function loadRoadwayDataset() {
+  roadwayDatasetLoaded = false;
+  roadwayDatasetLoadError = null;
+  roadwaySegmentFeatures = [];
+  try {
+    const response = await fetch(ROADWAY_SEGMENTS_URL, { cache: "no-store" });
+    if (!response.ok) throw new Error(`Roadway dataset returned ${response.status}`);
+    const geojson = await response.json();
+    const features = Array.isArray(geojson?.features) ? geojson.features : [];
+    roadwaySegmentFeatures = features.filter((feature) => {
+      if (!feature || feature.type !== "Feature") return false;
+      const geometryType = feature?.geometry?.type;
+      const coordinates = feature?.geometry?.coordinates;
+      const isLine = geometryType === "LineString" || geometryType === "MultiLineString";
+      return isLine && Array.isArray(coordinates) && coordinates.length > 0;
+    });
+    roadwayDatasetLoaded = true;
+  } catch (error) {
+    roadwayDatasetLoadError = String(error?.message || error || "unknown_error");
+    console.warn("Unable to load local roadway dataset:", error);
+  }
+}
+
+function findNearestRoadwaySegment(lat, lng, maxDistanceMiles = 1.2) {
+  if (!roadwayDatasetLoaded || !Array.isArray(roadwaySegmentFeatures) || !roadwaySegmentFeatures.length) return null;
+  let best = null;
+  for (const feature of roadwaySegmentFeatures) {
+    const segments = flattenRoadGeometrySegments(feature?.geometry);
+    for (const segment of segments) {
+      const distance = distancePointToSegmentMiles(lat, lng, segment.startLat, segment.startLng, segment.endLat, segment.endLng);
+      if (!Number.isFinite(distance)) continue;
+      if (!best || distance < best.distanceMiles) {
+        best = {
+          feature,
+          distanceMiles: distance
+        };
+      }
+    }
+  }
+  if (!best || !Number.isFinite(best.distanceMiles) || best.distanceMiles > maxDistanceMiles) return null;
+  return best;
+}
+
+function flattenRoadGeometrySegments(geometry) {
+  if (!geometry || !geometry.type) return [];
+  if (geometry.type === "LineString") return lineCoordinatesToSegments(geometry.coordinates);
+  if (geometry.type === "MultiLineString") {
+    return geometry.coordinates.flatMap((line) => lineCoordinatesToSegments(line));
+  }
+  return [];
+}
+
+function lineCoordinatesToSegments(lineCoordinates) {
+  if (!Array.isArray(lineCoordinates) || lineCoordinates.length < 2) return [];
+  const segments = [];
+  for (let i = 1; i < lineCoordinates.length; i += 1) {
+    const start = lineCoordinates[i - 1];
+    const end = lineCoordinates[i];
+    const startLng = Number(start?.[0]);
+    const startLat = Number(start?.[1]);
+    const endLng = Number(end?.[0]);
+    const endLat = Number(end?.[1]);
+    if (![startLat, startLng, endLat, endLng].every(Number.isFinite)) continue;
+    segments.push({ startLat, startLng, endLat, endLng });
+  }
+  return segments;
+}
+
+function distancePointToSegmentMiles(lat, lng, startLat, startLng, endLat, endLng) {
+  const scale = Math.cos(toRad((startLat + endLat + lat) / 3));
+  const pointX = lng * scale;
+  const startX = startLng * scale;
+  const endX = endLng * scale;
+  const pointY = lat;
+  const startY = startLat;
+  const endY = endLat;
+  const dx = endX - startX;
+  const dy = endY - startY;
+  const lengthSquared = dx * dx + dy * dy;
+  if (lengthSquared <= 0) return haversineDistance(lat, lng, startLat, startLng);
+  let t = ((pointX - startX) * dx + (pointY - startY) * dy) / lengthSquared;
+  t = Math.max(0, Math.min(1, t));
+  const projX = startX + t * dx;
+  const projY = startY + t * dy;
+  const projLng = scale === 0 ? startLng : projX / scale;
+  const projLat = projY;
+  return haversineDistance(lat, lng, projLat, projLng);
 }
 
 async function fetchFraCrossingsWithRetry() {
@@ -8934,7 +9028,11 @@ function resolveNearestRoadName(lat, lng) {
   const coords = normalizeCoordinatePair(lat, lng);
   const debugState = {
     resolverExists: true,
-    roadwayDatasetLoaded: false,
+    roadwayDatasetLoaded,
+    roadwayFeatureCount: Array.isArray(roadwaySegmentFeatures) ? roadwaySegmentFeatures.length : 0,
+    roadwayLookupSource: "none",
+    nearestSegmentDistance: null,
+    fallbackReason: "",
     candidateSource: "none",
     rejectedCandidates: [],
     rejectionReasons: [],
@@ -8945,8 +9043,31 @@ function resolveNearestRoadName(lat, lng) {
   };
   if (!coords) {
     debugState.fallbackBehavior = "returns null when coordinates are invalid";
+    debugState.fallbackReason = "invalid_coordinates";
     resolveNearestRoadName.lastDebug = debugState;
     return null;
+  }
+
+  const nearestSegmentMatch = findNearestRoadwaySegment(coords.lat, coords.lng, 1.2);
+  if (nearestSegmentMatch?.feature) {
+    const props = nearestSegmentMatch.feature?.properties || {};
+    const segmentCandidates = [props?.name, props?.ref, props?.highway].map((value) => evaluateRoadNameCandidate(value));
+    const selectedSegment = segmentCandidates.find((entry) => entry.valid);
+    const rejectedSegments = segmentCandidates.filter((entry) => entry.normalized && !entry.valid);
+    debugState.rejectedCandidates.push(...rejectedSegments.map((entry) => entry.normalized));
+    debugState.rejectionReasons.push(...rejectedSegments.map((entry) => entry.reason));
+    debugState.normalizedCandidateSamples.push(...segmentCandidates.map((entry) => entry.normalized).filter(Boolean).slice(0, 4));
+    debugState.nearestSegmentDistance = Number(nearestSegmentMatch.distanceMiles.toFixed(4));
+    if (selectedSegment?.normalized) {
+      debugState.candidateSource = "roadway_dataset";
+      debugState.roadwayLookupSource = "roadway_dataset";
+      debugState.fallbackBehavior = "returns nearest roadway segment label when valid";
+      resolveNearestRoadName.lastDebug = debugState;
+      return selectedSegment.normalized;
+    }
+    debugState.fallbackReason = "nearest_segment_unnamed_or_generic";
+  } else {
+    debugState.fallbackReason = roadwayDatasetLoaded ? "no_segment_within_radius" : "roadway_dataset_unavailable";
   }
 
   const nearest = findNearestCrossings(coords.lat, coords.lng, 1)[0];
@@ -8957,16 +9078,20 @@ function resolveNearestRoadName(lat, lng) {
     const rejected = tempCandidate.filter((entry) => entry.normalized && !entry.valid);
     debugState.rejectedCandidates = rejected.map((entry) => entry.normalized);
     debugState.rejectionReasons = rejected.map((entry) => entry.reason);
-    debugState.normalizedCandidateSamples = tempCandidate.map((entry) => entry.normalized).filter(Boolean).slice(0, 8);
+    debugState.normalizedCandidateSamples = tempCandidate.map((entry) => entry.normalized).filter(Boolean).slice(0, 8).concat(debugState.normalizedCandidateSamples).slice(0, 8);
     debugState.sampleLookup = nearest?.name || null;
     if (selected?.normalized) {
       debugState.candidateSource = "crossing_fallback";
+      debugState.roadwayLookupSource = "crossing_fallback";
       debugState.fallbackBehavior = "returns nearest crossing-linked road label when valid";
       resolveNearestRoadName.lastDebug = debugState;
       return selected.normalized;
     }
+    debugState.fallbackReason = debugState.fallbackReason || "crossing_candidate_invalid";
   }
 
+  debugState.roadwayLookupSource = debugState.roadwayLookupSource || "none";
+  debugState.fallbackReason = debugState.fallbackReason || "no_valid_candidate_found";
   resolveNearestRoadName.lastDebug = debugState;
   return null;
 }
@@ -8978,7 +9103,11 @@ window.gridlyRoadNameResolverDebug = function () {
     : null;
   const status = {
     resolverExists: typeof resolveNearestRoadName === "function",
-    roadwayDatasetLoaded: false,
+    roadwayDatasetLoaded,
+    roadwayFeatureCount: Array.isArray(roadwaySegmentFeatures) ? roadwaySegmentFeatures.length : 0,
+    roadwayLookupSource: last?.roadwayLookupSource || "none",
+    nearestSegmentDistance: Number.isFinite(Number(last?.nearestSegmentDistance)) ? Number(last.nearestSegmentDistance) : null,
+    fallbackReason: last?.fallbackReason || (roadwayDatasetLoadError ? "dataset_load_failed" : ""),
     candidateSourceUsed: last?.candidateSource || "none",
     rejectedCandidates: Array.isArray(last?.rejectedCandidates) ? last.rejectedCandidates : [],
     rejectionReasons: Array.isArray(last?.rejectionReasons) ? last.rejectionReasons : [],
