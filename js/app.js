@@ -262,6 +262,20 @@ let lastMarkerAuditDebug = {
   routeHighlightedMarkers: 0,
   activeVisualStates: []
 };
+let lastMobileReportSubmitDebug = {
+  lastSubmitAttempt: "idle",
+  lastSubmitError: "",
+  originalTapCoords: null,
+  snappedCoords: null,
+  activeSubmitCoords: null,
+  snapComplete: false,
+  insertPayloadPreview: null,
+  supabaseInsertStarted: false,
+  supabaseInsertSucceeded: false,
+  supabaseInsertError: "",
+  postSubmitUiResetSucceeded: false
+};
+
 let mobileUiMode = "live";
 const MOBILE_REPORT_ENTRY_SELECTORS = [
   "#mobileDockReportBtn",
@@ -295,6 +309,7 @@ function updateReportingState(patch = {}) {
   }
   syncHazardPickerUiState();
   syncMapPlacementCursorState();
+  syncHazardPickerFooterSpacing();
 }
 
 function isMobileUiViewport() {
@@ -369,6 +384,42 @@ function layerDebugLog(...args) {
   if (!GRIDLY_LAYER_VERBOSE_DEBUG) return;
   console.log(...args);
 }
+
+window.gridlyMobileReportSubmitDebug = function () {
+  const panel = document.getElementById("gridlyHazardPanel");
+  const submitBtn = panel?.querySelector('[data-action="submit-hazard"]') || null;
+  const rect = submitBtn?.getBoundingClientRect?.() || null;
+  const panelRect = panel?.getBoundingClientRect?.() || null;
+  const style = submitBtn ? window.getComputedStyle(submitBtn) : null;
+  const submitButtonVisible = Boolean(submitBtn && style && style.display !== "none" && style.visibility !== "hidden" && rect && rect.width > 0 && rect.height > 0);
+  const footer = panel?.querySelector('.hazard-panel-placement-actions') || null;
+  const footerRect = footer?.getBoundingClientRect?.() || null;
+  return {
+    reportingState: { ...reportingState },
+    selectedHazardType: reportingState.selectedHazardType || selectedQuickHazardType || pendingHazardPlacement || null,
+    selectedPlacementMode: reportingState.placementModeActive ? "tap_map" : "use_my_location",
+    originalTapCoords: lastMobileReportSubmitDebug.originalTapCoords,
+    snappedCoords: lastMobileReportSubmitDebug.snappedCoords,
+    activeSubmitCoords: lastMobileReportSubmitDebug.activeSubmitCoords,
+    snapComplete: Boolean(lastMobileReportSubmitDebug.snapComplete),
+    submitButtonExists: Boolean(submitBtn),
+    submitButtonVisible,
+    submitButtonDisabled: submitBtn ? Boolean(submitBtn.disabled) : null,
+    submitButtonRect: rect ? rect.toJSON?.() || rect : null,
+    lastSubmitAttempt: lastMobileReportSubmitDebug.lastSubmitAttempt,
+    lastSubmitError: lastMobileReportSubmitDebug.lastSubmitError || reportingState.lastReportError || "",
+    insertPayloadPreview: lastMobileReportSubmitDebug.insertPayloadPreview,
+    supabaseConfigured: Boolean(supabaseClient),
+    supabaseInsertStarted: Boolean(lastMobileReportSubmitDebug.supabaseInsertStarted),
+    supabaseInsertSucceeded: Boolean(lastMobileReportSubmitDebug.supabaseInsertSucceeded),
+    supabaseInsertError: lastMobileReportSubmitDebug.supabaseInsertError || "",
+    modalOpen: Boolean(panel?.classList?.contains("visible")),
+    activePanelRect: panelRect ? panelRect.toJSON?.() || panelRect : null,
+    viewportHeight: window.innerHeight,
+    saveOrSubmitButtonBlockedByFooter: Boolean(rect && footerRect && rect.bottom > footerRect.top && rect.top < footerRect.bottom),
+    pointerEventsOnSubmitButton: style?.pointerEvents || null
+  };
+};
 
 window.gridlyReportingDebug = function () {
   return {
@@ -4032,6 +4083,7 @@ function resetQuickHazardReportState() {
 }
 
 window.submitHazardNearMe = function (hazardType) {
+  lastMobileReportSubmitDebug.lastSubmitAttempt = "use_my_location_clicked";
   const selectedType = hazardType || reportingState.selectedHazardType || selectedQuickHazardType || pendingHazardPlacement;
   if (!selectedType) {
     updateReportingState({ lastReportError: "Choose a hazard first, then use My Location.", lastReportMessage: "" });
@@ -4089,6 +4141,7 @@ window.submitHazardNearMe = function (hazardType) {
 };
 
 function openHazardPlacement(hazardType) {
+  lastMobileReportSubmitDebug.lastSubmitAttempt = "tap_map_mode_selected";
   pendingHazardPlacement = hazardType || reportingState.selectedHazardType || selectedQuickHazardType || "other_hazard";
   selectedQuickHazardType = pendingHazardPlacement;
   updateReportingState({
@@ -4111,7 +4164,13 @@ async function handleHazardPlacementMapClick(event) {
   const lng = event?.latlng?.lng;
   if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
   const selectedType = pendingHazardPlacement || reportingState.selectedHazardType;
+  lastMobileReportSubmitDebug.originalTapCoords = { lat, lng };
+  lastMobileReportSubmitDebug.lastSubmitAttempt = "tap_captured";
   const snapped = await snapHazardToRoad(lat, lng);
+  lastMobileReportSubmitDebug.snappedCoords = { lat: snapped.lat, lng: snapped.lng };
+  lastMobileReportSubmitDebug.activeSubmitCoords = { lat: snapped.lat, lng: snapped.lng };
+  lastMobileReportSubmitDebug.snapComplete = true;
+  lastMobileReportSubmitDebug.lastSubmitAttempt = "snap_completed";
   const submitted = await createSharedHazardReport(selectedType, snapped.lat, snapped.lng, "tap map placement", "", snapped.originalTapCoords);
   if (!submitted) return;
   if (map) {
@@ -4168,6 +4227,7 @@ function isPointNearActiveRoute(lat, lng) {
 }
 
 async function createSharedHazardReport(hazardType, lat, lng, confidence, locationName = "", originalTapCoords = null) {
+  lastMobileReportSubmitDebug.lastSubmitAttempt = "final_submit_handler_entered";
   if (reportingState.submissionInProgress) return false;
 
   if (!supabaseClient) {
@@ -4191,20 +4251,30 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     source: "user",
     confidence,
     device_id: deviceId,
-    expires_at: expiresAt,
-    debug_meta: originalTapCoords ? JSON.stringify({ originalTapCoords }) : null
+    expires_at: expiresAt
   };
 
   try {
+    lastMobileReportSubmitDebug.activeSubmitCoords = { lat, lng };
+    if (originalTapCoords) lastMobileReportSubmitDebug.originalTapCoords = { ...originalTapCoords };
+    lastMobileReportSubmitDebug.insertPayloadPreview = { ...row };
+    lastMobileReportSubmitDebug.supabaseInsertStarted = false;
+    lastMobileReportSubmitDebug.supabaseInsertSucceeded = false;
+    lastMobileReportSubmitDebug.supabaseInsertError = "";
+    lastMobileReportSubmitDebug.lastSubmitError = "";
     updateReportingState({ submissionInProgress: true, locationLookupInProgress: false });
     setSync("Sending hazard report...");
     updateReportingState({ lastReportError: "", lastReportMessage: `Sending ${copy.label} hazard report...` });
     setConfirmation(`Sending ${copy.label} hazard report...`, "success");
 
+    lastMobileReportSubmitDebug.lastSubmitAttempt = "supabase_insert_started";
+    lastMobileReportSubmitDebug.supabaseInsertStarted = true;
     const { error } = await supabaseClient.from("reports").insert(row);
 
     if (error) throw error;
 
+    lastMobileReportSubmitDebug.lastSubmitAttempt = "supabase_insert_succeeded";
+    lastMobileReportSubmitDebug.supabaseInsertSucceeded = true;
     updateReportingState({ lastReportError: "", lastReportMessage: "Report added" });
     setConfirmation("Report added", "success");
     setSync("Hazard report shared");
@@ -4219,9 +4289,14 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     });
     if (window.matchMedia("(max-width: 760px)").matches) setMobileUiMode("live", { silent: true });
     closeHazardPanel({ preserveLastReportMessage: true });
+    lastMobileReportSubmitDebug.postSubmitUiResetSucceeded = true;
+    lastMobileReportSubmitDebug.lastSubmitAttempt = "ui_reset_complete";
     return true;
   } catch (error) {
     console.error("Gridly hazard insert failed:", error);
+    lastMobileReportSubmitDebug.lastSubmitAttempt = "supabase_insert_failed";
+    lastMobileReportSubmitDebug.supabaseInsertError = error?.message || "unknown_error";
+    lastMobileReportSubmitDebug.lastSubmitError = error?.message || "unknown_error";
     updateReportingState({ lastReportError: `Hazard report failed: ${error.message || "permission denied"}` });
     setConfirmation(`Hazard report failed: ${error.message || "permission denied"}`, "error");
     setSync("Hazard report failed");
@@ -4261,6 +4336,8 @@ window.clearHazard = async function (hazardType, lat, lng) {
     setSync("Sending hazard clear report...");
     setConfirmation(`Clearing ${copy.label} hazard...`, "success");
 
+    lastMobileReportSubmitDebug.lastSubmitAttempt = "supabase_insert_started";
+    lastMobileReportSubmitDebug.supabaseInsertStarted = true;
     const { error } = await supabaseClient.from("reports").insert(row);
 
     if (error) throw error;
@@ -9499,6 +9576,16 @@ window.gridlyHazardPickerAuditDebug = function gridlyHazardPickerAuditDebug() {
   };
 };
 
+function syncHazardPickerFooterSpacing() {
+  const picker = document.getElementById("gridlyHazardPanel");
+  if (!picker) return;
+  const footer = picker.querySelector(".hazard-panel-placement-actions");
+  const footerHeight = Math.ceil(footer?.getBoundingClientRect?.().height || 0);
+  const safeInsetBottom = 24;
+  const total = Math.max(8, footerHeight + safeInsetBottom);
+  picker.style.setProperty("--gridly-hazard-list-bottom-padding", `${total}px`);
+}
+
 function injectMobileCTACleanupStyles() {
   if (document.getElementById("gridlyMobileCTACleanupStyles")) return;
 
@@ -9564,7 +9651,7 @@ function injectMobileCTACleanupStyles() {
         overflow-y: auto !important;
         overscroll-behavior: contain !important;
         -webkit-overflow-scrolling: touch !important;
-        padding-bottom: 8px !important;
+        padding-bottom: var(--gridly-hazard-list-bottom-padding, 8px) !important;
         gap: 8px !important;
       }
       .hazard-choice-grid button {
