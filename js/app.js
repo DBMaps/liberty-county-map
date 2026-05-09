@@ -8889,6 +8889,66 @@ function resolveNearbyKnownLocation(lat, lng, options = {}) {
   return label && !/^(railroad crossing|unknown|private)$/i.test(label) ? label : "";
 }
 
+function isResolvableRoadNameCandidate(value = "") {
+  const text = String(value || "").trim();
+  if (!text) return false;
+  if (/^(unknown|private|unnamed|null|none|n\/a|na|road|street|railroad crossing)$/i.test(text)) return false;
+  if (/^[-,.\s]+$/.test(text)) return false;
+  return true;
+}
+
+function resolveNearestRoadName(lat, lng) {
+  const coords = normalizeCoordinatePair(lat, lng);
+  const debugState = {
+    resolverExists: true,
+    roadwayDatasetLoaded: false,
+    candidateSource: "none",
+    sampleLookup: null,
+    fallbackBehavior: "returns null when no local roadway source is available",
+    coords
+  };
+  if (!coords) {
+    debugState.fallbackBehavior = "returns null when coordinates are invalid";
+    resolveNearestRoadName.lastDebug = debugState;
+    return null;
+  }
+
+  const nearest = findNearestCrossings(coords.lat, coords.lng, 1)[0];
+  if (nearest && Number.isFinite(Number(nearest.distance)) && Number(nearest.distance) <= 0.8) {
+    const tempCandidate = [nearest?.roadwayName, nearest?.road_name, nearest?.street_name, nearest?.crossing_street, nearest?.cross_street, nearest?.name]
+      .map((value) => String(value || "").trim())
+      .find((value) => isResolvableRoadNameCandidate(value)) || "";
+    debugState.sampleLookup = nearest?.name || null;
+    if (tempCandidate) {
+      debugState.candidateSource = "crossing_fallback";
+      debugState.fallbackBehavior = "returns nearest crossing-linked road label when valid";
+      resolveNearestRoadName.lastDebug = debugState;
+      return tempCandidate;
+    }
+  }
+
+  resolveNearestRoadName.lastDebug = debugState;
+  return null;
+}
+
+window.gridlyRoadNameResolverDebug = function () {
+  const last = resolveNearestRoadName?.lastDebug || null;
+  const sampleCrossing = Array.isArray(crossings) && crossings.length
+    ? { id: crossings[0]?.id || null, name: crossings[0]?.name || null }
+    : null;
+  const status = {
+    resolverExists: typeof resolveNearestRoadName === "function",
+    roadwayDatasetLoaded: false,
+    candidateSourceUsed: last?.candidateSource || "none",
+    sampleLookupResults: last?.sampleLookup || sampleCrossing,
+    fallbackBehavior: last?.fallbackBehavior || "returns null when no roadway dataset is available",
+    localFallbackSourceAvailable: Boolean(Array.isArray(crossings) && crossings.length),
+    notes: "Foundation resolver only: local-only, no external geocoding/API calls."
+  };
+  console.info("gridlyRoadNameResolverDebug", status);
+  return status;
+};
+
 function buildRoadHazardDisplay(incident) {
   const category = getHazardCategory(incident?.report_type || incident?.type || "other_hazard");
   const hazardType = formatRoadHazardCategoryLabel(category);
@@ -8908,7 +8968,9 @@ function buildRoadHazardDisplay(incident) {
   if (roadFromText) locationCandidates.unshift(roadFromText);
   const nearestKnownLocation = resolveNearbyKnownLocation(incident?.lat, incident?.lng);
   if (nearestKnownLocation) locationCandidates.push(nearestKnownLocation);
-  const locationName = locationCandidates.map((value) => String(value || "").trim()).find(Boolean) || "";
+  const resolvedRoadName = resolveNearestRoadName(incident?.lat, incident?.lng);
+  if (resolvedRoadName) locationCandidates.push(resolvedRoadName);
+  const locationName = locationCandidates.map((value) => String(value || "").trim()).find((value) => isResolvableRoadNameCandidate(value)) || "";
   const hasUsefulRoadName = locationName && !/liberty county/i.test(locationName);
 
   let title = "Road Hazard";
@@ -8944,9 +9006,10 @@ function buildRoadHazardDisplay(incident) {
 function resolveRailLocationText(incident) {
   const latest = incident?.latestReport || {};
   const coords = normalizeCoordinatePair(latest?.lat, latest?.lng);
-  const humanRoad = [latest?.road_name, latest?.street_name, latest?.nearest_road, latest?.snapped_road_name, latest?.crossing_street, latest?.cross_street]
+  const resolvedRoadName = resolveNearestRoadName(latest?.lat, latest?.lng);
+  const humanRoad = [latest?.road_name, latest?.street_name, latest?.nearest_road, latest?.snapped_road_name, latest?.crossing_street, latest?.cross_street, resolvedRoadName]
     .map((value) => String(value || "").trim())
-    .find((value) => value && !/^(private|unknown)$/i.test(value)) || "";
+    .find((value) => isResolvableRoadNameCandidate(value)) || "";
   const crossingName = String(incident?.crossingName || latest?.crossingName || latest?.crossing || "").trim();
   const nearbyKnownLocation = resolveNearbyKnownLocation(latest?.lat, latest?.lng);
   const nearbyName = [nearbyKnownLocation, latest?.location_name, latest?.city, latest?.area, latest?.county].map((value) => String(value || "").trim()).find(Boolean) || "";
