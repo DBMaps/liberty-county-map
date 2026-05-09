@@ -9010,6 +9010,50 @@ function evaluateRoadNameCandidate(value = "") {
   return { normalized, valid: true, reason: "ok" };
 }
 
+
+function titleCaseRoadText(value = "") {
+  const text = String(value || "").trim();
+  if (!text) return "";
+  if (/^(US|SH|FM|IH|I|TX)\s*\d+[A-Z]?$/i.test(text)) return text.toUpperCase().replace(/\s+/g, " ");
+  return text
+    .split(/\s+/)
+    .map((token) => (/^[A-Z0-9-]{2,}$/.test(token) ? token : token.charAt(0).toUpperCase() + token.slice(1).toLowerCase()))
+    .join(" ");
+}
+
+function normalizeRoadComparison(value = "") {
+  return String(value || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function buildHumanLocationContext({ primaryRoad = "", crossingRoad = "", intersectingRoad = "", roadwayRef = "", nearbyArea = "" } = {}) {
+  const ordered = [primaryRoad, crossingRoad, intersectingRoad, roadwayRef]
+    .map((value) => titleCaseRoadText(normalizeRoadNameCandidate(value)))
+    .filter(Boolean);
+  const uniqueRoads = [];
+  const seen = new Set();
+  ordered.forEach((road) => {
+    const key = normalizeRoadComparison(road);
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    uniqueRoads.push(road);
+  });
+  const area = String(nearbyArea || "").trim();
+  const primary = uniqueRoads[0] || "";
+  const secondary = uniqueRoads[1] || "";
+  let phrasing = "";
+  if (primary && secondary) phrasing = `${primary} near ${secondary}`;
+  else if (primary) phrasing = primary;
+  else if (area) phrasing = area;
+  return {
+    primary,
+    secondary,
+    phrasing,
+    usedFallback: !primary,
+    source: primary ? "roadway_candidates" : area ? "area_fallback" : "none",
+    samples: uniqueRoads.slice(0, 4)
+  };
+}
+
 function resolveNearbyKnownLocation(lat, lng, options = {}) {
   const coords = normalizeCoordinatePair(lat, lng);
   if (!coords) return "";
@@ -9115,6 +9159,9 @@ window.gridlyRoadNameResolverDebug = function () {
     sampleLookupResults: last?.sampleLookup || sampleCrossing,
     fallbackBehavior: last?.fallbackBehavior || "returns null when no roadway dataset is available",
     localFallbackSourceAvailable: Boolean(Array.isArray(crossings) && crossings.length),
+    formattedLocationSamples: ["Blocked crossing on US 90 near Stilson Road", "Crash near SH 146 & Winfree Street", "Flooding near FM 1960"],
+    formattingSource: last?.candidateSource || "none",
+    formattingFallbackUsed: Boolean(last?.fallbackReason && String(last.fallbackReason).length),
     notes: "Foundation resolver only: local-only, no external geocoding/API calls."
   };
   console.info("gridlyRoadNameResolverDebug", status);
@@ -9143,21 +9190,28 @@ function buildRoadHazardDisplay(incident) {
   const resolvedRoadName = resolveNearestRoadName(incident?.lat, incident?.lng);
   if (resolvedRoadName) locationCandidates.push(resolvedRoadName);
   const locationName = locationCandidates.map((value) => String(value || "").trim()).find((value) => isResolvableRoadNameCandidate(value)) || "";
-  const hasUsefulRoadName = locationName && !/liberty county/i.test(locationName);
+  const locationContext = buildHumanLocationContext({
+    primaryRoad: locationName,
+    crossingRoad: incident?.crossing_street || incident?.cross_street,
+    intersectingRoad: incident?.intersecting_road,
+    roadwayRef: incident?.road_ref,
+    nearbyArea: incident?.city || incident?.area || incident?.county
+  });
+  const hasUsefulRoadName = locationContext.primary && !/liberty county/i.test(locationContext.primary);
 
   let title = "Road Hazard";
-  if (category === "flooding" && hasUsefulRoadName) title = `Flooding near ${locationName}`;
-  else if (hasUsefulRoadName) title = `${hazardType} on ${locationName}`;
+  if (category === "flooding" && hasUsefulRoadName) title = `Flooding near ${locationContext.phrasing}`;
+  else if (hasUsefulRoadName) title = `${hazardType} near ${locationContext.phrasing}`;
   else if (hazardType !== "Road Hazard") title = hazardType;
 
   const coords = normalizeCoordinatePair(incident?.lat, incident?.lng);
   const coordinateFallback = coords ? `${coords.lat.toFixed(3)}, ${coords.lng.toFixed(3)}` : "";
   const areaName = [incident?.city, incident?.area, incident?.county].map((value) => String(value || "").trim()).find(Boolean) || "";
   let locationText = "";
-  if (hasUsefulRoadName) locationText = `Near ${locationName}`;
+  if (hasUsefulRoadName) locationText = `Near ${locationContext.phrasing}`;
   else if (nearestKnownLocation) locationText = `Near ${nearestKnownLocation}`;
-  else if (coordinateFallback) locationText = `Near ${coordinateFallback}`;
   else if (areaName) locationText = `Near ${areaName}`;
+  else if (coordinateFallback) locationText = `Near ${coordinateFallback}`;
   else locationText = "Location pending";
 
   const isCleared = String(incident?.status || "").toLowerCase() === "cleared";
@@ -9182,17 +9236,24 @@ function resolveRailLocationText(incident) {
   const humanRoad = [latest?.road_name, latest?.street_name, latest?.nearest_road, latest?.snapped_road_name, latest?.crossing_street, latest?.cross_street, resolvedRoadName]
     .map((value) => String(value || "").trim())
     .find((value) => isResolvableRoadNameCandidate(value)) || "";
+  const context = buildHumanLocationContext({
+    primaryRoad: humanRoad,
+    crossingRoad: latest?.crossing_street || latest?.cross_street,
+    intersectingRoad: latest?.intersecting_road,
+    roadwayRef: latest?.road_ref,
+    nearbyArea: latest?.city || latest?.area || latest?.county
+  });
   const crossingName = String(incident?.crossingName || latest?.crossingName || latest?.crossing || "").trim();
   const nearbyKnownLocation = resolveNearbyKnownLocation(latest?.lat, latest?.lng);
   const nearbyName = [nearbyKnownLocation, latest?.location_name, latest?.city, latest?.area, latest?.county].map((value) => String(value || "").trim()).find(Boolean) || "";
   const crossingId = String(latest?.crossingId || incident?.crossingId || "").trim();
   return {
-    humanRoad,
+    humanRoad: context.primary,
     crossingName,
     nearbyName,
     coords,
     crossingId,
-    subtitlePrefix: humanRoad ? `Near ${humanRoad}` : nearbyName ? `Near ${nearbyName}` : coords ? `Near ${coords.lat.toFixed(3)}, ${coords.lng.toFixed(3)}` : crossingId ? `Crossing ID ${crossingId}` : "Location pending"
+    subtitlePrefix: context.phrasing ? `Near ${context.phrasing}` : nearbyName ? `Near ${nearbyName}` : coords ? `Near ${coords.lat.toFixed(3)}, ${coords.lng.toFixed(3)}` : crossingId ? `Crossing ID ${crossingId}` : "Location pending"
   };
 }
 
