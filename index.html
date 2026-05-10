@@ -438,6 +438,18 @@
       </aside>
     </section>
 
+    <section class="mobile-daily-panel" id="mobileDailyPanel" aria-label="Daily Panel">
+      <button class="mobile-daily-panel-handle" id="mobileDailyPanelHandle" type="button" aria-expanded="false" aria-controls="mobileDailyPanelBody">Daily Panel</button>
+      <div class="mobile-daily-panel-body" id="mobileDailyPanelBody" hidden>
+        <div class="mobile-daily-panel-actions" role="tablist" aria-label="Daily Panel shortcuts">
+          <button class="secondary-btn" type="button" data-mobile-panel-jump="routes">Route Watch</button>
+          <button class="secondary-btn" type="button" data-mobile-panel-jump="alerts">Rail Pulse</button>
+          <button class="secondary-btn" type="button" data-mobile-panel-jump="report">Report</button>
+        </div>
+        <p class="mobile-daily-panel-note">Use shortcuts to open existing Route Watch, Rail Pulse, and Report surfaces.</p>
+      </div>
+    </section>
+
 
     <details class="report-card report-drawer" id="reportSection">
       <summary class="report-drawer-summary"><span class="eyebrow">Report Center</span><h2>Live Reporting</h2></summary>

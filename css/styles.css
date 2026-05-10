@@ -9829,3 +9829,88 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
     pointer-events: none !important;
   }
 }
+
+/* =========================================================
+   GRIDLY V52 — MOBILE MAP-FIRST SHELL (PHASE 1A)
+========================================================= */
+@media (max-width: 768px) {
+  body[data-mobile-mode="v52"] .future-map-hero,
+  body[data-mobile-mode="v52"] .driver-hero,
+  body[data-mobile-mode="v52"] .mobile-home-cards,
+  body[data-mobile-mode="v52"] .destination-hero-card,
+  body[data-mobile-mode="v52"] .mobile-floating-action-dock,
+  body[data-mobile-mode="v52"] .mobile-bottom-nav {
+    display: none !important;
+  }
+
+  body[data-mobile-mode="v52"] .command-center {
+    display: block;
+  }
+
+  body[data-mobile-mode="v52"] .map-card {
+    margin-top: max(6px, env(safe-area-inset-top));
+    min-height: calc(100dvh - 174px - env(safe-area-inset-bottom));
+  }
+
+  body[data-mobile-mode="v52"] #map {
+    min-height: calc(100dvh - 280px - env(safe-area-inset-bottom));
+  }
+
+  body[data-mobile-mode="v52"] .map-tools-overlay {
+    left: 10px;
+    right: 10px;
+    bottom: calc(90px + env(safe-area-inset-bottom));
+    padding: 10px;
+    border-radius: 14px;
+  }
+
+  body[data-mobile-mode="v52"] .mobile-daily-panel {
+    position: fixed;
+    left: 10px;
+    right: 10px;
+    bottom: calc(8px + env(safe-area-inset-bottom));
+    z-index: 2100;
+    border: 1px solid rgba(130, 185, 255, 0.4);
+    border-radius: 16px;
+    background: linear-gradient(165deg, rgba(8, 14, 24, 0.96), rgba(6, 11, 20, 0.98));
+    box-shadow: 0 16px 30px rgba(0, 0, 0, 0.42);
+    backdrop-filter: blur(10px);
+  }
+
+  body[data-mobile-mode="v52"] .mobile-daily-panel-handle {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: #ecf4ff;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    padding: 12px 14px;
+    text-align: left;
+  }
+
+  body[data-mobile-mode="v52"] .mobile-daily-panel-body {
+    padding: 0 12px 12px;
+  }
+
+  body[data-mobile-mode="v52"] .mobile-daily-panel-actions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  body[data-mobile-mode="v52"] .mobile-daily-panel-actions .secondary-btn {
+    min-height: 42px;
+    font-size: 0.82rem;
+    padding: 10px 8px;
+  }
+
+  body[data-mobile-mode="v52"] .mobile-daily-panel-note {
+    margin: 8px 2px 0;
+    font-size: 0.74rem;
+    color: rgba(220, 234, 252, 0.82);
+  }
+
+  body[data-mobile-mode="v52"] .report-drawer {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
+  }
+}
