@@ -11590,13 +11590,30 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       if (action === "prep-hazard-flooding") { document.getElementById("mobileHazardReportBtn")?.click(); prepQuickReportType("flooding"); }
       if (action === "prep-hazard-debris") { document.getElementById("mobileHazardReportBtn")?.click(); prepQuickReportType("debris"); }
       if (action === "open-alerts-center") {
-        setMobileUiMode("alert", { silent: true });
-        document.getElementById("alertsSection")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        logDailyPanelAction("open alerts center action received", {
+          action,
+          visibilityState: !layer.hidden,
+          nextMode: "live_then_route_alert"
+        });
       }
       if (action === "route-map") document.querySelector('.mobile-bottom-nav .nav-btn[data-section="map"]')?.click();
-      const nextMode = action === "open-alerts-center" ? "alert" : "live";
+      const nextMode = "live";
       logDailyPanelAction("source action", { action, visibilityState: !layer.hidden, nextMode });
       closeSurface(action, { nextMode });
+      if (action === "open-alerts-center") {
+        logDailyPanelAction("alerts center open/render requested", {
+          targetSection: "alertsSection",
+          via: "routeNavSection",
+          postCloseVisibilityState: !layer.hidden
+        });
+        routeNavSection("alerts");
+        logDailyPanelAction("alerts center route applied", { targetSection: "alerts", mobileModeAfterRoute: mobileUiMode });
+        logDailyPanelAction("alerts center final visibility", {
+          sourceAction: action,
+          visibilityState: !layer.hidden,
+          mobileMode: mobileUiMode
+        });
+      }
     });
   }
 
