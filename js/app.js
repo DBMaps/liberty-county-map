@@ -11419,25 +11419,49 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
 
   function executeMobilePanelAction(section) {
-    const sectionToNavButton = {
-      routes: '.mobile-bottom-nav .nav-btn[data-section="routes"]',
-      alerts: '.mobile-bottom-nav .nav-btn[data-section="alerts"]',
-      report: '.mobile-bottom-nav .nav-btn[data-section="report"]'
+    const layer = document.getElementById("mobileNativeSurfaceLayer");
+    const title = document.getElementById("mobileNativeSurfaceTitle");
+    const body = document.getElementById("mobileNativeSurfaceBody");
+    const views = {
+      routes: {
+        title: "Route Watch",
+        html: `
+          <article class="mobile-native-surface-card">
+            <strong id="mobileSurfaceRouteStatus">${document.getElementById("routeStatus")?.textContent || "Monitoring route"}</strong>
+            <p id="mobileSurfaceRouteDetails">${document.getElementById("routeSummaryInline")?.textContent || "Live route intelligence is active."}</p>
+            <div class="mobile-native-surface-actions">
+              <button class="primary-btn" type="button" data-mobile-surface-action="route-watch">Start Route Watch</button>
+              <button class="secondary-btn" type="button" data-mobile-surface-action="route-map">Stay on Map</button>
+            </div>
+          </article>`
+      },
+      alerts: {
+        title: "Rail Pulse",
+        html: `
+          <article class="mobile-native-surface-card">
+            <strong>Alerts & Hazards</strong>
+            <p>${document.getElementById("crossingSummary")?.textContent || "No crossing summary available."}</p>
+            <p>${document.getElementById("freshestReportReason")?.textContent || "Live signals update automatically."}</p>
+          </article>
+          <article class="mobile-native-surface-card">
+            <div class="mobile-native-surface-actions">
+              <button class="secondary-btn" type="button" data-mobile-surface-action="open-alerts-center">Open Alerts Center</button>
+            </div>
+          </article>`
+      },
+      report: {
+        title: "Report",
+        html: `
+          <article class="mobile-native-surface-card">
+            <strong>Quick Report Launcher</strong>
+            <p>Use fast actions to report without leaving the map.</p>
+            <div class="mobile-native-surface-actions">
+              <button class="primary-btn" type="button" data-mobile-surface-action="quick-report">Report Hazard Fast</button>
+              <button class="secondary-btn" type="button" data-mobile-surface-action="quick-cleared">Mark Cleared</button>
+            </div>
+          </article>`
+      }
     };
-    const selector = sectionToNavButton[section] || "";
-    const navButton = selector ? document.querySelector(selector) : null;
-    const targetIdBySection = { routes: "setupCard", alerts: "alertsSection", report: "reportSection" };
-    const targetId = targetIdBySection[section] || "";
-    const target = targetId ? document.getElementById(targetId) : null;
-    const targetVisible = isElementVisibleForInteraction(target);
-
-    logDailyPanelAction("target found", {
-      section,
-      navButtonFound: Boolean(navButton),
-      targetId,
-      targetFound: Boolean(target)
-    });
-    logDailyPanelAction("target visible", { section, targetId, targetVisible });
 
     if (!isMobileLayoutMode()) {
       logDailyPanelAction("action executed", {
@@ -11447,23 +11471,12 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       });
       return;
     }
-
-    if (!navButton) {
-      logDailyPanelAction("action executed", {
-        section,
-        action: "blocked",
-        reason: "Mobile nav target button not found"
-      });
-      return;
-    }
-
-    navButton.click();
-    logDailyPanelAction("action executed", {
-      section,
-      action: "mobile-nav-click",
-      targetId,
-      targetVisible
-    });
+    if (!layer || !title || !body || !views[section]) return;
+    title.textContent = views[section].title;
+    body.innerHTML = views[section].html;
+    layer.hidden = false;
+    layer.setAttribute("aria-hidden", "false");
+    logDailyPanelAction("mobile surface opened", { section, sourceAction: "daily_panel_button", visibilityState: !layer.hidden });
   }
 
   function bindDailyPanel() {
@@ -11493,6 +11506,30 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         executeMobilePanelAction(section);
         setOpen(false);
       });
+    });
+
+    const layer = document.getElementById("mobileNativeSurfaceLayer");
+    const closeBtn = document.getElementById("mobileNativeSurfaceCloseBtn");
+    const closeSurface = (sourceAction = "close_button") => {
+      if (!layer) return;
+      const wasVisible = !layer.hidden;
+      layer.hidden = true;
+      layer.setAttribute("aria-hidden", "true");
+      logDailyPanelAction("mobile surface closed", { sourceAction, visibilityState: !layer.hidden, wasVisible });
+    };
+    closeBtn?.addEventListener("click", () => closeSurface("close_button"));
+    layer?.querySelector('[data-mobile-surface-close="backdrop"]')?.addEventListener("click", () => closeSurface("backdrop"));
+    layer?.addEventListener("click", (event) => {
+      const trigger = event.target?.closest?.("[data-mobile-surface-action]");
+      if (!trigger) return;
+      const action = trigger.getAttribute("data-mobile-surface-action");
+      if (action === "route-watch") document.getElementById("mobileQuickRouteBtn")?.click();
+      if (action === "quick-report") document.getElementById("mobileQuickReportBtn")?.click();
+      if (action === "quick-cleared") document.getElementById("mobileQuickClearedBtn")?.click();
+      if (action === "open-alerts-center") document.querySelector('.mobile-bottom-nav .nav-btn[data-section="alerts"]')?.click();
+      if (action === "route-map") document.querySelector('.mobile-bottom-nav .nav-btn[data-section="map"]')?.click();
+      logDailyPanelAction("source action", { action, visibilityState: !layer.hidden });
+      closeSurface(action);
     });
   }
 

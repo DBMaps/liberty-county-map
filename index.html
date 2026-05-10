@@ -626,6 +626,17 @@
     <button class="mobile-bottom-nav-btn nav-btn" data-section="routes" type="button">Routes</button>
   </nav>
 
+  <div class="mobile-native-surface-layer" id="mobileNativeSurfaceLayer" hidden aria-hidden="true">
+    <div class="mobile-native-surface-backdrop" data-mobile-surface-close="backdrop"></div>
+    <section class="mobile-native-surface-sheet" role="dialog" aria-modal="true" aria-labelledby="mobileNativeSurfaceTitle">
+      <header class="mobile-native-surface-header">
+        <strong id="mobileNativeSurfaceTitle">Mobile Surface</strong>
+        <button class="secondary-btn compact-btn" type="button" id="mobileNativeSurfaceCloseBtn">Close</button>
+      </header>
+      <div class="mobile-native-surface-body" id="mobileNativeSurfaceBody"></div>
+    </section>
+  </div>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/app.js?v=122"></script>
