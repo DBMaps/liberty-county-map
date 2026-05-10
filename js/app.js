@@ -11399,6 +11399,73 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
    GRIDLY V52 — MOBILE DAILY PANEL SHELL (PHASE 1A)
 ========================================================= */
 (function initMobileDailyPanelShell() {
+  const DAILY_PANEL_LOG_PREFIX = "[Mobile Daily Panel]";
+  const MOBILE_LAYOUT_SELECTOR = 'body[data-layout-mode="mobile"]';
+
+  function isMobileLayoutMode() {
+    return document.body?.matches?.(MOBILE_LAYOUT_SELECTOR);
+  }
+
+  function isElementVisibleForInteraction(element) {
+    if (!element || !element.isConnected) return false;
+    if (element.hidden) return false;
+    const style = window.getComputedStyle(element);
+    if (style.display === "none" || style.visibility === "hidden") return false;
+    return true;
+  }
+
+  function logDailyPanelAction(stage, details = {}) {
+    console.info(`${DAILY_PANEL_LOG_PREFIX} ${stage}`, details);
+  }
+
+  function executeMobilePanelAction(section) {
+    const sectionToNavButton = {
+      routes: '.mobile-bottom-nav .nav-btn[data-section="routes"]',
+      alerts: '.mobile-bottom-nav .nav-btn[data-section="alerts"]',
+      report: '.mobile-bottom-nav .nav-btn[data-section="report"]'
+    };
+    const selector = sectionToNavButton[section] || "";
+    const navButton = selector ? document.querySelector(selector) : null;
+    const targetIdBySection = { routes: "setupCard", alerts: "alertsSection", report: "reportSection" };
+    const targetId = targetIdBySection[section] || "";
+    const target = targetId ? document.getElementById(targetId) : null;
+    const targetVisible = isElementVisibleForInteraction(target);
+
+    logDailyPanelAction("target found", {
+      section,
+      navButtonFound: Boolean(navButton),
+      targetId,
+      targetFound: Boolean(target)
+    });
+    logDailyPanelAction("target visible", { section, targetId, targetVisible });
+
+    if (!isMobileLayoutMode()) {
+      logDailyPanelAction("action executed", {
+        section,
+        action: "blocked",
+        reason: "Not in mobile layout mode"
+      });
+      return;
+    }
+
+    if (!navButton) {
+      logDailyPanelAction("action executed", {
+        section,
+        action: "blocked",
+        reason: "Mobile nav target button not found"
+      });
+      return;
+    }
+
+    navButton.click();
+    logDailyPanelAction("action executed", {
+      section,
+      action: "mobile-nav-click",
+      targetId,
+      targetVisible
+    });
+  }
+
   function bindDailyPanel() {
     const panel = document.getElementById("mobileDailyPanel");
     const handle = document.getElementById("mobileDailyPanelHandle");
@@ -11419,14 +11486,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     panel.querySelectorAll("[data-mobile-panel-jump]").forEach((btn) => {
       btn.addEventListener("click", () => {
         const section = btn.getAttribute("data-mobile-panel-jump");
-        const mapSection = document.getElementById("mapSection");
-        const alertsSection = document.getElementById("alertsSection");
-        const reportSection = document.getElementById("reportSection");
-        const setupCard = document.getElementById("setupCard");
-
-        if (section === "alerts") alertsSection?.scrollIntoView({ behavior: "smooth", block: "start" });
-        if (section === "report") reportSection?.scrollIntoView({ behavior: "smooth", block: "start" });
-        if (section === "routes") (setupCard || mapSection)?.scrollIntoView({ behavior: "smooth", block: "start" });
+        logDailyPanelAction("click detected", {
+          section,
+          buttonLabel: btn.textContent?.trim() || ""
+        });
+        executeMobilePanelAction(section);
         setOpen(false);
       });
     });
