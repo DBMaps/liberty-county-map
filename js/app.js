@@ -11452,6 +11452,110 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     if (typeSelect) typeSelect.value = type;
   }
 
+
+  function renderMobileNativeAlertsCenter() {
+    const layer = document.getElementById("mobileNativeSurfaceLayer");
+    const title = document.getElementById("mobileNativeSurfaceTitle");
+    const body = document.getElementById("mobileNativeSurfaceBody");
+    logDailyPanelAction("mobile alerts center native open requested", {
+      via: "open_alerts_center_action",
+      nativeSurfaceBodyExists: Boolean(body)
+    });
+
+    if (!layer || !title || !body) {
+      throw new Error("mobile native surface elements missing");
+    }
+
+    const railIncidents = getConsolidatedIncidents().slice(0, 6);
+    const roadHazards = getRoadHazardSurfaceIncidents(4);
+    const trending = getConsolidatedIncidents().slice(0, 3);
+
+    logDailyPanelAction("mobile alerts center data snapshot", {
+      incidentsCount: railIncidents.length,
+      hazardsCount: roadHazards.length,
+      trendingCount: trending.length
+    });
+
+    const railRows = railIncidents.length
+      ? railIncidents.map((incident) => {
+          const latest = incident?.latestReport || {};
+          const railDisplay = buildRailIncidentDisplay(incident);
+          const reportState = getReportStateLabel(latest);
+          const freshnessLabel = getFreshnessLabel(latest);
+          const severityLabel = latest.type === "cleared" ? "Cleared" : latest.severity === "high" ? "High" : latest.severity === "moderate" ? "Moderate" : "Watch";
+          const itemClass = latest.type === "cleared" ? "cleared" : latest.severity === "high" ? "high" : "";
+          return `
+            <article class="alert-item intelligence-row ${itemClass}" tabindex="0" role="button" ${buildAlertFocusDataset(latest, { incidentId: incident.crossingId })}>
+              <div class="alert-row-main">
+                <span class="alert-severity-chip">${sanitizeText(severityLabel)}</span>
+                <strong>${sanitizeText(railDisplay.title)}</strong>
+                <span class="alert-row-time">${sanitizeText(`${incident.newestMinutes}m`)}</span>
+              </div>
+              <p class="alert-row-subline">${sanitizeText(railDisplay.subtitlePrefix)} · ${sanitizeText(reportState)} · ${sanitizeText(freshnessLabel)}</p>
+            </article>`;
+        }).join("")
+      : '<div class="alert-item"><strong>No active community alerts</strong><p>No high-impact disruptions detected nearby.</p></div>';
+
+    const hazardRows = roadHazards.length
+      ? roadHazards.map((incident) => {
+          const display = buildRoadHazardDisplay(incident);
+          const age = Number.isFinite(Number(incident?.age_minutes)) ? `${Math.max(0, Math.round(Number(incident.age_minutes)))}m` : "now";
+          return `
+            <article class="alert-item intelligence-row ${sanitizeText(display.rowClass || "")}" tabindex="0" role="button" ${buildAlertFocusDataset(incident)}>
+              <div class="alert-row-main">
+                <span class="alert-severity-chip">${sanitizeText(display.meta)}</span>
+                <strong>${sanitizeText(display.title)}</strong>
+                <span class="alert-row-time">${sanitizeText(age)}</span>
+              </div>
+              <p class="alert-row-subline">${sanitizeText(display.subtitle)}</p>
+            </article>`;
+        }).join("")
+      : '<div class="alert-item"><strong>Road conditions appear calm</strong><p>No high-impact road hazards detected nearby.</p></div>';
+
+    const trendingRows = trending.length
+      ? trending.map((incident) => {
+          const latest = incident?.latestReport || {};
+          return `
+            <article class="alert-item intelligence-row" tabindex="0" role="button" ${buildAlertFocusDataset(latest, { incidentId: incident.crossingId })}>
+              <div class="alert-row-main">
+                <span class="alert-severity-chip">Trend</span>
+                <strong>${sanitizeText(incident.crossingName || "Crossing")}</strong>
+                <span class="alert-row-time">${sanitizeText(`${incident.count} rpt`)}</span>
+              </div>
+              <p class="alert-row-subline">${sanitizeText(getFreshnessLabel(latest))} · ${sanitizeText(getCrossingConfidenceLabel(latest, incident.count))} · ${sanitizeText(getDriverConfirmationLabel(incident.count))}</p>
+            </article>`;
+        }).join("")
+      : '<div class="alert-item"><strong>Trending crossings are calm</strong><p>Live trendline is stabilizing.</p></div>';
+
+    title.textContent = "Alerts Center";
+    body.innerHTML = `
+      <article class="mobile-native-surface-card">
+        <strong>Rail Alerts</strong>
+        <div class="mobile-intel-feed">${railRows}</div>
+      </article>
+      <article class="mobile-native-surface-card">
+        <strong>Road Hazards</strong>
+        <div class="mobile-intel-feed">${hazardRows}</div>
+      </article>
+      <article class="mobile-native-surface-card">
+        <strong>Trending Crossings</strong>
+        <div class="mobile-intel-feed">${trendingRows}</div>
+      </article>`;
+
+    layer.hidden = false;
+    layer.setAttribute("aria-hidden", "false");
+    setMobileUiMode("alert", { silent: true });
+
+    logDailyPanelAction("mobile alerts center rendered", {
+      surfaceVisible: !layer.hidden,
+      surfaceAriaHidden: layer.getAttribute("aria-hidden")
+    });
+    logDailyPanelAction("mobile alerts center final state", {
+      finalSurfaceVisibilityState: !layer.hidden,
+      finalBodyMobileMode: document.body?.getAttribute("data-mobile-mode") || null
+    });
+  }
+
   function executeMobilePanelAction(section) {
     const layer = document.getElementById("mobileNativeSurfaceLayer");
     const title = document.getElementById("mobileNativeSurfaceTitle");
@@ -11598,47 +11702,20 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       if (action === "prep-hazard-flooding") { document.getElementById("mobileHazardReportBtn")?.click(); prepQuickReportType("flooding"); }
       if (action === "prep-hazard-debris") { document.getElementById("mobileHazardReportBtn")?.click(); prepQuickReportType("debris"); }
       if (action === "open-alerts-center") {
-        logDailyPanelAction("open alerts center action received", {
-          action,
-          visibilityState: !layer.hidden,
-          nextMode: "alert"
-        });
+        closeSurface(action, { nextMode: "alert" });
+        try {
+          renderMobileNativeAlertsCenter();
+        } catch (error) {
+          console.warn("[Mobile Daily Panel] mobile alerts center native render failed; falling back to alertsSection.", error);
+          setMobileUiMode("alert", { silent: true });
+          scrollToSection("alertsSection");
+        }
+        return;
       }
       if (action === "route-map") document.querySelector('.mobile-bottom-nav .nav-btn[data-section="map"]')?.click();
-      const nextMode = action === "open-alerts-center" ? "alert" : "live";
+      const nextMode = "live";
       logDailyPanelAction("source action", { action, visibilityState: !layer.hidden, nextMode });
       closeSurface(action, { nextMode });
-      if (action === "open-alerts-center") {
-        const alertsEl = document.getElementById("alertsSection");
-        const alertStyle = alertsEl ? window.getComputedStyle(alertsEl) : null;
-        logDailyPanelAction("alerts center open/render requested", {
-          targetSection: "alertsSection",
-          via: "direct_alerts_open",
-          targetExists: Boolean(alertsEl),
-          targetDisplay: alertStyle?.display || null,
-          targetVisibility: alertStyle?.visibility || null,
-          targetHiddenAttribute: Boolean(alertsEl?.hidden),
-          targetAriaHidden: alertsEl?.getAttribute("aria-hidden") || null,
-          activeMobileMode: document.body?.getAttribute("data-mobile-mode") || null,
-          hasVisibleStateClass: Boolean(alertsEl?.classList?.contains("visible") || alertsEl?.classList?.contains("active")),
-          postCloseVisibilityState: !layer.hidden
-        });
-        setMobileUiMode("alert", { silent: true });
-        scrollToSection("alertsSection");
-        const finalAlertStyle = alertsEl ? window.getComputedStyle(alertsEl) : null;
-        logDailyPanelAction("alerts center final visibility", {
-          sourceAction: action,
-          visibilityState: !layer.hidden,
-          mobileMode: mobileUiMode,
-          finalBodyMobileMode: document.body?.getAttribute("data-mobile-mode") || null,
-          finalSurfaceAriaHidden: layer.getAttribute("aria-hidden"),
-          finalDisplay: finalAlertStyle?.display || null,
-          finalVisibility: finalAlertStyle?.visibility || null,
-          finalHiddenAttribute: Boolean(alertsEl?.hidden),
-          finalAriaHidden: alertsEl?.getAttribute("aria-hidden") || null,
-          finalHasVisibleStateClass: Boolean(alertsEl?.classList?.contains("visible") || alertsEl?.classList?.contains("active"))
-        });
-      }
     });
   }
 
