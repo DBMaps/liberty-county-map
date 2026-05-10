@@ -11405,6 +11405,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
 (function initMobileDailyPanelShell() {
   const DAILY_PANEL_LOG_PREFIX = "[Mobile Daily Panel]";
   const MOBILE_LAYOUT_SELECTOR = 'body[data-layout-mode="mobile"]';
+  let lastMobileSurfaceLauncher = null;
 
   function isMobileLayoutMode() {
     return document.body?.matches?.(MOBILE_LAYOUT_SELECTOR);
@@ -11420,6 +11421,38 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
 
   function logDailyPanelAction(stage, details = {}) {
     console.info(`${DAILY_PANEL_LOG_PREFIX} ${stage}`, details);
+  }
+
+  function focusElementWithoutScroll(element) {
+    if (!isElementVisibleForInteraction(element) || typeof element.focus !== "function") return false;
+    try {
+      element.focus({ preventScroll: true });
+    } catch (_) {
+      element.focus();
+    }
+    return document.activeElement === element;
+  }
+
+  function focusMobileSurfaceEntryTarget() {
+    const layer = document.getElementById("mobileNativeSurfaceLayer");
+    if (!isMobileLayoutMode() || !isElementVisibleForInteraction(layer)) return;
+    window.requestAnimationFrame(() => {
+      const closeBtn = document.getElementById("mobileNativeSurfaceCloseBtn");
+      const firstActionableCard = layer.querySelector('.alert-item.intelligence-row[tabindex], [data-mobile-surface-action], button:not([disabled])');
+      const focused = focusElementWithoutScroll(closeBtn) || focusElementWithoutScroll(firstActionableCard);
+      logDailyPanelAction("mobile surface focus entry", {
+        focused,
+        target: focused && document.activeElement === closeBtn ? "close_button" : focused ? "first_actionable" : "none"
+      });
+    });
+  }
+
+  function restoreMobileSurfaceLauncherFocus() {
+    const launcher = lastMobileSurfaceLauncher;
+    lastMobileSurfaceLauncher = null;
+    if (!isMobileLayoutMode()) return;
+    if (!launcher || !isElementVisibleForInteraction(launcher)) return;
+    focusElementWithoutScroll(launcher);
   }
 
   function summarizeRouteWatchSurface() {
@@ -11556,6 +11589,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     layer.hidden = false;
     layer.setAttribute("aria-hidden", "false");
     setMobileUiMode("alert", { silent: true });
+    focusMobileSurfaceEntryTarget();
 
     logDailyPanelAction("mobile alerts center rendered", {
       surfaceVisible: !layer.hidden,
@@ -11649,6 +11683,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     body.innerHTML = views[section].html;
     layer.hidden = false;
     layer.setAttribute("aria-hidden", "false");
+    focusMobileSurfaceEntryTarget();
     logDailyPanelAction("mobile surface opened", { section, sourceAction: "daily_panel_button", visibilityState: !layer.hidden });
   }
 
@@ -11672,6 +11707,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     panel.querySelectorAll("[data-mobile-panel-jump]").forEach((btn) => {
       btn.addEventListener("click", () => {
         const section = btn.getAttribute("data-mobile-panel-jump");
+        lastMobileSurfaceLauncher = btn;
         logDailyPanelAction("click detected", {
           section,
           buttonLabel: btn.textContent?.trim() || ""
@@ -11691,6 +11727,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       layer.hidden = true;
       layer.setAttribute("aria-hidden", "true");
       if (isMobileLayoutMode()) setMobileUiMode(nextMode, { silent: true });
+      restoreMobileSurfaceLauncherFocus();
       logDailyPanelAction("closeSurface completed", {
         sourceAction,
         visibilityState: !layer.hidden,
@@ -11702,6 +11739,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     };
     closeBtn?.addEventListener("click", () => closeSurface("close_button"));
     layer?.querySelector('[data-mobile-surface-close="backdrop"]')?.addEventListener("click", () => closeSurface("backdrop"));
+    layer?.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || layer.hidden || !isMobileLayoutMode()) return;
+      event.preventDefault();
+      closeSurface("escape");
+    });
     layer?.addEventListener("click", (event) => {
       const trigger = event.target?.closest?.("[data-mobile-surface-action]");
       if (!trigger) return;
