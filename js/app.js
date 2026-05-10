@@ -300,6 +300,8 @@ let lastMobileReportSubmitDebug = {
 };
 
 let mobileUiMode = "live";
+let activeLayoutMode = "desktop";
+let lastLayoutSignal = null;
 const MOBILE_REPORT_ENTRY_SELECTORS = [
   "#mobileDockReportBtn",
   ".mobile-dock-btn.report",
@@ -335,8 +337,46 @@ function updateReportingState(patch = {}) {
   syncHazardPickerFooterSpacing();
 }
 
+function computeLayoutModeSignals() {
+  const viewportWidth = window.visualViewport?.width || window.innerWidth || document.documentElement?.clientWidth || 0;
+  const appShell = document.querySelector(".app-shell");
+  const commandCenter = document.querySelector(".command-center");
+  const shellWidth = appShell?.getBoundingClientRect?.().width || viewportWidth;
+  const commandWidth = commandCenter?.getBoundingClientRect?.().width || shellWidth;
+  const hasHorizontalOverflow = document.documentElement.scrollWidth - document.documentElement.clientWidth > 2;
+  const coarsePointer = window.matchMedia?.("(pointer: coarse)")?.matches === true;
+  return { viewportWidth, shellWidth, commandWidth, hasHorizontalOverflow, coarsePointer };
+}
+
+function evaluateLayoutMode() {
+  const s = computeLayoutModeSignals();
+  const mobileByWidth = s.viewportWidth <= 980;
+  const desktopByWidth = s.viewportWidth >= 1160;
+  const containerCollapsed = s.shellWidth <= 1020 || s.commandWidth <= 760;
+  const forcedMobile = mobileByWidth || containerCollapsed || (s.hasHorizontalOverflow && s.viewportWidth < 1220);
+  const forcedDesktop = desktopByWidth && !containerCollapsed && !s.hasHorizontalOverflow && !s.coarsePointer;
+  const nextMode = forcedMobile ? "mobile" : forcedDesktop ? "desktop" : activeLayoutMode;
+  lastLayoutSignal = { ...s, nextMode, forcedMobile, forcedDesktop };
+  return nextMode;
+}
+
+function applyLayoutMode(nextMode) {
+  activeLayoutMode = nextMode === "mobile" ? "mobile" : "desktop";
+  if (!document?.body) return;
+  document.body.setAttribute("data-layout-mode", activeLayoutMode);
+  if (activeLayoutMode === "mobile") {
+    document.body.setAttribute("data-mobile-mode", mobileUiMode || "live");
+  } else {
+    document.body.removeAttribute("data-mobile-mode");
+  }
+}
+
+function syncAuthoritativeLayoutMode() {
+  applyLayoutMode(evaluateLayoutMode());
+}
+
 function isMobileUiViewport() {
-  return window.matchMedia("(max-width: 1100px)").matches;
+  return activeLayoutMode === "mobile";
 }
 
 function syncMobileNavVisibilityForViewport() {
@@ -769,6 +809,7 @@ function hydrateElements() {
   syncMobileNavVisibilityForViewport();
   window.addEventListener("resize", () => setMobileUiMode(mobileUiMode, { silent: true }));
   window.addEventListener("resize", syncMobileNavVisibilityForViewport);
+  window.addEventListener("resize", syncAuthoritativeLayoutMode, { passive: true });
   highlightNearestCrossingOnFirstLoad();
 }
 
@@ -11358,15 +11399,6 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
    GRIDLY V52 — MOBILE DAILY PANEL SHELL (PHASE 1A)
 ========================================================= */
 (function initMobileDailyPanelShell() {
-  const MOBILE_QUERY = "(max-width: 768px)";
-
-  function applyMobileModeFlag() {
-    if (!document?.body) return;
-    const isMobile = window.matchMedia(MOBILE_QUERY).matches;
-    if (isMobile) document.body.setAttribute("data-mobile-mode", "v52");
-    else document.body.removeAttribute("data-mobile-mode");
-  }
-
   function bindDailyPanel() {
     const panel = document.getElementById("mobileDailyPanel");
     const handle = document.getElementById("mobileDailyPanelHandle");
@@ -11401,9 +11433,14 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    applyMobileModeFlag();
+    syncAuthoritativeLayoutMode();
+    setMobileUiMode(mobileUiMode, { silent: true });
+    const modeObserver = new ResizeObserver(() => syncAuthoritativeLayoutMode());
+    const observedNode = document.querySelector(".app-shell") || document.body;
+    if (observedNode) modeObserver.observe(observedNode);
     bindDailyPanel();
   });
 
-  window.addEventListener("resize", applyMobileModeFlag, { passive: true });
+  window.addEventListener("resize", syncAuthoritativeLayoutMode, { passive: true });
+  window.visualViewport?.addEventListener("resize", syncAuthoritativeLayoutMode, { passive: true });
 })();

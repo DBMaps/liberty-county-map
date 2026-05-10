@@ -9817,46 +9817,55 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
 }
 
 
-/* Hard desktop containment: prevent mobile nav leakage in desktop layout */
-@media (min-width: 1101px) {
-  .mobile-floating-action-dock,
-  .mobile-dock,
-  .mobile-dock-btn,
-  .mobile-bottom-nav,
-  .mobile-bottom-nav-btn {
-    display: none !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-  }
+/* V52.1 authoritative layout ownership */
+body[data-layout-mode="desktop"] .mobile-live-brand,
+body[data-layout-mode="desktop"] .mobile-premium-header,
+body[data-layout-mode="desktop"] .mobile-home-cards,
+body[data-layout-mode="desktop"] .mobile-daily-panel,
+body[data-layout-mode="desktop"] .mobile-floating-action-dock,
+body[data-layout-mode="desktop"] .mobile-bottom-nav {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+body[data-layout-mode="mobile"] .desktop-left-rail,
+body[data-layout-mode="mobile"] .app-header,
+body[data-layout-mode="mobile"] .desktop-route-watch-strip,
+body[data-layout-mode="mobile"] .desktop-command-strip,
+body[data-layout-mode="mobile"] .desktop-command-panel {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 /* =========================================================
    GRIDLY V52 — MOBILE MAP-FIRST SHELL (PHASE 1A)
 ========================================================= */
 @media (max-width: 768px) {
-  body[data-mobile-mode="v52"] .future-map-hero,
-  body[data-mobile-mode="v52"] .driver-hero,
-  body[data-mobile-mode="v52"] .mobile-home-cards,
-  body[data-mobile-mode="v52"] .destination-hero-card,
-  body[data-mobile-mode="v52"] .mobile-floating-action-dock,
-  body[data-mobile-mode="v52"] .mobile-bottom-nav {
+  body[data-layout-mode="mobile"] .future-map-hero,
+  body[data-layout-mode="mobile"] .driver-hero,
+  body[data-layout-mode="mobile"] .mobile-home-cards,
+  body[data-layout-mode="mobile"] .destination-hero-card,
+  body[data-layout-mode="mobile"] .mobile-floating-action-dock,
+  body[data-layout-mode="mobile"] .mobile-bottom-nav {
     display: none !important;
   }
 
-  body[data-mobile-mode="v52"] .command-center {
+  body[data-layout-mode="mobile"] .command-center {
     display: block;
   }
 
-  body[data-mobile-mode="v52"] .map-card {
+  body[data-layout-mode="mobile"] .map-card {
     margin-top: max(6px, env(safe-area-inset-top));
     min-height: calc(100dvh - 174px - env(safe-area-inset-bottom));
   }
 
-  body[data-mobile-mode="v52"] #map {
+  body[data-layout-mode="mobile"] #map {
     min-height: calc(100dvh - 280px - env(safe-area-inset-bottom));
   }
 
-  body[data-mobile-mode="v52"] .map-tools-overlay {
+  body[data-layout-mode="mobile"] .map-tools-overlay {
     left: 10px;
     right: 10px;
     bottom: calc(90px + env(safe-area-inset-bottom));
@@ -9864,7 +9873,7 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
     border-radius: 14px;
   }
 
-  body[data-mobile-mode="v52"] .mobile-daily-panel {
+  body[data-layout-mode="mobile"] .mobile-daily-panel {
     position: fixed;
     left: 10px;
     right: 10px;
@@ -9877,7 +9886,7 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
     backdrop-filter: blur(10px);
   }
 
-  body[data-mobile-mode="v52"] .mobile-daily-panel-handle {
+  body[data-layout-mode="mobile"] .mobile-daily-panel-handle {
     width: 100%;
     border: 0;
     background: transparent;
@@ -9888,29 +9897,29 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
     text-align: left;
   }
 
-  body[data-mobile-mode="v52"] .mobile-daily-panel-body {
+  body[data-layout-mode="mobile"] .mobile-daily-panel-body {
     padding: 0 12px 12px;
   }
 
-  body[data-mobile-mode="v52"] .mobile-daily-panel-actions {
+  body[data-layout-mode="mobile"] .mobile-daily-panel-actions {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
   }
 
-  body[data-mobile-mode="v52"] .mobile-daily-panel-actions .secondary-btn {
+  body[data-layout-mode="mobile"] .mobile-daily-panel-actions .secondary-btn {
     min-height: 42px;
     font-size: 0.82rem;
     padding: 10px 8px;
   }
 
-  body[data-mobile-mode="v52"] .mobile-daily-panel-note {
+  body[data-layout-mode="mobile"] .mobile-daily-panel-note {
     margin: 8px 2px 0;
     font-size: 0.74rem;
     color: rgba(220, 234, 252, 0.82);
   }
 
-  body[data-mobile-mode="v52"] .report-drawer {
+  body[data-layout-mode="mobile"] .report-drawer {
     padding-bottom: calc(96px + env(safe-area-inset-bottom));
   }
 }
