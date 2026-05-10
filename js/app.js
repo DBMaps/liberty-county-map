@@ -8667,8 +8667,11 @@ function getMobileWatchAreaLabel() {
 }
 
 function updateMobileWatchHeader() {
+  const watchArea = getMobileWatchAreaLabel();
   safeText("mobileWatchLabel", "WATCHING");
-  safeText("mobileWatchArea", getMobileWatchAreaLabel());
+  safeText("mobileWatchArea", watchArea);
+  safeText("mobileLocalContextLabel", "Current Area");
+  safeText("mobileLocalContextValue", watchArea);
 }
 
 
@@ -10049,6 +10052,7 @@ function setSync(value) {
 }
 
 function safeText(id, value) {
+  if (!els[id]) els[id] = document.getElementById(id);
   if (els[id]) els[id].textContent = value;
   document.querySelectorAll(`[data-bind-text="${id}"]`).forEach((node) => {
     node.textContent = value;
