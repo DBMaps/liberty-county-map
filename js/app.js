@@ -11565,12 +11565,14 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
 
     const layer = document.getElementById("mobileNativeSurfaceLayer");
     const closeBtn = document.getElementById("mobileNativeSurfaceCloseBtn");
-    const closeSurface = (sourceAction = "close_button") => {
+    const closeSurface = (sourceAction = "close_button", options = {}) => {
       if (!layer) return;
       const wasVisible = !layer.hidden;
+      const nextMode = typeof options.nextMode === "string" ? options.nextMode : "live";
       layer.hidden = true;
       layer.setAttribute("aria-hidden", "true");
-      logDailyPanelAction("mobile surface closed", { sourceAction, visibilityState: !layer.hidden, wasVisible });
+      if (isMobileLayoutMode()) setMobileUiMode(nextMode, { silent: true });
+      logDailyPanelAction("mobile surface closed", { sourceAction, visibilityState: !layer.hidden, wasVisible, nextMode });
     };
     closeBtn?.addEventListener("click", () => closeSurface("close_button"));
     layer?.querySelector('[data-mobile-surface-close="backdrop"]')?.addEventListener("click", () => closeSurface("backdrop"));
@@ -11587,10 +11589,14 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       if (action === "prep-hazard-crash") { document.getElementById("mobileHazardReportBtn")?.click(); prepQuickReportType("crash"); }
       if (action === "prep-hazard-flooding") { document.getElementById("mobileHazardReportBtn")?.click(); prepQuickReportType("flooding"); }
       if (action === "prep-hazard-debris") { document.getElementById("mobileHazardReportBtn")?.click(); prepQuickReportType("debris"); }
-      if (action === "open-alerts-center") document.querySelector('.mobile-bottom-nav .nav-btn[data-section="alerts"]')?.click();
+      if (action === "open-alerts-center") {
+        setMobileUiMode("alert", { silent: true });
+        document.getElementById("alertsSection")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
       if (action === "route-map") document.querySelector('.mobile-bottom-nav .nav-btn[data-section="map"]')?.click();
-      logDailyPanelAction("source action", { action, visibilityState: !layer.hidden });
-      closeSurface(action);
+      const nextMode = action === "open-alerts-center" ? "alert" : "live";
+      logDailyPanelAction("source action", { action, visibilityState: !layer.hidden, nextMode });
+      closeSurface(action, { nextMode });
     });
   }
 
