@@ -10735,3 +10735,58 @@ body[data-layout-mode="desktop"] .mobile-native-surface-layer { display:none !im
     box-shadow: 0 24px 40px rgba(2, 8, 20, 0.44), inset 0 -28px 56px rgba(2, 14, 28, 0.22);
   }
 }
+
+/* V56 — spatial edge refinement (mobile-only, CSS polish only) */
+@media (max-width: 760px) {
+  body[data-layout-mode="mobile"] .mobile-live-command {
+    padding: 9px 11px 10px;
+    border-radius: 12px;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-command strong {
+    line-height: 1.08;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-command p {
+    margin-top: 2px;
+    line-height: 1.26;
+  }
+
+  body[data-layout-mode="mobile"] .map-tools-overlay {
+    margin-top: 6px;
+    padding: 2px;
+  }
+
+  body[data-layout-mode="mobile"] .map-tools-overlay .geo-filter-shell {
+    gap: 3px;
+    padding: 2px;
+  }
+
+  body[data-layout-mode="mobile"] .map-tools-overlay .geo-filter-pill,
+  body[data-layout-mode="mobile"] .map-tools-overlay .legend-pill {
+    min-height: 25px;
+    padding: 4px 8px;
+  }
+
+  body[data-layout-mode="mobile"] #map .leaflet-control-zoom {
+    margin-top: calc(var(--mobile-command-zone-top) + 28px) !important;
+  }
+
+  body[data-layout-mode="mobile"] #map .gridly-mobile-layer-menu {
+    bottom: calc(108px + env(safe-area-inset-bottom));
+  }
+
+  body[data-layout-mode="mobile"] .mobile-daily-panel::before {
+    left: 16px;
+    right: 16px;
+    bottom: 100%;
+    height: 4px;
+    opacity: 0.22;
+    filter: blur(1px);
+    background: linear-gradient(180deg, rgba(66, 138, 206, 0.035), rgba(8, 18, 30, 0));
+  }
+
+  body[data-layout-mode="mobile"] .map-frame {
+    box-shadow: 0 20px 34px rgba(2, 8, 20, 0.38), inset 0 -20px 40px rgba(2, 14, 28, 0.16);
+  }
+}
