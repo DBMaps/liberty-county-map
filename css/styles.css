@@ -10790,3 +10790,20 @@ body[data-layout-mode="desktop"] .mobile-native-surface-layer { display:none !im
     box-shadow: 0 20px 34px rgba(2, 8, 20, 0.38), inset 0 -20px 40px rgba(2, 14, 28, 0.16);
   }
 }
+
+/* V57 — map dominance recovery (mobile-only, CSS-only) */
+@media (max-width: 760px) {
+  body[data-layout-mode="mobile"] .mobile-daily-panel::before {
+    left: 18px;
+    right: 18px;
+    bottom: calc(100% + 1px);
+    height: 2px;
+    opacity: 0.12;
+    filter: blur(0.8px);
+    background: linear-gradient(180deg, rgba(66, 138, 206, 0.02), rgba(8, 18, 30, 0));
+  }
+
+  body[data-layout-mode="mobile"] .map-frame {
+    box-shadow: 0 18px 30px rgba(2, 8, 20, 0.34), inset 0 -12px 26px rgba(2, 14, 28, 0.1);
+  }
+}
