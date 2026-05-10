@@ -11111,7 +11111,107 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
 
   body[data-layout-mode="mobile"] .app-header { padding-top: 2px; padding-bottom: 2px; }
 
-  /* V74 phase 3: decommission legacy hybrid shells in short-height landscape survival */
+  /* V74 phase 7: compact landscape brand + header compression */
+  body[data-layout-mode="mobile"] .mobile-live-brand {
+    display: flex !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    align-items: center;
+    gap: 8px;
+    margin: 2px 8px 4px;
+    padding: 4px 8px;
+    border-radius: 10px;
+    background: rgba(7, 16, 27, 0.46);
+    border: 1px solid rgba(170, 218, 255, 0.2);
+    box-shadow: 0 5px 12px rgba(2, 8, 18, 0.2);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  body[data-layout-mode="mobile"] .mobile-live-brand-main {
+    display: flex !important;
+    flex: 0 0 auto;
+    min-width: 0;
+  }
+  body[data-layout-mode="mobile"] .mobile-live-brand-logo {
+    display: flex !important;
+    width: 86px;
+    max-width: 32vw;
+    opacity: 0.95;
+  }
+  body[data-layout-mode="mobile"] .mobile-live-brand-logo img {
+    max-height: 18px;
+    width: 100%;
+    object-fit: contain;
+  }
+  body[data-layout-mode="mobile"] .mobile-live-brand-status {
+    min-width: 0;
+    max-width: none;
+    margin-left: auto;
+    gap: 1px;
+  }
+  body[data-layout-mode="mobile"] .mobile-live-brand-status strong {
+    font-size: 0.52rem;
+    letter-spacing: 0.13em;
+  }
+  body[data-layout-mode="mobile"] .mobile-live-brand-status span {
+    font-size: 0.63rem;
+    line-height: 1.1;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-command {
+    margin: 0 8px 4px;
+    padding: 6px 8px;
+    row-gap: 3px;
+    border-radius: 10px;
+  }
+  body[data-layout-mode="mobile"] .mobile-live-command strong {
+    font-size: 0.78rem;
+    line-height: 1.15;
+  }
+  body[data-layout-mode="mobile"] .mobile-live-command p {
+    font-size: 0.64rem;
+    line-height: 1.15;
+    margin-top: 1px;
+  }
+
+  body[data-layout-mode="mobile"] .route-status-card,
+  body[data-layout-mode="mobile"] .mobile-route-status-card {
+    padding: 7px 8px;
+    row-gap: 3px;
+    min-height: 0;
+    border-radius: 10px;
+  }
+  body[data-layout-mode="mobile"] .route-status-card strong,
+  body[data-layout-mode="mobile"] .mobile-route-status-card strong {
+    font-size: 0.82rem;
+    line-height: 1.15;
+  }
+  body[data-layout-mode="mobile"] .route-status-card #routeEta,
+  body[data-layout-mode="mobile"] .mobile-route-status-card #routeEta {
+    font-size: 0.64rem;
+    line-height: 1.1;
+  }
+  body[data-layout-mode="mobile"] .route-status-card .route-edit-link,
+  body[data-layout-mode="mobile"] .mobile-route-status-card .route-edit-link {
+    margin-top: 2px;
+    font-size: 0.62rem;
+    padding: 2px 0;
+  }
+
+  body[data-layout-mode="mobile"] #mobileDailyPanel {
+    max-height: 92px;
+    border-radius: 10px;
+  }
+  body[data-layout-mode="mobile"] #mobileDailyPanel .mobile-daily-panel-actions .secondary-btn {
+    min-height: 32px;
+  }
+
+  body[data-layout-mode="mobile"] .map-card,
+  body[data-layout-mode="mobile"] .map-frame {
+    min-height: clamp(210px, 57vh, 320px);
+  }
+
+  /* keep legacy-heavy shells suppressed in short-height landscape survival */
   body[data-layout-mode="mobile"] .mobile-bottom-nav,
   body[data-layout-mode="mobile"] .mobile-floating-action-dock,
   body[data-layout-mode="mobile"] #mobileReportBtn.mobile-sticky-report,
@@ -11120,10 +11220,7 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
   body[data-layout-mode="mobile"] .mobile-home-cards,
   body[data-layout-mode="mobile"] .destination-hero-card,
   body[data-layout-mode="mobile"] .future-map-hero,
-  body[data-layout-mode="mobile"] .driver-hero,
-  body[data-layout-mode="mobile"] .mobile-live-brand,
-  body[data-layout-mode="mobile"] .mobile-live-brand-main,
-  body[data-layout-mode="mobile"] .mobile-live-brand-logo {
+  body[data-layout-mode="mobile"] .driver-hero {
     display: none !important;
     visibility: hidden !important;
     pointer-events: none !important;
