@@ -11594,14 +11594,23 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     });
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
+  let dailyPanelShellBound = false;
+  const bootstrapMobileDailyPanelShell = () => {
+    if (dailyPanelShellBound) return;
+    dailyPanelShellBound = true;
     syncAuthoritativeLayoutMode();
     setMobileUiMode(mobileUiMode, { silent: true });
     const modeObserver = new ResizeObserver(() => syncAuthoritativeLayoutMode());
     const observedNode = document.querySelector(".app-shell") || document.body;
     if (observedNode) modeObserver.observe(observedNode);
     bindDailyPanel();
-  });
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bootstrapMobileDailyPanelShell, { once: true });
+  } else {
+    bootstrapMobileDailyPanelShell();
+  }
 
   window.addEventListener("resize", syncAuthoritativeLayoutMode, { passive: true });
   window.visualViewport?.addEventListener("resize", syncAuthoritativeLayoutMode, { passive: true });
