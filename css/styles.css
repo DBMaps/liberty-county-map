@@ -10596,3 +10596,84 @@ body[data-layout-mode="desktop"] .mobile-native-surface-layer { display:none !im
     transition: opacity 180ms ease, transform 220ms ease, backdrop-filter 200ms ease;
   }
 }
+
+/* V54 — premium tactical calibration (mobile-only, no layout architecture changes) */
+@media (max-width: 760px) {
+  body[data-layout-mode="mobile"] .map-tools-overlay {
+    padding: 2px 3px;
+    border-radius: 10px;
+    background: rgba(7, 13, 22, 0.4) !important;
+    border-color: rgba(170, 205, 236, 0.14) !important;
+    box-shadow: 0 2px 6px rgba(2, 8, 16, 0.12) !important;
+  }
+
+  body[data-layout-mode="mobile"] .map-tools-overlay .geo-filter-shell {
+    background: rgba(8, 16, 26, 0.4) !important;
+    border-color: rgba(186, 216, 238, 0.2) !important;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+  }
+
+  body[data-layout-mode="mobile"] .map-tools-overlay .geo-filter-pill {
+    background: rgba(20, 32, 48, 0.6) !important;
+    border-color: rgba(194, 220, 241, 0.28) !important;
+    color: rgba(238, 245, 252, 0.94) !important;
+  }
+
+  body[data-layout-mode="mobile"] .map-tools-overlay .geo-filter-pill.selected {
+    background: rgba(104, 193, 255, 0.42) !important;
+    border-color: rgba(178, 226, 255, 0.84) !important;
+    color: #f5fbff !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 0 0 1px rgba(120, 197, 255, 0.16);
+  }
+
+  body[data-layout-mode="mobile"] #map .leaflet-control-zoom {
+    border-radius: 10px;
+    box-shadow: 0 2px 7px rgba(2, 8, 16, 0.14);
+    background: rgba(7, 14, 24, 0.46) !important;
+  }
+
+  body[data-layout-mode="mobile"] #map .leaflet-control-zoom a,
+  body[data-layout-mode="mobile"] #map .leaflet-control-layers-toggle {
+    background: rgba(7, 14, 24, 0.5) !important;
+    border-color: rgba(172, 206, 237, 0.2) !important;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-daily-panel {
+    background: linear-gradient(180deg, rgba(8, 13, 22, 0.9), rgba(6, 11, 19, 0.94));
+    border-color: rgba(166, 201, 233, 0.2);
+    box-shadow: 0 6px 16px rgba(2, 8, 16, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  body[data-layout-mode="mobile"] .mobile-daily-panel-grip {
+    background: linear-gradient(180deg, rgba(186, 216, 242, 0.72), rgba(148, 186, 218, 0.48));
+    box-shadow: 0 0 0 1px rgba(179, 211, 239, 0.14), 0 2px 6px rgba(100, 158, 205, 0.12);
+  }
+
+  body[data-layout-mode="mobile"] .mobile-daily-panel-handle-row strong {
+    letter-spacing: 0.005em;
+    transform: translateY(-0.2px);
+  }
+
+  body[data-layout-mode="mobile"] .mobile-daily-panel-handle-row span {
+    color: rgba(191, 208, 226, 0.8);
+    letter-spacing: 0.03em;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-daily-panel::before {
+    left: 10px;
+    right: 10px;
+    bottom: calc(100% + 2px);
+    height: 9px;
+    background: linear-gradient(180deg, rgba(52, 118, 182, 0.05), rgba(8, 18, 30, 0));
+    opacity: 0.44;
+    filter: blur(2px);
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-command {
+    border-color: rgba(151, 206, 255, 0.32);
+    background: linear-gradient(145deg, rgba(8, 19, 33, 0.72), rgba(5, 12, 23, 0.78));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 8px 20px rgba(3, 9, 22, 0.3), 0 0 24px rgba(45, 135, 255, 0.1);
+  }
+}
