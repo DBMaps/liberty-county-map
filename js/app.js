@@ -11617,16 +11617,26 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           targetExists: Boolean(alertsEl),
           targetDisplay: alertStyle?.display || null,
           targetVisibility: alertStyle?.visibility || null,
+          targetHiddenAttribute: Boolean(alertsEl?.hidden),
+          targetAriaHidden: alertsEl?.getAttribute("aria-hidden") || null,
+          activeMobileMode: document.body?.getAttribute("data-mobile-mode") || null,
+          hasVisibleStateClass: Boolean(alertsEl?.classList?.contains("visible") || alertsEl?.classList?.contains("active")),
           postCloseVisibilityState: !layer.hidden
         });
         setMobileUiMode("alert", { silent: true });
         scrollToSection("alertsSection");
+        const finalAlertStyle = alertsEl ? window.getComputedStyle(alertsEl) : null;
         logDailyPanelAction("alerts center final visibility", {
           sourceAction: action,
           visibilityState: !layer.hidden,
           mobileMode: mobileUiMode,
           finalBodyMobileMode: document.body?.getAttribute("data-mobile-mode") || null,
-          finalSurfaceAriaHidden: layer.getAttribute("aria-hidden")
+          finalSurfaceAriaHidden: layer.getAttribute("aria-hidden"),
+          finalDisplay: finalAlertStyle?.display || null,
+          finalVisibility: finalAlertStyle?.visibility || null,
+          finalHiddenAttribute: Boolean(alertsEl?.hidden),
+          finalAriaHidden: alertsEl?.getAttribute("aria-hidden") || null,
+          finalHasVisibleStateClass: Boolean(alertsEl?.classList?.contains("visible") || alertsEl?.classList?.contains("active"))
         });
       }
     });
