@@ -8406,9 +8406,7 @@ body.modal-open {
     transition: opacity 180ms ease, transform 180ms ease;
   }
 
-  body[data-mobile-mode="live"] .report-drawer,
-  body[data-mobile-mode="report"] .report-drawer,
-  body[data-mobile-mode="route"] .report-drawer {
+  body[data-mobile-mode="report"] .report-drawer {
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
@@ -8459,6 +8457,12 @@ body.modal-open {
     border-color: rgba(142, 209, 255, 0.32);
     background: linear-gradient(165deg, rgba(7, 16, 28, 0.9), rgba(4, 10, 19, 0.9));
     z-index: 1560;
+  }
+
+  body[data-mobile-mode]:not([data-mobile-mode="report"]) .report-drawer {
+    display: none !important;
+    opacity: 0;
+    pointer-events: none;
   }
 
   body[data-mobile-mode] .report-drawer[open] {
