@@ -9962,3 +9962,32 @@ body[data-layout-mode="mobile"] .desktop-command-panel {
     opacity: 0.86;
   }
 }
+
+.mobile-native-surface-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 4600;
+}
+.mobile-native-surface-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(3, 8, 17, 0.52);
+}
+.mobile-native-surface-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: min(72vh, 640px);
+  border-radius: 18px 18px 0 0;
+  border: 1px solid rgba(154, 190, 255, 0.22);
+  background: #07131f;
+  padding: 14px;
+  overflow-y: auto;
+}
+.mobile-native-surface-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.mobile-native-surface-body { display:grid; gap:10px; }
+.mobile-native-surface-card { border:1px solid rgba(154,190,255,.2); border-radius:12px; padding:10px; background:rgba(14,34,62,.72); }
+.mobile-native-surface-card p { margin:6px 0; }
+.mobile-native-surface-actions { display:flex; gap:8px; flex-wrap:wrap; }
+body[data-layout-mode="desktop"] .mobile-native-surface-layer { display:none !important; }
