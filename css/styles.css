@@ -10677,3 +10677,61 @@ body[data-layout-mode="desktop"] .mobile-native-surface-layer { display:none !im
     box-shadow: 0 8px 20px rgba(3, 9, 22, 0.3), 0 0 24px rgba(45, 135, 255, 0.1);
   }
 }
+
+/* V55 — spatial calmness & dock integration pass (mobile-only, architecture untouched) */
+@media (max-width: 760px) {
+  body[data-layout-mode="mobile"] .mobile-daily-panel {
+    bottom: calc(3px + env(safe-area-inset-bottom));
+    border-radius: 16px;
+    background: linear-gradient(180deg, rgba(8, 13, 22, 0.84), rgba(6, 11, 19, 0.88));
+    border-color: rgba(166, 201, 233, 0.16);
+    box-shadow: 0 4px 12px rgba(2, 8, 16, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  body[data-layout-mode="mobile"] .mobile-daily-panel-handle {
+    min-height: 52px;
+    padding: 5px 11px 7px;
+    gap: 4px;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-daily-panel-handle-row {
+    gap: 7px;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-daily-panel-handle-row strong {
+    letter-spacing: 0.003em;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-daily-panel-handle-row span {
+    color: rgba(191, 208, 226, 0.74);
+    letter-spacing: 0.025em;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-daily-panel-grip {
+    width: 42px;
+    opacity: 0.84;
+    box-shadow: 0 0 0 1px rgba(179, 211, 239, 0.1), 0 1px 4px rgba(100, 158, 205, 0.09);
+  }
+
+  body[data-layout-mode="mobile"] .mobile-daily-panel::before {
+    left: 14px;
+    right: 14px;
+    bottom: calc(100% + 1px);
+    height: 6px;
+    background: linear-gradient(180deg, rgba(48, 111, 171, 0.04), rgba(8, 18, 30, 0));
+    opacity: 0.34;
+    filter: blur(1.5px);
+  }
+
+  body[data-layout-mode="mobile"] .mobile-floating-action-dock {
+    background: linear-gradient(145deg, rgba(9, 15, 25, 0.74), rgba(7, 13, 23, 0.78));
+    border-color: rgba(170, 205, 236, 0.16);
+    box-shadow: 0 8px 18px rgba(2, 9, 20, 0.24), 0 0 22px rgba(90, 164, 255, 0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  body[data-layout-mode="mobile"] .map-frame {
+    box-shadow: 0 24px 40px rgba(2, 8, 20, 0.44), inset 0 -28px 56px rgba(2, 14, 28, 0.22);
+  }
+}
