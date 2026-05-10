@@ -655,7 +655,7 @@ function installMapClickDiagnostics() {
 function setManualFallbackDefaultState() {
   if (!els.reportSection) return;
   const isDesktop = window.matchMedia("(min-width: 1101px)").matches;
-  els.reportSection.open = !isDesktop;
+  els.reportSection.open = isDesktop;
 }
 
 function hydrateElements() {
