@@ -11056,4 +11056,19 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
   body[data-layout-mode="mobile"] .map-tools-overlay .map-tools-status { display: none; }
 
   body[data-layout-mode="mobile"] .app-header { padding-top: 2px; padding-bottom: 2px; }
+
+  /* V74 phase 3: decommission legacy hybrid shells in short-height landscape survival */
+  body[data-layout-mode="mobile"] .mobile-bottom-nav,
+  body[data-layout-mode="mobile"] .mobile-floating-action-dock,
+  body[data-layout-mode="mobile"] #mobileReportBtn.mobile-sticky-report,
+  body[data-layout-mode="mobile"] #gridlyHazardLauncher.gridly-hazard-launcher,
+  body[data-layout-mode="mobile"] .mobile-premium-header,
+  body[data-layout-mode="mobile"] .mobile-home-cards,
+  body[data-layout-mode="mobile"] .destination-hero-card,
+  body[data-layout-mode="mobile"] .future-map-hero,
+  body[data-layout-mode="mobile"] .driver-hero {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
 }
