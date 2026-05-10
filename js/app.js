@@ -4,6 +4,7 @@ const SUPABASE_PUBLIC_KEY = "sb_publishable_T33dpOj4M3TioSqFcVxf2Q_YTmhkPdO";
 const FRA_URL =
   "https://data.transportation.gov/resource/m2f8-22s6.geojson?$limit=5000&statename=TEXAS&countyname=LIBERTY";
 const CROSSING_REVIEW_OVERRIDES_URL = "data/gridly-crossing-review-overrides.json";
+const ROADWAY_SEGMENTS_URL = "data/liberty-county-road-segments.geojson";
 const HAZARD_REPORT_EXPIRATION_MINUTES = 180;
 
 const HAZARD_TYPES = {
@@ -135,6 +136,9 @@ const LIBERTY_COUNTY_CITY_RULES = [
   { city: "Devers", patterns: ["devers"] }
 ];
 let crossingReviewOverrides = {};
+let roadwaySegmentFeatures = [];
+let roadwayDatasetLoaded = false;
+let roadwayDatasetLoadError = null;
 const defaultCenter = [30.0466, -94.8852];
 const REPORT_EXPIRATION_MINUTES = 90;
 const RECENTLY_CLEARED_WINDOW_MINUTES = 20;
@@ -212,6 +216,16 @@ let activeRouteSource = "primary";
 let lastRouteSwitchMessage = "";
 let routeUxState = "primary_clear";
 let routeRecommendationTone = "calm";
+let routePressureScore = 0;
+let routePressureBand = "Clear";
+let routeConfidence = "Low";
+let calibratedRecommendationBand = "Clear";
+let estimatedHazardReduction = 0;
+let estimatedPressureReduction = 0;
+let confidenceInputs = {};
+let confidenceReasoning = "Awaiting route monitoring data.";
+let activeMonitoringState = "standby";
+let lastRouteRecommendationMessage = "Monitoring active route conditions";
 let routeTransitionUntil = 0;
 let routePreviewReason = "Route preview has not been requested.";
 let lastRoutePreviewError = null;
@@ -255,6 +269,15 @@ let lastRoadSnapDebug = {
 };
 let lastMarkerAuditDebug = {
   activeMarkerCount: 0,
+  totalIncidentsInput: 0,
+  uniqueIncidentRenderCount: 0,
+  duplicateIncidentCount: 0,
+  duplicateKeysPreview: [],
+  activeRenderedCount: 0,
+  clearedRenderedCount: 0,
+  routeRelevantRenderedCount: 0,
+  lastRenderAt: null,
+  markerLayerCount: 0,
   markersByCategory: {},
   markersAffectingRoute: 0,
   clusteredMarkerCount: 0,
@@ -538,6 +561,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   maybeOpenFirstRunSetup();
 
   await loadCrossings();
+  await loadRoadwayDataset();
   await loadSharedReports();
 
   setInterval(loadSharedReports, LIVE_REFRESH_MS);
@@ -632,6 +656,7 @@ function hydrateElements() {
     "useLocationBtn",
     "refreshBtn",
     "alertsList",
+    "roadHazardsList",
     "impactFill",
     "impactScore",
     "impactText",
@@ -2307,6 +2332,95 @@ async function loadCrossings() {
   }
 }
 
+async function loadRoadwayDataset() {
+  roadwayDatasetLoaded = false;
+  roadwayDatasetLoadError = null;
+  roadwaySegmentFeatures = [];
+  try {
+    const response = await fetch(ROADWAY_SEGMENTS_URL, { cache: "no-store" });
+    if (!response.ok) throw new Error(`Roadway dataset returned ${response.status}`);
+    const geojson = await response.json();
+    const features = Array.isArray(geojson?.features) ? geojson.features : [];
+    roadwaySegmentFeatures = features.filter((feature) => {
+      if (!feature || feature.type !== "Feature") return false;
+      const geometryType = feature?.geometry?.type;
+      const coordinates = feature?.geometry?.coordinates;
+      const isLine = geometryType === "LineString" || geometryType === "MultiLineString";
+      return isLine && Array.isArray(coordinates) && coordinates.length > 0;
+    });
+    roadwayDatasetLoaded = true;
+  } catch (error) {
+    roadwayDatasetLoadError = String(error?.message || error || "unknown_error");
+    console.warn("Unable to load local roadway dataset:", error);
+  }
+}
+
+function findNearestRoadwaySegment(lat, lng, maxDistanceMiles = 1.2) {
+  if (!roadwayDatasetLoaded || !Array.isArray(roadwaySegmentFeatures) || !roadwaySegmentFeatures.length) return null;
+  let best = null;
+  for (const feature of roadwaySegmentFeatures) {
+    const segments = flattenRoadGeometrySegments(feature?.geometry);
+    for (const segment of segments) {
+      const distance = distancePointToSegmentMiles(lat, lng, segment.startLat, segment.startLng, segment.endLat, segment.endLng);
+      if (!Number.isFinite(distance)) continue;
+      if (!best || distance < best.distanceMiles) {
+        best = {
+          feature,
+          distanceMiles: distance
+        };
+      }
+    }
+  }
+  if (!best || !Number.isFinite(best.distanceMiles) || best.distanceMiles > maxDistanceMiles) return null;
+  return best;
+}
+
+function flattenRoadGeometrySegments(geometry) {
+  if (!geometry || !geometry.type) return [];
+  if (geometry.type === "LineString") return lineCoordinatesToSegments(geometry.coordinates);
+  if (geometry.type === "MultiLineString") {
+    return geometry.coordinates.flatMap((line) => lineCoordinatesToSegments(line));
+  }
+  return [];
+}
+
+function lineCoordinatesToSegments(lineCoordinates) {
+  if (!Array.isArray(lineCoordinates) || lineCoordinates.length < 2) return [];
+  const segments = [];
+  for (let i = 1; i < lineCoordinates.length; i += 1) {
+    const start = lineCoordinates[i - 1];
+    const end = lineCoordinates[i];
+    const startLng = Number(start?.[0]);
+    const startLat = Number(start?.[1]);
+    const endLng = Number(end?.[0]);
+    const endLat = Number(end?.[1]);
+    if (![startLat, startLng, endLat, endLng].every(Number.isFinite)) continue;
+    segments.push({ startLat, startLng, endLat, endLng });
+  }
+  return segments;
+}
+
+function distancePointToSegmentMiles(lat, lng, startLat, startLng, endLat, endLng) {
+  const scale = Math.cos(toRad((startLat + endLat + lat) / 3));
+  const pointX = lng * scale;
+  const startX = startLng * scale;
+  const endX = endLng * scale;
+  const pointY = lat;
+  const startY = startLat;
+  const endY = endLat;
+  const dx = endX - startX;
+  const dy = endY - startY;
+  const lengthSquared = dx * dx + dy * dy;
+  if (lengthSquared <= 0) return haversineDistance(lat, lng, startLat, startLng);
+  let t = ((pointX - startX) * dx + (pointY - startY) * dy) / lengthSquared;
+  t = Math.max(0, Math.min(1, t));
+  const projX = startX + t * dx;
+  const projY = startY + t * dy;
+  const projLng = scale === 0 ? startLng : projX / scale;
+  const projLat = projY;
+  return haversineDistance(lat, lng, projLat, projLng);
+}
+
 async function fetchFraCrossingsWithRetry() {
   let lastError = null;
 
@@ -2406,6 +2520,7 @@ function shouldShowCrossingInLaunchMode(crossing) {
 }
 function refreshReportHazardViews() {
   renderAlerts();
+  renderRoadHazards();
   renderTrendingCrossings();
   renderUnifiedIncidents();
   renderCrossings();
@@ -2914,6 +3029,8 @@ function updateRouteComparisonState(routeHazard = null) {
   alternateRouteHazardCount = getHazardCountNearRoute(alternateLatLngs);
   alternateRouteScore = calculateRouteScore(alternateReports);
   hazardsAvoidedCount = primaryRouteHazardCount - alternateRouteHazardCount;
+  estimatedHazardReduction = Math.max(0, hazardsAvoidedCount);
+  estimatedPressureReduction = Math.max(0, Number((primaryRouteScore - alternateRouteScore).toFixed(2)));
 
   if (alternateRouteScore < primaryRouteScore) {
     preferredRoute = "alternate";
@@ -3368,6 +3485,21 @@ function renderUnifiedIncidents() {
 
   const incidents = getUnifiedIncidents();
   const routeHazard = routeWatchActivated ? getRouteHazardAssessment() : null;
+  const dedupedMap = new Map();
+  const duplicateCounts = new Map();
+
+  incidents.forEach((incident) => {
+    const renderKey = getUnifiedIncidentRenderKey(incident);
+    incident._gridlyRenderKey = renderKey;
+    if (!dedupedMap.has(renderKey)) {
+      dedupedMap.set(renderKey, incident);
+      duplicateCounts.set(renderKey, 1);
+      return;
+    }
+    duplicateCounts.set(renderKey, (duplicateCounts.get(renderKey) || 1) + 1);
+    dedupedMap.set(renderKey, choosePreferredIncidentCandidate(dedupedMap.get(renderKey), incident, routeHazard));
+  });
+  const dedupedIncidents = [...dedupedMap.values()];
 
   const markersByCategory = {};
   const markerTypesRendered = new Set();
@@ -3375,7 +3507,7 @@ function renderUnifiedIncidents() {
   let markersAffectingRoute = 0;
   let routeHighlightedMarkers = 0;
 
-  incidents.forEach((incident) => {
+  dedupedIncidents.forEach((incident) => {
     if (!Number.isFinite(incident.lat) || !Number.isFinite(incident.lng)) return;
 
     const distanceFromUser = userLocation
@@ -3402,10 +3534,16 @@ function renderUnifiedIncidents() {
       routeHighlightedMarkers += 1;
     }
 
+    const markerState = incident?.status === "cleared" || incident?.report_type === "hazard_cleared" ? "cleared" : "active";
     const icon = L.divIcon({
       className: "",
       html: `
-        <div class="gridly-hazard-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass} ${proximityClass} ${routeRelevanceClass} ${sanitizeText(markerVariantClass)} ${sanitizeText(confidenceClass)}">
+        <div class="gridly-hazard-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass} ${proximityClass} ${routeRelevanceClass} ${sanitizeText(markerVariantClass)} ${sanitizeText(confidenceClass)}"
+          data-category="${sanitizeText(category)}"
+          data-freshness="${sanitizeText(ageClass)}"
+          data-confidence="${sanitizeText(confidenceClass.replace("confidence-", ""))}"
+          data-route-relevance="${sanitizeText(routeRelevanceClass || "unscored")}"
+          data-state="${sanitizeText(markerState)}">
           <span>${sanitizeText(getCategoryMarkerGlyph(category, incident))}</span>
           <small>${incident.age_minutes}m</small>
           ${incident.reports_count > 1 ? `<b>${incident.reports_count}</b>` : ""}
@@ -3420,9 +3558,21 @@ function renderUnifiedIncidents() {
       .addTo(unifiedIncidentLayer);
   });
 
-  updateHazardCounter(incidents);
+  const duplicateEntries = [...duplicateCounts.entries()].filter(([, count]) => count > 1);
+  const duplicateIncidentCount = duplicateEntries.reduce((sum, [, count]) => sum + (count - 1), 0);
+
+  updateHazardCounter(dedupedIncidents);
   lastMarkerAuditDebug = {
-    activeMarkerCount: incidents.length,
+    activeMarkerCount: dedupedIncidents.length,
+    totalIncidentsInput: incidents.length,
+    uniqueIncidentRenderCount: dedupedIncidents.length,
+    duplicateIncidentCount,
+    duplicateKeysPreview: duplicateEntries.slice(0, 8).map(([key, count]) => `${key}×${count}`),
+    activeRenderedCount: dedupedIncidents.filter((item) => String(item?.status || "").toLowerCase() !== "cleared").length,
+    clearedRenderedCount: dedupedIncidents.filter((item) => String(item?.status || "").toLowerCase() === "cleared").length,
+    routeRelevantRenderedCount: dedupedIncidents.filter((item) => isIncidentRouteRelevant(item, routeHazard)).length,
+    lastRenderAt: new Date().toISOString(),
+    markerLayerCount: typeof unifiedIncidentLayer?.getLayers === "function" ? unifiedIncidentLayer.getLayers().length : null,
     markersByCategory,
     markersAffectingRoute,
     clusteredMarkerCount: getLiveHazardIncidents().length,
@@ -3598,7 +3748,7 @@ function getUnifiedIncidents() {
       description: latest.detail,
       lat: latest.lat,
       lng: latest.lng,
-      area: "Liberty County",
+      area: latest.location_name || latest.area || latest.city || incident.location_name || incident.area || incident.city || "",
       created_at: latest.submittedAt,
       confidence: latest.confidence,
       reports_count: incident.count,
@@ -3610,6 +3760,60 @@ function getUnifiedIncidents() {
 
   return [...railIncidents, ...roadIncidents, ...futureTxdotIncidents(), ...futureTxdotConstruction(), ...futureFloodAlerts()]
     .sort((a,b)=>new Date(b.updated_at)-new Date(a.updated_at));
+}
+
+
+function getUnifiedIncidentRenderKey(incident = {}) {
+  const explicitId = incident?.id ?? incident?.report_id ?? incident?.reportId;
+  if (explicitId !== undefined && explicitId !== null && String(explicitId).trim()) return `id:${String(explicitId).trim()}`;
+
+  const crossingId = incident?.crossing_id ?? incident?.crossingId;
+  const reportType = String(incident?.report_type || incident?.type || "other_hazard").toLowerCase();
+  const state = String(incident?.status || "").toLowerCase() === "cleared" || reportType === "hazard_cleared" ? "cleared" : "active";
+  if (crossingId !== undefined && crossingId !== null && String(crossingId).trim()) {
+    return `crossing:${String(crossingId).trim()}:${reportType}:${state}`;
+  }
+
+  const category = getHazardCategory(incident?.report_type || incident?.type || "other_hazard");
+  const lat = Number(incident?.lat);
+  const lng = Number(incident?.lng);
+  const roundedLat = Number.isFinite(lat) ? lat.toFixed(4) : "na";
+  const roundedLng = Number.isFinite(lng) ? lng.toFixed(4) : "na";
+  const sourceTime = incident?.updated_at || incident?.created_at || incident?.submittedAt;
+  const timeMs = sourceTime ? new Date(sourceTime).getTime() : Number.NaN;
+  const bucketMinutes = Number.isFinite(timeMs) ? Math.floor(timeMs / (5 * 60 * 1000)) : "na";
+  return `fallback:${category}:${roundedLat}:${roundedLng}:${bucketMinutes}:${state}`;
+}
+
+function choosePreferredIncidentCandidate(current, candidate, routeHazard) {
+  if (!current) return candidate;
+
+  const currentRelevant = isIncidentRouteRelevant(current, routeHazard);
+  const candidateRelevant = isIncidentRouteRelevant(candidate, routeHazard);
+  if (currentRelevant !== candidateRelevant) return candidateRelevant ? candidate : current;
+
+  const currentStatus = String(current?.status || "").toLowerCase();
+  const candidateStatus = String(candidate?.status || "").toLowerCase();
+  const currentActive = currentStatus !== "cleared" && String(current?.report_type || "").toLowerCase() !== "hazard_cleared";
+  const candidateActive = candidateStatus !== "cleared" && String(candidate?.report_type || "").toLowerCase() !== "hazard_cleared";
+
+  const currentUpdated = new Date(current?.updated_at || current?.created_at || 0).getTime();
+  const candidateUpdated = new Date(candidate?.updated_at || candidate?.created_at || 0).getTime();
+  if (currentActive !== candidateActive) {
+    if (!candidateActive && candidateUpdated > currentUpdated) return candidate;
+    if (candidateActive) return candidate;
+    return current;
+  }
+
+  const currentConfidence = String(current?.confidence || "").toLowerCase().includes("community") ? 1 : 2;
+  const candidateConfidence = String(candidate?.confidence || "").toLowerCase().includes("community") ? 1 : 2;
+  if (candidateConfidence !== currentConfidence) return candidateConfidence > currentConfidence ? candidate : current;
+  if (candidateUpdated !== currentUpdated) return candidateUpdated > currentUpdated ? candidate : current;
+
+  const currentReports = Number(current?.reports_count || 0);
+  const candidateReports = Number(candidate?.reports_count || 0);
+  if (candidateReports !== currentReports) return candidateReports > currentReports ? candidate : current;
+  return current;
 }
 
 function getMapSeverityClass(incident){
@@ -3733,7 +3937,7 @@ function injectHazardReportUI() {
   const counter = document.createElement("div");
 counter.id = "gridlyHazardCounter";
 counter.className = "gridly-hazard-counter";
-counter.textContent = "No live road hazards";
+counter.textContent = "Road conditions appear calm";
   launcher.addEventListener("click", openHazardPanel);
 
   const panel = document.createElement("div");
@@ -4179,45 +4383,58 @@ async function handleHazardPlacementMapClick(event) {
       .bindTooltip("Tap", { permanent: false, direction: "top" });
     map.flyTo([snapped.lat, snapped.lng], Math.max(map.getZoom(), 15), { duration: 0.35 });
   }
-  setConfirmation(snapped.fallbackUsed ? "Unable to snap to roadway" : "Snapped to roadway", snapped.fallbackUsed ? "error" : "success");
+  setConfirmation(snapped.fallbackUsed ? "No nearby roadway found — using tapped location" : "Snapped to roadway", snapped.fallbackUsed ? "success" : "success");
   resetQuickHazardReportState();
   closeHazardPanel();
 }
 
 async function snapHazardToRoad(lat, lng) {
   const regionContext = { ...LOCATION_DEFAULTS };
+  const snapAttemptRadii = [75, 150];
   const debug = {
     originalTapCoords: { lat, lng },
     snappedCoords: { lat, lng },
+    snapAttemptRadii: [...snapAttemptRadii],
+    finalSnapRadiusUsed: null,
     snapDistanceMeters: 0,
     nearestRoadFound: false,
     snapMethodUsed: "fallback_original_tap",
     fallbackUsed: true,
+    fallbackReason: "nearest_no_result",
+    osrmNearestUrl: "",
+    osrmNearestStatus: null,
     regionContext,
     routeImpactDetected: false
   };
-  try {
-    const nearestUrl = `${OSRM_NEAREST_API}/${lng},${lat}?number=1`;
-    const response = await fetch(nearestUrl);
-    if (!response.ok) throw new Error(`nearest_failed_${response.status}`);
-    const payload = await response.json();
-    const nearest = payload?.waypoints?.[0];
-    const snappedLat = nearest?.location?.[1];
-    const snappedLng = nearest?.location?.[0];
-    if (!Number.isFinite(snappedLat) || !Number.isFinite(snappedLng)) throw new Error("nearest_no_geometry");
-    const snapDistanceMeters = Number(nearest.distance || 0);
-    debug.snappedCoords = { lat: snappedLat, lng: snappedLng };
-    debug.snapDistanceMeters = snapDistanceMeters;
-    debug.nearestRoadFound = true;
-    debug.snapMethodUsed = "osrm_nearest_v1_driving";
-    debug.fallbackUsed = false;
-    debug.routeImpactDetected = routeWatchActivated && isPointNearActiveRoute(snappedLat, snappedLng);
-    lastRoadSnapDebug = debug;
-    return { lat: snappedLat, lng: snappedLng, fallbackUsed: false, originalTapCoords: debug.originalTapCoords };
-  } catch (error) {
-    lastRoadSnapDebug = debug;
-    return { lat, lng, fallbackUsed: true, originalTapCoords: debug.originalTapCoords };
+  for (const radiusMeters of snapAttemptRadii) {
+    try {
+      const nearestUrl = `${OSRM_NEAREST_API}/${lng},${lat}?number=1&radiuses=${radiusMeters}`;
+      debug.osrmNearestUrl = nearestUrl;
+      const response = await fetch(nearestUrl);
+      debug.osrmNearestStatus = response.status;
+      if (!response.ok) throw new Error(`nearest_failed_${response.status}`);
+      const payload = await response.json();
+      const nearest = payload?.waypoints?.[0];
+      const snappedLat = nearest?.location?.[1];
+      const snappedLng = nearest?.location?.[0];
+      if (!Number.isFinite(snappedLat) || !Number.isFinite(snappedLng)) throw new Error("nearest_no_geometry");
+      const snapDistanceMeters = Number(nearest?.distance || 0);
+      debug.snappedCoords = { lat: snappedLat, lng: snappedLng };
+      debug.snapDistanceMeters = snapDistanceMeters;
+      debug.finalSnapRadiusUsed = radiusMeters;
+      debug.nearestRoadFound = true;
+      debug.snapMethodUsed = "osrm_nearest_v1_driving";
+      debug.fallbackUsed = false;
+      debug.fallbackReason = "";
+      debug.routeImpactDetected = routeWatchActivated && isPointNearActiveRoute(snappedLat, snappedLng);
+      lastRoadSnapDebug = debug;
+      return { lat: snappedLat, lng: snappedLng, fallbackUsed: false, originalTapCoords: debug.originalTapCoords };
+    } catch (error) {
+      debug.fallbackReason = String(error?.message || error || "nearest_unknown_failure");
+    }
   }
+  lastRoadSnapDebug = debug;
+  return { lat, lng, fallbackUsed: true, originalTapCoords: debug.originalTapCoords };
 }
 
 function isPointNearActiveRoute(lat, lng) {
@@ -4359,16 +4576,18 @@ function injectHazardStyles() {
   style.id = "gridlyHazardStyles";
   style.textContent = `
     .gridly-hazard-marker {
-      width: 28px;
-      height: 28px;
+      --gridly-marker-border: rgba(255, 209, 102, 0.95);
+      --gridly-marker-glow: rgba(255, 209, 102, 0.24);
+      width: 27px;
+      height: 27px;
       border-radius: 999px;
       display: grid;
       place-items: center;
       position: relative;
       background: rgba(8, 16, 24, 0.96);
-      border: 2px solid rgba(255, 209, 102, 0.95);
-      box-shadow: 0 0 0 2px rgba(255,255,255,0.18), 0 0 16px rgba(255, 209, 102, 0.34);
-      animation: gridlyHazardPulse 1.7s infinite;
+      border: 2px solid var(--gridly-marker-border);
+      box-shadow: 0 0 0 1.5px rgba(255,255,255,0.16), 0 0 10px var(--gridly-marker-glow);
+      animation: gridlyHazardPulse 2.2s infinite;
     }
 
     .gridly-hazard-marker.high {
@@ -4431,37 +4650,44 @@ function injectHazardStyles() {
     }
 
     .gridly-hazard-marker.old {
-      opacity: 0.55;
+      opacity: 0.5;
       animation: none;
     }
 
     .gridly-hazard-marker.route-relevant {
-      transform: scale(1.08);
-      filter: saturate(1.14) brightness(1.08);
-      box-shadow: 0 0 0 3px rgba(255,255,255,0.2), 0 0 22px rgba(255, 209, 102, 0.56);
+      transform: scale(1.1);
+      filter: saturate(1.12) brightness(1.06);
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.2), 0 0 14px rgba(255, 209, 102, 0.44);
     }
 
     .gridly-hazard-marker.high.route-relevant {
-      box-shadow: 0 0 0 3px rgba(255,255,255,0.2), 0 0 24px rgba(255, 78, 111, 0.62);
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.2), 0 0 16px rgba(255, 78, 111, 0.5);
     }
 
     .gridly-hazard-marker.moderate.route-relevant {
-      box-shadow: 0 0 0 3px rgba(255,255,255,0.2), 0 0 24px rgba(57, 200, 255, 0.62);
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.2), 0 0 16px rgba(57, 200, 255, 0.48);
     }
 
     .gridly-hazard-marker.route-deemphasized {
-      opacity: 0.48;
-      filter: saturate(0.78) brightness(0.9);
+      opacity: 0.46;
+      filter: saturate(0.72) brightness(0.88);
       animation-duration: 3.2s;
     }
-    .gridly-hazard-marker.marker-rail_blockage_delay { border-color: rgba(255, 78, 111, 0.98); }
-    .gridly-hazard-marker.marker-flooding { border-color: rgba(71, 169, 255, 0.98); }
-    .gridly-hazard-marker.marker-crash { border-color: rgba(255, 143, 71, 0.98); }
-    .gridly-hazard-marker.marker-construction { border-color: rgba(255, 176, 46, 0.98); }
-    .gridly-hazard-marker.marker-road_closed { border-color: rgba(255, 78, 111, 0.98); box-shadow: 0 0 0 2px rgba(255,255,255,0.16), 0 0 18px rgba(255, 78, 111, 0.58); }
-    .gridly-hazard-marker.marker-disabled_vehicle { border-color: rgba(183, 197, 214, 0.95); }
-    .gridly-hazard-marker.marker-other_hazard { border-color: rgba(181, 210, 255, 0.9); }
-    .gridly-hazard-marker.confidence-high { box-shadow: 0 0 0 2px rgba(255,255,255,0.22), 0 0 18px rgba(143, 206, 255, 0.5); }
+    .gridly-hazard-marker[data-category="rail_blockage_delay"] { --gridly-marker-border: rgba(255, 78, 111, 0.98); --gridly-marker-glow: rgba(255, 78, 111, 0.46); }
+    .gridly-hazard-marker[data-category="flooding"] { --gridly-marker-border: rgba(71, 169, 255, 0.98); --gridly-marker-glow: rgba(71, 169, 255, 0.44); }
+    .gridly-hazard-marker[data-category="crash"] { --gridly-marker-border: rgba(255, 143, 71, 0.98); --gridly-marker-glow: rgba(255, 143, 71, 0.44); }
+    .gridly-hazard-marker[data-category="construction"] { --gridly-marker-border: rgba(255, 176, 46, 0.98); --gridly-marker-glow: rgba(255, 176, 46, 0.44); }
+    .gridly-hazard-marker[data-category="road_closed"] { --gridly-marker-border: rgba(255, 78, 111, 0.98); --gridly-marker-glow: rgba(255, 78, 111, 0.52); }
+    .gridly-hazard-marker[data-category="disabled_vehicle"] { --gridly-marker-border: rgba(183, 197, 214, 0.95); --gridly-marker-glow: rgba(183, 197, 214, 0.4); }
+    .gridly-hazard-marker[data-category="other_hazard"] { --gridly-marker-border: rgba(181, 210, 255, 0.9); --gridly-marker-glow: rgba(181, 210, 255, 0.36); }
+    .gridly-hazard-marker[data-state="cleared"] {
+      opacity: 0.48;
+      filter: saturate(0.68) brightness(0.9);
+      animation: none;
+      --gridly-marker-border: rgba(80, 228, 156, 0.95);
+      --gridly-marker-glow: rgba(80, 228, 156, 0.36);
+    }
+    .gridly-hazard-marker.confidence-high { box-shadow: 0 0 0 2px rgba(255,255,255,0.2), 0 0 12px rgba(143, 206, 255, 0.38); }
 
     .gridly-hazard-marker b {
       position: absolute;
@@ -4996,6 +5222,16 @@ function bindEvents() {
   document.addEventListener("pointerup", handlePopupAction, true);
   document.addEventListener("click", handlePopupAction, true);
   const handleDataActionClick = async (event) => {
+    const focusCard = event.target?.closest?.("[data-alert-focus]");
+    if (focusCard) {
+      event.preventDefault();
+      focusAlertLocation(focusCard.dataset.lat, focusCard.dataset.lng, {
+        incidentId: focusCard.dataset.incidentId,
+        type: focusCard.closest("#roadHazardsList") ? "road" : "rail",
+        openPopup: false
+      });
+      return;
+    }
     const actionEl = event.target.closest("[data-action]");
     if (!actionEl) return;
     const action = actionEl.dataset.action;
@@ -5098,10 +5334,18 @@ function bindEvents() {
     if (action === "zoom-crossing") {
       event.preventDefault();
       zoomToCrossing(actionEl.dataset.crossingId);
+      return;
     }
   };
   attachRouteQuickPanelDelegatedClickHandlers();
   document.addEventListener("click", handleDataActionClick);
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    const focusCard = event.target?.closest?.("[data-alert-focus]");
+    if (!focusCard) return;
+    event.preventDefault();
+    focusAlertLocation(focusCard.dataset.lat, focusCard.dataset.lng, { incidentId: focusCard.dataset.incidentId, type: focusCard.closest("#roadHazardsList") ? "road" : "rail", openPopup: false });
+  });
   els.mobileOpenLiveMapBtn?.addEventListener("click", () => {
     setConfirmation("Opening Live Map.", "success");
   });
@@ -7964,7 +8208,11 @@ function renderRouteWatchIntelligenceFields({
   corridorHealth = "Unknown",
   estimatedDelayImpact = "Unknown",
   routeEtaValue = "",
-  routeDelayValue = ""
+  routeDelayValue = "",
+  routePressureBand = "Clear",
+  routeRelevantHazardCount = 0,
+  alternateRouteAdvantageLabel = "None",
+  routeConfidence = "Low"
 } = {}) {
   ensureRouteWatchLayoutPolishV331Styles();
   if (!els.departureReason) return;
@@ -7985,7 +8233,11 @@ function renderRouteWatchIntelligenceFields({
     <div class="route-watch-intel-grid" aria-label="Route Watch intelligence">
       <div class="route-watch-intel-item"><span class="route-watch-intel-label">System Confidence</span><span class="route-watch-intel-value">${systemConfidence}</span></div>
       <div class="route-watch-intel-item"><span class="route-watch-intel-label">Recommendation Confidence</span><span class="route-watch-intel-value">${recommendationConfidence}</span></div>
-      <div class="route-watch-intel-item"><span class="route-watch-intel-label">Corridor Health</span><span class="route-watch-intel-value">${corridorHealth}</span></div>
+      <div class="route-watch-intel-item"><span class="route-watch-intel-label">Route Status</span><span class="route-watch-intel-value">${corridorHealth}</span></div>
+      <div class="route-watch-intel-item"><span class="route-watch-intel-label">Delay Pressure</span><span class="route-watch-intel-value">${sanitizeText(routePressureBand)}</span></div>
+      <div class="route-watch-intel-item"><span class="route-watch-intel-label">Hazards Affecting Route</span><span class="route-watch-intel-value">${Number(routeRelevantHazardCount || 0)}</span></div>
+      <div class="route-watch-intel-item"><span class="route-watch-intel-label">Alternate Route Advantage</span><span class="route-watch-intel-value">${sanitizeText(alternateRouteAdvantageLabel)}</span></div>
+      <div class="route-watch-intel-item"><span class="route-watch-intel-label">Monitoring Confidence</span><span class="route-watch-intel-value">${sanitizeText(routeConfidence)}</span></div>
       ${routeEtaMarkup}
       ${routeDelayMarkup}
       <div class="route-watch-intel-item ${delayToneClass}"><span class="route-watch-intel-label">Estimated Delay Impact</span><span class="route-watch-intel-value">${estimatedDelayImpact}</span></div>
@@ -8001,7 +8253,11 @@ function renderDesktopRouteWatchMetrics({
   corridorHealth = "Unknown",
   estimatedDelayImpact = "Unknown",
   routeEtaValue = "",
-  routeDelayValue = ""
+  routeDelayValue = "",
+  routePressureBand = "Clear",
+  routeRelevantHazardCount = 0,
+  alternateRouteAdvantageLabel = "None",
+  routeConfidence = "Low"
 } = {}) {
   const desktopMetricsContainer = document.querySelector(".desktop-route-watch-strip .route-watch-metrics");
   if (!desktopMetricsContainer) return;
@@ -8039,6 +8295,66 @@ function getRouteEtaMetricsFromState({
     routeEtaValue: etaMinutes && etaMinutes > 0 ? `${etaMinutes} min` : "",
     routeDelayValue: delayMinutes && delayMinutes > 0 ? `+${delayMinutes} min` : ""
   };
+}
+
+function getRoutePressureBand(score = 0) {
+  const normalized = Math.max(0, Math.min(100, Number(score) || 0));
+  if (normalized < 20) return "Clear";
+  if (normalized < 45) return "Moderate";
+  if (normalized < 70) return "Heavy";
+  return "Severe";
+}
+
+function computeRoutePressureModel({ routeHazard = null, routeRelevantHazards = [], freshnessTier = "Unknown" } = {}) {
+  const relevant = Array.isArray(routeRelevantHazards) ? routeRelevantHazards : [];
+  const activeRelevant = relevant.filter((incident) => String(incident?.status || "").toLowerCase() === "active");
+  const highSeverityCount = activeRelevant.filter((incident) => String(incident?.severity || "").toLowerCase() === "high").length;
+  const mediumSeverityCount = activeRelevant.filter((incident) => ["medium","moderate"].includes(String(incident?.severity || "").toLowerCase())).length;
+  const densityScore = Math.min(28, activeRelevant.length * 7);
+  const recentActivityScore = Math.min(18, activeRelevant.filter((incident) => Number(incident?.age_minutes) <= 20).length * 6);
+  const blockageScore = Math.min(28, (Array.isArray(routeHazard?.nearbyReports) ? routeHazard.nearbyReports : []).filter((report) => report.lifecycleState === "active" && report.reportType === "blocked").length * 14);
+  const delayAccumulationScore = Math.min(18, highSeverityCount * 6 + mediumSeverityCount * 3 + Math.max(0, Number(monitoredRouteDelayMinutes) || 0));
+  const freshnessMultiplier = freshnessTier === "Fresh" ? 1 : freshnessTier === "Aging" ? 0.82 : 0.66;
+  const raw = densityScore + recentActivityScore + blockageScore + delayAccumulationScore;
+  const score = Math.round(Math.min(100, raw * freshnessMultiplier));
+  return { score, band: getRoutePressureBand(score) };
+}
+
+function buildRouteRecommendationMessage({ routeIsMonitoring = false, pressureBand = "Clear", hazardsAvoided = 0, routeRelevantCount = 0, blockedNearRoute = 0, alternateAvailable = false } = {}) {
+  const normalizedBand = String(pressureBand || "Clear").toLowerCase();
+  if (!routeIsMonitoring) return "Monitoring active route conditions";
+  if (alternateAvailable && hazardsAvoided > 0) return `Alternate route avoids ${hazardsAvoided} active hazard${hazardsAvoided === 1 ? "" : "s"}`;
+  if (normalizedBand === "severe") return blockedNearRoute > 0 ? "Route heavily impacted by active incidents" : "Major corridor disruption detected";
+  if (normalizedBand === "heavy") return routeRelevantCount > 2 ? "Multiple active hazards affecting route" : "Heavy congestion risk detected ahead";
+  if (normalizedBand === "moderate") return blockedNearRoute > 0 ? "Monitor conditions near active crossings" : "Delay pressure building near your route";
+  if (routeRelevantCount === 0) return "No active hazards affecting your route";
+  return "Primary corridor currently stable";
+}
+
+function computeRouteConfidenceModel({ routeRelevantHazards = [], routeHazard = null, freshnessTier = "Unknown", routeIsMonitoring = false } = {}) {
+  if (!routeIsMonitoring) return { band: "Low", score: 0, inputs: { routeIsMonitoring: false }, reasoning: "Route Watch inactive; confidence held low until monitoring is enabled." };
+  const relevant = Array.isArray(routeRelevantHazards) ? routeRelevantHazards : [];
+  const hazardReports = Array.isArray(routeHazard?.nearbyReports) ? routeHazard.nearbyReports : [];
+  const freshReports = relevant.filter((incident) => Number(incident?.age_minutes) <= 30).length;
+  const staleReports = relevant.filter((incident) => Number(incident?.age_minutes) > 120).length;
+  const confirmations = relevant.reduce((sum, incident) => sum + Math.max(0, Number(incident?.reports_count) || 0), 0);
+  const repeatedIncidents = relevant.filter((incident) => Number(incident?.reports_count) >= 2).length;
+  const activeCoverage = hazardReports.filter((report) => report.lifecycleState === "active").length;
+  const consistency = hazardReports.length > 0 ? Math.round((activeCoverage / hazardReports.length) * 100) : 0;
+  const freshnessScore = freshnessTier === "Fresh" ? 35 : freshnessTier === "Aging" ? 24 : 12;
+  const confirmationScore = Math.min(25, confirmations * 2);
+  const repeatScore = Math.min(15, repeatedIncidents * 4);
+  const coverageScore = Math.min(15, activeCoverage * 3);
+  const consistencyScore = Math.min(10, Math.round(consistency / 10));
+  const stalePenalty = Math.min(12, staleReports * 2);
+  const score = Math.max(0, Math.min(100, freshnessScore + confirmationScore + repeatScore + coverageScore + consistencyScore - stalePenalty));
+  const band = score >= 70 ? "High" : score >= 40 ? "Moderate" : "Low";
+  const reasoning = band === "High"
+    ? "Multiple confirmations with fresh and consistent route coverage."
+    : band === "Moderate"
+      ? "Some confirmations and fresh activity; continue active monitoring."
+      : "Sparse or aging incident signal; confidence remains limited.";
+  return { band, score, inputs: { freshReports, staleReports, confirmations, repeatedIncidents, activeCoverage, consistency, freshnessTier }, reasoning };
 }
 
 function updateRouteIntelligence(nearest = []) {
@@ -8099,6 +8415,25 @@ function updateRouteIntelligence(nearest = []) {
     ? Math.min(...activeIssues.map((issue) => Number(issue.minutesAgo)).filter((value) => Number.isFinite(value)))
     : null;
   const freshnessTier = getFreshnessTier(newestMinutes);
+  const pressureModel = computeRoutePressureModel({ routeHazard, routeRelevantHazards, freshnessTier });
+  routePressureScore = pressureModel.score;
+  routePressureBand = pressureModel.band;
+  calibratedRecommendationBand = routePressureBand;
+  const confidenceModel = computeRouteConfidenceModel({ routeRelevantHazards, routeHazard, freshnessTier, routeIsMonitoring });
+  routeConfidence = confidenceModel.band;
+  confidenceInputs = confidenceModel.inputs;
+  confidenceReasoning = confidenceModel.reasoning;
+  activeMonitoringState = routeIsMonitoring ? "active" : "standby";
+  const alternateRouteAdvantageLabel = hazardsAvoidedCount > 0 ? `${hazardsAvoidedCount} avoided` : "None";
+  const recommendationMessage = buildRouteRecommendationMessage({
+    routeIsMonitoring,
+    pressureBand: calibratedRecommendationBand,
+    hazardsAvoided: hazardsAvoidedCount,
+    routeRelevantCount: routeRelevantHazards.length,
+    blockedNearRoute: routeRelevantBlockedCrossings,
+    alternateAvailable: Boolean(alternateRouteAvailable)
+  });
+  lastRouteRecommendationMessage = recommendationMessage;
   const etaMetrics = getRouteEtaMetricsFromState({
     routeHazardLevel: routeHazard.level,
     fallbackExtraMinutes: extraMinutes
@@ -8126,62 +8461,66 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeFreshness", "Unknown");
     safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
     safeText("routeReports", "0 active");
-    safeText("routeRecommendation", "Leave now for best commute");
+    safeText("routeRecommendation", recommendationMessage);
     safeText("sideRouteWatchHint", routeLabelParts.hasHome ? "Choose a saved destination to start Route Watch." : "Set Home and one destination to start Route Watch.");
     safeText("departureTime", "Set destination first");
     renderRouteWatchIntelligenceFields({
       systemConfidence,
       recommendationConfidence,
       corridorHealth: "Awaiting route",
-      estimatedDelayImpact: "Awaiting route"
+      estimatedDelayImpact: "Awaiting route",
+      routePressureBand: "Clear",
+      routeRelevantHazardCount: 0,
+      alternateRouteAdvantageLabel: "None",
+      routeConfidence
     });
     els.routeStatusCard?.classList.add("delayed");
   } else if (routeHazard.level === "blocked") {
     safeText("routeStatus", "ALTERNATE ROUTE RECOMMENDED");
     safeText("routeEta", `ETA 32 min (+${extraMinutes})`);
     safeText("departureTime", "LEAVE NOW");
-    renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, ...getRouteEtaMetricsFromState({ routeHazardLevel: routeHazard.level, fallbackExtraMinutes: extraMinutes }) });
+    renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, routePressureBand, routeRelevantHazardCount: routeRelevantHazards.length, alternateRouteAdvantageLabel, routeConfidence, ...getRouteEtaMetricsFromState({ routeHazardLevel: routeHazard.level, fallbackExtraMinutes: extraMinutes }) });
     safeText("desktopRouteStatus", "Delay wall detected on your corridor. Switch routes now.");
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
-    { const rec = getRouteRecommendationState(routeHazard); safeText("routeRecommendation", rec.message); }
+    safeText("routeRecommendation", recommendationMessage);
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("high");
   } else if (routeHazard.level === "heavy") {
     safeText("routeStatus", "Heavy blockage ahead");
     safeText("routeEta", `ETA 26 min (+${extraMinutes})`);
     safeText("departureTime", "LEAVE 8 MIN EARLY");
-    renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, ...getRouteEtaMetricsFromState({ routeHazardLevel: routeHazard.level, fallbackExtraMinutes: extraMinutes }) });
+    renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, routePressureBand, routeRelevantHazardCount: routeRelevantHazards.length, alternateRouteAdvantageLabel, routeConfidence, ...getRouteEtaMetricsFromState({ routeHazardLevel: routeHazard.level, fallbackExtraMinutes: extraMinutes }) });
     safeText("desktopRouteStatus", "Operational pressure is rising. Leave early or shift to an alternate.");
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
-    { const rec = getRouteRecommendationState(routeHazard); safeText("routeRecommendation", rec.message); }
+    safeText("routeRecommendation", recommendationMessage);
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("delayed");
   } else if (routeHazard.level === "caution") {
     safeText("routeStatus", "Monitoring crossings nearby");
     safeText("routeEta", `ETA 24 min (+${Math.max(extraMinutes, 3)})`);
     safeText("departureTime", "LEAVE SLIGHTLY EARLY");
-    renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, ...getRouteEtaMetricsFromState({ routeHazardLevel: routeHazard.level, fallbackExtraMinutes: extraMinutes }) });
+    renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, routePressureBand, routeRelevantHazardCount: routeRelevantHazards.length, alternateRouteAdvantageLabel, routeConfidence, ...getRouteEtaMetricsFromState({ routeHazardLevel: routeHazard.level, fallbackExtraMinutes: extraMinutes }) });
     safeText("desktopRouteStatus", "Early delay signal detected near your monitored corridor.");
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
-    { const rec = getRouteRecommendationState(routeHazard); safeText("routeRecommendation", rec.message); }
+    safeText("routeRecommendation", recommendationMessage);
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("delayed");
   } else {
     safeText("routeStatus", "Corridor clear");
     safeText("routeEta", "ETA 21 min");
     safeText("departureTime", "ON-SCHEDULE DEPARTURE");
-    renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, ...getRouteEtaMetricsFromState({ routeHazardLevel: routeHazard.level, fallbackExtraMinutes: extraMinutes }) });
+    renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, routePressureBand, routeRelevantHazardCount: routeRelevantHazards.length, alternateRouteAdvantageLabel, routeConfidence, ...getRouteEtaMetricsFromState({ routeHazardLevel: routeHazard.level, fallbackExtraMinutes: extraMinutes }) });
     safeText("desktopRouteStatus", "Route corridor is open. Continue live monitoring.");
     safeText("routeFreshness", freshnessTier);
     safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
-    { const rec = getRouteRecommendationState(routeHazard); safeText("routeRecommendation", rec.message); }
+    safeText("routeRecommendation", recommendationMessage);
     safeText("sideRouteWatchHint", routeContextSummary);
     els.routeStatusCard?.classList.add("clear");
   }
@@ -8302,7 +8641,7 @@ function updateDailyHabitStatus() {
 
   let pill = "All Clear";
   let headline = "0 active reports · 0 crossings impacted";
-  let detail = "No active reports right now. Live watch remains on for new driver confirmations.";
+  let detail = "No active community-reported hazards right now.";
   let cardClass = "clear";
 
   if (highIssues.length > 0) {
@@ -8354,9 +8693,37 @@ function updateGrowthWidgets() {
   }
 
   const confirmationCount = getUnifiedIncidents().reduce((sum,i)=>sum+i.reports_count,0);
+  const routeIsMonitoring = Boolean(routeWatchActivated && routeLabelParts?.configured);
+  const routeHazard = routeIsMonitoring ? getRouteHazardAssessment() : { nearbyReports: [], level: "clear", score: 0 };
+  const activeUnifiedHazards = unifiedActive.filter((incident) => !String(incident.type || "").startsWith("rail_"));
+  const routeRelevantHazards = routeIsMonitoring
+    ? activeUnifiedHazards.filter((incident) => isIncidentRouteRelevant(incident, routeHazard))
+    : [];
+  const routeRelevantBlockedCrossings = routeIsMonitoring
+    ? (Array.isArray(routeHazard?.nearbyReports) ? routeHazard.nearbyReports : []).filter((report) => report.reportType === "blocked" && report.lifecycleState === "active").length
+    : 0;
 
   const newestMinutes = typeof lastReport?.minutesAgo === "number" ? lastReport.minutesAgo : null;
   const freshnessTier = getFreshnessTier(newestMinutes);
+  const pressureModel = computeRoutePressureModel({ routeHazard, routeRelevantHazards, freshnessTier });
+  routePressureScore = pressureModel.score;
+  routePressureBand = pressureModel.band;
+  calibratedRecommendationBand = routePressureBand;
+  const confidenceModel = computeRouteConfidenceModel({ routeRelevantHazards, routeHazard, freshnessTier, routeIsMonitoring });
+  routeConfidence = confidenceModel.band;
+  confidenceInputs = confidenceModel.inputs;
+  confidenceReasoning = confidenceModel.reasoning;
+  activeMonitoringState = routeIsMonitoring ? "active" : "standby";
+  const alternateRouteAdvantageLabel = hazardsAvoidedCount > 0 ? `${hazardsAvoidedCount} avoided` : "None";
+  const recommendationMessage = buildRouteRecommendationMessage({
+    routeIsMonitoring,
+    pressureBand: calibratedRecommendationBand,
+    hazardsAvoided: hazardsAvoidedCount,
+    routeRelevantCount: routeRelevantHazards.length,
+    blockedNearRoute: routeRelevantBlockedCrossings,
+    alternateAvailable: Boolean(alternateRouteAvailable)
+  });
+  lastRouteRecommendationMessage = recommendationMessage;
   if (confirmationCount >= 5) {
     safeText("communityTrust", `${freshnessTier} · Strong local signal`);
     safeText("communityTrustReason", `${confirmationCount} reports live. Confidence is ${freshnessTier.toLowerCase()}.`);
@@ -8583,6 +8950,564 @@ function getCorridorSeverityTheme(severityLabel = "Clear") {
   return { border: "rgba(34, 197, 94, 0.65)", glow: "rgba(34, 197, 94, 0.14)", badge: "rgba(34, 197, 94, 0.2)", text: "#86efac" };
 }
 
+const ROAD_HAZARD_DISPLAY_CATEGORIES = new Set(["road_closed", "flooding", "crash", "construction", "disabled_vehicle", "other_hazard"]);
+
+function formatRoadHazardCategoryLabel(category) {
+  const labels = {
+    road_closed: "Road Closure",
+    flooding: "Flooding",
+    crash: "Crash",
+    construction: "Construction",
+    disabled_vehicle: "Disabled Vehicle",
+    other_hazard: "Road Hazard"
+  };
+  return labels[category] || "Road Hazard";
+}
+
+function extractRoadHintFromText(text = "") {
+  const candidate = String(text || "");
+  if (!candidate) return "";
+  const between = candidate.match(/\bbetween\s+([A-Z0-9][A-Za-z0-9 .\/-]{2,})\s+and\s+([A-Z0-9][A-Za-z0-9 .\/-]{2,})/i);
+  if (between?.[1] && between?.[2]) return `${between[1].trim()} / ${between[2].trim()}`;
+  const near = candidate.match(/\b(?:on|near|at)\s+([A-Z0-9][A-Za-z0-9 .\/-]{2,})/i);
+  return near?.[1] ? near[1].trim() : "";
+}
+
+const INVALID_ROAD_NAME_TOKENS = new Set([
+  "private",
+  "unnamed",
+  "unknown",
+  "null",
+  "none",
+  "road",
+  "crossing",
+  "railroad",
+  "railroad crossing",
+  "street",
+  "n/a",
+  "na",
+  "test",
+  "temp",
+  "etc"
+]);
+
+function normalizeRoadNameCandidate(value = "") {
+  return String(value || "")
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+function normalizeRoadwayReference(value = "") {
+  const normalized = normalizeRoadNameCandidate(value);
+  if (!normalized) return "";
+
+  const compact = normalized
+    .replace(/\bwestbound\b|\beastbound\b|\bnorthbound\b|\bsouthbound\b/gi, "")
+    .replace(/\bwest\b|\beast\b|\bnorth\b|\bsouth\b/gi, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  const patterns = [
+    { re: /^(?:united\s+states\s+highway|u\.?s\.?\s*highway|us\s*highway|us)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `US ${n.toUpperCase()}` },
+    { re: /^(?:farm\s+to\s+market(?:\s+road)?|fm)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `FM ${n.toUpperCase()}` },
+    { re: /^(?:state\s+highway|sh)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `SH ${n.toUpperCase()}` },
+    { re: /^(?:interstate|ih|i)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `I-${n.toUpperCase()}` },
+    { re: /^(?:loop)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `Loop ${n.toUpperCase()}` },
+    { re: /^(?:spur)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `Spur ${n.toUpperCase()}` },
+    { re: /^(?:county\s+road|cr)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `CR ${n.toUpperCase()}` }
+  ];
+
+  for (const pattern of patterns) {
+    const match = compact.match(pattern.re);
+    if (match?.[1]) return pattern.format(match[1]);
+  }
+  return compact;
+}
+
+function evaluateRoadNameCandidate(value = "") {
+  const normalized = normalizeRoadwayReference(normalizeRoadNameCandidate(value));
+  if (!normalized) return { normalized, valid: false, reason: "empty" };
+  if (/^[-,.\s]+$/.test(normalized)) return { normalized, valid: false, reason: "punctuation_only" };
+  if (normalized.length < 3) return { normalized, valid: false, reason: "too_short" };
+  const lowered = normalized.toLowerCase();
+  if (INVALID_ROAD_NAME_TOKENS.has(lowered)) return { normalized, valid: false, reason: "generic_placeholder" };
+  if (/^[A-Z0-9\s\-/.&]+$/.test(normalized) && INVALID_ROAD_NAME_TOKENS.has(lowered.replace(/\s+/g, " "))) {
+    return { normalized, valid: false, reason: "all_caps_placeholder" };
+  }
+  return { normalized, valid: true, reason: "ok" };
+}
+
+
+function normalizeRoadDisplayCase(value = "") {
+  const text = normalizeRoadNameCandidate(value);
+  if (!text) return "";
+  const normalizedReference = normalizeRoadwayReference(text);
+  if (/^(?:US|FM|SH|I-\d+[A-Z]?|CR|Loop|Spur)\b/.test(normalizedReference)) return normalizedReference;
+
+  return text
+    .split(/(\s+|[-\/])/)
+    .map((segment) => {
+      if (!segment || /^\s+$/.test(segment) || segment === "-" || segment === "/") return segment;
+      if (/^\d+[A-Z]?$/.test(segment)) return segment.toUpperCase();
+      return segment.charAt(0).toUpperCase() + segment.slice(1).toLowerCase();
+    })
+    .join("");
+}
+
+function titleCaseRoadText(value = "") {
+  return normalizeRoadDisplayCase(value);
+}
+
+function normalizeRoadComparison(value = "") {
+  return String(value || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function collectNearbyRoadCandidates(lat, lng, maxDistanceMiles = 0.45, maxCandidates = 6) {
+  if (!roadwayDatasetLoaded || !Array.isArray(roadwaySegmentFeatures) || !roadwaySegmentFeatures.length) return [];
+  const bestByRoadKey = new Map();
+  for (const feature of roadwaySegmentFeatures) {
+    const props = feature?.properties || {};
+    const candidates = [props?.name, props?.ref, props?.highway].map((value) => evaluateRoadNameCandidate(value));
+    const selected = candidates.find((entry) => entry.valid);
+    if (!selected?.normalized) continue;
+    const roadName = selected.normalized;
+    const roadKey = normalizeRoadComparison(roadName);
+    if (!roadKey) continue;
+    const segments = flattenRoadGeometrySegments(feature?.geometry);
+    for (const segment of segments) {
+      const distance = distancePointToSegmentMiles(lat, lng, segment.startLat, segment.startLng, segment.endLat, segment.endLng);
+      if (!Number.isFinite(distance) || distance > maxDistanceMiles) continue;
+      const existing = bestByRoadKey.get(roadKey);
+      if (!existing || distance < existing.distanceMiles) {
+        bestByRoadKey.set(roadKey, { roadName, roadKey, distanceMiles: distance });
+      }
+    }
+  }
+  return Array.from(bestByRoadKey.values())
+    .sort((a, b) => a.distanceMiles - b.distanceMiles)
+    .slice(0, Math.max(2, maxCandidates));
+}
+
+function resolveNearbyRoadPair(lat, lng, primaryRoad = "") {
+  const primaryNormalized = evaluateRoadNameCandidate(primaryRoad);
+  const result = {
+    roadA: primaryNormalized.valid ? primaryNormalized.normalized : "",
+    roadB: "",
+    used: false,
+    distanceMiles: null,
+    rejectedReason: "",
+    samples: []
+  };
+  const coords = normalizeCoordinatePair(lat, lng);
+  if (!coords) {
+    result.rejectedReason = "invalid_coordinates";
+    return result;
+  }
+  const candidates = collectNearbyRoadCandidates(coords.lat, coords.lng, 0.45, 8);
+  result.samples = candidates.slice(0, 6).map((entry) => `${entry.roadName} (${entry.distanceMiles.toFixed(3)} mi)`);
+  if (!candidates.length) {
+    result.rejectedReason = roadwayDatasetLoaded ? "no_nearby_roads_in_radius" : "roadway_dataset_unavailable";
+    return result;
+  }
+  if (!result.roadA) result.roadA = candidates[0]?.roadName || "";
+  const primaryKey = normalizeRoadComparison(result.roadA);
+  const secondary = candidates.find((entry) => {
+    const candidateKey = normalizeRoadComparison(entry.roadName);
+    if (!candidateKey || !primaryKey) return false;
+    if (candidateKey === primaryKey) return false;
+    if (candidateKey.includes(primaryKey) || primaryKey.includes(candidateKey)) return false;
+    if (entry.distanceMiles > 0.35) return false;
+    return true;
+  });
+  if (!secondary) {
+    result.rejectedReason = "no_meaningful_secondary_road";
+    return result;
+  }
+  result.roadB = secondary.roadName;
+  result.distanceMiles = Number(secondary.distanceMiles.toFixed(4));
+  result.used = true;
+  return result;
+}
+
+function buildHumanLocationContext({ primaryRoad = "", crossingRoad = "", intersectingRoad = "", roadwayRef = "", nearbyArea = "" } = {}) {
+  const ordered = [primaryRoad, crossingRoad, intersectingRoad, roadwayRef]
+    .map((value) => titleCaseRoadText(normalizeRoadNameCandidate(value)))
+    .filter(Boolean);
+  const uniqueRoads = [];
+  const seen = new Set();
+  ordered.forEach((road) => {
+    const key = normalizeRoadComparison(road);
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    uniqueRoads.push(road);
+  });
+  const area = String(nearbyArea || "").trim();
+  const primary = uniqueRoads[0] || "";
+  const secondary = uniqueRoads[1] || "";
+  let phrasing = "";
+  if (primary && secondary) phrasing = `${primary} & ${secondary}`;
+  else if (primary) phrasing = primary;
+  else if (area) phrasing = area;
+  return {
+    primary,
+    secondary,
+    phrasing,
+    usedFallback: !primary,
+    source: primary ? "roadway_candidates" : area ? "area_fallback" : "none",
+    samples: uniqueRoads.slice(0, 4)
+  };
+}
+
+function resolveNearbyKnownLocation(lat, lng, options = {}) {
+  const coords = normalizeCoordinatePair(lat, lng);
+  if (!coords) return "";
+  const radiusMiles = Number.isFinite(Number(options?.radiusMiles)) ? Number(options.radiusMiles) : 1.8;
+  const nearest = findNearestCrossings(coords.lat, coords.lng, 1)[0];
+  if (!nearest || !Number.isFinite(Number(nearest.distance)) || Number(nearest.distance) > radiusMiles) return "";
+  const evaluation = evaluateRoadNameCandidate(nearest?.name || "");
+  return evaluation.valid ? evaluation.normalized : "";
+}
+
+function isResolvableRoadNameCandidate(value = "") {
+  return evaluateRoadNameCandidate(value).valid;
+}
+
+function resolveNearestRoadName(lat, lng) {
+  const coords = normalizeCoordinatePair(lat, lng);
+  const debugState = {
+    resolverExists: true,
+    roadwayDatasetLoaded,
+    roadwayFeatureCount: Array.isArray(roadwaySegmentFeatures) ? roadwaySegmentFeatures.length : 0,
+    roadwayLookupSource: "none",
+    nearestSegmentDistance: null,
+    fallbackReason: "",
+    candidateSource: "none",
+    rejectedCandidates: [],
+    rejectionReasons: [],
+    normalizedCandidateSamples: [],
+    pairedRoadSamples: [],
+    nearbyRoadPairingUsed: false,
+    nearbyRoadDistance: null,
+    pairingRejectedReason: "",
+    sampleLookup: null,
+    fallbackBehavior: "returns null when no local roadway source is available",
+    coords
+  };
+  if (!coords) {
+    debugState.fallbackBehavior = "returns null when coordinates are invalid";
+    debugState.fallbackReason = "invalid_coordinates";
+    resolveNearestRoadName.lastDebug = debugState;
+    return null;
+  }
+
+  const nearestSegmentMatch = findNearestRoadwaySegment(coords.lat, coords.lng, 1.2);
+  if (nearestSegmentMatch?.feature) {
+    const props = nearestSegmentMatch.feature?.properties || {};
+    const segmentCandidates = [props?.name, props?.ref, props?.highway].map((value) => evaluateRoadNameCandidate(value));
+    const selectedSegment = segmentCandidates.find((entry) => entry.valid);
+    const rejectedSegments = segmentCandidates.filter((entry) => entry.normalized && !entry.valid);
+    debugState.rejectedCandidates.push(...rejectedSegments.map((entry) => entry.normalized));
+    debugState.rejectionReasons.push(...rejectedSegments.map((entry) => entry.reason));
+    debugState.normalizedCandidateSamples.push(...segmentCandidates.map((entry) => entry.normalized).filter(Boolean).slice(0, 4));
+    debugState.nearestSegmentDistance = Number(nearestSegmentMatch.distanceMiles.toFixed(4));
+    if (selectedSegment?.normalized) {
+      debugState.candidateSource = "roadway_dataset";
+      debugState.roadwayLookupSource = "roadway_dataset";
+      debugState.fallbackBehavior = "returns nearest roadway segment label when valid";
+      const pair = resolveNearbyRoadPair(coords.lat, coords.lng, selectedSegment.normalized);
+      debugState.pairedRoadSamples = pair.samples;
+      debugState.nearbyRoadPairingUsed = pair.used;
+      debugState.nearbyRoadDistance = pair.distanceMiles;
+      debugState.pairingRejectedReason = pair.rejectedReason;
+      resolveNearestRoadName.lastDebug = debugState;
+      return pair.used ? `${pair.roadA} & ${pair.roadB}` : selectedSegment.normalized;
+    }
+    debugState.fallbackReason = "nearest_segment_unnamed_or_generic";
+  } else {
+    debugState.fallbackReason = roadwayDatasetLoaded ? "no_segment_within_radius" : "roadway_dataset_unavailable";
+  }
+
+  const nearest = findNearestCrossings(coords.lat, coords.lng, 1)[0];
+  if (nearest && Number.isFinite(Number(nearest.distance)) && Number(nearest.distance) <= 0.8) {
+    const tempCandidate = [nearest?.roadwayName, nearest?.road_name, nearest?.street_name, nearest?.crossing_street, nearest?.cross_street, nearest?.name]
+      .map((value) => evaluateRoadNameCandidate(value));
+    const selected = tempCandidate.find((entry) => entry.valid);
+    const rejected = tempCandidate.filter((entry) => entry.normalized && !entry.valid);
+    debugState.rejectedCandidates = rejected.map((entry) => entry.normalized);
+    debugState.rejectionReasons = rejected.map((entry) => entry.reason);
+    debugState.normalizedCandidateSamples = tempCandidate.map((entry) => entry.normalized).filter(Boolean).slice(0, 8).concat(debugState.normalizedCandidateSamples).slice(0, 8);
+    debugState.sampleLookup = nearest?.name || null;
+    if (selected?.normalized) {
+      debugState.candidateSource = "crossing_fallback";
+      debugState.roadwayLookupSource = "crossing_fallback";
+      debugState.fallbackBehavior = "returns nearest crossing-linked road label when valid";
+      const pair = resolveNearbyRoadPair(coords.lat, coords.lng, selected.normalized);
+      debugState.pairedRoadSamples = pair.samples;
+      debugState.nearbyRoadPairingUsed = pair.used;
+      debugState.nearbyRoadDistance = pair.distanceMiles;
+      debugState.pairingRejectedReason = pair.rejectedReason;
+      resolveNearestRoadName.lastDebug = debugState;
+      return pair.used ? `${pair.roadA} & ${pair.roadB}` : selected.normalized;
+    }
+    debugState.fallbackReason = debugState.fallbackReason || "crossing_candidate_invalid";
+  }
+
+  debugState.roadwayLookupSource = debugState.roadwayLookupSource || "none";
+  debugState.fallbackReason = debugState.fallbackReason || "no_valid_candidate_found";
+  resolveNearestRoadName.lastDebug = debugState;
+  return null;
+}
+
+window.gridlyRoadNameResolverDebug = function () {
+  const last = resolveNearestRoadName?.lastDebug || null;
+  const sampleCrossing = Array.isArray(crossings) && crossings.length
+    ? { id: crossings[0]?.id || null, name: crossings[0]?.name || null }
+    : null;
+  const status = {
+    resolverExists: typeof resolveNearestRoadName === "function",
+    roadwayDatasetLoaded,
+    roadwayFeatureCount: Array.isArray(roadwaySegmentFeatures) ? roadwaySegmentFeatures.length : 0,
+    roadwayLookupSource: last?.roadwayLookupSource || "none",
+    nearestSegmentDistance: Number.isFinite(Number(last?.nearestSegmentDistance)) ? Number(last.nearestSegmentDistance) : null,
+    fallbackReason: last?.fallbackReason || (roadwayDatasetLoadError ? "dataset_load_failed" : ""),
+    candidateSourceUsed: last?.candidateSource || "none",
+    rejectedCandidates: Array.isArray(last?.rejectedCandidates) ? last.rejectedCandidates : [],
+    rejectionReasons: Array.isArray(last?.rejectionReasons) ? last.rejectionReasons : [],
+    normalizedCandidateSamples: Array.isArray(last?.normalizedCandidateSamples) ? last.normalizedCandidateSamples : [],
+    pairedRoadSamples: Array.isArray(last?.pairedRoadSamples) ? last.pairedRoadSamples : [],
+    nearbyRoadPairingUsed: Boolean(last?.nearbyRoadPairingUsed),
+    nearbyRoadDistance: Number.isFinite(Number(last?.nearbyRoadDistance)) ? Number(last.nearbyRoadDistance) : null,
+    pairingRejectedReason: String(last?.pairingRejectedReason || ""),
+    normalizedRoadwaySamples: [
+      "United States Highway 90 West",
+      "US Highway 90",
+      "Farm to Market Road 1960",
+      "State Highway 146",
+      "Interstate 10 West",
+      "County Road 101"
+    ].map((sample) => normalizeRoadwayReference(sample)),
+    roadwayNormalizationApplied: true,
+    displayCaseNormalizationApplied: true,
+    displayCaseSamples: [
+      "WINFREE STREET",
+      "WACO STREET",
+      "Main Street",
+      "Stilson Road",
+      "US 90",
+      "FM 1960",
+      "SH 146",
+      "I-10",
+      "CR 321"
+    ].map((sample) => normalizeRoadDisplayCase(sample)),
+    sampleLookupResults: last?.sampleLookup || sampleCrossing,
+    fallbackBehavior: last?.fallbackBehavior || "returns null when no roadway dataset is available",
+    localFallbackSourceAvailable: Boolean(Array.isArray(crossings) && crossings.length),
+    formattedLocationSamples: ["Blocked crossing on US 90 near Stilson Road", "Crash near SH 146 & Winfree Street", "Flooding near FM 1960"],
+    formattingSource: last?.candidateSource || "none",
+    formattingFallbackUsed: Boolean(last?.fallbackReason && String(last.fallbackReason).length),
+    notes: "Foundation resolver only: local-only, no external geocoding/API calls."
+  };
+  console.info("gridlyRoadNameResolverDebug", status);
+  return status;
+};
+
+function buildRoadHazardDisplay(incident) {
+  const category = getHazardCategory(incident?.report_type || incident?.type || "other_hazard");
+  const hazardType = formatRoadHazardCategoryLabel(category);
+  const locationCandidates = [
+    incident?.road_name,
+    incident?.street_name,
+    incident?.street,
+    incident?.nearest_road,
+    incident?.snapped_road_name,
+    incident?.crossing_street,
+    incident?.cross_street,
+    incident?.location_name,
+    incident?.area
+  ];
+  const titleDescription = `${incident?.title || ""} ${incident?.description || ""}`;
+  const roadFromText = extractRoadHintFromText(titleDescription);
+  if (roadFromText) locationCandidates.unshift(roadFromText);
+  const nearestKnownLocation = resolveNearbyKnownLocation(incident?.lat, incident?.lng);
+  if (nearestKnownLocation) locationCandidates.push(nearestKnownLocation);
+  const resolvedRoadName = resolveNearestRoadName(incident?.lat, incident?.lng);
+  if (resolvedRoadName) locationCandidates.push(resolvedRoadName);
+  const locationName = locationCandidates.map((value) => String(value || "").trim()).find((value) => isResolvableRoadNameCandidate(value)) || "";
+  const locationContext = buildHumanLocationContext({
+    primaryRoad: locationName,
+    crossingRoad: incident?.crossing_street || incident?.cross_street,
+    intersectingRoad: incident?.intersecting_road,
+    roadwayRef: incident?.road_ref,
+    nearbyArea: incident?.city || incident?.area || incident?.county
+  });
+  const hasUsefulRoadName = locationContext.primary && !/liberty county/i.test(locationContext.primary);
+
+  let title = "Road Hazard";
+  if (category === "flooding" && hasUsefulRoadName) title = `Flooding near ${locationContext.phrasing}`;
+  else if (hasUsefulRoadName) title = `${hazardType} near ${locationContext.phrasing}`;
+  else if (hazardType !== "Road Hazard") title = hazardType;
+
+  const coords = normalizeCoordinatePair(incident?.lat, incident?.lng);
+  const coordinateFallback = coords ? `${coords.lat.toFixed(3)}, ${coords.lng.toFixed(3)}` : "";
+  const isNonInformativeRoadArea = (value) => {
+    const normalized = String(value || "").trim().toLowerCase();
+    return normalized === "liberty county" || normalized === "county";
+  };
+  const areaName = [incident?.location_name, incident?.area, incident?.city, incident?.county]
+    .map((value) => String(value || "").trim())
+    .find((value) => value && !isNonInformativeRoadArea(value)) || "";
+  let locationText = "";
+  if (hasUsefulRoadName) locationText = `Near ${locationContext.phrasing}`;
+  else if (nearestKnownLocation && !isNonInformativeRoadArea(nearestKnownLocation)) locationText = `Near ${nearestKnownLocation}`;
+  else if (areaName) locationText = `Near ${areaName}`;
+  else if (coordinateFallback) locationText = `Near ${coordinateFallback}`;
+  else locationText = "Location pending";
+
+  const isCleared = String(incident?.status || "").toLowerCase() === "cleared";
+  const routeRelevant = isIncidentRouteRelevant(incident);
+  const statusText = isCleared ? "Cleared" : routeRelevant ? "Route relevant" : "Active";
+  const ageText = Number.isFinite(Number(incident?.age_minutes))
+    ? `${Math.max(0, Math.round(Number(incident.age_minutes)))}m ago`
+    : "just now";
+
+  return {
+    title,
+    subtitle: `${locationText} · ${statusText} · ${ageText}`,
+    meta: statusText,
+    rowClass: isCleared ? "cleared" : routeRelevant ? "high" : ""
+  };
+}
+
+function resolveRailLocationText(incident) {
+  const latest = incident?.latestReport || {};
+  const coords = normalizeCoordinatePair(latest?.lat, latest?.lng);
+  const resolvedRoadName = resolveNearestRoadName(latest?.lat, latest?.lng);
+  const humanRoad = [latest?.road_name, latest?.street_name, latest?.nearest_road, latest?.snapped_road_name, latest?.crossing_street, latest?.cross_street, resolvedRoadName]
+    .map((value) => String(value || "").trim())
+    .find((value) => isResolvableRoadNameCandidate(value)) || "";
+  const context = buildHumanLocationContext({
+    primaryRoad: humanRoad,
+    crossingRoad: latest?.crossing_street || latest?.cross_street,
+    intersectingRoad: latest?.intersecting_road,
+    roadwayRef: latest?.road_ref,
+    nearbyArea: latest?.city || latest?.area || latest?.county
+  });
+  const crossingName = String(incident?.crossingName || latest?.crossingName || latest?.crossing || "").trim();
+  const nearbyKnownLocation = resolveNearbyKnownLocation(latest?.lat, latest?.lng);
+  const nearbyName = [nearbyKnownLocation, latest?.location_name, latest?.city, latest?.area, latest?.county].map((value) => String(value || "").trim()).find(Boolean) || "";
+  const crossingId = String(latest?.crossingId || incident?.crossingId || "").trim();
+  return {
+    humanRoad: context.primary,
+    crossingName,
+    nearbyName,
+    coords,
+    crossingId,
+    subtitlePrefix: context.phrasing ? `Near ${context.phrasing}` : nearbyName ? `Near ${nearbyName}` : coords ? `Near ${coords.lat.toFixed(3)}, ${coords.lng.toFixed(3)}` : crossingId ? `Crossing ID ${crossingId}` : "Location pending"
+  };
+}
+
+function buildRailIncidentDisplay(incident) {
+  const latest = incident?.latestReport || {};
+  const reportType = String(latest?.type || "").toLowerCase();
+  const actionWord = reportType === "cleared" ? "Cleared" : reportType === "blocked" ? "Blocked" : "Delay";
+  const location = resolveRailLocationText(incident);
+  const title = location.humanRoad
+    ? `${actionWord} crossing on ${location.humanRoad}`
+    : location.crossingName
+    ? `${actionWord} near ${location.crossingName}`
+    : `${actionWord} crossing`;
+  return { title, subtitlePrefix: location.subtitlePrefix };
+}
+
+function buildAlertFocusDataset(incidentLike = {}, defaults = {}) {
+  const coords = normalizeCoordinatePair(incidentLike?.lat, incidentLike?.lng) || normalizeCoordinatePair(defaults?.lat, defaults?.lng);
+  const incidentId = String(incidentLike?.id || incidentLike?.crossingId || defaults?.incidentId || "").trim();
+  const focusAttrs = coords ? `data-alert-focus="true" data-lat="${coords.lat}" data-lng="${coords.lng}"` : "";
+  return `${focusAttrs} data-incident-id="${sanitizeText(incidentId || "unknown")}"`;
+}
+
+function focusAlertLocation(lat, lng, options = {}) {
+  const coords = normalizeCoordinatePair(lat, lng);
+  if (!map || !coords) return false;
+  map.flyTo([coords.lat, coords.lng], Math.max(14, Number(map.getZoom?.() || 14)), { duration: 0.45 });
+  const incidentId = String(options?.incidentId || "").trim();
+  const tolerance = Number(options?.tolerance || 0.00025);
+  const matchedMarker = unifiedIncidentLayer?.getLayers?.().find((layer) => {
+    const markerPos = layer?.getLatLng?.();
+    const markerIncidentId = String(layer?.options?.incidentId || "").trim();
+    if (incidentId && markerIncidentId && markerIncidentId === incidentId) return true;
+    return markerPos && Math.abs(markerPos.lat - coords.lat) < tolerance && Math.abs(markerPos.lng - coords.lng) < tolerance;
+  });
+  const shouldOpenPopup = Boolean(options?.openPopup && matchedMarker?.openPopup);
+  if (shouldOpenPopup) setTimeout(() => matchedMarker.openPopup(), 180);
+  window.__gridlyAlertFocusDebugState = {
+    lastAlertFocusIncidentId: incidentId || null,
+    lastAlertFocusLat: coords.lat,
+    lastAlertFocusLng: coords.lng,
+    lastAlertFocusType: String(options?.type || "unknown"),
+    lastAlertFocusMatchedMarker: Boolean(matchedMarker),
+    lastAlertFocusPopupOpened: shouldOpenPopup,
+    lastAlertFocusReason: shouldOpenPopup ? "popup-opened" : matchedMarker ? "pan-only-matched-marker" : "pan-only-no-marker"
+  };
+  return true;
+}
+
+
+window.gridlyAlertFocusDebug = function () {
+  return { ...(window.__gridlyAlertFocusDebugState || {}) };
+};
+
+function getRoadHazardSurfaceIncidents(limit = 3) {
+  const routeHazard = routeWatchActivated ? getRouteHazardAssessment() : null;
+  const severityWeight = { high: 3, medium: 2, moderate: 2, low: 1 };
+  return getUnifiedIncidents()
+    .filter((incident) => {
+      const idLooksRoad = String(incident?.id || "").startsWith("road-");
+      const category = getHazardCategory(incident?.report_type || incident?.type || "other_hazard");
+      return idLooksRoad && ROAD_HAZARD_DISPLAY_CATEGORIES.has(category);
+    })
+    .sort((a, b) => {
+      const aActive = String(a?.status || "").toLowerCase() !== "cleared";
+      const bActive = String(b?.status || "").toLowerCase() !== "cleared";
+      if (aActive !== bActive) return bActive ? 1 : -1;
+      const aRelevant = isIncidentRouteRelevant(a, routeHazard);
+      const bRelevant = isIncidentRouteRelevant(b, routeHazard);
+      if (aRelevant !== bRelevant) return bRelevant ? 1 : -1;
+      const sevDelta = (severityWeight[String(b?.severity || "low")] || 0) - (severityWeight[String(a?.severity || "low")] || 0);
+      if (sevDelta !== 0) return sevDelta;
+      return Number(a?.age_minutes ?? 999) - Number(b?.age_minutes ?? 999);
+    })
+    .slice(0, limit);
+}
+
+function renderRoadHazards() {
+  if (!els.roadHazardsList) return;
+  const hazards = getRoadHazardSurfaceIncidents(3);
+  if (!hazards.length) {
+    els.roadHazardsList.innerHTML = `
+      <div class="alert-item">
+        <strong>Road conditions appear calm</strong>
+        <p>No high-impact road hazards detected nearby.</p>
+      </div>
+    `;
+    return;
+  }
+
+  els.roadHazardsList.innerHTML = hazards.map((incident) => {
+    const display = buildRoadHazardDisplay(incident);
+    const age = Number.isFinite(Number(incident.age_minutes)) ? `${Math.max(0, Math.round(Number(incident.age_minutes)))}m` : "now";
+    return `
+      <article class="alert-item intelligence-row ${display.rowClass}" tabindex="0" role="button" ${buildAlertFocusDataset(incident)}>
+        <div class="alert-row-main">
+          <span class="alert-severity-chip">${sanitizeText(display.meta)}</span>
+          <strong>${sanitizeText(display.title)}</strong>
+          <span class="alert-row-time">${sanitizeText(age)}</span>
+        </div>
+        <p class="alert-row-subline">${sanitizeText(display.subtitle)}</p>
+      </article>
+    `;
+  }).join("");
+}
 function renderAlerts() {
   if (!els.alertsList) return;
 
@@ -8590,8 +9515,8 @@ function renderAlerts() {
   if (!incidents.length) {
     els.alertsList.innerHTML = `
       <div class="alert-item">
-        <strong>No active shared alerts</strong>
-        <p>Your saved route looks quiet right now.</p>
+        <strong>No active community alerts</strong>
+        <p>No high-impact disruptions detected nearby.</p>
       </div>
     `;
     return;
@@ -8618,6 +9543,7 @@ function renderAlerts() {
       const freshnessLabel = getFreshnessLabel(latest);
       const confirmationLabel = getDriverConfirmationLabel(incident.count);
       const reportState = getReportStateLabel(latest);
+      const railDisplay = buildRailIncidentDisplay(incident);
       const severityLabel =
         latest.type === "cleared"
           ? "Cleared"
@@ -8629,13 +9555,13 @@ function renderAlerts() {
       const itemClass = latest.type === "cleared" ? "cleared" : latest.severity === "high" ? "high" : "";
 
       return `
-        <article class="alert-item intelligence-row ${itemClass}">
+        <article class="alert-item intelligence-row ${itemClass}" tabindex="0" role="button" ${buildAlertFocusDataset(latest, { incidentId: incident.crossingId })}>
           <div class="alert-row-main">
             <span class="alert-severity-chip">${sanitizeText(severityLabel)}</span>
-            <strong>${sanitizeText(incident.crossingName)}</strong>
+            <strong>${sanitizeText(railDisplay.title)}</strong>
             <span class="alert-row-time">${incident.newestMinutes}m</span>
           </div>
-          <p class="alert-row-subline">${sanitizeText(confidenceLabel)} · ${sanitizeText(confirmationLabel)} · ${sanitizeText(reportState)}</p>
+          <p class="alert-row-subline">${sanitizeText(railDisplay.subtitlePrefix)} · ${sanitizeText(confirmationLabel)} · ${sanitizeText(reportState)}</p>
           <details class="alert-row-details">
             <summary>Details</summary>
             <p>${sanitizeText(freshnessLabel)} · ${sanitizeText(latest.detail)}</p>
@@ -8653,7 +9579,7 @@ function renderTrendingCrossings() {
   const incidents = getConsolidatedIncidents().slice(0, 3);
 
   if (!incidents.length) {
-    els.trendingList.innerHTML = `<div class="trend-item muted">Monitoring nearby crossings...</div>`;
+    els.trendingList.innerHTML = `<div class="trend-item muted">Nearby crossings look clear right now.</div>`;
     return;
   }
 
@@ -8688,7 +9614,7 @@ function updateMobileAlertsMirror() {
 
   if (!incidents.length) {
     els.mobileAlertsMirror.textContent =
-      "Active monitoring enabled. Route looks clear right now.";
+      "Route conditions currently appear calm.";
     return;
   }
 
@@ -10397,3 +11323,33 @@ function injectHideDesktopCommunityToolsStylesV126C3() {
 })();
 
 window.gridlyHazardPickerDebug = window.gridlyHazardPickerAuditDebug;
+
+
+window.gridlyMarkerRenderDebug = function gridlyMarkerRenderDebug() {
+  return { ...lastMarkerAuditDebug };
+};
+
+window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
+  const routeHazard = getRouteHazardAssessment?.() || { nearbyReports: [] };
+  const activeIncidents = (getUnifiedIncidents?.() || []).filter((incident) => incident.status === "active");
+  const relevant = activeIncidents.filter((incident) => isIncidentRouteRelevant(incident, routeHazard));
+  return {
+    activeRouteHazardCount: Number(primaryRouteHazardCount || 0),
+    alternateRouteHazardCount: Number(alternateRouteHazardCount || 0),
+    hazardsAvoidedByAlternate: Number(hazardsAvoidedCount || 0),
+    routePressureScore: Number(routePressureScore || 0),
+    routePressureBand,
+    calibratedRecommendationBand,
+    alternateRoutePressureScore: Number(alternateRouteScore || 0),
+    alternateRoutePressureBand: getRoutePressureBand(Math.round(Math.max(0, Number(routePressureScore || 0) - Number(estimatedPressureReduction || 0)))),
+    estimatedPressureReduction: Number(estimatedPressureReduction || 0),
+    estimatedHazardReduction: Number(estimatedHazardReduction || 0),
+    routeRelevantHazards: relevant,
+    routeRelevantHazardIds: relevant.map((incident) => incident.id || incident.crossingId).filter(Boolean),
+    recommendationMessage: lastRouteRecommendationMessage,
+    routeConfidence,
+    confidenceInputs,
+    confidenceReasoning,
+    activeMonitoringState
+  };
+};
