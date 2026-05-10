@@ -9549,6 +9549,22 @@ function renderRoadHazards() {
     `;
   }).join("");
 }
+function getPrioritizedRailAlertIncidents(limit = 6) {
+  const severityWeight = { high: 3, moderate: 2, low: 1, cleared: 0 };
+  return getConsolidatedIncidents()
+    .slice()
+    .sort((a, b) => {
+      const aLatest = a?.latestReport || {};
+      const bLatest = b?.latestReport || {};
+      const aKey = aLatest.type === "cleared" ? "cleared" : String(aLatest.severity || "low");
+      const bKey = bLatest.type === "cleared" ? "cleared" : String(bLatest.severity || "low");
+      const severityDelta = (severityWeight[bKey] || 0) - (severityWeight[aKey] || 0);
+      if (severityDelta !== 0) return severityDelta;
+      return Number(a.newestMinutes ?? 999) - Number(b.newestMinutes ?? 999);
+    })
+    .slice(0, limit);
+}
+
 function renderAlerts() {
   if (!els.alertsList) return;
 
@@ -9563,19 +9579,7 @@ function renderAlerts() {
     return;
   }
 
-  const severityWeight = { high: 3, moderate: 2, low: 1, cleared: 0 };
-  const prioritized = incidents
-    .slice()
-    .sort((a, b) => {
-      const aLatest = a?.latestReport || {};
-      const bLatest = b?.latestReport || {};
-      const aKey = aLatest.type === "cleared" ? "cleared" : String(aLatest.severity || "low");
-      const bKey = bLatest.type === "cleared" ? "cleared" : String(bLatest.severity || "low");
-      const severityDelta = (severityWeight[bKey] || 0) - (severityWeight[aKey] || 0);
-      if (severityDelta !== 0) return severityDelta;
-      return Number(a.newestMinutes ?? 999) - Number(b.newestMinutes ?? 999);
-    })
-    .slice(0, 6);
+  const prioritized = getPrioritizedRailAlertIncidents(6);
 
   els.alertsList.innerHTML = prioritized
     .map((incident) => {
@@ -11466,11 +11470,18 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       throw new Error("mobile native surface elements missing");
     }
 
-    const railIncidents = getConsolidatedIncidents().slice(0, 6);
+    const consolidatedIncidents = getConsolidatedIncidents();
+    const unifiedIncidents = getUnifiedIncidents();
+    const railIncidents = getPrioritizedRailAlertIncidents(6);
     const roadHazards = getRoadHazardSurfaceIncidents(4);
-    const trending = getConsolidatedIncidents().slice(0, 3);
+    const trending = consolidatedIncidents.slice(0, 3);
+    const activeCrossingReports = activeReports.filter((report) => getIncidentLifecycleState(report) === "active");
 
     logDailyPanelAction("mobile alerts center data snapshot", {
+      consolidatedIncidentCount: consolidatedIncidents.length,
+      unifiedIncidentCount: unifiedIncidents.length,
+      activeCrossingReportCount: activeCrossingReports.length,
+      alertListSourceCount: railIncidents.length,
       incidentsCount: railIncidents.length,
       hazardsCount: roadHazards.length,
       trendingCount: trending.length
@@ -11548,7 +11559,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
 
     logDailyPanelAction("mobile alerts center rendered", {
       surfaceVisible: !layer.hidden,
-      surfaceAriaHidden: layer.getAttribute("aria-hidden")
+      surfaceAriaHidden: layer.getAttribute("aria-hidden"),
+      renderedRailAlertCount: railIncidents.length,
+      renderedRoadHazardCount: roadHazards.length,
+      renderedTrendingCount: trending.length
     });
     logDailyPanelAction("mobile alerts center final state", {
       finalSurfaceVisibilityState: !layer.hidden,
