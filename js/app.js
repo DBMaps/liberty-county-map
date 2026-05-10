@@ -11353,3 +11353,57 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     activeMonitoringState
   };
 };
+
+/* =========================================================
+   GRIDLY V52 — MOBILE DAILY PANEL SHELL (PHASE 1A)
+========================================================= */
+(function initMobileDailyPanelShell() {
+  const MOBILE_QUERY = "(max-width: 768px)";
+
+  function applyMobileModeFlag() {
+    if (!document?.body) return;
+    const isMobile = window.matchMedia(MOBILE_QUERY).matches;
+    if (isMobile) document.body.setAttribute("data-mobile-mode", "v52");
+    else document.body.removeAttribute("data-mobile-mode");
+  }
+
+  function bindDailyPanel() {
+    const panel = document.getElementById("mobileDailyPanel");
+    const handle = document.getElementById("mobileDailyPanelHandle");
+    const body = document.getElementById("mobileDailyPanelBody");
+    if (!panel || !handle || !body) return;
+
+    const setOpen = (open) => {
+      handle.setAttribute("aria-expanded", open ? "true" : "false");
+      body.hidden = !open;
+      panel.classList.toggle("is-open", open);
+    };
+
+    handle.addEventListener("click", () => {
+      const open = handle.getAttribute("aria-expanded") !== "true";
+      setOpen(open);
+    });
+
+    panel.querySelectorAll("[data-mobile-panel-jump]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const section = btn.getAttribute("data-mobile-panel-jump");
+        const mapSection = document.getElementById("mapSection");
+        const alertsSection = document.getElementById("alertsSection");
+        const reportSection = document.getElementById("reportSection");
+        const setupCard = document.getElementById("setupCard");
+
+        if (section === "alerts") alertsSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (section === "report") reportSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (section === "routes") (setupCard || mapSection)?.scrollIntoView({ behavior: "smooth", block: "start" });
+        setOpen(false);
+      });
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    applyMobileModeFlag();
+    bindDailyPanel();
+  });
+
+  window.addEventListener("resize", applyMobileModeFlag, { passive: true });
+})();
