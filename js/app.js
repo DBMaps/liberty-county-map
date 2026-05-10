@@ -322,14 +322,27 @@ const reportingState = {
   lastReportError: "",
   activeReportEntryPoint: ""
 };
+const GRIDLY_REPORT_DIAGNOSTICS = true;
+
+function reportLifecycleDiag(label, payload = {}) {
+  if (!GRIDLY_REPORT_DIAGNOSTICS) return;
+  console.debug(`[Gridly][ReportDiag] ${label}`, payload);
+}
 
 function updateReportingState(patch = {}) {
+  reportLifecycleDiag("updateReportingState called", {
+    patch,
+    before: { ...reportingState },
+    mobileMode: mobileUiMode,
+    bodyMobileMode: document.body?.dataset?.mobileMode || null
+  });
   Object.assign(reportingState, patch);
   const isReportingLive = Boolean(reportingState.reportModeActive || reportingState.placementModeActive || reportingState.submissionInProgress);
   document.body?.classList.toggle("reporting-live", isReportingLive);
   const mapFrame = document.querySelector(".map-frame");
   if (mapFrame) mapFrame.dataset.reportingState = isReportingLive ? "active" : "idle";
   if (window.matchMedia("(max-width: 760px)").matches) {
+    if (isReportingLive) console.trace("[Gridly][ReportDiag] updateReportingState requesting setMobileUiMode('report')");
     setMobileUiMode(isReportingLive ? "report" : mobileUiMode === "report" ? "live" : mobileUiMode, { silent: true });
   }
   syncHazardPickerUiState();
@@ -390,6 +403,15 @@ function syncMobileNavVisibilityForViewport() {
 function setMobileUiMode(mode = "live", options = {}) {
   const nextMode = ["live", "route", "report", "alert"].includes(mode) ? mode : "live";
   mobileUiMode = nextMode;
+  reportLifecycleDiag("setMobileUiMode", {
+    requestedMode: mode,
+    nextMode,
+    isMobileViewport: isMobileUiViewport(),
+    reportModeActive: reportingState.reportModeActive,
+    placementModeActive: reportingState.placementModeActive,
+    submissionInProgress: reportingState.submissionInProgress
+  });
+  if (nextMode === "report") console.trace("[Gridly][ReportDiag] setMobileUiMode('report') stack");
   if (isMobileUiViewport()) {
     document.body?.setAttribute("data-mobile-mode", nextMode);
     if (els.reportSection) {
@@ -578,6 +600,7 @@ localStorage.setItem("gridlyDeviceId", deviceId);
 const els = {};
 
 document.addEventListener("DOMContentLoaded", async () => {
+  reportLifecycleDiag("DOMContentLoaded init start", { readyState: document.readyState });
   initVisualViewportHeightVar();
   hydrateElements();
   gridlyHealthCheck();
@@ -660,6 +683,7 @@ function setManualFallbackDefaultState() {
   const isDesktop = window.matchMedia("(min-width: 1101px)").matches;
   els.reportSection.open = isDesktop;
   if (!isDesktop) setMobileUiMode("live", { silent: true });
+  reportLifecycleDiag("setManualFallbackDefaultState", { isDesktop, mobileMode: mobileUiMode });
 }
 
 function returnMobileToLiveMode(reason = "") {
@@ -4046,6 +4070,7 @@ function syncMapPlacementCursorState() {
 }
 
 function openHazardPanel(entryPoint = reportingState.activeReportEntryPoint || "report_near_me") {
+  reportLifecycleDiag("openHazardPanel", { entryPoint });
   injectHazardReportUI();
   updateReportingState({ reportModeActive: true, activeReportEntryPoint: entryPoint });
   const picker = document.getElementById("gridlyHazardPanel");
@@ -5089,7 +5114,7 @@ window.zoomToCrossing = function (crossingId) {
 
 function setReportMode(mode) {
   activeReportMode = mode === REPORT_MODES.roadHazard ? REPORT_MODES.roadHazard : REPORT_MODES.rail;
-  updateReportingState({ reportModeActive: true, activeReportEntryPoint: "manual_mode_toggle" });
+  updateReportingState({ activeReportEntryPoint: "manual_mode_toggle" });
 
   const isRoadHazardMode = activeReportMode === REPORT_MODES.roadHazard;
 
@@ -5837,6 +5862,7 @@ function bindMobileReportEntryDelegation() {
 }
 
 function handleReportNearMe(entryPoint = "report_near_me") {
+  reportLifecycleDiag("handleReportNearMe", { entryPoint });
   setMobileUiMode("report", { silent: true });
   updateReportingState({
     reportModeActive: true,
@@ -11775,6 +11801,13 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         action: "blocked",
         reason: "Not in mobile layout mode"
       });
+      return;
+    }
+    if (section === "report") {
+      reportLifecycleDiag("executeMobilePanelAction report redirect", { section });
+      layer.hidden = true;
+      layer.setAttribute("aria-hidden", "true");
+      handleReportNearMe("daily_panel_report");
       return;
     }
     if (!layer || !title || !body || !views[section]) return;
