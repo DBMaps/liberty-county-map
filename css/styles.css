@@ -10901,7 +10901,8 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
 }
 
 
-@media (max-width: 760px) {
+@media (max-width: 760px),
+       (max-height: 520px) and (orientation: landscape) {
   body[data-layout-mode="mobile"][data-mobile-mode="live"] #reportSection,
   body[data-layout-mode="mobile"][data-mobile-mode="live"] #mobileReportModeCard {
     display: none !important;
@@ -10920,7 +10921,8 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
 }
 
 /* V74 — compressed tactical mode (mobile-only, CSS-surgical) */
-@media (max-width: 760px) and (max-height: 620px) {
+@media (max-width: 760px) and (max-height: 620px),
+       (max-height: 620px) and (orientation: landscape) {
   body[data-layout-mode="mobile"] {
     --mobile-daily-panel-gap: clamp(3px, 1.2vh, 8px);
     --mobile-context-gap: clamp(56px, 8.6vh, 74px);
@@ -10993,7 +10995,8 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
 }
 
 @media (max-width: 760px) and (max-height: 520px),
-       (max-width: 760px) and (orientation: landscape) {
+       (max-width: 760px) and (orientation: landscape),
+       (max-height: 520px) and (orientation: landscape) {
   body[data-layout-mode="mobile"] {
     --mobile-context-gap: 46px;
     --mobile-daily-panel-pad-y: 4px;
