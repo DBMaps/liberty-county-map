@@ -5271,6 +5271,18 @@ function bindEvents() {
         type: focusCard.closest("#roadHazardsList") ? "road" : "rail",
         openPopup: false
       });
+      const mobileSurfaceLayer = document.getElementById("mobileNativeSurfaceLayer");
+      const mobileSurfaceBody = document.getElementById("mobileNativeSurfaceBody");
+      const focusedFromMobileAlertsCenter =
+        Boolean(mobileSurfaceLayer && !mobileSurfaceLayer.hidden) &&
+        focusCard.closest("#mobileNativeSurfaceLayer") &&
+        mobileSurfaceBody?.dataset?.mobileSurfaceView === "alerts-center" &&
+        document.body?.matches?.('body[data-layout-mode="mobile"]');
+      if (focusedFromMobileAlertsCenter) {
+        mobileSurfaceLayer.hidden = true;
+        mobileSurfaceLayer.setAttribute("aria-hidden", "true");
+        if (typeof setMobileUiMode === "function") setMobileUiMode("live", { silent: true });
+      }
       return;
     }
     const actionEl = event.target.closest("[data-action]");
@@ -9565,6 +9577,20 @@ function getPrioritizedRailAlertIncidents(limit = 6) {
     .slice(0, limit);
 }
 
+function getOperationalFeedSummaryLine() {
+  const consolidatedIncidents = getConsolidatedIncidents();
+  if (!consolidatedIncidents.length) {
+    return "No active community alerts";
+  }
+  const topIncident = consolidatedIncidents[0];
+  const topReport = topIncident?.latestReport || {};
+  const statusLabel = getReportCopy(topReport.type).label;
+  const confirmationCount = Number(topIncident.count || 0);
+  const confirmationLabel = `${confirmationCount} confirmation${confirmationCount === 1 ? "" : "s"}`;
+  const freshness = Number.isFinite(Number(topIncident.newestMinutes)) ? `${Math.max(0, Math.round(Number(topIncident.newestMinutes)))} min ago` : "just now";
+  return `${topIncident.crossingName || "Crossing"}: ${statusLabel} · ${confirmationLabel} · newest ${freshness}.`;
+}
+
 function renderAlerts() {
   if (!els.alertsList) return;
 
@@ -11571,10 +11597,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         }).join("")
       : '<div class="alert-item"><strong>Trending crossings are calm</strong><p>Live trendline is stabilizing.</p></div>';
 
-    title.textContent = "Alerts Center";
+    title.textContent = "Operational Feed Center";
+    body.dataset.mobileSurfaceView = "alerts-center";
     body.innerHTML = `
       <article class="mobile-native-surface-card">
-        <strong>Rail Alerts</strong>
+        <strong>Operational Alerts</strong>
         <div class="mobile-intel-feed">${railRows}</div>
       </article>
       <article class="mobile-native-surface-card">
@@ -11628,7 +11655,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
             <div class="mobile-native-surface-actions">
               <button class="primary-btn" type="button" data-mobile-surface-action="route-watch">Update Route Watch</button>
               <button class="secondary-btn" type="button" data-mobile-surface-action="route-map">Stay on Map</button>
-              <button class="secondary-btn" type="button" data-mobile-surface-action="open-alerts-center">Rail Pulse</button>
+              <button class="secondary-btn" type="button" data-mobile-surface-action="open-alerts-center">Operational Feed</button>
             </div>
           </article>`;
         })()
@@ -11638,7 +11665,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         html: `
           <article class="mobile-native-surface-card">
             <strong>Active Alerts Summary</strong>
-            <p>${document.getElementById("crossingSummary")?.textContent || "No crossing summary available."}</p>
+            <p>${sanitizeText(getOperationalFeedSummaryLine())}</p>
             <p><b>Road hazards:</b> ${document.getElementById("hazardSummary")?.textContent || "Monitoring active road hazard reports."}</p>
             <p><b>Trending crossings:</b> ${document.getElementById("corridorSummaryDetail")?.textContent || "Live trendline is stabilizing."}</p>
             <p>${document.getElementById("freshestReportReason")?.textContent || "Live signals update automatically."}</p>
@@ -11680,6 +11707,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     }
     if (!layer || !title || !body || !views[section]) return;
     title.textContent = views[section].title;
+    body.dataset.mobileSurfaceView = section;
     body.innerHTML = views[section].html;
     layer.hidden = false;
     layer.setAttribute("aria-hidden", "false");
