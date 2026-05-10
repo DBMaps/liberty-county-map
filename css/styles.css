@@ -9829,6 +9829,12 @@ body[data-layout-mode="desktop"] .mobile-bottom-nav {
   pointer-events: none !important;
 }
 
+body[data-layout-mode="mobile"][data-mobile-mode="alert"] .desktop-command-panel {
+  display: block !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
 body[data-layout-mode="mobile"] .desktop-left-rail,
 body[data-layout-mode="mobile"] .app-header,
 body[data-layout-mode="mobile"] .desktop-route-watch-strip,
