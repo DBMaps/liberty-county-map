@@ -11569,10 +11569,18 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       if (!layer) return;
       const wasVisible = !layer.hidden;
       const nextMode = typeof options.nextMode === "string" ? options.nextMode : "live";
+      logDailyPanelAction("closeSurface started", { sourceAction, wasVisible, nextMode, visibilityState: !layer.hidden });
       layer.hidden = true;
       layer.setAttribute("aria-hidden", "true");
       if (isMobileLayoutMode()) setMobileUiMode(nextMode, { silent: true });
-      logDailyPanelAction("mobile surface closed", { sourceAction, visibilityState: !layer.hidden, wasVisible, nextMode });
+      logDailyPanelAction("closeSurface completed", {
+        sourceAction,
+        visibilityState: !layer.hidden,
+        wasVisible,
+        nextMode,
+        mobileMode: mobileUiMode,
+        finalSurfaceAriaHidden: layer.getAttribute("aria-hidden")
+      });
     };
     closeBtn?.addEventListener("click", () => closeSurface("close_button"));
     layer?.querySelector('[data-mobile-surface-close="backdrop"]')?.addEventListener("click", () => closeSurface("backdrop"));
@@ -11593,25 +11601,32 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         logDailyPanelAction("open alerts center action received", {
           action,
           visibilityState: !layer.hidden,
-          nextMode: "live_then_route_alert"
+          nextMode: "alert"
         });
       }
       if (action === "route-map") document.querySelector('.mobile-bottom-nav .nav-btn[data-section="map"]')?.click();
-      const nextMode = "live";
+      const nextMode = action === "open-alerts-center" ? "alert" : "live";
       logDailyPanelAction("source action", { action, visibilityState: !layer.hidden, nextMode });
       closeSurface(action, { nextMode });
       if (action === "open-alerts-center") {
+        const alertsEl = document.getElementById("alertsSection");
+        const alertStyle = alertsEl ? window.getComputedStyle(alertsEl) : null;
         logDailyPanelAction("alerts center open/render requested", {
           targetSection: "alertsSection",
-          via: "routeNavSection",
+          via: "direct_alerts_open",
+          targetExists: Boolean(alertsEl),
+          targetDisplay: alertStyle?.display || null,
+          targetVisibility: alertStyle?.visibility || null,
           postCloseVisibilityState: !layer.hidden
         });
-        routeNavSection("alerts");
-        logDailyPanelAction("alerts center route applied", { targetSection: "alerts", mobileModeAfterRoute: mobileUiMode });
+        setMobileUiMode("alert", { silent: true });
+        scrollToSection("alertsSection");
         logDailyPanelAction("alerts center final visibility", {
           sourceAction: action,
           visibilityState: !layer.hidden,
-          mobileMode: mobileUiMode
+          mobileMode: mobileUiMode,
+          finalBodyMobileMode: document.body?.getAttribute("data-mobile-mode") || null,
+          finalSurfaceAriaHidden: layer.getAttribute("aria-hidden")
         });
       }
     });
