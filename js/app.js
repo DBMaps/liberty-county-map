@@ -392,6 +392,9 @@ function setMobileUiMode(mode = "live", options = {}) {
   mobileUiMode = nextMode;
   if (isMobileUiViewport()) {
     document.body?.setAttribute("data-mobile-mode", nextMode);
+    if (els.reportSection) {
+      els.reportSection.open = nextMode === "report";
+    }
   } else {
     document.body?.removeAttribute("data-mobile-mode");
   }
@@ -656,6 +659,14 @@ function setManualFallbackDefaultState() {
   if (!els.reportSection) return;
   const isDesktop = window.matchMedia("(min-width: 1101px)").matches;
   els.reportSection.open = isDesktop;
+  if (!isDesktop) setMobileUiMode("live", { silent: true });
+}
+
+function returnMobileToLiveMode(reason = "") {
+  if (!window.matchMedia("(max-width: 760px)").matches) return;
+  if (reportingState.reportModeActive || reportingState.placementModeActive || reportingState.submissionInProgress) return;
+  setMobileUiMode("live", { silent: true });
+  reportDebugLog("[Gridly][Report] returned to live mode", { reason, mobileUiMode });
 }
 
 function hydrateElements() {
@@ -4065,6 +4076,7 @@ window.closeHazardPanel = function (options = {}) {
   if (!preserveLastReportMessage) updates.lastReportMessage = "";
   updateReportingState(updates);
   document.getElementById("gridlyHazardPanel")?.classList.remove("visible");
+  returnMobileToLiveMode("close_hazard_panel");
 };
 
 function injectMobileQuickActionOverlays() {
@@ -4545,8 +4557,8 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
       placementModeActive: false,
       selectedHazardType: null
     });
-    if (window.matchMedia("(max-width: 760px)").matches) setMobileUiMode("live", { silent: true });
     closeHazardPanel({ preserveLastReportMessage: true });
+    returnMobileToLiveMode("submit_hazard_success");
     lastMobileReportSubmitDebug.postSubmitUiResetSucceeded = true;
     lastMobileReportSubmitDebug.lastSubmitAttempt = "ui_reset_complete";
     return true;
@@ -5360,7 +5372,7 @@ function bindEvents() {
       resetQuickHazardReportState();
       updateReportingState({ activeReportEntryPoint: "hazard_cancel", lastReportMessage: "", lastReportError: "" });
       closeHazardPanel({ preserveLastReportMessage: false });
-      if (window.matchMedia("(max-width: 760px)").matches) setMobileUiMode("live", { silent: true });
+      returnMobileToLiveMode("cancel_hazard_placement");
       return;
     }
     if (action === "close-route-quick") {
