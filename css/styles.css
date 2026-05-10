@@ -11082,7 +11082,10 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
   body[data-layout-mode="mobile"] .mobile-home-cards,
   body[data-layout-mode="mobile"] .destination-hero-card,
   body[data-layout-mode="mobile"] .future-map-hero,
-  body[data-layout-mode="mobile"] .driver-hero {
+  body[data-layout-mode="mobile"] .driver-hero,
+  body[data-layout-mode="mobile"] .mobile-live-brand,
+  body[data-layout-mode="mobile"] .mobile-live-brand-main,
+  body[data-layout-mode="mobile"] .mobile-live-brand-logo {
     display: none !important;
     visibility: hidden !important;
     pointer-events: none !important;
