@@ -5276,8 +5276,8 @@ function bindEvents() {
       const focusedFromMobileAlertsCenter =
         Boolean(mobileSurfaceLayer && !mobileSurfaceLayer.hidden) &&
         focusCard.closest("#mobileNativeSurfaceLayer") &&
-        mobileSurfaceBody?.dataset?.mobileSurfaceView === "alerts-center" &&
-        document.body?.matches?.('body[data-layout-mode="mobile"]');
+        ["alerts-center", "alerts"].includes(String(mobileSurfaceBody?.dataset?.mobileSurfaceView || "")) &&
+        (document.body?.matches?.('body[data-layout-mode="mobile"]') || window.matchMedia("(max-width: 760px)").matches);
       if (focusedFromMobileAlertsCenter) {
         mobileSurfaceLayer.hidden = true;
         mobileSurfaceLayer.setAttribute("aria-hidden", "true");
@@ -11502,10 +11502,33 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const incidents = getUnifiedIncidents().filter((incident) => incident.status === "active").slice(0, 8);
     if (!incidents.length) return '<li class="mobile-intel-feed-item"><span class="chip chip-clear">Clear</span><p>No active alerts right now.</p></li>';
     return incidents.map((incident) => {
-      const label = incident?.name || incident?.crossingName || "Corridor update";
-      const detail = `${incident?.severity_label || "active"} · ${Math.round(Number(incident?.delay_minutes || 0))} min impact`;
+      const isRailIncident = String(incident?.id || "").startsWith("rail-") || String(incident?.type || "").startsWith("rail_");
+      const railDisplay = isRailIncident
+        ? buildRailIncidentDisplay({
+            crossingName: incident?.area,
+            crossingId: incident?.crossing_id,
+            latestReport: {
+              type: incident?.report_type,
+              lat: incident?.lat,
+              lng: incident?.lng,
+              road_name: incident?.road_name,
+              street_name: incident?.street_name,
+              crossing_street: incident?.crossing_street,
+              cross_street: incident?.cross_street,
+              city: incident?.city,
+              area: incident?.area,
+              county: incident?.county
+            }
+          })
+        : null;
+      const roadDisplay = isRailIncident ? null : buildRoadHazardDisplay(incident);
+      const label = isRailIncident ? railDisplay?.title : roadDisplay?.title;
+      const location = isRailIncident ? railDisplay?.subtitlePrefix : String(roadDisplay?.subtitle || "").split(" · ")[0] || "Location pending";
+      const freshness = Number.isFinite(Number(incident?.age_minutes)) ? `Last confirmed ${Math.max(0, Math.round(Number(incident.age_minutes)))} min ago` : "Needs confirmation";
+      const confirmation = Number(incident?.reports_count || 0) > 0 ? getDriverConfirmationLabel(Number(incident.reports_count || 0)) : "Needs confirmation";
+      const detail = `${location} · ${confirmation} · ${freshness}`;
       const tone = incident?.severity === "high" ? "chip-alert" : "chip-watch";
-      return `<li class="mobile-intel-feed-item"><span class="chip ${tone}">${sanitizeText(incident?.severity?.toUpperCase?.() || "LIVE")}</span><p><strong>${sanitizeText(label)}</strong><span>${sanitizeText(detail)}</span></p></li>`;
+      return `<li class="mobile-intel-feed-item"><span class="chip ${tone}">${sanitizeText(incident?.severity?.toUpperCase?.() || "LIVE")}</span><p><strong>${sanitizeText(label || "Operational update")}</strong><span>${sanitizeText(detail)}</span></p></li>`;
     }).join("");
   }
 
