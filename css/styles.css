@@ -11070,6 +11070,44 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
   body[data-layout-mode="mobile"] .map-tools-overlay .map-view-label,
   body[data-layout-mode="mobile"] .map-tools-overlay .map-tools-section-label,
   body[data-layout-mode="mobile"] .map-tools-overlay .map-tools-status { display: none; }
+  /* V74 phase 6: landscape survival cleanup for gray slab + left-edge artifact */
+  body[data-layout-mode="mobile"] .map-tools-overlay {
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  body[data-layout-mode="mobile"] .map-tools-overlay .geo-filter-shell {
+    padding: 1px 2px !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  body[data-layout-mode="mobile"] .map-tools-overlay .geo-filter-pill {
+    min-height: 24px;
+    padding: 3px 7px !important;
+    font-size: 0.66rem !important;
+  }
+  body[data-layout-mode="mobile"] #map .leaflet-left {
+    display: none !important;
+  }
+  body[data-layout-mode="mobile"] #mobileDailyPanel {
+    max-height: 96px;
+    border-radius: 10px;
+  }
+  body[data-layout-mode="mobile"] #mobileDailyPanel .mobile-daily-panel-handle {
+    min-height: 30px;
+    padding: 4px 8px 5px;
+  }
+  body[data-layout-mode="mobile"] #mobileDailyPanel .mobile-daily-panel-actions .secondary-btn {
+    min-height: 34px;
+    padding: 4px 7px;
+    font-size: 0.66rem;
+  }
 
   body[data-layout-mode="mobile"] .app-header { padding-top: 2px; padding-bottom: 2px; }
 
