@@ -686,9 +686,26 @@ function setManualFallbackDefaultState() {
   reportLifecycleDiag("setManualFallbackDefaultState", { isDesktop, mobileMode: mobileUiMode });
 }
 
+function isReportSurfaceVisiblyOpen() {
+  const reportSection = document.getElementById("reportSection");
+  if (!reportSection) return false;
+  const style = window.getComputedStyle(reportSection);
+  return Boolean(
+    reportSection.open &&
+    style.display !== "none" &&
+    style.visibility !== "hidden" &&
+    style.opacity !== "0" &&
+    style.pointerEvents !== "none"
+  );
+}
+
 function returnMobileToLiveMode(reason = "") {
   if (!window.matchMedia("(max-width: 760px)").matches) return;
   if (reportingState.reportModeActive || reportingState.placementModeActive || reportingState.submissionInProgress) return;
+  if (isReportSurfaceVisiblyOpen()) {
+    reportLifecycleDiag("returnMobileToLiveMode blocked: report surface still open", { reason, reportSectionOpen: true });
+    return;
+  }
   setMobileUiMode("live", { silent: true });
   reportDebugLog("[Gridly][Report] returned to live mode", { reason, mobileUiMode });
 }
@@ -11490,6 +11507,38 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   function logDailyPanelAction(stage, details = {}) {
     console.info(`${DAILY_PANEL_LOG_PREFIX} ${stage}`, details);
   }
+  function collectMobileSurfaceDiagnostics() {
+    const readSurfaceState = (selector) => {
+      const element = document.querySelector(selector);
+      if (!element) return { selector, exists: false };
+      const style = window.getComputedStyle(element);
+      return {
+        selector,
+        exists: true,
+        hidden: element.hidden === true,
+        open: typeof element.open === "boolean" ? element.open : null,
+        display: style.display,
+        visibility: style.visibility,
+        opacity: style.opacity,
+        pointerEvents: style.pointerEvents
+      };
+    };
+    return {
+      bodyMobileMode: document.body?.getAttribute("data-mobile-mode") || null,
+      reportSectionOpen: Boolean(document.getElementById("reportSection")?.open),
+      reportModeActive: reportingState.reportModeActive,
+      placementModeActive: reportingState.placementModeActive,
+      submissionInProgress: reportingState.submissionInProgress,
+      surfaces: [
+        readSurfaceState("#mobileNativeSurfaceLayer"),
+        readSurfaceState("#mobileNativeSurfaceBody"),
+        readSurfaceState("#reportSection"),
+        readSurfaceState(".route-setup-modal"),
+        readSurfaceState(".gridly-mobile-route-quick-panel")
+      ]
+    };
+  }
+
 
   function focusElementWithoutScroll(element) {
     if (!isElementVisibleForInteraction(element) || typeof element.focus !== "function") return false;
@@ -11804,10 +11853,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       return;
     }
     if (section === "report") {
-      reportLifecycleDiag("executeMobilePanelAction report redirect", { section });
+      reportLifecycleDiag("executeMobilePanelAction report redirect", { section, before: collectMobileSurfaceDiagnostics() });
       layer.hidden = true;
       layer.setAttribute("aria-hidden", "true");
       handleReportNearMe("daily_panel_report");
+      reportLifecycleDiag("executeMobilePanelAction report redirect complete", { after: collectMobileSurfaceDiagnostics() });
       return;
     }
     if (!layer || !title || !body || !views[section]) return;
@@ -11816,6 +11866,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     body.innerHTML = views[section].html;
     layer.hidden = false;
     layer.setAttribute("aria-hidden", "false");
+    setMobileUiMode(section === "routes" ? "route" : section === "alerts" ? "alert" : "live", { silent: true });
     focusMobileSurfaceEntryTarget();
     logDailyPanelAction("mobile surface opened", { section, sourceAction: "daily_panel_button", visibilityState: !layer.hidden });
   }
@@ -11843,9 +11894,15 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         lastMobileSurfaceLauncher = btn;
         logDailyPanelAction("click detected", {
           section,
-          buttonLabel: btn.textContent?.trim() || ""
+          buttonLabel: btn.textContent?.trim() || "",
+          before: collectMobileSurfaceDiagnostics(),
+          intendedSurfaceSelector: section === "routes" ? ".gridly-mobile-route-quick-panel" : section === "alerts" ? "#mobileNativeSurfaceLayer / #mobileNativeSurfaceBody" : "#reportSection"
         });
         executeMobilePanelAction(section);
+        logDailyPanelAction("click completed", {
+          section,
+          after: collectMobileSurfaceDiagnostics()
+        });
         setOpen(false);
       });
     });
@@ -11881,7 +11938,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       const trigger = event.target?.closest?.("[data-mobile-surface-action]");
       if (!trigger) return;
       const action = trigger.getAttribute("data-mobile-surface-action");
-      if (action === "route-watch") document.getElementById("mobileQuickRouteBtn")?.click();
+      if (action === "route-watch") {
+        document.getElementById("mobileQuickRouteBtn")?.click();
+        logDailyPanelAction("source action route-watch requested", { action, afterRouteClick: collectMobileSurfaceDiagnostics() });
+      }
       if (action === "quick-report") document.getElementById("mobileQuickReportBtn")?.click();
       if (action === "quick-cleared") document.getElementById("mobileQuickClearedBtn")?.click();
       if (action === "prep-report-blocked") prepQuickReportType("blocked");
@@ -11902,7 +11962,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         return;
       }
       if (action === "route-map") document.querySelector('.mobile-bottom-nav .nav-btn[data-section="map"]')?.click();
-      const nextMode = "live";
+      const nextMode = action === "route-watch" ? "route" : action === "quick-report" ? "report" : "live";
       logDailyPanelAction("source action", { action, visibilityState: !layer.hidden, nextMode });
       closeSurface(action, { nextMode });
     });
