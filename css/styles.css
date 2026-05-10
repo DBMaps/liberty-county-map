@@ -10882,85 +10882,22 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
   display: none !important;
 }
 
-/* V73 — MOBILE OVERLAY MODE CONTRACT + SHORT/LANDSCAPE SURVIVAL */
+
 @media (max-width: 760px) {
-  /* Contract baseline: hide mobile surfaces that can contaminate map unless mode re-allows. */
-  body[data-layout-mode="mobile"][data-mobile-mode] #reportSection,
-  body[data-layout-mode="mobile"][data-mobile-mode] .mobile-report-mode-card,
-  body[data-layout-mode="mobile"][data-mobile-mode] .mobile-home-cards,
-  body[data-layout-mode="mobile"][data-mobile-mode] .mobile-quick-actions-card,
-  body[data-layout-mode="mobile"][data-mobile-mode] .mobile-hero-map-cta,
-  body[data-layout-mode="mobile"][data-mobile-mode] .mobile-commute-cta,
-  body[data-layout-mode="mobile"][data-mobile-mode] .route-setup-modal,
-  body[data-layout-mode="mobile"][data-mobile-mode] .route-setup-modal-card,
-  body[data-layout-mode="mobile"][data-mobile-mode] .gridly-mobile-route-quick-panel,
-  body[data-layout-mode="mobile"][data-mobile-mode] .smart-alerts-modal,
-  body[data-layout-mode="mobile"][data-mobile-mode] #mobileNativeSurfaceLayer,
-  body[data-layout-mode="mobile"][data-mobile-mode] .mobile-alerts-panel,
-  body[data-layout-mode="mobile"][data-mobile-mode] .alerts-drawer,
-  body[data-layout-mode="mobile"][data-mobile-mode] .mobile-sticky-report,
-  body[data-layout-mode="mobile"][data-mobile-mode] #gridlyHazardLauncher {
-    visibility: hidden;
-    opacity: 0;
-    pointer-events: none;
+  body[data-layout-mode="mobile"][data-mobile-mode="live"] #reportSection,
+  body[data-layout-mode="mobile"][data-mobile-mode="live"] #mobileReportModeCard {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
 
-  /* Persistent live layers only. */
-  body[data-layout-mode="mobile"][data-mobile-mode="live"] #mobileDailyPanel,
-  body[data-layout-mode="mobile"][data-mobile-mode="live"] #mobileLocalContextStrip,
-  body[data-layout-mode="mobile"][data-mobile-mode="live"] .mobile-floating-action-dock,
-  body[data-layout-mode="mobile"][data-mobile-mode="live"] .map-tools-overlay,
-  body[data-layout-mode="mobile"][data-mobile-mode="live"] .mobile-live-brand,
-  body[data-layout-mode="mobile"][data-mobile-mode="live"] .mobile-live-command,
-  body[data-layout-mode="mobile"][data-mobile-mode="live"] .route-status-card {
-    visibility: visible;
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  /* Report mode ownership. */
   body[data-layout-mode="mobile"][data-mobile-mode="report"] #reportSection,
-  body[data-layout-mode="mobile"][data-mobile-mode="report"] #reportSection[open],
-  body[data-layout-mode="mobile"][data-mobile-mode="report"] #mobileReportModeCard,
-  body[data-layout-mode="mobile"][data-mobile-mode="report"] .mobile-sticky-report,
-  body[data-layout-mode="mobile"][data-mobile-mode="report"] #gridlyHazardLauncher {
-    visibility: visible;
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  /* Route mode ownership. */
-  body[data-layout-mode="mobile"][data-mobile-mode="route"] .route-setup-modal.open,
-  body[data-layout-mode="mobile"][data-mobile-mode="route"] .route-setup-modal:not([hidden]),
-  body[data-layout-mode="mobile"][data-mobile-mode="route"] .route-setup-modal.open .route-setup-modal-card,
-  body[data-layout-mode="mobile"][data-mobile-mode="route"] .gridly-mobile-route-quick-panel,
-  body[data-layout-mode="mobile"][data-mobile-mode="route"] .smart-alerts-modal:not([hidden]) {
-    visibility: visible;
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  /* Alert mode ownership. */
-  body[data-layout-mode="mobile"][data-mobile-mode="alert"] #mobileNativeSurfaceLayer:not([hidden]),
-  body[data-layout-mode="mobile"][data-mobile-mode="alert"] .mobile-alerts-panel,
-  body[data-layout-mode="mobile"][data-mobile-mode="alert"] .alerts-drawer {
-    visibility: visible;
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  /* Local context strip readability without fog/card treatment. */
-  body[data-layout-mode="mobile"][data-mobile-mode="live"] #mobileLocalContextStrip {
-    background: rgba(6, 14, 26, 0.48);
-    border: 1px solid rgba(166, 206, 242, 0.22);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.16);
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
-    z-index: 1305;
-  }
-
-  body[data-layout-mode="mobile"][data-mobile-mode="live"] #mobileDailyPanel {
-    z-index: 1300;
+  body[data-layout-mode="mobile"][data-mobile-mode="report"] #mobileReportModeCard {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
   }
 }
 

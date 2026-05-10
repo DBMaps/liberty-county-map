@@ -322,7 +322,7 @@ const reportingState = {
   lastReportError: "",
   activeReportEntryPoint: ""
 };
-const GRIDLY_REPORT_DIAGNOSTICS = true;
+const GRIDLY_REPORT_DIAGNOSTICS = false;
 
 function reportLifecycleDiag(label, payload = {}) {
   if (!GRIDLY_REPORT_DIAGNOSTICS) return;
@@ -342,7 +342,6 @@ function updateReportingState(patch = {}) {
   const mapFrame = document.querySelector(".map-frame");
   if (mapFrame) mapFrame.dataset.reportingState = isReportingLive ? "active" : "idle";
   if (window.matchMedia("(max-width: 760px)").matches) {
-    if (isReportingLive) console.trace("[Gridly][ReportDiag] updateReportingState requesting setMobileUiMode('report')");
     setMobileUiMode(isReportingLive ? "report" : mobileUiMode === "report" ? "live" : mobileUiMode, { silent: true });
   }
   syncHazardPickerUiState();
@@ -411,7 +410,6 @@ function setMobileUiMode(mode = "live", options = {}) {
     placementModeActive: reportingState.placementModeActive,
     submissionInProgress: reportingState.submissionInProgress
   });
-  if (nextMode === "report") console.trace("[Gridly][ReportDiag] setMobileUiMode('report') stack");
   if (isMobileUiViewport()) {
     document.body?.setAttribute("data-mobile-mode", nextMode);
     if (els.reportSection) {
@@ -714,12 +712,8 @@ function readSurfaceComputedState(selector) {
   };
 }
 
-function traceMobileModeMutation(label, data = {}) {
-  logDailyPanelAction(label, {
-    ...data,
-    bodyMobileMode: document.body?.dataset?.mobileMode || null,
-    mobileUiMode
-  });
+function traceMobileModeMutation(_label, _data = {}) {
+  return;
 }
 
 function returnMobileToLiveMode(reason = "") {
