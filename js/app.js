@@ -11418,30 +11418,79 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     console.info(`${DAILY_PANEL_LOG_PREFIX} ${stage}`, details);
   }
 
+  function summarizeRouteWatchSurface() {
+    const snapshot = typeof window.getRouteWatchIntelligenceSnapshot === "function" ? window.getRouteWatchIntelligenceSnapshot() : {};
+    const routeHazards = Array.isArray(snapshot.routeRelevantHazards) ? snapshot.routeRelevantHazards : [];
+    const nearbyReports = Array.isArray(snapshot.routeNearbyReports) ? snapshot.routeNearbyReports : [];
+    const activeNearby = nearbyReports.filter((item) => item?.lifecycleState === "active");
+    const topHazards = routeHazards.slice(0, 3).map((hazard) => hazard?.name || hazard?.crossingName || "Hazard").filter(Boolean);
+    return {
+      status: document.getElementById("routeStatus")?.textContent || "Monitoring route",
+      eta: document.getElementById("routeEta")?.textContent || "ETA pending",
+      summary: document.getElementById("routeSummaryInline")?.textContent || "Live route intelligence is active.",
+      recommendation: snapshot.recommendationMessage || document.getElementById("routeRecommendation")?.textContent || "Maintain route monitoring.",
+      confidence: snapshot.routeConfidence || "Unknown",
+      activeHazards: activeNearby.length,
+      topHazards
+    };
+  }
+
+  function buildCompactFeedItems() {
+    const incidents = getUnifiedIncidents().filter((incident) => incident.status === "active").slice(0, 8);
+    if (!incidents.length) return '<li class="mobile-intel-feed-item"><span class="chip chip-clear">Clear</span><p>No active alerts right now.</p></li>';
+    return incidents.map((incident) => {
+      const label = incident?.name || incident?.crossingName || "Corridor update";
+      const detail = `${incident?.severity_label || "active"} · ${Math.round(Number(incident?.delay_minutes || 0))} min impact`;
+      const tone = incident?.severity === "high" ? "chip-alert" : "chip-watch";
+      return `<li class="mobile-intel-feed-item"><span class="chip ${tone}">${sanitizeText(incident?.severity?.toUpperCase?.() || "LIVE")}</span><p><strong>${sanitizeText(label)}</strong><span>${sanitizeText(detail)}</span></p></li>`;
+    }).join("");
+  }
+
+  function prepQuickReportType(type = "blocked") {
+    document.querySelector('.mobile-bottom-nav .nav-btn[data-section="report"]')?.click();
+    const typeSelect = document.getElementById("manualReportType");
+    if (typeSelect) typeSelect.value = type;
+  }
+
   function executeMobilePanelAction(section) {
     const layer = document.getElementById("mobileNativeSurfaceLayer");
     const title = document.getElementById("mobileNativeSurfaceTitle");
     const body = document.getElementById("mobileNativeSurfaceBody");
     const views = {
       routes: {
-        title: "Route Watch",
-        html: `
+        title: "Commute Command",
+        html: (() => {
+          const intel = summarizeRouteWatchSurface();
+          const hazardList = intel.topHazards.length ? intel.topHazards.map((name) => `<span class="chip chip-watch">${sanitizeText(name)}</span>`).join("") : '<span class="chip chip-clear">No active hazards near route</span>';
+          return `
           <article class="mobile-native-surface-card">
-            <strong id="mobileSurfaceRouteStatus">${document.getElementById("routeStatus")?.textContent || "Monitoring route"}</strong>
-            <p id="mobileSurfaceRouteDetails">${document.getElementById("routeSummaryInline")?.textContent || "Live route intelligence is active."}</p>
-            <div class="mobile-native-surface-actions">
-              <button class="primary-btn" type="button" data-mobile-surface-action="route-watch">Start Route Watch</button>
-              <button class="secondary-btn" type="button" data-mobile-surface-action="route-map">Stay on Map</button>
+            <strong>${sanitizeText(intel.status)}</strong>
+            <p>${sanitizeText(intel.summary)}</p>
+            <div class="mobile-kpi-row">
+              <span class="chip chip-neutral">${sanitizeText(intel.eta)}</span>
+              <span class="chip chip-neutral">Confidence: ${sanitizeText(intel.confidence)}</span>
+              <span class="chip ${intel.activeHazards ? "chip-alert" : "chip-clear"}">${intel.activeHazards} active hazards</span>
             </div>
-          </article>`
+            <p><b>Recommendation:</b> ${sanitizeText(intel.recommendation)}</p>
+            <div class="mobile-chip-wrap">${hazardList}</div>
+            <div class="mobile-native-surface-actions">
+              <button class="primary-btn" type="button" data-mobile-surface-action="route-watch">Update Route Watch</button>
+              <button class="secondary-btn" type="button" data-mobile-surface-action="route-map">Stay on Map</button>
+              <button class="secondary-btn" type="button" data-mobile-surface-action="open-alerts-center">Rail Pulse</button>
+            </div>
+          </article>`;
+        })()
       },
       alerts: {
-        title: "Rail Pulse",
+        title: "Operational Feed",
         html: `
           <article class="mobile-native-surface-card">
-            <strong>Alerts & Hazards</strong>
+            <strong>Active Alerts Summary</strong>
             <p>${document.getElementById("crossingSummary")?.textContent || "No crossing summary available."}</p>
+            <p><b>Road hazards:</b> ${document.getElementById("hazardSummary")?.textContent || "Monitoring active road hazard reports."}</p>
+            <p><b>Trending crossings:</b> ${document.getElementById("corridorSummaryDetail")?.textContent || "Live trendline is stabilizing."}</p>
             <p>${document.getElementById("freshestReportReason")?.textContent || "Live signals update automatically."}</p>
+            <div class="mobile-intel-feed"><ul>${buildCompactFeedItems()}</ul></div>
           </article>
           <article class="mobile-native-surface-card">
             <div class="mobile-native-surface-actions">
@@ -11450,14 +11499,20 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           </article>`
       },
       report: {
-        title: "Report",
+        title: "Fast Tactical Reporting",
         html: `
           <article class="mobile-native-surface-card">
             <strong>Quick Report Launcher</strong>
-            <p>Use fast actions to report without leaving the map.</p>
-            <div class="mobile-native-surface-actions">
+            <p>Choose a status, then tap a map marker to submit through the existing shared report flow.</p>
+            <div class="mobile-native-surface-actions mobile-native-surface-actions-grid">
+              <button class="secondary-btn" type="button" data-mobile-surface-action="prep-report-blocked">Blocked</button>
+              <button class="secondary-btn" type="button" data-mobile-surface-action="prep-report-heavy">Delayed</button>
+              <button class="secondary-btn" type="button" data-mobile-surface-action="quick-cleared">Cleared</button>
+              <button class="secondary-btn" type="button" data-mobile-surface-action="prep-hazard-other_hazard">Road Hazard</button>
+              <button class="secondary-btn" type="button" data-mobile-surface-action="prep-hazard-crash">Crash</button>
+              <button class="secondary-btn" type="button" data-mobile-surface-action="prep-hazard-flooding">Flooding</button>
+              <button class="secondary-btn" type="button" data-mobile-surface-action="prep-hazard-debris">Debris</button>
               <button class="primary-btn" type="button" data-mobile-surface-action="quick-report">Report Hazard Fast</button>
-              <button class="secondary-btn" type="button" data-mobile-surface-action="quick-cleared">Mark Cleared</button>
             </div>
           </article>`
       }
@@ -11526,6 +11581,12 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       if (action === "route-watch") document.getElementById("mobileQuickRouteBtn")?.click();
       if (action === "quick-report") document.getElementById("mobileQuickReportBtn")?.click();
       if (action === "quick-cleared") document.getElementById("mobileQuickClearedBtn")?.click();
+      if (action === "prep-report-blocked") prepQuickReportType("blocked");
+      if (action === "prep-report-heavy") prepQuickReportType("heavy");
+      if (action === "prep-hazard-other_hazard") { document.getElementById("mobileHazardReportBtn")?.click(); prepQuickReportType("other_hazard"); }
+      if (action === "prep-hazard-crash") { document.getElementById("mobileHazardReportBtn")?.click(); prepQuickReportType("crash"); }
+      if (action === "prep-hazard-flooding") { document.getElementById("mobileHazardReportBtn")?.click(); prepQuickReportType("flooding"); }
+      if (action === "prep-hazard-debris") { document.getElementById("mobileHazardReportBtn")?.click(); prepQuickReportType("debris"); }
       if (action === "open-alerts-center") document.querySelector('.mobile-bottom-nav .nav-btn[data-section="alerts"]')?.click();
       if (action === "route-map") document.querySelector('.mobile-bottom-nav .nav-btn[data-section="map"]')?.click();
       logDailyPanelAction("source action", { action, visibilityState: !layer.hidden });
