@@ -10349,3 +10349,136 @@ body[data-layout-mode="desktop"] .mobile-native-surface-layer { display:none !im
     -webkit-backdrop-filter: blur(8px) saturate(112%);
   }
 }
+
+/* V52.9 — mobile proportional refinement pass */
+@media (max-width: 760px) {
+  body[data-layout-mode="mobile"] {
+    --mobile-command-zone-top: calc(var(--mobile-brand-top, env(safe-area-inset-top, 0px) + 6px) + var(--mobile-brand-height, 34px) + 5px);
+  }
+
+  /* 1) Top command strip compression */
+  body[data-layout-mode="mobile"] .mobile-live-command {
+    padding: 5px 7px;
+    gap: 5px;
+    border-radius: 10px;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-command strong {
+    font-size: 0.79rem;
+    line-height: 1.04;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-command p {
+    font-size: 0.58rem;
+    line-height: 1.13;
+    margin-top: 0;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-command .compact-btn {
+    min-height: 27px;
+    padding: 5px 7px;
+    font-size: 0.63rem;
+    line-height: 1.1;
+  }
+
+  /* 4) Tighter filter shell/pills */
+  body[data-layout-mode="mobile"] .map-tools-overlay {
+    top: calc(var(--mobile-command-zone-top) + 56px);
+    padding: 2px 3px;
+    border-radius: 8px;
+    background: rgba(7, 13, 22, 0.4) !important;
+    border-color: rgba(160, 200, 236, 0.12) !important;
+    box-shadow: 0 4px 9px rgba(2, 8, 16, 0.15) !important;
+  }
+
+  body[data-layout-mode="mobile"] .map-tools-overlay .geo-filter-shell {
+    padding: 1px !important;
+    gap: 1px !important;
+    background: rgba(8, 16, 26, 0.22) !important;
+    border-color: rgba(178, 210, 236, 0.1) !important;
+  }
+
+  body[data-layout-mode="mobile"] .map-tools-overlay .geo-filter-pill,
+  body[data-layout-mode="mobile"] .map-tools-overlay .legend-pill {
+    min-height: 20px;
+    padding: 2px 6px !important;
+    font-size: 0.58rem !important;
+  }
+
+  body[data-layout-mode="mobile"] .map-tools-overlay .geo-filter-pill {
+    background: rgba(18, 30, 45, 0.42) !important;
+    border-color: rgba(188, 214, 238, 0.22) !important;
+    color: rgba(229, 238, 249, 0.88) !important;
+  }
+
+  body[data-layout-mode="mobile"] .map-tools-overlay .geo-filter-pill.selected {
+    background: rgba(88, 180, 255, 0.34) !important;
+    border-color: rgba(155, 214, 255, 0.72) !important;
+    color: #e9f7ff !important;
+  }
+
+  /* 2) Daily panel dock compression */
+  body[data-layout-mode="mobile"] .mobile-daily-panel {
+    bottom: calc(4px + env(safe-area-inset-bottom));
+    border-radius: 17px;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-daily-panel-handle {
+    padding: 6px 12px 8px;
+    min-height: 56px;
+    gap: 5px;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-daily-panel-grip {
+    width: 46px;
+    height: 4px;
+    margin: 0 auto 1px;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-daily-panel-handle-row {
+    gap: 8px;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-daily-panel-handle-row strong {
+    font-size: 0.92rem;
+    line-height: 1.08;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-daily-panel-handle-row span {
+    font-size: 0.67rem;
+    letter-spacing: 0.035em;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-daily-panel-body {
+    padding: 0 10px 10px;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-daily-panel-actions {
+    gap: 6px;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-daily-panel-actions .secondary-btn {
+    min-height: 42px;
+    font-size: 0.77rem;
+    padding: 9px 7px;
+  }
+
+  /* 3) Lighter/shorter fog transition above dock */
+  body[data-layout-mode="mobile"] .mobile-daily-panel::before {
+    content: "";
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    bottom: calc(100% + 3px);
+    height: 14px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(40, 105, 172, 0.08), rgba(8, 18, 30, 0));
+    pointer-events: none;
+    filter: blur(4px);
+    opacity: 0.72;
+  }
+
+  body[data-layout-mode="mobile"] #map {
+    min-height: calc(100dvh - 144px - env(safe-area-inset-bottom));
+  }
+}
