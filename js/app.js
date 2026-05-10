@@ -699,14 +699,44 @@ function isReportSurfaceVisiblyOpen() {
   );
 }
 
+
+function readSurfaceComputedState(selector) {
+  const el = document.querySelector(selector);
+  if (!el) return { selector, exists: false };
+  const style = window.getComputedStyle(el);
+  return {
+    selector,
+    exists: true,
+    display: style.display,
+    visibility: style.visibility,
+    opacity: style.opacity,
+    pointerEvents: style.pointerEvents
+  };
+}
+
+function traceMobileModeMutation(label, data = {}) {
+  logDailyPanelAction(label, {
+    ...data,
+    bodyMobileMode: document.body?.dataset?.mobileMode || null,
+    mobileUiMode
+  });
+}
+
 function returnMobileToLiveMode(reason = "") {
   if (!window.matchMedia("(max-width: 760px)").matches) return;
+  traceMobileModeMutation("returnMobileToLiveMode called", { reason });
   if (reportingState.reportModeActive || reportingState.placementModeActive || reportingState.submissionInProgress) return;
+  const routePanelVisible = Boolean(document.getElementById("gridlyMobileRouteQuickPanel")?.classList.contains("visible"));
   if (isReportSurfaceVisiblyOpen()) {
     reportLifecycleDiag("returnMobileToLiveMode blocked: report surface still open", { reason, reportSectionOpen: true });
     return;
   }
+  if (routePanelVisible) {
+    traceMobileModeMutation("returnMobileToLiveMode blocked: route panel still open", { reason, routePanelVisible });
+    return;
+  }
   setMobileUiMode("live", { silent: true });
+  traceMobileModeMutation("returnMobileToLiveMode completed", { reason });
   reportDebugLog("[Gridly][Report] returned to live mode", { reason, mobileUiMode });
 }
 
@@ -4196,6 +4226,8 @@ function openMobileRouteQuickPanel() {
   }
   bindDirectRouteQuickPanelButtonListeners();
   panel.classList.add("visible");
+  if (isMobileLayoutMode()) setMobileUiMode("route", { silent: true });
+  traceMobileModeMutation("route quick panel opened", { intendedSurfaceSelector: "#gridlyMobileRouteQuickPanel", surfaceState: readSurfaceComputedState("#gridlyMobileRouteQuickPanel") });
 }
 
 async function debugEnterRoutePipeline(args = {}) {
@@ -5880,7 +5912,9 @@ function bindMobileReportEntryDelegation() {
 
 function handleReportNearMe(entryPoint = "report_near_me") {
   reportLifecycleDiag("handleReportNearMe", { entryPoint });
+  traceMobileModeMutation("handleReportNearMe before setMobileUiMode", { entryPoint });
   setMobileUiMode("report", { silent: true });
+  traceMobileModeMutation("handleReportNearMe after setMobileUiMode", { entryPoint, intendedSurfaceSelector: "#reportSection", surfaceState: readSurfaceComputedState("#reportSection") });
   updateReportingState({
     reportModeActive: true,
     placementModeActive: false,
@@ -11853,11 +11887,17 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       return;
     }
     if (section === "report") {
-      reportLifecycleDiag("executeMobilePanelAction report redirect", { section, before: collectMobileSurfaceDiagnostics() });
+      traceMobileModeMutation("daily panel report clicked", { section, intendedSurfaceSelector: "#reportSection", before: collectMobileSurfaceDiagnostics(), surfaceState: readSurfaceComputedState("#reportSection") });
       layer.hidden = true;
       layer.setAttribute("aria-hidden", "true");
+      const beforeSetMode = document.body?.dataset?.mobileMode || null;
       handleReportNearMe("daily_panel_report");
-      reportLifecycleDiag("executeMobilePanelAction report redirect complete", { after: collectMobileSurfaceDiagnostics() });
+      traceMobileModeMutation("daily panel report completed", {
+        section,
+        beforeSetMode,
+        afterAction: collectMobileSurfaceDiagnostics(),
+        surfaceState: readSurfaceComputedState("#reportSection")
+      });
       return;
     }
     if (!layer || !title || !body || !views[section]) return;
@@ -11916,7 +11956,13 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       logDailyPanelAction("closeSurface started", { sourceAction, wasVisible, nextMode, visibilityState: !layer.hidden });
       layer.hidden = true;
       layer.setAttribute("aria-hidden", "true");
-      if (isMobileLayoutMode()) setMobileUiMode(nextMode, { silent: true });
+      if (isMobileLayoutMode()) {
+        const reportVisible = isReportSurfaceVisiblyOpen();
+        const routeVisible = Boolean(document.getElementById("gridlyMobileRouteQuickPanel")?.classList.contains("visible"));
+        const safeMode = reportVisible ? "report" : routeVisible ? "route" : nextMode;
+        setMobileUiMode(safeMode, { silent: true });
+        traceMobileModeMutation("closeSurface set mode", { sourceAction, requestedMode: nextMode, safeMode, reportVisible, routeVisible });
+      }
       restoreMobileSurfaceLauncherFocus();
       logDailyPanelAction("closeSurface completed", {
         sourceAction,
@@ -11939,8 +11985,16 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       if (!trigger) return;
       const action = trigger.getAttribute("data-mobile-surface-action");
       if (action === "route-watch") {
-        document.getElementById("mobileQuickRouteBtn")?.click();
-        logDailyPanelAction("source action route-watch requested", { action, afterRouteClick: collectMobileSurfaceDiagnostics() });
+        traceMobileModeMutation("daily panel route-watch clicked", {
+          action,
+          intendedSurfaceSelector: "#gridlyMobileRouteQuickPanel",
+          surfaceState: readSurfaceComputedState("#gridlyMobileRouteQuickPanel")
+        });
+        openMobileRouteQuickPanel();
+        traceMobileModeMutation("daily panel route-watch open completed", {
+          action,
+          surfaceState: readSurfaceComputedState("#gridlyMobileRouteQuickPanel")
+        });
       }
       if (action === "quick-report") document.getElementById("mobileQuickReportBtn")?.click();
       if (action === "quick-cleared") document.getElementById("mobileQuickClearedBtn")?.click();
