@@ -10816,37 +10816,39 @@ body[data-layout-mode="desktop"] .mobile-native-surface-layer { display:none !im
 
 /* V71 — bottom clarity + local context restoration (mobile-only, map-first refinement) */
 @media (max-width: 760px) {
+  body[data-layout-mode="mobile"] {
+    --mobile-bottom-safe: env(safe-area-inset-bottom, 0px);
+    --mobile-daily-panel-gap: clamp(4px, 1.8vh, 10px);
+    --mobile-daily-panel-offset: calc(var(--mobile-daily-panel-gap) + var(--mobile-bottom-safe));
+    --mobile-context-gap: clamp(72px, 11vh, 96px);
+  }
+
   body[data-layout-mode="mobile"] .mobile-daily-panel {
+    bottom: var(--mobile-daily-panel-offset);
     background: linear-gradient(180deg, rgba(8, 13, 22, 0.76), rgba(6, 11, 19, 0.82));
     backdrop-filter: blur(8px);
   }
 
   body[data-layout-mode="mobile"] .mobile-daily-panel::before {
-    left: 20px;
-    right: 20px;
-    bottom: calc(100% + 1px);
-    height: 1px;
-    opacity: 0.08;
-    filter: blur(0.4px);
-    background: linear-gradient(180deg, rgba(66, 138, 206, 0.012), rgba(8, 18, 30, 0));
+    content: none;
   }
 
   body[data-layout-mode="mobile"] .mobile-local-context-strip {
     position: fixed;
-    left: 14px;
-    right: 14px;
-    bottom: calc(126px + env(safe-area-inset-bottom, 0px));
+    left: clamp(10px, 3.4vw, 14px);
+    right: clamp(10px, 3.4vw, 14px);
+    bottom: calc(var(--mobile-daily-panel-offset) + var(--mobile-context-gap));
     z-index: 780;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    padding: 8px 11px;
-    border-radius: 11px;
-    border: 1px solid rgba(152, 187, 221, 0.2);
-    background: linear-gradient(135deg, rgba(10, 21, 34, 0.56), rgba(7, 16, 27, 0.52));
-    box-shadow: 0 10px 20px rgba(4, 10, 20, 0.2);
-    backdrop-filter: blur(6px);
+    gap: clamp(8px, 2vw, 12px);
+    padding: clamp(5px, 1.4vh, 8px) clamp(8px, 2.2vw, 11px);
+    border-radius: 9px;
+    border: 0;
+    background: linear-gradient(180deg, rgba(9, 19, 31, 0.22), rgba(7, 15, 25, 0.16));
+    box-shadow: none;
+    backdrop-filter: none;
     pointer-events: none;
   }
 
@@ -10866,7 +10868,7 @@ body[data-layout-mode="desktop"] .mobile-native-surface-layer { display:none !im
   }
 
   body[data-layout-mode="mobile"] .map-frame {
-    box-shadow: 0 16px 26px rgba(2, 8, 20, 0.28), inset 0 -8px 16px rgba(2, 14, 28, 0.06);
+    box-shadow: 0 16px 26px rgba(2, 8, 20, 0.28);
   }
 }
 
