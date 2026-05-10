@@ -10142,3 +10142,120 @@ body[data-layout-mode="desktop"] .mobile-native-surface-layer { display:none !im
     padding: 8px 10px;
   }
 }
+
+/* V52.7 — mobile command compression pass */
+@media (max-width: 760px) {
+  body[data-layout-mode="mobile"] .mobile-live-brand {
+    top: max(4px, env(safe-area-inset-top, 0px));
+    left: max(8px, env(safe-area-inset-left, 0px));
+    right: max(8px, env(safe-area-inset-right, 0px));
+    padding: 7px 10px;
+    gap: 9px;
+    border-radius: 14px;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-brand-logo {
+    width: 112px;
+    height: 24px;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-brand-copy strong {
+    font-size: 0.72rem;
+    letter-spacing: 0.13em;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-brand-status {
+    min-width: 102px;
+    gap: 1px;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-brand-status strong {
+    font-size: 0.58rem;
+    letter-spacing: 0.14em;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-brand-status span {
+    font-size: 0.68rem;
+  }
+
+  body[data-layout-mode="mobile"] {
+    --mobile-command-zone-top: calc(var(--mobile-brand-top, env(safe-area-inset-top, 0px) + 6px) + var(--mobile-brand-height, 34px) + 6px);
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-command {
+    top: var(--mobile-command-zone-top);
+    left: max(8px, env(safe-area-inset-left, 0px));
+    right: max(8px, env(safe-area-inset-right, 0px));
+    padding: 6px 8px;
+    gap: 6px;
+    border-radius: 11px;
+    box-shadow: 0 8px 18px rgba(2, 8, 18, 0.3);
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-command .eyebrow {
+    font-size: 0.56rem;
+    letter-spacing: 0.14em;
+    margin-bottom: 2px;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-status-pill {
+    min-height: 18px;
+    padding: 2px 6px;
+    font-size: 0.56rem;
+    letter-spacing: 0.1em;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-command strong {
+    font-size: 0.82rem;
+    line-height: 1.08;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-command p {
+    font-size: 0.6rem;
+    line-height: 1.18;
+    margin-top: 1px;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-command .compact-btn {
+    min-height: 30px;
+    padding: 6px 8px;
+    font-size: 0.66rem;
+  }
+
+  body[data-layout-mode="mobile"] .map-tools-overlay {
+    top: calc(var(--mobile-command-zone-top) + 64px);
+    left: max(8px, env(safe-area-inset-left, 0px));
+    right: max(8px, env(safe-area-inset-right, 0px));
+    padding: 4px 5px;
+    border-radius: 10px;
+    background: rgba(8, 15, 24, 0.62) !important;
+  }
+
+  body[data-layout-mode="mobile"] .map-tools-overlay .geo-filter-shell {
+    padding: 2px !important;
+    gap: 3px !important;
+    border-radius: 999px;
+    border-color: rgba(185, 214, 238, 0.18) !important;
+  }
+
+  body[data-layout-mode="mobile"] .map-tools-overlay .geo-filter-pill,
+  body[data-layout-mode="mobile"] .map-tools-overlay .legend-pill {
+    min-height: 24px;
+    padding: 4px 8px !important;
+    font-size: 0.63rem !important;
+  }
+
+  body[data-layout-mode="mobile"] .map-tools-overlay .map-view-label,
+  body[data-layout-mode="mobile"] .map-tools-overlay .map-tools-section-label,
+  body[data-layout-mode="mobile"] .map-tools-overlay .map-tools-status {
+    font-size: 0.6rem;
+  }
+
+  body[data-layout-mode="mobile"] .map-card {
+    min-height: calc(100dvh - 108px - env(safe-area-inset-bottom));
+  }
+
+  body[data-layout-mode="mobile"] #map {
+    min-height: calc(100dvh - 152px - env(safe-area-inset-bottom));
+  }
+}
