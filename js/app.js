@@ -11532,6 +11532,35 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     }).join("");
   }
 
+  function buildPriorityIncidentItems(limit = 3) {
+    const incidents = getUnifiedIncidents().filter((incident) => incident.status === "active").slice(0, limit);
+    if (!incidents.length) {
+      return '<li class="mobile-intel-feed-item"><span class="chip chip-clear">Clear</span><p><strong>No priority incidents</strong><span>No high-impact disruptions right now.</span></p></li>';
+    }
+    return incidents.map((incident) => {
+      const isRailIncident = String(incident?.id || "").startsWith("rail-") || String(incident?.type || "").startsWith("rail_");
+      const railDisplay = isRailIncident ? buildRailIncidentDisplay({ crossingName: incident?.area, crossingId: incident?.crossing_id, latestReport: incident }) : null;
+      const roadDisplay = isRailIncident ? null : buildRoadHazardDisplay(incident);
+      const title = isRailIncident ? railDisplay?.title : roadDisplay?.title;
+      const subtitle = isRailIncident ? railDisplay?.subtitlePrefix : String(roadDisplay?.subtitle || "").split(" · ")[0] || "Location pending";
+      const tone = incident?.severity === "high" ? "chip-alert" : "chip-watch";
+      return `<li class="mobile-intel-feed-item" tabindex="0" role="button" ${buildAlertFocusDataset(incident)}><span class="chip ${tone}">${sanitizeText(incident?.severity?.toUpperCase?.() || "LIVE")}</span><p><strong>${sanitizeText(title || "Operational incident")}</strong><span>${sanitizeText(subtitle)}</span></p></li>`;
+    }).join("");
+  }
+
+  function getOperationalInsightLine() {
+    const incidents = getUnifiedIncidents().filter((incident) => incident.status === "active");
+    const high = incidents.filter((incident) => incident?.severity === "high");
+    const roadHazards = getRoadHazardSurfaceIncidents(12).filter((incident) => incident?.status === "active" || !incident?.status);
+    const floodingOrCrash = roadHazards.filter((incident) => ["crash", "flooding"].includes(String(incident?.type || "").toLowerCase()));
+    const blockages = incidents.filter((incident) => String(incident?.report_type || incident?.type || "").toLowerCase().includes("blocked"));
+    if (!incidents.length) return "No severe disruptions nearby. Network conditions are currently stable.";
+    if (high.length >= 2) return `${high.length} high-priority incidents need reroute awareness.`;
+    if (blockages.length >= 2) return "Repeated blockage activity detected across active corridors.";
+    if (floodingOrCrash.length) return `${floodingOrCrash.length} road safety hazard${floodingOrCrash.length > 1 ? "s" : ""} reported nearby.`;
+    return `${incidents.length} active incident${incidents.length > 1 ? "s" : ""} in your operating area.`;
+  }
+
   function prepQuickReportType(type = "blocked") {
     document.querySelector('.mobile-bottom-nav .nav-btn[data-section="report"]')?.click();
     const typeSelect = document.getElementById("manualReportType");
@@ -11620,19 +11649,19 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         }).join("")
       : '<div class="alert-item"><strong>Trending crossings are calm</strong><p>Live trendline is stabilizing.</p></div>';
 
-    title.textContent = "Operational Feed Center";
+    title.textContent = "Operational Feed Details";
     body.dataset.mobileSurfaceView = "alerts-center";
     body.innerHTML = `
       <article class="mobile-native-surface-card">
-        <strong>Operational Alerts</strong>
+        <strong>All Active Incidents</strong>
         <div class="mobile-intel-feed">${railRows}</div>
       </article>
       <article class="mobile-native-surface-card">
-        <strong>Road Hazards</strong>
+        <strong>Road Hazard Detail</strong>
         <div class="mobile-intel-feed">${hazardRows}</div>
       </article>
       <article class="mobile-native-surface-card">
-        <strong>Trending Crossings</strong>
+        <strong>Crossing Trendline</strong>
         <div class="mobile-intel-feed">${trendingRows}</div>
       </article>`;
 
@@ -11687,16 +11716,20 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         title: "Operational Feed",
         html: `
           <article class="mobile-native-surface-card">
-            <strong>Active Alerts Summary</strong>
-            <p>${sanitizeText(getOperationalFeedSummaryLine())}</p>
-            <p><b>Road hazards:</b> ${document.getElementById("hazardSummary")?.textContent || "Monitoring active road hazard reports."}</p>
-            <p><b>Trending crossings:</b> ${document.getElementById("corridorSummaryDetail")?.textContent || "Live trendline is stabilizing."}</p>
-            <p>${document.getElementById("freshestReportReason")?.textContent || "Live signals update automatically."}</p>
-            <div class="mobile-intel-feed"><ul>${buildCompactFeedItems()}</ul></div>
+            <strong>Active Priority Incidents</strong>
+            <div class="mobile-intel-feed"><ul>${buildPriorityIncidentItems(3)}</ul></div>
           </article>
           <article class="mobile-native-surface-card">
-            <div class="mobile-native-surface-actions">
-              <button class="secondary-btn" type="button" data-mobile-surface-action="open-alerts-center">Open Alerts Center</button>
+            <strong>Operational Insight</strong>
+            <p>${sanitizeText(getOperationalInsightLine())}</p>
+            <p>${sanitizeText(document.getElementById("freshestReportReason")?.textContent || "Live signals update automatically.")}</p>
+          </article>
+          <article class="mobile-native-surface-card">
+            <strong>Quick Actions</strong>
+            <div class="mobile-native-surface-actions mobile-native-surface-actions-grid">
+              <button class="secondary-btn" type="button" data-mobile-surface-action="open-alerts-center">View All Alerts</button>
+              <button class="secondary-btn" type="button" data-mobile-surface-action="prep-hazard-other_hazard">Report Hazard</button>
+              <button class="secondary-btn" type="button" data-mobile-surface-action="route-watch">Open Route Watch</button>
             </div>
           </article>`
       },
