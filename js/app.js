@@ -311,6 +311,18 @@ const MOBILE_REPORT_ENTRY_SELECTORS = [
   ".report-drawer-summary"
 ];
 let mobileReportEntryBindingsAttached = false;
+const GRIDLY_TACTICAL_DOCK_SELECTORS = [
+  "#mobileDockReportBtn",
+  ".mobile-dock-btn.route",
+  ".mobile-dock-btn.alerts",
+  "#mobileDockAreaBtn",
+  "#mobileDockLayersBtn"
+];
+const gridlyTacticalInteractionTraceState = {
+  enabled: false,
+  handlersBound: false,
+  lastClicks: []
+};
 
 const reportingState = {
   selectedHazardType: null,
@@ -735,6 +747,130 @@ window.gridlyMobileQAAuditDebug = function gridlyMobileQAAuditDebug() {
       return rect.width * rect.height > (window.innerWidth * window.innerHeight * 0.2);
     }).map((el) => ({ className: el.className, id: el.id || null }))
   };
+};
+
+function getRouteSelectionAuditState() {
+  const routeActivation = (typeof getRouteWatchActivationState === "function" ? getRouteWatchActivationState() : null) || {};
+  const routeWatchActive = Boolean(window.__gridlyRouteWatchActive === true || routeWatchActivated === true || routeActivation.routeWatchActive);
+  const routeSelected = Boolean(routeActivation.selectedRouteId || routeActivation.selectedCorridorId || window.__gridlySelectedRouteId || routeWatchActive);
+  return {
+    routeSelected,
+    routeWatchActive,
+    selectedRouteId: routeActivation.selectedRouteId || window.__gridlySelectedRouteId || null,
+    selectedCorridorId: routeActivation.selectedCorridorId || window.__gridlySelectedCorridorId || null
+  };
+}
+
+window.gridlyTacticalInteractionAudit = function gridlyTacticalInteractionAudit() {
+  const routeState = getRouteSelectionAuditState();
+  const allEls = Array.from(document.querySelectorAll("body *"));
+  const buttons = GRIDLY_TACTICAL_DOCK_SELECTORS.map((selector) => {
+    const el = document.querySelector(selector);
+    if (!el) return { selector, exists: false };
+    const style = window.getComputedStyle(el);
+    const rect = el.getBoundingClientRect();
+    const centerX = Math.floor(rect.left + (rect.width / 2));
+    const centerY = Math.floor(rect.top + (rect.height / 2));
+    const centerTarget = rect.width > 0 && rect.height > 0 ? document.elementFromPoint(centerX, centerY) : null;
+    const clickPath = centerTarget?.closest?.(".mobile-dock-btn") ? "dock-btn" : centerTarget?.tagName || null;
+    const overlaps = allEls.filter((node) => {
+      if (node === el || node.contains(el) || el.contains(node)) return false;
+      const nodeStyle = getComputedStyle(node);
+      if (nodeStyle.display === "none" || nodeStyle.visibility === "hidden" || nodeStyle.pointerEvents === "none") return false;
+      if (!["fixed", "sticky", "absolute"].includes(nodeStyle.position)) return false;
+      const r = node.getBoundingClientRect();
+      const overlapsX = Math.max(0, Math.min(rect.right, r.right) - Math.max(rect.left, r.left));
+      const overlapsY = Math.max(0, Math.min(rect.bottom, r.bottom) - Math.max(rect.top, r.top));
+      return overlapsX * overlapsY > 24;
+    }).slice(0, 10).map((node) => ({
+      tag: node.tagName,
+      id: node.id || null,
+      className: node.className || null,
+      zIndex: getComputedStyle(node).zIndex,
+      pointerEvents: getComputedStyle(node).pointerEvents
+    }));
+    return {
+      selector,
+      exists: true,
+      id: el.id || null,
+      disabled: Boolean(el.disabled || el.getAttribute("aria-disabled") === "true"),
+      visible: rect.width > 0 && rect.height > 0 && style.display !== "none" && style.visibility !== "hidden" && style.opacity !== "0",
+      display: style.display,
+      pointerEvents: style.pointerEvents,
+      zIndex: style.zIndex,
+      position: style.position,
+      rect: rect.toJSON ? rect.toJSON() : { top: rect.top, left: rect.left, width: rect.width, height: rect.height },
+      centerTarget: centerTarget ? `${centerTarget.tagName}${centerTarget.id ? `#${centerTarget.id}` : ""}` : null,
+      clickTargetChain: clickPath,
+      listenerFlags: {
+        onclickProperty: typeof el.onclick === "function",
+        boundRouteQuick: el.dataset.gridlyDirectRouteListenerAttached === "1"
+      },
+      overlapRisks: overlaps,
+      coveredByAnotherLayer: Boolean(centerTarget && centerTarget !== el && !el.contains(centerTarget))
+    };
+  });
+  const layers = [".mobile-floating-action-dock", "#gridlyHazardPanel", "#gridlyMobileRouteQuickPanel", "#mobileNativeSurfaceLayer", "#map"].map((selector) => {
+    const el = document.querySelector(selector);
+    if (!el) return { selector, exists: false };
+    const style = getComputedStyle(el);
+    const rect = el.getBoundingClientRect();
+    return { selector, exists: true, display: style.display, visibility: style.visibility, pointerEvents: style.pointerEvents, zIndex: style.zIndex, rect: rect.toJSON ? rect.toJSON() : null };
+  });
+  const alerts = [];
+  buttons.forEach((btn) => {
+    if (!btn.exists) alerts.push(`${btn.selector} missing`);
+    else {
+      if (btn.pointerEvents === "none") alerts.push(`${btn.selector} pointer-events none`);
+      if (!btn.visible) alerts.push(`${btn.selector} not visible`);
+      if (btn.coveredByAnotherLayer) alerts.push(`${btn.selector} center covered by ${btn.centerTarget}`);
+    }
+  });
+  const report = {
+    Report: "gridly tactical interaction audit",
+    Route: routeState,
+    Alerts: alerts,
+    Area: { viewport: { width: window.innerWidth, height: window.innerHeight }, bodyLayoutMode: document.body?.dataset?.layoutMode || null, tacticalMediaMatches: window.matchMedia("(orientation: landscape) and (max-height: 520px)").matches },
+    Layers: layers,
+    Buttons: buttons
+  };
+  console.groupCollapsed("[Gridly] Tactical interaction audit");
+  console.table(buttons.map(({ selector, exists, visible, pointerEvents, zIndex, coveredByAnotherLayer, centerTarget }) => ({ selector, exists, visible, pointerEvents, zIndex, coveredByAnotherLayer, centerTarget })));
+  console.table(layers);
+  if (alerts.length) console.warn("[Gridly] Tactical interaction audit alerts", alerts);
+  console.groupEnd();
+  return report;
+};
+
+window.gridlyEnableTacticalClickTrace = function gridlyEnableTacticalClickTrace(enabled = true) {
+  gridlyTacticalInteractionTraceState.enabled = Boolean(enabled);
+  if (gridlyTacticalInteractionTraceState.handlersBound) return gridlyTacticalInteractionTraceState;
+  const traceHandler = (phase) => (event) => {
+    if (!gridlyTacticalInteractionTraceState.enabled) return;
+    const dockBtn = event.target?.closest?.(".mobile-floating-action-dock .mobile-dock-btn");
+    if (!dockBtn) return;
+    const row = {
+      time: new Date().toISOString(),
+      phase,
+      eventType: event.type,
+      button: dockBtn.id || dockBtn.dataset.mode || dockBtn.className,
+      target: event.target?.tagName || null,
+      currentTarget: event.currentTarget === document ? "document" : event.currentTarget?.tagName || null,
+      propagationStopped: event.cancelBubble === true,
+      defaultPrevented: event.defaultPrevented,
+      routeState: getRouteSelectionAuditState()
+    };
+    gridlyTacticalInteractionTraceState.lastClicks.push(row);
+    gridlyTacticalInteractionTraceState.lastClicks = gridlyTacticalInteractionTraceState.lastClicks.slice(-40);
+    console.info("[Gridly][TacticalClickTrace]", row);
+  };
+  document.addEventListener("click", traceHandler("capture"), true);
+  document.addEventListener("click", traceHandler("bubble"), false);
+  gridlyTacticalInteractionTraceState.handlersBound = true;
+  return gridlyTacticalInteractionTraceState;
+};
+window.gridlyGetTacticalClickTrace = function gridlyGetTacticalClickTrace() {
+  return { ...gridlyTacticalInteractionTraceState, lastClicks: [...gridlyTacticalInteractionTraceState.lastClicks] };
 };
 
 const LOCAL_PLACE_LOOKUP = {
