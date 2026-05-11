@@ -536,9 +536,22 @@
   </main>
 
   <div class="mobile-floating-action-dock" aria-label="Quick commute actions">
-    <button class="mobile-dock-btn report" type="button" id="mobileDockReportBtn" data-mode="report">Report</button>
-    <button class="mobile-dock-btn route" type="button" data-section-jump="routes" data-mode="route">Route</button>
-    <button class="mobile-dock-btn alerts" type="button" data-section-jump="alerts" data-mode="alert">Alerts</button>
+    <button class="mobile-dock-btn report" type="button" id="mobileDockReportBtn" data-mode="report" aria-label="Report">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 3 20h18L12 3Z"/><path d="M12 9v5"/><circle cx="12" cy="17" r="1"/></svg>
+      <span>Report</span>
+    </button>
+    <button class="mobile-dock-btn route" type="button" data-section-jump="routes" data-mode="route" aria-label="Route Watch">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 18a3 3 0 1 0 0-6c1.6 0 3-1.4 3-3a3 3 0 1 1 6 0c0 1.6 1.4 3 3 3a3 3 0 1 1 0 6"/><circle cx="5" cy="18" r="1"/><circle cx="19" cy="18" r="1"/></svg>
+      <span>Route</span>
+    </button>
+    <button class="mobile-dock-btn alerts" type="button" data-section-jump="alerts" data-mode="alert" aria-label="Operational Feed">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a7 7 0 0 1 7 7v3.6l1.3 1.4H3.7L5 13.6V10a7 7 0 0 1 7-7Z"/><path d="M10 18a2 2 0 0 0 4 0"/></svg>
+      <span>Alerts</span>
+    </button>
+    <button class="mobile-dock-btn layers" type="button" id="mobileDockLayersBtn" data-mode="live" aria-label="Layers">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 4 8 4-8 4-8-4 8-4Z"/><path d="m4 12 8 4 8-4"/><path d="m4 16 8 4 8-4"/></svg>
+      <span>Layers</span>
+    </button>
   </div>
 
 
