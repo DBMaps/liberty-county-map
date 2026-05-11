@@ -521,6 +521,136 @@ window.gridlyReportingDebug = function () {
   };
 };
 
+
+window.gridlyLandscapeLayoutAudit = function gridlyLandscapeLayoutAudit() {
+  const selectors = [
+    ".mobile-daily-home",
+    "#mobileDailyPanel",
+    ".mobile-live-commute-card",
+    ".mobile-live-state-card",
+    "#map",
+    ".map-card",
+    ".map-frame",
+    "#mobileLocalContextStrip",
+    ".mobile-local-context-strip",
+    ".mobile-floating-action-dock",
+    ".leaflet-control-zoom",
+    ".leaflet-control-layers"
+  ];
+
+  const dockButtonSelectors = [
+    ".mobile-floating-action-dock .mobile-dock-btn",
+    ".mobile-floating-action-dock button",
+    ".mobile-bottom-nav button",
+    "#mobileDockRouteBtn",
+    "#mobileDockReportBtn",
+    "#mobileDockAlertsBtn",
+    "#mobileDockLayersBtn"
+  ];
+
+  const isVisible = (el) => {
+    if (!el) return false;
+    const style = window.getComputedStyle(el);
+    if (style.display === "none" || style.visibility === "hidden" || Number(style.opacity) === 0) return false;
+    const rect = el.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0;
+  };
+
+  const readElement = (selector) => {
+    const el = document.querySelector(selector);
+    if (!el) return { selector, exists: false };
+    const style = window.getComputedStyle(el);
+    const rect = el.getBoundingClientRect();
+    return {
+      selector,
+      exists: true,
+      display: style.display,
+      visibility: style.visibility,
+      opacity: style.opacity,
+      position: style.position,
+      zIndex: style.zIndex,
+      top: Math.round(rect.top),
+      bottom: Math.round(rect.bottom),
+      left: Math.round(rect.left),
+      right: Math.round(rect.right),
+      width: Math.round(rect.width),
+      height: Math.round(rect.height),
+      overflow: style.overflow,
+      transform: style.transform,
+      pointerEvents: style.pointerEvents
+    };
+  };
+
+  const overlapY = (a, b) => {
+    if (!a || !b) return 0;
+    const y = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+    return y > 0 ? Math.round(y) : 0;
+  };
+
+  const rectOf = (selector) => document.querySelector(selector)?.getBoundingClientRect?.() || null;
+  const findContextStrip = () => document.querySelector("#mobileLocalContextStrip") || document.querySelector(".mobile-local-context-strip");
+  const findDock = () => document.querySelector(".mobile-floating-action-dock");
+  const findMap = () => document.querySelector("#map") || document.querySelector(".map-frame") || document.querySelector(".map-card");
+  const findZoom = () => document.querySelector(".leaflet-control-zoom");
+  const findCommute = () => document.querySelector(".mobile-live-commute-card") || document.querySelector(".mobile-live-state-card");
+
+  const contextStripEl = findContextStrip();
+  const contextStripRect = contextStripEl?.getBoundingClientRect?.() || null;
+  const dockRect = rectOf(".mobile-floating-action-dock");
+  const mapRect = findMap()?.getBoundingClientRect?.() || null;
+  const zoomRect = findZoom()?.getBoundingClientRect?.() || null;
+
+  const stripParentStyle = contextStripEl?.parentElement ? window.getComputedStyle(contextStripEl.parentElement) : null;
+  const stripClippedByParent = Boolean(
+    contextStripEl &&
+    stripParentStyle &&
+    ["hidden", "clip", "scroll", "auto"].includes(stripParentStyle.overflow) &&
+    contextStripRect &&
+    contextStripEl.parentElement.getBoundingClientRect &&
+    (contextStripRect.top < contextStripEl.parentElement.getBoundingClientRect().top ||
+      contextStripRect.bottom > contextStripEl.parentElement.getBoundingClientRect().bottom)
+  );
+
+  const currentFilterLabel = contextStripEl?.querySelector?.(".mobile-local-context-value") || null;
+  const currentFilterLabelClipped = Boolean(
+    currentFilterLabel &&
+    (currentFilterLabel.scrollWidth > currentFilterLabel.clientWidth || currentFilterLabel.scrollHeight > currentFilterLabel.clientHeight)
+  );
+
+  const dockButtons = [];
+  dockButtonSelectors.forEach((selector) => {
+    document.querySelectorAll(selector).forEach((el) => {
+      if (isVisible(el)) {
+        dockButtons.push({ selector, label: (el.textContent || "").trim() || el.id || "(icon)", rect: el.getBoundingClientRect().toJSON() });
+      }
+    });
+  });
+
+  const rows = selectors.map((selector) => readElement(selector));
+  const viewport = {
+    width: window.innerWidth,
+    height: window.innerHeight,
+    orientation: window.innerWidth > window.innerHeight ? "landscape" : "portrait",
+    devicePixelRatio: window.devicePixelRatio || 1,
+    bodyLayoutMode: document.body?.dataset?.layoutMode || null,
+    tacticalMediaMatches: window.matchMedia("(orientation: landscape) and (max-height: 520px)").matches,
+    overlapContextDockY: overlapY(contextStripRect, dockRect),
+    overlapContextMapY: overlapY(contextStripRect, mapRect),
+    overlapDockMapY: overlapY(dockRect, mapRect),
+    overlapZoomContextY: overlapY(zoomRect, contextStripRect),
+    contextStripClippedByParent: stripClippedByParent,
+    currentFilterLabelTextClipped: currentFilterLabelClipped,
+    liveCommuteCardPresent: Boolean(findCommute())
+  };
+
+  console.groupCollapsed("[Gridly] Landscape layout audit");
+  console.table(rows);
+  console.table([viewport]);
+  if (dockButtons.length) console.table(dockButtons);
+  console.groupEnd();
+  return { elements: rows, viewport, dockButtons };
+};
+
 window.gridlyMobileQAAuditDebug = function gridlyMobileQAAuditDebug() {
   const isMobileViewport = window.matchMedia?.("(max-width: 760px)")?.matches === true;
   const quickReportCandidates = Array.from(document.querySelectorAll("#mobileQuickReportBtn, #mobileQuickReportSmallBtn, #mobileReportBtn, .mobile-sticky-report, .report-drawer-summary"));

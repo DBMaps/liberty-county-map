@@ -11133,8 +11133,9 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
      This block intentionally overrides legacy V74/V7x landscape fragments. */
   body[data-layout-mode="mobile"] {
     --mobile-command-zone-top: calc(var(--mobile-brand-top, env(safe-area-inset-top, 0px) + 4px) + var(--mobile-brand-height, 32px) + 5px);
-    --mobile-landscape-dock-space: calc(68px + env(safe-area-inset-bottom, 0px));
-    --mobile-landscape-context-bottom: calc(var(--mobile-landscape-dock-space) + 36px);
+    --mobile-landscape-dock-space: calc(clamp(60px, 16vh, 72px) + env(safe-area-inset-bottom, 0px));
+    --mobile-landscape-context-gap: clamp(10px, 2.2vh, 16px);
+    --mobile-landscape-context-bottom: calc(var(--mobile-landscape-dock-space) + var(--mobile-landscape-context-gap));
   }
 
   body[data-layout-mode="mobile"] .mobile-floating-action-dock {
@@ -11237,7 +11238,8 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     justify-content: space-between;
     gap: 10px;
     padding: 5px 10px;
-    min-height: 28px;
+    min-height: 30px;
+    max-height: clamp(30px, 8vh, 38px);
     border-radius: 8px;
     border: 1px solid rgba(166, 202, 233, 0.2);
     background: rgba(6, 12, 21, 0.56);
@@ -11303,7 +11305,7 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     right: max(8px, env(safe-area-inset-right, 0px));
   }
   body[data-layout-mode="mobile"] #map .leaflet-bottom.leaflet-right {
-    bottom: var(--mobile-landscape-dock-space);
+    bottom: calc(var(--mobile-landscape-context-bottom) + 34px);
   }
   body[data-layout-mode="mobile"] #map .leaflet-control-zoom {
     margin: 0 !important;
