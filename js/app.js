@@ -5479,6 +5479,9 @@ function bindEvents() {
     invokeMobileReportEntry("mobile_dock_report_button", event);
   });
   els.mobileDockAreaBtn?.addEventListener("click", () => {
+    pushReportActionTrace("Area dock button handler starts", { modeBefore: mobileUiMode });
+    clearReportModeForDockAction("dock_area");
+    setMobileUiMode("live", { silent: true });
     const townSelectorBtn = document.getElementById("mobileTownSelectorBtn");
     if (townSelectorBtn) {
       townSelectorBtn.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
@@ -5488,8 +5491,22 @@ function bindEvents() {
     scrollToSection("mapSection");
     setConfirmation("Showing My Town crossings.", "success");
   });
-  document.querySelector('.mobile-dock-btn.route')?.addEventListener("click", openMobileRouteQuickPanel);
+  document.querySelector('.mobile-dock-btn.route')?.addEventListener("click", () => {
+    pushReportActionTrace("Route dock button handler starts", { modeBefore: mobileUiMode });
+    clearReportModeForDockAction("dock_route");
+    setMobileUiMode("route", { silent: true });
+    openMobileRouteQuickPanel();
+  });
+  document.querySelector(".mobile-dock-btn.alerts")?.addEventListener("click", () => {
+    pushReportActionTrace("Alerts dock button handler starts", { modeBefore: mobileUiMode });
+    clearReportModeForDockAction("dock_alerts");
+    setMobileUiMode("alert", { silent: true });
+    scrollToSection("alertsSection");
+  });
   document.getElementById("mobileDockLayersBtn")?.addEventListener("click", () => {
+    pushReportActionTrace("Layers dock button handler starts", { modeBefore: mobileUiMode });
+    clearReportModeForDockAction("dock_layers");
+    setMobileUiMode("live", { silent: true });
     const layerToggle = document.querySelector("#map .leaflet-control-layers-toggle");
     layerToggle?.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
   });
@@ -6210,6 +6227,20 @@ function handleReportNearMe(entryPoint = "report_near_me") {
     hazardPanelFinal: collectReportActionTraceElementState("#gridlyHazardPanel"),
     hazardPanelVisible: Boolean(document.getElementById("gridlyHazardPanel")?.classList?.contains("visible"))
   });
+}
+
+function clearReportModeForDockAction(reason = "dock_action_switch") {
+  const hazardPanel = document.getElementById("gridlyHazardPanel");
+  const reportSection = document.getElementById("reportSection");
+  if (hazardPanel?.classList?.contains("visible")) hazardPanel.classList.remove("visible");
+  if (reportSection?.open) reportSection.open = false;
+  updateReportingState({
+    reportModeActive: false,
+    placementModeActive: false,
+    selectedHazardType: null,
+    activeReportEntryPoint: ""
+  });
+  reportLifecycleDiag("clearReportModeForDockAction", { reason });
 }
 
 window.gridlyReportClickBindingDebug = function () {

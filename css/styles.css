@@ -8451,12 +8451,12 @@ body.modal-open {
   body[data-mobile-mode] .report-drawer {
     left: 8px;
     right: 8px;
-    bottom: 84px;
+    bottom: calc(148px + env(safe-area-inset-bottom, 0px));
     max-height: 72px;
     border-radius: 12px;
     border-color: rgba(142, 209, 255, 0.32);
     background: linear-gradient(165deg, rgba(7, 16, 28, 0.9), rgba(4, 10, 19, 0.9));
-    z-index: 1560;
+    z-index: 1320;
   }
 
   body[data-mobile-mode]:not([data-mobile-mode="report"]) .report-drawer {
