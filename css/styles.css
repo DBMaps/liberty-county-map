@@ -11133,21 +11133,23 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
      This block intentionally overrides legacy V74/V7x landscape fragments. */
   body[data-layout-mode="mobile"] {
     --mobile-command-zone-top: calc(var(--mobile-brand-top, env(safe-area-inset-top, 0px) + 4px) + var(--mobile-brand-height, 32px) + 5px);
-    --mobile-landscape-dock-space: calc(clamp(58px, 15.5vh, 69px) + env(safe-area-inset-bottom, 0px));
+    --mobile-landscape-bottom-band-height: clamp(60px, 16.5vh, 74px);
+    --mobile-landscape-dock-space: calc(var(--mobile-landscape-bottom-band-height) + env(safe-area-inset-bottom, 0px));
     --mobile-landscape-context-gap: clamp(10px, 2.2vh, 16px);
     --mobile-landscape-context-bottom: calc(var(--mobile-landscape-dock-space) + var(--mobile-landscape-context-gap));
   }
 
   body[data-layout-mode="mobile"] .mobile-live-command {
     top: var(--mobile-command-zone-top);
-    padding: 7px 10px 8px;
+    padding: 6px 9px 7px;
     border-radius: 11px;
     border: 1px solid rgba(154, 208, 255, 0.24);
     background: linear-gradient(145deg, rgba(8, 18, 31, 0.66), rgba(5, 11, 21, 0.72));
     box-shadow: 0 5px 12px rgba(3, 9, 20, 0.2), 0 0 16px rgba(45, 135, 255, 0.07);
     backdrop-filter: blur(8px) saturate(108%);
     -webkit-backdrop-filter: blur(8px) saturate(108%);
-    row-gap: 2px;
+    row-gap: 1px;
+    max-width: min(72vw, 460px);
   }
 
   body[data-layout-mode="mobile"] .mobile-live-command .eyebrow {
@@ -11165,23 +11167,28 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
   }
 
   body[data-layout-mode="mobile"] .mobile-live-command strong {
-    font-size: 0.97rem;
+    font-size: 0.9rem;
     line-height: 1.06;
     letter-spacing: 0.007em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   body[data-layout-mode="mobile"] .mobile-live-command p {
     margin-top: 1px;
-    font-size: 0.7rem;
-    line-height: 1.16;
+    font-size: 0.65rem;
+    line-height: 1.12;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  body[data-layout-mode="mobile"] .mobile-live-command .compact-btn {
-    min-height: 30px;
-    padding: 5px 9px;
-    font-size: 0.62rem;
-    letter-spacing: 0.05em;
-    line-height: 1.05;
+  body[data-layout-mode="mobile"] .mobile-live-command .compact-btn,
+  body[data-layout-mode="mobile"] #mobileLiveRouteActionBtn {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
   }
 
   body[data-layout-mode="mobile"] .mobile-floating-action-dock {
@@ -11194,7 +11201,7 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     transform: translateX(-50%) !important;
     width: min(94vw, 424px) !important;
     max-width: 424px !important;
-    min-height: 44px;
+    min-height: 42px;
     gap: 5px;
     padding: 4px;
     border-radius: 14px;
@@ -11206,6 +11213,7 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     overflow: hidden;
     box-sizing: border-box;
     z-index: 1200;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 8px) !important;
   }
 
   body[data-layout-mode="mobile"] .mobile-floating-action-dock::before,
@@ -11270,7 +11278,11 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
   }
 
   body[data-layout-mode="mobile"] #mobileLocalContextStrip,
-  body[data-layout-mode="mobile"] .mobile-local-context-strip {
+  body[data-layout-mode="mobile"] .mobile-local-context-strip,
+  body[data-layout-mode="mobile"] [id*="LocalContextStrip"],
+  body[data-layout-mode="mobile"] [class*="local-context-strip"],
+  body[data-layout-mode="mobile"] [data-mobile-local-context],
+  body[data-layout-mode="mobile"] [data-context-strip] {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
