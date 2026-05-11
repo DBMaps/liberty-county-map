@@ -11272,6 +11272,13 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     transform: translateY(1px) !important;
   }
 
+  body[data-layout-mode="mobile"][data-mobile-mode="report"] #reportSection,
+  body[data-layout-mode="mobile"][data-mobile-mode="report"] #mobileReportModeCard {
+    position: relative;
+    z-index: 1320;
+    margin-bottom: calc(var(--mobile-landscape-dock-space) + 10px);
+  }
+
   body[data-layout-mode="mobile"] #mobileDockLayersBtn,
   body[data-layout-mode="mobile"] .mobile-dock-btn.layers {
     display: inline-flex !important;
