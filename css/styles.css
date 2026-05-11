@@ -11133,9 +11133,55 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
      This block intentionally overrides legacy V74/V7x landscape fragments. */
   body[data-layout-mode="mobile"] {
     --mobile-command-zone-top: calc(var(--mobile-brand-top, env(safe-area-inset-top, 0px) + 4px) + var(--mobile-brand-height, 32px) + 5px);
-    --mobile-landscape-dock-space: calc(clamp(60px, 16vh, 72px) + env(safe-area-inset-bottom, 0px));
+    --mobile-landscape-dock-space: calc(clamp(58px, 15.5vh, 69px) + env(safe-area-inset-bottom, 0px));
     --mobile-landscape-context-gap: clamp(10px, 2.2vh, 16px);
     --mobile-landscape-context-bottom: calc(var(--mobile-landscape-dock-space) + var(--mobile-landscape-context-gap));
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-command {
+    top: var(--mobile-command-zone-top);
+    padding: 7px 10px 8px;
+    border-radius: 11px;
+    border: 1px solid rgba(154, 208, 255, 0.24);
+    background: linear-gradient(145deg, rgba(8, 18, 31, 0.66), rgba(5, 11, 21, 0.72));
+    box-shadow: 0 5px 12px rgba(3, 9, 20, 0.2), 0 0 16px rgba(45, 135, 255, 0.07);
+    backdrop-filter: blur(8px) saturate(108%);
+    -webkit-backdrop-filter: blur(8px) saturate(108%);
+    row-gap: 2px;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-command .eyebrow {
+    margin-bottom: 1px;
+    font-size: 0.53rem;
+    letter-spacing: 0.11em;
+    line-height: 1.04;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-status-pill {
+    padding: 2px 7px;
+    font-size: 0.51rem;
+    line-height: 1.05;
+    border-width: 1px;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-command strong {
+    font-size: 0.97rem;
+    line-height: 1.06;
+    letter-spacing: 0.007em;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-command p {
+    margin-top: 1px;
+    font-size: 0.7rem;
+    line-height: 1.16;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-command .compact-btn {
+    min-height: 30px;
+    padding: 5px 9px;
+    font-size: 0.62rem;
+    letter-spacing: 0.05em;
+    line-height: 1.05;
   }
 
   body[data-layout-mode="mobile"] .mobile-floating-action-dock {
@@ -11146,15 +11192,15 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     left: 50% !important;
     right: auto !important;
     transform: translateX(-50%) !important;
-    width: min(94vw, 430px) !important;
-    max-width: 430px !important;
-    min-height: 46px;
-    gap: 6px;
-    padding: 5px;
+    width: min(94vw, 424px) !important;
+    max-width: 424px !important;
+    min-height: 44px;
+    gap: 5px;
+    padding: 4px;
     border-radius: 14px;
     border: 1px solid rgba(168, 203, 232, 0.15);
     background: rgba(8, 14, 24, 0.82);
-    box-shadow: 0 6px 14px rgba(2, 9, 20, 0.22);
+    box-shadow: 0 5px 12px rgba(2, 9, 20, 0.2);
     backdrop-filter: blur(6px) saturate(112%);
     -webkit-backdrop-filter: blur(6px) saturate(112%);
     overflow: hidden;
@@ -11176,16 +11222,16 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
   body[data-layout-mode="mobile"] .mobile-floating-action-dock .mobile-dock-btn:nth-child(n) {
     flex: 1 1 0 !important;
     min-width: 0 !important;
-    min-height: 35px !important;
-    height: 35px !important;
-    padding: 6px 8px !important;
+    min-height: 34px !important;
+    height: 34px !important;
+    padding: 5px 8px !important;
     border-radius: 10px !important;
     border: 1px solid rgba(175, 212, 244, 0.2) !important;
     background: rgba(14, 24, 38, 0.86) !important;
     color: rgba(220, 237, 252, 0.96) !important;
-    font-size: 0.69rem !important;
+    font-size: 0.67rem !important;
     font-weight: 700 !important;
-    letter-spacing: 0.035em !important;
+    letter-spacing: 0.03em !important;
     text-transform: uppercase !important;
     line-height: 1.05 !important;
     white-space: nowrap !important;
