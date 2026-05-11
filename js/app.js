@@ -533,9 +533,14 @@ window.gridlyLandscapeLayoutAudit = function gridlyLandscapeLayoutAudit() {
     ".map-frame",
     "#mobileLocalContextStrip",
     ".mobile-local-context-strip",
+    "[id*='LocalContextStrip']",
+    "[class*='local-context-strip']",
     ".mobile-floating-action-dock",
+    "#mobileLiveRouteActionBtn",
     ".leaflet-control-zoom",
-    ".leaflet-control-layers"
+    ".leaflet-control-layers",
+    ".gridly-mobile-route-quick-panel",
+    ".route-setup-modal"
   ];
 
   const dockButtonSelectors = [
@@ -593,12 +598,27 @@ window.gridlyLandscapeLayoutAudit = function gridlyLandscapeLayoutAudit() {
   const findMap = () => document.querySelector("#map") || document.querySelector(".map-frame") || document.querySelector(".map-card");
   const findZoom = () => document.querySelector(".leaflet-control-zoom");
   const findCommute = () => document.querySelector(".mobile-live-commute-card") || document.querySelector(".mobile-live-state-card");
+  const routeActivation = (typeof getRouteWatchActivationState === "function" ? getRouteWatchActivationState() : null) || {};
+  const routeWatchActive = Boolean(window.__gridlyRouteWatchActive === true || routeWatchActivated === true || routeActivation.routeWatchActive);
+  const routeSelected = Boolean(routeActivation.selectedRouteId || routeActivation.selectedCorridorId || routeWatchActive);
+  const routePanels = [
+    ".gridly-mobile-route-quick-panel",
+    ".route-setup-modal",
+    "#mobileNativeSurfaceLayer",
+    "#mobileNativeSurfaceBody"
+  ].map((selector) => {
+    const el = document.querySelector(selector);
+    return { selector, visible: isVisible(el), exists: Boolean(el) };
+  });
 
   const contextStripEl = findContextStrip();
   const contextStripRect = contextStripEl?.getBoundingClientRect?.() || null;
   const dockRect = rectOf(".mobile-floating-action-dock");
+  const dockParentRect = document.querySelector(".command-center")?.getBoundingClientRect?.() || null;
   const mapRect = findMap()?.getBoundingClientRect?.() || null;
   const zoomRect = findZoom()?.getBoundingClientRect?.() || null;
+  const topPanelRect = rectOf(".mobile-live-command");
+  const routeTopCtaRect = rectOf("#mobileLiveRouteActionBtn");
 
   const stripParentStyle = contextStripEl?.parentElement ? window.getComputedStyle(contextStripEl.parentElement) : null;
   const stripClippedByParent = Boolean(
@@ -638,17 +658,33 @@ window.gridlyLandscapeLayoutAudit = function gridlyLandscapeLayoutAudit() {
     overlapContextMapY: overlapY(contextStripRect, mapRect),
     overlapDockMapY: overlapY(dockRect, mapRect),
     overlapZoomContextY: overlapY(zoomRect, contextStripRect),
+    overlapTopPanelMapY: overlapY(topPanelRect, mapRect),
     contextStripClippedByParent: stripClippedByParent,
     currentFilterLabelTextClipped: currentFilterLabelClipped,
-    liveCommuteCardPresent: Boolean(findCommute())
+    liveCommuteCardPresent: Boolean(findCommute()),
+    routeSelected,
+    routeWatchActive,
+    selectedRouteId: routeActivation.selectedRouteId || null,
+    selectedCorridorId: routeActivation.selectedCorridorId || null,
+    duplicateRouteTopCtaVisible: isVisible(document.getElementById("mobileLiveRouteActionBtn")),
+    dockInsideBottomBand: Boolean(dockRect && mapRect && dockRect.top >= mapRect.bottom),
+    dockParentBottomGap: dockRect && dockParentRect ? Math.round(dockParentRect.bottom - dockRect.bottom) : null,
+    mapBottom: mapRect ? Math.round(mapRect.bottom) : null,
+    dockTop: dockRect ? Math.round(dockRect.top) : null,
+    dockBottom: dockRect ? Math.round(dockRect.bottom) : null,
+    topPanelTop: topPanelRect ? Math.round(topPanelRect.top) : null,
+    topPanelBottom: topPanelRect ? Math.round(topPanelRect.bottom) : null,
+    topPanelOverflowingMap: Boolean(topPanelRect && mapRect && topPanelRect.bottom > mapRect.top + (mapRect.height * 0.35)),
+    routeTopCtaTop: routeTopCtaRect ? Math.round(routeTopCtaRect.top) : null
   };
 
   console.groupCollapsed("[Gridly] Landscape layout audit");
   console.table(rows);
   console.table([viewport]);
   if (dockButtons.length) console.table(dockButtons);
+  console.table(routePanels);
   console.groupEnd();
-  return { elements: rows, viewport, dockButtons };
+  return { elements: rows, viewport, dockButtons, routePanels };
 };
 
 window.gridlyMobileQAAuditDebug = function gridlyMobileQAAuditDebug() {
