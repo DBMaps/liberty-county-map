@@ -5240,6 +5240,10 @@ function bindEvents() {
   els.mobileReportBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_sticky_report", event));
   els.mobileDockReportBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_dock_report_button", event));
   document.querySelector('.mobile-dock-btn.route')?.addEventListener("click", openMobileRouteQuickPanel);
+  document.getElementById("mobileDockLayersBtn")?.addEventListener("click", () => {
+    const layerToggle = document.querySelector("#map .leaflet-control-layers-toggle");
+    layerToggle?.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+  });
   els.mobileLiveRouteActionBtn?.addEventListener("click", openMobileRouteQuickPanel);
   els.mobileQuickReportBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_quick_report_btn", event));
   els.mobileQuickReportSmallBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_quick_report_small_btn", event));
