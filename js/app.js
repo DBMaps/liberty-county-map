@@ -5448,7 +5448,7 @@ function openTacticalReportOverlay() {
   document.body.classList.remove('tactical-alerts-overlay-open');
   setMobileUiMode('report', { silent: true });
   els.reportSection.open = true;
-  document.body.classList.add('tactical-report-overlay-open');
+  document.body.classList.add('tactical-surface-open', 'tactical-report-overlay-open');
   tacticalDockSurfaceOpenEpoch = Date.now();
 }
 
@@ -5458,13 +5458,14 @@ function openTacticalAreaSelector() {
     applyGeoFilterFromPill('town');
     return;
   }
-  document.body.classList.add('tactical-area-selector-open');
+  document.body.classList.add('tactical-surface-open', 'tactical-area-selector-open');
   shell.querySelector('[data-geo-filter="county"], [data-geo-filter="town"], .geo-filter-pill')?.focus?.();
   tacticalDockSurfaceOpenEpoch = Date.now();
 }
 
 function closeTacticalAreaSelector() {
   document.body.classList.remove('tactical-area-selector-open');
+  if (!document.body.classList.contains('tactical-report-overlay-open') && !document.body.classList.contains('tactical-alerts-overlay-open')) document.body.classList.remove('tactical-surface-open');
 }
 
 function openTacticalLayersMenu() {
@@ -5491,7 +5492,7 @@ function closeTacticalDockSurfaces(reason = "dock_surface_switch") {
   clearReportModeForDockAction(reason);
   closeTacticalAreaSelector();
   closeTacticalLayersMenu();
-  document.body.classList.remove('tactical-report-overlay-open', 'tactical-alerts-overlay-open');
+  document.body.classList.remove('tactical-surface-open', 'tactical-report-overlay-open', 'tactical-alerts-overlay-open');
 }
 
 function bindEvents() {
@@ -5575,7 +5576,7 @@ function bindEvents() {
     closeTacticalDockSurfaces("dock_alerts");
     setMobileUiMode("alert", { silent: true });
     if (isTacticalLandscapeMode()) {
-      document.body.classList.add('tactical-alerts-overlay-open');
+      document.body.classList.add('tactical-surface-open', 'tactical-alerts-overlay-open');
       tacticalDockSurfaceOpenEpoch = Date.now();
     }
     scrollToSection("alertsSection");
@@ -5690,8 +5691,14 @@ function bindEvents() {
     const inReportButton = target.closest('#mobileDockReportBtn, .mobile-dock-btn.report');
     const inLayersButton = target.closest('#mobileDockLayersBtn, .mobile-dock-btn.layers');
     if (!target.closest('.map-tools-overlay .geo-filter-shell') && !inAreaButton) closeTacticalAreaSelector();
-    if (!target.closest('#alertsSection') && !inAlertsButton) document.body.classList.remove('tactical-alerts-overlay-open');
-    if (!target.closest('#reportSection') && !inReportButton) document.body.classList.remove('tactical-report-overlay-open');
+    if (!target.closest('#alertsSection') && !inAlertsButton) {
+      document.body.classList.remove('tactical-alerts-overlay-open');
+      if (!document.body.classList.contains('tactical-report-overlay-open') && !document.body.classList.contains('tactical-area-selector-open')) document.body.classList.remove('tactical-surface-open');
+    }
+    if (!target.closest('#reportSection') && !inReportButton) {
+      document.body.classList.remove('tactical-report-overlay-open');
+      if (!document.body.classList.contains('tactical-alerts-overlay-open') && !document.body.classList.contains('tactical-area-selector-open')) document.body.classList.remove('tactical-surface-open');
+    }
     if (!target.closest('#map .leaflet-control-layers') && !inLayersButton) closeTacticalLayersMenu();
   }, true);
 
@@ -5719,7 +5726,7 @@ function bindEvents() {
     button.setAttribute("aria-label", "Close alerts");
     button.textContent = "Close";
     button.addEventListener("click", () => {
-      document.body.classList.remove("tactical-alerts-overlay-open");
+      document.body.classList.remove("tactical-alerts-overlay-open", "tactical-surface-open");
       setMobileUiMode("live", { silent: true });
     });
     els.alertsSection.prepend(button);
