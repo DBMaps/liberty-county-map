@@ -311,6 +311,9 @@ const MOBILE_REPORT_ENTRY_SELECTORS = [
   ".report-drawer-summary"
 ];
 let mobileReportEntryBindingsAttached = false;
+let reportActionTraceEnabled = false;
+const reportActionTraceBuffer = [];
+const REPORT_ACTION_TRACE_BUFFER_LIMIT = 200;
 
 const reportingState = {
   selectedHazardType: null,
@@ -443,6 +446,55 @@ function reportDebugLog(...args) {
   if (!GRIDLY_REPORT_VERBOSE_DEBUG) return;
   console.log(...args);
 }
+
+function collectReportActionTraceElementState(selector) {
+  const el = document.querySelector(selector);
+  const computed = el ? window.getComputedStyle(el) : null;
+  const rect = el?.getBoundingClientRect?.() || null;
+  return {
+    selector,
+    exists: Boolean(el),
+    className: el?.className || null,
+    display: computed?.display || null,
+    visibility: computed?.visibility || null,
+    opacity: computed?.opacity || null,
+    pointerEvents: computed?.pointerEvents || null,
+    zIndex: computed?.zIndex || null,
+    rect: rect ? { top: rect.top, left: rect.left, width: rect.width, height: rect.height } : null
+  };
+}
+
+function pushReportActionTrace(step, details = {}) {
+  if (!reportActionTraceEnabled) return;
+  const snapshot = {
+    timestamp: new Date().toISOString(),
+    step,
+    routeSelectedState: document.querySelector(".nav-btn[data-section='report']")?.classList?.contains("active") ?? null,
+    tacticalLandscapeMediaMatch: window.matchMedia("(max-width: 1100px)").matches,
+    ...details
+  };
+  reportActionTraceBuffer.push(snapshot);
+  if (reportActionTraceBuffer.length > REPORT_ACTION_TRACE_BUFFER_LIMIT) {
+    reportActionTraceBuffer.splice(0, reportActionTraceBuffer.length - REPORT_ACTION_TRACE_BUFFER_LIMIT);
+  }
+  console.debug("[Gridly][ReportActionTrace]", snapshot);
+}
+
+window.gridlyEnableReportActionTrace = function gridlyEnableReportActionTrace(enabled = true) {
+  reportActionTraceEnabled = Boolean(enabled);
+  if (reportActionTraceEnabled) reportActionTraceBuffer.length = 0;
+  const state = { enabled: reportActionTraceEnabled, bufferedEvents: reportActionTraceBuffer.length };
+  console.info("[Gridly][ReportActionTrace] state updated", state);
+  return state;
+};
+
+window.gridlyReportActionTraceDebug = function gridlyReportActionTraceDebug() {
+  return {
+    enabled: reportActionTraceEnabled,
+    totalEvents: reportActionTraceBuffer.length,
+    events: [...reportActionTraceBuffer]
+  };
+};
 
 function routeDebugLog(...args) {
   if (!GRIDLY_ROUTE_VERBOSE_DEBUG) return;
@@ -4278,6 +4330,13 @@ function syncMapPlacementCursorState() {
 }
 
 function openHazardPanel(entryPoint = reportingState.activeReportEntryPoint || "report_near_me") {
+  const reportSectionBefore = collectReportActionTraceElementState("#reportSection");
+  const pickerBefore = collectReportActionTraceElementState("#gridlyHazardPanel");
+  pushReportActionTrace("openHazardPanel starts", { entryPoint, reportSectionBefore, pickerBefore });
+  if (pickerBefore.exists && pickerBefore.className?.includes("visible")) {
+    pushReportActionTrace("openHazardPanel early returns", { entryPoint, reason: "panel_already_visible", pickerBefore });
+    return;
+  }
   reportLifecycleDiag("openHazardPanel", { entryPoint });
   injectHazardReportUI();
   updateReportingState({ reportModeActive: true, activeReportEntryPoint: entryPoint });
@@ -4296,6 +4355,12 @@ function openHazardPanel(entryPoint = reportingState.activeReportEntryPoint || "
     opacity: computed?.opacity || null,
     zIndex: computed?.zIndex || null,
     rect: picker ? picker.getBoundingClientRect() : null
+  });
+  pushReportActionTrace("hazard picker/panel class changes", {
+    entryPoint,
+    pickerAfter: collectReportActionTraceElementState("#gridlyHazardPanel"),
+    reportSectionAfter: collectReportActionTraceElementState("#reportSection"),
+    panelVisible: Boolean(picker?.classList?.contains("visible"))
   });
 }
 
@@ -5405,7 +5470,14 @@ function bindEvents() {
 
   bindMobileReportEntryDelegation();
   els.mobileReportBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_sticky_report", event));
-  els.mobileDockReportBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_dock_report_button", event));
+  els.mobileDockReportBtn?.addEventListener("click", (event) => {
+    pushReportActionTrace("Report dock button click handler starts", {
+      eventType: event?.type || "click",
+      targetTag: event?.target?.tagName || null,
+      targetId: event?.target?.id || null
+    });
+    invokeMobileReportEntry("mobile_dock_report_button", event);
+  });
   els.mobileDockAreaBtn?.addEventListener("click", () => {
     const townSelectorBtn = document.getElementById("mobileTownSelectorBtn");
     if (townSelectorBtn) {
@@ -6056,6 +6128,13 @@ function getMobileReportEntryElements() {
 function invokeMobileReportEntry(sourceLabel, event) {
   const target = event?.target || null;
   const receiver = event?.currentTarget || target;
+  pushReportActionTrace("invokeMobileReportEntry starts", {
+    sourceLabel,
+    eventType: event?.type || "manual",
+    targetTag: target?.tagName || null,
+    targetId: target?.id || null,
+    receiverId: receiver?.id || null
+  });
   reportDebugLog("[Gridly][Report] mobile report entry clicked", {
     sourceLabel,
     eventType: event?.type || "manual",
@@ -6078,6 +6157,10 @@ function bindMobileReportEntryDelegation() {
     const target = event?.target?.closest?.(MOBILE_REPORT_ENTRY_SELECTORS.join(", "));
     if (!target) return;
     if (target.closest(".mobile-dock-btn.route")) return;
+    pushReportActionTrace("delegated report entry handler starts", {
+      eventType: event?.type || "unknown",
+      matchedTarget: target?.id ? `#${target.id}` : target?.className || target?.tagName || "unknown"
+    });
     invokeMobileReportEntry("delegated_mobile_report_entry", event);
   };
   document.addEventListener("click", delegatedHandler);
@@ -6086,6 +6169,11 @@ function bindMobileReportEntryDelegation() {
 }
 
 function handleReportNearMe(entryPoint = "report_near_me") {
+  pushReportActionTrace("handleReportNearMe starts", {
+    entryPoint,
+    reportSectionBefore: collectReportActionTraceElementState("#reportSection"),
+    hazardPanelBefore: collectReportActionTraceElementState("#gridlyHazardPanel")
+  });
   reportLifecycleDiag("handleReportNearMe", { entryPoint });
   traceMobileModeMutation("handleReportNearMe before setMobileUiMode", { entryPoint });
   setMobileUiMode("report", { silent: true });
@@ -6096,6 +6184,13 @@ function handleReportNearMe(entryPoint = "report_near_me") {
     activeReportEntryPoint: entryPoint,
     lastReportError: "",
     lastReportMessage: "Choose a hazard, then use your location or tap the map."
+  });
+  pushReportActionTrace("mode switch/state update occurs", {
+    entryPoint,
+    reportModeActive: reportingState.reportModeActive,
+    placementModeActive: reportingState.placementModeActive,
+    activeReportEntryPoint: reportingState.activeReportEntryPoint,
+    reportSectionState: collectReportActionTraceElementState("#reportSection")
   });
   reportDebugLog("[Gridly][Report] handler executed", { handler: "handleReportNearMe", entryPoint });
   openHazardPanel(entryPoint);
@@ -6108,6 +6203,12 @@ function handleReportNearMe(entryPoint = "report_near_me") {
     openedOverlay: "gridlyHazardPanel",
     reportingState: window.gridlyReportingDebug(),
     activeReportEntryPoint: reportingState.activeReportEntryPoint
+  });
+  pushReportActionTrace("final visible/open state after attempted open", {
+    entryPoint,
+    reportSectionFinal: collectReportActionTraceElementState("#reportSection"),
+    hazardPanelFinal: collectReportActionTraceElementState("#gridlyHazardPanel"),
+    hazardPanelVisible: Boolean(document.getElementById("gridlyHazardPanel")?.classList?.contains("visible"))
   });
 }
 
