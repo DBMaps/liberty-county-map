@@ -435,6 +435,48 @@ function closeMobileRouteQuickPanel(reason = "") {
   if (reason) lastRoutePanelCloseReason = reason;
 }
 
+function isTacticalLandscapeDockMode() {
+  return activeLayoutMode === "mobile" && window.matchMedia("(orientation: landscape) and (max-height: 520px)").matches;
+}
+
+function ensureTacticalDockSheet() {
+  let sheet = document.getElementById("gridlyTacticalDockSheet");
+  if (sheet) return sheet;
+  sheet = document.createElement("section");
+  sheet.id = "gridlyTacticalDockSheet";
+  sheet.className = "gridly-tactical-dock-sheet";
+  sheet.hidden = true;
+  sheet.innerHTML = `<div class="gridly-tactical-dock-sheet-head"><strong id="gridlyTacticalDockSheetTitle"></strong><button type="button" id="gridlyTacticalDockSheetClose" aria-label="Close tactical panel">×</button></div><div id="gridlyTacticalDockSheetBody" class="gridly-tactical-dock-sheet-body"></div>`;
+  document.body.appendChild(sheet);
+  sheet.querySelector("#gridlyTacticalDockSheetClose")?.addEventListener("click", () => closeTacticalDockSheet());
+  return sheet;
+}
+
+function closeTacticalDockSheet() {
+  const sheet = document.getElementById("gridlyTacticalDockSheet");
+  if (!sheet) return;
+  sheet.hidden = true;
+  sheet.dataset.action = "";
+}
+
+function closeAllTacticalDockSurfaces({ except = "" } = {}) {
+  if (except !== "route") closeMobileRouteQuickPanel("switch_tactical_action");
+  if (except !== "report") window.closeHazardPanel?.({ preserveLastReportMessage: true });
+  if (except !== "alerts" && except !== "area" && except !== "layers") closeTacticalDockSheet();
+}
+
+function openTacticalDockSheet(action, title, contentHtml) {
+  const sheet = ensureTacticalDockSheet();
+  if (!sheet) return;
+  closeAllTacticalDockSurfaces({ except: action });
+  const titleEl = sheet.querySelector("#gridlyTacticalDockSheetTitle");
+  const bodyEl = sheet.querySelector("#gridlyTacticalDockSheetBody");
+  if (titleEl) titleEl.textContent = title;
+  if (bodyEl) bodyEl.innerHTML = contentHtml;
+  sheet.dataset.action = action;
+  sheet.hidden = false;
+}
+
 const GRIDLY_REPORT_VERBOSE_DEBUG = false;
 const GRIDLY_ROUTE_VERBOSE_DEBUG = false;
 const GRIDLY_LAYER_VERBOSE_DEBUG = false;
@@ -5405,21 +5447,64 @@ function bindEvents() {
 
   bindMobileReportEntryDelegation();
   els.mobileReportBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_sticky_report", event));
-  els.mobileDockReportBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_dock_report_button", event));
-  els.mobileDockAreaBtn?.addEventListener("click", () => {
-    const townSelectorBtn = document.getElementById("mobileTownSelectorBtn");
-    if (townSelectorBtn) {
-      townSelectorBtn.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
-      return;
-    }
-    applyGeoFilterFromPill("town");
-    scrollToSection("mapSection");
-    setConfirmation("Showing My Town crossings.", "success");
+  els.mobileDockReportBtn?.addEventListener("click", (event) => {
+    if (!isTacticalLandscapeDockMode()) return invokeMobileReportEntry("mobile_dock_report_button", event);
+    closeAllTacticalDockSurfaces({ except: "report" });
+    invokeMobileReportEntry("mobile_dock_report_button", event);
   });
-  document.querySelector('.mobile-dock-btn.route')?.addEventListener("click", openMobileRouteQuickPanel);
+  els.mobileDockAreaBtn?.addEventListener("click", () => {
+    if (!isTacticalLandscapeDockMode()) {
+      const townSelectorBtn = document.getElementById("mobileTownSelectorBtn");
+      if (townSelectorBtn) return townSelectorBtn.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+      applyGeoFilterFromPill("town");
+      scrollToSection("mapSection");
+      return setConfirmation("Showing My Town crossings.", "success");
+    }
+    openTacticalDockSheet("area", "Area Filter", `
+      <div class="gridly-tactical-option-grid">
+        <button type="button" data-geo-filter="nearby">Nearby</button>
+        <button type="button" data-geo-filter="town">My Route</button>
+        <button type="button" data-geo-filter="county">My Town</button>
+        <button type="button" data-geo-filter="active-delays">Delays</button>
+        <button type="button" data-geo-filter="all">All</button>
+      </div>
+    `);
+    document.querySelectorAll("#gridlyTacticalDockSheet [data-geo-filter]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyGeoFilterFromPill(btn.dataset.geoFilter || "all");
+        closeTacticalDockSheet();
+      }, { once: true });
+    });
+  });
+  document.querySelector('.mobile-dock-btn.route')?.addEventListener("click", () => {
+    closeAllTacticalDockSurfaces({ except: "route" });
+    openMobileRouteQuickPanel();
+  });
+  document.querySelector('.mobile-dock-btn.alerts')?.addEventListener("click", () => {
+    if (!isTacticalLandscapeDockMode()) return openSmartAlertsModal();
+    const rows = (getUnifiedIncidents?.() || []).slice(0, 8).map((incident) => {
+      const latest = incident?.latestReport || {};
+      return `<article class="gridly-tactical-alert-row"><strong>${sanitizeText(incident?.crossingName || "Incident")}</strong><p>${sanitizeText(getReportCopy(latest.type).label)} · ${sanitizeText(getReportStateLabel(latest))}</p></article>`;
+    }).join("") || `<p class="gridly-tactical-empty">No active alerts right now.</p>`;
+    openTacticalDockSheet("alerts", "Live Alerts", `<div class="gridly-tactical-alert-list">${rows}</div><div class="gridly-tactical-sheet-actions"><button type="button" data-alerts-manage>Manage Alerts</button></div>`);
+    document.querySelector("#gridlyTacticalDockSheet [data-alerts-manage]")?.addEventListener("click", () => {
+      closeTacticalDockSheet();
+      openSmartAlertsModal();
+    }, { once: true });
+  });
   document.getElementById("mobileDockLayersBtn")?.addEventListener("click", () => {
-    const layerToggle = document.querySelector("#map .leaflet-control-layers-toggle");
-    layerToggle?.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+    if (!isTacticalLandscapeDockMode()) {
+      const layerToggle = document.querySelector("#map .leaflet-control-layers-toggle");
+      return layerToggle?.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+    }
+    const options = ["Standard", "Dark", "Satellite"].map((name) => `<button type="button" data-layer-name="${name}">${name}</button>`).join("");
+    openTacticalDockSheet("layers", "Map Layers", `<div class="gridly-tactical-option-grid">${options}</div>`);
+    document.querySelectorAll("#gridlyTacticalDockSheet [data-layer-name]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyMapStyle(btn.dataset.layerName || "Satellite");
+        closeTacticalDockSheet();
+      }, { once: true });
+    });
   });
   els.mobileLiveRouteActionBtn?.addEventListener("click", openMobileRouteQuickPanel);
   els.mobileQuickReportBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_quick_report_btn", event));
