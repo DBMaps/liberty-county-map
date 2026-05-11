@@ -5433,6 +5433,42 @@ function setReportMode(mode) {
   }
 }
 
+
+function isTacticalLandscapeMode() {
+  return Boolean(document.body?.matches?.('body[data-layout-mode="mobile"]')) && window.matchMedia('(orientation: landscape) and (max-height: 520px)').matches;
+}
+
+function openTacticalReportOverlay() {
+  if (!els.reportSection) return;
+  clearReportModeForDockAction('dock_report_overlay');
+  setMobileUiMode('report', { silent: true });
+  els.reportSection.open = true;
+  document.body.classList.add('tactical-report-overlay-open');
+}
+
+function openTacticalAreaSelector() {
+  const shell = document.querySelector('.map-tools-overlay .geo-filter-shell');
+  if (!shell) {
+    applyGeoFilterFromPill('town');
+    return;
+  }
+  document.body.classList.add('tactical-area-selector-open');
+  shell.querySelector('[data-geo-filter="county"], [data-geo-filter="town"], .geo-filter-pill')?.focus?.();
+}
+
+function closeTacticalAreaSelector() {
+  document.body.classList.remove('tactical-area-selector-open');
+}
+
+function openTacticalLayersMenu() {
+  const controlContainer = document.querySelector('#map .leaflet-control-layers');
+  const layerToggle = controlContainer?.querySelector('.leaflet-control-layers-toggle');
+  if (!controlContainer || !layerToggle) return;
+  controlContainer.classList.remove('gridly-mobile-layer-control-hidden');
+  controlContainer.classList.add('gridly-dock-layers-open');
+  layerToggle.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+}
+
 function bindEvents() {
   migrateLegacyStorage();
   const bindTapSafeClose = (element, handler) => {
@@ -5476,12 +5512,20 @@ function bindEvents() {
       targetTag: event?.target?.tagName || null,
       targetId: event?.target?.id || null
     });
+    if (isTacticalLandscapeMode()) {
+      openTacticalReportOverlay();
+      return;
+    }
     invokeMobileReportEntry("mobile_dock_report_button", event);
   });
   els.mobileDockAreaBtn?.addEventListener("click", () => {
     pushReportActionTrace("Area dock button handler starts", { modeBefore: mobileUiMode });
     clearReportModeForDockAction("dock_area");
     setMobileUiMode("live", { silent: true });
+    if (isTacticalLandscapeMode()) {
+      openTacticalAreaSelector();
+      return;
+    }
     const townSelectorBtn = document.getElementById("mobileTownSelectorBtn");
     if (townSelectorBtn) {
       townSelectorBtn.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
@@ -5501,12 +5545,17 @@ function bindEvents() {
     pushReportActionTrace("Alerts dock button handler starts", { modeBefore: mobileUiMode });
     clearReportModeForDockAction("dock_alerts");
     setMobileUiMode("alert", { silent: true });
+    if (isTacticalLandscapeMode()) document.body.classList.add('tactical-alerts-overlay-open');
     scrollToSection("alertsSection");
   });
   document.getElementById("mobileDockLayersBtn")?.addEventListener("click", () => {
     pushReportActionTrace("Layers dock button handler starts", { modeBefore: mobileUiMode });
     clearReportModeForDockAction("dock_layers");
     setMobileUiMode("live", { silent: true });
+    if (isTacticalLandscapeMode()) {
+      openTacticalLayersMenu();
+      return;
+    }
     const layerToggle = document.querySelector("#map .leaflet-control-layers-toggle");
     layerToggle?.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
   });
@@ -5597,6 +5646,15 @@ function bindEvents() {
   };
 
   document.addEventListener("pointerup", handleMobileHeaderDelegateTap);
+
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    if (!target.closest('.map-tools-overlay .geo-filter-shell') && !target.closest('#mobileDockAreaBtn')) closeTacticalAreaSelector();
+    if (!target.closest('#alertsSection') && !target.closest('#mobileDockAlertsBtn')) document.body.classList.remove('tactical-alerts-overlay-open');
+    if (!target.closest('#reportSection') && !target.closest('#mobileDockReportBtn')) document.body.classList.remove('tactical-report-overlay-open');
+  }, true);
+
 
   const handlePopupAction = async (event) => {
     const unifiedButton = event.target.closest(".popup-report-btn[data-unified-action]");

@@ -11418,3 +11418,51 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     content: none !important;
   }
 }
+
+@media (orientation: landscape) and (max-height: 520px) {
+  body[data-layout-mode="mobile"].tactical-report-overlay-open #reportSection {
+    position: fixed !important;
+    left: 8px;
+    right: 8px;
+    top: max(8px, env(safe-area-inset-top, 0px));
+    bottom: calc(var(--mobile-landscape-dock-space) + 8px);
+    z-index: 1400;
+    overflow: auto !important;
+    background: rgba(8, 14, 24, 0.96);
+    border-radius: 12px;
+    padding: 8px;
+  }
+  body[data-layout-mode="mobile"].tactical-alerts-overlay-open #alertsSection {
+    display: block !important;
+    position: fixed !important;
+    left: 8px;
+    right: 8px;
+    top: max(8px, env(safe-area-inset-top, 0px));
+    bottom: calc(var(--mobile-landscape-dock-space) + 8px);
+    z-index: 1380;
+    overflow: auto !important;
+    padding-bottom: calc(var(--mobile-landscape-dock-space) + 8px);
+  }
+  body[data-layout-mode="mobile"].tactical-area-selector-open .map-tools-overlay .geo-filter-shell {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    position: fixed !important;
+    left: 8px;
+    right: 8px;
+    bottom: calc(var(--mobile-landscape-dock-space) + 8px);
+    z-index: 1370;
+    background: rgba(10, 16, 28, 0.96) !important;
+    border-radius: 10px;
+    padding: 6px;
+  }
+  body[data-layout-mode="mobile"] #map .leaflet-control-layers.gridly-dock-layers-open,
+  body[data-layout-mode="mobile"] #map .leaflet-control-layers-expanded.gridly-dock-layers-open {
+    display: block !important;
+    position: fixed !important;
+    right: 8px;
+    bottom: calc(var(--mobile-landscape-dock-space) + 8px);
+    z-index: 1390;
+  }
+}
