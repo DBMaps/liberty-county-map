@@ -5239,6 +5239,15 @@ function bindEvents() {
   bindMobileReportEntryDelegation();
   els.mobileReportBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_sticky_report", event));
   els.mobileDockReportBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_dock_report_button", event));
+  els.mobileDockLayersBtn?.addEventListener("click", () => {
+    const layersToggle = document.querySelector("#map .leaflet-control-layers-toggle");
+    if (layersToggle) {
+      layersToggle.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      return;
+    }
+    const legendPill = document.querySelector(".map-tools-overlay .legend-pill");
+    legendPill?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+  });
   document.querySelector('.mobile-dock-btn.route')?.addEventListener("click", openMobileRouteQuickPanel);
   els.mobileLiveRouteActionBtn?.addEventListener("click", openMobileRouteQuickPanel);
   els.mobileQuickReportBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_quick_report_btn", event));
