@@ -989,6 +989,7 @@ function hydrateElements() {
     "mobileCrossingReportBtn",
     "mobileHazardReportBtn",
     "mobileDockReportBtn",
+    "mobileDockAreaBtn",
     "mobileLiveRouteActionBtn",
     "mobileLiveRouteStatus",
     "mobileLiveRouteMeta",
@@ -5369,6 +5370,16 @@ function bindEvents() {
   bindMobileReportEntryDelegation();
   els.mobileReportBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_sticky_report", event));
   els.mobileDockReportBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_dock_report_button", event));
+  els.mobileDockAreaBtn?.addEventListener("click", () => {
+    const townSelectorBtn = document.getElementById("mobileTownSelectorBtn");
+    if (townSelectorBtn) {
+      townSelectorBtn.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+      return;
+    }
+    applyGeoFilterFromPill("town");
+    scrollToSection("mapSection");
+    setConfirmation("Showing My Town crossings.", "success");
+  });
   document.querySelector('.mobile-dock-btn.route')?.addEventListener("click", openMobileRouteQuickPanel);
   document.getElementById("mobileDockLayersBtn")?.addEventListener("click", () => {
     const layerToggle = document.querySelector("#map .leaflet-control-layers-toggle");
