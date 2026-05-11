@@ -11290,3 +11290,188 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     box-shadow: inset 0 0 0 1px rgba(160, 214, 255, 0.35), 0 0 14px rgba(104, 181, 255, 0.28);
   }
 }
+
+/* V76 — landscape tactical refinement pass (map-first polish) */
+@media (orientation: landscape) and (max-height: 520px) {
+  body[data-layout-mode="mobile"] {
+    --mobile-top-stack-height: 84px;
+  }
+
+  body[data-layout-mode="mobile"] .app-header {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    min-height: 0;
+    border-bottom-width: 0;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-brand {
+    padding: 4px 10px 3px;
+    gap: 8px;
+    min-height: 34px;
+    border-radius: 0 0 14px 14px;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-brand-main { gap: 7px; }
+  body[data-layout-mode="mobile"] .mobile-live-brand-logo { width: 22px; height: 22px; border-radius: 8px; }
+  body[data-layout-mode="mobile"] .mobile-live-brand-logo img { width: 13px; height: 13px; }
+
+  body[data-layout-mode="mobile"] .mobile-live-brand-copy strong {
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-brand-status {
+    padding: 2px 7px;
+    min-height: 20px;
+    border-radius: 999px;
+    gap: 4px;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-brand-status strong { font-size: 0.47rem; }
+  body[data-layout-mode="mobile"] .mobile-live-brand-status span { font-size: 0.5rem; }
+
+  body[data-layout-mode="mobile"] .mobile-live-command {
+    margin: 4px 10px 4px;
+    padding: 7px 9px;
+    row-gap: 3px;
+    border-radius: 12px;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-command .eyebrow {
+    font-size: 0.5rem;
+    letter-spacing: 0.12em;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-command strong {
+    font-size: 0.78rem;
+    line-height: 1.15;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-command p {
+    font-size: 0.58rem;
+    line-height: 1.25;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-command .compact-btn {
+    min-height: 30px;
+    padding: 5px 9px;
+    font-size: 0.56rem;
+  }
+
+  body[data-layout-mode="mobile"] .route-status-card,
+  body[data-layout-mode="mobile"] .mobile-route-status-card {
+    margin-top: 4px;
+    padding: 6px 8px;
+    border-radius: 11px;
+    gap: 5px;
+  }
+
+  body[data-layout-mode="mobile"] .route-status-card strong,
+  body[data-layout-mode="mobile"] .mobile-route-status-card strong { font-size: 0.67rem; }
+  body[data-layout-mode="mobile"] .route-status-card #routeEta,
+  body[data-layout-mode="mobile"] .mobile-route-status-card #routeEta { font-size: 0.58rem; }
+  body[data-layout-mode="mobile"] .route-status-card .route-edit-link,
+  body[data-layout-mode="mobile"] .mobile-route-status-card .route-edit-link { font-size: 0.55rem; }
+
+  body[data-layout-mode="mobile"] .map-frame,
+  body[data-layout-mode="mobile"] .map-card {
+    margin-top: 2px;
+    padding-top: 0;
+  }
+
+  body[data-layout-mode="mobile"] #map {
+    min-height: calc(100dvh - 132px);
+  }
+
+  body[data-layout-mode="mobile"] .map-tools-overlay {
+    top: 76px;
+    left: 8px;
+    right: 8px;
+    gap: 3px;
+    padding: 5px 7px;
+    border-radius: 12px;
+  }
+
+  body[data-layout-mode="mobile"] .map-tools-overlay .geo-filter-shell {
+    gap: 4px;
+    padding: 2px;
+  }
+
+  body[data-layout-mode="mobile"] .map-tools-overlay .geo-filter-pill,
+  body[data-layout-mode="mobile"] .map-tools-overlay .legend-pill {
+    min-height: 30px;
+    padding: 5px 9px;
+    border-radius: 999px;
+    font-size: 0.52rem;
+    letter-spacing: 0.06em;
+  }
+
+  body[data-layout-mode="mobile"] .map-tools-overlay .map-view-label,
+  body[data-layout-mode="mobile"] .map-tools-overlay .map-tools-section-label,
+  body[data-layout-mode="mobile"] .map-tools-overlay .map-tools-status {
+    font-size: 0.48rem;
+    letter-spacing: 0.11em;
+  }
+
+  body[data-layout-mode="mobile"] #map .leaflet-control-zoom a,
+  body[data-layout-mode="mobile"] #map .leaflet-control-layers-toggle {
+    width: 32px;
+    height: 32px;
+  }
+
+  body[data-layout-mode="mobile"] #map .leaflet-control-layers,
+  body[data-layout-mode="mobile"] #map .leaflet-control-layers-expanded {
+    border-radius: 10px;
+    box-shadow: 0 6px 14px rgba(4, 14, 27, 0.32);
+  }
+
+  body[data-layout-mode="mobile"] #mobileDailyPanel {
+    min-height: auto;
+    border-radius: 14px 14px 0 0;
+    padding-bottom: calc(env(safe-area-inset-bottom) + 2px);
+  }
+
+  body[data-layout-mode="mobile"] #mobileDailyPanel .mobile-daily-panel-handle {
+    min-height: 28px;
+    padding: 4px 10px 3px;
+  }
+
+  body[data-layout-mode="mobile"] #mobileDailyPanel .mobile-daily-panel-handle-row {
+    gap: 6px;
+  }
+
+  body[data-layout-mode="mobile"] #mobileDailyPanel .mobile-daily-panel-handle-row strong {
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+  }
+
+  body[data-layout-mode="mobile"] #mobileDailyPanel .mobile-daily-panel-handle-row span {
+    font-size: 0.5rem;
+  }
+
+  body[data-layout-mode="mobile"] #mobileDailyPanel .mobile-daily-panel-body {
+    padding: 4px 10px 8px;
+  }
+
+  body[data-layout-mode="mobile"] #mobileDailyPanel .mobile-daily-panel-actions {
+    gap: 5px;
+  }
+
+  body[data-layout-mode="mobile"] #mobileDailyPanel .mobile-daily-panel-actions .secondary-btn {
+    min-height: 34px;
+    padding: 6px 9px;
+    font-size: 0.54rem;
+    letter-spacing: 0.08em;
+  }
+
+  body[data-layout-mode="mobile"] #mobileLocalContextStrip,
+  body[data-layout-mode="mobile"] .mobile-home-cards,
+  body[data-layout-mode="mobile"] .mobile-community-card,
+  body[data-layout-mode="mobile"] .mobile-onboarding-card,
+  body[data-layout-mode="mobile"] .mobile-promo-card,
+  body[data-layout-mode="mobile"] .mobile-native-surface-sheet {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}
