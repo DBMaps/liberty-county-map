@@ -11412,11 +11412,21 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
   }
 
   body[data-layout-mode="mobile"] .gridly-hazard-panel {
-    left: 12px !important;
-    right: 12px !important;
+    left: max(10px, env(safe-area-inset-left, 0px)) !important;
+    right: max(10px, env(safe-area-inset-right, 0px)) !important;
+    width: min(460px, calc(100vw - max(20px, calc(env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px) + 20px)))) !important;
+    max-width: calc(100vw - max(20px, calc(env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px) + 20px))) !important;
+    margin-inline: auto !important;
+    transform: none !important;
     bottom: 74px !important;
     max-height: calc(var(--gridly-visual-vh, 100vh) - 94px) !important;
     z-index: 10030 !important;
+  }
+
+  body[data-layout-mode="mobile"] .gridly-hazard-panel:not(.visible) {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
   }
 
   body[data-layout-mode="mobile"] .gridly-tactical-dock-sheet {
@@ -11434,7 +11444,13 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
   }
-  body[data-layout-mode="mobile"] .gridly-tactical-dock-sheet[hidden] { display: none !important; }
+  body[data-layout-mode="mobile"] .gridly-tactical-dock-sheet[hidden],
+  body[data-layout-mode="mobile"] .gridly-tactical-dock-sheet:not([data-action]),
+  body[data-layout-mode="mobile"] .gridly-tactical-dock-sheet[data-action=""] {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
   body[data-layout-mode="mobile"] .gridly-tactical-dock-sheet-head {
     display: flex; justify-content: space-between; align-items: center; padding: 10px 12px 8px;
   }
