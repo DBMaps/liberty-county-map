@@ -11639,3 +11639,95 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     pointer-events: none !important;
   }
 }
+
+/* V77 QA fix 1 — landscape tactical completeness */
+@media (orientation: landscape) and (max-height: 520px) {
+  body[data-layout-mode="mobile"] .app-shell,
+  body[data-layout-mode="mobile"] .main-column,
+  body[data-layout-mode="mobile"] #mapSection,
+  body[data-layout-mode="mobile"] .map-card {
+    overflow: visible !important;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-brand {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    padding: 4px 10px 3px !important;
+    min-height: 34px;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-brand-main {
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-brand-logo {
+    display: flex !important;
+    width: 82px !important;
+    max-width: 34vw;
+    height: auto !important;
+    min-height: 18px;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-brand-logo img {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 18px;
+    object-fit: contain;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-live-brand-status {
+    display: inline-flex !important;
+    margin-left: auto;
+  }
+
+  body[data-layout-mode="mobile"] #mobileDailyPanel,
+  body[data-layout-mode="mobile"] .mobile-daily-panel,
+  body[data-layout-mode="mobile"] .mobile-daily-panel-body,
+  body[data-layout-mode="mobile"] .mobile-daily-panel-handle {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-floating-action-dock {
+    position: fixed !important;
+    display: grid !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: min(94vw, 420px) !important;
+    bottom: max(8px, env(safe-area-inset-bottom)) !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 1300 !important;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-dock-btn {
+    min-height: 40px !important;
+    padding: 4px 3px !important;
+  }
+
+  body[data-layout-mode="mobile"] #mapSection,
+  body[data-layout-mode="mobile"] .map-card,
+  body[data-layout-mode="mobile"] .map-frame,
+  body[data-layout-mode="mobile"] #map {
+    min-height: calc(100dvh - 154px) !important;
+    padding-bottom: 0 !important;
+  }
+
+  body[data-layout-mode="mobile"] .mobile-home-card.mobile-community-card,
+  body[data-layout-mode="mobile"] #gridlyCommunityToolsCard,
+  body[data-layout-mode="mobile"] .community-tools-sidebar-card,
+  body[data-layout-mode="mobile"] .community-tools-eyebrow,
+  body[data-layout-mode="mobile"] .community-tools-title,
+  body[data-layout-mode="mobile"] [aria-label*="Community Tools" i] {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}
