@@ -439,6 +439,17 @@ function isTacticalLandscapeDockMode() {
   return activeLayoutMode === "mobile" && window.matchMedia("(orientation: landscape) and (max-height: 520px)").matches;
 }
 
+
+function setTacticalReportHelperVisibility(visible) {
+  const helper = document.querySelector("#reportSection .report-copy > p");
+  if (!helper) return;
+  if (!isTacticalLandscapeDockMode()) {
+    helper.hidden = false;
+    return;
+  }
+  helper.hidden = !visible;
+}
+
 function ensureTacticalDockSheet() {
   let sheet = document.getElementById("gridlyTacticalDockSheet");
   if (sheet) return sheet;
@@ -457,15 +468,20 @@ function closeTacticalDockSheet() {
   if (!sheet) return;
   sheet.hidden = true;
   sheet.dataset.action = "";
+  setTacticalReportHelperVisibility(false);
 }
 
 function closeAllTacticalDockSurfaces({ except = "" } = {}) {
   if (except !== "route") closeMobileRouteQuickPanel("switch_tactical_action");
-  if (except !== "report") window.closeHazardPanel?.({ preserveLastReportMessage: true });
+  if (except !== "report") {
+    window.closeHazardPanel?.({ preserveLastReportMessage: false });
+    setTacticalReportHelperVisibility(false);
+  }
   if (except !== "alerts" && except !== "area" && except !== "layers") closeTacticalDockSheet();
 }
 
 function openTacticalDockSheet(action, title, contentHtml) {
+  setTacticalReportHelperVisibility(false);
   const sheet = ensureTacticalDockSheet();
   if (!sheet) return;
   closeAllTacticalDockSurfaces({ except: action });
@@ -2311,6 +2327,9 @@ function installLayerPickerDebugDiagnostics() {
   window.gridlySetBaseLayerDebug = function gridlySetBaseLayerDebug(name) {
     applyBaseLayerByName(name, "debug-helper");
     return window.gridlyLayerControlDebug();
+  };
+  window.applyMapStyle = function applyMapStyle(name) {
+    return applyBaseLayerByName(name, "tactical-dock-layer-sheet");
   };
   window.gridlyLayerMenuAuditDebug = function gridlyLayerMenuAuditDebug() {
     const menuRoot = document.querySelector("#map .gridly-mobile-layer-menu");
@@ -4343,6 +4362,7 @@ function openHazardPanel(entryPoint = reportingState.activeReportEntryPoint || "
 
 window.closeHazardPanel = function (options = {}) {
   const { preserveLastReportMessage = true } = options;
+  setTacticalReportHelperVisibility(false);
   const updates = {
     reportModeActive: false,
     placementModeActive: false,
@@ -5450,6 +5470,7 @@ function bindEvents() {
   els.mobileDockReportBtn?.addEventListener("click", (event) => {
     if (!isTacticalLandscapeDockMode()) return invokeMobileReportEntry("mobile_dock_report_button", event);
     closeAllTacticalDockSurfaces({ except: "report" });
+    setTacticalReportHelperVisibility(true);
     invokeMobileReportEntry("mobile_dock_report_button", event);
   });
   els.mobileDockAreaBtn?.addEventListener("click", () => {
