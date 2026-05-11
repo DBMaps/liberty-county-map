@@ -11141,15 +11141,18 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
 
   body[data-layout-mode="mobile"] .mobile-live-command {
     top: calc(var(--mobile-command-zone-top) + 1px);
-    padding: 5px 9px 6px;
-    border-radius: 10px;
-    border: 1px solid rgba(154, 208, 255, 0.14);
-    background: linear-gradient(145deg, rgba(8, 18, 31, 0.56), rgba(5, 11, 21, 0.62));
-    box-shadow: 0 2px 7px rgba(3, 9, 20, 0.14), 0 0 8px rgba(45, 135, 255, 0.04);
+    left: calc(env(safe-area-inset-left, 0px) + 8px);
+    right: calc(env(safe-area-inset-right, 0px) + 8px);
+    max-width: none;
+    width: auto;
+    padding: 4px 10px 5px;
+    border-radius: 8px;
+    border: 1px solid rgba(154, 208, 255, 0.11);
+    background: linear-gradient(145deg, rgba(8, 18, 31, 0.5), rgba(5, 11, 21, 0.56));
+    box-shadow: 0 1px 4px rgba(3, 9, 20, 0.1), 0 0 6px rgba(45, 135, 255, 0.03);
     backdrop-filter: blur(5px) saturate(103%);
     -webkit-backdrop-filter: blur(5px) saturate(103%);
     row-gap: 1px;
-    max-width: clamp(260px, 63vw, 388px);
   }
 
   body[data-layout-mode="mobile"] .mobile-live-command .eyebrow {
@@ -11168,12 +11171,17 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
   }
 
   body[data-layout-mode="mobile"] .mobile-live-command strong {
-    font-size: clamp(0.78rem, 1.85vw, 0.88rem);
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    font-size: clamp(0.79rem, 1.62vw, 0.89rem);
     line-height: 1.04;
     letter-spacing: 0.004em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
   body[data-layout-mode="mobile"] .mobile-live-command p {
