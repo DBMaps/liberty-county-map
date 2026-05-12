@@ -5640,6 +5640,64 @@ function bindEvents() {
   els.headerShareGridlyBtn?.addEventListener("click", shareGridly);
 
   bindMobileReportEntryDelegation();
+  const openPortraitAreaSurface = () => {
+    const layer = document.getElementById("mobileNativeSurfaceLayer");
+    const title = document.getElementById("mobileNativeSurfaceTitle");
+    const body = document.getElementById("mobileNativeSurfaceBody");
+    if (!layer || !title || !body) return;
+    title.textContent = "Area Filter";
+    body.dataset.mobileSurfaceView = "area-filter";
+    body.innerHTML = `
+      <article class="mobile-native-surface-card">
+        <strong>Focus Map Area</strong>
+        <p>Choose which crossings to show using the same map filters.</p>
+        <div class="mobile-native-surface-actions mobile-native-surface-actions-grid">
+          <button class="secondary-btn" type="button" data-area-filter="nearby">Nearby</button>
+          <button class="secondary-btn" type="button" data-area-filter="town">My Route</button>
+          <button class="secondary-btn" type="button" data-area-filter="county">My Town</button>
+          <button class="secondary-btn" type="button" data-area-filter="active-delays">Delays</button>
+          <button class="secondary-btn" type="button" data-area-filter="all">All</button>
+        </div>
+      </article>`;
+    layer.hidden = false;
+    normalizeMobileSurfaceBackdrop(true);
+    setMobileUiMode("alert", { silent: true });
+    body.querySelectorAll("[data-area-filter]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyGeoFilterFromPill(btn.dataset.areaFilter || "all");
+        scrollToSection("mapSection");
+        closeMobileNativeSurfaceLayer();
+      }, { once: true });
+    });
+    focusMobileSurfaceEntryTarget();
+  };
+  const openPortraitLayersSurface = () => {
+    const layer = document.getElementById("mobileNativeSurfaceLayer");
+    const title = document.getElementById("mobileNativeSurfaceTitle");
+    const body = document.getElementById("mobileNativeSurfaceBody");
+    if (!layer || !title || !body) return;
+    title.textContent = "Map Layers";
+    body.dataset.mobileSurfaceView = "map-layers";
+    body.innerHTML = `
+      <article class="mobile-native-surface-card">
+        <strong>Choose Base Layer</strong>
+        <div class="mobile-native-surface-actions mobile-native-surface-actions-grid">
+          <button class="secondary-btn" type="button" data-layer-name="Standard">Standard</button>
+          <button class="secondary-btn" type="button" data-layer-name="Dark">Dark</button>
+          <button class="secondary-btn" type="button" data-layer-name="Satellite">Satellite</button>
+        </div>
+      </article>`;
+    layer.hidden = false;
+    normalizeMobileSurfaceBackdrop(true);
+    setMobileUiMode("alert", { silent: true });
+    body.querySelectorAll("[data-layer-name]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyMapStyle(btn.dataset.layerName || "Satellite");
+        closeMobileNativeSurfaceLayer();
+      }, { once: true });
+    });
+    focusMobileSurfaceEntryTarget();
+  };
   els.mobileReportBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_sticky_report", event));
   els.mobileDockReportBtn?.addEventListener("click", (event) => {
     if (!isTacticalLandscapeDockMode()) return invokeMobileReportEntry("mobile_dock_report_button", event);
@@ -5649,15 +5707,8 @@ function bindEvents() {
   });
   els.mobileDockAreaBtn?.addEventListener("click", () => {
     if (!isTacticalLandscapeDockMode()) {
-      const townSelectorBtn = document.getElementById("mobileTownSelectorBtn");
-      if (townSelectorBtn) {
-        applyGeoFilterFromPill("town");
-        scrollToSection("mapSection");
-        return setConfirmation("Showing My Town crossings.", "success");
-      }
-      applyGeoFilterFromPill("town");
-      scrollToSection("mapSection");
-      return setConfirmation("Showing My Town crossings.", "success");
+      openPortraitAreaSurface();
+      return;
     }
     openTacticalDockSheet("area", "Area Filter", `
       <div class="gridly-tactical-option-grid">
@@ -5693,11 +5744,8 @@ function bindEvents() {
   });
   document.getElementById("mobileDockLayersBtn")?.addEventListener("click", () => {
     if (!isTacticalLandscapeDockMode()) {
-      const layerToggle = document.querySelector("#map .gridly-mobile-layer-menu-toggle")
-        || document.querySelector("#map .leaflet-control-layers-toggle");
-      if (!layerToggle) return;
-      layerToggle.dispatchEvent(new MouseEvent("pointerdown", { bubbles: true, cancelable: true }));
-      return layerToggle.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+      openPortraitLayersSurface();
+      return;
     }
     const options = ["Standard", "Dark", "Satellite"].map((name) => `<button type="button" data-layer-name="${name}">${name}</button>`).join("");
     openTacticalDockSheet("layers", "Map Layers", `<div class="gridly-tactical-option-grid">${options}</div>`);
