@@ -12661,4 +12661,176 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   window.addEventListener("resize", scheduleAuthoritativeLayoutModeSync, { passive: true });
   window.addEventListener("orientationchange", scheduleAuthoritativeLayoutModeSync, { passive: true });
   window.visualViewport?.addEventListener("resize", scheduleAuthoritativeLayoutModeSync, { passive: true });
+
+  // DEV ONLY: Gridly Layout Edit Mode
+  (() => {
+    const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1"]);
+    const DEV_STYLE_ID = "gridly-layout-edit-dev-style";
+    const DEV_OVERLAY_ID = "gridlyLayoutEditOverlay";
+    const DEV_BADGE_ID = "gridlyLayoutEditBadge";
+    const state = {
+      enabled: false,
+      selected: null,
+      dragging: false,
+      pointerId: null,
+      startX: 0,
+      startY: 0,
+      baseX: 0,
+      baseY: 0
+    };
+
+    const isLocalDevHost = () => LOCAL_HOSTS.has((window.location && window.location.hostname) || "");
+    const targetDefs = [
+      ["Mobile Portrait Dock", ".mobile-floating-action-dock"],
+      ["Portrait Bottom Nav", ".mobile-bottom-nav"],
+      ["Portrait Daily Panel", "#mobileDailyPanel"],
+      ["Portrait Report Button", "#mobileDockReportBtn"],
+      ["Portrait Route Button", "#mobileDockRoutesBtn, #mobileDockRouteBtn"],
+      ["Portrait Alerts Button", "#mobileDockAlertsBtn"],
+      ["Portrait Area Button", "#mobileDockAreaBtn"],
+      ["Portrait Layers Button", "#mobileDockLayersBtn"],
+      ["Tactical Landscape Dock", ".tactical-landscape-gate, .gridly-tactical-dock-sheet"],
+      ["Desktop Left Rail", ".desktop-left-rail"],
+      ["Desktop Report CTA", "#desktopReportNearMeBtnRail, #desktopReportNearMeBtn"],
+      ["Desktop Top Nav/Header", ".top-nav.command-top-nav, .mobile-live-brand-status"],
+      ["Map Status/Command Panel", ".command-center .mobile-live-command, .command-center .desktop-route-watch-strip, .command-center .map-tools-status"]
+    ];
+
+    const ensureDevStyle = () => {
+      if (document.getElementById(DEV_STYLE_ID)) return;
+      const style = document.createElement("style");
+      style.id = DEV_STYLE_ID;
+      style.textContent = `
+        [data-gridly-edit-mode="on"] [data-gridly-editable="true"] { outline: 2px dashed #26d1ff !important; outline-offset: 2px; }
+        [data-gridly-edit-mode="on"] [data-gridly-editable="true"].gridly-edit-selected { outline: 2px solid #00ff99 !important; }
+        .gridly-layout-edit-fixed { position: fixed; z-index: 999999; font: 12px/1.3 ui-monospace, SFMono-Regular, Menlo, monospace; color: #fff; background: rgba(8,14,26,.92); border: 1px solid rgba(255,255,255,.25); border-radius: 8px; padding: 8px 10px; }
+        #${DEV_BADGE_ID} { top: 10px; left: 10px; font-weight: 700; }
+        #${DEV_OVERLAY_ID} { top: 44px; left: 10px; width: 320px; }
+        #${DEV_OVERLAY_ID} .gridly-row { margin-bottom: 6px; word-break: break-word; }
+        #${DEV_OVERLAY_ID} .gridly-actions { display: flex; gap: 6px; }
+        #${DEV_OVERLAY_ID} button { cursor: pointer; border: 1px solid rgba(255,255,255,.3); background: #1f2a44; color: #fff; border-radius: 6px; padding: 4px 7px; }
+      `;
+      document.head.appendChild(style);
+    };
+
+    const markEditableTargets = () => {
+      targetDefs.forEach(([name, selector]) => {
+        document.querySelectorAll(selector).forEach((el) => {
+          el.setAttribute("data-gridly-editable", "true");
+          if (!el.getAttribute("data-gridly-edit-name")) el.setAttribute("data-gridly-edit-name", name);
+          if (!el.dataset.gridlyEditInitPos) el.dataset.gridlyEditInitPos = el.style.position || "";
+        });
+      });
+    };
+    const getEditableEls = () => Array.from(document.querySelectorAll('[data-gridly-editable="true"]'));
+    const parseTranslate = (el) => {
+      const m = /translate\((-?\d+(?:\.\d+)?)px,\s*(-?\d+(?:\.\d+)?)px\)/.exec(el.style.transform || "");
+      return m ? { x: Number(m[1]), y: Number(m[2]) } : { x: 0, y: 0 };
+    };
+    const setTranslate = (el, x, y) => { el.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`; };
+    const getSnapshot = () => ({
+      layoutMode: typeof window.getCurrentLayoutMode === "function" ? window.getCurrentLayoutMode() : (document.body?.dataset?.layoutMode || "unknown"),
+      viewport: { width: window.innerWidth, height: window.innerHeight },
+      elements: getEditableEls().map((el) => {
+        const r = el.getBoundingClientRect();
+        const t = parseTranslate(el);
+        return { name: el.getAttribute("data-gridly-edit-name") || "Unnamed", selector: el.id ? `#${el.id}` : null, id: el.id || null, classes: el.className || "", x: Math.round(r.x), y: Math.round(r.y), width: Math.round(r.width), height: Math.round(r.height), computedPosition: getComputedStyle(el).position, inlineTransform: el.style.transform || "", inlineTop: el.style.top || "", inlineLeft: el.style.left || "", translateX: t.x, translateY: t.y };
+      })
+    });
+
+    const refreshOverlay = () => {
+      const overlay = document.getElementById(DEV_OVERLAY_ID);
+      if (!overlay) return;
+      const sel = state.selected;
+      const rect = sel ? sel.getBoundingClientRect() : null;
+      overlay.querySelector('[data-k="mode"]').textContent = `Layout: ${typeof window.getCurrentLayoutMode === "function" ? window.getCurrentLayoutMode() : "unknown"}`;
+      overlay.querySelector('[data-k="selected"]').textContent = `Selected: ${sel?.getAttribute("data-gridly-edit-name") || "none"}`;
+      overlay.querySelector('[data-k="metrics"]').textContent = rect ? `x:${Math.round(rect.x)} y:${Math.round(rect.y)} w:${Math.round(rect.width)} h:${Math.round(rect.height)}` : "x:- y:- w:- h:-";
+    };
+    const createDevUi = () => {
+      ensureDevStyle();
+      if (!document.getElementById(DEV_BADGE_ID)) {
+        const badge = document.createElement("div");
+        badge.id = DEV_BADGE_ID; badge.className = "gridly-layout-edit-fixed"; badge.textContent = "Gridly Layout Edit Mode"; document.body.appendChild(badge);
+      }
+      if (!document.getElementById(DEV_OVERLAY_ID)) {
+        const overlay = document.createElement("div");
+        overlay.id = DEV_OVERLAY_ID; overlay.className = "gridly-layout-edit-fixed";
+        overlay.innerHTML = '<div class="gridly-row" data-k="mode"></div><div class="gridly-row" data-k="selected"></div><div class="gridly-row" data-k="metrics"></div><div class="gridly-actions"><button type="button" data-gridly-export>Export snapshot</button><button type="button" data-gridly-reset>Reset</button><button type="button" data-gridly-disable>Disable</button></div>';
+        overlay.addEventListener("click", (e) => {
+          if (e.target.matches('[data-gridly-export]')) console.log("[Gridly Layout Edit] Snapshot", window.exportGridlyLayoutSnapshot());
+          if (e.target.matches('[data-gridly-reset]')) window.resetGridlyLayoutEditMode();
+          if (e.target.matches('[data-gridly-disable]')) window.disableGridlyLayoutEditMode();
+        });
+        document.body.appendChild(overlay);
+      }
+      refreshOverlay();
+    };
+
+    const onPointerDown = (event) => {
+      if (!state.enabled || event.button !== 0) return;
+      const target = event.target.closest('[data-gridly-editable="true"]');
+      if (!target) return;
+      event.preventDefault();
+      getEditableEls().forEach((el) => el.classList.remove("gridly-edit-selected"));
+      target.classList.add("gridly-edit-selected");
+      state.selected = target;
+      state.dragging = true;
+      state.pointerId = event.pointerId;
+      state.startX = event.clientX;
+      state.startY = event.clientY;
+      const base = parseTranslate(target);
+      state.baseX = base.x; state.baseY = base.y;
+      document.body.style.userSelect = "none";
+      target.setPointerCapture?.(event.pointerId);
+      refreshOverlay();
+    };
+    const onPointerMove = (event) => {
+      if (!state.enabled || !state.dragging || !state.selected || event.pointerId !== state.pointerId) return;
+      const dx = event.clientX - state.startX;
+      const dy = event.clientY - state.startY;
+      setTranslate(state.selected, state.baseX + dx, state.baseY + dy);
+      refreshOverlay();
+    };
+    const stopDrag = () => { state.dragging = false; state.pointerId = null; document.body.style.userSelect = ""; refreshOverlay(); };
+
+    window.exportGridlyLayoutSnapshot = () => getSnapshot();
+    window.resetGridlyLayoutEditMode = () => {
+      getEditableEls().forEach((el) => { el.style.transform = ""; el.style.top = ""; el.style.left = ""; el.classList.remove("gridly-edit-selected"); });
+      state.selected = null;
+      refreshOverlay();
+      return true;
+    };
+    window.disableGridlyLayoutEditMode = () => {
+      if (!state.enabled) return false;
+      window.resetGridlyLayoutEditMode();
+      state.enabled = false;
+      document.body.removeAttribute("data-gridly-edit-mode");
+      document.removeEventListener("pointerdown", onPointerDown, true);
+      document.removeEventListener("pointermove", onPointerMove, true);
+      document.removeEventListener("pointerup", stopDrag, true);
+      document.removeEventListener("pointercancel", stopDrag, true);
+      document.getElementById(DEV_BADGE_ID)?.remove();
+      document.getElementById(DEV_OVERLAY_ID)?.remove();
+      return true;
+    };
+    window.enableGridlyLayoutEditMode = () => {
+      if (!isLocalDevHost()) {
+        console.warn("[Gridly Layout Edit] Refused: only localhost/127.0.0.1 can enable edit mode.");
+        return false;
+      }
+      if (state.enabled) return true;
+      markEditableTargets();
+      state.enabled = true;
+      document.body.setAttribute("data-gridly-edit-mode", "on");
+      createDevUi();
+      document.addEventListener("pointerdown", onPointerDown, true);
+      document.addEventListener("pointermove", onPointerMove, true);
+      document.addEventListener("pointerup", stopDrag, true);
+      document.addEventListener("pointercancel", stopDrag, true);
+      refreshOverlay();
+      return true;
+    };
+  })();
+
 })();
