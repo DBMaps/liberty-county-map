@@ -4567,6 +4567,15 @@ function bindDirectRouteQuickPanelButtonListeners() {
   routeQuickDirectListenerAttached = true;
 }
 
+// Compatibility wrapper: legacy callers still invoke this name after route CTA helper split.
+function updateRouteWatchStartButtonState() {
+  if (typeof loadSavedRoute === "function") {
+    loadSavedRoute();
+    return;
+  }
+  if (typeof updateRouteWatchStartButtonLabel === "function") updateRouteWatchStartButtonLabel();
+}
+
 async function handleRouteQuickPanelAction(action, event, actionEl) {
   const startSelect = document.getElementById("mobileRouteQuickStart");
   const destinationSelect = document.getElementById("mobileRouteQuickDestination");
@@ -5471,12 +5480,34 @@ function setReportMode(mode) {
 function bindEvents() {
   migrateLegacyStorage();
   // Control ownership helpers: mode-scoped visible controls, shared behavior helpers.
-  const bindDesktopControls = () => {
-    els.desktopReportNearMeBtn?.addEventListener("click", handleReportNearMe);
-    els.desktopReportNearMeBtnRail?.addEventListener("click", handleReportNearMe);
+  const bindSharedCoreControls = () => {
+    if (document.body.dataset.gridlySharedCoreBound === "1") return;
+    document.body.dataset.gridlySharedCoreBound = "1";
   };
-  const bindPortraitControls = () => {};
-  const bindTacticalLandscapeControls = () => {};
+  const bindDesktopControls = () => {
+    if (document.body.dataset.gridlyDesktopControlsBound === "1") return;
+    document.body.dataset.gridlyDesktopControlsBound = "1";
+    const desktopReportBtn = els.desktopReportNearMeBtn;
+    const desktopRailReportBtn = els.desktopReportNearMeBtnRail;
+    desktopReportBtn?.addEventListener("click", handleReportNearMe);
+    desktopRailReportBtn?.addEventListener("click", handleReportNearMe);
+  };
+  const bindPortraitControls = () => {
+    if (document.body.dataset.gridlyPortraitControlsBound === "1") return;
+    document.body.dataset.gridlyPortraitControlsBound = "1";
+    const portraitRouteBtn = els.mobileQuickRouteBtn;
+    const portraitAlertsBtn = els.mobileQuickFavoritesBtn;
+    portraitRouteBtn?.addEventListener("click", () => openMobileRouteQuickPanel());
+    portraitAlertsBtn?.addEventListener("click", () => openSmartAlertsModal());
+  };
+  const bindTacticalLandscapeControls = () => {
+    if (document.body.dataset.gridlyTacticalControlsBound === "1") return;
+    document.body.dataset.gridlyTacticalControlsBound = "1";
+    const tacticalRouteBtn = document.getElementById("mobileDockRouteBtn");
+    const tacticalLayersBtn = document.getElementById("mobileDockLayersBtn");
+    tacticalRouteBtn?.setAttribute("data-gridly-mode-owner", "tactical-landscape");
+    tacticalLayersBtn?.setAttribute("data-gridly-mode-owner", "tactical-landscape");
+  };
   const bindTapSafeClose = (element, handler) => {
     if (!element) return;
     const invoke = (event) => {
@@ -5826,6 +5857,7 @@ function bindEvents() {
     handleReportNearMe();
   });
   els.mapReportShortcutBtn?.addEventListener("click", handleReportNearMe);
+  bindSharedCoreControls();
   bindDesktopControls();
   bindPortraitControls();
   bindTacticalLandscapeControls();
@@ -9159,6 +9191,7 @@ function updateGrowthWidgets() {
   }
 
   const confirmationCount = getUnifiedIncidents().reduce((sum,i)=>sum+i.reports_count,0);
+  const routeLabelParts = buildRouteWatchLabelParts();
   const routeIsMonitoring = Boolean(routeWatchActivated && routeLabelParts?.configured);
   const routeHazard = routeIsMonitoring ? getRouteHazardAssessment() : { nearbyReports: [], level: "clear", score: 0 };
   const activeUnifiedHazards = unifiedActive.filter((incident) => !String(incident.type || "").startsWith("rail_"));
