@@ -11610,6 +11610,18 @@ body[data-layout-mode="tactical-landscape"] .future-map-hero,
 body[data-layout-mode="tactical-landscape"] .driver-hero {
   display: none !important;
 }
+
+/* GRIDLY V102 — when real tactical map is active, suppress oversized fallback/hero surfaces above it. */
+body[data-layout-mode="tactical-landscape"][data-tactical-map-active] .mobile-native-surface-layer,
+body[data-layout-mode="tactical-landscape"][data-tactical-map-active] .future-map-hero,
+body[data-layout-mode="tactical-landscape"][data-tactical-map-active] .driver-hero,
+body[data-layout-mode="tactical-landscape"][data-tactical-map-active] .destination-hero-card,
+body[data-layout-mode="tactical-landscape"][data-tactical-map-active] .mobile-home-cards {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
 body[data-layout-mode="tactical-landscape"] .map-card,
 body[data-layout-mode="tactical-landscape"] .map-frame,
 body[data-layout-mode="tactical-landscape"] #map {
