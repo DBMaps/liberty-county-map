@@ -5659,11 +5659,11 @@ function bindEvents() {
         <strong>Focus Map Area</strong>
         <p>Choose which crossings to show using the same map filters.</p>
         <div class="mobile-native-surface-actions mobile-native-surface-actions-grid">
-          <button class="secondary-btn" type="button" data-area-filter="nearby">Nearby</button>
-          <button class="secondary-btn" type="button" data-area-filter="town">My Route</button>
-          <button class="secondary-btn" type="button" data-area-filter="county">My Town</button>
-          <button class="secondary-btn" type="button" data-area-filter="active-delays">Delays</button>
-          <button class="secondary-btn" type="button" data-area-filter="all">All</button>
+          <button class="secondary-btn" type="button" data-portrait-area-option="nearby">Nearby</button>
+          <button class="secondary-btn" type="button" data-portrait-area-option="route">My Route</button>
+          <button class="secondary-btn" type="button" data-portrait-area-option="town">My Town</button>
+          <button class="secondary-btn" type="button" data-portrait-area-option="delays">Delays</button>
+          <button class="secondary-btn" type="button" data-portrait-area-option="all">All</button>
         </div>
       </article>`;
     layer.hidden = false;
@@ -5674,13 +5674,6 @@ function bindEvents() {
     layer.classList.add("is-open");
     normalizeMobileSurfaceBackdrop(true);
     setMobileUiMode("alert", { silent: true });
-    body.querySelectorAll("[data-area-filter]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        applyGeoFilterFromPill(btn.dataset.areaFilter || "all");
-        scrollToSection("mapSection");
-        closeMobileNativeSurfaceLayer();
-      }, { once: true });
-    });
     portraitSurfaceDebugLog("[Gridly][PortraitSurface] openPortraitAreaSurface:rendered", {
       hidden: layer.hidden,
       ariaHidden: layer.getAttribute("aria-hidden"),
@@ -5700,9 +5693,9 @@ function bindEvents() {
       <article class="mobile-native-surface-card">
         <strong>Choose Base Layer</strong>
         <div class="mobile-native-surface-actions mobile-native-surface-actions-grid">
-          <button class="secondary-btn" type="button" data-layer-name="Standard">Standard</button>
-          <button class="secondary-btn" type="button" data-layer-name="Dark">Dark</button>
-          <button class="secondary-btn" type="button" data-layer-name="Satellite">Satellite</button>
+          <button class="secondary-btn" type="button" data-portrait-layer-option="standard">Standard</button>
+          <button class="secondary-btn" type="button" data-portrait-layer-option="dark">Dark</button>
+          <button class="secondary-btn" type="button" data-portrait-layer-option="satellite">Satellite</button>
         </div>
       </article>`;
     layer.hidden = false;
@@ -5713,12 +5706,6 @@ function bindEvents() {
     layer.classList.add("is-open");
     normalizeMobileSurfaceBackdrop(true);
     setMobileUiMode("alert", { silent: true });
-    body.querySelectorAll("[data-layer-name]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        applyMapStyle(btn.dataset.layerName || "Satellite");
-        closeMobileNativeSurfaceLayer();
-      }, { once: true });
-    });
     portraitSurfaceDebugLog("[Gridly][PortraitSurface] openPortraitLayersSurface:rendered", {
       hidden: layer.hidden,
       ariaHidden: layer.getAttribute("aria-hidden"),
@@ -5726,6 +5713,47 @@ function bindEvents() {
     });
     focusMobileSurfaceEntryTarget();
   };
+  const bindPortraitSurfaceOptionHandlers = () => {
+    const body = document.getElementById("mobileNativeSurfaceBody");
+    if (!body || body.dataset.gridlyPortraitSurfaceOptionsBound === "1") return;
+    body.dataset.gridlyPortraitSurfaceOptionsBound = "1";
+    const areaFilterKeyByOption = {
+      nearby: "nearby",
+      route: "town",
+      town: "county",
+      delays: "active-delays",
+      all: "all"
+    };
+    const layerNameByOption = {
+      standard: "Standard",
+      dark: "Dark",
+      satellite: "Satellite"
+    };
+    body.addEventListener("click", (event) => {
+      const areaOptionBtn = event.target?.closest?.("[data-portrait-area-option]");
+      if (areaOptionBtn) {
+        const selectedOption = areaOptionBtn.dataset.portraitAreaOption || "all";
+        const filterKey = areaFilterKeyByOption[selectedOption] || "all";
+        portraitSurfaceDebugLog("[Gridly][PortraitSurface] option clicked", { type: "area", selectedOption });
+        portraitSurfaceDebugLog("[Gridly][PortraitSurface] target function called", { fn: "applyGeoFilterFromPill", value: filterKey });
+        applyGeoFilterFromPill(filterKey);
+        scrollToSection("mapSection");
+        closeMobileNativeSurfaceLayer();
+        portraitSurfaceDebugLog("[Gridly][PortraitSurface] close completed", { type: "area", selectedOption });
+        return;
+      }
+      const layerOptionBtn = event.target?.closest?.("[data-portrait-layer-option]");
+      if (!layerOptionBtn) return;
+      const selectedOption = layerOptionBtn.dataset.portraitLayerOption || "satellite";
+      const layerName = layerNameByOption[selectedOption] || "Satellite";
+      portraitSurfaceDebugLog("[Gridly][PortraitSurface] option clicked", { type: "layers", selectedOption });
+      portraitSurfaceDebugLog("[Gridly][PortraitSurface] target function called", { fn: "applyMapStyle", value: layerName });
+      applyMapStyle(layerName);
+      closeMobileNativeSurfaceLayer();
+      portraitSurfaceDebugLog("[Gridly][PortraitSurface] close completed", { type: "layers", selectedOption });
+    });
+  };
+  bindPortraitSurfaceOptionHandlers();
   els.mobileReportBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_sticky_report", event));
   els.mobileDockReportBtn?.addEventListener("click", (event) => {
     if (!isTacticalLandscapeDockMode()) return invokeMobileReportEntry("mobile_dock_report_button", event);
