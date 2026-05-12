@@ -363,7 +363,6 @@ function computeLayoutModeSignals() {
 function resolveLayoutMode({ viewportWidth, viewportHeight, shellWidth, commandWidth, hasHorizontalOverflow, coarsePointer, orientationLandscape }) {
   const tacticalLandscapeByHeight =
     orientationLandscape &&
-    coarsePointer &&
     viewportWidth <= 1100 &&
     viewportHeight <= 520;
   if (tacticalLandscapeByHeight) {
