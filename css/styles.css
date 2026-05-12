@@ -11573,6 +11573,18 @@ body[data-layout-mode="portrait"] .desktop-business-note {
   visibility: hidden !important;
 }
 
+
+body[data-layout-mode="tactical-landscape"] {
+  overflow: hidden !important;
+  height: 100dvh;
+}
+
+body[data-layout-mode="tactical-landscape"] .app-shell,
+body[data-layout-mode="tactical-landscape"] .command-center {
+  max-height: 100dvh;
+  overflow: hidden !important;
+}
+
 /* Tactical-landscape-only surfaces: show tactical dock/map shell, suppress portrait/desktop lower sections. */
 body[data-layout-mode="tactical-landscape"] .mobile-floating-action-dock,
 body[data-layout-mode="tactical-landscape"] .map-card,
@@ -11612,7 +11624,7 @@ body[data-layout-mode="tactical-landscape"] .driver-hero {
 }
 
 /* GRIDLY V102 — when real tactical map is active, suppress oversized fallback/hero surfaces above it. */
-body[data-layout-mode="tactical-landscape"][data-tactical-map-active] .mobile-native-surface-layer,
+body[data-layout-mode="tactical-landscape"][data-tactical-map-active="true"] .mobile-native-surface-layer,
 body[data-layout-mode="tactical-landscape"][data-tactical-map-active] .future-map-hero,
 body[data-layout-mode="tactical-landscape"][data-tactical-map-active] .driver-hero,
 body[data-layout-mode="tactical-landscape"][data-tactical-map-active] .destination-hero-card,
@@ -11629,4 +11641,9 @@ body[data-layout-mode="tactical-landscape"] #map {
   visibility: visible !important;
   min-height: max(248px, calc(var(--gridly-visual-vh, 100vh) - 120px));
   height: auto;
+}
+
+
+body[data-layout-mode="tactical-landscape"] .map-card {
+  margin-top: 0 !important;
 }

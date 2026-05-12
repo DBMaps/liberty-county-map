@@ -376,7 +376,11 @@ function evaluateLayoutMode() {
 
 function applyLayoutMode(nextMode) {
   const previousLayoutMode = activeLayoutMode;
-  activeLayoutMode = nextMode === "desktop" || nextMode === "portrait" || nextMode === "tactical-landscape" ? nextMode : "desktop";
+  const validModes = ["desktop", "portrait", "tactical-landscape"];
+  const viewportWidth = window.visualViewport?.width || window.innerWidth || document.documentElement?.clientWidth || 0;
+  const fallbackMode = viewportWidth <= 980 ? "portrait" : "desktop";
+  const safePreviousMode = validModes.includes(previousLayoutMode) ? previousLayoutMode : fallbackMode;
+  activeLayoutMode = validModes.includes(nextMode) ? nextMode : safePreviousMode;
   if (!document?.body) return;
   document.body.setAttribute("data-layout-mode", activeLayoutMode);
   document.body.setAttribute("data-layout-mode-legacy", activeLayoutMode === "desktop" ? "desktop" : "mobile");
@@ -428,8 +432,9 @@ function isMobileUiViewport() {
   return isPortraitMode() || isTacticalLandscapeMode();
 }
 
-function syncTacticalMapSurfaceVisibility() {
+function syncTacticalMapSurfaceVisibility(options = {}) {
   if (!document?.body) return;
+  const { resync = false } = options;
   const mapEl = document.getElementById("map");
   const mapRect = mapEl?.getBoundingClientRect?.();
   const mapStyle = mapEl ? window.getComputedStyle(mapEl) : null;
@@ -445,7 +450,23 @@ function syncTacticalMapSurfaceVisibility() {
     mapRect.width > 0 &&
     mapRect.height > 0
   );
-  document.body.toggleAttribute("data-tactical-map-active", mapVisible);
+  if (mapVisible) {
+    document.body.dataset.tacticalMapActive = "true";
+  } else {
+    delete document.body.dataset.tacticalMapActive;
+  }
+  if (!mapVisible && tacticalMode && !resync) {
+    window.requestAnimationFrame(() => {
+      try {
+        if (window.map && typeof window.map.invalidateSize === "function") {
+          window.map.invalidateSize();
+        }
+      } catch (error) {
+        console.debug("[Gridly] Tactical map invalidateSize sync skipped", error);
+      }
+      syncTacticalMapSurfaceVisibility({ resync: true });
+    });
+  }
 }
 
 function syncMobileNavVisibilityForViewport() {
