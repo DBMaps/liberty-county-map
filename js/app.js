@@ -360,16 +360,42 @@ function computeLayoutModeSignals() {
   return { viewportWidth, shellWidth, commandWidth, hasHorizontalOverflow, coarsePointer };
 }
 
+function resolveLayoutMode({ viewportWidth, viewportHeight, shellWidth, commandWidth, hasHorizontalOverflow, coarsePointer, orientationLandscape }) {
+  const tacticalLandscapeByHeight =
+    orientationLandscape &&
+    coarsePointer &&
+    viewportWidth <= 1100 &&
+    viewportHeight <= 520;
+  if (tacticalLandscapeByHeight) {
+    return {
+      nextMode: "tactical-landscape",
+      tacticalLandscapeByHeight,
+      forcedPortrait: false,
+      forcedDesktop: false
+    };
+  }
+  const mobileByWidth = viewportWidth <= 980;
+  const desktopByWidth = viewportWidth >= 1160;
+  const containerCollapsed = shellWidth <= 1020 || commandWidth <= 760;
+  const forcedPortrait = mobileByWidth || containerCollapsed || (hasHorizontalOverflow && viewportWidth < 1220);
+  const forcedDesktop = desktopByWidth && !containerCollapsed && !hasHorizontalOverflow && !coarsePointer;
+  const nextMode = forcedPortrait ? "portrait" : forcedDesktop ? "desktop" : activeLayoutMode;
+  return { nextMode, tacticalLandscapeByHeight, forcedPortrait, forcedDesktop };
+}
+
 function evaluateLayoutMode() {
   const s = computeLayoutModeSignals();
   const orientationLandscape = window.matchMedia?.("(orientation: landscape)")?.matches === true;
-  const tacticalLandscapeByHeight = orientationLandscape && s.coarsePointer && s.viewportWidth <= 1100 && window.innerHeight <= 520;
-  const mobileByWidth = s.viewportWidth <= 980;
-  const desktopByWidth = s.viewportWidth >= 1160;
-  const containerCollapsed = s.shellWidth <= 1020 || s.commandWidth <= 760;
-  const forcedPortrait = (mobileByWidth || containerCollapsed || (s.hasHorizontalOverflow && s.viewportWidth < 1220)) && !tacticalLandscapeByHeight;
-  const forcedDesktop = desktopByWidth && !containerCollapsed && !s.hasHorizontalOverflow && !s.coarsePointer && !tacticalLandscapeByHeight;
-  const nextMode = tacticalLandscapeByHeight ? "tactical-landscape" : forcedPortrait ? "portrait" : forcedDesktop ? "desktop" : activeLayoutMode;
+  const resolved = resolveLayoutMode({
+    viewportWidth: s.viewportWidth,
+    viewportHeight: window.innerHeight || 0,
+    shellWidth: s.shellWidth,
+    commandWidth: s.commandWidth,
+    hasHorizontalOverflow: s.hasHorizontalOverflow,
+    coarsePointer: s.coarsePointer,
+    orientationLandscape
+  });
+  const { nextMode, forcedPortrait, forcedDesktop, tacticalLandscapeByHeight } = resolved;
   lastLayoutSignal = { ...s, nextMode, forcedPortrait, forcedDesktop, tacticalLandscapeByHeight };
   return nextMode;
 }
@@ -427,6 +453,34 @@ function isPortraitMode() {
 function isTacticalLandscapeMode() {
   return getCurrentLayoutMode() === "tactical-landscape";
 }
+
+window.gridlyLayoutDebug = function gridlyLayoutDebug() {
+  const s = computeLayoutModeSignals();
+  const width = window.innerWidth || 0;
+  const height = window.innerHeight || 0;
+  const orientation = width > height ? "landscape" : "portrait";
+  const resolved = resolveLayoutMode({
+    viewportWidth: s.viewportWidth,
+    viewportHeight: height,
+    shellWidth: s.shellWidth,
+    commandWidth: s.commandWidth,
+    hasHorizontalOverflow: s.hasHorizontalOverflow,
+    coarsePointer: s.coarsePointer,
+    orientationLandscape: orientation === "landscape"
+  });
+  return {
+    width,
+    height,
+    orientation,
+    coarsePointer: s.coarsePointer,
+    detectedMode: resolved.nextMode,
+    bodyDataset: {
+      layoutMode: document.body?.dataset?.layoutMode || null,
+      layoutModeLegacy: document.body?.dataset?.layoutModeLegacy || null,
+      mobileMode: document.body?.dataset?.mobileMode || null
+    }
+  };
+};
 
 function isMobileUiViewport() {
   return isPortraitMode() || isTacticalLandscapeMode();
