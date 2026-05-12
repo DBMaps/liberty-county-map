@@ -388,6 +388,7 @@ function applyLayoutMode(nextMode) {
   if (previousLayoutMode !== activeLayoutMode && typeof window.resetMobileSurfaceState === "function") {
     window.resetMobileSurfaceState("layout_transition", { previousLayoutMode, nextLayoutMode: activeLayoutMode });
   }
+  syncTacticalMapSurfaceVisibility();
 }
 
 // Layout mode UX contracts:
@@ -425,6 +426,26 @@ function isTacticalLandscapeMode() {
 
 function isMobileUiViewport() {
   return isPortraitMode() || isTacticalLandscapeMode();
+}
+
+function syncTacticalMapSurfaceVisibility() {
+  if (!document?.body) return;
+  const mapEl = document.getElementById("map");
+  const mapRect = mapEl?.getBoundingClientRect?.();
+  const mapStyle = mapEl ? window.getComputedStyle(mapEl) : null;
+  const tacticalMode = isTacticalLandscapeMode();
+  const mapVisible = Boolean(
+    tacticalMode &&
+    mapEl &&
+    mapStyle &&
+    mapStyle.display !== "none" &&
+    mapStyle.visibility !== "hidden" &&
+    Number.parseFloat(mapStyle.opacity || "1") > 0 &&
+    mapRect &&
+    mapRect.width > 0 &&
+    mapRect.height > 0
+  );
+  document.body.toggleAttribute("data-tactical-map-active", mapVisible);
 }
 
 function syncMobileNavVisibilityForViewport() {
@@ -2007,6 +2028,7 @@ function initMap() {
 
   L.control.layers(baseLayers, null, { position: "bottomright", collapsed: true }).addTo(map);
   installLayerPickerDebugDiagnostics();
+  map.whenReady(() => syncTacticalMapSurfaceVisibility());
 
   map.on("baselayerchange", (event) => {
     const selectedName = event?.name;
@@ -2503,10 +2525,12 @@ function installMapLayoutResizeSafety() {
 
     rafId = requestAnimationFrame(() => {
       map.invalidateSize({ pan: false, debounceMoveend: true });
+      syncTacticalMapSurfaceVisibility();
     });
 
     debounceId = setTimeout(() => {
       map.invalidateSize({ pan: false, debounceMoveend: true });
+      syncTacticalMapSurfaceVisibility();
     }, 180);
   };
 
