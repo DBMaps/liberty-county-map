@@ -627,6 +627,7 @@ function openTacticalDockSheet(action, title, contentHtml) {
 const GRIDLY_REPORT_VERBOSE_DEBUG = false;
 const GRIDLY_ROUTE_VERBOSE_DEBUG = false;
 const GRIDLY_LAYER_VERBOSE_DEBUG = false;
+const GRIDLY_PORTRAIT_SURFACE_DEBUG = false;
 
 function reportDebugLog(...args) {
   if (!GRIDLY_REPORT_VERBOSE_DEBUG) return;
@@ -657,6 +658,11 @@ function captureRouteAttempt(patch = {}) {
 
 function layerDebugLog(...args) {
   if (!GRIDLY_LAYER_VERBOSE_DEBUG) return;
+  console.log(...args);
+}
+
+function portraitSurfaceDebugLog(...args) {
+  if (!GRIDLY_PORTRAIT_SURFACE_DEBUG) return;
   console.log(...args);
 }
 
@@ -5641,6 +5647,7 @@ function bindEvents() {
 
   bindMobileReportEntryDelegation();
   const openPortraitAreaSurface = () => {
+    portraitSurfaceDebugLog("[Gridly][PortraitSurface] openPortraitAreaSurface:start");
     const layer = document.getElementById("mobileNativeSurfaceLayer");
     const title = document.getElementById("mobileNativeSurfaceTitle");
     const body = document.getElementById("mobileNativeSurfaceBody");
@@ -5660,6 +5667,11 @@ function bindEvents() {
         </div>
       </article>`;
     layer.hidden = false;
+    layer.style.opacity = "1";
+    layer.style.visibility = "visible";
+    layer.style.pointerEvents = "auto";
+    layer.setAttribute("aria-hidden", "false");
+    layer.classList.add("is-open");
     normalizeMobileSurfaceBackdrop(true);
     setMobileUiMode("alert", { silent: true });
     body.querySelectorAll("[data-area-filter]").forEach((btn) => {
@@ -5669,9 +5681,15 @@ function bindEvents() {
         closeMobileNativeSurfaceLayer();
       }, { once: true });
     });
+    portraitSurfaceDebugLog("[Gridly][PortraitSurface] openPortraitAreaSurface:rendered", {
+      hidden: layer.hidden,
+      ariaHidden: layer.getAttribute("aria-hidden"),
+      view: body.dataset.mobileSurfaceView
+    });
     focusMobileSurfaceEntryTarget();
   };
   const openPortraitLayersSurface = () => {
+    portraitSurfaceDebugLog("[Gridly][PortraitSurface] openPortraitLayersSurface:start");
     const layer = document.getElementById("mobileNativeSurfaceLayer");
     const title = document.getElementById("mobileNativeSurfaceTitle");
     const body = document.getElementById("mobileNativeSurfaceBody");
@@ -5688,6 +5706,11 @@ function bindEvents() {
         </div>
       </article>`;
     layer.hidden = false;
+    layer.style.opacity = "1";
+    layer.style.visibility = "visible";
+    layer.style.pointerEvents = "auto";
+    layer.setAttribute("aria-hidden", "false");
+    layer.classList.add("is-open");
     normalizeMobileSurfaceBackdrop(true);
     setMobileUiMode("alert", { silent: true });
     body.querySelectorAll("[data-layer-name]").forEach((btn) => {
@@ -5695,6 +5718,11 @@ function bindEvents() {
         applyMapStyle(btn.dataset.layerName || "Satellite");
         closeMobileNativeSurfaceLayer();
       }, { once: true });
+    });
+    portraitSurfaceDebugLog("[Gridly][PortraitSurface] openPortraitLayersSurface:rendered", {
+      hidden: layer.hidden,
+      ariaHidden: layer.getAttribute("aria-hidden"),
+      view: body.dataset.mobileSurfaceView
     });
     focusMobileSurfaceEntryTarget();
   };
@@ -5705,7 +5733,12 @@ function bindEvents() {
     setTacticalReportHelperVisibility(true);
     invokeMobileReportEntry("mobile_dock_report_button", event);
   });
+  portraitSurfaceDebugLog("[Gridly][PortraitSurface] binding attached", {
+    areaButtonPresent: Boolean(els.mobileDockAreaBtn),
+    layersButtonPresent: Boolean(document.getElementById("mobileDockLayersBtn"))
+  });
   els.mobileDockAreaBtn?.addEventListener("click", () => {
+    portraitSurfaceDebugLog("[Gridly][PortraitSurface] Area button click handler fired");
     if (!isTacticalLandscapeDockMode()) {
       openPortraitAreaSurface();
       return;
@@ -5743,6 +5776,7 @@ function bindEvents() {
     }, { once: true });
   });
   document.getElementById("mobileDockLayersBtn")?.addEventListener("click", () => {
+    portraitSurfaceDebugLog("[Gridly][PortraitSurface] Layers button click handler fired");
     if (!isTacticalLandscapeDockMode()) {
       openPortraitLayersSurface();
       return;
