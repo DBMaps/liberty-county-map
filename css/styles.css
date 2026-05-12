@@ -68,22 +68,22 @@ button {
 }
 
 .brand-logo-frame {
-  width: 285px;
+  width: min(285px, 42vw);
   height: 78px;
+  max-height: 78px;
   overflow: hidden;
   position: relative;
   flex-shrink: 0;
 }
 
 .brand-logo-img {
-  width: 520px;
-  max-width: none;
-  height: auto;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
   display: block;
-  position: absolute;
-  left: 50%;
-  top: 53%;
-  transform: translate(-50%, -50%);
 }
 
 .beta-pill {
@@ -1874,13 +1874,14 @@ body.modal-open {
   }
 
   .brand-logo-frame {
-    width: 280px;
+    width: min(280px, 56vw);
     height: 82px;
+    max-height: 82px;
   }
 
   .brand-logo-img {
-    width: 520px;
-    top: 53%;
+    width: 100%;
+    height: 100%;
   }
 
   .top-nav {
@@ -1934,22 +1935,19 @@ body.modal-open {
   }
 
   .brand-logo-frame {
-    width: 196px;
+    width: min(196px, 62vw);
     height: 56px;
+    max-height: 56px;
     overflow: hidden;
     position: relative;
     flex-shrink: 0;
   }
 
   .brand-logo-img {
-    width: 336px;
-    max-width: none;
-    height: auto;
-    display: block;
-    position: absolute;
-    left: 50%;
-    top: 55%;
-    transform: translate(-50%, -50%);
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100%;
   }
 
   .beta-pill {
@@ -3150,13 +3148,14 @@ body.modal-open {
   }
 
   .brand-logo-frame {
-    width: 176px;
+    width: min(176px, 58vw);
     height: 44px;
+    max-height: 44px;
   }
 
   .brand-logo-img {
-    width: 300px;
-    top: 52%;
+    width: 100%;
+    height: 100%;
   }
 
   .beta-pill {
@@ -9998,6 +9997,19 @@ body[data-layout-mode="mobile"] .desktop-command-panel {
   position: absolute;
   inset: 0;
   background: rgba(3, 8, 17, 0.52);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+body[data-layout-mode="portrait"] .mobile-native-surface-layer:not([hidden]) .mobile-native-surface-backdrop,
+body[data-layout-mode-legacy="mobile"] .mobile-native-surface-layer:not([hidden]) .mobile-native-surface-backdrop {
+  opacity: 1;
+  pointer-events: auto;
+}
+body[data-layout-mode="tactical-landscape"] .mobile-native-surface-backdrop,
+body[data-layout-mode="desktop"] .mobile-native-surface-backdrop {
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 .mobile-native-surface-sheet {
   position: absolute;

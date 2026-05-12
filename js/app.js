@@ -12108,7 +12108,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       </article>`;
 
     layer.hidden = false;
-    layer.setAttribute("aria-hidden", "false");
+    normalizeMobileSurfaceBackdrop(true);
     setMobileUiMode("alert", { silent: true });
     focusMobileSurfaceEntryTarget();
 
@@ -12206,7 +12206,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     if (section === "report") {
       traceMobileModeMutation("daily panel report clicked", { section, intendedSurfaceSelector: "#reportSection", before: collectMobileSurfaceDiagnostics(), surfaceState: readSurfaceComputedState("#reportSection") });
       layer.hidden = true;
-      layer.setAttribute("aria-hidden", "true");
+      normalizeMobileSurfaceBackdrop(false);
       const beforeSetMode = document.body?.dataset?.mobileMode || null;
       handleReportNearMe("daily_panel_report");
       traceMobileModeMutation("daily panel report completed", {
@@ -12222,7 +12222,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     body.dataset.mobileSurfaceView = section;
     body.innerHTML = views[section].html;
     layer.hidden = false;
-    layer.setAttribute("aria-hidden", "false");
+    normalizeMobileSurfaceBackdrop(true);
     setMobileUiMode(section === "routes" ? "route" : section === "alerts" ? "alert" : "live", { silent: true });
     focusMobileSurfaceEntryTarget();
     logDailyPanelAction("mobile surface opened", { section, sourceAction: "daily_panel_button", visibilityState: !layer.hidden });
@@ -12266,13 +12266,28 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
 
     const layer = document.getElementById("mobileNativeSurfaceLayer");
     const closeBtn = document.getElementById("mobileNativeSurfaceCloseBtn");
+    const backdrop = layer?.querySelector('.mobile-native-surface-backdrop');
+    const normalizeMobileSurfaceBackdrop = (open) => {
+      if (!layer) return;
+      const active = Boolean(open);
+      layer.classList.toggle("is-open", active);
+      layer.classList.remove("is-active", "active", "open");
+      layer.setAttribute("aria-hidden", active ? "false" : "true");
+      if (backdrop) {
+        backdrop.classList.toggle("is-active", active);
+        backdrop.classList.remove("active", "open");
+        backdrop.style.opacity = active ? "1" : "0";
+        backdrop.style.pointerEvents = active ? "auto" : "none";
+        backdrop.setAttribute("aria-hidden", active ? "false" : "true");
+      }
+    };
     const closeSurface = (sourceAction = "close_button", options = {}) => {
       if (!layer) return;
       const wasVisible = !layer.hidden;
       const nextMode = typeof options.nextMode === "string" ? options.nextMode : "live";
       logDailyPanelAction("closeSurface started", { sourceAction, wasVisible, nextMode, visibilityState: !layer.hidden });
       layer.hidden = true;
-      layer.setAttribute("aria-hidden", "true");
+      normalizeMobileSurfaceBackdrop(false);
       if (isMobileLayoutMode()) {
         const reportVisible = isReportSurfaceVisiblyOpen();
         const routeVisible = Boolean(document.getElementById("gridlyMobileRouteQuickPanel")?.classList.contains("visible"));
@@ -12290,8 +12305,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         finalSurfaceAriaHidden: layer.getAttribute("aria-hidden")
       });
     };
+    normalizeMobileSurfaceBackdrop(!layer?.hidden);
     closeBtn?.addEventListener("click", () => closeSurface("close_button"));
-    layer?.querySelector('[data-mobile-surface-close="backdrop"]')?.addEventListener("click", () => closeSurface("backdrop"));
+    backdrop?.addEventListener("click", () => closeSurface("backdrop"));
     layer?.addEventListener("keydown", (event) => {
       if (event.key !== "Escape" || layer.hidden || !isMobileLayoutMode()) return;
       event.preventDefault();
