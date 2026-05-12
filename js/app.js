@@ -5650,7 +5650,11 @@ function bindEvents() {
   els.mobileDockAreaBtn?.addEventListener("click", () => {
     if (!isTacticalLandscapeDockMode()) {
       const townSelectorBtn = document.getElementById("mobileTownSelectorBtn");
-      if (townSelectorBtn) return townSelectorBtn.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+      if (townSelectorBtn) {
+        applyGeoFilterFromPill("town");
+        scrollToSection("mapSection");
+        return setConfirmation("Showing My Town crossings.", "success");
+      }
       applyGeoFilterFromPill("town");
       scrollToSection("mapSection");
       return setConfirmation("Showing My Town crossings.", "success");
@@ -5689,8 +5693,11 @@ function bindEvents() {
   });
   document.getElementById("mobileDockLayersBtn")?.addEventListener("click", () => {
     if (!isTacticalLandscapeDockMode()) {
-      const layerToggle = document.querySelector("#map .leaflet-control-layers-toggle");
-      return layerToggle?.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+      const layerToggle = document.querySelector("#map .gridly-mobile-layer-menu-toggle")
+        || document.querySelector("#map .leaflet-control-layers-toggle");
+      if (!layerToggle) return;
+      layerToggle.dispatchEvent(new MouseEvent("pointerdown", { bubbles: true, cancelable: true }));
+      return layerToggle.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
     }
     const options = ["Standard", "Dark", "Satellite"].map((name) => `<button type="button" data-layer-name="${name}">${name}</button>`).join("");
     openTacticalDockSheet("layers", "Map Layers", `<div class="gridly-tactical-option-grid">${options}</div>`);
