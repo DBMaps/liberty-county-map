@@ -11508,6 +11508,44 @@ body[data-layout-mode="desktop"] .gridly-tactical-dock-sheet {
   pointer-events: none !important;
 }
 
+/* V100 — explicit logo/header ownership by authoritative layout mode. */
+body[data-layout-mode="desktop"] .mobile-live-brand,
+body[data-layout-mode="desktop"] .mobile-live-brand-main,
+body[data-layout-mode="desktop"] .mobile-live-brand-logo {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+body[data-layout-mode="portrait"] .app-header,
+body[data-layout-mode="tactical-landscape"] .app-header {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+body[data-layout-mode="portrait"] .mobile-live-brand,
+body[data-layout-mode="tactical-landscape"] .mobile-live-brand {
+  display: flex !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+/* V100 — scope logo image containment to live mobile brand only. */
+body[data-layout-mode="portrait"] .mobile-live-brand-logo img,
+body[data-layout-mode="tactical-landscape"] .mobile-live-brand-logo img {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  position: static !important;
+  inset: auto !important;
+  transform: none !important;
+}
+
 /* Desktop-only surfaces: keep desktop command/report/map areas visible in desktop mode. */
 body[data-layout-mode="desktop"] .desktop-left-rail,
 body[data-layout-mode="desktop"] .desktop-command-strip,
