@@ -1115,6 +1115,8 @@ function hydrateElements() {
     "mobileCrossingReportBtn",
     "mobileHazardReportBtn",
     "mobileDockReportBtn",
+    "mobileDockRouteBtn",
+    "mobileDockAlertsBtn",
     "mobileDockAreaBtn",
     "mobileLiveRouteActionBtn",
     "mobileLiveRouteStatus",
@@ -5464,6 +5466,13 @@ function setReportMode(mode) {
 
 function bindEvents() {
   migrateLegacyStorage();
+  // Control ownership helpers: mode-scoped visible controls, shared behavior helpers.
+  const bindDesktopControls = () => {
+    els.desktopReportNearMeBtn?.addEventListener("click", handleReportNearMe);
+    els.desktopReportNearMeBtnRail?.addEventListener("click", handleReportNearMe);
+  };
+  const bindPortraitControls = () => {};
+  const bindTacticalLandscapeControls = () => {};
   const bindTapSafeClose = (element, handler) => {
     if (!element) return;
     const invoke = (event) => {
@@ -5529,11 +5538,11 @@ function bindEvents() {
       }, { once: true });
     });
   });
-  document.querySelector('.mobile-dock-btn.route')?.addEventListener("click", () => {
+  document.getElementById("mobileDockRouteBtn")?.addEventListener("click", () => {
     closeAllTacticalDockSurfaces({ except: "route" });
     openMobileRouteQuickPanel();
   });
-  document.querySelector('.mobile-dock-btn.alerts')?.addEventListener("click", () => {
+  document.getElementById("mobileDockAlertsBtn")?.addEventListener("click", () => {
     if (!isTacticalLandscapeDockMode()) return openSmartAlertsModal();
     const rows = (getUnifiedIncidents?.() || []).slice(0, 8).map((incident) => {
       const latest = incident?.latestReport || {};
@@ -5813,8 +5822,9 @@ function bindEvents() {
     handleReportNearMe();
   });
   els.mapReportShortcutBtn?.addEventListener("click", handleReportNearMe);
-  els.desktopReportNearMeBtn?.addEventListener("click", handleReportNearMe);
-  els.desktopReportNearMeBtnRail?.addEventListener("click", handleReportNearMe);
+  bindDesktopControls();
+  bindPortraitControls();
+  bindTacticalLandscapeControls();
   els.saveSmartAlertsBtn?.addEventListener("click", saveSmartAlertsPreferences);
   els.closeSmartAlertsModalBtn?.addEventListener("click", closeSmartAlertsModal);
   if (els.mobileSaveRouteBtn) {
@@ -6027,7 +6037,7 @@ function bindEvents() {
     settings: "Left rail Settings action"
   };
 
-  const navButtons = Array.from(document.querySelectorAll(".nav-btn[data-section]"));
+  const navButtons = Array.from(document.querySelectorAll(".desktop-only-nav .nav-btn[data-section], .desktop-left-rail .nav-btn[data-section], .mobile-bottom-nav .nav-btn[data-section]"));
   navButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
       const section = btn.dataset.section;
