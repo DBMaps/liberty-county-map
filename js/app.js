@@ -12672,11 +12672,16 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       enabled: false,
       selected: null,
       dragging: false,
+      resizing: false,
+      overlayMinimized: false,
       pointerId: null,
+      pointerAction: "",
       startX: 0,
       startY: 0,
       baseX: 0,
-      baseY: 0
+      baseY: 0,
+      baseWidth: 0,
+      baseHeight: 0
     };
 
     const isLocalDevHost = () => LOCAL_HOSTS.has((window.location && window.location.hostname) || "");
@@ -12703,11 +12708,16 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       style.textContent = `
         [data-gridly-edit-mode="on"] [data-gridly-editable="true"] { outline: 2px dashed #26d1ff !important; outline-offset: 2px; }
         [data-gridly-edit-mode="on"] [data-gridly-editable="true"].gridly-edit-selected { outline: 2px solid #00ff99 !important; }
+        [data-gridly-edit-mode="on"] [data-gridly-editable="true"].gridly-edit-selected .gridly-edit-resize-handle { position: absolute; width: 14px; height: 14px; right: -8px; bottom: -8px; border: 1px solid rgba(255,255,255,.75); background: #00ff99; border-radius: 50%; cursor: nwse-resize; z-index: 999998; box-shadow: 0 0 0 1px rgba(8,14,26,.8); }
         .gridly-layout-edit-fixed { position: fixed; z-index: 999999; font: 12px/1.3 ui-monospace, SFMono-Regular, Menlo, monospace; color: #fff; background: rgba(8,14,26,.92); border: 1px solid rgba(255,255,255,.25); border-radius: 8px; padding: 8px 10px; }
         #${DEV_BADGE_ID} { top: 10px; left: 10px; font-weight: 700; }
         #${DEV_OVERLAY_ID} { top: 44px; left: 10px; width: 320px; }
+        #${DEV_OVERLAY_ID}.is-minimized { width: auto; min-width: 0; padding: 6px 10px; }
         #${DEV_OVERLAY_ID} .gridly-row { margin-bottom: 6px; word-break: break-word; }
+        #${DEV_OVERLAY_ID} .gridly-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+        #${DEV_OVERLAY_ID}.is-minimized .gridly-header { margin-bottom: 0; }
         #${DEV_OVERLAY_ID} .gridly-actions { display: flex; gap: 6px; }
+        #${DEV_OVERLAY_ID}.is-minimized [data-gridly-expanded-only] { display: none; }
         #${DEV_OVERLAY_ID} button { cursor: pointer; border: 1px solid rgba(255,255,255,.3); background: #1f2a44; color: #fff; border-radius: 6px; padding: 4px 7px; }
       `;
       document.head.appendChild(style);
@@ -12741,11 +12751,29 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const refreshOverlay = () => {
       const overlay = document.getElementById(DEV_OVERLAY_ID);
       if (!overlay) return;
+      overlay.classList.toggle("is-minimized", Boolean(state.overlayMinimized));
+      const toggleButton = overlay.querySelector('[data-gridly-toggle-minimize]');
+      if (toggleButton) toggleButton.textContent = state.overlayMinimized ? "Expand" : "Minimize";
       const sel = state.selected;
       const rect = sel ? sel.getBoundingClientRect() : null;
-      overlay.querySelector('[data-k="mode"]').textContent = `Layout: ${typeof window.getCurrentLayoutMode === "function" ? window.getCurrentLayoutMode() : "unknown"}`;
-      overlay.querySelector('[data-k="selected"]').textContent = `Selected: ${sel?.getAttribute("data-gridly-edit-name") || "none"}`;
-      overlay.querySelector('[data-k="metrics"]').textContent = rect ? `x:${Math.round(rect.x)} y:${Math.round(rect.y)} w:${Math.round(rect.width)} h:${Math.round(rect.height)}` : "x:- y:- w:- h:-";
+      const modeEl = overlay.querySelector('[data-k="mode"]');
+      const selectedEl = overlay.querySelector('[data-k="selected"]');
+      const metricsEl = overlay.querySelector('[data-k="metrics"]');
+      if (modeEl) modeEl.textContent = `Layout: ${typeof window.getCurrentLayoutMode === "function" ? window.getCurrentLayoutMode() : "unknown"}`;
+      if (selectedEl) selectedEl.textContent = `Selected: ${sel?.getAttribute("data-gridly-edit-name") || "none"}`;
+      if (metricsEl) metricsEl.textContent = rect ? `x:${Math.round(rect.x)} y:${Math.round(rect.y)} w:${Math.round(rect.width)} h:${Math.round(rect.height)}` : "x:- y:- w:- h:-";
+    };
+
+    const ensureResizeHandle = (el) => {
+      if (!el) return;
+      const computedPosition = getComputedStyle(el).position;
+      if (computedPosition === "static") el.style.position = "relative";
+      if (el.querySelector('.gridly-edit-resize-handle')) return;
+      const handle = document.createElement("span");
+      handle.className = "gridly-edit-resize-handle";
+      handle.setAttribute("data-gridly-resize-handle", "br");
+      handle.title = "Resize";
+      el.appendChild(handle);
     };
     const createDevUi = () => {
       ensureDevStyle();
@@ -12756,11 +12784,15 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       if (!document.getElementById(DEV_OVERLAY_ID)) {
         const overlay = document.createElement("div");
         overlay.id = DEV_OVERLAY_ID; overlay.className = "gridly-layout-edit-fixed";
-        overlay.innerHTML = '<div class="gridly-row" data-k="mode"></div><div class="gridly-row" data-k="selected"></div><div class="gridly-row" data-k="metrics"></div><div class="gridly-actions"><button type="button" data-gridly-export>Export snapshot</button><button type="button" data-gridly-reset>Reset</button><button type="button" data-gridly-disable>Disable</button></div>';
+        overlay.innerHTML = '<div class="gridly-header"><strong>Layout Edit Mode</strong><button type="button" data-gridly-toggle-minimize>Minimize</button></div><div data-gridly-expanded-only><div class="gridly-row" data-k="mode"></div><div class="gridly-row" data-k="selected"></div><div class="gridly-row" data-k="metrics"></div><div class="gridly-actions"><button type="button" data-gridly-export>Export snapshot</button><button type="button" data-gridly-reset>Reset</button><button type="button" data-gridly-disable>Disable</button></div></div>';
         overlay.addEventListener("click", (e) => {
           if (e.target.matches('[data-gridly-export]')) console.log("[Gridly Layout Edit] Snapshot", window.exportGridlyLayoutSnapshot());
           if (e.target.matches('[data-gridly-reset]')) window.resetGridlyLayoutEditMode();
           if (e.target.matches('[data-gridly-disable]')) window.disableGridlyLayoutEditMode();
+          if (e.target.matches('[data-gridly-toggle-minimize]')) {
+            if (state.overlayMinimized) window.expandGridlyLayoutEditOverlay();
+            else window.minimizeGridlyLayoutEditOverlay();
+          }
         });
         document.body.appendChild(overlay);
       }
@@ -12775,32 +12807,66 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       getEditableEls().forEach((el) => el.classList.remove("gridly-edit-selected"));
       target.classList.add("gridly-edit-selected");
       state.selected = target;
-      state.dragging = true;
+      const resizeHandle = event.target.closest('[data-gridly-resize-handle]');
       state.pointerId = event.pointerId;
       state.startX = event.clientX;
       state.startY = event.clientY;
-      const base = parseTranslate(target);
-      state.baseX = base.x; state.baseY = base.y;
       document.body.style.userSelect = "none";
       target.setPointerCapture?.(event.pointerId);
+      if (resizeHandle && state.selected === target) {
+        const rect = target.getBoundingClientRect();
+        state.resizing = true;
+        state.dragging = false;
+        state.pointerAction = "resize";
+        state.baseWidth = rect.width;
+        state.baseHeight = rect.height;
+      } else {
+        const base = parseTranslate(target);
+        state.dragging = true;
+        state.resizing = false;
+        state.pointerAction = "drag";
+        state.baseX = base.x; state.baseY = base.y;
+      }
+      ensureResizeHandle(target);
       refreshOverlay();
     };
     const onPointerMove = (event) => {
-      if (!state.enabled || !state.dragging || !state.selected || event.pointerId !== state.pointerId) return;
+      if (!state.enabled || !state.selected || event.pointerId !== state.pointerId) return;
       const dx = event.clientX - state.startX;
       const dy = event.clientY - state.startY;
-      setTranslate(state.selected, state.baseX + dx, state.baseY + dy);
+      if (state.resizing) {
+        state.selected.style.width = `${Math.max(24, Math.round(state.baseWidth + dx))}px`;
+        state.selected.style.height = `${Math.max(24, Math.round(state.baseHeight + dy))}px`;
+        state.selected.style.maxWidth = "none";
+        state.selected.style.maxHeight = "none";
+      } else if (state.dragging) {
+        setTranslate(state.selected, state.baseX + dx, state.baseY + dy);
+      }
       refreshOverlay();
     };
-    const stopDrag = () => { state.dragging = false; state.pointerId = null; document.body.style.userSelect = ""; refreshOverlay(); };
+    const stopDrag = () => { state.dragging = false; state.resizing = false; state.pointerAction = ""; state.pointerId = null; document.body.style.userSelect = ""; refreshOverlay(); };
 
     window.exportGridlyLayoutSnapshot = () => getSnapshot();
     window.resetGridlyLayoutEditMode = () => {
-      getEditableEls().forEach((el) => { el.style.transform = ""; el.style.top = ""; el.style.left = ""; el.classList.remove("gridly-edit-selected"); });
+      getEditableEls().forEach((el) => { el.style.transform = ""; el.style.top = ""; el.style.left = ""; el.style.width = ""; el.style.height = ""; el.style.maxWidth = ""; el.style.maxHeight = ""; el.classList.remove("gridly-edit-selected"); el.querySelector('.gridly-edit-resize-handle')?.remove(); });
       state.selected = null;
       refreshOverlay();
       return true;
     };
+
+    window.minimizeGridlyLayoutEditOverlay = () => {
+      if (!state.enabled) return false;
+      state.overlayMinimized = true;
+      refreshOverlay();
+      return true;
+    };
+    window.expandGridlyLayoutEditOverlay = () => {
+      if (!state.enabled) return false;
+      state.overlayMinimized = false;
+      refreshOverlay();
+      return true;
+    };
+
     window.disableGridlyLayoutEditMode = () => {
       if (!state.enabled) return false;
       window.resetGridlyLayoutEditMode();
@@ -12810,6 +12876,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       document.removeEventListener("pointermove", onPointerMove, true);
       document.removeEventListener("pointerup", stopDrag, true);
       document.removeEventListener("pointercancel", stopDrag, true);
+      state.overlayMinimized = false;
       document.getElementById(DEV_BADGE_ID)?.remove();
       document.getElementById(DEV_OVERLAY_ID)?.remove();
       return true;
@@ -12824,6 +12891,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       state.enabled = true;
       document.body.setAttribute("data-gridly-edit-mode", "on");
       createDevUi();
+      if (state.selected) ensureResizeHandle(state.selected);
       document.addEventListener("pointerdown", onPointerDown, true);
       document.addEventListener("pointermove", onPointerMove, true);
       document.addEventListener("pointerup", stopDrag, true);
