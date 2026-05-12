@@ -362,33 +362,65 @@ function computeLayoutModeSignals() {
 
 function evaluateLayoutMode() {
   const s = computeLayoutModeSignals();
+  const orientationLandscape = window.matchMedia?.("(orientation: landscape)")?.matches === true;
+  const tacticalLandscapeByHeight = orientationLandscape && s.coarsePointer && s.viewportWidth <= 1100 && window.innerHeight <= 520;
   const mobileByWidth = s.viewportWidth <= 980;
   const desktopByWidth = s.viewportWidth >= 1160;
   const containerCollapsed = s.shellWidth <= 1020 || s.commandWidth <= 760;
-  const forcedMobile = mobileByWidth || containerCollapsed || (s.hasHorizontalOverflow && s.viewportWidth < 1220);
-  const forcedDesktop = desktopByWidth && !containerCollapsed && !s.hasHorizontalOverflow && !s.coarsePointer;
-  const nextMode = forcedMobile ? "mobile" : forcedDesktop ? "desktop" : activeLayoutMode;
-  lastLayoutSignal = { ...s, nextMode, forcedMobile, forcedDesktop };
+  const forcedPortrait = (mobileByWidth || containerCollapsed || (s.hasHorizontalOverflow && s.viewportWidth < 1220)) && !tacticalLandscapeByHeight;
+  const forcedDesktop = desktopByWidth && !containerCollapsed && !s.hasHorizontalOverflow && !s.coarsePointer && !tacticalLandscapeByHeight;
+  const nextMode = tacticalLandscapeByHeight ? "tactical-landscape" : forcedPortrait ? "portrait" : forcedDesktop ? "desktop" : activeLayoutMode;
+  lastLayoutSignal = { ...s, nextMode, forcedPortrait, forcedDesktop, tacticalLandscapeByHeight };
   return nextMode;
 }
 
 function applyLayoutMode(nextMode) {
-  activeLayoutMode = nextMode === "mobile" ? "mobile" : "desktop";
+  activeLayoutMode = nextMode === "desktop" || nextMode === "portrait" || nextMode === "tactical-landscape" ? nextMode : "desktop";
   if (!document?.body) return;
   document.body.setAttribute("data-layout-mode", activeLayoutMode);
-  if (activeLayoutMode === "mobile") {
+  document.body.setAttribute("data-layout-mode-legacy", activeLayoutMode === "desktop" ? "desktop" : "mobile");
+  if (activeLayoutMode === "portrait" || activeLayoutMode === "tactical-landscape") {
     document.body.setAttribute("data-mobile-mode", mobileUiMode || "live");
   } else {
     document.body.removeAttribute("data-mobile-mode");
   }
 }
 
+// Layout mode UX contracts:
+// desktop = Regional Movement Intelligence Center
+// portrait = Daily Community Awareness Companion
+// tactical-landscape = Tactical In-Motion Awareness Mode
 function syncAuthoritativeLayoutMode() {
   applyLayoutMode(evaluateLayoutMode());
 }
+let layoutSyncScheduled = false;
+function scheduleAuthoritativeLayoutModeSync() {
+  if (layoutSyncScheduled) return;
+  layoutSyncScheduled = true;
+  window.requestAnimationFrame(() => {
+    layoutSyncScheduled = false;
+    syncAuthoritativeLayoutMode();
+  });
+}
+
+function getCurrentLayoutMode() {
+  return activeLayoutMode;
+}
+
+function isDesktopMode() {
+  return getCurrentLayoutMode() === "desktop";
+}
+
+function isPortraitMode() {
+  return getCurrentLayoutMode() === "portrait";
+}
+
+function isTacticalLandscapeMode() {
+  return getCurrentLayoutMode() === "tactical-landscape";
+}
 
 function isMobileUiViewport() {
-  return activeLayoutMode === "mobile";
+  return isPortraitMode() || isTacticalLandscapeMode();
 }
 
 function syncMobileNavVisibilityForViewport() {
@@ -436,7 +468,7 @@ function closeMobileRouteQuickPanel(reason = "") {
 }
 
 function isTacticalLandscapeDockMode() {
-  return activeLayoutMode === "mobile" && window.matchMedia("(orientation: landscape) and (max-height: 520px)").matches;
+  return isTacticalLandscapeMode() && window.matchMedia("(orientation: landscape) and (max-height: 520px)").matches;
 }
 
 
@@ -5644,7 +5676,7 @@ function bindEvents() {
         Boolean(mobileSurfaceLayer && !mobileSurfaceLayer.hidden) &&
         focusCard.closest("#mobileNativeSurfaceLayer") &&
         ["alerts-center", "alerts"].includes(String(mobileSurfaceBody?.dataset?.mobileSurfaceView || "")) &&
-        (document.body?.matches?.('body[data-layout-mode="mobile"]') || window.matchMedia("(max-width: 760px)").matches);
+        (isMobileUiViewport() || window.matchMedia("(max-width: 760px)").matches);
       if (focusedFromMobileAlertsCenter) {
         mobileSurfaceLayer.hidden = true;
         mobileSurfaceLayer.setAttribute("aria-hidden", "true");
@@ -6024,12 +6056,6 @@ function bindEvents() {
     console.log("Desktop command button clicked: live-data");
     routeNavSection("map");
     setConfirmation("Live data map opened.", "success");
-  });
-
-  document.getElementById("desktopDispatcherBtn")?.addEventListener("click", () => {
-    if (!isDesktopViewport()) return;
-    console.log("Desktop command button clicked: dispatcher");
-    handleDesktopCommandAction("dispatcher");
   });
 
   ["desktopLegendBlockedBtn", "desktopLegendDelayedBtn", "desktopLegendClearedBtn"].forEach((id) => {
@@ -11804,7 +11830,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
 ========================================================= */
 (function initMobileDailyPanelShell() {
   const DAILY_PANEL_LOG_PREFIX = "[Mobile Daily Panel]";
-  const MOBILE_LAYOUT_SELECTOR = 'body[data-layout-mode="mobile"]';
+  const MOBILE_LAYOUT_SELECTOR = 'body[data-layout-mode="portrait"], body[data-layout-mode="tactical-landscape"], body[data-layout-mode-legacy="mobile"]';
   let lastMobileSurfaceLauncher = null;
 
   function isMobileLayoutMode() {
@@ -12321,6 +12347,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     bootstrapMobileDailyPanelShell();
   }
 
-  window.addEventListener("resize", syncAuthoritativeLayoutMode, { passive: true });
-  window.visualViewport?.addEventListener("resize", syncAuthoritativeLayoutMode, { passive: true });
+  window.addEventListener("resize", scheduleAuthoritativeLayoutModeSync, { passive: true });
+  window.addEventListener("orientationchange", scheduleAuthoritativeLayoutModeSync, { passive: true });
+  window.visualViewport?.addEventListener("resize", scheduleAuthoritativeLayoutModeSync, { passive: true });
 })();
