@@ -11131,7 +11131,7 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
 @media (orientation: landscape) and (max-height: 520px) {
   /* V80 authoritative short-height landscape tactical contract.
      This block intentionally overrides legacy V74/V7x landscape fragments. */
-  body[data-layout-mode="mobile"] {
+  body[data-layout-mode="tactical-landscape"] {
     --mobile-command-zone-top: calc(var(--mobile-brand-top, env(safe-area-inset-top, 0px) + 4px) + var(--mobile-brand-height, 32px) + 5px);
     --mobile-landscape-bottom-band-height: clamp(60px, 16.5vh, 74px);
     --mobile-landscape-dock-space: calc(var(--mobile-landscape-bottom-band-height) + env(safe-area-inset-bottom, 0px));
@@ -11139,7 +11139,7 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     --mobile-landscape-context-bottom: calc(var(--mobile-landscape-dock-space) + var(--mobile-landscape-context-gap));
   }
 
-  body[data-layout-mode="mobile"] .mobile-live-command {
+  body[data-layout-mode="tactical-landscape"] .mobile-live-command {
     top: calc(var(--mobile-command-zone-top) + 1px);
     left: calc(env(safe-area-inset-left, 0px) + 8px);
     right: calc(env(safe-area-inset-right, 0px) + 8px);
@@ -11155,14 +11155,14 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     row-gap: 1px;
   }
 
-  body[data-layout-mode="mobile"] .mobile-live-command .eyebrow {
+  body[data-layout-mode="tactical-landscape"] .mobile-live-command .eyebrow {
     margin-bottom: 1px;
     font-size: 0.5rem;
     letter-spacing: 0.1em;
     line-height: 1;
   }
 
-  body[data-layout-mode="mobile"] .mobile-live-status-pill {
+  body[data-layout-mode="tactical-landscape"] .mobile-live-status-pill {
     padding: 1px 6px;
     font-size: 0.49rem;
     line-height: 1;
@@ -11171,7 +11171,7 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     box-shadow: inset 0 1px 0 rgba(227, 242, 255, 0.08);
   }
 
-  body[data-layout-mode="mobile"] .mobile-live-command strong {
+  body[data-layout-mode="tactical-landscape"] .mobile-live-command strong {
     display: block;
     width: 100%;
     max-width: 100%;
@@ -11185,7 +11185,7 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     min-width: 0;
   }
 
-  body[data-layout-mode="mobile"] .mobile-live-command p {
+  body[data-layout-mode="tactical-landscape"] .mobile-live-command p {
     display: none;
     margin-top: 0;
     font-size: 0.6rem;
@@ -11195,14 +11195,14 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     text-overflow: ellipsis;
   }
 
-  body[data-layout-mode="mobile"] .mobile-live-command .compact-btn,
-  body[data-layout-mode="mobile"] #mobileLiveRouteActionBtn {
+  body[data-layout-mode="tactical-landscape"] .mobile-live-command .compact-btn,
+  body[data-layout-mode="tactical-landscape"] #mobileLiveRouteActionBtn {
     display: none !important;
     visibility: hidden !important;
     pointer-events: none !important;
   }
 
-  body[data-layout-mode="mobile"] .mobile-floating-action-dock {
+  body[data-layout-mode="tactical-landscape"] .mobile-floating-action-dock {
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
@@ -11227,18 +11227,18 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     bottom: calc(env(safe-area-inset-bottom, 0px) + 7px) !important;
   }
 
-  body[data-layout-mode="mobile"] .mobile-floating-action-dock::before,
-  body[data-layout-mode="mobile"] .mobile-floating-action-dock::after {
+  body[data-layout-mode="tactical-landscape"] .mobile-floating-action-dock::before,
+  body[data-layout-mode="tactical-landscape"] .mobile-floating-action-dock::after {
     content: none !important;
   }
 
-  body[data-layout-mode="mobile"] .mobile-dock-btn,
-  body[data-layout-mode="mobile"] .mobile-dock-btn.report,
-  body[data-layout-mode="mobile"] .mobile-dock-btn.route,
-  body[data-layout-mode="mobile"] .mobile-dock-btn.alerts,
-  body[data-layout-mode="mobile"] .mobile-dock-btn.layers,
-  body[data-layout-mode="mobile"] .mobile-dock-btn[data-mode],
-  body[data-layout-mode="mobile"] .mobile-floating-action-dock .mobile-dock-btn:nth-child(n) {
+  body[data-layout-mode="tactical-landscape"] .mobile-dock-btn,
+  body[data-layout-mode="tactical-landscape"] .mobile-dock-btn.report,
+  body[data-layout-mode="tactical-landscape"] .mobile-dock-btn.route,
+  body[data-layout-mode="tactical-landscape"] .mobile-dock-btn.alerts,
+  body[data-layout-mode="tactical-landscape"] .mobile-dock-btn.layers,
+  body[data-layout-mode="tactical-landscape"] .mobile-dock-btn[data-mode],
+  body[data-layout-mode="tactical-landscape"] .mobile-floating-action-dock .mobile-dock-btn:nth-child(n) {
     flex: 1 1 0 !important;
     min-width: 0 !important;
     min-height: 33px !important;
@@ -11261,46 +11261,46 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     opacity: 1 !important;
   }
 
-  body[data-layout-mode="mobile"] .mobile-dock-btn.active,
-  body[data-layout-mode="mobile"] .mobile-dock-btn:focus-visible {
+  body[data-layout-mode="tactical-landscape"] .mobile-dock-btn.active,
+  body[data-layout-mode="tactical-landscape"] .mobile-dock-btn:focus-visible {
     border-color: rgba(131, 206, 255, 0.62) !important;
     box-shadow: inset 0 0 0 1px rgba(199, 234, 255, 0.18), 0 0 0 1px rgba(73, 170, 235, 0.2), 0 0 7px rgba(87, 186, 255, 0.12) !important;
     outline: none !important;
   }
 
-  body[data-layout-mode="mobile"] .mobile-dock-btn:active {
+  body[data-layout-mode="tactical-landscape"] .mobile-dock-btn:active {
     transform: translateY(1px) !important;
   }
 
-  body[data-layout-mode="mobile"] #mobileDockLayersBtn,
-  body[data-layout-mode="mobile"] .mobile-dock-btn.layers {
+  body[data-layout-mode="tactical-landscape"] #mobileDockLayersBtn,
+  body[data-layout-mode="tactical-landscape"] .mobile-dock-btn.layers {
     display: inline-flex !important;
     align-items: center;
     justify-content: center;
   }
 
-  body[data-layout-mode="mobile"] #mobileDailyPanel,
-  body[data-layout-mode="mobile"] .mobile-daily-panel,
-  body[data-layout-mode="mobile"] .mobile-daily-panel-body,
-  body[data-layout-mode="mobile"] .mobile-daily-panel-handle {
+  body[data-layout-mode="tactical-landscape"] #mobileDailyPanel,
+  body[data-layout-mode="tactical-landscape"] .mobile-daily-panel,
+  body[data-layout-mode="tactical-landscape"] .mobile-daily-panel-body,
+  body[data-layout-mode="tactical-landscape"] .mobile-daily-panel-handle {
     display: none !important;
     visibility: hidden !important;
     pointer-events: none !important;
   }
 
-  body[data-layout-mode="mobile"] #mobileLocalContextStrip,
-  body[data-layout-mode="mobile"] .mobile-local-context-strip,
-  body[data-layout-mode="mobile"] [id*="LocalContextStrip"],
-  body[data-layout-mode="mobile"] [class*="local-context-strip"],
-  body[data-layout-mode="mobile"] [data-mobile-local-context],
-  body[data-layout-mode="mobile"] [data-context-strip] {
+  body[data-layout-mode="tactical-landscape"] #mobileLocalContextStrip,
+  body[data-layout-mode="tactical-landscape"] .mobile-local-context-strip,
+  body[data-layout-mode="tactical-landscape"] [id*="LocalContextStrip"],
+  body[data-layout-mode="tactical-landscape"] [class*="local-context-strip"],
+  body[data-layout-mode="tactical-landscape"] [data-mobile-local-context],
+  body[data-layout-mode="tactical-landscape"] [data-context-strip] {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
     pointer-events: none !important;
   }
 
-  body[data-layout-mode="mobile"] #mobileLocalContextStrip .mobile-local-context-label {
+  body[data-layout-mode="tactical-landscape"] #mobileLocalContextStrip .mobile-local-context-label {
     flex: 0 1 auto;
     min-width: 0;
     font-size: 0.56rem;
@@ -11312,7 +11312,7 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     white-space: nowrap;
   }
 
-  body[data-layout-mode="mobile"] #mobileLocalContextStrip .mobile-local-context-value {
+  body[data-layout-mode="tactical-landscape"] #mobileLocalContextStrip .mobile-local-context-value {
     flex: 1 1 auto;
     min-width: 0;
     font-size: 0.75rem;
@@ -11326,28 +11326,28 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     text-overflow: ellipsis;
   }
 
-  body[data-layout-mode="mobile"] .mobile-home-cards,
-  body[data-layout-mode="mobile"] .mobile-community-card,
-  body[data-layout-mode="mobile"] .community-tools,
-  body[data-layout-mode="mobile"] #gridlyCommunityToolsCard,
-  body[data-layout-mode="mobile"] .mobile-promo-card,
-  body[data-layout-mode="mobile"] .mobile-onboarding-card,
-  body[data-layout-mode="mobile"] .app-footer {
+  body[data-layout-mode="tactical-landscape"] .mobile-home-cards,
+  body[data-layout-mode="tactical-landscape"] .mobile-community-card,
+  body[data-layout-mode="tactical-landscape"] .community-tools,
+  body[data-layout-mode="tactical-landscape"] #gridlyCommunityToolsCard,
+  body[data-layout-mode="tactical-landscape"] .mobile-promo-card,
+  body[data-layout-mode="tactical-landscape"] .mobile-onboarding-card,
+  body[data-layout-mode="tactical-landscape"] .app-footer {
     display: none !important;
   }
 
-  body[data-layout-mode="mobile"] .mobile-map-floating-chips,
-  body[data-layout-mode="mobile"] #map .gridly-mobile-layer-menu,
-  body[data-layout-mode="mobile"] #map .gridly-mobile-layer-menu-toggle,
-  body[data-layout-mode="mobile"] #map .gridly-mobile-layer-menu-list {
+  body[data-layout-mode="tactical-landscape"] .mobile-map-floating-chips,
+  body[data-layout-mode="tactical-landscape"] #map .gridly-mobile-layer-menu,
+  body[data-layout-mode="tactical-landscape"] #map .gridly-mobile-layer-menu-toggle,
+  body[data-layout-mode="tactical-landscape"] #map .gridly-mobile-layer-menu-list {
     display: none !important;
     visibility: hidden !important;
     pointer-events: none !important;
   }
 
-  body[data-layout-mode="mobile"] #map .leaflet-left { display: none !important; }
-  body[data-layout-mode="mobile"] .map-tools-overlay,
-  body[data-layout-mode="mobile"] .map-tools-overlay .geo-filter-shell {
+  body[data-layout-mode="tactical-landscape"] #map .leaflet-left { display: none !important; }
+  body[data-layout-mode="tactical-landscape"] .map-tools-overlay,
+  body[data-layout-mode="tactical-landscape"] .map-tools-overlay .geo-filter-shell {
     background: transparent !important;
     border: 0 !important;
     box-shadow: none !important;
@@ -11356,62 +11356,62 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
   }
 
   /* V86B: suppress landscape geo filter pill rows in tactical mobile layout. */
-  body[data-layout-mode="mobile"] .map-tools-overlay .geo-filter-shell,
-  body[data-layout-mode="mobile"] .map-tools-overlay .geo-filter-status,
-  body[data-layout-mode="mobile"] .map-tools-overlay .geo-filter-pill,
-  body[data-layout-mode="mobile"] .map-tools-overlay .mobile-geo-filter,
-  body[data-layout-mode="mobile"] .map-tools-overlay .geo-filter,
-  body[data-layout-mode="mobile"] .map-tools-overlay .map-filter,
-  body[data-layout-mode="mobile"] .map-tools-overlay .filter-pill,
-  body[data-layout-mode="mobile"] .map-tools-overlay [class*="geo-filter-pill"],
-  body[data-layout-mode="mobile"] .map-tools-overlay [class*="mobile-geo-filter"],
-  body[data-layout-mode="mobile"] .map-tools-overlay [class*="map-filter"],
-  body[data-layout-mode="mobile"] .map-tools-overlay [class*="filter-pill"] {
+  body[data-layout-mode="tactical-landscape"] .map-tools-overlay .geo-filter-shell,
+  body[data-layout-mode="tactical-landscape"] .map-tools-overlay .geo-filter-status,
+  body[data-layout-mode="tactical-landscape"] .map-tools-overlay .geo-filter-pill,
+  body[data-layout-mode="tactical-landscape"] .map-tools-overlay .mobile-geo-filter,
+  body[data-layout-mode="tactical-landscape"] .map-tools-overlay .geo-filter,
+  body[data-layout-mode="tactical-landscape"] .map-tools-overlay .map-filter,
+  body[data-layout-mode="tactical-landscape"] .map-tools-overlay .filter-pill,
+  body[data-layout-mode="tactical-landscape"] .map-tools-overlay [class*="geo-filter-pill"],
+  body[data-layout-mode="tactical-landscape"] .map-tools-overlay [class*="mobile-geo-filter"],
+  body[data-layout-mode="tactical-landscape"] .map-tools-overlay [class*="map-filter"],
+  body[data-layout-mode="tactical-landscape"] .map-tools-overlay [class*="filter-pill"] {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
     pointer-events: none !important;
   }
-  body[data-layout-mode="mobile"] #map .leaflet-right {
+  body[data-layout-mode="tactical-landscape"] #map .leaflet-right {
     right: max(8px, env(safe-area-inset-right, 0px));
   }
-  body[data-layout-mode="mobile"] #map .leaflet-bottom.leaflet-right {
+  body[data-layout-mode="tactical-landscape"] #map .leaflet-bottom.leaflet-right {
     bottom: calc(var(--mobile-landscape-context-bottom) + 32px);
   }
-  body[data-layout-mode="mobile"] #map .leaflet-control-zoom {
+  body[data-layout-mode="tactical-landscape"] #map .leaflet-control-zoom {
     margin: 0 !important;
     border-radius: 11px;
     overflow: hidden;
     box-shadow: 0 2px 6px rgba(2, 9, 20, 0.16);
   }
 
-  body[data-layout-mode="mobile"] .map-card,
-  body[data-layout-mode="mobile"] .map-frame,
-  body[data-layout-mode="mobile"] #map {
+  body[data-layout-mode="tactical-landscape"] .map-card,
+  body[data-layout-mode="tactical-landscape"] .map-frame,
+  body[data-layout-mode="tactical-landscape"] #map {
     height: calc(100dvh - var(--mobile-landscape-dock-space));
     min-height: calc(100dvh - var(--mobile-landscape-dock-space));
     max-height: calc(100dvh - var(--mobile-landscape-dock-space));
   }
 
-  body[data-layout-mode="mobile"] .map-frame,
-  body[data-layout-mode="mobile"] .map-card {
+  body[data-layout-mode="tactical-landscape"] .map-frame,
+  body[data-layout-mode="tactical-landscape"] .map-card {
     border-radius: 14px !important;
     overflow: clip;
     box-shadow: 0 7px 16px rgba(2, 8, 20, 0.18) !important;
   }
 
-  body[data-layout-mode="mobile"] #map {
+  body[data-layout-mode="tactical-landscape"] #map {
     border-radius: 14px !important;
   }
 
-  body[data-layout-mode="mobile"] .map-frame::before,
-  body[data-layout-mode="mobile"] .map-frame::after,
-  body[data-layout-mode="mobile"] .map-card::before,
-  body[data-layout-mode="mobile"] .map-card::after {
+  body[data-layout-mode="tactical-landscape"] .map-frame::before,
+  body[data-layout-mode="tactical-landscape"] .map-frame::after,
+  body[data-layout-mode="tactical-landscape"] .map-card::before,
+  body[data-layout-mode="tactical-landscape"] .map-card::after {
     content: none !important;
   }
 
-  body[data-layout-mode="mobile"] .gridly-hazard-panel {
+  body[data-layout-mode="tactical-landscape"] .gridly-hazard-panel {
     left: max(10px, env(safe-area-inset-left, 0px)) !important;
     right: max(10px, env(safe-area-inset-right, 0px)) !important;
     width: min(460px, calc(100vw - max(20px, calc(env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px) + 20px)))) !important;
@@ -11423,13 +11423,13 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     z-index: 10030 !important;
   }
 
-  body[data-layout-mode="mobile"] .gridly-hazard-panel:not(.visible) {
+  body[data-layout-mode="tactical-landscape"] .gridly-hazard-panel:not(.visible) {
     display: none !important;
     visibility: hidden !important;
     pointer-events: none !important;
   }
 
-  body[data-layout-mode="mobile"] .gridly-tactical-dock-sheet {
+  body[data-layout-mode="tactical-landscape"] .gridly-tactical-dock-sheet {
     position: fixed;
     left: 12px;
     right: 12px;
@@ -11444,29 +11444,29 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
   }
-  body[data-layout-mode="mobile"] .gridly-tactical-dock-sheet[hidden],
-  body[data-layout-mode="mobile"] .gridly-tactical-dock-sheet:not([data-action]),
-  body[data-layout-mode="mobile"] .gridly-tactical-dock-sheet[data-action=""] {
+  body[data-layout-mode="tactical-landscape"] .gridly-tactical-dock-sheet[hidden],
+  body[data-layout-mode="tactical-landscape"] .gridly-tactical-dock-sheet:not([data-action]),
+  body[data-layout-mode="tactical-landscape"] .gridly-tactical-dock-sheet[data-action=""] {
     display: none !important;
     visibility: hidden !important;
     pointer-events: none !important;
   }
-  body[data-layout-mode="mobile"] .gridly-tactical-dock-sheet-head {
+  body[data-layout-mode="tactical-landscape"] .gridly-tactical-dock-sheet-head {
     display: flex; justify-content: space-between; align-items: center; padding: 10px 12px 8px;
   }
-  body[data-layout-mode="mobile"] .gridly-tactical-dock-sheet-head strong { color: #e8f2ff; font-size: .86rem; }
-  body[data-layout-mode="mobile"] .gridly-tactical-dock-sheet-head button {
+  body[data-layout-mode="tactical-landscape"] .gridly-tactical-dock-sheet-head strong { color: #e8f2ff; font-size: .86rem; }
+  body[data-layout-mode="tactical-landscape"] .gridly-tactical-dock-sheet-head button {
     border: 0; background: transparent; color: #d4e4f9; font-size: 1.2rem; line-height: 1; cursor: pointer;
   }
-  body[data-layout-mode="mobile"] .gridly-tactical-dock-sheet-body { overflow: auto; padding: 0 12px 12px; }
-  body[data-layout-mode="mobile"] .gridly-tactical-option-grid { display: grid; gap: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  body[data-layout-mode="mobile"] .gridly-tactical-option-grid button,
-  body[data-layout-mode="mobile"] .gridly-tactical-sheet-actions button {
+  body[data-layout-mode="tactical-landscape"] .gridly-tactical-dock-sheet-body { overflow: auto; padding: 0 12px 12px; }
+  body[data-layout-mode="tactical-landscape"] .gridly-tactical-option-grid { display: grid; gap: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body[data-layout-mode="tactical-landscape"] .gridly-tactical-option-grid button,
+  body[data-layout-mode="tactical-landscape"] .gridly-tactical-sheet-actions button {
     border: 1px solid rgba(137, 184, 233, 0.35); border-radius: 10px; padding: 9px 10px; background: rgba(13, 28, 47, 0.86); color: #ebf5ff; font-weight: 700;
   }
-  body[data-layout-mode="mobile"] .gridly-tactical-alert-list { display: grid; gap: 8px; max-height: 160px; overflow: auto; }
-  body[data-layout-mode="mobile"] .gridly-tactical-alert-row { border: 1px solid rgba(134, 176, 221, 0.22); border-radius: 10px; padding: 8px 9px; background: rgba(9, 22, 37, 0.72); }
-  body[data-layout-mode="mobile"] .gridly-tactical-alert-row strong { display: block; font-size: .8rem; color: #ebf4ff; }
-  body[data-layout-mode="mobile"] .gridly-tactical-alert-row p { margin: 4px 0 0; font-size: .74rem; color: #b9cde4; }
-  body[data-layout-mode="mobile"] .gridly-tactical-sheet-actions { margin-top: 10px; }
+  body[data-layout-mode="tactical-landscape"] .gridly-tactical-alert-list { display: grid; gap: 8px; max-height: 160px; overflow: auto; }
+  body[data-layout-mode="tactical-landscape"] .gridly-tactical-alert-row { border: 1px solid rgba(134, 176, 221, 0.22); border-radius: 10px; padding: 8px 9px; background: rgba(9, 22, 37, 0.72); }
+  body[data-layout-mode="tactical-landscape"] .gridly-tactical-alert-row strong { display: block; font-size: .8rem; color: #ebf4ff; }
+  body[data-layout-mode="tactical-landscape"] .gridly-tactical-alert-row p { margin: 4px 0 0; font-size: .74rem; color: #b9cde4; }
+  body[data-layout-mode="tactical-landscape"] .gridly-tactical-sheet-actions { margin-top: 10px; }
 }
