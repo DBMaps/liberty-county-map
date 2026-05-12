@@ -11730,9 +11730,9 @@ body[data-layout-mode="tactical-landscape"] #map {
 
 /* GRIDLY V111 — tactical landscape viewport-fit correction (CSS-only) */
 body[data-layout-mode="tactical-landscape"] {
-  --gridly-tactical-top-shell: clamp(54px, 14.5vh, 62px);
-  --gridly-tactical-dock-band: clamp(40px, 10.2vh, 46px);
-  --gridly-tactical-shell-gap: clamp(4px, 1.1vh, 7px);
+  --gridly-tactical-top-shell: clamp(50px, 13.3vh, 58px);
+  --gridly-tactical-dock-band: clamp(38px, 9.5vh, 44px);
+  --gridly-tactical-shell-gap: clamp(3px, 0.9vh, 6px);
   --gridly-tactical-map-max: calc(var(--gridly-visual-vh, 100vh) - var(--gridly-tactical-top-shell) - var(--gridly-tactical-dock-band) - var(--gridly-tactical-shell-gap));
 }
 
@@ -11744,28 +11744,31 @@ body[data-layout-mode="tactical-landscape"] .mobile-live-command {
 }
 
 body[data-layout-mode="tactical-landscape"] .mobile-live-brand {
-  padding: 1px 4px !important;
+  padding: 0 4px !important;
   border-radius: 5px !important;
   box-shadow: 0 1px 3px rgba(2, 8, 19, 0.1) !important;
 }
 
 body[data-layout-mode="tactical-landscape"] .mobile-live-command {
-  top: calc(var(--mobile-command-zone-top) + 0px) !important;
-  padding: 1px 7px 2px !important;
+  top: calc(var(--mobile-command-zone-top) - 1px) !important;
+  padding: 1px 6px 1px !important;
   border-radius: 6px !important;
   box-shadow: 0 1px 3px rgba(2, 8, 19, 0.08) !important;
 }
 
 body[data-layout-mode="tactical-landscape"] .mobile-live-brand-status {
-  opacity: 0.5 !important;
+  opacity: 0.38 !important;
+  letter-spacing: 0.01em !important;
 }
 
 body[data-layout-mode="tactical-landscape"] .mobile-live-brand-status strong {
-  font-size: clamp(0.44rem, 0.8vw, 0.52rem) !important;
+  font-size: clamp(0.42rem, 0.74vw, 0.5rem) !important;
+  line-height: 1.1 !important;
 }
 
 body[data-layout-mode="tactical-landscape"] .mobile-live-brand-status span {
-  font-size: clamp(0.5rem, 0.88vw, 0.58rem) !important;
+  font-size: clamp(0.46rem, 0.8vw, 0.54rem) !important;
+  line-height: 1.08 !important;
 }
 
 body[data-layout-mode="tactical-landscape"] #mapSection,
@@ -11775,10 +11778,10 @@ body[data-layout-mode="tactical-landscape"] .map-card {
 }
 
 body[data-layout-mode="tactical-landscape"] .map-frame {
-  min-height: clamp(212px, var(--gridly-tactical-map-max), 336px) !important;
-  height: clamp(212px, var(--gridly-tactical-map-max), 336px) !important;
-  max-height: clamp(212px, var(--gridly-tactical-map-max), 336px) !important;
-  padding-top: clamp(24px, 5.1vh, 29px) !important;
+  min-height: clamp(214px, var(--gridly-tactical-map-max), 338px) !important;
+  height: clamp(214px, var(--gridly-tactical-map-max), 338px) !important;
+  max-height: clamp(214px, var(--gridly-tactical-map-max), 338px) !important;
+  padding-top: clamp(22px, 4.6vh, 27px) !important;
 }
 
 body[data-layout-mode="tactical-landscape"] #map {
@@ -11791,6 +11794,16 @@ body[data-layout-mode="tactical-landscape"] .mobile-floating-action-dock {
   width: min(88.5vw, 372px) !important;
   max-width: 372px !important;
   min-height: 31px !important;
-  padding: 2px 3px !important;
+  padding: 1px 3px !important;
   bottom: calc(env(safe-area-inset-bottom, 0px) + 2px) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  background: rgba(8, 12, 18, 0.64) !important;
+  backdrop-filter: blur(9px) saturate(112%) !important;
+  -webkit-backdrop-filter: blur(9px) saturate(112%) !important;
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.18) !important;
+}
+
+body[data-layout-mode="tactical-landscape"] #map .leaflet-control-attribution {
+  margin: 0 0 calc(var(--gridly-tactical-dock-band) + 7px) 0 !important;
+  opacity: 0.74 !important;
 }
