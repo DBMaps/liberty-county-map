@@ -11604,3 +11604,17 @@ body[data-layout-mode="tactical-landscape"] #gridlyHazardLauncher.gridly-hazard-
   visibility: hidden !important;
   pointer-events: none !important;
 }
+
+/* GRIDLY V101 stabilization: tactical-landscape must always render real map surface. */
+body[data-layout-mode="tactical-landscape"] .future-map-hero,
+body[data-layout-mode="tactical-landscape"] .driver-hero {
+  display: none !important;
+}
+body[data-layout-mode="tactical-landscape"] .map-card,
+body[data-layout-mode="tactical-landscape"] .map-frame,
+body[data-layout-mode="tactical-landscape"] #map {
+  display: block !important;
+  visibility: visible !important;
+  min-height: max(248px, calc(var(--gridly-visual-vh, 100vh) - 120px));
+  height: auto;
+}

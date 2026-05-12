@@ -36,3 +36,37 @@ Do not treat major interaction changes as CSS-only responsive work. Layout mode 
 - **Portrait only:** mobile bottom nav (Today/Map/Report/Alerts/Routes), portrait report entry controls, portrait layer toggle trigger.
 - **Tactical-landscape only:** tactical floating dock actions (Report/Route/Alerts/Area/Layers), tactical dock sheet surfaces.
 - **Shared helper behavior only:** section routing, report/layer action helpers, geo-filter application, and modal open/close utilities.
+
+## View Contract Ownership Matrix (V101 Audit)
+
+| Surface / Control | desktop | portrait | tactical-landscape |
+| --- | --- | --- | --- |
+| `app-header` | owner | hidden | hidden |
+| `mobile-live-brand` | hidden | owner | owner (compact) |
+| desktop rail / command strips | owner | hidden | hidden |
+| portrait bottom nav | hidden | owner | hidden |
+| tactical floating dock | hidden | hidden | owner |
+| mobile native surface layer | hidden | owner (intentional open only) | hidden by default (open only) |
+| report/route/alerts/layers visible actions | desktop-owned entrypoints | portrait-owned entrypoints | tactical-owned dock entrypoints |
+| map shell/frame/container | owner | owner | owner (must stay visible, no fallback hero replacement) |
+
+## Shared Core vs Mode-Owned UX
+
+Shared core remains shared across all modes: map initialization, Supabase/report sync, FRA crossings, Liberty County boundary, route/hazard scoring, saved places, Route Watch state, and layer engines.
+
+Mode-owned UX:
+- binders: `bindDesktopControls()`, `bindPortraitControls()`, `bindTacticalLandscapeControls()`.
+- mode-owned route/alerts/report/layers entry controls use mode-specific ownership references (for example `desktopReportBtn`, `portraitRouteBtn`, `tacticalRouteBtn`) to prevent cross-mode collisions.
+- visible interaction surfaces are bound once with per-mode data flags to prevent listener stacking during orientation/resize transitions.
+
+## Known Compatibility Wrappers Added
+
+- `isMobileLayoutMode()` compatibility wrapper retained at top-level so older call sites still work while layout-contract migration completes.
+- `updateRouteWatchStartButtonState()` compatibility wrapper restored and mapped to `loadSavedRoute()` / `updateRouteWatchStartButtonLabel()` behavior so quick-panel route changes continue updating Route Watch CTA state.
+
+## Future Codex Rules (Contract Guardrails)
+
+- Do not add cross-mode buttons with shared IDs.
+- Do not bind visible controls globally when behavior differs by mode.
+- Do not rely on CSS-only responsive behavior for major interaction ownership.
+- Keep protected core systems shared and mode-agnostic.
