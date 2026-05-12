@@ -9993,6 +9993,18 @@ body[data-layout-mode="mobile"] .desktop-command-panel {
   inset: 0;
   z-index: 4600;
 }
+.mobile-native-surface-layer[hidden],
+.mobile-native-surface-layer[aria-hidden="true"],
+.mobile-native-surface-layer:not(.is-open) {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+.mobile-native-surface-layer.is-open:not([hidden]):not([aria-hidden="true"]) {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
 .mobile-native-surface-backdrop {
   position: absolute;
   inset: 0;
