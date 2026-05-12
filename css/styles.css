@@ -11470,3 +11470,75 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
   body[data-layout-mode="tactical-landscape"] .gridly-tactical-alert-row p { margin: 4px 0 0; font-size: .74rem; color: #b9cde4; }
   body[data-layout-mode="tactical-landscape"] .gridly-tactical-sheet-actions { margin-top: 10px; }
 }
+
+/* V97 — strict surface visibility ownership cleanup */
+/* Shared helpers: explicit ownership guards to prevent cross-mode leakage. */
+body[data-layout-mode="desktop"] .mobile-floating-action-dock,
+body[data-layout-mode="desktop"] .mobile-bottom-nav,
+body[data-layout-mode="desktop"] .mobile-native-surface-layer,
+body[data-layout-mode="desktop"] #mobileDailyPanel,
+body[data-layout-mode="desktop"] #mobileLocalContextStrip,
+body[data-layout-mode="desktop"] .gridly-tactical-dock-sheet {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Desktop-only surfaces: keep desktop command/report/map areas visible in desktop mode. */
+body[data-layout-mode="desktop"] .desktop-left-rail,
+body[data-layout-mode="desktop"] .desktop-command-strip,
+body[data-layout-mode="desktop"] .desktop-route-setup,
+body[data-layout-mode="desktop"] .desktop-insights,
+body[data-layout-mode="desktop"] .desktop-route-watch-strip,
+body[data-layout-mode="desktop"] .desktop-command-panel,
+body[data-layout-mode="desktop"] .desktop-business-note {
+  display: revert !important;
+  visibility: visible !important;
+}
+
+/* Portrait-only surfaces: preserve current portrait shell and hide desktop-only lower sections. */
+body[data-layout-mode="portrait"] .mobile-bottom-nav,
+body[data-layout-mode="portrait"] #mobileDailyPanel,
+body[data-layout-mode="portrait"] #mobileLocalContextStrip,
+body[data-layout-mode="portrait"] .mobile-native-surface-layer {
+  display: revert !important;
+  visibility: visible !important;
+}
+
+body[data-layout-mode="portrait"] .desktop-left-rail,
+body[data-layout-mode="portrait"] .desktop-business-note {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Tactical-landscape-only surfaces: show tactical dock/map shell, suppress portrait/desktop lower sections. */
+body[data-layout-mode="tactical-landscape"] .mobile-floating-action-dock,
+body[data-layout-mode="tactical-landscape"] .map-card,
+body[data-layout-mode="tactical-landscape"] .map-frame,
+body[data-layout-mode="tactical-landscape"] #map {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+body[data-layout-mode="tactical-landscape"] .mobile-bottom-nav,
+body[data-layout-mode="tactical-landscape"] .desktop-command-strip,
+body[data-layout-mode="tactical-landscape"] .desktop-route-setup,
+body[data-layout-mode="tactical-landscape"] .desktop-insights,
+body[data-layout-mode="tactical-landscape"] .desktop-route-watch-strip,
+body[data-layout-mode="tactical-landscape"] .desktop-business-note,
+body[data-layout-mode="tactical-landscape"] .desktop-command-panel {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* CTA ownership: keep the floating report launcher mode-scoped. */
+body[data-layout-mode="desktop"] #gridlyHazardLauncher.gridly-hazard-launcher {
+  position: fixed;
+}
+
+body[data-layout-mode="tactical-landscape"] #gridlyHazardLauncher.gridly-hazard-launcher {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
