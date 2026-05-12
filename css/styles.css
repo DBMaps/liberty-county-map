@@ -11650,3 +11650,71 @@ body[data-layout-mode="tactical-landscape"] #map {
 body[data-layout-mode="tactical-landscape"] .map-card {
   margin-top: 0 !important;
 }
+
+
+/* GRIDLY V107 — tactical landscape map-first enforcement across wide landscape widths. */
+body[data-layout-mode="tactical-landscape"] .mobile-live-brand {
+  top: calc(env(safe-area-inset-top, 0px) + 6px) !important;
+  height: clamp(30px, 7.4vh, 38px) !important;
+  min-height: clamp(30px, 7.4vh, 38px) !important;
+  max-height: clamp(30px, 7.4vh, 38px) !important;
+  padding: 4px 10px !important;
+  border-radius: 10px !important;
+  gap: 8px !important;
+}
+
+body[data-layout-mode="tactical-landscape"] .mobile-live-brand,
+body[data-layout-mode="tactical-landscape"] .mobile-live-brand-main,
+body[data-layout-mode="tactical-landscape"] .mobile-live-brand-logo,
+body[data-layout-mode="tactical-landscape"] .brand-logo-frame {
+  flex-grow: 0 !important;
+  flex-shrink: 1 !important;
+}
+
+body[data-layout-mode="tactical-landscape"] .mobile-live-brand-main {
+  gap: 6px !important;
+  min-width: 0 !important;
+}
+
+body[data-layout-mode="tactical-landscape"] .mobile-live-brand-logo,
+body[data-layout-mode="tactical-landscape"] .brand-logo-frame {
+  width: clamp(92px, 20vw, 124px) !important;
+  height: clamp(16px, 3.7vh, 22px) !important;
+  max-height: clamp(16px, 3.7vh, 22px) !important;
+  overflow: hidden !important;
+}
+
+body[data-layout-mode="tactical-landscape"] .mobile-live-brand-logo img,
+body[data-layout-mode="tactical-landscape"] .brand-logo-img {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  object-position: left center !important;
+}
+
+body[data-layout-mode="tactical-landscape"] .mobile-live-brand-status {
+  min-width: 82px !important;
+  max-width: 54% !important;
+}
+
+body[data-layout-mode="tactical-landscape"] #mapSection,
+body[data-layout-mode="tactical-landscape"] .map-card {
+  min-height: 0 !important;
+  height: auto !important;
+  flex: 1 1 auto !important;
+}
+
+body[data-layout-mode="tactical-landscape"] .map-frame {
+  min-height: max(220px, calc(var(--gridly-visual-vh, 100vh) - 108px)) !important;
+  height: max(220px, calc(var(--gridly-visual-vh, 100vh) - 108px)) !important;
+  max-height: max(220px, calc(var(--gridly-visual-vh, 100vh) - 108px)) !important;
+  padding-top: clamp(42px, 9vh, 56px) !important;
+}
+
+body[data-layout-mode="tactical-landscape"] #map {
+  min-height: max(220px, calc(var(--gridly-visual-vh, 100vh) - 108px)) !important;
+  height: 100% !important;
+  max-height: none !important;
+}
