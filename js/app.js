@@ -375,6 +375,7 @@ function evaluateLayoutMode() {
 }
 
 function applyLayoutMode(nextMode) {
+  const previousLayoutMode = activeLayoutMode;
   activeLayoutMode = nextMode === "desktop" || nextMode === "portrait" || nextMode === "tactical-landscape" ? nextMode : "desktop";
   if (!document?.body) return;
   document.body.setAttribute("data-layout-mode", activeLayoutMode);
@@ -383,6 +384,9 @@ function applyLayoutMode(nextMode) {
     document.body.setAttribute("data-mobile-mode", mobileUiMode || "live");
   } else {
     document.body.removeAttribute("data-mobile-mode");
+  }
+  if (previousLayoutMode !== activeLayoutMode && typeof window.resetMobileSurfaceState === "function") {
+    window.resetMobileSurfaceState("layout_transition", { previousLayoutMode, nextLayoutMode: activeLayoutMode });
   }
 }
 
@@ -12108,6 +12112,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       </article>`;
 
     layer.hidden = false;
+    layer.style.opacity = "1";
+    layer.style.visibility = "visible";
+    layer.style.pointerEvents = "auto";
     normalizeMobileSurfaceBackdrop(true);
     setMobileUiMode("alert", { silent: true });
     focusMobileSurfaceEntryTarget();
@@ -12222,6 +12229,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     body.dataset.mobileSurfaceView = section;
     body.innerHTML = views[section].html;
     layer.hidden = false;
+    layer.style.opacity = "1";
+    layer.style.visibility = "visible";
+    layer.style.pointerEvents = "auto";
     normalizeMobileSurfaceBackdrop(true);
     setMobileUiMode(section === "routes" ? "route" : section === "alerts" ? "alert" : "live", { silent: true });
     focusMobileSurfaceEntryTarget();
@@ -12281,28 +12291,55 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         backdrop.setAttribute("aria-hidden", active ? "false" : "true");
       }
     };
-    const closeSurface = (sourceAction = "close_button", options = {}) => {
+    const resetMobileSurfaceState = (reason = "manual_reset", options = {}) => {
       if (!layer) return;
-      const wasVisible = !layer.hidden;
       const nextMode = typeof options.nextMode === "string" ? options.nextMode : "live";
-      logDailyPanelAction("closeSurface started", { sourceAction, wasVisible, nextMode, visibilityState: !layer.hidden });
+      const wasVisible = !layer.hidden;
+      const sheet = layer.querySelector(".mobile-native-surface-sheet");
       layer.hidden = true;
+      layer.classList.remove("is-open", "is-active", "active", "open");
+      layer.style.opacity = "0";
+      layer.style.visibility = "hidden";
+      layer.style.pointerEvents = "none";
+      layer.style.transform = "";
+      layer.style.translate = "";
+      layer.setAttribute("aria-hidden", "true");
+      if (body) {
+        body.dataset.mobileSurfaceView = "";
+        body.style.transform = "";
+        body.style.translate = "";
+      }
+      if (sheet) {
+        sheet.style.transform = "";
+        sheet.style.translate = "";
+      }
       normalizeMobileSurfaceBackdrop(false);
       if (isMobileLayoutMode()) {
         const reportVisible = isReportSurfaceVisiblyOpen();
         const routeVisible = Boolean(document.getElementById("gridlyMobileRouteQuickPanel")?.classList.contains("visible"));
         const safeMode = reportVisible ? "report" : routeVisible ? "route" : nextMode;
         setMobileUiMode(safeMode, { silent: true });
-        traceMobileModeMutation("closeSurface set mode", { sourceAction, requestedMode: nextMode, safeMode, reportVisible, routeVisible });
       }
       restoreMobileSurfaceLauncherFocus();
-      logDailyPanelAction("closeSurface completed", {
-        sourceAction,
-        visibilityState: !layer.hidden,
+      logDailyPanelAction("resetMobileSurfaceState completed", {
+        reason,
         wasVisible,
         nextMode,
+        currentLayoutMode: getCurrentLayoutMode(),
+        currentMobileMode: mobileUiMode
+      });
+    };
+    window.resetMobileSurfaceState = resetMobileSurfaceState;
+    const closeSurface = (sourceAction = "close_button", options = {}) => {
+      const nextMode = typeof options.nextMode === "string" ? options.nextMode : "live";
+      logDailyPanelAction("closeSurface started", { sourceAction, nextMode, visibilityState: !layer?.hidden });
+      resetMobileSurfaceState(`close_surface:${sourceAction}`, { nextMode });
+      logDailyPanelAction("closeSurface completed", {
+        sourceAction,
+        visibilityState: !layer?.hidden,
+        nextMode,
         mobileMode: mobileUiMode,
-        finalSurfaceAriaHidden: layer.getAttribute("aria-hidden")
+        finalSurfaceAriaHidden: layer?.getAttribute("aria-hidden")
       });
     };
     normalizeMobileSurfaceBackdrop(!layer?.hidden);
