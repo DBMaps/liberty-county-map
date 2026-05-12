@@ -11156,10 +11156,10 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
   /* V80 authoritative short-height landscape tactical contract.
      This block intentionally overrides legacy V74/V7x landscape fragments. */
   body[data-layout-mode="tactical-landscape"] {
-    --mobile-command-zone-top: calc(var(--mobile-brand-top, env(safe-area-inset-top, 0px) + 4px) + var(--mobile-brand-height, 32px) + 5px);
-    --mobile-landscape-bottom-band-height: clamp(50px, 13.4vh, 60px);
+    --mobile-command-zone-top: calc(var(--mobile-brand-top, env(safe-area-inset-top, 0px) + 3px) + var(--mobile-brand-height, 30px) + 4px);
+    --mobile-landscape-bottom-band-height: clamp(46px, 12.2vh, 54px);
     --mobile-landscape-dock-space: calc(var(--mobile-landscape-bottom-band-height) + env(safe-area-inset-bottom, 0px));
-    --mobile-landscape-context-gap: clamp(6px, 1.5vh, 9px);
+    --mobile-landscape-context-gap: clamp(4px, 1.1vh, 7px);
     --mobile-landscape-context-bottom: calc(var(--mobile-landscape-dock-space) + var(--mobile-landscape-context-gap));
   }
 
@@ -11169,26 +11169,26 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     right: calc(env(safe-area-inset-right, 0px) + 8px);
     max-width: none;
     width: auto;
-    padding: 3px 9px 4px;
+    padding: 2px 8px 3px;
     border-radius: 7px;
-    border: 1px solid rgba(168, 209, 240, 0.09);
-    background: linear-gradient(148deg, rgba(8, 16, 28, 0.34), rgba(6, 12, 22, 0.38));
-    box-shadow: 0 1px 5px rgba(2, 8, 19, 0.1), 0 0 0 1px rgba(52, 126, 182, 0.04);
+    border: 1px solid rgba(168, 209, 240, 0.06);
+    background: linear-gradient(148deg, rgba(8, 16, 28, 0.26), rgba(6, 12, 22, 0.3));
+    box-shadow: 0 1px 4px rgba(2, 8, 19, 0.07), 0 0 0 1px rgba(52, 126, 182, 0.025);
     backdrop-filter: blur(2px) saturate(103%);
     -webkit-backdrop-filter: blur(2px) saturate(103%);
     row-gap: 0;
   }
 
   body[data-layout-mode="tactical-landscape"] .mobile-live-command .eyebrow {
-    margin-bottom: 1px;
-    font-size: 0.5rem;
+    margin-bottom: 0;
+    font-size: 0.46rem;
     letter-spacing: 0.1em;
     line-height: 1;
   }
 
   body[data-layout-mode="tactical-landscape"] .mobile-live-status-pill {
-    padding: 1px 6px;
-    font-size: 0.49rem;
+    padding: 1px 5px;
+    font-size: 0.45rem;
     line-height: 1;
     border-width: 1px;
     margin-left: 1px;
@@ -11199,7 +11199,7 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     display: block;
     width: 100%;
     max-width: 100%;
-    font-size: clamp(0.76rem, 1.54vw, 0.84rem);
+    font-size: clamp(0.72rem, 1.44vw, 0.8rem);
     line-height: 1.02;
     letter-spacing: 0.004em;
     white-space: nowrap;
@@ -11219,6 +11219,12 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     text-overflow: ellipsis;
   }
 
+  @media (max-height: 400px) {
+    body[data-layout-mode="tactical-landscape"] .mobile-live-command .eyebrow {
+      display: none;
+    }
+  }
+
   body[data-layout-mode="tactical-landscape"] .mobile-live-command .compact-btn,
   body[data-layout-mode="tactical-landscape"] #mobileLiveRouteActionBtn {
     display: none !important;
@@ -11234,21 +11240,21 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     left: 50% !important;
     right: auto !important;
     transform: translateX(-50%) !important;
-    width: min(91.5vw, 404px) !important;
-    max-width: 404px !important;
-    min-height: 36px;
-    gap: 4px;
-    padding: 3px 4px;
+    width: min(90.5vw, 392px) !important;
+    max-width: 392px !important;
+    min-height: 33px;
+    gap: 3px;
+    padding: 2px 3px;
     border-radius: 10px;
-    border: 1px solid rgba(168, 203, 232, 0.1);
-    background: rgba(8, 14, 24, 0.66);
-    box-shadow: 0 2px 6px rgba(2, 9, 20, 0.12);
+    border: 1px solid rgba(168, 203, 232, 0.07);
+    background: rgba(8, 14, 24, 0.56);
+    box-shadow: 0 2px 5px rgba(2, 9, 20, 0.09);
     backdrop-filter: blur(4px) saturate(106%);
     -webkit-backdrop-filter: blur(4px) saturate(106%);
     overflow: hidden;
     box-sizing: border-box;
     z-index: 1200;
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 4px) !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 3px) !important;
   }
 
   body[data-layout-mode="tactical-landscape"] .mobile-floating-action-dock::before,
@@ -11265,14 +11271,14 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
   body[data-layout-mode="tactical-landscape"] .mobile-floating-action-dock .mobile-dock-btn:nth-child(n) {
     flex: 1 1 0 !important;
     min-width: 0 !important;
-    min-height: 30px !important;
-    height: 30px !important;
-    padding: 3px 6px !important;
+    min-height: 28px !important;
+    height: 28px !important;
+    padding: 2px 5px !important;
     border-radius: 8px !important;
-    border: 1px solid rgba(175, 212, 244, 0.13) !important;
-    background: rgba(14, 24, 38, 0.72) !important;
-    color: rgba(220, 237, 252, 0.96) !important;
-    font-size: 0.62rem !important;
+    border: 1px solid rgba(175, 212, 244, 0.1) !important;
+    background: rgba(14, 24, 38, 0.62) !important;
+    color: rgba(220, 237, 252, 0.93) !important;
+    font-size: 0.58rem !important;
     font-weight: 700 !important;
     letter-spacing: 0.028em !important;
     text-transform: uppercase !important;
@@ -11280,15 +11286,15 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
-    box-shadow: inset 0 1px 0 rgba(233, 246, 255, 0.035) !important;
+    box-shadow: inset 0 1px 0 rgba(233, 246, 255, 0.02) !important;
     filter: none !important;
     opacity: 1 !important;
   }
 
   body[data-layout-mode="tactical-landscape"] .mobile-dock-btn.active,
   body[data-layout-mode="tactical-landscape"] .mobile-dock-btn:focus-visible {
-    border-color: rgba(131, 206, 255, 0.62) !important;
-    box-shadow: inset 0 0 0 1px rgba(199, 234, 255, 0.18), 0 0 0 1px rgba(73, 170, 235, 0.2), 0 0 7px rgba(87, 186, 255, 0.12) !important;
+    border-color: rgba(131, 206, 255, 0.5) !important;
+    box-shadow: inset 0 0 0 1px rgba(199, 234, 255, 0.14), 0 0 0 1px rgba(73, 170, 235, 0.14), 0 0 5px rgba(87, 186, 255, 0.08) !important;
     outline: none !important;
   }
 
@@ -11400,7 +11406,7 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
     right: max(8px, env(safe-area-inset-right, 0px));
   }
   body[data-layout-mode="tactical-landscape"] #map .leaflet-bottom.leaflet-right {
-    bottom: calc(var(--mobile-landscape-context-bottom) + 28px);
+    bottom: calc(var(--mobile-landscape-context-bottom) + 24px);
   }
   body[data-layout-mode="tactical-landscape"] #map .leaflet-control-zoom {
     margin: 0 !important;
@@ -11412,9 +11418,9 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
   body[data-layout-mode="tactical-landscape"] .map-card,
   body[data-layout-mode="tactical-landscape"] .map-frame,
   body[data-layout-mode="tactical-landscape"] #map {
-    height: calc(100dvh - var(--mobile-landscape-dock-space) + 4px);
-    min-height: calc(100dvh - var(--mobile-landscape-dock-space) + 4px);
-    max-height: calc(100dvh - var(--mobile-landscape-dock-space) + 4px);
+    height: calc(100dvh - var(--mobile-landscape-dock-space) + 6px);
+    min-height: calc(100dvh - var(--mobile-landscape-dock-space) + 6px);
+    max-height: calc(100dvh - var(--mobile-landscape-dock-space) + 6px);
   }
 
   body[data-layout-mode="tactical-landscape"] .map-frame,
@@ -11654,13 +11660,13 @@ body[data-layout-mode="tactical-landscape"] .map-card {
 
 /* GRIDLY V107 — tactical landscape map-first enforcement across wide landscape widths. */
 body[data-layout-mode="tactical-landscape"] .mobile-live-brand {
-  top: calc(env(safe-area-inset-top, 0px) + 3px) !important;
-  height: clamp(24px, 5.8vh, 30px) !important;
-  min-height: clamp(24px, 5.8vh, 30px) !important;
-  max-height: clamp(24px, 5.8vh, 30px) !important;
-  padding: 2px 6px !important;
-  border-radius: 7px !important;
-  gap: 4px !important;
+  top: calc(env(safe-area-inset-top, 0px) + 2px) !important;
+  height: clamp(22px, 5.2vh, 27px) !important;
+  min-height: clamp(22px, 5.2vh, 27px) !important;
+  max-height: clamp(22px, 5.2vh, 27px) !important;
+  padding: 1px 5px !important;
+  border-radius: 6px !important;
+  gap: 3px !important;
 }
 
 body[data-layout-mode="tactical-landscape"] .mobile-live-brand,
@@ -11672,15 +11678,15 @@ body[data-layout-mode="tactical-landscape"] .brand-logo-frame {
 }
 
 body[data-layout-mode="tactical-landscape"] .mobile-live-brand-main {
-  gap: 3px !important;
+  gap: 2px !important;
   min-width: 0 !important;
 }
 
 body[data-layout-mode="tactical-landscape"] .mobile-live-brand-logo,
 body[data-layout-mode="tactical-landscape"] .brand-logo-frame {
-  width: clamp(76px, 16.5vw, 98px) !important;
-  height: clamp(13px, 2.8vh, 16px) !important;
-  max-height: clamp(13px, 2.8vh, 16px) !important;
+  width: clamp(72px, 15.6vw, 92px) !important;
+  height: clamp(12px, 2.5vh, 14px) !important;
+  max-height: clamp(12px, 2.5vh, 14px) !important;
   overflow: hidden !important;
 }
 
@@ -11695,11 +11701,11 @@ body[data-layout-mode="tactical-landscape"] .brand-logo-img {
 }
 
 body[data-layout-mode="tactical-landscape"] .mobile-live-brand-status {
-  min-width: 62px !important;
+  min-width: 56px !important;
   max-width: 50% !important;
-  font-size: clamp(0.52rem, 1.05vw, 0.6rem) !important;
+  font-size: clamp(0.48rem, 0.96vw, 0.56rem) !important;
   line-height: 1.05 !important;
-  opacity: 0.74 !important;
+  opacity: 0.58 !important;
 }
 
 body[data-layout-mode="tactical-landscape"] #mapSection,
@@ -11710,14 +11716,14 @@ body[data-layout-mode="tactical-landscape"] .map-card {
 }
 
 body[data-layout-mode="tactical-landscape"] .map-frame {
-  min-height: max(224px, calc(var(--gridly-visual-vh, 100vh) - 92px)) !important;
-  height: max(224px, calc(var(--gridly-visual-vh, 100vh) - 92px)) !important;
-  max-height: max(224px, calc(var(--gridly-visual-vh, 100vh) - 92px)) !important;
-  padding-top: clamp(30px, 6.4vh, 38px) !important;
+  min-height: max(224px, calc(var(--gridly-visual-vh, 100vh) - 84px)) !important;
+  height: max(224px, calc(var(--gridly-visual-vh, 100vh) - 84px)) !important;
+  max-height: max(224px, calc(var(--gridly-visual-vh, 100vh) - 84px)) !important;
+  padding-top: clamp(26px, 5.6vh, 32px) !important;
 }
 
 body[data-layout-mode="tactical-landscape"] #map {
-  min-height: max(224px, calc(var(--gridly-visual-vh, 100vh) - 92px)) !important;
+  min-height: max(224px, calc(var(--gridly-visual-vh, 100vh) - 84px)) !important;
   height: 100% !important;
   max-height: none !important;
 }
