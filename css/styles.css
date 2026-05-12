@@ -11621,6 +11621,9 @@ body[data-layout-mode="tactical-landscape"] #gridlyHazardLauncher.gridly-hazard-
 body[data-layout-mode="tactical-landscape"] .future-map-hero,
 body[data-layout-mode="tactical-landscape"] .driver-hero {
   display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 /* GRIDLY V102 — when real tactical map is active, suppress oversized fallback/hero surfaces above it. */
