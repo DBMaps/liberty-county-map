@@ -59,6 +59,25 @@
     </div>
   </section>
 
+  <div id="gridlySearchShell" class="gridly-search-shell" hidden data-search-ui="dormant">
+    <div class="gridly-search-card">
+      <label class="gridly-search-label" for="gridlyAddressSearchInput">Search destination</label>
+      <div class="gridly-search-input-row">
+        <input
+          id="gridlyAddressSearchInput"
+          class="gridly-search-input"
+          type="search"
+          autocomplete="off"
+          placeholder="Search an address or place"
+        />
+        <button id="gridlySearchClearBtn" class="gridly-search-clear-btn" type="button" aria-label="Clear search">
+          Clear
+        </button>
+      </div>
+      <div id="gridlySearchResults" class="gridly-search-results" aria-live="polite"></div>
+    </div>
+  </div>
+
   <main class="app-shell premium-layout">
     <aside class="desktop-left-rail" aria-label="Operations navigation">
       <div class="rail-brand">GRIDLY</div>
