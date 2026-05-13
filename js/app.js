@@ -1156,6 +1156,7 @@ function showGridlySearchShell(options = {}) {
   const shell = gridlySearchUiRefs.shell || document.getElementById("gridlySearchShell");
   if (!shell) return false;
   shell.hidden = false;
+  shell.removeAttribute("hidden");
   shell.dataset.searchUi = "active";
   if (options?.focusInput === true) {
     const input = gridlySearchUiRefs.input || document.getElementById("gridlyAddressSearchInput");
@@ -1168,6 +1169,7 @@ function hideGridlySearchShell(options = {}) {
   const shell = gridlySearchUiRefs.shell || document.getElementById("gridlySearchShell");
   if (!shell) return false;
   shell.hidden = true;
+  shell.setAttribute("hidden", "");
   shell.dataset.searchUi = "dormant";
   if (options?.clear === true) {
     const input = gridlySearchUiRefs.input || document.getElementById("gridlyAddressSearchInput");
@@ -7705,6 +7707,7 @@ window.gridlySearchDebug = function gridlySearchDebug() {
     hasDestinationMarker: Boolean(safeState.destinationMarker),
     hasSearchShell: Boolean(shell),
     searchShellHidden: Boolean(shell?.hidden),
+    searchShellHasHiddenAttribute: Boolean(shell?.hasAttribute("hidden")),
     searchUiState: shell?.dataset?.searchUi || "unknown",
     hasSearchInput: Boolean(input),
     hasSearchResults: Boolean(results),
