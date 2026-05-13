@@ -1371,6 +1371,8 @@ function selectGridlySearchResult(result, options = {}) {
   const input = gridlySearchUiRefs.input || document.getElementById("gridlyAddressSearchInput");
   if (input) input.value = selectedLabel;
   state.activeQuery = selectedLabel;
+  const destinationHabitCopy = document.getElementById("destinationHabitCopy");
+  if (destinationHabitCopy && selectedLabel) destinationHabitCopy.textContent = `Selected: ${selectedLabel}`;
 
   const marker = setGridlyDestinationMarker(normalized, { preserveSelectedDestination: true });
   if (!marker && !gridlySearchUiState.debugWarningsSeen.has("select-marker-failed")) {
@@ -6385,7 +6387,17 @@ function bindEvents() {
       }, { once: true });
     });
   });
-  els.mobileLiveRouteActionBtn?.addEventListener("click", openMobileRouteQuickPanel);
+  if (els.mobileLiveRouteActionBtn && els.mobileLiveRouteActionBtn.dataset.searchBound !== "true") {
+    els.mobileLiveRouteActionBtn.addEventListener("click", (event) => {
+      const ctaLabel = String(els.mobileLiveRouteActionBtn?.textContent || "").trim().toLowerCase();
+      if (ctaLabel === "choose route") {
+        openDestinationSearchShell(event, "chooseRouteButton");
+        return;
+      }
+      openMobileRouteQuickPanel();
+    });
+    els.mobileLiveRouteActionBtn.dataset.searchBound = "true";
+  }
   els.mobileQuickReportBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_quick_report_btn", event));
   els.mobileQuickReportSmallBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_quick_report_small_btn", event));
   els.mobileQuickClearedBtn?.addEventListener("click", () => {
@@ -8108,6 +8120,8 @@ window.gridlySearchDebug = function gridlySearchDebug() {
     hasSearchClearButton: Boolean(clearBtn),
     hasDestinationAddBtn: Boolean(els.destinationAddBtn),
     destinationAddBtnBound: Boolean(els.destinationAddBtn?.dataset?.searchBound === "true"),
+    hasChooseRouteButton: Boolean(els.mobileLiveRouteActionBtn),
+    chooseRouteButtonBound: Boolean(els.mobileLiveRouteActionBtn?.dataset?.searchBound === "true"),
     hasDestinationHeroCard: Boolean(document.querySelector(".destination-hero-card")),
     destinationHeroCardBound: Boolean(document.querySelector(".destination-hero-card")?.dataset?.searchBound === "true"),
     isSearching: Boolean(gridlySearchUiState.isSearching),
