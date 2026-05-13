@@ -1173,6 +1173,7 @@ function clearGridlySearchResults(options = {}) {
   const resultsContainer = gridlySearchUiRefs.results || document.getElementById("gridlySearchResults");
   if (resultsContainer) resultsContainer.textContent = "";
   gridlySearchUiState.lastRenderedResults = [];
+  gridlySearchUiState.lastResultShapePreview = [];
   if (options?.clearActiveResult === true) state.activeResult = null;
   if (options?.clearSelectedDestination === true) state.selectedDestination = null;
   if (options?.clearDestinationMarker === true) clearGridlyDestinationMarker({ silent: true });
@@ -1286,6 +1287,7 @@ function renderGridlySearchResults(results = [], options = {}) {
     list.appendChild(itemBtn);
   });
   gridlySearchUiState.lastRenderedResultsPreview = preview.slice(0, 3);
+  gridlySearchUiState.lastResultShapePreview = renderedResults.slice(0, 3).map((result) => buildGridlyResultShapePreviewItem(result));
 
   resultsContainer.appendChild(list);
   return true;
@@ -7924,6 +7926,33 @@ async function gridlyReverseGeocode(lat, lng, options = {}) {
   }
 }
 
+
+function buildGridlyResultShapePreviewItem(result) {
+  const safeResult = result && typeof result === "object" ? result : {};
+  const raw = safeResult.raw && typeof safeResult.raw === "object" ? safeResult.raw : {};
+  const rawAddress = raw.address && typeof raw.address === "object" ? raw.address : {};
+  const safeAddressKeys = [
+    "city", "town", "village", "hamlet", "county", "state", "country",
+    "road", "suburb", "neighbourhood", "municipality"
+  ];
+  const rawAddressSample = {};
+  safeAddressKeys.forEach((key) => {
+    const value = rawAddress[key];
+    if (typeof value === "string" && value.trim()) rawAddressSample[key] = value.trim();
+  });
+  return {
+    title: typeof safeResult.title === "string" ? safeResult.title : "",
+    label: typeof safeResult.label === "string" ? safeResult.label : "",
+    context: buildGridlyLocationContext(safeResult) || "",
+    lat: Number.isFinite(safeResult.lat) ? Number(safeResult.lat.toFixed(6)) : null,
+    lng: Number.isFinite(safeResult.lng) ? Number(safeResult.lng.toFixed(6)) : null,
+    rawDisplayNameSample: String(raw.display_name || "").slice(0, 160),
+    rawAddressKeys: Object.keys(rawAddress).slice(0, 10),
+    rawAddressSample,
+    topLevelKeys: Object.keys(safeResult).slice(0, 15)
+  };
+}
+
 window.gridlySearchAddress = gridlySearchAddress;
 window.gridlyReverseGeocode = gridlyReverseGeocode;
 window.normalizeGridlySearchResult = normalizeGridlySearchResult;
@@ -7965,6 +7994,7 @@ window.gridlySearchDebug = function gridlySearchDebug() {
     lastRenderedResultsCount: Array.isArray(gridlySearchUiState.lastRenderedResults) ? gridlySearchUiState.lastRenderedResults.length : 0,
     prioritizedLocalResultsCount: Number(gridlySearchUiState.prioritizedLocalResultsCount || 0),
     renderedResultsPreview: Array.isArray(gridlySearchUiState.lastRenderedResultsPreview) ? gridlySearchUiState.lastRenderedResultsPreview : [],
+    resultShapePreview: Array.isArray(gridlySearchUiState.lastResultShapePreview) ? gridlySearchUiState.lastResultShapePreview : [],
     contextDiagnostics: gridlySearchUiState.lastContextDiagnostics,
     searchResultsTextLength: Number(results?.textContent?.length || 0),
     destinationMarkerLatLng: typeof safeState.destinationMarker?.getLatLng === "function"
