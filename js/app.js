@@ -972,6 +972,109 @@ const gridlySearchUiRefs = {
   results: null
 };
 
+const gridlySearchUiState = {
+  pendingSearchTimer: null,
+  activeSearchRequestId: 0,
+  lastRenderedResults: [],
+  isSearching: false
+};
+
+function clearGridlySearchResults(options = {}) {
+  const state = ensureGridlySearchState();
+  const resultsContainer = gridlySearchUiRefs.results || document.getElementById("gridlySearchResults");
+  if (resultsContainer) resultsContainer.textContent = "";
+  gridlySearchUiState.lastRenderedResults = [];
+  if (options?.clearActiveResult === true) state.activeResult = null;
+  if (options?.clearSelectedDestination === true) state.selectedDestination = null;
+  if (options?.clearDestinationMarker === true) clearGridlyDestinationMarker({ silent: true });
+  return true;
+}
+
+function renderGridlySearchResults(results = [], options = {}) {
+  const resultsContainer = gridlySearchUiRefs.results || document.getElementById("gridlySearchResults");
+  if (!resultsContainer) return false;
+  resultsContainer.textContent = "";
+
+  if (options?.state === "searching") {
+    const status = document.createElement("div");
+    status.className = "gridly-search-results-status";
+    status.textContent = "Searching…";
+    resultsContainer.appendChild(status);
+    return true;
+  }
+
+  if (options?.state === "error") {
+    const status = document.createElement("div");
+    status.className = "gridly-search-results-status";
+    status.textContent = "Search unavailable. Try again.";
+    resultsContainer.appendChild(status);
+    return true;
+  }
+
+  const normalizedResults = Array.isArray(results)
+    ? results.map((result) => normalizeGridlySearchResult(result)).filter(Boolean)
+    : [];
+  gridlySearchUiState.lastRenderedResults = normalizedResults;
+
+  if (!normalizedResults.length) {
+    if (options?.state === "done" && options?.allowEmptyMessage === true) {
+      const status = document.createElement("div");
+      status.className = "gridly-search-results-status";
+      status.textContent = "No results found";
+      resultsContainer.appendChild(status);
+    }
+    return true;
+  }
+
+  const list = document.createElement("div");
+  list.className = "gridly-search-results-list";
+  normalizedResults.forEach((result, index) => {
+    const itemBtn = document.createElement("button");
+    itemBtn.type = "button";
+    itemBtn.className = "gridly-search-result-item";
+    itemBtn.dataset.resultIndex = String(index);
+
+    const label = document.createElement("span");
+    label.className = "gridly-search-result-label";
+    label.textContent = String(result.label || result.title || result.address || "Destination");
+    itemBtn.appendChild(label);
+
+    const metaText = [result.type, result.provider].map((value) => String(value || "").trim()).filter(Boolean).join(" • ");
+    if (metaText) {
+      const meta = document.createElement("small");
+      meta.className = "gridly-search-result-meta";
+      meta.textContent = metaText;
+      itemBtn.appendChild(meta);
+    }
+
+    itemBtn.addEventListener("click", () => {
+      const picked = gridlySearchUiState.lastRenderedResults[index];
+      if (picked) selectGridlySearchResult(picked);
+    });
+    list.appendChild(itemBtn);
+  });
+
+  resultsContainer.appendChild(list);
+  return true;
+}
+
+function selectGridlySearchResult(result, options = {}) {
+  const normalized = normalizeGridlySearchResult(result);
+  if (!normalized) return null;
+  const state = ensureGridlySearchState();
+  state.activeResult = normalized;
+  state.selectedDestination = normalized;
+
+  if (options?.addToRecentSearches !== false) {
+    const existing = Array.isArray(state.recentSearches) ? state.recentSearches : [];
+    const deduped = [normalized, ...existing.filter((entry) => normalizeGridlySearchResult(entry)?.id !== normalized.id)];
+    state.recentSearches = deduped.slice(0, 5);
+  }
+
+  setGridlyDestinationMarker(normalized, { preserveSelectedDestination: true });
+  return normalized;
+}
+
 function initGridlySearchUI() {
   const shell = document.getElementById("gridlySearchShell");
   const input = document.getElementById("gridlyAddressSearchInput");
@@ -990,10 +1093,55 @@ function initGridlySearchUI() {
 
   if (clearBtn && !clearBtn.dataset.gridlySearchClearBound) {
     clearBtn.addEventListener("click", () => {
+      const state = ensureGridlySearchState();
+      if (gridlySearchUiState.pendingSearchTimer) {
+        clearTimeout(gridlySearchUiState.pendingSearchTimer);
+        gridlySearchUiState.pendingSearchTimer = null;
+      }
       if (gridlySearchUiRefs.input) gridlySearchUiRefs.input.value = "";
-      if (gridlySearchUiRefs.results) gridlySearchUiRefs.results.textContent = "";
+      state.activeQuery = "";
+      clearGridlySearchResults();
     });
     clearBtn.dataset.gridlySearchClearBound = "true";
+  }
+
+  if (input && !input.dataset.gridlySearchInputBound) {
+    input.addEventListener("input", () => {
+      const state = ensureGridlySearchState();
+      const query = String(input.value || "").trim();
+      state.activeQuery = query;
+
+      if (gridlySearchUiState.pendingSearchTimer) {
+        clearTimeout(gridlySearchUiState.pendingSearchTimer);
+        gridlySearchUiState.pendingSearchTimer = null;
+      }
+
+      if (query.length < 3) {
+        gridlySearchUiState.isSearching = false;
+        clearGridlySearchResults();
+        return;
+      }
+
+      const requestId = gridlySearchUiState.activeSearchRequestId + 1;
+      gridlySearchUiState.activeSearchRequestId = requestId;
+      gridlySearchUiState.isSearching = true;
+      renderGridlySearchResults([], { state: "searching" });
+
+      gridlySearchUiState.pendingSearchTimer = setTimeout(async () => {
+        gridlySearchUiState.pendingSearchTimer = null;
+        try {
+          const searchResults = await gridlySearchAddress(query);
+          if (requestId !== gridlySearchUiState.activeSearchRequestId) return;
+          gridlySearchUiState.isSearching = false;
+          renderGridlySearchResults(searchResults, { state: "done", allowEmptyMessage: true });
+        } catch (_error) {
+          if (requestId !== gridlySearchUiState.activeSearchRequestId) return;
+          gridlySearchUiState.isSearching = false;
+          renderGridlySearchResults([], { state: "error" });
+        }
+      }, 350);
+    });
+    input.dataset.gridlySearchInputBound = "true";
   }
 
   window.GridlySearchUI = {
@@ -7537,6 +7685,7 @@ window.setGridlyDestinationMarker = setGridlyDestinationMarker;
 window.clearGridlyDestinationMarker = clearGridlyDestinationMarker;
 window.showGridlySearchShell = showGridlySearchShell;
 window.hideGridlySearchShell = hideGridlySearchShell;
+window.clearGridlySearchResults = clearGridlySearchResults;
 window.gridlySearchDebug = function gridlySearchDebug() {
   const state = window.GridlySearchState;
   const shell = gridlySearchUiRefs.shell || document.getElementById("gridlySearchShell");
@@ -7560,6 +7709,10 @@ window.gridlySearchDebug = function gridlySearchDebug() {
     hasSearchInput: Boolean(input),
     hasSearchResults: Boolean(results),
     hasSearchClearButton: Boolean(clearBtn),
+    isSearching: Boolean(gridlySearchUiState.isSearching),
+    activeSearchRequestId: Number(gridlySearchUiState.activeSearchRequestId || 0),
+    lastRenderedResultsCount: Array.isArray(gridlySearchUiState.lastRenderedResults) ? gridlySearchUiState.lastRenderedResults.length : 0,
+    searchResultsTextLength: Number(results?.textContent?.length || 0),
     destinationMarkerLatLng: typeof safeState.destinationMarker?.getLatLng === "function"
       ? safeState.destinationMarker.getLatLng()
       : null,
