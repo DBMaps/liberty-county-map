@@ -1075,15 +1075,53 @@ function cleanGridlyDisplayNameContext(displayName, fallbackTitle = "") {
 function cleanGridlyNormalizedContext(contextValue, fallbackTitle = "") {
   const normalizedTitle = normalizeGridlySearchDisplayLabel(fallbackTitle);
   const noisyTokens = new Set(["administrative", "unknown", "boundary", "place", "node", "city", "town", "village", "hamlet"]);
-  const parts = String(contextValue || "")
-    .split(",")
-    .map((part) => String(part || "").trim())
-    .map((part) => toGridlyTitleCase(part))
-    .filter(Boolean)
-    .map((part) => part.replace(/\s+/g, " ").trim())
-    .filter((part) => normalizeGridlySearchDisplayLabel(part) !== normalizedTitle)
-    .filter((part) => !noisyTokens.has(normalizeGridlySearchDisplayLabel(part)));
-  while (parts.length && normalizeGridlySearchDisplayLabel(parts[parts.length - 1]) === "united states") parts.pop();
+  const sanitizePart = (value) => toGridlyTitleCase(String(value || "").replace(/\s+/g, " ").trim());
+  const cleanParts = (parts) => {
+    const cleaned = parts
+      .map((part) => sanitizePart(part))
+      .filter(Boolean)
+      .filter((part) => {
+        const normalized = normalizeGridlySearchDisplayLabel(part);
+        return normalized && normalized !== normalizedTitle && !noisyTokens.has(normalized) && normalized !== "[object object]" && normalized !== "object object";
+      });
+    while (cleaned.length && normalizeGridlySearchDisplayLabel(cleaned[cleaned.length - 1]) === "united states") cleaned.pop();
+    return cleaned;
+  };
+
+  if (contextValue && typeof contextValue === "object" && !Array.isArray(contextValue)) {
+    const location = contextValue;
+    const take = (...keys) => keys.map((key) => sanitizePart(location?.[key])).find(Boolean) || "";
+    const county = take("county");
+    const state = take("state");
+    const locality = take("city", "town", "village", "hamlet", "municipality");
+    const suburb = take("suburb", "neighbourhood", "neighborhood");
+    const road = take("road");
+    const country = take("country");
+
+    const objectCandidates = [];
+    if (county && state) objectCandidates.push([county, state]);
+    if (locality && state) objectCandidates.push([locality, state]);
+    if (suburb && locality && state) objectCandidates.push([suburb, locality, state]);
+    if (road && locality && state) objectCandidates.push([locality, state]);
+    if (state && country) objectCandidates.push([state, country]);
+
+    const objectEntries = Object.entries(location)
+      .map(([, value]) => sanitizePart(value))
+      .filter(Boolean)
+      .slice(0, 2);
+    if (objectEntries.length) objectCandidates.push(objectEntries);
+
+    for (const candidate of objectCandidates) {
+      const cleaned = cleanParts(candidate);
+      if (cleaned.length) return cleaned.slice(0, 2).join(", ");
+    }
+    return "";
+  }
+
+  const normalizedRaw = normalizeGridlySearchDisplayLabel(contextValue);
+  if (normalizedRaw === "[object object]" || normalizedRaw === "object object") return "";
+
+  const parts = cleanParts(String(contextValue || "").split(","));
   return parts.join(", ").replace(/,\s*,+/g, ", ").replace(/\s{2,}/g, " ").trim().replace(/,\s*$/, "");
 }
 
