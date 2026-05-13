@@ -948,7 +948,15 @@ const GRIDLY_SEARCH_STATE_DEFAULTS = {
   workLocation: null,
   selectedDestination: null,
   destinationMarker: null,
-  searchSessionActive: false
+  searchSessionActive: false,
+  markerPlacementDiagnostics: {
+    lastMarkerAttempted: false,
+    lastMarkerSuccess: false,
+    lastMarkerFailureReason: "not_attempted",
+    lastMarkerLat: null,
+    lastMarkerLng: null,
+    mapAvailable: false
+  }
 };
 
 function ensureGridlySearchState() {
@@ -7900,6 +7908,9 @@ window.gridlySearchDebug = function gridlySearchDebug() {
     hasHomeLocation: Boolean(safeState.homeLocation),
     hasWorkLocation: Boolean(safeState.workLocation),
     hasDestinationMarker: Boolean(safeState.destinationMarker),
+    markerPlacementDiagnostics: safeState.markerPlacementDiagnostics && typeof safeState.markerPlacementDiagnostics === "object"
+      ? { ...safeState.markerPlacementDiagnostics }
+      : { ...GRIDLY_SEARCH_STATE_DEFAULTS.markerPlacementDiagnostics },
     hasSearchShell: Boolean(shell),
     searchShellHidden: Boolean(shell?.hidden),
     searchShellHasHiddenAttribute: Boolean(shell?.hasAttribute("hidden")),
@@ -7945,6 +7956,30 @@ window.gridlySearchDebug = function gridlySearchDebug() {
 };
 
 
+function getGridlyMapInstance() {
+  const candidates = [
+    (typeof map !== "undefined" ? map : null),
+    window.map,
+    window.gridlyMap
+  ];
+  for (const candidate of candidates) {
+    if (candidate && typeof candidate.addLayer === "function" && typeof candidate.removeLayer === "function") {
+      return candidate;
+    }
+  }
+  return null;
+}
+
+function setGridlyMarkerDiagnostics(patch = {}) {
+  const state = ensureGridlySearchState();
+  const existing = state.markerPlacementDiagnostics && typeof state.markerPlacementDiagnostics === "object"
+    ? state.markerPlacementDiagnostics
+    : GRIDLY_SEARCH_STATE_DEFAULTS.markerPlacementDiagnostics;
+  state.markerPlacementDiagnostics = { ...existing, ...patch };
+  return state.markerPlacementDiagnostics;
+}
+
+
 function clearGridlyDestinationMarker(options = {}) {
   const state = ensureGridlySearchState();
   const preserveSelectedDestination = options?.preserveSelectedDestination === true;
@@ -7960,8 +7995,9 @@ function clearGridlyDestinationMarker(options = {}) {
   try {
     if (typeof marker.remove === "function") {
       marker.remove();
-    } else if (map && typeof map.removeLayer === "function") {
-      map.removeLayer(marker);
+    } else {
+      const mapInstance = getGridlyMapInstance();
+      if (mapInstance && typeof mapInstance.removeLayer === "function") mapInstance.removeLayer(marker);
     }
   } catch (error) {
     if (!silent) {
@@ -7976,17 +8012,49 @@ function clearGridlyDestinationMarker(options = {}) {
 
 function setGridlyDestinationMarker(result, options = {}) {
   const normalized = normalizeGridlySearchResult(result);
-  if (!normalized) return null;
+  if (!normalized) {
+    setGridlyMarkerDiagnostics({
+      lastMarkerAttempted: true,
+      lastMarkerSuccess: false,
+      lastMarkerFailureReason: "normalize_failed",
+      lastMarkerLat: null,
+      lastMarkerLng: null,
+      mapAvailable: Boolean(getGridlyMapInstance())
+    });
+    return null;
+  }
 
-  if (!map || typeof map.addLayer !== "function") {
+  const coordinates = normalizeCoordinatePair(
+    normalized.lat ?? normalized.latitude ?? normalized?.coordinates?.lat,
+    normalized.lng ?? normalized.longitude ?? normalized?.coordinates?.lng
+  );
+  const mapInstance = getGridlyMapInstance();
+  if (!mapInstance || typeof mapInstance.addLayer !== "function") {
+    setGridlyMarkerDiagnostics({
+      lastMarkerAttempted: true,
+      lastMarkerSuccess: false,
+      lastMarkerFailureReason: "map_not_ready",
+      lastMarkerLat: coordinates?.lat ?? null,
+      lastMarkerLng: coordinates?.lng ?? null,
+      mapAvailable: false
+    });
     if (options?.silent !== true) {
       console.warn("Destination marker skipped: map not ready.");
     }
     return null;
   }
 
-  const coordinates = normalizeCoordinatePair(normalized.lat, normalized.lng);
-  if (!coordinates || typeof window.L?.marker !== "function") return null;
+  if (!coordinates || typeof window.L?.marker !== "function") {
+    setGridlyMarkerDiagnostics({
+      lastMarkerAttempted: true,
+      lastMarkerSuccess: false,
+      lastMarkerFailureReason: !coordinates ? "invalid_coordinates" : "leaflet_marker_unavailable",
+      lastMarkerLat: coordinates?.lat ?? null,
+      lastMarkerLng: coordinates?.lng ?? null,
+      mapAvailable: true
+    });
+    return null;
+  }
 
   const state = ensureGridlySearchState();
   clearGridlyDestinationMarker({ preserveSelectedDestination: true, silent: options?.silent === true });
@@ -7996,12 +8064,20 @@ function setGridlyDestinationMarker(result, options = {}) {
     marker = window.L.marker([coordinates.lat, coordinates.lng], {
       title: String(normalized.title || normalized.address || "Selected destination")
     });
-    marker.addTo(map);
+    marker.addTo(mapInstance);
     if (options?.tooltip !== false && typeof marker.bindTooltip === "function") {
       const tooltipText = String(normalized.title || normalized.address || "Destination").trim();
       if (tooltipText) marker.bindTooltip(tooltipText, { direction: "top", offset: [0, -10] });
     }
   } catch (error) {
+    setGridlyMarkerDiagnostics({
+      lastMarkerAttempted: true,
+      lastMarkerSuccess: false,
+      lastMarkerFailureReason: "marker_creation_failed",
+      lastMarkerLat: coordinates.lat,
+      lastMarkerLng: coordinates.lng,
+      mapAvailable: true
+    });
     if (options?.silent !== true) {
       console.warn("Failed to set destination marker:", error);
     }
@@ -8009,6 +8085,14 @@ function setGridlyDestinationMarker(result, options = {}) {
   }
 
   state.destinationMarker = marker;
+  setGridlyMarkerDiagnostics({
+    lastMarkerAttempted: true,
+    lastMarkerSuccess: true,
+    lastMarkerFailureReason: "",
+    lastMarkerLat: coordinates.lat,
+    lastMarkerLng: coordinates.lng,
+    mapAvailable: true
+  });
   if (options?.preserveSelectedDestination !== true) {
     state.selectedDestination = normalized;
   }
