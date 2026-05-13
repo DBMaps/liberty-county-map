@@ -1129,7 +1129,7 @@ function buildGridlyLocationContext(result) {
   try {
     const raw = result?.raw && typeof result.raw === "object" ? result.raw : {};
     const resolve = (...values) => values.map((value) => String(value || "").trim()).find(Boolean) || "";
-    const sourceTitle = resolve(result?.label, result?.title, "");
+    const sourceTitle = resolve(result?.label, result?.title, result?.display_name, raw?.display_name, "");
     const subtitleContext = cleanGridlyNormalizedContext(result?.subtitle, sourceTitle);
     if (subtitleContext) {
       gridlySearchUiState.lastContextDiagnostics = { strategy: "subtitle", hasNormalizedSubtitle: true };
@@ -1139,6 +1139,11 @@ function buildGridlyLocationContext(result) {
     if (addressContext) {
       gridlySearchUiState.lastContextDiagnostics = { strategy: "address", hasNormalizedAddress: true };
       return addressContext;
+    }
+    const rawAddressContext = cleanGridlyNormalizedContext(raw?.address, sourceTitle);
+    if (rawAddressContext) {
+      gridlySearchUiState.lastContextDiagnostics = { strategy: "raw_address", hasRawAddress: true };
+      return rawAddressContext;
     }
     const displayNameValue = resolve(raw?.display_name, result?.display_name, "");
     const displayNameContext = cleanGridlyDisplayNameContext(displayNameValue, sourceTitle);
@@ -7863,8 +7868,20 @@ function normalizeGridlySearchResult(result) {
   const provider = resolveString(result.provider, result.source, result.engine, "unknown");
   const providerId = resolveString(result.providerId, result.place_id, result.id, result.osm_id);
   const rawType = resolveString(result.type, result.class, result.kind, "unknown");
-  const title = resolveString(result.title, result.name, result.label, result.display_name);
-  const address = resolveString(result.address, result.formatted, result.display_name, title);
+  const rawAddressObject = result.address && typeof result.address === "object" && !Array.isArray(result.address)
+    ? { ...result.address }
+    : null;
+  const rawPayload = result.raw && typeof result.raw === "object" ? result.raw : result;
+  const rawPayloadAddress = rawPayload.address && typeof rawPayload.address === "object" && !Array.isArray(rawPayload.address)
+    ? { ...rawPayload.address }
+    : null;
+  const title = resolveString(result.title, result.name, result.label, result.display_name, rawPayload.display_name);
+  const displayName = resolveString(result.display_name, rawPayload.display_name, title);
+  const county = resolveString(rawAddressObject?.county, rawPayloadAddress?.county);
+  const state = resolveString(rawAddressObject?.state, rawPayloadAddress?.state);
+  const countyStateSubtitle = county && state ? `${county}, ${state}` : "";
+  const subtitle = resolveString(result.subtitle, countyStateSubtitle, result.formatted, displayName, title);
+  const address = rawAddressObject || rawPayloadAddress || resolveString(result.address, result.formatted, result.display_name, rawPayload.display_name, title);
 
   const bounds = Array.isArray(result.boundingbox) && result.boundingbox.length === 4
     ? {
@@ -7889,7 +7906,7 @@ function normalizeGridlySearchResult(result) {
     label: title || address || "Selected destination",
     lat: coordinates.lat,
     lng: coordinates.lng,
-    subtitle: address || "",
+    subtitle: subtitle || "",
     address: address || "",
     coordinates,
     bounds: normalizedBounds,
@@ -7897,7 +7914,8 @@ function normalizeGridlySearchResult(result) {
     providerId: providerId || null,
     type: rawType,
     confidence: Number.isFinite(Number(result.confidence)) ? Number(result.confidence) : null,
-    raw: result
+    display_name: displayName || "",
+    raw: rawPayload
   };
 }
 
@@ -7915,6 +7933,8 @@ async function gridlySearchAddress(query, options = {}) {
       format: "jsonv2",
       limit: String(limit),
       addressdetails: "1",
+      extratags: "0",
+      namedetails: "0",
       countrycodes: countryCodes
     });
     const response = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`, {
@@ -7978,6 +7998,10 @@ function buildGridlyResultShapePreviewItem(result) {
   return {
     title: typeof safeResult.title === "string" ? safeResult.title : "",
     label: typeof safeResult.label === "string" ? safeResult.label : "",
+    subtitleSample: typeof safeResult.subtitle === "string" ? safeResult.subtitle : "",
+    addressSample: safeResult.address && typeof safeResult.address === "object"
+      ? { ...safeResult.address }
+      : (typeof safeResult.address === "string" ? safeResult.address : ""),
     context: buildGridlyLocationContext(safeResult) || "",
     lat: Number.isFinite(safeResult.lat) ? Number(safeResult.lat.toFixed(6)) : null,
     lng: Number.isFinite(safeResult.lng) ? Number(safeResult.lng.toFixed(6)) : null,
