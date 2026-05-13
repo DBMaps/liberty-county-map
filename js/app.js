@@ -1050,16 +1050,23 @@ function isGridlyUsefulMetaValue(value) {
 
 function cleanGridlyDisplayNameContext(displayName, fallbackTitle = "") {
   const normalizedTitle = normalizeGridlySearchDisplayLabel(fallbackTitle);
+  const noisyDisplayParts = new Set(["united states", "usa", "us"]);
   const parts = String(displayName || "")
     .split(",")
     .map((part) => toGridlyTitleCase(part))
     .map((part) => String(part || "").trim())
     .filter((part) => isGridlyUsefulMetaValue(part))
     .filter((part) => normalizeGridlySearchDisplayLabel(part) !== normalizedTitle)
-    .filter((part) => normalizeGridlySearchDisplayLabel(part) !== "united states");
+    .filter((part) => !noisyDisplayParts.has(normalizeGridlySearchDisplayLabel(part)));
   if (!parts.length) return "";
-  const county = parts.find((part) => /county$/i.test(part)) || "";
-  const state = parts.find((part) => /^(alabama|alaska|arizona|arkansas|california|colorado|connecticut|delaware|florida|georgia|hawaii|idaho|illinois|indiana|iowa|kansas|kentucky|louisiana|maine|maryland|massachusetts|michigan|minnesota|mississippi|missouri|montana|nebraska|nevada|new hampshire|new jersey|new mexico|new york|north carolina|north dakota|ohio|oklahoma|oregon|pennsylvania|rhode island|south carolina|south dakota|tennessee|texas|utah|vermont|virginia|washington|west virginia|wisconsin|wyoming|district of columbia)$/i.test(part)) || "";
+  const stateMatcher = /^(alabama|alaska|arizona|arkansas|california|colorado|connecticut|delaware|florida|georgia|hawaii|idaho|illinois|indiana|iowa|kansas|kentucky|louisiana|maine|maryland|massachusetts|michigan|minnesota|mississippi|missouri|montana|nebraska|nevada|new hampshire|new jersey|new mexico|new york|north carolina|north dakota|ohio|oklahoma|oregon|pennsylvania|rhode island|south carolina|south dakota|tennessee|texas|utah|vermont|virginia|washington|west virginia|wisconsin|wyoming|district of columbia)$/i;
+  const countyIndex = parts.findIndex((part) => /\bcounty\b/i.test(part));
+  if (countyIndex >= 0) {
+    const nextPart = parts[countyIndex + 1] || "";
+    if (stateMatcher.test(nextPart)) return `${parts[countyIndex]}, ${nextPart}`;
+  }
+  const county = parts.find((part) => /\bcounty\b/i.test(part)) || "";
+  const state = parts.find((part) => stateMatcher.test(part)) || "";
   if (county && state) return `${county}, ${state}`;
   if (parts.length >= 2) return `${parts[0]}, ${parts[1]}`;
   return parts[0];
@@ -1074,9 +1081,11 @@ function buildGridlyLocationContext(result) {
     const country = toGridlyTitleCase(resolve(address.country, resultAddress.country, ""));
     const state = toGridlyTitleCase(resolve(address.state, address.region, address.state_district, ""));
     const county = toGridlyTitleCase(resolve(address.county, ""));
-    const city = toGridlyTitleCase(resolve(address.city, address.town, address.village, address.hamlet, address.municipality, address.suburb, ""));
+    const city = toGridlyTitleCase(resolve(address.city, address.town, address.village, address.hamlet, address.municipality, ""));
+    const suburb = toGridlyTitleCase(resolve(address.suburb, address.neighbourhood, ""));
     const usefulCounty = isGridlyUsefulMetaValue(county) ? county : "";
     const usefulCity = isGridlyUsefulMetaValue(city) ? city : "";
+    const usefulSuburb = isGridlyUsefulMetaValue(suburb) ? suburb : "";
     const usefulState = isGridlyUsefulMetaValue(state) ? state : "";
     const usefulCountry = isGridlyUsefulMetaValue(country) ? country : "";
     if (usefulCounty && usefulState) {
@@ -1087,13 +1096,27 @@ function buildGridlyLocationContext(result) {
       gridlySearchUiState.lastContextDiagnostics = { strategy: "city_state", hasAddressFields: true };
       return `${usefulCity}, ${usefulState}`;
     }
+    if (usefulSuburb && usefulCity && usefulState) {
+      gridlySearchUiState.lastContextDiagnostics = { strategy: "suburb_city_state", hasAddressFields: true };
+      return `${usefulSuburb}, ${usefulCity}, ${usefulState}`;
+    }
     if (usefulState && usefulCountry) {
       gridlySearchUiState.lastContextDiagnostics = { strategy: "state_country", hasAddressFields: true };
       return `${usefulState}, ${usefulCountry}`;
     }
-    const displayNameContext = cleanGridlyDisplayNameContext(resolve(raw?.display_name, result?.display_name, ""), resolve(result?.label, result?.title, ""));
+    const displayNameValue = resolve(raw?.display_name, result?.display_name, result?.label, "");
+    const displayNameContext = cleanGridlyDisplayNameContext(displayNameValue, resolve(result?.label, result?.title, ""));
     if (displayNameContext) {
-      gridlySearchUiState.lastContextDiagnostics = { strategy: "display_name_fallback", hasAddressFields: Boolean(Object.keys(address).length) };
+      gridlySearchUiState.lastContextDiagnostics = {
+        strategy: "display_name_fallback",
+        hasAddressFields: Boolean(Object.keys(address).length),
+        contextSourcePreview: {
+          hasRawDisplayName: Boolean(resolve(raw?.display_name, "")),
+          hasRawAddress: Boolean(raw?.address && typeof raw.address === "object"),
+          rawDisplayNameSample: String(resolve(raw?.display_name, result?.display_name, "")).slice(0, 120),
+          addressKeys: Object.keys(address).slice(0, 6)
+        }
+      };
       return displayNameContext;
     }
     gridlySearchUiState.lastContextDiagnostics = {
