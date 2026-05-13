@@ -979,6 +979,47 @@ const gridlySearchUiState = {
   isSearching: false
 };
 
+const GRIDLY_SEARCH_RENDER_LIMIT = 5;
+const GRIDLY_SEARCH_NOISY_META_TOKENS = new Set(["administrative", "unknown", "boundary", "place"]);
+
+function normalizeGridlySearchDisplayLabel(value) {
+  return String(value || "")
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+function buildGridlySearchDisplayLines(result) {
+  const title = String(result.label || result.title || result.address || "Destination").trim();
+  const titleNorm = normalizeGridlySearchDisplayLabel(title);
+  const provider = String(result.provider || "").trim();
+  const type = String(result.type || "").trim();
+  const metaParts = [type, provider]
+    .map((entry) => String(entry || "").trim())
+    .filter(Boolean)
+    .filter((entry) => !GRIDLY_SEARCH_NOISY_META_TOKENS.has(entry.toLowerCase()));
+  const meta = metaParts.find((entry) => normalizeGridlySearchDisplayLabel(entry) !== titleNorm) || "";
+  return { title, meta };
+}
+
+function dedupeGridlySearchResults(results) {
+  if (!Array.isArray(results) || !results.length) return [];
+  const seen = new Set();
+  const deduped = [];
+  for (const result of results) {
+    const display = buildGridlySearchDisplayLines(result);
+    const labelKey = normalizeGridlySearchDisplayLabel(display.title);
+    const hasCoords = Number.isFinite(result?.lat) && Number.isFinite(result?.lng);
+    const coordKey = hasCoords ? `${result.lat.toFixed(3)},${result.lng.toFixed(3)}` : "no-coords";
+    const dedupeKey = `${labelKey}|${coordKey}`;
+    if (seen.has(dedupeKey)) continue;
+    seen.add(dedupeKey);
+    deduped.push(result);
+    if (deduped.length >= GRIDLY_SEARCH_RENDER_LIMIT) break;
+  }
+  return deduped;
+}
+
 function clearGridlySearchResults(options = {}) {
   const state = ensureGridlySearchState();
   const resultsContainer = gridlySearchUiRefs.results || document.getElementById("gridlySearchResults");
@@ -998,7 +1039,7 @@ function renderGridlySearchResults(results = [], options = {}) {
   if (options?.state === "searching") {
     const status = document.createElement("div");
     status.className = "gridly-search-results-status";
-    status.textContent = "Searching…";
+    status.textContent = "Searching nearby places…";
     resultsContainer.appendChild(status);
     return true;
   }
@@ -1006,7 +1047,7 @@ function renderGridlySearchResults(results = [], options = {}) {
   if (options?.state === "error") {
     const status = document.createElement("div");
     status.className = "gridly-search-results-status";
-    status.textContent = "Search unavailable. Try again.";
+    status.textContent = "Search is unavailable right now.";
     resultsContainer.appendChild(status);
     return true;
   }
@@ -1014,13 +1055,14 @@ function renderGridlySearchResults(results = [], options = {}) {
   const normalizedResults = Array.isArray(results)
     ? results.map((result) => normalizeGridlySearchResult(result)).filter(Boolean)
     : [];
-  gridlySearchUiState.lastRenderedResults = normalizedResults;
+  const renderedResults = dedupeGridlySearchResults(normalizedResults);
+  gridlySearchUiState.lastRenderedResults = renderedResults;
 
-  if (!normalizedResults.length) {
+  if (!renderedResults.length) {
     if (options?.state === "done" && options?.allowEmptyMessage === true) {
       const status = document.createElement("div");
       status.className = "gridly-search-results-status";
-      status.textContent = "No results found";
+      status.textContent = "No matching places found.";
       resultsContainer.appendChild(status);
     }
     return true;
@@ -1028,22 +1070,22 @@ function renderGridlySearchResults(results = [], options = {}) {
 
   const list = document.createElement("div");
   list.className = "gridly-search-results-list";
-  normalizedResults.forEach((result, index) => {
+  renderedResults.forEach((result, index) => {
     const itemBtn = document.createElement("button");
     itemBtn.type = "button";
     itemBtn.className = "gridly-search-result-item";
     itemBtn.dataset.resultIndex = String(index);
 
+    const display = buildGridlySearchDisplayLines(result);
     const label = document.createElement("span");
-    label.className = "gridly-search-result-label";
-    label.textContent = String(result.label || result.title || result.address || "Destination");
+    label.className = "gridly-search-result-title";
+    label.textContent = display.title;
     itemBtn.appendChild(label);
 
-    const metaText = [result.type, result.provider].map((value) => String(value || "").trim()).filter(Boolean).join(" • ");
-    if (metaText) {
-      const meta = document.createElement("small");
+    if (display.meta) {
+      const meta = document.createElement("span");
       meta.className = "gridly-search-result-meta";
-      meta.textContent = metaText;
+      meta.textContent = display.meta;
       itemBtn.appendChild(meta);
     }
 
@@ -7715,6 +7757,11 @@ window.gridlySearchDebug = function gridlySearchDebug() {
     isSearching: Boolean(gridlySearchUiState.isSearching),
     activeSearchRequestId: Number(gridlySearchUiState.activeSearchRequestId || 0),
     lastRenderedResultsCount: Array.isArray(gridlySearchUiState.lastRenderedResults) ? gridlySearchUiState.lastRenderedResults.length : 0,
+    renderedResultsPreview: Array.isArray(gridlySearchUiState.lastRenderedResults)
+      ? gridlySearchUiState.lastRenderedResults
+        .slice(0, 3)
+        .map((result) => buildGridlySearchDisplayLines(result).title)
+      : [],
     searchResultsTextLength: Number(results?.textContent?.length || 0),
     destinationMarkerLatLng: typeof safeState.destinationMarker?.getLatLng === "function"
       ? safeState.destinationMarker.getLatLng()
