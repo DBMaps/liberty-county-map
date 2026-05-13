@@ -955,6 +955,10 @@ const GRIDLY_SEARCH_STATE_DEFAULTS = {
     lastMarkerFailureReason: "not_attempted",
     lastMarkerLat: null,
     lastMarkerLng: null,
+    lastMapFocusSuccess: false,
+    lastMapFocusLat: null,
+    lastMapFocusLng: null,
+    lastMapFocusZoom: null,
     mapAvailable: false,
     markerAssignedToState: false,
     destinationMarkerStatePresent: false,
@@ -1358,6 +1362,7 @@ function selectGridlySearchResult(result, options = {}) {
     console.warn("Gridly selection warning: destination marker was not created.");
     gridlySearchUiState.debugWarningsSeen.add("select-marker-failed");
   }
+  if (marker) focusGridlyDestinationOnMap(normalized.lat, normalized.lng);
   return normalized;
 }
 
@@ -8094,6 +8099,64 @@ function setGridlyMarkerDiagnostics(patch = {}) {
     : GRIDLY_SEARCH_STATE_DEFAULTS.markerPlacementDiagnostics;
   state.markerPlacementDiagnostics = { ...existing, ...patch };
   return state.markerPlacementDiagnostics;
+}
+
+function focusGridlyDestinationOnMap(lat, lng, options = {}) {
+  const coordinates = normalizeCoordinatePair(lat, lng);
+  const mapInstance = getGridlyMapInstance();
+  if (!coordinates || !mapInstance) {
+    setGridlyMarkerDiagnostics({
+      lastMapFocusSuccess: false,
+      lastMapFocusLat: coordinates?.lat ?? null,
+      lastMapFocusLng: coordinates?.lng ?? null,
+      lastMapFocusZoom: null
+    });
+    return false;
+  }
+
+  const currentZoom = typeof mapInstance.getZoom === "function" ? Number(mapInstance.getZoom()) : null;
+  const minFocusZoom = Number.isFinite(options?.minZoom) ? options.minZoom : 12;
+  const maxFocusZoom = Number.isFinite(options?.maxZoom) ? options.maxZoom : 14;
+  const targetZoom = Number.isFinite(currentZoom)
+    ? Math.min(maxFocusZoom, Math.max(currentZoom, minFocusZoom))
+    : maxFocusZoom;
+
+  try {
+    if (typeof mapInstance.flyTo === "function") {
+      mapInstance.flyTo([coordinates.lat, coordinates.lng], targetZoom, { animate: true, duration: 0.9 });
+    } else if (typeof mapInstance.panTo === "function") {
+      mapInstance.panTo([coordinates.lat, coordinates.lng], { animate: true, duration: 0.7 });
+      if (typeof mapInstance.setZoom === "function" && Number.isFinite(currentZoom) && currentZoom < minFocusZoom) {
+        mapInstance.setZoom(targetZoom);
+      }
+    } else if (typeof mapInstance.setView === "function") {
+      mapInstance.setView([coordinates.lat, coordinates.lng], targetZoom, { animate: true });
+    } else {
+      setGridlyMarkerDiagnostics({
+        lastMapFocusSuccess: false,
+        lastMapFocusLat: coordinates.lat,
+        lastMapFocusLng: coordinates.lng,
+        lastMapFocusZoom: null
+      });
+      return false;
+    }
+  } catch (_error) {
+    setGridlyMarkerDiagnostics({
+      lastMapFocusSuccess: false,
+      lastMapFocusLat: coordinates.lat,
+      lastMapFocusLng: coordinates.lng,
+      lastMapFocusZoom: null
+    });
+    return false;
+  }
+
+  setGridlyMarkerDiagnostics({
+    lastMapFocusSuccess: true,
+    lastMapFocusLat: coordinates.lat,
+    lastMapFocusLng: coordinates.lng,
+    lastMapFocusZoom: targetZoom
+  });
+  return true;
 }
 
 
