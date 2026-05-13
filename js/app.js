@@ -939,6 +939,32 @@ const LOCAL_PLACE_LOOKUP = {
   liberty: { lat: 30.0572, lng: -94.795 },
   cleveland: { lat: 30.3413, lng: -95.0858 }
 };
+
+const GRIDLY_SEARCH_STATE_DEFAULTS = {
+  activeQuery: "",
+  activeResult: null,
+  recentSearches: [],
+  homeLocation: null,
+  workLocation: null,
+  selectedDestination: null,
+  destinationMarker: null,
+  searchSessionActive: false
+};
+
+function ensureGridlySearchState() {
+  const existingState = window.GridlySearchState;
+  const nextState = { ...GRIDLY_SEARCH_STATE_DEFAULTS };
+  if (existingState && typeof existingState === "object") {
+    Object.keys(GRIDLY_SEARCH_STATE_DEFAULTS).forEach((key) => {
+      if (Object.hasOwn(existingState, key)) {
+        nextState[key] = existingState[key];
+      }
+    });
+  }
+  window.GridlySearchState = nextState;
+  return window.GridlySearchState;
+}
+
 let lastRouteWatchSelection = { startId: "", destinationId: "" };
 let gridlyUserProfile = getGridlyUserProfile();
 let movementIntelligence = getMovementIntelligence();
@@ -960,6 +986,7 @@ const els = {};
 
 document.addEventListener("DOMContentLoaded", async () => {
   reportLifecycleDiag("DOMContentLoaded init start", { readyState: document.readyState });
+  ensureGridlySearchState();
   initVisualViewportHeightVar();
   hydrateElements();
   gridlyHealthCheck();
