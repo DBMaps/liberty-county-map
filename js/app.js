@@ -1337,6 +1337,15 @@ function renderGridlySearchResults(results = [], options = {}) {
   return true;
 }
 
+function collapseGridlySearchResults() {
+  const resultsContainer = gridlySearchUiRefs.results || document.getElementById("gridlySearchResults");
+  if (resultsContainer) resultsContainer.textContent = "";
+  gridlySearchUiState.lastRenderedResults = [];
+  gridlySearchUiState.lastRenderedResultsPreview = [];
+  gridlySearchUiState.lastResultShapePreview = [];
+  gridlySearchUiState.isSearching = false;
+}
+
 function selectGridlySearchResult(result, options = {}) {
   const normalized = normalizeGridlySearchResult(result);
   if (!normalized) return null;
@@ -1357,12 +1366,19 @@ function selectGridlySearchResult(result, options = {}) {
     state.recentSearches = deduped.slice(0, 5);
   }
 
+  const selectedLabel = normalized.title || normalized.displayName || normalized.context || normalized.address || "";
+  const input = gridlySearchUiRefs.input || document.getElementById("gridlyAddressSearchInput");
+  if (input) input.value = selectedLabel;
+  state.activeQuery = selectedLabel;
+
   const marker = setGridlyDestinationMarker(normalized, { preserveSelectedDestination: true });
   if (!marker && !gridlySearchUiState.debugWarningsSeen.has("select-marker-failed")) {
     console.warn("Gridly selection warning: destination marker was not created.");
     gridlySearchUiState.debugWarningsSeen.add("select-marker-failed");
   }
   if (marker) focusGridlyDestinationOnMap(normalized.lat, normalized.lng);
+
+  collapseGridlySearchResults();
   return normalized;
 }
 
@@ -1432,6 +1448,21 @@ function initGridlySearchUI() {
         }
       }, 350);
     });
+    const reopenResults = () => {
+      const state = ensureGridlySearchState();
+      const query = String(input.value || state.activeQuery || "").trim();
+      state.activeQuery = query;
+      if (query.length >= 3) {
+        renderGridlySearchResults([], { state: "searching" });
+        gridlySearchAddress(query)
+          .then((resultsList) => renderGridlySearchResults(resultsList, { state: "done", allowEmptyMessage: true }))
+          .catch(() => renderGridlySearchResults([], { state: "error" }));
+      } else if (Array.isArray(state.recentSearches) && state.recentSearches.length) {
+        renderGridlySearchResults(state.recentSearches, { state: "done", allowEmptyMessage: false });
+      }
+    };
+    input.addEventListener("focus", reopenResults);
+    input.addEventListener("click", reopenResults);
     input.dataset.gridlySearchInputBound = "true";
   }
 
@@ -6740,6 +6771,18 @@ function bindEvents() {
       event.stopPropagation();
       openRouteSetupModalForType(type);
     });
+  });
+
+  const openDestinationSearchShell = (event) => {
+    event?.preventDefault?.();
+    event?.stopPropagation?.();
+    showGridlySearchShell({ focusInput: true });
+  };
+
+  els.destinationAddBtn?.addEventListener("click", openDestinationSearchShell);
+  document.querySelector(".destination-hero-card")?.addEventListener("click", (event) => {
+    if (event.target?.closest?.("button")) return;
+    openDestinationSearchShell(event);
   });
 
   els.routeStatusCard?.addEventListener("click", handleRouteCardInteraction);
