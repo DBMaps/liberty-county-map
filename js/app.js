@@ -976,7 +976,8 @@ const gridlySearchUiState = {
   pendingSearchTimer: null,
   activeSearchRequestId: 0,
   lastRenderedResults: [],
-  isSearching: false
+  isSearching: false,
+  prioritizedLocalResultsCount: 0
 };
 
 const GRIDLY_SEARCH_RENDER_LIMIT = 5;
@@ -1000,6 +1001,66 @@ function buildGridlySearchDisplayLines(result) {
     .filter((entry) => !GRIDLY_SEARCH_NOISY_META_TOKENS.has(entry.toLowerCase()));
   const meta = metaParts.find((entry) => normalizeGridlySearchDisplayLabel(entry) !== titleNorm) || "";
   return { title, meta };
+}
+
+function toGridlyTitleCase(value) {
+  const normalized = String(value || "").trim();
+  if (!normalized) return "";
+  return normalized
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((part) => {
+      if (part.length <= 3 && part.toUpperCase() === part) return part;
+      if (/^\d/.test(part)) return part;
+      return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+    })
+    .join(" ");
+}
+
+function buildGridlyLocationContext(result) {
+  try {
+    const raw = result?.raw && typeof result.raw === "object" ? result.raw : {};
+    const address = raw?.address && typeof raw.address === "object" ? raw.address : {};
+    const resolve = (...values) => values.map((value) => String(value || "").trim()).find(Boolean) || "";
+    const country = toGridlyTitleCase(resolve(address.country, ""));
+    const state = toGridlyTitleCase(resolve(address.state, address.region, address.state_district, ""));
+    const county = toGridlyTitleCase(resolve(address.county, ""));
+    const city = toGridlyTitleCase(resolve(address.city, address.town, address.village, address.municipality, address.suburb, ""));
+    const road = resolve(address.road, address.pedestrian, address.highway, "");
+    const displayType = normalizeGridlySearchDisplayLabel(resolve(result?.type, raw?.type, raw?.class, ""));
+    const routeLike = displayType.includes("road") || displayType.includes("highway") || displayType.includes("motorway");
+    if (routeLike && road) return road;
+    const contextParts = [];
+    if (county && !city.toLowerCase().includes(county.toLowerCase())) contextParts.push(county);
+    if (state && !contextParts.some((part) => part.toLowerCase() === state.toLowerCase())) contextParts.push(state);
+    if (!contextParts.length && city && city.toLowerCase() !== normalizeGridlySearchDisplayLabel(result?.label || result?.title || "")) {
+      contextParts.push(city);
+    }
+    if (!contextParts.length && country) contextParts.push(country);
+    return contextParts.join(", ");
+  } catch (_error) {
+    return "";
+  }
+}
+
+function prioritizeGridlySearchResults(results = []) {
+  if (!Array.isArray(results) || !results.length) return [];
+  const bounds = map?.getBounds?.();
+  const scored = results.map((result, index) => {
+    const context = buildGridlyLocationContext(result);
+    const haystack = normalizeGridlySearchDisplayLabel(
+      `${result?.label || ""} ${result?.address || ""} ${context} ${result?.raw?.display_name || ""}`
+    );
+    let score = 0;
+    if (haystack.includes("liberty county")) score += 6;
+    if (haystack.includes(" texas") || haystack.endsWith("texas") || haystack.includes(", tx") || haystack.includes(" tx ")) score += 4;
+    if (bounds && Number.isFinite(result?.lat) && Number.isFinite(result?.lng) && bounds.contains([result.lat, result.lng])) score += 3;
+    if (score > 0) score += Math.max(0, GRIDLY_SEARCH_RENDER_LIMIT - index) * 0.05;
+    return { result, score, index };
+  });
+  const prioritized = scored.sort((a, b) => (b.score - a.score) || (a.index - b.index));
+  gridlySearchUiState.prioritizedLocalResultsCount = prioritized.filter((entry) => entry.score > 0).length;
+  return prioritized.map((entry) => entry.result);
 }
 
 function dedupeGridlySearchResults(results) {
@@ -1055,7 +1116,8 @@ function renderGridlySearchResults(results = [], options = {}) {
   const normalizedResults = Array.isArray(results)
     ? results.map((result) => normalizeGridlySearchResult(result)).filter(Boolean)
     : [];
-  const renderedResults = dedupeGridlySearchResults(normalizedResults);
+  const prioritizedResults = prioritizeGridlySearchResults(normalizedResults);
+  const renderedResults = dedupeGridlySearchResults(prioritizedResults);
   gridlySearchUiState.lastRenderedResults = renderedResults;
 
   if (!renderedResults.length) {
@@ -1077,15 +1139,17 @@ function renderGridlySearchResults(results = [], options = {}) {
     itemBtn.dataset.resultIndex = String(index);
 
     const display = buildGridlySearchDisplayLines(result);
+    const locationContext = buildGridlyLocationContext(result);
     const label = document.createElement("span");
     label.className = "gridly-search-result-title";
     label.textContent = display.title;
     itemBtn.appendChild(label);
 
-    if (display.meta) {
+    const secondaryLine = locationContext || display.meta;
+    if (secondaryLine) {
       const meta = document.createElement("span");
       meta.className = "gridly-search-result-meta";
-      meta.textContent = display.meta;
+      meta.textContent = secondaryLine;
       itemBtn.appendChild(meta);
     }
 
@@ -7757,10 +7821,15 @@ window.gridlySearchDebug = function gridlySearchDebug() {
     isSearching: Boolean(gridlySearchUiState.isSearching),
     activeSearchRequestId: Number(gridlySearchUiState.activeSearchRequestId || 0),
     lastRenderedResultsCount: Array.isArray(gridlySearchUiState.lastRenderedResults) ? gridlySearchUiState.lastRenderedResults.length : 0,
+    prioritizedLocalResultsCount: Number(gridlySearchUiState.prioritizedLocalResultsCount || 0),
     renderedResultsPreview: Array.isArray(gridlySearchUiState.lastRenderedResults)
       ? gridlySearchUiState.lastRenderedResults
         .slice(0, 3)
-        .map((result) => buildGridlySearchDisplayLines(result).title)
+        .map((result) => {
+          const display = buildGridlySearchDisplayLines(result);
+          const context = buildGridlyLocationContext(result);
+          return context ? `${display.title} — ${context}` : display.title;
+        })
       : [],
     searchResultsTextLength: Number(results?.textContent?.length || 0),
     destinationMarkerLatLng: typeof safeState.destinationMarker?.getLatLng === "function"
