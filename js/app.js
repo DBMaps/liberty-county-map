@@ -7467,6 +7467,8 @@ async function gridlyReverseGeocode(lat, lng, options = {}) {
 window.gridlySearchAddress = gridlySearchAddress;
 window.gridlyReverseGeocode = gridlyReverseGeocode;
 window.normalizeGridlySearchResult = normalizeGridlySearchResult;
+window.setGridlyDestinationMarker = setGridlyDestinationMarker;
+window.clearGridlyDestinationMarker = clearGridlyDestinationMarker;
 window.gridlySearchDebug = function gridlySearchDebug() {
   const state = window.GridlySearchState;
   const hasState = Boolean(state && typeof state === "object");
@@ -7480,15 +7482,93 @@ window.gridlySearchDebug = function gridlySearchDebug() {
     hasHomeLocation: Boolean(safeState.homeLocation),
     hasWorkLocation: Boolean(safeState.workLocation),
     hasDestinationMarker: Boolean(safeState.destinationMarker),
+    destinationMarkerLatLng: typeof safeState.destinationMarker?.getLatLng === "function"
+      ? safeState.destinationMarker.getLatLng()
+      : null,
+    selectedDestinationPresent: Boolean(safeState.selectedDestination),
     helpers: {
       gridlySearchAddress: typeof window.gridlySearchAddress === "function",
       gridlyReverseGeocode: typeof window.gridlyReverseGeocode === "function",
-      normalizeGridlySearchResult: typeof window.normalizeGridlySearchResult === "function"
+      normalizeGridlySearchResult: typeof window.normalizeGridlySearchResult === "function",
+      setGridlyDestinationMarker: typeof window.setGridlyDestinationMarker === "function",
+      clearGridlyDestinationMarker: typeof window.clearGridlyDestinationMarker === "function"
     }
   };
   console.info("Gridly Search Debug", debug);
   return debug;
 };
+
+
+function clearGridlyDestinationMarker(options = {}) {
+  const state = ensureGridlySearchState();
+  const preserveSelectedDestination = options?.preserveSelectedDestination === true;
+  const silent = options?.silent === true;
+  const marker = state.destinationMarker;
+
+  if (!marker) {
+    if (!preserveSelectedDestination) state.selectedDestination = null;
+    state.destinationMarker = null;
+    return true;
+  }
+
+  try {
+    if (typeof marker.remove === "function") {
+      marker.remove();
+    } else if (map && typeof map.removeLayer === "function") {
+      map.removeLayer(marker);
+    }
+  } catch (error) {
+    if (!silent) {
+      console.warn("Failed to clear destination marker:", error);
+    }
+  }
+
+  state.destinationMarker = null;
+  if (!preserveSelectedDestination) state.selectedDestination = null;
+  return true;
+}
+
+function setGridlyDestinationMarker(result, options = {}) {
+  const normalized = normalizeGridlySearchResult(result);
+  if (!normalized) return null;
+
+  if (!map || typeof map.addLayer !== "function") {
+    if (options?.silent !== true) {
+      console.warn("Destination marker skipped: map not ready.");
+    }
+    return null;
+  }
+
+  const coordinates = normalizeCoordinatePair(normalized.lat, normalized.lng);
+  if (!coordinates || typeof window.L?.marker !== "function") return null;
+
+  const state = ensureGridlySearchState();
+  clearGridlyDestinationMarker({ preserveSelectedDestination: true, silent: options?.silent === true });
+
+  let marker = null;
+  try {
+    marker = window.L.marker([coordinates.lat, coordinates.lng], {
+      title: String(normalized.title || normalized.address || "Selected destination")
+    });
+    marker.addTo(map);
+    if (options?.tooltip !== false && typeof marker.bindTooltip === "function") {
+      const tooltipText = String(normalized.title || normalized.address || "Destination").trim();
+      if (tooltipText) marker.bindTooltip(tooltipText, { direction: "top", offset: [0, -10] });
+    }
+  } catch (error) {
+    if (options?.silent !== true) {
+      console.warn("Failed to set destination marker:", error);
+    }
+    return null;
+  }
+
+  state.destinationMarker = marker;
+  if (options?.preserveSelectedDestination !== true) {
+    state.selectedDestination = normalized;
+  }
+
+  return marker;
+}
 
 async function geocodeAddressToCoordinates(rawAddress = "") {
   const query = String(rawAddress || "").trim();
