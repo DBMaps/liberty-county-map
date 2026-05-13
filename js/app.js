@@ -955,7 +955,10 @@ const GRIDLY_SEARCH_STATE_DEFAULTS = {
     lastMarkerFailureReason: "not_attempted",
     lastMarkerLat: null,
     lastMarkerLng: null,
-    mapAvailable: false
+    mapAvailable: false,
+    markerAssignedToState: false,
+    destinationMarkerStatePresent: false,
+    lastMarkerStateCheckAt: null
   }
 };
 
@@ -7892,7 +7895,7 @@ window.showGridlySearchShell = showGridlySearchShell;
 window.hideGridlySearchShell = hideGridlySearchShell;
 window.clearGridlySearchResults = clearGridlySearchResults;
 window.gridlySearchDebug = function gridlySearchDebug() {
-  const state = window.GridlySearchState;
+  const state = ensureGridlySearchState();
   const shell = gridlySearchUiRefs.shell || document.getElementById("gridlySearchShell");
   const input = gridlySearchUiRefs.input || document.getElementById("gridlyAddressSearchInput");
   const results = gridlySearchUiRefs.results || document.getElementById("gridlySearchResults");
@@ -7908,6 +7911,7 @@ window.gridlySearchDebug = function gridlySearchDebug() {
     hasHomeLocation: Boolean(safeState.homeLocation),
     hasWorkLocation: Boolean(safeState.workLocation),
     hasDestinationMarker: Boolean(safeState.destinationMarker),
+    destinationMarkerStatePresent: Boolean(safeState.destinationMarker),
     markerPlacementDiagnostics: safeState.markerPlacementDiagnostics && typeof safeState.markerPlacementDiagnostics === "object"
       ? { ...safeState.markerPlacementDiagnostics }
       : { ...GRIDLY_SEARCH_STATE_DEFAULTS.markerPlacementDiagnostics },
@@ -8006,6 +8010,11 @@ function clearGridlyDestinationMarker(options = {}) {
   }
 
   state.destinationMarker = null;
+  setGridlyMarkerDiagnostics({
+    markerAssignedToState: false,
+    destinationMarkerStatePresent: false,
+    lastMarkerStateCheckAt: Date.now()
+  });
   if (!preserveSelectedDestination) state.selectedDestination = null;
   return true;
 }
@@ -8085,13 +8094,18 @@ function setGridlyDestinationMarker(result, options = {}) {
   }
 
   state.destinationMarker = marker;
+  window.GridlySearchState = state;
+  const markerAssignedToState = Boolean(state.destinationMarker);
   setGridlyMarkerDiagnostics({
     lastMarkerAttempted: true,
     lastMarkerSuccess: true,
     lastMarkerFailureReason: "",
     lastMarkerLat: coordinates.lat,
     lastMarkerLng: coordinates.lng,
-    mapAvailable: true
+    mapAvailable: true,
+    markerAssignedToState,
+    destinationMarkerStatePresent: markerAssignedToState,
+    lastMarkerStateCheckAt: Date.now()
   });
   if (options?.preserveSelectedDestination !== true) {
     state.selectedDestination = normalized;
