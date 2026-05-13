@@ -987,6 +987,7 @@ const gridlySearchUiState = {
   pendingSearchTimer: null,
   activeSearchRequestId: 0,
   lastRenderedResults: [],
+  lastRenderedResultsPreview: [],
   isSearching: false,
   prioritizedLocalResultsCount: 0,
   debugWarningsSeen: new Set(),
@@ -1054,9 +1055,14 @@ function cleanGridlyDisplayNameContext(displayName, fallbackTitle = "") {
     .map((part) => toGridlyTitleCase(part))
     .map((part) => String(part || "").trim())
     .filter((part) => isGridlyUsefulMetaValue(part))
-    .filter((part) => normalizeGridlySearchDisplayLabel(part) !== normalizedTitle);
+    .filter((part) => normalizeGridlySearchDisplayLabel(part) !== normalizedTitle)
+    .filter((part) => normalizeGridlySearchDisplayLabel(part) !== "united states");
   if (!parts.length) return "";
-  return parts.slice(1, 4).join(", ") || parts.slice(0, 3).join(", ");
+  const county = parts.find((part) => /county$/i.test(part)) || "";
+  const state = parts.find((part) => /^(alabama|alaska|arizona|arkansas|california|colorado|connecticut|delaware|florida|georgia|hawaii|idaho|illinois|indiana|iowa|kansas|kentucky|louisiana|maine|maryland|massachusetts|michigan|minnesota|mississippi|missouri|montana|nebraska|nevada|new hampshire|new jersey|new mexico|new york|north carolina|north dakota|ohio|oklahoma|oregon|pennsylvania|rhode island|south carolina|south dakota|tennessee|texas|utah|vermont|virginia|washington|west virginia|wisconsin|wyoming|district of columbia)$/i.test(part)) || "";
+  if (county && state) return `${county}, ${state}`;
+  if (parts.length >= 2) return `${parts[0]}, ${parts[1]}`;
+  return parts[0];
 }
 
 function buildGridlyLocationContext(result) {
@@ -1203,6 +1209,7 @@ function renderGridlySearchResults(results = [], options = {}) {
 
   const list = document.createElement("div");
   list.className = "gridly-search-results-list";
+  const preview = [];
   renderedResults.forEach((result, index) => {
     const itemBtn = document.createElement("button");
     itemBtn.type = "button";
@@ -1220,6 +1227,13 @@ function renderGridlySearchResults(results = [], options = {}) {
     const secondaryLine = [locationContext, fallbackContext, display.meta]
       .map((entry) => String(entry || "").trim())
       .find((entry) => isGridlyUsefulMetaValue(entry));
+    preview.push({
+      title: display.title,
+      context: secondaryLine || "",
+      lat: Number.isFinite(result?.lat) ? Number(result.lat.toFixed(6)) : null,
+      lng: Number.isFinite(result?.lng) ? Number(result.lng.toFixed(6)) : null,
+      selectable: Boolean(Number.isFinite(result?.lat) && Number.isFinite(result?.lng))
+    });
     if (secondaryLine) {
       const meta = document.createElement("span");
       meta.className = "gridly-search-result-meta";
@@ -1248,6 +1262,7 @@ function renderGridlySearchResults(results = [], options = {}) {
     });
     list.appendChild(itemBtn);
   });
+  gridlySearchUiState.lastRenderedResultsPreview = preview.slice(0, 3);
 
   resultsContainer.appendChild(list);
   return true;
@@ -7926,21 +7941,7 @@ window.gridlySearchDebug = function gridlySearchDebug() {
     activeSearchRequestId: Number(gridlySearchUiState.activeSearchRequestId || 0),
     lastRenderedResultsCount: Array.isArray(gridlySearchUiState.lastRenderedResults) ? gridlySearchUiState.lastRenderedResults.length : 0,
     prioritizedLocalResultsCount: Number(gridlySearchUiState.prioritizedLocalResultsCount || 0),
-    renderedResultsPreview: Array.isArray(gridlySearchUiState.lastRenderedResults)
-      ? gridlySearchUiState.lastRenderedResults
-        .slice(0, 3)
-        .map((result) => {
-          const display = buildGridlySearchDisplayLines(result);
-          const context = buildGridlyLocationContext(result);
-          return {
-            title: display.title,
-            context: context || cleanGridlyDisplayNameContext(result?.raw?.display_name || result?.display_name || "", display.title) || "",
-            lat: Number.isFinite(result?.lat) ? Number(result.lat.toFixed(6)) : null,
-            lng: Number.isFinite(result?.lng) ? Number(result.lng.toFixed(6)) : null,
-            selectable: Boolean(Number.isFinite(result?.lat) && Number.isFinite(result?.lng))
-          };
-        })
-      : [],
+    renderedResultsPreview: Array.isArray(gridlySearchUiState.lastRenderedResultsPreview) ? gridlySearchUiState.lastRenderedResultsPreview : [],
     contextDiagnostics: gridlySearchUiState.lastContextDiagnostics,
     searchResultsTextLength: Number(results?.textContent?.length || 0),
     destinationMarkerLatLng: typeof safeState.destinationMarker?.getLatLng === "function"
