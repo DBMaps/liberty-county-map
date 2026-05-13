@@ -981,7 +981,7 @@ const gridlySearchUiState = {
 };
 
 const GRIDLY_SEARCH_RENDER_LIMIT = 5;
-const GRIDLY_SEARCH_NOISY_META_TOKENS = new Set(["administrative", "unknown", "boundary", "place"]);
+const GRIDLY_SEARCH_NOISY_META_TOKENS = new Set(["administrative", "unknown", "boundary", "place", "node", "hamlet", "village", "city", "town"]);
 
 function normalizeGridlySearchDisplayLabel(value) {
   return String(value || "")
@@ -991,7 +991,18 @@ function normalizeGridlySearchDisplayLabel(value) {
 }
 
 function buildGridlySearchDisplayLines(result) {
-  const title = String(result.label || result.title || result.address || "Destination").trim();
+  const raw = result?.raw && typeof result.raw === "object" ? result.raw : {};
+  const rawAddress = raw?.address && typeof raw.address === "object" ? raw.address : {};
+  const conciseAddressName = String(
+    rawAddress.road ||
+    rawAddress.city ||
+    rawAddress.town ||
+    rawAddress.village ||
+    rawAddress.hamlet ||
+    ""
+  ).trim();
+  const baseTitle = String(result.label || result.title || conciseAddressName || result.address || "Destination").trim();
+  const title = isGridlyUsefulMetaValue(baseTitle) ? baseTitle : (conciseAddressName || "Destination");
   const titleNorm = normalizeGridlySearchDisplayLabel(title);
   const provider = String(result.provider || "").trim();
   const type = String(result.type || "").trim();
@@ -1017,27 +1028,44 @@ function toGridlyTitleCase(value) {
     .join(" ");
 }
 
+function isGridlyUsefulMetaValue(value) {
+  const normalized = normalizeGridlySearchDisplayLabel(value);
+  if (!normalized) return false;
+  return !GRIDLY_SEARCH_NOISY_META_TOKENS.has(normalized);
+}
+
+function cleanGridlyDisplayNameContext(displayName, fallbackTitle = "") {
+  const normalizedTitle = normalizeGridlySearchDisplayLabel(fallbackTitle);
+  const parts = String(displayName || "")
+    .split(",")
+    .map((part) => toGridlyTitleCase(part))
+    .map((part) => String(part || "").trim())
+    .filter((part) => isGridlyUsefulMetaValue(part))
+    .filter((part) => normalizeGridlySearchDisplayLabel(part) !== normalizedTitle);
+  if (!parts.length) return "";
+  return parts.slice(1, 4).join(", ") || parts.slice(0, 3).join(", ");
+}
+
 function buildGridlyLocationContext(result) {
   try {
     const raw = result?.raw && typeof result.raw === "object" ? result.raw : {};
-    const address = raw?.address && typeof raw.address === "object" ? raw.address : {};
+    const resultAddress = result?.address && typeof result.address === "object" ? result.address : {};
+    const address = raw?.address && typeof raw.address === "object" ? raw.address : resultAddress;
     const resolve = (...values) => values.map((value) => String(value || "").trim()).find(Boolean) || "";
-    const country = toGridlyTitleCase(resolve(address.country, ""));
+    const country = toGridlyTitleCase(resolve(address.country, resultAddress.country, ""));
     const state = toGridlyTitleCase(resolve(address.state, address.region, address.state_district, ""));
     const county = toGridlyTitleCase(resolve(address.county, ""));
-    const city = toGridlyTitleCase(resolve(address.city, address.town, address.village, address.municipality, address.suburb, ""));
-    const road = resolve(address.road, address.pedestrian, address.highway, "");
-    const displayType = normalizeGridlySearchDisplayLabel(resolve(result?.type, raw?.type, raw?.class, ""));
-    const routeLike = displayType.includes("road") || displayType.includes("highway") || displayType.includes("motorway");
-    if (routeLike && road) return road;
-    const contextParts = [];
-    if (county && !city.toLowerCase().includes(county.toLowerCase())) contextParts.push(county);
-    if (state && !contextParts.some((part) => part.toLowerCase() === state.toLowerCase())) contextParts.push(state);
-    if (!contextParts.length && city && city.toLowerCase() !== normalizeGridlySearchDisplayLabel(result?.label || result?.title || "")) {
-      contextParts.push(city);
-    }
-    if (!contextParts.length && country) contextParts.push(country);
-    return contextParts.join(", ");
+    const city = toGridlyTitleCase(resolve(address.city, address.town, address.village, address.hamlet, address.municipality, address.suburb, ""));
+    const usefulCounty = isGridlyUsefulMetaValue(county) ? county : "";
+    const usefulCity = isGridlyUsefulMetaValue(city) ? city : "";
+    const usefulState = isGridlyUsefulMetaValue(state) ? state : "";
+    const usefulCountry = isGridlyUsefulMetaValue(country) ? country : "";
+    if (usefulCounty && usefulState) return `${usefulCounty}, ${usefulState}`;
+    if (usefulCity && usefulState) return `${usefulCity}, ${usefulState}`;
+    if (usefulState && usefulCountry) return `${usefulState}, ${usefulCountry}`;
+    const displayNameContext = cleanGridlyDisplayNameContext(resolve(raw?.display_name, result?.display_name, ""), resolve(result?.label, result?.title, ""));
+    if (displayNameContext) return displayNameContext;
+    return "";
   } catch (_error) {
     return "";
   }
@@ -1145,7 +1173,10 @@ function renderGridlySearchResults(results = [], options = {}) {
     label.textContent = display.title;
     itemBtn.appendChild(label);
 
-    const secondaryLine = locationContext || display.meta;
+    const fallbackContext = cleanGridlyDisplayNameContext(result?.raw?.display_name || result?.display_name || "", display.title);
+    const secondaryLine = [locationContext, fallbackContext, display.meta]
+      .map((entry) => String(entry || "").trim())
+      .find((entry) => isGridlyUsefulMetaValue(entry));
     if (secondaryLine) {
       const meta = document.createElement("span");
       meta.className = "gridly-search-result-meta";
@@ -7828,7 +7859,10 @@ window.gridlySearchDebug = function gridlySearchDebug() {
         .map((result) => {
           const display = buildGridlySearchDisplayLines(result);
           const context = buildGridlyLocationContext(result);
-          return context ? `${display.title} — ${context}` : display.title;
+          return {
+            title: display.title,
+            context: context || cleanGridlyDisplayNameContext(result?.raw?.display_name || result?.display_name || "", display.title) || ""
+          };
         })
       : [],
     searchResultsTextLength: Number(results?.textContent?.length || 0),
