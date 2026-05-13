@@ -977,7 +977,9 @@ const gridlySearchUiState = {
   activeSearchRequestId: 0,
   lastRenderedResults: [],
   isSearching: false,
-  prioritizedLocalResultsCount: 0
+  prioritizedLocalResultsCount: 0,
+  debugWarningsSeen: new Set(),
+  lastContextDiagnostics: null
 };
 
 const GRIDLY_SEARCH_RENDER_LIMIT = 5;
@@ -1060,11 +1062,28 @@ function buildGridlyLocationContext(result) {
     const usefulCity = isGridlyUsefulMetaValue(city) ? city : "";
     const usefulState = isGridlyUsefulMetaValue(state) ? state : "";
     const usefulCountry = isGridlyUsefulMetaValue(country) ? country : "";
-    if (usefulCounty && usefulState) return `${usefulCounty}, ${usefulState}`;
-    if (usefulCity && usefulState) return `${usefulCity}, ${usefulState}`;
-    if (usefulState && usefulCountry) return `${usefulState}, ${usefulCountry}`;
+    if (usefulCounty && usefulState) {
+      gridlySearchUiState.lastContextDiagnostics = { strategy: "county_state", hasAddressFields: true };
+      return `${usefulCounty}, ${usefulState}`;
+    }
+    if (usefulCity && usefulState) {
+      gridlySearchUiState.lastContextDiagnostics = { strategy: "city_state", hasAddressFields: true };
+      return `${usefulCity}, ${usefulState}`;
+    }
+    if (usefulState && usefulCountry) {
+      gridlySearchUiState.lastContextDiagnostics = { strategy: "state_country", hasAddressFields: true };
+      return `${usefulState}, ${usefulCountry}`;
+    }
     const displayNameContext = cleanGridlyDisplayNameContext(resolve(raw?.display_name, result?.display_name, ""), resolve(result?.label, result?.title, ""));
-    if (displayNameContext) return displayNameContext;
+    if (displayNameContext) {
+      gridlySearchUiState.lastContextDiagnostics = { strategy: "display_name_fallback", hasAddressFields: Boolean(Object.keys(address).length) };
+      return displayNameContext;
+    }
+    gridlySearchUiState.lastContextDiagnostics = {
+      strategy: "empty",
+      hasAddressFields: Boolean(Object.keys(address).length),
+      hasDisplayName: Boolean(resolve(raw?.display_name, result?.display_name, ""))
+    };
     return "";
   } catch (_error) {
     return "";
@@ -1144,6 +1163,19 @@ function renderGridlySearchResults(results = [], options = {}) {
   const normalizedResults = Array.isArray(results)
     ? results.map((result) => normalizeGridlySearchResult(result)).filter(Boolean)
     : [];
+  if (normalizedResults.length && !gridlySearchUiState.debugWarningsSeen.has("normalized-results-preview")) {
+    const preview = normalizedResults.slice(0, 3).map((result) => {
+      const display = buildGridlySearchDisplayLines(result);
+      return {
+        title: display.title,
+        lat: Number.isFinite(result?.lat) ? Number(result.lat.toFixed(6)) : null,
+        lng: Number.isFinite(result?.lng) ? Number(result.lng.toFixed(6)) : null,
+        selectable: Boolean(Number.isFinite(result?.lat) && Number.isFinite(result?.lng))
+      };
+    });
+    console.info("Gridly search normalized preview", preview);
+    gridlySearchUiState.debugWarningsSeen.add("normalized-results-preview");
+  }
   const prioritizedResults = prioritizeGridlySearchResults(normalizedResults);
   const renderedResults = dedupeGridlySearchResults(prioritizedResults);
   gridlySearchUiState.lastRenderedResults = renderedResults;
@@ -1185,8 +1217,23 @@ function renderGridlySearchResults(results = [], options = {}) {
     }
 
     itemBtn.addEventListener("click", () => {
-      const picked = gridlySearchUiState.lastRenderedResults[index];
-      if (picked) selectGridlySearchResult(picked);
+      const resolvedIndex = Number.parseInt(itemBtn.dataset.resultIndex || "", 10);
+      const picked = Number.isInteger(resolvedIndex) ? gridlySearchUiState.lastRenderedResults[resolvedIndex] : null;
+      if (!picked) {
+        if (!gridlySearchUiState.debugWarningsSeen.has("selection-missing-result")) {
+          console.warn("Gridly selection skipped: missing rendered result.", { resolvedIndex });
+          gridlySearchUiState.debugWarningsSeen.add("selection-missing-result");
+        }
+        return;
+      }
+      if (!Number.isFinite(picked?.lat) || !Number.isFinite(picked?.lng)) {
+        if (!gridlySearchUiState.debugWarningsSeen.has("selection-invalid-coordinates")) {
+          console.warn("Gridly selection skipped: invalid coordinates.", { resolvedIndex });
+          gridlySearchUiState.debugWarningsSeen.add("selection-invalid-coordinates");
+        }
+        return;
+      }
+      selectGridlySearchResult(picked);
     });
     list.appendChild(itemBtn);
   });
@@ -1198,6 +1245,13 @@ function renderGridlySearchResults(results = [], options = {}) {
 function selectGridlySearchResult(result, options = {}) {
   const normalized = normalizeGridlySearchResult(result);
   if (!normalized) return null;
+  if (!Number.isFinite(normalized?.lat) || !Number.isFinite(normalized?.lng)) {
+    if (!gridlySearchUiState.debugWarningsSeen.has("select-invalid-normalized-result")) {
+      console.warn("Gridly selection aborted: normalized result missing coordinates.");
+      gridlySearchUiState.debugWarningsSeen.add("select-invalid-normalized-result");
+    }
+    return null;
+  }
   const state = ensureGridlySearchState();
   state.activeResult = normalized;
   state.selectedDestination = normalized;
@@ -1208,7 +1262,11 @@ function selectGridlySearchResult(result, options = {}) {
     state.recentSearches = deduped.slice(0, 5);
   }
 
-  setGridlyDestinationMarker(normalized, { preserveSelectedDestination: true });
+  const marker = setGridlyDestinationMarker(normalized, { preserveSelectedDestination: true });
+  if (!marker && !gridlySearchUiState.debugWarningsSeen.has("select-marker-failed")) {
+    console.warn("Gridly selection warning: destination marker was not created.");
+    gridlySearchUiState.debugWarningsSeen.add("select-marker-failed");
+  }
   return normalized;
 }
 
@@ -7861,10 +7919,14 @@ window.gridlySearchDebug = function gridlySearchDebug() {
           const context = buildGridlyLocationContext(result);
           return {
             title: display.title,
-            context: context || cleanGridlyDisplayNameContext(result?.raw?.display_name || result?.display_name || "", display.title) || ""
+            context: context || cleanGridlyDisplayNameContext(result?.raw?.display_name || result?.display_name || "", display.title) || "",
+            lat: Number.isFinite(result?.lat) ? Number(result.lat.toFixed(6)) : null,
+            lng: Number.isFinite(result?.lng) ? Number(result.lng.toFixed(6)) : null,
+            selectable: Boolean(Number.isFinite(result?.lat) && Number.isFinite(result?.lng))
           };
         })
       : [],
+    contextDiagnostics: gridlySearchUiState.lastContextDiagnostics,
     searchResultsTextLength: Number(results?.textContent?.length || 0),
     destinationMarkerLatLng: typeof safeState.destinationMarker?.getLatLng === "function"
       ? safeState.destinationMarker.getLatLng()
