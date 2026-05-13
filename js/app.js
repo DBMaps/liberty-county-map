@@ -7389,6 +7389,9 @@ function normalizeGridlySearchResult(result) {
   return {
     id: providerId || `${coordinates.lat.toFixed(6)},${coordinates.lng.toFixed(6)}`,
     title: title || address || "Selected destination",
+    label: title || address || "Selected destination",
+    lat: coordinates.lat,
+    lng: coordinates.lng,
     subtitle: address || "",
     address: address || "",
     coordinates,
@@ -7400,6 +7403,92 @@ function normalizeGridlySearchResult(result) {
     raw: result
   };
 }
+
+async function gridlySearchAddress(query, options = {}) {
+  const rawQuery = String(query || "").trim();
+  if (!rawQuery) return [];
+
+  const parsedLimit = Number(options.limit);
+  const limit = Number.isFinite(parsedLimit) ? Math.min(Math.max(Math.floor(parsedLimit), 1), 10) : 5;
+  const countryCodes = String(options.countryCodes || "us").trim() || "us";
+
+  try {
+    const params = new URLSearchParams({
+      q: rawQuery,
+      format: "jsonv2",
+      limit: String(limit),
+      addressdetails: "1",
+      countrycodes: countryCodes
+    });
+    const response = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`, {
+      headers: { Accept: "application/json" }
+    });
+    if (!response.ok) return [];
+    const providerResults = await response.json();
+    if (!Array.isArray(providerResults)) return [];
+    return providerResults
+      .map((result) => normalizeGridlySearchResult(result))
+      .filter(Boolean)
+      .slice(0, limit);
+  } catch (error) {
+    console.warn("Address search failed:", error);
+    return [];
+  }
+}
+
+async function gridlyReverseGeocode(lat, lng, options = {}) {
+  const coordinates = normalizeCoordinatePair(lat, lng);
+  if (!coordinates) return null;
+
+  const zoom = Number.isFinite(Number(options.zoom)) ? Math.min(Math.max(Math.floor(Number(options.zoom)), 3), 18) : 16;
+  const countryCodes = String(options.countryCodes || "us").trim() || "us";
+
+  try {
+    const params = new URLSearchParams({
+      lat: String(coordinates.lat),
+      lon: String(coordinates.lng),
+      format: "jsonv2",
+      zoom: String(zoom),
+      addressdetails: "1",
+      countrycodes: countryCodes
+    });
+    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?${params.toString()}`, {
+      headers: { Accept: "application/json" }
+    });
+    if (!response.ok) return null;
+    const providerResult = await response.json();
+    return normalizeGridlySearchResult(providerResult);
+  } catch (error) {
+    console.warn("Reverse geocode failed:", error);
+    return null;
+  }
+}
+
+window.gridlySearchAddress = gridlySearchAddress;
+window.gridlyReverseGeocode = gridlyReverseGeocode;
+window.normalizeGridlySearchResult = normalizeGridlySearchResult;
+window.gridlySearchDebug = function gridlySearchDebug() {
+  const state = window.GridlySearchState;
+  const hasState = Boolean(state && typeof state === "object");
+  const safeState = hasState ? state : {};
+  const debug = {
+    hasInitializedState: hasState,
+    activeQuery: String(safeState.activeQuery || ""),
+    hasActiveResult: Boolean(safeState.activeResult),
+    hasSelectedDestination: Boolean(safeState.selectedDestination),
+    recentSearchesCount: Array.isArray(safeState.recentSearches) ? safeState.recentSearches.length : 0,
+    hasHomeLocation: Boolean(safeState.homeLocation),
+    hasWorkLocation: Boolean(safeState.workLocation),
+    hasDestinationMarker: Boolean(safeState.destinationMarker),
+    helpers: {
+      gridlySearchAddress: typeof window.gridlySearchAddress === "function",
+      gridlyReverseGeocode: typeof window.gridlyReverseGeocode === "function",
+      normalizeGridlySearchResult: typeof window.normalizeGridlySearchResult === "function"
+    }
+  };
+  console.info("Gridly Search Debug", debug);
+  return debug;
+};
 
 async function geocodeAddressToCoordinates(rawAddress = "") {
   const query = String(rawAddress || "").trim();
