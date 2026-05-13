@@ -965,6 +965,71 @@ function ensureGridlySearchState() {
   return window.GridlySearchState;
 }
 
+const gridlySearchUiRefs = {
+  shell: null,
+  input: null,
+  clearBtn: null,
+  results: null
+};
+
+function initGridlySearchUI() {
+  const shell = document.getElementById("gridlySearchShell");
+  const input = document.getElementById("gridlyAddressSearchInput");
+  const clearBtn = document.getElementById("gridlySearchClearBtn");
+  const results = document.getElementById("gridlySearchResults");
+
+  gridlySearchUiRefs.shell = shell || null;
+  gridlySearchUiRefs.input = input || null;
+  gridlySearchUiRefs.clearBtn = clearBtn || null;
+  gridlySearchUiRefs.results = results || null;
+
+  if (shell) {
+    shell.hidden = true;
+    shell.dataset.searchUi = "dormant";
+  }
+
+  if (clearBtn && !clearBtn.dataset.gridlySearchClearBound) {
+    clearBtn.addEventListener("click", () => {
+      if (gridlySearchUiRefs.input) gridlySearchUiRefs.input.value = "";
+      if (gridlySearchUiRefs.results) gridlySearchUiRefs.results.textContent = "";
+    });
+    clearBtn.dataset.gridlySearchClearBound = "true";
+  }
+
+  window.GridlySearchUI = {
+    hasSearchShell: Boolean(shell),
+    hasSearchInput: Boolean(input),
+    hasSearchClearButton: Boolean(clearBtn),
+    hasSearchResults: Boolean(results)
+  };
+}
+
+function showGridlySearchShell(options = {}) {
+  const shell = gridlySearchUiRefs.shell || document.getElementById("gridlySearchShell");
+  if (!shell) return false;
+  shell.hidden = false;
+  shell.dataset.searchUi = "active";
+  if (options?.focusInput === true) {
+    const input = gridlySearchUiRefs.input || document.getElementById("gridlyAddressSearchInput");
+    if (input && typeof input.focus === "function") input.focus();
+  }
+  return true;
+}
+
+function hideGridlySearchShell(options = {}) {
+  const shell = gridlySearchUiRefs.shell || document.getElementById("gridlySearchShell");
+  if (!shell) return false;
+  shell.hidden = true;
+  shell.dataset.searchUi = "dormant";
+  if (options?.clear === true) {
+    const input = gridlySearchUiRefs.input || document.getElementById("gridlyAddressSearchInput");
+    const results = gridlySearchUiRefs.results || document.getElementById("gridlySearchResults");
+    if (input) input.value = "";
+    if (results) results.textContent = "";
+  }
+  return true;
+}
+
 let lastRouteWatchSelection = { startId: "", destinationId: "" };
 let gridlyUserProfile = getGridlyUserProfile();
 let movementIntelligence = getMovementIntelligence();
@@ -987,6 +1052,7 @@ const els = {};
 document.addEventListener("DOMContentLoaded", async () => {
   reportLifecycleDiag("DOMContentLoaded init start", { readyState: document.readyState });
   ensureGridlySearchState();
+  initGridlySearchUI();
   initVisualViewportHeightVar();
   hydrateElements();
   gridlyHealthCheck();
@@ -7469,8 +7535,14 @@ window.gridlyReverseGeocode = gridlyReverseGeocode;
 window.normalizeGridlySearchResult = normalizeGridlySearchResult;
 window.setGridlyDestinationMarker = setGridlyDestinationMarker;
 window.clearGridlyDestinationMarker = clearGridlyDestinationMarker;
+window.showGridlySearchShell = showGridlySearchShell;
+window.hideGridlySearchShell = hideGridlySearchShell;
 window.gridlySearchDebug = function gridlySearchDebug() {
   const state = window.GridlySearchState;
+  const shell = gridlySearchUiRefs.shell || document.getElementById("gridlySearchShell");
+  const input = gridlySearchUiRefs.input || document.getElementById("gridlyAddressSearchInput");
+  const results = gridlySearchUiRefs.results || document.getElementById("gridlySearchResults");
+  const clearBtn = gridlySearchUiRefs.clearBtn || document.getElementById("gridlySearchClearBtn");
   const hasState = Boolean(state && typeof state === "object");
   const safeState = hasState ? state : {};
   const debug = {
@@ -7482,6 +7554,12 @@ window.gridlySearchDebug = function gridlySearchDebug() {
     hasHomeLocation: Boolean(safeState.homeLocation),
     hasWorkLocation: Boolean(safeState.workLocation),
     hasDestinationMarker: Boolean(safeState.destinationMarker),
+    hasSearchShell: Boolean(shell),
+    searchShellHidden: Boolean(shell?.hidden),
+    searchUiState: shell?.dataset?.searchUi || "unknown",
+    hasSearchInput: Boolean(input),
+    hasSearchResults: Boolean(results),
+    hasSearchClearButton: Boolean(clearBtn),
     destinationMarkerLatLng: typeof safeState.destinationMarker?.getLatLng === "function"
       ? safeState.destinationMarker.getLatLng()
       : null,
