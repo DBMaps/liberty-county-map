@@ -1072,56 +1072,54 @@ function cleanGridlyDisplayNameContext(displayName, fallbackTitle = "") {
   return parts[0];
 }
 
+function cleanGridlyNormalizedContext(contextValue, fallbackTitle = "") {
+  const normalizedTitle = normalizeGridlySearchDisplayLabel(fallbackTitle);
+  const noisyTokens = new Set(["administrative", "unknown", "boundary", "place", "node", "city", "town", "village", "hamlet"]);
+  const parts = String(contextValue || "")
+    .split(",")
+    .map((part) => String(part || "").trim())
+    .map((part) => toGridlyTitleCase(part))
+    .filter(Boolean)
+    .map((part) => part.replace(/\s+/g, " ").trim())
+    .filter((part) => normalizeGridlySearchDisplayLabel(part) !== normalizedTitle)
+    .filter((part) => !noisyTokens.has(normalizeGridlySearchDisplayLabel(part)));
+  while (parts.length && normalizeGridlySearchDisplayLabel(parts[parts.length - 1]) === "united states") parts.pop();
+  return parts.join(", ").replace(/,\s*,+/g, ", ").replace(/\s{2,}/g, " ").trim().replace(/,\s*$/, "");
+}
+
 function buildGridlyLocationContext(result) {
   try {
     const raw = result?.raw && typeof result.raw === "object" ? result.raw : {};
-    const resultAddress = result?.address && typeof result.address === "object" ? result.address : {};
-    const address = raw?.address && typeof raw.address === "object" ? raw.address : resultAddress;
     const resolve = (...values) => values.map((value) => String(value || "").trim()).find(Boolean) || "";
-    const country = toGridlyTitleCase(resolve(address.country, resultAddress.country, ""));
-    const state = toGridlyTitleCase(resolve(address.state, address.region, address.state_district, ""));
-    const county = toGridlyTitleCase(resolve(address.county, ""));
-    const city = toGridlyTitleCase(resolve(address.city, address.town, address.village, address.hamlet, address.municipality, ""));
-    const suburb = toGridlyTitleCase(resolve(address.suburb, address.neighbourhood, ""));
-    const usefulCounty = isGridlyUsefulMetaValue(county) ? county : "";
-    const usefulCity = isGridlyUsefulMetaValue(city) ? city : "";
-    const usefulSuburb = isGridlyUsefulMetaValue(suburb) ? suburb : "";
-    const usefulState = isGridlyUsefulMetaValue(state) ? state : "";
-    const usefulCountry = isGridlyUsefulMetaValue(country) ? country : "";
-    if (usefulCounty && usefulState) {
-      gridlySearchUiState.lastContextDiagnostics = { strategy: "county_state", hasAddressFields: true };
-      return `${usefulCounty}, ${usefulState}`;
+    const sourceTitle = resolve(result?.label, result?.title, "");
+    const subtitleContext = cleanGridlyNormalizedContext(result?.subtitle, sourceTitle);
+    if (subtitleContext) {
+      gridlySearchUiState.lastContextDiagnostics = { strategy: "subtitle", hasNormalizedSubtitle: true };
+      return subtitleContext;
     }
-    if (usefulCity && usefulState) {
-      gridlySearchUiState.lastContextDiagnostics = { strategy: "city_state", hasAddressFields: true };
-      return `${usefulCity}, ${usefulState}`;
+    const addressContext = cleanGridlyNormalizedContext(result?.address, sourceTitle);
+    if (addressContext) {
+      gridlySearchUiState.lastContextDiagnostics = { strategy: "address", hasNormalizedAddress: true };
+      return addressContext;
     }
-    if (usefulSuburb && usefulCity && usefulState) {
-      gridlySearchUiState.lastContextDiagnostics = { strategy: "suburb_city_state", hasAddressFields: true };
-      return `${usefulSuburb}, ${usefulCity}, ${usefulState}`;
-    }
-    if (usefulState && usefulCountry) {
-      gridlySearchUiState.lastContextDiagnostics = { strategy: "state_country", hasAddressFields: true };
-      return `${usefulState}, ${usefulCountry}`;
-    }
-    const displayNameValue = resolve(raw?.display_name, result?.display_name, result?.label, "");
-    const displayNameContext = cleanGridlyDisplayNameContext(displayNameValue, resolve(result?.label, result?.title, ""));
+    const displayNameValue = resolve(raw?.display_name, result?.display_name, "");
+    const displayNameContext = cleanGridlyDisplayNameContext(displayNameValue, sourceTitle);
     if (displayNameContext) {
       gridlySearchUiState.lastContextDiagnostics = {
         strategy: "display_name_fallback",
-        hasAddressFields: Boolean(Object.keys(address).length),
+        hasAddressFields: Boolean(raw?.address && typeof raw.address === "object" && Object.keys(raw.address).length),
         contextSourcePreview: {
           hasRawDisplayName: Boolean(resolve(raw?.display_name, "")),
           hasRawAddress: Boolean(raw?.address && typeof raw.address === "object"),
           rawDisplayNameSample: String(resolve(raw?.display_name, result?.display_name, "")).slice(0, 120),
-          addressKeys: Object.keys(address).slice(0, 6)
+          addressKeys: raw?.address && typeof raw.address === "object" ? Object.keys(raw.address).slice(0, 6) : []
         }
       };
       return displayNameContext;
     }
     gridlySearchUiState.lastContextDiagnostics = {
       strategy: "empty",
-      hasAddressFields: Boolean(Object.keys(address).length),
+      hasAddressFields: Boolean(raw?.address && typeof raw.address === "object" && Object.keys(raw.address).length),
       hasDisplayName: Boolean(resolve(raw?.display_name, result?.display_name, ""))
     };
     return "";
@@ -1247,8 +1245,7 @@ function renderGridlySearchResults(results = [], options = {}) {
     label.textContent = display.title;
     itemBtn.appendChild(label);
 
-    const fallbackContext = cleanGridlyDisplayNameContext(result?.raw?.display_name || result?.display_name || "", display.title);
-    const secondaryLine = [locationContext, fallbackContext, display.meta]
+    const secondaryLine = [locationContext, display.meta]
       .map((entry) => String(entry || "").trim())
       .find((entry) => isGridlyUsefulMetaValue(entry));
     preview.push({
