@@ -995,7 +995,8 @@ const gridlySearchUiState = {
   isSearching: false,
   prioritizedLocalResultsCount: 0,
   debugWarningsSeen: new Set(),
-  lastContextDiagnostics: null
+  lastContextDiagnostics: null,
+  lastSearchShellOpenSource: ""
 };
 
 const GRIDLY_SEARCH_RENDER_LIMIT = 5;
@@ -1476,6 +1477,7 @@ function initGridlySearchUI() {
 
 function showGridlySearchShell(options = {}) {
   const shell = gridlySearchUiRefs.shell || document.getElementById("gridlySearchShell");
+  if (options?.source) gridlySearchUiState.lastSearchShellOpenSource = String(options.source);
   if (!shell) return false;
   shell.hidden = false;
   shell.removeAttribute("hidden");
@@ -6773,17 +6775,25 @@ function bindEvents() {
     });
   });
 
-  const openDestinationSearchShell = (event) => {
+  const openDestinationSearchShell = (event, source = "manual") => {
     event?.preventDefault?.();
     event?.stopPropagation?.();
-    showGridlySearchShell({ focusInput: true });
+    showGridlySearchShell({ focusInput: true, source });
   };
 
-  els.destinationAddBtn?.addEventListener("click", openDestinationSearchShell);
-  document.querySelector(".destination-hero-card")?.addEventListener("click", (event) => {
-    if (event.target?.closest?.("button")) return;
-    openDestinationSearchShell(event);
-  });
+  if (els.destinationAddBtn && els.destinationAddBtn.dataset.searchBound !== "true") {
+    els.destinationAddBtn.addEventListener("click", (event) => openDestinationSearchShell(event, "destinationAddBtn"));
+    els.destinationAddBtn.dataset.searchBound = "true";
+  }
+
+  const destinationHeroCard = document.querySelector(".destination-hero-card");
+  if (destinationHeroCard && destinationHeroCard.dataset.searchBound !== "true") {
+    destinationHeroCard.addEventListener("click", (event) => {
+      if (event.target?.closest?.("button, [role='button'], .chip, .hero-chip")) return;
+      openDestinationSearchShell(event, "destinationHeroCard");
+    });
+    destinationHeroCard.dataset.searchBound = "true";
+  }
 
   els.routeStatusCard?.addEventListener("click", handleRouteCardInteraction);
   els.routeStatusCard?.addEventListener("keydown", (event) => {
@@ -8096,6 +8106,10 @@ window.gridlySearchDebug = function gridlySearchDebug() {
     hasSearchInput: Boolean(input),
     hasSearchResults: Boolean(results),
     hasSearchClearButton: Boolean(clearBtn),
+    hasDestinationAddBtn: Boolean(els.destinationAddBtn),
+    destinationAddBtnBound: Boolean(els.destinationAddBtn?.dataset?.searchBound === "true"),
+    hasDestinationHeroCard: Boolean(document.querySelector(".destination-hero-card")),
+    destinationHeroCardBound: Boolean(document.querySelector(".destination-hero-card")?.dataset?.searchBound === "true"),
     isSearching: Boolean(gridlySearchUiState.isSearching),
     activeSearchRequestId: Number(gridlySearchUiState.activeSearchRequestId || 0),
     lastRenderedResultsCount: Array.isArray(gridlySearchUiState.lastRenderedResults) ? gridlySearchUiState.lastRenderedResults.length : 0,
@@ -8103,6 +8117,7 @@ window.gridlySearchDebug = function gridlySearchDebug() {
     renderedResultsPreview: Array.isArray(gridlySearchUiState.lastRenderedResultsPreview) ? gridlySearchUiState.lastRenderedResultsPreview : [],
     resultShapePreview: Array.isArray(gridlySearchUiState.lastResultShapePreview) ? gridlySearchUiState.lastResultShapePreview : [],
     contextDiagnostics: gridlySearchUiState.lastContextDiagnostics,
+    lastSearchShellOpenSource: String(gridlySearchUiState.lastSearchShellOpenSource || ""),
     searchResultsTextLength: Number(results?.textContent?.length || 0),
     destinationMarkerLatLng: typeof safeState.destinationMarker?.getLatLng === "function"
       ? safeState.destinationMarker.getLatLng()
