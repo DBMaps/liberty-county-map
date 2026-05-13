@@ -7345,6 +7345,62 @@ function normalizeCoordinatePair(lat, lng) {
   return null;
 }
 
+function normalizeGridlySearchResult(result) {
+  if (!result || typeof result !== "object") return null;
+
+  const resolveString = (...values) => {
+    for (const value of values) {
+      const normalized = String(value || "").trim();
+      if (normalized) return normalized;
+    }
+    return "";
+  };
+
+  const coordinates = normalizeCoordinatePair(
+    result.lat ?? result.latitude ?? result?.coordinates?.lat ?? result?.coordinates?.latitude,
+    result.lng ?? result.lon ?? result.longitude ?? result?.coordinates?.lng ?? result?.coordinates?.lon ?? result?.coordinates?.longitude
+  );
+
+  if (!coordinates) return null;
+
+  const provider = resolveString(result.provider, result.source, result.engine, "unknown");
+  const providerId = resolveString(result.providerId, result.place_id, result.id, result.osm_id);
+  const rawType = resolveString(result.type, result.class, result.kind, "unknown");
+  const title = resolveString(result.title, result.name, result.label, result.display_name);
+  const address = resolveString(result.address, result.formatted, result.display_name, title);
+
+  const bounds = Array.isArray(result.boundingbox) && result.boundingbox.length === 4
+    ? {
+        south: Number(result.boundingbox[0]),
+        north: Number(result.boundingbox[1]),
+        west: Number(result.boundingbox[2]),
+        east: Number(result.boundingbox[3])
+      }
+    : null;
+
+  const normalizedBounds = bounds
+    && Number.isFinite(bounds.south)
+    && Number.isFinite(bounds.north)
+    && Number.isFinite(bounds.west)
+    && Number.isFinite(bounds.east)
+    ? bounds
+    : null;
+
+  return {
+    id: providerId || `${coordinates.lat.toFixed(6)},${coordinates.lng.toFixed(6)}`,
+    title: title || address || "Selected destination",
+    subtitle: address || "",
+    address: address || "",
+    coordinates,
+    bounds: normalizedBounds,
+    provider,
+    providerId: providerId || null,
+    type: rawType,
+    confidence: Number.isFinite(Number(result.confidence)) ? Number(result.confidence) : null,
+    raw: result
+  };
+}
+
 async function geocodeAddressToCoordinates(rawAddress = "") {
   const query = String(rawAddress || "").trim();
   if (!query) return null;
