@@ -12632,3 +12632,137 @@ body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
     gap: 10px;
   }
 }
+
+/* V126 unified portrait bottom-sheet system */
+@media (max-width: 1100px) and (orientation: portrait) {
+  :root {
+    --gridly-sheet-inset: 10px;
+    --gridly-sheet-radius: 18px;
+    --gridly-sheet-border: 1px solid rgba(156, 214, 255, 0.22);
+    --gridly-sheet-bg: linear-gradient(180deg, rgba(11, 20, 33, 0.93), rgba(8, 14, 24, 0.97));
+    --gridly-sheet-shadow: 0 -18px 40px rgba(0, 0, 0, 0.38), 0 8px 20px rgba(0, 0, 0, 0.26);
+    --gridly-sheet-max-height: min(72dvh, 620px);
+  }
+
+  #reportSection.report-drawer,
+  body.portrait-alerts-open #alertsSection,
+  .route-setup-modal-card,
+  .settings-modal-card {
+    position: fixed !important;
+    left: var(--gridly-sheet-inset) !important;
+    right: var(--gridly-sheet-inset) !important;
+    width: auto !important;
+    max-width: none !important;
+    bottom: calc(74px + env(safe-area-inset-bottom, 0px)) !important;
+    margin: 0 !important;
+    border-radius: var(--gridly-sheet-radius) !important;
+    border: var(--gridly-sheet-border) !important;
+    background: var(--gridly-sheet-bg) !important;
+    box-shadow: var(--gridly-sheet-shadow) !important;
+    backdrop-filter: blur(18px) saturate(125%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(125%) !important;
+    max-height: var(--gridly-sheet-max-height) !important;
+    overflow: hidden !important;
+    z-index: 100110 !important;
+    animation: gridlySheetRise 200ms ease-out both;
+  }
+
+  #reportSection.report-drawer[open],
+  body.portrait-alerts-open #alertsSection {
+    display: block !important;
+  }
+
+  #reportSection .report-copy,
+  #reportSection .mobile-report-mode-card,
+  #reportSection .report-tools,
+  #reportSection .report-tools-advanced,
+  #alertsSection .panel-card,
+  .route-setup-modal-card > *:not(.route-setup-modal-head),
+  .settings-modal-card > *:not(.settings-modal-head) {
+    max-height: none;
+    overflow: visible;
+  }
+
+  #reportSection .report-copy,
+  #reportSection .report-tools,
+  #alertsSection .panel-card,
+  .route-setup-modal-card,
+  .settings-modal-card {
+    overflow-y: auto !important;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  #reportSection .report-drawer-summary,
+  #alertsSection .panel-head,
+  .route-setup-modal-head,
+  .settings-modal-head {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    min-height: 52px;
+    margin: 0 !important;
+    padding: 10px 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+    background: rgba(7, 13, 22, 0.92) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  }
+
+  #reportSection .report-drawer-summary h2,
+  #alertsSection .panel-head h2,
+  .route-setup-modal-head h2,
+  .settings-modal-head h2 {
+    margin: 0 !important;
+    font-size: 0.98rem !important;
+    letter-spacing: 0.01em;
+  }
+
+  #reportSection .report-drawer-summary .eyebrow,
+  #alertsSection .panel-head .eyebrow,
+  .route-setup-modal-head .eyebrow {
+    display: none !important;
+  }
+
+  #reportSection .report-drawer-summary::after {
+    content: "×";
+    font-size: 1.28rem;
+    line-height: 1;
+    opacity: 0.9;
+  }
+
+  #alertsSection .alerts-list {
+    display: grid;
+    gap: 8px;
+  }
+
+  #alertsSection .alert-item {
+    padding: 10px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  #reportSection .mobile-report-mode-card,
+  #reportSection .confirmation-box,
+  #reportSection .share-card,
+  #reportSection .quick-clear-card {
+    border-radius: 12px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+  }
+
+  .smart-alerts-modal {
+    display: none !important;
+  }
+
+  .mobile-floating-action-dock {
+    z-index: 100140 !important;
+  }
+}
+
+@keyframes gridlySheetRise {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
