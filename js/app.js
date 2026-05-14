@@ -253,6 +253,10 @@ let lastOsrmResponseStatus = null;
 let routeQuickButtonDelegatedBindingActive = false;
 let routeQuickDirectListenerAttached = false;
 let lastDirectRouteClick = null;
+let routeRequestInFlight = false;
+let lastRouteRequestKey = "";
+let lastRouteRequestAt = 0;
+let duplicateRouteRequestBlockedCount = 0;
 let debugPipelineWrapperEntered = false;
 window.gridlyLastRouteAttempt = null;
 let pendingHazardPlacement = null;
@@ -5215,6 +5219,8 @@ function bindDirectRouteQuickPanelButtonListeners() {
         at: new Date().toISOString()
       };
       event.preventDefault();
+      event.stopPropagation();
+      if (typeof event.stopImmediatePropagation === "function") event.stopImmediatePropagation();
       const panelWasVisible = panel?.classList?.contains("visible") ?? false;
       await debugEnterRoutePipeline({
         activateWatch: action === "start-route-watch-quick",
@@ -8715,6 +8721,7 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
   // Render from saved Home/Work (or other saved place) coordinates only after coordinate validation succeeds.
   if (!map) return false;
 
+  try {
   const fallbackPoints = [
     [Number(startCoordinates?.lat), Number(startCoordinates?.lng)],
     [Number(destinationCoordinates?.lat), Number(destinationCoordinates?.lng)]
@@ -8726,6 +8733,17 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
     && Number.isFinite(point[1])
   ));
   if (!hasValidPoints) return false;
+
+  const requestKey = `${fallbackPoints[0][0].toFixed(6)},${fallbackPoints[0][1].toFixed(6)}->${fallbackPoints[1][0].toFixed(6)},${fallbackPoints[1][1].toFixed(6)}`;
+  const nowMs = Date.now();
+  if (routeRequestInFlight && requestKey === lastRouteRequestKey && (nowMs - lastRouteRequestAt) < 1500) {
+    duplicateRouteRequestBlockedCount += 1;
+    console.info("Gridly duplicate route request blocked", { requestKey, duplicateRouteRequestBlockedCount });
+    return false;
+  }
+  routeRequestInFlight = true;
+  lastRouteRequestKey = requestKey;
+  lastRouteRequestAt = nowMs;
 
   if (window.__gridlyRoutePreviewLayer && typeof map.removeLayer === "function" && map.hasLayer(window.__gridlyRoutePreviewLayer)) {
     map.removeLayer(window.__gridlyRoutePreviewLayer);
@@ -8923,7 +8941,11 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
   }
 
   return true;
+  } finally {
+    routeRequestInFlight = false;
+  }
 }
+
 
 
 
@@ -9386,9 +9408,14 @@ window.gridlyRouteExecutionDebug = function gridlyRouteExecutionDebug() {
     routeButtonDisabled: Boolean(routeButton?.disabled), routeButtonVisible: Boolean(routeButton && rect && rect.width > 0 && rect.height > 0),
     routeButtonRect: rect ? { x: rect.x, y: rect.y, width: rect.width, height: rect.height } : null,
     routeButtonClickHandlersFound: Boolean(routeQuickDirectListenerAttached || routeQuickButtonDelegatedBindingActive || els?.routeWatchStartBtn),
+    routeActionButtonBound: Boolean(routeQuickDirectListenerAttached || routeQuickButtonDelegatedBindingActive || els?.routeWatchStartBtn?.dataset?.searchBound === "true"),
     lastRouteAttempt, lastRouteError, osrmRequestUrl: lastOsrmRequestUrl, osrmResponseStatus: lastOsrmResponseStatus,
     routePolylineExists: Boolean(window.__gridlyRoutePreviewLayer), routePolylinePointCount: Number(routePreviewPolylinePointCount || 0),
-    monitoringState: Boolean(window.__gridlyRouteWatchActive), activeRouteSource
+    monitoringState: Boolean(window.__gridlyRouteWatchActive), activeRouteSource,
+    routeRequestInFlight,
+    lastRouteRequestKey,
+    lastRouteRequestAt: lastRouteRequestAt ? new Date(lastRouteRequestAt).toISOString() : null,
+    duplicateRouteRequestBlockedCount
   };
 };
 
