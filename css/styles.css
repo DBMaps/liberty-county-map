@@ -12923,7 +12923,33 @@ body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
   body[data-layout-mode="portrait"] .report-drawer-summary h2,
   body[data-layout-mode="portrait"] #alertsSection .panel-head h2,
   body[data-layout-mode="portrait"] .route-setup-modal-head h2,
-  body[data-layout-mode="portrait"] .settings-modal-head h2,
+  
+
+/* V129.1 popup viewport anchoring */
+#map .leaflet-popup-pane {
+  overflow: visible;
+}
+#map .leaflet-popup {
+  max-width: min(320px, calc(100vw - 24px));
+}
+#map .leaflet-popup-content-wrapper {
+  max-width: min(320px, calc(100vw - 24px));
+  max-height: min(52vh, 420px);
+  overflow: hidden;
+}
+#map .leaflet-popup-content {
+  width: min(296px, calc(100vw - 48px));
+  max-width: 100%;
+  max-height: min(48vh, 360px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.gridly-popup {
+  min-width: 0;
+  width: 100%;
+}
+
+body[data-layout-mode="portrait"] .settings-modal-head h2,
   body[data-layout-mode="portrait"] .mobile-native-surface-header h2 {
     font-size: 0.95rem !important;
     font-weight: 700;
@@ -13108,25 +13134,25 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar {
   top: 8px;
   left: 10px;
   right: 10px;
-  min-height: 46px;
-  padding: 6px 8px 6px 10px;
+  min-height: 48px;
+  padding: 7px 9px 7px 11px;
   border-radius: 13px;
   border-color: rgba(170, 207, 255, 0.26);
   background: linear-gradient(165deg, rgba(5, 13, 24, 0.88), rgba(4, 10, 18, 0.92));
   box-shadow: 0 8px 22px rgba(3, 10, 21, 0.44);
 }
-body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand { display: inline-flex; align-items: center; gap: 7px; min-width: 0; }
-body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand img { width: 18px; height: 18px; opacity: 0.92; }
-body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand span { font-size: 0.72rem; letter-spacing: 0.12em; font-weight: 700; color: #dff0ff; }
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand { display: inline-flex; align-items: center; gap: 8px; min-width: 0; padding: 2px 2px 2px 0; }
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand img { width: 19px; height: 19px; opacity: 0.95; object-fit: contain; }
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand span { font-size: 0.74rem; letter-spacing: 0.115em; font-weight: 720; color: #e4f2ff; }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-watch { flex: 1; display: flex; justify-content: center; min-width: 0; }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-watch span { font-size: 0.57rem; letter-spacing: 0.11em; color: rgba(185, 214, 245, 0.78); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-icon-btn { width: 32px; height: 32px; border-radius: 10px; padding: 0; border: 1px solid rgba(161, 206, 255, 0.24); background: rgba(166, 207, 255, 0.1); }
-body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill { top: 58px; left: 10px; right: 10px; padding: 7px 10px; }
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill { top: 60px; left: 10px; right: 10px; padding: 7px 10px; }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill strong { font-size: 0.73rem; font-weight: 640; letter-spacing: 0.01em; }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill span { font-size: 0.66rem; }
-body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments { top: 104px; left: 10px; right: 10px; gap: 5px; padding: 5px; }
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments { top: 116px; left: 10px; right: 10px; gap: 5px; padding: 5px; }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button { font-size: 0.68rem; font-weight: 560; letter-spacing: 0.012em; }
-body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail { top: 154px; right: 10px; gap: 7px; }
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail { top: 166px; right: 10px; gap: 7px; }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail button { width: 40px; height: 40px; border-radius: 11px; }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock { left: 10px; right: 10px; bottom: 10px; padding: 7px; gap: 7px; }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button em { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.02em; }
@@ -13163,6 +13189,32 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 svg {
 .popup-report-btn.blue { background: linear-gradient(165deg, #235f96, #184770); }
 .popup-report-btn.neutral { background: linear-gradient(165deg, #3f4f67, #2f3c52); }
 .popup-report-btn:hover { box-shadow: inset 0 1px 0 rgba(255,255,255,0.16), 0 6px 14px rgba(4, 11, 21, 0.44); }
+
+
+
+/* V129.1 popup viewport anchoring */
+#map .leaflet-popup-pane {
+  overflow: visible;
+}
+#map .leaflet-popup {
+  max-width: min(320px, calc(100vw - 24px));
+}
+#map .leaflet-popup-content-wrapper {
+  max-width: min(320px, calc(100vw - 24px));
+  max-height: min(52vh, 420px);
+  overflow: hidden;
+}
+#map .leaflet-popup-content {
+  width: min(296px, calc(100vw - 48px));
+  max-width: 100%;
+  max-height: min(48vh, 360px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.gridly-popup {
+  min-width: 0;
+  width: 100%;
+}
 
 body[data-layout-mode="portrait"] .settings-modal-head h2,
 body[data-layout-mode="portrait"] .mobile-native-surface-header h2,
