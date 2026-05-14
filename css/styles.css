@@ -12082,10 +12082,13 @@ body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
   body[data-layout-mode="portrait"] .mobile-destination-command {
     z-index: 25 !important;
     margin-top: 0 !important;
+    min-height: 72px !important;
+    align-content: center !important;
   }
 
   body[data-layout-mode="portrait"] .mobile-live-command {
     z-index: 20 !important;
+    min-height: 88px !important;
   }
 
   body[data-layout-mode="portrait"] .map-card {
@@ -12105,5 +12108,23 @@ body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
     bottom: 0 !important;
     margin: 0 0 calc(152px + env(safe-area-inset-bottom, 0px)) 0 !important;
     z-index: 10100 !important;
+  }
+
+  body[data-layout-mode="portrait"] #mobileDockAreaBtn,
+  body[data-layout-mode="portrait"] .mobile-dock-btn.area {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  body[data-layout-mode="portrait"].portrait-alerts-open #alertsSection {
+    display: grid !important;
+    position: fixed !important;
+    left: 10px !important;
+    right: 10px !important;
+    top: calc(var(--mobile-command-zone-top, 72px) + 6px) !important;
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+    z-index: 10040 !important;
+    overflow: auto !important;
   }
 }
