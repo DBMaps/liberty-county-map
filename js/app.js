@@ -6499,6 +6499,11 @@ function bindEvents() {
       openGridlySurface("settings", () => openSettingsModal());
     }, { once: true });
   });
+  document.getElementById("mobileHeaderSettingsBtn")?.addEventListener("click", () => {
+    closeGridlySurface("alerts", { silent: true });
+    openGridlySurface("settings", () => openSettingsModal());
+  });
+
   document.getElementById("mobileDockLayersBtn")?.addEventListener("click", () => {
     closePortraitAlertsPanel();
     portraitSurfaceDebugLog("[Gridly][PortraitSurface] Layers button click handler fired");
