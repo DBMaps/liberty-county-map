@@ -14071,6 +14071,46 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     };
   };
 
+
+
+  window.gridlyBottomSheetDebug = () => {
+    const isVisible = (node) => Boolean(node && node.getClientRects().length > 0 && window.getComputedStyle(node).display !== "none" && window.getComputedStyle(node).visibility !== "hidden");
+    const getSheetMeta = (label, node, expectedOrigin = "bottom") => {
+      if (!node) return { label, exists: false, expectedOrigin };
+      const style = window.getComputedStyle(node);
+      return {
+        label,
+        exists: true,
+        visible: isVisible(node),
+        expectedOrigin,
+        bottom: style.bottom,
+        top: style.top,
+        left: style.left,
+        right: style.right,
+        position: style.position,
+        borderRadius: style.borderRadius,
+        transform: style.transform
+      };
+    };
+    const sheets = [
+      getSheetMeta("report", document.getElementById("reportSection")),
+      getSheetMeta("alerts", document.getElementById("alertsSection")),
+      getSheetMeta("route", document.querySelector(".route-setup-modal-card")),
+      getSheetMeta("settings", document.querySelector(".settings-modal-card"))
+    ];
+    const activeSheet = sheets.find((sheet) => sheet.visible)?.label || "none";
+    const inconsistentSurfaceWarnings = sheets
+      .filter((sheet) => sheet.exists)
+      .filter((sheet) => String(sheet.position || "").toLowerCase() !== "fixed" || String(sheet.bottom || "auto").toLowerCase() === "auto")
+      .map((sheet) => `${sheet.label} is not anchored as a unified bottom sheet`);
+    return {
+      activeSheet,
+      openDirection: "bottom-up",
+      sheetOrigins: sheets,
+      inconsistentSurfaceWarnings,
+      portraitMode: window.matchMedia('(max-width: 1100px) and (orientation: portrait)').matches
+    };
+  };
   // DEV ONLY: Gridly Layout Edit Mode
   (() => {
     const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1"]);
