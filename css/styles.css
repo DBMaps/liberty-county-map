@@ -11977,3 +11977,39 @@ body[data-layout-mode="tactical-landscape"] .tactical-landscape-gate p {
 body[data-layout-mode="mobile"].route-quick-panel-open .mobile-live-command {
   display: none !important;
 }
+
+/* V122.5v - separate destination command from live commute status */
+.mobile-destination-command {
+  display: none;
+}
+
+body[data-layout-mode="mobile"] .mobile-destination-command {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(131, 197, 255, 0.34);
+  background: linear-gradient(145deg, rgba(18, 40, 66, 0.82), rgba(8, 14, 24, 0.94));
+}
+
+body[data-layout-mode="mobile"] .mobile-destination-command-copy {
+  display: grid;
+  gap: 4px;
+}
+
+body[data-layout-mode="mobile"] .mobile-destination-command strong {
+  font-size: 1.02rem;
+}
+
+body[data-layout-mode="mobile"] .mobile-destination-command p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #d5e8ff;
+}
+
+body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
+  display: none;
+}
