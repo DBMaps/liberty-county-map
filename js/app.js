@@ -6413,7 +6413,12 @@ function bindEvents() {
   document.getElementById("mobileDockAlertsBtn")?.addEventListener("click", () => {
     if (!isTacticalLandscapeDockMode()) {
       closeSmartAlertsModal();
-      routeNavSection("alerts");
+      try {
+        renderMobileNativeAlertsCenter();
+      } catch (error) {
+        console.warn("[Mobile Portrait Dock] alerts center render failed; falling back to alerts section.", error);
+        routeNavSection("alerts");
+      }
       return;
     }
     const rows = (getUnifiedIncidents?.() || []).slice(0, 8).map((incident) => {

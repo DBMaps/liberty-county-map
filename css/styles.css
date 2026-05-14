@@ -12049,3 +12049,61 @@ body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
     z-index: 10100 !important;
   }
 }
+
+/* V122.6c — portrait stabilization: header reservation, alerts flow support, dock/controls spacing */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] .command-center {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-live-brand,
+  body[data-layout-mode="portrait"] .mobile-premium-header {
+    position: relative !important;
+    inset: auto !important;
+    z-index: 30 !important;
+    margin: 0 0 10px !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command,
+  body[data-layout-mode="portrait"] .mobile-live-command,
+  body[data-layout-mode="portrait"] .map-card,
+  body[data-layout-mode="portrait"] .map-frame {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    transform: none !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command {
+    z-index: 25 !important;
+    margin-top: 0 !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-live-command {
+    z-index: 20 !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card {
+    z-index: 1 !important;
+    margin-top: 0 !important;
+  }
+
+  body[data-layout-mode="portrait"] #mobileDockLayersBtn,
+  body[data-layout-mode="portrait"] .mobile-dock-btn.layers {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  body[data-layout-mode="portrait"] #map .leaflet-control-zoom {
+    right: 12px !important;
+    bottom: 0 !important;
+    margin: 0 0 calc(152px + env(safe-area-inset-bottom, 0px)) 0 !important;
+    z-index: 10100 !important;
+  }
+}
