@@ -334,14 +334,6 @@
 
     <section class="command-center" id="mapSection">
       <section class="map-card">
-        <article class="mobile-destination-command" aria-label="Destination and search command">
-          <div class="mobile-destination-command-copy">
-            <span class="eyebrow">Destination Command</span>
-            <strong id="mobileDestinationCommandTitle">Search destination</strong>
-            <p id="mobileDestinationCommandMeta">Choose Route to set a destination and open search.</p>
-          </div>
-          <button class="primary-btn compact-btn" id="mobileDestinationCommandBtn" type="button">Choose Route</button>
-        </article>
         <article class="mobile-live-command" aria-label="Live commute status">
           <div class="mobile-live-command-copy">
             <span class="eyebrow">Live Commute State</span>
@@ -434,7 +426,7 @@
       </section>
 
       <aside class="side-panel desktop-command-panel" id="alertsSection">
-        <button class="secondary-btn compact-btn portrait-alerts-close" type="button" id="portraitAlertsCloseBtn" aria-label="Close alerts panel">✕ Close</button>
+        <button class="gridly-surface-close portrait-alerts-close" type="button" id="portraitAlertsCloseBtn" aria-label="Close alerts panel">×</button>
         <details class="panel-card drawer-panel" id="railPulseDrawer" open>
           <summary class="drawer-summary"><span class="eyebrow">Rail Pulse</span></summary>
           <div class="drawer-body">
@@ -590,7 +582,7 @@
     <div class="route-setup-modal-card" role="dialog" aria-modal="true" aria-labelledby="routeSetupTitle">
       <div class="route-setup-modal-head">
         <span class="eyebrow">Daily Route</span>
-        <button type="button" class="secondary-btn compact-btn route-modal-close" id="closeRouteSetupModalBtn" aria-label="Close Save Route modal">×</button>
+        <button type="button" class="gridly-surface-close route-modal-close" id="closeRouteSetupModalBtn" aria-label="Close Save Route modal">×</button>
       </div>
       <h2 id="routeSetupTitle">Save places</h2>
       <p class="smart-alerts-subtitle">Saved places stay on this device. Follow the quick flow below to set where Gridly should watch for you.</p>
@@ -646,7 +638,7 @@
     <div class="smart-alerts-modal-card" role="dialog" aria-modal="true" aria-labelledby="smartAlertsStatus">
       <div class="smart-alerts-modal-head">
         <span class="eyebrow">Gridly Premium</span>
-        <button type="button" class="secondary-btn compact-btn" id="closeSmartAlertsModalBtn">Close</button>
+        <button type="button" class="gridly-surface-close" id="closeSmartAlertsModalBtn" aria-label="Close alert preferences">×</button>
       </div>
       <h2 id="smartAlertsStatus">Premium Smart Alerts: Off</h2>
       <p class="smart-alerts-subtitle">Choose what Gridly should watch for your saved route and nearby crossings.</p>
@@ -667,15 +659,14 @@
     <div class="settings-modal-card" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
       <div class="settings-modal-head">
         <h2 id="settingsModalTitle">Settings</h2>
-        <button type="button" class="secondary-btn compact-btn settings-modal-close" id="closeSettingsModalBtn" aria-label="Close Settings">×</button>
+        <button type="button" class="gridly-surface-close settings-modal-close" id="closeSettingsModalBtn" aria-label="Close Settings">×</button>
       </div>
-      <p class="settings-modal-subtitle">Foundations for destination setup and route defaults.</p>
-      <ul class="settings-modal-list">
-        <li>Set Home Town</li>
-        <li>Home / Work / Saved Places</li>
-        <li>Alert Preferences</li>
-        <li>Route Preferences</li>
-      </ul>
+      <p class="settings-modal-subtitle">Destination setup and app preferences now live here for portrait mode.</p>
+      <section class="settings-modal-section" id="settingsHomeTownSection"><h3>Set Home Town</h3><p>Choose your primary town context for local route awareness.</p></section>
+      <section class="settings-modal-section" id="settingsSavedPlacesSection"><h3>Home / Work / Saved Places</h3><p>Manage commute anchors used by Route and destination setup.</p></section>
+      <section class="settings-modal-section" id="settingsAlertPreferencesSection"><h3>Alert Preferences</h3><p>Configure the alerts and watch triggers you want to receive.</p></section>
+      <section class="settings-modal-section" id="settingsRoutePreferencesSection"><h3>Route Preferences</h3><p>Set route defaults and commute behavior preferences.</p></section>
+      <section class="settings-modal-section" id="settingsAppPreferencesSection"><h3>App Preferences</h3><p>Manage interface and app-level behavior preferences.</p></section>
     </div>
   </div>
 
@@ -696,7 +687,7 @@
     <section class="mobile-native-surface-sheet" role="dialog" aria-modal="true" aria-labelledby="mobileNativeSurfaceTitle">
       <header class="mobile-native-surface-header">
         <strong id="mobileNativeSurfaceTitle">Mobile Surface</strong>
-        <button class="secondary-btn compact-btn" type="button" id="mobileNativeSurfaceCloseBtn">Close</button>
+        <button class="gridly-surface-close" type="button" id="mobileNativeSurfaceCloseBtn" aria-label="Close mobile surface">×</button>
       </header>
       <div class="mobile-native-surface-body" id="mobileNativeSurfaceBody"></div>
     </section>
