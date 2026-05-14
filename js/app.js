@@ -1359,6 +1359,27 @@ function collapseGridlySearchResults() {
   gridlySearchUiState.isSearching = false;
 }
 
+
+function getSelectedDestinationLabel() {
+  const state = ensureGridlySearchState();
+  const normalized = normalizeGridlySearchResult(state?.selectedDestination);
+  if (!normalized) return "";
+  return normalized.title || normalized.displayName || normalized.context || normalized.address || "";
+}
+
+function syncMobileDestinationCommandCard() {
+  const routeIsMonitoring = Boolean(routeWatchActivated || window.__gridlyRouteWatchActive);
+  const selectedLabel = getSelectedDestinationLabel();
+  safeText("mobileDestinationCommandTitle", routeIsMonitoring ? "Destination selected" : "Destination");
+  safeText(
+    "mobileDestinationCommandMeta",
+    routeIsMonitoring
+      ? `Selected: ${selectedLabel || "Saved destination"}`
+      : (selectedLabel || "Choose Route to set a destination and open search.")
+  );
+  safeText("mobileDestinationCommandBtn", selectedLabel ? "Change" : "Choose Route");
+}
+
 function selectGridlySearchResult(result, options = {}) {
   const normalized = normalizeGridlySearchResult(result);
   if (!normalized) return null;
@@ -1394,6 +1415,8 @@ function selectGridlySearchResult(result, options = {}) {
   if (marker) focusGridlyDestinationOnMap(normalized.lat, normalized.lng);
 
   collapseGridlySearchResults();
+  hideGridlySearchShell({ clear: false });
+  syncMobileDestinationCommandCard();
   return normalized;
 }
 
@@ -8122,6 +8145,8 @@ window.gridlySearchDebug = function gridlySearchDebug() {
   const state = ensureGridlySearchState();
   const shell = gridlySearchUiRefs.shell || document.getElementById("gridlySearchShell");
   const input = gridlySearchUiRefs.input || document.getElementById("gridlyAddressSearchInput");
+  const destinationCommandButton = els.mobileDestinationCommandBtn || document.getElementById("mobileDestinationCommandBtn");
+  const zoomControl = document.querySelector("#map .leaflet-control-zoom");
   const results = gridlySearchUiRefs.results || document.getElementById("gridlySearchResults");
   const clearBtn = gridlySearchUiRefs.clearBtn || document.getElementById("gridlySearchClearBtn");
   const hasState = Boolean(state && typeof state === "object");
@@ -8152,7 +8177,12 @@ window.gridlySearchDebug = function gridlySearchDebug() {
     chooseRouteButtonBound: Boolean(els.mobileDestinationCommandBtn?.dataset?.searchBound === "true"),
     hasDestinationCommandButton: Boolean(els.mobileDestinationCommandBtn),
     destinationCommandButtonBound: Boolean(els.mobileDestinationCommandBtn?.dataset?.searchBound === "true"),
-    destinationCommandButtonVisible: isVisibleEl(els.mobileDestinationCommandBtn),
+    destinationCommandButtonVisible: isVisibleEl(destinationCommandButton),
+    searchShellBounds: shell?.getBoundingClientRect?.()?.toJSON?.() || null,
+    searchShellDisplay: shell ? window.getComputedStyle(shell).display : null,
+    destinationCommandBounds: destinationCommandButton?.getBoundingClientRect?.()?.toJSON?.() || null,
+    mapZoomControlVisible: isVisibleEl(zoomControl),
+    mapZoomControlBounds: zoomControl?.getBoundingClientRect?.()?.toJSON?.() || null,
     hasDestinationHeroCard: Boolean(document.querySelector(".destination-hero-card")),
     destinationHeroCardBound: Boolean(document.querySelector(".destination-hero-card")?.dataset?.searchBound === "true"),
     isSearching: Boolean(gridlySearchUiState.isSearching),
@@ -10428,9 +10458,7 @@ function updateRouteIntelligence(nearest = []) {
   }
   const mobileLiveCommand = document.querySelector(".mobile-live-command");
   if (mobileLiveCommand) mobileLiveCommand.removeAttribute("data-delay-state");
-  safeText("mobileDestinationCommandTitle", routeIsMonitoring ? "Destination selected" : "Search destination");
-  safeText("mobileDestinationCommandMeta", routeIsMonitoring ? `Selected: ${routeLabelParts.activeLabel || "Saved destination"}` : "Choose Route to set a destination and open search.");
-  safeText("mobileDestinationCommandBtn", "Choose Route");
+  syncMobileDestinationCommandCard();
   safeText("mobileLiveRouteStatus", `${els.routeStatus?.textContent || "Corridor clear"} • ${els.routeEta?.textContent || "ETA pending"}`);
   safeText("mobileLiveRouteMeta", getLiveCommuteSignalLine({ impact, urgentBlockedCount: routeIntel.urgentBlockedCount, recommendation: els.routeRecommendation?.textContent || "" }));
   renderDesktopRouteWatchMetrics({
