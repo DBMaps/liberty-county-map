@@ -12213,3 +12213,49 @@ body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
     grid-template-columns: minmax(0, 1fr) !important;
   }
 }
+
+/* V122.6h — portrait visual stabilization cleanup (top safe-area + compact zoom rail) */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] .command-center {
+    padding-top: max(8px, env(safe-area-inset-top, 0px)) !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-live-brand,
+  body[data-layout-mode="portrait"] .mobile-premium-header,
+  body[data-layout-mode="portrait"] .mobile-destination-command,
+  body[data-layout-mode="portrait"] .mobile-live-command {
+    margin-left: max(8px, env(safe-area-inset-left, 0px)) !important;
+    margin-right: max(8px, env(safe-area-inset-right, 0px)) !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-live-command {
+    margin-top: 4px !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card {
+    margin-top: 8px !important;
+  }
+
+  body[data-layout-mode="portrait"] #map .leaflet-top,
+  body[data-layout-mode="portrait"] #map .leaflet-right {
+    height: auto !important;
+  }
+
+  body[data-layout-mode="portrait"] #map .leaflet-top.leaflet-right,
+  body[data-layout-mode="portrait"] #map .leaflet-bottom.leaflet-right {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    gap: 8px !important;
+  }
+
+  body[data-layout-mode="portrait"] #map .leaflet-control-layers,
+  body[data-layout-mode="portrait"] #map .leaflet-control-zoom {
+    margin: 0 !important;
+    align-self: flex-end !important;
+  }
+
+  body[data-layout-mode="portrait"] #map .leaflet-control-zoom {
+    margin-bottom: calc(196px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
