@@ -12117,13 +12117,18 @@ body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
     pointer-events: none !important;
   }
 
-  body[data-layout-mode="portrait"].portrait-alerts-open #alertsSection {
+  body[data-layout-mode="portrait"].portrait-alerts-open #alertsSection,
+  body[data-layout-mode-legacy="mobile"].portrait-alerts-open #alertsSection {
     display: grid !important;
     position: fixed !important;
     left: 10px !important;
     right: 10px !important;
     top: calc(var(--mobile-command-zone-top, 72px) + 6px) !important;
     bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+    width: auto !important;
+    height: auto !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
     z-index: 10040 !important;
     overflow: auto !important;
   }
