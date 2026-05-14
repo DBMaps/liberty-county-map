@@ -3962,8 +3962,31 @@ function renderCrossings() {
       })
       .addTo(crossingLayer);
 
+    marker.off("click");
     marker.on("click", () => {
       console.log("Crossing marker clicked", String(crossing.id));
+      const mapRef = map;
+      if (!mapRef || typeof mapRef.latLngToContainerPoint !== "function" || typeof mapRef.panBy !== "function") {
+        marker.openPopup();
+        return;
+      }
+      const markerPoint = mapRef.latLngToContainerPoint(marker.getLatLng());
+      const viewportHeight = mapRef.getSize?.().y || window.innerHeight || 0;
+      const safeTopPadding = 18;
+      const estimatedPopupHeight = 210;
+      const availableTopSpace = markerPoint.y - safeTopPadding;
+      const requiredTopSpace = estimatedPopupHeight;
+      const missingTopSpace = Math.max(0, requiredTopSpace - availableTopSpace);
+      const preferredMarkerY = Math.round(viewportHeight * 0.62);
+      const preferredOffset = Math.max(0, preferredMarkerY - markerPoint.y);
+      const panDownPixels = Math.min(120, Math.max(missingTopSpace, preferredOffset));
+      const shouldAutoPan = panDownPixels > 8;
+      if (shouldAutoPan) {
+        mapRef.panBy([0, panDownPixels], { animate: true, duration: 0.25 });
+      }
+      window.__gridlyLastPopupAutoPanApplied = shouldAutoPan;
+      const openDelayMs = shouldAutoPan ? 120 : 0;
+      setTimeout(() => marker.openPopup(), openDelayMs);
     });
 
     marker.on("popupopen", () => {
@@ -14324,12 +14347,28 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const popupV2Styled = Boolean(document.querySelector(".leaflet-popup-content-wrapper"));
     const popupContentEl = document.querySelector("#map .leaflet-popup-content");
     const popupViewportSafe = Boolean(popupContentEl && getComputedStyle(popupContentEl).overflowY === "auto");
+    const filterSegmentButtons = Array.from(document.querySelectorAll("#gridlyPortraitV2 .gridly-v2-segments button"));
+    const filterStripBalanced = filterSegmentButtons.length === 5 && filterSegmentButtons.every((button) => {
+      const width = button.getBoundingClientRect().width;
+      return Number.isFinite(width) && width > 0;
+    });
+    const popupContainerEl = document.querySelector("#map .leaflet-popup");
+    const mapRect = document.getElementById("map")?.getBoundingClientRect?.();
+    const popupRect = popupContainerEl?.getBoundingClientRect?.();
+    const popupViewportCentered = Boolean(
+      mapRect && popupRect &&
+      popupRect.top >= mapRect.top + 4 &&
+      popupRect.left >= mapRect.left + 4 &&
+      popupRect.right <= mapRect.right - 4 &&
+      popupRect.bottom <= mapRect.bottom - 4
+    );
+    const popupAutoPanApplied = Boolean(window.__gridlyLastPopupAutoPanApplied);
     const typographyPassApplied = Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-status-pill strong"));
     const iconSystemUnified = v2IconsApplied && Boolean(document.querySelector("#gridlyPortraitV2 .dock-icon svg"));
     const surfacePolishApplied = Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-topbar"));
     const spacingRhythmPassApplied = Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-status-pill") && document.querySelector("#gridlyPortraitV2 .gridly-v2-segments"));
     const compactHeaderRefined = Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-brand img") && document.querySelector("#gridlyPortraitV2 .gridly-v2-brand span"));
-    return {v2Exists:Boolean(v2),v2Visible:Boolean(v2&&getComputedStyle(v2).display!=="none"),activeSheet,sheetOpen:!document.getElementById("gridlyPortraitV2Sheet")?.hidden,dockButtonsFound:document.querySelectorAll(".gridly-v2-bottom-dock button").length,controlRailFound:Boolean(document.querySelector(".gridly-v2-control-rail")),legacyPortraitHidden:legacyHidden,duplicateZoomControlsVisible,duplicateFilterStripsVisible,v2IconsApplied,legacyControlsHidden,mapContainerFound:Boolean(document.getElementById("map")),layoutMode:mode, popupV2Styled, popupViewportSafe, compactBrandApplied, compactHeaderRefined, typographyPassApplied, spacingRhythmPassApplied, iconSystemUnified, surfacePolishApplied, warnings};
+    return {v2Exists:Boolean(v2),v2Visible:Boolean(v2&&getComputedStyle(v2).display!=="none"),activeSheet,sheetOpen:!document.getElementById("gridlyPortraitV2Sheet")?.hidden,dockButtonsFound:document.querySelectorAll(".gridly-v2-bottom-dock button").length,controlRailFound:Boolean(document.querySelector(".gridly-v2-control-rail")),legacyPortraitHidden:legacyHidden,duplicateZoomControlsVisible,duplicateFilterStripsVisible,v2IconsApplied,legacyControlsHidden,mapContainerFound:Boolean(document.getElementById("map")),layoutMode:mode, popupV2Styled, popupViewportSafe, filterStripBalanced, popupViewportCentered, popupAutoPanApplied, compactBrandApplied, compactHeaderRefined, typographyPassApplied, spacingRhythmPassApplied, iconSystemUnified, surfacePolishApplied, warnings};
   };
   document.addEventListener("DOMContentLoaded", bindV2);
 })();
