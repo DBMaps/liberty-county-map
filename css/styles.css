@@ -13016,3 +13016,72 @@ body[data-layout-mode="portrait"] #map{height:100vh;}
 .gridly-v2-sheet header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.gridly-v2-sheet header h3{margin:0;color:#f3f8ff}
 #gridlyPortraitV2SheetClose{border:0;background:rgba(255,255,255,.1);color:#fff;border-radius:8px;padding:3px 8px}
 .gridly-v2-list,.gridly-v2-tiles{display:grid;gap:8px}.gridly-v2-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.gridly-v2-tile{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);color:#daebff;border-radius:10px;padding:10px;font-size:12px}
+
+/* V128.1 Portrait V2 cleanup */
+body[data-layout-mode="portrait"] #gridlyPortraitV2 {
+  display: block;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail button,
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button,
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button {
+  font-size: 0.73rem;
+  padding: 8px 6px;
+  letter-spacing: 0.01em;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button.is-active {
+  background: linear-gradient(135deg, rgba(94, 177, 255, 0.32), rgba(67, 149, 255, 0.23));
+  border-color: rgba(146, 209, 255, 0.58);
+  color: #e6f4ff;
+  box-shadow: 0 6px 14px rgba(32, 92, 171, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button {
+  flex-direction: column;
+  min-width: 0;
+  padding: 8px 5px;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button em {
+  font-size: 0.68rem;
+  line-height: 1;
+  font-style: normal;
+  opacity: 0.95;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button:active,
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button:focus-visible {
+  transform: translateY(1px);
+  filter: brightness(1.07);
+}
+
+body[data-layout-mode="portrait"] #map .leaflet-control-zoom,
+body[data-layout-mode="portrait"] .mobile-floating-action-dock,
+body[data-layout-mode="portrait"] .map-tools-overlay,
+body[data-layout-mode="portrait"] .map-card .map-tools-overlay,
+body[data-layout-mode="portrait"] .geo-filter-status,
+body[data-layout-mode="portrait"] .map-card .map-ux-strip .geo-filter-shell,
+body[data-layout-mode="portrait"] .map-tools-overlay .geo-filter-shell {
+  display: none !important;
+}
