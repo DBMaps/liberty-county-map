@@ -12167,3 +12167,49 @@ body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
     overflow: auto !important;
   }
 }
+
+/* V122.6g — portrait alerts/settings surface hardening */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] .mobile-live-brand-status-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-header-settings-btn {
+    min-width: 36px;
+    min-height: 36px;
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    padding: 0;
+    display: inline-grid;
+    place-items: center;
+    font-size: 1.05rem;
+    line-height: 1;
+  }
+
+  body[data-layout-mode="portrait"].portrait-alerts-open #alertsSection,
+  body[data-layout-mode-legacy="mobile"].portrait-alerts-open #alertsSection {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    overflow-x: hidden !important;
+  }
+
+  body[data-layout-mode="portrait"].portrait-alerts-open #alertsSection > .drawer-panel,
+  body[data-layout-mode-legacy="mobile"].portrait-alerts-open #alertsSection > .drawer-panel,
+  body[data-layout-mode="portrait"].portrait-alerts-open #alertsSection .drawer-body,
+  body[data-layout-mode-legacy="mobile"].portrait-alerts-open #alertsSection .drawer-body {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  body[data-layout-mode="portrait"].portrait-alerts-open #alertsSection .drawer-body,
+  body[data-layout-mode-legacy="mobile"].portrait-alerts-open #alertsSection .drawer-body {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
