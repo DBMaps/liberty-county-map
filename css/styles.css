@@ -12258,4 +12258,55 @@ body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
   body[data-layout-mode="portrait"] #map .leaflet-control-zoom {
     margin-bottom: calc(196px + env(safe-area-inset-bottom, 0px)) !important;
   }
+
+  body[data-layout-mode="portrait"] #map .gridly-mobile-control-rail,
+  body[data-layout-mode-legacy="mobile"] #map .gridly-mobile-control-rail {
+    top: auto !important;
+    bottom: calc(102px + env(safe-area-inset-bottom, 0px)) !important;
+    width: auto !important;
+    height: auto !important;
+    max-height: max-content !important;
+    padding: 6px !important;
+    gap: 6px !important;
+    align-items: flex-end !important;
+  }
+
+  body[data-layout-mode="portrait"] #map .leaflet-bottom.leaflet-right,
+  body[data-layout-mode="portrait"] #map .leaflet-top.leaflet-right,
+  body[data-layout-mode-legacy="mobile"] #map .leaflet-bottom.leaflet-right,
+  body[data-layout-mode-legacy="mobile"] #map .leaflet-top.leaflet-right {
+    height: auto !important;
+    min-height: 0 !important;
+    width: auto !important;
+  }
+
+  body[data-layout-mode="portrait"] #map .leaflet-control-layers,
+  body[data-layout-mode="portrait"] #map .leaflet-control-layers-expanded,
+  body[data-layout-mode-legacy="mobile"] #map .leaflet-control-layers,
+  body[data-layout-mode-legacy="mobile"] #map .leaflet-control-layers-expanded {
+    width: auto !important;
+    min-width: 42px !important;
+    max-width: min(72vw, 260px) !important;
+    height: auto !important;
+    max-height: min(46vh, 320px) !important;
+    overflow: auto !important;
+  }
+
+  body[data-layout-mode="portrait"] #alertsSection .portrait-alerts-close,
+  body[data-layout-mode-legacy="mobile"] #alertsSection .portrait-alerts-close {
+    display: inline-flex !important;
+    align-self: flex-end;
+    align-items: center;
+    justify-content: center;
+    min-height: 30px;
+    padding: 4px 10px;
+    margin-bottom: 6px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    letter-spacing: 0.03em;
+    z-index: 1;
+  }
 }
+
+
+#alertsSection .portrait-alerts-close { display: none; }
