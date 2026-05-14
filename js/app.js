@@ -1781,6 +1781,9 @@ function hydrateElements() {
     "trendingDrawer",
     "smartAlertsModal",
     "smartAlertsModalBackdrop",
+    "settingsModal",
+    "settingsModalBackdrop",
+    "closeSettingsModalBtn",
     "closeSmartAlertsModalBtn",
     "openSmartAlertsBtn",
     "mobileAlertsMirror",
@@ -2523,6 +2526,49 @@ function closeModal(modalEl, { restoreFocus = true } = {}) {
     requestAnimationFrame(() => modalEl.__opener.focus());
   }
 }
+
+const GRIDLY_PRIMARY_SURFACE_IDS = ["alerts", "settings", "route", "report", "search", "layers"];
+let gridlyActiveSurface = null;
+
+function closeGridlySurface(surface, options = {}) {
+  const { silent = false } = options;
+  if (!surface) return;
+  if (surface === "alerts") document.body.classList.remove("portrait-alerts-open");
+  if (surface === "settings") {
+    closeSettingsModal({ restoreFocus: false });
+    closeSmartAlertsModal();
+  }
+  if (surface === "route") closeRouteSetupModal({ restoreFocus: false });
+  if (surface === "report" && typeof closeReportSurface === "function") closeReportSurface({ source: "gridly_surface_owner", nextMode: "live" });
+  if (surface === "search" && typeof hideGridlySearchShell === "function") hideGridlySearchShell({ source: "surface_ownership", restoreFocus: false });
+  if (!silent) gridlyActiveSurface = null;
+}
+
+function openGridlySurface(surface, openHandler = null) {
+  if (!surface) return;
+  GRIDLY_PRIMARY_SURFACE_IDS.forEach((id) => {
+    if (id !== surface) closeGridlySurface(id, { silent: true });
+  });
+  if (typeof openHandler === "function") openHandler();
+  gridlyActiveSurface = surface;
+}
+
+window.gridlySurfaceDebug = function gridlySurfaceDebug() {
+  const surfaceStates = {
+    alerts: Boolean(document.body.classList.contains("portrait-alerts-open")),
+    settings: Boolean((els.settingsModal && !els.settingsModal.hidden) || (els.smartAlertsModal && !els.smartAlertsModal.hidden)),
+    route: Boolean((els.routeSetupModal && !els.routeSetupModal.hidden) || mobileUiMode === "route"),
+    report: Boolean((activeReportMode && activeReportMode !== REPORT_MODES.none) || mobileUiMode === "report"),
+    search: Boolean(els.gridlySearchShell && !els.gridlySearchShell.hidden),
+    layers: mobileUiMode === "layers"
+  };
+  const openPanels = Object.entries(surfaceStates).filter(([, open]) => open).map(([name]) => name);
+  const modalCount = ["settingsModal", "smartAlertsModal", "routeSetupModal"].reduce((count, id) => {
+    const modal = document.getElementById(id);
+    return count + (modal && !modal.hidden ? 1 : 0);
+  }, 0);
+  return { activeSurface: gridlyActiveSurface, openPanels, modalCount, surfaceStates };
+};
 
 
 function resolveZipCode(zipCode = "") {
@@ -6420,26 +6466,27 @@ function bindEvents() {
     });
   });
   document.getElementById("mobileDockRouteBtn")?.addEventListener("click", () => {
-    closePortraitAlertsPanel();
+    closeGridlySurface("alerts", { silent: true });
     closeAllTacticalDockSurfaces({ except: "route" });
     routeLauncherSource = "route-dock-button";
-    openMobileRouteQuickPanel();
+    openGridlySurface("route", () => openMobileRouteQuickPanel());
   });
   document.getElementById("mobileDockAlertsBtn")?.addEventListener("click", () => {
     if (!isTacticalLandscapeDockMode()) {
-      closeSmartAlertsModal();
       const alertsSection = document.getElementById("alertsSection");
-      document.body.classList.add("portrait-alerts-open");
-      if (alertsSection) {
-        alertsSection.hidden = false;
-        alertsSection.setAttribute("aria-hidden", "false");
-        alertsSection.style.display = "grid";
-        alertsSection.style.opacity = "1";
-        alertsSection.style.pointerEvents = "auto";
-        alertsSection.style.width = "";
-        alertsSection.style.height = "";
-      }
-      setMobileUiMode("alert", { silent: true });
+      openGridlySurface("alerts", () => {
+        document.body.classList.add("portrait-alerts-open");
+        if (alertsSection) {
+          alertsSection.hidden = false;
+          alertsSection.setAttribute("aria-hidden", "false");
+          alertsSection.style.display = "grid";
+          alertsSection.style.opacity = "1";
+          alertsSection.style.pointerEvents = "auto";
+          alertsSection.style.width = "";
+          alertsSection.style.height = "";
+        }
+        setMobileUiMode("alert", { silent: true });
+      });
       return;
     }
     const rows = (getUnifiedIncidents?.() || []).slice(0, 8).map((incident) => {
@@ -6449,7 +6496,7 @@ function bindEvents() {
     openTacticalDockSheet("alerts", "Live Alerts", `<div class="gridly-tactical-alert-list">${rows}</div><div class="gridly-tactical-sheet-actions"><button type="button" data-alerts-manage>Manage Alerts</button></div>`);
     document.querySelector("#gridlyTacticalDockSheet [data-alerts-manage]")?.addEventListener("click", () => {
       closeTacticalDockSheet();
-      openSmartAlertsModal();
+      openGridlySurface("settings", () => openSettingsModal());
     }, { once: true });
   });
   document.getElementById("mobileDockLayersBtn")?.addEventListener("click", () => {
@@ -6752,6 +6799,7 @@ function bindEvents() {
   bindTacticalLandscapeControls();
   els.saveSmartAlertsBtn?.addEventListener("click", saveSmartAlertsPreferences);
   els.closeSmartAlertsModalBtn?.addEventListener("click", closeSmartAlertsModal);
+  els.closeSettingsModalBtn?.addEventListener("click", () => closeGridlySurface("settings"));
   if (els.mobileSaveRouteBtn) {
     saveButtonHandlerAttached = true;
     els.mobileSaveRouteBtn.addEventListener("click", () => {
@@ -6839,7 +6887,8 @@ function bindEvents() {
     }
   });
   els.smartAlertsModalBackdrop?.addEventListener("click", closeSmartAlertsModal);
-  els.openSmartAlertsBtn?.addEventListener("click", openSmartAlertsModal);
+  els.settingsModalBackdrop?.addEventListener("click", () => closeGridlySurface("settings"));
+  els.openSmartAlertsBtn?.addEventListener("click", () => openGridlySurface("settings", () => openSettingsModal()));
 
   els.quickClearBtn?.addEventListener("click", async () => {
     if (!lastSubmittedCrossing) {
@@ -6900,7 +6949,7 @@ function bindEvents() {
   };
   const routeNavSection = (section) => {
     if (section === "settings") {
-      setConfirmation("Settings are coming soon.", "info");
+      openGridlySurface("settings", () => openSettingsModal());
       return;
     }
     const target = navTargets[section];
@@ -6912,7 +6961,7 @@ function bindEvents() {
         return;
       }
       if (section === "map" || section === "dashboard") setMobileUiMode("live", { silent: true });
-      if (section === "alerts") setMobileUiMode("alert", { silent: true });
+      if (section === "alerts") openGridlySurface("alerts", () => setMobileUiMode("alert", { silent: true }));
       if (section === "routes") setMobileUiMode("route", { silent: true });
       if (section === "report") setMobileUiMode("report", { silent: true });
     }
@@ -7106,6 +7155,16 @@ function openSmartAlertsModal() {
 
 function closeSmartAlertsModal() {
   closeModal(els.smartAlertsModal);
+}
+
+function openSettingsModal() {
+  if (!els.settingsModal) return;
+  openModal(els.settingsModal);
+}
+
+function closeSettingsModal(options = {}) {
+  if (!els.settingsModal) return;
+  closeModal(els.settingsModal, options);
 }
 
 function handleSmartReportButton() {
