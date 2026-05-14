@@ -228,6 +228,14 @@ let gridlyPopupLastMarkerScreenPoint = null;
 let gridlyPopupLastSafeTargetPoint = null;
 let gridlyPopupClippedAfterOpen = null;
 let gridlyPopupViewportBounds = null;
+let gridlyPopupSingleTapFlowReady = true;
+let gridlyLastPopupTapCrossingId = null;
+let gridlyLastPopupPanStartedAt = null;
+let gridlyLastPopupMoveEndAt = null;
+let gridlyLastPopupFallbackFiredAt = null;
+let gridlyLastPopupFinalizeReason = null;
+let gridlyDuplicateMarkerClickCount = 0;
+let gridlyMarkerClickHandlerGuardApplied = false;
 
 function cancelPendingCrossingPopup(reason = "") {
   const session = window.__gridlyPopupPanSession;
@@ -250,6 +258,7 @@ function finalizeOpenCrossingPopup(marker, token, reason = "unknown") {
   if (session.fallbackTimer) clearTimeout(session.fallbackTimer);
   if (session.moveendHandler && session.mapRef?.off) session.mapRef.off("moveend", session.moveendHandler);
   gridlyPopupLastOpenAt = Date.now();
+  gridlyLastPopupFinalizeReason = reason;
   gridlyPopupOpenCount += 1;
   gridlyPopupLastFailureReason = reason === "fallback" ? "" : gridlyPopupLastFailureReason;
   marker.openPopup();
@@ -4025,14 +4034,24 @@ function renderCrossings() {
       })
       .addTo(crossingLayer);
 
-    marker.off("click");
-    marker.on("click", () => {
-      console.log("Crossing marker clicked", String(crossing.id));
-      const mapRef = map;
-      gridlyPopupLastTapAt = Date.now();
-      gridlyPopupReopenReady = false;
-      const token = `popup-${++gridlyPopupTapSeq}`;
-      cancelPendingCrossingPopup("replaced-by-new-tap");
+    if (!marker.__gridlyCrossingClickBound) {
+      marker.off("click");
+      marker.on("click", () => {
+        const now = Date.now();
+        if (Number.isFinite(marker.__gridlyLastClickAt) && now - marker.__gridlyLastClickAt < 220) {
+          gridlyDuplicateMarkerClickCount += 1;
+          return;
+        }
+        marker.__gridlyLastClickAt = now;
+        console.log("Crossing marker clicked", String(crossing.id));
+        const mapRef = map;
+        gridlyPopupLastTapAt = now;
+        gridlyLastPopupTapCrossingId = String(crossing.id);
+        gridlyPopupSingleTapFlowReady = true;
+        gridlyPopupReopenReady = false;
+        const token = `popup-${++gridlyPopupTapSeq}`;
+        cancelPendingCrossingPopup("replaced-by-new-tap");
+        mapRef?.closePopup?.();
 
       if (!mapRef || typeof mapRef.latLngToContainerPoint !== "function" || typeof mapRef.panBy !== "function") {
         const session = { token, marker, mapRef: null, opened: false, settleTimer: null, fallbackTimer: null, moveendHandler: null };
@@ -4069,21 +4088,27 @@ function renderCrossings() {
       window.__gridlyPopupPanSession = session;
 
       if (!shouldAutoPan) {
-        session.settleTimer = setTimeout(() => finalizeOpenCrossingPopup(marker, token, "no-pan"), 10);
+        session.settleTimer = setTimeout(() => finalizeOpenCrossingPopup(marker, token, "no-pan"), 90);
         return;
       }
 
+      gridlyLastPopupPanStartedAt = Date.now();
       session.moveendHandler = () => {
         if (window.__gridlyPopupPanSession?.token !== token) return;
+        gridlyLastPopupMoveEndAt = Date.now();
         session.settleTimer = setTimeout(() => finalizeOpenCrossingPopup(marker, token, "moveend-settle"), 90);
       };
       mapRef.on("moveend", session.moveendHandler);
       session.fallbackTimer = setTimeout(() => {
+        gridlyLastPopupFallbackFiredAt = Date.now();
         const opened = finalizeOpenCrossingPopup(marker, token, "fallback");
         if (!opened) gridlyPopupLastFailureReason = "fallback-ignored";
-      }, 420);
+      }, 700);
       mapRef.panBy([panX, panY], { animate: true, duration: 0.27 });
-    });
+      });
+      marker.__gridlyCrossingClickBound = true;
+      gridlyMarkerClickHandlerGuardApplied = true;
+    }
 
     marker.on("popupopen", () => {
       console.log("Crossing popup opened", String(crossing.id));
@@ -4094,6 +4119,8 @@ function renderCrossings() {
 
     marker.on("popupclose", () => {
       gridlyPopupReopenReady = true;
+      const activeSession = window.__gridlyPopupPanSession;
+      if (activeSession && !activeSession.opened) return;
       cancelPendingCrossingPopup("popup-closed");
     });
 
@@ -14481,7 +14508,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const surfacePolishApplied = Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-topbar"));
     const spacingRhythmPassApplied = Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-status-pill") && document.querySelector("#gridlyPortraitV2 .gridly-v2-segments"));
     const compactHeaderRefined = Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-brand img") && document.querySelector("#gridlyPortraitV2 .gridly-v2-brand span"));
-    return {v2Exists:Boolean(v2),v2Visible:Boolean(v2&&getComputedStyle(v2).display!=="none"),activeSheet,sheetOpen:!document.getElementById("gridlyPortraitV2Sheet")?.hidden,dockButtonsFound:document.querySelectorAll(".gridly-v2-bottom-dock button").length,controlRailFound:Boolean(document.querySelector(".gridly-v2-control-rail")),legacyPortraitHidden:legacyHidden,duplicateZoomControlsVisible,duplicateFilterStripsVisible,v2IconsApplied,legacyControlsHidden,mapContainerFound:Boolean(document.getElementById("map")),layoutMode:mode, popupV2Styled, popupViewportSafe, filterStripBalanced, popupViewportCentered, popupAutoPanApplied, popupCameraPanApplied, popupAnchorMode, popupLastMarkerScreenPoint, popupLastSafeTargetPoint, popupClippedAfterOpen, popupViewportBounds, popupAutoPanSequenced, popupBlinkResolved, lastPopupTapAt:gridlyPopupLastTapAt, lastPopupOpenAt:gridlyPopupLastOpenAt, pendingPopupToken:window.__gridlyPopupPanSession?.token||null, popupOpenCount:gridlyPopupOpenCount, popupCancelCount:gridlyPopupCancelCount, popupLastFailureReason:gridlyPopupLastFailureReason||null, popupReopenReady:gridlyPopupReopenReady, compactBrandApplied, compactHeaderRefined, typographyPassApplied, spacingRhythmPassApplied, iconSystemUnified, dockIconSystemUnified, railIconSystemUnified, iconSystemReferenceAligned, surfacePolishApplied, warnings};
+    return {v2Exists:Boolean(v2),v2Visible:Boolean(v2&&getComputedStyle(v2).display!=="none"),activeSheet,sheetOpen:!document.getElementById("gridlyPortraitV2Sheet")?.hidden,dockButtonsFound:document.querySelectorAll(".gridly-v2-bottom-dock button").length,controlRailFound:Boolean(document.querySelector(".gridly-v2-control-rail")),legacyPortraitHidden:legacyHidden,duplicateZoomControlsVisible,duplicateFilterStripsVisible,v2IconsApplied,legacyControlsHidden,mapContainerFound:Boolean(document.getElementById("map")),layoutMode:mode, popupV2Styled, popupViewportSafe, filterStripBalanced, popupViewportCentered, popupAutoPanApplied, popupCameraPanApplied, popupAnchorMode, popupLastMarkerScreenPoint, popupLastSafeTargetPoint, popupClippedAfterOpen, popupViewportBounds, popupAutoPanSequenced, popupBlinkResolved, lastPopupTapAt:gridlyPopupLastTapAt, lastPopupOpenAt:gridlyPopupLastOpenAt, pendingPopupToken:window.__gridlyPopupPanSession?.token||null, popupOpenCount:gridlyPopupOpenCount, popupCancelCount:gridlyPopupCancelCount, popupLastFailureReason:gridlyPopupLastFailureReason||null, popupReopenReady:gridlyPopupReopenReady, popupSingleTapFlowReady:gridlyPopupSingleTapFlowReady, lastPopupTapCrossingId:gridlyLastPopupTapCrossingId, lastPopupPanStartedAt:gridlyLastPopupPanStartedAt, lastPopupMoveEndAt:gridlyLastPopupMoveEndAt, lastPopupFallbackFiredAt:gridlyLastPopupFallbackFiredAt, lastPopupFinalizeReason:gridlyLastPopupFinalizeReason, duplicateMarkerClickCount:gridlyDuplicateMarkerClickCount, markerClickHandlerGuardApplied:gridlyMarkerClickHandlerGuardApplied, compactBrandApplied, compactHeaderRefined, typographyPassApplied, spacingRhythmPassApplied, iconSystemUnified, dockIconSystemUnified, railIconSystemUnified, iconSystemReferenceAligned, surfacePolishApplied, warnings};
   };
   document.addEventListener("DOMContentLoaded", bindV2);
 })();
