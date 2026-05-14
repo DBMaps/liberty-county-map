@@ -12006,6 +12006,13 @@ body[data-layout-mode="portrait"] .mobile-live-command {
   margin: 0 0 10px;
 }
 
+/* V122.5z - portrait live commute card is status-only (no route launcher CTA) */
+body[data-layout-mode="portrait"] #mobileLiveRouteActionBtn {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
 body[data-layout-mode="portrait"] .mobile-destination-command-copy {
   display: grid;
   gap: 4px;
