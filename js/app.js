@@ -14283,3 +14283,39 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   })();
 
 })();
+
+/* ===== Gridly Portrait V2 Shell Wiring ===== */
+(() => {
+  const sheetTemplates = {
+    report: { title: "Report Hazard", html: `<div class="gridly-v2-tiles">${["Flooding","Ice","Debris","Crash / Wreck","Construction","Road Closed","Disabled Vehicle"].map((i)=>`<button class="gridly-v2-tile" type="button">${i}</button>`).join("")}</div><div class="gridly-v2-list"><button class="primary-btn" type="button">Use My Location</button><button class="secondary-btn" type="button">Tap Map Location</button></div>` },
+    route: { title: "Route Setup", html: `<div class="gridly-v2-list"><label>Start<select id="gridlyV2StartSel"><option>Choose start</option></select></label><label>Destination<select id="gridlyV2DestSel"><option>Choose destination</option></select></label><button class="primary-btn" id="gridlyV2StartRouteWatchBtn" type="button">Start Route Watch</button><button class="secondary-btn" id="gridlyV2ViewRouteBtn" type="button">View Route</button><button class="secondary-btn" id="gridlyV2ManagePlacesBtn" type="button">Manage Places</button></div>` },
+    alerts: { title: "Alerts", html: `<div class="gridly-v2-list"><div class="gridly-v2-tile">Trending Now</div><div class="gridly-v2-tile">Live Alerts</div><div class="gridly-v2-tile">Road Hazards</div><div class="gridly-v2-tile">Impact Score</div><button class="secondary-btn" data-v2-sheet="settings" type="button">Manage Alerts</button></div>` },
+    settings: { title: "Settings", html: `<div class="gridly-v2-list"><button class="gridly-v2-tile" type="button">Set Home Town</button><button class="gridly-v2-tile" type="button">Home / Work / Saved Places</button><button class="gridly-v2-tile" type="button">Alert Preferences</button><button class="gridly-v2-tile" type="button">Route Preferences</button><button class="gridly-v2-tile" type="button">App Preferences</button></div>` }
+  };
+  let activeSheet = "";
+  function openPortraitV2Sheet(type) {
+    const sheet = document.getElementById("gridlyPortraitV2Sheet"); const backdrop = document.getElementById("gridlyPortraitV2SheetBackdrop");
+    const title = document.getElementById("gridlyPortraitV2SheetTitle"); const body = document.getElementById("gridlyPortraitV2SheetBody");
+    const template = sheetTemplates[type]; if (!sheet || !backdrop || !template) return;
+    activeSheet = type; title.textContent = template.title; body.innerHTML = template.html; sheet.hidden = false; backdrop.hidden = false;
+  }
+  function closePortraitV2Sheet(){ const sheet=document.getElementById("gridlyPortraitV2Sheet"); const backdrop=document.getElementById("gridlyPortraitV2SheetBackdrop"); if(sheet)sheet.hidden=true; if(backdrop)backdrop.hidden=true; activeSheet=""; }
+  function bindV2(){
+    document.querySelectorAll("[data-v2-sheet]").forEach((b)=>b.addEventListener("click",()=>openPortraitV2Sheet(b.dataset.v2Sheet)));
+    document.getElementById("gridlyV2TopSettingsBtn")?.addEventListener("click",()=>openPortraitV2Sheet("settings"));
+    document.getElementById("gridlyPortraitV2SheetClose")?.addEventListener("click",closePortraitV2Sheet);
+    document.getElementById("gridlyPortraitV2SheetBackdrop")?.addEventListener("click",closePortraitV2Sheet);
+    document.querySelectorAll(".gridly-v2-segments button").forEach((b)=>b.addEventListener("click",()=>{document.querySelectorAll(".gridly-v2-segments button").forEach(x=>x.classList.remove("is-active"));b.classList.add("is-active");const gf=b.dataset.geoFilter;document.querySelector(`.geo-filter-pill[data-geo-filter='${gf}']`)?.click();}));
+    document.querySelector("[data-v2-control='zoom-in']")?.addEventListener("click",()=>document.querySelector("#map .leaflet-control-zoom-in")?.click());
+    document.querySelector("[data-v2-control='zoom-out']")?.addEventListener("click",()=>document.querySelector("#map .leaflet-control-zoom-out")?.click());
+    document.querySelector("[data-v2-control='layers']")?.addEventListener("click",()=>document.querySelector("#mobileDockLayersBtn")?.click());
+  }
+  window.openPortraitV2Sheet = openPortraitV2Sheet;
+  window.gridlyPortraitV2Debug = function(){
+    const v2=document.getElementById("gridlyPortraitV2"); const mode=document.body?.dataset?.layoutMode||null;
+    const legacyHidden=[".mobile-live-brand","#mobileLocalContextStrip","#mobileDailyPanel",".mobile-floating-action-dock"].every((sel)=>{const el=document.querySelector(sel);return !el||getComputedStyle(el).display==="none";});
+    const warnings=[]; if(mode!=="portrait") warnings.push("Layout is not portrait.");
+    return {v2Exists:Boolean(v2),v2Visible:Boolean(v2&&getComputedStyle(v2).display!=="none"),activeSheet,sheetOpen:!document.getElementById("gridlyPortraitV2Sheet")?.hidden,dockButtonsFound:document.querySelectorAll(".gridly-v2-bottom-dock button").length,controlRailFound:Boolean(document.querySelector(".gridly-v2-control-rail")),legacyPortraitHidden:legacyHidden,mapContainerFound:Boolean(document.getElementById("map")),layoutMode:mode,warnings};
+  };
+  document.addEventListener("DOMContentLoaded", bindV2);
+})();

@@ -568,6 +568,42 @@
     </div>
   </main>
 
+
+
+  <section id="gridlyPortraitV2" aria-label="Gridly Portrait V2 shell" hidden>
+    <div class="gridly-v2-topbar">
+      <div class="gridly-v2-brand"><img src="assets/gridly-logo-primary.png" alt="Gridly logo"/></div>
+      <div class="gridly-v2-watch"><span>WATCHING LIBERTY COUNTY</span></div>
+      <button id="gridlyV2TopSettingsBtn" class="gridly-v2-icon-btn" type="button" aria-label="Open settings">⚙</button>
+    </div>
+    <div class="gridly-v2-status-pill">
+      <strong>Heavy blockage ahead • ETA 24m</strong>
+      <span>Delay building near Dayton crossing</span>
+    </div>
+    <div class="gridly-v2-segments" role="tablist" aria-label="Map scope filters">
+      <button class="is-active" type="button" data-v2-filter="nearby" data-geo-filter="nearby">Nearby</button>
+      <button type="button" data-v2-filter="route" data-geo-filter="town">My Route</button>
+      <button type="button" data-v2-filter="town" data-geo-filter="county">My Town</button>
+      <button type="button" data-v2-filter="delays" data-geo-filter="active-delays">Delays</button>
+      <button type="button" data-v2-filter="all" data-geo-filter="all">All</button>
+    </div>
+    <div class="gridly-v2-control-rail" aria-label="Map controls">
+      <button type="button" data-v2-control="layers" aria-label="Layers">☷</button>
+      <button type="button" data-v2-control="zoom-in" aria-label="Zoom in">＋</button>
+      <button type="button" data-v2-control="zoom-out" aria-label="Zoom out">－</button>
+    </div>
+    <div class="gridly-v2-bottom-dock" aria-label="Primary actions">
+      <button type="button" data-v2-sheet="report"><span>⚠</span><em>Report</em></button>
+      <button type="button" data-v2-sheet="route"><span>➤</span><em>Route</em></button>
+      <button type="button" data-v2-sheet="alerts"><span>◉</span><em>Alerts</em></button>
+      <button type="button" data-v2-sheet="settings"><span>⚙</span><em>Settings</em></button>
+    </div>
+    <div id="gridlyPortraitV2SheetBackdrop" class="gridly-v2-sheet-backdrop" hidden></div>
+    <section id="gridlyPortraitV2Sheet" class="gridly-v2-sheet" hidden aria-live="polite">
+      <header><h3 id="gridlyPortraitV2SheetTitle">Panel</h3><button id="gridlyPortraitV2SheetClose" type="button" aria-label="Close panel">×</button></header>
+      <div id="gridlyPortraitV2SheetBody"></div>
+    </section>
+  </section>
   <div class="mobile-floating-action-dock" aria-label="Quick commute actions">
     <button class="mobile-dock-btn report" type="button" id="mobileDockReportBtn" data-mode="report">Report</button>
     <button class="mobile-dock-btn route" type="button" id="mobileDockRouteBtn" data-section-jump="routes" data-mode="route">Route</button>
