@@ -6376,9 +6376,13 @@ function bindEvents() {
     document.body.classList.remove("portrait-alerts-open");
     const alertsSection = document.getElementById("alertsSection");
     if (!alertsSection) return;
-    alertsSection.style.display = "";
     alertsSection.hidden = true;
     alertsSection.setAttribute("aria-hidden", "true");
+    alertsSection.style.display = "";
+    alertsSection.style.opacity = "";
+    alertsSection.style.pointerEvents = "";
+    alertsSection.style.width = "";
+    alertsSection.style.height = "";
   };
   els.mobileReportBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_sticky_report", event));
   els.mobileDockReportBtn?.addEventListener("click", (event) => {
@@ -6428,8 +6432,12 @@ function bindEvents() {
       document.body.classList.add("portrait-alerts-open");
       if (alertsSection) {
         alertsSection.hidden = false;
-        alertsSection.style.display = "grid";
         alertsSection.setAttribute("aria-hidden", "false");
+        alertsSection.style.display = "grid";
+        alertsSection.style.opacity = "1";
+        alertsSection.style.pointerEvents = "auto";
+        alertsSection.style.width = "";
+        alertsSection.style.height = "";
       }
       setMobileUiMode("alert", { silent: true });
       return;
@@ -13919,10 +13927,29 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const liveCard = document.querySelector(".mobile-live-command");
     const header = document.querySelector(".app-header");
     const mapFrame = document.querySelector(".map-frame");
+    const alertsStyle = alertsSection ? window.getComputedStyle(alertsSection) : null;
+    const alertsBounds = getBounds(alertsSection);
+    const portraitAlertsOpenClassPresent = document.body.classList.contains("portrait-alerts-open");
+    const alertsPanelLikelyVisible = Boolean(
+      alertsSection
+      && alertsStyle
+      && alertsStyle.display !== "none"
+      && alertsStyle.opacity !== "0"
+      && alertsStyle.pointerEvents !== "none"
+      && alertsBounds
+      && alertsBounds.width > 0
+      && alertsBounds.height > 0
+    );
     return {
       alertsButtonVisible: isVisible(alertsBtn),
       alertsSectionExists: Boolean(alertsSection),
       alertsSectionVisible: isVisible(alertsSection),
+      alertsSectionDisplay: alertsStyle?.display || null,
+      alertsSectionOpacity: alertsStyle?.opacity || null,
+      alertsSectionPointerEvents: alertsStyle?.pointerEvents || null,
+      alertsSectionBounds: alertsBounds,
+      portraitAlertsOpenClassPresent,
+      alertsPanelLikelyVisible,
       smartAlertsModalVisible: isVisible(smartAlertsModal),
       areaDockVisible: isVisible(areaDockBtn),
       geoFilterVisible: isVisible(geoFilter),
