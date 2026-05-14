@@ -12031,3 +12031,12 @@ body[data-layout-mode="portrait"] .mobile-destination-command p {
 body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
   display: none;
 }
+
+/* V122.6a — keep zoom controls visible above map overlays */
+@media (max-width: 760px) {
+  body[data-layout-mode="mobile"] #map .leaflet-control-zoom {
+    z-index: 10090 !important;
+    margin-bottom: calc(112px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
