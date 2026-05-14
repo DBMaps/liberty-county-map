@@ -239,6 +239,12 @@ let gridlyLastPopupTimerFiredAt = null;
 let gridlyPopupSingleTapGuaranteed = true;
 let gridlyDuplicateMarkerClickCount = 0;
 let gridlyMarkerClickHandlerGuardApplied = false;
+let gridlyPopupLastFinalizeAttemptAt = null;
+let gridlyPopupLastOpenCallAt = null;
+let gridlyPopupLastOpenMethod = "none";
+let gridlyPopupEarlyReturnReason = "";
+let gridlyPopupInterferenceEventSeen = false;
+let gridlyRouteWatchAllClickedDuringPopupTap = false;
 
 function cancelPendingCrossingPopup(reason = "") {
   const session = window.__gridlyPopupPanSession;
@@ -250,13 +256,33 @@ function cancelPendingCrossingPopup(reason = "") {
 }
 
 function finalizeOpenCrossingPopup(marker, token, reason = "unknown") {
+  gridlyPopupLastFinalizeAttemptAt = Date.now();
   const session = window.__gridlyPopupPanSession;
-  if (!session || session.token !== token || session.marker !== marker || session.opened) return false;
+  if (!session) {
+    gridlyPopupEarlyReturnReason = "no-session";
+    return false;
+  }
+  if (session.token !== token) {
+    gridlyPopupEarlyReturnReason = "stale-token";
+    return false;
+  }
+  if (session.marker !== marker) {
+    gridlyPopupEarlyReturnReason = "marker-mismatch";
+    return false;
+  }
+  if (session.opened) {
+    gridlyPopupEarlyReturnReason = "already-opened";
+    return false;
+  }
   session.opened = true;
   if (session.openTimer) clearTimeout(session.openTimer);
+  session.openTimer = null;
   gridlyPopupLastOpenAt = Date.now();
   gridlyLastPopupFinalizeReason = reason;
   gridlyPopupOpenCount += 1;
+  gridlyPopupLastOpenCallAt = Date.now();
+  gridlyPopupLastOpenMethod = "marker.openPopup";
+  gridlyPopupEarlyReturnReason = "";
   gridlyPopupLastFailureReason = reason === "fallback" ? "" : gridlyPopupLastFailureReason;
   marker.openPopup();
   requestAnimationFrame(() => {
@@ -4033,7 +4059,9 @@ function renderCrossings() {
 
     if (!marker.__gridlyCrossingClickBound) {
       marker.off("click");
-      marker.on("click", () => {
+      marker.on("click", (event) => {
+        event?.originalEvent?.stopPropagation?.();
+        event?.originalEvent?.preventDefault?.();
         const now = Date.now();
         if (Number.isFinite(marker.__gridlyLastClickAt) && now - marker.__gridlyLastClickAt < 220) {
           gridlyDuplicateMarkerClickCount += 1;
@@ -7296,6 +7324,10 @@ function bindEvents() {
       const filterKey = btn.dataset.geoFilter || "all";
       const logMessage = routeWatchLogByFilter[filterKey];
       if (logMessage) console.log(logMessage);
+      if (filterKey === "all" && Date.now() - (gridlyPopupLastTapAt || 0) < 900) {
+        gridlyRouteWatchAllClickedDuringPopupTap = true;
+        gridlyPopupInterferenceEventSeen = true;
+      }
       applyGeoFilterFromPill(filterKey);
     });
   });
@@ -14505,7 +14537,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const surfacePolishApplied = Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-topbar"));
     const spacingRhythmPassApplied = Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-status-pill") && document.querySelector("#gridlyPortraitV2 .gridly-v2-segments"));
     const compactHeaderRefined = Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-brand img") && document.querySelector("#gridlyPortraitV2 .gridly-v2-brand span"));
-    return {v2Exists:Boolean(v2),v2Visible:Boolean(v2&&getComputedStyle(v2).display!=="none"),activeSheet,sheetOpen:!document.getElementById("gridlyPortraitV2Sheet")?.hidden,dockButtonsFound:document.querySelectorAll(".gridly-v2-bottom-dock button").length,controlRailFound:Boolean(document.querySelector(".gridly-v2-control-rail")),legacyPortraitHidden:legacyHidden,duplicateZoomControlsVisible,duplicateFilterStripsVisible,v2IconsApplied,legacyControlsHidden,mapContainerFound:Boolean(document.getElementById("map")),layoutMode:mode, popupV2Styled, popupViewportSafe, filterStripBalanced, popupViewportCentered, popupAutoPanApplied, popupCameraPanApplied, popupAnchorMode, popupLastMarkerScreenPoint, popupLastSafeTargetPoint, popupClippedAfterOpen, popupViewportBounds, popupAutoPanSequenced, popupBlinkResolved, lastPopupTapAt:gridlyPopupLastTapAt, lastPopupOpenAt:gridlyPopupLastOpenAt, pendingPopupToken:window.__gridlyPopupPanSession?.token||null, popupOpenCount:gridlyPopupOpenCount, popupCancelCount:gridlyPopupCancelCount, popupLastFailureReason:gridlyPopupLastFailureReason||null, popupReopenReady:gridlyPopupReopenReady, popupSingleTapFlowReady:gridlyPopupSingleTapFlowReady, popupSingleTapGuaranteed:gridlyPopupSingleTapGuaranteed, lastPopupTapCrossingId:gridlyLastPopupTapCrossingId, lastPopupPanStartedAt:gridlyLastPopupPanStartedAt, lastPopupMoveEndAt:gridlyLastPopupMoveEndAt, lastPopupFallbackFiredAt:gridlyLastPopupFallbackFiredAt, lastPopupScheduledDelay:gridlyLastPopupScheduledDelay, lastPopupTimerFiredAt:gridlyLastPopupTimerFiredAt, lastPopupFinalizeReason:gridlyLastPopupFinalizeReason, duplicateMarkerClickCount:gridlyDuplicateMarkerClickCount, markerClickHandlerGuardApplied:gridlyMarkerClickHandlerGuardApplied, compactBrandApplied, compactHeaderRefined, typographyPassApplied, spacingRhythmPassApplied, iconSystemUnified, dockIconSystemUnified, railIconSystemUnified, iconSystemReferenceAligned, surfacePolishApplied, warnings};
+    return {v2Exists:Boolean(v2),v2Visible:Boolean(v2&&getComputedStyle(v2).display!=="none"),activeSheet,sheetOpen:!document.getElementById("gridlyPortraitV2Sheet")?.hidden,dockButtonsFound:document.querySelectorAll(".gridly-v2-bottom-dock button").length,controlRailFound:Boolean(document.querySelector(".gridly-v2-control-rail")),legacyPortraitHidden:legacyHidden,duplicateZoomControlsVisible,duplicateFilterStripsVisible,v2IconsApplied,legacyControlsHidden,mapContainerFound:Boolean(document.getElementById("map")),layoutMode:mode, popupV2Styled, popupViewportSafe, filterStripBalanced, popupViewportCentered, popupAutoPanApplied, popupCameraPanApplied, popupAnchorMode, popupLastMarkerScreenPoint, popupLastSafeTargetPoint, popupClippedAfterOpen, popupViewportBounds, popupAutoPanSequenced, popupBlinkResolved, lastPopupTapAt:gridlyPopupLastTapAt, lastPopupOpenAt:gridlyPopupLastOpenAt, pendingPopupToken:window.__gridlyPopupPanSession?.token||null, popupOpenCount:gridlyPopupOpenCount, popupCancelCount:gridlyPopupCancelCount, popupLastFailureReason:gridlyPopupLastFailureReason||null, popupReopenReady:gridlyPopupReopenReady, popupSingleTapFlowReady:gridlyPopupSingleTapFlowReady, popupSingleTapGuaranteed:gridlyPopupSingleTapGuaranteed, lastPopupTapCrossingId:gridlyLastPopupTapCrossingId, lastPopupPanStartedAt:gridlyLastPopupPanStartedAt, lastPopupMoveEndAt:gridlyLastPopupMoveEndAt, lastPopupFallbackFiredAt:gridlyLastPopupFallbackFiredAt, lastPopupScheduledDelay:gridlyLastPopupScheduledDelay, lastPopupTimerFiredAt:gridlyLastPopupTimerFiredAt, lastPopupFinalizeReason:gridlyLastPopupFinalizeReason, popupLastClickCrossingId:gridlyLastPopupTapCrossingId, popupLastFinalizeAttemptAt:gridlyPopupLastFinalizeAttemptAt, popupLastOpenCallAt:gridlyPopupLastOpenCallAt, popupLastOpenMethod:gridlyPopupLastOpenMethod, popupOpenCallCount:gridlyPopupOpenCount, popupEarlyReturnReason:gridlyPopupEarlyReturnReason||null, popupPaneCount:document.querySelectorAll(".leaflet-popup-pane .leaflet-popup").length, popupDomExists:Boolean(document.querySelector(".leaflet-popup")), popupInterferenceEventSeen:gridlyPopupInterferenceEventSeen, routeWatchAllClickedDuringPopupTap:gridlyRouteWatchAllClickedDuringPopupTap, duplicateMarkerClickCount:gridlyDuplicateMarkerClickCount, markerClickHandlerGuardApplied:gridlyMarkerClickHandlerGuardApplied, compactBrandApplied, compactHeaderRefined, typographyPassApplied, spacingRhythmPassApplied, iconSystemUnified, dockIconSystemUnified, railIconSystemUnified, iconSystemReferenceAligned, surfacePolishApplied, warnings};
   };
   document.addEventListener("DOMContentLoaded", bindV2);
 })();
