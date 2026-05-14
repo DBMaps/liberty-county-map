@@ -14322,10 +14322,14 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const warnings=[]; if(mode!=="portrait") warnings.push("Layout is not portrait.");
     const compactBrandApplied = Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-brand span"));
     const popupV2Styled = Boolean(document.querySelector(".leaflet-popup-content-wrapper"));
+    const popupContentEl = document.querySelector("#map .leaflet-popup-content");
+    const popupViewportSafe = Boolean(popupContentEl && getComputedStyle(popupContentEl).overflowY === "auto");
     const typographyPassApplied = Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-status-pill strong"));
     const iconSystemUnified = v2IconsApplied && Boolean(document.querySelector("#gridlyPortraitV2 .dock-icon svg"));
     const surfacePolishApplied = Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-topbar"));
-    return {v2Exists:Boolean(v2),v2Visible:Boolean(v2&&getComputedStyle(v2).display!=="none"),activeSheet,sheetOpen:!document.getElementById("gridlyPortraitV2Sheet")?.hidden,dockButtonsFound:document.querySelectorAll(".gridly-v2-bottom-dock button").length,controlRailFound:Boolean(document.querySelector(".gridly-v2-control-rail")),legacyPortraitHidden:legacyHidden,duplicateZoomControlsVisible,duplicateFilterStripsVisible,v2IconsApplied,legacyControlsHidden,mapContainerFound:Boolean(document.getElementById("map")),layoutMode:mode, popupV2Styled, compactBrandApplied, typographyPassApplied, iconSystemUnified, surfacePolishApplied, warnings};
+    const spacingRhythmPassApplied = Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-status-pill") && document.querySelector("#gridlyPortraitV2 .gridly-v2-segments"));
+    const compactHeaderRefined = Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-brand img") && document.querySelector("#gridlyPortraitV2 .gridly-v2-brand span"));
+    return {v2Exists:Boolean(v2),v2Visible:Boolean(v2&&getComputedStyle(v2).display!=="none"),activeSheet,sheetOpen:!document.getElementById("gridlyPortraitV2Sheet")?.hidden,dockButtonsFound:document.querySelectorAll(".gridly-v2-bottom-dock button").length,controlRailFound:Boolean(document.querySelector(".gridly-v2-control-rail")),legacyPortraitHidden:legacyHidden,duplicateZoomControlsVisible,duplicateFilterStripsVisible,v2IconsApplied,legacyControlsHidden,mapContainerFound:Boolean(document.getElementById("map")),layoutMode:mode, popupV2Styled, popupViewportSafe, compactBrandApplied, compactHeaderRefined, typographyPassApplied, spacingRhythmPassApplied, iconSystemUnified, surfacePolishApplied, warnings};
   };
   document.addEventListener("DOMContentLoaded", bindV2);
 })();
