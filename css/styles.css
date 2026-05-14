@@ -12040,3 +12040,12 @@ body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
   }
 }
 
+/* V122.6b — portrait zoom controls must clear the bottom dock */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #map .leaflet-control-zoom {
+    right: 12px !important;
+    bottom: 0 !important;
+    margin: 0 0 calc(132px + env(safe-area-inset-bottom, 0px)) 0 !important;
+    z-index: 10100 !important;
+  }
+}

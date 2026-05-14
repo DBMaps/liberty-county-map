@@ -6411,7 +6411,11 @@ function bindEvents() {
     openMobileRouteQuickPanel();
   });
   document.getElementById("mobileDockAlertsBtn")?.addEventListener("click", () => {
-    if (!isTacticalLandscapeDockMode()) return openSmartAlertsModal();
+    if (!isTacticalLandscapeDockMode()) {
+      closeSmartAlertsModal();
+      routeNavSection("alerts");
+      return;
+    }
     const rows = (getUnifiedIncidents?.() || []).slice(0, 8).map((incident) => {
       const latest = incident?.latestReport || {};
       return `<article class="gridly-tactical-alert-row"><strong>${sanitizeText(incident?.crossingName || "Incident")}</strong><p>${sanitizeText(getReportCopy(latest.type).label)} · ${sanitizeText(getReportStateLabel(latest))}</p></article>`;
@@ -6471,8 +6475,9 @@ function bindEvents() {
     openMobileRouteQuickPanel();
   });
   els.mobileQuickFavoritesBtn?.addEventListener("click", () => {
-    openSmartAlertsModal();
-    setConfirmation("Smart Alerts opened.", "success");
+    closeSmartAlertsModal();
+    routeNavSection("alerts");
+    setConfirmation("Live alerts opened.", "success");
   });
   const weatherChipBtn = els.mobileWeatherChipBtn || document.querySelector("#mobileWeatherChipBtn, .mobile-weather-chip");
   const bellBtn = els.mobileBellBtn || document.querySelector("#mobileBellBtn, .mobile-icon-btn");
@@ -6482,8 +6487,9 @@ function bindEvents() {
     setConfirmation("Weather context is not wired yet. Opening live map as a safe fallback.", "success");
   });
   bindMobileTap(bellBtn, () => {
-    openSmartAlertsModal();
-    setConfirmation("Smart Alerts opened.", "success");
+    closeSmartAlertsModal();
+    routeNavSection("alerts");
+    setConfirmation("Live alerts opened.", "success");
   });
 
   const mobileHeaderTapState = { town: 0, avatar: 0 };
