@@ -2554,6 +2554,14 @@ function openGridlySurface(surface, openHandler = null) {
 }
 
 window.gridlySurfaceDebug = function gridlySurfaceDebug() {
+  const surfaceSelectors = {
+    alerts: "#alertsSection",
+    settings: "#settingsModal",
+    route: "#routeSetupModal, #gridlyMobileRouteQuickPanel",
+    report: "#reportSection, #gridlyMobileHazardPanel",
+    search: "#gridlySearchShell",
+    layers: "#mobileNativeSurfaceLayer"
+  };
   const surfaceStates = {
     alerts: Boolean(document.body.classList.contains("portrait-alerts-open")),
     settings: Boolean((els.settingsModal && !els.settingsModal.hidden) || (els.smartAlertsModal && !els.smartAlertsModal.hidden)),
@@ -2567,7 +2575,18 @@ window.gridlySurfaceDebug = function gridlySurfaceDebug() {
     const modal = document.getElementById(id);
     return count + (modal && !modal.hidden ? 1 : 0);
   }, 0);
-  return { activeSurface: gridlyActiveSurface, openPanels, modalCount, surfaceStates };
+  const closeButtonsFound = Array.from(document.querySelectorAll(".gridly-surface-close")).map((button) => ({
+    id: button.id || null,
+    ariaLabel: button.getAttribute("aria-label") || null,
+    visible: Boolean(button.getClientRects().length > 0)
+  }));
+  const surfacesMissingClose = Object.entries(surfaceSelectors)
+    .filter(([, selector]) => {
+      const node = document.querySelector(selector);
+      return node && !node.querySelector(".gridly-surface-close");
+    })
+    .map(([surface]) => surface);
+  return { activeSurface: gridlyActiveSurface, openPanels, modalCount, surfaceStates, closeButtonsFound, surfacesMissingClose };
 };
 
 
@@ -6901,6 +6920,12 @@ function bindEvents() {
   els.smartAlertsModalBackdrop?.addEventListener("click", closeSmartAlertsModal);
   els.settingsModalBackdrop?.addEventListener("click", () => closeGridlySurface("settings"));
   els.openSmartAlertsBtn?.addEventListener("click", () => openGridlySurface("settings", () => openSettingsModal()));
+  els.openSmartAlertsBtn?.addEventListener("click", () => {
+    const section = document.getElementById("settingsAlertPreferencesSection");
+    section?.scrollIntoView?.({ block: "start", behavior: "smooth" });
+    section?.classList.add("gridly-settings-focus");
+    window.setTimeout(() => section?.classList.remove("gridly-settings-focus"), 1200);
+  });
 
   els.quickClearBtn?.addEventListener("click", async () => {
     if (!lastSubmittedCrossing) {
@@ -13994,10 +14019,13 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const smartAlertsModal = document.getElementById("smartAlertsModal");
     const areaDockBtn = document.getElementById("mobileDockAreaBtn");
     const geoFilter = document.querySelector(".geo-filter-pill");
-    const destinationCard = document.querySelector(".mobile-destination-command, .destination-hero-card");
+    const destinationCard = document.querySelector(".mobile-destination-command");
     const liveCard = document.querySelector(".mobile-live-command");
     const header = document.querySelector(".app-header");
     const mapFrame = document.querySelector(".map-frame");
+    const bottomDock = document.querySelector(".mobile-floating-action-dock");
+    const rightControl = document.querySelector("#map .leaflet-right");
+    const zoomControl = document.querySelector("#map .leaflet-control-zoom");
     const alertsStyle = alertsSection ? window.getComputedStyle(alertsSection) : null;
     const alertsBounds = getBounds(alertsSection);
     const portraitAlertsOpenClassPresent = document.body.classList.contains("portrait-alerts-open");
@@ -14011,6 +14039,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       && alertsBounds.width > 0
       && alertsBounds.height > 0
     );
+    const mapFrameBounds = getBounds(mapFrame);
+    const rightControlBounds = getBounds(rightControl);
+    const zoomControlBounds = getBounds(zoomControl);
+    const layoutShiftRisk = Boolean(mapFrameBounds && mapFrameBounds.height < 280);
     return {
       alertsButtonVisible: isVisible(alertsBtn),
       alertsSectionExists: Boolean(alertsSection),
@@ -14024,10 +14056,18 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       smartAlertsModalVisible: isVisible(smartAlertsModal),
       areaDockVisible: isVisible(areaDockBtn),
       geoFilterVisible: isVisible(geoFilter),
+      destinationCardVisible: isVisible(destinationCard),
       destinationCardBounds: getBounds(destinationCard),
       liveCardBounds: getBounds(liveCard),
       headerBounds: getBounds(header),
-      mapFrameBounds: getBounds(mapFrame)
+      mapFrameBounds,
+      bottomDockBounds: getBounds(bottomDock),
+      rightControlBounds,
+      zoomControlBounds,
+      layoutShiftRisk,
+      alertsPanelVisible: alertsPanelLikelyVisible,
+      settingsVisible: isVisible(document.getElementById("settingsModal")),
+      activeSurface: gridlyActiveSurface
     };
   };
 
