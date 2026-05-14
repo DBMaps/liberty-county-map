@@ -1804,6 +1804,9 @@ function hydrateElements() {
     "mobileDockRouteBtn",
     "mobileDockAlertsBtn",
     "mobileDockAreaBtn",
+    "mobileDestinationCommandBtn",
+    "mobileDestinationCommandTitle",
+    "mobileDestinationCommandMeta",
     "mobileLiveRouteActionBtn",
     "mobileLiveRouteStatus",
     "mobileLiveRouteMeta",
@@ -6411,19 +6414,20 @@ function bindEvents() {
       }, { once: true });
     });
   });
-  if (els.mobileLiveRouteActionBtn && els.mobileLiveRouteActionBtn.dataset.searchBound !== "true") {
+  if (els.mobileDestinationCommandBtn && els.mobileDestinationCommandBtn.dataset.searchBound !== "true") {
+    els.mobileDestinationCommandBtn.addEventListener("click", (event) => {
+      routeLauncherSource = "choose-route-button";
+      openDestinationSearchShell(event, "chooseRouteButton");
+    });
+    els.mobileDestinationCommandBtn.dataset.searchBound = "true";
+  }
+  if (els.mobileLiveRouteActionBtn && els.mobileLiveRouteActionBtn.dataset.infoBound !== "true") {
     els.mobileLiveRouteActionBtn.addEventListener("click", (event) => {
-      const ctaLabel = String(els.mobileLiveRouteActionBtn?.textContent || "").trim().toLowerCase();
-      if (ctaLabel === "choose route") {
-        routeLauncherSource = "choose-route-button";
-        openDestinationSearchShell(event, "chooseRouteButton");
-        return;
-      }
       routeLauncherSource = "status-action-informational";
       event?.preventDefault?.();
       event?.stopPropagation?.();
     });
-    els.mobileLiveRouteActionBtn.dataset.searchBound = "true";
+    els.mobileLiveRouteActionBtn.dataset.infoBound = "true";
   }
   els.mobileQuickReportBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_quick_report_btn", event));
   els.mobileQuickReportSmallBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_quick_report_small_btn", event));
@@ -8133,8 +8137,8 @@ window.gridlySearchDebug = function gridlySearchDebug() {
     hasSearchClearButton: Boolean(clearBtn),
     hasDestinationAddBtn: Boolean(els.destinationAddBtn),
     destinationAddBtnBound: Boolean(els.destinationAddBtn?.dataset?.searchBound === "true"),
-    hasChooseRouteButton: Boolean(els.mobileLiveRouteActionBtn),
-    chooseRouteButtonBound: Boolean(els.mobileLiveRouteActionBtn?.dataset?.searchBound === "true"),
+    hasChooseRouteButton: Boolean(els.mobileDestinationCommandBtn),
+    chooseRouteButtonBound: Boolean(els.mobileDestinationCommandBtn?.dataset?.searchBound === "true"),
     hasDestinationHeroCard: Boolean(document.querySelector(".destination-hero-card")),
     destinationHeroCardBound: Boolean(document.querySelector(".destination-hero-card")?.dataset?.searchBound === "true"),
     isSearching: Boolean(gridlySearchUiState.isSearching),
@@ -9446,10 +9450,17 @@ window.gridlyRouteExecutionDebug = function gridlyRouteExecutionDebug() {
   const destinationCoords = normalizeCoordinatePair(selectedDestinationPlace?.lat, selectedDestinationPlace?.lng);
   const routeButton = document.querySelector('#routeWatchStartBtn, #gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="start-route-watch-quick"], #gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="view-route-quick"]');
   const rect = routeButton?.getBoundingClientRect?.();
+  const destinationCommandCard = document.querySelector(".mobile-destination-command");
   const routeStatusCard = document.querySelector(".mobile-live-command");
   const searchShell = document.getElementById("gridlySearchShell");
+  const destinationCommandRect = destinationCommandCard?.getBoundingClientRect?.();
   const routeStatusRect = routeStatusCard?.getBoundingClientRect?.();
   const searchShellRect = searchShell?.getBoundingClientRect?.();
+  const destinationCommandText = [
+    document.getElementById("mobileDestinationCommandTitle")?.textContent || "",
+    document.getElementById("mobileDestinationCommandMeta")?.textContent || "",
+    document.getElementById("mobileDestinationCommandBtn")?.textContent || ""
+  ].map((value) => String(value).trim()).filter(Boolean).join(" | ");
   const routeStatusCardText = [
     document.getElementById("mobileLiveStatusPill")?.textContent || "",
     document.getElementById("mobileLiveRouteStatus")?.textContent || "",
@@ -9479,6 +9490,11 @@ window.gridlyRouteExecutionDebug = function gridlyRouteExecutionDebug() {
     routeButtonRect: rect ? { x: rect.x, y: rect.y, width: rect.width, height: rect.height } : null,
     routeButtonClickHandlersFound: Boolean(routeQuickDirectListenerAttached || routeQuickButtonDelegatedBindingActive || els?.routeWatchStartBtn),
     routeActionButtonBound: Boolean(routeQuickDirectListenerAttached || routeQuickButtonDelegatedBindingActive || els?.routeWatchStartBtn?.dataset?.searchBound === "true"),
+    destinationCommandVisible: Boolean(destinationCommandCard && destinationCommandRect && destinationCommandRect.width > 0 && destinationCommandRect.height > 0 && window.getComputedStyle(destinationCommandCard).display !== "none"),
+    destinationCommandText,
+    liveCommuteCardVisible: Boolean(routeStatusCard && routeStatusRect && routeStatusRect.width > 0 && routeStatusRect.height > 0 && window.getComputedStyle(routeStatusCard).display !== "none"),
+    liveCommuteCardText: routeStatusCardText,
+    destinationAndStatusSeparated: Boolean(destinationCommandCard && routeStatusCard && destinationCommandCard !== routeStatusCard),
     routeStatusCardVisible: Boolean(routeStatusCard && routeStatusRect && routeStatusRect.width > 0 && routeStatusRect.height > 0 && window.getComputedStyle(routeStatusCard).display !== "none"),
     liveCommandMode,
     routeStatusMode,
@@ -10398,6 +10414,9 @@ function updateRouteIntelligence(nearest = []) {
   }
   const mobileLiveCommand = document.querySelector(".mobile-live-command");
   if (mobileLiveCommand) mobileLiveCommand.removeAttribute("data-delay-state");
+  safeText("mobileDestinationCommandTitle", routeIsMonitoring ? "Destination selected" : "Search destination");
+  safeText("mobileDestinationCommandMeta", routeIsMonitoring ? `Selected: ${routeLabelParts.activeLabel || "Saved destination"}` : "Choose Route to set a destination and open search.");
+  safeText("mobileDestinationCommandBtn", "Choose Route");
   safeText("mobileLiveRouteStatus", `${els.routeStatus?.textContent || "Corridor clear"} • ${els.routeEta?.textContent || "ETA pending"}`);
   safeText("mobileLiveRouteMeta", getLiveCommuteSignalLine({ impact, urgentBlockedCount: routeIntel.urgentBlockedCount, recommendation: els.routeRecommendation?.textContent || "" }));
   renderDesktopRouteWatchMetrics({
