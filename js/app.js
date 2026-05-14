@@ -181,6 +181,7 @@ let lastSubmittedReportType = null;
 let crossingLoadFailed = false;
 let activeGeoFilter = "nearby";
 let activeReportMode = REPORT_MODES.rail;
+let routeLauncherSource = "none";
 let showAllCrossingsLayer = false;
 let savedRouteCrossingIds = new Set();
 let activeDestinationPlace = null;
@@ -2448,6 +2449,10 @@ function syncModalScrollLock() {
     "route-setup-open",
     Boolean(els.routeSetupModal && !els.routeSetupModal.hidden)
   );
+}
+
+function setRouteActiveBodyState(isActive) {
+  document.body.classList.toggle("route-active", Boolean(isActive));
 }
 function openFirstRunSetupModal() {
   return;
@@ -5139,6 +5144,7 @@ function injectMobileQuickActionOverlays() {
 }
 
 function openMobileRouteQuickPanel() {
+  routeLauncherSource = routeLauncherSource || "unknown";
   injectMobileQuickActionOverlays();
   const panel = document.getElementById("gridlyMobileRouteQuickPanel");
   if (!panel) return;
@@ -6375,6 +6381,7 @@ function bindEvents() {
   });
   document.getElementById("mobileDockRouteBtn")?.addEventListener("click", () => {
     closeAllTacticalDockSurfaces({ except: "route" });
+    routeLauncherSource = "route-dock-button";
     openMobileRouteQuickPanel();
   });
   document.getElementById("mobileDockAlertsBtn")?.addEventListener("click", () => {
@@ -6408,10 +6415,13 @@ function bindEvents() {
     els.mobileLiveRouteActionBtn.addEventListener("click", (event) => {
       const ctaLabel = String(els.mobileLiveRouteActionBtn?.textContent || "").trim().toLowerCase();
       if (ctaLabel === "choose route") {
+        routeLauncherSource = "choose-route-button";
         openDestinationSearchShell(event, "chooseRouteButton");
         return;
       }
-      openMobileRouteQuickPanel();
+      routeLauncherSource = "status-action-informational";
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
     });
     els.mobileLiveRouteActionBtn.dataset.searchBound = "true";
   }
@@ -6425,7 +6435,10 @@ function bindEvents() {
 
     setConfirmation("No recent crossing selected to clear.", "error");
   });
-  els.mobileQuickRouteBtn?.addEventListener("click", () => openMobileRouteQuickPanel());
+  els.mobileQuickRouteBtn?.addEventListener("click", () => {
+    routeLauncherSource = "quick-route-button";
+    openMobileRouteQuickPanel();
+  });
   els.mobileQuickFavoritesBtn?.addEventListener("click", () => {
     openSmartAlertsModal();
     setConfirmation("Smart Alerts opened.", "success");
@@ -6657,6 +6670,7 @@ function bindEvents() {
     setConfirmation("Opening Live Map.", "success");
   });
   els.mobileCommuteRouteBtn?.addEventListener("click", () => {
+    routeLauncherSource = "view-route-button";
     setConfirmation("Opening Route Watch.", "success");
   });
   els.mobileCrossingReportBtn?.addEventListener("click", () => {
@@ -6774,18 +6788,6 @@ function bindEvents() {
     resetSmartReportButton();
   });
 
-  const handleRouteCardInteraction = () => {
-    const hasSavedRoute = getSavedPlaces().length > 0;
-    const isMobile = window.matchMedia("(max-width: 1100px)").matches;
-
-    if (isMobile) {
-      if (!hasSavedRoute) openRouteSetupModal();
-      return;
-    }
-
-    scrollToSection("setupCard");
-  };
-
   els.mobileEditRouteBtn?.addEventListener("click", (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -6824,13 +6826,6 @@ function bindEvents() {
     destinationHeroCard.dataset.searchBound = "true";
   }
 
-  els.routeStatusCard?.addEventListener("click", handleRouteCardInteraction);
-  els.routeStatusCard?.addEventListener("keydown", (event) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      handleRouteCardInteraction();
-    }
-  });
 
   const navTargets = {
     dashboard: "dashboardSection",
@@ -6953,6 +6948,7 @@ function bindEvents() {
           routeNavSection("map");
           return;
         }
+        routeLauncherSource = "view-route-button";
         openRouteSetupModal(btn);
         return;
       }
@@ -9460,6 +9456,11 @@ window.gridlyRouteExecutionDebug = function gridlyRouteExecutionDebug() {
     document.getElementById("mobileLiveRouteMeta")?.textContent || "",
     document.getElementById("mobileLiveRouteActionBtn")?.textContent || ""
   ].map((value) => String(value).trim()).filter(Boolean).join(" | ");
+  const liveCommandButtonLabel = (document.getElementById("mobileLiveRouteActionBtn")?.textContent || "").trim().toLowerCase();
+  const liveCommandMode = liveCommandButtonLabel === "choose route" ? "command" : "status";
+  const routeStatusMode = routeWatchActivated || window.__gridlyRouteWatchActive ? "live-status" : "pre-route";
+  const liveCommandClickable = liveCommandMode === "command";
+  const routeStatusClickable = false;
   return {
     savedPlacesState: normalizeSavedPlaces?.() || null,
     savedPlaceKeys: savedPlaceDebug.savedPlaceKeys,
@@ -9479,6 +9480,12 @@ window.gridlyRouteExecutionDebug = function gridlyRouteExecutionDebug() {
     routeButtonClickHandlersFound: Boolean(routeQuickDirectListenerAttached || routeQuickButtonDelegatedBindingActive || els?.routeWatchStartBtn),
     routeActionButtonBound: Boolean(routeQuickDirectListenerAttached || routeQuickButtonDelegatedBindingActive || els?.routeWatchStartBtn?.dataset?.searchBound === "true"),
     routeStatusCardVisible: Boolean(routeStatusCard && routeStatusRect && routeStatusRect.width > 0 && routeStatusRect.height > 0 && window.getComputedStyle(routeStatusCard).display !== "none"),
+    liveCommandMode,
+    routeStatusMode,
+    liveCommandClickable,
+    routeStatusClickable,
+    routeStatusText: (document.getElementById("mobileLiveRouteStatus")?.textContent || "").trim(),
+    routeLauncherSource,
     routeQuickPanelOpen: Boolean(document.getElementById("gridlyMobileRouteQuickPanel")?.classList.contains("visible")),
     searchShellVisible: Boolean(searchShell && !searchShell.hasAttribute("hidden") && searchShell.dataset.searchUi !== "dormant"),
     routeStatusCardText,
@@ -10441,6 +10448,7 @@ function updateRouteIntelligence(nearest = []) {
   if (!routeIsMonitoring) {
     safeText("mobileLiveRouteActionBtn", "Choose route");
   }
+  setRouteActiveBodyState(routeIsMonitoring);
   updateAlternateRouteActionState();
 
   updateMobileTopCommuteCta({ impact, routeIsMonitoring, alternateRouteAvailable });
