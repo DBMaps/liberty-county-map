@@ -6414,13 +6414,17 @@ function bindEvents() {
       }, { once: true });
     });
   });
-  if (els.mobileDestinationCommandBtn && els.mobileDestinationCommandBtn.dataset.searchBound !== "true") {
+  const bindDestinationCommandButton = () => {
+    if (!els.mobileDestinationCommandBtn || els.mobileDestinationCommandBtn.dataset.searchBound === "true") return;
     els.mobileDestinationCommandBtn.addEventListener("click", (event) => {
       routeLauncherSource = "choose-route-button";
-      openDestinationSearchShell(event, "chooseRouteButton");
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      showGridlySearchShell({ focusInput: true, source: "destinationCommandButton" });
     });
     els.mobileDestinationCommandBtn.dataset.searchBound = "true";
-  }
+  };
+  bindDestinationCommandButton();
   if (els.mobileLiveRouteActionBtn && els.mobileLiveRouteActionBtn.dataset.infoBound !== "true") {
     els.mobileLiveRouteActionBtn.addEventListener("click", (event) => {
       routeLauncherSource = "status-action-informational";
@@ -8139,6 +8143,9 @@ window.gridlySearchDebug = function gridlySearchDebug() {
     destinationAddBtnBound: Boolean(els.destinationAddBtn?.dataset?.searchBound === "true"),
     hasChooseRouteButton: Boolean(els.mobileDestinationCommandBtn),
     chooseRouteButtonBound: Boolean(els.mobileDestinationCommandBtn?.dataset?.searchBound === "true"),
+    hasDestinationCommandButton: Boolean(els.mobileDestinationCommandBtn),
+    destinationCommandButtonBound: Boolean(els.mobileDestinationCommandBtn?.dataset?.searchBound === "true"),
+    destinationCommandButtonVisible: isVisible(els.mobileDestinationCommandBtn),
     hasDestinationHeroCard: Boolean(document.querySelector(".destination-hero-card")),
     destinationHeroCardBound: Boolean(document.querySelector(".destination-hero-card")?.dataset?.searchBound === "true"),
     isSearching: Boolean(gridlySearchUiState.isSearching),
