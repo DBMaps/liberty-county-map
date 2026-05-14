@@ -5218,6 +5218,9 @@ function bindDirectRouteQuickPanelButtonListeners() {
         selectedDestination,
         at: new Date().toISOString()
       };
+      if (els.routeWatchStartSelect && startSelect) els.routeWatchStartSelect.value = selectedStart;
+      if (els.routeWatchDestinationSelect && destinationSelect) els.routeWatchDestinationSelect.value = selectedDestination;
+      updateRouteWatchStartButtonState();
       event.preventDefault();
       event.stopPropagation();
       if (typeof event.stopImmediatePropagation === "function") event.stopImmediatePropagation();
@@ -9357,6 +9360,46 @@ function attachRouteQuickPanelDebugGlobal() {
   };
 }
 
+function getSavedPlaceDebugData() {
+  const state = normalizeSavedPlaces?.() || { home: null, work: null, custom: [], favorites: [] };
+  const places = Array.isArray(getSavedPlaces?.()) ? getSavedPlaces() : [];
+  const slots = {
+    home: state?.home?.id || null,
+    work: state?.work?.id || null,
+    custom: Array.isArray(state?.custom) ? state.custom.map((place) => place?.id || null).filter(Boolean) : [],
+    favorites: Array.isArray(state?.favorites) ? state.favorites.map((place) => place?.id || null).filter(Boolean) : []
+  };
+  const summarize = (title, place) => {
+    if (!place) return `${title}: (not set)`;
+    const coords = normalizeCoordinatePair(place?.lat, place?.lng);
+    return `${title}: ${place?.name || place?.label || title} | ${place?.address || "(no address)"} | ${coords ? `${coords.lat},${coords.lng}` : "no coordinates"}`;
+  };
+  const summary = [
+    summarize("Home", places.find((place) => place.id === "home") || state?.home),
+    summarize("Work", places.find((place) => place.id === "work") || state?.work),
+    ...places.filter((place) => place.id !== "home" && place.id !== "work").map((place) => summarize(place.name || place.label || place.id, place))
+  ];
+  return {
+    savedPlaceKeys: places.map((place) => place.id),
+    savedPlaceSummary: summary,
+    savedPlaceSlots: slots,
+    allSavedPlaces: places.map((place) => ({
+      id: place.id,
+      label: place.name || place.label || "",
+      address: place.address || "",
+      coordinates: normalizeCoordinatePair(place.lat, place.lng),
+      source: place.source || null
+    })),
+    normalizedState: state,
+    storageState: {
+      savedPlacesRaw: localStorage.getItem(SAVED_PLACES_STORAGE_KEY),
+      selectedPlaceId: localStorage.getItem(SELECTED_PLACE_STORAGE_KEY),
+      legacyHome: localStorage.getItem("gridlyHome"),
+      legacyWork: localStorage.getItem("gridlyWork")
+    }
+  };
+}
+
 window.gridlyRouteButtonBindingDebug = function gridlyRouteButtonBindingDebug() {
   const panel = document.getElementById("gridlyMobileRouteQuickPanel");
   const viewButton = panel?.querySelector?.('.route-quick-actions button[data-action="view-route-quick"]') || null;
@@ -9389,6 +9432,7 @@ window.gridlyRouteButtonBindingDebug = function gridlyRouteButtonBindingDebug() 
 };
 
 window.gridlyRouteExecutionDebug = function gridlyRouteExecutionDebug() {
+  const savedPlaceDebug = getSavedPlaceDebugData();
   const places = Array.isArray(getSavedPlaces?.()) ? getSavedPlaces() : [];
   const selectedStartValue = els?.routeWatchStartSelect?.value || "";
   const selectedDestinationValue = els?.routeWatchDestinationSelect?.value || "";
@@ -9400,8 +9444,15 @@ window.gridlyRouteExecutionDebug = function gridlyRouteExecutionDebug() {
   const rect = routeButton?.getBoundingClientRect?.();
   return {
     savedPlacesState: normalizeSavedPlaces?.() || null,
+    savedPlaceKeys: savedPlaceDebug.savedPlaceKeys,
+    savedPlaceSummary: savedPlaceDebug.savedPlaceSummary,
+    savedPlaceSlots: savedPlaceDebug.savedPlaceSlots,
     routeWatchState: { routeWatchActivated, routePreviewRendered, routePreviewReason },
     selectedStartValue, selectedDestinationValue, selectedStartPlace, selectedDestinationPlace,
+    resolvedStartName: selectedStartPlace?.name || selectedStartPlace?.label || null,
+    resolvedDestinationName: selectedDestinationPlace?.name || selectedDestinationPlace?.label || null,
+    resolvedStartCoordinates: startCoords || null,
+    resolvedDestinationCoordinates: destinationCoords || null,
     startHasLatLng: Boolean(startCoords), destinationHasLatLng: Boolean(destinationCoords),
     startCoords: startCoords || null, destinationCoords: destinationCoords || null,
     routeButtonExists: Boolean(routeButton), routeButtonText: (routeButton?.textContent || "").trim(),
@@ -9417,6 +9468,11 @@ window.gridlyRouteExecutionDebug = function gridlyRouteExecutionDebug() {
     lastRouteRequestAt: lastRouteRequestAt ? new Date(lastRouteRequestAt).toISOString() : null,
     duplicateRouteRequestBlockedCount
   };
+};
+
+
+window.gridlySavedPlacesDebug = function gridlySavedPlacesDebug() {
+  return getSavedPlaceDebugData();
 };
 
 window.gridlyMobileOverlayDebug = function gridlyMobileOverlayDebug() {
