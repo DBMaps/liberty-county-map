@@ -6372,8 +6372,17 @@ function bindEvents() {
     });
   };
   bindPortraitSurfaceOptionHandlers();
+  const closePortraitAlertsPanel = () => {
+    document.body.classList.remove("portrait-alerts-open");
+    const alertsSection = document.getElementById("alertsSection");
+    if (!alertsSection) return;
+    alertsSection.style.display = "";
+    alertsSection.hidden = true;
+    alertsSection.setAttribute("aria-hidden", "true");
+  };
   els.mobileReportBtn?.addEventListener("click", (event) => invokeMobileReportEntry("mobile_sticky_report", event));
   els.mobileDockReportBtn?.addEventListener("click", (event) => {
+    closePortraitAlertsPanel();
     if (!isTacticalLandscapeDockMode()) return invokeMobileReportEntry("mobile_dock_report_button", event);
     closeAllTacticalDockSurfaces({ except: "report" });
     setTacticalReportHelperVisibility(true);
@@ -6384,6 +6393,7 @@ function bindEvents() {
     layersButtonPresent: Boolean(document.getElementById("mobileDockLayersBtn"))
   });
   els.mobileDockAreaBtn?.addEventListener("click", () => {
+    closePortraitAlertsPanel();
     portraitSurfaceDebugLog("[Gridly][PortraitSurface] Area button click handler fired");
     if (!isTacticalLandscapeDockMode()) {
       openPortraitAreaSurface();
@@ -6406,6 +6416,7 @@ function bindEvents() {
     });
   });
   document.getElementById("mobileDockRouteBtn")?.addEventListener("click", () => {
+    closePortraitAlertsPanel();
     closeAllTacticalDockSurfaces({ except: "route" });
     routeLauncherSource = "route-dock-button";
     openMobileRouteQuickPanel();
@@ -6413,12 +6424,14 @@ function bindEvents() {
   document.getElementById("mobileDockAlertsBtn")?.addEventListener("click", () => {
     if (!isTacticalLandscapeDockMode()) {
       closeSmartAlertsModal();
-      try {
-        renderMobileNativeAlertsCenter();
-      } catch (error) {
-        console.warn("[Mobile Portrait Dock] alerts center render failed; falling back to alerts section.", error);
-        routeNavSection("alerts");
+      const alertsSection = document.getElementById("alertsSection");
+      document.body.classList.add("portrait-alerts-open");
+      if (alertsSection) {
+        alertsSection.hidden = false;
+        alertsSection.style.display = "grid";
+        alertsSection.setAttribute("aria-hidden", "false");
       }
+      setMobileUiMode("alert", { silent: true });
       return;
     }
     const rows = (getUnifiedIncidents?.() || []).slice(0, 8).map((incident) => {
@@ -6432,6 +6445,7 @@ function bindEvents() {
     }, { once: true });
   });
   document.getElementById("mobileDockLayersBtn")?.addEventListener("click", () => {
+    closePortraitAlertsPanel();
     portraitSurfaceDebugLog("[Gridly][PortraitSurface] Layers button click handler fired");
     if (!isTacticalLandscapeDockMode()) {
       openPortraitLayersSurface();
@@ -13892,6 +13906,32 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   window.addEventListener("resize", scheduleAuthoritativeLayoutModeSync, { passive: true });
   window.addEventListener("orientationchange", scheduleAuthoritativeLayoutModeSync, { passive: true });
   window.visualViewport?.addEventListener("resize", scheduleAuthoritativeLayoutModeSync, { passive: true });
+
+  window.gridlyPortraitLayoutDebug = () => {
+    const isVisible = (node) => Boolean(node && node.getClientRects().length > 0 && window.getComputedStyle(node).display !== "none" && window.getComputedStyle(node).visibility !== "hidden");
+    const getBounds = (node) => node?.getBoundingClientRect?.()?.toJSON?.() || null;
+    const alertsBtn = document.getElementById("mobileDockAlertsBtn");
+    const alertsSection = document.getElementById("alertsSection");
+    const smartAlertsModal = document.getElementById("smartAlertsModal");
+    const areaDockBtn = document.getElementById("mobileDockAreaBtn");
+    const geoFilter = document.querySelector(".geo-filter-pill");
+    const destinationCard = document.querySelector(".mobile-destination-command, .destination-hero-card");
+    const liveCard = document.querySelector(".mobile-live-command");
+    const header = document.querySelector(".app-header");
+    const mapFrame = document.querySelector(".map-frame");
+    return {
+      alertsButtonVisible: isVisible(alertsBtn),
+      alertsSectionExists: Boolean(alertsSection),
+      alertsSectionVisible: isVisible(alertsSection),
+      smartAlertsModalVisible: isVisible(smartAlertsModal),
+      areaDockVisible: isVisible(areaDockBtn),
+      geoFilterVisible: isVisible(geoFilter),
+      destinationCardBounds: getBounds(destinationCard),
+      liveCardBounds: getBounds(liveCard),
+      headerBounds: getBounds(header),
+      mapFrameBounds: getBounds(mapFrame)
+    };
+  };
 
   // DEV ONLY: Gridly Layout Edit Mode
   (() => {
