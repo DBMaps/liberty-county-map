@@ -8112,6 +8112,13 @@ window.showGridlySearchShell = showGridlySearchShell;
 window.hideGridlySearchShell = hideGridlySearchShell;
 window.clearGridlySearchResults = clearGridlySearchResults;
 window.gridlySearchDebug = function gridlySearchDebug() {
+  const isVisibleEl = (el) => {
+    if (!el) return false;
+    const style = window.getComputedStyle(el);
+    if (style.display === "none" || style.visibility === "hidden" || Number(style.opacity || "1") === 0) return false;
+    const rect = el.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0;
+  };
   const state = ensureGridlySearchState();
   const shell = gridlySearchUiRefs.shell || document.getElementById("gridlySearchShell");
   const input = gridlySearchUiRefs.input || document.getElementById("gridlyAddressSearchInput");
@@ -8145,7 +8152,7 @@ window.gridlySearchDebug = function gridlySearchDebug() {
     chooseRouteButtonBound: Boolean(els.mobileDestinationCommandBtn?.dataset?.searchBound === "true"),
     hasDestinationCommandButton: Boolean(els.mobileDestinationCommandBtn),
     destinationCommandButtonBound: Boolean(els.mobileDestinationCommandBtn?.dataset?.searchBound === "true"),
-    destinationCommandButtonVisible: isVisible(els.mobileDestinationCommandBtn),
+    destinationCommandButtonVisible: isVisibleEl(els.mobileDestinationCommandBtn),
     hasDestinationHeroCard: Boolean(document.querySelector(".destination-hero-card")),
     destinationHeroCardBound: Boolean(document.querySelector(".destination-hero-card")?.dataset?.searchBound === "true"),
     isSearching: Boolean(gridlySearchUiState.isSearching),
