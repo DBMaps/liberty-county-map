@@ -1268,6 +1268,39 @@ body.route-setup-open #gridlyHazardLauncher {
   display: none;
 }
 
+.settings-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 3250;
+}
+
+.settings-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(3, 10, 20, 0.62);
+}
+
+.settings-modal-card {
+  position: relative;
+  width: min(620px, calc(100% - 32px));
+  margin: 9vh auto 0;
+  background: var(--card);
+  border: 1px solid rgba(67, 230, 160, 0.28);
+  border-radius: 22px;
+  padding: 18px;
+  box-shadow: 0 24px 56px rgba(0, 0, 0, 0.5);
+}
+
+.settings-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.settings-modal-subtitle { margin: 0 0 12px; color: var(--muted); }
+.settings-modal-list { margin: 0; padding-left: 18px; display: grid; gap: 8px; }
+
 body.modal-open {
   overflow: hidden;
 }
@@ -12106,7 +12139,7 @@ body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
   body[data-layout-mode="portrait"] #map .leaflet-control-zoom {
     right: 12px !important;
     bottom: 0 !important;
-    margin: 0 0 calc(152px + env(safe-area-inset-bottom, 0px)) 0 !important;
+    margin: 0 0 calc(196px + env(safe-area-inset-bottom, 0px)) 0 !important;
     z-index: 10100 !important;
   }
 
@@ -12121,11 +12154,12 @@ body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
   body[data-layout-mode-legacy="mobile"].portrait-alerts-open #alertsSection {
     display: grid !important;
     position: fixed !important;
-    left: 10px !important;
-    right: 10px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: min(560px, calc(100vw - 20px)) !important;
+    right: auto !important;
     top: calc(var(--mobile-command-zone-top, 72px) + 6px) !important;
     bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
-    width: auto !important;
     height: auto !important;
     opacity: 1 !important;
     pointer-events: auto !important;
