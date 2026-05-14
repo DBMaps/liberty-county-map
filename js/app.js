@@ -14313,9 +14313,14 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   window.openPortraitV2Sheet = openPortraitV2Sheet;
   window.gridlyPortraitV2Debug = function(){
     const v2=document.getElementById("gridlyPortraitV2"); const mode=document.body?.dataset?.layoutMode||null;
+    const isVisible=(el)=>Boolean(el&&getComputedStyle(el).display!=="none"&&getComputedStyle(el).visibility!=="hidden"&&Number(getComputedStyle(el).opacity||1)!==0);
     const legacyHidden=[".mobile-live-brand","#mobileLocalContextStrip","#mobileDailyPanel",".mobile-floating-action-dock"].every((sel)=>{const el=document.querySelector(sel);return !el||getComputedStyle(el).display==="none";});
+    const duplicateZoomControlsVisible = isVisible(document.querySelector('#map .leaflet-control-zoom'));
+    const duplicateFilterStripsVisible = isVisible(document.querySelector('.map-tools-overlay .geo-filter-shell')) || isVisible(document.querySelector('.map-card .map-ux-strip .geo-filter-shell'));
+    const v2IconsApplied = document.querySelectorAll('#gridlyPortraitV2 svg').length >= 8;
+    const legacyControlsHidden = legacyHidden && !duplicateZoomControlsVisible && !duplicateFilterStripsVisible;
     const warnings=[]; if(mode!=="portrait") warnings.push("Layout is not portrait.");
-    return {v2Exists:Boolean(v2),v2Visible:Boolean(v2&&getComputedStyle(v2).display!=="none"),activeSheet,sheetOpen:!document.getElementById("gridlyPortraitV2Sheet")?.hidden,dockButtonsFound:document.querySelectorAll(".gridly-v2-bottom-dock button").length,controlRailFound:Boolean(document.querySelector(".gridly-v2-control-rail")),legacyPortraitHidden:legacyHidden,mapContainerFound:Boolean(document.getElementById("map")),layoutMode:mode,warnings};
+    return {v2Exists:Boolean(v2),v2Visible:Boolean(v2&&getComputedStyle(v2).display!=="none"),activeSheet,sheetOpen:!document.getElementById("gridlyPortraitV2Sheet")?.hidden,dockButtonsFound:document.querySelectorAll(".gridly-v2-bottom-dock button").length,controlRailFound:Boolean(document.querySelector(".gridly-v2-control-rail")),legacyPortraitHidden:legacyHidden,duplicateZoomControlsVisible,duplicateFilterStripsVisible,v2IconsApplied,legacyControlsHidden,mapContainerFound:Boolean(document.getElementById("map")),layoutMode:mode,warnings};
   };
   document.addEventListener("DOMContentLoaded", bindV2);
 })();
