@@ -3970,23 +3970,43 @@ function renderCrossings() {
         marker.openPopup();
         return;
       }
+
+      if (window.__gridlyPopupPanSession?.settleTimer) clearTimeout(window.__gridlyPopupPanSession.settleTimer);
+      if (window.__gridlyPopupPanSession?.fallbackTimer) clearTimeout(window.__gridlyPopupPanSession.fallbackTimer);
+
       const markerPoint = mapRef.latLngToContainerPoint(marker.getLatLng());
       const viewportHeight = mapRef.getSize?.().y || window.innerHeight || 0;
       const safeTopPadding = 18;
       const estimatedPopupHeight = 210;
       const availableTopSpace = markerPoint.y - safeTopPadding;
-      const requiredTopSpace = estimatedPopupHeight;
-      const missingTopSpace = Math.max(0, requiredTopSpace - availableTopSpace);
+      const missingTopSpace = Math.max(0, estimatedPopupHeight - availableTopSpace);
       const preferredMarkerY = Math.round(viewportHeight * 0.62);
       const preferredOffset = Math.max(0, preferredMarkerY - markerPoint.y);
       const panDownPixels = Math.min(120, Math.max(missingTopSpace, preferredOffset));
       const shouldAutoPan = panDownPixels > 8;
-      if (shouldAutoPan) {
-        mapRef.panBy([0, panDownPixels], { animate: true, duration: 0.25 });
-      }
       window.__gridlyLastPopupAutoPanApplied = shouldAutoPan;
-      const openDelayMs = shouldAutoPan ? 120 : 0;
-      setTimeout(() => marker.openPopup(), openDelayMs);
+
+      const openPopupSafely = () => {
+        const session = window.__gridlyPopupPanSession;
+        if (!session || session.marker !== marker || session.opened) return;
+        session.opened = true;
+        marker.openPopup();
+      };
+
+      const session = { marker, opened: false, settleTimer: null, fallbackTimer: null };
+      window.__gridlyPopupPanSession = session;
+
+      if (!shouldAutoPan) {
+        openPopupSafely();
+        return;
+      }
+
+      mapRef.once("moveend", () => {
+        if (window.__gridlyPopupPanSession !== session) return;
+        session.settleTimer = setTimeout(openPopupSafely, 90);
+      });
+      session.fallbackTimer = setTimeout(openPopupSafely, 420);
+      mapRef.panBy([0, panDownPixels], { animate: true, duration: 0.27 });
     });
 
     marker.on("popupopen", () => {
@@ -14363,12 +14383,17 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       popupRect.bottom <= mapRect.bottom - 4
     );
     const popupAutoPanApplied = Boolean(window.__gridlyLastPopupAutoPanApplied);
+    const popupAutoPanSequenced = Boolean(window.__gridlyPopupPanSession);
+    const popupBlinkResolved = popupAutoPanApplied ? popupAutoPanSequenced : true;
     const typographyPassApplied = Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-status-pill strong"));
     const iconSystemUnified = v2IconsApplied && Boolean(document.querySelector("#gridlyPortraitV2 .dock-icon svg"));
+    const dockIconSystemUnified = iconSystemUnified && Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-bottom-dock .dock-icon svg"));
+    const railIconSystemUnified = iconSystemUnified && Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-control-rail svg"));
+    const iconSystemReferenceAligned = iconSystemUnified && dockIconSystemUnified && railIconSystemUnified;
     const surfacePolishApplied = Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-topbar"));
     const spacingRhythmPassApplied = Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-status-pill") && document.querySelector("#gridlyPortraitV2 .gridly-v2-segments"));
     const compactHeaderRefined = Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-brand img") && document.querySelector("#gridlyPortraitV2 .gridly-v2-brand span"));
-    return {v2Exists:Boolean(v2),v2Visible:Boolean(v2&&getComputedStyle(v2).display!=="none"),activeSheet,sheetOpen:!document.getElementById("gridlyPortraitV2Sheet")?.hidden,dockButtonsFound:document.querySelectorAll(".gridly-v2-bottom-dock button").length,controlRailFound:Boolean(document.querySelector(".gridly-v2-control-rail")),legacyPortraitHidden:legacyHidden,duplicateZoomControlsVisible,duplicateFilterStripsVisible,v2IconsApplied,legacyControlsHidden,mapContainerFound:Boolean(document.getElementById("map")),layoutMode:mode, popupV2Styled, popupViewportSafe, filterStripBalanced, popupViewportCentered, popupAutoPanApplied, compactBrandApplied, compactHeaderRefined, typographyPassApplied, spacingRhythmPassApplied, iconSystemUnified, surfacePolishApplied, warnings};
+    return {v2Exists:Boolean(v2),v2Visible:Boolean(v2&&getComputedStyle(v2).display!=="none"),activeSheet,sheetOpen:!document.getElementById("gridlyPortraitV2Sheet")?.hidden,dockButtonsFound:document.querySelectorAll(".gridly-v2-bottom-dock button").length,controlRailFound:Boolean(document.querySelector(".gridly-v2-control-rail")),legacyPortraitHidden:legacyHidden,duplicateZoomControlsVisible,duplicateFilterStripsVisible,v2IconsApplied,legacyControlsHidden,mapContainerFound:Boolean(document.getElementById("map")),layoutMode:mode, popupV2Styled, popupViewportSafe, filterStripBalanced, popupViewportCentered, popupAutoPanApplied, popupAutoPanSequenced, popupBlinkResolved, compactBrandApplied, compactHeaderRefined, typographyPassApplied, spacingRhythmPassApplied, iconSystemUnified, dockIconSystemUnified, railIconSystemUnified, iconSystemReferenceAligned, surfacePolishApplied, warnings};
   };
   document.addEventListener("DOMContentLoaded", bindV2);
 })();

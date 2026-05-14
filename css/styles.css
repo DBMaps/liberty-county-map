@@ -13059,7 +13059,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 svg {
   width: 18px;
   height: 18px;
   stroke: currentColor;
-  stroke-width: 1.9;
+  stroke-width: 2.15;
   fill: none;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -13093,6 +13093,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock butto
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock .dock-icon {
   width: 30px;
   height: 30px;
+  padding: 0;
   border-radius: 10px;
   border: 1px solid rgba(172, 208, 255, 0.35);
   background: linear-gradient(155deg, rgba(89, 148, 235, 0.32), rgba(20, 64, 124, 0.18));
@@ -13101,7 +13102,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock .dock
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock .dock-icon svg {
   width: 17px;
   height: 17px;
-  stroke-width: 2.2;
+  stroke-width: 2.25;
 }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock .dock-icon svg path:first-child,
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock .dock-icon svg circle:first-of-type {
@@ -13146,14 +13147,14 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand img { width
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand span { font-size: 0.74rem; letter-spacing: 0.115em; font-weight: 720; color: #e4f2ff; }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-watch { flex: 1; display: flex; justify-content: center; min-width: 0; }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-watch span { font-size: 0.57rem; letter-spacing: 0.11em; color: rgba(185, 214, 245, 0.78); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-icon-btn { width: 32px; height: 32px; border-radius: 10px; padding: 0; border: 1px solid rgba(161, 206, 255, 0.24); background: rgba(166, 207, 255, 0.1); }
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-icon-btn { width: 32px; height: 32px; border-radius: 10px; padding: 0; border: 1px solid rgba(161, 206, 255, 0.24); background: rgba(166, 207, 255, 0.1); box-shadow: inset 0 1px 0 rgba(255,255,255,.14); }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill { top: 60px; left: 10px; right: 10px; padding: 7px 10px; }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill strong { font-size: 0.73rem; font-weight: 640; letter-spacing: 0.01em; }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill span { font-size: 0.66rem; }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments { top: 116px; left: 10px; right: 10px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; padding: 5px; overflow: hidden; }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button { width: 100%; min-width: 0; text-align: center; font-size: 0.67rem; font-weight: 590; letter-spacing: 0.01em; padding: 8px 4px; line-height: 1.15; }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail { top: 166px; right: 10px; gap: 7px; }
-body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail button { width: 40px; height: 40px; border-radius: 11px; }
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail button { width: 40px; height: 40px; border-radius: 11px; padding: 0; border-color: rgba(169, 209, 255, 0.32); background: linear-gradient(168deg, rgba(8, 19, 35, 0.86), rgba(7, 16, 29, 0.92)); box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 8px 16px rgba(2,10,21,.44); }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock { left: 10px; right: 10px; bottom: 10px; padding: 7px; gap: 7px; }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button em { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.02em; }
 
@@ -13182,8 +13183,8 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 svg {
 .gridly-popup { color: #deedff; min-width: 238px; }
 .gridly-popup strong { color: #f4f9ff; font-size: 0.84rem; font-weight: 680; letter-spacing: 0.012em; margin-bottom: 3px; }
 .gridly-popup span { color: #a8c2de; font-size: 0.72rem; line-height: 1.3; }
-.popup-report-grid { gap: 6px; margin-top: 9px; }
-.popup-report-btn { border: 1px solid rgba(173, 214, 255, 0.28); border-radius: 10px; padding: 8px 9px; color: #f3f8ff; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.018em; text-transform: uppercase; }
+.popup-report-grid { gap: 7px; margin-top: 10px; }
+.popup-report-btn { border: 1px solid rgba(173, 214, 255, 0.28); border-radius: 10px; min-height: 34px; padding: 8px 10px; color: #f3f8ff; font-size: 0.7rem; font-weight: 710; letter-spacing: 0.024em; text-transform: uppercase; }
 .popup-report-btn.danger { background: linear-gradient(165deg, #a42c38, #78222b); }
 .popup-report-btn.warning { background: linear-gradient(165deg, #9f6823, #7f4f15); }
 .popup-report-btn.blue { background: linear-gradient(165deg, #235f96, #184770); }
