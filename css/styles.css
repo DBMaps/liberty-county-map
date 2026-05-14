@@ -11972,3 +11972,8 @@ body[data-layout-mode="tactical-landscape"] .tactical-landscape-gate p {
   font-size: clamp(0.94rem, 2vw, 1.07rem);
   line-height: 1.45;
 }
+
+
+body[data-layout-mode="mobile"].route-quick-panel-open .mobile-live-command {
+  display: none !important;
+}

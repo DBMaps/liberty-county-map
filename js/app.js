@@ -563,10 +563,17 @@ function setMobileUiMode(mode = "live", options = {}) {
   }
 }
 
+
+function syncRouteQuickPanelUiState() {
+  const panel = document.getElementById("gridlyMobileRouteQuickPanel");
+  const routeQuickPanelOpen = Boolean(panel?.classList?.contains("visible"));
+  document.body?.classList.toggle("route-quick-panel-open", routeQuickPanelOpen);
+}
 function closeMobileRouteQuickPanel(reason = "") {
   const panel = document.getElementById("gridlyMobileRouteQuickPanel");
   if (!panel?.classList?.contains("visible")) return;
   panel.classList.remove("visible");
+  syncRouteQuickPanelUiState();
   if (reason) lastRoutePanelCloseReason = reason;
 }
 
@@ -5164,6 +5171,7 @@ function openMobileRouteQuickPanel() {
   }
   bindDirectRouteQuickPanelButtonListeners();
   panel.classList.add("visible");
+  syncRouteQuickPanelUiState();
   if (isMobileLayoutMode()) setMobileUiMode("route", { silent: true });
   traceMobileModeMutation("route quick panel opened", { intendedSurfaceSelector: "#gridlyMobileRouteQuickPanel", surfaceState: readSurfaceComputedState("#gridlyMobileRouteQuickPanel") });
 }
@@ -6611,12 +6619,12 @@ function bindEvents() {
     }
     if (action === "close-route-quick") {
       event.preventDefault();
-      document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
+      closeMobileRouteQuickPanel("close_button");
       return;
     }
     if (action === "open-manage-places-quick") {
       event.preventDefault();
-      document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
+      closeMobileRouteQuickPanel("manage_places");
       openRouteSetupModalForType("manage");
       return;
     }
@@ -9442,6 +9450,16 @@ window.gridlyRouteExecutionDebug = function gridlyRouteExecutionDebug() {
   const destinationCoords = normalizeCoordinatePair(selectedDestinationPlace?.lat, selectedDestinationPlace?.lng);
   const routeButton = document.querySelector('#routeWatchStartBtn, #gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="start-route-watch-quick"], #gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="view-route-quick"]');
   const rect = routeButton?.getBoundingClientRect?.();
+  const routeStatusCard = document.querySelector(".mobile-live-command");
+  const searchShell = document.getElementById("gridlySearchShell");
+  const routeStatusRect = routeStatusCard?.getBoundingClientRect?.();
+  const searchShellRect = searchShell?.getBoundingClientRect?.();
+  const routeStatusCardText = [
+    document.getElementById("mobileLiveStatusPill")?.textContent || "",
+    document.getElementById("mobileLiveRouteStatus")?.textContent || "",
+    document.getElementById("mobileLiveRouteMeta")?.textContent || "",
+    document.getElementById("mobileLiveRouteActionBtn")?.textContent || ""
+  ].map((value) => String(value).trim()).filter(Boolean).join(" | ");
   return {
     savedPlacesState: normalizeSavedPlaces?.() || null,
     savedPlaceKeys: savedPlaceDebug.savedPlaceKeys,
@@ -9460,6 +9478,12 @@ window.gridlyRouteExecutionDebug = function gridlyRouteExecutionDebug() {
     routeButtonRect: rect ? { x: rect.x, y: rect.y, width: rect.width, height: rect.height } : null,
     routeButtonClickHandlersFound: Boolean(routeQuickDirectListenerAttached || routeQuickButtonDelegatedBindingActive || els?.routeWatchStartBtn),
     routeActionButtonBound: Boolean(routeQuickDirectListenerAttached || routeQuickButtonDelegatedBindingActive || els?.routeWatchStartBtn?.dataset?.searchBound === "true"),
+    routeStatusCardVisible: Boolean(routeStatusCard && routeStatusRect && routeStatusRect.width > 0 && routeStatusRect.height > 0 && window.getComputedStyle(routeStatusCard).display !== "none"),
+    routeQuickPanelOpen: Boolean(document.getElementById("gridlyMobileRouteQuickPanel")?.classList.contains("visible")),
+    searchShellVisible: Boolean(searchShell && !searchShell.hasAttribute("hidden") && searchShell.dataset.searchUi !== "dormant"),
+    routeStatusCardText,
+    routeStatusCardBounds: routeStatusRect ? { x: routeStatusRect.x, y: routeStatusRect.y, width: routeStatusRect.width, height: routeStatusRect.height } : null,
+    searchShellBounds: searchShellRect ? { x: searchShellRect.x, y: searchShellRect.y, width: searchShellRect.width, height: searchShellRect.height } : null,
     lastRouteAttempt, lastRouteError, osrmRequestUrl: lastOsrmRequestUrl, osrmResponseStatus: lastOsrmResponseStatus,
     routePolylineExists: Boolean(window.__gridlyRoutePreviewLayer), routePolylinePointCount: Number(routePreviewPolylinePointCount || 0),
     monitoringState: Boolean(window.__gridlyRouteWatchActive), activeRouteSource,
