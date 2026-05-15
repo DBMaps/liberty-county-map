@@ -5799,6 +5799,9 @@ window.submitHazardNearMe = function (hazardType) {
       }
 
       resetQuickHazardReportState();
+      if (typeof closePortraitV2Sheet === "function") {
+        closePortraitV2Sheet();
+      }
       closeHazardPanel();
     },
     () => {
