@@ -11989,6 +11989,56 @@ function inferConsequenceTrend({ activeItems = [], recentlyClearedCount = 0 } = 
   return activeItems.length ? "stable" : "clear";
 }
 
+
+function inferCorridorLabel(incident = {}) {
+  const text = `${incident?.title || ""} ${incident?.description || ""} ${incident?.area || ""}`;
+  const upper = text.toUpperCase();
+  const match = upper.match(/(US\s*\d+|TX\s*\d+|FM\s*\d+)/);
+  if (match) return `${match[1].replace(/\s+/g, " ")} Corridor`;
+  const crossing = String(incident?.crossingName || incident?.area || "");
+  if (/cross/i.test(crossing) || /cross/i.test(text)) {
+    const locality = crossing.split(/,|near/i)[0].trim() || "Local";
+    return `${locality} Crossing Cluster`;
+  }
+  const road = resolveNearestRoadName(Number(incident?.lat), Number(incident?.lng), { includeRoadPairing: true }) || "Local";
+  return `${road} Corridor`;
+}
+
+function getCorridorHealthState(score = 0) {
+  if (score >= 320) return "severe blockage";
+  if (score >= 250) return "heavy delays";
+  if (score >= 180) return "moderate disruption";
+  if (score > 0) return "minor slowdown";
+  return "clear";
+}
+
+function buildCorridorClusters(intelItems = [], recentlyCleared = []) {
+  const clusters = new Map();
+  intelItems.forEach((item) => {
+    const label = inferCorridorLabel(item.incident);
+    if (!clusters.has(label)) clusters.set(label, { label, items: [], routeImpactCount: 0, maxPriority: 0, freshestAge: 999, trendFreshCount: 0 });
+    const cluster = clusters.get(label);
+    cluster.items.push(item);
+    if (item.routeRelevant) cluster.routeImpactCount += 1;
+    cluster.maxPriority = Math.max(cluster.maxPriority, Number(item.priorityScore || 0));
+    cluster.freshestAge = Math.min(cluster.freshestAge, Number(item.ageMinutes || 999));
+    if (Number(item.ageMinutes) <= 20) cluster.trendFreshCount += 1;
+  });
+  return Array.from(clusters.values()).map((cluster) => {
+    const disruptionDensity = cluster.items.length;
+    const trend = cluster.trendFreshCount >= 2 ? "worsening" : "stable";
+    const healthState = getCorridorHealthState(cluster.maxPriority + disruptionDensity * 18 + cluster.routeImpactCount * 40);
+    return {
+      ...cluster,
+      disruptionDensity,
+      trend,
+      freshnessMinutes: Number.isFinite(cluster.freshestAge) ? cluster.freshestAge : null,
+      healthState,
+      recentlyCleared: recentlyCleared.filter((incident) => inferCorridorLabel(incident) === cluster.label).slice(0, 2)
+    };
+  }).sort((a, b) => (b.maxPriority + b.routeImpactCount * 35) - (a.maxPriority + a.routeImpactCount * 35));
+}
+
 function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   const routeHazard = routeWatchActivated ? getRouteHazardAssessment() : null;
   const activeIncidents = getActiveUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "active");
@@ -12053,9 +12103,15 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     unknownIncidentCount
   };
 
+  const corridorClusters = buildCorridorClusters(intelItems, recentlyCleared);
+  const highestPriorityCorridor = corridorClusters[0] || null;
+
   return {
     items: intelItems.slice(0, limit),
-    topStatus: top ? top.localizedSummary : "Routes currently clear",
+    corridorClusters,
+    highestPriorityCorridor: highestPriorityCorridor?.label || null,
+    corridorSeverityMap: corridorClusters.reduce((acc, corridor) => { acc[corridor.label] = corridor.healthState; return acc; }, {}),
+    topStatus: highestPriorityCorridor ? `${highestPriorityCorridor.healthState.replace(/^./, (c) => c.toUpperCase())} on ${highestPriorityCorridor.label.replace(/ Corridor$/, "")}` : (top ? top.localizedSummary : "Routes currently clear"),
     commuteImpactHeadline: consequencePrimaryMessage,
     topStatusLocalizedDetail: topSecondary,
     nearbySummary: topSecondary,
@@ -12148,56 +12204,24 @@ function getOperationalFeedSummaryLine() {
 
 function renderAlerts() {
   if (!els.alertsList) return;
-
-  const incidents = getActiveUnifiedIncidents();
-  if (!incidents.length) {
-    els.alertsList.innerHTML = `
-      <div class="alert-item">
-        <strong>No active community alerts</strong>
-        <p>No high-impact disruptions detected nearby.</p>
-      </div>
-    `;
+  const consequenceIntel = buildCommuteConsequenceIntelligence({ limit: 8 });
+  const corridors = consequenceIntel.corridorClusters || [];
+  if (!corridors.length) {
+    els.alertsList.innerHTML = `<div class="alert-item"><strong>Major corridors currently clear</strong><p>No significant commute disruptions nearby.</p></div>`;
     return;
   }
-
-  const consequenceIntel = buildCommuteConsequenceIntelligence({ limit: 6 });
-  const prioritized = consequenceIntel.items.map((item) => item.incident);
-
-  els.alertsList.innerHTML = prioritized
-    .map((incident) => {
-      const incidentType = String(incident.type || "");
-      const minutesAgo = Math.max(0, Math.floor((Date.now() - new Date(incident.created_at || incident.updated_at || Date.now()).getTime()) / 60000));
-      const confirmationLabel = getDriverConfirmationLabel(Number(incident.reports_count || 1));
-      const severityLabel =
-        incident.severity === "high"
-          ? "High"
-          : incident.severity === "moderate" || incident.severity === "medium"
-          ? "Moderate"
-          : "Watch";
-      const itemClass = incident.severity === "high" ? "high" : "";
-
-      return `
-        <article class="alert-item intelligence-row ${itemClass}" tabindex="0" role="button" ${buildAlertFocusDataset({
-          lat: incident.lat,
-          lng: incident.lng,
-          crossingId: incident.crossing_id || incident.id,
-          crossingName: incident.area || incident.title || "Reported area"
-        }, { incidentId: incident.crossing_id || incident.id })}>
-          <div class="alert-row-main">
-            <span class="alert-severity-chip">${sanitizeText(severityLabel)}</span>
-            <strong>${sanitizeText(incident.title || "Live incident")}</strong>
-            <span class="alert-row-time">${minutesAgo}m</span>
-          </div>
-          <p class="alert-row-subline">${sanitizeText(consequenceIntel.trendMessage)} · ${sanitizeText(confirmationLabel)} · active</p>
-          <details class="alert-row-details">
-            <summary>Details</summary>
-            <p>${sanitizeText(`${minutesAgo} min ago`)} · ${sanitizeText(incident.description || "Live incident")}</p>
-            <p>Source: ${sanitizeText(incident.source || "community")}</p>
-          </details>
-        </article>
-      `;
-    })
-    .join("");
+  const critical = corridors[0];
+  const criticalItem = critical?.items?.[0];
+  const criticalEta = Number(criticalItem?.etaImpact || 0);
+  const sections = [];
+  sections.push(`<article class="alert-item intelligence-row high"><div class="alert-row-main"><span class="alert-severity-chip">Critical Now</span><strong>${sanitizeText(criticalItem?.localizedSummary || `Disruption on ${critical.label}`)}</strong><span class="alert-row-time">${criticalEta ? `+${criticalEta}m` : "live"}</span></div><p class="alert-row-subline">${sanitizeText(criticalEta ? `Estimated impact +${criticalEta} minutes` : "Monitoring live corridor impact")}</p></article>`);
+  corridors.slice(0,3).forEach((corridor) => {
+    const rows = corridor.items.slice(0,3).map((item) => `<li>${sanitizeText(item.localizedSummary)}</li>`).join("");
+    sections.push(`<article class="alert-item"><strong>${sanitizeText(corridor.label)}</strong><p>${sanitizeText(corridor.healthState)} · ${corridor.routeImpactCount > 0 ? `${corridor.routeImpactCount} route impact` : "no direct route impact"}</p><ul class="alert-row-details-list">${rows}</ul></article>`);
+  });
+  const cleared = corridors.flatMap((c) => (c.recentlyCleared || []).map((incident) => buildLocalizedIncidentLabel(incident))).slice(0,3);
+  if (cleared.length) sections.push(`<article class="alert-item"><strong>Recently Cleared</strong><p>${cleared.map((x)=>sanitizeText(x)).join(" · ")}</p></article>`);
+  els.alertsList.innerHTML = sections.join("");
 }
 
 function renderTrendingCrossings() {
@@ -15532,7 +15556,7 @@ const v134ReportingRefinementApplied = true;
       routeWatch:"route-watch-open", routePreview:"route-preview-open", routeManagePlaces:"route-manage-places-open",
       settingsHomeTown:"settings-home-town", settingsSavedPlaces:"settings-saved-places", settingsAlertPreferences:"settings-alert-preferences",
       settingsRoutePreferences:"settings-route-preferences", settingsAppPreferences:"settings-app-preferences", alertsManage:"alerts-manage-open"
-    }, adapterFallbackCount:v2DockAdapterState.adapterFallbackCount, lastDockActionTriggered:v2DockAdapterState.lastDockActionTriggered, lastDockAdapterTarget:v2DockAdapterState.lastDockAdapterTarget, adapterBridgeFailures:v2DockAdapterState.adapterBridgeFailures.slice(-8), v134ReportingRefinementApplied, v1341UnifiedReportSuccessLifecycleApplied, v1342ReportSurfaceOwnershipApplied, v1343PopupReportingPriorityApplied:true, v1344HardReportingSuppressionApplied:true, v1345ReportingMountFlashPrevented:true, liveReportingMountBypassed:Boolean(popupReportingLifecycleActive && liveReportingTemporarilySuppressed && liveReportingDrawerEl && !liveReportingDrawerEl.open), popupReportingLifecycleCleaned:Boolean(!popupReportingLifecycleActive || (liveReportingTemporarilySuppressed && lastSuccessSurfaceOwner === "crossing_popup")), transientReportingFlashEliminated:Boolean(!popupReportingLifecycleActive || (liveReportingDrawerEl && !liveReportingDrawerEl.open)), popupReportingExclusivityMaintained:Boolean(!popupReportingLifecycleActive || lastSuccessSurfaceOwner === "crossing_popup"), mapFirstCompletionFlowImproved:true, liveReportingDrawerFullySuppressed, popupReportingExclusiveOwnership:Boolean(!popupReportingLifecycleActive || (lastSuccessSurfaceOwner === "crossing_popup" && liveReportingDrawerFullySuppressed)), duplicateReportingUiEliminated:Boolean(!popupReportingLifecycleActive || (liveReportingDrawerFullySuppressed && !reportingState.submissionInProgress)), popupSuccessFlowCleanedUp:Boolean(!popupReportingLifecycleActive || (lastSuccessSurfaceOwner === "crossing_popup" && liveReportingDrawerFullySuppressed)), mapFirstReportingRestored:true, popupReportingSuppressionActive, popupReportingOwnsLifecycle:Boolean(lastSuccessSurfaceOwner === "crossing_popup" || popupReportingLifecycleActive), liveReportingCompetitionSuppressed:Boolean(!popupReportingLifecycleActive || liveReportingTemporarilySuppressed), duplicateReportingSurfacesReduced:Boolean(!popupReportingLifecycleActive || !reportingState.submissionInProgress), popupReportingComposureImproved:Boolean(!popupReportingLifecycleActive || (lastSuccessSurfaceOwner === "crossing_popup" && liveReportingTemporarilySuppressed)), mapFirstReportingFlowPreserved:true, liveReportingTemporarilySuppressed, liveReportingDrawerHiddenAt:liveReportingDrawerSuppressedAt||0, liveReportingDrawerRestoredAt:liveReportingDrawerRestoredAt||0, lastLiveReportingMountPreventedAt:liveReportingDrawerSuppressedAt||0, popupReportingDrawerBypassActive:Boolean(popupReportingLifecycleActive && liveReportingTemporarilySuppressed), lastPopupReportingStartedAt, lastPopupReportingCompletedAt, reportSuccessTimersUnified, reportSuccessLifecycleActive, reportSuccessHoldMs:REPORT_SUCCESS_HOLD_MS, reportSuccessFadeMs:REPORT_SUCCESS_FADE_MS, reportPopupCloseDelayMs:REPORT_POPUP_CLOSE_DELAY_MS, reportButtonSuccessMs:REPORT_BUTTON_SUCCESS_MS, duplicateSuccessTimersReduced, authoritativeSuccessSurfaceEstablished, popupCompetitionReduced, reportingSuccessLayoutRefined, stackedReportingStatesReduced, reportCompletionComposureImproved, lastSuccessSurfaceOwner, lastPopupClosedAt, lastReportingResetAt, lastReportSuccessStartedAt, lastReportSuccessCompletedAt, lastReportSuccessType, lastReportSuccessFlow, successStateCalmed, reportingHierarchyImproved, transientTimingRefined, overlayCompetitionReduced, reportSuccessClarityImproved, brandLogoHeight, brandLogoWidth, topbarHeight, v1352SurfaceContainmentApplied, v1353PresentationNormalizationApplied, v1354HazardPanelRootNormalized, v1355RedundantHazardPanelRemoved, v1356HazardSelectionKeepsSheetOpen:true, hazardTileSelectionNoClose:true, selectedHazardRequiresExplicitPlacement:true, v2HazardSelectionInline, legacyHazardPanelBypassed, selectedV2HazardType, v2HazardActionsWired, v1363HazardRoadSnapRestored:true, hazardPlacementUsesCanonicalSnap:Boolean(lastRoadSnapDebug?.hazardPlacementUsesCanonicalSnap), lastHazardPlacementSource:lastRoadSnapDebug?.lastHazardPlacementSource||null, lastHazardSnapResult:lastRoadSnapDebug?.lastHazardSnapResult||null, lastHazardSnapDistance:lastRoadSnapDebug?.snapDistanceMeters ?? null, rawHazardCoordinatesBlockedWhenInvalid:Boolean(lastRoadSnapDebug?.rawHazardCoordinatesBlockedWhenInvalid), hazardPanelRootV2SheetApplied, hazardPanelNoLongerFullHeight, hazardPanelDockClearancePreserved, hazardPanelLegacyTakeoverResolved, reportHazardV2PresentationApplied, routeQuickPanelV2PresentationApplied, closeButtonStandardized, bottomSheetPresentationConsistent, legacySurfaceVisualDriftReduced, legacyReportSurfaceSuppressed, legacyRouteSurfaceContained, legacyAlertsSurfaceContained, legacySettingsSurfaceContained, v2VisualOwnershipPreserved, oldPortraitUiNotRestored, v1362RouteSurfaceProductionized:true, placeholderRouteCopyRemoved, routeSurfaceShowsRealState, routeSheetVisualOwnershipMaintained:v2VisualOwnershipPreserved, v1371AlertsSurfaceProductionized:true, placeholderAlertsCopyRemoved, alertsSurfaceShowsRealState:true, alertsOwnershipImproved:true, alertsEmptyStateProductionized:true, alertsSurfaceMode:activeSheet === "alerts" ? "alerts_sheet_open" : "alerts_sheet_closed", activeAlertCount:alertsSnapshot.activeIncidentCount, nearbyAlertCount:alertsSnapshot.activeIncidentCount, routeImpactAlertCount:alertsSnapshot.activeIncidentCount, v1372AlertsHierarchyRefined:true, duplicateAlertsCopyRemoved:true, manageAlertsActionRestored:Boolean(v1372AlertsActionDebug.manageAlertsActionHandled), alertPreferencesActionRestored:Boolean(v1372AlertsActionDebug.alertPreferencesActionHandled), alertsSurfaceCurated:true, alertsSurfaceSectionCount:4, alertsActionFailureReason:v1372AlertsActionDebug.lastAlertsActionFailureReason || null, routeIntentPresentationImproved:true, v1363RouteActionsRestored:true, routeDockClickHandled:v1363RouteActionDebug.routeDockClickHandled, routeWatchActionHandled:v1363RouteActionDebug.routeWatchActionHandled, routePreviewActionHandled:v1363RouteActionDebug.routePreviewActionHandled, routeManagePlacesActionHandled:v1363RouteActionDebug.routeManagePlacesActionHandled, lastRouteActionFailureReason:v1363RouteActionDebug.lastRouteActionFailureReason || null, v1365ManagePlacesAdapterRestored:true, v1366ManagePlacesModalOpeningFixed:true, v1368RouteQuickPanelClosesBeforeManagePlaces:v1365ManagePlacesAdapterDebug.v1368RouteQuickPanelClosesBeforeManagePlaces, routeQuickPanelClosedForManagePlaces:v1365ManagePlacesAdapterDebug.routeQuickPanelClosedForManagePlaces, managePlacesOpenedWithoutStacking:v1365ManagePlacesAdapterDebug.managePlacesOpenedWithoutStacking, lastManagePlacesSurfaceCleanup:v1365ManagePlacesAdapterDebug.lastManagePlacesSurfaceCleanup || null, managePlacesActionHandled:v1365ManagePlacesAdapterDebug.managePlacesActionHandled, managePlacesTargetFound:v1365ManagePlacesAdapterDebug.managePlacesTargetFound, managePlacesFailureReason:v1365ManagePlacesAdapterDebug.managePlacesFailureReason || null, lastManagePlacesTriggerSource:v1365ManagePlacesAdapterDebug.lastManagePlacesTriggerSource || null, routeSetupModalVisible, routeSetupModalSuppressed, managePlacesModalOwnershipResolved, v1367RouteSetupModalVisibilitySynced, routeSetupModalInteractive, routeSetupModalOpacityResolved, routeSetupModalPointerEventsResolved, routeSetupModalSuppressionCleared, routeSetupModalOpenClasses, routeSetupModalComputedVisibility:routeSetupModalComputed?.visibility || null, lastManagePlacesModalState:v1365ManagePlacesAdapterDebug.lastManagePlacesModalState || null, routeSetupModalComputedDisplay:routeSetupModalComputed?.display || null, routeSetupModalComputedOpacity:routeSetupModalComputed?.opacity || null, routeSetupModalComputedPointerEvents:routeSetupModalComputed?.pointerEvents || null, currentRouteSurfaceState:routeSurfaceState.routeState, routeReadinessState:routeSurfaceState.readinessState, v1364RouteSnapshotPlacesShapeFixed:true, savedPlacesNormalizedForRouteSnapshot:Boolean(routeSurfaceState.savedPlacesNormalizedForRouteSnapshot), routeSnapshotNoThrow:Boolean(routeSurfaceState.routeSnapshotNoThrow), routeSnapshotPlaceCount:routeSurfaceState.savedPlaceCount, routeSnapshotPlacesShape:routeSurfaceState.savedPlacesShape || "missing", routeSheetMode:activeSheet === "route" ? "route_sheet_open" : "route_sheet_closed", visibleLegacySurfaceCount: legacySurfaceState.visibleCount, lastLegacySurfaceSuppressed: legacySurfaceState.lastSuppressed || null, lastNormalizedSurface: legacySurfaceState.lastSuppressed || null, visibleNonV2SurfaceCount: legacySurfaceState.visibleCount, activeV2SurfaceOwner: activeSheet || "dock", v1369PreconditionsUxApplied, disabledStateSystemApplied, silentNoOpsReduced, routePreconditionsHardened, reportPreconditionsHardened, alertsPreconditionsHardened, settingsPreconditionsHardened, disabledInteractionCount:v1369PreconditionsDebug.disabledInteractionCount, lastBlockedInteraction:v1369PreconditionsDebug.lastBlockedInteraction || null, lastPreconditionReason:v1369PreconditionsDebug.lastPreconditionReason || null, v138CommuteConsequenceIntelligenceApplied:true, v1381CrossingClassificationFixed:v1381CrossingClassificationDebug.v1381CrossingClassificationFixed, crossingIncidentsPreserved:v1381CrossingClassificationDebug.crossingIncidentsPreserved, genericRoadHazardDowngradePrevented:v1381CrossingClassificationDebug.genericRoadHazardDowngradePrevented, lastClassifiedIncidentType:v1381CrossingClassificationDebug.lastClassifiedIncidentType, lastClassifiedIncidentLabel:v1381CrossingClassificationDebug.lastClassifiedIncidentLabel, crossingIncidentCount:v1381CrossingClassificationDebug.crossingIncidentCount, roadHazardIncidentCount:v1381CrossingClassificationDebug.roadHazardIncidentCount, unknownIncidentCount:v1381CrossingClassificationDebug.unknownIncidentCount, commuteConsequenceTier:localizedIntel.commuteConsequenceTier, routeConsequenceSeverity:localizedIntel.routeConsequenceSeverity, topStatusUsesConsequenceLanguage: topStatusPrimaryText === localizedIntel.consequencePrimaryMessage, rerouteReadinessDetected: localizedIntel.rerouteReadinessDetected, consequenceTrendState: localizedIntel.consequenceTrendState, consequencePrimaryMessage: localizedIntel.consequencePrimaryMessage, consequenceSecondaryMessage: localizedIntel.consequenceSecondaryMessage, consequenceIncidentCount: localizedIntel.consequenceIncidentCount, routeImpactEtaEstimate: localizedIntel.routeImpactEtaEstimate, warnings};
+    }, adapterFallbackCount:v2DockAdapterState.adapterFallbackCount, lastDockActionTriggered:v2DockAdapterState.lastDockActionTriggered, lastDockAdapterTarget:v2DockAdapterState.lastDockAdapterTarget, adapterBridgeFailures:v2DockAdapterState.adapterBridgeFailures.slice(-8), v134ReportingRefinementApplied, v1341UnifiedReportSuccessLifecycleApplied, v1342ReportSurfaceOwnershipApplied, v1343PopupReportingPriorityApplied:true, v1344HardReportingSuppressionApplied:true, v1345ReportingMountFlashPrevented:true, liveReportingMountBypassed:Boolean(popupReportingLifecycleActive && liveReportingTemporarilySuppressed && liveReportingDrawerEl && !liveReportingDrawerEl.open), popupReportingLifecycleCleaned:Boolean(!popupReportingLifecycleActive || (liveReportingTemporarilySuppressed && lastSuccessSurfaceOwner === "crossing_popup")), transientReportingFlashEliminated:Boolean(!popupReportingLifecycleActive || (liveReportingDrawerEl && !liveReportingDrawerEl.open)), popupReportingExclusivityMaintained:Boolean(!popupReportingLifecycleActive || lastSuccessSurfaceOwner === "crossing_popup"), mapFirstCompletionFlowImproved:true, liveReportingDrawerFullySuppressed, popupReportingExclusiveOwnership:Boolean(!popupReportingLifecycleActive || (lastSuccessSurfaceOwner === "crossing_popup" && liveReportingDrawerFullySuppressed)), duplicateReportingUiEliminated:Boolean(!popupReportingLifecycleActive || (liveReportingDrawerFullySuppressed && !reportingState.submissionInProgress)), popupSuccessFlowCleanedUp:Boolean(!popupReportingLifecycleActive || (lastSuccessSurfaceOwner === "crossing_popup" && liveReportingDrawerFullySuppressed)), mapFirstReportingRestored:true, popupReportingSuppressionActive, popupReportingOwnsLifecycle:Boolean(lastSuccessSurfaceOwner === "crossing_popup" || popupReportingLifecycleActive), liveReportingCompetitionSuppressed:Boolean(!popupReportingLifecycleActive || liveReportingTemporarilySuppressed), duplicateReportingSurfacesReduced:Boolean(!popupReportingLifecycleActive || !reportingState.submissionInProgress), popupReportingComposureImproved:Boolean(!popupReportingLifecycleActive || (lastSuccessSurfaceOwner === "crossing_popup" && liveReportingTemporarilySuppressed)), mapFirstReportingFlowPreserved:true, liveReportingTemporarilySuppressed, liveReportingDrawerHiddenAt:liveReportingDrawerSuppressedAt||0, liveReportingDrawerRestoredAt:liveReportingDrawerRestoredAt||0, lastLiveReportingMountPreventedAt:liveReportingDrawerSuppressedAt||0, popupReportingDrawerBypassActive:Boolean(popupReportingLifecycleActive && liveReportingTemporarilySuppressed), lastPopupReportingStartedAt, lastPopupReportingCompletedAt, reportSuccessTimersUnified, reportSuccessLifecycleActive, reportSuccessHoldMs:REPORT_SUCCESS_HOLD_MS, reportSuccessFadeMs:REPORT_SUCCESS_FADE_MS, reportPopupCloseDelayMs:REPORT_POPUP_CLOSE_DELAY_MS, reportButtonSuccessMs:REPORT_BUTTON_SUCCESS_MS, duplicateSuccessTimersReduced, authoritativeSuccessSurfaceEstablished, popupCompetitionReduced, reportingSuccessLayoutRefined, stackedReportingStatesReduced, reportCompletionComposureImproved, lastSuccessSurfaceOwner, lastPopupClosedAt, lastReportingResetAt, lastReportSuccessStartedAt, lastReportSuccessCompletedAt, lastReportSuccessType, lastReportSuccessFlow, successStateCalmed, reportingHierarchyImproved, transientTimingRefined, overlayCompetitionReduced, reportSuccessClarityImproved, brandLogoHeight, brandLogoWidth, topbarHeight, v1352SurfaceContainmentApplied, v1353PresentationNormalizationApplied, v1354HazardPanelRootNormalized, v1355RedundantHazardPanelRemoved, v1356HazardSelectionKeepsSheetOpen:true, hazardTileSelectionNoClose:true, selectedHazardRequiresExplicitPlacement:true, v2HazardSelectionInline, legacyHazardPanelBypassed, selectedV2HazardType, v2HazardActionsWired, v1363HazardRoadSnapRestored:true, hazardPlacementUsesCanonicalSnap:Boolean(lastRoadSnapDebug?.hazardPlacementUsesCanonicalSnap), lastHazardPlacementSource:lastRoadSnapDebug?.lastHazardPlacementSource||null, lastHazardSnapResult:lastRoadSnapDebug?.lastHazardSnapResult||null, lastHazardSnapDistance:lastRoadSnapDebug?.snapDistanceMeters ?? null, rawHazardCoordinatesBlockedWhenInvalid:Boolean(lastRoadSnapDebug?.rawHazardCoordinatesBlockedWhenInvalid), hazardPanelRootV2SheetApplied, hazardPanelNoLongerFullHeight, hazardPanelDockClearancePreserved, hazardPanelLegacyTakeoverResolved, reportHazardV2PresentationApplied, routeQuickPanelV2PresentationApplied, closeButtonStandardized, bottomSheetPresentationConsistent, legacySurfaceVisualDriftReduced, legacyReportSurfaceSuppressed, legacyRouteSurfaceContained, legacyAlertsSurfaceContained, legacySettingsSurfaceContained, v2VisualOwnershipPreserved, oldPortraitUiNotRestored, v1362RouteSurfaceProductionized:true, placeholderRouteCopyRemoved, routeSurfaceShowsRealState, routeSheetVisualOwnershipMaintained:v2VisualOwnershipPreserved, v1371AlertsSurfaceProductionized:true, placeholderAlertsCopyRemoved, alertsSurfaceShowsRealState:true, alertsOwnershipImproved:true, alertsEmptyStateProductionized:true, alertsSurfaceMode:activeSheet === "alerts" ? "alerts_sheet_open" : "alerts_sheet_closed", activeAlertCount:alertsSnapshot.activeIncidentCount, nearbyAlertCount:alertsSnapshot.activeIncidentCount, routeImpactAlertCount:alertsSnapshot.activeIncidentCount, v1372AlertsHierarchyRefined:true, duplicateAlertsCopyRemoved:true, manageAlertsActionRestored:Boolean(v1372AlertsActionDebug.manageAlertsActionHandled), alertPreferencesActionRestored:Boolean(v1372AlertsActionDebug.alertPreferencesActionHandled), alertsSurfaceCurated:true, alertsSurfaceSectionCount:4, alertsActionFailureReason:v1372AlertsActionDebug.lastAlertsActionFailureReason || null, routeIntentPresentationImproved:true, v1363RouteActionsRestored:true, routeDockClickHandled:v1363RouteActionDebug.routeDockClickHandled, routeWatchActionHandled:v1363RouteActionDebug.routeWatchActionHandled, routePreviewActionHandled:v1363RouteActionDebug.routePreviewActionHandled, routeManagePlacesActionHandled:v1363RouteActionDebug.routeManagePlacesActionHandled, lastRouteActionFailureReason:v1363RouteActionDebug.lastRouteActionFailureReason || null, v1365ManagePlacesAdapterRestored:true, v1366ManagePlacesModalOpeningFixed:true, v1368RouteQuickPanelClosesBeforeManagePlaces:v1365ManagePlacesAdapterDebug.v1368RouteQuickPanelClosesBeforeManagePlaces, routeQuickPanelClosedForManagePlaces:v1365ManagePlacesAdapterDebug.routeQuickPanelClosedForManagePlaces, managePlacesOpenedWithoutStacking:v1365ManagePlacesAdapterDebug.managePlacesOpenedWithoutStacking, lastManagePlacesSurfaceCleanup:v1365ManagePlacesAdapterDebug.lastManagePlacesSurfaceCleanup || null, managePlacesActionHandled:v1365ManagePlacesAdapterDebug.managePlacesActionHandled, managePlacesTargetFound:v1365ManagePlacesAdapterDebug.managePlacesTargetFound, managePlacesFailureReason:v1365ManagePlacesAdapterDebug.managePlacesFailureReason || null, lastManagePlacesTriggerSource:v1365ManagePlacesAdapterDebug.lastManagePlacesTriggerSource || null, routeSetupModalVisible, routeSetupModalSuppressed, managePlacesModalOwnershipResolved, v1367RouteSetupModalVisibilitySynced, routeSetupModalInteractive, routeSetupModalOpacityResolved, routeSetupModalPointerEventsResolved, routeSetupModalSuppressionCleared, routeSetupModalOpenClasses, routeSetupModalComputedVisibility:routeSetupModalComputed?.visibility || null, lastManagePlacesModalState:v1365ManagePlacesAdapterDebug.lastManagePlacesModalState || null, routeSetupModalComputedDisplay:routeSetupModalComputed?.display || null, routeSetupModalComputedOpacity:routeSetupModalComputed?.opacity || null, routeSetupModalComputedPointerEvents:routeSetupModalComputed?.pointerEvents || null, currentRouteSurfaceState:routeSurfaceState.routeState, routeReadinessState:routeSurfaceState.readinessState, v1364RouteSnapshotPlacesShapeFixed:true, savedPlacesNormalizedForRouteSnapshot:Boolean(routeSurfaceState.savedPlacesNormalizedForRouteSnapshot), routeSnapshotNoThrow:Boolean(routeSurfaceState.routeSnapshotNoThrow), routeSnapshotPlaceCount:routeSurfaceState.savedPlaceCount, routeSnapshotPlacesShape:routeSurfaceState.savedPlacesShape || "missing", routeSheetMode:activeSheet === "route" ? "route_sheet_open" : "route_sheet_closed", visibleLegacySurfaceCount: legacySurfaceState.visibleCount, lastLegacySurfaceSuppressed: legacySurfaceState.lastSuppressed || null, lastNormalizedSurface: legacySurfaceState.lastSuppressed || null, visibleNonV2SurfaceCount: legacySurfaceState.visibleCount, activeV2SurfaceOwner: activeSheet || "dock", v1369PreconditionsUxApplied, disabledStateSystemApplied, silentNoOpsReduced, routePreconditionsHardened, reportPreconditionsHardened, alertsPreconditionsHardened, settingsPreconditionsHardened, disabledInteractionCount:v1369PreconditionsDebug.disabledInteractionCount, lastBlockedInteraction:v1369PreconditionsDebug.lastBlockedInteraction || null, lastPreconditionReason:v1369PreconditionsDebug.lastPreconditionReason || null, v138CommuteConsequenceIntelligenceApplied:true, v1381CrossingClassificationFixed:v1381CrossingClassificationDebug.v1381CrossingClassificationFixed, crossingIncidentsPreserved:v1381CrossingClassificationDebug.crossingIncidentsPreserved, genericRoadHazardDowngradePrevented:v1381CrossingClassificationDebug.genericRoadHazardDowngradePrevented, lastClassifiedIncidentType:v1381CrossingClassificationDebug.lastClassifiedIncidentType, lastClassifiedIncidentLabel:v1381CrossingClassificationDebug.lastClassifiedIncidentLabel, crossingIncidentCount:v1381CrossingClassificationDebug.crossingIncidentCount, roadHazardIncidentCount:v1381CrossingClassificationDebug.roadHazardIncidentCount, unknownIncidentCount:v1381CrossingClassificationDebug.unknownIncidentCount, commuteConsequenceTier:localizedIntel.commuteConsequenceTier, routeConsequenceSeverity:localizedIntel.routeConsequenceSeverity, topStatusUsesConsequenceLanguage: topStatusPrimaryText === localizedIntel.consequencePrimaryMessage, rerouteReadinessDetected: localizedIntel.rerouteReadinessDetected, consequenceTrendState: localizedIntel.consequenceTrendState, consequencePrimaryMessage: localizedIntel.consequencePrimaryMessage, consequenceSecondaryMessage: localizedIntel.consequenceSecondaryMessage, consequenceIncidentCount: localizedIntel.consequenceIncidentCount, routeImpactEtaEstimate: localizedIntel.routeImpactEtaEstimate, v1382CorridorClusteringApplied:true, corridorHealthModelActive:true, corridorGroupingEnabled:true, topStatusUsesCorridorIntelligence:true, routeAwareCorridorRankingEnabled:true, activeCorridorCount:(localizedIntel.corridorClusters||[]).length, highestPriorityCorridor:localizedIntel.highestPriorityCorridor, corridorSummaries:(localizedIntel.corridorClusters||[]).map((c)=>`${c.label}: ${c.healthState}`), corridorSeverityMap:localizedIntel.corridorSeverityMap||{}, warnings};
   };
   document.addEventListener("DOMContentLoaded", bindV2);
 })();
