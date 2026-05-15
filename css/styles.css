@@ -13560,13 +13560,14 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 {
 }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar {
   min-height: 42px;
-  padding: 6px 9px;
+  padding: 6px 11px 6px 9px;
   border-color: rgba(164, 198, 236, 0.24);
   box-shadow: 0 5px 11px rgba(2, 8, 18, 0.24);
   position: fixed;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 11px;
 }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-header-region {
   min-width: 0;
@@ -13578,18 +13579,16 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-header-left {
   z-index: 2;
 }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-header-center {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  justify-content: center;
+  position: static;
+  transform: none;
+  justify-content: flex-start;
+  margin-left: auto;
+  padding-right: 1px;
   pointer-events: none;
   z-index: 1;
 }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-header-right {
-  margin-left: auto;
-  justify-content: flex-end;
-  z-index: 2;
+  display: none;
 }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand {
   min-width: 0;
