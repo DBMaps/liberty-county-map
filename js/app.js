@@ -15620,7 +15620,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     sheet.style.pointerEvents = "";
     sheet.style.transform = "";
     sheet.style.translate = "";
-    sheet.classList.remove("is-closing");
+    sheet.classList.remove("is-closing", "is-closed");
+    sheet.classList.add("is-open");
     backdrop.style.pointerEvents = "";
     backdrop.style.display = "";
     backdrop.classList.remove("is-closing");
@@ -15672,13 +15673,17 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const backdrop=document.getElementById("gridlyPortraitV2SheetBackdrop");
     if(sheet){
       sheet.hidden=true;
+      sheet.style.display="none";
       sheet.style.pointerEvents="none";
       sheet.style.transform="translate3d(0, 100%, 0)";
       sheet.style.translate="0 100%";
       sheet.classList.remove("visible", "is-open", "active", "open");
-      sheet.classList.add("is-closing");
+      sheet.classList.add("is-closing", "is-closed");
     }
-    if(sheetBody) sheetBody.classList.remove("visible", "is-open", "active", "open");
+    if(sheetBody){
+      sheetBody.hidden=true;
+      sheetBody.classList.remove("visible", "is-open", "active", "open");
+    }
     if(backdrop){
       backdrop.hidden=true;
       backdrop.style.pointerEvents="none";
@@ -16266,6 +16271,11 @@ const v134ReportingRefinementApplied = true;
       shell: getState(shell),
       sheet: getState(sheet),
       sheetBody: getState(sheetBody),
+      sheetHidden: Boolean(sheet?.hidden),
+      sheetDisplay: sheet ? getComputedStyle(sheet).display : null,
+      sheetTransform: sheet ? getComputedStyle(sheet).transform : null,
+      sheetHasOpenClass: Boolean(sheet?.classList.contains("is-open")),
+      sheetHasClosedClass: Boolean(sheet?.classList.contains("is-closed")),
       activeSheet,
       rawActiveSheetSource: {
         portraitV2ActiveSheet: activeSheet,
