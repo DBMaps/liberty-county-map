@@ -6048,6 +6048,10 @@ window.gridlyPortraitV2ClickTrace = function gridlyPortraitV2ClickTrace() {
 
 window.gridlyPortraitV2HitboxAudit = function gridlyPortraitV2HitboxAudit() {
   const actions = ["report-use-location", "report-tap-map"];
+  const selectedHazardButtons = Array.from(document.querySelectorAll('#gridlyPortraitV2SheetBody [data-v2-action="report-select-hazard"].is-selected'));
+  const selectedHazardButtonText = selectedHazardButtons.map((button) => (button.textContent || "").trim()).filter(Boolean);
+  const reportingStateSelectedHazardType = (typeof reportingState === "object" && reportingState ? reportingState.selectedHazardType : null) || null;
+  const ctaDisabledReason = reportingStateSelectedHazardType ? "" : "hazard_type_not_selected";
   const summarizeNode = (node) => {
     if (!(node instanceof Element)) return null;
     return {
@@ -6088,6 +6092,10 @@ window.gridlyPortraitV2HitboxAudit = function gridlyPortraitV2HitboxAudit() {
   });
   return {
     sheetHidden: Boolean(document.getElementById("gridlyPortraitV2Sheet")?.hidden),
+    ctaDisabledReason,
+    reportingStateSelectedHazardType,
+    selectedHazardButtonCount: selectedHazardButtons.length,
+    selectedHazardButtonText,
     auditRows
   };
 };
@@ -15621,6 +15629,16 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       settingsReason: "Set Home Town and preferences to unlock route and alerts intelligence."
     };
   }
+  function refreshPortraitV2ReportCtas(body, preconditions = getV2PreconditionsState()) {
+    if (!body) return;
+    body.querySelectorAll('[data-v2-action="report-use-location"], [data-v2-action="report-tap-map"]').forEach((button) => {
+      const isDisabledByPrecondition = !preconditions.reportHazardSelected;
+      button.disabled = isDisabledByPrecondition;
+      button.classList.toggle("is-disabled", isDisabledByPrecondition);
+      if (isDisabledByPrecondition) button.setAttribute("aria-disabled", "true");
+      else button.removeAttribute("aria-disabled");
+    });
+  }
   function markV2BlockedInteraction(action, reason) {
     v1369PreconditionsDebug.disabledInteractionCount += 1;
     v1369PreconditionsDebug.lastBlockedInteraction = action;
@@ -15658,6 +15676,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         document.querySelectorAll("#gridlyPortraitV2SheetBody .gridly-v2-report-action").forEach((button) => {
           button.classList.toggle("is-selected", (button.dataset.hazardType || "") === selectedV2HazardType);
         });
+        const sheetBody = document.getElementById("gridlyPortraitV2SheetBody");
+        refreshPortraitV2ReportCtas(sheetBody);
       },
       "report-use-location": () => {
         pushTapMapTrace("portrait-v2-report-use-location", {
@@ -15675,7 +15695,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       "report-tap-map": () => {
         const resolvedHazardType = selectedV2HazardType || reportingState.selectedHazardType || selectedQuickHazardType || "";
         pushTapMapTrace("portrait-v2-report-tap-map", { source: "portrait-v2-report", hazardType: resolvedHazardType || null });
-        if (!selectedV2HazardType) {
+        if (!resolvedHazardType) {
           markV2BlockedInteraction("report-tap-map", "Choose a hazard first, then tap a map location.");
           return;
         }
@@ -15803,11 +15823,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       body.dataset.tapMapDelegateBound = "1";
     }
     const preconditions = getV2PreconditionsState();
+    refreshPortraitV2ReportCtas(body, preconditions);
     body.querySelectorAll("[data-v2-action]").forEach((button) => {
       const action = button.dataset.v2Action || "";
       const isDisabledByPrecondition = (
-        ((action === "report-use-location" || action === "report-tap-map") && !preconditions.reportHazardSelected)
-        || ((action === "route-watch-open" || action === "route-preview-open") && !preconditions.routeReady)
+        ((action === "route-watch-open" || action === "route-preview-open") && !preconditions.routeReady)
         || (action === "route-manage-places-open" && !preconditions.hasSavedPlaces)
       );
       button.disabled = isDisabledByPrecondition;
