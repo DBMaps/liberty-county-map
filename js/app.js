@@ -3973,6 +3973,66 @@ window.gridlyClearLocalTestReports = function gridlyClearLocalTestReports() {
   return summary;
 };
 
+window.gridlyUnifiedHazardSourceAudit = async function gridlyUnifiedHazardSourceAudit(options = {}) {
+  if (!supabaseClient) {
+    const missing = { ok: false, reason: "Supabase client not initialized." };
+    console.warn("gridlyUnifiedHazardSourceAudit unavailable", missing);
+    return missing;
+  }
+
+  const ROAD_HAZARD_TYPES = ["flooding", "ice", "debris", "crash", "construction", "road_closed", "disabled_vehicle", "other_hazard", "hazard_cleared", "wreck"];
+  const hours = Math.max(1, Number(options?.hours) || 24);
+  const cutoffIso = new Date(Date.now() - (hours * 60 * 60 * 1000)).toISOString();
+  const rawSourceFilter = options?.sourceFilter;
+  const sourceFilter = Array.isArray(rawSourceFilter)
+    ? rawSourceFilter.map((value) => String(value || "").trim().toLowerCase()).filter(Boolean)
+    : null;
+
+  const { data, error } = await supabaseClient
+    .from("reports")
+    .select("id,report_type,source,created_at,expires_at,crossing_id")
+    .gte("created_at", cutoffIso)
+    .in("report_type", ROAD_HAZARD_TYPES)
+    .order("created_at", { ascending: false })
+    .limit(1000);
+
+  if (error) {
+    console.error("gridlyUnifiedHazardSourceAudit query failed", error);
+    return { ok: false, reason: error.message || "query_failed" };
+  }
+
+  const rows = Array.isArray(data) ? data : [];
+  const normalizedRows = normalizeReports(rows);
+  const activeNormalizedHazards = normalizedRows.filter((report) => report.reportKind === "hazard" && !report.expired && report.type !== "hazard_cleared");
+  const effectiveSourceRows = rows.filter((row) => {
+    if (!sourceFilter?.length) return true;
+    const effectiveSource = String(row?.source || "user").toLowerCase();
+    return sourceFilter.includes(effectiveSource);
+  });
+  const recentUserRoadHazards = effectiveSourceRows.filter((row) => {
+    const type = String(row?.report_type || "").toLowerCase();
+    const normalizedType = type === "wreck" ? "crash" : type;
+    return normalizedType !== "hazard_cleared" && String(row?.crossing_id || "").trim().length === 0 && String(row?.source || "user").toLowerCase() === "user";
+  });
+
+  const summary = {
+    ok: true,
+    cutoffIso,
+    sourceOwner: "supabase.reports -> normalizeReports(...) -> activeHazards -> getLiveHazardIncidents()",
+    sourceCount: activeNormalizedHazards.length,
+    generatedIncidentCount: getLiveHazardIncidents().length,
+    recentUserRoadHazardCount: recentUserRoadHazards.length,
+    sourceBreakdown: rows.reduce((acc, row) => {
+      const key = String(row?.source || "user").toLowerCase() || "user";
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, {})
+  };
+
+  console.info("gridlyUnifiedHazardSourceAudit", summary);
+  return summary;
+};
+
 window.gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoadHazards(options = {}) {
   const host = String(window?.location?.hostname || "").toLowerCase();
   const isDevHost = host === "localhost" || host === "127.0.0.1" || host.endsWith(".local") || host === "";
@@ -4031,9 +4091,10 @@ window.gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoad
   const matches = (Array.isArray(data) ? data : []).filter((row) => {
     const type = String(row?.report_type || "").toLowerCase();
     const source = String(row?.source || "").toLowerCase();
+    const effectiveSource = source || "user";
     if (!ROAD_HAZARD_TYPES.includes(type)) return false;
     if (!includeRail && String(row?.crossing_id || "").trim().length > 0) return false;
-    if (sourceFilter.length && !sourceFilter.includes(source)) return false;
+    if (sourceFilter.length && !sourceFilter.includes(effectiveSource)) return false;
     if (!radius || !centerCandidate) return true;
     return getDistanceMiles(centerCandidate.lat, centerCandidate.lng, Number(row?.lat), Number(row?.lng)) <= radius;
   });
@@ -4085,6 +4146,8 @@ window.gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoad
   refreshReportHazardViews();
   await loadSharedReports("dev_purge_recent_road_hazards");
   refreshReportHazardViews();
+  renderUnifiedIncidents();
+  renderRoadHazards();
 
   summary.deleted = idsToDelete.length;
   console.info("gridlyDevPurgeRecentRoadHazards completed", summary);
