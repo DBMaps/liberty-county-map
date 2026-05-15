@@ -205,6 +205,35 @@ let alternateRouteAvailable = false;
 let primaryRouteHazardCount = 0;
 let alternateRouteHazardCount = 0;
 let hazardsAvoidedCount = 0;
+const NETWORK_AUDIT_LOG_LIMIT = 10;
+const LOAD_SHARED_REPORTS_DEDUPE_MS = 1500;
+const gridlyNetworkAuditState = {
+  loadSharedReports: { count: 0, lastCalls: [], inFlight: false, inFlightPromise: null, lastByReason: {} },
+  osrmNearest: { count: 0, lastCalls: [], inFlight: 0 },
+  hazardSubmit: { lastLifecycle: null }
+};
+
+function pushAuditCall(bucket, reason, extra = {}) {
+  const timestamp = Date.now();
+  bucket.count += 1;
+  bucket.lastCalls.push({ timestamp, iso: new Date(timestamp).toISOString(), reason, ...extra });
+  if (bucket.lastCalls.length > NETWORK_AUDIT_LOG_LIMIT) bucket.lastCalls.splice(0, bucket.lastCalls.length - NETWORK_AUDIT_LOG_LIMIT);
+  return timestamp;
+}
+
+window.gridlyNetworkAudit = function gridlyNetworkAudit() {
+  return {
+    loadSharedReportsCallCount: gridlyNetworkAuditState.loadSharedReports.count,
+    loadSharedReportsLast10: [...gridlyNetworkAuditState.loadSharedReports.lastCalls],
+    osrmNearestCallCount: gridlyNetworkAuditState.osrmNearest.count,
+    osrmNearestLast10: [...gridlyNetworkAuditState.osrmNearest.lastCalls],
+    inFlight: {
+      loadSharedReports: Boolean(gridlyNetworkAuditState.loadSharedReports.inFlight),
+      osrmNearestCalls: Number(gridlyNetworkAuditState.osrmNearest.inFlight || 0)
+    },
+    lastHazardSubmitLifecycle: gridlyNetworkAuditState.hazardSubmit.lastLifecycle
+  };
+};
 let routeComparisonStatus = "alternate_unavailable";
 let routeComparisonSummary = "";
 let primaryRouteScore = 0;
@@ -1744,9 +1773,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   await loadCrossings();
   await loadRoadwayDataset();
-  await loadSharedReports();
+  await loadSharedReports("initial_bootstrap");
 
-  setInterval(loadSharedReports, LIVE_REFRESH_MS);
+  setInterval(() => loadSharedReports("interval_live_refresh"), LIVE_REFRESH_MS);
 });
 
 function initVisualViewportHeightVar() {
@@ -2036,7 +2065,7 @@ function initSupabase() {
           schema: "public",
           table: "reports"
         },
-        () => loadSharedReports()
+        () => loadSharedReports("realtime_postgres_change")
       )
       .subscribe((status) => {
         if (status === "SUBSCRIBED") {
@@ -3885,15 +3914,26 @@ window.gridlyClearLocalTestReports = function gridlyClearLocalTestReports() {
 
 async function runPostSubmitRefresh() {
   console.debug("Post-submit refresh started");
-  await loadSharedReports();
+  await loadSharedReports("post_submit_refresh");
   refreshReportHazardViews();
   console.debug("Post-submit refresh complete");
 }
 
-async function loadSharedReports() {
+async function loadSharedReports(reason = "manual") {
+  const audit = gridlyNetworkAuditState.loadSharedReports;
+  const now = pushAuditCall(audit, reason);
+  const lastForReason = audit.lastByReason[reason] || 0;
+  if (now - lastForReason < LOAD_SHARED_REPORTS_DEDUPE_MS) {
+    return audit.inFlightPromise || null;
+  }
+  audit.lastByReason[reason] = now;
+  if (audit.inFlight && audit.inFlightPromise) return audit.inFlightPromise;
+
+  audit.inFlight = true;
+  audit.inFlightPromise = (async () => {
   if (!supabaseClient) {
     setSync(`Live sync unavailable · Build ${APP_BUILD}`);
-    return;
+    return null;
   }
 
   try {
@@ -3927,7 +3967,14 @@ async function loadSharedReports() {
     console.error("Gridly report sync failed:", error);
     setSync("Live sync read failed");
   }
-
+  return null;
+  })();
+  try {
+    return await audit.inFlightPromise;
+  } finally {
+    audit.inFlight = false;
+    audit.inFlightPromise = null;
+  }
 }
 
 function normalizeReports(rows) {
@@ -6096,6 +6143,8 @@ async function snapHazardToRoad(lat, lng, options = {}) {
   };
   for (const radiusMeters of snapAttemptRadii) {
     try {
+      pushAuditCall(gridlyNetworkAuditState.osrmNearest, options?.source || "hazard_snap", { radiusMeters });
+      gridlyNetworkAuditState.osrmNearest.inFlight += 1;
       const nearestUrl = `${OSRM_NEAREST_API}/${lng},${lat}?number=1&radiuses=${radiusMeters}`;
       debug.osrmNearestUrl = nearestUrl;
       const response = await fetch(nearestUrl);
@@ -6120,6 +6169,8 @@ async function snapHazardToRoad(lat, lng, options = {}) {
       return { lat: snappedLat, lng: snappedLng, fallbackUsed: false, originalTapCoords: debug.originalTapCoords };
     } catch (error) {
       debug.fallbackReason = String(error?.message || error || "nearest_unknown_failure");
+    } finally {
+      gridlyNetworkAuditState.osrmNearest.inFlight = Math.max(0, gridlyNetworkAuditState.osrmNearest.inFlight - 1);
     }
   }
   debug.lastHazardSnapResult = "blocked_no_nearby_road";
@@ -6136,6 +6187,16 @@ function isPointNearActiveRoute(lat, lng) {
 }
 
 async function createSharedHazardReport(hazardType, lat, lng, confidence, locationName = "", originalTapCoords = null) {
+  const submitAudit = {
+    startedAt: Date.now(),
+    startedIso: new Date().toISOString(),
+    hazardType,
+    stages: []
+  };
+  const markSubmitStage = (name, extra = {}) => {
+    submitAudit.stages.push({ name, timestamp: Date.now(), ...extra });
+  };
+  markSubmitStage("enter");
   lastMobileReportSubmitDebug.lastSubmitAttempt = "final_submit_handler_entered";
   if (reportingState.submissionInProgress) return false;
 
@@ -6177,12 +6238,14 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     setConfirmation(`Sending ${copy.label} hazard report...`, "success");
 
     lastMobileReportSubmitDebug.lastSubmitAttempt = "supabase_insert_started";
+    markSubmitStage("supabase_insert_started");
     lastMobileReportSubmitDebug.supabaseInsertStarted = true;
     const { error } = await supabaseClient.from("reports").insert(row);
 
     if (error) throw error;
 
     lastMobileReportSubmitDebug.lastSubmitAttempt = "supabase_insert_succeeded";
+    markSubmitStage("supabase_insert_succeeded");
     lastMobileReportSubmitDebug.supabaseInsertSucceeded = true;
     updateReportingState({ lastReportError: "", lastReportMessage: "Report added" });
     runUnifiedReportSuccessLifecycle({
@@ -6192,7 +6255,9 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     });
     setSync("Hazard report shared");
 
+    markSubmitStage("post_submit_refresh_started");
     await runPostSubmitRefresh();
+    markSubmitStage("post_submit_refresh_completed");
     updateReportingState({
       submissionInProgress: false,
       locationLookupInProgress: false,
@@ -6204,6 +6269,10 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     returnMobileToLiveMode("submit_hazard_success");
     lastMobileReportSubmitDebug.postSubmitUiResetSucceeded = true;
     lastMobileReportSubmitDebug.lastSubmitAttempt = "ui_reset_complete";
+    markSubmitStage("ui_reset_complete");
+    submitAudit.completedAt = Date.now();
+    submitAudit.durationMs = submitAudit.completedAt - submitAudit.startedAt;
+    gridlyNetworkAuditState.hazardSubmit.lastLifecycle = submitAudit;
     return true;
   } catch (error) {
     console.error("Gridly hazard insert failed:", error);
@@ -6214,6 +6283,11 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     setConfirmation(`Hazard report failed: ${error.message || "permission denied"}`, "error");
     setSync("Hazard report failed");
     updateReportingState({ submissionInProgress: false, locationLookupInProgress: false });
+    markSubmitStage("failed", { message: error?.message || "unknown_error" });
+    submitAudit.completedAt = Date.now();
+    submitAudit.durationMs = submitAudit.completedAt - submitAudit.startedAt;
+    submitAudit.error = error?.message || "unknown_error";
+    gridlyNetworkAuditState.hazardSubmit.lastLifecycle = submitAudit;
     return false;
   }
 }
