@@ -6046,6 +6046,52 @@ window.gridlyPortraitV2ClickTrace = function gridlyPortraitV2ClickTrace() {
   };
 };
 
+window.gridlyPortraitV2HitboxAudit = function gridlyPortraitV2HitboxAudit() {
+  const actions = ["report-use-location", "report-tap-map"];
+  const summarizeNode = (node) => {
+    if (!(node instanceof Element)) return null;
+    return {
+      tag: node.tagName.toLowerCase(),
+      class: node.className || null,
+      id: node.id || null,
+      text: (node.textContent || "").trim().slice(0, 140) || null
+    };
+  };
+  const auditRows = actions.map((action) => {
+    const button = document.querySelector(`#gridlyPortraitV2SheetBody [data-v2-action="${action}"]`);
+    if (!(button instanceof HTMLButtonElement)) return { action, found: false };
+    const style = getComputedStyle(button);
+    const rect = button.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const topNode = rect.width > 0 && rect.height > 0 ? document.elementFromPoint(centerX, centerY) : null;
+    const centerTargetsButton = Boolean(topNode && (topNode === button || button.contains(topNode)));
+    return {
+      text: (button.textContent || "").trim(),
+      dataV2Action: button.getAttribute("data-v2-action") || null,
+      visible: style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity || "1") > 0 && rect.width > 0 && rect.height > 0,
+      disabled: Boolean(button.disabled || button.getAttribute("aria-disabled") === "true"),
+      rect: {
+        top: Math.round(rect.top),
+        left: Math.round(rect.left),
+        width: Math.round(rect.width),
+        height: Math.round(rect.height),
+        right: Math.round(rect.right),
+        bottom: Math.round(rect.bottom)
+      },
+      pointerEvents: style.pointerEvents,
+      zIndex: style.zIndex,
+      elementFromPoint: summarizeNode(topNode),
+      elementFromPointIsButtonOrInside: centerTargetsButton,
+      blockingElement: centerTargetsButton ? null : summarizeNode(topNode)
+    };
+  });
+  return {
+    sheetHidden: Boolean(document.getElementById("gridlyPortraitV2Sheet")?.hidden),
+    auditRows
+  };
+};
+
 async function handleHazardPlacementMapClick(event) {
   if (!reportingState.placementModeActive) return;
   if (!pendingHazardPlacement && !reportingState.selectedHazardType) return;
