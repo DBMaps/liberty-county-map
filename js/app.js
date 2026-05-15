@@ -12090,17 +12090,17 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
 
   const topPrimaryByTier = {
     clear: "Routes currently clear",
-    minor: "Minor hazards nearby",
-    moderate: trendState === "worsening" ? "Slowdowns building nearby" : "Moderate delays nearby",
-    heavy: routeImpactItems.length ? "Heavy delays on your route" : "Heavy delays building nearby",
-    severe: routeImpactItems.length ? "Severe disruptions on your route" : "Severe disruptions nearby"
+    minor: "Routes currently clear",
+    moderate: trendState === "worsening" ? "Delays building on primary corridor" : "Primary corridor slowing",
+    heavy: routeImpactItems.length ? "Route Watch impacted" : "Primary corridor disrupted",
+    severe: routeImpactItems.length ? "Alternate route recommended" : "Crossing blockage confirmed"
   };
 
-  const topSecondary = top ? `${top.localizedSummary}${top.etaImpact ? ` • +${top.etaImpact}m` : ""}` : "No major disruptions nearby";
+  const topSecondary = top ? `${top.localizedSummary}${top.etaImpact ? ` • +${top.etaImpact}m` : ""}` : "Routes currently clear";
   const consequencePrimaryMessage = routeWatchActivated && routeImpactItems.length >= 2
     ? `${routeImpactItems.length} disruptions affecting your route`
     : topPrimaryByTier[consequenceTier];
-  const trendMessage = trendState === "worsening" ? "Reports increasing nearby" : trendState === "improving" ? "Conditions improving" : trendState === "stable" ? "Ongoing disruption monitoring" : "No major disruptions nearby";
+  const trendMessage = trendState === "worsening" ? "Corridor delays increasing" : trendState === "improving" ? "Corridor conditions improving" : trendState === "stable" ? "Operational corridor watch active" : "Routes currently clear";
   const lastTopType = String(top?.incident?.report_type || top?.incident?.type || "").toLowerCase() || null;
   v1381CrossingClassificationDebug = {
     v1381CrossingClassificationFixed: true,
@@ -12151,7 +12151,7 @@ function refreshPortraitV2LocalizedIntelligence() {
   if (!topPrimaryEl && !topSecondaryEl) return;
   const intel = buildUnifiedLocalizedCommuteIntelligence({ limit: 6 });
   if (topPrimaryEl) topPrimaryEl.textContent = intel.commuteImpactHeadline;
-  if (topSecondaryEl) topSecondaryEl.textContent = intel.hasActiveAlerts ? intel.topStatusLocalizedDetail : "No major disruptions nearby";
+  if (topSecondaryEl) topSecondaryEl.textContent = intel.hasActiveAlerts ? intel.topStatusLocalizedDetail : "Routes currently clear";
 }
 
 function renderRoadHazards() {
@@ -12217,37 +12217,35 @@ function renderAlerts() {
   const consequenceIntel = buildCommuteConsequenceIntelligence({ limit: 10 });
   const corridors = consequenceIntel.corridorClusters || [];
   if (!corridors.length) {
-    els.alertsList.innerHTML = `<div class="alert-item"><strong>Commute Status</strong><p>Routes currently clear.</p></div>`;
+    els.alertsList.innerHTML = `<div class="alert-item corridor-command-status"><strong>COMMUTE STATUS</strong><p>Routes currently clear</p></div>`;
     return;
   }
 
-  const highestPriorityCorridor = corridors[0] || null;
-  const criticalItem = highestPriorityCorridor?.items?.[0] || null;
-  const criticalAge = Number(criticalItem?.ageMinutes);
-  const criticalAgeLabel = Number.isFinite(criticalAge) ? `${Math.max(0, Math.round(criticalAge))}m ago` : "just now";
-
+  const primaryCorridor = corridors[0] || null;
+  const routeImpacted = Number(consequenceIntel.routeImpactIncidentCount || 0) > 0;
   const sections = [];
-  sections.push(`<article class="alert-item intelligence-row high"><div class="alert-row-main"><span class="alert-severity-chip">Commute Status</span><strong>${sanitizeText(consequenceIntel.topStatus || "Routes currently clear")}</strong><span class="alert-row-time">live</span></div><p class="alert-row-subline">${sanitizeText(consequenceIntel.trendMessage || "Monitoring active corridors")}</p></article>`);
-  if (criticalItem) {
-    sections.push(`<article class="alert-item intelligence-row high"><div class="alert-row-main"><span class="alert-severity-chip">Critical Now</span><strong>${sanitizeText(criticalItem.localizedSummary || `Disruption on ${highestPriorityCorridor?.label || "primary corridor"}`)}</strong><span class="alert-row-time">high impact</span></div><p class="alert-row-subline">High impact · Last confirmed ${sanitizeText(criticalAgeLabel)}</p></article>`);
-  }
+  sections.push(`<article class="alert-item intelligence-row high corridor-command-status"><div class="alert-row-main"><span class="alert-severity-chip">Commute Status</span><strong>${sanitizeText(routeImpacted ? "Route Watch impacted" : (consequenceIntel.topStatus || "Routes currently clear"))}</strong><span class="alert-row-time">live</span></div><p class="alert-row-subline">${sanitizeText(consequenceIntel.topStatusLocalizedDetail || "Operational corridor watch active")}</p></article>`);
 
-  sections.push(`<article class="alert-item"><strong>Affected Corridors</strong><p>${sanitizeText(corridors.length)} corridor group${corridors.length === 1 ? "" : "s"} with active reports.</p></article>`);
-
-  corridors.slice(0, 4).forEach((corridor) => {
+  corridors.slice(0, 3).forEach((corridor, idx) => {
     const count = corridor.items.length;
-    const heading = corridor.label || "Other Nearby Hazards";
-    const consequence = corridor.healthState || "active disruptions";
-    const rows = corridor.items.slice(0, 4).map((item) => `<li>${sanitizeText(item.localizedSummary)} <span class="alert-row-time">${sanitizeText(item.minutesText)}</span></li>`).join("");
-    sections.push(`<article class="alert-item"><strong>${sanitizeText(heading)}</strong><p>${sanitizeText(consequence)} · ${count} active report${count === 1 ? "" : "s"}</p><ul class="alert-row-details-list">${rows}</ul></article>`);
+    const heading = corridor.label || "Primary Corridor";
+    const severity = String(corridor.healthState || "moderate").toUpperCase();
+    const rows = corridor.items.slice(0, 3).map((item) => `<li>${sanitizeText(item.localizedSummary)}</li>`).join("");
+    const corridorClass = idx === 0 ? "primary-corridor" : "secondary-corridor";
+    const action = idx === 0 ? '<button class="secondary-btn compact-btn" type="button" data-v2-action="alerts-open">Avoid Corridor</button>' : "";
+    sections.push(`<article class="alert-item corridor-command ${corridorClass}"><strong class="corridor-command-title">${sanitizeText(heading)}</strong><p class="corridor-command-severity">${sanitizeText(severity)} • ${count} ACTIVE ISSUE${count === 1 ? "" : "S"}</p><ul class="alert-row-details-list">${rows}</ul>${action}</article>`);
   });
+
+  if (routeImpacted) {
+    sections.push(`<article class="alert-item corridor-command-route-watch"><strong>Route Watch</strong><p>Your saved commute is currently affected.</p><button class="primary-btn compact-btn" type="button" data-v2-action="route-watch-open">View Alternate Route</button></article>`);
+  }
 
   const cleared = getUnifiedIncidents()
     .filter((incident) => String(incident?.status || "").toLowerCase() === "cleared" && Number(incident?.age_minutes) <= 90)
-    .slice(0, 4)
+    .slice(0, 3)
     .map((incident) => buildLocalizedIncidentLabel(incident));
   if (cleared.length) {
-    sections.push(`<article class="alert-item"><strong>Recently Cleared</strong><p>${cleared.map((label) => sanitizeText(label)).join(" · ")}</p></article>`);
+    sections.push(`<article class="alert-item cleared"><strong>Recently Cleared</strong><p>${cleared.map((label) => sanitizeText(label)).join(" · ")}</p></article>`);
   }
 
   els.alertsList.innerHTML = sections.join("");
@@ -15094,7 +15092,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   function buildAlertsSurfaceHtml() {
     const alerts = getAlertsSurfaceSnapshot();
     const commuteStatus = alerts.commuteImpactHeadline || "Routes currently clear";
-    const nearbyActivity = alerts.hasActiveAlerts ? alerts.routeImpactSummary : "No major disruptions nearby";
+    const nearbyActivity = alerts.hasActiveAlerts ? alerts.routeImpactSummary : "Routes currently clear";
     const localizedRows = alerts.localizedIntelligenceSummaries.length
       ? alerts.localizedIntelligenceSummaries.map((summary) => `<li>${sanitizeText(summary)}</li>`).join("")
       : "<li>Routes currently clear</li>";
@@ -15104,11 +15102,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     return `<div class="gridly-v2-list">
       <p class="gridly-v2-sheet-copy"><strong>Commute Status</strong><br>${commuteStatus}</p>
       <p class="gridly-v2-sheet-copy"><strong>Nearby Activity</strong><br>${nearbyActivity}</p>
-      <p class="gridly-v2-sheet-copy"><strong>Localized Alerts</strong></p>
+      <p class="gridly-v2-sheet-copy"><strong>Corridor Conditions</strong></p>
       <ul class="gridly-v2-sheet-copy">${localizedRows}</ul>
       <p class="gridly-v2-sheet-copy"><strong>Preferences</strong><br>${preferenceState}</p>
       <p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p>
-      <button class="primary-btn" data-v2-action="alerts-open" type="button">Nearby Delays</button>
+      <button class="primary-btn" data-v2-action="alerts-open" type="button">Corridor Command</button>
       <button class="secondary-btn" data-v2-action="alerts-manage-open" type="button">Manage Alerts</button>
       <button class="secondary-btn" data-v2-action="alerts-preferences-open" type="button">Alert Preferences</button>
     </div>`;

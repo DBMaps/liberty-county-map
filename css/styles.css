@@ -13667,3 +13667,12 @@ body[data-layout-mode="portrait"] #reportSection.report-drawer[data-popup-suppre
   pointer-events: none !important;
   visibility: hidden !important;
 }
+
+/* V139 corridor command intelligence */
+.corridor-command-status strong{letter-spacing:.08em;text-transform:uppercase;font-size:.72rem}
+.corridor-command.primary-corridor{border-color:rgba(255,154,122,.45);background:rgba(32,18,15,.45)}
+.corridor-command-title{display:block;font-size:1rem;letter-spacing:.06em}
+.corridor-command-severity{font-size:.72rem!important;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,216,196,.88)}
+.corridor-command .alert-row-details-list{margin:6px 0 0 0;padding-left:16px}
+.corridor-command .alert-row-details-list li{margin:2px 0;line-height:1.25}
+.corridor-command-route-watch{border-color:rgba(127,219,255,.35)}
