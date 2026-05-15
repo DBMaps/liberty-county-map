@@ -5390,6 +5390,15 @@ function syncHazardPickerUiState() {
   if (cancelBtn) cancelBtn.disabled = Boolean(reportingState.submissionInProgress);
 }
 
+const tapMapTraceLog = [];
+let lastHazardPlacementEvent = null;
+function pushTapMapTrace(event, detail = {}) {
+  const entry = { at: new Date().toISOString(), event, detail };
+  tapMapTraceLog.push(entry);
+  if (tapMapTraceLog.length > 80) tapMapTraceLog.shift();
+  lastHazardPlacementEvent = entry;
+}
+
 function syncMapPlacementCursorState() {
   const mapEl = map?.getContainer?.() || document.getElementById("map");
   if (!mapEl) return;
@@ -5420,6 +5429,9 @@ function openHazardPanel(entryPoint = reportingState.activeReportEntryPoint || "
 
 window.closeHazardPanel = function (options = {}) {
   const { preserveLastReportMessage = true } = options;
+  if (reportingState.placementModeActive && !options.forceCloseDuringPlacement) {
+    return;
+  }
   setTacticalReportHelperVisibility(false);
   const updates = {
     reportModeActive: false,
@@ -5707,6 +5719,7 @@ function attachRouteQuickPanelDelegatedClickHandlers() {
 }
 
 function resetQuickHazardReportState() {
+  if (reportingState.placementModeActive) return;
   pendingHazardPlacement = null;
   selectedQuickHazardType = null;
   updateReportingState({ selectedHazardType: null, placementModeActive: false, reportModeActive: false });
@@ -5801,7 +5814,60 @@ function openHazardPlacement(hazardType) {
   });
   document.getElementById("gridlyHazardPanel")?.classList.remove("visible");
   setConfirmation("Tap a road to place this hazard.", "info");
+  pushTapMapTrace("placement_mode_armed", { source: "openHazardPlacement", hazardType: pendingHazardPlacement });
 }
+
+function startV2RoadHazardMapPlacement(hazardType) {
+  const resolvedHazardType = hazardType || selectedV2HazardType || reportingState.selectedHazardType || selectedQuickHazardType || "other_hazard";
+  pushTapMapTrace("tap_map_location_clicked", { hazardType: resolvedHazardType });
+  pushTapMapTrace("v2_sheet_teardown_started", {});
+  const v2Backdrop = document.getElementById("gridlyPortraitV2SheetBackdrop");
+  if (v2Backdrop) {
+    v2Backdrop.hidden = true;
+    v2Backdrop.style.pointerEvents = "none";
+  }
+  const v2Sheet = document.getElementById("gridlyPortraitV2Sheet");
+  if (v2Sheet) {
+    v2Sheet.hidden = true;
+    v2Sheet.style.pointerEvents = "none";
+  }
+  document.body.classList.remove("modal-open", "report-pulse", "portrait-alerts-open");
+  document.getElementById("gridlyMobileRouteQuickPanel")?.classList.remove("visible");
+  document.getElementById("gridlyHazardPanel")?.classList.remove("visible");
+  pushTapMapTrace("v2_sheet_teardown_completed", { backdropHidden: Boolean(v2Backdrop?.hidden), sheetHidden: Boolean(v2Sheet?.hidden) });
+  openHazardPlacement(resolvedHazardType);
+}
+window.startV2RoadHazardMapPlacement = startV2RoadHazardMapPlacement;
+window.gridlyTapMapLocationTrace = function gridlyTapMapLocationTrace() {
+  return tapMapTraceLog.slice();
+};
+window.gridlyV1395InteractionDebug = function gridlyV1395InteractionDebug() {
+  const sheet = document.getElementById("gridlyPortraitV2Sheet");
+  const backdrop = document.getElementById("gridlyPortraitV2SheetBackdrop");
+  const overlays = Array.from(document.querySelectorAll("body *")).filter((node) => {
+    if (!(node instanceof HTMLElement)) return false;
+    const style = getComputedStyle(node);
+    if (style.display === "none" || style.visibility === "hidden" || style.pointerEvents === "none") return false;
+    const rect = node.getBoundingClientRect();
+    if (rect.width < window.innerWidth * 0.6 || rect.height < window.innerHeight * 0.35) return false;
+    return true;
+  }).slice(0, 20).map((node) => {
+    const style = getComputedStyle(node);
+    return { tag: node.tagName, id: node.id || "", className: node.className || "", pointerEvents: style.pointerEvents, zIndex: style.zIndex };
+  });
+  return {
+    activeV2Sheet: !sheet?.hidden ? "open" : "closed",
+    v2BackdropVisible: Boolean(backdrop && !backdrop.hidden && getComputedStyle(backdrop).display !== "none"),
+    bodyClasses: Array.from(document.body.classList).filter((name) => /modal|sheet|report|v2|containment|alerts/i.test(name)),
+    selectedHazardType: reportingState.selectedHazardType || selectedQuickHazardType || pendingHazardPlacement || null,
+    reportMode: reportingState.reportModeActive,
+    hazardPlacementActive: reportingState.placementModeActive,
+    popupSuppressionState: typeof suppressGlobalMapPopupsUntil === "number" ? suppressGlobalMapPopupsUntil : null,
+    mapClickHandlerAvailable: Boolean(map && reportingState && typeof handleHazardPlacementMapClick === "function"),
+    visiblePointerOverlays: overlays,
+    lastHazardPlacementEvent
+  };
+};
 
 async function handleHazardPlacementMapClick(event) {
   if (!reportingState.placementModeActive) return;
@@ -5810,26 +5876,33 @@ async function handleHazardPlacementMapClick(event) {
   const lng = event?.latlng?.lng;
   if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
   const selectedType = pendingHazardPlacement || reportingState.selectedHazardType;
+  pushTapMapTrace("map_click_received", { lat, lng, hazardType: selectedType });
   updateReportingState({ placementModeActive: false });
   lastMobileReportSubmitDebug.originalTapCoords = { lat, lng };
   lastMobileReportSubmitDebug.lastSubmitAttempt = "tap_captured";
   const snapped = await snapHazardToRoad(lat, lng, { source: "tap_map" });
+  pushTapMapTrace("snap_started", { lat, lng });
   if (snapped.invalid) {
     updateReportingState({ placementModeActive: true });
     lastRoadSnapDebug.rawHazardCoordinatesBlockedWhenInvalid = true;
     setConfirmation("Hazard location must be near a road. Tap closer to a roadway.", "error");
     updateReportingState({ lastReportError: "Tap closer to a road to place this hazard.", lastReportMessage: "" });
+    pushTapMapTrace("snap_failed", { reason: "no_nearby_road" });
     return;
   }
+  pushTapMapTrace("snap_succeeded", { lat: snapped.lat, lng: snapped.lng });
   lastMobileReportSubmitDebug.snappedCoords = { lat: snapped.lat, lng: snapped.lng };
   lastMobileReportSubmitDebug.activeSubmitCoords = { lat: snapped.lat, lng: snapped.lng };
   lastMobileReportSubmitDebug.snapComplete = true;
   lastMobileReportSubmitDebug.lastSubmitAttempt = "snap_completed";
+  pushTapMapTrace("submit_started", { hazardType: selectedType });
   const submitted = await createSharedHazardReport(selectedType, snapped.lat, snapped.lng, "tap map placement", "", snapped.originalTapCoords);
   if (!submitted) {
     updateReportingState({ placementModeActive: true });
+    pushTapMapTrace("submit_failed", { hazardType: selectedType });
     return;
   }
+  pushTapMapTrace("submit_succeeded", { hazardType: selectedType });
   if (map) {
     L.circleMarker([lat, lng], { radius: 4, color: "#8fb6ff", weight: 1, fillOpacity: 0.3, opacity: 0.8 })
       .addTo(unifiedIncidentLayer)
@@ -5839,6 +5912,7 @@ async function handleHazardPlacementMapClick(event) {
   setConfirmation("Snapped to roadway", "success");
   resetQuickHazardReportState();
   closeHazardPanel();
+  pushTapMapTrace("placement_mode_cleared_restored", { outcome: "success" });
 }
 
 async function snapHazardToRoad(lat, lng, options = {}) {
@@ -15374,8 +15448,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           markV2BlockedInteraction("report-tap-map", "Choose a hazard first, then tap a map location.");
           return;
         }
-        if (typeof openHazardPlacement === "function") {
-          openHazardPlacement(selectedV2HazardType);
+        if (typeof startV2RoadHazardMapPlacement === "function") {
+          startV2RoadHazardMapPlacement(selectedV2HazardType);
         }
       },
       "route-open": () => { v1363RouteActionDebug.routeDockClickHandled = true; document.getElementById("mobileDockRouteBtn")?.click(); },
