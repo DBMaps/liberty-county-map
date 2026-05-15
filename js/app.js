@@ -5879,10 +5879,28 @@ window.gridlyRoadHazardPlacementTrace = function gridlyRoadHazardPlacementTrace(
 };
 window.gridlyRoadHazardPlacementDebug = function gridlyRoadHazardPlacementDebug() {
   const sheet = document.getElementById("gridlyPortraitV2Sheet");
+  const sheetBody = document.getElementById("gridlyPortraitV2SheetBody");
   const backdrop = document.getElementById("gridlyPortraitV2SheetBackdrop");
   const legacyPanel = document.getElementById("gridlyHazardPanel");
+  const allTapMapButtons = Array.from(document.querySelectorAll('[data-v2-action="report-tap-map"], [data-action="start-map-placement"], #gridlyV2TapMapLocationBtn')).map((button) => {
+    const rect = button.getBoundingClientRect();
+    const style = getComputedStyle(button);
+    return {
+      text: button.textContent?.trim() || "",
+      id: button.id || "",
+      dataAction: button.getAttribute("data-action") || null,
+      dataV2Action: button.getAttribute("data-v2-action") || null,
+      inV2SheetBody: Boolean(sheetBody && sheetBody.contains(button)),
+      inLegacyHazardPanel: Boolean(legacyPanel && legacyPanel.contains(button)),
+      visible: style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0
+    };
+  });
+  const visibleTapMapButtons = allTapMapButtons.filter((button) => button.visible);
+  const activeHazardButtons = Array.from(document.querySelectorAll('#gridlyHazardPanel .hazard-choice-grid button[data-action="open-hazard-placement"]')).filter((button) => button.classList.contains("selected")).map((button) => ({ hazardType: button.dataset.hazardType || "", text: button.textContent?.trim() || "" }));
+  const selectedHazardSource = selectedV2HazardType ? "selectedV2HazardType" : (reportingState.selectedHazardType ? "reportingState.selectedHazardType" : (selectedQuickHazardType ? "selectedQuickHazardType" : (pendingHazardPlacement ? "pendingHazardPlacement" : "none")));
   return {
     selectedHazardType: reportingState.selectedHazardType || selectedQuickHazardType || pendingHazardPlacement || null,
+    selectedHazardSource,
     placementActive: Boolean(reportingState.placementModeActive),
     reportModeState: Boolean(reportingState.reportModeActive),
     activeReportSurface: !sheet?.hidden ? "v2_sheet" : (legacyPanel?.classList.contains("visible") ? "legacy_hazard_panel" : "none"),
@@ -5892,7 +5910,11 @@ window.gridlyRoadHazardPlacementDebug = function gridlyRoadHazardPlacementDebug(
     blockingOverlays: getRoadHazardBlockingOverlays(),
     lastPlacementSource: lastRoadHazardPlacementSource,
     lastPlacementStep: lastRoadHazardPlacementStep,
-    lastPlacementError: lastRoadHazardPlacementError
+    lastPlacementError: lastRoadHazardPlacementError,
+    allTapMapButtons,
+    visibleTapMapButtons,
+    activeHazardButtons,
+    actualTapMapHandlerPath: "document[data-action=start-map-placement] -> beginRoadHazardMapPlacement (legacy-visible-or-actual); #gridlyPortraitV2SheetBody capture delegate -> beginRoadHazardMapPlacement (actual-ui); v2 bridge report-tap-map -> beginRoadHazardMapPlacement (actual-ui)"
   };
 };
 window.gridlyV1395InteractionDebug = function gridlyV1395InteractionDebug() {
@@ -7162,13 +7184,14 @@ function bindEvents() {
     if (action === "start-map-placement") {
       event.preventDefault();
       const selectedType = reportingState.selectedHazardType || selectedQuickHazardType;
+      pushTapMapTrace("actual-tap-map-button-clicked", { source: "legacy_start_map_placement", hazardType: selectedType || null });
       if (!selectedType) {
         updateReportingState({ lastReportError: "Choose a hazard first, then tap map location.", lastReportMessage: "" });
         setConfirmation("Choose a hazard first, then tap map location.", "error");
         return;
       }
       const placementBefore = reportingState.placementModeActive;
-      beginRoadHazardMapPlacement(selectedType, { source: "legacy" });
+      beginRoadHazardMapPlacement(selectedType, { source: "legacy-visible-or-actual" });
       const mapPlacementArmed = Boolean(reportingState.placementModeActive && (pendingHazardPlacement || reportingState.selectedHazardType));
       console.log("[Gridly][Report] Tap Map Location clicked", {
         selectedHazardType: selectedType,
@@ -15507,9 +15530,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           markV2BlockedInteraction("report-tap-map", "Choose a hazard first, then tap a map location.");
           return;
         }
-        pushTapMapTrace("tap-map-button-clicked", { source: "v2_sheet_action", hazardType: selectedV2HazardType });
+        pushTapMapTrace("actual-tap-map-button-clicked", { source: "v2_sheet_action", hazardType: selectedV2HazardType });
         if (typeof beginRoadHazardMapPlacement === "function") {
-          beginRoadHazardMapPlacement(selectedV2HazardType, { source: "v2" });
+          beginRoadHazardMapPlacement(selectedV2HazardType, { source: "actual-ui" });
         }
       },
       "route-open": () => { v1363RouteActionDebug.routeDockClickHandled = true; document.getElementById("mobileDockRouteBtn")?.click(); },
@@ -15618,9 +15641,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         event.preventDefault();
         event.stopPropagation();
         const resolvedHazardType = selectedV2HazardType || reportingState.selectedHazardType || selectedQuickHazardType || "other_hazard";
-        pushTapMapTrace("tap-map-button-clicked", { source: "v2_sheet_delegate", hazardType: resolvedHazardType });
-        if (typeof startV2RoadHazardMapPlacement === "function") {
-          startV2RoadHazardMapPlacement(resolvedHazardType);
+        pushTapMapTrace("actual-tap-map-button-clicked", { source: "v2_sheet_delegate", hazardType: resolvedHazardType });
+        if (typeof beginRoadHazardMapPlacement === "function") {
+          beginRoadHazardMapPlacement(resolvedHazardType, { source: "actual-ui" });
         }
       }, true);
       body.dataset.tapMapDelegateBound = "1";
