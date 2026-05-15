@@ -5799,9 +5799,6 @@ window.submitHazardNearMe = function (hazardType) {
       }
 
       resetQuickHazardReportState();
-      if (typeof clearPortraitV2ReportActiveStateAfterSubmit === "function") {
-        clearPortraitV2ReportActiveStateAfterSubmit();
-      }
       closeVisiblePortraitV2ReportSurfaceAfterSubmit();
       closeHazardPanel();
     },
@@ -15611,20 +15608,38 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
 
   function openPortraitV2Sheet(type) {
-    const sheet = document.getElementById("gridlyPortraitV2Sheet"); const backdrop = document.getElementById("gridlyPortraitV2SheetBackdrop");
-    const title = document.getElementById("gridlyPortraitV2SheetTitle"); const body = document.getElementById("gridlyPortraitV2SheetBody");
-    const template = sheetTemplates[type]; if (!sheet || !backdrop || !template) return;
+    const sheet = document.getElementById("gridlyPortraitV2Sheet");
+    const backdrop = document.getElementById("gridlyPortraitV2SheetBackdrop");
+    const shell = document.getElementById("gridlyPortraitV2");
+    const title = document.getElementById("gridlyPortraitV2SheetTitle");
+    const body = document.getElementById("gridlyPortraitV2SheetBody");
+    const template = sheetTemplates[type];
+    if (!sheet || !backdrop || !template) return;
     const templateHtml = typeof template.html === "function" ? template.html() : template.html;
-    activeSheet = type; title.textContent = template.title; body.innerHTML = templateHtml; bindV2SheetActions(); sheet.hidden = false; backdrop.hidden = false; body.hidden = false;
+
+    activeSheet = type;
+    title.textContent = template.title;
+    body.innerHTML = templateHtml;
+    bindV2SheetActions();
+
+    shell?.removeAttribute("hidden");
+    shell?.classList.remove("is-closing", "is-closed");
+
+    sheet.hidden = false;
+    body.hidden = false;
+    backdrop.hidden = false;
+
     sheet.style.display = "";
-    sheet.style.pointerEvents = "";
-    sheet.style.transform = "";
-    sheet.style.translate = "";
-    sheet.classList.remove("is-closing", "is-closed");
+    sheet.style.pointerEvents = "auto";
+    sheet.style.transform = "none";
+    sheet.style.translate = "0 0";
+    sheet.classList.remove("is-closing", "is-closed", "visible", "active", "open");
     sheet.classList.add("is-open");
-    backdrop.style.pointerEvents = "";
+
     backdrop.style.display = "";
-    backdrop.classList.remove("is-closing");
+    backdrop.style.pointerEvents = "auto";
+    backdrop.classList.remove("is-closing", "is-closed");
+    backdrop.classList.add("is-open");
   }
   function getV2PreconditionsState() {
     const route = getRouteSurfaceSnapshot();
@@ -15668,29 +15683,38 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
 
   function closePortraitV2Sheet(){
-    const sheet=document.getElementById("gridlyPortraitV2Sheet");
-    const sheetBody=document.getElementById("gridlyPortraitV2SheetBody");
-    const backdrop=document.getElementById("gridlyPortraitV2SheetBackdrop");
-    if(sheet){
-      sheet.hidden=true;
-      sheet.style.display="none";
-      sheet.style.pointerEvents="none";
-      sheet.style.transform="translate3d(0, 100%, 0)";
-      sheet.style.translate="0 100%";
+    const sheet = document.getElementById("gridlyPortraitV2Sheet");
+    const sheetBody = document.getElementById("gridlyPortraitV2SheetBody");
+    const backdrop = document.getElementById("gridlyPortraitV2SheetBackdrop");
+
+    activeSheet = "";
+    if (gridlyActiveSurface === "report" || gridlyActiveSurface === "route" || gridlyActiveSurface === "alerts" || gridlyActiveSurface === "settings") {
+      gridlyActiveSurface = null;
+    }
+    if (mobileUiMode === "report") setMobileUiMode("live", { silent: true });
+
+    if (sheet) {
+      sheet.hidden = true;
+      sheet.style.display = "none";
+      sheet.style.pointerEvents = "none";
+      sheet.style.transform = "translate3d(0, 100%, 0)";
+      sheet.style.translate = "0 100%";
       sheet.classList.remove("visible", "is-open", "active", "open");
       sheet.classList.add("is-closing", "is-closed");
     }
-    if(sheetBody){
-      sheetBody.hidden=true;
+    if (sheetBody) {
+      sheetBody.hidden = true;
       sheetBody.classList.remove("visible", "is-open", "active", "open");
     }
-    if(backdrop){
-      backdrop.hidden=true;
-      backdrop.style.pointerEvents="none";
+    if (backdrop) {
+      backdrop.hidden = true;
+      backdrop.style.display = "none";
+      backdrop.style.pointerEvents = "none";
       backdrop.classList.remove("visible", "is-open", "active", "open");
-      backdrop.classList.add("is-closing");
+      backdrop.classList.add("is-closing", "is-closed");
     }
-    activeSheet="";
+
+    document.body.classList.remove("modal-open", "report-pulse");
   }
   function closeVisiblePortraitV2ReportSurfaceAfterSubmit() {
     pushTapMapTrace("portrait-v2-use-location-success-close-start", { source: "portrait-v2-report" });
@@ -15721,29 +15745,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     });
 
     clearPortraitV2ReportActiveStateAfterSubmit();
-    if (typeof closePortraitV2Sheet === "function") closePortraitV2Sheet();
-    if (sheet) {
-      sheet.hidden = true;
-      sheet.style.display = "none";
-      sheet.style.pointerEvents = "none";
-      sheet.style.transform = "translate3d(0, 100%, 0)";
-      sheet.style.translate = "0 100%";
-      sheet.classList.remove("visible", "is-open", "active", "open");
-      sheet.classList.add("is-closing");
-    }
-    if (sheetBody) {
-      sheetBody.hidden = true;
-      sheetBody.classList.remove("visible", "is-open", "active", "open");
-    }
-    if (backdrop) {
-      backdrop.hidden = true;
-      backdrop.style.display = "none";
-      backdrop.style.pointerEvents = "none";
-      backdrop.classList.remove("visible", "is-open", "active", "open");
-      backdrop.classList.add("is-closing");
-    }
+    closePortraitV2Sheet();
     if (legacyHazardPanel?.classList.contains("visible")) legacyHazardPanel.classList.remove("visible");
-    document.body.classList.remove("modal-open", "report-pulse");
 
     const reportTitleNodeAfter = Array.from(document.querySelectorAll("h1, h2, h3, h4, [role='heading'], .panel-title, .sheet-title")).find((node) => {
       if (!(node instanceof HTMLElement)) return false;
@@ -16267,16 +16270,24 @@ const v134ReportingRefinementApplied = true;
       mobileModeIsReport: mobileUiMode === "report",
       reportModeActiveFlag: Boolean(reportingState?.reportModeActive)
     };
+    const backdrop = document.getElementById("gridlyPortraitV2SheetBackdrop");
     return {
+      activeSheet,
+      shellHidden: Boolean(shell?.hidden),
+      shellDisplay: shell ? getComputedStyle(shell).display : null,
+      shellPointerEvents: shell ? getComputedStyle(shell).pointerEvents : null,
+      sheetHidden: Boolean(sheet?.hidden),
+      sheetDisplay: sheet ? getComputedStyle(sheet).display : null,
+      sheetPointerEvents: sheet ? getComputedStyle(sheet).pointerEvents : null,
+      sheetTransform: sheet ? getComputedStyle(sheet).transform : null,
+      sheetClasses: sheet ? Array.from(sheet.classList) : [],
+      sheetVisible: isOnscreen(sheet),
+      backdropHidden: Boolean(backdrop?.hidden),
+      backdropDisplay: backdrop ? getComputedStyle(backdrop).display : null,
+      bodyClasses: Array.from(document.body?.classList || []),
       shell: getState(shell),
       sheet: getState(sheet),
       sheetBody: getState(sheetBody),
-      sheetHidden: Boolean(sheet?.hidden),
-      sheetDisplay: sheet ? getComputedStyle(sheet).display : null,
-      sheetTransform: sheet ? getComputedStyle(sheet).transform : null,
-      sheetHasOpenClass: Boolean(sheet?.classList.contains("is-open")),
-      sheetHasClosedClass: Boolean(sheet?.classList.contains("is-closed")),
-      activeSheet,
       rawActiveSheetSource: {
         portraitV2ActiveSheet: activeSheet,
         gridlyActiveSurface,
