@@ -13054,6 +13054,26 @@ body[data-layout-mode="portrait"] #map{height:100vh;}
 #gridlyPortraitV2SheetClose{border:0;background:rgba(255,255,255,.1);color:#fff;border-radius:8px;padding:3px 8px}
 .gridly-v2-list,.gridly-v2-tiles{display:grid;gap:10px}.gridly-v2-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.gridly-v2-tile{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);color:#daebff;border-radius:12px;padding:12px 13px;font-size:12px}.gridly-v2-report-tiles{gap:10px}.gridly-v2-report-action{display:flex;align-items:center;justify-content:flex-start;background:rgba(181,219,255,.06);border:1px solid rgba(181,219,255,.2);box-shadow:none;padding:14px 12px}.gridly-v2-report-action span{font-size:14px;line-height:1.25;font-weight:650;letter-spacing:.01em;color:#f5f9ff}.gridly-v2-report-ctas{margin-top:2px;gap:9px}
 
+/* V135.2 Portrait V2 surface containment */
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #reportSection,
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #alertsSection,
+body[data-layout-mode="portrait"].gridly-v2-surface-containment .report-drawer,
+body[data-layout-mode="portrait"].gridly-v2-surface-containment .mobile-report-mode-card,
+body[data-layout-mode="portrait"].gridly-v2-surface-containment .report-buttons,
+body[data-layout-mode="portrait"].gridly-v2-surface-containment .route-setup-modal,
+body[data-layout-mode="portrait"].gridly-v2-surface-containment .route-setup-modal-backdrop,
+body[data-layout-mode="portrait"].gridly-v2-surface-containment .settings-modal-backdrop,
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #settingsModal {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2,
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2Sheet,
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2SheetBackdrop {
+  z-index: 9500;
+}
+
 /* V128.1 Portrait V2 cleanup */
 body[data-layout-mode="portrait"] #gridlyPortraitV2 {
   display: block;
