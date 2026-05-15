@@ -5971,6 +5971,81 @@ window.gridlyV1395InteractionDebug = function gridlyV1395InteractionDebug() {
   };
 };
 
+const portraitV2ClickTraceLog = [];
+let portraitV2ClickTraceBound = false;
+
+function getPortraitV2ClickNodeDescriptor(node) {
+  if (!node) return "null";
+  if (node === window) return "window";
+  if (node === document) return "document";
+  if (!(node instanceof Element)) return String(node?.nodeName || node);
+  const id = node.id ? `#${node.id}` : "";
+  const cls = typeof node.className === "string" && node.className.trim()
+    ? `.${node.className.trim().split(/\s+/).slice(0, 2).join(".")}`
+    : "";
+  return `${node.tagName.toLowerCase()}${id}${cls}`;
+}
+
+function bindPortraitV2ClickTrace() {
+  if (portraitV2ClickTraceBound) return;
+  portraitV2ClickTraceBound = true;
+  document.addEventListener("click", (event) => {
+    const sheetBody = document.getElementById("gridlyPortraitV2SheetBody");
+    if (!sheetBody || !(event.target instanceof Element) || !sheetBody.contains(event.target)) return;
+    const target = event.target;
+    const closestButton = target.closest("button");
+    const closestActionNode = target.closest("[data-v2-action], [data-action]");
+    const targetStyle = getComputedStyle(target);
+    const buttonStyle = closestButton ? getComputedStyle(closestButton) : null;
+    const buttonRect = closestButton?.getBoundingClientRect?.() || null;
+    const row = {
+      at: new Date().toISOString(),
+      targetTag: target.tagName.toLowerCase(),
+      targetText: target.textContent?.trim()?.slice(0, 140) || "",
+      closestButtonText: closestButton?.textContent?.trim()?.slice(0, 140) || "",
+      closestDataV2Action: closestActionNode?.getAttribute("data-v2-action") || null,
+      closestDataAction: closestActionNode?.getAttribute("data-action") || null,
+      composedPathFirst8: (typeof event.composedPath === "function" ? event.composedPath() : []).slice(0, 8).map(getPortraitV2ClickNodeDescriptor),
+      defaultPrevented: Boolean(event.defaultPrevented),
+      targetPointerEvents: targetStyle.pointerEvents,
+      closestButtonPointerEvents: buttonStyle?.pointerEvents || null,
+      closestButtonRect: buttonRect ? {
+        x: Math.round(buttonRect.x),
+        y: Math.round(buttonRect.y),
+        width: Math.round(buttonRect.width),
+        height: Math.round(buttonRect.height)
+      } : null
+    };
+    portraitV2ClickTraceLog.push(row);
+    if (portraitV2ClickTraceLog.length > 60) portraitV2ClickTraceLog.shift();
+    console.log("[Gridly][PortraitV2][ClickTrace]", row);
+  }, true);
+}
+
+bindPortraitV2ClickTrace();
+window.gridlyPortraitV2ClickTrace = function gridlyPortraitV2ClickTrace() {
+  const sheetBody = document.getElementById("gridlyPortraitV2SheetBody");
+  const reportTapMapButtons = Array.from(document.querySelectorAll('#gridlyPortraitV2SheetBody [data-v2-action="report-tap-map"], #gridlyPortraitV2SheetBody [data-action="start-map-placement"], #gridlyPortraitV2SheetBody #gridlyV2TapMapLocationBtn')).map((button) => {
+    const rect = button.getBoundingClientRect();
+    const style = getComputedStyle(button);
+    return {
+      text: button.textContent?.trim() || "",
+      action: button.getAttribute("data-v2-action") || button.getAttribute("data-action") || null,
+      visible: style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0,
+      rect: { x: Math.round(rect.x), y: Math.round(rect.y), width: Math.round(rect.width), height: Math.round(rect.height) },
+      pointerEvents: style.pointerEvents,
+      disabled: Boolean(button.disabled)
+    };
+  });
+  const bodyStyle = sheetBody ? getComputedStyle(sheetBody) : null;
+  return {
+    v2SheetBodyExists: Boolean(sheetBody),
+    v2SheetBodyVisible: Boolean(sheetBody && bodyStyle && bodyStyle.display !== "none" && bodyStyle.visibility !== "hidden"),
+    reportTapMapButtons,
+    trace: portraitV2ClickTraceLog.slice()
+  };
+};
+
 async function handleHazardPlacementMapClick(event) {
   if (!reportingState.placementModeActive) return;
   if (!pendingHazardPlacement && !reportingState.selectedHazardType) return;
