@@ -13567,25 +13567,28 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar {
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand {
   min-width: 0;
   padding-top: 1px;
+  margin-right: 6px;
 }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand img {
-  width: clamp(88px, 24vw, 118px);
+  width: clamp(96px, 28vw, 128px);
   height: auto;
+  max-height: 22px;
   display: block;
   object-fit: contain;
   image-rendering: -webkit-optimize-contrast;
 }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-watch {
-  padding-top: 1px;
+  padding-top: 0;
+  transform: translateY(0.5px);
 }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-watch span {
-  font-size: 0.545rem;
-  letter-spacing: 0.128em;
+  font-size: 0.54rem;
+  letter-spacing: 0.118em;
   color: rgba(188, 214, 242, 0.82);
 }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-icon-btn {
-  width: 39px;
-  height: 39px;
+  width: 37px;
+  height: 37px;
 }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail,
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {
@@ -13593,6 +13596,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {
 }
 @media (max-width: 380px) {
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand img {
-    width: clamp(82px, 23vw, 104px);
+    width: clamp(90px, 27vw, 112px);
+    max-height: 20px;
   }
 }
