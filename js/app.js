@@ -5799,9 +5799,7 @@ window.submitHazardNearMe = function (hazardType) {
       }
 
       resetQuickHazardReportState();
-      if (typeof closePortraitV2Sheet === "function") {
-        closePortraitV2Sheet();
-      }
+      closeVisiblePortraitV2ReportSurfaceAfterSubmit();
       closeHazardPanel();
     },
     () => {
@@ -15649,6 +15647,64 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     if (typeof setConfirmation === "function" && reason) setConfirmation(reason, "error");
   }
   function closePortraitV2Sheet(){ const sheet=document.getElementById("gridlyPortraitV2Sheet"); const backdrop=document.getElementById("gridlyPortraitV2SheetBackdrop"); if(sheet)sheet.hidden=true; if(backdrop)backdrop.hidden=true; activeSheet=""; }
+  function closeVisiblePortraitV2ReportSurfaceAfterSubmit() {
+    pushTapMapTrace("portrait-v2-use-location-success-close-start", { source: "portrait-v2-report" });
+    const isVisible = (el) => {
+      if (!el) return false;
+      const style = getComputedStyle(el);
+      if (el.hidden || style.display === "none" || style.visibility === "hidden" || Number(style.opacity || "1") === 0) return false;
+      const rect = el.getBoundingClientRect();
+      return rect.width > 0 && rect.height > 0;
+    };
+    const sheet = document.getElementById("gridlyPortraitV2Sheet");
+    const sheetBody = document.getElementById("gridlyPortraitV2SheetBody");
+    const backdrop = document.getElementById("gridlyPortraitV2SheetBackdrop");
+    const legacyHazardPanel = document.getElementById("gridlyHazardPanel");
+    const reportTitleNode = Array.from(document.querySelectorAll("h1, h2, h3, h4, [role='heading'], .panel-title, .sheet-title")).find((node) => {
+      if (!(node instanceof HTMLElement)) return false;
+      return /report\s*hazard/i.test(node.textContent || "") && isVisible(node);
+    }) || null;
+
+    pushTapMapTrace("portrait-v2-visible-report-surface-before", {
+      sheetVisible: isVisible(sheet),
+      sheetBodyVisible: isVisible(sheetBody),
+      backdropVisible: isVisible(backdrop),
+      hazardPanelVisible: Boolean(legacyHazardPanel?.classList.contains("visible")) && isVisible(legacyHazardPanel),
+      reportTitleVisible: Boolean(reportTitleNode),
+      bodyModalOpen: document.body.classList.contains("modal-open"),
+      bodyReportPulse: document.body.classList.contains("report-pulse")
+    });
+
+    if (typeof closePortraitV2Sheet === "function") closePortraitV2Sheet();
+    if (sheet) {
+      sheet.hidden = true;
+      sheet.style.pointerEvents = "none";
+      sheet.classList.remove("visible", "is-open", "active", "open");
+    }
+    if (sheetBody) sheetBody.classList.remove("visible", "is-open", "active", "open");
+    if (backdrop) {
+      backdrop.hidden = true;
+      backdrop.style.pointerEvents = "none";
+      backdrop.classList.remove("visible", "is-open", "active", "open");
+    }
+    if (legacyHazardPanel?.classList.contains("visible")) legacyHazardPanel.classList.remove("visible");
+    document.body.classList.remove("modal-open", "report-pulse");
+
+    const reportTitleNodeAfter = Array.from(document.querySelectorAll("h1, h2, h3, h4, [role='heading'], .panel-title, .sheet-title")).find((node) => {
+      if (!(node instanceof HTMLElement)) return false;
+      return /report\s*hazard/i.test(node.textContent || "") && isVisible(node);
+    }) || null;
+
+    pushTapMapTrace("portrait-v2-visible-report-surface-after", {
+      sheetVisible: isVisible(sheet),
+      sheetBodyVisible: isVisible(sheetBody),
+      backdropVisible: isVisible(backdrop),
+      hazardPanelVisible: Boolean(legacyHazardPanel?.classList.contains("visible")) && isVisible(legacyHazardPanel),
+      reportTitleVisible: Boolean(reportTitleNodeAfter),
+      bodyModalOpen: document.body.classList.contains("modal-open"),
+      bodyReportPulse: document.body.classList.contains("report-pulse")
+    });
+  }
   function triggerV2DockAdapter(action, payload = {}) {
     const hasActiveRouteForPreview = () => {
       const hasSelection = Boolean(lastRouteWatchSelection.startId && lastRouteWatchSelection.destinationId);
