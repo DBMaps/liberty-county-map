@@ -412,6 +412,11 @@ const MOBILE_REPORT_ENTRY_SELECTORS = [
 ];
 let mobileReportEntryBindingsAttached = false;
 
+const REPORT_CONFIRMATION_READ_MS = 2600;
+const REPORT_CONFIRMATION_FADE_MS = 260;
+let reportConfirmationDismissTimer = null;
+let reportConfirmationFadeTimer = null;
+
 const reportingState = {
   selectedHazardType: null,
   reportModeActive: false,
@@ -5854,7 +5859,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     lastMobileReportSubmitDebug.lastSubmitAttempt = "supabase_insert_succeeded";
     lastMobileReportSubmitDebug.supabaseInsertSucceeded = true;
     updateReportingState({ lastReportError: "", lastReportMessage: "Report added" });
-    setConfirmation("Report added", "success");
+    setConfirmation("Report accepted and shared.", "success", { durationMs: 3000 });
     setSync("Hazard report shared");
 
     await runPostSubmitRefresh();
@@ -7666,7 +7671,7 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
       buttonEl.textContent = "Shared ✓";
     }
 
-    setConfirmation(`Shared report submitted: ${crossing.name} as ${copy.label}.`, "success");
+    setConfirmation(`Report accepted: ${copy.label} at ${crossing.name}.`, "success", { durationMs: 3000 });
     console.log("Crossing report saved", { crossingId: String(crossing.id), type: reportType });
 
     setSync("Live report shared");
@@ -7689,7 +7694,7 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
 
     if (map) {
       map.setView([crossing.lat, crossing.lng], 14);
-      setTimeout(() => map.closePopup(), 850);
+      setTimeout(() => map.closePopup(), 500);
     }
 
     if (buttonEl) {
@@ -7705,7 +7710,7 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
         } else {
           buttonEl.textContent = originalButtonText;
         }
-      }, 1400);
+      }, 2100);
     }
     updateReportingState({ submissionInProgress: false });
   } catch (error) {
@@ -12190,20 +12195,35 @@ function flashButton(button, message) {
   }, 1300);
 }
 
-function setConfirmation(message, type = "success") {
+function setConfirmation(message, type = "success", options = {}) {
+  const { persist = false, durationMs = REPORT_CONFIRMATION_READ_MS } = options || {};
   updateReportingState({
     lastReportMessage: message || "",
     lastReportError: type === "error" ? message || "" : ""
   });
   if (!els.reportConfirmation) return;
 
+  if (reportConfirmationDismissTimer) clearTimeout(reportConfirmationDismissTimer);
+  if (reportConfirmationFadeTimer) clearTimeout(reportConfirmationFadeTimer);
+  els.reportConfirmation.classList.remove("is-fading");
+
   els.reportConfirmation.classList.remove("success", "error");
+  if (type) els.reportConfirmation.classList.add(type);
+  els.reportConfirmation.textContent = message || "";
 
-  if (type) {
-    els.reportConfirmation.classList.add(type);
-  }
+  if (persist || !message || type === "error") return;
 
-  els.reportConfirmation.textContent = message;
+  reportConfirmationFadeTimer = setTimeout(() => {
+    els.reportConfirmation?.classList.add("is-fading");
+  }, Math.max(800, durationMs - REPORT_CONFIRMATION_FADE_MS));
+
+  reportConfirmationDismissTimer = setTimeout(() => {
+    if (!els.reportConfirmation) return;
+    els.reportConfirmation.classList.remove("is-fading");
+    els.reportConfirmation.classList.remove("success");
+    els.reportConfirmation.textContent = "";
+    updateReportingState({ lastReportMessage: "" });
+  }, durationMs);
 }
 
 function showShareCard() {
@@ -14597,7 +14617,13 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const headerVisualCompetitionReduced = redundantTopUtilityRemoved;
     const compactHeaderCalmnessImproved = Boolean(v1335HeaderSimplified && logoWatchAlignmentApplied && headerHeightPreserved);
     const bottomSettingsAccessPreserved = Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-bottom-dock [data-v2-sheet='settings']"));
-    return {v2Exists:Boolean(v2),v2Visible:Boolean(v2&&getComputedStyle(v2).display!=="none"),activeSheet,sheetOpen:!document.getElementById("gridlyPortraitV2Sheet")?.hidden,dockButtonsFound:document.querySelectorAll(".gridly-v2-bottom-dock button").length,controlRailFound:Boolean(document.querySelector(".gridly-v2-control-rail")),legacyPortraitHidden:legacyHidden,duplicateZoomControlsVisible,duplicateFilterStripsVisible,v2IconsApplied,legacyControlsHidden,mapContainerFound:Boolean(document.getElementById("map")),layoutMode:mode, popupV2Styled, popupViewportSafe, filterStripBalanced, popupViewportCentered, popupAutoPanApplied, popupCameraPanApplied, popupAnchorMode, popupLastMarkerScreenPoint, popupLastSafeTargetPoint, popupClippedAfterOpen, popupViewportBounds, popupAutoPanSequenced, popupBlinkResolved, lastPopupTapAt:gridlyPopupLastTapAt, lastPopupOpenAt:gridlyPopupLastOpenAt, pendingPopupToken:window.__gridlyPopupPanSession?.token||null, popupOpenCount:gridlyPopupOpenCount, popupCancelCount:gridlyPopupCancelCount, popupLastFailureReason:gridlyPopupLastFailureReason||null, popupReopenReady:gridlyPopupReopenReady, popupSingleTapFlowReady:gridlyPopupSingleTapFlowReady, popupSingleTapGuaranteed:gridlyPopupSingleTapGuaranteed, lastPopupTapCrossingId:gridlyLastPopupTapCrossingId, lastPopupPanStartedAt:gridlyLastPopupPanStartedAt, lastPopupMoveEndAt:gridlyLastPopupMoveEndAt, lastPopupFallbackFiredAt:gridlyLastPopupFallbackFiredAt, lastPopupScheduledDelay:gridlyLastPopupScheduledDelay, lastPopupTimerFiredAt:gridlyLastPopupTimerFiredAt, lastPopupFinalizeReason:gridlyLastPopupFinalizeReason, popupLastClickCrossingId:gridlyLastPopupTapCrossingId, popupLastFinalizeAttemptAt:gridlyPopupLastFinalizeAttemptAt, popupLastOpenCallAt:gridlyPopupLastOpenCallAt, popupLastOpenMethod:gridlyPopupLastOpenMethod, popupOpenCallCount:gridlyPopupOpenCount, popupEarlyReturnReason:gridlyPopupEarlyReturnReason||null, popupPaneCount:document.querySelectorAll(".leaflet-popup-pane .leaflet-popup").length, popupDomExists:Boolean(document.querySelector(".leaflet-popup")), popupInterferenceEventSeen:gridlyPopupInterferenceEventSeen, routeWatchAllClickedDuringPopupTap:gridlyRouteWatchAllClickedDuringPopupTap, duplicateMarkerClickCount:gridlyDuplicateMarkerClickCount, markerClickHandlerGuardApplied:gridlyMarkerClickHandlerGuardApplied, compactBrandApplied, compactHeaderRefined, typographyPassApplied, spacingRhythmPassApplied, surfacePolishApplied, iconConsistencyPassApplied, sheetProductizationApplied, mapBreathingRoomApplied, iconSystemUnified, dockIconSystemUnified, railIconSystemUnified, iconSystemReferenceAligned, iconSystemHarmonized, dockRefinementApplied, utilityControlConsistencyApplied, headerFoundationApplied, surfaceRestraintApplied, opticalAlignmentPassApplied, v1321FinalTighteningApplied, headerStatusCohesionApplied, filterDensityTuned, dockOpticalFinalized, mapFirstBalancePreserved, microAlignmentQaApplied, v1322TypographyEasingApplied, topHeaderTypographyRefined, filterStripEased, topStackCalmnessApplied, microTypographyConsistencyApplied, mapDominancePreserved, v133BrandFoundationApplied, headerIdentitySystemApplied, gridlyMarkFoundationApplied, wordmarkPolished, brandRestraintMaintained, iconBrandRelationshipAligned, v1331RealBrandAssetsIntegrated, compactResponsiveBrandVariantApplied, faviconValidated, appIconsValidated, temporaryBrandLayersRemoved, brandProductionIntegrationComplete, v1332UltraCompactHeaderApplied, headerBrandFitmentComplete, compactLogoOpticsBalanced, mapFirstBrandRestraintMaintained, legacyWideLogoRemoved, productionHeaderIdentityFinalized, v1333LogoSizingCorrected, ultraCompactLogoReadable, headerBrandScaleBalanced, headerHeightPreserved, v1334IndependentHeaderLayoutApplied, centeredWatchLabelIndependent, logoNoLongerConstrainsHeader, utilityControlIndependentlyAligned, compactHeaderLayoutPreserved, finalHeaderFitmentResolved, v1335HeaderSimplified, redundantTopUtilityRemoved, logoWatchAlignmentApplied, headerVisualCompetitionReduced, compactHeaderCalmnessImproved, bottomSettingsAccessPreserved, brandLogoHeight, brandLogoWidth, topbarHeight, warnings};
+const v134ReportingRefinementApplied = true;
+    const successStateCalmed = Boolean(document.querySelector("#reportConfirmation"));
+    const reportingHierarchyImproved = Boolean(!reportingState.submissionInProgress || (document.querySelector("#reportConfirmation") && document.querySelectorAll(".leaflet-popup-pane .leaflet-popup").length <= 1));
+    const transientTimingRefined = REPORT_CONFIRMATION_READ_MS >= 2400;
+    const overlayCompetitionReduced = Boolean(!reportingState.submissionInProgress || document.body?.classList.contains("reporting-live"));
+    const reportSuccessClarityImproved = Boolean((reportingState.lastReportMessage || "").toLowerCase().includes("accepted") || !reportingState.lastReportMessage);
+    return {v2Exists:Boolean(v2),v2Visible:Boolean(v2&&getComputedStyle(v2).display!=="none"),activeSheet,sheetOpen:!document.getElementById("gridlyPortraitV2Sheet")?.hidden,dockButtonsFound:document.querySelectorAll(".gridly-v2-bottom-dock button").length,controlRailFound:Boolean(document.querySelector(".gridly-v2-control-rail")),legacyPortraitHidden:legacyHidden,duplicateZoomControlsVisible,duplicateFilterStripsVisible,v2IconsApplied,legacyControlsHidden,mapContainerFound:Boolean(document.getElementById("map")),layoutMode:mode, popupV2Styled, popupViewportSafe, filterStripBalanced, popupViewportCentered, popupAutoPanApplied, popupCameraPanApplied, popupAnchorMode, popupLastMarkerScreenPoint, popupLastSafeTargetPoint, popupClippedAfterOpen, popupViewportBounds, popupAutoPanSequenced, popupBlinkResolved, lastPopupTapAt:gridlyPopupLastTapAt, lastPopupOpenAt:gridlyPopupLastOpenAt, pendingPopupToken:window.__gridlyPopupPanSession?.token||null, popupOpenCount:gridlyPopupOpenCount, popupCancelCount:gridlyPopupCancelCount, popupLastFailureReason:gridlyPopupLastFailureReason||null, popupReopenReady:gridlyPopupReopenReady, popupSingleTapFlowReady:gridlyPopupSingleTapFlowReady, popupSingleTapGuaranteed:gridlyPopupSingleTapGuaranteed, lastPopupTapCrossingId:gridlyLastPopupTapCrossingId, lastPopupPanStartedAt:gridlyLastPopupPanStartedAt, lastPopupMoveEndAt:gridlyLastPopupMoveEndAt, lastPopupFallbackFiredAt:gridlyLastPopupFallbackFiredAt, lastPopupScheduledDelay:gridlyLastPopupScheduledDelay, lastPopupTimerFiredAt:gridlyLastPopupTimerFiredAt, lastPopupFinalizeReason:gridlyLastPopupFinalizeReason, popupLastClickCrossingId:gridlyLastPopupTapCrossingId, popupLastFinalizeAttemptAt:gridlyPopupLastFinalizeAttemptAt, popupLastOpenCallAt:gridlyPopupLastOpenCallAt, popupLastOpenMethod:gridlyPopupLastOpenMethod, popupOpenCallCount:gridlyPopupOpenCount, popupEarlyReturnReason:gridlyPopupEarlyReturnReason||null, popupPaneCount:document.querySelectorAll(".leaflet-popup-pane .leaflet-popup").length, popupDomExists:Boolean(document.querySelector(".leaflet-popup")), popupInterferenceEventSeen:gridlyPopupInterferenceEventSeen, routeWatchAllClickedDuringPopupTap:gridlyRouteWatchAllClickedDuringPopupTap, duplicateMarkerClickCount:gridlyDuplicateMarkerClickCount, markerClickHandlerGuardApplied:gridlyMarkerClickHandlerGuardApplied, compactBrandApplied, compactHeaderRefined, typographyPassApplied, spacingRhythmPassApplied, surfacePolishApplied, iconConsistencyPassApplied, sheetProductizationApplied, mapBreathingRoomApplied, iconSystemUnified, dockIconSystemUnified, railIconSystemUnified, iconSystemReferenceAligned, iconSystemHarmonized, dockRefinementApplied, utilityControlConsistencyApplied, headerFoundationApplied, surfaceRestraintApplied, opticalAlignmentPassApplied, v1321FinalTighteningApplied, headerStatusCohesionApplied, filterDensityTuned, dockOpticalFinalized, mapFirstBalancePreserved, microAlignmentQaApplied, v1322TypographyEasingApplied, topHeaderTypographyRefined, filterStripEased, topStackCalmnessApplied, microTypographyConsistencyApplied, mapDominancePreserved, v133BrandFoundationApplied, headerIdentitySystemApplied, gridlyMarkFoundationApplied, wordmarkPolished, brandRestraintMaintained, iconBrandRelationshipAligned, v1331RealBrandAssetsIntegrated, compactResponsiveBrandVariantApplied, faviconValidated, appIconsValidated, temporaryBrandLayersRemoved, brandProductionIntegrationComplete, v1332UltraCompactHeaderApplied, headerBrandFitmentComplete, compactLogoOpticsBalanced, mapFirstBrandRestraintMaintained, legacyWideLogoRemoved, productionHeaderIdentityFinalized, v1333LogoSizingCorrected, ultraCompactLogoReadable, headerBrandScaleBalanced, headerHeightPreserved, v1334IndependentHeaderLayoutApplied, centeredWatchLabelIndependent, logoNoLongerConstrainsHeader, utilityControlIndependentlyAligned, compactHeaderLayoutPreserved, finalHeaderFitmentResolved, v1335HeaderSimplified, redundantTopUtilityRemoved, logoWatchAlignmentApplied, headerVisualCompetitionReduced, compactHeaderCalmnessImproved, bottomSettingsAccessPreserved, v134ReportingRefinementApplied, successStateCalmed, reportingHierarchyImproved, transientTimingRefined, overlayCompetitionReduced, reportSuccessClarityImproved, brandLogoHeight, brandLogoWidth, topbarHeight, warnings};
   };
   document.addEventListener("DOMContentLoaded", bindV2);
 })();
