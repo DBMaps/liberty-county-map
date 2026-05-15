@@ -15509,6 +15509,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       "report-open": () => document.getElementById("mobileDockReportBtn")?.click(),
       "report-select-hazard": () => {
         selectedV2HazardType = payload.hazardType || selectedV2HazardType || "";
+        pushTapMapTrace("portrait-v2-hazard-selection", { source: "portrait-v2-report", hazardType: selectedV2HazardType || null });
         if (typeof updateReportingState === "function" && selectedV2HazardType) {
           updateReportingState({ selectedHazardType: selectedV2HazardType, activeReportEntryPoint: "portrait_v2_sheet" });
         }
@@ -15517,6 +15518,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         });
       },
       "report-use-location": () => {
+        pushTapMapTrace("portrait-v2-report-use-location", {
+          source: "portrait-v2-report",
+          hazardType: selectedV2HazardType || reportingState.selectedHazardType || null
+        });
         if (!selectedV2HazardType) {
           markV2BlockedInteraction("report-use-location", "Choose a hazard first, then use My Location.");
           return;
@@ -15526,13 +15531,17 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         }
       },
       "report-tap-map": () => {
+        const resolvedHazardType = selectedV2HazardType || reportingState.selectedHazardType || selectedQuickHazardType || "";
+        pushTapMapTrace("portrait-v2-report-tap-map", { source: "portrait-v2-report", hazardType: resolvedHazardType || null });
         if (!selectedV2HazardType) {
           markV2BlockedInteraction("report-tap-map", "Choose a hazard first, then tap a map location.");
           return;
         }
-        pushTapMapTrace("actual-tap-map-button-clicked", { source: "v2_sheet_action", hazardType: selectedV2HazardType });
+        pushTapMapTrace("portrait-v2-tap-map-clicked", { source: "portrait-v2-report", hazardType: resolvedHazardType || null });
+        closePortraitV2Sheet();
+        applyPortraitV2SurfaceContainment();
         if (typeof beginRoadHazardMapPlacement === "function") {
-          beginRoadHazardMapPlacement(selectedV2HazardType, { source: "actual-ui" });
+          beginRoadHazardMapPlacement(resolvedHazardType, { source: "portrait-v2-report" });
         }
       },
       "route-open": () => { v1363RouteActionDebug.routeDockClickHandled = true; document.getElementById("mobileDockRouteBtn")?.click(); },
@@ -15641,9 +15650,12 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         event.preventDefault();
         event.stopPropagation();
         const resolvedHazardType = selectedV2HazardType || reportingState.selectedHazardType || selectedQuickHazardType || "other_hazard";
-        pushTapMapTrace("actual-tap-map-button-clicked", { source: "v2_sheet_delegate", hazardType: resolvedHazardType });
+        pushTapMapTrace("portrait-v2-report-tap-map", { source: "portrait-v2-report", hazardType: resolvedHazardType || null });
+        pushTapMapTrace("portrait-v2-tap-map-clicked", { source: "portrait-v2-report", hazardType: resolvedHazardType || null });
+        closePortraitV2Sheet();
+        applyPortraitV2SurfaceContainment();
         if (typeof beginRoadHazardMapPlacement === "function") {
-          beginRoadHazardMapPlacement(resolvedHazardType, { source: "actual-ui" });
+          beginRoadHazardMapPlacement(resolvedHazardType, { source: "portrait-v2-report" });
         }
       }, true);
       body.dataset.tapMapDelegateBound = "1";
