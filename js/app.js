@@ -5160,6 +5160,10 @@ function getUnifiedIncidents() {
     .sort((a,b)=>new Date(b.updated_at)-new Date(a.updated_at));
 }
 
+function getActiveUnifiedIncidents() {
+  return getUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "active");
+}
+
 
 function getUnifiedIncidentRenderKey(incident = {}) {
   const explicitId = incident?.id ?? incident?.report_id ?? incident?.reportId;
@@ -10989,9 +10993,10 @@ function updateRouteIntelligence(nearest = []) {
   liveStatusCard?.classList.remove("clear-status", "delay-status", "blocked-status");
 
   if (impact >= 70) {
+    const routeIssueTitle = routeHazard?.nearestIssue?.incident?.title || "";
     if (mobileLiveCommand) mobileLiveCommand.dataset.delayState = "blocked";
     safeText("mobileLiveStatusPill", alternateRouteAvailable ? "ALT ROUTE READY" : "BLOCKED");
-    safeText("delayRisk", routeIntel.urgentBlockedCount > 0 ? "Heavy blockage risk on US-90" : "Alternate route recommended");
+    safeText("delayRisk", routeIntel.urgentBlockedCount > 0 ? (routeIssueTitle || "Heavy blockage risk nearby") : "Alternate route recommended");
     safeText("delayReason", routeIntel.urgentBlockedCount > 0 ? `${routeIntel.urgentBlockedCount} active signal${routeIntel.urgentBlockedCount === 1 ? "" : "s"} in the last 10 min · alternate route recommended.` : "Live corridor unstable · severe crossing pressure detected.");
     safeText("alternateRoute", "Use alternate");
     safeText("alternateReason", "Avoid highest-impact crossing if possible.");
@@ -10999,10 +11004,11 @@ function updateRouteIntelligence(nearest = []) {
     safeText("mobileLiveRouteActionBtn", alternateRouteAvailable ? "Use alternate" : "Review route");
     liveStatusCard?.classList.add("blocked-status");
   } else if (impact >= 40) {
+    const routeIssueTitle = routeHazard?.nearestIssue?.incident?.title || "";
     if (mobileLiveCommand) mobileLiveCommand.dataset.delayState = "delayed";
-    safeText("mobileLiveStatusPill", "Heavy blockage ahead");
-    safeText("delayRisk", "Delay building near Dayton crossing");
-    safeText("delayReason", "Active live signals detected · prepare backup route.");
+    safeText("mobileLiveStatusPill", routeIssueTitle ? "Delay risk detected" : "Route watch active");
+    safeText("delayRisk", routeIssueTitle || "Delay risk building nearby");
+    safeText("delayReason", routeIssueTitle ? `${routeIssueTitle} · prepare backup route if conditions worsen.` : "Active live signals detected · prepare backup route.");
     safeText("alternateRoute", "Have backup");
     safeText("alternateReason", "Alternate route may help if reports increase.");
     safeText("impactText", "Moderate route impact. Wait 10 min or leave early.");
@@ -11988,7 +11994,7 @@ function getOperationalFeedSummaryLine() {
 function renderAlerts() {
   if (!els.alertsList) return;
 
-  const incidents = getConsolidatedIncidents();
+  const incidents = getActiveUnifiedIncidents();
   if (!incidents.length) {
     els.alertsList.innerHTML = `
       <div class="alert-item">
@@ -11999,38 +12005,48 @@ function renderAlerts() {
     return;
   }
 
-  const prioritized = getPrioritizedRailAlertIncidents(6);
+  const prioritized = incidents
+    .slice()
+    .sort((a, b) => {
+      const severityScore = (incident) => {
+        if (incident?.severity === "high") return 3;
+        if (incident?.severity === "medium" || incident?.severity === "moderate") return 2;
+        return 1;
+      };
+      return severityScore(b) - severityScore(a) || new Date(b.updated_at || 0) - new Date(a.updated_at || 0);
+    })
+    .slice(0, 6);
 
   els.alertsList.innerHTML = prioritized
     .map((incident) => {
-      const latest = incident.latestReport;
-      const confidenceLabel = getCrossingConfidenceLabel(latest, incident.count);
-      const freshnessLabel = getFreshnessLabel(latest);
-      const confirmationLabel = getDriverConfirmationLabel(incident.count);
-      const reportState = getReportStateLabel(latest);
-      const railDisplay = buildRailIncidentDisplay(incident);
+      const incidentType = String(incident.type || "");
+      const minutesAgo = Math.max(0, Math.floor((Date.now() - new Date(incident.created_at || incident.updated_at || Date.now()).getTime()) / 60000));
+      const confirmationLabel = getDriverConfirmationLabel(Number(incident.reports_count || 1));
       const severityLabel =
-        latest.type === "cleared"
-          ? "Cleared"
-          : latest.severity === "high"
+        incident.severity === "high"
           ? "High"
-          : latest.severity === "moderate"
+          : incident.severity === "moderate" || incident.severity === "medium"
           ? "Moderate"
           : "Watch";
-      const itemClass = latest.type === "cleared" ? "cleared" : latest.severity === "high" ? "high" : "";
+      const itemClass = incident.severity === "high" ? "high" : "";
 
       return `
-        <article class="alert-item intelligence-row ${itemClass}" tabindex="0" role="button" ${buildAlertFocusDataset(latest, { incidentId: incident.crossingId })}>
+        <article class="alert-item intelligence-row ${itemClass}" tabindex="0" role="button" ${buildAlertFocusDataset({
+          lat: incident.lat,
+          lng: incident.lng,
+          crossingId: incident.crossing_id || incident.id,
+          crossingName: incident.area || incident.title || "Reported area"
+        }, { incidentId: incident.crossing_id || incident.id })}>
           <div class="alert-row-main">
             <span class="alert-severity-chip">${sanitizeText(severityLabel)}</span>
-            <strong>${sanitizeText(railDisplay.title)}</strong>
-            <span class="alert-row-time">${incident.newestMinutes}m</span>
+            <strong>${sanitizeText(incident.title || "Live incident")}</strong>
+            <span class="alert-row-time">${minutesAgo}m</span>
           </div>
-          <p class="alert-row-subline">${sanitizeText(railDisplay.subtitlePrefix)} · ${sanitizeText(confirmationLabel)} · ${sanitizeText(reportState)}</p>
+          <p class="alert-row-subline">${sanitizeText(incidentType)} · ${sanitizeText(confirmationLabel)} · active</p>
           <details class="alert-row-details">
             <summary>Details</summary>
-            <p>${sanitizeText(freshnessLabel)} · ${sanitizeText(latest.detail)}</p>
-            <p>First reported ${incident.oldestMinutes} min ago</p>
+            <p>${sanitizeText(`${minutesAgo} min ago`)} · ${sanitizeText(incident.description || "Live incident")}</p>
+            <p>Source: ${sanitizeText(incident.source || "community")}</p>
           </details>
         </article>
       `;
@@ -14834,21 +14850,24 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     return `<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy"><strong>Start:</strong> ${route.startLabel}</p><p class="gridly-v2-sheet-copy"><strong>Destination:</strong> ${route.destinationLabel}</p><p class="gridly-v2-sheet-copy"><strong>Saved places:</strong> ${route.savedPlaceCount}</p><p class="gridly-v2-sheet-copy"><strong>Status:</strong> ${route.routeState}</p><p class="gridly-v2-sheet-copy"><strong>Readiness:</strong> ${route.readinessMessage}</p><p class="gridly-v2-sheet-copy"><strong>Preview:</strong> ${route.previewState}</p><p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p><button class="primary-btn" data-v2-action="route-watch-open" type="button">Open Route Watch</button><button class="secondary-btn" data-v2-action="route-preview-open" type="button">View Route</button><button class="secondary-btn" data-v2-action="route-manage-places-open" type="button">Manage Places</button></div>`;
   }
   function getAlertsSurfaceSnapshot() {
-    const incidents = getConsolidatedIncidents();
+    const incidents = getActiveUnifiedIncidents();
     const prefs = getSmartAlertsPreferences();
     const route = getRouteSurfaceSnapshot();
     const now = Date.now();
-    const reports = Array.isArray(activeReports) ? activeReports.filter((report) => report && !report.expired) : [];
+    const reports = [...(Array.isArray(activeReports) ? activeReports : []), ...(Array.isArray(activeHazards) ? activeHazards : [])]
+      .filter((report) => report && !report.expired);
     const recentHazardCount = reports.filter((report) => {
       const submittedAt = new Date(report.submittedAt || 0).getTime();
       return Number.isFinite(submittedAt) && (now - submittedAt) <= 60 * 60 * 1000;
     }).length;
-    const clearedCount = incidents.filter((incident) => incident?.latestReport?.type === "cleared").length;
-    const activeIncidentCount = incidents.length - clearedCount;
-    const highImpactCount = incidents.filter((incident) => incident?.latestReport?.severity === "high" && incident?.latestReport?.type !== "cleared").length;
-    const watchCount = incidents.filter((incident) => incident?.latestReport?.severity !== "high" && incident?.latestReport?.type !== "cleared").length;
+    const clearedCount = 0;
+    const activeIncidentCount = incidents.length;
+    const highImpactCount = incidents.filter((incident) => incident?.severity === "high").length;
+    const watchCount = incidents.filter((incident) => incident?.severity !== "high").length;
     const top = incidents[0] || null;
-    const newestMinutes = Number(top?.newestMinutes);
+    const newestMinutes = Number.isFinite(new Date(top?.created_at || top?.updated_at || 0).getTime())
+      ? Math.max(0, Math.round((Date.now() - new Date(top?.created_at || top?.updated_at).getTime()) / 60000))
+      : Number.NaN;
     const nearbySummary = activeIncidentCount > 0
       ? `${activeIncidentCount} active delay${activeIncidentCount === 1 ? "" : "s"} nearby${Number.isFinite(newestMinutes) ? ` · newest ${Math.max(0, Math.round(newestMinutes))} min ago` : ""}`
       : "No active delays nearby";
