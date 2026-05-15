@@ -11990,18 +11990,28 @@ function inferConsequenceTrend({ activeItems = [], recentlyClearedCount = 0 } = 
 }
 
 
+function normalizeCorridorBaseLabel(label = "") {
+  const raw = String(label || "").trim();
+  if (!raw) return "";
+  const normalized = raw
+    .replace(/Us\s*(\d+)/gi, "US $1")
+    .replace(/Tx\s*(\d+)/gi, "TX $1")
+    .replace(/Farm\s*-?\s*To\s*-?\s*Market\s+Road\s*(\d+)/gi, "FM $1")
+    .replace(/Fm\s*(\d+)/gi, "FM $1")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (/^(US|TX|FM)\s+\d+$/i.test(normalized)) return normalized.toUpperCase();
+  return normalized;
+}
+
 function inferCorridorLabel(incident = {}) {
   const text = `${incident?.title || ""} ${incident?.description || ""} ${incident?.area || ""}`;
-  const upper = text.toUpperCase();
-  const match = upper.match(/(US\s*\d+|TX\s*\d+|FM\s*\d+)/);
-  if (match) return `${match[1].replace(/\s+/g, " ")} Corridor`;
+  const normalizedText = normalizeCorridorBaseLabel(text);
+  const match = normalizedText.match(/(US\s*\d+|TX\s*\d+|FM\s*\d+)/i);
+  if (match) return `${normalizeCorridorBaseLabel(match[1])} Corridor`;
   const crossing = String(incident?.crossingName || incident?.area || "");
-  if (/cross/i.test(crossing) || /cross/i.test(text)) {
-    const locality = crossing.split(/,|near/i)[0].trim() || "Local";
-    return `${locality} Crossing Cluster`;
-  }
-  const road = resolveNearestRoadName(Number(incident?.lat), Number(incident?.lng), { includeRoadPairing: true }) || "Local";
-  return `${road} Corridor`;
+  if (/cross/i.test(crossing) || /cross/i.test(text)) return "Other Nearby Hazards";
+  return "Other Nearby Hazards";
 }
 
 function getCorridorHealthState(score = 0) {
@@ -12204,25 +12214,45 @@ function getOperationalFeedSummaryLine() {
 
 function renderAlerts() {
   if (!els.alertsList) return;
-  const consequenceIntel = buildCommuteConsequenceIntelligence({ limit: 8 });
+  const consequenceIntel = buildCommuteConsequenceIntelligence({ limit: 10 });
   const corridors = consequenceIntel.corridorClusters || [];
   if (!corridors.length) {
-    els.alertsList.innerHTML = `<div class="alert-item"><strong>Major corridors currently clear</strong><p>No significant commute disruptions nearby.</p></div>`;
+    els.alertsList.innerHTML = `<div class="alert-item"><strong>Commute Status</strong><p>Routes currently clear.</p></div>`;
     return;
   }
-  const critical = corridors[0];
-  const criticalItem = critical?.items?.[0];
-  const criticalEta = Number(criticalItem?.etaImpact || 0);
+
+  const highestPriorityCorridor = corridors[0] || null;
+  const criticalItem = highestPriorityCorridor?.items?.[0] || null;
+  const criticalAge = Number(criticalItem?.ageMinutes);
+  const criticalAgeLabel = Number.isFinite(criticalAge) ? `${Math.max(0, Math.round(criticalAge))}m ago` : "just now";
+
   const sections = [];
-  sections.push(`<article class="alert-item intelligence-row high"><div class="alert-row-main"><span class="alert-severity-chip">Critical Now</span><strong>${sanitizeText(criticalItem?.localizedSummary || `Disruption on ${critical.label}`)}</strong><span class="alert-row-time">${criticalEta ? `+${criticalEta}m` : "live"}</span></div><p class="alert-row-subline">${sanitizeText(criticalEta ? `Estimated impact +${criticalEta} minutes` : "Monitoring live corridor impact")}</p></article>`);
-  corridors.slice(0,3).forEach((corridor) => {
-    const rows = corridor.items.slice(0,3).map((item) => `<li>${sanitizeText(item.localizedSummary)}</li>`).join("");
-    sections.push(`<article class="alert-item"><strong>${sanitizeText(corridor.label)}</strong><p>${sanitizeText(corridor.healthState)} · ${corridor.routeImpactCount > 0 ? `${corridor.routeImpactCount} route impact` : "no direct route impact"}</p><ul class="alert-row-details-list">${rows}</ul></article>`);
+  sections.push(`<article class="alert-item intelligence-row high"><div class="alert-row-main"><span class="alert-severity-chip">Commute Status</span><strong>${sanitizeText(consequenceIntel.topStatus || "Routes currently clear")}</strong><span class="alert-row-time">live</span></div><p class="alert-row-subline">${sanitizeText(consequenceIntel.trendMessage || "Monitoring active corridors")}</p></article>`);
+  if (criticalItem) {
+    sections.push(`<article class="alert-item intelligence-row high"><div class="alert-row-main"><span class="alert-severity-chip">Critical Now</span><strong>${sanitizeText(criticalItem.localizedSummary || `Disruption on ${highestPriorityCorridor?.label || "primary corridor"}`)}</strong><span class="alert-row-time">high impact</span></div><p class="alert-row-subline">High impact · Last confirmed ${sanitizeText(criticalAgeLabel)}</p></article>`);
+  }
+
+  sections.push(`<article class="alert-item"><strong>Affected Corridors</strong><p>${sanitizeText(corridors.length)} corridor group${corridors.length === 1 ? "" : "s"} with active reports.</p></article>`);
+
+  corridors.slice(0, 4).forEach((corridor) => {
+    const count = corridor.items.length;
+    const heading = corridor.label || "Other Nearby Hazards";
+    const consequence = corridor.healthState || "active disruptions";
+    const rows = corridor.items.slice(0, 4).map((item) => `<li>${sanitizeText(item.localizedSummary)} <span class="alert-row-time">${sanitizeText(item.minutesText)}</span></li>`).join("");
+    sections.push(`<article class="alert-item"><strong>${sanitizeText(heading)}</strong><p>${sanitizeText(consequence)} · ${count} active report${count === 1 ? "" : "s"}</p><ul class="alert-row-details-list">${rows}</ul></article>`);
   });
-  const cleared = corridors.flatMap((c) => (c.recentlyCleared || []).map((incident) => buildLocalizedIncidentLabel(incident))).slice(0,3);
-  if (cleared.length) sections.push(`<article class="alert-item"><strong>Recently Cleared</strong><p>${cleared.map((x)=>sanitizeText(x)).join(" · ")}</p></article>`);
+
+  const cleared = getUnifiedIncidents()
+    .filter((incident) => String(incident?.status || "").toLowerCase() === "cleared" && Number(incident?.age_minutes) <= 90)
+    .slice(0, 4)
+    .map((incident) => buildLocalizedIncidentLabel(incident));
+  if (cleared.length) {
+    sections.push(`<article class="alert-item"><strong>Recently Cleared</strong><p>${cleared.map((label) => sanitizeText(label)).join(" · ")}</p></article>`);
+  }
+
   els.alertsList.innerHTML = sections.join("");
 }
+
 
 function renderTrendingCrossings() {
   if (!els.trendingList) return;
