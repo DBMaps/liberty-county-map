@@ -3973,6 +3973,118 @@ window.gridlyClearLocalTestReports = function gridlyClearLocalTestReports() {
   return summary;
 };
 
+window.gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoadHazards(options = {}) {
+  const host = String(window?.location?.hostname || "").toLowerCase();
+  const isDevHost = host === "localhost" || host === "127.0.0.1" || host.endsWith(".local") || host === "";
+  if (!isDevHost) {
+    const blocked = { ok: false, deleted: 0, reason: `Blocked outside dev host (${host || "unknown"}).` };
+    console.warn("gridlyDevPurgeRecentRoadHazards blocked", blocked);
+    return blocked;
+  }
+  if (!supabaseClient) {
+    const missing = { ok: false, deleted: 0, reason: "Supabase client not initialized." };
+    console.warn("gridlyDevPurgeRecentRoadHazards unavailable", missing);
+    return missing;
+  }
+
+  const ROAD_HAZARD_TYPES = ["flooding", "ice", "debris", "crash", "construction", "road_closed", "disabled_vehicle", "other_hazard"];
+  const {
+    dryRun = true,
+    hours = 24,
+    radiusMiles = 0,
+    nearLocation = null,
+    includeRail = false,
+    includeSources = ["user"]
+  } = options || {};
+
+  const radius = Number(radiusMiles) > 0 ? Number(radiusMiles) : 0;
+  const centerCandidate = nearLocation && Number.isFinite(Number(nearLocation.lat)) && Number.isFinite(Number(nearLocation.lng))
+    ? { lat: Number(nearLocation.lat), lng: Number(nearLocation.lng), source: "nearLocation" }
+    : userLocation && Number.isFinite(Number(userLocation.lat)) && Number.isFinite(Number(userLocation.lng))
+    ? { lat: Number(userLocation.lat), lng: Number(userLocation.lng), source: "userLocation" }
+    : map?.getCenter
+    ? { lat: Number(map.getCenter().lat), lng: Number(map.getCenter().lng), source: "mapCenter" }
+    : null;
+
+  const cutoffIso = new Date(Date.now() - (Math.max(1, Number(hours) || 24) * 60 * 60 * 1000)).toISOString();
+  const sourceFilter = Array.isArray(includeSources) ? includeSources.map((v) => String(v || "").trim().toLowerCase()).filter(Boolean) : ["user"];
+
+  const { data, error } = await supabaseClient
+    .from("reports")
+    .select("id,report_type,source,created_at,lat,lng,crossing_id,crossing_name,detail")
+    .gte("created_at", cutoffIso)
+    .in("report_type", ROAD_HAZARD_TYPES)
+    .order("created_at", { ascending: false })
+    .limit(500);
+
+  if (error) {
+    console.error("gridlyDevPurgeRecentRoadHazards query failed", error);
+    return { ok: false, deleted: 0, error: error.message || "query_failed" };
+  }
+
+  const matches = (Array.isArray(data) ? data : []).filter((row) => {
+    const type = String(row?.report_type || "").toLowerCase();
+    const source = String(row?.source || "").toLowerCase();
+    if (!ROAD_HAZARD_TYPES.includes(type)) return false;
+    if (!includeRail && String(row?.crossing_id || "").trim().length > 0) return false;
+    if (sourceFilter.length && !sourceFilter.includes(source)) return false;
+    if (!radius || !centerCandidate) return true;
+    return getDistanceMiles(centerCandidate.lat, centerCandidate.lng, Number(row?.lat), Number(row?.lng)) <= radius;
+  });
+
+  const displayRows = matches.map((row) => ({
+    id: row.id,
+    type: row.report_type,
+    source: row.source,
+    created_at: row.created_at,
+    lat: row.lat,
+    lng: row.lng,
+    crossing_id: row.crossing_id || "",
+    crossing_name: row.crossing_name || "",
+    detail: row.detail || ""
+  }));
+  console.table(displayRows);
+
+  const summary = {
+    ok: true,
+    dryRun: Boolean(dryRun),
+    cutoffIso,
+    radiusMiles: radius,
+    center: centerCandidate,
+    includeRail: Boolean(includeRail),
+    sourceFilter,
+    matchedCount: matches.length,
+    deleted: 0
+  };
+
+  if (dryRun !== false) {
+    console.info("gridlyDevPurgeRecentRoadHazards dry run", summary);
+    return summary;
+  }
+
+  const idsToDelete = matches.map((row) => row.id).filter(Boolean);
+  if (!idsToDelete.length) {
+    console.info("gridlyDevPurgeRecentRoadHazards no matches to delete", summary);
+    return summary;
+  }
+
+  const { error: deleteError } = await supabaseClient.from("reports").delete().in("id", idsToDelete);
+  if (deleteError) {
+    console.error("gridlyDevPurgeRecentRoadHazards delete failed", deleteError);
+    return { ...summary, ok: false, error: deleteError.message || "delete_failed" };
+  }
+
+  activeHazards = [];
+  activeReports = [];
+  refreshReportHazardViews();
+  await loadSharedReports("dev_purge_recent_road_hazards");
+  refreshReportHazardViews();
+
+  summary.deleted = idsToDelete.length;
+  console.info("gridlyDevPurgeRecentRoadHazards completed", summary);
+  return summary;
+};
+
 function runPostSubmitRefreshInBackground(submitAudit, markSubmitStage) {
   const startedAt = Date.now();
   suppressRealtimeRefreshUntil = startedAt + POST_SUBMIT_REALTIME_SUPPRESS_MS;
