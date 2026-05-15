@@ -13505,3 +13505,50 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock butto
   letter-spacing: 0.024em;
   opacity: 0.94;
 }
+
+
+/* V132.2 — Portrait V2 typography + top-strip easing */
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar {
+  border-color: rgba(171, 205, 242, 0.2);
+  box-shadow: 0 5px 11px rgba(2, 8, 18, 0.23);
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand span {
+  letter-spacing: 0.108em;
+  font-weight: 700;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-watch span {
+  letter-spacing: 0.118em;
+  font-weight: 565;
+  opacity: 0.84;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill {
+  border-color: rgba(171, 205, 242, 0.2);
+  box-shadow: 0 4px 10px rgba(2, 8, 18, 0.2);
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill strong {
+  letter-spacing: 0.012em;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill span {
+  letter-spacing: 0.012em;
+  line-height: 1.2;
+  opacity: 0.88;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments {
+  gap: 6px;
+  padding: 4px 5px;
+  border-color: rgba(174, 208, 245, 0.24);
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button {
+  padding: 7px 5px;
+  font-size: 0.65rem;
+  letter-spacing: 0.016em;
+  line-height: 1.17;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button.is-active {
+  letter-spacing: 0.018em;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button em {
+  letter-spacing: 0.026em;
+  line-height: 1.18;
+  opacity: 0.95;
+}
