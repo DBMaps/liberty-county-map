@@ -1685,6 +1685,16 @@ function hideGridlySearchShell(options = {}) {
 }
 
 let lastRouteWatchSelection = { startId: "", destinationId: "" };
+let v1370ViewRouteDebugState = {
+  v1370ViewRouteBehaviorCorrected: true,
+  activeRouteDetectedForPreview: false,
+  routePreviewOpenedWithoutSetup: false,
+  setupFlowAvoidedForActiveRoute: false,
+  lastViewRouteBehavior: "",
+  activeRouteGeometryPresent: false,
+  routePreviewFocusApplied: false,
+  viewRouteFallbackReason: ""
+};
 let gridlyUserProfile = getGridlyUserProfile();
 let movementIntelligence = getMovementIntelligence();
 let mapBaseLayersByName = {};
@@ -10263,7 +10273,7 @@ async function startInlineRouteWatch(options = {}) {
     setRoutePreviewState(false, "Start or destination was not selected.", { layerExists: false, mapHasLayer: false, pointCount: 0 });
     setConfirmation("Choose a start and destination to begin monitoring.", "error");
     captureRouteAttempt({ finalFailureReason: "Missing start or destination selection" });
-    return;
+    return { success: false, reason: lastRouteEarlyReturnReason };
   }
 
   const samePlace = start.id === destination.id;
@@ -10277,7 +10287,7 @@ async function startInlineRouteWatch(options = {}) {
     setRoutePreviewState(false, "Start and destination are the same place.", { layerExists: false, mapHasLayer: false, pointCount: 0 });
     setConfirmation("Choose a different destination.", "error");
     captureRouteAttempt({ finalFailureReason: "Start and destination are the same" });
-    return;
+    return { success: false, reason: lastRouteEarlyReturnReason };
   }
 
   routeWatchActivated = false;
@@ -10298,7 +10308,7 @@ async function startInlineRouteWatch(options = {}) {
     safeText("routeWatchSetupHint", "Route preview unavailable until precise locations are saved.");
     updateRouteIntelligence();
     updateRouteWatchStartButtonLabel();
-    return;
+    return { success: false, reason: lastRouteEarlyReturnReason };
   }
   if (startCoords.lat === destinationCoords.lat && startCoords.lng === destinationCoords.lng) {
     lastRouteEarlyReturnReason = "same_coordinates";
@@ -10310,7 +10320,7 @@ async function startInlineRouteWatch(options = {}) {
     safeText("routeWatchSetupHint", "Update one saved place location to view a route preview.");
     updateRouteIntelligence();
     updateRouteWatchStartButtonLabel();
-    return;
+    return { success: false, reason: lastRouteEarlyReturnReason };
   }
   if (getDistanceMiles(startCoords.lat, startCoords.lng, destinationCoords.lat, destinationCoords.lng) > 80) {
     lastRouteEarlyReturnReason = "distance_exceeds_local_preview_limit";
@@ -10322,7 +10332,7 @@ async function startInlineRouteWatch(options = {}) {
     safeText("routeWatchSetupHint", "Route preview unavailable for this selection.");
     updateRouteIntelligence();
     updateRouteWatchStartButtonLabel();
-    return;
+    return { success: false, reason: lastRouteEarlyReturnReason };
   }
 
   lastRoutePipelineStep = "route_engine_availability_checked";
@@ -10378,6 +10388,13 @@ async function startInlineRouteWatch(options = {}) {
   updateRouteWatchBadge(destination.name);
   updateRouteIntelligence();
   updateRouteWatchStartButtonLabel();
+  return {
+    success: Boolean(routePreviewRendered),
+    reason: routePreviewRendered ? "" : (lastRouteEarlyReturnReason || "route_preview_unavailable"),
+    activateWatch: Boolean(routeWatchActivated),
+    startId: start.id,
+    destinationId: destination.id
+  };
 }
 window.gridlyStartInlineRouteWatch = startInlineRouteWatch;
 
@@ -14904,6 +14921,24 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
   function closePortraitV2Sheet(){ const sheet=document.getElementById("gridlyPortraitV2Sheet"); const backdrop=document.getElementById("gridlyPortraitV2SheetBackdrop"); if(sheet)sheet.hidden=true; if(backdrop)backdrop.hidden=true; activeSheet=""; }
   function triggerV2DockAdapter(action, payload = {}) {
+    const hasActiveRouteForPreview = () => {
+      const hasSelection = Boolean(lastRouteWatchSelection.startId && lastRouteWatchSelection.destinationId);
+      const hasLayer = Boolean(window.__gridlyRoutePreviewLayer && typeof window.__gridlyRoutePreviewLayer.getLatLngs === "function");
+      const points = hasLayer ? window.__gridlyRoutePreviewLayer.getLatLngs() : [];
+      const hasGeometry = Array.isArray(points) && points.length >= 2;
+      const onMap = Boolean(map && window.__gridlyRoutePreviewLayer && typeof map.hasLayer === "function" && map.hasLayer(window.__gridlyRoutePreviewLayer));
+      return { hasActiveRoute: hasSelection && hasLayer && hasGeometry, hasGeometry, onMap };
+    };
+    const focusActiveRoutePreview = () => {
+      const routeBounds = window.__gridlyRoutePreviewLayer?.getBounds?.();
+      if (!map || !routeBounds || !routeBounds.isValid?.()) return false;
+      try {
+        map.fitBounds(routeBounds, { padding: [24, 24], maxZoom: 15 });
+        return true;
+      } catch (error) {
+        return false;
+      }
+    };
     const bridges = {
       "report-open": () => document.getElementById("mobileDockReportBtn")?.click(),
       "report-select-hazard": () => {
@@ -14945,12 +14980,37 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       },
       "route-preview-open": async () => {
         v1363RouteActionDebug.routePreviewActionHandled = true;
+        const activeRouteState = hasActiveRouteForPreview();
+        v1370ViewRouteDebugState.activeRouteDetectedForPreview = Boolean(activeRouteState.hasActiveRoute);
+        v1370ViewRouteDebugState.activeRouteGeometryPresent = Boolean(activeRouteState.hasGeometry);
+        if (activeRouteState.hasActiveRoute) {
+          const focusApplied = focusActiveRoutePreview();
+          v1370ViewRouteDebugState.routePreviewFocusApplied = Boolean(focusApplied);
+          v1370ViewRouteDebugState.routePreviewOpenedWithoutSetup = true;
+          v1370ViewRouteDebugState.setupFlowAvoidedForActiveRoute = true;
+          v1370ViewRouteDebugState.lastViewRouteBehavior = "active_route_preview_opened";
+          v1370ViewRouteDebugState.viewRouteFallbackReason = "";
+          if (!activeRouteState.onMap && map && window.__gridlyRoutePreviewLayer?.addTo) {
+            window.__gridlyRoutePreviewLayer.addTo(map);
+          }
+          window.__gridlyRouteWatchActive = Boolean(routeWatchActivated);
+          setConfirmation("Viewing active route preview.", "success");
+          return;
+        }
         const result = await startInlineRouteWatch({ activateWatch: false, source: "portrait_v2_route_preview" });
         if (!result?.success) {
           v1363RouteActionDebug.lastRouteActionFailureReason = result?.reason || "route_preview_setup_required";
+          v1370ViewRouteDebugState.routePreviewOpenedWithoutSetup = false;
+          v1370ViewRouteDebugState.setupFlowAvoidedForActiveRoute = false;
+          v1370ViewRouteDebugState.lastViewRouteBehavior = "no_active_route_setup_guidance";
+          v1370ViewRouteDebugState.viewRouteFallbackReason = result?.reason || "route_preview_setup_required";
           setConfirmation("Add Home and Destination to view a route preview.", "error");
-          triggerV2DockAdapter("route-open");
+          return;
         }
+        v1370ViewRouteDebugState.routePreviewOpenedWithoutSetup = true;
+        v1370ViewRouteDebugState.setupFlowAvoidedForActiveRoute = true;
+        v1370ViewRouteDebugState.lastViewRouteBehavior = "new_preview_opened_from_selection";
+        v1370ViewRouteDebugState.viewRouteFallbackReason = "";
       },
       "route-manage-places-open": () => {
         v1363RouteActionDebug.routeManagePlacesActionHandled = true;
@@ -15220,7 +15280,7 @@ const v134ReportingRefinementApplied = true;
     const routeSheetText = document.getElementById("gridlyPortraitV2SheetBody")?.textContent || "";
     const placeholderRouteCopyRemoved = !routeSheetText.includes("Route Watch adapters now open canonical route flows.");
     const routeSurfaceShowsRealState = routeSheetText.includes("Start:") && routeSheetText.includes("Destination:") && routeSheetText.includes("Readiness:");
-    return {v2Exists:Boolean(v2),v2Visible:Boolean(v2&&getComputedStyle(v2).display!=="none"),activeSheet,sheetOpen:!document.getElementById("gridlyPortraitV2Sheet")?.hidden,dockButtonsFound:document.querySelectorAll(".gridly-v2-bottom-dock button").length,controlRailFound:Boolean(document.querySelector(".gridly-v2-control-rail")),legacyPortraitHidden:legacyHidden,duplicateZoomControlsVisible,duplicateFilterStripsVisible,v2IconsApplied,legacyControlsHidden,mapContainerFound:Boolean(document.getElementById("map")),layoutMode:mode, popupV2Styled, popupViewportSafe, filterStripBalanced, popupViewportCentered, popupAutoPanApplied, popupCameraPanApplied, popupAnchorMode, popupLastMarkerScreenPoint, popupLastSafeTargetPoint, popupClippedAfterOpen, popupViewportBounds, popupAutoPanSequenced, popupBlinkResolved, lastPopupTapAt:gridlyPopupLastTapAt, lastPopupOpenAt:gridlyPopupLastOpenAt, pendingPopupToken:window.__gridlyPopupPanSession?.token||null, popupOpenCount:gridlyPopupOpenCount, popupCancelCount:gridlyPopupCancelCount, popupLastFailureReason:gridlyPopupLastFailureReason||null, popupReopenReady:gridlyPopupReopenReady, popupSingleTapFlowReady:gridlyPopupSingleTapFlowReady, popupSingleTapGuaranteed:gridlyPopupSingleTapGuaranteed, lastPopupTapCrossingId:gridlyLastPopupTapCrossingId, lastPopupPanStartedAt:gridlyLastPopupPanStartedAt, lastPopupMoveEndAt:gridlyLastPopupMoveEndAt, lastPopupFallbackFiredAt:gridlyLastPopupFallbackFiredAt, lastPopupScheduledDelay:gridlyLastPopupScheduledDelay, lastPopupTimerFiredAt:gridlyLastPopupTimerFiredAt, lastPopupFinalizeReason:gridlyLastPopupFinalizeReason, popupLastClickCrossingId:gridlyLastPopupTapCrossingId, popupLastFinalizeAttemptAt:gridlyPopupLastFinalizeAttemptAt, popupLastOpenCallAt:gridlyPopupLastOpenCallAt, popupLastOpenMethod:gridlyPopupLastOpenMethod, popupOpenCallCount:gridlyPopupOpenCount, popupEarlyReturnReason:gridlyPopupEarlyReturnReason||null, popupPaneCount:document.querySelectorAll(".leaflet-popup-pane .leaflet-popup").length, popupDomExists:Boolean(document.querySelector(".leaflet-popup")), popupInterferenceEventSeen:gridlyPopupInterferenceEventSeen, routeWatchAllClickedDuringPopupTap:gridlyRouteWatchAllClickedDuringPopupTap, duplicateMarkerClickCount:gridlyDuplicateMarkerClickCount, markerClickHandlerGuardApplied:gridlyMarkerClickHandlerGuardApplied, compactBrandApplied, compactHeaderRefined, typographyPassApplied, spacingRhythmPassApplied, surfacePolishApplied, iconConsistencyPassApplied, sheetProductizationApplied, mapBreathingRoomApplied, iconSystemUnified, dockIconSystemUnified, railIconSystemUnified, iconSystemReferenceAligned, iconSystemHarmonized, dockRefinementApplied, utilityControlConsistencyApplied, headerFoundationApplied, surfaceRestraintApplied, opticalAlignmentPassApplied, v1321FinalTighteningApplied, headerStatusCohesionApplied, filterDensityTuned, dockOpticalFinalized, mapFirstBalancePreserved, microAlignmentQaApplied, v1322TypographyEasingApplied, topHeaderTypographyRefined, filterStripEased, topStackCalmnessApplied, microTypographyConsistencyApplied, mapDominancePreserved, v133BrandFoundationApplied, headerIdentitySystemApplied, gridlyMarkFoundationApplied, wordmarkPolished, brandRestraintMaintained, iconBrandRelationshipAligned, v1331RealBrandAssetsIntegrated, compactResponsiveBrandVariantApplied, faviconValidated, appIconsValidated, temporaryBrandLayersRemoved, brandProductionIntegrationComplete, v1332UltraCompactHeaderApplied, headerBrandFitmentComplete, compactLogoOpticsBalanced, mapFirstBrandRestraintMaintained, legacyWideLogoRemoved, productionHeaderIdentityFinalized, v1333LogoSizingCorrected, ultraCompactLogoReadable, headerBrandScaleBalanced, headerHeightPreserved, v1334IndependentHeaderLayoutApplied, centeredWatchLabelIndependent, logoNoLongerConstrainsHeader, utilityControlIndependentlyAligned, compactHeaderLayoutPreserved, finalHeaderFitmentResolved, v1335HeaderSimplified, redundantTopUtilityRemoved, logoWatchAlignmentApplied, headerVisualCompetitionReduced, compactHeaderCalmnessImproved, bottomSettingsAccessPreserved, v1351DockAdaptersApplied, reportDockProductionWired, routeDockProductionWired, alertsDockProductionWired, settingsDockProductionWired, v2ShellParityImproved, v1361IntentSplitApplied:true, routeIntentAdaptersSplit:true, settingsIntentAdaptersSplit:true, alertsOwnershipCorrected:true, ambiguousAdapterRoutingReduced:true, v2InteractionTrustImproved:true, lastIntentAdapterTriggered:v2DockAdapterState.lastDockActionTriggered, adapterIntentMap:{
+    return {v2Exists:Boolean(v2),v2Visible:Boolean(v2&&getComputedStyle(v2).display!=="none"),activeSheet,sheetOpen:!document.getElementById("gridlyPortraitV2Sheet")?.hidden,dockButtonsFound:document.querySelectorAll(".gridly-v2-bottom-dock button").length,controlRailFound:Boolean(document.querySelector(".gridly-v2-control-rail")),legacyPortraitHidden:legacyHidden,duplicateZoomControlsVisible,duplicateFilterStripsVisible,v2IconsApplied,legacyControlsHidden,mapContainerFound:Boolean(document.getElementById("map")),layoutMode:mode, popupV2Styled, popupViewportSafe, filterStripBalanced, popupViewportCentered, popupAutoPanApplied, popupCameraPanApplied, popupAnchorMode, popupLastMarkerScreenPoint, popupLastSafeTargetPoint, popupClippedAfterOpen, popupViewportBounds, popupAutoPanSequenced, popupBlinkResolved, lastPopupTapAt:gridlyPopupLastTapAt, lastPopupOpenAt:gridlyPopupLastOpenAt, pendingPopupToken:window.__gridlyPopupPanSession?.token||null, popupOpenCount:gridlyPopupOpenCount, popupCancelCount:gridlyPopupCancelCount, popupLastFailureReason:gridlyPopupLastFailureReason||null, popupReopenReady:gridlyPopupReopenReady, popupSingleTapFlowReady:gridlyPopupSingleTapFlowReady, popupSingleTapGuaranteed:gridlyPopupSingleTapGuaranteed, lastPopupTapCrossingId:gridlyLastPopupTapCrossingId, lastPopupPanStartedAt:gridlyLastPopupPanStartedAt, lastPopupMoveEndAt:gridlyLastPopupMoveEndAt, lastPopupFallbackFiredAt:gridlyLastPopupFallbackFiredAt, lastPopupScheduledDelay:gridlyLastPopupScheduledDelay, lastPopupTimerFiredAt:gridlyLastPopupTimerFiredAt, lastPopupFinalizeReason:gridlyLastPopupFinalizeReason, popupLastClickCrossingId:gridlyLastPopupTapCrossingId, popupLastFinalizeAttemptAt:gridlyPopupLastFinalizeAttemptAt, popupLastOpenCallAt:gridlyPopupLastOpenCallAt, popupLastOpenMethod:gridlyPopupLastOpenMethod, popupOpenCallCount:gridlyPopupOpenCount, popupEarlyReturnReason:gridlyPopupEarlyReturnReason||null, popupPaneCount:document.querySelectorAll(".leaflet-popup-pane .leaflet-popup").length, popupDomExists:Boolean(document.querySelector(".leaflet-popup")), popupInterferenceEventSeen:gridlyPopupInterferenceEventSeen, routeWatchAllClickedDuringPopupTap:gridlyRouteWatchAllClickedDuringPopupTap, duplicateMarkerClickCount:gridlyDuplicateMarkerClickCount, markerClickHandlerGuardApplied:gridlyMarkerClickHandlerGuardApplied, compactBrandApplied, compactHeaderRefined, typographyPassApplied, spacingRhythmPassApplied, surfacePolishApplied, iconConsistencyPassApplied, sheetProductizationApplied, mapBreathingRoomApplied, iconSystemUnified, dockIconSystemUnified, railIconSystemUnified, iconSystemReferenceAligned, iconSystemHarmonized, dockRefinementApplied, utilityControlConsistencyApplied, headerFoundationApplied, surfaceRestraintApplied, opticalAlignmentPassApplied, v1321FinalTighteningApplied, headerStatusCohesionApplied, filterDensityTuned, dockOpticalFinalized, mapFirstBalancePreserved, microAlignmentQaApplied, v1322TypographyEasingApplied, topHeaderTypographyRefined, filterStripEased, topStackCalmnessApplied, microTypographyConsistencyApplied, mapDominancePreserved, v133BrandFoundationApplied, headerIdentitySystemApplied, gridlyMarkFoundationApplied, wordmarkPolished, brandRestraintMaintained, iconBrandRelationshipAligned, v1331RealBrandAssetsIntegrated, compactResponsiveBrandVariantApplied, faviconValidated, appIconsValidated, temporaryBrandLayersRemoved, brandProductionIntegrationComplete, v1332UltraCompactHeaderApplied, headerBrandFitmentComplete, compactLogoOpticsBalanced, mapFirstBrandRestraintMaintained, legacyWideLogoRemoved, productionHeaderIdentityFinalized, v1333LogoSizingCorrected, ultraCompactLogoReadable, headerBrandScaleBalanced, headerHeightPreserved, v1334IndependentHeaderLayoutApplied, centeredWatchLabelIndependent, logoNoLongerConstrainsHeader, utilityControlIndependentlyAligned, compactHeaderLayoutPreserved, finalHeaderFitmentResolved, v1335HeaderSimplified, redundantTopUtilityRemoved, logoWatchAlignmentApplied, headerVisualCompetitionReduced, compactHeaderCalmnessImproved, bottomSettingsAccessPreserved, v1351DockAdaptersApplied, reportDockProductionWired, routeDockProductionWired, alertsDockProductionWired, settingsDockProductionWired, v2ShellParityImproved, v1370ViewRouteBehaviorCorrected:Boolean(v1370ViewRouteDebugState.v1370ViewRouteBehaviorCorrected), activeRouteDetectedForPreview:Boolean(v1370ViewRouteDebugState.activeRouteDetectedForPreview), routePreviewOpenedWithoutSetup:Boolean(v1370ViewRouteDebugState.routePreviewOpenedWithoutSetup), setupFlowAvoidedForActiveRoute:Boolean(v1370ViewRouteDebugState.setupFlowAvoidedForActiveRoute), lastViewRouteBehavior:v1370ViewRouteDebugState.lastViewRouteBehavior||"", activeRouteGeometryPresent:Boolean(v1370ViewRouteDebugState.activeRouteGeometryPresent), routePreviewFocusApplied:Boolean(v1370ViewRouteDebugState.routePreviewFocusApplied), viewRouteFallbackReason:v1370ViewRouteDebugState.viewRouteFallbackReason||"", v1361IntentSplitApplied:true, routeIntentAdaptersSplit:true, settingsIntentAdaptersSplit:true, alertsOwnershipCorrected:true, ambiguousAdapterRoutingReduced:true, v2InteractionTrustImproved:true, lastIntentAdapterTriggered:v2DockAdapterState.lastDockActionTriggered, adapterIntentMap:{
       routeWatch:"route-watch-open", routePreview:"route-preview-open", routeManagePlaces:"route-manage-places-open",
       settingsHomeTown:"settings-home-town", settingsSavedPlaces:"settings-saved-places", settingsAlertPreferences:"settings-alert-preferences",
       settingsRoutePreferences:"settings-route-preferences", settingsAppPreferences:"settings-app-preferences", alertsManage:"alerts-manage-open"
