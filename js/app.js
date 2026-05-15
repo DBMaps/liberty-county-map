@@ -15561,8 +15561,6 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   const v1369PreconditionsDebug = { disabledInteractionCount: 0, lastBlockedInteraction: "", lastPreconditionReason: "" };
   const v1372AlertsActionDebug = { manageAlertsActionHandled:false, alertPreferencesActionHandled:false, lastAlertsActionFailureReason:"" };
   let activeSheet = "";
-  let portraitV2SheetOpen = false;
-  let portraitV2ActiveSheet = "";
 
   const V2_CONTAINMENT_CLASS = "gridly-v2-surface-containment";
   const legacySurfaceState = { lastSuppressed: "", visibleCount: 0, report: false, route: false, alerts: false, settings: false };
@@ -15590,26 +15588,6 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       legacySurfaceState.alerts = false;
       legacySurfaceState.settings = false;
       return;
-    }
-    const portraitSheet = document.getElementById("gridlyPortraitV2Sheet");
-    const portraitBackdrop = document.getElementById("gridlyPortraitV2SheetBackdrop");
-    if (!portraitV2SheetOpen) {
-      if (portraitSheet) {
-        portraitSheet.hidden = true;
-        portraitSheet.style.display = "none";
-        portraitSheet.style.pointerEvents = "none";
-        portraitSheet.style.transform = "translate3d(0, 100%, 0)";
-        portraitSheet.style.translate = "0 100%";
-        portraitSheet.classList.remove("visible", "is-open", "active", "open");
-        portraitSheet.classList.add("is-closing", "is-closed");
-      }
-      if (portraitBackdrop) {
-        portraitBackdrop.hidden = true;
-        portraitBackdrop.style.display = "none";
-        portraitBackdrop.style.pointerEvents = "none";
-        portraitBackdrop.classList.remove("visible", "is-open", "active", "open");
-        portraitBackdrop.classList.add("is-closing", "is-closed");
-      }
     }
     const visible = (el) => Boolean(el && !el.hidden && getComputedStyle(el).display !== "none" && getComputedStyle(el).visibility !== "hidden" && Number(getComputedStyle(el).opacity || 1) !== 0);
     const reportEl = document.getElementById("reportSection");
@@ -15639,8 +15617,6 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     if (!sheet || !backdrop || !template) return;
     const templateHtml = typeof template.html === "function" ? template.html() : template.html;
 
-    portraitV2SheetOpen = true;
-    portraitV2ActiveSheet = type;
     activeSheet = type;
     title.textContent = template.title;
     body.innerHTML = templateHtml;
@@ -15711,8 +15687,6 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const sheetBody = document.getElementById("gridlyPortraitV2SheetBody");
     const backdrop = document.getElementById("gridlyPortraitV2SheetBackdrop");
 
-    portraitV2SheetOpen = false;
-    portraitV2ActiveSheet = "";
     activeSheet = "";
     if (gridlyActiveSurface === "report" || gridlyActiveSurface === "route" || gridlyActiveSurface === "alerts" || gridlyActiveSurface === "settings") {
       gridlyActiveSurface = null;
@@ -15844,6 +15818,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         }
         pushTapMapTrace("portrait-v2-tap-map-clicked", { source: "portrait-v2-report", hazardType: resolvedHazardType || null });
         closePortraitV2Sheet();
+        applyPortraitV2SurfaceContainment();
         if (typeof beginRoadHazardMapPlacement === "function") {
           beginRoadHazardMapPlacement(resolvedHazardType, { source: "portrait-v2-report" });
         }
@@ -15938,6 +15913,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       bridge();
       const shouldKeepSheetOpen = action === "report-select-hazard";
       if (!shouldKeepSheetOpen) closePortraitV2Sheet();
+      applyPortraitV2SurfaceContainment();
     } catch (error) {
       v2DockAdapterState.adapterBridgeFailures.push({ action, reason: String(error?.message || error), at: Date.now() });
     }
@@ -15956,6 +15932,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         pushTapMapTrace("portrait-v2-report-tap-map", { source: "portrait-v2-report", hazardType: resolvedHazardType || null });
         pushTapMapTrace("portrait-v2-tap-map-clicked", { source: "portrait-v2-report", hazardType: resolvedHazardType || null });
         closePortraitV2Sheet();
+        applyPortraitV2SurfaceContainment();
         if (typeof beginRoadHazardMapPlacement === "function") {
           beginRoadHazardMapPlacement(resolvedHazardType, { source: "portrait-v2-report" });
         }
@@ -15977,18 +15954,6 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       button.addEventListener("click", (event) => {
         const action = button.dataset.v2Action || "";
         const resolvedHazardType = (typeof reportingState === "object" && reportingState ? reportingState.selectedHazardType : "") || selectedV2HazardType || selectedQuickHazardType || "";
-        console.debug("[PortraitV2] [data-v2-action] click", {
-          action,
-          buttonText: button.textContent?.trim?.() || "",
-          selectedHazardType: resolvedHazardType || null,
-          eventFired: true
-        });
-        pushTapMapTrace("portrait-v2-data-v2-action-click", {
-          action,
-          buttonText: button.textContent?.trim?.() || "",
-          hazardType: resolvedHazardType || null,
-          eventFired: true
-        });
         if (action === "report-select-hazard" || action === "report-tap-map" || action === "report-use-location") {
           event.preventDefault();
           event.stopPropagation();
@@ -15996,7 +15961,6 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         if (action === "report-tap-map") {
           event.preventDefault();
           event.stopPropagation();
-          pushTapMapTrace("portrait-v2-report-tap-map-handler-fired", { source: "portrait-v2-report", hazardType: resolvedHazardType || null });
           if (typeof beginRoadHazardMapPlacement === "function") {
             beginRoadHazardMapPlacement(resolvedHazardType, { source: "portrait-v2-report" });
           }
@@ -16005,7 +15969,6 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         if (action === "report-use-location") {
           event.preventDefault();
           event.stopPropagation();
-          pushTapMapTrace("portrait-v2-report-use-location-handler-fired", { source: "portrait-v2-report", hazardType: resolvedHazardType || null });
           if (typeof window.submitHazardNearMe === "function") {
             window.submitHazardNearMe(resolvedHazardType, { source: "portrait-v2-report" });
           }
@@ -16020,7 +15983,6 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         event.preventDefault();
         event.stopPropagation();
         const resolvedHazardType = (typeof reportingState === "object" && reportingState ? reportingState.selectedHazardType : "") || selectedV2HazardType || selectedQuickHazardType || "";
-        pushTapMapTrace("portrait-v2-report-tap-map-direct-fired", { source: "portrait-v2-report", hazardType: resolvedHazardType || null });
         if (typeof beginRoadHazardMapPlacement === "function") {
           beginRoadHazardMapPlacement(resolvedHazardType, { source: "portrait-v2-report" });
         }
@@ -16033,7 +15995,6 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         event.preventDefault();
         event.stopPropagation();
         const resolvedHazardType = (typeof reportingState === "object" && reportingState ? reportingState.selectedHazardType : "") || selectedV2HazardType || selectedQuickHazardType || "";
-        pushTapMapTrace("portrait-v2-report-use-location-direct-fired", { source: "portrait-v2-report", hazardType: resolvedHazardType || null });
         if (typeof window.submitHazardNearMe === "function") {
           window.submitHazardNearMe(resolvedHazardType, { source: "portrait-v2-report" });
         }
@@ -16062,7 +16023,6 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     applyPortraitV2SurfaceContainment();
     window.addEventListener("resize", applyPortraitV2SurfaceContainment);
     window.addEventListener("orientationchange", applyPortraitV2SurfaceContainment);
-    setInterval(applyPortraitV2SurfaceContainment, 500);
     document.querySelectorAll("[data-v2-sheet]").forEach((b)=>b.addEventListener("click",()=>openPortraitV2Sheet(b.dataset.v2Sheet)));
     document.getElementById("gridlyPortraitV2SheetClose")?.addEventListener("click",closePortraitV2Sheet);
     document.getElementById("gridlyPortraitV2SheetBackdrop")?.addEventListener("click",closePortraitV2Sheet);
@@ -16295,8 +16255,6 @@ const v134ReportingRefinementApplied = true;
     };
     const backdrop = document.getElementById("gridlyPortraitV2SheetBackdrop");
     return {
-      portraitV2SheetOpen,
-      portraitV2ActiveSheet,
       activeSheet,
       shellHidden: Boolean(shell?.hidden),
       shellDisplay: shell ? getComputedStyle(shell).display : null,
