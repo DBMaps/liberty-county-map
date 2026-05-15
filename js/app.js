@@ -15091,22 +15091,58 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
   function buildAlertsSurfaceHtml() {
     const alerts = getAlertsSurfaceSnapshot();
-    const commuteStatus = alerts.commuteImpactHeadline || "Routes currently clear";
-    const nearbyActivity = alerts.hasActiveAlerts ? alerts.routeImpactSummary : "Routes currently clear";
-    const localizedRows = alerts.localizedIntelligenceSummaries.length
-      ? alerts.localizedIntelligenceSummaries.map((summary) => `<li>${sanitizeText(summary)}</li>`).join("")
-      : "<li>Routes currently clear</li>";
-    const preferenceState = alerts.readinessSummary
-      .replace("Alert preferences are on for this device", "Alerts active for this device")
-      .replace("Alert preferences are off — turn on to receive commute alerts", "Alerts are off for this device");
-    return `<div class="gridly-v2-list">
-      <p class="gridly-v2-sheet-copy"><strong>Commute Status</strong><br>${commuteStatus}</p>
-      <p class="gridly-v2-sheet-copy"><strong>Nearby Activity</strong><br>${nearbyActivity}</p>
-      <p class="gridly-v2-sheet-copy"><strong>Corridor Conditions</strong></p>
-      <ul class="gridly-v2-sheet-copy">${localizedRows}</ul>
-      <p class="gridly-v2-sheet-copy"><strong>Preferences</strong><br>${preferenceState}</p>
+    const intel = buildUnifiedLocalizedCommuteIntelligence({ limit: 8 });
+    const primaryCorridor = intel.highestPriorityCorridor || null;
+    const secondaryCorridors = (intel.corridorClusters || []).slice(1, 3);
+    const recentlyCleared = Array.isArray(intel.recentlyCleared) ? intel.recentlyCleared.slice(0, 2) : [];
+
+    const heroTitle = sanitizeText((intel.consequencePrimaryMessage || "COMMUTE CLEAR").toUpperCase());
+    const heroDetail = sanitizeText(intel.consequenceSecondaryMessage || "Major corridors are moving normally.");
+    const recommendation = sanitizeText(intel.rerouteReadinessDetected
+      ? `Avoid ${primaryCorridor?.label || "primary corridor"}`
+      : alerts.hasActiveAlerts
+        ? "Monitor Conditions"
+        : "Route Clear");
+
+    const primaryLabel = sanitizeText(primaryCorridor?.label || "Countywide");
+    const primaryState = sanitizeText((primaryCorridor?.healthState || "clear").replace(/_/g, " ").toUpperCase());
+    const primarySummary = sanitizeText(primaryCorridor?.summary || (alerts.hasActiveAlerts ? alerts.routeImpactSummary : "Traffic moving normally"));
+    const primaryCount = Number(primaryCorridor?.incidentCount || 0);
+    const primaryIncidents = (primaryCorridor?.incidents || []).slice(0, 2)
+      .map((incident) => `<li>${sanitizeText(incident.localizedSummary || incident.topLine || "Traffic slowing")}</li>`)
+      .join("");
+
+    const secondaryHtml = secondaryCorridors.length
+      ? secondaryCorridors.map((corridor) => `<div class="gridly-v2-secondary-item"><strong>${sanitizeText(corridor.label)}</strong><span>${sanitizeText(corridor.summary || "Watch conditions")}</span></div>`).join("")
+      : `<div class="gridly-v2-secondary-item"><strong>No secondary delays</strong><span>Other corridors are currently clear.</span></div>`;
+
+    const clearedHtml = recentlyCleared.length
+      ? recentlyCleared.map((item) => `<li>${sanitizeText(item.localizedSummary || item.topLine || "Conditions improving")}</li>`).join("")
+      : "<li>No recent recovery updates</li>";
+
+    return `<div class="gridly-v2-command-surface">
+      <section class="gridly-v2-command-hero" aria-label="Hero command state">
+        <p class="gridly-v2-command-kicker">Commute Command</p>
+        <h4>${heroTitle}</h4>
+        <p>${heroDetail}</p>
+      </section>
+      <button class="primary-btn gridly-v2-command-primary-action" data-v2-action="alerts-open" type="button">${recommendation}</button>
+      <section class="gridly-v2-command-primary-corridor" aria-label="Primary corridor">
+        <p class="gridly-v2-command-section-label">Primary Corridor</p>
+        <strong>${primaryLabel}</strong>
+        <span class="gridly-v2-corridor-state">${primaryState}</span>
+        <p>${primarySummary}${primaryCount ? ` · ${primaryCount} active incidents` : ""}</p>
+        ${primaryIncidents ? `<ul>${primaryIncidents}</ul>` : ""}
+      </section>
+      <section class="gridly-v2-command-secondary" aria-label="Secondary conditions">
+        <p class="gridly-v2-command-section-label">Secondary Conditions</p>
+        ${secondaryHtml}
+      </section>
+      <section class="gridly-v2-command-cleared" aria-label="Recently cleared">
+        <p class="gridly-v2-command-section-label">Recently Cleared</p>
+        <ul>${clearedHtml}</ul>
+      </section>
       <p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p>
-      <button class="primary-btn" data-v2-action="alerts-open" type="button">Corridor Command</button>
       <button class="secondary-btn" data-v2-action="alerts-manage-open" type="button">Manage Alerts</button>
       <button class="secondary-btn" data-v2-action="alerts-preferences-open" type="button">Alert Preferences</button>
     </div>`;
@@ -15115,7 +15151,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   const sheetTemplates = {
     report: { title: "Report Hazard", html: `<div class="gridly-v2-tiles gridly-v2-report-tiles">${V2_REPORT_HAZARD_OPTIONS.map((option)=>`<button class="gridly-v2-tile gridly-v2-report-action" data-v2-action="report-select-hazard" data-hazard-type="${option.type}" type="button"><span>${option.label}</span></button>`).join("")}</div><div class="gridly-v2-list gridly-v2-report-ctas"><p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p><button class="primary-btn" data-v2-action="report-use-location" type="button">Use My Location</button><button class="secondary-btn" data-v2-action="report-tap-map" type="button">Tap Map Location</button></div>` },
     route: { title: "Route Setup", html: buildRouteSurfaceHtml },
-    alerts: { title: "Alerts", html: buildAlertsSurfaceHtml },
+    alerts: { title: "Commute Command", html: buildAlertsSurfaceHtml },
     settings: { title: "Settings", html: `<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p><button class="gridly-v2-tile" data-v2-action="settings-home-town" type="button">Set Home Town</button><button class="gridly-v2-tile" data-v2-action="settings-saved-places" type="button">Home / Work / Saved Places</button><button class="gridly-v2-tile" data-v2-action="settings-alert-preferences" type="button">Alert Preferences</button><button class="gridly-v2-tile" data-v2-action="settings-route-preferences" type="button">Route Preferences</button><button class="gridly-v2-tile" data-v2-action="settings-app-preferences" type="button">App Preferences</button></div>` }
   };
   const v2DockAdapterState = { lastDockActionTriggered: "", lastDockAdapterTarget: "", adapterBridgeFailures: [], adapterFallbackCount: 0 };
