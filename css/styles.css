@@ -1529,13 +1529,17 @@ body.modal-open {
 }
 
 .confirmation-box {
-  margin-top: 14px;
-  padding: 12px 13px;
+  margin-top: 16px;
+  padding: 14px 15px;
   border-radius: 16px;
   background: rgba(126, 173, 214, 0.09);
   border: 1px solid rgba(126, 173, 214, 0.24);
   color: var(--muted);
-  line-height: 1.4;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
   transition: opacity 260ms ease, transform 260ms ease, border-color 260ms ease, background-color 260ms ease;
 }
 
