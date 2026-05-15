@@ -13565,36 +13565,15 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar {
   box-shadow: 0 5px 11px rgba(2, 8, 18, 0.24);
 }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand {
-  gap: 6px;
-  min-width: 92px;
+  min-width: 0;
+  padding-top: 1px;
 }
-body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-mark {
-  width: 18px;
-  height: 18px;
-  border-radius: 6px;
-  border: 1px solid rgba(164, 204, 246, 0.36);
-  background: linear-gradient(160deg, rgba(66, 132, 224, 0.32), rgba(13, 43, 82, 0.3));
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 2px 6px rgba(5, 17, 34, 0.32);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-mark i {
-  width: 11px;
-  height: 11px;
-  border: 1.8px solid rgba(221, 239, 255, 0.92);
-  border-right-color: transparent;
-  border-bottom-color: transparent;
-  border-radius: 3px;
-  transform: rotate(45deg) translate(-0.3px, 0.3px);
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand img {
+  width: clamp(88px, 24vw, 118px);
+  height: auto;
   display: block;
-}
-body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-wordmark {
-  font-size: 0.71rem;
-  letter-spacing: 0.13em;
-  font-weight: 745;
-  color: #e9f6ff;
-  line-height: 1;
+  object-fit: contain;
+  image-rendering: -webkit-optimize-contrast;
 }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-watch {
   padding-top: 1px;
@@ -13611,4 +13590,9 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-icon-btn {
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail,
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {
   border-color: rgba(164, 198, 236, 0.23);
+}
+@media (max-width: 380px) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand img {
+    width: clamp(82px, 23vw, 104px);
+  }
 }
