@@ -210,7 +210,16 @@ const LOAD_SHARED_REPORTS_DEDUPE_MS = 1500;
 const POST_SUBMIT_REALTIME_SUPPRESS_MS = 2000;
 const POST_SUBMIT_INTERVAL_SUPPRESS_MS = 2000;
 const gridlyNetworkAuditState = {
-  loadSharedReports: { count: 0, lastCalls: [], inFlight: false, inFlightPromise: null, lastByReason: {} },
+  loadSharedReports: {
+    count: 0,
+    lastCalls: [],
+    inFlight: false,
+    inFlightPromise: null,
+    lastByReason: {},
+    lastSuccessAt: 0,
+    lastPostSubmitSuccessAt: 0,
+    skipped: { intervalAfterRecentSuccess: 0, realtimeAfterPostSubmit: 0 }
+  },
   osrmNearest: { count: 0, lastCalls: [], inFlight: 0 },
   hazardSubmit: { lastLifecycle: null }
 };
@@ -230,6 +239,11 @@ window.gridlyNetworkAudit = function gridlyNetworkAudit() {
   return {
     loadSharedReportsCallCount: gridlyNetworkAuditState.loadSharedReports.count,
     loadSharedReportsLast10: [...gridlyNetworkAuditState.loadSharedReports.lastCalls],
+    loadSharedReportsLastSuccessAt: gridlyNetworkAuditState.loadSharedReports.lastSuccessAt || null,
+    loadSharedReportsLastSuccessIso: gridlyNetworkAuditState.loadSharedReports.lastSuccessAt ? new Date(gridlyNetworkAuditState.loadSharedReports.lastSuccessAt).toISOString() : null,
+    loadSharedReportsLastPostSubmitSuccessAt: gridlyNetworkAuditState.loadSharedReports.lastPostSubmitSuccessAt || null,
+    loadSharedReportsLastPostSubmitSuccessIso: gridlyNetworkAuditState.loadSharedReports.lastPostSubmitSuccessAt ? new Date(gridlyNetworkAuditState.loadSharedReports.lastPostSubmitSuccessAt).toISOString() : null,
+    skippedRefreshes: { ...gridlyNetworkAuditState.loadSharedReports.skipped },
     osrmNearestCallCount: gridlyNetworkAuditState.osrmNearest.count,
     osrmNearestLast10: [...gridlyNetworkAuditState.osrmNearest.lastCalls],
     inFlight: {
@@ -3947,9 +3961,11 @@ async function loadSharedReports(reason = "manual") {
   const now = pushAuditCall(audit, reason);
   if (reason === "realtime_postgres_change" && skipNextRealtimeRefresh && now <= suppressRealtimeRefreshUntil) {
     skipNextRealtimeRefresh = false;
+    audit.skipped.realtimeAfterPostSubmit += 1;
     return audit.inFlightPromise || null;
   }
-  if (reason === "interval_live_refresh" && now <= suppressIntervalRefreshUntil) {
+  if (reason === "interval_live_refresh" && (now <= suppressIntervalRefreshUntil || (audit.lastSuccessAt && now - audit.lastSuccessAt <= POST_SUBMIT_INTERVAL_SUPPRESS_MS))) {
+    audit.skipped.intervalAfterRecentSuccess += 1;
     return audit.inFlightPromise || null;
   }
   if (reason === "post_submit_refresh") {
@@ -3996,6 +4012,12 @@ async function loadSharedReports(reason = "manual") {
     refreshReportHazardViews();
 
     setSync(`${activeReports.length} crossing reports · ${activeHazards.length} hazards synced`);
+
+    const successAt = Date.now();
+    audit.lastSuccessAt = successAt;
+    if (reason === "post_submit_refresh") {
+      audit.lastPostSubmitSuccessAt = successAt;
+    }
   } catch (error) {
     console.error("Gridly report sync failed:", error);
     setSync("Live sync read failed");
