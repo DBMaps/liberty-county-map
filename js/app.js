@@ -3994,7 +3994,8 @@ window.gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoad
     radiusMiles = 0,
     nearLocation = null,
     includeRail = false,
-    includeSources = ["user"]
+    includeSources,
+    sourceFilter: sourceFilterOption
   } = options || {};
 
   const radius = Number(radiusMiles) > 0 ? Number(radiusMiles) : 0;
@@ -4007,7 +4008,12 @@ window.gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoad
     : null;
 
   const cutoffIso = new Date(Date.now() - (Math.max(1, Number(hours) || 24) * 60 * 60 * 1000)).toISOString();
-  const sourceFilter = Array.isArray(includeSources) ? includeSources.map((v) => String(v || "").trim().toLowerCase()).filter(Boolean) : ["user"];
+  const rawSourceFilter = sourceFilterOption !== undefined ? sourceFilterOption : includeSources;
+  const sourceFilter = rawSourceFilter === undefined
+    ? ["user"]
+    : Array.isArray(rawSourceFilter)
+    ? rawSourceFilter.map((v) => String(v || "").trim().toLowerCase()).filter(Boolean)
+    : ["user"];
 
   const { data, error } = await supabaseClient
     .from("reports")
