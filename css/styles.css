@@ -13676,3 +13676,26 @@ body[data-layout-mode="portrait"] #reportSection.report-drawer[data-popup-suppre
 .corridor-command .alert-row-details-list{margin:6px 0 0 0;padding-left:16px}
 .corridor-command .alert-row-details-list li{margin:2px 0;line-height:1.25}
 .corridor-command-route-watch{border-color:rgba(127,219,255,.35)}
+
+/* V139.1 commute command hierarchy (portrait mobile alerts surface only) */
+.gridly-v2-command-surface { display: grid; gap: 10px; }
+.gridly-v2-command-hero { background: linear-gradient(165deg, rgba(125, 193, 255, 0.2), rgba(20, 50, 92, 0.55)); border: 1px solid rgba(170, 218, 255, 0.42); border-radius: 16px; padding: 14px; }
+.gridly-v2-command-kicker { margin: 0 0 6px; font-size: 0.66rem; letter-spacing: 0.11em; text-transform: uppercase; color: rgba(199, 225, 255, 0.88); }
+.gridly-v2-command-hero h4 { margin: 0; font-size: 1.25rem; line-height: 1.05; letter-spacing: 0.01em; color: #fff; }
+.gridly-v2-command-hero p { margin: 8px 0 0; font-size: 0.82rem; color: rgba(226, 240, 255, 0.93); }
+.gridly-v2-command-primary-action { width: 100%; font-weight: 680; }
+.gridly-v2-command-primary-corridor,
+.gridly-v2-command-secondary,
+.gridly-v2-command-cleared { background: rgba(152, 198, 255, 0.08); border: 1px solid rgba(162, 207, 255, 0.18); border-radius: 14px; padding: 11px 12px; }
+.gridly-v2-command-section-label { margin: 0 0 4px; font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(179, 208, 238, 0.84); }
+.gridly-v2-command-primary-corridor strong { display: block; font-size: 1rem; color: #f5f9ff; }
+.gridly-v2-corridor-state { display: inline-block; margin-top: 3px; font-size: 0.67rem; letter-spacing: 0.1em; text-transform: uppercase; color: #ffd698; }
+.gridly-v2-command-primary-corridor p { margin: 6px 0 0; font-size: 0.78rem; color: rgba(220, 236, 255, 0.94); }
+.gridly-v2-command-primary-corridor ul,
+.gridly-v2-command-cleared ul { margin: 7px 0 0; padding-left: 16px; display: grid; gap: 4px; }
+.gridly-v2-command-primary-corridor li,
+.gridly-v2-command-cleared li { font-size: 0.75rem; color: rgba(205, 225, 247, 0.95); }
+.gridly-v2-command-secondary { display: grid; gap: 6px; }
+.gridly-v2-secondary-item { display: grid; gap: 2px; }
+.gridly-v2-secondary-item strong { font-size: 0.8rem; color: rgba(239, 248, 255, 0.95); }
+.gridly-v2-secondary-item span { font-size: 0.72rem; color: rgba(184, 214, 245, 0.88); }
