@@ -5875,7 +5875,8 @@ window.gridlyTapMapLocationTrace = function gridlyTapMapLocationTrace() {
   return tapMapTraceLog.slice();
 };
 window.gridlyRoadHazardPlacementTrace = function gridlyRoadHazardPlacementTrace() {
-  return tapMapTraceLog.slice();
+  const traceLog = Array.isArray(typeof tapMapTraceLog !== "undefined" ? tapMapTraceLog : null) ? tapMapTraceLog : [];
+  return traceLog.slice();
 };
 window.gridlyRoadHazardPlacementDebug = function gridlyRoadHazardPlacementDebug() {
   const sheet = document.getElementById("gridlyPortraitV2Sheet");
@@ -5897,17 +5898,23 @@ window.gridlyRoadHazardPlacementDebug = function gridlyRoadHazardPlacementDebug(
   });
   const visibleTapMapButtons = allTapMapButtons.filter((button) => button.visible);
   const activeHazardButtons = Array.from(document.querySelectorAll('#gridlyHazardPanel .hazard-choice-grid button[data-action="open-hazard-placement"]')).filter((button) => button.classList.contains("selected")).map((button) => ({ hazardType: button.dataset.hazardType || "", text: button.textContent?.trim() || "" }));
-  const selectedHazardSource = selectedV2HazardType ? "selectedV2HazardType" : (reportingState.selectedHazardType ? "reportingState.selectedHazardType" : (selectedQuickHazardType ? "selectedQuickHazardType" : (pendingHazardPlacement ? "pendingHazardPlacement" : "none")));
+  const safeReportingState = typeof reportingState === "object" && reportingState ? reportingState : {};
+  const v2SelectedHazardType = typeof selectedV2HazardType !== "undefined" ? selectedV2HazardType : null;
+  const quickSelectedHazardType = typeof selectedQuickHazardType !== "undefined" ? selectedQuickHazardType : null;
+  const pendingPlacementHazardType = typeof pendingHazardPlacement !== "undefined" ? pendingHazardPlacement : null;
+  const pickerSelectedHazardType = (Array.from(document.querySelectorAll('[data-hazard-type].selected, [data-hazard-type][aria-pressed="true"]')).map((button) => button?.dataset?.hazardType || "").find(Boolean)) || null;
+  const selectedHazardType = v2SelectedHazardType || safeReportingState.selectedHazardType || quickSelectedHazardType || pendingPlacementHazardType || pickerSelectedHazardType || null;
+  const selectedHazardSource = v2SelectedHazardType ? "selectedV2HazardType" : (safeReportingState.selectedHazardType ? "reportingState.selectedHazardType" : (quickSelectedHazardType ? "selectedQuickHazardType" : (pendingPlacementHazardType ? "pendingHazardPlacement" : (pickerSelectedHazardType ? "hazardPicker.selectedButton" : "none"))));
   return {
-    selectedHazardType: reportingState.selectedHazardType || selectedQuickHazardType || pendingHazardPlacement || null,
+    selectedHazardType,
     selectedHazardSource,
-    placementActive: Boolean(reportingState.placementModeActive),
-    reportModeState: Boolean(reportingState.reportModeActive),
+    placementActive: Boolean(safeReportingState.placementModeActive),
+    reportModeState: Boolean(safeReportingState.reportModeActive),
     activeReportSurface: !sheet?.hidden ? "v2_sheet" : (legacyPanel?.classList.contains("visible") ? "legacy_hazard_panel" : "none"),
     v2SheetVisible: Boolean(sheet && !sheet.hidden && getComputedStyle(sheet).display !== "none"),
     v2Backdrop: backdrop ? { visible: !backdrop.hidden && getComputedStyle(backdrop).display !== "none", pointerEvents: getComputedStyle(backdrop).pointerEvents } : null,
     legacyHazardPanelOpen: Boolean(legacyPanel?.classList.contains("visible")),
-    blockingOverlays: getRoadHazardBlockingOverlays(),
+    blockingOverlays: typeof getRoadHazardBlockingOverlays === "function" ? getRoadHazardBlockingOverlays() : [],
     lastPlacementSource: lastRoadHazardPlacementSource,
     lastPlacementStep: lastRoadHazardPlacementStep,
     lastPlacementError: lastRoadHazardPlacementError,
