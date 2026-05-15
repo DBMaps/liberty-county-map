@@ -15612,7 +15612,15 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const title = document.getElementById("gridlyPortraitV2SheetTitle"); const body = document.getElementById("gridlyPortraitV2SheetBody");
     const template = sheetTemplates[type]; if (!sheet || !backdrop || !template) return;
     const templateHtml = typeof template.html === "function" ? template.html() : template.html;
-    activeSheet = type; title.textContent = template.title; body.innerHTML = templateHtml; bindV2SheetActions(); sheet.hidden = false; backdrop.hidden = false;
+    activeSheet = type; title.textContent = template.title; body.innerHTML = templateHtml; bindV2SheetActions(); sheet.hidden = false; backdrop.hidden = false; body.hidden = false;
+    sheet.style.display = "";
+    sheet.style.pointerEvents = "";
+    sheet.style.transform = "";
+    sheet.style.translate = "";
+    sheet.classList.remove("is-closing");
+    backdrop.style.pointerEvents = "";
+    backdrop.style.display = "";
+    backdrop.classList.remove("is-closing");
   }
   function getV2PreconditionsState() {
     const route = getRouteSurfaceSnapshot();
@@ -15646,7 +15654,27 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     v1369PreconditionsDebug.lastPreconditionReason = reason;
     if (typeof setConfirmation === "function" && reason) setConfirmation(reason, "error");
   }
-  function closePortraitV2Sheet(){ const sheet=document.getElementById("gridlyPortraitV2Sheet"); const backdrop=document.getElementById("gridlyPortraitV2SheetBackdrop"); if(sheet)sheet.hidden=true; if(backdrop)backdrop.hidden=true; activeSheet=""; }
+  function closePortraitV2Sheet(){
+    const sheet=document.getElementById("gridlyPortraitV2Sheet");
+    const sheetBody=document.getElementById("gridlyPortraitV2SheetBody");
+    const backdrop=document.getElementById("gridlyPortraitV2SheetBackdrop");
+    if(sheet){
+      sheet.hidden=true;
+      sheet.style.pointerEvents="none";
+      sheet.style.transform="translate3d(0, 100%, 0)";
+      sheet.style.translate="0 100%";
+      sheet.classList.remove("visible", "is-open", "active", "open");
+      sheet.classList.add("is-closing");
+    }
+    if(sheetBody) sheetBody.classList.remove("visible", "is-open", "active", "open");
+    if(backdrop){
+      backdrop.hidden=true;
+      backdrop.style.pointerEvents="none";
+      backdrop.classList.remove("visible", "is-open", "active", "open");
+      backdrop.classList.add("is-closing");
+    }
+    activeSheet="";
+  }
   function closeVisiblePortraitV2ReportSurfaceAfterSubmit() {
     pushTapMapTrace("portrait-v2-use-location-success-close-start", { source: "portrait-v2-report" });
     const isVisible = (el) => {
@@ -15678,14 +15706,23 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     if (typeof closePortraitV2Sheet === "function") closePortraitV2Sheet();
     if (sheet) {
       sheet.hidden = true;
+      sheet.style.display = "none";
       sheet.style.pointerEvents = "none";
+      sheet.style.transform = "translate3d(0, 100%, 0)";
+      sheet.style.translate = "0 100%";
       sheet.classList.remove("visible", "is-open", "active", "open");
+      sheet.classList.add("is-closing");
     }
-    if (sheetBody) sheetBody.classList.remove("visible", "is-open", "active", "open");
+    if (sheetBody) {
+      sheetBody.hidden = true;
+      sheetBody.classList.remove("visible", "is-open", "active", "open");
+    }
     if (backdrop) {
       backdrop.hidden = true;
+      backdrop.style.display = "none";
       backdrop.style.pointerEvents = "none";
       backdrop.classList.remove("visible", "is-open", "active", "open");
+      backdrop.classList.add("is-closing");
     }
     if (legacyHazardPanel?.classList.contains("visible")) legacyHazardPanel.classList.remove("visible");
     document.body.classList.remove("modal-open", "report-pulse");
@@ -16179,6 +16216,40 @@ const v134ReportingRefinementApplied = true;
       settingsHomeTown:"settings-home-town", settingsSavedPlaces:"settings-saved-places", settingsAlertPreferences:"settings-alert-preferences",
       settingsRoutePreferences:"settings-route-preferences", settingsAppPreferences:"settings-app-preferences", alertsManage:"alerts-manage-open"
     }, adapterFallbackCount:v2DockAdapterState.adapterFallbackCount, lastDockActionTriggered:v2DockAdapterState.lastDockActionTriggered, lastDockAdapterTarget:v2DockAdapterState.lastDockAdapterTarget, adapterBridgeFailures:v2DockAdapterState.adapterBridgeFailures.slice(-8), v134ReportingRefinementApplied, v1341UnifiedReportSuccessLifecycleApplied, v1342ReportSurfaceOwnershipApplied, v1343PopupReportingPriorityApplied:true, v1344HardReportingSuppressionApplied:true, v1345ReportingMountFlashPrevented:true, liveReportingMountBypassed:Boolean(popupReportingLifecycleActive && liveReportingTemporarilySuppressed && liveReportingDrawerEl && !liveReportingDrawerEl.open), popupReportingLifecycleCleaned:Boolean(!popupReportingLifecycleActive || (liveReportingTemporarilySuppressed && lastSuccessSurfaceOwner === "crossing_popup")), transientReportingFlashEliminated:Boolean(!popupReportingLifecycleActive || (liveReportingDrawerEl && !liveReportingDrawerEl.open)), popupReportingExclusivityMaintained:Boolean(!popupReportingLifecycleActive || lastSuccessSurfaceOwner === "crossing_popup"), mapFirstCompletionFlowImproved:true, liveReportingDrawerFullySuppressed, popupReportingExclusiveOwnership:Boolean(!popupReportingLifecycleActive || (lastSuccessSurfaceOwner === "crossing_popup" && liveReportingDrawerFullySuppressed)), duplicateReportingUiEliminated:Boolean(!popupReportingLifecycleActive || (liveReportingDrawerFullySuppressed && !reportingState.submissionInProgress)), popupSuccessFlowCleanedUp:Boolean(!popupReportingLifecycleActive || (lastSuccessSurfaceOwner === "crossing_popup" && liveReportingDrawerFullySuppressed)), mapFirstReportingRestored:true, popupReportingSuppressionActive, popupReportingOwnsLifecycle:Boolean(lastSuccessSurfaceOwner === "crossing_popup" || popupReportingLifecycleActive), liveReportingCompetitionSuppressed:Boolean(!popupReportingLifecycleActive || liveReportingTemporarilySuppressed), duplicateReportingSurfacesReduced:Boolean(!popupReportingLifecycleActive || !reportingState.submissionInProgress), popupReportingComposureImproved:Boolean(!popupReportingLifecycleActive || (lastSuccessSurfaceOwner === "crossing_popup" && liveReportingTemporarilySuppressed)), mapFirstReportingFlowPreserved:true, liveReportingTemporarilySuppressed, liveReportingDrawerHiddenAt:liveReportingDrawerSuppressedAt||0, liveReportingDrawerRestoredAt:liveReportingDrawerRestoredAt||0, lastLiveReportingMountPreventedAt:liveReportingDrawerSuppressedAt||0, popupReportingDrawerBypassActive:Boolean(popupReportingLifecycleActive && liveReportingTemporarilySuppressed), lastPopupReportingStartedAt, lastPopupReportingCompletedAt, reportSuccessTimersUnified, reportSuccessLifecycleActive, reportSuccessHoldMs:REPORT_SUCCESS_HOLD_MS, reportSuccessFadeMs:REPORT_SUCCESS_FADE_MS, reportPopupCloseDelayMs:REPORT_POPUP_CLOSE_DELAY_MS, reportButtonSuccessMs:REPORT_BUTTON_SUCCESS_MS, duplicateSuccessTimersReduced, authoritativeSuccessSurfaceEstablished, popupCompetitionReduced, reportingSuccessLayoutRefined, stackedReportingStatesReduced, reportCompletionComposureImproved, lastSuccessSurfaceOwner, lastPopupClosedAt, lastReportingResetAt, lastReportSuccessStartedAt, lastReportSuccessCompletedAt, lastReportSuccessType, lastReportSuccessFlow, successStateCalmed, reportingHierarchyImproved, transientTimingRefined, overlayCompetitionReduced, reportSuccessClarityImproved, brandLogoHeight, brandLogoWidth, topbarHeight, v1352SurfaceContainmentApplied, v1353PresentationNormalizationApplied, v1354HazardPanelRootNormalized, v1355RedundantHazardPanelRemoved, v1356HazardSelectionKeepsSheetOpen:true, hazardTileSelectionNoClose:true, selectedHazardRequiresExplicitPlacement:true, v2HazardSelectionInline, legacyHazardPanelBypassed, selectedV2HazardType, v2HazardActionsWired, v1363HazardRoadSnapRestored:true, hazardPlacementUsesCanonicalSnap:Boolean(lastRoadSnapDebug?.hazardPlacementUsesCanonicalSnap), lastHazardPlacementSource:lastRoadSnapDebug?.lastHazardPlacementSource||null, lastHazardSnapResult:lastRoadSnapDebug?.lastHazardSnapResult||null, lastHazardSnapDistance:lastRoadSnapDebug?.snapDistanceMeters ?? null, rawHazardCoordinatesBlockedWhenInvalid:Boolean(lastRoadSnapDebug?.rawHazardCoordinatesBlockedWhenInvalid), hazardPanelRootV2SheetApplied, hazardPanelNoLongerFullHeight, hazardPanelDockClearancePreserved, hazardPanelLegacyTakeoverResolved, reportHazardV2PresentationApplied, routeQuickPanelV2PresentationApplied, closeButtonStandardized, bottomSheetPresentationConsistent, legacySurfaceVisualDriftReduced, legacyReportSurfaceSuppressed, legacyRouteSurfaceContained, legacyAlertsSurfaceContained, legacySettingsSurfaceContained, v2VisualOwnershipPreserved, oldPortraitUiNotRestored, v1362RouteSurfaceProductionized:true, placeholderRouteCopyRemoved, routeSurfaceShowsRealState, routeSheetVisualOwnershipMaintained:v2VisualOwnershipPreserved, v1371AlertsSurfaceProductionized:true, placeholderAlertsCopyRemoved, alertsSurfaceShowsRealState:true, alertsOwnershipImproved:true, alertsEmptyStateProductionized:true, alertsSurfaceMode:activeSheet === "alerts" ? "alerts_sheet_open" : "alerts_sheet_closed", activeAlertCount:alertsSnapshot.activeIncidentCount, nearbyAlertCount:alertsSnapshot.activeIncidentCount, routeImpactAlertCount:alertsSnapshot.activeIncidentCount, v1372AlertsHierarchyRefined:true, duplicateAlertsCopyRemoved:true, manageAlertsActionRestored:Boolean(v1372AlertsActionDebug.manageAlertsActionHandled), alertPreferencesActionRestored:Boolean(v1372AlertsActionDebug.alertPreferencesActionHandled), alertsSurfaceCurated:true, alertsSurfaceSectionCount:4, alertsActionFailureReason:v1372AlertsActionDebug.lastAlertsActionFailureReason || null, routeIntentPresentationImproved:true, v1363RouteActionsRestored:true, routeDockClickHandled:v1363RouteActionDebug.routeDockClickHandled, routeWatchActionHandled:v1363RouteActionDebug.routeWatchActionHandled, routePreviewActionHandled:v1363RouteActionDebug.routePreviewActionHandled, routeManagePlacesActionHandled:v1363RouteActionDebug.routeManagePlacesActionHandled, lastRouteActionFailureReason:v1363RouteActionDebug.lastRouteActionFailureReason || null, v1365ManagePlacesAdapterRestored:true, v1366ManagePlacesModalOpeningFixed:true, v1368RouteQuickPanelClosesBeforeManagePlaces:v1365ManagePlacesAdapterDebug.v1368RouteQuickPanelClosesBeforeManagePlaces, routeQuickPanelClosedForManagePlaces:v1365ManagePlacesAdapterDebug.routeQuickPanelClosedForManagePlaces, managePlacesOpenedWithoutStacking:v1365ManagePlacesAdapterDebug.managePlacesOpenedWithoutStacking, lastManagePlacesSurfaceCleanup:v1365ManagePlacesAdapterDebug.lastManagePlacesSurfaceCleanup || null, managePlacesActionHandled:v1365ManagePlacesAdapterDebug.managePlacesActionHandled, managePlacesTargetFound:v1365ManagePlacesAdapterDebug.managePlacesTargetFound, managePlacesFailureReason:v1365ManagePlacesAdapterDebug.managePlacesFailureReason || null, lastManagePlacesTriggerSource:v1365ManagePlacesAdapterDebug.lastManagePlacesTriggerSource || null, routeSetupModalVisible, routeSetupModalSuppressed, managePlacesModalOwnershipResolved, v1367RouteSetupModalVisibilitySynced, routeSetupModalInteractive, routeSetupModalOpacityResolved, routeSetupModalPointerEventsResolved, routeSetupModalSuppressionCleared, routeSetupModalOpenClasses, routeSetupModalComputedVisibility:routeSetupModalComputed?.visibility || null, lastManagePlacesModalState:v1365ManagePlacesAdapterDebug.lastManagePlacesModalState || null, routeSetupModalComputedDisplay:routeSetupModalComputed?.display || null, routeSetupModalComputedOpacity:routeSetupModalComputed?.opacity || null, routeSetupModalComputedPointerEvents:routeSetupModalComputed?.pointerEvents || null, currentRouteSurfaceState:routeSurfaceState.routeState, routeReadinessState:routeSurfaceState.readinessState, v1364RouteSnapshotPlacesShapeFixed:true, savedPlacesNormalizedForRouteSnapshot:Boolean(routeSurfaceState.savedPlacesNormalizedForRouteSnapshot), routeSnapshotNoThrow:Boolean(routeSurfaceState.routeSnapshotNoThrow), routeSnapshotPlaceCount:routeSurfaceState.savedPlaceCount, routeSnapshotPlacesShape:routeSurfaceState.savedPlacesShape || "missing", routeSheetMode:activeSheet === "route" ? "route_sheet_open" : "route_sheet_closed", visibleLegacySurfaceCount: legacySurfaceState.visibleCount, lastLegacySurfaceSuppressed: legacySurfaceState.lastSuppressed || null, lastNormalizedSurface: legacySurfaceState.lastSuppressed || null, visibleNonV2SurfaceCount: legacySurfaceState.visibleCount, activeV2SurfaceOwner: activeSheet || "dock", v1369PreconditionsUxApplied, disabledStateSystemApplied, silentNoOpsReduced, routePreconditionsHardened, reportPreconditionsHardened, alertsPreconditionsHardened, settingsPreconditionsHardened, disabledInteractionCount:v1369PreconditionsDebug.disabledInteractionCount, lastBlockedInteraction:v1369PreconditionsDebug.lastBlockedInteraction || null, lastPreconditionReason:v1369PreconditionsDebug.lastPreconditionReason || null, v138CommuteConsequenceIntelligenceApplied:true, v1381CrossingClassificationFixed:v1381CrossingClassificationDebug.v1381CrossingClassificationFixed, crossingIncidentsPreserved:v1381CrossingClassificationDebug.crossingIncidentsPreserved, genericRoadHazardDowngradePrevented:v1381CrossingClassificationDebug.genericRoadHazardDowngradePrevented, lastClassifiedIncidentType:v1381CrossingClassificationDebug.lastClassifiedIncidentType, lastClassifiedIncidentLabel:v1381CrossingClassificationDebug.lastClassifiedIncidentLabel, crossingIncidentCount:v1381CrossingClassificationDebug.crossingIncidentCount, roadHazardIncidentCount:v1381CrossingClassificationDebug.roadHazardIncidentCount, unknownIncidentCount:v1381CrossingClassificationDebug.unknownIncidentCount, commuteConsequenceTier:localizedIntel.commuteConsequenceTier, routeConsequenceSeverity:localizedIntel.routeConsequenceSeverity, topStatusUsesConsequenceLanguage: topStatusPrimaryText === localizedIntel.consequencePrimaryMessage, rerouteReadinessDetected: localizedIntel.rerouteReadinessDetected, consequenceTrendState: localizedIntel.consequenceTrendState, consequencePrimaryMessage: localizedIntel.consequencePrimaryMessage, consequenceSecondaryMessage: localizedIntel.consequenceSecondaryMessage, consequenceIncidentCount: localizedIntel.consequenceIncidentCount, routeImpactEtaEstimate: localizedIntel.routeImpactEtaEstimate, v1382CorridorClusteringApplied:true, corridorHealthModelActive:true, corridorGroupingEnabled:true, topStatusUsesCorridorIntelligence:true, routeAwareCorridorRankingEnabled:true, activeCorridorCount:(localizedIntel.corridorClusters||[]).length, highestPriorityCorridor:localizedIntel.highestPriorityCorridor, corridorSummaries:(localizedIntel.corridorClusters||[]).map((c)=>`${c.label}: ${c.healthState}`), corridorSeverityMap:localizedIntel.corridorSeverityMap||{}, warnings};
+  };
+  window.gridlyPortraitV2SheetState = function gridlyPortraitV2SheetState() {
+    const shell = document.getElementById("gridlyPortraitV2");
+    const sheet = document.getElementById("gridlyPortraitV2Sheet");
+    const sheetBody = document.getElementById("gridlyPortraitV2SheetBody");
+    const isOnscreen = (el) => {
+      if (!el) return false;
+      const style = getComputedStyle(el);
+      if (el.hidden || style.display === "none" || style.visibility === "hidden" || Number(style.opacity || "1") === 0) return false;
+      const rect = el.getBoundingClientRect();
+      return rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.right > 0 && rect.top < window.innerHeight && rect.left < window.innerWidth;
+    };
+    const getState = (el) => {
+      if (!el) return null;
+      const style = getComputedStyle(el);
+      return {
+        hidden: Boolean(el.hidden),
+        display: style.display,
+        pointerEvents: style.pointerEvents,
+        transform: style.transform,
+        translate: style.translate,
+        classes: Array.from(el.classList),
+        visuallyOnscreen: isOnscreen(el)
+      };
+    };
+    const portraitModeActive = (document.body?.dataset?.layoutMode || "") === "portrait-v2";
+    return {
+      shell: getState(shell),
+      sheet: getState(sheet),
+      sheetBody: getState(sheetBody),
+      activeSheet,
+      bodyModalOpen: document.body.classList.contains("modal-open"),
+      attachedToActivePortraitMode: portraitModeActive && Boolean(shell && !shell.hidden)
+    };
   };
   document.addEventListener("DOMContentLoaded", bindV2);
 })();
