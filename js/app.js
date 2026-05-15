@@ -412,10 +412,20 @@ const MOBILE_REPORT_ENTRY_SELECTORS = [
 ];
 let mobileReportEntryBindingsAttached = false;
 
-const REPORT_CONFIRMATION_READ_MS = 2600;
-const REPORT_CONFIRMATION_FADE_MS = 260;
+const REPORT_SUCCESS_HOLD_MS = 2600;
+const REPORT_SUCCESS_FADE_MS = 260;
+const REPORT_POPUP_CLOSE_DELAY_MS = 500;
+const REPORT_BUTTON_SUCCESS_MS = 2600;
+const REPORT_CONFIRMATION_READ_MS = REPORT_SUCCESS_HOLD_MS;
+const REPORT_CONFIRMATION_FADE_MS = REPORT_SUCCESS_FADE_MS;
 let reportConfirmationDismissTimer = null;
 let reportConfirmationFadeTimer = null;
+let reportSuccessLifecycleTimer = null;
+let reportButtonResetTimer = null;
+let lastReportSuccessStartedAt = 0;
+let lastReportSuccessCompletedAt = 0;
+let lastReportSuccessType = "";
+let lastReportSuccessFlow = "";
 
 const reportingState = {
   selectedHazardType: null,
@@ -5859,7 +5869,11 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     lastMobileReportSubmitDebug.lastSubmitAttempt = "supabase_insert_succeeded";
     lastMobileReportSubmitDebug.supabaseInsertSucceeded = true;
     updateReportingState({ lastReportError: "", lastReportMessage: "Report added" });
-    setConfirmation("Report accepted and shared.", "success", { durationMs: 3000 });
+    runUnifiedReportSuccessLifecycle({
+      flow: "hazard",
+      successType: hazardType,
+      successMessage: "Report accepted and shared."
+    });
     setSync("Hazard report shared");
 
     await runPostSubmitRefresh();
@@ -7665,13 +7679,28 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
 
     if (error) throw error;
 
-    if (buttonEl) {
-      buttonEl.classList.remove("is-submitting");
-      buttonEl.classList.add("is-success");
-      buttonEl.textContent = "Shared ✓";
-    }
-
-    setConfirmation(`Report accepted: ${copy.label} at ${crossing.name}.`, "success", { durationMs: 3000 });
+    runUnifiedReportSuccessLifecycle({
+      flow: "crossing",
+      successType: reportType,
+      successMessage: `Report accepted: ${copy.label} at ${crossing.name}.`,
+      buttonEl,
+      originalButtonText,
+      onButtonReset: () => {
+        if (!buttonEl) return;
+        if (buttonEl === els.mobileReportBtn) {
+          if (reportType === "blocked" || reportType === "heavy") {
+            buttonEl.textContent = "Report Cleared";
+          } else {
+            buttonEl.textContent = "📍 Report Near Me";
+          }
+          return;
+        }
+        buttonEl.textContent = originalButtonText;
+      },
+      popupClose: () => {
+        if (map) map.closePopup();
+      }
+    });
     console.log("Crossing report saved", { crossingId: String(crossing.id), type: reportType });
 
     setSync("Live report shared");
@@ -7692,26 +7721,7 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
 
     await runPostSubmitRefresh();
 
-    if (map) {
-      map.setView([crossing.lat, crossing.lng], 14);
-      setTimeout(() => map.closePopup(), 500);
-    }
-
-    if (buttonEl) {
-      setTimeout(() => {
-        buttonEl.classList.remove("is-success");
-
-        if (buttonEl === els.mobileReportBtn) {
-          if (reportType === "blocked" || reportType === "heavy") {
-            buttonEl.textContent = "Report Cleared";
-          } else {
-            buttonEl.textContent = "📍 Report Near Me";
-          }
-        } else {
-          buttonEl.textContent = originalButtonText;
-        }
-      }, 2100);
-    }
+    if (map) map.setView([crossing.lat, crossing.lng], 14);
     updateReportingState({ submissionInProgress: false });
   } catch (error) {
     console.error("Gridly report insert failed:", error);
@@ -12195,6 +12205,48 @@ function flashButton(button, message) {
   }, 1300);
 }
 
+function runUnifiedReportSuccessLifecycle({
+  flow = "crossing",
+  successType = "",
+  successMessage = "Report accepted and shared.",
+  buttonEl = null,
+  originalButtonText = "",
+  onButtonReset = null,
+  popupClose = null
+} = {}) {
+  if (reportSuccessLifecycleTimer) clearTimeout(reportSuccessLifecycleTimer);
+  if (reportButtonResetTimer) clearTimeout(reportButtonResetTimer);
+
+  lastReportSuccessStartedAt = Date.now();
+  lastReportSuccessCompletedAt = 0;
+  lastReportSuccessType = successType || "";
+  lastReportSuccessFlow = flow || "";
+
+  if (buttonEl) {
+    buttonEl.classList.remove("is-submitting");
+    buttonEl.classList.add("is-success");
+    buttonEl.textContent = "Shared ✓";
+  }
+
+  setConfirmation(successMessage, "success", { durationMs: REPORT_SUCCESS_HOLD_MS });
+
+  reportSuccessLifecycleTimer = setTimeout(() => {
+    if (typeof popupClose === "function") popupClose();
+  }, REPORT_POPUP_CLOSE_DELAY_MS);
+
+  reportButtonResetTimer = setTimeout(() => {
+    if (buttonEl) {
+      buttonEl.classList.remove("is-success");
+      if (typeof onButtonReset === "function") {
+        onButtonReset();
+      } else {
+        buttonEl.textContent = originalButtonText;
+      }
+    }
+    lastReportSuccessCompletedAt = Date.now();
+  }, REPORT_BUTTON_SUCCESS_MS);
+}
+
 function setConfirmation(message, type = "success", options = {}) {
   const { persist = false, durationMs = REPORT_CONFIRMATION_READ_MS } = options || {};
   updateReportingState({
@@ -14618,12 +14670,16 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const compactHeaderCalmnessImproved = Boolean(v1335HeaderSimplified && logoWatchAlignmentApplied && headerHeightPreserved);
     const bottomSettingsAccessPreserved = Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-bottom-dock [data-v2-sheet='settings']"));
 const v134ReportingRefinementApplied = true;
+    const v1341UnifiedReportSuccessLifecycleApplied = true;
+    const reportSuccessTimersUnified = REPORT_SUCCESS_HOLD_MS === REPORT_BUTTON_SUCCESS_MS && REPORT_CONFIRMATION_READ_MS === REPORT_SUCCESS_HOLD_MS;
+    const reportSuccessLifecycleActive = Boolean(reportSuccessLifecycleTimer || reportButtonResetTimer || reportingState.submissionInProgress);
+    const duplicateSuccessTimersReduced = reportSuccessTimersUnified;
     const successStateCalmed = Boolean(document.querySelector("#reportConfirmation"));
     const reportingHierarchyImproved = Boolean(!reportingState.submissionInProgress || (document.querySelector("#reportConfirmation") && document.querySelectorAll(".leaflet-popup-pane .leaflet-popup").length <= 1));
     const transientTimingRefined = REPORT_CONFIRMATION_READ_MS >= 2400;
     const overlayCompetitionReduced = Boolean(!reportingState.submissionInProgress || document.body?.classList.contains("reporting-live"));
     const reportSuccessClarityImproved = Boolean((reportingState.lastReportMessage || "").toLowerCase().includes("accepted") || !reportingState.lastReportMessage);
-    return {v2Exists:Boolean(v2),v2Visible:Boolean(v2&&getComputedStyle(v2).display!=="none"),activeSheet,sheetOpen:!document.getElementById("gridlyPortraitV2Sheet")?.hidden,dockButtonsFound:document.querySelectorAll(".gridly-v2-bottom-dock button").length,controlRailFound:Boolean(document.querySelector(".gridly-v2-control-rail")),legacyPortraitHidden:legacyHidden,duplicateZoomControlsVisible,duplicateFilterStripsVisible,v2IconsApplied,legacyControlsHidden,mapContainerFound:Boolean(document.getElementById("map")),layoutMode:mode, popupV2Styled, popupViewportSafe, filterStripBalanced, popupViewportCentered, popupAutoPanApplied, popupCameraPanApplied, popupAnchorMode, popupLastMarkerScreenPoint, popupLastSafeTargetPoint, popupClippedAfterOpen, popupViewportBounds, popupAutoPanSequenced, popupBlinkResolved, lastPopupTapAt:gridlyPopupLastTapAt, lastPopupOpenAt:gridlyPopupLastOpenAt, pendingPopupToken:window.__gridlyPopupPanSession?.token||null, popupOpenCount:gridlyPopupOpenCount, popupCancelCount:gridlyPopupCancelCount, popupLastFailureReason:gridlyPopupLastFailureReason||null, popupReopenReady:gridlyPopupReopenReady, popupSingleTapFlowReady:gridlyPopupSingleTapFlowReady, popupSingleTapGuaranteed:gridlyPopupSingleTapGuaranteed, lastPopupTapCrossingId:gridlyLastPopupTapCrossingId, lastPopupPanStartedAt:gridlyLastPopupPanStartedAt, lastPopupMoveEndAt:gridlyLastPopupMoveEndAt, lastPopupFallbackFiredAt:gridlyLastPopupFallbackFiredAt, lastPopupScheduledDelay:gridlyLastPopupScheduledDelay, lastPopupTimerFiredAt:gridlyLastPopupTimerFiredAt, lastPopupFinalizeReason:gridlyLastPopupFinalizeReason, popupLastClickCrossingId:gridlyLastPopupTapCrossingId, popupLastFinalizeAttemptAt:gridlyPopupLastFinalizeAttemptAt, popupLastOpenCallAt:gridlyPopupLastOpenCallAt, popupLastOpenMethod:gridlyPopupLastOpenMethod, popupOpenCallCount:gridlyPopupOpenCount, popupEarlyReturnReason:gridlyPopupEarlyReturnReason||null, popupPaneCount:document.querySelectorAll(".leaflet-popup-pane .leaflet-popup").length, popupDomExists:Boolean(document.querySelector(".leaflet-popup")), popupInterferenceEventSeen:gridlyPopupInterferenceEventSeen, routeWatchAllClickedDuringPopupTap:gridlyRouteWatchAllClickedDuringPopupTap, duplicateMarkerClickCount:gridlyDuplicateMarkerClickCount, markerClickHandlerGuardApplied:gridlyMarkerClickHandlerGuardApplied, compactBrandApplied, compactHeaderRefined, typographyPassApplied, spacingRhythmPassApplied, surfacePolishApplied, iconConsistencyPassApplied, sheetProductizationApplied, mapBreathingRoomApplied, iconSystemUnified, dockIconSystemUnified, railIconSystemUnified, iconSystemReferenceAligned, iconSystemHarmonized, dockRefinementApplied, utilityControlConsistencyApplied, headerFoundationApplied, surfaceRestraintApplied, opticalAlignmentPassApplied, v1321FinalTighteningApplied, headerStatusCohesionApplied, filterDensityTuned, dockOpticalFinalized, mapFirstBalancePreserved, microAlignmentQaApplied, v1322TypographyEasingApplied, topHeaderTypographyRefined, filterStripEased, topStackCalmnessApplied, microTypographyConsistencyApplied, mapDominancePreserved, v133BrandFoundationApplied, headerIdentitySystemApplied, gridlyMarkFoundationApplied, wordmarkPolished, brandRestraintMaintained, iconBrandRelationshipAligned, v1331RealBrandAssetsIntegrated, compactResponsiveBrandVariantApplied, faviconValidated, appIconsValidated, temporaryBrandLayersRemoved, brandProductionIntegrationComplete, v1332UltraCompactHeaderApplied, headerBrandFitmentComplete, compactLogoOpticsBalanced, mapFirstBrandRestraintMaintained, legacyWideLogoRemoved, productionHeaderIdentityFinalized, v1333LogoSizingCorrected, ultraCompactLogoReadable, headerBrandScaleBalanced, headerHeightPreserved, v1334IndependentHeaderLayoutApplied, centeredWatchLabelIndependent, logoNoLongerConstrainsHeader, utilityControlIndependentlyAligned, compactHeaderLayoutPreserved, finalHeaderFitmentResolved, v1335HeaderSimplified, redundantTopUtilityRemoved, logoWatchAlignmentApplied, headerVisualCompetitionReduced, compactHeaderCalmnessImproved, bottomSettingsAccessPreserved, v134ReportingRefinementApplied, successStateCalmed, reportingHierarchyImproved, transientTimingRefined, overlayCompetitionReduced, reportSuccessClarityImproved, brandLogoHeight, brandLogoWidth, topbarHeight, warnings};
+    return {v2Exists:Boolean(v2),v2Visible:Boolean(v2&&getComputedStyle(v2).display!=="none"),activeSheet,sheetOpen:!document.getElementById("gridlyPortraitV2Sheet")?.hidden,dockButtonsFound:document.querySelectorAll(".gridly-v2-bottom-dock button").length,controlRailFound:Boolean(document.querySelector(".gridly-v2-control-rail")),legacyPortraitHidden:legacyHidden,duplicateZoomControlsVisible,duplicateFilterStripsVisible,v2IconsApplied,legacyControlsHidden,mapContainerFound:Boolean(document.getElementById("map")),layoutMode:mode, popupV2Styled, popupViewportSafe, filterStripBalanced, popupViewportCentered, popupAutoPanApplied, popupCameraPanApplied, popupAnchorMode, popupLastMarkerScreenPoint, popupLastSafeTargetPoint, popupClippedAfterOpen, popupViewportBounds, popupAutoPanSequenced, popupBlinkResolved, lastPopupTapAt:gridlyPopupLastTapAt, lastPopupOpenAt:gridlyPopupLastOpenAt, pendingPopupToken:window.__gridlyPopupPanSession?.token||null, popupOpenCount:gridlyPopupOpenCount, popupCancelCount:gridlyPopupCancelCount, popupLastFailureReason:gridlyPopupLastFailureReason||null, popupReopenReady:gridlyPopupReopenReady, popupSingleTapFlowReady:gridlyPopupSingleTapFlowReady, popupSingleTapGuaranteed:gridlyPopupSingleTapGuaranteed, lastPopupTapCrossingId:gridlyLastPopupTapCrossingId, lastPopupPanStartedAt:gridlyLastPopupPanStartedAt, lastPopupMoveEndAt:gridlyLastPopupMoveEndAt, lastPopupFallbackFiredAt:gridlyLastPopupFallbackFiredAt, lastPopupScheduledDelay:gridlyLastPopupScheduledDelay, lastPopupTimerFiredAt:gridlyLastPopupTimerFiredAt, lastPopupFinalizeReason:gridlyLastPopupFinalizeReason, popupLastClickCrossingId:gridlyLastPopupTapCrossingId, popupLastFinalizeAttemptAt:gridlyPopupLastFinalizeAttemptAt, popupLastOpenCallAt:gridlyPopupLastOpenCallAt, popupLastOpenMethod:gridlyPopupLastOpenMethod, popupOpenCallCount:gridlyPopupOpenCount, popupEarlyReturnReason:gridlyPopupEarlyReturnReason||null, popupPaneCount:document.querySelectorAll(".leaflet-popup-pane .leaflet-popup").length, popupDomExists:Boolean(document.querySelector(".leaflet-popup")), popupInterferenceEventSeen:gridlyPopupInterferenceEventSeen, routeWatchAllClickedDuringPopupTap:gridlyRouteWatchAllClickedDuringPopupTap, duplicateMarkerClickCount:gridlyDuplicateMarkerClickCount, markerClickHandlerGuardApplied:gridlyMarkerClickHandlerGuardApplied, compactBrandApplied, compactHeaderRefined, typographyPassApplied, spacingRhythmPassApplied, surfacePolishApplied, iconConsistencyPassApplied, sheetProductizationApplied, mapBreathingRoomApplied, iconSystemUnified, dockIconSystemUnified, railIconSystemUnified, iconSystemReferenceAligned, iconSystemHarmonized, dockRefinementApplied, utilityControlConsistencyApplied, headerFoundationApplied, surfaceRestraintApplied, opticalAlignmentPassApplied, v1321FinalTighteningApplied, headerStatusCohesionApplied, filterDensityTuned, dockOpticalFinalized, mapFirstBalancePreserved, microAlignmentQaApplied, v1322TypographyEasingApplied, topHeaderTypographyRefined, filterStripEased, topStackCalmnessApplied, microTypographyConsistencyApplied, mapDominancePreserved, v133BrandFoundationApplied, headerIdentitySystemApplied, gridlyMarkFoundationApplied, wordmarkPolished, brandRestraintMaintained, iconBrandRelationshipAligned, v1331RealBrandAssetsIntegrated, compactResponsiveBrandVariantApplied, faviconValidated, appIconsValidated, temporaryBrandLayersRemoved, brandProductionIntegrationComplete, v1332UltraCompactHeaderApplied, headerBrandFitmentComplete, compactLogoOpticsBalanced, mapFirstBrandRestraintMaintained, legacyWideLogoRemoved, productionHeaderIdentityFinalized, v1333LogoSizingCorrected, ultraCompactLogoReadable, headerBrandScaleBalanced, headerHeightPreserved, v1334IndependentHeaderLayoutApplied, centeredWatchLabelIndependent, logoNoLongerConstrainsHeader, utilityControlIndependentlyAligned, compactHeaderLayoutPreserved, finalHeaderFitmentResolved, v1335HeaderSimplified, redundantTopUtilityRemoved, logoWatchAlignmentApplied, headerVisualCompetitionReduced, compactHeaderCalmnessImproved, bottomSettingsAccessPreserved, v134ReportingRefinementApplied, v1341UnifiedReportSuccessLifecycleApplied, reportSuccessTimersUnified, reportSuccessLifecycleActive, reportSuccessHoldMs:REPORT_SUCCESS_HOLD_MS, reportSuccessFadeMs:REPORT_SUCCESS_FADE_MS, reportPopupCloseDelayMs:REPORT_POPUP_CLOSE_DELAY_MS, reportButtonSuccessMs:REPORT_BUTTON_SUCCESS_MS, duplicateSuccessTimersReduced, lastReportSuccessStartedAt, lastReportSuccessCompletedAt, lastReportSuccessType, lastReportSuccessFlow, successStateCalmed, reportingHierarchyImproved, transientTimingRefined, overlayCompetitionReduced, reportSuccessClarityImproved, brandLogoHeight, brandLogoWidth, topbarHeight, warnings};
   };
   document.addEventListener("DOMContentLoaded", bindV2);
 })();
