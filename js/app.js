@@ -5844,6 +5844,7 @@ window.gridlyTapMapLocationTrace = function gridlyTapMapLocationTrace() {
 window.gridlyV1395InteractionDebug = function gridlyV1395InteractionDebug() {
   const sheet = document.getElementById("gridlyPortraitV2Sheet");
   const backdrop = document.getElementById("gridlyPortraitV2SheetBackdrop");
+  const tapMapButton = document.querySelector('#gridlyPortraitV2SheetBody [data-v2-action="report-tap-map"], #gridlyPortraitV2SheetBody [data-action="start-map-placement"], #gridlyPortraitV2SheetBody #gridlyV2TapMapLocationBtn');
   const overlays = Array.from(document.querySelectorAll("body *")).filter((node) => {
     if (!(node instanceof HTMLElement)) return false;
     const style = getComputedStyle(node);
@@ -5864,6 +5865,10 @@ window.gridlyV1395InteractionDebug = function gridlyV1395InteractionDebug() {
     hazardPlacementActive: reportingState.placementModeActive,
     popupSuppressionState: typeof suppressGlobalMapPopupsUntil === "number" ? suppressGlobalMapPopupsUntil : null,
     mapClickHandlerAvailable: Boolean(map && reportingState && typeof handleHazardPlacementMapClick === "function"),
+    tapMapButtonFound: Boolean(tapMapButton),
+    tapMapButtonAction: tapMapButton?.getAttribute("data-v2-action") || tapMapButton?.getAttribute("data-action") || null,
+    tapMapButtonText: tapMapButton?.textContent?.trim() || null,
+    bridgeFunctionAvailable: typeof startV2RoadHazardMapPlacement === "function",
     visiblePointerOverlays: overlays,
     lastHazardPlacementEvent
   };
@@ -15448,6 +15453,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           markV2BlockedInteraction("report-tap-map", "Choose a hazard first, then tap a map location.");
           return;
         }
+        pushTapMapTrace("tap-map-button-clicked", { source: "v2_sheet_action", hazardType: selectedV2HazardType });
         if (typeof startV2RoadHazardMapPlacement === "function") {
           startV2RoadHazardMapPlacement(selectedV2HazardType);
         }
@@ -15550,6 +15556,21 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   function bindV2SheetActions() {
     const body = document.getElementById("gridlyPortraitV2SheetBody");
     if (!body) return;
+    if (!body.dataset.tapMapDelegateBound) {
+      body.addEventListener("click", (event) => {
+        const target = event.target instanceof Element ? event.target : null;
+        const tapMapButton = target?.closest?.('[data-v2-action="report-tap-map"], [data-action="start-map-placement"], #gridlyV2TapMapLocationBtn');
+        if (!tapMapButton) return;
+        event.preventDefault();
+        event.stopPropagation();
+        const resolvedHazardType = selectedV2HazardType || reportingState.selectedHazardType || selectedQuickHazardType || "other_hazard";
+        pushTapMapTrace("tap-map-button-clicked", { source: "v2_sheet_delegate", hazardType: resolvedHazardType });
+        if (typeof startV2RoadHazardMapPlacement === "function") {
+          startV2RoadHazardMapPlacement(resolvedHazardType);
+        }
+      }, true);
+      body.dataset.tapMapDelegateBound = "1";
+    }
     const preconditions = getV2PreconditionsState();
     body.querySelectorAll("[data-v2-action]").forEach((button) => {
       const action = button.dataset.v2Action || "";
@@ -15563,11 +15584,12 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       if (isDisabledByPrecondition) button.setAttribute("aria-disabled", "true");
       else button.removeAttribute("aria-disabled");
       button.addEventListener("click", (event) => {
-        if ((button.dataset.v2Action || "") === "report-select-hazard") {
+        const action = button.dataset.v2Action || "";
+        if (action === "report-select-hazard" || action === "report-tap-map") {
           event.preventDefault();
           event.stopPropagation();
         }
-        triggerV2DockAdapter(button.dataset.v2Action || "", { hazardType: button.dataset.hazardType || "" });
+        triggerV2DockAdapter(action, { hazardType: button.dataset.hazardType || "" });
       });
     });
     const seededType = selectedV2HazardType || (typeof reportingState === "object" ? (reportingState.selectedHazardType || "") : "");
