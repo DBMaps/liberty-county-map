@@ -226,6 +226,39 @@ const gridlyNetworkAuditState = {
 let suppressRealtimeRefreshUntil = 0;
 let suppressIntervalRefreshUntil = 0;
 let skipNextRealtimeRefresh = false;
+const GRIDLY_CROSSING_AUDIT_LOG_LIMIT = 20;
+const GRIDLY_GEO_FILTER_DEDUPE_MS = 300;
+const GRIDLY_CROSSING_RENDER_DEBUG = false;
+const gridlyCrossingRenderAuditState = {
+  renderCallCount: 0,
+  filterApplyCallCount: 0,
+  lastCalls: [],
+  lastFilterApply: { key: "", visibleCount: -1, signature: "", at: 0 },
+  lastRender: { signature: "", at: 0, visibleCount: 0 }
+};
+
+function pushCrossingAuditCall(type, reason, details = {}) {
+  const timestamp = Date.now();
+  gridlyCrossingRenderAuditState.lastCalls.push({ timestamp, iso: new Date(timestamp).toISOString(), type, reason, ...details });
+  if (gridlyCrossingRenderAuditState.lastCalls.length > GRIDLY_CROSSING_AUDIT_LOG_LIMIT) {
+    gridlyCrossingRenderAuditState.lastCalls.splice(0, gridlyCrossingRenderAuditState.lastCalls.length - GRIDLY_CROSSING_AUDIT_LOG_LIMIT);
+  }
+  return timestamp;
+}
+
+function buildCrossingRenderSignature(visibleCrossings = []) {
+  return [activeGeoFilter, showAllCrossingsLayer ? "show-all" : "default-only", savedRouteCrossingIds.size, visibleCrossings.length, ...visibleCrossings.map((crossing) => String(crossing.id))].join("|");
+}
+
+window.gridlyCrossingRenderAudit = function gridlyCrossingRenderAudit() {
+  return {
+    renderCrossingsCallCount: gridlyCrossingRenderAuditState.renderCallCount,
+    filterApplyCallCount: gridlyCrossingRenderAuditState.filterApplyCallCount,
+    lastCalls: [...gridlyCrossingRenderAuditState.lastCalls],
+    activeGeoFilter,
+    visibleCrossingCount: gridlyCrossingRenderAuditState.lastRender.visibleCount
+  };
+};
 
 function pushAuditCall(bucket, reason, extra = {}) {
   const timestamp = Date.now();
@@ -3011,7 +3044,7 @@ function initMap() {
 
   map.on("zoomend moveend", () => {
     if (!crossings.length) return;
-    renderCrossings();
+    renderCrossings("map-move-or-zoom");
   });
   map.on("click", handleHazardPlacementMapClick);
 
@@ -3553,7 +3586,7 @@ function centerMapOnUserIfAllowed() {
       };
       renderUserLocationDot();
       map.setView([userLocation.lat, userLocation.lng], 14);
-      renderCrossings();
+      renderCrossings("state-change");
       renderUnifiedIncidents();
       updateNearestContext();
     },
@@ -3673,7 +3706,7 @@ async function loadCrossings() {
     });
 
     populateCrossingSelect();
-    renderCrossings();
+    renderCrossings("state-change");
     updateRouteIntelligence();
     updateTrustStats();
     updateGrowthWidgets();
@@ -3888,7 +3921,7 @@ function refreshReportHazardViews() {
   renderRoadHazards();
   renderTrendingCrossings();
   renderUnifiedIncidents();
-  renderCrossings();
+  renderCrossings("state-change");
   updateRouteIntelligence();
   updateTrustStats();
   updateGrowthWidgets();
@@ -4148,12 +4181,12 @@ function shouldShowDistantInactiveCrossing(crossing) {
   const state = getIncidentLifecycleState(report);
   return state !== "active" && state !== "recently_cleared";
 }
-function renderCrossings() {
+function renderCrossings(reason = "unspecified") {
   if (!crossingLayer || !crossings.length) return;
   renderSavedRouteLine();
 
   const bounds = map?.getBounds?.();
-  const visibleCrossings = getVisibleCrossingsForFilter().filter((crossing) => {
+  const visibleCrossings = getVisibleCrossingsForFilter(`fit:${reason}`).filter((crossing) => {
     const inDefaultSet = getDefaultRelevantCrossings().some((item) => String(item.id) === String(crossing.id));
     const inView = bounds ? bounds.contains([crossing.lat, crossing.lng]) : true;
     return (inDefaultSet || shouldShowDistantInactiveCrossing(crossing)) && inView;
@@ -4168,6 +4201,12 @@ function renderCrossings() {
         .slice(0, 120)
         .map((entry) => entry.crossing)
     : visibleCrossings;
+  gridlyCrossingRenderAuditState.renderCallCount += 1;
+  const renderSignature = buildCrossingRenderSignature(prioritizedVisibleCrossings);
+  const renderNow = pushCrossingAuditCall("render", reason, { activeGeoFilter, visibleCount: prioritizedVisibleCrossings.length, signature: renderSignature });
+  const lastRender = gridlyCrossingRenderAuditState.lastRender;
+  if (renderSignature === lastRender.signature && renderNow - lastRender.at <= GRIDLY_GEO_FILTER_DEDUPE_MS) return;
+  gridlyCrossingRenderAuditState.lastRender = { signature: renderSignature, at: renderNow, visibleCount: prioritizedVisibleCrossings.length };
   updateGeoFilterStatus(prioritizedVisibleCrossings);
 
   crossingLayer.clearLayers();
@@ -4922,15 +4961,15 @@ function updateGeoFilterStatus(visibleCrossings = []) {
   els.geoFilterStatus.textContent = message;
 }
 
-function getVisibleCrossingsForFilter() {
+function getVisibleCrossingsForFilter(reason = "unknown") {
   const fallbackToAll = () => {
-    debugGeoFilter(activeGeoFilter, crossings.length);
+    debugGeoFilter(activeGeoFilter, crossings.length, reason);
     return crossings;
   };
 
   if (activeGeoFilter === "all") {
     const relevant = getDefaultRelevantCrossings();
-    debugGeoFilter("All", relevant.length);
+    debugGeoFilter("All", relevant.length, reason);
     return relevant;
   }
 
@@ -4939,7 +4978,7 @@ function getVisibleCrossingsForFilter() {
       const report = getLatestReportForCrossing(crossing.id);
       return getIncidentLifecycleState(report) === "active";
     });
-    debugGeoFilter("Active Delays", filtered.length);
+    debugGeoFilter("Active Delays", filtered.length, reason);
     return filtered;
   }
 
@@ -4947,7 +4986,7 @@ function getVisibleCrossingsForFilter() {
     const filtered = crossings.filter(
       (crossing) => String(crossing.county || "").toLowerCase() === "liberty county"
     );
-    debugGeoFilter("My County", filtered.length);
+    debugGeoFilter("My County", filtered.length, reason);
     return filtered;
   }
 
@@ -4957,27 +4996,35 @@ function getVisibleCrossingsForFilter() {
     );
 
     if (!filtered.length) {
-      debugGeoFilter("My Town", crossings.length);
+      debugGeoFilter("My Town", crossings.length, reason);
       return crossings;
     }
 
-    debugGeoFilter("My Town", filtered.length);
+    debugGeoFilter("My Town", filtered.length, reason);
     return filtered;
   }
 
   if (activeGeoFilter === "nearby") {
     const center = userLocation || { lat: defaultCenter[0], lng: defaultCenter[1] };
     const nearest = findNearestCrossings(center.lat, center.lng, 10);
-    debugGeoFilter("Nearby", nearest.length);
+    debugGeoFilter("Nearby", nearest.length, reason);
     return nearest;
   }
 
   return fallbackToAll();
 }
 
-function debugGeoFilter(label, visibleCount) {
-  console.debug(`Filter applied: ${label}`);
-  console.debug(`Visible crossings: ${visibleCount}`);
+function debugGeoFilter(label, visibleCount, reason = "unknown") {
+  gridlyCrossingRenderAuditState.filterApplyCallCount += 1;
+  const signature = `${activeGeoFilter}|${label}|${visibleCount}`;
+  const now = pushCrossingAuditCall("filter-apply", reason, { label, visibleCount, activeGeoFilter, signature });
+  const lastApply = gridlyCrossingRenderAuditState.lastFilterApply;
+  if (signature === lastApply.signature && now - lastApply.at <= GRIDLY_GEO_FILTER_DEDUPE_MS) return;
+  gridlyCrossingRenderAuditState.lastFilterApply = { key: activeGeoFilter, visibleCount, signature, at: now };
+  if (GRIDLY_CROSSING_RENDER_DEBUG) {
+    console.debug(`Filter applied: ${label}`);
+    console.debug(`Visible crossings: ${visibleCount}`);
+  }
 }
 function renderUnifiedIncidents() {
   if (!unifiedIncidentLayer) return;
@@ -7058,7 +7105,7 @@ function bindEvents() {
         const filterKey = areaFilterKeyByOption[selectedOption] || "all";
         portraitSurfaceDebugLog("[Gridly][PortraitSurface] option clicked", { type: "area", selectedOption });
         portraitSurfaceDebugLog("[Gridly][PortraitSurface] target function called", { fn: "applyGeoFilterFromPill", value: filterKey });
-        applyGeoFilterFromPill(filterKey);
+        applyGeoFilterFromPill(filterKey, "geo-filter-pill-click");
         scrollToSection("mapSection");
         closeMobileNativeSurfaceLayer();
         portraitSurfaceDebugLog("[Gridly][PortraitSurface] close completed", { type: "area", selectedOption });
@@ -7118,7 +7165,7 @@ function bindEvents() {
     `);
     document.querySelectorAll("#gridlyTacticalDockSheet [data-geo-filter]").forEach((btn) => {
       btn.addEventListener("click", () => {
-        applyGeoFilterFromPill(btn.dataset.geoFilter || "all");
+        applyGeoFilterFromPill(btn.dataset.geoFilter || "all", "mobile-pill");
         closeTacticalDockSheet();
       }, { once: true });
     });
@@ -7262,7 +7309,7 @@ function bindEvents() {
   };
 
   const showTownSelectorConfirmation = () => {
-    applyGeoFilterFromPill("town");
+    applyGeoFilterFromPill("town", "nav-town-shortcut");
     scrollToSection("mapSection");
     showMobileHeaderConfirmation("Showing My Town crossings.", "success");
   };
@@ -7669,7 +7716,7 @@ function bindEvents() {
     };
     if (section === "crossings") {
       routeNavSection("map");
-      applyGeoFilterFromPill("all");
+      applyGeoFilterFromPill("all", "desktop-live-data");
       setConfirmation("Crossings filter set to all crossings.", "success");
       return;
     }
@@ -7735,7 +7782,7 @@ function bindEvents() {
       if (!isDesktopViewport()) return;
       const filterKey = event.currentTarget?.dataset?.geoFilter || "all";
       console.log(`Desktop map legend button clicked: ${id}`);
-      applyGeoFilterFromPill(filterKey);
+      applyGeoFilterFromPill(filterKey, "geo-filter-pill-click");
     });
   });
 
@@ -7765,7 +7812,7 @@ function bindEvents() {
     });
   });
 
-  const applyGeoFilterFromPill = (filterKey) => {
+  const applyGeoFilterFromPill = (filterKey, reason = "unknown") => {
     const selectedFilter = filterKey || "all";
     const matchingPill = document.querySelector(`.geo-filter-pill[data-geo-filter="${selectedFilter}"]`);
 
@@ -7773,10 +7820,15 @@ function bindEvents() {
       pill.classList.toggle("selected", pill === matchingPill);
     });
 
-    activeGeoFilter = selectedFilter;
-    renderCrossings();
+    if (activeGeoFilter === selectedFilter) {
+      pushCrossingAuditCall("filter-skip", reason, { selectedFilter, skip: "same-filter" });
+      return;
+    }
 
-    const visibleCrossings = getVisibleCrossingsForFilter().filter((crossing) => {
+    activeGeoFilter = selectedFilter;
+    renderCrossings(`filter-change:${reason}`);
+
+    const visibleCrossings = getVisibleCrossingsForFilter(`render:${reason}`).filter((crossing) => {
     const inDefaultSet = getDefaultRelevantCrossings().some((item) => String(item.id) === String(crossing.id));
     return inDefaultSet || shouldShowDistantInactiveCrossing(crossing);
   });
@@ -7801,11 +7853,11 @@ function bindEvents() {
         gridlyRouteWatchAllClickedDuringPopupTap = true;
         gridlyPopupInterferenceEventSeen = true;
       }
-      applyGeoFilterFromPill(filterKey);
+      applyGeoFilterFromPill(filterKey, "geo-filter-pill-click");
     });
   });
   document.querySelectorAll(".map-floating-chip[data-geo-filter]").forEach((btn) => {
-    btn.addEventListener("click", () => applyGeoFilterFromPill(btn.dataset.geoFilter || "all"));
+    btn.addEventListener("click", () => applyGeoFilterFromPill(btn.dataset.geoFilter || "all", "floating-filter-chip"));
   });
 
   els.editSetupBtn?.addEventListener("click", () => {
@@ -7815,7 +7867,7 @@ function bindEvents() {
   const allCrossingsToggle = document.getElementById("allCrossingsLayerToggle");
   allCrossingsToggle?.addEventListener("change", (event) => {
     showAllCrossingsLayer = Boolean(event?.target?.checked);
-    renderCrossings();
+    renderCrossings("state-change");
   });
 
   highlightNearestCrossingOnFirstLoad();
@@ -10481,7 +10533,7 @@ async function renderDestinationRoute(target) {
     savedRouteCrossingIds = new Set();
     window.__gridlyRouteWatchActive = false;
     window.__gridlySelectedRouteId = "";
-    renderCrossings();
+    renderCrossings("state-change");
     return;
   }
   const from = [fromCoords.lat, fromCoords.lng];
@@ -10496,7 +10548,7 @@ async function renderDestinationRoute(target) {
     if (els.routeWatchSetupHint) els.routeWatchSetupHint.textContent = `Monitoring Home → ${target.label}. Precise route line unavailable.`;
   }
   savedRouteCrossingIds = new Set(crossings.filter((c) => getDistanceMiles(c.lat, c.lng, target.lat, target.lng) <= 3.5).map((c) => String(c.id)));
-  renderCrossings();
+  renderCrossings("state-change");
   updateRouteWatchBadge(target.label);
 }
 
@@ -10785,7 +10837,7 @@ function resetSavedPlaces() {
   window.__gridlyRouteWatchActive = false;
   window.__gridlySelectedRouteId = "";
   loadSavedRoute();
-  renderCrossings();
+  renderCrossings("state-change");
   setConfirmation("Saved places reset on this device.", "success");
 }
 
