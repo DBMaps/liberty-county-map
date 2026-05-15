@@ -5799,6 +5799,9 @@ window.submitHazardNearMe = function (hazardType) {
       }
 
       resetQuickHazardReportState();
+      if (typeof clearPortraitV2ReportActiveStateAfterSubmit === "function") {
+        clearPortraitV2ReportActiveStateAfterSubmit();
+      }
       closeVisiblePortraitV2ReportSurfaceAfterSubmit();
       closeHazardPanel();
     },
@@ -15654,6 +15657,15 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     v1369PreconditionsDebug.lastPreconditionReason = reason;
     if (typeof setConfirmation === "function" && reason) setConfirmation(reason, "error");
   }
+  function clearPortraitV2ReportActiveStateAfterSubmit() {
+    if (activeSheet === "report") activeSheet = "";
+    if (gridlyActiveSurface === "report") gridlyActiveSurface = null;
+    if (mobileUiMode === "report") setMobileUiMode("live", { silent: true });
+    if (typeof updateReportingState === "function") {
+      updateReportingState({ reportModeActive: false, placementModeActive: false });
+    }
+  }
+
   function closePortraitV2Sheet(){
     const sheet=document.getElementById("gridlyPortraitV2Sheet");
     const sheetBody=document.getElementById("gridlyPortraitV2SheetBody");
@@ -15703,6 +15715,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       bodyReportPulse: document.body.classList.contains("report-pulse")
     });
 
+    clearPortraitV2ReportActiveStateAfterSubmit();
     if (typeof closePortraitV2Sheet === "function") closePortraitV2Sheet();
     if (sheet) {
       sheet.hidden = true;
@@ -16242,11 +16255,27 @@ const v134ReportingRefinementApplied = true;
       };
     };
     const portraitModeActive = (document.body?.dataset?.layoutMode || "") === "portrait-v2";
+    const reportRenderLoopActive = activeSheet === "report";
+    const reportSurfaceReopenConditions = {
+      activeSheetIsReport: activeSheet === "report",
+      gridlyActiveSurfaceIsReport: gridlyActiveSurface === "report",
+      mobileModeIsReport: mobileUiMode === "report",
+      reportModeActiveFlag: Boolean(reportingState?.reportModeActive)
+    };
     return {
       shell: getState(shell),
       sheet: getState(sheet),
       sheetBody: getState(sheetBody),
       activeSheet,
+      rawActiveSheetSource: {
+        portraitV2ActiveSheet: activeSheet,
+        gridlyActiveSurface,
+        mobileUiMode,
+        reportingStateReportModeActive: Boolean(reportingState?.reportModeActive)
+      },
+      reportRenderLoopActive,
+      reportSurfaceReopenConditions,
+      reportSurfaceReopenEligible: Object.values(reportSurfaceReopenConditions).some(Boolean),
       bodyModalOpen: document.body.classList.contains("modal-open"),
       attachedToActivePortraitMode: portraitModeActive && Boolean(shell && !shell.hidden)
     };
