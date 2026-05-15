@@ -13570,11 +13570,13 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand {
   margin-right: 6px;
 }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand img {
-  width: clamp(96px, 28vw, 128px);
+  width: clamp(112px, 33vw, 146px);
   height: auto;
-  max-height: 22px;
+  max-width: 100%;
+  max-height: 26px;
   display: block;
   object-fit: contain;
+  object-position: left center;
   image-rendering: -webkit-optimize-contrast;
 }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-watch {
@@ -13596,7 +13598,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {
 }
 @media (max-width: 380px) {
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand img {
-    width: clamp(90px, 27vw, 112px);
-    max-height: 20px;
+    width: clamp(104px, 31vw, 128px);
+    max-height: 24px;
   }
 }
