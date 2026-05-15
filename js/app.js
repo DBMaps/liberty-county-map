@@ -207,11 +207,16 @@ let alternateRouteHazardCount = 0;
 let hazardsAvoidedCount = 0;
 const NETWORK_AUDIT_LOG_LIMIT = 10;
 const LOAD_SHARED_REPORTS_DEDUPE_MS = 1500;
+const POST_SUBMIT_REALTIME_SUPPRESS_MS = 2000;
+const POST_SUBMIT_INTERVAL_SUPPRESS_MS = 2000;
 const gridlyNetworkAuditState = {
   loadSharedReports: { count: 0, lastCalls: [], inFlight: false, inFlightPromise: null, lastByReason: {} },
   osrmNearest: { count: 0, lastCalls: [], inFlight: 0 },
   hazardSubmit: { lastLifecycle: null }
 };
+let suppressRealtimeRefreshUntil = 0;
+let suppressIntervalRefreshUntil = 0;
+let skipNextRealtimeRefresh = false;
 
 function pushAuditCall(bucket, reason, extra = {}) {
   const timestamp = Date.now();
@@ -3912,16 +3917,44 @@ window.gridlyClearLocalTestReports = function gridlyClearLocalTestReports() {
   return summary;
 };
 
-async function runPostSubmitRefresh() {
-  console.debug("Post-submit refresh started");
-  await loadSharedReports("post_submit_refresh");
-  refreshReportHazardViews();
-  console.debug("Post-submit refresh complete");
+function runPostSubmitRefreshInBackground(submitAudit, markSubmitStage) {
+  const startedAt = Date.now();
+  suppressRealtimeRefreshUntil = startedAt + POST_SUBMIT_REALTIME_SUPPRESS_MS;
+  suppressIntervalRefreshUntil = Math.max(suppressIntervalRefreshUntil, startedAt + POST_SUBMIT_INTERVAL_SUPPRESS_MS);
+  skipNextRealtimeRefresh = true;
+  markSubmitStage("background_refresh_started", { startedAt });
+  submitAudit.backgroundRefreshStartedAt = startedAt;
+  submitAudit.backgroundRefreshStartedIso = new Date(startedAt).toISOString();
+  console.debug("Post-submit refresh started in background");
+  loadSharedReports("post_submit_refresh")
+    .then(() => {
+      refreshReportHazardViews();
+      const completedAt = Date.now();
+      markSubmitStage("background_refresh_completed", { completedAt });
+      submitAudit.backgroundRefreshCompletedAt = completedAt;
+      submitAudit.backgroundRefreshDurationMs = completedAt - startedAt;
+      console.debug("Post-submit refresh complete");
+    })
+    .catch((error) => {
+      console.warn("Post-submit background refresh failed", error);
+      markSubmitStage("background_refresh_failed", { message: error?.message || "unknown_error" });
+      submitAudit.backgroundRefreshError = error?.message || "unknown_error";
+    });
 }
 
 async function loadSharedReports(reason = "manual") {
   const audit = gridlyNetworkAuditState.loadSharedReports;
   const now = pushAuditCall(audit, reason);
+  if (reason === "realtime_postgres_change" && skipNextRealtimeRefresh && now <= suppressRealtimeRefreshUntil) {
+    skipNextRealtimeRefresh = false;
+    return audit.inFlightPromise || null;
+  }
+  if (reason === "interval_live_refresh" && now <= suppressIntervalRefreshUntil) {
+    return audit.inFlightPromise || null;
+  }
+  if (reason === "post_submit_refresh") {
+    suppressIntervalRefreshUntil = Math.max(suppressIntervalRefreshUntil, now + POST_SUBMIT_INTERVAL_SUPPRESS_MS);
+  }
   const lastForReason = audit.lastByReason[reason] || 0;
   if (now - lastForReason < LOAD_SHARED_REPORTS_DEDUPE_MS) {
     return audit.inFlightPromise || null;
@@ -6255,9 +6288,6 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     });
     setSync("Hazard report shared");
 
-    markSubmitStage("post_submit_refresh_started");
-    await runPostSubmitRefresh();
-    markSubmitStage("post_submit_refresh_completed");
     updateReportingState({
       submissionInProgress: false,
       locationLookupInProgress: false,
@@ -6270,6 +6300,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     lastMobileReportSubmitDebug.postSubmitUiResetSucceeded = true;
     lastMobileReportSubmitDebug.lastSubmitAttempt = "ui_reset_complete";
     markSubmitStage("ui_reset_complete");
+    runPostSubmitRefreshInBackground(submitAudit, markSubmitStage);
     submitAudit.completedAt = Date.now();
     submitAudit.durationMs = submitAudit.completedAt - submitAudit.startedAt;
     gridlyNetworkAuditState.hazardSubmit.lastLifecycle = submitAudit;
