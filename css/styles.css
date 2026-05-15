@@ -13563,14 +13563,41 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar {
   padding: 6px 9px;
   border-color: rgba(164, 198, 236, 0.24);
   box-shadow: 0 5px 11px rgba(2, 8, 18, 0.24);
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-header-region {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-header-left {
+  justify-content: flex-start;
+  z-index: 2;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-header-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-header-right {
+  margin-left: auto;
+  justify-content: flex-end;
+  z-index: 2;
 }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand {
   min-width: 0;
   padding-top: 1px;
-  margin-right: 6px;
+  margin-right: 0;
 }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand img {
-  width: clamp(112px, 33vw, 146px);
+  width: clamp(114px, 33vw, 150px);
   height: auto;
   max-width: 100%;
   max-height: 26px;
@@ -13582,6 +13609,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand img {
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-watch {
   padding-top: 0;
   transform: translateY(0.5px);
+  white-space: nowrap;
 }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-watch span {
   font-size: 0.54rem;
@@ -13591,6 +13619,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-watch span {
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-icon-btn {
   width: 37px;
   height: 37px;
+  flex: 0 0 auto;
 }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail,
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {
