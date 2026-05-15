@@ -5787,17 +5787,20 @@ function openHazardPlacement(hazardType) {
   lastMobileReportSubmitDebug.lastSubmitAttempt = "tap_map_mode_selected";
   pendingHazardPlacement = hazardType || reportingState.selectedHazardType || selectedQuickHazardType || "other_hazard";
   selectedQuickHazardType = pendingHazardPlacement;
+  setReportMode(REPORT_MODES.roadHazard);
   updateReportingState({
     selectedHazardType: pendingHazardPlacement,
     placementModeActive: true,
+    reportModeActive: true,
     activeReportEntryPoint: "hazard_tap_map"
   });
+  if (typeof suppressGlobalMapPopupsUntil === "number") suppressGlobalMapPopupsUntil = Date.now() + 2500;
   updateReportingState({
     lastReportError: "",
-    lastReportMessage: "Tap the map to place report."
+    lastReportMessage: "Tap a road to place this hazard."
   });
   document.getElementById("gridlyHazardPanel")?.classList.remove("visible");
-  setConfirmation("Tap the map to place report.", "info");
+  setConfirmation("Tap a road to place this hazard.", "info");
 }
 
 async function handleHazardPlacementMapClick(event) {
@@ -5807,10 +5810,12 @@ async function handleHazardPlacementMapClick(event) {
   const lng = event?.latlng?.lng;
   if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
   const selectedType = pendingHazardPlacement || reportingState.selectedHazardType;
+  updateReportingState({ placementModeActive: false });
   lastMobileReportSubmitDebug.originalTapCoords = { lat, lng };
   lastMobileReportSubmitDebug.lastSubmitAttempt = "tap_captured";
   const snapped = await snapHazardToRoad(lat, lng, { source: "tap_map" });
   if (snapped.invalid) {
+    updateReportingState({ placementModeActive: true });
     lastRoadSnapDebug.rawHazardCoordinatesBlockedWhenInvalid = true;
     setConfirmation("Hazard location must be near a road. Tap closer to a roadway.", "error");
     updateReportingState({ lastReportError: "Tap closer to a road to place this hazard.", lastReportMessage: "" });
@@ -5821,7 +5826,10 @@ async function handleHazardPlacementMapClick(event) {
   lastMobileReportSubmitDebug.snapComplete = true;
   lastMobileReportSubmitDebug.lastSubmitAttempt = "snap_completed";
   const submitted = await createSharedHazardReport(selectedType, snapped.lat, snapped.lng, "tap map placement", "", snapped.originalTapCoords);
-  if (!submitted) return;
+  if (!submitted) {
+    updateReportingState({ placementModeActive: true });
+    return;
+  }
   if (map) {
     L.circleMarker([lat, lng], { radius: 4, color: "#8fb6ff", weight: 1, fillOpacity: 0.3, opacity: 0.8 })
       .addTo(unifiedIncidentLayer)
@@ -12027,14 +12035,18 @@ function getRoadPriorityWeight(incident = {}) {
 
 function buildCommunityConsequenceLabel(incident = {}, fallback = "Traffic slowing") {
   const towns = findTownMentions(incident);
-  const road = inferCorridorLabel(incident).replace(/ Corridor$/, "");
+  const road = normalizeCorridorBaseLabel(inferCorridorLabel(incident).replace(/ Corridor$/, ""));
   const type = String(incident?.report_type || incident?.type || "").toLowerCase();
+  const direction = inferDirectionalPhrase(incident);
+  const localSpot = buildLocalizedLocationPhrase(incident);
   if (towns.length >= 2) return `Traffic slowing between ${towns[0]} and ${towns[1]}`;
-  if (/blocked|crossing_blocked/.test(type) && /FM 1008/i.test(road)) return `Train blocking 1008 again${towns[0] ? ` near ${towns[0]}` : ""}`;
-  if (/blocked|crossing_blocked/.test(type) && /US 90/i.test(road)) return `Train causing backups on US 90${towns[0] ? ` into ${towns[0]}` : ""}`;
-  if (towns[0] && road && !/Other Nearby Hazards/i.test(road)) return `${road} backed up near ${towns[0]}`;
-  if (towns[0]) return `Delays reported near ${towns[0]}`;
-  if (road && !/Other Nearby Hazards/i.test(road)) return `Traffic slowing on ${road}`;
+  if (/blocked|crossing_blocked/.test(type) && /US 90/i.test(road)) return `Train blocking ${localSpot}${direction ? ` · ${direction} backups` : ""}`;
+  if (/blocked|crossing_blocked/.test(type) && /FM 1008/i.test(road)) return `Train reported at ${localSpot}${towns[0] ? ` into ${towns[0]}` : ""}`;
+  if (/flood/.test(type) && road) return `Flooding on ${localSpot}${direction ? ` · ${direction} traffic slowing` : ""}`;
+  if (/crash|wreck/.test(type) && road) return `Wreck slowing ${direction ? `${direction} ` : ""}${localSpot}`;
+  if (towns[0] && road && !/Other Nearby Hazards/i.test(road)) return `${direction ? `${direction} ` : ""}delays on ${road} into ${towns[0]}`;
+  if (towns[0]) return `${direction ? `${direction} ` : ""}delays into ${towns[0]}`;
+  if (road && !/Other Nearby Hazards/i.test(road)) return `${direction ? `${direction} ` : ""}traffic slowing on ${road}`;
   return fallback;
 }
 
@@ -12060,6 +12072,39 @@ function inferCorridorLabel(incident = {}) {
   const crossing = String(incident?.crossingName || incident?.area || "");
   if (/cross/i.test(crossing) || /cross/i.test(text)) return "Local crossing impact";
   return "Local road impact";
+}
+
+function inferDirectionalPhrase(incident = {}, context = {}) {
+  const heading = Number(context?.bearing);
+  if (Number.isFinite(heading)) {
+    if (heading >= 45 && heading < 135) return "eastbound";
+    if (heading >= 135 && heading < 225) return "southbound";
+    if (heading >= 225 && heading < 315) return "westbound";
+    return "northbound";
+  }
+  const text = `${incident?.title || ""} ${incident?.description || ""} ${incident?.area || ""}`.toLowerCase();
+  if (/\beastbound|\beb\b/.test(text)) return "eastbound";
+  if (/\bwestbound|\bwb\b/.test(text)) return "westbound";
+  if (/\bnorthbound|\bnb\b/.test(text)) return "northbound";
+  if (/\bsouthbound|\bsb\b/.test(text)) return "southbound";
+  return "";
+}
+
+function buildLocalizedLocationPhrase(incident = {}) {
+  const road = normalizeCorridorBaseLabel(inferCorridorLabel(incident).replace(/ Corridor$/, ""));
+  const rail = resolveRailLocationText({
+    crossingName: incident?.crossingName || incident?.area || "",
+    crossingId: incident?.crossing_id || incident?.crossingId || "",
+    latestReport: incident
+  });
+  const crossingName = String(rail?.crossingName || "").replace(/\s+crossing$/i, "").trim();
+  const town = findTownMentions(incident)[0] || String(incident?.city || incident?.area || "").trim();
+  if (road && crossingName) return `${road} at ${crossingName}`;
+  if (crossingName) return `${crossingName} crossing`;
+  if (road && town) return `${road} near ${town}`;
+  if (road) return road;
+  if (town) return `near ${town}`;
+  return "location pending";
 }
 
 function getCorridorHealthState(score = 0) {
