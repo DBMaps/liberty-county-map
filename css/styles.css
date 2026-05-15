@@ -13641,3 +13641,9 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {
     max-height: 24px;
   }
 }
+
+body[data-layout-mode="portrait"].popup-reporting-suppress-live-panel #reportSection.report-drawer[open] {
+  opacity: 0;
+  transform: translateY(16px);
+  pointer-events: none;
+}
