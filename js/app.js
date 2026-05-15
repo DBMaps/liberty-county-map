@@ -7038,7 +7038,7 @@ function bindEvents() {
     if (action === "open-manage-places-quick") {
       event.preventDefault();
       closeMobileRouteQuickPanel("manage_places");
-      openRouteSetupModalForType("manage");
+      openV2ManagePlacesAdapter("route_quick_panel");
       return;
     }
     if (action === "view-route-quick") {
@@ -7429,6 +7429,54 @@ function bindEvents() {
   highlightNearestCrossingOnFirstLoad();
 }
 
+
+
+const v1365ManagePlacesAdapterDebug = {
+  managePlacesActionHandled: false,
+  managePlacesTargetFound: false,
+  managePlacesFailureReason: "",
+  lastManagePlacesTriggerSource: ""
+};
+
+function openV2ManagePlacesAdapter(triggerSource = "unknown") {
+  v1365ManagePlacesAdapterDebug.managePlacesActionHandled = true;
+  v1365ManagePlacesAdapterDebug.lastManagePlacesTriggerSource = triggerSource || "unknown";
+  v1365ManagePlacesAdapterDebug.managePlacesTargetFound = false;
+  v1365ManagePlacesAdapterDebug.managePlacesFailureReason = "";
+
+  const canonicalFns = [
+    () => (typeof openRouteSetupModalForType === "function" ? openRouteSetupModalForType("manage") : false),
+    () => (typeof openRouteSetupModal === "function" ? openRouteSetupModal() : false)
+  ];
+
+  for (const invoke of canonicalFns) {
+    try {
+      const result = invoke();
+      if (result !== false) {
+        v1365ManagePlacesAdapterDebug.managePlacesTargetFound = true;
+        return true;
+      }
+    } catch (error) {
+      v1365ManagePlacesAdapterDebug.managePlacesFailureReason = String(error?.message || error || "canonical_manage_places_call_failed");
+    }
+  }
+
+  const selector = [
+    '#managePlacesBtn',
+    '[data-action="manage-saved-places"]',
+    '[data-mobile-surface-action="manage-places"]'
+  ].join(', ');
+  const btn = document.querySelector(selector);
+  if (btn && typeof btn.click === "function") {
+    btn.click();
+    v1365ManagePlacesAdapterDebug.managePlacesTargetFound = true;
+    return true;
+  }
+
+  v1365ManagePlacesAdapterDebug.managePlacesFailureReason = v1365ManagePlacesAdapterDebug.managePlacesFailureReason || "manage_places_target_missing";
+  setConfirmation("Manage Places is unavailable right now. Open Route Setup to manage Home, Work, and Favorites.", "error");
+  return false;
+}
 
 let lastRouteSetupTrigger = null;
 
@@ -14816,12 +14864,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       },
       "route-manage-places-open": () => {
         v1363RouteActionDebug.routeManagePlacesActionHandled = true;
-        const btn = document.getElementById("managePlacesBtn") || document.querySelector('[data-action="manage-saved-places"], [data-mobile-surface-action="manage-places"]');
-        if (btn) btn.click();
-        else {
-          v1363RouteActionDebug.lastRouteActionFailureReason = "manage_places_button_missing";
-          setConfirmation("Open Route and choose Saved Places to add Home/Work/Destination.", "error");
-          triggerV2DockAdapter("route-open");
+        const handled = openV2ManagePlacesAdapter("route_sheet");
+        if (!handled) {
+          v1363RouteActionDebug.lastRouteActionFailureReason = v1365ManagePlacesAdapterDebug.managePlacesFailureReason || "manage_places_target_missing";
         }
       },
       "alerts-open": () => document.getElementById("mobileDockAlertsBtn")?.click(),
@@ -15047,7 +15092,7 @@ const v134ReportingRefinementApplied = true;
       routeWatch:"route-watch-open", routePreview:"route-preview-open", routeManagePlaces:"route-manage-places-open",
       settingsHomeTown:"settings-home-town", settingsSavedPlaces:"settings-saved-places", settingsAlertPreferences:"settings-alert-preferences",
       settingsRoutePreferences:"settings-route-preferences", settingsAppPreferences:"settings-app-preferences", alertsManage:"alerts-manage-open"
-    }, adapterFallbackCount:v2DockAdapterState.adapterFallbackCount, lastDockActionTriggered:v2DockAdapterState.lastDockActionTriggered, lastDockAdapterTarget:v2DockAdapterState.lastDockAdapterTarget, adapterBridgeFailures:v2DockAdapterState.adapterBridgeFailures.slice(-8), v134ReportingRefinementApplied, v1341UnifiedReportSuccessLifecycleApplied, v1342ReportSurfaceOwnershipApplied, v1343PopupReportingPriorityApplied:true, v1344HardReportingSuppressionApplied:true, v1345ReportingMountFlashPrevented:true, liveReportingMountBypassed:Boolean(popupReportingLifecycleActive && liveReportingTemporarilySuppressed && liveReportingDrawerEl && !liveReportingDrawerEl.open), popupReportingLifecycleCleaned:Boolean(!popupReportingLifecycleActive || (liveReportingTemporarilySuppressed && lastSuccessSurfaceOwner === "crossing_popup")), transientReportingFlashEliminated:Boolean(!popupReportingLifecycleActive || (liveReportingDrawerEl && !liveReportingDrawerEl.open)), popupReportingExclusivityMaintained:Boolean(!popupReportingLifecycleActive || lastSuccessSurfaceOwner === "crossing_popup"), mapFirstCompletionFlowImproved:true, liveReportingDrawerFullySuppressed, popupReportingExclusiveOwnership:Boolean(!popupReportingLifecycleActive || (lastSuccessSurfaceOwner === "crossing_popup" && liveReportingDrawerFullySuppressed)), duplicateReportingUiEliminated:Boolean(!popupReportingLifecycleActive || (liveReportingDrawerFullySuppressed && !reportingState.submissionInProgress)), popupSuccessFlowCleanedUp:Boolean(!popupReportingLifecycleActive || (lastSuccessSurfaceOwner === "crossing_popup" && liveReportingDrawerFullySuppressed)), mapFirstReportingRestored:true, popupReportingSuppressionActive, popupReportingOwnsLifecycle:Boolean(lastSuccessSurfaceOwner === "crossing_popup" || popupReportingLifecycleActive), liveReportingCompetitionSuppressed:Boolean(!popupReportingLifecycleActive || liveReportingTemporarilySuppressed), duplicateReportingSurfacesReduced:Boolean(!popupReportingLifecycleActive || !reportingState.submissionInProgress), popupReportingComposureImproved:Boolean(!popupReportingLifecycleActive || (lastSuccessSurfaceOwner === "crossing_popup" && liveReportingTemporarilySuppressed)), mapFirstReportingFlowPreserved:true, liveReportingTemporarilySuppressed, liveReportingDrawerHiddenAt:liveReportingDrawerSuppressedAt||0, liveReportingDrawerRestoredAt:liveReportingDrawerRestoredAt||0, lastLiveReportingMountPreventedAt:liveReportingDrawerSuppressedAt||0, popupReportingDrawerBypassActive:Boolean(popupReportingLifecycleActive && liveReportingTemporarilySuppressed), lastPopupReportingStartedAt, lastPopupReportingCompletedAt, reportSuccessTimersUnified, reportSuccessLifecycleActive, reportSuccessHoldMs:REPORT_SUCCESS_HOLD_MS, reportSuccessFadeMs:REPORT_SUCCESS_FADE_MS, reportPopupCloseDelayMs:REPORT_POPUP_CLOSE_DELAY_MS, reportButtonSuccessMs:REPORT_BUTTON_SUCCESS_MS, duplicateSuccessTimersReduced, authoritativeSuccessSurfaceEstablished, popupCompetitionReduced, reportingSuccessLayoutRefined, stackedReportingStatesReduced, reportCompletionComposureImproved, lastSuccessSurfaceOwner, lastPopupClosedAt, lastReportingResetAt, lastReportSuccessStartedAt, lastReportSuccessCompletedAt, lastReportSuccessType, lastReportSuccessFlow, successStateCalmed, reportingHierarchyImproved, transientTimingRefined, overlayCompetitionReduced, reportSuccessClarityImproved, brandLogoHeight, brandLogoWidth, topbarHeight, v1352SurfaceContainmentApplied, v1353PresentationNormalizationApplied, v1354HazardPanelRootNormalized, v1355RedundantHazardPanelRemoved, v1356HazardSelectionKeepsSheetOpen:true, hazardTileSelectionNoClose:true, selectedHazardRequiresExplicitPlacement:true, v2HazardSelectionInline, legacyHazardPanelBypassed, selectedV2HazardType, v2HazardActionsWired, v1363HazardRoadSnapRestored:true, hazardPlacementUsesCanonicalSnap:Boolean(lastRoadSnapDebug?.hazardPlacementUsesCanonicalSnap), lastHazardPlacementSource:lastRoadSnapDebug?.lastHazardPlacementSource||null, lastHazardSnapResult:lastRoadSnapDebug?.lastHazardSnapResult||null, lastHazardSnapDistance:lastRoadSnapDebug?.snapDistanceMeters ?? null, rawHazardCoordinatesBlockedWhenInvalid:Boolean(lastRoadSnapDebug?.rawHazardCoordinatesBlockedWhenInvalid), hazardPanelRootV2SheetApplied, hazardPanelNoLongerFullHeight, hazardPanelDockClearancePreserved, hazardPanelLegacyTakeoverResolved, reportHazardV2PresentationApplied, routeQuickPanelV2PresentationApplied, closeButtonStandardized, bottomSheetPresentationConsistent, legacySurfaceVisualDriftReduced, legacyReportSurfaceSuppressed, legacyRouteSurfaceContained, legacyAlertsSurfaceContained, legacySettingsSurfaceContained, v2VisualOwnershipPreserved, oldPortraitUiNotRestored, v1362RouteSurfaceProductionized:true, placeholderRouteCopyRemoved, routeSurfaceShowsRealState, routeSheetVisualOwnershipMaintained:v2VisualOwnershipPreserved, routeIntentPresentationImproved:true, v1363RouteActionsRestored:true, routeDockClickHandled:v1363RouteActionDebug.routeDockClickHandled, routeWatchActionHandled:v1363RouteActionDebug.routeWatchActionHandled, routePreviewActionHandled:v1363RouteActionDebug.routePreviewActionHandled, routeManagePlacesActionHandled:v1363RouteActionDebug.routeManagePlacesActionHandled, lastRouteActionFailureReason:v1363RouteActionDebug.lastRouteActionFailureReason || null, currentRouteSurfaceState:routeSurfaceState.routeState, routeReadinessState:routeSurfaceState.readinessState, v1364RouteSnapshotPlacesShapeFixed:true, savedPlacesNormalizedForRouteSnapshot:Boolean(routeSurfaceState.savedPlacesNormalizedForRouteSnapshot), routeSnapshotNoThrow:Boolean(routeSurfaceState.routeSnapshotNoThrow), routeSnapshotPlaceCount:routeSurfaceState.savedPlaceCount, routeSnapshotPlacesShape:routeSurfaceState.savedPlacesShape || "missing", routeSheetMode:activeSheet === "route" ? "route_sheet_open" : "route_sheet_closed", visibleLegacySurfaceCount: legacySurfaceState.visibleCount, lastLegacySurfaceSuppressed: legacySurfaceState.lastSuppressed || null, lastNormalizedSurface: legacySurfaceState.lastSuppressed || null, visibleNonV2SurfaceCount: legacySurfaceState.visibleCount, activeV2SurfaceOwner: activeSheet || "dock", warnings};
+    }, adapterFallbackCount:v2DockAdapterState.adapterFallbackCount, lastDockActionTriggered:v2DockAdapterState.lastDockActionTriggered, lastDockAdapterTarget:v2DockAdapterState.lastDockAdapterTarget, adapterBridgeFailures:v2DockAdapterState.adapterBridgeFailures.slice(-8), v134ReportingRefinementApplied, v1341UnifiedReportSuccessLifecycleApplied, v1342ReportSurfaceOwnershipApplied, v1343PopupReportingPriorityApplied:true, v1344HardReportingSuppressionApplied:true, v1345ReportingMountFlashPrevented:true, liveReportingMountBypassed:Boolean(popupReportingLifecycleActive && liveReportingTemporarilySuppressed && liveReportingDrawerEl && !liveReportingDrawerEl.open), popupReportingLifecycleCleaned:Boolean(!popupReportingLifecycleActive || (liveReportingTemporarilySuppressed && lastSuccessSurfaceOwner === "crossing_popup")), transientReportingFlashEliminated:Boolean(!popupReportingLifecycleActive || (liveReportingDrawerEl && !liveReportingDrawerEl.open)), popupReportingExclusivityMaintained:Boolean(!popupReportingLifecycleActive || lastSuccessSurfaceOwner === "crossing_popup"), mapFirstCompletionFlowImproved:true, liveReportingDrawerFullySuppressed, popupReportingExclusiveOwnership:Boolean(!popupReportingLifecycleActive || (lastSuccessSurfaceOwner === "crossing_popup" && liveReportingDrawerFullySuppressed)), duplicateReportingUiEliminated:Boolean(!popupReportingLifecycleActive || (liveReportingDrawerFullySuppressed && !reportingState.submissionInProgress)), popupSuccessFlowCleanedUp:Boolean(!popupReportingLifecycleActive || (lastSuccessSurfaceOwner === "crossing_popup" && liveReportingDrawerFullySuppressed)), mapFirstReportingRestored:true, popupReportingSuppressionActive, popupReportingOwnsLifecycle:Boolean(lastSuccessSurfaceOwner === "crossing_popup" || popupReportingLifecycleActive), liveReportingCompetitionSuppressed:Boolean(!popupReportingLifecycleActive || liveReportingTemporarilySuppressed), duplicateReportingSurfacesReduced:Boolean(!popupReportingLifecycleActive || !reportingState.submissionInProgress), popupReportingComposureImproved:Boolean(!popupReportingLifecycleActive || (lastSuccessSurfaceOwner === "crossing_popup" && liveReportingTemporarilySuppressed)), mapFirstReportingFlowPreserved:true, liveReportingTemporarilySuppressed, liveReportingDrawerHiddenAt:liveReportingDrawerSuppressedAt||0, liveReportingDrawerRestoredAt:liveReportingDrawerRestoredAt||0, lastLiveReportingMountPreventedAt:liveReportingDrawerSuppressedAt||0, popupReportingDrawerBypassActive:Boolean(popupReportingLifecycleActive && liveReportingTemporarilySuppressed), lastPopupReportingStartedAt, lastPopupReportingCompletedAt, reportSuccessTimersUnified, reportSuccessLifecycleActive, reportSuccessHoldMs:REPORT_SUCCESS_HOLD_MS, reportSuccessFadeMs:REPORT_SUCCESS_FADE_MS, reportPopupCloseDelayMs:REPORT_POPUP_CLOSE_DELAY_MS, reportButtonSuccessMs:REPORT_BUTTON_SUCCESS_MS, duplicateSuccessTimersReduced, authoritativeSuccessSurfaceEstablished, popupCompetitionReduced, reportingSuccessLayoutRefined, stackedReportingStatesReduced, reportCompletionComposureImproved, lastSuccessSurfaceOwner, lastPopupClosedAt, lastReportingResetAt, lastReportSuccessStartedAt, lastReportSuccessCompletedAt, lastReportSuccessType, lastReportSuccessFlow, successStateCalmed, reportingHierarchyImproved, transientTimingRefined, overlayCompetitionReduced, reportSuccessClarityImproved, brandLogoHeight, brandLogoWidth, topbarHeight, v1352SurfaceContainmentApplied, v1353PresentationNormalizationApplied, v1354HazardPanelRootNormalized, v1355RedundantHazardPanelRemoved, v1356HazardSelectionKeepsSheetOpen:true, hazardTileSelectionNoClose:true, selectedHazardRequiresExplicitPlacement:true, v2HazardSelectionInline, legacyHazardPanelBypassed, selectedV2HazardType, v2HazardActionsWired, v1363HazardRoadSnapRestored:true, hazardPlacementUsesCanonicalSnap:Boolean(lastRoadSnapDebug?.hazardPlacementUsesCanonicalSnap), lastHazardPlacementSource:lastRoadSnapDebug?.lastHazardPlacementSource||null, lastHazardSnapResult:lastRoadSnapDebug?.lastHazardSnapResult||null, lastHazardSnapDistance:lastRoadSnapDebug?.snapDistanceMeters ?? null, rawHazardCoordinatesBlockedWhenInvalid:Boolean(lastRoadSnapDebug?.rawHazardCoordinatesBlockedWhenInvalid), hazardPanelRootV2SheetApplied, hazardPanelNoLongerFullHeight, hazardPanelDockClearancePreserved, hazardPanelLegacyTakeoverResolved, reportHazardV2PresentationApplied, routeQuickPanelV2PresentationApplied, closeButtonStandardized, bottomSheetPresentationConsistent, legacySurfaceVisualDriftReduced, legacyReportSurfaceSuppressed, legacyRouteSurfaceContained, legacyAlertsSurfaceContained, legacySettingsSurfaceContained, v2VisualOwnershipPreserved, oldPortraitUiNotRestored, v1362RouteSurfaceProductionized:true, placeholderRouteCopyRemoved, routeSurfaceShowsRealState, routeSheetVisualOwnershipMaintained:v2VisualOwnershipPreserved, routeIntentPresentationImproved:true, v1363RouteActionsRestored:true, routeDockClickHandled:v1363RouteActionDebug.routeDockClickHandled, routeWatchActionHandled:v1363RouteActionDebug.routeWatchActionHandled, routePreviewActionHandled:v1363RouteActionDebug.routePreviewActionHandled, routeManagePlacesActionHandled:v1363RouteActionDebug.routeManagePlacesActionHandled, lastRouteActionFailureReason:v1363RouteActionDebug.lastRouteActionFailureReason || null, v1365ManagePlacesAdapterRestored:true, managePlacesActionHandled:v1365ManagePlacesAdapterDebug.managePlacesActionHandled, managePlacesTargetFound:v1365ManagePlacesAdapterDebug.managePlacesTargetFound, managePlacesFailureReason:v1365ManagePlacesAdapterDebug.managePlacesFailureReason || null, lastManagePlacesTriggerSource:v1365ManagePlacesAdapterDebug.lastManagePlacesTriggerSource || null, currentRouteSurfaceState:routeSurfaceState.routeState, routeReadinessState:routeSurfaceState.readinessState, v1364RouteSnapshotPlacesShapeFixed:true, savedPlacesNormalizedForRouteSnapshot:Boolean(routeSurfaceState.savedPlacesNormalizedForRouteSnapshot), routeSnapshotNoThrow:Boolean(routeSurfaceState.routeSnapshotNoThrow), routeSnapshotPlaceCount:routeSurfaceState.savedPlaceCount, routeSnapshotPlacesShape:routeSurfaceState.savedPlacesShape || "missing", routeSheetMode:activeSheet === "route" ? "route_sheet_open" : "route_sheet_closed", visibleLegacySurfaceCount: legacySurfaceState.visibleCount, lastLegacySurfaceSuppressed: legacySurfaceState.lastSuppressed || null, lastNormalizedSurface: legacySurfaceState.lastSuppressed || null, visibleNonV2SurfaceCount: legacySurfaceState.visibleCount, activeV2SurfaceOwner: activeSheet || "dock", warnings};
   };
   document.addEventListener("DOMContentLoaded", bindV2);
 })();
