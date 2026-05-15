@@ -3835,6 +3835,7 @@ function shouldShowCrossingInLaunchMode(crossing) {
   return false;
 }
 function refreshReportHazardViews() {
+  refreshPortraitV2LocalizedIntelligence();
   renderAlerts();
   renderRoadHazards();
   renderTrendingCrossings();
@@ -11967,6 +11968,15 @@ function buildUnifiedLocalizedCommuteIntelligence({ limit = 6 } = {}) {
   };
 }
 
+function refreshPortraitV2LocalizedIntelligence() {
+  const topPrimaryEl = document.getElementById("gridlyV2TopStatusPrimary");
+  const topSecondaryEl = document.getElementById("gridlyV2TopStatusSecondary");
+  if (!topPrimaryEl && !topSecondaryEl) return;
+  const intel = buildUnifiedLocalizedCommuteIntelligence({ limit: 6 });
+  if (topPrimaryEl) topPrimaryEl.textContent = intel.topStatus;
+  if (topSecondaryEl) topSecondaryEl.textContent = intel.hasActiveAlerts ? intel.nearbySummary : "No major disruptions nearby";
+}
+
 function renderRoadHazards() {
   if (!els.roadHazardsList) return;
   const hazards = getRoadHazardSurfaceIncidents(3);
@@ -14915,18 +14925,19 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
   function buildAlertsSurfaceHtml() {
     const alerts = getAlertsSurfaceSnapshot();
-    const commuteStatus = alerts.hasActiveAlerts ? alerts.routeImpactSummary : "Routes currently clear";
-    const nearbyActivity = alerts.hasActiveAlerts ? alerts.nearbySummary : "No major disruptions nearby";
-    const recentReports = alerts.recentHazardCount > 0
-      ? `${alerts.recentHazardCount} localized crossing disruption${alerts.recentHazardCount === 1 ? "" : "s"} in the last hour`
-      : "No recent crossing disruptions";
+    const commuteStatus = alerts.hasActiveAlerts ? alerts.topStatus : "Routes currently clear";
+    const nearbyActivity = alerts.hasActiveAlerts ? alerts.routeImpactSummary : "No major disruptions nearby";
+    const localizedRows = alerts.localizedIntelligenceSummaries.length
+      ? alerts.localizedIntelligenceSummaries.map((summary) => `<li>${sanitizeText(summary)}</li>`).join("")
+      : "<li>Routes currently clear</li>";
     const preferenceState = alerts.readinessSummary
       .replace("Alert preferences are on for this device", "Alerts active for this device")
       .replace("Alert preferences are off — turn on to receive commute alerts", "Alerts are off for this device");
     return `<div class="gridly-v2-list">
       <p class="gridly-v2-sheet-copy"><strong>Commute Status</strong><br>${commuteStatus}</p>
       <p class="gridly-v2-sheet-copy"><strong>Nearby Activity</strong><br>${nearbyActivity}</p>
-      <p class="gridly-v2-sheet-copy"><strong>Recent Reports</strong><br>${recentReports}</p>
+      <p class="gridly-v2-sheet-copy"><strong>Localized Alerts</strong></p>
+      <ul class="gridly-v2-sheet-copy">${localizedRows}</ul>
       <p class="gridly-v2-sheet-copy"><strong>Preferences</strong><br>${preferenceState}</p>
       <p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p>
       <button class="primary-btn" data-v2-action="alerts-open" type="button">Nearby Delays</button>
