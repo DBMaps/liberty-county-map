@@ -11990,6 +11990,54 @@ function inferConsequenceTrend({ activeItems = [], recentlyClearedCount = 0 } = 
 }
 
 
+
+const LOCAL_PRIORITY_ROAD_WEIGHTS = {
+  "US 90": 180,
+  "TX 146": 160,
+  "FM 1409": 135,
+  "FM 1008": 140,
+  "TX 321": 125
+};
+const LOCAL_TOWN_NAMES = ["Dayton", "Liberty", "Cleveland", "Ames", "Hull", "Hardin", "Daisetta", "Moss Hill", "Raywood", "Devers", "Kenefick", "Plum Grove"];
+
+function normalizeRoadShorthand(text = "") {
+  return String(text || "")
+    .replace(/\bHwy\s*146\b/gi, "TX 146")
+    .replace(/\bHighway\s*146\b/gi, "TX 146")
+    .replace(/\bUS[-\s]?90\b/gi, "US 90")
+    .replace(/\bFM[-\s]?1409\b/gi, "FM 1409")
+    .replace(/\bFM[-\s]?1008\b/gi, "FM 1008")
+    .replace(/\bTX[-\s]?321\b/gi, "TX 321");
+}
+
+function findTownMentions(incident = {}) {
+  const hay = `${incident?.title || ""} ${incident?.description || ""} ${incident?.area || ""} ${incident?.city || ""}`;
+  return LOCAL_TOWN_NAMES.filter((town) => new RegExp(`\\b${town}\\b`, "i").test(hay));
+}
+
+function getRoadPriorityWeight(incident = {}) {
+  const hay = normalizeRoadShorthand(`${incident?.title || ""} ${incident?.description || ""} ${incident?.area || ""} ${incident?.road_name || ""}`);
+  if (/\bUS\s*90\b/i.test(hay)) return LOCAL_PRIORITY_ROAD_WEIGHTS["US 90"];
+  if (/\b(?:TX\s*)?146\b/i.test(hay)) return LOCAL_PRIORITY_ROAD_WEIGHTS["TX 146"];
+  if (/\bFM\s*1409\b/i.test(hay)) return LOCAL_PRIORITY_ROAD_WEIGHTS["FM 1409"];
+  if (/\bFM\s*1008\b/i.test(hay)) return LOCAL_PRIORITY_ROAD_WEIGHTS["FM 1008"];
+  if (/\bTX\s*321\b/i.test(hay)) return LOCAL_PRIORITY_ROAD_WEIGHTS["TX 321"];
+  return 20;
+}
+
+function buildCommunityConsequenceLabel(incident = {}, fallback = "Traffic slowing") {
+  const towns = findTownMentions(incident);
+  const road = inferCorridorLabel(incident).replace(/ Corridor$/, "");
+  const type = String(incident?.report_type || incident?.type || "").toLowerCase();
+  if (towns.length >= 2) return `Traffic slowing between ${towns[0]} and ${towns[1]}`;
+  if (/blocked|crossing_blocked/.test(type) && /FM 1008/i.test(road)) return `Train blocking 1008 again${towns[0] ? ` near ${towns[0]}` : ""}`;
+  if (/blocked|crossing_blocked/.test(type) && /US 90/i.test(road)) return `Train causing backups on US 90${towns[0] ? ` into ${towns[0]}` : ""}`;
+  if (towns[0] && road && !/Other Nearby Hazards/i.test(road)) return `${road} backed up near ${towns[0]}`;
+  if (towns[0]) return `Delays reported near ${towns[0]}`;
+  if (road && !/Other Nearby Hazards/i.test(road)) return `Traffic slowing on ${road}`;
+  return fallback;
+}
+
 function normalizeCorridorBaseLabel(label = "") {
   const raw = String(label || "").trim();
   if (!raw) return "";
@@ -12008,10 +12056,10 @@ function inferCorridorLabel(incident = {}) {
   const text = `${incident?.title || ""} ${incident?.description || ""} ${incident?.area || ""}`;
   const normalizedText = normalizeCorridorBaseLabel(text);
   const match = normalizedText.match(/(US\s*\d+|TX\s*\d+|FM\s*\d+)/i);
-  if (match) return `${normalizeCorridorBaseLabel(match[1])} Corridor`;
+  if (match) return `${normalizeCorridorBaseLabel(normalizeRoadShorthand(match[1]))} Corridor`;
   const crossing = String(incident?.crossingName || incident?.area || "");
-  if (/cross/i.test(crossing) || /cross/i.test(text)) return "Other Nearby Hazards";
-  return "Other Nearby Hazards";
+  if (/cross/i.test(crossing) || /cross/i.test(text)) return "Local crossing impact";
+  return "Local road impact";
 }
 
 function getCorridorHealthState(score = 0) {
@@ -12074,10 +12122,12 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     const routeRelevant = isIncidentRouteRelevant(incident, routeHazard);
     const routeScore = routeRelevant ? 85 : 0;
     const clusterScore = confirmations >= 3 ? 14 : 0;
-    const priorityScore = typeScore + sevScore + freshnessScore + confirmationScore + routeScore + clusterScore;
+    const roadPriorityWeight = getRoadPriorityWeight(incident);
+    const townWeight = Math.min(40, findTownMentions(incident).length * 20);
+    const priorityScore = typeScore + sevScore + freshnessScore + confirmationScore + routeScore + clusterScore + roadPriorityWeight + townWeight;
     const minutesText = Number.isFinite(ageMinutes) ? `${Math.max(0, Math.round(ageMinutes))}m ago` : "just now";
     const etaImpact = routeRelevant && sevScore >= 62 ? Math.max(6, Math.min(24, Math.round((typeScore + sevScore) / 15))) : 0;
-    return { incident, routeRelevant, priorityScore, localizedSummary: localizedLabel || incident?.title || "Localized disruption", minutesText, ageMinutes, etaImpact };
+    return { incident, routeRelevant, priorityScore, localizedSummary: buildCommunityConsequenceLabel(incident, localizedLabel || incident?.title || "Traffic slowing"), minutesText, ageMinutes, etaImpact };
   }).sort((a, b) => b.priorityScore - a.priorityScore);
 
   const routeImpactItems = intelItems.filter((item) => item.routeRelevant);
@@ -12091,16 +12141,16 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   const topPrimaryByTier = {
     clear: "Routes currently clear",
     minor: "Routes currently clear",
-    moderate: trendState === "worsening" ? "Delays building on primary corridor" : "Primary corridor slowing",
-    heavy: routeImpactItems.length ? "Route Watch impacted" : "Primary corridor disrupted",
-    severe: routeImpactItems.length ? "Alternate route recommended" : "Crossing blockage confirmed"
+    moderate: trendState === "worsening" ? "Delays building into Dayton" : "Traffic slowing near Liberty",
+    heavy: routeImpactItems.length ? "Your route is slowing near Liberty" : "US 90 backed up near Dayton",
+    severe: routeImpactItems.length ? "Alternate route recommended" : "Train blocking US 90"
   };
 
   const topSecondary = top ? `${top.localizedSummary}${top.etaImpact ? ` • +${top.etaImpact}m` : ""}` : "Routes currently clear";
   const consequencePrimaryMessage = routeWatchActivated && routeImpactItems.length >= 2
     ? `${routeImpactItems.length} disruptions affecting your route`
     : topPrimaryByTier[consequenceTier];
-  const trendMessage = trendState === "worsening" ? "Corridor delays increasing" : trendState === "improving" ? "Corridor conditions improving" : trendState === "stable" ? "Operational corridor watch active" : "Routes currently clear";
+  const trendMessage = trendState === "worsening" ? "Delays building across town routes" : trendState === "improving" ? "Traffic easing on major roads" : trendState === "stable" ? "Live local commute watch active" : "Routes currently clear";
   const lastTopType = String(top?.incident?.report_type || top?.incident?.type || "").toLowerCase() || null;
   v1381CrossingClassificationDebug = {
     v1381CrossingClassificationFixed: true,
@@ -12121,11 +12171,11 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     corridorClusters,
     highestPriorityCorridor: highestPriorityCorridor?.label || null,
     corridorSeverityMap: corridorClusters.reduce((acc, corridor) => { acc[corridor.label] = corridor.healthState; return acc; }, {}),
-    topStatus: highestPriorityCorridor ? `${highestPriorityCorridor.healthState.replace(/^./, (c) => c.toUpperCase())} on ${highestPriorityCorridor.label.replace(/ Corridor$/, "")}` : (top ? top.localizedSummary : "Routes currently clear"),
+    topStatus: highestPriorityCorridor ? buildCommunityConsequenceLabel(highestPriorityCorridor.items?.[0]?.incident || {}, `${highestPriorityCorridor.label.replace(/ Corridor$/, "")} moving with caution`) : (top ? top.localizedSummary : "US 90 moving normally"),
     commuteImpactHeadline: consequencePrimaryMessage,
     topStatusLocalizedDetail: topSecondary,
     nearbySummary: topSecondary,
-    routeImpactSummary: routeImpactItems.length > 0 ? `${routeImpactItems.length} disruptions affecting Route Watch` : "Routes currently clear",
+    routeImpactSummary: routeImpactItems.length > 0 ? `Expect delays into Dayton · ${routeImpactItems.length} route impact${routeImpactItems.length === 1 ? "" : "s"}` : "Route into Liberty moving normally",
     hasActiveAlerts: intelItems.length > 0,
     activeLocalizedAlertCount: intelItems.length,
     routeImpactIncidentCount: routeImpactItems.length,
@@ -14274,11 +14324,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const roadHazards = getRoadHazardSurfaceIncidents(12).filter((incident) => incident?.status === "active" || !incident?.status);
     const floodingOrCrash = roadHazards.filter((incident) => ["crash", "flooding"].includes(String(incident?.type || "").toLowerCase()));
     const blockages = incidents.filter((incident) => String(incident?.report_type || incident?.type || "").toLowerCase().includes("blocked"));
-    if (!incidents.length) return "No severe disruptions nearby. Network conditions are currently stable.";
-    if (high.length >= 2) return `${high.length} high-priority incidents need reroute awareness.`;
-    if (blockages.length >= 2) return "Repeated blockage activity detected across active corridors.";
-    if (floodingOrCrash.length) return `${floodingOrCrash.length} road safety hazard${floodingOrCrash.length > 1 ? "s" : ""} reported nearby.`;
-    return `${incidents.length} active incident${incidents.length > 1 ? "s" : ""} in your operating area.`;
+    if (!incidents.length) return "US 90 moving normally and roads around Dayton are clear.";
+    if (high.length >= 2) return `Delays building into Dayton. Consider an alternate route.`;
+    if (blockages.length >= 2) return "Train and crossing blockages are stacking up on major roads.";
+    if (floodingOrCrash.length) return `${floodingOrCrash.length} road safety issue${floodingOrCrash.length > 1 ? "s" : ""} slowing local traffic.`;
+    return `${incidents.length} active issue${incidents.length > 1 ? "s" : ""} affecting local commutes.`;
   }
 
   function prepQuickReportType(type = "blocked") {
@@ -15101,10 +15151,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const recommendation = sanitizeText(intel.rerouteReadinessDetected
       ? `Avoid ${primaryCorridor?.label || "primary corridor"}`
       : alerts.hasActiveAlerts
-        ? "Monitor Conditions"
+        ? "Watch US 90"
         : "Route Clear");
 
-    const primaryLabel = sanitizeText(primaryCorridor?.label || "Countywide");
+    const primaryLabel = sanitizeText((primaryCorridor?.label || "US 90").replace(" Corridor", ""));
     const primaryState = sanitizeText((primaryCorridor?.healthState || "clear").replace(/_/g, " ").toUpperCase());
     const primarySummary = sanitizeText(primaryCorridor?.summary || (alerts.hasActiveAlerts ? alerts.routeImpactSummary : "Traffic moving normally"));
     const primaryCount = Number(primaryCorridor?.incidentCount || 0);
@@ -15113,8 +15163,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       .join("");
 
     const secondaryHtml = secondaryCorridors.length
-      ? secondaryCorridors.map((corridor) => `<div class="gridly-v2-secondary-item"><strong>${sanitizeText(corridor.label)}</strong><span>${sanitizeText(corridor.summary || "Watch conditions")}</span></div>`).join("")
-      : `<div class="gridly-v2-secondary-item"><strong>No secondary delays</strong><span>Other corridors are currently clear.</span></div>`;
+      ? secondaryCorridors.map((corridor) => `<div class="gridly-v2-secondary-item"><strong>${sanitizeText((corridor.label || "").replace(" Corridor", ""))}</strong><span>${sanitizeText(corridor.summary || "Traffic moving normally")}</span></div>`).join("")
+      : `<div class="gridly-v2-secondary-item"><strong>Local roads steady</strong><span>Major commuter roads are moving normally.</span></div>`;
 
     const clearedHtml = recentlyCleared.length
       ? recentlyCleared.map((item) => `<li>${sanitizeText(item.localizedSummary || item.topLine || "Conditions improving")}</li>`).join("")
