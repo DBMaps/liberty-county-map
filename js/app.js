@@ -11079,6 +11079,7 @@ function getLiveCommuteSignalLine({ impact = 0, urgentBlockedCount = 0, recommen
 }
 
 function updateDailyHabitStatus() {
+  const localizedIntel = buildUnifiedLocalizedCommuteIntelligence({ limit: 5 });
   const unifiedActive = getUnifiedIncidents().filter((incident) => incident.status === "active");
   const railActive = unifiedActive.filter((incident) => incident.type.startsWith("rail_"));
   const activeIssues = railActive;
@@ -11092,20 +11093,20 @@ function updateDailyHabitStatus() {
   )[0];
 
   let pill = "All Clear";
-  let headline = "0 active reports · 0 crossings impacted";
-  let detail = "No active community-reported hazards right now.";
+  let headline = "Routes currently clear";
+  let detail = "No major disruptions nearby.";
   let cardClass = "clear";
 
   if (highIssues.length > 0) {
     pill = "Major Delay Active";
-    headline = `${highIssues.length} high-impact alert${highIssues.length === 1 ? "" : "s"} · ${activeCount} active report${activeCount === 1 ? "" : "s"}`;
+    headline = localizedIntel.topStatus;
     detail = freshest
       ? `${freshest.crossingName} reported ${freshest.minutesAgo} min ago · ${confirmationCount} live confirmation${confirmationCount === 1 ? "" : "s"}.`
       : `High-impact shared reports are active · ${confirmationCount} live confirmation${confirmationCount === 1 ? "" : "s"}.`;
     cardClass = "high";
   } else if (moderateIssues.length > 0 || activeIssues.length > 0) {
     pill = "Use Caution";
-    headline = `${activeCount} active report${activeCount === 1 ? "" : "s"} · ${moderateIssues.length} moderate impact`;
+    headline = localizedIntel.topStatus;
     detail = freshest
       ? `${freshest.crossingName} updated ${freshest.minutesAgo} min ago · ${confirmationCount} live confirmation${confirmationCount === 1 ? "" : "s"}.`
       : `There is live report activity · ${confirmationCount} live confirmation${confirmationCount === 1 ? "" : "s"}.`;
@@ -11933,6 +11934,39 @@ function getRoadHazardSurfaceIncidents(limit = 3) {
     .slice(0, limit);
 }
 
+function buildUnifiedLocalizedCommuteIntelligence({ limit = 6 } = {}) {
+  const routeHazard = routeWatchActivated ? getRouteHazardAssessment() : null;
+  const activeIncidents = getActiveUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "active");
+  const severityWeight = { high: 120, moderate: 85, medium: 85, low: 45 };
+  const intelItems = activeIncidents.map((incident) => {
+    const roadDisplay = buildRoadHazardDisplay(incident);
+    const locationText = roadDisplay?.title || incident?.title || "Localized disruption";
+    const ageMinutes = Number(incident?.age_minutes);
+    const freshnessScore = Number.isFinite(ageMinutes) ? Math.max(0, 50 - Math.min(45, ageMinutes)) : 20;
+    const confirmationScore = Math.min(26, Number(incident?.reports_count || 1) * 4);
+    const routeRelevant = isIncidentRouteRelevant(incident, routeHazard);
+    const routeScore = routeRelevant ? 70 : 0;
+    const severityScore = severityWeight[String(incident?.severity || "low")] || 30;
+    const priorityScore = severityScore + freshnessScore + confirmationScore + routeScore;
+    const etaText = routeRelevant && severityScore >= 85 ? " • ETA +12m" : "";
+    const minutesText = Number.isFinite(ageMinutes) ? `${Math.max(0, Math.round(ageMinutes))}m ago` : "just now";
+    return { incident, routeRelevant, priorityScore, localizedSummary: `${locationText}${etaText}`, minutesText };
+  }).sort((a, b) => b.priorityScore - a.priorityScore);
+  const top = intelItems[0] || null;
+  const routeImpactItems = intelItems.filter((item) => item.routeRelevant);
+  return {
+    items: intelItems.slice(0, limit),
+    topStatus: top ? top.localizedSummary : "Routes currently clear",
+    nearbySummary: top ? `${top.localizedSummary} • ${top.minutesText}` : "No major disruptions nearby",
+    routeImpactSummary: routeImpactItems.length > 0
+      ? `${routeImpactItems.length} active hazard${routeImpactItems.length === 1 ? "" : "s"} affecting Route Watch`
+      : "Routes currently clear",
+    hasActiveAlerts: intelItems.length > 0,
+    activeLocalizedAlertCount: intelItems.length,
+    routeImpactIncidentCount: routeImpactItems.length
+  };
+}
+
 function renderRoadHazards() {
   if (!els.roadHazardsList) return;
   const hazards = getRoadHazardSurfaceIncidents(3);
@@ -12005,17 +12039,7 @@ function renderAlerts() {
     return;
   }
 
-  const prioritized = incidents
-    .slice()
-    .sort((a, b) => {
-      const severityScore = (incident) => {
-        if (incident?.severity === "high") return 3;
-        if (incident?.severity === "medium" || incident?.severity === "moderate") return 2;
-        return 1;
-      };
-      return severityScore(b) - severityScore(a) || new Date(b.updated_at || 0) - new Date(a.updated_at || 0);
-    })
-    .slice(0, 6);
+  const prioritized = buildUnifiedLocalizedCommuteIntelligence({ limit: 6 }).items.map((item) => item.incident);
 
   els.alertsList.innerHTML = prioritized
     .map((incident) => {
@@ -14868,14 +14892,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const newestMinutes = Number.isFinite(new Date(top?.created_at || top?.updated_at || 0).getTime())
       ? Math.max(0, Math.round((Date.now() - new Date(top?.created_at || top?.updated_at).getTime()) / 60000))
       : Number.NaN;
-    const nearbySummary = activeIncidentCount > 0
-      ? `${activeIncidentCount} active delay${activeIncidentCount === 1 ? "" : "s"} nearby${Number.isFinite(newestMinutes) ? ` · newest ${Math.max(0, Math.round(newestMinutes))} min ago` : ""}`
-      : "No active delays nearby";
-    const routeImpactSummary = highImpactCount > 0
-      ? `${highImpactCount} high-impact route alert${highImpactCount === 1 ? "" : "s"}`
-      : activeIncidentCount > 0
-        ? `${watchCount} route watch update${watchCount === 1 ? "" : "s"}`
-        : "Routes currently clear";
+    const unifiedIntel = buildUnifiedLocalizedCommuteIntelligence({ limit: 8 });
+    const nearbySummary = unifiedIntel.nearbySummary;
+    const routeImpactSummary = unifiedIntel.routeImpactSummary;
     const readinessSummary = prefs.enabled
       ? "Alert preferences are on for this device"
       : "Alert preferences are off — turn on to receive commute alerts";
@@ -14887,15 +14906,19 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       recentHazardCount,
       clearedCount,
       hasActiveAlerts: activeIncidentCount > 0,
-      routeState: route.routeState
+      routeState: route.routeState,
+      topStatus: unifiedIntel.topStatus,
+      localizedIntelligenceSummaries: unifiedIntel.items.map((item) => `${item.localizedSummary} • ${item.minutesText}`),
+      activeLocalizedAlertCount: unifiedIntel.activeLocalizedAlertCount,
+      routeImpactIncidentCount: unifiedIntel.routeImpactIncidentCount
     };
   }
   function buildAlertsSurfaceHtml() {
     const alerts = getAlertsSurfaceSnapshot();
     const commuteStatus = alerts.hasActiveAlerts ? alerts.routeImpactSummary : "Routes currently clear";
-    const nearbyActivity = alerts.hasActiveAlerts ? alerts.nearbySummary : "No active delays nearby";
+    const nearbyActivity = alerts.hasActiveAlerts ? alerts.nearbySummary : "No major disruptions nearby";
     const recentReports = alerts.recentHazardCount > 0
-      ? `${alerts.recentHazardCount} crossing disruption${alerts.recentHazardCount === 1 ? "" : "s"} in the last hour`
+      ? `${alerts.recentHazardCount} localized crossing disruption${alerts.recentHazardCount === 1 ? "" : "s"} in the last hour`
       : "No recent crossing disruptions";
     const preferenceState = alerts.readinessSummary
       .replace("Alert preferences are on for this device", "Alerts active for this device")
@@ -15375,9 +15398,11 @@ const v134ReportingRefinementApplied = true;
     const placeholderRouteCopyRemoved = !routeSheetText.includes("Route Watch adapters now open canonical route flows.");
     const alertsSheetText = ((document.getElementById("gridlyPortraitV2SheetBody")?.textContent) || "").toLowerCase();
     const alertsSnapshot = getAlertsSurfaceSnapshot();
+    const localizedIntel = buildUnifiedLocalizedCommuteIntelligence({ limit: 6 });
+    const localizedNamedRoadExtractionEnabled = localizedIntel.items.some((item) => /\b(on|near)\b/i.test(item.localizedSummary));
     const placeholderAlertsCopyRemoved = !alertsSheetText.includes("adapter") && !alertsSheetText.includes("canonical flow") && !alertsSheetText.includes("intelligence rendering");
     const routeSurfaceShowsRealState = routeSheetText.includes("Start:") && routeSheetText.includes("Destination:") && routeSheetText.includes("Readiness:");
-    return {v2Exists:Boolean(v2),v2Visible:Boolean(v2&&getComputedStyle(v2).display!=="none"),activeSheet,sheetOpen:!document.getElementById("gridlyPortraitV2Sheet")?.hidden,dockButtonsFound:document.querySelectorAll(".gridly-v2-bottom-dock button").length,controlRailFound:Boolean(document.querySelector(".gridly-v2-control-rail")),legacyPortraitHidden:legacyHidden,duplicateZoomControlsVisible,duplicateFilterStripsVisible,v2IconsApplied,legacyControlsHidden,mapContainerFound:Boolean(document.getElementById("map")),layoutMode:mode, popupV2Styled, popupViewportSafe, filterStripBalanced, popupViewportCentered, popupAutoPanApplied, popupCameraPanApplied, popupAnchorMode, popupLastMarkerScreenPoint, popupLastSafeTargetPoint, popupClippedAfterOpen, popupViewportBounds, popupAutoPanSequenced, popupBlinkResolved, lastPopupTapAt:gridlyPopupLastTapAt, lastPopupOpenAt:gridlyPopupLastOpenAt, pendingPopupToken:window.__gridlyPopupPanSession?.token||null, popupOpenCount:gridlyPopupOpenCount, popupCancelCount:gridlyPopupCancelCount, popupLastFailureReason:gridlyPopupLastFailureReason||null, popupReopenReady:gridlyPopupReopenReady, popupSingleTapFlowReady:gridlyPopupSingleTapFlowReady, popupSingleTapGuaranteed:gridlyPopupSingleTapGuaranteed, lastPopupTapCrossingId:gridlyLastPopupTapCrossingId, lastPopupPanStartedAt:gridlyLastPopupPanStartedAt, lastPopupMoveEndAt:gridlyLastPopupMoveEndAt, lastPopupFallbackFiredAt:gridlyLastPopupFallbackFiredAt, lastPopupScheduledDelay:gridlyLastPopupScheduledDelay, lastPopupTimerFiredAt:gridlyLastPopupTimerFiredAt, lastPopupFinalizeReason:gridlyLastPopupFinalizeReason, popupLastClickCrossingId:gridlyLastPopupTapCrossingId, popupLastFinalizeAttemptAt:gridlyPopupLastFinalizeAttemptAt, popupLastOpenCallAt:gridlyPopupLastOpenCallAt, popupLastOpenMethod:gridlyPopupLastOpenMethod, popupOpenCallCount:gridlyPopupOpenCount, popupEarlyReturnReason:gridlyPopupEarlyReturnReason||null, popupPaneCount:document.querySelectorAll(".leaflet-popup-pane .leaflet-popup").length, popupDomExists:Boolean(document.querySelector(".leaflet-popup")), popupInterferenceEventSeen:gridlyPopupInterferenceEventSeen, routeWatchAllClickedDuringPopupTap:gridlyRouteWatchAllClickedDuringPopupTap, duplicateMarkerClickCount:gridlyDuplicateMarkerClickCount, markerClickHandlerGuardApplied:gridlyMarkerClickHandlerGuardApplied, compactBrandApplied, compactHeaderRefined, typographyPassApplied, spacingRhythmPassApplied, surfacePolishApplied, iconConsistencyPassApplied, sheetProductizationApplied, mapBreathingRoomApplied, iconSystemUnified, dockIconSystemUnified, railIconSystemUnified, iconSystemReferenceAligned, iconSystemHarmonized, dockRefinementApplied, utilityControlConsistencyApplied, headerFoundationApplied, surfaceRestraintApplied, opticalAlignmentPassApplied, v1321FinalTighteningApplied, headerStatusCohesionApplied, filterDensityTuned, dockOpticalFinalized, mapFirstBalancePreserved, microAlignmentQaApplied, v1322TypographyEasingApplied, topHeaderTypographyRefined, filterStripEased, topStackCalmnessApplied, microTypographyConsistencyApplied, mapDominancePreserved, v133BrandFoundationApplied, headerIdentitySystemApplied, gridlyMarkFoundationApplied, wordmarkPolished, brandRestraintMaintained, iconBrandRelationshipAligned, v1331RealBrandAssetsIntegrated, compactResponsiveBrandVariantApplied, faviconValidated, appIconsValidated, temporaryBrandLayersRemoved, brandProductionIntegrationComplete, v1332UltraCompactHeaderApplied, headerBrandFitmentComplete, compactLogoOpticsBalanced, mapFirstBrandRestraintMaintained, legacyWideLogoRemoved, productionHeaderIdentityFinalized, v1333LogoSizingCorrected, ultraCompactLogoReadable, headerBrandScaleBalanced, headerHeightPreserved, v1334IndependentHeaderLayoutApplied, centeredWatchLabelIndependent, logoNoLongerConstrainsHeader, utilityControlIndependentlyAligned, compactHeaderLayoutPreserved, finalHeaderFitmentResolved, v1335HeaderSimplified, redundantTopUtilityRemoved, logoWatchAlignmentApplied, headerVisualCompetitionReduced, compactHeaderCalmnessImproved, bottomSettingsAccessPreserved, v1351DockAdaptersApplied, reportDockProductionWired, routeDockProductionWired, alertsDockProductionWired, settingsDockProductionWired, v2ShellParityImproved, v1370ViewRouteBehaviorCorrected:Boolean(v1370ViewRouteDebugState.v1370ViewRouteBehaviorCorrected), activeRouteDetectedForPreview:Boolean(v1370ViewRouteDebugState.activeRouteDetectedForPreview), routePreviewOpenedWithoutSetup:Boolean(v1370ViewRouteDebugState.routePreviewOpenedWithoutSetup), setupFlowAvoidedForActiveRoute:Boolean(v1370ViewRouteDebugState.setupFlowAvoidedForActiveRoute), lastViewRouteBehavior:v1370ViewRouteDebugState.lastViewRouteBehavior||"", activeRouteGeometryPresent:Boolean(v1370ViewRouteDebugState.activeRouteGeometryPresent), routePreviewFocusApplied:Boolean(v1370ViewRouteDebugState.routePreviewFocusApplied), viewRouteFallbackReason:v1370ViewRouteDebugState.viewRouteFallbackReason||"", v1361IntentSplitApplied:true, routeIntentAdaptersSplit:true, settingsIntentAdaptersSplit:true, alertsOwnershipCorrected:true, ambiguousAdapterRoutingReduced:true, v2InteractionTrustImproved:true, lastIntentAdapterTriggered:v2DockAdapterState.lastDockActionTriggered, adapterIntentMap:{
+    return {v2Exists:Boolean(v2),v2Visible:Boolean(v2&&getComputedStyle(v2).display!=="none"),activeSheet,sheetOpen:!document.getElementById("gridlyPortraitV2Sheet")?.hidden,dockButtonsFound:document.querySelectorAll(".gridly-v2-bottom-dock button").length,controlRailFound:Boolean(document.querySelector(".gridly-v2-control-rail")),legacyPortraitHidden:legacyHidden,duplicateZoomControlsVisible,duplicateFilterStripsVisible,v2IconsApplied,legacyControlsHidden,mapContainerFound:Boolean(document.getElementById("map")),layoutMode:mode, popupV2Styled, popupViewportSafe, filterStripBalanced, popupViewportCentered, popupAutoPanApplied, popupCameraPanApplied, popupAnchorMode, popupLastMarkerScreenPoint, popupLastSafeTargetPoint, popupClippedAfterOpen, popupViewportBounds, popupAutoPanSequenced, popupBlinkResolved, lastPopupTapAt:gridlyPopupLastTapAt, lastPopupOpenAt:gridlyPopupLastOpenAt, pendingPopupToken:window.__gridlyPopupPanSession?.token||null, popupOpenCount:gridlyPopupOpenCount, popupCancelCount:gridlyPopupCancelCount, popupLastFailureReason:gridlyPopupLastFailureReason||null, popupReopenReady:gridlyPopupReopenReady, popupSingleTapFlowReady:gridlyPopupSingleTapFlowReady, popupSingleTapGuaranteed:gridlyPopupSingleTapGuaranteed, lastPopupTapCrossingId:gridlyLastPopupTapCrossingId, lastPopupPanStartedAt:gridlyLastPopupPanStartedAt, lastPopupMoveEndAt:gridlyLastPopupMoveEndAt, lastPopupFallbackFiredAt:gridlyLastPopupFallbackFiredAt, lastPopupScheduledDelay:gridlyLastPopupScheduledDelay, lastPopupTimerFiredAt:gridlyLastPopupTimerFiredAt, lastPopupFinalizeReason:gridlyLastPopupFinalizeReason, popupLastClickCrossingId:gridlyLastPopupTapCrossingId, popupLastFinalizeAttemptAt:gridlyPopupLastFinalizeAttemptAt, popupLastOpenCallAt:gridlyPopupLastOpenCallAt, popupLastOpenMethod:gridlyPopupLastOpenMethod, popupOpenCallCount:gridlyPopupOpenCount, popupEarlyReturnReason:gridlyPopupEarlyReturnReason||null, popupPaneCount:document.querySelectorAll(".leaflet-popup-pane .leaflet-popup").length, popupDomExists:Boolean(document.querySelector(".leaflet-popup")), popupInterferenceEventSeen:gridlyPopupInterferenceEventSeen, routeWatchAllClickedDuringPopupTap:gridlyRouteWatchAllClickedDuringPopupTap, duplicateMarkerClickCount:gridlyDuplicateMarkerClickCount, markerClickHandlerGuardApplied:gridlyMarkerClickHandlerGuardApplied, compactBrandApplied, compactHeaderRefined, typographyPassApplied, spacingRhythmPassApplied, surfacePolishApplied, iconConsistencyPassApplied, sheetProductizationApplied, mapBreathingRoomApplied, iconSystemUnified, dockIconSystemUnified, railIconSystemUnified, iconSystemReferenceAligned, iconSystemHarmonized, dockRefinementApplied, utilityControlConsistencyApplied, headerFoundationApplied, surfaceRestraintApplied, opticalAlignmentPassApplied, v1321FinalTighteningApplied, headerStatusCohesionApplied, filterDensityTuned, dockOpticalFinalized, mapFirstBalancePreserved, microAlignmentQaApplied, v1322TypographyEasingApplied, topHeaderTypographyRefined, filterStripEased, topStackCalmnessApplied, microTypographyConsistencyApplied, mapDominancePreserved, v133BrandFoundationApplied, headerIdentitySystemApplied, gridlyMarkFoundationApplied, wordmarkPolished, brandRestraintMaintained, iconBrandRelationshipAligned, v1331RealBrandAssetsIntegrated, compactResponsiveBrandVariantApplied, faviconValidated, appIconsValidated, temporaryBrandLayersRemoved, brandProductionIntegrationComplete, v1332UltraCompactHeaderApplied, headerBrandFitmentComplete, compactLogoOpticsBalanced, mapFirstBrandRestraintMaintained, legacyWideLogoRemoved, productionHeaderIdentityFinalized, v1333LogoSizingCorrected, ultraCompactLogoReadable, headerBrandScaleBalanced, headerHeightPreserved, v1334IndependentHeaderLayoutApplied, centeredWatchLabelIndependent, logoNoLongerConstrainsHeader, utilityControlIndependentlyAligned, compactHeaderLayoutPreserved, finalHeaderFitmentResolved, v1335HeaderSimplified, redundantTopUtilityRemoved, logoWatchAlignmentApplied, headerVisualCompetitionReduced, compactHeaderCalmnessImproved, bottomSettingsAccessPreserved, v1351DockAdaptersApplied, reportDockProductionWired, routeDockProductionWired, alertsDockProductionWired, settingsDockProductionWired, v2ShellParityImproved, v1373UnifiedLocalizedIntelligenceApplied:true, topStatusUsesUnifiedIntelligence:true, alertsUseLocalizedIntelligence:true, routeAwareIntelligenceEnabled:true, localizedNamedRoadExtractionEnabled, intelligencePriorityRankingApplied:true, topStatusPrimaryIncident:localizedIntel.topStatus, activeLocalizedAlertCount:localizedIntel.activeLocalizedAlertCount, routeImpactIncidentCount:localizedIntel.routeImpactIncidentCount, localizedIntelligenceSummaries:localizedIntel.items.map((item)=>`${item.localizedSummary} • ${item.minutesText}`), v1370ViewRouteBehaviorCorrected:Boolean(v1370ViewRouteDebugState.v1370ViewRouteBehaviorCorrected), activeRouteDetectedForPreview:Boolean(v1370ViewRouteDebugState.activeRouteDetectedForPreview), routePreviewOpenedWithoutSetup:Boolean(v1370ViewRouteDebugState.routePreviewOpenedWithoutSetup), setupFlowAvoidedForActiveRoute:Boolean(v1370ViewRouteDebugState.setupFlowAvoidedForActiveRoute), lastViewRouteBehavior:v1370ViewRouteDebugState.lastViewRouteBehavior||"", activeRouteGeometryPresent:Boolean(v1370ViewRouteDebugState.activeRouteGeometryPresent), routePreviewFocusApplied:Boolean(v1370ViewRouteDebugState.routePreviewFocusApplied), viewRouteFallbackReason:v1370ViewRouteDebugState.viewRouteFallbackReason||"", v1361IntentSplitApplied:true, routeIntentAdaptersSplit:true, settingsIntentAdaptersSplit:true, alertsOwnershipCorrected:true, ambiguousAdapterRoutingReduced:true, v2InteractionTrustImproved:true, lastIntentAdapterTriggered:v2DockAdapterState.lastDockActionTriggered, adapterIntentMap:{
       routeWatch:"route-watch-open", routePreview:"route-preview-open", routeManagePlaces:"route-manage-places-open",
       settingsHomeTown:"settings-home-town", settingsSavedPlaces:"settings-saved-places", settingsAlertPreferences:"settings-alert-preferences",
       settingsRoutePreferences:"settings-route-preferences", settingsAppPreferences:"settings-app-preferences", alertsManage:"alerts-manage-open"
