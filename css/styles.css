@@ -13060,8 +13060,6 @@ body[data-layout-mode="portrait"].gridly-v2-surface-containment #alertsSection,
 body[data-layout-mode="portrait"].gridly-v2-surface-containment .report-drawer,
 body[data-layout-mode="portrait"].gridly-v2-surface-containment .mobile-report-mode-card,
 body[data-layout-mode="portrait"].gridly-v2-surface-containment .report-buttons,
-body[data-layout-mode="portrait"].gridly-v2-surface-containment .route-setup-modal,
-body[data-layout-mode="portrait"].gridly-v2-surface-containment .route-setup-modal-backdrop,
 body[data-layout-mode="portrait"].gridly-v2-surface-containment .settings-modal-backdrop,
 body[data-layout-mode="portrait"].gridly-v2-surface-containment #settingsModal {
   opacity: 0 !important;
