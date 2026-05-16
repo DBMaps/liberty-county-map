@@ -9084,6 +9084,7 @@ async function saveRoute(source = "desktop") {
   initDailyDestinationHero();
   updateRouteIntelligence();
   updateGrowthWidgets();
+  if (typeof window.gridlyRefreshRouteButtonStates === "function") window.gridlyRefreshRouteButtonStates("saveRoute");
   const placeLabel = normalizedType === "home" ? "Home" : normalizedType === "work" ? "Work" : (home || "Favorite");
   const saveMessage = `${placeLabel} saved with resolved coordinates (${coordinateResolution.source}).`;
   setConfirmation(saveMessage, "success");
@@ -9147,6 +9148,7 @@ function savePlaceType(type, label, address = "") {
     state.custom.push({ id: `custom-${Date.now()}`, ...place, label: label || "Favorite Place" });
   }
   saveSavedPlacesState(state);
+  if (typeof window.gridlyRefreshRouteButtonStates === "function") window.gridlyRefreshRouteButtonStates(`savePlaceType:${type}`);
 }
 
 function normalizeSavedPlaces(input = null) {
@@ -15878,6 +15880,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const routeSelected = Boolean(activation.selectedRouteId || activation.selectedCorridorId || routeWatchActive);
     const hasRoutePreview = Boolean(routePreviewRendered || routePreviewLayerExists || window.__gridlyRoutePreviewLayer);
     const hasAnyPlaces = places.length > 0;
+    const hasHome = places.some((place) => place?.id === "home");
+    const hasWork = places.some((place) => place?.id === "work");
     const readinessState = start && destination ? "ready" : hasAnyPlaces ? "needs_setup" : "missing_places";
     const readinessMessage = readinessState === "ready"
       ? "Route Watch ready"
@@ -15896,7 +15900,12 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       readinessState,
       readinessMessage,
       routeState,
-      previewState
+      previewState,
+      hasHome,
+      hasWork,
+      hasRoutePreview,
+      routeWatchActive,
+      routeSelected
     };
   }
   function buildRouteSurfaceHtml() {
@@ -16014,6 +16023,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   const v1363RouteActionDebug = { routeDockClickHandled:false, routeWatchActionHandled:false, routePreviewActionHandled:false, routeManagePlacesActionHandled:false, lastRouteActionFailureReason:"" };
   const v1369PreconditionsDebug = { disabledInteractionCount: 0, lastBlockedInteraction: "", lastPreconditionReason: "" };
   const v1372AlertsActionDebug = { manageAlertsActionHandled:false, alertPreferencesActionHandled:false, lastAlertsActionFailureReason:"" };
+  const v1415RouteReadinessDebug = { lastRefreshAt: 0, lastRefreshSource: "", stateRefreshDetected: false };
   let activeSheet = "";
 
   const V2_CONTAINMENT_CLASS = "gridly-v2-surface-containment";
@@ -16100,17 +16110,46 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const reportHazardSelected = Boolean(selectedV2HazardType || (typeof reportingState === "object" && reportingState?.selectedHazardType));
     const routeReady = route.readinessState === "ready";
     const hasSavedPlaces = route.savedPlaceCount > 0;
+    const hasHome = route.hasHome;
+    const hasWork = route.hasWork;
+    const hasRoutePreview = route.hasRoutePreview;
+    const hasActiveRoute = route.routeWatchActive || route.routeSelected;
+    const canOpenManagePlaces = !hasHome || !hasWork || !hasSavedPlaces || hasSavedPlaces;
+    const routeWatchReason = routeReady
+      ? ""
+      : !hasHome || !hasWork
+        ? "Add Home and Work first."
+        : "Select a destination.";
+    const routePreviewReason = (hasRoutePreview || hasActiveRoute)
+      ? ""
+      : !hasHome || !hasWork
+        ? "Add Home and Work first."
+        : "No route preview available.";
     return {
       reportHazardSelected,
       reportReason: reportHazardSelected ? "" : "Choose a hazard to enable placement actions.",
       routeReady,
+      hasHome,
+      hasWork,
+      hasRoutePreview,
+      hasActiveRoute,
       hasSavedPlaces,
-      routeWatchReason: routeReady ? "" : "Add Home and Destination to preview routes.",
-      routeManageReason: hasSavedPlaces ? "" : "Save places to enable Route Watch.",
+      canOpenManagePlaces,
+      canViewRoute: hasRoutePreview || hasActiveRoute,
+      routeWatchReason,
+      routePreviewReason,
+      routeManageReason: "",
       alertsReason: "Set alert preferences to personalize what triggers your alerts.",
       settingsReason: "Set Home Town and preferences to unlock route and alerts intelligence."
     };
   }
+  function refreshRouteButtonStates(source = "unknown") {
+    v1415RouteReadinessDebug.lastRefreshAt = Date.now();
+    v1415RouteReadinessDebug.lastRefreshSource = source;
+    v1415RouteReadinessDebug.stateRefreshDetected = true;
+    if (activeSheet === "route") bindV2SheetActions();
+  }
+  window.gridlyRefreshRouteButtonStates = refreshRouteButtonStates;
   function refreshPortraitV2ReportCtas(body, preconditions = getV2PreconditionsState()) {
     if (!body) return;
     body.querySelectorAll('[data-v2-action="report-use-location"], [data-v2-action="report-tap-map"]').forEach((button) => {
@@ -16425,8 +16464,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     body.querySelectorAll("[data-v2-action], [data-action], [data-route-action]").forEach((button) => {
       const action = resolveV2SheetAction(button);
       const isDisabledByPrecondition = (
-        ((action === "route-watch-open" || action === "route-preview-open") && !preconditions.routeReady)
-        || (action === "route-manage-places-open" && !preconditions.hasSavedPlaces)
+        (action === "route-watch-open" && !preconditions.routeReady)
+        || (action === "route-preview-open" && !preconditions.canViewRoute)
+        || (action === "route-manage-places-open" && !preconditions.canOpenManagePlaces)
       );
       button.disabled = isDisabledByPrecondition;
       button.classList.toggle("is-disabled", isDisabledByPrecondition);
@@ -16503,8 +16543,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     window.gridlyRouteSetupButtonAudit = function gridlyRouteSetupButtonAudit() {
       const routeHandlers = {
         "route-watch-open": "triggerV2DockAdapter.bridges.route-watch-open",
-        "route-preview-open": "triggerV2DockAdapter.bridges.route-preview-open"
+        "route-preview-open": "triggerV2DockAdapter.bridges.route-preview-open",
+        "route-manage-places-open": "triggerV2DockAdapter.bridges.route-manage-places-open"
       };
+      const preconditions = getV2PreconditionsState();
       const actionAliases = {
         "open-route-watch": "route-watch-open",
         "routewatch": "route-watch-open",
@@ -16523,15 +16565,26 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           const rawAction = String(button?.dataset?.v2Action || button?.dataset?.action || button?.dataset?.routeAction || "").trim();
           const normalized = actionAliases[rawAction.toLowerCase()] || rawAction;
           const matchedHandler = Boolean(routeHandlers[normalized]);
+          let disabledReason = "";
+          if (normalized === "route-watch-open" && button.disabled) disabledReason = preconditions.routeWatchReason;
+          if (normalized === "route-preview-open" && button.disabled) disabledReason = preconditions.routePreviewReason;
           return {
             text: (button.textContent || "").trim(),
             id: button.id || "",
             className: button.className || "",
             dataset: { ...button.dataset },
             disabled: Boolean(button.disabled),
+            disabledReason,
             matchedHandler,
             expectedAction: matchedHandler ? normalized : "route-watch-open | route-preview-open",
-            clickTargetReady: !button.disabled && matchedHandler
+            clickTargetReady: !button.disabled && matchedHandler,
+            effectiveReadinessReason: disabledReason || (normalized === "route-manage-places-open" ? "Manage Places always available for setup/edit." : "Ready"),
+            stateRefreshDetected: Boolean(v1415RouteReadinessDebug.stateRefreshDetected),
+            savedPlaceSlots: {
+              hasHome: preconditions.hasHome,
+              hasWork: preconditions.hasWork,
+              count: preconditions.hasSavedPlaces ? getRouteSurfaceSnapshot().savedPlaceCount : 0
+            }
           };
         });
       const result = { buttonsFound: buttons.length, buttons };
