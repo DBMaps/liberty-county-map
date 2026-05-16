@@ -16540,7 +16540,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       helper.hidden = !helperText;
     }
 
-    window.gridlyRouteSetupButtonAudit = function gridlyRouteSetupButtonAudit() {
+    const routeSetupButtonAuditHelper = function gridlyRouteSetupButtonAudit() {
       const routeHandlers = {
         "route-watch-open": "triggerV2DockAdapter.bridges.route-watch-open",
         "route-preview-open": "triggerV2DockAdapter.bridges.route-preview-open",
@@ -16590,6 +16590,14 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       const result = { buttonsFound: buttons.length, buttons };
       console.info("Gridly Route Setup button audit", result);
       return result;
+    };
+    window.gridlyRouteSetupButtonAudit = routeSetupButtonAuditHelper;
+    window.gridlyRouteButtonSystemAudit = routeSetupButtonAuditHelper;
+    window.gridlyRouteAuditGlobalsCheck = function gridlyRouteAuditGlobalsCheck() {
+      return {
+        routeButtonSystemAudit: typeof window.gridlyRouteButtonSystemAudit,
+        routeSetupButtonAudit: typeof window.gridlyRouteSetupButtonAudit
+      };
     };
   }
   function bindV2(){
