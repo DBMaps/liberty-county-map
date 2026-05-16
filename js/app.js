@@ -247,6 +247,55 @@ const gridlyRefreshAuditState = {
   recentRefreshes: []
 };
 const GRIDLY_REFRESH_BREAKDOWN_LOG_LIMIT = 12;
+const gridlyPortraitIntelligenceBreakdownAuditState = {
+  refreshPortraitV2LocalizedIntelligence: { totalMs: 0, sections: {}, at: 0 },
+  renderAlerts: { totalMs: 0, sections: {}, at: 0 },
+  updateDailyHabitStatus: { totalMs: 0, sections: {}, at: 0 }
+};
+
+function makeGridlySectionTimer(sections) {
+  return (name, fn) => {
+    const started = performance.now();
+    const result = fn();
+    sections[name] = (sections[name] || 0) + (performance.now() - started);
+    return result;
+  };
+}
+
+function recordPortraitIntelligenceBreakdown(functionName, startedAt, sections) {
+  gridlyPortraitIntelligenceBreakdownAuditState[functionName] = {
+    totalMs: performance.now() - startedAt,
+    sections,
+    at: Date.now()
+  };
+}
+
+window.gridlyPortraitIntelligenceBreakdownAudit = function gridlyPortraitIntelligenceBreakdownAudit() {
+  const refreshPortraitV2LocalizedIntelligence = { ...gridlyPortraitIntelligenceBreakdownAuditState.refreshPortraitV2LocalizedIntelligence };
+  const renderAlerts = { ...gridlyPortraitIntelligenceBreakdownAuditState.renderAlerts };
+  const updateDailyHabitStatus = { ...gridlyPortraitIntelligenceBreakdownAuditState.updateDailyHabitStatus };
+
+  const sectionEntries = [
+    ...Object.entries(refreshPortraitV2LocalizedIntelligence.sections || {}).map(([name, durationMs]) => ({ fn: 'refreshPortraitV2LocalizedIntelligence', name, durationMs })),
+    ...Object.entries(renderAlerts.sections || {}).map(([name, durationMs]) => ({ fn: 'renderAlerts', name, durationMs })),
+    ...Object.entries(updateDailyHabitStatus.sections || {}).map(([name, durationMs]) => ({ fn: 'updateDailyHabitStatus', name, durationMs }))
+  ].filter((entry) => Number.isFinite(entry.durationMs));
+
+  const slowestSection = sectionEntries.sort((a, b) => b.durationMs - a.durationMs)[0] || null;
+
+  return {
+    refreshPortraitV2LocalizedIntelligence,
+    renderAlerts,
+    updateDailyHabitStatus,
+    slowestSection,
+    recommendedTargets: [
+      'Measure the slowest section under both route-watch active and idle states.',
+      'Compare DOM update sections with alert volume and corridor cluster counts.',
+      'Track intelligence calculation sections against unified incident totals and route relevance checks.'
+    ]
+  };
+};
+
 let suppressRealtimeRefreshUntil = 0;
 let suppressIntervalRefreshUntil = 0;
 let skipNextRealtimeRefresh = false;
@@ -12114,18 +12163,31 @@ function getLiveCommuteSignalLine({ impact = 0, urgentBlockedCount = 0, recommen
 }
 
 function updateDailyHabitStatus() {
-  const localizedIntel = buildUnifiedLocalizedCommuteIntelligence({ limit: 5 });
-  const unifiedActive = getUnifiedIncidents().filter((incident) => incident.status === "active");
-  const railActive = unifiedActive.filter((incident) => incident.type.startsWith("rail_"));
-  const activeIssues = railActive;
-  const highIssues = activeIssues.filter((report) => report.severity === "high");
-  const moderateIssues = activeIssues.filter((report) => report.severity === "moderate");
-  const activeCount = activeIssues.length;
-  const confirmationCount = getUnifiedIncidents().reduce((sum,i)=>sum+i.reports_count,0);
+  const functionStartedAt = performance.now();
+  const sections = {};
+  const timeSection = makeGridlySectionTimer(sections);
 
-  const freshest = [...activeReports].sort(
+  const localizedIntel = timeSection("intelligence_calculations", () => buildUnifiedLocalizedCommuteIntelligence({ limit: 5 }));
+  const { unifiedActive, railActive, activeIssues, highIssues, moderateIssues, activeCount, confirmationCount } = timeSection("array_filtering_sorting", () => {
+    const unifiedActiveItems = getUnifiedIncidents().filter((incident) => incident.status === "active");
+    const railActiveItems = unifiedActiveItems.filter((incident) => incident.type.startsWith("rail_"));
+    const activeIssueItems = railActiveItems;
+    const highIssueItems = activeIssueItems.filter((report) => report.severity === "high");
+    const moderateIssueItems = activeIssueItems.filter((report) => report.severity === "moderate");
+    return {
+      unifiedActive: unifiedActiveItems,
+      railActive: railActiveItems,
+      activeIssues: activeIssueItems,
+      highIssues: highIssueItems,
+      moderateIssues: moderateIssueItems,
+      activeCount: activeIssueItems.length,
+      confirmationCount: getUnifiedIncidents().reduce((sum, i) => sum + i.reports_count, 0)
+    };
+  });
+
+  const freshest = timeSection("array_filtering_sorting", () => [...activeReports].sort(
     (a, b) => new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0)
-  )[0];
+  )[0]);
 
   let pill = "All Clear";
   let headline = "Routes currently clear";
@@ -12148,12 +12210,21 @@ function updateDailyHabitStatus() {
     cardClass = "delayed";
   }
 
-  safeText("habitStatusPill", pill);
-  safeText("habitStatusHeadline", headline);
-  safeText("habitStatusDetail", detail);
+  timeSection("text_content_updates", () => {
+    safeText("habitStatusPill", pill);
+    safeText("habitStatusHeadline", headline);
+    safeText("habitStatusDetail", detail);
+  });
 
-  els.habitStatusStrip?.classList.remove("clear", "delayed", "high");
-  els.habitStatusStrip?.classList.add(cardClass);
+  timeSection("class_style_updates", () => {
+    els.habitStatusStrip?.classList.remove("clear", "delayed", "high");
+    els.habitStatusStrip?.classList.add(cardClass);
+  });
+
+  void unifiedActive;
+  void railActive;
+  void activeCount;
+  recordPortraitIntelligenceBreakdown("updateDailyHabitStatus", functionStartedAt, sections);
 }
 
 function updateGrowthWidgets() {
@@ -13267,12 +13338,24 @@ function buildUnifiedLocalizedCommuteIntelligence({ limit = 6 } = {}) {
 }
 
 function refreshPortraitV2LocalizedIntelligence() {
-  const topPrimaryEl = document.getElementById("gridlyV2TopStatusPrimary");
-  const topSecondaryEl = document.getElementById("gridlyV2TopStatusSecondary");
-  if (!topPrimaryEl && !topSecondaryEl) return;
-  const intel = buildUnifiedLocalizedCommuteIntelligence({ limit: 6 });
-  if (topPrimaryEl) topPrimaryEl.textContent = intel.commuteImpactHeadline;
-  if (topSecondaryEl) topSecondaryEl.textContent = intel.hasActiveAlerts ? intel.topStatusLocalizedDetail : "Routes currently clear";
+  const functionStartedAt = performance.now();
+  const sections = {};
+  const timeSection = makeGridlySectionTimer(sections);
+
+  const { topPrimaryEl, topSecondaryEl } = timeSection("dom_queries", () => ({
+    topPrimaryEl: document.getElementById("gridlyV2TopStatusPrimary"),
+    topSecondaryEl: document.getElementById("gridlyV2TopStatusSecondary")
+  }));
+  if (!topPrimaryEl && !topSecondaryEl) {
+    recordPortraitIntelligenceBreakdown("refreshPortraitV2LocalizedIntelligence", functionStartedAt, sections);
+    return;
+  }
+  const intel = timeSection("intelligence_calculations", () => buildUnifiedLocalizedCommuteIntelligence({ limit: 6 }));
+  timeSection("text_content_updates", () => {
+    if (topPrimaryEl) topPrimaryEl.textContent = intel.commuteImpactHeadline;
+    if (topSecondaryEl) topSecondaryEl.textContent = intel.hasActiveAlerts ? intel.topStatusLocalizedDetail : "Routes currently clear";
+  });
+  recordPortraitIntelligenceBreakdown("refreshPortraitV2LocalizedIntelligence", functionStartedAt, sections);
 }
 
 function renderRoadHazards() {
@@ -13334,43 +13417,59 @@ function getOperationalFeedSummaryLine() {
 }
 
 function renderAlerts() {
+  const functionStartedAt = performance.now();
+  const breakdownSections = {};
+  const timeSection = makeGridlySectionTimer(breakdownSections);
   const endRenderAlertsTrace = timeGridlyReflowTrace("renderAlerts");
-  if (!els.alertsList) return;
-  const consequenceIntel = buildCommuteConsequenceIntelligence({ limit: 10 });
+  if (!els.alertsList) {
+    recordPortraitIntelligenceBreakdown("renderAlerts", functionStartedAt, breakdownSections);
+    return;
+  }
+  const consequenceIntel = timeSection("intelligence_calculations", () => buildCommuteConsequenceIntelligence({ limit: 10 }));
   const corridors = consequenceIntel.corridorClusters || [];
   if (!corridors.length) {
-    els.alertsList.innerHTML = `<div class="alert-item corridor-command-status"><strong>COMMUTE STATUS</strong><p>Routes currently clear</p></div>`;
+    timeSection("text_content_updates", () => {
+      els.alertsList.innerHTML = `<div class="alert-item corridor-command-status"><strong>COMMUTE STATUS</strong><p>Routes currently clear</p></div>`;
+    });
+    recordPortraitIntelligenceBreakdown("renderAlerts", functionStartedAt, breakdownSections);
     return;
   }
 
   const primaryCorridor = corridors[0] || null;
-  const routeImpacted = Number(consequenceIntel.routeImpactIncidentCount || 0) > 0;
+  const routeImpacted = timeSection("map_route_dependent_checks", () => Number(consequenceIntel.routeImpactIncidentCount || 0) > 0);
   const sections = [];
   sections.push(`<article class="alert-item intelligence-row high corridor-command-status"><div class="alert-row-main"><span class="alert-severity-chip">Commute Status</span><strong>${sanitizeText(routeImpacted ? "Route Watch impacted" : (consequenceIntel.topStatus || "Routes currently clear"))}</strong><span class="alert-row-time">live</span></div><p class="alert-row-subline">${sanitizeText(consequenceIntel.topStatusLocalizedDetail || "Operational corridor watch active")}</p></article>`);
 
-  corridors.slice(0, 3).forEach((corridor, idx) => {
-    const count = corridor.items.length;
-    const heading = corridor.label || "Primary Corridor";
-    const severity = String(corridor.healthState || "moderate").toUpperCase();
-    const rows = corridor.items.slice(0, 3).map((item) => `<li>${sanitizeText(item.localizedSummary)}</li>`).join("");
-    const corridorClass = idx === 0 ? "primary-corridor" : "secondary-corridor";
-    const action = idx === 0 ? '<button class="secondary-btn compact-btn" type="button" data-v2-action="alerts-open">Avoid Corridor</button>' : "";
-    sections.push(`<article class="alert-item corridor-command ${corridorClass}"><strong class="corridor-command-title">${sanitizeText(heading)}</strong><p class="corridor-command-severity">${sanitizeText(severity)} • ${count} ACTIVE ISSUE${count === 1 ? "" : "S"}</p><ul class="alert-row-details-list">${rows}</ul>${action}</article>`);
+  timeSection("alert_corridor_grouping_logic", () => {
+    corridors.slice(0, 3).forEach((corridor, idx) => {
+      const count = corridor.items.length;
+      const heading = corridor.label || "Primary Corridor";
+      const severity = String(corridor.healthState || "moderate").toUpperCase();
+      const rows = corridor.items.slice(0, 3).map((item) => `<li>${sanitizeText(item.localizedSummary)}</li>`).join("");
+      const corridorClass = idx === 0 ? "primary-corridor" : "secondary-corridor";
+      const action = idx === 0 ? '<button class="secondary-btn compact-btn" type="button" data-v2-action="alerts-open">Avoid Corridor</button>' : "";
+      sections.push(`<article class="alert-item corridor-command ${corridorClass}"><strong class="corridor-command-title">${sanitizeText(heading)}</strong><p class="corridor-command-severity">${sanitizeText(severity)} • ${count} ACTIVE ISSUE${count === 1 ? "" : "S"}</p><ul class="alert-row-details-list">${rows}</ul>${action}</article>`);
+    });
   });
 
   if (routeImpacted) {
     sections.push(`<article class="alert-item corridor-command-route-watch"><strong>Route Watch</strong><p>Your saved commute is currently affected.</p><button class="primary-btn compact-btn" type="button" data-v2-action="route-watch-open">View Alternate Route</button></article>`);
   }
 
-  const cleared = getUnifiedIncidents()
+  const cleared = timeSection("array_filtering_sorting", () => getUnifiedIncidents()
     .filter((incident) => String(incident?.status || "").toLowerCase() === "cleared" && Number(incident?.age_minutes) <= 90)
     .slice(0, 3)
-    .map((incident) => buildLocalizedIncidentLabel(incident));
+    .map((incident) => buildLocalizedIncidentLabel(incident)));
   if (cleared.length) {
     sections.push(`<article class="alert-item cleared"><strong>Recently Cleared</strong><p>${cleared.map((label) => sanitizeText(label)).join(" · ")}</p></article>`);
   }
 
-  els.alertsList.innerHTML = sections.join("");
+  void primaryCorridor;
+  timeSection("text_content_updates", () => {
+    els.alertsList.innerHTML = sections.join("");
+  });
+  endRenderAlertsTrace();
+  recordPortraitIntelligenceBreakdown("renderAlerts", functionStartedAt, breakdownSections);
 }
 
 
