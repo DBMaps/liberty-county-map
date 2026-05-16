@@ -276,6 +276,9 @@ const gridlyCommuteIntelligenceAuditState = {
   formatterCacheHits: 0,
   formatterCacheMisses: 0,
   equivalentLookupReuseDetected: false,
+  localizedLabelLookupSections: {},
+  localizedLabelPerIncidentLookupTimings: [],
+  localizedLabelSlowestLookupStep: null,
   timingBoundaryVerified: false,
   routeRelevanceNestedSections: {},
   suspectedMisattribution: null,
@@ -558,6 +561,9 @@ window.gridlyCommuteIntelligenceAudit = function gridlyCommuteIntelligenceAudit(
     formatterCacheHits: Number(gridlyCommuteIntelligenceAuditState.formatterCacheHits || 0),
     formatterCacheMisses: Number(gridlyCommuteIntelligenceAuditState.formatterCacheMisses || 0),
     equivalentLookupReuseDetected: Boolean(gridlyCommuteIntelligenceAuditState.equivalentLookupReuseDetected),
+    localizedLabelLookupSections: { ...(gridlyCommuteIntelligenceAuditState.localizedLabelLookupSections || {}) },
+    localizedLabelPerIncidentLookupTimings: [...(gridlyCommuteIntelligenceAuditState.localizedLabelPerIncidentLookupTimings || [])],
+    localizedLabelSlowestLookupStep: gridlyCommuteIntelligenceAuditState.localizedLabelSlowestLookupStep || null,
     slowestSection,
     recommendedTargets,
     timingBoundaryVerified: Boolean(gridlyCommuteIntelligenceAuditState.timingBoundaryVerified),
@@ -13417,6 +13423,7 @@ function buildLocalizedIncidentLabel(incident = {}) {
   const helperStartedAt = performance.now();
   const sectionTimes = {};
   const calls = {};
+  const lookupTimings = {};
   const recordSection = (sectionName, fn) => {
     const startedAt = performance.now();
     const value = fn();
@@ -13427,8 +13434,15 @@ function buildLocalizedIncidentLabel(incident = {}) {
     calls[callName] = (calls[callName] || 0) + 1;
     return fn();
   };
+  const recordLookupStep = (stepName, fn) => {
+    const startedAt = performance.now();
+    const value = fn();
+    lookupTimings[stepName] = (lookupTimings[stepName] || 0) + (performance.now() - startedAt);
+    return value;
+  };
   const finalizeAudit = (result, meta = {}) => {
     const totalMs = performance.now() - helperStartedAt;
+    recordLocalizedLabelLookupAudit(incident, lookupTimings);
     recordLabelHelperInternalAudit(helperName, {
       totalMs,
       sectionTimes,
@@ -13441,22 +13455,71 @@ function buildLocalizedIncidentLabel(incident = {}) {
   };
   if (!incident) return finalizeAudit("Localized disruption", { fallbackReason: "missing_incident" });
   const isCrossing = recordSection("type_status_mapping", () => recordCall("isCrossingDisruptionIncident", () => isCrossingDisruptionIncident(incident)));
-  const roadDisplay = recordSection("crossing_road_name_lookup", () => recordCall("buildRoadHazardDisplay", () => getCachedRoadNameLookup(incident, "buildRoadHazardDisplay", (resolvedLookup) => buildRoadHazardDisplay(incident, resolvedLookup))));
+  const roadDisplay = recordSection("crossing_road_name_lookup", () => recordCall("buildRoadHazardDisplay", () => {
+    const cachedRoadDisplay = recordLookupStep("shared_cache_lookup_time", () => getCachedRoadNameLookup(incident, "buildRoadHazardDisplay", (resolvedLookup) => {
+      const builtRoadDisplay = recordLookupStep("buildRoadHazardDisplay_time", () => buildRoadHazardDisplay(incident, resolvedLookup));
+      return builtRoadDisplay;
+    }));
+    return cachedRoadDisplay;
+  }));
   const roadFallback = recordSection("fallback_logic", () => roadDisplay?.title || incident?.title || "Localized disruption");
   if (!isCrossing) return finalizeAudit(roadFallback, { path: "road_display" });
 
   const reportType = recordSection("input_normalization", () => String(incident?.report_type || incident?.type || "").toLowerCase());
-  const location = recordSection("corridor_location_inference", () => recordCall("resolveRailLocationText", () => getCachedRoadNameLookup(incident, "resolveRailLocationText", () => resolveRailLocationText({
-    crossingName: incident?.crossingName || incident?.area || "",
-    crossingId: incident?.crossing_id || incident?.crossingId || "",
-    latestReport: incident
-  }))));
-  const nearTarget = recordSection("crossing_road_name_lookup", () => location.humanRoad || location.crossingName || location.nearbyName || "");
+  const location = recordSection("corridor_location_inference", () => recordCall("resolveRailLocationText", () => getCachedRoadNameLookup(incident, "resolveRailLocationText", () => {
+    const railLookupPayload = recordLookupStep("resolveIncidentRoadLookupPayload_time", () => resolveIncidentRoadLookupPayload(incident));
+    return resolveRailLocationText({
+      crossingName: incident?.crossingName || incident?.area || "",
+      crossingId: incident?.crossing_id || incident?.crossingId || "",
+      latestReport: incident,
+      ...railLookupPayload
+    });
+  })));
+  const nearTarget = recordSection("crossing_road_name_lookup", () => recordLookupStep("road_name_fallback_time", () => location.humanRoad || location.crossingName || location.nearbyName || ""));
+  const crossingFallback = recordLookupStep("crossing_fallback_time", () => location.crossingName || "");
+  recordLookupStep("string_cleanup_normalization_time", () => {
+    String(nearTarget || "").trim().replace(/\s+/g, " ");
+    String(crossingFallback || "").trim().replace(/\s+/g, " ");
+    return true;
+  });
+  recordLookupStep("buildRoadHazardDisplay_repeated_scan_lookup_time", () => {
+    const fields = [incident?.title, incident?.description, incident?.road_name, incident?.street_name, incident?.area, incident?.location_name];
+    return fields.map((value) => String(value || "").trim()).filter(Boolean).length;
+  });
   const nearSuffix = recordSection("string_template_construction", () => (nearTarget ? ` near ${nearTarget}` : ""));
   if (reportType === "cleared") return finalizeAudit(recordSection("string_template_construction", () => `Crossing cleared${nearSuffix}`), { path: "cleared" });
   if (reportType === "blocked" || reportType === "crossing_blocked") return finalizeAudit(recordSection("string_template_construction", () => `Blocked crossing${nearSuffix}`), { path: "blocked" });
   if (["delay", "delayed", "heavy", "rail_blockage_delay", "rail_blockage"].includes(reportType)) return finalizeAudit(recordSection("string_template_construction", () => `Rail delay${nearSuffix}`), { path: "delay" });
   return finalizeAudit(recordSection("fallback_logic", () => `Crossing disruption${nearSuffix}`), { path: "crossing_fallback" });
+}
+
+function recordLocalizedLabelLookupAudit(incident = {}, lookupTimings = {}) {
+  const roundedLookupTimings = Object.fromEntries(
+    Object.entries(lookupTimings || {}).map(([stepName, durationMs]) => [stepName, Number(Number(durationMs || 0).toFixed(3))])
+  );
+  Object.entries(roundedLookupTimings).forEach(([stepName, durationMs]) => {
+    gridlyCommuteIntelligenceAuditState.localizedLabelLookupSections[stepName] = Number(
+      ((gridlyCommuteIntelligenceAuditState.localizedLabelLookupSections[stepName] || 0) + Number(durationMs || 0)).toFixed(3)
+    );
+  });
+  const perIncidentEntry = {
+    incidentId: String(incident?.id || incident?.report_id || incident?.reportId || "unknown"),
+    reportType: String(incident?.report_type || incident?.type || ""),
+    lookupTimings: roundedLookupTimings,
+    totalLookupMs: Number(Object.values(roundedLookupTimings).reduce((sum, value) => sum + Number(value || 0), 0).toFixed(3))
+  };
+  gridlyCommuteIntelligenceAuditState.localizedLabelPerIncidentLookupTimings.push(perIncidentEntry);
+  const incidentSlowestStep = Object.entries(roundedLookupTimings).sort((a, b) => Number(b[1]) - Number(a[1]))[0] || null;
+  if (!incidentSlowestStep) return;
+  const currentSlowest = gridlyCommuteIntelligenceAuditState.localizedLabelSlowestLookupStep;
+  if (!currentSlowest || Number(incidentSlowestStep[1]) > Number(currentSlowest?.ms || 0)) {
+    gridlyCommuteIntelligenceAuditState.localizedLabelSlowestLookupStep = {
+      step: incidentSlowestStep[0],
+      ms: Number(incidentSlowestStep[1]),
+      incidentId: perIncidentEntry.incidentId,
+      reportType: perIncidentEntry.reportType
+    };
+  }
 }
 
 function getRoadHazardSurfaceIncidents(limit = 3) {
@@ -13707,6 +13770,9 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.formatterCacheHits = 0;
   gridlyCommuteIntelligenceAuditState.formatterCacheMisses = 0;
   gridlyCommuteIntelligenceAuditState.equivalentLookupReuseDetected = false;
+  gridlyCommuteIntelligenceAuditState.localizedLabelLookupSections = {};
+  gridlyCommuteIntelligenceAuditState.localizedLabelPerIncidentLookupTimings = [];
+  gridlyCommuteIntelligenceAuditState.localizedLabelSlowestLookupStep = null;
   const timeSection = makeGridlySectionTimer(sections);
   const routeHazard = timeSection("route_hazard_scoring", () => (routeWatchActivated ? getRouteHazardAssessment() : null));
   const activeIncidents = timeSection("unified_incident_retrieval", () => getActiveUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "active"));
