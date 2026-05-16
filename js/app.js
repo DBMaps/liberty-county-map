@@ -260,6 +260,10 @@ const gridlyCommuteIntelligenceAuditState = {
   commuteModelPerIncidentTimings: [],
   commuteModelHelperCallCounts: {},
   commuteModelSlowestIncident: null,
+  titleLabelNestedSections: {},
+  titleLabelPerIncidentTimings: [],
+  titleLabelSlowestHelper: null,
+  titleLabelSlowestIncident: null,
   timingBoundaryVerified: false,
   routeRelevanceNestedSections: {},
   suspectedMisattribution: null,
@@ -440,6 +444,10 @@ window.gridlyCommuteIntelligenceAudit = function gridlyCommuteIntelligenceAudit(
     commuteModelPerIncidentTimings: [...(gridlyCommuteIntelligenceAuditState.commuteModelPerIncidentTimings || [])],
     commuteModelHelperCallCounts: { ...(gridlyCommuteIntelligenceAuditState.commuteModelHelperCallCounts || {}) },
     commuteModelSlowestIncident: gridlyCommuteIntelligenceAuditState.commuteModelSlowestIncident || null,
+    titleLabelNestedSections: { ...(gridlyCommuteIntelligenceAuditState.titleLabelNestedSections || {}) },
+    titleLabelPerIncidentTimings: [...(gridlyCommuteIntelligenceAuditState.titleLabelPerIncidentTimings || [])],
+    titleLabelSlowestHelper: gridlyCommuteIntelligenceAuditState.titleLabelSlowestHelper || null,
+    titleLabelSlowestIncident: gridlyCommuteIntelligenceAuditState.titleLabelSlowestIncident || null,
     slowestSection,
     recommendedTargets,
     timingBoundaryVerified: Boolean(gridlyCommuteIntelligenceAuditState.timingBoundaryVerified),
@@ -13555,6 +13563,8 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     repeatedHelperCalls: 0
   };
   const commuteModelPerIncidentTimings = [];
+  const titleLabelNestedSections = {};
+  const titleLabelPerIncidentTimings = [];
   const intelItems = timeSection("commute_model_build", () => activeIncidents.map((incident) => {
     const incidentStartedAt = performance.now();
     const perIncidentSections = {
@@ -13578,10 +13588,19 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
       findTownMentions: 0,
       inferCorridorLabel: 0
     };
+    const titleLabelHelperTimings = {};
+    const timeTitleLabelHelper = (name, fn) => {
+      const startedAt = performance.now();
+      const result = fn();
+      const elapsed = performance.now() - startedAt;
+      titleLabelHelperTimings[name] = (titleLabelHelperTimings[name] || 0) + elapsed;
+      titleLabelNestedSections[name] = (titleLabelNestedSections[name] || 0) + elapsed;
+      return result;
+    };
     const localizedLabel = (() => {
       const sectionStartedAt = performance.now();
       helperCalls.buildLocalizedIncidentLabel += 1;
-      const value = buildLocalizedIncidentLabel(incident);
+      const value = timeTitleLabelHelper("buildLocalizedIncidentLabel", () => buildLocalizedIncidentLabel(incident));
       perIncidentSections.title_label_generation += (performance.now() - sectionStartedAt);
       return value;
     })();
@@ -13643,14 +13662,14 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     const inferredCorridorLabel = (() => {
       const sectionStartedAt = performance.now();
       helperCalls.inferCorridorLabel += 1;
-      const value = inferCorridorLabel(incident);
+      const value = timeTitleLabelHelper("inferCorridorLabel", () => inferCorridorLabel(incident));
       perIncidentSections.corridor_label_inference += (performance.now() - sectionStartedAt);
       return value;
     })();
     const localizedSummary = (() => {
       const sectionStartedAt = performance.now();
       helperCalls.buildCommunityConsequenceLabel += 1;
-      const value = buildCommunityConsequenceLabel(incident, localizedLabel || incident?.title || "Traffic slowing");
+      const value = timeTitleLabelHelper("buildCommunityConsequenceLabel", () => buildCommunityConsequenceLabel(incident, localizedLabel || incident?.title || "Traffic slowing"));
       perIncidentSections.title_label_generation += (performance.now() - sectionStartedAt);
       return value;
     })();
@@ -13675,6 +13694,14 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
       incidentId: String(incident?.id || `idx-${commuteModelPerIncidentTimings.length}`),
       ms: Number(perIncidentSections.incident_mapping.toFixed(3)),
       sections: Object.fromEntries(Object.entries(perIncidentSections).map(([name, ms]) => [name, Number(ms.toFixed(3))]))
+    });
+    const titleHelperEntries = Object.entries(titleLabelHelperTimings).map(([name, ms]) => ({ name, ms: Number(ms.toFixed(3)) }));
+    const slowestTitleHelper = titleHelperEntries.slice().sort((a, b) => b.ms - a.ms)[0] || null;
+    titleLabelPerIncidentTimings.push({
+      incidentId: String(incident?.id || `idx-${titleLabelPerIncidentTimings.length}`),
+      incidentType: String(incident?.report_type || incident?.type || "unknown"),
+      titleHelperTimings: Object.fromEntries(titleHelperEntries.map((entry) => [entry.name, entry.ms])),
+      slowestTitleHelper
     });
     return shapedItem;
   }));
@@ -13743,6 +13770,11 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     ? "route_relevance_checks appears fast while route watch is inactive; prior ~1008ms likely included unrelated work outside this timing boundary."
     : null;
   gridlyCommuteIntelligenceAuditState.actualSlowSectionCandidate = Object.entries(sections).filter(([, ms]) => Number.isFinite(ms)).sort((a,b)=>b[1]-a[1]).map(([name])=>name)[0] || null;
+  gridlyCommuteIntelligenceAuditState.titleLabelNestedSections = Object.fromEntries(Object.entries(titleLabelNestedSections).map(([name, ms]) => [name, Number(ms.toFixed(3))]));
+  gridlyCommuteIntelligenceAuditState.titleLabelPerIncidentTimings = titleLabelPerIncidentTimings;
+  const titleLabelSlowestHelperEntry = Object.entries(titleLabelNestedSections).sort((a, b) => b[1] - a[1])[0] || null;
+  gridlyCommuteIntelligenceAuditState.titleLabelSlowestHelper = titleLabelSlowestHelperEntry ? { name: titleLabelSlowestHelperEntry[0], ms: Number(titleLabelSlowestHelperEntry[1].toFixed(3)) } : null;
+  gridlyCommuteIntelligenceAuditState.titleLabelSlowestIncident = titleLabelPerIncidentTimings.slice().sort((a, b) => Number((b.slowestTitleHelper || {}).ms || 0) - Number((a.slowestTitleHelper || {}).ms || 0))[0] || null;
   gridlyCommuteIntelligenceAuditState.at = Date.now();
 
   return {
