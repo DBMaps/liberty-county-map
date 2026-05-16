@@ -252,6 +252,62 @@ const gridlyPortraitIntelligenceBreakdownAuditState = {
   renderAlerts: { totalMs: 0, sections: {}, at: 0 },
   updateDailyHabitStatus: { totalMs: 0, sections: {}, at: 0 }
 };
+const gridlyIntelligenceCacheAuditState = {
+  active: false,
+  cycleId: 0,
+  hits: 0,
+  misses: 0,
+  functionNames: []
+};
+let gridlyRefreshCycleCache = null;
+
+function createGridlyRefreshCycleCache() {
+  gridlyIntelligenceCacheAuditState.active = true;
+  gridlyIntelligenceCacheAuditState.cycleId += 1;
+  gridlyIntelligenceCacheAuditState.hits = 0;
+  gridlyIntelligenceCacheAuditState.misses = 0;
+  gridlyIntelligenceCacheAuditState.functionNames = [];
+  return {
+    cycleId: gridlyIntelligenceCacheAuditState.cycleId,
+    values: new Map(),
+    hits: 0,
+    misses: 0,
+    names: new Set()
+  };
+}
+
+function buildGridlyCacheKey(name = "", payload = {}) {
+  const options = payload && typeof payload === "object" ? payload : {};
+  const sortedEntries = Object.keys(options).sort().map((key) => [key, options[key]]);
+  return `${String(name || "unknown")}::${JSON.stringify(Object.fromEntries(sortedEntries))}`;
+}
+
+function getGridlyRefreshCycleCachedValue(name = "", payload = {}, resolver = () => null) {
+  if (!gridlyRefreshCycleCache?.values) return resolver();
+  const key = buildGridlyCacheKey(name, payload);
+  if (gridlyRefreshCycleCache.values.has(key)) {
+    gridlyRefreshCycleCache.hits += 1;
+    gridlyIntelligenceCacheAuditState.hits = gridlyRefreshCycleCache.hits;
+    return gridlyRefreshCycleCache.values.get(key);
+  }
+  const value = resolver();
+  gridlyRefreshCycleCache.values.set(key, value);
+  gridlyRefreshCycleCache.misses += 1;
+  gridlyRefreshCycleCache.names.add(String(name || "unknown"));
+  gridlyIntelligenceCacheAuditState.misses = gridlyRefreshCycleCache.misses;
+  gridlyIntelligenceCacheAuditState.functionNames = Array.from(gridlyRefreshCycleCache.names.values());
+  return value;
+}
+
+function snapshotGridlyIntelligenceCacheAudit() {
+  return {
+    intelligenceCacheActive: Boolean(gridlyIntelligenceCacheAuditState.active),
+    cacheCycleId: gridlyIntelligenceCacheAuditState.cycleId,
+    cacheHits: Number(gridlyIntelligenceCacheAuditState.hits || 0),
+    cacheMisses: Number(gridlyIntelligenceCacheAuditState.misses || 0),
+    cachedFunctionNames: [...(gridlyIntelligenceCacheAuditState.functionNames || [])]
+  };
+}
 
 function makeGridlySectionTimer(sections) {
   return (name, fn) => {
@@ -287,6 +343,7 @@ window.gridlyPortraitIntelligenceBreakdownAudit = function gridlyPortraitIntelli
     refreshPortraitV2LocalizedIntelligence,
     renderAlerts,
     updateDailyHabitStatus,
+    ...snapshotGridlyIntelligenceCacheAudit(),
     slowestSection,
     recommendedTargets: [
       'Measure the slowest section under both route-watch active and idle states.',
@@ -393,6 +450,7 @@ window.gridlyRefreshBreakdownAudit = function gridlyRefreshBreakdownAudit() {
     lastRefreshDuration: gridlyRefreshAuditState.lastRefreshDuration || 0,
     childDurations,
     slowestChild,
+    ...snapshotGridlyIntelligenceCacheAudit(),
     recentRefreshes: [...(gridlyRefreshAuditState.recentRefreshes || [])],
     recommendedTargets: [
       "Instrument and isolate the slowest child call first.",
@@ -4130,57 +4188,63 @@ function refreshReportHazardViews(source = "unspecified") {
   gridlyRefreshAuditState.refreshSourceCounts[source] = (gridlyRefreshAuditState.refreshSourceCounts[source] || 0) + 1;
   gridlyRefreshAuditState.lastRefreshAt = Date.now();
   crossingRenderReportsVersion += 1;
-  const childDurations = {};
-  const timeRefreshChild = (name, fn) => {
-    const start = performance.now();
-    fn();
-    childDurations[name] = Number((performance.now() - start).toFixed(2));
-  };
-  timeRefreshChild("refreshPortraitV2LocalizedIntelligence", () => refreshPortraitV2LocalizedIntelligence());
-  gridlyRefreshAuditState.renderCounts.renderAlerts += 1;
-  timeRefreshChild("renderAlerts", () => renderAlerts());
-  gridlyRefreshAuditState.renderCounts.renderRoadHazards += 1;
-  timeRefreshChild("renderRoadHazards", () => renderRoadHazards());
-  gridlyRefreshAuditState.renderCounts.renderTrendingCrossings += 1;
-  timeRefreshChild("renderTrendingCrossings", () => renderTrendingCrossings());
-  gridlyRefreshAuditState.renderCounts.renderUnifiedIncidents += 1;
-  timeRefreshChild("renderUnifiedIncidents", () => renderUnifiedIncidents());
-  gridlyRefreshAuditState.renderCounts.scheduleRenderCrossings += 1;
-  timeRefreshChild("scheduleRenderCrossings", () => scheduleRenderCrossings("state-change"));
-  gridlyRefreshAuditState.renderCounts.updateRouteIntelligence += 1;
-  timeRefreshChild("updateRouteIntelligence", () => updateRouteIntelligence());
-  timeRefreshChild("updateTrustStats", () => updateTrustStats());
-  timeRefreshChild("updateGrowthWidgets", () => updateGrowthWidgets());
-  timeRefreshChild("updateDailyHabitStatus", () => updateDailyHabitStatus());
-  timeRefreshChild("updateMobileAlertsMirror", () => updateMobileAlertsMirror());
-  timeRefreshChild("evaluateSmartAlertsBanner", () => evaluateSmartAlertsBanner());
-  timeRefreshChild("updateLastUpdated", () => updateLastUpdated());
-  timeRefreshChild("recomputeMovementIntelligence", () => recomputeMovementIntelligence());
-  timeRefreshChild("updateCorridorSummaryCards", () => updateCorridorSummaryCards());
-  const refreshDuration = Number((performance.now() - refreshStart).toFixed(2));
-  gridlyRefreshAuditState.lastRefreshDuration = refreshDuration;
-  gridlyRefreshAuditState.lastChildDurations = childDurations;
-  const unifiedIncidents = getUnifiedIncidents();
-  const refreshSummary = {
-    at: gridlyRefreshAuditState.lastRefreshAt,
-    iso: new Date(gridlyRefreshAuditState.lastRefreshAt).toISOString(),
-    source,
-    durationMs: refreshDuration,
-    childDurations: { ...childDurations },
-    itemCounts: {
-      alertCount: Array.isArray(activeReports) ? activeReports.length : 0,
-      unifiedIncidentCount: Array.isArray(unifiedIncidents) ? unifiedIncidents.length : 0,
-      roadHazardCount: Array.isArray(activeHazards) ? activeHazards.length : 0,
-      crossingCount: Array.isArray(crossings) ? crossings.length : 0,
-      renderedMarkerCount: (hazardMarkers?.length || 0) + (roadHazardMarkers?.length || 0) + crossingMarkers.size,
-      routeIntelligenceState: routeWatchActivated ? "active" : "idle"
+  gridlyRefreshCycleCache = createGridlyRefreshCycleCache();
+  try {
+    const childDurations = {};
+    const timeRefreshChild = (name, fn) => {
+      const start = performance.now();
+      fn();
+      childDurations[name] = Number((performance.now() - start).toFixed(2));
+    };
+    timeRefreshChild("refreshPortraitV2LocalizedIntelligence", () => refreshPortraitV2LocalizedIntelligence());
+    gridlyRefreshAuditState.renderCounts.renderAlerts += 1;
+    timeRefreshChild("renderAlerts", () => renderAlerts());
+    gridlyRefreshAuditState.renderCounts.renderRoadHazards += 1;
+    timeRefreshChild("renderRoadHazards", () => renderRoadHazards());
+    gridlyRefreshAuditState.renderCounts.renderTrendingCrossings += 1;
+    timeRefreshChild("renderTrendingCrossings", () => renderTrendingCrossings());
+    gridlyRefreshAuditState.renderCounts.renderUnifiedIncidents += 1;
+    timeRefreshChild("renderUnifiedIncidents", () => renderUnifiedIncidents());
+    gridlyRefreshAuditState.renderCounts.scheduleRenderCrossings += 1;
+    timeRefreshChild("scheduleRenderCrossings", () => scheduleRenderCrossings("state-change"));
+    gridlyRefreshAuditState.renderCounts.updateRouteIntelligence += 1;
+    timeRefreshChild("updateRouteIntelligence", () => updateRouteIntelligence());
+    timeRefreshChild("updateTrustStats", () => updateTrustStats());
+    timeRefreshChild("updateGrowthWidgets", () => updateGrowthWidgets());
+    timeRefreshChild("updateDailyHabitStatus", () => updateDailyHabitStatus());
+    timeRefreshChild("updateMobileAlertsMirror", () => updateMobileAlertsMirror());
+    timeRefreshChild("evaluateSmartAlertsBanner", () => evaluateSmartAlertsBanner());
+    timeRefreshChild("updateLastUpdated", () => updateLastUpdated());
+    timeRefreshChild("recomputeMovementIntelligence", () => recomputeMovementIntelligence());
+    timeRefreshChild("updateCorridorSummaryCards", () => updateCorridorSummaryCards());
+    const refreshDuration = Number((performance.now() - refreshStart).toFixed(2));
+    gridlyRefreshAuditState.lastRefreshDuration = refreshDuration;
+    gridlyRefreshAuditState.lastChildDurations = childDurations;
+    const unifiedIncidents = getUnifiedIncidents();
+    const refreshSummary = {
+      at: gridlyRefreshAuditState.lastRefreshAt,
+      iso: new Date(gridlyRefreshAuditState.lastRefreshAt).toISOString(),
+      source,
+      durationMs: refreshDuration,
+      childDurations: { ...childDurations },
+      itemCounts: {
+        alertCount: Array.isArray(activeReports) ? activeReports.length : 0,
+        unifiedIncidentCount: Array.isArray(unifiedIncidents) ? unifiedIncidents.length : 0,
+        roadHazardCount: Array.isArray(activeHazards) ? activeHazards.length : 0,
+        crossingCount: Array.isArray(crossings) ? crossings.length : 0,
+        renderedMarkerCount: (hazardMarkers?.length || 0) + (roadHazardMarkers?.length || 0) + crossingMarkers.size,
+        routeIntelligenceState: routeWatchActivated ? "active" : "idle"
+      }
+    };
+    gridlyRefreshAuditState.recentRefreshes.push(refreshSummary);
+    if (gridlyRefreshAuditState.recentRefreshes.length > GRIDLY_REFRESH_BREAKDOWN_LOG_LIMIT) {
+      gridlyRefreshAuditState.recentRefreshes.splice(0, gridlyRefreshAuditState.recentRefreshes.length - GRIDLY_REFRESH_BREAKDOWN_LOG_LIMIT);
     }
-  };
-  gridlyRefreshAuditState.recentRefreshes.push(refreshSummary);
-  if (gridlyRefreshAuditState.recentRefreshes.length > GRIDLY_REFRESH_BREAKDOWN_LOG_LIMIT) {
-    gridlyRefreshAuditState.recentRefreshes.splice(0, gridlyRefreshAuditState.recentRefreshes.length - GRIDLY_REFRESH_BREAKDOWN_LOG_LIMIT);
+  } finally {
+    gridlyIntelligenceCacheAuditState.active = false;
+    gridlyRefreshCycleCache = null;
+    endRefreshHazardTrace();
   }
-  endRefreshHazardTrace();
 }
 
 window.gridlyClearLocalTestReports = function gridlyClearLocalTestReports() {
@@ -13240,6 +13304,13 @@ function buildCorridorClusters(intelItems = [], recentlyCleared = []) {
 }
 
 function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
+  const cachePayload = {
+    limit: Number(limit || 0),
+    routeWatchActivated: Boolean(routeWatchActivated),
+    activeUnifiedCount: Array.isArray(getUnifiedIncidents()) ? getUnifiedIncidents().length : 0,
+    activeReportCount: Array.isArray(activeReports) ? activeReports.length : 0
+  };
+  return getGridlyRefreshCycleCachedValue("buildCommuteConsequenceIntelligence", cachePayload, () => {
   const routeHazard = routeWatchActivated ? getRouteHazardAssessment() : null;
   const activeIncidents = getActiveUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "active");
   const recentlyCleared = getUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "cleared" && Number(incident?.age_minutes) <= 45);
@@ -13331,6 +13402,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     routeImpactEtaEstimate: top?.etaImpact || 0,
     trendMessage
   };
+  });
 }
 
 function buildUnifiedLocalizedCommuteIntelligence({ limit = 6 } = {}) {
