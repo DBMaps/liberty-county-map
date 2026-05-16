@@ -258,6 +258,20 @@ const gridlyCommuteIntelligenceAuditState = {
   counts: {},
   at: 0
 };
+const gridlyRouteRelevanceAuditState = {
+  at: 0,
+  checksRun: 0,
+  functionsCalled: [],
+  perIncidentTimings: [],
+  totalMs: 0,
+  slowestCheck: null,
+  routeWatchActive: false,
+  routeGeometryAvailable: false,
+  routeIncidentCount: 0,
+  unifiedIncidentCount: 0,
+  unnecessaryWorkDetected: [],
+  recommendedV143Patch: ""
+};
 const gridlyIntelligenceCacheAuditState = {
   active: false,
   cycleId: 0,
@@ -399,6 +413,85 @@ window.gridlyCommuteIntelligenceAudit = function gridlyCommuteIntelligenceAudit(
     ]
     : ["Run a refresh cycle and submit one report before auditing commute intelligence timing."];
   return { totalMs, sections, counts, slowestSection, recommendedTargets };
+};
+
+window.gridlyRouteRelevanceAudit = function gridlyRouteRelevanceAudit() {
+  const auditStartedAt = performance.now();
+  const activeIncidents = getActiveUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "active");
+  const routeWatchActive = Boolean(routeWatchActivated === true || window.__gridlyRouteWatchActive === true);
+  const routeLatLngs = getRoutePolylineLatLngs();
+  const routeGeometryAvailable = Array.isArray(routeLatLngs) && routeLatLngs.length >= 2;
+  const routeHazard = routeWatchActive ? getRouteHazardAssessment() : null;
+  const functionsCalled = [
+    "buildCommuteConsequenceIntelligence",
+    "getRouteHazardAssessment",
+    "buildRouteHazardAssessment",
+    "isIncidentRouteRelevant",
+    "getRoutePolylineLatLngs",
+    "getDistanceMiles"
+  ];
+
+  const perIncidentTimings = activeIncidents.map((incident) => {
+    const startedAt = performance.now();
+    const routeRelevant = isIncidentRouteRelevant(incident, routeHazard);
+    const ms = Number((performance.now() - startedAt).toFixed(3));
+    return {
+      incidentId: String(incident?.id || "unknown"),
+      crossingId: String(incident?.crossingId || ""),
+      routeRelevant,
+      ms
+    };
+  });
+
+  const routeIncidentCount = perIncidentTimings.filter((item) => item.routeRelevant).length;
+  const checksRun = perIncidentTimings.length;
+  const slowestCheck = perIncidentTimings.slice().sort((a, b) => b.ms - a.ms)[0] || null;
+  const unnecessaryWorkDetected = [];
+  if (!routeWatchActive && checksRun > 0) {
+    unnecessaryWorkDetected.push("Route relevance loop executes while route watch is idle; each incident still calls isIncidentRouteRelevant and exits false.");
+  }
+  if (routeWatchActive && !routeGeometryAvailable && checksRun > 0) {
+    unnecessaryWorkDetected.push("Route relevance loop executes without route geometry; each incident repeats guard checks and returns false.");
+  }
+  if (routeWatchActive && routeGeometryAvailable && checksRun > 1) {
+    unnecessaryWorkDetected.push("Route polyline distance checks are recalculated per incident, including repeated polyline access and distance scans.");
+  }
+
+  const recommendedV143Patch = !routeWatchActive
+    ? "Short-circuit route relevance computation in buildCommuteConsequenceIntelligence when route watch is inactive."
+    : !routeGeometryAvailable
+      ? "Short-circuit route relevance computation when active route geometry is unavailable."
+      : "Compute route relevance context once per refresh cycle (routeLatLngs + nearbyCrossingIds) and reuse it per incident.";
+  const totalMs = Number((performance.now() - auditStartedAt).toFixed(3));
+
+  Object.assign(gridlyRouteRelevanceAuditState, {
+    at: Date.now(),
+    checksRun,
+    functionsCalled,
+    perIncidentTimings,
+    totalMs,
+    slowestCheck,
+    routeWatchActive,
+    routeGeometryAvailable,
+    routeIncidentCount,
+    unifiedIncidentCount: activeIncidents.length,
+    unnecessaryWorkDetected,
+    recommendedV143Patch
+  });
+
+  return {
+    routeWatchActive,
+    routeGeometryAvailable,
+    routeIncidentCount,
+    unifiedIncidentCount: activeIncidents.length,
+    checksRun,
+    functionsCalled,
+    perIncidentTimings,
+    totalMs,
+    slowestCheck,
+    unnecessaryWorkDetected,
+    recommendedV143Patch
+  };
 };
 
 let suppressRealtimeRefreshUntil = 0;
