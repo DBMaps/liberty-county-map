@@ -16218,6 +16218,19 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     });
   }
   function triggerV2DockAdapter(action, payload = {}) {
+    const canonicalAction = (() => {
+      const raw = String(action || "").trim();
+      const aliases = {
+        "open-route-watch": "route-watch-open",
+        "routewatch": "route-watch-open",
+        "route-watch": "route-watch-open",
+        "view-route": "route-preview-open",
+        "routepreview": "route-preview-open",
+        "route-preview": "route-preview-open"
+      };
+      const lowered = raw.toLowerCase();
+      return aliases[lowered] || raw;
+    })();
     const hasActiveRouteForPreview = () => {
       const hasSelection = Boolean(lastRouteWatchSelection.startId && lastRouteWatchSelection.destinationId);
       const hasLayer = Boolean(window.__gridlyRoutePreviewLayer && typeof window.__gridlyRoutePreviewLayer.getLatLngs === "function");
@@ -16355,22 +16368,36 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       "settings-route-preferences": () => triggerV2DockAdapter("settings-open"),
       "settings-app-preferences": () => triggerV2DockAdapter("settings-open")
     };
-    const bridge = bridges[action];
-    v2DockAdapterState.lastDockActionTriggered = action || "";
-    v2DockAdapterState.lastDockAdapterTarget = action ? `intent:${action}` : "";
+    const bridge = bridges[canonicalAction];
+    v2DockAdapterState.lastDockActionTriggered = canonicalAction || "";
+    v2DockAdapterState.lastDockAdapterTarget = canonicalAction ? `intent:${canonicalAction}` : "";
     if (typeof bridge !== "function") {
       v2DockAdapterState.adapterFallbackCount += 1;
-      v2DockAdapterState.adapterBridgeFailures.push({ action, reason: "missing_bridge", at: Date.now() });
+      v2DockAdapterState.adapterBridgeFailures.push({ action: canonicalAction, reason: "missing_bridge", at: Date.now() });
       return;
     }
     try {
       bridge();
-      const shouldKeepSheetOpen = action === "report-select-hazard";
+      const shouldKeepSheetOpen = canonicalAction === "report-select-hazard";
       if (!shouldKeepSheetOpen) closePortraitV2Sheet();
       applyPortraitV2SurfaceContainment();
     } catch (error) {
-      v2DockAdapterState.adapterBridgeFailures.push({ action, reason: String(error?.message || error), at: Date.now() });
+      v2DockAdapterState.adapterBridgeFailures.push({ action: canonicalAction, reason: String(error?.message || error), at: Date.now() });
     }
+  }
+  function resolveV2SheetAction(button) {
+    if (!button) return "";
+    const raw = String(button.dataset?.v2Action || button.dataset?.action || button.dataset?.routeAction || "").trim();
+    const aliases = {
+      "open-route-watch": "route-watch-open",
+      "routewatch": "route-watch-open",
+      "route-watch": "route-watch-open",
+      "view-route": "route-preview-open",
+      "routepreview": "route-preview-open",
+      "route-preview": "route-preview-open"
+    };
+    const lowered = raw.toLowerCase();
+    return aliases[lowered] || raw;
   }
   function bindV2SheetActions() {
     const body = document.getElementById("gridlyPortraitV2SheetBody");
@@ -16395,8 +16422,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     }
     const preconditions = getV2PreconditionsState();
     refreshPortraitV2ReportCtas(body, preconditions);
-    body.querySelectorAll("[data-v2-action]").forEach((button) => {
-      const action = button.dataset.v2Action || "";
+    body.querySelectorAll("[data-v2-action], [data-action], [data-route-action]").forEach((button) => {
+      const action = resolveV2SheetAction(button);
       const isDisabledByPrecondition = (
         ((action === "route-watch-open" || action === "route-preview-open") && !preconditions.routeReady)
         || (action === "route-manage-places-open" && !preconditions.hasSavedPlaces)
@@ -16406,7 +16433,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       if (isDisabledByPrecondition) button.setAttribute("aria-disabled", "true");
       else button.removeAttribute("aria-disabled");
       button.addEventListener("click", (event) => {
-        const action = button.dataset.v2Action || "";
+        const action = resolveV2SheetAction(button);
         const resolvedHazardType = (typeof reportingState === "object" && reportingState ? reportingState.selectedHazardType : "") || selectedV2HazardType || selectedQuickHazardType || "";
         if (action === "report-select-hazard" || action === "report-tap-map" || action === "report-use-location") {
           event.preventDefault();
@@ -16472,6 +16499,45 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       helper.textContent = helperText;
       helper.hidden = !helperText;
     }
+
+    window.gridlyRouteSetupButtonAudit = function gridlyRouteSetupButtonAudit() {
+      const routeHandlers = {
+        "route-watch-open": "triggerV2DockAdapter.bridges.route-watch-open",
+        "route-preview-open": "triggerV2DockAdapter.bridges.route-preview-open"
+      };
+      const actionAliases = {
+        "open-route-watch": "route-watch-open",
+        "routewatch": "route-watch-open",
+        "route-watch": "route-watch-open",
+        "view-route": "route-preview-open",
+        "routepreview": "route-preview-open",
+        "route-preview": "route-preview-open"
+      };
+      const buttons = Array.from(document.querySelectorAll('#gridlyPortraitV2SheetBody button, .route-setup-modal button, #routeSetupModal button'))
+        .filter((button) => {
+          const rawAction = String(button?.dataset?.v2Action || button?.dataset?.action || button?.dataset?.routeAction || "").trim();
+          const label = (button?.textContent || "").trim().toLowerCase();
+          return /route/.test(rawAction.toLowerCase()) || label === "open route watch" || label === "view route";
+        })
+        .map((button) => {
+          const rawAction = String(button?.dataset?.v2Action || button?.dataset?.action || button?.dataset?.routeAction || "").trim();
+          const normalized = actionAliases[rawAction.toLowerCase()] || rawAction;
+          const matchedHandler = Boolean(routeHandlers[normalized]);
+          return {
+            text: (button.textContent || "").trim(),
+            id: button.id || "",
+            className: button.className || "",
+            dataset: { ...button.dataset },
+            disabled: Boolean(button.disabled),
+            matchedHandler,
+            expectedAction: matchedHandler ? normalized : "route-watch-open | route-preview-open",
+            clickTargetReady: !button.disabled && matchedHandler
+          };
+        });
+      const result = { buttonsFound: buttons.length, buttons };
+      console.info("Gridly Route Setup button audit", result);
+      return result;
+    };
   }
   function bindV2(){
     applyPortraitV2SurfaceContainment();
