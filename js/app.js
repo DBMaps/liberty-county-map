@@ -16162,6 +16162,49 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   const v1372AlertsActionDebug = { manageAlertsActionHandled:false, alertPreferencesActionHandled:false, lastAlertsActionFailureReason:"" };
   const v1415RouteReadinessDebug = { lastRefreshAt: 0, lastRefreshSource: "", stateRefreshDetected: false };
   let activeSheet = "";
+  const portraitV2BatchingState = { active: false };
+  const portraitV2MeasurementCache = { active: false, frameId: 0, reads: new WeakMap(), hits: 0, misses: 0 };
+
+  function withPortraitMeasurementCache(reader) {
+    const nextFrameId = portraitV2MeasurementCache.frameId + 1;
+    portraitV2MeasurementCache.frameId = nextFrameId;
+    portraitV2MeasurementCache.active = true;
+    portraitV2MeasurementCache.reads = new WeakMap();
+    try {
+      return typeof reader === "function" ? reader(nextFrameId) : null;
+    } finally {
+      portraitV2MeasurementCache.active = false;
+      portraitV2MeasurementCache.reads = new WeakMap();
+    }
+  }
+
+  function getCachedPortraitMeasurement(el, key, reader, frameId) {
+    if (!el || typeof reader !== "function") return null;
+    if (!(portraitV2MeasurementCache.active && frameId === portraitV2MeasurementCache.frameId)) return reader();
+    let bucket = portraitV2MeasurementCache.reads.get(el);
+    if (!bucket) {
+      bucket = new Map();
+      portraitV2MeasurementCache.reads.set(el, bucket);
+    }
+    if (bucket.has(key)) {
+      portraitV2MeasurementCache.hits += 1;
+      return bucket.get(key);
+    }
+    portraitV2MeasurementCache.misses += 1;
+    const value = reader();
+    bucket.set(key, value);
+    return value;
+  }
+
+  function runPortraitV2BatchedRead(writePhase, readPhase) {
+    if (typeof writePhase === "function") writePhase();
+    portraitV2BatchingState.active = true;
+    return new Promise((resolve) => requestAnimationFrame(() => {
+      const value = withPortraitMeasurementCache((frameId) => (typeof readPhase === "function" ? readPhase(frameId) : null));
+      portraitV2BatchingState.active = false;
+      resolve(value);
+    }));
+  }
 
   const V2_CONTAINMENT_CLASS = "gridly-v2-surface-containment";
   const legacySurfaceState = { lastSuppressed: "", visibleCount: 0, report: false, route: false, alerts: false, settings: false };
@@ -16177,35 +16220,43 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
 
   function applyPortraitV2SurfaceContainment() {
-    const body = document.body;
-    if (!body) return;
-    const active = isPortraitV2VisuallyActive();
-    body.classList.toggle(V2_CONTAINMENT_CLASS, active);
-    if (!active) {
-      legacySurfaceState.lastSuppressed = "";
-      legacySurfaceState.visibleCount = 0;
-      legacySurfaceState.report = false;
-      legacySurfaceState.route = false;
-      legacySurfaceState.alerts = false;
-      legacySurfaceState.settings = false;
-      return;
-    }
-    const visible = (el) => Boolean(el && !el.hidden && getComputedStyle(el).display !== "none" && getComputedStyle(el).visibility !== "hidden" && Number(getComputedStyle(el).opacity || 1) !== 0);
-    const reportEl = document.getElementById("reportSection");
-    const routeEl = document.querySelector(".route-setup-modal:not([hidden]), .route-setup-modal-card");
-    const alertsEl = document.getElementById("alertsSection");
-    const settingsEl = document.getElementById("settingsModal");
-    const seen = [];
-    legacySurfaceState.report = visible(reportEl);
-    legacySurfaceState.route = visible(routeEl);
-    legacySurfaceState.alerts = visible(alertsEl);
-    legacySurfaceState.settings = visible(settingsEl);
-    if (legacySurfaceState.report) seen.push("report");
-    if (legacySurfaceState.route) seen.push("route");
-    if (legacySurfaceState.alerts) seen.push("alerts");
-    if (legacySurfaceState.settings) seen.push("settings");
-    legacySurfaceState.visibleCount = seen.length;
-    legacySurfaceState.lastSuppressed = seen[seen.length - 1] || legacySurfaceState.lastSuppressed || "";
+    runPortraitV2BatchedRead(() => {
+      const body = document.body;
+      if (!body) return;
+      const active = isPortraitV2VisuallyActive();
+      body.classList.toggle(V2_CONTAINMENT_CLASS, active);
+      if (!active) {
+        legacySurfaceState.lastSuppressed = "";
+        legacySurfaceState.visibleCount = 0;
+        legacySurfaceState.report = false;
+        legacySurfaceState.route = false;
+        legacySurfaceState.alerts = false;
+        legacySurfaceState.settings = false;
+      }
+    }, (frameId) => {
+      const body = document.body;
+      if (!body?.classList.contains(V2_CONTAINMENT_CLASS)) return;
+      const visible = (el) => {
+        if (!el || el.hidden) return false;
+        const style = getCachedPortraitMeasurement(el, "computed-style", () => getComputedStyle(el), frameId);
+        return Boolean(style && style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity || 1) !== 0);
+      };
+      const reportEl = document.getElementById("reportSection");
+      const routeEl = document.querySelector(".route-setup-modal:not([hidden]), .route-setup-modal-card");
+      const alertsEl = document.getElementById("alertsSection");
+      const settingsEl = document.getElementById("settingsModal");
+      const seen = [];
+      legacySurfaceState.report = visible(reportEl);
+      legacySurfaceState.route = visible(routeEl);
+      legacySurfaceState.alerts = visible(alertsEl);
+      legacySurfaceState.settings = visible(settingsEl);
+      if (legacySurfaceState.report) seen.push("report");
+      if (legacySurfaceState.route) seen.push("route");
+      if (legacySurfaceState.alerts) seen.push("alerts");
+      if (legacySurfaceState.settings) seen.push("settings");
+      legacySurfaceState.visibleCount = seen.length;
+      legacySurfaceState.lastSuppressed = seen[seen.length - 1] || legacySurfaceState.lastSuppressed || "";
+    });
   }
 
   function openPortraitV2Sheet(type) {
@@ -17002,6 +17053,10 @@ const v134ReportingRefinementApplied = true;
       lastMapSize: mapResizeGuard?.getLastSize?.() || null,
       skippedMapInvalidates: mapResizeGuard?.getSkippedCount?.() || 0,
       forcedMapInvalidates: mapResizeGuard?.getForcedCount?.() || 0,
+      portraitMeasurementCacheActive: Boolean(portraitV2MeasurementCache.active),
+      cachedReadHits: portraitV2MeasurementCache.hits,
+      cachedReadMisses: portraitV2MeasurementCache.misses,
+      portraitBatchingActive: Boolean(portraitV2BatchingState.active),
       passiveAuditOnlyConfirmed: true
     };
   };
@@ -17064,20 +17119,20 @@ const v134ReportingRefinementApplied = true;
   };
 
   window.gridlyPortraitV2SheetState = function gridlyPortraitV2SheetState() {
-    return new Promise((resolve) => requestAnimationFrame(() => {
+    return runPortraitV2BatchedRead(null, (frameId) => {
     const shell = document.getElementById("gridlyPortraitV2");
     const sheet = document.getElementById("gridlyPortraitV2Sheet");
     const sheetBody = document.getElementById("gridlyPortraitV2SheetBody");
     const isOnscreen = (el) => {
       if (!el) return false;
-      const style = getComputedStyle(el);
+      const style = getCachedPortraitMeasurement(el, "computed-style", () => getComputedStyle(el), frameId);
       if (el.hidden || style.display === "none" || style.visibility === "hidden" || Number(style.opacity || "1") === 0) return false;
-      const rect = el.getBoundingClientRect();
+      const rect = getCachedPortraitMeasurement(el, "rect", () => el.getBoundingClientRect(), frameId);
       return rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.right > 0 && rect.top < window.innerHeight && rect.left < window.innerWidth;
     };
     const getState = (el) => {
       if (!el) return null;
-      const style = getComputedStyle(el);
+      const style = getCachedPortraitMeasurement(el, "computed-style", () => getComputedStyle(el), frameId);
       return {
         hidden: Boolean(el.hidden),
         display: style.display,
@@ -17100,16 +17155,16 @@ const v134ReportingRefinementApplied = true;
     resolve({
       activeSheet,
       shellHidden: Boolean(shell?.hidden),
-      shellDisplay: shell ? getComputedStyle(shell).display : null,
-      shellPointerEvents: shell ? getComputedStyle(shell).pointerEvents : null,
+      shellDisplay: shell ? getCachedPortraitMeasurement(shell, "computed-style", () => getComputedStyle(shell), frameId)?.display : null,
+      shellPointerEvents: shell ? getCachedPortraitMeasurement(shell, "computed-style", () => getComputedStyle(shell), frameId)?.pointerEvents : null,
       sheetHidden: Boolean(sheet?.hidden),
-      sheetDisplay: sheet ? getComputedStyle(sheet).display : null,
-      sheetPointerEvents: sheet ? getComputedStyle(sheet).pointerEvents : null,
-      sheetTransform: sheet ? getComputedStyle(sheet).transform : null,
+      sheetDisplay: sheet ? getCachedPortraitMeasurement(sheet, "computed-style", () => getComputedStyle(sheet), frameId)?.display : null,
+      sheetPointerEvents: sheet ? getCachedPortraitMeasurement(sheet, "computed-style", () => getComputedStyle(sheet), frameId)?.pointerEvents : null,
+      sheetTransform: sheet ? getCachedPortraitMeasurement(sheet, "computed-style", () => getComputedStyle(sheet), frameId)?.transform : null,
       sheetClasses: sheet ? Array.from(sheet.classList) : [],
       sheetVisible: isOnscreen(sheet),
       backdropHidden: Boolean(backdrop?.hidden),
-      backdropDisplay: backdrop ? getComputedStyle(backdrop).display : null,
+      backdropDisplay: backdrop ? getCachedPortraitMeasurement(backdrop, "computed-style", () => getComputedStyle(backdrop), frameId)?.display : null,
       bodyClasses: Array.from(document.body?.classList || []),
       shell: getState(shell),
       sheet: getState(sheet),
@@ -17126,7 +17181,7 @@ const v134ReportingRefinementApplied = true;
       bodyModalOpen: document.body.classList.contains("modal-open"),
       attachedToActivePortraitMode: portraitModeActive && Boolean(shell && !shell.hidden)
     });
-    }));
+    });
   };
   document.addEventListener("DOMContentLoaded", bindV2);
 })();
