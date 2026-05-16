@@ -252,6 +252,12 @@ const gridlyPortraitIntelligenceBreakdownAuditState = {
   renderAlerts: { totalMs: 0, sections: {}, at: 0 },
   updateDailyHabitStatus: { totalMs: 0, sections: {}, at: 0 }
 };
+const gridlyCommuteIntelligenceAuditState = {
+  totalMs: 0,
+  sections: {},
+  counts: {},
+  at: 0
+};
 const gridlyIntelligenceCacheAuditState = {
   active: false,
   cycleId: 0,
@@ -375,6 +381,24 @@ window.gridlyPortraitIntelligenceBreakdownAudit = function gridlyPortraitIntelli
       'Track intelligence calculation sections against unified incident totals and route relevance checks.'
     ]
   };
+};
+
+window.gridlyCommuteIntelligenceAudit = function gridlyCommuteIntelligenceAudit() {
+  const totalMs = Number(gridlyCommuteIntelligenceAuditState.totalMs || 0);
+  const sections = { ...(gridlyCommuteIntelligenceAuditState.sections || {}) };
+  const counts = { ...(gridlyCommuteIntelligenceAuditState.counts || {}) };
+  const slowestSection = Object.entries(sections)
+    .filter(([, durationMs]) => Number.isFinite(durationMs))
+    .sort((a, b) => b[1] - a[1])
+    .map(([name, durationMs]) => ({ name, durationMs }))[0] || null;
+  const recommendedTargets = slowestSection
+    ? [
+      `Prioritize ${slowestSection.name} (${slowestSection.durationMs.toFixed(1)}ms) for V143 optimization experiments.`,
+      "Compare section timing under route-watch active vs inactive runs to isolate route-dependent costs.",
+      "Correlate incident and corridor counts with slow sections to confirm algorithmic scaling."
+    ]
+    : ["Run a refresh cycle and submit one report before auditing commute intelligence timing."];
+  return { totalMs, sections, counts, slowestSection, recommendedTargets };
 };
 
 let suppressRealtimeRefreshUntil = 0;
@@ -13335,15 +13359,20 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     activeReportCount: Array.isArray(activeReports) ? activeReports.length : 0
   };
   return getGridlyRefreshCycleCachedValue("buildCommuteConsequenceIntelligence", cachePayload, () => {
-  const routeHazard = routeWatchActivated ? getRouteHazardAssessment() : null;
-  const activeIncidents = getActiveUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "active");
-  const recentlyCleared = getUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "cleared" && Number(incident?.age_minutes) <= 45);
+  const startedAt = performance.now();
+  const sections = {};
+  const counts = {};
+  const timeSection = makeGridlySectionTimer(sections);
+  const routeHazard = timeSection("route_hazard_scoring", () => (routeWatchActivated ? getRouteHazardAssessment() : null));
+  const activeIncidents = timeSection("unified_incident_retrieval", () => getActiveUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "active"));
+  const recentlyCleared = timeSection("recently_cleared_retrieval", () => getUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "cleared" && Number(incident?.age_minutes) <= 45));
+  counts.unifiedIncidentCount = activeIncidents.length;
   const weightedByType = { road_closed: 140, rail_blockage_delay: 130, flooding: 120, crash: 112, construction: 90, disabled_vehicle: 74, other_hazard: 60 };
   const severityWeight = { high: 90, moderate: 62, medium: 62, low: 35 };
   let crossingIncidentCount = 0;
   let roadHazardIncidentCount = 0;
   let unknownIncidentCount = 0;
-  const intelItems = activeIncidents.map((incident) => {
+  const intelItems = timeSection("route_relevance_checks", () => activeIncidents.map((incident) => {
     const localizedLabel = buildLocalizedIncidentLabel(incident);
     const crossingIncident = isCrossingDisruptionIncident(incident);
     if (crossingIncident) crossingIncidentCount += 1;
@@ -13365,12 +13394,15 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     const minutesText = Number.isFinite(ageMinutes) ? `${Math.max(0, Math.round(ageMinutes))}m ago` : "just now";
     const etaImpact = routeRelevant && sevScore >= 62 ? Math.max(6, Math.min(24, Math.round((typeScore + sevScore) / 15))) : 0;
     return { incident, routeRelevant, priorityScore, localizedSummary: buildCommunityConsequenceLabel(incident, localizedLabel || incident?.title || "Traffic slowing"), minutesText, ageMinutes, etaImpact };
-  }).sort((a, b) => b.priorityScore - a.priorityScore);
+  }));
 
-  const routeImpactItems = intelItems.filter((item) => item.routeRelevant);
+  timeSection("sorting", () => intelItems.sort((a, b) => b.priorityScore - a.priorityScore));
+
+  const routeImpactItems = timeSection("filtering", () => intelItems.filter((item) => item.routeRelevant));
+  counts.routeIncidentCount = routeImpactItems.length;
   const top = intelItems[0] || null;
   const maxScore = top?.priorityScore || 0;
-  const trendState = inferConsequenceTrend({ activeItems: intelItems, recentlyClearedCount: recentlyCleared.length });
+  const trendState = timeSection("severity_calculations", () => inferConsequenceTrend({ activeItems: intelItems, recentlyClearedCount: recentlyCleared.length }));
   const consequenceTier = maxScore >= 300 ? "severe" : maxScore >= 250 ? "heavy" : maxScore >= 190 ? "moderate" : maxScore > 0 ? "minor" : "clear";
   const rerouteReadinessDetected = routeWatchActivated && routeImpactItems.length > 0 && (consequenceTier === "heavy" || consequenceTier === "severe");
   const routeConsequenceSeverity = routeImpactItems.length === 0 ? "clear" : (maxScore >= 300 ? "severe" : maxScore >= 230 ? "heavy" : "moderate");
@@ -13400,19 +13432,31 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     unknownIncidentCount
   };
 
-  const corridorClusters = buildCorridorClusters(intelItems, recentlyCleared);
+  const corridorClusters = timeSection("corridor_grouping", () => buildCorridorClusters(intelItems, recentlyCleared));
+  counts.corridorCount = corridorClusters.length;
   const highestPriorityCorridor = corridorClusters[0] || null;
+  const corridorSeverityMap = timeSection("object_construction_output_shaping", () => corridorClusters.reduce((acc, corridor) => { acc[corridor.label] = corridor.healthState; return acc; }, {}));
+  const routeImpactSummary = timeSection("impact_calculations", () => (routeImpactItems.length > 0 ? `Expect delays into Dayton · ${routeImpactItems.length} route impact${routeImpactItems.length === 1 ? "" : "s"}` : "Route into Liberty moving normally"));
+  const topStatus = timeSection("alert_generation", () => (highestPriorityCorridor ? buildCommunityConsequenceLabel(highestPriorityCorridor.items?.[0]?.incident || {}, `${highestPriorityCorridor.label.replace(/ Corridor$/, "")} moving with caution`) : (top ? top.localizedSummary : "US 90 moving normally")));
+  const consequenceSecondaryMessage = timeSection("recommendation_generation", () => topSecondary);
+  counts.alertCount = Math.min(Number(limit || 0), intelItems.length);
+  counts.recommendationCount = consequenceSecondaryMessage ? 1 : 0;
+  sections.dedupe_logic = 0;
+  gridlyCommuteIntelligenceAuditState.totalMs = performance.now() - startedAt;
+  gridlyCommuteIntelligenceAuditState.sections = sections;
+  gridlyCommuteIntelligenceAuditState.counts = counts;
+  gridlyCommuteIntelligenceAuditState.at = Date.now();
 
   return {
     items: intelItems.slice(0, limit),
     corridorClusters,
     highestPriorityCorridor: highestPriorityCorridor?.label || null,
-    corridorSeverityMap: corridorClusters.reduce((acc, corridor) => { acc[corridor.label] = corridor.healthState; return acc; }, {}),
-    topStatus: highestPriorityCorridor ? buildCommunityConsequenceLabel(highestPriorityCorridor.items?.[0]?.incident || {}, `${highestPriorityCorridor.label.replace(/ Corridor$/, "")} moving with caution`) : (top ? top.localizedSummary : "US 90 moving normally"),
+    corridorSeverityMap,
+    topStatus,
     commuteImpactHeadline: consequencePrimaryMessage,
     topStatusLocalizedDetail: topSecondary,
     nearbySummary: topSecondary,
-    routeImpactSummary: routeImpactItems.length > 0 ? `Expect delays into Dayton · ${routeImpactItems.length} route impact${routeImpactItems.length === 1 ? "" : "s"}` : "Route into Liberty moving normally",
+    routeImpactSummary,
     hasActiveAlerts: intelItems.length > 0,
     activeLocalizedAlertCount: intelItems.length,
     routeImpactIncidentCount: routeImpactItems.length,
@@ -13421,7 +13465,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     rerouteReadinessDetected,
     consequenceTrendState: trendState,
     consequencePrimaryMessage,
-    consequenceSecondaryMessage: topSecondary,
+    consequenceSecondaryMessage,
     consequenceIncidentCount: intelItems.length,
     routeImpactEtaEstimate: top?.etaImpact || 0,
     trendMessage
