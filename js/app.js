@@ -465,6 +465,46 @@ let lastOsrmRequestUrl = null;
 let lastOsrmResponseStatus = null;
 let routeQuickButtonDelegatedBindingActive = false;
 let routeQuickDirectListenerAttached = false;
+
+const GRIDLY_REFLOW_TRACE_WINDOW_MS = 10000;
+const gridlyReflowTraceState = { entries: [], maxEntries: 500 };
+
+function pushGridlyReflowTrace(label, phase, options = {}) {
+  const now = (typeof performance !== "undefined" && typeof performance.now === "function") ? performance.now() : Date.now();
+  const entry = {
+    ts: Date.now(),
+    t: Math.round(now * 1000) / 1000,
+    label: String(label || "unknown"),
+    phase: String(phase || "event"),
+    duration: Number.isFinite(Number(options.duration)) ? Number(options.duration) : null,
+    source: options.source ? String(options.source) : null
+  };
+  gridlyReflowTraceState.entries.push(entry);
+  if (gridlyReflowTraceState.entries.length > gridlyReflowTraceState.maxEntries) {
+    gridlyReflowTraceState.entries.splice(0, gridlyReflowTraceState.entries.length - gridlyReflowTraceState.maxEntries);
+  }
+  return entry;
+}
+
+function timeGridlyReflowTrace(label, source) {
+  const startAt = (typeof performance !== "undefined" && typeof performance.now === "function") ? performance.now() : Date.now();
+  pushGridlyReflowTrace(label, "start", { source });
+  return function endTrace(phase = "end") {
+    const endAt = (typeof performance !== "undefined" && typeof performance.now === "function") ? performance.now() : Date.now();
+    pushGridlyReflowTrace(label, phase, { source, duration: endAt - startAt });
+  };
+}
+
+window.gridlyReflowTraceAudit = function gridlyReflowTraceAudit() {
+  const nowTs = Date.now();
+  const minTs = nowTs - GRIDLY_REFLOW_TRACE_WINDOW_MS;
+  const recent = gridlyReflowTraceState.entries.filter((entry) => entry.ts >= minTs);
+  return {
+    windowMs: GRIDLY_REFLOW_TRACE_WINDOW_MS,
+    recentEntryCount: recent.length,
+    recent
+  };
+};
 let lastDirectRouteClick = null;
 let routeRequestInFlight = false;
 let lastRouteRequestKey = "";
@@ -2159,6 +2199,7 @@ function initSupabase() {
           setSync(`Live sync active · Build ${APP_BUILD}`);
         }
       });
+    endContainmentTrace();
   } catch (error) {
     console.error("Supabase init failed:", error);
     setSync(`Live sync failed · Build ${APP_BUILD}`);
@@ -3553,6 +3594,7 @@ function installMapLayoutResizeSafety() {
   });
 
   const invalidateMapIfSizeChanged = ({ force = false } = {}) => {
+    pushGridlyReflowTrace("map invalidate guard", "read", { source: force ? "force" : "normal" });
     const nextSize = readMapSize();
     const changed = !lastMapSize || lastMapSize.width !== nextSize.width || lastMapSize.height !== nextSize.height;
     if (!force && !changed) {
@@ -3561,6 +3603,7 @@ function installMapLayoutResizeSafety() {
     }
     if (force) forcedMapInvalidates += 1;
     lastMapSize = nextSize;
+    pushGridlyReflowTrace("map invalidate guard", "write", { source: "map.invalidateSize" });
     map.invalidateSize({ pan: false, debounceMoveend: true });
     return true;
   };
@@ -3573,15 +3616,18 @@ function installMapLayoutResizeSafety() {
   };
 
   const scheduleMapResize = ({ force = false } = {}) => {
+    pushGridlyReflowTrace("scheduleMapResize", "start", { source: force ? "force" : "normal" });
     if (rafId) cancelAnimationFrame(rafId);
     if (debounceId) clearTimeout(debounceId);
 
     rafId = requestAnimationFrame(() => {
+      pushGridlyReflowTrace("scheduleMapResize", "raf");
       invalidateMapIfSizeChanged({ force });
       syncTacticalMapSurfaceVisibility();
     });
 
     debounceId = setTimeout(() => {
+      pushGridlyReflowTrace("scheduleMapResize", "timeout");
       invalidateMapIfSizeChanged();
       syncTacticalMapSurfaceVisibility();
     }, 180);
@@ -3991,6 +4037,7 @@ function shouldShowCrossingInLaunchMode(crossing) {
   return false;
 }
 function refreshReportHazardViews(source = "unspecified") {
+  const endRefreshHazardTrace = timeGridlyReflowTrace("refreshReportHazardViews", source);
   gridlyRefreshAuditState.totalRefreshCount += 1;
   gridlyRefreshAuditState.refreshSourceCounts[source] = (gridlyRefreshAuditState.refreshSourceCounts[source] || 0) + 1;
   gridlyRefreshAuditState.lastRefreshAt = Date.now();
@@ -4016,6 +4063,7 @@ function refreshReportHazardViews(source = "unspecified") {
   updateLastUpdated();
   recomputeMovementIntelligence();
   updateCorridorSummaryCards();
+  endRefreshHazardTrace();
 }
 
 window.gridlyClearLocalTestReports = function gridlyClearLocalTestReports() {
@@ -4347,6 +4395,7 @@ const gridlyPostSubmitRefreshAuditState = {
   recommendedFixes: [
     "V142.3: add idempotent guard around global handleDataActionClick registration.",
     "V142.3: add per-submit nonce gate around createSharedHazardReport success lifecycle to prevent duplicate post-submit completion handling.",
+    "V142.5: passive reflow timing trace audit instrumentation for post-submit refresh and route/report/map surface flows.",
     "V142.3: optionally dedupe refresh launch by submit lifecycle id while preserving all existing flows."
   ]
 };
@@ -4492,7 +4541,9 @@ async function loadSharedReports(reason = "manual") {
     activeHazards = normalized.filter((report) => report.reportKind === "hazard");
     activeReports = normalized.filter((report) => report.reportKind !== "hazard");
 
+    pushGridlyReflowTrace("post-submit refresh", "start", { source: `loadSharedReports:${reason}` });
     refreshReportHazardViews(`loadSharedReports:${reason}`);
+    pushGridlyReflowTrace("post-submit refresh", "end", { source: `loadSharedReports:${reason}` });
 
     setSync(`${activeReports.length} crossing reports · ${activeHazards.length} hazards synced`);
 
@@ -5492,6 +5543,7 @@ function debugGeoFilter(label, visibleCount, reason = "unknown") {
   }
 }
 function renderUnifiedIncidents() {
+  const endRenderUnifiedTrace = timeGridlyReflowTrace("renderUnifiedIncidents");
   if (!unifiedIncidentLayer) return;
 
   unifiedIncidentLayer.clearLayers();
@@ -6265,6 +6317,7 @@ async function handleRouteQuickPanelAction(action, event, actionEl) {
   const selectedDestinationValue = destinationSelect?.value || "";
 
   if (action === "view-route-quick") {
+    pushGridlyReflowTrace("Route Watch open/view route", "start", { source: "view-route-quick" });
     routeDebugLog("ROUTE QUICK VIEW CLICK HIT", {
       eventTarget: event?.target || null,
       eventCurrentTarget: event?.currentTarget || null,
@@ -6272,6 +6325,7 @@ async function handleRouteQuickPanelAction(action, event, actionEl) {
       selectedDestinationValue
     });
   } else if (action === "start-route-watch-quick") {
+    pushGridlyReflowTrace("Route Watch open/view route", "start", { source: "start-route-watch-quick" });
     routeDebugLog("ROUTE QUICK START CLICK HIT", {
       eventTarget: event?.target || null,
       eventCurrentTarget: event?.currentTarget || null,
@@ -7947,6 +8001,7 @@ function bindEvents() {
       return;
     }
     if (action === "open-manage-places-quick") {
+      pushGridlyReflowTrace("Manage Places open/close", "start", { source: "open-manage-places-quick" });
       event.preventDefault();
       closeMobileRouteQuickPanel("manage_places");
       const routePanelVisibleAfterClose = Boolean(document.getElementById("gridlyMobileRouteQuickPanel")?.classList.contains("visible"));
@@ -8417,6 +8472,7 @@ function openV2ManagePlacesAdapter(triggerSource = "unknown") {
 let lastRouteSetupTrigger = null;
 
 function openRouteSetupModal(triggerEl = null) {
+  pushGridlyReflowTrace("route setup open/close", "start", { source: "open" });
   if (!els.routeSetupModal) return;
   lastRouteSetupTrigger = triggerEl || document.activeElement || null;
   loadSavedRoute();
@@ -8456,6 +8512,7 @@ function openRouteSetupModal(triggerEl = null) {
 }
 
 function closeRouteSetupModal(options = {}) {
+  pushGridlyReflowTrace("route setup open/close", "start", { source: "close" });
   if (!els.routeSetupModal) return;
   const { restoreFocus = true } = options;
   closeModal(els.routeSetupModal, { restoreFocus });
@@ -11134,6 +11191,7 @@ function loadSavedRoute() {
 }
 
 async function startInlineRouteWatch(options = {}) {
+  const endInlineRouteTrace = timeGridlyReflowTrace("Route Watch open/view route", String(options?.source || "startInlineRouteWatch"));
   lastRoutePipelineStep = "entered";
   lastRouteEarlyReturnReason = null;
   const { activateWatch = true, source = "route_watch_cta" } = options;
@@ -13208,6 +13266,7 @@ function getOperationalFeedSummaryLine() {
 }
 
 function renderAlerts() {
+  const endRenderAlertsTrace = timeGridlyReflowTrace("renderAlerts");
   if (!els.alertsList) return;
   const consequenceIntel = buildCommuteConsequenceIntelligence({ limit: 10 });
   const corridors = consequenceIntel.corridorClusters || [];
@@ -16220,6 +16279,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
 
   function applyPortraitV2SurfaceContainment() {
+    const endContainmentTrace = timeGridlyReflowTrace("applyPortraitV2SurfaceContainment");
     runPortraitV2BatchedRead(() => {
       const body = document.body;
       if (!body) return;
@@ -17119,6 +17179,7 @@ const v134ReportingRefinementApplied = true;
   };
 
   window.gridlyPortraitV2SheetState = function gridlyPortraitV2SheetState() {
+    pushGridlyReflowTrace("gridlyPortraitV2SheetState", "read");
     return runPortraitV2BatchedRead(null, (frameId) => {
     const shell = document.getElementById("gridlyPortraitV2");
     const sheet = document.getElementById("gridlyPortraitV2Sheet");
