@@ -13080,10 +13080,14 @@ body[data-layout-mode="portrait"].gridly-v2-surface-containment #settingsModal {
   visibility: hidden !important;
   pointer-events: none !important;
 }
-body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2,
-body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2Sheet,
-body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2SheetBackdrop {
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 {
   z-index: 9500;
+}
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2SheetBackdrop {
+  z-index: 9501;
+}
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2Sheet {
+  z-index: 9502;
 }
 
 /* V128.1 Portrait V2 cleanup */
