@@ -4325,8 +4325,65 @@ window.gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoad
 };
 
 
-function runPostSubmitRefreshInBackground(submitAudit, markSubmitStage) {
+
+const gridlyPostSubmitRefreshAuditState = {
+  callCount: 0,
+  callSources: {},
+  lastCallAt: null,
+  recentCalls: [],
+  submitHandlersFound: {
+    createSharedHazardReport: 1,
+    runPostSubmitRefreshInBackgroundDirectCallers: 1,
+    globalDataActionClickBindingCountEstimate: 1,
+    popupReportBindingsPerButton: "direct_click_plus_delegate_click"
+  },
+  duplicateHandlerRisks: [
+    {
+      risk: "app_init_reentry_global_click_binding",
+      detail: "document.addEventListener(\"click\", handleDataActionClick) is unguarded and can be bound multiple times if init block re-runs.",
+      location: "js/app.js"
+    }
+  ],
+  recommendedFixes: [
+    "V142.3: add idempotent guard around global handleDataActionClick registration.",
+    "V142.3: add per-submit nonce gate around createSharedHazardReport success lifecycle to prevent duplicate post-submit completion handling.",
+    "V142.3: optionally dedupe refresh launch by submit lifecycle id while preserving all existing flows."
+  ]
+};
+
+function recordPostSubmitRefreshAudit(meta = {}) {
+  const at = Date.now();
+  const stack = typeof meta.stack === "string" && meta.stack ? meta.stack : (new Error().stack || "");
+  const source = meta.source || stack.split("\n")[2]?.trim?.() || "unknown_source";
+  const entry = {
+    at,
+    atIso: new Date(at).toISOString(),
+    source,
+    sourceTag: meta.sourceTag || "unspecified",
+    stage: meta.stage || "started"
+  };
+  gridlyPostSubmitRefreshAuditState.callCount += 1;
+  gridlyPostSubmitRefreshAuditState.lastCallAt = entry.atIso;
+  gridlyPostSubmitRefreshAuditState.callSources[source] = (gridlyPostSubmitRefreshAuditState.callSources[source] || 0) + 1;
+  gridlyPostSubmitRefreshAuditState.recentCalls.push(entry);
+  if (gridlyPostSubmitRefreshAuditState.recentCalls.length > 25) gridlyPostSubmitRefreshAuditState.recentCalls.shift();
+}
+
+window.gridlyPostSubmitRefreshAudit = function gridlyPostSubmitRefreshAudit() {
+  return {
+    callCount: gridlyPostSubmitRefreshAuditState.callCount,
+    callSources: { ...gridlyPostSubmitRefreshAuditState.callSources },
+    lastCallAt: gridlyPostSubmitRefreshAuditState.lastCallAt,
+    recentCalls: [...gridlyPostSubmitRefreshAuditState.recentCalls],
+    submitHandlersFound: { ...gridlyPostSubmitRefreshAuditState.submitHandlersFound },
+    duplicateHandlerRisks: [...gridlyPostSubmitRefreshAuditState.duplicateHandlerRisks],
+    recommendedFixes: [...gridlyPostSubmitRefreshAuditState.recommendedFixes]
+  };
+};
+
+function runPostSubmitRefreshInBackground(submitAudit, markSubmitStage, sourceTag = "createSharedHazardReport_success") {
   const startedAt = Date.now();
+  recordPostSubmitRefreshAudit({ sourceTag, stage: "started" });
   suppressRealtimeRefreshUntil = startedAt + POST_SUBMIT_REALTIME_SUPPRESS_MS;
   suppressIntervalRefreshUntil = Math.max(suppressIntervalRefreshUntil, startedAt + POST_SUBMIT_INTERVAL_SUPPRESS_MS);
   skipNextRealtimeRefresh = true;
