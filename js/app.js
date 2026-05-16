@@ -3543,24 +3543,52 @@ function installMapLayoutResizeSafety() {
 
   let rafId = null;
   let debounceId = null;
+  let lastMapSize = null;
+  let skippedMapInvalidates = 0;
+  let forcedMapInvalidates = 0;
 
-  const scheduleMapResize = () => {
+  const readMapSize = () => ({
+    width: Math.round(mapEl.clientWidth || 0),
+    height: Math.round(mapEl.clientHeight || 0)
+  });
+
+  const invalidateMapIfSizeChanged = ({ force = false } = {}) => {
+    const nextSize = readMapSize();
+    const changed = !lastMapSize || lastMapSize.width !== nextSize.width || lastMapSize.height !== nextSize.height;
+    if (!force && !changed) {
+      skippedMapInvalidates += 1;
+      return false;
+    }
+    if (force) forcedMapInvalidates += 1;
+    lastMapSize = nextSize;
+    map.invalidateSize({ pan: false, debounceMoveend: true });
+    return true;
+  };
+
+  window.__gridlyMapResizeGuard = {
+    active: true,
+    getLastSize: () => (lastMapSize ? { ...lastMapSize } : null),
+    getSkippedCount: () => skippedMapInvalidates,
+    getForcedCount: () => forcedMapInvalidates
+  };
+
+  const scheduleMapResize = ({ force = false } = {}) => {
     if (rafId) cancelAnimationFrame(rafId);
     if (debounceId) clearTimeout(debounceId);
 
     rafId = requestAnimationFrame(() => {
-      map.invalidateSize({ pan: false, debounceMoveend: true });
+      invalidateMapIfSizeChanged({ force });
       syncTacticalMapSurfaceVisibility();
     });
 
     debounceId = setTimeout(() => {
-      map.invalidateSize({ pan: false, debounceMoveend: true });
+      invalidateMapIfSizeChanged();
       syncTacticalMapSurfaceVisibility();
     }, 180);
   };
 
   const observer = new ResizeObserver(() => {
-    scheduleMapResize();
+    scheduleMapResize({ force: true });
   });
 
   observer.observe(mapFrame);
@@ -16853,17 +16881,24 @@ const v134ReportingRefinementApplied = true;
       'Centralize sheet/panel measurement to one read phase per transition.'
     ];
 
+    const mapResizeGuard = window.__gridlyMapResizeGuard || null;
     return {
       layoutReads,
       layoutWrites,
       suspectedReadAfterWrite,
       hotspotFunctions,
       repeatedTriggers,
-      recommendedTargets
+      recommendedTargets,
+      mapResizeGuardActive: Boolean(mapResizeGuard?.active),
+      lastMapSize: mapResizeGuard?.getLastSize?.() || null,
+      skippedMapInvalidates: mapResizeGuard?.getSkippedCount?.() || 0,
+      forcedMapInvalidates: mapResizeGuard?.getForcedCount?.() || 0,
+      passiveAuditOnlyConfirmed: true
     };
   };
 
   window.gridlyPortraitV2LayerAudit = function gridlyPortraitV2LayerAudit() {
+    return new Promise((resolve) => requestAnimationFrame(() => {
     const backdrop = document.getElementById("gridlyPortraitV2SheetBackdrop");
     const sheet = document.getElementById("gridlyPortraitV2Sheet");
     const routeButtons = Array.from(document.querySelectorAll('#gridlyPortraitV2SheetBody button')).filter((button) => {
@@ -16908,17 +16943,19 @@ const v134ReportingRefinementApplied = true;
       };
     });
     const backdropCoveringSheet = Boolean(centerTarget && !centerTarget.isInsideSheet);
-    return {
+    resolve({
       backdrop: getMetrics(backdrop),
       activeSheet: getMetrics(sheet),
       elementFromPointAtSheetCenter: centerTarget,
       elementFromPointAtRouteButtons: routeButtonHits,
       backdropCoveringSheet,
       recommendedStatus: backdropCoveringSheet ? "needs-fix" : "ok"
-    };
+    });
+    }));
   };
 
   window.gridlyPortraitV2SheetState = function gridlyPortraitV2SheetState() {
+    return new Promise((resolve) => requestAnimationFrame(() => {
     const shell = document.getElementById("gridlyPortraitV2");
     const sheet = document.getElementById("gridlyPortraitV2Sheet");
     const sheetBody = document.getElementById("gridlyPortraitV2SheetBody");
@@ -16951,7 +16988,7 @@ const v134ReportingRefinementApplied = true;
       reportModeActiveFlag: Boolean(reportingState?.reportModeActive)
     };
     const backdrop = document.getElementById("gridlyPortraitV2SheetBackdrop");
-    return {
+    resolve({
       activeSheet,
       shellHidden: Boolean(shell?.hidden),
       shellDisplay: shell ? getComputedStyle(shell).display : null,
@@ -16979,7 +17016,8 @@ const v134ReportingRefinementApplied = true;
       reportSurfaceReopenEligible: Object.values(reportSurfaceReopenConditions).some(Boolean),
       bodyModalOpen: document.body.classList.contains("modal-open"),
       attachedToActivePortraitMode: portraitModeActive && Boolean(shell && !shell.hidden)
-    };
+    });
+    }));
   };
   document.addEventListener("DOMContentLoaded", bindV2);
 })();
