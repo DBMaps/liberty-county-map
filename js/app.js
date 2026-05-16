@@ -279,6 +279,9 @@ const gridlyCommuteIntelligenceAuditState = {
   localizedLabelLookupSections: {},
   localizedLabelPerIncidentLookupTimings: [],
   localizedLabelSlowestLookupStep: null,
+  sharedCacheRetrievalSections: {},
+  sharedCachePerIncidentTimings: [],
+  sharedCacheSlowestStep: null,
   timingBoundaryVerified: false,
   routeRelevanceNestedSections: {},
   suspectedMisattribution: null,
@@ -359,16 +362,33 @@ function getSharedResolvedRoadLookup(incident = {}) {
   return value;
 }
 
-function getCachedRoadNameLookup(incident = {}, lookupType = "road_name_lookup", resolver = () => null) {
-  if (!gridlyRoadNameLookupCache?.formatterValues) return resolver(getSharedResolvedRoadLookup(incident));
-  const key = buildRoadNameLookupCacheKey(incident, lookupType);
-  if (gridlyRoadNameLookupCache.formatterValues.has(key)) {
-    gridlyRoadNameLookupCache.formatterHits += 1;
-    return gridlyRoadNameLookupCache.formatterValues.get(key);
+function getCachedRoadNameLookup(incident = {}, lookupType = "road_name_lookup", resolver = () => null, options = {}) {
+  const sectionTimings = options?.sectionTimings || null;
+  const withTiming = (stepName, fn) => {
+    const startedAt = performance.now();
+    const value = fn();
+    if (sectionTimings) sectionTimings[stepName] = (sectionTimings[stepName] || 0) + (performance.now() - startedAt);
+    return value;
+  };
+  const cacheAvailable = withTiming("cache_existence_check", () => Boolean(gridlyRoadNameLookupCache?.formatterValues));
+  if (!cacheAvailable) {
+    const payload = withTiming("cache_retrieval", () => getSharedResolvedRoadLookup(incident));
+    return withTiming("wrapper_overhead", () => resolver(payload));
   }
-  const value = resolver(getSharedResolvedRoadLookup(incident));
-  gridlyRoadNameLookupCache.formatterValues.set(key, value);
+  const key = withTiming("cache_key_generation", () => buildRoadNameLookupCacheKey(incident, lookupType));
+  withTiming("key_normalization", () => normalizeRoadNameLookupKeyPart(key));
+  const hasCachedValue = withTiming("cache_existence_check", () => gridlyRoadNameLookupCache.formatterValues.has(key));
+  if (hasCachedValue) {
+    gridlyRoadNameLookupCache.formatterHits += 1;
+    return withTiming("cache_retrieval", () => gridlyRoadNameLookupCache.formatterValues.get(key));
+  }
+  const payload = withTiming("payload_shaping", () => getSharedResolvedRoadLookup(incident));
+  const value = withTiming("wrapper_overhead", () => resolver(payload));
+  withTiming("cache_write", () => gridlyRoadNameLookupCache.formatterValues.set(key, value));
   gridlyRoadNameLookupCache.formatterMisses += 1;
+  withTiming("payload_cloning", () => ({ ...(payload || {}) }));
+  withTiming("object_spread_cost", () => ({ ...(value && typeof value === "object" ? value : {}) }));
+  withTiming("serialization_stringification", () => JSON.stringify(key));
   return value;
 }
 const gridlyRouteRelevanceAuditState = {
@@ -564,6 +584,9 @@ function gridlyCommuteIntelligenceAudit() {
     localizedLabelLookupSections: { ...(gridlyCommuteIntelligenceAuditState.localizedLabelLookupSections || {}) },
     localizedLabelPerIncidentLookupTimings: [...(gridlyCommuteIntelligenceAuditState.localizedLabelPerIncidentLookupTimings || [])],
     localizedLabelSlowestLookupStep: gridlyCommuteIntelligenceAuditState.localizedLabelSlowestLookupStep || null,
+    sharedCacheRetrievalSections: { ...(gridlyCommuteIntelligenceAuditState.sharedCacheRetrievalSections || {}) },
+    sharedCachePerIncidentTimings: [...(gridlyCommuteIntelligenceAuditState.sharedCachePerIncidentTimings || [])],
+    sharedCacheSlowestStep: gridlyCommuteIntelligenceAuditState.sharedCacheSlowestStep || null,
     slowestSection,
     recommendedTargets,
     timingBoundaryVerified: Boolean(gridlyCommuteIntelligenceAuditState.timingBoundaryVerified),
@@ -13458,10 +13481,12 @@ function buildLocalizedIncidentLabel(incident = {}) {
   if (!incident) return finalizeAudit("Localized disruption", { fallbackReason: "missing_incident" });
   const isCrossing = recordSection("type_status_mapping", () => recordCall("isCrossingDisruptionIncident", () => isCrossingDisruptionIncident(incident)));
   const roadDisplay = recordSection("crossing_road_name_lookup", () => recordCall("buildRoadHazardDisplay", () => {
+    const sharedCacheSectionTimings = {};
     const cachedRoadDisplay = recordLookupStep("shared_cache_lookup_time", () => getCachedRoadNameLookup(incident, "buildRoadHazardDisplay", (resolvedLookup) => {
       const builtRoadDisplay = recordLookupStep("buildRoadHazardDisplay_time", () => buildRoadHazardDisplay(incident, resolvedLookup));
       return builtRoadDisplay;
-    }));
+    }, { sectionTimings: sharedCacheSectionTimings }));
+    recordSharedCacheRetrievalAudit(incident, "buildRoadHazardDisplay", sharedCacheSectionTimings);
     return cachedRoadDisplay;
   }));
   const roadFallback = recordSection("fallback_logic", () => roadDisplay?.title || incident?.title || "Localized disruption");
@@ -13520,6 +13545,37 @@ function recordLocalizedLabelLookupAudit(incident = {}, lookupTimings = {}) {
       ms: Number(incidentSlowestStep[1]),
       incidentId: perIncidentEntry.incidentId,
       reportType: perIncidentEntry.reportType
+    };
+  }
+}
+
+function recordSharedCacheRetrievalAudit(incident = {}, lookupType = "", sectionTimings = {}) {
+  const roundedTimings = Object.fromEntries(
+    Object.entries(sectionTimings || {}).map(([stepName, durationMs]) => [stepName, Number(Number(durationMs || 0).toFixed(3))])
+  );
+  Object.entries(roundedTimings).forEach(([stepName, durationMs]) => {
+    gridlyCommuteIntelligenceAuditState.sharedCacheRetrievalSections[stepName] = Number(
+      ((gridlyCommuteIntelligenceAuditState.sharedCacheRetrievalSections[stepName] || 0) + Number(durationMs || 0)).toFixed(3)
+    );
+  });
+  const perIncidentEntry = {
+    incidentId: String(incident?.id || incident?.report_id || incident?.reportId || "unknown"),
+    reportType: String(incident?.report_type || incident?.type || ""),
+    lookupType: String(lookupType || "road_name_lookup"),
+    timings: roundedTimings,
+    totalMs: Number(Object.values(roundedTimings).reduce((sum, value) => sum + Number(value || 0), 0).toFixed(3))
+  };
+  gridlyCommuteIntelligenceAuditState.sharedCachePerIncidentTimings.push(perIncidentEntry);
+  const incidentSlowestStep = Object.entries(roundedTimings).sort((a, b) => Number(b[1]) - Number(a[1]))[0] || null;
+  if (!incidentSlowestStep) return;
+  const currentSlowest = gridlyCommuteIntelligenceAuditState.sharedCacheSlowestStep;
+  if (!currentSlowest || Number(incidentSlowestStep[1]) > Number(currentSlowest?.ms || 0)) {
+    gridlyCommuteIntelligenceAuditState.sharedCacheSlowestStep = {
+      step: incidentSlowestStep[0],
+      ms: Number(incidentSlowestStep[1]),
+      incidentId: perIncidentEntry.incidentId,
+      reportType: perIncidentEntry.reportType,
+      lookupType: perIncidentEntry.lookupType
     };
   }
 }
@@ -13775,6 +13831,9 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.localizedLabelLookupSections = {};
   gridlyCommuteIntelligenceAuditState.localizedLabelPerIncidentLookupTimings = [];
   gridlyCommuteIntelligenceAuditState.localizedLabelSlowestLookupStep = null;
+  gridlyCommuteIntelligenceAuditState.sharedCacheRetrievalSections = {};
+  gridlyCommuteIntelligenceAuditState.sharedCachePerIncidentTimings = [];
+  gridlyCommuteIntelligenceAuditState.sharedCacheSlowestStep = null;
   const timeSection = makeGridlySectionTimer(sections);
   const routeHazard = timeSection("route_hazard_scoring", () => (routeWatchActivated ? getRouteHazardAssessment() : null));
   const activeIncidents = timeSection("unified_incident_retrieval", () => getActiveUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "active"));
