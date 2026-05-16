@@ -4078,18 +4078,28 @@ window.gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoad
     return missing;
   }
 
-  const ROAD_HAZARD_TYPES = ["flooding", "ice", "debris", "crash", "construction", "road_closed", "disabled_vehicle", "other_hazard"];
+  const ROAD_HAZARD_TYPES = ["flooding", "ice", "debris", "crash", "construction", "road_closed", "disabled_vehicle", "other_hazard", "hazard_cleared"];
   const {
     dryRun = true,
     hours = 24,
     radiusMiles = 0,
     nearLocation = null,
-    includeRail = false,
-    includeSources,
-    sourceFilter: sourceFilterOption
+    sourceFilter = [],
+    typeFilter = [],
+    limit = 50,
+    confirm = false
   } = options || {};
 
+  const normalizedTypeFilter = Array.isArray(typeFilter)
+    ? typeFilter.map((v) => String(v || "").trim().toLowerCase()).filter(Boolean)
+    : [];
+  const normalizedSourceFilter = Array.isArray(sourceFilter)
+    ? sourceFilter.map((v) => String(v || "").trim().toLowerCase()).filter(Boolean)
+    : [];
+  const explicitTypeFilter = normalizedTypeFilter.length > 0;
+  const maxRows = Math.max(1, Math.min(500, Number(limit) || 50));
   const radius = Number(radiusMiles) > 0 ? Number(radiusMiles) : 0;
+  const cutoffIso = new Date(Date.now() - (Math.max(1, Number(hours) || 24) * 60 * 60 * 1000)).toISOString();
   const centerCandidate = nearLocation && Number.isFinite(Number(nearLocation.lat)) && Number.isFinite(Number(nearLocation.lng))
     ? { lat: Number(nearLocation.lat), lng: Number(nearLocation.lng), source: "nearLocation" }
     : userLocation && Number.isFinite(Number(userLocation.lat)) && Number.isFinite(Number(userLocation.lng))
@@ -4098,13 +4108,7 @@ window.gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoad
     ? { lat: Number(map.getCenter().lat), lng: Number(map.getCenter().lng), source: "mapCenter" }
     : null;
 
-  const cutoffIso = new Date(Date.now() - (Math.max(1, Number(hours) || 24) * 60 * 60 * 1000)).toISOString();
-  const rawSourceFilter = sourceFilterOption !== undefined ? sourceFilterOption : includeSources;
-  const sourceFilter = rawSourceFilter === undefined
-    ? ["user"]
-    : Array.isArray(rawSourceFilter)
-    ? rawSourceFilter.map((v) => String(v || "").trim().toLowerCase()).filter(Boolean)
-    : ["user"];
+  console.warn("⚠️ gridlyDevPurgeRecentRoadHazards: This helper targets Supabase report SOURCE rows. Generated road-* incidents are derived output and are not directly persisted. Always review dryRun output before running confirm delete.");
 
   const { data, error } = await supabaseClient
     .from("reports")
@@ -4112,7 +4116,7 @@ window.gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoad
     .gte("created_at", cutoffIso)
     .in("report_type", ROAD_HAZARD_TYPES)
     .order("created_at", { ascending: false })
-    .limit(500);
+    .limit(1000);
 
   if (error) {
     console.error("gridlyDevPurgeRecentRoadHazards query failed", error);
@@ -4121,19 +4125,25 @@ window.gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoad
 
   const matches = (Array.isArray(data) ? data : []).filter((row) => {
     const type = String(row?.report_type || "").toLowerCase();
-    const source = String(row?.source || "").toLowerCase();
-    const effectiveSource = source || "user";
-    if (!ROAD_HAZARD_TYPES.includes(type)) return false;
-    if (!includeRail && String(row?.crossing_id || "").trim().length > 0) return false;
-    if (sourceFilter.length && !sourceFilter.includes(effectiveSource)) return false;
-    if (!radius || !centerCandidate) return true;
-    return getDistanceMiles(centerCandidate.lat, centerCandidate.lng, Number(row?.lat), Number(row?.lng)) <= radius;
-  });
+    const effectiveSource = String(row?.source || "user").toLowerCase();
+    const isRail = String(row?.crossing_id || "").trim().length > 0;
 
-  const displayRows = matches.map((row) => ({
+    if (!ROAD_HAZARD_TYPES.includes(type)) return false;
+    if (!explicitTypeFilter && type === "hazard_cleared") return false;
+    if (!explicitTypeFilter && isRail) return false;
+    if (explicitTypeFilter && !normalizedTypeFilter.includes(type)) return false;
+    if (normalizedSourceFilter.length && !normalizedSourceFilter.includes(effectiveSource)) return false;
+    if (!radius || !centerCandidate) return true;
+
+    return getDistanceMiles(centerCandidate.lat, centerCandidate.lng, Number(row?.lat), Number(row?.lng)) <= radius;
+  }).slice(0, maxRows);
+
+  const groupedClusterKeys = [...new Set(matches.map((row) => getHazardClusterKey({ type: row.report_type, lat: row.lat, lng: row.lng })))];
+  const predictedRoadIncidentIds = groupedClusterKeys.map((clusterKey) => `road-${clusterKey}`);
+  const candidates = matches.map((row) => ({
     id: row.id,
     type: row.report_type,
-    source: row.source,
+    source: row.source || "user",
     created_at: row.created_at,
     lat: row.lat,
     lng: row.lng,
@@ -4141,17 +4151,25 @@ window.gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoad
     crossing_name: row.crossing_name || "",
     detail: row.detail || ""
   }));
-  console.table(displayRows);
+
+  if (candidates.length) console.table(candidates);
 
   const summary = {
     ok: true,
     dryRun: Boolean(dryRun),
     cutoffIso,
     radiusMiles: radius,
+    hours: Math.max(1, Number(hours) || 24),
+    limit: maxRows,
+    sourceFilter: normalizedSourceFilter,
+    typeFilter: normalizedTypeFilter,
     center: centerCandidate,
-    includeRail: Boolean(includeRail),
-    sourceFilter,
-    matchedCount: matches.length,
+    candidateCount: candidates.length,
+    candidates,
+    groupedClusterKeys,
+    predictedRoadIncidentIds,
+    currentLiveHazardIncidentCount: getLiveHazardIncidents().length,
+    currentGeneratedRoadIncidentCount: getUnifiedIncidents().filter((item) => String(item?.id || "").startsWith("road-")).length,
     deleted: 0
   };
 
@@ -4160,7 +4178,11 @@ window.gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoad
     return summary;
   }
 
-  const idsToDelete = matches.map((row) => row.id).filter(Boolean);
+  if (confirm !== true) {
+    return { ...summary, ok: false, reason: "confirm_true_required_for_delete" };
+  }
+
+  const idsToDelete = candidates.map((row) => row.id).filter(Boolean);
   if (!idsToDelete.length) {
     console.info("gridlyDevPurgeRecentRoadHazards no matches to delete", summary);
     return summary;
@@ -4172,15 +4194,13 @@ window.gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoad
     return { ...summary, ok: false, error: deleteError.message || "delete_failed" };
   }
 
-  activeHazards = [];
-  activeReports = [];
-  refreshReportHazardViews("gridlyDevPurgeRecentRoadHazards:pre_load");
   await loadSharedReports("dev_purge_recent_road_hazards");
 
   summary.deleted = idsToDelete.length;
   console.info("gridlyDevPurgeRecentRoadHazards completed", summary);
   return summary;
 };
+
 
 function runPostSubmitRefreshInBackground(submitAudit, markSubmitStage) {
   const startedAt = Date.now();
