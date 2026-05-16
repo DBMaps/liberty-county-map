@@ -175,6 +175,13 @@ let activeHazards = [];
 let unifiedIncidentLayer;
 let userLocation = null;
 let userMarker = null;
+const gridlyGeoAuditState = {
+  startupRequestsBlocked: 0,
+  geolocationRequestsBySource: {},
+  lastRequestSource: null,
+  lastRequestTime: null,
+  startupAutoRequestDetected: false
+};
 let nearbyReportCrossingIds = new Set();
 let lastSubmittedCrossing = null;
 let lastSubmittedReportType = null;
@@ -3605,22 +3612,31 @@ function ensureMapStylePersistence(sourceLabel = "unknown") {
   localStorage.setItem(MAP_STYLE_STORAGE_KEY, currentMapStyle);
 }
 
+function recordGridlyGeolocationRequest(source, options = {}) {
+  const normalizedSource = String(source || "unknown");
+  const count = Number(gridlyGeoAuditState.geolocationRequestsBySource[normalizedSource] || 0) + 1;
+  gridlyGeoAuditState.geolocationRequestsBySource[normalizedSource] = count;
+  gridlyGeoAuditState.lastRequestSource = normalizedSource;
+  gridlyGeoAuditState.lastRequestTime = new Date().toISOString();
+  if (options.startupBlocked) {
+    gridlyGeoAuditState.startupRequestsBlocked += 1;
+    gridlyGeoAuditState.startupAutoRequestDetected = true;
+  }
+}
+
+window.gridlyGeoAudit = function gridlyGeoAudit() {
+  return {
+    startupRequestsBlocked: gridlyGeoAuditState.startupRequestsBlocked,
+    geolocationRequestsBySource: { ...gridlyGeoAuditState.geolocationRequestsBySource },
+    lastRequestSource: gridlyGeoAuditState.lastRequestSource,
+    lastRequestTime: gridlyGeoAuditState.lastRequestTime,
+    startupAutoRequestDetected: gridlyGeoAuditState.startupAutoRequestDetected
+  };
+};
+
 function centerMapOnUserIfAllowed() {
-  if (!navigator.geolocation || !map) return;
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      userLocation = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
-      };
-      renderUserLocationDot();
-      map.setView([userLocation.lat, userLocation.lng], 14);
-      scheduleRenderCrossings("state-change");
-      renderUnifiedIncidents();
-      updateNearestContext();
-    },
-    () => {}
-  );
+  recordGridlyGeolocationRequest("startup_centerMapOnUserIfAllowed_blocked", { startupBlocked: true });
+  return false;
 }
 
 function updateNearestContext() {
@@ -6258,6 +6274,7 @@ window.submitHazardNearMe = function (hazardType) {
   });
   setConfirmation("Getting your location...", "info");
 
+  recordGridlyGeolocationRequest("hazard_use_my_location");
   navigator.geolocation.getCurrentPosition(
     async (position) => {
       const lat = position.coords.latitude;
