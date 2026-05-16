@@ -16337,6 +16337,17 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       }, true);
       body.dataset.tapMapDelegateBound = "1";
     }
+    if (!body.dataset.routeDelegateBound) {
+      body.addEventListener("click", (event) => {
+        const target = event.target instanceof Element ? event.target : null;
+        const routeActionButton = target?.closest?.('[data-v2-action="route-watch-open"], [data-v2-action="route-preview-open"]');
+        if (!routeActionButton || routeActionButton.disabled) return;
+        event.preventDefault();
+        event.stopPropagation();
+        triggerV2DockAdapter(routeActionButton.dataset.v2Action || "");
+      }, true);
+      body.dataset.routeDelegateBound = "1";
+    }
     const preconditions = getV2PreconditionsState();
     refreshPortraitV2ReportCtas(body, preconditions);
     body.querySelectorAll("[data-v2-action]").forEach((button) => {
