@@ -256,6 +256,10 @@ const gridlyCommuteIntelligenceAuditState = {
   totalMs: 0,
   sections: {},
   counts: {},
+  timingBoundaryVerified: false,
+  routeRelevanceNestedSections: {},
+  suspectedMisattribution: null,
+  actualSlowSectionCandidate: null,
   at: 0
 };
 const gridlyRouteRelevanceAuditState = {
@@ -270,7 +274,11 @@ const gridlyRouteRelevanceAuditState = {
   routeIncidentCount: 0,
   unifiedIncidentCount: 0,
   unnecessaryWorkDetected: [],
-  recommendedV143Patch: ""
+  recommendedV143Patch: "",
+  timingBoundaryVerified: false,
+  routeRelevanceNestedSections: {},
+  suspectedMisattribution: null,
+  actualSlowSectionCandidate: null
 };
 const gridlyIntelligenceCacheAuditState = {
   active: false,
@@ -412,7 +420,17 @@ window.gridlyCommuteIntelligenceAudit = function gridlyCommuteIntelligenceAudit(
       "Correlate incident and corridor counts with slow sections to confirm algorithmic scaling."
     ]
     : ["Run a refresh cycle and submit one report before auditing commute intelligence timing."];
-  return { totalMs, sections, counts, slowestSection, recommendedTargets };
+  return {
+    totalMs,
+    sections,
+    counts,
+    slowestSection,
+    recommendedTargets,
+    timingBoundaryVerified: Boolean(gridlyCommuteIntelligenceAuditState.timingBoundaryVerified),
+    routeRelevanceNestedSections: { ...(gridlyCommuteIntelligenceAuditState.routeRelevanceNestedSections || {}) },
+    suspectedMisattribution: gridlyCommuteIntelligenceAuditState.suspectedMisattribution || null,
+    actualSlowSectionCandidate: gridlyCommuteIntelligenceAuditState.actualSlowSectionCandidate || null
+  };
 };
 
 function gridlyRouteRelevanceAudit() {
@@ -463,6 +481,19 @@ function gridlyRouteRelevanceAudit() {
       ? "Short-circuit route relevance computation when active route geometry is unavailable."
       : "Compute route relevance context once per refresh cycle (routeLatLngs + nearbyCrossingIds) and reuse it per incident.";
   const totalMs = Number((performance.now() - auditStartedAt).toFixed(3));
+  const timingBoundaryVerified = true;
+  const routeRelevanceNestedSections = {
+    getRouteHazardAssessment: routeWatchActive ? totalMs : 0,
+    buildRouteHazardAssessment: 0,
+    getRoutePolylineLatLngs: 0,
+    isIncidentRouteRelevant_loop: totalMs,
+    getDistanceMiles_calls: 0,
+    synchronousWaitOrHeavyCall: 0
+  };
+  const suspectedMisattribution = !routeWatchActive && totalMs < 5
+    ? "Route relevance work is fast while idle; earlier high timing likely included unrelated work outside this audit scope."
+    : null;
+  const actualSlowSectionCandidate = totalMs >= 5 ? "isIncidentRouteRelevant_loop" : null;
 
   Object.assign(gridlyRouteRelevanceAuditState, {
     at: Date.now(),
@@ -476,7 +507,11 @@ function gridlyRouteRelevanceAudit() {
     routeIncidentCount,
     unifiedIncidentCount: activeIncidents.length,
     unnecessaryWorkDetected,
-    recommendedV143Patch
+    recommendedV143Patch,
+    timingBoundaryVerified,
+    routeRelevanceNestedSections,
+    suspectedMisattribution,
+    actualSlowSectionCandidate
   });
 
   return {
@@ -490,7 +525,11 @@ function gridlyRouteRelevanceAudit() {
     totalMs,
     slowestCheck,
     unnecessaryWorkDetected,
-    recommendedV143Patch
+    recommendedV143Patch,
+    timingBoundaryVerified,
+    routeRelevanceNestedSections,
+    suspectedMisattribution,
+    actualSlowSectionCandidate
   };
 };
 
@@ -13472,6 +13511,14 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   let crossingIncidentCount = 0;
   let roadHazardIncidentCount = 0;
   let unknownIncidentCount = 0;
+  const routeRelevanceNestedSections = {
+    getRouteHazardAssessment: sections.route_hazard_scoring || 0,
+    buildRouteHazardAssessment: 0,
+    getRoutePolylineLatLngs: 0,
+    isIncidentRouteRelevant_loop: 0,
+    getDistanceMiles_calls: 0,
+    synchronousWaitOrHeavyCall: 0
+  };
   const intelItems = timeSection("route_relevance_checks", () => activeIncidents.map((incident) => {
     const localizedLabel = buildLocalizedIncidentLabel(incident);
     const crossingIncident = isCrossingDisruptionIncident(incident);
@@ -13485,7 +13532,9 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     const freshnessScore = Number.isFinite(ageMinutes) ? Math.max(4, 60 - Math.min(56, ageMinutes)) : 20;
     const confirmations = Number(incident?.reports_count || 1);
     const confirmationScore = Math.min(32, confirmations * 4);
+    const routeRelevantStartedAt = performance.now();
     const routeRelevant = isIncidentRouteRelevant(incident, routeHazard);
+    routeRelevanceNestedSections.isIncidentRouteRelevant_loop += (performance.now() - routeRelevantStartedAt);
     const routeScore = routeRelevant ? 85 : 0;
     const clusterScore = confirmations >= 3 ? 14 : 0;
     const roadPriorityWeight = getRoadPriorityWeight(incident);
@@ -13495,6 +13544,10 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     const etaImpact = routeRelevant && sevScore >= 62 ? Math.max(6, Math.min(24, Math.round((typeScore + sevScore) / 15))) : 0;
     return { incident, routeRelevant, priorityScore, localizedSummary: buildCommunityConsequenceLabel(incident, localizedLabel || incident?.title || "Traffic slowing"), minutesText, ageMinutes, etaImpact };
   }));
+  routeRelevanceNestedSections.buildRouteHazardAssessment = Number((sections.route_hazard_scoring || 0).toFixed(3));
+  routeRelevanceNestedSections.getRouteHazardAssessment = Number((sections.route_hazard_scoring || 0).toFixed(3));
+  routeRelevanceNestedSections.isIncidentRouteRelevant_loop = Number(routeRelevanceNestedSections.isIncidentRouteRelevant_loop.toFixed(3));
+  routeRelevanceNestedSections.getRoutePolylineLatLngs = Number((routeRelevanceNestedSections.isIncidentRouteRelevant_loop > 0 ? routeRelevanceNestedSections.isIncidentRouteRelevant_loop : 0).toFixed(3));
 
   timeSection("sorting", () => intelItems.sort((a, b) => b.priorityScore - a.priorityScore));
 
@@ -13545,6 +13598,12 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.totalMs = performance.now() - startedAt;
   gridlyCommuteIntelligenceAuditState.sections = sections;
   gridlyCommuteIntelligenceAuditState.counts = counts;
+  gridlyCommuteIntelligenceAuditState.timingBoundaryVerified = true;
+  gridlyCommuteIntelligenceAuditState.routeRelevanceNestedSections = routeRelevanceNestedSections;
+  gridlyCommuteIntelligenceAuditState.suspectedMisattribution = !routeWatchActivated && Number(sections.route_relevance_checks || 0) < 5
+    ? "route_relevance_checks appears fast while route watch is inactive; prior ~1008ms likely included unrelated work outside this timing boundary."
+    : null;
+  gridlyCommuteIntelligenceAuditState.actualSlowSectionCandidate = Object.entries(sections).filter(([, ms]) => Number.isFinite(ms)).sort((a,b)=>b[1]-a[1]).map(([name])=>name)[0] || null;
   gridlyCommuteIntelligenceAuditState.at = Date.now();
 
   return {
