@@ -335,7 +335,11 @@ window.gridlyRefreshBreakdownAudit = function gridlyRefreshBreakdownAudit() {
   const slowestChildEntry = childEntries.sort((a, b) => b[1] - a[1])[0] || null;
   const slowestChild = slowestChildEntry ? { name: slowestChildEntry[0], durationMs: slowestChildEntry[1] } : null;
   const unifiedIncidents = getUnifiedIncidents();
-  const renderedMarkerCount = (hazardMarkers?.length || 0) + (roadHazardMarkers?.length || 0) + crossingMarkers.size;
+  const renderedMarkerCount = typeof unifiedIncidentLayer?.getLayers === "function"
+    ? unifiedIncidentLayer.getLayers().length
+    : ((Array.isArray(globalThis?.hazardMarkers) ? globalThis.hazardMarkers.length : 0)
+      + (Array.isArray(globalThis?.roadHazardMarkers) ? globalThis.roadHazardMarkers.length : 0)
+      + (crossingMarkers?.size || 0));
   return {
     lastRefreshDuration: gridlyRefreshAuditState.lastRefreshDuration || 0,
     childDurations,
