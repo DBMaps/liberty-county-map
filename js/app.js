@@ -415,7 +415,7 @@ window.gridlyCommuteIntelligenceAudit = function gridlyCommuteIntelligenceAudit(
   return { totalMs, sections, counts, slowestSection, recommendedTargets };
 };
 
-window.gridlyRouteRelevanceAudit = function gridlyRouteRelevanceAudit() {
+function gridlyRouteRelevanceAudit() {
   const auditStartedAt = performance.now();
   const activeIncidents = getActiveUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "active");
   const routeWatchActive = Boolean(routeWatchActivated === true || window.__gridlyRouteWatchActive === true);
@@ -491,6 +491,13 @@ window.gridlyRouteRelevanceAudit = function gridlyRouteRelevanceAudit() {
     slowestCheck,
     unnecessaryWorkDetected,
     recommendedV143Patch
+  };
+};
+
+window.gridlyRouteRelevanceAudit = gridlyRouteRelevanceAudit;
+window.gridlyRouteRelevanceAuditGlobalsCheck = function () {
+  return {
+    routeRelevanceAudit: typeof window.gridlyRouteRelevanceAudit
   };
 };
 
