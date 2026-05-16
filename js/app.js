@@ -4351,6 +4351,36 @@ const gridlyPostSubmitRefreshAuditState = {
   ]
 };
 
+const GRIDLY_SUBMIT_LIFECYCLE_GUARD_TTL_MS = 15000;
+const gridlySubmitLifecycleGuardState = {
+  activeSubmitGuard: null,
+  lastSubmitLifecycleId: null,
+  lastCompletedAt: 0,
+  duplicateSuppressedCount: 0
+};
+
+function beginSubmitLifecycleGuard(lifecycleId) {
+  const now = Date.now();
+  if (
+    gridlySubmitLifecycleGuardState.activeSubmitGuard &&
+    gridlySubmitLifecycleGuardState.activeSubmitGuard === lifecycleId &&
+    now - gridlySubmitLifecycleGuardState.lastCompletedAt <= GRIDLY_SUBMIT_LIFECYCLE_GUARD_TTL_MS
+  ) {
+    gridlySubmitLifecycleGuardState.duplicateSuppressedCount += 1;
+    return false;
+  }
+  gridlySubmitLifecycleGuardState.activeSubmitGuard = lifecycleId;
+  gridlySubmitLifecycleGuardState.lastSubmitLifecycleId = lifecycleId;
+  return true;
+}
+
+function endSubmitLifecycleGuard(lifecycleId) {
+  gridlySubmitLifecycleGuardState.lastCompletedAt = Date.now();
+  if (gridlySubmitLifecycleGuardState.activeSubmitGuard === lifecycleId) {
+    gridlySubmitLifecycleGuardState.activeSubmitGuard = null;
+  }
+}
+
 function recordPostSubmitRefreshAudit(meta = {}) {
   const at = Date.now();
   const stack = typeof meta.stack === "string" && meta.stack ? meta.stack : (new Error().stack || "");
@@ -4377,7 +4407,10 @@ window.gridlyPostSubmitRefreshAudit = function gridlyPostSubmitRefreshAudit() {
     recentCalls: [...gridlyPostSubmitRefreshAuditState.recentCalls],
     submitHandlersFound: { ...gridlyPostSubmitRefreshAuditState.submitHandlersFound },
     duplicateHandlerRisks: [...gridlyPostSubmitRefreshAuditState.duplicateHandlerRisks],
-    recommendedFixes: [...gridlyPostSubmitRefreshAuditState.recommendedFixes]
+    recommendedFixes: [...gridlyPostSubmitRefreshAuditState.recommendedFixes],
+    duplicateSuppressedCount: gridlySubmitLifecycleGuardState.duplicateSuppressedCount,
+    lastSubmitLifecycleId: gridlySubmitLifecycleGuardState.lastSubmitLifecycleId,
+    activeSubmitGuard: gridlySubmitLifecycleGuardState.activeSubmitGuard
   };
 };
 
@@ -6782,27 +6815,43 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     lastMobileReportSubmitDebug.lastSubmitAttempt = "supabase_insert_succeeded";
     markSubmitStage("supabase_insert_succeeded");
     lastMobileReportSubmitDebug.supabaseInsertSucceeded = true;
-    updateReportingState({ lastReportError: "", lastReportMessage: "Report added" });
-    runUnifiedReportSuccessLifecycle({
-      flow: "hazard",
-      successType: hazardType,
-      successMessage: "Report accepted and shared."
-    });
-    setSync("Hazard report shared");
+    const submitLifecycleId = row.crossing_id;
+    if (!beginSubmitLifecycleGuard(submitLifecycleId)) {
+      markSubmitStage("duplicate_success_lifecycle_suppressed", { submitLifecycleId });
+      updateReportingState({ submissionInProgress: false, locationLookupInProgress: false });
+      submitAudit.suppressedDuplicateLifecycle = true;
+      submitAudit.submitLifecycleId = submitLifecycleId;
+      submitAudit.completedAt = Date.now();
+      submitAudit.durationMs = submitAudit.completedAt - submitAudit.startedAt;
+      gridlyNetworkAuditState.hazardSubmit.lastLifecycle = submitAudit;
+      return false;
+    }
 
-    updateReportingState({
-      submissionInProgress: false,
-      locationLookupInProgress: false,
-      reportModeActive: false,
-      placementModeActive: false,
-      selectedHazardType: null
-    });
-    closeHazardPanel({ preserveLastReportMessage: true });
-    returnMobileToLiveMode("submit_hazard_success");
-    lastMobileReportSubmitDebug.postSubmitUiResetSucceeded = true;
-    lastMobileReportSubmitDebug.lastSubmitAttempt = "ui_reset_complete";
-    markSubmitStage("ui_reset_complete");
-    runPostSubmitRefreshInBackground(submitAudit, markSubmitStage);
+    try {
+      updateReportingState({ lastReportError: "", lastReportMessage: "Report added" });
+      runUnifiedReportSuccessLifecycle({
+        flow: "hazard",
+        successType: hazardType,
+        successMessage: "Report accepted and shared."
+      });
+      setSync("Hazard report shared");
+
+      updateReportingState({
+        submissionInProgress: false,
+        locationLookupInProgress: false,
+        reportModeActive: false,
+        placementModeActive: false,
+        selectedHazardType: null
+      });
+      closeHazardPanel({ preserveLastReportMessage: true });
+      returnMobileToLiveMode("submit_hazard_success");
+      lastMobileReportSubmitDebug.postSubmitUiResetSucceeded = true;
+      lastMobileReportSubmitDebug.lastSubmitAttempt = "ui_reset_complete";
+      markSubmitStage("ui_reset_complete");
+      runPostSubmitRefreshInBackground(submitAudit, markSubmitStage);
+    } finally {
+      endSubmitLifecycleGuard(submitLifecycleId);
+    }
     submitAudit.completedAt = Date.now();
     submitAudit.durationMs = submitAudit.completedAt - submitAudit.startedAt;
     gridlyNetworkAuditState.hazardSubmit.lastLifecycle = submitAudit;
@@ -7930,7 +7979,10 @@ function bindEvents() {
     }
   };
   attachRouteQuickPanelDelegatedClickHandlers();
-  document.addEventListener("click", handleDataActionClick);
+  if (!window.__gridlyHandleDataActionClickBound) {
+    document.addEventListener("click", handleDataActionClick);
+    window.__gridlyHandleDataActionClickBound = true;
+  }
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Enter" && event.key !== " ") return;
     const focusCard = event.target?.closest?.("[data-alert-focus]");
