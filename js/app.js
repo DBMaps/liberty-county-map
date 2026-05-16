@@ -267,12 +267,61 @@ const gridlyCommuteIntelligenceAuditState = {
   labelHelperInternalSections: {},
   labelHelperCallStats: {},
   labelHelperSlowestCall: null,
+  roadNameLookupCacheActive: false,
+  roadNameLookupCacheHits: 0,
+  roadNameLookupCacheMisses: 0,
+  roadNameLookupCachedKeys: [],
   timingBoundaryVerified: false,
   routeRelevanceNestedSections: {},
   suspectedMisattribution: null,
   actualSlowSectionCandidate: null,
   at: 0
 };
+let gridlyRoadNameLookupCache = null;
+
+function normalizeRoadNameLookupKeyPart(value = "") {
+  return String(value || "").trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+function buildRoadNameLookupCacheKey(incident = {}, lookupType = "road_name_lookup") {
+  const stableId = String(
+    incident?.id
+    || incident?.report_id
+    || incident?.reportId
+    || incident?.incident_id
+    || incident?.incidentId
+    || ""
+  ).trim();
+  if (stableId) return `${lookupType}::id::${stableId}`;
+  const latRaw = Number(incident?.lat ?? incident?.latitude ?? incident?.location?.lat);
+  const lngRaw = Number(incident?.lng ?? incident?.lon ?? incident?.longitude ?? incident?.location?.lng);
+  const lat = Number.isFinite(latRaw) ? latRaw.toFixed(4) : "na";
+  const lng = Number.isFinite(lngRaw) ? lngRaw.toFixed(4) : "na";
+  const type = normalizeRoadNameLookupKeyPart(incident?.report_type || incident?.type || "unknown");
+  const roadKey = normalizeRoadNameLookupKeyPart(
+    incident?.crossing_id
+    || incident?.crossingId
+    || incident?.crossingName
+    || incident?.road_name
+    || incident?.area
+    || incident?.title
+    || ""
+  ) || "unknown";
+  return `${lookupType}::geo::${type}::${lat},${lng}::${roadKey}`;
+}
+
+function getCachedRoadNameLookup(incident = {}, lookupType = "road_name_lookup", resolver = () => null) {
+  if (!gridlyRoadNameLookupCache?.values) return resolver();
+  const key = buildRoadNameLookupCacheKey(incident, lookupType);
+  if (gridlyRoadNameLookupCache.values.has(key)) {
+    gridlyRoadNameLookupCache.hits += 1;
+    return gridlyRoadNameLookupCache.values.get(key);
+  }
+  const value = resolver();
+  gridlyRoadNameLookupCache.values.set(key, value);
+  gridlyRoadNameLookupCache.misses += 1;
+  return value;
+}
 const gridlyRouteRelevanceAuditState = {
   at: 0,
   checksRun: 0,
@@ -454,6 +503,10 @@ window.gridlyCommuteIntelligenceAudit = function gridlyCommuteIntelligenceAudit(
     labelHelperInternalSections: { ...(gridlyCommuteIntelligenceAuditState.labelHelperInternalSections || {}) },
     labelHelperCallStats: { ...(gridlyCommuteIntelligenceAuditState.labelHelperCallStats || {}) },
     labelHelperSlowestCall: gridlyCommuteIntelligenceAuditState.labelHelperSlowestCall || null,
+    roadNameLookupCacheActive: Boolean(gridlyCommuteIntelligenceAuditState.roadNameLookupCacheActive),
+    roadNameLookupCacheHits: Number(gridlyCommuteIntelligenceAuditState.roadNameLookupCacheHits || 0),
+    roadNameLookupCacheMisses: Number(gridlyCommuteIntelligenceAuditState.roadNameLookupCacheMisses || 0),
+    roadNameLookupCachedKeys: [...(gridlyCommuteIntelligenceAuditState.roadNameLookupCachedKeys || [])],
     slowestSection,
     recommendedTargets,
     timingBoundaryVerified: Boolean(gridlyCommuteIntelligenceAuditState.timingBoundaryVerified),
@@ -13360,16 +13413,16 @@ function buildLocalizedIncidentLabel(incident = {}) {
   };
   if (!incident) return finalizeAudit("Localized disruption", { fallbackReason: "missing_incident" });
   const isCrossing = recordSection("type_status_mapping", () => recordCall("isCrossingDisruptionIncident", () => isCrossingDisruptionIncident(incident)));
-  const roadDisplay = recordSection("crossing_road_name_lookup", () => recordCall("buildRoadHazardDisplay", () => buildRoadHazardDisplay(incident)));
+  const roadDisplay = recordSection("crossing_road_name_lookup", () => recordCall("buildRoadHazardDisplay", () => getCachedRoadNameLookup(incident, "buildRoadHazardDisplay", () => buildRoadHazardDisplay(incident))));
   const roadFallback = recordSection("fallback_logic", () => roadDisplay?.title || incident?.title || "Localized disruption");
   if (!isCrossing) return finalizeAudit(roadFallback, { path: "road_display" });
 
   const reportType = recordSection("input_normalization", () => String(incident?.report_type || incident?.type || "").toLowerCase());
-  const location = recordSection("corridor_location_inference", () => recordCall("resolveRailLocationText", () => resolveRailLocationText({
+  const location = recordSection("corridor_location_inference", () => recordCall("resolveRailLocationText", () => getCachedRoadNameLookup(incident, "resolveRailLocationText", () => resolveRailLocationText({
     crossingName: incident?.crossingName || incident?.area || "",
     crossingId: incident?.crossing_id || incident?.crossingId || "",
     latestReport: incident
-  })));
+  }))));
   const nearTarget = recordSection("crossing_road_name_lookup", () => location.humanRoad || location.crossingName || location.nearbyName || "");
   const nearSuffix = recordSection("string_template_construction", () => (nearTarget ? ` near ${nearTarget}` : ""));
   if (reportType === "cleared") return finalizeAudit(recordSection("string_template_construction", () => `Crossing cleared${nearSuffix}`), { path: "cleared" });
@@ -13468,7 +13521,7 @@ function buildCommunityConsequenceLabel(incident = {}, fallback = "Traffic slowi
   const road = recordSection("corridor_location_inference", () => recordCall("normalizeCorridorBaseLabel+inferCorridorLabel", () => normalizeCorridorBaseLabel(inferCorridorLabel(incident).replace(/ Corridor$/, ""))));
   const type = recordSection("input_normalization", () => String(incident?.report_type || incident?.type || "").toLowerCase());
   const direction = recordSection("type_status_mapping", () => recordCall("inferDirectionalPhrase", () => inferDirectionalPhrase(incident)));
-  const localSpot = recordSection("crossing_road_name_lookup", () => recordCall("buildLocalizedLocationPhrase", () => buildLocalizedLocationPhrase(incident)));
+  const localSpot = recordSection("crossing_road_name_lookup", () => recordCall("buildLocalizedLocationPhrase", () => getCachedRoadNameLookup(incident, "buildLocalizedLocationPhrase", () => buildLocalizedLocationPhrase(incident))));
   if (towns.length >= 2) return finalizeAudit(recordSection("string_template_construction", () => `Traffic slowing between ${towns[0]} and ${towns[1]}`), { path: "town_pair" });
   if (/blocked|crossing_blocked/.test(type) && /US 90/i.test(road)) return finalizeAudit(recordSection("string_template_construction", () => `Train blocking ${localSpot}${direction ? ` · ${direction} backups` : ""}`), { path: "blocked_us90" });
   if (/blocked|crossing_blocked/.test(type) && /FM 1008/i.test(road)) return finalizeAudit(recordSection("string_template_construction", () => `Train reported at ${localSpot}${towns[0] ? ` into ${towns[0]}` : ""}`), { path: "blocked_fm1008" });
@@ -13619,6 +13672,11 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.labelHelperInternalSections = {};
   gridlyCommuteIntelligenceAuditState.labelHelperCallStats = {};
   gridlyCommuteIntelligenceAuditState.labelHelperSlowestCall = null;
+  gridlyRoadNameLookupCache = { values: new Map(), hits: 0, misses: 0 };
+  gridlyCommuteIntelligenceAuditState.roadNameLookupCacheActive = true;
+  gridlyCommuteIntelligenceAuditState.roadNameLookupCacheHits = 0;
+  gridlyCommuteIntelligenceAuditState.roadNameLookupCacheMisses = 0;
+  gridlyCommuteIntelligenceAuditState.roadNameLookupCachedKeys = [];
   const timeSection = makeGridlySectionTimer(sections);
   const routeHazard = timeSection("route_hazard_scoring", () => (routeWatchActivated ? getRouteHazardAssessment() : null));
   const activeIncidents = timeSection("unified_incident_retrieval", () => getActiveUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "active"));
@@ -13869,6 +13927,11 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   const titleLabelSlowestHelperEntry = Object.entries(titleLabelNestedSections).sort((a, b) => b[1] - a[1])[0] || null;
   gridlyCommuteIntelligenceAuditState.titleLabelSlowestHelper = titleLabelSlowestHelperEntry ? { name: titleLabelSlowestHelperEntry[0], ms: Number(titleLabelSlowestHelperEntry[1].toFixed(3)) } : null;
   gridlyCommuteIntelligenceAuditState.titleLabelSlowestIncident = titleLabelPerIncidentTimings.slice().sort((a, b) => Number((b.slowestTitleHelper || {}).ms || 0) - Number((a.slowestTitleHelper || {}).ms || 0))[0] || null;
+  gridlyCommuteIntelligenceAuditState.roadNameLookupCacheActive = Boolean(gridlyRoadNameLookupCache?.values);
+  gridlyCommuteIntelligenceAuditState.roadNameLookupCacheHits = Number(gridlyRoadNameLookupCache?.hits || 0);
+  gridlyCommuteIntelligenceAuditState.roadNameLookupCacheMisses = Number(gridlyRoadNameLookupCache?.misses || 0);
+  gridlyCommuteIntelligenceAuditState.roadNameLookupCachedKeys = Array.from(gridlyRoadNameLookupCache?.values?.keys?.() || []);
+  gridlyRoadNameLookupCache = null;
   gridlyCommuteIntelligenceAuditState.at = Date.now();
 
   return {
