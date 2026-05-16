@@ -223,6 +223,19 @@ const gridlyNetworkAuditState = {
   osrmNearest: { count: 0, lastCalls: [], inFlight: 0 },
   hazardSubmit: { lastLifecycle: null }
 };
+const gridlyRefreshAuditState = {
+  totalRefreshCount: 0,
+  refreshSourceCounts: {},
+  renderCounts: {
+    renderAlerts: 0,
+    renderRoadHazards: 0,
+    renderTrendingCrossings: 0,
+    renderUnifiedIncidents: 0,
+    scheduleRenderCrossings: 0,
+    updateRouteIntelligence: 0
+  },
+  lastRefreshAt: 0
+};
 let suppressRealtimeRefreshUntil = 0;
 let suppressIntervalRefreshUntil = 0;
 let skipNextRealtimeRefresh = false;
@@ -291,6 +304,15 @@ window.gridlyNetworkAudit = function gridlyNetworkAudit() {
       osrmNearestCalls: Number(gridlyNetworkAuditState.osrmNearest.inFlight || 0)
     },
     lastHazardSubmitLifecycle: gridlyNetworkAuditState.hazardSubmit.lastLifecycle
+  };
+};
+window.gridlyRefreshAudit = function gridlyRefreshAudit() {
+  return {
+    totalRefreshCount: gridlyRefreshAuditState.totalRefreshCount,
+    refreshSourceCounts: { ...gridlyRefreshAuditState.refreshSourceCounts },
+    renderCounts: { ...gridlyRefreshAuditState.renderCounts },
+    lastRefreshAt: gridlyRefreshAuditState.lastRefreshAt || null,
+    lastRefreshIso: gridlyRefreshAuditState.lastRefreshAt ? new Date(gridlyRefreshAuditState.lastRefreshAt).toISOString() : null
   };
 };
 let routeComparisonStatus = "alternate_unavailable";
@@ -3923,14 +3945,23 @@ function shouldShowCrossingInLaunchMode(crossing) {
 
   return false;
 }
-function refreshReportHazardViews() {
+function refreshReportHazardViews(source = "unspecified") {
+  gridlyRefreshAuditState.totalRefreshCount += 1;
+  gridlyRefreshAuditState.refreshSourceCounts[source] = (gridlyRefreshAuditState.refreshSourceCounts[source] || 0) + 1;
+  gridlyRefreshAuditState.lastRefreshAt = Date.now();
   crossingRenderReportsVersion += 1;
   refreshPortraitV2LocalizedIntelligence();
+  gridlyRefreshAuditState.renderCounts.renderAlerts += 1;
   renderAlerts();
+  gridlyRefreshAuditState.renderCounts.renderRoadHazards += 1;
   renderRoadHazards();
+  gridlyRefreshAuditState.renderCounts.renderTrendingCrossings += 1;
   renderTrendingCrossings();
+  gridlyRefreshAuditState.renderCounts.renderUnifiedIncidents += 1;
   renderUnifiedIncidents();
+  gridlyRefreshAuditState.renderCounts.scheduleRenderCrossings += 1;
   scheduleRenderCrossings("state-change");
+  gridlyRefreshAuditState.renderCounts.updateRouteIntelligence += 1;
   updateRouteIntelligence();
   updateTrustStats();
   updateGrowthWidgets();
@@ -3959,7 +3990,7 @@ window.gridlyClearLocalTestReports = function gridlyClearLocalTestReports() {
     }
   }
 
-  refreshReportHazardViews();
+  refreshReportHazardViews("gridlyClearLocalTestReports");
 
   const summary = {
     clearedLocalActiveReports: reportCountBefore,
@@ -4143,11 +4174,8 @@ window.gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoad
 
   activeHazards = [];
   activeReports = [];
-  refreshReportHazardViews();
+  refreshReportHazardViews("gridlyDevPurgeRecentRoadHazards:pre_load");
   await loadSharedReports("dev_purge_recent_road_hazards");
-  refreshReportHazardViews();
-  renderUnifiedIncidents();
-  renderRoadHazards();
 
   summary.deleted = idsToDelete.length;
   console.info("gridlyDevPurgeRecentRoadHazards completed", summary);
@@ -4165,7 +4193,6 @@ function runPostSubmitRefreshInBackground(submitAudit, markSubmitStage) {
   console.debug("Post-submit refresh started in background");
   loadSharedReports("post_submit_refresh")
     .then(() => {
-      refreshReportHazardViews();
       const completedAt = Date.now();
       markSubmitStage("background_refresh_completed", { completedAt });
       submitAudit.backgroundRefreshCompletedAt = completedAt;
@@ -4232,7 +4259,7 @@ async function loadSharedReports(reason = "manual") {
     activeHazards = normalized.filter((report) => report.reportKind === "hazard");
     activeReports = normalized.filter((report) => report.reportKind !== "hazard");
 
-    refreshReportHazardViews();
+    refreshReportHazardViews(`loadSharedReports:${reason}`);
 
     setSync(`${activeReports.length} crossing reports · ${activeHazards.length} hazards synced`);
 
