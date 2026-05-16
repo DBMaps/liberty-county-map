@@ -1846,6 +1846,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initGreeting();
   updateLastUpdated();
   initMap();
+  installMapClickDiagnostics();
   initSupabase();
   bindEvents();
   setReportMode(REPORT_MODES.rail);
@@ -1879,6 +1880,39 @@ function initVisualViewportHeightVar() {
 }
 
 
+
+function installMapClickDiagnostics() {
+  document.addEventListener("click", (event) => {
+    const mapEl = document.getElementById("map");
+    const mapFrame = document.querySelector(".map-frame");
+    if (!mapEl || !mapFrame) return;
+
+    const rect = mapFrame.getBoundingClientRect();
+    const insideFrame =
+      event.clientX >= rect.left &&
+      event.clientX <= rect.right &&
+      event.clientY >= rect.top &&
+      event.clientY <= rect.bottom;
+    if (!insideFrame) return;
+
+    const topEl = document.elementFromPoint(event.clientX, event.clientY);
+    const target = event.target;
+    reportDebugLog("[Map click diagnostic]", {
+      targetTag: target?.tagName || null,
+      targetId: target?.id || null,
+      targetClass: target?.className || null,
+      topTag: topEl?.tagName || null,
+      topId: topEl?.id || null,
+      topClass: topEl?.className || null,
+      x: event.clientX,
+      y: event.clientY
+    });
+  }, true);
+}
+
+function traceMobileModeMutation(_label, _data = {}) {
+  return;
+}
 
 function setManualFallbackDefaultState() {
   if (!els.reportSection) return;
@@ -1918,6 +1952,7 @@ function readSurfaceComputedState(selector) {
 
 function returnMobileToLiveMode(reason = "") {
   if (!window.matchMedia("(max-width: 760px)").matches) return;
+  traceMobileModeMutation("returnMobileToLiveMode called", { reason });
   if (reportingState.reportModeActive || reportingState.placementModeActive || reportingState.submissionInProgress) return;
   const routePanelVisible = Boolean(document.getElementById("gridlyMobileRouteQuickPanel")?.classList.contains("visible"));
   if (isReportSurfaceVisiblyOpen()) {
@@ -1925,9 +1960,11 @@ function returnMobileToLiveMode(reason = "") {
     return;
   }
   if (routePanelVisible) {
+    traceMobileModeMutation("returnMobileToLiveMode blocked: route panel still open", { reason, routePanelVisible });
     return;
   }
   setMobileUiMode("live", { silent: true });
+  traceMobileModeMutation("returnMobileToLiveMode completed", { reason });
   reportDebugLog("[Gridly][Report] returned to live mode", { reason, mobileUiMode });
 }
 
@@ -6010,6 +6047,7 @@ function openMobileRouteQuickPanel() {
   panel.classList.add("visible");
   syncRouteQuickPanelUiState();
   if (isMobileLayoutMode()) setMobileUiMode("route", { silent: true });
+  traceMobileModeMutation("route quick panel opened", { intendedSurfaceSelector: "#gridlyMobileRouteQuickPanel", surfaceState: readSurfaceComputedState("#gridlyMobileRouteQuickPanel") });
 }
 
 async function debugEnterRoutePipeline(args = {}) {
@@ -8369,7 +8407,9 @@ function bindMobileReportEntryDelegation() {
 
 function handleReportNearMe(entryPoint = "report_near_me") {
   reportLifecycleDiag("handleReportNearMe", { entryPoint });
+  traceMobileModeMutation("handleReportNearMe before setMobileUiMode", { entryPoint });
   setMobileUiMode("report", { silent: true });
+  traceMobileModeMutation("handleReportNearMe after setMobileUiMode", { entryPoint, intendedSurfaceSelector: "#reportSection", surfaceState: readSurfaceComputedState("#reportSection") });
   updateReportingState({
     reportModeActive: true,
     placementModeActive: false,
@@ -15301,10 +15341,17 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       return;
     }
     if (section === "report") {
+      traceMobileModeMutation("daily panel report clicked", { section, intendedSurfaceSelector: "#reportSection", before: collectMobileSurfaceDiagnostics(), surfaceState: readSurfaceComputedState("#reportSection") });
       layer.hidden = true;
       normalizeMobileSurfaceBackdrop(false);
       const beforeSetMode = document.body?.dataset?.mobileMode || null;
       handleReportNearMe("daily_panel_report");
+      traceMobileModeMutation("daily panel report completed", {
+        section,
+        beforeSetMode,
+        afterAction: collectMobileSurfaceDiagnostics(),
+        surfaceState: readSurfaceComputedState("#reportSection")
+      });
       return;
     }
     if (!layer || !title || !body || !views[section]) return;
@@ -15438,7 +15485,16 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       if (!trigger) return;
       const action = trigger.getAttribute("data-mobile-surface-action");
       if (action === "route-watch") {
+        traceMobileModeMutation("daily panel route-watch clicked", {
+          action,
+          intendedSurfaceSelector: "#gridlyMobileRouteQuickPanel",
+          surfaceState: readSurfaceComputedState("#gridlyMobileRouteQuickPanel")
+        });
         openMobileRouteQuickPanel();
+        traceMobileModeMutation("daily panel route-watch open completed", {
+          action,
+          surfaceState: readSurfaceComputedState("#gridlyMobileRouteQuickPanel")
+        });
       }
       if (action === "quick-report") document.getElementById("mobileQuickReportBtn")?.click();
       if (action === "quick-cleared") document.getElementById("mobileQuickClearedBtn")?.click();
@@ -16336,17 +16392,6 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         }
       }, true);
       body.dataset.tapMapDelegateBound = "1";
-    }
-    if (!body.dataset.routeDelegateBound) {
-      body.addEventListener("click", (event) => {
-        const target = event.target instanceof Element ? event.target : null;
-        const routeActionButton = target?.closest?.('[data-v2-action="route-watch-open"], [data-v2-action="route-preview-open"]');
-        if (!routeActionButton || routeActionButton.disabled) return;
-        event.preventDefault();
-        event.stopPropagation();
-        triggerV2DockAdapter(routeActionButton.dataset.v2Action || "");
-      }, true);
-      body.dataset.routeDelegateBound = "1";
     }
     const preconditions = getV2PreconditionsState();
     refreshPortraitV2ReportCtas(body, preconditions);
