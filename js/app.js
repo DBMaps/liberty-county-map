@@ -420,9 +420,17 @@ window.gridlyCommuteIntelligenceAudit = function gridlyCommuteIntelligenceAudit(
       "Correlate incident and corridor counts with slow sections to confirm algorithmic scaling."
     ]
     : ["Run a refresh cycle and submit one report before auditing commute intelligence timing."];
+  const sectionAttribution = {
+    route_relevance_checks: Number(sections.route_relevance_checks || 0),
+    commute_model_build: Number(sections.commute_model_build || 0),
+    corridor_model_build: Number((Number(sections.corridor_grouping || 0) + Number(sections.object_construction_output_shaping || 0)).toFixed(3)),
+    route_context_setup: Number((Number(sections.route_hazard_scoring || 0) + Number(sections.unified_incident_retrieval || 0) + Number(sections.recently_cleared_retrieval || 0)).toFixed(3)),
+    uncategorized_or_wrapper_overhead: Number(sections.uncategorized_or_wrapper_overhead || 0)
+  };
   return {
     totalMs,
     sections,
+    sectionAttribution,
     counts,
     slowestSection,
     recommendedTargets,
@@ -13519,7 +13527,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     getDistanceMiles_calls: 0,
     synchronousWaitOrHeavyCall: 0
   };
-  const intelItems = timeSection("route_relevance_checks", () => activeIncidents.map((incident) => {
+  const intelItems = timeSection("commute_model_build", () => activeIncidents.map((incident) => {
     const localizedLabel = buildLocalizedIncidentLabel(incident);
     const crossingIncident = isCrossingDisruptionIncident(incident);
     if (crossingIncident) crossingIncidentCount += 1;
@@ -13532,9 +13540,12 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     const freshnessScore = Number.isFinite(ageMinutes) ? Math.max(4, 60 - Math.min(56, ageMinutes)) : 20;
     const confirmations = Number(incident?.reports_count || 1);
     const confirmationScore = Math.min(32, confirmations * 4);
-    const routeRelevantStartedAt = performance.now();
-    const routeRelevant = isIncidentRouteRelevant(incident, routeHazard);
-    routeRelevanceNestedSections.isIncidentRouteRelevant_loop += (performance.now() - routeRelevantStartedAt);
+    const routeRelevant = timeSection("route_relevance_checks", () => {
+      const routeRelevantStartedAt = performance.now();
+      const result = isIncidentRouteRelevant(incident, routeHazard);
+      routeRelevanceNestedSections.isIncidentRouteRelevant_loop += (performance.now() - routeRelevantStartedAt);
+      return result;
+    });
     const routeScore = routeRelevant ? 85 : 0;
     const clusterScore = confirmations >= 3 ? 14 : 0;
     const roadPriorityWeight = getRoadPriorityWeight(incident);
@@ -13594,6 +13605,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   const consequenceSecondaryMessage = timeSection("recommendation_generation", () => topSecondary);
   counts.alertCount = Math.min(Number(limit || 0), intelItems.length);
   counts.recommendationCount = consequenceSecondaryMessage ? 1 : 0;
+  sections.uncategorized_or_wrapper_overhead = Number(Math.max(0, (performance.now() - startedAt) - Object.values(sections).reduce((sum, ms) => sum + (Number.isFinite(ms) ? ms : 0), 0)).toFixed(3));
   sections.dedupe_logic = 0;
   gridlyCommuteIntelligenceAuditState.totalMs = performance.now() - startedAt;
   gridlyCommuteIntelligenceAuditState.sections = sections;
