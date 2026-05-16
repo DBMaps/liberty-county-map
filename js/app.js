@@ -256,6 +256,10 @@ const gridlyCommuteIntelligenceAuditState = {
   totalMs: 0,
   sections: {},
   counts: {},
+  commuteModelNestedSections: {},
+  commuteModelPerIncidentTimings: [],
+  commuteModelHelperCallCounts: {},
+  commuteModelSlowestIncident: null,
   timingBoundaryVerified: false,
   routeRelevanceNestedSections: {},
   suspectedMisattribution: null,
@@ -432,6 +436,10 @@ window.gridlyCommuteIntelligenceAudit = function gridlyCommuteIntelligenceAudit(
     sections,
     sectionAttribution,
     counts,
+    commuteModelNestedSections: { ...(gridlyCommuteIntelligenceAuditState.commuteModelNestedSections || {}) },
+    commuteModelPerIncidentTimings: [...(gridlyCommuteIntelligenceAuditState.commuteModelPerIncidentTimings || [])],
+    commuteModelHelperCallCounts: { ...(gridlyCommuteIntelligenceAuditState.commuteModelHelperCallCounts || {}) },
+    commuteModelSlowestIncident: gridlyCommuteIntelligenceAuditState.commuteModelSlowestIncident || null,
     slowestSection,
     recommendedTargets,
     timingBoundaryVerified: Boolean(gridlyCommuteIntelligenceAuditState.timingBoundaryVerified),
@@ -13527,13 +13535,73 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     getDistanceMiles_calls: 0,
     synchronousWaitOrHeavyCall: 0
   };
+  const commuteModelNestedSections = {
+    incident_mapping: 0,
+    title_label_generation: 0,
+    severity_status_derivation: 0,
+    corridor_label_inference: 0,
+    location_crossing_lookup: 0,
+    date_time_freshness_formatting: 0,
+    confidence_impact_scoring: 0,
+    object_cloning_spreading: 0,
+    repeated_helper_calls: 0
+  };
+  const commuteModelHelperCallCounts = {
+    incidentsProcessed: 0,
+    helperCallsPerIncident: {},
+    corridorLabelsInferred: 0,
+    crossingLookups: 0,
+    formattingCalls: 0,
+    repeatedHelperCalls: 0
+  };
+  const commuteModelPerIncidentTimings = [];
   const intelItems = timeSection("commute_model_build", () => activeIncidents.map((incident) => {
-    const localizedLabel = buildLocalizedIncidentLabel(incident);
-    const crossingIncident = isCrossingDisruptionIncident(incident);
+    const incidentStartedAt = performance.now();
+    const perIncidentSections = {
+      incident_mapping: 0,
+      title_label_generation: 0,
+      severity_status_derivation: 0,
+      corridor_label_inference: 0,
+      location_crossing_lookup: 0,
+      date_time_freshness_formatting: 0,
+      confidence_impact_scoring: 0,
+      object_cloning_spreading: 0,
+      repeated_helper_calls: 0
+    };
+    const helperCalls = {
+      buildLocalizedIncidentLabel: 0,
+      buildCommunityConsequenceLabel: 0,
+      isCrossingDisruptionIncident: 0,
+      getHazardCategory: 0,
+      isIncidentRouteRelevant: 0,
+      getRoadPriorityWeight: 0,
+      findTownMentions: 0,
+      inferCorridorLabel: 0
+    };
+    const localizedLabel = (() => {
+      const sectionStartedAt = performance.now();
+      helperCalls.buildLocalizedIncidentLabel += 1;
+      const value = buildLocalizedIncidentLabel(incident);
+      perIncidentSections.title_label_generation += (performance.now() - sectionStartedAt);
+      return value;
+    })();
+    const crossingIncident = (() => {
+      const sectionStartedAt = performance.now();
+      helperCalls.isCrossingDisruptionIncident += 1;
+      const value = isCrossingDisruptionIncident(incident);
+      perIncidentSections.location_crossing_lookup += (performance.now() - sectionStartedAt);
+      return value;
+    })();
     if (crossingIncident) crossingIncidentCount += 1;
     else if (String(incident?.id || "").startsWith("road-")) roadHazardIncidentCount += 1;
     else unknownIncidentCount += 1;
-    const category = getHazardCategory(incident?.report_type || incident?.type || "other_hazard");
+    const category = (() => {
+      const sectionStartedAt = performance.now();
+      helperCalls.getHazardCategory += 1;
+      const value = getHazardCategory(incident?.report_type || incident?.type || "other_hazard");
+      perIncidentSections.severity_status_derivation += (performance.now() - sectionStartedAt);
+      return value;
+    })();
     const typeScore = weightedByType[category] || 55;
     const sevScore = severityWeight[String(incident?.severity || "low")] || 35;
     const ageMinutes = Number(incident?.age_minutes);
@@ -13542,18 +13610,73 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     const confirmationScore = Math.min(32, confirmations * 4);
     const routeRelevant = timeSection("route_relevance_checks", () => {
       const routeRelevantStartedAt = performance.now();
+      helperCalls.isIncidentRouteRelevant += 1;
       const result = isIncidentRouteRelevant(incident, routeHazard);
+      perIncidentSections.location_crossing_lookup += (performance.now() - routeRelevantStartedAt);
       routeRelevanceNestedSections.isIncidentRouteRelevant_loop += (performance.now() - routeRelevantStartedAt);
       return result;
     });
     const routeScore = routeRelevant ? 85 : 0;
     const clusterScore = confirmations >= 3 ? 14 : 0;
-    const roadPriorityWeight = getRoadPriorityWeight(incident);
-    const townWeight = Math.min(40, findTownMentions(incident).length * 20);
+    const roadPriorityWeight = (() => {
+      const sectionStartedAt = performance.now();
+      helperCalls.getRoadPriorityWeight += 1;
+      const value = getRoadPriorityWeight(incident);
+      perIncidentSections.confidence_impact_scoring += (performance.now() - sectionStartedAt);
+      return value;
+    })();
+    const townWeight = (() => {
+      const sectionStartedAt = performance.now();
+      helperCalls.findTownMentions += 1;
+      const value = Math.min(40, findTownMentions(incident).length * 20);
+      perIncidentSections.confidence_impact_scoring += (performance.now() - sectionStartedAt);
+      return value;
+    })();
     const priorityScore = typeScore + sevScore + freshnessScore + confirmationScore + routeScore + clusterScore + roadPriorityWeight + townWeight;
-    const minutesText = Number.isFinite(ageMinutes) ? `${Math.max(0, Math.round(ageMinutes))}m ago` : "just now";
+    const minutesText = (() => {
+      const sectionStartedAt = performance.now();
+      const value = Number.isFinite(ageMinutes) ? `${Math.max(0, Math.round(ageMinutes))}m ago` : "just now";
+      perIncidentSections.date_time_freshness_formatting += (performance.now() - sectionStartedAt);
+      return value;
+    })();
     const etaImpact = routeRelevant && sevScore >= 62 ? Math.max(6, Math.min(24, Math.round((typeScore + sevScore) / 15))) : 0;
-    return { incident, routeRelevant, priorityScore, localizedSummary: buildCommunityConsequenceLabel(incident, localizedLabel || incident?.title || "Traffic slowing"), minutesText, ageMinutes, etaImpact };
+    const inferredCorridorLabel = (() => {
+      const sectionStartedAt = performance.now();
+      helperCalls.inferCorridorLabel += 1;
+      const value = inferCorridorLabel(incident);
+      perIncidentSections.corridor_label_inference += (performance.now() - sectionStartedAt);
+      return value;
+    })();
+    const localizedSummary = (() => {
+      const sectionStartedAt = performance.now();
+      helperCalls.buildCommunityConsequenceLabel += 1;
+      const value = buildCommunityConsequenceLabel(incident, localizedLabel || incident?.title || "Traffic slowing");
+      perIncidentSections.title_label_generation += (performance.now() - sectionStartedAt);
+      return value;
+    })();
+    const shapedItem = (() => {
+      const sectionStartedAt = performance.now();
+      const value = { incident, routeRelevant, priorityScore, localizedSummary, minutesText, ageMinutes, etaImpact, inferredCorridorLabel };
+      perIncidentSections.object_cloning_spreading += (performance.now() - sectionStartedAt);
+      return value;
+    })();
+    perIncidentSections.incident_mapping = performance.now() - incidentStartedAt;
+    perIncidentSections.repeated_helper_calls = Math.max(0, helperCalls.buildLocalizedIncidentLabel - 1) + Math.max(0, helperCalls.findTownMentions - 1);
+    commuteModelHelperCallCounts.repeatedHelperCalls += perIncidentSections.repeated_helper_calls;
+    Object.entries(perIncidentSections).forEach(([name, ms]) => {
+      commuteModelNestedSections[name] += ms;
+    });
+    commuteModelHelperCallCounts.incidentsProcessed += 1;
+    commuteModelHelperCallCounts.corridorLabelsInferred += inferredCorridorLabel ? 1 : 0;
+    commuteModelHelperCallCounts.crossingLookups += helperCalls.isCrossingDisruptionIncident + helperCalls.isIncidentRouteRelevant;
+    commuteModelHelperCallCounts.formattingCalls += 1;
+    commuteModelHelperCallCounts.helperCallsPerIncident[String(incident?.id || `idx-${commuteModelPerIncidentTimings.length}`)] = { ...helperCalls };
+    commuteModelPerIncidentTimings.push({
+      incidentId: String(incident?.id || `idx-${commuteModelPerIncidentTimings.length}`),
+      ms: Number(perIncidentSections.incident_mapping.toFixed(3)),
+      sections: Object.fromEntries(Object.entries(perIncidentSections).map(([name, ms]) => [name, Number(ms.toFixed(3))]))
+    });
+    return shapedItem;
   }));
   routeRelevanceNestedSections.buildRouteHazardAssessment = Number((sections.route_hazard_scoring || 0).toFixed(3));
   routeRelevanceNestedSections.getRouteHazardAssessment = Number((sections.route_hazard_scoring || 0).toFixed(3));
@@ -13610,6 +13733,10 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.totalMs = performance.now() - startedAt;
   gridlyCommuteIntelligenceAuditState.sections = sections;
   gridlyCommuteIntelligenceAuditState.counts = counts;
+  gridlyCommuteIntelligenceAuditState.commuteModelNestedSections = Object.fromEntries(Object.entries(commuteModelNestedSections).map(([name, ms]) => [name, Number(ms.toFixed(3))]));
+  gridlyCommuteIntelligenceAuditState.commuteModelPerIncidentTimings = commuteModelPerIncidentTimings;
+  gridlyCommuteIntelligenceAuditState.commuteModelHelperCallCounts = commuteModelHelperCallCounts;
+  gridlyCommuteIntelligenceAuditState.commuteModelSlowestIncident = commuteModelPerIncidentTimings.slice().sort((a, b) => b.ms - a.ms)[0] || null;
   gridlyCommuteIntelligenceAuditState.timingBoundaryVerified = true;
   gridlyCommuteIntelligenceAuditState.routeRelevanceNestedSections = routeRelevanceNestedSections;
   gridlyCommuteIntelligenceAuditState.suspectedMisattribution = !routeWatchActivated && Number(sections.route_relevance_checks || 0) < 5
