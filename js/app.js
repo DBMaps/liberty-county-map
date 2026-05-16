@@ -257,7 +257,10 @@ const gridlyIntelligenceCacheAuditState = {
   cycleId: 0,
   hits: 0,
   misses: 0,
-  functionNames: []
+  functionNames: [],
+  cacheKeysThisCycle: [],
+  cacheKeyMissReasons: [],
+  cacheableEquivalentCalls: []
 };
 let gridlyRefreshCycleCache = null;
 
@@ -267,12 +270,18 @@ function createGridlyRefreshCycleCache() {
   gridlyIntelligenceCacheAuditState.hits = 0;
   gridlyIntelligenceCacheAuditState.misses = 0;
   gridlyIntelligenceCacheAuditState.functionNames = [];
+  gridlyIntelligenceCacheAuditState.cacheKeysThisCycle = [];
+  gridlyIntelligenceCacheAuditState.cacheKeyMissReasons = [];
+  gridlyIntelligenceCacheAuditState.cacheableEquivalentCalls = [];
   return {
     cycleId: gridlyIntelligenceCacheAuditState.cycleId,
     values: new Map(),
     hits: 0,
     misses: 0,
-    names: new Set()
+    names: new Set(),
+    keyCalls: new Map(),
+    keyMissReasons: [],
+    equivalentCalls: []
   };
 }
 
@@ -285,17 +294,29 @@ function buildGridlyCacheKey(name = "", payload = {}) {
 function getGridlyRefreshCycleCachedValue(name = "", payload = {}, resolver = () => null) {
   if (!gridlyRefreshCycleCache?.values) return resolver();
   const key = buildGridlyCacheKey(name, payload);
-  if (gridlyRefreshCycleCache.values.has(key)) {
+  const keyCalls = gridlyRefreshCycleCache.keyCalls;
+  const callCount = Number(keyCalls.get(key) || 0) + 1;
+  keyCalls.set(key, callCount);
+  const isHit = gridlyRefreshCycleCache.values.has(key);
+  gridlyIntelligenceCacheAuditState.cacheKeysThisCycle.push({ key, functionName: String(name || "unknown"), payload: { ...(payload || {}) }, callCount, hit: isHit });
+  if (isHit) {
     gridlyRefreshCycleCache.hits += 1;
     gridlyIntelligenceCacheAuditState.hits = gridlyRefreshCycleCache.hits;
+    if (callCount > 1) {
+      gridlyRefreshCycleCache.equivalentCalls.push({ key, functionName: String(name || "unknown"), callCount, payload: { ...(payload || {}) } });
+      gridlyIntelligenceCacheAuditState.cacheableEquivalentCalls = [...gridlyRefreshCycleCache.equivalentCalls];
+    }
     return gridlyRefreshCycleCache.values.get(key);
   }
   const value = resolver();
   gridlyRefreshCycleCache.values.set(key, value);
   gridlyRefreshCycleCache.misses += 1;
   gridlyRefreshCycleCache.names.add(String(name || "unknown"));
+  const missReason = callCount > 1 ? "value_not_cached_for_equivalent_key" : "new_key_in_cycle";
+  gridlyRefreshCycleCache.keyMissReasons.push({ key, functionName: String(name || "unknown"), payload: { ...(payload || {}) }, reason: missReason });
   gridlyIntelligenceCacheAuditState.misses = gridlyRefreshCycleCache.misses;
   gridlyIntelligenceCacheAuditState.functionNames = Array.from(gridlyRefreshCycleCache.names.values());
+  gridlyIntelligenceCacheAuditState.cacheKeyMissReasons = [...gridlyRefreshCycleCache.keyMissReasons];
   return value;
 }
 
@@ -305,7 +326,10 @@ function snapshotGridlyIntelligenceCacheAudit() {
     cacheCycleId: gridlyIntelligenceCacheAuditState.cycleId,
     cacheHits: Number(gridlyIntelligenceCacheAuditState.hits || 0),
     cacheMisses: Number(gridlyIntelligenceCacheAuditState.misses || 0),
-    cachedFunctionNames: [...(gridlyIntelligenceCacheAuditState.functionNames || [])]
+    cachedFunctionNames: [...(gridlyIntelligenceCacheAuditState.functionNames || [])],
+    cacheKeysThisCycle: [...(gridlyIntelligenceCacheAuditState.cacheKeysThisCycle || [])],
+    cacheKeyMissReasons: [...(gridlyIntelligenceCacheAuditState.cacheKeyMissReasons || [])],
+    cacheableEquivalentCalls: [...(gridlyIntelligenceCacheAuditState.cacheableEquivalentCalls || [])]
   };
 }
 
@@ -12231,7 +12255,7 @@ function updateDailyHabitStatus() {
   const sections = {};
   const timeSection = makeGridlySectionTimer(sections);
 
-  const localizedIntel = timeSection("intelligence_calculations", () => buildUnifiedLocalizedCommuteIntelligence({ limit: 5 }));
+  const localizedIntel = timeSection("intelligence_calculations", () => buildUnifiedLocalizedCommuteIntelligence({ limit: 6 }));
   const { unifiedActive, railActive, activeIssues, highIssues, moderateIssues, activeCount, confirmationCount } = timeSection("array_filtering_sorting", () => {
     const unifiedActiveItems = getUnifiedIncidents().filter((incident) => incident.status === "active");
     const railActiveItems = unifiedActiveItems.filter((incident) => incident.type.startsWith("rail_"));
