@@ -463,6 +463,12 @@ window.gridlyCommuteIntelligenceAudit = function gridlyCommuteIntelligenceAudit(
   };
 };
 
+window.gridlyCommuteAuditGlobalsCheck = function () {
+  return {
+    commuteIntelligenceAudit: typeof window.gridlyCommuteIntelligenceAudit
+  };
+};
+
 function gridlyRouteRelevanceAudit() {
   const auditStartedAt = performance.now();
   const activeIncidents = getActiveUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "active");
