@@ -514,7 +514,7 @@ window.gridlyPortraitIntelligenceBreakdownAudit = function gridlyPortraitIntelli
   };
 };
 
-window.gridlyCommuteIntelligenceAudit = function gridlyCommuteIntelligenceAudit() {
+function gridlyCommuteIntelligenceAudit() {
   const totalMs = Number(gridlyCommuteIntelligenceAuditState.totalMs || 0);
   const sections = { ...(gridlyCommuteIntelligenceAuditState.sections || {}) };
   const counts = { ...(gridlyCommuteIntelligenceAuditState.counts || {}) };
@@ -571,7 +571,9 @@ window.gridlyCommuteIntelligenceAudit = function gridlyCommuteIntelligenceAudit(
     suspectedMisattribution: gridlyCommuteIntelligenceAuditState.suspectedMisattribution || null,
     actualSlowSectionCandidate: gridlyCommuteIntelligenceAuditState.actualSlowSectionCandidate || null
   };
-};
+}
+
+window.gridlyCommuteIntelligenceAudit = gridlyCommuteIntelligenceAudit;
 
 window.gridlyCommuteAuditGlobalsCheck = function () {
   return {
