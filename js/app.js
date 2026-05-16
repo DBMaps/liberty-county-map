@@ -264,6 +264,9 @@ const gridlyCommuteIntelligenceAuditState = {
   titleLabelPerIncidentTimings: [],
   titleLabelSlowestHelper: null,
   titleLabelSlowestIncident: null,
+  labelHelperInternalSections: {},
+  labelHelperCallStats: {},
+  labelHelperSlowestCall: null,
   timingBoundaryVerified: false,
   routeRelevanceNestedSections: {},
   suspectedMisattribution: null,
@@ -448,6 +451,9 @@ window.gridlyCommuteIntelligenceAudit = function gridlyCommuteIntelligenceAudit(
     titleLabelPerIncidentTimings: [...(gridlyCommuteIntelligenceAuditState.titleLabelPerIncidentTimings || [])],
     titleLabelSlowestHelper: gridlyCommuteIntelligenceAuditState.titleLabelSlowestHelper || null,
     titleLabelSlowestIncident: gridlyCommuteIntelligenceAuditState.titleLabelSlowestIncident || null,
+    labelHelperInternalSections: { ...(gridlyCommuteIntelligenceAuditState.labelHelperInternalSections || {}) },
+    labelHelperCallStats: { ...(gridlyCommuteIntelligenceAuditState.labelHelperCallStats || {}) },
+    labelHelperSlowestCall: gridlyCommuteIntelligenceAuditState.labelHelperSlowestCall || null,
     slowestSection,
     recommendedTargets,
     timingBoundaryVerified: Boolean(gridlyCommuteIntelligenceAuditState.timingBoundaryVerified),
@@ -13320,23 +13326,50 @@ function isCrossingDisruptionIncident(incident = {}) {
 }
 
 function buildLocalizedIncidentLabel(incident = {}) {
-  if (!incident) return "Localized disruption";
-  const isCrossing = isCrossingDisruptionIncident(incident);
-  const roadDisplay = buildRoadHazardDisplay(incident);
-  if (!isCrossing) return roadDisplay?.title || incident?.title || "Localized disruption";
+  const helperName = "buildLocalizedIncidentLabel";
+  const helperStartedAt = performance.now();
+  const sectionTimes = {};
+  const calls = {};
+  const recordSection = (sectionName, fn) => {
+    const startedAt = performance.now();
+    const value = fn();
+    sectionTimes[sectionName] = (sectionTimes[sectionName] || 0) + (performance.now() - startedAt);
+    return value;
+  };
+  const recordCall = (callName, fn) => {
+    calls[callName] = (calls[callName] || 0) + 1;
+    return fn();
+  };
+  const finalizeAudit = (result, meta = {}) => {
+    const totalMs = performance.now() - helperStartedAt;
+    recordLabelHelperInternalAudit(helperName, {
+      totalMs,
+      sectionTimes,
+      calls,
+      incident,
+      result,
+      meta
+    });
+    return result;
+  };
+  if (!incident) return finalizeAudit("Localized disruption", { fallbackReason: "missing_incident" });
+  const isCrossing = recordSection("type_status_mapping", () => recordCall("isCrossingDisruptionIncident", () => isCrossingDisruptionIncident(incident)));
+  const roadDisplay = recordSection("crossing_road_name_lookup", () => recordCall("buildRoadHazardDisplay", () => buildRoadHazardDisplay(incident)));
+  const roadFallback = recordSection("fallback_logic", () => roadDisplay?.title || incident?.title || "Localized disruption");
+  if (!isCrossing) return finalizeAudit(roadFallback, { path: "road_display" });
 
-  const reportType = String(incident?.report_type || incident?.type || "").toLowerCase();
-  const location = resolveRailLocationText({
+  const reportType = recordSection("input_normalization", () => String(incident?.report_type || incident?.type || "").toLowerCase());
+  const location = recordSection("corridor_location_inference", () => recordCall("resolveRailLocationText", () => resolveRailLocationText({
     crossingName: incident?.crossingName || incident?.area || "",
     crossingId: incident?.crossing_id || incident?.crossingId || "",
     latestReport: incident
-  });
-  const nearTarget = location.humanRoad || location.crossingName || location.nearbyName || "";
-  const nearSuffix = nearTarget ? ` near ${nearTarget}` : "";
-  if (reportType === "cleared") return `Crossing cleared${nearSuffix}`;
-  if (reportType === "blocked" || reportType === "crossing_blocked") return `Blocked crossing${nearSuffix}`;
-  if (["delay", "delayed", "heavy", "rail_blockage_delay", "rail_blockage"].includes(reportType)) return `Rail delay${nearSuffix}`;
-  return `Crossing disruption${nearSuffix}`;
+  })));
+  const nearTarget = recordSection("crossing_road_name_lookup", () => location.humanRoad || location.crossingName || location.nearbyName || "");
+  const nearSuffix = recordSection("string_template_construction", () => (nearTarget ? ` near ${nearTarget}` : ""));
+  if (reportType === "cleared") return finalizeAudit(recordSection("string_template_construction", () => `Crossing cleared${nearSuffix}`), { path: "cleared" });
+  if (reportType === "blocked" || reportType === "crossing_blocked") return finalizeAudit(recordSection("string_template_construction", () => `Blocked crossing${nearSuffix}`), { path: "blocked" });
+  if (["delay", "delayed", "heavy", "rail_blockage_delay", "rail_blockage"].includes(reportType)) return finalizeAudit(recordSection("string_template_construction", () => `Rail delay${nearSuffix}`), { path: "delay" });
+  return finalizeAudit(recordSection("fallback_logic", () => `Crossing disruption${nearSuffix}`), { path: "crossing_fallback" });
 }
 
 function getRoadHazardSurfaceIncidents(limit = 3) {
@@ -13406,20 +13439,72 @@ function getRoadPriorityWeight(incident = {}) {
 }
 
 function buildCommunityConsequenceLabel(incident = {}, fallback = "Traffic slowing") {
-  const towns = findTownMentions(incident);
-  const road = normalizeCorridorBaseLabel(inferCorridorLabel(incident).replace(/ Corridor$/, ""));
-  const type = String(incident?.report_type || incident?.type || "").toLowerCase();
-  const direction = inferDirectionalPhrase(incident);
-  const localSpot = buildLocalizedLocationPhrase(incident);
-  if (towns.length >= 2) return `Traffic slowing between ${towns[0]} and ${towns[1]}`;
-  if (/blocked|crossing_blocked/.test(type) && /US 90/i.test(road)) return `Train blocking ${localSpot}${direction ? ` · ${direction} backups` : ""}`;
-  if (/blocked|crossing_blocked/.test(type) && /FM 1008/i.test(road)) return `Train reported at ${localSpot}${towns[0] ? ` into ${towns[0]}` : ""}`;
-  if (/flood/.test(type) && road) return `Flooding on ${localSpot}${direction ? ` · ${direction} traffic slowing` : ""}`;
-  if (/crash|wreck/.test(type) && road) return `Wreck slowing ${direction ? `${direction} ` : ""}${localSpot}`;
-  if (towns[0] && road && !/Other Nearby Hazards/i.test(road)) return `${direction ? `${direction} ` : ""}delays on ${road} into ${towns[0]}`;
-  if (towns[0]) return `${direction ? `${direction} ` : ""}delays into ${towns[0]}`;
-  if (road && !/Other Nearby Hazards/i.test(road)) return `${direction ? `${direction} ` : ""}traffic slowing on ${road}`;
-  return fallback;
+  const helperName = "buildCommunityConsequenceLabel";
+  const helperStartedAt = performance.now();
+  const sectionTimes = {};
+  const calls = {};
+  const recordSection = (sectionName, fn) => {
+    const startedAt = performance.now();
+    const value = fn();
+    sectionTimes[sectionName] = (sectionTimes[sectionName] || 0) + (performance.now() - startedAt);
+    return value;
+  };
+  const recordCall = (callName, fn) => {
+    calls[callName] = (calls[callName] || 0) + 1;
+    return fn();
+  };
+  const finalizeAudit = (result, meta = {}) => {
+    const totalMs = performance.now() - helperStartedAt;
+    recordLabelHelperInternalAudit(helperName, { totalMs, sectionTimes, calls, incident, result, meta });
+    return result;
+  };
+  const towns = recordSection("corridor_location_inference", () => recordCall("findTownMentions", () => findTownMentions(incident)));
+  const road = recordSection("corridor_location_inference", () => recordCall("normalizeCorridorBaseLabel+inferCorridorLabel", () => normalizeCorridorBaseLabel(inferCorridorLabel(incident).replace(/ Corridor$/, ""))));
+  const type = recordSection("input_normalization", () => String(incident?.report_type || incident?.type || "").toLowerCase());
+  const direction = recordSection("type_status_mapping", () => recordCall("inferDirectionalPhrase", () => inferDirectionalPhrase(incident)));
+  const localSpot = recordSection("crossing_road_name_lookup", () => recordCall("buildLocalizedLocationPhrase", () => buildLocalizedLocationPhrase(incident)));
+  if (towns.length >= 2) return finalizeAudit(recordSection("string_template_construction", () => `Traffic slowing between ${towns[0]} and ${towns[1]}`), { path: "town_pair" });
+  if (/blocked|crossing_blocked/.test(type) && /US 90/i.test(road)) return finalizeAudit(recordSection("string_template_construction", () => `Train blocking ${localSpot}${direction ? ` · ${direction} backups` : ""}`), { path: "blocked_us90" });
+  if (/blocked|crossing_blocked/.test(type) && /FM 1008/i.test(road)) return finalizeAudit(recordSection("string_template_construction", () => `Train reported at ${localSpot}${towns[0] ? ` into ${towns[0]}` : ""}`), { path: "blocked_fm1008" });
+  if (/flood/.test(type) && road) return finalizeAudit(recordSection("string_template_construction", () => `Flooding on ${localSpot}${direction ? ` · ${direction} traffic slowing` : ""}`), { path: "flood" });
+  if (/crash|wreck/.test(type) && road) return finalizeAudit(recordSection("string_template_construction", () => `Wreck slowing ${direction ? `${direction} ` : ""}${localSpot}`), { path: "crash" });
+  if (towns[0] && road && !/Other Nearby Hazards/i.test(road)) return finalizeAudit(recordSection("string_template_construction", () => `${direction ? `${direction} ` : ""}delays on ${road} into ${towns[0]}`), { path: "road_town" });
+  if (towns[0]) return finalizeAudit(recordSection("string_template_construction", () => `${direction ? `${direction} ` : ""}delays into ${towns[0]}`), { path: "town_only" });
+  if (road && !/Other Nearby Hazards/i.test(road)) return finalizeAudit(recordSection("string_template_construction", () => `${direction ? `${direction} ` : ""}traffic slowing on ${road}`), { path: "road_only" });
+  return finalizeAudit(recordSection("fallback_logic", () => fallback), { path: "fallback" });
+}
+
+function recordLabelHelperInternalAudit(helperName = "", details = {}) {
+  if (!helperName) return;
+  if (!gridlyCommuteIntelligenceAuditState.labelHelperInternalSections[helperName]) gridlyCommuteIntelligenceAuditState.labelHelperInternalSections[helperName] = {};
+  const sectionStore = gridlyCommuteIntelligenceAuditState.labelHelperInternalSections[helperName];
+  Object.entries(details?.sectionTimes || {}).forEach(([sectionName, durationMs]) => {
+    sectionStore[sectionName] = (sectionStore[sectionName] || 0) + Number(durationMs || 0);
+  });
+  if (!gridlyCommuteIntelligenceAuditState.labelHelperCallStats[helperName]) {
+    gridlyCommuteIntelligenceAuditState.labelHelperCallStats[helperName] = { callsPerRefresh: 0, totalMs: 0, averageMsPerCall: 0, repeatedHelperCalls: {}, slowestInternalSection: null };
+  }
+  const stats = gridlyCommuteIntelligenceAuditState.labelHelperCallStats[helperName];
+  stats.callsPerRefresh += 1;
+  stats.totalMs += Number(details?.totalMs || 0);
+  stats.averageMsPerCall = stats.callsPerRefresh > 0 ? Number((stats.totalMs / stats.callsPerRefresh).toFixed(3)) : 0;
+  Object.entries(details?.calls || {}).forEach(([callName, count]) => {
+    stats.repeatedHelperCalls[callName] = (stats.repeatedHelperCalls[callName] || 0) + Number(count || 0);
+  });
+  const slowestSectionEntry = Object.entries(details?.sectionTimes || {}).sort((a, b) => b[1] - a[1])[0] || null;
+  stats.slowestInternalSection = slowestSectionEntry ? { name: slowestSectionEntry[0], ms: Number(slowestSectionEntry[1].toFixed(3)) } : stats.slowestInternalSection;
+  const slowestExisting = gridlyCommuteIntelligenceAuditState.labelHelperSlowestCall;
+  if (!slowestExisting || Number(details?.totalMs || 0) > Number(slowestExisting?.ms || 0)) {
+    gridlyCommuteIntelligenceAuditState.labelHelperSlowestCall = {
+      helperName,
+      ms: Number(Number(details?.totalMs || 0).toFixed(3)),
+      incidentId: String(details?.incident?.id || "unknown"),
+      reportType: String(details?.incident?.report_type || details?.incident?.type || ""),
+      slowestInternalSection: slowestSectionEntry ? { name: slowestSectionEntry[0], ms: Number(slowestSectionEntry[1].toFixed(3)) } : null,
+      output: String(details?.result || ""),
+      meta: { ...(details?.meta || {}) }
+    };
+  }
 }
 
 function normalizeCorridorBaseLabel(label = "") {
@@ -13525,6 +13610,9 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   const startedAt = performance.now();
   const sections = {};
   const counts = {};
+  gridlyCommuteIntelligenceAuditState.labelHelperInternalSections = {};
+  gridlyCommuteIntelligenceAuditState.labelHelperCallStats = {};
+  gridlyCommuteIntelligenceAuditState.labelHelperSlowestCall = null;
   const timeSection = makeGridlySectionTimer(sections);
   const routeHazard = timeSection("route_hazard_scoring", () => (routeWatchActivated ? getRouteHazardAssessment() : null));
   const activeIncidents = timeSection("unified_incident_retrieval", () => getActiveUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "active"));
