@@ -271,6 +271,11 @@ const gridlyCommuteIntelligenceAuditState = {
   roadNameLookupCacheHits: 0,
   roadNameLookupCacheMisses: 0,
   roadNameLookupCachedKeys: [],
+  sharedRoadLookupCacheHits: 0,
+  sharedRoadLookupCacheMisses: 0,
+  formatterCacheHits: 0,
+  formatterCacheMisses: 0,
+  equivalentLookupReuseDetected: false,
   timingBoundaryVerified: false,
   routeRelevanceNestedSections: {},
   suspectedMisattribution: null,
@@ -278,6 +283,34 @@ const gridlyCommuteIntelligenceAuditState = {
   at: 0
 };
 let gridlyRoadNameLookupCache = null;
+
+function resolveIncidentRoadLookupPayload(incident = {}) {
+  const locationCandidates = [
+    incident?.road_name, incident?.street_name, incident?.street, incident?.nearest_road, incident?.snapped_road_name,
+    incident?.crossing_street, incident?.cross_street, incident?.location_name, incident?.area
+  ];
+  const titleDescription = `${incident?.title || ""} ${incident?.description || ""}`;
+  const roadFromText = extractRoadHintFromText(titleDescription);
+  if (roadFromText) locationCandidates.unshift(roadFromText);
+  const nearestKnownLocation = resolveNearbyKnownLocation(incident?.lat, incident?.lng);
+  if (nearestKnownLocation) locationCandidates.push(nearestKnownLocation);
+  const resolvedRoadName = resolveNearestRoadName(incident?.lat, incident?.lng);
+  if (resolvedRoadName) locationCandidates.push(resolvedRoadName);
+  const locationName = locationCandidates.map((value) => String(value || "").trim()).find((value) => isResolvableRoadNameCandidate(value)) || "";
+  const locationContext = buildHumanLocationContext({
+    primaryRoad: locationName,
+    crossingRoad: incident?.crossing_street || incident?.cross_street,
+    intersectingRoad: incident?.intersecting_road,
+    roadwayRef: incident?.road_ref,
+    nearbyArea: incident?.city || incident?.area || incident?.county
+  });
+  const coords = normalizeCoordinatePair(incident?.lat, incident?.lng);
+  const crossingName = String(incident?.crossingName || incident?.crossing || incident?.area || "").trim();
+  const crossingId = String(incident?.crossing_id || incident?.crossingId || "").trim();
+  const nearbyName = [nearestKnownLocation, incident?.location_name, incident?.city, incident?.area, incident?.county].map((value) => String(value || "").trim()).find(Boolean) || "";
+  return { locationContext, nearestKnownLocation, coords, crossingName, crossingId, nearbyName };
+}
+
 
 function normalizeRoadNameLookupKeyPart(value = "") {
   return String(value || "").trim().toLowerCase().replace(/\s+/g, " ");
@@ -310,16 +343,29 @@ function buildRoadNameLookupCacheKey(incident = {}, lookupType = "road_name_look
   return `${lookupType}::geo::${type}::${lat},${lng}::${roadKey}`;
 }
 
-function getCachedRoadNameLookup(incident = {}, lookupType = "road_name_lookup", resolver = () => null) {
-  if (!gridlyRoadNameLookupCache?.values) return resolver();
-  const key = buildRoadNameLookupCacheKey(incident, lookupType);
-  if (gridlyRoadNameLookupCache.values.has(key)) {
-    gridlyRoadNameLookupCache.hits += 1;
-    return gridlyRoadNameLookupCache.values.get(key);
+function getSharedResolvedRoadLookup(incident = {}) {
+  if (!gridlyRoadNameLookupCache?.sharedLookupValues) return resolveIncidentRoadLookupPayload(incident);
+  const sharedKey = buildRoadNameLookupCacheKey(incident, "shared_road_lookup");
+  if (gridlyRoadNameLookupCache.sharedLookupValues.has(sharedKey)) {
+    gridlyRoadNameLookupCache.sharedHits += 1;
+    return gridlyRoadNameLookupCache.sharedLookupValues.get(sharedKey);
   }
-  const value = resolver();
-  gridlyRoadNameLookupCache.values.set(key, value);
-  gridlyRoadNameLookupCache.misses += 1;
+  const value = resolveIncidentRoadLookupPayload(incident);
+  gridlyRoadNameLookupCache.sharedLookupValues.set(sharedKey, value);
+  gridlyRoadNameLookupCache.sharedMisses += 1;
+  return value;
+}
+
+function getCachedRoadNameLookup(incident = {}, lookupType = "road_name_lookup", resolver = () => null) {
+  if (!gridlyRoadNameLookupCache?.formatterValues) return resolver(getSharedResolvedRoadLookup(incident));
+  const key = buildRoadNameLookupCacheKey(incident, lookupType);
+  if (gridlyRoadNameLookupCache.formatterValues.has(key)) {
+    gridlyRoadNameLookupCache.formatterHits += 1;
+    return gridlyRoadNameLookupCache.formatterValues.get(key);
+  }
+  const value = resolver(getSharedResolvedRoadLookup(incident));
+  gridlyRoadNameLookupCache.formatterValues.set(key, value);
+  gridlyRoadNameLookupCache.formatterMisses += 1;
   return value;
 }
 const gridlyRouteRelevanceAuditState = {
@@ -507,6 +553,11 @@ window.gridlyCommuteIntelligenceAudit = function gridlyCommuteIntelligenceAudit(
     roadNameLookupCacheHits: Number(gridlyCommuteIntelligenceAuditState.roadNameLookupCacheHits || 0),
     roadNameLookupCacheMisses: Number(gridlyCommuteIntelligenceAuditState.roadNameLookupCacheMisses || 0),
     roadNameLookupCachedKeys: [...(gridlyCommuteIntelligenceAuditState.roadNameLookupCachedKeys || [])],
+    sharedRoadLookupCacheHits: Number(gridlyCommuteIntelligenceAuditState.sharedRoadLookupCacheHits || 0),
+    sharedRoadLookupCacheMisses: Number(gridlyCommuteIntelligenceAuditState.sharedRoadLookupCacheMisses || 0),
+    formatterCacheHits: Number(gridlyCommuteIntelligenceAuditState.formatterCacheHits || 0),
+    formatterCacheMisses: Number(gridlyCommuteIntelligenceAuditState.formatterCacheMisses || 0),
+    equivalentLookupReuseDetected: Boolean(gridlyCommuteIntelligenceAuditState.equivalentLookupReuseDetected),
     slowestSection,
     recommendedTargets,
     timingBoundaryVerified: Boolean(gridlyCommuteIntelligenceAuditState.timingBoundaryVerified),
@@ -13211,35 +13262,12 @@ window.gridlyRoadNameResolverDebug = function () {
   return status;
 };
 
-function buildRoadHazardDisplay(incident) {
+function buildRoadHazardDisplay(incident, resolvedLookup = null) {
   const category = getHazardCategory(incident?.report_type || incident?.type || "other_hazard");
   const hazardType = formatRoadHazardCategoryLabel(category);
-  const locationCandidates = [
-    incident?.road_name,
-    incident?.street_name,
-    incident?.street,
-    incident?.nearest_road,
-    incident?.snapped_road_name,
-    incident?.crossing_street,
-    incident?.cross_street,
-    incident?.location_name,
-    incident?.area
-  ];
-  const titleDescription = `${incident?.title || ""} ${incident?.description || ""}`;
-  const roadFromText = extractRoadHintFromText(titleDescription);
-  if (roadFromText) locationCandidates.unshift(roadFromText);
-  const nearestKnownLocation = resolveNearbyKnownLocation(incident?.lat, incident?.lng);
-  if (nearestKnownLocation) locationCandidates.push(nearestKnownLocation);
-  const resolvedRoadName = resolveNearestRoadName(incident?.lat, incident?.lng);
-  if (resolvedRoadName) locationCandidates.push(resolvedRoadName);
-  const locationName = locationCandidates.map((value) => String(value || "").trim()).find((value) => isResolvableRoadNameCandidate(value)) || "";
-  const locationContext = buildHumanLocationContext({
-    primaryRoad: locationName,
-    crossingRoad: incident?.crossing_street || incident?.cross_street,
-    intersectingRoad: incident?.intersecting_road,
-    roadwayRef: incident?.road_ref,
-    nearbyArea: incident?.city || incident?.area || incident?.county
-  });
+  const lookup = resolvedLookup || getSharedResolvedRoadLookup(incident);
+  const locationContext = lookup.locationContext || { primary: "", phrasing: "" };
+  const nearestKnownLocation = lookup.nearestKnownLocation || "";
   const hasUsefulRoadName = locationContext.primary && !/liberty county/i.test(locationContext.primary);
 
   let title = "Road Hazard";
@@ -13413,7 +13441,7 @@ function buildLocalizedIncidentLabel(incident = {}) {
   };
   if (!incident) return finalizeAudit("Localized disruption", { fallbackReason: "missing_incident" });
   const isCrossing = recordSection("type_status_mapping", () => recordCall("isCrossingDisruptionIncident", () => isCrossingDisruptionIncident(incident)));
-  const roadDisplay = recordSection("crossing_road_name_lookup", () => recordCall("buildRoadHazardDisplay", () => getCachedRoadNameLookup(incident, "buildRoadHazardDisplay", () => buildRoadHazardDisplay(incident))));
+  const roadDisplay = recordSection("crossing_road_name_lookup", () => recordCall("buildRoadHazardDisplay", () => getCachedRoadNameLookup(incident, "buildRoadHazardDisplay", (resolvedLookup) => buildRoadHazardDisplay(incident, resolvedLookup))));
   const roadFallback = recordSection("fallback_logic", () => roadDisplay?.title || incident?.title || "Localized disruption");
   if (!isCrossing) return finalizeAudit(roadFallback, { path: "road_display" });
 
@@ -13521,7 +13549,7 @@ function buildCommunityConsequenceLabel(incident = {}, fallback = "Traffic slowi
   const road = recordSection("corridor_location_inference", () => recordCall("normalizeCorridorBaseLabel+inferCorridorLabel", () => normalizeCorridorBaseLabel(inferCorridorLabel(incident).replace(/ Corridor$/, ""))));
   const type = recordSection("input_normalization", () => String(incident?.report_type || incident?.type || "").toLowerCase());
   const direction = recordSection("type_status_mapping", () => recordCall("inferDirectionalPhrase", () => inferDirectionalPhrase(incident)));
-  const localSpot = recordSection("crossing_road_name_lookup", () => recordCall("buildLocalizedLocationPhrase", () => getCachedRoadNameLookup(incident, "buildLocalizedLocationPhrase", () => buildLocalizedLocationPhrase(incident))));
+  const localSpot = recordSection("crossing_road_name_lookup", () => recordCall("buildLocalizedLocationPhrase", () => getCachedRoadNameLookup(incident, "buildLocalizedLocationPhrase", (resolvedLookup) => buildLocalizedLocationPhrase(incident, resolvedLookup))));
   if (towns.length >= 2) return finalizeAudit(recordSection("string_template_construction", () => `Traffic slowing between ${towns[0]} and ${towns[1]}`), { path: "town_pair" });
   if (/blocked|crossing_blocked/.test(type) && /US 90/i.test(road)) return finalizeAudit(recordSection("string_template_construction", () => `Train blocking ${localSpot}${direction ? ` · ${direction} backups` : ""}`), { path: "blocked_us90" });
   if (/blocked|crossing_blocked/.test(type) && /FM 1008/i.test(road)) return finalizeAudit(recordSection("string_template_construction", () => `Train reported at ${localSpot}${towns[0] ? ` into ${towns[0]}` : ""}`), { path: "blocked_fm1008" });
@@ -13606,13 +13634,10 @@ function inferDirectionalPhrase(incident = {}, context = {}) {
   return "";
 }
 
-function buildLocalizedLocationPhrase(incident = {}) {
+function buildLocalizedLocationPhrase(incident = {}, resolvedLookup = null) {
   const road = normalizeCorridorBaseLabel(inferCorridorLabel(incident).replace(/ Corridor$/, ""));
-  const rail = resolveRailLocationText({
-    crossingName: incident?.crossingName || incident?.area || "",
-    crossingId: incident?.crossing_id || incident?.crossingId || "",
-    latestReport: incident
-  });
+  const lookup = resolvedLookup || getSharedResolvedRoadLookup(incident);
+  const rail = { crossingName: lookup.crossingName, nearbyName: lookup.nearbyName };
   const crossingName = String(rail?.crossingName || "").replace(/\s+crossing$/i, "").trim();
   const town = findTownMentions(incident)[0] || String(incident?.city || incident?.area || "").trim();
   if (road && crossingName) return `${road} at ${crossingName}`;
@@ -13672,11 +13697,16 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.labelHelperInternalSections = {};
   gridlyCommuteIntelligenceAuditState.labelHelperCallStats = {};
   gridlyCommuteIntelligenceAuditState.labelHelperSlowestCall = null;
-  gridlyRoadNameLookupCache = { values: new Map(), hits: 0, misses: 0 };
+  gridlyRoadNameLookupCache = { formatterValues: new Map(), formatterHits: 0, formatterMisses: 0, sharedLookupValues: new Map(), sharedHits: 0, sharedMisses: 0 };
   gridlyCommuteIntelligenceAuditState.roadNameLookupCacheActive = true;
   gridlyCommuteIntelligenceAuditState.roadNameLookupCacheHits = 0;
   gridlyCommuteIntelligenceAuditState.roadNameLookupCacheMisses = 0;
   gridlyCommuteIntelligenceAuditState.roadNameLookupCachedKeys = [];
+  gridlyCommuteIntelligenceAuditState.sharedRoadLookupCacheHits = 0;
+  gridlyCommuteIntelligenceAuditState.sharedRoadLookupCacheMisses = 0;
+  gridlyCommuteIntelligenceAuditState.formatterCacheHits = 0;
+  gridlyCommuteIntelligenceAuditState.formatterCacheMisses = 0;
+  gridlyCommuteIntelligenceAuditState.equivalentLookupReuseDetected = false;
   const timeSection = makeGridlySectionTimer(sections);
   const routeHazard = timeSection("route_hazard_scoring", () => (routeWatchActivated ? getRouteHazardAssessment() : null));
   const activeIncidents = timeSection("unified_incident_retrieval", () => getActiveUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "active"));
@@ -13927,10 +13957,18 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   const titleLabelSlowestHelperEntry = Object.entries(titleLabelNestedSections).sort((a, b) => b[1] - a[1])[0] || null;
   gridlyCommuteIntelligenceAuditState.titleLabelSlowestHelper = titleLabelSlowestHelperEntry ? { name: titleLabelSlowestHelperEntry[0], ms: Number(titleLabelSlowestHelperEntry[1].toFixed(3)) } : null;
   gridlyCommuteIntelligenceAuditState.titleLabelSlowestIncident = titleLabelPerIncidentTimings.slice().sort((a, b) => Number((b.slowestTitleHelper || {}).ms || 0) - Number((a.slowestTitleHelper || {}).ms || 0))[0] || null;
-  gridlyCommuteIntelligenceAuditState.roadNameLookupCacheActive = Boolean(gridlyRoadNameLookupCache?.values);
-  gridlyCommuteIntelligenceAuditState.roadNameLookupCacheHits = Number(gridlyRoadNameLookupCache?.hits || 0);
-  gridlyCommuteIntelligenceAuditState.roadNameLookupCacheMisses = Number(gridlyRoadNameLookupCache?.misses || 0);
-  gridlyCommuteIntelligenceAuditState.roadNameLookupCachedKeys = Array.from(gridlyRoadNameLookupCache?.values?.keys?.() || []);
+  gridlyCommuteIntelligenceAuditState.roadNameLookupCacheActive = Boolean(gridlyRoadNameLookupCache?.formatterValues);
+  gridlyCommuteIntelligenceAuditState.roadNameLookupCacheHits = Number(gridlyRoadNameLookupCache?.formatterHits || 0) + Number(gridlyRoadNameLookupCache?.sharedHits || 0);
+  gridlyCommuteIntelligenceAuditState.roadNameLookupCacheMisses = Number(gridlyRoadNameLookupCache?.formatterMisses || 0) + Number(gridlyRoadNameLookupCache?.sharedMisses || 0);
+  gridlyCommuteIntelligenceAuditState.roadNameLookupCachedKeys = [
+    ...Array.from(gridlyRoadNameLookupCache?.sharedLookupValues?.keys?.() || []),
+    ...Array.from(gridlyRoadNameLookupCache?.formatterValues?.keys?.() || [])
+  ];
+  gridlyCommuteIntelligenceAuditState.sharedRoadLookupCacheHits = Number(gridlyRoadNameLookupCache?.sharedHits || 0);
+  gridlyCommuteIntelligenceAuditState.sharedRoadLookupCacheMisses = Number(gridlyRoadNameLookupCache?.sharedMisses || 0);
+  gridlyCommuteIntelligenceAuditState.formatterCacheHits = Number(gridlyRoadNameLookupCache?.formatterHits || 0);
+  gridlyCommuteIntelligenceAuditState.formatterCacheMisses = Number(gridlyRoadNameLookupCache?.formatterMisses || 0);
+  gridlyCommuteIntelligenceAuditState.equivalentLookupReuseDetected = Number(gridlyRoadNameLookupCache?.sharedHits || 0) > 0;
   gridlyRoadNameLookupCache = null;
   gridlyCommuteIntelligenceAuditState.at = Date.now();
 
