@@ -4064,6 +4064,84 @@ window.gridlyUnifiedHazardSourceAudit = async function gridlyUnifiedHazardSource
   return summary;
 };
 
+
+window.gridlyActiveIncidentAudit = function gridlyActiveIncidentAudit() {
+  const now = new Date();
+  const liveHazardIncidents = getLiveHazardIncidents();
+
+  const lifecycleStateTotals = {};
+  const reportTypeTotals = {};
+
+  const generatedRoadIncidents = liveHazardIncidents.map((incident) => {
+    const reports = Array.isArray(incident?.reports)
+      ? incident.reports
+      : activeHazards.filter((hazard) => getHazardClusterKey(hazard) === incident.key && !hazard.expired && hazard.type !== "hazard_cleared");
+
+    const latestReport = incident.latestReport || reports[0] || null;
+    const lifecycleState = latestReport ? getIncidentLifecycleState(latestReport, now) : "unknown";
+
+    lifecycleStateTotals[lifecycleState] = (lifecycleStateTotals[lifecycleState] || 0) + 1;
+
+    reports.forEach((report) => {
+      const type = String(report?.type || "unknown").toLowerCase();
+      reportTypeTotals[type] = (reportTypeTotals[type] || 0) + 1;
+    });
+
+    const routeImpactStatus = latestReport?.routeImpactStatus
+      || latestReport?.route_impact_status
+      || latestReport?.routeImpact
+      || latestReport?.route_impact
+      || latestReport?.route_relevance
+      || null;
+
+    return {
+      roadIncidentId: `road-${incident.key}`,
+      clusterKey: incident.key,
+      sourceReportIds: reports.map((report) => report.id).filter(Boolean),
+      sourceReportTypes: reports.map((report) => String(report?.type || "unknown").toLowerCase()),
+      source: latestReport?.source || "user",
+      created_at: latestReport?.submittedAt || null,
+      expires_at: latestReport?.expires_at || latestReport?.expiresAt || null,
+      lifecycleState,
+      expired: Boolean(latestReport?.expired),
+      coordinates: {
+        lat: Number(latestReport?.lat),
+        lng: Number(latestReport?.lng)
+      },
+      routeImpactStatus,
+      inclusionReason: {
+        includedByGetLiveHazardIncidents: true,
+        rules: [
+          "source row is in activeHazards[]",
+          "hazard.expired === false",
+          "hazard.type !== 'hazard_cleared'",
+          "clustered by getHazardClusterKey(type + lat/lng rounded to 3 decimals)"
+        ],
+        filterSnapshot: {
+          reportKind: latestReport?.reportKind || null,
+          expired: Boolean(latestReport?.expired),
+          type: String(latestReport?.type || "")
+        }
+      }
+    };
+  });
+
+  const activeHazardsCount = activeHazards.filter((hazard) => !hazard.expired && hazard.type !== "hazard_cleared").length;
+  const activeReportsCount = activeReports.filter((report) => getIncidentLifecycleState(report, now) === "active").length;
+
+  const summary = {
+    generatedRoadIncidentCount: generatedRoadIncidents.length,
+    activeHazardsCount,
+    activeReportsCount,
+    lifecycleStateTotals,
+    reportTypeTotals
+  };
+
+  const audit = { generatedRoadIncidents, summary };
+  console.info("gridlyActiveIncidentAudit", audit);
+  return audit;
+};
+
 window.gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoadHazards(options = {}) {
   const host = String(window?.location?.hostname || "").toLowerCase();
   const isDevHost = host === "localhost" || host === "127.0.0.1" || host.endsWith(".local") || host === "";
