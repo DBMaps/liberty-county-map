@@ -3620,6 +3620,8 @@ function recordGridlyGeolocationRequest(source, options = {}) {
   gridlyGeoAuditState.lastRequestTime = new Date().toISOString();
   if (options.startupBlocked) {
     gridlyGeoAuditState.startupRequestsBlocked += 1;
+  }
+  if (options.startupAutoRequest) {
     gridlyGeoAuditState.startupAutoRequestDetected = true;
   }
 }
