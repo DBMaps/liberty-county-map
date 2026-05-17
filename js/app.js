@@ -14362,17 +14362,23 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.formatterCacheHits = Number(gridlyRoadNameLookupCache?.formatterHits || 0);
   gridlyCommuteIntelligenceAuditState.formatterCacheMisses = Number(gridlyRoadNameLookupCache?.formatterMisses || 0);
   gridlyCommuteIntelligenceAuditState.equivalentLookupReuseDetected = Number(gridlyRoadNameLookupCache?.sharedHits || 0) > 0;
-  if (Number(commuteModelHelperCallCounts.incidentsProcessed || 0) === 0) {
+  const incidentsProcessedCount = Number(commuteModelHelperCallCounts.incidentsProcessed || 0);
+  const unifiedIncidentCount = Number(commuteModelHelperCallCounts.unifiedIncidentCount || 0);
+  if (incidentsProcessedCount === 0 || unifiedIncidentCount === 0) {
+    gridlyCommuteIntelligenceAuditState.labelHelperInternalSections = {};
+    gridlyCommuteIntelligenceAuditState.labelHelperCallStats = {};
+    gridlyCommuteIntelligenceAuditState.labelHelperSlowestCall = null;
+    gridlyCommuteIntelligenceAuditState.localizedLabelLookupSections = {};
     gridlyCommuteIntelligenceAuditState.localizedLabelPerIncidentLookupTimings = [];
+    gridlyCommuteIntelligenceAuditState.localizedLabelSlowestLookupStep = null;
+    gridlyCommuteIntelligenceAuditState.sharedCacheRetrievalSections = {};
     gridlyCommuteIntelligenceAuditState.sharedCachePerIncidentTimings = [];
+    gridlyCommuteIntelligenceAuditState.sharedCacheSlowestStep = null;
+    gridlyCommuteIntelligenceAuditState.payloadShapingSections = {};
     gridlyCommuteIntelligenceAuditState.payloadShapingPerIncidentTimings = [];
+    gridlyCommuteIntelligenceAuditState.payloadShapingSlowestStep = null;
     gridlyCommuteIntelligenceAuditState.titleLabelPerIncidentTimings = [];
     gridlyCommuteIntelligenceAuditState.commuteModelPerIncidentTimings = [];
-    gridlyCommuteIntelligenceAuditState.labelHelperCallStats = null;
-    gridlyCommuteIntelligenceAuditState.labelHelperSlowestCall = null;
-    gridlyCommuteIntelligenceAuditState.localizedLabelSlowestLookupStep = null;
-    gridlyCommuteIntelligenceAuditState.sharedCacheSlowestStep = null;
-    gridlyCommuteIntelligenceAuditState.payloadShapingSlowestStep = null;
     gridlyCommuteIntelligenceAuditState.titleLabelSlowestIncident = null;
     gridlyCommuteIntelligenceAuditState.titleLabelSlowestHelper = null;
   }
