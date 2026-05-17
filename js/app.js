@@ -409,6 +409,8 @@ const gridlyCommuteIntelligenceAuditState = {
   commuteAuditUnifiedIncidentCountBeforeBuild: 0,
   commuteAuditUnifiedIncidentCountAfterBuild: 0,
   commuteAuditSanitizerReason: null,
+  commuteAuditExcludedIncidentCount: 0,
+  commuteAuditExclusionReasons: [],
   auditCycleId: 0,
   auditCollectionEnabled: false,
   pendingWritesRejected: 0,
@@ -742,9 +744,17 @@ exposeGridlyAuditHelper("gridlyPortraitIntelligenceBreakdownAudit", gridlyPortra
 
 function sanitizeEmptyCommuteAuditPayload(payload) {
   const result = payload && typeof payload === "object" ? { ...payload } : {};
+  const verifiedUnifiedIncidentCount = Number(
+    result?.commuteAuditUnifiedIncidentCountAfterBuild
+    ?? result?.counts?.unifiedIncidentCount
+    ?? 0
+  );
+  if (!result.counts || typeof result.counts !== "object") {
+    result.counts = {};
+  }
+  result.counts.unifiedIncidentCount = verifiedUnifiedIncidentCount;
   const incidentsProcessed = Number(result?.counts?.incidentsProcessed || 0);
-  const unifiedIncidentCount = Number(result?.counts?.unifiedIncidentCount || 0);
-  const shouldSanitizeEmptyCycle = incidentsProcessed === 0 || unifiedIncidentCount === 0;
+  const shouldSanitizeEmptyCycle = verifiedUnifiedIncidentCount === 0;
 
   if (shouldSanitizeEmptyCycle) {
     result.labelHelperInternalSections = {};
@@ -765,6 +775,8 @@ function sanitizeEmptyCommuteAuditPayload(payload) {
   }
 
   result.emptyCycleSanitized = shouldSanitizeEmptyCycle;
+  result.commuteAuditExcludedIncidentCount = Math.max(0, verifiedUnifiedIncidentCount - incidentsProcessed);
+  result.commuteAuditExclusionReasons = Array.isArray(result.commuteAuditExclusionReasons) ? result.commuteAuditExclusionReasons : [];
   return result;
 }
 
@@ -846,7 +858,9 @@ function gridlyCommuteIntelligenceAudit() {
     commuteAuditInputSource: String(gridlyCommuteIntelligenceAuditState.commuteAuditInputSource || "uninitialized"),
     commuteAuditUnifiedIncidentCountBeforeBuild: Number(gridlyCommuteIntelligenceAuditState.commuteAuditUnifiedIncidentCountBeforeBuild || 0),
     commuteAuditUnifiedIncidentCountAfterBuild: Number(gridlyCommuteIntelligenceAuditState.commuteAuditUnifiedIncidentCountAfterBuild || 0),
-    commuteAuditSanitizerReason: gridlyCommuteIntelligenceAuditState.commuteAuditSanitizerReason || null
+    commuteAuditSanitizerReason: gridlyCommuteIntelligenceAuditState.commuteAuditSanitizerReason || null,
+    commuteAuditExcludedIncidentCount: Number(gridlyCommuteIntelligenceAuditState.commuteAuditExcludedIncidentCount || 0),
+    commuteAuditExclusionReasons: [...(gridlyCommuteIntelligenceAuditState.commuteAuditExclusionReasons || [])]
   };
   return sanitizeEmptyCommuteAuditPayload(result);
 }
@@ -14194,6 +14208,8 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.commuteAuditUnifiedIncidentCountBeforeBuild = unifiedIncidentsBeforeBuildCount;
   gridlyCommuteIntelligenceAuditState.commuteAuditUnifiedIncidentCountAfterBuild = unifiedIncidentsBeforeBuildCount;
   gridlyCommuteIntelligenceAuditState.commuteAuditSanitizerReason = null;
+  gridlyCommuteIntelligenceAuditState.commuteAuditExcludedIncidentCount = 0;
+  gridlyCommuteIntelligenceAuditState.commuteAuditExclusionReasons = [];
   gridlyCommuteIntelligenceAuditState.labelHelperInternalSections = {};
   gridlyCommuteIntelligenceAuditState.labelHelperCallStats = {};
   gridlyCommuteIntelligenceAuditState.labelHelperSlowestCall = null;
@@ -14479,10 +14495,16 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.formatterCacheMisses = Number(gridlyRoadNameLookupCache?.formatterMisses || 0);
   gridlyCommuteIntelligenceAuditState.equivalentLookupReuseDetected = Number(gridlyRoadNameLookupCache?.sharedHits || 0) > 0;
   const incidentsProcessedCount = Number(commuteModelHelperCallCounts.incidentsProcessed || 0);
-  const unifiedIncidentCount = Number(counts.unifiedIncidentCount || 0);
-  if (incidentsProcessedCount === 0 || unifiedIncidentCount === 0) {
+  const unifiedIncidentCount = Number(gridlyCommuteIntelligenceAuditState.commuteAuditUnifiedIncidentCountAfterBuild || counts.unifiedIncidentCount || 0);
+  counts.unifiedIncidentCount = unifiedIncidentCount;
+  counts.incidentsProcessed = incidentsProcessedCount;
+  const excludedIncidentCount = Math.max(0, unifiedIncidentCount - incidentsProcessedCount);
+  const exclusionReasons = [];
+  if (excludedIncidentCount > 0) exclusionReasons.push(`excluded_after_build=${excludedIncidentCount}`);
+  gridlyCommuteIntelligenceAuditState.commuteAuditExcludedIncidentCount = excludedIncidentCount;
+  gridlyCommuteIntelligenceAuditState.commuteAuditExclusionReasons = exclusionReasons;
+  if (unifiedIncidentCount === 0) {
     const sanitizerReasons = [];
-    if (incidentsProcessedCount === 0) sanitizerReasons.push("incidentsProcessed=0");
     if (unifiedIncidentCount === 0) sanitizerReasons.push("unifiedIncidentCount=0");
     gridlyCommuteIntelligenceAuditState.commuteAuditSanitizerReason = sanitizerReasons.join("; ");
     gridlyCommuteIntelligenceAuditState.labelHelperInternalSections = {};
