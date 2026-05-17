@@ -735,6 +735,35 @@ const gridlyPortraitIntelligenceBreakdownAudit = function gridlyPortraitIntellig
 
 exposeGridlyAuditHelper("gridlyPortraitIntelligenceBreakdownAudit", gridlyPortraitIntelligenceBreakdownAudit);
 
+
+function sanitizeEmptyCommuteAuditPayload(payload) {
+  const result = payload && typeof payload === "object" ? { ...payload } : {};
+  const incidentsProcessed = Number(result?.counts?.incidentsProcessed || 0);
+  const unifiedIncidentCount = Number(result?.counts?.unifiedIncidentCount || 0);
+  const shouldSanitizeEmptyCycle = incidentsProcessed === 0 || unifiedIncidentCount === 0;
+
+  if (shouldSanitizeEmptyCycle) {
+    result.labelHelperInternalSections = {};
+    result.labelHelperCallStats = {};
+    result.labelHelperSlowestCall = null;
+
+    result.localizedLabelLookupSections = {};
+    result.localizedLabelPerIncidentLookupTimings = [];
+    result.localizedLabelSlowestLookupStep = null;
+
+    result.sharedCacheRetrievalSections = {};
+    result.sharedCachePerIncidentTimings = [];
+    result.sharedCacheSlowestStep = null;
+
+    result.payloadShapingSections = {};
+    result.payloadShapingPerIncidentTimings = [];
+    result.payloadShapingSlowestStep = null;
+  }
+
+  result.emptyCycleSanitized = shouldSanitizeEmptyCycle;
+  return result;
+}
+
 function gridlyCommuteIntelligenceAudit() {
   const totalMs = Number(gridlyCommuteIntelligenceAuditState.totalMs || 0);
   const sections = { ...(gridlyCommuteIntelligenceAuditState.sections || {}) };
@@ -757,7 +786,7 @@ function gridlyCommuteIntelligenceAudit() {
     route_context_setup: Number((Number(sections.route_hazard_scoring || 0) + Number(sections.unified_incident_retrieval || 0) + Number(sections.recently_cleared_retrieval || 0)).toFixed(3)),
     uncategorized_or_wrapper_overhead: Number(sections.uncategorized_or_wrapper_overhead || 0)
   };
-  return {
+  const result = {
     auditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
     totalMs,
     sections,
@@ -811,6 +840,7 @@ function gridlyCommuteIntelligenceAudit() {
     suspectedMisattribution: gridlyCommuteIntelligenceAuditState.suspectedMisattribution || null,
     actualSlowSectionCandidate: gridlyCommuteIntelligenceAuditState.actualSlowSectionCandidate || null
   };
+  return sanitizeEmptyCommuteAuditPayload(result);
 }
 
 exposeGridlyAuditHelper("gridlyCommuteIntelligenceAudit", gridlyCommuteIntelligenceAudit);
