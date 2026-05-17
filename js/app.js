@@ -513,20 +513,44 @@ function createDerivedFieldPrecomputeStore(activeIncidents = []) {
     buildSections[sectionName] += (precomputeTimeSource() - startedAt);
     return value;
   };
-  (Array.isArray(activeIncidents) ? activeIncidents : []).forEach((incident) => {
-    const key = buildDerivedFieldPrecomputeKey(incident);
-    if (crossingLookupIndex.has(key)) return;
-    const payload = resolveIncidentRoadLookupPayload(incident);
-    measureBuildSection("precompute_crossings_build", () => crossingLookupIndex.set(key, String(payload?.crossingId || payload?.crossingName || "")));
-    measureBuildSection("precompute_road_lookup_build", () => roadLookupIndex.set(key, String(payload?.locationContext || "")));
-    measureBuildSection("precompute_nearby_location_build", () => nearbyLocationLookupIndex.set(key, String(payload?.nearbyName || payload?.nearestKnownLocation || "")));
+  const materializationSections = {
+    materialize_key_creation: 0,
+    materialize_object_creation: 0,
+    materialize_object_spread: 0,
+    materialize_clone_operations: 0,
+    materialize_nested_assignment: 0,
+    materialize_store_insert: 0
+  };
+  const measureMaterializationSection = (sectionName, fn) => {
+    const startedAt = precomputeTimeSource();
+    const value = fn();
+    materializationSections[sectionName] = Number((Number(materializationSections[sectionName] || 0) + (precomputeTimeSource() - startedAt)).toFixed(3));
+    return value;
+  };
+  const materialize_key_creation = (incident) => measureMaterializationSection("materialize_key_creation", () => buildDerivedFieldPrecomputeKey(incident));
+  const materialize_object_creation = (incident) => measureMaterializationSection("materialize_object_creation", () => resolveIncidentRoadLookupPayload(incident));
+  const materialize_nested_assignment = (payload) => measureMaterializationSection("materialize_nested_assignment", () => {
     const coords = payload?.coords || null;
-    const segmentToken = coords && Number.isFinite(coords.lat) && Number.isFinite(coords.lng)
+    return coords && Number.isFinite(coords.lat) && Number.isFinite(coords.lng)
       ? `${coords.lat.toFixed(3)},${coords.lng.toFixed(3)}`
       : String(payload?.crossingId || "unknown");
-    measureBuildSection("precompute_segment_candidate_build", () => segmentCandidateIndex.set(key, segmentToken));
+  });
+  const materialize_store_insert = (store, key, value) => measureMaterializationSection("materialize_store_insert", () => store.set(key, value));
+  const materialize_object_spread = (payload) => measureMaterializationSection("materialize_object_spread", () => ({ ...(payload && typeof payload === "object" ? payload : {}) }));
+  const materialize_clone_operations = (payload) => measureMaterializationSection("materialize_clone_operations", () => JSON.stringify(payload || null));
+  (Array.isArray(activeIncidents) ? activeIncidents : []).forEach((incident) => {
+    const key = materialize_key_creation(incident);
+    if (crossingLookupIndex.has(key)) return;
+    const payload = materialize_object_creation(incident);
+    measureBuildSection("precompute_crossings_build", () => materialize_store_insert(crossingLookupIndex, key, String(payload?.crossingId || payload?.crossingName || "")));
+    measureBuildSection("precompute_road_lookup_build", () => materialize_store_insert(roadLookupIndex, key, String(payload?.locationContext || "")));
+    measureBuildSection("precompute_nearby_location_build", () => materialize_store_insert(nearbyLocationLookupIndex, key, String(payload?.nearbyName || payload?.nearestKnownLocation || "")));
+    const segmentToken = materialize_nested_assignment(payload);
+    measureBuildSection("precompute_segment_candidate_build", () => materialize_store_insert(segmentCandidateIndex, key, segmentToken));
+    materialize_object_spread(payload);
+    materialize_clone_operations(payload);
     if (gridlyRoadNameLookupCache?.sharedLookupValues && !gridlyRoadNameLookupCache.sharedLookupValues.has(key)) {
-      gridlyRoadNameLookupCache.sharedLookupValues.set(key, payload);
+      materialize_store_insert(gridlyRoadNameLookupCache.sharedLookupValues, key, payload);
     }
   });
   return {
@@ -539,7 +563,8 @@ function createDerivedFieldPrecomputeStore(activeIncidents = []) {
       precompute_road_lookup_build: Number(buildSections.precompute_road_lookup_build.toFixed(3)),
       precompute_nearby_location_build: Number(buildSections.precompute_nearby_location_build.toFixed(3)),
       precompute_segment_candidate_build: Number(buildSections.precompute_segment_candidate_build.toFixed(3))
-    }
+    },
+    __gridlyMaterializationSections: { ...materializationSections }
   };
 }
 function gridlyCloneAuditPayload(payload) {
@@ -14568,6 +14593,12 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     precompute_road_lookup_build: 0,
     precompute_nearby_location_build: 0,
     precompute_segment_candidate_build: 0,
+    materialize_key_creation: 0,
+    materialize_object_creation: 0,
+    materialize_object_spread: 0,
+    materialize_clone_operations: 0,
+    materialize_nested_assignment: 0,
+    materialize_store_insert: 0,
     precompute_key_generation: 0,
     precompute_object_materialization: 0,
     precompute_store_publish: 0
@@ -14584,6 +14615,12 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   precomputeSectionDurations.precompute_road_lookup_build = Number((precomputeStore?.__gridlyBuildSections?.precompute_road_lookup_build || 0).toFixed(3));
   precomputeSectionDurations.precompute_nearby_location_build = Number((precomputeStore?.__gridlyBuildSections?.precompute_nearby_location_build || 0).toFixed(3));
   precomputeSectionDurations.precompute_segment_candidate_build = Number((precomputeStore?.__gridlyBuildSections?.precompute_segment_candidate_build || 0).toFixed(3));
+  precomputeSectionDurations.materialize_key_creation = Number((precomputeStore?.__gridlyMaterializationSections?.materialize_key_creation || 0).toFixed(3));
+  precomputeSectionDurations.materialize_object_creation = Number((precomputeStore?.__gridlyMaterializationSections?.materialize_object_creation || 0).toFixed(3));
+  precomputeSectionDurations.materialize_object_spread = Number((precomputeStore?.__gridlyMaterializationSections?.materialize_object_spread || 0).toFixed(3));
+  precomputeSectionDurations.materialize_clone_operations = Number((precomputeStore?.__gridlyMaterializationSections?.materialize_clone_operations || 0).toFixed(3));
+  precomputeSectionDurations.materialize_nested_assignment = Number((precomputeStore?.__gridlyMaterializationSections?.materialize_nested_assignment || 0).toFixed(3));
+  precomputeSectionDurations.materialize_store_insert = Number((precomputeStore?.__gridlyMaterializationSections?.materialize_store_insert || 0).toFixed(3));
   measurePrecomputeStage("precompute_store_publish", () => {
     gridlyRoadNameLookupCache.precomputedIndexes = precomputeStore;
     gridlyRoadNameLookupCache.precomputeActive = Boolean(precomputeStore);
