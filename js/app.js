@@ -193,7 +193,8 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyRouteAuditGlobalsCheck",
   "gridlyPortraitV2LayerAudit",
   "gridlyAuditCycleDebug",
-  "gridlyAuditHelpersCheck"
+  "gridlyAuditHelpersCheck",
+  "loadSharedReports"
 ];
 
 function exposeGridlyAuditHelper(name, fn, options = {}) {
@@ -255,7 +256,8 @@ function exposeAllGridlyAuditHelpers() {
     gridlyRouteAuditGlobalsCheck: typeof gridlyRouteAuditGlobalsCheck === "function" ? gridlyRouteAuditGlobalsCheck : null,
     gridlyPortraitV2LayerAudit: typeof gridlyPortraitV2LayerAudit === "function" ? gridlyPortraitV2LayerAudit : null,
     gridlyAuditCycleDebug: typeof gridlyAuditCycleDebug === "function" ? gridlyAuditCycleDebug : null,
-    gridlyAuditHelpersCheck: typeof gridlyAuditHelpersCheck === "function" ? gridlyAuditHelpersCheck : null
+    gridlyAuditHelpersCheck: typeof gridlyAuditHelpersCheck === "function" ? gridlyAuditHelpersCheck : null,
+    loadSharedReports: typeof loadSharedReports === "function" ? loadSharedReports : null
   };
 
   Object.entries(helperSourceMap).forEach(([name, helperFn]) => {
@@ -5559,6 +5561,10 @@ async function loadSharedReports(reason = "manual") {
     audit.inFlight = false;
     audit.inFlightPromise = null;
   }
+}
+
+if (typeof window !== "undefined") {
+  window.loadSharedReports = loadSharedReports;
 }
 
 function normalizeReports(rows) {
@@ -18963,6 +18969,8 @@ const v134ReportingRefinementApplied = true;
 
 
 exposeGridlyAuditHelper("gridlyAuditRegistryDebug", gridlyAuditRegistryDebug);
+exposeGridlyAuditHelper("gridlyCommuteIntelligenceAudit", gridlyCommuteIntelligenceAudit);
+exposeGridlyAuditHelper("loadSharedReports", typeof loadSharedReports === "function" ? loadSharedReports : null);
 exposeAllGridlyAuditHelpers();
 
   document.addEventListener("DOMContentLoaded", bindV2);
