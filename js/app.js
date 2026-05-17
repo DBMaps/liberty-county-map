@@ -411,6 +411,10 @@ const gridlyCommuteIntelligenceAuditState = {
   payloadShapingSections: {},
   payloadShapingPerIncidentTimings: [],
   payloadShapingSlowestStep: null,
+  derivedPropertyFunctionSections: {},
+  derivedPropertyPerIncidentTimings: [],
+  derivedPropertySlowestFunction: null,
+  derivedPropertyFunctionCallCount: 0,
   timingBoundaryVerified: false,
   routeRelevanceNestedSections: {},
   suspectedMisattribution: null,
@@ -645,6 +649,7 @@ exposeGridlyAuditHelper("gridlyAuditCycleDebug", gridlyAuditCycleDebug);
 function resolveIncidentRoadLookupPayload(incident = {}) {
   const payloadShapingSections = {};
   const derivedFieldTrace = {};
+  const derivedPropertyFunctionSections = {};
   const withPayloadTiming = (stepName, fn) => {
     const startedAt = performance.now();
     const value = fn();
@@ -657,6 +662,12 @@ function resolveIncidentRoadLookupPayload(incident = {}) {
     derivedFieldTrace[stepName] = (derivedFieldTrace[stepName] || 0) + (performance.now() - startedAt);
     return value;
   });
+  const withDerivedPropertyFunctionTiming = (stepName, fn) => {
+    const startedAt = performance.now();
+    const value = fn();
+    derivedPropertyFunctionSections[stepName] = (derivedPropertyFunctionSections[stepName] || 0) + (performance.now() - startedAt);
+    return value;
+  };
   const locationCandidates = [
     incident?.road_name, incident?.street_name, incident?.street, incident?.nearest_road, incident?.snapped_road_name,
     incident?.crossing_street, incident?.cross_street, incident?.location_name, incident?.area
@@ -667,11 +678,11 @@ function resolveIncidentRoadLookupPayload(incident = {}) {
   withPayloadTiming("conditional_field_population", () => {
     if (roadFromText) locationCandidates.unshift(roadFromText);
   });
-  const nearestKnownLocation = withDerivedFieldTiming("nestedLookupWork", () => resolveNearbyKnownLocation(incident?.lat, incident?.lng));
+  const nearestKnownLocation = withDerivedFieldTiming("nestedLookupWork", () => withDerivedPropertyFunctionTiming("resolveNearbyKnownLocation", () => resolveNearbyKnownLocation(incident?.lat, incident?.lng)));
   withPayloadTiming("conditional_field_population", () => {
     if (nearestKnownLocation) locationCandidates.push(nearestKnownLocation);
   });
-  const resolvedRoadName = withDerivedFieldTiming("nestedLookupWork", () => resolveNearestRoadName(incident?.lat, incident?.lng));
+  const resolvedRoadName = withDerivedFieldTiming("nestedLookupWork", () => withDerivedPropertyFunctionTiming("resolveNearestRoadName", () => resolveNearestRoadName(incident?.lat, incident?.lng)));
   withPayloadTiming("conditional_field_population", () => {
     if (resolvedRoadName) locationCandidates.push(resolvedRoadName);
   });
@@ -684,22 +695,28 @@ function resolveIncidentRoadLookupPayload(incident = {}) {
     nearbyArea: incident?.city || incident?.area || incident?.county
   }));
   const coords = withDerivedFieldTiming("normalizationWork", () => normalizeCoordinatePair(incident?.lat, incident?.lng));
-  const crossingName = withDerivedFieldTiming("crossingNameDerivation", () => String(incident?.crossingName || incident?.crossing || incident?.area || "").trim());
+  const crossingName = withDerivedFieldTiming("crossingNameDerivation", () => withDerivedPropertyFunctionTiming("crossing_resolution", () => String(incident?.crossingName || incident?.crossing || incident?.area || "").trim()));
   const crossingId = withDerivedFieldTiming("normalizationWork", () => String(incident?.crossing_id || incident?.crossingId || "").trim());
-  const nearbyName = withDerivedFieldTiming("locationPhraseDerivation", () => [nearestKnownLocation, incident?.location_name, incident?.city, incident?.area, incident?.county].map((value) => String(value || "").trim()).find(Boolean) || "");
+  const nearbyName = withDerivedFieldTiming("locationPhraseDerivation", () => withDerivedPropertyFunctionTiming("corridor_location_phrase", () => [nearestKnownLocation, incident?.location_name, incident?.city, incident?.area, incident?.county].map((value) => String(value || "").trim()).find(Boolean) || ""));
+  withDerivedFieldTiming("locationPhraseDerivation", () => withDerivedPropertyFunctionTiming("segment_candidate_resolution", () => {
+    const lat = Number(incident?.lat);
+    const lng = Number(incident?.lng);
+    return Number.isFinite(lat) && Number.isFinite(lng) ? `${lat.toFixed(4)},${lng.toFixed(4)}` : "na";
+  }));
   const payload = withDerivedFieldTiming("objectConstruction", () => ({ locationContext, nearestKnownLocation, coords, crossingName, crossingId, nearbyName }));
   withDerivedFieldTiming("serializationWork", () => JSON.stringify([locationName, nearbyName, crossingName, crossingId]));
   withDerivedFieldTiming("objectSpread", () => ({ ...(incident && typeof incident === "object" ? incident : {}) }));
-  withDerivedFieldTiming("fallbackResolution", () => ({
+  withDerivedFieldTiming("fallbackResolution", () => withDerivedPropertyFunctionTiming("fallback_lookup_resolution", () => ({
     locationContext: "",
     nearestKnownLocation: "",
     coords: null,
     crossingName: "",
     crossingId: "",
     nearbyName: ""
-  }));
+  })));
   payload.__gridlyPayloadShapingSections = payloadShapingSections;
   payload.__gridlyDerivedFieldGenerationTrace = derivedFieldTrace;
+  payload.__gridlyDerivedPropertyFunctionSections = derivedPropertyFunctionSections;
   return payload;
 }
 
@@ -776,9 +793,11 @@ function getCachedRoadNameLookup(incident = {}, lookupType = "road_name_lookup",
     if (sectionTimings && typeof sectionTimings === "object") {
       sectionTimings.payload_shaping_sections = { ...(payloadSections || {}) };
       sectionTimings.derived_field_generation_trace = { ...(payload?.__gridlyDerivedFieldGenerationTrace || {}) };
+      sectionTimings.derived_property_function_sections = { ...(payload?.__gridlyDerivedPropertyFunctionSections || {}) };
     }
     if (payload && typeof payload === "object") delete payload.__gridlyPayloadShapingSections;
     if (payload && typeof payload === "object") delete payload.__gridlyDerivedFieldGenerationTrace;
+    if (payload && typeof payload === "object") delete payload.__gridlyDerivedPropertyFunctionSections;
   });
   const value = withTiming("wrapper_overhead", () => resolver(payload));
   withTiming("cache_write", () => gridlyRoadNameLookupCache.formatterValues.set(key, value));
@@ -964,6 +983,10 @@ function sanitizeEmptyCommuteAuditPayload(payload) {
     result.payloadShapingSections = {};
     result.payloadShapingPerIncidentTimings = [];
     result.payloadShapingSlowestStep = null;
+    result.derivedPropertyFunctionSections = {};
+    result.derivedPropertyPerIncidentTimings = [];
+    result.derivedPropertySlowestFunction = null;
+    result.derivedPropertyFunctionCallCount = 0;
   }
 
   result.emptyCycleSanitized = shouldSanitizeEmptyCycle;
@@ -1056,6 +1079,10 @@ function gridlyCommuteIntelligenceAudit() {
     payloadShapingPerIncidentTimingsAuditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
     payloadShapingSlowestStep: gridlyCommuteIntelligenceAuditState.payloadShapingSlowestStep || null,
     payloadShapingSlowestStepAuditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
+    derivedPropertyFunctionSections: { ...(gridlyCommuteIntelligenceAuditState.derivedPropertyFunctionSections || {}) },
+    derivedPropertyPerIncidentTimings: [...(gridlyCommuteIntelligenceAuditState.derivedPropertyPerIncidentTimings || [])],
+    derivedPropertySlowestFunction: gridlyCommuteIntelligenceAuditState.derivedPropertySlowestFunction || null,
+    derivedPropertyFunctionCallCount: Number(gridlyCommuteIntelligenceAuditState.derivedPropertyFunctionCallCount || 0),
     derivedFieldGenerationTrace: gridlyCloneAuditPayload(gridlyCommuteIntelligenceAuditState.derivedFieldGenerationTrace || { totals: {}, perIncident: [], slowestStep: null, repeatedWork: [] }),
     derivedFieldGenerationTraceAuditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
     nestedLookupCallMap: gridlyCloneAuditPayload(gridlyCommuteIntelligenceAuditState.nestedLookupCallMap || { totals: {}, byFunction: {}, repeatedScans: [], indexCandidateRecommendations: [] }),
@@ -14262,6 +14289,9 @@ function recordSharedCacheRetrievalAudit(incident = {}, lookupType = "", section
   const derivedFieldTimings = Object.fromEntries(
     Object.entries(sectionTimings?.derived_field_generation_trace || {}).map(([stepName, durationMs]) => [stepName, Number(Number(durationMs || 0).toFixed(3))])
   );
+  const derivedPropertyFunctionTimings = Object.fromEntries(
+    Object.entries(sectionTimings?.derived_property_function_sections || {}).map(([stepName, durationMs]) => [stepName, Number(Number(durationMs || 0).toFixed(3))])
+  );
   Object.entries(payloadShapingTimings).forEach(([stepName, durationMs]) => {
     gridlyCommuteIntelligenceAuditState.payloadShapingSections[stepName] = Number(
       ((gridlyCommuteIntelligenceAuditState.payloadShapingSections[stepName] || 0) + Number(durationMs || 0)).toFixed(3)
@@ -14303,6 +14333,33 @@ function recordSharedCacheRetrievalAudit(incident = {}, lookupType = "", section
   if (repeatedExisting) repeatedExisting.count = Number(repeatedExisting.count || 1) + 1;
   else derivedStore.repeatedWork.push({ key: repeatedKey, count: 1, incidentId: perIncidentEntry.incidentId, reportType: perIncidentEntry.reportType });
   gridlyCommuteIntelligenceAuditState.derivedFieldGenerationTrace = derivedStore;
+  Object.entries(derivedPropertyFunctionTimings).forEach(([stepName, durationMs]) => {
+    gridlyCommuteIntelligenceAuditState.derivedPropertyFunctionSections[stepName] = Number(
+      ((gridlyCommuteIntelligenceAuditState.derivedPropertyFunctionSections[stepName] || 0) + Number(durationMs || 0)).toFixed(3)
+    );
+    gridlyCommuteIntelligenceAuditState.derivedPropertyFunctionCallCount = Number(gridlyCommuteIntelligenceAuditState.derivedPropertyFunctionCallCount || 0) + 1;
+    const currentSlowestFn = gridlyCommuteIntelligenceAuditState.derivedPropertySlowestFunction;
+    if (!currentSlowestFn || Number(durationMs || 0) > Number(currentSlowestFn?.ms || 0)) {
+      gridlyCommuteIntelligenceAuditState.derivedPropertySlowestFunction = {
+        functionName: stepName,
+        ms: Number(durationMs || 0),
+        incidentId: perIncidentEntry.incidentId,
+        reportType: perIncidentEntry.reportType,
+        lookupType: perIncidentEntry.lookupType,
+        auditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0)
+      };
+    }
+  });
+  if (Object.keys(derivedPropertyFunctionTimings).length) {
+    gridlyCommuteIntelligenceAuditState.derivedPropertyPerIncidentTimings.push({
+      incidentId: perIncidentEntry.incidentId,
+      reportType: perIncidentEntry.reportType,
+      lookupType: perIncidentEntry.lookupType,
+      timings: derivedPropertyFunctionTimings,
+      totalMs: Number(Object.values(derivedPropertyFunctionTimings).reduce((sum, value) => sum + Number(value || 0), 0).toFixed(3)),
+      auditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0)
+    });
+  }
   if (!payloadIncidentSlowestStep) return;
   const currentPayloadSlowest = gridlyCommuteIntelligenceAuditState.payloadShapingSlowestStep;
   if (!currentPayloadSlowest || Number(payloadIncidentSlowestStep[1]) > Number(currentPayloadSlowest?.ms || 0)) {
@@ -14609,6 +14666,10 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.payloadShapingSections = {};
   gridlyCommuteIntelligenceAuditState.payloadShapingPerIncidentTimings = [];
   gridlyCommuteIntelligenceAuditState.payloadShapingSlowestStep = null;
+  gridlyCommuteIntelligenceAuditState.derivedPropertyFunctionSections = {};
+  gridlyCommuteIntelligenceAuditState.derivedPropertyPerIncidentTimings = [];
+  gridlyCommuteIntelligenceAuditState.derivedPropertySlowestFunction = null;
+  gridlyCommuteIntelligenceAuditState.derivedPropertyFunctionCallCount = 0;
   gridlyCommuteIntelligenceAuditState.derivedFieldGenerationTrace = { totals: {}, perIncident: [], slowestStep: null, repeatedWork: [] };
   gridlyCommuteIntelligenceAuditState.nestedLookupCallMap = { totals: {}, byFunction: {}, repeatedScans: [], indexCandidateRecommendations: [] };
   const timeSection = makeGridlySectionTimer(sections);
@@ -15034,6 +15095,10 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     gridlyCommuteIntelligenceAuditState.payloadShapingSections = {};
     gridlyCommuteIntelligenceAuditState.payloadShapingPerIncidentTimings = [];
     gridlyCommuteIntelligenceAuditState.payloadShapingSlowestStep = null;
+    gridlyCommuteIntelligenceAuditState.derivedPropertyFunctionSections = {};
+    gridlyCommuteIntelligenceAuditState.derivedPropertyPerIncidentTimings = [];
+    gridlyCommuteIntelligenceAuditState.derivedPropertySlowestFunction = null;
+    gridlyCommuteIntelligenceAuditState.derivedPropertyFunctionCallCount = 0;
   gridlyCommuteIntelligenceAuditState.derivedFieldGenerationTrace = { totals: {}, perIncident: [], slowestStep: null, repeatedWork: [] };
   gridlyCommuteIntelligenceAuditState.nestedLookupCallMap = { totals: {}, byFunction: {}, repeatedScans: [], indexCandidateRecommendations: [] };
     gridlyCommuteIntelligenceAuditState.titleLabelPerIncidentTimings = [];
