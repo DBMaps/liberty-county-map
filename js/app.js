@@ -585,7 +585,9 @@ function getCachedRoadNameLookup(incident = {}, lookupType = "road_name_lookup",
   const payload = withTiming("payload_shaping", () => getSharedResolvedRoadLookup(incident));
   withTiming("payload_shaping_section_capture", () => {
     const payloadSections = payload?.__gridlyPayloadShapingSections || {};
-    sectionTimings.payload_shaping_sections = { ...(payloadSections || {}) };
+    if (sectionTimings && typeof sectionTimings === "object") {
+      sectionTimings.payload_shaping_sections = { ...(payloadSections || {}) };
+    }
     if (payload && typeof payload === "object") delete payload.__gridlyPayloadShapingSections;
   });
   const value = withTiming("wrapper_overhead", () => resolver(payload));
@@ -2985,7 +2987,7 @@ function initSupabase() {
           setSync(`Live sync active · Build ${APP_BUILD}`);
         }
       });
-    endContainmentTrace();
+    if (typeof endContainmentTrace === "function") endContainmentTrace();
   } catch (error) {
     console.error("Supabase init failed:", error);
     setSync(`Live sync failed · Build ${APP_BUILD}`);
