@@ -405,6 +405,10 @@ const gridlyCommuteIntelligenceAuditState = {
   routeRelevanceNestedSections: {},
   suspectedMisattribution: null,
   actualSlowSectionCandidate: null,
+  commuteAuditInputSource: "uninitialized",
+  commuteAuditUnifiedIncidentCountBeforeBuild: 0,
+  commuteAuditUnifiedIncidentCountAfterBuild: 0,
+  commuteAuditSanitizerReason: null,
   auditCycleId: 0,
   auditCollectionEnabled: false,
   pendingWritesRejected: 0,
@@ -838,7 +842,11 @@ function gridlyCommuteIntelligenceAudit() {
     timingBoundaryVerified: Boolean(gridlyCommuteIntelligenceAuditState.timingBoundaryVerified),
     routeRelevanceNestedSections: { ...(gridlyCommuteIntelligenceAuditState.routeRelevanceNestedSections || {}) },
     suspectedMisattribution: gridlyCommuteIntelligenceAuditState.suspectedMisattribution || null,
-    actualSlowSectionCandidate: gridlyCommuteIntelligenceAuditState.actualSlowSectionCandidate || null
+    actualSlowSectionCandidate: gridlyCommuteIntelligenceAuditState.actualSlowSectionCandidate || null,
+    commuteAuditInputSource: String(gridlyCommuteIntelligenceAuditState.commuteAuditInputSource || "uninitialized"),
+    commuteAuditUnifiedIncidentCountBeforeBuild: Number(gridlyCommuteIntelligenceAuditState.commuteAuditUnifiedIncidentCountBeforeBuild || 0),
+    commuteAuditUnifiedIncidentCountAfterBuild: Number(gridlyCommuteIntelligenceAuditState.commuteAuditUnifiedIncidentCountAfterBuild || 0),
+    commuteAuditSanitizerReason: gridlyCommuteIntelligenceAuditState.commuteAuditSanitizerReason || null
   };
   return sanitizeEmptyCommuteAuditPayload(result);
 }
@@ -14166,10 +14174,12 @@ function buildCorridorClusters(intelItems = [], recentlyCleared = []) {
 }
 
 function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
+  const unifiedIncidentsForAudit = getUnifiedIncidents();
+  const unifiedIncidentsBeforeBuildCount = Array.isArray(unifiedIncidentsForAudit) ? unifiedIncidentsForAudit.length : 0;
   const cachePayload = {
     limit: Number(limit || 0),
     routeWatchActivated: Boolean(routeWatchActivated),
-    activeUnifiedCount: Array.isArray(getUnifiedIncidents()) ? getUnifiedIncidents().length : 0,
+    activeUnifiedCount: unifiedIncidentsBeforeBuildCount,
     activeReportCount: Array.isArray(activeReports) ? activeReports.length : 0
   };
   return getGridlyRefreshCycleCachedValue("buildCommuteConsequenceIntelligence", cachePayload, () => {
@@ -14180,6 +14190,10 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.cyclePublishState = "collecting";
   const sections = {};
   const counts = {};
+  gridlyCommuteIntelligenceAuditState.commuteAuditInputSource = "getUnifiedIncidents()->getActiveUnifiedIncidents(status=active)";
+  gridlyCommuteIntelligenceAuditState.commuteAuditUnifiedIncidentCountBeforeBuild = unifiedIncidentsBeforeBuildCount;
+  gridlyCommuteIntelligenceAuditState.commuteAuditUnifiedIncidentCountAfterBuild = unifiedIncidentsBeforeBuildCount;
+  gridlyCommuteIntelligenceAuditState.commuteAuditSanitizerReason = null;
   gridlyCommuteIntelligenceAuditState.labelHelperInternalSections = {};
   gridlyCommuteIntelligenceAuditState.labelHelperCallStats = {};
   gridlyCommuteIntelligenceAuditState.labelHelperSlowestCall = null;
@@ -14465,8 +14479,12 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.formatterCacheMisses = Number(gridlyRoadNameLookupCache?.formatterMisses || 0);
   gridlyCommuteIntelligenceAuditState.equivalentLookupReuseDetected = Number(gridlyRoadNameLookupCache?.sharedHits || 0) > 0;
   const incidentsProcessedCount = Number(commuteModelHelperCallCounts.incidentsProcessed || 0);
-  const unifiedIncidentCount = Number(commuteModelHelperCallCounts.unifiedIncidentCount || 0);
+  const unifiedIncidentCount = Number(counts.unifiedIncidentCount || 0);
   if (incidentsProcessedCount === 0 || unifiedIncidentCount === 0) {
+    const sanitizerReasons = [];
+    if (incidentsProcessedCount === 0) sanitizerReasons.push("incidentsProcessed=0");
+    if (unifiedIncidentCount === 0) sanitizerReasons.push("unifiedIncidentCount=0");
+    gridlyCommuteIntelligenceAuditState.commuteAuditSanitizerReason = sanitizerReasons.join("; ");
     gridlyCommuteIntelligenceAuditState.labelHelperInternalSections = {};
     gridlyCommuteIntelligenceAuditState.labelHelperCallStats = {};
     gridlyCommuteIntelligenceAuditState.labelHelperSlowestCall = null;
@@ -14483,6 +14501,8 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     gridlyCommuteIntelligenceAuditState.commuteModelPerIncidentTimings = [];
     gridlyCommuteIntelligenceAuditState.titleLabelSlowestIncident = null;
     gridlyCommuteIntelligenceAuditState.titleLabelSlowestHelper = null;
+  } else {
+    gridlyCommuteIntelligenceAuditState.commuteAuditSanitizerReason = null;
   }
   gridlyCommuteIntelligenceAuditState.cyclePublishState = "publishing";
   const publishedSnapshot = gridlyFreezePublishedAuditPayload(gridlyCloneAuditPayload({
