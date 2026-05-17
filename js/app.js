@@ -4864,6 +4864,18 @@ function refreshReportHazardViews(source = "unspecified") {
     gridlyRefreshAuditState.lastRefreshDuration = refreshDuration;
     gridlyRefreshAuditState.lastChildDurations = childDurations;
     const unifiedIncidents = getUnifiedIncidents();
+    const safeHazardMarkerCount = (typeof hazardMarkers !== "undefined" && Array.isArray(hazardMarkers))
+      ? hazardMarkers.length
+      : null;
+    const safeRoadHazardMarkerCount = (typeof roadHazardMarkers !== "undefined" && Array.isArray(roadHazardMarkers))
+      ? roadHazardMarkers.length
+      : null;
+    const safeCrossingMarkerCount = (typeof crossingMarkers !== "undefined" && crossingMarkers && typeof crossingMarkers.size === "number")
+      ? crossingMarkers.size
+      : null;
+    const renderedMarkerCount = [safeHazardMarkerCount, safeRoadHazardMarkerCount, safeCrossingMarkerCount].every((count) => typeof count === "number")
+      ? (safeHazardMarkerCount + safeRoadHazardMarkerCount + safeCrossingMarkerCount)
+      : "unknown";
     const refreshSummary = {
       at: gridlyRefreshAuditState.lastRefreshAt,
       iso: new Date(gridlyRefreshAuditState.lastRefreshAt).toISOString(),
@@ -4875,7 +4887,7 @@ function refreshReportHazardViews(source = "unspecified") {
         unifiedIncidentCount: Array.isArray(unifiedIncidents) ? unifiedIncidents.length : 0,
         roadHazardCount: Array.isArray(activeHazards) ? activeHazards.length : 0,
         crossingCount: Array.isArray(crossings) ? crossings.length : 0,
-        renderedMarkerCount: (hazardMarkers?.length || 0) + (roadHazardMarkers?.length || 0) + crossingMarkers.size,
+        renderedMarkerCount,
         routeIntelligenceState: routeWatchActivated ? "active" : "idle"
       }
     };
