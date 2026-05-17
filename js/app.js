@@ -192,6 +192,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyRouteSetupButtonAudit",
   "gridlyRouteAuditGlobalsCheck",
   "gridlyPortraitV2LayerAudit",
+  "gridlyAuditCycleDebug",
   "gridlyAuditHelpersCheck"
 ];
 
@@ -253,6 +254,7 @@ function exposeAllGridlyAuditHelpers() {
     gridlyRouteSetupButtonAudit: typeof gridlyRouteSetupButtonAudit === "function" ? gridlyRouteSetupButtonAudit : null,
     gridlyRouteAuditGlobalsCheck: typeof gridlyRouteAuditGlobalsCheck === "function" ? gridlyRouteAuditGlobalsCheck : null,
     gridlyPortraitV2LayerAudit: typeof gridlyPortraitV2LayerAudit === "function" ? gridlyPortraitV2LayerAudit : null,
+    gridlyAuditCycleDebug: typeof gridlyAuditCycleDebug === "function" ? gridlyAuditCycleDebug : null,
     gridlyAuditHelpersCheck: typeof gridlyAuditHelpersCheck === "function" ? gridlyAuditHelpersCheck : null
   };
 
