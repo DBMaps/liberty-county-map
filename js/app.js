@@ -405,9 +405,56 @@ const gridlyCommuteIntelligenceAuditState = {
   actualSlowSectionCandidate: null,
   auditCycleId: 0,
   auditCollectionEnabled: false,
+  pendingWritesRejected: 0,
+  rejectedReasons: {},
+  cyclePublishState: "idle",
   at: 0
 };
 let gridlyRoadNameLookupCache = null;
+function gridlyCloneAuditPayload(payload) {
+  if (payload === null || payload === undefined) return payload;
+  return JSON.parse(JSON.stringify(payload));
+}
+
+function gridlyFreezePublishedAuditPayload(payload) {
+  if (!payload || typeof payload !== "object") return payload;
+  Object.freeze(payload);
+  Object.keys(payload).forEach((key) => {
+    if (payload[key] && typeof payload[key] === "object" && !Object.isFrozen(payload[key])) {
+      gridlyFreezePublishedAuditPayload(payload[key]);
+    }
+  });
+  return payload;
+}
+
+function rejectAuditWrite(reason = "unknown_reject_reason") {
+  gridlyCommuteIntelligenceAuditState.pendingWritesRejected = Number(gridlyCommuteIntelligenceAuditState.pendingWritesRejected || 0) + 1;
+  gridlyCommuteIntelligenceAuditState.rejectedReasons[reason] = Number(gridlyCommuteIntelligenceAuditState.rejectedReasons[reason] || 0) + 1;
+}
+
+function validateAuditCycleWrite(cycleId) {
+  if (!gridlyCommuteIntelligenceAuditState.auditCollectionEnabled) {
+    rejectAuditWrite("audit_collection_disabled");
+    return false;
+  }
+  const activeCycleId = Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0);
+  if (Number(cycleId || 0) !== activeCycleId) {
+    rejectAuditWrite("cycle_id_mismatch");
+    return false;
+  }
+  return true;
+}
+
+function gridlyAuditCycleDebug() {
+  return {
+    activeCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
+    auditCollectionEnabled: Boolean(gridlyCommuteIntelligenceAuditState.auditCollectionEnabled),
+    pendingWritesRejected: Number(gridlyCommuteIntelligenceAuditState.pendingWritesRejected || 0),
+    rejectedReasons: { ...(gridlyCommuteIntelligenceAuditState.rejectedReasons || {}) },
+    cyclePublishState: String(gridlyCommuteIntelligenceAuditState.cyclePublishState || "idle")
+  };
+}
+exposeGridlyAuditHelper("gridlyAuditCycleDebug", gridlyAuditCycleDebug);
 
 function resolveIncidentRoadLookupPayload(incident = {}) {
   const payloadShapingSections = {};
@@ -13615,6 +13662,7 @@ function isCrossingDisruptionIncident(incident = {}) {
 
 function buildLocalizedIncidentLabel(incident = {}) {
   const helperName = "buildLocalizedIncidentLabel";
+  const helperAuditCycleId = Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0);
   const helperStartedAt = performance.now();
   const sectionTimes = {};
   const calls = {};
@@ -13637,7 +13685,7 @@ function buildLocalizedIncidentLabel(incident = {}) {
   };
   const finalizeAudit = (result, meta = {}) => {
     const totalMs = performance.now() - helperStartedAt;
-    recordLocalizedLabelLookupAudit(incident, lookupTimings);
+    recordLocalizedLabelLookupAudit(incident, lookupTimings, helperAuditCycleId);
     recordLabelHelperInternalAudit(helperName, {
       totalMs,
       sectionTimes,
@@ -13645,7 +13693,7 @@ function buildLocalizedIncidentLabel(incident = {}) {
       incident,
       result,
       meta
-    });
+    }, helperAuditCycleId);
     return result;
   };
   if (!incident) return finalizeAudit("Localized disruption", { fallbackReason: "missing_incident" });
@@ -13656,7 +13704,7 @@ function buildLocalizedIncidentLabel(incident = {}) {
       const builtRoadDisplay = recordLookupStep("buildRoadHazardDisplay_time", () => buildRoadHazardDisplay(incident, resolvedLookup));
       return builtRoadDisplay;
     }, { sectionTimings: sharedCacheSectionTimings }));
-    recordSharedCacheRetrievalAudit(incident, "buildRoadHazardDisplay", sharedCacheSectionTimings);
+    recordSharedCacheRetrievalAudit(incident, "buildRoadHazardDisplay", sharedCacheSectionTimings, helperAuditCycleId);
     return cachedRoadDisplay;
   }));
   const roadFallback = recordSection("fallback_logic", () => roadDisplay?.title || incident?.title || "Localized disruption");
@@ -13690,8 +13738,8 @@ function buildLocalizedIncidentLabel(incident = {}) {
   return finalizeAudit(recordSection("fallback_logic", () => `Crossing disruption${nearSuffix}`), { path: "crossing_fallback" });
 }
 
-function recordLocalizedLabelLookupAudit(incident = {}, lookupTimings = {}) {
-  if (!gridlyCommuteIntelligenceAuditState.auditCollectionEnabled) return;
+function recordLocalizedLabelLookupAudit(incident = {}, lookupTimings = {}, cycleId = 0) {
+  if (!validateAuditCycleWrite(cycleId)) return;
   const roundedLookupTimings = Object.fromEntries(
     Object.entries(lookupTimings || {}).map(([stepName, durationMs]) => [stepName, Number(Number(durationMs || 0).toFixed(3))])
   );
@@ -13722,8 +13770,8 @@ function recordLocalizedLabelLookupAudit(incident = {}, lookupTimings = {}) {
   }
 }
 
-function recordSharedCacheRetrievalAudit(incident = {}, lookupType = "", sectionTimings = {}) {
-  if (!gridlyCommuteIntelligenceAuditState.auditCollectionEnabled) return;
+function recordSharedCacheRetrievalAudit(incident = {}, lookupType = "", sectionTimings = {}, cycleId = 0) {
+  if (!validateAuditCycleWrite(cycleId)) return;
   const roundedTimings = Object.fromEntries(
     Object.entries(sectionTimings || {}).map(([stepName, durationMs]) => [stepName, Number(Number(durationMs || 0).toFixed(3))])
   );
@@ -13854,6 +13902,7 @@ function getRoadPriorityWeight(incident = {}) {
 
 function buildCommunityConsequenceLabel(incident = {}, fallback = "Traffic slowing") {
   const helperName = "buildCommunityConsequenceLabel";
+  const helperAuditCycleId = Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0);
   const helperStartedAt = performance.now();
   const sectionTimes = {};
   const calls = {};
@@ -13869,7 +13918,7 @@ function buildCommunityConsequenceLabel(incident = {}, fallback = "Traffic slowi
   };
   const finalizeAudit = (result, meta = {}) => {
     const totalMs = performance.now() - helperStartedAt;
-    recordLabelHelperInternalAudit(helperName, { totalMs, sectionTimes, calls, incident, result, meta });
+    recordLabelHelperInternalAudit(helperName, { totalMs, sectionTimes, calls, incident, result, meta }, helperAuditCycleId);
     return result;
   };
   const towns = recordSection("corridor_location_inference", () => recordCall("findTownMentions", () => findTownMentions(incident)));
@@ -13888,8 +13937,9 @@ function buildCommunityConsequenceLabel(incident = {}, fallback = "Traffic slowi
   return finalizeAudit(recordSection("fallback_logic", () => fallback), { path: "fallback" });
 }
 
-function recordLabelHelperInternalAudit(helperName = "", details = {}) {
-  if (!helperName || !gridlyCommuteIntelligenceAuditState.auditCollectionEnabled) return;
+function recordLabelHelperInternalAudit(helperName = "", details = {}, cycleId = 0) {
+  if (!helperName) return;
+  if (!validateAuditCycleWrite(cycleId)) return;
   if (!gridlyCommuteIntelligenceAuditState.labelHelperInternalSections[helperName]) gridlyCommuteIntelligenceAuditState.labelHelperInternalSections[helperName] = {};
   const sectionStore = gridlyCommuteIntelligenceAuditState.labelHelperInternalSections[helperName];
   Object.entries(details?.sectionTimes || {}).forEach(([sectionName, durationMs]) => {
@@ -14023,6 +14073,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.auditCycleId = Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0) + 1;
   const activeAuditCycleId = gridlyCommuteIntelligenceAuditState.auditCycleId;
   gridlyCommuteIntelligenceAuditState.auditCollectionEnabled = true;
+  gridlyCommuteIntelligenceAuditState.cyclePublishState = "collecting";
   const sections = {};
   const counts = {};
   gridlyCommuteIntelligenceAuditState.labelHelperInternalSections = {};
@@ -14309,9 +14360,32 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.formatterCacheHits = Number(gridlyRoadNameLookupCache?.formatterHits || 0);
   gridlyCommuteIntelligenceAuditState.formatterCacheMisses = Number(gridlyRoadNameLookupCache?.formatterMisses || 0);
   gridlyCommuteIntelligenceAuditState.equivalentLookupReuseDetected = Number(gridlyRoadNameLookupCache?.sharedHits || 0) > 0;
+  if (Number(commuteModelHelperCallCounts.incidentsProcessed || 0) === 0) {
+    gridlyCommuteIntelligenceAuditState.localizedLabelPerIncidentLookupTimings = [];
+    gridlyCommuteIntelligenceAuditState.sharedCachePerIncidentTimings = [];
+    gridlyCommuteIntelligenceAuditState.payloadShapingPerIncidentTimings = [];
+    gridlyCommuteIntelligenceAuditState.titleLabelPerIncidentTimings = [];
+    gridlyCommuteIntelligenceAuditState.commuteModelPerIncidentTimings = [];
+    gridlyCommuteIntelligenceAuditState.labelHelperCallStats = null;
+    gridlyCommuteIntelligenceAuditState.labelHelperSlowestCall = null;
+    gridlyCommuteIntelligenceAuditState.localizedLabelSlowestLookupStep = null;
+    gridlyCommuteIntelligenceAuditState.sharedCacheSlowestStep = null;
+    gridlyCommuteIntelligenceAuditState.payloadShapingSlowestStep = null;
+    gridlyCommuteIntelligenceAuditState.titleLabelSlowestIncident = null;
+    gridlyCommuteIntelligenceAuditState.titleLabelSlowestHelper = null;
+  }
+  gridlyCommuteIntelligenceAuditState.cyclePublishState = "publishing";
+  const publishedSnapshot = gridlyFreezePublishedAuditPayload(gridlyCloneAuditPayload({
+    ...gridlyCommuteIntelligenceAuditState,
+    auditCollectionEnabled: false,
+    cyclePublishState: "published",
+    at: Date.now()
+  }));
+  Object.keys(gridlyCommuteIntelligenceAuditState).forEach((key) => {
+    gridlyCommuteIntelligenceAuditState[key] = publishedSnapshot[key];
+  });
   gridlyRoadNameLookupCache = null;
   gridlyCommuteIntelligenceAuditState.auditCollectionEnabled = false;
-  gridlyCommuteIntelligenceAuditState.at = Date.now();
 
   return {
     items: intelItems.slice(0, limit),
