@@ -395,6 +395,7 @@ const gridlyCommuteIntelligenceAuditState = {
   localizedLabelLookupSections: {},
   localizedLabelPerIncidentLookupTimings: [],
   localizedLabelSlowestLookupStep: null,
+  localizedLabelHotspotTrace: { totals: {}, perIncident: [], slowestStep: null, repeatedWork: [] },
   sharedCacheRetrievalSections: {},
   sharedCachePerIncidentTimings: [],
   sharedCacheSlowestStep: null,
@@ -854,6 +855,8 @@ function gridlyCommuteIntelligenceAudit() {
     localizedLabelPerIncidentLookupTimingsAuditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
     localizedLabelSlowestLookupStep: gridlyCommuteIntelligenceAuditState.localizedLabelSlowestLookupStep || null,
     localizedLabelSlowestLookupStepAuditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
+    localizedLabelHotspotTrace: gridlyCloneAuditPayload(gridlyCommuteIntelligenceAuditState.localizedLabelHotspotTrace || { totals: {}, perIncident: [], slowestStep: null, repeatedWork: [] }),
+    localizedLabelHotspotTraceAuditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
     sharedCacheRetrievalSections: { ...(gridlyCommuteIntelligenceAuditState.sharedCacheRetrievalSections || {}) },
     sharedCacheRetrievalSectionsAuditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
     sharedCachePerIncidentTimings: [...(gridlyCommuteIntelligenceAuditState.sharedCachePerIncidentTimings || [])],
@@ -13834,6 +13837,16 @@ function buildLocalizedIncidentLabel(incident = {}) {
   const sectionTimes = {};
   const calls = {};
   const lookupTimings = {};
+  const hotspotTimings = {
+    helperEntryTime: 0,
+    cacheHitTime: 0,
+    cacheMissTime: 0,
+    payloadResolverTime: 0,
+    stringFormattingTime: 0,
+    roadDisplayResolutionTime: 0,
+    locationPhraseResolutionTime: 0,
+    finalAssemblyTime: 0
+  };
   const recordSection = (sectionName, fn) => {
     const startedAt = performance.now();
     const value = fn();
@@ -13851,8 +13864,10 @@ function buildLocalizedIncidentLabel(incident = {}) {
     return value;
   };
   const finalizeAudit = (result, meta = {}) => {
+    const preFinalizeTrackedMs = Object.values(hotspotTimings).reduce((sum, value) => sum + Number(value || 0), 0);
+    hotspotTimings.finalAssemblyTime += Math.max(0, (performance.now() - helperStartedAt) - preFinalizeTrackedMs);
     const totalMs = performance.now() - helperStartedAt;
-    recordLocalizedLabelLookupAudit(incident, lookupTimings, helperAuditCycleId);
+    recordLocalizedLabelLookupAudit(incident, lookupTimings, helperAuditCycleId, hotspotTimings);
     recordLabelHelperInternalAudit(helperName, {
       totalMs,
       sectionTimes,
@@ -13863,14 +13878,22 @@ function buildLocalizedIncidentLabel(incident = {}) {
     }, helperAuditCycleId);
     return result;
   };
+  hotspotTimings.helperEntryTime += performance.now() - helperStartedAt;
   if (!incident) return finalizeAudit("Localized disruption", { fallbackReason: "missing_incident" });
   const isCrossing = recordSection("type_status_mapping", () => recordCall("isCrossingDisruptionIncident", () => isCrossingDisruptionIncident(incident)));
   const roadDisplay = recordSection("crossing_road_name_lookup", () => recordCall("buildRoadHazardDisplay", () => {
     const sharedCacheSectionTimings = {};
     const cachedRoadDisplay = recordLookupStep("shared_cache_lookup_time", () => getCachedRoadNameLookup(incident, "buildRoadHazardDisplay", (resolvedLookup) => {
-      const builtRoadDisplay = recordLookupStep("buildRoadHazardDisplay_time", () => buildRoadHazardDisplay(incident, resolvedLookup));
+      const builtRoadDisplay = recordLookupStep("buildRoadHazardDisplay_time", () => {
+        const startedAt = performance.now();
+        const value = buildRoadHazardDisplay(incident, resolvedLookup);
+        hotspotTimings.roadDisplayResolutionTime += performance.now() - startedAt;
+        return value;
+      });
       return builtRoadDisplay;
     }, { sectionTimings: sharedCacheSectionTimings }));
+    hotspotTimings.cacheHitTime += Number(sharedCacheSectionTimings.cache_hit_time || 0);
+    hotspotTimings.cacheMissTime += Number(sharedCacheSectionTimings.cache_miss_time || 0);
     recordSharedCacheRetrievalAudit(incident, "buildRoadHazardDisplay", sharedCacheSectionTimings, helperAuditCycleId);
     return cachedRoadDisplay;
   }));
@@ -13879,33 +13902,48 @@ function buildLocalizedIncidentLabel(incident = {}) {
 
   const reportType = recordSection("input_normalization", () => String(incident?.report_type || incident?.type || "").toLowerCase());
   const location = recordSection("corridor_location_inference", () => recordCall("resolveRailLocationText", () => getCachedRoadNameLookup(incident, "resolveRailLocationText", () => {
-    const railLookupPayload = recordLookupStep("resolveIncidentRoadLookupPayload_time", () => resolveIncidentRoadLookupPayload(incident));
-    return resolveRailLocationText({
+    const railLookupPayload = recordLookupStep("resolveIncidentRoadLookupPayload_time", () => {
+      const startedAt = performance.now();
+      const value = resolveIncidentRoadLookupPayload(incident);
+      hotspotTimings.payloadResolverTime += performance.now() - startedAt;
+      return value;
+    });
+    const phraseStartedAt = performance.now();
+    const phraseValue = resolveRailLocationText({
       crossingName: incident?.crossingName || incident?.area || "",
       crossingId: incident?.crossing_id || incident?.crossingId || "",
       latestReport: incident,
       ...railLookupPayload
     });
+    hotspotTimings.locationPhraseResolutionTime += performance.now() - phraseStartedAt;
+    return phraseValue;
   })));
   const nearTarget = recordSection("crossing_road_name_lookup", () => recordLookupStep("road_name_fallback_time", () => location.humanRoad || location.crossingName || location.nearbyName || ""));
   const crossingFallback = recordLookupStep("crossing_fallback_time", () => location.crossingName || "");
   recordLookupStep("string_cleanup_normalization_time", () => {
+    const startedAt = performance.now();
     String(nearTarget || "").trim().replace(/\s+/g, " ");
     String(crossingFallback || "").trim().replace(/\s+/g, " ");
+    hotspotTimings.stringFormattingTime += performance.now() - startedAt;
     return true;
   });
   recordLookupStep("buildRoadHazardDisplay_repeated_scan_lookup_time", () => {
     const fields = [incident?.title, incident?.description, incident?.road_name, incident?.street_name, incident?.area, incident?.location_name];
     return fields.map((value) => String(value || "").trim()).filter(Boolean).length;
   });
-  const nearSuffix = recordSection("string_template_construction", () => (nearTarget ? ` near ${nearTarget}` : ""));
+  const nearSuffix = recordSection("string_template_construction", () => {
+    const startedAt = performance.now();
+    const value = (nearTarget ? ` near ${nearTarget}` : "");
+    hotspotTimings.stringFormattingTime += performance.now() - startedAt;
+    return value;
+  });
   if (reportType === "cleared") return finalizeAudit(recordSection("string_template_construction", () => `Crossing cleared${nearSuffix}`), { path: "cleared" });
   if (reportType === "blocked" || reportType === "crossing_blocked") return finalizeAudit(recordSection("string_template_construction", () => `Blocked crossing${nearSuffix}`), { path: "blocked" });
   if (["delay", "delayed", "heavy", "rail_blockage_delay", "rail_blockage"].includes(reportType)) return finalizeAudit(recordSection("string_template_construction", () => `Rail delay${nearSuffix}`), { path: "delay" });
   return finalizeAudit(recordSection("fallback_logic", () => `Crossing disruption${nearSuffix}`), { path: "crossing_fallback" });
 }
 
-function recordLocalizedLabelLookupAudit(incident = {}, lookupTimings = {}, cycleId = 0) {
+function recordLocalizedLabelLookupAudit(incident = {}, lookupTimings = {}, cycleId = 0, hotspotTimings = {}) {
   if (!validateAuditCycleWrite(cycleId)) return;
   const roundedLookupTimings = Object.fromEntries(
     Object.entries(lookupTimings || {}).map(([stepName, durationMs]) => [stepName, Number(Number(durationMs || 0).toFixed(3))])
@@ -13923,6 +13961,46 @@ function recordLocalizedLabelLookupAudit(incident = {}, lookupTimings = {}, cycl
     auditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0)
   };
   gridlyCommuteIntelligenceAuditState.localizedLabelPerIncidentLookupTimings.push(perIncidentEntry);
+  const roundedHotspotTimings = Object.fromEntries(
+    Object.entries(hotspotTimings || {}).map(([stepName, durationMs]) => [stepName, Number(Number(durationMs || 0).toFixed(3))])
+  );
+  const hotspotStore = gridlyCommuteIntelligenceAuditState.localizedLabelHotspotTrace || { totals: {}, perIncident: [], slowestStep: null, repeatedWork: [] };
+  Object.entries(roundedHotspotTimings).forEach(([stepName, durationMs]) => {
+    hotspotStore.totals[stepName] = Number(((Number(hotspotStore.totals[stepName] || 0)) + Number(durationMs || 0)).toFixed(3));
+  });
+  hotspotStore.perIncident.push({
+    incidentId: perIncidentEntry.incidentId,
+    reportType: perIncidentEntry.reportType,
+    timings: roundedHotspotTimings,
+    totalMs: Number(Object.values(roundedHotspotTimings).reduce((sum, value) => sum + Number(value || 0), 0).toFixed(3)),
+    auditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0)
+  });
+  const hotspotIncidentSlowest = Object.entries(roundedHotspotTimings).sort((a, b) => Number(b[1]) - Number(a[1]))[0] || null;
+  if (hotspotIncidentSlowest && (!hotspotStore.slowestStep || Number(hotspotIncidentSlowest[1]) > Number(hotspotStore.slowestStep?.ms || 0))) {
+    hotspotStore.slowestStep = {
+      step: hotspotIncidentSlowest[0],
+      ms: Number(hotspotIncidentSlowest[1]),
+      incidentId: perIncidentEntry.incidentId,
+      reportType: perIncidentEntry.reportType,
+      auditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0)
+    };
+  }
+  const repeatedSignals = [];
+  if (Number(roundedLookupTimings.buildRoadHazardDisplay_repeated_scan_lookup_time || 0) > 0) {
+    repeatedSignals.push({
+      signal: "buildRoadHazardDisplay_repeated_scan_lookup_time",
+      ms: Number(roundedLookupTimings.buildRoadHazardDisplay_repeated_scan_lookup_time || 0)
+    });
+  }
+  if (repeatedSignals.length) {
+    hotspotStore.repeatedWork.push({
+      incidentId: perIncidentEntry.incidentId,
+      reportType: perIncidentEntry.reportType,
+      signals: repeatedSignals,
+      auditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0)
+    });
+  }
+  gridlyCommuteIntelligenceAuditState.localizedLabelHotspotTrace = hotspotStore;
   const incidentSlowestStep = Object.entries(roundedLookupTimings).sort((a, b) => Number(b[1]) - Number(a[1]))[0] || null;
   if (!incidentSlowestStep) return;
   const currentSlowest = gridlyCommuteIntelligenceAuditState.localizedLabelSlowestLookupStep;
@@ -14275,6 +14353,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.localizedLabelLookupSections = {};
   gridlyCommuteIntelligenceAuditState.localizedLabelPerIncidentLookupTimings = [];
   gridlyCommuteIntelligenceAuditState.localizedLabelSlowestLookupStep = null;
+  gridlyCommuteIntelligenceAuditState.localizedLabelHotspotTrace = { totals: {}, perIncident: [], slowestStep: null, repeatedWork: [] };
   gridlyCommuteIntelligenceAuditState.sharedCacheRetrievalSections = {};
   gridlyCommuteIntelligenceAuditState.sharedCachePerIncidentTimings = [];
   gridlyCommuteIntelligenceAuditState.sharedCacheSlowestStep = null;
@@ -14631,6 +14710,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     gridlyCommuteIntelligenceAuditState.localizedLabelLookupSections = {};
     gridlyCommuteIntelligenceAuditState.localizedLabelPerIncidentLookupTimings = [];
     gridlyCommuteIntelligenceAuditState.localizedLabelSlowestLookupStep = null;
+    gridlyCommuteIntelligenceAuditState.localizedLabelHotspotTrace = { totals: {}, perIncident: [], slowestStep: null, repeatedWork: [] };
     gridlyCommuteIntelligenceAuditState.sharedCacheRetrievalSections = {};
     gridlyCommuteIntelligenceAuditState.sharedCachePerIncidentTimings = [];
     gridlyCommuteIntelligenceAuditState.sharedCacheSlowestStep = null;
