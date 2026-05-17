@@ -5251,6 +5251,77 @@ const gridlyPostSubmitRefreshAudit = function gridlyPostSubmitRefreshAudit() {
   };
 };
 
+
+const gridlyCrossingPipelineAuditState = {
+  lastRunAt: null,
+  lastRunReason: "init",
+  crossingReportsLoadedCount: 0,
+  crossingReportsNormalizedCount: 0,
+  crossingReportsMergedIntoUnifiedCount: 0,
+  unifiedIncidentSourceBreakdown: {
+    railCommunity: 0,
+    roadHazardCommunity: 0,
+    futureTxdot: 0,
+    futureConstruction: 0,
+    futureFlood: 0,
+    total: 0
+  },
+  droppedCrossingReports: []
+};
+
+function updateCrossingPipelineAudit(reason = "unknown") {
+  const crossingReports = (Array.isArray(activeReports) ? activeReports : []).filter((report) => String(report?.reportKind || "").toLowerCase() === "crossing");
+  const dropped = [];
+  let normalizedCount = 0;
+
+  crossingReports.forEach((report) => {
+    if (!report || typeof report !== "object") {
+      dropped.push({ reportId: String(report?.id || ""), crossingId: "", crossingName: "", type: String(report?.type || ""), dropReason: "invalid_report_object" });
+      return;
+    }
+    if (report.expired) {
+      dropped.push({ reportId: String(report.id || ""), crossingId: String(report.crossingId || ""), crossingName: String(report.crossingName || ""), type: String(report.type || ""), dropReason: "expired" });
+      return;
+    }
+    const locationKey = getReportLocationKey(report);
+    if (!locationKey) {
+      dropped.push({ reportId: String(report.id || ""), crossingId: String(report.crossingId || ""), crossingName: String(report.crossingName || ""), type: String(report.type || ""), dropReason: "missing_location_key" });
+      return;
+    }
+    normalizedCount += 1;
+  });
+
+  const consolidated = getConsolidatedIncidents();
+  const railCount = Array.isArray(consolidated) ? consolidated.length : 0;
+  const txdotCount = futureTxdotIncidents().length;
+  const constructionCount = futureTxdotConstruction().length;
+  const floodCount = futureFloodAlerts().length;
+  const roadCount = getLiveHazardIncidents().length;
+
+  gridlyCrossingPipelineAuditState.lastRunAt = new Date().toISOString();
+  gridlyCrossingPipelineAuditState.lastRunReason = reason;
+  gridlyCrossingPipelineAuditState.crossingReportsLoadedCount = crossingReports.length;
+  gridlyCrossingPipelineAuditState.crossingReportsNormalizedCount = normalizedCount;
+  gridlyCrossingPipelineAuditState.crossingReportsMergedIntoUnifiedCount = railCount;
+  gridlyCrossingPipelineAuditState.unifiedIncidentSourceBreakdown = {
+    railCommunity: railCount,
+    roadHazardCommunity: roadCount,
+    futureTxdot: txdotCount,
+    futureConstruction: constructionCount,
+    futureFlood: floodCount,
+    total: railCount + roadCount + txdotCount + constructionCount + floodCount
+  };
+  gridlyCrossingPipelineAuditState.droppedCrossingReports = dropped;
+}
+
+window.gridlyCrossingPipelineAudit = function gridlyCrossingPipelineAudit() {
+  updateCrossingPipelineAudit("manual_window_call");
+  return {
+    ...gridlyCrossingPipelineAuditState,
+    droppedCrossingReports: [...gridlyCrossingPipelineAuditState.droppedCrossingReports]
+  };
+};
+
 function runPostSubmitRefreshInBackground(submitAudit, markSubmitStage, sourceTag = "createSharedHazardReport_success") {
   const startedAt = Date.now();
   recordPostSubmitRefreshAudit({ sourceTag, stage: "started" });
@@ -5328,6 +5399,7 @@ async function loadSharedReports(reason = "manual") {
 
     activeHazards = normalized.filter((report) => report.reportKind === "hazard");
     activeReports = normalized.filter((report) => report.reportKind !== "hazard");
+    updateCrossingPipelineAudit(`loadSharedReports:${reason}`);
 
     pushGridlyReflowTrace("post-submit refresh", "start", { source: `loadSharedReports:${reason}` });
     refreshReportHazardViews(`loadSharedReports:${reason}`);
