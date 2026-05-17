@@ -916,6 +916,11 @@ function snapshotGridlyIntelligenceCacheAudit() {
   };
 }
 
+function finalizeNearbyPairResult(state) {
+  if (!state || typeof state !== "object") return {};
+  return { ...state };
+}
+
 function makeGridlySectionTimer(sections) {
   return (name, fn) => {
     const started = performance.now();
