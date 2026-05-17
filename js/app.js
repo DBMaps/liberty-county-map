@@ -396,6 +396,11 @@ const gridlyCommuteIntelligenceAuditState = {
   formatterCacheHits: 0,
   formatterCacheMisses: 0,
   equivalentLookupReuseDetected: false,
+  derivedFieldPrecomputeActive: false,
+  derivedFieldPrecomputeHits: 0,
+  derivedFieldPrecomputeMisses: 0,
+  derivedFieldPrecomputeKeys: [],
+  derivedFieldWorkBeforeAfterEstimate: { before: 0, after: 0, delta: 0 },
   localizedLabelLookupSections: {},
   localizedLabelPerIncidentLookupTimings: [],
   localizedLabelSlowestLookupStep: null,
@@ -485,6 +490,32 @@ function finalizeNestedLookupCallMapAudit() {
   gridlyCommuteIntelligenceAuditState.nestedLookupCallMap = { totals: Object.fromEntries(totalsEntries.map((entry) => [`${entry.functionName}::${entry.collectionName}::${entry.lookupType}`, { ...entry, totalMs: Number(entry.totalMs.toFixed(4)), averageMs: Number(entry.averageMs.toFixed(4)), slowestCallMs: Number(entry.slowestCallMs.toFixed(4)) }])), byFunction, repeatedScans, indexCandidateRecommendations };
 }
 let gridlyRoadNameLookupCache = null;
+function buildDerivedFieldPrecomputeKey(incident = {}) {
+  return buildRoadNameLookupCacheKey(incident, "derived_field_precompute");
+}
+function createDerivedFieldPrecomputeStore(activeIncidents = []) {
+  const crossingLookupIndex = new Map();
+  const roadLookupIndex = new Map();
+  const nearbyLocationLookupIndex = new Map();
+  const segmentCandidateIndex = new Map();
+  (Array.isArray(activeIncidents) ? activeIncidents : []).forEach((incident) => {
+    const key = buildDerivedFieldPrecomputeKey(incident);
+    if (crossingLookupIndex.has(key)) return;
+    const payload = resolveIncidentRoadLookupPayload(incident);
+    crossingLookupIndex.set(key, String(payload?.crossingId || payload?.crossingName || ""));
+    roadLookupIndex.set(key, String(payload?.locationContext || ""));
+    nearbyLocationLookupIndex.set(key, String(payload?.nearbyName || payload?.nearestKnownLocation || ""));
+    const coords = payload?.coords || null;
+    const segmentToken = coords && Number.isFinite(coords.lat) && Number.isFinite(coords.lng)
+      ? `${coords.lat.toFixed(3)},${coords.lng.toFixed(3)}`
+      : String(payload?.crossingId || "unknown");
+    segmentCandidateIndex.set(key, segmentToken);
+    if (gridlyRoadNameLookupCache?.sharedLookupValues && !gridlyRoadNameLookupCache.sharedLookupValues.has(key)) {
+      gridlyRoadNameLookupCache.sharedLookupValues.set(key, payload);
+    }
+  });
+  return { crossingLookupIndex, roadLookupIndex, nearbyLocationLookupIndex, segmentCandidateIndex };
+}
 function gridlyCloneAuditPayload(payload) {
   if (payload === null || payload === undefined) return payload;
   return JSON.parse(JSON.stringify(payload));
@@ -625,14 +656,16 @@ function buildRoadNameLookupCacheKey(incident = {}, lookupType = "road_name_look
 
 function getSharedResolvedRoadLookup(incident = {}) {
   if (!gridlyRoadNameLookupCache?.sharedLookupValues) return resolveIncidentRoadLookupPayload(incident);
-  const sharedKey = buildRoadNameLookupCacheKey(incident, "shared_road_lookup");
+  const sharedKey = buildDerivedFieldPrecomputeKey(incident);
   if (gridlyRoadNameLookupCache.sharedLookupValues.has(sharedKey)) {
     gridlyRoadNameLookupCache.sharedHits += 1;
+    gridlyRoadNameLookupCache.derivedFieldPrecomputeHits += 1;
     return gridlyRoadNameLookupCache.sharedLookupValues.get(sharedKey);
   }
   const value = resolveIncidentRoadLookupPayload(incident);
   gridlyRoadNameLookupCache.sharedLookupValues.set(sharedKey, value);
   gridlyRoadNameLookupCache.sharedMisses += 1;
+  gridlyRoadNameLookupCache.derivedFieldPrecomputeMisses += 1;
   return value;
 }
 
@@ -917,6 +950,11 @@ function gridlyCommuteIntelligenceAudit() {
     formatterCacheHits: Number(gridlyCommuteIntelligenceAuditState.formatterCacheHits || 0),
     formatterCacheMisses: Number(gridlyCommuteIntelligenceAuditState.formatterCacheMisses || 0),
     equivalentLookupReuseDetected: Boolean(gridlyCommuteIntelligenceAuditState.equivalentLookupReuseDetected),
+    derivedFieldPrecomputeActive: Boolean(gridlyCommuteIntelligenceAuditState.derivedFieldPrecomputeActive),
+    derivedFieldPrecomputeHits: Number(gridlyCommuteIntelligenceAuditState.derivedFieldPrecomputeHits || 0),
+    derivedFieldPrecomputeMisses: Number(gridlyCommuteIntelligenceAuditState.derivedFieldPrecomputeMisses || 0),
+    derivedFieldPrecomputeKeys: [...(gridlyCommuteIntelligenceAuditState.derivedFieldPrecomputeKeys || [])],
+    derivedFieldWorkBeforeAfterEstimate: { ...(gridlyCommuteIntelligenceAuditState.derivedFieldWorkBeforeAfterEstimate || { before: 0, after: 0, delta: 0 }) },
     localizedLabelLookupSections: { ...(gridlyCommuteIntelligenceAuditState.localizedLabelLookupSections || {}) },
     localizedLabelLookupSectionsAuditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
     localizedLabelPerIncidentLookupTimings: [...(gridlyCommuteIntelligenceAuditState.localizedLabelPerIncidentLookupTimings || [])],
@@ -14459,7 +14497,13 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.labelHelperInternalSections = {};
   gridlyCommuteIntelligenceAuditState.labelHelperCallStats = {};
   gridlyCommuteIntelligenceAuditState.labelHelperSlowestCall = null;
-  gridlyRoadNameLookupCache = { formatterValues: new Map(), formatterHits: 0, formatterMisses: 0, sharedLookupValues: new Map(), sharedHits: 0, sharedMisses: 0 };
+  gridlyRoadNameLookupCache = {
+    formatterValues: new Map(), formatterHits: 0, formatterMisses: 0,
+    sharedLookupValues: new Map(), sharedHits: 0, sharedMisses: 0,
+    precomputedIndexes: null, precomputeActive: false, precomputeKeys: [],
+    derivedFieldPrecomputeHits: 0, derivedFieldPrecomputeMisses: 0,
+    derivedFieldWorkBeforeAfterEstimate: { before: 0, after: 0, delta: 0 }
+  };
   gridlyCommuteIntelligenceAuditState.roadNameLookupCacheActive = true;
   gridlyCommuteIntelligenceAuditState.roadNameLookupCacheHits = 0;
   gridlyCommuteIntelligenceAuditState.roadNameLookupCacheMisses = 0;
@@ -14469,6 +14513,11 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.formatterCacheHits = 0;
   gridlyCommuteIntelligenceAuditState.formatterCacheMisses = 0;
   gridlyCommuteIntelligenceAuditState.equivalentLookupReuseDetected = false;
+  gridlyCommuteIntelligenceAuditState.derivedFieldPrecomputeActive = false;
+  gridlyCommuteIntelligenceAuditState.derivedFieldPrecomputeHits = 0;
+  gridlyCommuteIntelligenceAuditState.derivedFieldPrecomputeMisses = 0;
+  gridlyCommuteIntelligenceAuditState.derivedFieldPrecomputeKeys = [];
+  gridlyCommuteIntelligenceAuditState.derivedFieldWorkBeforeAfterEstimate = { before: 0, after: 0, delta: 0 };
   gridlyCommuteIntelligenceAuditState.localizedLabelLookupSections = {};
   gridlyCommuteIntelligenceAuditState.localizedLabelPerIncidentLookupTimings = [];
   gridlyCommuteIntelligenceAuditState.localizedLabelSlowestLookupStep = null;
@@ -14484,6 +14533,16 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   const timeSection = makeGridlySectionTimer(sections);
   const routeHazard = timeSection("route_hazard_scoring", () => (routeWatchActivated ? getRouteHazardAssessment() : null));
   const activeIncidents = timeSection("unified_incident_retrieval", () => getActiveUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "active"));
+  const precomputeStartedAt = performance.now();
+  gridlyRoadNameLookupCache.precomputedIndexes = createDerivedFieldPrecomputeStore(activeIncidents);
+  gridlyRoadNameLookupCache.precomputeActive = Boolean(gridlyRoadNameLookupCache.precomputedIndexes);
+  gridlyRoadNameLookupCache.precomputeKeys = Array.from(gridlyRoadNameLookupCache.precomputedIndexes?.roadLookupIndex?.keys?.() || []);
+  gridlyRoadNameLookupCache.derivedFieldWorkBeforeAfterEstimate = {
+    before: activeIncidents.length * 2,
+    after: activeIncidents.length,
+    delta: activeIncidents.length
+  };
+  sections.derived_field_precompute_index = Number((performance.now() - precomputeStartedAt).toFixed(3));
   const unifiedIncidentIds = (unifiedIncidentsForAudit || []).map((incident) => String(incident?.id || ""));
   const activeIncidentIds = (activeIncidents || []).map((incident) => String(incident?.id || ""));
   const activeIncidentIdSet = new Set(activeIncidents.map((incident) => String(incident?.id || "")));
@@ -14759,6 +14818,11 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.formatterCacheHits = Number(gridlyRoadNameLookupCache?.formatterHits || 0);
   gridlyCommuteIntelligenceAuditState.formatterCacheMisses = Number(gridlyRoadNameLookupCache?.formatterMisses || 0);
   gridlyCommuteIntelligenceAuditState.equivalentLookupReuseDetected = Number(gridlyRoadNameLookupCache?.sharedHits || 0) > 0;
+  gridlyCommuteIntelligenceAuditState.derivedFieldPrecomputeActive = Boolean(gridlyRoadNameLookupCache?.precomputeActive);
+  gridlyCommuteIntelligenceAuditState.derivedFieldPrecomputeHits = Number(gridlyRoadNameLookupCache?.derivedFieldPrecomputeHits || 0);
+  gridlyCommuteIntelligenceAuditState.derivedFieldPrecomputeMisses = Number(gridlyRoadNameLookupCache?.derivedFieldPrecomputeMisses || 0);
+  gridlyCommuteIntelligenceAuditState.derivedFieldPrecomputeKeys = [...(gridlyRoadNameLookupCache?.precomputeKeys || [])];
+  gridlyCommuteIntelligenceAuditState.derivedFieldWorkBeforeAfterEstimate = { ...(gridlyRoadNameLookupCache?.derivedFieldWorkBeforeAfterEstimate || { before: 0, after: 0, delta: 0 }) };
   const incidentsProcessedCount = Number(commuteModelHelperCallCounts.incidentsProcessed || 0);
   const commuteModelInputIds = (intelItems || []).map((item) => String(item?.incident?.id || ""));
   const processedIncidentIdSet = new Set(commuteModelInputIds);
