@@ -175,6 +175,54 @@ let activeHazards = [];
 let unifiedIncidentLayer;
 let userLocation = null;
 let userMarker = null;
+
+const GRIDLY_AUDIT_HELPER_NAMES = [
+  "gridlyCommuteIntelligenceAudit",
+  "gridlyRouteRelevanceAudit",
+  "gridlyReflowAudit",
+  "gridlyRefreshBreakdownAudit",
+  "gridlyPortraitIntelligenceBreakdownAudit",
+  "gridlyPostSubmitRefreshAudit",
+  "gridlyRefreshAudit",
+  "gridlyGeoAudit",
+  "gridlyActiveIncidentAudit",
+  "gridlyDevPurgeRecentRoadHazards",
+  "gridlyRouteButtonSystemAudit",
+  "gridlyRouteSetupButtonAudit",
+  "gridlyRouteAuditGlobalsCheck",
+  "gridlyPortraitV2LayerAudit",
+  "gridlyCommuteAuditGlobalsCheck"
+];
+
+function exposeGridlyAuditHelper(name, fn, options = {}) {
+  try {
+    if (typeof name !== "string" || !name) return null;
+    if (typeof fn !== "function") return null;
+    const target = typeof window !== "undefined" ? window : globalThis;
+    if (!target || typeof target !== "object") return null;
+    target[name] = fn;
+    const registry = target.__gridlyAuditHelperRegistry || (target.__gridlyAuditHelperRegistry = {});
+    registry[name] = {
+      name,
+      type: typeof fn,
+      exposedAt: Date.now(),
+      overwrite: options.overwrite !== false
+    };
+    return fn;
+  } catch (_error) {
+    return null;
+  }
+}
+
+function gridlyAuditHelpersCheck() {
+  const target = typeof window !== "undefined" ? window : globalThis;
+  return GRIDLY_AUDIT_HELPER_NAMES.reduce((audit, helperName) => {
+    audit[helperName] = typeof target?.[helperName];
+    return audit;
+  }, {});
+}
+
+exposeGridlyAuditHelper("gridlyAuditHelpersCheck", gridlyAuditHelpersCheck);
 const gridlyGeoAuditState = {
   startupRequestsBlocked: 0,
   geolocationRequestsBySource: {},
@@ -507,7 +555,7 @@ function recordPortraitIntelligenceBreakdown(functionName, startedAt, sections) 
   };
 }
 
-window.gridlyPortraitIntelligenceBreakdownAudit = function gridlyPortraitIntelligenceBreakdownAudit() {
+const gridlyPortraitIntelligenceBreakdownAudit = function gridlyPortraitIntelligenceBreakdownAudit() {
   const refreshPortraitV2LocalizedIntelligence = { ...gridlyPortraitIntelligenceBreakdownAuditState.refreshPortraitV2LocalizedIntelligence };
   const renderAlerts = { ...gridlyPortraitIntelligenceBreakdownAuditState.renderAlerts };
   const updateDailyHabitStatus = { ...gridlyPortraitIntelligenceBreakdownAuditState.updateDailyHabitStatus };
@@ -533,6 +581,8 @@ window.gridlyPortraitIntelligenceBreakdownAudit = function gridlyPortraitIntelli
     ]
   };
 };
+
+exposeGridlyAuditHelper("gridlyPortraitIntelligenceBreakdownAudit", gridlyPortraitIntelligenceBreakdownAudit);
 
 function gridlyCommuteIntelligenceAudit() {
   const totalMs = Number(gridlyCommuteIntelligenceAuditState.totalMs || 0);
@@ -596,13 +646,15 @@ function gridlyCommuteIntelligenceAudit() {
   };
 }
 
-window.gridlyCommuteIntelligenceAudit = gridlyCommuteIntelligenceAudit;
+exposeGridlyAuditHelper("gridlyCommuteIntelligenceAudit", gridlyCommuteIntelligenceAudit);
 
-window.gridlyCommuteAuditGlobalsCheck = function () {
+const gridlyCommuteAuditGlobalsCheck = function () {
   return {
     commuteIntelligenceAudit: typeof window.gridlyCommuteIntelligenceAudit
   };
 };
+
+exposeGridlyAuditHelper("gridlyCommuteAuditGlobalsCheck", gridlyCommuteAuditGlobalsCheck);
 
 function gridlyRouteRelevanceAudit() {
   const auditStartedAt = performance.now();
@@ -704,7 +756,7 @@ function gridlyRouteRelevanceAudit() {
   };
 };
 
-window.gridlyRouteRelevanceAudit = gridlyRouteRelevanceAudit;
+exposeGridlyAuditHelper("gridlyRouteRelevanceAudit", gridlyRouteRelevanceAudit);
 window.gridlyRouteRelevanceAuditGlobalsCheck = function () {
   return {
     routeRelevanceAudit: typeof window.gridlyRouteRelevanceAudit
@@ -781,7 +833,7 @@ window.gridlyNetworkAudit = function gridlyNetworkAudit() {
     lastHazardSubmitLifecycle: gridlyNetworkAuditState.hazardSubmit.lastLifecycle
   };
 };
-window.gridlyRefreshAudit = function gridlyRefreshAudit() {
+const gridlyRefreshAudit = function gridlyRefreshAudit() {
   return {
     totalRefreshCount: gridlyRefreshAuditState.totalRefreshCount,
     refreshSourceCounts: { ...gridlyRefreshAuditState.refreshSourceCounts },
@@ -793,7 +845,7 @@ window.gridlyRefreshAudit = function gridlyRefreshAudit() {
   };
 };
 
-window.gridlyRefreshBreakdownAudit = function gridlyRefreshBreakdownAudit() {
+const gridlyRefreshBreakdownAudit = function gridlyRefreshBreakdownAudit() {
   const childDurations = { ...(gridlyRefreshAuditState.lastChildDurations || {}) };
   const childEntries = Object.entries(childDurations).filter(([, duration]) => Number.isFinite(duration));
   const slowestChildEntry = childEntries.sort((a, b) => b[1] - a[1])[0] || null;
@@ -4202,7 +4254,7 @@ function recordGridlyGeolocationRequest(source, options = {}) {
   }
 }
 
-window.gridlyGeoAudit = function gridlyGeoAudit() {
+const gridlyGeoAudit = function gridlyGeoAudit() {
   return {
     startupRequestsBlocked: gridlyGeoAuditState.startupRequestsBlocked,
     geolocationRequestsBySource: { ...gridlyGeoAuditState.geolocationRequestsBySource },
@@ -4697,7 +4749,7 @@ window.gridlyUnifiedHazardSourceAudit = async function gridlyUnifiedHazardSource
 };
 
 
-window.gridlyActiveIncidentAudit = function gridlyActiveIncidentAudit() {
+const gridlyActiveIncidentAudit = function gridlyActiveIncidentAudit() {
   const now = new Date();
   const liveHazardIncidents = getLiveHazardIncidents();
 
@@ -4774,7 +4826,7 @@ window.gridlyActiveIncidentAudit = function gridlyActiveIncidentAudit() {
   return audit;
 };
 
-window.gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoadHazards(options = {}) {
+const gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoadHazards(options = {}) {
   const host = String(window?.location?.hostname || "").toLowerCase();
   const isDevHost = host === "localhost" || host === "127.0.0.1" || host.endsWith(".local") || host === "";
   if (!isDevHost) {
@@ -4987,7 +5039,7 @@ function recordPostSubmitRefreshAudit(meta = {}) {
   if (gridlyPostSubmitRefreshAuditState.recentCalls.length > 25) gridlyPostSubmitRefreshAuditState.recentCalls.shift();
 }
 
-window.gridlyPostSubmitRefreshAudit = function gridlyPostSubmitRefreshAudit() {
+const gridlyPostSubmitRefreshAudit = function gridlyPostSubmitRefreshAudit() {
   return {
     callCount: gridlyPostSubmitRefreshAuditState.callCount,
     callSources: { ...gridlyPostSubmitRefreshAuditState.callSources },
@@ -17798,14 +17850,15 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       console.info("Gridly Route Setup button audit", result);
       return result;
     };
-    window.gridlyRouteSetupButtonAudit = routeSetupButtonAuditHelper;
-    window.gridlyRouteButtonSystemAudit = routeSetupButtonAuditHelper;
-    window.gridlyRouteAuditGlobalsCheck = function gridlyRouteAuditGlobalsCheck() {
+    exposeGridlyAuditHelper("gridlyRouteSetupButtonAudit", routeSetupButtonAuditHelper);
+    exposeGridlyAuditHelper("gridlyRouteButtonSystemAudit", routeSetupButtonAuditHelper);
+    const gridlyRouteAuditGlobalsCheck = function gridlyRouteAuditGlobalsCheck() {
       return {
         routeButtonSystemAudit: typeof window.gridlyRouteButtonSystemAudit,
         routeSetupButtonAudit: typeof window.gridlyRouteSetupButtonAudit
       };
     };
+    exposeGridlyAuditHelper("gridlyRouteAuditGlobalsCheck", gridlyRouteAuditGlobalsCheck);
   }
   function bindV2(){
     applyPortraitV2SurfaceContainment();
@@ -18011,7 +18064,7 @@ const v134ReportingRefinementApplied = true;
   };
 
 
-  window.gridlyReflowAudit = function gridlyReflowAudit() {
+  const gridlyReflowAudit = function gridlyReflowAudit() {
     const layoutReads = [
       { pattern: 'getBoundingClientRect', notes: 'Frequently used in sheet visibility checks, popup placement, map/control diagnostics, and route/report UI probes.' },
       { pattern: 'getComputedStyle', notes: 'Used heavily in visibility gating and state diagnostics across portrait v2, modals, route setup, and alerts surfaces.' },
@@ -18080,7 +18133,7 @@ const v134ReportingRefinementApplied = true;
     };
   };
 
-  window.gridlyPortraitV2LayerAudit = function gridlyPortraitV2LayerAudit() {
+  const gridlyPortraitV2LayerAudit = function gridlyPortraitV2LayerAudit() {
     return new Promise((resolve) => requestAnimationFrame(() => {
     const backdrop = document.getElementById("gridlyPortraitV2SheetBackdrop");
     const sheet = document.getElementById("gridlyPortraitV2Sheet");
@@ -18203,5 +18256,16 @@ const v134ReportingRefinementApplied = true;
     });
     });
   };
+
+
+exposeGridlyAuditHelper("gridlyRefreshAudit", gridlyRefreshAudit);
+exposeGridlyAuditHelper("gridlyRefreshBreakdownAudit", gridlyRefreshBreakdownAudit);
+exposeGridlyAuditHelper("gridlyGeoAudit", gridlyGeoAudit);
+exposeGridlyAuditHelper("gridlyActiveIncidentAudit", gridlyActiveIncidentAudit);
+exposeGridlyAuditHelper("gridlyDevPurgeRecentRoadHazards", gridlyDevPurgeRecentRoadHazards);
+exposeGridlyAuditHelper("gridlyPostSubmitRefreshAudit", gridlyPostSubmitRefreshAudit);
+exposeGridlyAuditHelper("gridlyReflowAudit", gridlyReflowAudit);
+exposeGridlyAuditHelper("gridlyPortraitV2LayerAudit", gridlyPortraitV2LayerAudit);
+
   document.addEventListener("DOMContentLoaded", bindV2);
 })();
