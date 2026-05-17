@@ -777,6 +777,14 @@ function sanitizeEmptyCommuteAuditPayload(payload) {
   result.emptyCycleSanitized = shouldSanitizeEmptyCycle;
   result.commuteAuditExcludedIncidentCount = Math.max(0, verifiedUnifiedIncidentCount - incidentsProcessed);
   result.commuteAuditExclusionReasons = Array.isArray(result.commuteAuditExclusionReasons) ? result.commuteAuditExclusionReasons : [];
+  const expectedExcludedCount = Number(result.commuteAuditExcludedIncidentCount || 0);
+  const actualReasonCount = Number(result.commuteAuditExclusionReasons.length || 0);
+  if (expectedExcludedCount > 0 && actualReasonCount < expectedExcludedCount) {
+    result.exclusionReasonCollectionFailed = true;
+    result.exclusionReasonCollectionStage = String(result.exclusionReasonCollectionStage || "sanitize_empty_commute_audit_payload");
+    result.expectedExcludedCount = expectedExcludedCount;
+    result.actualReasonCount = actualReasonCount;
+  }
   return result;
 }
 
@@ -860,7 +868,11 @@ function gridlyCommuteIntelligenceAudit() {
     commuteAuditUnifiedIncidentCountAfterBuild: Number(gridlyCommuteIntelligenceAuditState.commuteAuditUnifiedIncidentCountAfterBuild || 0),
     commuteAuditSanitizerReason: gridlyCommuteIntelligenceAuditState.commuteAuditSanitizerReason || null,
     commuteAuditExcludedIncidentCount: Number(gridlyCommuteIntelligenceAuditState.commuteAuditExcludedIncidentCount || 0),
-    commuteAuditExclusionReasons: [...(gridlyCommuteIntelligenceAuditState.commuteAuditExclusionReasons || [])]
+    commuteAuditExclusionReasons: [...(gridlyCommuteIntelligenceAuditState.commuteAuditExclusionReasons || [])],
+    exclusionReasonCollectionFailed: Boolean(gridlyCommuteIntelligenceAuditState.exclusionReasonCollectionFailed),
+    exclusionReasonCollectionStage: gridlyCommuteIntelligenceAuditState.exclusionReasonCollectionStage || null,
+    expectedExcludedCount: Number(gridlyCommuteIntelligenceAuditState.expectedExcludedCount || 0),
+    actualReasonCount: Number(gridlyCommuteIntelligenceAuditState.actualReasonCount || 0)
   };
   return sanitizeEmptyCommuteAuditPayload(result);
 }
@@ -14540,6 +14552,14 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   }
   gridlyCommuteIntelligenceAuditState.commuteAuditExcludedIncidentCount = excludedIncidentCount;
   gridlyCommuteIntelligenceAuditState.commuteAuditExclusionReasons = exclusionReasons;
+  gridlyCommuteIntelligenceAuditState.exclusionReasonCollectionFailed = false;
+  gridlyCommuteIntelligenceAuditState.exclusionReasonCollectionStage = null;
+  gridlyCommuteIntelligenceAuditState.expectedExcludedCount = excludedIncidentCount;
+  gridlyCommuteIntelligenceAuditState.actualReasonCount = exclusionReasons.length;
+  if (excludedIncidentCount > 0 && exclusionReasons.length < excludedIncidentCount) {
+    gridlyCommuteIntelligenceAuditState.exclusionReasonCollectionFailed = true;
+    gridlyCommuteIntelligenceAuditState.exclusionReasonCollectionStage = "build_commute_consequence_intelligence_publish";
+  }
   if (unifiedIncidentCount === 0) {
     const sanitizerReasons = [];
     if (unifiedIncidentCount === 0) sanitizerReasons.push("unifiedIncidentCount=0");
