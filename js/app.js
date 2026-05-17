@@ -371,6 +371,7 @@ const gridlyPortraitIntelligenceBreakdownAuditState = {
 const gridlyCommuteIntelligenceAuditState = {
   totalMs: 0,
   derivedFieldGenerationTrace: { totals: {}, perIncident: [], slowestStep: null, repeatedWork: [] },
+  nestedLookupCallMap: { totals: {}, byFunction: {}, repeatedScans: [], indexCandidateRecommendations: [] },
   sections: {},
   counts: {},
   commuteModelNestedSections: {},
@@ -427,6 +428,60 @@ const gridlyCommuteIntelligenceAuditState = {
   cyclePublishState: "idle",
   at: 0
 };
+function recordNestedLookupOperation({ functionName = "", collectionName = "", collectionLength = 0, lookupType = "unknown", durationMs = 0 } = {}) {
+  const fn = String(functionName || "unknown");
+  const collection = String(collectionName || "unknown");
+  const type = String(lookupType || "unknown");
+  const key = `${fn}::${collection}::${type}`;
+  if (!gridlyCommuteIntelligenceAuditState.nestedLookupCallMap || typeof gridlyCommuteIntelligenceAuditState.nestedLookupCallMap !== "object") {
+    gridlyCommuteIntelligenceAuditState.nestedLookupCallMap = { totals: {}, byFunction: {}, repeatedScans: [], indexCandidateRecommendations: [] };
+  }
+  const store = gridlyCommuteIntelligenceAuditState.nestedLookupCallMap;
+  if (!store.totals[key]) {
+    store.totals[key] = { functionName: fn, collectionName: collection, collectionLength: Number(collectionLength || 0), lookupType: type, callCount: 0, totalMs: 0, averageMs: 0, slowestCallMs: 0 };
+  }
+  const item = store.totals[key];
+  item.collectionLength = Math.max(Number(item.collectionLength || 0), Number(collectionLength || 0));
+  item.callCount += 1;
+  item.totalMs += Number(durationMs || 0);
+  item.averageMs = item.callCount > 0 ? Number((item.totalMs / item.callCount).toFixed(4)) : 0;
+  item.slowestCallMs = Math.max(Number(item.slowestCallMs || 0), Number(durationMs || 0));
+}
+function runNestedLookupOperation(meta = {}, fn = () => null) {
+  const startedAt = performance.now();
+  const value = fn();
+  recordNestedLookupOperation({ ...meta, durationMs: performance.now() - startedAt });
+  return value;
+}
+function finalizeNestedLookupCallMapAudit() {
+  const totalsEntries = Object.values(gridlyCommuteIntelligenceAuditState.nestedLookupCallMap?.totals || {});
+  const byFunction = {};
+  totalsEntries.forEach((entry) => {
+    if (!byFunction[entry.functionName]) byFunction[entry.functionName] = { totalMs: 0, callCount: 0, operations: [] };
+    byFunction[entry.functionName].totalMs += Number(entry.totalMs || 0);
+    byFunction[entry.functionName].callCount += Number(entry.callCount || 0);
+    byFunction[entry.functionName].operations.push({
+      collectionName: entry.collectionName,
+      collectionLength: entry.collectionLength,
+      lookupType: entry.lookupType,
+      callCount: entry.callCount,
+      totalMs: Number(Number(entry.totalMs || 0).toFixed(4)),
+      averageMs: Number(Number(entry.averageMs || 0).toFixed(4)),
+      slowestCallMs: Number(Number(entry.slowestCallMs || 0).toFixed(4))
+    });
+  });
+  const repeatedScans = totalsEntries.filter((entry) => Number(entry.callCount || 0) > 1 && Number(entry.collectionLength || 0) > 10).map((entry) => ({
+    functionName: entry.functionName, collectionName: entry.collectionName, lookupType: entry.lookupType, callCount: Number(entry.callCount || 0), collectionLength: Number(entry.collectionLength || 0), totalMs: Number(Number(entry.totalMs || 0).toFixed(4))
+  }));
+  const indexCandidateRecommendations = repeatedScans
+    .filter((entry) => /crossings|reports|hazards/i.test(entry.collectionName))
+    .map((entry) => {
+      if (/crossings/i.test(entry.collectionName)) return { collectionName: "crossings", recommendation: "crossingById Map", reason: "Repeated scans across crossings detected." };
+      if (/reports/i.test(entry.collectionName)) return { collectionName: "reports", recommendation: "reportById Map", reason: "Repeated scans across reports detected." };
+      return { collectionName: "hazards", recommendation: "hazardById Map", reason: "Repeated scans across hazards detected." };
+    });
+  gridlyCommuteIntelligenceAuditState.nestedLookupCallMap = { totals: Object.fromEntries(totalsEntries.map((entry) => [`${entry.functionName}::${entry.collectionName}::${entry.lookupType}`, { ...entry, totalMs: Number(entry.totalMs.toFixed(4)), averageMs: Number(entry.averageMs.toFixed(4)), slowestCallMs: Number(entry.slowestCallMs.toFixed(4)) }])), byFunction, repeatedScans, indexCandidateRecommendations };
+}
 let gridlyRoadNameLookupCache = null;
 function gridlyCloneAuditPayload(payload) {
   if (payload === null || payload === undefined) return payload;
@@ -882,6 +937,7 @@ function gridlyCommuteIntelligenceAudit() {
     payloadShapingSlowestStepAuditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
     derivedFieldGenerationTrace: gridlyCloneAuditPayload(gridlyCommuteIntelligenceAuditState.derivedFieldGenerationTrace || { totals: {}, perIncident: [], slowestStep: null, repeatedWork: [] }),
     derivedFieldGenerationTraceAuditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
+    nestedLookupCallMap: gridlyCloneAuditPayload(gridlyCommuteIntelligenceAuditState.nestedLookupCallMap || { totals: {}, byFunction: {}, repeatedScans: [], indexCandidateRecommendations: [] }),
     slowestSection,
     recommendedTargets,
     timingBoundaryVerified: Boolean(gridlyCommuteIntelligenceAuditState.timingBoundaryVerified),
@@ -13544,7 +13600,12 @@ function resolveNearbyKnownLocation(lat, lng, options = {}) {
   const coords = normalizeCoordinatePair(lat, lng);
   if (!coords) return "";
   const radiusMiles = Number.isFinite(Number(options?.radiusMiles)) ? Number(options.radiusMiles) : 1.8;
-  const nearest = findNearestCrossings(coords.lat, coords.lng, 1)[0];
+  const nearest = runNestedLookupOperation({
+    functionName: "resolveNearbyKnownLocation",
+    collectionName: "crossings",
+    collectionLength: Array.isArray(crossings) ? crossings.length : 0,
+    lookupType: "scan"
+  }, () => findNearestCrossings(coords.lat, coords.lng, 1))[0];
   if (!nearest || !Number.isFinite(Number(nearest.distance)) || Number(nearest.distance) > radiusMiles) return "";
   const evaluation = evaluateRoadNameCandidate(nearest?.name || "");
   return evaluation.valid ? evaluation.normalized : "";
@@ -13582,12 +13643,17 @@ function resolveNearestRoadName(lat, lng) {
     return null;
   }
 
-  const nearestSegmentMatch = findNearestRoadwaySegment(coords.lat, coords.lng, 1.2);
+  const nearestSegmentMatch = runNestedLookupOperation({
+    functionName: "resolveNearestRoadName",
+    collectionName: "roadwaySegmentFeatures",
+    collectionLength: Array.isArray(roadwaySegmentFeatures) ? roadwaySegmentFeatures.length : 0,
+    lookupType: "scan"
+  }, () => findNearestRoadwaySegment(coords.lat, coords.lng, 1.2));
   if (nearestSegmentMatch?.feature) {
     const props = nearestSegmentMatch.feature?.properties || {};
     const segmentCandidates = [props?.name, props?.ref, props?.highway].map((value) => evaluateRoadNameCandidate(value));
-    const selectedSegment = segmentCandidates.find((entry) => entry.valid);
-    const rejectedSegments = segmentCandidates.filter((entry) => entry.normalized && !entry.valid);
+    const selectedSegment = runNestedLookupOperation({ functionName: "resolveNearestRoadName", collectionName: "segmentCandidates", collectionLength: segmentCandidates.length, lookupType: "find" }, () => segmentCandidates.find((entry) => entry.valid));
+    const rejectedSegments = runNestedLookupOperation({ functionName: "resolveNearestRoadName", collectionName: "segmentCandidates", collectionLength: segmentCandidates.length, lookupType: "filter" }, () => segmentCandidates.filter((entry) => entry.normalized && !entry.valid));
     debugState.rejectedCandidates.push(...rejectedSegments.map((entry) => entry.normalized));
     debugState.rejectionReasons.push(...rejectedSegments.map((entry) => entry.reason));
     debugState.normalizedCandidateSamples.push(...segmentCandidates.map((entry) => entry.normalized).filter(Boolean).slice(0, 4));
@@ -13609,12 +13675,17 @@ function resolveNearestRoadName(lat, lng) {
     debugState.fallbackReason = roadwayDatasetLoaded ? "no_segment_within_radius" : "roadway_dataset_unavailable";
   }
 
-  const nearest = findNearestCrossings(coords.lat, coords.lng, 1)[0];
+  const nearest = runNestedLookupOperation({
+    functionName: "resolveNearestRoadName",
+    collectionName: "crossings",
+    collectionLength: Array.isArray(crossings) ? crossings.length : 0,
+    lookupType: "scan"
+  }, () => findNearestCrossings(coords.lat, coords.lng, 1))[0];
   if (nearest && Number.isFinite(Number(nearest.distance)) && Number(nearest.distance) <= 0.8) {
     const tempCandidate = [nearest?.roadwayName, nearest?.road_name, nearest?.street_name, nearest?.crossing_street, nearest?.cross_street, nearest?.name]
       .map((value) => evaluateRoadNameCandidate(value));
-    const selected = tempCandidate.find((entry) => entry.valid);
-    const rejected = tempCandidate.filter((entry) => entry.normalized && !entry.valid);
+    const selected = runNestedLookupOperation({ functionName: "resolveNearestRoadName", collectionName: "crossingCandidates", collectionLength: tempCandidate.length, lookupType: "find" }, () => tempCandidate.find((entry) => entry.valid));
+    const rejected = runNestedLookupOperation({ functionName: "resolveNearestRoadName", collectionName: "crossingCandidates", collectionLength: tempCandidate.length, lookupType: "filter" }, () => tempCandidate.filter((entry) => entry.normalized && !entry.valid));
     debugState.rejectedCandidates = rejected.map((entry) => entry.normalized);
     debugState.rejectionReasons = rejected.map((entry) => entry.reason);
     debugState.normalizedCandidateSamples = tempCandidate.map((entry) => entry.normalized).filter(Boolean).slice(0, 8).concat(debugState.normalizedCandidateSamples).slice(0, 8);
@@ -14403,6 +14474,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.payloadShapingPerIncidentTimings = [];
   gridlyCommuteIntelligenceAuditState.payloadShapingSlowestStep = null;
   gridlyCommuteIntelligenceAuditState.derivedFieldGenerationTrace = { totals: {}, perIncident: [], slowestStep: null, repeatedWork: [] };
+  gridlyCommuteIntelligenceAuditState.nestedLookupCallMap = { totals: {}, byFunction: {}, repeatedScans: [], indexCandidateRecommendations: [] };
   const timeSection = makeGridlySectionTimer(sections);
   const routeHazard = timeSection("route_hazard_scoring", () => (routeWatchActivated ? getRouteHazardAssessment() : null));
   const activeIncidents = timeSection("unified_incident_retrieval", () => getActiveUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "active"));
@@ -14651,6 +14723,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   sections.uncategorized_or_wrapper_overhead = Number(Math.max(0, (performance.now() - startedAt) - Object.values(sections).reduce((sum, ms) => sum + (Number.isFinite(ms) ? ms : 0), 0)).toFixed(3));
   sections.dedupe_logic = 0;
   gridlyCommuteIntelligenceAuditState.totalMs = performance.now() - startedAt;
+  finalizeNestedLookupCallMapAudit();
   gridlyCommuteIntelligenceAuditState.sections = sections;
   gridlyCommuteIntelligenceAuditState.counts = counts;
   gridlyCommuteIntelligenceAuditState.commuteModelNestedSections = Object.fromEntries(Object.entries(commuteModelNestedSections).map(([name, ms]) => [name, Number(ms.toFixed(3))]));
@@ -14761,6 +14834,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     gridlyCommuteIntelligenceAuditState.payloadShapingPerIncidentTimings = [];
     gridlyCommuteIntelligenceAuditState.payloadShapingSlowestStep = null;
   gridlyCommuteIntelligenceAuditState.derivedFieldGenerationTrace = { totals: {}, perIncident: [], slowestStep: null, repeatedWork: [] };
+  gridlyCommuteIntelligenceAuditState.nestedLookupCallMap = { totals: {}, byFunction: {}, repeatedScans: [], indexCandidateRecommendations: [] };
     gridlyCommuteIntelligenceAuditState.titleLabelPerIncidentTimings = [];
     gridlyCommuteIntelligenceAuditState.commuteModelPerIncidentTimings = [];
     gridlyCommuteIntelligenceAuditState.titleLabelSlowestIncident = null;
