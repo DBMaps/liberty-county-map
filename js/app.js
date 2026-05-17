@@ -337,6 +337,8 @@ const gridlyCommuteIntelligenceAuditState = {
   routeRelevanceNestedSections: {},
   suspectedMisattribution: null,
   actualSlowSectionCandidate: null,
+  auditCycleId: 0,
+  auditCollectionEnabled: false,
   at: 0
 };
 let gridlyRoadNameLookupCache = null;
@@ -641,6 +643,7 @@ function gridlyCommuteIntelligenceAudit() {
     uncategorized_or_wrapper_overhead: Number(sections.uncategorized_or_wrapper_overhead || 0)
   };
   return {
+    auditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
     totalMs,
     sections,
     sectionAttribution,
@@ -654,8 +657,11 @@ function gridlyCommuteIntelligenceAudit() {
     titleLabelSlowestHelper: gridlyCommuteIntelligenceAuditState.titleLabelSlowestHelper || null,
     titleLabelSlowestIncident: gridlyCommuteIntelligenceAuditState.titleLabelSlowestIncident || null,
     labelHelperInternalSections: { ...(gridlyCommuteIntelligenceAuditState.labelHelperInternalSections || {}) },
+    labelHelperInternalSectionsAuditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
     labelHelperCallStats: { ...(gridlyCommuteIntelligenceAuditState.labelHelperCallStats || {}) },
+    labelHelperCallStatsAuditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
     labelHelperSlowestCall: gridlyCommuteIntelligenceAuditState.labelHelperSlowestCall || null,
+    labelHelperSlowestCallAuditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
     roadNameLookupCacheActive: Boolean(gridlyCommuteIntelligenceAuditState.roadNameLookupCacheActive),
     roadNameLookupCacheHits: Number(gridlyCommuteIntelligenceAuditState.roadNameLookupCacheHits || 0),
     roadNameLookupCacheMisses: Number(gridlyCommuteIntelligenceAuditState.roadNameLookupCacheMisses || 0),
@@ -666,14 +672,23 @@ function gridlyCommuteIntelligenceAudit() {
     formatterCacheMisses: Number(gridlyCommuteIntelligenceAuditState.formatterCacheMisses || 0),
     equivalentLookupReuseDetected: Boolean(gridlyCommuteIntelligenceAuditState.equivalentLookupReuseDetected),
     localizedLabelLookupSections: { ...(gridlyCommuteIntelligenceAuditState.localizedLabelLookupSections || {}) },
+    localizedLabelLookupSectionsAuditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
     localizedLabelPerIncidentLookupTimings: [...(gridlyCommuteIntelligenceAuditState.localizedLabelPerIncidentLookupTimings || [])],
+    localizedLabelPerIncidentLookupTimingsAuditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
     localizedLabelSlowestLookupStep: gridlyCommuteIntelligenceAuditState.localizedLabelSlowestLookupStep || null,
+    localizedLabelSlowestLookupStepAuditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
     sharedCacheRetrievalSections: { ...(gridlyCommuteIntelligenceAuditState.sharedCacheRetrievalSections || {}) },
+    sharedCacheRetrievalSectionsAuditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
     sharedCachePerIncidentTimings: [...(gridlyCommuteIntelligenceAuditState.sharedCachePerIncidentTimings || [])],
+    sharedCachePerIncidentTimingsAuditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
     sharedCacheSlowestStep: gridlyCommuteIntelligenceAuditState.sharedCacheSlowestStep || null,
+    sharedCacheSlowestStepAuditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
     payloadShapingSections: { ...(gridlyCommuteIntelligenceAuditState.payloadShapingSections || {}) },
+    payloadShapingSectionsAuditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
     payloadShapingPerIncidentTimings: [...(gridlyCommuteIntelligenceAuditState.payloadShapingPerIncidentTimings || [])],
+    payloadShapingPerIncidentTimingsAuditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
     payloadShapingSlowestStep: gridlyCommuteIntelligenceAuditState.payloadShapingSlowestStep || null,
+    payloadShapingSlowestStepAuditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
     slowestSection,
     recommendedTargets,
     timingBoundaryVerified: Boolean(gridlyCommuteIntelligenceAuditState.timingBoundaryVerified),
@@ -13610,6 +13625,7 @@ function buildLocalizedIncidentLabel(incident = {}) {
 }
 
 function recordLocalizedLabelLookupAudit(incident = {}, lookupTimings = {}) {
+  if (!gridlyCommuteIntelligenceAuditState.auditCollectionEnabled) return;
   const roundedLookupTimings = Object.fromEntries(
     Object.entries(lookupTimings || {}).map(([stepName, durationMs]) => [stepName, Number(Number(durationMs || 0).toFixed(3))])
   );
@@ -13622,7 +13638,8 @@ function recordLocalizedLabelLookupAudit(incident = {}, lookupTimings = {}) {
     incidentId: String(incident?.id || incident?.report_id || incident?.reportId || "unknown"),
     reportType: String(incident?.report_type || incident?.type || ""),
     lookupTimings: roundedLookupTimings,
-    totalLookupMs: Number(Object.values(roundedLookupTimings).reduce((sum, value) => sum + Number(value || 0), 0).toFixed(3))
+    totalLookupMs: Number(Object.values(roundedLookupTimings).reduce((sum, value) => sum + Number(value || 0), 0).toFixed(3)),
+    auditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0)
   };
   gridlyCommuteIntelligenceAuditState.localizedLabelPerIncidentLookupTimings.push(perIncidentEntry);
   const incidentSlowestStep = Object.entries(roundedLookupTimings).sort((a, b) => Number(b[1]) - Number(a[1]))[0] || null;
@@ -13633,12 +13650,14 @@ function recordLocalizedLabelLookupAudit(incident = {}, lookupTimings = {}) {
       step: incidentSlowestStep[0],
       ms: Number(incidentSlowestStep[1]),
       incidentId: perIncidentEntry.incidentId,
-      reportType: perIncidentEntry.reportType
+      reportType: perIncidentEntry.reportType,
+      auditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0)
     };
   }
 }
 
 function recordSharedCacheRetrievalAudit(incident = {}, lookupType = "", sectionTimings = {}) {
+  if (!gridlyCommuteIntelligenceAuditState.auditCollectionEnabled) return;
   const roundedTimings = Object.fromEntries(
     Object.entries(sectionTimings || {}).map(([stepName, durationMs]) => [stepName, Number(Number(durationMs || 0).toFixed(3))])
   );
@@ -13652,7 +13671,8 @@ function recordSharedCacheRetrievalAudit(incident = {}, lookupType = "", section
     reportType: String(incident?.report_type || incident?.type || ""),
     lookupType: String(lookupType || "road_name_lookup"),
     timings: roundedTimings,
-    totalMs: Number(Object.values(roundedTimings).reduce((sum, value) => sum + Number(value || 0), 0).toFixed(3))
+    totalMs: Number(Object.values(roundedTimings).reduce((sum, value) => sum + Number(value || 0), 0).toFixed(3)),
+    auditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0)
   };
   gridlyCommuteIntelligenceAuditState.sharedCachePerIncidentTimings.push(perIncidentEntry);
   const incidentSlowestStep = Object.entries(roundedTimings).sort((a, b) => Number(b[1]) - Number(a[1]))[0] || null;
@@ -13664,7 +13684,8 @@ function recordSharedCacheRetrievalAudit(incident = {}, lookupType = "", section
       ms: Number(incidentSlowestStep[1]),
       incidentId: perIncidentEntry.incidentId,
       reportType: perIncidentEntry.reportType,
-      lookupType: perIncidentEntry.lookupType
+      lookupType: perIncidentEntry.lookupType,
+      auditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0)
     };
   }
   const payloadShapingTimings = Object.fromEntries(
@@ -13680,7 +13701,8 @@ function recordSharedCacheRetrievalAudit(incident = {}, lookupType = "", section
     reportType: perIncidentEntry.reportType,
     lookupType: perIncidentEntry.lookupType,
     timings: payloadShapingTimings,
-    totalMs: Number(Object.values(payloadShapingTimings).reduce((sum, value) => sum + Number(value || 0), 0).toFixed(3))
+    totalMs: Number(Object.values(payloadShapingTimings).reduce((sum, value) => sum + Number(value || 0), 0).toFixed(3)),
+    auditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0)
   };
   if (Object.keys(payloadShapingTimings).length) gridlyCommuteIntelligenceAuditState.payloadShapingPerIncidentTimings.push(payloadPerIncidentEntry);
   const payloadIncidentSlowestStep = Object.entries(payloadShapingTimings).sort((a, b) => Number(b[1]) - Number(a[1]))[0] || null;
@@ -13692,7 +13714,8 @@ function recordSharedCacheRetrievalAudit(incident = {}, lookupType = "", section
       ms: Number(payloadIncidentSlowestStep[1]),
       incidentId: payloadPerIncidentEntry.incidentId,
       reportType: payloadPerIncidentEntry.reportType,
-      lookupType: payloadPerIncidentEntry.lookupType
+      lookupType: payloadPerIncidentEntry.lookupType,
+      auditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0)
     };
   }
 }
@@ -13800,7 +13823,7 @@ function buildCommunityConsequenceLabel(incident = {}, fallback = "Traffic slowi
 }
 
 function recordLabelHelperInternalAudit(helperName = "", details = {}) {
-  if (!helperName) return;
+  if (!helperName || !gridlyCommuteIntelligenceAuditState.auditCollectionEnabled) return;
   if (!gridlyCommuteIntelligenceAuditState.labelHelperInternalSections[helperName]) gridlyCommuteIntelligenceAuditState.labelHelperInternalSections[helperName] = {};
   const sectionStore = gridlyCommuteIntelligenceAuditState.labelHelperInternalSections[helperName];
   Object.entries(details?.sectionTimes || {}).forEach(([sectionName, durationMs]) => {
@@ -13827,7 +13850,8 @@ function recordLabelHelperInternalAudit(helperName = "", details = {}) {
       reportType: String(details?.incident?.report_type || details?.incident?.type || ""),
       slowestInternalSection: slowestSectionEntry ? { name: slowestSectionEntry[0], ms: Number(slowestSectionEntry[1].toFixed(3)) } : null,
       output: String(details?.result || ""),
-      meta: { ...(details?.meta || {}) }
+      meta: { ...(details?.meta || {}) },
+      auditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0)
     };
   }
 }
@@ -13930,6 +13954,9 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   };
   return getGridlyRefreshCycleCachedValue("buildCommuteConsequenceIntelligence", cachePayload, () => {
   const startedAt = performance.now();
+  gridlyCommuteIntelligenceAuditState.auditCycleId = Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0) + 1;
+  const activeAuditCycleId = gridlyCommuteIntelligenceAuditState.auditCycleId;
+  gridlyCommuteIntelligenceAuditState.auditCollectionEnabled = true;
   const sections = {};
   const counts = {};
   gridlyCommuteIntelligenceAuditState.labelHelperInternalSections = {};
@@ -14217,6 +14244,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.formatterCacheMisses = Number(gridlyRoadNameLookupCache?.formatterMisses || 0);
   gridlyCommuteIntelligenceAuditState.equivalentLookupReuseDetected = Number(gridlyRoadNameLookupCache?.sharedHits || 0) > 0;
   gridlyRoadNameLookupCache = null;
+  gridlyCommuteIntelligenceAuditState.auditCollectionEnabled = false;
   gridlyCommuteIntelligenceAuditState.at = Date.now();
 
   return {
