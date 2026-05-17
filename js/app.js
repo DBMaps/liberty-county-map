@@ -178,6 +178,7 @@ let userMarker = null;
 
 const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyCommuteIntelligenceAudit",
+  "gridlyCommuteAuditGlobalsCheck",
   "gridlyRouteRelevanceAudit",
   "gridlyReflowAudit",
   "gridlyRefreshBreakdownAudit",
@@ -191,27 +192,92 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyRouteSetupButtonAudit",
   "gridlyRouteAuditGlobalsCheck",
   "gridlyPortraitV2LayerAudit",
-  "gridlyCommuteAuditGlobalsCheck"
+  "gridlyAuditHelpersCheck"
 ];
 
 function exposeGridlyAuditHelper(name, fn, options = {}) {
   try {
     if (typeof name !== "string" || !name) return null;
-    if (typeof fn !== "function") return null;
     const target = typeof window !== "undefined" ? window : globalThis;
     if (!target || typeof target !== "object") return null;
-    target[name] = fn;
     const registry = target.__gridlyAuditHelperRegistry || (target.__gridlyAuditHelperRegistry = {});
+    const debugRegistry = target.__gridlyAuditHelperRegistryDebug || (target.__gridlyAuditHelperRegistryDebug = {});
+    const sourceFound = typeof fn === "function";
+    if (!sourceFound) {
+      debugRegistry[name] = {
+        name,
+        type: typeof target[name],
+        attemptedExposure: true,
+        sourceFunctionFound: false,
+        exposedAt: Date.now(),
+        failureReason: "source_function_not_found"
+      };
+      return null;
+    }
+    target[name] = fn;
     registry[name] = {
       name,
       type: typeof fn,
       exposedAt: Date.now(),
       overwrite: options.overwrite !== false
     };
+    debugRegistry[name] = {
+      name,
+      type: typeof target[name],
+      attemptedExposure: true,
+      sourceFunctionFound: true,
+      exposedAt: registry[name].exposedAt,
+      failureReason: null
+    };
     return fn;
   } catch (_error) {
     return null;
   }
+}
+
+function exposeAllGridlyAuditHelpers() {
+  const target = typeof window !== "undefined" ? window : globalThis;
+  const helperSourceMap = {
+    gridlyCommuteIntelligenceAudit: typeof gridlyCommuteIntelligenceAudit === "function" ? gridlyCommuteIntelligenceAudit : null,
+    gridlyCommuteAuditGlobalsCheck: typeof gridlyCommuteAuditGlobalsCheck === "function" ? gridlyCommuteAuditGlobalsCheck : null,
+    gridlyRouteRelevanceAudit: typeof gridlyRouteRelevanceAudit === "function" ? gridlyRouteRelevanceAudit : null,
+    gridlyReflowAudit: typeof gridlyReflowAudit === "function" ? gridlyReflowAudit : null,
+    gridlyRefreshBreakdownAudit: typeof gridlyRefreshBreakdownAudit === "function" ? gridlyRefreshBreakdownAudit : null,
+    gridlyPortraitIntelligenceBreakdownAudit: typeof gridlyPortraitIntelligenceBreakdownAudit === "function" ? gridlyPortraitIntelligenceBreakdownAudit : null,
+    gridlyPostSubmitRefreshAudit: typeof gridlyPostSubmitRefreshAudit === "function" ? gridlyPostSubmitRefreshAudit : null,
+    gridlyRefreshAudit: typeof gridlyRefreshAudit === "function" ? gridlyRefreshAudit : null,
+    gridlyGeoAudit: typeof gridlyGeoAudit === "function" ? gridlyGeoAudit : null,
+    gridlyActiveIncidentAudit: typeof gridlyActiveIncidentAudit === "function" ? gridlyActiveIncidentAudit : null,
+    gridlyDevPurgeRecentRoadHazards: typeof gridlyDevPurgeRecentRoadHazards === "function" ? gridlyDevPurgeRecentRoadHazards : null,
+    gridlyRouteButtonSystemAudit: typeof gridlyRouteButtonSystemAudit === "function" ? gridlyRouteButtonSystemAudit : null,
+    gridlyRouteSetupButtonAudit: typeof gridlyRouteSetupButtonAudit === "function" ? gridlyRouteSetupButtonAudit : null,
+    gridlyRouteAuditGlobalsCheck: typeof gridlyRouteAuditGlobalsCheck === "function" ? gridlyRouteAuditGlobalsCheck : null,
+    gridlyPortraitV2LayerAudit: typeof gridlyPortraitV2LayerAudit === "function" ? gridlyPortraitV2LayerAudit : null,
+    gridlyAuditHelpersCheck: typeof gridlyAuditHelpersCheck === "function" ? gridlyAuditHelpersCheck : null
+  };
+
+  Object.entries(helperSourceMap).forEach(([name, helperFn]) => {
+    const fallbackFn = typeof target?.[name] === "function" ? target[name] : null;
+    const fn = helperFn || fallbackFn;
+    exposeGridlyAuditHelper(name, fn);
+  });
+}
+
+function gridlyAuditRegistryDebug() {
+  const target = typeof window !== "undefined" ? window : globalThis;
+  const debugRegistry = target?.__gridlyAuditHelperRegistryDebug || {};
+  const helperNames = Array.from(new Set([...GRIDLY_AUDIT_HELPER_NAMES, "gridlyAuditRegistryDebug"]));
+  return helperNames.map((name) => {
+    const debug = debugRegistry[name] || {};
+    return {
+      helperName: name,
+      windowType: typeof target?.[name],
+      attemptedExposure: Boolean(debug.attemptedExposure),
+      sourceFunctionFound: Boolean(debug.sourceFunctionFound),
+      exposureTimestamp: debug.exposedAt || null,
+      failureReason: debug.failureReason || null
+    };
+  });
 }
 
 function gridlyAuditHelpersCheck() {
@@ -18354,14 +18420,8 @@ const v134ReportingRefinementApplied = true;
   };
 
 
-exposeGridlyAuditHelper("gridlyRefreshAudit", gridlyRefreshAudit);
-exposeGridlyAuditHelper("gridlyRefreshBreakdownAudit", gridlyRefreshBreakdownAudit);
-exposeGridlyAuditHelper("gridlyGeoAudit", gridlyGeoAudit);
-exposeGridlyAuditHelper("gridlyActiveIncidentAudit", gridlyActiveIncidentAudit);
-exposeGridlyAuditHelper("gridlyDevPurgeRecentRoadHazards", gridlyDevPurgeRecentRoadHazards);
-exposeGridlyAuditHelper("gridlyPostSubmitRefreshAudit", gridlyPostSubmitRefreshAudit);
-exposeGridlyAuditHelper("gridlyReflowAudit", gridlyReflowAudit);
-exposeGridlyAuditHelper("gridlyPortraitV2LayerAudit", gridlyPortraitV2LayerAudit);
+exposeGridlyAuditHelper("gridlyAuditRegistryDebug", gridlyAuditRegistryDebug);
+exposeAllGridlyAuditHelpers();
 
   document.addEventListener("DOMContentLoaded", bindV2);
 })();
