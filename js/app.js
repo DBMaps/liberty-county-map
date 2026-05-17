@@ -498,23 +498,49 @@ function createDerivedFieldPrecomputeStore(activeIncidents = []) {
   const roadLookupIndex = new Map();
   const nearbyLocationLookupIndex = new Map();
   const segmentCandidateIndex = new Map();
+  const precomputeTimeSource = (typeof performance !== "undefined" && performance && typeof performance.now === "function")
+    ? () => performance.now()
+    : () => Date.now();
+  const buildSections = {
+    precompute_crossings_build: 0,
+    precompute_road_lookup_build: 0,
+    precompute_nearby_location_build: 0,
+    precompute_segment_candidate_build: 0
+  };
+  const measureBuildSection = (sectionName, fn) => {
+    const startedAt = precomputeTimeSource();
+    const value = fn();
+    buildSections[sectionName] += (precomputeTimeSource() - startedAt);
+    return value;
+  };
   (Array.isArray(activeIncidents) ? activeIncidents : []).forEach((incident) => {
     const key = buildDerivedFieldPrecomputeKey(incident);
     if (crossingLookupIndex.has(key)) return;
     const payload = resolveIncidentRoadLookupPayload(incident);
-    crossingLookupIndex.set(key, String(payload?.crossingId || payload?.crossingName || ""));
-    roadLookupIndex.set(key, String(payload?.locationContext || ""));
-    nearbyLocationLookupIndex.set(key, String(payload?.nearbyName || payload?.nearestKnownLocation || ""));
+    measureBuildSection("precompute_crossings_build", () => crossingLookupIndex.set(key, String(payload?.crossingId || payload?.crossingName || "")));
+    measureBuildSection("precompute_road_lookup_build", () => roadLookupIndex.set(key, String(payload?.locationContext || "")));
+    measureBuildSection("precompute_nearby_location_build", () => nearbyLocationLookupIndex.set(key, String(payload?.nearbyName || payload?.nearestKnownLocation || "")));
     const coords = payload?.coords || null;
     const segmentToken = coords && Number.isFinite(coords.lat) && Number.isFinite(coords.lng)
       ? `${coords.lat.toFixed(3)},${coords.lng.toFixed(3)}`
       : String(payload?.crossingId || "unknown");
-    segmentCandidateIndex.set(key, segmentToken);
+    measureBuildSection("precompute_segment_candidate_build", () => segmentCandidateIndex.set(key, segmentToken));
     if (gridlyRoadNameLookupCache?.sharedLookupValues && !gridlyRoadNameLookupCache.sharedLookupValues.has(key)) {
       gridlyRoadNameLookupCache.sharedLookupValues.set(key, payload);
     }
   });
-  return { crossingLookupIndex, roadLookupIndex, nearbyLocationLookupIndex, segmentCandidateIndex };
+  return {
+    crossingLookupIndex,
+    roadLookupIndex,
+    nearbyLocationLookupIndex,
+    segmentCandidateIndex,
+    __gridlyBuildSections: {
+      precompute_crossings_build: Number(buildSections.precompute_crossings_build.toFixed(3)),
+      precompute_road_lookup_build: Number(buildSections.precompute_road_lookup_build.toFixed(3)),
+      precompute_nearby_location_build: Number(buildSections.precompute_nearby_location_build.toFixed(3)),
+      precompute_segment_candidate_build: Number(buildSections.precompute_segment_candidate_build.toFixed(3))
+    }
+  };
 }
 function gridlyCloneAuditPayload(payload) {
   if (payload === null || payload === undefined) return payload;
@@ -14533,16 +14559,46 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   const timeSection = makeGridlySectionTimer(sections);
   const routeHazard = timeSection("route_hazard_scoring", () => (routeWatchActivated ? getRouteHazardAssessment() : null));
   const activeIncidents = timeSection("unified_incident_retrieval", () => getActiveUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "active"));
-  const precomputeStartedAt = performance.now();
-  gridlyRoadNameLookupCache.precomputedIndexes = createDerivedFieldPrecomputeStore(activeIncidents);
-  gridlyRoadNameLookupCache.precomputeActive = Boolean(gridlyRoadNameLookupCache.precomputedIndexes);
-  gridlyRoadNameLookupCache.precomputeKeys = Array.from(gridlyRoadNameLookupCache.precomputedIndexes?.roadLookupIndex?.keys?.() || []);
+  const precomputeTimeSource = (typeof performance !== "undefined" && performance && typeof performance.now === "function")
+    ? () => performance.now()
+    : () => Date.now();
+  const precomputeStartedAt = precomputeTimeSource();
+  const precomputeSectionDurations = {
+    precompute_crossings_build: 0,
+    precompute_road_lookup_build: 0,
+    precompute_nearby_location_build: 0,
+    precompute_segment_candidate_build: 0,
+    precompute_key_generation: 0,
+    precompute_object_materialization: 0,
+    precompute_store_publish: 0
+  };
+  const measurePrecomputeStage = (stageName, fn) => {
+    const stageStartedAt = precomputeTimeSource();
+    const value = fn();
+    precomputeSectionDurations[stageName] = Number((precomputeSectionDurations[stageName] + (precomputeTimeSource() - stageStartedAt)).toFixed(3));
+    return value;
+  };
+  const precomputeStore = measurePrecomputeStage("precompute_object_materialization", () => createDerivedFieldPrecomputeStore(activeIncidents));
+  const precomputeKeys = measurePrecomputeStage("precompute_key_generation", () => Array.from(precomputeStore?.roadLookupIndex?.keys?.() || []));
+  precomputeSectionDurations.precompute_crossings_build = Number((precomputeStore?.__gridlyBuildSections?.precompute_crossings_build || 0).toFixed(3));
+  precomputeSectionDurations.precompute_road_lookup_build = Number((precomputeStore?.__gridlyBuildSections?.precompute_road_lookup_build || 0).toFixed(3));
+  precomputeSectionDurations.precompute_nearby_location_build = Number((precomputeStore?.__gridlyBuildSections?.precompute_nearby_location_build || 0).toFixed(3));
+  precomputeSectionDurations.precompute_segment_candidate_build = Number((precomputeStore?.__gridlyBuildSections?.precompute_segment_candidate_build || 0).toFixed(3));
+  measurePrecomputeStage("precompute_store_publish", () => {
+    gridlyRoadNameLookupCache.precomputedIndexes = precomputeStore;
+    gridlyRoadNameLookupCache.precomputeActive = Boolean(precomputeStore);
+    gridlyRoadNameLookupCache.precomputeKeys = precomputeKeys;
+    return null;
+  });
   gridlyRoadNameLookupCache.derivedFieldWorkBeforeAfterEstimate = {
     before: activeIncidents.length * 2,
     after: activeIncidents.length,
     delta: activeIncidents.length
   };
-  sections.derived_field_precompute_index = Number((performance.now() - precomputeStartedAt).toFixed(3));
+  Object.entries(precomputeSectionDurations).forEach(([stageName, stageMs]) => {
+    sections[stageName] = Number(Number(stageMs || 0).toFixed(3));
+  });
+  sections.derived_field_precompute_index = Number((precomputeTimeSource() - precomputeStartedAt).toFixed(3));
   const unifiedIncidentIds = (unifiedIncidentsForAudit || []).map((incident) => String(incident?.id || ""));
   const activeIncidentIds = (activeIncidents || []).map((incident) => String(incident?.id || ""));
   const activeIncidentIdSet = new Set(activeIncidents.map((incident) => String(incident?.id || "")));
