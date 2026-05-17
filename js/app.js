@@ -516,6 +516,10 @@ function createDerivedFieldPrecomputeStore(activeIncidents = []) {
   const materializationSections = {
     materialize_key_creation: 0,
     materialize_object_creation: 0,
+    materialize_property_assignment: 0,
+    materialize_property_function_calls: 0,
+    materialize_literal_creation: 0,
+    materialize_wrapper_overhead: 0,
     materialize_object_spread: 0,
     materialize_clone_operations: 0,
     materialize_nested_assignment: 0,
@@ -528,7 +532,33 @@ function createDerivedFieldPrecomputeStore(activeIncidents = []) {
     return value;
   };
   const materialize_key_creation = (incident) => measureMaterializationSection("materialize_key_creation", () => buildDerivedFieldPrecomputeKey(incident));
-  const materialize_object_creation = (incident) => measureMaterializationSection("materialize_object_creation", () => resolveIncidentRoadLookupPayload(incident));
+  const materialize_object_creation = (incident) => measureMaterializationSection("materialize_object_creation", () => {
+    const startedAt = precomputeTimeSource();
+    const payload = resolveIncidentRoadLookupPayload(incident);
+    const objectCreationMs = precomputeTimeSource() - startedAt;
+    const derivedTrace = (payload && typeof payload === "object" && payload.__gridlyDerivedFieldGenerationTrace && typeof payload.__gridlyDerivedFieldGenerationTrace === "object")
+      ? payload.__gridlyDerivedFieldGenerationTrace
+      : {};
+    const toMs = (value) => {
+      const numeric = Number(value || 0);
+      return Number.isFinite(numeric) ? numeric : 0;
+    };
+    const propertyFunctionCallsMs = toMs(derivedTrace.normalizationWork)
+      + toMs(derivedTrace.roadNameDerivation)
+      + toMs(derivedTrace.nestedLookupWork)
+      + toMs(derivedTrace.displayLabelDerivation)
+      + toMs(derivedTrace.crossingNameDerivation)
+      + toMs(derivedTrace.locationPhraseDerivation)
+      + toMs(derivedTrace.fallbackResolution);
+    const literalCreationMs = toMs(derivedTrace.objectConstruction);
+    const propertyAssignmentMs = toMs(derivedTrace.serializationWork);
+    const wrapperOverheadMs = Math.max(0, objectCreationMs - (propertyFunctionCallsMs + literalCreationMs + propertyAssignmentMs));
+    materializationSections.materialize_property_function_calls = Number((Number(materializationSections.materialize_property_function_calls || 0) + propertyFunctionCallsMs).toFixed(3));
+    materializationSections.materialize_literal_creation = Number((Number(materializationSections.materialize_literal_creation || 0) + literalCreationMs).toFixed(3));
+    materializationSections.materialize_property_assignment = Number((Number(materializationSections.materialize_property_assignment || 0) + propertyAssignmentMs).toFixed(3));
+    materializationSections.materialize_wrapper_overhead = Number((Number(materializationSections.materialize_wrapper_overhead || 0) + wrapperOverheadMs).toFixed(3));
+    return payload;
+  });
   const materialize_nested_assignment = (payload) => measureMaterializationSection("materialize_nested_assignment", () => {
     const coords = payload?.coords || null;
     return coords && Number.isFinite(coords.lat) && Number.isFinite(coords.lng)
@@ -14595,6 +14625,10 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     precompute_segment_candidate_build: 0,
     materialize_key_creation: 0,
     materialize_object_creation: 0,
+    materialize_property_assignment: 0,
+    materialize_property_function_calls: 0,
+    materialize_literal_creation: 0,
+    materialize_wrapper_overhead: 0,
     materialize_object_spread: 0,
     materialize_clone_operations: 0,
     materialize_nested_assignment: 0,
@@ -14617,6 +14651,10 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   precomputeSectionDurations.precompute_segment_candidate_build = Number((precomputeStore?.__gridlyBuildSections?.precompute_segment_candidate_build || 0).toFixed(3));
   precomputeSectionDurations.materialize_key_creation = Number((precomputeStore?.__gridlyMaterializationSections?.materialize_key_creation || 0).toFixed(3));
   precomputeSectionDurations.materialize_object_creation = Number((precomputeStore?.__gridlyMaterializationSections?.materialize_object_creation || 0).toFixed(3));
+  precomputeSectionDurations.materialize_property_assignment = Number((precomputeStore?.__gridlyMaterializationSections?.materialize_property_assignment || 0).toFixed(3));
+  precomputeSectionDurations.materialize_property_function_calls = Number((precomputeStore?.__gridlyMaterializationSections?.materialize_property_function_calls || 0).toFixed(3));
+  precomputeSectionDurations.materialize_literal_creation = Number((precomputeStore?.__gridlyMaterializationSections?.materialize_literal_creation || 0).toFixed(3));
+  precomputeSectionDurations.materialize_wrapper_overhead = Number((precomputeStore?.__gridlyMaterializationSections?.materialize_wrapper_overhead || 0).toFixed(3));
   precomputeSectionDurations.materialize_object_spread = Number((precomputeStore?.__gridlyMaterializationSections?.materialize_object_spread || 0).toFixed(3));
   precomputeSectionDurations.materialize_clone_operations = Number((precomputeStore?.__gridlyMaterializationSections?.materialize_clone_operations || 0).toFixed(3));
   precomputeSectionDurations.materialize_nested_assignment = Number((precomputeStore?.__gridlyMaterializationSections?.materialize_nested_assignment || 0).toFixed(3));
