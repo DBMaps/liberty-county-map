@@ -420,6 +420,11 @@ const gridlyCommuteIntelligenceAuditState = {
   resolveNearestRoadNameIndexMisses: 0,
   resolveNearestRoadNameIndexKeys: [],
   resolveNearestRoadNameSlowestStage: null,
+  nearbyPairResolutionIndexActive: false,
+  nearbyPairResolutionIndexHits: 0,
+  nearbyPairResolutionIndexMisses: 0,
+  nearbyPairResolutionSlowestStage: null,
+  nearbyPairResolutionCandidateCount: 0,
   timingBoundaryVerified: false,
   routeRelevanceNestedSections: {},
   suspectedMisattribution: null,
@@ -916,7 +921,7 @@ function makeGridlySectionTimer(sections) {
     const started = performance.now();
     const result = fn();
     sections[name] = (sections[name] || 0) + (performance.now() - started);
-    return result;
+    return finalizeNearbyPairResult(result);
   };
 }
 
@@ -1005,7 +1010,7 @@ function sanitizeEmptyCommuteAuditPayload(payload) {
     result.expectedExcludedCount = expectedExcludedCount;
     result.actualReasonCount = actualReasonCount;
   }
-  return result;
+  return finalizeNearbyPairResult(result);
 }
 
 function gridlyCommuteIntelligenceAudit() {
@@ -1093,6 +1098,11 @@ function gridlyCommuteIntelligenceAudit() {
     resolveNearestRoadNameIndexMisses: Number(gridlyCommuteIntelligenceAuditState.resolveNearestRoadNameIndexMisses || 0),
     resolveNearestRoadNameIndexKeys: [...(gridlyCommuteIntelligenceAuditState.resolveNearestRoadNameIndexKeys || [])],
     resolveNearestRoadNameSlowestStage: gridlyCommuteIntelligenceAuditState.resolveNearestRoadNameSlowestStage || null,
+    nearbyPairResolutionIndexActive: Boolean(gridlyCommuteIntelligenceAuditState.nearbyPairResolutionIndexActive),
+    nearbyPairResolutionIndexHits: Number(gridlyCommuteIntelligenceAuditState.nearbyPairResolutionIndexHits || 0),
+    nearbyPairResolutionIndexMisses: Number(gridlyCommuteIntelligenceAuditState.nearbyPairResolutionIndexMisses || 0),
+    nearbyPairResolutionSlowestStage: gridlyCommuteIntelligenceAuditState.nearbyPairResolutionSlowestStage || null,
+    nearbyPairResolutionCandidateCount: Number(gridlyCommuteIntelligenceAuditState.nearbyPairResolutionCandidateCount || 0),
     derivedFieldGenerationTrace: gridlyCloneAuditPayload(gridlyCommuteIntelligenceAuditState.derivedFieldGenerationTrace || { totals: {}, perIncident: [], slowestStep: null, repeatedWork: [] }),
     derivedFieldGenerationTraceAuditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
     nestedLookupCallMap: gridlyCloneAuditPayload(gridlyCommuteIntelligenceAuditState.nestedLookupCallMap || { totals: {}, byFunction: {}, repeatedScans: [], indexCandidateRecommendations: [] }),
@@ -7389,7 +7399,7 @@ async function debugEnterRoutePipeline(args = {}) {
     routeDebugError("DEBUG ROUTE PIPELINE BEFORE AWAIT", { args });
     const result = await startInlineRouteWatch(args);
     routeDebugError("DEBUG ROUTE PIPELINE AFTER AWAIT", { args });
-    return result;
+    return finalizeNearbyPairResult(result);
   } catch (error) {
     routeDebugError("DEBUG ROUTE PIPELINE CATCH ERROR", { error, args });
     throw error;
@@ -13688,8 +13698,40 @@ function collectNearbyRoadCandidates(lat, lng, maxDistanceMiles = 0.45, maxCandi
     .slice(0, Math.max(2, maxCandidates));
 }
 
+function buildNearbyPairResolutionIndexKey(lat, lng, primaryRoad = "") {
+  const coords = normalizeCoordinatePair(lat, lng);
+  if (!coords) return "";
+  const primaryKey = normalizeRoadComparison(evaluateRoadNameCandidate(primaryRoad).normalized || "");
+  return `${coords.lat.toFixed(4)},${coords.lng.toFixed(4)}::${primaryKey || "none"}`;
+}
+
 function resolveNearbyRoadPair(lat, lng, primaryRoad = "") {
   const primaryNormalized = evaluateRoadNameCandidate(primaryRoad);
+  const indexActive = Boolean(gridlyRoadNameLookupCache?.nearbyPairResolutionIndex instanceof Map);
+  const indexKey = buildNearbyPairResolutionIndexKey(lat, lng, primaryRoad);
+  if (indexActive && indexKey && gridlyRoadNameLookupCache.nearbyPairResolutionIndex.has(indexKey)) {
+    gridlyRoadNameLookupCache.nearbyPairResolutionIndexHits = Number(gridlyRoadNameLookupCache.nearbyPairResolutionIndexHits || 0) + 1;
+    return { ...(gridlyRoadNameLookupCache.nearbyPairResolutionIndex.get(indexKey) || {}) };
+  }
+  if (indexActive && indexKey) gridlyRoadNameLookupCache.nearbyPairResolutionIndexMisses = Number(gridlyRoadNameLookupCache.nearbyPairResolutionIndexMisses || 0) + 1;
+  const stageTimings = {};
+  const withStageTiming = (stageName, fn) => {
+    const startedAt = performance.now();
+    const value = fn();
+    stageTimings[stageName] = Number((Number(stageTimings[stageName] || 0) + (performance.now() - startedAt)).toFixed(4));
+    return value;
+  };
+  const finalizeNearbyPairResult = (state) => {
+    if (indexActive && indexKey) gridlyRoadNameLookupCache.nearbyPairResolutionIndex.set(indexKey, { ...state });
+    if (indexActive) {
+      const slowestStage = Object.entries(stageTimings).sort((a, b) => Number(b[1]) - Number(a[1]))[0] || null;
+      const currentSlowest = gridlyRoadNameLookupCache.nearbyPairResolutionSlowestStage;
+      if (slowestStage && (!currentSlowest || Number(slowestStage[1]) > Number(currentSlowest.ms || 0))) {
+        gridlyRoadNameLookupCache.nearbyPairResolutionSlowestStage = { stage: slowestStage[0], ms: Number(slowestStage[1]) };
+      }
+    }
+    return state;
+  };
   const result = {
     roadA: primaryNormalized.valid ? primaryNormalized.normalized : "",
     roadB: "",
@@ -13701,13 +13743,14 @@ function resolveNearbyRoadPair(lat, lng, primaryRoad = "") {
   const coords = normalizeCoordinatePair(lat, lng);
   if (!coords) {
     result.rejectedReason = "invalid_coordinates";
-    return result;
+    return finalizeNearbyPairResult(result);
   }
-  const candidates = collectNearbyRoadCandidates(coords.lat, coords.lng, 0.45, 8);
+  const candidates = withStageTiming("nearby_candidate_scan", () => collectNearbyRoadCandidates(coords.lat, coords.lng, 0.45, 8));
+  if (indexActive) gridlyRoadNameLookupCache.nearbyPairResolutionCandidateCount = Number(gridlyRoadNameLookupCache.nearbyPairResolutionCandidateCount || 0) + Number(candidates.length || 0);
   result.samples = candidates.slice(0, 6).map((entry) => `${entry.roadName} (${entry.distanceMiles.toFixed(3)} mi)`);
   if (!candidates.length) {
     result.rejectedReason = roadwayDatasetLoaded ? "no_nearby_roads_in_radius" : "roadway_dataset_unavailable";
-    return result;
+    return finalizeNearbyPairResult(result);
   }
   if (!result.roadA) result.roadA = candidates[0]?.roadName || "";
   const primaryKey = normalizeRoadComparison(result.roadA);
@@ -13721,12 +13764,12 @@ function resolveNearbyRoadPair(lat, lng, primaryRoad = "") {
   });
   if (!secondary) {
     result.rejectedReason = "no_meaningful_secondary_road";
-    return result;
+    return finalizeNearbyPairResult(result);
   }
   result.roadB = secondary.roadName;
   result.distanceMiles = Number(secondary.distanceMiles.toFixed(4));
   result.used = true;
-  return result;
+  return finalizeNearbyPairResult(result);
 }
 
 function buildHumanLocationContext({ primaryRoad = "", crossingRoad = "", intersectingRoad = "", roadwayRef = "", nearbyArea = "" } = {}) {
@@ -14162,7 +14205,7 @@ function buildLocalizedIncidentLabel(incident = {}) {
       result,
       meta
     }, helperAuditCycleId);
-    return result;
+    return finalizeNearbyPairResult(result);
   };
   hotspotTimings.helperEntryTime += performance.now() - helperStartedAt;
   if (!incident) return finalizeAudit("Localized disruption", { fallbackReason: "missing_incident" });
@@ -14509,7 +14552,7 @@ function buildCommunityConsequenceLabel(incident = {}, fallback = "Traffic slowi
   const finalizeAudit = (result, meta = {}) => {
     const totalMs = performance.now() - helperStartedAt;
     recordLabelHelperInternalAudit(helperName, { totalMs, sectionTimes, calls, incident, result, meta }, helperAuditCycleId);
-    return result;
+    return finalizeNearbyPairResult(result);
   };
   const towns = recordSection("corridor_location_inference", () => recordCall("findTownMentions", () => findTownMentions(incident)));
   const road = recordSection("corridor_location_inference", () => recordCall("normalizeCorridorBaseLabel+inferCorridorLabel", () => normalizeCorridorBaseLabel(inferCorridorLabel(incident).replace(/ Corridor$/, ""))));
@@ -14691,6 +14734,9 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     resolveNearestRoadNameIndex: new Map(),
     resolveNearestRoadNameIndexHits: 0, resolveNearestRoadNameIndexMisses: 0,
     resolveNearestRoadNameSlowestStage: null,
+    nearbyPairResolutionIndex: new Map(),
+    nearbyPairResolutionIndexHits: 0, nearbyPairResolutionIndexMisses: 0,
+    nearbyPairResolutionSlowestStage: null, nearbyPairResolutionCandidateCount: 0,
     precomputedIndexes: null, precomputeActive: false, precomputeKeys: [],
     derivedFieldPrecomputeHits: 0, derivedFieldPrecomputeMisses: 0,
     derivedFieldWorkBeforeAfterEstimate: { before: 0, after: 0, delta: 0 }
@@ -14728,6 +14774,11 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.resolveNearestRoadNameIndexMisses = 0;
   gridlyCommuteIntelligenceAuditState.resolveNearestRoadNameIndexKeys = [];
   gridlyCommuteIntelligenceAuditState.resolveNearestRoadNameSlowestStage = null;
+  gridlyCommuteIntelligenceAuditState.nearbyPairResolutionIndexActive = false;
+  gridlyCommuteIntelligenceAuditState.nearbyPairResolutionIndexHits = 0;
+  gridlyCommuteIntelligenceAuditState.nearbyPairResolutionIndexMisses = 0;
+  gridlyCommuteIntelligenceAuditState.nearbyPairResolutionSlowestStage = null;
+  gridlyCommuteIntelligenceAuditState.nearbyPairResolutionCandidateCount = 0;
   gridlyCommuteIntelligenceAuditState.derivedFieldGenerationTrace = { totals: {}, perIncident: [], slowestStep: null, repeatedWork: [] };
   gridlyCommuteIntelligenceAuditState.nestedLookupCallMap = { totals: {}, byFunction: {}, repeatedScans: [], indexCandidateRecommendations: [] };
   const timeSection = makeGridlySectionTimer(sections);
@@ -14875,7 +14926,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
       const elapsed = performance.now() - startedAt;
       titleLabelHelperTimings[name] = (titleLabelHelperTimings[name] || 0) + elapsed;
       titleLabelNestedSections[name] = (titleLabelNestedSections[name] || 0) + elapsed;
-      return result;
+      return finalizeNearbyPairResult(result);
     };
     const localizedLabel = (() => {
       const sectionStartedAt = performance.now();
@@ -14913,7 +14964,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
       const result = isIncidentRouteRelevant(incident, routeHazard);
       perIncidentSections.location_crossing_lookup += (performance.now() - routeRelevantStartedAt);
       routeRelevanceNestedSections.isIncidentRouteRelevant_loop += (performance.now() - routeRelevantStartedAt);
-      return result;
+      return finalizeNearbyPairResult(result);
     });
     const routeScore = routeRelevant ? 85 : 0;
     const clusterScore = confirmations >= 3 ? 14 : 0;
@@ -15078,6 +15129,11 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.resolveNearestRoadNameIndexMisses = Number(gridlyRoadNameLookupCache?.resolveNearestRoadNameIndexMisses || 0);
   gridlyCommuteIntelligenceAuditState.resolveNearestRoadNameIndexKeys = Array.from(gridlyRoadNameLookupCache?.resolveNearestRoadNameIndex?.keys?.() || []);
   gridlyCommuteIntelligenceAuditState.resolveNearestRoadNameSlowestStage = gridlyRoadNameLookupCache?.resolveNearestRoadNameSlowestStage || null;
+  gridlyCommuteIntelligenceAuditState.nearbyPairResolutionIndexActive = Boolean(gridlyRoadNameLookupCache?.nearbyPairResolutionIndex instanceof Map);
+  gridlyCommuteIntelligenceAuditState.nearbyPairResolutionIndexHits = Number(gridlyRoadNameLookupCache?.nearbyPairResolutionIndexHits || 0);
+  gridlyCommuteIntelligenceAuditState.nearbyPairResolutionIndexMisses = Number(gridlyRoadNameLookupCache?.nearbyPairResolutionIndexMisses || 0);
+  gridlyCommuteIntelligenceAuditState.nearbyPairResolutionSlowestStage = gridlyRoadNameLookupCache?.nearbyPairResolutionSlowestStage || null;
+  gridlyCommuteIntelligenceAuditState.nearbyPairResolutionCandidateCount = Number(gridlyRoadNameLookupCache?.nearbyPairResolutionCandidateCount || 0);
   const incidentsProcessedCount = Number(commuteModelHelperCallCounts.incidentsProcessed || 0);
   const commuteModelInputIds = (intelItems || []).map((item) => String(item?.incident?.id || ""));
   const processedIncidentIdSet = new Set(commuteModelInputIds);
@@ -18881,7 +18937,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         });
       const result = { buttonsFound: buttons.length, buttons };
       console.info("Gridly Route Setup button audit", result);
-      return result;
+      return finalizeNearbyPairResult(result);
     };
     exposeGridlyAuditHelper("gridlyRouteSetupButtonAudit", routeSetupButtonAuditHelper);
     exposeGridlyAuditHelper("gridlyRouteButtonSystemAudit", routeSetupButtonAuditHelper);
