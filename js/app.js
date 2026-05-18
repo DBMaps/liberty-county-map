@@ -443,6 +443,7 @@ const gridlyCommuteIntelligenceAuditState = {
   commuteAuditUnifiedSnapshotKeys: [],
   commuteAuditRawUnifiedIncidentObjectAvailable: false,
   commuteAuditRawUnifiedIncidentObjectSample: null,
+  commuteAuditRawArrayPublicationStage: "uninitialized",
   commuteAuditRawMinusActiveCandidateCount: 0,
   commuteAuditRawMinusActiveCandidateIds: [],
   commuteAuditRawMinusActiveBuildAttempted: false,
@@ -1170,6 +1171,7 @@ function gridlyCommuteIntelligenceAudit() {
     commuteAuditUnifiedSnapshotKeys: [...(gridlyCommuteIntelligenceAuditState.commuteAuditUnifiedSnapshotKeys || [])],
     commuteAuditRawUnifiedIncidentObjectAvailable: Boolean(gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentObjectAvailable),
     commuteAuditRawUnifiedIncidentObjectSample: gridlyCloneAuditPayload(gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentObjectSample || null),
+    commuteAuditRawArrayPublicationStage: String(gridlyCommuteIntelligenceAuditState.commuteAuditRawArrayPublicationStage || "uninitialized"),
     commuteAuditRawMinusActiveCandidateCount: Number(gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveCandidateCount || 0),
     commuteAuditRawMinusActiveCandidateIds: [...(gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveCandidateIds || [])],
     commuteAuditRawMinusActiveBuildAttempted: Boolean(gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveBuildAttempted),
@@ -14799,6 +14801,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.commuteAuditUnifiedSnapshotKeys = !Array.isArray(unifiedIncidentsForAudit) && unifiedIncidentsForAudit && typeof unifiedIncidentsForAudit === "object"
     ? Object.keys(unifiedIncidentsForAudit).slice(0, 12)
     : [];
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawArrayPublicationStage = "bootstrap_defaults_before_raw_publication";
   gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentObjectAvailable = false;
   gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentObjectSample = null;
   gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveCandidateCount = 0;
@@ -15024,6 +15027,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   const unifiedExclusionsFromStatus = rawUnifiedIncidentArray
     .filter((incident) => !activeIncidentIdSet.has(String(incident?.id || "")))
     .map((incident) => buildActiveFilterExclusionEntry(incident));
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawArrayPublicationStage = "raw_array_snapshot_published_before_exclusion_fallback";
   gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveCandidateCount = unifiedExclusionsFromStatus.length;
   gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveCandidateIds = unifiedExclusionsFromStatus.map((entry) => String(entry?.incidentId || ""));
   gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveBuildAttempted = true;
