@@ -2057,46 +2057,19 @@ function classifyBottomDockIntent(button) {
 }
 
 function openAlertsSurfaceFromDock() {
-  let opened = false;
-  const v2Sheet = document.getElementById('gridlyPortraitV2Sheet');
-  if (typeof openPortraitV2Sheet === 'function' && v2Sheet) {
-    openPortraitV2Sheet('alerts');
-    opened = true;
+  if (typeof openGridlyPortraitV2Sheet === 'function') {
+    const openedPrimary = openGridlyPortraitV2Sheet('alerts');
+    if (openedPrimary) return true;
+    const fallbackTemplate = {
+      title: 'Alerts',
+      html: '<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy">No active alerts right now.</p></div>'
+    };
+    return Boolean(openGridlyPortraitV2Sheet('alerts', fallbackTemplate));
   }
-
-  const alertsSection = document.getElementById('alertsSection');
-  if (alertsSection) {
-    alertsSection.hidden = false;
-    alertsSection.removeAttribute('inert');
-    alertsSection.setAttribute('aria-hidden', 'false');
-    alertsSection.style.display = 'grid';
-    alertsSection.style.visibility = 'visible';
-    alertsSection.style.opacity = '1';
-    alertsSection.style.pointerEvents = 'auto';
-    alertsSection.classList.add('visible', 'is-open', 'active');
-    document.body?.classList.add('portrait-alerts-open');
-    opened = true;
+  if (typeof openPortraitV2Sheet === 'function') {
+    return Boolean(openPortraitV2Sheet('alerts'));
   }
-
-  const tacticalAlerts = document.querySelector('.gridly-tactical-dock-sheet[data-action="alerts"]');
-  if (tacticalAlerts instanceof HTMLElement) {
-    tacticalAlerts.hidden = false;
-    tacticalAlerts.removeAttribute('inert');
-    tacticalAlerts.style.display = 'grid';
-    tacticalAlerts.style.visibility = 'visible';
-    tacticalAlerts.style.opacity = '1';
-    tacticalAlerts.classList.add('visible', 'is-open', 'active');
-    opened = true;
-  }
-
-  if (!opened) {
-    const legacyAlertsBtn = document.getElementById('mobileDockAlertsBtn');
-    if (legacyAlertsBtn) {
-      legacyAlertsBtn.click();
-      opened = true;
-    }
-  }
-  return opened;
+  return false;
 }
 
 function openSettingsSurfaceFromDock() {
@@ -2141,7 +2114,7 @@ function bindBottomDockRealButtons() {
       event.stopPropagation();
       if (intent === 'report') return invokeMobileReportEntry?.('bottom_dock_runtime_bind', event);
       if (intent === 'route') return openGridlySurface?.('route', () => openMobileRouteQuickPanel?.());
-      if (intent === 'alerts') return openGridlyPortraitV2Sheet?.('alerts') || openAlertsSurfaceFromDock();
+      if (intent === 'alerts') return openAlertsSurfaceFromDock();
       if (intent === 'settings') return openSettingsSurfaceFromDock();
       if (intent === 'layers') return openGridlyPortraitV2Sheet?.('layers') || openPortraitLayersSurface?.();
     }, true);
