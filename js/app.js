@@ -2279,30 +2279,20 @@ function openAlertsSurfaceFromDock() {
     });
   };
   const toDelayEstimate = (state) => ({
-    "Widespread Delays": "15–30 minutes longer than normal",
-    "Impacted Movement": "8–15 minutes longer than normal",
-    "Slowing Areas": "5–10 minutes longer than normal",
+    "Widespread Delays": "15–30 min delays possible",
+    "Impacted Movement": "8–15 min delays possible",
+    "Slowing Areas": "5–10 min slowdowns possible",
     "Flowing Normally": "Near normal travel times"
   }[state] || "Near normal travel times");
-  const toExpectedImpact = (state) => ({
-    "Widespread Delays": "Route delays likely across multiple nearby segments",
-    "Impacted Movement": "Route delays likely",
-    "Slowing Areas": "Travel pace is reduced in nearby segments",
-    "Flowing Normally": "Movement reliability is currently stable"
-  }[state] || "Movement reliability is currently stable");
-  const buildMovementDescription = (card) => {
-    const corridor = normalizeToken(card?.rawRoad || card?.road || card?.nearestRoad || "nearby corridors");
-    const crossing = normalizeToken(card?.crossing || card?.nearestRoad || "the nearby area");
-    if (card?.impact === "Flowing Normally") return `${corridor} is moving normally with stable travel conditions.`;
-    if (/rail|train|crossing|blocked/.test(String(card?.rawType || '').toLowerCase())) return `Train activity at ${crossing} is slowing movement along ${corridor}.`;
-    return `Road activity near ${crossing} is reducing movement reliability along ${corridor}.`;
+  const getCrossingHeader = (card) => {
+    const crossing = upperText(card?.crossing || card?.nearestRoad || "LOCAL CROSSING");
+    const corridor = upperText(card?.rawRoad || card?.road || "NEARBY CORRIDOR");
+    return `${crossing} / ${corridor}`;
   };
-  const getMovementHeader = (card) => {
-    const corridor = upperText(card?.rawRoad || card?.road || "LOCAL CORRIDORS");
-    if (card?.impact === "Flowing Normally") return `${corridor} FLOWING NORMALLY`;
-    if (card?.impact === "Slowing Areas") return `${corridor} SLOWING AREAS`;
-    if (card?.impact === "Widespread Delays") return `${corridor} WIDESPREAD DELAYS`;
-    return `${corridor} MOVEMENT IMPACTED`;
+  const getCardLabel = (card) => {
+    if (card?.impact === "Flowing Normally") return "Conditions stable";
+    if (/rail|train|crossing|blocked/.test(String(card?.rawType || '').toLowerCase())) return "Train blocking crossing";
+    return "Traffic disruption reported";
   };
   const fallbackTemplate = {
     title: 'Alerts',
@@ -2334,23 +2324,26 @@ function openAlertsSurfaceFromDock() {
 
     if (hasActiveAlerts) {
       const cards = clusterAlerts(alerts.map((alert) => formatAlertForMobileV2(alert)));
-      const routeActive = String(snapshot?.routeState || "").toLowerCase() === "active";
+      const detailCards = cards.slice(0, 3);
+      const hiddenCount = Math.max(0, cards.length - detailCards.length);
+      const leadCard = detailCards[0] || cards[0] || null;
+      const totalReports = cards.reduce((sum, card) => sum + Number(card?.reportCount || 1), 0);
       html = `
 <div class="gridly-alerts-active">
-  <strong>${snapshot?.commuteImpactHeadline || "Movement Intelligence"}</strong>
-  ${cards.map((card) => `
+  <div class="gridly-alert-row gridly-alert-intel-card">
+    <div><strong>IMPACTED MOVEMENT</strong></div>
+    <small>${leadCard ? `Multiple rail crossings are affecting ${sanitizeText(normalizeToken(leadCard?.rawRoad || leadCard?.road || "nearby") )} movement through Dayton.` : "Multiple rail crossings are affecting movement through Dayton."}</small>
+    <small><strong>Expected impact:</strong> ${sanitizeText(toDelayEstimate(leadCard?.impact || "Widespread Delays"))}</small>
+    <small><strong>Community activity:</strong> ${totalReports} nearby report${totalReports === 1 ? "" : "s"}</small>
+  </div>
+  ${detailCards.map((card) => `
     <div class="gridly-alert-row gridly-alert-intel-card">
-      <div><strong>${String(getMovementHeader(card))}</strong></div>
-      <small>${String(buildMovementDescription(card))}</small>
-      <small><strong>Expected impact:</strong> ${String(toExpectedImpact(card?.impact))}</small>
-      <small><strong>Delay estimate:</strong> ${String(toDelayEstimate(card?.impact))}</small>
-      <small><strong>Affected movement:</strong> ${String(card?.rawRoad || card?.road || "Nearby corridors")}${card?.direction ? ` • ${String(card.direction)}` : ""}</small>
-      <small><strong>What this means:</strong> Movement reliability ${card?.impact === "Flowing Normally" ? "is stable" : "is reduced"} in this area.</small>
-      <small><strong>${routeActive ? "Your route impact" : "Nearby movement impact"}:</strong> ${card?.impact === "Widespread Delays" ? "High" : card?.impact === "Impacted Movement" ? "Moderate" : "Low"}</small>
-      <small><strong>Confidence:</strong> ${String(card?.confidence || "Low confidence")}</small>
-      <small><strong>Community activity:</strong> ${Number(card?.reportCount || 1)} nearby report${Number(card?.reportCount || 1) === 1 ? "" : "s"}</small>
+      <div><strong>${sanitizeText(getCrossingHeader(card))}</strong></div>
+      <small>${sanitizeText(getCardLabel(card))}</small>
+      <small>${sanitizeText(card?.confidence || "Low confidence")} · ${sanitizeText(formatMinutesAgo(card?.latestAtMs))}</small>
     </div>
   `).join("")}
+  ${hiddenCount > 0 ? `<div class="gridly-alert-row gridly-alert-intel-card"><small><strong>+ ${hiddenCount} more affected crossing${hiddenCount === 1 ? "" : "s"}</strong></small></div>` : ""}
 </div>`.trim();
     }
   } catch (error) {
