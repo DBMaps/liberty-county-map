@@ -2125,6 +2125,7 @@ function hardenBottomDockInteractivity() {
 
 function bindBottomDockRealButtons() {
   hardenBottomDockInteractivity();
+  const dockDiag = window.__gridlyV2DockRuntimeDiagnostics || (window.__gridlyV2DockRuntimeDiagnostics = { dockLastIntent: "", dockLastIntentAt: 0, dockLastOpenResult: null });
   const buttons = getBottomDockButtons();
   buttons.forEach((button) => {
     if (button.dataset.gridlyDockBound === 'true') return;
@@ -2133,11 +2134,19 @@ function bindBottomDockRealButtons() {
     button.addEventListener('click', (event) => {
       event.preventDefault();
       event.stopPropagation();
-      if (intent === 'report') return invokeMobileReportEntry?.('bottom_dock_runtime_bind', event);
-      if (intent === 'route') return openGridlySurface?.('route', () => openMobileRouteQuickPanel?.());
-      if (intent === 'alerts') return openGridlyPortraitV2Sheet?.('alerts') || openAlertsSurfaceFromDock();
-      if (intent === 'settings') return openSettingsSurfaceFromDock();
-      if (intent === 'layers') return openGridlyPortraitV2Sheet?.('layers') || openPortraitLayersSurface?.();
+      const trace = (result) => {
+        dockDiag.dockLastIntent = intent;
+        dockDiag.dockLastIntentAt = Date.now();
+        dockDiag.dockLastOpenResult = result;
+        console.info("[Gridly V146J dock]", { intent, result, at: dockDiag.dockLastIntentAt });
+        return result;
+      };
+      if (intent === 'report') return trace(invokeMobileReportEntry?.('bottom_dock_runtime_bind', event) ?? true);
+      if (intent === 'route') return trace(openGridlySurface?.('route', () => openMobileRouteQuickPanel?.()) ?? true);
+      if (intent === 'alerts') return trace(Boolean(openGridlyPortraitV2Sheet?.('alerts') || openAlertsSurfaceFromDock()));
+      if (intent === 'settings') return trace(Boolean(openSettingsSurfaceFromDock()));
+      if (intent === 'layers') return trace(Boolean(openGridlyPortraitV2Sheet?.('layers') || openPortraitLayersSurface?.()));
+      return trace(false);
     }, true);
     button.dataset.gridlyDockBound = 'true';
   });
@@ -18982,6 +18991,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
 
   const V2_CONTAINMENT_CLASS = "gridly-v2-surface-containment";
+  const APP_RUNTIME_BUILD_TAG = "V146J";
   const legacySurfaceState = { lastSuppressed: "", visibleCount: 0, report: false, route: false, alerts: false, settings: false };
 
   function isPortraitV2VisuallyActive() {
@@ -19045,6 +19055,19 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     if (!sheet || !backdrop || !title || !body || !template) return false;
     const templateHtml = typeof template.html === "function" ? template.html() : template.html;
 
+    activeSheet = "";
+    sheet.hidden = true;
+    sheet.style.display = "";
+    sheet.style.pointerEvents = "none";
+    sheet.classList.remove("is-closing", "is-closed", "visible", "active", "open", "is-open");
+    backdrop.hidden = true;
+    backdrop.style.display = "";
+    backdrop.style.pointerEvents = "none";
+    backdrop.classList.remove("is-closing", "is-closed", "visible", "active", "open", "is-open");
+    body.hidden = false;
+    body.style.display = "";
+    body.classList.remove("is-closing", "is-closed", "visible", "active", "open", "is-open");
+
     activeSheet = sheetName;
     title.textContent = template.title || "";
     body.innerHTML = templateHtml || "";
@@ -19052,7 +19075,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     body.style.display = "";
 
     shell?.removeAttribute("hidden");
-    shell?.classList.remove("is-closing", "is-closed");
+    shell?.classList.remove("is-closing", "is-closed", "hidden");
 
     sheet.removeAttribute("hidden");
     sheet.removeAttribute("aria-hidden");
@@ -19994,6 +20017,8 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
   const byIntent = (intent) => classified.some((entry) => entry.intent === intent && entry.btn.dataset.gridlyDockBound === "true");
   const alertsPanel = document.querySelector("#alertsSection:not([hidden]), .gridly-tactical-dock-sheet:not([hidden])[data-action='alerts']");
   const markerAudit = window.gridlyMarkerAuditDebug?.() || {};
+  const dockDiag = window.__gridlyV2DockRuntimeDiagnostics || {};
+  const v2SheetNode = document.getElementById("gridlyPortraitV2Sheet");
   const isVisible = (el) => {
     if (!el || el.hidden) return false;
     const style = window.getComputedStyle(el);
@@ -20077,6 +20102,7 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
   });
 
   return {
+    appRuntimeBuildTag: APP_RUNTIME_BUILD_TAG,
     bottomDockButtonsFound: dockButtons.length,
     reportButtonBound: byIntent("report"),
     routeButtonBound: byIntent("route"),
@@ -20101,10 +20127,19 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
     activeHazardCount: Array.isArray(activeHazards) ? activeHazards.length : 0,
     activeHazardCoordinateSample,
     visibleHazardMarkerCount,
-    markerRenderFunctionFound: Boolean(markerAudit?.markerRenderFunctionFound),
+    markerRenderFunctionFound: Boolean(typeof renderUnifiedIncidentMarkers === "function" || markerAudit?.markerRenderFunctionFound),
+    gridlyOpenSheetDebugFound: typeof window.gridlyOpenSheetDebug === "function",
+    gridlyRenderHazardMarkersDebugFound: typeof window.gridlyRenderHazardMarkersDebug === "function",
     markerSourceCount: Number(markerAudit?.markerSourceCount || 0),
     markerSourceSample: Array.isArray(markerAudit?.markerSourceSample) ? markerAudit.markerSourceSample : [],
     markerRenderSkipReasons: markerAudit?.markerRenderSkipReasons || null,
+    dockLastIntent: dockDiag.dockLastIntent || "",
+    dockLastIntentAt: Number(dockDiag.dockLastIntentAt || 0),
+    dockLastOpenResult: dockDiag.dockLastOpenResult ?? null,
+    v2SheetClassName: v2SheetNode?.className || "",
+    v2SheetHidden: Boolean(v2SheetNode?.hidden),
+    v2SheetDisplay: v2SheetNode ? getComputedStyle(v2SheetNode).display : null,
+    v2SheetPointerEvents: v2SheetNode ? getComputedStyle(v2SheetNode).pointerEvents : null,
     currentFilter: activeGeoFilter || null
   };
 };
