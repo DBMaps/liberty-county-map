@@ -2012,6 +2012,104 @@ function syncMobileNavVisibilityForViewport() {
   });
 }
 
+
+function getBottomDockButtons() {
+  return Array.from(document.querySelectorAll([
+    '.gridly-v2-bottom-dock button',
+    '.gridly-bottom-dock button',
+    '.tactical-dock button',
+    '.mobile-floating-action-dock button',
+    '.mobile-bottom-nav button',
+    '[data-section]',
+    '[data-action]'
+  ].join(','))).filter((btn) => btn instanceof HTMLElement);
+}
+
+function classifyBottomDockIntent(button) {
+  const text = (button?.textContent || '').trim().toLowerCase();
+  const section = String(button?.dataset?.section || button?.dataset?.v2Sheet || button?.dataset?.mode || '').toLowerCase();
+  const action = String(button?.dataset?.action || '').toLowerCase();
+  const id = String(button?.id || '').toLowerCase();
+  const token = `${text} ${section} ${action} ${id}`;
+  if (/report/.test(token)) return 'report';
+  if (/route/.test(token)) return 'route';
+  if (/alert/.test(token)) return 'alerts';
+  if (/setting|preferences/.test(token)) return 'settings';
+  return '';
+}
+
+function openAlertsSurfaceFromDock() {
+  const v2AlertsBtn = document.querySelector('#gridlyPortraitV2 [data-v2-sheet="alerts"]');
+  if (v2AlertsBtn && typeof openPortraitV2Sheet === 'function') {
+    openPortraitV2Sheet('alerts');
+    return true;
+  }
+  const legacyAlertsBtn = document.getElementById('mobileDockAlertsBtn');
+  if (legacyAlertsBtn) {
+    legacyAlertsBtn.click();
+    return true;
+  }
+  const alertsSection = document.getElementById('alertsSection');
+  if (alertsSection) {
+    alertsSection.hidden = false;
+    alertsSection.setAttribute('aria-hidden', 'false');
+    alertsSection.style.display = 'grid';
+    alertsSection.style.pointerEvents = 'auto';
+    document.body?.classList.add('portrait-alerts-open');
+    return true;
+  }
+  return false;
+}
+
+function openSettingsSurfaceFromDock() {
+  const v2SettingsBtn = document.querySelector('#gridlyPortraitV2 [data-v2-sheet="settings"]');
+  if (v2SettingsBtn && typeof openPortraitV2Sheet === 'function') {
+    openPortraitV2Sheet('settings');
+    return true;
+  }
+  if (typeof openGridlySurface === 'function') {
+    openGridlySurface('settings', () => openSettingsModal?.());
+    return true;
+  }
+  return false;
+}
+
+function hardenBottomDockInteractivity() {
+  const docks = document.querySelectorAll('.gridly-v2-bottom-dock, .gridly-bottom-dock, .tactical-dock, .mobile-floating-action-dock');
+  docks.forEach((dock) => {
+    if (!(dock instanceof HTMLElement)) return;
+    dock.style.pointerEvents = 'auto';
+    dock.style.zIndex = String(Math.max(Number(dock.style.zIndex || 0), 10040));
+    dock.querySelectorAll('button').forEach((btn) => {
+      btn.style.pointerEvents = 'auto';
+      ['pointerdown', 'touchstart', 'mousedown', 'click'].forEach((evt) => {
+        btn.addEventListener(evt, (e) => {
+          e.stopPropagation();
+        }, true);
+      });
+    });
+  });
+}
+
+function bindBottomDockRealButtons() {
+  hardenBottomDockInteractivity();
+  const buttons = getBottomDockButtons();
+  buttons.forEach((button) => {
+    if (button.dataset.gridlyDockBound === 'true') return;
+    const intent = classifyBottomDockIntent(button);
+    if (!intent) return;
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (intent === 'report') return invokeMobileReportEntry?.('bottom_dock_runtime_bind', event);
+      if (intent === 'route') return openGridlySurface?.('route', () => openMobileRouteQuickPanel?.());
+      if (intent === 'alerts') return openAlertsSurfaceFromDock();
+      if (intent === 'settings') return openSettingsSurfaceFromDock();
+    }, true);
+    button.dataset.gridlyDockBound = 'true';
+  });
+}
+
 function setMobileUiMode(mode = "live", options = {}) {
   const nextMode = ["live", "route", "report", "alert"].includes(mode) ? mode : "live";
   const bypassLiveReportingDrawerMount = Boolean(
@@ -8177,7 +8275,14 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     const localHazardEntry = localHazardRows[0] || null;
     if (localHazardEntry) {
       activeHazards = [localHazardEntry, ...activeHazards.filter((hazard) => hazard.crossingId !== localHazardEntry.crossingId)];
+      if (activeGeoFilter !== "all" && activeGeoFilter !== "active-delays" && typeof applyGeoFilterFromPill === "function") {
+        applyGeoFilterFromPill("all", "post_hazard_submit_visibility");
+      }
+      if (unifiedIncidentLayer && map && typeof map.hasLayer === "function" && !map.hasLayer(unifiedIncidentLayer)) {
+        unifiedIncidentLayer.addTo(map);
+      }
       refreshReportHazardViews("createSharedHazardReport:local_immediate");
+      if (typeof renderUnifiedIncidents === "function") renderUnifiedIncidents();
     }
     const submitLifecycleId = row.crossing_id;
     if (!beginSubmitLifecycleGuard(submitLifecycleId)) {
@@ -8969,6 +9074,7 @@ function bindEvents() {
     });
   };
   bindPortraitSurfaceOptionHandlers();
+  bindBottomDockRealButtons();
   const closePortraitAlertsPanel = () => {
     document.body.classList.remove("portrait-alerts-open");
     const alertsSection = document.getElementById("alertsSection");
@@ -19759,6 +19865,31 @@ const v134ReportingRefinementApplied = true;
   };
 
 
+window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
+  bindBottomDockRealButtons();
+  const dockButtons = getBottomDockButtons();
+  const classified = dockButtons.map((btn) => ({ btn, intent: classifyBottomDockIntent(btn) }));
+  const byIntent = (intent) => classified.some((entry) => entry.intent === intent && entry.btn.dataset.gridlyDockBound === "true");
+  const alertsPanel = document.querySelector("#alertsSection:not([hidden]), .gridly-tactical-dock-sheet:not([hidden])[data-action='alerts']");
+  const settingsPanel = document.querySelector("#settingsModal:not([hidden]), .gridly-tactical-dock-sheet:not([hidden])[data-action='settings']");
+  const layer = unifiedIncidentLayer;
+  const layerMarkers = typeof layer?.getLayers === "function" ? layer.getLayers() : [];
+  const visibleHazardMarkerCount = layerMarkers.filter((m) => typeof m.getElement === "function" && m.getElement()).length;
+  return {
+    bottomDockButtonsFound: dockButtons.length,
+    reportButtonBound: byIntent("report"),
+    routeButtonBound: byIntent("route"),
+    alertsButtonBound: byIntent("alerts"),
+    settingsButtonBound: byIntent("settings"),
+    alertsPanelFound: Boolean(alertsPanel),
+    settingsPanelFound: Boolean(settingsPanel),
+    hazardLayerFound: Boolean(layer && map && map.hasLayer?.(layer)),
+    activeHazardCount: Array.isArray(activeHazards) ? activeHazards.length : 0,
+    visibleHazardMarkerCount,
+    currentFilter: activeGeoFilter || null
+  };
+};
+
 exposeGridlyAuditHelper("gridlyAuditRegistryDebug", gridlyAuditRegistryDebug);
 exposeGridlyAuditHelper("gridlyCommuteIntelligenceAudit", gridlyCommuteIntelligenceAudit);
 exposeGridlyAuditHelper("loadSharedReports", typeof loadSharedReports === "function" ? loadSharedReports : null);
@@ -19766,3 +19897,4 @@ exposeAllGridlyAuditHelpers();
 
   document.addEventListener("DOMContentLoaded", bindV2);
 })();
+
