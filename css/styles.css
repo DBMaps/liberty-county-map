@@ -13107,11 +13107,6 @@ body[data-layout-mode="portrait"].gridly-v2-surface-containment #settingsModalBa
   visibility: hidden !important;
   pointer-events: none !important;
 }
-body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 [hidden],
-body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 [aria-hidden="true"] {
-  display: none !important;
-  pointer-events: none !important;
-}
 body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 {
   z-index: 9500;
 }
