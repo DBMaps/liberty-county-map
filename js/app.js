@@ -2103,11 +2103,39 @@ window.gridlyAlertDataDiagnostic = function () {
     ? window.__gridlyAlertsForRenderSample
     : (Array.isArray(window.__gridlyLatestAlertsForRender) ? window.__gridlyLatestAlertsForRender : []);
   const choose = (alert, keys=[]) => keys.map((k) => alert?.[k]).find((v) => typeof v === "string" && v.trim()) || "";
+  const tidy = (value) => String(value || "").replace(/[\s_]+/g, " ").trim();
+  const genericTitle = (value) => /^(road|traffic)?\s*hazard reported$|^hazard reported$|^alert reported$/i.test(tidy(value));
+  const pickLocationMeta = (alert = {}) => {
+    const road = tidy(alert?.roadName || alert?.primaryRoad || alert?.corridor || alert?.route || alert?.road);
+    const cross = tidy(alert?.crossStreet || alert?.nearbyCrossStreet || alert?.crossingName || alert?.crossingRoad || alert?.resolvedCrossingName);
+    const known = tidy(alert?.knownLocation || alert?.locationName || alert?.locationLabel || alert?.city || alert?.place);
+    const phrase = tidy(alert?.locationPhrase || alert?.locationText);
+    const nearest = tidy(alert?.nearestRoad || alert?.nearestCrossStreet);
+    if (road && cross) return { value: `${road} at ${cross}`, source: "roadPlusCrossStreet" };
+    if (known) return { value: known, source: "knownLocation" };
+    if (phrase) return { value: phrase, source: "locationPhrase" };
+    if (nearest) return { value: `Near ${nearest}`, source: "nearestRoad" };
+    return { value: tidy(alert?.location || alert?.localizedSummary || ""), source: "fallbackLocationText" };
+  };
+  const pickHazardMeta = (alert = {}) => {
+    const hazard = tidy(alert?.hazardType);
+    if (hazard) return { value: hazard, source: "hazardType" };
+    const reportType = tidy(alert?.reportType || alert?.type);
+    if (reportType) return { value: reportType, source: "reportType" };
+    const category = tidy(alert?.category || alert?.label);
+    if (category) return { value: category, source: "alertCategory" };
+    const shortDesc = tidy(alert?.description || alert?.subtitle || alert?.localizedSummary);
+    return { value: shortDesc || "Road hazard reported", source: shortDesc ? "shortHazardDescription" : "default" };
+  };
   return alertSource.slice(0, 5).map((alert) => {
     const lat = Number(alert?.lat ?? alert?.latitude ?? alert?.rawLat ?? alert?.raw?.lat ?? alert?.source?.lat);
     const lng = Number(alert?.lng ?? alert?.lon ?? alert?.longitude ?? alert?.rawLng ?? alert?.raw?.lng ?? alert?.source?.lng ?? alert?.source?.lon);
     const chosenTitle = choose(alert, ["resolvedHeadline", "headline", "title", "localizedSummary"]);
     const chosenSubtitle = choose(alert, ["subtitle", "description", "locationPhrase", "locationLabel", "localizedSummary"]);
+    const locationMeta = pickLocationMeta(alert);
+    const hazardMeta = pickHazardMeta(alert);
+    const chosenPrimaryTitle = (!genericTitle(chosenTitle) && tidy(chosenTitle)) || locationMeta.value || chosenTitle || "Road hazard reported";
+    const chosenSecondaryDetail = hazardMeta.value || chosenSubtitle || "Road hazard reported";
     return {
       id: alert?.id,
       title: alert?.title,
@@ -2140,6 +2168,10 @@ window.gridlyAlertDataDiagnostic = function () {
       raw: alert?.raw,
       chosenTitle,
       chosenSubtitle,
+      chosenPrimaryTitle,
+      chosenSecondaryDetail,
+      primarySource: (!genericTitle(chosenTitle) && tidy(chosenTitle)) ? "headlineLikeField" : locationMeta.source,
+      secondarySource: hazardMeta.source,
       fieldUsedForTitle: chosenTitle === alert?.resolvedHeadline ? "resolvedHeadline" : chosenTitle === alert?.headline ? "headline" : chosenTitle === alert?.title ? "title" : chosenTitle === alert?.localizedSummary ? "localizedSummary" : "",
       fieldUsedForSubtitle: chosenSubtitle === alert?.subtitle ? "subtitle" : chosenSubtitle === alert?.description ? "description" : chosenSubtitle === alert?.locationPhrase ? "locationPhrase" : chosenSubtitle === alert?.locationLabel ? "locationLabel" : chosenSubtitle === alert?.localizedSummary ? "localizedSummary" : "",
       hasValidCoordinates: Number.isFinite(lat) && Number.isFinite(lng)
@@ -2575,54 +2607,47 @@ function openAlertsSurfaceFromDock() {
         })[impactLevel] || "Minor impact";
         return { resolvedRoadName, crossStreet, direction, nearbyKnownLocation, impactLevel, movementSummary };
       };
+      const isGenericPrimaryTitle = (value) => /^(road|traffic)?\s*hazard reported$|^hazard reported$|^alert reported$/i.test(cleanDisplayValue(value));
+      const pickPrimaryTitleMeta = (alert = {}) => {
+        const picked = chooseBestAlertLocationContext(alert);
+        const enriched = picked.enriched || {};
+        const road = cleanDisplayValue(enriched.resolvedRoadName);
+        const crossStreet = cleanDisplayValue(enriched.crossStreet);
+        const known = cleanDisplayValue(enriched.nearbyKnownLocation);
+        const locationPhrase = cleanDisplayValue(text(alert.locationPhrase) || text(alert.locationText) || text(alert.locationLabel) || text(alert.knownLocation) || text(alert.locationName));
+        const nearestRoad = cleanDisplayValue(text(alert.nearestRoad) || text(alert.nearestCrossStreet) || road);
+        if (road && crossStreet) return { value: `${road} at ${crossStreet.split(" and ")[0]}`, source: "roadPlusCrossStreet" };
+        if (known && known.toLowerCase() !== "dayton area") return { value: known, source: "knownLocation" };
+        if (locationPhrase) return { value: locationPhrase, source: "locationPhrase" };
+        if (nearestRoad) return { value: /^near\s+/i.test(nearestRoad) ? nearestRoad : `Near ${nearestRoad}`, source: "nearestRoad" };
+        return { value: cleanDisplayValue(picked.bestTitleLocation), source: "fallbackLocationText" };
+      };
+      const pickSecondaryDetailMeta = (alert = {}) => {
+        const hazardType = cleanDisplayValue(text(alert.hazardType));
+        if (hazardType) return { value: hazardType, source: "hazardType" };
+        const reportType = cleanDisplayValue(text(alert.reportType) || text(alert.type));
+        if (reportType) return { value: reportType, source: "reportType" };
+        const category = cleanDisplayValue(text(alert.category) || text(alert.label));
+        if (category) return { value: category, source: "alertCategory" };
+        const shortDesc = cleanDisplayValue(text(alert.description) || text(alert.subtitle) || text(alert.localizedSummary));
+        return { value: shortDesc || "Road hazard reported", source: shortDesc ? "shortHazardDescription" : "default" };
+      };
 
       const titleFor = alert => {
         const picked = chooseBestAlertLocationContext(alert);
-        const enriched = picked.enriched;
-        const crossing = cleanDisplayValue(text(alert.roadName) || text(alert.crossingRoad) || text(alert.nearestRoad)) || enriched.resolvedRoadName;
-        const base = cleanDisplayValue(text(alert.resolvedHeadline) || text(alert.headline) || text(alert.title));
-        const crossingId = cleanDisplayValue(alert?.crossingId);
-
-        if (crossingId) {
-          const crossingRecord = (Array.isArray(crossings) ? crossings : []).find((item) => String(item?.id || "").trim() === crossingId);
-          const crossingName = cleanDisplayValue(text(crossingRecord?.name || crossingRecord?.crossingName || crossingRecord?.label));
-          if (crossingName) {
-            if (crossingName.includes("&")) {
-              const [road, crossStreet] = crossingName.split("&").map((segment) => segment.trim()).filter(Boolean);
-              if (road && crossStreet) return `Train blocking ${road} at ${crossStreet}`;
-            }
-            return `Train blocking ${crossingName}`;
-          }
-        }
-
-        if ((alert.type === "blocked" || /rail|crossing|train/i.test(base)) && crossing) {
-          if (crossing.includes("&")) {
-            const [a, b] = crossing.split("&").map(s => s.trim());
-            return `Train blocking ${a} at ${b}`;
-          }
-          return `Train blocking ${crossing}`;
-        }
-
-        if (picked.explicitHeadline && (/\sat\s/i.test(picked.explicitHeadline) || /\snear\s/i.test(picked.explicitHeadline) || isSpecificPhrase(picked.explicitHeadline))) return picked.explicitHeadline;
-        if (base) return base;
-        const hazard = cleanDisplayValue(getHazardType(alert));
-        if (hazard && enriched.resolvedRoadName && enriched.crossStreet) return `${hazard} on ${enriched.resolvedRoadName} at ${enriched.crossStreet.split(" and ")[0]}`;
-        if (hazard && enriched.resolvedRoadName && enriched.nearbyKnownLocation) return `${hazard} on ${enriched.resolvedRoadName} near ${enriched.nearbyKnownLocation}`;
-        if (hazard && picked.bestTitleLocation) return `${hazard} on ${picked.bestTitleLocation}`.replace(/\son\snear\s/i, " near ");
-        if (enriched.direction && crossing && !/train|crossing|rail/i.test(hazard)) return `${hazard} ${enriched.direction.toLowerCase()} on ${crossing}`;
-        if (crossing && /train|crossing|rail|blocked/i.test(cleanDisplayValue(text(alert.type) || ""))) return `Train blocking ${crossing}`;
-        if (crossing) return `${hazard} on ${crossing}`;
+        const explicit = cleanDisplayValue(text(alert.resolvedHeadline) || text(alert.headline) || text(alert.title) || text(alert.localizedSummary));
+        if (explicit && !isGenericPrimaryTitle(explicit) && (/\sat\s/i.test(explicit) || /\snear\s/i.test(explicit) || isSpecificPhrase(explicit))) return explicit;
+        const primary = pickPrimaryTitleMeta(alert);
+        if (primary.value) return primary.value;
+        if (explicit && !isGenericPrimaryTitle(explicit)) return explicit;
         return "Road hazard reported";
       };
 
       const helperTextFor = alert => {
-        const picked = chooseBestAlertLocationContext(alert);
-        const enriched = picked.enriched;
-        const explicit = cleanDisplayValue(text(alert.subtitle) || text(alert.locationText));
-        if (explicit && explicit.toLowerCase() !== titleFor(alert).toLowerCase()) return explicit;
-        if (enriched.nearbyKnownLocation && !titleFor(alert).toLowerCase().includes(enriched.nearbyKnownLocation.toLowerCase()) && !titleFor(alert).toLowerCase().includes(enriched.resolvedRoadName.toLowerCase()) ) return `Near ${enriched.nearbyKnownLocation}`;
-        if (enriched.crossStreet && !titleFor(alert).toLowerCase().includes(enriched.crossStreet.toLowerCase())) return `Near ${enriched.crossStreet}`;
-        return picked.secondary || "Moderate movement impact";
+        const primary = titleFor(alert).toLowerCase();
+        const secondary = pickSecondaryDetailMeta(alert);
+        if (secondary.value && secondary.value.toLowerCase() !== primary) return secondary.value;
+        return "Road hazard reported";
       };
       const timeTextFor = alert => text(alert.minutesText) || text(alert.timeAgo) || text(alert.updatedText) || "Now";
       const renderAlertCard = (alert, index, isHidden = false) => {
