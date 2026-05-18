@@ -15043,10 +15043,10 @@ function normalizeCorridorBaseLabel(label = "") {
   const raw = String(label || "").trim();
   if (!raw) return "";
   const normalized = raw
-    .replace(/Us\s*(\d+)/gi, "US $1")
-    .replace(/Tx\s*(\d+)/gi, "TX $1")
-    .replace(/Farm\s*-?\s*To\s*-?\s*Market\s+Road\s*(\d+)/gi, "FM $1")
-    .replace(/Fm\s*(\d+)/gi, "FM $1")
+    .replace(/\bUs\s*(\d+)\b/gi, "US $1")
+    .replace(/\bTx\s*(\d+)\b/gi, "TX $1")
+    .replace(/\bFarm\s*-?\s*To\s*-?\s*Market\s+Road\s*(\d+)\b/gi, "FM $1")
+    .replace(/\bFm\s*(\d+)\b/gi, "FM $1")
     .replace(/\s+/g, " ")
     .trim();
   if (/^(US|TX|FM)\s+\d+$/i.test(normalized)) return normalized.toUpperCase();
@@ -15056,7 +15056,7 @@ function normalizeCorridorBaseLabel(label = "") {
 function inferCorridorLabel(incident = {}) {
   const text = `${incident?.title || ""} ${incident?.description || ""} ${incident?.area || ""}`;
   const normalizedText = normalizeCorridorBaseLabel(text);
-  const match = normalizedText.match(/(US\s*\d+|TX\s*\d+|FM\s*\d+)/i);
+  const match = normalizedText.match(/\b(US\s*\d+|TX\s*\d+|FM\s*\d+)\b/i);
   if (match) return `${normalizeCorridorBaseLabel(normalizeRoadShorthand(match[1]))} Corridor`;
   const crossing = String(incident?.crossingName || incident?.area || "");
   if (/cross/i.test(crossing) || /cross/i.test(text)) return "Local crossing impact";
@@ -18932,6 +18932,78 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const route = getRouteSurfaceSnapshot();
     return `<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy"><strong>Start:</strong> ${route.startLabel}</p><p class="gridly-v2-sheet-copy"><strong>Destination:</strong> ${route.destinationLabel}</p><p class="gridly-v2-sheet-copy"><strong>Saved places:</strong> ${route.savedPlaceCount}</p><p class="gridly-v2-sheet-copy"><strong>Status:</strong> ${route.routeState}</p><p class="gridly-v2-sheet-copy"><strong>Readiness:</strong> ${route.readinessMessage}</p><p class="gridly-v2-sheet-copy"><strong>Preview:</strong> ${route.previewState}</p><p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p><button class="primary-btn" data-v2-action="route-watch-open" type="button">Open Route Watch</button><button class="secondary-btn" data-v2-action="route-preview-open" type="button">View Route</button><button class="secondary-btn" data-v2-action="route-manage-places-open" type="button">Manage Places</button></div>`;
   }
+
+  function pickFirstNonEmptyText(values = []) {
+    for (const value of values) {
+      const text = String(value ?? "").trim();
+      if (text && text.toLowerCase() !== "[object object]") return text;
+    }
+    return "";
+  }
+
+  function normalizeDirectionLabel(value) {
+    const raw = String(value || "").trim().toLowerCase();
+    if (!raw) return "";
+    if (/(east|eb)\b/.test(raw)) return "eastbound";
+    if (/(west|wb)\b/.test(raw)) return "westbound";
+    if (/(north|nb)\b/.test(raw)) return "northbound";
+    if (/(south|sb)\b/.test(raw)) return "southbound";
+    return "";
+  }
+
+  function buildSpecificAlertTitle(alert = {}) {
+    const alertType = String(alert?.type || alert?.reportType || alert?.incidentType || "").toLowerCase();
+    const isRail = alert?.reportKind === "crossing" || /train|crossing|blocked/.test(alertType) || String(alert?.crossingId || "").trim().length > 0;
+    const hazardType = pickFirstNonEmptyText([
+      alert?.hazardTypeLabel,
+      alert?.typeLabel,
+      alert?.label,
+      alert?.report_type,
+      alert?.reportType,
+      alert?.title
+    ]) || "Hazard";
+    const road = pickFirstNonEmptyText([alert?.roadName, alert?.corridor, alert?.locationName, alert?.titleRoad]);
+    const atStreet = pickFirstNonEmptyText([alert?.crossingName, alert?.crossingRoad, alert?.nearestRoad, alert?.knownLocation, alert?.locationName, alert?.location]);
+    const crossA = pickFirstNonEmptyText([alert?.crossStreetA, alert?.fromStreet, alert?.startStreet, alert?.nearestRoad]);
+    const crossB = pickFirstNonEmptyText([alert?.crossStreetB, alert?.toStreet, alert?.endStreet, alert?.crossingRoad]);
+    const direction = normalizeDirectionLabel(alert?.direction || alert?.travelDirection || alert?.laneDirection || alert?.subtitle);
+
+    if (isRail) {
+      if (road && atStreet) return `Train blocking ${road} at ${atStreet}`;
+      if (road) {
+        const near = pickFirstNonEmptyText([alert?.nearestRoad, alert?.crossingRoad, alert?.knownLocation, alert?.locationName, alert?.location]);
+        if (near) return `Train blocking ${road} near ${near}`;
+      }
+      if (road) return `Train blocking ${road}`;
+      if (alert?.corridor) return `Train blocking ${String(alert.corridor).trim()}`;
+      return "Train blocking railroad crossing";
+    }
+
+    if (road && crossA && crossB) {
+      const dirText = direction ? ` ${direction}` : "";
+      return `${hazardType} on ${road}${dirText} between ${crossA} and ${crossB}`;
+    }
+    if (road) {
+      const near = pickFirstNonEmptyText([alert?.knownLocation, alert?.nearestRoad, alert?.locationName, alert?.location]);
+      if (near) return `${hazardType} on ${road} near ${near}`;
+      return `${hazardType} on ${road}`;
+    }
+    return pickFirstNonEmptyText([alert?.title, alert?.subtitle]) || "Road hazard nearby";
+  }
+
+  function getSeverityChipLabel(alert = {}) {
+    const sev = String(alert?.severity || "moderate").toLowerCase();
+    if (sev === "high") return "High impact";
+    if (sev === "low") return "Low impact";
+    if (sev === "cleared") return "Cleared";
+    return "Medium impact";
+  }
+
+  function getAlertClusterKey(alert = {}) {
+    const type = String(alert?.type || alert?.reportType || "hazard").toLowerCase();
+    const road = pickFirstNonEmptyText([alert?.roadName, alert?.corridor, alert?.locationName, alert?.crossingName]).toLowerCase();
+    return `${type}|${road}`;
+  }
   function getAlertsSurfaceSnapshot() {
     const incidents = getActiveUnifiedIncidents();
     const unifiedIncidents = Array.isArray(getUnifiedIncidents?.()) ? getUnifiedIncidents() : [];
@@ -18958,10 +19030,23 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         const incident = item?.incident || {};
         const severityKey = String(incident?.severity || "moderate").toLowerCase();
         return {
-          title: item?.localizedSummary || incident?.title || unifiedIntel.topStatus || "Traffic slowing",
-          subtitle: incident?.report_type ? `${String(incident.report_type).replace(/[_-]+/g, " ")} • ${item?.minutesText || "now"}` : (item?.minutesText || "now"),
+          title: buildSpecificAlertTitle({ ...incident, title: item?.localizedSummary || incident?.title, subtitle: incident?.subtitle || item?.localizedSummary }),
+          subtitle: pickFirstNonEmptyText([incident?.subtitle, incident?.detail, item?.localizedSummary]),
           severity: severityKey,
-          minutesText: item?.minutesText || "now"
+          minutesText: item?.minutesText || "now",
+          type: incident?.report_type || incident?.type || item?.type || "hazard",
+          reportKind: incident?.reportKind || (String(incident?.crossingId || "").trim() ? "crossing" : "hazard"),
+          roadName: incident?.roadName || incident?.corridor,
+          corridor: incident?.corridor,
+          crossingName: incident?.crossingName,
+          crossingRoad: incident?.crossingRoad,
+          nearestRoad: incident?.nearestRoad,
+          knownLocation: incident?.knownLocation,
+          locationName: incident?.locationName,
+          location: incident?.location,
+          crossStreetA: incident?.crossStreetA,
+          crossStreetB: incident?.crossStreetB,
+          direction: incident?.direction
         };
       })
       : (incidents.length ? incidents : fallbackHazards).map((item) => {
@@ -18970,10 +19055,30 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         const locationLabel = item?.crossingName || item?.locationLabel || item?.locationName || item?.roadName || item?.label || "Local roadway";
         const stateLabel = item?.latestReport ? getReportStateLabel(item.latestReport) : (item?.statusLabel || "Active");
         return {
-          title: `${typeLabel} · ${locationLabel}`,
+          title: buildSpecificAlertTitle({
+            title: `${typeLabel} · ${locationLabel}`,
+            type: rawType,
+            reportType: rawType,
+            reportKind: item?.reportKind,
+            crossingName: item?.crossingName,
+            roadName: item?.roadName,
+            corridor: item?.corridor,
+            nearestRoad: item?.nearestRoad,
+            knownLocation: item?.knownLocation,
+            locationName: item?.locationName,
+            location: item?.location,
+            subtitle: stateLabel
+          }),
           subtitle: stateLabel,
           severity: String(item?.severity || "moderate").toLowerCase(),
-          minutesText: "now"
+          minutesText: "now",
+          type: rawType,
+          reportKind: item?.reportKind,
+          roadName: item?.roadName,
+          corridor: item?.corridor,
+          crossingName: item?.crossingName,
+          locationName: item?.locationName,
+          location: item?.location
         };
       });
     const normalizedAlertItems = normalizedAlertItemsFromIntel;
@@ -19034,19 +19139,26 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       snapshot.hasActiveAlerts === true ||
       alerts.length > 0;
 
-    const dedupeSet = new Set();
-    const dedupedAlerts = alerts.filter((alert) => {
-      const key = [
-        alert?.id || "",
-        resolveAlertTitleText(alert).toLowerCase(),
-        String(alert?.type || "").toLowerCase(),
-        String(alert?.location || "").toLowerCase(),
-        String(alert?.minutesText || "").toLowerCase()
-      ].join("|");
-      if (dedupeSet.has(key)) return false;
-      dedupeSet.add(key);
-      return true;
+    const severityRank = { high: 3, moderate: 2, low: 1, cleared: 0 };
+    const groupedAlerts = new Map();
+    alerts.forEach((alert) => {
+      const key = getAlertClusterKey(alert);
+      const minutes = Number.parseInt(String(alert?.minutesText || "").replace(/[^0-9]/g, ""), 10);
+      const rank = severityRank[String(alert?.severity || "moderate").toLowerCase()] || 1;
+      const scored = { ...alert, __rank: rank, __minutes: Number.isFinite(minutes) ? minutes : 999 };
+      if (!groupedAlerts.has(key)) {
+        groupedAlerts.set(key, { lead: scored, extras: 0 });
+        return;
+      }
+      const group = groupedAlerts.get(key);
+      group.extras += 1;
+      const lead = group.lead;
+      if (scored.__rank > lead.__rank || (scored.__rank === lead.__rank && scored.__minutes < lead.__minutes)) {
+        group.lead = scored;
+      }
     });
+    const dedupedAlerts = [...groupedAlerts.values()].map((entry) => ({ ...entry.lead, extraCount: entry.extras }))
+      .sort((a, b) => (b.__rank - a.__rank) || (a.__minutes - b.__minutes));
 
     const compactLimit = 4;
     const isMobileCompact = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(max-width: 768px)").matches;
@@ -19072,10 +19184,13 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     ].filter(Boolean).join(" • ");
     const timeText = String(alert?.minutesText || alert?.timeText || "now");
     return `
-    <div class="gridly-alert-row">
-      <div class="gridly-alert-title">${sanitizeText(title)}</div>
-      <div class="gridly-alert-subtitle">${sanitizeText(metaLine || "Active alert")}</div>
-      <div class="gridly-alert-subtitle">${sanitizeText(timeText)}</div>
+    <div class="gridly-alert-row" style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.08);">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+        <div class="gridly-alert-title" style="font-weight:700;line-height:1.3;">${sanitizeText(title)}</div>
+        <div class="gridly-alert-subtitle" style="white-space:nowrap;opacity:0.85;">${sanitizeText(timeText)}</div>
+      </div>
+      <div class="gridly-alert-subtitle" style="font-size:12px;opacity:0.85;">${sanitizeText(alert?.subtitle || "")}</div>
+      <div class="gridly-alert-subtitle" style="font-size:12px;opacity:0.8;">${sanitizeText(getSeverityChipLabel(alert))}${alert?.extraCount > 0 ? ` · + ${alert.extraCount} more nearby reports` : ""}</div>
     </div>
   `;
   }).join("")}
