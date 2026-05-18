@@ -18925,27 +18925,37 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       return Number.isFinite(submittedAt) && (now - submittedAt) <= 60 * 60 * 1000;
     }).length;
     const clearedCount = 0;
-    const activeIncidentCount = incidents.length;
+    const unifiedIntel = buildUnifiedLocalizedCommuteIntelligence({ limit: 8 });
+    const intelItems = Array.isArray(unifiedIntel.items) ? unifiedIntel.items : [];
     const highImpactCount = incidents.filter((incident) => incident?.severity === "high").length;
     const watchCount = incidents.filter((incident) => incident?.severity !== "high").length;
     const unifiedIncidentSourceCount = unifiedIncidents.length;
     const activeHazardSourceCount = fallbackHazards.length;
-    const normalizedAlertItems = (incidents.length ? incidents : fallbackHazards).slice(0, 6).map((item) => {
-      const rawType = item?.latestReport?.type || item?.type || "hazard";
-      const typeLabel = getReportCopy?.(rawType)?.label || String(rawType).replace(/[_-]+/g, " ");
-      const locationLabel = item?.crossingName || item?.locationLabel || item?.locationName || item?.roadName || item?.label || "Local roadway";
-      const stateLabel = item?.latestReport ? getReportStateLabel(item.latestReport) : (item?.statusLabel || "Active");
-      return {
-        typeLabel,
-        locationLabel,
-        stateLabel
-      };
-    });
-    const top = incidents[0] || fallbackHazards[0] || null;
-    const newestMinutes = Number.isFinite(new Date(top?.created_at || top?.updated_at || 0).getTime())
-      ? Math.max(0, Math.round((Date.now() - new Date(top?.created_at || top?.updated_at).getTime()) / 60000))
-      : Number.NaN;
-    const unifiedIntel = buildUnifiedLocalizedCommuteIntelligence({ limit: 8 });
+    const normalizedAlertItems = intelItems.length
+      ? intelItems.slice(0, 6).map((item) => {
+        const incident = item?.incident || {};
+        const severityKey = String(incident?.severity || "moderate").toLowerCase();
+        return {
+          title: item?.localizedSummary || incident?.title || unifiedIntel.topStatus || "Traffic slowing",
+          subtitle: incident?.report_type ? `${String(incident.report_type).replace(/[_-]+/g, " ")} • ${item?.minutesText || "now"}` : (item?.minutesText || "now"),
+          severity: severityKey,
+          minutesText: item?.minutesText || "now"
+        };
+      })
+      : (incidents.length ? incidents : fallbackHazards).slice(0, 6).map((item) => {
+        const rawType = item?.latestReport?.type || item?.type || "hazard";
+        const typeLabel = getReportCopy?.(rawType)?.label || String(rawType).replace(/[_-]+/g, " ");
+        const locationLabel = item?.crossingName || item?.locationLabel || item?.locationName || item?.roadName || item?.label || "Local roadway";
+        const stateLabel = item?.latestReport ? getReportStateLabel(item.latestReport) : (item?.statusLabel || "Active");
+        return {
+          title: `${typeLabel} · ${locationLabel}`,
+          subtitle: stateLabel,
+          severity: String(item?.severity || "moderate").toLowerCase(),
+          minutesText: "now"
+        };
+      });
+    const activeIncidentCount = intelItems.length || incidents.length;
+    const hasFallbackSignals = activeHazardSourceCount > 0 || unifiedIncidentSourceCount > 0;
     const nearbySummary = unifiedIntel.nearbySummary;
     const routeImpactSummary = unifiedIntel.routeImpactSummary;
     const readinessSummary = prefs.enabled
@@ -18958,7 +18968,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       readinessSummary,
       recentHazardCount,
       clearedCount,
-      hasActiveAlerts: activeIncidentCount > 0 || activeHazardSourceCount > 0 || unifiedIncidentSourceCount > 0,
+      hasActiveAlerts: Boolean(unifiedIntel.hasActiveAlerts || activeIncidentCount > 0 || hasFallbackSignals),
       unifiedIncidentSourceCount,
       activeHazardSourceCount,
       normalizedAlertItems,
@@ -18966,7 +18976,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       topStatus: unifiedIntel.topStatus,
       commuteImpactHeadline: unifiedIntel.commuteImpactHeadline,
       topStatusLocalizedDetail: unifiedIntel.topStatusLocalizedDetail,
-      localizedIntelligenceSummaries: unifiedIntel.items.map((item) => `${item.localizedSummary} • ${item.minutesText}`),
+      localizedIntelligenceSummaries: intelItems.map((item) => `${item.localizedSummary} • ${item.minutesText}`),
       activeLocalizedAlertCount: unifiedIntel.activeLocalizedAlertCount,
       routeImpactIncidentCount: unifiedIntel.routeImpactIncidentCount
     };
@@ -19003,7 +19013,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       : "<li>No recent recovery updates</li>";
 
     const alertItemsHtml = alerts.hasActiveAlerts
-      ? (Array.isArray(alerts.normalizedAlertItems) ? alerts.normalizedAlertItems : []).map((item) => `<li><strong>${sanitizeText(item.typeLabel || "Hazard")}</strong> · ${sanitizeText(item.locationLabel || "Local roadway")} <span>(${sanitizeText(item.stateLabel || "Active")})</span></li>`).join("")
+      ? (Array.isArray(alerts.normalizedAlertItems) ? alerts.normalizedAlertItems : []).map((item) => `<li><strong>${sanitizeText(item.title || "Traffic slowing")}</strong> <span>(${sanitizeText(String(item.severity || "moderate").toUpperCase())})</span><p>${sanitizeText(item.subtitle || item.minutesText || "now")}</p></li>`).join("")
       : "";
 
     return `<div class="gridly-v2-command-surface">
