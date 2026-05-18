@@ -2679,27 +2679,45 @@ function openAlertsSurfaceFromDock() {
         const compare = normalizeRailSubtitleMatch(compareTo);
         return Boolean(normalized && normalized !== "blocked" && normalized !== "rail crossing blocked" && normalized !== "dayton area" && normalized !== compare);
       };
-      const composeRailCrossingHeadline = (alert = {}) => {
+      const resolveRailCrossingPair = (alert = {}) => {
         const enriched = chooseBestAlertLocationContext(alert).enriched || {};
-        const crossingParts = [
+        const crossingFields = [
           alert?.crossingName, alert?.crossingRoad, alert?.resolvedCrossingName, alert?.crossingLabel,
           alert?.raw?.crossingName, alert?.raw?.crossingRoad, alert?.source?.crossingName, alert?.source?.crossingRoad
-        ].flatMap(splitCrossingPair);
-        const primaryRoad = [
+        ];
+        const crossingParts = crossingFields.flatMap(splitCrossingPair);
+        const pickDistinct = (values, compareTo = "") => values
+          .map(value => cleanDisplayValue(text(value)))
+          .find(value => isDistinctCrossingPart(value, compareTo)) || "";
+        const primaryRoad = pickDistinct([
           alert?.primaryRoad, alert?.roadName, alert?.corridor, alert?.route, alert?.road, enriched.resolvedRoadName,
           alert?.raw?.primaryRoad, alert?.raw?.roadName, alert?.raw?.corridor, alert?.source?.primaryRoad, alert?.source?.roadName, alert?.source?.corridor,
           crossingParts[0]
-        ].map(value => cleanDisplayValue(text(value))).find(value => isDistinctCrossingPart(value, ""));
-        const crossStreet = [
+        ]);
+        const firstDistinctCrossingPart = crossingParts.find(part => isDistinctCrossingPart(part, primaryRoad)) || "";
+        const crossStreet = pickDistinct([
           alert?.crossStreet, alert?.nearbyCrossStreet, alert?.crossStreetA, alert?.crossStreet1, alert?.fromStreet,
-          alert?.crossStreetB, alert?.crossStreet2, alert?.toStreet, enriched.crossStreet, crossingParts.find(part => isDistinctCrossingPart(part, primaryRoad)),
-          alert?.nearestRoad, alert?.knownLocation, alert?.locationName, alert?.raw?.crossStreet, alert?.raw?.nearbyCrossStreet, alert?.source?.crossStreet, alert?.source?.nearbyCrossStreet
-        ].map(value => cleanDisplayValue(text(value))).find(value => isDistinctCrossingPart(value, primaryRoad));
-        const singleRoad = primaryRoad || crossingParts.find(part => isDistinctCrossingPart(part, "")) || cleanDisplayValue(enriched.nearbyKnownLocation);
-        if (primaryRoad && crossStreet) return `Crossing blocked at ${primaryRoad} and ${crossStreet}`;
-        if (singleRoad) return `Crossing blocked at ${singleRoad}`;
-        return "Active rail report";
+          alert?.crossStreetB, alert?.crossStreet2, alert?.toStreet, enriched.crossStreet,
+          alert?.raw?.crossStreet, alert?.raw?.nearbyCrossStreet, alert?.source?.crossStreet, alert?.source?.nearbyCrossStreet
+        ], primaryRoad);
+        const crossingRoad = pickDistinct([
+          alert?.crossingRoad, alert?.crossingName, alert?.resolvedCrossingName, alert?.crossingLabel,
+          firstDistinctCrossingPart, alert?.raw?.crossingRoad, alert?.raw?.crossingName, alert?.source?.crossingRoad, alert?.source?.crossingName
+        ].flatMap(value => splitCrossingPair(value).length ? splitCrossingPair(value) : [value]), primaryRoad);
+        const nearbyKnownLocation = pickDistinct([
+          alert?.nearbyKnownLocation, alert?.knownLocation, alert?.locationName, alert?.locationLabel,
+          alert?.raw?.nearbyKnownLocation, alert?.raw?.knownLocation, alert?.raw?.locationName,
+          alert?.source?.nearbyKnownLocation, alert?.source?.knownLocation, alert?.source?.locationName,
+          enriched.nearbyKnownLocation
+        ], primaryRoad);
+        const pairLabel = crossStreet || crossingRoad || nearbyKnownLocation;
+        const singleRoad = primaryRoad || firstDistinctCrossingPart || cleanDisplayValue(enriched.nearbyKnownLocation);
+        const chosenHeadline = primaryRoad && pairLabel
+          ? `Crossing blocked at ${primaryRoad} and ${pairLabel}`
+          : (singleRoad ? `Crossing blocked at ${singleRoad}` : "Crossing blocked nearby");
+        return { primaryRoad, crossStreet, crossingRoad, nearbyKnownLocation, chosenHeadline };
       };
+      const composeRailCrossingHeadline = (alert = {}) => resolveRailCrossingPair(alert).chosenHeadline;
       const titleFor = alert => {
         if (isRailAlert(alert)) return composeRailCrossingHeadline(alert);
         const explicit = cleanDisplayValue(text(alert.resolvedHeadline) || text(alert.headline) || text(alert.title) || text(alert.localizedSummary));
@@ -2861,6 +2879,18 @@ function openAlertsSurfaceFromDock() {
         const lat = getFirstNumber(alert, ["lat", "latitude", "rawLat", "raw.lat", "source.lat"]);
         const lng = getFirstNumber(alert, ["lng", "lon", "longitude", "rawLng", "raw.lng", "source.lng", "source.lon"]);
         return { id: cleanDisplayValue(alert?.id || alert?.reportId || `alert-${idx}`), originalTitle: text(alert?.title), originalHeadline: text(alert?.headline), chosenTitle, chosenSubtitle, roadFieldUsed: chosen.roadFieldUsed, crossingLocationFieldUsed: chosen.crossingFieldUsed, hasCoordinates: Number.isFinite(lat) && Number.isFinite(lng) };
+      }));
+
+      console.log("[V157.8 RAIL PAIR SAMPLE]", alertsForRender.filter(isRailAlert).slice(0, 5).map((alert, idx) => {
+        const pair = resolveRailCrossingPair(alert);
+        return {
+          id: cleanDisplayValue(alert?.id || alert?.reportId || alert?.uuid || `rail-alert-${idx}`),
+          primaryRoad: pair.primaryRoad,
+          crossStreet: pair.crossStreet,
+          crossingRoad: pair.crossingRoad,
+          nearbyKnownLocation: pair.nearbyKnownLocation,
+          chosenHeadline: pair.chosenHeadline
+        };
       }));
 
       const html = `
