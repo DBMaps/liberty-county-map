@@ -14792,8 +14792,8 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.commuteAuditRawIdsSource = Array.isArray(unifiedIncidentsForAudit)
     ? "getUnifiedIncidents_array_map_id"
     : "getUnifiedIncidents_non_array_fallback_empty";
-  gridlyCommuteIntelligenceAuditState.commuteAuditRawObjectSource = "not_evaluated";
-  gridlyCommuteIntelligenceAuditState.commuteAuditRawObjectUnavailableReason = "not_evaluated";
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawObjectSource = "bootstrap_pending_raw_array_evaluation";
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawObjectUnavailableReason = "bootstrap_pending_raw_array_evaluation";
   gridlyCommuteIntelligenceAuditState.commuteAuditUnifiedSnapshotShape = Array.isArray(unifiedIncidentsForAudit)
     ? "array"
     : (unifiedIncidentsForAudit === null ? "null" : typeof unifiedIncidentsForAudit);
@@ -14881,6 +14881,53 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.nearbyPairResolutionCandidateCount = 0;
   gridlyCommuteIntelligenceAuditState.derivedFieldGenerationTrace = { totals: {}, perIncident: [], slowestStep: null, repeatedWork: [] };
   gridlyCommuteIntelligenceAuditState.nestedLookupCallMap = { totals: {}, byFunction: {}, repeatedScans: [], indexCandidateRecommendations: [] };
+  const rawUnifiedIncidentArray = Array.isArray(unifiedIncidentsForAudit) ? unifiedIncidentsForAudit : [];
+  const unifiedIncidentIds = rawUnifiedIncidentArray.map((incident) => String(incident?.id || ""));
+  const rawUnifiedIncidentObjectSample = rawUnifiedIncidentArray.length > 0
+    ? rawUnifiedIncidentArray.find((incident) => incident && typeof incident === "object")
+    : null;
+  const isUnifiedSnapshotArray = Array.isArray(unifiedIncidentsForAudit);
+  const unifiedSnapshotShape = isUnifiedSnapshotArray
+    ? "array"
+    : (unifiedIncidentsForAudit === null ? "null" : typeof unifiedIncidentsForAudit);
+  const unifiedSnapshotKeys = !isUnifiedSnapshotArray && unifiedIncidentsForAudit && typeof unifiedIncidentsForAudit === "object"
+    ? Object.keys(unifiedIncidentsForAudit).slice(0, 12)
+    : [];
+  const rawCountSource = isUnifiedSnapshotArray
+    ? "getUnifiedIncidents_array_length"
+    : "derived_from_mapped_ids_length";
+  const rawIdsSource = isUnifiedSnapshotArray
+    ? "getUnifiedIncidents_array_map_id"
+    : "non_array_or_sparse_snapshot_map_fallback";
+  const rawObjectSource = rawUnifiedIncidentObjectSample
+    ? "getUnifiedIncidents_array_sample"
+    : "no_object_found_in_unified_snapshot";
+  const rawObjectUnavailableReason = rawUnifiedIncidentObjectSample
+    ? "available"
+    : (!isUnifiedSnapshotArray
+      ? "unified_snapshot_not_array"
+      : (rawUnifiedIncidentArray.length === 0 ? "unified_snapshot_empty_array" : "array_entries_missing_object_payload"));
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentCount = unifiedIncidentIds.length;
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentIds = unifiedIncidentIds;
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawCountSource = rawCountSource;
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawIdsSource = rawIdsSource;
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawObjectSource = rawObjectSource;
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawObjectUnavailableReason = rawObjectUnavailableReason;
+  gridlyCommuteIntelligenceAuditState.commuteAuditUnifiedSnapshotShape = unifiedSnapshotShape;
+  gridlyCommuteIntelligenceAuditState.commuteAuditUnifiedSnapshotIsArray = isUnifiedSnapshotArray;
+  gridlyCommuteIntelligenceAuditState.commuteAuditUnifiedSnapshotKeys = unifiedSnapshotKeys;
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentObjectAvailable = Boolean(rawUnifiedIncidentObjectSample && typeof rawUnifiedIncidentObjectSample === "object");
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentObjectSample = rawUnifiedIncidentObjectSample
+    ? {
+      incidentId: String(rawUnifiedIncidentObjectSample?.id || ""),
+      reportType: String(rawUnifiedIncidentObjectSample?.report_type || rawUnifiedIncidentObjectSample?.type || "unknown"),
+      status: String(rawUnifiedIncidentObjectSample?.status || "unknown"),
+      lifecycle: String(rawUnifiedIncidentObjectSample?.lifecycle || rawUnifiedIncidentObjectSample?.lifecycleState || "unknown"),
+      source: String(rawUnifiedIncidentObjectSample?.source || "unknown"),
+      hasLatLng: Number.isFinite(Number(rawUnifiedIncidentObjectSample?.lat)) && Number.isFinite(Number(rawUnifiedIncidentObjectSample?.lng))
+    }
+    : null;
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawArrayPublicationStage = "raw_array_snapshot_published_after_getUnifiedIncidents";
   const timeSection = makeGridlySectionTimer(sections);
   const routeHazard = timeSection("route_hazard_scoring", () => (routeWatchActivated ? getRouteHazardAssessment() : null));
   const activeIncidents = timeSection("unified_incident_retrieval", () => getActiveUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "active"));
@@ -14944,54 +14991,8 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     sections[stageName] = Number(Number(stageMs || 0).toFixed(3));
   });
   sections.derived_field_precompute_index = Number((precomputeTimeSource() - precomputeStartedAt).toFixed(3));
-  const rawUnifiedIncidentArray = Array.isArray(unifiedIncidentsForAudit) ? unifiedIncidentsForAudit : [];
-  const unifiedIncidentIds = rawUnifiedIncidentArray.map((incident) => String(incident?.id || ""));
   const activeIncidentIds = (activeIncidents || []).map((incident) => String(incident?.id || ""));
   const activeIncidentIdSet = new Set(activeIncidents.map((incident) => String(incident?.id || "")));
-  const rawUnifiedIncidentObjectSample = rawUnifiedIncidentArray.length > 0
-    ? rawUnifiedIncidentArray.find((incident) => incident && typeof incident === "object")
-    : null;
-  const isUnifiedSnapshotArray = Array.isArray(unifiedIncidentsForAudit);
-  const unifiedSnapshotShape = isUnifiedSnapshotArray
-    ? "array"
-    : (unifiedIncidentsForAudit === null ? "null" : typeof unifiedIncidentsForAudit);
-  const unifiedSnapshotKeys = !isUnifiedSnapshotArray && unifiedIncidentsForAudit && typeof unifiedIncidentsForAudit === "object"
-    ? Object.keys(unifiedIncidentsForAudit).slice(0, 12)
-    : [];
-  const rawCountSource = isUnifiedSnapshotArray
-    ? "getUnifiedIncidents_array_length"
-    : "derived_from_mapped_ids_length";
-  const rawIdsSource = isUnifiedSnapshotArray
-    ? "getUnifiedIncidents_array_map_id"
-    : "non_array_or_sparse_snapshot_map_fallback";
-  const rawObjectSource = rawUnifiedIncidentObjectSample
-    ? "getUnifiedIncidents_array_sample"
-    : "no_object_found_in_unified_snapshot";
-  const rawObjectUnavailableReason = rawUnifiedIncidentObjectSample
-    ? "available"
-    : (!isUnifiedSnapshotArray
-      ? "unified_snapshot_not_array"
-      : (rawUnifiedIncidentArray.length === 0 ? "unified_snapshot_empty_array" : "array_entries_missing_object_payload"));
-  gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentCount = unifiedIncidentIds.length;
-  gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentIds = unifiedIncidentIds;
-  gridlyCommuteIntelligenceAuditState.commuteAuditRawCountSource = rawCountSource;
-  gridlyCommuteIntelligenceAuditState.commuteAuditRawIdsSource = rawIdsSource;
-  gridlyCommuteIntelligenceAuditState.commuteAuditRawObjectSource = rawObjectSource;
-  gridlyCommuteIntelligenceAuditState.commuteAuditRawObjectUnavailableReason = rawObjectUnavailableReason;
-  gridlyCommuteIntelligenceAuditState.commuteAuditUnifiedSnapshotShape = unifiedSnapshotShape;
-  gridlyCommuteIntelligenceAuditState.commuteAuditUnifiedSnapshotIsArray = isUnifiedSnapshotArray;
-  gridlyCommuteIntelligenceAuditState.commuteAuditUnifiedSnapshotKeys = unifiedSnapshotKeys;
-  gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentObjectAvailable = Boolean(rawUnifiedIncidentObjectSample && typeof rawUnifiedIncidentObjectSample === "object");
-  gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentObjectSample = rawUnifiedIncidentObjectSample
-    ? {
-      incidentId: String(rawUnifiedIncidentObjectSample?.id || ""),
-      reportType: String(rawUnifiedIncidentObjectSample?.report_type || rawUnifiedIncidentObjectSample?.type || "unknown"),
-      status: String(rawUnifiedIncidentObjectSample?.status || "unknown"),
-      lifecycle: String(rawUnifiedIncidentObjectSample?.lifecycle || rawUnifiedIncidentObjectSample?.lifecycleState || "unknown"),
-      source: String(rawUnifiedIncidentObjectSample?.source || "unknown"),
-      hasLatLng: Number.isFinite(Number(rawUnifiedIncidentObjectSample?.lat)) && Number.isFinite(Number(rawUnifiedIncidentObjectSample?.lng))
-    }
-    : null;
   gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentCount = activeIncidentIds.length;
   gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentIds = activeIncidentIds;
   const buildActiveFilterExclusionEntry = (incident, reason = "filtered_before_active_incidents") => {
@@ -15027,7 +15028,6 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   const unifiedExclusionsFromStatus = rawUnifiedIncidentArray
     .filter((incident) => !activeIncidentIdSet.has(String(incident?.id || "")))
     .map((incident) => buildActiveFilterExclusionEntry(incident));
-  gridlyCommuteIntelligenceAuditState.commuteAuditRawArrayPublicationStage = "raw_array_snapshot_published_before_exclusion_fallback";
   gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveCandidateCount = unifiedExclusionsFromStatus.length;
   gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveCandidateIds = unifiedExclusionsFromStatus.map((entry) => String(entry?.incidentId || ""));
   gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveBuildAttempted = true;
