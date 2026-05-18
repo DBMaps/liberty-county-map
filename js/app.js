@@ -7005,9 +7005,22 @@ function renderUnifiedIncidents() {
 
   const unifiedIncidents = getUnifiedIncidents();
   const fallbackHazards = Array.isArray(activeHazards) ? activeHazards : [];
-  const incidents = Array.isArray(unifiedIncidents) && unifiedIncidents.length ? unifiedIncidents : fallbackHazards;
+  const getIncidentCoordinate = (incident) => {
+    const lat = incident?.lat ?? incident?.latitude ?? incident?.rawLat;
+    const lng = incident?.lng ?? incident?.lon ?? incident?.longitude ?? incident?.rawLng;
+    return { lat, lng };
+  };
+  const hasFiniteCoordinates = (incident) => {
+    const { lat, lng } = getIncidentCoordinate(incident);
+    return Number.isFinite(Number(lat)) && Number.isFinite(Number(lng));
+  };
+  const primaryIncidents = Array.isArray(unifiedIncidents) ? unifiedIncidents : [];
+  const primaryCoordinateCount = primaryIncidents.filter(hasFiniteCoordinates).length;
+  const fallbackCoordinateCount = fallbackHazards.filter(hasFiniteCoordinates).length;
+  const shouldUseFallbackHazards = primaryCoordinateCount === 0 && fallbackCoordinateCount > 0;
+  const incidents = shouldUseFallbackHazards ? fallbackHazards : primaryIncidents;
   const markerRenderSkipReasons = { missing_lat_lng: 0, invalid_lat_lng: 0, filtered_out: 0, missing_marker_layer: 0, render_exception: 0 };
-  const markerSourceUsed = (Array.isArray(unifiedIncidents) && unifiedIncidents.length) ? "unifiedIncidents" : "activeHazards_fallback";
+  const markerSourceUsed = shouldUseFallbackHazards ? "activeHazards_fallback" : "unifiedIncidents";
   const routeHazard = routeWatchActivated ? getRouteHazardAssessment() : null;
   const dedupedMap = new Map();
   const duplicateCounts = new Map();
@@ -7033,8 +7046,7 @@ function renderUnifiedIncidents() {
 
   dedupedIncidents.forEach((incident) => {
     if (!unifiedIncidentLayer) { markerRenderSkipReasons.missing_marker_layer += 1; return; }
-    const rawLat = incident?.lat ?? incident?.latitude ?? incident?.rawLat;
-    const rawLng = incident?.lng ?? incident?.lon ?? incident?.longitude ?? incident?.rawLng;
+    const { lat: rawLat, lng: rawLng } = getIncidentCoordinate(incident);
     if (rawLat == null || rawLng == null) { markerRenderSkipReasons.missing_lat_lng += 1; return; }
     const lat = Number(rawLat);
     const lng = Number(rawLng);
@@ -7118,8 +7130,8 @@ function renderUnifiedIncidents() {
     markerSourceSample: (Array.isArray(incidents) ? incidents : []).slice(0, 3).map((item) => ({
       id: item?.id || item?.report_id || item?.key || null,
       type: item?.report_type || item?.type || null,
-      lat: item?.lat ?? item?.latitude ?? item?.rawLat ?? null,
-      lng: item?.lng ?? item?.lon ?? item?.longitude ?? item?.rawLng ?? null
+      lat: getIncidentCoordinate(item).lat ?? null,
+      lng: getIncidentCoordinate(item).lng ?? null
     })),
     markerRenderSkipReasons,
     markerSourceUsed
