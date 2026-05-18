@@ -2057,40 +2057,51 @@ function classifyBottomDockIntent(button) {
 }
 
 function openAlertsSurfaceFromDock() {
-  if (!window.__gridlyAlertPanelDelegatedClickBound) {
-    document.addEventListener("click", (event) => {
+  const bindAlertsPanelClick = () => {
+    const alertsPanel = document.querySelector(".gridly-alerts-active");
+    if (!(alertsPanel instanceof HTMLElement) || alertsPanel.dataset.alertFocusBound === "true") return;
+    alertsPanel.addEventListener("click", (event) => {
       const expandRow = event.target?.closest?.("[data-gridly-alert-expand]");
       if (expandRow) {
-        const container = document.querySelector(".gridly-alerts-active");
-        if (!container) return;
-        const hiddenRows = container.querySelectorAll("[data-gridly-alert-hidden='true']");
+        event.preventDefault();
+        const hiddenRows = alertsPanel.querySelectorAll("[data-gridly-alert-hidden='true']");
         hiddenRows.forEach((row) => { row.style.display = ""; });
         expandRow.remove();
         return;
       }
       const alertRow = event.target?.closest?.("[data-gridly-alert-id]");
-      if (!alertRow) return;
-      const lat = Number(alertRow.getAttribute("data-lat"));
-      const lng = Number(alertRow.getAttribute("data-lng"));
+      if (!alertRow || !alertsPanel.contains(alertRow)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const id = alertRow.getAttribute("data-gridly-alert-id") || "";
+      const lat = Number(alertRow.getAttribute("data-gridly-alert-lat"));
+      const lng = Number(alertRow.getAttribute("data-gridly-alert-lng"));
       if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-        if (window.__GRIDLY_DEBUG__) console.warn("[V157.2 ALERT FOCUS] missing coordinates", { id: alertRow.getAttribute("data-gridly-alert-id") });
+        if (window.__GRIDLY_DEBUG__) console.warn("[V157.3 ALERT FOCUS] missing coordinates", { id, lat, lng });
         return;
       }
-      const mapInstance = window.map || window.gridlyMap || window.__gridlyMap || (typeof getMapInstance === "function" ? getMapInstance() : null);
-      if (mapInstance?.flyTo) {
-        mapInstance.flyTo([lat, lng], Math.max(15, Number(mapInstance.getZoom?.() || 0)), { animate: true });
-      } else if (mapInstance?.setView) {
-        mapInstance.setView([lat, lng], 15, { animate: true });
-      }
-      if (typeof window.closeGridlyPortraitV2Sheet === "function") window.closeGridlyPortraitV2Sheet("alerts");
-      else if (typeof window.minimizeGridlyPortraitV2Sheet === "function") window.minimizeGridlyPortraitV2Sheet("alerts");
-      else {
+      let closedPanel = false;
+      if (typeof window.closeGridlyPortraitV2Sheet === "function") {
+        window.closeGridlyPortraitV2Sheet("alerts");
+        closedPanel = true;
+      } else if (typeof window.minimizeGridlyPortraitV2Sheet === "function") {
+        window.minimizeGridlyPortraitV2Sheet("alerts");
+        closedPanel = true;
+      } else {
         const closeBtn = document.querySelector('[data-gridly-sheet-close="alerts"], [data-sheet-close="alerts"], .gridly-v2-sheet [aria-label="Close"]');
-        if (closeBtn) closeBtn.click();
+        if (closeBtn) {
+          closeBtn.click();
+          closedPanel = true;
+        }
       }
-    }, { passive: true });
-    window.__gridlyAlertPanelDelegatedClickBound = true;
-  }
+      const mapInstance = window.map || window.gridlyMap || window.__gridlyMap || (typeof getMapInstance === "function" ? getMapInstance() : null);
+      if (mapInstance?.flyTo) mapInstance.flyTo([lat, lng], 16, { animate: true });
+      else if (mapInstance?.setView) mapInstance.setView([lat, lng], 16, { animate: true });
+      if (typeof window.focusAlertMarkerOnMap === "function") window.focusAlertMarkerOnMap(id, { lat, lng });
+      console.log("[V157.3 ALERT FOCUS]", { id, lat, lng, hasMap: Boolean(mapInstance), closedPanel, zoomTarget: 16 });
+    });
+    alertsPanel.dataset.alertFocusBound = "true";
+  };
   const normalizeToken = (value) => String(value || "").replace(/[\s_]+/g, " ").trim();
   const titleCase = (value) => normalizeToken(value).toLowerCase().replace(/\b\w/g, (match) => match.toUpperCase());
   const upperText = (value) => normalizeToken(value).toUpperCase();
@@ -2473,9 +2484,11 @@ function openAlertsSurfaceFromDock() {
           return `Train blocking ${crossing}`;
         }
 
-        if (picked.explicitHeadline && isSpecificPhrase(picked.explicitHeadline)) return picked.explicitHeadline;
+        if (picked.explicitHeadline && (/\sat\s/i.test(picked.explicitHeadline) || /\snear\s/i.test(picked.explicitHeadline) || isSpecificPhrase(picked.explicitHeadline))) return picked.explicitHeadline;
         if (base) return base;
         const hazard = cleanDisplayValue(getHazardType(alert));
+        if (hazard && enriched.resolvedRoadName && enriched.crossStreet) return `${hazard} on ${enriched.resolvedRoadName} at ${enriched.crossStreet.split(" and ")[0]}`;
+        if (hazard && enriched.resolvedRoadName && enriched.nearbyKnownLocation) return `${hazard} on ${enriched.resolvedRoadName} near ${enriched.nearbyKnownLocation}`;
         if (hazard && picked.bestTitleLocation) return `${hazard} on ${picked.bestTitleLocation}`.replace(/\son\snear\s/i, " near ");
         if (enriched.direction && crossing && !/train|crossing|rail/i.test(hazard)) return `${hazard} ${enriched.direction.toLowerCase()} on ${crossing}`;
         if (crossing && /train|crossing|rail|blocked/i.test(cleanDisplayValue(text(alert.type) || ""))) return `Train blocking ${crossing}`;
@@ -2488,8 +2501,8 @@ function openAlertsSurfaceFromDock() {
         const enriched = picked.enriched;
         const explicit = cleanDisplayValue(text(alert.subtitle) || text(alert.locationText));
         if (explicit && explicit.toLowerCase() !== titleFor(alert).toLowerCase()) return explicit;
-        if (enriched.crossStreet) return `Between ${enriched.crossStreet}`;
-        if (enriched.nearbyKnownLocation && !titleFor(alert).toLowerCase().includes(enriched.nearbyKnownLocation.toLowerCase())) return `Near ${enriched.nearbyKnownLocation}`;
+        if (enriched.nearbyKnownLocation && !titleFor(alert).toLowerCase().includes(enriched.nearbyKnownLocation.toLowerCase()) && !titleFor(alert).toLowerCase().includes(enriched.resolvedRoadName.toLowerCase()) ) return `Near ${enriched.nearbyKnownLocation}`;
+        if (enriched.crossStreet && !titleFor(alert).toLowerCase().includes(enriched.crossStreet.toLowerCase())) return `Near ${enriched.crossStreet}`;
         return picked.secondary || "Moderate movement impact";
       };
       const timeTextFor = alert => text(alert.minutesText) || text(alert.timeAgo) || text(alert.updatedText) || "Now";
@@ -2497,7 +2510,7 @@ function openAlertsSurfaceFromDock() {
   const lat = getFirstNumber(alert, ["lat", "latitude", "rawLat", "raw.lat", "source.lat"]);
   const lng = getFirstNumber(alert, ["lng", "lon", "longitude", "rawLng", "raw.lng", "source.lng", "source.lon"]);
   const id = cleanDisplayValue(alert?.id || alert?.reportId || alert?.uuid || `alert-${index}`);
-  const coordAttrs = Number.isFinite(lat) && Number.isFinite(lng) ? ` data-lat="${esc(lat)}" data-lng="${esc(lng)}"` : "";
+  const coordAttrs = Number.isFinite(lat) && Number.isFinite(lng) ? ` data-gridly-alert-lat="${esc(lat)}" data-gridly-alert-lng="${esc(lng)}"` : "";
   return `
   <div class="gridly-alert-row gridly-alert-intel-card" data-gridly-alert-id="${esc(id)}"${coordAttrs} data-gridly-alert-hidden="${isHidden ? "true" : "false"}" style="display:${isHidden ? "none" : "flex"};gap:10px;align-items:flex-start;padding:12px 12px ${index === 2 ? 12 : 10}px 12px;border:1px solid rgba(255,255,255,0.09);border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018));box-shadow:0 6px 20px rgba(0,0,0,0.28);margin-bottom:${index === 2 ? 0 : 8}px;cursor:${Number.isFinite(lat) && Number.isFinite(lng) ? "pointer" : "default"};">
     <div style="width:18px;min-width:18px;height:18px;margin-top:1px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,179,71,0.18);border:1px solid rgba(255,179,71,0.5);color:#ffd28a;font-size:11px;line-height:1;">!</div>
@@ -2544,10 +2557,12 @@ function openAlertsSurfaceFromDock() {
         htmlLength: html.length
       });
 
-      return window.openGridlyPortraitV2Sheet("alerts", {
+      const opened = window.openGridlyPortraitV2Sheet("alerts", {
         title: "Alerts",
         html
       });
+      bindAlertsPanelClick();
+      return opened;
     }
 
     console.table(alertsForRender.slice(0, 5).map(a => ({
