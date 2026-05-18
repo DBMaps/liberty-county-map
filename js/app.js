@@ -2057,6 +2057,40 @@ function classifyBottomDockIntent(button) {
 }
 
 function openAlertsSurfaceFromDock() {
+  if (!window.__gridlyAlertPanelDelegatedClickBound) {
+    document.addEventListener("click", (event) => {
+      const expandRow = event.target?.closest?.("[data-gridly-alert-expand]");
+      if (expandRow) {
+        const container = document.querySelector(".gridly-alerts-active");
+        if (!container) return;
+        const hiddenRows = container.querySelectorAll("[data-gridly-alert-hidden='true']");
+        hiddenRows.forEach((row) => { row.style.display = ""; });
+        expandRow.remove();
+        return;
+      }
+      const alertRow = event.target?.closest?.("[data-gridly-alert-id]");
+      if (!alertRow) return;
+      const lat = Number(alertRow.getAttribute("data-lat"));
+      const lng = Number(alertRow.getAttribute("data-lng"));
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+        if (window.__GRIDLY_DEBUG__) console.warn("[V157.2 ALERT FOCUS] missing coordinates", { id: alertRow.getAttribute("data-gridly-alert-id") });
+        return;
+      }
+      const mapInstance = window.map || window.gridlyMap || window.__gridlyMap || (typeof getMapInstance === "function" ? getMapInstance() : null);
+      if (mapInstance?.flyTo) {
+        mapInstance.flyTo([lat, lng], Math.max(15, Number(mapInstance.getZoom?.() || 0)), { animate: true });
+      } else if (mapInstance?.setView) {
+        mapInstance.setView([lat, lng], 15, { animate: true });
+      }
+      if (typeof window.closeGridlyPortraitV2Sheet === "function") window.closeGridlyPortraitV2Sheet("alerts");
+      else if (typeof window.minimizeGridlyPortraitV2Sheet === "function") window.minimizeGridlyPortraitV2Sheet("alerts");
+      else {
+        const closeBtn = document.querySelector('[data-gridly-sheet-close="alerts"], [data-sheet-close="alerts"], .gridly-v2-sheet [aria-label="Close"]');
+        if (closeBtn) closeBtn.click();
+      }
+    }, { passive: true });
+    window.__gridlyAlertPanelDelegatedClickBound = true;
+  }
   const normalizeToken = (value) => String(value || "").replace(/[\s_]+/g, " ").trim();
   const titleCase = (value) => normalizeToken(value).toLowerCase().replace(/\b\w/g, (match) => match.toUpperCase());
   const upperText = (value) => normalizeToken(value).toUpperCase();
@@ -2355,6 +2389,34 @@ function openAlertsSurfaceFromDock() {
         return normalized;
       };
       const extractRoadFromCrossingName = (value) => cleanDisplayValue(value).split("&").map((segment) => cleanDisplayValue(segment)).filter(Boolean);
+      const isSpecificPhrase = (value) => {
+        const v = cleanDisplayValue(value);
+        if (!v) return false;
+        const lowered = v.toLowerCase();
+        if (/^near\s+/.test(lowered) && !/\sat\s/.test(lowered)) return false;
+        return /\sat\s|\sbetween\s|crossing|county road|cr\s*\d|fm\s*\d|us\s*\d|high school|street|st\b|ave|blvd/.test(lowered) || v.split(" ").length >= 4;
+      };
+      const chooseBestAlertLocationContext = (alert = {}) => {
+        const enriched = enrichAlertContext(alert);
+        const explicitHeadline = cleanDisplayValue(text(alert.resolvedHeadline) || text(alert.headline) || text(alert.title) || text(alert.localizedSummary));
+        const richLocationFields = [
+          text(alert.crossingName), text(alert.crossingRoad), text(alert.resolvedCrossingName), text(alert.nearbyCrossStreet),
+          text(alert.crossingLabel), text(alert.locationPhrase), text(alert.localizedSummary), text(alert.resolvedHeadline),
+          text(alert.subtitle), text(alert.locationText), text(alert.knownLocation), text(alert.locationName)
+        ].map(cleanDisplayValue).filter(Boolean);
+        const road = cleanDisplayValue(enriched.resolvedRoadName);
+        const crossStreet = cleanDisplayValue(enriched.crossStreet);
+        const near = cleanDisplayValue(enriched.nearbyKnownLocation);
+        const bestLocationPhrase = richLocationFields.find(isSpecificPhrase) || richLocationFields[0] || "";
+        return {
+          enriched,
+          roadFieldUsed: road || "",
+          crossingFieldUsed: bestLocationPhrase || crossStreet || near || "",
+          bestTitleLocation: bestLocationPhrase || (road && crossStreet ? `${road} at ${crossStreet.split(" and ")[0]}` : (road && near ? `${road} near ${near}` : (road || "Road hazard reported"))),
+          explicitHeadline,
+          secondary: near ? `Near ${near}` : (enriched.movementSummary || "Moderate movement impact")
+        };
+      };
       const enrichAlertContext = (alert = {}) => {
         const alertObj = alert && typeof alert === "object" ? alert : {};
         const crossingId = cleanDisplayValue(alertObj?.crossingId);
@@ -2385,7 +2447,8 @@ function openAlertsSurfaceFromDock() {
       };
 
       const titleFor = alert => {
-        const enriched = enrichAlertContext(alert);
+        const picked = chooseBestAlertLocationContext(alert);
+        const enriched = picked.enriched;
         const crossing = cleanDisplayValue(text(alert.roadName) || text(alert.crossingRoad) || text(alert.nearestRoad)) || enriched.resolvedRoadName;
         const base = cleanDisplayValue(text(alert.resolvedHeadline) || text(alert.headline) || text(alert.title));
         const crossingId = cleanDisplayValue(alert?.crossingId);
@@ -2410,8 +2473,10 @@ function openAlertsSurfaceFromDock() {
           return `Train blocking ${crossing}`;
         }
 
+        if (picked.explicitHeadline && isSpecificPhrase(picked.explicitHeadline)) return picked.explicitHeadline;
         if (base) return base;
         const hazard = cleanDisplayValue(getHazardType(alert));
+        if (hazard && picked.bestTitleLocation) return `${hazard} on ${picked.bestTitleLocation}`.replace(/\son\snear\s/i, " near ");
         if (enriched.direction && crossing && !/train|crossing|rail/i.test(hazard)) return `${hazard} ${enriched.direction.toLowerCase()} on ${crossing}`;
         if (crossing && /train|crossing|rail|blocked/i.test(cleanDisplayValue(text(alert.type) || ""))) return `Train blocking ${crossing}`;
         if (crossing) return `${hazard} on ${crossing}`;
@@ -2419,16 +2484,22 @@ function openAlertsSurfaceFromDock() {
       };
 
       const helperTextFor = alert => {
-        const enriched = enrichAlertContext(alert);
+        const picked = chooseBestAlertLocationContext(alert);
+        const enriched = picked.enriched;
         const explicit = cleanDisplayValue(text(alert.subtitle) || text(alert.locationText));
-        if (explicit) return explicit;
+        if (explicit && explicit.toLowerCase() !== titleFor(alert).toLowerCase()) return explicit;
         if (enriched.crossStreet) return `Between ${enriched.crossStreet}`;
-        if (enriched.nearbyKnownLocation) return `Near ${enriched.nearbyKnownLocation}`;
-        return enriched.movementSummary || "Minor impact";
+        if (enriched.nearbyKnownLocation && !titleFor(alert).toLowerCase().includes(enriched.nearbyKnownLocation.toLowerCase())) return `Near ${enriched.nearbyKnownLocation}`;
+        return picked.secondary || "Moderate movement impact";
       };
       const timeTextFor = alert => text(alert.minutesText) || text(alert.timeAgo) || text(alert.updatedText) || "Now";
-      const renderAlertCard = (alert, index) => `
-  <div class="gridly-alert-row gridly-alert-intel-card" style="display:flex;gap:10px;align-items:flex-start;padding:12px 12px ${index === 2 ? 12 : 10}px 12px;border:1px solid rgba(255,255,255,0.09);border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018));box-shadow:0 6px 20px rgba(0,0,0,0.28);margin-bottom:${index === 2 ? 0 : 8}px;">
+      const renderAlertCard = (alert, index, isHidden = false) => {
+  const lat = getFirstNumber(alert, ["lat", "latitude", "rawLat", "raw.lat", "source.lat"]);
+  const lng = getFirstNumber(alert, ["lng", "lon", "longitude", "rawLng", "raw.lng", "source.lng", "source.lon"]);
+  const id = cleanDisplayValue(alert?.id || alert?.reportId || alert?.uuid || `alert-${index}`);
+  const coordAttrs = Number.isFinite(lat) && Number.isFinite(lng) ? ` data-lat="${esc(lat)}" data-lng="${esc(lng)}"` : "";
+  return `
+  <div class="gridly-alert-row gridly-alert-intel-card" data-gridly-alert-id="${esc(id)}"${coordAttrs} data-gridly-alert-hidden="${isHidden ? "true" : "false"}" style="display:${isHidden ? "none" : "flex"};gap:10px;align-items:flex-start;padding:12px 12px ${index === 2 ? 12 : 10}px 12px;border:1px solid rgba(255,255,255,0.09);border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018));box-shadow:0 6px 20px rgba(0,0,0,0.28);margin-bottom:${index === 2 ? 0 : 8}px;cursor:${Number.isFinite(lat) && Number.isFinite(lng) ? "pointer" : "default"};">
     <div style="width:18px;min-width:18px;height:18px;margin-top:1px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,179,71,0.18);border:1px solid rgba(255,179,71,0.5);color:#ffd28a;font-size:11px;line-height:1;">!</div>
     <div style="min-width:0;flex:1;">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
@@ -2439,12 +2510,22 @@ function openAlertsSurfaceFromDock() {
     </div>
   </div>
 `;
+};
 
-      const rows = alertsForRender.slice(0, 3).map(renderAlertCard).join("");
+      const rows = alertsForRender.slice(0, 3).map((a, i) => renderAlertCard(a, i, false)).join("");
+      const hiddenRows = alertsForRender.slice(3).map((a, i) => renderAlertCard(a, i + 3, true)).join("");
 
       const extra = alertsForRender.length > 3
-        ? `<div class="gridly-alert-row gridly-alert-intel-card" style="margin-top:6px;padding:10px 12px;border:1px solid rgba(255,255,255,0.09);border-radius:11px;background:rgba(255,255,255,0.018);text-align:center;"><small style="font-size:11px;line-height:1.35;color:rgba(206,218,235,0.85);letter-spacing:0.02em;"><strong style="color:#f2f6ff;">+ ${alertsForRender.length - 3} more active reports</strong></small></div>`
+        ? `<div class="gridly-alert-row gridly-alert-intel-card" data-gridly-alert-expand="true" style="margin-top:6px;padding:10px 12px;border:1px solid rgba(255,255,255,0.09);border-radius:11px;background:rgba(255,255,255,0.018);text-align:center;cursor:pointer;"><small style="font-size:11px;line-height:1.35;color:rgba(206,218,235,0.85);letter-spacing:0.02em;"><strong style="color:#f2f6ff;">+ ${alertsForRender.length - 3} more active reports</strong></small></div>`
         : "";
+      console.log("[V157.2 ALERT LOCATION SAMPLE]", alertsForRender.slice(0, 3).map((alert, idx) => {
+        const chosenTitle = titleFor(alert);
+        const chosenSubtitle = helperTextFor(alert);
+        const chosen = chooseBestAlertLocationContext(alert);
+        const lat = getFirstNumber(alert, ["lat", "latitude", "rawLat", "raw.lat", "source.lat"]);
+        const lng = getFirstNumber(alert, ["lng", "lon", "longitude", "rawLng", "raw.lng", "source.lng", "source.lon"]);
+        return { id: cleanDisplayValue(alert?.id || alert?.reportId || `alert-${idx}`), originalTitle: text(alert?.title), originalHeadline: text(alert?.headline), chosenTitle, chosenSubtitle, roadFieldUsed: chosen.roadFieldUsed, crossingLocationFieldUsed: chosen.crossingFieldUsed, hasCoordinates: Number.isFinite(lat) && Number.isFinite(lng) };
+      }));
 
       const html = `
 <div class="gridly-alerts-active" style="padding:0 1px;">
@@ -2453,6 +2534,7 @@ function openAlertsSurfaceFromDock() {
     <div style="margin-top:4px;font-size:12px;line-height:1.35;color:rgba(196,208,224,0.82);">${alertsForRender.length} active community report${alertsForRender.length === 1 ? "" : "s"}</div>
   </div>
   ${rows}
+  ${hiddenRows}
   ${extra}
 </div>`;
 
