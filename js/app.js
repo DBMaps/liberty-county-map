@@ -1195,6 +1195,13 @@ function gridlyCommuteIntelligenceAudit() {
     commuteAuditExcludedIncidentCount: Number(gridlyCommuteIntelligenceAuditState.commuteAuditExcludedIncidentCount || 0),
     commuteAuditExclusionReasons: [...(gridlyCommuteIntelligenceAuditState.commuteAuditExclusionReasons || [])],
     commuteAuditExclusionReasonSource: String(gridlyCommuteIntelligenceAuditState.commuteAuditExclusionReasonSource || "fallback_placeholder"),
+    directCommuteAuditRawCount: Number(gridlyCommuteIntelligenceAuditState.directCommuteAuditRawCount || 0),
+    directCommuteAuditRawIds: [...(gridlyCommuteIntelligenceAuditState.directCommuteAuditRawIds || [])],
+    directCommuteAuditActiveCount: Number(gridlyCommuteIntelligenceAuditState.directCommuteAuditActiveCount || 0),
+    directCommuteAuditActiveIds: [...(gridlyCommuteIntelligenceAuditState.directCommuteAuditActiveIds || [])],
+    directCommuteAuditMissingFromActiveCount: Number(gridlyCommuteIntelligenceAuditState.directCommuteAuditMissingFromActiveCount || 0),
+    directCommuteAuditMissingFromActiveIds: [...(gridlyCommuteIntelligenceAuditState.directCommuteAuditMissingFromActiveIds || [])],
+    directCommuteAuditMissingFromActiveReasons: [...(gridlyCommuteIntelligenceAuditState.directCommuteAuditMissingFromActiveReasons || [])],
     commuteModelEntryTrace: {
       ...(gridlyCommuteIntelligenceAuditState.commuteModelEntryTrace || {}),
       unifiedIncidentIds: [...(gridlyCommuteIntelligenceAuditState.commuteModelEntryTrace?.unifiedIncidentIds || [])],
@@ -14830,6 +14837,13 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.commuteAuditSanitizerReason = null;
   gridlyCommuteIntelligenceAuditState.commuteAuditExcludedIncidentCount = 0;
   gridlyCommuteIntelligenceAuditState.commuteAuditExclusionReasons = [];
+  gridlyCommuteIntelligenceAuditState.directCommuteAuditRawCount = 0;
+  gridlyCommuteIntelligenceAuditState.directCommuteAuditRawIds = [];
+  gridlyCommuteIntelligenceAuditState.directCommuteAuditActiveCount = 0;
+  gridlyCommuteIntelligenceAuditState.directCommuteAuditActiveIds = [];
+  gridlyCommuteIntelligenceAuditState.directCommuteAuditMissingFromActiveCount = 0;
+  gridlyCommuteIntelligenceAuditState.directCommuteAuditMissingFromActiveIds = [];
+  gridlyCommuteIntelligenceAuditState.directCommuteAuditMissingFromActiveReasons = [];
   gridlyCommuteIntelligenceAuditState.commuteModelEntryTrace = {
     unifiedIncidentIds: [],
     activeIncidentIds: [],
@@ -14951,6 +14965,58 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   const timeSection = makeGridlySectionTimer(sections);
   const routeHazard = timeSection("route_hazard_scoring", () => (routeWatchActivated ? getRouteHazardAssessment() : null));
   const activeIncidents = timeSection("unified_incident_retrieval", () => getActiveUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "active"));
+  const directRawIncidents = (typeof getUnifiedIncidents === "function" && Array.isArray(getUnifiedIncidents()))
+    ? getUnifiedIncidents()
+    : [];
+  const directActiveIncidents = (typeof getActiveUnifiedIncidents === "function" && Array.isArray(getActiveUnifiedIncidents()))
+    ? getActiveUnifiedIncidents()
+    : [];
+  const directIncidentIdAccessor = (incident) => String(
+    incident?.id
+    || incident?.incident_id
+    || incident?.incidentId
+    || incident?.report_id
+    || incident?.reportId
+    || ""
+  );
+  const directRawIds = directRawIncidents.map((incident) => directIncidentIdAccessor(incident));
+  const directActiveIds = directActiveIncidents.map((incident) => directIncidentIdAccessor(incident));
+  const directActiveIdSet = new Set(directActiveIds.map((incidentId) => String(incidentId || "")));
+  const directMissingFromActive = directRawIncidents.filter((incident) => !directActiveIdSet.has(directIncidentIdAccessor(incident)));
+  const buildDirectMissingReason = (incident) => {
+    const rawStatus = String(incident?.status || "");
+    const normalizedStatus = rawStatus.toLowerCase() || "unknown";
+    const rawLifecycle = String(incident?.lifecycle || incident?.lifecycleState || "");
+    const normalizedLifecycle = rawLifecycle.toLowerCase() || String(getIncidentLifecycleState(incident) || "unknown").toLowerCase() || "unknown";
+    const lat = Number(incident?.lat);
+    const lng = Number(incident?.lng);
+    return {
+      incidentId: directIncidentIdAccessor(incident) || "unknown",
+      type: String(incident?.report_type || incident?.type || "unknown"),
+      source: String(incident?.source || "unknown"),
+      status: rawStatus || "unknown",
+      lifecycle: normalizedLifecycle || "unknown",
+      rawStatus: rawStatus || "unknown",
+      normalizedStatus,
+      rawLifecycle: rawLifecycle || "unknown",
+      normalizedLifecycle,
+      hasLatLng: Number.isFinite(lat) && Number.isFinite(lng),
+      createdAt: incident?.created_at || incident?.createdAt || incident?.submittedAt || null,
+      updatedAt: incident?.updated_at || incident?.updatedAt || null,
+      ageMinutes: Number.isFinite(Number(incident?.age_minutes))
+        ? Number(incident.age_minutes)
+        : (Number.isFinite(Number(incident?.minutesAgo)) ? Number(incident.minutesAgo) : null),
+      reason: "raw_unified_not_in_active_incidents",
+      stage: "direct_raw_to_active_trace"
+    };
+  };
+  gridlyCommuteIntelligenceAuditState.directCommuteAuditRawCount = directRawIds.length;
+  gridlyCommuteIntelligenceAuditState.directCommuteAuditRawIds = directRawIds;
+  gridlyCommuteIntelligenceAuditState.directCommuteAuditActiveCount = directActiveIds.length;
+  gridlyCommuteIntelligenceAuditState.directCommuteAuditActiveIds = directActiveIds;
+  gridlyCommuteIntelligenceAuditState.directCommuteAuditMissingFromActiveCount = directMissingFromActive.length;
+  gridlyCommuteIntelligenceAuditState.directCommuteAuditMissingFromActiveIds = directMissingFromActive.map((incident) => directIncidentIdAccessor(incident));
+  gridlyCommuteIntelligenceAuditState.directCommuteAuditMissingFromActiveReasons = directMissingFromActive.map((incident) => buildDirectMissingReason(incident));
   const precomputeTimeSource = (typeof performance !== "undefined" && performance && typeof performance.now === "function")
     ? () => performance.now()
     : () => Date.now();
