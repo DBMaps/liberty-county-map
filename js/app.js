@@ -2152,6 +2152,52 @@ function bindBottomDockRealButtons() {
   });
 }
 
+function installFinalBottomDockIntentBridge() {
+  if (document.documentElement?.dataset?.gridlyDockBridgeFinalized === "true") return;
+  document.documentElement.dataset.gridlyDockBridgeFinalized = "true";
+  const dockDiag = window.__gridlyV2DockRuntimeDiagnostics || (window.__gridlyV2DockRuntimeDiagnostics = { dockLastIntent: "", dockLastIntentAt: 0, dockLastOpenResult: null });
+  const intentFromText = (raw = "") => {
+    const value = String(raw || "").trim().toLowerCase();
+    if (!value) return "";
+    if (value.includes("report")) return "report";
+    if (value.includes("route")) return "route";
+    if (value.includes("alerts")) return "alerts";
+    if (value.includes("layers")) return "layers";
+    if (value.includes("settings")) return "settings";
+    return "";
+  };
+  const resolveIntent = (target) => {
+    const button = target?.closest?.("button, [role='button'], [aria-label], [data-intent], [data-v2-sheet]") || null;
+    const probes = [
+      button?.dataset?.intent,
+      button?.dataset?.v2Sheet,
+      button?.getAttribute?.("aria-label"),
+      button?.textContent,
+      target?.getAttribute?.("aria-label"),
+      target?.textContent
+    ];
+    for (const probe of probes) {
+      const intent = intentFromText(probe);
+      if (intent) return intent;
+    }
+    return "";
+  };
+  const handler = (event) => {
+    const intent = resolveIntent(event.target);
+    if (!intent) return;
+    const result = Boolean(openGridlyPortraitV2Sheet?.(intent));
+    dockDiag.dockLastIntent = intent;
+    dockDiag.dockLastIntentAt = Date.now();
+    dockDiag.dockLastOpenResult = result;
+    event.preventDefault?.();
+    event.stopPropagation?.();
+    event.stopImmediatePropagation?.();
+    return false;
+  };
+  document.addEventListener("click", handler, true);
+  document.addEventListener("touchend", handler, true);
+}
+
 function setMobileUiMode(mode = "live", options = {}) {
   const nextMode = ["live", "route", "report", "alert"].includes(mode) ? mode : "live";
   const bypassLiveReportingDrawerMount = Boolean(
@@ -5984,7 +6030,7 @@ async function loadSharedReports(reason = "manual") {
 
     pushGridlyReflowTrace("post-submit refresh", "start", { source: `loadSharedReports:${reason}` });
     refreshReportHazardViews(`loadSharedReports:${reason}`);
-    if (typeof renderUnifiedIncidentMarkers === "function") renderUnifiedIncidentMarkers();
+    triggerProductionHazardMarkerRender(`loadSharedReports:${reason}`);
     pushGridlyReflowTrace("post-submit refresh", "end", { source: `loadSharedReports:${reason}` });
 
     setSync(`${activeReports.length} crossing reports · ${activeHazards.length} hazards synced`);
@@ -8371,7 +8417,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
       }
       refreshReportHazardViews("createSharedHazardReport:local_immediate");
       if (typeof renderUnifiedIncidents === "function") renderUnifiedIncidents();
-      if (typeof renderUnifiedIncidentMarkers === "function") renderUnifiedIncidentMarkers();
+      triggerProductionHazardMarkerRender("createSharedHazardReport:local_immediate");
     }
     const submitLifecycleId = row.crossing_id;
     if (!beginSubmitLifecycleGuard(submitLifecycleId)) {
@@ -18991,7 +19037,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
 
   const V2_CONTAINMENT_CLASS = "gridly-v2-surface-containment";
-  const APP_RUNTIME_BUILD_TAG = "V146J";
+  const APP_RUNTIME_BUILD_TAG = "V146K";
   const legacySurfaceState = { lastSuppressed: "", visibleCount: 0, report: false, route: false, alerts: false, settings: false };
 
   function isPortraitV2VisuallyActive() {
@@ -19057,7 +19103,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
 
     activeSheet = "";
     sheet.hidden = true;
-    sheet.style.display = "";
+    sheet.style.display = "block";
     sheet.style.pointerEvents = "none";
     sheet.classList.remove("is-closing", "is-closed", "visible", "active", "open", "is-open");
     backdrop.hidden = true;
@@ -19084,7 +19130,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     sheet.style.opacity = "1";
     sheet.style.display = "";
     sheet.style.pointerEvents = "auto";
-    sheet.style.transform = "translate3d(0, 0, 0)";
+    sheet.style.transform = "translate3d(0,0,0)";
     sheet.style.translate = "0 0";
     sheet.classList.remove("is-closing", "is-closed", "visible", "active", "open");
     sheet.classList.add("is-open", "active", "open");
@@ -19607,7 +19653,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     exposeGridlyAuditHelper("gridlyRouteAuditGlobalsCheck", gridlyRouteAuditGlobalsCheck);
   }
   function bindV2(){
+    installFinalBottomDockIntentBridge();
     applyPortraitV2SurfaceContainment();
+    triggerProductionHazardMarkerRender("map_init_bindV2");
+    setTimeout(() => triggerProductionHazardMarkerRender("delayed_500ms"), 500);
+    setTimeout(() => triggerProductionHazardMarkerRender("delayed_1500ms"), 1500);
     window.addEventListener("resize", applyPortraitV2SurfaceContainment);
     window.addEventListener("orientationchange", applyPortraitV2SurfaceContainment);
     document.querySelectorAll("[data-v2-sheet]").forEach((b)=>b.addEventListener("click",()=>openPortraitV2Sheet(b.dataset.v2Sheet)));
@@ -19625,6 +19675,14 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   window.gridlyRenderHazardMarkersDebug = function gridlyRenderHazardMarkersDebug() {
     return renderUnifiedIncidentMarkers();
   };
+  function triggerProductionHazardMarkerRender(source = "unknown") {
+    try {
+      return Boolean(renderUnifiedIncidentMarkers?.());
+    } catch (error) {
+      console.warn("Hazard marker render bridge failed", { source, error });
+      return false;
+    }
+  }
   window.gridlyPortraitV2Debug = function(){
     const v2=document.getElementById("gridlyPortraitV2"); const mode=document.body?.dataset?.layoutMode||null;
     const isVisible=(el)=>Boolean(el&&getComputedStyle(el).display!=="none"&&getComputedStyle(el).visibility!=="hidden"&&Number(getComputedStyle(el).opacity||1)!==0);
