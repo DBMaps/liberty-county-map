@@ -2046,6 +2046,7 @@ function classifyBottomDockIntent(button) {
   if (/route/.test(token)) return 'route';
   if (/alert/.test(token)) return 'alerts';
   if (/setting|preferences/.test(token)) return 'settings';
+  if (/layer/.test(token)) return 'layers';
   return '';
 }
 
@@ -2136,6 +2137,7 @@ function bindBottomDockRealButtons() {
       if (intent === 'route') return openGridlySurface?.('route', () => openMobileRouteQuickPanel?.());
       if (intent === 'alerts') return openAlertsSurfaceFromDock();
       if (intent === 'settings') return openSettingsSurfaceFromDock();
+      if (intent === 'layers') return openPortraitLayersSurface?.();
     }, true);
     button.dataset.gridlyDockBound = 'true';
   });
@@ -18903,7 +18905,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     report: { title: "Report Hazard", html: `<div class="gridly-v2-tiles gridly-v2-report-tiles">${V2_REPORT_HAZARD_OPTIONS.map((option)=>`<button class="gridly-v2-tile gridly-v2-report-action" data-v2-action="report-select-hazard" data-hazard-type="${option.type}" type="button"><span>${option.label}</span></button>`).join("")}</div><div class="gridly-v2-list gridly-v2-report-ctas"><p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p><button class="primary-btn" data-v2-action="report-use-location" type="button">Use My Location</button><button class="secondary-btn" data-v2-action="report-tap-map" type="button">Tap Map Location</button></div>` },
     route: { title: "Route Setup", html: buildRouteSurfaceHtml },
     alerts: { title: "Commute Command", html: buildAlertsSurfaceHtml },
-    settings: { title: "Settings", html: `<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p><button class="gridly-v2-tile" data-v2-action="settings-home-town" type="button">Set Home Town</button><button class="gridly-v2-tile" data-v2-action="settings-saved-places" type="button">Home / Work / Saved Places</button><button class="gridly-v2-tile" data-v2-action="settings-alert-preferences" type="button">Alert Preferences</button><button class="gridly-v2-tile" data-v2-action="settings-route-preferences" type="button">Route Preferences</button><button class="gridly-v2-tile" data-v2-action="settings-app-preferences" type="button">App Preferences</button></div>` }
+    settings: { title: "Settings", html: `<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p><button class="gridly-v2-tile" data-v2-action="settings-home-town" type="button">Set Home Town</button><button class="gridly-v2-tile" data-v2-action="settings-saved-places" type="button">Home / Work / Saved Places</button><button class="gridly-v2-tile" data-v2-action="settings-alert-preferences" type="button">Alert Preferences</button><button class="gridly-v2-tile" data-v2-action="settings-route-preferences" type="button">Route Preferences</button><button class="gridly-v2-tile" data-v2-action="settings-app-preferences" type="button">App Preferences</button></div>` },
+    layers: { title: "Map Layers", html: `<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy">Choose map style:</p><button class="gridly-v2-tile" data-v2-action="layers-select" data-layer-name="Standard" type="button">Standard</button><button class="gridly-v2-tile" data-v2-action="layers-select" data-layer-name="Dark" type="button">Dark</button><button class="gridly-v2-tile" data-v2-action="layers-select" data-layer-name="Satellite" type="button">Satellite</button></div>` }
   };
   const v2DockAdapterState = { lastDockActionTriggered: "", lastDockAdapterTarget: "", adapterBridgeFailures: [], adapterFallbackCount: 0 };
   const v1363RouteActionDebug = { routeDockClickHandled:false, routeWatchActionHandled:false, routePreviewActionHandled:false, routeManagePlacesActionHandled:false, lastRouteActionFailureReason:"" };
@@ -19350,7 +19353,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       "settings-saved-places": () => triggerV2DockAdapter("settings-open"),
       "settings-alert-preferences": () => triggerV2DockAdapter("settings-open"),
       "settings-route-preferences": () => triggerV2DockAdapter("settings-open"),
-      "settings-app-preferences": () => triggerV2DockAdapter("settings-open")
+      "settings-app-preferences": () => triggerV2DockAdapter("settings-open"),
+      "layers-select": () => {
+        const requestedLayer = payload.layerName || "Standard";
+        if (typeof applyMapStyle === "function") applyMapStyle(requestedLayer);
+      }
     };
     const bridge = bridges[canonicalAction];
     v2DockAdapterState.lastDockActionTriggered = canonicalAction || "";
@@ -19440,7 +19447,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           }
           return;
         }
-        triggerV2DockAdapter(action, { hazardType: button.dataset.hazardType || "" });
+        triggerV2DockAdapter(action, { hazardType: button.dataset.hazardType || "", layerName: button.dataset.layerName || "" });
       });
     });
     const tapMapButton = body.querySelector('[data-v2-action="report-tap-map"]');
@@ -19481,6 +19488,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       if (activeSheet === "route" && !preconditions.routeReady) helperText = preconditions.routeWatchReason;
       if (activeSheet === "alerts") helperText = preconditions.alertsReason;
       if (activeSheet === "settings") helperText = preconditions.settingsReason;
+      if (activeSheet === "layers") helperText = "";
       helper.textContent = helperText;
       helper.hidden = !helperText;
     }
@@ -19983,6 +19991,8 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
 
   const settingsPanelFound = visibleSettingsSurfaceSelectorsFound.length > 0 || (activeSheet === "settings" && !document.getElementById("gridlyPortraitV2Sheet")?.hidden);
 
+  const activeSheetValue = activeSheet || document.getElementById("gridlyPortraitV2Sheet")?.dataset?.activeSheet || "";
+
   const alertsSurfaceSelectorCandidates = [
     "#alertsSection",
     "#gridlyPortraitV2Sheet[data-active-sheet='alerts']",
@@ -19998,6 +20008,7 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
     if ([...matches].some((node) => isVisible(node))) visibleAlertsSurfaceSelectorsFound.push(selector);
   });
   const alertsOpenActionFound = typeof openAlertsSurfaceFromDock === "function";
+  const layersOpenActionFound = typeof openPortraitLayersSurface === "function" || typeof openPortraitV2Sheet === "function";
 
   const layer = unifiedIncidentLayer;
   const layerMarkers = typeof layer?.getLayers === "function" ? layer.getLayers() : [];
@@ -20008,11 +20019,17 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
     "#map .leaflet-marker-icon[data-state]"
   ];
   const hazardMarkerDomSelectorsFound = hazardMarkerDomSelectors.filter((selector) => document.querySelector(selector));
+
+  const layersSurfaceSelectorCandidates = ["#gridlyPortraitV2Sheet[data-active-sheet='layers']", "#map .leaflet-control-layers-expanded", "#mobileNativeSurfaceLayer:not([hidden])"];
+  const visibleLayersSurfaceSelectorsFound = layersSurfaceSelectorCandidates.filter((selector) => {
+    const matches = Array.from(document.querySelectorAll(selector));
+    return matches.some((node) => isVisible(node));
+  });
   const visibleHazardMarkerCount = document.querySelectorAll("#map .leaflet-marker-icon .gridly-hazard-marker").length || document.querySelectorAll("#map .gridly-hazard-marker").length;
 
   const activeHazardCoordinateSample = (Array.isArray(activeHazards) ? activeHazards : []).slice(0, 3).map((hazard) => {
     const rawLat = hazard?.lat ?? hazard?.latitude ?? hazard?.rawLat ?? null;
-    const rawLng = hazard?.lng ?? hazard?.longitude ?? hazard?.rawLng ?? null;
+    const rawLng = hazard?.lng ?? hazard?.lon ?? hazard?.longitude ?? hazard?.rawLng ?? null;
     const lat = Number(rawLat);
     const lng = Number(rawLng);
     return {
@@ -20030,13 +20047,18 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
     routeButtonBound: byIntent("route"),
     alertsButtonBound: byIntent("alerts"),
     settingsButtonBound: byIntent("settings"),
+    layersButtonBound: byIntent("layers"),
     alertsPanelFound: Boolean(alertsPanel),
     alertsSurfaceSelectorsFound,
     visibleAlertsSurfaceSelectorsFound,
     alertsOpenActionFound,
+    reportUsesBottomSheet: activeSheetValue === "report" && !document.getElementById("gridlyPortraitV2Sheet")?.hidden,
+    activeSheet: activeSheetValue || null,
     settingsPanelFound,
     settingsSurfaceSelectorsFound,
     visibleSettingsSurfaceSelectorsFound,
+    layersOpenActionFound,
+    visibleLayersSurfaceSelectorsFound,
     hazardLayerFound: Boolean(layer && map && map.hasLayer?.(layer)),
     unifiedIncidentLayerOnMap: Boolean(layer && map && map.hasLayer?.(layer)),
     hazardLayerChildCount: layerMarkers.length,
