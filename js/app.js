@@ -4444,6 +4444,7 @@ function initMap() {
   centerMapOnUserIfAllowed();
   highlightNearestCrossingOnFirstLoad();
   installMapLayoutResizeSafety();
+  if (typeof renderUnifiedIncidents === "function") renderUnifiedIncidents("auto-map-init");
 }
 
 function installLayerPickerDebugDiagnostics() {
@@ -5158,6 +5159,8 @@ async function loadCrossings() {
       "mapTrustNote",
       `${crossings.length} curated public crossings loaded for Gridly launch mode. Tap a marker to report road issues.`
     );
+
+    if (typeof renderUnifiedIncidents === "function") renderUnifiedIncidents("auto-crossings-loaded");
   } catch (error) {
     crossingLoadFailed = true;
     console.error("Gridly crossing load failed:", error);
@@ -5982,9 +5985,12 @@ async function loadSharedReports(reason = "manual") {
     pushGridlyReflowTrace("post-submit refresh", "start", { source: `loadSharedReports:${reason}` });
     refreshReportHazardViews(`loadSharedReports:${reason}`);
     scheduleHazardMarkerAutoRender(`loadSharedReports:${reason}`);
-    if (Array.isArray(activeHazards) && activeHazards.length > 0) {
-      setTimeout(() => renderUnifiedIncidents("post-load-250"), 250);
-      setTimeout(() => renderUnifiedIncidents("post-load-1000"), 1000);
+    if (typeof renderUnifiedIncidents === "function") {
+      renderUnifiedIncidents("auto-shared-reports-loaded");
+      renderUnifiedIncidents("auto-hazards-refreshed");
+      setTimeout(() => renderUnifiedIncidents("auto-shared-reports-loaded-250"), 250);
+      setTimeout(() => renderUnifiedIncidents("auto-shared-reports-loaded-1000"), 1000);
+      setTimeout(() => renderUnifiedIncidents("auto-shared-reports-loaded-2000"), 2000);
     }
     pushGridlyReflowTrace("post-submit refresh", "end", { source: `loadSharedReports:${reason}` });
 
