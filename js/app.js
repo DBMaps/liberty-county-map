@@ -2657,18 +2657,59 @@ function openAlertsSurfaceFromDock() {
   const coordAttrs = Number.isFinite(lat) && Number.isFinite(lng) ? ` data-gridly-alert-lat="${esc(lat)}" data-gridly-alert-lng="${esc(lng)}"` : "";
   const resolvedTitle = titleFor(alert);
   const resolvedHelper = helperTextFor(alert);
-  const resolvedRoad = cleanDisplayValue(chooseBestAlertLocationContext(alert)?.enriched?.resolvedRoadName).toLowerCase();
-  const normalizedTitle = cleanDisplayValue(resolvedTitle).toLowerCase();
-  const normalizedHelper = cleanDisplayValue(resolvedHelper).toLowerCase();
-  const titleIsRoadOnly = Boolean(normalizedTitle && resolvedRoad && normalizedTitle === resolvedRoad);
-  const helperIsRoadClosed = normalizedHelper === "road closed" || normalizedHelper === "road closure";
-  const helperIsConstruction = normalizedHelper === "construction";
-  const displayTitle = titleIsRoadOnly && (helperIsRoadClosed || helperIsConstruction)
-    ? (helperIsRoadClosed ? "Road closed" : "Construction")
-    : resolvedTitle;
-  const displaySubtitle = titleIsRoadOnly && (helperIsRoadClosed || helperIsConstruction)
-    ? resolvedTitle
-    : resolvedHelper;
+  const alertContext = chooseBestAlertLocationContext(alert);
+  const normalizeAlertDisplayMatch = value => cleanDisplayValue(value).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  const eventTokenLabels = [
+    { token: "road closed", label: "Road closed" },
+    { token: "road closure", label: "Road closed" },
+    { token: "construction", label: "Construction" },
+    { token: "blocked", label: "Blocked" },
+    { token: "flooding", label: "Flooding" },
+    { token: "debris", label: "Debris" },
+    { token: "crash", label: "Crash" },
+    { token: "accident", label: "Accident" }
+  ];
+  const eventLabelFromHelper = helper => {
+    const normalized = normalizeAlertDisplayMatch(helper);
+    const matched = eventTokenLabels.find(({ token }) => {
+      const normalizedToken = normalizeAlertDisplayMatch(token);
+      return normalized === normalizedToken || ` ${normalized} `.includes(` ${normalizedToken} `);
+    });
+    return matched?.label || "";
+  };
+  const normalizedTitle = normalizeAlertDisplayMatch(resolvedTitle);
+  const normalizedTitleWithoutNear = normalizedTitle.replace(/^near\s+/, "");
+  const locationCandidateValues = [
+    alertContext?.enriched?.resolvedRoadName,
+    alertContext?.enriched?.nearbyKnownLocation,
+    alert?.roadName,
+    alert?.primaryRoad,
+    alert?.corridor,
+    alert?.route,
+    alert?.nearestRoad,
+    alert?.knownLocation,
+    alert?.locationName,
+    alert?.location,
+    alert?.titleRoad,
+    alert?.raw?.roadName,
+    alert?.raw?.nearestRoad,
+    alert?.raw?.knownLocation,
+    alert?.raw?.locationName,
+    alert?.source?.roadName,
+    alert?.source?.nearestRoad,
+    alert?.source?.knownLocation,
+    alert?.source?.locationName
+  ];
+  const normalizedLocationCandidates = locationCandidateValues
+    .map(normalizeAlertDisplayMatch)
+    .filter(candidate => candidate && candidate !== "dayton area");
+  const titleLooksLikeRoadOrLocation = Boolean(normalizedTitle && !eventLabelFromHelper(resolvedTitle) && normalizedLocationCandidates.some(candidate => {
+    return normalizedTitle === candidate || normalizedTitleWithoutNear === candidate;
+  }));
+  const helperEventLabel = eventLabelFromHelper(resolvedHelper);
+  const shouldUseEventFirstLayout = titleLooksLikeRoadOrLocation && Boolean(helperEventLabel);
+  const displayTitle = shouldUseEventFirstLayout ? helperEventLabel : resolvedTitle;
+  const displaySubtitle = shouldUseEventFirstLayout ? resolvedTitle : resolvedHelper;
   return `
   <div class="gridly-alert-row gridly-alert-intel-card" data-gridly-alert-id="${esc(id)}"${coordAttrs} data-gridly-alert-hidden="${isHidden ? "true" : "false"}" style="display:${isHidden ? "none" : "flex"};gap:10px;align-items:flex-start;padding:12px 12px ${index === 2 ? 12 : 10}px 12px;border:1px solid rgba(255,255,255,0.09);border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018));box-shadow:0 6px 20px rgba(0,0,0,0.28);margin-bottom:${index === 2 ? 0 : 8}px;cursor:${Number.isFinite(lat) && Number.isFinite(lng) ? "pointer" : "default"};">
     <div style="width:18px;min-width:18px;height:18px;margin-top:1px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,179,71,0.18);border:1px solid rgba(255,179,71,0.5);color:#ffd28a;font-size:11px;line-height:1;">!</div>
