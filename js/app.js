@@ -18999,8 +18999,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       snapshot.hasActiveAlerts === true ||
       alerts.length > 0;
 
+    let html = "";
+
     if (hasActiveAlerts) {
-      return `
+      html = `
 <div class="gridly-alerts-active">
   <div class="gridly-alert-headline">
     ${sanitizeText(snapshot.commuteImpactHeadline || "Active Alerts")}
@@ -19028,9 +19030,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   `).join("")}
 </div>
 `;
-    }
-
-    return `
+    } else {
+      html = `
 <div class="gridly-alerts-active">
   <div class="gridly-alert-headline">Active Alerts</div>
   <div class="gridly-alert-row">
@@ -19039,6 +19040,15 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   </div>
 </div>
 `;
+    }
+
+    console.log("[Alerts HTML ACTIVE PATH V155]", {
+      alertsLength: alerts.length,
+      hasActiveAlerts,
+      htmlLength: html.length
+    });
+
+    return html;
   }
 
 
