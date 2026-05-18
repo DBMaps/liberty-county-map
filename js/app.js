@@ -16642,7 +16642,9 @@ function refreshPortraitV2LocalizedIntelligence() {
   const intel = timeSection("intelligence_calculations", () => buildUnifiedLocalizedCommuteIntelligence({ limit: 6 }));
   timeSection("text_content_updates", () => {
     if (topPrimaryEl) topPrimaryEl.textContent = intel.commuteImpactHeadline;
-    if (topSecondaryEl) topSecondaryEl.textContent = intel.hasActiveAlerts ? intel.topStatusLocalizedDetail : "Routes currently clear";
+    if (topSecondaryEl) topSecondaryEl.textContent = intel.hasActiveAlerts
+      ? safeDisplayText(intel.topStatusLocalizedDetail, "Liberty County • Updated just now")
+      : "Routes currently clear";
   });
   recordPortraitIntelligenceBreakdown("refreshPortraitV2LocalizedIntelligence", functionStartedAt, sections);
 }
@@ -19585,6 +19587,24 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     return "";
   }
 
+  function safeDisplayText(value, fallback = "") {
+    if (value == null) return fallback;
+    if (typeof value === "string") {
+      const text = value.trim();
+      return text && text.toLowerCase() !== "[object object]" ? text : fallback;
+    }
+    if (typeof value === "number") return Number.isFinite(value) ? String(value) : fallback;
+    if (Array.isArray(value)) {
+      const items = value.filter((item) => typeof item === "string").map((item) => item.trim()).filter(Boolean);
+      return items.length ? items.join(" • ") : fallback;
+    }
+    if (typeof value === "object") {
+      const known = pickFirstNonEmptyText([value?.label, value?.name, value?.title]);
+      return known || fallback;
+    }
+    return fallback;
+  }
+
   function normalizeDirectionLabel(value) {
     const raw = String(value || "").trim().toLowerCase();
     if (!raw) return "";
@@ -19593,6 +19613,35 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     if (/(north|nb)\b/.test(raw)) return "northbound";
     if (/(south|sb)\b/.test(raw)) return "southbound";
     return "";
+  }
+
+  function buildAlertTitle({
+    alert = {},
+    roadLabel = "",
+    crossingLabel = "",
+    knownLocationLabel = "",
+    eventLabel = ""
+  } = {}) {
+    const alertType = String(alert?.type || alert?.reportType || alert?.incidentType || "").toLowerCase();
+    const isRail = alert?.reportKind === "crossing" || /train|crossing|blocked/.test(alertType) || String(alert?.crossingId || "").trim().length > 0;
+    if (isRail) {
+      if (roadLabel && crossingLabel) return `Train blocking ${roadLabel} at ${crossingLabel}`;
+      if (roadLabel && knownLocationLabel) return `Train blocking ${roadLabel} near ${knownLocationLabel}`;
+      if (roadLabel) return `Train blocking ${roadLabel}`;
+      if (crossingLabel) return `Train blocking at ${crossingLabel}`;
+      return "Rail crossing blocked";
+    }
+    const normalizedEvent = String(eventLabel || "").toLowerCase();
+    const roadHazardMap = [
+      { test: /road[_\s-]*closed|closure|closed/, label: "Road closed" },
+      { test: /construction|work ?zone|lane ?work/, label: "Construction" },
+      { test: /debris|object/, label: "Debris" },
+      { test: /flood|high water/, label: "Flooding" },
+      { test: /crash|collision|wreck|accident/, label: "Crash" }
+    ];
+    const hazardLabel = (roadHazardMap.find((entry) => entry.test.test(normalizedEvent)) || {}).label || "Road hazard";
+    if (roadLabel) return `${hazardLabel} on ${roadLabel}`;
+    return hazardLabel === "Road hazard" ? "Road hazard reported" : `${hazardLabel} reported`;
   }
 
   function buildSpecificAlertTitle(alert = {}) {
@@ -19621,25 +19670,18 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       return "Rail crossing blocked";
     }
 
-    const roadHazardMap = [
-      { test: /road[_\s-]*closed|closure|closed/, label: "Road closed" },
-      { test: /construction|work ?zone|lane ?work/, label: "Construction" },
-      { test: /debris|object/, label: "Debris" },
-      { test: /flood|high water/, label: "Flooding" },
-      { test: /crash|collision|wreck|accident/, label: "Crash" }
-    ];
-    const hazardLabel = (roadHazardMap.find((entry) => entry.test.test(hazardType)) || {}).label || "Road hazard";
-
-    if (road && crossA && crossB) {
+    const cardTitle = buildAlertTitle({
+      alert,
+      roadLabel: road,
+      crossingLabel: atStreet,
+      knownLocationLabel: pickFirstNonEmptyText([alert?.knownLocation, alert?.nearestRoad, alert?.locationName, alert?.location]),
+      eventLabel: hazardType
+    });
+    if (road && crossA && crossB && !isRail) {
       const dirText = direction ? ` ${direction}` : "";
-      return `${hazardLabel} on ${road}${dirText} between ${crossA} and ${crossB}`;
+      return `${cardTitle}${dirText} between ${crossA} and ${crossB}`;
     }
-    if (road) {
-      const near = pickFirstNonEmptyText([alert?.knownLocation, alert?.nearestRoad, alert?.locationName, alert?.location]);
-      if (near) return `${hazardLabel} on ${road} near ${near}`;
-      return `${hazardLabel} on ${road}`;
-    }
-    return pickFirstNonEmptyText([alert?.title, alert?.subtitle]) || "Road hazard";
+    return cardTitle || pickFirstNonEmptyText([alert?.title, alert?.subtitle]) || "Road hazard reported";
   }
 
   function buildAlertSubtitleLine(alert = {}, titleText = "") {
@@ -19890,7 +19932,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   </div>
 
   ${visibleAlerts.map((alert) => {
-    const title = resolveAlertTitleText(alert);
+    const roadLabel = pickFirstNonEmptyText([alert?.roadName, alert?.corridor, alert?.locationName, alert?.titleRoad]);
+    const crossingLabel = pickFirstNonEmptyText([alert?.crossingName, alert?.crossingRoad, alert?.nearestRoad, alert?.knownLocation, alert?.locationName, alert?.location]);
+    const knownLocationLabel = pickFirstNonEmptyText([alert?.knownLocation, alert?.locationName, alert?.location, alert?.nearestRoad]);
+    const eventLabel = pickFirstNonEmptyText([alert?.hazardTypeLabel, alert?.typeLabel, alert?.type, alert?.reportType, alert?.report_type, alert?.title]);
+    const title = buildAlertTitle({ alert, roadLabel, crossingLabel, knownLocationLabel, eventLabel }) || resolveAlertTitleText(alert);
     const locationTimeLine = buildAlertSubtitleLine(alert, title);
     return `
     <div class="gridly-alert-row" style="padding:10px 12px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.1);border-radius:10px;background:rgba(255,255,255,0.02);">
