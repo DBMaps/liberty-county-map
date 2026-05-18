@@ -2093,9 +2093,10 @@ function openAlertsSurfaceFromDock() {
   };
   const getImpact = (alert) => {
     const raw = normalizeToken(alert?.routeImpact || alert?.impact || alert?.severity || alert?.priority || "").toLowerCase();
-    if (/(high|major|severe|blocked|closure|closed|standstill)/.test(raw)) return "High impact";
-    if (/(moderate|medium|delay|slow|congestion)/.test(raw)) return "Moderate impact";
-    return "Minor impact";
+    if (/(high|major|severe|blocked|closure|closed|standstill)/.test(raw)) return "Widespread Delays";
+    if (/(moderate|medium|delay|slow|congestion)/.test(raw)) return "Impacted Movement";
+    if (/(minor|watch|caution|active)/.test(raw)) return "Slowing Areas";
+    return "Flowing Normally";
   };
   const getHazardType = (alert) => titleCase(alert?.hazardType || alert?.category || alert?.label || alert?.type || "Road hazard reported") || "Road hazard reported";
   const maybeResolveNearestRoad = (lat, lng) => {
@@ -2249,7 +2250,7 @@ function openAlertsSurfaceFromDock() {
       latestAtMs: new Date(alertObject?.timestamp || alertObject?.updated_at || alertObject?.created_at || Date.now()).getTime() || Date.now()
     };
   };
-  const rankImpact = (impact) => ({ "High impact": 3, "Moderate impact": 2, "Minor impact": 1 }[impact] || 1);
+  const rankImpact = (impact) => ({ "Widespread Delays": 4, "Impacted Movement": 3, "Slowing Areas": 2, "Flowing Normally": 1 }[impact] || 1);
   const rankConfidence = (confidence) => ({ "High confidence": 3, "Medium confidence": 2, "Low confidence": 1 }[confidence] || 1);
   const clusterAlerts = (formattedAlerts) => {
     const map = new Map();
@@ -2276,6 +2277,32 @@ function openAlertsSurfaceFromDock() {
         clusterInfo: item.reportCount > 1 ? `${item.reportCount} nearby reports • latest ${mins}m ago` : ""
       };
     });
+  };
+  const toDelayEstimate = (state) => ({
+    "Widespread Delays": "15–30 minutes longer than normal",
+    "Impacted Movement": "8–15 minutes longer than normal",
+    "Slowing Areas": "5–10 minutes longer than normal",
+    "Flowing Normally": "Near normal travel times"
+  }[state] || "Near normal travel times");
+  const toExpectedImpact = (state) => ({
+    "Widespread Delays": "Route delays likely across multiple nearby segments",
+    "Impacted Movement": "Route delays likely",
+    "Slowing Areas": "Travel pace is reduced in nearby segments",
+    "Flowing Normally": "Movement reliability is currently stable"
+  }[state] || "Movement reliability is currently stable");
+  const buildMovementDescription = (card) => {
+    const corridor = normalizeToken(card?.rawRoad || card?.road || card?.nearestRoad || "nearby corridors");
+    const crossing = normalizeToken(card?.crossing || card?.nearestRoad || "the nearby area");
+    if (card?.impact === "Flowing Normally") return `${corridor} is moving normally with stable travel conditions.`;
+    if (/rail|train|crossing|blocked/.test(String(card?.rawType || '').toLowerCase())) return `Train activity at ${crossing} is slowing movement along ${corridor}.`;
+    return `Road activity near ${crossing} is reducing movement reliability along ${corridor}.`;
+  };
+  const getMovementHeader = (card) => {
+    const corridor = upperText(card?.rawRoad || card?.road || "LOCAL CORRIDORS");
+    if (card?.impact === "Flowing Normally") return `${corridor} FLOWING NORMALLY`;
+    if (card?.impact === "Slowing Areas") return `${corridor} SLOWING AREAS`;
+    if (card?.impact === "Widespread Delays") return `${corridor} WIDESPREAD DELAYS`;
+    return `${corridor} MOVEMENT IMPACTED`;
   };
   const fallbackTemplate = {
     title: 'Alerts',
@@ -2307,24 +2334,21 @@ function openAlertsSurfaceFromDock() {
 
     if (hasActiveAlerts) {
       const cards = clusterAlerts(alerts.map((alert) => formatAlertForMobileV2(alert)));
-      console.table(cards.map(c => ({
-        rawType: c.rawType,
-        finalTitle: c.title,
-        road: c.road,
-        crossing: c.crossing,
-        nearestRoad: c.nearestRoad,
-        direction: c.direction,
-        confidence: c.confidence
-      })));
+      const routeActive = String(snapshot?.routeState || "").toLowerCase() === "active";
       html = `
 <div class="gridly-alerts-active">
-  <strong>${snapshot?.commuteImpactHeadline || "Active Alerts"}</strong>
+  <strong>${snapshot?.commuteImpactHeadline || "Movement Intelligence"}</strong>
   ${cards.map((card) => `
-    <div class="gridly-alert-row">
-      <div>${String(card?.title || "ROAD HAZARD REPORTED — LOCATION NEEDS CONFIRMATION")}</div>
-      <small>${String(card?.detail || "Approximate location • Just now")}</small>
-      <small>${String(card?.impact || "Minor impact")} · ${String(card?.confidence || "Low confidence")}</small>
-      ${card?.clusterInfo ? `<small>${String(card.clusterInfo)}</small>` : ""}
+    <div class="gridly-alert-row gridly-alert-intel-card">
+      <div><strong>${String(getMovementHeader(card))}</strong></div>
+      <small>${String(buildMovementDescription(card))}</small>
+      <small><strong>Expected impact:</strong> ${String(toExpectedImpact(card?.impact))}</small>
+      <small><strong>Delay estimate:</strong> ${String(toDelayEstimate(card?.impact))}</small>
+      <small><strong>Affected movement:</strong> ${String(card?.rawRoad || card?.road || "Nearby corridors")}${card?.direction ? ` • ${String(card.direction)}` : ""}</small>
+      <small><strong>What this means:</strong> Movement reliability ${card?.impact === "Flowing Normally" ? "is stable" : "is reduced"} in this area.</small>
+      <small><strong>${routeActive ? "Your route impact" : "Nearby movement impact"}:</strong> ${card?.impact === "Widespread Delays" ? "High" : card?.impact === "Impacted Movement" ? "Moderate" : "Low"}</small>
+      <small><strong>Confidence:</strong> ${String(card?.confidence || "Low confidence")}</small>
+      <small><strong>Community activity:</strong> ${Number(card?.reportCount || 1)} nearby report${Number(card?.reportCount || 1) === 1 ? "" : "s"}</small>
     </div>
   `).join("")}
 </div>`.trim();
