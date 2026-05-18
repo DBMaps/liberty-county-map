@@ -2076,20 +2076,20 @@ function openAlertsSurfaceFromDock() {
     if (/west/.test(raw)) return "Westbound";
     if (/north/.test(raw)) return "Northbound";
     if (/south/.test(raw)) return "Southbound";
-    if (/shoulder/.test(raw)) return `${titleCase(raw)} shoulder`;
-    if (/lane/.test(raw)) return `${titleCase(raw)} lane`;
+    if (/shoulder/.test(raw)) return "Shoulder";
+    if (/(lane blocked|blocked lane|lane closure|closed lane)/.test(raw)) return "Lane blocked";
+    if (/lane/.test(raw)) return "Lane affected";
     return titleCase(raw);
   };
-  const getLocationConfidence = (alert, resolvedRoad = "", resolvedLocation = "") => {
-    if (normalizeToken(alert?.crossingRoad || alert?.crossingName)) return "High confidence";
-    if (normalizeToken(alert?.roadName || alert?.corridor || alert?.primaryRoad || alert?.nearestRoad || alert?.knownLocation || alert?.locationName || resolvedRoad || resolvedLocation)) return "Medium confidence";
-    if (Number.isFinite(Number(alert?.lat)) && Number.isFinite(Number(alert?.lng))) return "Medium confidence";
+  const getLocationConfidence = (resolutionType = "") => {
+    if (resolutionType === "exact") return "High confidence";
+    if (resolutionType === "resolved") return "Medium confidence";
     return "Low confidence";
   };
-  const getLocationDetail = (alert, resolvedRoad = "", resolvedLocation = "") => {
-    if (normalizeToken(alert?.crossingRoad || alert?.crossingName)) return "Exact crossing";
-    if (normalizeToken(alert?.roadName || alert?.corridor || alert?.primaryRoad || alert?.nearestRoad || alert?.knownLocation || alert?.locationName || resolvedRoad || resolvedLocation)) return "Near known road";
-    return "Approximate location";
+  const getLocationDetail = (resolutionType = "") => {
+    if (resolutionType === "exact") return "Exact crossing";
+    if (resolutionType === "resolved") return "Near known road";
+    return "Approximate coordinates";
   };
   const getImpact = (alert) => {
     const raw = normalizeToken(alert?.routeImpact || alert?.impact || alert?.severity || alert?.priority || "").toLowerCase();
@@ -2104,6 +2104,31 @@ function openAlertsSurfaceFromDock() {
     const resolvedLocation = typeof resolveNearbyKnownLocation === "function" ? normalizeToken(resolveNearbyKnownLocation(lat, lng)) : "";
     return { resolvedRoad, resolvedLocation };
   };
+  const resolveLocationContext = (alertObject, isRail, lat, lng) => {
+    const resolvedByNearby = Number.isFinite(lat) && Number.isFinite(lng) && typeof resolveNearbyKnownLocation === "function"
+      ? normalizeToken(resolveNearbyKnownLocation(lat, lng)) : "";
+    const resolvedByRoad = Number.isFinite(lat) && Number.isFinite(lng) && typeof resolveNearestRoadName === "function"
+      ? normalizeToken(resolveNearestRoadName(lat, lng)) : "";
+    const first = (values) => values.map(normalizeToken).find(Boolean) || "";
+    if (isRail) {
+      return {
+        crossing: first([alertObject?.crossingRoad, alertObject?.crossingName, alertObject?.nearestRoad, alertObject?.knownLocation, alertObject?.locationName, resolvedByNearby, resolvedByRoad]),
+        road: first([alertObject?.roadName, alertObject?.primaryRoad, alertObject?.corridor, alertObject?.route, resolvedByRoad]),
+        nearestRoad: first([alertObject?.nearestRoad, alertObject?.knownLocation, alertObject?.locationName, resolvedByNearby, resolvedByRoad]),
+        resolutionType: normalizeToken(alertObject?.crossingRoad || alertObject?.crossingName) ? "exact" : ((resolvedByNearby || resolvedByRoad || alertObject?.nearestRoad || alertObject?.knownLocation || alertObject?.locationName) ? "resolved" : "approx")
+      };
+    }
+    const crossA = first([alertObject?.crossStreetA, alertObject?.crossStreet1, alertObject?.fromStreet]);
+    const crossB = first([alertObject?.crossStreetB, alertObject?.crossStreet2, alertObject?.toStreet]);
+    return {
+      road: first([alertObject?.primaryRoad, alertObject?.roadName, alertObject?.corridor, alertObject?.route, resolvedByRoad]),
+      crossing: "",
+      nearestRoad: first([alertObject?.nearestRoad, alertObject?.knownLocation, alertObject?.locationName, resolvedByNearby, resolvedByRoad]),
+      crossA,
+      crossB,
+      resolutionType: (crossA && crossB) || normalizeToken(alertObject?.primaryRoad || alertObject?.roadName || alertObject?.corridor || alertObject?.nearestRoad || alertObject?.knownLocation || alertObject?.locationName || resolvedByNearby || resolvedByRoad) ? "resolved" : "approx"
+    };
+  };
   const formatAlertForMobileV2 = (alert) => {
     const alertObject = alert && typeof alert === "object" ? alert : {};
     const rawRoad = normalizeToken(alertObject?.roadName || alertObject?.corridor || alertObject?.primaryRoad || alertObject?.route || "");
@@ -2116,10 +2141,11 @@ function openAlertsSurfaceFromDock() {
     const lat = Number(alertObject?.lat);
     const lng = Number(alertObject?.lng);
     const { resolvedRoad, resolvedLocation } = maybeResolveNearestRoad(lat, lng);
-    const bestRoad = rawRoad || resolvedRoad;
-    const bestNear = rawNearest || resolvedLocation;
     const typeToken = normalizeToken(alertObject?.type || alertObject?.category || alertObject?.hazardType || alertObject?.title).toLowerCase();
     const isRail = /rail|train|crossing|blocked/.test(typeToken);
+    const context = resolveLocationContext(alertObject, isRail, lat, lng);
+    const bestRoad = context.road || rawRoad || resolvedRoad;
+    const bestNear = context.nearestRoad || rawNearest || resolvedLocation;
     const resolvedHeadline = normalizeToken(
       alertObject?.resolvedHeadline ||
       alertObject?.headline ||
@@ -2131,13 +2157,16 @@ function openAlertsSurfaceFromDock() {
     let title = resolvedHeadline ? upperText(resolvedHeadline) : "";
 
     if (!title && isRail) {
-      if (bestRoad && rawCrossing) title = `TRAIN BLOCKING ${upperText(bestRoad)} AT ${upperText(rawCrossing)}`;
+      if (bestRoad && context.crossing) title = `TRAIN BLOCKING ${upperText(bestRoad)} AT ${upperText(context.crossing)}`;
       else if (bestRoad && bestNear) title = `TRAIN BLOCKING ${upperText(bestRoad)} NEAR ${upperText(bestNear)}`;
       else if (bestNear || rawDescription) title = `TRAIN BLOCKING RAIL CROSSING NEAR ${upperText(bestNear || rawDescription)}`;
       else title = "TRAIN BLOCKING RAIL CROSSING — LOCATION NEEDS CONFIRMATION";
     } else if (!title) {
       const hazard = upperText(getHazardType(alertObject));
-      if (bestRoad && direction && crossA && crossB) title = `${hazard} ON ${upperText(bestRoad)} ${upperText(direction)} BETWEEN ${upperText(crossA)} AND ${upperText(crossB)}`;
+      const betweenA = context.crossA || crossA;
+      const betweenB = context.crossB || crossB;
+      if (bestRoad && direction && betweenA && betweenB) title = `${hazard} ON ${upperText(bestRoad)} ${upperText(direction)} BETWEEN ${upperText(betweenA)} AND ${upperText(betweenB)}`;
+      else if (bestRoad && betweenA && betweenB) title = `${hazard} ON ${upperText(bestRoad)} BETWEEN ${upperText(betweenA)} AND ${upperText(betweenB)}`;
       else if (bestRoad && direction && bestNear) title = `${hazard} ON ${upperText(bestRoad)} ${upperText(direction)} NEAR ${upperText(bestNear)}`;
       else if (bestRoad && bestNear) title = `${hazard} ON ${upperText(bestRoad)} NEAR ${upperText(bestNear)}`;
       else if (bestNear) title = `${hazard} NEAR ${upperText(bestNear)}`;
@@ -2145,12 +2174,12 @@ function openAlertsSurfaceFromDock() {
       else title = `${hazard} REPORTED — LOCATION NEEDS CONFIRMATION`;
     }
 
-    const locationDetail = getLocationDetail(alertObject, resolvedRoad, resolvedLocation);
+    const locationDetail = getLocationDetail(context.resolutionType);
     const detail = `${locationDetail} • ${toMinutesAgoLabel(alertObject)}`;
     return {
       title,
       detail,
-      confidence: getLocationConfidence(alertObject, resolvedRoad, resolvedLocation),
+      confidence: getLocationConfidence(context.resolutionType),
       impact: getImpact(alertObject),
       rawType: normalizeToken(alertObject?.type || alertObject?.category || alertObject?.hazardType || ""),
       rawRoad: rawRoad || bestRoad,
@@ -2158,6 +2187,10 @@ function openAlertsSurfaceFromDock() {
       lng: Number.isFinite(lng) ? lng : null,
       resolvedRoad,
       resolvedLocation,
+      road: bestRoad,
+      crossing: context.crossing,
+      nearestRoad: context.nearestRoad,
+      direction,
       reportCount: 1,
       clusterKey: `${isRail ? "rail" : "road"}|${upperText(rawRoad || bestRoad || rawNearest || resolvedLocation || "unknown")}|${upperText(getHazardType(alertObject))}`,
       latestAtMs: new Date(alertObject?.timestamp || alertObject?.updated_at || alertObject?.created_at || Date.now()).getTime() || Date.now()
@@ -2207,14 +2240,12 @@ function openAlertsSurfaceFromDock() {
       const cards = clusterAlerts(alerts.map((alert) => formatAlertForMobileV2(alert)));
       console.table(cards.map(c => ({
         rawType: c.rawType,
-        rawRoad: c.rawRoad,
-        rawLat: c.lat,
-        rawLng: c.lng,
-        resolvedRoad: c.resolvedRoad,
         finalTitle: c.title,
-        detail: c.detail,
-        confidence: c.confidence,
-        reportCount: c.reportCount
+        road: c.road,
+        crossing: c.crossing,
+        nearestRoad: c.nearestRoad,
+        direction: c.direction,
+        confidence: c.confidence
       })));
       html = `
 <div class="gridly-alerts-active">
