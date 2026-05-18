@@ -2120,19 +2120,28 @@ function openAlertsSurfaceFromDock() {
     const bestNear = rawNearest || resolvedLocation;
     const typeToken = normalizeToken(alertObject?.type || alertObject?.category || alertObject?.hazardType || alertObject?.title).toLowerCase();
     const isRail = /rail|train|crossing|blocked/.test(typeToken);
-    let title = "";
+    const resolvedHeadline = normalizeToken(
+      alertObject?.resolvedHeadline ||
+      alertObject?.headline ||
+      alertObject?.localizedSummary ||
+      (alertObject?.title && typeof alertObject.title === "object"
+        ? (alertObject.title.label || alertObject.title.text || alertObject.title.name || alertObject.title.title || "")
+        : alertObject?.title)
+    );
+    let title = resolvedHeadline ? upperText(resolvedHeadline) : "";
 
-    if (isRail) {
+    if (!title && isRail) {
       if (bestRoad && rawCrossing) title = `TRAIN BLOCKING ${upperText(bestRoad)} AT ${upperText(rawCrossing)}`;
       else if (bestRoad && bestNear) title = `TRAIN BLOCKING ${upperText(bestRoad)} NEAR ${upperText(bestNear)}`;
       else if (bestNear || rawDescription) title = `TRAIN BLOCKING RAIL CROSSING NEAR ${upperText(bestNear || rawDescription)}`;
       else title = "TRAIN BLOCKING RAIL CROSSING — LOCATION NEEDS CONFIRMATION";
-    } else {
+    } else if (!title) {
       const hazard = upperText(getHazardType(alertObject));
       if (bestRoad && direction && crossA && crossB) title = `${hazard} ON ${upperText(bestRoad)} ${upperText(direction)} BETWEEN ${upperText(crossA)} AND ${upperText(crossB)}`;
       else if (bestRoad && direction && bestNear) title = `${hazard} ON ${upperText(bestRoad)} ${upperText(direction)} NEAR ${upperText(bestNear)}`;
       else if (bestRoad && bestNear) title = `${hazard} ON ${upperText(bestRoad)} NEAR ${upperText(bestNear)}`;
       else if (bestNear) title = `${hazard} NEAR ${upperText(bestNear)}`;
+      else if (Number.isFinite(lat) && Number.isFinite(lng)) title = "ROAD HAZARD NEAR REPORTED LOCATION";
       else title = `${hazard} REPORTED — LOCATION NEEDS CONFIRMATION`;
     }
 
@@ -19080,6 +19089,18 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     return "";
   }
 
+  function coerceDisplayText(value) {
+    if (value == null) return "";
+    if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+      const text = String(value).trim();
+      return text.toLowerCase() === "[object object]" ? "" : text;
+    }
+    if (typeof value === "object") {
+      return pickFirstNonEmptyText([value?.label, value?.text, value?.name, value?.title, value?.value]);
+    }
+    return "";
+  }
+
   function normalizeDirectionLabel(value) {
     const raw = String(value || "").trim().toLowerCase();
     if (!raw) return "";
@@ -19178,8 +19199,16 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       ? intelItems.map((item) => {
         const incident = item?.incident || {};
         const severityKey = String(incident?.severity || "moderate").toLowerCase();
+        const resolvedHeadline = pickFirstNonEmptyText([
+          coerceDisplayText(item?.headline),
+          coerceDisplayText(item?.title),
+          coerceDisplayText(item?.localizedSummary),
+          coerceDisplayText(item?.label)
+        ]);
         return {
-          title: buildSpecificAlertTitle({ ...incident, title: item?.localizedSummary || incident?.title, subtitle: incident?.subtitle || item?.localizedSummary }),
+          title: resolvedHeadline || buildSpecificAlertTitle({ ...incident, title: item?.localizedSummary || incident?.title, subtitle: incident?.subtitle || item?.localizedSummary }),
+          resolvedHeadline,
+          localizedSummary: coerceDisplayText(item?.localizedSummary),
           subtitle: pickFirstNonEmptyText([incident?.subtitle, incident?.detail, item?.localizedSummary]),
           severity: severityKey,
           minutesText: item?.minutesText || "now",
@@ -19204,7 +19233,12 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         const locationLabel = item?.crossingName || item?.locationLabel || item?.locationName || item?.roadName || item?.label || "Local roadway";
         const stateLabel = item?.latestReport ? getReportStateLabel(item.latestReport) : (item?.statusLabel || "Active");
         return {
-          title: buildSpecificAlertTitle({
+          title: pickFirstNonEmptyText([
+            coerceDisplayText(item?.headline),
+            coerceDisplayText(item?.title),
+            coerceDisplayText(item?.localizedSummary),
+            coerceDisplayText(item?.label),
+            buildSpecificAlertTitle({
             title: `${typeLabel} · ${locationLabel}`,
             type: rawType,
             reportType: rawType,
@@ -19217,7 +19251,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
             locationName: item?.locationName,
             location: item?.location,
             subtitle: stateLabel
-          }),
+            })
+          ]),
           subtitle: stateLabel,
           severity: String(item?.severity || "moderate").toLowerCase(),
           minutesText: "now",
@@ -19262,20 +19297,16 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
   window.getAlertsSurfaceSnapshot = getAlertsSurfaceSnapshot;
   function resolveAlertTitleText(alert) {
-    const rawTitle = (
-      alert?.title?.label ||
-      alert?.title?.text ||
-      alert?.title?.name ||
-      alert?.label ||
-      alert?.headline ||
-      alert?.type ||
-      "Active Alert"
-    );
-    if (typeof rawTitle === "string") return rawTitle;
-    if (rawTitle && typeof rawTitle === "object") {
-      return String(rawTitle.label || rawTitle.text || rawTitle.name || "Active Alert");
-    }
-    return String(rawTitle || "Active Alert");
+    const resolved = pickFirstNonEmptyText([
+      coerceDisplayText(alert?.resolvedHeadline),
+      coerceDisplayText(alert?.commuteImpactHeadline),
+      coerceDisplayText(alert?.localizedSummary),
+      coerceDisplayText(alert?.headline),
+      coerceDisplayText(alert?.title),
+      coerceDisplayText(alert?.label),
+      coerceDisplayText(alert?.type)
+    ]);
+    return resolved || "Active Alert";
   }
 
   function buildAlertsSurfaceHtml() {
