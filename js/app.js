@@ -1283,7 +1283,13 @@ exposeGridlyAuditHelper("gridlyCommuteAuditGlobalsCheck", gridlyCommuteAuditGlob
 
 function gridlyRouteRelevanceAudit() {
   const auditStartedAt = performance.now();
-  const activeIncidents = getActiveUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "active");
+  const activeIncidents = getActiveUnifiedIncidents();
+  const safeActiveIncidents = Array.isArray(activeIncidents)
+    ? activeIncidents
+    : activeIncidents && typeof activeIncidents === "object"
+      ? Object.values(activeIncidents)
+      : [];
+  const normalizedActiveIncidents = safeActiveIncidents.filter((incident) => String(incident?.status || "").toLowerCase() === "active");
   const routeWatchActive = Boolean(routeWatchActivated === true || window.__gridlyRouteWatchActive === true);
   const routeLatLngs = getRoutePolylineLatLngs();
   const routeGeometryAvailable = Array.isArray(routeLatLngs) && routeLatLngs.length >= 2;
@@ -1297,7 +1303,7 @@ function gridlyRouteRelevanceAudit() {
     "getDistanceMiles"
   ];
 
-  const perIncidentTimings = activeIncidents.map((incident) => {
+  const perIncidentTimings = normalizedActiveIncidents.map((incident) => {
     const startedAt = performance.now();
     const routeRelevant = isIncidentRouteRelevant(incident, routeHazard);
     const ms = Number((performance.now() - startedAt).toFixed(3));
@@ -15414,7 +15420,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     : rawUnifiedIncidentArray.map((incident) => getRawMinusActiveComparableIncidentId(incident));
   const activeIdsForDiff = Array.isArray(gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentIds)
     ? gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentIds
-    : (Array.isArray(activeIncidents) ? activeIncidents.map((incident) => getRawMinusActiveComparableIncidentId(incident)) : []);
+    : safeActiveIncidents.map((incident) => getRawMinusActiveComparableIncidentId(incident));
   const activeIdsForDiffSet = new Set(activeIdsForDiff.map((incidentId) => String(incidentId || "")));
   const rawMinusActiveMissingIds = rawIdsForDiff.filter((incidentId) => !activeIdsForDiffSet.has(String(incidentId || "")));
   gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveDiffRawIds = rawIdsForDiff;
@@ -15501,7 +15507,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   const commuteModelPerIncidentTimings = [];
   const titleLabelNestedSections = {};
   const titleLabelPerIncidentTimings = [];
-  const intelItems = timeSection("commute_model_build", () => activeIncidents.map((incident) => {
+  const intelItems = timeSection("commute_model_build", () => safeActiveIncidents.map((incident) => {
     const incidentStartedAt = performance.now();
     const perIncidentSections = {
       incident_mapping: 0,
