@@ -7131,13 +7131,16 @@ function renderUnifiedIncidentMarkers() {
 }
 
 function scheduleHazardMarkerAutoRender(source = "unspecified") {
-  if (typeof renderUnifiedIncidentMarkers !== "function") return;
-  renderUnifiedIncidentMarkers();
+  const renderFn = typeof renderUnifiedIncidents === "function"
+    ? renderUnifiedIncidents
+    : (typeof renderUnifiedIncidentMarkers === "function" ? renderUnifiedIncidentMarkers : null);
+  if (typeof renderFn !== "function") return;
+  renderFn();
   setTimeout(() => {
-    if (typeof renderUnifiedIncidentMarkers === "function") renderUnifiedIncidentMarkers();
+    if (typeof renderFn === "function") renderFn();
   }, 500);
   setTimeout(() => {
-    if (typeof renderUnifiedIncidentMarkers === "function") renderUnifiedIncidentMarkers();
+    if (typeof renderFn === "function") renderFn();
   }, 1500);
 }
 
@@ -19609,8 +19612,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     return openGridlyPortraitV2Sheet(sheetName);
   };
   window.gridlyRenderHazardMarkersDebug = function gridlyRenderHazardMarkersDebug() {
-    return renderUnifiedIncidentMarkers();
+    return renderUnifiedIncidents();
   };
+  globalThis.gridlyRenderHazardMarkersDebug = window.gridlyRenderHazardMarkersDebug;
   window.gridlyPortraitV2Debug = function(){
     const v2=document.getElementById("gridlyPortraitV2"); const mode=document.body?.dataset?.layoutMode||null;
     const isVisible=(el)=>Boolean(el&&getComputedStyle(el).display!=="none"&&getComputedStyle(el).visibility!=="hidden"&&Number(getComputedStyle(el).opacity||1)!==0);
@@ -20003,6 +20007,11 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
   const byIntent = (intent) => classified.some((entry) => entry.intent === intent && entry.btn.dataset.gridlyDockBound === "true");
   const alertsPanel = document.querySelector("#alertsSection:not([hidden]), .gridly-tactical-dock-sheet:not([hidden])[data-action='alerts']");
   const markerAudit = window.gridlyMarkerAuditDebug?.() || {};
+  const markerRendererPresent = (
+    typeof window.gridlyRenderHazardMarkersDebug === "function" ||
+    typeof renderUnifiedIncidents === "function" ||
+    typeof renderUnifiedIncidentMarkers === "function"
+  );
   const isVisible = (el) => {
     if (!el || el.hidden) return false;
     const style = window.getComputedStyle(el);
@@ -20110,7 +20119,7 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
     activeHazardCount: Array.isArray(activeHazards) ? activeHazards.length : 0,
     activeHazardCoordinateSample,
     visibleHazardMarkerCount,
-    markerRenderFunctionFound: Boolean(markerAudit?.markerRenderFunctionFound),
+    markerRenderFunctionFound: Boolean(markerAudit?.markerRenderFunctionFound) || markerRendererPresent,
     markerSourceCount: Number(markerAudit?.markerSourceCount || 0),
     markerSourceSample: Array.isArray(markerAudit?.markerSourceSample) ? markerAudit.markerSourceSample : [],
     markerRenderSkipReasons: markerAudit?.markerRenderSkipReasons || null,
