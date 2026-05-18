@@ -448,6 +448,10 @@ const gridlyCommuteIntelligenceAuditState = {
   commuteAuditRawMinusActiveCandidateIds: [],
   commuteAuditRawMinusActiveBuildAttempted: false,
   commuteAuditRawMinusActiveBuildReason: "uninitialized",
+  commuteAuditRawMinusActiveDiffRawIds: [],
+  commuteAuditRawMinusActiveDiffActiveIds: [],
+  commuteAuditRawMinusActiveDiffMissingIds: [],
+  commuteAuditRawMinusActiveDiffMethod: "uninitialized",
   commuteAuditActiveFilterExclusionBuildCount: 0,
   commuteAuditActiveIncidentCount: 0,
   commuteAuditActiveIncidentIds: [],
@@ -1176,6 +1180,10 @@ function gridlyCommuteIntelligenceAudit() {
     commuteAuditRawMinusActiveCandidateIds: [...(gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveCandidateIds || [])],
     commuteAuditRawMinusActiveBuildAttempted: Boolean(gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveBuildAttempted),
     commuteAuditRawMinusActiveBuildReason: String(gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveBuildReason || "uninitialized"),
+    commuteAuditRawMinusActiveDiffRawIds: [...(gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveDiffRawIds || [])],
+    commuteAuditRawMinusActiveDiffActiveIds: [...(gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveDiffActiveIds || [])],
+    commuteAuditRawMinusActiveDiffMissingIds: [...(gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveDiffMissingIds || [])],
+    commuteAuditRawMinusActiveDiffMethod: String(gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveDiffMethod || "uninitialized"),
     commuteAuditActiveFilterExclusionBuildCount: Number(gridlyCommuteIntelligenceAuditState.commuteAuditActiveFilterExclusionBuildCount || 0),
     commuteAuditActiveIncidentCount: Number(gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentCount || 0),
     commuteAuditActiveIncidentIds: [...(gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentIds || [])],
@@ -14808,6 +14816,10 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveCandidateIds = [];
   gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveBuildAttempted = false;
   gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveBuildReason = "not_evaluated";
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveDiffRawIds = [];
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveDiffActiveIds = [];
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveDiffMissingIds = [];
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveDiffMethod = "not_evaluated";
   gridlyCommuteIntelligenceAuditState.commuteAuditActiveFilterExclusionBuildCount = 0;
   gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentCount = 0;
   gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentIds = [];
@@ -14881,8 +14893,16 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.nearbyPairResolutionCandidateCount = 0;
   gridlyCommuteIntelligenceAuditState.derivedFieldGenerationTrace = { totals: {}, perIncident: [], slowestStep: null, repeatedWork: [] };
   gridlyCommuteIntelligenceAuditState.nestedLookupCallMap = { totals: {}, byFunction: {}, repeatedScans: [], indexCandidateRecommendations: [] };
+  const getRawMinusActiveComparableIncidentId = (incident) => String(
+    incident?.id
+    || incident?.incident_id
+    || incident?.incidentId
+    || incident?.report_id
+    || incident?.reportId
+    || ""
+  );
   const rawUnifiedIncidentArray = Array.isArray(unifiedIncidentsForAudit) ? unifiedIncidentsForAudit : [];
-  const unifiedIncidentIds = rawUnifiedIncidentArray.map((incident) => String(incident?.id || ""));
+  const unifiedIncidentIds = rawUnifiedIncidentArray.map((incident) => getRawMinusActiveComparableIncidentId(incident));
   const rawUnifiedIncidentObjectSample = rawUnifiedIncidentArray.length > 0
     ? rawUnifiedIncidentArray.find((incident) => incident && typeof incident === "object")
     : null;
@@ -14991,8 +15011,8 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     sections[stageName] = Number(Number(stageMs || 0).toFixed(3));
   });
   sections.derived_field_precompute_index = Number((precomputeTimeSource() - precomputeStartedAt).toFixed(3));
-  const activeIncidentIds = (activeIncidents || []).map((incident) => String(incident?.id || ""));
-  const activeIncidentIdSet = new Set(activeIncidents.map((incident) => String(incident?.id || "")));
+  const activeIncidentIds = (activeIncidents || []).map((incident) => getRawMinusActiveComparableIncidentId(incident));
+  const activeIncidentIdSet = new Set(activeIncidentIds);
   gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentCount = activeIncidentIds.length;
   gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentIds = activeIncidentIds;
   const buildActiveFilterExclusionEntry = (incident, reason = "filtered_before_active_incidents") => {
@@ -15025,8 +15045,9 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
       exclusionReason: reason
     };
   };
+  const rawMinusActiveMissingIds = unifiedIncidentIds.filter((incidentId) => !activeIncidentIdSet.has(String(incidentId || "")));
   const unifiedExclusionsFromStatus = rawUnifiedIncidentArray
-    .filter((incident) => !activeIncidentIdSet.has(String(incident?.id || "")))
+    .filter((incident) => !activeIncidentIdSet.has(getRawMinusActiveComparableIncidentId(incident)))
     .map((incident) => buildActiveFilterExclusionEntry(incident));
   gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveCandidateCount = unifiedExclusionsFromStatus.length;
   gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveCandidateIds = unifiedExclusionsFromStatus.map((entry) => String(entry?.incidentId || ""));
@@ -15034,6 +15055,10 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveBuildReason = !Array.isArray(unifiedIncidentsForAudit)
     ? "raw_unified_incidents_unavailable"
     : (unifiedExclusionsFromStatus.length > 0 ? "raw_minus_active_candidates_built" : "no_raw_minus_active_candidates");
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveDiffRawIds = unifiedIncidentIds;
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveDiffActiveIds = activeIncidentIds;
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveDiffMissingIds = rawMinusActiveMissingIds;
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveDiffMethod = "raw_ids_minus_active_ids_with_shared_accessor";
   gridlyCommuteIntelligenceAuditState.commuteAuditActiveFilterExclusionBuildCount = unifiedExclusionsFromStatus.length;
   if (unifiedExclusionsFromStatus.length) buildAuditExclusionDetails.push(...unifiedExclusionsFromStatus);
   const recentlyCleared = timeSection("recently_cleared_retrieval", () => getUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "cleared" && Number(incident?.age_minutes) <= 45));
