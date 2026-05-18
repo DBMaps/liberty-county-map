@@ -2300,12 +2300,12 @@ function openAlertsSurfaceFromDock() {
   };
   let html = '';
   let hasActiveAlerts = false;
-  let rawAlerts = [];
+  let alertsForRender = [];
   try {
     const snapshot = window.getAlertsSurfaceSnapshot?.() || getAlertsSurfaceSnapshot?.();
-    rawAlerts = Array.isArray(snapshot?.alerts) ? snapshot.alerts : [];
-    console.log("[V155.8 ALERT RAW SAMPLE]", rawAlerts.slice(0, 3));
-    console.table(rawAlerts.slice(0, 5).map(a => ({
+    alertsForRender = Array.isArray(snapshot?.alerts) ? snapshot.alerts : [];
+    console.log("[V155.8 ALERT RAW SAMPLE]", alertsForRender.slice(0, 3));
+    console.table(alertsForRender.slice(0, 5).map(a => ({
       keys: Object.keys(a || {}).join(", "),
       id: a?.id,
       type: a?.type,
@@ -2320,8 +2320,8 @@ function openAlertsSurfaceFromDock() {
       rawKeys: a?.raw ? Object.keys(a.raw).join(", ") : "",
       sourceKeys: a?.source ? Object.keys(a.source).join(", ") : ""
     })));
-    const formattedAlerts = rawAlerts.map((alert) => formatAlertForMobileV2(alert));
-    hasActiveAlerts = snapshot?.hasActiveAlerts === true || rawAlerts.length > 0;
+    const formattedAlerts = alertsForRender.map((alert) => formatAlertForMobileV2(alert));
+    hasActiveAlerts = alertsForRender.length > 0;
 
     if (hasActiveAlerts) {
       const cards = clusterAlerts(formattedAlerts);
@@ -2349,15 +2349,18 @@ function openAlertsSurfaceFromDock() {
   ${hiddenCount > 0 ? `<div class="gridly-alert-row gridly-alert-intel-card"><small><strong>+ ${hiddenCount} more affected crossing${hiddenCount === 1 ? "" : "s"}</strong></small></div>` : ""}
 </div>`.trim();
     }
+    if (alertsForRender.length > 0 && !html) {
+      html = '<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy">Active alerts detected. Details are loading.</p></div>';
+    }
   } catch (error) {
     console.warn('[Gridly][Alerts] live alerts template render failed; fallback retained.', error);
     html = '';
     hasActiveAlerts = false;
-    rawAlerts = [];
+    alertsForRender = [];
   }
   console.log("[Alerts DIRECT HTML V156]", {
     hasActiveAlerts,
-    count: rawAlerts.length,
+    count: alertsForRender.length,
     htmlLength: html.length
   });
 
