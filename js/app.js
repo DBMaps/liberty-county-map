@@ -2294,45 +2294,16 @@ function openAlertsSurfaceFromDock() {
     if (/rail|train|crossing|blocked/.test(String(card?.rawType || '').toLowerCase())) return "Train blocking crossing";
     return "Traffic disruption reported";
   };
-  const fallbackTemplate = {
-    title: 'Alerts',
-    html: '<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy">No active alerts right now.</p></div>'
-  };
-  let template = fallbackTemplate;
-  try {
-    let html = '';
-    const snapshot = window.getAlertsSurfaceSnapshot?.() || getAlertsSurfaceSnapshot?.();
-    const alertsForRender = Array.isArray(snapshot?.alerts) ? snapshot.alerts : [];
-
-    console.log("[V155.8 ALERT RAW SAMPLE]", alertsForRender.slice(0, 3));
-
-    console.table(alertsForRender.slice(0, 5).map(a => ({
-      keys: Object.keys(a || {}).join(", "),
-      id: a?.id,
-      type: a?.type,
-      title: JSON.stringify(a?.title),
-      subtitle: a?.subtitle,
-      corridor: a?.corridor,
-      roadName: a?.roadName,
-      crossingId: a?.crossingId,
-      crossingRoad: a?.crossingRoad,
-      lat: a?.lat || a?.latitude || a?.rawLat,
-      lng: a?.lng || a?.lon || a?.longitude || a?.rawLng,
-      rawKeys: a?.raw ? Object.keys(a.raw).join(", ") : "",
-      sourceKeys: a?.source ? Object.keys(a.source).join(", ") : ""
-    })));
-    const formattedAlerts = alertsForRender.map((alert) => formatAlertForMobileV2(alert));
-    const hasActiveAlerts = alertsForRender.length > 0;
-
-    if (hasActiveAlerts) {
-      const cards = clusterAlerts(formattedAlerts);
-      const fallbackCards = formattedAlerts.filter(Boolean);
-      const activeCards = cards.length > 0 ? cards : fallbackCards;
-      const detailCards = activeCards.slice(0, 3);
-      const hiddenCount = Math.max(0, activeCards.length - detailCards.length);
-      const leadCard = detailCards[0] || activeCards[0] || null;
-      const totalReports = activeCards.reduce((sum, card) => sum + Number(card?.reportCount || 1), 0);
-      html = `
+  const buildMobileV2AlertsHtmlFromRawAlerts = (alerts = []) => {
+    const formattedAlerts = alerts.map((alert) => formatAlertForMobileV2(alert));
+    const cards = clusterAlerts(formattedAlerts);
+    const fallbackCards = formattedAlerts.filter(Boolean);
+    const activeCards = cards.length > 0 ? cards : fallbackCards;
+    const detailCards = activeCards.slice(0, 3);
+    const hiddenCount = Math.max(0, activeCards.length - detailCards.length);
+    const leadCard = detailCards[0] || activeCards[0] || null;
+    const totalReports = activeCards.reduce((sum, card) => sum + Number(card?.reportCount || 1), 0);
+    return `
 <div class="gridly-alerts-active">
   <div class="gridly-alert-row gridly-alert-intel-card">
     <div><strong>IMPACTED MOVEMENT</strong></div>
@@ -2349,20 +2320,47 @@ function openAlertsSurfaceFromDock() {
   `).join("")}
   ${hiddenCount > 0 ? `<div class="gridly-alert-row gridly-alert-intel-card"><small><strong>+ ${hiddenCount} more affected crossing${hiddenCount === 1 ? "" : "s"}</strong></small></div>` : ""}
 </div>`.trim();
-    }
-    if (alertsForRender.length > 0 && !html) {
-      html = '<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy">Active alerts detected. Details are loading.</p></div>';
+  };
+  const fallbackTemplate = {
+    title: 'Alerts',
+    html: '<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy">No active alerts right now.</p></div>'
+  };
+  let template = fallbackTemplate;
+  try {
+    const snapshot = window.getAlertsSurfaceSnapshot?.() || getAlertsSurfaceSnapshot?.();
+    const alertsForRender = Array.isArray(snapshot?.alerts) ? snapshot.alerts : [];
+
+    console.log("[V155.8 ALERT RAW SAMPLE]", alertsForRender.slice(0, 3));
+
+    if (alertsForRender.length > 0) {
+      const html = buildMobileV2AlertsHtmlFromRawAlerts(alertsForRender, snapshot);
+      console.log("[Alerts DIRECT HTML V156]", {
+        hasActiveAlerts: true,
+        count: alertsForRender.length,
+        htmlLength: html.length
+      });
+      return window.openGridlyPortraitV2Sheet("alerts", {
+        title: "Alerts",
+        html
+      });
     }
 
-    console.log("[Alerts DIRECT HTML V156]", {
-      hasActiveAlerts,
-      count: alertsForRender.length,
-      htmlLength: html.length
-    });
-
-    template = hasActiveAlerts
-      ? { title: 'Alerts', html }
-      : fallbackTemplate;
+    console.table(alertsForRender.slice(0, 5).map(a => ({
+      keys: Object.keys(a || {}).join(", "),
+      id: a?.id,
+      type: a?.type,
+      title: JSON.stringify(a?.title),
+      subtitle: a?.subtitle,
+      corridor: a?.corridor,
+      roadName: a?.roadName,
+      crossingId: a?.crossingId,
+      crossingRoad: a?.crossingRoad,
+      lat: a?.lat || a?.latitude || a?.rawLat,
+      lng: a?.lng || a?.lon || a?.longitude || a?.rawLng,
+      rawKeys: a?.raw ? Object.keys(a.raw).join(", ") : "",
+      sourceKeys: a?.source ? Object.keys(a.source).join(", ") : ""
+    })));
+    template = fallbackTemplate;
   } catch (error) {
     console.warn('[Gridly][Alerts] live alerts template render failed; fallback retained.', error);
   }
