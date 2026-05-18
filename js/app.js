@@ -19598,7 +19598,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   function buildSpecificAlertTitle(alert = {}) {
     const alertType = String(alert?.type || alert?.reportType || alert?.incidentType || "").toLowerCase();
     const isRail = alert?.reportKind === "crossing" || /train|crossing|blocked/.test(alertType) || String(alert?.crossingId || "").trim().length > 0;
-    const hazardType = pickFirstNonEmptyText([
+    const hazardTypeRaw = pickFirstNonEmptyText([
       alert?.hazardTypeLabel,
       alert?.typeLabel,
       alert?.label,
@@ -19606,6 +19606,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       alert?.reportType,
       alert?.title
     ]) || "Hazard";
+    const hazardType = String(hazardTypeRaw).trim().toLowerCase();
     const road = pickFirstNonEmptyText([alert?.roadName, alert?.corridor, alert?.locationName, alert?.titleRoad]);
     const atStreet = pickFirstNonEmptyText([alert?.crossingName, alert?.crossingRoad, alert?.nearestRoad, alert?.knownLocation, alert?.locationName, alert?.location]);
     const crossA = pickFirstNonEmptyText([alert?.crossStreetA, alert?.fromStreet, alert?.startStreet, alert?.nearestRoad]);
@@ -19620,16 +19621,45 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       return "Rail crossing blocked";
     }
 
+    const roadHazardMap = [
+      { test: /road[_\s-]*closed|closure|closed/, label: "Road closed" },
+      { test: /construction|work ?zone|lane ?work/, label: "Construction" },
+      { test: /debris|object/, label: "Debris" },
+      { test: /flood|high water/, label: "Flooding" },
+      { test: /crash|collision|wreck|accident/, label: "Crash" }
+    ];
+    const hazardLabel = (roadHazardMap.find((entry) => entry.test.test(hazardType)) || {}).label || "Road hazard";
+
     if (road && crossA && crossB) {
       const dirText = direction ? ` ${direction}` : "";
-      return `${hazardType} on ${road}${dirText} between ${crossA} and ${crossB}`;
+      return `${hazardLabel} on ${road}${dirText} between ${crossA} and ${crossB}`;
     }
     if (road) {
       const near = pickFirstNonEmptyText([alert?.knownLocation, alert?.nearestRoad, alert?.locationName, alert?.location]);
-      if (near) return `${hazardType} on ${road} near ${near}`;
-      return `${hazardType} on ${road}`;
+      if (near) return `${hazardLabel} on ${road} near ${near}`;
+      return `${hazardLabel} on ${road}`;
     }
-    return pickFirstNonEmptyText([alert?.title, alert?.subtitle]) || "Road hazard reported";
+    return pickFirstNonEmptyText([alert?.title, alert?.subtitle]) || "Road hazard";
+  }
+
+  function buildAlertSubtitleLine(alert = {}, titleText = "") {
+    const titleNorm = String(titleText || "").toLowerCase();
+    const city = pickFirstNonEmptyText([alert?.city, alert?.town, alert?.municipality, alert?.county]);
+    const nearCandidates = [
+      alert?.knownLocation,
+      alert?.locationName,
+      alert?.location,
+      alert?.crossingName,
+      alert?.nearestRoad,
+      alert?.crossingRoad
+    ].map((value) => coerceDisplayText(value)).filter(Boolean);
+    const near = nearCandidates.find((value) => !titleNorm.includes(String(value).toLowerCase())) || "";
+    const nearText = near ? `Near ${near}` : "";
+    const cityText = city ? `${city}` : "";
+    const timeText = coerceDisplayText(alert?.minutesText || alert?.timeText || "");
+    const parts = [nearText, cityText, timeText].filter(Boolean);
+    if (!parts.length) return "Liberty County • Updated just now";
+    return parts.join(" • ");
   }
 
   function getSeverityChipLabel(alert = {}) {
@@ -19798,14 +19828,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   function resolveAlertTitleText(alert) {
     const resolved = pickFirstNonEmptyText([
       coerceDisplayText(alert?.resolvedHeadline),
-      coerceDisplayText(alert?.commuteImpactHeadline),
-      coerceDisplayText(alert?.localizedSummary),
+      buildSpecificAlertTitle(alert),
       coerceDisplayText(alert?.headline),
-      coerceDisplayText(alert?.title),
-      coerceDisplayText(alert?.label),
-      coerceDisplayText(alert?.type)
+      coerceDisplayText(alert?.title)
     ]);
-    return resolved || "Active Alert";
+    return resolved || "Road hazard";
   }
 
   function buildAlertsSurfaceHtml() {
@@ -19859,22 +19886,12 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   </div>
   <div class="gridly-alert-row" style="padding:10px 12px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.1);border-radius:10px;background:rgba(255,255,255,0.02);">
     <div class="gridly-alert-title" style="font-size:14px;font-weight:800;line-height:1.3;letter-spacing:0.03em;text-transform:uppercase;">MOVEMENT SUMMARY</div>
-    <div class="gridly-alert-subtitle" style="margin-top:4px;font-size:11px;opacity:0.72;line-height:1.35;">${sanitizeText(snapshot.topStatusLocalizedDetail || snapshot.routeImpactSummary || "Active movement impacts reported")}</div>
+    <div class="gridly-alert-subtitle" style="margin-top:4px;font-size:11px;opacity:0.72;line-height:1.35;">${sanitizeText(coerceDisplayText(snapshot.topStatusLocalizedDetail) || coerceDisplayText(snapshot.routeImpactSummary) || "Liberty County • Updated just now")}</div>
   </div>
 
   ${visibleAlerts.map((alert) => {
     const title = resolveAlertTitleText(alert);
-    const locationLineRaw = pickFirstNonEmptyText([
-      alert?.crossingRoad ? `At ${alert.crossingRoad}` : "",
-      alert?.nearestRoad ? `Near ${alert.nearestRoad}` : "",
-      alert?.knownLocation ? `Near ${alert.knownLocation}` : "",
-      alert?.crossingName ? `At ${alert.crossingName}` : "",
-      alert?.locationName ? `Near ${alert.locationName}` : "",
-      alert?.location ? `Near ${alert.location}` : "",
-      alert?.subtitle || ""
-    ]);
-    const timeText = String(alert?.minutesText || alert?.timeText || "now");
-    const locationTimeLine = [locationLineRaw, timeText].filter(Boolean).join(" • ");
+    const locationTimeLine = buildAlertSubtitleLine(alert, title);
     return `
     <div class="gridly-alert-row" style="padding:10px 12px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.1);border-radius:10px;background:rgba(255,255,255,0.02);">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
