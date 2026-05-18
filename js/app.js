@@ -2350,6 +2350,19 @@ function openAlertsSurfaceFromDock() {
       const titleFor = alert => {
         const crossing = text(alert.roadName) || text(alert.crossingRoad) || text(alert.nearestRoad);
         const base = text(alert.resolvedHeadline) || text(alert.headline) || text(alert.title);
+        const crossingId = String(alert?.crossingId || "").trim();
+
+        if (crossingId) {
+          const crossingRecord = (Array.isArray(crossings) ? crossings : []).find((item) => String(item?.id || "").trim() === crossingId);
+          const crossingName = text(crossingRecord?.name || crossingRecord?.crossingName || crossingRecord?.label);
+          if (crossingName) {
+            if (crossingName.includes("&")) {
+              const [road, crossStreet] = crossingName.split("&").map((segment) => segment.trim()).filter(Boolean);
+              if (road && crossStreet) return `Train blocking ${road} at ${crossStreet}`;
+            }
+            return `Train blocking ${crossingName}`;
+          }
+        }
 
         if ((alert.type === "blocked" || /rail|crossing|train/i.test(base)) && crossing) {
           if (crossing.includes("&")) {
