@@ -1015,6 +1015,7 @@ function sanitizeEmptyCommuteAuditPayload(payload) {
   result.emptyCycleSanitized = shouldSanitizeEmptyCycle;
   result.commuteAuditExcludedIncidentCount = Math.max(0, verifiedUnifiedIncidentCount - incidentsProcessed);
   result.commuteAuditExclusionReasons = Array.isArray(result.commuteAuditExclusionReasons) ? result.commuteAuditExclusionReasons : [];
+  result.commuteAuditExclusionReasonSource = String(result.commuteAuditExclusionReasonSource || "fallback_placeholder");
   const expectedExcludedCount = Number(result.commuteAuditExcludedIncidentCount || 0);
   const actualReasonCount = Number(result.commuteAuditExclusionReasons.length || 0);
   if (expectedExcludedCount > 0 && actualReasonCount < expectedExcludedCount) {
@@ -1033,6 +1034,7 @@ function sanitizeEmptyCommuteAuditPayload(payload) {
         });
       }
     }
+    result.commuteAuditExclusionReasonSource = "fallback_placeholder";
     result.exclusionReasonCollectionFailed = false;
     result.exclusionReasonCollectionStage = null;
     result.expectedExcludedCount = expectedExcludedCount;
@@ -1154,6 +1156,7 @@ function gridlyCommuteIntelligenceAudit() {
     commuteAuditSanitizerReason: gridlyCommuteIntelligenceAuditState.commuteAuditSanitizerReason || null,
     commuteAuditExcludedIncidentCount: Number(gridlyCommuteIntelligenceAuditState.commuteAuditExcludedIncidentCount || 0),
     commuteAuditExclusionReasons: [...(gridlyCommuteIntelligenceAuditState.commuteAuditExclusionReasons || [])],
+    commuteAuditExclusionReasonSource: String(gridlyCommuteIntelligenceAuditState.commuteAuditExclusionReasonSource || "fallback_placeholder"),
     commuteModelEntryTrace: {
       ...(gridlyCommuteIntelligenceAuditState.commuteModelEntryTrace || {}),
       unifiedIncidentIds: [...(gridlyCommuteIntelligenceAuditState.commuteModelEntryTrace?.unifiedIncidentIds || [])],
@@ -15289,10 +15292,16 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   counts.incidentsProcessed = incidentsProcessedCount;
   const excludedIncidentCount = Math.max(0, unifiedIncidentCount - incidentsProcessedCount);
   const exclusionReasons = buildAuditExclusionDetails.slice(0, Math.max(0, excludedIncidentCount));
+  let exclusionReasonSource = "fallback_placeholder";
+  const rawUnifiedCount = Number(gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentCount || 0);
+  const activeCount = Number(gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentCount || 0);
+  const modelInputCount = Number(gridlyCommuteIntelligenceAuditState.commuteAuditModelInputCount || 0);
+  if (rawUnifiedCount > activeCount && exclusionReasons.some((entry) => String(entry?.stage || "") === "raw_unified_to_active_filter")) {
+    exclusionReasonSource = "raw_minus_active_filter";
+  } else if (activeCount > modelInputCount && exclusionReasons.length > 0) {
+    exclusionReasonSource = "model_input_gap";
+  }
   if (excludedIncidentCount > exclusionReasons.length) {
-    const rawUnifiedCount = Number(gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentCount || 0);
-    const activeCount = Number(gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentCount || 0);
-    const modelInputCount = Number(gridlyCommuteIntelligenceAuditState.commuteAuditModelInputCount || 0);
     let mismatchStage = "unknown";
     let mismatchReason = `unresolved_count_gap:expected_exclusions=${excludedIncidentCount},resolved=${exclusionReasons.length}`;
     if (rawUnifiedCount !== activeCount) {
@@ -15320,9 +15329,11 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
       `excluded_count_mismatch_unresolved:${excludedIncidentCount - exclusionReasons.length}`,
       "commute_audit_sanitizer"
     ));
+    exclusionReasonSource = "fallback_placeholder";
   }
   gridlyCommuteIntelligenceAuditState.commuteAuditExcludedIncidentCount = excludedIncidentCount;
   gridlyCommuteIntelligenceAuditState.commuteAuditExclusionReasons = exclusionReasons;
+  gridlyCommuteIntelligenceAuditState.commuteAuditExclusionReasonSource = exclusionReasonSource;
   gridlyCommuteIntelligenceAuditState.exclusionReasonCollectionFailed = false;
   gridlyCommuteIntelligenceAuditState.exclusionReasonCollectionStage = null;
   gridlyCommuteIntelligenceAuditState.expectedExcludedCount = excludedIncidentCount;
