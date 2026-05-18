@@ -18991,84 +18991,56 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   window.getAlertsSurfaceSnapshot = getAlertsSurfaceSnapshot;
   function buildAlertsSurfaceHtml() {
     const snapshot = getAlertsSurfaceSnapshot();
-    const alerts = Array.isArray(snapshot.alerts) ? snapshot.alerts : [];
-    const hasActiveAlerts = snapshot.hasActiveAlerts === true || alerts.length > 0;
-    const intel = buildUnifiedLocalizedCommuteIntelligence({ limit: 8 });
-    const primaryCorridor = intel.highestPriorityCorridor || null;
-    const secondaryCorridors = (intel.corridorClusters || []).slice(1, 3);
-    const recentlyCleared = Array.isArray(intel.recentlyCleared) ? intel.recentlyCleared.slice(0, 2) : [];
+    const alerts = Array.isArray(snapshot.alerts)
+      ? snapshot.alerts
+      : [];
 
-    const heroTitle = sanitizeText((intel.consequencePrimaryMessage || "COMMUTE CLEAR").toUpperCase());
-    const heroDetail = sanitizeText(intel.consequenceSecondaryMessage || "Major corridors are moving normally.");
-    const recommendation = sanitizeText(intel.rerouteReadinessDetected
-      ? `Avoid ${primaryCorridor?.label || "primary corridor"}`
-      : hasActiveAlerts
-        ? "Watch US 90"
-        : "Route Clear");
+    const hasActiveAlerts =
+      snapshot.hasActiveAlerts === true ||
+      alerts.length > 0;
 
-    const primaryLabel = sanitizeText((primaryCorridor?.label || "US 90").replace(" Corridor", ""));
-    const primaryState = sanitizeText((primaryCorridor?.healthState || "clear").replace(/_/g, " ").toUpperCase());
-    const primarySummary = sanitizeText(primaryCorridor?.summary || (hasActiveAlerts ? snapshot.routeImpactSummary : "Traffic moving normally"));
-    const primaryCount = Number(primaryCorridor?.incidentCount || 0);
-    const primaryIncidents = (primaryCorridor?.incidents || []).slice(0, 2)
-      .map((incident) => `<li>${sanitizeText(incident.localizedSummary || incident.topLine || "Traffic slowing")}</li>`)
-      .join("");
+    if (hasActiveAlerts) {
+      return `
+<div class="gridly-alerts-active">
+  <div class="gridly-alert-headline">
+    ${sanitizeText(snapshot.commuteImpactHeadline || "Active Alerts")}
+  </div>
 
-    const secondaryHtml = secondaryCorridors.length
-      ? secondaryCorridors.map((corridor) => `<div class="gridly-v2-secondary-item"><strong>${sanitizeText((corridor.label || "").replace(" Corridor", ""))}</strong><span>${sanitizeText(corridor.summary || "Traffic moving normally")}</span></div>`).join("")
-      : `<div class="gridly-v2-secondary-item"><strong>Local roads steady</strong><span>Major commuter roads are moving normally.</span></div>`;
+  ${alerts.map((alert) => `
+    <div class="gridly-alert-row">
+      <div class="gridly-alert-title">
+        ${sanitizeText(String(
+          alert?.title?.label ||
+          alert?.title ||
+          alert?.type ||
+          "Active Alert"
+        ))}
+      </div>
 
-    const clearedHtml = recentlyCleared.length
-      ? recentlyCleared.map((item) => `<li>${sanitizeText(item.localizedSummary || item.topLine || "Conditions improving")}</li>`).join("")
-      : "<li>No recent recovery updates</li>";
+      <div class="gridly-alert-subtitle">
+        ${sanitizeText(String(
+          alert?.subtitle ||
+          alert?.minutesText ||
+          ""
+        ))}
+      </div>
+    </div>
+  `).join("")}
+</div>
+`;
+    }
 
-    const alertItemsHtml = hasActiveAlerts
-      ? alerts.map((item) => {
-        const title = item?.title || item?.label || item?.type || "Traffic slowing";
-        const typeOrSeverity = item?.type || item?.severity;
-        const location = item?.location || item?.locationLabel || item?.locationName || item?.roadName || "";
-        const time = item?.time || item?.minutesText || item?.subtitle || "";
-        const detailParts = [item?.label, typeOrSeverity, location, time]
-          .filter((value, index, array) => value && array.indexOf(value) === index)
-          .map((value) => sanitizeText(String(value)));
-        return `<li><strong>${sanitizeText(String(title))}</strong>${detailParts.length ? `<p>${detailParts.join(" • ")}</p>` : ""}</li>`;
-      }).join("")
-      : "";
-
-    return `<div class="gridly-v2-command-surface">
-      <section class="gridly-v2-command-hero" aria-label="Hero command state">
-        <p class="gridly-v2-command-kicker">Commute Command</p>
-        <h4>${heroTitle}</h4>
-        <p>${heroDetail}</p>
-      </section>
-      <button class="primary-btn gridly-v2-command-primary-action" data-v2-action="alerts-open" type="button">${recommendation}</button>
-      <section class="gridly-v2-command-primary-corridor" aria-label="Primary corridor">
-        <p class="gridly-v2-command-section-label">Primary Corridor</p>
-        <strong>${primaryLabel}</strong>
-        <span class="gridly-v2-corridor-state">${primaryState}</span>
-        <p>${primarySummary}${primaryCount ? ` · ${primaryCount} active incidents` : ""}</p>
-        ${primaryIncidents ? `<ul>${primaryIncidents}</ul>` : ""}
-      </section>
-      <section class="gridly-v2-command-secondary" aria-label="Secondary conditions">
-        <p class="gridly-v2-command-section-label">Secondary Conditions</p>
-        ${secondaryHtml}
-      </section>
-      <section class="gridly-v2-command-cleared" aria-label="Recently cleared">
-        <p class="gridly-v2-command-section-label">Recently Cleared</p>
-        <ul>${clearedHtml}</ul>
-      </section>
-      <section class="gridly-v2-command-secondary" aria-label="Active alerts">
-        <p class="gridly-v2-command-section-label">Active Alerts</p>
-        ${snapshot.commuteImpactHeadline ? `<p class="gridly-v2-sheet-copy"><strong>${sanitizeText(snapshot.commuteImpactHeadline)}</strong></p>` : ""}
-        ${hasActiveAlerts && alertItemsHtml
-          ? `<ul>${alertItemsHtml}</ul>`
-          : `<p class="gridly-v2-sheet-copy">No active alerts right now.</p>`}
-      </section>
-      <p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p>
-      <button class="secondary-btn" data-v2-action="alerts-manage-open" type="button">Manage Alerts</button>
-      <button class="secondary-btn" data-v2-action="alerts-preferences-open" type="button">Alert Preferences</button>
-    </div>`;
+    return `
+<div class="gridly-alerts-active">
+  <div class="gridly-alert-headline">Active Alerts</div>
+  <div class="gridly-alert-row">
+    <div class="gridly-alert-title">No active alerts right now.</div>
+    <div class="gridly-alert-subtitle"></div>
+  </div>
+</div>
+`;
   }
+
 
   const sheetTemplates = {
     report: { title: "Report Hazard", html: `<div class="gridly-v2-tiles gridly-v2-report-tiles">${V2_REPORT_HAZARD_OPTIONS.map((option)=>`<button class="gridly-v2-tile gridly-v2-report-action" data-v2-action="report-select-hazard" data-hazard-type="${option.type}" type="button"><span>${option.label}</span></button>`).join("")}</div><div class="gridly-v2-list gridly-v2-report-ctas"><p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p><button class="primary-btn" data-v2-action="report-use-location" type="button">Use My Location</button><button class="secondary-btn" data-v2-action="report-tap-map" type="button">Tap Map Location</button></div>` },
