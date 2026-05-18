@@ -2347,14 +2347,52 @@ function openAlertsSurfaceFromDock() {
         return "";
       };
 
+      const cleanDisplayValue = (value) => {
+        const normalized = normalizeToken(value);
+        if (!normalized) return "";
+        const lowered = normalized.toLowerCase();
+        if (lowered === "unknown" || lowered === "undefined" || lowered === "null" || lowered === "[object object]") return "";
+        return normalized;
+      };
+      const extractRoadFromCrossingName = (value) => cleanDisplayValue(value).split("&").map((segment) => cleanDisplayValue(segment)).filter(Boolean);
+      const enrichAlertContext = (alert = {}) => {
+        const alertObj = alert && typeof alert === "object" ? alert : {};
+        const crossingId = cleanDisplayValue(alertObj?.crossingId);
+        const crossingRecord = crossingId
+          ? (Array.isArray(crossings) ? crossings : []).find((item) => cleanDisplayValue(item?.id) === crossingId)
+          : null;
+        const lat = getFirstNumber(alertObj, ["lat", "latitude", "rawLat", "raw.lat", "raw.latitude", "source.lat", "source.latitude"]);
+        const lng = getFirstNumber(alertObj, ["lng", "lon", "longitude", "rawLng", "raw.lng", "raw.lon", "raw.longitude", "source.lng", "source.lon", "source.longitude"]);
+        const resolvedByLookup = maybeResolveNearestRoad(lat, lng);
+        const roadName = cleanDisplayValue(getFirstText(alertObj, ["roadName", "primaryRoad", "corridor", "route", "raw.roadName", "source.roadName"])) || cleanDisplayValue(crossingRecord?.road);
+        const nearestRoad = cleanDisplayValue(getFirstText(alertObj, ["nearestRoad", "knownLocation", "locationName", "location", "raw.nearestRoad", "source.nearestRoad"])) || cleanDisplayValue(resolvedByLookup?.resolvedRoad);
+        const crossStreetA = cleanDisplayValue(getFirstText(alertObj, ["crossStreetA", "crossStreet1", "fromStreet", "raw.crossStreetA", "source.crossStreetA"]));
+        const crossStreetB = cleanDisplayValue(getFirstText(alertObj, ["crossStreetB", "crossStreet2", "toStreet", "raw.crossStreetB", "source.crossStreetB"]));
+        const crossingRoad = cleanDisplayValue(getFirstText(alertObj, ["crossingRoad", "crossingName", "raw.crossingRoad", "source.crossingRoad"])) || cleanDisplayValue(crossingRecord?.name || crossingRecord?.crossingName);
+        const crossingParts = extractRoadFromCrossingName(crossingRoad);
+        const resolvedRoadName = roadName || crossingParts[0] || nearestRoad || "Dayton area";
+        const crossStreet = [crossStreetA, crossStreetB].filter(Boolean).join(" and ") || crossingParts.slice(1).join(" and ");
+        const direction = cleanDisplayValue(parseDirection(alertObj));
+        const nearbyKnownLocation = cleanDisplayValue(getFirstText(alertObj, ["knownLocation", "locationName", "location", "raw.knownLocation", "source.knownLocation"])) || cleanDisplayValue(resolvedByLookup?.resolvedLocation) || "Dayton area";
+        const impactLevel = cleanDisplayValue(getImpact(alertObj));
+        const movementSummary = ({
+          "Widespread Delays": "Heavy impact",
+          "Impacted Movement": "Moderate impact",
+          "Slowing Areas": "Minor impact",
+          "Flowing Normally": "Minor impact"
+        })[impactLevel] || "Minor impact";
+        return { resolvedRoadName, crossStreet, direction, nearbyKnownLocation, impactLevel, movementSummary };
+      };
+
       const titleFor = alert => {
-        const crossing = text(alert.roadName) || text(alert.crossingRoad) || text(alert.nearestRoad);
-        const base = text(alert.resolvedHeadline) || text(alert.headline) || text(alert.title);
-        const crossingId = String(alert?.crossingId || "").trim();
+        const enriched = enrichAlertContext(alert);
+        const crossing = cleanDisplayValue(text(alert.roadName) || text(alert.crossingRoad) || text(alert.nearestRoad)) || enriched.resolvedRoadName;
+        const base = cleanDisplayValue(text(alert.resolvedHeadline) || text(alert.headline) || text(alert.title));
+        const crossingId = cleanDisplayValue(alert?.crossingId);
 
         if (crossingId) {
           const crossingRecord = (Array.isArray(crossings) ? crossings : []).find((item) => String(item?.id || "").trim() === crossingId);
-          const crossingName = text(crossingRecord?.name || crossingRecord?.crossingName || crossingRecord?.label);
+          const crossingName = cleanDisplayValue(text(crossingRecord?.name || crossingRecord?.crossingName || crossingRecord?.label));
           if (crossingName) {
             if (crossingName.includes("&")) {
               const [road, crossStreet] = crossingName.split("&").map((segment) => segment.trim()).filter(Boolean);
@@ -2372,10 +2410,22 @@ function openAlertsSurfaceFromDock() {
           return `Train blocking ${crossing}`;
         }
 
-        return base || text(alert.type) || "Active movement alert";
+        if (base) return base;
+        const hazard = cleanDisplayValue(getHazardType(alert));
+        if (enriched.direction && crossing && !/train|crossing|rail/i.test(hazard)) return `${hazard} ${enriched.direction.toLowerCase()} on ${crossing}`;
+        if (crossing && /train|crossing|rail|blocked/i.test(cleanDisplayValue(text(alert.type) || ""))) return `Train blocking ${crossing}`;
+        if (crossing) return `${hazard} on ${crossing}`;
+        return "Road hazard reported";
       };
 
-      const helperTextFor = alert => text(alert.subtitle) || text(alert.locationText) || text(alert.crossingRoad) || text(alert.roadName) || "Active report";
+      const helperTextFor = alert => {
+        const enriched = enrichAlertContext(alert);
+        const explicit = cleanDisplayValue(text(alert.subtitle) || text(alert.locationText));
+        if (explicit) return explicit;
+        if (enriched.crossStreet) return `Between ${enriched.crossStreet}`;
+        if (enriched.nearbyKnownLocation) return `Near ${enriched.nearbyKnownLocation}`;
+        return enriched.movementSummary || "Minor impact";
+      };
       const timeTextFor = alert => text(alert.minutesText) || text(alert.timeAgo) || text(alert.updatedText) || "Now";
       const renderAlertCard = (alert, index) => `
   <div class="gridly-alert-row gridly-alert-intel-card" style="display:flex;gap:10px;align-items:flex-start;padding:12px 12px ${index === 2 ? 12 : 10}px 12px;border:1px solid rgba(255,255,255,0.09);border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018));box-shadow:0 6px 20px rgba(0,0,0,0.28);margin-bottom:${index === 2 ? 0 : 8}px;">
