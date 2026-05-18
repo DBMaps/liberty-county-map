@@ -5913,6 +5913,13 @@ window.gridlyCrossingPipelineAudit = function gridlyCrossingPipelineAudit() {
   };
 };
 
+async function runPostSubmitRefresh(sourceTag = "post_submit_refresh") {
+  await loadSharedReports("post_submit_refresh");
+  if (typeof renderUnifiedIncidents === "function") {
+    renderUnifiedIncidents(`post-submit-${sourceTag}`);
+  }
+}
+
 function runPostSubmitRefreshInBackground(submitAudit, markSubmitStage, sourceTag = "createSharedHazardReport_success") {
   const startedAt = Date.now();
   recordPostSubmitRefreshAudit({ sourceTag, stage: "started" });
@@ -15294,6 +15301,11 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
         : []);
     return normalizedActiveIncidents.filter((incident) => String(incident?.status || "").toLowerCase() === "active");
   });
+  const safeActiveIncidents = Array.isArray(activeIncidents)
+    ? activeIncidents
+    : activeIncidents && typeof activeIncidents === "object"
+      ? Object.values(activeIncidents)
+      : [];
   const directRawIncidents = (typeof getUnifiedIncidents === "function" && Array.isArray(getUnifiedIncidents()))
     ? getUnifiedIncidents()
     : [];
@@ -15406,7 +15418,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     sections[stageName] = Number(Number(stageMs || 0).toFixed(3));
   });
   sections.derived_field_precompute_index = Number((precomputeTimeSource() - precomputeStartedAt).toFixed(3));
-  const activeIncidentIds = (activeIncidents || []).map((incident) => getRawMinusActiveComparableIncidentId(incident));
+  const activeIncidentIds = safeActiveIncidents.map((incident) => getRawMinusActiveComparableIncidentId(incident));
   const activeIncidentIdSet = new Set(activeIncidentIds);
   gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentCount = activeIncidentIds.length;
   gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentIds = activeIncidentIds;
@@ -15801,12 +15813,12 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
       exclusionReason: "not_mapped_into_commute_model_build"
     };
   };
-  const activeIncidentsExcludedFromBuild = activeIncidents
+  const activeIncidentsExcludedFromBuild = safeActiveIncidents
     .filter((incident) => !processedIncidentIdSet.has(String(incident?.id || "")))
     .map((incident) => buildAuditExclusionReasonEntry(incident, "not_mapped_into_commute_model_build", "commute_model_build(activeIncidents.map)"));
   if (activeIncidentsExcludedFromBuild.length) buildAuditExclusionDetails.push(...activeIncidentsExcludedFromBuild);
   const missingIncidentDetails = missingIds.map((missingId) => {
-    const incident = activeIncidents.find((item) => String(item?.id || "") === String(missingId)) || null;
+    const incident = safeActiveIncidents.find((item) => String(item?.id || "") === String(missingId)) || null;
     const exclusionMatch = buildAuditExclusionDetails.find((item) => String(item?.incidentId || "") === String(missingId)) || null;
     return {
       incidentId: String(missingId || ""),
