@@ -5979,6 +5979,11 @@ async function loadSharedReports(reason = "manual") {
 
     activeHazards = normalized.filter((report) => report.reportKind === "hazard");
     activeReports = normalized.filter((report) => report.reportKind !== "hazard");
+    if (typeof renderUnifiedIncidents === "function") {
+      renderUnifiedIncidents("auto-active-hazards-populated");
+      setTimeout(() => renderUnifiedIncidents("auto-active-hazards-populated-250"), 250);
+      setTimeout(() => renderUnifiedIncidents("auto-active-hazards-populated-1000"), 1000);
+    }
     ensureUnifiedIncidentLayerOnMap();
     updateCrossingPipelineAudit(`loadSharedReports:${reason}`);
 
