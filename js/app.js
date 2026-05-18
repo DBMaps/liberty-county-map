@@ -14941,11 +14941,12 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     sections[stageName] = Number(Number(stageMs || 0).toFixed(3));
   });
   sections.derived_field_precompute_index = Number((precomputeTimeSource() - precomputeStartedAt).toFixed(3));
-  const unifiedIncidentIds = (unifiedIncidentsForAudit || []).map((incident) => String(incident?.id || ""));
+  const rawUnifiedIncidentArray = Array.isArray(unifiedIncidentsForAudit) ? unifiedIncidentsForAudit : [];
+  const unifiedIncidentIds = rawUnifiedIncidentArray.map((incident) => String(incident?.id || ""));
   const activeIncidentIds = (activeIncidents || []).map((incident) => String(incident?.id || ""));
   const activeIncidentIdSet = new Set(activeIncidents.map((incident) => String(incident?.id || "")));
-  const rawUnifiedIncidentObjectSample = Array.isArray(unifiedIncidentsForAudit) && unifiedIncidentsForAudit.length > 0
-    ? unifiedIncidentsForAudit.find((incident) => incident && typeof incident === "object")
+  const rawUnifiedIncidentObjectSample = rawUnifiedIncidentArray.length > 0
+    ? rawUnifiedIncidentArray.find((incident) => incident && typeof incident === "object")
     : null;
   const isUnifiedSnapshotArray = Array.isArray(unifiedIncidentsForAudit);
   const unifiedSnapshotShape = isUnifiedSnapshotArray
@@ -14961,13 +14962,13 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     ? "getUnifiedIncidents_array_map_id"
     : "non_array_or_sparse_snapshot_map_fallback";
   const rawObjectSource = rawUnifiedIncidentObjectSample
-    ? "getUnifiedIncidents_array_object_sample"
+    ? "getUnifiedIncidents_array_sample"
     : "no_object_found_in_unified_snapshot";
   const rawObjectUnavailableReason = rawUnifiedIncidentObjectSample
     ? "available"
     : (!isUnifiedSnapshotArray
       ? "unified_snapshot_not_array"
-      : (unifiedIncidentsForAudit.length === 0 ? "unified_snapshot_empty_array" : "array_entries_missing_object_payload"));
+      : (rawUnifiedIncidentArray.length === 0 ? "unified_snapshot_empty_array" : "array_entries_missing_object_payload"));
   gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentCount = unifiedIncidentIds.length;
   gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentIds = unifiedIncidentIds;
   gridlyCommuteIntelligenceAuditState.commuteAuditRawCountSource = rawCountSource;
@@ -15020,7 +15021,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
       exclusionReason: reason
     };
   };
-  const unifiedExclusionsFromStatus = unifiedIncidentsForAudit
+  const unifiedExclusionsFromStatus = rawUnifiedIncidentArray
     .filter((incident) => !activeIncidentIdSet.has(String(incident?.id || "")))
     .map((incident) => buildActiveFilterExclusionEntry(incident));
   gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveCandidateCount = unifiedExclusionsFromStatus.length;
