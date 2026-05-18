@@ -15158,17 +15158,58 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   const commuteModelInputIds = (intelItems || []).map((item) => String(item?.incident?.id || ""));
   const processedIncidentIdSet = new Set(commuteModelInputIds);
   const missingIds = activeIncidentIds.filter((incidentId) => !processedIncidentIdSet.has(incidentId));
-  const activeIncidentsExcludedFromBuild = activeIncidents
-    .filter((incident) => !processedIncidentIdSet.has(String(incident?.id || "")))
-    .map((incident) => ({
-      incidentId: String(incident?.id || ""),
+  const buildAuditExclusionReasonEntry = (incident, reason = "unknown", stage = "unknown") => {
+    if (!incident || typeof incident !== "object") {
+      return {
+        incidentId: "unknown",
+        type: "unknown",
+        source: "unknown",
+        status: "unknown",
+        lifecycle: "unknown",
+        reason,
+        stage,
+        hasLatLng: false,
+        rawStatus: "unknown",
+        normalizedStatus: "unknown",
+        rawLifecycle: "unknown",
+        normalizedLifecycle: "unknown",
+        ageMinutes: null,
+        createdAt: null,
+        updatedAt: null,
+        excludedByFunction: "commute_audit_sanitizer",
+        exclusionReason: "excluded_incident_object_unavailable"
+      };
+    }
+    const rawStatus = String(incident?.status || "");
+    const normalizedStatus = rawStatus.toLowerCase() || "unknown";
+    const rawLifecycle = String(incident?.lifecycle || incident?.lifecycleState || "");
+    const normalizedLifecycle = rawLifecycle.toLowerCase() || String(getIncidentLifecycleState(incident) || "unknown").toLowerCase() || "unknown";
+    const lat = Number(incident?.lat);
+    const lng = Number(incident?.lng);
+    const hasLatLng = Number.isFinite(lat) && Number.isFinite(lng);
+    return {
+      incidentId: String(incident?.id || "unknown"),
       type: String(incident?.report_type || incident?.type || "unknown"),
       source: String(incident?.source || "unknown"),
-      status: String(incident?.status || "unknown"),
-      lifecycle: String(incident?.status || "unknown"),
+      status: rawStatus || "unknown",
+      lifecycle: normalizedLifecycle || "unknown",
+      reason,
+      stage,
+      hasLatLng,
+      rawStatus: rawStatus || "unknown",
+      normalizedStatus,
+      rawLifecycle: rawLifecycle || "unknown",
+      normalizedLifecycle,
+      ageMinutes: Number.isFinite(Number(incident?.minutesAgo)) ? Number(incident.minutesAgo) : null,
+      createdAt: incident?.created_at || incident?.createdAt || incident?.submittedAt || null,
+      updatedAt: incident?.updated_at || incident?.updatedAt || null,
       excludedByFunction: "commute_model_build(activeIncidents.map)",
       exclusionReason: "not_mapped_into_commute_model_build"
-    }));
+    };
+  };
+  const activeIncidentsExcludedFromBuild = activeIncidents
+    .filter((incident) => !processedIncidentIdSet.has(String(incident?.id || "")))
+    .map((incident) => buildAuditExclusionReasonEntry(incident, "not_mapped_into_commute_model_build", "commute_model_build(activeIncidents.map)"));
   if (activeIncidentsExcludedFromBuild.length) buildAuditExclusionDetails.push(...activeIncidentsExcludedFromBuild);
   const missingIncidentDetails = missingIds.map((missingId) => {
     const incident = activeIncidents.find((item) => String(item?.id || "") === String(missingId)) || null;
@@ -15197,15 +15238,11 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   const excludedIncidentCount = Math.max(0, unifiedIncidentCount - incidentsProcessedCount);
   const exclusionReasons = buildAuditExclusionDetails.slice(0, Math.max(0, excludedIncidentCount));
   if (excludedIncidentCount > exclusionReasons.length) {
-    exclusionReasons.push({
-      incidentId: "unknown",
-      type: "unknown",
-      source: "unknown",
-      status: "unknown",
-      lifecycle: "unknown",
-      excludedByFunction: "commute_audit_sanitizer",
-      exclusionReason: `excluded_count_mismatch_unresolved:${excludedIncidentCount - exclusionReasons.length}`
-    });
+    exclusionReasons.push(buildAuditExclusionReasonEntry(
+      null,
+      `excluded_count_mismatch_unresolved:${excludedIncidentCount - exclusionReasons.length}`,
+      "commute_audit_sanitizer"
+    ));
   }
   gridlyCommuteIntelligenceAuditState.commuteAuditExcludedIncidentCount = excludedIncidentCount;
   gridlyCommuteIntelligenceAuditState.commuteAuditExclusionReasons = exclusionReasons;
