@@ -2659,6 +2659,38 @@ function openAlertsSurfaceFromDock() {
       };
 
       const normalizeRailSubtitleMatch = value => cleanDisplayValue(value).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+      const normalizeRailRoadAlias = (value) => {
+        let normalized = normalizeRailSubtitleMatch(value);
+        if (!normalized) return "";
+        normalized = normalized
+          .replace(/\bcrossing\b/g, " ")
+          .replace(/\brail(?:road)?\b/g, " ")
+          .replace(/\brr\b/g, " ")
+          .replace(/\bcounty\s+(?:road|rd)\s*(\d+[a-z]?)\b/g, "cr$1")
+          .replace(/\b(?:co|cnty)\s+(?:road|rd)\s*(\d+[a-z]?)\b/g, "cr$1")
+          .replace(/\bcr\s*(\d+[a-z]?)\b/g, "cr$1")
+          .replace(/\bfarm\s+to\s+market\s*(\d+[a-z]?)\b/g, "fm$1")
+          .replace(/\bfm\s*(\d+[a-z]?)\b/g, "fm$1")
+          .replace(/\b(?:us|u s)\s*(?:hwy|highway|route)?\s*(\d+[a-z]?)\b/g, "us$1")
+          .replace(/\b(?:hwy|highway)\s*(\d+[a-z]?)\b/g, "hwy$1")
+          .replace(/\b(?:road|rd|street|st|avenue|ave|boulevard|blvd|drive|dr|lane|ln)\b/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+        return normalized.replace(/\s+/g, "");
+      };
+      const isGenericRailCrossingLabel = (value) => {
+        const normalized = normalizeRailSubtitleMatch(value);
+        return !normalized || /^(blocked|rail crossing blocked|train blocking crossing|crossing blocked|local crossing|railroad crossing|rail crossing|unknown crossing|nearby crossing|nearby|dayton area|liberty county|local area|area)$/.test(normalized);
+      };
+      const areRailRoadAliasesEquivalent = (left, right) => {
+        const a = normalizeRailRoadAlias(left);
+        const b = normalizeRailRoadAlias(right);
+        if (!a || !b) return false;
+        if (a === b) return true;
+        const aHighway = a.match(/^(?:us|hwy)(\d+[a-z]?)$/);
+        const bHighway = b.match(/^(?:us|hwy)(\d+[a-z]?)$/);
+        return Boolean(aHighway && bHighway && aHighway[1] === bHighway[1]);
+      };
       const isRailAlert = (alert = {}) => {
         const railText = [
           alert?.type, alert?.category, alert?.hazardType, alert?.label, alert?.reportType, alert?.title,
@@ -2674,41 +2706,84 @@ function openAlertsSurfaceFromDock() {
         .split(/\s*(?:&|\band\b|\bat\b|\/)\s*/i)
         .map(cleanDisplayValue)
         .filter(Boolean);
-      const isDistinctCrossingPart = (value, compareTo) => {
-        const normalized = normalizeRailSubtitleMatch(value);
-        const compare = normalizeRailSubtitleMatch(compareTo);
-        return Boolean(normalized && normalized !== "blocked" && normalized !== "rail crossing blocked" && normalized !== "dayton area" && normalized !== compare);
+      const isDistinctCrossingPart = (value, compareTo, rejected = []) => {
+        const label = cleanDisplayValue(value);
+        const normalized = normalizeRailSubtitleMatch(label);
+        const alias = normalizeRailRoadAlias(label);
+        const compare = normalizeRailRoadAlias(compareTo) || normalizeRailSubtitleMatch(compareTo);
+        const reject = (reason) => {
+          if (Array.isArray(rejected)) rejected.push({ value: label, normalized: alias || normalized, reason });
+          return false;
+        };
+        if (isGenericRailCrossingLabel(label)) return reject("generic");
+        if (compare && (areRailRoadAliasesEquivalent(label, compareTo) || alias === compare || normalized === compare)) return reject("same-road-alias");
+        return Boolean(normalized);
       };
+      const collectRailLabelValues = (obj, paths = []) => paths.map(path => readPathValue(obj, path)).filter(value => cleanDisplayValue(text(value)));
       const resolveRailCrossingPair = (alert = {}) => {
         const enriched = chooseBestAlertLocationContext(alert).enriched || {};
+        const crossingId = cleanDisplayValue(alert?.crossingId || alert?.crossing_id || alert?.raw?.crossingId || alert?.raw?.crossing_id || alert?.source?.crossingId || alert?.source?.crossing_id);
+        const crossingRecord = crossingId
+          ? (Array.isArray(crossings) ? crossings : []).find((item) => cleanDisplayValue(item?.id) === crossingId)
+          : null;
+        const crossingProps = crossingRecord?.props || {};
         const crossingFields = [
           alert?.crossingName, alert?.crossingRoad, alert?.resolvedCrossingName, alert?.crossingLabel,
           alert?.raw?.crossingName, alert?.raw?.crossingRoad, alert?.raw?.source?.crossingName, alert?.raw?.source?.crossingRoad,
-          alert?.source?.crossingName, alert?.source?.crossingRoad
+          alert?.source?.crossingName, alert?.source?.crossingRoad,
+          crossingRecord?.name, crossingRecord?.originalName, crossingProps?.street, crossingProps?.roadwayname, crossingProps?.highwayname,
+          crossingProps?.road, crossingProps?.road_name, crossingProps?.crossingname
         ];
         const crossingParts = crossingFields.flatMap(splitCrossingPair);
-        const pickDistinct = (values, compareTo = "") => values
+        const normalizedRejected = [];
+        const seenSelectedAliases = new Set();
+        const pickDistinct = (values, compareTo = "", localRejected = normalizedRejected) => values
           .map(value => cleanDisplayValue(text(value)))
-          .find(value => isDistinctCrossingPart(value, compareTo)) || "";
+          .find(value => isDistinctCrossingPart(value, compareTo, localRejected)) || "";
         const primaryRoad = pickDistinct([
           alert?.primaryRoad, alert?.roadName, alert?.corridor, alert?.route, alert?.road, enriched.resolvedRoadName,
           alert?.raw?.primaryRoad, alert?.raw?.roadName, alert?.raw?.corridor, alert?.raw?.source?.primaryRoad, alert?.raw?.source?.roadName, alert?.raw?.source?.corridor,
-          alert?.source?.primaryRoad, alert?.source?.roadName, alert?.source?.corridor, crossingParts[0]
-        ]);
-        const firstDistinctCrossingPart = crossingParts.find(part => isDistinctCrossingPart(part, primaryRoad)) || "";
+          alert?.source?.primaryRoad, alert?.source?.roadName, alert?.source?.corridor, crossingProps?.road_name, crossingProps?.roadwayname, crossingRecord?.road, crossingParts[0]
+        ], "", []);
+        const firstDistinctCrossingPart = crossingParts.find(part => isDistinctCrossingPart(part, primaryRoad, normalizedRejected)) || "";
+        const candidateLabels = [];
         const pickSecondaryCandidate = (candidates = [], sourceFieldUsed = "") => {
           for (const candidate of candidates) {
             const parts = splitCrossingPair(candidate);
             const values = parts.length ? parts : [candidate];
-            const value = pickDistinct(values, primaryRoad);
-            if (value) return { value, sourceFieldUsed };
+            for (const rawValue of values) {
+              const value = cleanDisplayValue(text(rawValue));
+              if (!value) continue;
+              const normalized = normalizeRailRoadAlias(value) || normalizeRailSubtitleMatch(value);
+              candidateLabels.push({ sourceFieldUsed, value, normalized });
+              if (!isDistinctCrossingPart(value, primaryRoad, normalizedRejected)) continue;
+              if (seenSelectedAliases.has(normalized)) {
+                normalizedRejected.push({ value, normalized, reason: "duplicate-value" });
+                continue;
+              }
+              seenSelectedAliases.add(normalized);
+              return { value, sourceFieldUsed };
+            }
           }
           return { value: "", sourceFieldUsed: "" };
         };
+        const crossingMetadataValues = collectRailLabelValues(alert, [
+          "crossingMetadata.label", "crossingMetadata.name", "crossingMetadata.roadName", "crossingMetadata.roadwayName", "crossingMetadata.crossStreet",
+          "metadata.crossingLabel", "metadata.crossingName", "metadata.roadName", "metadata.roadwayName", "metadata.crossStreet",
+          "raw.crossingMetadata.label", "raw.crossingMetadata.name", "raw.crossingMetadata.roadName", "raw.metadata.crossingLabel", "source.crossingMetadata.label"
+        ]);
+        const fraMetadataValues = [
+          ...collectRailLabelValues(alert, [
+            "fra.label", "fra.name", "fra.roadwayName", "fra.roadwayname", "fra.highwayName", "fra.highwayname", "fra.street",
+            "fraCrossing.label", "fraCrossing.name", "fraCrossing.roadwayName", "fraCrossing.roadwayname", "fraCrossing.highwayName", "fraCrossing.highwayname",
+            "raw.fra.label", "raw.fra.name", "raw.fra.roadwayName", "raw.fraCrossing.label", "source.fra.label", "source.fraCrossing.label"
+          ]),
+          crossingRecord?.name, crossingRecord?.originalName, crossingProps?.street, crossingProps?.roadwayname, crossingProps?.highwayname,
+          crossingProps?.road, crossingProps?.road_name, crossingProps?.crossingname
+        ];
         const secondaryCandidates = [
           { sourceFieldUsed: "crossStreet", values: [
-            alert?.crossStreet, alert?.crossStreetA, alert?.crossStreet1, alert?.fromStreet, alert?.crossStreetB, alert?.crossStreet2, alert?.toStreet,
-            alert?.raw?.crossStreet, alert?.raw?.crossStreetA, alert?.raw?.crossStreetB, alert?.raw?.source?.crossStreet, alert?.source?.crossStreet
+            alert?.crossStreet, alert?.raw?.crossStreet, alert?.raw?.source?.crossStreet, alert?.source?.crossStreet
           ] },
           { sourceFieldUsed: "crossingRoad", values: [
             alert?.crossingRoad, alert?.crossingName, alert?.crossingLabel, firstDistinctCrossingPart,
@@ -2719,9 +2794,21 @@ function openAlertsSurfaceFromDock() {
             alert?.resolvedCrossingName, alert?.raw?.resolvedCrossingName, alert?.raw?.source?.resolvedCrossingName, alert?.source?.resolvedCrossingName
           ] },
           { sourceFieldUsed: "nearbyCrossStreet", values: [
-            alert?.nearbyCrossStreet, alert?.nearestCrossStreet, alert?.raw?.nearbyCrossStreet, alert?.raw?.nearestCrossStreet,
-            alert?.raw?.source?.nearbyCrossStreet, alert?.source?.nearbyCrossStreet, alert?.source?.nearestCrossStreet, enriched.crossStreet
+            alert?.nearbyCrossStreet, alert?.raw?.nearbyCrossStreet, alert?.raw?.source?.nearbyCrossStreet, alert?.source?.nearbyCrossStreet, enriched.crossStreet
           ] },
+          { sourceFieldUsed: "nearestCrossStreet", values: [
+            alert?.nearestCrossStreet, alert?.raw?.nearestCrossStreet, alert?.raw?.source?.nearestCrossStreet, alert?.source?.nearestCrossStreet
+          ] },
+          { sourceFieldUsed: "crossStreetA", values: [
+            alert?.crossStreetA, alert?.crossStreet1, alert?.fromStreet, alert?.raw?.crossStreetA, alert?.raw?.crossStreet1,
+            alert?.raw?.fromStreet, alert?.raw?.source?.crossStreetA, alert?.source?.crossStreetA, alert?.source?.crossStreet1, alert?.source?.fromStreet
+          ] },
+          { sourceFieldUsed: "crossStreetB", values: [
+            alert?.crossStreetB, alert?.crossStreet2, alert?.toStreet, alert?.raw?.crossStreetB, alert?.raw?.crossStreet2,
+            alert?.raw?.toStreet, alert?.raw?.source?.crossStreetB, alert?.source?.crossStreetB, alert?.source?.crossStreet2, alert?.source?.toStreet
+          ] },
+          { sourceFieldUsed: "crossingMetadata", values: crossingMetadataValues },
+          { sourceFieldUsed: "fraCrossingMetadata", values: fraMetadataValues },
           { sourceFieldUsed: "knownLocation", values: [
             alert?.knownLocation, alert?.nearbyKnownLocation, alert?.locationName, alert?.locationLabel,
             alert?.raw?.knownLocation, alert?.raw?.nearbyKnownLocation, alert?.raw?.locationName, alert?.raw?.source?.knownLocation,
@@ -2736,11 +2823,12 @@ function openAlertsSurfaceFromDock() {
         const finalHeadline = primaryRoad && secondaryCrossingLabel
           ? `Crossing blocked at ${primaryRoad} and ${secondaryCrossingLabel}`
           : (singleRoad ? `Crossing blocked at ${singleRoad}` : "Crossing blocked nearby");
-        console.log("[V157.8A CROSSING CONTEXT]", {
-          id: cleanDisplayValue(alert?.id || alert?.reportId || alert?.crossingId),
+        console.log("[V157.8B CROSSING ENRICHMENT]", {
+          id: cleanDisplayValue(alert?.id || alert?.reportId || alert?.crossingId || alert?.crossing_id),
           primaryRoad,
-          secondaryCrossingLabel,
-          sourceFieldUsed: secondaryMatch.sourceFieldUsed,
+          candidateLabels,
+          normalizedRejected,
+          selectedSecondary: secondaryCrossingLabel,
           finalHeadline
         });
         return { primaryRoad, secondaryCrossingLabel, sourceFieldUsed: secondaryMatch.sourceFieldUsed, finalHeadline };
