@@ -13095,6 +13095,17 @@ body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV
 body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 {
   z-index: 9500;
 }
+
+
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 .gridly-v2-bottom-dock button [aria-hidden="true"],
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 .gridly-v2-bottom-dock button svg[aria-hidden="true"],
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 .gridly-v2-bottom-dock button .dock-icon {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: none;
+}
+
 body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2SheetBackdrop {
   z-index: 9501;
   pointer-events: none;
