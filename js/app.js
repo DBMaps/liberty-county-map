@@ -19058,6 +19058,35 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     }, (frameId) => {
       const body = document.body;
       if (!body?.classList.contains(V2_CONTAINMENT_CLASS)) return;
+      const isPortraitMode = body.dataset.layoutMode === "portrait";
+      const legacyPortraitControlSelectors = [
+        ".mobile-floating-action-dock .mobile-dock-btn",
+        ".mobile-bottom-nav .nav-btn",
+        ".mobile-bottom-nav .mobile-bottom-nav-btn",
+        ".top-nav .nav-btn",
+        ".desktop-left-rail .rail-nav-btn",
+        "[data-section-jump]"
+      ];
+      legacyPortraitControlSelectors.forEach((selector) => {
+        document.querySelectorAll(selector).forEach((control) => {
+          if (!(control instanceof HTMLElement)) return;
+          if (!isPortraitMode) {
+            control.hidden = false;
+            control.disabled = false;
+            control.removeAttribute("aria-hidden");
+            control.removeAttribute("aria-disabled");
+            control.removeAttribute("tabindex");
+            return;
+          }
+          if (control.closest("#gridlyPortraitV2")) return;
+          if (control.closest(".tactical-dock")) return;
+          control.hidden = true;
+          control.disabled = true;
+          control.setAttribute("aria-hidden", "true");
+          control.setAttribute("aria-disabled", "true");
+          control.setAttribute("tabindex", "-1");
+        });
+      });
       const visible = (el) => {
         if (!el || el.hidden) return false;
         const style = getCachedPortraitMeasurement(el, "computed-style", () => getComputedStyle(el), frameId);
