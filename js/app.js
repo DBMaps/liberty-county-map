@@ -2052,7 +2052,6 @@ function classifyBottomDockIntent(button) {
   if (/route/.test(token)) return 'route';
   if (/alert/.test(token)) return 'alerts';
   if (/setting|preferences/.test(token)) return 'settings';
-  if (/layer/.test(token)) return 'layers';
   return '';
 }
 
@@ -2131,7 +2130,6 @@ function bindBottomDockRealButtons() {
       if (intent === 'route') return openGridlySurface?.('route', () => openMobileRouteQuickPanel?.());
       if (intent === 'alerts') return openAlertsSurfaceFromDock();
       if (intent === 'settings') return openSettingsSurfaceFromDock();
-      if (intent === 'layers') return openGridlyPortraitV2Sheet?.('layers') || openPortraitLayersSurface?.();
     }, true);
     button.dataset.gridlyDockBound = 'true';
   });
@@ -19654,7 +19652,14 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     document.querySelectorAll(".gridly-v2-segments button").forEach((b)=>b.addEventListener("click",()=>{document.querySelectorAll(".gridly-v2-segments button").forEach(x=>x.classList.remove("is-active"));b.classList.add("is-active");const gf=b.dataset.geoFilter;document.querySelector(`.geo-filter-pill[data-geo-filter='${gf}']`)?.click();}));
     document.querySelector("[data-v2-control='zoom-in']")?.addEventListener("click",()=>document.querySelector("#map .leaflet-control-zoom-in")?.click());
     document.querySelector("[data-v2-control='zoom-out']")?.addEventListener("click",()=>document.querySelector("#map .leaflet-control-zoom-out")?.click());
-    document.querySelector("[data-v2-control='layers']")?.addEventListener("click",()=>document.querySelector("#mobileDockLayersBtn")?.click());
+    document.querySelector("[data-v2-control='layers']")?.addEventListener("click",()=>{
+      const menuToggle = document.querySelector("#map .gridly-mobile-layer-menu-toggle");
+      if (menuToggle instanceof HTMLElement) {
+        menuToggle.click();
+        return;
+      }
+      document.querySelector("#mobileDockLayersBtn")?.click();
+    });
   }
   window.openPortraitV2Sheet = openPortraitV2Sheet;
   window.gridlyOpenSheetDebug = function gridlyOpenSheetDebug(sheetName) {
