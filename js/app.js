@@ -2061,24 +2061,28 @@ function openAlertsSurfaceFromDock() {
     title: 'Alerts',
     html: '<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy">No active alerts right now.</p></div>'
   };
-
-  const buildLiveAlertsTemplate = () => {
-    if (typeof buildAlertsSurfaceHtml !== 'function') return null;
-    const liveHtml = String(buildAlertsSurfaceHtml() || '').trim();
-    if (!liveHtml) return null;
-    return { title: 'Alerts', html: liveHtml };
-  };
+  let html = '';
+  let snapshot = null;
+  try {
+    snapshot = typeof getAlertsSurfaceSnapshot === 'function' ? getAlertsSurfaceSnapshot() : null;
+    html = typeof buildAlertsSurfaceHtml === 'function'
+      ? String(buildAlertsSurfaceHtml() || '').trim()
+      : '';
+  } catch (error) {
+    console.warn('[Gridly][Alerts] live alerts template render failed; fallback retained.', error);
+    html = '';
+  }
+  console.log("[Alerts render]", {
+    hasActiveAlerts: snapshot?.hasActiveAlerts,
+    count: snapshot?.count,
+    htmlLength: html?.length
+  });
+  const template = html ? { title: 'Alerts', html } : fallbackTemplate;
 
   if (typeof openGridlyPortraitV2Sheet === 'function') {
-    const opened = Boolean(openGridlyPortraitV2Sheet('alerts', fallbackTemplate));
+    const opened = Boolean(openGridlyPortraitV2Sheet('alerts', template));
     if (opened) {
       scrollToSection('mapSection');
-      try {
-        const liveTemplate = buildLiveAlertsTemplate();
-        if (liveTemplate) openGridlyPortraitV2Sheet('alerts', liveTemplate);
-      } catch (error) {
-        console.warn('[Gridly][Alerts] live alerts template render failed; fallback retained.', error);
-      }
       return true;
     }
   }
