@@ -2057,6 +2057,71 @@ function classifyBottomDockIntent(button) {
 }
 
 function openAlertsSurfaceFromDock() {
+  const normalizeToken = (value) => String(value || "").replace(/[\s_]+/g, " ").trim();
+  const titleCase = (value) => normalizeToken(value).toLowerCase().replace(/\b\w/g, (match) => match.toUpperCase());
+  const upperText = (value) => normalizeToken(value).toUpperCase();
+  const parseDirection = (alert) => {
+    const raw = normalizeToken(alert?.direction || alert?.lane || alert?.side || alert?.routeImpact || "").toLowerCase();
+    if (!raw) return "Direction unknown";
+    if (/(both|all directions|bidirectional|two-way)/.test(raw)) return "Both directions affected";
+    if (/east/.test(raw)) return "Eastbound";
+    if (/west/.test(raw)) return "Westbound";
+    if (/north/.test(raw)) return "Northbound";
+    if (/south/.test(raw)) return "Southbound";
+    if (/shoulder/.test(raw)) return `${titleCase(raw)} shoulder`;
+    if (/lane/.test(raw)) return `${titleCase(raw)} lane blocked`;
+    return titleCase(raw);
+  };
+  const getLocationConfidence = (alert) => {
+    if (normalizeToken(alert?.crossingRoad || alert?.crossingName)) return "Exact crossing";
+    if (normalizeToken(alert?.roadName || alert?.corridor || alert?.primaryRoad || alert?.nearestRoad || alert?.knownLocation || alert?.locationName)) return "Near known road";
+    return "Approximate location";
+  };
+  const getImpact = (alert) => {
+    const raw = normalizeToken(alert?.routeImpact || alert?.impact || alert?.severity || alert?.priority || "").toLowerCase();
+    if (/(high|major|severe|blocked|closure|closed|standstill)/.test(raw)) return "High impact";
+    if (/(moderate|medium|delay|slow|congestion)/.test(raw)) return "Moderate impact";
+    return "Minor impact";
+  };
+  const getHazardType = (alert) => titleCase(alert?.hazardType || alert?.category || alert?.label || alert?.type || "Road hazard reported") || "Road hazard reported";
+  const formatAlertForMobileV2 = (alert) => {
+    const rawRoad = normalizeToken(alert?.roadName || alert?.corridor || alert?.primaryRoad || alert?.route || "");
+    const rawCrossing = normalizeToken(alert?.crossingRoad || alert?.crossingName || "");
+    const rawNearest = normalizeToken(alert?.nearestRoad || alert?.knownLocation || alert?.locationName || alert?.location || "");
+    const crossA = normalizeToken(alert?.crossStreetA || alert?.crossStreet1 || alert?.fromStreet || "");
+    const crossB = normalizeToken(alert?.crossStreetB || alert?.crossStreet2 || alert?.toStreet || "");
+    const direction = parseDirection(alert);
+    const isRail = /rail|train|crossing/.test(normalizeToken(alert?.type || alert?.category || alert?.hazardType || alert?.title).toLowerCase());
+    let finalTitle = "";
+
+    if (isRail) {
+      if (rawRoad && rawCrossing) finalTitle = `TRAIN BLOCKING ${upperText(rawRoad)} AT ${upperText(rawCrossing)}`;
+      else if (rawRoad && rawNearest) finalTitle = `TRAIN BLOCKING ${upperText(rawRoad)} NEAR ${upperText(rawNearest)}`;
+      else finalTitle = "TRAIN BLOCKING RAILROAD CROSSING — LOCATION NEEDS CONFIRMATION";
+    } else {
+      const hazard = upperText(getHazardType(alert));
+      if (rawRoad && crossA && crossB) finalTitle = `${hazard} ON ${upperText(rawRoad)} ${upperText(direction)} BETWEEN ${upperText(crossA)} AND ${upperText(crossB)}`;
+      else if (rawRoad && rawNearest) finalTitle = `${hazard} ON ${upperText(rawRoad)} NEAR ${upperText(rawNearest)}`;
+      else if (rawRoad) finalTitle = `${hazard} ON ${upperText(rawRoad)}`;
+      else finalTitle = "ROAD HAZARD REPORTED — LOCATION NEEDS CONFIRMATION";
+    }
+
+    const minutesText = normalizeToken(alert?.minutesText || alert?.timeAgo || "");
+    const detail = `${direction} • ${minutesText || "Just now"}`;
+    const confidence = getLocationConfidence(alert);
+    const weakLocation = /confirmation|approximate/i.test(finalTitle) || confidence === "Approximate location";
+    return {
+      finalTitle,
+      finalDetail: detail,
+      confidence,
+      impact: getImpact(alert),
+      locationNeedsConfirmation: weakLocation,
+      rawRoad,
+      rawCrossing,
+      rawNearest,
+      rawDirection: normalizeToken(alert?.direction || alert?.lane || alert?.side || "")
+    };
+  };
   const fallbackTemplate = {
     title: 'Alerts',
     html: '<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy">No active alerts right now.</p></div>'
@@ -2070,13 +2135,28 @@ function openAlertsSurfaceFromDock() {
     hasActiveAlerts = snapshot?.hasActiveAlerts === true || alerts.length > 0;
 
     if (hasActiveAlerts) {
+      const formattedAlerts = alerts.map((alert) => ({ ...alert, __mobileV2: formatAlertForMobileV2(alert) }));
+      console.table(formattedAlerts.map((a) => ({
+        id: a?.id,
+        type: a?.type,
+        rawRoad: a?.__mobileV2?.rawRoad,
+        rawCrossing: a?.__mobileV2?.rawCrossing,
+        rawNearest: a?.__mobileV2?.rawNearest,
+        rawDirection: a?.__mobileV2?.rawDirection,
+        finalTitle: a?.__mobileV2?.finalTitle,
+        finalDetail: a?.__mobileV2?.finalDetail,
+        confidence: a?.__mobileV2?.confidence
+      })));
       html = `
 <div class="gridly-alerts-active">
   <strong>${snapshot?.commuteImpactHeadline || "Active Alerts"}</strong>
-  ${alerts.map(alert => `
+  ${formattedAlerts.map(alert => `
     <div class="gridly-alert-row">
-      <div>${String(alert?.title?.label || alert?.title || alert?.type || "Active Alert")}</div>
-      <small>${String(alert?.subtitle || alert?.minutesText || "")}</small>
+      <div>${String(alert?.__mobileV2?.finalTitle || "ROAD HAZARD REPORTED — LOCATION NEEDS CONFIRMATION")}</div>
+      <small>${String(alert?.__mobileV2?.finalDetail || "Direction unknown • Just now")}</small>
+      <small>${String(alert?.__mobileV2?.confidence || "Approximate location")}</small>
+      <small>${String(alert?.__mobileV2?.impact || "Minor impact")}</small>
+      ${alert?.__mobileV2?.locationNeedsConfirmation ? '<small>Location needs confirmation</small>' : ''}
     </div>
   `).join("")}
 </div>`.trim();
