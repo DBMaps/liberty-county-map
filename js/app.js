@@ -15015,6 +15015,22 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   const activeIncidentIdSet = new Set(activeIncidentIds);
   gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentCount = activeIncidentIds.length;
   gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentIds = activeIncidentIds;
+  const rawIdsForDiff = Array.isArray(gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentIds)
+    ? gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentIds
+    : rawUnifiedIncidentArray.map((incident) => getRawMinusActiveComparableIncidentId(incident));
+  const activeIdsForDiff = Array.isArray(gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentIds)
+    ? gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentIds
+    : (Array.isArray(activeIncidents) ? activeIncidents.map((incident) => getRawMinusActiveComparableIncidentId(incident)) : []);
+  const activeIdsForDiffSet = new Set(activeIdsForDiff.map((incidentId) => String(incidentId || "")));
+  const rawMinusActiveMissingIds = rawIdsForDiff.filter((incidentId) => !activeIdsForDiffSet.has(String(incidentId || "")));
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveDiffRawIds = rawIdsForDiff;
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveDiffActiveIds = activeIdsForDiff;
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveDiffMissingIds = rawMinusActiveMissingIds;
+  if (rawIdsForDiff.length > 0 && Number.isFinite(activeIdsForDiff.length)) {
+    gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveDiffMethod = "raw_ids_minus_active_ids_after_active_snapshot";
+  }
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveCandidateCount = rawMinusActiveMissingIds.length;
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveCandidateIds = rawMinusActiveMissingIds.map((incidentId) => String(incidentId || ""));
   const buildActiveFilterExclusionEntry = (incident, reason = "filtered_before_active_incidents") => {
     const rawStatus = String(incident?.status || "");
     const normalizedStatus = rawStatus.toLowerCase() || "unknown";
@@ -15045,20 +15061,13 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
       exclusionReason: reason
     };
   };
-  const rawMinusActiveMissingIds = unifiedIncidentIds.filter((incidentId) => !activeIncidentIdSet.has(String(incidentId || "")));
   const unifiedExclusionsFromStatus = rawUnifiedIncidentArray
     .filter((incident) => !activeIncidentIdSet.has(getRawMinusActiveComparableIncidentId(incident)))
     .map((incident) => buildActiveFilterExclusionEntry(incident));
-  gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveCandidateCount = unifiedExclusionsFromStatus.length;
-  gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveCandidateIds = unifiedExclusionsFromStatus.map((entry) => String(entry?.incidentId || ""));
   gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveBuildAttempted = true;
   gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveBuildReason = !Array.isArray(unifiedIncidentsForAudit)
     ? "raw_unified_incidents_unavailable"
     : (unifiedExclusionsFromStatus.length > 0 ? "raw_minus_active_candidates_built" : "no_raw_minus_active_candidates");
-  gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveDiffRawIds = unifiedIncidentIds;
-  gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveDiffActiveIds = activeIncidentIds;
-  gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveDiffMissingIds = rawMinusActiveMissingIds;
-  gridlyCommuteIntelligenceAuditState.commuteAuditRawMinusActiveDiffMethod = "raw_ids_minus_active_ids_with_shared_accessor";
   gridlyCommuteIntelligenceAuditState.commuteAuditActiveFilterExclusionBuildCount = unifiedExclusionsFromStatus.length;
   if (unifiedExclusionsFromStatus.length) buildAuditExclusionDetails.push(...unifiedExclusionsFromStatus);
   const recentlyCleared = timeSection("recently_cleared_retrieval", () => getUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "cleared" && Number(incident?.age_minutes) <= 45));
