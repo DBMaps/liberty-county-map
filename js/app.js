@@ -2156,34 +2156,30 @@ function installFinalBottomDockIntentBridge() {
   if (document.documentElement?.dataset?.gridlyDockBridgeFinalized === "true") return;
   document.documentElement.dataset.gridlyDockBridgeFinalized = "true";
   const dockDiag = window.__gridlyV2DockRuntimeDiagnostics || (window.__gridlyV2DockRuntimeDiagnostics = { dockLastIntent: "", dockLastIntentAt: 0, dockLastOpenResult: null });
-  const intentFromText = (raw = "") => {
-    const value = String(raw || "").trim().toLowerCase();
-    if (!value) return "";
-    if (value.includes("report")) return "report";
-    if (value.includes("route")) return "route";
-    if (value.includes("alerts")) return "alerts";
-    if (value.includes("layers")) return "layers";
-    if (value.includes("settings")) return "settings";
-    return "";
-  };
   const resolveIntent = (target) => {
-    const button = target?.closest?.("button, [role='button'], [aria-label], [data-intent], [data-v2-sheet]") || null;
-    const probes = [
-      button?.dataset?.intent,
-      button?.dataset?.v2Sheet,
-      button?.getAttribute?.("aria-label"),
-      button?.textContent,
-      target?.getAttribute?.("aria-label"),
-      target?.textContent
-    ];
-    for (const probe of probes) {
-      const intent = intentFromText(probe);
-      if (intent) return intent;
+    const dockButton = target?.closest?.("#gridlyBottomDock [data-v2-sheet], .gridly-v2-bottom-dock [data-v2-sheet], .mobile-floating-action-dock [data-v2-sheet], .mobile-floating-action-dock button, [data-gridly-bottom-dock] [data-v2-sheet], [data-gridly-bottom-dock] button") || null;
+    if (!dockButton) return "";
+    const explicitSheet = String(dockButton.dataset?.v2Sheet || "").trim().toLowerCase();
+    if (["report", "route", "alerts", "settings", "layers"].includes(explicitSheet)) return explicitSheet;
+    const id = String(dockButton.id || "");
+    if (id === "mobileDockReportBtn") return "report";
+    if (id === "mobileDockRouteBtn") return "route";
+    if (id === "mobileDockAlertsBtn") return "alerts";
+    if (id === "mobileDockLayersBtn") return "layers";
+    const mode = String(dockButton.dataset?.mode || "").trim().toLowerCase();
+    if (["report", "route", "alert", "alerts", "layers", "settings"].includes(mode)) {
+      if (mode === "alert") return "alerts";
+      return mode;
     }
     return "";
   };
   const handler = (event) => {
-    const intent = resolveIntent(event.target);
+    const target = event.target instanceof Element ? event.target : null;
+    if (!target) return;
+    if (target.closest("#gridlyPortraitV2Sheet, .leaflet-container, .leaflet-pane, .leaflet-control, .leaflet-marker-pane, .leaflet-popup-pane")) return;
+    const dockRoot = target.closest("#gridlyBottomDock, .gridly-v2-bottom-dock, .mobile-floating-action-dock, [data-gridly-bottom-dock]");
+    if (!dockRoot) return;
+    const intent = resolveIntent(target);
     if (!intent) return;
     const result = Boolean(window.openGridlyPortraitV2Sheet?.(intent));
     dockDiag.dockLastIntent = intent;
@@ -19076,7 +19072,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
 
   const V2_CONTAINMENT_CLASS = "gridly-v2-surface-containment";
-  const APP_RUNTIME_BUILD_TAG = "V146L";
+  const APP_RUNTIME_BUILD_TAG = "V146N";
   const legacySurfaceState = { lastSuppressed: "", visibleCount: 0, report: false, route: false, alerts: false, settings: false };
 
   function isPortraitV2VisuallyActive() {
