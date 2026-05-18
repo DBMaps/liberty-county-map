@@ -2298,13 +2298,14 @@ function openAlertsSurfaceFromDock() {
     title: 'Alerts',
     html: '<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy">No active alerts right now.</p></div>'
   };
-  let html = '';
-  let hasActiveAlerts = false;
-  let alertsForRender = [];
+  let template = fallbackTemplate;
   try {
+    let html = '';
     const snapshot = window.getAlertsSurfaceSnapshot?.() || getAlertsSurfaceSnapshot?.();
-    alertsForRender = Array.isArray(snapshot?.alerts) ? snapshot.alerts : [];
+    const alertsForRender = Array.isArray(snapshot?.alerts) ? snapshot.alerts : [];
+
     console.log("[V155.8 ALERT RAW SAMPLE]", alertsForRender.slice(0, 3));
+
     console.table(alertsForRender.slice(0, 5).map(a => ({
       keys: Object.keys(a || {}).join(", "),
       id: a?.id,
@@ -2321,7 +2322,7 @@ function openAlertsSurfaceFromDock() {
       sourceKeys: a?.source ? Object.keys(a.source).join(", ") : ""
     })));
     const formattedAlerts = alertsForRender.map((alert) => formatAlertForMobileV2(alert));
-    hasActiveAlerts = alertsForRender.length > 0;
+    const hasActiveAlerts = alertsForRender.length > 0;
 
     if (hasActiveAlerts) {
       const cards = clusterAlerts(formattedAlerts);
@@ -2352,21 +2353,19 @@ function openAlertsSurfaceFromDock() {
     if (alertsForRender.length > 0 && !html) {
       html = '<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy">Active alerts detected. Details are loading.</p></div>';
     }
+
+    console.log("[Alerts DIRECT HTML V156]", {
+      hasActiveAlerts,
+      count: alertsForRender.length,
+      htmlLength: html.length
+    });
+
+    template = hasActiveAlerts
+      ? { title: 'Alerts', html }
+      : fallbackTemplate;
   } catch (error) {
     console.warn('[Gridly][Alerts] live alerts template render failed; fallback retained.', error);
-    html = '';
-    hasActiveAlerts = false;
-    alertsForRender = [];
   }
-  console.log("[Alerts DIRECT HTML V156]", {
-    hasActiveAlerts,
-    count: alertsForRender.length,
-    htmlLength: html.length
-  });
-
-  const template = hasActiveAlerts
-    ? { title: 'Alerts', html }
-    : fallbackTemplate;
 
   if (typeof openGridlyPortraitV2Sheet === 'function') {
     const opened = Boolean(openGridlyPortraitV2Sheet('alerts', template));
