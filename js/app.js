@@ -19553,12 +19553,12 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     if (hasActiveAlerts) {
       html = `
 <div class="gridly-alerts-active">
-  <div class="gridly-alert-headline">
-    ${sanitizeText(snapshot.commuteImpactHeadline || "Active Alerts")}
+  <div class="gridly-alert-headline" style="font-size:13px;letter-spacing:0.08em;font-weight:700;opacity:0.85;text-transform:uppercase;margin-bottom:8px;">
+    ${sanitizeText(snapshot.commuteImpactHeadline || "Active Alerts").toUpperCase()}
   </div>
-  <div class="gridly-alert-row" style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.08);">
-    <div class="gridly-alert-title" style="font-weight:700;line-height:1.3;">MOVEMENT SUMMARY</div>
-    <div class="gridly-alert-subtitle" style="font-size:12px;opacity:0.85;">${sanitizeText(snapshot.topStatusLocalizedDetail || snapshot.routeImpactSummary || "Active movement impacts reported")}</div>
+  <div class="gridly-alert-row" style="padding:10px 12px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.1);border-radius:10px;background:rgba(255,255,255,0.02);">
+    <div class="gridly-alert-title" style="font-size:14px;font-weight:800;line-height:1.3;letter-spacing:0.03em;text-transform:uppercase;">MOVEMENT SUMMARY</div>
+    <div class="gridly-alert-subtitle" style="margin-top:4px;font-size:11px;opacity:0.72;line-height:1.35;">${sanitizeText(snapshot.topStatusLocalizedDetail || snapshot.routeImpactSummary || "Active movement impacts reported")}</div>
   </div>
 
   ${visibleAlerts.map((alert) => {
@@ -19575,17 +19575,17 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const timeText = String(alert?.minutesText || alert?.timeText || "now");
     const locationTimeLine = [locationLineRaw, timeText].filter(Boolean).join(" • ");
     return `
-    <div class="gridly-alert-row" style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.08);">
+    <div class="gridly-alert-row" style="padding:10px 12px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.1);border-radius:10px;background:rgba(255,255,255,0.02);">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
-        <div class="gridly-alert-title" style="font-weight:700;line-height:1.3;">${sanitizeText(title).toUpperCase()}</div>
+        <div class="gridly-alert-title" style="font-size:14px;font-weight:800;line-height:1.28;letter-spacing:0.03em;text-transform:uppercase;">${sanitizeText(title).toUpperCase()}</div>
       </div>
-      <div class="gridly-alert-subtitle" style="font-size:12px;opacity:0.85;">${sanitizeText(locationTimeLine)}</div>
-      <div class="gridly-alert-subtitle" style="font-size:12px;opacity:0.8;"><span style="display:inline-block;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,0.12);font-weight:600;">${sanitizeText(getSeverityChipLabel(alert))}</span>${alert?.extraCount > 0 ? ` <span style="opacity:0.9;">+${alert.extraCount} more nearby reports</span>` : ""}</div>
+      <div class="gridly-alert-subtitle" style="margin-top:4px;font-size:11px;opacity:0.72;line-height:1.35;">${sanitizeText(locationTimeLine)}</div>
+      <div class="gridly-alert-subtitle" style="margin-top:6px;font-size:11px;opacity:0.78;"><span style="display:inline-block;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,0.12);font-weight:600;font-size:10px;letter-spacing:0.04em;text-transform:uppercase;">${sanitizeText(getSeverityChipLabel(alert))}</span>${alert?.extraCount > 0 ? ` <span style="opacity:0.85;">+${alert.extraCount} more nearby reports</span>` : ""}</div>
     </div>
   `;
   }).join("")}
-  ${affectedCrossingsMoreCount > 0 ? `<div class="gridly-alert-row"><div class="gridly-alert-subtitle">+ ${affectedCrossingsMoreCount} more affected crossings</div></div>` : ""}
-  ${hiddenCount > 0 ? `<div class="gridly-alert-row"><div class="gridly-alert-subtitle">+ ${hiddenCount} more active alerts</div></div>` : ""}
+  ${affectedCrossingsMoreCount > 0 ? `<div class="gridly-alert-row" style="padding:8px 12px;margin-top:4px;border-top:1px dashed rgba(255,255,255,0.14);"><div class="gridly-alert-subtitle" style="font-size:11px;opacity:0.65;">+ ${affectedCrossingsMoreCount} more affected crossings</div></div>` : ""}
+  ${hiddenCount > 0 ? `<div class="gridly-alert-row" style="padding:8px 12px;margin-top:4px;border:1px solid rgba(255,255,255,0.08);border-radius:10px;background:rgba(255,255,255,0.015);"><div class="gridly-alert-subtitle" style="font-size:11px;opacity:0.68;letter-spacing:0.02em;">+ ${hiddenCount} more active reports</div></div>` : ""}
 </div>
 `;
     } else {
