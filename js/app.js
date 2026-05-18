@@ -1070,20 +1070,23 @@ function sanitizeEmptyCommuteAuditPayload(payload) {
 }
 
 function gridlyCommuteIntelligenceAudit() {
-  const totalMs = Number(gridlyCommuteIntelligenceAuditState.totalMs || 0);
-  const sections = { ...(gridlyCommuteIntelligenceAuditState.sections || {}) };
-  const counts = { ...(gridlyCommuteIntelligenceAuditState.counts || {}) };
-  const slowestSection = Object.entries(sections)
-    .filter(([, durationMs]) => Number.isFinite(durationMs))
-    .sort((a, b) => b[1] - a[1])
-    .map(([name, durationMs]) => ({ name, durationMs }))[0] || null;
-  const recommendedTargets = slowestSection
-    ? [
-      `Prioritize ${slowestSection.name} (${slowestSection.durationMs.toFixed(1)}ms) for V143 optimization experiments.`,
-      "Compare section timing under route-watch active vs inactive runs to isolate route-dependent costs.",
-      "Correlate incident and corridor counts with slow sections to confirm algorithmic scaling."
-    ]
-    : ["Run a refresh cycle and submit one report before auditing commute intelligence timing."];
+  try {
+    const totalMs = Number(gridlyCommuteIntelligenceAuditState.totalMs || 0);
+    const sections = { ...(gridlyCommuteIntelligenceAuditState.sections || {}) };
+    const counts = { ...(gridlyCommuteIntelligenceAuditState.counts || {}) };
+    const timedSectionEntries = Object.entries(sections).filter(([, durationMs]) => Number.isFinite(durationMs) && Number(durationMs) > 0);
+    const performanceAuditAvailable = timedSectionEntries.length > 0;
+    const performanceAuditUnavailableReason = performanceAuditAvailable ? null : "cached_or_equivalent_path_bypassed_timing";
+    const slowestSection = timedSectionEntries
+      .sort((a, b) => b[1] - a[1])
+      .map(([name, durationMs]) => ({ name, durationMs }))[0] || null;
+    const recommendedTargets = performanceAuditAvailable
+      ? [
+        `Prioritize ${slowestSection.name} (${slowestSection.durationMs.toFixed(1)}ms) for current-cycle optimization experiments.`,
+        "Compare section timing under route-watch active vs inactive runs to isolate route-dependent costs.",
+        "Correlate incident and corridor counts with slow sections to confirm algorithmic scaling."
+      ]
+      : [];
   const sectionAttribution = {
     route_relevance_checks: Number(sections.route_relevance_checks || 0),
     commute_model_build: Number(sections.commute_model_build || 0),
@@ -1209,6 +1212,21 @@ function gridlyCommuteIntelligenceAudit() {
     directCommuteAuditMissingFromActiveCount: Number(gridlyCommuteIntelligenceAuditState.directCommuteAuditMissingFromActiveCount || 0),
     directCommuteAuditMissingFromActiveIds: [...(gridlyCommuteIntelligenceAuditState.directCommuteAuditMissingFromActiveIds || [])],
     directCommuteAuditMissingFromActiveReasons: [...(gridlyCommuteIntelligenceAuditState.directCommuteAuditMissingFromActiveReasons || [])],
+    performanceAuditAvailable,
+    performanceAuditUnavailableReason,
+    commutePipelineHealthy: Number(gridlyCommuteIntelligenceAuditState.directCommuteAuditMissingFromActiveCount || 0) > 0
+      ? false
+      : Number(gridlyCommuteIntelligenceAuditState.directCommuteAuditActiveCount || 0) > 0,
+    commuteAuditStatusSummary: {
+      rawCount: Number(gridlyCommuteIntelligenceAuditState.directCommuteAuditRawCount || 0),
+      activeCount: Number(gridlyCommuteIntelligenceAuditState.directCommuteAuditActiveCount || 0),
+      missingCount: Number(gridlyCommuteIntelligenceAuditState.directCommuteAuditMissingFromActiveCount || 0),
+      pipelineHealthy: Number(gridlyCommuteIntelligenceAuditState.directCommuteAuditMissingFromActiveCount || 0) > 0
+        ? false
+        : Number(gridlyCommuteIntelligenceAuditState.directCommuteAuditActiveCount || 0) > 0,
+      performanceAuditAvailable,
+      performanceAuditUnavailableReason
+    },
     commuteModelEntryTrace: {
       ...(gridlyCommuteIntelligenceAuditState.commuteModelEntryTrace || {}),
       unifiedIncidentIds: [...(gridlyCommuteIntelligenceAuditState.commuteModelEntryTrace?.unifiedIncidentIds || [])],
@@ -1223,6 +1241,34 @@ function gridlyCommuteIntelligenceAudit() {
     actualReasonCount: Number(gridlyCommuteIntelligenceAuditState.actualReasonCount || 0)
   };
   return sanitizeEmptyCommuteAuditPayload(result);
+  } catch (error) {
+    const fallbackRawCount = Number(gridlyCommuteIntelligenceAuditState.directCommuteAuditRawCount || 0);
+    const fallbackActiveCount = Number(gridlyCommuteIntelligenceAuditState.directCommuteAuditActiveCount || 0);
+    const fallbackMissingCount = Number(gridlyCommuteIntelligenceAuditState.directCommuteAuditMissingFromActiveCount || 0);
+    const fallbackPipelineHealthy = fallbackMissingCount > 0 ? false : fallbackActiveCount > 0;
+    return {
+      auditCycleId: Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0),
+      error: String(error?.message || error || "unknown_audit_error"),
+      performanceAuditAvailable: false,
+      performanceAuditUnavailableReason: "cached_or_equivalent_path_bypassed_timing",
+      directCommuteAuditRawCount: fallbackRawCount,
+      directCommuteAuditRawIds: [...(gridlyCommuteIntelligenceAuditState.directCommuteAuditRawIds || [])],
+      directCommuteAuditActiveCount: fallbackActiveCount,
+      directCommuteAuditActiveIds: [...(gridlyCommuteIntelligenceAuditState.directCommuteAuditActiveIds || [])],
+      directCommuteAuditMissingFromActiveCount: fallbackMissingCount,
+      directCommuteAuditMissingFromActiveIds: [...(gridlyCommuteIntelligenceAuditState.directCommuteAuditMissingFromActiveIds || [])],
+      directCommuteAuditMissingFromActiveReasons: [...(gridlyCommuteIntelligenceAuditState.directCommuteAuditMissingFromActiveReasons || [])],
+      commutePipelineHealthy: fallbackPipelineHealthy,
+      commuteAuditStatusSummary: {
+        rawCount: fallbackRawCount,
+        activeCount: fallbackActiveCount,
+        missingCount: fallbackMissingCount,
+        pipelineHealthy: fallbackPipelineHealthy,
+        performanceAuditAvailable: false,
+        performanceAuditUnavailableReason: "cached_or_equivalent_path_bypassed_timing"
+      }
+    };
+  }
 }
 
 exposeGridlyAuditHelper("gridlyCommuteIntelligenceAudit", gridlyCommuteIntelligenceAudit);
