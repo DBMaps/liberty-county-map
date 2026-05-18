@@ -14895,17 +14895,39 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentIds = unifiedIncidentIds;
   gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentCount = activeIncidentIds.length;
   gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentIds = activeIncidentIds;
-  const unifiedExclusionsFromStatus = unifiedIncidentsForAudit
-    .filter((incident) => !activeIncidentIdSet.has(String(incident?.id || "")))
-    .map((incident) => ({
-      incidentId: String(incident?.id || ""),
+  const buildActiveFilterExclusionEntry = (incident, reason = "filtered_before_active_incidents") => {
+    const rawStatus = String(incident?.status || "");
+    const normalizedStatus = rawStatus.toLowerCase() || "unknown";
+    const rawLifecycle = String(incident?.lifecycle || incident?.lifecycleState || "");
+    const normalizedLifecycle = rawLifecycle.toLowerCase() || String(getIncidentLifecycleState(incident) || "unknown").toLowerCase() || "unknown";
+    const lat = Number(incident?.lat);
+    const lng = Number(incident?.lng);
+    const hasLatLng = Number.isFinite(lat) && Number.isFinite(lng);
+    return {
+      incidentId: String(incident?.id || "unknown"),
       type: String(incident?.report_type || incident?.type || "unknown"),
       source: String(incident?.source || "unknown"),
-      status: String(incident?.status || "unknown"),
-      lifecycle: String(incident?.status || "unknown"),
+      status: rawStatus || "unknown",
+      lifecycle: normalizedLifecycle || "unknown",
+      reason,
+      stage: "raw_unified_to_active_filter",
+      hasLatLng,
+      rawStatus: rawStatus || "unknown",
+      normalizedStatus,
+      rawLifecycle: rawLifecycle || "unknown",
+      normalizedLifecycle,
+      ageMinutes: Number.isFinite(Number(incident?.age_minutes))
+        ? Number(incident.age_minutes)
+        : (Number.isFinite(Number(incident?.minutesAgo)) ? Number(incident.minutesAgo) : null),
+      createdAt: incident?.created_at || incident?.createdAt || incident?.submittedAt || null,
+      updatedAt: incident?.updated_at || incident?.updatedAt || null,
       excludedByFunction: "getActiveUnifiedIncidents",
-      exclusionReason: "status_filter_non_active"
-    }));
+      exclusionReason: reason
+    };
+  };
+  const unifiedExclusionsFromStatus = unifiedIncidentsForAudit
+    .filter((incident) => !activeIncidentIdSet.has(String(incident?.id || "")))
+    .map((incident) => buildActiveFilterExclusionEntry(incident));
   if (unifiedExclusionsFromStatus.length) buildAuditExclusionDetails.push(...unifiedExclusionsFromStatus);
   const recentlyCleared = timeSection("recently_cleared_retrieval", () => getUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "cleared" && Number(incident?.age_minutes) <= 45));
   counts.unifiedIncidentCount = activeIncidents.length;
