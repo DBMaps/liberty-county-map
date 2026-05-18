@@ -18931,8 +18931,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const watchCount = incidents.filter((incident) => incident?.severity !== "high").length;
     const unifiedIncidentSourceCount = unifiedIncidents.length;
     const activeHazardSourceCount = fallbackHazards.length;
-    const normalizedAlertItems = intelItems.length
-      ? intelItems.slice(0, 6).map((item) => {
+    const normalizedAlertItemsFromIntel = intelItems.length
+      ? intelItems.map((item) => {
         const incident = item?.incident || {};
         const severityKey = String(incident?.severity || "moderate").toLowerCase();
         return {
@@ -18942,7 +18942,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           minutesText: item?.minutesText || "now"
         };
       })
-      : (incidents.length ? incidents : fallbackHazards).slice(0, 6).map((item) => {
+      : (incidents.length ? incidents : fallbackHazards).map((item) => {
         const rawType = item?.latestReport?.type || item?.type || "hazard";
         const typeLabel = getReportCopy?.(rawType)?.label || String(rawType).replace(/[_-]+/g, " ");
         const locationLabel = item?.crossingName || item?.locationLabel || item?.locationName || item?.roadName || item?.label || "Local roadway";
@@ -18954,7 +18954,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           minutesText: "now"
         };
       });
-    const activeIncidentCount = intelItems.length || incidents.length;
+    const normalizedAlertItems = normalizedAlertItemsFromIntel;
+    const activeIncidentCount = normalizedAlertItems.length || incidents.length;
     const hasFallbackSignals = activeHazardSourceCount > 0 || unifiedIncidentSourceCount > 0;
     const nearbySummary = unifiedIntel.nearbySummary;
     const routeImpactSummary = unifiedIntel.routeImpactSummary;
@@ -18968,7 +18969,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       readinessSummary,
       recentHazardCount,
       clearedCount,
-      hasActiveAlerts: Boolean(unifiedIntel.hasActiveAlerts || activeIncidentCount > 0 || hasFallbackSignals),
+      hasActiveAlerts: Boolean(activeIncidentCount > 0 || hasFallbackSignals),
+      alerts: normalizedAlertItems,
+      count: normalizedAlertItems.length,
       unifiedIncidentSourceCount,
       activeHazardSourceCount,
       normalizedAlertItems,
@@ -18981,6 +18984,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       routeImpactIncidentCount: unifiedIntel.routeImpactIncidentCount
     };
   }
+  window.getAlertsSurfaceSnapshot = getAlertsSurfaceSnapshot;
   function buildAlertsSurfaceHtml() {
     const alerts = getAlertsSurfaceSnapshot();
     const intel = buildUnifiedLocalizedCommuteIntelligence({ limit: 8 });
