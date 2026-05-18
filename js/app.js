@@ -15652,13 +15652,19 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   routeRelevanceNestedSections.isIncidentRouteRelevant_loop = Number(routeRelevanceNestedSections.isIncidentRouteRelevant_loop.toFixed(3));
   routeRelevanceNestedSections.getRoutePolylineLatLngs = Number((routeRelevanceNestedSections.isIncidentRouteRelevant_loop > 0 ? routeRelevanceNestedSections.isIncidentRouteRelevant_loop : 0).toFixed(3));
 
-  timeSection("sorting", () => intelItems.sort((a, b) => b.priorityScore - a.priorityScore));
+  const safeIntelItems = Array.isArray(intelItems)
+    ? intelItems
+    : intelItems && typeof intelItems === "object"
+      ? Object.values(intelItems)
+      : [];
 
-  const routeImpactItems = timeSection("filtering", () => intelItems.filter((item) => item.routeRelevant));
+  timeSection("sorting", () => safeIntelItems.sort((a, b) => b.priorityScore - a.priorityScore));
+
+  const routeImpactItems = timeSection("filtering", () => safeIntelItems.filter((item) => item.routeRelevant));
   counts.routeIncidentCount = routeImpactItems.length;
-  const top = intelItems[0] || null;
+  const top = safeIntelItems[0] || null;
   const maxScore = top?.priorityScore || 0;
-  const trendState = timeSection("severity_calculations", () => inferConsequenceTrend({ activeItems: intelItems, recentlyClearedCount: recentlyCleared.length }));
+  const trendState = timeSection("severity_calculations", () => inferConsequenceTrend({ activeItems: safeIntelItems, recentlyClearedCount: recentlyCleared.length }));
   const consequenceTier = maxScore >= 300 ? "severe" : maxScore >= 250 ? "heavy" : maxScore >= 190 ? "moderate" : maxScore > 0 ? "minor" : "clear";
   const rerouteReadinessDetected = routeWatchActivated && routeImpactItems.length > 0 && (consequenceTier === "heavy" || consequenceTier === "severe");
   const routeConsequenceSeverity = routeImpactItems.length === 0 ? "clear" : (maxScore >= 300 ? "severe" : maxScore >= 230 ? "heavy" : "moderate");
@@ -15688,14 +15694,14 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     unknownIncidentCount
   };
 
-  const corridorClusters = timeSection("corridor_grouping", () => buildCorridorClusters(intelItems, recentlyCleared));
+  const corridorClusters = timeSection("corridor_grouping", () => buildCorridorClusters(safeIntelItems, recentlyCleared));
   counts.corridorCount = corridorClusters.length;
   const highestPriorityCorridor = corridorClusters[0] || null;
   const corridorSeverityMap = timeSection("object_construction_output_shaping", () => corridorClusters.reduce((acc, corridor) => { acc[corridor.label] = corridor.healthState; return acc; }, {}));
   const routeImpactSummary = timeSection("impact_calculations", () => (routeImpactItems.length > 0 ? `Expect delays into Dayton · ${routeImpactItems.length} route impact${routeImpactItems.length === 1 ? "" : "s"}` : "Route into Liberty moving normally"));
   const topStatus = timeSection("alert_generation", () => (highestPriorityCorridor ? buildCommunityConsequenceLabel(highestPriorityCorridor.items?.[0]?.incident || {}, `${highestPriorityCorridor.label.replace(/ Corridor$/, "")} moving with caution`) : (top ? top.localizedSummary : "US 90 moving normally")));
   const consequenceSecondaryMessage = timeSection("recommendation_generation", () => topSecondary);
-  counts.alertCount = Math.min(Number(limit || 0), intelItems.length);
+  counts.alertCount = Math.min(Number(limit || 0), safeIntelItems.length);
   counts.recommendationCount = consequenceSecondaryMessage ? 1 : 0;
   sections.uncategorized_or_wrapper_overhead = Number(Math.max(0, (performance.now() - startedAt) - Object.values(sections).reduce((sum, ms) => sum + (Number.isFinite(ms) ? ms : 0), 0)).toFixed(3));
   sections.dedupe_logic = 0;
