@@ -19338,6 +19338,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       bodyReportPulse: document.body.classList.contains("report-pulse")
     });
   }
+  const warnedUnknownV2DockActions = new Set();
   function triggerV2DockAdapter(action, payload = {}) {
     const canonicalAction = (() => {
       const raw = String(action || "").trim();
@@ -19488,6 +19489,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       "settings-alert-preferences": () => triggerV2DockAdapter("settings-open"),
       "settings-route-preferences": () => triggerV2DockAdapter("settings-open"),
       "settings-app-preferences": () => triggerV2DockAdapter("settings-open"),
+      "report-cancel": () => closePortraitV2Sheet(),
+      "close": () => closePortraitV2Sheet(),
       "layers-select": () => {
         const requestedLayer = payload.layerName || "Standard";
         if (typeof applyMapStyle === "function") applyMapStyle(requestedLayer);
@@ -19497,6 +19500,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     v2DockAdapterState.lastDockActionTriggered = canonicalAction || "";
     v2DockAdapterState.lastDockAdapterTarget = canonicalAction ? `intent:${canonicalAction}` : "";
     if (typeof bridge !== "function") {
+      if (canonicalAction && !warnedUnknownV2DockActions.has(canonicalAction)) {
+        warnedUnknownV2DockActions.add(canonicalAction);
+        console.warn("[V146O] Unknown V2 dock action:", canonicalAction);
+      }
       v2DockAdapterState.adapterFallbackCount += 1;
       v2DockAdapterState.adapterBridgeFailures.push({ action: canonicalAction, reason: "missing_bridge", at: Date.now() });
       return;
@@ -19527,23 +19534,18 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   function bindV2SheetActions() {
     const body = document.getElementById("gridlyPortraitV2SheetBody");
     if (!body) return;
-    if (!body.dataset.tapMapDelegateBound) {
+    if (!body.dataset.v2DelegatedClickBound) {
       body.addEventListener("click", (event) => {
         const target = event.target instanceof Element ? event.target : null;
-        const tapMapButton = target?.closest?.('[data-v2-action="report-tap-map"], [data-action="start-map-placement"], #gridlyV2TapMapLocationBtn');
-        if (!tapMapButton) return;
+        const actionEl = target?.closest?.("[data-v2-action], [data-action], [data-route-action]");
+        if (!actionEl || !body.contains(actionEl)) return;
+        const action = resolveV2SheetAction(actionEl);
+        if (!action) return;
         event.preventDefault();
         event.stopPropagation();
-        const resolvedHazardType = selectedV2HazardType || reportingState.selectedHazardType || selectedQuickHazardType || "other_hazard";
-        pushTapMapTrace("portrait-v2-report-tap-map", { source: "portrait-v2-report", hazardType: resolvedHazardType || null });
-        pushTapMapTrace("portrait-v2-tap-map-clicked", { source: "portrait-v2-report", hazardType: resolvedHazardType || null });
-        closePortraitV2Sheet();
-        applyPortraitV2SurfaceContainment();
-        if (typeof beginRoadHazardMapPlacement === "function") {
-          beginRoadHazardMapPlacement(resolvedHazardType, { source: "portrait-v2-report" });
-        }
-      }, true);
-      body.dataset.tapMapDelegateBound = "1";
+        triggerV2DockAdapter(action, { hazardType: actionEl.dataset.hazardType || "", layerName: actionEl.dataset.layerName || "" });
+      });
+      body.dataset.v2DelegatedClickBound = "1";
     }
     const preconditions = getV2PreconditionsState();
     refreshPortraitV2ReportCtas(body, preconditions);
@@ -19558,56 +19560,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       button.classList.toggle("is-disabled", isDisabledByPrecondition);
       if (isDisabledByPrecondition) button.setAttribute("aria-disabled", "true");
       else button.removeAttribute("aria-disabled");
-      button.addEventListener("click", (event) => {
-        const action = resolveV2SheetAction(button);
-        const resolvedHazardType = (typeof reportingState === "object" && reportingState ? reportingState.selectedHazardType : "") || selectedV2HazardType || selectedQuickHazardType || "";
-        if (action === "report-select-hazard" || action === "report-tap-map" || action === "report-use-location") {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-        if (action === "report-tap-map") {
-          event.preventDefault();
-          event.stopPropagation();
-          if (typeof beginRoadHazardMapPlacement === "function") {
-            beginRoadHazardMapPlacement(resolvedHazardType, { source: "portrait-v2-report" });
-          }
-          return;
-        }
-        if (action === "report-use-location") {
-          event.preventDefault();
-          event.stopPropagation();
-          if (typeof window.submitHazardNearMe === "function") {
-            window.submitHazardNearMe(resolvedHazardType, { source: "portrait-v2-report" });
-          }
-          return;
-        }
-        triggerV2DockAdapter(action, { hazardType: button.dataset.hazardType || "", layerName: button.dataset.layerName || "" });
-      });
     });
-    const tapMapButton = body.querySelector('[data-v2-action="report-tap-map"]');
-    if (tapMapButton && tapMapButton.dataset.v2CtaBound !== "true") {
-      tapMapButton.addEventListener("click", (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        const resolvedHazardType = (typeof reportingState === "object" && reportingState ? reportingState.selectedHazardType : "") || selectedV2HazardType || selectedQuickHazardType || "";
-        if (typeof beginRoadHazardMapPlacement === "function") {
-          beginRoadHazardMapPlacement(resolvedHazardType, { source: "portrait-v2-report" });
-        }
-      }, true);
-      tapMapButton.dataset.v2CtaBound = "true";
-    }
-    const useLocationButton = body.querySelector('[data-v2-action="report-use-location"]');
-    if (useLocationButton && useLocationButton.dataset.v2CtaBound !== "true") {
-      useLocationButton.addEventListener("click", (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        const resolvedHazardType = (typeof reportingState === "object" && reportingState ? reportingState.selectedHazardType : "") || selectedV2HazardType || selectedQuickHazardType || "";
-        if (typeof window.submitHazardNearMe === "function") {
-          window.submitHazardNearMe(resolvedHazardType, { source: "portrait-v2-report" });
-        }
-      }, true);
-      useLocationButton.dataset.v2CtaBound = "true";
-    }
     const seededType = selectedV2HazardType || (typeof reportingState === "object" ? (reportingState.selectedHazardType || "") : "");
     if (seededType) {
       selectedV2HazardType = seededType;
