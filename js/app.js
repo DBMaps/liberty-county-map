@@ -2655,15 +2655,29 @@ function openAlertsSurfaceFromDock() {
   const lng = getFirstNumber(alert, ["lng", "lon", "longitude", "rawLng", "raw.lng", "source.lng", "source.lon"]);
   const id = cleanDisplayValue(alert?.id || alert?.reportId || alert?.uuid || `alert-${index}`);
   const coordAttrs = Number.isFinite(lat) && Number.isFinite(lng) ? ` data-gridly-alert-lat="${esc(lat)}" data-gridly-alert-lng="${esc(lng)}"` : "";
+  const resolvedTitle = titleFor(alert);
+  const resolvedHelper = helperTextFor(alert);
+  const resolvedRoad = cleanDisplayValue(chooseBestAlertLocationContext(alert)?.enriched?.resolvedRoadName).toLowerCase();
+  const normalizedTitle = cleanDisplayValue(resolvedTitle).toLowerCase();
+  const normalizedHelper = cleanDisplayValue(resolvedHelper).toLowerCase();
+  const titleIsRoadOnly = Boolean(normalizedTitle && resolvedRoad && normalizedTitle === resolvedRoad);
+  const helperIsRoadClosed = normalizedHelper === "road closed" || normalizedHelper === "road closure";
+  const helperIsConstruction = normalizedHelper === "construction";
+  const displayTitle = titleIsRoadOnly && (helperIsRoadClosed || helperIsConstruction)
+    ? (helperIsRoadClosed ? "Road closed" : "Construction")
+    : resolvedTitle;
+  const displaySubtitle = titleIsRoadOnly && (helperIsRoadClosed || helperIsConstruction)
+    ? resolvedTitle
+    : resolvedHelper;
   return `
   <div class="gridly-alert-row gridly-alert-intel-card" data-gridly-alert-id="${esc(id)}"${coordAttrs} data-gridly-alert-hidden="${isHidden ? "true" : "false"}" style="display:${isHidden ? "none" : "flex"};gap:10px;align-items:flex-start;padding:12px 12px ${index === 2 ? 12 : 10}px 12px;border:1px solid rgba(255,255,255,0.09);border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018));box-shadow:0 6px 20px rgba(0,0,0,0.28);margin-bottom:${index === 2 ? 0 : 8}px;cursor:${Number.isFinite(lat) && Number.isFinite(lng) ? "pointer" : "default"};">
     <div style="width:18px;min-width:18px;height:18px;margin-top:1px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,179,71,0.18);border:1px solid rgba(255,179,71,0.5);color:#ffd28a;font-size:11px;line-height:1;">!</div>
     <div style="min-width:0;flex:1;">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
-        <strong style="display:block;font-size:14px;line-height:1.3;color:#fff;letter-spacing:0.01em;">${esc(titleFor(alert))}</strong>
+        <strong style="display:block;font-size:14px;line-height:1.3;color:#fff;letter-spacing:0.01em;">${esc(displayTitle)}</strong>
         <small style="white-space:nowrap;font-size:11px;line-height:1.25;color:rgba(225,232,244,0.72);margin-top:1px;">${esc(timeTextFor(alert))}</small>
       </div>
-      <div style="margin-top:4px;font-size:11px;line-height:1.35;color:rgba(199,211,226,0.8);">${esc(helperTextFor(alert))}</div>
+      <div style="margin-top:4px;font-size:11px;line-height:1.35;color:rgba(199,211,226,0.8);">${esc(displaySubtitle)}</div>
     </div>
   </div>
 `;
