@@ -18932,37 +18932,61 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     };
   }
   function buildAlertsSurfaceHtml() {
-    const alerts = getAlertsSurfaceSnapshot();
-    const intel = buildUnifiedLocalizedCommuteIntelligence({ limit: 8 });
-    const primaryCorridor = intel.highestPriorityCorridor || null;
-    const secondaryCorridors = (intel.corridorClusters || []).slice(1, 3);
-    const recentlyCleared = Array.isArray(intel.recentlyCleared) ? intel.recentlyCleared.slice(0, 2) : [];
+    const fallbackHtml = `<div class="gridly-v2-command-surface">
+      <section class="gridly-v2-command-hero" aria-label="Hero command state">
+        <p class="gridly-v2-command-kicker">Commute Command</p>
+        <h4>COMMUTE CLEAR</h4>
+        <p>No active alerts right now.</p>
+      </section>
+      <p class="gridly-v2-sheet-copy">No active alerts right now.</p>
+      <p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p>
+      <button class="secondary-btn" data-v2-action="alerts-manage-open" type="button">Manage Alerts</button>
+      <button class="secondary-btn" data-v2-action="alerts-preferences-open" type="button">Alert Preferences</button>
+    </div>`;
+    let alerts = null;
+    try {
+      alerts = getAlertsSurfaceSnapshot();
+    } catch (error) {
+      console.warn("[Gridly V2] Alerts snapshot unavailable; using fallback.", error);
+      return fallbackHtml;
+    }
+    let intel = null;
+    try {
+      intel = buildUnifiedLocalizedCommuteIntelligence({ limit: 8 });
+    } catch (error) {
+      console.warn("[Gridly V2] Alerts intelligence unavailable; using fallback.", error);
+      return fallbackHtml;
+    }
+    try {
+      const primaryCorridor = intel.highestPriorityCorridor || null;
+      const secondaryCorridors = (intel.corridorClusters || []).slice(1, 3);
+      const recentlyCleared = Array.isArray(intel.recentlyCleared) ? intel.recentlyCleared.slice(0, 2) : [];
 
-    const heroTitle = sanitizeText((intel.consequencePrimaryMessage || "COMMUTE CLEAR").toUpperCase());
-    const heroDetail = sanitizeText(intel.consequenceSecondaryMessage || "Major corridors are moving normally.");
-    const recommendation = sanitizeText(intel.rerouteReadinessDetected
-      ? `Avoid ${primaryCorridor?.label || "primary corridor"}`
-      : alerts.hasActiveAlerts
-        ? "Watch US 90"
-        : "Route Clear");
+      const heroTitle = sanitizeText((intel.consequencePrimaryMessage || "COMMUTE CLEAR").toUpperCase());
+      const heroDetail = sanitizeText(intel.consequenceSecondaryMessage || "Major corridors are moving normally.");
+      const recommendation = sanitizeText(intel.rerouteReadinessDetected
+        ? `Avoid ${primaryCorridor?.label || "primary corridor"}`
+        : alerts.hasActiveAlerts
+          ? "Watch US 90"
+          : "Route Clear");
 
-    const primaryLabel = sanitizeText((primaryCorridor?.label || "US 90").replace(" Corridor", ""));
-    const primaryState = sanitizeText((primaryCorridor?.healthState || "clear").replace(/_/g, " ").toUpperCase());
-    const primarySummary = sanitizeText(primaryCorridor?.summary || (alerts.hasActiveAlerts ? alerts.routeImpactSummary : "Traffic moving normally"));
-    const primaryCount = Number(primaryCorridor?.incidentCount || 0);
-    const primaryIncidents = (primaryCorridor?.incidents || []).slice(0, 2)
-      .map((incident) => `<li>${sanitizeText(incident.localizedSummary || incident.topLine || "Traffic slowing")}</li>`)
-      .join("");
+      const primaryLabel = sanitizeText((primaryCorridor?.label || "US 90").replace(" Corridor", ""));
+      const primaryState = sanitizeText((primaryCorridor?.healthState || "clear").replace(/_/g, " ").toUpperCase());
+      const primarySummary = sanitizeText(primaryCorridor?.summary || (alerts.hasActiveAlerts ? alerts.routeImpactSummary : "Traffic moving normally"));
+      const primaryCount = Number(primaryCorridor?.incidentCount || 0);
+      const primaryIncidents = (primaryCorridor?.incidents || []).slice(0, 2)
+        .map((incident) => `<li>${sanitizeText(incident.localizedSummary || incident.topLine || "Traffic slowing")}</li>`)
+        .join("");
 
-    const secondaryHtml = secondaryCorridors.length
-      ? secondaryCorridors.map((corridor) => `<div class="gridly-v2-secondary-item"><strong>${sanitizeText((corridor.label || "").replace(" Corridor", ""))}</strong><span>${sanitizeText(corridor.summary || "Traffic moving normally")}</span></div>`).join("")
-      : `<div class="gridly-v2-secondary-item"><strong>Local roads steady</strong><span>Major commuter roads are moving normally.</span></div>`;
+      const secondaryHtml = secondaryCorridors.length
+        ? secondaryCorridors.map((corridor) => `<div class="gridly-v2-secondary-item"><strong>${sanitizeText((corridor.label || "").replace(" Corridor", ""))}</strong><span>${sanitizeText(corridor.summary || "Traffic moving normally")}</span></div>`).join("")
+        : `<div class="gridly-v2-secondary-item"><strong>Local roads steady</strong><span>Major commuter roads are moving normally.</span></div>`;
 
-    const clearedHtml = recentlyCleared.length
-      ? recentlyCleared.map((item) => `<li>${sanitizeText(item.localizedSummary || item.topLine || "Conditions improving")}</li>`).join("")
-      : "<li>No recent recovery updates</li>";
+      const clearedHtml = recentlyCleared.length
+        ? recentlyCleared.map((item) => `<li>${sanitizeText(item.localizedSummary || item.topLine || "Conditions improving")}</li>`).join("")
+        : "<li>No recent recovery updates</li>";
 
-    return `<div class="gridly-v2-command-surface">
+      return `<div class="gridly-v2-command-surface">
       <section class="gridly-v2-command-hero" aria-label="Hero command state">
         <p class="gridly-v2-command-kicker">Commute Command</p>
         <h4>${heroTitle}</h4>
@@ -18988,6 +19012,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       <button class="secondary-btn" data-v2-action="alerts-manage-open" type="button">Manage Alerts</button>
       <button class="secondary-btn" data-v2-action="alerts-preferences-open" type="button">Alert Preferences</button>
     </div>`;
+    } catch (error) {
+      console.warn("[Gridly V2] Alerts template render failed; using fallback.", error);
+      return fallbackHtml;
+    }
   }
 
   const sheetTemplates = {
