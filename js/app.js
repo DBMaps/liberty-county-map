@@ -18912,10 +18912,13 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
   function getAlertsSurfaceSnapshot() {
     const incidents = getActiveUnifiedIncidents();
+    const unifiedIncidents = Array.isArray(getUnifiedIncidents?.()) ? getUnifiedIncidents() : [];
+    const fallbackHazards = (Array.isArray(activeHazards) ? activeHazards : [])
+      .filter((hazard) => hazard && !hazard.expired && hazard.type !== "hazard_cleared");
     const prefs = getSmartAlertsPreferences();
     const route = getRouteSurfaceSnapshot();
     const now = Date.now();
-    const reports = [...(Array.isArray(activeReports) ? activeReports : []), ...(Array.isArray(activeHazards) ? activeHazards : [])]
+    const reports = [...(Array.isArray(activeReports) ? activeReports : []), ...fallbackHazards]
       .filter((report) => report && !report.expired);
     const recentHazardCount = reports.filter((report) => {
       const submittedAt = new Date(report.submittedAt || 0).getTime();
@@ -18925,7 +18928,20 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const activeIncidentCount = incidents.length;
     const highImpactCount = incidents.filter((incident) => incident?.severity === "high").length;
     const watchCount = incidents.filter((incident) => incident?.severity !== "high").length;
-    const top = incidents[0] || null;
+    const unifiedIncidentSourceCount = unifiedIncidents.length;
+    const activeHazardSourceCount = fallbackHazards.length;
+    const normalizedAlertItems = (incidents.length ? incidents : fallbackHazards).slice(0, 6).map((item) => {
+      const rawType = item?.latestReport?.type || item?.type || "hazard";
+      const typeLabel = getReportCopy?.(rawType)?.label || String(rawType).replace(/[_-]+/g, " ");
+      const locationLabel = item?.crossingName || item?.locationLabel || item?.locationName || item?.roadName || item?.label || "Local roadway";
+      const stateLabel = item?.latestReport ? getReportStateLabel(item.latestReport) : (item?.statusLabel || "Active");
+      return {
+        typeLabel,
+        locationLabel,
+        stateLabel
+      };
+    });
+    const top = incidents[0] || fallbackHazards[0] || null;
     const newestMinutes = Number.isFinite(new Date(top?.created_at || top?.updated_at || 0).getTime())
       ? Math.max(0, Math.round((Date.now() - new Date(top?.created_at || top?.updated_at).getTime()) / 60000))
       : Number.NaN;
@@ -18942,7 +18958,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       readinessSummary,
       recentHazardCount,
       clearedCount,
-      hasActiveAlerts: activeIncidentCount > 0,
+      hasActiveAlerts: activeIncidentCount > 0 || activeHazardSourceCount > 0 || unifiedIncidentSourceCount > 0,
+      unifiedIncidentSourceCount,
+      activeHazardSourceCount,
+      normalizedAlertItems,
       routeState: route.routeState,
       topStatus: unifiedIntel.topStatus,
       commuteImpactHeadline: unifiedIntel.commuteImpactHeadline,
@@ -18983,6 +19002,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       ? recentlyCleared.map((item) => `<li>${sanitizeText(item.localizedSummary || item.topLine || "Conditions improving")}</li>`).join("")
       : "<li>No recent recovery updates</li>";
 
+    const alertItemsHtml = alerts.hasActiveAlerts
+      ? (Array.isArray(alerts.normalizedAlertItems) ? alerts.normalizedAlertItems : []).map((item) => `<li><strong>${sanitizeText(item.typeLabel || "Hazard")}</strong> · ${sanitizeText(item.locationLabel || "Local roadway")} <span>(${sanitizeText(item.stateLabel || "Active")})</span></li>`).join("")
+      : "";
+
     return `<div class="gridly-v2-command-surface">
       <section class="gridly-v2-command-hero" aria-label="Hero command state">
         <p class="gridly-v2-command-kicker">Commute Command</p>
@@ -19004,6 +19027,12 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       <section class="gridly-v2-command-cleared" aria-label="Recently cleared">
         <p class="gridly-v2-command-section-label">Recently Cleared</p>
         <ul>${clearedHtml}</ul>
+      </section>
+      <section class="gridly-v2-command-secondary" aria-label="Active alerts">
+        <p class="gridly-v2-command-section-label">Active Alerts</p>
+        ${alerts.hasActiveAlerts && alertItemsHtml
+          ? `<ul>${alertItemsHtml}</ul>`
+          : `<p class="gridly-v2-sheet-copy">No active alerts right now.</p>`}
       </section>
       <p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p>
       <button class="secondary-btn" data-v2-action="alerts-manage-open" type="button">Manage Alerts</button>
