@@ -7106,7 +7106,7 @@ function renderUnifiedIncidents() {
     markerTypesRendered: [...markerTypesRendered],
     routeHighlightedMarkers,
     activeVisualStates: [...activeVisualStates],
-    markerRenderFunctionFound: typeof renderUnifiedIncidents === "function",
+    markerRenderFunctionFound: typeof renderUnifiedIncidentMarkers === "function" || typeof renderUnifiedIncidents === "function",
     markerSourceCount: Array.isArray(incidents) ? incidents.length : 0,
     markerSourceSample: (Array.isArray(incidents) ? incidents : []).slice(0, 3).map((item) => ({
       id: item?.id || item?.report_id || item?.key || null,
@@ -7117,6 +7117,10 @@ function renderUnifiedIncidents() {
     markerRenderSkipReasons,
     markerSourceUsed
   };
+}
+
+function renderUnifiedIncidentMarkers() {
+  return renderUnifiedIncidents();
 }
 
 function getCategoryMarkerGlyph(category, incident) {
@@ -9077,6 +9081,10 @@ function bindEvents() {
   };
   const openPortraitLayersSurface = () => {
     portraitSurfaceDebugLog("[Gridly][PortraitSurface] openPortraitLayersSurface:start");
+    if (typeof openPortraitV2Sheet === "function" && document.getElementById("gridlyPortraitV2Sheet")) {
+      openPortraitV2Sheet("layers");
+      return;
+    }
     const layer = document.getElementById("mobileNativeSurfaceLayer");
     const title = document.getElementById("mobileNativeSurfaceTitle");
     const body = document.getElementById("mobileNativeSurfaceBody");
@@ -10077,6 +10085,11 @@ function invokeMobileReportEntry(sourceLabel, event) {
     called: "handleReportNearMe",
     entryPoint: "mobile_dock_report"
   });
+  if (typeof openPortraitV2Sheet === "function") {
+    openPortraitV2Sheet("report");
+    scrollToSection("mapSection");
+    return;
+  }
   handleReportNearMe("mobile_dock_report");
 }
 
@@ -19012,46 +19025,52 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     });
   }
 
-  function openPortraitV2Sheet(type) {
+  function openGridlyPortraitV2Sheet(sheetName, templateOverride = null) {
     const sheet = document.getElementById("gridlyPortraitV2Sheet");
     const backdrop = document.getElementById("gridlyPortraitV2SheetBackdrop");
     const shell = document.getElementById("gridlyPortraitV2");
     const title = document.getElementById("gridlyPortraitV2SheetTitle");
     const body = document.getElementById("gridlyPortraitV2SheetBody");
-    const template = sheetTemplates[type];
-    if (!sheet || !backdrop || !template) return;
+    const template = templateOverride || sheetTemplates[sheetName];
+    if (!sheet || !backdrop || !title || !body || !template) return false;
     const templateHtml = typeof template.html === "function" ? template.html() : template.html;
 
-    activeSheet = type;
-    title.textContent = template.title;
-    body.innerHTML = templateHtml;
-    bindV2SheetActions();
+    activeSheet = sheetName;
+    title.textContent = template.title || "";
+    body.innerHTML = templateHtml || "";
+    body.hidden = false;
+    body.style.display = "";
 
     shell?.removeAttribute("hidden");
     shell?.classList.remove("is-closing", "is-closed");
 
-    sheet.hidden = false;
-    body.hidden = false;
-    backdrop.hidden = false;
+    sheet.removeAttribute("hidden");
     sheet.removeAttribute("aria-hidden");
-    backdrop.removeAttribute("aria-hidden");
     sheet.removeAttribute("inert");
-    backdrop.removeAttribute("inert");
-
     sheet.style.visibility = "visible";
     sheet.style.opacity = "1";
     sheet.style.display = "";
     sheet.style.pointerEvents = "auto";
-    sheet.style.transform = "none";
+    sheet.style.transform = "translate3d(0, 0, 0)";
     sheet.style.translate = "0 0";
     sheet.classList.remove("is-closing", "is-closed", "visible", "active", "open");
     sheet.classList.add("is-open", "active", "open");
-    sheet.setAttribute("data-active-sheet", type);
+    sheet.setAttribute("data-active-sheet", sheetName);
 
+    backdrop.removeAttribute("hidden");
+    backdrop.removeAttribute("aria-hidden");
+    backdrop.removeAttribute("inert");
     backdrop.style.display = "";
     backdrop.style.pointerEvents = "auto";
     backdrop.classList.remove("is-closing", "is-closed");
     backdrop.classList.add("is-open");
+
+    bindV2SheetActions();
+    return true;
+  }
+
+  function openPortraitV2Sheet(type) {
+    return openGridlyPortraitV2Sheet(type);
   }
   function getV2PreconditionsState() {
     const route = getRouteSurfaceSnapshot();
@@ -19567,6 +19586,12 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     document.querySelector("[data-v2-control='layers']")?.addEventListener("click",()=>document.querySelector("#mobileDockLayersBtn")?.click());
   }
   window.openPortraitV2Sheet = openPortraitV2Sheet;
+  window.gridlyOpenSheetDebug = function gridlyOpenSheetDebug(sheetName) {
+    return openGridlyPortraitV2Sheet(sheetName);
+  };
+  window.gridlyRenderHazardMarkersDebug = function gridlyRenderHazardMarkersDebug() {
+    return renderUnifiedIncidentMarkers();
+  };
   window.gridlyPortraitV2Debug = function(){
     const v2=document.getElementById("gridlyPortraitV2"); const mode=document.body?.dataset?.layoutMode||null;
     const isVisible=(el)=>Boolean(el&&getComputedStyle(el).display!=="none"&&getComputedStyle(el).visibility!=="hidden"&&Number(getComputedStyle(el).opacity||1)!==0);
@@ -20081,4 +20106,3 @@ exposeAllGridlyAuditHelpers();
 
   document.addEventListener("DOMContentLoaded", bindV2);
 })();
-
