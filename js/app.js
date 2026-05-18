@@ -2198,55 +2198,61 @@ function openAlertsSurfaceFromDock() {
       event.preventDefault();
       event.stopPropagation();
       const id = alertRow.getAttribute("data-gridly-alert-id") || "";
-      const lat = Number(alertRow.getAttribute("data-gridly-alert-lat"));
-      const lng = Number(alertRow.getAttribute("data-gridly-alert-lng"));
-      const closeFunctionFound = typeof window.closeGridlyPortraitV2Sheet === "function" || typeof window.minimizeGridlyPortraitV2Sheet === "function";
-      const closeBtn = document.querySelector('[data-gridly-sheet-close="alerts"], [data-sheet-close="alerts"], .gridly-v2-sheet [aria-label="Close"]');
-      const clickPathLog = {
-        clickedElement: event?.target?.tagName || null,
-        matchedRow: id || null,
-        rowDataset: { ...(alertRow?.dataset || {}) },
-        parsedLat: lat,
-        parsedLng: lng,
-        hasValidCoordinates: Number.isFinite(lat) && Number.isFinite(lng),
-        mapFound: false,
-        closeFunctionFound,
-        closeButtonFound: Boolean(closeBtn),
-        attemptedClose: false,
-        attemptedFlyTo: false,
-        error: null
+      const readRowCoordinate = (name) => {
+        const rawValue = alertRow.getAttribute(`data-gridly-alert-${name}`);
+        if (rawValue === null || rawValue === "") return null;
+        const value = Number(rawValue);
+        return Number.isFinite(value) ? value : null;
       };
-      if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-        if (window.__GRIDLY_DEBUG__) console.warn("[V157.3 ALERT FOCUS] missing coordinates", { id, lat, lng });
-        console.log("[V157.3A ALERT CLICK PATH]", clickPathLog);
-        return;
-      }
+      const findMatchingAlert = () => {
+        const alerts = Array.isArray(window.__gridlyLatestAlertsForRender) ? window.__gridlyLatestAlertsForRender : [];
+        if (!id) return null;
+        return alerts.find((alert, index) => {
+          const alertId = normalizeToken(alert?.id || alert?.reportId || alert?.uuid || `alert-${index}`);
+          return alertId === id;
+        }) || null;
+      };
+      const matchingAlert = findMatchingAlert();
+      const fallbackLat = matchingAlert ? getFirstNumber(matchingAlert, ["lat", "latitude", "rawLat", "raw.lat", "raw.latitude", "source.lat", "source.latitude"]) : null;
+      const fallbackLng = matchingAlert ? getFirstNumber(matchingAlert, ["lng", "lon", "longitude", "rawLng", "raw.lng", "raw.lon", "raw.longitude", "source.lng", "source.lon", "source.longitude"]) : null;
+      const lat = readRowCoordinate("lat") ?? fallbackLat;
+      const lng = readRowCoordinate("lng") ?? fallbackLng;
+      const closeBtn = document.querySelector('[data-gridly-sheet-close="alerts"], [data-sheet-close="alerts"], .gridly-v2-sheet [aria-label="Close"]');
+      let hasMap = false;
       let closedPanel = false;
+      let attemptedFlyTo = false;
+      const mapInstance = getGridlyAlertMapInstance();
+      hasMap = Boolean(mapInstance);
       try {
         if (typeof window.closeGridlyPortraitV2Sheet === "function") {
           window.closeGridlyPortraitV2Sheet("alerts");
           closedPanel = true;
-          clickPathLog.attemptedClose = true;
         } else if (typeof window.minimizeGridlyPortraitV2Sheet === "function") {
           window.minimizeGridlyPortraitV2Sheet("alerts");
           closedPanel = true;
-          clickPathLog.attemptedClose = true;
         } else if (closeBtn) {
           closeBtn.click();
           closedPanel = true;
-          clickPathLog.attemptedClose = true;
         }
-        const mapInstance = getGridlyAlertMapInstance();
-        clickPathLog.mapFound = Boolean(mapInstance);
-        if (mapInstance?.flyTo) { mapInstance.flyTo([lat, lng], 16, { animate: true }); clickPathLog.attemptedFlyTo = true; }
-        else if (mapInstance?.setView) { mapInstance.setView([lat, lng], 16, { animate: true }); clickPathLog.attemptedFlyTo = true; }
-        if (typeof window.focusAlertMarkerOnMap === "function") window.focusAlertMarkerOnMap(id, { lat, lng });
-        console.log("[V157.3 ALERT FOCUS]", { id, lat, lng, hasMap: Boolean(mapInstance), closedPanel, zoomTarget: 16 });
-      } catch (error) {
-        clickPathLog.error = error?.message || String(error);
-        throw error;
+        if (Number.isFinite(lat) && Number.isFinite(lng)) {
+          if (typeof mapInstance?.flyTo === "function") {
+            mapInstance.flyTo([lat, lng], 16, { animate: true });
+            attemptedFlyTo = true;
+          } else if (typeof mapInstance?.setView === "function") {
+            mapInstance.setView([lat, lng], 16, { animate: true });
+            attemptedFlyTo = true;
+          }
+          if (typeof window.focusAlertMarkerOnMap === "function") window.focusAlertMarkerOnMap(id, { lat, lng });
+        }
       } finally {
-        console.log("[V157.3A ALERT CLICK PATH]", clickPathLog);
+        console.log("[V157.5 ALERT ROW FOCUS]", {
+          id,
+          lat,
+          lng,
+          hasMap,
+          closedPanel,
+          attemptedFlyTo
+        });
       }
     });
     alertsPanel.dataset.alertFocusBound = "true";
