@@ -2659,25 +2659,32 @@ function openAlertsSurfaceFromDock() {
       };
 
       const normalizeRailSubtitleMatch = value => cleanDisplayValue(value).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-      const normalizeRailRoadAlias = (value) => {
-        let normalized = normalizeRailSubtitleMatch(value);
+      const normalizeRoadLabel = (value) => {
+        let normalized = cleanDisplayValue(value).toUpperCase().replace(/[^A-Z0-9]+/g, " ").trim();
         if (!normalized) return "";
         normalized = normalized
-          .replace(/\bcrossing\b/g, " ")
-          .replace(/\brail(?:road)?\b/g, " ")
-          .replace(/\brr\b/g, " ")
-          .replace(/\bcounty\s+(?:road|rd)\s*(\d+[a-z]?)\b/g, "cr$1")
-          .replace(/\b(?:co|cnty)\s+(?:road|rd)\s*(\d+[a-z]?)\b/g, "cr$1")
-          .replace(/\bcr\s*(\d+[a-z]?)\b/g, "cr$1")
-          .replace(/\bfarm\s+to\s+market\s*(\d+[a-z]?)\b/g, "fm$1")
-          .replace(/\bfm\s*(\d+[a-z]?)\b/g, "fm$1")
-          .replace(/\b(?:us|u s)\s*(?:hwy|highway|route)?\s*(\d+[a-z]?)\b/g, "us$1")
-          .replace(/\b(?:hwy|highway)\s*(\d+[a-z]?)\b/g, "hwy$1")
-          .replace(/\b(?:road|rd|street|st|avenue|ave|boulevard|blvd|drive|dr|lane|ln)\b/g, " ")
+          .replace(/\bCROSSING\b/g, " ")
+          .replace(/\bRAIL(?:ROAD)?\b/g, " ")
+          .replace(/\bRR\b/g, " ")
+          .replace(/\bCOUNTY\s+(?:ROAD|RD)\s*0*(\d+[A-Z]?)\b/g, "CR$1")
+          .replace(/\b(?:CO|CNTY)\s+(?:ROAD|RD)\s*0*(\d+[A-Z]?)\b/g, "CR$1")
+          .replace(/\bC\s*R\s*0*(\d+[A-Z]?)\b/g, "CR$1")
+          .replace(/\bFARM\s+TO\s+MARKET\s*0*(\d+[A-Z]?)\b/g, "FM$1")
+          .replace(/\bF\s*M\s*0*(\d+[A-Z]?)\b/g, "FM$1")
+          .replace(/\bU\s*S\s*(?:HWY|HIGHWAY|ROUTE)?\s*0*(\d+[A-Z]?)\b/g, "US$1")
+          .replace(/\b(?:HWY|HIGHWAY)\s*0*(\d+[A-Z]?)\b/g, "HWY$1")
+          .replace(/\bRD\b/g, "ROAD")
+          .replace(/\bST\b/g, "STREET")
+          .replace(/\bAVE\b/g, "AVENUE")
+          .replace(/\bBLVD\b/g, "BOULEVARD")
+          .replace(/\bDR\b/g, "DRIVE")
+          .replace(/\bLN\b/g, "LANE")
+          .replace(/\b0+(\d)/g, "$1")
           .replace(/\s+/g, " ")
           .trim();
         return normalized.replace(/\s+/g, "");
       };
+      const normalizeRailRoadAlias = normalizeRoadLabel;
       const isGenericRailCrossingLabel = (value) => {
         const normalized = normalizeRailSubtitleMatch(value);
         return !normalized || /^(blocked|rail crossing blocked|train blocking crossing|crossing blocked|local crossing|railroad crossing|rail crossing|unknown crossing|nearby crossing|nearby|dayton area|liberty county|local area|area)$/.test(normalized);
@@ -2687,8 +2694,8 @@ function openAlertsSurfaceFromDock() {
         const b = normalizeRailRoadAlias(right);
         if (!a || !b) return false;
         if (a === b) return true;
-        const aHighway = a.match(/^(?:us|hwy)(\d+[a-z]?)$/);
-        const bHighway = b.match(/^(?:us|hwy)(\d+[a-z]?)$/);
+        const aHighway = a.match(/^(?:US|HWY)(\d+[A-Z]?)$/);
+        const bHighway = b.match(/^(?:US|HWY)(\d+[A-Z]?)$/);
         return Boolean(aHighway && bHighway && aHighway[1] === bHighway[1]);
       };
       const isRailAlert = (alert = {}) => {
@@ -2747,6 +2754,15 @@ function openAlertsSurfaceFromDock() {
         ], "", []);
         const firstDistinctCrossingPart = crossingParts.find(part => isDistinctCrossingPart(part, primaryRoad, normalizedRejected)) || "";
         const candidateLabels = [];
+        const logNormalizationDecision = (rawSecondary, normalizedSecondary, duplicateRejected) => {
+          console.log("[V157.8C NORMALIZATION]", {
+            rawPrimary: primaryRoad,
+            rawSecondary,
+            normalizedPrimary: normalizeRoadLabel(primaryRoad) || normalizeRailSubtitleMatch(primaryRoad),
+            normalizedSecondary,
+            duplicateRejected
+          });
+        };
         const pickSecondaryCandidate = (candidates = [], sourceFieldUsed = "") => {
           for (const candidate of candidates) {
             const parts = splitCrossingPair(candidate);
@@ -2754,13 +2770,19 @@ function openAlertsSurfaceFromDock() {
             for (const rawValue of values) {
               const value = cleanDisplayValue(text(rawValue));
               if (!value) continue;
-              const normalized = normalizeRailRoadAlias(value) || normalizeRailSubtitleMatch(value);
+              const normalized = normalizeRoadLabel(value) || normalizeRailSubtitleMatch(value);
               candidateLabels.push({ sourceFieldUsed, value, normalized });
-              if (!isDistinctCrossingPart(value, primaryRoad, normalizedRejected)) continue;
-              if (seenSelectedAliases.has(normalized)) {
-                normalizedRejected.push({ value, normalized, reason: "duplicate-value" });
+              const distinct = isDistinctCrossingPart(value, primaryRoad, normalizedRejected);
+              if (!distinct) {
+                logNormalizationDecision(value, normalized, true);
                 continue;
               }
+              if (seenSelectedAliases.has(normalized)) {
+                normalizedRejected.push({ value, normalized, reason: "duplicate-value" });
+                logNormalizationDecision(value, normalized, true);
+                continue;
+              }
+              logNormalizationDecision(value, normalized, false);
               seenSelectedAliases.add(normalized);
               return { value, sourceFieldUsed };
             }
