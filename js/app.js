@@ -2669,9 +2669,55 @@ function openAlertsSurfaceFromDock() {
         return "Road hazard reported";
       };
 
+      const normalizeRailSubtitleMatch = value => cleanDisplayValue(value).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+      const isRailBlockedTitle = value => normalizeRailSubtitleMatch(value) === "rail crossing blocked";
+      const isWeakRailBlockedSubtitle = value => normalizeRailSubtitleMatch(value) === "blocked";
+      const formatRailCrossingContext = (alert = {}) => {
+        const picked = chooseBestAlertLocationContext(alert);
+        const enriched = picked.enriched || {};
+        const normalizeCandidate = value => cleanDisplayValue(text(value));
+        const isUsableContext = value => {
+          const normalized = normalizeRailSubtitleMatch(value);
+          return Boolean(normalized && normalized !== "blocked" && normalized !== "rail crossing blocked" && normalized !== "dayton area");
+        };
+        const crossingContext = [
+          alert.crossingName,
+          alert.crossingRoad,
+          alert.resolvedCrossingName,
+          alert.crossingLabel,
+          enriched.crossStreet
+        ].map(normalizeCandidate).find(isUsableContext);
+        if (crossingContext) return /crossing/i.test(crossingContext) ? crossingContext : `${crossingContext} crossing`;
+
+        const roadContext = [
+          enriched.resolvedRoadName,
+          alert.roadName,
+          alert.primaryRoad,
+          alert.corridor,
+          alert.route,
+          alert.road,
+          alert.nearestRoad,
+          alert.titleRoad,
+          alert.raw?.roadName,
+          alert.raw?.nearestRoad,
+          alert.source?.roadName,
+          alert.source?.nearestRoad
+        ].map(normalizeCandidate).find(isUsableContext);
+        if (roadContext) return /crossing/i.test(roadContext) ? roadContext : `${roadContext} crossing`;
+
+        const cityContext = [alert.city, alert.place, alert.area, enriched.nearbyKnownLocation, alert.nearbyKnownLocation, alert.knownLocation, alert.locationName, alert.locationLabel, alert.locationPhrase, alert.locationText, alert.location]
+          .map(normalizeCandidate)
+          .find(isUsableContext);
+        if (cityContext) return /^near\s+/i.test(cityContext) ? cityContext : `Near ${cityContext}`;
+
+        return "Active rail report";
+      };
+
       const helperTextFor = alert => {
-        const primary = titleFor(alert).toLowerCase();
+        const primaryTitle = titleFor(alert);
+        const primary = primaryTitle.toLowerCase();
         const secondary = pickSecondaryDetailMeta(alert);
+        if (isRailBlockedTitle(primaryTitle) && isWeakRailBlockedSubtitle(secondary.value)) return formatRailCrossingContext(alert);
         if (secondary.value && secondary.value.toLowerCase() !== primary) return secondary.value;
         return "Road hazard reported";
       };
