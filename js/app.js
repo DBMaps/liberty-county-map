@@ -2114,7 +2114,7 @@ function hardenBottomDockInteractivity() {
     dock.style.zIndex = String(Math.max(Number(dock.style.zIndex || 0), 10040));
     dock.querySelectorAll('button').forEach((btn) => {
       btn.style.pointerEvents = 'auto';
-      ['pointerdown', 'touchstart', 'mousedown', 'click'].forEach((evt) => {
+      ['pointerdown', 'touchstart', 'mousedown', 'mouseup', 'touchend', 'click'].forEach((evt) => {
         btn.addEventListener(evt, (e) => {
           e.stopPropagation();
         }, true);
@@ -2135,9 +2135,9 @@ function bindBottomDockRealButtons() {
       event.stopPropagation();
       if (intent === 'report') return invokeMobileReportEntry?.('bottom_dock_runtime_bind', event);
       if (intent === 'route') return openGridlySurface?.('route', () => openMobileRouteQuickPanel?.());
-      if (intent === 'alerts') return openAlertsSurfaceFromDock();
+      if (intent === 'alerts') return openGridlyPortraitV2Sheet?.('alerts') || openAlertsSurfaceFromDock();
       if (intent === 'settings') return openSettingsSurfaceFromDock();
-      if (intent === 'layers') return openPortraitLayersSurface?.();
+      if (intent === 'layers') return openGridlyPortraitV2Sheet?.('layers') || openPortraitLayersSurface?.();
     }, true);
     button.dataset.gridlyDockBound = 'true';
   });
@@ -5975,6 +5975,7 @@ async function loadSharedReports(reason = "manual") {
 
     pushGridlyReflowTrace("post-submit refresh", "start", { source: `loadSharedReports:${reason}` });
     refreshReportHazardViews(`loadSharedReports:${reason}`);
+    if (typeof renderUnifiedIncidentMarkers === "function") renderUnifiedIncidentMarkers();
     pushGridlyReflowTrace("post-submit refresh", "end", { source: `loadSharedReports:${reason}` });
 
     setSync(`${activeReports.length} crossing reports · ${activeHazards.length} hazards synced`);
@@ -8361,6 +8362,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
       }
       refreshReportHazardViews("createSharedHazardReport:local_immediate");
       if (typeof renderUnifiedIncidents === "function") renderUnifiedIncidents();
+      if (typeof renderUnifiedIncidentMarkers === "function") renderUnifiedIncidentMarkers();
     }
     const submitLifecycleId = row.crossing_id;
     if (!beginSubmitLifecycleGuard(submitLifecycleId)) {
@@ -15220,7 +15222,15 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.commuteAuditRawArrayPublicationStage = "raw_array_snapshot_published_after_getUnifiedIncidents";
   const timeSection = makeGridlySectionTimer(sections);
   const routeHazard = timeSection("route_hazard_scoring", () => (routeWatchActivated ? getRouteHazardAssessment() : null));
-  const activeIncidents = timeSection("unified_incident_retrieval", () => getActiveUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "active"));
+  const activeIncidents = timeSection("unified_incident_retrieval", () => {
+    const activeIncidentsSnapshot = getActiveUnifiedIncidents();
+    const normalizedActiveIncidents = Array.isArray(activeIncidentsSnapshot)
+      ? activeIncidentsSnapshot
+      : (activeIncidentsSnapshot && typeof activeIncidentsSnapshot === "object"
+        ? Object.values(activeIncidentsSnapshot)
+        : []);
+    return normalizedActiveIncidents.filter((incident) => String(incident?.status || "").toLowerCase() === "active");
+  });
   const directRawIncidents = (typeof getUnifiedIncidents === "function" && Array.isArray(getUnifiedIncidents()))
     ? getUnifiedIncidents()
     : [];
@@ -20077,7 +20087,7 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
     alertsSurfaceSelectorsFound,
     visibleAlertsSurfaceSelectorsFound,
     alertsOpenActionFound,
-    reportUsesBottomSheet: activeSheetValue === "report" && !document.getElementById("gridlyPortraitV2Sheet")?.hidden,
+    reportUsesBottomSheet: Boolean((activeSheetValue === "report" || document.getElementById("gridlyPortraitV2Sheet")?.dataset?.activeSheet === "report") && isVisible(document.getElementById("gridlyPortraitV2Sheet"))),
     activeSheet: activeSheetValue || null,
     settingsPanelFound,
     settingsSurfaceSelectorsFound,
