@@ -2200,11 +2200,20 @@ function openAlertsSurfaceFromDock() {
     );
     let title = resolvedHeadline ? upperText(resolvedHeadline) : "";
 
-    if (!title && isRail) {
-      if (bestRoad && context.crossing) title = `TRAIN BLOCKING ${upperText(bestRoad)} AT ${upperText(context.crossing)}`;
-      else if (bestRoad && bestNear) title = `TRAIN BLOCKING ${upperText(bestRoad)} NEAR ${upperText(bestNear)}`;
-      else if (bestNear || rawDescription) title = `TRAIN BLOCKING RAIL CROSSING NEAR ${upperText(bestNear || rawDescription)}`;
-      else title = "TRAIN BLOCKING RAIL CROSSING — LOCATION NEEDS CONFIRMATION";
+    const railHeadlineIsGeneric = /^RAIL\s+CROSSING\s+BLOCKED$/.test(title);
+    const shouldBuildRailTitle = isRail && (!title || railHeadlineIsGeneric);
+
+    if (shouldBuildRailTitle) {
+      const roadParts = String(bestRoad || "").split("&").map((part) => normalizeToken(part)).filter(Boolean);
+      if (roadParts.length >= 2) {
+        title = `TRAIN BLOCKING ${upperText(roadParts[0])} AT ${upperText(roadParts[1])}`;
+      } else if (context.crossing && bestNear) {
+        title = `TRAIN BLOCKING ${upperText(context.crossing)} AT ${upperText(bestNear)}`;
+      } else if (bestRoad) {
+        title = `TRAIN BLOCKING ${upperText(bestRoad)}`;
+      } else {
+        title = "TRAIN BLOCKING RAIL CROSSING";
+      }
     } else if (!title) {
       const hazard = upperText(getHazardType(alertObject));
       const betweenA = context.crossA || crossA;
