@@ -2057,17 +2057,21 @@ function classifyBottomDockIntent(button) {
 }
 
 function openAlertsSurfaceFromDock() {
-  if (typeof openPortraitV2Sheet === 'function') {
-    openPortraitV2Sheet('alerts');
-    scrollToSection('mapSection');
-    return true;
-  }
   if (typeof openGridlyPortraitV2Sheet === 'function') {
     const fallbackTemplate = {
       title: 'Alerts',
       html: '<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy">No active alerts right now.</p></div>'
     };
-    return Boolean(openGridlyPortraitV2Sheet('alerts', fallbackTemplate));
+    const opened = Boolean(openGridlyPortraitV2Sheet('alerts', fallbackTemplate));
+    if (opened) {
+      scrollToSection('mapSection');
+      return true;
+    }
+  }
+  if (typeof openPortraitV2Sheet === 'function') {
+    openPortraitV2Sheet('alerts');
+    scrollToSection('mapSection');
+    return true;
   }
   return false;
 }
