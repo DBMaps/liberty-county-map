@@ -19007,6 +19007,23 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     };
   }
   window.getAlertsSurfaceSnapshot = getAlertsSurfaceSnapshot;
+  function resolveAlertTitleText(alert) {
+    const rawTitle = (
+      alert?.title?.label ||
+      alert?.title?.text ||
+      alert?.title?.name ||
+      alert?.label ||
+      alert?.headline ||
+      alert?.type ||
+      "Active Alert"
+    );
+    if (typeof rawTitle === "string") return rawTitle;
+    if (rawTitle && typeof rawTitle === "object") {
+      return String(rawTitle.label || rawTitle.text || rawTitle.name || "Active Alert");
+    }
+    return String(rawTitle || "Active Alert");
+  }
+
   function buildAlertsSurfaceHtml() {
     const snapshot = getAlertsSurfaceSnapshot();
     const alerts = Array.isArray(snapshot.alerts)
@@ -19017,6 +19034,25 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       snapshot.hasActiveAlerts === true ||
       alerts.length > 0;
 
+    const dedupeSet = new Set();
+    const dedupedAlerts = alerts.filter((alert) => {
+      const key = [
+        alert?.id || "",
+        resolveAlertTitleText(alert).toLowerCase(),
+        String(alert?.type || "").toLowerCase(),
+        String(alert?.location || "").toLowerCase(),
+        String(alert?.minutesText || "").toLowerCase()
+      ].join("|");
+      if (dedupeSet.has(key)) return false;
+      dedupeSet.add(key);
+      return true;
+    });
+
+    const compactLimit = 4;
+    const isMobileCompact = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(max-width: 768px)").matches;
+    const visibleAlerts = isMobileCompact ? dedupedAlerts.slice(0, compactLimit) : dedupedAlerts;
+    const hiddenCount = Math.max(0, dedupedAlerts.length - visibleAlerts.length);
+
     let html = "";
 
     if (hasActiveAlerts) {
@@ -19026,26 +19062,24 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     ${sanitizeText(snapshot.commuteImpactHeadline || "Active Alerts")}
   </div>
 
-  ${alerts.map((alert) => `
+  ${visibleAlerts.map((alert) => {
+    const title = resolveAlertTitleText(alert);
+    const typeOrStatus = String(alert?.type || alert?.status || "Active Alert").replace(/[_-]+/g, " ").trim();
+    const severity = String(alert?.severity || "").trim();
+    const metaLine = [
+      typeOrStatus ? typeOrStatus.charAt(0).toUpperCase() + typeOrStatus.slice(1) : "",
+      severity ? `${severity.charAt(0).toUpperCase() + severity.slice(1)}${/severity/i.test(severity) ? "" : " severity"}` : ""
+    ].filter(Boolean).join(" • ");
+    const timeText = String(alert?.minutesText || alert?.timeText || "now");
+    return `
     <div class="gridly-alert-row">
-      <div class="gridly-alert-title">
-        ${sanitizeText(String(
-          alert?.title?.label ||
-          alert?.title ||
-          alert?.type ||
-          "Active Alert"
-        ))}
-      </div>
-
-      <div class="gridly-alert-subtitle">
-        ${sanitizeText(String(
-          alert?.subtitle ||
-          alert?.minutesText ||
-          ""
-        ))}
-      </div>
+      <div class="gridly-alert-title">${sanitizeText(title)}</div>
+      <div class="gridly-alert-subtitle">${sanitizeText(metaLine || "Active alert")}</div>
+      <div class="gridly-alert-subtitle">${sanitizeText(timeText)}</div>
     </div>
-  `).join("")}
+  `;
+  }).join("")}
+  ${hiddenCount > 0 ? `<div class="gridly-alert-row"><div class="gridly-alert-subtitle">+ ${hiddenCount} more active alerts</div></div>` : ""}
 </div>
 `;
     } else {
