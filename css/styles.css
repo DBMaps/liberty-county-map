@@ -13075,9 +13075,21 @@ body[data-layout-mode="portrait"].gridly-v2-surface-containment .report-drawer,
 body[data-layout-mode="portrait"].gridly-v2-surface-containment .mobile-report-mode-card,
 body[data-layout-mode="portrait"].gridly-v2-surface-containment .report-buttons,
 body[data-layout-mode="portrait"].gridly-v2-surface-containment .settings-modal-backdrop,
-body[data-layout-mode="portrait"].gridly-v2-surface-containment #settingsModal {
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #settingsModal,
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #routeSetupModal,
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #smartAlertsModal,
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #mobileNativeSurfaceLayer,
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #routeSetupModalBackdrop,
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #smartAlertsModalBackdrop,
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #settingsModalBackdrop {
+  display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
+  pointer-events: none !important;
+}
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 [hidden],
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 [aria-hidden="true"] {
+  display: none !important;
   pointer-events: none !important;
 }
 body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 {
@@ -13085,6 +13097,10 @@ body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV
 }
 body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2SheetBackdrop {
   z-index: 9501;
+  pointer-events: none;
+}
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2SheetBackdrop:not([hidden]) {
+  pointer-events: auto;
 }
 body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2Sheet {
   z-index: 9502;
