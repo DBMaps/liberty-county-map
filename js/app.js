@@ -2333,12 +2333,62 @@ function openAlertsSurfaceFromDock() {
     console.log("[V155.8 ALERT RAW SAMPLE]", alertsForRender.slice(0, 3));
 
     if (alertsForRender.length > 0) {
-      const html = buildMobileV2AlertsHtmlFromRawAlerts(alertsForRender, snapshot);
+      const esc = value => String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+
+      const text = value => {
+        if (typeof value === "string") return value;
+        if (value && typeof value === "object") {
+          return value.label || value.text || value.name || value.title || value.value || "";
+        }
+        return "";
+      };
+
+      const titleFor = alert => {
+        const crossing = text(alert.roadName) || text(alert.crossingRoad) || text(alert.nearestRoad);
+        const base = text(alert.resolvedHeadline) || text(alert.headline) || text(alert.title);
+
+        if ((alert.type === "blocked" || /rail|crossing|train/i.test(base)) && crossing) {
+          if (crossing.includes("&")) {
+            const [a, b] = crossing.split("&").map(s => s.trim());
+            return `Train blocking ${a} at ${b}`;
+          }
+          return `Train blocking ${crossing}`;
+        }
+
+        return base || text(alert.type) || "Active movement alert";
+      };
+
+      const rows = alertsForRender.slice(0, 3).map(alert => `
+  <div class="gridly-alert-row gridly-alert-intel-card">
+    <strong>${esc(titleFor(alert))}</strong>
+    <small>${esc(alert.subtitle || alert.minutesText || "Active report")}</small>
+  </div>
+`).join("");
+
+      const extra = alertsForRender.length > 3
+        ? `<div class="gridly-alert-row gridly-alert-intel-card"><small><strong>+ ${alertsForRender.length - 3} more active reports</strong></small></div>`
+        : "";
+
+      const html = `
+<div class="gridly-alerts-active">
+  <div class="gridly-alert-row gridly-alert-intel-card">
+    <strong>${esc(snapshot?.commuteImpactHeadline || "Active movement alerts")}</strong>
+    <small>${alertsForRender.length} active community report${alertsForRender.length === 1 ? "" : "s"}</small>
+  </div>
+  ${rows}
+  ${extra}
+</div>`;
+
       console.log("[Alerts DIRECT HTML V156]", {
         hasActiveAlerts: true,
         count: alertsForRender.length,
         htmlLength: html.length
       });
+
       return window.openGridlyPortraitV2Sheet("alerts", {
         title: "Alerts",
         html
