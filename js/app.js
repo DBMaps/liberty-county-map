@@ -2198,11 +2198,6 @@ function openAlertsSurfaceFromDock() {
       event.preventDefault();
       event.stopPropagation();
       const id = alertRow.getAttribute("data-gridly-alert-id") || "";
-      const rowDataset = {
-        id,
-        "data-gridly-alert-lat": alertRow.getAttribute("data-gridly-alert-lat"),
-        "data-gridly-alert-lng": alertRow.getAttribute("data-gridly-alert-lng")
-      };
       const readRowCoordinate = (name) => {
         const rawValue = alertRow.getAttribute(`data-gridly-alert-${name}`);
         if (rawValue === null || rawValue === "") return null;
@@ -2224,7 +2219,6 @@ function openAlertsSurfaceFromDock() {
       const fallbackLng = matchingAlert ? getFirstNumber(matchingAlert, ["lng", "lon", "longitude", "rawLng", "raw.lng", "raw.lon", "raw.longitude", "source.lng", "source.lon", "source.longitude"]) : null;
       const lat = Number.isFinite(rowLat) ? rowLat : fallbackLat;
       const lng = Number.isFinite(rowLng) ? rowLng : fallbackLng;
-      const usedFallbackCoords = (!Number.isFinite(rowLat) || !Number.isFinite(rowLng)) && Number.isFinite(lat) && Number.isFinite(lng);
       const sheet = alertRow.closest("#gridlyPortraitV2Sheet, .gridly-v2-sheet") || document.querySelector("#gridlyPortraitV2Sheet[data-active-sheet='alerts']");
       const closeButton = sheet?.querySelector?.("#gridlyPortraitV2SheetClose, [data-gridly-sheet-close='alerts'], [data-sheet-close='alerts'], [aria-label='Close panel'], [aria-label='Close']") || null;
       const isVisible = (el) => {
@@ -2239,41 +2233,46 @@ function openAlertsSurfaceFromDock() {
         if (activeSheet instanceof HTMLElement) return isVisible(activeSheet);
         return isVisible(alertsPanel);
       };
-      const panelVisibleBefore = isPanelVisible();
       const mapInstance = getGridlyAlertMapInstance();
-      const hasMap = Boolean(mapInstance);
-      let closeClicked = false;
+      const readMapCenter = () => {
+        const center = typeof mapInstance?.getCenter === "function" ? mapInstance.getCenter() : null;
+        if (!center) return null;
+        return { lat: Number(center.lat), lng: Number(center.lng) };
+      };
+      const readMapZoom = () => {
+        const zoom = typeof mapInstance?.getZoom === "function" ? Number(mapInstance.getZoom()) : null;
+        return Number.isFinite(zoom) ? zoom : null;
+      };
+      const beforeCenter = readMapCenter();
+      const beforeZoom = readMapZoom();
       let attemptedFlyTo = false;
-      try {
-        if (Number.isFinite(lat) && Number.isFinite(lng)) {
-          if (closeButton) {
-            closeButton.click();
-            closeClicked = true;
-          }
-          if (typeof mapInstance?.flyTo === "function") {
-            mapInstance.flyTo([lat, lng], 16, { animate: true });
-            attemptedFlyTo = true;
-          } else if (typeof mapInstance?.setView === "function") {
-            mapInstance.setView([lat, lng], 16, { animate: true });
-            attemptedFlyTo = true;
-          }
-          if (typeof window.focusAlertMarkerOnMap === "function") window.focusAlertMarkerOnMap(id, { lat, lng });
+      if (Number.isFinite(lat) && Number.isFinite(lng)) {
+        if (closeButton) closeButton.click();
+        if (typeof mapInstance?.flyTo === "function") {
+          mapInstance.flyTo([lat, lng], 16, { animate: true, duration: 0.35 });
+          attemptedFlyTo = true;
+        } else if (typeof mapInstance?.setView === "function") {
+          mapInstance.setView([lat, lng], 16, { animate: true });
+          attemptedFlyTo = true;
         }
-      } finally {
-        console.log("[V157.5A ALERT FOCUS VERIFY]", {
+        if (typeof window.focusAlertMarkerOnMap === "function") window.focusAlertMarkerOnMap(id, { lat, lng });
+      }
+      window.setTimeout(() => {
+        if (Number.isFinite(lat) && Number.isFinite(lng) && readMapZoom() !== null && readMapZoom() < 15 && typeof mapInstance?.setView === "function") {
+          mapInstance.setView([lat, lng], 16, { animate: false });
+        }
+        console.log("[V157.7 ALERT MAP FOCUS RESULT]", {
           id,
-          rowDataset,
-          usedFallbackCoords,
           lat,
           lng,
-          hasMap,
-          closeButtonFound: Boolean(closeButton),
-          closeClicked,
-          panelVisibleBefore,
-          panelVisibleAfter: isPanelVisible(),
-          attemptedFlyTo
+          beforeCenter,
+          beforeZoom,
+          afterCenter: readMapCenter(),
+          afterZoom: readMapZoom(),
+          attemptedFlyTo,
+          panelVisibleAfter: isPanelVisible()
         });
-      }
+      }, 450);
     });
     alertsPanel.dataset.alertFocusBound = "true";
   };
@@ -2659,8 +2658,50 @@ function openAlertsSurfaceFromDock() {
         return { value: shortDesc || "Road hazard reported", source: shortDesc ? "shortHazardDescription" : "default" };
       };
 
+      const normalizeRailSubtitleMatch = value => cleanDisplayValue(value).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+      const isRailAlert = (alert = {}) => {
+        const railText = [
+          alert?.type, alert?.category, alert?.hazardType, alert?.label, alert?.reportType, alert?.title,
+          alert?.headline, alert?.resolvedHeadline, alert?.localizedSummary, alert?.subtitle, alert?.description
+        ].map(text).join(" ");
+        const crossingText = [
+          alert?.crossingName, alert?.crossingRoad, alert?.resolvedCrossingName, alert?.crossingLabel, alert?.crossStreet, alert?.nearbyCrossStreet,
+          alert?.raw?.crossingName, alert?.raw?.crossingRoad, alert?.source?.crossingName, alert?.source?.crossingRoad
+        ].map(text).join(" ");
+        return /rail|train|crossing/i.test(railText) || (/blocked/i.test(railText) && Boolean(cleanDisplayValue(crossingText)));
+      };
+      const splitCrossingPair = value => cleanDisplayValue(value)
+        .split(/\s*(?:&|\band\b|\bat\b|\/)\s*/i)
+        .map(cleanDisplayValue)
+        .filter(Boolean);
+      const isDistinctCrossingPart = (value, compareTo) => {
+        const normalized = normalizeRailSubtitleMatch(value);
+        const compare = normalizeRailSubtitleMatch(compareTo);
+        return Boolean(normalized && normalized !== "blocked" && normalized !== "rail crossing blocked" && normalized !== "dayton area" && normalized !== compare);
+      };
+      const composeRailCrossingHeadline = (alert = {}) => {
+        const enriched = chooseBestAlertLocationContext(alert).enriched || {};
+        const crossingParts = [
+          alert?.crossingName, alert?.crossingRoad, alert?.resolvedCrossingName, alert?.crossingLabel,
+          alert?.raw?.crossingName, alert?.raw?.crossingRoad, alert?.source?.crossingName, alert?.source?.crossingRoad
+        ].flatMap(splitCrossingPair);
+        const primaryRoad = [
+          alert?.primaryRoad, alert?.roadName, alert?.corridor, alert?.route, alert?.road, enriched.resolvedRoadName,
+          alert?.raw?.primaryRoad, alert?.raw?.roadName, alert?.raw?.corridor, alert?.source?.primaryRoad, alert?.source?.roadName, alert?.source?.corridor,
+          crossingParts[0]
+        ].map(value => cleanDisplayValue(text(value))).find(value => isDistinctCrossingPart(value, ""));
+        const crossStreet = [
+          alert?.crossStreet, alert?.nearbyCrossStreet, alert?.crossStreetA, alert?.crossStreet1, alert?.fromStreet,
+          alert?.crossStreetB, alert?.crossStreet2, alert?.toStreet, enriched.crossStreet, crossingParts.find(part => isDistinctCrossingPart(part, primaryRoad)),
+          alert?.nearestRoad, alert?.knownLocation, alert?.locationName, alert?.raw?.crossStreet, alert?.raw?.nearbyCrossStreet, alert?.source?.crossStreet, alert?.source?.nearbyCrossStreet
+        ].map(value => cleanDisplayValue(text(value))).find(value => isDistinctCrossingPart(value, primaryRoad));
+        const singleRoad = primaryRoad || crossingParts.find(part => isDistinctCrossingPart(part, "")) || cleanDisplayValue(enriched.nearbyKnownLocation);
+        if (primaryRoad && crossStreet) return `Crossing blocked at ${primaryRoad} and ${crossStreet}`;
+        if (singleRoad) return `Crossing blocked at ${singleRoad}`;
+        return "Active rail report";
+      };
       const titleFor = alert => {
-        const picked = chooseBestAlertLocationContext(alert);
+        if (isRailAlert(alert)) return composeRailCrossingHeadline(alert);
         const explicit = cleanDisplayValue(text(alert.resolvedHeadline) || text(alert.headline) || text(alert.title) || text(alert.localizedSummary));
         if (explicit && !isGenericPrimaryTitle(explicit) && (/\sat\s/i.test(explicit) || /\snear\s/i.test(explicit) || isSpecificPhrase(explicit))) return explicit;
         const primary = pickPrimaryTitleMeta(alert);
@@ -2669,7 +2710,6 @@ function openAlertsSurfaceFromDock() {
         return "Road hazard reported";
       };
 
-      const normalizeRailSubtitleMatch = value => cleanDisplayValue(value).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
       const isRailBlockedTitle = value => normalizeRailSubtitleMatch(value) === "rail crossing blocked";
       const isWeakRailBlockedSubtitle = value => normalizeRailSubtitleMatch(value) === "blocked";
       const formatRailCrossingContext = (alert = {}) => {
@@ -2713,15 +2753,27 @@ function openAlertsSurfaceFromDock() {
         return "Active rail report";
       };
 
+      const timeTextFor = alert => text(alert.minutesText) || text(alert.timeAgo) || text(alert.updatedText) || toMinutesAgoLabel(alert);
+      const railImpactTextFor = alert => {
+        const impact = cleanDisplayValue(getImpact(alert));
+        if (impact === "Widespread Delays") return "High impact";
+        if (impact === "Impacted Movement") return "Moderate impact";
+        if (impact === "Slowing Areas") return "Active rail report";
+        return "Active rail report";
+      };
+      const cleanSubtitleText = value => {
+        const cleaned = cleanDisplayValue(value);
+        return /^(undefined|null|\[object object\]|blocked)$/i.test(cleaned) ? "" : cleaned;
+      };
       const helperTextFor = alert => {
+        if (isRailAlert(alert)) return `${railImpactTextFor(alert)} • ${cleanSubtitleText(timeTextFor(alert)) || "Now"}`;
         const primaryTitle = titleFor(alert);
         const primary = primaryTitle.toLowerCase();
         const secondary = pickSecondaryDetailMeta(alert);
         if (isRailBlockedTitle(primaryTitle) && isWeakRailBlockedSubtitle(secondary.value)) return formatRailCrossingContext(alert);
-        if (secondary.value && secondary.value.toLowerCase() !== primary) return secondary.value;
+        if (secondary.value && secondary.value.toLowerCase() !== primary) return cleanSubtitleText(secondary.value) || "Road hazard reported";
         return "Road hazard reported";
       };
-      const timeTextFor = alert => text(alert.minutesText) || text(alert.timeAgo) || text(alert.updatedText) || "Now";
       const renderAlertCard = (alert, index, isHidden = false) => {
   const lat = getFirstNumber(alert, ["lat", "latitude", "rawLat", "raw.lat", "source.lat"]);
   const lng = getFirstNumber(alert, ["lng", "lon", "longitude", "rawLng", "raw.lng", "source.lng", "source.lon"]);
