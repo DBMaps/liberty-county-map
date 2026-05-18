@@ -2057,14 +2057,28 @@ function classifyBottomDockIntent(button) {
 }
 
 function openAlertsSurfaceFromDock() {
+  const fallbackTemplate = {
+    title: 'Alerts',
+    html: '<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy">No active alerts right now.</p></div>'
+  };
+
+  const buildLiveAlertsTemplate = () => {
+    if (typeof buildAlertsSurfaceHtml !== 'function') return null;
+    const liveHtml = String(buildAlertsSurfaceHtml() || '').trim();
+    if (!liveHtml) return null;
+    return { title: 'Alerts', html: liveHtml };
+  };
+
   if (typeof openGridlyPortraitV2Sheet === 'function') {
-    const fallbackTemplate = {
-      title: 'Alerts',
-      html: '<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy">No active alerts right now.</p></div>'
-    };
     const opened = Boolean(openGridlyPortraitV2Sheet('alerts', fallbackTemplate));
     if (opened) {
       scrollToSection('mapSection');
+      try {
+        const liveTemplate = buildLiveAlertsTemplate();
+        if (liveTemplate) openGridlyPortraitV2Sheet('alerts', liveTemplate);
+      } catch (error) {
+        console.warn('[Gridly][Alerts] live alerts template render failed; fallback retained.', error);
+      }
       return true;
     }
   }
