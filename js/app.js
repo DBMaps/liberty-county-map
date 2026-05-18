@@ -18986,7 +18986,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
   window.getAlertsSurfaceSnapshot = getAlertsSurfaceSnapshot;
   function buildAlertsSurfaceHtml() {
-    const alerts = getAlertsSurfaceSnapshot();
+    const snapshot = getAlertsSurfaceSnapshot();
+    const alerts = Array.isArray(snapshot.alerts) ? snapshot.alerts : [];
+    const hasActiveAlerts = snapshot.hasActiveAlerts === true || alerts.length > 0;
     const intel = buildUnifiedLocalizedCommuteIntelligence({ limit: 8 });
     const primaryCorridor = intel.highestPriorityCorridor || null;
     const secondaryCorridors = (intel.corridorClusters || []).slice(1, 3);
@@ -18996,13 +18998,13 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const heroDetail = sanitizeText(intel.consequenceSecondaryMessage || "Major corridors are moving normally.");
     const recommendation = sanitizeText(intel.rerouteReadinessDetected
       ? `Avoid ${primaryCorridor?.label || "primary corridor"}`
-      : alerts.hasActiveAlerts
+      : hasActiveAlerts
         ? "Watch US 90"
         : "Route Clear");
 
     const primaryLabel = sanitizeText((primaryCorridor?.label || "US 90").replace(" Corridor", ""));
     const primaryState = sanitizeText((primaryCorridor?.healthState || "clear").replace(/_/g, " ").toUpperCase());
-    const primarySummary = sanitizeText(primaryCorridor?.summary || (alerts.hasActiveAlerts ? alerts.routeImpactSummary : "Traffic moving normally"));
+    const primarySummary = sanitizeText(primaryCorridor?.summary || (hasActiveAlerts ? snapshot.routeImpactSummary : "Traffic moving normally"));
     const primaryCount = Number(primaryCorridor?.incidentCount || 0);
     const primaryIncidents = (primaryCorridor?.incidents || []).slice(0, 2)
       .map((incident) => `<li>${sanitizeText(incident.localizedSummary || incident.topLine || "Traffic slowing")}</li>`)
@@ -19016,8 +19018,17 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       ? recentlyCleared.map((item) => `<li>${sanitizeText(item.localizedSummary || item.topLine || "Conditions improving")}</li>`).join("")
       : "<li>No recent recovery updates</li>";
 
-    const alertItemsHtml = alerts.hasActiveAlerts
-      ? (Array.isArray(alerts.normalizedAlertItems) ? alerts.normalizedAlertItems : []).map((item) => `<li><strong>${sanitizeText(item.title || "Traffic slowing")}</strong> <span>(${sanitizeText(String(item.severity || "moderate").toUpperCase())})</span><p>${sanitizeText(item.subtitle || item.minutesText || "now")}</p></li>`).join("")
+    const alertItemsHtml = hasActiveAlerts
+      ? alerts.map((item) => {
+        const title = item?.title || item?.label || item?.type || "Traffic slowing";
+        const typeOrSeverity = item?.type || item?.severity;
+        const location = item?.location || item?.locationLabel || item?.locationName || item?.roadName || "";
+        const time = item?.time || item?.minutesText || item?.subtitle || "";
+        const detailParts = [item?.label, typeOrSeverity, location, time]
+          .filter((value, index, array) => value && array.indexOf(value) === index)
+          .map((value) => sanitizeText(String(value)));
+        return `<li><strong>${sanitizeText(String(title))}</strong>${detailParts.length ? `<p>${detailParts.join(" • ")}</p>` : ""}</li>`;
+      }).join("")
       : "";
 
     return `<div class="gridly-v2-command-surface">
@@ -19044,7 +19055,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       </section>
       <section class="gridly-v2-command-secondary" aria-label="Active alerts">
         <p class="gridly-v2-command-section-label">Active Alerts</p>
-        ${alerts.hasActiveAlerts && alertItemsHtml
+        ${snapshot.commuteImpactHeadline ? `<p class="gridly-v2-sheet-copy"><strong>${sanitizeText(snapshot.commuteImpactHeadline)}</strong></p>` : ""}
+        ${hasActiveAlerts && alertItemsHtml
           ? `<ul>${alertItemsHtml}</ul>`
           : `<p class="gridly-v2-sheet-copy">No active alerts right now.</p>`}
       </section>
