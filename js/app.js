@@ -2062,22 +2062,40 @@ function openAlertsSurfaceFromDock() {
     html: '<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy">No active alerts right now.</p></div>'
   };
   let html = '';
-  let snapshot = null;
+  let hasActiveAlerts = false;
+  let alerts = [];
   try {
-    snapshot = typeof getAlertsSurfaceSnapshot === 'function' ? getAlertsSurfaceSnapshot() : null;
-    html = typeof buildAlertsSurfaceHtml === 'function'
-      ? String(buildAlertsSurfaceHtml() || '').trim()
-      : '';
+    const snapshot = window.getAlertsSurfaceSnapshot?.() || getAlertsSurfaceSnapshot?.();
+    alerts = Array.isArray(snapshot?.alerts) ? snapshot.alerts : [];
+    hasActiveAlerts = snapshot?.hasActiveAlerts === true || alerts.length > 0;
+
+    if (hasActiveAlerts) {
+      html = `
+<div class="gridly-alerts-active">
+  <strong>${snapshot?.commuteImpactHeadline || "Active Alerts"}</strong>
+  ${alerts.map(alert => `
+    <div class="gridly-alert-row">
+      <div>${String(alert?.title?.label || alert?.title || alert?.type || "Active Alert")}</div>
+      <small>${String(alert?.subtitle || alert?.minutesText || "")}</small>
+    </div>
+  `).join("")}
+</div>`.trim();
+    }
   } catch (error) {
     console.warn('[Gridly][Alerts] live alerts template render failed; fallback retained.', error);
     html = '';
+    hasActiveAlerts = false;
+    alerts = [];
   }
-  console.log("[Alerts render]", {
-    hasActiveAlerts: snapshot?.hasActiveAlerts,
-    count: snapshot?.count,
-    htmlLength: html?.length
+  console.log("[Alerts DIRECT HTML V156]", {
+    hasActiveAlerts,
+    count: alerts.length,
+    htmlLength: html.length
   });
-  const template = html ? { title: 'Alerts', html } : fallbackTemplate;
+
+  const template = hasActiveAlerts
+    ? { title: 'Alerts', html }
+    : fallbackTemplate;
 
   if (typeof openGridlyPortraitV2Sheet === 'function') {
     const opened = Boolean(openGridlyPortraitV2Sheet('alerts', template));
