@@ -1720,7 +1720,18 @@ let lastMarkerAuditDebug = {
   clusteredMarkerCount: 0,
   markerTypesRendered: [],
   routeHighlightedMarkers: 0,
-  activeVisualStates: []
+  activeVisualStates: [],
+  markerRenderFunctionFound: false,
+  markerSourceCount: 0,
+  markerSourceSample: [],
+  markerRenderSkipReasons: {
+    missing_lat_lng: 0,
+    invalid_lat_lng: 0,
+    filtered_out: 0,
+    missing_marker_layer: 0,
+    render_exception: 0
+  },
+  markerSourceUsed: ""
 };
 let lastMobileReportSubmitDebug = {
   lastSubmitAttempt: "idle",
@@ -2039,26 +2050,46 @@ function classifyBottomDockIntent(button) {
 }
 
 function openAlertsSurfaceFromDock() {
-  const v2AlertsBtn = document.querySelector('#gridlyPortraitV2 [data-v2-sheet="alerts"]');
-  if (v2AlertsBtn && typeof openPortraitV2Sheet === 'function') {
+  let opened = false;
+  const v2Sheet = document.getElementById('gridlyPortraitV2Sheet');
+  if (typeof openPortraitV2Sheet === 'function' && v2Sheet) {
     openPortraitV2Sheet('alerts');
-    return true;
+    opened = true;
   }
-  const legacyAlertsBtn = document.getElementById('mobileDockAlertsBtn');
-  if (legacyAlertsBtn) {
-    legacyAlertsBtn.click();
-    return true;
-  }
+
   const alertsSection = document.getElementById('alertsSection');
   if (alertsSection) {
     alertsSection.hidden = false;
+    alertsSection.removeAttribute('inert');
     alertsSection.setAttribute('aria-hidden', 'false');
     alertsSection.style.display = 'grid';
+    alertsSection.style.visibility = 'visible';
+    alertsSection.style.opacity = '1';
     alertsSection.style.pointerEvents = 'auto';
+    alertsSection.classList.add('visible', 'is-open', 'active');
     document.body?.classList.add('portrait-alerts-open');
-    return true;
+    opened = true;
   }
-  return false;
+
+  const tacticalAlerts = document.querySelector('.gridly-tactical-dock-sheet[data-action="alerts"]');
+  if (tacticalAlerts instanceof HTMLElement) {
+    tacticalAlerts.hidden = false;
+    tacticalAlerts.removeAttribute('inert');
+    tacticalAlerts.style.display = 'grid';
+    tacticalAlerts.style.visibility = 'visible';
+    tacticalAlerts.style.opacity = '1';
+    tacticalAlerts.classList.add('visible', 'is-open', 'active');
+    opened = true;
+  }
+
+  if (!opened) {
+    const legacyAlertsBtn = document.getElementById('mobileDockAlertsBtn');
+    if (legacyAlertsBtn) {
+      legacyAlertsBtn.click();
+      opened = true;
+    }
+  }
+  return opened;
 }
 
 function openSettingsSurfaceFromDock() {
@@ -6963,7 +6994,11 @@ function renderUnifiedIncidents() {
 
   unifiedIncidentLayer.clearLayers();
 
-  const incidents = getUnifiedIncidents();
+  const unifiedIncidents = getUnifiedIncidents();
+  const fallbackHazards = Array.isArray(activeHazards) ? activeHazards : [];
+  const incidents = Array.isArray(unifiedIncidents) && unifiedIncidents.length ? unifiedIncidents : fallbackHazards;
+  const markerRenderSkipReasons = { missing_lat_lng: 0, invalid_lat_lng: 0, filtered_out: 0, missing_marker_layer: 0, render_exception: 0 };
+  const markerSourceUsed = (Array.isArray(unifiedIncidents) && unifiedIncidents.length) ? "unifiedIncidents" : "activeHazards_fallback";
   const routeHazard = routeWatchActivated ? getRouteHazardAssessment() : null;
   const dedupedMap = new Map();
   const duplicateCounts = new Map();
@@ -6988,11 +7023,13 @@ function renderUnifiedIncidents() {
   let routeHighlightedMarkers = 0;
 
   dedupedIncidents.forEach((incident) => {
+    if (!unifiedIncidentLayer) { markerRenderSkipReasons.missing_marker_layer += 1; return; }
     const rawLat = incident?.lat ?? incident?.latitude ?? incident?.rawLat;
     const rawLng = incident?.lng ?? incident?.lon ?? incident?.longitude ?? incident?.rawLng;
+    if (rawLat == null || rawLng == null) { markerRenderSkipReasons.missing_lat_lng += 1; return; }
     const lat = Number(rawLat);
     const lng = Number(rawLng);
-    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) { markerRenderSkipReasons.invalid_lat_lng += 1; return; }
 
     const distanceFromUser = userLocation
       ? getDistanceMiles(userLocation.lat, userLocation.lng, lat, lng)
@@ -7037,9 +7074,13 @@ function renderUnifiedIncidents() {
       iconAnchor: [23, 23]
     });
 
-    L.marker([lat, lng], { icon })
-      .bindPopup(buildUnifiedIncidentPopup(incident), { maxWidth: 340 })
-      .addTo(unifiedIncidentLayer);
+    try {
+      L.marker([lat, lng], { icon })
+        .bindPopup(buildUnifiedIncidentPopup(incident), { maxWidth: 340 })
+        .addTo(unifiedIncidentLayer);
+    } catch (error) {
+      markerRenderSkipReasons.render_exception += 1;
+    }
   });
 
   const duplicateEntries = [...duplicateCounts.entries()].filter(([, count]) => count > 1);
@@ -7062,7 +7103,17 @@ function renderUnifiedIncidents() {
     clusteredMarkerCount: getLiveHazardIncidents().length,
     markerTypesRendered: [...markerTypesRendered],
     routeHighlightedMarkers,
-    activeVisualStates: [...activeVisualStates]
+    activeVisualStates: [...activeVisualStates],
+    markerRenderFunctionFound: typeof renderUnifiedIncidents === "function",
+    markerSourceCount: Array.isArray(incidents) ? incidents.length : 0,
+    markerSourceSample: (Array.isArray(incidents) ? incidents : []).slice(0, 3).map((item) => ({
+      id: item?.id || item?.report_id || item?.key || null,
+      type: item?.report_type || item?.type || null,
+      lat: item?.lat ?? item?.latitude ?? item?.rawLat ?? null,
+      lng: item?.lng ?? item?.lon ?? item?.longitude ?? item?.rawLng ?? null
+    })),
+    markerRenderSkipReasons,
+    markerSourceUsed
   };
 }
 
@@ -19899,6 +19950,7 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
   const classified = dockButtons.map((btn) => ({ btn, intent: classifyBottomDockIntent(btn) }));
   const byIntent = (intent) => classified.some((entry) => entry.intent === intent && entry.btn.dataset.gridlyDockBound === "true");
   const alertsPanel = document.querySelector("#alertsSection:not([hidden]), .gridly-tactical-dock-sheet:not([hidden])[data-action='alerts']");
+  const markerAudit = window.gridlyMarkerAuditDebug?.() || {};
   const isVisible = (el) => {
     if (!el || el.hidden) return false;
     const style = window.getComputedStyle(el);
@@ -19930,6 +19982,22 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
   });
 
   const settingsPanelFound = visibleSettingsSurfaceSelectorsFound.length > 0 || (activeSheet === "settings" && !document.getElementById("gridlyPortraitV2Sheet")?.hidden);
+
+  const alertsSurfaceSelectorCandidates = [
+    "#alertsSection",
+    "#gridlyPortraitV2Sheet[data-active-sheet='alerts']",
+    ".gridly-tactical-dock-sheet[data-action='alerts']",
+    "#smartAlertsModal"
+  ];
+  const alertsSurfaceSelectorsFound = [];
+  const visibleAlertsSurfaceSelectorsFound = [];
+  alertsSurfaceSelectorCandidates.forEach((selector) => {
+    const matches = document.querySelectorAll(selector);
+    if (!matches.length) return;
+    alertsSurfaceSelectorsFound.push(selector);
+    if ([...matches].some((node) => isVisible(node))) visibleAlertsSurfaceSelectorsFound.push(selector);
+  });
+  const alertsOpenActionFound = typeof openAlertsSurfaceFromDock === "function";
 
   const layer = unifiedIncidentLayer;
   const layerMarkers = typeof layer?.getLayers === "function" ? layer.getLayers() : [];
@@ -19963,6 +20031,9 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
     alertsButtonBound: byIntent("alerts"),
     settingsButtonBound: byIntent("settings"),
     alertsPanelFound: Boolean(alertsPanel),
+    alertsSurfaceSelectorsFound,
+    visibleAlertsSurfaceSelectorsFound,
+    alertsOpenActionFound,
     settingsPanelFound,
     settingsSurfaceSelectorsFound,
     visibleSettingsSurfaceSelectorsFound,
@@ -19973,6 +20044,10 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
     activeHazardCount: Array.isArray(activeHazards) ? activeHazards.length : 0,
     activeHazardCoordinateSample,
     visibleHazardMarkerCount,
+    markerRenderFunctionFound: Boolean(markerAudit?.markerRenderFunctionFound),
+    markerSourceCount: Number(markerAudit?.markerSourceCount || 0),
+    markerSourceSample: Array.isArray(markerAudit?.markerSourceSample) ? markerAudit.markerSourceSample : [],
+    markerRenderSkipReasons: markerAudit?.markerRenderSkipReasons || null,
     currentFilter: activeGeoFilter || null
   };
 };
