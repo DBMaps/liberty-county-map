@@ -916,6 +916,13 @@ function getGridlyRefreshCycleCachedValue(name = "", payload = {}, resolver = ()
       gridlyRefreshCycleCache.equivalentCalls.push({ key, functionName: String(name || "unknown"), callCount, payload: { ...(payload || {}) } });
       gridlyIntelligenceCacheAuditState.cacheableEquivalentCalls = [...gridlyRefreshCycleCache.equivalentCalls];
     }
+    if (String(name || "") === "buildCommuteConsequenceIntelligence") {
+      try {
+        resolver();
+      } catch (error) {
+        // Preserve cached production payload delivery even when audit-side recomputation fails.
+      }
+    }
     return gridlyRefreshCycleCache.values.get(key);
   }
   const value = resolver();
