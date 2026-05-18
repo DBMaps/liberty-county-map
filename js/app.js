@@ -6975,10 +6975,12 @@ function renderUnifiedIncidents() {
   let routeHighlightedMarkers = 0;
 
   dedupedIncidents.forEach((incident) => {
-    if (!Number.isFinite(incident.lat) || !Number.isFinite(incident.lng)) return;
+    const lat = Number(incident?.lat);
+    const lng = Number(incident?.lng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
 
     const distanceFromUser = userLocation
-      ? getDistanceMiles(userLocation.lat, userLocation.lng, incident.lat, incident.lng)
+      ? getDistanceMiles(userLocation.lat, userLocation.lng, lat, lng)
       : null;
     const isNearbyPriority = Number.isFinite(distanceFromUser) && distanceFromUser <= PRIORITY_NEARBY_MILES;
     const ageClass =
@@ -7020,7 +7022,7 @@ function renderUnifiedIncidents() {
       iconAnchor: [23, 23]
     });
 
-    L.marker([incident.lat, incident.lng], { icon })
+    L.marker([lat, lng], { icon })
       .bindPopup(buildUnifiedIncidentPopup(incident), { maxWidth: 340 })
       .addTo(unifiedIncidentLayer);
   });
@@ -19871,10 +19873,14 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
   const classified = dockButtons.map((btn) => ({ btn, intent: classifyBottomDockIntent(btn) }));
   const byIntent = (intent) => classified.some((entry) => entry.intent === intent && entry.btn.dataset.gridlyDockBound === "true");
   const alertsPanel = document.querySelector("#alertsSection:not([hidden]), .gridly-tactical-dock-sheet:not([hidden])[data-action='alerts']");
-  const settingsPanel = document.querySelector("#settingsModal:not([hidden]), .gridly-tactical-dock-sheet:not([hidden])[data-action='settings']");
+  const settingsPanel = document.querySelector("#settingsModal:not([hidden]), .gridly-tactical-dock-sheet:not([hidden])[data-action='settings'], #gridlyPortraitV2Sheet:not([hidden]).is-open");
+  const v2SettingsSheetOpen = activeSheet === "settings" && !document.getElementById("gridlyPortraitV2Sheet")?.hidden;
   const layer = unifiedIncidentLayer;
   const layerMarkers = typeof layer?.getLayers === "function" ? layer.getLayers() : [];
-  const visibleHazardMarkerCount = layerMarkers.filter((m) => typeof m.getElement === "function" && m.getElement()).length;
+  const visibleHazardMarkerCount = Math.max(
+    layerMarkers.filter((m) => typeof m.getElement === "function" && m.getElement()).length,
+    document.querySelectorAll("#map .gridly-hazard-marker").length
+  );
   return {
     bottomDockButtonsFound: dockButtons.length,
     reportButtonBound: byIntent("report"),
@@ -19882,7 +19888,7 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
     alertsButtonBound: byIntent("alerts"),
     settingsButtonBound: byIntent("settings"),
     alertsPanelFound: Boolean(alertsPanel),
-    settingsPanelFound: Boolean(settingsPanel),
+    settingsPanelFound: Boolean(settingsPanel) || Boolean(v2SettingsSheetOpen),
     hazardLayerFound: Boolean(layer && map && map.hasLayer?.(layer)),
     activeHazardCount: Array.isArray(activeHazards) ? activeHazards.length : 0,
     visibleHazardMarkerCount,
