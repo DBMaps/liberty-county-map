@@ -2198,6 +2198,11 @@ function openAlertsSurfaceFromDock() {
       event.preventDefault();
       event.stopPropagation();
       const id = alertRow.getAttribute("data-gridly-alert-id") || "";
+      const rowDataset = {
+        id,
+        "data-gridly-alert-lat": alertRow.getAttribute("data-gridly-alert-lat"),
+        "data-gridly-alert-lng": alertRow.getAttribute("data-gridly-alert-lng")
+      };
       const readRowCoordinate = (name) => {
         const rawValue = alertRow.getAttribute(`data-gridly-alert-${name}`);
         if (rawValue === null || rawValue === "") return null;
@@ -2212,29 +2217,39 @@ function openAlertsSurfaceFromDock() {
           return alertId === id;
         }) || null;
       };
-      const matchingAlert = findMatchingAlert();
+      const rowLat = readRowCoordinate("lat");
+      const rowLng = readRowCoordinate("lng");
+      const matchingAlert = (!Number.isFinite(rowLat) || !Number.isFinite(rowLng)) ? findMatchingAlert() : null;
       const fallbackLat = matchingAlert ? getFirstNumber(matchingAlert, ["lat", "latitude", "rawLat", "raw.lat", "raw.latitude", "source.lat", "source.latitude"]) : null;
       const fallbackLng = matchingAlert ? getFirstNumber(matchingAlert, ["lng", "lon", "longitude", "rawLng", "raw.lng", "raw.lon", "raw.longitude", "source.lng", "source.lon", "source.longitude"]) : null;
-      const lat = readRowCoordinate("lat") ?? fallbackLat;
-      const lng = readRowCoordinate("lng") ?? fallbackLng;
-      const closeBtn = document.querySelector('[data-gridly-sheet-close="alerts"], [data-sheet-close="alerts"], .gridly-v2-sheet [aria-label="Close"]');
-      let hasMap = false;
-      let closedPanel = false;
-      let attemptedFlyTo = false;
+      const lat = Number.isFinite(rowLat) ? rowLat : fallbackLat;
+      const lng = Number.isFinite(rowLng) ? rowLng : fallbackLng;
+      const usedFallbackCoords = (!Number.isFinite(rowLat) || !Number.isFinite(rowLng)) && Number.isFinite(lat) && Number.isFinite(lng);
+      const sheet = alertRow.closest("#gridlyPortraitV2Sheet, .gridly-v2-sheet") || document.querySelector("#gridlyPortraitV2Sheet[data-active-sheet='alerts']");
+      const closeButton = sheet?.querySelector?.("#gridlyPortraitV2SheetClose, [data-gridly-sheet-close='alerts'], [data-sheet-close='alerts'], [aria-label='Close panel'], [aria-label='Close']") || null;
+      const isVisible = (el) => {
+        if (!(el instanceof HTMLElement)) return false;
+        const style = getComputedStyle(el);
+        if (el.hidden || style.display === "none" || style.visibility === "hidden" || Number(style.opacity || "1") === 0) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      };
+      const isPanelVisible = () => {
+        const activeSheet = document.querySelector("#gridlyPortraitV2Sheet[data-active-sheet='alerts']");
+        if (activeSheet instanceof HTMLElement) return isVisible(activeSheet);
+        return isVisible(alertsPanel);
+      };
+      const panelVisibleBefore = isPanelVisible();
       const mapInstance = getGridlyAlertMapInstance();
-      hasMap = Boolean(mapInstance);
+      const hasMap = Boolean(mapInstance);
+      let closeClicked = false;
+      let attemptedFlyTo = false;
       try {
-        if (typeof window.closeGridlyPortraitV2Sheet === "function") {
-          window.closeGridlyPortraitV2Sheet("alerts");
-          closedPanel = true;
-        } else if (typeof window.minimizeGridlyPortraitV2Sheet === "function") {
-          window.minimizeGridlyPortraitV2Sheet("alerts");
-          closedPanel = true;
-        } else if (closeBtn) {
-          closeBtn.click();
-          closedPanel = true;
-        }
         if (Number.isFinite(lat) && Number.isFinite(lng)) {
+          if (closeButton) {
+            closeButton.click();
+            closeClicked = true;
+          }
           if (typeof mapInstance?.flyTo === "function") {
             mapInstance.flyTo([lat, lng], 16, { animate: true });
             attemptedFlyTo = true;
@@ -2245,12 +2260,17 @@ function openAlertsSurfaceFromDock() {
           if (typeof window.focusAlertMarkerOnMap === "function") window.focusAlertMarkerOnMap(id, { lat, lng });
         }
       } finally {
-        console.log("[V157.5 ALERT ROW FOCUS]", {
+        console.log("[V157.5A ALERT FOCUS VERIFY]", {
           id,
+          rowDataset,
+          usedFallbackCoords,
           lat,
           lng,
           hasMap,
-          closedPanel,
+          closeButtonFound: Boolean(closeButton),
+          closeClicked,
+          panelVisibleBefore,
+          panelVisibleAfter: isPanelVisible(),
           attemptedFlyTo
         });
       }
