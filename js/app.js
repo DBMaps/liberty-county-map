@@ -6988,8 +6988,10 @@ function renderUnifiedIncidents() {
   let routeHighlightedMarkers = 0;
 
   dedupedIncidents.forEach((incident) => {
-    const lat = Number(incident?.lat);
-    const lng = Number(incident?.lng);
+    const rawLat = incident?.lat ?? incident?.latitude ?? incident?.rawLat;
+    const rawLng = incident?.lng ?? incident?.lon ?? incident?.longitude ?? incident?.rawLng;
+    const lat = Number(rawLat);
+    const lng = Number(rawLng);
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
 
     const distanceFromUser = userLocation
@@ -7164,9 +7166,13 @@ function getLiveHazardIncidents() {
 }
 
 function getHazardClusterKey(hazard) {
-  const lat = Number(hazard.lat).toFixed(3);
-  const lng = Number(hazard.lng).toFixed(3);
-  return `${hazard.type}-${lat}-${lng}`;
+  const rawLat = hazard?.lat ?? hazard?.latitude ?? hazard?.rawLat;
+  const rawLng = hazard?.lng ?? hazard?.lon ?? hazard?.longitude ?? hazard?.rawLng;
+  const latNum = Number(rawLat);
+  const lngNum = Number(rawLng);
+  const lat = Number.isFinite(latNum) ? latNum.toFixed(3) : "na";
+  const lng = Number.isFinite(lngNum) ? lngNum.toFixed(3) : "na";
+  return `${hazard?.type || "hazard"}-${lat}-${lng}`;
 }
 
 
@@ -7206,8 +7212,8 @@ function getUnifiedIncidents() {
           ? `${incident.crossingName} Rail Update`
           : `✅ ${incident.crossingName} Cleared`,
       description: latest.detail,
-      lat: latest.lat,
-      lng: latest.lng,
+      lat: latest.lat ?? latest.latitude ?? latest.rawLat,
+      lng: latest.lng ?? latest.lon ?? latest.longitude ?? latest.rawLng,
       area: incident.crossingName,
       created_at: latest.submittedAt,
       confidence: latest.confidence,
@@ -7228,8 +7234,8 @@ function getUnifiedIncidents() {
       status: latest.type === "hazard_cleared" ? "cleared" : "active",
       title: latest.title,
       description: latest.detail,
-      lat: latest.lat,
-      lng: latest.lng,
+      lat: latest.lat ?? latest.latitude ?? latest.rawLat,
+      lng: latest.lng ?? latest.lon ?? latest.longitude ?? latest.rawLng,
       area: latest.location_name || latest.area || latest.city || incident.location_name || incident.area || incident.city || "",
       created_at: latest.submittedAt,
       confidence: latest.confidence,
@@ -18973,13 +18979,20 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     sheet.hidden = false;
     body.hidden = false;
     backdrop.hidden = false;
+    sheet.removeAttribute("aria-hidden");
+    backdrop.removeAttribute("aria-hidden");
+    sheet.removeAttribute("inert");
+    backdrop.removeAttribute("inert");
 
+    sheet.style.visibility = "visible";
+    sheet.style.opacity = "1";
     sheet.style.display = "";
     sheet.style.pointerEvents = "auto";
     sheet.style.transform = "none";
     sheet.style.translate = "0 0";
     sheet.classList.remove("is-closing", "is-closed", "visible", "active", "open");
-    sheet.classList.add("is-open");
+    sheet.classList.add("is-open", "active", "open");
+    sheet.setAttribute("data-active-sheet", type);
 
     backdrop.style.display = "";
     backdrop.style.pointerEvents = "auto";
