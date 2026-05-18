@@ -2131,7 +2131,6 @@ function hardenBottomDockInteractivity() {
 
 function bindBottomDockRealButtons() {
   hardenBottomDockInteractivity();
-  const dockDiag = window.__gridlyV2DockRuntimeDiagnostics || (window.__gridlyV2DockRuntimeDiagnostics = { dockLastIntent: "", dockLastIntentAt: 0, dockLastOpenResult: null });
   const buttons = getBottomDockButtons();
   buttons.forEach((button) => {
     if (button.dataset.gridlyDockBound === 'true') return;
@@ -2140,64 +2139,14 @@ function bindBottomDockRealButtons() {
     button.addEventListener('click', (event) => {
       event.preventDefault();
       event.stopPropagation();
-      const trace = (result) => {
-        dockDiag.dockLastIntent = intent;
-        dockDiag.dockLastIntentAt = Date.now();
-        dockDiag.dockLastOpenResult = result;
-        console.info("[Gridly V146J dock]", { intent, result, at: dockDiag.dockLastIntentAt });
-        return result;
-      };
-      if (intent === 'report') return trace(invokeMobileReportEntry?.('bottom_dock_runtime_bind', event) ?? true);
-      if (intent === 'route') return trace(openGridlySurface?.('route', () => openMobileRouteQuickPanel?.()) ?? true);
-      if (intent === 'alerts') return trace(Boolean(window.openGridlyPortraitV2Sheet?.('alerts') || openAlertsSurfaceFromDock()));
-      if (intent === 'settings') return trace(Boolean(openSettingsSurfaceFromDock()));
-      if (intent === 'layers') return trace(Boolean(window.openGridlyPortraitV2Sheet?.('layers') || openPortraitLayersSurface?.()));
-      return trace(false);
+      if (intent === 'report') return invokeMobileReportEntry?.('bottom_dock_runtime_bind', event);
+      if (intent === 'route') return openGridlySurface?.('route', () => openMobileRouteQuickPanel?.());
+      if (intent === 'alerts') return openGridlyPortraitV2Sheet?.('alerts') || openAlertsSurfaceFromDock();
+      if (intent === 'settings') return openSettingsSurfaceFromDock();
+      if (intent === 'layers') return openGridlyPortraitV2Sheet?.('layers') || openPortraitLayersSurface?.();
     }, true);
     button.dataset.gridlyDockBound = 'true';
   });
-}
-
-function installFinalBottomDockIntentBridge() {
-  if (document.documentElement?.dataset?.gridlyDockBridgeFinalized === "true") return;
-  document.documentElement.dataset.gridlyDockBridgeFinalized = "true";
-  const dockDiag = window.__gridlyV2DockRuntimeDiagnostics || (window.__gridlyV2DockRuntimeDiagnostics = { dockLastIntent: "", dockLastIntentAt: 0, dockLastOpenResult: null });
-  const resolveIntent = (target) => {
-    const dockButton = target?.closest?.("#gridlyBottomDock [data-v2-sheet], .gridly-v2-bottom-dock [data-v2-sheet], .mobile-floating-action-dock [data-v2-sheet], .mobile-floating-action-dock button, [data-gridly-bottom-dock] [data-v2-sheet], [data-gridly-bottom-dock] button") || null;
-    if (!dockButton) return "";
-    const explicitSheet = String(dockButton.dataset?.v2Sheet || "").trim().toLowerCase();
-    if (["report", "route", "alerts", "settings", "layers"].includes(explicitSheet)) return explicitSheet;
-    const id = String(dockButton.id || "");
-    if (id === "mobileDockReportBtn") return "report";
-    if (id === "mobileDockRouteBtn") return "route";
-    if (id === "mobileDockAlertsBtn") return "alerts";
-    if (id === "mobileDockLayersBtn") return "layers";
-    const mode = String(dockButton.dataset?.mode || "").trim().toLowerCase();
-    if (["report", "route", "alert", "alerts", "layers", "settings"].includes(mode)) {
-      if (mode === "alert") return "alerts";
-      return mode;
-    }
-    return "";
-  };
-  const handler = (event) => {
-    const target = event.target instanceof Element ? event.target : null;
-    if (!target) return;
-    if (target.closest("#gridlyPortraitV2Sheet, .leaflet-container, .leaflet-pane, .leaflet-control, .leaflet-marker-pane, .leaflet-popup-pane")) return;
-    const dockRoot = target.closest("#gridlyBottomDock, .gridly-v2-bottom-dock, .mobile-floating-action-dock, [data-gridly-bottom-dock]");
-    if (!dockRoot) return;
-    const intent = resolveIntent(target);
-    if (!intent) return;
-    const result = Boolean(window.openGridlyPortraitV2Sheet?.(intent));
-    dockDiag.dockLastIntent = intent;
-    dockDiag.dockLastIntentAt = Date.now();
-    dockDiag.dockLastOpenResult = result;
-    event.preventDefault?.();
-    event.stopPropagation?.();
-    event.stopImmediatePropagation?.();
-    return false;
-  };
-  document.addEventListener("click", handler, true);
-  document.addEventListener("touchend", handler, true);
 }
 
 function setMobileUiMode(mode = "live", options = {}) {
@@ -3270,8 +3219,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadCrossings();
   await loadRoadwayDataset();
   await loadSharedReports("initial_bootstrap");
-  setTimeout(() => window.gridlyRenderHazardMarkersDebug?.(), 250);
-  setTimeout(() => window.gridlyRenderHazardMarkersDebug?.(), 1000);
 
   setInterval(() => loadSharedReports("interval_live_refresh"), LIVE_REFRESH_MS);
 });
@@ -5969,8 +5916,6 @@ function runPostSubmitRefreshInBackground(submitAudit, markSubmitStage, sourceTa
       submitAudit.backgroundRefreshCompletedAt = completedAt;
       submitAudit.backgroundRefreshDurationMs = completedAt - startedAt;
       console.debug("Post-submit refresh complete");
-      setTimeout(() => window.gridlyRenderHazardMarkersDebug?.(), 250);
-      setTimeout(() => window.gridlyRenderHazardMarkersDebug?.(), 1000);
     })
     .catch((error) => {
       console.warn("Post-submit background refresh failed", error);
@@ -6036,9 +5981,7 @@ async function loadSharedReports(reason = "manual") {
 
     pushGridlyReflowTrace("post-submit refresh", "start", { source: `loadSharedReports:${reason}` });
     refreshReportHazardViews(`loadSharedReports:${reason}`);
-    triggerProductionHazardMarkerRender(`loadSharedReports:${reason}`);
-    setTimeout(() => window.gridlyRenderHazardMarkersDebug?.(), 250);
-    setTimeout(() => window.gridlyRenderHazardMarkersDebug?.(), 1000);
+    if (typeof renderUnifiedIncidentMarkers === "function") renderUnifiedIncidentMarkers();
     pushGridlyReflowTrace("post-submit refresh", "end", { source: `loadSharedReports:${reason}` });
 
     setSync(`${activeReports.length} crossing reports · ${activeHazards.length} hazards synced`);
@@ -8425,7 +8368,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
       }
       refreshReportHazardViews("createSharedHazardReport:local_immediate");
       if (typeof renderUnifiedIncidents === "function") renderUnifiedIncidents();
-      triggerProductionHazardMarkerRender("createSharedHazardReport:local_immediate");
+      if (typeof renderUnifiedIncidentMarkers === "function") renderUnifiedIncidentMarkers();
     }
     const submitLifecycleId = row.crossing_id;
     if (!beginSubmitLifecycleGuard(submitLifecycleId)) {
@@ -15406,12 +15349,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     sections[stageName] = Number(Number(stageMs || 0).toFixed(3));
   });
   sections.derived_field_precompute_index = Number((precomputeTimeSource() - precomputeStartedAt).toFixed(3));
-  const safeActiveIncidents = Array.isArray(activeIncidents)
-    ? activeIncidents
-    : activeIncidents && typeof activeIncidents === "object"
-      ? Object.values(activeIncidents)
-      : [];
-  const activeIncidentIds = safeActiveIncidents.map((incident) => getRawMinusActiveComparableIncidentId(incident));
+  const activeIncidentIds = (activeIncidents || []).map((incident) => getRawMinusActiveComparableIncidentId(incident));
   const activeIncidentIdSet = new Set(activeIncidentIds);
   gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentCount = activeIncidentIds.length;
   gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentIds = activeIncidentIds;
@@ -18940,61 +18878,37 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     };
   }
   function buildAlertsSurfaceHtml() {
-    const fallbackHtml = `<div class="gridly-v2-command-surface">
-      <section class="gridly-v2-command-hero" aria-label="Hero command state">
-        <p class="gridly-v2-command-kicker">Commute Command</p>
-        <h4>COMMUTE CLEAR</h4>
-        <p>No active alerts right now.</p>
-      </section>
-      <p class="gridly-v2-sheet-copy">No active alerts right now.</p>
-      <p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p>
-      <button class="secondary-btn" data-v2-action="alerts-manage-open" type="button">Manage Alerts</button>
-      <button class="secondary-btn" data-v2-action="alerts-preferences-open" type="button">Alert Preferences</button>
-    </div>`;
-    let alerts = null;
-    try {
-      alerts = getAlertsSurfaceSnapshot();
-    } catch (error) {
-      console.warn("[Gridly V2] Alerts snapshot unavailable; using fallback.", error);
-      return fallbackHtml;
-    }
-    let intel = null;
-    try {
-      intel = buildUnifiedLocalizedCommuteIntelligence({ limit: 8 });
-    } catch (error) {
-      console.warn("[Gridly V2] Alerts intelligence unavailable; using fallback.", error);
-      return fallbackHtml;
-    }
-    try {
-      const primaryCorridor = intel.highestPriorityCorridor || null;
-      const secondaryCorridors = (intel.corridorClusters || []).slice(1, 3);
-      const recentlyCleared = Array.isArray(intel.recentlyCleared) ? intel.recentlyCleared.slice(0, 2) : [];
+    const alerts = getAlertsSurfaceSnapshot();
+    const intel = buildUnifiedLocalizedCommuteIntelligence({ limit: 8 });
+    const primaryCorridor = intel.highestPriorityCorridor || null;
+    const secondaryCorridors = (intel.corridorClusters || []).slice(1, 3);
+    const recentlyCleared = Array.isArray(intel.recentlyCleared) ? intel.recentlyCleared.slice(0, 2) : [];
 
-      const heroTitle = sanitizeText((intel.consequencePrimaryMessage || "COMMUTE CLEAR").toUpperCase());
-      const heroDetail = sanitizeText(intel.consequenceSecondaryMessage || "Major corridors are moving normally.");
-      const recommendation = sanitizeText(intel.rerouteReadinessDetected
-        ? `Avoid ${primaryCorridor?.label || "primary corridor"}`
-        : alerts.hasActiveAlerts
-          ? "Watch US 90"
-          : "Route Clear");
+    const heroTitle = sanitizeText((intel.consequencePrimaryMessage || "COMMUTE CLEAR").toUpperCase());
+    const heroDetail = sanitizeText(intel.consequenceSecondaryMessage || "Major corridors are moving normally.");
+    const recommendation = sanitizeText(intel.rerouteReadinessDetected
+      ? `Avoid ${primaryCorridor?.label || "primary corridor"}`
+      : alerts.hasActiveAlerts
+        ? "Watch US 90"
+        : "Route Clear");
 
-      const primaryLabel = sanitizeText((primaryCorridor?.label || "US 90").replace(" Corridor", ""));
-      const primaryState = sanitizeText((primaryCorridor?.healthState || "clear").replace(/_/g, " ").toUpperCase());
-      const primarySummary = sanitizeText(primaryCorridor?.summary || (alerts.hasActiveAlerts ? alerts.routeImpactSummary : "Traffic moving normally"));
-      const primaryCount = Number(primaryCorridor?.incidentCount || 0);
-      const primaryIncidents = (primaryCorridor?.incidents || []).slice(0, 2)
-        .map((incident) => `<li>${sanitizeText(incident.localizedSummary || incident.topLine || "Traffic slowing")}</li>`)
-        .join("");
+    const primaryLabel = sanitizeText((primaryCorridor?.label || "US 90").replace(" Corridor", ""));
+    const primaryState = sanitizeText((primaryCorridor?.healthState || "clear").replace(/_/g, " ").toUpperCase());
+    const primarySummary = sanitizeText(primaryCorridor?.summary || (alerts.hasActiveAlerts ? alerts.routeImpactSummary : "Traffic moving normally"));
+    const primaryCount = Number(primaryCorridor?.incidentCount || 0);
+    const primaryIncidents = (primaryCorridor?.incidents || []).slice(0, 2)
+      .map((incident) => `<li>${sanitizeText(incident.localizedSummary || incident.topLine || "Traffic slowing")}</li>`)
+      .join("");
 
-      const secondaryHtml = secondaryCorridors.length
-        ? secondaryCorridors.map((corridor) => `<div class="gridly-v2-secondary-item"><strong>${sanitizeText((corridor.label || "").replace(" Corridor", ""))}</strong><span>${sanitizeText(corridor.summary || "Traffic moving normally")}</span></div>`).join("")
-        : `<div class="gridly-v2-secondary-item"><strong>Local roads steady</strong><span>Major commuter roads are moving normally.</span></div>`;
+    const secondaryHtml = secondaryCorridors.length
+      ? secondaryCorridors.map((corridor) => `<div class="gridly-v2-secondary-item"><strong>${sanitizeText((corridor.label || "").replace(" Corridor", ""))}</strong><span>${sanitizeText(corridor.summary || "Traffic moving normally")}</span></div>`).join("")
+      : `<div class="gridly-v2-secondary-item"><strong>Local roads steady</strong><span>Major commuter roads are moving normally.</span></div>`;
 
-      const clearedHtml = recentlyCleared.length
-        ? recentlyCleared.map((item) => `<li>${sanitizeText(item.localizedSummary || item.topLine || "Conditions improving")}</li>`).join("")
-        : "<li>No recent recovery updates</li>";
+    const clearedHtml = recentlyCleared.length
+      ? recentlyCleared.map((item) => `<li>${sanitizeText(item.localizedSummary || item.topLine || "Conditions improving")}</li>`).join("")
+      : "<li>No recent recovery updates</li>";
 
-      return `<div class="gridly-v2-command-surface">
+    return `<div class="gridly-v2-command-surface">
       <section class="gridly-v2-command-hero" aria-label="Hero command state">
         <p class="gridly-v2-command-kicker">Commute Command</p>
         <h4>${heroTitle}</h4>
@@ -19020,10 +18934,6 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       <button class="secondary-btn" data-v2-action="alerts-manage-open" type="button">Manage Alerts</button>
       <button class="secondary-btn" data-v2-action="alerts-preferences-open" type="button">Alert Preferences</button>
     </div>`;
-    } catch (error) {
-      console.warn("[Gridly V2] Alerts template render failed; using fallback.", error);
-      return fallbackHtml;
-    }
   }
 
   const sheetTemplates = {
@@ -19084,7 +18994,6 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
 
   const V2_CONTAINMENT_CLASS = "gridly-v2-surface-containment";
-  const APP_RUNTIME_BUILD_TAG = "V146N";
   const legacySurfaceState = { lastSuppressed: "", visibleCount: 0, report: false, route: false, alerts: false, settings: false };
 
   function isPortraitV2VisuallyActive() {
@@ -19148,19 +19057,6 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     if (!sheet || !backdrop || !title || !body || !template) return false;
     const templateHtml = typeof template.html === "function" ? template.html() : template.html;
 
-    activeSheet = "";
-    sheet.hidden = true;
-    sheet.style.display = "block";
-    sheet.style.pointerEvents = "none";
-    sheet.classList.remove("is-closing", "is-closed", "visible", "active", "open", "is-open");
-    backdrop.hidden = true;
-    backdrop.style.display = "";
-    backdrop.style.pointerEvents = "none";
-    backdrop.classList.remove("is-closing", "is-closed", "visible", "active", "open", "is-open");
-    body.hidden = false;
-    body.style.display = "";
-    body.classList.remove("is-closing", "is-closed", "visible", "active", "open", "is-open");
-
     activeSheet = sheetName;
     title.textContent = template.title || "";
     body.innerHTML = templateHtml || "";
@@ -19168,7 +19064,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     body.style.display = "";
 
     shell?.removeAttribute("hidden");
-    shell?.classList.remove("is-closing", "is-closed", "hidden");
+    shell?.classList.remove("is-closing", "is-closed");
 
     sheet.removeAttribute("hidden");
     sheet.removeAttribute("aria-hidden");
@@ -19177,7 +19073,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     sheet.style.opacity = "1";
     sheet.style.display = "";
     sheet.style.pointerEvents = "auto";
-    sheet.style.transform = "translate3d(0,0,0)";
+    sheet.style.transform = "translate3d(0, 0, 0)";
     sheet.style.translate = "0 0";
     sheet.classList.remove("is-closing", "is-closed", "visible", "active", "open");
     sheet.classList.add("is-open", "active", "open");
@@ -19198,7 +19094,6 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   function openPortraitV2Sheet(type) {
     return openGridlyPortraitV2Sheet(type);
   }
-  window.openGridlyPortraitV2Sheet = openGridlyPortraitV2Sheet;
   function getV2PreconditionsState() {
     const route = getRouteSurfaceSnapshot();
     const reportHazardSelected = Boolean(selectedV2HazardType || (typeof reportingState === "object" && reportingState?.selectedHazardType));
@@ -19672,11 +19567,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     exposeGridlyAuditHelper("gridlyRouteAuditGlobalsCheck", gridlyRouteAuditGlobalsCheck);
   }
   function bindV2(){
-    installFinalBottomDockIntentBridge();
     applyPortraitV2SurfaceContainment();
-    triggerProductionHazardMarkerRender("map_init_bindV2");
-    setTimeout(() => triggerProductionHazardMarkerRender("delayed_500ms"), 500);
-    setTimeout(() => triggerProductionHazardMarkerRender("delayed_1500ms"), 1500);
     window.addEventListener("resize", applyPortraitV2SurfaceContainment);
     window.addEventListener("orientationchange", applyPortraitV2SurfaceContainment);
     document.querySelectorAll("[data-v2-sheet]").forEach((b)=>b.addEventListener("click",()=>openPortraitV2Sheet(b.dataset.v2Sheet)));
@@ -19694,14 +19585,6 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   window.gridlyRenderHazardMarkersDebug = function gridlyRenderHazardMarkersDebug() {
     return renderUnifiedIncidentMarkers();
   };
-  function triggerProductionHazardMarkerRender(source = "unknown") {
-    try {
-      return Boolean(renderUnifiedIncidentMarkers?.());
-    } catch (error) {
-      console.warn("Hazard marker render bridge failed", { source, error });
-      return false;
-    }
-  }
   window.gridlyPortraitV2Debug = function(){
     const v2=document.getElementById("gridlyPortraitV2"); const mode=document.body?.dataset?.layoutMode||null;
     const isVisible=(el)=>Boolean(el&&getComputedStyle(el).display!=="none"&&getComputedStyle(el).visibility!=="hidden"&&Number(getComputedStyle(el).opacity||1)!==0);
@@ -20094,8 +19977,6 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
   const byIntent = (intent) => classified.some((entry) => entry.intent === intent && entry.btn.dataset.gridlyDockBound === "true");
   const alertsPanel = document.querySelector("#alertsSection:not([hidden]), .gridly-tactical-dock-sheet:not([hidden])[data-action='alerts']");
   const markerAudit = window.gridlyMarkerAuditDebug?.() || {};
-  const dockDiag = window.__gridlyV2DockRuntimeDiagnostics || {};
-  const v2SheetNode = document.getElementById("gridlyPortraitV2Sheet");
   const isVisible = (el) => {
     if (!el || el.hidden) return false;
     const style = window.getComputedStyle(el);
@@ -20179,7 +20060,6 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
   });
 
   return {
-    appRuntimeBuildTag: APP_RUNTIME_BUILD_TAG,
     bottomDockButtonsFound: dockButtons.length,
     reportButtonBound: byIntent("report"),
     routeButtonBound: byIntent("route"),
@@ -20204,19 +20084,10 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
     activeHazardCount: Array.isArray(activeHazards) ? activeHazards.length : 0,
     activeHazardCoordinateSample,
     visibleHazardMarkerCount,
-    markerRenderFunctionFound: Boolean(typeof renderUnifiedIncidentMarkers === "function" || markerAudit?.markerRenderFunctionFound),
-    gridlyOpenSheetDebugFound: typeof window.gridlyOpenSheetDebug === "function",
-    gridlyRenderHazardMarkersDebugFound: typeof window.gridlyRenderHazardMarkersDebug === "function",
+    markerRenderFunctionFound: Boolean(markerAudit?.markerRenderFunctionFound),
     markerSourceCount: Number(markerAudit?.markerSourceCount || 0),
     markerSourceSample: Array.isArray(markerAudit?.markerSourceSample) ? markerAudit.markerSourceSample : [],
     markerRenderSkipReasons: markerAudit?.markerRenderSkipReasons || null,
-    dockLastIntent: dockDiag.dockLastIntent || "",
-    dockLastIntentAt: Number(dockDiag.dockLastIntentAt || 0),
-    dockLastOpenResult: dockDiag.dockLastOpenResult ?? null,
-    v2SheetClassName: v2SheetNode?.className || "",
-    v2SheetHidden: Boolean(v2SheetNode?.hidden),
-    v2SheetDisplay: v2SheetNode ? getComputedStyle(v2SheetNode).display : null,
-    v2SheetPointerEvents: v2SheetNode ? getComputedStyle(v2SheetNode).pointerEvents : null,
     currentFilter: activeGeoFilter || null
   };
 };
