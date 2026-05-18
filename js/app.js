@@ -19443,17 +19443,17 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
 
   function buildAlertsSurfaceHtml() {
     const snapshot = getAlertsSurfaceSnapshot();
-    const alerts = Array.isArray(snapshot.alerts)
+    const rawAlerts = Array.isArray(snapshot.alerts)
       ? snapshot.alerts
       : [];
 
     const hasActiveAlerts =
       snapshot.hasActiveAlerts === true ||
-      alerts.length > 0;
+      rawAlerts.length > 0;
 
     const severityRank = { high: 3, moderate: 2, low: 1, cleared: 0 };
     const groupedAlerts = new Map();
-    alerts.forEach((alert) => {
+    rawAlerts.forEach((alert) => {
       const key = getAlertClusterKey(alert);
       const minutes = Number.parseInt(String(alert?.minutesText || "").replace(/[^0-9]/g, ""), 10);
       const rank = severityRank[String(alert?.severity || "moderate").toLowerCase()] || 1;
@@ -19472,10 +19472,15 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const dedupedAlerts = [...groupedAlerts.values()].map((entry) => ({ ...entry.lead, extraCount: entry.extras }))
       .sort((a, b) => (b.__rank - a.__rank) || (a.__minutes - b.__minutes));
 
-    const compactLimit = 4;
+    const groupedFailed = dedupedAlerts.length === 0 && rawAlerts.length > 0;
+    const fallbackAlerts = rawAlerts.slice(0, 3).map((alert) => ({ ...alert, extraCount: 0 }));
+    const activeCards = groupedFailed ? fallbackAlerts : dedupedAlerts;
+
+    const detailCardLimit = 3;
     const isMobileCompact = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(max-width: 768px)").matches;
-    const visibleAlerts = isMobileCompact ? dedupedAlerts.slice(0, compactLimit) : dedupedAlerts;
-    const hiddenCount = Math.max(0, dedupedAlerts.length - visibleAlerts.length);
+    const visibleAlerts = (isMobileCompact ? activeCards : activeCards).slice(0, detailCardLimit);
+    const hiddenCount = Math.max(0, activeCards.length - visibleAlerts.length);
+    const affectedCrossingsMoreCount = Math.max(0, rawAlerts.length - visibleAlerts.length);
 
     let html = "";
 
@@ -19484,6 +19489,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
 <div class="gridly-alerts-active">
   <div class="gridly-alert-headline">
     ${sanitizeText(snapshot.commuteImpactHeadline || "Active Alerts")}
+  </div>
+  <div class="gridly-alert-row" style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.08);">
+    <div class="gridly-alert-title" style="font-weight:700;line-height:1.3;">MOVEMENT SUMMARY</div>
+    <div class="gridly-alert-subtitle" style="font-size:12px;opacity:0.85;">${sanitizeText(snapshot.topStatusLocalizedDetail || snapshot.routeImpactSummary || "Active movement impacts reported")}</div>
   </div>
 
   ${visibleAlerts.map((alert) => {
@@ -19509,6 +19518,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     </div>
   `;
   }).join("")}
+  ${affectedCrossingsMoreCount > 0 ? `<div class="gridly-alert-row"><div class="gridly-alert-subtitle">+ ${affectedCrossingsMoreCount} more affected crossings</div></div>` : ""}
   ${hiddenCount > 0 ? `<div class="gridly-alert-row"><div class="gridly-alert-subtitle">+ ${hiddenCount} more active alerts</div></div>` : ""}
 </div>
 `;
@@ -19525,7 +19535,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     }
 
     console.log("[Alerts HTML ACTIVE PATH V155]", {
-      alertsLength: alerts.length,
+      alertsLength: rawAlerts.length,
+      groupedLength: dedupedAlerts.length,
+      renderedCards: visibleAlerts.length,
+      groupedFailed,
       hasActiveAlerts,
       htmlLength: html.length
     });
