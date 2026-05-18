@@ -8173,6 +8173,12 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     lastMobileReportSubmitDebug.lastSubmitAttempt = "supabase_insert_succeeded";
     markSubmitStage("supabase_insert_succeeded");
     lastMobileReportSubmitDebug.supabaseInsertSucceeded = true;
+    const localHazardRows = normalizeReports([row]);
+    const localHazardEntry = localHazardRows[0] || null;
+    if (localHazardEntry) {
+      activeHazards = [localHazardEntry, ...activeHazards.filter((hazard) => hazard.crossingId !== localHazardEntry.crossingId)];
+      refreshReportHazardViews("createSharedHazardReport:local_immediate");
+    }
     const submitLifecycleId = row.crossing_id;
     if (!beginSubmitLifecycleGuard(submitLifecycleId)) {
       markSubmitStage("duplicate_success_lifecycle_suppressed", { submitLifecycleId });
@@ -9555,9 +9561,13 @@ function bindEvents() {
   const handleDesktopCommandAction = (section) => {
     const fallbackMessages = {
       weather: "Weather coming soon",
-      settings: "Settings coming soon",
       dispatcher: "Dispatcher profile coming soon"
     };
+    if (section === "settings") {
+      openGridlySurface("settings", () => openSettingsModal());
+      setConfirmation("Settings opened.", "success");
+      return;
+    }
     if (section === "crossings") {
       routeNavSection("map");
       applyGeoFilterFromPill("all", "desktop-live-data");
@@ -9590,7 +9600,7 @@ function bindEvents() {
     settings: "Left rail Settings action"
   };
 
-  const navButtons = Array.from(document.querySelectorAll(".desktop-only-nav .nav-btn[data-section], .desktop-left-rail .nav-btn[data-section], .mobile-bottom-nav .nav-btn[data-section]"));
+  const navButtons = Array.from(document.querySelectorAll(".top-nav .nav-btn[data-section], .desktop-only-nav .nav-btn[data-section], .desktop-left-rail .nav-btn[data-section], .mobile-bottom-nav .nav-btn[data-section]"));
   navButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
       const section = btn.dataset.section;
