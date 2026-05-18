@@ -18970,13 +18970,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
 
     if (isRail) {
       if (road && atStreet) return `Train blocking ${road} at ${atStreet}`;
-      if (road) {
-        const near = pickFirstNonEmptyText([alert?.nearestRoad, alert?.crossingRoad, alert?.knownLocation, alert?.locationName, alert?.location]);
-        if (near) return `Train blocking ${road} near ${near}`;
-      }
-      if (road) return `Train blocking ${road}`;
-      if (alert?.corridor) return `Train blocking ${String(alert.corridor).trim()}`;
-      return "Train blocking railroad crossing";
+      if (road && alert?.nearestRoad) return `Train blocking ${road} near ${String(alert.nearestRoad).trim()}`;
+      if (road && alert?.knownLocation) return `Train blocking ${road} near ${String(alert.knownLocation).trim()}`;
+      if (alert?.crossingRoad) return `Train blocking at ${String(alert.crossingRoad).trim()}`;
+      return "Rail crossing blocked";
     }
 
     if (road && crossA && crossB) {
@@ -18988,21 +18985,34 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       if (near) return `${hazardType} on ${road} near ${near}`;
       return `${hazardType} on ${road}`;
     }
-    return pickFirstNonEmptyText([alert?.title, alert?.subtitle]) || "Road hazard nearby";
+    return pickFirstNonEmptyText([alert?.title, alert?.subtitle]) || "Road hazard reported";
   }
 
   function getSeverityChipLabel(alert = {}) {
     const sev = String(alert?.severity || "moderate").toLowerCase();
     if (sev === "high") return "High impact";
-    if (sev === "low") return "Low impact";
+    if (sev === "low") return "Minor impact";
     if (sev === "cleared") return "Cleared";
-    return "Medium impact";
+    return "Moderate impact";
+  }
+
+  function getAlertLocationClusterLabel(alert = {}) {
+    return pickFirstNonEmptyText([
+      alert?.crossingRoad,
+      alert?.nearestRoad,
+      alert?.knownLocation,
+      alert?.crossingName,
+      alert?.locationName,
+      alert?.location
+    ]);
   }
 
   function getAlertClusterKey(alert = {}) {
+    const kind = String(alert?.reportKind || "").toLowerCase() === "crossing" ? "rail" : "road";
     const type = String(alert?.type || alert?.reportType || "hazard").toLowerCase();
-    const road = pickFirstNonEmptyText([alert?.roadName, alert?.corridor, alert?.locationName, alert?.crossingName]).toLowerCase();
-    return `${type}|${road}`;
+    const corridor = pickFirstNonEmptyText([alert?.corridor, alert?.roadName, alert?.titleRoad]).toLowerCase();
+    const locationCluster = getAlertLocationClusterLabel(alert).toLowerCase();
+    return `${kind}|${type}|${corridor}|${locationCluster}`;
   }
   function getAlertsSurfaceSnapshot() {
     const incidents = getActiveUnifiedIncidents();
@@ -19176,21 +19186,24 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
 
   ${visibleAlerts.map((alert) => {
     const title = resolveAlertTitleText(alert);
-    const typeOrStatus = String(alert?.type || alert?.status || "Active Alert").replace(/[_-]+/g, " ").trim();
-    const severity = String(alert?.severity || "").trim();
-    const metaLine = [
-      typeOrStatus ? typeOrStatus.charAt(0).toUpperCase() + typeOrStatus.slice(1) : "",
-      severity ? `${severity.charAt(0).toUpperCase() + severity.slice(1)}${/severity/i.test(severity) ? "" : " severity"}` : ""
-    ].filter(Boolean).join(" • ");
+    const locationLineRaw = pickFirstNonEmptyText([
+      alert?.crossingRoad ? `At ${alert.crossingRoad}` : "",
+      alert?.nearestRoad ? `Near ${alert.nearestRoad}` : "",
+      alert?.knownLocation ? `Near ${alert.knownLocation}` : "",
+      alert?.crossingName ? `At ${alert.crossingName}` : "",
+      alert?.locationName ? `Near ${alert.locationName}` : "",
+      alert?.location ? `Near ${alert.location}` : "",
+      alert?.subtitle || ""
+    ]);
     const timeText = String(alert?.minutesText || alert?.timeText || "now");
+    const locationTimeLine = [locationLineRaw, timeText].filter(Boolean).join(" • ");
     return `
     <div class="gridly-alert-row" style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.08);">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
-        <div class="gridly-alert-title" style="font-weight:700;line-height:1.3;">${sanitizeText(title)}</div>
-        <div class="gridly-alert-subtitle" style="white-space:nowrap;opacity:0.85;">${sanitizeText(timeText)}</div>
+        <div class="gridly-alert-title" style="font-weight:700;line-height:1.3;">${sanitizeText(title).toUpperCase()}</div>
       </div>
-      <div class="gridly-alert-subtitle" style="font-size:12px;opacity:0.85;">${sanitizeText(alert?.subtitle || "")}</div>
-      <div class="gridly-alert-subtitle" style="font-size:12px;opacity:0.8;">${sanitizeText(getSeverityChipLabel(alert))}${alert?.extraCount > 0 ? ` · + ${alert.extraCount} more nearby reports` : ""}</div>
+      <div class="gridly-alert-subtitle" style="font-size:12px;opacity:0.85;">${sanitizeText(locationTimeLine)}</div>
+      <div class="gridly-alert-subtitle" style="font-size:12px;opacity:0.8;"><span style="display:inline-block;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,0.12);font-weight:600;">${sanitizeText(getSeverityChipLabel(alert))}</span>${alert?.extraCount > 0 ? ` <span style="opacity:0.9;">+${alert.extraCount} more nearby reports</span>` : ""}</div>
     </div>
   `;
   }).join("")}
