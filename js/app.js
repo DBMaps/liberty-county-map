@@ -432,6 +432,14 @@ const gridlyCommuteIntelligenceAuditState = {
   commuteAuditInputSource: "uninitialized",
   commuteAuditUnifiedIncidentCountBeforeBuild: 0,
   commuteAuditUnifiedIncidentCountAfterBuild: 0,
+  commuteAuditRawUnifiedIncidentCount: 0,
+  commuteAuditRawUnifiedIncidentIds: [],
+  commuteAuditActiveIncidentCount: 0,
+  commuteAuditActiveIncidentIds: [],
+  commuteAuditModelInputCount: 0,
+  commuteAuditModelInputIds: [],
+  commuteAuditCountMismatchStage: null,
+  commuteAuditCountMismatchReason: null,
   commuteAuditSanitizerReason: null,
   commuteAuditExcludedIncidentCount: 0,
   commuteAuditExclusionReasons: [],
@@ -1135,6 +1143,14 @@ function gridlyCommuteIntelligenceAudit() {
     commuteAuditInputSource: String(gridlyCommuteIntelligenceAuditState.commuteAuditInputSource || "uninitialized"),
     commuteAuditUnifiedIncidentCountBeforeBuild: Number(gridlyCommuteIntelligenceAuditState.commuteAuditUnifiedIncidentCountBeforeBuild || 0),
     commuteAuditUnifiedIncidentCountAfterBuild: Number(gridlyCommuteIntelligenceAuditState.commuteAuditUnifiedIncidentCountAfterBuild || 0),
+    commuteAuditRawUnifiedIncidentCount: Number(gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentCount || 0),
+    commuteAuditRawUnifiedIncidentIds: [...(gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentIds || [])],
+    commuteAuditActiveIncidentCount: Number(gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentCount || 0),
+    commuteAuditActiveIncidentIds: [...(gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentIds || [])],
+    commuteAuditModelInputCount: Number(gridlyCommuteIntelligenceAuditState.commuteAuditModelInputCount || 0),
+    commuteAuditModelInputIds: [...(gridlyCommuteIntelligenceAuditState.commuteAuditModelInputIds || [])],
+    commuteAuditCountMismatchStage: gridlyCommuteIntelligenceAuditState.commuteAuditCountMismatchStage || null,
+    commuteAuditCountMismatchReason: gridlyCommuteIntelligenceAuditState.commuteAuditCountMismatchReason || null,
     commuteAuditSanitizerReason: gridlyCommuteIntelligenceAuditState.commuteAuditSanitizerReason || null,
     commuteAuditExcludedIncidentCount: Number(gridlyCommuteIntelligenceAuditState.commuteAuditExcludedIncidentCount || 0),
     commuteAuditExclusionReasons: [...(gridlyCommuteIntelligenceAuditState.commuteAuditExclusionReasons || [])],
@@ -14735,6 +14751,14 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   gridlyCommuteIntelligenceAuditState.commuteAuditInputSource = "getUnifiedIncidents()->getActiveUnifiedIncidents(status=active)";
   gridlyCommuteIntelligenceAuditState.commuteAuditUnifiedIncidentCountBeforeBuild = unifiedIncidentsBeforeBuildCount;
   gridlyCommuteIntelligenceAuditState.commuteAuditUnifiedIncidentCountAfterBuild = unifiedIncidentsBeforeBuildCount;
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentCount = unifiedIncidentsBeforeBuildCount;
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentIds = (unifiedIncidentsForAudit || []).map((incident) => String(incident?.id || ""));
+  gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentCount = 0;
+  gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentIds = [];
+  gridlyCommuteIntelligenceAuditState.commuteAuditModelInputCount = 0;
+  gridlyCommuteIntelligenceAuditState.commuteAuditModelInputIds = [];
+  gridlyCommuteIntelligenceAuditState.commuteAuditCountMismatchStage = null;
+  gridlyCommuteIntelligenceAuditState.commuteAuditCountMismatchReason = null;
   gridlyCommuteIntelligenceAuditState.commuteAuditSanitizerReason = null;
   gridlyCommuteIntelligenceAuditState.commuteAuditExcludedIncidentCount = 0;
   gridlyCommuteIntelligenceAuditState.commuteAuditExclusionReasons = [];
@@ -14867,6 +14891,10 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   const unifiedIncidentIds = (unifiedIncidentsForAudit || []).map((incident) => String(incident?.id || ""));
   const activeIncidentIds = (activeIncidents || []).map((incident) => String(incident?.id || ""));
   const activeIncidentIdSet = new Set(activeIncidents.map((incident) => String(incident?.id || "")));
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentCount = unifiedIncidentIds.length;
+  gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentIds = unifiedIncidentIds;
+  gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentCount = activeIncidentIds.length;
+  gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentIds = activeIncidentIds;
   const unifiedExclusionsFromStatus = unifiedIncidentsForAudit
     .filter((incident) => !activeIncidentIdSet.has(String(incident?.id || "")))
     .map((incident) => ({
@@ -15157,6 +15185,8 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   const incidentsProcessedCount = Number(commuteModelHelperCallCounts.incidentsProcessed || 0);
   const commuteModelInputIds = (intelItems || []).map((item) => String(item?.incident?.id || ""));
   const processedIncidentIdSet = new Set(commuteModelInputIds);
+  gridlyCommuteIntelligenceAuditState.commuteAuditModelInputCount = commuteModelInputIds.length;
+  gridlyCommuteIntelligenceAuditState.commuteAuditModelInputIds = commuteModelInputIds;
   const missingIds = activeIncidentIds.filter((incidentId) => !processedIncidentIdSet.has(incidentId));
   const buildAuditExclusionReasonEntry = (incident, reason = "unknown", stage = "unknown") => {
     if (!incident || typeof incident !== "object") {
@@ -15237,6 +15267,31 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   counts.incidentsProcessed = incidentsProcessedCount;
   const excludedIncidentCount = Math.max(0, unifiedIncidentCount - incidentsProcessedCount);
   const exclusionReasons = buildAuditExclusionDetails.slice(0, Math.max(0, excludedIncidentCount));
+  if (excludedIncidentCount > exclusionReasons.length) {
+    const rawUnifiedCount = Number(gridlyCommuteIntelligenceAuditState.commuteAuditRawUnifiedIncidentCount || 0);
+    const activeCount = Number(gridlyCommuteIntelligenceAuditState.commuteAuditActiveIncidentCount || 0);
+    const modelInputCount = Number(gridlyCommuteIntelligenceAuditState.commuteAuditModelInputCount || 0);
+    let mismatchStage = "unknown";
+    let mismatchReason = `unresolved_count_gap:expected_exclusions=${excludedIncidentCount},resolved=${exclusionReasons.length}`;
+    if (rawUnifiedCount !== activeCount) {
+      mismatchStage = "status_filter_getActiveUnifiedIncidents";
+      mismatchReason = `raw_unified_count_differs_from_active_count:${rawUnifiedCount}->${activeCount}`;
+    } else if (activeCount !== modelInputCount) {
+      mismatchStage = "commute_model_build_activeIncidents_map";
+      mismatchReason = `active_count_differs_from_model_input_count:${activeCount}->${modelInputCount}`;
+    } else if (unifiedIncidentCount !== rawUnifiedCount) {
+      mismatchStage = "audit_count_source_selection";
+      mismatchReason = `published_unified_count_differs_from_raw_unified_count:${unifiedIncidentCount}->${rawUnifiedCount}`;
+    } else {
+      mismatchStage = "fallback_placeholder_generation";
+      mismatchReason = `incident_object_unavailable_for_exclusion_gap:${excludedIncidentCount - exclusionReasons.length}`;
+    }
+    gridlyCommuteIntelligenceAuditState.commuteAuditCountMismatchStage = mismatchStage;
+    gridlyCommuteIntelligenceAuditState.commuteAuditCountMismatchReason = mismatchReason;
+  } else {
+    gridlyCommuteIntelligenceAuditState.commuteAuditCountMismatchStage = null;
+    gridlyCommuteIntelligenceAuditState.commuteAuditCountMismatchReason = null;
+  }
   if (excludedIncidentCount > exclusionReasons.length) {
     exclusionReasons.push(buildAuditExclusionReasonEntry(
       null,
