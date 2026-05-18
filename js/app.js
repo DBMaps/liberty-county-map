@@ -2072,6 +2072,22 @@ function openAlertsSurfaceFromDock() {
   return false;
 }
 
+function invokeMobileAlertsEntry(sourceLabel, event) {
+  reportDebugLog("[Gridly][Alerts] mobile alerts entry clicked", {
+    sourceLabel,
+    eventType: event?.type || "manual",
+    targetId: event?.target?.id || null,
+    receiverId: event?.currentTarget?.id || null
+  });
+  const opened = openAlertsSurfaceFromDock();
+  if (!opened) {
+    openGridlyPortraitV2Sheet?.("alerts", {
+      title: "Alerts",
+      html: '<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy">No active alerts right now.</p></div>'
+    });
+  }
+}
+
 function openSettingsSurfaceFromDock() {
   const v2SettingsBtn = document.querySelector('#gridlyPortraitV2 [data-v2-sheet="settings"]');
   if (v2SettingsBtn && typeof openPortraitV2Sheet === 'function') {
@@ -9255,23 +9271,7 @@ function bindEvents() {
     openGridlySurface("route", () => openMobileRouteQuickPanel());
   });
   document.getElementById("mobileDockAlertsBtn")?.addEventListener("click", () => {
-    if (!isTacticalLandscapeDockMode()) {
-      const alertsSection = document.getElementById("alertsSection");
-      openGridlySurface("alerts", () => {
-        document.body.classList.add("portrait-alerts-open");
-        if (alertsSection) {
-          alertsSection.hidden = false;
-          alertsSection.setAttribute("aria-hidden", "false");
-          alertsSection.style.display = "grid";
-          alertsSection.style.opacity = "1";
-          alertsSection.style.pointerEvents = "auto";
-          alertsSection.style.width = "";
-          alertsSection.style.height = "";
-        }
-        setMobileUiMode("alert", { silent: true });
-      });
-      return;
-    }
+    if (!isTacticalLandscapeDockMode()) return invokeMobileAlertsEntry("mobile_dock_alerts");
     const rows = (getUnifiedIncidents?.() || []).slice(0, 8).map((incident) => {
       const latest = incident?.latestReport || {};
       return `<article class="gridly-tactical-alert-row"><strong>${sanitizeText(incident?.crossingName || "Incident")}</strong><p>${sanitizeText(getReportCopy(latest.type).label)} · ${sanitizeText(getReportStateLabel(latest))}</p></article>`;

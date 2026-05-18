@@ -7398,6 +7398,26 @@ body.modal-open {
   z-index: 1300 !important;
 }
 
+/* V148C surgical fix: restore map-control glyph visibility without reviving hidden panels */
+#map .leaflet-control-zoom a span,
+#map .leaflet-control-zoom a svg,
+#map .leaflet-control-layers-toggle,
+#map .leaflet-control-layers-toggle span,
+#map .leaflet-control-layers-toggle svg,
+#gridlyPortraitV2 .gridly-v2-control-rail button span,
+#gridlyPortraitV2 .gridly-v2-control-rail button i,
+#gridlyPortraitV2 .gridly-v2-control-rail button svg,
+.gridly-mobile-control-rail button span,
+.gridly-mobile-control-rail button i,
+.gridly-mobile-control-rail button svg {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: inherit !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
 .map-tools-overlay {
   z-index: 540 !important;
   background: rgba(8, 13, 20, 0.56) !important;
