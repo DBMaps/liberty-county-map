@@ -5982,6 +5982,10 @@ async function loadSharedReports(reason = "manual") {
     pushGridlyReflowTrace("post-submit refresh", "start", { source: `loadSharedReports:${reason}` });
     refreshReportHazardViews(`loadSharedReports:${reason}`);
     scheduleHazardMarkerAutoRender(`loadSharedReports:${reason}`);
+    if (Array.isArray(activeHazards) && activeHazards.length > 0) {
+      setTimeout(() => renderUnifiedIncidents("post-load-250"), 250);
+      setTimeout(() => renderUnifiedIncidents("post-load-1000"), 1000);
+    }
     pushGridlyReflowTrace("post-submit refresh", "end", { source: `loadSharedReports:${reason}` });
 
     setSync(`${activeReports.length} crossing reports · ${activeHazards.length} hazards synced`);
@@ -6997,7 +7001,7 @@ function ensureUnifiedIncidentLayerOnMap() {
   return Boolean(unifiedIncidentLayer && typeof map.hasLayer === "function" ? map.hasLayer(unifiedIncidentLayer) : unifiedIncidentLayer);
 }
 
-function renderUnifiedIncidents() {
+function renderUnifiedIncidents(reason = "auto") {
   const endRenderUnifiedTrace = timeGridlyReflowTrace("renderUnifiedIncidents");
   if (!ensureUnifiedIncidentLayerOnMap()) return;
 
@@ -7021,6 +7025,15 @@ function renderUnifiedIncidents() {
   const incidents = shouldUseFallbackHazards ? fallbackHazards : primaryIncidents;
   const markerRenderSkipReasons = { missing_lat_lng: 0, invalid_lat_lng: 0, filtered_out: 0, missing_marker_layer: 0, render_exception: 0 };
   const markerSourceUsed = shouldUseFallbackHazards ? "activeHazards_fallback" : "unifiedIncidents";
+  const sourceCounts = {
+    primaryCount: primaryIncidents.length,
+    primaryValidCount: primaryCoordinateCount,
+    activeHazardsCount: fallbackHazards.length,
+    activeHazardsValidCount: fallbackCoordinateCount,
+    selectedSourceName: markerSourceUsed,
+    selectedSourceCount: incidents.length
+  };
+  console.log("[V147D] renderUnifiedIncidents source", sourceCounts);
   const routeHazard = routeWatchActivated ? getRouteHazardAssessment() : null;
   const dedupedMap = new Map();
   const duplicateCounts = new Map();
@@ -7134,12 +7147,25 @@ function renderUnifiedIncidents() {
       lng: getIncidentCoordinate(item).lng ?? null
     })),
     markerRenderSkipReasons,
-    markerSourceUsed
+    markerSourceUsed,
+    lastMarkerRenderAt: new Date().toISOString(),
+    lastMarkerRenderSourceCounts: sourceCounts,
+    lastMarkerRenderResult: {
+      reason,
+      selectedSourceName: markerSourceUsed,
+      selectedSourceCount: incidents.length,
+      renderedMarkerCount: typeof unifiedIncidentLayer?.getLayers === "function" ? unifiedIncidentLayer.getLayers().length : 0
+    }
   };
 }
 
 function renderUnifiedIncidentMarkers() {
   return renderUnifiedIncidents();
+}
+
+
+if (typeof window !== "undefined") {
+  window.gridlyRenderUnifiedIncidentsNow = () => renderUnifiedIncidents("manual-debug");
 }
 
 function scheduleHazardMarkerAutoRender(source = "unspecified") {
@@ -20134,6 +20160,10 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
     markerRenderFunctionFound: Boolean(markerAudit?.markerRenderFunctionFound) || markerRendererPresent,
     markerSourceCount: Number(markerAudit?.markerSourceCount || 0),
     markerSourceSample: Array.isArray(markerAudit?.markerSourceSample) ? markerAudit.markerSourceSample : [],
+    markerSourceUsed: markerAudit?.markerSourceUsed || "",
+    lastMarkerRenderAt: markerAudit?.lastMarkerRenderAt || null,
+    lastMarkerRenderSourceCounts: markerAudit?.lastMarkerRenderSourceCounts || null,
+    lastMarkerRenderResult: markerAudit?.lastMarkerRenderResult || null,
     markerRenderSkipReasons: markerAudit?.markerRenderSkipReasons || null,
     currentFilter: activeGeoFilter || null
   };
