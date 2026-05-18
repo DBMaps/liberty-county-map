@@ -2300,12 +2300,12 @@ function openAlertsSurfaceFromDock() {
   };
   let html = '';
   let hasActiveAlerts = false;
-  let alerts = [];
+  let rawAlerts = [];
   try {
     const snapshot = window.getAlertsSurfaceSnapshot?.() || getAlertsSurfaceSnapshot?.();
-    alerts = Array.isArray(snapshot?.alerts) ? snapshot.alerts : [];
-    console.log("[V155.8 ALERT RAW SAMPLE]", alerts.slice(0, 3));
-    console.table(alerts.slice(0, 5).map(a => ({
+    rawAlerts = Array.isArray(snapshot?.alerts) ? snapshot.alerts : [];
+    console.log("[V155.8 ALERT RAW SAMPLE]", rawAlerts.slice(0, 3));
+    console.table(rawAlerts.slice(0, 5).map(a => ({
       keys: Object.keys(a || {}).join(", "),
       id: a?.id,
       type: a?.type,
@@ -2320,14 +2320,17 @@ function openAlertsSurfaceFromDock() {
       rawKeys: a?.raw ? Object.keys(a.raw).join(", ") : "",
       sourceKeys: a?.source ? Object.keys(a.source).join(", ") : ""
     })));
-    hasActiveAlerts = snapshot?.hasActiveAlerts === true || alerts.length > 0;
+    const formattedAlerts = rawAlerts.map((alert) => formatAlertForMobileV2(alert));
+    hasActiveAlerts = snapshot?.hasActiveAlerts === true || rawAlerts.length > 0;
 
     if (hasActiveAlerts) {
-      const cards = clusterAlerts(alerts.map((alert) => formatAlertForMobileV2(alert)));
-      const detailCards = cards.slice(0, 3);
-      const hiddenCount = Math.max(0, cards.length - detailCards.length);
-      const leadCard = detailCards[0] || cards[0] || null;
-      const totalReports = cards.reduce((sum, card) => sum + Number(card?.reportCount || 1), 0);
+      const cards = clusterAlerts(formattedAlerts);
+      const fallbackCards = formattedAlerts.filter(Boolean);
+      const activeCards = cards.length > 0 ? cards : fallbackCards;
+      const detailCards = activeCards.slice(0, 3);
+      const hiddenCount = Math.max(0, activeCards.length - detailCards.length);
+      const leadCard = detailCards[0] || activeCards[0] || null;
+      const totalReports = activeCards.reduce((sum, card) => sum + Number(card?.reportCount || 1), 0);
       html = `
 <div class="gridly-alerts-active">
   <div class="gridly-alert-row gridly-alert-intel-card">
@@ -2350,11 +2353,11 @@ function openAlertsSurfaceFromDock() {
     console.warn('[Gridly][Alerts] live alerts template render failed; fallback retained.', error);
     html = '';
     hasActiveAlerts = false;
-    alerts = [];
+    rawAlerts = [];
   }
   console.log("[Alerts DIRECT HTML V156]", {
     hasActiveAlerts,
-    count: alerts.length,
+    count: rawAlerts.length,
     htmlLength: html.length
   });
 
