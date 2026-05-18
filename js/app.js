@@ -4638,6 +4638,11 @@ function installLayerPickerDebugDiagnostics() {
       if (zoomControl) mobileControlRail?.appendChild(zoomControl);
     }
     menuRoot.classList.toggle("is-mobile-visible", compactMode);
+    if (compactMode) {
+      menuRoot.hidden = false;
+      menuRoot.style.display = "";
+      menuRoot.style.visibility = "visible";
+    }
     if (!compactMode) {
       mobileLayerMenuOpen = false;
       menuRoot.classList.remove("is-open");
@@ -19100,6 +19105,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     shell?.removeAttribute("hidden");
     shell?.classList.remove("is-closing", "is-closed");
 
+    sheet.hidden = false;
     sheet.removeAttribute("hidden");
     sheet.removeAttribute("aria-hidden");
     sheet.removeAttribute("inert");
@@ -19113,6 +19119,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     sheet.classList.add("is-open", "active", "open");
     sheet.setAttribute("data-active-sheet", sheetName);
 
+    backdrop.hidden = false;
     backdrop.removeAttribute("hidden");
     backdrop.removeAttribute("aria-hidden");
     backdrop.removeAttribute("inert");
@@ -19125,7 +19132,13 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     return true;
   }
 
-  function openPortraitV2Sheet(type) {
+  function openPortraitV2Sheet(type, titleOverride = "", htmlOverride = "") {
+    if (titleOverride || htmlOverride) {
+      return openGridlyPortraitV2Sheet(type, {
+        title: titleOverride || sheetTemplates[type]?.title || "",
+        html: htmlOverride || sheetTemplates[type]?.html || ""
+      });
+    }
     return openGridlyPortraitV2Sheet(type);
   }
   function getV2PreconditionsState() {
@@ -19628,6 +19641,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     document.querySelector("[data-v2-control='layers']")?.addEventListener("click",()=>document.querySelector("#mobileDockLayersBtn")?.click());
   }
   window.openPortraitV2Sheet = openPortraitV2Sheet;
+  window.openGridlyPortraitV2Sheet = openGridlyPortraitV2Sheet;
   window.gridlyOpenSheetDebug = function gridlyOpenSheetDebug(sheetName) {
     return openGridlyPortraitV2Sheet(sheetName);
   };
