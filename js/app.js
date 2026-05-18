@@ -2633,22 +2633,26 @@ function openAlertsSurfaceFromDock() {
         return { value: shortDesc || "Road hazard reported", source: shortDesc ? "shortHazardDescription" : "default" };
       };
 
-      const titleFor = alert => {
-        const picked = chooseBestAlertLocationContext(alert);
-        const explicit = cleanDisplayValue(text(alert.resolvedHeadline) || text(alert.headline) || text(alert.title) || text(alert.localizedSummary));
-        if (explicit && !isGenericPrimaryTitle(explicit) && (/\sat\s/i.test(explicit) || /\snear\s/i.test(explicit) || isSpecificPhrase(explicit))) return explicit;
-        const primary = pickPrimaryTitleMeta(alert);
-        if (primary.value) return primary.value;
-        if (explicit && !isGenericPrimaryTitle(explicit)) return explicit;
-        return "Road hazard reported";
+      const composeFinalAlertRowText = (alert = {}) => {
+        const roadLabel = cleanDisplayValue(text(alert.roadName) || text(alert.corridor) || text(alert.locationName) || text(alert.titleRoad));
+        const crossingLabel = cleanDisplayValue(text(alert.crossingName) || text(alert.crossingRoad) || text(alert.nearestRoad) || text(alert.knownLocation) || text(alert.locationName) || text(alert.location));
+        const knownLocationLabel = cleanDisplayValue(text(alert.knownLocation) || text(alert.locationName) || text(alert.location) || text(alert.nearestRoad));
+        const eventLabel = cleanDisplayValue(text(alert.hazardTypeLabel) || text(alert.typeLabel) || text(alert.type) || text(alert.reportType) || text(alert.report_type) || text(alert.title));
+        const finalTitle = buildAlertTitle({
+          alert,
+          roadLabel,
+          crossingLabel,
+          knownLocationLabel,
+          eventLabel
+        });
+        return {
+          finalTitle: finalTitle || "Road hazard reported",
+          subtitle: buildAlertSubtitleLine(alert, finalTitle || "Road hazard reported")
+        };
       };
 
-      const helperTextFor = alert => {
-        const primary = titleFor(alert).toLowerCase();
-        const secondary = pickSecondaryDetailMeta(alert);
-        if (secondary.value && secondary.value.toLowerCase() !== primary) return secondary.value;
-        return "Road hazard reported";
-      };
+      const titleFor = alert => composeFinalAlertRowText(alert).finalTitle;
+      const helperTextFor = alert => composeFinalAlertRowText(alert).subtitle;
       const timeTextFor = alert => text(alert.minutesText) || text(alert.timeAgo) || text(alert.updatedText) || "Now";
       const renderAlertCard = (alert, index, isHidden = false) => {
   const lat = getFirstNumber(alert, ["lat", "latitude", "rawLat", "raw.lat", "source.lat"]);
