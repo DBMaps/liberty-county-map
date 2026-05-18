@@ -991,11 +991,7 @@ const gridlyPortraitIntelligenceBreakdownAudit = function gridlyPortraitIntellig
     updateDailyHabitStatus,
     ...snapshotGridlyIntelligenceCacheAudit(),
     slowestSection,
-    recommendedTargets: [
-      'Measure the slowest section under both route-watch active and idle states.',
-      'Compare DOM update sections with alert volume and corridor cluster counts.',
-      'Track intelligence calculation sections against unified incident totals and route relevance checks.'
-    ]
+    recommendedTargets: []
   };
 };
 
@@ -1080,13 +1076,7 @@ function gridlyCommuteIntelligenceAudit() {
     const slowestSection = timedSectionEntries
       .sort((a, b) => b[1] - a[1])
       .map(([name, durationMs]) => ({ name, durationMs }))[0] || null;
-    const recommendedTargets = performanceAuditAvailable
-      ? [
-        `Prioritize ${slowestSection.name} (${slowestSection.durationMs.toFixed(1)}ms) for current-cycle optimization experiments.`,
-        "Compare section timing under route-watch active vs inactive runs to isolate route-dependent costs.",
-        "Correlate incident and corridor counts with slow sections to confirm algorithmic scaling."
-      ]
-      : [];
+    const recommendedTargets = [];
   const sectionAttribution = {
     route_relevance_checks: Number(sections.route_relevance_checks || 0),
     commute_model_build: Number(sections.commute_model_build || 0),
@@ -1487,11 +1477,7 @@ const gridlyRefreshBreakdownAudit = function gridlyRefreshBreakdownAudit() {
     slowestChild,
     ...snapshotGridlyIntelligenceCacheAudit(),
     recentRefreshes: [...(gridlyRefreshAuditState.recentRefreshes || [])],
-    recommendedTargets: [
-      "Instrument and isolate the slowest child call first.",
-      "Check child-level item counts against duration spikes.",
-      "Verify route intelligence active/idle state impact on refresh cost."
-    ],
+    recommendedTargets: [],
     itemCounts: {
       alertCount: Array.isArray(activeReports) ? activeReports.length : 0,
       unifiedIncidentCount: Array.isArray(unifiedIncidents) ? unifiedIncidents.length : 0,
@@ -19596,13 +19582,7 @@ const v134ReportingRefinementApplied = true;
       'setInterval live refresh loop for shared reports'
     ];
 
-    const recommendedTargets = [
-      'Batch DOM writes before any geometry/computed-style reads per frame.',
-      'Isolate heavy visibility/debug probes from hot interaction paths.',
-      'Throttle/de-duplicate resize-triggered measurement paths.',
-      'Guard map.invalidateSize calls to only run when container dimensions actually changed.',
-      'Centralize sheet/panel measurement to one read phase per transition.'
-    ];
+    const recommendedTargets = [];
 
     const mapResizeGuard = window.__gridlyMapResizeGuard || null;
     return {
