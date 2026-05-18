@@ -20180,8 +20180,94 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
   };
 };
 
+const gridlyPointerInterceptionAudit = function gridlyPointerInterceptionAudit() {
+  const selectors = [
+    "[data-v2-action='report-use-location']",
+    "[data-v2-action='report-tap-map']",
+    "[data-v2-action='alerts-manage-open']",
+    "[data-v2-action='alerts-preferences-open']",
+    "[data-v2-action='route-watch-open']",
+    "[data-v2-action='route-preview-open']",
+    "[data-v2-action='route-manage-places-open']",
+    "[data-action='open-route-watch']",
+    "[data-action='view-route-quick']",
+    "[data-action='open-manage-places-quick']",
+    ".leaflet-popup-content [data-action]",
+    ".leaflet-popup-content button"
+  ];
+  const all = selectors.flatMap((selector) => Array.from(document.querySelectorAll(selector)));
+  const buttons = all.filter((el, index) => all.indexOf(el) === index).filter((el) => el instanceof Element);
+  const isVisible = (el) => {
+    const style = getComputedStyle(el);
+    const rect = el.getBoundingClientRect();
+    return !el.hidden && style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity || 1) > 0 && rect.width > 0 && rect.height > 0;
+  };
+  const pickVisible = buttons.filter((el) => isVisible(el));
+  const chain = (start, mapper) => {
+    const out = [];
+    let node = start instanceof Element ? start : null;
+    while (node) {
+      out.push(mapper(node));
+      node = node.parentElement;
+    }
+    return out;
+  };
+  const desc = (el) => `${el.tagName.toLowerCase()}${el.id ? `#${el.id}` : ""}${el.className ? `.${String(el.className).trim().replace(/\s+/g, ".")}` : ""}`;
+  const entries = pickVisible.map((button) => {
+    const rect = button.getBoundingClientRect();
+    const center = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+    const top = document.elementFromPoint(center.x, center.y);
+    const blocked = Boolean(top && top !== button && !button.contains(top));
+    const pivot = top || button;
+    return {
+      text: (button.textContent || "").trim(),
+      action: button.dataset?.v2Action || button.dataset?.action || button.dataset?.routeAction || "",
+      buttonBoundingRect: { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom, width: rect.width, height: rect.height },
+      elementFromPointAtCenter: top instanceof Element ? desc(top) : null,
+      topmostElement: top instanceof Element ? desc(top) : null,
+      topmostIsButton: Boolean(top && (top === button || button.contains(top))),
+      blockedByOverlay: blocked,
+      zIndexChain: chain(pivot, (el) => ({ element: desc(el), zIndex: getComputedStyle(el).zIndex })),
+      pointerEventsChain: chain(pivot, (el) => ({ element: desc(el), pointerEvents: getComputedStyle(el).pointerEvents })),
+      hiddenDisplayVisibilityOpacityChain: chain(pivot, (el) => {
+        const s = getComputedStyle(el);
+        return { element: desc(el), hidden: Boolean(el.hidden), display: s.display, visibility: s.visibility, opacity: s.opacity };
+      }),
+      fixedStickyAncestors: chain(pivot, (el) => ({ element: desc(el), position: getComputedStyle(el).position }))
+        .filter((entry) => entry.position === "fixed" || entry.position === "sticky")
+    };
+  });
+  const overlaySelector = "#gridlyPortraitV2, #gridlyPortraitV2Sheet, #gridlyPortraitV2SheetBackdrop, .leaflet-popup-pane, .leaflet-popup, .leaflet-overlay-pane, .route-setup-modal, .route-setup-modal-card, #reportSection, #alertsSection, #settingsModal";
+  const activeBackdropSheetPopupElements = Array.from(document.querySelectorAll(overlaySelector)).map((el) => {
+    const s = getComputedStyle(el);
+    const rect = el.getBoundingClientRect();
+    return {
+      element: desc(el),
+      display: s.display,
+      visibility: s.visibility,
+      opacity: s.opacity,
+      pointerEvents: s.pointerEvents,
+      position: s.position,
+      zIndex: s.zIndex,
+      viewportOccupation: {
+        widthRatio: window.innerWidth ? Number((rect.width / window.innerWidth).toFixed(3)) : 0,
+        heightRatio: window.innerHeight ? Number((rect.height / window.innerHeight).toFixed(3)) : 0
+      }
+    };
+  });
+  return {
+    createdAt: new Date().toISOString(),
+    activeSheet: document.getElementById("gridlyPortraitV2Sheet")?.dataset?.activeSheet || null,
+    ownershipRule: { shell: 9500, backdrop: 9501, activeSheetPopup: "9502+" },
+    buttonsAudited: entries.length,
+    entries,
+    activeBackdropSheetPopupElements
+  };
+};
+
 exposeGridlyAuditHelper("gridlyAuditRegistryDebug", gridlyAuditRegistryDebug);
 exposeGridlyAuditHelper("gridlyCommuteIntelligenceAudit", gridlyCommuteIntelligenceAudit);
+exposeGridlyAuditHelper("gridlyPointerInterceptionAudit", gridlyPointerInterceptionAudit);
 exposeGridlyAuditHelper("loadSharedReports", typeof loadSharedReports === "function" ? loadSharedReports : null);
 exposeAllGridlyAuditHelpers();
 
