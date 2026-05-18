@@ -2375,22 +2375,32 @@ function openAlertsSurfaceFromDock() {
         return base || text(alert.type) || "Active movement alert";
       };
 
-      const rows = alertsForRender.slice(0, 3).map(alert => `
-  <div class="gridly-alert-row gridly-alert-intel-card">
-    <strong>${esc(titleFor(alert))}</strong>
-    <small>${esc(alert.subtitle || alert.minutesText || "Active report")}</small>
+      const helperTextFor = alert => text(alert.subtitle) || text(alert.locationText) || text(alert.crossingRoad) || text(alert.roadName) || "Active report";
+      const timeTextFor = alert => text(alert.minutesText) || text(alert.timeAgo) || text(alert.updatedText) || "Now";
+      const renderAlertCard = (alert, index) => `
+  <div class="gridly-alert-row gridly-alert-intel-card" style="display:flex;gap:10px;align-items:flex-start;padding:12px 12px ${index === 2 ? 12 : 10}px 12px;border:1px solid rgba(255,255,255,0.09);border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018));box-shadow:0 6px 20px rgba(0,0,0,0.28);margin-bottom:${index === 2 ? 0 : 8}px;">
+    <div style="width:18px;min-width:18px;height:18px;margin-top:1px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,179,71,0.18);border:1px solid rgba(255,179,71,0.5);color:#ffd28a;font-size:11px;line-height:1;">!</div>
+    <div style="min-width:0;flex:1;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+        <strong style="display:block;font-size:14px;line-height:1.3;color:#fff;letter-spacing:0.01em;">${esc(titleFor(alert))}</strong>
+        <small style="white-space:nowrap;font-size:11px;line-height:1.25;color:rgba(225,232,244,0.72);margin-top:1px;">${esc(timeTextFor(alert))}</small>
+      </div>
+      <div style="margin-top:4px;font-size:11px;line-height:1.35;color:rgba(199,211,226,0.8);">${esc(helperTextFor(alert))}</div>
+    </div>
   </div>
-`).join("");
+`;
+
+      const rows = alertsForRender.slice(0, 3).map(renderAlertCard).join("");
 
       const extra = alertsForRender.length > 3
-        ? `<div class="gridly-alert-row gridly-alert-intel-card"><small><strong>+ ${alertsForRender.length - 3} more active reports</strong></small></div>`
+        ? `<div class="gridly-alert-row gridly-alert-intel-card" style="margin-top:6px;padding:10px 12px;border:1px solid rgba(255,255,255,0.09);border-radius:11px;background:rgba(255,255,255,0.018);text-align:center;"><small style="font-size:11px;line-height:1.35;color:rgba(206,218,235,0.85);letter-spacing:0.02em;"><strong style="color:#f2f6ff;">+ ${alertsForRender.length - 3} more active reports</strong></small></div>`
         : "";
 
       const html = `
-<div class="gridly-alerts-active">
-  <div class="gridly-alert-row gridly-alert-intel-card">
-    <strong>${esc(snapshot?.commuteImpactHeadline || "Active movement alerts")}</strong>
-    <small>${alertsForRender.length} active community report${alertsForRender.length === 1 ? "" : "s"}</small>
+<div class="gridly-alerts-active" style="padding:0 1px;">
+  <div class="gridly-alert-row gridly-alert-intel-card" style="padding:4px 4px 10px 4px;margin-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.08);">
+    <div style="font-weight:700;font-size:16px;line-height:1.2;letter-spacing:0.015em;color:#f7fbff;">${esc(snapshot?.commuteImpactHeadline || "Active movement alerts")}</div>
+    <div style="margin-top:4px;font-size:12px;line-height:1.35;color:rgba(196,208,224,0.82);">${alertsForRender.length} active community report${alertsForRender.length === 1 ? "" : "s"}</div>
   </div>
   ${rows}
   ${extra}
