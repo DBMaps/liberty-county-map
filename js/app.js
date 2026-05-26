@@ -21976,6 +21976,33 @@ const v134ReportingRefinementApplied = true;
 
 window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit() {
   console.log("[V165.2 DIRECTION CONFIDENCE AUDIT]");
+  const pathHelperFromGlobal = (typeof window !== "undefined" && typeof window.getValueByPath === "function")
+    ? window.getValueByPath
+    : (typeof globalThis !== "undefined" && typeof globalThis.getValueByPath === "function")
+      ? globalThis.getValueByPath
+      : (typeof getValueByPath === "function" ? getValueByPath : null);
+  const safeGetValueByPath = (obj, path) => {
+    if (pathHelperFromGlobal) {
+      try {
+        return pathHelperFromGlobal(obj, path);
+      } catch (_error) {
+        return undefined;
+      }
+    }
+    if (!obj || typeof path !== "string" || !path.trim()) return undefined;
+    return path.split(".").reduce((acc, key) => {
+      if (acc === null || acc === undefined) return undefined;
+      return acc[key];
+    }, obj);
+  };
+  const helperResolved = Boolean(pathHelperFromGlobal);
+  const helperSource = helperResolved ? "global.getValueByPath" : "gridlyDirectionConfidenceAudit.safeGetValueByPath";
+  const auditRecovered = !helperResolved;
+  console.debug("[V165.5.1 DIRECTION PATH HELPER FIX]", {
+    helperResolved,
+    helperSource,
+    auditRecovered
+  });
   const activeIncidents = typeof getActiveUnifiedIncidents === "function" ? getActiveUnifiedIncidents() : [];
   const alertSnapshot = typeof getAlertsSurfaceSnapshot === "function" ? getAlertsSurfaceSnapshot() : null;
   const alertItems = Array.isArray(alertSnapshot?.alerts) ? alertSnapshot.alerts : [];
@@ -21997,7 +22024,7 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
       "primaryRoad", "roadName", "resolvedRoadName", "corridor", "route", "road", "nearestRoad", "knownLocation",
       "raw.primaryRoad", "raw.roadName", "source.primaryRoad", "source.roadName"
     ].filter((path) => {
-      const value = getValueByPath(directionOwnerIncident, path);
+      const value = safeGetValueByPath(directionOwnerIncident, path);
       return typeof value === "string" ? Boolean(value.trim()) : value !== undefined && value !== null;
     });
     const selectedRoadName = String(confidence?.roadName || "").trim();
