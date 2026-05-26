@@ -4473,6 +4473,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadCrossings();
   await loadRoadwayDataset();
   await loadSharedReports("initial_bootstrap");
+  if (typeof syncVisibleTopStripToLiveAlerts === "function") {
+    setTimeout(() => syncVisibleTopStripToLiveAlerts("startup-post-bootstrap-250"), 250);
+    setTimeout(() => syncVisibleTopStripToLiveAlerts("startup-post-bootstrap-1000"), 1000);
+  }
 
   setInterval(() => loadSharedReports("interval_live_refresh"), LIVE_REFRESH_MS);
 });
@@ -7268,6 +7272,11 @@ async function loadSharedReports(reason = "manual") {
       setTimeout(() => refreshPortraitV2LocalizedIntelligence(`loadSharedReports:${reason}:post-load-250`), 250);
       setTimeout(() => refreshPortraitV2LocalizedIntelligence(`loadSharedReports:${reason}:post-load-1000`), 1000);
     }
+    if (typeof syncVisibleTopStripToLiveAlerts === "function") {
+      syncVisibleTopStripToLiveAlerts(`loadSharedReports:${reason}:finish`);
+      setTimeout(() => syncVisibleTopStripToLiveAlerts(`loadSharedReports:${reason}:finish-250`), 250);
+      setTimeout(() => syncVisibleTopStripToLiveAlerts(`loadSharedReports:${reason}:finish-1000`), 1000);
+    }
     pushGridlyReflowTrace("post-submit refresh", "end", { source: `loadSharedReports:${reason}` });
 
     setSync(`${activeReports.length} crossing reports · ${activeHazards.length} hazards synced`);
@@ -8438,6 +8447,9 @@ function renderUnifiedIncidents(reason = "auto") {
       renderedMarkerCount: typeof unifiedIncidentLayer?.getLayers === "function" ? unifiedIncidentLayer.getLayers().length : 0
     }
   };
+  if (typeof syncVisibleTopStripToLiveAlerts === "function") {
+    syncVisibleTopStripToLiveAlerts(`renderUnifiedIncidents:${reason}`);
+  }
 }
 
 function renderUnifiedIncidentMarkers() {
@@ -17315,6 +17327,56 @@ function formatPortraitTopStripImpactLabel(tier = "") {
   return "Low impact";
 }
 
+function syncVisibleTopStripToLiveAlerts(triggerSource = "direct_call") {
+  const topPrimaryEl = document.getElementById("gridlyV2TopStatusPrimary");
+  const topSecondaryEl = document.getElementById("gridlyV2TopStatusSecondary");
+  if (!topPrimaryEl && !topSecondaryEl) return;
+
+  const unifiedIncidents = Array.isArray(getUnifiedIncidents?.()) ? getUnifiedIncidents() : [];
+  const activeIncidentItems = unifiedIncidents.filter((incident) => String(incident?.status || "").toLowerCase() === "active");
+  const activeHazardCount = activeIncidentItems.length;
+  const unifiedIncidentCount = unifiedIncidents.length;
+  const markerAudit = window.gridlyMarkerAuditDebug?.() || {};
+  const markerSourceUsed = markerAudit?.markerSourceUsed || "";
+  const fallbackHazards = Array.isArray(activeHazards) ? activeHazards : [];
+  const sourceIncidents = markerSourceUsed === "activeHazards_fallback" && fallbackHazards.length ? fallbackHazards : activeIncidentItems;
+  const selectedIncident = sourceIncidents[0] || activeIncidentItems[0] || unifiedIncidents[0] || null;
+  const selectedPrimary = safeDisplayText(
+    selectedIncident?.title,
+    selectedIncident?.resolvedHeadline,
+    selectedIncident?.localizedHeadline,
+    selectedIncident?.finalHeadline,
+    selectedIncident?.headline,
+    selectedIncident?.label,
+    ""
+  );
+  const selectedSecondary = `${Math.max(activeHazardCount, unifiedIncidentCount)} active community reports`;
+
+  let wrotePrimary = false;
+  let wroteSecondary = false;
+  if (activeHazardCount > 0 || unifiedIncidentCount > 0) {
+    if (topPrimaryEl && selectedPrimary) {
+      topPrimaryEl.textContent = selectedPrimary;
+      wrotePrimary = true;
+    }
+    if (topSecondaryEl) {
+      topSecondaryEl.textContent = selectedSecondary;
+      wroteSecondary = true;
+    }
+  }
+
+  console.debug("[V161.5 TOP STRIP DIRECT LIVE BIND]", {
+    triggerSource,
+    activeHazardCount,
+    unifiedIncidentCount,
+    markerSourceUsed,
+    selectedPrimary,
+    selectedSecondary,
+    wrotePrimary,
+    wroteSecondary
+  });
+}
+
 function refreshPortraitV2LocalizedIntelligence(triggerSource = "direct_call") {
   const functionStartedAt = performance.now();
   const sections = {};
@@ -17537,6 +17599,9 @@ function renderAlerts() {
   timeSection("text_content_updates", () => {
     els.alertsList.innerHTML = sections.join("");
   });
+  if (typeof syncVisibleTopStripToLiveAlerts === "function") {
+    syncVisibleTopStripToLiveAlerts("renderAlerts:direct-html");
+  }
   endRenderAlertsTrace();
   recordPortraitIntelligenceBreakdown("renderAlerts", functionStartedAt, breakdownSections);
 }
