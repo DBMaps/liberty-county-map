@@ -21789,6 +21789,140 @@ const v134ReportingRefinementApplied = true;
   };
 
 
+const gridlyTopStripDomTraceState = {
+  observer: null,
+  observedNodes: [],
+  latestTopPanelRoot: null
+};
+
+function describeTopStripCandidate(selector, element) {
+  if (!element) {
+    return { selector, exists: false, visible: false, text: "", rect: null, className: "", id: "" };
+  }
+  const rect = element.getBoundingClientRect();
+  const style = window.getComputedStyle(element);
+  const visible = !element.hidden &&
+    style.display !== "none" &&
+    style.visibility !== "hidden" &&
+    style.opacity !== "0" &&
+    rect.width > 0 &&
+    rect.height > 0;
+  return {
+    selector,
+    exists: true,
+    visible,
+    text: (element.textContent || "").trim(),
+    rect: { top: rect.top, left: rect.left, width: rect.width, height: rect.height, bottom: rect.bottom, right: rect.right },
+    className: element.className || "",
+    id: element.id || ""
+  };
+}
+
+function getVisibleTopRoundedPanel() {
+  const candidates = [
+    document.querySelector("#gridlyPortraitV2 .gridly-v2-status-pill"),
+    document.querySelector(".gridly-v2-status-pill"),
+    document.querySelector("#habitStatusStrip"),
+    document.querySelector(".habit-status-strip"),
+    document.querySelector(".gridly-habit-status"),
+    document.querySelector(".gridly-top-status"),
+    document.querySelector(".daily-status")
+  ].filter(Boolean);
+  return candidates.find((node) => {
+    const rect = node.getBoundingClientRect();
+    const style = getComputedStyle(node);
+    return !node.hidden && style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0;
+  }) || null;
+}
+
+function buildTopStripDomAuditPayload() {
+  const selectorCandidates = [
+    "#gridlyV2TopStatusPrimary",
+    "#gridlyV2TopStatusSecondary",
+    "#habitStatusTitle",
+    "#habitStatusSubtitle",
+    "[data-gridly-top-status]",
+    "[data-gridly-status-primary]",
+    "[data-gridly-status-secondary]",
+    ".gridly-v2-top-status",
+    ".gridly-top-status",
+    ".gridly-habit-status",
+    ".gridly-daily-status",
+    ".daily-status",
+    ".status-primary",
+    ".status-secondary"
+  ];
+  const panel = getVisibleTopRoundedPanel();
+  const panelChildren = panel
+    ? Array.from(panel.children).map((child, index) => ({
+      selector: `[top-panel-child-${index}] ${child.tagName.toLowerCase()}${child.id ? `#${child.id}` : ""}`,
+      element: child
+    }))
+    : [];
+  const selectorEntries = selectorCandidates.map((selector) => ({ selector, element: document.querySelector(selector) }));
+  const candidates = [...selectorEntries, ...panelChildren].map((entry) => describeTopStripCandidate(entry.selector, entry.element));
+  const visibleTopText = panel ? (panel.textContent || "").trim().replace(/\s+/g, " ") : "";
+  const markerAudit = window.gridlyMarkerAuditDebug?.() || {};
+  return {
+    visibleTopText,
+    candidates,
+    activeHazardCount: Array.isArray(activeHazards) ? activeHazards.length : 0,
+    unifiedIncidentCount: Array.isArray(getUnifiedIncidents?.()) ? getUnifiedIncidents().length : 0,
+    markerSourceUsed: markerAudit?.markerSourceUsed || ""
+  };
+}
+
+function attachTopStripTextMutationTrace() {
+  const panel = getVisibleTopRoundedPanel();
+  const nodesToObserve = panel ? Array.from(panel.querySelectorAll("*")) : [];
+  if (panel) nodesToObserve.unshift(panel);
+  if (!nodesToObserve.length) return;
+  const signature = nodesToObserve.map((node) => node.id || node.className || node.tagName).join("|");
+  const priorSignature = gridlyTopStripDomTraceState.observedNodes.map((node) => node.id || node.className || node.tagName).join("|");
+  if (gridlyTopStripDomTraceState.observer && signature === priorSignature) return;
+  if (gridlyTopStripDomTraceState.observer) {
+    gridlyTopStripDomTraceState.observer.disconnect();
+  }
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type !== "characterData" && mutation.type !== "childList") return;
+      const targetEl = mutation.target?.nodeType === Node.TEXT_NODE ? mutation.target.parentElement : mutation.target;
+      const oldText = mutation.oldValue || "";
+      const newText = targetEl ? (targetEl.textContent || "").trim() : "";
+      if ((oldText || "").trim() === newText) return;
+      const markerAudit = window.gridlyMarkerAuditDebug?.() || {};
+      const selectorGuess = targetEl?.id
+        ? `#${targetEl.id}`
+        : targetEl?.className
+          ? `.${String(targetEl.className).trim().split(/\s+/).join(".")}`
+          : (targetEl?.tagName || "unknown");
+      console.debug("[V161.3 TOP STRIP DOM WRITE TRACE]", {
+        time: new Date().toISOString(),
+        targetSelectorGuess: selectorGuess,
+        oldText: (oldText || "").trim(),
+        newText,
+        activeHazardCount: Array.isArray(activeHazards) ? activeHazards.length : 0,
+        stack: new Error().stack,
+        markerSourceUsed: markerAudit?.markerSourceUsed || ""
+      });
+    });
+  });
+  nodesToObserve.forEach((node) => observer.observe(node, {
+    subtree: true,
+    childList: true,
+    characterData: true,
+    characterDataOldValue: true
+  }));
+  gridlyTopStripDomTraceState.observer = observer;
+  gridlyTopStripDomTraceState.observedNodes = nodesToObserve;
+  gridlyTopStripDomTraceState.latestTopPanelRoot = panel;
+}
+
+window.gridlyTopStripDomAudit = function gridlyTopStripDomAudit() {
+  attachTopStripTextMutationTrace();
+  return buildTopStripDomAuditPayload();
+};
+
 window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
   bindBottomDockRealButtons();
   const dockButtons = getBottomDockButtons();
