@@ -3224,9 +3224,28 @@ function openAlertsSurfaceFromDock() {
           referenceRoadB,
           finalHeadline
         };
+        let rawOwner = null;
         if (alert && typeof alert === "object") {
           Object.assign(alert, persistedFields);
+          if (alert.raw && typeof alert.raw === "object") {
+            rawOwner = alert.raw;
+            Object.assign(rawOwner, persistedFields);
+          }
         }
+        const availableRoadFields = Object.keys(persistedFields).filter((field) => {
+          if (!rawOwner || typeof rawOwner !== "object") return false;
+          const value = rawOwner[field];
+          return typeof value === "string" ? Boolean(value.trim()) : value !== undefined && value !== null;
+        });
+        console.log("[V165.7 ALERT RAW ROAD FIELD PERSIST]", {
+          id: cleanDisplayValue(alert?.id || alert?.reportId || alert?.uuid || ""),
+          rawOwnerFound: Boolean(rawOwner),
+          persistedToRaw: Boolean(rawOwner),
+          availableRoadFields,
+          primaryRoad,
+          referenceRoadA,
+          referenceRoadB
+        });
         console.log("[V165.6 ROAD LANGUAGE FIELD PERSIST]", {
           id: cleanDisplayValue(alert?.id || alert?.reportId || alert?.uuid || ""),
           persistedFields: Object.keys(persistedFields),
