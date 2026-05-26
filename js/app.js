@@ -22224,9 +22224,30 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
       || incidentTypeToken.includes("flood")
       || incidentTypeToken.includes("closure")
       || incidentTypeToken.includes("construct");
+    const roadFieldsBeforeResolve = {
+      primaryRoad: directionOwnerIncident?.primaryRoad,
+      roadName: directionOwnerIncident?.roadName,
+      referenceRoadA: directionOwnerIncident?.referenceRoadA,
+      referenceRoadB: directionOwnerIncident?.referenceRoadB
+    };
     const roadHazardResolved = (isRoadHazardIncident && typeof resolveRoadHazardSegmentHeadline === "function")
       ? resolveRoadHazardSegmentHeadline(directionOwnerIncident)
       : null;
+    const roadFieldsAfterResolve = roadHazardResolved && typeof roadHazardResolved === "object"
+      ? { ...directionOwnerIncident, ...roadHazardResolved }
+      : directionOwnerIncident;
+    console.debug("[V169.3 DIRECTION ROAD ENRICH TRACE]", {
+      incidentId: String(directionOwnerIncident?.id || directionOwnerIncident?.incidentId || directionOwnerIncident?.reportId || "").trim(),
+      type: String(directionOwnerIncident?.type || directionOwnerIncident?.hazardType || directionOwnerIncident?.category || directionOwnerIncident?.label || ""),
+      before: roadFieldsBeforeResolve,
+      resolverResult: roadHazardResolved,
+      after: {
+        primaryRoad: roadFieldsAfterResolve?.primaryRoad,
+        roadName: roadFieldsAfterResolve?.roadName,
+        referenceRoadA: roadFieldsAfterResolve?.referenceRoadA,
+        referenceRoadB: roadFieldsAfterResolve?.referenceRoadB
+      }
+    });
     const directionAuditOwner = roadHazardResolved && typeof roadHazardResolved === "object"
       ? { ...directionOwnerIncident, ...roadHazardResolved }
       : directionOwnerIncident;
