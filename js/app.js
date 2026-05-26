@@ -16424,6 +16424,7 @@ function getRoadPriorityWeight(incident = {}) {
 
 function buildCommunityConsequenceLabel(incident = {}, fallback = "Traffic slowing") {
   const helperName = "buildCommunityConsequenceLabel";
+  const helperIncident = incident && typeof incident === "object" ? incident : {};
   const helperAuditCycleId = Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0);
   const helperStartedAt = performance.now();
   const sectionTimes = {};
@@ -16443,11 +16444,11 @@ function buildCommunityConsequenceLabel(incident = {}, fallback = "Traffic slowi
     recordLabelHelperInternalAudit(helperName, { totalMs, sectionTimes, calls, incident, result, meta }, helperAuditCycleId);
     return finalizeNearbyPairResult(result);
   };
-  const towns = recordSection("corridor_location_inference", () => recordCall("findTownMentions", () => findTownMentions(incident)));
-  const road = recordSection("corridor_location_inference", () => recordCall("normalizeCorridorBaseLabel+inferCorridorLabel", () => normalizeCorridorBaseLabel(inferCorridorLabel(directionOwnerIncident).replace(/ Corridor$/, ""))));
-  const type = recordSection("input_normalization", () => String(incident?.report_type || incident?.type || "").toLowerCase());
-  const direction = recordSection("type_status_mapping", () => recordCall("inferDirectionalPhrase", () => inferDirectionalPhrase(incident)));
-  const localSpot = recordSection("crossing_road_name_lookup", () => recordCall("buildLocalizedLocationPhrase", () => getCachedRoadNameLookup(incident, "buildLocalizedLocationPhrase", (resolvedLookup) => buildLocalizedLocationPhrase(incident, resolvedLookup))));
+  const towns = recordSection("corridor_location_inference", () => recordCall("findTownMentions", () => findTownMentions(helperIncident)));
+  const road = recordSection("corridor_location_inference", () => recordCall("normalizeCorridorBaseLabel+inferCorridorLabel", () => normalizeCorridorBaseLabel(inferCorridorLabel(helperIncident).replace(/ Corridor$/, ""))));
+  const type = recordSection("input_normalization", () => String(helperIncident?.report_type || helperIncident?.type || "").toLowerCase());
+  const direction = recordSection("type_status_mapping", () => recordCall("inferDirectionalPhrase", () => inferDirectionalPhrase(helperIncident)));
+  const localSpot = recordSection("crossing_road_name_lookup", () => recordCall("buildLocalizedLocationPhrase", () => getCachedRoadNameLookup(helperIncident, "buildLocalizedLocationPhrase", (resolvedLookup) => buildLocalizedLocationPhrase(helperIncident, resolvedLookup))));
   if (towns.length >= 2) return finalizeAudit(recordSection("string_template_construction", () => `Traffic slowing between ${towns[0]} and ${towns[1]}`), { path: "town_pair" });
   if (/blocked|crossing_blocked/.test(type) && /US 90/i.test(road)) return finalizeAudit(recordSection("string_template_construction", () => `Train blocking ${localSpot}${direction ? ` · ${direction} backups` : ""}`), { path: "blocked_us90" });
   if (/blocked|crossing_blocked/.test(type) && /FM 1008/i.test(road)) return finalizeAudit(recordSection("string_template_construction", () => `Train reported at ${localSpot}${towns[0] ? ` into ${towns[0]}` : ""}`), { path: "blocked_fm1008" });
