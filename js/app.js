@@ -4473,10 +4473,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadCrossings();
   await loadRoadwayDataset();
   await loadSharedReports("initial_bootstrap");
-  if (typeof syncVisibleTopStripToLiveAlerts === "function") {
-    setTimeout(() => syncVisibleTopStripToLiveAlerts("startup-post-bootstrap-250"), 250);
-    setTimeout(() => syncVisibleTopStripToLiveAlerts("startup-post-bootstrap-1000"), 1000);
-  }
 
   setInterval(() => loadSharedReports("interval_live_refresh"), LIVE_REFRESH_MS);
 });
@@ -7267,16 +7263,6 @@ async function loadSharedReports(reason = "manual") {
       setTimeout(() => renderUnifiedIncidents("auto-shared-reports-loaded-1000"), 1000);
       setTimeout(() => renderUnifiedIncidents("auto-shared-reports-loaded-2000"), 2000);
     }
-    if (typeof refreshPortraitV2LocalizedIntelligence === "function") {
-      refreshPortraitV2LocalizedIntelligence(`loadSharedReports:${reason}:post-load`);
-      setTimeout(() => refreshPortraitV2LocalizedIntelligence(`loadSharedReports:${reason}:post-load-250`), 250);
-      setTimeout(() => refreshPortraitV2LocalizedIntelligence(`loadSharedReports:${reason}:post-load-1000`), 1000);
-    }
-    if (typeof syncVisibleTopStripToLiveAlerts === "function") {
-      syncVisibleTopStripToLiveAlerts(`loadSharedReports:${reason}:finish`);
-      setTimeout(() => syncVisibleTopStripToLiveAlerts(`loadSharedReports:${reason}:finish-250`), 250);
-      setTimeout(() => syncVisibleTopStripToLiveAlerts(`loadSharedReports:${reason}:finish-1000`), 1000);
-    }
     pushGridlyReflowTrace("post-submit refresh", "end", { source: `loadSharedReports:${reason}` });
 
     setSync(`${activeReports.length} crossing reports · ${activeHazards.length} hazards synced`);
@@ -8447,9 +8433,6 @@ function renderUnifiedIncidents(reason = "auto") {
       renderedMarkerCount: typeof unifiedIncidentLayer?.getLayers === "function" ? unifiedIncidentLayer.getLayers().length : 0
     }
   };
-  if (typeof syncVisibleTopStripToLiveAlerts === "function") {
-    syncVisibleTopStripToLiveAlerts(`renderUnifiedIncidents:${reason}`);
-  }
 }
 
 function renderUnifiedIncidentMarkers() {
@@ -14897,43 +14880,6 @@ function logTopPanelWrite(sourceFunction, targetElement, value) {
   });
 }
 
-const GRIDLY_TOP_STRIP_CLEAR_STATE_PATTERNS = [
-  /routes?\s+currently\s+clear/i,
-  /no\s+major\s+disruptions\s+nearby/i
-];
-
-let gridlyTopStripOwnerState = {
-  suppressClearStateWrites: false,
-  lastHasActiveAlerts: false
-};
-
-function isTopStripClearStateValue(value = "") {
-  const text = String(value || "").trim();
-  return GRIDLY_TOP_STRIP_CLEAR_STATE_PATTERNS.some((pattern) => pattern.test(text));
-}
-
-function writeTopStripOwnedText({ element, value, sourceFunction, fieldName, hasActiveAlerts }) {
-  if (!element) {
-    return { writerAttempted: false, writerBlocked: false, writerSource: sourceFunction, value: "" };
-  }
-  const attemptedValue = String(value == null ? "" : value);
-  const writerAttempted = true;
-  const blockedByOwnerGuard = Boolean(
-    hasActiveAlerts &&
-    gridlyTopStripOwnerState.suppressClearStateWrites &&
-    isTopStripClearStateValue(attemptedValue)
-  );
-  if (!blockedByOwnerGuard) {
-    element.textContent = attemptedValue;
-  }
-  return {
-    writerAttempted,
-    writerBlocked: blockedByOwnerGuard,
-    writerSource: `${sourceFunction}:${fieldName}`,
-    value: blockedByOwnerGuard ? String(element.textContent || "") : attemptedValue
-  };
-}
-
 
 function logTopStripOwnershipDiagnostic(sourceFunction) {
   const selectors = [
@@ -17327,57 +17273,7 @@ function formatPortraitTopStripImpactLabel(tier = "") {
   return "Low impact";
 }
 
-function syncVisibleTopStripToLiveAlerts(triggerSource = "direct_call") {
-  const topPrimaryEl = document.getElementById("gridlyV2TopStatusPrimary");
-  const topSecondaryEl = document.getElementById("gridlyV2TopStatusSecondary");
-  if (!topPrimaryEl && !topSecondaryEl) return;
-
-  const unifiedIncidents = Array.isArray(getUnifiedIncidents?.()) ? getUnifiedIncidents() : [];
-  const activeIncidentItems = unifiedIncidents.filter((incident) => String(incident?.status || "").toLowerCase() === "active");
-  const activeHazardCount = activeIncidentItems.length;
-  const unifiedIncidentCount = unifiedIncidents.length;
-  const markerAudit = window.gridlyMarkerAuditDebug?.() || {};
-  const markerSourceUsed = markerAudit?.markerSourceUsed || "";
-  const fallbackHazards = Array.isArray(activeHazards) ? activeHazards : [];
-  const sourceIncidents = markerSourceUsed === "activeHazards_fallback" && fallbackHazards.length ? fallbackHazards : activeIncidentItems;
-  const selectedIncident = sourceIncidents[0] || activeIncidentItems[0] || unifiedIncidents[0] || null;
-  const selectedPrimary = safeDisplayText(
-    selectedIncident?.title,
-    selectedIncident?.resolvedHeadline,
-    selectedIncident?.localizedHeadline,
-    selectedIncident?.finalHeadline,
-    selectedIncident?.headline,
-    selectedIncident?.label,
-    ""
-  );
-  const selectedSecondary = `${Math.max(activeHazardCount, unifiedIncidentCount)} active community reports`;
-
-  let wrotePrimary = false;
-  let wroteSecondary = false;
-  if (activeHazardCount > 0 || unifiedIncidentCount > 0) {
-    if (topPrimaryEl && selectedPrimary) {
-      topPrimaryEl.textContent = selectedPrimary;
-      wrotePrimary = true;
-    }
-    if (topSecondaryEl) {
-      topSecondaryEl.textContent = selectedSecondary;
-      wroteSecondary = true;
-    }
-  }
-
-  console.debug("[V161.5 TOP STRIP DIRECT LIVE BIND]", {
-    triggerSource,
-    activeHazardCount,
-    unifiedIncidentCount,
-    markerSourceUsed,
-    selectedPrimary,
-    selectedSecondary,
-    wrotePrimary,
-    wroteSecondary
-  });
-}
-
-function refreshPortraitV2LocalizedIntelligence(triggerSource = "direct_call") {
+function refreshPortraitV2LocalizedIntelligence() {
   const functionStartedAt = performance.now();
   const sections = {};
   const timeSection = makeGridlySectionTimer(sections);
@@ -17391,99 +17287,17 @@ function refreshPortraitV2LocalizedIntelligence(triggerSource = "direct_call") {
     return;
   }
   const intel = timeSection("intelligence_calculations", () => buildUnifiedLocalizedCommuteIntelligence({ limit: 6 }));
-  const unifiedIncidents = timeSection("incident_snapshot", () => (Array.isArray(getUnifiedIncidents()) ? getUnifiedIncidents() : []));
-  const activeIncidents = timeSection("array_filtering_sorting", () => unifiedIncidents.filter((incident) => String(incident?.status || "").toLowerCase() === "active"));
-  const activeHazardCount = activeIncidents.length;
-  const unifiedIncidentCount = unifiedIncidents.length;
-  const localizedAlertCount = Number(intel?.activeLocalizedAlertCount || 0);
-  const activePanelCount = Array.isArray(intel?.items) ? intel.items.length : 0;
-  const corridorCount = Array.isArray(intel?.corridorClusters) ? intel.corridorClusters.length : 0;
-  const liveActiveIncidents = activeIncidents;
-  const highestPriorityLiveIncident = (() => {
-    const topIntelIncident = Array.isArray(intel?.items)
-      ? intel.items.find((item) => {
-        const incidentId = item?.incident?.id;
-        return incidentId != null && liveActiveIncidents.some((incident) => String(incident?.id || "") === String(incidentId));
-      })?.incident
-      : null;
-    return topIntelIncident || liveActiveIncidents[0] || null;
-  })();
-  const hasLiveActiveIncidents = liveActiveIncidents.length > 0;
-  const hasActiveAlerts = hasLiveActiveIncidents || unifiedIncidentCount > 0 || localizedAlertCount > 0 || activePanelCount > 0 || corridorCount > 0;
-  const selectedTopPrimary = hasLiveActiveIncidents
-    ? safeDisplayText(
-      highestPriorityLiveIncident?.title,
-      highestPriorityLiveIncident?.resolvedHeadline,
-      highestPriorityLiveIncident?.localizedHeadline,
-      highestPriorityLiveIncident?.finalHeadline,
-      highestPriorityLiveIncident?.headline,
-      highestPriorityLiveIncident?.label,
-      "Community alerts active"
-    )
-    : safeDisplayText(intel.commuteImpactHeadline, "Routes currently clear");
-  const selectedTopSecondary = hasLiveActiveIncidents
-    ? `${liveActiveIncidents.length} active community reports`
-    : "No major disruptions nearby";
-  const blockedClearState = hasLiveActiveIncidents && (/routes?\s+currently\s+clear/i.test(selectedTopPrimary) || /no\s+major\s+disruptions\s+nearby/i.test(selectedTopSecondary));
-  gridlyTopStripOwnerState.lastHasActiveAlerts = hasActiveAlerts;
-  gridlyTopStripOwnerState.suppressClearStateWrites = hasActiveAlerts;
-
-  console.debug("[V161.4 TOP STRIP LIVE INCIDENT SOURCE]", {
-    liveActiveIncidentCount: liveActiveIncidents.length,
-    selectedIncidentId: highestPriorityLiveIncident?.id || null,
-    selectedIncidentTitle: safeDisplayText(
-      highestPriorityLiveIncident?.title,
-      highestPriorityLiveIncident?.resolvedHeadline,
-      highestPriorityLiveIncident?.localizedHeadline,
-      highestPriorityLiveIncident?.finalHeadline,
-      highestPriorityLiveIncident?.headline,
-      highestPriorityLiveIncident?.label,
-      null
-    ),
-    selectedTopPrimary,
-    selectedTopSecondary,
-    blockedClearState,
-    sourceUsed: hasLiveActiveIncidents ? "liveActiveIncidents" : "clear_state"
-  });
-
   timeSection("text_content_updates", () => {
-    const primaryValue = blockedClearState ? safeDisplayText(intel.topStatusLocalizedDetail, intel.topStatus, "Community alerts active") : selectedTopPrimary;
+    const primaryValue = intel.hasActiveAlerts
+      ? safeDisplayText(intel.topStatus, intel.commuteImpactHeadline)
+      : safeDisplayText(intel.commuteImpactHeadline, "Routes currently clear");
     logTopPanelWrite("refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusPrimary", primaryValue);
-    const primaryWrite = writeTopStripOwnedText({
-      element: topPrimaryEl,
-      value: primaryValue,
-      sourceFunction: "refreshPortraitV2LocalizedIntelligence",
-      fieldName: "primary",
-      hasActiveAlerts
-    });
-    const secondaryValue = selectedTopSecondary;
+    if (topPrimaryEl) topPrimaryEl.textContent = primaryValue;
+    const secondaryValue = intel.hasActiveAlerts
+      ? `${formatPortraitTopStripImpactLabel(intel.commuteConsequenceTier)} • ${safeDisplayText(intel.topIncidentFreshnessText, "just now")}`
+      : "Routes currently clear";
     logTopPanelWrite("refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusSecondary", secondaryValue);
-    const secondaryWrite = writeTopStripOwnedText({
-      element: topSecondaryEl,
-      value: secondaryValue,
-      sourceFunction: "refreshPortraitV2LocalizedIntelligence",
-      fieldName: "secondary",
-      hasActiveAlerts
-    });
-    console.debug("[V161.1 TOP STRIP OWNER]", {
-      activeHazardCount,
-      hasActiveAlerts,
-      writerAttempted: primaryWrite.writerAttempted || secondaryWrite.writerAttempted,
-      writerBlocked: primaryWrite.writerBlocked || secondaryWrite.writerBlocked,
-      writerSource: [primaryWrite.writerSource, secondaryWrite.writerSource].join(","),
-      finalPrimary: String(topPrimaryEl?.textContent || ""),
-      finalSecondary: String(topSecondaryEl?.textContent || "")
-    });
-    console.debug("[V161.2 TOP STRIP REFRESH AFTER LOAD]", {
-      triggerSource,
-      activeHazardCount,
-      unifiedIncidentCount,
-      localizedAlertCount,
-      hasActiveAlerts,
-      refreshCalled: true,
-      finalPrimary: String(topPrimaryEl?.textContent || ""),
-      finalSecondary: String(topSecondaryEl?.textContent || "")
-    });
+    if (topSecondaryEl) topSecondaryEl.textContent = secondaryValue;
     logTopStripOwnershipDiagnostic("refreshPortraitV2LocalizedIntelligence");
   });
   recordPortraitIntelligenceBreakdown("refreshPortraitV2LocalizedIntelligence", functionStartedAt, sections);
@@ -17599,9 +17413,6 @@ function renderAlerts() {
   timeSection("text_content_updates", () => {
     els.alertsList.innerHTML = sections.join("");
   });
-  if (typeof syncVisibleTopStripToLiveAlerts === "function") {
-    syncVisibleTopStripToLiveAlerts("renderAlerts:direct-html");
-  }
   endRenderAlertsTrace();
   recordPortraitIntelligenceBreakdown("renderAlerts", functionStartedAt, breakdownSections);
 }
@@ -21878,140 +21689,6 @@ const v134ReportingRefinementApplied = true;
     });
   };
 
-
-const gridlyTopStripDomTraceState = {
-  observer: null,
-  observedNodes: [],
-  latestTopPanelRoot: null
-};
-
-function describeTopStripCandidate(selector, element) {
-  if (!element) {
-    return { selector, exists: false, visible: false, text: "", rect: null, className: "", id: "" };
-  }
-  const rect = element.getBoundingClientRect();
-  const style = window.getComputedStyle(element);
-  const visible = !element.hidden &&
-    style.display !== "none" &&
-    style.visibility !== "hidden" &&
-    style.opacity !== "0" &&
-    rect.width > 0 &&
-    rect.height > 0;
-  return {
-    selector,
-    exists: true,
-    visible,
-    text: (element.textContent || "").trim(),
-    rect: { top: rect.top, left: rect.left, width: rect.width, height: rect.height, bottom: rect.bottom, right: rect.right },
-    className: element.className || "",
-    id: element.id || ""
-  };
-}
-
-function getVisibleTopRoundedPanel() {
-  const candidates = [
-    document.querySelector("#gridlyPortraitV2 .gridly-v2-status-pill"),
-    document.querySelector(".gridly-v2-status-pill"),
-    document.querySelector("#habitStatusStrip"),
-    document.querySelector(".habit-status-strip"),
-    document.querySelector(".gridly-habit-status"),
-    document.querySelector(".gridly-top-status"),
-    document.querySelector(".daily-status")
-  ].filter(Boolean);
-  return candidates.find((node) => {
-    const rect = node.getBoundingClientRect();
-    const style = getComputedStyle(node);
-    return !node.hidden && style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0;
-  }) || null;
-}
-
-function buildTopStripDomAuditPayload() {
-  const selectorCandidates = [
-    "#gridlyV2TopStatusPrimary",
-    "#gridlyV2TopStatusSecondary",
-    "#habitStatusTitle",
-    "#habitStatusSubtitle",
-    "[data-gridly-top-status]",
-    "[data-gridly-status-primary]",
-    "[data-gridly-status-secondary]",
-    ".gridly-v2-top-status",
-    ".gridly-top-status",
-    ".gridly-habit-status",
-    ".gridly-daily-status",
-    ".daily-status",
-    ".status-primary",
-    ".status-secondary"
-  ];
-  const panel = getVisibleTopRoundedPanel();
-  const panelChildren = panel
-    ? Array.from(panel.children).map((child, index) => ({
-      selector: `[top-panel-child-${index}] ${child.tagName.toLowerCase()}${child.id ? `#${child.id}` : ""}`,
-      element: child
-    }))
-    : [];
-  const selectorEntries = selectorCandidates.map((selector) => ({ selector, element: document.querySelector(selector) }));
-  const candidates = [...selectorEntries, ...panelChildren].map((entry) => describeTopStripCandidate(entry.selector, entry.element));
-  const visibleTopText = panel ? (panel.textContent || "").trim().replace(/\s+/g, " ") : "";
-  const markerAudit = window.gridlyMarkerAuditDebug?.() || {};
-  return {
-    visibleTopText,
-    candidates,
-    activeHazardCount: Array.isArray(activeHazards) ? activeHazards.length : 0,
-    unifiedIncidentCount: Array.isArray(getUnifiedIncidents?.()) ? getUnifiedIncidents().length : 0,
-    markerSourceUsed: markerAudit?.markerSourceUsed || ""
-  };
-}
-
-function attachTopStripTextMutationTrace() {
-  const panel = getVisibleTopRoundedPanel();
-  const nodesToObserve = panel ? Array.from(panel.querySelectorAll("*")) : [];
-  if (panel) nodesToObserve.unshift(panel);
-  if (!nodesToObserve.length) return;
-  const signature = nodesToObserve.map((node) => node.id || node.className || node.tagName).join("|");
-  const priorSignature = gridlyTopStripDomTraceState.observedNodes.map((node) => node.id || node.className || node.tagName).join("|");
-  if (gridlyTopStripDomTraceState.observer && signature === priorSignature) return;
-  if (gridlyTopStripDomTraceState.observer) {
-    gridlyTopStripDomTraceState.observer.disconnect();
-  }
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      if (mutation.type !== "characterData" && mutation.type !== "childList") return;
-      const targetEl = mutation.target?.nodeType === Node.TEXT_NODE ? mutation.target.parentElement : mutation.target;
-      const oldText = mutation.oldValue || "";
-      const newText = targetEl ? (targetEl.textContent || "").trim() : "";
-      if ((oldText || "").trim() === newText) return;
-      const markerAudit = window.gridlyMarkerAuditDebug?.() || {};
-      const selectorGuess = targetEl?.id
-        ? `#${targetEl.id}`
-        : targetEl?.className
-          ? `.${String(targetEl.className).trim().split(/\s+/).join(".")}`
-          : (targetEl?.tagName || "unknown");
-      console.debug("[V161.3 TOP STRIP DOM WRITE TRACE]", {
-        time: new Date().toISOString(),
-        targetSelectorGuess: selectorGuess,
-        oldText: (oldText || "").trim(),
-        newText,
-        activeHazardCount: Array.isArray(activeHazards) ? activeHazards.length : 0,
-        stack: new Error().stack,
-        markerSourceUsed: markerAudit?.markerSourceUsed || ""
-      });
-    });
-  });
-  nodesToObserve.forEach((node) => observer.observe(node, {
-    subtree: true,
-    childList: true,
-    characterData: true,
-    characterDataOldValue: true
-  }));
-  gridlyTopStripDomTraceState.observer = observer;
-  gridlyTopStripDomTraceState.observedNodes = nodesToObserve;
-  gridlyTopStripDomTraceState.latestTopPanelRoot = panel;
-}
-
-window.gridlyTopStripDomAudit = function gridlyTopStripDomAudit() {
-  attachTopStripTextMutationTrace();
-  return buildTopStripDomAuditPayload();
-};
 
 window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
   bindBottomDockRealButtons();
