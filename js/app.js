@@ -14843,16 +14843,27 @@ function updateDailyHabitStatus() {
   let detail = "No major disruptions nearby.";
   let cardClass = "clear";
 
+  const topStatus = safeDisplayText(localizedIntel?.topStatus, "Movement alert active");
+  const topDetail = safeDisplayText(localizedIntel?.topStatusLocalizedDetail, "Updated just now");
+
   if (hasActiveAlertIntel) {
     const impactLabel = highIssues.length > 0
       ? "High impact"
       : (moderateIssues.length > 0 ? "Moderate impact" : "Active rail report");
     const activeCountLabel = `${Math.max(1, activeAlertCount || activeIssues.length)} Active Movement Alert${Math.max(1, activeAlertCount || activeIssues.length) === 1 ? "" : "s"}`;
     pill = activeCountLabel;
-    headline = safeDisplayText(localizedIntel?.topStatus, "Movement alert active");
-    detail = `${impactLabel} • ${safeDisplayText(localizedIntel?.topStatusLocalizedDetail, "Updated just now")}`;
+    headline = topStatus;
+    detail = `${impactLabel} • ${topDetail}`;
     cardClass = highIssues.length > 0 ? "high" : "delayed";
   }
+
+  console.debug("[V159.1 TOP PANEL BINDING]", {
+    activeAlertCount,
+    topStatus,
+    topDetail,
+    renderedTitle: headline,
+    renderedSubtitle: detail
+  });
 
   timeSection("text_content_updates", () => {
     safeText("habitStatusPill", pill);
