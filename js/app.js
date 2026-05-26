@@ -3018,9 +3018,17 @@ function openAlertsSurfaceFromDock() {
         const nearbyRoadCandidateRaw = firstDistinctCrossingPart;
         const nearbyReferenceRoadRaw = cleanDisplayValue(enriched.nearbyKnownLocation);
         const nearestRoadLookupRaw = cleanDisplayValue(alert?.nearestRoad || alert?.knownLocation || alert?.locationName);
+        const crossingLat = Number.isFinite(Number(crossingRecord?.lat)) ? Number(crossingRecord.lat) : null;
+        const crossingLng = Number.isFinite(Number(crossingRecord?.lng))
+          ? Number(crossingRecord.lng)
+          : (Number.isFinite(Number(crossingRecord?.lon)) ? Number(crossingRecord.lon) : null);
+        const nearestRoadByCrossingCoordsRaw = (Number.isFinite(crossingLat) && Number.isFinite(crossingLng) && typeof resolveNearestRoadName === "function")
+          ? cleanDisplayValue(resolveNearestRoadName(crossingLat, crossingLng))
+          : "";
         const nearbyRoadCandidate = isGenericAreaLikeLabel(nearbyRoadCandidateRaw).invalid ? "" : nearbyRoadCandidateRaw;
         const nearbyReferenceRoad = isGenericAreaLikeLabel(nearbyReferenceRoadRaw).invalid ? "" : nearbyReferenceRoadRaw;
         const nearestRoadLookup = isGenericAreaLikeLabel(nearestRoadLookupRaw).invalid ? "" : nearestRoadLookupRaw;
+        const nearestRoadByCrossingCoords = isGenericAreaLikeLabel(nearestRoadByCrossingCoordsRaw).invalid ? "" : nearestRoadByCrossingCoordsRaw;
         let finalHeadline = "";
         let replacementSource = "primaryRoad";
         let rejectedLabel = "";
@@ -3041,6 +3049,9 @@ function openAlertsSurfaceFromDock() {
         } else if (nearestRoadLookup) {
           finalHeadline = `Crossing blocked near ${nearestRoadLookup}`;
           replacementSource = "nearestRoadLookup";
+        } else if (nearestRoadByCrossingCoords) {
+          finalHeadline = `Crossing blocked near ${nearestRoadByCrossingCoords}`;
+          replacementSource = "nearestRoadByCrossingCoords";
         } else {
           finalHeadline = "Crossing blocked nearby";
           replacementSource = "fallbackNearby";
@@ -3070,6 +3081,22 @@ function openAlertsSurfaceFromDock() {
           crossingId,
           rejectedLabel,
           rejectionReason,
+          replacementSource,
+          finalHeadline
+        });
+        console.log("[V164 CROSSING FALLBACK REFERENCE]", {
+          crossingId,
+          lat: crossingLat,
+          lng: crossingLng,
+          rawPrimaryRoad: cleanDisplayValue(primaryRoad),
+          rawSecondaryRoad: cleanDisplayValue(resolvedSecondaryCrossingLabel),
+          candidateReferences: [
+            nearbyRoadCandidate,
+            nearbyReferenceRoad,
+            nearestRoadLookup,
+            nearestRoadByCrossingCoords
+          ].filter(Boolean),
+          selectedReference: cleanDisplayValue(finalHeadline.replace(/^Crossing blocked\s+(?:at|near)\s+/i, "")),
           replacementSource,
           finalHeadline
         });
