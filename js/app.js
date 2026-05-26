@@ -22049,8 +22049,14 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
   alertItems.forEach((alert) => {
     const alertId = String(alert?.id || alert?.incidentId || alert?.reportId || "").trim();
     if (!alertId) return;
-    const enrichedCandidate = (alert?.raw && typeof alert.raw === "object") ? alert.raw : alert;
-    if (enrichedCandidate && typeof enrichedCandidate === "object") {
+    const rawCandidate =
+      alert?.raw && typeof alert.raw === "object" ? alert.raw : null;
+    const alertCandidate =
+      alert && typeof alert === "object" ? alert : null;
+    const enrichedCandidate = rawCandidate
+      ? { ...rawCandidate, ...alertCandidate }
+      : alertCandidate;
+    if (enrichedCandidate) {
       enrichedById.set(alertId, enrichedCandidate);
     }
   });
