@@ -22252,6 +22252,22 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
     const roadHazardResolved = (isRoadHazardIncident && typeof resolveRoadHazardSegmentHeadline === "function")
       ? resolveRoadHazardSegmentHeadline(roadHazardResolveInput)
       : null;
+    const auditOwnerBefore = roadHazardResolveInput;
+    const auditOwnerAfter = roadHazardResolved && typeof roadHazardResolved === "object"
+      ? { ...directionOwnerIncident, ...roadHazardResolved }
+      : directionOwnerIncident;
+    console.debug("[V169.5 ROAD AUDIT RESOLVER RESULT]", {
+      incidentId: String(directionOwnerIncident?.id || directionOwnerIncident?.incidentId || directionOwnerIncident?.reportId || "").trim(),
+      type: String(directionOwnerIncident?.type || directionOwnerIncident?.hazardType || directionOwnerIncident?.category || directionOwnerIncident?.label || ""),
+      auditOwnerBefore,
+      resolverResult: roadHazardResolved,
+      auditOwnerAfter,
+      selectedRoadCandidate:
+        auditOwnerAfter?.primaryRoad ||
+        auditOwnerAfter?.roadName ||
+        roadHazardResolved?.primaryRoad ||
+        roadHazardResolved?.roadName
+    });
     const roadFieldsAfterResolve = roadHazardResolved && typeof roadHazardResolved === "object"
       ? { ...directionOwnerIncident, ...roadHazardResolved }
       : directionOwnerIncident;
