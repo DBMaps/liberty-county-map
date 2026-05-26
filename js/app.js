@@ -16532,6 +16532,11 @@ function resolveDirectionEngineRoadName(incident = {}) {
 
 
 function resolveIncidentDirectionConfidence(incident = {}) {
+  const resolvedDirectionDisplayHelper = typeof cleanDisplayValue === "function"
+    ? cleanDisplayValue
+    : (value) => String(value || "").trim().replace(/\s+/g, " ");
+  const helperResolved = typeof cleanDisplayValue === "function";
+  const helperSource = helperResolved ? "global.cleanDisplayValue" : "resolveIncidentDirectionConfidence.safeDirectionDisplayValue";
   const roadResolution = resolveDirectionEngineRoadName(incident);
   const normalizedRoadFromEnrichment = normalizeCorridorBaseLabel(roadResolution.roadName);
   const normalizedRoadFromCorridor = normalizeCorridorBaseLabel(inferCorridorLabel(incident).replace(/ Corridor$/i, ""));
@@ -16604,9 +16609,15 @@ function resolveIncidentDirectionConfidence(incident = {}) {
     reason = "Only isolated point plus road name available; direction remains unknown.";
   }
   const incidentId = String(incident?.id || incident?.report_id || incident?.reportId || "unknown");
+  const auditRecovered = !helperResolved;
+  console.debug("[V165.4.1 DIRECTION HELPER FIX]", {
+    helperResolved,
+    helperSource,
+    auditRecovered
+  });
   console.debug("[V165.4 DIRECTION SOURCE OWNER]", {
     incidentId,
-    availableFields: Object.fromEntries((roadResolution?.availableFields || []).map(([key, value]) => [key, cleanDisplayValue(value)])),
+    availableFields: Object.fromEntries((roadResolution?.availableFields || []).map(([key, value]) => [key, resolvedDirectionDisplayHelper(value)])),
     selectedRoad: roadName,
     sourceUsed: roadResolution?.sourceUsed || source,
     confidence
