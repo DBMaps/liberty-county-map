@@ -16499,10 +16499,63 @@ function inferDirectionalPhrase(incident = {}, context = {}) {
   return "";
 }
 
+function resolveDirectionEngineRoadName(incident = {}) {
+  const clean = (value) => String(value || "").trim();
+  const pickRoadLikeValue = (values = []) => values.map(clean).find((value) => isResolvableRoadNameCandidate(value)) || "";
+  const headlineExtractionCandidates = [
+    incident?.resolvedHeadline,
+    incident?.headline,
+    incident?.title,
+    incident?.localizedSummary
+  ];
+  const extractRoadFromHeadline = (headline = "") => {
+    const text = clean(headline);
+    if (!text) return "";
+    const onRoadMatch = text.match(/\bon\s+(.+?)(?:\s+(?:between|near|at)\b|$)/i);
+    if (onRoadMatch?.[1]) {
+      const candidate = clean(onRoadMatch[1].replace(/[.,;:]+$/g, ""));
+      if (isResolvableRoadNameCandidate(candidate)) return candidate;
+    }
+    const betweenMatch = text.match(/\bbetween\s+(.+?)\s+and\s+(.+?)(?:[.,;:]|$)/i);
+    if (betweenMatch?.[1]) {
+      const candidate = clean(betweenMatch[1]);
+      if (isResolvableRoadNameCandidate(candidate)) return candidate;
+    }
+    return "";
+  };
+  const headlineRoad = headlineExtractionCandidates.map(extractRoadFromHeadline).find(Boolean) || "";
+  const prioritizedSources = [
+    ["parsedPrimaryRoad", incident?.parsedPrimaryRoad],
+    ["primaryRoad", incident?.primaryRoad],
+    ["resolvedPrimaryRoad", incident?.resolvedPrimaryRoad],
+    ["originalPrimaryRoad", incident?.originalPrimaryRoad],
+    ["referenceRoadA", incident?.referenceRoadA],
+    ["referenceRoadB", incident?.referenceRoadB],
+    ["resolvedHeadline", headlineRoad]
+  ];
+  const priorityHit = prioritizedSources.find(([, value]) => isResolvableRoadNameCandidate(clean(value)));
+  if (priorityHit) return { roadName: clean(priorityHit[1]), sourceUsed: priorityHit[0] };
+  const candidateRoad = pickRoadLikeValue([
+    incident?.roadName,
+    incident?.road_name,
+    incident?.corridor,
+    incident?.route,
+    incident?.road,
+    incident?.nearest_road,
+    incident?.snapped_road_name,
+    incident?.location_name,
+    incident?.area
+  ]);
+  return { roadName: candidateRoad, sourceUsed: candidateRoad ? "candidate_road_fields" : "" };
+}
+
 
 function resolveIncidentDirectionConfidence(incident = {}) {
-  const normalizedRoad = normalizeCorridorBaseLabel(inferCorridorLabel(incident).replace(/ Corridor$/i, ""));
-  const roadName = normalizedRoad && !/local (crossing|road) impact/i.test(normalizedRoad) ? normalizedRoad : "";
+  const roadResolution = resolveDirectionEngineRoadName(incident);
+  const normalizedRoadFromEnrichment = normalizeCorridorBaseLabel(roadResolution.roadName);
+  const normalizedRoadFromCorridor = normalizeCorridorBaseLabel(inferCorridorLabel(incident).replace(/ Corridor$/i, ""));
+  const roadName = normalizedRoadFromEnrichment
+    || (normalizedRoadFromCorridor && !/local (crossing|road) impact/i.test(normalizedRoadFromCorridor) ? normalizedRoadFromCorridor : "");
 
   const extractHeading = (value) => {
     const heading = Number(value);
@@ -16566,12 +16619,20 @@ function resolveIncidentDirectionConfidence(incident = {}) {
     reason = `Known corridor orientation default applied for ${roadName}.`;
   } else if (roadName) {
     confidence = "LOW";
-    source = "road_name_only";
+    source = roadResolution?.sourceUsed || "road_name_only";
     reason = "Only isolated point plus road name available; direction remains unknown.";
   }
+  const incidentId = String(incident?.id || incident?.report_id || incident?.reportId || "unknown");
+  console.debug("[V165.3 DIRECTION ENRICHMENT BRIDGE]", {
+    incidentId,
+    selectedRoadName: roadName,
+    sourceUsed: roadResolution?.sourceUsed || source,
+    confidence,
+    inferredOrientation
+  });
 
   return {
-    incidentId: String(incident?.id || incident?.report_id || incident?.reportId || "unknown"),
+    incidentId,
     roadName,
     inferredOrientation,
     directionPair: directionPairByOrientation[inferredOrientation] || [],
