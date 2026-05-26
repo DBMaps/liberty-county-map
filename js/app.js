@@ -3237,6 +3237,11 @@ function openAlertsSurfaceFromDock() {
           const value = rawOwner[field];
           return typeof value === "string" ? Boolean(value.trim()) : value !== undefined && value !== null;
         });
+        logGridlyRawOwnerTrace({
+          incidentId: cleanDisplayValue(alert?.id || alert?.reportId || alert?.uuid || ""),
+          stage: "V165.7 persistence point",
+          owner: rawOwner
+        });
         console.log("[V165.7 ALERT RAW ROAD FIELD PERSIST]", {
           id: cleanDisplayValue(alert?.id || alert?.reportId || alert?.uuid || ""),
           rawOwnerFound: Boolean(rawOwner),
@@ -20707,7 +20712,46 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const locationCluster = getAlertLocationClusterLabel(alert).toLowerCase();
     return `${kind}|${type}|${corridor}|${locationCluster}`;
   }
-  function getAlertsSurfaceSnapshot() {
+  
+
+  function ensureGridlyRawOwnerTraceId(owner = null, incidentId = "") {
+    if (!owner || typeof owner !== "object") return "";
+    if (typeof owner.__gridlyOwnerTraceId === "string" && owner.__gridlyOwnerTraceId.trim()) {
+      return owner.__gridlyOwnerTraceId.trim();
+    }
+    const fallbackIncidentId = String(incidentId || owner.id || owner.incidentId || owner.reportId || owner.uuid || "").trim() || "unknown";
+    const mintedTraceId = `raw-owner-${fallbackIncidentId}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    owner.__gridlyOwnerTraceId = mintedTraceId;
+    return mintedTraceId;
+  }
+
+  function logGridlyRawOwnerTrace({ incidentId = "", stage = "", owner = null } = {}) {
+    const normalizedIncidentId = String(incidentId || owner?.id || owner?.incidentId || owner?.reportId || owner?.uuid || "").trim();
+    const objectIdentity = ensureGridlyRawOwnerTraceId(owner, normalizedIncidentId);
+    const availableRoadFields = [
+      "originalPrimaryRoad",
+      "primaryRoad",
+      "parsedPrimaryRoad",
+      "parsedCrossRoad",
+      "referenceRoadA",
+      "referenceRoadB",
+      "finalHeadline"
+    ].filter((field) => {
+      if (!owner || typeof owner !== "object") return false;
+      const value = owner[field];
+      return typeof value === "string" ? Boolean(value.trim()) : value !== undefined && value !== null;
+    });
+    console.log("[V165.8 RAW OWNER TRACE]", {
+      incidentId: normalizedIncidentId,
+      stage,
+      objectIdentity,
+      hasPrimaryRoad: Boolean(typeof owner?.primaryRoad === "string" ? owner.primaryRoad.trim() : owner?.primaryRoad),
+      hasReferenceRoadA: Boolean(typeof owner?.referenceRoadA === "string" ? owner.referenceRoadA.trim() : owner?.referenceRoadA),
+      hasReferenceRoadB: Boolean(typeof owner?.referenceRoadB === "string" ? owner.referenceRoadB.trim() : owner?.referenceRoadB),
+      availableRoadFields
+    });
+  }
+function getAlertsSurfaceSnapshot() {
     const incidents = getActiveUnifiedIncidents();
     const unifiedIncidents = Array.isArray(getUnifiedIncidents?.()) ? getUnifiedIncidents() : [];
     const fallbackHazards = (Array.isArray(activeHazards) ? activeHazards : [])
@@ -20761,6 +20805,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           lng: incident?.lng ?? incident?.lon ?? incident?.longitude ?? incident?.rawLng ?? null,
           source: incident?.source || item?.source || null,
           raw: incident?.raw || item?.raw || incident || item || null,
+          __gridlyOwnerTraceSource: incident?.raw || item?.raw || incident || item || null,
           crossStreetA: incident?.crossStreetA,
           crossStreetB: incident?.crossStreetB,
           direction: incident?.direction
@@ -20810,10 +20855,31 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           lat: item?.lat ?? item?.latitude ?? item?.rawLat ?? null,
           lng: item?.lng ?? item?.lon ?? item?.longitude ?? item?.rawLng ?? null,
           source: item?.source || item?.latestReport || null,
-          raw: item?.raw || item || null
+          raw: item?.raw || item || null,
+          __gridlyOwnerTraceSource: item?.raw || item || null
         };
       });
     const normalizedAlertItems = normalizedAlertItemsFromIntel;
+    normalizedAlertItems.forEach((alert) => {
+      const incidentId = String(alert?.id || alert?.incidentId || alert?.reportId || "").trim();
+      const sourceOwner = (alert?.__gridlyOwnerTraceSource && typeof alert.__gridlyOwnerTraceSource === "object")
+        ? alert.__gridlyOwnerTraceSource
+        : ((alert?.raw && typeof alert.raw === "object") ? alert.raw : null);
+      logGridlyRawOwnerTrace({
+        incidentId,
+        stage: "alert row construction",
+        owner: sourceOwner
+      });
+      const snapshotOwner = (alert?.raw && typeof alert.raw === "object") ? alert.raw : null;
+      logGridlyRawOwnerTrace({
+        incidentId,
+        stage: "getAlertsSurfaceSnapshot()",
+        owner: snapshotOwner
+      });
+      if (Object.prototype.hasOwnProperty.call(alert, "__gridlyOwnerTraceSource")) {
+        delete alert.__gridlyOwnerTraceSource;
+      }
+    });
     const activeIncidentCount = normalizedAlertItems.length || incidents.length;
     const hasFallbackSignals = activeHazardSourceCount > 0 || unifiedIncidentSourceCount > 0;
     const nearbySummary = unifiedIntel.nearbySummary;
@@ -22050,6 +22116,11 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
     const alertId = String(alert?.id || alert?.incidentId || alert?.reportId || "").trim();
     if (!alertId) return;
     const enrichedCandidate = (alert?.raw && typeof alert.raw === "object") ? alert.raw : alert;
+    logGridlyRawOwnerTrace({
+      incidentId: alertId,
+      stage: "gridlyDirectionConfidenceAudit() snapshot ingestion",
+      owner: enrichedCandidate
+    });
     if (enrichedCandidate && typeof enrichedCandidate === "object") {
       enrichedById.set(alertId, enrichedCandidate);
     }
@@ -22058,6 +22129,11 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
     const incidentId = String(incident?.id || incident?.incidentId || incident?.reportId || "").trim();
     const enrichedIncident = incidentId ? (enrichedById.get(incidentId) || null) : null;
     const directionOwnerIncident = enrichedIncident || incident;
+    logGridlyRawOwnerTrace({
+      incidentId,
+      stage: "gridlyDirectionConfidenceAudit()",
+      owner: directionOwnerIncident
+    });
     const confidence = resolveIncidentDirectionConfidence(directionOwnerIncident);
     const availableRoadFields = [
       "primaryRoad", "roadName", "resolvedRoadName", "corridor", "route", "road", "nearestRoad", "knownLocation",
