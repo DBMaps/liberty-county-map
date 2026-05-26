@@ -176,6 +176,94 @@ let unifiedIncidentLayer;
 let userLocation = null;
 let userMarker = null;
 
+window.gridlyCrossingRecordDebug = function gridlyCrossingRecordDebug(crossingId) {
+  const normalizedId = String(crossingId || "").trim();
+  const emptyResult = {
+    crossingId: normalizedId,
+    found: false,
+    sourceName: "",
+    record: null,
+    usefulFields: {
+      roadName: "",
+      crossingRoad: "",
+      crossStreet: "",
+      street: "",
+      city: "",
+      county: "",
+      latitude: null,
+      longitude: null,
+      inventory: "",
+      railroad: "",
+      raw: null
+    }
+  };
+
+  if (!normalizedId) return emptyResult;
+
+  const norm = (value) => String(value || "").trim();
+  const cleanId = (value) => norm(value).toUpperCase();
+  const toNumber = (value) => {
+    const next = Number(value);
+    return Number.isFinite(next) ? next : null;
+  };
+  const targetId = cleanId(normalizedId);
+
+  const candidates = [
+    { sourceName: "crossings[]", getItems: () => (Array.isArray(crossings) ? crossings : []) },
+    {
+      sourceName: "crossingMarkers Map",
+      getItems: () => (crossingMarkers instanceof Map ? Array.from(crossingMarkers.values()).map((entry) => entry?.crossing || entry?.options?.crossing || entry?.feature?.properties || entry) : [])
+    }
+  ];
+
+  const globalTarget = typeof window !== "undefined" ? window : globalThis;
+  if (globalTarget && typeof globalTarget === "object") {
+    Object.keys(globalTarget).forEach((key) => {
+      if (!/crossing/i.test(key) || ["crossings", "crossingMarkers"].includes(key)) return;
+      const value = globalTarget[key];
+      if (Array.isArray(value)) {
+        candidates.push({ sourceName: `window.${key}[]`, getItems: () => value });
+      } else if (value instanceof Map) {
+        candidates.push({ sourceName: `window.${key} Map`, getItems: () => Array.from(value.values()) });
+      }
+    });
+  }
+
+  const extractId = (record) => {
+    if (!record || typeof record !== "object") return "";
+    return cleanId(record.id || record.crossingId || record.crossing_id || record.inventory || record.crossing || record?.props?.crossingid || record?.props?.crossing_id || record?.props?.inventory || record?.properties?.crossingid || record?.properties?.crossing_id);
+  };
+
+  for (const source of candidates) {
+    const items = source.getItems();
+    if (!Array.isArray(items)) continue;
+    const record = items.find((item) => extractId(item) === targetId);
+    if (!record) continue;
+    const props = (record && typeof record === "object" && (record.props || record.properties || {})) || {};
+    return {
+      crossingId: normalizedId,
+      found: true,
+      sourceName: source.sourceName,
+      record,
+      usefulFields: {
+        roadName: norm(record.road || record.roadName || props.road || props.road_name || props.roadwayname || props.highwayname),
+        crossingRoad: norm(record.name || record.crossingRoad || record.crossingName || props.crossingname || props.roadwayname || props.street),
+        crossStreet: norm(record.crossStreet || record.cross_street || props.cross_street || props.crossstreet),
+        street: norm(record.street || props.street || props.roadwayname),
+        city: norm(record.city || props.city || props.town || props.community),
+        county: norm(record.county || props.county),
+        latitude: toNumber(record.lat ?? record.latitude ?? record.y ?? props.lat ?? props.latitude ?? props.y),
+        longitude: toNumber(record.lng ?? record.lon ?? record.longitude ?? record.x ?? props.lng ?? props.lon ?? props.longitude ?? props.x),
+        inventory: norm(record.id || record.inventory || record.crossingId || props.crossingid || props.crossing_id || props.inventory),
+        railroad: norm(record.railroad || props.railroad || props.railroadname || props.railroad_company),
+        raw: record.raw || props.raw || null
+      }
+    };
+  }
+
+  return emptyResult;
+};
+
 const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyCommuteIntelligenceAudit",
   "gridlyCommuteAuditGlobalsCheck",
