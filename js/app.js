@@ -17576,8 +17576,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     consequenceIncidentCount: safeIntelItems.length,
     routeImpactEtaEstimate: top?.etaImpact || 0,
     topIncidentFreshnessText: top?.minutesText || "just now",
-    trendMessage,
-    topStatusIncidentId: String(top?.incident?.id || "").trim() || null
+    trendMessage
   };
   });
 }
@@ -20929,7 +20928,6 @@ function getAlertsSurfaceSnapshot() {
       normalizedAlertItems,
       routeState: route.routeState,
       topStatus: unifiedIntel.topStatus,
-      headlineIncidentId: unifiedIntel.topStatusIncidentId || null,
       commuteImpactHeadline: unifiedIntel.commuteImpactHeadline,
       topStatusLocalizedDetail: unifiedIntel.topStatusLocalizedDetail,
       localizedIntelligenceSummaries: intelItems.map((item) => `${item.localizedSummary} • ${item.minutesText}`),
@@ -20983,17 +20981,9 @@ function getAlertsSurfaceSnapshot() {
     const fallbackAlerts = rawAlerts.slice(0, 3).map((alert) => ({ ...alert, extraCount: 0 }));
     const activeCards = groupedFailed ? fallbackAlerts : dedupedAlerts;
 
-    const headlineIncidentId = String(snapshot?.headlineIncidentId || "").trim();
-    const pinIndex = headlineIncidentId
-      ? activeCards.findIndex((alert) => String(alert?.id || alert?.incidentId || alert?.reportId || "").trim() === headlineIncidentId)
-      : -1;
-    const pinnedCards = pinIndex > 0
-      ? [activeCards[pinIndex], ...activeCards.slice(0, pinIndex), ...activeCards.slice(pinIndex + 1)]
-      : activeCards;
-
     const detailCardLimit = 3;
     const isMobileCompact = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(max-width: 768px)").matches;
-    const visibleAlerts = (isMobileCompact ? pinnedCards : pinnedCards).slice(0, detailCardLimit);
+    const visibleAlerts = (isMobileCompact ? activeCards : activeCards).slice(0, detailCardLimit);
     const hiddenCount = Math.max(0, activeCards.length - visibleAlerts.length);
     const affectedCrossingsMoreCount = Math.max(0, rawAlerts.length - visibleAlerts.length);
 
@@ -22215,36 +22205,6 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
   });
 };
 
-
-window.gridlyHeadlineAudit = function gridlyHeadlineAudit() {
-  const snapshot = typeof getAlertsSurfaceSnapshot === "function" ? getAlertsSurfaceSnapshot() : {};
-  const visibleIncidentIds = Array.isArray(snapshot?.alerts)
-    ? snapshot.alerts.slice(0, 3).map((alert) => String(alert?.id || alert?.incidentId || alert?.reportId || "").trim()).filter(Boolean)
-    : [];
-  const headlineIncidentId = String(snapshot?.headlineIncidentId || "").trim() || null;
-  const visibleMatch = Boolean(headlineIncidentId && visibleIncidentIds.includes(headlineIncidentId));
-  const pinnedMatch = visibleMatch && visibleIncidentIds[0] === headlineIncidentId;
-  const resolveAuditHeadline = () => {
-    const headline = snapshot?.topStatus;
-    const readableHeadline = [
-      headline,
-      headline?.text,
-      headline?.title,
-      headline?.label,
-      headline?.message,
-      snapshot?.topStatus?.primary,
-      snapshot?.topStatus?.label
-    ].find((value) => typeof value === "string" && value.trim());
-    return (readableHeadline ?? String(headline || "")).trim();
-  };
-  return {
-    headline: resolveAuditHeadline(),
-    headlineIncidentId,
-    visibleIncidentIds,
-    visibleMatch,
-    pinnedMatch
-  };
-};
 
 window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
   bindBottomDockRealButtons();
