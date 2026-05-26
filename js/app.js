@@ -2778,6 +2778,14 @@ function openAlertsSurfaceFromDock() {
         const normalized = normalizeRailSubtitleMatch(value);
         return !normalized || /^(blocked|rail crossing blocked|train blocking crossing|crossing blocked|local crossing|railroad crossing|rail crossing|unknown crossing|nearby crossing|nearby|dayton area|liberty county|local area|area|tbd|unknown|unknown road|unknown crossing|unidentified crossing|unidentified road|local road|area road|county area|nearby area|general area)$/.test(normalized);
       };
+      const isInvalidPrimaryRoadLabel = (value = "") => {
+        const normalized = normalizeRailSubtitleMatch(value);
+        if (!normalized) return { invalid: true, reason: "empty" };
+        if (/^(private|unknown|unnamed|dayton area|null|undefined)$/.test(normalized)) return { invalid: true, reason: normalized };
+        if (/^(area|general area|nearby area|local area|county area)$/.test(normalized)) return { invalid: true, reason: "generic-area" };
+        if (isGenericRailCrossingLabel(value)) return { invalid: true, reason: "placeholder" };
+        return { invalid: false, reason: "" };
+      };
       const isUnqualifiedRailRouteAlias = (value) => {
         const label = cleanDisplayValue(value).toUpperCase().replace(/[^A-Z0-9]+/g, " ").trim();
         const normalized = normalizeRoadLabel(value);
@@ -3002,16 +3010,44 @@ function openAlertsSurfaceFromDock() {
           sourceUsed: secondaryMatch.sourceFieldUsed || ""
         });
         const singleRoad = primaryRoad || firstDistinctCrossingPart || cleanDisplayValue(enriched.nearbyKnownLocation);
-        const finalHeadline = usedLocalContext && localDisplayName
-          ? `Crossing blocked at ${localDisplayName}`
-          : (primaryRoad && resolvedSecondaryWithLocal
-            ? `Crossing blocked at ${primaryRoad} and ${resolvedSecondaryWithLocal}`
-            : (singleRoad ? `Crossing blocked at ${singleRoad}` : "Crossing blocked nearby"));
+        const primaryRoadValidity = isInvalidPrimaryRoadLabel(primaryRoad);
+        const nearbyRoadCandidate = firstDistinctCrossingPart;
+        const nearbyReferenceRoad = cleanDisplayValue(enriched.nearbyKnownLocation);
+        const nearestRoadLookup = cleanDisplayValue(alert?.nearestRoad || alert?.knownLocation || alert?.locationName);
+        let finalHeadline = "";
+        let replacementSource = "primaryRoad";
+        if (!primaryRoadValidity.invalid && primaryRoad && resolvedSecondaryWithLocal) {
+          finalHeadline = `Crossing blocked at ${primaryRoad} and ${resolvedSecondaryWithLocal}`;
+        } else if (!primaryRoadValidity.invalid && singleRoad) {
+          finalHeadline = `Crossing blocked at ${singleRoad}`;
+        } else if (usedLocalContext && localDisplayName) {
+          finalHeadline = `Crossing blocked at ${localDisplayName}`;
+          replacementSource = "localCrossingContextStreet";
+        } else if (nearbyRoadCandidate) {
+          finalHeadline = `Crossing blocked near ${nearbyRoadCandidate}`;
+          replacementSource = "nearbyRoadCandidate";
+        } else if (nearbyReferenceRoad) {
+          finalHeadline = `Crossing blocked near ${nearbyReferenceRoad}`;
+          replacementSource = "nearbyReferenceRoad";
+        } else if (nearestRoadLookup) {
+          finalHeadline = `Crossing blocked near ${nearestRoadLookup}`;
+          replacementSource = "nearestRoadLookup";
+        } else {
+          finalHeadline = "Crossing blocked nearby";
+          replacementSource = "fallbackNearby";
+        }
         console.log("[V158.2 LOCAL CROSSING CONTEXT]", {
           crossingId,
           primaryRoad,
           localSecondaryLabel,
           usedLocalContext,
+          finalHeadline
+        });
+        console.log("[V162 CROSSING LABEL QUALITY]", {
+          crossingId,
+          rawPrimaryRoad: cleanDisplayValue(primaryRoad),
+          rejectedReason: primaryRoadValidity.invalid ? primaryRoadValidity.reason : "",
+          replacementSource,
           finalHeadline
         });
         const resolvedSecondaryForOutput = resolvedSecondaryWithLocal;
