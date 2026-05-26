@@ -21977,8 +21977,40 @@ const v134ReportingRefinementApplied = true;
 window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit() {
   console.log("[V165.2 DIRECTION CONFIDENCE AUDIT]");
   const activeIncidents = typeof getActiveUnifiedIncidents === "function" ? getActiveUnifiedIncidents() : [];
+  const alertSnapshot = typeof getAlertsSurfaceSnapshot === "function" ? getAlertsSurfaceSnapshot() : null;
+  const alertItems = Array.isArray(alertSnapshot?.alerts) ? alertSnapshot.alerts : [];
+  const enrichedById = new Map();
+  alertItems.forEach((alert) => {
+    const alertId = String(alert?.id || alert?.incidentId || alert?.reportId || "").trim();
+    if (!alertId) return;
+    const enrichedCandidate = (alert?.raw && typeof alert.raw === "object") ? alert.raw : alert;
+    if (enrichedCandidate && typeof enrichedCandidate === "object") {
+      enrichedById.set(alertId, enrichedCandidate);
+    }
+  });
   return (Array.isArray(activeIncidents) ? activeIncidents : []).map((incident) => {
-    const confidence = resolveIncidentDirectionConfidence(incident);
+    const incidentId = String(incident?.id || incident?.incidentId || incident?.reportId || "").trim();
+    const enrichedIncident = incidentId ? (enrichedById.get(incidentId) || null) : null;
+    const directionOwnerIncident = enrichedIncident || incident;
+    const confidence = resolveIncidentDirectionConfidence(directionOwnerIncident);
+    const availableRoadFields = [
+      "primaryRoad", "roadName", "resolvedRoadName", "corridor", "route", "road", "nearestRoad", "knownLocation",
+      "raw.primaryRoad", "raw.roadName", "source.primaryRoad", "source.roadName"
+    ].filter((path) => {
+      const value = getValueByPath(directionOwnerIncident, path);
+      return typeof value === "string" ? Boolean(value.trim()) : value !== undefined && value !== null;
+    });
+    const selectedRoadName = String(confidence?.roadName || "").trim();
+    const sourceOwner = enrichedIncident
+      ? "getAlertsSurfaceSnapshot().alerts[].raw (post-V160/V163 enriched)"
+      : "getActiveUnifiedIncidents() fallback";
+    console.log("[V165.5 DIRECTION OWNER FIX]", {
+      incidentId: confidence.incidentId || incidentId || "",
+      isEnriched: Boolean(enrichedIncident),
+      availableRoadFields,
+      selectedRoadName,
+      sourceOwner
+    });
     return {
       incidentId: confidence.incidentId,
       titleOrHeadline: String(incident?.title || incident?.headline || ""),
