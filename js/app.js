@@ -22215,12 +22215,27 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
     const incidentId = String(incident?.id || incident?.incidentId || incident?.reportId || "").trim();
     const enrichedIncident = incidentId ? (enrichedById.get(incidentId) || null) : null;
     const directionOwnerIncident = enrichedIncident || incident;
-    const confidence = resolveIncidentDirectionConfidence(directionOwnerIncident);
+    const incidentTypeToken = String(directionOwnerIncident?.type || directionOwnerIncident?.hazardType || directionOwnerIncident?.category || directionOwnerIncident?.label || "").toLowerCase();
+    const incidentIdToken = String(directionOwnerIncident?.id || directionOwnerIncident?.incidentId || "").toLowerCase();
+    const isRoadHazardIncident = incidentIdToken.startsWith("road-")
+      || incidentTypeToken.includes("hazard")
+      || incidentTypeToken.includes("crash")
+      || incidentTypeToken.includes("debris")
+      || incidentTypeToken.includes("flood")
+      || incidentTypeToken.includes("closure")
+      || incidentTypeToken.includes("construct");
+    const roadHazardResolved = (isRoadHazardIncident && typeof resolveRoadHazardSegmentHeadline === "function")
+      ? resolveRoadHazardSegmentHeadline(directionOwnerIncident)
+      : null;
+    const directionAuditOwner = roadHazardResolved && typeof roadHazardResolved === "object"
+      ? { ...directionOwnerIncident, ...roadHazardResolved }
+      : directionOwnerIncident;
+    const confidence = resolveIncidentDirectionConfidence(directionAuditOwner);
     const availableRoadFields = [
       "primaryRoad", "roadName", "resolvedRoadName", "corridor", "route", "road", "nearestRoad", "knownLocation",
       "raw.primaryRoad", "raw.roadName", "source.primaryRoad", "source.roadName"
     ].filter((path) => {
-      const value = safeGetValueByPath(directionOwnerIncident, path);
+      const value = safeGetValueByPath(directionAuditOwner, path);
       return typeof value === "string" ? Boolean(value.trim()) : value !== undefined && value !== null;
     });
     const selectedRoadName = String(confidence?.roadName || "").trim();
