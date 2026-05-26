@@ -20748,6 +20748,58 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     if (value === null || value === undefined) return "";
     return String(value).trim();
   }
+  function getGridlyRoadRefStrength({ referenceRoadA = "", referenceRoadB = "", parsedCrossRoad = "" } = {}) {
+    const refA = cleanGridlyRegistryValue(referenceRoadA);
+    const refB = cleanGridlyRegistryValue(referenceRoadB);
+    const parsedCross = cleanGridlyRegistryValue(parsedCrossRoad);
+    const distinctPair = refA && refB && normalizeRoadLabel(refA) !== normalizeRoadLabel(refB);
+    return {
+      refA,
+      refB,
+      parsedCross,
+      hasPair: Boolean(distinctPair),
+      hasCross: Boolean(parsedCross),
+      score: (distinctPair ? 2 : (refA || refB ? 1 : 0)) + (parsedCross ? 1 : 0)
+    };
+  }
+  function mergeGridlyEnrichedRoadFields(existing = {}, incoming = {}) {
+    const protectedFields = [
+      "primaryRoad",
+      "roadName",
+      "referenceRoadA",
+      "referenceRoadB",
+      "parsedPrimaryRoad",
+      "parsedCrossRoad"
+    ];
+    const merged = { ...existing, ...incoming };
+    protectedFields.forEach((field) => {
+      const existingValue = cleanGridlyRegistryValue(existing?.[field]);
+      const incomingValue = cleanGridlyRegistryValue(incoming?.[field]);
+      if (existingValue && !incomingValue) merged[field] = existingValue;
+    });
+
+    const existingStrength = getGridlyRoadRefStrength(existing);
+    const incomingStrength = getGridlyRoadRefStrength(incoming);
+    if (existingStrength.hasPair && !incomingStrength.hasPair) {
+      merged.referenceRoadA = existingStrength.refA;
+      merged.referenceRoadB = existingStrength.refB;
+    }
+    if (existingStrength.hasCross && !incomingStrength.hasCross) {
+      merged.parsedCrossRoad = existingStrength.parsedCross;
+    }
+    if (existingStrength.score > incomingStrength.score) {
+      if (existingStrength.refA && !cleanGridlyRegistryValue(merged.referenceRoadA)) {
+        merged.referenceRoadA = existingStrength.refA;
+      }
+      if (existingStrength.refB && !cleanGridlyRegistryValue(merged.referenceRoadB)) {
+        merged.referenceRoadB = existingStrength.refB;
+      }
+      if (existingStrength.parsedCross && !cleanGridlyRegistryValue(merged.parsedCrossRoad)) {
+        merged.parsedCrossRoad = existingStrength.parsedCross;
+      }
+    }
+    return merged;
+  }
   function getGridlyEnrichedIncidentRegistryId(incident = {}) {
     return cleanGridlyRegistryValue(incident?.id || incident?.incidentId || incident?.reportId || incident?.uuid || incident?.crossingId || incident?.crossing_id);
   }
@@ -20756,7 +20808,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       const id = getGridlyEnrichedIncidentRegistryId(incident);
       if (!id || !incident || typeof incident !== "object") return null;
       const existing = gridlyEnrichedIncidentRegistry.get(id) || {};
-      const next = { ...existing, ...incident, id };
+      const next = mergeGridlyEnrichedRoadFields(existing, { ...incident, id });
       gridlyEnrichedIncidentRegistry.set(id, next);
       return next;
     } catch (error) {
