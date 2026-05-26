@@ -20738,6 +20738,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           coerceDisplayText(item?.localizedSummary),
           coerceDisplayText(item?.label)
         ]);
+        const raw = incident?.raw || item?.raw || null;
         return {
           id: incident?.id || item?.id || "",
           title: resolvedHeadline || buildSpecificAlertTitle({ ...incident, title: item?.localizedSummary || incident?.title, subtitle: incident?.subtitle || item?.localizedSummary }),
@@ -20748,7 +20749,14 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           minutesText: item?.minutesText || "now",
           type: incident?.report_type || incident?.type || item?.type || "hazard",
           reportKind: incident?.reportKind || (String(incident?.crossingId || "").trim() ? "crossing" : "hazard"),
-          roadName: incident?.roadName || incident?.corridor,
+          primaryRoad: raw?.primaryRoad ?? incident?.primaryRoad,
+          roadName: raw?.roadName ?? incident?.roadName ?? incident?.corridor,
+          referenceRoadA: raw?.referenceRoadA ?? incident?.referenceRoadA,
+          referenceRoadB: raw?.referenceRoadB ?? incident?.referenceRoadB,
+          parsedPrimaryRoad: raw?.parsedPrimaryRoad ?? incident?.parsedPrimaryRoad,
+          parsedCrossRoad: raw?.parsedCrossRoad ?? incident?.parsedCrossRoad,
+          segmentHeadline: raw?.segmentHeadline ?? incident?.segmentHeadline,
+          finalHeadline: raw?.finalHeadline ?? incident?.finalHeadline,
           corridor: incident?.corridor,
           crossingName: incident?.crossingName,
           crossingId: incident?.crossingId || incident?.crossing_id || "",
@@ -20760,7 +20768,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           lat: incident?.lat ?? incident?.latitude ?? incident?.rawLat ?? null,
           lng: incident?.lng ?? incident?.lon ?? incident?.longitude ?? incident?.rawLng ?? null,
           source: incident?.source || item?.source || null,
-          raw: incident?.raw || item?.raw || incident || item || null,
+          raw: raw || incident || item || null,
           crossStreetA: incident?.crossStreetA,
           crossStreetB: incident?.crossStreetB,
           direction: incident?.direction
@@ -20771,6 +20779,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         const typeLabel = getReportCopy?.(rawType)?.label || String(rawType).replace(/[_-]+/g, " ");
         const locationLabel = item?.crossingName || item?.locationLabel || item?.locationName || item?.roadName || item?.label || "Local roadway";
         const stateLabel = item?.latestReport ? getReportStateLabel(item.latestReport) : (item?.statusLabel || "Active");
+        const raw = item?.raw || null;
         return {
           id: item?.id || item?.crossingId || "",
           title: pickFirstNonEmptyText([
@@ -20798,9 +20807,16 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           minutesText: "now",
           type: rawType,
           reportKind: item?.reportKind,
+          primaryRoad: raw?.primaryRoad ?? item?.primaryRoad,
+          roadName: raw?.roadName ?? item?.roadName,
+          referenceRoadA: raw?.referenceRoadA ?? item?.referenceRoadA,
+          referenceRoadB: raw?.referenceRoadB ?? item?.referenceRoadB,
+          parsedPrimaryRoad: raw?.parsedPrimaryRoad ?? item?.parsedPrimaryRoad,
+          parsedCrossRoad: raw?.parsedCrossRoad ?? item?.parsedCrossRoad,
+          segmentHeadline: raw?.segmentHeadline ?? item?.segmentHeadline,
+          finalHeadline: raw?.finalHeadline ?? item?.finalHeadline,
           crossingId: item?.crossingId || item?.crossing_id || "",
           crossingRoad: item?.crossingRoad,
-          roadName: item?.roadName,
           corridor: item?.corridor,
           crossingName: item?.crossingName,
           nearestRoad: item?.nearestRoad,
@@ -20810,7 +20826,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           lat: item?.lat ?? item?.latitude ?? item?.rawLat ?? null,
           lng: item?.lng ?? item?.lon ?? item?.longitude ?? item?.rawLng ?? null,
           source: item?.source || item?.latestReport || null,
-          raw: item?.raw || item || null
+          raw: raw || item || null
         };
       });
     const normalizedAlertItems = normalizedAlertItemsFromIntel;
