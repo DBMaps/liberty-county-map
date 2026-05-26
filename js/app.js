@@ -3229,6 +3229,49 @@ function openAlertsSurfaceFromDock() {
           Object.assign(alert, persistedFields);
           if (alert.raw && typeof alert.raw === "object") {
             rawOwner = alert.raw;
+            const nonEmpty = (value) => {
+              if (value === null || value === undefined) return false;
+              if (typeof value === "string") return Boolean(value.trim());
+              return true;
+            };
+            const buildProtectedFields = (existing = {}, incoming = {}) => {
+              const protectedFields = {};
+              const candidateFields = [
+                "primaryRoad",
+                "referenceRoadA",
+                "referenceRoadB",
+                "parsedPrimaryRoad",
+                "parsedCrossRoad"
+              ];
+              candidateFields.forEach((field) => {
+                const currentValue = existing?.[field];
+                const nextValue = incoming?.[field];
+                if (!nonEmpty(currentValue)) {
+                  protectedFields[field] = nextValue;
+                  return;
+                }
+                if (!nonEmpty(nextValue)) {
+                  protectedFields[field] = currentValue;
+                  return;
+                }
+                protectedFields[field] = nextValue;
+              });
+              const existingRefA = cleanDisplayValue(existing?.referenceRoadA);
+              const existingRefB = cleanDisplayValue(existing?.referenceRoadB);
+              const incomingRefA = cleanDisplayValue(incoming?.referenceRoadA);
+              const incomingRefB = cleanDisplayValue(incoming?.referenceRoadB);
+              const existingRefCount = (existingRefA ? 1 : 0) + (existingRefB ? 1 : 0);
+              const incomingRefCount = (incomingRefA ? 1 : 0) + (incomingRefB ? 1 : 0);
+              if (existingRefCount > incomingRefCount) {
+                protectedFields.referenceRoadA = existing?.referenceRoadA;
+                protectedFields.referenceRoadB = existing?.referenceRoadB;
+              }
+              if (nonEmpty(existing?.parsedCrossRoad) && !nonEmpty(incoming?.parsedCrossRoad)) {
+                protectedFields.parsedCrossRoad = existing?.parsedCrossRoad;
+              }
+              return protectedFields;
+            };
+            const preservedRoadFields = buildProtectedFields(rawOwner, persistedFields);
             console.log(
               "[V165.7D RAW MUTATION TARGET]",
               {
@@ -3241,7 +3284,7 @@ function openAlertsSurfaceFromDock() {
                 afterPreview: null
               }
             );
-            Object.assign(rawOwner, persistedFields);
+            Object.assign(rawOwner, persistedFields, preservedRoadFields);
             console.log(
               "[V165.7D RAW MUTATION RESULT]",
               {
