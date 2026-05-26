@@ -14812,6 +14812,14 @@ function getLiveCommuteSignalLine({ impact = 0, urgentBlockedCount = 0, recommen
   return recommendation || "Route clear • Leave now";
 }
 
+function logTopPanelWrite(sourceFunction, targetElement, value) {
+  console.debug("[V159.2 TOP PANEL WRITE]", {
+    sourceFunction,
+    targetElement,
+    value: typeof value === "string" ? value : (value == null ? "" : String(value))
+  });
+}
+
 function updateDailyHabitStatus() {
   const functionStartedAt = performance.now();
   const sections = {};
@@ -14866,8 +14874,11 @@ function updateDailyHabitStatus() {
   });
 
   timeSection("text_content_updates", () => {
+    logTopPanelWrite("updateDailyHabitStatus", "habitStatusPill", pill);
     safeText("habitStatusPill", pill);
+    logTopPanelWrite("updateDailyHabitStatus", "habitStatusHeadline", headline);
     safeText("habitStatusHeadline", headline);
+    logTopPanelWrite("updateDailyHabitStatus", "habitStatusDetail", detail);
     safeText("habitStatusDetail", detail);
   });
 
@@ -17180,10 +17191,13 @@ function refreshPortraitV2LocalizedIntelligence() {
   }
   const intel = timeSection("intelligence_calculations", () => buildUnifiedLocalizedCommuteIntelligence({ limit: 6 }));
   timeSection("text_content_updates", () => {
+    logTopPanelWrite("refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusPrimary", intel.commuteImpactHeadline);
     if (topPrimaryEl) topPrimaryEl.textContent = intel.commuteImpactHeadline;
-    if (topSecondaryEl) topSecondaryEl.textContent = intel.hasActiveAlerts
+    const secondaryValue = intel.hasActiveAlerts
       ? safeDisplayText(intel.topStatusLocalizedDetail, "Liberty County • Updated just now")
       : "Routes currently clear";
+    logTopPanelWrite("refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusSecondary", secondaryValue);
+    if (topSecondaryEl) topSecondaryEl.textContent = secondaryValue;
   });
   recordPortraitIntelligenceBreakdown("refreshPortraitV2LocalizedIntelligence", functionStartedAt, sections);
 }
