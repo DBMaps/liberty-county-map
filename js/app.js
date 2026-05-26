@@ -16667,10 +16667,46 @@ function resolveIncidentDirectionConfidence(incident = {}) {
   const helperResolved = typeof cleanDisplayValue === "function";
   const helperSource = helperResolved ? "global.cleanDisplayValue" : "resolveIncidentDirectionConfidence.safeDirectionDisplayValue";
   const incidentId = String(incident?.id || incident?.incidentId || incident?.reportId || incident?.report_id || incident?.uuid || "").trim();
-  const enrichedIncident = incidentId && typeof getGridlyEnrichedIncident === "function"
-    ? (getGridlyEnrichedIncident(incidentId) || incident)
+  const toCleanId = (value) => String(value || "").trim();
+  const candidateIds = [];
+  const pushCandidateId = (value) => {
+    const cleanValue = toCleanId(value);
+    if (cleanValue && !candidateIds.includes(cleanValue)) candidateIds.push(cleanValue);
+  };
+  pushCandidateId(incident?.id);
+  pushCandidateId(incident?.incidentId);
+  pushCandidateId(incident?.reportId);
+  pushCandidateId(incident?.uuid);
+  pushCandidateId(incident?.crossingId);
+  const crossingId = toCleanId(incident?.crossingId || incident?.crossing_id);
+  if (crossingId) pushCandidateId(`rail-${crossingId}`);
+  const roadType = toCleanId(incident?.type || incident?.report_type).toLowerCase();
+  const lat = Number(incident?.lat ?? incident?.latitude ?? incident?.coords?.lat ?? incident?.geometry?.lat);
+  const lng = Number(incident?.lng ?? incident?.lon ?? incident?.longitude ?? incident?.coords?.lng ?? incident?.geometry?.lng);
+  if (roadType && Number.isFinite(lat) && Number.isFinite(lng)) {
+    pushCandidateId(`road-${roadType}:${lat.toFixed(4)},${lng.toFixed(4)}`);
+  }
+
+  let enrichedIncident = null;
+  let matchedRegistryId = "";
+  if (typeof getGridlyEnrichedIncident === "function") {
+    for (let idx = 0; idx < candidateIds.length; idx += 1) {
+      const candidateId = candidateIds[idx];
+      const candidateIncident = getGridlyEnrichedIncident(candidateId);
+      if (candidateIncident) {
+        enrichedIncident = candidateIncident;
+        matchedRegistryId = candidateId;
+        break;
+      }
+    }
+  }
+  const usedFallback = !enrichedIncident;
+  if (usedFallback) {
+    console.debug("[V167.7 DIRECTION OWNER MISS]", { incidentId, candidateIds });
+  }
+  const directionOwnerIncident = enrichedIncident
+    ? { ...incident, ...enrichedIncident }
     : incident;
-  const directionOwnerIncident = enrichedIncident || incident;
   const roadResolution = resolveDirectionEngineRoadName(directionOwnerIncident);
   const normalizedRoadFromEnrichment = normalizeCorridorBaseLabel(roadResolution.roadName);
   const normalizedRoadFromCorridor = normalizeCorridorBaseLabel(inferCorridorLabel(incident).replace(/ Corridor$/i, ""));
@@ -16706,6 +16742,9 @@ function resolveIncidentDirectionConfidence(incident = {}) {
   console.debug("[V165.4 DIRECTION SOURCE OWNER]", {
     incidentId: resolvedIncidentId,
     isEnriched: Boolean(enrichedIncident && enrichedIncident !== incident),
+    candidateIds,
+    matchedRegistryId,
+    usedFallback,
     availableFields: Object.fromEntries((roadResolution?.availableFields || []).map(([key, value]) => [key, resolvedDirectionDisplayHelper(value)])),
     selectedRoad: roadName,
     sourceUsed: roadResolution?.sourceUsed || source,
@@ -16725,7 +16764,10 @@ function resolveIncidentDirectionConfidence(incident = {}) {
     directionPair: Array.isArray(orientationResolution.directionPair) ? orientationResolution.directionPair : [],
     confidence,
     source,
-    reason
+    reason,
+    candidateIds,
+    matchedRegistryId,
+    usedFallback
   };
 }
 
@@ -22247,7 +22289,10 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
         directionPair: confidence.directionPair,
         confidence: confidence.confidence,
         source: "enriched-incident-registry",
-        reason: confidence.reason
+        reason: confidence.reason,
+        candidateIds: Array.isArray(confidence?.candidateIds) ? confidence.candidateIds : [],
+        matchedRegistryId: cleanDirectionAuditValue(confidence?.matchedRegistryId),
+        usedFallback: Boolean(confidence?.usedFallback)
       };
     } catch (error) {
       return {
