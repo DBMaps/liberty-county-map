@@ -17287,15 +17287,34 @@ function refreshPortraitV2LocalizedIntelligence() {
     return;
   }
   const intel = timeSection("intelligence_calculations", () => buildUnifiedLocalizedCommuteIntelligence({ limit: 6 }));
+  const activeHazardCount = timeSection("array_filtering_sorting", () => getUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "active").length);
+  const corridorCount = Array.isArray(intel?.corridorClusters) ? intel.corridorClusters.length : 0;
+  const hasActiveAlerts = Boolean(intel?.hasActiveAlerts) || Number(intel?.activeLocalizedAlertCount || 0) > 0 || activeHazardCount > 0 || corridorCount > 0;
+  const selectedTopPrimary = hasActiveAlerts
+    ? safeDisplayText(intel.topStatus, intel.commuteImpactHeadline)
+    : safeDisplayText(intel.commuteImpactHeadline, "Routes currently clear");
+  const selectedTopSecondary = hasActiveAlerts
+    ? `${formatPortraitTopStripImpactLabel(intel.commuteConsequenceTier)} • ${safeDisplayText(intel.topIncidentFreshnessText, "just now")}`
+    : "Routes currently clear";
+  const blockedClearState = hasActiveAlerts && /routes?\s+currently\s+clear/i.test(selectedTopPrimary);
+  const highestPriorityAlert = intel?.items?.[0]?.incident || null;
+
+  console.debug("[V161 TOP STRIP TRUTH]", {
+    activeHazardCount,
+    hasActiveAlerts,
+    selectedTopPrimary,
+    selectedTopSecondary,
+    sourceUsed: hasActiveAlerts ? "unified_active_alert_truth" : "clear_state",
+    blockedClearState,
+    highestPriorityAlertId: highestPriorityAlert?.id || null,
+    highestPriorityAlertTitle: highestPriorityAlert?.title || null
+  });
+
   timeSection("text_content_updates", () => {
-    const primaryValue = intel.hasActiveAlerts
-      ? safeDisplayText(intel.topStatus, intel.commuteImpactHeadline)
-      : safeDisplayText(intel.commuteImpactHeadline, "Routes currently clear");
+    const primaryValue = blockedClearState ? safeDisplayText(intel.topStatusLocalizedDetail, intel.topStatus, "Community alerts active") : selectedTopPrimary;
     logTopPanelWrite("refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusPrimary", primaryValue);
     if (topPrimaryEl) topPrimaryEl.textContent = primaryValue;
-    const secondaryValue = intel.hasActiveAlerts
-      ? `${formatPortraitTopStripImpactLabel(intel.commuteConsequenceTier)} • ${safeDisplayText(intel.topIncidentFreshnessText, "just now")}`
-      : "Routes currently clear";
+    const secondaryValue = selectedTopSecondary;
     logTopPanelWrite("refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusSecondary", secondaryValue);
     if (topSecondaryEl) topSecondaryEl.textContent = secondaryValue;
     logTopStripOwnershipDiagnostic("refreshPortraitV2LocalizedIntelligence");
