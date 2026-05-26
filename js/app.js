@@ -20856,6 +20856,24 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           coerceDisplayText(item?.label)
         ]);
         const raw = incident?.raw || item?.raw || null;
+        console.log(
+          "[V169.1 SNAPSHOT SOURCE]",
+          {
+            id: incident?.id || item?.id,
+            incidentRoadFields: {
+              primaryRoad: incident?.primaryRoad,
+              roadName: incident?.roadName,
+              referenceRoadA: incident?.referenceRoadA,
+              referenceRoadB: incident?.referenceRoadB
+            },
+            rawRoadFields: {
+              primaryRoad: incident?.raw?.primaryRoad,
+              roadName: incident?.raw?.roadName,
+              referenceRoadA: incident?.raw?.referenceRoadA,
+              referenceRoadB: incident?.raw?.referenceRoadB
+            }
+          }
+        );
         return {
           id: incident?.id || item?.id || "",
           title: resolvedHeadline || buildSpecificAlertTitle({ ...incident, title: item?.localizedSummary || incident?.title, subtitle: incident?.subtitle || item?.localizedSummary }),
