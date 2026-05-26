@@ -22107,6 +22107,10 @@ const v134ReportingRefinementApplied = true;
 
 window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit() {
   console.log("[V165.2 DIRECTION CONFIDENCE AUDIT]");
+  const cleanDirectionAuditValue = (value) => {
+    if (value === null || value === undefined) return "";
+    return String(value).trim();
+  };
   const pathHelperFromGlobal = (typeof window !== "undefined" && typeof window.getValueByPath === "function")
     ? window.getValueByPath
     : (typeof globalThis !== "undefined" && typeof globalThis.getValueByPath === "function")
@@ -22139,47 +22143,65 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
   const alertItems = Array.isArray(alertSnapshot?.alerts) ? alertSnapshot.alerts : [];
   const registryCount = gridlyEnrichedIncidentRegistry.size;
   return (Array.isArray(activeIncidents) ? activeIncidents : []).map((incident) => {
-    const incidentId = String(incident?.id || incident?.incidentId || incident?.reportId || "").trim();
-    const enrichedIncident = incidentId ? (getGridlyEnrichedIncident(incidentId) || null) : null;
-    const diagnosticFallback = alertItems.find((alert) => String(alert?.id || "").trim() === incidentId) || null;
-    const directionOwnerIncident = enrichedIncident || diagnosticFallback || incident;
-    logGridlyRawOwnerTrace({
-      incidentId,
-      stage: "gridlyDirectionConfidenceAudit()",
-      owner: directionOwnerIncident
-    });
-    const confidence = resolveIncidentDirectionConfidence(directionOwnerIncident);
-    const availableRoadFields = [
-      "primaryRoad", "roadName", "resolvedRoadName", "corridor", "route", "road", "nearestRoad", "knownLocation",
-      "raw.primaryRoad", "raw.roadName", "source.primaryRoad", "source.roadName"
-    ].filter((path) => {
-      const value = safeGetValueByPath(directionOwnerIncident, path);
-      return typeof value === "string" ? Boolean(value.trim()) : value !== undefined && value !== null;
-    });
-    const selectedRoadName = String(confidence?.roadName || "").trim();
-    const sourceOwner = enrichedIncident ? "enriched-incident-registry" : "diagnostic-fallback";
-    console.log("[V165.5 DIRECTION OWNER FIX]", {
-      incidentId: confidence.incidentId || incidentId || "",
-      isEnriched: Boolean(enrichedIncident),
-      registryCount,
-      availableRoadFields,
-      selectedRoadName,
-      sourceOwner
-    });
-    return {
-      incidentId: confidence.incidentId,
-      titleOrHeadline: String(incident?.title || incident?.headline || ""),
-      roadName: confidence.roadName,
-      primaryRoad: cleanDisplayValue(directionOwnerIncident?.primaryRoad),
-      referenceRoadA: cleanDisplayValue(directionOwnerIncident?.referenceRoadA),
-      referenceRoadB: cleanDisplayValue(directionOwnerIncident?.referenceRoadB),
-      directionAxis: confidence.directionPair,
-      inferredOrientation: confidence.inferredOrientation,
-      directionPair: confidence.directionPair,
-      confidence: confidence.confidence,
-      source: "enriched-incident-registry",
-      reason: confidence.reason
-    };
+    try {
+      const incidentId = cleanDirectionAuditValue(incident?.id || incident?.incidentId || incident?.reportId);
+      const enrichedIncident = incidentId ? (getGridlyEnrichedIncident(incidentId) || null) : null;
+      const diagnosticFallback = alertItems.find((alert) => cleanDirectionAuditValue(alert?.id) === incidentId) || null;
+      const directionOwnerIncident = enrichedIncident || diagnosticFallback || incident;
+      logGridlyRawOwnerTrace({
+        incidentId,
+        stage: "gridlyDirectionConfidenceAudit()",
+        owner: directionOwnerIncident
+      });
+      const confidence = resolveIncidentDirectionConfidence(directionOwnerIncident);
+      const availableRoadFields = [
+        "primaryRoad", "roadName", "resolvedRoadName", "corridor", "route", "road", "nearestRoad", "knownLocation",
+        "raw.primaryRoad", "raw.roadName", "source.primaryRoad", "source.roadName"
+      ].filter((path) => {
+        const value = safeGetValueByPath(directionOwnerIncident, path);
+        return typeof value === "string" ? Boolean(value.trim()) : value !== undefined && value !== null;
+      });
+      const selectedRoadName = cleanDirectionAuditValue(confidence?.roadName);
+      const sourceOwner = enrichedIncident ? "enriched-incident-registry" : "diagnostic-fallback";
+      console.log("[V165.5 DIRECTION OWNER FIX]", {
+        incidentId: confidence.incidentId || incidentId || "",
+        isEnriched: Boolean(enrichedIncident),
+        registryCount,
+        availableRoadFields,
+        selectedRoadName,
+        sourceOwner
+      });
+      return {
+        incidentId: confidence.incidentId,
+        titleOrHeadline: cleanDirectionAuditValue(incident?.title || incident?.headline),
+        roadName: confidence.roadName,
+        primaryRoad: cleanDirectionAuditValue(directionOwnerIncident?.primaryRoad),
+        referenceRoadA: cleanDirectionAuditValue(directionOwnerIncident?.referenceRoadA),
+        referenceRoadB: cleanDirectionAuditValue(directionOwnerIncident?.referenceRoadB),
+        directionAxis: confidence.directionPair,
+        inferredOrientation: confidence.inferredOrientation,
+        directionPair: confidence.directionPair,
+        confidence: confidence.confidence,
+        source: "enriched-incident-registry",
+        reason: confidence.reason
+      };
+    } catch (error) {
+      return {
+        incidentId: cleanDirectionAuditValue(incident?.id || incident?.incidentId || incident?.reportId),
+        titleOrHeadline: cleanDirectionAuditValue(incident?.title || incident?.headline),
+        roadName: "",
+        primaryRoad: "",
+        referenceRoadA: "",
+        referenceRoadB: "",
+        directionAxis: "",
+        inferredOrientation: "",
+        directionPair: "",
+        confidence: "LOW",
+        source: "enriched-incident-registry",
+        reason: "audit-row-error",
+        diagnosticError: cleanDirectionAuditValue(error?.message || error)
+      };
+    }
   });
 };
 
