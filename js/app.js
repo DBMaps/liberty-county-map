@@ -20743,19 +20743,30 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     });
   }
   const gridlyEnrichedIncidentRegistry = new Map();
+  function cleanGridlyRegistryValue(value) {
+    if (value === null || value === undefined) return "";
+    return String(value).trim();
+  }
   function getGridlyEnrichedIncidentRegistryId(incident = {}) {
-    return cleanDisplayValue(incident?.id || incident?.incidentId || incident?.reportId || incident?.uuid || incident?.crossingId || incident?.crossing_id);
+    return cleanGridlyRegistryValue(incident?.id || incident?.incidentId || incident?.reportId || incident?.uuid || incident?.crossingId || incident?.crossing_id);
   }
   function registerGridlyEnrichedIncident(incident = {}) {
-    const id = getGridlyEnrichedIncidentRegistryId(incident);
-    if (!id || !incident || typeof incident !== "object") return null;
-    const existing = gridlyEnrichedIncidentRegistry.get(id) || {};
-    const next = { ...existing, ...incident, id };
-    gridlyEnrichedIncidentRegistry.set(id, next);
-    return next;
+    try {
+      const id = getGridlyEnrichedIncidentRegistryId(incident);
+      if (!id || !incident || typeof incident !== "object") return null;
+      const existing = gridlyEnrichedIncidentRegistry.get(id) || {};
+      const next = { ...existing, ...incident, id };
+      gridlyEnrichedIncidentRegistry.set(id, next);
+      return next;
+    } catch (error) {
+      if (window?.GRIDLY_DIRECTION_AUDIT_ENABLED || window?.GRIDLY_DEBUG_REGISTRY) {
+        console.warn("[GRIDLY REGISTRY] Unable to register enriched incident", error);
+      }
+      return null;
+    }
   }
   function getGridlyEnrichedIncident(id = "") {
-    const key = cleanDisplayValue(id);
+    const key = cleanGridlyRegistryValue(id);
     if (!key) return null;
     return gridlyEnrichedIncidentRegistry.get(key) || null;
   }
