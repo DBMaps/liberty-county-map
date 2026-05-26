@@ -16501,13 +16501,6 @@ function inferDirectionalPhrase(incident = {}, context = {}) {
 
 function resolveDirectionEngineRoadName(incident = {}) {
   const clean = (value) => String(value || "").trim();
-  const pickRoadLikeValue = (values = []) => values.map(clean).find((value) => isResolvableRoadNameCandidate(value)) || "";
-  const headlineExtractionCandidates = [
-    incident?.resolvedHeadline,
-    incident?.headline,
-    incident?.title,
-    incident?.localizedSummary
-  ];
   const extractRoadFromHeadline = (headline = "") => {
     const text = clean(headline);
     if (!text) return "";
@@ -16523,30 +16516,18 @@ function resolveDirectionEngineRoadName(incident = {}) {
     }
     return "";
   };
-  const headlineRoad = headlineExtractionCandidates.map(extractRoadFromHeadline).find(Boolean) || "";
   const prioritizedSources = [
-    ["parsedPrimaryRoad", incident?.parsedPrimaryRoad],
     ["primaryRoad", incident?.primaryRoad],
-    ["resolvedPrimaryRoad", incident?.resolvedPrimaryRoad],
+    ["parsedPrimaryRoad", incident?.parsedPrimaryRoad],
     ["originalPrimaryRoad", incident?.originalPrimaryRoad],
     ["referenceRoadA", incident?.referenceRoadA],
     ["referenceRoadB", incident?.referenceRoadB],
-    ["resolvedHeadline", headlineRoad]
+    ["finalHeadline", incident?.finalHeadline ? extractRoadFromHeadline(incident.finalHeadline) : ""],
+    ["resolvedHeadline", incident?.resolvedHeadline ? extractRoadFromHeadline(incident.resolvedHeadline) : ""]
   ];
   const priorityHit = prioritizedSources.find(([, value]) => isResolvableRoadNameCandidate(clean(value)));
-  if (priorityHit) return { roadName: clean(priorityHit[1]), sourceUsed: priorityHit[0] };
-  const candidateRoad = pickRoadLikeValue([
-    incident?.roadName,
-    incident?.road_name,
-    incident?.corridor,
-    incident?.route,
-    incident?.road,
-    incident?.nearest_road,
-    incident?.snapped_road_name,
-    incident?.location_name,
-    incident?.area
-  ]);
-  return { roadName: candidateRoad, sourceUsed: candidateRoad ? "candidate_road_fields" : "" };
+  if (priorityHit) return { roadName: clean(priorityHit[1]), sourceUsed: priorityHit[0], availableFields: prioritizedSources };
+  return { roadName: "", sourceUsed: "", availableFields: prioritizedSources };
 }
 
 
@@ -16623,12 +16604,12 @@ function resolveIncidentDirectionConfidence(incident = {}) {
     reason = "Only isolated point plus road name available; direction remains unknown.";
   }
   const incidentId = String(incident?.id || incident?.report_id || incident?.reportId || "unknown");
-  console.debug("[V165.3 DIRECTION ENRICHMENT BRIDGE]", {
+  console.debug("[V165.4 DIRECTION SOURCE OWNER]", {
     incidentId,
-    selectedRoadName: roadName,
+    availableFields: Object.fromEntries((roadResolution?.availableFields || []).map(([key, value]) => [key, cleanDisplayValue(value)])),
+    selectedRoad: roadName,
     sourceUsed: roadResolution?.sourceUsed || source,
-    confidence,
-    inferredOrientation
+    confidence
   });
 
   return {
