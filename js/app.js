@@ -22224,6 +22224,15 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
       || incidentTypeToken.includes("flood")
       || incidentTypeToken.includes("closure")
       || incidentTypeToken.includes("construct");
+    const type = directionOwnerIncident?.type;
+    console.log(
+      "[V169.3 ROAD ENRICHMENT SCOPE]",
+      {
+        resolverType: typeof resolveRoadHazardSegmentHeadline,
+        incidentId,
+        incidentType: type
+      }
+    );
     const roadHazardResolved = (isRoadHazardIncident && typeof resolveRoadHazardSegmentHeadline === "function")
       ? resolveRoadHazardSegmentHeadline(directionOwnerIncident)
       : null;
