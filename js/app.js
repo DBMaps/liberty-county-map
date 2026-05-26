@@ -22224,8 +22224,21 @@ window.gridlyHeadlineAudit = function gridlyHeadlineAudit() {
   const headlineIncidentId = String(snapshot?.headlineIncidentId || "").trim() || null;
   const visibleMatch = Boolean(headlineIncidentId && visibleIncidentIds.includes(headlineIncidentId));
   const pinnedMatch = visibleMatch && visibleIncidentIds[0] === headlineIncidentId;
+  const resolveAuditHeadline = () => {
+    const headline = snapshot?.topStatus;
+    const readableHeadline = [
+      headline,
+      headline?.text,
+      headline?.title,
+      headline?.label,
+      headline?.message,
+      snapshot?.topStatus?.primary,
+      snapshot?.topStatus?.label
+    ].find((value) => typeof value === "string" && value.trim());
+    return (readableHeadline ?? String(headline || "")).trim();
+  };
   return {
-    headline: String(snapshot?.topStatus || "").trim(),
+    headline: resolveAuditHeadline(),
     headlineIncidentId,
     visibleIncidentIds,
     visibleMatch,
