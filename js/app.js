@@ -3127,26 +3127,13 @@ function openAlertsSurfaceFromDock() {
           sourceFieldUsed: sourceFieldUsedForOutput,
           finalHeadline
         };
-        const enrichedRailIncident = {
+        registerGridlyEnrichedIncident({
           ...alert,
           ...resolvedPayload,
           roadName: cleanDisplayValue(alert?.roadName) || primaryRoad,
           referenceRoadA: cleanDisplayValue(resolvedSecondaryForOutput),
           referenceRoadB: "",
           nearbyStreet: cleanDisplayValue(alert?.nearbyCrossStreet || alert?.nearestCrossStreet || alert?.knownLocation || alert?.locationName || "")
-        };
-        const railIncidentId = getGridlyEnrichedIncidentRegistryId(enrichedRailIncident);
-        const existingRailRegistryEntry = railIncidentId ? (getGridlyEnrichedIncident(railIncidentId) || {}) : {};
-        registerGridlyEnrichedIncident({
-          ...existingRailRegistryEntry,
-          ...enrichedRailIncident
-        });
-        console.log("[V167.6 REGISTRY ENRICH REFRESH]", {
-          id: railIncidentId,
-          primaryRoad: cleanDisplayValue(enrichedRailIncident?.primaryRoad),
-          roadName: cleanDisplayValue(enrichedRailIncident?.roadName),
-          referenceRoadA: cleanDisplayValue(enrichedRailIncident?.referenceRoadA),
-          referenceRoadB: cleanDisplayValue(enrichedRailIncident?.referenceRoadB)
         });
         return resolvedPayload;
       };
@@ -3249,24 +3236,11 @@ function openAlertsSurfaceFromDock() {
         if (alert && typeof alert === "object") {
           Object.assign(alert, persistedFields);
         }
-        const enrichedRoadIncident = {
+        registerGridlyEnrichedIncident({
           ...alert,
           roadName: cleanDisplayValue(alert?.roadName) || primaryRoad,
           nearbyStreet: nearbyStreet || splitPrimary.parsedCrossRoad || referenceRoadA || "",
           ...persistedFields
-        };
-        const roadIncidentId = getGridlyEnrichedIncidentRegistryId(enrichedRoadIncident);
-        const existingRoadRegistryEntry = roadIncidentId ? (getGridlyEnrichedIncident(roadIncidentId) || {}) : {};
-        registerGridlyEnrichedIncident({
-          ...existingRoadRegistryEntry,
-          ...enrichedRoadIncident
-        });
-        console.log("[V167.6 REGISTRY ENRICH REFRESH]", {
-          id: roadIncidentId,
-          primaryRoad: cleanDisplayValue(enrichedRoadIncident?.primaryRoad),
-          roadName: cleanDisplayValue(enrichedRoadIncident?.roadName),
-          referenceRoadA: cleanDisplayValue(enrichedRoadIncident?.referenceRoadA),
-          referenceRoadB: cleanDisplayValue(enrichedRoadIncident?.referenceRoadB)
         });
         console.log("[V165.6 ROAD LANGUAGE FIELD PERSIST]", {
           id: cleanDisplayValue(alert?.id || alert?.reportId || alert?.uuid || ""),
@@ -16450,7 +16424,6 @@ function getRoadPriorityWeight(incident = {}) {
 
 function buildCommunityConsequenceLabel(incident = {}, fallback = "Traffic slowing") {
   const helperName = "buildCommunityConsequenceLabel";
-  const helperIncident = incident && typeof incident === "object" ? incident : {};
   const helperAuditCycleId = Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0);
   const helperStartedAt = performance.now();
   const sectionTimes = {};
@@ -16470,11 +16443,11 @@ function buildCommunityConsequenceLabel(incident = {}, fallback = "Traffic slowi
     recordLabelHelperInternalAudit(helperName, { totalMs, sectionTimes, calls, incident, result, meta }, helperAuditCycleId);
     return finalizeNearbyPairResult(result);
   };
-  const towns = recordSection("corridor_location_inference", () => recordCall("findTownMentions", () => findTownMentions(helperIncident)));
-  const road = recordSection("corridor_location_inference", () => recordCall("normalizeCorridorBaseLabel+inferCorridorLabel", () => normalizeCorridorBaseLabel(inferCorridorLabel(helperIncident).replace(/ Corridor$/, ""))));
-  const type = recordSection("input_normalization", () => String(helperIncident?.report_type || helperIncident?.type || "").toLowerCase());
-  const direction = recordSection("type_status_mapping", () => recordCall("inferDirectionalPhrase", () => inferDirectionalPhrase(helperIncident)));
-  const localSpot = recordSection("crossing_road_name_lookup", () => recordCall("buildLocalizedLocationPhrase", () => getCachedRoadNameLookup(helperIncident, "buildLocalizedLocationPhrase", (resolvedLookup) => buildLocalizedLocationPhrase(helperIncident, resolvedLookup))));
+  const towns = recordSection("corridor_location_inference", () => recordCall("findTownMentions", () => findTownMentions(incident)));
+  const road = recordSection("corridor_location_inference", () => recordCall("normalizeCorridorBaseLabel+inferCorridorLabel", () => normalizeCorridorBaseLabel(inferCorridorLabel(incident).replace(/ Corridor$/, ""))));
+  const type = recordSection("input_normalization", () => String(incident?.report_type || incident?.type || "").toLowerCase());
+  const direction = recordSection("type_status_mapping", () => recordCall("inferDirectionalPhrase", () => inferDirectionalPhrase(incident)));
+  const localSpot = recordSection("crossing_road_name_lookup", () => recordCall("buildLocalizedLocationPhrase", () => getCachedRoadNameLookup(incident, "buildLocalizedLocationPhrase", (resolvedLookup) => buildLocalizedLocationPhrase(incident, resolvedLookup))));
   if (towns.length >= 2) return finalizeAudit(recordSection("string_template_construction", () => `Traffic slowing between ${towns[0]} and ${towns[1]}`), { path: "town_pair" });
   if (/blocked|crossing_blocked/.test(type) && /US 90/i.test(road)) return finalizeAudit(recordSection("string_template_construction", () => `Train blocking ${localSpot}${direction ? ` · ${direction} backups` : ""}`), { path: "blocked_us90" });
   if (/blocked|crossing_blocked/.test(type) && /FM 1008/i.test(road)) return finalizeAudit(recordSection("string_template_construction", () => `Train reported at ${localSpot}${towns[0] ? ` into ${towns[0]}` : ""}`), { path: "blocked_fm1008" });
@@ -16593,29 +16566,23 @@ function resolveDirectionEngineRoadName(incident = {}) {
 }
 
 
-function resolveGridlyRoadOrientation({ roadName = "", lat = null, lng = null, incident = null } = {}) {
-  const normalizedRoad = normalizeCorridorBaseLabel(roadName);
-  const knownCorridorOrientation = {
-    "US 90": { orientation: "east-west", directionPair: ["eastbound", "westbound"] },
-    "TX 146": { orientation: "north-south", directionPair: ["northbound", "southbound"] },
-    "TX 321": { orientation: "north-south", directionPair: ["northbound", "southbound"] },
-    "FM 1409": { orientation: "north-south", directionPair: ["northbound", "southbound"] },
-    "FM 1008": { orientation: "north-south", directionPair: ["northbound", "southbound"] }
+function resolveIncidentDirectionConfidence(incident = {}) {
+  const resolvedDirectionDisplayHelper = typeof cleanDisplayValue === "function"
+    ? cleanDisplayValue
+    : (value) => String(value || "").trim().replace(/\s+/g, " ");
+  const helperResolved = typeof cleanDisplayValue === "function";
+  const helperSource = helperResolved ? "global.cleanDisplayValue" : "resolveIncidentDirectionConfidence.safeDirectionDisplayValue";
+  const roadResolution = resolveDirectionEngineRoadName(incident);
+  const normalizedRoadFromEnrichment = normalizeCorridorBaseLabel(roadResolution.roadName);
+  const normalizedRoadFromCorridor = normalizeCorridorBaseLabel(inferCorridorLabel(incident).replace(/ Corridor$/i, ""));
+  const roadName = normalizedRoadFromEnrichment
+    || (normalizedRoadFromCorridor && !/local (crossing|road) impact/i.test(normalizedRoadFromCorridor) ? normalizedRoadFromCorridor : "");
+
+  const extractHeading = (value) => {
+    const heading = Number(value);
+    return Number.isFinite(heading) ? ((heading % 360) + 360) % 360 : null;
   };
 
-  if (normalizedRoad && knownCorridorOrientation[normalizedRoad]) {
-    return {
-      orientation: knownCorridorOrientation[normalizedRoad].orientation,
-      confidence: "MEDIUM",
-      directionPair: knownCorridorOrientation[normalizedRoad].directionPair,
-      reason: "Known corridor orientation default applied"
-    };
-  }
-
-  const normalizeBearing = (value) => {
-    const numeric = Number(value);
-    return Number.isFinite(numeric) ? ((numeric % 180) + 180) % 180 : null;
-  };
   const headingCandidates = [
     incident?.bearing,
     incident?.heading,
@@ -16626,113 +16593,57 @@ function resolveGridlyRoadOrientation({ roadName = "", lat = null, lng = null, i
     incident?.geometry?.bearing,
     incident?.geometry?.heading,
     incident?.segment?.bearing,
-    incident?.segment?.heading,
-    ...(Array.isArray(incident?.roadSegmentCandidates) ? incident.roadSegmentCandidates.flatMap((candidate) => [candidate?.bearing, candidate?.heading, candidate?.segmentBearing]) : []),
-    ...(Array.isArray(incident?.nearbyRoads) ? incident.nearbyRoads.flatMap((candidate) => [candidate?.bearing, candidate?.heading]) : [])
-  ].map(normalizeBearing).filter((value) => Number.isFinite(value));
+    incident?.segment?.heading
+  ];
+  const heading = headingCandidates.map(extractHeading).find((value) => Number.isFinite(value));
 
-  const heading = headingCandidates[0];
-  if (Number.isFinite(heading)) {
-    if ((heading >= 0 && heading <= 30) || (heading >= 150 && heading <= 180)) {
-      return {
-        orientation: "north-south",
-        confidence: "MEDIUM",
-        directionPair: ["northbound", "southbound"],
-        reason: "Nearby geometry bearing inference"
-      };
-    }
-    if (heading >= 60 && heading <= 120) {
-      return {
-        orientation: "east-west",
-        confidence: "MEDIUM",
-        directionPair: ["eastbound", "westbound"],
-        reason: "Nearby geometry bearing inference"
-      };
-    }
-  }
-
-  return {
-    orientation: "unknown",
-    confidence: "LOW",
-    directionPair: [],
-    reason: "Only isolated point plus road name available"
+  const orientationFromHeading = (value) => {
+    if (!Number.isFinite(value)) return "unknown";
+    const norm = ((value % 180) + 180) % 180;
+    if (norm < 22.5 || norm >= 157.5) return "north-south";
+    if (norm >= 22.5 && norm < 67.5) return "northeast-southwest";
+    if (norm >= 67.5 && norm < 112.5) return "east-west";
+    return "northwest-southeast";
   };
-}
 
-
-function resolveIncidentDirectionConfidence(incident = {}) {
-  const resolvedDirectionDisplayHelper = typeof cleanDisplayValue === "function"
-    ? cleanDisplayValue
-    : (value) => String(value || "").trim().replace(/\s+/g, " ");
-  const helperResolved = typeof cleanDisplayValue === "function";
-  const helperSource = helperResolved ? "global.cleanDisplayValue" : "resolveIncidentDirectionConfidence.safeDirectionDisplayValue";
-  const incidentId = String(incident?.id || incident?.incidentId || incident?.reportId || incident?.report_id || incident?.uuid || "").trim();
-  const toCleanId = (value) => String(value || "").trim();
-  const candidateIds = [];
-  const pushCandidateId = (value) => {
-    const cleanValue = toCleanId(value);
-    if (cleanValue && !candidateIds.includes(cleanValue)) candidateIds.push(cleanValue);
+  const knownCorridorOrientation = {
+    "US 90": "east-west",
+    "TX 146": "north-south",
+    "TX 321": "north-south",
+    "FM 1409": "north-south",
+    "FM 1008": "east-west"
   };
-  pushCandidateId(incident?.id);
-  pushCandidateId(incident?.incidentId);
-  pushCandidateId(incident?.reportId);
-  pushCandidateId(incident?.uuid);
-  pushCandidateId(incident?.crossingId);
-  const crossingId = toCleanId(incident?.crossingId || incident?.crossing_id);
-  if (crossingId) pushCandidateId(`rail-${crossingId}`);
-  const roadType = toCleanId(incident?.type || incident?.report_type).toLowerCase();
-  const lat = Number(incident?.lat ?? incident?.latitude ?? incident?.coords?.lat ?? incident?.geometry?.lat);
-  const lng = Number(incident?.lng ?? incident?.lon ?? incident?.longitude ?? incident?.coords?.lng ?? incident?.geometry?.lng);
-  if (roadType && Number.isFinite(lat) && Number.isFinite(lng)) {
-    pushCandidateId(`road-${roadType}:${lat.toFixed(4)},${lng.toFixed(4)}`);
-  }
 
-  let enrichedIncident = null;
-  let matchedRegistryId = "";
-  if (typeof getGridlyEnrichedIncident === "function") {
-    for (let idx = 0; idx < candidateIds.length; idx += 1) {
-      const candidateId = candidateIds[idx];
-      const candidateIncident = getGridlyEnrichedIncident(candidateId);
-      if (candidateIncident) {
-        enrichedIncident = candidateIncident;
-        matchedRegistryId = candidateId;
-        break;
-      }
-    }
-  }
-  const usedFallback = !enrichedIncident;
-  if (usedFallback) {
-    console.debug("[V167.7 DIRECTION OWNER MISS]", { incidentId, candidateIds });
-  }
-  const directionOwnerIncident = enrichedIncident
-    ? { ...incident, ...enrichedIncident }
-    : incident;
-  const roadResolution = resolveDirectionEngineRoadName(directionOwnerIncident);
-  const normalizedRoadFromEnrichment = normalizeCorridorBaseLabel(roadResolution.roadName);
-  const normalizedRoadFromCorridor = normalizeCorridorBaseLabel(inferCorridorLabel(incident).replace(/ Corridor$/i, ""));
-  const roadName = normalizedRoadFromEnrichment
-    || (normalizedRoadFromCorridor && !/local (crossing|road) impact/i.test(normalizedRoadFromCorridor) ? normalizedRoadFromCorridor : "");
-  const orientationResolution = resolveGridlyRoadOrientation({
-    roadName: roadName || directionOwnerIncident?.primaryRoad || "",
-    lat: directionOwnerIncident?.lat ?? directionOwnerIncident?.latitude ?? directionOwnerIncident?.coords?.lat ?? directionOwnerIncident?.geometry?.lat,
-    lng: directionOwnerIncident?.lng ?? directionOwnerIncident?.lon ?? directionOwnerIncident?.longitude ?? directionOwnerIncident?.coords?.lng ?? directionOwnerIncident?.geometry?.lng,
-    incident: directionOwnerIncident
-  });
+  const orientationFromGeometry = orientationFromHeading(heading);
+  const orientationFromRoad = roadName ? (knownCorridorOrientation[roadName] || "unknown") : "unknown";
+  const inferredOrientation = orientationFromGeometry !== "unknown" ? orientationFromGeometry : orientationFromRoad;
 
-  const inferredOrientation = orientationResolution.orientation;
+  const directionPairByOrientation = {
+    "east-west": ["eastbound", "westbound"],
+    "north-south": ["northbound", "southbound"],
+    "northeast-southwest": ["northeastbound", "southwestbound"],
+    "northwest-southeast": ["northwestbound", "southeastbound"],
+    unknown: []
+  };
 
-  let confidence = orientationResolution.confidence || "LOW";
+  let confidence = "UNKNOWN";
   let source = "insufficient_data";
-  let reason = orientationResolution.reason || "Insufficient directional evidence.";
+  let reason = "Insufficient directional evidence.";
 
-  if (orientationResolution.reason === "Known corridor orientation default applied") {
+  if (orientationFromGeometry !== "unknown") {
+    confidence = "HIGH";
+    source = "route_segment_geometry";
+    reason = "Route or segment bearing available from incident geometry.";
+  } else if (orientationFromRoad !== "unknown") {
+    confidence = "MEDIUM";
     source = "known_corridor_default";
-  } else if (orientationResolution.reason === "Nearby geometry bearing inference") {
-    source = "nearby_geometry_bearing";
+    reason = `Known corridor orientation default applied for ${roadName}.`;
   } else if (roadName) {
+    confidence = "LOW";
     source = roadResolution?.sourceUsed || "road_name_only";
+    reason = "Only isolated point plus road name available; direction remains unknown.";
   }
-  const resolvedIncidentId = incidentId || String(incident?.report_id || incident?.reportId || "unknown");
+  const incidentId = String(incident?.id || incident?.report_id || incident?.reportId || "unknown");
   const auditRecovered = !helperResolved;
   console.debug("[V165.4.1 DIRECTION HELPER FIX]", {
     helperResolved,
@@ -16740,34 +16651,21 @@ function resolveIncidentDirectionConfidence(incident = {}) {
     auditRecovered
   });
   console.debug("[V165.4 DIRECTION SOURCE OWNER]", {
-    incidentId: resolvedIncidentId,
-    isEnriched: Boolean(enrichedIncident && enrichedIncident !== incident),
-    candidateIds,
-    matchedRegistryId,
-    usedFallback,
+    incidentId,
     availableFields: Object.fromEntries((roadResolution?.availableFields || []).map(([key, value]) => [key, resolvedDirectionDisplayHelper(value)])),
     selectedRoad: roadName,
     sourceUsed: roadResolution?.sourceUsed || source,
-    confidence,
-    resolverInputFields: {
-      roadName: resolvedDirectionDisplayHelper(roadName),
-      primaryRoad: resolvedDirectionDisplayHelper(directionOwnerIncident?.primaryRoad),
-      referenceRoadA: resolvedDirectionDisplayHelper(directionOwnerIncident?.referenceRoadA),
-      referenceRoadB: resolvedDirectionDisplayHelper(directionOwnerIncident?.referenceRoadB)
-    }
+    confidence
   });
 
   return {
-    incidentId: resolvedIncidentId,
+    incidentId,
     roadName,
     inferredOrientation,
-    directionPair: Array.isArray(orientationResolution.directionPair) ? orientationResolution.directionPair : [],
+    directionPair: directionPairByOrientation[inferredOrientation] || [],
     confidence,
     source,
-    reason,
-    candidateIds,
-    matchedRegistryId,
-    usedFallback
+    reason
   };
 }
 
@@ -20844,11 +20742,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       availableRoadFields
     });
   }
-  const gridlyEnrichedIncidentRegistry = window.gridlyEnrichedIncidentRegistry || {};
-  window.gridlyEnrichedIncidentRegistry = gridlyEnrichedIncidentRegistry;
-  console.log("[V167.5 REGISTRY INSTANCE]", {
-    sameReference: window.gridlyEnrichedIncidentRegistry === gridlyEnrichedIncidentRegistry
-  });
+  const gridlyEnrichedIncidentRegistry = new Map();
   function cleanGridlyRegistryValue(value) {
     if (value === null || value === undefined) return "";
     return String(value).trim();
@@ -20860,9 +20754,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     try {
       const id = getGridlyEnrichedIncidentRegistryId(incident);
       if (!id || !incident || typeof incident !== "object") return null;
-      const existing = gridlyEnrichedIncidentRegistry[id] || {};
+      const existing = gridlyEnrichedIncidentRegistry.get(id) || {};
       const next = { ...existing, ...incident, id };
-      gridlyEnrichedIncidentRegistry[id] = next;
+      gridlyEnrichedIncidentRegistry.set(id, next);
       return next;
     } catch (error) {
       if (window?.GRIDLY_DIRECTION_AUDIT_ENABLED || window?.GRIDLY_DEBUG_REGISTRY) {
@@ -20874,10 +20768,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   function getGridlyEnrichedIncident(id = "") {
     const key = cleanGridlyRegistryValue(id);
     if (!key) return null;
-    return gridlyEnrichedIncidentRegistry[key] || null;
+    return gridlyEnrichedIncidentRegistry.get(key) || null;
   }
   function getGridlyEnrichedIncidentRegistrySnapshot() {
-    return { ...gridlyEnrichedIncidentRegistry };
+    return [...gridlyEnrichedIncidentRegistry.values()].map((item) => ({ ...item }));
   }
   window.registerGridlyEnrichedIncident = registerGridlyEnrichedIncident;
   window.getGridlyEnrichedIncident = getGridlyEnrichedIncident;
@@ -22247,7 +22141,7 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
   const activeIncidents = typeof getActiveUnifiedIncidents === "function" ? getActiveUnifiedIncidents() : [];
   const alertSnapshot = typeof getAlertsSurfaceSnapshot === "function" ? getAlertsSurfaceSnapshot() : null;
   const alertItems = Array.isArray(alertSnapshot?.alerts) ? alertSnapshot.alerts : [];
-  const registryCount = Object.keys(gridlyEnrichedIncidentRegistry).length;
+  const registryCount = gridlyEnrichedIncidentRegistry.size;
   return (Array.isArray(activeIncidents) ? activeIncidents : []).map((incident) => {
     try {
       const incidentId = cleanDirectionAuditValue(incident?.id || incident?.incidentId || incident?.reportId);
@@ -22289,10 +22183,7 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
         directionPair: confidence.directionPair,
         confidence: confidence.confidence,
         source: "enriched-incident-registry",
-        reason: confidence.reason,
-        candidateIds: Array.isArray(confidence?.candidateIds) ? confidence.candidateIds : [],
-        matchedRegistryId: cleanDirectionAuditValue(confidence?.matchedRegistryId),
-        usedFallback: Boolean(confidence?.usedFallback)
+        reason: confidence.reason
       };
     } catch (error) {
       return {
