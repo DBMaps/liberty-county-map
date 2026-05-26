@@ -3119,12 +3119,28 @@ function openAlertsSurfaceFromDock() {
         return value;
       };
       const resolveRoadHazardSegmentHeadline = (alert = {}) => {
+        const splitCompositePrimaryRoad = (value = "") => {
+          const original = cleanDisplayValue(text(value));
+          if (!original) return { parsedPrimaryRoad: "", parsedCrossRoad: "", splitDetected: false };
+          const match = original.match(/\s*(?:&|\/|@|\band\b|\sat\s|\snear\s)\s*/i);
+          if (!match || typeof match.index !== "number") {
+            return { parsedPrimaryRoad: original, parsedCrossRoad: "", splitDetected: false };
+          }
+          const left = cleanDisplayValue(original.slice(0, match.index));
+          const right = cleanDisplayValue(original.slice(match.index + match[0].length));
+          if (!left || !right) {
+            return { parsedPrimaryRoad: original, parsedCrossRoad: "", splitDetected: false };
+          }
+          return { parsedPrimaryRoad: left, parsedCrossRoad: right, splitDetected: true };
+        };
         const lat = getFirstNumber(alert, ["lat", "latitude", "rawLat", "raw.lat", "source.lat"]);
         const lng = getFirstNumber(alert, ["lng", "lon", "longitude", "rawLng", "raw.lng", "source.lng", "source.lon"]);
         const byLookup = maybeResolveNearestRoad(lat, lng);
         const explicitRoad = cleanDisplayValue(text(alert.roadName) || text(alert.primaryRoad) || text(alert.route));
         const fallbackRoad = cleanDisplayValue(byLookup?.resolvedRoad);
-        const primaryRoad = !isRoadLabelGenericForHazard(explicitRoad) ? explicitRoad : fallbackRoad;
+        const originalPrimaryRoad = !isRoadLabelGenericForHazard(explicitRoad) ? explicitRoad : fallbackRoad;
+        const splitPrimary = splitCompositePrimaryRoad(originalPrimaryRoad);
+        const primaryRoad = splitPrimary.parsedPrimaryRoad || originalPrimaryRoad;
 
         const collectRoadCandidates = (values = []) => values
           .flatMap((value) => {
@@ -3140,7 +3156,7 @@ function openAlertsSurfaceFromDock() {
         const nearestRoad = cleanDisplayValue(text(alert.nearestRoad) || text(alert.raw?.nearestRoad) || text(alert.source?.nearestRoad));
         const enrichedContext = chooseBestAlertLocationContext(alert).enriched || {};
         const refsRaw = collectRoadCandidates([
-          crossA, crossB, nearbyStreet, intersectionStreet, nearestRoad, enrichedContext.crossStreet, enrichedContext.nearbyKnownLocation
+          splitPrimary.parsedCrossRoad, crossA, crossB, nearbyStreet, intersectionStreet, nearestRoad, enrichedContext.crossStreet, enrichedContext.nearbyKnownLocation
         ]);
         const refs = refsRaw.filter((v, i, arr) => Boolean(v)
           && !isRoadLabelGenericForHazard(v)
@@ -3172,8 +3188,18 @@ function openAlertsSurfaceFromDock() {
         else finalHeadline = `${eventLabel} reported`;
 
         const finalSubtitle = `${cleanDisplayValue(getImpact(alert)) || "Active report"} • ${toMinutesAgoLabel(alert)}`;
+        console.log("[V163.1 PRIMARY ROAD SPLIT]", {
+          originalPrimaryRoad,
+          parsedPrimaryRoad: primaryRoad,
+          parsedCrossRoad: splitPrimary.parsedCrossRoad || "",
+          referenceRoadA,
+          referenceRoadB,
+          duplicateSuppressed,
+          finalHeadline
+        });
         console.log("[V163 ROAD SEGMENT LANGUAGE]", {
           id: cleanDisplayValue(alert?.id || alert?.reportId || alert?.uuid || ""),
+          originalPrimaryRoad,
           primaryRoad,
           referenceRoadA,
           referenceRoadB,
