@@ -3126,24 +3126,61 @@ function openAlertsSurfaceFromDock() {
         const fallbackRoad = cleanDisplayValue(byLookup?.resolvedRoad);
         const primaryRoad = !isRoadLabelGenericForHazard(explicitRoad) ? explicitRoad : fallbackRoad;
 
+        const collectRoadCandidates = (values = []) => values
+          .flatMap((value) => {
+            const label = cleanDisplayValue(text(value));
+            if (!label) return [];
+            const parts = label.split(/\s*(?:&|\band\b|\/)\s*/i).map(cleanDisplayValue).filter(Boolean);
+            return parts.length ? parts : [label];
+          });
         const crossA = cleanDisplayValue(text(alert.crossStreetA) || text(alert.crossStreet1) || text(alert.fromStreet));
         const crossB = cleanDisplayValue(text(alert.crossStreetB) || text(alert.crossStreet2) || text(alert.toStreet));
         const nearbyStreet = cleanDisplayValue(text(alert.nearbyCrossStreet) || text(alert.nearestCrossStreet) || text(alert.knownLocation) || text(alert.locationName) || text(byLookup?.resolvedLocation));
-
-        const refs = [crossA, crossB, nearbyStreet].filter((v, i, arr) => Boolean(v) && !isRoadLabelGenericForHazard(v) && arr.findIndex(x => normalizeRoadLabel(x) === normalizeRoadLabel(v)) === i && normalizeRoadLabel(v) !== normalizeRoadLabel(primaryRoad));
+        const intersectionStreet = cleanDisplayValue(text(alert.crossStreet) || text(alert.crossingRoad) || text(alert.crossingName));
+        const nearestRoad = cleanDisplayValue(text(alert.nearestRoad) || text(alert.raw?.nearestRoad) || text(alert.source?.nearestRoad));
+        const enrichedContext = chooseBestAlertLocationContext(alert).enriched || {};
+        const refsRaw = collectRoadCandidates([
+          crossA, crossB, nearbyStreet, intersectionStreet, nearestRoad, enrichedContext.crossStreet, enrichedContext.nearbyKnownLocation
+        ]);
+        const refs = refsRaw.filter((v, i, arr) => Boolean(v)
+          && !isRoadLabelGenericForHazard(v)
+          && arr.findIndex(x => normalizeRoadLabel(x) === normalizeRoadLabel(v)) === i
+          && normalizeRoadLabel(v) !== normalizeRoadLabel(primaryRoad));
         const referenceRoadA = refs[0] || "";
         const referenceRoadB = refs[1] || "";
         const localReferenceStreet = referenceRoadA || "";
         const eventLabel = toHazardEventLabel(alert);
+        const duplicateSuppressed = Boolean(
+          (primaryRoad && referenceRoadA && normalizeRoadLabel(primaryRoad) === normalizeRoadLabel(referenceRoadA))
+          || (primaryRoad && referenceRoadB && normalizeRoadLabel(primaryRoad) === normalizeRoadLabel(referenceRoadB))
+          || (referenceRoadA && referenceRoadB && normalizeRoadLabel(referenceRoadA) === normalizeRoadLabel(referenceRoadB))
+        );
+        let selectedTier = "tier4";
         let finalHeadline = "";
-        if (primaryRoad && referenceRoadA && referenceRoadB) finalHeadline = `${eventLabel} on ${primaryRoad} between ${referenceRoadA} and ${referenceRoadB}`;
-        else if (primaryRoad && referenceRoadA) finalHeadline = `${eventLabel} on ${primaryRoad} near ${referenceRoadA}`;
-        else if (primaryRoad) finalHeadline = `${eventLabel} on ${primaryRoad}`;
+        if (primaryRoad && referenceRoadA && referenceRoadB) {
+          selectedTier = "tier1";
+          finalHeadline = `${eventLabel} on ${primaryRoad} between ${referenceRoadA} and ${referenceRoadB}`;
+        } else if (primaryRoad && referenceRoadA) {
+          selectedTier = "tier2";
+          finalHeadline = `${eventLabel} on ${primaryRoad} near ${referenceRoadA}`;
+        } else if (primaryRoad) {
+          selectedTier = "tier4";
+          finalHeadline = `${eventLabel} on ${primaryRoad}`;
+        }
         else if (referenceRoadA && referenceRoadB) finalHeadline = `${eventLabel} between ${referenceRoadA} and ${referenceRoadB}`;
         else if (referenceRoadA) finalHeadline = `${eventLabel} near ${referenceRoadA}`;
         else finalHeadline = `${eventLabel} reported`;
 
         const finalSubtitle = `${cleanDisplayValue(getImpact(alert)) || "Active report"} • ${toMinutesAgoLabel(alert)}`;
+        console.log("[V163 ROAD SEGMENT LANGUAGE]", {
+          id: cleanDisplayValue(alert?.id || alert?.reportId || alert?.uuid || ""),
+          primaryRoad,
+          referenceRoadA,
+          referenceRoadB,
+          duplicateSuppressed,
+          selectedTier,
+          finalHeadline
+        });
         console.log("[V160 ROAD HAZARD SEGMENT]", {
           id: cleanDisplayValue(alert?.id || alert?.reportId || alert?.uuid || ""),
           type: cleanDisplayValue(text(alert?.type) || text(alert?.hazardType) || text(alert?.category)),
