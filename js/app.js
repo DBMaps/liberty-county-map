@@ -7263,6 +7263,11 @@ async function loadSharedReports(reason = "manual") {
       setTimeout(() => renderUnifiedIncidents("auto-shared-reports-loaded-1000"), 1000);
       setTimeout(() => renderUnifiedIncidents("auto-shared-reports-loaded-2000"), 2000);
     }
+    if (typeof refreshPortraitV2LocalizedIntelligence === "function") {
+      refreshPortraitV2LocalizedIntelligence(`loadSharedReports:${reason}:post-load`);
+      setTimeout(() => refreshPortraitV2LocalizedIntelligence(`loadSharedReports:${reason}:post-load-250`), 250);
+      setTimeout(() => refreshPortraitV2LocalizedIntelligence(`loadSharedReports:${reason}:post-load-1000`), 1000);
+    }
     pushGridlyReflowTrace("post-submit refresh", "end", { source: `loadSharedReports:${reason}` });
 
     setSync(`${activeReports.length} crossing reports · ${activeHazards.length} hazards synced`);
@@ -17310,7 +17315,7 @@ function formatPortraitTopStripImpactLabel(tier = "") {
   return "Low impact";
 }
 
-function refreshPortraitV2LocalizedIntelligence() {
+function refreshPortraitV2LocalizedIntelligence(triggerSource = "direct_call") {
   const functionStartedAt = performance.now();
   const sections = {};
   const timeSection = makeGridlySectionTimer(sections);
@@ -17324,14 +17329,19 @@ function refreshPortraitV2LocalizedIntelligence() {
     return;
   }
   const intel = timeSection("intelligence_calculations", () => buildUnifiedLocalizedCommuteIntelligence({ limit: 6 }));
-  const activeHazardCount = timeSection("array_filtering_sorting", () => getUnifiedIncidents().filter((incident) => String(incident?.status || "").toLowerCase() === "active").length);
+  const unifiedIncidents = timeSection("incident_snapshot", () => (Array.isArray(getUnifiedIncidents()) ? getUnifiedIncidents() : []));
+  const activeIncidents = timeSection("array_filtering_sorting", () => unifiedIncidents.filter((incident) => String(incident?.status || "").toLowerCase() === "active"));
+  const activeHazardCount = activeIncidents.length;
+  const unifiedIncidentCount = unifiedIncidents.length;
+  const localizedAlertCount = Number(intel?.activeLocalizedAlertCount || 0);
+  const activePanelCount = Array.isArray(intel?.items) ? intel.items.length : 0;
   const corridorCount = Array.isArray(intel?.corridorClusters) ? intel.corridorClusters.length : 0;
-  const hasActiveAlerts = Boolean(intel?.hasActiveAlerts) || Number(intel?.activeLocalizedAlertCount || 0) > 0 || activeHazardCount > 0 || corridorCount > 0;
+  const hasActiveAlerts = activeHazardCount > 0 || unifiedIncidentCount > 0 || localizedAlertCount > 0 || activePanelCount > 0 || corridorCount > 0;
   const selectedTopPrimary = hasActiveAlerts
     ? safeDisplayText(intel.topStatus, intel.commuteImpactHeadline)
     : safeDisplayText(intel.commuteImpactHeadline, "Routes currently clear");
   const selectedTopSecondary = hasActiveAlerts
-    ? `${formatPortraitTopStripImpactLabel(intel.commuteConsequenceTier)} • ${safeDisplayText(intel.topIncidentFreshnessText, "just now")}`
+    ? `${activeHazardCount} active community reports`
     : "Routes currently clear";
   const blockedClearState = hasActiveAlerts && /routes?\s+currently\s+clear/i.test(selectedTopPrimary);
   const highestPriorityAlert = intel?.items?.[0]?.incident || null;
@@ -17374,6 +17384,16 @@ function refreshPortraitV2LocalizedIntelligence() {
       writerAttempted: primaryWrite.writerAttempted || secondaryWrite.writerAttempted,
       writerBlocked: primaryWrite.writerBlocked || secondaryWrite.writerBlocked,
       writerSource: [primaryWrite.writerSource, secondaryWrite.writerSource].join(","),
+      finalPrimary: String(topPrimaryEl?.textContent || ""),
+      finalSecondary: String(topSecondaryEl?.textContent || "")
+    });
+    console.debug("[V161.2 TOP STRIP REFRESH AFTER LOAD]", {
+      triggerSource,
+      activeHazardCount,
+      unifiedIncidentCount,
+      localizedAlertCount,
+      hasActiveAlerts,
+      refreshCalled: true,
       finalPrimary: String(topPrimaryEl?.textContent || ""),
       finalSecondary: String(topSecondaryEl?.textContent || "")
     });
