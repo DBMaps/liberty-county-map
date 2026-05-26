@@ -2853,20 +2853,6 @@ function openAlertsSurfaceFromDock() {
           { sourceFieldUsed: "crossStreet", qualityRank: 1, values: [
             alert?.crossStreet, alert?.raw?.crossStreet, alert?.raw?.source?.crossStreet, alert?.source?.crossStreet
           ] },
-          { sourceFieldUsed: "crossingRoad", qualityRank: 2, values: [
-            alert?.crossingRoad, alert?.crossingName, alert?.crossingLabel, firstDistinctCrossingPart,
-            alert?.raw?.crossingRoad, alert?.raw?.crossingName, alert?.raw?.source?.crossingRoad, alert?.raw?.source?.crossingName,
-            alert?.source?.crossingRoad, alert?.source?.crossingName
-          ] },
-          { sourceFieldUsed: "resolvedCrossingName", qualityRank: 2, values: [
-            alert?.resolvedCrossingName, alert?.raw?.resolvedCrossingName, alert?.raw?.source?.resolvedCrossingName, alert?.source?.resolvedCrossingName
-          ] },
-          { sourceFieldUsed: "nearbyCrossStreet", qualityRank: 2, values: [
-            alert?.nearbyCrossStreet, alert?.raw?.nearbyCrossStreet, alert?.raw?.source?.nearbyCrossStreet, alert?.source?.nearbyCrossStreet, enriched.crossStreet
-          ] },
-          { sourceFieldUsed: "nearestCrossStreet", qualityRank: 2, values: [
-            alert?.nearestCrossStreet, alert?.raw?.nearestCrossStreet, alert?.raw?.source?.nearestCrossStreet, alert?.source?.nearestCrossStreet
-          ] },
           { sourceFieldUsed: "crossStreetA", qualityRank: 2, values: [
             alert?.crossStreetA, alert?.crossStreet1, alert?.fromStreet, alert?.raw?.crossStreetA, alert?.raw?.crossStreet1,
             alert?.raw?.fromStreet, alert?.raw?.source?.crossStreetA, alert?.source?.crossStreetA, alert?.source?.crossStreet1, alert?.source?.fromStreet
@@ -2875,15 +2861,27 @@ function openAlertsSurfaceFromDock() {
             alert?.crossStreetB, alert?.crossStreet2, alert?.toStreet, alert?.raw?.crossStreetB, alert?.raw?.crossStreet2,
             alert?.raw?.toStreet, alert?.raw?.source?.crossStreetB, alert?.source?.crossStreetB, alert?.source?.crossStreet2, alert?.source?.toStreet
           ] },
-          { sourceFieldUsed: "crossingMetadata", qualityRank: 4, values: crossingMetadataValues },
-          { sourceFieldUsed: "fraCrossingMetadata", qualityRank: 4, values: fraMetadataValues },
-          { sourceFieldUsed: "knownLocation", qualityRank: 3, values: [
+          { sourceFieldUsed: "nearbyCrossStreet", qualityRank: 3, values: [
+            alert?.nearbyCrossStreet, alert?.raw?.nearbyCrossStreet, alert?.raw?.source?.nearbyCrossStreet, alert?.source?.nearbyCrossStreet, enriched.crossStreet
+          ] },
+          { sourceFieldUsed: "nearestCrossStreet", qualityRank: 4, values: [
+            alert?.nearestCrossStreet, alert?.raw?.nearestCrossStreet, alert?.raw?.source?.nearestCrossStreet, alert?.source?.nearestCrossStreet
+          ] },
+          { sourceFieldUsed: "crossingMetadata", qualityRank: 5, values: crossingMetadataValues },
+          { sourceFieldUsed: "knownLocation", qualityRank: 6, values: [
             alert?.knownLocation, alert?.nearbyKnownLocation, alert?.locationName, alert?.locationLabel,
             alert?.raw?.knownLocation, alert?.raw?.nearbyKnownLocation, alert?.raw?.locationName, alert?.raw?.source?.knownLocation,
             alert?.source?.knownLocation, alert?.source?.nearbyKnownLocation, alert?.source?.locationName, enriched.nearbyKnownLocation
+          ] },
+          { sourceFieldUsed: "fraCrossingMetadata", qualityRank: 7, values: fraMetadataValues },
+          { sourceFieldUsed: "crossingRoad", qualityRank: 8, values: [
+            alert?.crossingRoad, alert?.crossingName, alert?.crossingLabel, firstDistinctCrossingPart,
+            alert?.resolvedCrossingName, alert?.raw?.resolvedCrossingName, alert?.raw?.source?.resolvedCrossingName, alert?.source?.resolvedCrossingName,
+            alert?.raw?.crossingRoad, alert?.raw?.crossingName, alert?.raw?.source?.crossingRoad, alert?.raw?.source?.crossingName,
+            alert?.source?.crossingRoad, alert?.source?.crossingName
           ] }
         ];
-        console.log("[V157.9 CROSSING AUDIT]", {
+        console.log("[V158 FRA ENRICHMENT]", {
           id: cleanDisplayValue(alert?.id || alert?.reportId || alert?.crossingId || alert?.crossing_id),
           crossingId: cleanDisplayValue(alert?.crossingId || alert?.crossing_id),
           primaryRoad,
@@ -2891,23 +2889,30 @@ function openAlertsSurfaceFromDock() {
           populatedFields,
           candidateLabels
         });
-
         const secondaryMatch = secondaryCandidates
           .slice()
           .sort((a, b) => (a.qualityRank - b.qualityRank))
           .flatMap(candidate => collectSecondaryCandidates(candidate.values, candidate.sourceFieldUsed, candidate.qualityRank))
           .sort((a, b) => (a.qualityRank - b.qualityRank) || (a.candidateOrder - b.candidateOrder))[0] || { value: "", sourceFieldUsed: "" };
-        const secondaryCrossingLabel = secondaryMatch.value;
+        const resolvedSecondaryCrossingLabel = secondaryMatch.value;
+        const secondaryCrossingLabel = resolvedSecondaryCrossingLabel;
+        console.log("[V158 FRA ENRICHMENT]", {
+          crossingId,
+          primaryRoad,
+          resolvedSecondaryCrossingLabel,
+          sourceUsed: secondaryMatch.sourceFieldUsed || ""
+        });
         const singleRoad = primaryRoad || firstDistinctCrossingPart || cleanDisplayValue(enriched.nearbyKnownLocation);
-        const finalHeadline = primaryRoad && secondaryCrossingLabel
-          ? `Crossing blocked at ${primaryRoad} and ${secondaryCrossingLabel}`
+        const finalHeadline = primaryRoad && resolvedSecondaryCrossingLabel
+          ? `Crossing blocked at ${primaryRoad} and ${resolvedSecondaryCrossingLabel}`
           : (singleRoad ? `Crossing blocked at ${singleRoad}` : "Crossing blocked nearby");
         const debugId = cleanDisplayValue(alert?.id || alert?.reportId || alert?.crossingId || alert?.crossing_id);
         console.log("[V157.8D SECONDARY QUALITY]", {
           id: debugId,
           candidateLabels,
           rejectedCandidates,
-          selectedSecondary: secondaryCrossingLabel,
+          resolvedSecondaryCrossingLabel,
+          selectedSecondary: resolvedSecondaryCrossingLabel,
           finalHeadline
         });
         console.log("[V157.8B CROSSING ENRICHMENT]", {
@@ -2915,10 +2920,11 @@ function openAlertsSurfaceFromDock() {
           primaryRoad,
           candidateLabels,
           normalizedRejected,
-          selectedSecondary: secondaryCrossingLabel,
+          resolvedSecondaryCrossingLabel,
+          selectedSecondary: resolvedSecondaryCrossingLabel,
           finalHeadline
         });
-        return { primaryRoad, secondaryCrossingLabel, sourceFieldUsed: secondaryMatch.sourceFieldUsed, finalHeadline };
+        return { primaryRoad, secondaryCrossingLabel, resolvedSecondaryCrossingLabel, sourceFieldUsed: secondaryMatch.sourceFieldUsed, finalHeadline };
       };
       const composeRailCrossingHeadline = (alert = {}) => resolveRailCrossingPair(alert).finalHeadline;
       const titleFor = alert => {
