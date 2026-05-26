@@ -22166,6 +22166,10 @@ const v134ReportingRefinementApplied = true;
 
 window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit() {
   console.log("[V165.2 DIRECTION CONFIDENCE AUDIT]");
+  console.log("[V169 LIVE FILE CHECK]", {
+    loaded: true,
+    timestamp: Date.now()
+  });
   const pathHelperFromGlobal = (typeof window !== "undefined" && typeof window.getValueByPath === "function")
     ? window.getValueByPath
     : (typeof globalThis !== "undefined" && typeof globalThis.getValueByPath === "function")
