@@ -20865,7 +20865,6 @@ function getAlertsSurfaceSnapshot() {
       const sourceOwner = (alert?.__gridlyOwnerTraceSource && typeof alert.__gridlyOwnerTraceSource === "object")
         ? alert.__gridlyOwnerTraceSource
         : ((alert?.raw && typeof alert.raw === "object") ? alert.raw : null);
-      const roadHeadlineFields = resolveRoadHazardSegmentHeadline(alert);
       const rowRawOwner = (alert?.raw && typeof alert.raw === "object") ? alert.raw : null;
       const persistedRoadFieldKeys = [
         "originalPrimaryRoad",
@@ -20876,11 +20875,14 @@ function getAlertsSurfaceSnapshot() {
         "referenceRoadB",
         "finalHeadline"
       ];
-      const persistedToRowRaw = Boolean(rowRawOwner && roadHeadlineFields && typeof roadHeadlineFields === "object");
+      const existingRoadFieldSource = (alert && typeof alert === "object")
+        ? alert
+        : null;
+      const persistedToRowRaw = Boolean(rowRawOwner && existingRoadFieldSource);
       if (persistedToRowRaw) {
         persistedRoadFieldKeys.forEach((field) => {
-          if (Object.prototype.hasOwnProperty.call(roadHeadlineFields, field)) {
-            rowRawOwner[field] = roadHeadlineFields[field];
+          if (Object.prototype.hasOwnProperty.call(existingRoadFieldSource, field)) {
+            rowRawOwner[field] = existingRoadFieldSource[field];
           }
         });
       }
@@ -20889,14 +20891,16 @@ function getAlertsSurfaceSnapshot() {
         const value = rowRawOwner[field];
         return typeof value === "string" ? Boolean(value.trim()) : value !== undefined && value !== null;
       });
-      console.log("[V165.9 ALERT ROW ROAD OWNER FIX]", {
+      console.log("[V165.9.1 ALERT ROW SCOPE FIX]", {
         id: incidentId,
-        rowRawFound: Boolean(rowRawOwner),
-        persistedToRowRaw,
-        availableRoadFields,
-        primaryRoad: rowRawOwner?.primaryRoad || "",
-        referenceRoadA: rowRawOwner?.referenceRoadA || "",
-        referenceRoadB: rowRawOwner?.referenceRoadB || ""
+        avoidedOutOfScopeCall: true,
+        usedExistingFields: persistedRoadFieldKeys.filter((field) => (
+          Boolean(
+            existingRoadFieldSource
+            && Object.prototype.hasOwnProperty.call(existingRoadFieldSource, field)
+          )
+        )),
+        availableRoadFields
       });
       logGridlyRawOwnerTrace({
         incidentId,
