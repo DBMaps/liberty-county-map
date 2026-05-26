@@ -16499,6 +16499,88 @@ function inferDirectionalPhrase(incident = {}, context = {}) {
   return "";
 }
 
+
+function resolveIncidentDirectionConfidence(incident = {}) {
+  const normalizedRoad = normalizeCorridorBaseLabel(inferCorridorLabel(incident).replace(/ Corridor$/i, ""));
+  const roadName = normalizedRoad && !/local (crossing|road) impact/i.test(normalizedRoad) ? normalizedRoad : "";
+
+  const extractHeading = (value) => {
+    const heading = Number(value);
+    return Number.isFinite(heading) ? ((heading % 360) + 360) % 360 : null;
+  };
+
+  const headingCandidates = [
+    incident?.bearing,
+    incident?.heading,
+    incident?.segment_bearing,
+    incident?.segmentBearing,
+    incident?.route_bearing,
+    incident?.routeBearing,
+    incident?.geometry?.bearing,
+    incident?.geometry?.heading,
+    incident?.segment?.bearing,
+    incident?.segment?.heading
+  ];
+  const heading = headingCandidates.map(extractHeading).find((value) => Number.isFinite(value));
+
+  const orientationFromHeading = (value) => {
+    if (!Number.isFinite(value)) return "unknown";
+    const norm = ((value % 180) + 180) % 180;
+    if (norm < 22.5 || norm >= 157.5) return "north-south";
+    if (norm >= 22.5 && norm < 67.5) return "northeast-southwest";
+    if (norm >= 67.5 && norm < 112.5) return "east-west";
+    return "northwest-southeast";
+  };
+
+  const knownCorridorOrientation = {
+    "US 90": "east-west",
+    "TX 146": "north-south",
+    "TX 321": "north-south",
+    "FM 1409": "north-south",
+    "FM 1008": "east-west"
+  };
+
+  const orientationFromGeometry = orientationFromHeading(heading);
+  const orientationFromRoad = roadName ? (knownCorridorOrientation[roadName] || "unknown") : "unknown";
+  const inferredOrientation = orientationFromGeometry !== "unknown" ? orientationFromGeometry : orientationFromRoad;
+
+  const directionPairByOrientation = {
+    "east-west": ["eastbound", "westbound"],
+    "north-south": ["northbound", "southbound"],
+    "northeast-southwest": ["northeastbound", "southwestbound"],
+    "northwest-southeast": ["northwestbound", "southeastbound"],
+    unknown: []
+  };
+
+  let confidence = "UNKNOWN";
+  let source = "insufficient_data";
+  let reason = "Insufficient directional evidence.";
+
+  if (orientationFromGeometry !== "unknown") {
+    confidence = "HIGH";
+    source = "route_segment_geometry";
+    reason = "Route or segment bearing available from incident geometry.";
+  } else if (orientationFromRoad !== "unknown") {
+    confidence = "MEDIUM";
+    source = "known_corridor_default";
+    reason = `Known corridor orientation default applied for ${roadName}.`;
+  } else if (roadName) {
+    confidence = "LOW";
+    source = "road_name_only";
+    reason = "Only isolated point plus road name available; direction remains unknown.";
+  }
+
+  return {
+    incidentId: String(incident?.id || incident?.report_id || incident?.reportId || "unknown"),
+    roadName,
+    inferredOrientation,
+    directionPair: directionPairByOrientation[inferredOrientation] || [],
+    confidence,
+    source,
+    reason
+  };
+}
+
 function buildLocalizedLocationPhrase(incident = {}, resolvedLookup = null) {
   const road = normalizeCorridorBaseLabel(inferCorridorLabel(incident).replace(/ Corridor$/, ""));
   const lookup = resolvedLookup || getSharedResolvedRoadLookup(incident);
@@ -21837,6 +21919,25 @@ const v134ReportingRefinementApplied = true;
     });
     });
   };
+
+
+window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit() {
+  console.log("[V165.2 DIRECTION CONFIDENCE AUDIT]");
+  const activeIncidents = typeof getActiveUnifiedIncidents === "function" ? getActiveUnifiedIncidents() : [];
+  return (Array.isArray(activeIncidents) ? activeIncidents : []).map((incident) => {
+    const confidence = resolveIncidentDirectionConfidence(incident);
+    return {
+      incidentId: confidence.incidentId,
+      titleOrHeadline: String(incident?.title || incident?.headline || ""),
+      roadName: confidence.roadName,
+      inferredOrientation: confidence.inferredOrientation,
+      directionPair: confidence.directionPair,
+      confidence: confidence.confidence,
+      source: confidence.source,
+      reason: confidence.reason
+    };
+  });
+};
 
 
 window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
