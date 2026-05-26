@@ -2829,6 +2829,26 @@ function openAlertsSurfaceFromDock() {
           crossingRecord?.name, crossingRecord?.originalName, crossingProps?.street, crossingProps?.roadwayname, crossingProps?.highwayname,
           crossingProps?.road, crossingProps?.road_name, crossingProps?.crossingname
         ];
+        const allCrossingFields = {
+          crossStreet: alert?.crossStreet,
+          crossStreetA: alert?.crossStreetA || alert?.crossStreet1 || alert?.fromStreet,
+          crossStreetB: alert?.crossStreetB || alert?.crossStreet2 || alert?.toStreet,
+          crossingRoad: alert?.crossingRoad,
+          crossingName: alert?.crossingName,
+          resolvedCrossingName: alert?.resolvedCrossingName,
+          nearestCrossStreet: alert?.nearestCrossStreet,
+          knownLocation: alert?.knownLocation,
+          nearbyKnownLocation: alert?.nearbyKnownLocation,
+          fraCrossingMetadata: fraMetadataValues,
+          crossingMetadataLabels: crossingMetadataValues
+        };
+        const populatedFields = Object.entries(allCrossingFields)
+          .filter(([, value]) => {
+            if (Array.isArray(value)) return value.some(item => cleanDisplayValue(text(item)));
+            return Boolean(cleanDisplayValue(text(value)));
+          })
+          .map(([field]) => field);
+
         const secondaryCandidates = [
           { sourceFieldUsed: "crossStreet", qualityRank: 1, values: [
             alert?.crossStreet, alert?.raw?.crossStreet, alert?.raw?.source?.crossStreet, alert?.source?.crossStreet
@@ -2863,6 +2883,15 @@ function openAlertsSurfaceFromDock() {
             alert?.source?.knownLocation, alert?.source?.nearbyKnownLocation, alert?.source?.locationName, enriched.nearbyKnownLocation
           ] }
         ];
+        console.log("[V157.9 CROSSING AUDIT]", {
+          id: cleanDisplayValue(alert?.id || alert?.reportId || alert?.crossingId || alert?.crossing_id),
+          crossingId: cleanDisplayValue(alert?.crossingId || alert?.crossing_id),
+          primaryRoad,
+          allCrossingFields,
+          populatedFields,
+          candidateLabels
+        });
+
         const secondaryMatch = secondaryCandidates
           .slice()
           .sort((a, b) => (a.qualityRank - b.qualityRank))
