@@ -16566,6 +16566,73 @@ function resolveDirectionEngineRoadName(incident = {}) {
 }
 
 
+function resolveGridlyRoadOrientation({ roadName = "", lat = null, lng = null, incident = null } = {}) {
+  const normalizedRoad = normalizeCorridorBaseLabel(roadName);
+  const knownCorridorOrientation = {
+    "US 90": { orientation: "east-west", directionPair: ["eastbound", "westbound"] },
+    "TX 146": { orientation: "north-south", directionPair: ["northbound", "southbound"] },
+    "TX 321": { orientation: "north-south", directionPair: ["northbound", "southbound"] },
+    "FM 1409": { orientation: "north-south", directionPair: ["northbound", "southbound"] },
+    "FM 1008": { orientation: "north-south", directionPair: ["northbound", "southbound"] }
+  };
+
+  if (normalizedRoad && knownCorridorOrientation[normalizedRoad]) {
+    return {
+      orientation: knownCorridorOrientation[normalizedRoad].orientation,
+      confidence: "MEDIUM",
+      directionPair: knownCorridorOrientation[normalizedRoad].directionPair,
+      reason: "Known corridor orientation default applied"
+    };
+  }
+
+  const normalizeBearing = (value) => {
+    const numeric = Number(value);
+    return Number.isFinite(numeric) ? ((numeric % 180) + 180) % 180 : null;
+  };
+  const headingCandidates = [
+    incident?.bearing,
+    incident?.heading,
+    incident?.segment_bearing,
+    incident?.segmentBearing,
+    incident?.route_bearing,
+    incident?.routeBearing,
+    incident?.geometry?.bearing,
+    incident?.geometry?.heading,
+    incident?.segment?.bearing,
+    incident?.segment?.heading,
+    ...(Array.isArray(incident?.roadSegmentCandidates) ? incident.roadSegmentCandidates.flatMap((candidate) => [candidate?.bearing, candidate?.heading, candidate?.segmentBearing]) : []),
+    ...(Array.isArray(incident?.nearbyRoads) ? incident.nearbyRoads.flatMap((candidate) => [candidate?.bearing, candidate?.heading]) : [])
+  ].map(normalizeBearing).filter((value) => Number.isFinite(value));
+
+  const heading = headingCandidates[0];
+  if (Number.isFinite(heading)) {
+    if ((heading >= 0 && heading <= 30) || (heading >= 150 && heading <= 180)) {
+      return {
+        orientation: "north-south",
+        confidence: "MEDIUM",
+        directionPair: ["northbound", "southbound"],
+        reason: "Nearby geometry bearing inference"
+      };
+    }
+    if (heading >= 60 && heading <= 120) {
+      return {
+        orientation: "east-west",
+        confidence: "MEDIUM",
+        directionPair: ["eastbound", "westbound"],
+        reason: "Nearby geometry bearing inference"
+      };
+    }
+  }
+
+  return {
+    orientation: "unknown",
+    confidence: "LOW",
+    directionPair: [],
+    reason: "Only isolated point plus road name available"
+  };
+}
+
+
 function resolveIncidentDirectionConfidence(incident = {}) {
   const resolvedDirectionDisplayHelper = typeof cleanDisplayValue === "function"
     ? cleanDisplayValue
@@ -16577,71 +16644,25 @@ function resolveIncidentDirectionConfidence(incident = {}) {
   const normalizedRoadFromCorridor = normalizeCorridorBaseLabel(inferCorridorLabel(incident).replace(/ Corridor$/i, ""));
   const roadName = normalizedRoadFromEnrichment
     || (normalizedRoadFromCorridor && !/local (crossing|road) impact/i.test(normalizedRoadFromCorridor) ? normalizedRoadFromCorridor : "");
+  const orientationResolution = resolveGridlyRoadOrientation({
+    roadName,
+    lat: incident?.lat ?? incident?.latitude ?? incident?.coords?.lat ?? incident?.geometry?.lat,
+    lng: incident?.lng ?? incident?.lon ?? incident?.longitude ?? incident?.coords?.lng ?? incident?.geometry?.lng,
+    incident
+  });
 
-  const extractHeading = (value) => {
-    const heading = Number(value);
-    return Number.isFinite(heading) ? ((heading % 360) + 360) % 360 : null;
-  };
+  const inferredOrientation = orientationResolution.orientation;
 
-  const headingCandidates = [
-    incident?.bearing,
-    incident?.heading,
-    incident?.segment_bearing,
-    incident?.segmentBearing,
-    incident?.route_bearing,
-    incident?.routeBearing,
-    incident?.geometry?.bearing,
-    incident?.geometry?.heading,
-    incident?.segment?.bearing,
-    incident?.segment?.heading
-  ];
-  const heading = headingCandidates.map(extractHeading).find((value) => Number.isFinite(value));
-
-  const orientationFromHeading = (value) => {
-    if (!Number.isFinite(value)) return "unknown";
-    const norm = ((value % 180) + 180) % 180;
-    if (norm < 22.5 || norm >= 157.5) return "north-south";
-    if (norm >= 22.5 && norm < 67.5) return "northeast-southwest";
-    if (norm >= 67.5 && norm < 112.5) return "east-west";
-    return "northwest-southeast";
-  };
-
-  const knownCorridorOrientation = {
-    "US 90": "east-west",
-    "TX 146": "north-south",
-    "TX 321": "north-south",
-    "FM 1409": "north-south",
-    "FM 1008": "east-west"
-  };
-
-  const orientationFromGeometry = orientationFromHeading(heading);
-  const orientationFromRoad = roadName ? (knownCorridorOrientation[roadName] || "unknown") : "unknown";
-  const inferredOrientation = orientationFromGeometry !== "unknown" ? orientationFromGeometry : orientationFromRoad;
-
-  const directionPairByOrientation = {
-    "east-west": ["eastbound", "westbound"],
-    "north-south": ["northbound", "southbound"],
-    "northeast-southwest": ["northeastbound", "southwestbound"],
-    "northwest-southeast": ["northwestbound", "southeastbound"],
-    unknown: []
-  };
-
-  let confidence = "UNKNOWN";
+  let confidence = orientationResolution.confidence || "LOW";
   let source = "insufficient_data";
-  let reason = "Insufficient directional evidence.";
+  let reason = orientationResolution.reason || "Insufficient directional evidence.";
 
-  if (orientationFromGeometry !== "unknown") {
-    confidence = "HIGH";
-    source = "route_segment_geometry";
-    reason = "Route or segment bearing available from incident geometry.";
-  } else if (orientationFromRoad !== "unknown") {
-    confidence = "MEDIUM";
+  if (orientationResolution.reason === "Known corridor orientation default applied") {
     source = "known_corridor_default";
-    reason = `Known corridor orientation default applied for ${roadName}.`;
+  } else if (orientationResolution.reason === "Nearby geometry bearing inference") {
+    source = "nearby_geometry_bearing";
   } else if (roadName) {
-    confidence = "LOW";
     source = roadResolution?.sourceUsed || "road_name_only";
-    reason = "Only isolated point plus road name available; direction remains unknown.";
   }
   const incidentId = String(incident?.id || incident?.report_id || incident?.reportId || "unknown");
   const auditRecovered = !helperResolved;
@@ -16662,7 +16683,7 @@ function resolveIncidentDirectionConfidence(incident = {}) {
     incidentId,
     roadName,
     inferredOrientation,
-    directionPair: directionPairByOrientation[inferredOrientation] || [],
+    directionPair: Array.isArray(orientationResolution.directionPair) ? orientationResolution.directionPair : [],
     confidence,
     source,
     reason
