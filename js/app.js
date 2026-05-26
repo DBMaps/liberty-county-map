@@ -3215,6 +3215,26 @@ function openAlertsSurfaceFromDock() {
         else finalHeadline = `${eventLabel} reported`;
 
         const finalSubtitle = `${cleanDisplayValue(getImpact(alert)) || "Active report"} • ${toMinutesAgoLabel(alert)}`;
+        const persistedFields = {
+          originalPrimaryRoad,
+          primaryRoad,
+          parsedPrimaryRoad: primaryRoad,
+          parsedCrossRoad: splitPrimary.parsedCrossRoad || "",
+          referenceRoadA,
+          referenceRoadB,
+          finalHeadline
+        };
+        if (alert && typeof alert === "object") {
+          Object.assign(alert, persistedFields);
+        }
+        console.log("[V165.6 ROAD LANGUAGE FIELD PERSIST]", {
+          id: cleanDisplayValue(alert?.id || alert?.reportId || alert?.uuid || ""),
+          persistedFields: Object.keys(persistedFields),
+          primaryRoad,
+          referenceRoadA,
+          referenceRoadB,
+          finalHeadline
+        });
         console.log("[V163.1 PRIMARY ROAD SPLIT]", {
           originalPrimaryRoad,
           parsedPrimaryRoad: primaryRoad,
@@ -3246,7 +3266,7 @@ function openAlertsSurfaceFromDock() {
           finalHeadline,
           finalSubtitle
         });
-        return { finalHeadline, finalSubtitle };
+        return { finalHeadline, finalSubtitle, ...persistedFields };
       };
 
       const composeRailCrossingHeadline = (alert = {}) => resolveRailCrossingPair(alert).finalHeadline;
