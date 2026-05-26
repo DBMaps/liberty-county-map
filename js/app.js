@@ -3120,13 +3120,22 @@ function openAlertsSurfaceFromDock() {
           selectedSecondary: resolvedSecondaryForOutput,
           finalHeadline
         });
-        return {
+        const resolvedPayload = {
           primaryRoad,
           secondaryCrossingLabel: resolvedSecondaryForOutput,
           resolvedSecondaryCrossingLabel: resolvedSecondaryForOutput,
           sourceFieldUsed: sourceFieldUsedForOutput,
           finalHeadline
         };
+        registerGridlyEnrichedIncident({
+          ...alert,
+          ...resolvedPayload,
+          roadName: cleanDisplayValue(alert?.roadName) || primaryRoad,
+          referenceRoadA: cleanDisplayValue(resolvedSecondaryForOutput),
+          referenceRoadB: "",
+          nearbyStreet: cleanDisplayValue(alert?.nearbyCrossStreet || alert?.nearestCrossStreet || alert?.knownLocation || alert?.locationName || "")
+        });
+        return resolvedPayload;
       };
       
       const isRoadLabelGenericForHazard = (value = "") => {
@@ -3224,32 +3233,14 @@ function openAlertsSurfaceFromDock() {
           referenceRoadB,
           finalHeadline
         };
-        let rawOwner = null;
         if (alert && typeof alert === "object") {
           Object.assign(alert, persistedFields);
-          if (alert.raw && typeof alert.raw === "object") {
-            rawOwner = alert.raw;
-            Object.assign(rawOwner, persistedFields);
-          }
         }
-        const availableRoadFields = Object.keys(persistedFields).filter((field) => {
-          if (!rawOwner || typeof rawOwner !== "object") return false;
-          const value = rawOwner[field];
-          return typeof value === "string" ? Boolean(value.trim()) : value !== undefined && value !== null;
-        });
-        logGridlyRawOwnerTrace({
-          incidentId: cleanDisplayValue(alert?.id || alert?.reportId || alert?.uuid || ""),
-          stage: "V165.7 persistence point",
-          owner: rawOwner
-        });
-        console.log("[V165.7 ALERT RAW ROAD FIELD PERSIST]", {
-          id: cleanDisplayValue(alert?.id || alert?.reportId || alert?.uuid || ""),
-          rawOwnerFound: Boolean(rawOwner),
-          persistedToRaw: Boolean(rawOwner),
-          availableRoadFields,
-          primaryRoad,
-          referenceRoadA,
-          referenceRoadB
+        registerGridlyEnrichedIncident({
+          ...alert,
+          roadName: cleanDisplayValue(alert?.roadName) || primaryRoad,
+          nearbyStreet: nearbyStreet || splitPrimary.parsedCrossRoad || referenceRoadA || "",
+          ...persistedFields
         });
         console.log("[V165.6 ROAD LANGUAGE FIELD PERSIST]", {
           id: cleanDisplayValue(alert?.id || alert?.reportId || alert?.uuid || ""),
@@ -20751,6 +20742,29 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       availableRoadFields
     });
   }
+  const gridlyEnrichedIncidentRegistry = new Map();
+  function getGridlyEnrichedIncidentRegistryId(incident = {}) {
+    return cleanDisplayValue(incident?.id || incident?.incidentId || incident?.reportId || incident?.uuid || incident?.crossingId || incident?.crossing_id);
+  }
+  function registerGridlyEnrichedIncident(incident = {}) {
+    const id = getGridlyEnrichedIncidentRegistryId(incident);
+    if (!id || !incident || typeof incident !== "object") return null;
+    const existing = gridlyEnrichedIncidentRegistry.get(id) || {};
+    const next = { ...existing, ...incident, id };
+    gridlyEnrichedIncidentRegistry.set(id, next);
+    return next;
+  }
+  function getGridlyEnrichedIncident(id = "") {
+    const key = cleanDisplayValue(id);
+    if (!key) return null;
+    return gridlyEnrichedIncidentRegistry.get(key) || null;
+  }
+  function getGridlyEnrichedIncidentRegistrySnapshot() {
+    return [...gridlyEnrichedIncidentRegistry.values()].map((item) => ({ ...item }));
+  }
+  window.registerGridlyEnrichedIncident = registerGridlyEnrichedIncident;
+  window.getGridlyEnrichedIncident = getGridlyEnrichedIncident;
+  window.getGridlyEnrichedIncidentRegistrySnapshot = getGridlyEnrichedIncidentRegistrySnapshot;
 function getAlertsSurfaceSnapshot() {
     const incidents = getActiveUnifiedIncidents();
     const unifiedIncidents = Array.isArray(getUnifiedIncidents?.()) ? getUnifiedIncidents() : [];
@@ -20865,43 +20879,7 @@ function getAlertsSurfaceSnapshot() {
       const sourceOwner = (alert?.__gridlyOwnerTraceSource && typeof alert.__gridlyOwnerTraceSource === "object")
         ? alert.__gridlyOwnerTraceSource
         : ((alert?.raw && typeof alert.raw === "object") ? alert.raw : null);
-      const rowRawOwner = (alert?.raw && typeof alert.raw === "object") ? alert.raw : null;
-      const persistedRoadFieldKeys = [
-        "originalPrimaryRoad",
-        "primaryRoad",
-        "parsedPrimaryRoad",
-        "parsedCrossRoad",
-        "referenceRoadA",
-        "referenceRoadB",
-        "finalHeadline"
-      ];
-      const existingRoadFieldSource = (alert && typeof alert === "object")
-        ? alert
-        : null;
-      const persistedToRowRaw = Boolean(rowRawOwner && existingRoadFieldSource);
-      if (persistedToRowRaw) {
-        persistedRoadFieldKeys.forEach((field) => {
-          if (Object.prototype.hasOwnProperty.call(existingRoadFieldSource, field)) {
-            rowRawOwner[field] = existingRoadFieldSource[field];
-          }
-        });
-      }
-      const availableRoadFields = persistedRoadFieldKeys.filter((field) => {
-        if (!rowRawOwner || typeof rowRawOwner !== "object") return false;
-        const value = rowRawOwner[field];
-        return typeof value === "string" ? Boolean(value.trim()) : value !== undefined && value !== null;
-      });
-      console.log("[V165.9.1 ALERT ROW SCOPE FIX]", {
-        id: incidentId,
-        avoidedOutOfScopeCall: true,
-        usedExistingFields: persistedRoadFieldKeys.filter((field) => (
-          Boolean(
-            existingRoadFieldSource
-            && Object.prototype.hasOwnProperty.call(existingRoadFieldSource, field)
-          )
-        )),
-        availableRoadFields
-      });
+      registerGridlyEnrichedIncident(alert);
       logGridlyRawOwnerTrace({
         incidentId,
         stage: "alert row construction",
@@ -22148,24 +22126,12 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
   const activeIncidents = typeof getActiveUnifiedIncidents === "function" ? getActiveUnifiedIncidents() : [];
   const alertSnapshot = typeof getAlertsSurfaceSnapshot === "function" ? getAlertsSurfaceSnapshot() : null;
   const alertItems = Array.isArray(alertSnapshot?.alerts) ? alertSnapshot.alerts : [];
-  const enrichedById = new Map();
-  alertItems.forEach((alert) => {
-    const alertId = String(alert?.id || alert?.incidentId || alert?.reportId || "").trim();
-    if (!alertId) return;
-    const enrichedCandidate = (alert?.raw && typeof alert.raw === "object") ? alert.raw : alert;
-    logGridlyRawOwnerTrace({
-      incidentId: alertId,
-      stage: "gridlyDirectionConfidenceAudit() snapshot ingestion",
-      owner: enrichedCandidate
-    });
-    if (enrichedCandidate && typeof enrichedCandidate === "object") {
-      enrichedById.set(alertId, enrichedCandidate);
-    }
-  });
+  const registryCount = gridlyEnrichedIncidentRegistry.size;
   return (Array.isArray(activeIncidents) ? activeIncidents : []).map((incident) => {
     const incidentId = String(incident?.id || incident?.incidentId || incident?.reportId || "").trim();
-    const enrichedIncident = incidentId ? (enrichedById.get(incidentId) || null) : null;
-    const directionOwnerIncident = enrichedIncident || incident;
+    const enrichedIncident = incidentId ? (getGridlyEnrichedIncident(incidentId) || null) : null;
+    const diagnosticFallback = alertItems.find((alert) => String(alert?.id || "").trim() === incidentId) || null;
+    const directionOwnerIncident = enrichedIncident || diagnosticFallback || incident;
     logGridlyRawOwnerTrace({
       incidentId,
       stage: "gridlyDirectionConfidenceAudit()",
@@ -22180,12 +22146,11 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
       return typeof value === "string" ? Boolean(value.trim()) : value !== undefined && value !== null;
     });
     const selectedRoadName = String(confidence?.roadName || "").trim();
-    const sourceOwner = enrichedIncident
-      ? "getAlertsSurfaceSnapshot().alerts[].raw (post-V160/V163 enriched)"
-      : "getActiveUnifiedIncidents() fallback";
+    const sourceOwner = enrichedIncident ? "enriched-incident-registry" : "diagnostic-fallback";
     console.log("[V165.5 DIRECTION OWNER FIX]", {
       incidentId: confidence.incidentId || incidentId || "",
       isEnriched: Boolean(enrichedIncident),
+      registryCount,
       availableRoadFields,
       selectedRoadName,
       sourceOwner
@@ -22194,10 +22159,14 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
       incidentId: confidence.incidentId,
       titleOrHeadline: String(incident?.title || incident?.headline || ""),
       roadName: confidence.roadName,
+      primaryRoad: cleanDisplayValue(directionOwnerIncident?.primaryRoad),
+      referenceRoadA: cleanDisplayValue(directionOwnerIncident?.referenceRoadA),
+      referenceRoadB: cleanDisplayValue(directionOwnerIncident?.referenceRoadB),
+      directionAxis: confidence.directionPair,
       inferredOrientation: confidence.inferredOrientation,
       directionPair: confidence.directionPair,
       confidence: confidence.confidence,
-      source: confidence.source,
+      source: "enriched-incident-registry",
       reason: confidence.reason
     };
   });
