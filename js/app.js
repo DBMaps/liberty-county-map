@@ -20776,7 +20776,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       availableRoadFields
     });
   }
-  const gridlyEnrichedIncidentRegistry = {};
+  const gridlyEnrichedIncidentRegistry = window.gridlyEnrichedIncidentRegistry || {};
+  window.gridlyEnrichedIncidentRegistry = gridlyEnrichedIncidentRegistry;
+  console.log("[V167.5 REGISTRY INSTANCE]", {
+    sameReference: window.gridlyEnrichedIncidentRegistry === gridlyEnrichedIncidentRegistry
+  });
   function cleanGridlyRegistryValue(value) {
     if (value === null || value === undefined) return "";
     return String(value).trim();
