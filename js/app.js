@@ -20708,6 +20708,58 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     return `${kind}|${type}|${corridor}|${locationCluster}`;
   }
   function getAlertsSurfaceSnapshot() {
+    function applyRoadSnapshotFallback(alert = {}) {
+      const hasPrimary = String(alert?.primaryRoad || "").trim();
+      const hasRefA = String(alert?.referenceRoadA || "").trim();
+      const hasRefB = String(alert?.referenceRoadB || "").trim();
+      if (hasPrimary && (hasRefA || hasRefB)) return alert;
+      const sourceText = pickFirstNonEmptyText([
+        alert?.finalHeadline,
+        alert?.resolvedHeadline,
+        alert?.segmentHeadline,
+        alert?.localizedSummary,
+        alert?.title,
+        alert?.subtitle
+      ]);
+      if (!sourceText) return alert;
+      const betweenMatch = sourceText.match(/^[^]*?\bon\s+(.+?)\s+between\s+(.+?)\s+and\s+(.+?)$/i);
+      if (betweenMatch) {
+        const primary = betweenMatch[1].trim();
+        const refA = betweenMatch[2].trim();
+        const refB = betweenMatch[3].trim();
+        return {
+          ...alert,
+          primaryRoad: hasPrimary || primary,
+          roadName: String(alert?.roadName || "").trim() || primary,
+          referenceRoadA: hasRefA || refA,
+          referenceRoadB: hasRefB || refB
+        };
+      }
+      const nearMatch = sourceText.match(/^[^]*?\bon\s+(.+?)\s+near\s+(.+?)$/i);
+      if (nearMatch) {
+        const primary = nearMatch[1].trim();
+        const refA = nearMatch[2].trim();
+        return {
+          ...alert,
+          primaryRoad: hasPrimary || primary,
+          roadName: String(alert?.roadName || "").trim() || primary,
+          referenceRoadA: hasRefA || refA,
+          referenceRoadB: hasRefB || ""
+        };
+      }
+      const crossingMatch = sourceText.match(/^[^]*?\bcrossing\s+blocked\s+at\s+(.+?)\s+and\s+(.+?)$/i);
+      if (crossingMatch) {
+        const primary = crossingMatch[1].trim();
+        const refA = crossingMatch[2].trim();
+        return {
+          ...alert,
+          primaryRoad: hasPrimary || primary,
+          roadName: String(alert?.roadName || "").trim() || primary,
+          referenceRoadA: hasRefA || refA
+        };
+      }
+      return alert;
+    }
     const incidents = getActiveUnifiedIncidents();
     const unifiedIncidents = Array.isArray(getUnifiedIncidents?.()) ? getUnifiedIncidents() : [];
     const fallbackHazards = (Array.isArray(activeHazards) ? activeHazards : [])
@@ -20829,7 +20881,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           raw: raw || item || null
         };
       });
-    const normalizedAlertItems = normalizedAlertItemsFromIntel;
+    const normalizedAlertItems = normalizedAlertItemsFromIntel.map((alert) => applyRoadSnapshotFallback(alert));
     const activeIncidentCount = normalizedAlertItems.length || incidents.length;
     const hasFallbackSignals = activeHazardSourceCount > 0 || unifiedIncidentSourceCount > 0;
     const nearbySummary = unifiedIntel.nearbySummary;
