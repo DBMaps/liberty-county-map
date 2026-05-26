@@ -2776,16 +2776,19 @@ function openAlertsSurfaceFromDock() {
       const normalizeRailRoadAlias = normalizeRoadLabel;
       const isGenericRailCrossingLabel = (value) => {
         const normalized = normalizeRailSubtitleMatch(value);
-        return !normalized || /^(blocked|rail crossing blocked|train blocking crossing|crossing blocked|local crossing|railroad crossing|rail crossing|unknown crossing|nearby crossing|nearby|dayton area|liberty county|local area|area|tbd|unknown|unknown road|unknown crossing|unidentified crossing|unidentified road|local road|area road|county area|nearby area|general area)$/.test(normalized);
+        return !normalized || /^(blocked|rail crossing blocked|train blocking crossing|crossing blocked|local crossing|railroad crossing|rail crossing|unknown crossing|nearby crossing|nearby|dayton area|liberty county|local area|area|region|community area|town area|city area|tbd|unknown|unknown road|unknown crossing|unidentified crossing|unidentified road|local road|area road|county area|nearby area|general area)$/.test(normalized);
       };
-      const isInvalidPrimaryRoadLabel = (value = "") => {
+      const isGenericAreaLikeLabel = (value = "") => {
         const normalized = normalizeRailSubtitleMatch(value);
         if (!normalized) return { invalid: true, reason: "empty" };
-        if (/^(private|unknown|unnamed|dayton area|null|undefined)$/.test(normalized)) return { invalid: true, reason: normalized };
-        if (/^(area|general area|nearby area|local area|county area)$/.test(normalized)) return { invalid: true, reason: "generic-area" };
-        if (isGenericRailCrossingLabel(value)) return { invalid: true, reason: "placeholder" };
+        if (/^(private|unknown|unnamed|null|undefined)$/.test(normalized)) return { invalid: true, reason: normalized };
+        if (isGenericRailCrossingLabel(value)) return { invalid: true, reason: "generic-area-or-placeholder" };
+        if (/\b(?:city|town|county|community|local|nearby|general|metro)\s+area\b/.test(normalized)) return { invalid: true, reason: "generic-area" };
+        if (/\barea\b/.test(normalized) && normalized.split(" ").length <= 3) return { invalid: true, reason: "generic-area" };
+        if (/\b(?:county|city|region)\b/.test(normalized) && normalized.split(" ").length <= 2) return { invalid: true, reason: "generic-region" };
         return { invalid: false, reason: "" };
       };
+      const isInvalidPrimaryRoadLabel = (value = "") => isGenericAreaLikeLabel(value);
       const isUnqualifiedRailRouteAlias = (value) => {
         const label = cleanDisplayValue(value).toUpperCase().replace(/[^A-Z0-9]+/g, " ").trim();
         const normalized = normalizeRoadLabel(value);
@@ -3009,17 +3012,23 @@ function openAlertsSurfaceFromDock() {
           resolvedSecondaryCrossingLabel: resolvedSecondaryWithLocal,
           sourceUsed: secondaryMatch.sourceFieldUsed || ""
         });
-        const singleRoad = primaryRoad || firstDistinctCrossingPart || cleanDisplayValue(enriched.nearbyKnownLocation);
+        const singleRoadCandidate = primaryRoad || firstDistinctCrossingPart || cleanDisplayValue(enriched.nearbyKnownLocation);
         const primaryRoadValidity = isInvalidPrimaryRoadLabel(primaryRoad);
-        const nearbyRoadCandidate = firstDistinctCrossingPart;
-        const nearbyReferenceRoad = cleanDisplayValue(enriched.nearbyKnownLocation);
-        const nearestRoadLookup = cleanDisplayValue(alert?.nearestRoad || alert?.knownLocation || alert?.locationName);
+        const singleRoadValidity = isGenericAreaLikeLabel(singleRoadCandidate);
+        const nearbyRoadCandidateRaw = firstDistinctCrossingPart;
+        const nearbyReferenceRoadRaw = cleanDisplayValue(enriched.nearbyKnownLocation);
+        const nearestRoadLookupRaw = cleanDisplayValue(alert?.nearestRoad || alert?.knownLocation || alert?.locationName);
+        const nearbyRoadCandidate = isGenericAreaLikeLabel(nearbyRoadCandidateRaw).invalid ? "" : nearbyRoadCandidateRaw;
+        const nearbyReferenceRoad = isGenericAreaLikeLabel(nearbyReferenceRoadRaw).invalid ? "" : nearbyReferenceRoadRaw;
+        const nearestRoadLookup = isGenericAreaLikeLabel(nearestRoadLookupRaw).invalid ? "" : nearestRoadLookupRaw;
         let finalHeadline = "";
         let replacementSource = "primaryRoad";
+        let rejectedLabel = "";
+        let rejectionReason = "";
         if (!primaryRoadValidity.invalid && primaryRoad && resolvedSecondaryWithLocal) {
           finalHeadline = `Crossing blocked at ${primaryRoad} and ${resolvedSecondaryWithLocal}`;
-        } else if (!primaryRoadValidity.invalid && singleRoad) {
-          finalHeadline = `Crossing blocked at ${singleRoad}`;
+        } else if (!primaryRoadValidity.invalid && !singleRoadValidity.invalid && singleRoadCandidate) {
+          finalHeadline = `Crossing blocked at ${singleRoadCandidate}`;
         } else if (usedLocalContext && localDisplayName) {
           finalHeadline = `Crossing blocked at ${localDisplayName}`;
           replacementSource = "localCrossingContextStreet";
@@ -3036,6 +3045,13 @@ function openAlertsSurfaceFromDock() {
           finalHeadline = "Crossing blocked nearby";
           replacementSource = "fallbackNearby";
         }
+        if (primaryRoadValidity.invalid) {
+          rejectedLabel = cleanDisplayValue(primaryRoad);
+          rejectionReason = primaryRoadValidity.reason;
+        } else if (singleRoadCandidate && singleRoadValidity.invalid) {
+          rejectedLabel = cleanDisplayValue(singleRoadCandidate);
+          rejectionReason = singleRoadValidity.reason;
+        }
         console.log("[V158.2 LOCAL CROSSING CONTEXT]", {
           crossingId,
           primaryRoad,
@@ -3047,6 +3063,13 @@ function openAlertsSurfaceFromDock() {
           crossingId,
           rawPrimaryRoad: cleanDisplayValue(primaryRoad),
           rejectedReason: primaryRoadValidity.invalid ? primaryRoadValidity.reason : "",
+          replacementSource,
+          finalHeadline
+        });
+        console.log("[V162.1 GENERIC AREA FILTER]", {
+          crossingId,
+          rejectedLabel,
+          rejectionReason,
           replacementSource,
           finalHeadline
         });
