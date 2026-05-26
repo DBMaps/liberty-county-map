@@ -14820,6 +14820,34 @@ function logTopPanelWrite(sourceFunction, targetElement, value) {
   });
 }
 
+
+function logTopStripOwnershipDiagnostic(sourceFunction) {
+  const selectors = [
+    "#habitStatusHeadline",
+    "#habitStatusDetail",
+    "#gridlyV2TopStatusPrimary",
+    "#gridlyV2TopStatusSecondary"
+  ];
+  const candidates = selectors.map((selector) => {
+    const element = document.querySelector(selector);
+    return {
+      selector,
+      id: element?.id || null,
+      classList: element ? Array.from(element.classList) : [],
+      innerText: element?.innerText || "",
+      sourceFunction
+    };
+  });
+  const visibleOwner = candidates.find((entry) => {
+    const text = String(entry.innerText || "");
+    return /Train blocking US 90|No major disruptions nearby/.test(text);
+  }) || null;
+  console.debug("[V159.3 TOP STRIP OWNER]", {
+    visibleOwner,
+    candidates
+  });
+}
+
 function updateDailyHabitStatus() {
   const functionStartedAt = performance.now();
   const sections = {};
@@ -14880,6 +14908,7 @@ function updateDailyHabitStatus() {
     safeText("habitStatusHeadline", headline);
     logTopPanelWrite("updateDailyHabitStatus", "habitStatusDetail", detail);
     safeText("habitStatusDetail", detail);
+    logTopStripOwnershipDiagnostic("updateDailyHabitStatus");
   });
 
   timeSection("class_style_updates", () => {
@@ -17198,6 +17227,7 @@ function refreshPortraitV2LocalizedIntelligence() {
       : "Routes currently clear";
     logTopPanelWrite("refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusSecondary", secondaryValue);
     if (topSecondaryEl) topSecondaryEl.textContent = secondaryValue;
+    logTopStripOwnershipDiagnostic("refreshPortraitV2LocalizedIntelligence");
   });
   recordPortraitIntelligenceBreakdown("refreshPortraitV2LocalizedIntelligence", functionStartedAt, sections);
 }
