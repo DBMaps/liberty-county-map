@@ -17336,27 +17336,52 @@ function refreshPortraitV2LocalizedIntelligence(triggerSource = "direct_call") {
   const localizedAlertCount = Number(intel?.activeLocalizedAlertCount || 0);
   const activePanelCount = Array.isArray(intel?.items) ? intel.items.length : 0;
   const corridorCount = Array.isArray(intel?.corridorClusters) ? intel.corridorClusters.length : 0;
-  const hasActiveAlerts = activeHazardCount > 0 || unifiedIncidentCount > 0 || localizedAlertCount > 0 || activePanelCount > 0 || corridorCount > 0;
-  const selectedTopPrimary = hasActiveAlerts
-    ? safeDisplayText(intel.topStatus, intel.commuteImpactHeadline)
+  const liveActiveIncidents = activeIncidents;
+  const highestPriorityLiveIncident = (() => {
+    const topIntelIncident = Array.isArray(intel?.items)
+      ? intel.items.find((item) => {
+        const incidentId = item?.incident?.id;
+        return incidentId != null && liveActiveIncidents.some((incident) => String(incident?.id || "") === String(incidentId));
+      })?.incident
+      : null;
+    return topIntelIncident || liveActiveIncidents[0] || null;
+  })();
+  const hasLiveActiveIncidents = liveActiveIncidents.length > 0;
+  const hasActiveAlerts = hasLiveActiveIncidents || unifiedIncidentCount > 0 || localizedAlertCount > 0 || activePanelCount > 0 || corridorCount > 0;
+  const selectedTopPrimary = hasLiveActiveIncidents
+    ? safeDisplayText(
+      highestPriorityLiveIncident?.title,
+      highestPriorityLiveIncident?.resolvedHeadline,
+      highestPriorityLiveIncident?.localizedHeadline,
+      highestPriorityLiveIncident?.finalHeadline,
+      highestPriorityLiveIncident?.headline,
+      highestPriorityLiveIncident?.label,
+      "Community alerts active"
+    )
     : safeDisplayText(intel.commuteImpactHeadline, "Routes currently clear");
-  const selectedTopSecondary = hasActiveAlerts
-    ? `${activeHazardCount} active community reports`
-    : "Routes currently clear";
-  const blockedClearState = hasActiveAlerts && /routes?\s+currently\s+clear/i.test(selectedTopPrimary);
-  const highestPriorityAlert = intel?.items?.[0]?.incident || null;
+  const selectedTopSecondary = hasLiveActiveIncidents
+    ? `${liveActiveIncidents.length} active community reports`
+    : "No major disruptions nearby";
+  const blockedClearState = hasLiveActiveIncidents && (/routes?\s+currently\s+clear/i.test(selectedTopPrimary) || /no\s+major\s+disruptions\s+nearby/i.test(selectedTopSecondary));
   gridlyTopStripOwnerState.lastHasActiveAlerts = hasActiveAlerts;
   gridlyTopStripOwnerState.suppressClearStateWrites = hasActiveAlerts;
 
-  console.debug("[V161 TOP STRIP TRUTH]", {
-    activeHazardCount,
-    hasActiveAlerts,
+  console.debug("[V161.4 TOP STRIP LIVE INCIDENT SOURCE]", {
+    liveActiveIncidentCount: liveActiveIncidents.length,
+    selectedIncidentId: highestPriorityLiveIncident?.id || null,
+    selectedIncidentTitle: safeDisplayText(
+      highestPriorityLiveIncident?.title,
+      highestPriorityLiveIncident?.resolvedHeadline,
+      highestPriorityLiveIncident?.localizedHeadline,
+      highestPriorityLiveIncident?.finalHeadline,
+      highestPriorityLiveIncident?.headline,
+      highestPriorityLiveIncident?.label,
+      null
+    ),
     selectedTopPrimary,
     selectedTopSecondary,
-    sourceUsed: hasActiveAlerts ? "unified_active_alert_truth" : "clear_state",
     blockedClearState,
-    highestPriorityAlertId: highestPriorityAlert?.id || null,
-    highestPriorityAlertTitle: highestPriorityAlert?.title || null
+    sourceUsed: hasLiveActiveIncidents ? "liveActiveIncidents" : "clear_state"
   });
 
   timeSection("text_content_updates", () => {
