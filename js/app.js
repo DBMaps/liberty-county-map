@@ -20865,6 +20865,39 @@ function getAlertsSurfaceSnapshot() {
       const sourceOwner = (alert?.__gridlyOwnerTraceSource && typeof alert.__gridlyOwnerTraceSource === "object")
         ? alert.__gridlyOwnerTraceSource
         : ((alert?.raw && typeof alert.raw === "object") ? alert.raw : null);
+      const roadHeadlineFields = resolveRoadHazardSegmentHeadline(alert);
+      const rowRawOwner = (alert?.raw && typeof alert.raw === "object") ? alert.raw : null;
+      const persistedRoadFieldKeys = [
+        "originalPrimaryRoad",
+        "primaryRoad",
+        "parsedPrimaryRoad",
+        "parsedCrossRoad",
+        "referenceRoadA",
+        "referenceRoadB",
+        "finalHeadline"
+      ];
+      const persistedToRowRaw = Boolean(rowRawOwner && roadHeadlineFields && typeof roadHeadlineFields === "object");
+      if (persistedToRowRaw) {
+        persistedRoadFieldKeys.forEach((field) => {
+          if (Object.prototype.hasOwnProperty.call(roadHeadlineFields, field)) {
+            rowRawOwner[field] = roadHeadlineFields[field];
+          }
+        });
+      }
+      const availableRoadFields = persistedRoadFieldKeys.filter((field) => {
+        if (!rowRawOwner || typeof rowRawOwner !== "object") return false;
+        const value = rowRawOwner[field];
+        return typeof value === "string" ? Boolean(value.trim()) : value !== undefined && value !== null;
+      });
+      console.log("[V165.9 ALERT ROW ROAD OWNER FIX]", {
+        id: incidentId,
+        rowRawFound: Boolean(rowRawOwner),
+        persistedToRowRaw,
+        availableRoadFields,
+        primaryRoad: rowRawOwner?.primaryRoad || "",
+        referenceRoadA: rowRawOwner?.referenceRoadA || "",
+        referenceRoadB: rowRawOwner?.referenceRoadB || ""
+      });
       logGridlyRawOwnerTrace({
         incidentId,
         stage: "alert row construction",
