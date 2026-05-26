@@ -3042,9 +3042,69 @@ function openAlertsSurfaceFromDock() {
           finalHeadline
         };
       };
+      
+      const isRoadLabelGenericForHazard = (value = "") => {
+        const normalized = normalizeRailSubtitleMatch(value);
+        if (!normalized) return true;
+        return /^(dayton area|liberty county|nearby|area|unknown|local area|road|street|highway|route)$/.test(normalized);
+      };
+      const toHazardEventLabel = (alert = {}) => {
+        const value = cleanDisplayValue(text(alert.hazardType) || text(alert.type) || text(alert.category) || text(alert.label));
+        if (!value) return "Road hazard";
+        const normalized = normalizeRailSubtitleMatch(value);
+        if (normalized.includes("flood")) return "Flooding";
+        if (normalized.includes("construct")) return "Construction";
+        if (normalized.includes("closed") || normalized.includes("closure")) return "Road closed";
+        if (normalized.includes("debris")) return "Debris";
+        if (normalized.includes("crash") || normalized.includes("accident")) return "Crash";
+        return value;
+      };
+      const resolveRoadHazardSegmentHeadline = (alert = {}) => {
+        const lat = getFirstNumber(alert, ["lat", "latitude", "rawLat", "raw.lat", "source.lat"]);
+        const lng = getFirstNumber(alert, ["lng", "lon", "longitude", "rawLng", "raw.lng", "source.lng", "source.lon"]);
+        const byLookup = maybeResolveNearestRoad(lat, lng);
+        const explicitRoad = cleanDisplayValue(text(alert.roadName) || text(alert.primaryRoad) || text(alert.route));
+        const fallbackRoad = cleanDisplayValue(byLookup?.resolvedRoad);
+        const primaryRoad = !isRoadLabelGenericForHazard(explicitRoad) ? explicitRoad : fallbackRoad;
+
+        const crossA = cleanDisplayValue(text(alert.crossStreetA) || text(alert.crossStreet1) || text(alert.fromStreet));
+        const crossB = cleanDisplayValue(text(alert.crossStreetB) || text(alert.crossStreet2) || text(alert.toStreet));
+        const nearbyStreet = cleanDisplayValue(text(alert.nearbyCrossStreet) || text(alert.nearestCrossStreet) || text(alert.knownLocation) || text(alert.locationName) || text(byLookup?.resolvedLocation));
+
+        const refs = [crossA, crossB, nearbyStreet].filter((v, i, arr) => Boolean(v) && !isRoadLabelGenericForHazard(v) && arr.findIndex(x => normalizeRoadLabel(x) === normalizeRoadLabel(v)) === i && normalizeRoadLabel(v) !== normalizeRoadLabel(primaryRoad));
+        const referenceRoadA = refs[0] || "";
+        const referenceRoadB = refs[1] || "";
+        const localReferenceStreet = referenceRoadA || "";
+        const eventLabel = toHazardEventLabel(alert);
+        let finalHeadline = "";
+        if (primaryRoad && referenceRoadA && referenceRoadB) finalHeadline = `${eventLabel} on ${primaryRoad} between ${referenceRoadA} and ${referenceRoadB}`;
+        else if (primaryRoad && referenceRoadA) finalHeadline = `${eventLabel} on ${primaryRoad} near ${referenceRoadA}`;
+        else if (primaryRoad) finalHeadline = `${eventLabel} on ${primaryRoad}`;
+        else if (referenceRoadA && referenceRoadB) finalHeadline = `${eventLabel} between ${referenceRoadA} and ${referenceRoadB}`;
+        else if (referenceRoadA) finalHeadline = `${eventLabel} near ${referenceRoadA}`;
+        else finalHeadline = `${eventLabel} reported`;
+
+        const finalSubtitle = `${cleanDisplayValue(getImpact(alert)) || "Active report"} • ${toMinutesAgoLabel(alert)}`;
+        console.log("[V160 ROAD HAZARD SEGMENT]", {
+          id: cleanDisplayValue(alert?.id || alert?.reportId || alert?.uuid || ""),
+          type: cleanDisplayValue(text(alert?.type) || text(alert?.hazardType) || text(alert?.category)),
+          lat: Number.isFinite(lat) ? lat : null,
+          lng: Number.isFinite(lng) ? lng : null,
+          primaryRoad,
+          localReferenceStreet,
+          referenceRoadA,
+          referenceRoadB,
+          finalHeadline,
+          finalSubtitle
+        });
+        return { finalHeadline, finalSubtitle };
+      };
+
       const composeRailCrossingHeadline = (alert = {}) => resolveRailCrossingPair(alert).finalHeadline;
       const titleFor = alert => {
         if (isRailAlert(alert)) return composeRailCrossingHeadline(alert);
+        const roadHazard = resolveRoadHazardSegmentHeadline(alert);
+        if (cleanDisplayValue(roadHazard.finalHeadline)) return roadHazard.finalHeadline;
         const explicit = cleanDisplayValue(text(alert.resolvedHeadline) || text(alert.headline) || text(alert.title) || text(alert.localizedSummary));
         if (explicit && !isGenericPrimaryTitle(explicit) && (/\sat\s/i.test(explicit) || /\snear\s/i.test(explicit) || isSpecificPhrase(explicit))) return explicit;
         const primary = pickPrimaryTitleMeta(alert);
