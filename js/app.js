@@ -14880,6 +14880,43 @@ function logTopPanelWrite(sourceFunction, targetElement, value) {
   });
 }
 
+const GRIDLY_TOP_STRIP_CLEAR_STATE_PATTERNS = [
+  /routes?\s+currently\s+clear/i,
+  /no\s+major\s+disruptions\s+nearby/i
+];
+
+let gridlyTopStripOwnerState = {
+  suppressClearStateWrites: false,
+  lastHasActiveAlerts: false
+};
+
+function isTopStripClearStateValue(value = "") {
+  const text = String(value || "").trim();
+  return GRIDLY_TOP_STRIP_CLEAR_STATE_PATTERNS.some((pattern) => pattern.test(text));
+}
+
+function writeTopStripOwnedText({ element, value, sourceFunction, fieldName, hasActiveAlerts }) {
+  if (!element) {
+    return { writerAttempted: false, writerBlocked: false, writerSource: sourceFunction, value: "" };
+  }
+  const attemptedValue = String(value == null ? "" : value);
+  const writerAttempted = true;
+  const blockedByOwnerGuard = Boolean(
+    hasActiveAlerts &&
+    gridlyTopStripOwnerState.suppressClearStateWrites &&
+    isTopStripClearStateValue(attemptedValue)
+  );
+  if (!blockedByOwnerGuard) {
+    element.textContent = attemptedValue;
+  }
+  return {
+    writerAttempted,
+    writerBlocked: blockedByOwnerGuard,
+    writerSource: `${sourceFunction}:${fieldName}`,
+    value: blockedByOwnerGuard ? String(element.textContent || "") : attemptedValue
+  };
+}
+
 
 function logTopStripOwnershipDiagnostic(sourceFunction) {
   const selectors = [
@@ -17298,6 +17335,8 @@ function refreshPortraitV2LocalizedIntelligence() {
     : "Routes currently clear";
   const blockedClearState = hasActiveAlerts && /routes?\s+currently\s+clear/i.test(selectedTopPrimary);
   const highestPriorityAlert = intel?.items?.[0]?.incident || null;
+  gridlyTopStripOwnerState.lastHasActiveAlerts = hasActiveAlerts;
+  gridlyTopStripOwnerState.suppressClearStateWrites = hasActiveAlerts;
 
   console.debug("[V161 TOP STRIP TRUTH]", {
     activeHazardCount,
@@ -17313,10 +17352,31 @@ function refreshPortraitV2LocalizedIntelligence() {
   timeSection("text_content_updates", () => {
     const primaryValue = blockedClearState ? safeDisplayText(intel.topStatusLocalizedDetail, intel.topStatus, "Community alerts active") : selectedTopPrimary;
     logTopPanelWrite("refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusPrimary", primaryValue);
-    if (topPrimaryEl) topPrimaryEl.textContent = primaryValue;
+    const primaryWrite = writeTopStripOwnedText({
+      element: topPrimaryEl,
+      value: primaryValue,
+      sourceFunction: "refreshPortraitV2LocalizedIntelligence",
+      fieldName: "primary",
+      hasActiveAlerts
+    });
     const secondaryValue = selectedTopSecondary;
     logTopPanelWrite("refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusSecondary", secondaryValue);
-    if (topSecondaryEl) topSecondaryEl.textContent = secondaryValue;
+    const secondaryWrite = writeTopStripOwnedText({
+      element: topSecondaryEl,
+      value: secondaryValue,
+      sourceFunction: "refreshPortraitV2LocalizedIntelligence",
+      fieldName: "secondary",
+      hasActiveAlerts
+    });
+    console.debug("[V161.1 TOP STRIP OWNER]", {
+      activeHazardCount,
+      hasActiveAlerts,
+      writerAttempted: primaryWrite.writerAttempted || secondaryWrite.writerAttempted,
+      writerBlocked: primaryWrite.writerBlocked || secondaryWrite.writerBlocked,
+      writerSource: [primaryWrite.writerSource, secondaryWrite.writerSource].join(","),
+      finalPrimary: String(topPrimaryEl?.textContent || ""),
+      finalSecondary: String(topSecondaryEl?.textContent || "")
+    });
     logTopStripOwnershipDiagnostic("refreshPortraitV2LocalizedIntelligence");
   });
   recordPortraitIntelligenceBreakdown("refreshPortraitV2LocalizedIntelligence", functionStartedAt, sections);
