@@ -3127,13 +3127,26 @@ function openAlertsSurfaceFromDock() {
           sourceFieldUsed: sourceFieldUsedForOutput,
           finalHeadline
         };
-        registerGridlyEnrichedIncident({
+        const enrichedRailIncident = {
           ...alert,
           ...resolvedPayload,
           roadName: cleanDisplayValue(alert?.roadName) || primaryRoad,
           referenceRoadA: cleanDisplayValue(resolvedSecondaryForOutput),
           referenceRoadB: "",
           nearbyStreet: cleanDisplayValue(alert?.nearbyCrossStreet || alert?.nearestCrossStreet || alert?.knownLocation || alert?.locationName || "")
+        };
+        const railIncidentId = getGridlyEnrichedIncidentRegistryId(enrichedRailIncident);
+        const existingRailRegistryEntry = railIncidentId ? (getGridlyEnrichedIncident(railIncidentId) || {}) : {};
+        registerGridlyEnrichedIncident({
+          ...existingRailRegistryEntry,
+          ...enrichedRailIncident
+        });
+        console.log("[V167.6 REGISTRY ENRICH REFRESH]", {
+          id: railIncidentId,
+          primaryRoad: cleanDisplayValue(enrichedRailIncident?.primaryRoad),
+          roadName: cleanDisplayValue(enrichedRailIncident?.roadName),
+          referenceRoadA: cleanDisplayValue(enrichedRailIncident?.referenceRoadA),
+          referenceRoadB: cleanDisplayValue(enrichedRailIncident?.referenceRoadB)
         });
         return resolvedPayload;
       };
@@ -3236,11 +3249,24 @@ function openAlertsSurfaceFromDock() {
         if (alert && typeof alert === "object") {
           Object.assign(alert, persistedFields);
         }
-        registerGridlyEnrichedIncident({
+        const enrichedRoadIncident = {
           ...alert,
           roadName: cleanDisplayValue(alert?.roadName) || primaryRoad,
           nearbyStreet: nearbyStreet || splitPrimary.parsedCrossRoad || referenceRoadA || "",
           ...persistedFields
+        };
+        const roadIncidentId = getGridlyEnrichedIncidentRegistryId(enrichedRoadIncident);
+        const existingRoadRegistryEntry = roadIncidentId ? (getGridlyEnrichedIncident(roadIncidentId) || {}) : {};
+        registerGridlyEnrichedIncident({
+          ...existingRoadRegistryEntry,
+          ...enrichedRoadIncident
+        });
+        console.log("[V167.6 REGISTRY ENRICH REFRESH]", {
+          id: roadIncidentId,
+          primaryRoad: cleanDisplayValue(enrichedRoadIncident?.primaryRoad),
+          roadName: cleanDisplayValue(enrichedRoadIncident?.roadName),
+          referenceRoadA: cleanDisplayValue(enrichedRoadIncident?.referenceRoadA),
+          referenceRoadB: cleanDisplayValue(enrichedRoadIncident?.referenceRoadB)
         });
         console.log("[V165.6 ROAD LANGUAGE FIELD PERSIST]", {
           id: cleanDisplayValue(alert?.id || alert?.reportId || alert?.uuid || ""),
