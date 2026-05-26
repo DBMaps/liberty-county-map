@@ -16444,7 +16444,7 @@ function buildCommunityConsequenceLabel(incident = {}, fallback = "Traffic slowi
     return finalizeNearbyPairResult(result);
   };
   const towns = recordSection("corridor_location_inference", () => recordCall("findTownMentions", () => findTownMentions(incident)));
-  const road = recordSection("corridor_location_inference", () => recordCall("normalizeCorridorBaseLabel+inferCorridorLabel", () => normalizeCorridorBaseLabel(inferCorridorLabel(incident).replace(/ Corridor$/, ""))));
+  const road = recordSection("corridor_location_inference", () => recordCall("normalizeCorridorBaseLabel+inferCorridorLabel", () => normalizeCorridorBaseLabel(inferCorridorLabel(directionOwnerIncident).replace(/ Corridor$/, ""))));
   const type = recordSection("input_normalization", () => String(incident?.report_type || incident?.type || "").toLowerCase());
   const direction = recordSection("type_status_mapping", () => recordCall("inferDirectionalPhrase", () => inferDirectionalPhrase(incident)));
   const localSpot = recordSection("crossing_road_name_lookup", () => recordCall("buildLocalizedLocationPhrase", () => getCachedRoadNameLookup(incident, "buildLocalizedLocationPhrase", (resolvedLookup) => buildLocalizedLocationPhrase(incident, resolvedLookup))));
@@ -16639,16 +16639,21 @@ function resolveIncidentDirectionConfidence(incident = {}) {
     : (value) => String(value || "").trim().replace(/\s+/g, " ");
   const helperResolved = typeof cleanDisplayValue === "function";
   const helperSource = helperResolved ? "global.cleanDisplayValue" : "resolveIncidentDirectionConfidence.safeDirectionDisplayValue";
-  const roadResolution = resolveDirectionEngineRoadName(incident);
+  const incidentId = String(incident?.id || incident?.incidentId || incident?.reportId || incident?.report_id || incident?.uuid || "").trim();
+  const enrichedIncident = incidentId && typeof getGridlyEnrichedIncident === "function"
+    ? (getGridlyEnrichedIncident(incidentId) || incident)
+    : incident;
+  const directionOwnerIncident = enrichedIncident || incident;
+  const roadResolution = resolveDirectionEngineRoadName(directionOwnerIncident);
   const normalizedRoadFromEnrichment = normalizeCorridorBaseLabel(roadResolution.roadName);
   const normalizedRoadFromCorridor = normalizeCorridorBaseLabel(inferCorridorLabel(incident).replace(/ Corridor$/i, ""));
   const roadName = normalizedRoadFromEnrichment
     || (normalizedRoadFromCorridor && !/local (crossing|road) impact/i.test(normalizedRoadFromCorridor) ? normalizedRoadFromCorridor : "");
   const orientationResolution = resolveGridlyRoadOrientation({
-    roadName,
-    lat: incident?.lat ?? incident?.latitude ?? incident?.coords?.lat ?? incident?.geometry?.lat,
-    lng: incident?.lng ?? incident?.lon ?? incident?.longitude ?? incident?.coords?.lng ?? incident?.geometry?.lng,
-    incident
+    roadName: roadName || directionOwnerIncident?.primaryRoad || "",
+    lat: directionOwnerIncident?.lat ?? directionOwnerIncident?.latitude ?? directionOwnerIncident?.coords?.lat ?? directionOwnerIncident?.geometry?.lat,
+    lng: directionOwnerIncident?.lng ?? directionOwnerIncident?.lon ?? directionOwnerIncident?.longitude ?? directionOwnerIncident?.coords?.lng ?? directionOwnerIncident?.geometry?.lng,
+    incident: directionOwnerIncident
   });
 
   const inferredOrientation = orientationResolution.orientation;
@@ -16664,7 +16669,7 @@ function resolveIncidentDirectionConfidence(incident = {}) {
   } else if (roadName) {
     source = roadResolution?.sourceUsed || "road_name_only";
   }
-  const incidentId = String(incident?.id || incident?.report_id || incident?.reportId || "unknown");
+  const resolvedIncidentId = incidentId || String(incident?.report_id || incident?.reportId || "unknown");
   const auditRecovered = !helperResolved;
   console.debug("[V165.4.1 DIRECTION HELPER FIX]", {
     helperResolved,
@@ -16672,15 +16677,22 @@ function resolveIncidentDirectionConfidence(incident = {}) {
     auditRecovered
   });
   console.debug("[V165.4 DIRECTION SOURCE OWNER]", {
-    incidentId,
+    incidentId: resolvedIncidentId,
+    isEnriched: Boolean(enrichedIncident && enrichedIncident !== incident),
     availableFields: Object.fromEntries((roadResolution?.availableFields || []).map(([key, value]) => [key, resolvedDirectionDisplayHelper(value)])),
     selectedRoad: roadName,
     sourceUsed: roadResolution?.sourceUsed || source,
-    confidence
+    confidence,
+    resolverInputFields: {
+      roadName: resolvedDirectionDisplayHelper(roadName),
+      primaryRoad: resolvedDirectionDisplayHelper(directionOwnerIncident?.primaryRoad),
+      referenceRoadA: resolvedDirectionDisplayHelper(directionOwnerIncident?.referenceRoadA),
+      referenceRoadB: resolvedDirectionDisplayHelper(directionOwnerIncident?.referenceRoadB)
+    }
   });
 
   return {
-    incidentId,
+    incidentId: resolvedIncidentId,
     roadName,
     inferredOrientation,
     directionPair: Array.isArray(orientationResolution.directionPair) ? orientationResolution.directionPair : [],
