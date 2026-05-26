@@ -20776,7 +20776,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       availableRoadFields
     });
   }
-  const gridlyEnrichedIncidentRegistry = new Map();
+  const gridlyEnrichedIncidentRegistry = {};
   function cleanGridlyRegistryValue(value) {
     if (value === null || value === undefined) return "";
     return String(value).trim();
@@ -20788,9 +20788,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     try {
       const id = getGridlyEnrichedIncidentRegistryId(incident);
       if (!id || !incident || typeof incident !== "object") return null;
-      const existing = gridlyEnrichedIncidentRegistry.get(id) || {};
+      const existing = gridlyEnrichedIncidentRegistry[id] || {};
       const next = { ...existing, ...incident, id };
-      gridlyEnrichedIncidentRegistry.set(id, next);
+      gridlyEnrichedIncidentRegistry[id] = next;
       return next;
     } catch (error) {
       if (window?.GRIDLY_DIRECTION_AUDIT_ENABLED || window?.GRIDLY_DEBUG_REGISTRY) {
@@ -20802,10 +20802,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   function getGridlyEnrichedIncident(id = "") {
     const key = cleanGridlyRegistryValue(id);
     if (!key) return null;
-    return gridlyEnrichedIncidentRegistry.get(key) || null;
+    return gridlyEnrichedIncidentRegistry[key] || null;
   }
   function getGridlyEnrichedIncidentRegistrySnapshot() {
-    return [...gridlyEnrichedIncidentRegistry.values()].map((item) => ({ ...item }));
+    return { ...gridlyEnrichedIncidentRegistry };
   }
   window.registerGridlyEnrichedIncident = registerGridlyEnrichedIncident;
   window.getGridlyEnrichedIncident = getGridlyEnrichedIncident;
@@ -22175,7 +22175,7 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
   const activeIncidents = typeof getActiveUnifiedIncidents === "function" ? getActiveUnifiedIncidents() : [];
   const alertSnapshot = typeof getAlertsSurfaceSnapshot === "function" ? getAlertsSurfaceSnapshot() : null;
   const alertItems = Array.isArray(alertSnapshot?.alerts) ? alertSnapshot.alerts : [];
-  const registryCount = gridlyEnrichedIncidentRegistry.size;
+  const registryCount = Object.keys(gridlyEnrichedIncidentRegistry).length;
   return (Array.isArray(activeIncidents) ? activeIncidents : []).map((incident) => {
     try {
       const incidentId = cleanDirectionAuditValue(incident?.id || incident?.incidentId || incident?.reportId);
