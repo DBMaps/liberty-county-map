@@ -14835,29 +14835,23 @@ function updateDailyHabitStatus() {
     };
   });
 
-  const freshest = timeSection("array_filtering_sorting", () => [...activeReports].sort(
-    (a, b) => new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0)
-  )[0]);
+  const activeAlertCount = Math.max(0, Number(localizedIntel?.activeLocalizedAlertCount || 0));
+  const hasActiveAlertIntel = Boolean(localizedIntel?.hasActiveAlerts) || activeAlertCount > 0 || activeIssues.length > 0;
 
   let pill = "All Clear";
   let headline = "Routes currently clear";
   let detail = "No major disruptions nearby.";
   let cardClass = "clear";
 
-  if (highIssues.length > 0) {
-    pill = "Major Delay Active";
-    headline = localizedIntel.topStatus;
-    detail = freshest
-      ? `${freshest.crossingName} reported ${freshest.minutesAgo} min ago · ${confirmationCount} live confirmation${confirmationCount === 1 ? "" : "s"}.`
-      : `High-impact shared reports are active · ${confirmationCount} live confirmation${confirmationCount === 1 ? "" : "s"}.`;
-    cardClass = "high";
-  } else if (moderateIssues.length > 0 || activeIssues.length > 0) {
-    pill = "Use Caution";
-    headline = localizedIntel.topStatus;
-    detail = freshest
-      ? `${freshest.crossingName} updated ${freshest.minutesAgo} min ago · ${confirmationCount} live confirmation${confirmationCount === 1 ? "" : "s"}.`
-      : `There is live report activity · ${confirmationCount} live confirmation${confirmationCount === 1 ? "" : "s"}.`;
-    cardClass = "delayed";
+  if (hasActiveAlertIntel) {
+    const impactLabel = highIssues.length > 0
+      ? "High impact"
+      : (moderateIssues.length > 0 ? "Moderate impact" : "Active rail report");
+    const activeCountLabel = `${Math.max(1, activeAlertCount || activeIssues.length)} Active Movement Alert${Math.max(1, activeAlertCount || activeIssues.length) === 1 ? "" : "s"}`;
+    pill = activeCountLabel;
+    headline = safeDisplayText(localizedIntel?.topStatus, "Movement alert active");
+    detail = `${impactLabel} • ${safeDisplayText(localizedIntel?.topStatusLocalizedDetail, "Updated just now")}`;
+    cardClass = highIssues.length > 0 ? "high" : "delayed";
   }
 
   timeSection("text_content_updates", () => {
