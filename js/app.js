@@ -2827,6 +2827,12 @@ function openAlertsSurfaceFromDock() {
         return true;
       };
       const collectRailLabelValues = (obj, paths = []) => paths.map(path => readPathValue(obj, path)).filter(value => cleanDisplayValue(text(value)));
+      const GRIDLY_LOCAL_CROSSING_CONTEXT = {
+        "762790L": {
+          secondaryLabel: "Waco",
+          displayName: "US 90 and Waco"
+        }
+      };
       const resolveRailCrossingPair = (alert = {}) => {
         const enriched = chooseBestAlertLocationContext(alert).enriched || {};
         const crossingId = cleanDisplayValue(alert?.crossingId || alert?.crossing_id || alert?.raw?.crossingId || alert?.raw?.crossing_id || alert?.source?.crossingId || alert?.source?.crossing_id);
@@ -2983,24 +2989,40 @@ function openAlertsSurfaceFromDock() {
           .flatMap(candidate => collectSecondaryCandidates(candidate.values, candidate.sourceFieldUsed, candidate.qualityRank))
           .sort((a, b) => (a.qualityRank - b.qualityRank) || (a.candidateOrder - b.candidateOrder))[0] || { value: "", sourceFieldUsed: "" };
         const resolvedSecondaryCrossingLabel = secondaryMatch.value;
-        const secondaryCrossingLabel = resolvedSecondaryCrossingLabel;
+        const localCrossingContext = GRIDLY_LOCAL_CROSSING_CONTEXT[crossingId] || null;
+        const localSecondaryLabel = cleanDisplayValue(localCrossingContext?.secondaryLabel);
+        const localDisplayName = cleanDisplayValue(localCrossingContext?.displayName);
+        const localSecondaryIsDistinct = isDistinctCrossingPart(localSecondaryLabel, primaryRoad, [], { rejectRouteAlias: true });
+        const usedLocalContext = !resolvedSecondaryCrossingLabel && localSecondaryLabel && localSecondaryIsDistinct;
+        const resolvedSecondaryWithLocal = usedLocalContext ? localSecondaryLabel : resolvedSecondaryCrossingLabel;
         console.log("[V158 FRA ENRICHMENT]", {
           crossingId,
           primaryRoad,
-          resolvedSecondaryCrossingLabel,
+          resolvedSecondaryCrossingLabel: resolvedSecondaryWithLocal,
           sourceUsed: secondaryMatch.sourceFieldUsed || ""
         });
         const singleRoad = primaryRoad || firstDistinctCrossingPart || cleanDisplayValue(enriched.nearbyKnownLocation);
-        const finalHeadline = primaryRoad && resolvedSecondaryCrossingLabel
-          ? `Crossing blocked at ${primaryRoad} and ${resolvedSecondaryCrossingLabel}`
-          : (singleRoad ? `Crossing blocked at ${singleRoad}` : "Crossing blocked nearby");
+        const finalHeadline = usedLocalContext && localDisplayName
+          ? `Crossing blocked at ${localDisplayName}`
+          : (primaryRoad && resolvedSecondaryWithLocal
+            ? `Crossing blocked at ${primaryRoad} and ${resolvedSecondaryWithLocal}`
+            : (singleRoad ? `Crossing blocked at ${singleRoad}` : "Crossing blocked nearby"));
+        console.log("[V158.2 LOCAL CROSSING CONTEXT]", {
+          crossingId,
+          primaryRoad,
+          localSecondaryLabel,
+          usedLocalContext,
+          finalHeadline
+        });
+        const resolvedSecondaryForOutput = resolvedSecondaryWithLocal;
+        const sourceFieldUsedForOutput = usedLocalContext ? "localCrossingContext" : (secondaryMatch.sourceFieldUsed || "");
         const debugId = cleanDisplayValue(alert?.id || alert?.reportId || alert?.crossingId || alert?.crossing_id);
         console.log("[V157.8D SECONDARY QUALITY]", {
           id: debugId,
           candidateLabels,
           rejectedCandidates,
-          resolvedSecondaryCrossingLabel,
-          selectedSecondary: resolvedSecondaryCrossingLabel,
+          resolvedSecondaryCrossingLabel: resolvedSecondaryForOutput,
+          selectedSecondary: resolvedSecondaryForOutput,
           finalHeadline
         });
         console.log("[V157.8B CROSSING ENRICHMENT]", {
@@ -3008,11 +3030,17 @@ function openAlertsSurfaceFromDock() {
           primaryRoad,
           candidateLabels,
           normalizedRejected,
-          resolvedSecondaryCrossingLabel,
-          selectedSecondary: resolvedSecondaryCrossingLabel,
+          resolvedSecondaryCrossingLabel: resolvedSecondaryForOutput,
+          selectedSecondary: resolvedSecondaryForOutput,
           finalHeadline
         });
-        return { primaryRoad, secondaryCrossingLabel, resolvedSecondaryCrossingLabel, sourceFieldUsed: secondaryMatch.sourceFieldUsed, finalHeadline };
+        return {
+          primaryRoad,
+          secondaryCrossingLabel: resolvedSecondaryForOutput,
+          resolvedSecondaryCrossingLabel: resolvedSecondaryForOutput,
+          sourceFieldUsed: sourceFieldUsedForOutput,
+          finalHeadline
+        };
       };
       const composeRailCrossingHeadline = (alert = {}) => resolveRailCrossingPair(alert).finalHeadline;
       const titleFor = alert => {
