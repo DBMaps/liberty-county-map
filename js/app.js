@@ -22234,8 +22234,23 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
       referenceRoadA: directionOwnerIncident?.referenceRoadA,
       referenceRoadB: directionOwnerIncident?.referenceRoadB
     };
+    const directionAuditRoadOwner = isRoadHazardIncident
+      ? {
+        id: String(incident?.id || directionOwnerIncident?.id || directionOwnerIncident?.incidentId || directionOwnerIncident?.reportId || "").trim(),
+        type: String(incident?.type || directionOwnerIncident?.type || directionOwnerIncident?.hazardType || directionOwnerIncident?.category || directionOwnerIncident?.label || "").trim(),
+        title: String(incident?.title || incident?.headline || directionOwnerIncident?.title || directionOwnerIncident?.headline || "").trim(),
+        lat: Number.isFinite(Number(incident?.lat)) ? Number(incident?.lat) : directionOwnerIncident?.lat,
+        lng: Number.isFinite(Number(incident?.lng)) ? Number(incident?.lng) : (Number.isFinite(Number(incident?.lon)) ? Number(incident?.lon) : directionOwnerIncident?.lng),
+        raw: directionOwnerIncident?.raw && typeof directionOwnerIncident.raw === "object"
+          ? directionOwnerIncident.raw
+          : (incident?.raw && typeof incident.raw === "object" ? incident.raw : {})
+      }
+      : null;
+    const roadHazardResolveInput = directionAuditRoadOwner
+      ? { ...directionAuditRoadOwner, ...directionOwnerIncident }
+      : directionOwnerIncident;
     const roadHazardResolved = (isRoadHazardIncident && typeof resolveRoadHazardSegmentHeadline === "function")
-      ? resolveRoadHazardSegmentHeadline(directionOwnerIncident)
+      ? resolveRoadHazardSegmentHeadline(roadHazardResolveInput)
       : null;
     const roadFieldsAfterResolve = roadHazardResolved && typeof roadHazardResolved === "object"
       ? { ...directionOwnerIncident, ...roadHazardResolved }
