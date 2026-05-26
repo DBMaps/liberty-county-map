@@ -163,29 +163,119 @@ Avoid:
 
 ---
 
+## Directional Impact Language V1
+
+### Purpose
+Provide users with useful travel direction context without making headlines excessively long.
+
+### Core principle
+Headlines describe location.
+
+Secondary text describes movement impact.
+
+Avoid overloaded headlines.
+
+Bad:
+- Flooding eastbound on US 90 near Winfree Street
+- Train blocking westbound northbound traffic near Waco
+
+Preferred pattern:
+
+Headline:
+- Flooding on US 90 near Winfree Street
+
+Secondary:
+- Eastbound impact likely
+
+Headline:
+- Train blocking US 90 at Waco
+
+Secondary:
+- Westbound delays building
+
+---
+
+## Confidence Model
+
+### High confidence
+Conditions:
+- known route geometry
+- route segment orientation
+- route direction data available
+- route watch data available
+
+Examples:
+- Eastbound affected
+- Westbound affected
+- Northbound affected
+- Southbound affected
+
+### Medium confidence
+Conditions:
+- road orientation known
+- corridor orientation known
+
+Examples:
+- Eastbound impact likely
+- Northbound impact likely
+
+### Low confidence
+Conditions:
+- intersection only
+- isolated point
+- insufficient geometry
+
+Examples:
+- Traffic impact possible
+- Both directions may be affected
+
+---
+
+## Road Orientation Examples
+
+US 90:
+- Primary orientation: East / West
+
+TX 146:
+- Primary orientation: North / South
+
+FM roads:
+- Use geometry-based determination
+
+Local streets:
+- Use geometry if available
+- Otherwise use: Both directions may be affected
+
+---
+
 ## Future Mobility Intelligence (not implemented)
 
 Examples:
-- Flooding on TX 146 between Moller Street and US 90. Affecting southbound traffic.
-- Train blocking US 90 at Waco. Traffic delays building westbound.
+- Flooding on TX 146 between Moller Street and US 90
+  - Southbound impact likely
+- Train blocking US 90 at Waco
+  - Westbound delays building
+- Road closed on FM 1409 near CR 676
+  - Northbound traffic affected
 
 ---
 
 ## Protected Systems
 
 Do not alter:
-- V158.2 local crossing context
+- V158.2 crossing context
 - V160 road hazard intelligence
+- V162 quality filtering
+- V163 segmentation logic
+- V164 crossing references
 - Supabase sync
 - Alerts rendering
-- Report flow
 - Route logic
-- Desktop architecture
+- Desktop
 - Tactical landscape
+- Marker ownership
 - Popup ownership
-- Hazard ownership
-- Portrait V2 ownership
-- Marker render ownership
+- Top strip
 
 ---
 
@@ -200,4 +290,4 @@ Do not alter:
 ---
 
 ## Deliverable
-Create markdown document only. No application code changes.
+Update markdown document only. No application behavior changes.
