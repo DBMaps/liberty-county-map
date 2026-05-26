@@ -3229,7 +3229,29 @@ function openAlertsSurfaceFromDock() {
           Object.assign(alert, persistedFields);
           if (alert.raw && typeof alert.raw === "object") {
             rawOwner = alert.raw;
+            console.log(
+              "[V165.7D RAW MUTATION TARGET]",
+              {
+                id: alert.id,
+                rawOwnerIdentity:
+                  rawOwner
+                  && `${rawOwner.id}-${Object.keys(rawOwner).length}`,
+                beforeKeys: Object.keys(rawOwner || {}),
+                persistedFields,
+                afterPreview: null
+              }
+            );
             Object.assign(rawOwner, persistedFields);
+            console.log(
+              "[V165.7D RAW MUTATION RESULT]",
+              {
+                id: alert.id,
+                afterKeys: Object.keys(rawOwner || {}),
+                primaryRoad: rawOwner?.primaryRoad,
+                referenceRoadA: rawOwner?.referenceRoadA,
+                referenceRoadB: rawOwner?.referenceRoadB
+              }
+            );
           }
         }
         const availableRoadFields = Object.keys(persistedFields).filter((field) => {
