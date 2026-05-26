@@ -17196,6 +17196,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     consequenceSecondaryMessage,
     consequenceIncidentCount: safeIntelItems.length,
     routeImpactEtaEstimate: top?.etaImpact || 0,
+    topIncidentFreshnessText: top?.minutesText || "just now",
     trendMessage
   };
   });
@@ -17203,6 +17204,13 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
 
 function buildUnifiedLocalizedCommuteIntelligence({ limit = 6 } = {}) {
   return buildCommuteConsequenceIntelligence({ limit });
+}
+
+function formatPortraitTopStripImpactLabel(tier = "") {
+  const normalizedTier = String(tier || "").toLowerCase();
+  if (normalizedTier === "severe" || normalizedTier === "heavy") return "High impact";
+  if (normalizedTier === "moderate") return "Moderate impact";
+  return "Low impact";
 }
 
 function refreshPortraitV2LocalizedIntelligence() {
@@ -17220,10 +17228,13 @@ function refreshPortraitV2LocalizedIntelligence() {
   }
   const intel = timeSection("intelligence_calculations", () => buildUnifiedLocalizedCommuteIntelligence({ limit: 6 }));
   timeSection("text_content_updates", () => {
-    logTopPanelWrite("refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusPrimary", intel.commuteImpactHeadline);
-    if (topPrimaryEl) topPrimaryEl.textContent = intel.commuteImpactHeadline;
+    const primaryValue = intel.hasActiveAlerts
+      ? safeDisplayText(intel.topStatus, intel.commuteImpactHeadline)
+      : safeDisplayText(intel.commuteImpactHeadline, "Routes currently clear");
+    logTopPanelWrite("refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusPrimary", primaryValue);
+    if (topPrimaryEl) topPrimaryEl.textContent = primaryValue;
     const secondaryValue = intel.hasActiveAlerts
-      ? safeDisplayText(intel.topStatusLocalizedDetail, "Liberty County • Updated just now")
+      ? `${formatPortraitTopStripImpactLabel(intel.commuteConsequenceTier)} • ${safeDisplayText(intel.topIncidentFreshnessText, "just now")}`
       : "Routes currently clear";
     logTopPanelWrite("refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusSecondary", secondaryValue);
     if (topSecondaryEl) topSecondaryEl.textContent = secondaryValue;
