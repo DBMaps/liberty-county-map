@@ -3272,30 +3272,8 @@ function openAlertsSurfaceFromDock() {
               return protectedFields;
             };
             const preservedRoadFields = buildProtectedFields(rawOwner, persistedFields);
-            console.log(
-              "[V165.7D RAW MUTATION TARGET]",
-              {
-                id: alert.id,
-                rawOwnerIdentity:
-                  rawOwner
-                  && `${rawOwner.id}-${Object.keys(rawOwner).length}`,
-                beforeKeys: Object.keys(rawOwner || {}),
-                persistedFields,
-                afterPreview: null
-              }
-            );
-            Object.assign(rawOwner, persistedFields, preservedRoadFields);
-            console.log(
-              "[V165.7D RAW MUTATION RESULT]",
-              {
-                id: alert.id,
-                afterKeys: Object.keys(rawOwner || {}),
-                primaryRoad: rawOwner?.primaryRoad,
-                referenceRoadA: rawOwner?.referenceRoadA,
-                referenceRoadB: rawOwner?.referenceRoadB
-              }
-            );
-          }
+                        Object.assign(rawOwner, persistedFields, preservedRoadFields);
+                      }
         }
         const availableRoadFields = Object.keys(persistedFields).filter((field) => {
           if (!rawOwner || typeof rawOwner !== "object") return false;
@@ -20856,24 +20834,6 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           coerceDisplayText(item?.label)
         ]);
         const raw = incident?.raw || item?.raw || null;
-        console.log(
-          "[V169.1 SNAPSHOT SOURCE]",
-          {
-            id: incident?.id || item?.id,
-            incidentRoadFields: {
-              primaryRoad: incident?.primaryRoad,
-              roadName: incident?.roadName,
-              referenceRoadA: incident?.referenceRoadA,
-              referenceRoadB: incident?.referenceRoadB
-            },
-            rawRoadFields: {
-              primaryRoad: incident?.raw?.primaryRoad,
-              roadName: incident?.raw?.roadName,
-              referenceRoadA: incident?.raw?.referenceRoadA,
-              referenceRoadB: incident?.raw?.referenceRoadB
-            }
-          }
-        );
         return {
           id: incident?.id || item?.id || "",
           title: resolvedHeadline || buildSpecificAlertTitle({ ...incident, title: item?.localizedSummary || incident?.title, subtitle: incident?.subtitle || item?.localizedSummary }),
@@ -22166,10 +22126,6 @@ const v134ReportingRefinementApplied = true;
 
 window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit() {
   console.log("[V165.2 DIRECTION CONFIDENCE AUDIT]");
-  console.log("[V169 LIVE FILE CHECK]", {
-    loaded: true,
-    timestamp: Date.now()
-  });
   const pathHelperFromGlobal = (typeof window !== "undefined" && typeof window.getValueByPath === "function")
     ? window.getValueByPath
     : (typeof globalThis !== "undefined" && typeof globalThis.getValueByPath === "function")
@@ -22228,12 +22184,18 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
       || incidentTypeToken.includes("flood")
       || incidentTypeToken.includes("closure")
       || incidentTypeToken.includes("construct");
-    const roadFieldsBeforeResolve = {
-      primaryRoad: directionOwnerIncident?.primaryRoad,
-      roadName: directionOwnerIncident?.roadName,
-      referenceRoadA: directionOwnerIncident?.referenceRoadA,
-      referenceRoadB: directionOwnerIncident?.referenceRoadB
-    };
+    if (isRoadHazardIncident) {
+      return {
+        incidentId: String(directionOwnerIncident?.id || directionOwnerIncident?.incidentId || directionOwnerIncident?.reportId || "").trim(),
+        titleOrHeadline: String(incident?.title || incident?.headline || ""),
+        roadName: "",
+        inferredOrientation: "unknown",
+        directionPair: [],
+        confidence: "LOW",
+        source: "road-hazard-deferred",
+        reason: "Road hazard direction confidence deferred; location text remains authoritative."
+      };
+    }
     const directionAuditRoadOwner = isRoadHazardIncident
       ? {
         id: String(incident?.id || directionOwnerIncident?.id || directionOwnerIncident?.incidentId || directionOwnerIncident?.reportId || "").trim(),
@@ -22256,34 +22218,10 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
     const auditOwnerAfter = roadHazardResolved && typeof roadHazardResolved === "object"
       ? { ...directionOwnerIncident, ...roadHazardResolved }
       : directionOwnerIncident;
-    console.debug("[V169.5 ROAD AUDIT RESOLVER RESULT]", {
-      incidentId: String(directionOwnerIncident?.id || directionOwnerIncident?.incidentId || directionOwnerIncident?.reportId || "").trim(),
-      type: String(directionOwnerIncident?.type || directionOwnerIncident?.hazardType || directionOwnerIncident?.category || directionOwnerIncident?.label || ""),
-      auditOwnerBefore,
-      resolverResult: roadHazardResolved,
-      auditOwnerAfter,
-      selectedRoadCandidate:
-        auditOwnerAfter?.primaryRoad ||
-        auditOwnerAfter?.roadName ||
-        roadHazardResolved?.primaryRoad ||
-        roadHazardResolved?.roadName
-    });
-    const roadFieldsAfterResolve = roadHazardResolved && typeof roadHazardResolved === "object"
+        const roadFieldsAfterResolve = roadHazardResolved && typeof roadHazardResolved === "object"
       ? { ...directionOwnerIncident, ...roadHazardResolved }
       : directionOwnerIncident;
-    console.debug("[V169.3 DIRECTION ROAD ENRICH TRACE]", {
-      incidentId: String(directionOwnerIncident?.id || directionOwnerIncident?.incidentId || directionOwnerIncident?.reportId || "").trim(),
-      type: String(directionOwnerIncident?.type || directionOwnerIncident?.hazardType || directionOwnerIncident?.category || directionOwnerIncident?.label || ""),
-      before: roadFieldsBeforeResolve,
-      resolverResult: roadHazardResolved,
-      after: {
-        primaryRoad: roadFieldsAfterResolve?.primaryRoad,
-        roadName: roadFieldsAfterResolve?.roadName,
-        referenceRoadA: roadFieldsAfterResolve?.referenceRoadA,
-        referenceRoadB: roadFieldsAfterResolve?.referenceRoadB
-      }
-    });
-    const directionAuditOwner = roadHazardResolved && typeof roadHazardResolved === "object"
+        const directionAuditOwner = roadHazardResolved && typeof roadHazardResolved === "object"
       ? { ...directionOwnerIncident, ...roadHazardResolved }
       : directionOwnerIncident;
     const confidence = resolveIncidentDirectionConfidence(directionAuditOwner);
@@ -22298,20 +22236,7 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
     const sourceOwner = enrichedIncident
       ? "getAlertsSurfaceSnapshot().alerts[].raw (post-V160/V163 enriched)"
       : "getActiveUnifiedIncidents() fallback";
-    console.debug("[V169.5 ROAD AUDIT RESOLVER RESULT]", {
-      incidentId,
-      type: directionOwnerIncident?.type,
-      selectedRoadName,
-      availableRoadFields,
-      directionOwnerKeys: Object.keys(directionOwnerIncident || {}),
-      directionOwnerRoadFields: {
-        primaryRoad: directionOwnerIncident?.primaryRoad,
-        roadName: directionOwnerIncident?.roadName,
-        referenceRoadA: directionOwnerIncident?.referenceRoadA,
-        referenceRoadB: directionOwnerIncident?.referenceRoadB
-      }
-    });
-    console.log("[V165.5 DIRECTION OWNER FIX]", {
+        console.log("[V165.5 DIRECTION OWNER FIX]", {
       incidentId: confidence.incidentId || incidentId || "",
       isEnriched: Boolean(enrichedIncident),
       availableRoadFields,
