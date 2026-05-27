@@ -287,7 +287,7 @@ function getGridlyZoomBehavior(category = "unknown", severity = "low", incident 
 const GRIDLY_MARKER_VISUALS = {
   rail_clear: { className: "gridly-marker-rail-clear", priority: 1, scale: 0.9, glow: false, pulse: false, priorityRank: 7, zIndexOffset: 7, visualWeight: "light", emphasisLevel: "passive", calmLabel: "Rail clear" },
   rail_blocked: { className: "gridly-marker-rail-blocked", priority: 3, scale: 1.1, glow: true, pulse: false, priorityRank: 3, zIndexOffset: 30, visualWeight: "strong", emphasisLevel: "high", calmLabel: "Rail blocked" },
-  rail_route_impact: { className: "gridly-marker-rail-route-impact", priority: 5, scale: 1.2, glow: true, pulse: true, priorityRank: 1, zIndexOffset: 50, visualWeight: "strong", emphasisLevel: "route-impact", calmLabel: "Rail route impact" },
+  rail_route_impact: { className: "gridly-marker-rail-route-impact", priority: 4, scale: 1.13, glow: true, pulse: false, priorityRank: 2, zIndexOffset: 34, visualWeight: "strong", emphasisLevel: "route-impact", calmLabel: "Rail route impact" },
   hazard_low: { className: "gridly-marker-hazard-low", priority: 1, scale: 0.95, glow: false, pulse: false, priorityRank: 6, zIndexOffset: 10, visualWeight: "light", emphasisLevel: "low", calmLabel: "Low hazard" },
   hazard_moderate: { className: "gridly-marker-hazard-moderate", priority: 2, scale: 1, glow: false, pulse: false, priorityRank: 5, zIndexOffset: 16, visualWeight: "medium", emphasisLevel: "moderate", calmLabel: "Moderate hazard" },
   hazard_high: { className: "gridly-marker-hazard-high", priority: 3, scale: 1.08, glow: true, pulse: false, priorityRank: 4, zIndexOffset: 24, visualWeight: "strong", emphasisLevel: "high", calmLabel: "High hazard" },
@@ -337,7 +337,8 @@ function getGridlyMarkerStyle(category = "unknown", severity = "low", incident =
   const routeImpact = Boolean(incident?.routeImpact) || /route impact|blocking road|closure|detour|all lanes/.test(text);
   const txdotLike = source === "txdot" || /^txdot_/.test(category);
   if (category === "rail") {
-    if (routeImpact) return "rail_route_impact";
+    const activeRouteImpact = doesGridlyIncidentImpactActiveRoute(incident);
+    if (activeRouteImpact || routeImpact) return "rail_route_impact";
     if (/blocked crossing|train blocking|stopped train|closed crossing|\bblocked\b|\bclosed\b|\bstopped\b/.test(text)) return "rail_blocked";
     return "rail_clear";
   }
@@ -354,6 +355,43 @@ function getGridlyMarkerStyle(category = "unknown", severity = "low", incident =
   if (severity === "low") return "hazard_low";
   return "unknown_quiet";
 }
+
+const gridlyRouteImpactAuditState = {
+  checksRun: 0,
+  safeFallbacksUsed: 0
+};
+
+function doesGridlyIncidentImpactActiveRoute(incident = {}) {
+  try {
+    gridlyRouteImpactAuditState.checksRun += 1;
+    const routeLatLngs = typeof getRoutePolylineLatLngs === "function" ? getRoutePolylineLatLngs() : [];
+    if (!Array.isArray(routeLatLngs) || routeLatLngs.length < 2) return false;
+    const incidentLat = Number(incident?.lat);
+    const incidentLng = Number(incident?.lng);
+    const incidentCrossingId = String(incident?.crossingId || "");
+    const routeHazard = typeof getRouteHazardAssessmentForPath === "function"
+      ? getRouteHazardAssessmentForPath(routeLatLngs)
+      : (typeof getRouteHazardAssessment === "function" ? getRouteHazardAssessment() : null);
+    const nearbyCrossingIds = new Set((Array.isArray(routeHazard?.nearbyReports) ? routeHazard.nearbyReports : [])
+      .map((report) => String(report?.crossingId || ""))
+      .filter(Boolean));
+    if (incidentCrossingId && nearbyCrossingIds.has(incidentCrossingId)) return true;
+    if (!Number.isFinite(incidentLat) || !Number.isFinite(incidentLng)) return false;
+    const thresholdMiles = 0.6;
+    const minDistance = routeLatLngs.reduce((minDist, pt) => {
+      const lat = Number(pt?.lat);
+      const lng = Number(pt?.lng);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return minDist;
+      return Math.min(minDist, getDistanceMiles(incidentLat, incidentLng, lat, lng));
+    }, Number.POSITIVE_INFINITY);
+    return Number.isFinite(minDistance) && minDistance <= thresholdMiles;
+  } catch (_error) {
+    gridlyRouteImpactAuditState.safeFallbacksUsed += 1;
+    return false;
+  }
+}
+
+window.gridlyDoesIncidentImpactActiveRoute = doesGridlyIncidentImpactActiveRoute;
 
 function getGridlyIncidentVisualState(incident = {}) {
   const text = gridlyCollectIncidentText(incident);
@@ -776,6 +814,107 @@ window.gridlyMarkerDensityAudit = function gridlyMarkerDensityAudit() {
     };
   } catch (error) {
     return { zoom: null, bounds: null, renderedMarkerCount: 0, visibleMarkerDomCount: 0, markerCountsByStyle: {}, countsByPriorityEmphasis: {}, approximateOverlapWarning: null, mode: {}, notes: [`Density audit fallback: ${error?.message || "unknown error"}`] };
+  }
+};
+
+window.gridlyRouteImpactAudit = function gridlyRouteImpactAudit() {
+  try {
+    const routeLatLngs = typeof getRoutePolylineLatLngs === "function" ? getRoutePolylineLatLngs() : [];
+    const activeRoutePresent = Array.isArray(routeLatLngs) && routeLatLngs.length >= 2;
+    const incidents = typeof getUnifiedIncidents === "function" ? getUnifiedIncidents() : [];
+    const railIncidents = (Array.isArray(incidents) ? incidents : []).filter((incident) => {
+      const visualState = getGridlyIncidentVisualState(incident);
+      return visualState?.source === "rail" || visualState?.category === "rail";
+    });
+    const impacted = railIncidents.filter((incident) => doesGridlyIncidentImpactActiveRoute(incident));
+    const toSample = (incident) => {
+      const visualState = getGridlyIncidentVisualState(incident);
+      return {
+        id: incident?.id || incident?.crossingId || "",
+        crossingId: incident?.crossingId || "",
+        markerStyle: visualState?.markerStyle || "unknown_quiet"
+      };
+    };
+    const markerStyleBreakdown = railIncidents.reduce((acc, incident) => {
+      const style = String(getGridlyIncidentVisualState(incident)?.markerStyle || "unknown_quiet");
+      acc[style] = (acc[style] || 0) + 1;
+      return acc;
+    }, {});
+    const routeImpactHierarchy = getGridlyMarkerHierarchyConfig("rail_route_impact");
+    const renderedRouteImpactCount = typeof document !== "undefined"
+      ? document.querySelectorAll("#map .leaflet-marker-pane .gridly-marker-rail-route-impact, #map .leaflet-marker-pane [data-visual-style=\"rail_route_impact\"]").length
+      : 0;
+    return {
+      activeRoutePresent,
+      activeRouteCoordinateCount: Array.isArray(routeLatLngs) ? routeLatLngs.length : 0,
+      railIncidentCount: railIncidents.length,
+      impactedRailIncidentCount: impacted.length,
+      impactedSamples: impacted.slice(0, 8).map(toSample),
+      nonImpactedSamples: railIncidents.filter((incident) => !doesGridlyIncidentImpactActiveRoute(incident)).slice(0, 8).map(toSample),
+      markerStyleBreakdown,
+      railRouteImpactMarkersRendered: renderedRouteImpactCount > 0,
+      routeImpactHierarchyRank: Number(routeImpactHierarchy?.priorityRank ?? -1),
+      safeFallbacksUsed: Number(gridlyRouteImpactAuditState.safeFallbacksUsed || 0),
+      notes: ["Visual-state escalation only; incident source/category remain unchanged.", "No route recalculation is performed by route-impact helper."]
+    };
+  } catch (error) {
+    return {
+      activeRoutePresent: false,
+      activeRouteCoordinateCount: 0,
+      railIncidentCount: 0,
+      impactedRailIncidentCount: 0,
+      impactedSamples: [],
+      nonImpactedSamples: [],
+      markerStyleBreakdown: {},
+      railRouteImpactMarkersRendered: false,
+      routeImpactHierarchyRank: -1,
+      safeFallbacksUsed: Number(gridlyRouteImpactAuditState.safeFallbacksUsed || 0),
+      notes: [`Route impact audit fallback: ${error?.message || "unknown error"}`]
+    };
+  }
+};
+
+window.gridlyRouteImpactVisualAudit = function gridlyRouteImpactVisualAudit() {
+  try {
+    const nodes = typeof document !== "undefined"
+      ? Array.from(document.querySelectorAll("#map .leaflet-marker-pane .gridly-hazard-marker"))
+      : [];
+    const routeImpactNodes = nodes.filter((node) => String(node.dataset?.visualStyle || "") === "rail_route_impact" || node.classList.contains("gridly-marker-rail-route-impact"));
+    const blockedRailNodes = nodes.filter((node) => String(node.dataset?.visualStyle || "") === "rail_blocked" || node.classList.contains("gridly-marker-rail-blocked"));
+    const seenByIncidentId = new Set();
+    let duplicateMarkerCount = 0;
+    nodes.forEach((node) => {
+      const incidentId = String(node.dataset?.incidentId || node.dataset?.id || "");
+      if (!incidentId) return;
+      if (seenByIncidentId.has(incidentId)) duplicateMarkerCount += 1;
+      seenByIncidentId.add(incidentId);
+    });
+    const hierarchyClassesFound = Array.from(new Set(nodes.flatMap((node) => Array.from(node.classList || []).filter((cls) => cls.startsWith("gridly-marker-")))));
+    const routeImpactHierarchy = getGridlyMarkerHierarchyConfig("rail_route_impact");
+    const blockedHierarchy = getGridlyMarkerHierarchyConfig("rail_blocked");
+    return {
+      routeImpactMarkerDomCount: routeImpactNodes.length,
+      railBlockedMarkerDomCount: blockedRailNodes.length,
+      hierarchyClassesFound,
+      zIndexEmphasisCheck: {
+        routeImpactPriorityRank: routeImpactHierarchy.priorityRank,
+        railBlockedPriorityRank: blockedHierarchy.priorityRank,
+        routeImpactZIndexOffset: routeImpactHierarchy.zIndexOffset,
+        railBlockedZIndexOffset: blockedHierarchy.zIndexOffset,
+        routeImpactElevated: Number(routeImpactHierarchy.priorityRank) <= Number(blockedHierarchy.priorityRank)
+      },
+      duplicateMarkerCount,
+      notes: ["Audit samples marker pane only to avoid expensive DOM traversal.", "TxDOT marker classes should remain absent in non-rendering mode."]
+    };
+  } catch (error) {
+    return {
+      routeImpactMarkerDomCount: 0,
+      railBlockedMarkerDomCount: 0,
+      hierarchyClassesFound: [],
+      zIndexEmphasisCheck: {},
+      duplicateMarkerCount: 0,
+      notes: [`Route impact visual audit fallback: ${error?.message || "unknown error"}`]
+    };
   }
 };
 
