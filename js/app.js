@@ -433,6 +433,25 @@ window.gridlyIncidentVisualStateAudit = function gridlyIncidentVisualStateAudit(
   };
 };
 
+
+window.gridlyMarkerVisualAudit = function gridlyMarkerVisualAudit() {
+  const visualStateAudit = typeof window.gridlyIncidentVisualStateAudit === "function"
+    ? window.gridlyIncidentVisualStateAudit()
+    : {};
+  const countedStyles = Object.keys(visualStateAudit?.countsByMarkerStyle || {});
+  const sampledStyles = Array.isArray(visualStateAudit?.samples)
+    ? visualStateAudit.samples.map((sample) => sample?.markerStyle).filter((style) => typeof style === "string" && style.length > 0)
+    : [];
+  const producedStyles = Array.from(new Set([...countedStyles, ...sampledStyles]));
+  const availableStyles = Object.keys(GRIDLY_MARKER_VISUALS);
+  const missingStyles = producedStyles.filter((style) => !(style in GRIDLY_MARKER_VISUALS));
+  return {
+    availableStyles,
+    configs: { ...GRIDLY_MARKER_VISUALS },
+    missingStyles
+  };
+};
+
 const LOCATION_DEFAULTS = {
   country: "USA",
   state: "Texas",
