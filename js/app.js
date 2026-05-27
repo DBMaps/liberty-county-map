@@ -129,14 +129,27 @@ function gridlyCollectIncidentText(incident = {}) {
   ].map((value) => String(value || "").toLowerCase()).join(" ");
 }
 
+function isGridlyRailShapedObject(input = {}) {
+  if (!input || typeof input !== "object") return false;
+  const hasLatLng = Number.isFinite(Number(input?.lat)) && Number.isFinite(Number(input?.lng));
+  const hasCrossingIdentity = Boolean(input?.crossingId || input?.crossingName || input?.crossingNumber);
+  const hasRailroad = Boolean(String(input?.railroad || "").trim());
+  const hasStaticCrossingShape = hasLatLng && hasRailroad && Boolean(input?.name || input?.originalName);
+  const reportKindText = String(input?.reportKind || input?.type || input?.status || "").toLowerCase();
+  const hasRailReportKind = /rail|crossing|train|blocked/.test(reportKindText);
+  return hasCrossingIdentity || hasStaticCrossingShape || (hasLatLng && hasRailroad) || hasRailReportKind;
+}
+
 function normalizeGridlyIncidentCategory(input) {
+  if (isGridlyRailShapedObject(input)) return "rail";
   const raw = String(input || "").trim();
   if (!raw) return "unknown";
   const value = raw.toLowerCase().replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
   const compact = value.replace(/\s+/g, "");
   const txdotLike = /txdot|drivetexas|drive texas/.test(value);
 
-  if (/blocked crossing|train blocking|rail|crossing/.test(value)) return "rail";
+  if (/blocked crossing|train blocking|active rail report|fra crossing|crossing id|crossing number/.test(value)) return "rail";
+  if (/\brail\b/.test(value) && /crossing|train|blocked|fra/.test(value)) return "rail";
   if (/standing water/.test(value)) return txdotLike ? "txdot_flooding" : "standing_water";
   if (/fallen tree|down(ed)? tree|tree in road/.test(value)) return "fallen_tree";
   if (/signal outage|traffic signal|signal out/.test(value)) return "signal_outage";
@@ -165,14 +178,19 @@ function getGridlyIncidentSeverity(incident = {}, category = "unknown") {
   const isMinor = /minor|small|fender bender/.test(text);
   const severeFlooding = /severe flooding|flooded road|impassable|swift water/.test(text);
   const routeImpact = Boolean(incident?.routeImpact) || /blocking road|blocked road|all lanes|closure|detour|route impact/.test(text);
+  const blockedRail = /blocked crossing|train blocking|stopped train|closed crossing|\bblocked\b|\bclosed\b|\bstopped\b/.test(text);
+  const clearRail = /clear crossing|crossing clear|\bclear\b|\bopen\b|no blockage/.test(text);
+  const staticRail = isGridlyRailShapedObject(incident) && !incident?.crossingId && !incident?.reportKind && !incident?.title && !incident?.description && !incident?.status;
 
   if (category === "road_closed" || category === "txdot_closure") return "critical";
   if (severeFlooding) return "critical";
   if (category === "rail" && routeImpact) return "critical";
+  if (category === "rail" && blockedRail) return "high";
+  if (category === "rail" && (staticRail || clearRail)) return "low";
+  if (category === "rail") return "moderate";
   if (category === "crash") return isMinor ? "moderate" : "high";
   if (category === "flooding" || category === "txdot_flooding") return "high";
   if (category === "ice") return "high";
-  if (category === "rail") return /clear|open/.test(text) ? "low" : "high";
   if (category === "construction" || category === "txdot_construction") return "moderate";
   if (category === "disabled_vehicle") return "moderate";
   if (category === "debris") return isMinor ? "low" : "moderate";
@@ -183,7 +201,11 @@ function getGridlyIncidentSeverity(incident = {}, category = "unknown") {
 function getGridlyZoomBehavior(category = "unknown", severity = "low", incident = {}) {
   const text = gridlyCollectIncidentText(incident);
   const routeImpact = Boolean(incident?.routeImpact) || /route impact|blocking road|closure|detour|all lanes/.test(text);
-  if (category === "rail" && /clear|open/.test(text)) return "near";
+  const railClear = /clear crossing|crossing clear|\bclear\b|\bopen\b/.test(text)
+    || (isGridlyRailShapedObject(incident) && !/blocked|train blocking|stopped|closed/.test(text));
+  if (category === "rail" && (routeImpact || severity === "critical")) return "far";
+  if (category === "rail" && (/blocked crossing|train blocking|stopped train|closed crossing|\bblocked\b|\bclosed\b|\bstopped\b/.test(text) || severity === "high")) return "mid";
+  if (category === "rail" && railClear) return "near";
   if (severity === "critical" && routeImpact) return "far";
   if (severity === "high" || severity === "moderate") return "mid";
   return "near";
@@ -194,9 +216,9 @@ function getGridlyMarkerStyle(category = "unknown", severity = "low", incident =
   const routeImpact = Boolean(incident?.routeImpact) || /route impact|blocking road|closure|detour|all lanes/.test(text);
   const txdotLike = /txdot|drivetexas|drive texas/.test(text) || /^txdot_/.test(category);
   if (category === "rail") {
-    if (/clear|open/.test(text)) return "rail_clear";
     if (routeImpact) return "rail_route_impact";
-    return "rail_blocked";
+    if (/blocked crossing|train blocking|stopped train|closed crossing|\bblocked\b|\bclosed\b|\bstopped\b/.test(text)) return "rail_blocked";
+    return "rail_clear";
   }
   if (txdotLike) {
     if (routeImpact || severity === "critical") return "txdot_route_impact";
@@ -213,9 +235,11 @@ function getGridlyIncidentVisualState(incident = {}) {
   const text = gridlyCollectIncidentText(incident);
   const responderSensitive = /police|cop\b|speed trap|sheriff sitting|officer location|radar|enforcement|patrol location/.test(text);
   const sourceText = `${String(incident?.source || "").toLowerCase()} ${text}`;
+  const railShaped = isGridlyRailShapedObject(incident);
+  const railText = /blocked crossing|train blocking|fra crossing|active rail report|crossing/.test(sourceText);
   const source = /txdot|drivetexas|drive texas/.test(sourceText)
     ? "txdot"
-    : /crossing|rail|fra/.test(sourceText)
+    : railShaped || railText
       ? "rail"
       : /community|report|shared/.test(sourceText)
         ? "community"
