@@ -240,10 +240,73 @@
     return externalStore.slice();
   }
 
+
+  function isFlagged(value) {
+    if (value === true || value === 1) return true;
+    const normalized = toSafeString(value).toLowerCase();
+    return normalized === "1" || normalized === "y" || normalized === "yes" || normalized === "true";
+  }
+
+  function buildTopEntries(countMap, limit) {
+    return Array.from(countMap.entries())
+      .sort((a, b) => (b[1] - a[1]) || a[0].localeCompare(b[0]))
+      .slice(0, limit)
+      .map(([name, count]) => ({ name, count }));
+  }
+
   globalScope.gridlyTxdot = {
     fetchRoadConditions,
     normalizeIncident,
     getRoadConditions
+  };
+
+
+
+  globalScope.gridlyTxdotAnalytics = function gridlyTxdotAnalytics() {
+    const records = externalStore.slice();
+    const conditionCounts = {};
+    const countyCounts = {};
+    const directionCounts = {};
+    const roadCounts = new Map();
+    const conditionCountMap = new Map();
+
+    let delayedEvents = 0;
+    let detourEvents = 0;
+
+    for (const record of records) {
+      const condition = toSafeString(record?.type) || "unknown";
+      const countyNum = toSafeString(record?.countyNum) || "unknown";
+      const direction = toSafeString(record?.direction) || "unknown";
+      const roadName = toSafeString(record?.routeNameDisplay)
+        || toSafeString(record?.routeName)
+        || toSafeString(record?.roadName)
+        || "unknown";
+
+      conditionCounts[condition] = (conditionCounts[condition] || 0) + 1;
+      countyCounts[countyNum] = (countyCounts[countyNum] || 0) + 1;
+      directionCounts[direction] = (directionCounts[direction] || 0) + 1;
+
+      roadCounts.set(roadName, (roadCounts.get(roadName) || 0) + 1);
+      conditionCountMap.set(condition, (conditionCountMap.get(condition) || 0) + 1);
+
+      if (isFlagged(record?.delayFlag)) delayedEvents += 1;
+      if (isFlagged(record?.detourFlag)) detourEvents += 1;
+    }
+
+    const libertyCountyEvents = records.filter((record) => Number(record?.countyNum) === 146);
+
+    return {
+      totalEvents: records.length,
+      conditionCounts,
+      delayedEvents,
+      detourEvents,
+      countyCounts,
+      directionCounts,
+      topRoads: buildTopEntries(roadCounts, 10),
+      topConditions: buildTopEntries(conditionCountMap, 10),
+      libertyCountyEvents: libertyCountyEvents.length,
+      sampleLibertyCountyEvents: libertyCountyEvents.slice(0, 5)
+    };
   };
 
   globalScope.gridlyTxdotDebug = function gridlyTxdotDebug() {
