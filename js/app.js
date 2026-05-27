@@ -187,6 +187,35 @@ function normalizeGridlyIncidentCategory(input) {
   return txdotLike ? "txdot_other" : "unknown";
 }
 
+
+function normalizeGridlyTxdotVisualCategory(category = "unknown", incident = {}) {
+  const normalized = String(category || "").toLowerCase().trim();
+  if (["txdot_construction", "txdot_closure", "txdot_flooding", "txdot_damage", "txdot_other"].includes(normalized)) {
+    return normalized;
+  }
+
+  const value = [
+    normalized,
+    incident?.condition,
+    incident?.conditionType,
+    incident?.title,
+    incident?.description,
+    incident?.detail,
+    incident?.category,
+    incident?.eventType,
+    incident?.externalSource,
+    incident?.provider,
+    incident?.source
+  ].map((item) => String(item || "").toLowerCase()).join(" ").replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
+
+  if (/construction|utility work|road work|maintenance/.test(value)) return "txdot_construction";
+  if (/road closed|closure|\bclosed\b/.test(value)) return "txdot_closure";
+  if (/flooding|high water|\bice\b|weather|standing water|impassable/.test(value)) return "txdot_flooding";
+  if (/damage|debris|pothole|road damage|washout|obstruction/.test(value)) return "txdot_damage";
+  if (/crash|signal outage|disabled vehicle|stalled|unknown|other/.test(value)) return "txdot_other";
+
+  return "txdot_other";
+}
 function getGridlyIncidentSeverity(incident = {}, category = "unknown") {
   const text = gridlyCollectIncidentText(incident);
   const isMinor = /minor|small|fender bender/.test(text);
@@ -267,6 +296,9 @@ function getGridlyIncidentVisualState(incident = {}) {
   let category = normalizeGridlyIncidentCategory(incident);
   if (category === "unknown" && isGridlyRailShapedObject?.(incident)) {
     category = "rail";
+  }
+  if (source === "txdot") {
+    category = normalizeGridlyTxdotVisualCategory(category, incident);
   }
   const routeImpact = Boolean(incident?.routeImpact) || /route impact|blocking road|closure|detour|all lanes|impassable/.test(text);
   const severity = getGridlyIncidentSeverity({ ...incident, routeImpact }, category);
