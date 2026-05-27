@@ -303,13 +303,26 @@ function getGridlyIncidentVisualState(incident = {}) {
   const sourceText = `${String(incident?.source || "").toLowerCase()} ${text} ${String(incident?.externalSource || "").toLowerCase()} ${String(incident?.provider || "").toLowerCase()} ${String(incident?.eventType || "").toLowerCase()} ${String(incident?.conditionType || "").toLowerCase()} ${String(incident?.roadName || "").toLowerCase()}`;
   const railShaped = isGridlyRailShapedObject(incident);
   const railText = /blocked crossing|train blocking|fra crossing|active rail report|crossing/.test(sourceText);
-  const source = /txdot|drivetexas|drive texas|conditiontype|eventtype|countykey|corridor|roadname|externalsource|provider/.test(sourceText) || Boolean(incident?.countyKey || incident?.corridor || incident?.roadName || incident?.conditionType || incident?.eventType || incident?.externalSource || incident?.provider)
-    ? "txdot"
+  const communitySignalKeys = [
+    "submittedAt", "deviceId", "expiresAt", "reportKind", "reportType", "report_type",
+    "driverConfirmations", "detail", "details", "description", "userReport", "manualReport",
+    "communityReport", "sharedBy", "reporterId"
+  ];
+  const hasCommunitySignalFields = communitySignalKeys.some((key) => incident?.[key] !== undefined && incident?.[key] !== null && incident?.[key] !== "");
+  const hasCommunitySourceHint = /community|user report|manual report|shared report|driver report|activehazards|activereports|hazard report/.test(sourceText);
+  const hasTxdotStrongSignal = incident?.provider === "txdot"
+    || incident?.externalSource === "txdot"
+    || /\btxdot\b|drivetexas|drive texas/.test(sourceText)
+    || Boolean(incident?.conditionType || incident?.eventType)
+    || /conditiontype|eventtype|official feed|external feed/.test(sourceText);
+  const hasSystemSignal = /system/.test(sourceText);
+  const source = hasCommunitySignalFields || hasCommunitySourceHint
+    ? "community"
     : railShaped || railText
       ? "rail"
-      : /community|report|shared/.test(sourceText)
-        ? "community"
-        : /system/.test(sourceText)
+      : hasTxdotStrongSignal
+        ? "txdot"
+        : hasSystemSignal
           ? "system"
           : "unknown";
   let category = normalizeGridlyIncidentCategory(incident);
