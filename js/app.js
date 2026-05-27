@@ -302,10 +302,10 @@ function getGridlyMarkerVisualConfig(markerStyle = "unknown_quiet") {
   return GRIDLY_MARKER_VISUALS[markerStyle] || GRIDLY_MARKER_VISUALS.unknown_quiet;
 }
 
-function getGridlyMarkerStyle(category = "unknown", severity = "low", incident = {}) {
+function getGridlyMarkerStyle(category = "unknown", severity = "low", incident = {}, source = "unknown") {
   const text = gridlyCollectIncidentText(incident);
   const routeImpact = Boolean(incident?.routeImpact) || /route impact|blocking road|closure|detour|all lanes/.test(text);
-  const txdotLike = /txdot|drivetexas|drive texas/.test(text) || /^txdot_/.test(category);
+  const txdotLike = source === "txdot" || /^txdot_/.test(category);
   if (category === "rail") {
     if (routeImpact) return "rail_route_impact";
     if (/blocked crossing|train blocking|stopped train|closed crossing|\bblocked\b|\bclosed\b|\bstopped\b/.test(text)) return "rail_blocked";
@@ -365,7 +365,7 @@ function getGridlyIncidentVisualState(incident = {}) {
   const routeImpact = Boolean(incident?.routeImpact) || /route impact|blocking road|closure|detour|all lanes|impassable/.test(text);
   const severity = getGridlyIncidentSeverity({ ...incident, routeImpact }, category);
   const zoomBehavior = getGridlyZoomBehavior(category, severity, { ...incident, routeImpact });
-  const markerStyle = getGridlyMarkerStyle(category, severity, { ...incident, routeImpact });
+  const markerStyle = getGridlyMarkerStyle(category, severity, { ...incident, routeImpact }, source);
   const shouldRender = responderSensitive ? false : source === "txdot" ? false : true;
   return {
     category,
