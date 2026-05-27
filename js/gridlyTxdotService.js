@@ -273,6 +273,45 @@
     return corridors.some((corridor) => haystack.includes(corridor));
   }
 
+  function getLocalRecords(options) {
+    const config = (options && typeof options === "object") ? options : {};
+    const countyNum = Number.isFinite(Number(config.countyNum)) ? Number(config.countyNum) : 146;
+    const defaultCorridors = ["US 90", "TX 146", "TX 321", "FM 1960", "FM 1409", "FM 1008"];
+    const corridors = toArray(config.corridors)
+      .map((value) => toSafeString(value).toUpperCase())
+      .filter(Boolean);
+    const corridorList = corridors.length ? corridors : defaultCorridors.map((name) => name.toUpperCase());
+
+    const records = externalStore.slice();
+    const libertyCountyRecords = records.filter((event) => Number(event?.countyNum) === countyNum);
+    const corridorRecords = records.filter((event) => matchesCorridor(event, corridorList));
+    const localRecordMap = new Map();
+
+    for (const event of libertyCountyRecords) {
+      localRecordMap.set(event.id, event);
+    }
+    for (const event of corridorRecords) {
+      localRecordMap.set(event.id, event);
+    }
+
+    return {
+      localRecords: Array.from(localRecordMap.values()),
+      libertyCountyRecords,
+      corridorRecords
+    };
+  }
+
+  function buildLocalRecommendation(event) {
+    if (isFlagged(event?.delayFlag)) return "Expect delays.";
+    if (isFlagged(event?.detourFlag)) return "Detour in effect.";
+
+    const type = toSafeString(event?.type).toLowerCase();
+    if (type === "flooding") return "Use caution around flooded roadway conditions.";
+    if (type === "closure") return "Road closure active.";
+    if (type === "damage") return "Road damage reported.";
+    return "Monitor roadway conditions.";
+  }
+
   globalScope.gridlyTxdot = {
     fetchRoadConditions,
     normalizeIncident,
@@ -349,27 +388,7 @@
   };
 
   globalScope.gridlyTxdotLocalFocus = function gridlyTxdotLocalFocus(options) {
-    const config = (options && typeof options === "object") ? options : {};
-    const countyNum = Number.isFinite(Number(config.countyNum)) ? Number(config.countyNum) : 146;
-    const defaultCorridors = ["US 90", "TX 146", "TX 321", "FM 1960", "FM 1409", "FM 1008"];
-    const corridors = toArray(config.corridors)
-      .map((value) => toSafeString(value).toUpperCase())
-      .filter(Boolean);
-    const corridorList = corridors.length ? corridors : defaultCorridors.map((name) => name.toUpperCase());
-
-    const records = externalStore.slice();
-    const libertyCountyRecords = records.filter((event) => Number(event?.countyNum) === countyNum);
-    const corridorRecords = records.filter((event) => matchesCorridor(event, corridorList));
-    const localRecordMap = new Map();
-
-    for (const event of libertyCountyRecords) {
-      localRecordMap.set(event.id, event);
-    }
-    for (const event of corridorRecords) {
-      localRecordMap.set(event.id, event);
-    }
-
-    const localRecords = Array.from(localRecordMap.values());
+    const { localRecords, libertyCountyRecords, corridorRecords } = getLocalRecords(options);
     const delayedLocalEvents = localRecords.filter((event) => isFlagged(event?.delayFlag));
     const detourLocalEvents = localRecords.filter((event) => isFlagged(event?.detourFlag));
     const activeConstruction = localRecords.filter((event) => toSafeString(event?.type).toLowerCase() === "construction");
@@ -388,6 +407,41 @@
       activeFlooding: activeFlooding.length,
       activeDamage: activeDamage.length,
       sampleEvents: localRecords.slice(0, 10)
+    };
+  };
+
+  globalScope.gridlyTxdotLocalSummaries = function gridlyTxdotLocalSummaries(options) {
+    const localFocus = globalScope.gridlyTxdotLocalFocus(options);
+    const localRecords = toArray(localFocus?.sampleEvents).length === Number(localFocus?.totalLocalEvents)
+      ? toArray(localFocus.sampleEvents)
+      : getLocalRecords(options).localRecords;
+
+    const summaries = localRecords
+      .map((event) => {
+        const title = toSafeString(event?.title);
+        const direction = toSafeString(event?.direction) || "unknown";
+        return {
+          id: toSafeString(event?.id),
+          primary: `${title} ${direction}`.trim(),
+          secondary: `${toSafeString(event?.fromLimitDisplay)} to ${toSafeString(event?.toLimitDisplay)}`.trim(),
+          recommendation: buildLocalRecommendation(event),
+          confidence: Number.isFinite(Number(event?.confidence)) ? Number(event.confidence) : 0,
+          source: toSafeString(event?.source) || TXDOT_SOURCE_LABEL,
+          delayFlag: isFlagged(event?.delayFlag),
+          detourFlag: isFlagged(event?.detourFlag)
+        };
+      })
+      .sort((a, b) => {
+        if (a.detourFlag !== b.detourFlag) return a.detourFlag ? -1 : 1;
+        if (a.delayFlag !== b.delayFlag) return a.delayFlag ? -1 : 1;
+        return b.confidence - a.confidence;
+      })
+      .slice(0, 10)
+      .map(({ delayFlag, detourFlag, ...summary }) => summary);
+
+    return {
+      totalSummaries: summaries.length,
+      summaries
     };
   };
 })(typeof window !== "undefined" ? window : globalThis);
