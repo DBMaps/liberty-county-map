@@ -676,7 +676,10 @@ window.gridlyRailMarkerSourceTrace = function gridlyRailMarkerSourceTrace() {
       }
       return null;
     };
-    const samples = uniqueRailNodes.slice(0, 15).map((el) => {
+    const toRoundedLatLngKey = (lat, lng) => (Number.isFinite(lat) && Number.isFinite(lng))
+      ? `${lat.toFixed(6)},${lng.toFixed(6)}`
+      : "";
+    const samples = uniqueRailNodes.slice(0, 15).map((el, sampleIndex) => {
       const dataAttributes = getDataAttributesObject(el);
       const dataset = getDatasetObject(el);
       const coordinateFromDataset = readCoordinateFromDataset(dataset, dataAttributes);
@@ -684,12 +687,17 @@ window.gridlyRailMarkerSourceTrace = function gridlyRailMarkerSourceTrace() {
       const coordinate = coordinateFromDataset || coordinateFromLeaflet;
       const className = String(el.className || "").trim();
       const parentClassName = String(el.parentElement?.className || markerPane?.className || "");
-      const inferredStyle = dataset.visualStyle
+      const detectedVisualStyle = dataset.visualStyle
         || (className.includes("gridly-marker-rail-route-impact") ? "rail_route_impact" : "")
         || (className.includes("gridly-marker-rail-blocked") ? "rail_blocked" : "")
         || (className.includes("gridly-marker-rail-clear") ? "rail_clear" : "")
         || "";
+      const crossingId = dataset.crossingId || dataset.incidentId || dataAttributes["data-crossing-id"] || "";
+      const crossingNumber = dataset.crossingNumber || dataAttributes["data-crossing-number"] || "";
+      const roundedLatLngKey = coordinate ? toRoundedLatLngKey(Number(coordinate.lat), Number(coordinate.lng)) : "";
       return {
+        sampleIndex,
+        markerDomIndex: sampleIndex,
         tag: el.tagName,
         className,
         parentClassName,
@@ -697,11 +705,15 @@ window.gridlyRailMarkerSourceTrace = function gridlyRailMarkerSourceTrace() {
         dataset,
         title: el.getAttribute("title") || "",
         ariaLabel: el.getAttribute("aria-label") || "",
-        visualStyleDetected: inferredStyle,
+        visualStyleDetected: detectedVisualStyle,
+        detectedVisualStyle,
+        crossingId,
+        crossingNumber,
+        roundedLatLngKey,
         crossingDetected: {
-          id: dataset.crossingId || dataset.incidentId || dataAttributes["data-crossing-id"] || "",
+          id: crossingId,
           name: dataset.crossingName || dataAttributes["data-crossing-name"] || "",
-          number: dataset.crossingNumber || dataAttributes["data-crossing-number"] || ""
+          number: crossingNumber
         },
         coordinates: coordinate ? { lat: coordinate.lat, lng: coordinate.lng, source: coordinate.source } : null,
         nearbyMarkerHtmlSummary: truncate(el.outerHTML || "", 260),
@@ -1167,6 +1179,17 @@ window.gridlyApplyRailRouteImpactDomBridge = function gridlyApplyRailRouteImpact
     activeRoutePresent: false,
     domBridgeAvailable: typeof window.gridlyRailMarkerSourceTrace === "function" && typeof doesGridlyIncidentImpactActiveRoute === "function",
     evaluatedRailDomCount: 0,
+    impactedSampleCount: 0,
+    matchedDomCount: 0,
+    unmatchedImpactedCount: 0,
+    unmatchedImpactedSamples: [],
+    matchStrategyCounts: {
+      direct_reference: 0,
+      marker_dom_index: 0,
+      crossing_id_or_number: 0,
+      rounded_lat_lng_key: 0,
+      class_style_fallback: 0
+    },
     escalatedDomCount: 0,
     deEscalatedDomCount: 0,
     skippedDomCount: 0,
@@ -1190,17 +1213,36 @@ window.gridlyApplyRailRouteImpactDomBridge = function gridlyApplyRailRouteImpact
     ? Array.from(markerPane.querySelectorAll(".gridly-marker-rail-clear, .gridly-marker-rail-blocked, .gridly-marker-rail-route-impact, [data-visual-style=\"rail_clear\"], [data-visual-style=\"rail_blocked\"], [data-visual-style=\"rail_route_impact\"], [class*='rail']"))
     : [];
   const uniqueRailNodes = Array.from(new Set(railNodes));
-  const keyFor = (sample = {}) => {
+  const keyForSample = (sample = {}) => {
+    if (typeof sample?.roundedLatLngKey === "string" && sample.roundedLatLngKey) return sample.roundedLatLngKey;
     const lat = Number(sample?.coordinates?.lat);
     const lng = Number(sample?.coordinates?.lng);
     return Number.isFinite(lat) && Number.isFinite(lng) ? `${lat.toFixed(6)},${lng.toFixed(6)}` : "";
   };
-  const sampleByKey = railSamples.reduce((acc, sample) => {
-    const key = keyFor(sample);
-    if (!key || acc[key]) return acc;
-    acc[key] = sample;
-    return acc;
-  }, {});
+  const keyForNode = (el) => {
+    const lat = Number(el?.dataset?.lat ?? el?.dataset?.latitude);
+    const lng = Number(el?.dataset?.lng ?? el?.dataset?.lon ?? el?.dataset?.longitude);
+    return Number.isFinite(lat) && Number.isFinite(lng) ? `${lat.toFixed(6)},${lng.toFixed(6)}` : "";
+  };
+  const crossingTokensForSample = (sample = {}) => [
+    sample?.crossingId,
+    sample?.crossingNumber,
+    sample?.crossingDetected?.id,
+    sample?.crossingDetected?.number,
+    sample?.dataset?.crossingId,
+    sample?.dataset?.crossingNumber,
+    sample?.dataAttributes?.["data-crossing-id"],
+    sample?.dataAttributes?.["data-crossing-number"]
+  ].map((value) => String(value || "").trim()).filter(Boolean);
+  const crossingTokensForNode = (el) => [
+    el?.dataset?.crossingId,
+    el?.dataset?.crossingNumber,
+    el?.dataset?.incidentId,
+    el?.getAttribute?.("data-crossing-id"),
+    el?.getAttribute?.("data-crossing-number")
+  ].map((value) => String(value || "").trim()).filter(Boolean);
+  const classStyleTokenForSample = (sample = {}) => `${String(sample?.detectedVisualStyle || sample?.visualStyleDetected || "").trim()}|${String(sample?.className || "").trim()}`;
+  const classStyleTokenForNode = (el) => `${String(el?.dataset?.visualStyle || "").trim()}|${String(el?.className || "").trim()}`;
   const removeLowPriorityRailClasses = (el) => {
     el.classList.remove("gridly-marker-rail-clear", "gridly-marker-rail-blocked", "gridly-marker-priority-passive");
   };
@@ -1234,23 +1276,56 @@ window.gridlyApplyRailRouteImpactDomBridge = function gridlyApplyRailRouteImpact
     }
     if (wasEscalated) summary.deEscalatedDomCount += 1;
   };
-  uniqueRailNodes.forEach((el) => {
-    const lat = Number(el.dataset?.lat ?? el.dataset?.latitude);
-    const lng = Number(el.dataset?.lng ?? el.dataset?.lon ?? el.dataset?.longitude);
-    const key = Number.isFinite(lat) && Number.isFinite(lng) ? `${lat.toFixed(6)},${lng.toFixed(6)}` : "";
-    const sample = sampleByKey[key];
-    if (!sample) {
-      summary.skippedDomCount += 1;
+  const unmatchedNodePool = [...uniqueRailNodes];
+  const consumeNode = (node, strategy) => {
+    if (!node) return null;
+    const idx = unmatchedNodePool.indexOf(node);
+    if (idx >= 0) unmatchedNodePool.splice(idx, 1);
+    if (strategy && summary.matchStrategyCounts[strategy] !== undefined) {
+      summary.matchStrategyCounts[strategy] += 1;
+    }
+    return node;
+  };
+  const findAndConsume = (predicate, strategy) => consumeNode(unmatchedNodePool.find(predicate), strategy);
+  railSamples.forEach((sample, sampleIndex) => {
+    const candidate = { lat: sample?.coordinates?.lat, lng: sample?.coordinates?.lng, source: "rail_dom_trace", markerStyle: sample?.detectedVisualStyle || sample?.visualStyleDetected || "rail_clear" };
+    const impacted = summary.activeRoutePresent && doesGridlyIncidentImpactActiveRoute(candidate);
+    if (!impacted) return;
+    summary.impactedSampleCount += 1;
+    let matchedNode = null;
+    if (sample?.__gridlyDomElement && unmatchedNodePool.includes(sample.__gridlyDomElement)) {
+      matchedNode = consumeNode(sample.__gridlyDomElement, "direct_reference");
+    }
+    if (!matchedNode) {
+      const domIndex = Number(sample?.markerDomIndex ?? sample?.sampleIndex ?? sampleIndex);
+      if (Number.isInteger(domIndex) && domIndex >= 0) matchedNode = consumeNode(uniqueRailNodes[domIndex], "marker_dom_index");
+    }
+    if (!matchedNode) {
+      const sampleCrossingTokens = new Set(crossingTokensForSample(sample));
+      if (sampleCrossingTokens.size > 0) {
+        matchedNode = findAndConsume((node) => crossingTokensForNode(node).some((token) => sampleCrossingTokens.has(token)), "crossing_id_or_number");
+      }
+    }
+    if (!matchedNode) {
+      const roundedLatLngKey = keyForSample(sample);
+      if (roundedLatLngKey) matchedNode = findAndConsume((node) => keyForNode(node) === roundedLatLngKey, "rounded_lat_lng_key");
+    }
+    if (!matchedNode) {
+      const classStyleToken = classStyleTokenForSample(sample);
+      matchedNode = findAndConsume((node) => classStyleTokenForNode(node) === classStyleToken, "class_style_fallback");
+    }
+    if (!matchedNode) {
+      summary.unmatchedImpactedCount += 1;
+      if (summary.unmatchedImpactedSamples.length < 8) summary.unmatchedImpactedSamples.push(sample);
       return;
     }
-    const candidate = { lat: sample.coordinates.lat, lng: sample.coordinates.lng, source: "rail_dom_trace", markerStyle: sample.visualStyleDetected || "rail_clear" };
-    const impacted = summary.activeRoutePresent && doesGridlyIncidentImpactActiveRoute(candidate);
-    if (impacted) {
-      applyEscalation(el, sample);
-      summary.escalatedDomCount += 1;
-    } else {
-      clearEscalation(el);
-    }
+    applyEscalation(matchedNode, sample);
+    summary.matchedDomCount += 1;
+    summary.escalatedDomCount += 1;
+  });
+  unmatchedNodePool.forEach((el) => {
+    clearEscalation(el);
+    summary.skippedDomCount += 1;
   });
   window.__gridlyRailRouteImpactDomBridgeLastAudit = summary;
   summary.notes.push("no_source_object_mutation");
