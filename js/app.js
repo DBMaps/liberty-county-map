@@ -1332,15 +1332,23 @@ window.gridlyRouteConsequenceVisualAudit = function gridlyRouteConsequenceVisual
   try {
     const nodes = typeof document !== "undefined" ? Array.from(document.querySelectorAll("#map .leaflet-marker-pane .gridly-hazard-marker")) : [];
     const classCounts = { low: 0, moderate: 0, high: 0, critical: 0 };
+    const consequenceLevels = ["low", "moderate", "high", "critical"];
     let markersWithConsequence = 0;
     nodes.forEach((node) => {
-      const level = String(node.dataset?.gridlyConsequence || "").toLowerCase();
+      const datasetLevel = String(node.dataset?.gridlyConsequence || "").toLowerCase();
+      const classLevel = consequenceLevels.find((level) => node.classList?.contains(`gridly-consequence-${level}`)) || "";
+      const level = datasetLevel || classLevel;
       if (!level) return;
       markersWithConsequence += 1;
       if (classCounts[level] === undefined) classCounts[level] = 0;
       classCounts[level] += 1;
     });
-    const routeImpactMarkerCount = nodes.filter((node) => String(node.dataset?.visualStyle || "") === "rail_route_impact").length;
+    const routeImpactMarkerCount = nodes.filter((node) => {
+      const isRouteImpactDataset = String(node.dataset?.gridlyRouteImpact || "") === "true";
+      const isRouteImpactStyle = String(node.dataset?.visualStyle || "") === "rail_route_impact";
+      const isRouteImpactClass = node.classList?.contains("gridly-marker-priority-route-impact") || node.classList?.contains("gridly-marker-rail-route-impact");
+      return isRouteImpactDataset || isRouteImpactStyle || isRouteImpactClass;
+    }).length;
     const levelOrder = ["critical", "high", "moderate", "low"];
     const highestVisibleConsequence = levelOrder.find((level) => (classCounts[level] || 0) > 0) || "low";
     const seen = new Set();
@@ -1357,7 +1365,7 @@ window.gridlyRouteConsequenceVisualAudit = function gridlyRouteConsequenceVisual
       routeImpactMarkerCount,
       highestVisibleConsequence,
       duplicateMarkerCount,
-      notes: ["Visual consequence audit inspects marker-pane DOM only for calm, low-cost checks."]
+      notes: ["Visual consequence audit inspects marker-pane DOM only for calm, low-cost checks.", "Bridge markers are recognized through route-impact dataset, style, or hierarchy classes."]
     };
   } catch (error) {
     return { markersWithConsequence: 0, consequenceClassCounts: { low: 0, moderate: 0, high: 0, critical: 0 }, routeImpactMarkerCount: 0, highestVisibleConsequence: "low", duplicateMarkerCount: 0, notes: [`Route consequence visual audit fallback: ${error?.message || "unknown error"}`] };
@@ -1436,12 +1444,26 @@ window.gridlyApplyRailRouteImpactDomBridge = function gridlyApplyRailRouteImpact
   const removeLowPriorityRailClasses = (el) => {
     el.classList.remove("gridly-marker-rail-clear", "gridly-marker-rail-blocked", "gridly-marker-priority-passive");
   };
+  const consequenceLevels = ["low", "moderate", "high", "critical"];
+  const clearConsequenceClasses = (el) => {
+    consequenceLevels.forEach((level) => el.classList.remove(`gridly-consequence-${level}`));
+  };
+  const deriveBridgeConsequenceLevel = (sample = {}) => {
+    const candidate = { lat: sample?.coordinates?.lat, lng: sample?.coordinates?.lng, routeImpact: true, status: sample?.crossingDetected?.status || sample?.dataset?.status || "blocked" };
+    const evalResult = evaluateGridlyRouteConsequence(candidate, { category: "rail", markerStyle: "rail_route_impact", routeImpact: true });
+    const level = String(evalResult?.consequenceLevel || "high").toLowerCase();
+    return consequenceLevels.includes(level) ? level : "high";
+  };
   const applyEscalation = (el, sample = {}) => {
     removeLowPriorityRailClasses(el);
     el.classList.add("gridly-marker-rail-route-impact", "gridly-marker-priority-route-impact");
     el.dataset.visualStyle = "rail_route_impact";
     el.dataset.gridlyMarkerPriority = "route-impact";
     el.dataset.gridlyRouteImpact = "true";
+    const consequenceLevel = deriveBridgeConsequenceLevel(sample);
+    clearConsequenceClasses(el);
+    el.classList.add(`gridly-consequence-${consequenceLevel}`);
+    el.dataset.gridlyConsequence = consequenceLevel;
     if (summary.escalatedSamples.length < 8) {
       summary.escalatedSamples.push({
         crossingId: sample?.crossingDetected?.id || "",
@@ -1458,6 +1480,8 @@ window.gridlyApplyRailRouteImpactDomBridge = function gridlyApplyRailRouteImpact
       || String(el.dataset?.gridlyRouteImpact || "") === "true";
     el.classList.remove("gridly-marker-rail-route-impact", "gridly-marker-priority-route-impact");
     delete el.dataset.gridlyRouteImpact;
+    clearConsequenceClasses(el);
+    delete el.dataset.gridlyConsequence;
     if (String(el.dataset?.visualStyle || "") === "rail_route_impact") {
       el.dataset.visualStyle = "rail_blocked";
     }
@@ -1537,6 +1561,44 @@ window.gridlyRailRouteImpactDomBridgeAudit = function gridlyRailRouteImpactDomBr
     notes: ["bridge_not_run_yet"],
     warning: "temporary_dom_visual_bridge"
   };
+};
+
+
+window.gridlyRouteConsequenceBridgeAudit = function gridlyRouteConsequenceBridgeAudit() {
+  try {
+    const nodes = typeof document !== "undefined" ? Array.from(document.querySelectorAll("#map .leaflet-marker-pane .gridly-hazard-marker")) : [];
+    const bridgeNodes = nodes.filter((node) => String(node.dataset?.gridlyRouteImpact || "") === "true"
+      || String(node.dataset?.visualStyle || "") === "rail_route_impact"
+      || node.classList?.contains("gridly-marker-priority-route-impact"));
+    const levels = ["low", "moderate", "high", "critical"];
+    const counts = { low: 0, moderate: 0, high: 0, critical: 0 };
+    let withConsequence = 0;
+    const missing = [];
+    bridgeNodes.forEach((node) => {
+      const datasetLevel = String(node.dataset?.gridlyConsequence || "").toLowerCase();
+      const classLevel = levels.find((level) => node.classList?.contains(`gridly-consequence-${level}`)) || "";
+      const level = datasetLevel || classLevel;
+      if (!level) {
+        if (missing.length < 12) missing.push(String(node.dataset?.incidentId || node.dataset?.crossingId || node.dataset?.id || "unknown"));
+        return;
+      }
+      withConsequence += 1;
+      counts[level] = Number(counts[level] || 0) + 1;
+    });
+    const highestBridgeConsequence = ["critical", "high", "moderate", "low"].find((level) => counts[level] > 0) || "low";
+    return {
+      evaluatedBridgeMarkers: bridgeNodes.length,
+      bridgeMarkersWithConsequence: withConsequence,
+      bridgeConsequenceCounts: counts,
+      highestBridgeConsequence,
+      routeImpactBridgeMarkerCount: bridgeNodes.length,
+      missingConsequenceMarkers: missing,
+      notes: ["Temporary bridge diagnostic for route-impact rail DOM metadata alignment.", "No route recalculation or source mutation performed."],
+      warning: "temporary_dom_consequence_bridge"
+    };
+  } catch (error) {
+    return { evaluatedBridgeMarkers: 0, bridgeMarkersWithConsequence: 0, bridgeConsequenceCounts: { low: 0, moderate: 0, high: 0, critical: 0 }, highestBridgeConsequence: "low", routeImpactBridgeMarkerCount: 0, missingConsequenceMarkers: [], notes: [`Route consequence bridge audit fallback: ${error?.message || "unknown error"}`], warning: "temporary_dom_consequence_bridge" };
+  }
 };
 
 const LOCATION_DEFAULTS = {
