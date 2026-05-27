@@ -4896,6 +4896,29 @@ h1, h2, h3, .future-metric-headline {
   animation: marker-nearest-pulse 1.05s ease-in-out 4;
 }
 
+/* V173.5 rail-only marker visual pass (passive class driven) */
+.gridly-marker-rail-clear .gridly-marker {
+  background: #6f8695;
+  border-color: rgba(214, 229, 240, 0.72);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.26);
+  color: #022536;
+}
+
+.gridly-marker-rail-blocked .gridly-marker {
+  background: #ff6a4f;
+  border-color: rgba(255, 220, 212, 0.92);
+  box-shadow: 0 0 0 2px rgba(255, 106, 79, 0.18), 0 7px 14px rgba(0, 0, 0, 0.33);
+  color: #fff6f3;
+}
+
+.gridly-marker-rail-route-impact .gridly-marker {
+  background: #ff563d;
+  border-color: rgba(255, 225, 218, 0.96);
+  box-shadow: 0 0 0 3px rgba(255, 86, 61, 0.2), 0 8px 16px rgba(0, 0, 0, 0.35);
+  color: #fff8f5;
+  animation: gridly-rail-route-impact-pulse 2.2s ease-in-out infinite;
+}
+
 .leaflet-tooltip.gridly-map-hint {
   background: rgba(8, 16, 26, 0.95);
   color: #eaf4ff;
@@ -4910,6 +4933,12 @@ h1, h2, h3, .future-metric-headline {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.28); }
 }
+
+@keyframes gridly-rail-route-impact-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(255, 86, 61, 0.18), 0 8px 16px rgba(0, 0, 0, 0.35); }
+  50% { box-shadow: 0 0 0 5px rgba(255, 86, 61, 0.24), 0 9px 17px rgba(0, 0, 0, 0.35); }
+}
+
 @keyframes blocked-pulse {
   0%, 100% { transform: scale(1); box-shadow: 0 0 0 2px rgba(255, 92, 61, 0.2), 0 8px 16px rgba(0,0,0,0.3); }
   50% { transform: scale(1.14); box-shadow: 0 0 0 6px rgba(255, 92, 61, 0.38), 0 10px 18px rgba(0,0,0,0.34); }

@@ -435,6 +435,18 @@ window.gridlyIncidentVisualStateAudit = function gridlyIncidentVisualStateAudit(
 
 
 window.gridlyMarkerVisualAudit = function gridlyMarkerVisualAudit() {
+  const hasDocument = typeof document !== "undefined" && Boolean(document?.querySelectorAll);
+  const railClassElements = hasDocument
+    ? {
+        rail_clear: document.querySelectorAll(".gridly-marker-rail-clear").length,
+        rail_blocked: document.querySelectorAll(".gridly-marker-rail-blocked").length,
+        rail_route_impact: document.querySelectorAll(".gridly-marker-rail-route-impact").length
+      }
+    : {
+        rail_clear: 0,
+        rail_blocked: 0,
+        rail_route_impact: 0
+      };
   const visualStateAudit = typeof window.gridlyIncidentVisualStateAudit === "function"
     ? window.gridlyIncidentVisualStateAudit()
     : {};
@@ -448,7 +460,9 @@ window.gridlyMarkerVisualAudit = function gridlyMarkerVisualAudit() {
   return {
     availableStyles,
     configs: { ...GRIDLY_MARKER_VISUALS },
-    missingStyles
+    missingStyles,
+    railClassElements,
+    hasRailCssClasses: Object.values(railClassElements).some((count) => count > 0)
   };
 };
 
