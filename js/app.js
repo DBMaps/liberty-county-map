@@ -285,21 +285,51 @@ function getGridlyZoomBehavior(category = "unknown", severity = "low", incident 
 
 
 const GRIDLY_MARKER_VISUALS = {
-  rail_clear: { className: "gridly-marker-rail-clear", priority: 1, scale: 0.9, glow: false, pulse: false },
-  rail_blocked: { className: "gridly-marker-rail-blocked", priority: 3, scale: 1.1, glow: true, pulse: false },
-  rail_route_impact: { className: "gridly-marker-rail-route-impact", priority: 5, scale: 1.2, glow: true, pulse: true },
-  hazard_low: { className: "gridly-marker-hazard-low", priority: 1, scale: 0.95, glow: false, pulse: false },
-  hazard_moderate: { className: "gridly-marker-hazard-moderate", priority: 2, scale: 1, glow: false, pulse: false },
-  hazard_high: { className: "gridly-marker-hazard-high", priority: 3, scale: 1.08, glow: true, pulse: false },
-  hazard_critical: { className: "gridly-marker-hazard-critical", priority: 5, scale: 1.18, glow: true, pulse: true },
-  txdot_single: { className: "gridly-marker-txdot-single", priority: 2, scale: 1, glow: false, pulse: false },
-  txdot_corridor: { className: "gridly-marker-txdot-corridor", priority: 3, scale: 1.08, glow: true, pulse: false },
-  txdot_route_impact: { className: "gridly-marker-txdot-route-impact", priority: 5, scale: 1.2, glow: true, pulse: true },
-  unknown_quiet: { className: "gridly-marker-unknown-quiet", priority: 0, scale: 0.9, glow: false, pulse: false }
+  rail_clear: { className: "gridly-marker-rail-clear", priority: 1, scale: 0.9, glow: false, pulse: false, priorityRank: 7, zIndexOffset: 7, visualWeight: "light", emphasisLevel: "passive", calmLabel: "Rail clear" },
+  rail_blocked: { className: "gridly-marker-rail-blocked", priority: 3, scale: 1.1, glow: true, pulse: false, priorityRank: 3, zIndexOffset: 30, visualWeight: "strong", emphasisLevel: "high", calmLabel: "Rail blocked" },
+  rail_route_impact: { className: "gridly-marker-rail-route-impact", priority: 5, scale: 1.2, glow: true, pulse: true, priorityRank: 1, zIndexOffset: 50, visualWeight: "strong", emphasisLevel: "route-impact", calmLabel: "Rail route impact" },
+  hazard_low: { className: "gridly-marker-hazard-low", priority: 1, scale: 0.95, glow: false, pulse: false, priorityRank: 6, zIndexOffset: 10, visualWeight: "light", emphasisLevel: "low", calmLabel: "Low hazard" },
+  hazard_moderate: { className: "gridly-marker-hazard-moderate", priority: 2, scale: 1, glow: false, pulse: false, priorityRank: 5, zIndexOffset: 16, visualWeight: "medium", emphasisLevel: "moderate", calmLabel: "Moderate hazard" },
+  hazard_high: { className: "gridly-marker-hazard-high", priority: 3, scale: 1.08, glow: true, pulse: false, priorityRank: 4, zIndexOffset: 24, visualWeight: "strong", emphasisLevel: "high", calmLabel: "High hazard" },
+  hazard_critical: { className: "gridly-marker-hazard-critical", priority: 5, scale: 1.18, glow: true, pulse: true, priorityRank: 2, zIndexOffset: 40, visualWeight: "strong", emphasisLevel: "critical", calmLabel: "Critical hazard" },
+  txdot_single: { className: "gridly-marker-txdot-single", priority: 2, scale: 1, glow: false, pulse: false, priorityRank: 6, zIndexOffset: 10, visualWeight: "light", emphasisLevel: "low", calmLabel: "TxDOT single" },
+  txdot_corridor: { className: "gridly-marker-txdot-corridor", priority: 3, scale: 1.08, glow: true, pulse: false, priorityRank: 4, zIndexOffset: 22, visualWeight: "medium", emphasisLevel: "moderate", calmLabel: "TxDOT corridor" },
+  txdot_route_impact: { className: "gridly-marker-txdot-route-impact", priority: 5, scale: 1.2, glow: true, pulse: true, priorityRank: 1, zIndexOffset: 36, visualWeight: "strong", emphasisLevel: "route-impact", calmLabel: "TxDOT route impact" },
+  unknown_quiet: { className: "gridly-marker-unknown-quiet", priority: 0, scale: 0.9, glow: false, pulse: false, priorityRank: 8, zIndexOffset: 0, visualWeight: "light", emphasisLevel: "passive", calmLabel: "Unknown quiet" }
 };
 
 function getGridlyMarkerVisualConfig(markerStyle = "unknown_quiet") {
   return GRIDLY_MARKER_VISUALS[markerStyle] || GRIDLY_MARKER_VISUALS.unknown_quiet;
+}
+
+function getGridlyMarkerHierarchyConfig(markerStyle = "unknown_quiet") {
+  try {
+    const markerVisual = typeof getGridlyMarkerVisualConfig === "function"
+      ? getGridlyMarkerVisualConfig(markerStyle)
+      : GRIDLY_MARKER_VISUALS.unknown_quiet;
+    const safeVisual = markerVisual && typeof markerVisual === "object" ? markerVisual : GRIDLY_MARKER_VISUALS.unknown_quiet;
+    return {
+      markerStyle: typeof markerStyle === "string" && markerStyle ? markerStyle : "unknown_quiet",
+      className: String(safeVisual.className || GRIDLY_MARKER_VISUALS.unknown_quiet.className),
+      priority: Number.isFinite(Number(safeVisual.priority)) ? Number(safeVisual.priority) : 0,
+      priorityRank: Number.isFinite(Number(safeVisual.priorityRank)) ? Number(safeVisual.priorityRank) : 8,
+      zIndexOffset: Number.isFinite(Number(safeVisual.zIndexOffset)) ? Number(safeVisual.zIndexOffset) : 0,
+      visualWeight: String(safeVisual.visualWeight || "light"),
+      emphasisLevel: String(safeVisual.emphasisLevel || "passive"),
+      calmLabel: String(safeVisual.calmLabel || "Unknown quiet")
+    };
+  } catch (_error) {
+    return {
+      markerStyle: "unknown_quiet",
+      className: GRIDLY_MARKER_VISUALS.unknown_quiet.className,
+      priority: 0,
+      priorityRank: 8,
+      zIndexOffset: 0,
+      visualWeight: "light",
+      emphasisLevel: "passive",
+      calmLabel: "Unknown quiet"
+    };
+  }
 }
 
 function getGridlyMarkerStyle(category = "unknown", severity = "low", incident = {}, source = "unknown") {
@@ -659,6 +689,94 @@ window.gridlyCommunityHazardVisualPathAudit = function gridlyCommunityHazardVisu
     possibleAlternateHazardSelectors,
     notes
   };
+};
+
+window.gridlyMarkerHierarchyAudit = function gridlyMarkerHierarchyAudit() {
+  try {
+    const nodes = typeof document !== "undefined"
+      ? Array.from(document.querySelectorAll("#map .leaflet-marker-pane .gridly-hazard-marker"))
+      : [];
+    const markerStyleCounts = {};
+    const hierarchyRankCounts = {};
+    const renderedPrioritySamples = [];
+    const missingHierarchyConfigs = [];
+    nodes.forEach((node) => {
+      const markerStyle = String(node.dataset?.visualStyle || "unknown_quiet");
+      markerStyleCounts[markerStyle] = (markerStyleCounts[markerStyle] || 0) + 1;
+      const hierarchy = getGridlyMarkerHierarchyConfig(markerStyle);
+      const rankKey = String(hierarchy.priorityRank);
+      hierarchyRankCounts[rankKey] = (hierarchyRankCounts[rankKey] || 0) + 1;
+      if (!GRIDLY_MARKER_VISUALS[markerStyle]) missingHierarchyConfigs.push(markerStyle);
+      if (renderedPrioritySamples.length < 10) renderedPrioritySamples.push({ markerStyle, rank: hierarchy.priorityRank, emphasis: hierarchy.emphasisLevel });
+    });
+    const topPriorityMarkerSamples = renderedPrioritySamples.filter((sample) => Number(sample.rank) <= 3).slice(0, 6);
+    const railRendered = ["rail_clear", "rail_blocked", "rail_route_impact"].some((style) => (markerStyleCounts[style] || 0) > 0);
+    const communityRendered = ["hazard_low", "hazard_moderate", "hazard_high", "hazard_critical"].some((style) => (markerStyleCounts[style] || 0) > 0);
+    const txdotRendered = ["txdot_single", "txdot_corridor", "txdot_route_impact"].some((style) => (markerStyleCounts[style] || 0) > 0);
+    return {
+      renderedMarkerCount: nodes.length,
+      markerStyleCounts,
+      hierarchyRankCounts,
+      missingHierarchyConfigs: Array.from(new Set(missingHierarchyConfigs)),
+      renderedPrioritySamples,
+      topPriorityMarkerSamples,
+      railMarkersRender: railRendered,
+      communityMarkersRender: communityRendered,
+      txdotRenderingDisabled: !txdotRendered,
+      unknownFallbackSafe: Boolean(getGridlyMarkerHierarchyConfig("__unknown_style__")?.markerStyle),
+      notes: ["Hierarchy metadata sourced from GRIDLY_MARKER_VISUALS.", "TxDOT markers should remain non-rendering."]
+    };
+  } catch (error) {
+    return { renderedMarkerCount: 0, markerStyleCounts: {}, hierarchyRankCounts: {}, missingHierarchyConfigs: [], renderedPrioritySamples: [], topPriorityMarkerSamples: [], railMarkersRender: false, communityMarkersRender: false, txdotRenderingDisabled: true, unknownFallbackSafe: true, notes: [`Hierarchy audit fallback: ${error?.message || "unknown error"}`] };
+  }
+};
+
+window.gridlyMarkerDensityAudit = function gridlyMarkerDensityAudit() {
+  try {
+    const nodes = typeof document !== "undefined"
+      ? Array.from(document.querySelectorAll("#map .leaflet-marker-pane .gridly-hazard-marker"))
+      : [];
+    const styleCounts = {};
+    const emphasisCounts = {};
+    const coordinateSamples = [];
+    const markers = unifiedIncidentLayer && typeof unifiedIncidentLayer.getLayers === "function" ? unifiedIncidentLayer.getLayers() : [];
+    markers.slice(0, 250).forEach((marker) => {
+      const latlng = typeof marker?.getLatLng === "function" ? marker.getLatLng() : null;
+      if (latlng && Number.isFinite(latlng.lat) && Number.isFinite(latlng.lng)) coordinateSamples.push(latlng);
+    });
+    let closePairs = 0;
+    for (let i = 0; i < coordinateSamples.length; i += 1) {
+      for (let j = i + 1; j < coordinateSamples.length && j < i + 40; j += 1) {
+        const dLat = Math.abs(coordinateSamples[i].lat - coordinateSamples[j].lat);
+        const dLng = Math.abs(coordinateSamples[i].lng - coordinateSamples[j].lng);
+        if (dLat < 0.00035 && dLng < 0.00035) closePairs += 1;
+      }
+    }
+    nodes.forEach((node) => {
+      const style = String(node.dataset?.visualStyle || "unknown_quiet");
+      const hierarchy = getGridlyMarkerHierarchyConfig(style);
+      styleCounts[style] = (styleCounts[style] || 0) + 1;
+      emphasisCounts[hierarchy.emphasisLevel] = (emphasisCounts[hierarchy.emphasisLevel] || 0) + 1;
+    });
+    return {
+      zoom: typeof map?.getZoom === "function" ? map.getZoom() : null,
+      bounds: typeof map?.getBounds === "function" ? map.getBounds()?.toBBoxString?.() || null : null,
+      renderedMarkerCount: markers.length,
+      visibleMarkerDomCount: nodes.length,
+      markerCountsByStyle: styleCounts,
+      countsByPriorityEmphasis: emphasisCounts,
+      approximateOverlapWarning: closePairs > 6 ? `Potential overlap clusters detected (${closePairs} close pairs).` : null,
+      mode: {
+        mobile: Boolean(window.matchMedia?.("(max-width: 768px)")?.matches),
+        portrait: Boolean(window.matchMedia?.("(orientation: portrait)")?.matches),
+        tactical: Boolean(document?.body?.classList?.contains("tactical-mode")),
+        desktop: Boolean(window.matchMedia?.("(min-width: 1024px)")?.matches)
+      },
+      notes: ["Density audit uses rendered markers only.", "TxDOT datasets are not iterated in full."]
+    };
+  } catch (error) {
+    return { zoom: null, bounds: null, renderedMarkerCount: 0, visibleMarkerDomCount: 0, markerCountsByStyle: {}, countsByPriorityEmphasis: {}, approximateOverlapWarning: null, mode: {}, notes: [`Density audit fallback: ${error?.message || "unknown error"}`] };
+  }
 };
 
 const LOCATION_DEFAULTS = {
@@ -8989,12 +9107,24 @@ function renderUnifiedIncidents(reason = "auto") {
       : "";
     const visualState = getGridlyIncidentVisualState(incident);
     const markerVisual = getGridlyMarkerVisualConfig(visualState.markerStyle);
+    const hierarchyConfig = getGridlyMarkerHierarchyConfig(visualState.markerStyle);
     const markerVisualClass = markerVisual.className;
     const markerVisualClassSafe = sanitizeText(markerVisualClass);
     const hazardVisualClassSegment = markerVisualClassSafe ? ` ${markerVisualClassSafe}` : "";
+    const priorityClassMap = {
+      "route-impact": "gridly-marker-priority-route-impact",
+      critical: "gridly-marker-priority-critical",
+      high: "gridly-marker-priority-high",
+      moderate: "gridly-marker-priority-moderate",
+      low: "gridly-marker-priority-low",
+      passive: "gridly-marker-priority-passive"
+    };
+    const hierarchyPriorityClass = priorityClassMap[hierarchyConfig.emphasisLevel] || "gridly-marker-priority-passive";
     const hazardVisualMetadataAttributes = `
           data-visual-style="${sanitizeText(visualState.markerStyle)}"
           data-visual-priority="${sanitizeText(String(markerVisual.priority))}"
+          data-gridly-marker-priority="${sanitizeText(String(hierarchyConfig.priorityRank))}"
+          data-gridly-marker-weight="${sanitizeText(String(hierarchyConfig.visualWeight))}"
         `;
     const category = getHazardCategory(incident.report_type || incident.type || "other_hazard");
     const markerVariantClass = `marker-${category}`;
@@ -9015,7 +9145,7 @@ function renderUnifiedIncidents(reason = "auto") {
     const icon = L.divIcon({
       className: markerVisualClassSafe,
       html: `
-        <div class="gridly-hazard-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass} ${proximityClass} ${routeRelevanceClass} ${sanitizeText(markerVariantClass)} ${sanitizeText(confidenceClass)}${hazardVisualClassSegment}"
+        <div class="gridly-hazard-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass} ${proximityClass} ${routeRelevanceClass} ${sanitizeText(markerVariantClass)} ${sanitizeText(confidenceClass)} ${sanitizeText(hierarchyPriorityClass)}${hazardVisualClassSegment}"
           data-category="${sanitizeText(category)}"
           ${hazardVisualMetadataAttributes}
           data-freshness="${sanitizeText(ageClass)}"
@@ -10597,6 +10727,25 @@ function injectHazardStyles() {
 
     .gridly-marker-hazard-critical .gridly-hazard-marker b {
       background: #ff5d73;
+    }
+
+    .gridly-marker-priority-route-impact { z-index: 550 !important; }
+    .gridly-marker-priority-critical { z-index: 540 !important; }
+    .gridly-marker-priority-high { z-index: 530 !important; }
+    .gridly-marker-priority-moderate { z-index: 520 !important; }
+    .gridly-marker-priority-low { z-index: 510 !important; }
+    .gridly-marker-priority-passive { z-index: 500 !important; }
+
+    .gridly-marker-priority-route-impact,
+    .gridly-marker-priority-critical {
+      filter: saturate(1.04) brightness(1.03);
+    }
+    .gridly-marker-priority-high { filter: saturate(1.02) brightness(1.01); }
+    .gridly-marker-priority-moderate { filter: saturate(0.98) brightness(0.99); }
+    .gridly-marker-priority-low,
+    .gridly-marker-priority-passive {
+      opacity: 0.9;
+      animation-duration: 2.9s;
     }
 
     .gridly-hazard-marker[data-state="cleared"] {
