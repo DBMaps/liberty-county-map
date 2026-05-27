@@ -216,6 +216,34 @@ function normalizeGridlyTxdotVisualCategory(category = "unknown", incident = {})
 
   return "txdot_other";
 }
+
+function normalizeGridlyCommunityVisualCategory(category = "unknown") {
+  const normalized = String(category || "").toLowerCase().trim();
+  const allowedCommunityCategories = new Set([
+    "flooding",
+    "ice",
+    "debris",
+    "crash",
+    "construction",
+    "road_closed",
+    "disabled_vehicle",
+    "standing_water",
+    "fallen_tree",
+    "signal_outage",
+    "utility_work",
+    "emergency_response_impact",
+    "unknown"
+  ]);
+  if (allowedCommunityCategories.has(normalized)) return normalized;
+  if (!normalized.startsWith("txdot_")) return "unknown";
+  if (normalized === "txdot_flooding") return "flooding";
+  if (normalized === "txdot_construction") return "construction";
+  if (normalized === "txdot_closure") return "road_closed";
+  if (normalized === "txdot_damage") return "debris";
+  if (normalized === "txdot_other") return "unknown";
+  return "unknown";
+}
+
 function getGridlyIncidentSeverity(incident = {}, category = "unknown") {
   const text = gridlyCollectIncidentText(incident);
   const isMinor = /minor|small|fender bender/.test(text);
@@ -331,6 +359,8 @@ function getGridlyIncidentVisualState(incident = {}) {
   }
   if (source === "txdot") {
     category = normalizeGridlyTxdotVisualCategory(category, incident);
+  } else if (source === "community") {
+    category = normalizeGridlyCommunityVisualCategory(category);
   }
   const routeImpact = Boolean(incident?.routeImpact) || /route impact|blocking road|closure|detour|all lanes|impassable/.test(text);
   const severity = getGridlyIncidentSeverity({ ...incident, routeImpact }, category);
