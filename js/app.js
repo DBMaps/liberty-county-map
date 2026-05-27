@@ -3280,23 +3280,6 @@ function openAlertsSurfaceFromDock() {
           const value = rawOwner[field];
           return typeof value === "string" ? Boolean(value.trim()) : value !== undefined && value !== null;
         });
-        console.log("[V165.7 ALERT RAW ROAD FIELD PERSIST]", {
-          id: cleanDisplayValue(alert?.id || alert?.reportId || alert?.uuid || ""),
-          rawOwnerFound: Boolean(rawOwner),
-          persistedToRaw: Boolean(rawOwner),
-          availableRoadFields,
-          primaryRoad,
-          referenceRoadA,
-          referenceRoadB
-        });
-        console.log("[V165.6 ROAD LANGUAGE FIELD PERSIST]", {
-          id: cleanDisplayValue(alert?.id || alert?.reportId || alert?.uuid || ""),
-          persistedFields: Object.keys(persistedFields),
-          primaryRoad,
-          referenceRoadA,
-          referenceRoadB,
-          finalHeadline
-        });
         console.log("[V163.1 PRIMARY ROAD SPLIT]", {
           originalPrimaryRoad,
           parsedPrimaryRoad: primaryRoad,
@@ -16690,23 +16673,8 @@ function resolveIncidentDirectionConfidence(incident = {}) {
     source = roadResolution?.sourceUsed || "road_name_only";
     reason = "Only isolated point plus road name available; direction remains unknown.";
   }
-  const incidentId = String(incident?.id || incident?.report_id || incident?.reportId || "unknown");
-  const auditRecovered = !helperResolved;
-  console.debug("[V165.4.1 DIRECTION HELPER FIX]", {
-    helperResolved,
-    helperSource,
-    auditRecovered
-  });
-  console.debug("[V165.4 DIRECTION SOURCE OWNER]", {
-    incidentId,
-    availableFields: Object.fromEntries((roadResolution?.availableFields || []).map(([key, value]) => [key, resolvedDirectionDisplayHelper(value)])),
-    selectedRoad: roadName,
-    sourceUsed: roadResolution?.sourceUsed || source,
-    confidence
-  });
-
   return {
-    incidentId,
+    incidentId: String(incident?.id || incident?.report_id || incident?.reportId || "unknown"),
     roadName,
     inferredOrientation,
     directionPair: directionPairByOrientation[inferredOrientation] || [],
@@ -22125,7 +22093,6 @@ const v134ReportingRefinementApplied = true;
 
 
 window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit() {
-  console.log("[V165.2 DIRECTION CONFIDENCE AUDIT]");
   const pathHelperFromGlobal = (typeof window !== "undefined" && typeof window.getValueByPath === "function")
     ? window.getValueByPath
     : (typeof globalThis !== "undefined" && typeof globalThis.getValueByPath === "function")
@@ -22145,14 +22112,6 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
       return acc[key];
     }, obj);
   };
-  const helperResolved = Boolean(pathHelperFromGlobal);
-  const helperSource = helperResolved ? "global.getValueByPath" : "gridlyDirectionConfidenceAudit.safeGetValueByPath";
-  const auditRecovered = !helperResolved;
-  console.debug("[V165.5.1 DIRECTION PATH HELPER FIX]", {
-    helperResolved,
-    helperSource,
-    auditRecovered
-  });
   const activeIncidents = typeof getActiveUnifiedIncidents === "function" ? getActiveUnifiedIncidents() : [];
   const alertSnapshot = typeof getAlertsSurfaceSnapshot === "function" ? getAlertsSurfaceSnapshot() : null;
   const alertItems = Array.isArray(alertSnapshot?.alerts) ? alertSnapshot.alerts : [];
@@ -22196,34 +22155,7 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
         reason: "Road hazard direction confidence deferred; location text remains authoritative."
       };
     }
-    const directionAuditRoadOwner = isRoadHazardIncident
-      ? {
-        id: String(incident?.id || directionOwnerIncident?.id || directionOwnerIncident?.incidentId || directionOwnerIncident?.reportId || "").trim(),
-        type: String(incident?.type || directionOwnerIncident?.type || directionOwnerIncident?.hazardType || directionOwnerIncident?.category || directionOwnerIncident?.label || "").trim(),
-        title: String(incident?.title || incident?.headline || directionOwnerIncident?.title || directionOwnerIncident?.headline || "").trim(),
-        lat: Number.isFinite(Number(incident?.lat)) ? Number(incident?.lat) : directionOwnerIncident?.lat,
-        lng: Number.isFinite(Number(incident?.lng)) ? Number(incident?.lng) : (Number.isFinite(Number(incident?.lon)) ? Number(incident?.lon) : directionOwnerIncident?.lng),
-        raw: directionOwnerIncident?.raw && typeof directionOwnerIncident.raw === "object"
-          ? directionOwnerIncident.raw
-          : (incident?.raw && typeof incident.raw === "object" ? incident.raw : {})
-      }
-      : null;
-    const roadHazardResolveInput = directionAuditRoadOwner
-      ? { ...directionAuditRoadOwner, ...directionOwnerIncident }
-      : directionOwnerIncident;
-    const roadHazardResolved = (isRoadHazardIncident && typeof resolveRoadHazardSegmentHeadline === "function")
-      ? resolveRoadHazardSegmentHeadline(roadHazardResolveInput)
-      : null;
-    const auditOwnerBefore = roadHazardResolveInput;
-    const auditOwnerAfter = roadHazardResolved && typeof roadHazardResolved === "object"
-      ? { ...directionOwnerIncident, ...roadHazardResolved }
-      : directionOwnerIncident;
-        const roadFieldsAfterResolve = roadHazardResolved && typeof roadHazardResolved === "object"
-      ? { ...directionOwnerIncident, ...roadHazardResolved }
-      : directionOwnerIncident;
-        const directionAuditOwner = roadHazardResolved && typeof roadHazardResolved === "object"
-      ? { ...directionOwnerIncident, ...roadHazardResolved }
-      : directionOwnerIncident;
+    const directionAuditOwner = directionOwnerIncident;
     const confidence = resolveIncidentDirectionConfidence(directionAuditOwner);
     const availableRoadFields = [
       "primaryRoad", "roadName", "resolvedRoadName", "corridor", "route", "road", "nearestRoad", "knownLocation",
@@ -22231,17 +22163,6 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
     ].filter((path) => {
       const value = safeGetValueByPath(directionAuditOwner, path);
       return typeof value === "string" ? Boolean(value.trim()) : value !== undefined && value !== null;
-    });
-    const selectedRoadName = String(confidence?.roadName || "").trim();
-    const sourceOwner = enrichedIncident
-      ? "getAlertsSurfaceSnapshot().alerts[].raw (post-V160/V163 enriched)"
-      : "getActiveUnifiedIncidents() fallback";
-        console.log("[V165.5 DIRECTION OWNER FIX]", {
-      incidentId: confidence.incidentId || incidentId || "",
-      isEnriched: Boolean(enrichedIncident),
-      availableRoadFields,
-      selectedRoadName,
-      sourceOwner
     });
     return {
       incidentId: confidence.incidentId,
