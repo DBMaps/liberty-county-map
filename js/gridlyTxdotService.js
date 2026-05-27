@@ -9,7 +9,8 @@
     : [];
   globalScope.gridlyExternalRoadConditions = externalStore;
 
-  let sourceHealthy = false;
+  let hasFetched = false;
+  let lastFetchOk = null;
 
   function toSafeString(value) {
     return typeof value === "string" ? value.trim() : "";
@@ -62,15 +63,17 @@
   async function fetchRoadConditions() {
     const endpoint = TXDOT_DEFAULT_ENDPOINT;
 
+    hasFetched = true;
+
     if (!endpoint) {
-      sourceHealthy = false;
+      lastFetchOk = false;
       externalStore.length = 0;
       return [];
     }
 
     const response = await fetch(endpoint);
     if (!response.ok) {
-      sourceHealthy = false;
+      lastFetchOk = false;
       throw new Error(`TxDOT fetch failed: ${response.status}`);
     }
 
@@ -84,7 +87,7 @@
     const normalized = rawRecords.map(normalizeIncident).filter(Boolean);
     externalStore.length = 0;
     externalStore.push(...normalized);
-    sourceHealthy = true;
+    lastFetchOk = true;
     return normalized;
   }
 
@@ -99,10 +102,20 @@
   };
 
   globalScope.gridlyTxdotDebug = function gridlyTxdotDebug() {
+    const serviceLoaded = !!globalScope.gridlyTxdot;
+    const apiAvailable = serviceLoaded
+      && typeof globalScope.gridlyTxdot.fetchRoadConditions === "function"
+      && typeof globalScope.gridlyTxdot.normalizeIncident === "function"
+      && typeof globalScope.gridlyTxdot.getRoadConditions === "function";
+
     return {
+      serviceLoaded,
+      apiAvailable,
       loadedCount: externalStore.length,
       sampleRecords: externalStore.slice(0, 3),
-      sourceHealthy
+      hasFetched,
+      lastFetchOk,
+      sourceHealthy: serviceLoaded && apiAvailable
     };
   };
 })(typeof window !== "undefined" ? window : globalThis);
