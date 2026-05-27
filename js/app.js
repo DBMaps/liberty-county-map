@@ -1221,7 +1221,39 @@ window.gridlyRouteImpactVisualAudit = function gridlyRouteImpactVisualAudit() {
 
 window.gridlyRouteConsequenceAudit = function gridlyRouteConsequenceAudit() {
   try {
-    const incidents = Array.isArray(activeHazards) ? activeHazards : [];
+    const routeLatLngs = typeof getRoutePolylineLatLngs === "function" ? getRoutePolylineLatLngs() : [];
+    const activeRoutePresent = Array.isArray(routeLatLngs) && routeLatLngs.length >= 2;
+    const routeDetectionNotes = [
+      "route geometry detection reuses getRoutePolylineLatLngs from route-impact audit.",
+      `routeWatchActivated=${Boolean(routeWatchActivated)}`,
+      `routeHazardGeometryPresent=${Boolean(routeHazard?.activeRoute?.geometry)}`
+    ];
+    const getIncidentCoordinate = (incident) => {
+      const lat = incident?.lat ?? incident?.latitude ?? incident?.rawLat;
+      const lng = incident?.lng ?? incident?.lon ?? incident?.longitude ?? incident?.rawLng;
+      return { lat, lng };
+    };
+    const hasFiniteCoordinates = (incident) => {
+      const { lat, lng } = getIncidentCoordinate(incident);
+      return Number.isFinite(Number(lat)) && Number.isFinite(Number(lng));
+    };
+    const primaryIncidents = Array.isArray(getUnifiedIncidents?.()) ? getUnifiedIncidents() : [];
+    const fallbackHazards = Array.isArray(activeHazards) ? activeHazards : [];
+    const primaryCoordinateCount = primaryIncidents.filter(hasFiniteCoordinates).length;
+    const fallbackCoordinateCount = fallbackHazards.filter(hasFiniteCoordinates).length;
+    const shouldUseFallbackHazards = primaryCoordinateCount === 0 && fallbackCoordinateCount > 0;
+    const markerAuditSource = lastMarkerAuditDebug?.lastMarkerRenderResult?.selectedSourceName;
+    const sourceMap = {
+      unifiedIncidents: primaryIncidents,
+      activeHazards_fallback: fallbackHazards
+    };
+    const fallbackSourceName = shouldUseFallbackHazards ? "activeHazards_fallback" : "unifiedIncidents";
+    const routeSourceUsed = Array.isArray(sourceMap[markerAuditSource]) ? markerAuditSource : fallbackSourceName;
+    const incidents = Array.isArray(sourceMap[routeSourceUsed]) ? sourceMap[routeSourceUsed] : [];
+    routeDetectionNotes.push(`routeSourceUsed=${routeSourceUsed}`);
+    routeDetectionNotes.push(`primaryCoordinateCount=${primaryCoordinateCount}`);
+    routeDetectionNotes.push(`fallbackCoordinateCount=${fallbackCoordinateCount}`);
+    routeDetectionNotes.push(`markerAuditSource=${markerAuditSource || "none"}`);
     const evaluated = incidents.map((incident) => ({ incident, visualState: getGridlyIncidentVisualState(incident) }));
     const counts = { low: 0, moderate: 0, high: 0, critical: 0 };
     let routeRelevantCount = 0;
@@ -1231,18 +1263,21 @@ window.gridlyRouteConsequenceAudit = function gridlyRouteConsequenceAudit() {
       const level = String(visualState?.consequenceLevel || "low").toLowerCase();
       if (counts[level] === undefined) counts[level] = 0;
       counts[level] += 1;
-      if (visualState?.routeRelevant) routeRelevantCount += 1;
-      if (visualState?.directRouteConflict) directConflictCount += 1;
-      if (visualState?.nearbyRouteConflict) nearbyConflictCount += 1;
+      if (activeRoutePresent && visualState?.routeRelevant) routeRelevantCount += 1;
+      if (activeRoutePresent && visualState?.directRouteConflict) directConflictCount += 1;
+      if (activeRoutePresent && visualState?.nearbyRouteConflict) nearbyConflictCount += 1;
     });
     const levelOrder = ["critical", "high", "moderate", "low"];
     const highestConsequence = levelOrder.find((level) => Number(counts[level] || 0) > 0) || "low";
     const topConsequenceSamples = evaluated
       .sort((a, b) => Number(b.visualState?.consequenceScore || 0) - Number(a.visualState?.consequenceScore || 0))
       .slice(0, 8)
-      .map(({ incident, visualState }) => ({ id: incident?.id || incident?.crossingId || "", type: incident?.type || incident?.report_type || "unknown", consequenceLevel: visualState?.consequenceLevel || "low", consequenceScore: Number(visualState?.consequenceScore || 0), consequenceReason: visualState?.consequenceReason || "" }));
+      .map(({ incident, visualState }) => ({ id: incident?.id || incident?.crossingId || "", type: incident?.type || incident?.report_type || "unknown", markerStyle: visualState?.markerStyle || "unknown_quiet", routeRelevant: Boolean(visualState?.routeRelevant), directRouteConflict: Boolean(visualState?.directRouteConflict), nearbyRouteConflict: Boolean(visualState?.nearbyRouteConflict), consequenceLevel: visualState?.consequenceLevel || "low", consequenceScore: Number(visualState?.consequenceScore || 0), consequenceReason: visualState?.consequenceReason || "" }));
     return {
-      activeRoutePresent: Boolean(routeWatchActivated && routeHazard?.activeRoute?.geometry),
+      activeRoutePresent,
+      routeSourceUsed,
+      activeRouteCoordinateCount: Array.isArray(routeLatLngs) ? routeLatLngs.length : 0,
+      routeDetectionNotes,
       evaluatedIncidentCount: evaluated.length,
       routeRelevantCount,
       directConflictCount,
@@ -1250,10 +1285,10 @@ window.gridlyRouteConsequenceAudit = function gridlyRouteConsequenceAudit() {
       consequenceCounts: counts,
       highestConsequence,
       topConsequenceSamples,
-      notes: ["Consequence audit uses existing active hazards collection and visual-state scoring only.", "No route recalculation is performed."]
+      notes: ["Consequence audit reuses route-impact active route geometry detection and aligned incident source selection.", "No route recalculation is performed."]
     };
   } catch (error) {
-    return { activeRoutePresent: false, evaluatedIncidentCount: 0, routeRelevantCount: 0, directConflictCount: 0, nearbyConflictCount: 0, consequenceCounts: { low: 0, moderate: 0, high: 0, critical: 0 }, highestConsequence: "low", topConsequenceSamples: [], notes: [`Route consequence audit fallback: ${error?.message || "unknown error"}`] };
+    return { activeRoutePresent: false, routeSourceUsed: "", activeRouteCoordinateCount: 0, routeDetectionNotes: [], evaluatedIncidentCount: 0, routeRelevantCount: 0, directConflictCount: 0, nearbyConflictCount: 0, consequenceCounts: { low: 0, moderate: 0, high: 0, critical: 0 }, highestConsequence: "low", topConsequenceSamples: [], notes: [`Route consequence audit fallback: ${error?.message || "unknown error"}`] };
   }
 };
 
