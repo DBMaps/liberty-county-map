@@ -513,6 +513,30 @@ window.gridlyMarkerVisualAudit = function gridlyMarkerVisualAudit() {
   const producedStyles = Array.from(new Set([...countedStyles, ...sampledStyles]));
   const availableStyles = Object.keys(GRIDLY_MARKER_VISUALS);
   const missingStyles = producedStyles.filter((style) => !(style in GRIDLY_MARKER_VISUALS));
+  const hazardStyleSelectors = [
+    ".gridly-marker-hazard-low .gridly-hazard-marker",
+    ".gridly-marker-hazard-moderate .gridly-hazard-marker",
+    ".gridly-marker-hazard-high .gridly-hazard-marker",
+    ".gridly-marker-hazard-critical .gridly-hazard-marker"
+  ];
+  const hazardCssActive = hasDocument
+    ? hazardStyleSelectors.every((selector) => {
+        try {
+          return Array.from(document.styleSheets || []).some((sheet) => {
+            let rules;
+            try {
+              rules = sheet.cssRules;
+            } catch (_error) {
+              return false;
+            }
+            return Array.from(rules || []).some((rule) => rule?.selectorText?.includes(selector));
+          });
+        } catch (_error) {
+          return false;
+        }
+      }) && Object.values(hazardClassElements).some((count) => count > 0)
+    : false;
+
   return {
     availableStyles,
     configs: { ...GRIDLY_MARKER_VISUALS },
@@ -520,7 +544,8 @@ window.gridlyMarkerVisualAudit = function gridlyMarkerVisualAudit() {
     railClassElements,
     hazardClassElements,
     hasRailCssClasses: Object.values(railClassElements).some((count) => count > 0),
-    hasHazardCssClasses: Object.values(hazardClassElements).some((count) => count > 0)
+    hasHazardCssClasses: Object.values(hazardClassElements).some((count) => count > 0),
+    hazardCssActive
   };
 };
 
@@ -10537,6 +10562,43 @@ function injectHazardStyles() {
     .gridly-hazard-marker[data-category="road_closed"] { --gridly-marker-border: rgba(255, 78, 111, 0.98); --gridly-marker-glow: rgba(255, 78, 111, 0.52); }
     .gridly-hazard-marker[data-category="disabled_vehicle"] { --gridly-marker-border: rgba(183, 197, 214, 0.95); --gridly-marker-glow: rgba(183, 197, 214, 0.4); }
     .gridly-hazard-marker[data-category="other_hazard"] { --gridly-marker-border: rgba(181, 210, 255, 0.9); --gridly-marker-glow: rgba(181, 210, 255, 0.36); }
+
+    .gridly-marker-hazard-low .gridly-hazard-marker {
+      --gridly-marker-border: rgba(122, 196, 255, 0.76);
+      --gridly-marker-glow: rgba(122, 196, 255, 0.2);
+      box-shadow: 0 0 0 1.5px rgba(255,255,255,0.14), 0 0 8px var(--gridly-marker-glow);
+      filter: saturate(0.92) brightness(0.98);
+      animation-duration: 2.7s;
+    }
+
+    .gridly-marker-hazard-moderate .gridly-hazard-marker {
+      --gridly-marker-border: rgba(255, 182, 92, 0.86);
+      --gridly-marker-glow: rgba(255, 182, 92, 0.28);
+      box-shadow: 0 0 0 1.5px rgba(255,255,255,0.16), 0 0 11px var(--gridly-marker-glow);
+      filter: saturate(1) brightness(1);
+      animation-duration: 2.35s;
+    }
+
+    .gridly-marker-hazard-high .gridly-hazard-marker {
+      --gridly-marker-border: rgba(255, 132, 92, 0.95);
+      --gridly-marker-glow: rgba(255, 132, 92, 0.34);
+      box-shadow: 0 0 0 1.5px rgba(255,255,255,0.17), 0 0 14px var(--gridly-marker-glow);
+      filter: saturate(1.06) brightness(1.03);
+      animation-duration: 2.05s;
+    }
+
+    .gridly-marker-hazard-critical .gridly-hazard-marker {
+      --gridly-marker-border: rgba(255, 96, 118, 0.98);
+      --gridly-marker-glow: rgba(255, 96, 118, 0.38);
+      box-shadow: 0 0 0 1.5px rgba(255,255,255,0.18), 0 0 16px var(--gridly-marker-glow);
+      filter: saturate(1.1) brightness(1.05);
+      animation-duration: 1.9s;
+    }
+
+    .gridly-marker-hazard-critical .gridly-hazard-marker b {
+      background: #ff5d73;
+    }
+
     .gridly-hazard-marker[data-state="cleared"] {
       opacity: 0.48;
       filter: saturate(0.68) brightness(0.9);
