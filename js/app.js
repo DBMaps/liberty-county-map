@@ -246,8 +246,10 @@ function getGridlyIncidentVisualState(incident = {}) {
         : /system/.test(sourceText)
           ? "system"
           : "unknown";
-  const categoryInput = [incident?.category, incident?.type, incident?.report_type, incident?.title, incident?.condition, incident?.status, source].find(Boolean);
-  const category = normalizeGridlyIncidentCategory(categoryInput);
+  let category = normalizeGridlyIncidentCategory(incident);
+  if (category === "unknown" && isGridlyRailShapedObject?.(incident)) {
+    category = "rail";
+  }
   const routeImpact = Boolean(incident?.routeImpact) || /route impact|blocking road|closure|detour|all lanes|impassable/.test(text);
   const severity = getGridlyIncidentSeverity({ ...incident, routeImpact }, category);
   const zoomBehavior = getGridlyZoomBehavior(category, severity, { ...incident, routeImpact });
