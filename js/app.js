@@ -243,11 +243,62 @@ function getGridlyIncidentVisualState(incident = {}) {
 }
 
 window.getGridlyIncidentVisualState = getGridlyIncidentVisualState;
+
+function isGridlyIncidentLike(item) {
+  if (!item || typeof item !== "object") return false;
+  const incidentSignalKeys = [
+    "id",
+    "lat",
+    "lng",
+    "geometry",
+    "coordinates",
+    "title",
+    "type",
+    "category",
+    "condition",
+    "conditionType",
+    "crossingId",
+    "crossingNumber",
+    "status",
+    "reportType",
+    "report_type"
+  ];
+  return incidentSignalKeys.some((key) => {
+    if (!(key in item)) return false;
+    const value = item[key];
+    if (value === null || value === undefined) return false;
+    if (typeof value === "string") return value.trim().length > 0;
+    if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === "object") return Object.keys(value).length > 0;
+    return true;
+  });
+}
+
+function isGridlyAnalyticsObject(item) {
+  if (!item || typeof item !== "object") return false;
+  const analyticsKeys = [
+    "countyCounts",
+    "conditionCounts",
+    "severityCounts",
+    "sourceCounts",
+    "markerStyleCounts",
+    "countsByCategory",
+    "countsBySeverity",
+    "countsBySource",
+    "countsByMarkerStyle"
+  ];
+  return analyticsKeys.some((key) => key in item);
+}
+
 window.gridlyIncidentVisualStateAudit = function gridlyIncidentVisualStateAudit() {
   const communityHazards = Array.isArray(activeHazards) ? activeHazards : [];
   const railIncidents = Array.isArray(crossings) ? crossings : [];
   const txdotItems = typeof futureTxdotIncidents === "function" ? futureTxdotIncidents() : [];
-  const samplePool = [...communityHazards, ...railIncidents, ...(Array.isArray(txdotItems) ? txdotItems : [])];
+  const candidateCollections = [communityHazards, railIncidents, Array.isArray(txdotItems) ? txdotItems : []];
+  const candidateItems = candidateCollections.flatMap((collection) => Array.isArray(collection) ? collection : [collection]);
+  const objectItems = candidateItems.filter((item) => item && typeof item === "object");
+  const nonAnalyticsItems = objectItems.filter((item) => !isGridlyAnalyticsObject(item));
+  const samplePool = nonAnalyticsItems.filter((item) => isGridlyIncidentLike(item));
   const states = samplePool.map((incident) => getGridlyIncidentVisualState(incident));
   const countsBy = (keyFn) => states.reduce((acc, item) => {
     const key = String(keyFn(item));
@@ -261,6 +312,12 @@ window.gridlyIncidentVisualStateAudit = function gridlyIncidentVisualStateAudit(
     countsByMarkerStyle: countsBy((item) => item.markerStyle),
     countsBySource: countsBy((item) => item.source),
     countsByShouldRender: countsBy((item) => item.shouldRender),
+    sampleFiltering: {
+      rawCandidateCount: candidateItems.length,
+      analyticsFiltered: objectItems.length - nonAnalyticsItems.length,
+      incidentLikeRemaining: samplePool.length
+    },
+    sampleKeys: samplePool.slice(0, 5).map((item) => ({ keys: Object.keys(item).slice(0, 25) })),
     responderSensitiveSuppressed: states.filter((item) => item.responderSensitive && !item.shouldRender).length,
     samples: states.slice(0, 10)
   };
