@@ -617,6 +617,120 @@ window.gridlyMarkerVisualAudit = function gridlyMarkerVisualAudit() {
   };
 };
 
+window.gridlyRailMarkerSourceTrace = function gridlyRailMarkerSourceTrace() {
+  try {
+    const hasDocument = typeof document !== "undefined" && Boolean(document?.querySelectorAll);
+    const markerPane = hasDocument ? document.querySelector("#map .leaflet-marker-pane") : null;
+    const railSelector = "#map .leaflet-marker-pane .gridly-marker-rail-clear, #map .leaflet-marker-pane .gridly-marker-rail-blocked, #map .leaflet-marker-pane .gridly-marker-rail-route-impact, #map .leaflet-marker-pane [data-visual-style=\"rail_clear\"], #map .leaflet-marker-pane [data-visual-style=\"rail_blocked\"], #map .leaflet-marker-pane [data-visual-style=\"rail_route_impact\"], #map .leaflet-marker-pane [class*='rail']";
+    const railNodes = hasDocument ? Array.from(document.querySelectorAll(railSelector)) : [];
+    const uniqueRailNodes = Array.from(new Set(railNodes));
+    const truncate = (value, max = 220) => {
+      const text = String(value || "").replace(/\s+/g, " ").trim();
+      return text.length > max ? `${text.slice(0, max - 1)}…` : text;
+    };
+    const getDatasetObject = (el) => {
+      const out = {};
+      Object.entries(el?.dataset || {}).forEach(([key, value]) => {
+        if (typeof value === "string" && value.length > 0) out[key] = value;
+      });
+      return out;
+    };
+    const getDataAttributesObject = (el) => {
+      const out = {};
+      Array.from(el?.attributes || []).forEach((attr) => {
+        if (String(attr?.name || "").startsWith("data-")) out[attr.name] = attr.value;
+      });
+      return out;
+    };
+    const parseFinite = (value) => {
+      const num = Number(value);
+      return Number.isFinite(num) ? num : null;
+    };
+    const readCoordinateFromDataset = (datasetObj, dataAttrObj) => {
+      const latRaw = datasetObj.lat ?? datasetObj.latitude ?? dataAttrObj["data-lat"] ?? dataAttrObj["data-latitude"];
+      const lngRaw = datasetObj.lng ?? datasetObj.lon ?? datasetObj.longitude ?? dataAttrObj["data-lng"] ?? dataAttrObj["data-lon"] ?? dataAttrObj["data-longitude"];
+      const lat = parseFinite(latRaw);
+      const lng = parseFinite(lngRaw);
+      return (lat !== null && lng !== null) ? { lat, lng, source: "dataset" } : null;
+    };
+    const readCoordinateFromLeafletMarker = (el) => {
+      const layerPool = [];
+      if (typeof unifiedIncidentLayer?.getLayers === "function") {
+        layerPool.push(...(unifiedIncidentLayer.getLayers() || []));
+      }
+      if (typeof map?.eachLayer === "function") {
+        map.eachLayer((layer) => layerPool.push(layer));
+      }
+      const checked = new Set();
+      for (const layer of layerPool) {
+        if (!layer || checked.has(layer)) continue;
+        checked.add(layer);
+        const iconEl = layer?._icon;
+        if (!iconEl) continue;
+        if (iconEl === el || iconEl.contains?.(el) || el.contains?.(iconEl)) {
+          const latlng = typeof layer.getLatLng === "function" ? layer.getLatLng() : layer?._latlng;
+          const lat = parseFinite(latlng?.lat);
+          const lng = parseFinite(latlng?.lng);
+          if (lat !== null && lng !== null) return { lat, lng, source: "leaflet_marker" };
+        }
+      }
+      return null;
+    };
+    const samples = uniqueRailNodes.slice(0, 15).map((el) => {
+      const dataAttributes = getDataAttributesObject(el);
+      const dataset = getDatasetObject(el);
+      const coordinateFromDataset = readCoordinateFromDataset(dataset, dataAttributes);
+      const coordinateFromLeaflet = coordinateFromDataset ? null : readCoordinateFromLeafletMarker(el);
+      const coordinate = coordinateFromDataset || coordinateFromLeaflet;
+      const className = String(el.className || "").trim();
+      const parentClassName = String(el.parentElement?.className || markerPane?.className || "");
+      const inferredStyle = dataset.visualStyle
+        || (className.includes("gridly-marker-rail-route-impact") ? "rail_route_impact" : "")
+        || (className.includes("gridly-marker-rail-blocked") ? "rail_blocked" : "")
+        || (className.includes("gridly-marker-rail-clear") ? "rail_clear" : "")
+        || "";
+      return {
+        tag: el.tagName,
+        className,
+        parentClassName,
+        dataAttributes,
+        dataset,
+        title: el.getAttribute("title") || "",
+        ariaLabel: el.getAttribute("aria-label") || "",
+        visualStyleDetected: inferredStyle,
+        crossingDetected: {
+          id: dataset.crossingId || dataset.incidentId || dataAttributes["data-crossing-id"] || "",
+          name: dataset.crossingName || dataAttributes["data-crossing-name"] || "",
+          number: dataset.crossingNumber || dataAttributes["data-crossing-number"] || ""
+        },
+        coordinates: coordinate ? { lat: coordinate.lat, lng: coordinate.lng, source: coordinate.source } : null,
+        nearbyMarkerHtmlSummary: truncate(el.outerHTML || "", 260),
+        notes: coordinate ? "usable_coordinates_detected" : "no_usable_coordinates_detected"
+      };
+    });
+    const coordinateCount = samples.filter((sample) => Number.isFinite(sample?.coordinates?.lat) && Number.isFinite(sample?.coordinates?.lng)).length;
+    return {
+      railDomCount: uniqueRailNodes.length,
+      railDomSamples: samples,
+      railDomHasUsableCoordinates: coordinateCount > 0,
+      railDomCoordinateCount: coordinateCount,
+      notes: [
+        `markerPanePresent=${Boolean(markerPane)}`,
+        `railSelectorMatches=${railNodes.length}`,
+        "Trace is diagnostic-only and does not alter marker ownership or data source selection."
+      ]
+    };
+  } catch (error) {
+    return {
+      railDomCount: 0,
+      railDomSamples: [],
+      railDomHasUsableCoordinates: false,
+      railDomCoordinateCount: 0,
+      notes: [`Rail source trace fallback: ${error?.message || "unknown error"}`]
+    };
+  }
+};
+
 window.gridlyCommunityHazardVisualPathAudit = function gridlyCommunityHazardVisualPathAudit() {
   const hasDocument = typeof document !== "undefined" && Boolean(document?.querySelectorAll);
   const markerPane = hasDocument ? document.querySelector("#map .leaflet-marker-pane") : null;
@@ -889,12 +1003,21 @@ window.gridlyRouteImpactAudit = function gridlyRouteImpactAudit() {
         ? "DOM rail markers detected but selected data source has zero rail candidates; marker DOM may be stale or source data was replaced after render."
         : "Data-source rail candidates align with rendered marker expectations."
     ];
+    const railDomTrace = typeof window.gridlyRailMarkerSourceTrace === "function"
+      ? window.gridlyRailMarkerSourceTrace()
+      : { railDomCount: 0, railDomSamples: [], railDomHasUsableCoordinates: false, railDomCoordinateCount: 0 };
+    const railSourceMismatchWarning = railCandidateIncidents.length === 0 && Number(railDomTrace?.railDomCount || 0) > 0;
     return {
       activeRoutePresent,
       activeRouteCoordinateCount: Array.isArray(routeLatLngs) ? routeLatLngs.length : 0,
       railSourceCandidatesChecked,
       railSourceUsed: markerSourceUsed,
       railCandidateCount: railCandidateIncidents.length,
+      railDomCount: Number(railDomTrace?.railDomCount || 0),
+      railDomSamples: Array.isArray(railDomTrace?.railDomSamples) ? railDomTrace.railDomSamples : [],
+      railDomHasUsableCoordinates: Boolean(railDomTrace?.railDomHasUsableCoordinates),
+      railDomCoordinateCount: Number(railDomTrace?.railDomCoordinateCount || 0),
+      railSourceMismatchWarning,
       railVisibleCount: railIncidents.length,
       railFilteredCount: Math.max(0, railCandidateIncidents.length - railIncidents.length),
       railIncidentCount: railIncidents.length,
@@ -917,6 +1040,11 @@ window.gridlyRouteImpactAudit = function gridlyRouteImpactAudit() {
       railSourceCandidatesChecked: [],
       railSourceUsed: "",
       railCandidateCount: 0,
+      railDomCount: 0,
+      railDomSamples: [],
+      railDomHasUsableCoordinates: false,
+      railDomCoordinateCount: 0,
+      railSourceMismatchWarning: false,
       railVisibleCount: 0,
       railFilteredCount: 0,
       railIncidentCount: 0,
