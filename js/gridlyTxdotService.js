@@ -275,7 +275,7 @@
 
     for (const event of records) {
       const condition = toSafeString(event?.type) || "unknown";
-      const countyNum = toSafeString(event?.countyNum) || "unknown";
+      const countyKey = event?.countyNum != null ? String(event.countyNum) : "unknown";
       const direction = toSafeString(event?.direction) || "unknown";
       const roadName = toSafeString(event?.routeNameDisplay)
         || toSafeString(event?.routeName)
@@ -283,7 +283,7 @@
         || "unknown";
 
       conditionCounts[condition] = (conditionCounts[condition] || 0) + 1;
-      countyCounts[countyNum] = (countyCounts[countyNum] || 0) + 1;
+      countyCounts[countyKey] = (countyCounts[countyKey] || 0) + 1;
       directionCounts[direction] = (directionCounts[direction] || 0) + 1;
 
       roadCounts.set(roadName, (roadCounts.get(roadName) || 0) + 1);
