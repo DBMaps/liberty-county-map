@@ -434,6 +434,7 @@ function getGridlyIncidentVisualState(incident = {}) {
   const severity = getGridlyIncidentSeverity({ ...incident, routeImpact }, category);
   const zoomBehavior = getGridlyZoomBehavior(category, severity, { ...incident, routeImpact });
   const markerStyle = getGridlyMarkerStyle(category, severity, { ...incident, routeImpact }, source);
+  const routeConsequence = evaluateGridlyRouteConsequence(incident, { category, severity, markerStyle, routeImpact });
   const shouldRender = responderSensitive ? false : source === "txdot" ? false : true;
   return {
     category,
@@ -442,12 +443,56 @@ function getGridlyIncidentVisualState(incident = {}) {
     source,
     zoomBehavior,
     markerStyle,
+    consequenceLevel: routeConsequence.consequenceLevel,
+    consequenceScore: routeConsequence.consequenceScore,
+    consequenceReason: routeConsequence.consequenceReason,
+    routeRelevant: routeConsequence.routeRelevant,
+    directRouteConflict: routeConsequence.directRouteConflict,
+    nearbyRouteConflict: routeConsequence.nearbyRouteConflict,
     shouldRender,
     responderSensitive,
     safetyNote: responderSensitive ? "Suppressed responder-sensitive report" : ""
   };
 }
 
+function evaluateGridlyRouteConsequence(incident, options = {}) {
+  try {
+    const safeIncident = incident && typeof incident === "object" ? incident : {};
+    const safeOptions = options && typeof options === "object" ? options : {};
+    const category = normalizeGridlyIncidentCategory(safeOptions.category || safeIncident);
+    const severity = String(safeOptions.severity || getGridlyIncidentSeverity(safeIncident, category) || "low").toLowerCase();
+    const markerStyle = String(safeOptions.markerStyle || getGridlyMarkerStyle(category, severity, safeIncident, safeIncident?.source) || "unknown_quiet");
+    const routeImpact = Boolean(safeOptions.routeImpact ?? safeIncident?.routeImpact);
+    const routeRelevant = Boolean(isIncidentRouteRelevant(safeIncident, routeHazard)) || routeImpact;
+    const directRouteConflict = Boolean(routeImpact) || markerStyle === "rail_route_impact" || markerStyle === "txdot_route_impact";
+    const nearbyRouteConflict = routeRelevant && !directRouteConflict;
+    const blockedSignal = /blocked|blocking|closure|impassable|all lanes/.test(String(safeIncident?.status || safeIncident?.reportType || safeIncident?.report_type || safeIncident?.type || "").toLowerCase());
+    const floodingSignal = /flood/.test(String(safeIncident?.type || safeIncident?.category || "").toLowerCase());
+    let score = 8;
+    if (routeRelevant) score += 22;
+    if (nearbyRouteConflict) score += 18;
+    if (directRouteConflict) score += 34;
+    if (blockedSignal) score += 20;
+    if (floodingSignal) score += 16;
+    if (severity === "moderate") score += 14;
+    if (severity === "high") score += 25;
+    if (severity === "critical") score += 36;
+    if (/rail_route_impact|rail_blocked/.test(markerStyle)) score += 14;
+    const consequenceLevel = score >= 88 ? "critical" : score >= 64 ? "high" : score >= 38 ? "moderate" : "low";
+    const consequenceReason = directRouteConflict
+      ? "Direct active-route conflict detected."
+      : nearbyRouteConflict
+        ? "Nearby route-relevant hazard detected."
+        : routeRelevant
+          ? "Route-relevant context detected."
+          : "Nearby non-blocking incident.";
+    return { consequenceLevel, consequenceScore: score, consequenceReason, routeRelevant, directRouteConflict, nearbyRouteConflict };
+  } catch (error) {
+    return { consequenceLevel: "low", consequenceScore: 0, consequenceReason: "Fallback: unable to evaluate consequence safely.", routeRelevant: false, directRouteConflict: false, nearbyRouteConflict: false };
+  }
+}
+
+window.evaluateGridlyRouteConsequence = evaluateGridlyRouteConsequence;
 window.getGridlyIncidentVisualState = getGridlyIncidentVisualState;
 
 function isGridlyIncidentLike(item) {
@@ -1171,6 +1216,80 @@ window.gridlyRouteImpactVisualAudit = function gridlyRouteImpactVisualAudit() {
       duplicateMarkerCount: 0,
       notes: [`Route impact visual audit fallback: ${error?.message || "unknown error"}`]
     };
+  }
+};
+
+window.gridlyRouteConsequenceAudit = function gridlyRouteConsequenceAudit() {
+  try {
+    const incidents = Array.isArray(activeHazards) ? activeHazards : [];
+    const evaluated = incidents.map((incident) => ({ incident, visualState: getGridlyIncidentVisualState(incident) }));
+    const counts = { low: 0, moderate: 0, high: 0, critical: 0 };
+    let routeRelevantCount = 0;
+    let directConflictCount = 0;
+    let nearbyConflictCount = 0;
+    evaluated.forEach(({ visualState }) => {
+      const level = String(visualState?.consequenceLevel || "low").toLowerCase();
+      if (counts[level] === undefined) counts[level] = 0;
+      counts[level] += 1;
+      if (visualState?.routeRelevant) routeRelevantCount += 1;
+      if (visualState?.directRouteConflict) directConflictCount += 1;
+      if (visualState?.nearbyRouteConflict) nearbyConflictCount += 1;
+    });
+    const levelOrder = ["critical", "high", "moderate", "low"];
+    const highestConsequence = levelOrder.find((level) => Number(counts[level] || 0) > 0) || "low";
+    const topConsequenceSamples = evaluated
+      .sort((a, b) => Number(b.visualState?.consequenceScore || 0) - Number(a.visualState?.consequenceScore || 0))
+      .slice(0, 8)
+      .map(({ incident, visualState }) => ({ id: incident?.id || incident?.crossingId || "", type: incident?.type || incident?.report_type || "unknown", consequenceLevel: visualState?.consequenceLevel || "low", consequenceScore: Number(visualState?.consequenceScore || 0), consequenceReason: visualState?.consequenceReason || "" }));
+    return {
+      activeRoutePresent: Boolean(routeWatchActivated && routeHazard?.activeRoute?.geometry),
+      evaluatedIncidentCount: evaluated.length,
+      routeRelevantCount,
+      directConflictCount,
+      nearbyConflictCount,
+      consequenceCounts: counts,
+      highestConsequence,
+      topConsequenceSamples,
+      notes: ["Consequence audit uses existing active hazards collection and visual-state scoring only.", "No route recalculation is performed."]
+    };
+  } catch (error) {
+    return { activeRoutePresent: false, evaluatedIncidentCount: 0, routeRelevantCount: 0, directConflictCount: 0, nearbyConflictCount: 0, consequenceCounts: { low: 0, moderate: 0, high: 0, critical: 0 }, highestConsequence: "low", topConsequenceSamples: [], notes: [`Route consequence audit fallback: ${error?.message || "unknown error"}`] };
+  }
+};
+
+window.gridlyRouteConsequenceVisualAudit = function gridlyRouteConsequenceVisualAudit() {
+  try {
+    const nodes = typeof document !== "undefined" ? Array.from(document.querySelectorAll("#map .leaflet-marker-pane .gridly-hazard-marker")) : [];
+    const classCounts = { low: 0, moderate: 0, high: 0, critical: 0 };
+    let markersWithConsequence = 0;
+    nodes.forEach((node) => {
+      const level = String(node.dataset?.gridlyConsequence || "").toLowerCase();
+      if (!level) return;
+      markersWithConsequence += 1;
+      if (classCounts[level] === undefined) classCounts[level] = 0;
+      classCounts[level] += 1;
+    });
+    const routeImpactMarkerCount = nodes.filter((node) => String(node.dataset?.visualStyle || "") === "rail_route_impact").length;
+    const levelOrder = ["critical", "high", "moderate", "low"];
+    const highestVisibleConsequence = levelOrder.find((level) => (classCounts[level] || 0) > 0) || "low";
+    const seen = new Set();
+    let duplicateMarkerCount = 0;
+    nodes.forEach((node) => {
+      const key = String(node.dataset?.incidentId || node.dataset?.id || "");
+      if (!key) return;
+      if (seen.has(key)) duplicateMarkerCount += 1;
+      seen.add(key);
+    });
+    return {
+      markersWithConsequence,
+      consequenceClassCounts: classCounts,
+      routeImpactMarkerCount,
+      highestVisibleConsequence,
+      duplicateMarkerCount,
+      notes: ["Visual consequence audit inspects marker-pane DOM only for calm, low-cost checks."]
+    };
+  } catch (error) {
+    return { markersWithConsequence: 0, consequenceClassCounts: { low: 0, moderate: 0, high: 0, critical: 0 }, routeImpactMarkerCount: 0, highestVisibleConsequence: "low", duplicateMarkerCount: 0, notes: [`Route consequence visual audit fallback: ${error?.message || "unknown error"}`] };
   }
 };
 
@@ -9690,11 +9809,14 @@ function renderUnifiedIncidents(reason = "auto") {
       passive: "gridly-marker-priority-passive"
     };
     const hierarchyPriorityClass = priorityClassMap[hierarchyConfig.emphasisLevel] || "gridly-marker-priority-passive";
+    const consequenceLevel = String(visualState?.consequenceLevel || "low").toLowerCase();
+    const consequenceClass = `gridly-consequence-${consequenceLevel}`;
     const hazardVisualMetadataAttributes = `
           data-visual-style="${sanitizeText(visualState.markerStyle)}"
           data-visual-priority="${sanitizeText(String(markerVisual.priority))}"
           data-gridly-marker-priority="${sanitizeText(String(hierarchyConfig.priorityRank))}"
           data-gridly-marker-weight="${sanitizeText(String(hierarchyConfig.visualWeight))}"
+          data-gridly-consequence="${sanitizeText(consequenceLevel)}"
         `;
     const category = getHazardCategory(incident.report_type || incident.type || "other_hazard");
     const markerVariantClass = `marker-${category}`;
@@ -9715,7 +9837,7 @@ function renderUnifiedIncidents(reason = "auto") {
     const icon = L.divIcon({
       className: markerVisualClassSafe,
       html: `
-        <div class="gridly-hazard-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass} ${proximityClass} ${routeRelevanceClass} ${sanitizeText(markerVariantClass)} ${sanitizeText(confidenceClass)} ${sanitizeText(hierarchyPriorityClass)}${hazardVisualClassSegment}"
+        <div class="gridly-hazard-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass} ${proximityClass} ${routeRelevanceClass} ${sanitizeText(markerVariantClass)} ${sanitizeText(confidenceClass)} ${sanitizeText(hierarchyPriorityClass)} ${sanitizeText(consequenceClass)}${hazardVisualClassSegment}"
           data-category="${sanitizeText(category)}"
           ${hazardVisualMetadataAttributes}
           data-freshness="${sanitizeText(ageClass)}"
