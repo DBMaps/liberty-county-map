@@ -821,10 +821,28 @@ window.gridlyRouteImpactAudit = function gridlyRouteImpactAudit() {
   try {
     const routeLatLngs = typeof getRoutePolylineLatLngs === "function" ? getRoutePolylineLatLngs() : [];
     const activeRoutePresent = Array.isArray(routeLatLngs) && routeLatLngs.length >= 2;
-    const incidents = typeof getUnifiedIncidents === "function" ? getUnifiedIncidents() : [];
-    const railIncidents = (Array.isArray(incidents) ? incidents : []).filter((incident) => {
+    const getIncidentCoordinate = (incident) => {
+      const lat = incident?.lat ?? incident?.latitude ?? incident?.rawLat;
+      const lng = incident?.lng ?? incident?.lon ?? incident?.longitude ?? incident?.rawLng;
+      return { lat, lng };
+    };
+    const hasFiniteCoordinates = (incident) => {
+      const { lat, lng } = getIncidentCoordinate(incident);
+      return Number.isFinite(Number(lat)) && Number.isFinite(Number(lng));
+    };
+    const primaryIncidents = Array.isArray(getUnifiedIncidents?.()) ? getUnifiedIncidents() : [];
+    const fallbackHazards = Array.isArray(activeHazards) ? activeHazards : [];
+    const primaryCoordinateCount = primaryIncidents.filter(hasFiniteCoordinates).length;
+    const fallbackCoordinateCount = fallbackHazards.filter(hasFiniteCoordinates).length;
+    const shouldUseFallbackHazards = primaryCoordinateCount === 0 && fallbackCoordinateCount > 0;
+    const incidents = shouldUseFallbackHazards ? fallbackHazards : primaryIncidents;
+    const railCandidateIncidents = (Array.isArray(incidents) ? incidents : []).filter((incident) => {
       const visualState = getGridlyIncidentVisualState(incident);
-      return visualState?.source === "rail" || visualState?.category === "rail";
+      return /^rail_/.test(String(visualState?.markerStyle || ""));
+    });
+    const railIncidents = railCandidateIncidents.filter((incident) => {
+      const visualState = getGridlyIncidentVisualState(incident);
+      return visualState?.shouldRender !== false;
     });
     const impacted = railIncidents.filter((incident) => doesGridlyIncidentImpactActiveRoute(incident));
     const toSample = (incident) => {
@@ -844,31 +862,54 @@ window.gridlyRouteImpactAudit = function gridlyRouteImpactAudit() {
     const renderedRouteImpactCount = typeof document !== "undefined"
       ? document.querySelectorAll("#map .leaflet-marker-pane .gridly-marker-rail-route-impact, #map .leaflet-marker-pane [data-visual-style=\"rail_route_impact\"]").length
       : 0;
+    const renderedRailNodeCount = typeof document !== "undefined"
+      ? document.querySelectorAll("#map .leaflet-marker-pane .gridly-marker-rail-clear, #map .leaflet-marker-pane .gridly-marker-rail-blocked, #map .leaflet-marker-pane .gridly-marker-rail-route-impact, #map .leaflet-marker-pane [data-visual-style=\"rail_clear\"], #map .leaflet-marker-pane [data-visual-style=\"rail_blocked\"], #map .leaflet-marker-pane [data-visual-style=\"rail_route_impact\"]").length
+      : 0;
+    const railDiscoveryNotes = [
+      `markerSourceUsed=${shouldUseFallbackHazards ? "activeHazards_fallback" : "unifiedIncidents"}`,
+      `primaryIncidentCount=${primaryIncidents.length}`,
+      `fallbackHazardCount=${fallbackHazards.length}`,
+      `primaryCoordinateCount=${primaryCoordinateCount}`,
+      `fallbackCoordinateCount=${fallbackCoordinateCount}`,
+      "rail candidate filtering is based on markerStyle rail_* to match rendered rail marker logic."
+    ];
     return {
       activeRoutePresent,
       activeRouteCoordinateCount: Array.isArray(routeLatLngs) ? routeLatLngs.length : 0,
+      railSourceUsed: shouldUseFallbackHazards ? "activeHazards_fallback" : "unifiedIncidents",
+      railCandidateCount: railCandidateIncidents.length,
+      railVisibleCount: railIncidents.length,
+      railFilteredCount: Math.max(0, railCandidateIncidents.length - railIncidents.length),
       railIncidentCount: railIncidents.length,
       impactedRailIncidentCount: impacted.length,
       impactedSamples: impacted.slice(0, 8).map(toSample),
       nonImpactedSamples: railIncidents.filter((incident) => !doesGridlyIncidentImpactActiveRoute(incident)).slice(0, 8).map(toSample),
       markerStyleBreakdown,
+      railMarkerDomCount: renderedRailNodeCount,
       railRouteImpactMarkersRendered: renderedRouteImpactCount > 0,
       routeImpactHierarchyRank: Number(routeImpactHierarchy?.priorityRank ?? -1),
       safeFallbacksUsed: Number(gridlyRouteImpactAuditState.safeFallbacksUsed || 0),
+      railDiscoveryNotes,
       notes: ["Visual-state escalation only; incident source/category remain unchanged.", "No route recalculation is performed by route-impact helper."]
     };
   } catch (error) {
     return {
       activeRoutePresent: false,
       activeRouteCoordinateCount: 0,
+      railSourceUsed: "",
+      railCandidateCount: 0,
+      railVisibleCount: 0,
+      railFilteredCount: 0,
       railIncidentCount: 0,
       impactedRailIncidentCount: 0,
       impactedSamples: [],
       nonImpactedSamples: [],
       markerStyleBreakdown: {},
+      railMarkerDomCount: 0,
       railRouteImpactMarkersRendered: false,
       routeImpactHierarchyRank: -1,
       safeFallbacksUsed: Number(gridlyRouteImpactAuditState.safeFallbacksUsed || 0),
+      railDiscoveryNotes: [],
       notes: [`Route impact audit fallback: ${error?.message || "unknown error"}`]
     };
   }
