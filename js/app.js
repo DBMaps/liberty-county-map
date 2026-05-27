@@ -113,6 +113,159 @@ const HAZARD_CATEGORY_MAP = {
   hazard_cleared: "other_hazard"
 };
 
+const GRIDLY_NORMALIZED_INCIDENT_CATEGORIES = new Set([
+  "rail", "flooding", "ice", "debris", "crash", "construction", "road_closed",
+  "disabled_vehicle", "standing_water", "fallen_tree", "signal_outage", "utility_work",
+  "emergency_response_impact", "txdot_construction", "txdot_closure", "txdot_flooding",
+  "txdot_damage", "txdot_other", "unknown"
+]);
+
+function gridlyCollectIncidentText(incident = {}) {
+  if (!incident || typeof incident !== "object") return "";
+  return [
+    incident.type, incident.report_type, incident.reportKind, incident.title, incident.description,
+    incident.notes, incident.category, incident.source, incident.status, incident.condition,
+    incident.crossingStatus, incident.crossing_status
+  ].map((value) => String(value || "").toLowerCase()).join(" ");
+}
+
+function normalizeGridlyIncidentCategory(input) {
+  const raw = String(input || "").trim();
+  if (!raw) return "unknown";
+  const value = raw.toLowerCase().replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
+  const compact = value.replace(/\s+/g, "");
+  const txdotLike = /txdot|drivetexas|drive texas/.test(value);
+
+  if (/blocked crossing|train blocking|rail|crossing/.test(value)) return "rail";
+  if (/standing water/.test(value)) return txdotLike ? "txdot_flooding" : "standing_water";
+  if (/fallen tree|down(ed)? tree|tree in road/.test(value)) return "fallen_tree";
+  if (/signal outage|traffic signal|signal out/.test(value)) return "signal_outage";
+  if (/utility work|power line|downed line/.test(value)) return "utility_work";
+  if (/emergency response impact|crash response|fire blocking road|ambulance delay/.test(value)) return "emergency_response_impact";
+  if (/wreck|crash|collision/.test(value)) return "crash";
+  if (/flood|high water|impassable/.test(value)) return txdotLike ? "txdot_flooding" : "flooding";
+  if (/ice|black ice/.test(value)) return "ice";
+  if (/debris|obstruction/.test(value)) return "debris";
+  if (/construction/.test(value)) return txdotLike ? "txdot_construction" : "construction";
+  if (/disabled vehicle|stalled|vehicle disabled/.test(value)) return "disabled_vehicle";
+  if (/damage|washout|road damage/.test(value)) return txdotLike ? "txdot_damage" : "unknown";
+  if (/closure|closed|road closed/.test(value)) return txdotLike ? "txdot_closure" : "road_closed";
+  if (/other/.test(value) && txdotLike) return "txdot_other";
+  if (compact in HAZARD_CATEGORY_MAP) {
+    const mapped = HAZARD_CATEGORY_MAP[compact];
+    if (mapped === "rail_blockage_delay") return "rail";
+    if (mapped === "other_hazard") return "unknown";
+    if (GRIDLY_NORMALIZED_INCIDENT_CATEGORIES.has(mapped)) return mapped;
+  }
+  return txdotLike ? "txdot_other" : "unknown";
+}
+
+function getGridlyIncidentSeverity(incident = {}, category = "unknown") {
+  const text = gridlyCollectIncidentText(incident);
+  const isMinor = /minor|small|fender bender/.test(text);
+  const severeFlooding = /severe flooding|flooded road|impassable|swift water/.test(text);
+  const routeImpact = Boolean(incident?.routeImpact) || /blocking road|blocked road|all lanes|closure|detour|route impact/.test(text);
+
+  if (category === "road_closed" || category === "txdot_closure") return "critical";
+  if (severeFlooding) return "critical";
+  if (category === "rail" && routeImpact) return "critical";
+  if (category === "crash") return isMinor ? "moderate" : "high";
+  if (category === "flooding" || category === "txdot_flooding") return "high";
+  if (category === "ice") return "high";
+  if (category === "rail") return /clear|open/.test(text) ? "low" : "high";
+  if (category === "construction" || category === "txdot_construction") return "moderate";
+  if (category === "disabled_vehicle") return "moderate";
+  if (category === "debris") return isMinor ? "low" : "moderate";
+  if (category === "standing_water" || category === "fallen_tree" || category === "signal_outage" || category === "utility_work" || category === "emergency_response_impact") return "moderate";
+  return "low";
+}
+
+function getGridlyZoomBehavior(category = "unknown", severity = "low", incident = {}) {
+  const text = gridlyCollectIncidentText(incident);
+  const routeImpact = Boolean(incident?.routeImpact) || /route impact|blocking road|closure|detour|all lanes/.test(text);
+  if (category === "rail" && /clear|open/.test(text)) return "near";
+  if (severity === "critical" && routeImpact) return "far";
+  if (severity === "high" || severity === "moderate") return "mid";
+  return "near";
+}
+
+function getGridlyMarkerStyle(category = "unknown", severity = "low", incident = {}) {
+  const text = gridlyCollectIncidentText(incident);
+  const routeImpact = Boolean(incident?.routeImpact) || /route impact|blocking road|closure|detour|all lanes/.test(text);
+  const txdotLike = /txdot|drivetexas|drive texas/.test(text) || /^txdot_/.test(category);
+  if (category === "rail") {
+    if (/clear|open/.test(text)) return "rail_clear";
+    if (routeImpact) return "rail_route_impact";
+    return "rail_blocked";
+  }
+  if (txdotLike) {
+    if (routeImpact || severity === "critical") return "txdot_route_impact";
+    return "txdot_single";
+  }
+  if (severity === "critical") return "hazard_critical";
+  if (severity === "high") return "hazard_high";
+  if (severity === "moderate") return "hazard_moderate";
+  if (severity === "low") return "hazard_low";
+  return "unknown_quiet";
+}
+
+function getGridlyIncidentVisualState(incident = {}) {
+  const text = gridlyCollectIncidentText(incident);
+  const responderSensitive = /police|cop\b|speed trap|sheriff sitting|officer location|radar|enforcement|patrol location/.test(text);
+  const sourceText = `${String(incident?.source || "").toLowerCase()} ${text}`;
+  const source = /txdot|drivetexas|drive texas/.test(sourceText)
+    ? "txdot"
+    : /crossing|rail|fra/.test(sourceText)
+      ? "rail"
+      : /community|report|shared/.test(sourceText)
+        ? "community"
+        : /system/.test(sourceText)
+          ? "system"
+          : "unknown";
+  const categoryInput = [incident?.category, incident?.type, incident?.report_type, incident?.title, incident?.condition, incident?.status, source].find(Boolean);
+  const category = normalizeGridlyIncidentCategory(categoryInput);
+  const routeImpact = Boolean(incident?.routeImpact) || /route impact|blocking road|closure|detour|all lanes|impassable/.test(text);
+  const severity = getGridlyIncidentSeverity({ ...incident, routeImpact }, category);
+  const zoomBehavior = getGridlyZoomBehavior(category, severity, { ...incident, routeImpact });
+  const markerStyle = getGridlyMarkerStyle(category, severity, { ...incident, routeImpact });
+  const shouldRender = responderSensitive ? false : source === "txdot" ? false : true;
+  return {
+    category,
+    severity,
+    routeImpact,
+    source,
+    zoomBehavior,
+    markerStyle,
+    shouldRender,
+    responderSensitive,
+    safetyNote: responderSensitive ? "Suppressed responder-sensitive report" : ""
+  };
+}
+
+window.getGridlyIncidentVisualState = getGridlyIncidentVisualState;
+window.gridlyIncidentVisualStateAudit = function gridlyIncidentVisualStateAudit() {
+  const communityHazards = Array.isArray(activeHazards) ? activeHazards : [];
+  const railIncidents = Array.isArray(crossings) ? crossings : [];
+  const txdotItems = typeof futureTxdotIncidents === "function" ? futureTxdotIncidents() : [];
+  const samplePool = [...communityHazards, ...railIncidents, ...(Array.isArray(txdotItems) ? txdotItems : [])];
+  const states = samplePool.map((incident) => getGridlyIncidentVisualState(incident));
+  const countsBy = (keyFn) => states.reduce((acc, item) => {
+    const key = String(keyFn(item));
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+  return {
+    sampled: samplePool.length,
+    countsByCategory: countsBy((item) => item.category),
+    countsBySeverity: countsBy((item) => item.severity),
+    countsByMarkerStyle: countsBy((item) => item.markerStyle),
+    countsBySource: countsBy((item) => item.source),
+    countsByShouldRender: countsBy((item) => item.shouldRender),
+    responderSensitiveSuppressed: states.filter((item) => item.responderSensitive && !item.shouldRender).length,
+    samples: states.slice(0, 10)
+  };
+};
+
 const LOCATION_DEFAULTS = {
   country: "USA",
   state: "Texas",
