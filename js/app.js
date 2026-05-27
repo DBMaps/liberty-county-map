@@ -990,8 +990,34 @@ window.gridlyMarkerDensityAudit = function gridlyMarkerDensityAudit() {
 
 window.gridlyRouteImpactAudit = function gridlyRouteImpactAudit() {
   try {
-    const routeLatLngs = typeof getRoutePolylineLatLngs === "function" ? getRoutePolylineLatLngs() : [];
-    const activeRoutePresent = Array.isArray(routeLatLngs) && routeLatLngs.length >= 2;
+    const getGridlyActiveRouteCoordinatesForAudit = window.getGridlyActiveRouteCoordinatesForAudit = window.getGridlyActiveRouteCoordinatesForAudit || function getGridlyActiveRouteCoordinatesForAudit() {
+      const routeDetectionNotes = [];
+      try {
+        if (typeof getRoutePolylineLatLngs !== "function") {
+          routeDetectionNotes.push("helper unavailable");
+          return { activeRoutePresent: false, activeRouteCoordinateCount: 0, routeCoordinates: [], routeSourceUsed: "getRoutePolylineLatLngs_unavailable", routeDetectionNotes };
+        }
+        const routeCoordinates = getRoutePolylineLatLngs();
+        if (!Array.isArray(routeCoordinates)) {
+          routeDetectionNotes.push("route coordinate extraction failed");
+          return { activeRoutePresent: false, activeRouteCoordinateCount: 0, routeCoordinates: [], routeSourceUsed: "getRoutePolylineLatLngs_invalid", routeDetectionNotes };
+        }
+        const coordinateCount = routeCoordinates.length;
+        if (coordinateCount >= 2) {
+          routeDetectionNotes.push("route coordinates found");
+          return { activeRoutePresent: true, activeRouteCoordinateCount: coordinateCount, routeCoordinates, routeSourceUsed: "getRoutePolylineLatLngs", routeDetectionNotes };
+        }
+        routeDetectionNotes.push("no route layer");
+        return { activeRoutePresent: false, activeRouteCoordinateCount: coordinateCount, routeCoordinates, routeSourceUsed: "getRoutePolylineLatLngs", routeDetectionNotes };
+      } catch (error) {
+        routeDetectionNotes.push("route coordinate extraction failed");
+        routeDetectionNotes.push(`route helper error: ${error?.message || "unknown error"}`);
+        return { activeRoutePresent: false, activeRouteCoordinateCount: 0, routeCoordinates: [], routeSourceUsed: "getRoutePolylineLatLngs_error", routeDetectionNotes };
+      }
+    };
+    const routeGeometryAudit = getGridlyActiveRouteCoordinatesForAudit();
+    const routeLatLngs = Array.isArray(routeGeometryAudit?.routeCoordinates) ? routeGeometryAudit.routeCoordinates : [];
+    const activeRoutePresent = Boolean(routeGeometryAudit?.activeRoutePresent);
     const getIncidentCoordinate = (incident) => {
       const lat = incident?.lat ?? incident?.latitude ?? incident?.rawLat;
       const lng = incident?.lng ?? incident?.lon ?? incident?.longitude ?? incident?.rawLng;
@@ -1107,7 +1133,7 @@ window.gridlyRouteImpactAudit = function gridlyRouteImpactAudit() {
         : (activeRoutePresent ? "route_geometry_or_threshold_review" : "upstream_rail_source_reconciliation"));
     return {
       activeRoutePresent,
-      activeRouteCoordinateCount: Array.isArray(routeLatLngs) ? routeLatLngs.length : 0,
+      activeRouteCoordinateCount: Number(routeGeometryAudit?.activeRouteCoordinateCount || 0),
       railSourceCandidatesChecked,
       railSourceUsed: markerSourceUsed,
       railCandidateCount: railCandidateIncidents.length,
@@ -1221,10 +1247,37 @@ window.gridlyRouteImpactVisualAudit = function gridlyRouteImpactVisualAudit() {
 
 window.gridlyRouteConsequenceAudit = function gridlyRouteConsequenceAudit() {
   try {
-    const routeLatLngs = typeof getRoutePolylineLatLngs === "function" ? getRoutePolylineLatLngs() : [];
-    const activeRoutePresent = Array.isArray(routeLatLngs) && routeLatLngs.length >= 2;
+    const getGridlyActiveRouteCoordinatesForAudit = window.getGridlyActiveRouteCoordinatesForAudit || function getGridlyActiveRouteCoordinatesForAudit() {
+      const routeDetectionNotes = [];
+      try {
+        if (typeof getRoutePolylineLatLngs !== "function") {
+          routeDetectionNotes.push("helper unavailable");
+          return { activeRoutePresent: false, activeRouteCoordinateCount: 0, routeCoordinates: [], routeSourceUsed: "getRoutePolylineLatLngs_unavailable", routeDetectionNotes };
+        }
+        const routeCoordinates = getRoutePolylineLatLngs();
+        if (!Array.isArray(routeCoordinates)) {
+          routeDetectionNotes.push("route coordinate extraction failed");
+          return { activeRoutePresent: false, activeRouteCoordinateCount: 0, routeCoordinates: [], routeSourceUsed: "getRoutePolylineLatLngs_invalid", routeDetectionNotes };
+        }
+        const coordinateCount = routeCoordinates.length;
+        if (coordinateCount >= 2) {
+          routeDetectionNotes.push("route coordinates found");
+          return { activeRoutePresent: true, activeRouteCoordinateCount: coordinateCount, routeCoordinates, routeSourceUsed: "getRoutePolylineLatLngs", routeDetectionNotes };
+        }
+        routeDetectionNotes.push("no route layer");
+        return { activeRoutePresent: false, activeRouteCoordinateCount: coordinateCount, routeCoordinates, routeSourceUsed: "getRoutePolylineLatLngs", routeDetectionNotes };
+      } catch (error) {
+        routeDetectionNotes.push("route coordinate extraction failed");
+        routeDetectionNotes.push(`route helper error: ${error?.message || "unknown error"}`);
+        return { activeRoutePresent: false, activeRouteCoordinateCount: 0, routeCoordinates: [], routeSourceUsed: "getRoutePolylineLatLngs_error", routeDetectionNotes };
+      }
+    };
+    const routeGeometryAudit = getGridlyActiveRouteCoordinatesForAudit();
+    const activeRoutePresent = Boolean(routeGeometryAudit?.activeRoutePresent);
     const routeDetectionNotes = [
-      "route geometry detection reuses getRoutePolylineLatLngs from route-impact audit.",
+      "route geometry detection reuses shared route audit helper.",
+      `routeSourceUsed=${routeGeometryAudit?.routeSourceUsed || "unknown"}`,
+      ...(Array.isArray(routeGeometryAudit?.routeDetectionNotes) ? routeGeometryAudit.routeDetectionNotes : []),
       `routeWatchActivated=${Boolean(routeWatchActivated)}`,
       `routeHazardGeometryPresent=${Boolean(routeHazard?.activeRoute?.geometry)}`
     ];
@@ -1276,7 +1329,7 @@ window.gridlyRouteConsequenceAudit = function gridlyRouteConsequenceAudit() {
     return {
       activeRoutePresent,
       routeSourceUsed,
-      activeRouteCoordinateCount: Array.isArray(routeLatLngs) ? routeLatLngs.length : 0,
+      activeRouteCoordinateCount: Number(routeGeometryAudit?.activeRouteCoordinateCount || 0),
       routeDetectionNotes,
       evaluatedIncidentCount: evaluated.length,
       routeRelevantCount,
