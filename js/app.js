@@ -7911,10 +7911,16 @@ function renderCrossings(reason = "unspecified", options = {}) {
     const clusterCount = smartClusterState.leadCounts.get(String(crossing.id)) || 0;
     if (smartClusterState.hiddenIds.has(String(crossing.id))) return;
     const markerMinutes = hasActiveIssue && report?.minutesAgo <= REPORT_EXPIRATION_MINUTES ? `${report.minutesAgo}m ago` : "";
+    const railMarkerStyle = isImpactedOnRoute
+      ? "rail_route_impact"
+      : markerStateClass === "state-blocked"
+        ? "rail_blocked"
+        : "rail_clear";
+    const railMarkerVisualClass = getGridlyMarkerVisualConfig(railMarkerStyle).className;
 
     const icon = L.divIcon({
-      className: "",
-      html: `<div class="gridly-marker-wrap">
+      className: `gridly-rail-marker ${sanitizeText(railMarkerVisualClass)}`,
+      html: `<div class="gridly-marker-wrap ${sanitizeText(railMarkerVisualClass)}" data-visual-style="${sanitizeText(railMarkerStyle)}">
         <div class="gridly-marker ${markerStateClass} ${hasActiveIssue ? "alert" : ""} ${isCleared ? "cleared" : ""} ${isNearby ? "nearby" : ""} ${clusterCount > 1 ? "cluster-lead" : ""}">${markerLabel}</div>
         ${clusterCount > 1 ? `<span class="gridly-marker-cluster-badge">${clusterCount}</span>` : ""}
         ${markerMinutes ? `<span class="gridly-marker-minutes">${markerMinutes}</span>` : ""}
