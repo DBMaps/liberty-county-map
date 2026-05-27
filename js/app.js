@@ -835,8 +835,21 @@ window.gridlyRouteImpactAudit = function gridlyRouteImpactAudit() {
     const primaryCoordinateCount = primaryIncidents.filter(hasFiniteCoordinates).length;
     const fallbackCoordinateCount = fallbackHazards.filter(hasFiniteCoordinates).length;
     const shouldUseFallbackHazards = primaryCoordinateCount === 0 && fallbackCoordinateCount > 0;
-    const incidents = shouldUseFallbackHazards ? fallbackHazards : primaryIncidents;
-    const railCandidateIncidents = (Array.isArray(incidents) ? incidents : []).filter((incident) => {
+    const markerAuditSource = lastMarkerAuditDebug?.lastMarkerRenderResult?.selectedSourceName;
+    const markerSourceMap = {
+      unifiedIncidents: primaryIncidents,
+      activeHazards_fallback: fallbackHazards
+    };
+    const fallbackSourceName = shouldUseFallbackHazards ? "activeHazards_fallback" : "unifiedIncidents";
+    const markerSourceUsed = Array.isArray(markerSourceMap[markerAuditSource]) ? markerAuditSource : fallbackSourceName;
+    const incidents = Array.isArray(markerSourceMap[markerSourceUsed]) ? markerSourceMap[markerSourceUsed] : [];
+    const railSourceCandidatesChecked = [
+      `lastMarkerAuditDebug=${markerAuditSource || "none"}`,
+      `fallbackSelection=${fallbackSourceName}`,
+      `primaryCoordinateCount=${primaryCoordinateCount}`,
+      `fallbackCoordinateCount=${fallbackCoordinateCount}`
+    ];
+    const railCandidateIncidents = incidents.filter((incident) => {
       const visualState = getGridlyIncidentVisualState(incident);
       return /^rail_/.test(String(visualState?.markerStyle || ""));
     });
@@ -866,17 +879,21 @@ window.gridlyRouteImpactAudit = function gridlyRouteImpactAudit() {
       ? document.querySelectorAll("#map .leaflet-marker-pane .gridly-marker-rail-clear, #map .leaflet-marker-pane .gridly-marker-rail-blocked, #map .leaflet-marker-pane .gridly-marker-rail-route-impact, #map .leaflet-marker-pane [data-visual-style=\"rail_clear\"], #map .leaflet-marker-pane [data-visual-style=\"rail_blocked\"], #map .leaflet-marker-pane [data-visual-style=\"rail_route_impact\"]").length
       : 0;
     const railDiscoveryNotes = [
-      `markerSourceUsed=${shouldUseFallbackHazards ? "activeHazards_fallback" : "unifiedIncidents"}`,
+      `markerSourceUsed=${markerSourceUsed}`,
       `primaryIncidentCount=${primaryIncidents.length}`,
       `fallbackHazardCount=${fallbackHazards.length}`,
       `primaryCoordinateCount=${primaryCoordinateCount}`,
       `fallbackCoordinateCount=${fallbackCoordinateCount}`,
-      "rail candidate filtering is based on markerStyle rail_* to match rendered rail marker logic."
+      "rail candidate filtering is based on markerStyle rail_* to match rendered rail marker logic.",
+      railCandidateIncidents.length === 0 && renderedRailNodeCount > 0
+        ? "DOM rail markers detected but selected data source has zero rail candidates; marker DOM may be stale or source data was replaced after render."
+        : "Data-source rail candidates align with rendered marker expectations."
     ];
     return {
       activeRoutePresent,
       activeRouteCoordinateCount: Array.isArray(routeLatLngs) ? routeLatLngs.length : 0,
-      railSourceUsed: shouldUseFallbackHazards ? "activeHazards_fallback" : "unifiedIncidents",
+      railSourceCandidatesChecked,
+      railSourceUsed: markerSourceUsed,
       railCandidateCount: railCandidateIncidents.length,
       railVisibleCount: railIncidents.length,
       railFilteredCount: Math.max(0, railCandidateIncidents.length - railIncidents.length),
@@ -886,6 +903,7 @@ window.gridlyRouteImpactAudit = function gridlyRouteImpactAudit() {
       nonImpactedSamples: railIncidents.filter((incident) => !doesGridlyIncidentImpactActiveRoute(incident)).slice(0, 8).map(toSample),
       markerStyleBreakdown,
       railMarkerDomCount: renderedRailNodeCount,
+      railDomOnlyWarning: railCandidateIncidents.length === 0 && renderedRailNodeCount > 0,
       railRouteImpactMarkersRendered: renderedRouteImpactCount > 0,
       routeImpactHierarchyRank: Number(routeImpactHierarchy?.priorityRank ?? -1),
       safeFallbacksUsed: Number(gridlyRouteImpactAuditState.safeFallbacksUsed || 0),
@@ -896,6 +914,7 @@ window.gridlyRouteImpactAudit = function gridlyRouteImpactAudit() {
     return {
       activeRoutePresent: false,
       activeRouteCoordinateCount: 0,
+      railSourceCandidatesChecked: [],
       railSourceUsed: "",
       railCandidateCount: 0,
       railVisibleCount: 0,
@@ -906,6 +925,7 @@ window.gridlyRouteImpactAudit = function gridlyRouteImpactAudit() {
       nonImpactedSamples: [],
       markerStyleBreakdown: {},
       railMarkerDomCount: 0,
+      railDomOnlyWarning: false,
       railRouteImpactMarkersRendered: false,
       routeImpactHierarchyRank: -1,
       safeFallbacksUsed: Number(gridlyRouteImpactAuditState.safeFallbacksUsed || 0),
