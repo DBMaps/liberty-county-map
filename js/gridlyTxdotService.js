@@ -9,8 +9,14 @@
     : [];
   globalScope.gridlyExternalRoadConditions = externalStore;
 
-  let hasFetched = false;
-  let lastFetchOk = null;
+  const txdotState = (globalScope.gridlyTxdotState && typeof globalScope.gridlyTxdotState === "object")
+    ? globalScope.gridlyTxdotState
+    : {};
+  txdotState.hasFetched = false;
+  txdotState.lastFetchOk = null;
+  txdotState.lastFetchTime = null;
+  txdotState.lastError = null;
+  globalScope.gridlyTxdotState = txdotState;
 
   function toSafeString(value) {
     return typeof value === "string" ? value.trim() : "";
@@ -63,32 +69,41 @@
   async function fetchRoadConditions() {
     const endpoint = TXDOT_DEFAULT_ENDPOINT;
 
-    hasFetched = true;
+    txdotState.hasFetched = true;
+    txdotState.lastFetchTime = new Date().toISOString();
+    txdotState.lastError = null;
 
     if (!endpoint) {
-      lastFetchOk = false;
+      txdotState.lastFetchOk = false;
+      txdotState.lastError = "TxDOT endpoint is not configured";
       externalStore.length = 0;
       return [];
     }
 
-    const response = await fetch(endpoint);
-    if (!response.ok) {
-      lastFetchOk = false;
-      throw new Error(`TxDOT fetch failed: ${response.status}`);
+    try {
+      const response = await fetch(endpoint);
+      if (!response.ok) {
+        throw new Error(`TxDOT fetch failed: ${response.status}`);
+      }
+
+      const payload = await response.json();
+      const rawRecords = Array.isArray(payload)
+        ? payload
+        : Array.isArray(payload?.incidents)
+          ? payload.incidents
+          : [];
+
+      const normalized = rawRecords.map(normalizeIncident).filter(Boolean);
+      externalStore.length = 0;
+      externalStore.push(...normalized);
+      txdotState.lastFetchOk = true;
+      return normalized;
+    } catch (error) {
+      txdotState.lastFetchOk = false;
+      txdotState.lastError = error instanceof Error ? error.message : String(error);
+      externalStore.length = 0;
+      return [];
     }
-
-    const payload = await response.json();
-    const rawRecords = Array.isArray(payload)
-      ? payload
-      : Array.isArray(payload?.incidents)
-        ? payload.incidents
-        : [];
-
-    const normalized = rawRecords.map(normalizeIncident).filter(Boolean);
-    externalStore.length = 0;
-    externalStore.push(...normalized);
-    lastFetchOk = true;
-    return normalized;
   }
 
   function getRoadConditions() {
@@ -113,8 +128,10 @@
       apiAvailable,
       loadedCount: externalStore.length,
       sampleRecords: externalStore.slice(0, 3),
-      hasFetched,
-      lastFetchOk,
+      hasFetched: !!txdotState.hasFetched,
+      lastFetchOk: txdotState.lastFetchOk,
+      lastFetchTime: txdotState.lastFetchTime,
+      lastError: txdotState.lastError,
       sourceHealthy: serviceLoaded && apiAvailable
     };
   };
