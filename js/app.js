@@ -438,9 +438,9 @@ window.gridlyMarkerVisualAudit = function gridlyMarkerVisualAudit() {
   const hasDocument = typeof document !== "undefined" && Boolean(document?.querySelectorAll);
   const railClassElements = hasDocument
     ? {
-        rail_clear: document.querySelectorAll(".gridly-marker-rail-clear").length,
-        rail_blocked: document.querySelectorAll(".gridly-marker-rail-blocked").length,
-        rail_route_impact: document.querySelectorAll(".gridly-marker-rail-route-impact").length
+        rail_clear: document.querySelectorAll("#map .leaflet-marker-pane .gridly-marker-rail-clear, #map .leaflet-marker-pane [data-visual-style=\"rail_clear\"]").length,
+        rail_blocked: document.querySelectorAll("#map .leaflet-marker-pane .gridly-marker-rail-blocked, #map .leaflet-marker-pane [data-visual-style=\"rail_blocked\"]").length,
+        rail_route_impact: document.querySelectorAll("#map .leaflet-marker-pane .gridly-marker-rail-route-impact, #map .leaflet-marker-pane [data-visual-style=\"rail_route_impact\"]").length
       }
     : {
         rail_clear: 0,
@@ -449,10 +449,10 @@ window.gridlyMarkerVisualAudit = function gridlyMarkerVisualAudit() {
       };
   const hazardClassElements = hasDocument
     ? {
-        hazard_low: document.querySelectorAll(".gridly-marker-hazard-low").length,
-        hazard_moderate: document.querySelectorAll(".gridly-marker-hazard-moderate").length,
-        hazard_high: document.querySelectorAll(".gridly-marker-hazard-high").length,
-        hazard_critical: document.querySelectorAll(".gridly-marker-hazard-critical").length
+        hazard_low: document.querySelectorAll("#map .leaflet-marker-pane .gridly-marker-hazard-low, #map .leaflet-marker-pane [data-visual-style=\"hazard_low\"]").length,
+        hazard_moderate: document.querySelectorAll("#map .leaflet-marker-pane .gridly-marker-hazard-moderate, #map .leaflet-marker-pane [data-visual-style=\"hazard_moderate\"]").length,
+        hazard_high: document.querySelectorAll("#map .leaflet-marker-pane .gridly-marker-hazard-high, #map .leaflet-marker-pane [data-visual-style=\"hazard_high\"]").length,
+        hazard_critical: document.querySelectorAll("#map .leaflet-marker-pane .gridly-marker-hazard-critical, #map .leaflet-marker-pane [data-visual-style=\"hazard_critical\"]").length
       }
     : {
         hazard_low: 0,
@@ -8810,15 +8810,12 @@ function renderUnifiedIncidents(reason = "auto") {
     const visualState = getGridlyIncidentVisualState(incident);
     const markerVisual = getGridlyMarkerVisualConfig(visualState.markerStyle);
     const markerVisualClass = markerVisual.className;
-    const isCommunityHazardMarker = visualState?.source === "community";
     const markerVisualClassSafe = sanitizeText(markerVisualClass);
-    const hazardVisualClassSegment = isCommunityHazardMarker ? ` ${markerVisualClassSafe}` : "";
-    const hazardVisualMetadataAttributes = isCommunityHazardMarker
-      ? `
+    const hazardVisualClassSegment = markerVisualClassSafe ? ` ${markerVisualClassSafe}` : "";
+    const hazardVisualMetadataAttributes = `
           data-visual-style="${sanitizeText(visualState.markerStyle)}"
           data-visual-priority="${sanitizeText(String(markerVisual.priority))}"
-        `
-      : "";
+        `;
     const category = getHazardCategory(incident.report_type || incident.type || "other_hazard");
     const markerVariantClass = `marker-${category}`;
     const confidenceClass = String(incident.confidence || "").toLowerCase().includes("community") ? "confidence-community" : "confidence-high";
@@ -8826,7 +8823,7 @@ function renderUnifiedIncidents(reason = "auto") {
     markerTypesRendered.add(markerVariantClass);
     markerTypesRendered.add(getMapSeverityClass(incident));
     markerTypesRendered.add(confidenceClass);
-    if (isCommunityHazardMarker) markerTypesRendered.add(markerVisualClass);
+    markerTypesRendered.add(markerVisualClass);
     activeVisualStates.add(ageClass);
     if (routeRelevanceClass) activeVisualStates.add(routeRelevanceClass);
     if (routeRelevanceClass === "route-relevant") {
@@ -8836,7 +8833,7 @@ function renderUnifiedIncidents(reason = "auto") {
 
     const markerState = incident?.status === "cleared" || incident?.report_type === "hazard_cleared" ? "cleared" : "active";
     const icon = L.divIcon({
-      className: "",
+      className: markerVisualClassSafe,
       html: `
         <div class="gridly-hazard-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass} ${proximityClass} ${routeRelevanceClass} ${sanitizeText(markerVariantClass)} ${sanitizeText(confidenceClass)}${hazardVisualClassSegment}"
           data-category="${sanitizeText(category)}"
