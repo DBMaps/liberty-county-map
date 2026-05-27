@@ -273,13 +273,13 @@
     let delayedEvents = 0;
     let detourEvents = 0;
 
-    for (const record of records) {
-      const condition = toSafeString(record?.type) || "unknown";
-      const countyNum = toSafeString(record?.countyNum) || "unknown";
-      const direction = toSafeString(record?.direction) || "unknown";
-      const roadName = toSafeString(record?.routeNameDisplay)
-        || toSafeString(record?.routeName)
-        || toSafeString(record?.roadName)
+    for (const event of records) {
+      const condition = toSafeString(event?.type) || "unknown";
+      const countyNum = toSafeString(event?.countyNum) || "unknown";
+      const direction = toSafeString(event?.direction) || "unknown";
+      const roadName = toSafeString(event?.routeNameDisplay)
+        || toSafeString(event?.routeName)
+        || toSafeString(event?.roadName)
         || "unknown";
 
       conditionCounts[condition] = (conditionCounts[condition] || 0) + 1;
@@ -289,8 +289,8 @@
       roadCounts.set(roadName, (roadCounts.get(roadName) || 0) + 1);
       conditionCountMap.set(condition, (conditionCountMap.get(condition) || 0) + 1);
 
-      if (isFlagged(record?.delayFlag)) delayedEvents += 1;
-      if (isFlagged(record?.detourFlag)) detourEvents += 1;
+      if (isFlagged(event?.delayFlag)) delayedEvents += 1;
+      if (isFlagged(event?.detourFlag)) detourEvents += 1;
     }
 
     const libertyCountyEvents = records.filter((record) => Number(record?.countyNum) === 146);
