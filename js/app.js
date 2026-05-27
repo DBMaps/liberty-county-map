@@ -22298,6 +22298,19 @@ window.gridlyDirectionConfidenceAudit = function gridlyDirectionConfidenceAudit(
     const sourceOwner = enrichedIncident
       ? "getAlertsSurfaceSnapshot().alerts[].raw (post-V160/V163 enriched)"
       : "getActiveUnifiedIncidents() fallback";
+    console.debug("[V169.5 ROAD AUDIT RESOLVER RESULT]", {
+      incidentId,
+      type: directionOwnerIncident?.type,
+      selectedRoadName,
+      availableRoadFields,
+      directionOwnerKeys: Object.keys(directionOwnerIncident || {}),
+      directionOwnerRoadFields: {
+        primaryRoad: directionOwnerIncident?.primaryRoad,
+        roadName: directionOwnerIncident?.roadName,
+        referenceRoadA: directionOwnerIncident?.referenceRoadA,
+        referenceRoadB: directionOwnerIncident?.referenceRoadB
+      }
+    });
     console.log("[V165.5 DIRECTION OWNER FIX]", {
       incidentId: confidence.incidentId || incidentId || "",
       isEnriched: Boolean(enrichedIncident),
