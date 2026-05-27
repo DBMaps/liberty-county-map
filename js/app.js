@@ -1123,7 +1123,7 @@ window.gridlyRouteImpactVisualAudit = function gridlyRouteImpactVisualAudit() {
     const nodes = typeof document !== "undefined"
       ? Array.from(document.querySelectorAll("#map .leaflet-marker-pane .gridly-hazard-marker"))
       : [];
-    const routeImpactNodes = nodes.filter((node) => String(node.dataset?.visualStyle || "") === "rail_route_impact" || node.classList.contains("gridly-marker-rail-route-impact"));
+    const routeImpactNodes = nodes.filter((node) => String(node.dataset?.visualStyle || "") === "rail_route_impact" || node.dataset?.gridlyRouteImpact === "true" || node.classList.contains("gridly-marker-rail-route-impact"));
     const blockedRailNodes = nodes.filter((node) => String(node.dataset?.visualStyle || "") === "rail_blocked" || node.classList.contains("gridly-marker-rail-blocked"));
     const seenByIncidentId = new Set();
     let duplicateMarkerCount = 0;
@@ -1160,6 +1160,118 @@ window.gridlyRouteImpactVisualAudit = function gridlyRouteImpactVisualAudit() {
       notes: [`Route impact visual audit fallback: ${error?.message || "unknown error"}`]
     };
   }
+};
+
+window.gridlyApplyRailRouteImpactDomBridge = function gridlyApplyRailRouteImpactDomBridge() {
+  const summary = {
+    activeRoutePresent: false,
+    domBridgeAvailable: typeof window.gridlyRailMarkerSourceTrace === "function" && typeof doesGridlyIncidentImpactActiveRoute === "function",
+    evaluatedRailDomCount: 0,
+    escalatedDomCount: 0,
+    deEscalatedDomCount: 0,
+    skippedDomCount: 0,
+    escalatedSamples: [],
+    notes: ["temporary_visual_escalation_only"],
+    warning: "temporary_dom_visual_bridge"
+  };
+  if (!summary.domBridgeAvailable || typeof document === "undefined") {
+    return summary;
+  }
+  const routeLatLngs = typeof getRoutePolylineLatLngs === "function" ? getRoutePolylineLatLngs() : [];
+  summary.activeRoutePresent = Array.isArray(routeLatLngs) && routeLatLngs.length >= 2;
+  if (!summary.activeRoutePresent) {
+    summary.notes.push("no_active_route_detected");
+  }
+  const trace = window.gridlyRailMarkerSourceTrace();
+  const railSamples = Array.isArray(trace?.railDomSamples) ? trace.railDomSamples : [];
+  summary.evaluatedRailDomCount = railSamples.length;
+  const markerPane = document.querySelector("#map .leaflet-marker-pane");
+  const railNodes = markerPane
+    ? Array.from(markerPane.querySelectorAll(".gridly-marker-rail-clear, .gridly-marker-rail-blocked, .gridly-marker-rail-route-impact, [data-visual-style=\"rail_clear\"], [data-visual-style=\"rail_blocked\"], [data-visual-style=\"rail_route_impact\"], [class*='rail']"))
+    : [];
+  const uniqueRailNodes = Array.from(new Set(railNodes));
+  const keyFor = (sample = {}) => {
+    const lat = Number(sample?.coordinates?.lat);
+    const lng = Number(sample?.coordinates?.lng);
+    return Number.isFinite(lat) && Number.isFinite(lng) ? `${lat.toFixed(6)},${lng.toFixed(6)}` : "";
+  };
+  const sampleByKey = railSamples.reduce((acc, sample) => {
+    const key = keyFor(sample);
+    if (!key || acc[key]) return acc;
+    acc[key] = sample;
+    return acc;
+  }, {});
+  const removeLowPriorityRailClasses = (el) => {
+    el.classList.remove("gridly-marker-rail-clear", "gridly-marker-rail-blocked", "gridly-marker-priority-passive");
+  };
+  const applyEscalation = (el, sample = {}) => {
+    removeLowPriorityRailClasses(el);
+    el.classList.add("gridly-marker-rail-route-impact", "gridly-marker-priority-route-impact");
+    el.dataset.visualStyle = "rail_route_impact";
+    el.dataset.gridlyMarkerPriority = "route-impact";
+    el.dataset.gridlyRouteImpact = "true";
+    if (summary.escalatedSamples.length < 8) {
+      summary.escalatedSamples.push({
+        crossingId: sample?.crossingDetected?.id || "",
+        crossingName: sample?.crossingDetected?.name || "",
+        lat: Number(sample?.coordinates?.lat),
+        lng: Number(sample?.coordinates?.lng)
+      });
+    }
+  };
+  const clearEscalation = (el) => {
+    const wasEscalated = el.classList.contains("gridly-marker-rail-route-impact")
+      || el.classList.contains("gridly-marker-priority-route-impact")
+      || String(el.dataset?.visualStyle || "") === "rail_route_impact"
+      || String(el.dataset?.gridlyRouteImpact || "") === "true";
+    el.classList.remove("gridly-marker-rail-route-impact", "gridly-marker-priority-route-impact");
+    delete el.dataset.gridlyRouteImpact;
+    if (String(el.dataset?.visualStyle || "") === "rail_route_impact") {
+      el.dataset.visualStyle = "rail_blocked";
+    }
+    if (String(el.dataset?.gridlyMarkerPriority || "") === "route-impact") {
+      el.dataset.gridlyMarkerPriority = "passive";
+    }
+    if (wasEscalated) summary.deEscalatedDomCount += 1;
+  };
+  uniqueRailNodes.forEach((el) => {
+    const lat = Number(el.dataset?.lat ?? el.dataset?.latitude);
+    const lng = Number(el.dataset?.lng ?? el.dataset?.lon ?? el.dataset?.longitude);
+    const key = Number.isFinite(lat) && Number.isFinite(lng) ? `${lat.toFixed(6)},${lng.toFixed(6)}` : "";
+    const sample = sampleByKey[key];
+    if (!sample) {
+      summary.skippedDomCount += 1;
+      return;
+    }
+    const candidate = { lat: sample.coordinates.lat, lng: sample.coordinates.lng, source: "rail_dom_trace", markerStyle: sample.visualStyleDetected || "rail_clear" };
+    const impacted = summary.activeRoutePresent && doesGridlyIncidentImpactActiveRoute(candidate);
+    if (impacted) {
+      applyEscalation(el, sample);
+      summary.escalatedDomCount += 1;
+    } else {
+      clearEscalation(el);
+    }
+  });
+  window.__gridlyRailRouteImpactDomBridgeLastAudit = summary;
+  summary.notes.push("no_source_object_mutation");
+  summary.notes.push("no_new_markers_created");
+  return summary;
+};
+
+window.gridlyRailRouteImpactDomBridgeAudit = function gridlyRailRouteImpactDomBridgeAudit() {
+  const last = window.__gridlyRailRouteImpactDomBridgeLastAudit;
+  if (last && typeof last === "object") return { ...last, domBridgeAvailable: true, warning: "temporary_dom_visual_bridge" };
+  return {
+    activeRoutePresent: false,
+    domBridgeAvailable: typeof window.gridlyApplyRailRouteImpactDomBridge === "function",
+    evaluatedRailDomCount: 0,
+    escalatedDomCount: 0,
+    deEscalatedDomCount: 0,
+    skippedDomCount: 0,
+    escalatedSamples: [],
+    notes: ["bridge_not_run_yet"],
+    warning: "temporary_dom_visual_bridge"
+  };
 };
 
 const LOCATION_DEFAULTS = {
