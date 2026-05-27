@@ -64,6 +64,27 @@
     return "";
   }
 
+
+  function toRouteDisplayName(routeNameRaw) {
+    const raw = toSafeString(routeNameRaw).toUpperCase();
+    if (!raw) return "";
+
+    const match = raw.match(/^(IH|US|SH|FM|RM|CR)0*(\d+)$/);
+    if (!match) return toSafeString(routeNameRaw);
+
+    const [, prefix, numberPart] = match;
+    const routeNumber = String(Number(numberPart));
+
+    if (prefix === "IH") return `I-${routeNumber}`;
+    if (prefix === "US") return `US ${routeNumber}`;
+    if (prefix === "SH") return `TX ${routeNumber}`;
+    if (prefix === "FM") return `FM ${routeNumber}`;
+    if (prefix === "RM") return `RM ${routeNumber}`;
+    if (prefix === "CR") return `CR ${routeNumber}`;
+
+    return toSafeString(routeNameRaw);
+  }
+
   function midpointFromLineString(featureGeometry) {
     if (!featureGeometry || typeof featureGeometry !== "object") return { latitude: null, longitude: null };
     if (featureGeometry.type !== "LineString") return { latitude: null, longitude: null };
@@ -84,9 +105,11 @@
     const midpoint = midpointFromLineString(featureGeometry);
     const longitude = midpoint.longitude;
     const latitude = midpoint.latitude;
-    const roadName = toSafeString(rawIncident.roadway) || toSafeString(rawIncident.route_name);
+    const routeNameRaw = toSafeString(rawIncident.route_name);
+    const routeNameDisplay = toRouteDisplayName(routeNameRaw);
+    const roadName = toSafeString(rawIncident.roadway) || routeNameRaw;
     const condition = toSafeString(rawIncident.condition) || "unknown";
-    const titleRoadName = roadName || "unknown road";
+    const titleRoadName = routeNameDisplay || roadName || "unknown road";
     const hasCoordinates = Number.isFinite(latitude) && Number.isFinite(longitude);
     const hasRoadName = !!roadName;
     const confidence = hasRoadName && hasCoordinates
@@ -101,7 +124,9 @@
       latitude,
       longitude,
       roadName,
-      routeName: toSafeString(rawIncident.route_name),
+      routeName: routeNameRaw,
+      routeNameRaw,
+      routeNameDisplay,
       direction: normalizeDirection(rawIncident.travel_direction),
       description: toSafeString(rawIncident.description),
       fromLimit: toSafeString(rawIncident.from_limit),
