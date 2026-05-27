@@ -45,7 +45,12 @@
 
   function normalizeDirection(value) {
     const normalized = toSafeString(value).toUpperCase();
-    if (["NB", "SB", "EB", "WB"].includes(normalized)) return normalized;
+    if (normalized === "N" || normalized === "NB") return "NB";
+    if (normalized === "S" || normalized === "SB") return "SB";
+    if (normalized === "E" || normalized === "EB") return "EB";
+    if (normalized === "W" || normalized === "WB") return "WB";
+    if (normalized === "NS") return "NB/SB";
+    if (normalized === "EW") return "EB/WB";
     return "unknown";
   }
 
@@ -59,32 +64,54 @@
     return "";
   }
 
+  function midpointFromLineString(featureGeometry) {
+    if (!featureGeometry || typeof featureGeometry !== "object") return { latitude: null, longitude: null };
+    if (featureGeometry.type !== "LineString") return { latitude: null, longitude: null };
+
+    const coordinates = Array.isArray(featureGeometry.coordinates) ? featureGeometry.coordinates : [];
+    if (!coordinates.length) return { latitude: null, longitude: null };
+
+    const midpointIndex = Math.floor(coordinates.length / 2);
+    const midpoint = Array.isArray(coordinates[midpointIndex]) ? coordinates[midpointIndex] : [];
+    const longitude = toNumber(midpoint[0]);
+    const latitude = toNumber(midpoint[1]);
+    return { latitude, longitude };
+  }
+
   function normalizeIncident(rawIncident, featureGeometry) {
     if (!rawIncident || typeof rawIncident !== "object") return null;
 
-    const coordinates = Array.isArray(featureGeometry?.coordinates)
-      ? featureGeometry.coordinates
-      : [];
-
-    const longitude = toNumber(readRawField(rawIncident, ["longitude", "lon", "lng", "x"]))
-      ?? toNumber(coordinates[0]);
-    const latitude = toNumber(readRawField(rawIncident, ["latitude", "lat", "y"]))
-      ?? toNumber(coordinates[1]);
+    const midpoint = midpointFromLineString(featureGeometry);
+    const longitude = midpoint.longitude;
+    const latitude = midpoint.latitude;
+    const roadName = toSafeString(rawIncident.roadway) || toSafeString(rawIncident.route_name);
+    const condition = toSafeString(rawIncident.condition) || "unknown";
+    const titleRoadName = roadName || "unknown road";
+    const hasCoordinates = Number.isFinite(latitude) && Number.isFinite(longitude);
+    const hasRoadName = !!roadName;
+    const confidence = hasRoadName && hasCoordinates
+      ? 1
+      : (hasRoadName ? 0.75 : (hasCoordinates ? 0.5 : 0));
 
     return {
-      id: toSafeString(readRawField(rawIncident, ["id", "incidentId", "event_id", "eventId"])) || `txdot-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      id: toSafeString(rawIncident.GLOBALID) || `txdot-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       source: TXDOT_SOURCE_LABEL,
-      type: toSafeString(readRawField(rawIncident, ["type", "category", "event_type", "conditionType"])) || "unknown",
-      title: toSafeString(readRawField(rawIncident, ["title", "headline", "event_title", "roadCondition"])) || "TxDOT Road Condition",
+      type: condition,
+      title: `TxDOT ${condition} on ${titleRoadName}`,
       latitude,
       longitude,
-      roadName: toSafeString(readRawField(rawIncident, ["roadName", "road", "roadway", "highway", "streetName"])),
-      direction: normalizeDirection(readRawField(rawIncident, ["direction", "travel_direction", "dir"])),
-      severity: toSafeString(readRawField(rawIncident, ["severity", "priority", "impact", "advisoryLevel"])) || "unknown",
-      description: toSafeString(readRawField(rawIncident, ["description", "details", "comment", "message"])),
-      startTime: toSafeString(readRawField(rawIncident, ["startTime", "start_time", "begin_time", "reportedDate"])),
-      endTime: toSafeString(readRawField(rawIncident, ["endTime", "end_time", "expire_time", "clearDate"])),
-      confidence: toNumber(readRawField(rawIncident, ["confidence", "confidence_score", "score"]))
+      roadName,
+      routeName: toSafeString(rawIncident.route_name),
+      direction: normalizeDirection(rawIncident.travel_direction),
+      description: toSafeString(rawIncident.description),
+      fromLimit: toSafeString(rawIncident.from_limit),
+      toLimit: toSafeString(rawIncident.to_limit),
+      startTime: toSafeString(rawIncident.start_time),
+      endTime: toSafeString(rawIncident.end_time),
+      delayFlag: rawIncident.delay_flag,
+      detourFlag: rawIncident.detour_flag,
+      countyNum: rawIncident.county_num,
+      confidence
     };
   }
 
