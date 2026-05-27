@@ -2639,7 +2639,6 @@ function openAlertsSurfaceFromDock() {
     window.__gridlyLatestAlertsForRender = alertsForRender;
     window.__gridlyAlertsForRenderSample = alertsForRender.slice(0, 5);
 
-    console.log("[V155.8 ALERT RAW SAMPLE]", alertsForRender.slice(0, 3));
 
     if (alertsForRender.length > 0) {
       const esc = value => String(value ?? "")
@@ -2873,14 +2872,6 @@ function openAlertsSurfaceFromDock() {
         const candidateLabels = [];
         const rejectedCandidates = [];
         const logNormalizationDecision = (rawSecondary, normalizedSecondary, duplicateRejected, reason = "") => {
-          console.log("[V157.8C NORMALIZATION]", {
-            rawPrimary: primaryRoad,
-            rawSecondary,
-            normalizedPrimary: normalizeRoadLabel(primaryRoad) || normalizeRailSubtitleMatch(primaryRoad),
-            normalizedSecondary,
-            duplicateRejected,
-            reason
-          });
         };
         const rejectSecondaryCandidate = (value, normalized, reason, sourceFieldUsed) => {
           const rejected = { sourceFieldUsed, value, normalized, reason };
@@ -2986,14 +2977,6 @@ function openAlertsSurfaceFromDock() {
             alert?.source?.crossingRoad, alert?.source?.crossingName
           ] }
         ];
-        console.log("[V158 FRA ENRICHMENT]", {
-          id: cleanDisplayValue(alert?.id || alert?.reportId || alert?.crossingId || alert?.crossing_id),
-          crossingId: cleanDisplayValue(alert?.crossingId || alert?.crossing_id),
-          primaryRoad,
-          allCrossingFields,
-          populatedFields,
-          candidateLabels
-        });
         const secondaryMatch = secondaryCandidates
           .slice()
           .sort((a, b) => (a.qualityRank - b.qualityRank))
@@ -3006,12 +2989,6 @@ function openAlertsSurfaceFromDock() {
         const localSecondaryIsDistinct = isDistinctCrossingPart(localSecondaryLabel, primaryRoad, [], { rejectRouteAlias: true });
         const usedLocalContext = !resolvedSecondaryCrossingLabel && localSecondaryLabel && localSecondaryIsDistinct;
         const resolvedSecondaryWithLocal = usedLocalContext ? localSecondaryLabel : resolvedSecondaryCrossingLabel;
-        console.log("[V158 FRA ENRICHMENT]", {
-          crossingId,
-          primaryRoad,
-          resolvedSecondaryCrossingLabel: resolvedSecondaryWithLocal,
-          sourceUsed: secondaryMatch.sourceFieldUsed || ""
-        });
         const singleRoadCandidate = primaryRoad || firstDistinctCrossingPart || cleanDisplayValue(enriched.nearbyKnownLocation);
         const primaryRoadValidity = isInvalidPrimaryRoadLabel(primaryRoad);
         const singleRoadValidity = isGenericAreaLikeLabel(singleRoadCandidate);
@@ -3063,63 +3040,9 @@ function openAlertsSurfaceFromDock() {
           rejectedLabel = cleanDisplayValue(singleRoadCandidate);
           rejectionReason = singleRoadValidity.reason;
         }
-        console.log("[V158.2 LOCAL CROSSING CONTEXT]", {
-          crossingId,
-          primaryRoad,
-          localSecondaryLabel,
-          usedLocalContext,
-          finalHeadline
-        });
-        console.log("[V162 CROSSING LABEL QUALITY]", {
-          crossingId,
-          rawPrimaryRoad: cleanDisplayValue(primaryRoad),
-          rejectedReason: primaryRoadValidity.invalid ? primaryRoadValidity.reason : "",
-          replacementSource,
-          finalHeadline
-        });
-        console.log("[V162.1 GENERIC AREA FILTER]", {
-          crossingId,
-          rejectedLabel,
-          rejectionReason,
-          replacementSource,
-          finalHeadline
-        });
-        console.log("[V164 CROSSING FALLBACK REFERENCE]", {
-          crossingId,
-          lat: crossingLat,
-          lng: crossingLng,
-          rawPrimaryRoad: cleanDisplayValue(primaryRoad),
-          rawSecondaryRoad: cleanDisplayValue(resolvedSecondaryCrossingLabel),
-          candidateReferences: [
-            nearbyRoadCandidate,
-            nearbyReferenceRoad,
-            nearestRoadLookup,
-            nearestRoadByCrossingCoords
-          ].filter(Boolean),
-          selectedReference: cleanDisplayValue(finalHeadline.replace(/^Crossing blocked\s+(?:at|near)\s+/i, "")),
-          replacementSource,
-          finalHeadline
-        });
         const resolvedSecondaryForOutput = resolvedSecondaryWithLocal;
         const sourceFieldUsedForOutput = usedLocalContext ? "localCrossingContext" : (secondaryMatch.sourceFieldUsed || "");
         const debugId = cleanDisplayValue(alert?.id || alert?.reportId || alert?.crossingId || alert?.crossing_id);
-        console.log("[V157.8D SECONDARY QUALITY]", {
-          id: debugId,
-          candidateLabels,
-          rejectedCandidates,
-          resolvedSecondaryCrossingLabel: resolvedSecondaryForOutput,
-          selectedSecondary: resolvedSecondaryForOutput,
-          finalHeadline
-        });
-        console.log("[V157.8B CROSSING ENRICHMENT]", {
-          id: debugId,
-          primaryRoad,
-          candidateLabels,
-          normalizedRejected,
-          resolvedSecondaryCrossingLabel: resolvedSecondaryForOutput,
-          selectedSecondary: resolvedSecondaryForOutput,
-          finalHeadline
-        });
         return {
           primaryRoad,
           secondaryCrossingLabel: resolvedSecondaryForOutput,
@@ -3279,37 +3202,6 @@ function openAlertsSurfaceFromDock() {
           if (!rawOwner || typeof rawOwner !== "object") return false;
           const value = rawOwner[field];
           return typeof value === "string" ? Boolean(value.trim()) : value !== undefined && value !== null;
-        });
-        console.log("[V163.1 PRIMARY ROAD SPLIT]", {
-          originalPrimaryRoad,
-          parsedPrimaryRoad: primaryRoad,
-          parsedCrossRoad: splitPrimary.parsedCrossRoad || "",
-          referenceRoadA,
-          referenceRoadB,
-          duplicateSuppressed,
-          finalHeadline
-        });
-        console.log("[V163 ROAD SEGMENT LANGUAGE]", {
-          id: cleanDisplayValue(alert?.id || alert?.reportId || alert?.uuid || ""),
-          originalPrimaryRoad,
-          primaryRoad,
-          referenceRoadA,
-          referenceRoadB,
-          duplicateSuppressed,
-          selectedTier,
-          finalHeadline
-        });
-        console.log("[V160 ROAD HAZARD SEGMENT]", {
-          id: cleanDisplayValue(alert?.id || alert?.reportId || alert?.uuid || ""),
-          type: cleanDisplayValue(text(alert?.type) || text(alert?.hazardType) || text(alert?.category)),
-          lat: Number.isFinite(lat) ? lat : null,
-          lng: Number.isFinite(lng) ? lng : null,
-          primaryRoad,
-          localReferenceStreet,
-          referenceRoadA,
-          referenceRoadB,
-          finalHeadline,
-          finalSubtitle
         });
         return { finalHeadline, finalSubtitle, ...persistedFields };
       };
@@ -3471,26 +3363,7 @@ function openAlertsSurfaceFromDock() {
       const extra = alertsForRender.length > 3
         ? `<div class="gridly-alert-row gridly-alert-intel-card" data-gridly-alert-expand="true" style="margin-top:6px;padding:10px 12px;border:1px solid rgba(255,255,255,0.09);border-radius:11px;background:rgba(255,255,255,0.018);text-align:center;cursor:pointer;"><small style="font-size:11px;line-height:1.35;color:rgba(206,218,235,0.85);letter-spacing:0.02em;"><strong style="color:#f2f6ff;">+ ${alertsForRender.length - 3} more active reports</strong></small></div>`
         : "";
-      console.log("[V157.2 ALERT LOCATION SAMPLE]", alertsForRender.slice(0, 3).map((alert, idx) => {
-        const chosenTitle = titleFor(alert);
-        const chosenSubtitle = helperTextFor(alert);
-        const chosen = chooseBestAlertLocationContext(alert);
-        const lat = getFirstNumber(alert, ["lat", "latitude", "rawLat", "raw.lat", "source.lat"]);
-        const lng = getFirstNumber(alert, ["lng", "lon", "longitude", "rawLng", "raw.lng", "source.lng", "source.lon"]);
-        return { id: cleanDisplayValue(alert?.id || alert?.reportId || `alert-${idx}`), originalTitle: text(alert?.title), originalHeadline: text(alert?.headline), chosenTitle, chosenSubtitle, roadFieldUsed: chosen.roadFieldUsed, crossingLocationFieldUsed: chosen.crossingFieldUsed, hasCoordinates: Number.isFinite(lat) && Number.isFinite(lng) };
-      }));
 
-      console.log("[V157.8 RAIL PAIR SAMPLE]", alertsForRender.filter(isRailAlert).slice(0, 5).map((alert, idx) => {
-        const pair = resolveRailCrossingPair(alert);
-        return {
-          id: cleanDisplayValue(alert?.id || alert?.reportId || alert?.uuid || `rail-alert-${idx}`),
-          primaryRoad: pair.primaryRoad,
-          crossStreet: pair.crossStreet,
-          crossingRoad: pair.crossingRoad,
-          nearbyKnownLocation: pair.nearbyKnownLocation,
-          chosenHeadline: pair.chosenHeadline
-        };
-      }));
 
       const html = `
 <div class="gridly-alerts-active" style="padding:0 1px;">
@@ -3503,11 +3376,6 @@ function openAlertsSurfaceFromDock() {
   ${extra}
 </div>`;
 
-      console.log("[Alerts DIRECT HTML V156]", {
-        hasActiveAlerts: true,
-        count: alertsForRender.length,
-        htmlLength: html.length
-      });
 
       const opened = window.openGridlyPortraitV2Sheet("alerts", {
         title: "Alerts",
