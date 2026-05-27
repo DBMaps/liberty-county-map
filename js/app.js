@@ -338,8 +338,23 @@ window.gridlyIncidentVisualStateAudit = function gridlyIncidentVisualStateAudit(
   const communityHazards = Array.isArray(activeHazards) ? activeHazards : [];
   const railIncidents = Array.isArray(crossings) ? crossings : [];
   const txdotItems = typeof futureTxdotIncidents === "function" ? futureTxdotIncidents() : [];
-  const candidateCollections = [communityHazards, railIncidents, Array.isArray(txdotItems) ? txdotItems : []];
-  const candidateItems = candidateCollections.flatMap((collection) => Array.isArray(collection) ? collection : [collection]);
+  const txdotCollections = [
+    window.gridlyExternalRoadConditions,
+    window.gridlyTxdot?.getRoadConditions?.()
+  ].filter(Array.isArray);
+  const candidateCollections = [communityHazards, railIncidents, Array.isArray(txdotItems) ? txdotItems : [], ...txdotCollections];
+  const txdotSeen = new Set();
+  const candidateItems = candidateCollections.flatMap((collection) => Array.isArray(collection) ? collection : [collection])
+    .filter((item) => item !== null && item !== undefined)
+    .filter((item) => {
+      if (!item || typeof item !== "object") return true;
+      const externalId = item.id ?? item.incidentId ?? item.featureId ?? item.conditionId;
+      if (externalId === null || externalId === undefined || externalId === "") return true;
+      const normalizedId = String(externalId);
+      if (txdotSeen.has(normalizedId)) return false;
+      txdotSeen.add(normalizedId);
+      return true;
+    });
   const objectItems = candidateItems.filter((item) => item && typeof item === "object");
   const nonAnalyticsItems = objectItems.filter((item) => !isGridlyAnalyticsObject(item));
   const samplePool = nonAnalyticsItems.filter((item) => isGridlyIncidentLike(item));
