@@ -1007,6 +1007,47 @@ window.gridlyRouteImpactAudit = function gridlyRouteImpactAudit() {
       ? window.gridlyRailMarkerSourceTrace()
       : { railDomCount: 0, railDomSamples: [], railDomHasUsableCoordinates: false, railDomCoordinateCount: 0 };
     const railSourceMismatchWarning = railCandidateIncidents.length === 0 && Number(railDomTrace?.railDomCount || 0) > 0;
+    const shouldUseDomBridge = railCandidateIncidents.length === 0
+      && Boolean(railDomTrace?.railDomHasUsableCoordinates)
+      && activeRoutePresent;
+    const toDomBridgeIncident = (sample = {}) => {
+      const lat = Number(sample?.coordinates?.lat);
+      const lng = Number(sample?.coordinates?.lng);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+      return {
+        source: "rail_dom_trace",
+        markerStyle: sample?.visualStyleDetected || "rail_clear",
+        lat,
+        lng,
+        crossingId: sample?.crossingDetected?.id || "",
+        crossingName: sample?.crossingDetected?.name || "",
+        crossingNumber: sample?.crossingDetected?.number || ""
+      };
+    };
+    const domBridgeCandidates = shouldUseDomBridge
+      ? (Array.isArray(railDomTrace?.railDomSamples) ? railDomTrace.railDomSamples : [])
+        .map(toDomBridgeIncident)
+        .filter(Boolean)
+      : [];
+    const domBridgeImpacted = domBridgeCandidates.filter((incident) => doesGridlyIncidentImpactActiveRoute(incident));
+    const domBridgeNonImpacted = domBridgeCandidates.filter((incident) => !doesGridlyIncidentImpactActiveRoute(incident));
+    const toDomSample = (incident = {}) => ({
+      source: incident.source || "rail_dom_trace",
+      markerStyle: incident.markerStyle || "rail_clear",
+      lat: Number.isFinite(Number(incident.lat)) ? Number(incident.lat) : null,
+      lng: Number.isFinite(Number(incident.lng)) ? Number(incident.lng) : null,
+      crossingId: incident.crossingId || "",
+      crossingName: incident.crossingName || "",
+      crossingNumber: incident.crossingNumber || ""
+    });
+    const domRailEvaluatedCount = domBridgeCandidates.length;
+    const domRailImpactedCount = domBridgeImpacted.length;
+    const domBridgeUsed = shouldUseDomBridge && domRailEvaluatedCount > 0;
+    const recommendedNextFix = domBridgeUsed && domRailImpactedCount > 0
+      ? "bridge_dom_to_visual_escalation"
+      : ((railDomTrace?.railDomHasUsableCoordinates && railCandidateIncidents.length === 0)
+        ? "upstream_rail_source_reconciliation"
+        : (activeRoutePresent ? "route_geometry_or_threshold_review" : "upstream_rail_source_reconciliation"));
     return {
       activeRoutePresent,
       activeRouteCoordinateCount: Array.isArray(routeLatLngs) ? routeLatLngs.length : 0,
@@ -1018,6 +1059,13 @@ window.gridlyRouteImpactAudit = function gridlyRouteImpactAudit() {
       railDomHasUsableCoordinates: Boolean(railDomTrace?.railDomHasUsableCoordinates),
       railDomCoordinateCount: Number(railDomTrace?.railDomCoordinateCount || 0),
       railSourceMismatchWarning,
+      domBridgeUsed,
+      domRailEvaluatedCount,
+      domRailImpactedCount,
+      domRailImpactedSamples: domBridgeImpacted.slice(0, 8).map(toDomSample),
+      domRailNonImpactedSamples: domBridgeNonImpacted.slice(0, 8).map(toDomSample),
+      domBridgeWarning: domBridgeUsed ? "diagnostic_only" : "",
+      recommendedNextFix,
       railVisibleCount: railIncidents.length,
       railFilteredCount: Math.max(0, railCandidateIncidents.length - railIncidents.length),
       railIncidentCount: railIncidents.length,
@@ -1045,6 +1093,13 @@ window.gridlyRouteImpactAudit = function gridlyRouteImpactAudit() {
       railDomHasUsableCoordinates: false,
       railDomCoordinateCount: 0,
       railSourceMismatchWarning: false,
+      domBridgeUsed: false,
+      domRailEvaluatedCount: 0,
+      domRailImpactedCount: 0,
+      domRailImpactedSamples: [],
+      domRailNonImpactedSamples: [],
+      domBridgeWarning: "",
+      recommendedNextFix: "",
       railVisibleCount: 0,
       railFilteredCount: 0,
       railIncidentCount: 0,
