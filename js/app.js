@@ -446,6 +446,9 @@ function getGridlyIncidentVisualState(incident = {}) {
     consequenceLevel: routeConsequence.consequenceLevel,
     consequenceScore: routeConsequence.consequenceScore,
     consequenceReason: routeConsequence.consequenceReason,
+    confidenceWeight: routeConsequence.confidenceWeight,
+    freshnessLevel: routeConsequence.freshnessLevel,
+    freshnessReason: routeConsequence.freshnessReason,
     routeRelevant: routeConsequence.routeRelevant,
     directRouteConflict: routeConsequence.directRouteConflict,
     nearbyRouteConflict: routeConsequence.nearbyRouteConflict,
@@ -468,6 +471,8 @@ function evaluateGridlyRouteConsequence(incident, options = {}) {
     const nearbyRouteConflict = routeRelevant && !directRouteConflict;
     const blockedSignal = /blocked|blocking|closure|impassable|all lanes/.test(String(safeIncident?.status || safeIncident?.reportType || safeIncident?.report_type || safeIncident?.type || "").toLowerCase());
     const floodingSignal = /flood/.test(String(safeIncident?.type || safeIncident?.category || "").toLowerCase());
+    const freshnessEval = evaluateGridlyIncidentFreshness(safeIncident, safeOptions.freshnessOptions || {});
+    const confidenceWeight = Number.isFinite(Number(freshnessEval?.confidenceWeight)) ? Number(freshnessEval.confidenceWeight) : 1;
     let score = 8;
     if (routeRelevant) score += 22;
     if (nearbyRouteConflict) score += 18;
@@ -478,6 +483,11 @@ function evaluateGridlyRouteConsequence(incident, options = {}) {
     if (severity === "high") score += 25;
     if (severity === "critical") score += 36;
     if (/rail_route_impact|rail_blocked/.test(markerStyle)) score += 14;
+    if (freshnessEval?.freshnessLevel === "fresh") score += 8;
+    if (freshnessEval?.freshnessLevel === "recent") score += 3;
+    if (freshnessEval?.freshnessLevel === "aging") score -= 8;
+    if (freshnessEval?.freshnessLevel === "stale") score -= 18;
+    score = Math.max(0, Math.min(100, Math.round(score * confidenceWeight)));
     const consequenceLevel = score >= 88 ? "critical" : score >= 64 ? "high" : score >= 38 ? "moderate" : "low";
     const consequenceReason = directRouteConflict
       ? "Direct active-route conflict detected."
@@ -486,12 +496,44 @@ function evaluateGridlyRouteConsequence(incident, options = {}) {
         : routeRelevant
           ? "Route-relevant context detected."
           : "Nearby non-blocking incident.";
-    return { consequenceLevel, consequenceScore: score, consequenceReason, routeRelevant, directRouteConflict, nearbyRouteConflict };
+    return { consequenceLevel, consequenceScore: score, consequenceReason, routeRelevant, directRouteConflict, nearbyRouteConflict, confidenceWeight, freshnessLevel: freshnessEval?.freshnessLevel || "recent", freshnessReason: freshnessEval?.freshnessReason || "" };
   } catch (error) {
-    return { consequenceLevel: "low", consequenceScore: 0, consequenceReason: "Fallback: unable to evaluate consequence safely.", routeRelevant: false, directRouteConflict: false, nearbyRouteConflict: false };
+    return { consequenceLevel: "low", consequenceScore: 0, consequenceReason: "Fallback: unable to evaluate consequence safely.", routeRelevant: false, directRouteConflict: false, nearbyRouteConflict: false, confidenceWeight: 1, freshnessLevel: "recent", freshnessReason: "fallback" };
   }
 }
 
+function evaluateGridlyIncidentFreshness(incident, options = {}) {
+  try {
+    const safeIncident = incident && typeof incident === "object" ? incident : {};
+    const safeOptions = options && typeof options === "object" ? options : {};
+    const nowMs = Number.isFinite(Number(safeOptions.nowMs)) ? Number(safeOptions.nowMs) : Date.now();
+    const maybeMs = [
+      safeIncident?.updatedAt, safeIncident?.reportedAt, safeIncident?.createdAt, safeIncident?.timestamp,
+      safeIncident?.submittedAt, safeIncident?.lastUpdatedAt
+    ].map((value) => {
+      const n = typeof value === "number" ? value : Date.parse(String(value || ""));
+      return Number.isFinite(n) ? n : null;
+    }).filter((value) => Number.isFinite(value));
+    const referenceMs = maybeMs.length ? Math.max(...maybeMs) : nowMs;
+    const ageMinutes = Math.max(0, Math.round((nowMs - referenceMs) / 60000));
+    const confirmationsRaw = safeIncident?.confirmations ?? safeIncident?.confirmationCount ?? safeIncident?.reports_count ?? safeIncident?.driverConfirmations ?? 0;
+    const confirmations = Math.max(0, Number(confirmationsRaw) || 0);
+    let freshnessLevel = "recent";
+    let freshnessScore = 72;
+    if (ageMinutes <= 30) { freshnessLevel = "fresh"; freshnessScore = 96; }
+    else if (ageMinutes <= 180) { freshnessLevel = "recent"; freshnessScore = 78; }
+    else if (ageMinutes <= 720) { freshnessLevel = "aging"; freshnessScore = 52; }
+    else { freshnessLevel = "stale"; freshnessScore = 26; }
+    freshnessScore = Math.max(0, Math.min(100, freshnessScore + Math.min(16, confirmations * 3)));
+    const confidenceWeight = Math.max(0.45, Math.min(1.16, Number((0.58 + (freshnessScore / 100) * 0.58).toFixed(2))));
+    const freshnessReason = `age=${ageMinutes}m; confirmations=${confirmations}; level=${freshnessLevel}`;
+    return { freshnessLevel, freshnessScore, ageMinutes, confidenceWeight, freshnessReason };
+  } catch (error) {
+    return { freshnessLevel: "recent", freshnessScore: 60, ageMinutes: 0, confidenceWeight: 1, freshnessReason: "fallback: unable to evaluate freshness safely." };
+  }
+}
+
+window.evaluateGridlyIncidentFreshness = evaluateGridlyIncidentFreshness;
 window.evaluateGridlyRouteConsequence = evaluateGridlyRouteConsequence;
 window.getGridlyIncidentVisualState = getGridlyIncidentVisualState;
 
@@ -1371,6 +1413,74 @@ window.gridlyRouteConsequenceVisualAudit = function gridlyRouteConsequenceVisual
     };
   } catch (error) {
     return { markersWithConsequence: 0, consequenceClassCounts: { low: 0, moderate: 0, high: 0, critical: 0 }, routeImpactMarkerCount: 0, highestVisibleConsequence: "low", duplicateMarkerCount: 0, notes: [`Route consequence visual audit fallback: ${error?.message || "unknown error"}`] };
+  }
+};
+
+window.gridlyFreshnessAudit = function gridlyFreshnessAudit() {
+  try {
+    const incidents = Array.isArray(getUnifiedIncidents?.()) ? getUnifiedIncidents() : (Array.isArray(activeHazards) ? activeHazards : []);
+    const evaluated = incidents.map((incident) => ({ incident, freshness: evaluateGridlyIncidentFreshness(incident) }));
+    const freshnessCounts = { fresh: 0, recent: 0, aging: 0, stale: 0 };
+    let totalAge = 0;
+    evaluated.forEach(({ freshness }) => {
+      const level = String(freshness?.freshnessLevel || "recent").toLowerCase();
+      if (freshnessCounts[level] === undefined) freshnessCounts[level] = 0;
+      freshnessCounts[level] += 1;
+      totalAge += Number(freshness?.ageMinutes || 0);
+    });
+    const byAgeAsc = [...evaluated].sort((a, b) => Number(a.freshness?.ageMinutes || 0) - Number(b.freshness?.ageMinutes || 0));
+    const formatSample = ({ incident, freshness }) => ({ id: incident?.id || incident?.crossingId || "", type: incident?.type || incident?.report_type || "unknown", ageMinutes: Number(freshness?.ageMinutes || 0), freshnessLevel: freshness?.freshnessLevel || "recent", confidenceWeight: Number(freshness?.confidenceWeight || 1), freshnessReason: freshness?.freshnessReason || "" });
+    return {
+      evaluatedCount: evaluated.length,
+      freshnessCounts,
+      staleCount: Number(freshnessCounts.stale || 0),
+      agingCount: Number(freshnessCounts.aging || 0),
+      freshCount: Number(freshnessCounts.fresh || 0),
+      averageAgeMinutes: evaluated.length ? Math.round(totalAge / evaluated.length) : 0,
+      oldestSamples: byAgeAsc.slice(-6).reverse().map(formatSample),
+      freshestSamples: byAgeAsc.slice(0, 6).map(formatSample),
+      notes: ["Freshness audit is read-only and uses on-demand incident timestamp/confirmation signals only."]
+    };
+  } catch (error) {
+    return { evaluatedCount: 0, freshnessCounts: { fresh: 0, recent: 0, aging: 0, stale: 0 }, staleCount: 0, agingCount: 0, freshCount: 0, averageAgeMinutes: 0, oldestSamples: [], freshestSamples: [], notes: [`Freshness audit fallback: ${error?.message || "unknown error"}`] };
+  }
+};
+
+window.gridlyRouteFreshnessConsequenceAudit = function gridlyRouteFreshnessConsequenceAudit() {
+  try {
+    const incidents = Array.isArray(getUnifiedIncidents?.()) ? getUnifiedIncidents() : (Array.isArray(activeHazards) ? activeHazards : []);
+    const levelRank = { low: 1, moderate: 2, high: 3, critical: 4 };
+    const evaluated = incidents.map((incident) => {
+      const base = evaluateGridlyRouteConsequence(incident, { freshnessOptions: { nowMs: Date.now() } });
+      const raw = evaluateGridlyRouteConsequence(incident, { freshnessOptions: { nowMs: Date.now() - 60000 } });
+      return { incident, base, raw };
+    });
+    const routeRelevant = evaluated.filter((entry) => Boolean(entry.base?.routeRelevant));
+    let downgradedConsequenceCount = 0;
+    let upgradedConsequenceCount = 0;
+    routeRelevant.forEach(({ base, raw }) => {
+      const a = levelRank[String(base?.consequenceLevel || "low")] || 1;
+      const b = levelRank[String(raw?.consequenceLevel || "low")] || 1;
+      if (a < b) downgradedConsequenceCount += 1;
+      if (a > b) upgradedConsequenceCount += 1;
+    });
+    const topWeightedSamples = routeRelevant
+      .sort((a, b) => Number(b.base?.consequenceScore || 0) - Number(a.base?.consequenceScore || 0))
+      .slice(0, 8)
+      .map(({ incident, base }) => ({ id: incident?.id || incident?.crossingId || "", type: incident?.type || incident?.report_type || "unknown", freshnessLevel: base?.freshnessLevel || "recent", confidenceWeight: Number(base?.confidenceWeight || 1), consequenceLevel: base?.consequenceLevel || "low", consequenceScore: Number(base?.consequenceScore || 0), consequenceReason: base?.consequenceReason || "" }));
+    const levelOrder = ["critical", "high", "moderate", "low"];
+    const highestFreshnessWeightedConsequence = levelOrder.find((level) => topWeightedSamples.some((sample) => sample.consequenceLevel === level)) || "low";
+    return {
+      routeRelevantCount: routeRelevant.length,
+      freshnessAdjustedCount: routeRelevant.filter(({ base }) => base?.freshnessLevel === "aging" || base?.freshnessLevel === "stale" || base?.freshnessLevel === "fresh").length,
+      downgradedConsequenceCount,
+      upgradedConsequenceCount,
+      highestFreshnessWeightedConsequence,
+      topWeightedSamples,
+      notes: ["Consequence freshness audit is read-only and preserves current route-impact bridge behavior."]
+    };
+  } catch (error) {
+    return { routeRelevantCount: 0, freshnessAdjustedCount: 0, downgradedConsequenceCount: 0, upgradedConsequenceCount: 0, highestFreshnessWeightedConsequence: "low", topWeightedSamples: [], notes: [`Route freshness consequence audit fallback: ${error?.message || "unknown error"}`] };
   }
 };
 
@@ -10013,12 +10123,15 @@ function renderUnifiedIncidents(reason = "auto") {
     const hierarchyPriorityClass = priorityClassMap[hierarchyConfig.emphasisLevel] || "gridly-marker-priority-passive";
     const consequenceLevel = String(visualState?.consequenceLevel || "low").toLowerCase();
     const consequenceClass = `gridly-consequence-${consequenceLevel}`;
+    const freshnessLevel = String(visualState?.freshnessLevel || evaluateGridlyIncidentFreshness(incident)?.freshnessLevel || "recent").toLowerCase();
+    const freshnessClass = `gridly-freshness-${freshnessLevel}`;
     const hazardVisualMetadataAttributes = `
           data-visual-style="${sanitizeText(visualState.markerStyle)}"
           data-visual-priority="${sanitizeText(String(markerVisual.priority))}"
           data-gridly-marker-priority="${sanitizeText(String(hierarchyConfig.priorityRank))}"
           data-gridly-marker-weight="${sanitizeText(String(hierarchyConfig.visualWeight))}"
           data-gridly-consequence="${sanitizeText(consequenceLevel)}"
+          data-gridly-freshness="${sanitizeText(freshnessLevel)}"
         `;
     const category = getHazardCategory(incident.report_type || incident.type || "other_hazard");
     const markerVariantClass = `marker-${category}`;
@@ -10039,7 +10152,7 @@ function renderUnifiedIncidents(reason = "auto") {
     const icon = L.divIcon({
       className: markerVisualClassSafe,
       html: `
-        <div class="gridly-hazard-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass} ${proximityClass} ${routeRelevanceClass} ${sanitizeText(markerVariantClass)} ${sanitizeText(confidenceClass)} ${sanitizeText(hierarchyPriorityClass)} ${sanitizeText(consequenceClass)}${hazardVisualClassSegment}"
+        <div class="gridly-hazard-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass} ${proximityClass} ${routeRelevanceClass} ${sanitizeText(markerVariantClass)} ${sanitizeText(confidenceClass)} ${sanitizeText(hierarchyPriorityClass)} ${sanitizeText(consequenceClass)} ${sanitizeText(freshnessClass)}${hazardVisualClassSegment}"
           data-category="${sanitizeText(category)}"
           ${hazardVisualMetadataAttributes}
           data-freshness="${sanitizeText(ageClass)}"
