@@ -481,6 +481,118 @@ window.gridlyMarkerVisualAudit = function gridlyMarkerVisualAudit() {
   };
 };
 
+window.gridlyCommunityHazardVisualPathAudit = function gridlyCommunityHazardVisualPathAudit() {
+  const hasDocument = typeof document !== "undefined" && Boolean(document?.querySelectorAll);
+  const markerPane = hasDocument ? document.querySelector("#map .leaflet-marker-pane") : null;
+  const asArray = (value) => Array.isArray(value) ? value : [];
+  const safeKeys = (obj) => (obj && typeof obj === "object") ? Object.keys(obj) : [];
+  const countBy = (items, getKey) => items.reduce((acc, item) => {
+    const key = String(getKey(item) || "unknown");
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+  const candidateCommunityArrays = [
+    { name: "activeHazards", value: globalThis?.activeHazards ?? (typeof activeHazards !== "undefined" ? activeHazards : undefined) },
+    { name: "activeReports", value: globalThis?.activeReports ?? (typeof activeReports !== "undefined" ? activeReports : undefined) },
+    { name: "hazards", value: globalThis?.hazards },
+    { name: "communityHazards", value: globalThis?.communityHazards },
+    { name: "communityReports", value: globalThis?.communityReports }
+  ];
+  const unifiedCandidates = [
+    typeof getUnifiedIncidents === "function" ? getUnifiedIncidents() : [],
+    globalThis?.unifiedIncidents,
+    globalThis?.gridlyUnifiedIncidents
+  ].filter(Array.isArray);
+
+  const communityRecords = candidateCommunityArrays
+    .filter((entry) => Array.isArray(entry.value))
+    .flatMap((entry) => asArray(entry.value).map((record) => ({ sourceArray: entry.name, record })))
+    .filter((entry) => entry.record && typeof entry.record === "object");
+  const activeCommunityHazardCount = communityRecords.length;
+
+  const unifiedIncidentPool = unifiedCandidates
+    .flatMap((collection) => asArray(collection))
+    .filter((item) => item && typeof item === "object");
+  const unifiedIncidentCandidateCount = unifiedIncidentPool.length;
+
+  const communityLikeUnified = unifiedIncidentPool
+    .map((incident) => {
+      const visualState = typeof getGridlyIncidentVisualState === "function"
+        ? getGridlyIncidentVisualState(incident)
+        : null;
+      const sourceText = [
+        incident?.source, incident?.reportType, incident?.report_type, incident?.type, incident?.category,
+        incident?.title, incident?.description, incident?.externalSource, incident?.provider
+      ].map((v) => String(v || "").toLowerCase()).join(" ");
+      const communityLike = Boolean(
+        visualState?.source === "community"
+        || /community|report|shared|hazard/.test(sourceText)
+      );
+      return { incident, visualState, communityLike };
+    })
+    .filter((entry) => entry.communityLike);
+
+  const hazardSelector = "#map .leaflet-marker-pane [data-visual-style], #map .leaflet-marker-pane [class*='hazard'], #map .leaflet-marker-pane [class*='incident'], #map .leaflet-marker-pane [class*='report'], #map .leaflet-marker-pane .gridly-marker-hazard-low, #map .leaflet-marker-pane .gridly-marker-hazard-moderate, #map .leaflet-marker-pane .gridly-marker-hazard-high, #map .leaflet-marker-pane .gridly-marker-hazard-critical";
+  const visibleHazardSelectors = [
+    "#map .leaflet-marker-pane [data-visual-style]",
+    "#map .leaflet-marker-pane [class*='hazard']",
+    "#map .leaflet-marker-pane [class*='incident']",
+    "#map .leaflet-marker-pane [class*='report']",
+    "#map .leaflet-marker-pane .gridly-marker-hazard-low",
+    "#map .leaflet-marker-pane .gridly-marker-hazard-moderate",
+    "#map .leaflet-marker-pane .gridly-marker-hazard-high",
+    "#map .leaflet-marker-pane .gridly-marker-hazard-critical"
+  ];
+  const possibleAlternateHazardSelectors = [
+    "#map .leaflet-marker-pane .gridly-alert-marker",
+    "#map .leaflet-marker-pane .gridly-community-marker",
+    "#map .leaflet-marker-pane [class*='alert']",
+    "#map .leaflet-overlay-pane [class*='hazard']",
+    "#map .leaflet-pane [class*='community']",
+    "#map .leaflet-pane [data-source*='community']"
+  ];
+  const domMatches = hasDocument ? Array.from(document.querySelectorAll(hazardSelector)) : [];
+  const renderedHazardDomCount = domMatches.length;
+  const renderedHazardDomSamples = domMatches.slice(0, 20).map((el) => ({
+    tag: el.tagName,
+    className: el.className || "",
+    visualStyle: el.dataset?.visualStyle || "",
+    dataSource: el.dataset?.source || "",
+    dataIncidentId: el.dataset?.incidentId || el.dataset?.id || "",
+    paneClass: markerPane?.className || ""
+  }));
+
+  const visualStates = communityLikeUnified
+    .map(({ incident, visualState }) => ({ incident, visualState }))
+    .filter((entry) => entry.visualState && typeof entry.visualState === "object");
+
+  const visualStateCounts = countBy(visualStates, (entry) => entry.visualState?.category);
+  const sourceCounts = countBy(visualStates, (entry) => entry.visualState?.source);
+  const markerStyleCounts = countBy(visualStates, (entry) => entry.visualState?.markerStyle);
+
+  const notes = [
+    `communityArraysFound=${candidateCommunityArrays.filter((entry) => Array.isArray(entry.value)).map((entry) => entry.name).join(",") || "none"}`,
+    `unifiedArraysFound=${unifiedCandidates.length}`,
+    `markerPanePresent=${Boolean(markerPane)}`,
+    `domHazardSelectorsMatched=${renderedHazardDomCount}`,
+    `communityLikeUnifiedCount=${communityLikeUnified.length}`,
+    `communityVisualSources=${safeKeys(sourceCounts).join(",") || "none"}`
+  ];
+
+  return {
+    activeCommunityHazardCount,
+    unifiedIncidentCandidateCount,
+    renderedHazardDomCount,
+    renderedHazardDomSamples,
+    visualStateCounts,
+    sourceCounts,
+    markerStyleCounts,
+    visibleHazardSelectors,
+    possibleAlternateHazardSelectors,
+    notes
+  };
+};
+
 const LOCATION_DEFAULTS = {
   country: "USA",
   state: "Texas",
