@@ -447,6 +447,19 @@ window.gridlyMarkerVisualAudit = function gridlyMarkerVisualAudit() {
         rail_blocked: 0,
         rail_route_impact: 0
       };
+  const hazardClassElements = hasDocument
+    ? {
+        hazard_low: document.querySelectorAll(".gridly-marker-hazard-low").length,
+        hazard_moderate: document.querySelectorAll(".gridly-marker-hazard-moderate").length,
+        hazard_high: document.querySelectorAll(".gridly-marker-hazard-high").length,
+        hazard_critical: document.querySelectorAll(".gridly-marker-hazard-critical").length
+      }
+    : {
+        hazard_low: 0,
+        hazard_moderate: 0,
+        hazard_high: 0,
+        hazard_critical: 0
+      };
   const visualStateAudit = typeof window.gridlyIncidentVisualStateAudit === "function"
     ? window.gridlyIncidentVisualStateAudit()
     : {};
@@ -462,7 +475,9 @@ window.gridlyMarkerVisualAudit = function gridlyMarkerVisualAudit() {
     configs: { ...GRIDLY_MARKER_VISUALS },
     missingStyles,
     railClassElements,
-    hasRailCssClasses: Object.values(railClassElements).some((count) => count > 0)
+    hazardClassElements,
+    hasRailCssClasses: Object.values(railClassElements).some((count) => count > 0),
+    hasHazardCssClasses: Object.values(hazardClassElements).some((count) => count > 0)
   };
 };
 
@@ -8795,6 +8810,15 @@ function renderUnifiedIncidents(reason = "auto") {
     const visualState = getGridlyIncidentVisualState(incident);
     const markerVisual = getGridlyMarkerVisualConfig(visualState.markerStyle);
     const markerVisualClass = markerVisual.className;
+    const isCommunityHazardMarker = visualState?.source === "community";
+    const markerVisualClassSafe = sanitizeText(markerVisualClass);
+    const hazardVisualClassSegment = isCommunityHazardMarker ? ` ${markerVisualClassSafe}` : "";
+    const hazardVisualMetadataAttributes = isCommunityHazardMarker
+      ? `
+          data-visual-style="${sanitizeText(visualState.markerStyle)}"
+          data-visual-priority="${sanitizeText(String(markerVisual.priority))}"
+        `
+      : "";
     const category = getHazardCategory(incident.report_type || incident.type || "other_hazard");
     const markerVariantClass = `marker-${category}`;
     const confidenceClass = String(incident.confidence || "").toLowerCase().includes("community") ? "confidence-community" : "confidence-high";
@@ -8802,7 +8826,7 @@ function renderUnifiedIncidents(reason = "auto") {
     markerTypesRendered.add(markerVariantClass);
     markerTypesRendered.add(getMapSeverityClass(incident));
     markerTypesRendered.add(confidenceClass);
-    markerTypesRendered.add(markerVisualClass);
+    if (isCommunityHazardMarker) markerTypesRendered.add(markerVisualClass);
     activeVisualStates.add(ageClass);
     if (routeRelevanceClass) activeVisualStates.add(routeRelevanceClass);
     if (routeRelevanceClass === "route-relevant") {
@@ -8814,10 +8838,9 @@ function renderUnifiedIncidents(reason = "auto") {
     const icon = L.divIcon({
       className: "",
       html: `
-        <div class="gridly-hazard-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass} ${proximityClass} ${routeRelevanceClass} ${sanitizeText(markerVariantClass)} ${sanitizeText(confidenceClass)} ${sanitizeText(markerVisualClass)}"
+        <div class="gridly-hazard-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass} ${proximityClass} ${routeRelevanceClass} ${sanitizeText(markerVariantClass)} ${sanitizeText(confidenceClass)}${hazardVisualClassSegment}"
           data-category="${sanitizeText(category)}"
-          data-visual-style="${sanitizeText(visualState.markerStyle)}"
-          data-visual-priority="${sanitizeText(String(markerVisual.priority))}"
+          ${hazardVisualMetadataAttributes}
           data-freshness="${sanitizeText(ageClass)}"
           data-confidence="${sanitizeText(confidenceClass.replace("confidence-", ""))}"
           data-route-relevance="${sanitizeText(routeRelevanceClass || "unscored")}"
