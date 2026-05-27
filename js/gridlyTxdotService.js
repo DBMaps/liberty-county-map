@@ -2,7 +2,23 @@
   if (!globalScope || typeof globalScope !== "object") return;
 
   const TXDOT_SOURCE_LABEL = "txdot";
-  const TXDOT_DEFAULT_ENDPOINT = "";
+  const TXDOT_ENDPOINT_TEMPLATE = "https://api.drivetexas.org/api/conditions.geojson?key={api_key}";
+  const TXDOT_REFRESH_INTERVAL_MS = 300000;
+
+  globalScope.GRIDLY_CONFIG = globalScope.GRIDLY_CONFIG || {};
+  const txdotConfig = (globalScope.GRIDLY_CONFIG.txdot && typeof globalScope.GRIDLY_CONFIG.txdot === "object")
+    ? globalScope.GRIDLY_CONFIG.txdot
+    : {};
+
+  txdotConfig.apiKey = typeof txdotConfig.apiKey === "string" ? txdotConfig.apiKey : "";
+  txdotConfig.endpointTemplate = typeof txdotConfig.endpointTemplate === "string"
+    ? txdotConfig.endpointTemplate
+    : TXDOT_ENDPOINT_TEMPLATE;
+  txdotConfig.refreshIntervalMs = Number.isFinite(Number(txdotConfig.refreshIntervalMs))
+    ? Number(txdotConfig.refreshIntervalMs)
+    : TXDOT_REFRESH_INTERVAL_MS;
+
+  globalScope.GRIDLY_CONFIG.txdot = txdotConfig;
 
   const externalStore = Array.isArray(globalScope.gridlyExternalRoadConditions)
     ? globalScope.gridlyExternalRoadConditions
@@ -43,39 +59,68 @@
     return "";
   }
 
-  function normalizeIncident(rawIncident) {
+  function normalizeIncident(rawIncident, featureGeometry) {
     if (!rawIncident || typeof rawIncident !== "object") return null;
 
-    const latitude = toNumber(readRawField(rawIncident, ["latitude", "lat", "y"]));
-    const longitude = toNumber(readRawField(rawIncident, ["longitude", "lon", "lng", "x"]));
+    const coordinates = Array.isArray(featureGeometry?.coordinates)
+      ? featureGeometry.coordinates
+      : [];
+
+    const longitude = toNumber(readRawField(rawIncident, ["longitude", "lon", "lng", "x"]))
+      ?? toNumber(coordinates[0]);
+    const latitude = toNumber(readRawField(rawIncident, ["latitude", "lat", "y"]))
+      ?? toNumber(coordinates[1]);
 
     return {
-      id: toSafeString(readRawField(rawIncident, ["id", "incidentId", "event_id"])) || `txdot-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      id: toSafeString(readRawField(rawIncident, ["id", "incidentId", "event_id", "eventId"])) || `txdot-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       source: TXDOT_SOURCE_LABEL,
-      type: toSafeString(readRawField(rawIncident, ["type", "category", "event_type"])) || "unknown",
-      title: toSafeString(readRawField(rawIncident, ["title", "headline", "event_title"])) || "TxDOT Incident",
+      type: toSafeString(readRawField(rawIncident, ["type", "category", "event_type", "conditionType"])) || "unknown",
+      title: toSafeString(readRawField(rawIncident, ["title", "headline", "event_title", "roadCondition"])) || "TxDOT Road Condition",
       latitude,
       longitude,
-      roadName: toSafeString(readRawField(rawIncident, ["roadName", "road", "roadway", "highway"])),
+      roadName: toSafeString(readRawField(rawIncident, ["roadName", "road", "roadway", "highway", "streetName"])),
       direction: normalizeDirection(readRawField(rawIncident, ["direction", "travel_direction", "dir"])),
-      severity: toSafeString(readRawField(rawIncident, ["severity", "priority", "impact"])) || "unknown",
-      description: toSafeString(readRawField(rawIncident, ["description", "details", "comment"])),
-      startTime: toSafeString(readRawField(rawIncident, ["startTime", "start_time", "begin_time"])),
-      endTime: toSafeString(readRawField(rawIncident, ["endTime", "end_time", "expire_time"])),
+      severity: toSafeString(readRawField(rawIncident, ["severity", "priority", "impact", "advisoryLevel"])) || "unknown",
+      description: toSafeString(readRawField(rawIncident, ["description", "details", "comment", "message"])),
+      startTime: toSafeString(readRawField(rawIncident, ["startTime", "start_time", "begin_time", "reportedDate"])),
+      endTime: toSafeString(readRawField(rawIncident, ["endTime", "end_time", "expire_time", "clearDate"])),
       confidence: toNumber(readRawField(rawIncident, ["confidence", "confidence_score", "score"]))
     };
   }
 
+  function extractRawRecords(payload) {
+    if (Array.isArray(payload)) return payload;
+
+    if (Array.isArray(payload?.features)) {
+      return payload.features.map((feature) => {
+        if (!feature || typeof feature !== "object") return null;
+        const properties = (feature.properties && typeof feature.properties === "object")
+          ? feature.properties
+          : {};
+        return {
+          ...properties,
+          __geometry: feature.geometry
+        };
+      }).filter(Boolean);
+    }
+
+    if (Array.isArray(payload?.incidents)) return payload.incidents;
+
+    return [];
+  }
+
   async function fetchRoadConditions() {
-    const endpoint = TXDOT_DEFAULT_ENDPOINT;
+    const apiKey = toSafeString(globalScope.GRIDLY_CONFIG?.txdot?.apiKey);
+    const endpointTemplate = toSafeString(globalScope.GRIDLY_CONFIG?.txdot?.endpointTemplate) || TXDOT_ENDPOINT_TEMPLATE;
+    const endpoint = endpointTemplate.replace("{api_key}", apiKey);
 
     txdotState.hasFetched = true;
     txdotState.lastFetchTime = new Date().toISOString();
     txdotState.lastError = null;
 
-    if (!endpoint) {
+    if (!apiKey) {
       txdotState.lastFetchOk = false;
-      txdotState.lastError = "TxDOT endpoint is not configured";
+      txdotState.lastError = "TxDOT API key is not configured";
       externalStore.length = 0;
       return [];
     }
@@ -87,13 +132,12 @@
       }
 
       const payload = await response.json();
-      const rawRecords = Array.isArray(payload)
-        ? payload
-        : Array.isArray(payload?.incidents)
-          ? payload.incidents
-          : [];
+      const rawRecords = extractRawRecords(payload);
 
-      const normalized = rawRecords.map(normalizeIncident).filter(Boolean);
+      const normalized = rawRecords
+        .map((record) => normalizeIncident(record, record?.__geometry))
+        .filter(Boolean);
+
       externalStore.length = 0;
       externalStore.push(...normalized);
       txdotState.lastFetchOk = true;
@@ -132,7 +176,7 @@
       lastFetchOk: txdotState.lastFetchOk,
       lastFetchTime: txdotState.lastFetchTime,
       lastError: txdotState.lastError,
-      sourceHealthy: serviceLoaded && apiAvailable
+      sourceHealthy: serviceLoaded && apiAvailable && txdotState.lastFetchOk !== false
     };
   };
 })(typeof window !== "undefined" ? window : globalThis);
