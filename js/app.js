@@ -1330,11 +1330,13 @@ window.gridlyRouteConsequenceAudit = function gridlyRouteConsequenceAudit() {
 
 window.gridlyRouteConsequenceVisualAudit = function gridlyRouteConsequenceVisualAudit() {
   try {
-    const nodes = typeof document !== "undefined" ? Array.from(document.querySelectorAll("#map .leaflet-marker-pane .gridly-hazard-marker")) : [];
+    const markerPane = typeof document !== "undefined" ? document.querySelector("#map .leaflet-marker-pane") : null;
+    const nodes = markerPane ? Array.from(markerPane.querySelectorAll("[data-gridly-route-impact=\"true\"], .gridly-marker-rail-route-impact, .gridly-marker-priority-route-impact, [data-gridly-consequence], .gridly-hazard-marker")) : [];
+    const uniqueNodes = Array.from(new Set(nodes));
     const classCounts = { low: 0, moderate: 0, high: 0, critical: 0 };
     const consequenceLevels = ["low", "moderate", "high", "critical"];
     let markersWithConsequence = 0;
-    nodes.forEach((node) => {
+    uniqueNodes.forEach((node) => {
       const datasetLevel = String(node.dataset?.gridlyConsequence || "").toLowerCase();
       const classLevel = consequenceLevels.find((level) => node.classList?.contains(`gridly-consequence-${level}`)) || "";
       const level = datasetLevel || classLevel;
@@ -1343,7 +1345,7 @@ window.gridlyRouteConsequenceVisualAudit = function gridlyRouteConsequenceVisual
       if (classCounts[level] === undefined) classCounts[level] = 0;
       classCounts[level] += 1;
     });
-    const routeImpactMarkerCount = nodes.filter((node) => {
+    const routeImpactMarkerCount = uniqueNodes.filter((node) => {
       const isRouteImpactDataset = String(node.dataset?.gridlyRouteImpact || "") === "true";
       const isRouteImpactStyle = String(node.dataset?.visualStyle || "") === "rail_route_impact";
       const isRouteImpactClass = node.classList?.contains("gridly-marker-priority-route-impact") || node.classList?.contains("gridly-marker-rail-route-impact");
@@ -1353,7 +1355,7 @@ window.gridlyRouteConsequenceVisualAudit = function gridlyRouteConsequenceVisual
     const highestVisibleConsequence = levelOrder.find((level) => (classCounts[level] || 0) > 0) || "low";
     const seen = new Set();
     let duplicateMarkerCount = 0;
-    nodes.forEach((node) => {
+    uniqueNodes.forEach((node) => {
       const key = String(node.dataset?.incidentId || node.dataset?.id || "");
       if (!key) return;
       if (seen.has(key)) duplicateMarkerCount += 1;
@@ -1392,6 +1394,14 @@ window.gridlyApplyRailRouteImpactDomBridge = function gridlyApplyRailRouteImpact
     deEscalatedDomCount: 0,
     skippedDomCount: 0,
     escalatedSamples: [],
+    appliedElementTagCounts: {},
+    appliedElementClassSamples: [],
+    appliedDatasetSamples: [],
+    canonicalTargetStrategyCounts: {
+      self: 0,
+      marker_wrapper: 0,
+      marker_icon: 0
+    },
     notes: ["temporary_visual_escalation_only"],
     warning: "temporary_dom_visual_bridge"
   };
@@ -1444,6 +1454,14 @@ window.gridlyApplyRailRouteImpactDomBridge = function gridlyApplyRailRouteImpact
   const removeLowPriorityRailClasses = (el) => {
     el.classList.remove("gridly-marker-rail-clear", "gridly-marker-rail-blocked", "gridly-marker-priority-passive");
   };
+  const getCanonicalVisibleMarkerTarget = (el) => {
+    if (!el || typeof el.closest !== "function") return { target: el, strategy: "self" };
+    const markerWrapper = el.closest(".leaflet-marker-icon");
+    if (markerWrapper) return { target: markerWrapper, strategy: "marker_icon" };
+    const markerShell = el.closest(".gridly-hazard-marker, .gridly-marker");
+    if (markerShell) return { target: markerShell, strategy: "marker_wrapper" };
+    return { target: el, strategy: "self" };
+  };
   const consequenceLevels = ["low", "moderate", "high", "critical"];
   const clearConsequenceClasses = (el) => {
     consequenceLevels.forEach((level) => el.classList.remove(`gridly-consequence-${level}`));
@@ -1455,15 +1473,29 @@ window.gridlyApplyRailRouteImpactDomBridge = function gridlyApplyRailRouteImpact
     return consequenceLevels.includes(level) ? level : "high";
   };
   const applyEscalation = (el, sample = {}) => {
-    removeLowPriorityRailClasses(el);
-    el.classList.add("gridly-marker-rail-route-impact", "gridly-marker-priority-route-impact");
-    el.dataset.visualStyle = "rail_route_impact";
-    el.dataset.gridlyMarkerPriority = "route-impact";
-    el.dataset.gridlyRouteImpact = "true";
+    const canonical = getCanonicalVisibleMarkerTarget(el);
+    const targetEl = canonical.target || el;
+    summary.canonicalTargetStrategyCounts[canonical.strategy] = Number(summary.canonicalTargetStrategyCounts[canonical.strategy] || 0) + 1;
+    removeLowPriorityRailClasses(targetEl);
+    targetEl.classList.add("gridly-marker-rail-route-impact", "gridly-marker-priority-route-impact");
+    targetEl.dataset.visualStyle = "rail_route_impact";
+    targetEl.dataset.gridlyMarkerPriority = "route-impact";
+    targetEl.dataset.gridlyRouteImpact = "true";
     const consequenceLevel = deriveBridgeConsequenceLevel(sample);
-    clearConsequenceClasses(el);
-    el.classList.add(`gridly-consequence-${consequenceLevel}`);
-    el.dataset.gridlyConsequence = consequenceLevel;
+    clearConsequenceClasses(targetEl);
+    targetEl.classList.add(`gridly-consequence-${consequenceLevel}`);
+    targetEl.dataset.gridlyConsequence = consequenceLevel;
+    const tagKey = String(targetEl.tagName || "unknown").toUpperCase();
+    summary.appliedElementTagCounts[tagKey] = Number(summary.appliedElementTagCounts[tagKey] || 0) + 1;
+    if (summary.appliedElementClassSamples.length < 8) summary.appliedElementClassSamples.push(String(targetEl.className || ""));
+    if (summary.appliedDatasetSamples.length < 8) {
+      summary.appliedDatasetSamples.push({
+        visualStyle: String(targetEl.dataset?.visualStyle || ""),
+        gridlyRouteImpact: String(targetEl.dataset?.gridlyRouteImpact || ""),
+        gridlyConsequence: String(targetEl.dataset?.gridlyConsequence || ""),
+        gridlyMarkerPriority: String(targetEl.dataset?.gridlyMarkerPriority || "")
+      });
+    }
     if (summary.escalatedSamples.length < 8) {
       summary.escalatedSamples.push({
         crossingId: sample?.crossingDetected?.id || "",
@@ -1474,19 +1506,21 @@ window.gridlyApplyRailRouteImpactDomBridge = function gridlyApplyRailRouteImpact
     }
   };
   const clearEscalation = (el) => {
-    const wasEscalated = el.classList.contains("gridly-marker-rail-route-impact")
-      || el.classList.contains("gridly-marker-priority-route-impact")
-      || String(el.dataset?.visualStyle || "") === "rail_route_impact"
-      || String(el.dataset?.gridlyRouteImpact || "") === "true";
-    el.classList.remove("gridly-marker-rail-route-impact", "gridly-marker-priority-route-impact");
-    delete el.dataset.gridlyRouteImpact;
-    clearConsequenceClasses(el);
-    delete el.dataset.gridlyConsequence;
-    if (String(el.dataset?.visualStyle || "") === "rail_route_impact") {
-      el.dataset.visualStyle = "rail_blocked";
+    const canonical = getCanonicalVisibleMarkerTarget(el);
+    const targetEl = canonical.target || el;
+    const wasEscalated = targetEl.classList.contains("gridly-marker-rail-route-impact")
+      || targetEl.classList.contains("gridly-marker-priority-route-impact")
+      || String(targetEl.dataset?.visualStyle || "") === "rail_route_impact"
+      || String(targetEl.dataset?.gridlyRouteImpact || "") === "true";
+    targetEl.classList.remove("gridly-marker-rail-route-impact", "gridly-marker-priority-route-impact");
+    delete targetEl.dataset.gridlyRouteImpact;
+    clearConsequenceClasses(targetEl);
+    delete targetEl.dataset.gridlyConsequence;
+    if (String(targetEl.dataset?.visualStyle || "") === "rail_route_impact") {
+      targetEl.dataset.visualStyle = "rail_blocked";
     }
-    if (String(el.dataset?.gridlyMarkerPriority || "") === "route-impact") {
-      el.dataset.gridlyMarkerPriority = "passive";
+    if (String(targetEl.dataset?.gridlyMarkerPriority || "") === "route-impact") {
+      targetEl.dataset.gridlyMarkerPriority = "passive";
     }
     if (wasEscalated) summary.deEscalatedDomCount += 1;
   };
@@ -1566,15 +1600,16 @@ window.gridlyRailRouteImpactDomBridgeAudit = function gridlyRailRouteImpactDomBr
 
 window.gridlyRouteConsequenceBridgeAudit = function gridlyRouteConsequenceBridgeAudit() {
   try {
-    const nodes = typeof document !== "undefined" ? Array.from(document.querySelectorAll("#map .leaflet-marker-pane .gridly-hazard-marker")) : [];
-    const bridgeNodes = nodes.filter((node) => String(node.dataset?.gridlyRouteImpact || "") === "true"
-      || String(node.dataset?.visualStyle || "") === "rail_route_impact"
-      || node.classList?.contains("gridly-marker-priority-route-impact"));
+    const markerPane = typeof document !== "undefined" ? document.querySelector("#map .leaflet-marker-pane") : null;
+    const routeImpactSelector = "[data-gridly-route-impact=\"true\"], .gridly-marker-rail-route-impact, .gridly-marker-priority-route-impact";
+    const consequenceSelector = "[data-gridly-consequence]";
+    const bridgeNodes = markerPane ? Array.from(markerPane.querySelectorAll(`${routeImpactSelector}, ${consequenceSelector}`)) : [];
+    const uniqueBridgeNodes = Array.from(new Set(bridgeNodes));
     const levels = ["low", "moderate", "high", "critical"];
     const counts = { low: 0, moderate: 0, high: 0, critical: 0 };
     let withConsequence = 0;
     const missing = [];
-    bridgeNodes.forEach((node) => {
+    uniqueBridgeNodes.forEach((node) => {
       const datasetLevel = String(node.dataset?.gridlyConsequence || "").toLowerCase();
       const classLevel = levels.find((level) => node.classList?.contains(`gridly-consequence-${level}`)) || "";
       const level = datasetLevel || classLevel;
@@ -1587,17 +1622,51 @@ window.gridlyRouteConsequenceBridgeAudit = function gridlyRouteConsequenceBridge
     });
     const highestBridgeConsequence = ["critical", "high", "moderate", "low"].find((level) => counts[level] > 0) || "low";
     return {
-      evaluatedBridgeMarkers: bridgeNodes.length,
+      evaluatedBridgeMarkers: uniqueBridgeNodes.length,
       bridgeMarkersWithConsequence: withConsequence,
       bridgeConsequenceCounts: counts,
       highestBridgeConsequence,
-      routeImpactBridgeMarkerCount: bridgeNodes.length,
+      routeImpactBridgeMarkerCount: uniqueBridgeNodes.length,
       missingConsequenceMarkers: missing,
       notes: ["Temporary bridge diagnostic for route-impact rail DOM metadata alignment.", "No route recalculation or source mutation performed."],
       warning: "temporary_dom_consequence_bridge"
     };
   } catch (error) {
     return { evaluatedBridgeMarkers: 0, bridgeMarkersWithConsequence: 0, bridgeConsequenceCounts: { low: 0, moderate: 0, high: 0, critical: 0 }, highestBridgeConsequence: "low", routeImpactBridgeMarkerCount: 0, missingConsequenceMarkers: [], notes: [`Route consequence bridge audit fallback: ${error?.message || "unknown error"}`], warning: "temporary_dom_consequence_bridge" };
+  }
+};
+
+window.gridlyRouteImpactDomTargetTrace = function gridlyRouteImpactDomTargetTrace() {
+  try {
+    const markerPane = typeof document !== "undefined" ? document.querySelector("#map .leaflet-marker-pane") : null;
+    const routeImpactSelector = "[data-gridly-route-impact=\"true\"], .gridly-marker-rail-route-impact, .gridly-marker-priority-route-impact";
+    const consequenceSelector = "[data-gridly-consequence]";
+    const routeImpactNodes = markerPane ? Array.from(markerPane.querySelectorAll(routeImpactSelector)) : [];
+    const consequenceNodes = markerPane ? Array.from(markerPane.querySelectorAll(consequenceSelector)) : [];
+    const samplePool = Array.from(new Set([...routeImpactNodes, ...consequenceNodes])).slice(0, 8);
+    return {
+      routeImpactSelectorCount: routeImpactNodes.length,
+      consequenceSelectorCount: consequenceNodes.length,
+      targetSamples: samplePool.map((el) => ({
+        tag: String(el?.tagName || ""),
+        className: String(el?.className || ""),
+        dataset: {
+          gridlyRouteImpact: String(el?.dataset?.gridlyRouteImpact || ""),
+          gridlyConsequence: String(el?.dataset?.gridlyConsequence || ""),
+          visualStyle: String(el?.dataset?.visualStyle || "")
+        }
+      })),
+      markerPanePresent: Boolean(markerPane),
+      notes: ["Trace verifies canonical bridge target selectors in marker pane."]
+    };
+  } catch (error) {
+    return {
+      routeImpactSelectorCount: 0,
+      consequenceSelectorCount: 0,
+      targetSamples: [],
+      markerPanePresent: false,
+      notes: [`Route impact target trace fallback: ${error?.message || "unknown error"}`]
+    };
   }
 };
 
