@@ -142,9 +142,23 @@ function isGridlyRailShapedObject(input = {}) {
 
 function normalizeGridlyIncidentCategory(input) {
   if (isGridlyRailShapedObject(input)) return "rail";
-  const raw = String(input || "").trim();
-  if (!raw) return "unknown";
-  const value = raw.toLowerCase().replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
+  const raw = typeof input === "object" && input
+    ? [
+      input.condition,
+      input.conditionType,
+      input.title,
+      input.description,
+      input.detail,
+      input.category,
+      input.eventType,
+      input.externalSource,
+      input.provider,
+      input.source
+    ].map((value) => String(value || "")).join(" ")
+    : String(input || "");
+  const trimmedRaw = String(raw || "").trim();
+  if (!trimmedRaw) return "unknown";
+  const value = trimmedRaw.toLowerCase().replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
   const compact = value.replace(/\s+/g, "");
   const txdotLike = /txdot|drivetexas|drive texas/.test(value);
 
@@ -182,6 +196,7 @@ function getGridlyIncidentSeverity(incident = {}, category = "unknown") {
   const clearRail = /clear crossing|crossing clear|\bclear\b|\bopen\b|no blockage/.test(text);
   const staticRail = isGridlyRailShapedObject(incident) && !incident?.crossingId && !incident?.reportKind && !incident?.title && !incident?.description && !incident?.status;
 
+  if (routeImpact) return "critical";
   if (category === "road_closed" || category === "txdot_closure") return "critical";
   if (severeFlooding) return "critical";
   if (category === "rail" && routeImpact) return "critical";
@@ -221,7 +236,10 @@ function getGridlyMarkerStyle(category = "unknown", severity = "low", incident =
     return "rail_clear";
   }
   if (txdotLike) {
+    const corridorCapable = Boolean(incident?.countyKey || incident?.corridor)
+      || /\bcorridor\b|\b(loop|beltway|bypass|tollway)\b|\b(i[- ]?\d+|us[- ]?\d+|sh[- ]?\d+|fm[- ]?\d+)\b/.test(text);
     if (routeImpact || severity === "critical") return "txdot_route_impact";
+    if (corridorCapable) return "txdot_corridor";
     return "txdot_single";
   }
   if (severity === "critical") return "hazard_critical";
@@ -234,10 +252,10 @@ function getGridlyMarkerStyle(category = "unknown", severity = "low", incident =
 function getGridlyIncidentVisualState(incident = {}) {
   const text = gridlyCollectIncidentText(incident);
   const responderSensitive = /police|cop\b|speed trap|sheriff sitting|officer location|radar|enforcement|patrol location/.test(text);
-  const sourceText = `${String(incident?.source || "").toLowerCase()} ${text}`;
+  const sourceText = `${String(incident?.source || "").toLowerCase()} ${text} ${String(incident?.externalSource || "").toLowerCase()} ${String(incident?.provider || "").toLowerCase()} ${String(incident?.eventType || "").toLowerCase()} ${String(incident?.conditionType || "").toLowerCase()} ${String(incident?.roadName || "").toLowerCase()}`;
   const railShaped = isGridlyRailShapedObject(incident);
   const railText = /blocked crossing|train blocking|fra crossing|active rail report|crossing/.test(sourceText);
-  const source = /txdot|drivetexas|drive texas/.test(sourceText)
+  const source = /txdot|drivetexas|drive texas|conditiontype|eventtype|countykey|corridor|roadname|externalsource|provider/.test(sourceText) || Boolean(incident?.countyKey || incident?.corridor || incident?.roadName || incident?.conditionType || incident?.eventType || incident?.externalSource || incident?.provider)
     ? "txdot"
     : railShaped || railText
       ? "rail"
