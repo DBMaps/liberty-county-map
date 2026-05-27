@@ -254,6 +254,25 @@
       .map(([name, count]) => ({ name, count }));
   }
 
+  function toArray(value) {
+    return Array.isArray(value) ? value : [];
+  }
+
+  function buildTextSearchBlob(event) {
+    return [
+      toSafeString(event?.routeNameDisplay),
+      toSafeString(event?.title),
+      toSafeString(event?.fromLimitDisplay),
+      toSafeString(event?.toLimitDisplay)
+    ].join(" ").toUpperCase();
+  }
+
+  function matchesCorridor(event, corridors) {
+    if (!event || !corridors.length) return false;
+    const haystack = buildTextSearchBlob(event);
+    return corridors.some((corridor) => haystack.includes(corridor));
+  }
+
   globalScope.gridlyTxdot = {
     fetchRoadConditions,
     normalizeIncident,
@@ -326,6 +345,49 @@
       lastFetchTime: txdotState.lastFetchTime,
       lastError: txdotState.lastError,
       sourceHealthy: serviceLoaded && apiAvailable && txdotState.lastFetchOk !== false
+    };
+  };
+
+  globalScope.gridlyTxdotLocalFocus = function gridlyTxdotLocalFocus(options) {
+    const config = (options && typeof options === "object") ? options : {};
+    const countyNum = Number.isFinite(Number(config.countyNum)) ? Number(config.countyNum) : 146;
+    const defaultCorridors = ["US 90", "TX 146", "TX 321", "FM 1960", "FM 1409", "FM 1008"];
+    const corridors = toArray(config.corridors)
+      .map((value) => toSafeString(value).toUpperCase())
+      .filter(Boolean);
+    const corridorList = corridors.length ? corridors : defaultCorridors.map((name) => name.toUpperCase());
+
+    const records = externalStore.slice();
+    const libertyCountyRecords = records.filter((event) => Number(event?.countyNum) === countyNum);
+    const corridorRecords = records.filter((event) => matchesCorridor(event, corridorList));
+    const localRecordMap = new Map();
+
+    for (const event of libertyCountyRecords) {
+      localRecordMap.set(event.id, event);
+    }
+    for (const event of corridorRecords) {
+      localRecordMap.set(event.id, event);
+    }
+
+    const localRecords = Array.from(localRecordMap.values());
+    const delayedLocalEvents = localRecords.filter((event) => isFlagged(event?.delayFlag));
+    const detourLocalEvents = localRecords.filter((event) => isFlagged(event?.detourFlag));
+    const activeConstruction = localRecords.filter((event) => toSafeString(event?.type).toLowerCase() === "construction");
+    const activeClosures = localRecords.filter((event) => toSafeString(event?.type).toLowerCase() === "closure");
+    const activeFlooding = localRecords.filter((event) => toSafeString(event?.type).toLowerCase() === "flooding");
+    const activeDamage = localRecords.filter((event) => toSafeString(event?.type).toLowerCase() === "damage");
+
+    return {
+      totalLocalEvents: localRecords.length,
+      libertyCountyEvents: libertyCountyRecords.length,
+      corridorEvents: corridorRecords.length,
+      delayedLocalEvents: delayedLocalEvents.length,
+      detourLocalEvents: detourLocalEvents.length,
+      activeConstruction: activeConstruction.length,
+      activeClosures: activeClosures.length,
+      activeFlooding: activeFlooding.length,
+      activeDamage: activeDamage.length,
+      sampleEvents: localRecords.slice(0, 10)
     };
   };
 })(typeof window !== "undefined" ? window : globalThis);
