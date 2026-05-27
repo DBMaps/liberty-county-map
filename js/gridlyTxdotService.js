@@ -85,6 +85,33 @@
     return toSafeString(routeNameRaw);
   }
 
+  function toDistanceDisplay(value, unit) {
+    const amount = Number(value);
+    if (!Number.isFinite(amount)) return "";
+    if (unit === "feet") return `${Math.round(amount)} ft`;
+    if (unit === "miles") return `${amount.toFixed(1)} mi`;
+    return "";
+  }
+
+  function humanizeLocationLimit(limitRaw) {
+    const raw = toSafeString(limitRaw);
+    if (!raw) return "";
+
+    const pattern = /^([\d.]+)\s+(Feet|Miles)\s+(North|South|East|West)\s+of\s+([A-Z]{2}\d+)\s+on\s+([A-Z]{2}\d+)$/i;
+    const match = raw.match(pattern);
+    if (!match) return raw;
+
+    const [, distanceValue, unitRaw, directionRaw, roadAtRaw, roadOnRaw] = match;
+    const unit = unitRaw.toLowerCase();
+    const direction = directionRaw.toLowerCase();
+    const distance = toDistanceDisplay(distanceValue, unit);
+    const roadAt = toRouteDisplayName(roadAtRaw);
+    const roadOn = toRouteDisplayName(roadOnRaw);
+
+    if (!distance || !roadAt || !roadOn) return raw;
+    return `${distance} ${direction} of ${roadAt} on ${roadOn}`;
+  }
+
   function midpointFromLineString(featureGeometry) {
     if (!featureGeometry || typeof featureGeometry !== "object") return { latitude: null, longitude: null };
     if (featureGeometry.type !== "LineString") return { latitude: null, longitude: null };
@@ -116,6 +143,9 @@
       ? 1
       : (hasRoadName ? 0.75 : (hasCoordinates ? 0.5 : 0));
 
+    const fromLimitRaw = toSafeString(rawIncident.from_limit);
+    const toLimitRaw = toSafeString(rawIncident.to_limit);
+
     return {
       id: toSafeString(rawIncident.GLOBALID) || `txdot-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       source: TXDOT_SOURCE_LABEL,
@@ -129,8 +159,12 @@
       routeNameDisplay,
       direction: normalizeDirection(rawIncident.travel_direction),
       description: toSafeString(rawIncident.description),
-      fromLimit: toSafeString(rawIncident.from_limit),
-      toLimit: toSafeString(rawIncident.to_limit),
+      fromLimit: fromLimitRaw,
+      toLimit: toLimitRaw,
+      fromLimitRaw,
+      toLimitRaw,
+      fromLimitDisplay: humanizeLocationLimit(fromLimitRaw),
+      toLimitDisplay: humanizeLocationLimit(toLimitRaw),
       startTime: toSafeString(rawIncident.start_time),
       endTime: toSafeString(rawIncident.end_time),
       delayFlag: rawIncident.delay_flag,
