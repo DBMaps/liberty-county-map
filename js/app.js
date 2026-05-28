@@ -1745,34 +1745,10 @@ window.gridlyIntelligenceDatasetTrace = function gridlyIntelligenceDatasetTrace(
 
 window.gridlyIntelligencePhraseAudit = function gridlyIntelligencePhraseAudit() {
   try {
-    const incidents = Array.isArray(getAllActiveIncidents?.()) ? getAllActiveIncidents() : [];
     const markerPane = typeof document !== "undefined" ? document.querySelector("#map .leaflet-marker-pane") : null;
-    const bridgeSelector = GRIDLY_DOM_BRIDGE_AUDIT_SELECTOR;
-    const selectedDomNodes = markerPane
-      ? Array.from(new Set(Array.from(markerPane.querySelectorAll(bridgeSelector))))
-      : getGridlyDomBridgeAuditTargets(markerPane);
-    const evaluated = incidents.map((incident) => {
-      const visualState = getGridlyIncidentVisualState(incident);
-      const phrase = generateGridlyIntelligencePhrase(incident, visualState);
-      const confidence = evaluateGridlyIncidentConfidence(incident, { visualState });
-      return { incident, visualState, phrase, confidence };
-    });
-    const countBy = (items, keyFn) => items.reduce((acc, item) => {
-      const key = String(keyFn(item) || "unknown");
-      acc[key] = (acc[key] || 0) + 1;
-      return acc;
-    }, {});
-    const sourceEvaluatedCount = evaluated.length;
-    const filterRejectReasons = { missingBridgeAttributes: 0 };
-    const domBridgeCandidates = selectedDomNodes.map((node, index) => {
-      const entry = extractGridlyDomBridgePhraseEntry(node, index, "dom-phrase");
-      const isValidBridge = Boolean(entry.isValidBridge);
-      if (!isValidBridge) filterRejectReasons.missingBridgeAttributes += 1;
-      return { ...entry, isValidBridge };
-    });
-    const domBridgePhrases = domBridgeCandidates.filter((entry) => entry.isValidBridge);
-    const domBridgeRoutePhrases = domBridgePhrases.filter((entry) => entry.routeImpact);
-    const extractedPhraseSamples = domBridgeCandidates
+    const selectedDomNodes = getGridlyDomBridgeAuditTargets(markerPane);
+    const extractedPhraseSamples = selectedDomNodes
+      .map((node, index) => extractGridlyDomBridgePhraseEntry(node, index, "dom-phrase"))
       .map((entry) => ({
         id: entry.id,
         shortPhrase: entry.extractedShortPhrase || entry.synthesizedShortPhrase || "",
@@ -1783,157 +1759,48 @@ window.gridlyIntelligencePhraseAudit = function gridlyIntelligencePhraseAudit() 
         routeImpact: Boolean(entry.routeImpact)
       }))
       .filter((entry) => Boolean(entry.shortPhrase));
-    const intelligenceSelectorCount = markerPane ? markerPane.querySelectorAll(GRIDLY_INTELLIGENCE_SELECTOR).length : 0;
-    const confidenceLabelSelectorCount = markerPane ? markerPane.querySelectorAll(GRIDLY_CONFIDENCE_LABEL_SELECTOR).length : 0;
-    const routeImpactSelectorCount = markerPane ? markerPane.querySelectorAll('[data-gridly-route-impact="true"], .gridly-marker-rail-route-impact, .gridly-marker-priority-route-impact').length : 0;
-    const finalSourceUsed = domBridgePhrases.length > 0 ? "dom_bridge" : (sourceEvaluatedCount > 0 ? "source_incidents" : "none");
-    const effectiveEvaluatedCount = finalSourceUsed === "source_incidents" ? sourceEvaluatedCount : domBridgePhrases.length;
-    const effectiveRouteRelevantPhraseCount = finalSourceUsed === "source_incidents"
-      ? evaluated.filter((e) => Boolean(e.visualState?.routeRelevant || e.visualState?.routeImpact)).length
-      : domBridgeRoutePhrases.length;
-    const effectivePhraseCounts = finalSourceUsed === "source_incidents"
-      ? countBy(evaluated, (e) => e.phrase?.shortPhrase || "unknown")
-      : countBy(domBridgePhrases, (entry) => entry.extractedShortPhrase || "unknown");
-    const effectiveTopPhraseSamples = finalSourceUsed === "source_incidents"
-      ? evaluated.slice(0, 8).map((e) => ({ id: e.incident?.id || e.incident?.crossingId || "", shortPhrase: e.phrase?.shortPhrase || "", detailPhrase: e.phrase?.detailPhrase || "", confidenceLevel: e.confidence?.confidenceLevel || "low", freshnessLevel: e.visualState?.freshnessLevel || "unknown", routeRelevant: Boolean(e.visualState?.routeRelevant), routeImpact: Boolean(e.visualState?.routeImpact) }))
-      : domBridgePhrases.slice(0, 8).map((entry) => ({ id: entry.id, shortPhrase: entry.extractedShortPhrase || "", detailPhrase: entry.consequence || "", confidenceLevel: entry.extractedConfidencePhrase || "unknown", freshnessLevel: entry.extractedFreshnessPhrase || "unknown", routeRelevant: Boolean(entry.routeImpact), routeImpact: Boolean(entry.routeImpact) }));
-    const useExtractedSamples = sourceEvaluatedCount === 0 && extractedPhraseSamples.length > 0;
-    let evaluatedCount = useExtractedSamples ? extractedPhraseSamples.length : effectiveEvaluatedCount;
-    let phraseCounts = useExtractedSamples ? countBy(extractedPhraseSamples, (entry) => entry.shortPhrase || "unknown") : effectivePhraseCounts;
-    let routeRelevantPhraseCount = useExtractedSamples ? extractedPhraseSamples.filter((entry) => entry.routeImpact).length : effectiveRouteRelevantPhraseCount;
-    let topPhraseSamples = useExtractedSamples ? extractedPhraseSamples.slice(0, 8) : effectiveTopPhraseSamples;
-    let domBridgePhraseCount = useExtractedSamples ? extractedPhraseSamples.length : domBridgePhrases.length;
-    let finalPhraseCount = useExtractedSamples ? extractedPhraseSamples.length : effectiveEvaluatedCount;
-    let finalSourceForReturn = useExtractedSamples ? "dom_bridge" : finalSourceUsed;
-    let finalUsedExtractedSamples = useExtractedSamples;
-    if (extractedPhraseSamples.length > 0 && sourceEvaluatedCount === 0 && evaluatedCount === 0) {
-      const extractedRouteImpactCount = extractedPhraseSamples.filter((entry) => entry.routeImpact).length;
-      evaluatedCount = extractedPhraseSamples.length;
-      domBridgePhraseCount = extractedPhraseSamples.length;
-      finalPhraseCount = extractedPhraseSamples.length;
-      finalSourceForReturn = "dom_bridge";
-      finalUsedExtractedSamples = true;
-      routeRelevantPhraseCount = extractedRouteImpactCount;
-      phraseCounts = countBy(extractedPhraseSamples, (entry) => entry.shortPhrase || "unknown");
-      topPhraseSamples = extractedPhraseSamples.slice(0, 8);
-    }
+    const evaluatedCount = extractedPhraseSamples.length;
+    const routeImpactCount = extractedPhraseSamples.filter((entry) => entry.routeImpact).length;
     return {
       evaluatedCount,
-      phraseCounts,
-      routeRelevantPhraseCount,
-      confidencePhraseCounts: countBy(evaluated, (e) => e.phrase?.confidencePhrase || "unknown"),
-      freshnessPhraseCounts: countBy(evaluated, (e) => e.phrase?.freshnessPhrase || "unknown"),
-      topPhraseSamples,
-      domBridgePhraseCount,
-      domBridgeRoutePhraseCount: domBridgeRoutePhrases.length,
-      sourcePhraseCount: sourceEvaluatedCount,
-      finalPhraseCount,
-      finalSourceUsed: finalSourceForReturn,
-      intelligenceSelectorCount,
-      confidenceLabelSelectorCount,
-      routeImpactSelectorCount,
-      inspectedDomCount: selectedDomNodes.length,
+      routeRelevantPhraseCount: routeImpactCount,
+      routeImpactPhraseCount: routeImpactCount,
+      domBridgePhraseCount: evaluatedCount,
+      finalSourceUsed: "dom_bridge",
+      finalUsedExtractedSamples: true,
+      topPhraseSamples: extractedPhraseSamples.slice(0, 8),
       selectedDomCount: selectedDomNodes.length,
-      filteredOutDomCount: selectedDomNodes.length - domBridgePhrases.length,
-      filterRejectReasons,
-      validDomBridgeCount: domBridgePhrases.length,
-      domBridgePhraseSamples: domBridgePhrases.slice(0, 8),
-      extractedDomPhraseCount: extractedPhraseSamples.length,
-      extractedRoutePhraseCount: extractedPhraseSamples.filter((entry) => entry.routeImpact).length,
-      finalUsedExtractedSamples,
-      intelligencePhraseSourceUsed: finalSourceForReturn,
-      notes: ["Intelligence phrase audit is read-only and preserves existing consequence, confidence, and freshness systems."]
+      extractedDomPhraseCount: evaluatedCount
     };
   } catch (error) {
-    return { evaluatedCount: 0, phraseCounts: {}, routeRelevantPhraseCount: 0, confidencePhraseCounts: {}, freshnessPhraseCounts: {}, topPhraseSamples: [], domBridgePhraseCount: 0, domBridgeRoutePhraseCount: 0, sourcePhraseCount: 0, finalPhraseCount: 0, finalSourceUsed: "none", intelligenceSelectorCount: 0, confidenceLabelSelectorCount: 0, routeImpactSelectorCount: 0, inspectedDomCount: 0, selectedDomCount: 0, filteredOutDomCount: 0, filterRejectReasons: {}, validDomBridgeCount: 0, domBridgePhraseSamples: [], extractedDomPhraseCount: 0, extractedRoutePhraseCount: 0, finalUsedExtractedSamples: false, intelligencePhraseSourceUsed: "none", notes: [`Intelligence phrase audit fallback: ${error?.message || "unknown error"}`] };
+    return { evaluatedCount: 0, routeRelevantPhraseCount: 0, routeImpactPhraseCount: 0, domBridgePhraseCount: 0, finalSourceUsed: "dom_bridge", finalUsedExtractedSamples: true, topPhraseSamples: [], selectedDomCount: 0, extractedDomPhraseCount: 0, error: error?.message || "unknown error" };
   }
 };
 
 window.gridlyRouteIntelligenceAudit = function gridlyRouteIntelligenceAudit() {
   try {
-    const incidents = Array.isArray(getAllActiveIncidents?.()) ? getAllActiveIncidents() : [];
     const markerPane = typeof document !== "undefined" ? document.querySelector("#map .leaflet-marker-pane") : null;
-    const bridgeSelector = GRIDLY_DOM_BRIDGE_AUDIT_SELECTOR;
-    const selectedDomNodes = markerPane
-      ? Array.from(new Set(Array.from(markerPane.querySelectorAll(bridgeSelector))))
-      : getGridlyDomBridgeAuditTargets(markerPane);
-    const evaluated = incidents.map((incident) => {
-      const visualState = getGridlyIncidentVisualState(incident);
-      const phrase = generateGridlyIntelligencePhrase(incident, visualState);
-      const confidence = evaluateGridlyIncidentConfidence(incident, { visualState });
-      return { incident, visualState, phrase, confidence };
-    }).filter((e) => Boolean(e.visualState?.routeRelevant || e.visualState?.routeImpact));
-    const filterRejectReasons = { missingBridgeAttributes: 0 };
-    const domBridgeEvaluated = selectedDomNodes.map((node, index) => {
-      const entry = extractGridlyDomBridgePhraseEntry(node, index, "dom-route-phrase");
-      const isValidBridge = Boolean(entry.isValidBridge);
-      if (!isValidBridge) filterRejectReasons.missingBridgeAttributes += 1;
-      return { ...entry, routePhrase: entry.extractedShortPhrase, confidencePhrase: entry.extractedConfidencePhrase, isValidBridge };
-    }).filter((entry) => entry.isValidBridge);
-    const intelligenceSelectorCount = markerPane ? markerPane.querySelectorAll(GRIDLY_INTELLIGENCE_SELECTOR).length : 0;
-    const confidenceLabelSelectorCount = markerPane ? markerPane.querySelectorAll(GRIDLY_CONFIDENCE_LABEL_SELECTOR).length : 0;
-    const routeImpactSelectorCount = markerPane ? markerPane.querySelectorAll('[data-gridly-route-impact="true"], .gridly-marker-rail-route-impact, .gridly-marker-priority-route-impact').length : 0;
-    const sourcePhraseCount = evaluated.length;
-    const domBridgePhraseCount = domBridgeEvaluated.length;
-    const finalSourceUsed = domBridgePhraseCount > 0 ? "dom_bridge" : (sourcePhraseCount > 0 ? "source_incidents" : "none");
-    const routeRelevantCount = finalSourceUsed === "source_incidents" ? sourcePhraseCount : domBridgePhraseCount;
-    const routeImpactPhraseCount = finalSourceUsed === "source_incidents" ? evaluated.filter((e) => Boolean(e.visualState?.routeImpact)).length : domBridgeEvaluated.filter((entry) => entry.routeImpact).length;
-    const lowConfidenceRoutePhraseCount = finalSourceUsed === "source_incidents"
-      ? evaluated.filter((e) => ["low", "very_low"].includes(String(e.confidence?.confidenceLevel || ""))).length
-      : domBridgeEvaluated.filter((entry) => /low/i.test(entry.confidenceLabel || entry.confidence || "")).length;
-    const highConfidenceRoutePhraseCount = finalSourceUsed === "source_incidents"
-      ? evaluated.filter((e) => String(e.confidence?.confidenceLevel || "") === "high").length
-      : domBridgeEvaluated.filter((entry) => /high/i.test(entry.confidenceLabel || entry.confidence || "")).length;
-    const extractedPhraseSamples = domBridgeEvaluated
-      .map((entry) => ({ id: entry.id, shortPhrase: entry.routePhrase || "", routePhrase: entry.routePhrase || "", confidencePhrase: entry.confidencePhrase || "", confidenceLevel: entry.confidencePhrase ? "dom_bridge" : "unknown", routeImpact: Boolean(entry.routeImpact) }))
+    const selectedDomNodes = getGridlyDomBridgeAuditTargets(markerPane);
+    const extractedPhraseSamples = selectedDomNodes
+      .map((node, index) => extractGridlyDomBridgePhraseEntry(node, index, "dom-route-phrase"))
+      .map((entry) => ({ id: entry.id, shortPhrase: entry.extractedShortPhrase || entry.synthesizedShortPhrase || "", routePhrase: entry.extractedShortPhrase || entry.synthesizedShortPhrase || "", confidencePhrase: entry.extractedConfidencePhrase || "", confidenceLevel: entry.extractedConfidencePhrase ? "dom_bridge" : "unknown", routeImpact: Boolean(entry.routeImpact) }))
       .filter((entry) => Boolean(entry.routePhrase));
     const extractedRouteSamples = extractedPhraseSamples.filter((entry) => entry.routeImpact);
-    const useExtractedSamples = sourcePhraseCount === 0 && extractedPhraseSamples.length > 0;
-    let routeRelevantCountForReturn = useExtractedSamples ? extractedRouteSamples.length : routeRelevantCount;
-    let routeImpactPhraseCountForReturn = useExtractedSamples ? extractedRouteSamples.length : routeImpactPhraseCount;
-    let topRoutePhraseSamples = useExtractedSamples
-      ? extractedRouteSamples.slice(0, 8)
-      : finalSourceUsed === "source_incidents"
-      ? evaluated.slice(0, 8).map((e) => ({ id: e.incident?.id || e.incident?.crossingId || "", shortPhrase: e.phrase?.shortPhrase || "", routePhrase: e.phrase?.routePhrase || "", confidencePhrase: e.phrase?.confidencePhrase || "", confidenceLevel: e.confidence?.confidenceLevel || "low" }))
-      : domBridgeEvaluated.slice(0, 8).map((e) => ({ id: e.id, shortPhrase: e.routePhrase || "", routePhrase: e.routePhrase || "", confidencePhrase: e.confidencePhrase || "", confidenceLevel: e.confidencePhrase ? "dom_bridge" : "unknown" }));
-    let finalPhraseCountForReturn = useExtractedSamples ? extractedRouteSamples.length : routeRelevantCount;
-    let finalSourceForReturn = useExtractedSamples ? "dom_bridge" : finalSourceUsed;
-    let finalUsedExtractedSamples = useExtractedSamples;
-    if (extractedPhraseSamples.length > 0 && sourcePhraseCount === 0 && routeRelevantCountForReturn === 0) {
-      const extractedRouteImpactCount = extractedRouteSamples.length;
-      routeRelevantCountForReturn = extractedRouteImpactCount;
-      routeImpactPhraseCountForReturn = extractedRouteImpactCount;
-      finalPhraseCountForReturn = extractedRouteImpactCount;
-      finalSourceForReturn = "dom_bridge";
-      finalUsedExtractedSamples = true;
-      topRoutePhraseSamples = extractedRouteSamples.slice(0, 8);
-    }
     return {
-      routeRelevantCount: routeRelevantCountForReturn,
-      lowConfidenceRoutePhraseCount,
-      highConfidenceRoutePhraseCount,
-      routeImpactPhraseCount: routeImpactPhraseCountForReturn,
-      topRoutePhraseSamples,
-      sourcePhraseCount,
-      domBridgePhraseCount,
-      finalPhraseCount: finalPhraseCountForReturn,
-      finalSourceUsed: finalSourceForReturn,
-      intelligenceSelectorCount,
-      confidenceLabelSelectorCount,
-      routeImpactSelectorCount,
-      inspectedDomCount: selectedDomNodes.length,
+      evaluatedCount: extractedPhraseSamples.length,
+      routeRelevantCount: extractedRouteSamples.length,
+      routeRelevantPhraseCount: extractedRouteSamples.length,
+      routeImpactPhraseCount: extractedRouteSamples.length,
+      domBridgePhraseCount: extractedPhraseSamples.length,
+      finalSourceUsed: "dom_bridge",
+      finalUsedExtractedSamples: true,
+      topRoutePhraseSamples: extractedRouteSamples.slice(0, 8),
       selectedDomCount: selectedDomNodes.length,
-      filteredOutDomCount: selectedDomNodes.length - domBridgeEvaluated.length,
-      filterRejectReasons,
-      validDomBridgeCount: domBridgeEvaluated.length,
       extractedDomPhraseCount: extractedPhraseSamples.length,
-      extractedRoutePhraseCount: extractedRouteSamples.length,
-      finalUsedExtractedSamples,
-      routeIntelligenceSourceUsed: finalSourceForReturn,
-      notes: ["Route intelligence audit preserves route-impact DOM bridge and calm hierarchy behavior."]
+      extractedRoutePhraseCount: extractedRouteSamples.length
     };
   } catch (error) {
-    return { routeRelevantCount: 0, lowConfidenceRoutePhraseCount: 0, highConfidenceRoutePhraseCount: 0, routeImpactPhraseCount: 0, topRoutePhraseSamples: [], sourcePhraseCount: 0, domBridgePhraseCount: 0, finalPhraseCount: 0, finalSourceUsed: "none", intelligenceSelectorCount: 0, confidenceLabelSelectorCount: 0, routeImpactSelectorCount: 0, inspectedDomCount: 0, selectedDomCount: 0, filteredOutDomCount: 0, filterRejectReasons: {}, validDomBridgeCount: 0, extractedDomPhraseCount: 0, extractedRoutePhraseCount: 0, finalUsedExtractedSamples: false, routeIntelligenceSourceUsed: "fallback", notes: [`Route intelligence audit fallback: ${error?.message || "unknown error"}`] };
+    return { evaluatedCount: 0, routeRelevantCount: 0, routeRelevantPhraseCount: 0, routeImpactPhraseCount: 0, domBridgePhraseCount: 0, finalSourceUsed: "dom_bridge", finalUsedExtractedSamples: true, topRoutePhraseSamples: [], selectedDomCount: 0, extractedDomPhraseCount: 0, extractedRoutePhraseCount: 0, error: error?.message || "unknown error" };
   }
 };
 
