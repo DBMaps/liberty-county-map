@@ -1660,6 +1660,88 @@ const getGridlyCanonicalRouteImpactDomTargets = (markerPane) => markerPane
 const getGridlyDomBridgeAuditTargets = (markerPane) => markerPane
   ? Array.from(new Set(Array.from(markerPane.querySelectorAll(GRIDLY_DOM_BRIDGE_AUDIT_SELECTOR))))
   : [];
+const getGridlyDatasetOrAttribute = (node, datasetKey, attributeName) => {
+  const datasetValue = String(node?.dataset?.[datasetKey] || "").trim();
+  const attributeValue = String(node?.getAttribute?.(attributeName) || "").trim();
+  return {
+    value: datasetValue || attributeValue,
+    datasetValue,
+    attributeValue
+  };
+};
+const extractGridlyDomBridgePhraseEntry = (node, index, idPrefix = "dom-bridge") => {
+  const intelligence = getGridlyDatasetOrAttribute(node, "gridlyIntelligence", "data-gridly-intelligence");
+  const confidenceLabel = getGridlyDatasetOrAttribute(node, "gridlyConfidenceLabel", "data-gridly-confidence-label");
+  const routeImpactValue = getGridlyDatasetOrAttribute(node, "gridlyRouteImpact", "data-gridly-route-impact");
+  const consequence = getGridlyDatasetOrAttribute(node, "gridlyConsequence", "data-gridly-consequence");
+  const confidence = getGridlyDatasetOrAttribute(node, "gridlyConfidence", "data-gridly-confidence");
+  const freshness = getGridlyDatasetOrAttribute(node, "gridlyFreshness", "data-gridly-freshness");
+  const routeImpact = String(routeImpactValue.value || "").toLowerCase() === "true"
+    || node.classList.contains("gridly-marker-rail-route-impact")
+    || node.classList.contains("gridly-marker-priority-route-impact");
+  const synthesizedShortPhrase = !intelligence.value && routeImpact ? "Possible delay on your route" : "";
+  const extractedShortPhrase = intelligence.value || synthesizedShortPhrase;
+  const extractedConfidencePhrase = confidenceLabel.value || confidence.value || "";
+  const extractedFreshnessPhrase = freshness.value || "";
+  const isValidBridge = Boolean(extractedShortPhrase || extractedConfidencePhrase || consequence.value || confidence.value || routeImpact);
+  return {
+    id: String(node.getAttribute("data-gridly-incident-id") || node.getAttribute("data-incident-id") || node.id || `${idPrefix}-${index + 1}`),
+    intelligence: intelligence.value,
+    confidenceLabel: confidenceLabel.value,
+    routeImpact,
+    consequence: consequence.value,
+    confidence: confidence.value,
+    freshness: freshness.value,
+    visualStyle: String(node.getAttribute("data-visual-style") || "").trim(),
+    extractedShortPhrase,
+    extractedConfidencePhrase,
+    extractedFreshnessPhrase,
+    synthesizedShortPhrase,
+    isValidBridge,
+    datasetSamples: {
+      intelligence: intelligence.datasetValue,
+      confidenceLabel: confidenceLabel.datasetValue,
+      routeImpact: routeImpactValue.datasetValue,
+      consequence: consequence.datasetValue,
+      confidence: confidence.datasetValue,
+      freshness: freshness.datasetValue
+    },
+    attributeSamples: {
+      intelligence: intelligence.attributeValue,
+      confidenceLabel: confidenceLabel.attributeValue,
+      routeImpact: routeImpactValue.attributeValue,
+      consequence: consequence.attributeValue,
+      confidence: confidence.attributeValue,
+      freshness: freshness.attributeValue
+    }
+  };
+};
+
+window.gridlyIntelligenceDatasetTrace = function gridlyIntelligenceDatasetTrace() {
+  try {
+    const markerPane = typeof document !== "undefined" ? document.querySelector("#map .leaflet-marker-pane") : null;
+    const selectedDomNodes = getGridlyDomBridgeAuditTargets(markerPane);
+    const extracted = selectedDomNodes.map((node, index) => extractGridlyDomBridgePhraseEntry(node, index, "dom-dataset-trace"));
+    const missingFieldCounts = extracted.reduce((acc, entry) => {
+      if (!entry.intelligence && !entry.synthesizedShortPhrase) acc.intelligence += 1;
+      if (!entry.confidenceLabel) acc.confidenceLabel += 1;
+      if (!entry.consequence) acc.consequence += 1;
+      if (!entry.confidence) acc.confidence += 1;
+      if (!entry.freshness) acc.freshness += 1;
+      return acc;
+    }, { intelligence: 0, confidenceLabel: 0, consequence: 0, confidence: 0, freshness: 0 });
+    return {
+      selectedDomCount: selectedDomNodes.length,
+      datasetSamples: extracted.slice(0, 8).map((entry) => ({ id: entry.id, ...entry.datasetSamples })),
+      attributeSamples: extracted.slice(0, 8).map((entry) => ({ id: entry.id, ...entry.attributeSamples })),
+      extractedPhraseSamples: extracted.slice(0, 8).map((entry) => ({ id: entry.id, shortPhrase: entry.extractedShortPhrase, confidencePhrase: entry.extractedConfidencePhrase, freshnessPhrase: entry.extractedFreshnessPhrase, routeImpact: entry.routeImpact, synthesizedShortPhrase: entry.synthesizedShortPhrase })),
+      missingFieldCounts,
+      notes: ["Dataset trace inspects both dataset and attribute access paths for DOM bridge intelligence metadata."]
+    };
+  } catch (error) {
+    return { selectedDomCount: 0, datasetSamples: [], attributeSamples: [], extractedPhraseSamples: [], missingFieldCounts: {}, notes: [`Intelligence dataset trace fallback: ${error?.message || "unknown error"}`] };
+  }
+};
 
 window.gridlyIntelligencePhraseAudit = function gridlyIntelligencePhraseAudit() {
   try {
@@ -1683,44 +1765,27 @@ window.gridlyIntelligencePhraseAudit = function gridlyIntelligencePhraseAudit() 
     const sourceEvaluatedCount = evaluated.length;
     const filterRejectReasons = { missingBridgeAttributes: 0 };
     const domBridgeCandidates = selectedDomNodes.map((node, index) => {
-      const intelligence = String(node.getAttribute("data-gridly-intelligence") || "").trim();
-      const confidenceLabel = String(node.getAttribute("data-gridly-confidence-label") || "").trim();
-      const routeImpactAttr = String(node.getAttribute("data-gridly-route-impact") || "").toLowerCase();
-      const consequence = String(node.getAttribute("data-gridly-consequence") || "").trim();
-      const confidence = String(node.getAttribute("data-gridly-confidence") || "").trim();
-      const visualStyle = String(node.getAttribute("data-visual-style") || "").trim();
-      const freshness = String(node.getAttribute("data-gridly-freshness") || "").trim();
-      const routeImpact = routeImpactAttr === "true" || node.classList.contains("gridly-marker-rail-route-impact") || node.classList.contains("gridly-marker-priority-route-impact");
-      const isValidBridge = Boolean(intelligence || confidenceLabel || consequence || confidence || routeImpact);
+      const entry = extractGridlyDomBridgePhraseEntry(node, index, "dom-phrase");
+      const isValidBridge = Boolean(entry.isValidBridge);
       if (!isValidBridge) filterRejectReasons.missingBridgeAttributes += 1;
-      return {
-        id: String(node.getAttribute("data-gridly-incident-id") || node.getAttribute("data-incident-id") || node.id || `dom-phrase-${index + 1}`),
-        intelligence,
-        confidenceLabel,
-        routeImpact,
-        consequence,
-        confidence,
-        freshness,
-        visualStyle,
-        isValidBridge
-      };
+      return { ...entry, isValidBridge };
     });
     const domBridgePhrases = domBridgeCandidates.filter((entry) => entry.isValidBridge);
     const domBridgeRoutePhrases = domBridgePhrases.filter((entry) => entry.routeImpact);
     const intelligenceSelectorCount = markerPane ? markerPane.querySelectorAll(GRIDLY_INTELLIGENCE_SELECTOR).length : 0;
     const confidenceLabelSelectorCount = markerPane ? markerPane.querySelectorAll(GRIDLY_CONFIDENCE_LABEL_SELECTOR).length : 0;
     const routeImpactSelectorCount = markerPane ? markerPane.querySelectorAll('[data-gridly-route-impact="true"], .gridly-marker-rail-route-impact, .gridly-marker-priority-route-impact').length : 0;
-    const finalSourceUsed = sourceEvaluatedCount > 0 ? "source_incidents" : (domBridgePhrases.length > 0 ? "dom_bridge" : "none");
+    const finalSourceUsed = domBridgePhrases.length > 0 ? "dom_bridge" : (sourceEvaluatedCount > 0 ? "source_incidents" : "none");
     const effectiveEvaluatedCount = finalSourceUsed === "source_incidents" ? sourceEvaluatedCount : domBridgePhrases.length;
     const effectiveRouteRelevantPhraseCount = finalSourceUsed === "source_incidents"
       ? evaluated.filter((e) => Boolean(e.visualState?.routeRelevant || e.visualState?.routeImpact)).length
       : domBridgeRoutePhrases.length;
     const effectivePhraseCounts = finalSourceUsed === "source_incidents"
       ? countBy(evaluated, (e) => e.phrase?.shortPhrase || "unknown")
-      : countBy(domBridgePhrases, (entry) => entry.intelligence || "unknown");
+      : countBy(domBridgePhrases, (entry) => entry.extractedShortPhrase || "unknown");
     const effectiveTopPhraseSamples = finalSourceUsed === "source_incidents"
       ? evaluated.slice(0, 8).map((e) => ({ id: e.incident?.id || e.incident?.crossingId || "", shortPhrase: e.phrase?.shortPhrase || "", detailPhrase: e.phrase?.detailPhrase || "", confidenceLevel: e.confidence?.confidenceLevel || "low", freshnessLevel: e.visualState?.freshnessLevel || "unknown", routeRelevant: Boolean(e.visualState?.routeRelevant), routeImpact: Boolean(e.visualState?.routeImpact) }))
-      : domBridgePhrases.slice(0, 8).map((entry) => ({ id: entry.id, shortPhrase: entry.intelligence || "", detailPhrase: entry.consequence || "", confidenceLevel: entry.confidenceLabel || entry.confidence || "unknown", freshnessLevel: entry.freshness || "unknown", routeRelevant: Boolean(entry.routeImpact), routeImpact: Boolean(entry.routeImpact) }));
+      : domBridgePhrases.slice(0, 8).map((entry) => ({ id: entry.id, shortPhrase: entry.extractedShortPhrase || "", detailPhrase: entry.consequence || "", confidenceLevel: entry.extractedConfidencePhrase || "unknown", freshnessLevel: entry.extractedFreshnessPhrase || "unknown", routeRelevant: Boolean(entry.routeImpact), routeImpact: Boolean(entry.routeImpact) }));
     const hardFallbackDomPhrases = sourceEvaluatedCount === 0 && selectedDomNodes.length > 0
       ? selectedDomNodes.map((node, index) => ({
         id: String(node.getAttribute("data-gridly-incident-id") || node.getAttribute("data-incident-id") || node.id || `dom-hard-phrase-${index + 1}`),
@@ -1777,37 +1842,17 @@ window.gridlyRouteIntelligenceAudit = function gridlyRouteIntelligenceAudit() {
     }).filter((e) => Boolean(e.visualState?.routeRelevant || e.visualState?.routeImpact));
     const filterRejectReasons = { missingBridgeAttributes: 0 };
     const domBridgeEvaluated = selectedDomNodes.map((node, index) => {
-      const routeImpact = String(node.getAttribute("data-gridly-route-impact") || "").toLowerCase() === "true"
-        || node.classList.contains("gridly-marker-rail-route-impact")
-        || node.classList.contains("gridly-marker-priority-route-impact");
-      const intelligence = String(node.getAttribute("data-gridly-intelligence") || "").trim();
-      const confidenceLabel = String(node.getAttribute("data-gridly-confidence-label") || "").trim();
-      const consequence = String(node.getAttribute("data-gridly-consequence") || "").trim();
-      const confidence = String(node.getAttribute("data-gridly-confidence") || "").trim();
-      const freshness = String(node.getAttribute("data-gridly-freshness") || "").trim();
-      const visualStyle = String(node.getAttribute("data-visual-style") || "").trim();
-      const isValidBridge = Boolean(intelligence || confidenceLabel || consequence || confidence || routeImpact);
+      const entry = extractGridlyDomBridgePhraseEntry(node, index, "dom-route-phrase");
+      const isValidBridge = Boolean(entry.isValidBridge);
       if (!isValidBridge) filterRejectReasons.missingBridgeAttributes += 1;
-      return {
-        id: String(node.getAttribute("data-gridly-incident-id") || node.getAttribute("data-incident-id") || node.id || `dom-route-phrase-${index + 1}`),
-        intelligence,
-        confidenceLabel,
-        routeImpact,
-        consequence,
-        confidence,
-        freshness,
-        visualStyle,
-        routePhrase: intelligence,
-        confidencePhrase: confidenceLabel,
-        isValidBridge
-      };
+      return { ...entry, routePhrase: entry.extractedShortPhrase, confidencePhrase: entry.extractedConfidencePhrase, isValidBridge };
     }).filter((entry) => entry.isValidBridge);
     const intelligenceSelectorCount = markerPane ? markerPane.querySelectorAll(GRIDLY_INTELLIGENCE_SELECTOR).length : 0;
     const confidenceLabelSelectorCount = markerPane ? markerPane.querySelectorAll(GRIDLY_CONFIDENCE_LABEL_SELECTOR).length : 0;
     const routeImpactSelectorCount = markerPane ? markerPane.querySelectorAll('[data-gridly-route-impact="true"], .gridly-marker-rail-route-impact, .gridly-marker-priority-route-impact').length : 0;
     const sourcePhraseCount = evaluated.length;
     const domBridgePhraseCount = domBridgeEvaluated.length;
-    const finalSourceUsed = sourcePhraseCount > 0 ? "source_incidents" : (domBridgePhraseCount > 0 ? "dom_bridge" : "none");
+    const finalSourceUsed = domBridgePhraseCount > 0 ? "dom_bridge" : (sourcePhraseCount > 0 ? "source_incidents" : "none");
     const routeRelevantCount = finalSourceUsed === "source_incidents" ? sourcePhraseCount : domBridgePhraseCount;
     const routeImpactPhraseCount = finalSourceUsed === "source_incidents" ? evaluated.filter((e) => Boolean(e.visualState?.routeImpact)).length : domBridgeEvaluated.filter((entry) => entry.routeImpact).length;
     const lowConfidenceRoutePhraseCount = finalSourceUsed === "source_incidents"
