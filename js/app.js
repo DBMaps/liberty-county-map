@@ -10204,30 +10204,146 @@ function getGridlyCommunityIncidentId(incident = {}) {
   return coords ? `${coords.lat.toFixed(5)},${coords.lng.toFixed(5)}:${type}:${timestamp}` : `${type}:${timestamp}`;
 }
 
-function getGridlyCommunityPresenceCandidates(options = {}) {
+function getGridlyCommunitySourceArray(name, getter) {
+  try {
+    const value = typeof getter === "function" ? getter() : [];
+    return { name, items: Array.isArray(value) ? value : [], error: Array.isArray(value) ? "" : "source_not_array" };
+  } catch (error) {
+    return { name, items: [], error: error?.message || "source_error" };
+  }
+}
+
+function normalizeGridlyCommunityPresenceDomCandidate(target, index = 0) {
+  if (!target?.dataset) return null;
+  const dataset = target.dataset;
+  const lat = Number(dataset.lat || target.getAttribute?.("data-lat"));
+  const lng = Number(dataset.lng || target.getAttribute?.("data-lng"));
+  const id = String(dataset.incidentId || dataset.id || dataset.crossingId || "").trim()
+    || (Number.isFinite(lat) && Number.isFinite(lng) ? `dom-${lat.toFixed(5)},${lng.toFixed(5)}-${dataset.category || index}` : `dom-${index}`);
+  const type = dataset.category || dataset.gridlyCategory || dataset.visualStyle || "rendered_marker";
+  const severity = dataset.gridlyCommunitySeverity || dataset.gridlyConsequence || dataset.visualPriority || "low";
+  const freshnessLevel = dataset.gridlyCommunityFreshness || dataset.gridlyFreshness || dataset.freshness || "recent";
+  return {
+    id,
+    reportId: id,
+    title: dataset.gridlyIntelligence || dataset.title || "Rendered community incident",
+    headline: dataset.gridlyIntelligence || "Rendered community incident",
+    type,
+    kind: type,
+    report_type: type,
+    category: dataset.category || type,
+    status: dataset.state === "cleared" ? "cleared" : "active",
+    lifecycleState: dataset.state === "cleared" ? "cleared" : "active",
+    lat: Number.isFinite(lat) ? lat : null,
+    lng: Number.isFinite(lng) ? lng : null,
+    severity,
+    freshnessLevel,
+    source: "rendered_marker_dom",
+    raw: target
+  };
+}
+
+function normalizeGridlyCommunityPresenceCandidate(raw = {}, sourceName = "unknown", index = 0) {
+  if (!raw || typeof raw !== "object") return null;
+  const coords = getGridlyIncidentCoordinate(raw) || getGridlyIncidentCoordinate(raw?.raw || {});
+  const id = getGridlyCommunityIncidentId(raw);
+  const type = raw?.type || raw?.report_type || raw?.reportType || raw?.category || raw?.condition || raw?.kind || "community_activity";
+  return {
+    ...raw,
+    id: String(id || `${sourceName}:${index}`),
+    reportId: raw?.reportId || raw?.report_id || raw?.id || String(id || `${sourceName}:${index}`),
+    title: raw?.title || raw?.headline || raw?.location_name || raw?.area || raw?.description || raw?.detail || "Community activity",
+    headline: raw?.headline || raw?.title || raw?.description || raw?.detail || "Community activity",
+    type,
+    kind: raw?.kind || raw?.reportKind || type,
+    report_type: raw?.report_type || raw?.reportType || type,
+    lat: coords ? coords.lat : raw?.lat,
+    lng: coords ? coords.lng : (raw?.lng ?? raw?.lon),
+    roadName: raw?.roadName || raw?.road_name || raw?.street_name || raw?.nearest_road || raw?.corridor || raw?.route || "",
+    corridor: raw?.corridor || raw?.roadName || raw?.road_name || raw?.street_name || raw?.nearest_road || raw?.route || "",
+    severity: raw?.severity || raw?.impact || "low",
+    age_minutes: raw?.age_minutes ?? raw?.minutesAgo ?? raw?.ageMinutes,
+    freshnessLevel: raw?.freshnessLevel || raw?.freshness || "",
+    source: sourceName,
+    raw
+  };
+}
+
+function isGridlyCommunityPresenceActiveCandidate(candidate = {}) {
+  if (!candidate || typeof candidate !== "object" || candidate.expired) return false;
+  const status = String(candidate?.status || candidate?.raw?.status || "").toLowerCase();
+  const explicitLifecycle = String(candidate?.lifecycleState || candidate?.raw?.lifecycleState || "").toLowerCase();
+  const reportType = String(candidate?.report_type || candidate?.reportType || candidate?.type || candidate?.raw?.report_type || candidate?.raw?.type || "").toLowerCase();
+  if (["cleared", "expired", "inactive"].includes(status) || ["cleared", "expired", "inactive"].includes(explicitLifecycle) || reportType === "hazard_cleared") return false;
+  if (status === "active" || explicitLifecycle === "active" || explicitLifecycle === "recently_cleared") return true;
+  if (typeof getIncidentLifecycleState === "function" && (candidate?.submittedAt || candidate?.raw?.submittedAt || candidate?.reportKind || candidate?.raw?.reportKind)) {
+    const lifecycleState = String(getIncidentLifecycleState(candidate?.raw || candidate) || "").toLowerCase();
+    if (["cleared", "expired", "inactive"].includes(lifecycleState)) return false;
+    if (lifecycleState === "active" || lifecycleState === "recently_cleared") return true;
+  }
+  return true;
+}
+
+function resolveGridlyCommunityPresenceSources(options = {}) {
   const optionItems = Array.isArray(options?.communityPresenceItems) ? options.communityPresenceItems : null;
-  const collections = optionItems ? [optionItems] : [
-    typeof getActiveUnifiedIncidents === "function" ? getActiveUnifiedIncidents() : [],
-    typeof getUnifiedIncidents === "function" ? getUnifiedIncidents() : [],
-    Array.isArray(typeof activeReports !== "undefined" ? activeReports : null) ? activeReports : [],
-    Array.isArray(typeof activeHazards !== "undefined" ? activeHazards : null) ? activeHazards : [],
-    Array.isArray(globalThis?.communityReports) ? globalThis.communityReports : [],
-    Array.isArray(globalThis?.communityHazards) ? globalThis.communityHazards : []
+  const sourceDefs = optionItems ? [
+    { name: "options.communityPresenceItems", items: optionItems, error: "" }
+  ] : [
+    getGridlyCommunitySourceArray("getActiveUnifiedIncidents()", () => (typeof getActiveUnifiedIncidents === "function" ? getActiveUnifiedIncidents() : [])),
+    getGridlyCommunitySourceArray("getUnifiedIncidents()", () => (typeof getUnifiedIncidents === "function" ? getUnifiedIncidents() : [])),
+    getGridlyCommunitySourceArray("activeHazards", () => (Array.isArray(typeof activeHazards !== "undefined" ? activeHazards : null) ? activeHazards : [])),
+    getGridlyCommunitySourceArray("activeReports", () => (Array.isArray(typeof activeReports !== "undefined" ? activeReports : null) ? activeReports : [])),
+    getGridlyCommunitySourceArray("window.activeHazards", () => (Array.isArray(globalThis?.activeHazards) ? globalThis.activeHazards : [])),
+    getGridlyCommunitySourceArray("window.activeReports", () => (Array.isArray(globalThis?.activeReports) ? globalThis.activeReports : [])),
+    getGridlyCommunitySourceArray("window.communityHazards", () => (Array.isArray(globalThis?.communityHazards) ? globalThis.communityHazards : [])),
+    getGridlyCommunitySourceArray("window.communityReports", () => (Array.isArray(globalThis?.communityReports) ? globalThis.communityReports : []))
   ];
+  const domTargets = getGridlyCommunityBridgeTargets();
+  sourceDefs.push({ name: "rendered_marker_dom", items: domTargets, error: "" });
+
   const seen = new Set();
-  return collections.flatMap((collection) => Array.isArray(collection) ? collection : [])
-    .filter((incident) => incident && typeof incident === "object")
-    .filter((incident) => {
-      const lifecycleState = typeof getIncidentLifecycleState === "function"
-        ? getIncidentLifecycleState(incident)
-        : String(incident?.status || incident?.lifecycleState || "active").toLowerCase();
-      if (["cleared", "expired", "inactive"].includes(String(lifecycleState || "").toLowerCase())) return false;
-      if (String(incident?.status || "").toLowerCase() === "cleared" || String(incident?.report_type || incident?.type || "").toLowerCase() === "hazard_cleared") return false;
-      const key = getGridlyCommunityIncidentId(incident);
-      if (seen.has(key)) return false;
+  const candidates = [];
+  const skippedCandidateReasons = {};
+  const candidateSourceCounts = {};
+  const rawCandidateSourceCounts = {};
+  const sourceErrors = {};
+
+  const addSkipped = (reason) => { skippedCandidateReasons[reason] = (skippedCandidateReasons[reason] || 0) + 1; };
+
+  sourceDefs.forEach((source) => {
+    const items = Array.isArray(source.items) ? source.items : [];
+    rawCandidateSourceCounts[source.name] = items.length;
+    candidateSourceCounts[source.name] = 0;
+    if (source.error) sourceErrors[source.name] = source.error;
+    items.forEach((item, index) => {
+      const normalized = source.name === "rendered_marker_dom"
+        ? normalizeGridlyCommunityPresenceDomCandidate(item, index)
+        : normalizeGridlyCommunityPresenceCandidate(item, source.name, index);
+      if (!normalized) { addSkipped("normalize_failed"); return; }
+      if (!getGridlyIncidentCoordinate(normalized)) { addSkipped("missing_coordinates"); return; }
+      if (!isGridlyCommunityPresenceActiveCandidate(normalized)) { addSkipped("inactive_or_cleared"); return; }
+      const key = getGridlyCommunityIncidentId(normalized);
+      if (seen.has(key)) { addSkipped("duplicate"); return; }
       seen.add(key);
-      return true;
+      candidateSourceCounts[source.name] += 1;
+      candidates.push(normalized);
     });
+  });
+
+  return {
+    candidates,
+    candidateSourceNames: sourceDefs.map((source) => source.name),
+    candidateSourceCounts,
+    rawCandidateSourceCounts,
+    rawCandidateCount: Object.values(rawCandidateSourceCounts).reduce((sum, count) => sum + Number(count || 0), 0),
+    normalizedCandidateCount: candidates.length,
+    skippedCandidateReasons,
+    sourceErrors
+  };
+}
+
+function getGridlyCommunityPresenceCandidates(options = {}) {
+  return resolveGridlyCommunityPresenceSources(options).candidates;
 }
 
 function detectGridlyCommunityCorridor(incident = {}) {
@@ -10314,7 +10430,8 @@ function buildCommunityPresencePhrases(scoredItems = []) {
 }
 
 function buildCommunityPresenceDataset(options = {}) {
-  const candidates = getGridlyCommunityPresenceCandidates(options);
+  const sourceDiagnostics = resolveGridlyCommunityPresenceSources(options);
+  const candidates = sourceDiagnostics.candidates;
   const scored = candidates.map((incident) => scoreCommunityPresenceIncident(incident, { ...options, allCandidates: candidates }))
     .sort((a, b) => b.communityPresenceScore - a.communityPresenceScore);
   const selected = scored.filter((item, index) => item.communityPresenceScore >= 34 || index < Math.min(5, scored.length)).slice(0, Number(options?.limit || 12));
@@ -10348,7 +10465,14 @@ function buildCommunityPresenceDataset(options = {}) {
     detectedCorridors,
     corridorIncidentCounts,
     dominantCorridor,
-    corridorSeveritySummary
+    corridorSeveritySummary,
+    candidateSourceNames: sourceDiagnostics.candidateSourceNames,
+    candidateSourceCounts: sourceDiagnostics.candidateSourceCounts,
+    rawCandidateSourceCounts: sourceDiagnostics.rawCandidateSourceCounts,
+    rawCandidateCount: sourceDiagnostics.rawCandidateCount,
+    normalizedCandidateCount: sourceDiagnostics.normalizedCandidateCount,
+    skippedCandidateReasons: sourceDiagnostics.skippedCandidateReasons,
+    sourceErrors: sourceDiagnostics.sourceErrors
   };
 }
 
@@ -10368,6 +10492,7 @@ function gridlyApplyCommunityAwarenessDomBridge(options = {}) {
     const coords = getGridlyIncidentCoordinate(item.incident);
     return coords ? [`${coords.lat.toFixed(4)},${coords.lng.toFixed(4)}`, item] : [null, item];
   }).filter(([key]) => key));
+  const matchedSelectedIds = new Set();
   let selectedDomCount = 0;
   const sampleBridgeEntries = [];
   targets.forEach((target) => {
@@ -10378,6 +10503,7 @@ function gridlyApplyCommunityAwarenessDomBridge(options = {}) {
     const selected = selectedById.get(datasetId) || selectedByRoundedCoords.get(coordKey) || null;
     if (!selected) return;
     selectedDomCount += 1;
+    matchedSelectedIds.add(String(selected.id));
     target.dataset.gridlyCommunityAwareness = "true";
     target.dataset.gridlyCommunityScore = String(selected.communityPresenceScore);
     target.dataset.gridlyCommunityCorridor = selected.corridor || "Local corridors";
@@ -10390,11 +10516,29 @@ function gridlyApplyCommunityAwarenessDomBridge(options = {}) {
         score: selected.communityPresenceScore,
         corridor: selected.corridor,
         severity: selected.severity,
-        freshness: selected.freshnessLevel
+        freshness: selected.freshnessLevel,
+        bridgeSource: GRIDLY_COMMUNITY_AWARENESS_BRIDGE_SOURCE
       });
     }
   });
-  return { dataset, targets, selectedDomCount, sampleBridgeEntries };
+  const unmatchedSelected = dataset.selected.filter((item) => !matchedSelectedIds.has(String(item.id)));
+  const unmatchedSelectedSamples = unmatchedSelected.slice(0, 8).map((item) => ({
+    id: item.id,
+    score: item.communityPresenceScore,
+    corridor: item.corridor,
+    severity: item.severity,
+    freshness: item.freshnessLevel
+  }));
+  return {
+    dataset,
+    targets,
+    selectedDomCount,
+    extractedDomCount: selectedDomCount,
+    bridgeSource: GRIDLY_COMMUNITY_AWARENESS_BRIDGE_SOURCE,
+    unmatchedSelectedCount: unmatchedSelected.length,
+    unmatchedSelectedSamples,
+    sampleBridgeEntries
+  };
 }
 
 function getGridlyAwarenessCommunityActivityItems(options = {}) {
@@ -10513,6 +10657,13 @@ window.gridlyCommunityPresenceAudit = function gridlyCommunityPresenceAudit(opti
       evaluatedCount: dataset.evaluatedCount,
       selectedCommunityCount: dataset.selectedCommunityCount,
       highestPresenceScore: dataset.highestPresenceScore,
+      candidateSourceNames: dataset.candidateSourceNames,
+      candidateSourceCounts: dataset.candidateSourceCounts,
+      rawCandidateSourceCounts: dataset.rawCandidateSourceCounts,
+      rawCandidateCount: dataset.rawCandidateCount,
+      normalizedCandidateCount: dataset.normalizedCandidateCount,
+      skippedCandidateReasons: dataset.skippedCandidateReasons,
+      sourceErrors: dataset.sourceErrors,
       corridorClusterCount: dataset.corridorClusterCount,
       nearbyIncidentCount: dataset.nearbyIncidentCount,
       samplePresenceItems: dataset.selected.slice(0, 8).map((item) => ({
@@ -10528,7 +10679,7 @@ window.gridlyCommunityPresenceAudit = function gridlyCommunityPresenceAudit(opti
       awarenessMode: dataset.awarenessMode
     };
   } catch (error) {
-    return { loaded: false, version: GRIDLY_COMMUNITY_PRESENCE_VERSION, evaluatedCount: 0, selectedCommunityCount: 0, highestPresenceScore: 0, corridorClusterCount: 0, nearbyIncidentCount: 0, samplePresenceItems: [], awarenessMode: "community", notes: [`Community presence audit fallback: ${error?.message || "unknown error"}`] };
+    return { loaded: false, version: GRIDLY_COMMUNITY_PRESENCE_VERSION, evaluatedCount: 0, selectedCommunityCount: 0, highestPresenceScore: 0, candidateSourceNames: [], candidateSourceCounts: {}, rawCandidateCount: 0, normalizedCandidateCount: 0, skippedCandidateReasons: {}, corridorClusterCount: 0, nearbyIncidentCount: 0, samplePresenceItems: [], awarenessMode: "community", notes: [`Community presence audit fallback: ${error?.message || "unknown error"}`] };
   }
 };
 window.gridlyCommunityCorridorAudit = function gridlyCommunityCorridorAudit(options = {}) {
@@ -10558,7 +10709,10 @@ window.gridlyCommunityBridgeAudit = function gridlyCommunityBridgeAudit(options 
       selectedDomCount: bridge.selectedDomCount,
       extractedDomCount: extractedNodes.length,
       communityBridgeTargets: bridge.targets.length,
-      bridgeSource: GRIDLY_COMMUNITY_AWARENESS_BRIDGE_SOURCE,
+      bridgeSource: bridge.bridgeSource || GRIDLY_COMMUNITY_AWARENESS_BRIDGE_SOURCE,
+      unmatchedSelectedCount: bridge.unmatchedSelectedCount,
+      unmatchedSelectedSamples: bridge.unmatchedSelectedSamples,
+      candidateSourceCounts: bridge.dataset?.candidateSourceCounts || {},
       sampleBridgeEntries: bridge.sampleBridgeEntries.length ? bridge.sampleBridgeEntries : extractedNodes.slice(0, 8).map((node) => ({
         id: node?.dataset?.incidentId || node?.dataset?.id || "",
         score: Number(node?.dataset?.gridlyCommunityScore || 0),
@@ -10571,6 +10725,10 @@ window.gridlyCommunityBridgeAudit = function gridlyCommunityBridgeAudit(options 
     return { loaded: false, version: GRIDLY_COMMUNITY_PRESENCE_VERSION, selectedDomCount: 0, extractedDomCount: 0, communityBridgeTargets: 0, bridgeSource: GRIDLY_COMMUNITY_AWARENESS_BRIDGE_SOURCE, sampleBridgeEntries: [], notes: [`Community bridge audit fallback: ${error?.message || "unknown error"}`] };
   }
 };
+window.gridlyApplyCommunityPresenceDomBridge = gridlyApplyCommunityAwarenessDomBridge;
+window.gridlyApplyCommunityAwarenessDomBridge = gridlyApplyCommunityAwarenessDomBridge;
+window.resolveGridlyCommunityPresenceSources = resolveGridlyCommunityPresenceSources;
+
 window.gridlyAwarenessModeDebug = {
   loaded: true,
   version: GRIDLY_COMMUNITY_PRESENCE_VERSION,
