@@ -10349,6 +10349,29 @@ function getGridlyCommunitySourceArray(name, getter) {
 }
 
 
+function getGridlyCommunityAuthoritativeCrossingSource(options = {}) {
+  const safeArray = (value) => Array.isArray(value) ? value : [];
+  const localCrossings = safeArray(typeof crossings !== "undefined" ? crossings : []);
+  const optionCrossings = safeArray(options?.crossings);
+  const windowCrossings = safeArray(typeof globalThis !== "undefined" ? globalThis?.crossings : []);
+  const items = localCrossings.length ? localCrossings : (optionCrossings.length ? optionCrossings : windowCrossings);
+  return {
+    name: "crossings",
+    items,
+    error: Array.isArray(items) ? "" : "source_not_array",
+    sourcePath: localCrossings.length ? "crossings" : (optionCrossings.length ? "options.crossings" : (windowCrossings.length ? "window.crossings" : "crossings")),
+    sourceCollectionName: "crossings",
+    authoritative: true
+  };
+}
+
+function getGridlyCommunityCrossingMarkerRecords() {
+  if (typeof crossingMarkers === "undefined" || !(crossingMarkers instanceof Map)) return [];
+  return Array.from(crossingMarkers.values())
+    .map((entry) => entry?.crossing || entry?.options?.crossing || entry?.feature?.properties || entry)
+    .filter(Boolean);
+}
+
 const GRIDLY_COMMUNITY_LOCATION_FIELD_GROUPS = {
   road: [
     "primaryRoad", "primary_road", "roadName", "road_name", "routeName", "route_name", "resolvedRoadName",
@@ -10531,17 +10554,16 @@ function getGridlyCommunitySourceJoinTextKeys(record = {}) {
 function collectGridlyCommunitySourceJoinRecords(options = {}) {
   const safeArray = (value) => Array.isArray(value) ? value : [];
   const routeHazard = options?.routeHazardAssessment || (typeof getRouteHazardAssessment === "function" ? getRouteHazardAssessment() : null);
-  const crossingMarkerRecords = crossingMarkers instanceof Map
-    ? Array.from(crossingMarkers.values()).map((entry) => entry?.crossing || entry?.options?.crossing || entry?.feature?.properties || entry).filter(Boolean)
-    : [];
+  const authoritativeCrossingSource = getGridlyCommunityAuthoritativeCrossingSource(options);
+  const crossingMarkerRecords = getGridlyCommunityCrossingMarkerRecords();
   const sourceDefs = [
     getGridlyCommunitySourceArray("getActiveUnifiedIncidents()", () => (typeof getActiveUnifiedIncidents === "function" ? getActiveUnifiedIncidents() : [])),
     getGridlyCommunitySourceArray("getUnifiedIncidents()", () => (typeof getUnifiedIncidents === "function" ? getUnifiedIncidents() : [])),
     getGridlyCommunitySourceArray("getConsolidatedIncidents()", () => (typeof getConsolidatedIncidents === "function" ? getConsolidatedIncidents() : [])),
     getGridlyCommunitySourceArray("activeReports", () => safeArray(typeof activeReports !== "undefined" ? activeReports : [])),
     getGridlyCommunitySourceArray("activeHazards", () => safeArray(typeof activeHazards !== "undefined" ? activeHazards : [])),
-    getGridlyCommunitySourceArray("crossings", () => safeArray(typeof crossings !== "undefined" ? crossings : [])),
-    { name: "crossingMarkers", items: crossingMarkerRecords, error: "" },
+    authoritativeCrossingSource,
+    { name: "crossingMarkers", items: crossingMarkerRecords, error: "", sourcePath: "crossingMarkers Map" },
     getGridlyCommunitySourceArray("routeHazard.nearbyReports", () => safeArray(routeHazard?.nearbyReports)),
     getGridlyCommunitySourceArray("window.activeReports", () => safeArray(globalThis?.activeReports)),
     getGridlyCommunitySourceArray("window.activeHazards", () => safeArray(globalThis?.activeHazards)),
@@ -11324,12 +11346,9 @@ function isGridlyCommunityPresenceActiveCandidate(candidate = {}) {
 function resolveGridlyCommunityPresenceSources(options = {}) {
   const optionItems = Array.isArray(options?.communityPresenceItems) ? options.communityPresenceItems : null;
   const safeArray = (value) => Array.isArray(value) ? value : [];
-  const crossingMarkerRecords = crossingMarkers instanceof Map
-    ? Array.from(crossingMarkers.values()).map((entry) => entry?.crossing || entry?.options?.crossing || entry?.feature?.properties || entry).filter(Boolean)
-    : [];
-  const sourceDefs = optionItems ? [
-    { name: "options.communityPresenceItems", items: optionItems, error: "", priorityGroup: "options" }
-  ] : [
+  const authoritativeCrossingSource = getGridlyCommunityAuthoritativeCrossingSource(options);
+  const crossingMarkerRecords = getGridlyCommunityCrossingMarkerRecords();
+  const baseSourceDefs = [
     getGridlyCommunitySourceArray("getActiveUnifiedIncidents()", () => (typeof getActiveUnifiedIncidents === "function" ? getActiveUnifiedIncidents() : [])),
     getGridlyCommunitySourceArray("activeHazards", () => safeArray(typeof activeHazards !== "undefined" ? activeHazards : [])),
     getGridlyCommunitySourceArray("activeReports", () => safeArray(typeof activeReports !== "undefined" ? activeReports : [])),
@@ -11340,9 +11359,12 @@ function resolveGridlyCommunityPresenceSources(options = {}) {
     getGridlyCommunitySourceArray("getUnifiedIncidents()", () => (typeof getUnifiedIncidents === "function" ? getUnifiedIncidents() : [])),
     getGridlyCommunitySourceArray("window.communityHazards", () => safeArray(globalThis?.communityHazards)),
     getGridlyCommunitySourceArray("window.communityReports", () => safeArray(globalThis?.communityReports)),
-    getGridlyCommunitySourceArray("crossings", () => safeArray(typeof crossings !== "undefined" ? crossings : [])),
-    { name: "crossingMarkers", items: crossingMarkerRecords, error: "" }
+    authoritativeCrossingSource,
+    { name: "crossingMarkers", items: crossingMarkerRecords, error: "", sourcePath: "crossingMarkers Map" }
   ];
+  const sourceDefs = optionItems
+    ? [{ name: "options.communityPresenceItems", items: optionItems, error: "", priorityGroup: "options" }, ...baseSourceDefs]
+    : baseSourceDefs;
   const domTargets = getGridlyCommunityBridgeTargets();
   const domSourceDef = { name: "rendered_marker_dom", items: domTargets, error: "" };
   const allSourceDefs = [...sourceDefs, domSourceDef];
@@ -11353,6 +11375,8 @@ function resolveGridlyCommunityPresenceSources(options = {}) {
   const candidateSourceCounts = {};
   const rawCandidateSourceCounts = {};
   const sourceErrors = {};
+  const candidateSourcePaths = {};
+  const authoritativeCrossingSourcePath = authoritativeCrossingSource.sourcePath || "crossings";
   const selectedSourcePriority = [
     "active unified incidents / active hazards / active reports",
     "active rail incident/consequence datasets",
@@ -11394,6 +11418,7 @@ function resolveGridlyCommunityPresenceSources(options = {}) {
     const items = Array.isArray(source.items) ? source.items : [];
     rawCandidateSourceCounts[source.name] = items.length;
     candidateSourceCounts[source.name] = 0;
+    candidateSourcePaths[source.name] = source.sourcePath || source.name;
     if (source.error) sourceErrors[source.name] = source.error;
   });
 
@@ -11449,6 +11474,8 @@ function resolveGridlyCommunityPresenceSources(options = {}) {
     normalizedCandidateCount: candidates.length,
     skippedCandidateReasons,
     sourceErrors,
+    candidateSourcePaths,
+    authoritativeCrossingSourcePath,
     selectedSourcePriority,
     renderedMarkerDomDemoted: true,
     domPlaceholderCandidateCount,
@@ -11615,6 +11642,8 @@ function buildCommunityPresenceDataset(options = {}) {
     normalizedCandidateCount: sourceDiagnostics.normalizedCandidateCount,
     skippedCandidateReasons: sourceDiagnostics.skippedCandidateReasons,
     sourceErrors: sourceDiagnostics.sourceErrors,
+    candidateSourcePaths: sourceDiagnostics.candidateSourcePaths || {},
+    authoritativeCrossingSourcePath: sourceDiagnostics.authoritativeCrossingSourcePath || "crossings",
     selectedSourceBreakdown,
     selectedSourcePriority: sourceDiagnostics.selectedSourcePriority,
     renderedMarkerDomDemoted: Boolean(sourceDiagnostics.renderedMarkerDomDemoted),
@@ -11824,6 +11853,8 @@ window.gridlyCommunityPresenceAudit = function gridlyCommunityPresenceAudit(opti
       zeroCoordinateCandidateCount: Number(dataset.zeroCoordinateCandidateCount || 0),
       skippedCandidateReasons: dataset.skippedCandidateReasons,
       sourceErrors: dataset.sourceErrors,
+      candidateSourcePaths: dataset.candidateSourcePaths || {},
+      authoritativeCrossingSourcePath: dataset.authoritativeCrossingSourcePath || "crossings",
       corridorClusterCount: dataset.corridorClusterCount,
       nearbyIncidentCount: dataset.nearbyIncidentCount,
       enrichedLocationFieldCounts: dataset.enrichedLocationFieldCounts || {},
