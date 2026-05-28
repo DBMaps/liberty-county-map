@@ -13879,3 +13879,79 @@ body[data-layout-mode="portrait"] #reportSection.report-drawer[data-popup-suppre
     padding: 10px 10px 8px;
   }
 }
+
+/* V178.1 Community Pulse surface — passive community-mode awareness above the map */
+.community-pulse-surface {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 10px;
+  padding: 10px 13px;
+  border: 1px solid rgba(139, 194, 255, 0.22);
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(9, 23, 40, 0.76), rgba(8, 17, 30, 0.66));
+  box-shadow: 0 12px 28px rgba(3, 9, 20, 0.22), inset 0 1px 0 rgba(218, 240, 255, 0.08);
+  color: #eef8ff;
+}
+
+.community-pulse-surface[hidden] {
+  display: none !important;
+}
+
+.community-pulse-kicker {
+  flex: 0 0 auto;
+  padding: 5px 9px;
+  border: 1px solid rgba(118, 226, 255, 0.22);
+  border-radius: 999px;
+  background: rgba(100, 210, 255, 0.1);
+  color: #8eefff;
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.community-pulse-copy {
+  min-width: 0;
+}
+
+.community-pulse-copy strong {
+  display: block;
+  font-size: 0.94rem;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+}
+
+.community-pulse-copy p {
+  margin: 2px 0 0;
+  color: rgba(220, 234, 248, 0.72);
+  font-size: 0.78rem;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+body[data-layout-mode="portrait"] .community-pulse-surface,
+body[data-layout-mode="mobile"] .community-pulse-surface {
+  margin: 6px 8px 8px;
+  padding: 8px 10px;
+  border-radius: 14px;
+}
+
+body[data-layout-mode="portrait"] .community-pulse-kicker,
+body[data-layout-mode="mobile"] .community-pulse-kicker {
+  font-size: 0.62rem;
+  padding: 4px 7px;
+}
+
+body[data-layout-mode="portrait"] .community-pulse-copy strong,
+body[data-layout-mode="mobile"] .community-pulse-copy strong {
+  font-size: 0.84rem;
+}
+
+body[data-layout-mode="portrait"] .community-pulse-copy p,
+body[data-layout-mode="mobile"] .community-pulse-copy p {
+  font-size: 0.7rem;
+}
