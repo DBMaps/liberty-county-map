@@ -570,8 +570,45 @@ function evaluateGridlyIncidentFreshness(incident, options = {}) {
   }
 }
 
+
+function evaluateGridlyIncidentConfidence(incident, options = {}) {
+  try {
+    const safeIncident = incident && typeof incident === "object" ? incident : {};
+    const safeOptions = options && typeof options === "object" ? options : {};
+    const freshness = evaluateGridlyIncidentFreshness(safeIncident, safeOptions.freshnessOptions || {});
+    const visualState = safeOptions.visualState && typeof safeOptions.visualState === "object" ? safeOptions.visualState : getGridlyIncidentVisualState(safeIncident);
+    const consequenceLevel = String(safeOptions.consequenceLevel || visualState?.consequenceLevel || "low").toLowerCase();
+    const routeRelevant = Boolean(safeOptions.routeRelevant ?? visualState?.routeRelevant ?? isIncidentRouteRelevant(safeIncident, routeHazard));
+    const routeImpact = Boolean(safeOptions.routeImpact ?? visualState?.routeImpact ?? safeIncident?.routeImpact);
+    const confirmationsRaw = safeIncident?.confirmations ?? safeIncident?.confirmationCount ?? safeIncident?.reports_count ?? safeIncident?.driverConfirmations ?? 0;
+    const confirmationCount = Math.max(0, Number(confirmationsRaw) || 0);
+    const freshnessLevel = String(freshness?.freshnessLevel || "unknown").toLowerCase();
+    const freshnessWeightMap = { fresh: 1, recent: 0.84, aging: 0.58, stale: 0.34, unknown: 0.42 };
+    const freshnessWeight = Number(freshnessWeightMap[freshnessLevel] ?? 0.42);
+    const routeImpactWeight = routeImpact ? 1 : routeRelevant ? 0.82 : 0.62;
+    const consequenceWeightMap = { low: 0.62, moderate: 0.78, high: 0.92, critical: 1 };
+    const consequenceWeight = Number(consequenceWeightMap[consequenceLevel] ?? 0.62);
+    const ageMinutes = Number.isFinite(Number(freshness?.ageMinutes)) ? Number(freshness.ageMinutes) : null;
+    const ageDecay = Number.isFinite(ageMinutes) ? Math.max(0.48, Math.min(1, 1 - Math.max(0, ageMinutes - 30) / 1800)) : 0.76;
+    const repeatedVisibilityRaw = safeIncident?.visibilitySignals ?? safeIncident?.visibilityCount ?? safeIncident?.observedCount ?? safeIncident?.seenCount ?? safeIncident?.reportViews ?? 0;
+    const repeatedVisibility = Math.max(0, Number(repeatedVisibilityRaw) || 0);
+    const repeatedVisibilityWeight = Math.min(0.12, repeatedVisibility * 0.02);
+    const confirmationBoost = Math.min(0.28, confirmationCount * 0.06);
+    const cautiousUnknownPenalty = freshnessLevel === "unknown" ? 0.1 : 0;
+    let confidenceScore = (freshnessWeight * 0.36 + routeImpactWeight * 0.23 + consequenceWeight * 0.17 + ageDecay * 0.14 + 0.1 + confirmationBoost + repeatedVisibilityWeight - cautiousUnknownPenalty) * 100;
+    confidenceScore = Math.max(0, Math.min(100, Math.round(confidenceScore)));
+    const confidenceLevel = confidenceScore >= 82 ? "high" : confidenceScore >= 60 ? "medium" : confidenceScore >= 36 ? "low" : "very_low";
+    const confidenceWeight = Math.max(0.3, Math.min(1.2, Number((0.34 + confidenceScore / 100 * 0.86).toFixed(2))));
+    const confidenceReason = `freshness=${freshnessLevel}; confirmations=${confirmationCount}; routeImpact=${routeImpact}; routeRelevant=${routeRelevant}; consequence=${consequenceLevel}; age=${Number.isFinite(ageMinutes) ? ageMinutes : "unknown"}m`;
+    return { confidenceLevel, confidenceScore, confidenceWeight, confirmationCount, freshnessWeight, routeImpactWeight, confidenceReason };
+  } catch (_error) {
+    return { confidenceLevel: "very_low", confidenceScore: 22, confidenceWeight: 0.35, confirmationCount: 0, freshnessWeight: 0.42, routeImpactWeight: 0.62, confidenceReason: "fallback: unable to evaluate confidence safely." };
+  }
+}
+
 window.evaluateGridlyIncidentFreshness = evaluateGridlyIncidentFreshness;
 window.evaluateGridlyRouteConsequence = evaluateGridlyRouteConsequence;
+window.evaluateGridlyIncidentConfidence = evaluateGridlyIncidentConfidence;
 window.getGridlyIncidentVisualState = getGridlyIncidentVisualState;
 
 function isGridlyIncidentLike(item) {
@@ -1492,6 +1529,37 @@ window.gridlyFreshnessAudit = function gridlyFreshnessAudit() {
     };
   } catch (error) {
     return { evaluatedCount: 0, freshnessCounts: { fresh: 0, recent: 0, aging: 0, stale: 0, unknown: 0 }, staleCount: 0, agingCount: 0, freshCount: 0, unknownFreshnessCount: 0, timestampSourceCounts: {}, missingTimestampCount: 0, invalidTimestampCount: 0, averageAgeMinutes: 0, oldestSamples: [], freshestSamples: [], timestampSamples: [], notes: [`Freshness audit fallback: ${error?.message || "unknown error"}`] };
+  }
+};
+
+
+window.gridlyConfidenceAudit = function gridlyConfidenceAudit() {
+  try {
+    const incidents = Array.isArray(getUnifiedIncidents?.()) ? getUnifiedIncidents() : (Array.isArray(activeHazards) ? activeHazards : []);
+    const evaluated = incidents.map((incident) => ({ incident, visualState: getGridlyIncidentVisualState(incident), confidence: evaluateGridlyIncidentConfidence(incident) }));
+    const confidenceCounts = { very_low: 0, low: 0, medium: 0, high: 0 };
+    let scoreTotal = 0;
+    evaluated.forEach(({ confidence }) => { const level = String(confidence?.confidenceLevel || 'very_low'); confidenceCounts[level] = (confidenceCounts[level] || 0) + 1; scoreTotal += Number(confidence?.confidenceScore || 0); });
+    const routeImpactConfidenceCount = evaluated.filter(({ visualState }) => Boolean(visualState?.routeRelevant || visualState?.routeImpact)).length;
+    const sorted = evaluated.slice().sort((a,b)=>Number(b.confidence?.confidenceScore||0)-Number(a.confidence?.confidenceScore||0));
+    const shape = (entry) => ({ id: entry.incident?.id || entry.incident?.crossingId || '', confidenceLevel: entry.confidence?.confidenceLevel || 'very_low', confidenceScore: Number(entry.confidence?.confidenceScore || 0), confirmationCount: Number(entry.confidence?.confirmationCount || 0), freshnessLevel: entry.visualState?.freshnessLevel || 'unknown', routeRelevant: Boolean(entry.visualState?.routeRelevant), confidenceReason: entry.confidence?.confidenceReason || '' });
+    return { evaluatedCount: evaluated.length, confidenceCounts, highConfidenceCount: Number(confidenceCounts.high || 0), lowConfidenceCount: Number(confidenceCounts.low || 0) + Number(confidenceCounts.very_low || 0), routeImpactConfidenceCount, averageConfidenceScore: evaluated.length ? Math.round(scoreTotal / evaluated.length) : 0, topConfidenceSamples: sorted.slice(0, 8).map(shape), lowestConfidenceSamples: sorted.slice(-8).reverse().map(shape), notes: ['Confidence audit is read-only and layered over existing freshness + route consequence systems.'] };
+  } catch (error) {
+    return { evaluatedCount: 0, confidenceCounts: { very_low: 0, low: 0, medium: 0, high: 0 }, highConfidenceCount: 0, lowConfidenceCount: 0, routeImpactConfidenceCount: 0, averageConfidenceScore: 0, topConfidenceSamples: [], lowestConfidenceSamples: [], notes: [`Confidence audit fallback: ${error?.message || 'unknown error'}`] };
+  }
+};
+
+window.gridlyRouteConfidenceAudit = function gridlyRouteConfidenceAudit() {
+  try {
+    const incidents = Array.isArray(getUnifiedIncidents?.()) ? getUnifiedIncidents() : (Array.isArray(activeHazards) ? activeHazards : []);
+    const evaluated = incidents.map((incident) => { const visualState = getGridlyIncidentVisualState(incident); return { incident, visualState, confidence: evaluateGridlyIncidentConfidence(incident, { visualState }) }; }).filter((entry) => Boolean(entry.visualState?.routeRelevant || entry.visualState?.routeImpact));
+    const domCount = typeof document !== 'undefined' ? document.querySelectorAll('#map .leaflet-marker-pane [data-gridly-route-impact="true"][data-gridly-confidence], #map .leaflet-marker-pane .gridly-marker-rail-route-impact[data-gridly-confidence]').length : 0;
+    const confidenceByConsequence = {}; const confidenceByFreshness = {};
+    evaluated.forEach((entry) => { const c = String(entry.visualState?.consequenceLevel || 'low'); const f = String(entry.visualState?.freshnessLevel || 'unknown'); confidenceByConsequence[c] = confidenceByConsequence[c] || { high: 0, medium: 0, low: 0, very_low: 0 }; confidenceByFreshness[f] = confidenceByFreshness[f] || { high: 0, medium: 0, low: 0, very_low: 0 }; const lvl = String(entry.confidence?.confidenceLevel || 'very_low'); confidenceByConsequence[c][lvl] += 1; confidenceByFreshness[f][lvl] += 1; });
+    const sorted = evaluated.slice().sort((a,b)=>Number(b.confidence?.confidenceScore||0)-Number(a.confidence?.confidenceScore||0));
+    return { routeRelevantConfidenceCount: evaluated.length, highConfidenceRouteImpactCount: evaluated.filter((e)=>e.confidence?.confidenceLevel==='high').length, lowConfidenceRouteImpactCount: evaluated.filter((e)=>['low','very_low'].includes(String(e.confidence?.confidenceLevel))).length, domBridgeConfidenceCount: domCount, confidenceByConsequence, confidenceByFreshness, topRouteConfidenceSamples: sorted.slice(0, 8).map((e)=>({ id: e.incident?.id || e.incident?.crossingId || '', consequenceLevel: e.visualState?.consequenceLevel || 'low', freshnessLevel: e.visualState?.freshnessLevel || 'unknown', confidenceLevel: e.confidence?.confidenceLevel || 'very_low', confidenceScore: Number(e.confidence?.confidenceScore || 0), confidenceReason: e.confidence?.confidenceReason || '' })), routeConfidenceSourceUsed: evaluated.length > 0 ? 'source_incidents' : (domCount > 0 ? 'dom_bridge' : 'none'), notes: ['Route confidence audit preserves existing route-impact DOM bridge and marker hierarchy.'] };
+  } catch (error) {
+    return { routeRelevantConfidenceCount: 0, highConfidenceRouteImpactCount: 0, lowConfidenceRouteImpactCount: 0, domBridgeConfidenceCount: 0, confidenceByConsequence: {}, confidenceByFreshness: {}, topRouteConfidenceSamples: [], routeConfidenceSourceUsed: 'none', notes: [`Route confidence audit fallback: ${error?.message || 'unknown error'}`] };
   }
 };
 
@@ -10230,6 +10298,9 @@ function renderUnifiedIncidents(reason = "auto") {
     const consequenceClass = `gridly-consequence-${consequenceLevel}`;
     const freshnessLevel = String(visualState?.freshnessLevel || evaluateGridlyIncidentFreshness(incident)?.freshnessLevel || "recent").toLowerCase();
     const freshnessClass = `gridly-freshness-${freshnessLevel}`;
+    const confidenceEval = evaluateGridlyIncidentConfidence(incident, { visualState, freshnessOptions: { nowMs: Date.now() } });
+    const confidenceLevel = String(confidenceEval?.confidenceLevel || "low").toLowerCase();
+    const confidenceVisualClass = `gridly-confidence-${confidenceLevel.replace(/_/g, "-")}`;
     const hazardVisualMetadataAttributes = `
           data-visual-style="${sanitizeText(visualState.markerStyle)}"
           data-visual-priority="${sanitizeText(String(markerVisual.priority))}"
@@ -10237,6 +10308,7 @@ function renderUnifiedIncidents(reason = "auto") {
           data-gridly-marker-weight="${sanitizeText(String(hierarchyConfig.visualWeight))}"
           data-gridly-consequence="${sanitizeText(consequenceLevel)}"
           data-gridly-freshness="${sanitizeText(freshnessLevel)}"
+          data-gridly-confidence="${sanitizeText(confidenceLevel)}"
         `;
     const category = getHazardCategory(incident.report_type || incident.type || "other_hazard");
     const markerVariantClass = `marker-${category}`;
@@ -10257,7 +10329,7 @@ function renderUnifiedIncidents(reason = "auto") {
     const icon = L.divIcon({
       className: markerVisualClassSafe,
       html: `
-        <div class="gridly-hazard-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass} ${proximityClass} ${routeRelevanceClass} ${sanitizeText(markerVariantClass)} ${sanitizeText(confidenceClass)} ${sanitizeText(hierarchyPriorityClass)} ${sanitizeText(consequenceClass)} ${sanitizeText(freshnessClass)}${hazardVisualClassSegment}"
+        <div class="gridly-hazard-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass} ${proximityClass} ${routeRelevanceClass} ${sanitizeText(markerVariantClass)} ${sanitizeText(confidenceClass)} ${sanitizeText(hierarchyPriorityClass)} ${sanitizeText(consequenceClass)} ${sanitizeText(freshnessClass)} ${sanitizeText(confidenceVisualClass)}${hazardVisualClassSegment}"
           data-category="${sanitizeText(category)}"
           ${hazardVisualMetadataAttributes}
           data-freshness="${sanitizeText(ageClass)}"
