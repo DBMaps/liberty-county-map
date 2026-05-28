@@ -6918,6 +6918,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadCrossings();
   await loadRoadwayDataset();
   await loadSharedReports("initial_bootstrap");
+  renderGridlyCommunityPulse({ reason: "initial_bootstrap" });
 
   setInterval(() => loadSharedReports("interval_live_refresh"), LIVE_REFRESH_MS);
 });
@@ -7083,6 +7084,9 @@ function hydrateElements() {
     "reportDecayStatus",
     "lastReportTime",
     "mapTrustNote",
+    "gridlyCommunityPulseSurface",
+    "gridlyCommunityPulseHeadline",
+    "gridlyCommunityPulseSubline",
     "geoFilterStatus",
     "routeRecommendation",
     "routeRecommendationReason",
@@ -9096,6 +9100,7 @@ function refreshReportHazardViews(source = "unspecified") {
     timeRefreshChild("updateLastUpdated", () => updateLastUpdated());
     timeRefreshChild("recomputeMovementIntelligence", () => recomputeMovementIntelligence());
     timeRefreshChild("updateCorridorSummaryCards", () => updateCorridorSummaryCards());
+    timeRefreshChild("renderGridlyCommunityPulse", () => renderGridlyCommunityPulse({ reason: source }));
     const refreshDuration = Number((performance.now() - refreshStart).toFixed(2));
     gridlyRefreshAuditState.lastRefreshDuration = refreshDuration;
     gridlyRefreshAuditState.lastChildDurations = childDurations;
@@ -10827,6 +10832,170 @@ window.gridlyCommunityCorridorAudit = function gridlyCommunityCorridorAudit(opti
     return { loaded: false, version: GRIDLY_COMMUNITY_PRESENCE_VERSION, detectedCorridors: [], corridorIncidentCounts: {}, dominantCorridor: null, corridorSeveritySummary: {}, notes: [`Community corridor audit fallback: ${error?.message || "unknown error"}`] };
   }
 };
+
+const GRIDLY_COMMUNITY_PULSE_RENDER_TARGET = "#gridlyCommunityPulseSurface";
+let gridlyCommunityPulseAuditState = {
+  awarenessMode: "community",
+  pulseVisible: false,
+  renderedPulseHeadline: "",
+  renderedPulseSubline: "",
+  dominantCorridor: null,
+  selectedCommunityCount: 0,
+  communityPhraseCount: 0,
+  pulseRenderTarget: GRIDLY_COMMUNITY_PULSE_RENDER_TARGET,
+  pulseSuppressedReason: "not_rendered_yet"
+};
+
+function formatGridlyCommunityCount(count, singular, plural = `${singular}s`) {
+  const safeCount = Math.max(0, Number(count || 0));
+  return `${safeCount} ${safeCount === 1 ? singular : plural}`;
+}
+
+function getGridlyCommunityPulseCategoryLabel(category = "activity") {
+  const normalized = String(category || "activity").toLowerCase().replace(/[_-]+/g, " ");
+  if (/flood|standing water|high water/.test(normalized)) return "flooding";
+  if (/rail|crossing|train/.test(normalized)) return "rail activity";
+  if (/crash|wreck|collision/.test(normalized)) return "crash reports";
+  if (/construction|utility|work/.test(normalized)) return "road work";
+  if (/closure|closed/.test(normalized)) return "closure reports";
+  if (/debris|tree|obstruction/.test(normalized)) return "road debris";
+  return "mobility reports";
+}
+
+function getGridlyCommunityPulseTypeSummary(selected = []) {
+  const labels = (Array.isArray(selected) ? selected : [])
+    .map((item) => getGridlyCommunityPulseCategoryLabel(item?.category || item?.incident?.type || item?.incident?.report_type))
+    .filter(Boolean);
+  const unique = Array.from(new Set(labels));
+  if (!unique.length) return "mobility reports";
+  if (unique.length === 1) return unique[0];
+  return `${unique[0]} and ${unique[1]}`;
+}
+
+function buildGridlyCommunityPulseModel(options = {}) {
+  const awarenessDiagnostics = typeof getGridlyAwarenessModeDiagnostics === "function"
+    ? getGridlyAwarenessModeDiagnostics(options)
+    : { awarenessMode: "community" };
+  const awarenessMode = String(awarenessDiagnostics?.awarenessMode || "community").toLowerCase();
+  const dataset = buildCommunityPresenceDataset(options);
+  const selectedCommunityCount = Number(dataset.selectedCommunityCount || 0);
+  const communityPhraseCount = Number(dataset.communityPhraseCount || 0);
+  const dominantCorridor = dataset.dominantCorridor || null;
+  const pulseRenderTarget = GRIDLY_COMMUNITY_PULSE_RENDER_TARGET;
+  const dominantCorridorCount = dominantCorridor
+    ? Number(dataset.corridorIncidentCounts?.[dominantCorridor] || 0)
+    : 0;
+  const activeCorridorCount = Object.entries(dataset.corridorIncidentCounts || {})
+    .filter(([, count]) => Number(count || 0) > 0).length;
+  const topPhrase = String(dataset.phrases?.[0] || "").trim();
+  const typeSummary = getGridlyCommunityPulseTypeSummary(dataset.selected);
+  const corridorIsLocal = !dominantCorridor || dominantCorridor === "Local corridors";
+
+  let renderedPulseHeadline = selectedCommunityCount > 0
+    ? `${formatGridlyCommunityCount(selectedCommunityCount, "active mobility report")} nearby`
+    : "Community pulse is quiet";
+  if (dominantCorridor && !corridorIsLocal && dominantCorridorCount >= 2) {
+    renderedPulseHeadline = `Activity building along ${dominantCorridor}`;
+  } else if (dominantCorridor && !corridorIsLocal) {
+    renderedPulseHeadline = `${dominantCorridor} area active`;
+  }
+
+  let renderedPulseSubline = topPhrase || `${formatGridlyCommunityCount(activeCorridorCount, "active corridor")} nearby`;
+  if (selectedCommunityCount > 0 && typeSummary) {
+    renderedPulseSubline = corridorIsLocal
+      ? `${typeSummary} reported around town`
+      : `${typeSummary} reported near ${dominantCorridor}`;
+  }
+  if (activeCorridorCount > 1 && selectedCommunityCount > 1) {
+    renderedPulseSubline = `${formatGridlyCommunityCount(activeCorridorCount, "active corridor")} nearby · ${typeSummary}`;
+  }
+
+  let pulseVisible = awarenessMode === "community" && selectedCommunityCount > 0;
+  let pulseSuppressedReason = "";
+  if (awarenessMode === "route") {
+    pulseVisible = false;
+    pulseSuppressedReason = "route-priority suppression: active route intelligence is primary";
+  } else if (awarenessMode !== "community") {
+    pulseVisible = false;
+    pulseSuppressedReason = `awareness mode ${awarenessMode || "unknown"} does not show Community Pulse`;
+  } else if (selectedCommunityCount <= 0) {
+    pulseVisible = false;
+    pulseSuppressedReason = "no selected community presence reports available";
+  }
+
+  return {
+    awarenessMode,
+    pulseVisible,
+    renderedPulseHeadline,
+    renderedPulseSubline,
+    dominantCorridor,
+    selectedCommunityCount,
+    communityPhraseCount,
+    pulseRenderTarget,
+    pulseSuppressedReason,
+    corridorIncidentCounts: dataset.corridorIncidentCounts || {},
+    highestPresenceScore: Number(dataset.highestPresenceScore || 0)
+  };
+}
+
+function renderGridlyCommunityPulse(options = {}) {
+  let model;
+  try {
+    model = buildGridlyCommunityPulseModel(options);
+  } catch (error) {
+    model = {
+      awarenessMode: "community",
+      pulseVisible: false,
+      renderedPulseHeadline: "",
+      renderedPulseSubline: "",
+      dominantCorridor: null,
+      selectedCommunityCount: 0,
+      communityPhraseCount: 0,
+      pulseRenderTarget: GRIDLY_COMMUNITY_PULSE_RENDER_TARGET,
+      pulseSuppressedReason: `render error: ${error?.message || "unknown error"}`
+    };
+  }
+
+  const surface = document.getElementById("gridlyCommunityPulseSurface");
+  const headline = document.getElementById("gridlyCommunityPulseHeadline");
+  const subline = document.getElementById("gridlyCommunityPulseSubline");
+  if (!surface) {
+    gridlyCommunityPulseAuditState = { ...model, pulseVisible: false, pulseSuppressedReason: "pulse render target missing" };
+    return gridlyCommunityPulseAuditState;
+  }
+
+  surface.hidden = !model.pulseVisible;
+  surface.dataset.awarenessMode = model.awarenessMode;
+  surface.dataset.gridlyPulseVisible = model.pulseVisible ? "true" : "false";
+  surface.dataset.gridlyPulseRenderTarget = GRIDLY_COMMUNITY_PULSE_RENDER_TARGET;
+  if (headline) headline.textContent = model.renderedPulseHeadline;
+  if (subline) subline.textContent = model.renderedPulseSubline;
+
+  gridlyCommunityPulseAuditState = {
+    ...model,
+    pulseVisible: model.pulseVisible && !surface.hidden,
+    renderedPulseHeadline: model.pulseVisible ? model.renderedPulseHeadline : "",
+    renderedPulseSubline: model.pulseVisible ? model.renderedPulseSubline : ""
+  };
+  return gridlyCommunityPulseAuditState;
+}
+
+window.gridlyCommunityPulseAudit = function gridlyCommunityPulseAudit(options = {}) {
+  const shouldRender = options?.render !== false;
+  const state = shouldRender ? renderGridlyCommunityPulse(options) : { ...gridlyCommunityPulseAuditState };
+  return {
+    awarenessMode: state.awarenessMode,
+    pulseVisible: Boolean(state.pulseVisible),
+    renderedPulseHeadline: state.renderedPulseHeadline || "",
+    renderedPulseSubline: state.renderedPulseSubline || "",
+    dominantCorridor: state.dominantCorridor || null,
+    selectedCommunityCount: Number(state.selectedCommunityCount || 0),
+    communityPhraseCount: Number(state.communityPhraseCount || 0),
+    pulseRenderTarget: state.pulseRenderTarget || GRIDLY_COMMUNITY_PULSE_RENDER_TARGET,
+    pulseSuppressedReason: state.pulseSuppressedReason || ""
+  };
+};
+window.renderGridlyCommunityPulse = renderGridlyCommunityPulse;
 window.gridlyCommunityBridgeAudit = function gridlyCommunityBridgeAudit(options = {}) {
   try {
     const bridge = gridlyApplyCommunityAwarenessDomBridge(options);
@@ -11633,6 +11802,7 @@ function renderUnifiedIncidents(reason = "auto") {
       renderedMarkerCount: typeof unifiedIncidentLayer?.getLayers === "function" ? unifiedIncidentLayer.getLayers().length : 0
     }
   };
+  renderGridlyCommunityPulse({ reason: `renderUnifiedIncidents:${reason}` });
 }
 
 function renderUnifiedIncidentMarkers() {
@@ -18087,6 +18257,7 @@ function updateRouteIntelligence(nearest = []) {
   updateMobileTopCommuteCta({ impact, routeIsMonitoring, alternateRouteAvailable });
   updateMobileWatchHeader();
   updateRouteWatchBadge();
+  renderGridlyCommunityPulse({ reason: "updateRouteIntelligence" });
 }
 
 function updateMobileTopCommuteCta({ routeIsMonitoring = false } = {}) {
