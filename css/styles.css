@@ -13955,3 +13955,8 @@ body[data-layout-mode="portrait"] .community-pulse-copy p,
 body[data-layout-mode="mobile"] .community-pulse-copy p {
   font-size: 0.7rem;
 }
+
+/* V178.3I — Portrait V2 owns the top awareness/status stack; prevent legacy map-card pulse overlap. */
+body[data-layout-mode="portrait"] #gridlyCommunityPulseSurface {
+  display: none !important;
+}
