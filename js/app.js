@@ -627,6 +627,14 @@ function generateGridlyIntelligencePhrase(incident, visualState = null) {
     const confidenceLevel = String(confidence?.confidenceLevel || "low").toLowerCase();
     const routeImpact = Boolean(resolvedVisualState?.routeImpact || safeIncident?.routeImpact);
     const routeRelevant = Boolean(resolvedVisualState?.routeRelevant || routeImpact);
+    const rawAwarenessMode = String(
+      resolvedVisualState?.awarenessMode
+      || safeIncident?.awarenessMode
+      || (typeof getGridlyAwarenessMode === "function" ? getGridlyAwarenessMode() : "community")
+    ).toLowerCase();
+    const awarenessMode = ["route", "community", "hybrid"].includes(rawAwarenessMode) ? rawAwarenessMode : "community";
+    const incidentType = String(safeIncident?.type || safeIncident?.category || safeIncident?.condition || safeIncident?.title || "").toLowerCase();
+    const railRelated = incidentType.includes("rail") || incidentType.includes("train") || incidentType.includes("crossing");
 
     const consequencePhrase = consequence === "critical" || consequence === "high"
       ? "Likely affecting traffic flow"
@@ -645,26 +653,48 @@ function generateGridlyIntelligencePhrase(incident, visualState = null) {
         : freshness === "aging" || freshness === "stale"
           ? "Older community report"
           : "Timing not fully confirmed";
-    const routePhrase = routeImpact
-      ? "Active route disruption"
+    const routeAwarenessPhrase = routeImpact
+      ? "Along your active route"
       : routeRelevant
         ? "Possible delay on your route"
-        : "Use caution nearby";
-    const shortPhrase = routeImpact
-      ? routePhrase
-      : ["low", "very_low"].includes(confidenceLevel) && routeRelevant
-        ? "Possible delay on your route"
-        : consequencePhrase;
+        : consequence === "critical" || consequence === "high" || consequence === "moderate"
+          ? "Route impact possible"
+          : "Possible delay on your route";
+    const communityAwarenessPhrase = railRelated
+      ? "Rail activity reported near town"
+      : consequence === "critical" || consequence === "high"
+        ? "Community activity reported nearby"
+        : consequence === "moderate"
+          ? "Local report near town"
+          : "Use caution nearby";
+    const hybridAwarenessPhrase = routeImpact || routeRelevant
+      ? "Active route disruption with nearby activity"
+      : "Route delays building nearby";
+    const awarenessPhrase = awarenessMode === "route"
+      ? routeAwarenessPhrase
+      : awarenessMode === "hybrid"
+        ? hybridAwarenessPhrase
+        : communityAwarenessPhrase;
+    const awarenessReason = awarenessMode === "route"
+      ? `route mode; routeImpact=${routeImpact}; routeRelevant=${routeRelevant}; route-specific language allowed.`
+      : awarenessMode === "hybrid"
+        ? `hybrid mode; routeImpact=${routeImpact}; routeRelevant=${routeRelevant}; blended route/community language selected.`
+        : `community mode; railRelated=${railRelated}; route-specific language avoided.`;
+    const routePhrase = awarenessMode === "community" ? communityAwarenessPhrase : routeAwarenessPhrase;
+    const shortPhrase = awarenessPhrase;
     const detailPhrase = `${freshnessPhrase} • ${confidencePhrase}`;
-    return { shortPhrase, detailPhrase, confidencePhrase, freshnessPhrase, routePhrase, consequencePhrase };
+    return { shortPhrase, detailPhrase, confidencePhrase, freshnessPhrase, routePhrase, consequencePhrase, awarenessMode, awarenessPhrase, awarenessReason };
   } catch (_error) {
     return {
       shortPhrase: "Use caution nearby",
       detailPhrase: "Community-reported hazard",
       confidencePhrase: "Not recently confirmed",
       freshnessPhrase: "Timing not fully confirmed",
-      routePhrase: "Traffic impact possible",
-      consequencePhrase: "Use caution nearby"
+      routePhrase: "Use caution nearby",
+      consequencePhrase: "Use caution nearby",
+      awarenessMode: "community",
+      awarenessPhrase: "Use caution nearby",
+      awarenessReason: "fallback: unable to evaluate awareness phrase safely; route-specific language avoided."
     };
   }
 }
@@ -1801,6 +1831,56 @@ window.gridlyRouteIntelligenceAudit = function gridlyRouteIntelligenceAudit() {
     };
   } catch (error) {
     return { evaluatedCount: 0, routeRelevantCount: 0, routeRelevantPhraseCount: 0, routeImpactPhraseCount: 0, domBridgePhraseCount: 0, finalSourceUsed: "dom_bridge", finalUsedExtractedSamples: true, topRoutePhraseSamples: [], selectedDomCount: 0, extractedDomPhraseCount: 0, extractedRoutePhraseCount: 0, error: error?.message || "unknown error" };
+  }
+};
+
+
+window.gridlyAwarenessPhraseAudit = function gridlyAwarenessPhraseAudit(options = {}) {
+  try {
+    const rawAwarenessMode = String(options?.awarenessMode || (typeof getGridlyAwarenessMode === "function" ? getGridlyAwarenessMode(options) : "community")).toLowerCase();
+    const awarenessMode = ["route", "community", "hybrid"].includes(rawAwarenessMode) ? rawAwarenessMode : "community";
+    const sourceIncidents = Array.isArray(options?.incidents)
+      ? options.incidents
+      : (typeof getActiveUnifiedIncidents === "function" && Array.isArray(getActiveUnifiedIncidents())
+        ? getActiveUnifiedIncidents()
+        : (typeof getUnifiedIncidents === "function" && Array.isArray(getUnifiedIncidents()) ? getUnifiedIncidents() : []));
+    const phraseSamples = sourceIncidents
+      .filter((incident) => incident && typeof incident === "object")
+      .map((incident, index) => {
+        const visualState = getGridlyIncidentVisualState(incident);
+        const phrase = generateGridlyIntelligencePhrase(incident, { ...visualState, awarenessMode });
+        return {
+          id: incident.id || incident.reportId || incident.crossingId || `incident-${index}`,
+          awarenessMode: phrase.awarenessMode,
+          awarenessPhrase: phrase.awarenessPhrase,
+          shortPhrase: phrase.shortPhrase,
+          awarenessReason: phrase.awarenessReason,
+          routeImpact: Boolean(visualState?.routeImpact || incident?.routeImpact),
+          routeRelevant: Boolean(visualState?.routeRelevant || visualState?.routeImpact || incident?.routeImpact)
+        };
+      });
+    return {
+      awarenessMode,
+      evaluatedCount: phraseSamples.length,
+      routePhraseCount: phraseSamples.filter((sample) => sample.awarenessMode === "route").length,
+      communityPhraseCount: phraseSamples.filter((sample) => sample.awarenessMode === "community").length,
+      hybridPhraseCount: phraseSamples.filter((sample) => sample.awarenessMode === "hybrid").length,
+      topPhraseSamples: phraseSamples.slice(0, 8),
+      notes: [
+        "Awareness phrase audit evaluates phrase logic only; no visual/UI rendering changes.",
+        "Existing intelligence and route intelligence phrase audits are preserved separately."
+      ]
+    };
+  } catch (error) {
+    return {
+      awarenessMode: "unknown",
+      evaluatedCount: 0,
+      routePhraseCount: 0,
+      communityPhraseCount: 0,
+      hybridPhraseCount: 0,
+      topPhraseSamples: [],
+      notes: [`Awareness phrase audit fallback: ${error?.message || "unknown error"}`]
+    };
   }
 };
 
