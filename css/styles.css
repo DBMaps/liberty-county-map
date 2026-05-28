@@ -4636,6 +4636,22 @@ h1, h2, h3, .future-metric-headline {
   opacity: 0.56;
   filter: saturate(0.6) grayscale(0.34);
 }
+.gridly-hazard-marker.gridly-confidence-high {
+  opacity: 1;
+  filter: contrast(1.02) saturate(1.01);
+}
+.gridly-hazard-marker.gridly-confidence-medium {
+  opacity: 0.92;
+  filter: contrast(0.99) saturate(0.95);
+}
+.gridly-hazard-marker.gridly-confidence-low {
+  opacity: 0.82;
+  filter: contrast(0.95) saturate(0.84);
+}
+.gridly-hazard-marker.gridly-confidence-very-low {
+  opacity: 0.72;
+  filter: contrast(0.9) saturate(0.72) grayscale(0.22);
+}
 
 * {
   transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 220ms ease;
