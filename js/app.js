@@ -1650,12 +1650,18 @@ window.gridlyRouteConfidenceAudit = function gridlyRouteConfidenceAudit() {
   }
 };
 
+const GRIDLY_CANONICAL_ROUTE_IMPACT_SELECTOR = '[data-gridly-route-impact="true"], .gridly-marker-rail-route-impact, .gridly-marker-priority-route-impact, [data-gridly-consequence], [data-gridly-confidence]';
+const GRIDLY_INTELLIGENCE_SELECTOR = "[data-gridly-intelligence]";
+const GRIDLY_CONFIDENCE_LABEL_SELECTOR = "[data-gridly-confidence-label]";
+const getGridlyCanonicalRouteImpactDomTargets = (markerPane) => markerPane
+  ? Array.from(new Set(Array.from(markerPane.querySelectorAll(GRIDLY_CANONICAL_ROUTE_IMPACT_SELECTOR))))
+  : [];
+
 window.gridlyIntelligencePhraseAudit = function gridlyIntelligencePhraseAudit() {
   try {
     const incidents = Array.isArray(getAllActiveIncidents?.()) ? getAllActiveIncidents() : [];
     const markerPane = typeof document !== "undefined" ? document.querySelector("#map .leaflet-marker-pane") : null;
-    const domBridgeSelector = "[data-gridly-route-impact=\"true\"], [data-gridly-intelligence], [data-gridly-confidence-label], .gridly-marker-rail-route-impact, .gridly-marker-priority-route-impact";
-    const domBridgeNodes = markerPane ? Array.from(new Set(Array.from(markerPane.querySelectorAll(domBridgeSelector)))) : [];
+    const domBridgeNodes = getGridlyCanonicalRouteImpactDomTargets(markerPane);
     const evaluated = incidents.map((incident) => {
       const visualState = getGridlyIncidentVisualState(incident);
       const phrase = generateGridlyIntelligencePhrase(incident, visualState);
@@ -1677,6 +1683,9 @@ window.gridlyIntelligencePhraseAudit = function gridlyIntelligencePhraseAudit() 
         || node.classList.contains("gridly-marker-priority-route-impact")
     }));
     const domBridgeRoutePhrases = domBridgePhrases.filter((entry) => entry.routeImpact);
+    const intelligenceSelectorCount = markerPane ? markerPane.querySelectorAll(GRIDLY_INTELLIGENCE_SELECTOR).length : 0;
+    const confidenceLabelSelectorCount = markerPane ? markerPane.querySelectorAll(GRIDLY_CONFIDENCE_LABEL_SELECTOR).length : 0;
+    const routeImpactSelectorCount = markerPane ? markerPane.querySelectorAll('[data-gridly-route-impact="true"], .gridly-marker-rail-route-impact, .gridly-marker-priority-route-impact').length : 0;
     const intelligencePhraseSourceUsed = sourceEvaluatedCount > 0 ? "source_incidents" : (domBridgePhrases.length > 0 ? "dom_bridge" : "none");
     const effectiveEvaluatedCount = intelligencePhraseSourceUsed === "source_incidents" ? sourceEvaluatedCount : domBridgePhrases.length;
     const effectiveRouteRelevantPhraseCount = intelligencePhraseSourceUsed === "source_incidents"
@@ -1691,12 +1700,16 @@ window.gridlyIntelligencePhraseAudit = function gridlyIntelligencePhraseAudit() 
       topPhraseSamples: evaluated.slice(0, 8).map((e) => ({ id: e.incident?.id || e.incident?.crossingId || "", shortPhrase: e.phrase?.shortPhrase || "", detailPhrase: e.phrase?.detailPhrase || "", confidenceLevel: e.confidence?.confidenceLevel || "low", freshnessLevel: e.visualState?.freshnessLevel || "unknown", routeRelevant: Boolean(e.visualState?.routeRelevant), routeImpact: Boolean(e.visualState?.routeImpact) })),
       domBridgePhraseCount: domBridgePhrases.length,
       domBridgeRoutePhraseCount: domBridgeRoutePhrases.length,
+      intelligenceSelectorCount,
+      confidenceLabelSelectorCount,
+      routeImpactSelectorCount,
+      inspectedDomCount: domBridgeNodes.length,
       domBridgePhraseSamples: domBridgePhrases.slice(0, 8),
       intelligencePhraseSourceUsed,
       notes: ["Intelligence phrase audit is read-only and preserves existing consequence, confidence, and freshness systems."]
     };
   } catch (error) {
-    return { evaluatedCount: 0, phraseCounts: {}, routeRelevantPhraseCount: 0, confidencePhraseCounts: {}, freshnessPhraseCounts: {}, topPhraseSamples: [], domBridgePhraseCount: 0, domBridgeRoutePhraseCount: 0, domBridgePhraseSamples: [], intelligencePhraseSourceUsed: "none", notes: [`Intelligence phrase audit fallback: ${error?.message || "unknown error"}`] };
+    return { evaluatedCount: 0, phraseCounts: {}, routeRelevantPhraseCount: 0, confidencePhraseCounts: {}, freshnessPhraseCounts: {}, topPhraseSamples: [], domBridgePhraseCount: 0, domBridgeRoutePhraseCount: 0, intelligenceSelectorCount: 0, confidenceLabelSelectorCount: 0, routeImpactSelectorCount: 0, inspectedDomCount: 0, domBridgePhraseSamples: [], intelligencePhraseSourceUsed: "none", notes: [`Intelligence phrase audit fallback: ${error?.message || "unknown error"}`] };
   }
 };
 
@@ -1704,8 +1717,7 @@ window.gridlyRouteIntelligenceAudit = function gridlyRouteIntelligenceAudit() {
   try {
     const incidents = Array.isArray(getAllActiveIncidents?.()) ? getAllActiveIncidents() : [];
     const markerPane = typeof document !== "undefined" ? document.querySelector("#map .leaflet-marker-pane") : null;
-    const domBridgeSelector = "[data-gridly-route-impact=\"true\"], [data-gridly-intelligence], [data-gridly-confidence-label], .gridly-marker-rail-route-impact, .gridly-marker-priority-route-impact";
-    const domBridgeNodes = markerPane ? Array.from(new Set(Array.from(markerPane.querySelectorAll(domBridgeSelector)))) : [];
+    const domBridgeNodes = getGridlyCanonicalRouteImpactDomTargets(markerPane);
     const evaluated = incidents.map((incident) => {
       const visualState = getGridlyIncidentVisualState(incident);
       const phrase = generateGridlyIntelligencePhrase(incident, visualState);
@@ -1720,6 +1732,9 @@ window.gridlyRouteIntelligenceAudit = function gridlyRouteIntelligenceAudit() {
       routePhrase: String(node.getAttribute("data-gridly-intelligence") || "").trim(),
       confidencePhrase: String(node.getAttribute("data-gridly-confidence-label") || "").trim()
     })).filter((entry) => entry.routeImpact);
+    const intelligenceSelectorCount = markerPane ? markerPane.querySelectorAll(GRIDLY_INTELLIGENCE_SELECTOR).length : 0;
+    const confidenceLabelSelectorCount = markerPane ? markerPane.querySelectorAll(GRIDLY_CONFIDENCE_LABEL_SELECTOR).length : 0;
+    const routeImpactSelectorCount = markerPane ? markerPane.querySelectorAll('[data-gridly-route-impact="true"], .gridly-marker-rail-route-impact, .gridly-marker-priority-route-impact').length : 0;
     const routeIntelligenceSourceUsed = evaluated.length > 0 ? "incident_visual_state" : (domBridgeEvaluated.length > 0 ? "dom_bridge" : "none");
     const routeRelevantCount = routeIntelligenceSourceUsed === "incident_visual_state" ? evaluated.length : domBridgeEvaluated.length;
     const routeImpactPhraseCount = routeIntelligenceSourceUsed === "incident_visual_state" ? evaluated.filter((e) => Boolean(e.visualState?.routeImpact)).length : domBridgeEvaluated.length;
@@ -1731,11 +1746,15 @@ window.gridlyRouteIntelligenceAudit = function gridlyRouteIntelligenceAudit() {
       topRoutePhraseSamples: routeIntelligenceSourceUsed === "incident_visual_state"
         ? evaluated.slice(0, 8).map((e) => ({ id: e.incident?.id || e.incident?.crossingId || "", shortPhrase: e.phrase?.shortPhrase || "", routePhrase: e.phrase?.routePhrase || "", confidencePhrase: e.phrase?.confidencePhrase || "", confidenceLevel: e.confidence?.confidenceLevel || "low" }))
         : domBridgeEvaluated.slice(0, 8).map((e) => ({ id: e.id, shortPhrase: e.routePhrase || "", routePhrase: e.routePhrase || "", confidencePhrase: e.confidencePhrase || "", confidenceLevel: e.confidencePhrase ? "dom_bridge" : "unknown" })),
+      intelligenceSelectorCount,
+      confidenceLabelSelectorCount,
+      routeImpactSelectorCount,
+      inspectedDomCount: domBridgeNodes.length,
       routeIntelligenceSourceUsed,
       notes: ["Route intelligence audit preserves route-impact DOM bridge and calm hierarchy behavior."]
     };
   } catch (error) {
-    return { routeRelevantCount: 0, lowConfidenceRoutePhraseCount: 0, highConfidenceRoutePhraseCount: 0, routeImpactPhraseCount: 0, topRoutePhraseSamples: [], routeIntelligenceSourceUsed: "fallback", notes: [`Route intelligence audit fallback: ${error?.message || "unknown error"}`] };
+    return { routeRelevantCount: 0, lowConfidenceRoutePhraseCount: 0, highConfidenceRoutePhraseCount: 0, routeImpactPhraseCount: 0, topRoutePhraseSamples: [], intelligenceSelectorCount: 0, confidenceLabelSelectorCount: 0, routeImpactSelectorCount: 0, inspectedDomCount: 0, routeIntelligenceSourceUsed: "fallback", notes: [`Route intelligence audit fallback: ${error?.message || "unknown error"}`] };
   }
 };
 
@@ -1948,6 +1967,7 @@ window.gridlyApplyRailRouteImpactDomBridge = function gridlyApplyRailRouteImpact
     const confidenceLabel = "Community report with stronger confidence";
     targetEl.dataset.gridlyIntelligence = intelligencePhrase;
     targetEl.dataset.gridlyConfidenceLabel = confidenceLabel;
+    targetEl.dataset.gridlyConfidence = "medium";
     const tagKey = String(targetEl.tagName || "unknown").toUpperCase();
     summary.appliedElementTagCounts[tagKey] = Number(summary.appliedElementTagCounts[tagKey] || 0) + 1;
     if (summary.appliedElementClassSamples.length < 8) summary.appliedElementClassSamples.push(String(targetEl.className || ""));
@@ -1983,6 +2003,7 @@ window.gridlyApplyRailRouteImpactDomBridge = function gridlyApplyRailRouteImpact
     delete targetEl.dataset.gridlyConsequence;
     delete targetEl.dataset.gridlyIntelligence;
     delete targetEl.dataset.gridlyConfidenceLabel;
+    delete targetEl.dataset.gridlyConfidence;
     if (String(targetEl.dataset?.visualStyle || "") === "rail_route_impact") {
       targetEl.dataset.visualStyle = "rail_blocked";
     }
@@ -2134,6 +2155,38 @@ window.gridlyRouteImpactDomTargetTrace = function gridlyRouteImpactDomTargetTrac
       markerPanePresent: false,
       notes: [`Route impact target trace fallback: ${error?.message || "unknown error"}`]
     };
+  }
+};
+
+window.gridlyIntelligenceDomTargetTrace = function gridlyIntelligenceDomTargetTrace() {
+  try {
+    const markerPane = typeof document !== "undefined" ? document.querySelector("#map .leaflet-marker-pane") : null;
+    const intelligenceNodes = markerPane ? Array.from(markerPane.querySelectorAll('[data-gridly-intelligence]')) : [];
+    const confidenceLabelNodes = markerPane ? Array.from(markerPane.querySelectorAll('[data-gridly-confidence-label]')) : [];
+    const routeImpactNodes = markerPane ? Array.from(markerPane.querySelectorAll('[data-gridly-route-impact="true"], .gridly-marker-rail-route-impact, .gridly-marker-priority-route-impact')) : [];
+    const consequenceNodes = markerPane ? Array.from(markerPane.querySelectorAll('[data-gridly-consequence]')) : [];
+    const samples = Array.from(new Set([...intelligenceNodes, ...confidenceLabelNodes, ...routeImpactNodes, ...consequenceNodes])).slice(0, 8);
+    return {
+      markerPanePresent: Boolean(markerPane),
+      intelligenceSelectorCount: intelligenceNodes.length,
+      confidenceLabelSelectorCount: confidenceLabelNodes.length,
+      routeImpactSelectorCount: routeImpactNodes.length,
+      consequenceSelectorCount: consequenceNodes.length,
+      targetSamples: samples.map((el) => ({
+        tag: String(el?.tagName || ""),
+        className: String(el?.className || ""),
+        dataset: {
+          gridlyIntelligence: String(el?.dataset?.gridlyIntelligence || ""),
+          gridlyConfidenceLabel: String(el?.dataset?.gridlyConfidenceLabel || ""),
+          gridlyRouteImpact: String(el?.dataset?.gridlyRouteImpact || ""),
+          gridlyConsequence: String(el?.dataset?.gridlyConsequence || ""),
+          gridlyConfidence: String(el?.dataset?.gridlyConfidence || "")
+        }
+      })),
+      notes: ["Trace verifies intelligence, confidence-label, and route-impact metadata on canonical marker-pane targets."]
+    };
+  } catch (error) {
+    return { markerPanePresent: false, intelligenceSelectorCount: 0, confidenceLabelSelectorCount: 0, routeImpactSelectorCount: 0, consequenceSelectorCount: 0, targetSamples: [], notes: [`Intelligence DOM target trace fallback: ${error?.message || "unknown error"}`] };
   }
 };
 
