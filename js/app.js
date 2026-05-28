@@ -1798,18 +1798,37 @@ window.gridlyIntelligencePhraseAudit = function gridlyIntelligencePhraseAudit() 
       ? evaluated.slice(0, 8).map((e) => ({ id: e.incident?.id || e.incident?.crossingId || "", shortPhrase: e.phrase?.shortPhrase || "", detailPhrase: e.phrase?.detailPhrase || "", confidenceLevel: e.confidence?.confidenceLevel || "low", freshnessLevel: e.visualState?.freshnessLevel || "unknown", routeRelevant: Boolean(e.visualState?.routeRelevant), routeImpact: Boolean(e.visualState?.routeImpact) }))
       : domBridgePhrases.slice(0, 8).map((entry) => ({ id: entry.id, shortPhrase: entry.extractedShortPhrase || "", detailPhrase: entry.consequence || "", confidenceLevel: entry.extractedConfidencePhrase || "unknown", freshnessLevel: entry.extractedFreshnessPhrase || "unknown", routeRelevant: Boolean(entry.routeImpact), routeImpact: Boolean(entry.routeImpact) }));
     const useExtractedSamples = sourceEvaluatedCount === 0 && extractedPhraseSamples.length > 0;
+    let evaluatedCount = useExtractedSamples ? extractedPhraseSamples.length : effectiveEvaluatedCount;
+    let phraseCounts = useExtractedSamples ? countBy(extractedPhraseSamples, (entry) => entry.shortPhrase || "unknown") : effectivePhraseCounts;
+    let routeRelevantPhraseCount = useExtractedSamples ? extractedPhraseSamples.filter((entry) => entry.routeImpact).length : effectiveRouteRelevantPhraseCount;
+    let topPhraseSamples = useExtractedSamples ? extractedPhraseSamples.slice(0, 8) : effectiveTopPhraseSamples;
+    let domBridgePhraseCount = useExtractedSamples ? extractedPhraseSamples.length : domBridgePhrases.length;
+    let finalPhraseCount = useExtractedSamples ? extractedPhraseSamples.length : effectiveEvaluatedCount;
+    let finalSourceForReturn = useExtractedSamples ? "dom_bridge" : finalSourceUsed;
+    let finalUsedExtractedSamples = useExtractedSamples;
+    if (extractedPhraseSamples.length > 0 && sourceEvaluatedCount === 0 && evaluatedCount === 0) {
+      const extractedRouteImpactCount = extractedPhraseSamples.filter((entry) => entry.routeImpact).length;
+      evaluatedCount = extractedPhraseSamples.length;
+      domBridgePhraseCount = extractedPhraseSamples.length;
+      finalPhraseCount = extractedPhraseSamples.length;
+      finalSourceForReturn = "dom_bridge";
+      finalUsedExtractedSamples = true;
+      routeRelevantPhraseCount = extractedRouteImpactCount;
+      phraseCounts = countBy(extractedPhraseSamples, (entry) => entry.shortPhrase || "unknown");
+      topPhraseSamples = extractedPhraseSamples.slice(0, 8);
+    }
     return {
-      evaluatedCount: useExtractedSamples ? extractedPhraseSamples.length : effectiveEvaluatedCount,
-      phraseCounts: useExtractedSamples ? countBy(extractedPhraseSamples, (entry) => entry.shortPhrase || "unknown") : effectivePhraseCounts,
-      routeRelevantPhraseCount: useExtractedSamples ? extractedPhraseSamples.filter((entry) => entry.routeImpact).length : effectiveRouteRelevantPhraseCount,
+      evaluatedCount,
+      phraseCounts,
+      routeRelevantPhraseCount,
       confidencePhraseCounts: countBy(evaluated, (e) => e.phrase?.confidencePhrase || "unknown"),
       freshnessPhraseCounts: countBy(evaluated, (e) => e.phrase?.freshnessPhrase || "unknown"),
-      topPhraseSamples: useExtractedSamples ? extractedPhraseSamples.slice(0, 8) : effectiveTopPhraseSamples,
-      domBridgePhraseCount: useExtractedSamples ? extractedPhraseSamples.length : domBridgePhrases.length,
+      topPhraseSamples,
+      domBridgePhraseCount,
       domBridgeRoutePhraseCount: domBridgeRoutePhrases.length,
       sourcePhraseCount: sourceEvaluatedCount,
-      finalPhraseCount: useExtractedSamples ? extractedPhraseSamples.length : effectiveEvaluatedCount,
-      finalSourceUsed: useExtractedSamples ? "dom_bridge" : finalSourceUsed,
+      finalPhraseCount,
+      finalSourceUsed: finalSourceForReturn,
       intelligenceSelectorCount,
       confidenceLabelSelectorCount,
       routeImpactSelectorCount,
@@ -1821,8 +1840,8 @@ window.gridlyIntelligencePhraseAudit = function gridlyIntelligencePhraseAudit() 
       domBridgePhraseSamples: domBridgePhrases.slice(0, 8),
       extractedDomPhraseCount: extractedPhraseSamples.length,
       extractedRoutePhraseCount: extractedPhraseSamples.filter((entry) => entry.routeImpact).length,
-      finalUsedExtractedSamples: useExtractedSamples,
-      intelligencePhraseSourceUsed: useExtractedSamples ? "dom_bridge" : finalSourceUsed,
+      finalUsedExtractedSamples,
+      intelligencePhraseSourceUsed: finalSourceForReturn,
       notes: ["Intelligence phrase audit is read-only and preserves existing consequence, confidence, and freshness systems."]
     };
   } catch (error) {
@@ -1870,20 +1889,35 @@ window.gridlyRouteIntelligenceAudit = function gridlyRouteIntelligenceAudit() {
       .filter((entry) => Boolean(entry.routePhrase));
     const extractedRouteSamples = extractedPhraseSamples.filter((entry) => entry.routeImpact);
     const useExtractedSamples = sourcePhraseCount === 0 && extractedPhraseSamples.length > 0;
+    let routeRelevantCountForReturn = useExtractedSamples ? extractedRouteSamples.length : routeRelevantCount;
+    let routeImpactPhraseCountForReturn = useExtractedSamples ? extractedRouteSamples.length : routeImpactPhraseCount;
+    let topRoutePhraseSamples = useExtractedSamples
+      ? extractedRouteSamples.slice(0, 8)
+      : finalSourceUsed === "source_incidents"
+      ? evaluated.slice(0, 8).map((e) => ({ id: e.incident?.id || e.incident?.crossingId || "", shortPhrase: e.phrase?.shortPhrase || "", routePhrase: e.phrase?.routePhrase || "", confidencePhrase: e.phrase?.confidencePhrase || "", confidenceLevel: e.confidence?.confidenceLevel || "low" }))
+      : domBridgeEvaluated.slice(0, 8).map((e) => ({ id: e.id, shortPhrase: e.routePhrase || "", routePhrase: e.routePhrase || "", confidencePhrase: e.confidencePhrase || "", confidenceLevel: e.confidencePhrase ? "dom_bridge" : "unknown" }));
+    let finalPhraseCountForReturn = useExtractedSamples ? extractedRouteSamples.length : routeRelevantCount;
+    let finalSourceForReturn = useExtractedSamples ? "dom_bridge" : finalSourceUsed;
+    let finalUsedExtractedSamples = useExtractedSamples;
+    if (extractedPhraseSamples.length > 0 && sourcePhraseCount === 0 && routeRelevantCountForReturn === 0) {
+      const extractedRouteImpactCount = extractedRouteSamples.length;
+      routeRelevantCountForReturn = extractedRouteImpactCount;
+      routeImpactPhraseCountForReturn = extractedRouteImpactCount;
+      finalPhraseCountForReturn = extractedRouteImpactCount;
+      finalSourceForReturn = "dom_bridge";
+      finalUsedExtractedSamples = true;
+      topRoutePhraseSamples = extractedRouteSamples.slice(0, 8);
+    }
     return {
-      routeRelevantCount: useExtractedSamples ? extractedRouteSamples.length : routeRelevantCount,
+      routeRelevantCount: routeRelevantCountForReturn,
       lowConfidenceRoutePhraseCount,
       highConfidenceRoutePhraseCount,
-      routeImpactPhraseCount: useExtractedSamples ? extractedRouteSamples.length : routeImpactPhraseCount,
-      topRoutePhraseSamples: useExtractedSamples
-        ? extractedRouteSamples.slice(0, 8)
-        : finalSourceUsed === "source_incidents"
-        ? evaluated.slice(0, 8).map((e) => ({ id: e.incident?.id || e.incident?.crossingId || "", shortPhrase: e.phrase?.shortPhrase || "", routePhrase: e.phrase?.routePhrase || "", confidencePhrase: e.phrase?.confidencePhrase || "", confidenceLevel: e.confidence?.confidenceLevel || "low" }))
-        : domBridgeEvaluated.slice(0, 8).map((e) => ({ id: e.id, shortPhrase: e.routePhrase || "", routePhrase: e.routePhrase || "", confidencePhrase: e.confidencePhrase || "", confidenceLevel: e.confidencePhrase ? "dom_bridge" : "unknown" })),
+      routeImpactPhraseCount: routeImpactPhraseCountForReturn,
+      topRoutePhraseSamples,
       sourcePhraseCount,
       domBridgePhraseCount,
-      finalPhraseCount: useExtractedSamples ? extractedRouteSamples.length : routeRelevantCount,
-      finalSourceUsed: useExtractedSamples ? "dom_bridge" : finalSourceUsed,
+      finalPhraseCount: finalPhraseCountForReturn,
+      finalSourceUsed: finalSourceForReturn,
       intelligenceSelectorCount,
       confidenceLabelSelectorCount,
       routeImpactSelectorCount,
@@ -1894,8 +1928,8 @@ window.gridlyRouteIntelligenceAudit = function gridlyRouteIntelligenceAudit() {
       validDomBridgeCount: domBridgeEvaluated.length,
       extractedDomPhraseCount: extractedPhraseSamples.length,
       extractedRoutePhraseCount: extractedRouteSamples.length,
-      finalUsedExtractedSamples: useExtractedSamples,
-      routeIntelligenceSourceUsed: useExtractedSamples ? "dom_bridge" : finalSourceUsed,
+      finalUsedExtractedSamples,
+      routeIntelligenceSourceUsed: finalSourceForReturn,
       notes: ["Route intelligence audit preserves route-impact DOM bridge and calm hierarchy behavior."]
     };
   } catch (error) {
