@@ -1707,20 +1707,29 @@ window.gridlyIntelligencePhraseAudit = function gridlyIntelligencePhraseAudit() 
     const intelligenceSelectorCount = markerPane ? markerPane.querySelectorAll(GRIDLY_INTELLIGENCE_SELECTOR).length : 0;
     const confidenceLabelSelectorCount = markerPane ? markerPane.querySelectorAll(GRIDLY_CONFIDENCE_LABEL_SELECTOR).length : 0;
     const routeImpactSelectorCount = markerPane ? markerPane.querySelectorAll('[data-gridly-route-impact="true"], .gridly-marker-rail-route-impact, .gridly-marker-priority-route-impact').length : 0;
-    const intelligencePhraseSourceUsed = sourceEvaluatedCount > 0 ? "source_incidents" : (domBridgePhrases.length > 0 ? "dom_bridge" : "none");
-    const effectiveEvaluatedCount = intelligencePhraseSourceUsed === "source_incidents" ? sourceEvaluatedCount : domBridgePhrases.length;
-    const effectiveRouteRelevantPhraseCount = intelligencePhraseSourceUsed === "source_incidents"
+    const finalSourceUsed = sourceEvaluatedCount > 0 ? "source_incidents" : (domBridgePhrases.length > 0 ? "dom_bridge" : "none");
+    const effectiveEvaluatedCount = finalSourceUsed === "source_incidents" ? sourceEvaluatedCount : domBridgePhrases.length;
+    const effectiveRouteRelevantPhraseCount = finalSourceUsed === "source_incidents"
       ? evaluated.filter((e) => Boolean(e.visualState?.routeRelevant || e.visualState?.routeImpact)).length
       : domBridgeRoutePhrases.length;
+    const effectivePhraseCounts = finalSourceUsed === "source_incidents"
+      ? countBy(evaluated, (e) => e.phrase?.shortPhrase || "unknown")
+      : countBy(domBridgePhrases, (entry) => entry.intelligence || "unknown");
+    const effectiveTopPhraseSamples = finalSourceUsed === "source_incidents"
+      ? evaluated.slice(0, 8).map((e) => ({ id: e.incident?.id || e.incident?.crossingId || "", shortPhrase: e.phrase?.shortPhrase || "", detailPhrase: e.phrase?.detailPhrase || "", confidenceLevel: e.confidence?.confidenceLevel || "low", freshnessLevel: e.visualState?.freshnessLevel || "unknown", routeRelevant: Boolean(e.visualState?.routeRelevant), routeImpact: Boolean(e.visualState?.routeImpact) }))
+      : domBridgePhrases.slice(0, 8).map((entry) => ({ id: entry.id, shortPhrase: entry.intelligence || "", detailPhrase: entry.consequence || "", confidenceLevel: entry.confidenceLabel || entry.confidence || "unknown", freshnessLevel: entry.freshness || "unknown", routeRelevant: Boolean(entry.routeImpact), routeImpact: Boolean(entry.routeImpact) }));
     return {
       evaluatedCount: effectiveEvaluatedCount,
-      phraseCounts: countBy(evaluated, (e) => e.phrase?.shortPhrase || "unknown"),
+      phraseCounts: effectivePhraseCounts,
       routeRelevantPhraseCount: effectiveRouteRelevantPhraseCount,
       confidencePhraseCounts: countBy(evaluated, (e) => e.phrase?.confidencePhrase || "unknown"),
       freshnessPhraseCounts: countBy(evaluated, (e) => e.phrase?.freshnessPhrase || "unknown"),
-      topPhraseSamples: evaluated.slice(0, 8).map((e) => ({ id: e.incident?.id || e.incident?.crossingId || "", shortPhrase: e.phrase?.shortPhrase || "", detailPhrase: e.phrase?.detailPhrase || "", confidenceLevel: e.confidence?.confidenceLevel || "low", freshnessLevel: e.visualState?.freshnessLevel || "unknown", routeRelevant: Boolean(e.visualState?.routeRelevant), routeImpact: Boolean(e.visualState?.routeImpact) })),
+      topPhraseSamples: effectiveTopPhraseSamples,
       domBridgePhraseCount: domBridgePhrases.length,
       domBridgeRoutePhraseCount: domBridgeRoutePhrases.length,
+      sourcePhraseCount: sourceEvaluatedCount,
+      finalPhraseCount: effectiveEvaluatedCount,
+      finalSourceUsed,
       intelligenceSelectorCount,
       confidenceLabelSelectorCount,
       routeImpactSelectorCount,
@@ -1730,11 +1739,11 @@ window.gridlyIntelligencePhraseAudit = function gridlyIntelligencePhraseAudit() 
       filterRejectReasons,
       validDomBridgeCount: domBridgePhrases.length,
       domBridgePhraseSamples: domBridgePhrases.slice(0, 8),
-      intelligencePhraseSourceUsed,
+      intelligencePhraseSourceUsed: finalSourceUsed,
       notes: ["Intelligence phrase audit is read-only and preserves existing consequence, confidence, and freshness systems."]
     };
   } catch (error) {
-    return { evaluatedCount: 0, phraseCounts: {}, routeRelevantPhraseCount: 0, confidencePhraseCounts: {}, freshnessPhraseCounts: {}, topPhraseSamples: [], domBridgePhraseCount: 0, domBridgeRoutePhraseCount: 0, intelligenceSelectorCount: 0, confidenceLabelSelectorCount: 0, routeImpactSelectorCount: 0, inspectedDomCount: 0, selectedDomCount: 0, filteredOutDomCount: 0, filterRejectReasons: {}, validDomBridgeCount: 0, domBridgePhraseSamples: [], intelligencePhraseSourceUsed: "none", notes: [`Intelligence phrase audit fallback: ${error?.message || "unknown error"}`] };
+    return { evaluatedCount: 0, phraseCounts: {}, routeRelevantPhraseCount: 0, confidencePhraseCounts: {}, freshnessPhraseCounts: {}, topPhraseSamples: [], domBridgePhraseCount: 0, domBridgeRoutePhraseCount: 0, sourcePhraseCount: 0, finalPhraseCount: 0, finalSourceUsed: "none", intelligenceSelectorCount: 0, confidenceLabelSelectorCount: 0, routeImpactSelectorCount: 0, inspectedDomCount: 0, selectedDomCount: 0, filteredOutDomCount: 0, filterRejectReasons: {}, validDomBridgeCount: 0, domBridgePhraseSamples: [], intelligencePhraseSourceUsed: "none", notes: [`Intelligence phrase audit fallback: ${error?.message || "unknown error"}`] };
   }
 };
 
@@ -1779,17 +1788,29 @@ window.gridlyRouteIntelligenceAudit = function gridlyRouteIntelligenceAudit() {
     const intelligenceSelectorCount = markerPane ? markerPane.querySelectorAll(GRIDLY_INTELLIGENCE_SELECTOR).length : 0;
     const confidenceLabelSelectorCount = markerPane ? markerPane.querySelectorAll(GRIDLY_CONFIDENCE_LABEL_SELECTOR).length : 0;
     const routeImpactSelectorCount = markerPane ? markerPane.querySelectorAll('[data-gridly-route-impact="true"], .gridly-marker-rail-route-impact, .gridly-marker-priority-route-impact').length : 0;
-    const routeIntelligenceSourceUsed = evaluated.length > 0 ? "incident_visual_state" : (domBridgeEvaluated.length > 0 ? "dom_bridge" : "none");
-    const routeRelevantCount = routeIntelligenceSourceUsed === "incident_visual_state" ? evaluated.length : domBridgeEvaluated.length;
-    const routeImpactPhraseCount = routeIntelligenceSourceUsed === "incident_visual_state" ? evaluated.filter((e) => Boolean(e.visualState?.routeImpact)).length : domBridgeEvaluated.length;
+    const sourcePhraseCount = evaluated.length;
+    const domBridgePhraseCount = domBridgeEvaluated.length;
+    const finalSourceUsed = sourcePhraseCount > 0 ? "source_incidents" : (domBridgePhraseCount > 0 ? "dom_bridge" : "none");
+    const routeRelevantCount = finalSourceUsed === "source_incidents" ? sourcePhraseCount : domBridgePhraseCount;
+    const routeImpactPhraseCount = finalSourceUsed === "source_incidents" ? evaluated.filter((e) => Boolean(e.visualState?.routeImpact)).length : domBridgeEvaluated.filter((entry) => entry.routeImpact).length;
+    const lowConfidenceRoutePhraseCount = finalSourceUsed === "source_incidents"
+      ? evaluated.filter((e) => ["low", "very_low"].includes(String(e.confidence?.confidenceLevel || ""))).length
+      : domBridgeEvaluated.filter((entry) => /low/i.test(entry.confidenceLabel || entry.confidence || "")).length;
+    const highConfidenceRoutePhraseCount = finalSourceUsed === "source_incidents"
+      ? evaluated.filter((e) => String(e.confidence?.confidenceLevel || "") === "high").length
+      : domBridgeEvaluated.filter((entry) => /high/i.test(entry.confidenceLabel || entry.confidence || "")).length;
     return {
       routeRelevantCount,
-      lowConfidenceRoutePhraseCount: evaluated.filter((e) => ["low", "very_low"].includes(String(e.confidence?.confidenceLevel || ""))).length,
-      highConfidenceRoutePhraseCount: evaluated.filter((e) => String(e.confidence?.confidenceLevel || "") === "high").length,
+      lowConfidenceRoutePhraseCount,
+      highConfidenceRoutePhraseCount,
       routeImpactPhraseCount,
-      topRoutePhraseSamples: routeIntelligenceSourceUsed === "incident_visual_state"
+      topRoutePhraseSamples: finalSourceUsed === "source_incidents"
         ? evaluated.slice(0, 8).map((e) => ({ id: e.incident?.id || e.incident?.crossingId || "", shortPhrase: e.phrase?.shortPhrase || "", routePhrase: e.phrase?.routePhrase || "", confidencePhrase: e.phrase?.confidencePhrase || "", confidenceLevel: e.confidence?.confidenceLevel || "low" }))
         : domBridgeEvaluated.slice(0, 8).map((e) => ({ id: e.id, shortPhrase: e.routePhrase || "", routePhrase: e.routePhrase || "", confidencePhrase: e.confidencePhrase || "", confidenceLevel: e.confidencePhrase ? "dom_bridge" : "unknown" })),
+      sourcePhraseCount,
+      domBridgePhraseCount,
+      finalPhraseCount: routeRelevantCount,
+      finalSourceUsed,
       intelligenceSelectorCount,
       confidenceLabelSelectorCount,
       routeImpactSelectorCount,
@@ -1798,11 +1819,11 @@ window.gridlyRouteIntelligenceAudit = function gridlyRouteIntelligenceAudit() {
       filteredOutDomCount: selectedDomNodes.length - domBridgeEvaluated.length,
       filterRejectReasons,
       validDomBridgeCount: domBridgeEvaluated.length,
-      routeIntelligenceSourceUsed,
+      routeIntelligenceSourceUsed: finalSourceUsed,
       notes: ["Route intelligence audit preserves route-impact DOM bridge and calm hierarchy behavior."]
     };
   } catch (error) {
-    return { routeRelevantCount: 0, lowConfidenceRoutePhraseCount: 0, highConfidenceRoutePhraseCount: 0, routeImpactPhraseCount: 0, topRoutePhraseSamples: [], intelligenceSelectorCount: 0, confidenceLabelSelectorCount: 0, routeImpactSelectorCount: 0, inspectedDomCount: 0, selectedDomCount: 0, filteredOutDomCount: 0, filterRejectReasons: {}, validDomBridgeCount: 0, routeIntelligenceSourceUsed: "fallback", notes: [`Route intelligence audit fallback: ${error?.message || "unknown error"}`] };
+    return { routeRelevantCount: 0, lowConfidenceRoutePhraseCount: 0, highConfidenceRoutePhraseCount: 0, routeImpactPhraseCount: 0, topRoutePhraseSamples: [], sourcePhraseCount: 0, domBridgePhraseCount: 0, finalPhraseCount: 0, finalSourceUsed: "none", intelligenceSelectorCount: 0, confidenceLabelSelectorCount: 0, routeImpactSelectorCount: 0, inspectedDomCount: 0, selectedDomCount: 0, filteredOutDomCount: 0, filterRejectReasons: {}, validDomBridgeCount: 0, routeIntelligenceSourceUsed: "fallback", notes: [`Route intelligence audit fallback: ${error?.message || "unknown error"}`] };
   }
 };
 
