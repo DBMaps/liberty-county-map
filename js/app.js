@@ -1653,15 +1653,19 @@ window.gridlyRouteConfidenceAudit = function gridlyRouteConfidenceAudit() {
 const GRIDLY_CANONICAL_ROUTE_IMPACT_SELECTOR = '[data-gridly-route-impact="true"], .gridly-marker-rail-route-impact, .gridly-marker-priority-route-impact, [data-gridly-consequence], [data-gridly-confidence]';
 const GRIDLY_INTELLIGENCE_SELECTOR = "[data-gridly-intelligence]";
 const GRIDLY_CONFIDENCE_LABEL_SELECTOR = "[data-gridly-confidence-label]";
+const GRIDLY_DOM_BRIDGE_AUDIT_SELECTOR = '[data-gridly-intelligence], [data-gridly-confidence-label], [data-gridly-route-impact="true"], [data-gridly-consequence], [data-gridly-confidence], .gridly-marker-rail-route-impact, .gridly-marker-priority-route-impact';
 const getGridlyCanonicalRouteImpactDomTargets = (markerPane) => markerPane
   ? Array.from(new Set(Array.from(markerPane.querySelectorAll(GRIDLY_CANONICAL_ROUTE_IMPACT_SELECTOR))))
+  : [];
+const getGridlyDomBridgeAuditTargets = (markerPane) => markerPane
+  ? Array.from(new Set(Array.from(markerPane.querySelectorAll(GRIDLY_DOM_BRIDGE_AUDIT_SELECTOR))))
   : [];
 
 window.gridlyIntelligencePhraseAudit = function gridlyIntelligencePhraseAudit() {
   try {
     const incidents = Array.isArray(getAllActiveIncidents?.()) ? getAllActiveIncidents() : [];
     const markerPane = typeof document !== "undefined" ? document.querySelector("#map .leaflet-marker-pane") : null;
-    const domBridgeNodes = getGridlyCanonicalRouteImpactDomTargets(markerPane);
+    const selectedDomNodes = getGridlyDomBridgeAuditTargets(markerPane);
     const evaluated = incidents.map((incident) => {
       const visualState = getGridlyIncidentVisualState(incident);
       const phrase = generateGridlyIntelligencePhrase(incident, visualState);
@@ -1674,14 +1678,31 @@ window.gridlyIntelligencePhraseAudit = function gridlyIntelligencePhraseAudit() 
       return acc;
     }, {});
     const sourceEvaluatedCount = evaluated.length;
-    const domBridgePhrases = domBridgeNodes.map((node, index) => ({
-      id: String(node.getAttribute("data-gridly-incident-id") || node.getAttribute("data-incident-id") || node.id || `dom-phrase-${index + 1}`),
-      intelligence: String(node.getAttribute("data-gridly-intelligence") || "").trim(),
-      confidenceLabel: String(node.getAttribute("data-gridly-confidence-label") || "").trim(),
-      routeImpact: String(node.getAttribute("data-gridly-route-impact") || "").toLowerCase() === "true"
-        || node.classList.contains("gridly-marker-rail-route-impact")
-        || node.classList.contains("gridly-marker-priority-route-impact")
-    }));
+    const filterRejectReasons = { missingBridgeAttributes: 0 };
+    const domBridgeCandidates = selectedDomNodes.map((node, index) => {
+      const intelligence = String(node.getAttribute("data-gridly-intelligence") || "").trim();
+      const confidenceLabel = String(node.getAttribute("data-gridly-confidence-label") || "").trim();
+      const routeImpactAttr = String(node.getAttribute("data-gridly-route-impact") || "").toLowerCase();
+      const consequence = String(node.getAttribute("data-gridly-consequence") || "").trim();
+      const confidence = String(node.getAttribute("data-gridly-confidence") || "").trim();
+      const visualStyle = String(node.getAttribute("data-visual-style") || "").trim();
+      const freshness = String(node.getAttribute("data-gridly-freshness") || "").trim();
+      const routeImpact = routeImpactAttr === "true" || node.classList.contains("gridly-marker-rail-route-impact") || node.classList.contains("gridly-marker-priority-route-impact");
+      const isValidBridge = Boolean(intelligence || confidenceLabel || consequence || confidence || routeImpact);
+      if (!isValidBridge) filterRejectReasons.missingBridgeAttributes += 1;
+      return {
+        id: String(node.getAttribute("data-gridly-incident-id") || node.getAttribute("data-incident-id") || node.id || `dom-phrase-${index + 1}`),
+        intelligence,
+        confidenceLabel,
+        routeImpact,
+        consequence,
+        confidence,
+        freshness,
+        visualStyle,
+        isValidBridge
+      };
+    });
+    const domBridgePhrases = domBridgeCandidates.filter((entry) => entry.isValidBridge);
     const domBridgeRoutePhrases = domBridgePhrases.filter((entry) => entry.routeImpact);
     const intelligenceSelectorCount = markerPane ? markerPane.querySelectorAll(GRIDLY_INTELLIGENCE_SELECTOR).length : 0;
     const confidenceLabelSelectorCount = markerPane ? markerPane.querySelectorAll(GRIDLY_CONFIDENCE_LABEL_SELECTOR).length : 0;
@@ -1703,13 +1724,17 @@ window.gridlyIntelligencePhraseAudit = function gridlyIntelligencePhraseAudit() 
       intelligenceSelectorCount,
       confidenceLabelSelectorCount,
       routeImpactSelectorCount,
-      inspectedDomCount: domBridgeNodes.length,
+      inspectedDomCount: selectedDomNodes.length,
+      selectedDomCount: selectedDomNodes.length,
+      filteredOutDomCount: selectedDomNodes.length - domBridgePhrases.length,
+      filterRejectReasons,
+      validDomBridgeCount: domBridgePhrases.length,
       domBridgePhraseSamples: domBridgePhrases.slice(0, 8),
       intelligencePhraseSourceUsed,
       notes: ["Intelligence phrase audit is read-only and preserves existing consequence, confidence, and freshness systems."]
     };
   } catch (error) {
-    return { evaluatedCount: 0, phraseCounts: {}, routeRelevantPhraseCount: 0, confidencePhraseCounts: {}, freshnessPhraseCounts: {}, topPhraseSamples: [], domBridgePhraseCount: 0, domBridgeRoutePhraseCount: 0, intelligenceSelectorCount: 0, confidenceLabelSelectorCount: 0, routeImpactSelectorCount: 0, inspectedDomCount: 0, domBridgePhraseSamples: [], intelligencePhraseSourceUsed: "none", notes: [`Intelligence phrase audit fallback: ${error?.message || "unknown error"}`] };
+    return { evaluatedCount: 0, phraseCounts: {}, routeRelevantPhraseCount: 0, confidencePhraseCounts: {}, freshnessPhraseCounts: {}, topPhraseSamples: [], domBridgePhraseCount: 0, domBridgeRoutePhraseCount: 0, intelligenceSelectorCount: 0, confidenceLabelSelectorCount: 0, routeImpactSelectorCount: 0, inspectedDomCount: 0, selectedDomCount: 0, filteredOutDomCount: 0, filterRejectReasons: {}, validDomBridgeCount: 0, domBridgePhraseSamples: [], intelligencePhraseSourceUsed: "none", notes: [`Intelligence phrase audit fallback: ${error?.message || "unknown error"}`] };
   }
 };
 
@@ -1717,21 +1742,40 @@ window.gridlyRouteIntelligenceAudit = function gridlyRouteIntelligenceAudit() {
   try {
     const incidents = Array.isArray(getAllActiveIncidents?.()) ? getAllActiveIncidents() : [];
     const markerPane = typeof document !== "undefined" ? document.querySelector("#map .leaflet-marker-pane") : null;
-    const domBridgeNodes = getGridlyCanonicalRouteImpactDomTargets(markerPane);
+    const selectedDomNodes = getGridlyDomBridgeAuditTargets(markerPane);
     const evaluated = incidents.map((incident) => {
       const visualState = getGridlyIncidentVisualState(incident);
       const phrase = generateGridlyIntelligencePhrase(incident, visualState);
       const confidence = evaluateGridlyIncidentConfidence(incident, { visualState });
       return { incident, visualState, phrase, confidence };
     }).filter((e) => Boolean(e.visualState?.routeRelevant || e.visualState?.routeImpact));
-    const domBridgeEvaluated = domBridgeNodes.map((node, index) => ({
-      id: String(node.getAttribute("data-gridly-incident-id") || node.getAttribute("data-incident-id") || node.id || `dom-route-phrase-${index + 1}`),
-      routeImpact: String(node.getAttribute("data-gridly-route-impact") || "").toLowerCase() === "true"
+    const filterRejectReasons = { missingBridgeAttributes: 0 };
+    const domBridgeEvaluated = selectedDomNodes.map((node, index) => {
+      const routeImpact = String(node.getAttribute("data-gridly-route-impact") || "").toLowerCase() === "true"
         || node.classList.contains("gridly-marker-rail-route-impact")
-        || node.classList.contains("gridly-marker-priority-route-impact"),
-      routePhrase: String(node.getAttribute("data-gridly-intelligence") || "").trim(),
-      confidencePhrase: String(node.getAttribute("data-gridly-confidence-label") || "").trim()
-    })).filter((entry) => entry.routeImpact);
+        || node.classList.contains("gridly-marker-priority-route-impact");
+      const intelligence = String(node.getAttribute("data-gridly-intelligence") || "").trim();
+      const confidenceLabel = String(node.getAttribute("data-gridly-confidence-label") || "").trim();
+      const consequence = String(node.getAttribute("data-gridly-consequence") || "").trim();
+      const confidence = String(node.getAttribute("data-gridly-confidence") || "").trim();
+      const freshness = String(node.getAttribute("data-gridly-freshness") || "").trim();
+      const visualStyle = String(node.getAttribute("data-visual-style") || "").trim();
+      const isValidBridge = Boolean(intelligence || confidenceLabel || consequence || confidence || routeImpact);
+      if (!isValidBridge) filterRejectReasons.missingBridgeAttributes += 1;
+      return {
+        id: String(node.getAttribute("data-gridly-incident-id") || node.getAttribute("data-incident-id") || node.id || `dom-route-phrase-${index + 1}`),
+        intelligence,
+        confidenceLabel,
+        routeImpact,
+        consequence,
+        confidence,
+        freshness,
+        visualStyle,
+        routePhrase: intelligence,
+        confidencePhrase: confidenceLabel,
+        isValidBridge
+      };
+    }).filter((entry) => entry.isValidBridge);
     const intelligenceSelectorCount = markerPane ? markerPane.querySelectorAll(GRIDLY_INTELLIGENCE_SELECTOR).length : 0;
     const confidenceLabelSelectorCount = markerPane ? markerPane.querySelectorAll(GRIDLY_CONFIDENCE_LABEL_SELECTOR).length : 0;
     const routeImpactSelectorCount = markerPane ? markerPane.querySelectorAll('[data-gridly-route-impact="true"], .gridly-marker-rail-route-impact, .gridly-marker-priority-route-impact').length : 0;
@@ -1749,12 +1793,16 @@ window.gridlyRouteIntelligenceAudit = function gridlyRouteIntelligenceAudit() {
       intelligenceSelectorCount,
       confidenceLabelSelectorCount,
       routeImpactSelectorCount,
-      inspectedDomCount: domBridgeNodes.length,
+      inspectedDomCount: selectedDomNodes.length,
+      selectedDomCount: selectedDomNodes.length,
+      filteredOutDomCount: selectedDomNodes.length - domBridgeEvaluated.length,
+      filterRejectReasons,
+      validDomBridgeCount: domBridgeEvaluated.length,
       routeIntelligenceSourceUsed,
       notes: ["Route intelligence audit preserves route-impact DOM bridge and calm hierarchy behavior."]
     };
   } catch (error) {
-    return { routeRelevantCount: 0, lowConfidenceRoutePhraseCount: 0, highConfidenceRoutePhraseCount: 0, routeImpactPhraseCount: 0, topRoutePhraseSamples: [], intelligenceSelectorCount: 0, confidenceLabelSelectorCount: 0, routeImpactSelectorCount: 0, inspectedDomCount: 0, routeIntelligenceSourceUsed: "fallback", notes: [`Route intelligence audit fallback: ${error?.message || "unknown error"}`] };
+    return { routeRelevantCount: 0, lowConfidenceRoutePhraseCount: 0, highConfidenceRoutePhraseCount: 0, routeImpactPhraseCount: 0, topRoutePhraseSamples: [], intelligenceSelectorCount: 0, confidenceLabelSelectorCount: 0, routeImpactSelectorCount: 0, inspectedDomCount: 0, selectedDomCount: 0, filteredOutDomCount: 0, filterRejectReasons: {}, validDomBridgeCount: 0, routeIntelligenceSourceUsed: "fallback", notes: [`Route intelligence audit fallback: ${error?.message || "unknown error"}`] };
   }
 };
 
