@@ -10296,6 +10296,8 @@ function getRouteHazardAssessmentForPath(routeLatLngs = []) {
 
 const GRIDLY_COMMUNITY_PRESENCE_VERSION = "V177.4";
 const GRIDLY_RECOVERY_BASELINE_VERSION = "V178-RECOVERY.1";
+const GRIDLY_MAIN_BASELINE_VERSION = GRIDLY_RECOVERY_BASELINE_VERSION;
+const GRIDLY_MAIN_BASELINE_STATUS = "protected_main_baseline";
 const GRIDLY_CROSSING_RUNTIME_ENABLED = false;
 const GRIDLY_CROSSING_ENRICHMENT_ENABLED = false;
 const GRIDLY_SOURCE_JOIN_RUNTIME_ENABLED = false;
@@ -11301,6 +11303,8 @@ window.gridlyRecoveryBaselineAudit = function gridlyRecoveryBaselineAudit() {
   return {
     loaded: true,
     version: GRIDLY_RECOVERY_BASELINE_VERSION,
+    mainBaselineVersion: GRIDLY_MAIN_BASELINE_VERSION,
+    mainBaselineStatus: GRIDLY_MAIN_BASELINE_STATUS,
     layoutMode,
     mapExists: Boolean(mapElement),
     mapVisible: isGridlyRecoveryAuditElementVisible(mapElement),
@@ -11312,7 +11316,7 @@ window.gridlyRecoveryBaselineAudit = function gridlyRecoveryBaselineAudit() {
     heavyCommunityRuntimeDisabled: GRIDLY_HEAVY_COMMUNITY_RUNTIME_DISABLED,
     bottomPanelResponsiveGuardActive: GRIDLY_BOTTOM_PANEL_RESPONSIVE_GUARD_ACTIVE,
     notes: [
-      "Fast recovery baseline is locked at V178-RECOVERY.1.",
+      "V178-RECOVERY.1 is promoted as the protected main baseline.",
       "Community Pulse reads lightweight active incident/report and rendered-marker inputs only.",
       "No full crossing collection scan, crossing enrichment, or source join is enabled for pulse render.",
       "Portrait/mobile responsiveness guard remains active without changing bottom sheet ownership."
