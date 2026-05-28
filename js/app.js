@@ -10310,7 +10310,7 @@ function getRouteHazardAssessmentForPath(routeLatLngs = []) {
 
 
 
-const GRIDLY_COMMUNITY_PRESENCE_VERSION = "V178.3G";
+const GRIDLY_COMMUNITY_PRESENCE_VERSION = "V178.3H";
 const GRIDLY_COMMUNITY_AWARENESS_BRIDGE_SOURCE = "community_presence_passive";
 const GRIDLY_COMMUNITY_CROSSING_CANDIDATE_LIMIT = 20;
 const GRIDLY_COMMUNITY_CROSSING_ENRICHMENT_LIMIT = 5;
@@ -12359,6 +12359,109 @@ function getGridlyCommunityPulseSignalLabel(signalType = "mobility") {
   return labels[signalType] || labels.mobility;
 }
 
+function isGridlyCommunityPulsePassiveCrossingSignal(item = {}) {
+  const incident = item?.incident && typeof item.incident === "object" ? item.incident : item;
+  const categoryText = String([
+    item?.category,
+    incident?.category,
+    incident?.type,
+    incident?.kind,
+    incident?.report_type,
+    incident?.reportType,
+    incident?.title,
+    incident?.headline
+  ].filter(Boolean).join(" ")).toLowerCase().replace(/[_-]+/g, " ");
+  const statusText = String([incident?.status, incident?.lifecycleState, incident?.state, incident?.freshnessLevel]
+    .filter(Boolean)
+    .join(" "))
+    .toLowerCase();
+  const severityText = String(item?.severity || incident?.severity || "low").toLowerCase();
+  const sourceText = String(incident?.sourceCollectionName || incident?.datasetSource || incident?.source || item?.source || "").toLowerCase();
+  const explicitlyPassive = Boolean(incident?.passiveRailInfrastructure)
+    || /passive\s+rail\s+crossing\s+awareness/.test(categoryText)
+    || /\bpassive\b/.test(statusText);
+  const railCrossingSignal = /rail|crossing|train/.test(categoryText)
+    || Boolean(incident?.crossingId || incident?.crossing_id || incident?.crossingRoad || incident?.crossing_road || incident?.railroadCrossing);
+  const activeHazardFlag = incident?.activeHazard === true || item?.activeHazard === true;
+  const activeLifecycle = /\b(active|open|reported|confirmed)\b/.test(statusText) && !/\bpassive\b/.test(statusText);
+  const activeSeverity = /critical|high|moderate|medium/.test(severityText);
+  const activeSource = /activehazards|activehazard|hazards|activereports|reports/.test(sourceText) && !isGridlyCommunityCrossingSourceName(sourceText);
+  return Boolean(explicitlyPassive && railCrossingSignal && !activeHazardFlag && !activeLifecycle && !activeSeverity && !activeSource);
+}
+
+function getGridlyCommunityPulseLanguageSignals(selected = []) {
+  const scoped = Array.isArray(selected) ? selected : [];
+  const passiveCrossingSignalCount = scoped.filter((item) => isGridlyCommunityPulsePassiveCrossingSignal(item)).length;
+  const activeIncidentSignalCount = scoped.filter((item) => {
+    if (isGridlyCommunityPulsePassiveCrossingSignal(item)) return false;
+    const incident = item?.incident && typeof item.incident === "object" ? item.incident : item;
+    const sourceText = String(incident?.sourceCollectionName || incident?.datasetSource || incident?.source || item?.source || "").toLowerCase();
+    const statusText = String([incident?.status, incident?.lifecycleState, incident?.state].filter(Boolean).join(" ")).toLowerCase();
+    const severityText = String(item?.severity || incident?.severity || "").toLowerCase();
+    return Boolean(
+      incident?.activeHazard === true
+      || item?.activeHazard === true
+      || /\b(active|open|reported|confirmed)\b/.test(statusText)
+      || /critical|high|moderate|medium/.test(severityText)
+      || /activehazards|activehazard|hazards|activereports|reports/.test(sourceText)
+    );
+  }).length;
+  const passiveCrossingOnly = scoped.length > 0 && passiveCrossingSignalCount === scoped.length && activeIncidentSignalCount === 0;
+  const pulseSignalMode = !scoped.length
+    ? "quiet"
+    : passiveCrossingOnly
+      ? "passive_crossing_awareness"
+      : passiveCrossingSignalCount > 0 && activeIncidentSignalCount > 0
+        ? "mixed_active_and_passive"
+        : activeIncidentSignalCount > 0
+          ? "active_incident"
+          : "quiet";
+  return {
+    pulseSignalMode,
+    passiveCrossingOnly,
+    activeIncidentSignalCount,
+    passiveCrossingSignalCount,
+    activeLanguageSuppressed: passiveCrossingOnly
+  };
+}
+
+function getGridlyCommunityPulseCorridorBalance({ selected = [], corridorPriority = {}, dominantCorridor = null, displayCorridor = null } = {}) {
+  const breakdown = Array.isArray(corridorPriority?.corridorPriorityBreakdown) ? corridorPriority.corridorPriorityBreakdown : [];
+  const supportedMajorNames = new Set((Array.isArray(selected) ? selected : [])
+    .map((item) => item?.corridor || detectGridlyCommunityCorridor(item?.incident || item))
+    .filter((corridor) => corridor && corridor !== "Local corridors" && corridor !== "nearby corridors"));
+  const majorCorridorCandidates = GRIDLY_COMMUNITY_CORRIDORS
+    .map((corridor) => corridor.name)
+    .filter((name) => supportedMajorNames.has(name));
+  const sortedCorridors = breakdown
+    .filter((entry) => entry?.corridor && entry.corridor !== "Local corridors" && entry.corridor !== "nearby corridors")
+    .slice()
+    .sort((a, b) => Number(b.score || 0) - Number(a.score || 0) || Number(b.count || 0) - Number(a.count || 0));
+  const dominant = displayCorridor || dominantCorridor || sortedCorridors[0]?.corridor || null;
+  const secondaryCorridors = sortedCorridors
+    .map((entry) => entry.corridor)
+    .filter((corridor, index, arr) => corridor && corridor !== dominant && arr.indexOf(corridor) === index)
+    .slice(0, 4);
+  const corridorBalanceApplied = majorCorridorCandidates.length > 1 || secondaryCorridors.length > 0;
+  const corridorBalanceReason = corridorBalanceApplied
+    ? (majorCorridorCandidates.length > 1 ? "multiple_supported_major_corridors" : "secondary_supported_corridors")
+    : (dominant ? "single_supported_corridor" : "no_specific_corridor");
+  return {
+    dominantCorridor: dominant,
+    secondaryCorridors,
+    majorCorridorCandidates,
+    corridorBalanceApplied,
+    corridorBalanceReason
+  };
+}
+
+function getGridlyCommunityPulseBalancedCorridorPhrase(context = {}) {
+  const major = Array.isArray(context.majorCorridorCandidates) ? context.majorCorridorCandidates.filter(Boolean) : [];
+  if (major.length >= 3) return "across primary corridors";
+  if (major.length === 2) return `near ${major[0]} and ${major[1]}`;
+  return formatGridlyCommunityPulsePlace(context.displayCorridor || context.dominantCorridor || null);
+}
+
 function scoreGridlyDominantCorridor(dataset = {}) {
   const scopedItems = Array.isArray(dataset.selected) && dataset.selected.length
     ? dataset.selected
@@ -12644,6 +12747,15 @@ function buildGridlyMobilityPressurePhrase(context = {}) {
   const corridorIsLocal = !corridor || corridor === "Local corridors" || corridor === "nearby corridors";
   const count = Number(context.selectedCommunityCount || 0);
   const pressure = context.mobilityPressureCategory || "light";
+  if (context.pulseSignalMode === "passive_crossing_awareness" || context.passiveCrossingOnly) {
+    const balancedPlace = getGridlyCommunityPulseBalancedCorridorPhrase(context);
+    return { phraseGenerationMode: "passive_crossing_awareness", templates: [
+      { id: "passive_rail_awareness", text: `Rail awareness active ${balancedPlace}` },
+      { id: "passive_crossing_awareness", text: `Rail crossing awareness ${balancedPlace}` },
+      { id: "rail_context_visible", text: `Rail context visible ${balancedPlace}` },
+      { id: "primary_corridor_awareness", text: `Rail crossing context visible ${balancedPlace}` }
+    ] };
+  }
   const phraseGenerationMode = signalTypes.length > 1 ? "blended_signals" : `category_${primarySignal}`;
   const blend = buildGridlyCommunityBlendPhrase(context);
   if (blend) return { templates: blend.templates, phraseGenerationMode: blend.mode };
@@ -12698,6 +12810,21 @@ function buildGridlyCommunityPulseSubline(context = {}) {
   const corridor = context.displayCorridor || context.dominantCorridor || null;
   const corridorIsSpecific = corridor && corridor !== "Local corridors" && corridor !== "nearby corridors";
   const primarySignal = Array.isArray(context.blendedSignalTypes) ? context.blendedSignalTypes[0] : "mobility";
+  if (context.pulseSignalMode === "passive_crossing_awareness" || context.passiveCrossingOnly) {
+    const balancedPlace = getGridlyCommunityPulseBalancedCorridorPhrase(context);
+    const templates = [
+      { id: "subline_passive_crossing_context", text: `Crossing context is visible ${balancedPlace}` },
+      { id: "subline_passive_rail_awareness", text: `Rail awareness is centered ${balancedPlace}` },
+      { id: "subline_passive_rail_context", text: `Rail crossing context remains localized ${balancedPlace}` }
+    ];
+    const seed = Number(context.passiveCrossingSignalCount || 0) + Number(context.dominantCorridorScore || 0) + activeCorridorCount;
+    const selected = selectGridlyCommunityPulseTemplate(templates, seed, gridlyCommunityPulseTemplateMemory.lastSublineTemplate);
+    return {
+      text: selected.template?.text || `Crossing context is visible ${balancedPlace}`,
+      selectedSublineTemplate: selected.template?.id || "subline_passive_crossing_context",
+      repetitionAvoidanceApplied: selected.repetitionAvoidanceApplied
+    };
+  }
   const localizedActivity = primarySignal === "rail"
     ? `Rail activity remains localized ${formatGridlyCommunityPulsePlace(corridor)}`
     : primarySignal === "flooding" && corridorIsSpecific
@@ -12746,6 +12873,14 @@ function buildGridlyCommunityPulseModel(options = {}) {
   const blendedSignalTypes = Array.isArray(corridorPriority.blendedSignalTypes) && corridorPriority.blendedSignalTypes.length
     ? corridorPriority.blendedSignalTypes
     : (fallbackTypeSummary ? [fallbackTypeSummary] : []);
+  const languageSignals = getGridlyCommunityPulseLanguageSignals(dataset.selected);
+  const corridorBalance = getGridlyCommunityPulseCorridorBalance({
+    selected: dataset.selected,
+    corridorPriority,
+    dominantCorridor,
+    displayCorridor
+  });
+  const balancedDominantCorridor = corridorBalance.dominantCorridor || dominantCorridor;
   const mobilityPressureCategory = getGridlyMobilityPressureCategory({
     selectedCommunityCount,
     dominantCorridorScore: corridorPriority.dominantCorridorScore,
@@ -12755,14 +12890,19 @@ function buildGridlyCommunityPulseModel(options = {}) {
     dataset,
     selectedCommunityCount,
     communityPhraseCount,
-    dominantCorridor,
+    dominantCorridor: balancedDominantCorridor,
     rawDominantCorridor,
     displayCorridor,
     dominantCorridorCount,
     dominantCorridorScore: corridorPriority.dominantCorridorScore,
     activeCorridorCount,
     blendedSignalTypes,
-    mobilityPressureCategory
+    mobilityPressureCategory,
+    ...languageSignals,
+    secondaryCorridors: corridorBalance.secondaryCorridors,
+    majorCorridorCandidates: corridorBalance.majorCorridorCandidates,
+    corridorBalanceApplied: corridorBalance.corridorBalanceApplied,
+    corridorBalanceReason: corridorBalance.corridorBalanceReason
   };
   const headlinePhrase = selectedCommunityCount > 0
     ? buildGridlyCommunityPulseHeadline(phraseContext)
@@ -12784,7 +12924,7 @@ function buildGridlyCommunityPulseModel(options = {}) {
   let renderedPulseSubline = sublinePhrase.text;
   const selectedHeadlineTemplate = headlinePhrase.selectedHeadlineTemplate;
   const selectedSublineTemplate = sublinePhrase.selectedSublineTemplate;
-  const phraseGenerationMode = headlinePhrase.phraseGenerationMode || "category_mobility";
+  const phraseGenerationMode = headlinePhrase.phraseGenerationMode || languageSignals.pulseSignalMode || "category_mobility";
   const repetitionAvoidanceApplied = Boolean(headlinePhrase.repetitionAvoidanceApplied || sublinePhrase.repetitionAvoidanceApplied);
 
   let pulseVisible = awarenessMode === "community" && selectedCommunityCount > 0;
@@ -12819,9 +12959,18 @@ function buildGridlyCommunityPulseModel(options = {}) {
     pulseVisible,
     renderedPulseHeadline,
     renderedPulseSubline,
-    dominantCorridor,
+    dominantCorridor: balancedDominantCorridor,
     rawDominantCorridor,
     displayCorridor,
+    pulseSignalMode: languageSignals.pulseSignalMode,
+    passiveCrossingOnly: Boolean(languageSignals.passiveCrossingOnly),
+    activeIncidentSignalCount: Number(languageSignals.activeIncidentSignalCount || 0),
+    passiveCrossingSignalCount: Number(languageSignals.passiveCrossingSignalCount || 0),
+    secondaryCorridors: corridorBalance.secondaryCorridors,
+    majorCorridorCandidates: corridorBalance.majorCorridorCandidates,
+    corridorBalanceApplied: Boolean(corridorBalance.corridorBalanceApplied),
+    corridorBalanceReason: corridorBalance.corridorBalanceReason,
+    activeLanguageSuppressed: Boolean(languageSignals.activeLanguageSuppressed),
     corridorSpecificitySource: corridorSpecificity.corridorSpecificitySource,
     corridorSpecificityConfidence: Number(corridorSpecificity.corridorSpecificityConfidence || 0),
     selectedLocationFieldsUsed: Array.isArray(corridorSpecificity.selectedLocationFieldsUsed) ? corridorSpecificity.selectedLocationFieldsUsed : [],
@@ -12880,6 +13029,15 @@ function renderGridlyCommunityPulse(options = {}) {
       dominantCorridor: null,
       rawDominantCorridor: null,
       displayCorridor: null,
+      pulseSignalMode: "quiet",
+      passiveCrossingOnly: false,
+      activeIncidentSignalCount: 0,
+      passiveCrossingSignalCount: 0,
+      secondaryCorridors: [],
+      majorCorridorCandidates: [],
+      corridorBalanceApplied: false,
+      corridorBalanceReason: "render_error",
+      activeLanguageSuppressed: false,
       corridorSpecificitySource: "render_error",
       corridorSpecificityConfidence: 0,
       selectedLocationFieldsUsed: [],
@@ -12951,6 +13109,15 @@ window.gridlyCommunityPulseAudit = function gridlyCommunityPulseAudit(options = 
     dominantCorridor: state.dominantCorridor || null,
     rawDominantCorridor: state.rawDominantCorridor || null,
     displayCorridor: state.displayCorridor || state.dominantCorridor || null,
+    pulseSignalMode: state.pulseSignalMode || "quiet",
+    passiveCrossingOnly: Boolean(state.passiveCrossingOnly),
+    activeIncidentSignalCount: Number(state.activeIncidentSignalCount || 0),
+    passiveCrossingSignalCount: Number(state.passiveCrossingSignalCount || 0),
+    secondaryCorridors: Array.isArray(state.secondaryCorridors) ? state.secondaryCorridors.slice(0, 6) : [],
+    majorCorridorCandidates: Array.isArray(state.majorCorridorCandidates) ? state.majorCorridorCandidates.slice(0, 6) : [],
+    corridorBalanceApplied: Boolean(state.corridorBalanceApplied),
+    corridorBalanceReason: state.corridorBalanceReason || "",
+    activeLanguageSuppressed: Boolean(state.activeLanguageSuppressed),
     corridorSpecificitySource: state.corridorSpecificitySource || "fallback",
     corridorSpecificityConfidence: Number(state.corridorSpecificityConfidence || 0),
     selectedLocationFieldsUsed: Array.isArray(state.selectedLocationFieldsUsed) ? state.selectedLocationFieldsUsed.slice(0, 12) : [],
