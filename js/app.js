@@ -10295,7 +10295,7 @@ function getRouteHazardAssessmentForPath(routeLatLngs = []) {
 
 
 const GRIDLY_COMMUNITY_PRESENCE_VERSION = "V177.4";
-const GRIDLY_COMMUNITY_ACTIVE_AWARENESS_VERSION = "V179.1";
+const GRIDLY_COMMUNITY_ACTIVE_AWARENESS_VERSION = "V179.2";
 const GRIDLY_RECOVERY_BASELINE_VERSION = "V178-RECOVERY.1";
 const GRIDLY_MAIN_BASELINE_VERSION = GRIDLY_RECOVERY_BASELINE_VERSION;
 const GRIDLY_MAIN_BASELINE_STATUS = "protected_main_baseline";
@@ -10515,16 +10515,206 @@ function isGridlyLightweightActiveItem(item = {}) {
   return state === "active";
 }
 
-function getGridlyLightweightCategoryLabel(category = "mobility") {
-  const normalized = String(category || "mobility").toLowerCase().replace(/[_-]+/g, " ");
+function getGridlyLightweightSafeDisplayText(value) {
+  return String(value ?? "")
+    .replace(/[\r\n\t]+/g, " ")
+    .replace(/\s+/g, " ")
+    .replace(/^[\s,;:•|-]+|[\s,;:•|-]+$/g, "")
+    .trim();
+}
+
+function getGridlyLightweightNestedValue(item = {}, path = "") {
+  if (!item || typeof item !== "object" || !path) return undefined;
+  return path.split(".").reduce((value, key) => (value && typeof value === "object" ? value[key] : undefined), item);
+}
+
+function getGridlyLightweightFirstField(item = {}, fieldDefs = []) {
+  const seen = new Set();
+  for (const def of fieldDefs) {
+    const path = Array.isArray(def) ? def[0] : def;
+    const label = Array.isArray(def) ? def[1] : def;
+    if (!path || seen.has(path)) continue;
+    seen.add(path);
+    const value = getGridlyLightweightSafeDisplayText(getGridlyLightweightNestedValue(item, path));
+    if (value) return { value, source: label || path };
+  }
+  return { value: "", source: "" };
+}
+
+function normalizeGridlyLightweightDirection(value = "") {
+  const raw = getGridlyLightweightSafeDisplayText(value);
+  if (!raw) return "";
+  const normalized = raw.toLowerCase();
+  if (/^(northbound|nb|north bound|n)$/i.test(raw) || /\bnb\b|northbound|north bound/.test(normalized)) return "NB";
+  if (/^(southbound|sb|south bound|s)$/i.test(raw) || /\bsb\b|southbound|south bound/.test(normalized)) return "SB";
+  if (/^(eastbound|eb|east bound|e)$/i.test(raw) || /\beb\b|eastbound|east bound/.test(normalized)) return "EB";
+  if (/^(westbound|wb|west bound|w)$/i.test(raw) || /\bwb\b|westbound|west bound/.test(normalized)) return "WB";
+  return raw.length <= 12 ? raw.toUpperCase() : raw;
+}
+
+function normalizeGridlyLightweightCategoryValue(value = "") {
+  return getGridlyLightweightSafeDisplayText(value).toLowerCase().replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function getGridlyLightweightCategoryLabel(category = "unknown") {
+  const normalized = normalizeGridlyLightweightCategoryValue(category);
+  if (!normalized || normalized === "unknown") return "unknown";
   if (/flood|standing water|high water/.test(normalized)) return "flooding";
-  if (/rail|crossing|train|blocked|delay/.test(normalized)) return "rail";
-  if (/closure|closed/.test(normalized)) return "road closure";
+  if (/rail|crossing|train/.test(normalized)) return "rail";
+  if (/closure|closed|road closed/.test(normalized)) return "road closure";
   if (/crash|wreck|collision|accident/.test(normalized)) return "crash";
-  if (/construction|utility|work/.test(normalized)) return "road work";
+  if (/construction|utility|work|maintenance/.test(normalized)) return "road work";
   if (/debris|tree|obstruction/.test(normalized)) return "debris";
   if (/ice|slick/.test(normalized)) return "ice";
-  return "road report";
+  if (/disabled|stalled/.test(normalized)) return "disabled vehicle";
+  return "unknown";
+}
+
+const GRIDLY_LIGHTWEIGHT_CATEGORY_FIELD_DEFS = [
+  ["normalizedCategory", "activeHazard.normalizedCategory"],
+  ["normalized_category", "activeHazard.normalized_category"],
+  ["lightweightCategory", "activeHazard.lightweightCategory"],
+  ["lightweightNormalizedCategory", "activeHazard.lightweightNormalizedCategory"],
+  ["category", "activeHazard.category"],
+  ["reportCategory", "activeHazard.reportCategory"],
+  ["report_category", "activeHazard.report_category"],
+  ["type", "activeHazard.type"],
+  ["reportType", "activeHazard.reportType"],
+  ["report_type", "activeHazard.report_type"],
+  ["subtype", "activeHazard.subtype"],
+  ["subType", "activeHazard.subType"],
+  ["reportSubtype", "activeHazard.reportSubtype"],
+  ["report_subtype", "activeHazard.report_subtype"],
+  ["raw.normalizedCategory", "activeHazard.raw.normalizedCategory"],
+  ["raw.normalized_category", "activeHazard.raw.normalized_category"],
+  ["raw.lightweightCategory", "activeHazard.raw.lightweightCategory"],
+  ["raw.category", "activeHazard.raw.category"],
+  ["raw.type", "activeHazard.raw.type"],
+  ["raw.reportType", "activeHazard.raw.reportType"],
+  ["raw.report_type", "activeHazard.raw.report_type"],
+  ["raw.subtype", "activeHazard.raw.subtype"],
+  ["raw.subType", "activeHazard.raw.subType"]
+];
+
+function resolveGridlyLightweightActiveCategory(item = {}, sourceKind = "activeHazard") {
+  for (const [path, genericSource] of GRIDLY_LIGHTWEIGHT_CATEGORY_FIELD_DEFS) {
+    const rawValue = getGridlyLightweightNestedValue(item, path);
+    const normalizedValue = normalizeGridlyLightweightCategoryValue(rawValue);
+    if (!normalizedValue) continue;
+    const resolvedCategory = getGridlyLightweightCategoryLabel(normalizedValue);
+    if (resolvedCategory !== "unknown") {
+      return {
+        resolvedCategory,
+        categorySource: genericSource.replace("activeHazard", sourceKind),
+        rawCategoryValue: getGridlyLightweightSafeDisplayText(rawValue)
+      };
+    }
+  }
+  return { resolvedCategory: "unknown", categorySource: "none", rawCategoryValue: "" };
+}
+
+function getGridlyLightweightLocationFromHeadline(headline = "") {
+  const text = getGridlyLightweightSafeDisplayText(headline);
+  if (!text) return "";
+  const onBetween = text.match(/\bon\s+(.+?)\s+between\s+(.+?)\s+and\s+(.+?)$/i);
+  if (onBetween?.[1] && onBetween?.[2] && onBetween?.[3]) return `${onBetween[1].trim()} between ${onBetween[2].trim()} and ${onBetween[3].trim()}`;
+  const onNear = text.match(/\bon\s+(.+?)\s+near\s+(.+?)$/i);
+  if (onNear?.[1] && onNear?.[2]) return `${onNear[1].trim()} near ${onNear[2].trim()}`;
+  const onRoad = text.match(/\bon\s+(.+?)(?:[.;,]|$)/i);
+  if (onRoad?.[1]) return onRoad[1].trim();
+  const nearRoad = text.match(/\bnear\s+(.+?)(?:[.;,]|$)/i);
+  if (nearRoad?.[1]) return nearRoad[1].trim();
+  return "";
+}
+
+function resolveGridlyLightweightActiveLocation(item = {}) {
+  const pick = (fieldDefs) => getGridlyLightweightFirstField(item, fieldDefs);
+  const primary = pick([
+    "primaryRoad", "roadName", "routeName", "route", "corridor", "highway", "nearestRoad",
+    "raw.primaryRoad", "raw.roadName", "raw.routeName", "raw.route", "raw.corridor", "raw.highway", "raw.nearestRoad"
+  ]);
+  const refA = pick(["referenceRoadA", "crossStreet", "crossStreetA", "raw.referenceRoadA", "raw.crossStreet", "raw.crossStreetA"]);
+  const refB = pick(["referenceRoadB", "crossStreetB", "raw.referenceRoadB", "raw.crossStreetB"]);
+  const direction = pick(["travelDirection", "direction", "laneDirection", "raw.travelDirection", "raw.direction", "raw.laneDirection"]);
+  const distance = pick(["relativeDistance", "distanceMiles", "raw.relativeDistance", "raw.distanceMiles"]);
+  const directional = pick(["directionalLocation", "raw.directionalLocation"]);
+  const nearby = pick(["nearbyLocationPhrase", "locationLabel", "localizedSummary", "raw.nearbyLocationPhrase", "raw.locationLabel", "raw.localizedSummary"]);
+
+  const markerSummary = getGridlyLightweightFirstField(item, [
+    "renderedMarkerSummary", "markerSummary", "finalHeadline", "resolvedHeadline", "segmentHeadline",
+    "raw.renderedMarkerSummary", "raw.markerSummary", "raw.finalHeadline", "raw.resolvedHeadline", "raw.segmentHeadline"
+  ]);
+  const markerLocation = getGridlyLightweightLocationFromHeadline(markerSummary.value);
+  const directionLabel = normalizeGridlyLightweightDirection(direction.value);
+  const hasDistance = Boolean(distance.value);
+  const distanceLabel = /^\d+(?:\.\d+)?$/.test(distance.value) ? `${Number(distance.value).toFixed(Number(distance.value) % 1 === 0 ? 0 : 1)} miles` : distance.value;
+
+  let resolvedLocationLabel = "";
+  let locationSpecificityLevel = "nearby";
+  let lightweightLocationSourcesUsed = [];
+  const useSources = (...sources) => {
+    lightweightLocationSourcesUsed = [...new Set(sources.filter(Boolean))];
+  };
+  if (primary.value && refA.value && refB.value) {
+    resolvedLocationLabel = `${primary.value} between ${refA.value} and ${refB.value}`;
+    locationSpecificityLevel = "road_reference";
+    useSources(primary.source, refA.source, refB.source);
+  } else if (primary.value && refA.value) {
+    resolvedLocationLabel = `${primary.value} near ${refA.value}`;
+    locationSpecificityLevel = "road_reference";
+    useSources(primary.source, refA.source);
+  } else if (primary.value && directionLabel) {
+    resolvedLocationLabel = `${primary.value} ${directionLabel}`;
+    locationSpecificityLevel = "road_direction";
+    useSources(primary.source, direction.source);
+  } else if (directional.value) {
+    resolvedLocationLabel = directional.value;
+    locationSpecificityLevel = "directional_location";
+    useSources(directional.source);
+  } else if (hasDistance && nearby.value) {
+    resolvedLocationLabel = `${distanceLabel} from ${nearby.value}`;
+    locationSpecificityLevel = "distance_place";
+    useSources(distance.source, nearby.source);
+  } else if (markerLocation) {
+    resolvedLocationLabel = markerLocation;
+    locationSpecificityLevel = /\bnear\b|\bbetween\b/i.test(markerLocation) ? "rendered_marker_reference" : "rendered_marker_summary";
+    useSources(markerSummary.source);
+  } else if (primary.value) {
+    resolvedLocationLabel = primary.value;
+    locationSpecificityLevel = "road";
+    useSources(primary.source);
+  } else if (nearby.value) {
+    resolvedLocationLabel = nearby.value;
+    locationSpecificityLevel = "nearby_phrase";
+    useSources(nearby.source);
+  }
+
+  return {
+    resolvedLocationLabel,
+    locationSpecificityLevel,
+    directionUsed: Boolean(directionLabel && resolvedLocationLabel.includes(directionLabel)),
+    distanceUsed: Boolean(hasDistance && resolvedLocationLabel.includes(distanceLabel)),
+    referenceRoadUsed: Boolean((lightweightLocationSourcesUsed.includes(refA.source) && refA.value) || (lightweightLocationSourcesUsed.includes(refB.source) && refB.value) || /\bnear\b|\bbetween\b/i.test(resolvedLocationLabel)),
+    lightweightLocationSourcesUsed
+  };
+}
+
+function buildGridlyLightweightActiveHeadline(category = "unknown", location = {}) {
+  const locationLabel = getGridlyLightweightSafeDisplayText(location?.resolvedLocationLabel);
+  const hasLocation = Boolean(locationLabel);
+  const preposition = hasLocation
+    ? (/^(?:\d|north|south|east|west|near\b|on\b|at\b|between\b)/i.test(locationLabel) ? "" : (location?.locationSpecificityLevel === "road" ? "near" : "on"))
+    : "nearby";
+  const locationPhrase = hasLocation ? `${preposition ? ` ${preposition} ` : " "}${locationLabel}` : " nearby";
+  if (category === "flooding") return `Flooding report active${locationPhrase}`;
+  if (category === "road closure") return `Road closure reported${locationPhrase}`;
+  if (category === "debris") return `Debris reported${locationPhrase}`;
+  if (category === "rail") return `Rail report visible${hasLocation ? ` near ${locationLabel}` : " nearby"}`;
+  if (category === "crash") return `Crash reported${locationPhrase}`;
+  if (category === "road work") return `Road work reported${locationPhrase}`;
+  if (category === "ice") return `Ice reported${locationPhrase}`;
+  if (category === "disabled vehicle") return `Disabled vehicle reported${locationPhrase}`;
+  return `Active report visible${hasLocation ? ` near ${locationLabel}` : " nearby"}`;
 }
 
 function getGridlyLightweightItemKey(item = {}, index = 0, prefix = "item") {
@@ -10567,8 +10757,14 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
     activeItems.push(item);
   });
 
-  const categoryCounts = activeItems.reduce((acc, item) => {
-    const category = getGridlyLightweightCategoryLabel(normalizeGridlyIncidentCategory(item));
+  const activeItemDetails = activeItems.map((item) => {
+    const sourceKind = activeHazardItems.includes(item) ? "activeHazard" : "activeReport";
+    const category = resolveGridlyLightweightActiveCategory(item, sourceKind);
+    const location = resolveGridlyLightweightActiveLocation(item);
+    return { item, sourceKind, ...category, ...location };
+  });
+  const categoryCounts = activeItemDetails.reduce((acc, detail) => {
+    const category = detail.resolvedCategory || "unknown";
     acc[category] = (acc[category] || 0) + 1;
     return acc;
   }, {});
@@ -10577,6 +10773,11 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
     .map(([category]) => category)
     .slice(0, 6);
   const topCategory = activeCategories[0] || null;
+  const selectedActiveDetail = activeItemDetails.find((detail) => detail.resolvedCategory !== "unknown" && detail.resolvedLocationLabel)
+    || activeItemDetails.find((detail) => detail.resolvedCategory !== "unknown")
+    || activeItemDetails.find((detail) => detail.resolvedLocationLabel)
+    || activeItemDetails[0]
+    || null;
   const corridorCounts = activeItems.reduce((acc, item) => {
     const corridor = typeof detectGridlyCommunityCorridor === "function" ? detectGridlyCommunityCorridor(item) : "Local corridors";
     if (corridor && corridor !== "Local corridors") acc[corridor] = (acc[corridor] || 0) + 1;
@@ -10587,16 +10788,21 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
   const activeReportCount = activeReportItems.length;
   const renderedMarkerCount = getGridlyLightweightRenderedMarkerCount();
   const activeAwarenessCount = activeItems.length;
-  const placePhrase = topCorridorLabel ? ` near ${topCorridorLabel}` : " nearby";
+  const selectedLocation = selectedActiveDetail ? {
+    resolvedLocationLabel: selectedActiveDetail.resolvedLocationLabel,
+    locationSpecificityLevel: selectedActiveDetail.locationSpecificityLevel
+  } : null;
+  const placePhrase = selectedLocation?.resolvedLocationLabel
+    ? ` near ${selectedLocation.resolvedLocationLabel}`
+    : (topCorridorLabel ? ` near ${topCorridorLabel}` : " nearby");
   let headline = "No active mobility reports nearby";
-  if (activeAwarenessCount === 1 && topCategory) {
-    const categoryHeadlineLabel = topCategory === "road report" ? "Road report" : `${topCategory.charAt(0).toUpperCase()}${topCategory.slice(1)} report`;
-    headline = `${categoryHeadlineLabel} ${topCategory === "rail" ? "visible" : "active"}${placePhrase}`;
+  if (activeAwarenessCount === 1 && selectedActiveDetail) {
+    headline = buildGridlyLightweightActiveHeadline(selectedActiveDetail.resolvedCategory, selectedLocation);
   } else if (activeAwarenessCount > 1 && topCategory) {
-    headline = `${activeAwarenessCount} active ${topCategory === "rail" ? "rail" : "road"} reports${placePhrase}`;
+    headline = `${activeAwarenessCount} active ${topCategory === "rail" ? "rail" : "mobility"} reports${placePhrase}`;
   }
   const subline = activeAwarenessCount > 0
-    ? (topCorridorLabel ? `Lightweight awareness is watching ${topCorridorLabel} from active reports only.` : "Active reports are limited nearby.")
+    ? (topCorridorLabel ? `Localized activity remains visible near ${topCorridorLabel}.` : "Active reports are limited nearby.")
     : "Local movement looks quiet from active reports.";
   const dataSourceSummary = {
     activeReports: activeReportCount,
@@ -10618,6 +10824,14 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
     activeCategories,
     topCategory,
     topCorridorLabel,
+    resolvedCategory: selectedActiveDetail?.resolvedCategory || null,
+    categorySource: selectedActiveDetail?.categorySource || "none",
+    resolvedLocationLabel: selectedActiveDetail?.resolvedLocationLabel || "",
+    locationSpecificityLevel: selectedActiveDetail?.locationSpecificityLevel || "nearby",
+    directionUsed: Boolean(selectedActiveDetail?.directionUsed),
+    distanceUsed: Boolean(selectedActiveDetail?.distanceUsed),
+    referenceRoadUsed: Boolean(selectedActiveDetail?.referenceRoadUsed),
+    lightweightLocationSourcesUsed: selectedActiveDetail?.lightweightLocationSourcesUsed || [],
     headline,
     subline,
     dataSourceSummary,
@@ -11474,6 +11688,14 @@ window.gridlyLightweightActiveAwarenessAudit = function gridlyLightweightActiveA
       activeCategories: [],
       topCategory: null,
       topCorridorLabel: null,
+      resolvedCategory: null,
+      categorySource: "none",
+      resolvedLocationLabel: "",
+      locationSpecificityLevel: "nearby",
+      directionUsed: false,
+      distanceUsed: false,
+      referenceRoadUsed: false,
+      lightweightLocationSourcesUsed: [],
       headline: "No active mobility reports nearby",
       subline: "Local movement looks quiet from active reports.",
       dataSourceSummary: {},
