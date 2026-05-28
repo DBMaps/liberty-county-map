@@ -1683,7 +1683,7 @@ window.gridlyRouteConfidenceAudit = function gridlyRouteConfidenceAudit() {
 const GRIDLY_CANONICAL_ROUTE_IMPACT_SELECTOR = '[data-gridly-route-impact="true"], .gridly-marker-rail-route-impact, .gridly-marker-priority-route-impact, [data-gridly-consequence], [data-gridly-confidence]';
 const GRIDLY_INTELLIGENCE_SELECTOR = "[data-gridly-intelligence]";
 const GRIDLY_CONFIDENCE_LABEL_SELECTOR = "[data-gridly-confidence-label]";
-const GRIDLY_DOM_BRIDGE_AUDIT_SELECTOR = '[data-gridly-intelligence], [data-gridly-confidence-label], [data-gridly-route-impact="true"], [data-gridly-consequence], [data-gridly-confidence], .gridly-marker-rail-route-impact, .gridly-marker-priority-route-impact';
+const GRIDLY_DOM_BRIDGE_AUDIT_SELECTOR = '[data-gridly-intelligence], [data-gridly-confidence-label], [data-gridly-route-impact="true"], [data-gridly-consequence], [data-gridly-confidence], [data-gridly-freshness], .gridly-marker-rail-route-impact, .gridly-marker-priority-route-impact';
 const getGridlyCanonicalRouteImpactDomTargets = (markerPane) => markerPane
   ? Array.from(new Set(Array.from(markerPane.querySelectorAll(GRIDLY_CANONICAL_ROUTE_IMPACT_SELECTOR))))
   : [];
@@ -1839,35 +1839,61 @@ window.gridlyAwarenessPhraseAudit = function gridlyAwarenessPhraseAudit(options 
   try {
     const rawAwarenessMode = String(options?.awarenessMode || (typeof getGridlyAwarenessMode === "function" ? getGridlyAwarenessMode(options) : "community")).toLowerCase();
     const awarenessMode = ["route", "community", "hybrid"].includes(rawAwarenessMode) ? rawAwarenessMode : "community";
-    const sourceIncidents = Array.isArray(options?.incidents)
-      ? options.incidents
-      : (typeof getActiveUnifiedIncidents === "function" && Array.isArray(getActiveUnifiedIncidents())
-        ? getActiveUnifiedIncidents()
-        : (typeof getUnifiedIncidents === "function" && Array.isArray(getUnifiedIncidents()) ? getUnifiedIncidents() : []));
-    const phraseSamples = sourceIncidents
-      .filter((incident) => incident && typeof incident === "object")
-      .map((incident, index) => {
-        const visualState = getGridlyIncidentVisualState(incident);
-        const phrase = generateGridlyIntelligencePhrase(incident, { ...visualState, awarenessMode });
+    const markerPane = typeof document !== "undefined" ? document.querySelector("#map .leaflet-marker-pane") : null;
+    const selectedDomNodes = getGridlyDomBridgeAuditTargets(markerPane);
+    const phraseSamples = selectedDomNodes
+      .map((node, index) => extractGridlyDomBridgePhraseEntry(node, index, "dom-awareness-phrase"))
+      .map((entry) => {
+        const extractedPhrases = [
+          entry.extractedShortPhrase || entry.synthesizedShortPhrase || "",
+          entry.extractedConfidencePhrase || entry.confidenceLabel || "",
+          entry.consequence || "",
+          entry.confidence || "",
+          entry.extractedFreshnessPhrase || entry.freshness || ""
+        ].filter(Boolean);
+        const awarenessPhrase = extractedPhrases[0] || "";
         return {
-          id: incident.id || incident.reportId || incident.crossingId || `incident-${index}`,
-          awarenessMode: phrase.awarenessMode,
-          awarenessPhrase: phrase.awarenessPhrase,
-          shortPhrase: phrase.shortPhrase,
-          awarenessReason: phrase.awarenessReason,
-          routeImpact: Boolean(visualState?.routeImpact || incident?.routeImpact),
-          routeRelevant: Boolean(visualState?.routeRelevant || visualState?.routeImpact || incident?.routeImpact)
+          id: entry.id,
+          awarenessMode,
+          awarenessPhrase,
+          shortPhrase: entry.extractedShortPhrase || entry.synthesizedShortPhrase || awarenessPhrase,
+          confidencePhrase: entry.extractedConfidencePhrase || entry.confidenceLabel || "",
+          consequencePhrase: entry.consequence || "",
+          confidenceLevel: entry.confidence || "unknown",
+          freshnessLevel: entry.extractedFreshnessPhrase || entry.freshness || "unknown",
+          routeImpact: Boolean(entry.routeImpact),
+          routeRelevant: Boolean(entry.routeImpact),
+          phraseSources: {
+            intelligence: entry.intelligence || entry.synthesizedShortPhrase || "",
+            confidenceLabel: entry.confidenceLabel || "",
+            routeImpact: entry.routeImpact ? "true" : "",
+            consequence: entry.consequence || "",
+            confidence: entry.confidence || "",
+            freshness: entry.freshness || ""
+          }
         };
-      });
+      })
+      .filter((sample) => Boolean(
+        sample.shortPhrase
+        || sample.confidencePhrase
+        || sample.consequencePhrase
+        || (sample.confidenceLevel && sample.confidenceLevel !== "unknown")
+        || (sample.freshnessLevel && sample.freshnessLevel !== "unknown")
+        || sample.routeImpact
+      ));
     return {
       awarenessMode,
       evaluatedCount: phraseSamples.length,
       routePhraseCount: phraseSamples.filter((sample) => sample.awarenessMode === "route").length,
       communityPhraseCount: phraseSamples.filter((sample) => sample.awarenessMode === "community").length,
       hybridPhraseCount: phraseSamples.filter((sample) => sample.awarenessMode === "hybrid").length,
+      selectedDomCount: selectedDomNodes.length,
+      extractedDomPhraseCount: phraseSamples.length,
+      finalSourceUsed: selectedDomNodes.length ? "dom_bridge" : "dom_bridge_empty",
+      finalUsedExtractedSamples: true,
       topPhraseSamples: phraseSamples.slice(0, 8),
       notes: [
-        "Awareness phrase audit evaluates phrase logic only; no visual/UI rendering changes.",
+        "Awareness phrase audit uses the shared DOM bridge intelligence extractor; no visual/UI rendering changes.",
         "Existing intelligence and route intelligence phrase audits are preserved separately."
       ]
     };
@@ -1878,6 +1904,10 @@ window.gridlyAwarenessPhraseAudit = function gridlyAwarenessPhraseAudit(options 
       routePhraseCount: 0,
       communityPhraseCount: 0,
       hybridPhraseCount: 0,
+      selectedDomCount: 0,
+      extractedDomPhraseCount: 0,
+      finalSourceUsed: "dom_bridge",
+      finalUsedExtractedSamples: true,
       topPhraseSamples: [],
       notes: [`Awareness phrase audit fallback: ${error?.message || "unknown error"}`]
     };
