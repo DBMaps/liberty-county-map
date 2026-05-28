@@ -10047,6 +10047,108 @@ function getRouteHazardAssessmentForPath(routeLatLngs = []) {
   return buildRouteHazardAssessment(routeLatLngs);
 }
 
+
+function getGridlyAwarenessCommunityActivityItems(options = {}) {
+  const optionItems = Array.isArray(options?.communityActivityItems) ? options.communityActivityItems : null;
+  const sourceItems = optionItems || [
+    ...(Array.isArray(activeReports) ? activeReports : []),
+    ...(Array.isArray(activeHazards) ? activeHazards : [])
+  ];
+  const seen = new Set();
+  return sourceItems.filter((item) => {
+    if (!item || typeof item !== "object") return false;
+    const lifecycleState = typeof getIncidentLifecycleState === "function"
+      ? getIncidentLifecycleState(item)
+      : String(item?.status || item?.lifecycleState || "active").toLowerCase();
+    if (lifecycleState !== "active") return false;
+    const key = String(item?.id || item?.reportId || item?.crossingId || item?.submittedAt || `${item?.lat || ""},${item?.lng || ""},${item?.type || ""}`);
+    if (key && seen.has(key)) return false;
+    if (key) seen.add(key);
+    return true;
+  });
+}
+
+function getGridlyAwarenessModeDiagnostics(options = {}) {
+  const notes = [
+    "V177 audit foundation only; no phrase, UI, route consequence, freshness, confidence, DOM bridge, rendering, marker, popup, bottom-sheet, or TxDOT integration."
+  ];
+  const routeLatLngs = Array.isArray(options?.routeLatLngs)
+    ? options.routeLatLngs
+    : (typeof getRoutePolylineLatLngs === "function" ? getRoutePolylineLatLngs() : []);
+  const activeRouteCoordinateCount = Array.isArray(routeLatLngs)
+    ? routeLatLngs.filter((pt) => Number.isFinite(Number(pt?.lat)) && Number.isFinite(Number(pt?.lng))).length
+    : 0;
+  const activeRoutePresent = activeRouteCoordinateCount > 1;
+  const routeHazard = activeRoutePresent
+    ? (options?.routeHazardAssessment || (typeof getRouteHazardAssessmentForPath === "function"
+      ? getRouteHazardAssessmentForPath(routeLatLngs)
+      : (typeof getRouteHazardAssessment === "function" ? getRouteHazardAssessment() : null)))
+    : null;
+  const nearbyReports = Array.isArray(routeHazard?.nearbyReports) ? routeHazard.nearbyReports : [];
+  const nearbyIncidentCount = nearbyReports.filter((report) => String(report?.lifecycleState || "active").toLowerCase() === "active").length;
+  const activeIncidents = Array.isArray(options?.activeIncidents)
+    ? options.activeIncidents
+    : (typeof getActiveUnifiedIncidents === "function" ? getActiveUnifiedIncidents() : []);
+  let routeRelevantIncidentCount = 0;
+  if (activeRoutePresent && Array.isArray(activeIncidents)) {
+    routeRelevantIncidentCount = activeIncidents.filter((incident) => {
+      if (!incident || typeof incident !== "object") return false;
+      if (typeof isIncidentRouteRelevant === "function" && isIncidentRouteRelevant(incident, routeHazard)) return true;
+      return typeof doesGridlyIncidentImpactActiveRoute === "function" ? doesGridlyIncidentImpactActiveRoute(incident) : false;
+    }).length;
+  }
+  const communityActivityCount = getGridlyAwarenessCommunityActivityItems(options).length;
+  const highDensityCommunityThreshold = Number.isFinite(Number(options?.highDensityCommunityThreshold))
+    ? Math.max(1, Number(options.highDensityCommunityThreshold))
+    : 3;
+  const nearbyCommunityActivityPresent = activeRoutePresent && nearbyIncidentCount > 0;
+  const highDensityCommunityActivityPresent = activeRoutePresent && communityActivityCount >= highDensityCommunityThreshold;
+
+  let awarenessMode = "community";
+  let modeReason = "No active route coordinates detected; community awareness mode selected.";
+  if (activeRoutePresent && (nearbyCommunityActivityPresent || highDensityCommunityActivityPresent)) {
+    awarenessMode = "hybrid";
+    modeReason = nearbyCommunityActivityPresent
+      ? "Active route detected with nearby active community activity."
+      : `Active route detected with high-density community activity (${communityActivityCount} active items; threshold ${highDensityCommunityThreshold}).`;
+  } else if (activeRoutePresent) {
+    awarenessMode = "route";
+    modeReason = "Active route detected with more than one route coordinate.";
+  }
+
+  return {
+    awarenessMode,
+    modeReason,
+    activeRoutePresent,
+    activeRouteCoordinateCount,
+    nearbyIncidentCount,
+    routeRelevantIncidentCount,
+    communityActivityCount,
+    notes
+  };
+}
+
+function getGridlyAwarenessMode(options = {}) {
+  return getGridlyAwarenessModeDiagnostics(options).awarenessMode;
+}
+
+window.getGridlyAwarenessMode = getGridlyAwarenessMode;
+window.getGridlyAwarenessModeDiagnostics = getGridlyAwarenessModeDiagnostics;
+window.gridlyAwarenessModeAudit = function gridlyAwarenessModeAudit(options = {}) {
+  const diagnostics = getGridlyAwarenessModeDiagnostics(options);
+  return {
+    loaded: true,
+    version: "V177",
+    awarenessMode: diagnostics.awarenessMode,
+    diagnostics
+  };
+};
+window.gridlyAwarenessModeDebug = {
+  loaded: true,
+  version: "V177"
+};
+
+
 function applyRouteVisualEmphasis() {
   const primaryStyle = preferredRoute === "primary"
     ? { weight: 8, opacity: 0.96 }
