@@ -1505,6 +1505,42 @@ window.gridlyRouteFreshnessConsequenceAudit = function gridlyRouteFreshnessConse
       return { incident, base, raw };
     });
     const routeRelevant = evaluated.filter((entry) => Boolean(entry.base?.routeRelevant));
+    const sourceRouteRelevantCount = routeRelevant.length;
+    const markerPane = typeof document !== "undefined" ? document.querySelector("#map .leaflet-marker-pane") : null;
+    const domBridgeNodes = markerPane
+      ? Array.from(new Set(Array.from(markerPane.querySelectorAll("[data-gridly-route-impact=\"true\"], .gridly-marker-rail-route-impact, .gridly-marker-priority-route-impact, [data-gridly-consequence]"))))
+      : [];
+    const consequenceLevels = ["low", "moderate", "high", "critical"];
+    const domBridgeSamples = domBridgeNodes.map((node) => {
+      const freshness = String(node?.dataset?.gridlyFreshness || "").toLowerCase();
+      const consequenceDataset = String(node?.dataset?.gridlyConsequence || "").toLowerCase();
+      const consequenceClass = consequenceLevels.find((level) => node.classList?.contains(`gridly-consequence-${level}`)) || "";
+      const consequence = consequenceDataset || consequenceClass || "low";
+      const visualStyle = String(node?.dataset?.visualStyle || "").toLowerCase();
+      const routeImpactDataset = String(node?.dataset?.gridlyRouteImpact || "").toLowerCase();
+      const isRouteImpactClass = node.classList?.contains("gridly-marker-rail-route-impact") || node.classList?.contains("gridly-marker-priority-route-impact");
+      const isRouteImpactStyle = visualStyle === "rail_route_impact";
+      const routeRelevantDom = routeImpactDataset === "true" || isRouteImpactClass || isRouteImpactStyle;
+      return {
+        id: String(node?.dataset?.incidentId || node?.dataset?.id || "").trim(),
+        freshnessLevel: freshness || "unknown",
+        consequenceLevel: consequence,
+        visualStyle: visualStyle || "",
+        routeImpact: routeImpactDataset === "true",
+        routeRelevant: routeRelevantDom
+      };
+    });
+    const domRouteRelevant = domBridgeSamples.filter((sample) => Boolean(sample.routeRelevant));
+    const domBridgeFreshnessCounts = { fresh: 0, recent: 0, aging: 0, stale: 0, unknown: 0 };
+    const domBridgeConsequenceCounts = { low: 0, moderate: 0, high: 0, critical: 0 };
+    domRouteRelevant.forEach((sample) => {
+      const freshnessLevel = String(sample.freshnessLevel || "unknown").toLowerCase();
+      if (domBridgeFreshnessCounts[freshnessLevel] === undefined) domBridgeFreshnessCounts[freshnessLevel] = 0;
+      domBridgeFreshnessCounts[freshnessLevel] += 1;
+      const consequenceLevel = String(sample.consequenceLevel || "low").toLowerCase();
+      if (domBridgeConsequenceCounts[consequenceLevel] === undefined) domBridgeConsequenceCounts[consequenceLevel] = 0;
+      domBridgeConsequenceCounts[consequenceLevel] += 1;
+    });
     const unknownFreshnessCount = routeRelevant.filter(({ base }) => String(base?.freshnessLevel || "").toLowerCase() === "unknown").length;
     const missingTimestampRouteRelevantCount = routeRelevant.filter(({ incident }) => Boolean(evaluateGridlyIncidentFreshness(incident)?.missingTimestamp)).length;
     const timestampSourceCounts = routeRelevant.reduce((acc, { incident }) => {
@@ -1525,10 +1561,20 @@ window.gridlyRouteFreshnessConsequenceAudit = function gridlyRouteFreshnessConse
       .slice(0, 8)
       .map(({ incident, base }) => ({ id: incident?.id || incident?.crossingId || "", type: incident?.type || incident?.report_type || "unknown", freshnessLevel: base?.freshnessLevel || "recent", confidenceWeight: Number(base?.confidenceWeight || 1), consequenceLevel: base?.consequenceLevel || "low", consequenceScore: Number(base?.consequenceScore || 0), consequenceReason: base?.consequenceReason || "" }));
     const levelOrder = ["critical", "high", "moderate", "low"];
-    const highestFreshnessWeightedConsequence = levelOrder.find((level) => topWeightedSamples.some((sample) => sample.consequenceLevel === level)) || "low";
+    const sourceHighestFreshnessWeightedConsequence = levelOrder.find((level) => topWeightedSamples.some((sample) => sample.consequenceLevel === level)) || "low";
+    const domHighestFreshnessWeightedConsequence = levelOrder.find((level) => Number(domBridgeConsequenceCounts[level] || 0) > 0) || "low";
+    const routeFreshnessSourceUsed = sourceRouteRelevantCount > 0 ? "source_incidents" : (domRouteRelevant.length > 0 ? "dom_bridge" : "none");
+    const useDomBridgeForRouteRelevant = sourceRouteRelevantCount === 0 && domRouteRelevant.length > 0;
+    const highestFreshnessWeightedConsequence = useDomBridgeForRouteRelevant ? domHighestFreshnessWeightedConsequence : sourceHighestFreshnessWeightedConsequence;
     return {
-      routeRelevantCount: routeRelevant.length,
+      routeRelevantCount: useDomBridgeForRouteRelevant ? domRouteRelevant.length : sourceRouteRelevantCount,
       freshnessAdjustedCount: routeRelevant.filter(({ base }) => base?.freshnessLevel === "aging" || base?.freshnessLevel === "stale" || base?.freshnessLevel === "fresh").length,
+      domBridgeRouteRelevantCount: domRouteRelevant.length,
+      domBridgeFreshnessCounts,
+      domBridgeConsequenceCounts,
+      domBridgeAdjustedCount: domRouteRelevant.filter((sample) => ["fresh", "aging", "stale"].includes(String(sample.freshnessLevel || "unknown").toLowerCase())).length,
+      domBridgeSamples: domRouteRelevant.slice(0, 8),
+      routeFreshnessSourceUsed,
       downgradedConsequenceCount,
       upgradedConsequenceCount,
       highestFreshnessWeightedConsequence,
@@ -1539,7 +1585,7 @@ window.gridlyRouteFreshnessConsequenceAudit = function gridlyRouteFreshnessConse
       notes: ["Consequence freshness audit is read-only and preserves current route-impact bridge behavior."]
     };
   } catch (error) {
-    return { routeRelevantCount: 0, freshnessAdjustedCount: 0, downgradedConsequenceCount: 0, upgradedConsequenceCount: 0, highestFreshnessWeightedConsequence: "low", topWeightedSamples: [], notes: [`Route freshness consequence audit fallback: ${error?.message || "unknown error"}`] };
+    return { routeRelevantCount: 0, freshnessAdjustedCount: 0, domBridgeRouteRelevantCount: 0, domBridgeFreshnessCounts: { fresh: 0, recent: 0, aging: 0, stale: 0, unknown: 0 }, domBridgeConsequenceCounts: { low: 0, moderate: 0, high: 0, critical: 0 }, domBridgeAdjustedCount: 0, domBridgeSamples: [], routeFreshnessSourceUsed: "none", downgradedConsequenceCount: 0, upgradedConsequenceCount: 0, highestFreshnessWeightedConsequence: "low", topWeightedSamples: [], notes: [`Route freshness consequence audit fallback: ${error?.message || "unknown error"}`] };
   }
 };
 
