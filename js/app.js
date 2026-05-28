@@ -10310,7 +10310,7 @@ function getRouteHazardAssessmentForPath(routeLatLngs = []) {
 
 
 
-const GRIDLY_COMMUNITY_PRESENCE_VERSION = "V178.3H";
+const GRIDLY_COMMUNITY_PRESENCE_VERSION = "V178.3J";
 const GRIDLY_COMMUNITY_AWARENESS_BRIDGE_SOURCE = "community_presence_passive";
 const GRIDLY_COMMUNITY_CROSSING_CANDIDATE_LIMIT = 20;
 const GRIDLY_COMMUNITY_CROSSING_ENRICHMENT_LIMIT = 5;
@@ -10324,7 +10324,49 @@ const GRIDLY_COMMUNITY_CORRIDORS = [
   { name: "FM 1008", aliases: ["fm 1008", "farm to market 1008", "f.m. 1008", "fm-1008"] }
 ];
 const GRIDLY_COMMUNITY_PRESENCE_CENTER = { lat: 30.0466, lng: -94.8852, label: "Dayton town center" };
+let latestCommunityPresenceDataset = null;
+let latestCommunityPulseModel = null;
+let latestCommunityPresenceTimestamp = 0;
+let latestCommunityPresenceBuildDurationMs = 0;
 
+function getGridlyCommunityNowMs() {
+  return typeof performance !== "undefined" && typeof performance.now === "function" ? performance.now() : Date.now();
+}
+
+function getGridlyCommunityAuditOptions(options = {}) {
+  return {
+    ...options,
+    lightweight: options.lightweight !== false,
+    useCache: options.useCache !== false,
+    skipHeavyCrossingWork: options.skipHeavyCrossingWork !== false,
+    skipCrossingEnrichment: options.skipCrossingEnrichment !== false,
+    skipLocationEnrichment: options.skipLocationEnrichment !== false,
+    skipSourceJoin: options.skipSourceJoin !== false,
+    skipDomBridgeApply: options.skipDomBridgeApply !== false,
+    crossingCandidateLimit: 0,
+    crossingEnrichmentLimit: 0,
+    forceCrossingProcessing: false,
+    evaluateCrossingsNow: false
+  };
+}
+
+function getGridlyCommunityPresenceCacheMeta(dataset = latestCommunityPresenceDataset) {
+  const now = Date.now();
+  const timestamp = Number(dataset?.datasetCachedAt || latestCommunityPresenceTimestamp || 0);
+  return {
+    usedCachedDataset: Boolean(dataset && dataset === latestCommunityPresenceDataset),
+    cacheAgeMs: timestamp ? Math.max(0, now - timestamp) : null,
+    lastDatasetBuildDurationMs: Number(latestCommunityPresenceBuildDurationMs || dataset?.datasetBuildDurationMs || 0)
+  };
+}
+
+function getGridlyCommunitySkippedAuditFields(options = {}) {
+  return {
+    skippedHeavyCrossingWork: Boolean(options.lightweight || options.skipHeavyCrossingWork),
+    skippedCrossingEnrichment: Boolean(options.lightweight || options.skipCrossingEnrichment),
+    skippedDomBridgeApply: Boolean(options.lightweight || options.skipDomBridgeApply)
+  };
+}
 
 function getGridlyCommunityCrossingGuardState(options = {}) {
   const now = Date.now();
@@ -10335,8 +10377,8 @@ function getGridlyCommunityCrossingGuardState(options = {}) {
   const forceCrossingProcessing = Boolean(options?.forceCrossingProcessing || options?.evaluateCrossingsNow);
   const startupGuardActive = !forceCrossingProcessing && elapsedMs < bootDelayMs;
   return {
-    crossingCandidateLimit: Math.max(0, Number(options?.crossingCandidateLimit || GRIDLY_COMMUNITY_CROSSING_CANDIDATE_LIMIT)),
-    crossingEnrichmentLimit: Math.max(0, Number(options?.crossingEnrichmentLimit || GRIDLY_COMMUNITY_CROSSING_ENRICHMENT_LIMIT)),
+    crossingCandidateLimit: Math.max(0, Number(options?.crossingCandidateLimit ?? GRIDLY_COMMUNITY_CROSSING_CANDIDATE_LIMIT)),
+    crossingEnrichmentLimit: Math.max(0, Number(options?.crossingEnrichmentLimit ?? GRIDLY_COMMUNITY_CROSSING_ENRICHMENT_LIMIT)),
     crossingBootDelayMs: bootDelayMs,
     crossingBootElapsedMs: elapsedMs,
     crossingStartupGuardActive: startupGuardActive,
@@ -10667,8 +10709,11 @@ function collectGridlyCommunitySourceJoinRecords(options = {}) {
   const safeArray = (value) => Array.isArray(value) ? value : [];
   const guard = getGridlyCommunityCrossingGuardState(options);
   const routeHazard = options?.routeHazardAssessment || (typeof getRouteHazardAssessment === "function" ? getRouteHazardAssessment() : null);
-  const authoritativeCrossingSource = getGridlyCommunityAuthoritativeCrossingSource(options);
-  const crossingMarkerRecords = getGridlyCommunityCrossingMarkerRecords();
+  const skipHeavyCrossingWork = Boolean(options?.lightweight || options?.skipHeavyCrossingWork);
+  const authoritativeCrossingSource = skipHeavyCrossingWork
+    ? { name: "crossings", items: [], error: "", sourcePath: "crossings (audit cache/lightweight skip)" }
+    : getGridlyCommunityAuthoritativeCrossingSource(options);
+  const crossingMarkerRecords = skipHeavyCrossingWork ? [] : getGridlyCommunityCrossingMarkerRecords();
   const sourceDefs = [
     getGridlyCommunitySourceArray("getActiveUnifiedIncidents()", () => (typeof getActiveUnifiedIncidents === "function" ? getActiveUnifiedIncidents() : [])),
     getGridlyCommunitySourceArray("getUnifiedIncidents()", () => (typeof getUnifiedIncidents === "function" ? getUnifiedIncidents() : [])),
@@ -11436,11 +11481,15 @@ function normalizeGridlyCommunityPresenceCrossingCandidate(raw = {}, sourceName 
 function enrichGridlyCommunitySelectedCrossingItems(selected = [], options = {}) {
   const guard = getGridlyCommunityCrossingGuardState(options);
   const scoped = Array.isArray(selected) ? selected : [];
+  if (options?.lightweight || options?.skipCrossingEnrichment) {
+    return { selected: scoped, crossingCandidatesSelectedForEnrichment: 0 };
+  }
+  const scopedLimit = Math.max(0, Number(guard.crossingEnrichmentLimit || 0));
   let selectedForEnrichment = 0;
   const enriched = scoped.map((item) => {
     const incident = item?.incident && typeof item.incident === "object" ? item.incident : item;
     const sourceName = [incident?.sourceCollectionName, incident?.datasetSource, incident?.source].find((value) => isGridlyCommunityCrossingSourceName(value)) || "";
-    if (!sourceName || selectedForEnrichment >= guard.crossingEnrichmentLimit) return item;
+    if (!sourceName || selectedForEnrichment >= scopedLimit) return item;
     selectedForEnrichment += 1;
     const enrichment = safeResolveGridlyCommunityLocationEnrichment(incident, { sourceName });
     const enrichedIncident = { ...incident, ...getGridlyCommunityNonEmptyEnrichmentFields(enrichment) };
@@ -11449,12 +11498,14 @@ function enrichGridlyCommunitySelectedCrossingItems(selected = [], options = {})
   return { selected: enriched, crossingCandidatesSelectedForEnrichment: selectedForEnrichment };
 }
 
-function normalizeGridlyCommunityPresenceCandidate(raw = {}, sourceName = "unknown", index = 0) {
+function normalizeGridlyCommunityPresenceCandidate(raw = {}, sourceName = "unknown", index = 0, options = {}) {
   if (!raw || typeof raw !== "object") return null;
   const coords = getGridlyIncidentCoordinate(raw) || getGridlyIncidentCoordinate(raw?.raw || {}) || getGridlyIncidentCoordinate(raw?.latestReport || {});
   const id = getGridlyCommunityIncidentId(raw);
   const type = raw?.type || raw?.report_type || raw?.reportType || raw?.category || raw?.condition || raw?.kind || "community_activity";
-  const enrichment = safeResolveGridlyCommunityLocationEnrichment(raw, { sourceName });
+  const enrichment = options?.lightweight || options?.skipLocationEnrichment || options?.skipCrossingEnrichment
+    ? {}
+    : safeResolveGridlyCommunityLocationEnrichment(raw, { sourceName });
   return {
     ...raw,
     ...getGridlyCommunityNonEmptyEnrichmentFields(enrichment),
@@ -11493,12 +11544,15 @@ function isGridlyCommunityPresenceActiveCandidate(candidate = {}) {
 }
 
 function resolveGridlyCommunityPresenceSources(options = {}) {
-  const processingStartedAt = performance.now();
+  const processingStartedAt = getGridlyCommunityNowMs();
   const guard = getGridlyCommunityCrossingGuardState(options);
   const optionItems = Array.isArray(options?.communityPresenceItems) ? options.communityPresenceItems : null;
   const safeArray = (value) => Array.isArray(value) ? value : [];
-  const authoritativeCrossingSource = getGridlyCommunityAuthoritativeCrossingSource(options);
-  const crossingMarkerRecords = getGridlyCommunityCrossingMarkerRecords();
+  const skipHeavyCrossingWork = Boolean(options?.lightweight || options?.skipHeavyCrossingWork);
+  const authoritativeCrossingSource = skipHeavyCrossingWork
+    ? { name: "crossings", items: [], error: "", sourcePath: "crossings (audit cache/lightweight skip)" }
+    : getGridlyCommunityAuthoritativeCrossingSource(options);
+  const crossingMarkerRecords = skipHeavyCrossingWork ? [] : getGridlyCommunityCrossingMarkerRecords();
   const baseSourceDefs = [
     getGridlyCommunitySourceArray("getActiveUnifiedIncidents()", () => (typeof getActiveUnifiedIncidents === "function" ? getActiveUnifiedIncidents() : [])),
     getGridlyCommunitySourceArray("activeHazards", () => safeArray(typeof activeHazards !== "undefined" ? activeHazards : [])),
@@ -11556,7 +11610,7 @@ function resolveGridlyCommunityPresenceSources(options = {}) {
   const normalizeForSource = (source, item, index) => {
     if (source.name === "rendered_marker_dom") return normalizeGridlyCommunityPresenceDomCandidate(item, index);
     if (source.name === "crossings" || source.name === "crossingMarkers") return normalizeGridlyCommunityPresenceCrossingCandidate(item, source.name === "crossingMarkers" ? "crossingMarkers" : "crossings", index, { enrich: false });
-    return normalizeGridlyCommunityPresenceCandidate(item, source.name, index);
+    return normalizeGridlyCommunityPresenceCandidate(item, source.name, index, options);
   };
   const pushCandidate = (normalized, sourceName) => {
     const key = getGridlyCommunityIncidentId(normalized);
@@ -11681,7 +11735,7 @@ function resolveGridlyCommunityPresenceSources(options = {}) {
     crossingCandidatesSelectedForEnrichment: 0,
     crossingLazyEvaluationApplied: true,
     crossingStartupGuardActive: Boolean(guard.crossingStartupGuardActive),
-    crossingProcessingDurationMs: Number((performance.now() - processingStartedAt).toFixed(2))
+    crossingProcessingDurationMs: Number((getGridlyCommunityNowMs() - processingStartedAt).toFixed(2))
   };
 }
 
@@ -11781,13 +11835,25 @@ function buildCommunityPresencePhrases(scoredItems = []) {
 }
 
 function buildCommunityPresenceDataset(options = {}) {
+  const buildStartedAt = getGridlyCommunityNowMs();
+  if (options?.useCache && latestCommunityPresenceDataset) {
+    return {
+      ...latestCommunityPresenceDataset,
+      usedCachedDataset: true,
+      cacheAgeMs: latestCommunityPresenceTimestamp ? Math.max(0, Date.now() - latestCommunityPresenceTimestamp) : null,
+      lastDatasetBuildDurationMs: Number(latestCommunityPresenceBuildDurationMs || latestCommunityPresenceDataset.lastDatasetBuildDurationMs || 0),
+      ...getGridlyCommunitySkippedAuditFields(options)
+    };
+  }
   const sourceDiagnostics = resolveGridlyCommunityPresenceSources(options);
   const candidates = sourceDiagnostics.candidates;
   const scored = candidates.map((incident) => scoreCommunityPresenceIncident(incident, { ...options, allCandidates: candidates }))
     .sort((a, b) => b.communityPresenceScore - a.communityPresenceScore);
   const selectedBeforeJoin = scored.filter((item, index) => item.communityPresenceScore >= 34 || index < Math.min(5, scored.length)).slice(0, Number(options?.limit || 12));
   const enrichmentSelection = enrichGridlyCommunitySelectedCrossingItems(selectedBeforeJoin, options);
-  const sourceJoin = applyGridlyCommunitySourceJoinToSelected(enrichmentSelection.selected, options);
+  const sourceJoin = (options?.lightweight || options?.skipSourceJoin)
+    ? { selected: enrichmentSelection.selected, diagnostics: { sourceJoinAttempts: 0, sourceJoinMatches: 0, sourceJoinFailures: 0, joinedSpecificityFields: [], joinedRailContextCount: 0, joinedRoadContextCount: 0, joinedCrossingContextCount: 0, specificityJoinApplied: false, specificityJoinSource: "skipped_lightweight_audit", resolvedSourceRecordTypes: [], selectedItemsAfterJoin: enrichmentSelection.selected.length, unresolvedSpecificityItems: enrichmentSelection.selected.filter((item) => !resolveGridlyIncidentSpecificCorridor(item)).length, sourceJoinCollectionCounts: {}, sourceJoinErrors: {} } }
+    : applyGridlyCommunitySourceJoinToSelected(enrichmentSelection.selected, options);
   const selected = sourceJoin.selected;
   const scoredForCorridors = scored.map((item) => selected.find((selectedItem) => String(selectedItem.id) === String(item.id)) || item);
   const corridorIncidentCounts = scoredForCorridors.reduce((acc, item) => {
@@ -11817,7 +11883,8 @@ function buildCommunityPresenceDataset(options = {}) {
       || (String(incident?.source || "") === "crossingMarkers" && String(incident?.crossingId || "").trim());
   }).length;
   const selectedDomPlaceholderCount = selected.filter((item) => isGridlyCommunityDomPlaceholderCandidate(item?.incident || item)).length;
-  return {
+  const datasetBuildDurationMs = Number((getGridlyCommunityNowMs() - buildStartedAt).toFixed(2));
+  const dataset = {
     version: GRIDLY_COMMUNITY_PRESENCE_VERSION,
     awarenessMode: "community",
     evaluatedCount: scored.length,
@@ -11860,15 +11927,25 @@ function buildCommunityPresenceDataset(options = {}) {
     crossingEnrichmentErrors: Array.isArray(sourceDiagnostics.crossingEnrichmentErrors) ? sourceDiagnostics.crossingEnrichmentErrors : [],
     crossingCandidatesPreservedAfterEnrichmentFailure: Number(sourceDiagnostics.crossingCandidatesPreservedAfterEnrichmentFailure || 0),
     crossingProcessingDeferred: Boolean(sourceDiagnostics.crossingProcessingDeferred),
-    crossingCandidateLimit: Number(sourceDiagnostics.crossingCandidateLimit || GRIDLY_COMMUNITY_CROSSING_CANDIDATE_LIMIT),
-    crossingEnrichmentLimit: Number(sourceDiagnostics.crossingEnrichmentLimit || GRIDLY_COMMUNITY_CROSSING_ENRICHMENT_LIMIT),
+    crossingCandidateLimit: Number(sourceDiagnostics.crossingCandidateLimit ?? GRIDLY_COMMUNITY_CROSSING_CANDIDATE_LIMIT),
+    crossingEnrichmentLimit: Number(sourceDiagnostics.crossingEnrichmentLimit ?? GRIDLY_COMMUNITY_CROSSING_ENRICHMENT_LIMIT),
     crossingCandidatesConsidered: Number(sourceDiagnostics.crossingCandidatesConsidered || 0),
     crossingCandidatesSkippedByCap: Number(sourceDiagnostics.crossingCandidatesSkippedByCap || 0),
     crossingCandidatesSelectedForEnrichment: Number(enrichmentSelection.crossingCandidatesSelectedForEnrichment || 0),
     crossingLazyEvaluationApplied: Boolean(sourceDiagnostics.crossingLazyEvaluationApplied),
     crossingStartupGuardActive: Boolean(sourceDiagnostics.crossingStartupGuardActive),
-    crossingProcessingDurationMs: Number(sourceDiagnostics.crossingProcessingDurationMs || 0)
+    crossingProcessingDurationMs: Number(sourceDiagnostics.crossingProcessingDurationMs || 0),
+    datasetBuildDurationMs,
+    lastDatasetBuildDurationMs: datasetBuildDurationMs,
+    usedCachedDataset: false,
+    cacheAgeMs: 0,
+    ...getGridlyCommunitySkippedAuditFields(options)
   };
+  latestCommunityPresenceDataset = dataset;
+  latestCommunityPresenceTimestamp = Date.now();
+  latestCommunityPresenceBuildDurationMs = datasetBuildDurationMs;
+  latestCommunityPresenceDataset.datasetCachedAt = latestCommunityPresenceTimestamp;
+  return dataset;
 }
 
 function getGridlyCommunityBridgeTargets() {
@@ -11882,6 +11959,9 @@ function getGridlyCommunityBridgeTargets() {
 function gridlyApplyCommunityAwarenessDomBridge(options = {}) {
   const dataset = buildCommunityPresenceDataset(options);
   const targets = getGridlyCommunityBridgeTargets();
+  if (options?.lightweight || options?.skipDomBridgeApply) {
+    return { dataset, targets, selectedDomCount: 0, extractedDomCount: 0, bridgeSource: GRIDLY_COMMUNITY_AWARENESS_BRIDGE_SOURCE, unmatchedSelectedCount: Number(dataset.selectedCommunityCount || 0), unmatchedSelectedSamples: [], sampleBridgeEntries: [], bridgeDeferredReason: "lightweight audit skipped DOM bridge mutation" };
+  }
   const selectedById = new Map(dataset.selected.map((item) => [String(item.id), item]));
   const selectedByRoundedCoords = new Map(dataset.selected.map((item) => {
     const coords = getGridlyIncidentCoordinate(item.incident);
@@ -12022,14 +12102,20 @@ function getGridlyAwarenessModeDiagnostics(options = {}) {
     highestPresenceScore: communityPresence.highestPresenceScore,
     dominantCommunityCorridor: communityPresence.dominantCorridor,
     crossingProcessingDeferred: Boolean(communityPresence.crossingProcessingDeferred),
-    crossingCandidateLimit: Number(communityPresence.crossingCandidateLimit || GRIDLY_COMMUNITY_CROSSING_CANDIDATE_LIMIT),
-    crossingEnrichmentLimit: Number(communityPresence.crossingEnrichmentLimit || GRIDLY_COMMUNITY_CROSSING_ENRICHMENT_LIMIT),
+    crossingCandidateLimit: Number(communityPresence.crossingCandidateLimit ?? GRIDLY_COMMUNITY_CROSSING_CANDIDATE_LIMIT),
+    crossingEnrichmentLimit: Number(communityPresence.crossingEnrichmentLimit ?? GRIDLY_COMMUNITY_CROSSING_ENRICHMENT_LIMIT),
     crossingCandidatesConsidered: Number(communityPresence.crossingCandidatesConsidered || 0),
     crossingCandidatesSkippedByCap: Number(communityPresence.crossingCandidatesSkippedByCap || 0),
     crossingCandidatesSelectedForEnrichment: Number(communityPresence.crossingCandidatesSelectedForEnrichment || 0),
     crossingLazyEvaluationApplied: Boolean(communityPresence.crossingLazyEvaluationApplied),
     crossingStartupGuardActive: Boolean(communityPresence.crossingStartupGuardActive),
     crossingProcessingDurationMs: Number(communityPresence.crossingProcessingDurationMs || 0),
+    usedCachedDataset: Boolean(communityPresence.usedCachedDataset),
+    cacheAgeMs: communityPresence.cacheAgeMs ?? null,
+    lastDatasetBuildDurationMs: Number(communityPresence.lastDatasetBuildDurationMs || communityPresence.datasetBuildDurationMs || 0),
+    skippedHeavyCrossingWork: Boolean(communityPresence.skippedHeavyCrossingWork),
+    skippedCrossingEnrichment: Boolean(communityPresence.skippedCrossingEnrichment),
+    skippedDomBridgeApply: Boolean(communityPresence.skippedDomBridgeApply),
     notes
   };
 }
@@ -12041,7 +12127,9 @@ function getGridlyAwarenessMode(options = {}) {
 window.getGridlyAwarenessMode = getGridlyAwarenessMode;
 window.getGridlyAwarenessModeDiagnostics = getGridlyAwarenessModeDiagnostics;
 window.gridlyAwarenessModeAudit = function gridlyAwarenessModeAudit(options = {}) {
-  const diagnostics = getGridlyAwarenessModeDiagnostics(options);
+  const auditStartedAt = getGridlyCommunityNowMs();
+  const auditOptions = getGridlyCommunityAuditOptions(options);
+  const diagnostics = getGridlyAwarenessModeDiagnostics(auditOptions);
   return {
     loaded: true,
     version: GRIDLY_COMMUNITY_PRESENCE_VERSION,
@@ -12049,15 +12137,30 @@ window.gridlyAwarenessModeAudit = function gridlyAwarenessModeAudit(options = {}
     selectedDomCount: diagnostics.selectedDomCount,
     evaluatedCount: diagnostics.evaluatedCount,
     communityPhraseCount: diagnostics.communityPhraseCount,
+    awarenessAuditDurationMs: Number((getGridlyCommunityNowMs() - auditStartedAt).toFixed(2)),
+    usedCachedDataset: Boolean(diagnostics.usedCachedDataset),
+    skippedHeavyCrossingWork: true,
+    skippedCrossingEnrichment: true,
+    skippedDomBridgeApply: true,
     diagnostics
   };
 };
 window.gridlyCommunityPresenceAudit = function gridlyCommunityPresenceAudit(options = {}) {
+  const auditStartedAt = getGridlyCommunityNowMs();
+  const auditOptions = getGridlyCommunityAuditOptions(options);
   try {
-    const dataset = buildCommunityPresenceDataset(options);
+    const dataset = buildCommunityPresenceDataset(auditOptions);
+    const cacheMeta = getGridlyCommunityPresenceCacheMeta(dataset);
     return {
       loaded: true,
       version: GRIDLY_COMMUNITY_PRESENCE_VERSION,
+      auditDurationMs: Number((getGridlyCommunityNowMs() - auditStartedAt).toFixed(2)),
+      usedCachedDataset: Boolean(dataset.usedCachedDataset || cacheMeta.usedCachedDataset),
+      skippedHeavyCrossingWork: true,
+      skippedCrossingEnrichment: true,
+      skippedDomBridgeApply: true,
+      cacheAgeMs: cacheMeta.cacheAgeMs,
+      lastDatasetBuildDurationMs: cacheMeta.lastDatasetBuildDurationMs,
       evaluatedCount: dataset.evaluatedCount,
       selectedCommunityCount: dataset.selectedCommunityCount,
       highestPresenceScore: dataset.highestPresenceScore,
@@ -12081,8 +12184,8 @@ window.gridlyCommunityPresenceAudit = function gridlyCommunityPresenceAudit(opti
       crossingEnrichmentErrors: Array.isArray(dataset.crossingEnrichmentErrors) ? dataset.crossingEnrichmentErrors : [],
       crossingCandidatesPreservedAfterEnrichmentFailure: Number(dataset.crossingCandidatesPreservedAfterEnrichmentFailure || 0),
       crossingProcessingDeferred: Boolean(dataset.crossingProcessingDeferred),
-      crossingCandidateLimit: Number(dataset.crossingCandidateLimit || GRIDLY_COMMUNITY_CROSSING_CANDIDATE_LIMIT),
-      crossingEnrichmentLimit: Number(dataset.crossingEnrichmentLimit || GRIDLY_COMMUNITY_CROSSING_ENRICHMENT_LIMIT),
+      crossingCandidateLimit: Number(dataset.crossingCandidateLimit ?? GRIDLY_COMMUNITY_CROSSING_CANDIDATE_LIMIT),
+      crossingEnrichmentLimit: Number(dataset.crossingEnrichmentLimit ?? GRIDLY_COMMUNITY_CROSSING_ENRICHMENT_LIMIT),
       crossingCandidatesConsidered: Number(dataset.crossingCandidatesConsidered || 0),
       crossingCandidatesSkippedByCap: Number(dataset.crossingCandidatesSkippedByCap || 0),
       crossingCandidatesSelectedForEnrichment: Number(dataset.crossingCandidatesSelectedForEnrichment || 0),
@@ -12141,7 +12244,7 @@ window.gridlyCommunityPresenceAudit = function gridlyCommunityPresenceAudit(opti
       awarenessMode: dataset.awarenessMode
     };
   } catch (error) {
-    return { loaded: false, version: GRIDLY_COMMUNITY_PRESENCE_VERSION, evaluatedCount: 0, selectedCommunityCount: 0, highestPresenceScore: 0, candidateSourceNames: [], candidateSourceCounts: {}, rawCandidateCount: 0, normalizedCandidateCount: 0, selectedSourceBreakdown: {}, selectedSourcePriority: [], renderedMarkerDomDemoted: false, domPlaceholderCandidateCount: 0, rejectedDomPlaceholderCount: 0, authoritativeCrossingCandidateCount: 0, selectedAuthoritativeCrossingCount: 0, selectedDomPlaceholderCount: 0, zeroCoordinateCandidateCount: 0, crossingEnrichmentAttemptedCount: 0, crossingEnrichmentSuccessCount: 0, crossingEnrichmentFailureCount: 0, crossingEnrichmentErrors: [], crossingCandidatesPreservedAfterEnrichmentFailure: 0, ...getGridlyCommunityCrossingDiagnosticsFallback(options), skippedCandidateReasons: {}, corridorClusterCount: 0, nearbyIncidentCount: 0, enrichedLocationFieldCounts: {}, enrichedRoadFieldCounts: {}, enrichedCrossingFieldCounts: {}, selectedItemsWithSpecificity: 0, selectedItemsMissingSpecificity: 0, specificityCoveragePercent: 0, sourceJoinAttempts: 0, sourceJoinMatches: 0, sourceJoinFailures: 0, joinedSpecificityFields: [], joinedRailContextCount: 0, joinedRoadContextCount: 0, sourceJoinCollectionCounts: {}, sourceJoinErrors: {}, samplePresenceItems: [], awarenessMode: "community", notes: [`Community presence audit fallback: ${error?.message || "unknown error"}`] };
+    return { loaded: false, version: GRIDLY_COMMUNITY_PRESENCE_VERSION, auditDurationMs: Number((getGridlyCommunityNowMs() - auditStartedAt).toFixed(2)), usedCachedDataset: false, skippedHeavyCrossingWork: true, skippedCrossingEnrichment: true, skippedDomBridgeApply: true, cacheAgeMs: null, lastDatasetBuildDurationMs: Number(latestCommunityPresenceBuildDurationMs || 0), evaluatedCount: 0, selectedCommunityCount: 0, highestPresenceScore: 0, candidateSourceNames: [], candidateSourceCounts: {}, rawCandidateCount: 0, normalizedCandidateCount: 0, selectedSourceBreakdown: {}, selectedSourcePriority: [], renderedMarkerDomDemoted: false, domPlaceholderCandidateCount: 0, rejectedDomPlaceholderCount: 0, authoritativeCrossingCandidateCount: 0, selectedAuthoritativeCrossingCount: 0, selectedDomPlaceholderCount: 0, zeroCoordinateCandidateCount: 0, crossingEnrichmentAttemptedCount: 0, crossingEnrichmentSuccessCount: 0, crossingEnrichmentFailureCount: 0, crossingEnrichmentErrors: [], crossingCandidatesPreservedAfterEnrichmentFailure: 0, ...getGridlyCommunityCrossingDiagnosticsFallback(auditOptions), skippedCandidateReasons: {}, corridorClusterCount: 0, nearbyIncidentCount: 0, enrichedLocationFieldCounts: {}, enrichedRoadFieldCounts: {}, enrichedCrossingFieldCounts: {}, selectedItemsWithSpecificity: 0, selectedItemsMissingSpecificity: 0, specificityCoveragePercent: 0, sourceJoinAttempts: 0, sourceJoinMatches: 0, sourceJoinFailures: 0, joinedSpecificityFields: [], joinedRailContextCount: 0, joinedRoadContextCount: 0, sourceJoinCollectionCounts: {}, sourceJoinErrors: {}, samplePresenceItems: [], awarenessMode: "community", notes: [`Community presence audit fallback: ${error?.message || "unknown error"}`] };
   }
 };
 
@@ -13023,7 +13126,7 @@ function buildGridlyCommunityPulseModel(options = {}) {
     };
   }
 
-  return {
+  const model = {
     awarenessMode,
     pulseVisible,
     renderedPulseHeadline,
@@ -13074,8 +13177,8 @@ function buildGridlyCommunityPulseModel(options = {}) {
     crossingProcessingDeferred: Boolean(dataset.crossingProcessingDeferred),
     crossingLazyEvaluationApplied: Boolean(dataset.crossingLazyEvaluationApplied),
     crossingStartupGuardActive: Boolean(dataset.crossingStartupGuardActive),
-    crossingCandidateLimit: Number(dataset.crossingCandidateLimit || GRIDLY_COMMUNITY_CROSSING_CANDIDATE_LIMIT),
-    crossingEnrichmentLimit: Number(dataset.crossingEnrichmentLimit || GRIDLY_COMMUNITY_CROSSING_ENRICHMENT_LIMIT),
+    crossingCandidateLimit: Number(dataset.crossingCandidateLimit ?? GRIDLY_COMMUNITY_CROSSING_CANDIDATE_LIMIT),
+    crossingEnrichmentLimit: Number(dataset.crossingEnrichmentLimit ?? GRIDLY_COMMUNITY_CROSSING_ENRICHMENT_LIMIT),
     crossingCandidatesConsidered: Number(dataset.crossingCandidatesConsidered || 0),
     crossingCandidatesSelectedForEnrichment: Number(dataset.crossingCandidatesSelectedForEnrichment || 0),
     crossingProcessingDurationMs: Number(dataset.crossingProcessingDurationMs || 0),
@@ -13088,8 +13191,13 @@ function buildGridlyCommunityPulseModel(options = {}) {
     blendedSignalTypes,
     phraseGenerationMode,
     repetitionAvoidanceApplied,
-    corridorPriorityBreakdown: corridorPriority.corridorPriorityBreakdown || []
+    corridorPriorityBreakdown: corridorPriority.corridorPriorityBreakdown || [],
+    pulseUsedCachedDataset: Boolean(dataset.usedCachedDataset),
+    pulseSkippedHeavyProcessing: Boolean(options?.lightweight || options?.skipHeavyCrossingWork || options?.skipCrossingEnrichment),
+    lastDatasetBuildDurationMs: Number(dataset.lastDatasetBuildDurationMs || dataset.datasetBuildDurationMs || 0)
   };
+  latestCommunityPulseModel = model;
+  return model;
 }
 
 function getGridlyCommunityPulsePortraitPlacementState() {
@@ -13204,13 +13312,19 @@ function renderGridlyCommunityPulse(options = {}) {
       ? "portrait V2 header owns top status area; legacy map-card pulse hidden"
       : model.pulseSuppressedReason
   };
+  latestCommunityPulseModel = gridlyCommunityPulseAuditState;
   return gridlyCommunityPulseAuditState;
 }
 
 window.gridlyCommunityPulseAudit = function gridlyCommunityPulseAudit(options = {}) {
-  const shouldRender = options?.render !== false;
-  const state = shouldRender ? renderGridlyCommunityPulse(options) : { ...gridlyCommunityPulseAuditState };
+  const auditStartedAt = getGridlyCommunityNowMs();
+  const auditOptions = getGridlyCommunityAuditOptions(options);
+  const shouldRender = options?.render === true;
+  const state = shouldRender ? renderGridlyCommunityPulse(auditOptions) : { ...(latestCommunityPulseModel || gridlyCommunityPulseAuditState) };
   return {
+    pulseAuditDurationMs: Number((getGridlyCommunityNowMs() - auditStartedAt).toFixed(2)),
+    pulseUsedCachedModel: !shouldRender,
+    pulseSkippedHeavyProcessing: true,
     awarenessMode: state.awarenessMode,
     pulseVisible: Boolean(state.pulseVisible),
     renderedPulseHeadline: state.renderedPulseHeadline || "",
@@ -13266,7 +13380,8 @@ window.gridlyCommunityPulseAudit = function gridlyCommunityPulseAudit(options = 
     mobilityPressureCategory: state.mobilityPressureCategory || "quiet",
     blendedSignalTypes: Array.isArray(state.blendedSignalTypes) ? state.blendedSignalTypes.slice(0, 6) : [],
     phraseGenerationMode: state.phraseGenerationMode || "",
-    repetitionAvoidanceApplied: Boolean(state.repetitionAvoidanceApplied)
+    repetitionAvoidanceApplied: Boolean(state.repetitionAvoidanceApplied),
+    lastDatasetBuildDurationMs: Number(state.lastDatasetBuildDurationMs || latestCommunityPresenceBuildDurationMs || 0)
   };
 };
 window.renderGridlyCommunityPulse = renderGridlyCommunityPulse;
