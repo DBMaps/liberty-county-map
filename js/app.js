@@ -10557,10 +10557,10 @@ function buildCommunityPresencePhrases(scoredItems = []) {
     const typeText = String(item?.category || item?.incident?.type || "activity").replace(/_/g, " ");
     const corridor = item?.corridor || "Local corridors";
     const count = Number(corridorCounts[corridor] || 0);
-    if (/flood|standing water/.test(typeText) && corridor !== "Local corridors") return `Flooding reports increasing near ${corridor}`;
-    if (/rail|blocked|train/.test(typeText) && count > 1) return `Rail activity active across ${corridor}`;
-    if (corridor !== "Local corridors" && count > 1) return `Heavy activity building along ${corridor}`;
-    return `Community activity reported near ${corridor}`;
+    if (/flood|standing water/.test(typeText) && corridor !== "Local corridors") return `Flooding activity increasing along ${corridor}`;
+    if (/rail|blocked|train/.test(typeText) && count > 1) return corridor === "Local corridors" ? "Rail activity reported across nearby corridors" : `Rail delays continuing near ${corridor}`;
+    if (corridor !== "Local corridors" && count > 1) return `Movement pressure building along ${corridor}`;
+    return corridor === "Local corridors" ? "Light activity across nearby corridors" : `Mobility activity under watch near ${corridor}`;
   });
 }
 
@@ -10843,7 +10843,18 @@ let gridlyCommunityPulseAuditState = {
   selectedCommunityCount: 0,
   communityPhraseCount: 0,
   pulseRenderTarget: GRIDLY_COMMUNITY_PULSE_RENDER_TARGET,
-  pulseSuppressedReason: "not_rendered_yet"
+  pulseSuppressedReason: "not_rendered_yet",
+  selectedHeadlineTemplate: "",
+  selectedSublineTemplate: "",
+  dominantCorridorScore: 0,
+  mobilityPressureCategory: "quiet",
+  blendedSignalTypes: [],
+  phraseGenerationMode: "not_rendered_yet",
+  repetitionAvoidanceApplied: false
+};
+let gridlyCommunityPulseTemplateMemory = {
+  lastHeadlineTemplate: "",
+  lastSublineTemplate: ""
 };
 
 function formatGridlyCommunityCount(count, singular, plural = `${singular}s`) {
@@ -10872,6 +10883,234 @@ function getGridlyCommunityPulseTypeSummary(selected = []) {
   return `${unique[0]} and ${unique[1]}`;
 }
 
+
+function getGridlyCommunityPulseSignalType(item = {}) {
+  const categoryText = String(item?.category || item?.incident?.type || item?.incident?.report_type || item?.incident?.category || "activity")
+    .toLowerCase()
+    .replace(/[_-]+/g, " ");
+  const detailText = String([item?.incident?.title, item?.incident?.description, item?.incident?.detail, item?.incident?.details, item?.incident?.status]
+    .filter(Boolean)
+    .join(" "))
+    .toLowerCase();
+  const text = `${categoryText} ${detailText}`;
+  if (/flood|standing water|high water/.test(text)) return "flooding";
+  if (/rail|crossing|train|blocked crossing|stopped train/.test(text)) return "rail";
+  if (/closure|closed|blocked road|road block/.test(text)) return "closure";
+  if (/crash|wreck|collision|accident/.test(text)) return "crash";
+  if (/construction|utility|work zone|road work/.test(text)) return "road_work";
+  if (/debris|tree|obstruction/.test(text)) return "debris";
+  return "mobility";
+}
+
+function getGridlyCommunityPulseSignalLabel(signalType = "mobility") {
+  const labels = {
+    flooding: "flooding",
+    rail: "rail activity",
+    closure: "closures",
+    crash: "crash reports",
+    road_work: "road work",
+    debris: "road debris",
+    mobility: "mobility reports"
+  };
+  return labels[signalType] || labels.mobility;
+}
+
+function scoreGridlyDominantCorridor(dataset = {}) {
+  const scopedItems = Array.isArray(dataset.selected) && dataset.selected.length
+    ? dataset.selected
+    : (Array.isArray(dataset.scored) ? dataset.scored : []);
+  const corridorScores = new Map();
+  const ensureCorridor = (corridor) => {
+    const key = corridor || "Local corridors";
+    if (!corridorScores.has(key)) {
+      corridorScores.set(key, {
+        corridor: key,
+        score: 0,
+        count: 0,
+        severityScore: 0,
+        freshnessScore: 0,
+        densityScore: 0,
+        repeatActivityScore: 0,
+        multiCategoryScore: 0,
+        signalTypes: new Set(),
+        signalCounts: {}
+      });
+    }
+    return corridorScores.get(key);
+  };
+  scopedItems.forEach((item) => {
+    const corridor = item?.corridor || "Local corridors";
+    const bucket = ensureCorridor(corridor);
+    const severity = String(item?.severity || "low").toLowerCase();
+    const freshness = String(item?.freshnessLevel || "unknown").toLowerCase();
+    const signalType = getGridlyCommunityPulseSignalType(item);
+    const severityWeights = { critical: 34, high: 26, moderate: 17, medium: 17, low: 8 };
+    const freshnessWeights = { fresh: 16, recent: 10, aging: 4, stale: -4, unknown: 2 };
+    const signalWeights = { flooding: 18, rail: 14, closure: 12, crash: 10, road_work: 6, debris: 5, mobility: 4 };
+    const nearbyCount = Math.max(0, Number(item?.nearbyCount || 0));
+    bucket.count += 1;
+    bucket.severityScore += Number(severityWeights[severity] ?? 6);
+    bucket.freshnessScore += Number(freshnessWeights[freshness] ?? 2);
+    bucket.densityScore += Math.min(12, nearbyCount * 3);
+    bucket.signalTypes.add(signalType);
+    bucket.signalCounts[signalType] = (bucket.signalCounts[signalType] || 0) + 1;
+    bucket.score += Number(signalWeights[signalType] || 4);
+  });
+  corridorScores.forEach((bucket) => {
+    const densityFromCount = Math.min(28, bucket.count * 7);
+    const repeatedRail = Number(bucket.signalCounts.rail || 0) > 1 ? 12 : 0;
+    const repeatedFlooding = Number(bucket.signalCounts.flooding || 0) > 1 ? 10 : 0;
+    const repeatedSameSignal = Object.values(bucket.signalCounts).some((count) => Number(count || 0) > 1) ? 6 : 0;
+    bucket.repeatActivityScore = repeatedRail + repeatedFlooding + repeatedSameSignal;
+    bucket.multiCategoryScore = bucket.signalTypes.size > 1 ? Math.min(14, bucket.signalTypes.size * 5) : 0;
+    bucket.densityScore += densityFromCount;
+    bucket.score += bucket.severityScore + bucket.freshnessScore + bucket.densityScore + bucket.repeatActivityScore + bucket.multiCategoryScore;
+    if (bucket.corridor === "Local corridors" && corridorScores.size > 1) bucket.score -= 6;
+    bucket.score = Math.max(0, Math.round(bucket.score));
+  });
+  const sorted = Array.from(corridorScores.values()).sort((a, b) => b.score - a.score || b.count - a.count || String(a.corridor).localeCompare(String(b.corridor)));
+  const winner = sorted[0] || { corridor: null, score: 0, count: 0, signalTypes: new Set(), signalCounts: {} };
+  return {
+    dominantCorridor: winner.corridor,
+    dominantCorridorScore: Number(winner.score || 0),
+    dominantCorridorCount: Number(winner.count || 0),
+    blendedSignalTypes: Array.from(winner.signalTypes || []).filter(Boolean),
+    signalCounts: { ...(winner.signalCounts || {}) },
+    corridorPriorityBreakdown: sorted.map((bucket) => ({
+      corridor: bucket.corridor,
+      score: Number(bucket.score || 0),
+      count: Number(bucket.count || 0),
+      severityScore: Number(bucket.severityScore || 0),
+      freshnessScore: Number(bucket.freshnessScore || 0),
+      densityScore: Number(bucket.densityScore || 0),
+      repeatActivityScore: Number(bucket.repeatActivityScore || 0),
+      multiCategoryScore: Number(bucket.multiCategoryScore || 0),
+      signalTypes: Array.from(bucket.signalTypes || [])
+    }))
+  };
+}
+
+function getGridlyMobilityPressureCategory({ selectedCommunityCount = 0, dominantCorridorScore = 0, activeCorridorCount = 0 } = {}) {
+  const count = Number(selectedCommunityCount || 0);
+  const score = Number(dominantCorridorScore || 0);
+  const activeCorridors = Number(activeCorridorCount || 0);
+  if (count <= 0 || score <= 0) return "quiet";
+  if (score >= 125 || count >= 6 || activeCorridors >= 4) return "building";
+  if (score >= 78 || count >= 3 || activeCorridors >= 2) return "elevated";
+  return "light";
+}
+
+function selectGridlyCommunityPulseTemplate(templates = [], seed = 0, previousTemplateId = "") {
+  const safeTemplates = Array.isArray(templates) ? templates.filter((template) => template && template.id) : [];
+  if (!safeTemplates.length) return { template: null, repetitionAvoidanceApplied: false };
+  const baseIndex = Math.abs(Number(seed || 0)) % safeTemplates.length;
+  let selected = safeTemplates[baseIndex];
+  let repetitionAvoidanceApplied = false;
+  if (safeTemplates.length > 1 && selected.id === previousTemplateId) {
+    selected = safeTemplates[(baseIndex + 1) % safeTemplates.length];
+    repetitionAvoidanceApplied = true;
+  }
+  return { template: selected, repetitionAvoidanceApplied };
+}
+
+function formatGridlyCommunityPulsePlace(corridor = null, mode = "near") {
+  const safeCorridor = String(corridor || "").trim();
+  if (!safeCorridor || safeCorridor === "Local corridors") {
+    return mode === "across" ? "across nearby corridors" : "nearby";
+  }
+  if (mode === "across") return `across ${safeCorridor}`;
+  if (mode === "along") return `along ${safeCorridor}`;
+  return `near ${safeCorridor}`;
+}
+
+function buildGridlyCommunityBlendPhrase(context = {}) {
+  const signalTypes = Array.isArray(context.blendedSignalTypes) ? context.blendedSignalTypes : [];
+  const corridor = context.dominantCorridor || null;
+  const pressure = context.mobilityPressureCategory || "light";
+  const hasMultipleSignals = signalTypes.length > 1;
+  if (!hasMultipleSignals && Number(context.activeCorridorCount || 0) <= 1) return null;
+  const verb = pressure === "building" ? "building" : pressure === "elevated" ? "showing" : "present";
+  const templates = [
+    { id: "blend_movement_slowing", text: `Movement slowing ${formatGridlyCommunityPulsePlace(corridor, corridor && corridor !== "Local corridors" ? "along" : "across")}` },
+    { id: "blend_travel_pressure", text: `Travel pressure ${verb} ${formatGridlyCommunityPulsePlace(corridor, corridor && corridor !== "Local corridors" ? "along" : "across")}` },
+    { id: "blend_mobility_slowdowns", text: corridor && corridor !== "Local corridors" ? `Multiple mobility slowdowns near ${corridor}` : "Multiple mobility slowdowns reported nearby" }
+  ];
+  return { templates, mode: hasMultipleSignals ? "blended_signals" : "corridor_density" };
+}
+
+function buildGridlyMobilityPressurePhrase(context = {}) {
+  const signalTypes = Array.isArray(context.blendedSignalTypes) ? context.blendedSignalTypes : [];
+  const primarySignal = signalTypes[0] || "mobility";
+  const corridor = context.dominantCorridor || null;
+  const corridorIsLocal = !corridor || corridor === "Local corridors";
+  const count = Number(context.selectedCommunityCount || 0);
+  const pressure = context.mobilityPressureCategory || "light";
+  const phraseGenerationMode = signalTypes.length > 1 ? "blended_signals" : `category_${primarySignal}`;
+  const blend = buildGridlyCommunityBlendPhrase(context);
+  if (blend) return { templates: blend.templates, phraseGenerationMode: blend.mode };
+  if (primarySignal === "flooding") {
+    return { phraseGenerationMode, templates: [
+      { id: "flood_increasing_along", text: `Flooding activity increasing ${formatGridlyCommunityPulsePlace(corridor, corridorIsLocal ? "across" : "along")}` },
+      { id: "flood_pressure_near", text: `High-water reports shaping travel ${formatGridlyCommunityPulsePlace(corridor)}` }
+    ] };
+  }
+  if (primarySignal === "rail") {
+    return { phraseGenerationMode, templates: [
+      { id: "rail_delays_continuing", text: `Rail delays continuing ${formatGridlyCommunityPulsePlace(corridor)}` },
+      { id: "rail_activity_across", text: corridorIsLocal ? "Rail activity reported across nearby corridors" : `Rail activity reported across ${corridor}` }
+    ] };
+  }
+  if (primarySignal === "closure") {
+    return { phraseGenerationMode, templates: [
+      { id: "closure_movement", text: `Closures affecting movement ${formatGridlyCommunityPulsePlace(corridor)}` },
+      { id: "closure_pressure", text: `Travel pressure near closure reports ${formatGridlyCommunityPulsePlace(corridor)}` }
+    ] };
+  }
+  if (primarySignal === "crash") {
+    return { phraseGenerationMode, templates: [
+      { id: "crash_slowing", text: `Traffic slowing ${formatGridlyCommunityPulsePlace(corridor)}` },
+      { id: "crash_pressure", text: `Traffic pressure ${pressure === "building" ? "building" : "showing"} ${formatGridlyCommunityPulsePlace(corridor, corridorIsLocal ? "across" : "near")}` }
+    ] };
+  }
+  return { phraseGenerationMode, templates: [
+    { id: "mobility_slowdowns", text: count > 1 ? "Multiple mobility slowdowns reported nearby" : `Mobility slowdown reported ${formatGridlyCommunityPulsePlace(corridor)}` },
+    { id: "movement_pressure", text: `Movement pressure ${pressure === "building" ? "building" : "present"} ${formatGridlyCommunityPulsePlace(corridor, corridorIsLocal ? "across" : "near")}` }
+  ] };
+}
+
+function buildGridlyCommunityPulseHeadline(context = {}) {
+  const seed = Number(context.selectedCommunityCount || 0) + Number(context.dominantCorridorScore || 0) + Number(context.activeCorridorCount || 0);
+  const phraseSet = buildGridlyMobilityPressurePhrase(context);
+  const selected = selectGridlyCommunityPulseTemplate(phraseSet.templates, seed, gridlyCommunityPulseTemplateMemory.lastHeadlineTemplate);
+  const text = selected.template?.text || "Light activity across nearby corridors";
+  return {
+    text,
+    selectedHeadlineTemplate: selected.template?.id || "headline_fallback",
+    phraseGenerationMode: phraseSet.phraseGenerationMode || "category_mobility",
+    repetitionAvoidanceApplied: selected.repetitionAvoidanceApplied
+  };
+}
+
+function buildGridlyCommunityPulseSubline(context = {}) {
+  const signalLabels = (Array.isArray(context.blendedSignalTypes) ? context.blendedSignalTypes : [])
+    .map((signalType) => getGridlyCommunityPulseSignalLabel(signalType));
+  const activeCorridorCount = Number(context.activeCorridorCount || 0);
+  const pressure = context.mobilityPressureCategory || "light";
+  const corridor = context.dominantCorridor || null;
+  const templates = [
+    { id: "subline_watchful", text: pressure === "light" ? "No major mobility slowdowns nearby" : "Local signals remain active but contained" },
+    { id: "subline_corridors", text: activeCorridorCount > 1 ? `${formatGridlyCommunityCount(activeCorridorCount, "active corridor")} under light watch` : `Watching ${formatGridlyCommunityPulsePlace(corridor)}` },
+    { id: "subline_signals", text: signalLabels.length > 1 ? `${signalLabels.slice(0, 2).join(" + ")} blending into travel pressure` : `${signalLabels[0] || "mobility reports"} under local watch` }
+  ];
+  const seed = Number(context.dominantCorridorScore || 0) + activeCorridorCount + signalLabels.length;
+  const selected = selectGridlyCommunityPulseTemplate(templates, seed, gridlyCommunityPulseTemplateMemory.lastSublineTemplate);
+  return {
+    text: selected.template?.text || "Light activity across nearby corridors",
+    selectedSublineTemplate: selected.template?.id || "subline_fallback",
+    repetitionAvoidanceApplied: selected.repetitionAvoidanceApplied
+  };
+}
+
 function buildGridlyCommunityPulseModel(options = {}) {
   const awarenessDiagnostics = typeof getGridlyAwarenessModeDiagnostics === "function"
     ? getGridlyAwarenessModeDiagnostics(options)
@@ -10880,35 +11119,54 @@ function buildGridlyCommunityPulseModel(options = {}) {
   const dataset = buildCommunityPresenceDataset(options);
   const selectedCommunityCount = Number(dataset.selectedCommunityCount || 0);
   const communityPhraseCount = Number(dataset.communityPhraseCount || 0);
-  const dominantCorridor = dataset.dominantCorridor || null;
+  const corridorPriority = scoreGridlyDominantCorridor(dataset);
+  const dominantCorridor = corridorPriority.dominantCorridor || dataset.dominantCorridor || null;
   const pulseRenderTarget = GRIDLY_COMMUNITY_PULSE_RENDER_TARGET;
-  const dominantCorridorCount = dominantCorridor
-    ? Number(dataset.corridorIncidentCounts?.[dominantCorridor] || 0)
-    : 0;
+  const dominantCorridorCount = Number(corridorPriority.dominantCorridorCount || (dominantCorridor ? dataset.corridorIncidentCounts?.[dominantCorridor] : 0) || 0);
   const activeCorridorCount = Object.entries(dataset.corridorIncidentCounts || {})
     .filter(([, count]) => Number(count || 0) > 0).length;
-  const topPhrase = String(dataset.phrases?.[0] || "").trim();
-  const typeSummary = getGridlyCommunityPulseTypeSummary(dataset.selected);
-  const corridorIsLocal = !dominantCorridor || dominantCorridor === "Local corridors";
+  const fallbackTypeSummary = getGridlyCommunityPulseTypeSummary(dataset.selected);
+  const blendedSignalTypes = Array.isArray(corridorPriority.blendedSignalTypes) && corridorPriority.blendedSignalTypes.length
+    ? corridorPriority.blendedSignalTypes
+    : (fallbackTypeSummary ? [fallbackTypeSummary] : []);
+  const mobilityPressureCategory = getGridlyMobilityPressureCategory({
+    selectedCommunityCount,
+    dominantCorridorScore: corridorPriority.dominantCorridorScore,
+    activeCorridorCount
+  });
+  const phraseContext = {
+    dataset,
+    selectedCommunityCount,
+    communityPhraseCount,
+    dominantCorridor,
+    dominantCorridorCount,
+    dominantCorridorScore: corridorPriority.dominantCorridorScore,
+    activeCorridorCount,
+    blendedSignalTypes,
+    mobilityPressureCategory
+  };
+  const headlinePhrase = selectedCommunityCount > 0
+    ? buildGridlyCommunityPulseHeadline(phraseContext)
+    : {
+        text: "Community pulse is quiet",
+        selectedHeadlineTemplate: "headline_quiet",
+        phraseGenerationMode: "quiet",
+        repetitionAvoidanceApplied: false
+      };
+  const sublinePhrase = selectedCommunityCount > 0
+    ? buildGridlyCommunityPulseSubline(phraseContext)
+    : {
+        text: "Town moving normally",
+        selectedSublineTemplate: "subline_quiet",
+        repetitionAvoidanceApplied: false
+      };
 
-  let renderedPulseHeadline = selectedCommunityCount > 0
-    ? `${formatGridlyCommunityCount(selectedCommunityCount, "active mobility report")} nearby`
-    : "Community pulse is quiet";
-  if (dominantCorridor && !corridorIsLocal && dominantCorridorCount >= 2) {
-    renderedPulseHeadline = `Activity building along ${dominantCorridor}`;
-  } else if (dominantCorridor && !corridorIsLocal) {
-    renderedPulseHeadline = `${dominantCorridor} area active`;
-  }
-
-  let renderedPulseSubline = topPhrase || `${formatGridlyCommunityCount(activeCorridorCount, "active corridor")} nearby`;
-  if (selectedCommunityCount > 0 && typeSummary) {
-    renderedPulseSubline = corridorIsLocal
-      ? `${typeSummary} reported around town`
-      : `${typeSummary} reported near ${dominantCorridor}`;
-  }
-  if (activeCorridorCount > 1 && selectedCommunityCount > 1) {
-    renderedPulseSubline = `${formatGridlyCommunityCount(activeCorridorCount, "active corridor")} nearby · ${typeSummary}`;
-  }
+  let renderedPulseHeadline = headlinePhrase.text;
+  let renderedPulseSubline = sublinePhrase.text;
+  const selectedHeadlineTemplate = headlinePhrase.selectedHeadlineTemplate;
+  const selectedSublineTemplate = sublinePhrase.selectedSublineTemplate;
+  const phraseGenerationMode = headlinePhrase.phraseGenerationMode || "category_mobility";
+  const repetitionAvoidanceApplied = Boolean(headlinePhrase.repetitionAvoidanceApplied || sublinePhrase.repetitionAvoidanceApplied);
 
   let pulseVisible = awarenessMode === "community" && selectedCommunityCount > 0;
   let pulseSuppressedReason = "";
@@ -10923,6 +11181,13 @@ function buildGridlyCommunityPulseModel(options = {}) {
     pulseSuppressedReason = "no selected community presence reports available";
   }
 
+  if (pulseVisible) {
+    gridlyCommunityPulseTemplateMemory = {
+      lastHeadlineTemplate: selectedHeadlineTemplate,
+      lastSublineTemplate: selectedSublineTemplate
+    };
+  }
+
   return {
     awarenessMode,
     pulseVisible,
@@ -10934,7 +11199,15 @@ function buildGridlyCommunityPulseModel(options = {}) {
     pulseRenderTarget,
     pulseSuppressedReason,
     corridorIncidentCounts: dataset.corridorIncidentCounts || {},
-    highestPresenceScore: Number(dataset.highestPresenceScore || 0)
+    highestPresenceScore: Number(dataset.highestPresenceScore || 0),
+    selectedHeadlineTemplate,
+    selectedSublineTemplate,
+    dominantCorridorScore: Number(corridorPriority.dominantCorridorScore || 0),
+    mobilityPressureCategory,
+    blendedSignalTypes,
+    phraseGenerationMode,
+    repetitionAvoidanceApplied,
+    corridorPriorityBreakdown: corridorPriority.corridorPriorityBreakdown || []
   };
 }
 
@@ -10952,7 +11225,14 @@ function renderGridlyCommunityPulse(options = {}) {
       selectedCommunityCount: 0,
       communityPhraseCount: 0,
       pulseRenderTarget: GRIDLY_COMMUNITY_PULSE_RENDER_TARGET,
-      pulseSuppressedReason: `render error: ${error?.message || "unknown error"}`
+      pulseSuppressedReason: `render error: ${error?.message || "unknown error"}`,
+      selectedHeadlineTemplate: "render_error",
+      selectedSublineTemplate: "render_error",
+      dominantCorridorScore: 0,
+      mobilityPressureCategory: "quiet",
+      blendedSignalTypes: [],
+      phraseGenerationMode: "render_error",
+      repetitionAvoidanceApplied: false
     };
   }
 
@@ -10992,7 +11272,14 @@ window.gridlyCommunityPulseAudit = function gridlyCommunityPulseAudit(options = 
     selectedCommunityCount: Number(state.selectedCommunityCount || 0),
     communityPhraseCount: Number(state.communityPhraseCount || 0),
     pulseRenderTarget: state.pulseRenderTarget || GRIDLY_COMMUNITY_PULSE_RENDER_TARGET,
-    pulseSuppressedReason: state.pulseSuppressedReason || ""
+    pulseSuppressedReason: state.pulseSuppressedReason || "",
+    selectedHeadlineTemplate: state.selectedHeadlineTemplate || "",
+    selectedSublineTemplate: state.selectedSublineTemplate || "",
+    dominantCorridorScore: Number(state.dominantCorridorScore || 0),
+    mobilityPressureCategory: state.mobilityPressureCategory || "quiet",
+    blendedSignalTypes: Array.isArray(state.blendedSignalTypes) ? state.blendedSignalTypes.slice(0, 6) : [],
+    phraseGenerationMode: state.phraseGenerationMode || "",
+    repetitionAvoidanceApplied: Boolean(state.repetitionAvoidanceApplied)
   };
 };
 window.renderGridlyCommunityPulse = renderGridlyCommunityPulse;
