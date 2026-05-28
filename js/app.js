@@ -1807,7 +1807,21 @@ window.gridlyIntelligencePhraseAudit = function gridlyIntelligencePhraseAudit() 
   }
 };
 
-window.gridlyRouteIntelligenceAudit = function gridlyRouteIntelligenceAudit() {
+function getGridlyRouteHydrationLayerSnapshot() {
+  const routeLayer = window.__gridlyRoutePreviewLayer || null;
+  const latLngs = typeof routeLayer?.getLatLngs === "function" ? routeLayer.getLatLngs() : [];
+  const routePointCount = Array.isArray(latLngs)
+    ? latLngs.filter((pt) => Number.isFinite(Number(pt?.lat)) && Number.isFinite(Number(pt?.lng))).length
+    : 0;
+  const routeLayerOnMap = Boolean(map && routeLayer && typeof map.hasLayer === "function" && map.hasLayer(routeLayer));
+  return {
+    routeLayerExists: Boolean(routeLayer),
+    routeLayerOnMap,
+    routePointCount
+  };
+}
+
+function buildGridlyRouteIntelligenceAuditSnapshot() {
   try {
     const markerPane = typeof document !== "undefined" ? document.querySelector("#map .leaflet-marker-pane") : null;
     const selectedDomNodes = getGridlyDomBridgeAuditTargets(markerPane);
@@ -1832,6 +1846,122 @@ window.gridlyRouteIntelligenceAudit = function gridlyRouteIntelligenceAudit() {
   } catch (error) {
     return { evaluatedCount: 0, routeRelevantCount: 0, routeRelevantPhraseCount: 0, routeImpactPhraseCount: 0, domBridgePhraseCount: 0, finalSourceUsed: "dom_bridge", finalUsedExtractedSamples: true, topRoutePhraseSamples: [], selectedDomCount: 0, extractedDomPhraseCount: 0, extractedRoutePhraseCount: 0, error: error?.message || "unknown error" };
   }
+}
+
+function getGridlyRouteIntelligenceZeroReason({ routeGeometryAudit, layerSnapshot, bridgeSummary, intelligenceSnapshot } = {}) {
+  if (!routeGeometryAudit?.activeRoutePresent) return "no_active_route_coordinates";
+  if (!layerSnapshot?.routeLayerOnMap) return "route_layer_not_on_map";
+  if (!bridgeSummary?.routeBridgeApplyAttempted) return "route_bridge_apply_not_attempted";
+  if (bridgeSummary?.routeBridgeApplyError) return `route_bridge_apply_error:${bridgeSummary.routeBridgeApplyError}`;
+  if (!bridgeSummary?.domBridgeAvailable) return "route_bridge_unavailable";
+  if (Number(bridgeSummary?.evaluatedRailDomCount || 0) === 0) return "no_rail_dom_targets_available";
+  if (Number(bridgeSummary?.impactedSampleCount || 0) === 0) return "no_route_impacted_rail_samples";
+  if (Number(bridgeSummary?.matchedDomCount || 0) === 0) return "route_impacted_samples_unmatched_to_dom";
+  if (Number(intelligenceSnapshot?.domBridgePhraseCount || 0) === 0) return "route_dom_bridge_metadata_missing";
+  return "";
+}
+
+function safeApplyRouteIntelligenceAfterRouteRender(reason = "route_intelligence_hydration") {
+  const routeGeometryAudit = typeof getGridlyActiveRouteCoordinatesForAudit === "function"
+    ? getGridlyActiveRouteCoordinatesForAudit()
+    : { activeRoutePresent: false, activeRouteCoordinateCount: 0, routeCoordinates: [] };
+  const layerSnapshot = getGridlyRouteHydrationLayerSnapshot();
+  const summary = {
+    reason: String(reason || "route_intelligence_hydration"),
+    activeRoutePresent: Boolean(routeGeometryAudit?.activeRoutePresent),
+    routeCoordinatesPresent: Number(routeGeometryAudit?.activeRouteCoordinateCount || 0) >= 2,
+    routeLayerOnMap: Boolean(layerSnapshot.routeLayerOnMap),
+    routePointCount: Number(layerSnapshot.routePointCount || routeGeometryAudit?.activeRouteCoordinateCount || 0),
+    routeBridgeApplyAttempted: false,
+    routeBridgeApplySuccess: false,
+    domBridgeAvailable: typeof window.gridlyApplyRailRouteImpactDomBridge === "function",
+    evaluatedRailDomCount: 0,
+    impactedSampleCount: 0,
+    matchedDomCount: 0,
+    escalatedDomCount: 0,
+    routeBridgeApplyError: "",
+    appliedAt: new Date().toISOString()
+  };
+  if (!summary.activeRoutePresent || !summary.routeCoordinatesPresent || !summary.domBridgeAvailable) {
+    window.__gridlyRouteIntelligenceHydrationLastApply = summary;
+    return summary;
+  }
+  try {
+    summary.routeBridgeApplyAttempted = true;
+    const bridgeResult = window.gridlyApplyRailRouteImpactDomBridge();
+    summary.activeRoutePresent = Boolean(bridgeResult?.activeRoutePresent ?? summary.activeRoutePresent);
+    summary.evaluatedRailDomCount = Number(bridgeResult?.evaluatedRailDomCount || 0);
+    summary.impactedSampleCount = Number(bridgeResult?.impactedSampleCount || 0);
+    summary.matchedDomCount = Number(bridgeResult?.matchedDomCount || 0);
+    summary.escalatedDomCount = Number(bridgeResult?.escalatedDomCount || 0);
+    summary.routeBridgeApplySuccess = summary.activeRoutePresent
+      && summary.evaluatedRailDomCount > 0
+      && summary.impactedSampleCount > 0
+      && summary.matchedDomCount > 0;
+  } catch (error) {
+    summary.routeBridgeApplyError = error?.message || "unknown error";
+    summary.routeBridgeApplySuccess = false;
+  }
+  window.__gridlyRouteIntelligenceHydrationLastApply = summary;
+  return summary;
+}
+
+window.gridlySafeApplyRouteIntelligenceAfterRouteRender = safeApplyRouteIntelligenceAfterRouteRender;
+
+window.gridlyRouteIntelligenceAudit = function gridlyRouteIntelligenceAudit() {
+  const routeGeometryAudit = typeof getGridlyActiveRouteCoordinatesForAudit === "function"
+    ? getGridlyActiveRouteCoordinatesForAudit()
+    : { activeRoutePresent: false, activeRouteCoordinateCount: 0, routeCoordinates: [] };
+  const bridgeSummary = routeGeometryAudit?.activeRoutePresent
+    ? safeApplyRouteIntelligenceAfterRouteRender("route_intelligence_audit_self_heal")
+    : (window.__gridlyRouteIntelligenceHydrationLastApply || { routeBridgeApplyAttempted: false, routeBridgeApplySuccess: false });
+  const audit = buildGridlyRouteIntelligenceAuditSnapshot();
+  return {
+    ...audit,
+    routeHydrationSelfHealAttempted: Boolean(routeGeometryAudit?.activeRoutePresent),
+    routeBridgeApplyAttempted: Boolean(bridgeSummary?.routeBridgeApplyAttempted),
+    routeBridgeApplySuccess: Boolean(bridgeSummary?.routeBridgeApplySuccess),
+    reasonIfZero: Number(audit.routeRelevantCount || 0) > 0 ? "" : getGridlyRouteIntelligenceZeroReason({
+      routeGeometryAudit,
+      layerSnapshot: getGridlyRouteHydrationLayerSnapshot(),
+      bridgeSummary,
+      intelligenceSnapshot: audit
+    })
+  };
+};
+
+window.gridlyRouteIntelligenceHydrationAudit = function gridlyRouteIntelligenceHydrationAudit() {
+  const routeGeometryAudit = typeof getGridlyActiveRouteCoordinatesForAudit === "function"
+    ? getGridlyActiveRouteCoordinatesForAudit()
+    : { activeRoutePresent: false, activeRouteCoordinateCount: 0, routeCoordinates: [] };
+  const layerSnapshot = getGridlyRouteHydrationLayerSnapshot();
+  const bridgeSummary = routeGeometryAudit?.activeRoutePresent
+    ? safeApplyRouteIntelligenceAfterRouteRender("route_intelligence_hydration_audit")
+    : (window.__gridlyRouteIntelligenceHydrationLastApply || { routeBridgeApplyAttempted: false, routeBridgeApplySuccess: false });
+  const intelligenceSnapshot = buildGridlyRouteIntelligenceAuditSnapshot();
+  return {
+    activeRoutePresent: Boolean(routeGeometryAudit?.activeRoutePresent),
+    routeCoordinatesPresent: Number(routeGeometryAudit?.activeRouteCoordinateCount || 0) >= 2,
+    routeLayerOnMap: Boolean(layerSnapshot.routeLayerOnMap),
+    routePointCount: Number(layerSnapshot.routePointCount || routeGeometryAudit?.activeRouteCoordinateCount || 0),
+    routeBridgeApplyAttempted: Boolean(bridgeSummary?.routeBridgeApplyAttempted),
+    routeBridgeApplySuccess: Boolean(bridgeSummary?.routeBridgeApplySuccess),
+    evaluatedCount: Number(intelligenceSnapshot?.evaluatedCount || 0),
+    routeRelevantCount: Number(intelligenceSnapshot?.routeRelevantCount || 0),
+    routeImpactPhraseCount: Number(intelligenceSnapshot?.routeImpactPhraseCount || 0),
+    domBridgePhraseCount: Number(intelligenceSnapshot?.domBridgePhraseCount || 0),
+    reasonIfZero: Number(intelligenceSnapshot?.routeRelevantCount || 0) > 0 ? "" : getGridlyRouteIntelligenceZeroReason({
+      routeGeometryAudit,
+      layerSnapshot,
+      bridgeSummary,
+      intelligenceSnapshot
+    }),
+    routeBridgeReason: bridgeSummary?.reason || "",
+    evaluatedRailDomCount: Number(bridgeSummary?.evaluatedRailDomCount || 0),
+    impactedSampleCount: Number(bridgeSummary?.impactedSampleCount || 0),
+    matchedDomCount: Number(bridgeSummary?.matchedDomCount || 0),
+    notes: ["Route hydration audit reuses the existing route-impact DOM bridge only; route rendering, markers, popups, and community bridge ownership are unchanged."]
+  };
 };
 
 
@@ -16408,6 +16538,9 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
   }
   routeRenderSucceeded = true;
   console.info("Gridly route render success", { pointCount: routePreviewPolylinePointCount });
+  if (typeof safeApplyRouteIntelligenceAfterRouteRender === "function") {
+    safeApplyRouteIntelligenceAfterRouteRender("route_render_success");
+  }
 
   if (map) {
     window.__gridlyRoutePreviewMapDebug = map;
