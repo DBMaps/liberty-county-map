@@ -10348,6 +10348,201 @@ function getGridlyCommunitySourceArray(name, getter) {
   }
 }
 
+
+const GRIDLY_COMMUNITY_LOCATION_FIELD_GROUPS = {
+  road: [
+    "primaryRoad", "primary_road", "roadName", "road_name", "routeName", "route_name", "resolvedRoadName",
+    "nearestRoad", "nearest_road", "road", "route", "highway", "corridor", "street", "street_name",
+    "snapped_road_name", "road_ref", "roadwayRef", "titleRoad"
+  ],
+  reference: [
+    "referenceRoadA", "reference_road_a", "referenceRoadB", "reference_road_b", "crossStreetA", "crossStreetB",
+    "crossStreet1", "crossStreet2", "fromStreet", "toStreet", "nearbyCrossStreet", "nearestCrossStreet",
+    "crossStreet", "cross_street", "intersecting_road", "intersectingRoad"
+  ],
+  crossing: [
+    "crossingRoad", "crossing_road", "crossingName", "crossing_name", "railroadCrossing", "railroad_crossing",
+    "resolvedCrossingName", "crossingLabel", "crossingId", "crossing_id", "crossingNumber", "crossing_number",
+    "crossing", "crossing_street"
+  ],
+  location: [
+    "nearbyKnownLocation", "nearby_known_location", "knownLocation", "known_location", "nearbyLocationPhrase",
+    "nearby_location_phrase", "locationPhrase", "location_phrase", "locationText", "locationLabel", "locationName",
+    "location_name", "directionalLocation", "directional_location", "direction", "area", "city", "place", "county",
+    "localizedSummary", "locationContext"
+  ]
+};
+
+const GRIDLY_COMMUNITY_SPECIFICITY_FIELDS = Array.from(new Set([
+  ...GRIDLY_COMMUNITY_LOCATION_FIELD_GROUPS.road,
+  ...GRIDLY_COMMUNITY_LOCATION_FIELD_GROUPS.reference,
+  ...GRIDLY_COMMUNITY_LOCATION_FIELD_GROUPS.crossing,
+  ...GRIDLY_COMMUNITY_LOCATION_FIELD_GROUPS.location
+]));
+
+function getGridlyNestedTextValue(obj = {}, path = "") {
+  if (!obj || typeof obj !== "object" || !path) return "";
+  const value = String(path).split(".").reduce((acc, key) => (acc && typeof acc === "object") ? acc[key] : undefined, obj);
+  return String(value ?? "").trim();
+}
+
+function getGridlyFirstNestedText(obj = {}, paths = []) {
+  for (const path of paths) {
+    const value = getGridlyNestedTextValue(obj, path);
+    if (value) return value;
+  }
+  return "";
+}
+
+function normalizeGridlyCommunityLocationText(value = "", { road = false } = {}) {
+  const text = String(value || "").trim().replace(/\s+/g, " ");
+  if (!text) return "";
+  if (/^(undefined|null|\[object object\]|unknown|n\/?a|na)$/i.test(text)) return "";
+  if (!road) return text;
+  if (/^(dayton|dayton area|liberty county|nearby|nearby corridors|local corridors)$/i.test(text)) return "";
+  if (typeof evaluateRoadNameCandidate === "function") {
+    const evaluated = evaluateRoadNameCandidate(text);
+    return evaluated.valid ? evaluated.normalized : "";
+  }
+  return text;
+}
+
+function buildGridlyCommunityFieldPaths(fields = []) {
+  return fields.flatMap((field) => [field, `raw.${field}`, `source.${field}`, `latestReport.${field}`, `raw.latestReport.${field}`]);
+}
+
+function getGridlyCommunityCrossingById(crossingId = "") {
+  const id = String(crossingId || "").trim();
+  if (!id || !Array.isArray(typeof crossings !== "undefined" ? crossings : null)) return null;
+  return crossings.find((crossing) => String(crossing?.id || crossing?.crossingId || crossing?.crossing_id || "").trim() === id) || null;
+}
+
+function resolveGridlyCommunityLocationEnrichment(raw = {}) {
+  const source = raw && typeof raw === "object" ? raw : {};
+  const coords = getGridlyIncidentCoordinate(source) || getGridlyIncidentCoordinate(source?.raw || {}) || getGridlyIncidentCoordinate(source?.latestReport || {});
+  const crossingId = getGridlyFirstNestedText(source, buildGridlyCommunityFieldPaths(["crossingId", "crossing_id", "crossingNumber", "crossing_number"]));
+  const crossingRecord = getGridlyCommunityCrossingById(crossingId);
+  const resolvedNearestRoad = coords && typeof resolveNearestRoadName === "function"
+    ? normalizeGridlyCommunityLocationText(resolveNearestRoadName(coords.lat, coords.lng), { road: true })
+    : "";
+  const resolvedNearbyKnownLocation = coords && typeof resolveNearbyKnownLocation === "function"
+    ? normalizeGridlyCommunityLocationText(resolveNearbyKnownLocation(coords.lat, coords.lng), { road: true })
+    : "";
+  const titleRoad = typeof extractRoadHintFromText === "function"
+    ? normalizeGridlyCommunityLocationText(extractRoadHintFromText([source?.title, source?.headline, source?.description, source?.detail, source?.details].filter(Boolean).join(" ")), { road: true })
+    : "";
+
+  const primaryRoad = normalizeGridlyCommunityLocationText(getGridlyFirstNestedText(source, buildGridlyCommunityFieldPaths(["primaryRoad", "primary_road", "roadName", "road_name", "routeName", "route_name", "road", "route", "street", "street_name", "snapped_road_name"])), { road: true })
+    || normalizeGridlyCommunityLocationText(crossingRecord?.road || crossingRecord?.name || crossingRecord?.crossingRoad, { road: true })
+    || titleRoad
+    || resolvedNearestRoad;
+  const nearestRoad = normalizeGridlyCommunityLocationText(getGridlyFirstNestedText(source, buildGridlyCommunityFieldPaths(["nearestRoad", "nearest_road", "nearestCrossStreet", "nearbyCrossStreet"])), { road: true })
+    || resolvedNearestRoad
+    || normalizeGridlyCommunityLocationText(crossingRecord?.road || crossingRecord?.name, { road: true });
+  const crossingRoad = normalizeGridlyCommunityLocationText(getGridlyFirstNestedText(source, buildGridlyCommunityFieldPaths(["crossingRoad", "crossing_road", "crossing_street", "cross_street"])), { road: true })
+    || normalizeGridlyCommunityLocationText(crossingRecord?.road || crossingRecord?.name || crossingRecord?.crossingRoad, { road: true });
+  const crossingName = normalizeGridlyCommunityLocationText(getGridlyFirstNestedText(source, buildGridlyCommunityFieldPaths(["crossingName", "crossing_name", "railroadCrossing", "railroad_crossing", "resolvedCrossingName", "crossingLabel", "crossing"])), { road: true })
+    || normalizeGridlyCommunityLocationText(crossingRecord?.name || crossingRecord?.crossingName || crossingRecord?.road, { road: true });
+  const referenceRoadA = normalizeGridlyCommunityLocationText(getGridlyFirstNestedText(source, buildGridlyCommunityFieldPaths(["referenceRoadA", "reference_road_a", "crossStreetA", "crossStreet1", "fromStreet", "intersecting_road", "intersectingRoad"])), { road: true });
+  const referenceRoadB = normalizeGridlyCommunityLocationText(getGridlyFirstNestedText(source, buildGridlyCommunityFieldPaths(["referenceRoadB", "reference_road_b", "crossStreetB", "crossStreet2", "toStreet"])), { road: true });
+  const highway = normalizeGridlyCommunityLocationText(getGridlyFirstNestedText(source, buildGridlyCommunityFieldPaths(["highway", "road_ref", "roadwayRef"])), { road: true });
+  const explicitCorridor = normalizeGridlyCommunityLocationText(getGridlyFirstNestedText(source, buildGridlyCommunityFieldPaths(["corridor"])), { road: true });
+  const nearbyKnownLocation = normalizeGridlyCommunityLocationText(getGridlyFirstNestedText(source, buildGridlyCommunityFieldPaths(["nearbyKnownLocation", "nearby_known_location", "knownLocation", "known_location", "locationName", "location_name", "locationLabel"])))
+    || resolvedNearbyKnownLocation;
+  const nearbyLocationPhrase = normalizeGridlyCommunityLocationText(getGridlyFirstNestedText(source, buildGridlyCommunityFieldPaths(["nearbyLocationPhrase", "nearby_location_phrase", "locationPhrase", "location_phrase", "locationText", "localizedSummary", "locationContext"])))
+    || (nearbyKnownLocation ? `Near ${nearbyKnownLocation}` : "");
+  const directionalLocation = normalizeGridlyCommunityLocationText(getGridlyFirstNestedText(source, buildGridlyCommunityFieldPaths(["directionalLocation", "directional_location", "direction"])))
+    || (/\b(?:west|east|north|south)\s+of\s+dayton\b/i.exec([source?.title, source?.headline, source?.description, source?.detail, source?.details].filter(Boolean).join(" "))?.[0] || "");
+  const city = normalizeGridlyCommunityLocationText(getGridlyFirstNestedText(source, buildGridlyCommunityFieldPaths(["city", "place"])));
+  const county = normalizeGridlyCommunityLocationText(getGridlyFirstNestedText(source, buildGridlyCommunityFieldPaths(["county"])));
+  const countyCityPhrase = [city, county].filter(Boolean).join(", ");
+  const knownCorridor = GRIDLY_COMMUNITY_CORRIDORS.find((candidate) => {
+    const text = normalizeGridlyCommunityPresenceToken([explicitCorridor, highway, primaryRoad, nearestRoad, crossingRoad, crossingName, referenceRoadA, referenceRoadB].join(" "));
+    return candidate.aliases.some((alias) => text.includes(alias));
+  })?.name || "";
+  const corridor = knownCorridor || explicitCorridor || highway || primaryRoad || nearestRoad || crossingRoad || "";
+
+  return {
+    primaryRoad,
+    roadName: primaryRoad || nearestRoad || crossingRoad || source?.roadName || source?.road_name || "",
+    nearestRoad,
+    referenceRoadA,
+    referenceRoadB,
+    corridor,
+    highway,
+    crossingRoad,
+    crossingName,
+    railroadCrossing: crossingName || crossingRoad || "",
+    crossingId,
+    nearbyKnownLocation,
+    nearbyLocationPhrase,
+    directionalLocation,
+    countyCityPhrase,
+    city,
+    county,
+    knownCorridorAlias: knownCorridor,
+    locationContext: nearbyLocationPhrase || directionalLocation || countyCityPhrase || ""
+  };
+}
+
+function getGridlyCommunitySpecificityDiagnostics(items = []) {
+  const scoped = Array.isArray(items) ? items : [];
+  const countFields = (fields) => fields.reduce((acc, field) => {
+    const count = scoped.filter((item) => getGridlyCommunityPulseIncidentFieldValues(item).some((entry) => entry.field === field && String(entry.value || "").trim())).length;
+    if (count > 0) acc[field] = count;
+    return acc;
+  }, {});
+  const roadCounts = countFields(GRIDLY_COMMUNITY_LOCATION_FIELD_GROUPS.road);
+  const crossingCounts = countFields(GRIDLY_COMMUNITY_LOCATION_FIELD_GROUPS.crossing);
+  const locationCounts = countFields(GRIDLY_COMMUNITY_LOCATION_FIELD_GROUPS.location);
+  const selectedWithSpecificity = scoped.filter((item) => Boolean(resolveGridlyIncidentSpecificCorridor(item)));
+  const selectedItemsWithSpecificity = selectedWithSpecificity.length;
+  const selectedItemsMissingSpecificity = Math.max(0, scoped.length - selectedItemsWithSpecificity);
+  const specificityCoveragePercent = scoped.length ? Math.round((selectedItemsWithSpecificity / scoped.length) * 100) : 0;
+  return {
+    enrichedLocationFieldCounts: locationCounts,
+    enrichedRoadFieldCounts: roadCounts,
+    enrichedCrossingFieldCounts: crossingCounts,
+    selectedItemsWithSpecificity,
+    selectedItemsMissingSpecificity,
+    specificityCoveragePercent
+  };
+}
+
+function getGridlyCommunityPulseSpecificityAuditFields(selected = [], corridorSpecificity = {}) {
+  const scoped = Array.isArray(selected) ? selected : [];
+  const fieldEntries = scoped.flatMap((item) => getGridlyCommunityPulseIncidentFieldValues(item));
+  const genericLabels = new Set(["local corridors", "nearby corridors", "around town", "local", "unknown", "n/a", "na"]);
+  const usable = (entry) => entry?.value && !genericLabels.has(normalizeGridlyCommunityPresenceToken(entry.value));
+  const specificityFieldSet = new Set(GRIDLY_COMMUNITY_SPECIFICITY_FIELDS);
+  const selectedSpecificityFields = Array.from(new Set(fieldEntries
+    .filter((entry) => specificityFieldSet.has(entry.field) && usable(entry))
+    .map((entry) => entry.field)))
+    .slice(0, 24);
+  const roadFields = new Set([...GRIDLY_COMMUNITY_LOCATION_FIELD_GROUPS.road, ...GRIDLY_COMMUNITY_LOCATION_FIELD_GROUPS.reference]);
+  const crossingFields = new Set(GRIDLY_COMMUNITY_LOCATION_FIELD_GROUPS.crossing);
+  const selectedRoadCandidates = Array.from(new Set(fieldEntries
+    .filter((entry) => roadFields.has(entry.field) && usable(entry))
+    .map((entry) => String(entry.value || "").trim())))
+    .slice(0, 12);
+  const selectedCrossingCandidates = Array.from(new Set(fieldEntries
+    .filter((entry) => crossingFields.has(entry.field) && usable(entry))
+    .map((entry) => String(entry.value || "").trim())))
+    .slice(0, 12);
+  const fallbackUsed = Boolean(corridorSpecificity.genericCorridorFallbackUsed);
+  return {
+    selectedSpecificityFields,
+    selectedRoadCandidates,
+    selectedCrossingCandidates,
+    specificityResolverReason: corridorSpecificity.corridorSpecificitySource
+      ? `${corridorSpecificity.corridorSpecificitySource} selected ${corridorSpecificity.displayCorridor || "no display corridor"}`
+      : "specificity resolver not evaluated",
+    specificityResolverFallbackReason: fallbackUsed
+      ? "No selected Community Presence item exposed a usable road, corridor, crossing, known-location, or directional field."
+      : ""
+  };
+}
+
 function normalizeGridlyCommunityPresenceDomCandidate(target, index = 0) {
   if (!target?.dataset) return null;
   const dataset = target.dataset;
@@ -10358,7 +10553,7 @@ function normalizeGridlyCommunityPresenceDomCandidate(target, index = 0) {
   const type = dataset.category || dataset.gridlyCategory || dataset.visualStyle || "rendered_marker";
   const severity = dataset.gridlyCommunitySeverity || dataset.gridlyConsequence || dataset.visualPriority || "low";
   const freshnessLevel = dataset.gridlyCommunityFreshness || dataset.gridlyFreshness || dataset.freshness || "recent";
-  return {
+  const base = {
     id,
     reportId: id,
     title: dataset.gridlyIntelligence || dataset.title || "Rendered community incident",
@@ -10371,31 +10566,50 @@ function normalizeGridlyCommunityPresenceDomCandidate(target, index = 0) {
     lifecycleState: dataset.state === "cleared" ? "cleared" : "active",
     lat: Number.isFinite(lat) ? lat : null,
     lng: Number.isFinite(lng) ? lng : null,
+    primaryRoad: dataset.primaryRoad || "",
+    roadName: dataset.roadName || dataset.gridlyCommunityCorridor || "",
+    nearestRoad: dataset.nearestRoad || "",
+    referenceRoadA: dataset.referenceRoadA || "",
+    referenceRoadB: dataset.referenceRoadB || "",
+    corridor: dataset.gridlyCommunityCorridor || dataset.corridor || "",
+    highway: dataset.highway || "",
+    crossingRoad: dataset.crossingRoad || "",
+    crossingName: dataset.crossingName || "",
+    railroadCrossing: dataset.railroadCrossing || dataset.crossingName || "",
+    crossingId: dataset.crossingId || "",
+    nearbyKnownLocation: dataset.nearbyKnownLocation || "",
+    nearbyLocationPhrase: dataset.nearbyLocationPhrase || dataset.locationPhrase || "",
+    directionalLocation: dataset.directionalLocation || "",
+    countyCityPhrase: dataset.countyCityPhrase || dataset.city || dataset.county || "",
     severity,
     freshnessLevel,
     source: "rendered_marker_dom",
     raw: target
   };
+  const enrichment = resolveGridlyCommunityLocationEnrichment(base);
+  return { ...base, ...Object.fromEntries(Object.entries(enrichment).filter(([, value]) => String(value || "").trim())), raw: target };
 }
 
 function normalizeGridlyCommunityPresenceCandidate(raw = {}, sourceName = "unknown", index = 0) {
   if (!raw || typeof raw !== "object") return null;
-  const coords = getGridlyIncidentCoordinate(raw) || getGridlyIncidentCoordinate(raw?.raw || {});
+  const coords = getGridlyIncidentCoordinate(raw) || getGridlyIncidentCoordinate(raw?.raw || {}) || getGridlyIncidentCoordinate(raw?.latestReport || {});
   const id = getGridlyCommunityIncidentId(raw);
   const type = raw?.type || raw?.report_type || raw?.reportType || raw?.category || raw?.condition || raw?.kind || "community_activity";
+  const enrichment = resolveGridlyCommunityLocationEnrichment(raw);
   return {
     ...raw,
+    ...Object.fromEntries(Object.entries(enrichment).filter(([, value]) => String(value || "").trim())),
     id: String(id || `${sourceName}:${index}`),
     reportId: raw?.reportId || raw?.report_id || raw?.id || String(id || `${sourceName}:${index}`),
-    title: raw?.title || raw?.headline || raw?.location_name || raw?.area || raw?.description || raw?.detail || "Community activity",
+    title: raw?.title || raw?.headline || raw?.location_name || raw?.area || raw?.description || raw?.detail || enrichment.nearbyLocationPhrase || "Community activity",
     headline: raw?.headline || raw?.title || raw?.description || raw?.detail || "Community activity",
     type,
     kind: raw?.kind || raw?.reportKind || type,
     report_type: raw?.report_type || raw?.reportType || type,
     lat: coords ? coords.lat : raw?.lat,
     lng: coords ? coords.lng : (raw?.lng ?? raw?.lon),
-    roadName: raw?.roadName || raw?.road_name || raw?.street_name || raw?.nearest_road || raw?.corridor || raw?.route || "",
-    corridor: raw?.corridor || raw?.roadName || raw?.road_name || raw?.street_name || raw?.nearest_road || raw?.route || "",
+    roadName: enrichment.roadName || raw?.roadName || raw?.road_name || raw?.street_name || raw?.nearest_road || raw?.corridor || raw?.route || "",
+    corridor: enrichment.corridor || raw?.corridor || raw?.roadName || raw?.road_name || raw?.street_name || raw?.nearest_road || raw?.route || "",
     severity: raw?.severity || raw?.impact || "low",
     age_minutes: raw?.age_minutes ?? raw?.minutesAgo ?? raw?.ageMinutes,
     freshnessLevel: raw?.freshnessLevel || raw?.freshness || "",
@@ -10483,9 +10697,12 @@ function getGridlyCommunityPresenceCandidates(options = {}) {
 
 function detectGridlyCommunityCorridor(incident = {}) {
   const text = normalizeGridlyCommunityPresenceToken([
-    incident?.corridor, incident?.roadName, incident?.road_name, incident?.street_name, incident?.nearest_road,
-    incident?.location_name, incident?.area, incident?.title, incident?.description, incident?.detail, incident?.details,
-    incident?.route, incident?.highway, incident?.crossingName
+    incident?.corridor, incident?.knownCorridorAlias, incident?.primaryRoad, incident?.primary_road, incident?.roadName, incident?.road_name,
+    incident?.street_name, incident?.nearestRoad, incident?.nearest_road, incident?.referenceRoadA, incident?.reference_road_a,
+    incident?.referenceRoadB, incident?.reference_road_b, incident?.crossingRoad, incident?.crossing_road, incident?.crossingName,
+    incident?.railroadCrossing, incident?.nearbyKnownLocation, incident?.nearbyLocationPhrase, incident?.directionalLocation,
+    incident?.location_name, incident?.area, incident?.city, incident?.county, incident?.title, incident?.description, incident?.detail, incident?.details,
+    incident?.route, incident?.highway
   ].join(" "));
   const detected = GRIDLY_COMMUNITY_CORRIDORS.find((corridor) => corridor.aliases.some((alias) => text.includes(alias)));
   return detected?.name || "Local corridors";
@@ -10604,6 +10821,7 @@ function buildCommunityPresenceDataset(options = {}) {
     corridorIncidentCounts,
     dominantCorridor,
     corridorSeveritySummary,
+    ...getGridlyCommunitySpecificityDiagnostics(selected),
     candidateSourceNames: sourceDiagnostics.candidateSourceNames,
     candidateSourceCounts: sourceDiagnostics.candidateSourceCounts,
     rawCandidateSourceCounts: sourceDiagnostics.rawCandidateSourceCounts,
@@ -10804,6 +11022,12 @@ window.gridlyCommunityPresenceAudit = function gridlyCommunityPresenceAudit(opti
       sourceErrors: dataset.sourceErrors,
       corridorClusterCount: dataset.corridorClusterCount,
       nearbyIncidentCount: dataset.nearbyIncidentCount,
+      enrichedLocationFieldCounts: dataset.enrichedLocationFieldCounts || {},
+      enrichedRoadFieldCounts: dataset.enrichedRoadFieldCounts || {},
+      enrichedCrossingFieldCounts: dataset.enrichedCrossingFieldCounts || {},
+      selectedItemsWithSpecificity: Number(dataset.selectedItemsWithSpecificity || 0),
+      selectedItemsMissingSpecificity: Number(dataset.selectedItemsMissingSpecificity || 0),
+      specificityCoveragePercent: Number(dataset.specificityCoveragePercent || 0),
       samplePresenceItems: dataset.selected.slice(0, 8).map((item) => ({
         id: item.id,
         communityPresenceScore: item.communityPresenceScore,
@@ -10812,12 +11036,22 @@ window.gridlyCommunityPresenceAudit = function gridlyCommunityPresenceAudit(opti
         freshnessLevel: item.freshnessLevel,
         nearbyCount: item.nearbyCount,
         distanceMiles: item.distanceMiles,
+        primaryRoad: item.incident?.primaryRoad || "",
+        roadName: item.incident?.roadName || "",
+        nearestRoad: item.incident?.nearestRoad || "",
+        referenceRoadA: item.incident?.referenceRoadA || "",
+        referenceRoadB: item.incident?.referenceRoadB || "",
+        crossingRoad: item.incident?.crossingRoad || "",
+        crossingName: item.incident?.crossingName || "",
+        nearbyKnownLocation: item.incident?.nearbyKnownLocation || "",
+        nearbyLocationPhrase: item.incident?.nearbyLocationPhrase || "",
+        directionalLocation: item.incident?.directionalLocation || "",
         phrase: dataset.phrases[dataset.selected.indexOf(item)] || ""
       })),
       awarenessMode: dataset.awarenessMode
     };
   } catch (error) {
-    return { loaded: false, version: GRIDLY_COMMUNITY_PRESENCE_VERSION, evaluatedCount: 0, selectedCommunityCount: 0, highestPresenceScore: 0, candidateSourceNames: [], candidateSourceCounts: {}, rawCandidateCount: 0, normalizedCandidateCount: 0, skippedCandidateReasons: {}, corridorClusterCount: 0, nearbyIncidentCount: 0, samplePresenceItems: [], awarenessMode: "community", notes: [`Community presence audit fallback: ${error?.message || "unknown error"}`] };
+    return { loaded: false, version: GRIDLY_COMMUNITY_PRESENCE_VERSION, evaluatedCount: 0, selectedCommunityCount: 0, highestPresenceScore: 0, candidateSourceNames: [], candidateSourceCounts: {}, rawCandidateCount: 0, normalizedCandidateCount: 0, skippedCandidateReasons: {}, corridorClusterCount: 0, nearbyIncidentCount: 0, enrichedLocationFieldCounts: {}, enrichedRoadFieldCounts: {}, enrichedCrossingFieldCounts: {}, selectedItemsWithSpecificity: 0, selectedItemsMissingSpecificity: 0, specificityCoveragePercent: 0, samplePresenceItems: [], awarenessMode: "community", notes: [`Community presence audit fallback: ${error?.message || "unknown error"}`] };
   }
 };
 window.gridlyCommunityCorridorAudit = function gridlyCommunityCorridorAudit(options = {}) {
@@ -10848,6 +11082,11 @@ let gridlyCommunityPulseAuditState = {
   corridorSpecificitySource: "not_rendered_yet",
   corridorSpecificityConfidence: 0,
   selectedLocationFieldsUsed: [],
+  selectedSpecificityFields: [],
+  selectedRoadCandidates: [],
+  selectedCrossingCandidates: [],
+  specificityResolverReason: "not_rendered_yet",
+  specificityResolverFallbackReason: "",
   genericCorridorFallbackUsed: false,
   specificityUpgradeApplied: false,
   selectedCommunityCount: 0,
@@ -11005,10 +11244,16 @@ function getGridlyCommunityPulseIncidentFieldValues(item = {}) {
   const incident = item?.incident && typeof item.incident === "object" ? item.incident : item;
   const raw = incident?.raw && typeof incident.raw === "object" ? incident.raw : {};
   const fieldNames = [
-    "primaryRoad", "primary_road", "roadName", "road_name", "routeName", "route_name", "corridor", "highway", "street", "street_name",
-    "referenceRoadA", "reference_road_a", "referenceRoadB", "reference_road_b", "crossingRoad", "crossing_road", "crossingName",
-    "crossing_name", "nearestRoad", "nearest_road", "railroadCrossing", "railroad_crossing", "crossingId", "crossing_id",
-    "location_name", "locationName", "area", "title", "headline", "description", "detail", "details"
+    "primaryRoad", "primary_road", "roadName", "road_name", "routeName", "route_name", "resolvedRoadName", "corridor",
+    "knownCorridorAlias", "highway", "street", "street_name", "road", "route", "snapped_road_name", "road_ref",
+    "referenceRoadA", "reference_road_a", "referenceRoadB", "reference_road_b", "crossStreetA", "crossStreetB",
+    "crossStreet1", "crossStreet2", "fromStreet", "toStreet", "nearbyCrossStreet", "nearestCrossStreet",
+    "crossingRoad", "crossing_road", "crossingName", "crossing_name", "nearestRoad", "nearest_road",
+    "railroadCrossing", "railroad_crossing", "resolvedCrossingName", "crossingLabel", "crossingId", "crossing_id",
+    "nearbyKnownLocation", "nearby_known_location", "nearbyLocationPhrase", "nearby_location_phrase", "knownLocation",
+    "known_location", "locationPhrase", "location_phrase", "locationText", "locationLabel", "directionalLocation",
+    "directional_location", "countyCityPhrase", "locationContext", "location_name", "locationName", "area", "city",
+    "place", "county", "localizedSummary", "title", "headline", "description", "detail", "details"
   ];
   const values = [];
   const addValue = (field, value, source = "incident") => {
@@ -11065,7 +11310,7 @@ function resolveGridlyIncidentSpecificCorridor(item = {}) {
     };
   }
 
-  const roadFields = ["primaryRoad", "primary_road", "roadName", "road_name", "routeName", "route_name", "corridor", "highway", "street", "street_name", "referenceRoadA", "reference_road_a", "referenceRoadB", "reference_road_b"];
+  const roadFields = ["primaryRoad", "primary_road", "roadName", "road_name", "routeName", "route_name", "resolvedRoadName", "nearestRoad", "nearest_road", "corridor", "knownCorridorAlias", "highway", "street", "street_name", "road", "route", "referenceRoadA", "reference_road_a", "referenceRoadB", "reference_road_b"];
   const genericLabels = new Set(["local corridors", "nearby corridors", "around town", "local", "unknown", "n/a", "na"]);
   const roadEntry = values.find((entry) => roadFields.includes(entry.field) && !genericLabels.has(normalizeGridlyCommunityPresenceToken(entry.value)));
   if (roadEntry) {
@@ -11078,7 +11323,7 @@ function resolveGridlyIncidentSpecificCorridor(item = {}) {
     };
   }
 
-  const crossingFields = ["crossingRoad", "crossing_road", "crossingName", "crossing_name", "nearestRoad", "nearest_road", "railroadCrossing", "railroad_crossing"];
+  const crossingFields = ["crossingRoad", "crossing_road", "crossingName", "crossing_name", "railroadCrossing", "railroad_crossing", "resolvedCrossingName", "crossingLabel"];
   const crossingEntry = values.find((entry) => crossingFields.includes(entry.field) && !genericLabels.has(normalizeGridlyCommunityPresenceToken(entry.value)));
   if (crossingEntry) {
     return {
@@ -11295,6 +11540,7 @@ function buildGridlyCommunityPulseModel(options = {}) {
   });
   const dominantCorridor = corridorSpecificity.displayCorridor || rawDominantCorridor || null;
   const displayCorridor = corridorSpecificity.displayCorridor || dominantCorridor;
+  const specificityAuditFields = getGridlyCommunityPulseSpecificityAuditFields(dataset.selected, corridorSpecificity);
   const pulseRenderTarget = GRIDLY_COMMUNITY_PULSE_RENDER_TARGET;
   const dominantCorridorCount = Number(corridorPriority.dominantCorridorCount || (rawDominantCorridor ? dataset.corridorIncidentCounts?.[rawDominantCorridor] : 0) || 0);
   const activeCorridorCount = Object.entries(dataset.corridorIncidentCounts || {})
@@ -11375,6 +11621,11 @@ function buildGridlyCommunityPulseModel(options = {}) {
     corridorSpecificitySource: corridorSpecificity.corridorSpecificitySource,
     corridorSpecificityConfidence: Number(corridorSpecificity.corridorSpecificityConfidence || 0),
     selectedLocationFieldsUsed: Array.isArray(corridorSpecificity.selectedLocationFieldsUsed) ? corridorSpecificity.selectedLocationFieldsUsed : [],
+    selectedSpecificityFields: specificityAuditFields.selectedSpecificityFields,
+    selectedRoadCandidates: specificityAuditFields.selectedRoadCandidates,
+    selectedCrossingCandidates: specificityAuditFields.selectedCrossingCandidates,
+    specificityResolverReason: specificityAuditFields.specificityResolverReason,
+    specificityResolverFallbackReason: specificityAuditFields.specificityResolverFallbackReason,
     genericCorridorFallbackUsed: Boolean(corridorSpecificity.genericCorridorFallbackUsed),
     specificityUpgradeApplied: Boolean(corridorSpecificity.specificityUpgradeApplied),
     selectedCommunityCount,
@@ -11410,6 +11661,11 @@ function renderGridlyCommunityPulse(options = {}) {
       corridorSpecificitySource: "render_error",
       corridorSpecificityConfidence: 0,
       selectedLocationFieldsUsed: [],
+      selectedSpecificityFields: [],
+      selectedRoadCandidates: [],
+      selectedCrossingCandidates: [],
+      specificityResolverReason: "render_error",
+      specificityResolverFallbackReason: "",
       genericCorridorFallbackUsed: false,
       specificityUpgradeApplied: false,
       selectedCommunityCount: 0,
@@ -11464,6 +11720,11 @@ window.gridlyCommunityPulseAudit = function gridlyCommunityPulseAudit(options = 
     corridorSpecificitySource: state.corridorSpecificitySource || "fallback",
     corridorSpecificityConfidence: Number(state.corridorSpecificityConfidence || 0),
     selectedLocationFieldsUsed: Array.isArray(state.selectedLocationFieldsUsed) ? state.selectedLocationFieldsUsed.slice(0, 12) : [],
+    selectedSpecificityFields: Array.isArray(state.selectedSpecificityFields) ? state.selectedSpecificityFields.slice(0, 24) : [],
+    selectedRoadCandidates: Array.isArray(state.selectedRoadCandidates) ? state.selectedRoadCandidates.slice(0, 12) : [],
+    selectedCrossingCandidates: Array.isArray(state.selectedCrossingCandidates) ? state.selectedCrossingCandidates.slice(0, 12) : [],
+    specificityResolverReason: state.specificityResolverReason || "",
+    specificityResolverFallbackReason: state.specificityResolverFallbackReason || "",
     genericCorridorFallbackUsed: Boolean(state.genericCorridorFallbackUsed),
     specificityUpgradeApplied: Boolean(state.specificityUpgradeApplied),
     selectedCommunityCount: Number(state.selectedCommunityCount || 0),
