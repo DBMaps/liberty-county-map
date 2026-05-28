@@ -507,29 +507,66 @@ function evaluateGridlyIncidentFreshness(incident, options = {}) {
     const safeIncident = incident && typeof incident === "object" ? incident : {};
     const safeOptions = options && typeof options === "object" ? options : {};
     const nowMs = Number.isFinite(Number(safeOptions.nowMs)) ? Number(safeOptions.nowMs) : Date.now();
-    const maybeMs = [
-      safeIncident?.updatedAt, safeIncident?.reportedAt, safeIncident?.createdAt, safeIncident?.timestamp,
-      safeIncident?.submittedAt, safeIncident?.lastUpdatedAt
-    ].map((value) => {
-      const n = typeof value === "number" ? value : Date.parse(String(value || ""));
+    const timestampPriority = [
+      "submittedAt",
+      "reportedAt",
+      "createdAt",
+      "reportCreatedAt",
+      "originalTimestamp",
+      "incidentTimestamp",
+      "timestamp",
+      "updatedAt",
+      "lastUpdatedAt",
+      "renderedAt",
+      "refreshedAt",
+      "lastSeenAt",
+      "loadedAt"
+    ];
+    const softTimestampSources = new Set(["renderedAt", "refreshedAt", "lastSeenAt", "loadedAt"]);
+    const parseTimestamp = (value) => {
+      if (value === null || value === undefined || value === "") return null;
+      const n = typeof value === "number" ? value : Date.parse(String(value));
       return Number.isFinite(n) ? n : null;
-    }).filter((value) => Number.isFinite(value));
-    const referenceMs = maybeMs.length ? Math.max(...maybeMs) : nowMs;
-    const ageMinutes = Math.max(0, Math.round((nowMs - referenceMs) / 60000));
+    };
+    const timestampCandidates = timestampPriority.map((key) => ({
+      key,
+      value: safeIncident?.[key],
+      parsedMs: parseTimestamp(safeIncident?.[key]),
+      parseValid: Number.isFinite(parseTimestamp(safeIncident?.[key])),
+      softSource: softTimestampSources.has(key)
+    }));
+    const preferredCandidate = timestampCandidates.find((candidate) => candidate.parseValid && !candidate.softSource);
+    const fallbackCandidate = timestampCandidates.find((candidate) => candidate.parseValid);
+    const selectedCandidate = preferredCandidate || fallbackCandidate || null;
+    const referenceMs = Number.isFinite(selectedCandidate?.parsedMs) ? Number(selectedCandidate.parsedMs) : null;
+    const timestampSourceUsed = selectedCandidate?.key || "missing";
+    const timestampValueUsed = selectedCandidate?.value ?? null;
+    const timestampParseValid = Boolean(selectedCandidate?.parseValid);
+    const missingTimestamp = !referenceMs;
+    const invalidTimestampCount = timestampCandidates.filter((candidate) => candidate.value !== null && candidate.value !== undefined && candidate.value !== "" && !candidate.parseValid).length;
+    const ageMinutes = Number.isFinite(referenceMs) ? Math.max(0, Math.round((nowMs - referenceMs) / 60000)) : null;
     const confirmationsRaw = safeIncident?.confirmations ?? safeIncident?.confirmationCount ?? safeIncident?.reports_count ?? safeIncident?.driverConfirmations ?? 0;
     const confirmations = Math.max(0, Number(confirmationsRaw) || 0);
-    let freshnessLevel = "recent";
-    let freshnessScore = 72;
-    if (ageMinutes <= 30) { freshnessLevel = "fresh"; freshnessScore = 96; }
-    else if (ageMinutes <= 180) { freshnessLevel = "recent"; freshnessScore = 78; }
-    else if (ageMinutes <= 720) { freshnessLevel = "aging"; freshnessScore = 52; }
-    else { freshnessLevel = "stale"; freshnessScore = 26; }
+    let freshnessLevel = "unknown";
+    let freshnessScore = 34;
+    if (Number.isFinite(ageMinutes)) {
+      if (ageMinutes <= 30) { freshnessLevel = "fresh"; freshnessScore = 96; }
+      else if (ageMinutes <= 180) { freshnessLevel = "recent"; freshnessScore = 78; }
+      else if (ageMinutes <= 720) { freshnessLevel = "aging"; freshnessScore = 52; }
+      else { freshnessLevel = "stale"; freshnessScore = 26; }
+    } else {
+      freshnessLevel = "unknown";
+      freshnessScore = 24;
+    }
     freshnessScore = Math.max(0, Math.min(100, freshnessScore + Math.min(16, confirmations * 3)));
-    const confidenceWeight = Math.max(0.45, Math.min(1.16, Number((0.58 + (freshnessScore / 100) * 0.58).toFixed(2))));
-    const freshnessReason = `age=${ageMinutes}m; confirmations=${confirmations}; level=${freshnessLevel}`;
-    return { freshnessLevel, freshnessScore, ageMinutes, confidenceWeight, freshnessReason };
+    const confidenceWeightBase = freshnessLevel === "unknown" ? 0.36 : 0.58 + (freshnessScore / 100) * 0.58;
+    const confidenceWeight = Math.max(0.28, Math.min(1.16, Number(confidenceWeightBase.toFixed(2))));
+    const freshnessReason = Number.isFinite(ageMinutes)
+      ? `age=${ageMinutes}m; confirmations=${confirmations}; level=${freshnessLevel}; timestampSource=${timestampSourceUsed}`
+      : `timestamp missing/invalid; confirmations=${confirmations}; level=${freshnessLevel}`;
+    return { freshnessLevel, freshnessScore, ageMinutes, confidenceWeight, freshnessReason, timestampSourceUsed, timestampValueUsed, timestampCandidates, timestampParseValid, missingTimestamp, invalidTimestampCount };
   } catch (error) {
-    return { freshnessLevel: "recent", freshnessScore: 60, ageMinutes: 0, confidenceWeight: 1, freshnessReason: "fallback: unable to evaluate freshness safely." };
+    return { freshnessLevel: "unknown", freshnessScore: 20, ageMinutes: null, confidenceWeight: 0.35, freshnessReason: "fallback: unable to evaluate freshness safely.", timestampSourceUsed: "fallback", timestampValueUsed: null, timestampCandidates: [], timestampParseValid: false, missingTimestamp: true, invalidTimestampCount: 0 };
   }
 }
 
@@ -1420,29 +1457,41 @@ window.gridlyFreshnessAudit = function gridlyFreshnessAudit() {
   try {
     const incidents = Array.isArray(getUnifiedIncidents?.()) ? getUnifiedIncidents() : (Array.isArray(activeHazards) ? activeHazards : []);
     const evaluated = incidents.map((incident) => ({ incident, freshness: evaluateGridlyIncidentFreshness(incident) }));
-    const freshnessCounts = { fresh: 0, recent: 0, aging: 0, stale: 0 };
+    const freshnessCounts = { fresh: 0, recent: 0, aging: 0, stale: 0, unknown: 0 };
+    const timestampSourceCounts = {};
+    let missingTimestampCount = 0;
+    let invalidTimestampCount = 0;
     let totalAge = 0;
     evaluated.forEach(({ freshness }) => {
-      const level = String(freshness?.freshnessLevel || "recent").toLowerCase();
+      const level = String(freshness?.freshnessLevel || "unknown").toLowerCase();
       if (freshnessCounts[level] === undefined) freshnessCounts[level] = 0;
       freshnessCounts[level] += 1;
-      totalAge += Number(freshness?.ageMinutes || 0);
+      const source = String(freshness?.timestampSourceUsed || "missing");
+      timestampSourceCounts[source] = (timestampSourceCounts[source] || 0) + 1;
+      if (freshness?.missingTimestamp) missingTimestampCount += 1;
+      invalidTimestampCount += Number(freshness?.invalidTimestampCount || 0) > 0 ? 1 : 0;
+      if (Number.isFinite(Number(freshness?.ageMinutes))) totalAge += Number(freshness.ageMinutes);
     });
     const byAgeAsc = [...evaluated].sort((a, b) => Number(a.freshness?.ageMinutes || 0) - Number(b.freshness?.ageMinutes || 0));
-    const formatSample = ({ incident, freshness }) => ({ id: incident?.id || incident?.crossingId || "", type: incident?.type || incident?.report_type || "unknown", ageMinutes: Number(freshness?.ageMinutes || 0), freshnessLevel: freshness?.freshnessLevel || "recent", confidenceWeight: Number(freshness?.confidenceWeight || 1), freshnessReason: freshness?.freshnessReason || "" });
+    const formatSample = ({ incident, freshness }) => ({ id: incident?.id || incident?.crossingId || "", type: incident?.type || incident?.report_type || "unknown", ageMinutes: Number.isFinite(Number(freshness?.ageMinutes)) ? Number(freshness.ageMinutes) : null, freshnessLevel: freshness?.freshnessLevel || "unknown", confidenceWeight: Number(freshness?.confidenceWeight || 1), freshnessReason: freshness?.freshnessReason || "", timestampSourceUsed: freshness?.timestampSourceUsed || "missing", timestampValueUsed: freshness?.timestampValueUsed ?? null, missingTimestamp: Boolean(freshness?.missingTimestamp), timestampParseValid: Boolean(freshness?.timestampParseValid) });
     return {
       evaluatedCount: evaluated.length,
       freshnessCounts,
       staleCount: Number(freshnessCounts.stale || 0),
       agingCount: Number(freshnessCounts.aging || 0),
       freshCount: Number(freshnessCounts.fresh || 0),
-      averageAgeMinutes: evaluated.length ? Math.round(totalAge / evaluated.length) : 0,
+      unknownFreshnessCount: Number(freshnessCounts.unknown || 0),
+      timestampSourceCounts,
+      missingTimestampCount,
+      invalidTimestampCount,
+      averageAgeMinutes: evaluated.length ? Math.round(totalAge / evaluated.filter(({ freshness }) => Number.isFinite(Number(freshness?.ageMinutes))).length || 0) : 0,
       oldestSamples: byAgeAsc.slice(-6).reverse().map(formatSample),
       freshestSamples: byAgeAsc.slice(0, 6).map(formatSample),
+      timestampSamples: byAgeAsc.slice(0, 3).concat(byAgeAsc.slice(-3)).map(formatSample),
       notes: ["Freshness audit is read-only and uses on-demand incident timestamp/confirmation signals only."]
     };
   } catch (error) {
-    return { evaluatedCount: 0, freshnessCounts: { fresh: 0, recent: 0, aging: 0, stale: 0 }, staleCount: 0, agingCount: 0, freshCount: 0, averageAgeMinutes: 0, oldestSamples: [], freshestSamples: [], notes: [`Freshness audit fallback: ${error?.message || "unknown error"}`] };
+    return { evaluatedCount: 0, freshnessCounts: { fresh: 0, recent: 0, aging: 0, stale: 0, unknown: 0 }, staleCount: 0, agingCount: 0, freshCount: 0, unknownFreshnessCount: 0, timestampSourceCounts: {}, missingTimestampCount: 0, invalidTimestampCount: 0, averageAgeMinutes: 0, oldestSamples: [], freshestSamples: [], timestampSamples: [], notes: [`Freshness audit fallback: ${error?.message || "unknown error"}`] };
   }
 };
 
@@ -1456,6 +1505,13 @@ window.gridlyRouteFreshnessConsequenceAudit = function gridlyRouteFreshnessConse
       return { incident, base, raw };
     });
     const routeRelevant = evaluated.filter((entry) => Boolean(entry.base?.routeRelevant));
+    const unknownFreshnessCount = routeRelevant.filter(({ base }) => String(base?.freshnessLevel || "").toLowerCase() === "unknown").length;
+    const missingTimestampRouteRelevantCount = routeRelevant.filter(({ incident }) => Boolean(evaluateGridlyIncidentFreshness(incident)?.missingTimestamp)).length;
+    const timestampSourceCounts = routeRelevant.reduce((acc, { incident }) => {
+      const src = String(evaluateGridlyIncidentFreshness(incident)?.timestampSourceUsed || "missing");
+      acc[src] = (acc[src] || 0) + 1;
+      return acc;
+    }, {});
     let downgradedConsequenceCount = 0;
     let upgradedConsequenceCount = 0;
     routeRelevant.forEach(({ base, raw }) => {
@@ -1476,6 +1532,9 @@ window.gridlyRouteFreshnessConsequenceAudit = function gridlyRouteFreshnessConse
       downgradedConsequenceCount,
       upgradedConsequenceCount,
       highestFreshnessWeightedConsequence,
+      unknownFreshnessCount,
+      missingTimestampRouteRelevantCount,
+      timestampSourceCounts,
       topWeightedSamples,
       notes: ["Consequence freshness audit is read-only and preserves current route-impact bridge behavior."]
     };
