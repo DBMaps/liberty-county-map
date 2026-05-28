@@ -10295,6 +10295,7 @@ function getRouteHazardAssessmentForPath(routeLatLngs = []) {
 
 
 const GRIDLY_COMMUNITY_PRESENCE_VERSION = "V177.4";
+const GRIDLY_COMMUNITY_ACTIVE_AWARENESS_VERSION = "V179.1";
 const GRIDLY_RECOVERY_BASELINE_VERSION = "V178-RECOVERY.1";
 const GRIDLY_MAIN_BASELINE_VERSION = GRIDLY_RECOVERY_BASELINE_VERSION;
 const GRIDLY_MAIN_BASELINE_STATUS = "protected_main_baseline";
@@ -10305,6 +10306,7 @@ const GRIDLY_HEAVY_COMMUNITY_RUNTIME_DISABLED = true;
 const GRIDLY_BOTTOM_PANEL_RESPONSIVE_GUARD_ACTIVE = true;
 const GRIDLY_COMMUNITY_PULSE_MAX_RUNTIME_CANDIDATES = 80;
 const GRIDLY_COMMUNITY_AWARENESS_BRIDGE_SOURCE = "community_presence_passive";
+const GRIDLY_LIGHTWEIGHT_ACTIVE_AWARENESS_SOURCE_LIMIT = 80;
 const GRIDLY_COMMUNITY_CORRIDORS = [
   { name: "US 90", aliases: ["us 90", "u.s. 90", "highway 90", "hwy 90", "us-90"] },
   { name: "TX 146", aliases: ["tx 146", "sh 146", "state highway 146", "highway 146", "hwy 146", "tx-146"] },
@@ -10492,6 +10494,138 @@ function resolveGridlyCommunityPresenceSources(options = {}) {
 
 function getGridlyCommunityPresenceCandidates(options = {}) {
   return resolveGridlyCommunityPresenceSources(options).candidates;
+}
+
+function getGridlyLightweightLifecycleState(item = {}) {
+  if (!item || typeof item !== "object") return "inactive";
+  if (item.expired) return "expired";
+  const type = String(item?.type || item?.report_type || item?.reportType || item?.raw?.type || item?.raw?.report_type || "").toLowerCase();
+  if (type === "hazard_cleared") return "cleared";
+  if (typeof getIncidentLifecycleState === "function") {
+    try {
+      const state = String(getIncidentLifecycleState(item) || "").toLowerCase();
+      if (state) return state;
+    } catch (_error) {}
+  }
+  return String(item?.status || item?.lifecycleState || item?.raw?.status || "active").toLowerCase() || "active";
+}
+
+function isGridlyLightweightActiveItem(item = {}) {
+  const state = getGridlyLightweightLifecycleState(item);
+  return state === "active";
+}
+
+function getGridlyLightweightCategoryLabel(category = "mobility") {
+  const normalized = String(category || "mobility").toLowerCase().replace(/[_-]+/g, " ");
+  if (/flood|standing water|high water/.test(normalized)) return "flooding";
+  if (/rail|crossing|train|blocked|delay/.test(normalized)) return "rail";
+  if (/closure|closed/.test(normalized)) return "road closure";
+  if (/crash|wreck|collision|accident/.test(normalized)) return "crash";
+  if (/construction|utility|work/.test(normalized)) return "road work";
+  if (/debris|tree|obstruction/.test(normalized)) return "debris";
+  if (/ice|slick/.test(normalized)) return "ice";
+  return "road report";
+}
+
+function getGridlyLightweightItemKey(item = {}, index = 0, prefix = "item") {
+  const explicit = item?.id ?? item?.reportId ?? item?.report_id ?? item?.key ?? item?.crossingId ?? item?.crossing_id;
+  if (explicit !== undefined && explicit !== null && String(explicit).trim()) return `${prefix}:${String(explicit).trim()}`;
+  const coords = typeof getGridlyIncidentCoordinate === "function" ? getGridlyIncidentCoordinate(item) : null;
+  const type = String(item?.type || item?.report_type || item?.category || "activity").toLowerCase();
+  return `${prefix}:${coords ? `${coords.lat.toFixed(4)},${coords.lng.toFixed(4)}` : "no-coords"}:${type}:${index}`;
+}
+
+function getGridlyLightweightRenderedMarkerCount() {
+  const rendered = Number(lastMarkerAuditDebug?.lastMarkerRenderResult?.renderedMarkerCount);
+  if (Number.isFinite(rendered)) return Math.max(0, rendered);
+  const activeRendered = Number(lastMarkerAuditDebug?.activeRenderedCount);
+  if (Number.isFinite(activeRendered)) return Math.max(0, activeRendered);
+  const markerLayerCount = Number(lastMarkerAuditDebug?.markerLayerCount);
+  return Number.isFinite(markerLayerCount) ? Math.max(0, markerLayerCount) : 0;
+}
+
+function buildGridlyLightweightActiveAwareness(options = {}) {
+  const startedAt = typeof performance !== "undefined" && typeof performance.now === "function" ? performance.now() : Date.now();
+  const sourceLimit = Math.max(1, Math.min(Number(options?.limit || GRIDLY_LIGHTWEIGHT_ACTIVE_AWARENESS_SOURCE_LIMIT), GRIDLY_LIGHTWEIGHT_ACTIVE_AWARENESS_SOURCE_LIMIT));
+  const reportItems = Array.isArray(options?.activeReports)
+    ? options.activeReports
+    : (Array.isArray(typeof activeReports !== "undefined" ? activeReports : null) ? activeReports : []);
+  const hazardItems = Array.isArray(options?.activeHazards)
+    ? options.activeHazards
+    : (Array.isArray(typeof activeHazards !== "undefined" ? activeHazards : null) ? activeHazards : []);
+  const activeReportItems = reportItems.slice(0, sourceLimit).filter(isGridlyLightweightActiveItem);
+  const activeHazardItems = hazardItems.slice(0, sourceLimit).filter(isGridlyLightweightActiveItem);
+  const seen = new Set();
+  const activeItems = [];
+  [
+    ...activeHazardItems.map((item, index) => ({ item, index, prefix: "hazard" })),
+    ...activeReportItems.map((item, index) => ({ item, index, prefix: "report" }))
+  ].forEach(({ item, index, prefix }) => {
+    const key = getGridlyLightweightItemKey(item, index, prefix);
+    if (seen.has(key)) return;
+    seen.add(key);
+    activeItems.push(item);
+  });
+
+  const categoryCounts = activeItems.reduce((acc, item) => {
+    const category = getGridlyLightweightCategoryLabel(normalizeGridlyIncidentCategory(item));
+    acc[category] = (acc[category] || 0) + 1;
+    return acc;
+  }, {});
+  const activeCategories = Object.entries(categoryCounts)
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([category]) => category)
+    .slice(0, 6);
+  const topCategory = activeCategories[0] || null;
+  const corridorCounts = activeItems.reduce((acc, item) => {
+    const corridor = typeof detectGridlyCommunityCorridor === "function" ? detectGridlyCommunityCorridor(item) : "Local corridors";
+    if (corridor && corridor !== "Local corridors") acc[corridor] = (acc[corridor] || 0) + 1;
+    return acc;
+  }, {});
+  const topCorridorLabel = Object.entries(corridorCounts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]?.[0] || null;
+  const activeHazardCount = activeHazardItems.length;
+  const activeReportCount = activeReportItems.length;
+  const renderedMarkerCount = getGridlyLightweightRenderedMarkerCount();
+  const activeAwarenessCount = activeItems.length;
+  const placePhrase = topCorridorLabel ? ` near ${topCorridorLabel}` : " nearby";
+  let headline = "No active mobility reports nearby";
+  if (activeAwarenessCount === 1 && topCategory) {
+    const categoryHeadlineLabel = topCategory === "road report" ? "Road report" : `${topCategory.charAt(0).toUpperCase()}${topCategory.slice(1)} report`;
+    headline = `${categoryHeadlineLabel} ${topCategory === "rail" ? "visible" : "active"}${placePhrase}`;
+  } else if (activeAwarenessCount > 1 && topCategory) {
+    headline = `${activeAwarenessCount} active ${topCategory === "rail" ? "rail" : "road"} reports${placePhrase}`;
+  }
+  const subline = activeAwarenessCount > 0
+    ? (topCorridorLabel ? `Lightweight awareness is watching ${topCorridorLabel} from active reports only.` : "Active reports are limited nearby.")
+    : "Local movement looks quiet from active reports.";
+  const dataSourceSummary = {
+    activeReports: activeReportCount,
+    activeHazards: activeHazardCount,
+    renderedMarkerSummary: renderedMarkerCount,
+    communityPulseCached: Number(gridlyCommunityPulseAuditState?.selectedCommunityCount || 0),
+    routeIntelligenceSummary: Number(lastMarkerAuditDebug?.routeRelevantRenderedCount || 0),
+    sourceLimit
+  };
+  const endedAt = typeof performance !== "undefined" && typeof performance.now === "function" ? performance.now() : Date.now();
+  return {
+    loaded: true,
+    version: GRIDLY_COMMUNITY_ACTIVE_AWARENESS_VERSION,
+    runtimeMode: "lightweight_only",
+    activeAwarenessCount,
+    activeHazardCount,
+    activeReportCount,
+    renderedMarkerCount,
+    activeCategories,
+    topCategory,
+    topCorridorLabel,
+    headline,
+    subline,
+    dataSourceSummary,
+    crossingRuntimeUsed: false,
+    sourceJoinRuntimeUsed: false,
+    heavyRuntimeUsed: false,
+    auditDurationMs: Number(Math.max(0, endedAt - startedAt).toFixed(2))
+  };
 }
 
 function detectGridlyCommunityCorridor(incident = {}) {
@@ -11134,6 +11268,7 @@ function buildGridlyCommunityPulseModel(options = {}) {
     : { awarenessMode: "community" };
   const awarenessMode = String(awarenessDiagnostics?.awarenessMode || "community").toLowerCase();
   const dataset = buildCommunityPresenceDataset(options);
+  const activeAwareness = buildGridlyLightweightActiveAwareness(options);
   const selectedCommunityCount = Number(dataset.selectedCommunityCount || 0);
   const communityPhraseCount = Number(dataset.communityPhraseCount || 0);
   const corridorPriority = scoreGridlyDominantCorridor(dataset);
@@ -11178,14 +11313,14 @@ function buildGridlyCommunityPulseModel(options = {}) {
         repetitionAvoidanceApplied: false
       };
 
-  let renderedPulseHeadline = headlinePhrase.text;
-  let renderedPulseSubline = sublinePhrase.text;
-  const selectedHeadlineTemplate = headlinePhrase.selectedHeadlineTemplate;
-  const selectedSublineTemplate = sublinePhrase.selectedSublineTemplate;
-  const phraseGenerationMode = headlinePhrase.phraseGenerationMode || "category_mobility";
+  let renderedPulseHeadline = activeAwareness.headline || headlinePhrase.text;
+  let renderedPulseSubline = activeAwareness.subline || sublinePhrase.text;
+  const selectedHeadlineTemplate = activeAwareness.headline ? "headline_lightweight_active_awareness" : headlinePhrase.selectedHeadlineTemplate;
+  const selectedSublineTemplate = activeAwareness.subline ? "subline_lightweight_active_awareness" : sublinePhrase.selectedSublineTemplate;
+  const phraseGenerationMode = activeAwareness.headline ? "lightweight_active_awareness" : (headlinePhrase.phraseGenerationMode || "category_mobility");
   const repetitionAvoidanceApplied = Boolean(headlinePhrase.repetitionAvoidanceApplied || sublinePhrase.repetitionAvoidanceApplied);
 
-  let pulseVisible = awarenessMode === "community" && selectedCommunityCount > 0;
+  let pulseVisible = awarenessMode === "community" && Boolean(activeAwareness.loaded);
   let pulseSuppressedReason = "";
   if (awarenessMode === "route") {
     pulseVisible = false;
@@ -11193,9 +11328,8 @@ function buildGridlyCommunityPulseModel(options = {}) {
   } else if (awarenessMode !== "community") {
     pulseVisible = false;
     pulseSuppressedReason = `awareness mode ${awarenessMode || "unknown"} does not show Community Pulse`;
-  } else if (selectedCommunityCount <= 0) {
-    pulseVisible = false;
-    pulseSuppressedReason = "no selected community presence reports available";
+  } else if (selectedCommunityCount <= 0 && activeAwareness.activeAwarenessCount <= 0) {
+    pulseSuppressedReason = "quiet lightweight active awareness state";
   }
 
   if (pulseVisible) {
@@ -11222,6 +11356,7 @@ function buildGridlyCommunityPulseModel(options = {}) {
     dominantCorridorScore: Number(corridorPriority.dominantCorridorScore || 0),
     mobilityPressureCategory,
     blendedSignalTypes,
+    activeAwareness,
     phraseGenerationMode,
     repetitionAvoidanceApplied,
     corridorPriorityBreakdown: corridorPriority.corridorPriorityBreakdown || []
@@ -11324,6 +11459,33 @@ window.gridlyRecoveryBaselineAudit = function gridlyRecoveryBaselineAudit() {
   };
 };
 
+window.gridlyLightweightActiveAwarenessAudit = function gridlyLightweightActiveAwarenessAudit(options = {}) {
+  try {
+    return buildGridlyLightweightActiveAwareness(options);
+  } catch (error) {
+    return {
+      loaded: false,
+      version: GRIDLY_COMMUNITY_ACTIVE_AWARENESS_VERSION,
+      runtimeMode: "lightweight_only",
+      activeAwarenessCount: 0,
+      activeHazardCount: 0,
+      activeReportCount: 0,
+      renderedMarkerCount: 0,
+      activeCategories: [],
+      topCategory: null,
+      topCorridorLabel: null,
+      headline: "No active mobility reports nearby",
+      subline: "Local movement looks quiet from active reports.",
+      dataSourceSummary: {},
+      crossingRuntimeUsed: false,
+      sourceJoinRuntimeUsed: false,
+      heavyRuntimeUsed: false,
+      auditDurationMs: 0,
+      notes: [`Lightweight active awareness audit fallback: ${error?.message || "unknown error"}`]
+    };
+  }
+};
+
 window.gridlyCommunityPulseAudit = function gridlyCommunityPulseAudit(options = {}) {
   const shouldRender = options?.render !== false;
   const state = shouldRender ? renderGridlyCommunityPulse(options) : { ...gridlyCommunityPulseAuditState };
@@ -11332,6 +11494,7 @@ window.gridlyCommunityPulseAudit = function gridlyCommunityPulseAudit(options = 
     pulseVisible: Boolean(state.pulseVisible),
     renderedPulseHeadline: state.renderedPulseHeadline || "",
     renderedPulseSubline: state.renderedPulseSubline || "",
+    lightweightActiveAwareness: state.activeAwareness || null,
     dominantCorridor: state.dominantCorridor || null,
     selectedCommunityCount: Number(state.selectedCommunityCount || 0),
     communityPhraseCount: Number(state.communityPhraseCount || 0),
@@ -11347,6 +11510,7 @@ window.gridlyCommunityPulseAudit = function gridlyCommunityPulseAudit(options = 
   };
 };
 window.renderGridlyCommunityPulse = renderGridlyCommunityPulse;
+window.buildGridlyLightweightActiveAwareness = buildGridlyLightweightActiveAwareness;
 window.gridlyCommunityBridgeAudit = function gridlyCommunityBridgeAudit(options = {}) {
   try {
     const bridge = gridlyApplyCommunityAwarenessDomBridge(options);
