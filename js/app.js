@@ -12258,6 +12258,7 @@ window.gridlyCommunityCorridorAudit = function gridlyCommunityCorridorAudit(opti
 };
 
 const GRIDLY_COMMUNITY_PULSE_RENDER_TARGET = "#gridlyCommunityPulseSurface";
+const GRIDLY_COMMUNITY_PULSE_ACTIVE_PHRASE_PATTERN = /\b(?:slowdowns?|delays?|delayed|blocked|closures?|congestion)\b|pressure building|travel pressure|movement slowing/i;
 let gridlyCommunityPulseAuditState = {
   awarenessMode: "community",
   pulseVisible: false,
@@ -12285,6 +12286,13 @@ let gridlyCommunityPulseAuditState = {
   communityPhraseCount: 0,
   pulseRenderTarget: GRIDLY_COMMUNITY_PULSE_RENDER_TARGET,
   pulseSuppressedReason: "not_rendered_yet",
+  passivePhraseEnforced: false,
+  activePhraseCandidateSuppressed: false,
+  suppressedActivePhraseTemplate: "",
+  finalPhraseSafetyMode: "not_rendered_yet",
+  portraitPulseOverlapProtected: false,
+  portraitPulsePlacementMode: "standard_map_card",
+  pulseHiddenDueToPortraitHeader: false,
   selectedHeadlineTemplate: "",
   selectedSublineTemplate: "",
   dominantCorridorScore: 0,
@@ -12725,6 +12733,75 @@ function formatGridlyCommunityPulsePlace(corridor = null, mode = "near") {
   return `near ${safeCorridor}`;
 }
 
+function getGridlyCommunityPulsePassiveCorridorPhrase(context = {}) {
+  const balancedPlace = getGridlyCommunityPulseBalancedCorridorPhrase(context);
+  return String(balancedPlace || "nearby").trim() || "nearby";
+}
+
+function buildGridlyCommunityPulsePassiveHeadlineTemplates(context = {}) {
+  const corridorPhrase = getGridlyCommunityPulsePassiveCorridorPhrase(context);
+  if (corridorPhrase === "across primary corridors") {
+    return [{ id: "passive_primary_corridor_awareness", text: "Rail awareness active across primary corridors" }];
+  }
+  return [
+    { id: "passive_rail_awareness_active", text: `Rail awareness active ${corridorPhrase}` },
+    { id: "passive_rail_crossing_awareness", text: `Rail crossing awareness ${corridorPhrase}` },
+    { id: "passive_rail_context_visible", text: `Rail context visible ${corridorPhrase}` }
+  ];
+}
+
+function buildGridlyCommunityPulsePassiveSublineTemplates(context = {}) {
+  const corridorPhrase = getGridlyCommunityPulsePassiveCorridorPhrase(context);
+  return [
+    { id: "subline_passive_crossing_context", text: `Crossing context is visible ${corridorPhrase}` },
+    { id: "subline_passive_rail_context_localized", text: `Rail crossing context remains localized ${corridorPhrase}` },
+    { id: "subline_passive_rail_awareness_centered", text: `Passive rail awareness is centered ${corridorPhrase}` }
+  ];
+}
+
+function buildGridlyCommunityPulsePassivePhraseEnforcement(context = {}, headlinePhrase = {}, sublinePhrase = {}) {
+  const passiveOnly = context.pulseSignalMode === "passive_crossing_awareness" || context.passiveCrossingOnly;
+  if (!passiveOnly) {
+    return {
+      passivePhraseEnforced: false,
+      activePhraseCandidateSuppressed: false,
+      suppressedActivePhraseTemplate: "",
+      finalPhraseSafetyMode: "standard_phrase_generation",
+      headlinePhrase,
+      sublinePhrase
+    };
+  }
+  const headlineTemplates = buildGridlyCommunityPulsePassiveHeadlineTemplates(context);
+  const sublineTemplates = buildGridlyCommunityPulsePassiveSublineTemplates(context);
+  const headlineSeed = Number(context.passiveCrossingSignalCount || 0) + Number(context.dominantCorridorScore || 0) + Number(context.selectedCommunityCount || 0);
+  const sublineSeed = Number(context.passiveCrossingSignalCount || 0) + Number(context.activeCorridorCount || 0) + Number(context.dominantCorridorScore || 0);
+  const headlineSelected = selectGridlyCommunityPulseTemplate(headlineTemplates, headlineSeed, gridlyCommunityPulseTemplateMemory.lastHeadlineTemplate);
+  const sublineSelected = selectGridlyCommunityPulseTemplate(sublineTemplates, sublineSeed, gridlyCommunityPulseTemplateMemory.lastSublineTemplate);
+  const candidateText = `${headlinePhrase.text || ""} ${sublinePhrase.text || ""}`;
+  const activePhraseCandidateSuppressed = GRIDLY_COMMUNITY_PULSE_ACTIVE_PHRASE_PATTERN.test(candidateText)
+    || !/^passive_|^rail_context_visible$|^primary_corridor_awareness$/.test(String(headlinePhrase.selectedHeadlineTemplate || ""))
+    || !/^subline_passive_/.test(String(sublinePhrase.selectedSublineTemplate || ""));
+  return {
+    passivePhraseEnforced: true,
+    activePhraseCandidateSuppressed,
+    suppressedActivePhraseTemplate: activePhraseCandidateSuppressed
+      ? [headlinePhrase.selectedHeadlineTemplate, sublinePhrase.selectedSublineTemplate].filter(Boolean).join(" + ")
+      : "",
+    finalPhraseSafetyMode: "passive_crossing_only_forced",
+    headlinePhrase: {
+      text: headlineSelected.template?.text || headlineTemplates[0].text,
+      selectedHeadlineTemplate: headlineSelected.template?.id || headlineTemplates[0].id,
+      phraseGenerationMode: "passive_crossing_awareness",
+      repetitionAvoidanceApplied: Boolean(headlineSelected.repetitionAvoidanceApplied)
+    },
+    sublinePhrase: {
+      text: sublineSelected.template?.text || sublineTemplates[0].text,
+      selectedSublineTemplate: sublineSelected.template?.id || sublineTemplates[0].id,
+      repetitionAvoidanceApplied: Boolean(sublineSelected.repetitionAvoidanceApplied)
+    }
+  };
+}
+
 function buildGridlyCommunityBlendPhrase(context = {}) {
   const signalTypes = Array.isArray(context.blendedSignalTypes) ? context.blendedSignalTypes : [];
   const corridor = context.displayCorridor || context.dominantCorridor || null;
@@ -12748,13 +12825,7 @@ function buildGridlyMobilityPressurePhrase(context = {}) {
   const count = Number(context.selectedCommunityCount || 0);
   const pressure = context.mobilityPressureCategory || "light";
   if (context.pulseSignalMode === "passive_crossing_awareness" || context.passiveCrossingOnly) {
-    const balancedPlace = getGridlyCommunityPulseBalancedCorridorPhrase(context);
-    return { phraseGenerationMode: "passive_crossing_awareness", templates: [
-      { id: "passive_rail_awareness", text: `Rail awareness active ${balancedPlace}` },
-      { id: "passive_crossing_awareness", text: `Rail crossing awareness ${balancedPlace}` },
-      { id: "rail_context_visible", text: `Rail context visible ${balancedPlace}` },
-      { id: "primary_corridor_awareness", text: `Rail crossing context visible ${balancedPlace}` }
-    ] };
+    return { phraseGenerationMode: "passive_crossing_awareness", templates: buildGridlyCommunityPulsePassiveHeadlineTemplates(context) };
   }
   const phraseGenerationMode = signalTypes.length > 1 ? "blended_signals" : `category_${primarySignal}`;
   const blend = buildGridlyCommunityBlendPhrase(context);
@@ -12811,17 +12882,12 @@ function buildGridlyCommunityPulseSubline(context = {}) {
   const corridorIsSpecific = corridor && corridor !== "Local corridors" && corridor !== "nearby corridors";
   const primarySignal = Array.isArray(context.blendedSignalTypes) ? context.blendedSignalTypes[0] : "mobility";
   if (context.pulseSignalMode === "passive_crossing_awareness" || context.passiveCrossingOnly) {
-    const balancedPlace = getGridlyCommunityPulseBalancedCorridorPhrase(context);
-    const templates = [
-      { id: "subline_passive_crossing_context", text: `Crossing context is visible ${balancedPlace}` },
-      { id: "subline_passive_rail_awareness", text: `Rail awareness is centered ${balancedPlace}` },
-      { id: "subline_passive_rail_context", text: `Rail crossing context remains localized ${balancedPlace}` }
-    ];
+    const templates = buildGridlyCommunityPulsePassiveSublineTemplates(context);
     const seed = Number(context.passiveCrossingSignalCount || 0) + Number(context.dominantCorridorScore || 0) + activeCorridorCount;
     const selected = selectGridlyCommunityPulseTemplate(templates, seed, gridlyCommunityPulseTemplateMemory.lastSublineTemplate);
     return {
-      text: selected.template?.text || `Crossing context is visible ${balancedPlace}`,
-      selectedSublineTemplate: selected.template?.id || "subline_passive_crossing_context",
+      text: selected.template?.text || templates[0].text,
+      selectedSublineTemplate: selected.template?.id || templates[0].id,
       repetitionAvoidanceApplied: selected.repetitionAvoidanceApplied
     };
   }
@@ -12904,7 +12970,7 @@ function buildGridlyCommunityPulseModel(options = {}) {
     corridorBalanceApplied: corridorBalance.corridorBalanceApplied,
     corridorBalanceReason: corridorBalance.corridorBalanceReason
   };
-  const headlinePhrase = selectedCommunityCount > 0
+  let headlinePhrase = selectedCommunityCount > 0
     ? buildGridlyCommunityPulseHeadline(phraseContext)
     : {
         text: "Community pulse is quiet",
@@ -12912,13 +12978,16 @@ function buildGridlyCommunityPulseModel(options = {}) {
         phraseGenerationMode: "quiet",
         repetitionAvoidanceApplied: false
       };
-  const sublinePhrase = selectedCommunityCount > 0
+  let sublinePhrase = selectedCommunityCount > 0
     ? buildGridlyCommunityPulseSubline(phraseContext)
     : {
         text: "Town moving normally",
         selectedSublineTemplate: "subline_quiet",
         repetitionAvoidanceApplied: false
       };
+  const phraseEnforcement = buildGridlyCommunityPulsePassivePhraseEnforcement(phraseContext, headlinePhrase, sublinePhrase);
+  headlinePhrase = phraseEnforcement.headlinePhrase;
+  sublinePhrase = phraseEnforcement.sublinePhrase;
 
   let renderedPulseHeadline = headlinePhrase.text;
   let renderedPulseSubline = sublinePhrase.text;
@@ -12970,7 +13039,14 @@ function buildGridlyCommunityPulseModel(options = {}) {
     majorCorridorCandidates: corridorBalance.majorCorridorCandidates,
     corridorBalanceApplied: Boolean(corridorBalance.corridorBalanceApplied),
     corridorBalanceReason: corridorBalance.corridorBalanceReason,
-    activeLanguageSuppressed: Boolean(languageSignals.activeLanguageSuppressed),
+    activeLanguageSuppressed: Boolean(languageSignals.activeLanguageSuppressed || phraseEnforcement.activePhraseCandidateSuppressed),
+    passivePhraseEnforced: Boolean(phraseEnforcement.passivePhraseEnforced),
+    activePhraseCandidateSuppressed: Boolean(phraseEnforcement.activePhraseCandidateSuppressed),
+    suppressedActivePhraseTemplate: phraseEnforcement.suppressedActivePhraseTemplate || "",
+    finalPhraseSafetyMode: phraseEnforcement.finalPhraseSafetyMode || "standard_phrase_generation",
+    portraitPulseOverlapProtected: false,
+    portraitPulsePlacementMode: "standard_map_card",
+    pulseHiddenDueToPortraitHeader: false,
     corridorSpecificitySource: corridorSpecificity.corridorSpecificitySource,
     corridorSpecificityConfidence: Number(corridorSpecificity.corridorSpecificityConfidence || 0),
     selectedLocationFieldsUsed: Array.isArray(corridorSpecificity.selectedLocationFieldsUsed) ? corridorSpecificity.selectedLocationFieldsUsed : [],
@@ -13013,6 +13089,32 @@ function buildGridlyCommunityPulseModel(options = {}) {
     phraseGenerationMode,
     repetitionAvoidanceApplied,
     corridorPriorityBreakdown: corridorPriority.corridorPriorityBreakdown || []
+  };
+}
+
+function getGridlyCommunityPulsePortraitPlacementState() {
+  if (typeof document === "undefined") {
+    return {
+      portraitPulseOverlapProtected: false,
+      portraitPulsePlacementMode: "standard_map_card",
+      pulseHiddenDueToPortraitHeader: false,
+      pulseRenderTarget: GRIDLY_COMMUNITY_PULSE_RENDER_TARGET
+    };
+  }
+  const body = document.body;
+  const portraitV2 = document.getElementById("gridlyPortraitV2");
+  const portraitMode = body?.dataset?.layoutMode === "portrait";
+  let portraitV2Visible = false;
+  if (portraitMode && portraitV2) {
+    const style = typeof getComputedStyle === "function" ? getComputedStyle(portraitV2) : null;
+    portraitV2Visible = !style || (style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity || 1) !== 0);
+  }
+  const protectPortraitTop = Boolean(portraitMode && portraitV2 && portraitV2Visible);
+  return {
+    portraitPulseOverlapProtected: protectPortraitTop,
+    portraitPulsePlacementMode: protectPortraitTop ? "hidden_legacy_map_card_portrait_v2_top_status_primary" : "standard_map_card",
+    pulseHiddenDueToPortraitHeader: protectPortraitTop,
+    pulseRenderTarget: protectPortraitTop ? "portrait_v2_top_status" : GRIDLY_COMMUNITY_PULSE_RENDER_TARGET
   };
 }
 
@@ -13082,18 +13184,25 @@ function renderGridlyCommunityPulse(options = {}) {
     return gridlyCommunityPulseAuditState;
   }
 
-  surface.hidden = !model.pulseVisible;
+  const portraitPlacement = getGridlyCommunityPulsePortraitPlacementState();
+  const pulseVisibleAfterPlacement = Boolean(model.pulseVisible && !portraitPlacement.pulseHiddenDueToPortraitHeader);
+  surface.hidden = !pulseVisibleAfterPlacement;
   surface.dataset.awarenessMode = model.awarenessMode;
-  surface.dataset.gridlyPulseVisible = model.pulseVisible ? "true" : "false";
-  surface.dataset.gridlyPulseRenderTarget = GRIDLY_COMMUNITY_PULSE_RENDER_TARGET;
+  surface.dataset.gridlyPulseVisible = pulseVisibleAfterPlacement ? "true" : "false";
+  surface.dataset.gridlyPulseRenderTarget = portraitPlacement.pulseRenderTarget;
+  surface.dataset.gridlyPortraitPulsePlacementMode = portraitPlacement.portraitPulsePlacementMode;
   if (headline) headline.textContent = model.renderedPulseHeadline;
   if (subline) subline.textContent = model.renderedPulseSubline;
 
   gridlyCommunityPulseAuditState = {
     ...model,
-    pulseVisible: model.pulseVisible && !surface.hidden,
-    renderedPulseHeadline: model.pulseVisible ? model.renderedPulseHeadline : "",
-    renderedPulseSubline: model.pulseVisible ? model.renderedPulseSubline : ""
+    ...portraitPlacement,
+    pulseVisible: pulseVisibleAfterPlacement && !surface.hidden,
+    renderedPulseHeadline: pulseVisibleAfterPlacement ? model.renderedPulseHeadline : "",
+    renderedPulseSubline: pulseVisibleAfterPlacement ? model.renderedPulseSubline : "",
+    pulseSuppressedReason: portraitPlacement.pulseHiddenDueToPortraitHeader
+      ? "portrait V2 header owns top status area; legacy map-card pulse hidden"
+      : model.pulseSuppressedReason
   };
   return gridlyCommunityPulseAuditState;
 }
@@ -13118,6 +13227,13 @@ window.gridlyCommunityPulseAudit = function gridlyCommunityPulseAudit(options = 
     corridorBalanceApplied: Boolean(state.corridorBalanceApplied),
     corridorBalanceReason: state.corridorBalanceReason || "",
     activeLanguageSuppressed: Boolean(state.activeLanguageSuppressed),
+    passivePhraseEnforced: Boolean(state.passivePhraseEnforced),
+    activePhraseCandidateSuppressed: Boolean(state.activePhraseCandidateSuppressed),
+    suppressedActivePhraseTemplate: state.suppressedActivePhraseTemplate || "",
+    finalPhraseSafetyMode: state.finalPhraseSafetyMode || "standard_phrase_generation",
+    portraitPulseOverlapProtected: Boolean(state.portraitPulseOverlapProtected),
+    portraitPulsePlacementMode: state.portraitPulsePlacementMode || "standard_map_card",
+    pulseHiddenDueToPortraitHeader: Boolean(state.pulseHiddenDueToPortraitHeader),
     corridorSpecificitySource: state.corridorSpecificitySource || "fallback",
     corridorSpecificityConfidence: Number(state.corridorSpecificityConfidence || 0),
     selectedLocationFieldsUsed: Array.isArray(state.selectedLocationFieldsUsed) ? state.selectedLocationFieldsUsed.slice(0, 12) : [],
