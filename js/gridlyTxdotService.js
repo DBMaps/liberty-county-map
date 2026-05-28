@@ -6,11 +6,13 @@
   const TXDOT_REFRESH_INTERVAL_MS = 300000;
 
   globalScope.GRIDLY_CONFIG = globalScope.GRIDLY_CONFIG || {};
+  globalScope.GRIDLY_CONFIG.txdot = globalScope.GRIDLY_CONFIG.txdot || {};
+  globalScope.GRIDLY_CONFIG.txdot.apiKey = globalScope.GRIDLY_TXDOT_API_KEY || "";
+
   const txdotConfig = (globalScope.GRIDLY_CONFIG.txdot && typeof globalScope.GRIDLY_CONFIG.txdot === "object")
     ? globalScope.GRIDLY_CONFIG.txdot
     : {};
 
-  txdotConfig.apiKey = typeof txdotConfig.apiKey === "string" ? txdotConfig.apiKey : "";
   txdotConfig.endpointTemplate = typeof txdotConfig.endpointTemplate === "string"
     ? txdotConfig.endpointTemplate
     : TXDOT_ENDPOINT_TEMPLATE;
