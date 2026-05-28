@@ -1,0 +1,4 @@
+js/gridly.local.js
+*.local.js
+.env
+.env.local
