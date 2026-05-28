@@ -435,6 +435,12 @@ function getGridlyIncidentVisualState(incident = {}) {
   const zoomBehavior = getGridlyZoomBehavior(category, severity, { ...incident, routeImpact });
   const markerStyle = getGridlyMarkerStyle(category, severity, { ...incident, routeImpact }, source);
   const routeConsequence = evaluateGridlyRouteConsequence(incident, { category, severity, markerStyle, routeImpact });
+  const intelligence = generateGridlyIntelligencePhrase(incident, {
+    category, severity, routeImpact, source, markerStyle,
+    consequenceLevel: routeConsequence.consequenceLevel,
+    freshnessLevel: routeConsequence.freshnessLevel,
+    routeRelevant: routeConsequence.routeRelevant
+  });
   const shouldRender = responderSensitive ? false : source === "txdot" ? false : true;
   return {
     category,
@@ -452,6 +458,9 @@ function getGridlyIncidentVisualState(incident = {}) {
     routeRelevant: routeConsequence.routeRelevant,
     directRouteConflict: routeConsequence.directRouteConflict,
     nearbyRouteConflict: routeConsequence.nearbyRouteConflict,
+    intelligencePhrase: intelligence.shortPhrase,
+    intelligenceDetail: intelligence.detailPhrase,
+    intelligenceConfidenceLabel: intelligence.confidencePhrase,
     shouldRender,
     responderSensitive,
     safetyNote: responderSensitive ? "Suppressed responder-sensitive report" : ""
@@ -606,10 +615,65 @@ function evaluateGridlyIncidentConfidence(incident, options = {}) {
   }
 }
 
+function generateGridlyIntelligencePhrase(incident, visualState = null) {
+  try {
+    const safeIncident = incident && typeof incident === "object" ? incident : {};
+    const resolvedVisualState = visualState && typeof visualState === "object"
+      ? visualState
+      : getGridlyIncidentVisualState(safeIncident);
+    const confidence = evaluateGridlyIncidentConfidence(safeIncident, { visualState: resolvedVisualState });
+    const consequence = String(resolvedVisualState?.consequenceLevel || "low").toLowerCase();
+    const freshness = String(resolvedVisualState?.freshnessLevel || evaluateGridlyIncidentFreshness(safeIncident)?.freshnessLevel || "unknown").toLowerCase();
+    const confidenceLevel = String(confidence?.confidenceLevel || "low").toLowerCase();
+    const routeImpact = Boolean(resolvedVisualState?.routeImpact || safeIncident?.routeImpact);
+    const routeRelevant = Boolean(resolvedVisualState?.routeRelevant || routeImpact);
+
+    const consequencePhrase = consequence === "critical" || consequence === "high"
+      ? "Likely affecting traffic flow"
+      : consequence === "moderate"
+        ? "Traffic impact possible"
+        : "Use caution nearby";
+    const confidencePhrase = ["low", "very_low"].includes(confidenceLevel)
+      ? "Not recently confirmed"
+      : confidenceLevel === "high"
+        ? "Community report with stronger confidence"
+        : "Community-reported hazard";
+    const freshnessPhrase = freshness === "fresh"
+      ? "Fresh community report"
+      : freshness === "recent"
+        ? "Recently reported"
+        : freshness === "aging" || freshness === "stale"
+          ? "Older community report"
+          : "Timing not fully confirmed";
+    const routePhrase = routeImpact
+      ? "Active route disruption"
+      : routeRelevant
+        ? "Possible delay on your route"
+        : "Use caution nearby";
+    const shortPhrase = routeImpact
+      ? routePhrase
+      : ["low", "very_low"].includes(confidenceLevel) && routeRelevant
+        ? "Possible delay on your route"
+        : consequencePhrase;
+    const detailPhrase = `${freshnessPhrase} • ${confidencePhrase}`;
+    return { shortPhrase, detailPhrase, confidencePhrase, freshnessPhrase, routePhrase, consequencePhrase };
+  } catch (_error) {
+    return {
+      shortPhrase: "Use caution nearby",
+      detailPhrase: "Community-reported hazard",
+      confidencePhrase: "Not recently confirmed",
+      freshnessPhrase: "Timing not fully confirmed",
+      routePhrase: "Traffic impact possible",
+      consequencePhrase: "Use caution nearby"
+    };
+  }
+}
+
 window.evaluateGridlyIncidentFreshness = evaluateGridlyIncidentFreshness;
 window.evaluateGridlyRouteConsequence = evaluateGridlyRouteConsequence;
 window.evaluateGridlyIncidentConfidence = evaluateGridlyIncidentConfidence;
 window.getGridlyIncidentVisualState = getGridlyIncidentVisualState;
+window.generateGridlyIntelligencePhrase = generateGridlyIntelligencePhrase;
 
 function isGridlyIncidentLike(item) {
   if (!item || typeof item !== "object") return false;
@@ -1583,6 +1647,57 @@ window.gridlyRouteConfidenceAudit = function gridlyRouteConfidenceAudit() {
     return { routeRelevantConfidenceCount: evaluated.length, highConfidenceRouteImpactCount: evaluated.filter((e)=>(e.confidence?.confidenceLevel || e.confidenceLevel)==='high').length, lowConfidenceRouteImpactCount: evaluated.filter((e)=>['low','very_low'].includes(String(e.confidence?.confidenceLevel || e.confidenceLevel))).length, domBridgeConfidenceCount, domBridgeConfidenceCounts, domBridgeConfidenceSamples: domBridgeEvaluated.slice(0, 8).map((entry) => ({ id: entry.id, confidenceLevel: entry.confidenceLevel, freshnessLevel: entry.freshnessLevel, consequenceLevel: entry.consequenceLevel, visualStyle: entry.visualStyle, routeImpact: entry.routeImpact })), routeConfidenceSourceUsed, missingConfidenceDomCount, confidenceByConsequence, confidenceByFreshness, topRouteConfidenceSamples: sorted.slice(0, 8).map((e)=>({ id: e.incident?.id || e.incident?.crossingId || e.id || '', consequenceLevel: e.visualState?.consequenceLevel || e.consequenceLevel || 'low', freshnessLevel: e.visualState?.freshnessLevel || e.freshnessLevel || 'unknown', confidenceLevel: e.confidence?.confidenceLevel || e.confidenceLevel || 'very_low', confidenceScore: Number(e.confidence?.confidenceScore || 0), confidenceReason: e.confidence?.confidenceReason || '' })), notes: ['Route confidence audit preserves existing route-impact DOM bridge and marker hierarchy.'] };
   } catch (error) {
     return { routeRelevantConfidenceCount: 0, highConfidenceRouteImpactCount: 0, lowConfidenceRouteImpactCount: 0, domBridgeConfidenceCount: 0, domBridgeConfidenceCounts: {}, domBridgeConfidenceSamples: [], routeConfidenceSourceUsed: 'none', missingConfidenceDomCount: 0, confidenceByConsequence: {}, confidenceByFreshness: {}, topRouteConfidenceSamples: [], notes: [`Route confidence audit fallback: ${error?.message || 'unknown error'}`] };
+  }
+};
+
+window.gridlyIntelligencePhraseAudit = function gridlyIntelligencePhraseAudit() {
+  try {
+    const incidents = Array.isArray(getAllActiveIncidents?.()) ? getAllActiveIncidents() : [];
+    const evaluated = incidents.map((incident) => {
+      const visualState = getGridlyIncidentVisualState(incident);
+      const phrase = generateGridlyIntelligencePhrase(incident, visualState);
+      const confidence = evaluateGridlyIncidentConfidence(incident, { visualState });
+      return { incident, visualState, phrase, confidence };
+    });
+    const countBy = (items, keyFn) => items.reduce((acc, item) => {
+      const key = String(keyFn(item) || "unknown");
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, {});
+    return {
+      evaluatedCount: evaluated.length,
+      phraseCounts: countBy(evaluated, (e) => e.phrase?.shortPhrase || "unknown"),
+      routeRelevantPhraseCount: evaluated.filter((e) => Boolean(e.visualState?.routeRelevant || e.visualState?.routeImpact)).length,
+      confidencePhraseCounts: countBy(evaluated, (e) => e.phrase?.confidencePhrase || "unknown"),
+      freshnessPhraseCounts: countBy(evaluated, (e) => e.phrase?.freshnessPhrase || "unknown"),
+      topPhraseSamples: evaluated.slice(0, 8).map((e) => ({ id: e.incident?.id || e.incident?.crossingId || "", shortPhrase: e.phrase?.shortPhrase || "", detailPhrase: e.phrase?.detailPhrase || "", confidenceLevel: e.confidence?.confidenceLevel || "low", freshnessLevel: e.visualState?.freshnessLevel || "unknown", routeRelevant: Boolean(e.visualState?.routeRelevant), routeImpact: Boolean(e.visualState?.routeImpact) })),
+      notes: ["Intelligence phrase audit is read-only and preserves existing consequence, confidence, and freshness systems."]
+    };
+  } catch (error) {
+    return { evaluatedCount: 0, phraseCounts: {}, routeRelevantPhraseCount: 0, confidencePhraseCounts: {}, freshnessPhraseCounts: {}, topPhraseSamples: [], notes: [`Intelligence phrase audit fallback: ${error?.message || "unknown error"}`] };
+  }
+};
+
+window.gridlyRouteIntelligenceAudit = function gridlyRouteIntelligenceAudit() {
+  try {
+    const incidents = Array.isArray(getAllActiveIncidents?.()) ? getAllActiveIncidents() : [];
+    const evaluated = incidents.map((incident) => {
+      const visualState = getGridlyIncidentVisualState(incident);
+      const phrase = generateGridlyIntelligencePhrase(incident, visualState);
+      const confidence = evaluateGridlyIncidentConfidence(incident, { visualState });
+      return { incident, visualState, phrase, confidence };
+    }).filter((e) => Boolean(e.visualState?.routeRelevant || e.visualState?.routeImpact));
+    return {
+      routeRelevantCount: evaluated.length,
+      lowConfidenceRoutePhraseCount: evaluated.filter((e) => ["low", "very_low"].includes(String(e.confidence?.confidenceLevel || ""))).length,
+      highConfidenceRoutePhraseCount: evaluated.filter((e) => String(e.confidence?.confidenceLevel || "") === "high").length,
+      routeImpactPhraseCount: evaluated.filter((e) => Boolean(e.visualState?.routeImpact)).length,
+      topRoutePhraseSamples: evaluated.slice(0, 8).map((e) => ({ id: e.incident?.id || e.incident?.crossingId || "", shortPhrase: e.phrase?.shortPhrase || "", routePhrase: e.phrase?.routePhrase || "", confidencePhrase: e.phrase?.confidencePhrase || "", confidenceLevel: e.confidence?.confidenceLevel || "low" })),
+      routeIntelligenceSourceUsed: "incident_visual_state",
+      notes: ["Route intelligence audit preserves route-impact DOM bridge and calm hierarchy behavior."]
+    };
+  } catch (error) {
+    return { routeRelevantCount: 0, lowConfidenceRoutePhraseCount: 0, highConfidenceRoutePhraseCount: 0, routeImpactPhraseCount: 0, topRoutePhraseSamples: [], routeIntelligenceSourceUsed: "fallback", notes: [`Route intelligence audit fallback: ${error?.message || "unknown error"}`] };
   }
 };
 
@@ -10324,6 +10439,7 @@ function renderUnifiedIncidents(reason = "auto") {
     const confidenceEval = evaluateGridlyIncidentConfidence(incident, { visualState, freshnessOptions: { nowMs: Date.now() } });
     const confidenceLevel = String(confidenceEval?.confidenceLevel || "low").toLowerCase();
     const confidenceVisualClass = `gridly-confidence-${confidenceLevel.replace(/_/g, "-")}`;
+    const intelligence = generateGridlyIntelligencePhrase(incident, visualState);
     const hazardVisualMetadataAttributes = `
           data-visual-style="${sanitizeText(visualState.markerStyle)}"
           data-visual-priority="${sanitizeText(String(markerVisual.priority))}"
@@ -10332,6 +10448,8 @@ function renderUnifiedIncidents(reason = "auto") {
           data-gridly-consequence="${sanitizeText(consequenceLevel)}"
           data-gridly-freshness="${sanitizeText(freshnessLevel)}"
           data-gridly-confidence="${sanitizeText(confidenceLevel)}"
+          data-gridly-intelligence="${sanitizeText(intelligence.shortPhrase)}"
+          data-gridly-confidence-label="${sanitizeText(intelligence.confidencePhrase)}"
         `;
     const category = getHazardCategory(incident.report_type || incident.type || "other_hazard");
     const markerVariantClass = `marker-${category}`;
@@ -22820,12 +22938,14 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const eventLabel = pickFirstNonEmptyText([alert?.hazardTypeLabel, alert?.typeLabel, alert?.type, alert?.reportType, alert?.report_type, alert?.title]);
     const title = buildAlertTitle({ alert, roadLabel, crossingLabel, knownLocationLabel, eventLabel }) || resolveAlertTitleText(alert);
     const locationTimeLine = buildAlertSubtitleLine(alert, title);
+    const intelligence = generateGridlyIntelligencePhrase(alert, alert?.visualState);
     return `
     <div class="gridly-alert-row" style="padding:10px 12px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.1);border-radius:10px;background:rgba(255,255,255,0.02);">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
         <div class="gridly-alert-title" style="font-size:14px;font-weight:800;line-height:1.28;letter-spacing:0.03em;text-transform:uppercase;">${sanitizeText(title).toUpperCase()}</div>
       </div>
       <div class="gridly-alert-subtitle" style="margin-top:4px;font-size:11px;opacity:0.72;line-height:1.35;">${sanitizeText(locationTimeLine)}</div>
+      <div class="gridly-alert-subtitle" style="margin-top:4px;font-size:11px;opacity:0.76;line-height:1.35;">${sanitizeText(intelligence.shortPhrase)} • ${sanitizeText(intelligence.detailPhrase)}</div>
       <div class="gridly-alert-subtitle" style="margin-top:6px;font-size:11px;opacity:0.78;"><span style="display:inline-block;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,0.12);font-weight:600;font-size:10px;letter-spacing:0.04em;text-transform:uppercase;">${sanitizeText(getSeverityChipLabel(alert))}</span>${alert?.extraCount > 0 ? ` <span style="opacity:0.85;">+${alert.extraCount} more nearby reports</span>` : ""}</div>
     </div>
   `;
