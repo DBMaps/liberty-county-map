@@ -10485,6 +10485,269 @@ function resolveGridlyCommunityLocationEnrichment(raw = {}) {
   };
 }
 
+
+function getGridlyCommunitySourceJoinIdValues(record = {}) {
+  if (!record || typeof record !== "object") return [];
+  const values = [];
+  const add = (value, prefix = "") => {
+    const text = String(value ?? "").trim();
+    if (!text) return;
+    values.push(prefix ? `${prefix}:${text}` : text);
+  };
+  const raw = record.raw && typeof record.raw === "object" ? record.raw : {};
+  const latest = record.latestReport && typeof record.latestReport === "object" ? record.latestReport : {};
+  [record, raw, latest].forEach((source) => {
+    add(source?.id, "id");
+    add(source?.incidentId, "id");
+    add(source?.reportId, "report");
+    add(source?.report_id, "report");
+    add(source?.crossingId, "crossing");
+    add(source?.crossing_id, "crossing");
+    add(source?.crossingNumber, "crossing");
+    add(source?.crossing_number, "crossing");
+  });
+  const crossingId = record.crossingId || record.crossing_id || raw.crossingId || raw.crossing_id || latest.crossingId || latest.crossing_id;
+  if (crossingId) add(`rail-${crossingId}`, "id");
+  return Array.from(new Set(values.map((value) => normalizeGridlyCommunityPresenceToken(value)).filter(Boolean)));
+}
+
+function getGridlyCommunitySourceJoinCoordinateKeys(record = {}) {
+  const coords = getGridlyIncidentCoordinate(record) || getGridlyIncidentCoordinate(record?.raw || {}) || getGridlyIncidentCoordinate(record?.latestReport || {});
+  if (!coords) return [];
+  return [3, 4, 5].map((precision) => `${coords.lat.toFixed(precision)},${coords.lng.toFixed(precision)}`);
+}
+
+function getGridlyCommunitySourceJoinTextKeys(record = {}) {
+  if (!record || typeof record !== "object") return [];
+  const raw = record.raw && typeof record.raw === "object" ? record.raw : {};
+  const latest = record.latestReport && typeof record.latestReport === "object" ? record.latestReport : {};
+  return Array.from(new Set([
+    record.crossingName, record.crossing_name, record.railroadCrossing, record.name, record.area, record.locationName,
+    raw.crossingName, raw.crossing_name, raw.railroadCrossing, raw.name, raw.area, raw.locationName,
+    latest.crossingName, latest.crossing_name, latest.railroadCrossing, latest.name, latest.area, latest.locationName
+  ].map((value) => normalizeGridlyCommunityPresenceToken(value)).filter((value) => value && value.length >= 4)));
+}
+
+function collectGridlyCommunitySourceJoinRecords(options = {}) {
+  const safeArray = (value) => Array.isArray(value) ? value : [];
+  const routeHazard = options?.routeHazardAssessment || (typeof getRouteHazardAssessment === "function" ? getRouteHazardAssessment() : null);
+  const crossingMarkerRecords = crossingMarkers instanceof Map
+    ? Array.from(crossingMarkers.values()).map((entry) => entry?.crossing || entry?.options?.crossing || entry?.feature?.properties || entry).filter(Boolean)
+    : [];
+  const sourceDefs = [
+    getGridlyCommunitySourceArray("getActiveUnifiedIncidents()", () => (typeof getActiveUnifiedIncidents === "function" ? getActiveUnifiedIncidents() : [])),
+    getGridlyCommunitySourceArray("getUnifiedIncidents()", () => (typeof getUnifiedIncidents === "function" ? getUnifiedIncidents() : [])),
+    getGridlyCommunitySourceArray("getConsolidatedIncidents()", () => (typeof getConsolidatedIncidents === "function" ? getConsolidatedIncidents() : [])),
+    getGridlyCommunitySourceArray("activeReports", () => safeArray(typeof activeReports !== "undefined" ? activeReports : [])),
+    getGridlyCommunitySourceArray("activeHazards", () => safeArray(typeof activeHazards !== "undefined" ? activeHazards : [])),
+    getGridlyCommunitySourceArray("crossings", () => safeArray(typeof crossings !== "undefined" ? crossings : [])),
+    { name: "crossingMarkers", items: crossingMarkerRecords, error: "" },
+    getGridlyCommunitySourceArray("routeHazard.nearbyReports", () => safeArray(routeHazard?.nearbyReports)),
+    getGridlyCommunitySourceArray("window.activeReports", () => safeArray(globalThis?.activeReports)),
+    getGridlyCommunitySourceArray("window.activeHazards", () => safeArray(globalThis?.activeHazards)),
+    getGridlyCommunitySourceArray("window.communityReports", () => safeArray(globalThis?.communityReports)),
+    getGridlyCommunitySourceArray("window.communityHazards", () => safeArray(globalThis?.communityHazards)),
+    getGridlyCommunitySourceArray("window.activeRailIncidents", () => safeArray(globalThis?.activeRailIncidents)),
+    getGridlyCommunitySourceArray("window.railIncidents", () => safeArray(globalThis?.railIncidents)),
+    getGridlyCommunitySourceArray("window.routeImpactIncidents", () => safeArray(globalThis?.routeImpactIncidents))
+  ];
+  const records = [];
+  const counts = {};
+  const errors = {};
+  sourceDefs.forEach((source) => {
+    const items = Array.isArray(source.items) ? source.items : [];
+    counts[source.name] = items.length;
+    if (source.error) errors[source.name] = source.error;
+    items.forEach((record, index) => {
+      if (!record || typeof record !== "object") return;
+      records.push({ record, sourceName: source.name, sourceIndex: index });
+      const latest = record.latestReport && typeof record.latestReport === "object" ? record.latestReport : null;
+      if (latest) records.push({ record: latest, sourceName: `${source.name}.latestReport`, sourceIndex: index });
+    });
+  });
+  return { records, sourceJoinCollectionCounts: counts, sourceJoinErrors: errors };
+}
+
+function getGridlyCommunitySourceJoinType(record = {}, sourceName = "unknown") {
+  const text = normalizeGridlyCommunityPresenceToken([
+    sourceName, record?.type, record?.report_type, record?.reportType, record?.category, record?.kind,
+    record?.title, record?.headline, record?.description, record?.detail, record?.area, record?.crossingName, record?.railroadCrossing
+  ].join(" "));
+  if (/crossing|rail|train/.test(text) || record?.crossingId || record?.crossing_id) return "rail_crossing_or_incident";
+  if (/hazard|flood|crash|closure|debris|construction/.test(text)) return "hazard_or_report";
+  if (/route/.test(text)) return "route_consequence";
+  return "incident_record";
+}
+
+function getGridlyCommunitySourceJoinMatchScore(item = {}, sourceEntry = {}) {
+  const incident = item?.incident && typeof item.incident === "object" ? item.incident : item;
+  const record = sourceEntry.record;
+  const itemIds = new Set(getGridlyCommunitySourceJoinIdValues(incident));
+  const recordIds = getGridlyCommunitySourceJoinIdValues(record);
+  if (recordIds.some((id) => itemIds.has(id))) return 100;
+  const itemCoords = getGridlyCommunitySourceJoinCoordinateKeys(incident);
+  const recordCoords = new Set(getGridlyCommunitySourceJoinCoordinateKeys(record));
+  if (itemCoords.some((key) => recordCoords.has(key))) return 82;
+  const itemText = new Set(getGridlyCommunitySourceJoinTextKeys(incident));
+  const recordText = getGridlyCommunitySourceJoinTextKeys(record);
+  if (recordText.some((key) => itemText.has(key))) return 66;
+  return 0;
+}
+
+function getGridlyCommunityRailRecoveryRecords(incident = {}) {
+  const records = [];
+  const crossingId = getGridlyFirstNestedText(incident, buildGridlyCommunityFieldPaths(["crossingId", "crossing_id", "crossingNumber", "crossing_number"]));
+  if (crossingId) {
+    const directCrossing = getGridlyCommunityCrossingById(crossingId);
+    if (directCrossing) records.push({ record: directCrossing, sourceName: "crossings.by_id" });
+    if (typeof window !== "undefined" && typeof window.gridlyCrossingRecordDebug === "function") {
+      const debug = window.gridlyCrossingRecordDebug(crossingId);
+      if (debug?.found && debug.record) records.push({ record: debug.record, sourceName: debug.sourceName || "gridlyCrossingRecordDebug" });
+    }
+  }
+  const coords = getGridlyIncidentCoordinate(incident) || getGridlyIncidentCoordinate(incident?.raw || {});
+  if (coords && typeof findNearestCrossings === "function") {
+    const nearest = findNearestCrossings(coords.lat, coords.lng, 3).filter((crossing) => Number(crossing?.distance) <= 0.8);
+    nearest.forEach((crossing) => records.push({ record: crossing, sourceName: "findNearestCrossings" }));
+  }
+  return records;
+}
+
+function buildGridlyCommunityJoinedSpecificityPayload(item = {}, sourceEntries = []) {
+  const incident = item?.incident && typeof item.incident === "object" ? item.incident : item;
+  const categoryText = normalizeGridlyCommunityPresenceToken([item?.category, incident?.type, incident?.report_type, incident?.category, incident?.title, incident?.description].join(" "));
+  const railLikely = /rail|crossing|train/.test(categoryText) || Boolean(incident?.crossingId || incident?.crossing_id);
+  const candidateRecords = railLikely ? [...sourceEntries, ...getGridlyCommunityRailRecoveryRecords(incident)] : sourceEntries;
+  const payload = {};
+  const matchedSources = [];
+  const recordTypes = [];
+  const mergeField = (field, value, road = false) => {
+    const normalized = normalizeGridlyCommunityLocationText(value, { road });
+    if (!normalized || String(payload[field] || "").trim()) return;
+    payload[field] = normalized;
+  };
+  candidateRecords.forEach((entry) => {
+    const source = entry?.record && typeof entry.record === "object" ? entry.record : null;
+    if (!source) return;
+    matchedSources.push(entry.sourceName || "unknown_source");
+    recordTypes.push(getGridlyCommunitySourceJoinType(source, entry.sourceName));
+    const enrichment = resolveGridlyCommunityLocationEnrichment({ ...source, raw: source?.raw || source });
+    Object.entries(enrichment).forEach(([field, value]) => {
+      const road = GRIDLY_COMMUNITY_LOCATION_FIELD_GROUPS.road.includes(field)
+        || GRIDLY_COMMUNITY_LOCATION_FIELD_GROUPS.reference.includes(field)
+        || GRIDLY_COMMUNITY_LOCATION_FIELD_GROUPS.crossing.includes(field)
+        || ["corridor", "highway", "knownCorridorAlias"].includes(field);
+      mergeField(field, value, road);
+    });
+    mergeField("primaryRoad", source.primaryRoad || source.primary_road || source.roadName || source.road_name || source.road || source.route || source.name, true);
+    mergeField("nearestRoad", source.nearestRoad || source.nearest_road || source.roadName || source.road_name || source.road || source.name, true);
+    mergeField("crossingRoad", source.crossingRoad || source.crossing_road || source.crossing_street || source.cross_street || source.road || source.name, true);
+    mergeField("crossingName", source.crossingName || source.crossing_name || source.railroadCrossing || source.name || source.area, true);
+    mergeField("railroadCrossing", source.railroadCrossing || source.crossingName || source.crossing_name || source.name, true);
+    mergeField("referenceRoadA", source.referenceRoadA || source.reference_road_a || source.crossStreetA || source.crossStreet1 || source.fromStreet, true);
+    mergeField("referenceRoadB", source.referenceRoadB || source.reference_road_b || source.crossStreetB || source.crossStreet2 || source.toStreet, true);
+    mergeField("nearbyKnownLocation", source.nearbyKnownLocation || source.knownLocation || source.locationName || source.location_name || source.area || source.city, false);
+    mergeField("nearbyLocationPhrase", source.nearbyLocationPhrase || source.locationPhrase || source.locationText || source.localizedSummary, false);
+    mergeField("directionalLocation", source.directionalLocation || source.directional_location || source.direction, false);
+    mergeField("countyCityPhrase", source.countyCityPhrase || source.city || source.county, false);
+    const sourceLooksCrossing = /crossing/i.test(String(entry.sourceName || "")) || (typeof isGridlyRailShapedObject === "function" && isGridlyRailShapedObject(source));
+    mergeField("crossingId", source.crossingId || source.crossing_id || source.crossingNumber || source.crossing_number || (sourceLooksCrossing ? source.id : ""), false);
+  });
+  if (payload.crossingName && !payload.railroadCrossing) payload.railroadCrossing = payload.crossingName;
+  if (railLikely && !payload.nearbyLocationPhrase && (payload.crossingRoad || payload.crossingName)) {
+    payload.nearbyLocationPhrase = `Near ${payload.crossingRoad || payload.crossingName}`;
+  }
+  if (!payload.corridor) {
+    const known = detectGridlyCommunityCorridor({ ...incident, ...payload });
+    if (known && known !== "Local corridors") payload.corridor = known;
+  }
+  return {
+    payload,
+    matchedSources: Array.from(new Set(matchedSources)),
+    recordTypes: Array.from(new Set(recordTypes)),
+    railLikely
+  };
+}
+
+function applyGridlyCommunitySourceJoinToSelected(selected = [], options = {}) {
+  const scoped = Array.isArray(selected) ? selected : [];
+  const sourceState = collectGridlyCommunitySourceJoinRecords(options);
+  const joinedSpecificityFields = new Set();
+  const resolvedSourceRecordTypes = new Set();
+  const matchedSourceNames = new Set();
+  let sourceJoinAttempts = 0;
+  let sourceJoinMatches = 0;
+  let joinedRailContextCount = 0;
+  let joinedRoadContextCount = 0;
+  let joinedCrossingContextCount = 0;
+  const enrichedSelected = scoped.map((item) => {
+    sourceJoinAttempts += 1;
+    const incident = item?.incident && typeof item.incident === "object" ? item.incident : {};
+    const matches = sourceState.records
+      .map((entry) => ({ ...entry, score: getGridlyCommunitySourceJoinMatchScore(item, entry) }))
+      .filter((entry) => entry.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 6);
+    const joined = buildGridlyCommunityJoinedSpecificityPayload(item, matches);
+    const payload = joined.payload || {};
+    const existingFields = new Set(getGridlyCommunityPulseIncidentFieldValues(item).map((entry) => entry.field));
+    const applied = {};
+    Object.entries(payload).forEach(([field, value]) => {
+      const text = String(value || "").trim();
+      if (!text) return;
+      const existing = String(incident?.[field] || item?.[field] || "").trim();
+      const existingGeneric = !existing || /^(local corridors|nearby corridors|around town|local|unknown|n\/?a|na)$/i.test(existing);
+      if (existingGeneric || !existingFields.has(field)) {
+        applied[field] = text;
+        joinedSpecificityFields.add(field);
+      }
+    });
+    const sourceJoinMatched = Object.keys(applied).length > 0;
+    if (sourceJoinMatched) {
+      sourceJoinMatches += 1;
+      joined.matchedSources.forEach((source) => matchedSourceNames.add(source));
+      joined.recordTypes.forEach((type) => resolvedSourceRecordTypes.add(type));
+      const hasRoad = ["primaryRoad", "nearestRoad", "roadName", "referenceRoadA", "referenceRoadB", "corridor", "highway"].some((field) => applied[field]);
+      const hasCrossing = ["crossingRoad", "crossingName", "railroadCrossing", "crossingId"].some((field) => applied[field]);
+      if (joined.railLikely && (hasCrossing || hasRoad)) joinedRailContextCount += 1;
+      if (hasRoad) joinedRoadContextCount += 1;
+      if (hasCrossing) joinedCrossingContextCount += 1;
+    }
+    const enrichedIncident = { ...incident, ...applied };
+    const nextCorridor = applied.corridor || (item.corridor === "Local corridors" ? detectGridlyCommunityCorridor(enrichedIncident) : item.corridor);
+    return {
+      ...item,
+      ...applied,
+      corridor: nextCorridor && nextCorridor !== "Local corridors" ? nextCorridor : item.corridor,
+      incident: enrichedIncident,
+      sourceJoinApplied: sourceJoinMatched,
+      sourceJoinSource: joined.matchedSources[0] || "",
+      sourceJoinMatchedSources: joined.matchedSources,
+      resolvedSourceRecordTypes: joined.recordTypes,
+      joinedSpecificityFields: Object.keys(applied)
+    };
+  });
+  return {
+    selected: enrichedSelected,
+    diagnostics: {
+      sourceJoinAttempts,
+      sourceJoinMatches,
+      sourceJoinFailures: Math.max(0, sourceJoinAttempts - sourceJoinMatches),
+      joinedSpecificityFields: Array.from(joinedSpecificityFields).slice(0, 32),
+      joinedRailContextCount,
+      joinedRoadContextCount,
+      joinedCrossingContextCount,
+      specificityJoinApplied: sourceJoinMatches > 0,
+      specificityJoinSource: Array.from(matchedSourceNames).slice(0, 12).join(", ") || "none",
+      resolvedSourceRecordTypes: Array.from(resolvedSourceRecordTypes).slice(0, 12),
+      selectedItemsAfterJoin: enrichedSelected.length,
+      unresolvedSpecificityItems: enrichedSelected.filter((item) => !resolveGridlyIncidentSpecificCorridor(item)).length,
+      sourceJoinCollectionCounts: sourceState.sourceJoinCollectionCounts,
+      sourceJoinErrors: sourceState.sourceJoinErrors
+    }
+  };
+}
+
 function getGridlyCommunitySpecificityDiagnostics(items = []) {
   const scoped = Array.isArray(items) ? items : [];
   const countFields = (fields) => fields.reduce((acc, field) => {
@@ -10789,13 +11052,16 @@ function buildCommunityPresenceDataset(options = {}) {
   const candidates = sourceDiagnostics.candidates;
   const scored = candidates.map((incident) => scoreCommunityPresenceIncident(incident, { ...options, allCandidates: candidates }))
     .sort((a, b) => b.communityPresenceScore - a.communityPresenceScore);
-  const selected = scored.filter((item, index) => item.communityPresenceScore >= 34 || index < Math.min(5, scored.length)).slice(0, Number(options?.limit || 12));
-  const corridorIncidentCounts = scored.reduce((acc, item) => {
+  const selectedBeforeJoin = scored.filter((item, index) => item.communityPresenceScore >= 34 || index < Math.min(5, scored.length)).slice(0, Number(options?.limit || 12));
+  const sourceJoin = applyGridlyCommunitySourceJoinToSelected(selectedBeforeJoin, options);
+  const selected = sourceJoin.selected;
+  const scoredForCorridors = scored.map((item) => selected.find((selectedItem) => String(selectedItem.id) === String(item.id)) || item);
+  const corridorIncidentCounts = scoredForCorridors.reduce((acc, item) => {
     const key = item?.corridor || "Local corridors";
     acc[key] = (acc[key] || 0) + 1;
     return acc;
   }, {});
-  const corridorSeveritySummary = scored.reduce((acc, item) => {
+  const corridorSeveritySummary = scoredForCorridors.reduce((acc, item) => {
     const corridor = item?.corridor || "Local corridors";
     if (!acc[corridor]) acc[corridor] = { low: 0, moderate: 0, high: 0, critical: 0 };
     const severity = String(item?.severity || "low").toLowerCase() === "medium" ? "moderate" : String(item?.severity || "low").toLowerCase();
@@ -10822,6 +11088,8 @@ function buildCommunityPresenceDataset(options = {}) {
     dominantCorridor,
     corridorSeveritySummary,
     ...getGridlyCommunitySpecificityDiagnostics(selected),
+    sourceJoinDiagnostics: sourceJoin.diagnostics,
+    ...sourceJoin.diagnostics,
     candidateSourceNames: sourceDiagnostics.candidateSourceNames,
     candidateSourceCounts: sourceDiagnostics.candidateSourceCounts,
     rawCandidateSourceCounts: sourceDiagnostics.rawCandidateSourceCounts,
@@ -11028,6 +11296,15 @@ window.gridlyCommunityPresenceAudit = function gridlyCommunityPresenceAudit(opti
       selectedItemsWithSpecificity: Number(dataset.selectedItemsWithSpecificity || 0),
       selectedItemsMissingSpecificity: Number(dataset.selectedItemsMissingSpecificity || 0),
       specificityCoveragePercent: Number(dataset.specificityCoveragePercent || 0),
+      sourceJoinAttempts: Number(dataset.sourceJoinAttempts || 0),
+      sourceJoinMatches: Number(dataset.sourceJoinMatches || 0),
+      sourceJoinFailures: Number(dataset.sourceJoinFailures || 0),
+      joinedSpecificityFields: Array.isArray(dataset.joinedSpecificityFields) ? dataset.joinedSpecificityFields : [],
+      joinedRailContextCount: Number(dataset.joinedRailContextCount || 0),
+      joinedRoadContextCount: Number(dataset.joinedRoadContextCount || 0),
+      joinedCrossingContextCount: Number(dataset.joinedCrossingContextCount || 0),
+      sourceJoinCollectionCounts: dataset.sourceJoinCollectionCounts || {},
+      sourceJoinErrors: dataset.sourceJoinErrors || {},
       samplePresenceItems: dataset.selected.slice(0, 8).map((item) => ({
         id: item.id,
         communityPresenceScore: item.communityPresenceScore,
@@ -11046,12 +11323,16 @@ window.gridlyCommunityPresenceAudit = function gridlyCommunityPresenceAudit(opti
         nearbyKnownLocation: item.incident?.nearbyKnownLocation || "",
         nearbyLocationPhrase: item.incident?.nearbyLocationPhrase || "",
         directionalLocation: item.incident?.directionalLocation || "",
+        sourceJoinApplied: Boolean(item.sourceJoinApplied),
+        sourceJoinSource: item.sourceJoinSource || "",
+        joinedSpecificityFields: item.joinedSpecificityFields || [],
+        resolvedSourceRecordTypes: item.resolvedSourceRecordTypes || [],
         phrase: dataset.phrases[dataset.selected.indexOf(item)] || ""
       })),
       awarenessMode: dataset.awarenessMode
     };
   } catch (error) {
-    return { loaded: false, version: GRIDLY_COMMUNITY_PRESENCE_VERSION, evaluatedCount: 0, selectedCommunityCount: 0, highestPresenceScore: 0, candidateSourceNames: [], candidateSourceCounts: {}, rawCandidateCount: 0, normalizedCandidateCount: 0, skippedCandidateReasons: {}, corridorClusterCount: 0, nearbyIncidentCount: 0, enrichedLocationFieldCounts: {}, enrichedRoadFieldCounts: {}, enrichedCrossingFieldCounts: {}, selectedItemsWithSpecificity: 0, selectedItemsMissingSpecificity: 0, specificityCoveragePercent: 0, samplePresenceItems: [], awarenessMode: "community", notes: [`Community presence audit fallback: ${error?.message || "unknown error"}`] };
+    return { loaded: false, version: GRIDLY_COMMUNITY_PRESENCE_VERSION, evaluatedCount: 0, selectedCommunityCount: 0, highestPresenceScore: 0, candidateSourceNames: [], candidateSourceCounts: {}, rawCandidateCount: 0, normalizedCandidateCount: 0, skippedCandidateReasons: {}, corridorClusterCount: 0, nearbyIncidentCount: 0, enrichedLocationFieldCounts: {}, enrichedRoadFieldCounts: {}, enrichedCrossingFieldCounts: {}, selectedItemsWithSpecificity: 0, selectedItemsMissingSpecificity: 0, specificityCoveragePercent: 0, sourceJoinAttempts: 0, sourceJoinMatches: 0, sourceJoinFailures: 0, joinedSpecificityFields: [], joinedRailContextCount: 0, joinedRoadContextCount: 0, joinedCrossingContextCount: 0, sourceJoinCollectionCounts: {}, sourceJoinErrors: {}, samplePresenceItems: [], awarenessMode: "community", notes: [`Community presence audit fallback: ${error?.message || "unknown error"}`] };
   }
 };
 window.gridlyCommunityCorridorAudit = function gridlyCommunityCorridorAudit(options = {}) {
@@ -11089,6 +11370,11 @@ let gridlyCommunityPulseAuditState = {
   specificityResolverFallbackReason: "",
   genericCorridorFallbackUsed: false,
   specificityUpgradeApplied: false,
+  specificityJoinApplied: false,
+  specificityJoinSource: "none",
+  resolvedSourceRecordTypes: [],
+  selectedItemsAfterJoin: 0,
+  unresolvedSpecificityItems: 0,
   selectedCommunityCount: 0,
   communityPhraseCount: 0,
   pulseRenderTarget: GRIDLY_COMMUNITY_PULSE_RENDER_TARGET,
@@ -11628,6 +11914,11 @@ function buildGridlyCommunityPulseModel(options = {}) {
     specificityResolverFallbackReason: specificityAuditFields.specificityResolverFallbackReason,
     genericCorridorFallbackUsed: Boolean(corridorSpecificity.genericCorridorFallbackUsed),
     specificityUpgradeApplied: Boolean(corridorSpecificity.specificityUpgradeApplied),
+    specificityJoinApplied: Boolean(dataset.specificityJoinApplied),
+    specificityJoinSource: dataset.specificityJoinSource || "none",
+    resolvedSourceRecordTypes: Array.isArray(dataset.resolvedSourceRecordTypes) ? dataset.resolvedSourceRecordTypes : [],
+    selectedItemsAfterJoin: Number(dataset.selectedItemsAfterJoin || dataset.selectedCommunityCount || 0),
+    unresolvedSpecificityItems: Number(dataset.unresolvedSpecificityItems || 0),
     selectedCommunityCount,
     communityPhraseCount,
     pulseRenderTarget,
@@ -11668,6 +11959,11 @@ function renderGridlyCommunityPulse(options = {}) {
       specificityResolverFallbackReason: "",
       genericCorridorFallbackUsed: false,
       specificityUpgradeApplied: false,
+      specificityJoinApplied: false,
+      specificityJoinSource: "none",
+      resolvedSourceRecordTypes: [],
+      selectedItemsAfterJoin: 0,
+      unresolvedSpecificityItems: 0,
       selectedCommunityCount: 0,
       communityPhraseCount: 0,
       pulseRenderTarget: GRIDLY_COMMUNITY_PULSE_RENDER_TARGET,
@@ -11727,6 +12023,11 @@ window.gridlyCommunityPulseAudit = function gridlyCommunityPulseAudit(options = 
     specificityResolverFallbackReason: state.specificityResolverFallbackReason || "",
     genericCorridorFallbackUsed: Boolean(state.genericCorridorFallbackUsed),
     specificityUpgradeApplied: Boolean(state.specificityUpgradeApplied),
+    specificityJoinApplied: Boolean(state.specificityJoinApplied),
+    specificityJoinSource: state.specificityJoinSource || "none",
+    resolvedSourceRecordTypes: Array.isArray(state.resolvedSourceRecordTypes) ? state.resolvedSourceRecordTypes.slice(0, 12) : [],
+    selectedItemsAfterJoin: Number(state.selectedItemsAfterJoin || 0),
+    unresolvedSpecificityItems: Number(state.unresolvedSpecificityItems || 0),
     selectedCommunityCount: Number(state.selectedCommunityCount || 0),
     communityPhraseCount: Number(state.communityPhraseCount || 0),
     pulseRenderTarget: state.pulseRenderTarget || GRIDLY_COMMUNITY_PULSE_RENDER_TARGET,
