@@ -10295,6 +10295,13 @@ function getRouteHazardAssessmentForPath(routeLatLngs = []) {
 
 
 const GRIDLY_COMMUNITY_PRESENCE_VERSION = "V177.4";
+const GRIDLY_RECOVERY_BASELINE_VERSION = "V178-RECOVERY.1";
+const GRIDLY_CROSSING_RUNTIME_ENABLED = false;
+const GRIDLY_CROSSING_ENRICHMENT_ENABLED = false;
+const GRIDLY_SOURCE_JOIN_RUNTIME_ENABLED = false;
+const GRIDLY_HEAVY_COMMUNITY_RUNTIME_DISABLED = true;
+const GRIDLY_BOTTOM_PANEL_RESPONSIVE_GUARD_ACTIVE = true;
+const GRIDLY_COMMUNITY_PULSE_MAX_RUNTIME_CANDIDATES = 80;
 const GRIDLY_COMMUNITY_AWARENESS_BRIDGE_SOURCE = "community_presence_passive";
 const GRIDLY_COMMUNITY_CORRIDORS = [
   { name: "US 90", aliases: ["us 90", "u.s. 90", "highway 90", "hwy 90", "us-90"] },
@@ -10303,7 +10310,7 @@ const GRIDLY_COMMUNITY_CORRIDORS = [
   { name: "FM 1409", aliases: ["fm 1409", "farm to market 1409", "f.m. 1409", "fm-1409"] },
   { name: "FM 1008", aliases: ["fm 1008", "farm to market 1008", "f.m. 1008", "fm-1008"] }
 ];
-const GRIDLY_COMMUNITY_PRESENCE_CENTER = { lat: 30.0466, lng: -94.8852, label: "Dayton town center" };
+const GRIDLY_COMMUNITY_PRESENCE_CENTER = { lat: 30.0466, lng: -94.8852, label: "Liberty County regional center" };
 
 function normalizeGridlyCommunityPresenceToken(value = "") {
   return String(value || "").toLowerCase().replace(/[._-]+/g, " ").replace(/\s+/g, " ").trim();
@@ -10327,7 +10334,7 @@ function getGridlyCommunityPresenceAnchor(options = {}) {
     const mapAnchor = getGridlyIncidentCoordinate(center || {});
     if (mapAnchor) return { ...mapAnchor, source: "mapCenter" };
   } catch (_error) {}
-  return { ...GRIDLY_COMMUNITY_PRESENCE_CENTER, source: "defaultDayton" };
+  return { ...GRIDLY_COMMUNITY_PRESENCE_CENTER, source: "defaultRegionCenter" };
 }
 
 function getGridlyCommunityIncidentId(incident = {}) {
@@ -10420,6 +10427,10 @@ function isGridlyCommunityPresenceActiveCandidate(candidate = {}) {
 }
 
 function resolveGridlyCommunityPresenceSources(options = {}) {
+  // V178-RECOVERY.1 guardrail: Community Presence may only read already-active
+  // incident/report arrays or rendered marker DOM. Do not scan the full crossings
+  // collection during UI runtime, do not enrich crossing records during boot or
+  // interaction, and do not add source joins here.
   const optionItems = Array.isArray(options?.communityPresenceItems) ? options.communityPresenceItems : null;
   const sourceDefs = optionItems ? [
     { name: "options.communityPresenceItems", items: optionItems, error: "" }
@@ -10450,7 +10461,7 @@ function resolveGridlyCommunityPresenceSources(options = {}) {
     rawCandidateSourceCounts[source.name] = items.length;
     candidateSourceCounts[source.name] = 0;
     if (source.error) sourceErrors[source.name] = source.error;
-    items.forEach((item, index) => {
+    items.slice(0, GRIDLY_COMMUNITY_PULSE_MAX_RUNTIME_CANDIDATES).forEach((item, index) => {
       const normalized = source.name === "rendered_marker_dom"
         ? normalizeGridlyCommunityPresenceDomCandidate(item, index)
         : normalizeGridlyCommunityPresenceCandidate(item, source.name, index);
@@ -10565,6 +10576,10 @@ function buildCommunityPresencePhrases(scoredItems = []) {
 }
 
 function buildCommunityPresenceDataset(options = {}) {
+  // V178-RECOVERY.1 guardrail: Community Pulse must stay lightweight unless an
+  // explicit future debug/feature flag re-enables heavier analysis. Keep this
+  // model free of full crossing scans, boot/interaction crossing enrichment,
+  // and source joins inside pulse render.
   const sourceDiagnostics = resolveGridlyCommunityPresenceSources(options);
   const candidates = sourceDiagnostics.candidates;
   const scored = candidates.map((incident) => scoreCommunityPresenceIncident(incident, { ...options, allCandidates: candidates }))
@@ -11212,6 +11227,8 @@ function buildGridlyCommunityPulseModel(options = {}) {
 }
 
 function renderGridlyCommunityPulse(options = {}) {
+  // Recovery baseline guard: rendering the pulse must consume the lightweight
+  // Community Presence model only. Do not run source joins inside pulse render.
   let model;
   try {
     model = buildGridlyCommunityPulseModel(options);
@@ -11259,6 +11276,49 @@ function renderGridlyCommunityPulse(options = {}) {
   };
   return gridlyCommunityPulseAuditState;
 }
+
+function isGridlyRecoveryAuditElementVisible(element) {
+  if (!element) return false;
+  const style = typeof window !== "undefined" && typeof window.getComputedStyle === "function"
+    ? window.getComputedStyle(element)
+    : null;
+  const rect = typeof element.getBoundingClientRect === "function" ? element.getBoundingClientRect() : null;
+  const hasBox = !rect || (Number(rect.width || 0) > 0 && Number(rect.height || 0) > 0);
+  return hasBox
+    && style?.display !== "none"
+    && style?.visibility !== "hidden"
+    && style?.opacity !== "0"
+    && element.hidden !== true;
+}
+
+window.gridlyRecoveryBaselineAudit = function gridlyRecoveryBaselineAudit() {
+  const layoutMode = typeof getCurrentLayoutMode === "function"
+    ? getCurrentLayoutMode()
+    : (document.body?.dataset?.layoutMode || "unknown");
+  const mapElement = typeof document !== "undefined" ? document.getElementById("map") : null;
+  const pulseElement = typeof document !== "undefined" ? document.getElementById("gridlyCommunityPulseSurface") : null;
+
+  return {
+    loaded: true,
+    version: GRIDLY_RECOVERY_BASELINE_VERSION,
+    layoutMode,
+    mapExists: Boolean(mapElement),
+    mapVisible: isGridlyRecoveryAuditElementVisible(mapElement),
+    pulseExists: Boolean(pulseElement),
+    pulseVisible: isGridlyRecoveryAuditElementVisible(pulseElement),
+    crossingRuntimeEnabled: GRIDLY_CROSSING_RUNTIME_ENABLED,
+    crossingEnrichmentEnabled: GRIDLY_CROSSING_ENRICHMENT_ENABLED,
+    sourceJoinRuntimeEnabled: GRIDLY_SOURCE_JOIN_RUNTIME_ENABLED,
+    heavyCommunityRuntimeDisabled: GRIDLY_HEAVY_COMMUNITY_RUNTIME_DISABLED,
+    bottomPanelResponsiveGuardActive: GRIDLY_BOTTOM_PANEL_RESPONSIVE_GUARD_ACTIVE,
+    notes: [
+      "Fast recovery baseline is locked at V178-RECOVERY.1.",
+      "Community Pulse reads lightweight active incident/report and rendered-marker inputs only.",
+      "No full crossing collection scan, crossing enrichment, or source join is enabled for pulse render.",
+      "Portrait/mobile responsiveness guard remains active without changing bottom sheet ownership."
+    ]
+  };
+};
 
 window.gridlyCommunityPulseAudit = function gridlyCommunityPulseAudit(options = {}) {
   const shouldRender = options?.render !== false;
