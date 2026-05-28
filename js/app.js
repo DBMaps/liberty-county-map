@@ -10602,14 +10602,12 @@ function getGridlyAwarenessModeDiagnostics(options = {}) {
 
   let awarenessMode = "community";
   let modeReason = "No active route coordinates detected; community awareness mode selected.";
-  if (activeRoutePresent && (nearbyCommunityActivityPresent || highDensityCommunityActivityPresent)) {
-    awarenessMode = "hybrid";
-    modeReason = nearbyCommunityActivityPresent
-      ? "Active route detected with nearby active community activity."
-      : `Active route detected with high-density community activity (${communityActivityCount} active items; threshold ${highDensityCommunityThreshold}).`;
-  } else if (activeRoutePresent) {
+  const communityActivityWouldElevate = Boolean(activeRoutePresent && (nearbyCommunityActivityPresent || highDensityCommunityActivityPresent));
+  if (activeRoutePresent) {
     awarenessMode = "route";
-    modeReason = "Active route detected with more than one route coordinate.";
+    modeReason = communityActivityWouldElevate
+      ? "Active route coordinates detected; route intelligence owns the active awareness mode while community presence remains available internally."
+      : "Active route detected with more than one route coordinate.";
   }
 
   return {
@@ -10620,6 +10618,8 @@ function getGridlyAwarenessModeDiagnostics(options = {}) {
     nearbyIncidentCount,
     routeRelevantIncidentCount,
     communityActivityCount,
+    communityActivityWouldElevate,
+    routeModePriorityApplied: activeRoutePresent && awarenessMode === "route",
     evaluatedCount: communityPresence.evaluatedCount,
     selectedCommunityCount: communityPresence.selectedCommunityCount,
     selectedDomCount: communityBridge.selectedDomCount,
@@ -10728,6 +10728,128 @@ window.gridlyCommunityBridgeAudit = function gridlyCommunityBridgeAudit(options 
 window.gridlyApplyCommunityPresenceDomBridge = gridlyApplyCommunityAwarenessDomBridge;
 window.gridlyApplyCommunityAwarenessDomBridge = gridlyApplyCommunityAwarenessDomBridge;
 window.resolveGridlyCommunityPresenceSources = resolveGridlyCommunityPresenceSources;
+
+function getGridlyParallelBridgeDomSnapshot() {
+  if (typeof document === "undefined") {
+    return {
+      markerPanePresent: false,
+      routeNodes: [],
+      communityNodes: [],
+      allBridgeNodes: [],
+      routePhraseNodes: [],
+      communityPhraseNodes: []
+    };
+  }
+  const markerPane = document.querySelector("#map .leaflet-marker-pane");
+  const query = (selector) => markerPane ? Array.from(markerPane.querySelectorAll(selector)) : [];
+  const routeNodes = Array.from(new Set(query('[data-gridly-route-impact="true"], [data-gridly-consequence], [data-gridly-confidence], [data-gridly-intelligence], [data-gridly-confidence-label], .gridly-marker-rail-route-impact, .gridly-marker-priority-route-impact')));
+  const communityNodes = Array.from(new Set(query('[data-gridly-community-awareness="true"], [data-gridly-community-score], [data-gridly-community-corridor], [data-gridly-community-severity], [data-gridly-community-freshness], [data-gridly-community-bridge-source]')));
+  const routePhraseNodes = routeNodes.filter((node) => Boolean(String(node?.dataset?.gridlyIntelligence || node?.getAttribute?.("data-gridly-intelligence") || "").trim()));
+  const communityPhraseNodes = communityNodes.filter((node) => Boolean(String(node?.dataset?.gridlyCommunityCorridor || node?.getAttribute?.("data-gridly-community-corridor") || "").trim()));
+  return {
+    markerPanePresent: Boolean(markerPane),
+    routeNodes,
+    communityNodes,
+    allBridgeNodes: Array.from(new Set([...routeNodes, ...communityNodes])),
+    routePhraseNodes,
+    communityPhraseNodes
+  };
+}
+
+function countGridlyDuplicateBridgeKeys(nodes = []) {
+  return Math.max(0, nodes.length - new Set(nodes).size);
+}
+
+function getGridlyBridgeOwnershipDiagnostics(options = {}) {
+  const awarenessDiagnostics = getGridlyAwarenessModeDiagnostics(options);
+  const routeGeometryAudit = typeof getGridlyActiveRouteCoordinatesForAudit === "function"
+    ? getGridlyActiveRouteCoordinatesForAudit()
+    : { activeRoutePresent: false, activeRouteCoordinateCount: 0 };
+  const routeAudit = typeof window.gridlyRouteIntelligenceAudit === "function"
+    ? window.gridlyRouteIntelligenceAudit(options)
+    : { routeRelevantCount: 0, routeImpactPhraseCount: 0, selectedDomCount: 0 };
+  const communityDataset = buildCommunityPresenceDataset(options);
+  const domSnapshot = getGridlyParallelBridgeDomSnapshot();
+  const routeBridgeApplied = domSnapshot.routeNodes.length > 0 || Number(routeAudit.selectedDomCount || 0) > 0;
+  const communityBridgeApplied = domSnapshot.communityNodes.length > 0;
+  const routeCommunitySourceConflicts = domSnapshot.routeNodes.filter((node) => String(node?.dataset?.gridlyCommunityBridgeSource || "") === GRIDLY_COMMUNITY_AWARENESS_BRIDGE_SOURCE && String(node?.dataset?.gridlyRouteImpact || "").toLowerCase() === "true" && String(node?.dataset?.gridlyCommunityAwareness || "").toLowerCase() !== "true").length;
+  const routeFieldsOnCommunityOnlyNodes = domSnapshot.communityNodes.filter((node) => !domSnapshot.routeNodes.includes(node) && (
+    String(node?.dataset?.gridlyRouteImpact || "").toLowerCase() === "true"
+    || Boolean(node?.dataset?.gridlyConsequence)
+    || Boolean(node?.dataset?.gridlyConfidence)
+    || Boolean(node?.dataset?.gridlyIntelligence)
+  )).length;
+  const communityFieldsOnRouteOnlyNodes = domSnapshot.routeNodes.filter((node) => !domSnapshot.communityNodes.includes(node) && (
+    String(node?.dataset?.gridlyCommunityAwareness || "").toLowerCase() === "true"
+    || Boolean(node?.dataset?.gridlyCommunityScore)
+    || Boolean(node?.dataset?.gridlyCommunityBridgeSource)
+  )).length;
+  const duplicateBridgeTargets = countGridlyDuplicateBridgeKeys(domSnapshot.routeNodes) + countGridlyDuplicateBridgeKeys(domSnapshot.communityNodes);
+  const duplicatePhraseTargets = countGridlyDuplicateBridgeKeys(domSnapshot.routePhraseNodes) + countGridlyDuplicateBridgeKeys(domSnapshot.communityPhraseNodes);
+  const bridgeOwnershipConflicts = routeCommunitySourceConflicts + routeFieldsOnCommunityOnlyNodes + communityFieldsOnRouteOnlyNodes;
+  return {
+    loaded: true,
+    version: GRIDLY_COMMUNITY_PRESENCE_VERSION,
+    awarenessMode: awarenessDiagnostics.awarenessMode,
+    routeModeActive: awarenessDiagnostics.awarenessMode === "route",
+    communityModeActive: communityDataset.selectedCommunityCount > 0,
+    routeBridgeApplied,
+    communityBridgeApplied,
+    routePhraseCount: Number(routeAudit.routeImpactPhraseCount || routeAudit.routeRelevantPhraseCount || 0),
+    communityPhraseCount: Number(communityDataset.communityPhraseCount || 0),
+    bridgeOwnershipConflicts,
+    duplicateBridgeTargets,
+    duplicatePhraseTargets,
+    activeRoutePresent: Boolean(routeGeometryAudit.activeRoutePresent || awarenessDiagnostics.activeRoutePresent),
+    routeCoordinatesPresent: Number(routeGeometryAudit.activeRouteCoordinateCount || awarenessDiagnostics.activeRouteCoordinateCount || 0) > 1,
+    activeRouteCoordinateCount: Number(routeGeometryAudit.activeRouteCoordinateCount || awarenessDiagnostics.activeRouteCoordinateCount || 0),
+    routeRelevantCount: Number(routeAudit.routeRelevantCount || 0),
+    selectedDomCount: Number(routeAudit.selectedDomCount || 0),
+    communitySelectedDomCount: Number(awarenessDiagnostics.selectedDomCount || 0),
+    routeBridgeDomCount: domSnapshot.routeNodes.length,
+    communityBridgeDomCount: domSnapshot.communityNodes.length,
+    bridgeOwnershipConflictBreakdown: {
+      routeCommunitySourceConflicts,
+      routeFieldsOnCommunityOnlyNodes,
+      communityFieldsOnRouteOnlyNodes
+    },
+    notes: [
+      "Route mode has awareness priority whenever active route coordinates are present.",
+      "Community bridge metadata uses data-gridly-community-* fields only; route bridge metadata uses route/consequence/confidence fields only.",
+      "Diagnostics are additive and do not rebuild markers, popups, or bridge DOM."
+    ]
+  };
+}
+
+window.gridlyIntelligenceModeStateAudit = function gridlyIntelligenceModeStateAudit(options = {}) {
+  try {
+    return getGridlyBridgeOwnershipDiagnostics(options);
+  } catch (error) {
+    return { loaded: false, version: GRIDLY_COMMUNITY_PRESENCE_VERSION, awarenessMode: "community", routeModeActive: false, communityModeActive: false, routeBridgeApplied: false, communityBridgeApplied: false, routePhraseCount: 0, communityPhraseCount: 0, bridgeOwnershipConflicts: 0, duplicateBridgeTargets: 0, duplicatePhraseTargets: 0, activeRoutePresent: false, routeCoordinatesPresent: false, notes: [`Intelligence mode state audit fallback: ${error?.message || "unknown error"}`] };
+  }
+};
+
+window.gridlyBridgeOwnershipAudit = function gridlyBridgeOwnershipAudit(options = {}) {
+  try {
+    return getGridlyBridgeOwnershipDiagnostics(options);
+  } catch (error) {
+    return { loaded: false, version: GRIDLY_COMMUNITY_PRESENCE_VERSION, awarenessMode: "community", routeModeActive: false, communityModeActive: false, routeBridgeApplied: false, communityBridgeApplied: false, routePhraseCount: 0, communityPhraseCount: 0, bridgeOwnershipConflicts: 0, duplicateBridgeTargets: 0, duplicatePhraseTargets: 0, activeRoutePresent: false, routeCoordinatesPresent: false, notes: [`Bridge ownership audit fallback: ${error?.message || "unknown error"}`] };
+  }
+};
+
+window.gridlyParallelModeAudit = function gridlyParallelModeAudit(options = {}) {
+  try {
+    const diagnostics = getGridlyBridgeOwnershipDiagnostics(options);
+    return {
+      ...diagnostics,
+      parallelStable: diagnostics.bridgeOwnershipConflicts === 0 && diagnostics.duplicateBridgeTargets === 0,
+      routePriorityConfirmed: diagnostics.activeRoutePresent ? diagnostics.awarenessMode === "route" : true,
+      communityFallbackReady: !diagnostics.activeRoutePresent ? diagnostics.awarenessMode === "community" && diagnostics.communityPhraseCount > 0 : diagnostics.communityModeActive
+    };
+  } catch (error) {
+    return { loaded: false, version: GRIDLY_COMMUNITY_PRESENCE_VERSION, awarenessMode: "community", routeModeActive: false, communityModeActive: false, routeBridgeApplied: false, communityBridgeApplied: false, routePhraseCount: 0, communityPhraseCount: 0, bridgeOwnershipConflicts: 0, duplicateBridgeTargets: 0, duplicatePhraseTargets: 0, activeRoutePresent: false, routeCoordinatesPresent: false, parallelStable: false, routePriorityConfirmed: false, communityFallbackReady: false, notes: [`Parallel mode audit fallback: ${error?.message || "unknown error"}`] };
+  }
+};
 
 window.gridlyAwarenessModeDebug = {
   loaded: true,
