@@ -1552,14 +1552,37 @@ window.gridlyConfidenceAudit = function gridlyConfidenceAudit() {
 window.gridlyRouteConfidenceAudit = function gridlyRouteConfidenceAudit() {
   try {
     const incidents = Array.isArray(getUnifiedIncidents?.()) ? getUnifiedIncidents() : (Array.isArray(activeHazards) ? activeHazards : []);
-    const evaluated = incidents.map((incident) => { const visualState = getGridlyIncidentVisualState(incident); return { incident, visualState, confidence: evaluateGridlyIncidentConfidence(incident, { visualState }) }; }).filter((entry) => Boolean(entry.visualState?.routeRelevant || entry.visualState?.routeImpact));
-    const domCount = typeof document !== 'undefined' ? document.querySelectorAll('#map .leaflet-marker-pane [data-gridly-route-impact="true"][data-gridly-confidence], #map .leaflet-marker-pane .gridly-marker-rail-route-impact[data-gridly-confidence]').length : 0;
+    const sourceEvaluated = incidents.map((incident) => { const visualState = getGridlyIncidentVisualState(incident); return { incident, visualState, confidence: evaluateGridlyIncidentConfidence(incident, { visualState }) }; }).filter((entry) => Boolean(entry.visualState?.routeRelevant || entry.visualState?.routeImpact));
+    const markerPane = typeof document !== 'undefined' ? document.querySelector('#map .leaflet-marker-pane') : null;
+    const domBridgeMarkers = markerPane ? Array.from(markerPane.querySelectorAll('[data-gridly-route-impact="true"], .gridly-marker-rail-route-impact, .gridly-marker-priority-route-impact, [data-gridly-consequence], [data-gridly-confidence]')).filter((node) => {
+      if (!(node instanceof HTMLElement)) return false;
+      const routeImpactAttr = String(node.getAttribute('data-gridly-route-impact') || '').toLowerCase();
+      return routeImpactAttr === 'true' || node.classList.contains('gridly-marker-rail-route-impact') || node.classList.contains('gridly-marker-priority-route-impact');
+    }) : [];
+    const domBridgeEvaluated = domBridgeMarkers.map((node, index) => {
+      const confidenceLevel = String(node.getAttribute('data-gridly-confidence') || '').toLowerCase();
+      const freshnessLevel = String(node.getAttribute('data-gridly-freshness') || 'unknown').toLowerCase();
+      const consequenceLevel = String(node.getAttribute('data-gridly-consequence') || 'low').toLowerCase();
+      const visualStyle = String(node.getAttribute('data-visual-style') || '');
+      const routeImpact = String(node.getAttribute('data-gridly-route-impact') || '').toLowerCase() === 'true' || node.classList.contains('gridly-marker-rail-route-impact') || node.classList.contains('gridly-marker-priority-route-impact');
+      return { id: String(node.getAttribute('data-gridly-incident-id') || node.getAttribute('data-incident-id') || node.id || `dom-route-impact-${index + 1}`), confidenceLevel: confidenceLevel || 'very_low', freshnessLevel: freshnessLevel || 'unknown', consequenceLevel: consequenceLevel || 'low', visualStyle, routeImpact, confidencePresent: Boolean(confidenceLevel) };
+    });
+    const sourceRouteRelevantCount = sourceEvaluated.length;
+    const routeConfidenceSourceUsed = sourceRouteRelevantCount > 0 ? 'source_incidents' : (domBridgeEvaluated.length > 0 ? 'dom_bridge' : 'none');
+    const evaluated = routeConfidenceSourceUsed === 'dom_bridge' ? domBridgeEvaluated : sourceEvaluated;
+    const domBridgeConfidenceCounts = { very_low: 0, low: 0, medium: 0, high: 0, unknown: 0 };
+    domBridgeEvaluated.forEach((entry) => {
+      const lvl = String(entry.confidenceLevel || 'unknown');
+      domBridgeConfidenceCounts[lvl] = (domBridgeConfidenceCounts[lvl] || 0) + 1;
+    });
+    const missingConfidenceDomCount = domBridgeEvaluated.filter((entry) => !entry.confidencePresent).length;
+    const domBridgeConfidenceCount = domBridgeEvaluated.length;
     const confidenceByConsequence = {}; const confidenceByFreshness = {};
-    evaluated.forEach((entry) => { const c = String(entry.visualState?.consequenceLevel || 'low'); const f = String(entry.visualState?.freshnessLevel || 'unknown'); confidenceByConsequence[c] = confidenceByConsequence[c] || { high: 0, medium: 0, low: 0, very_low: 0 }; confidenceByFreshness[f] = confidenceByFreshness[f] || { high: 0, medium: 0, low: 0, very_low: 0 }; const lvl = String(entry.confidence?.confidenceLevel || 'very_low'); confidenceByConsequence[c][lvl] += 1; confidenceByFreshness[f][lvl] += 1; });
+    evaluated.forEach((entry) => { const c = String(entry.visualState?.consequenceLevel || entry.consequenceLevel || 'low'); const f = String(entry.visualState?.freshnessLevel || entry.freshnessLevel || 'unknown'); confidenceByConsequence[c] = confidenceByConsequence[c] || { high: 0, medium: 0, low: 0, very_low: 0, unknown: 0 }; confidenceByFreshness[f] = confidenceByFreshness[f] || { high: 0, medium: 0, low: 0, very_low: 0, unknown: 0 }; const lvl = String(entry.confidence?.confidenceLevel || entry.confidenceLevel || 'very_low'); confidenceByConsequence[c][lvl] = (confidenceByConsequence[c][lvl] || 0) + 1; confidenceByFreshness[f][lvl] = (confidenceByFreshness[f][lvl] || 0) + 1; });
     const sorted = evaluated.slice().sort((a,b)=>Number(b.confidence?.confidenceScore||0)-Number(a.confidence?.confidenceScore||0));
-    return { routeRelevantConfidenceCount: evaluated.length, highConfidenceRouteImpactCount: evaluated.filter((e)=>e.confidence?.confidenceLevel==='high').length, lowConfidenceRouteImpactCount: evaluated.filter((e)=>['low','very_low'].includes(String(e.confidence?.confidenceLevel))).length, domBridgeConfidenceCount: domCount, confidenceByConsequence, confidenceByFreshness, topRouteConfidenceSamples: sorted.slice(0, 8).map((e)=>({ id: e.incident?.id || e.incident?.crossingId || '', consequenceLevel: e.visualState?.consequenceLevel || 'low', freshnessLevel: e.visualState?.freshnessLevel || 'unknown', confidenceLevel: e.confidence?.confidenceLevel || 'very_low', confidenceScore: Number(e.confidence?.confidenceScore || 0), confidenceReason: e.confidence?.confidenceReason || '' })), routeConfidenceSourceUsed: evaluated.length > 0 ? 'source_incidents' : (domCount > 0 ? 'dom_bridge' : 'none'), notes: ['Route confidence audit preserves existing route-impact DOM bridge and marker hierarchy.'] };
+    return { routeRelevantConfidenceCount: evaluated.length, highConfidenceRouteImpactCount: evaluated.filter((e)=>(e.confidence?.confidenceLevel || e.confidenceLevel)==='high').length, lowConfidenceRouteImpactCount: evaluated.filter((e)=>['low','very_low'].includes(String(e.confidence?.confidenceLevel || e.confidenceLevel))).length, domBridgeConfidenceCount, domBridgeConfidenceCounts, domBridgeConfidenceSamples: domBridgeEvaluated.slice(0, 8).map((entry) => ({ id: entry.id, confidenceLevel: entry.confidenceLevel, freshnessLevel: entry.freshnessLevel, consequenceLevel: entry.consequenceLevel, visualStyle: entry.visualStyle, routeImpact: entry.routeImpact })), routeConfidenceSourceUsed, missingConfidenceDomCount, confidenceByConsequence, confidenceByFreshness, topRouteConfidenceSamples: sorted.slice(0, 8).map((e)=>({ id: e.incident?.id || e.incident?.crossingId || e.id || '', consequenceLevel: e.visualState?.consequenceLevel || e.consequenceLevel || 'low', freshnessLevel: e.visualState?.freshnessLevel || e.freshnessLevel || 'unknown', confidenceLevel: e.confidence?.confidenceLevel || e.confidenceLevel || 'very_low', confidenceScore: Number(e.confidence?.confidenceScore || 0), confidenceReason: e.confidence?.confidenceReason || '' })), notes: ['Route confidence audit preserves existing route-impact DOM bridge and marker hierarchy.'] };
   } catch (error) {
-    return { routeRelevantConfidenceCount: 0, highConfidenceRouteImpactCount: 0, lowConfidenceRouteImpactCount: 0, domBridgeConfidenceCount: 0, confidenceByConsequence: {}, confidenceByFreshness: {}, topRouteConfidenceSamples: [], routeConfidenceSourceUsed: 'none', notes: [`Route confidence audit fallback: ${error?.message || 'unknown error'}`] };
+    return { routeRelevantConfidenceCount: 0, highConfidenceRouteImpactCount: 0, lowConfidenceRouteImpactCount: 0, domBridgeConfidenceCount: 0, domBridgeConfidenceCounts: {}, domBridgeConfidenceSamples: [], routeConfidenceSourceUsed: 'none', missingConfidenceDomCount: 0, confidenceByConsequence: {}, confidenceByFreshness: {}, topRouteConfidenceSamples: [], notes: [`Route confidence audit fallback: ${error?.message || 'unknown error'}`] };
   }
 };
 
