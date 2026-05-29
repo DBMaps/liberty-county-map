@@ -3003,13 +3003,14 @@ function applyGridlyAlertLocationSync(reason = "alert_row_render") {
     const pulseHeadline = safeDisplayText(document.getElementById("gridlyCommunityPulseHeadline")?.textContent || gridlyCommunityPulseAuditState?.renderedPulseHeadline, "");
     gridlyAlertLocationSyncState.applied = true;
     gridlyAlertLocationSyncState.applyCount += 1;
-    gridlyAlertLocationSyncState.reason = decision.reason;
+    gridlyAlertLocationSyncState.reason = reason || decision.reason;
     gridlyAlertLocationSyncState.lastAppliedAt = Date.now();
     gridlyAlertLocationSyncState.lastAppliedLabel = safeDisplayText(awareness?.resolvedLocationLabel, "");
     gridlyAlertLocationSyncState.lastAppliedHeaderText = topStatusPrimary;
     gridlyAlertLocationSyncState.lastAppliedPulseHeadline = pulseHeadline;
     recordGridlyActiveLocationLifecycleEvent("alertLocationSyncHeaderRefresh", {
-      reason: decision.reason,
+      reason: gridlyAlertLocationSyncState.reason,
+      decisionReason: decision.reason,
       triggerReason: reason,
       resolvedLocationLabel: awareness?.resolvedLocationLabel || "",
       resolvedCategory: awareness?.resolvedCategory || awareness?.topCategory || null,
@@ -3027,9 +3028,17 @@ function applyGridlyAlertLocationSync(reason = "alert_row_render") {
   }
 }
 
+function runGridlyAlertLocationSyncAfterAlertRender(reason = "immediate_after_alert_render") {
+  if (gridlyAlertLocationSyncState.applied) return true;
+  const appliedImmediately = applyGridlyAlertLocationSync(reason);
+  if (!appliedImmediately && !gridlyAlertLocationSyncState.applied) {
+    scheduleGridlyAlertLocationSync(reason);
+  }
+  return appliedImmediately;
+}
+
 function scheduleGridlyAlertLocationSync(reason = "alert_row_render") {
   if (gridlyAlertLocationSyncState.applied) {
-    gridlyAlertLocationSyncState.reason = "already_applied";
     return false;
   }
   if (gridlyAlertLocationSyncState.pendingTimer) return false;
@@ -5993,7 +6002,7 @@ function openAlertsSurfaceFromDock() {
         html
       });
       bindAlertsPanelClick();
-      scheduleGridlyAlertLocationSync("alerts_panel_rendered");
+      runGridlyAlertLocationSyncAfterAlertRender("immediate_after_alert_render");
       return opened;
     }
 
@@ -26704,7 +26713,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     backdrop.classList.add("is-open");
 
     bindV2SheetActions();
-    if (sheetName === "alerts") scheduleGridlyAlertLocationSync("portrait_v2_alerts_sheet_rendered");
+    if (sheetName === "alerts") runGridlyAlertLocationSyncAfterAlertRender("immediate_after_alert_render");
     return true;
   }
 
