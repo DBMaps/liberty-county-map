@@ -13162,7 +13162,7 @@ window.gridlyCommunityPulseAudit = function gridlyCommunityPulseAudit(options = 
   };
 };
 
-const GRIDLY_PORTRAIT_OWNERSHIP_INVENTORY_VERSION = "V180.7";
+const GRIDLY_PORTRAIT_OWNERSHIP_INVENTORY_VERSION = "V180.10";
 const GRIDLY_PORTRAIT_OWNERSHIP_SYSTEMS = [
   {
     name: "gridlyPortraitV2",
@@ -13306,6 +13306,11 @@ function activateGridlyPortraitV2StartupOwner(source = "portrait_startup_activat
   return true;
 }
 const GRIDLY_PORTRAIT_RETIRED_SURFACES = {
+  dashboardSection: {
+    status: "retired",
+    retiredIn: "V180.10",
+    reason: "Legacy dashboard wrapper is deauthorized after Portrait V2 assumed visible active-product ownership; passive text updates are suppressed and only raw evidence is retained for audit reference."
+  },
   "mobile-active-crossings-card": {
     status: "retired",
     retiredIn: "V180.7",
@@ -13313,7 +13318,6 @@ const GRIDLY_PORTRAIT_RETIRED_SURFACES = {
   }
 };
 const GRIDLY_PORTRAIT_RECOMMENDED_DEAUTHORIZE = [
-  "dashboardSection",
   "future-map-hero",
   "mobile-home-cards",
   "mobile-community-card",
@@ -13410,7 +13414,7 @@ function getGridlyPortraitOwnershipElementState(definition) {
 }
 
 function buildGridlyPortraitDuplicateOwnershipWarnings(systems, portraitModeActive) {
-  const visibleSystems = systems.filter((system) => system.visible);
+  const visibleSystems = systems.filter((system) => system.visible && !system.retirement);
   const activePrimary = systems.find((system) => system.name === GRIDLY_PORTRAIT_PRIMARY_OWNER && system.active);
   const activeLegacyOwners = visibleSystems.filter((system) => GRIDLY_PORTRAIT_RECOMMENDED_DEAUTHORIZE.includes(system.name) && !system.portraitContainedStructuralWrapper);
   const warnings = [];
@@ -13463,13 +13467,13 @@ const GRIDLY_PORTRAIT_CONTAINMENT_PROFILE = {
   },
   dashboardSection: {
     supportsPortraitV2: false,
-    competesWithPortraitOwnership: true,
-    ownsLayout: true,
+    competesWithPortraitOwnership: false,
+    ownsLayout: false,
     ownsNavigation: false,
     ownsMap: false,
     ownsAlerts: false,
     ownsHeader: false,
-    recommendedAction: "contain"
+    recommendedAction: "retired"
   },
   "future-map-hero": {
     supportsPortraitV2: false,
@@ -13670,8 +13674,8 @@ function gridlyPortraitContainmentAudit() {
   }
 }
 
-const GRIDLY_LEGACY_SURFACE_DEPENDENCY_AUDIT_VERSION = "V180.9";
-const GRIDLY_LEGACY_TRUTH_AUDIT_VERSION = "V180.9";
+const GRIDLY_LEGACY_SURFACE_DEPENDENCY_AUDIT_VERSION = "V180.10";
+const GRIDLY_LEGACY_TRUTH_AUDIT_VERSION = "V180.10";
 const GRIDLY_DASHBOARD_SECTION_PASSIVE_SUPPRESSION_SELECTOR = "#dashboardSection";
 const GRIDLY_DASHBOARD_SECTION_PASSIVE_SUPPRESSION_OWNER_SELECTOR = "#gridlyPortraitV2";
 const gridlyDashboardSectionPassiveUpdateSuppressionState = {
@@ -13958,6 +13962,7 @@ function getGridlyLegacyTruthMatchedSelectors(element, selectors = []) {
 }
 
 function classifyGridlyLegacyTruthSurface(surface) {
+  if (surface.retired) return "retired";
   if (!surface.loaded) return "deadSurface";
   if (surface.contributesVisibleContent || surface.contributesAlertContent || surface.contributesPulseContent || surface.contributesRouteContent || surface.contributesMapContent || surface.contributesReportContent) {
     return "trueDependency";
@@ -13975,6 +13980,7 @@ function gridlyLegacyTruthAudit() {
     const legacyDefinitions = GRIDLY_PORTRAIT_OWNERSHIP_SYSTEMS.filter((definition) => remainingSurfaceNames.has(definition.name));
     const surfaces = legacyDefinitions.map((definition) => {
       const dependencyProfile = GRIDLY_LEGACY_SURFACE_DEPENDENCY_PROFILES[definition.name] || {};
+      const retirement = GRIDLY_PORTRAIT_RETIRED_SURFACES[definition.name] || null;
       const contentProfile = GRIDLY_LEGACY_TRUTH_CONTENT_PROFILES[definition.name] || {};
       const state = getGridlyLegacySurfaceDependencyElementState(definition);
       const { element } = state;
@@ -14026,7 +14032,9 @@ function gridlyLegacyTruthAudit() {
         contributesReportContent: Boolean(contributesVisibleContent && matchedReportSelectors.length > 0),
         referencedByPortraitV2,
         referencedByCurrentUserFlow,
-        dependencyReason: dependencyProfile.dependencyReason || "No explicit dependency profile is registered for this legacy surface.",
+        retired: Boolean(retirement),
+        retirement,
+        dependencyReason: retirement?.reason || dependencyProfile.dependencyReason || "No explicit dependency profile is registered for this legacy surface.",
         evidence: {
           display: state.display || state.style?.display || null,
           visibility: state.visibility || state.style?.visibility || null,
@@ -14052,6 +14060,7 @@ function gridlyLegacyTruthAudit() {
     const passiveDependencies = namesForClassification("passiveDependency");
     const legacyReferenceOnly = namesForClassification("legacyReferenceOnly");
     const deadSurfaces = namesForClassification("deadSurface");
+    const retiredSurfaces = namesForClassification("retired");
 
     return {
       loaded: true,
@@ -14062,6 +14071,7 @@ function gridlyLegacyTruthAudit() {
       passiveDependencies,
       legacyReferenceOnly,
       deadSurfaces,
+      retiredSurfaces,
       dashboardSectionPassiveUpdatesSuppressed: dashboardSuppressionAudit.dashboardSectionPassiveUpdatesSuppressed,
       suppressedUpdateTargets: dashboardSuppressionAudit.suppressedUpdateTargets,
       skippedBecausePortraitV2Owns: dashboardSuppressionAudit.skippedBecausePortraitV2Owns,
@@ -14087,6 +14097,7 @@ function gridlyLegacyTruthAudit() {
       passiveDependencies: [],
       legacyReferenceOnly: [],
       deadSurfaces: [],
+      retiredSurfaces: Object.keys(GRIDLY_PORTRAIT_RETIRED_SURFACES),
       dashboardSectionPassiveUpdatesSuppressed: false,
       suppressedUpdateTargets: [],
       skippedBecausePortraitV2Owns: false,
@@ -14254,7 +14265,7 @@ window.gridlyPortraitOwnershipInventory = function gridlyPortraitOwnershipInvent
         ownerClass: state.ownerClass,
         visible: state.visible,
         loaded: state.loaded,
-        active: Boolean(state.active && !portraitContainedStructuralWrapper && (portraitModeActive || state.name === GRIDLY_PORTRAIT_PRIMARY_OWNER || state.ownerClass === "shared_map" || state.ownerClass === "portrait_module")),
+        active: Boolean(!GRIDLY_PORTRAIT_RETIRED_SURFACES[state.name] && state.active && !portraitContainedStructuralWrapper && (portraitModeActive || state.name === GRIDLY_PORTRAIT_PRIMARY_OWNER || state.ownerClass === "shared_map" || state.ownerClass === "portrait_module")),
         portraitContainedStructuralWrapper,
         retirement: GRIDLY_PORTRAIT_RETIRED_SURFACES[state.name] || null
       };
