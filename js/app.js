@@ -2675,6 +2675,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyRouteSetupButtonAudit",
   "gridlyRouteAuditGlobalsCheck",
   "gridlyPortraitV2LayerAudit",
+  "gridlyPortraitContainmentAudit",
   "gridlyAuditCycleDebug",
   "gridlyAuditHelpersCheck",
   "loadSharedReports"
@@ -2738,6 +2739,7 @@ function exposeAllGridlyAuditHelpers() {
     gridlyRouteSetupButtonAudit: typeof gridlyRouteSetupButtonAudit === "function" ? gridlyRouteSetupButtonAudit : null,
     gridlyRouteAuditGlobalsCheck: typeof gridlyRouteAuditGlobalsCheck === "function" ? gridlyRouteAuditGlobalsCheck : null,
     gridlyPortraitV2LayerAudit: typeof gridlyPortraitV2LayerAudit === "function" ? gridlyPortraitV2LayerAudit : null,
+    gridlyPortraitContainmentAudit: typeof gridlyPortraitContainmentAudit === "function" ? gridlyPortraitContainmentAudit : null,
     gridlyAuditCycleDebug: typeof gridlyAuditCycleDebug === "function" ? gridlyAuditCycleDebug : null,
     gridlyAuditHelpersCheck: typeof gridlyAuditHelpersCheck === "function" ? gridlyAuditHelpersCheck : null,
     loadSharedReports: typeof loadSharedReports === "function" ? loadSharedReports : null
@@ -13381,6 +13383,229 @@ function buildGridlyPortraitDuplicateOwnershipWarnings(systems, portraitModeActi
   }
   return warnings;
 }
+
+const GRIDLY_PORTRAIT_CONTAINMENT_AUDIT_VERSION = "V180.4";
+const GRIDLY_PORTRAIT_CONTAINMENT_PROFILE = {
+  gridlyPortraitV2: {
+    supportsPortraitV2: true,
+    competesWithPortraitOwnership: false,
+    ownsLayout: true,
+    ownsNavigation: true,
+    ownsMap: false,
+    ownsAlerts: true,
+    ownsHeader: true,
+    recommendedAction: "keep"
+  },
+  gridlyCommunityPulseSurface: {
+    supportsPortraitV2: true,
+    competesWithPortraitOwnership: false,
+    ownsLayout: false,
+    ownsNavigation: false,
+    ownsMap: false,
+    ownsAlerts: false,
+    ownsHeader: false,
+    recommendedAction: "keep"
+  },
+  dashboardSection: {
+    supportsPortraitV2: false,
+    competesWithPortraitOwnership: true,
+    ownsLayout: true,
+    ownsNavigation: false,
+    ownsMap: false,
+    ownsAlerts: false,
+    ownsHeader: false,
+    recommendedAction: "contain"
+  },
+  "future-map-hero": {
+    supportsPortraitV2: false,
+    competesWithPortraitOwnership: true,
+    ownsLayout: true,
+    ownsNavigation: false,
+    ownsMap: true,
+    ownsAlerts: false,
+    ownsHeader: true,
+    recommendedAction: "contain"
+  },
+  "mobile-home-cards": {
+    supportsPortraitV2: false,
+    competesWithPortraitOwnership: true,
+    ownsLayout: true,
+    ownsNavigation: false,
+    ownsMap: false,
+    ownsAlerts: true,
+    ownsHeader: false,
+    recommendedAction: "deauthorize"
+  },
+  "mobile-community-card": {
+    supportsPortraitV2: false,
+    competesWithPortraitOwnership: true,
+    ownsLayout: false,
+    ownsNavigation: false,
+    ownsMap: false,
+    ownsAlerts: true,
+    ownsHeader: false,
+    recommendedAction: "deauthorize"
+  },
+  "mobile-active-crossings-card": {
+    supportsPortraitV2: false,
+    competesWithPortraitOwnership: true,
+    ownsLayout: false,
+    ownsNavigation: false,
+    ownsMap: false,
+    ownsAlerts: true,
+    ownsHeader: false,
+    recommendedAction: "deauthorize"
+  },
+  "mobile-corridor-intel-card": {
+    supportsPortraitV2: false,
+    competesWithPortraitOwnership: true,
+    ownsLayout: false,
+    ownsNavigation: false,
+    ownsMap: false,
+    ownsAlerts: true,
+    ownsHeader: false,
+    recommendedAction: "deauthorize"
+  },
+  "desktop-command-strip": {
+    supportsPortraitV2: false,
+    competesWithPortraitOwnership: true,
+    ownsLayout: false,
+    ownsNavigation: true,
+    ownsMap: false,
+    ownsAlerts: true,
+    ownsHeader: true,
+    recommendedAction: "deauthorize"
+  },
+  "desktop-left-rail": {
+    supportsPortraitV2: false,
+    competesWithPortraitOwnership: true,
+    ownsLayout: false,
+    ownsNavigation: true,
+    ownsMap: false,
+    ownsAlerts: false,
+    ownsHeader: false,
+    recommendedAction: "deauthorize"
+  },
+  "future-hero-overlay": {
+    supportsPortraitV2: false,
+    competesWithPortraitOwnership: true,
+    ownsLayout: false,
+    ownsNavigation: false,
+    ownsMap: false,
+    ownsAlerts: false,
+    ownsHeader: true,
+    recommendedAction: "contain"
+  },
+  "map-card": {
+    supportsPortraitV2: true,
+    competesWithPortraitOwnership: false,
+    ownsLayout: false,
+    ownsNavigation: false,
+    ownsMap: true,
+    ownsAlerts: false,
+    ownsHeader: false,
+    recommendedAction: "keep"
+  },
+  "command-center": {
+    supportsPortraitV2: false,
+    competesWithPortraitOwnership: true,
+    ownsLayout: true,
+    ownsNavigation: true,
+    ownsMap: true,
+    ownsAlerts: true,
+    ownsHeader: true,
+    recommendedAction: "deauthorize"
+  }
+};
+
+function gridlyPortraitContainmentReceivesUserInteraction(element) {
+  if (!element) return false;
+  const style = window.getComputedStyle(element);
+  if (style.pointerEvents === "none") return false;
+  const interactiveSelector = "button, a[href], input, select, textarea, summary, [tabindex]:not([tabindex='-1']), [role='button'], [role='link'], [role='tab'], [role='menuitem'], [contenteditable='true']";
+  const hasInteractiveChild = Boolean(element.matches?.(interactiveSelector) || element.querySelector?.(interactiveSelector));
+  const hasInlineInteraction = Array.from(element.attributes || []).some((attribute) => /^on/i.test(attribute.name));
+  return Boolean(hasInteractiveChild || hasInlineInteraction || style.pointerEvents === "auto");
+}
+
+function getGridlyPortraitContainmentSystemAudit(definition) {
+  const state = getGridlyPortraitOwnershipElementState(definition);
+  const element = state.loaded ? document.querySelector(definition.selector) : null;
+  const profile = GRIDLY_PORTRAIT_CONTAINMENT_PROFILE[definition.name] || {};
+  const supportsPortraitV2 = Boolean(profile.supportsPortraitV2);
+  const competesWithPortraitOwnership = Boolean(profile.competesWithPortraitOwnership);
+  const recommendedAction = profile.recommendedAction || (supportsPortraitV2 ? "keep" : competesWithPortraitOwnership ? "contain" : "unknown");
+  return {
+    name: state.name,
+    selector: state.selector,
+    ownerClass: state.ownerClass || definition.ownerClass || "unknown",
+    visible: Boolean(state.visible),
+    loaded: Boolean(state.loaded),
+    supportsPortraitV2,
+    competesWithPortraitOwnership,
+    receivesUserInteraction: Boolean(state.visible && gridlyPortraitContainmentReceivesUserInteraction(element)),
+    ownsLayout: Boolean(profile.ownsLayout),
+    ownsNavigation: Boolean(profile.ownsNavigation),
+    ownsMap: Boolean(profile.ownsMap),
+    ownsAlerts: Boolean(profile.ownsAlerts),
+    ownsHeader: Boolean(profile.ownsHeader),
+    recommendedAction
+  };
+}
+
+function gridlyPortraitContainmentAudit() {
+  try {
+    const activationAudit = typeof window.gridlyPortraitActivationAudit === "function" ? window.gridlyPortraitActivationAudit() : null;
+    const portraitPrimaryOwner = activationAudit?.currentActivePortraitOwner || GRIDLY_PORTRAIT_PRIMARY_OWNER;
+    const visiblePortraitSystems = GRIDLY_PORTRAIT_OWNERSHIP_SYSTEMS
+      .map(getGridlyPortraitContainmentSystemAudit)
+      .filter((system) => system.visible);
+    const supportingPortraitModules = visiblePortraitSystems
+      .filter((system) => system.name !== portraitPrimaryOwner && system.supportsPortraitV2 && !system.competesWithPortraitOwnership)
+      .map((system) => system.name);
+    const competingPortraitOwners = visiblePortraitSystems
+      .filter((system) => system.name !== portraitPrimaryOwner && system.competesWithPortraitOwnership)
+      .map((system) => system.name);
+    const containmentCandidates = visiblePortraitSystems
+      .filter((system) => system.recommendedAction === "contain")
+      .map((system) => system.name);
+    const deauthorizationCandidates = visiblePortraitSystems
+      .filter((system) => system.recommendedAction === "deauthorize")
+      .map((system) => system.name);
+
+    return {
+      loaded: true,
+      version: GRIDLY_PORTRAIT_CONTAINMENT_AUDIT_VERSION,
+      portraitPrimaryOwner,
+      visiblePortraitSystems,
+      supportingPortraitModules,
+      competingPortraitOwners,
+      containmentCandidates,
+      deauthorizationCandidates,
+      answer: competingPortraitOwners.length
+        ? `Visible systems competing with Portrait V2 ownership: ${competingPortraitOwners.join(", ")}.`
+        : "No visible systems are currently classified as competing with Portrait V2 ownership.",
+      notes: [
+        "Audit only: this helper reads visible portrait systems and does not hide, remove, reparent, or deauthorize anything.",
+        "supportsPortraitV2 marks required/supporting modules for the active Portrait V2 owner; competesWithPortraitOwnership marks legacy or desktop surfaces that can own layout/navigation/map/alert/header responsibilities in parallel."
+      ]
+    };
+  } catch (error) {
+    return {
+      loaded: false,
+      version: GRIDLY_PORTRAIT_CONTAINMENT_AUDIT_VERSION,
+      portraitPrimaryOwner: GRIDLY_PORTRAIT_PRIMARY_OWNER,
+      visiblePortraitSystems: [],
+      supportingPortraitModules: [],
+      competingPortraitOwners: [],
+      containmentCandidates: [],
+      deauthorizationCandidates: [],
+      error: error?.message || "unknown error"
+    };
+  }
+}
+
+window.gridlyPortraitContainmentAudit = gridlyPortraitContainmentAudit;
 
 window.gridlyPortraitOwnershipInventory = function gridlyPortraitOwnershipInventory() {
   try {
