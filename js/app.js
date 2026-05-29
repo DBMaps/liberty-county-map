@@ -5811,6 +5811,8 @@ function openAlertsSurfaceFromDock() {
       const composeRailCrossingHeadline = (alert = {}) => resolveRailCrossingPair(alert).finalHeadline;
       const titleFor = alert => {
         if (isRailAlert(alert)) return composeRailCrossingHeadline(alert);
+        const txDotRoadHazard = buildGridlyRoadHazardTxDotStyleCandidate(alert);
+        if (txDotRoadHazard.text) return txDotRoadHazard.text;
         const roadHazard = resolveRoadHazardSegmentHeadline(alert);
         if (cleanDisplayValue(roadHazard.finalHeadline)) return roadHazard.finalHeadline;
         const explicit = cleanDisplayValue(text(alert.resolvedHeadline) || text(alert.headline) || text(alert.title) || text(alert.localizedSummary));
@@ -11132,6 +11134,12 @@ function buildGridlyLightweightActiveHeadline(category = "unknown", location = {
 function normalizeGridlyLightweightRenderedAlertText(value = "") {
   let text = getGridlyLightweightSafeDisplayText(value)
     .replace(/\s+·\s+.*$/g, " ")
+    .replace(/\b\d+\s+active\s+(?:community\s+)?reports?\b.*$/gi, " ")
+    .replace(/\b\d+\s+active\s+alerts?\b.*$/gi, " ")
+    .replace(/\bactive\s+(?:community\s+)?reports?\b.*$/gi, " ")
+    .replace(/\bactive\s+alerts?\b.*$/gi, " ")
+    .replace(/\b(?:high|moderate|low|minor)\s+impact\b.*$/gi, " ")
+    .replace(/\b\d+\s+(?:minutes?|hours?)\s+ago\b.*$/gi, " ")
     .replace(/\b(?:just\s+)?now\b/gi, " ")
     .replace(/\b\d+\s*[mh]\s+ago\b/gi, " ")
     .replace(/\b(?:alert|alerts|card|row|community report|active community report|movement summary|active alerts?)\b/gi, " ")
@@ -11406,6 +11414,15 @@ function resolveGridlyExistingAlertWording(options = {}) {
     candidates.push({ text: normalizedText, source, type });
   };
 
+  const activeRoadHazardItems = [
+    ...(Array.isArray(options?.activeHazards) ? options.activeHazards : (Array.isArray(typeof activeHazards !== "undefined" ? activeHazards : null) ? activeHazards : [])),
+    ...(Array.isArray(options?.activeReports) ? options.activeReports : (Array.isArray(typeof activeReports !== "undefined" ? activeReports : null) ? activeReports : []))
+  ].filter((item) => item && typeof item === "object" && isGridlyRoadHazardCategory(resolveGridlyLightweightActiveCategory(item, "activeHazard")?.resolvedCategory || item?.category || item?.type || item?.reportType));
+  activeRoadHazardItems.slice(0, 6).forEach((item, index) => {
+    const roadHazardCandidate = buildGridlyRoadHazardTxDotStyleCandidate(item);
+    addCandidate(roadHazardCandidate.text, roadHazardCandidate.source || `activeRoadHazards.${index}.txdotStyle`, "road_hazard_txdot_style_candidate");
+  });
+
   const activeSamples = Array.isArray(awareness?.activeAwarenessSamples) ? awareness.activeAwarenessSamples : [];
   activeSamples.forEach((sample, index) => {
     addCandidate(sample?.reusedAlertText, sample?.reusedAlertSource || `lightweightActiveAwareness.activeAwarenessSamples.${index}.reusedAlertText`, "actual_alert_item");
@@ -11523,9 +11540,76 @@ function getGridlyRoadHazardLabel(alert = {}) {
   return "Road hazard";
 }
 
+function stripGridlyRoadHazardLocationMetadata(value = "") {
+  return normalizeGridlyLightweightAlertSummaryText(value)
+    .replace(/\b\d+\s+active\s+(?:community\s+)?reports?\b.*$/i, "")
+    .replace(/\b\d+\s+active\s+alerts?\b.*$/i, "")
+    .replace(/\bactive\s+(?:community\s+)?reports?\b.*$/i, "")
+    .replace(/\bactive\s+alerts?\b.*$/i, "")
+    .replace(/\b(?:high|moderate|low|minor)\s+impact\b.*$/i, "")
+    .replace(/\b\d+\s+(?:minutes?|hours?)\s+ago\b.*$/i, "")
+    .replace(/\b(?:flooding|flood|high water|road closed|road closure|closure|closed|accident|crash|collision|wreck|debris|hazard|road hazard|construction|road work|ice|disabled vehicle|stalled vehicle)\b\s*$/i, "")
+    .replace(/[|•·].*$/g, "")
+    .replace(/[.,;:]+$/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function normalizeGridlyRoadHazardRoadComponent(value = "") {
+  const cleaned = stripGridlyRoadHazardLocationMetadata(value)
+    .replace(/^(?:on|near|at|between)\s+/i, "")
+    .replace(/\s+\b(?:between|near|at)\b.*$/i, "")
+    .trim();
+  const evaluated = evaluateRoadNameCandidate(cleaned);
+  return evaluated.valid ? normalizeRoadDisplayCase(evaluated.normalized) : "";
+}
+
+function isGridlyBroadHighwayReference(value = "") {
+  return /^(?:US|SH|TX|I-|IH|FM|Loop|Spur)\s*-?\d+/i.test(normalizeRoadDisplayCase(value));
+}
+
+function areGridlyRoadHazardRoadsEquivalent(left = "", right = "") {
+  const a = normalizeRoadComparison(left);
+  const b = normalizeRoadComparison(right);
+  if (!a || !b) return false;
+  if (a === b) return true;
+  return a.includes(b) || b.includes(a);
+}
+
+function pushGridlyRoadHazardReferenceRoad(refs, value = "", primaryRoad = "", source = "") {
+  const road = normalizeGridlyRoadHazardRoadComponent(value);
+  if (!road || areGridlyRoadHazardRoadsEquivalent(road, primaryRoad)) return;
+  if (refs.some((entry) => areGridlyRoadHazardRoadsEquivalent(entry.road, road))) return;
+  refs.push({ road, source, broad: isGridlyBroadHighwayReference(road) });
+}
+
+function parseGridlyRoadHazardRoadsFromText(value = "") {
+  const text = stripGridlyRoadHazardLocationMetadata(value);
+  const betweenMatch = text.match(/\bon\s+(.+?)\s+between\s+(.+?)\s+and\s+(.+?)(?:$|[.,;:])/i);
+  if (betweenMatch) {
+    return {
+      road: normalizeGridlyRoadHazardRoadComponent(betweenMatch[1]),
+      referenceRoadA: normalizeGridlyRoadHazardRoadComponent(betweenMatch[2]),
+      referenceRoadB: normalizeGridlyRoadHazardRoadComponent(betweenMatch[3])
+    };
+  }
+  const nearMatch = text.match(/\bon\s+(.+?)\s+near\s+(.+?)(?:$|[.,;:])/i);
+  if (nearMatch) {
+    return {
+      road: normalizeGridlyRoadHazardRoadComponent(nearMatch[1]),
+      referenceRoadA: normalizeGridlyRoadHazardRoadComponent(nearMatch[2]),
+      referenceRoadB: ""
+    };
+  }
+  const roadMatch = text.match(/\bon\s+(.+?)(?:$|[.,;:])/i);
+  return { road: roadMatch ? normalizeGridlyRoadHazardRoadComponent(roadMatch[1]) : "", referenceRoadA: "", referenceRoadB: "" };
+}
+
 function buildGridlyRoadHazardTxDotStyleCandidate(alert = {}) {
-  if (!alert || typeof alert !== "object") return { text: "", source: "", hazard: "", road: "", referenceRoadA: "", referenceRoadB: "", nearestRoadName: "" };
-  if (isGridlyAlertRailOrCrossingRelated(alert)) return { text: "", source: "rail_or_crossing", hazard: "", road: "", referenceRoadA: "", referenceRoadB: "", nearestRoadName: "" };
+  const empty = { text: "", source: "", hazard: "", road: "", referenceRoadA: "", referenceRoadB: "", nearestRoadName: "" };
+  if (!alert || typeof alert !== "object") return empty;
+  if (isGridlyAlertRailOrCrossingRelated(alert)) return { ...empty, source: "rail_or_crossing" };
+  const hazard = getGridlyRoadHazardLabel(alert);
   const renderedText = getGridlyAlertFirstTextValue(alert, [
     "resolvedHeadline",
     "finalHeadline",
@@ -11546,85 +11630,112 @@ function buildGridlyRoadHazardTxDotStyleCandidate(alert = {}) {
     "source.summary",
     "source.title"
   ]);
-  if (renderedText && /\bon\s+.+?\s+(?:between|near)\s+/i.test(renderedText) && !getGridlyHeaderRailTextRejectionReason(renderedText, getGridlyRoadHazardLabel(alert))) {
-    return { text: renderedText, source: "alreadyRenderedCleanAlertText", hazard: getGridlyRoadHazardLabel(alert), road: "", referenceRoadA: "", referenceRoadB: "", nearestRoadName: "" };
-  }
-  const hazard = getGridlyRoadHazardLabel(alert);
-  const road = getGridlyAlertFirstTextValue(alert, [
+  const parsedRendered = parseGridlyRoadHazardRoadsFromText(renderedText);
+  const road = normalizeGridlyRoadHazardRoadComponent(getGridlyAlertFirstTextValue(alert, [
     "primaryRoad",
+    "parsedPrimaryRoad",
     "roadName",
     "corridorLabel",
     "displayRoadName",
     "corridor",
+    "route",
     "titleRoad",
     "raw.primaryRoad",
+    "raw.parsedPrimaryRoad",
     "raw.roadName",
     "raw.corridorLabel",
     "raw.displayRoadName",
     "raw.corridor",
+    "raw.route",
     "source.primaryRoad",
+    "source.parsedPrimaryRoad",
     "source.roadName",
     "source.corridorLabel",
     "source.displayRoadName",
-    "source.corridor"
-  ]);
-  if (!road) return { text: "", source: "missing_road", hazard, road: "", referenceRoadA: "", referenceRoadB: "", nearestRoadName: "" };
-  const referenceRoadA = getGridlyAlertFirstTextValue(alert, [
+    "source.corridor",
+    "source.route"
+  ]) || parsedRendered.road);
+  if (!road) return { ...empty, source: "missing_road", hazard };
+
+  const refs = [];
+  pushGridlyRoadHazardReferenceRoad(refs, getGridlyAlertFirstTextValue(alert, [
     "referenceRoadA",
     "crossStreetA",
+    "crossStreet1",
     "fromStreet",
     "startStreet",
+    "parsedCrossRoad",
     "raw.referenceRoadA",
     "raw.crossStreetA",
+    "raw.crossStreet1",
     "raw.fromStreet",
     "raw.startStreet",
+    "raw.parsedCrossRoad",
     "source.referenceRoadA",
     "source.crossStreetA",
+    "source.crossStreet1",
     "source.fromStreet",
-    "source.startStreet"
-  ]);
-  const referenceRoadB = getGridlyAlertFirstTextValue(alert, [
+    "source.startStreet",
+    "source.parsedCrossRoad"
+  ]), road, "referenceRoadA");
+  pushGridlyRoadHazardReferenceRoad(refs, getGridlyAlertFirstTextValue(alert, [
     "referenceRoadB",
     "crossStreetB",
+    "crossStreet2",
     "toStreet",
     "endStreet",
     "raw.referenceRoadB",
     "raw.crossStreetB",
+    "raw.crossStreet2",
     "raw.toStreet",
     "raw.endStreet",
     "source.referenceRoadB",
     "source.crossStreetB",
+    "source.crossStreet2",
     "source.toStreet",
     "source.endStreet"
-  ]);
-  const nearestRoadName = getGridlyAlertFirstTextValue(alert, [
+  ]), road, "referenceRoadB");
+  pushGridlyRoadHazardReferenceRoad(refs, getGridlyAlertFirstTextValue(alert, [
     "nearestRoadName",
     "nearestRoad",
     "knownLocation",
-    "crossingRoad",
+    "nearbyRoad",
+    "nearbyCrossStreet",
     "locationName",
     "location",
     "raw.nearestRoadName",
     "raw.nearestRoad",
     "raw.knownLocation",
-    "raw.crossingRoad",
+    "raw.nearbyRoad",
+    "raw.nearbyCrossStreet",
     "raw.locationName",
     "raw.location",
     "source.nearestRoadName",
     "source.nearestRoad",
     "source.knownLocation",
-    "source.crossingRoad",
+    "source.nearbyRoad",
+    "source.nearbyCrossStreet",
     "source.locationName",
     "source.location"
-  ]);
+  ]), road, "nearestRoadName");
+  if (parsedRendered.referenceRoadA && parsedRendered.referenceRoadB) {
+    pushGridlyRoadHazardReferenceRoad(refs, parsedRendered.referenceRoadA, road, "renderedBetween.referenceRoadA");
+    pushGridlyRoadHazardReferenceRoad(refs, parsedRendered.referenceRoadB, road, "renderedBetween.referenceRoadB");
+  } else if (!refs.length && parsedRendered.referenceRoadA) {
+    pushGridlyRoadHazardReferenceRoad(refs, parsedRendered.referenceRoadA, road, "renderedNear.referenceRoadA");
+  }
+
+  const referenceRoadA = refs[0]?.road || "";
+  const referenceRoadB = refs[1]?.road || "";
+  const nearestRoadName = (refs.find((entry) => !entry.broad) || refs[0])?.road || "";
   let text = `${hazard} on ${road}`;
   let source = "roadHazard.primaryRoad";
   if (referenceRoadA && referenceRoadB) {
     text = `${hazard} on ${road} between ${referenceRoadA} and ${referenceRoadB}`;
     source = "roadHazard.primaryRoad+referenceRoadA+referenceRoadB";
-  } else if (referenceRoadA || nearestRoadName) {
-    text = `${hazard} on ${road} near ${referenceRoadA || nearestRoadName}`;
-    source = referenceRoadA ? "roadHazard.primaryRoad+referenceRoadA" : "roadHazard.primaryRoad+nearestRoadName";
+  } else if (nearestRoadName) {
+    text = `${hazard} on ${road} near ${nearestRoadName}`;
+    source = refs.find((entry) => entry.road === nearestRoadName)?.source === "nearestRoadName" ? "roadHazard.primaryRoad+nearestRoadName" : "roadHazard.primaryRoad+referenceRoad";
   }
   return { text: normalizeGridlyLightweightAlertSummaryText(text), source, hazard, road, referenceRoadA, referenceRoadB, nearestRoadName };
 }
@@ -21253,6 +21364,7 @@ function normalizeRoadwayReference(value = "") {
   const patterns = [
     { re: /^(?:united\s+states\s+highway|u\.?s\.?\s*highway|us\s*highway|us)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `US ${n.toUpperCase()}` },
     { re: /^(?:farm\s+to\s+market(?:\s+road)?|fm)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `FM ${n.toUpperCase()}` },
+    { re: /^(?:texas\s+state\s+highway|texas\s+highway|tx)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `TX ${n.toUpperCase()}` },
     { re: /^(?:state\s+highway|sh)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `SH ${n.toUpperCase()}` },
     { re: /^(?:interstate|ih|i)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `I-${n.toUpperCase()}` },
     { re: /^(?:loop)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `Loop ${n.toUpperCase()}` },
@@ -21285,7 +21397,7 @@ function normalizeRoadDisplayCase(value = "") {
   const text = normalizeRoadNameCandidate(value);
   if (!text) return "";
   const normalizedReference = normalizeRoadwayReference(text);
-  if (/^(?:US|FM|SH|I-\d+[A-Z]?|CR|Loop|Spur)\b/.test(normalizedReference)) return normalizedReference;
+  if (/^(?:US|FM|SH|TX|I-\d+[A-Z]?|CR|Loop|Spur)\b/.test(normalizedReference)) return normalizedReference;
 
   return text
     .split(/(\s+|[-\/])/)
@@ -26374,6 +26486,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       if (crossingLabel) return `Train blocking at ${crossingLabel}`;
       return "Rail crossing blocked";
     }
+    const txDotStyleCandidate = buildGridlyRoadHazardTxDotStyleCandidate(alert);
+    if (txDotStyleCandidate.text) return txDotStyleCandidate.text;
     const normalizedEvent = String(eventLabel || "").toLowerCase();
     const roadHazardMap = [
       { test: /road[_\s-]*closed|closure|closed/, label: "Road closed" },
