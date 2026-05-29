@@ -2876,6 +2876,72 @@ function gridlyGetLatestCommuteBaselineSample(samples = gridlyReadCommuteBaselin
   return candidates[0] || null;
 }
 
+function gridlyNormalizeCommuteBaselineDuration(value) {
+  const minutes = Number(value);
+  return Number.isFinite(minutes) && minutes > 0 ? minutes : null;
+}
+
+function gridlyRoundCommuteBaselineMinutes(value) {
+  const minutes = Number(value);
+  return Number.isFinite(minutes) && minutes > 0 ? Math.round(minutes * 10) / 10 : null;
+}
+
+function gridlyGetCommuteBaselineSamplesForRoute(samples = gridlyReadCommuteBaselineSamples(), routeKey = "") {
+  return gridlyDiagnosticArray(samples)
+    .filter((sample) => sample && typeof sample === "object")
+    .filter((sample) => !routeKey || sample.routeKey === routeKey)
+    .filter((sample) => gridlyNormalizeCommuteBaselineDuration(sample.durationMinutes) !== null)
+    .sort((a, b) => Date.parse(b?.capturedAt || "") - Date.parse(a?.capturedAt || ""));
+}
+
+function gridlyTrimNormalCommuteBaselineDurations(durations = []) {
+  const sortedDurations = gridlyDiagnosticArray(durations)
+    .map((duration) => gridlyNormalizeCommuteBaselineDuration(duration))
+    .filter((duration) => duration !== null)
+    .sort((a, b) => a - b);
+  const sampleCount = sortedDurations.length;
+  if (sampleCount < 5) return sortedDurations;
+  const trimCount = sampleCount >= 10
+    ? Math.max(1, Math.floor(sampleCount * 0.1))
+    : 1;
+  const trimmed = sortedDurations.slice(trimCount, Math.max(trimCount, sampleCount - trimCount));
+  return trimmed.length > 0 ? trimmed : sortedDurations;
+}
+
+function gridlyBuildNormalCommuteBaseline() {
+  const places = gridlyGetSavedPlacesReadiness();
+  const routeKey = gridlyBuildCommuteBaselineRouteKey(places) || "fallback_route";
+  const routeSamples = gridlyGetCommuteBaselineSamplesForRoute(gridlyReadCommuteBaselineSamples(), routeKey);
+  const sampleCount = routeSamples.length;
+  const latestSample = gridlyGetLatestCommuteBaselineSample(routeSamples, routeKey);
+  const durations = routeSamples.map((sample) => gridlyNormalizeCommuteBaselineDuration(sample.durationMinutes)).filter((duration) => duration !== null);
+  const samplesForAverage = sampleCount >= 5 ? gridlyTrimNormalCommuteBaselineDurations(durations) : durations.slice().sort((a, b) => a - b);
+  const normalCommuteMinutes = samplesForAverage.length > 0
+    ? gridlyRoundCommuteBaselineMinutes(samplesForAverage.reduce((total, duration) => total + duration, 0) / samplesForAverage.length)
+    : null;
+  const baselineStatus = sampleCount >= 10
+    ? "stable"
+    : (sampleCount >= 5 ? "usable" : (sampleCount >= 2 ? "warming_up" : (sampleCount === 1 ? "insufficient_samples" : "unavailable")));
+  const baselineConfidence = sampleCount >= 10
+    ? "high"
+    : (sampleCount >= 5 ? "medium" : (sampleCount >= 1 ? "low" : "none"));
+  const calculationMethod = sampleCount >= 10
+    ? "trimmed_average_10_percent_each_side"
+    : (sampleCount >= 5 ? "trimmed_average_drop_high_low" : (sampleCount >= 2 ? "average" : (sampleCount === 1 ? "single_sample_low_confidence" : "no_valid_samples")));
+
+  return {
+    routeKey,
+    sampleCount,
+    normalCommuteMinutes,
+    baselineStatus,
+    baselineConfidence,
+    samplesUsed: samplesForAverage.length,
+    latestSampleAt: latestSample?.capturedAt || null,
+    calculationMethod,
+    destructiveActionsTaken: false
+  };
+}
+
 function gridlyTrimCommuteBaselineSamples(samples = []) {
   const buckets = new Map();
   gridlyDiagnosticArray(samples).forEach((sample) => {
@@ -2898,12 +2964,18 @@ function gridlyBuildCommuteBaselineStorageAudit() {
   const duplicateGuardActive = Number.isFinite(latestCapturedAt)
     ? Date.now() - latestCapturedAt < COMMUTE_BASELINE_DUPLICATE_GUARD_MS
     : false;
+  const normalBaseline = gridlyBuildNormalCommuteBaseline();
+  const normalCommuteBaselineAvailable = Boolean(normalBaseline.normalCommuteMinutes > 0 && normalBaseline.sampleCount > 0);
   return {
     storageAvailable,
     sampleCount: samples.length,
     routeKeys,
     latestSample,
     baselineStorageReady: Boolean(storageAvailable && samples.length > 0),
+    normalCommuteBaselineAvailable,
+    normalCommuteMinutes: normalBaseline.normalCommuteMinutes,
+    baselineStatus: normalBaseline.baselineStatus,
+    baselineConfidence: normalBaseline.baselineConfidence,
     duplicateGuardActive,
     maxSamplesPerRoute: COMMUTE_BASELINE_MAX_SAMPLES_PER_ROUTE,
     destructiveActionsTaken: false
@@ -2954,6 +3026,10 @@ function gridlyCaptureCommuteBaselineSampleImpl() {
     gridlyCommuteBaselineSampleCaptureInProgress = false;
   }
 }
+
+window.gridlyNormalCommuteBaseline = function gridlyNormalCommuteBaseline() {
+  return gridlyBuildNormalCommuteBaseline();
+};
 
 window.gridlyCommuteBaselineStorageAudit = function gridlyCommuteBaselineStorageAudit() {
   return gridlyBuildCommuteBaselineStorageAudit();
@@ -3204,10 +3280,21 @@ function gridlyBuildCommuteBaselineBlueprint() {
   const baselineStorageAudit = typeof window.gridlyCommuteBaselineStorageAudit === "function"
     ? window.gridlyCommuteBaselineStorageAudit()
     : { baselineStorageReady: false, sampleCount: 0, latestSample: null };
+  const normalBaseline = typeof window.gridlyNormalCommuteBaseline === "function"
+    ? window.gridlyNormalCommuteBaseline()
+    : gridlyBuildNormalCommuteBaseline();
   const baselineStorageReady = Boolean(baselineStorageAudit.baselineStorageReady);
-  const baselineSampleCount = Math.max(0, Number(baselineStorageAudit.sampleCount || 0));
-  const latestBaselineSampleAt = baselineStorageAudit.latestSample?.capturedAt || null;
-  const deltaComputationReady = false;
+  const normalCommuteBaselineAvailable = Boolean(normalBaseline.normalCommuteMinutes > 0 && normalBaseline.sampleCount > 0);
+  const baselineSampleCount = Math.max(0, Number(normalBaseline.sampleCount || 0));
+  const latestBaselineSampleAt = normalBaseline.latestSampleAt || baselineStorageAudit.latestSample?.capturedAt || null;
+  const normalCommuteMinutes = normalBaseline.normalCommuteMinutes;
+  const baselineStatus = normalBaseline.baselineStatus || "unavailable";
+  const baselineConfidence = normalBaseline.baselineConfidence || "none";
+  const deltaComputationReady = Boolean(
+    currentCommuteSnapshotAvailable
+    && normalCommuteBaselineAvailable
+    && normalCommuteMinutes > 0
+  );
   const missingRequirements = [
     !places.hasHome ? "home_not_configured" : "",
     !places.hasWork ? "work_not_configured" : "",
@@ -3215,7 +3302,8 @@ function gridlyBuildCommuteBaselineBlueprint() {
     !routeMetricsAvailable ? "route_metrics_unavailable" : "",
     !currentCommuteSnapshotAvailable ? "current_commute_snapshot_unavailable" : "",
     !baselineStorageReady ? "baseline_storage_empty_or_unavailable" : "",
-    !deltaComputationReady ? "baseline_delta_computation_not_implemented" : ""
+    !normalCommuteBaselineAvailable ? "normal_commute_baseline_unavailable" : "",
+    !deltaComputationReady ? "normal_commute_delta_inputs_unavailable" : ""
   ].filter(Boolean);
 
   return {
@@ -3226,6 +3314,10 @@ function gridlyBuildCommuteBaselineBlueprint() {
     baselineStorageReady,
     baselineSampleCount,
     latestBaselineSampleAt,
+    normalCommuteBaselineAvailable,
+    normalCommuteMinutes,
+    baselineStatus,
+    baselineConfidence,
     deltaComputationReady,
     missingRequirements,
     recommendedFutureModel: {
@@ -3295,6 +3387,10 @@ window.gridlyTravelTimeBlueprint = function gridlyTravelTimeBlueprint() {
     baselineStorageReady: Boolean(commuteBaselineBlueprint.baselineStorageReady),
     baselineSampleCount: Math.max(0, Number(commuteBaselineBlueprint.baselineSampleCount || 0)),
     latestBaselineSampleAt: commuteBaselineBlueprint.latestBaselineSampleAt || null,
+    normalCommuteBaselineAvailable: Boolean(commuteBaselineBlueprint.normalCommuteBaselineAvailable),
+    normalCommuteMinutes: Number.isFinite(Number(commuteBaselineBlueprint.normalCommuteMinutes)) ? Number(commuteBaselineBlueprint.normalCommuteMinutes) : null,
+    baselineStatus: commuteBaselineBlueprint.baselineStatus || "unavailable",
+    baselineConfidence: commuteBaselineBlueprint.baselineConfidence || "none",
     deltaComputationReady: Boolean(commuteBaselineBlueprint.deltaComputationReady),
     estimatedTravelTimeReady: Boolean(audit.estimatedTravelTimeReady),
     routeImpactReady: Boolean(audit.routeImpactReady),
@@ -3383,7 +3479,7 @@ window.gridlyUserTrustBlueprintAudit = function gridlyUserTrustBlueprintAudit() 
     blueprintVersion: GRIDLY_USER_TRUST_BLUEPRINT_VERSION,
     hazardLifecycleReady,
     travelTimeReady,
-    travelTimeIntelligencePhase: travelBlueprint.baselineStorageReady && Number(travelBlueprint.baselineSampleCount || 0) > 0 ? "baseline_storage" : (travelBlueprint.baselineCollectionReady ? "baseline_blueprint" : (travelBlueprint.currentCommuteSnapshotAvailable ? "current_commute_snapshot" : (travelBlueprint.routeMetricsAvailable ? "metrics_persisted" : "foundation"))),
+    travelTimeIntelligencePhase: travelBlueprint.normalCommuteBaselineAvailable ? "normal_baseline" : (travelBlueprint.baselineStorageReady && Number(travelBlueprint.baselineSampleCount || 0) > 0 ? "baseline_storage" : (travelBlueprint.baselineCollectionReady ? "baseline_blueprint" : (travelBlueprint.currentCommuteSnapshotAvailable ? "current_commute_snapshot" : (travelBlueprint.routeMetricsAvailable ? "metrics_persisted" : "foundation")))),
     onboardingReady,
     settingsReady,
     launchCriticalGaps,
