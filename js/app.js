@@ -13670,8 +13670,71 @@ function gridlyPortraitContainmentAudit() {
   }
 }
 
-const GRIDLY_LEGACY_SURFACE_DEPENDENCY_AUDIT_VERSION = "V180.7";
-const GRIDLY_LEGACY_TRUTH_AUDIT_VERSION = "V180.8";
+const GRIDLY_LEGACY_SURFACE_DEPENDENCY_AUDIT_VERSION = "V180.9";
+const GRIDLY_LEGACY_TRUTH_AUDIT_VERSION = "V180.9";
+const GRIDLY_DASHBOARD_SECTION_PASSIVE_SUPPRESSION_SELECTOR = "#dashboardSection";
+const GRIDLY_DASHBOARD_SECTION_PASSIVE_SUPPRESSION_OWNER_SELECTOR = "#gridlyPortraitV2";
+const gridlyDashboardSectionPassiveUpdateSuppressionState = {
+  dashboardSectionPassiveUpdatesSuppressed: false,
+  suppressedUpdateTargets: [],
+  skippedBecausePortraitV2Owns: false,
+  lastSuppressedAt: 0
+};
+
+function isGridlyPortraitV2ActiveForDashboardPassiveSuppression() {
+  const layoutMode = typeof getCanonicalGridlyPortraitLayoutMode === "function"
+    ? getCanonicalGridlyPortraitLayoutMode()
+    : (document.body?.dataset?.layoutMode || "");
+  if (layoutMode !== "portrait") return false;
+  const shell = document.querySelector(GRIDLY_DASHBOARD_SECTION_PASSIVE_SUPPRESSION_OWNER_SELECTOR);
+  if (!shell || shell.hidden || shell.getAttribute("aria-hidden") === "true") return false;
+  const style = typeof window !== "undefined" && typeof window.getComputedStyle === "function"
+    ? window.getComputedStyle(shell)
+    : null;
+  return !style || (style.display !== "none" && style.visibility !== "hidden" && style.opacity !== "0");
+}
+
+function getGridlyDashboardSectionPassiveUpdateSuppressionAudit() {
+  const portraitV2OwnsDashboardUpdates = isGridlyPortraitV2ActiveForDashboardPassiveSuppression();
+  const suppressedUpdateTargets = gridlyDashboardSectionPassiveUpdateSuppressionState.suppressedUpdateTargets.slice();
+  return {
+    dashboardSectionPassiveUpdatesSuppressed: Boolean(gridlyDashboardSectionPassiveUpdateSuppressionState.dashboardSectionPassiveUpdatesSuppressed || portraitV2OwnsDashboardUpdates),
+    suppressedUpdateTargets,
+    skippedBecausePortraitV2Owns: Boolean(gridlyDashboardSectionPassiveUpdateSuppressionState.skippedBecausePortraitV2Owns || portraitV2OwnsDashboardUpdates),
+    portraitV2OwnsDashboardUpdates,
+    lastSuppressedAt: gridlyDashboardSectionPassiveUpdateSuppressionState.lastSuppressedAt || 0
+  };
+}
+
+function recordGridlyDashboardSectionPassiveUpdateSuppression(target) {
+  const normalizedTarget = String(target || "").trim();
+  gridlyDashboardSectionPassiveUpdateSuppressionState.dashboardSectionPassiveUpdatesSuppressed = true;
+  gridlyDashboardSectionPassiveUpdateSuppressionState.skippedBecausePortraitV2Owns = true;
+  gridlyDashboardSectionPassiveUpdateSuppressionState.lastSuppressedAt = Date.now();
+  if (normalizedTarget && !gridlyDashboardSectionPassiveUpdateSuppressionState.suppressedUpdateTargets.includes(normalizedTarget)) {
+    gridlyDashboardSectionPassiveUpdateSuppressionState.suppressedUpdateTargets.push(normalizedTarget);
+  }
+}
+
+function shouldSuppressGridlyDashboardSectionPassiveTextUpdate(id) {
+  if (!isGridlyPortraitV2ActiveForDashboardPassiveSuppression()) return false;
+  const dashboardSection = document.querySelector(GRIDLY_DASHBOARD_SECTION_PASSIVE_SUPPRESSION_SELECTOR);
+  if (!dashboardSection) return false;
+  const targetId = String(id || "").trim();
+  if (!targetId) return false;
+  const escapedId = typeof CSS !== "undefined" && typeof CSS.escape === "function" ? CSS.escape(targetId) : targetId.replace(/([ #;?%&,.+*~\':"!^$[\]()=>|/@])/g, "\\$1");
+  const candidates = [
+    document.getElementById(targetId),
+    ...document.querySelectorAll(`[data-bind-text="${escapedId}"]`)
+  ].filter(Boolean);
+  if (!candidates.length) return false;
+  const allTargetsAreLegacyDashboardOnly = candidates.every((node) => dashboardSection.contains(node));
+  const alsoFeedsPortraitV2 = candidates.some((node) => Boolean(node.closest?.(GRIDLY_DASHBOARD_SECTION_PASSIVE_SUPPRESSION_OWNER_SELECTOR)));
+  if (!allTargetsAreLegacyDashboardOnly || alsoFeedsPortraitV2) return false;
+  recordGridlyDashboardSectionPassiveUpdateSuppression(`#${targetId}`);
+  return true;
+}
+
 const GRIDLY_LEGACY_SURFACE_DEPENDENCY_PROFILES = {
   dashboardSection: {
     domUpdateSelectors: ["#greetingTitle", "#habitStatusHeadline", "#routeStatus", "#lastUpdated", "#dataStatus", "#syncStatus", "[data-bind-text]"],
@@ -13907,6 +13970,7 @@ function classifyGridlyLegacyTruthSurface(surface) {
 
 function gridlyLegacyTruthAudit() {
   try {
+    const dashboardSuppressionAudit = getGridlyDashboardSectionPassiveUpdateSuppressionAudit();
     const remainingSurfaceNames = new Set(GRIDLY_LEGACY_TRUTH_AUDIT_SURFACE_NAMES);
     const legacyDefinitions = GRIDLY_PORTRAIT_OWNERSHIP_SYSTEMS.filter((definition) => remainingSurfaceNames.has(definition.name));
     const surfaces = legacyDefinitions.map((definition) => {
@@ -13919,11 +13983,14 @@ function gridlyLegacyTruthAudit() {
         ...(dependencyProfile.dataUpdateSelectors || [])
       ];
       const eventSelectors = dependencyProfile.eventSelectors || [];
-      const receivesUpdates = Boolean(
+      const dashboardSectionPassiveUpdatesSuppressed = Boolean(definition.name === "dashboardSection" && dashboardSuppressionAudit.skippedBecausePortraitV2Owns);
+      const rawReceivesUpdates = Boolean(
         state.loaded &&
         (gridlyLegacySurfaceHasAnySelector(element, updateSelectors) || element?.querySelector?.("[data-bind-text]"))
       );
-      const receivesEvents = Boolean(state.loaded && gridlyLegacySurfaceHasAnySelector(element, eventSelectors));
+      const rawReceivesEvents = Boolean(state.loaded && gridlyLegacySurfaceHasAnySelector(element, eventSelectors));
+      const receivesUpdates = Boolean(rawReceivesUpdates && !dashboardSectionPassiveUpdatesSuppressed);
+      const receivesEvents = Boolean(rawReceivesEvents && !dashboardSectionPassiveUpdatesSuppressed);
       const matchedVisibleSelectors = getGridlyLegacyTruthMatchedSelectors(element, contentProfile.visibleSelectors);
       const matchedAlertSelectors = getGridlyLegacyTruthMatchedSelectors(element, contentProfile.alertSelectors);
       const matchedPulseSelectors = getGridlyLegacyTruthMatchedSelectors(element, contentProfile.pulseSelectors);
@@ -13931,7 +13998,7 @@ function gridlyLegacyTruthAudit() {
       const matchedMapSelectors = getGridlyLegacyTruthMatchedSelectors(element, contentProfile.mapSelectors);
       const matchedReportSelectors = getGridlyLegacyTruthMatchedSelectors(element, contentProfile.reportSelectors);
       const referencedByPortraitV2 = Boolean(dependencyProfile.referencedByPortraitV2);
-      const referencedByCurrentUserFlow = Boolean(
+      const rawReferencedByCurrentUserFlow = Boolean(
         dependencyProfile.referencedByAlerts ||
         dependencyProfile.referencedByPulse ||
         dependencyProfile.referencedByHeader ||
@@ -13939,6 +14006,7 @@ function gridlyLegacyTruthAudit() {
         dependencyProfile.referencedByRouteFlow ||
         dependencyProfile.referencedByReportFlow
       );
+      const referencedByCurrentUserFlow = Boolean(rawReferencedByCurrentUserFlow && !dashboardSectionPassiveUpdatesSuppressed);
       const contributesVisibleContent = Boolean(state.visible && matchedVisibleSelectors.length > 0);
       const surface = {
         name: definition.name,
@@ -13947,6 +14015,9 @@ function gridlyLegacyTruthAudit() {
         visible: Boolean(state.visible),
         receivesUpdates,
         receivesEvents,
+        dashboardSectionPassiveUpdatesSuppressed,
+        suppressedUpdateTargets: dashboardSectionPassiveUpdatesSuppressed ? dashboardSuppressionAudit.suppressedUpdateTargets.slice() : [],
+        skippedBecausePortraitV2Owns: Boolean(dashboardSectionPassiveUpdatesSuppressed),
         contributesVisibleContent,
         contributesAlertContent: Boolean(contributesVisibleContent && matchedAlertSelectors.length > 0),
         contributesPulseContent: Boolean(contributesVisibleContent && matchedPulseSelectors.length > 0),
@@ -13961,8 +14032,10 @@ function gridlyLegacyTruthAudit() {
           visibility: state.visibility || state.style?.visibility || null,
           opacity: state.opacity || state.style?.opacity || null,
           inLayoutFlow: Boolean(state.inLayoutFlow),
-          updateSelectorsFound: getGridlyLegacyTruthMatchedSelectors(element, updateSelectors),
-          eventSelectorsFound: getGridlyLegacyTruthMatchedSelectors(element, eventSelectors),
+          updateSelectorsFound: dashboardSectionPassiveUpdatesSuppressed ? [] : getGridlyLegacyTruthMatchedSelectors(element, updateSelectors),
+          rawUpdateSelectorsFound: getGridlyLegacyTruthMatchedSelectors(element, updateSelectors),
+          eventSelectorsFound: dashboardSectionPassiveUpdatesSuppressed ? [] : getGridlyLegacyTruthMatchedSelectors(element, eventSelectors),
+          rawEventSelectorsFound: getGridlyLegacyTruthMatchedSelectors(element, eventSelectors),
           visibleContentSelectorsFound: matchedVisibleSelectors,
           alertContentSelectorsFound: matchedAlertSelectors,
           pulseContentSelectorsFound: matchedPulseSelectors,
@@ -13989,6 +14062,9 @@ function gridlyLegacyTruthAudit() {
       passiveDependencies,
       legacyReferenceOnly,
       deadSurfaces,
+      dashboardSectionPassiveUpdatesSuppressed: dashboardSuppressionAudit.dashboardSectionPassiveUpdatesSuppressed,
+      suppressedUpdateTargets: dashboardSuppressionAudit.suppressedUpdateTargets,
+      skippedBecausePortraitV2Owns: dashboardSuppressionAudit.skippedBecausePortraitV2Owns,
       firstLikelyDeadSurface: deadSurfaces[0] || null,
       firstLikelyPassiveDependency: passiveDependencies[0] || null,
       answer: trueDependencies.length
@@ -14011,6 +14087,9 @@ function gridlyLegacyTruthAudit() {
       passiveDependencies: [],
       legacyReferenceOnly: [],
       deadSurfaces: [],
+      dashboardSectionPassiveUpdatesSuppressed: false,
+      suppressedUpdateTargets: [],
+      skippedBecausePortraitV2Owns: false,
       firstLikelyDeadSurface: null,
       firstLikelyPassiveDependency: null,
       error: error?.message || "unknown error"
@@ -14020,6 +14099,7 @@ function gridlyLegacyTruthAudit() {
 
 function gridlyLegacySurfaceDependencyAudit() {
   try {
+    const dashboardSuppressionAudit = getGridlyDashboardSectionPassiveUpdateSuppressionAudit();
     const portraitInventory = typeof window.gridlyPortraitOwnershipInventory === "function" ? window.gridlyPortraitOwnershipInventory() : null;
     const containmentAudit = typeof window.gridlyPortraitContainmentAudit === "function" ? window.gridlyPortraitContainmentAudit() : null;
     const legacySurfaceAuditNames = new Set([
@@ -14032,17 +14112,21 @@ function gridlyLegacySurfaceDependencyAudit() {
       const retirement = GRIDLY_PORTRAIT_RETIRED_SURFACES[definition.name] || null;
       const state = getGridlyLegacySurfaceDependencyElementState(definition);
       const { element } = state;
-      const receivesDomUpdates = Boolean(state.loaded && gridlyLegacySurfaceHasAnySelector(element, profile.domUpdateSelectors));
-      const receivesDataUpdates = Boolean(state.loaded && (gridlyLegacySurfaceHasAnySelector(element, profile.dataUpdateSelectors) || element?.querySelector?.("[data-bind-text]")));
-      const receivesEventBindings = Boolean(state.loaded && gridlyLegacySurfaceHasAnySelector(element, profile.eventSelectors));
+      const dashboardSectionPassiveUpdatesSuppressed = Boolean(definition.name === "dashboardSection" && dashboardSuppressionAudit.skippedBecausePortraitV2Owns);
+      const rawReceivesDomUpdates = Boolean(state.loaded && gridlyLegacySurfaceHasAnySelector(element, profile.domUpdateSelectors));
+      const rawReceivesDataUpdates = Boolean(state.loaded && (gridlyLegacySurfaceHasAnySelector(element, profile.dataUpdateSelectors) || element?.querySelector?.("[data-bind-text]")));
+      const rawReceivesEventBindings = Boolean(state.loaded && gridlyLegacySurfaceHasAnySelector(element, profile.eventSelectors));
+      const receivesDomUpdates = Boolean(rawReceivesDomUpdates && !dashboardSectionPassiveUpdatesSuppressed);
+      const receivesDataUpdates = Boolean(rawReceivesDataUpdates && !dashboardSectionPassiveUpdatesSuppressed);
+      const receivesEventBindings = Boolean(rawReceivesEventBindings && !dashboardSectionPassiveUpdatesSuppressed);
       const affectsLayout = Boolean(state.loaded && (state.inLayoutFlow || (profile.affectsLayoutWhenLoaded && state.visible)));
-      const referencedByPortraitV2 = Boolean(profile.referencedByPortraitV2);
-      const referencedByAlerts = Boolean(profile.referencedByAlerts);
-      const referencedByPulse = Boolean(profile.referencedByPulse);
-      const referencedByHeader = Boolean(profile.referencedByHeader);
-      const referencedByMap = Boolean(profile.referencedByMap);
-      const referencedByRouteFlow = Boolean(profile.referencedByRouteFlow);
-      const referencedByReportFlow = Boolean(profile.referencedByReportFlow);
+      const referencedByPortraitV2 = Boolean(profile.referencedByPortraitV2 && !dashboardSectionPassiveUpdatesSuppressed);
+      const referencedByAlerts = Boolean(profile.referencedByAlerts && !dashboardSectionPassiveUpdatesSuppressed);
+      const referencedByPulse = Boolean(profile.referencedByPulse && !dashboardSectionPassiveUpdatesSuppressed);
+      const referencedByHeader = Boolean(profile.referencedByHeader && !dashboardSectionPassiveUpdatesSuppressed);
+      const referencedByMap = Boolean(profile.referencedByMap && !dashboardSectionPassiveUpdatesSuppressed);
+      const referencedByRouteFlow = Boolean(profile.referencedByRouteFlow && !dashboardSectionPassiveUpdatesSuppressed);
+      const referencedByReportFlow = Boolean(profile.referencedByReportFlow && !dashboardSectionPassiveUpdatesSuppressed);
       const referencedByActiveSystems = Boolean(
         referencedByPortraitV2 ||
         referencedByAlerts ||
@@ -14060,6 +14144,9 @@ function gridlyLegacySurfaceDependencyAudit() {
         receivesDomUpdates,
         receivesEventBindings,
         receivesDataUpdates,
+        dashboardSectionPassiveUpdatesSuppressed,
+        suppressedUpdateTargets: dashboardSectionPassiveUpdatesSuppressed ? dashboardSuppressionAudit.suppressedUpdateTargets.slice() : [],
+        skippedBecausePortraitV2Owns: Boolean(dashboardSectionPassiveUpdatesSuppressed),
         affectsLayout,
         referencedByActiveSystems,
         referencedByPortraitV2,
@@ -14077,9 +14164,12 @@ function gridlyLegacySurfaceDependencyAudit() {
           visibility: state.visibility || state.style?.visibility || null,
           opacity: state.opacity || state.style?.opacity || null,
           inLayoutFlow: Boolean(state.inLayoutFlow),
-          domUpdateSelectorsFound: (profile.domUpdateSelectors || []).filter((selector) => gridlyLegacySurfaceHasAnySelector(element, [selector])),
-          dataUpdateSelectorsFound: (profile.dataUpdateSelectors || []).filter((selector) => gridlyLegacySurfaceHasAnySelector(element, [selector])),
-          eventSelectorsFound: (profile.eventSelectors || []).filter((selector) => gridlyLegacySurfaceHasAnySelector(element, [selector]))
+          domUpdateSelectorsFound: dashboardSectionPassiveUpdatesSuppressed ? [] : (profile.domUpdateSelectors || []).filter((selector) => gridlyLegacySurfaceHasAnySelector(element, [selector])),
+          dataUpdateSelectorsFound: dashboardSectionPassiveUpdatesSuppressed ? [] : (profile.dataUpdateSelectors || []).filter((selector) => gridlyLegacySurfaceHasAnySelector(element, [selector])),
+          eventSelectorsFound: dashboardSectionPassiveUpdatesSuppressed ? [] : (profile.eventSelectors || []).filter((selector) => gridlyLegacySurfaceHasAnySelector(element, [selector])),
+          rawDomUpdateSelectorsFound: (profile.domUpdateSelectors || []).filter((selector) => gridlyLegacySurfaceHasAnySelector(element, [selector])),
+          rawDataUpdateSelectorsFound: (profile.dataUpdateSelectors || []).filter((selector) => gridlyLegacySurfaceHasAnySelector(element, [selector])),
+          rawEventSelectorsFound: (profile.eventSelectors || []).filter((selector) => gridlyLegacySurfaceHasAnySelector(element, [selector]))
         }
       };
       surface.classification = retirement ? "retired" : classifyGridlyLegacySurfaceDependency(surface);
@@ -14108,6 +14198,9 @@ function gridlyLegacySurfaceDependencyAudit() {
       duplicateOwnershipWarnings: portraitInventory?.duplicateOwnershipWarnings || [],
       recommendedDeauthorize: GRIDLY_PORTRAIT_RECOMMENDED_DEAUTHORIZE.slice(),
       retiredSurfaces: Object.keys(GRIDLY_PORTRAIT_RETIRED_SURFACES),
+      dashboardSectionPassiveUpdatesSuppressed: dashboardSuppressionAudit.dashboardSectionPassiveUpdatesSuppressed,
+      suppressedUpdateTargets: dashboardSuppressionAudit.suppressedUpdateTargets,
+      skippedBecausePortraitV2Owns: dashboardSuppressionAudit.skippedBecausePortraitV2Owns,
       surfaces,
       safeRetirementCandidates,
       containmentCandidates,
@@ -14128,6 +14221,9 @@ function gridlyLegacySurfaceDependencyAudit() {
       surfaces: [],
       safeRetirementCandidates: [],
       retiredSurfaces: Object.keys(GRIDLY_PORTRAIT_RETIRED_SURFACES),
+      dashboardSectionPassiveUpdatesSuppressed: false,
+      suppressedUpdateTargets: [],
+      skippedBecausePortraitV2Owns: false,
       containmentCandidates: [],
       activeDependencyCandidates: [],
       highestRiskRemovals: [],
@@ -25578,6 +25674,7 @@ function setSync(value) {
 }
 
 function safeText(id, value) {
+  if (shouldSuppressGridlyDashboardSectionPassiveTextUpdate(id)) return;
   if (!els[id]) els[id] = document.getElementById(id);
   if (els[id]) els[id].textContent = value;
   document.querySelectorAll(`[data-bind-text="${id}"]`).forEach((node) => {
