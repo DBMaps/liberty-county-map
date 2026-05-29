@@ -13025,6 +13025,113 @@ function renderGridlyCommunityPulse(options = {}) {
   return gridlyCommunityPulseAuditState;
 }
 
+
+function isGridlyTopAwarenessActivityLevelMeaningful(activityLevel = "") {
+  const level = String(activityLevel || "").trim().toLowerCase();
+  return Boolean(level && !/^(calm|quiet|light|none|normal|unknown)$/.test(level));
+}
+
+function formatGridlyTopAwarenessActivityLevel(activityLevel = "") {
+  const level = String(activityLevel || "").trim().toLowerCase();
+  if (!isGridlyTopAwarenessActivityLevelMeaningful(level)) return "";
+  if (/^(high|heavy|severe|critical)$/.test(level)) return "activity high";
+  if (/^moderate$/.test(level)) return "activity moderate";
+  if (/^active$/.test(level)) return "activity active";
+  return `activity ${level.replace(/[_-]+/g, " ")}`;
+}
+
+function isGridlyTopAwarenessPulseHeadlineMeaningful(pulseHeadline = "") {
+  const headline = safeDisplayText(pulseHeadline, "");
+  if (!headline) return false;
+  return !/^(routes currently clear|community pulse is quiet|no active mobility reports nearby|light activity across nearby corridors|town moving normally|no major disruptions nearby)$/i.test(headline);
+}
+
+function buildGridlyTopAwarenessMicroline({
+  topStatusPrimary = "",
+  topStatusSecondary = "",
+  pulseHeadline = "",
+  activeReportCount = 0,
+  activeHazardCount = 0,
+  activityLevel = "quiet"
+} = {}) {
+  const topTexts = [topStatusPrimary, topStatusSecondary]
+    .map((text) => normalizeGridlyTopAwarenessAuditText(text))
+    .filter(Boolean);
+  const normalizedPulseHeadline = normalizeGridlyTopAwarenessAuditText(pulseHeadline);
+  const reportCount = Math.max(0, Number(activeReportCount || 0));
+  const hazardCount = Math.max(0, Number(activeHazardCount || 0));
+  const activityPhrase = formatGridlyTopAwarenessActivityLevel(activityLevel);
+  const topAlreadyHazardAware = topTexts.some((text) => /alert|hazard|closure|flood|rail|crash|blocked|backed up|impact|delay|disruption|route/i.test(text));
+  const topMentionsPulseHeadline = Boolean(normalizedPulseHeadline && topTexts.some((text) => text === normalizedPulseHeadline || text.includes(normalizedPulseHeadline) || normalizedPulseHeadline.includes(text)));
+  const pulseHeadlineMeaningful = isGridlyTopAwarenessPulseHeadlineMeaningful(pulseHeadline) && !topMentionsPulseHeadline;
+  const countParts = [];
+  const sourceFields = [];
+  const suppressedReasons = [];
+
+  if (reportCount > 0) {
+    countParts.push(`${reportCount} active mobility ${reportCount === 1 ? "report" : "reports"}`);
+    sourceFields.push("activeReportCount");
+  } else if (hazardCount > 0 && !topAlreadyHazardAware) {
+    countParts.push(`${hazardCount} ${hazardCount === 1 ? "hazard" : "hazards"} nearby`);
+    sourceFields.push("activeHazardCount");
+  } else if (hazardCount > 0) {
+    countParts.push(`${hazardCount} active mobility ${hazardCount === 1 ? "report" : "reports"}`);
+    sourceFields.push("activeHazardCount");
+    suppressedReasons.push("hazard wording generalized to avoid duplicating top status");
+  }
+
+  if (activityPhrase) {
+    countParts.push(activityPhrase);
+    sourceFields.push("activityLevel");
+  }
+
+  if (!countParts.length && pulseHeadlineMeaningful) {
+    countParts.push(safeDisplayText(pulseHeadline, ""));
+    sourceFields.push("pulseHeadline");
+  } else if (normalizedPulseHeadline && topMentionsPulseHeadline) {
+    suppressedReasons.push("pulseHeadline duplicates top status wording");
+  }
+
+  const microline = safeDisplayText(countParts.slice(0, 2).join(" • "), "");
+  if (microline) {
+    return {
+      text: microline,
+      visible: true,
+      sourceFields: Array.from(new Set(sourceFields)),
+      suppressedReason: suppressedReasons.join("; ")
+    };
+  }
+
+  const quietState = reportCount <= 0 && hazardCount <= 0 && !activityPhrase;
+  return {
+    text: "",
+    visible: false,
+    sourceFields: [],
+    suppressedReason: quietState
+      ? "quiet state: no meaningful pulse signal, calm activity, and zero active counts"
+      : (suppressedReasons.join("; ") || "no high-value non-duplicate pulse signal")
+  };
+}
+
+function ensureGridlyTopAwarenessMicrolineElement(topSecondaryEl = null) {
+  const existing = document.getElementById("gridlyV2TopAwarenessMicroline");
+  if (existing) return existing;
+  const anchor = topSecondaryEl || document.getElementById("gridlyV2TopStatusSecondary");
+  const parent = anchor?.parentElement || document.querySelector("#gridlyPortraitV2 .gridly-v2-status-pill");
+  if (!parent) return null;
+  const microline = document.createElement("span");
+  microline.id = "gridlyV2TopAwarenessMicroline";
+  microline.className = "gridly-v2-top-awareness-microline";
+  microline.hidden = true;
+  microline.setAttribute("aria-live", "polite");
+  if (anchor?.parentElement === parent) {
+    anchor.insertAdjacentElement("afterend", microline);
+  } else {
+    parent.appendChild(microline);
+  }
+  return microline;
+}
+
 function isGridlyRecoveryAuditElementVisible(element) {
   if (!element) return false;
   const style = typeof window !== "undefined" && typeof window.getComputedStyle === "function"
@@ -13262,6 +13369,24 @@ window.gridlyTopAwarenessIntegrationAudit = function gridlyTopAwarenessIntegrati
     const activeHazardCount = Number(activeAwareness.activeHazardCount ?? sourceState.activeHazardCount ?? 0);
     const activityLevel = String(sourceState.mobilityPressureCategory || activeAwareness.activityLevel || "quiet");
     const awarenessMode = String(sourceState.awarenessMode || activeAwareness.awarenessMode || "community");
+    const microlineElement = document.getElementById("gridlyV2TopAwarenessMicroline");
+    const computedMicroline = buildGridlyTopAwarenessMicroline({
+      topStatusPrimary,
+      topStatusSecondary,
+      pulseHeadline,
+      activeReportCount,
+      activeHazardCount,
+      activityLevel
+    });
+    const renderedMicrolineText = safeDisplayText(microlineElement?.textContent, "");
+    const topAwarenessMicroline = renderedMicrolineText || computedMicroline.text;
+    const microlineVisible = Boolean(microlineElement
+      ? renderedMicrolineText && microlineElement.hidden !== true
+      : computedMicroline.visible);
+    const microlineSourceFields = microlineElement?.dataset?.gridlyMicrolineSourceFields
+      ? microlineElement.dataset.gridlyMicrolineSourceFields.split(",").map((field) => field.trim()).filter(Boolean)
+      : computedMicroline.sourceFields;
+    const microlineSuppressedReason = microlineElement?.dataset?.gridlyMicrolineSuppressedReason || computedMicroline.suppressedReason || "";
     const classificationContext = {
       topTexts,
       activeReportCount,
@@ -13320,9 +13445,13 @@ window.gridlyTopAwarenessIntegrationAudit = function gridlyTopAwarenessIntegrati
 
     return {
       loaded: true,
-      version: "V181.1",
+      version: "V181.2",
       topStatusPrimary,
       topStatusSecondary,
+      topAwarenessMicroline,
+      microlineVisible,
+      microlineSourceFields,
+      microlineSuppressedReason,
       pulseHeadline,
       pulseSubline,
       activeReportCount,
@@ -13331,7 +13460,8 @@ window.gridlyTopAwarenessIntegrationAudit = function gridlyTopAwarenessIntegrati
       awarenessMode,
       currentTopAwarenessContent: {
         topStatusPrimary,
-        topStatusSecondary
+        topStatusSecondary,
+        topAwarenessMicroline
       },
       currentCommunityPulseContent: {
         pulseHeadline,
@@ -13353,16 +13483,20 @@ window.gridlyTopAwarenessIntegrationAudit = function gridlyTopAwarenessIntegrati
   } catch (error) {
     return {
       loaded: false,
-      version: "V181.1",
+      version: "V181.2",
       topStatusPrimary: "",
       topStatusSecondary: "",
+      topAwarenessMicroline: "",
+      microlineVisible: false,
+      microlineSourceFields: [],
+      microlineSuppressedReason: "audit failed",
       pulseHeadline: "",
       pulseSubline: "",
       activeReportCount: 0,
       activeHazardCount: 0,
       activityLevel: "quiet",
       awarenessMode: "community",
-      currentTopAwarenessContent: { topStatusPrimary: "", topStatusSecondary: "" },
+      currentTopAwarenessContent: { topStatusPrimary: "", topStatusSecondary: "", topAwarenessMicroline: "" },
       currentCommunityPulseContent: { pulseHeadline: "", pulseSubline: "", activeReportCount: 0, activeHazardCount: 0, activityLevel: "quiet", awarenessMode: "community" },
       pulseFieldClassifications: {},
       recommendedKeepInTopAwareness: ["topStatusPrimary", "topStatusSecondary"],
@@ -25502,10 +25636,14 @@ function refreshPortraitV2LocalizedIntelligence() {
   const sections = {};
   const timeSection = makeGridlySectionTimer(sections);
 
-  const { topPrimaryEl, topSecondaryEl } = timeSection("dom_queries", () => ({
-    topPrimaryEl: document.getElementById("gridlyV2TopStatusPrimary"),
-    topSecondaryEl: document.getElementById("gridlyV2TopStatusSecondary")
-  }));
+  const { topPrimaryEl, topSecondaryEl, topMicrolineEl } = timeSection("dom_queries", () => {
+    const topSecondary = document.getElementById("gridlyV2TopStatusSecondary");
+    return {
+      topPrimaryEl: document.getElementById("gridlyV2TopStatusPrimary"),
+      topSecondaryEl: topSecondary,
+      topMicrolineEl: ensureGridlyTopAwarenessMicrolineElement(topSecondary)
+    };
+  });
   if (!topPrimaryEl && !topSecondaryEl) {
     recordPortraitIntelligenceBreakdown("refreshPortraitV2LocalizedIntelligence", functionStartedAt, sections);
     return;
@@ -25533,6 +25671,30 @@ function refreshPortraitV2LocalizedIntelligence() {
       : "No major disruptions nearby";
     logTopPanelWrite("refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusSecondary", secondaryValue);
     if (topSecondaryEl) topSecondaryEl.textContent = safeDisplayText(secondaryValue, "No major disruptions nearby");
+    const pulseModel = buildGridlyCommunityPulseModel({ topAwarenessMicrolineReadOnly: true });
+    const activeAwareness = pulseModel.activeAwareness || {};
+    const topAwarenessMicroline = buildGridlyTopAwarenessMicroline({
+      topStatusPrimary: primaryValue,
+      topStatusSecondary: secondaryValue,
+      pulseHeadline: pulseModel.renderedPulseHeadline || activeAwareness.headline || "",
+      activeReportCount: activeAwareness.activeReportCount ?? activeAwareness.activeAwarenessCount ?? 0,
+      activeHazardCount: activeAwareness.activeHazardCount ?? 0,
+      activityLevel: pulseModel.mobilityPressureCategory || activeAwareness.activityLevel || "quiet"
+    });
+    if (topMicrolineEl) {
+      topMicrolineEl.textContent = topAwarenessMicroline.visible ? topAwarenessMicroline.text : "";
+      topMicrolineEl.hidden = !topAwarenessMicroline.visible;
+      topMicrolineEl.dataset.gridlyMicrolineVisible = topAwarenessMicroline.visible ? "true" : "false";
+      topMicrolineEl.dataset.gridlyMicrolineSourceFields = topAwarenessMicroline.sourceFields.join(",");
+      topMicrolineEl.dataset.gridlyMicrolineSuppressedReason = topAwarenessMicroline.suppressedReason || "";
+    }
+    window.gridlyTopAwarenessMicrolineState = {
+      ...topAwarenessMicroline,
+      pulseHeadline: pulseModel.renderedPulseHeadline || activeAwareness.headline || "",
+      activeReportCount: activeAwareness.activeReportCount ?? activeAwareness.activeAwarenessCount ?? 0,
+      activeHazardCount: activeAwareness.activeHazardCount ?? 0,
+      activityLevel: pulseModel.mobilityPressureCategory || activeAwareness.activityLevel || "quiet"
+    };
     logTopStripOwnershipDiagnostic("refreshPortraitV2LocalizedIntelligence");
   });
   recordPortraitIntelligenceBreakdown("refreshPortraitV2LocalizedIntelligence", functionStartedAt, sections);
