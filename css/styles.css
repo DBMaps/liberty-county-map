@@ -13972,3 +13972,55 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-top-awareness-mic
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-top-awareness-microline[hidden] {
   display: none !important;
 }
+
+/* V181.3 — Portrait V2 top-header background isolation / bleed guard */
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 {
+  --gridly-v2-top-shield-height: calc(158px + env(safe-area-inset-top, 0px));
+}
+
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--gridly-v2-top-shield-height);
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, #050b16 0%, #06101d 74%, rgba(6, 16, 29, 0.96) 100%);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.32);
+}
+
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 .gridly-v2-topbar,
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 .gridly-v2-status-pill,
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 .gridly-v2-segments {
+  isolation: isolate;
+  contain: paint;
+  background-clip: padding-box;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 .gridly-v2-topbar {
+  z-index: 3;
+  background: linear-gradient(165deg, #071322 0%, #050c17 100%);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(220, 239, 255, 0.08);
+}
+
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 .gridly-v2-status-pill {
+  z-index: 3;
+  background: linear-gradient(165deg, #071322 0%, #050c17 100%);
+  box-shadow: 0 7px 16px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(220, 239, 255, 0.08);
+}
+
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 .gridly-v2-segments {
+  z-index: 3;
+  background: linear-gradient(165deg, #081524 0%, #050d18 100%);
+  box-shadow: 0 7px 16px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(220, 239, 255, 0.08);
+}
+
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyCommunityPulseSurface {
+  position: relative;
+  z-index: 0;
+  pointer-events: none;
+}
