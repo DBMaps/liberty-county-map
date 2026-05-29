@@ -13137,6 +13137,245 @@ window.gridlyLightweightActiveAwarenessAudit = function gridlyLightweightActiveA
   }
 };
 
+function normalizeGridlyTopAwarenessAuditText(value = "") {
+  return normalizeGridlyLightweightAlertSummaryText(safeDisplayText(value, ""));
+}
+
+function classifyGridlyTopAwarenessPulseField(fieldName, value, context = {}) {
+  const normalizedValue = normalizeGridlyTopAwarenessAuditText(value);
+  const topTexts = Array.isArray(context.topTexts) ? context.topTexts : [];
+  const topHasValue = Boolean(normalizedValue && topTexts.some((text) => text === normalizedValue));
+  const activeReportCount = Number(context.activeReportCount || 0);
+  const activeHazardCount = Number(context.activeHazardCount || 0);
+  const genericQuiet = !normalizedValue || /^(?:no active|local movement looks quiet|community pulse is quiet|town moving normally|routes currently clear|no major disruptions nearby)$/i.test(String(value || "").trim());
+  const topMentionsSameCount = Number(value || 0) > 0 && topTexts.some((text) => new RegExp(`\\b${Number(value || 0)}\\b`).test(text));
+
+  if (fieldName === "pulseHeadline") {
+    const duplicateSignal = topHasValue || Boolean(context.pulseSummaryReuseApplied);
+    const strongSignal = Boolean(normalizedValue && !genericQuiet && (activeReportCount > 0 || activeHazardCount > 0));
+    const uniqueSignal = Boolean(normalizedValue && !duplicateSignal && !genericQuiet);
+    return {
+      uniqueSignal,
+      duplicateSignal,
+      weakSignal: !strongSignal,
+      strongSignal,
+      rationale: duplicateSignal
+        ? "Headline is already represented by the top status or reused alert wording."
+        : strongSignal
+          ? "Headline contributes a distinct community mobility/corridor summary."
+          : "Headline is empty or generic quiet-state language."
+    };
+  }
+
+  if (fieldName === "pulseSubline") {
+    const duplicateSignal = topHasValue;
+    const hasContext = /corridor|watch|signal|pressure|movement|mobility|report|nearby|local|rail|flood|closure|crash|debris|road work/i.test(String(value || ""));
+    const strongSignal = Boolean(normalizedValue && !genericQuiet && hasContext && (activeReportCount > 0 || activeHazardCount > 0));
+    const uniqueSignal = Boolean(normalizedValue && !duplicateSignal && hasContext);
+    return {
+      uniqueSignal,
+      duplicateSignal,
+      weakSignal: !strongSignal,
+      strongSignal,
+      rationale: duplicateSignal
+        ? "Subline repeats top awareness copy."
+        : uniqueSignal
+          ? "Subline adds community activity context beyond the primary top status."
+          : "Subline is generic and should not add top-awareness weight."
+    };
+  }
+
+  if (fieldName === "activeReportCount") {
+    const count = Number(value || 0);
+    return {
+      uniqueSignal: count > 0 && !topMentionsSameCount,
+      duplicateSignal: count > 0 && topMentionsSameCount,
+      weakSignal: count <= 0,
+      strongSignal: count > 0,
+      rationale: count > 0
+        ? "Active mobility report count is a concrete community-sourced volume signal."
+        : "No active reports means the count is only a quiet-state support signal."
+    };
+  }
+
+  if (fieldName === "activeHazardCount") {
+    const count = Number(value || 0);
+    const topAlreadyHazardAware = topTexts.some((text) => /alert|hazard|closure|flood|rail|crash|blocked|impact|delay|disruption|route/i.test(text));
+    return {
+      uniqueSignal: count > 0 && !topAlreadyHazardAware && !topMentionsSameCount,
+      duplicateSignal: count > 0 && (topAlreadyHazardAware || topMentionsSameCount),
+      weakSignal: count <= 0,
+      strongSignal: count > 0,
+      rationale: count > 0
+        ? "Hazard count is safety-relevant, but usually overlaps the top active alert/status headline."
+        : "No active hazards means the count should not be promoted."
+    };
+  }
+
+  if (fieldName === "activityLevel") {
+    const level = String(value || "quiet").toLowerCase();
+    const strongSignal = /building|elevated|heavy|high|active|moderate|severe/.test(level);
+    const weakSignal = !strongSignal || /quiet|light|none/.test(level);
+    return {
+      uniqueSignal: Boolean(level && level !== "unknown" && !topTexts.some((text) => text.includes(level))),
+      duplicateSignal: Boolean(level && topTexts.some((text) => text.includes(level))),
+      weakSignal,
+      strongSignal,
+      rationale: strongSignal
+        ? "Activity level is a compact pressure/trend signal that can qualify top awareness."
+        : "Quiet/light activity level is low-priority supporting context."
+    };
+  }
+
+  if (fieldName === "awarenessMode") {
+    const mode = String(value || "community").toLowerCase();
+    return {
+      uniqueSignal: false,
+      duplicateSignal: mode === String(context.currentAwarenessMode || "").toLowerCase(),
+      weakSignal: true,
+      strongSignal: false,
+      rationale: "Awareness mode is an ownership/routing state, not standalone top-awareness copy."
+    };
+  }
+
+  return { uniqueSignal: false, duplicateSignal: false, weakSignal: true, strongSignal: false, rationale: "Unrecognized pulse field." };
+}
+
+window.gridlyTopAwarenessIntegrationAudit = function gridlyTopAwarenessIntegrationAudit(options = {}) {
+  try {
+    const topStatusPrimary = safeDisplayText(document.getElementById("gridlyV2TopStatusPrimary")?.textContent, "");
+    const topStatusSecondary = safeDisplayText(document.getElementById("gridlyV2TopStatusSecondary")?.textContent, "");
+    const topTexts = [topStatusPrimary, topStatusSecondary].map((text) => normalizeGridlyTopAwarenessAuditText(text)).filter(Boolean);
+    const pulseState = gridlyCommunityPulseAuditState || {};
+    const model = options?.buildModel === true ? buildGridlyCommunityPulseModel({ ...options, topAwarenessIntegrationAuditReadOnly: true }) : null;
+    const sourceState = model || pulseState;
+    const activeAwareness = sourceState.activeAwareness || pulseState.activeAwareness || {};
+    const pulseHeadline = safeDisplayText(
+      document.getElementById("gridlyCommunityPulseHeadline")?.textContent || sourceState.renderedPulseHeadline || pulseState.renderedPulseHeadline,
+      ""
+    );
+    const pulseSubline = safeDisplayText(
+      document.getElementById("gridlyCommunityPulseSubline")?.textContent || sourceState.renderedPulseSubline || pulseState.renderedPulseSubline,
+      ""
+    );
+    const activeReportCount = Number(activeAwareness.activeReportCount ?? sourceState.activeReportCount ?? 0);
+    const activeHazardCount = Number(activeAwareness.activeHazardCount ?? sourceState.activeHazardCount ?? 0);
+    const activityLevel = String(sourceState.mobilityPressureCategory || activeAwareness.activityLevel || "quiet");
+    const awarenessMode = String(sourceState.awarenessMode || activeAwareness.awarenessMode || "community");
+    const classificationContext = {
+      topTexts,
+      activeReportCount,
+      activeHazardCount,
+      currentAwarenessMode: awarenessMode,
+      pulseSummaryReuseApplied: Boolean(sourceState.pulseSummaryReuseApplied)
+    };
+    const pulseFieldClassifications = {
+      pulseHeadline: classifyGridlyTopAwarenessPulseField("pulseHeadline", pulseHeadline, classificationContext),
+      pulseSubline: classifyGridlyTopAwarenessPulseField("pulseSubline", pulseSubline, classificationContext),
+      activeReportCount: classifyGridlyTopAwarenessPulseField("activeReportCount", activeReportCount, classificationContext),
+      activeHazardCount: classifyGridlyTopAwarenessPulseField("activeHazardCount", activeHazardCount, classificationContext),
+      activityLevel: classifyGridlyTopAwarenessPulseField("activityLevel", activityLevel, classificationContext),
+      awarenessMode: classifyGridlyTopAwarenessPulseField("awarenessMode", awarenessMode, classificationContext)
+    };
+    const uniqueStrongFields = Object.entries(pulseFieldClassifications)
+      .filter(([, classification]) => classification.uniqueSignal && classification.strongSignal)
+      .map(([field]) => field);
+    const duplicateFields = Object.entries(pulseFieldClassifications)
+      .filter(([, classification]) => classification.duplicateSignal)
+      .map(([field]) => field);
+    const weakFields = Object.entries(pulseFieldClassifications)
+      .filter(([, classification]) => classification.weakSignal && !classification.strongSignal)
+      .map(([field]) => field);
+    const recommendedKeepInTopAwareness = ["topStatusPrimary", "topStatusSecondary"];
+    const recommendedMergeIntoTopAwareness = uniqueStrongFields.filter((field) => field !== "awarenessMode");
+    const recommendedRemoveAsDuplicate = Array.from(new Set([...duplicateFields, ...weakFields.filter((field) => field === "awarenessMode")]));
+    const informationUnits = [topStatusPrimary, topStatusSecondary].filter(Boolean).length + recommendedMergeIntoTopAwareness.length;
+    const topAwarenessInformationDensity = informationUnits <= 1
+      ? "too_sparse"
+      : informationUnits <= 4
+        ? "balanced"
+        : "crowded";
+    const strongSignalCount = Object.values(pulseFieldClassifications).filter((classification) => classification.strongSignal).length;
+    const communityPulseInformationValue = strongSignalCount >= 3 || (activeReportCount > 0 && uniqueStrongFields.length >= 2)
+      ? "high"
+      : strongSignalCount >= 1 || activeReportCount > 0 || activeHazardCount > 0
+        ? "medium"
+        : "low";
+    const exactInformationShouldSurvive = [
+      "Keep the active alert/status headline and its impact/freshness line as the primary Portrait V2 top-awareness content.",
+      activeReportCount > 0
+        ? "Merge the active mobility report count as a compact community-volume signal."
+        : "Do not promote a zero active mobility report count except as quiet-state support.",
+      pulseFieldClassifications.activityLevel.strongSignal
+        ? "Merge the community activity/pressure level when it is building or elevated."
+        : "Do not promote quiet/light activity level as primary top-awareness copy.",
+      pulseFieldClassifications.pulseSubline.uniqueSignal
+        ? "Preserve one short community context phrase when it adds corridor, signal-type, or local movement context not already present in top status."
+        : "Drop generic pulse summary language when it repeats or softens the top status.",
+      pulseFieldClassifications.activeHazardCount.duplicateSignal
+        ? "Do not separately carry active hazard count when the top status already names the active hazard/alert condition."
+        : "Carry active hazard count only if no top headline already represents the hazard state.",
+      "Do not carry awarenessMode as user-facing copy; keep it as diagnostic/selection metadata only."
+    ];
+
+    return {
+      loaded: true,
+      version: "V181.1",
+      topStatusPrimary,
+      topStatusSecondary,
+      pulseHeadline,
+      pulseSubline,
+      activeReportCount,
+      activeHazardCount,
+      activityLevel,
+      awarenessMode,
+      currentTopAwarenessContent: {
+        topStatusPrimary,
+        topStatusSecondary
+      },
+      currentCommunityPulseContent: {
+        pulseHeadline,
+        pulseSubline,
+        activeReportCount,
+        activeHazardCount,
+        activityLevel,
+        awarenessMode
+      },
+      pulseFieldClassifications,
+      recommendedKeepInTopAwareness,
+      recommendedMergeIntoTopAwareness,
+      recommendedRemoveAsDuplicate,
+      topAwarenessInformationDensity,
+      communityPulseInformationValue,
+      exactInformationShouldSurvive,
+      answer: exactInformationShouldSurvive.join(" ")
+    };
+  } catch (error) {
+    return {
+      loaded: false,
+      version: "V181.1",
+      topStatusPrimary: "",
+      topStatusSecondary: "",
+      pulseHeadline: "",
+      pulseSubline: "",
+      activeReportCount: 0,
+      activeHazardCount: 0,
+      activityLevel: "quiet",
+      awarenessMode: "community",
+      currentTopAwarenessContent: { topStatusPrimary: "", topStatusSecondary: "" },
+      currentCommunityPulseContent: { pulseHeadline: "", pulseSubline: "", activeReportCount: 0, activeHazardCount: 0, activityLevel: "quiet", awarenessMode: "community" },
+      pulseFieldClassifications: {},
+      recommendedKeepInTopAwareness: ["topStatusPrimary", "topStatusSecondary"],
+      recommendedMergeIntoTopAwareness: [],
+      recommendedRemoveAsDuplicate: [],
+      topAwarenessInformationDensity: "too_sparse",
+      communityPulseInformationValue: "low",
+      answer: "Audit failed before Community Pulse information architecture could be classified.",
+      error: error?.message || "unknown error"
+    };
+  }
+};
+
 window.gridlyCommunityPulseAudit = function gridlyCommunityPulseAudit(options = {}) {
   const shouldRender = options?.render !== false;
   const state = shouldRender ? renderGridlyCommunityPulse(options) : { ...gridlyCommunityPulseAuditState };
