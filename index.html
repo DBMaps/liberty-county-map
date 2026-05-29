@@ -702,12 +702,63 @@
         <h2 id="settingsModalTitle">Settings</h2>
         <button type="button" class="gridly-surface-close settings-modal-close" id="closeSettingsModalBtn" aria-label="Close Settings">×</button>
       </div>
-      <p class="settings-modal-subtitle">Destination setup and app preferences now live here for portrait mode.</p>
-      <section class="settings-modal-section" id="settingsHomeTownSection"><h3>Set Home Town</h3><p>Choose your primary town context for local route awareness.</p></section>
-      <section class="settings-modal-section" id="settingsSavedPlacesSection"><h3>Home / Work / Saved Places</h3><p>Manage commute anchors used by Route and destination setup.</p></section>
-      <section class="settings-modal-section" id="settingsAlertPreferencesSection"><h3>Alert Preferences</h3><p>Configure the alerts and watch triggers you want to receive.</p></section>
-      <section class="settings-modal-section" id="settingsRoutePreferencesSection"><h3>Route Preferences</h3><p>Set route defaults and commute behavior preferences.</p></section>
-      <section class="settings-modal-section" id="settingsAppPreferencesSection"><h3>App Preferences</h3><p>Manage interface and app-level behavior preferences.</p></section>
+      <p class="settings-modal-subtitle">Manage saved route anchors and device preferences. Settings are stored locally on this device.</p>
+      <section class="settings-modal-section" id="settingsSavedPlacesSection">
+        <div class="settings-section-head">
+          <h3>Route Watch Settings</h3>
+          <button type="button" class="secondary-btn compact-btn" id="settingsManageSavedPlacesBtn">Manage Saved Places</button>
+        </div>
+        <div class="settings-place-grid" aria-label="Route Watch saved places">
+          <article class="settings-place-card">
+            <span class="settings-place-label">Home</span>
+            <strong id="settingsHomeValue">Not saved</strong>
+            <small id="settingsHomeMeta">Save Home to enable route awareness.</small>
+          </article>
+          <article class="settings-place-card">
+            <span class="settings-place-label">Work</span>
+            <strong id="settingsWorkValue">Not saved</strong>
+            <small id="settingsWorkMeta">Save Work to enable commute context.</small>
+          </article>
+        </div>
+        <div class="settings-saved-places-list" id="settingsSavedPlacesList" aria-live="polite">No saved places yet.</div>
+      </section>
+      <section class="settings-modal-section" id="settingsAlertPreferencesSection">
+        <h3>Notification Preferences</h3>
+        <p>Preference storage only. Gridly will not schedule or deliver notifications from these toggles.</p>
+        <div class="settings-toggle-grid">
+          <label class="settings-toggle-row"><input type="checkbox" id="settingsRouteAlertsToggle"><span>Route Watch Alerts</span></label>
+          <label class="settings-toggle-row"><input type="checkbox" id="settingsRailAlertsToggle"><span>Rail Crossing Alerts</span></label>
+          <label class="settings-toggle-row"><input type="checkbox" id="settingsHazardAlertsToggle"><span>Road Hazard Alerts</span></label>
+          <label class="settings-toggle-row"><input type="checkbox" id="settingsCommunityAlertsToggle"><span>Community Activity Alerts</span></label>
+        </div>
+      </section>
+      <section class="settings-modal-section" id="settingsDisplayPreferencesSection">
+        <h3>Display Preferences</h3>
+        <div class="settings-select-grid">
+          <label>Map Style
+            <select id="settingsMapStyleSelect">
+              <option value="standard">Standard</option>
+              <option value="dark">Dark</option>
+              <option value="satellite">Satellite</option>
+            </select>
+          </label>
+          <label>Theme
+            <select id="settingsThemeSelect">
+              <option value="system">System</option>
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select>
+          </label>
+        </div>
+        <p class="settings-placeholder-note" id="settingsThemePlaceholder">Theme preference is saved for the future theme engine; no theme redesign is applied.</p>
+      </section>
+      <section class="settings-modal-section" id="settingsAboutSection" data-gridly-about>
+        <h3>About Gridly</h3>
+        <p><strong>Gridly V198</strong><br><span id="settingsBuildValue">Build 1710</span></p>
+        <button type="button" class="secondary-btn compact-btn" id="settingsFeedbackBtn">Send Feedback</button>
+        <p class="settings-placeholder-note" id="settingsFeedbackStatus" aria-live="polite">Feedback entry point is a placeholder for this phase.</p>
+      </section>
+      <p class="settings-save-status" id="settingsSaveStatus" aria-live="polite"></p>
     </div>
   </div>
 
