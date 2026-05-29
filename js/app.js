@@ -2749,6 +2749,74 @@ function gridlyGetRouteGeometryDiagnostics() {
   };
 }
 
+function gridlyNormalizeRouteMetrics(metrics = {}) {
+  const routePointCount = Number.isFinite(Number(metrics.routePointCount)) ? Number(metrics.routePointCount) : 0;
+  const routeDistanceMiles = Number.isFinite(Number(metrics.routeDistanceMiles)) && Number(metrics.routeDistanceMiles) > 0
+    ? Number(metrics.routeDistanceMiles)
+    : null;
+  const routeDurationMinutes = Number.isFinite(Number(metrics.routeDurationMinutes)) && Number(metrics.routeDurationMinutes) > 0
+    ? Number(metrics.routeDurationMinutes)
+    : null;
+  const routeGeneratedAt = typeof metrics.routeGeneratedAt === "string" && metrics.routeGeneratedAt.trim()
+    ? metrics.routeGeneratedAt
+    : null;
+  return {
+    routePointCount,
+    routeDistanceMiles,
+    routeDurationMinutes,
+    routeGeneratedAt,
+    routeMetricsAvailable: Boolean(routePointCount > 0 && routeDistanceMiles > 0 && routeDurationMinutes > 0 && routeGeneratedAt)
+  };
+}
+
+function gridlyBuildActiveRouteMetrics(routeGeometry = gridlyGetRouteGeometryDiagnostics()) {
+  return gridlyNormalizeRouteMetrics({
+    routePointCount: routeGeometry.routePointCount,
+    routeDistanceMiles: Number.isFinite(Number(monitoredRouteDistanceMiles)) ? Number(monitoredRouteDistanceMiles) : null,
+    routeDurationMinutes: Number.isFinite(Number(monitoredRouteDurationSeconds)) && Number(monitoredRouteDurationSeconds) > 0
+      ? Math.max(1, Math.round(Number(monitoredRouteDurationSeconds) / 60))
+      : null,
+    routeGeneratedAt: window.gridlyRouteMetrics?.source === "active_route_render" ? window.gridlyRouteMetrics?.routeGeneratedAt : null
+  });
+}
+
+function gridlyGetPersistedRouteMetrics() {
+  return gridlyNormalizeRouteMetrics(window.gridlyRouteMetrics || {});
+}
+
+function gridlyGetTravelTimeRouteMetrics(routeGeometry = gridlyGetRouteGeometryDiagnostics()) {
+  const activeMetrics = gridlyBuildActiveRouteMetrics(routeGeometry);
+  if (routeGeometry.routeGeometryAvailable && activeMetrics.routeMetricsAvailable) {
+    return { ...activeMetrics, routeMetricsSource: "active_route_render" };
+  }
+
+  const persistedMetrics = gridlyGetPersistedRouteMetrics();
+  if (persistedMetrics.routeMetricsAvailable) {
+    return { ...persistedMetrics, routeMetricsSource: "persisted_route_metrics" };
+  }
+
+  const fallbackMetrics = activeMetrics.routePointCount > 0 ? activeMetrics : persistedMetrics;
+  return { ...fallbackMetrics, routeMetricsSource: "unavailable" };
+}
+
+function persistGridlyRouteMetrics({ routePointCount, routeDistanceMiles, routeDurationMinutes } = {}) {
+  const normalizedMetrics = gridlyNormalizeRouteMetrics({
+    routePointCount,
+    routeDistanceMiles,
+    routeDurationMinutes,
+    routeGeneratedAt: new Date().toISOString()
+  });
+  window.gridlyRouteMetrics = {
+    routePointCount: normalizedMetrics.routePointCount,
+    routeDistanceMiles: normalizedMetrics.routeDistanceMiles,
+    routeDurationMinutes: normalizedMetrics.routeDurationMinutes,
+    routeGeneratedAt: normalizedMetrics.routeGeneratedAt,
+    routeMetricsAvailable: normalizedMetrics.routeMetricsAvailable,
+    source: "active_route_render"
+  };
+  return window.gridlyRouteMetrics;
+}
+
 function gridlyGetLocationPermissionDiagnostic() {
   if (typeof navigator === "undefined") return "navigator_unavailable";
   if (typeof navigator.geolocation === "undefined") return "geolocation_unavailable";
@@ -2872,17 +2940,18 @@ window.gridlyTravelTimeAudit = function gridlyTravelTimeAudit() {
   const places = gridlyGetSavedPlacesReadiness();
   const routeGeometry = gridlyGetRouteGeometryDiagnostics();
   const routeWatchConfigured = Boolean(places.routablePlaceCount >= 2 && (places.hasHome || places.hasWork));
-  const routeDistanceMiles = Number.isFinite(Number(monitoredRouteDistanceMiles)) ? Number(monitoredRouteDistanceMiles) : null;
+  const routeMetrics = gridlyGetTravelTimeRouteMetrics(routeGeometry);
+  const routeDistanceMiles = routeMetrics.routeDistanceMiles;
   const routeDistanceAvailable = Number.isFinite(Number(routeDistanceMiles)) && Number(routeDistanceMiles) > 0;
-  const currentRouteDurationMinutes = Number.isFinite(Number(monitoredRouteDurationSeconds)) && Number(monitoredRouteDurationSeconds) > 0
-    ? Math.max(1, Math.round(Number(monitoredRouteDurationSeconds) / 60))
-    : null;
+  const currentRouteDurationMinutes = routeMetrics.routeDurationMinutes;
   const routeDurationAvailable = Number.isFinite(Number(currentRouteDurationMinutes)) && Number(currentRouteDurationMinutes) > 0;
+  const routeMetricsAvailable = Boolean(routeMetrics.routeMetricsAvailable);
   const missingRequirements = [
     !routeWatchConfigured ? "route_watch_not_configured" : "",
     !places.hasHome ? "home_not_configured" : "",
     !places.hasWork ? "work_not_configured" : "",
     !routeGeometry.routeGeometryAvailable ? "route_geometry_unavailable" : "",
+    !routeMetricsAvailable ? "route_metrics_unavailable" : "",
     !routeDistanceAvailable ? "route_distance_unavailable" : "",
     !routeDurationAvailable ? "current_route_duration_unavailable" : ""
   ].filter(Boolean);
@@ -2895,7 +2964,10 @@ window.gridlyTravelTimeAudit = function gridlyTravelTimeAudit() {
     homeConfigured: places.hasHome,
     workConfigured: places.hasWork,
     routeGeometryAvailable: routeGeometry.routeGeometryAvailable,
-    routePointCount: routeGeometry.routePointCount,
+    routeMetricsAvailable,
+    routeMetricsSource: routeMetrics.routeMetricsSource,
+    routeGeneratedAt: routeMetrics.routeGeneratedAt,
+    routePointCount: routeMetrics.routePointCount,
     routeDistanceAvailable,
     routeDistanceMiles,
     routeDurationAvailable,
@@ -2911,6 +2983,7 @@ window.gridlyTravelTimeAudit = function gridlyTravelTimeAudit() {
       homeConfigured: places.hasHome ? null : "saved_home_missing",
       workConfigured: places.hasWork ? null : "saved_work_missing",
       routeGeometryAvailable: routeGeometry.routeGeometryAvailable ? null : "active_route_polyline_missing",
+      routeMetricsAvailable: routeMetricsAvailable ? null : "route_metrics_not_available_from_active_or_persisted_route",
       routeDistanceAvailable: routeDistanceAvailable ? null : "osrm_distance_not_available_for_current_route",
       routeDurationAvailable: routeDurationAvailable ? null : "osrm_duration_not_available_for_current_route",
       routeImpactReady: impactReadiness.routeImpactReady ? null : impactReadiness.routeImpactUnavailableReasons.join(",")
@@ -2930,7 +3003,10 @@ window.gridlyTravelTimeBlueprint = function gridlyTravelTimeBlueprint() {
     routeWatchConfigured,
     currentRouteAvailable: routeGeometry.currentRouteAvailable,
     routeGeometryAvailable: routeGeometry.routeGeometryAvailable,
-    routePointCount: routeGeometry.routePointCount,
+    routeMetricsAvailable: Boolean(audit.routeMetricsAvailable),
+    routeMetricsSource: audit.routeMetricsSource || "unavailable",
+    routeGeneratedAt: audit.routeGeneratedAt || null,
+    routePointCount: Number.isFinite(Number(audit.routePointCount)) ? Number(audit.routePointCount) : routeGeometry.routePointCount,
     routeDistanceAvailable: Boolean(audit.routeDistanceAvailable),
     routeDistanceMiles: Number.isFinite(Number(audit.routeDistanceMiles)) ? Number(audit.routeDistanceMiles) : null,
     routeDurationAvailable: Boolean(audit.routeDurationAvailable),
@@ -2942,6 +3018,12 @@ window.gridlyTravelTimeBlueprint = function gridlyTravelTimeBlueprint() {
     && estimatedInputInventory.routeWatchConfigured
     && estimatedInputInventory.currentRouteAvailable
   );
+  const travelTimeFoundationReady = Boolean(
+    estimatedInputInventory.savedHome
+    && estimatedInputInventory.savedWork
+    && estimatedInputInventory.routeWatchConfigured
+    && estimatedInputInventory.routeMetricsAvailable
+  );
 
   return {
     blueprintVersion: GRIDLY_USER_TRUST_BLUEPRINT_VERSION,
@@ -2950,7 +3032,10 @@ window.gridlyTravelTimeBlueprint = function gridlyTravelTimeBlueprint() {
     routeWatchConfigured,
     currentRouteAvailable: routeGeometry.currentRouteAvailable,
     routeGeometryAvailable: routeGeometry.routeGeometryAvailable,
-    routePointCount: routeGeometry.routePointCount,
+    routeMetricsAvailable: Boolean(audit.routeMetricsAvailable),
+    routeGeneratedAt: audit.routeGeneratedAt || null,
+    routePointCount: Number.isFinite(Number(audit.routePointCount)) ? Number(audit.routePointCount) : routeGeometry.routePointCount,
+    travelTimeFoundationReady,
     estimatedInputsAvailable,
     estimatedInputInventory,
     travelTimeAuditAvailable: typeof window.gridlyTravelTimeAudit === "function",
@@ -2962,7 +3047,7 @@ window.gridlyTravelTimeBlueprint = function gridlyTravelTimeBlueprint() {
       currentCommute: "live commute duration for the current route context",
       delta: "difference between current commute and normal commute"
     },
-    notes: ["Diagnostic blueprint only; no travel times are predicted or persisted."]
+    notes: ["Diagnostic blueprint only; no travel times are predicted and only the latest successful route render metrics are retained."]
   };
 };
 
@@ -3042,7 +3127,7 @@ window.gridlyUserTrustBlueprintAudit = function gridlyUserTrustBlueprintAudit() 
     blueprintVersion: GRIDLY_USER_TRUST_BLUEPRINT_VERSION,
     hazardLifecycleReady,
     travelTimeReady,
-    travelTimeIntelligencePhase: "foundation",
+    travelTimeIntelligencePhase: travelBlueprint.routeMetricsAvailable ? "metrics_persisted" : "foundation",
     onboardingReady,
     settingsReady,
     launchCriticalGaps,
@@ -22071,6 +22156,13 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
     return false;
   }
   routeRenderSucceeded = true;
+  persistGridlyRouteMetrics({
+    routePointCount: routePreviewPolylinePointCount,
+    routeDistanceMiles: monitoredRouteDistanceMiles,
+    routeDurationMinutes: Number.isFinite(Number(monitoredRouteDurationSeconds)) && Number(monitoredRouteDurationSeconds) > 0
+      ? Math.max(1, Math.round(Number(monitoredRouteDurationSeconds) / 60))
+      : null
+  });
   recordGridlyActiveLocationLifecycleEvent("routePreviewRender:complete", {
     routeWatchActivated: Boolean(routeWatchActivated),
     routePreviewRendered: Boolean(routePreviewRendered),
