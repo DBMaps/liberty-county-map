@@ -13160,7 +13160,7 @@ window.gridlyCommunityPulseAudit = function gridlyCommunityPulseAudit(options = 
   };
 };
 
-const GRIDLY_PORTRAIT_OWNERSHIP_INVENTORY_VERSION = "V180.5";
+const GRIDLY_PORTRAIT_OWNERSHIP_INVENTORY_VERSION = "V180.7";
 const GRIDLY_PORTRAIT_OWNERSHIP_SYSTEMS = [
   {
     name: "gridlyPortraitV2",
@@ -13303,12 +13303,18 @@ function activateGridlyPortraitV2StartupOwner(source = "portrait_startup_activat
   }
   return true;
 }
+const GRIDLY_PORTRAIT_RETIRED_SURFACES = {
+  "mobile-active-crossings-card": {
+    status: "retired",
+    retiredIn: "V180.7",
+    reason: "Legacy mobile active crossings card was static, hidden, outside layout flow, and had no DOM/data/event dependencies."
+  }
+};
 const GRIDLY_PORTRAIT_RECOMMENDED_DEAUTHORIZE = [
   "dashboardSection",
   "future-map-hero",
   "mobile-home-cards",
   "mobile-community-card",
-  "mobile-active-crossings-card",
   "mobile-corridor-intel-card",
   "desktop-command-strip",
   "desktop-left-rail",
@@ -13662,7 +13668,7 @@ function gridlyPortraitContainmentAudit() {
   }
 }
 
-const GRIDLY_LEGACY_SURFACE_DEPENDENCY_AUDIT_VERSION = "V180.6";
+const GRIDLY_LEGACY_SURFACE_DEPENDENCY_AUDIT_VERSION = "V180.7";
 const GRIDLY_LEGACY_SURFACE_DEPENDENCY_PROFILES = {
   dashboardSection: {
     domUpdateSelectors: ["#greetingTitle", "#habitStatusHeadline", "#routeStatus", "#lastUpdated", "#dataStatus", "#syncStatus", "[data-bind-text]"],
@@ -13806,9 +13812,14 @@ function gridlyLegacySurfaceDependencyAudit() {
   try {
     const portraitInventory = typeof window.gridlyPortraitOwnershipInventory === "function" ? window.gridlyPortraitOwnershipInventory() : null;
     const containmentAudit = typeof window.gridlyPortraitContainmentAudit === "function" ? window.gridlyPortraitContainmentAudit() : null;
-    const legacyDefinitions = GRIDLY_PORTRAIT_OWNERSHIP_SYSTEMS.filter((definition) => GRIDLY_PORTRAIT_RECOMMENDED_DEAUTHORIZE.includes(definition.name));
+    const legacySurfaceAuditNames = new Set([
+      ...GRIDLY_PORTRAIT_RECOMMENDED_DEAUTHORIZE,
+      ...Object.keys(GRIDLY_PORTRAIT_RETIRED_SURFACES)
+    ]);
+    const legacyDefinitions = GRIDLY_PORTRAIT_OWNERSHIP_SYSTEMS.filter((definition) => legacySurfaceAuditNames.has(definition.name));
     const surfaces = legacyDefinitions.map((definition) => {
       const profile = GRIDLY_LEGACY_SURFACE_DEPENDENCY_PROFILES[definition.name] || {};
+      const retirement = GRIDLY_PORTRAIT_RETIRED_SURFACES[definition.name] || null;
       const state = getGridlyLegacySurfaceDependencyElementState(definition);
       const { element } = state;
       const receivesDomUpdates = Boolean(state.loaded && gridlyLegacySurfaceHasAnySelector(element, profile.domUpdateSelectors));
@@ -13848,7 +13859,9 @@ function gridlyLegacySurfaceDependencyAudit() {
         referencedByMap,
         referencedByRouteFlow,
         referencedByReportFlow,
-        dependencyReason: profile.dependencyReason || "No explicit dependency profile is registered for this legacy surface.",
+        retired: Boolean(retirement),
+        retirement,
+        dependencyReason: retirement?.reason || profile.dependencyReason || "No explicit dependency profile is registered for this legacy surface.",
         evidence: {
           display: state.display || state.style?.display || null,
           visibility: state.visibility || state.style?.visibility || null,
@@ -13859,8 +13872,8 @@ function gridlyLegacySurfaceDependencyAudit() {
           eventSelectorsFound: (profile.eventSelectors || []).filter((selector) => gridlyLegacySurfaceHasAnySelector(element, [selector]))
         }
       };
-      surface.classification = classifyGridlyLegacySurfaceDependency(surface);
-      surface.safeToRetire = surface.classification === "safeToRetire";
+      surface.classification = retirement ? "retired" : classifyGridlyLegacySurfaceDependency(surface);
+      surface.safeToRetire = !retirement && surface.classification === "safeToRetire";
       surface.safeToContain = surface.classification === "safeToContain";
       surface.activeDependency = surface.classification === "activeDependency";
       surface.unknown = surface.classification === "unknown";
@@ -13884,6 +13897,7 @@ function gridlyLegacySurfaceDependencyAudit() {
       portraitPrimaryOwner: portraitInventory?.portraitPrimaryOwner || containmentAudit?.portraitPrimaryOwner || GRIDLY_PORTRAIT_PRIMARY_OWNER,
       duplicateOwnershipWarnings: portraitInventory?.duplicateOwnershipWarnings || [],
       recommendedDeauthorize: GRIDLY_PORTRAIT_RECOMMENDED_DEAUTHORIZE.slice(),
+      retiredSurfaces: Object.keys(GRIDLY_PORTRAIT_RETIRED_SURFACES),
       surfaces,
       safeRetirementCandidates,
       containmentCandidates,
@@ -13903,6 +13917,7 @@ function gridlyLegacySurfaceDependencyAudit() {
       auditOnly: true,
       surfaces: [],
       safeRetirementCandidates: [],
+      retiredSurfaces: Object.keys(GRIDLY_PORTRAIT_RETIRED_SURFACES),
       containmentCandidates: [],
       activeDependencyCandidates: [],
       highestRiskRemovals: [],
@@ -13933,7 +13948,8 @@ window.gridlyPortraitOwnershipInventory = function gridlyPortraitOwnershipInvent
         visible: state.visible,
         loaded: state.loaded,
         active: Boolean(state.active && !portraitContainedStructuralWrapper && (portraitModeActive || state.name === GRIDLY_PORTRAIT_PRIMARY_OWNER || state.ownerClass === "shared_map" || state.ownerClass === "portrait_module")),
-        portraitContainedStructuralWrapper
+        portraitContainedStructuralWrapper,
+        retirement: GRIDLY_PORTRAIT_RETIRED_SURFACES[state.name] || null
       };
     });
     const portraitVisibleSystems = systems.filter((system) => system.visible);
@@ -13957,6 +13973,7 @@ window.gridlyPortraitOwnershipInventory = function gridlyPortraitOwnershipInvent
       portraitPrimaryOwner: activePrimary ? GRIDLY_PORTRAIT_PRIMARY_OWNER : (firstVisibleOwner?.name || GRIDLY_PORTRAIT_PRIMARY_OWNER),
       recommendedKeep: GRIDLY_PORTRAIT_RECOMMENDED_KEEP,
       recommendedDeauthorize: GRIDLY_PORTRAIT_RECOMMENDED_DEAUTHORIZE,
+      retiredSurfaces: Object.keys(GRIDLY_PORTRAIT_RETIRED_SURFACES),
       containedStructuralWrappers: systems.filter((system) => system.portraitContainedStructuralWrapper).map((system) => system.name),
       portraitV2StartupActivationApplied: Boolean(gridlyPortraitV2StartupActivationState.applied),
       portraitV2StartupActivationReason: gridlyPortraitV2StartupActivationState.reason,
@@ -13982,6 +13999,7 @@ window.gridlyPortraitOwnershipInventory = function gridlyPortraitOwnershipInvent
       portraitPrimaryOwner: GRIDLY_PORTRAIT_PRIMARY_OWNER,
       recommendedKeep: GRIDLY_PORTRAIT_RECOMMENDED_KEEP,
       recommendedDeauthorize: GRIDLY_PORTRAIT_RECOMMENDED_DEAUTHORIZE,
+      retiredSurfaces: Object.keys(GRIDLY_PORTRAIT_RETIRED_SURFACES),
       containedStructuralWrappers: [],
       portraitV2StartupActivationApplied: Boolean(gridlyPortraitV2StartupActivationState.applied),
       portraitV2StartupActivationReason: gridlyPortraitV2StartupActivationState.reason,
