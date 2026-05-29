@@ -2612,6 +2612,121 @@ function gridlyIsConfirmedHazardRecord(hazard = {}) {
   );
 }
 
+
+const GRIDLY_HAZARD_LIFECYCLE_RULES = {
+  unverified: [
+    { maxMinutes: 30, lifecycleStage: "new", lifecycleRecommendedAction: "keep_active" },
+    { maxMinutes: 60, lifecycleStage: "active", lifecycleRecommendedAction: "keep_active" },
+    { maxMinutes: 120, lifecycleStage: "aging", lifecycleRecommendedAction: "request_confirmation" },
+    { maxMinutes: Infinity, lifecycleStage: "expired_candidate", lifecycleRecommendedAction: "expired_candidate" }
+  ],
+  confirmed: [
+    { maxMinutes: 120, lifecycleStage: "active", lifecycleRecommendedAction: "keep_active" },
+    { maxMinutes: 360, lifecycleStage: "verified", lifecycleRecommendedAction: "keep_active" },
+    { maxMinutes: 720, lifecycleStage: "aging", lifecycleRecommendedAction: "reduce_confidence" },
+    { maxMinutes: Infinity, lifecycleStage: "expired_candidate", lifecycleRecommendedAction: "expired_candidate" }
+  ],
+  construction: [
+    { maxMinutes: 1440, lifecycleStage: "active", lifecycleRecommendedAction: "keep_active" },
+    { maxMinutes: 4320, lifecycleStage: "aging", lifecycleRecommendedAction: "reduce_confidence" },
+    { maxMinutes: Infinity, lifecycleStage: "expired_candidate", lifecycleRecommendedAction: "expired_candidate" }
+  ],
+  flooding: [
+    { maxMinutes: 360, lifecycleStage: "active", lifecycleRecommendedAction: "keep_active" },
+    { maxMinutes: 1440, lifecycleStage: "aging", lifecycleRecommendedAction: "request_confirmation" },
+    { maxMinutes: Infinity, lifecycleStage: "expired_candidate", lifecycleRecommendedAction: "expired_candidate" }
+  ],
+  rail_blockage: [
+    { maxMinutes: 30, lifecycleStage: "active", lifecycleRecommendedAction: "keep_active" },
+    { maxMinutes: 60, lifecycleStage: "aging", lifecycleRecommendedAction: "request_confirmation" },
+    { maxMinutes: Infinity, lifecycleStage: "expired_candidate", lifecycleRecommendedAction: "expired_candidate" }
+  ]
+};
+
+function gridlyResolveHazardLifecycleType(hazard = {}) {
+  const normalizedIncidentCategory = typeof normalizeGridlyIncidentCategory === "function" ? normalizeGridlyIncidentCategory(hazard) : "unknown";
+  const hazardCategory = gridlyNormalizeHazardType(hazard);
+  const text = [
+    hazard?.type,
+    hazard?.report_type,
+    hazard?.reportType,
+    hazard?.reportKind,
+    hazard?.category,
+    hazard?.hazardCategory,
+    hazard?.title,
+    hazard?.description,
+    hazard?.status
+  ].map((value) => String(value || "").toLowerCase()).join(" ");
+  if (normalizedIncidentCategory === "rail" || hazardCategory === "rail_blockage_delay" || /rail|crossing|train.*block|blocked.*train/.test(text)) return "rail_blockage";
+  if (["flooding", "standing_water", "txdot_flooding"].includes(normalizedIncidentCategory) || hazardCategory === "flooding" || /flood|high water|standing water/.test(text)) return "flooding";
+  if (["construction", "utility_work", "txdot_construction"].includes(normalizedIncidentCategory) || hazardCategory === "construction" || /construction|road work|work zone|utility work|maintenance/.test(text)) return "construction";
+  return gridlyIsConfirmedHazardRecord(hazard) ? "confirmed" : "unverified";
+}
+
+function gridlyGetHazardLifecycleAgeMinutes(hazard = {}, options = {}) {
+  const freshness = typeof evaluateGridlyIncidentFreshness === "function"
+    ? evaluateGridlyIncidentFreshness(hazard, { nowMs: options?.nowMs })
+    : { ageMinutes: null, timestampSourceUsed: "unavailable", timestampParseValid: false };
+  return {
+    ageMinutes: Number.isFinite(Number(freshness?.ageMinutes)) ? Number(freshness.ageMinutes) : null,
+    timestampSourceUsed: freshness?.timestampSourceUsed || "missing",
+    timestampParseValid: Boolean(freshness?.timestampParseValid),
+    freshnessReason: freshness?.freshnessReason || ""
+  };
+}
+
+function gridlyFindHazardLifecycleRule(lifecycleType, ageMinutes) {
+  const safeType = GRIDLY_HAZARD_LIFECYCLE_RULES[lifecycleType] ? lifecycleType : "unverified";
+  const rules = GRIDLY_HAZARD_LIFECYCLE_RULES[safeType];
+  if (!Number.isFinite(Number(ageMinutes))) {
+    return { lifecycleStage: "aging", lifecycleRecommendedAction: "request_confirmation", missingTimestamp: true };
+  }
+  return rules.find((rule) => Number(ageMinutes) <= Number(rule.maxMinutes)) || rules[rules.length - 1];
+}
+
+function gridlyBuildHazardLifecycleReason({ lifecycleType, lifecycleStage, lifecycleAgeMinutes, lifecycleConfidence, timestampSourceUsed, timestampParseValid }) {
+  const ageText = Number.isFinite(Number(lifecycleAgeMinutes)) ? `${lifecycleAgeMinutes}m` : "unknown age";
+  const timestampText = timestampParseValid ? `timestamp=${timestampSourceUsed}` : "timestamp missing/invalid";
+  const retentionNote = lifecycleType === "flooding"
+    ? "; extended_retention_candidate"
+    : (lifecycleType === "rail_blockage" ? "; event_driven_candidate" : "");
+  return `${lifecycleType} hazard classified ${lifecycleStage}; age=${ageText}; confidence=${lifecycleConfidence}; ${timestampText}${retentionNote}`;
+}
+
+function gridlyClassifyHazardLifecycle(hazard = {}, options = {}) {
+  const lifecycleType = gridlyResolveHazardLifecycleType(hazard);
+  const lifecycleConfidence = gridlyIsConfirmedHazardRecord(hazard) ? "confirmed" : "unverified";
+  const age = gridlyGetHazardLifecycleAgeMinutes(hazard, options);
+  const rule = gridlyFindHazardLifecycleRule(lifecycleType, age.ageMinutes);
+  const lifecycleStage = rule.lifecycleStage || "aging";
+  const lifecycleRecommendedAction = rule.lifecycleRecommendedAction || "request_confirmation";
+  const lifecycleAgeMinutes = Number.isFinite(Number(age.ageMinutes)) ? Number(age.ageMinutes) : null;
+  return {
+    lifecycleStage,
+    lifecycleReason: gridlyBuildHazardLifecycleReason({
+      lifecycleType,
+      lifecycleStage,
+      lifecycleAgeMinutes,
+      lifecycleConfidence,
+      timestampSourceUsed: age.timestampSourceUsed,
+      timestampParseValid: age.timestampParseValid
+    }),
+    lifecycleAgeMinutes,
+    lifecycleConfidence,
+    lifecycleType,
+    lifecycleRecommendedAction,
+    extendedRetentionCandidate: lifecycleType === "flooding",
+    eventDrivenCandidate: lifecycleType === "rail_blockage",
+    timestampSourceUsed: age.timestampSourceUsed,
+    timestampParseValid: age.timestampParseValid,
+    destructiveActionTaken: false
+  };
+}
+
+if (typeof window !== "undefined") {
+  window.gridlyClassifyHazardLifecycle = gridlyClassifyHazardLifecycle;
+}
+
 function gridlyGetSavedPlacesReadiness() {
   const state = typeof getSavedPlacesState === "function"
     ? getSavedPlacesState()
@@ -2657,24 +2772,80 @@ window.gridlyHazardLifecycleBlueprint = function gridlyHazardLifecycleBlueprint(
     confirmedHazardCount: confirmedHazards.length,
     unverifiedHazardCount: Math.max(0, activeHazardRecords.length - confirmedHazards.length),
     hazardTypeCounts,
+    lifecycleClassifierAvailable: typeof gridlyClassifyHazardLifecycle === "function",
+    lifecycleAuditAvailable: typeof window.gridlyHazardLifecycleAudit === "function",
     recommendedLifecycleRules: {
       unverified: [
-        { age: "0-30m", lifecycleState: "new" },
-        { age: "30-60m", lifecycleState: "active" },
-        { age: "60-120m", lifecycleState: "aging" },
-        { age: "120m+", lifecycleState: "expire" }
+        { age: "0-30m", lifecycleState: "new", recommendedAction: "keep_active" },
+        { age: "30-60m", lifecycleState: "active", recommendedAction: "keep_active" },
+        { age: "60-120m", lifecycleState: "aging", recommendedAction: "request_confirmation" },
+        { age: "120m+", lifecycleState: "expired_candidate", recommendedAction: "expired_candidate" }
       ],
       confirmed: [
-        { age: "0-2h", lifecycleState: "active" },
-        { age: "2-6h", lifecycleState: "verified" },
-        { age: "6-12h", lifecycleState: "aging" },
-        { age: "12h+", lifecycleState: "expire" }
+        { age: "0-2h", lifecycleState: "active", recommendedAction: "keep_active" },
+        { age: "2-6h", lifecycleState: "verified", recommendedAction: "keep_active" },
+        { age: "6-12h", lifecycleState: "aging", recommendedAction: "reduce_confidence" },
+        { age: "12h+", lifecycleState: "expired_candidate", recommendedAction: "expired_candidate" }
       ],
-      construction: "24-72h",
-      flooding: "extended retention candidate",
-      railBlockage: "event-driven candidate"
+      construction: [
+        { age: "0-24h", lifecycleState: "active", recommendedAction: "keep_active" },
+        { age: "24-72h", lifecycleState: "aging", recommendedAction: "reduce_confidence" },
+        { age: "72h+", lifecycleState: "expired_candidate", recommendedAction: "expired_candidate" }
+      ],
+      flooding: [
+        { age: "0-6h", lifecycleState: "active", recommendedAction: "keep_active" },
+        { age: "6-24h", lifecycleState: "aging", recommendedAction: "request_confirmation" },
+        { age: "24h+", lifecycleState: "expired_candidate", recommendedAction: "expired_candidate", marker: "extended_retention_candidate" }
+      ],
+      railBlockage: [
+        { age: "0-30m", lifecycleState: "active", recommendedAction: "keep_active" },
+        { age: "30-60m", lifecycleState: "aging", recommendedAction: "request_confirmation" },
+        { age: "60m+", lifecycleState: "expired_candidate", recommendedAction: "expired_candidate", marker: "event_driven_candidate" }
+      ]
     },
-    notes: ["Diagnostic blueprint only; no expiration logic changes are applied."]
+    notes: ["Lifecycle classifier is read-only; no Supabase deletes, cleanup, hard purge, map removal, or alert-panel removal are applied."]
+  };
+};
+
+window.gridlyHazardLifecycleAudit = function gridlyHazardLifecycleAudit(options = {}) {
+  const sourceHazards = Array.isArray(options?.hazards)
+    ? options.hazards
+    : (Array.isArray(activeHazards) ? activeHazards : []);
+  const sourceReports = Array.isArray(options?.reports)
+    ? options.reports
+    : (Array.isArray(activeReports) ? activeReports : []);
+  const sourceRecords = [
+    ...sourceHazards.map((record) => ({ record, sourceKind: "activeHazards" })),
+    ...sourceReports.map((record) => ({ record, sourceKind: "activeReports" }))
+  ]
+    .filter(({ record }) => record && typeof record === "object")
+    .filter(({ record }) => gridlyIsActiveHazardRecord(record));
+  const classifications = sourceRecords.map(({ record, sourceKind }, index) => ({
+    id: record?.id || record?.reportId || record?.crossingId || `${record?.type || record?.report_type || "hazard"}-${index}`,
+    sourceKind,
+    rawType: record?.type || record?.report_type || record?.category || "unknown",
+    ...gridlyClassifyHazardLifecycle(record, options)
+  }));
+  const byType = classifications.reduce((acc, entry) => {
+    const type = entry.lifecycleType || "unknown";
+    if (!acc[type]) acc[type] = { total: 0, active: 0, verified: 0, aging: 0, expired_candidate: 0, request_confirmation: 0 };
+    acc[type].total += 1;
+    if (acc[type][entry.lifecycleStage] !== undefined) acc[type][entry.lifecycleStage] += 1;
+    if (entry.lifecycleRecommendedAction === "request_confirmation") acc[type].request_confirmation += 1;
+    return acc;
+  }, {});
+  const stageCount = (stage) => classifications.filter((entry) => entry.lifecycleStage === stage).length;
+  const requestConfirmationCount = classifications.filter((entry) => entry.lifecycleRecommendedAction === "request_confirmation").length;
+  return {
+    totalClassified: classifications.length,
+    activeCount: stageCount("active") + stageCount("new") + stageCount("verified"),
+    agingCount: stageCount("aging"),
+    expiredCandidateCount: stageCount("expired_candidate"),
+    requestConfirmationCount,
+    byType,
+    sampleClassifications: classifications.slice(0, 10),
+    lifecycleRulesApplied: window.gridlyHazardLifecycleBlueprint?.().recommendedLifecycleRules || {},
+    destructiveActionsTaken: false
   };
 };
 
@@ -12329,16 +12500,27 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
     const location = resolveGridlyLightweightActiveLocation(item, sourceKind, category.resolvedCategory);
     const detail = { item, sourceKind, sourceIndex: index, ...category, ...location };
     const alertSummary = resolveGridlyLightweightReusableAlertSummary(detail);
+    const lifecycleClassification = typeof gridlyClassifyHazardLifecycle === "function" ? gridlyClassifyHazardLifecycle(item) : null;
+    const basePriorityScore = getGridlyLightweightActivePriorityScore(detail, index);
+    const lifecyclePriorityAdjustment = lifecycleClassification?.lifecycleStage === "expired_candidate"
+      ? -1000
+      : (lifecycleClassification?.lifecycleStage === "aging" ? -18 : 0);
     return {
       ...detail,
-      priorityScore: getGridlyLightweightActivePriorityScore(detail, index),
+      priorityScore: basePriorityScore + lifecyclePriorityAdjustment,
+      basePriorityScore,
+      lifecyclePriorityAdjustment,
+      lifecycleClassification,
+      lifecycleInfluencedTopAwareness: Boolean(lifecyclePriorityAdjustment),
       activeSourceTruthLayers: getGridlyActiveAwarenessTruthLayers(item, detail),
       reusedAlertSummary: Boolean(alertSummary.value || detail.locationReusedAlertSummary),
       reusedAlertSource: alertSummary.source || (detail.locationReusedAlertSummary ? detail.lightweightLocationSourceField : ""),
       reusedAlertText: alertSummary.value || detail.locationReusedAlertText || ""
     };
   });
-  const categoryCounts = activeItemDetails.reduce((acc, detail) => {
+  const topAwarenessEligibleDetails = activeItemDetails.filter((detail) => detail.lifecycleClassification?.lifecycleStage !== "expired_candidate");
+  const topAwarenessCategoryDetails = topAwarenessEligibleDetails.length ? topAwarenessEligibleDetails : activeItemDetails;
+  const categoryCounts = topAwarenessCategoryDetails.reduce((acc, detail) => {
     const category = detail.resolvedCategory || "unknown";
     acc[category] = (acc[category] || 0) + 1;
     return acc;
@@ -12350,8 +12532,16 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
   const topCategory = activeCategories[0] || null;
   const priorityOrderedDetails = activeItemDetails.slice().sort((a, b) => Number(b.priorityScore || 0) - Number(a.priorityScore || 0));
   const selectedActiveDetail = priorityOrderedDetails[0] || null;
-  const corridorCounts = activeItems.reduce((acc, item) => {
-    const corridor = typeof detectGridlyCommunityCorridor === "function" ? detectGridlyCommunityCorridor(item) : "Local corridors";
+  const lifecycleSuppressedDetails = activeItemDetails
+    .filter((detail) => detail.lifecycleClassification?.lifecycleStage === "expired_candidate" || Number(detail.lifecyclePriorityAdjustment || 0) < 0)
+    .sort((a, b) => Number(a.priorityScore || 0) - Number(b.priorityScore || 0));
+  const staleCandidatesSuppressedFromTopAwareness = lifecycleSuppressedDetails.filter((detail) => detail.lifecycleClassification?.lifecycleStage === "expired_candidate").length;
+  const lifecycleInfluencedTopAwareness = activeItemDetails.some((detail) => Boolean(detail.lifecycleInfluencedTopAwareness));
+  const lifecycleSuppressionReason = lifecycleInfluencedTopAwareness
+    ? "Read-only lifecycle scoring reduces aging and expired_candidate hazards during top-awareness selection only; map, alert panel, and Supabase records are unchanged."
+    : "No aging or expired_candidate hazards influenced top-awareness selection.";
+  const corridorCounts = topAwarenessCategoryDetails.reduce((acc, detail) => {
+    const corridor = typeof detectGridlyCommunityCorridor === "function" ? detectGridlyCommunityCorridor(detail.item) : "Local corridors";
     if (corridor && corridor !== "Local corridors") acc[corridor] = (acc[corridor] || 0) + 1;
     return acc;
   }, {});
@@ -12382,7 +12572,11 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
     categorySource: detail.categorySource || "none",
     locationSources: Array.isArray(detail.lightweightLocationSourcesUsed) ? detail.lightweightLocationSourcesUsed.slice(0, 6) : [],
     lightweightLocationSourceField: detail.lightweightLocationSourceField || "",
-    activeSourceTruthLayers: Array.isArray(detail.activeSourceTruthLayers) ? detail.activeSourceTruthLayers.slice(0, 6) : []
+    activeSourceTruthLayers: Array.isArray(detail.activeSourceTruthLayers) ? detail.activeSourceTruthLayers.slice(0, 6) : [],
+    lifecycleStage: detail.lifecycleClassification?.lifecycleStage || "unknown",
+    lifecycleAgeMinutes: detail.lifecycleClassification?.lifecycleAgeMinutes ?? null,
+    lifecycleRecommendedAction: detail.lifecycleClassification?.lifecycleRecommendedAction || "",
+    lifecyclePriorityAdjustment: Number(detail.lifecyclePriorityAdjustment || 0)
   }));
   let headline = "No active mobility reports nearby";
   if (lightweightSummaryReuseApplied) {
@@ -12442,6 +12636,21 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
     lightweightSummaryReuseApplied,
     headline,
     subline,
+    lifecycleInfluencedTopAwareness,
+    staleCandidatesSuppressedFromTopAwareness,
+    lifecycleSuppressionReason,
+    lifecycleSuppressionSamples: lifecycleSuppressedDetails.slice(0, 6).map((detail) => ({
+      sourceKind: detail.sourceKind || "activeItem",
+      sourceIndex: Number(detail.sourceIndex || 0),
+      resolvedCategory: detail.resolvedCategory || "unknown",
+      resolvedLocationLabel: safeDisplayText(detail.resolvedLocationLabel, ""),
+      lifecycleStage: detail.lifecycleClassification?.lifecycleStage || "unknown",
+      lifecycleReason: detail.lifecycleClassification?.lifecycleReason || "",
+      lifecycleRecommendedAction: detail.lifecycleClassification?.lifecycleRecommendedAction || "",
+      basePriorityScore: Number(detail.basePriorityScore || 0),
+      priorityScore: Number(detail.priorityScore || 0),
+      lifecyclePriorityAdjustment: Number(detail.lifecyclePriorityAdjustment || 0)
+    })),
     dataSourceSummary,
     crossingRuntimeUsed: false,
     sourceJoinRuntimeUsed: false,
@@ -13595,10 +13804,17 @@ window.gridlyTopStatusSelectionAudit = function gridlyTopStatusSelectionAudit(op
       routeImpactIncidentCount: Number(intel?.routeImpactIncidentCount || 0),
       awarenessMode: typeof getGridlyAwarenessMode === "function" ? getGridlyAwarenessMode(options) : "community"
     });
+    const lifecycleAwareness = typeof buildGridlyLightweightActiveAwareness === "function"
+      ? buildGridlyLightweightActiveAwareness({ lifecycleAuditReadOnly: true, limit: Number(options?.limit || 6) })
+      : {};
     return {
       ...audit,
       activeLocalizedAlertCount: Number(intel?.activeLocalizedAlertCount || audit.candidateCount || 0),
       routeImpactIncidentCount: Number(intel?.routeImpactIncidentCount || 0),
+      lifecycleInfluencedTopAwareness: Boolean(lifecycleAwareness.lifecycleInfluencedTopAwareness),
+      staleCandidatesSuppressedFromTopAwareness: Number(lifecycleAwareness.staleCandidatesSuppressedFromTopAwareness || 0),
+      lifecycleSuppressionReason: lifecycleAwareness.lifecycleSuppressionReason || "No lifecycle-aware top-awareness suppression was reported.",
+      lifecycleSuppressionSamples: Array.isArray(lifecycleAwareness.lifecycleSuppressionSamples) ? lifecycleAwareness.lifecycleSuppressionSamples : [],
       currentTopAwarenessContent: {
         topStatusPrimary: safeDisplayText(document.getElementById("gridlyV2TopStatusPrimary")?.textContent, ""),
         topStatusSecondary: safeDisplayText(document.getElementById("gridlyV2TopStatusSecondary")?.textContent, ""),
@@ -13681,6 +13897,9 @@ window.gridlyTopAwarenessIntegrationAudit = function gridlyTopAwarenessIntegrati
       ? microlineElement.dataset.gridlyMicrolineSourceFields.split(",").map((field) => field.trim()).filter(Boolean)
       : computedMicroline.sourceFields;
     const microlineSuppressedReason = microlineElement?.dataset?.gridlyMicrolineSuppressedReason || computedMicroline.suppressedReason || "";
+    const lifecycleAwareness = activeAwareness && typeof activeAwareness === "object" && "lifecycleInfluencedTopAwareness" in activeAwareness
+      ? activeAwareness
+      : (typeof buildGridlyLightweightActiveAwareness === "function" ? buildGridlyLightweightActiveAwareness({ lifecycleAuditReadOnly: true, limit: Number(options?.limit || 6) }) : {});
     const classificationContext = {
       topTexts,
       activeReportCount,
@@ -13752,6 +13971,10 @@ window.gridlyTopAwarenessIntegrationAudit = function gridlyTopAwarenessIntegrati
       activeHazardCount,
       activityLevel,
       awarenessMode,
+      lifecycleInfluencedTopAwareness: Boolean(lifecycleAwareness.lifecycleInfluencedTopAwareness),
+      staleCandidatesSuppressedFromTopAwareness: Number(lifecycleAwareness.staleCandidatesSuppressedFromTopAwareness || 0),
+      lifecycleSuppressionReason: lifecycleAwareness.lifecycleSuppressionReason || "No lifecycle-aware top-awareness suppression was reported.",
+      lifecycleSuppressionSamples: Array.isArray(lifecycleAwareness.lifecycleSuppressionSamples) ? lifecycleAwareness.lifecycleSuppressionSamples : [],
       currentTopAwarenessContent: {
         topStatusPrimary,
         topStatusSecondary,
