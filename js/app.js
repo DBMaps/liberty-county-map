@@ -13379,6 +13379,11 @@ window.gridlyTopStatusSelectionAudit = function gridlyTopStatusSelectionAudit(op
       suppressedCandidates: [],
       corridorGroups: [],
       topCorridor: null,
+      corridorAwareCandidateGenerated: false,
+      corridorAwareCandidateAccepted: false,
+      corridorAwareHeadline: "",
+      corridorAwareReason: "Top status selection audit failed before corridor-aware candidates could be evaluated.",
+      corridorEvidenceQuality: "unknown",
       awarenessSelectionReason: "Top status selection audit failed before candidates could be evaluated.",
       awarenessSelectionBreakdown: {
         winnerReason: "Audit failed before candidates could be evaluated",
@@ -24976,6 +24981,86 @@ function getGridlyTopStatusCandidateFreshnessContribution(item = {}) {
   return 6;
 }
 
+
+function getGridlyTopStatusCorridorBaseName(corridor = "") {
+  const text = getGridlyTopStatusDiagnosticText(corridor);
+  const normalized = normalizeGridlyTopStatusCorridorLabel(text);
+  if (normalized === "Local corridors") return "Local roads";
+  return safeDisplayText(normalized.replace(/\s+corridor$/i, ""), "Local roads");
+}
+
+function getGridlyTopStatusCorridorPlaceLabel(items = [], fallbackText = "") {
+  const townCounts = new Map();
+  const recordTown = (town) => {
+    const label = safeDisplayText(town, "");
+    if (!label) return;
+    townCounts.set(label, (townCounts.get(label) || 0) + 1);
+  };
+  gridlySafeArray(items).forEach((item) => {
+    const incident = item?.incident || item || {};
+    if (typeof findTownMentions === "function") {
+      findTownMentions(incident).forEach(recordTown);
+    }
+    const text = [
+      incident?.city, incident?.town, incident?.area, incident?.location_name, incident?.localizedLocation,
+      item?.localizedSummary, incident?.title, incident?.description
+    ].map((value) => getGridlyTopStatusDiagnosticText(value)).join(" ");
+    LOCAL_TOWN_NAMES.forEach((town) => {
+      if (new RegExp(`\\b${town}\\b`, "i").test(text)) recordTown(town);
+    });
+  });
+  const fallback = getGridlyTopStatusDiagnosticText(fallbackText);
+  if (fallback) {
+    LOCAL_TOWN_NAMES.forEach((town) => {
+      if (new RegExp(`\\b${town}\\b`, "i").test(fallback)) recordTown(town);
+    });
+  }
+  return Array.from(townCounts.entries()).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]?.[0] || "nearby";
+}
+
+function buildGridlyCorridorAwareTopStatusCandidate({ corridorGroups = [], candidates = [], topStatus = "" } = {}) {
+  const groups = gridlySafeArray(corridorGroups);
+  const eligibleGroups = groups
+    .filter((group) => Number(group?.candidateCount || 0) >= 3)
+    .sort((a, b) => {
+      const aNamed = a?.corridor !== "Local corridors" ? 1 : 0;
+      const bNamed = b?.corridor !== "Local corridors" ? 1 : 0;
+      const aScore = (Number(a?.candidateCount || 0) * 12) + (Number(a?.routeImpactCount || 0) * 10) + (Number(a?.maxModelPriorityScore || 0) / 20);
+      const bScore = (Number(b?.candidateCount || 0) * 12) + (Number(b?.routeImpactCount || 0) * 10) + (Number(b?.maxModelPriorityScore || 0) / 20);
+      return bNamed - aNamed || bScore - aScore || String(a?.corridor || "").localeCompare(String(b?.corridor || ""));
+    });
+  const selectedGroup = eligibleGroups[0] || null;
+  if (!selectedGroup) {
+    const topGroup = groups[0] || null;
+    return {
+      corridorAwareCandidateGenerated: false,
+      corridorAwareCandidateAccepted: false,
+      corridorAwareHeadline: "",
+      corridorAwareReason: topGroup
+        ? `Weak corridor evidence: ${safeDisplayText(topGroup.corridorDisplayName || topGroup.corridor, "Local corridors")} has ${Number(topGroup.candidateCount || 0)} active candidate${Number(topGroup.candidateCount || 0) === 1 ? "" : "s"}; requires 3+.`
+        : "No active localized corridor candidates available.",
+      corridorEvidenceQuality: "weak"
+    };
+  }
+  const supportingItems = gridlySafeArray(selectedGroup.candidateIndexes)
+    .map((index) => candidates[Number(index)])
+    .filter(Boolean);
+  const corridorName = getGridlyTopStatusCorridorBaseName(selectedGroup.corridorDisplayName || selectedGroup.corridor);
+  const placeLabel = getGridlyTopStatusCorridorPlaceLabel(supportingItems, topStatus);
+  const placePhrase = placeLabel === "nearby" ? "nearby" : `near ${placeLabel}`;
+  const headline = safeDisplayText(`${corridorName} impacted ${placePhrase}`, "");
+  const namedCorridor = selectedGroup.corridor !== "Local corridors";
+  return {
+    corridorAwareCandidateGenerated: Boolean(headline),
+    corridorAwareCandidateAccepted: Boolean(headline),
+    corridorAwareHeadline: headline,
+    corridorAwareReason: namedCorridor
+      ? `${safeDisplayText(selectedGroup.corridorDisplayName || selectedGroup.corridor, "Named corridor")} has ${Number(selectedGroup.candidateCount || 0)} active localized candidates; using pressure wording without claiming a blockage.`
+      : `${Number(selectedGroup.candidateCount || 0)} active localized candidates share only fallback/local corridor evidence; using local roads pressure wording without claiming a blockage.`,
+    corridorEvidenceQuality: namedCorridor ? "named_corridor_3_plus" : "local_fallback_3_plus"
+  };
+}
+
 function buildGridlyTopStatusSelectionDiagnostics({
   intelItems = [],
   corridorClusters = [],
@@ -25013,6 +25098,11 @@ function buildGridlyTopStatusSelectionDiagnostics({
     return bScore - aScore || a.corridor.localeCompare(b.corridor);
   });
   const topCorridor = corridorGroups[0] || null;
+  const corridorAwareCandidate = buildGridlyCorridorAwareTopStatusCandidate({
+    corridorGroups,
+    candidates,
+    topStatus
+  });
   const selectedKey = selectedItem ? `${selectedItem?.incident?.id || selectedItem?.incident?.report_id || selectedItem?.incident?.reportId || ""}:${selectedItem?.localizedSummary || ""}` : "";
   const candidateScores = candidates.map((item, index) => {
     const corridorDiagnostics = resolveGridlyTopStatusCorridorDiagnostics(item);
@@ -25079,6 +25169,11 @@ function buildGridlyTopStatusSelectionDiagnostics({
     suppressedCandidates,
     corridorGroups,
     topCorridor,
+    corridorAwareCandidateGenerated: Boolean(corridorAwareCandidate.corridorAwareCandidateGenerated),
+    corridorAwareCandidateAccepted: Boolean(corridorAwareCandidate.corridorAwareCandidateAccepted),
+    corridorAwareHeadline: safeDisplayText(corridorAwareCandidate.corridorAwareHeadline, ""),
+    corridorAwareReason: safeDisplayText(corridorAwareCandidate.corridorAwareReason, ""),
+    corridorEvidenceQuality: safeDisplayText(corridorAwareCandidate.corridorEvidenceQuality, "weak"),
     awarenessSelectionReason: candidates.length
       ? `${selectionSource}; corridor density is diagnostic and contributes to candidate evidence without changing top-awareness layout.`
       : "No active top-status candidates available; quiet-state fallback remains in control.",
@@ -25708,6 +25803,9 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     topStatus,
     selectionSource: topStatusSelectionSource
   }));
+  const corridorAwareTopStatus = topStatusSelectionAudit?.corridorAwareCandidateAccepted
+    ? safeDisplayText(topStatusSelectionAudit.corridorAwareHeadline, topStatus)
+    : topStatus;
   const consequenceSecondaryMessage = timeSection("recommendation_generation", () => topSecondary);
   counts.alertCount = Math.min(Number(limit || 0), safeIntelItems.length);
   counts.recommendationCount = consequenceSecondaryMessage ? 1 : 0;
@@ -25942,7 +26040,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     corridorClusters,
     highestPriorityCorridor: highestPriorityCorridor?.label || null,
     corridorSeverityMap,
-    topStatus,
+    topStatus: corridorAwareTopStatus,
     topStatusSelectionAudit,
     commuteImpactHeadline: consequencePrimaryMessage,
     topStatusLocalizedDetail: topSecondary,
@@ -26006,8 +26104,11 @@ function refreshPortraitV2LocalizedIntelligence() {
     const guardedPrimaryFallback = railFallbackRejectReason
       ? safeDisplayText(activeFallbackCandidate, "Routes currently clear")
       : rawPrimaryFallback;
+    const corridorAwarePrimaryCandidate = intel.topStatusSelectionAudit?.corridorAwareCandidateAccepted
+      ? safeDisplayText(intel.topStatusSelectionAudit.corridorAwareHeadline, "")
+      : "";
     const primaryValue = intel.hasActiveAlerts
-      ? safeDisplayText(existingAlertWording?.text || guardedPrimaryFallback, safeDisplayText(intel.commuteImpactHeadline, "Routes currently clear"))
+      ? safeDisplayText(corridorAwarePrimaryCandidate || existingAlertWording?.text || guardedPrimaryFallback, safeDisplayText(intel.commuteImpactHeadline, "Routes currently clear"))
       : safeDisplayText(intel.commuteImpactHeadline, "Routes currently clear");
     logTopPanelWrite("refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusPrimary", primaryValue);
     if (topPrimaryEl) topPrimaryEl.textContent = safeDisplayText(primaryValue, "Routes currently clear");
