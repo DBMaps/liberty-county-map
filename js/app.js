@@ -13152,6 +13152,237 @@ window.gridlyCommunityPulseAudit = function gridlyCommunityPulseAudit(options = 
     repetitionAvoidanceApplied: Boolean(state.repetitionAvoidanceApplied)
   };
 };
+
+const GRIDLY_PORTRAIT_OWNERSHIP_INVENTORY_VERSION = "V180.1";
+const GRIDLY_PORTRAIT_OWNERSHIP_SYSTEMS = [
+  {
+    name: "gridlyPortraitV2",
+    selector: "#gridlyPortraitV2",
+    ownershipRole: "primary portrait shell and bottom-sheet owner",
+    ownerClass: "primary_portrait"
+  },
+  {
+    name: "gridlyCommunityPulseSurface",
+    selector: "#gridlyCommunityPulseSurface",
+    ownershipRole: "community pulse module loaded inside the dashboard/map column",
+    ownerClass: "portrait_module"
+  },
+  {
+    name: "dashboardSection",
+    selector: "#dashboardSection",
+    ownershipRole: "legacy dashboard container that still wraps hero, cards, and command center",
+    ownerClass: "legacy_container"
+  },
+  {
+    name: "future-map-hero",
+    selector: ".future-map-hero",
+    ownershipRole: "legacy/future home hero surface",
+    ownerClass: "legacy_hero"
+  },
+  {
+    name: "mobile-home-cards",
+    selector: ".mobile-home-cards",
+    ownershipRole: "legacy mobile home card stack",
+    ownerClass: "legacy_mobile_cards"
+  },
+  {
+    name: "mobile-community-card",
+    selector: ".mobile-community-card",
+    ownershipRole: "legacy mobile community summary card",
+    ownerClass: "legacy_mobile_card"
+  },
+  {
+    name: "mobile-active-crossings-card",
+    selector: ".mobile-active-crossings-card",
+    ownershipRole: "legacy mobile active crossings card",
+    ownerClass: "legacy_mobile_card"
+  },
+  {
+    name: "mobile-corridor-intel-card",
+    selector: ".mobile-corridor-intel-card",
+    ownershipRole: "legacy mobile corridor intelligence card",
+    ownerClass: "legacy_mobile_card"
+  },
+  {
+    name: "desktop-command-strip",
+    selector: ".desktop-command-strip",
+    ownershipRole: "desktop summary command strip",
+    ownerClass: "desktop_command"
+  },
+  {
+    name: "desktop-left-rail",
+    selector: ".desktop-left-rail",
+    ownershipRole: "desktop left navigation rail",
+    ownerClass: "desktop_navigation"
+  },
+  {
+    name: "future-hero-overlay",
+    selector: ".future-hero-overlay",
+    ownershipRole: "legacy/future hero content overlay",
+    ownerClass: "legacy_hero"
+  },
+  {
+    name: "map-card",
+    selector: ".map-card",
+    ownershipRole: "map surface card owner shared by desktop and portrait layouts",
+    ownerClass: "shared_map"
+  },
+  {
+    name: "command-center",
+    selector: ".command-center",
+    ownershipRole: "desktop command center and map/sidebar layout owner",
+    ownerClass: "desktop_command"
+  }
+];
+const GRIDLY_PORTRAIT_PRIMARY_OWNER = "gridlyPortraitV2";
+const GRIDLY_PORTRAIT_RECOMMENDED_KEEP = ["gridlyPortraitV2", "map-card"];
+const GRIDLY_PORTRAIT_RECOMMENDED_DEAUTHORIZE = [
+  "dashboardSection",
+  "future-map-hero",
+  "mobile-home-cards",
+  "mobile-community-card",
+  "mobile-active-crossings-card",
+  "mobile-corridor-intel-card",
+  "desktop-command-strip",
+  "desktop-left-rail",
+  "future-hero-overlay",
+  "command-center"
+];
+
+function getGridlyPortraitOwnershipElementState(definition) {
+  const element = document.querySelector(definition.selector);
+  const loaded = Boolean(element);
+  if (!element) {
+    return {
+      name: definition.name,
+      selector: definition.selector,
+      ownershipRole: definition.ownershipRole,
+      visible: false,
+      loaded: false,
+      active: false
+    };
+  }
+  const style = window.getComputedStyle(element);
+  const rect = typeof element.getBoundingClientRect === "function" ? element.getBoundingClientRect() : null;
+  const hiddenByAttribute = Boolean(element.hidden || element.getAttribute("aria-hidden") === "true");
+  const visible = Boolean(
+    !hiddenByAttribute &&
+    style.display !== "none" &&
+    style.visibility !== "hidden" &&
+    Number.parseFloat(style.opacity || "1") !== 0 &&
+    rect &&
+    rect.width > 0 &&
+    rect.height > 0
+  );
+  return {
+    name: definition.name,
+    selector: definition.selector,
+    ownershipRole: definition.ownershipRole,
+    visible,
+    loaded,
+    active: visible,
+    ownerClass: definition.ownerClass,
+    hidden: hiddenByAttribute,
+    display: style.display,
+    visibility: style.visibility,
+    opacity: style.opacity
+  };
+}
+
+function buildGridlyPortraitDuplicateOwnershipWarnings(systems, portraitModeActive) {
+  const visibleSystems = systems.filter((system) => system.visible);
+  const activePrimary = systems.find((system) => system.name === GRIDLY_PORTRAIT_PRIMARY_OWNER && system.active);
+  const activeLegacyOwners = visibleSystems.filter((system) => GRIDLY_PORTRAIT_RECOMMENDED_DEAUTHORIZE.includes(system.name));
+  const warnings = [];
+  if (portraitModeActive && !activePrimary) {
+    warnings.push({
+      type: "missing_primary_portrait_owner",
+      message: "Portrait mode is active, but gridlyPortraitV2 is not visibly active.",
+      systems: [GRIDLY_PORTRAIT_PRIMARY_OWNER]
+    });
+  }
+  if (portraitModeActive && activeLegacyOwners.length > 0) {
+    warnings.push({
+      type: "portrait_legacy_owner_overlap",
+      message: "Legacy or desktop systems are visible while portrait ownership is active.",
+      systems: activeLegacyOwners.map((system) => system.name)
+    });
+  }
+  const visiblePrimaryCompetitors = visibleSystems.filter((system) => system.name !== GRIDLY_PORTRAIT_PRIMARY_OWNER && system.ownerClass !== "shared_map" && system.ownerClass !== "portrait_module");
+  if (activePrimary && visiblePrimaryCompetitors.length > 0) {
+    warnings.push({
+      type: "duplicate_visible_primary_surfaces",
+      message: "gridlyPortraitV2 is visible alongside other primary-capable portrait/dashboard surfaces.",
+      systems: [GRIDLY_PORTRAIT_PRIMARY_OWNER, ...visiblePrimaryCompetitors.map((system) => system.name)]
+    });
+  }
+  return warnings;
+}
+
+window.gridlyPortraitOwnershipInventory = function gridlyPortraitOwnershipInventory() {
+  try {
+    const layoutMode = document.body?.dataset?.layoutMode || "";
+    const legacyLayoutMode = document.body?.dataset?.layoutModeLegacy || "";
+    const portraitMedia = Boolean(window.matchMedia?.("(orientation: portrait)")?.matches);
+    const portraitModeActive = layoutMode === "portrait" || legacyLayoutMode === "mobile" || portraitMedia;
+    const systems = GRIDLY_PORTRAIT_OWNERSHIP_SYSTEMS.map((definition) => {
+      const state = getGridlyPortraitOwnershipElementState(definition);
+      return {
+        name: state.name,
+        selector: state.selector,
+        ownershipRole: state.ownershipRole,
+        ownerClass: state.ownerClass,
+        visible: state.visible,
+        loaded: state.loaded,
+        active: Boolean(state.active && (portraitModeActive || state.name === GRIDLY_PORTRAIT_PRIMARY_OWNER || state.ownerClass === "shared_map" || state.ownerClass === "portrait_module"))
+      };
+    });
+    const portraitVisibleSystems = systems.filter((system) => system.visible);
+    const portraitLoadedSystems = systems.filter((system) => system.loaded);
+    const portraitHiddenSystems = systems.filter((system) => system.loaded && !system.visible);
+    const portraitDormantSystems = systems.filter((system) => !system.loaded || !system.active);
+    const duplicateOwnershipWarnings = buildGridlyPortraitDuplicateOwnershipWarnings(systems, portraitModeActive);
+    const activePrimary = systems.find((system) => system.name === GRIDLY_PORTRAIT_PRIMARY_OWNER && system.active);
+    const firstVisibleOwner = portraitVisibleSystems.find((system) => system.name !== "map-card") || portraitVisibleSystems[0] || null;
+    return {
+      loaded: true,
+      version: GRIDLY_PORTRAIT_OWNERSHIP_INVENTORY_VERSION,
+      layoutMode,
+      legacyLayoutMode,
+      portraitModeActive,
+      portraitVisibleSystems,
+      portraitLoadedSystems,
+      portraitHiddenSystems,
+      portraitDormantSystems,
+      duplicateOwnershipWarnings,
+      portraitPrimaryOwner: activePrimary ? GRIDLY_PORTRAIT_PRIMARY_OWNER : (firstVisibleOwner?.name || GRIDLY_PORTRAIT_PRIMARY_OWNER),
+      recommendedKeep: GRIDLY_PORTRAIT_RECOMMENDED_KEEP,
+      recommendedDeauthorize: GRIDLY_PORTRAIT_RECOMMENDED_DEAUTHORIZE,
+      notes: [
+        "Inventory only: this helper reads DOM/system visibility and does not mutate UI, rendering, or behavior.",
+        "recommendedDeauthorize is an audit recommendation list only; no systems are removed or hidden by this helper."
+      ]
+    };
+  } catch (error) {
+    return {
+      loaded: false,
+      version: GRIDLY_PORTRAIT_OWNERSHIP_INVENTORY_VERSION,
+      portraitVisibleSystems: [],
+      portraitLoadedSystems: [],
+      portraitHiddenSystems: [],
+      portraitDormantSystems: [],
+      duplicateOwnershipWarnings: [{
+        type: "inventory_error",
+        message: error?.message || "unknown error",
+        systems: []
+      }],
+      portraitPrimaryOwner: GRIDLY_PORTRAIT_PRIMARY_OWNER,
+      recommendedKeep: GRIDLY_PORTRAIT_RECOMMENDED_KEEP,
+      recommendedDeauthorize: GRIDLY_PORTRAIT_RECOMMENDED_DEAUTHORIZE
+    };
+  }
+};
+
 function getGridlyHeaderOwnershipStaticWriters() {
   return [
     {
