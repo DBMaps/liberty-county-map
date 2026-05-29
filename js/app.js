@@ -2539,6 +2539,8 @@ const REPORT_EXPIRATION_MINUTES = 90;
 const RECENTLY_CLEARED_WINDOW_MINUTES = 20;
 const LIVE_REFRESH_MS = 15000;
 const APP_BUILD = "6D0";
+const GRIDLY_APP_VERSION_LABEL = "Gridly V198";
+const GRIDLY_APP_BUILD_LABEL = "Build 1710";
 const DEFAULT_NEARBY_RADIUS_MILES = 8;
 const PRIORITY_NEARBY_MILES = 3;
 const DISTANT_CROSSING_MIN_ZOOM = 14;
@@ -2548,6 +2550,7 @@ const SMART_ALERTS_STORAGE_KEY = "gridlySmartAlertsV1";
 const SMART_ALERTS_DRAWER_SEEN_KEY = "gridlySmartAlertsDrawerSeenV1";
 const MAP_FIRST_HINT_SEEN_KEY = "gridlyMapFirstHintSeenV1";
 const MAP_STYLE_STORAGE_KEY = "gridlyMapStyleV1";
+const GRIDLY_SETTINGS_STORAGE_KEY = "gridlySettingsV1";
 const SAVED_PLACES_STORAGE_KEY = "gridlySavedPlacesV1";
 const SELECTED_PLACE_STORAGE_KEY = "gridlySelectedPlaceIdV1";
 const GRIDLY_PROFILE_STORAGE_KEY = "gridlyUserProfileV1";
@@ -3800,8 +3803,10 @@ window.gridlySettingsBlueprint = function gridlySettingsBlueprint() {
   const hasDocument = typeof document !== "undefined";
   const places = gridlyGetSavedPlacesReadiness();
   const routeWatchControlsPresent = hasDocument && Boolean(document.getElementById("routeWatchStartSelect") || document.getElementById("routeWatchDestinationSelect") || document.getElementById("routeWatchStartBtn"));
-  const notificationControlsPresent = hasDocument && Boolean(document.getElementById("smartAlertNearbyBlocked") || document.getElementById("smartAlertRouteDelay") || document.getElementById("smartAlertUs90Clear") || document.getElementById("smartAlertNeedsConfirm"));
-  const displayStoragePresent = gridlySafeLocalStorageHas(MAP_STYLE_STORAGE_KEY);
+  const notificationControlsPresent = hasDocument && Boolean(document.getElementById("settingsRouteAlertsToggle") || document.getElementById("settingsRailAlertsToggle") || document.getElementById("settingsHazardAlertsToggle") || document.getElementById("settingsCommunityAlertsToggle") || document.getElementById("smartAlertNearbyBlocked") || document.getElementById("smartAlertRouteDelay") || document.getElementById("smartAlertUs90Clear") || document.getElementById("smartAlertNeedsConfirm"));
+  const displayControlsPresent = hasDocument && Boolean(document.getElementById("settingsMapStyleSelect") || document.getElementById("settingsThemeSelect"));
+  const settingsStoragePresent = gridlySafeLocalStorageHas(GRIDLY_SETTINGS_STORAGE_KEY);
+  const displayStoragePresent = settingsStoragePresent || gridlySafeLocalStorageHas(MAP_STYLE_STORAGE_KEY);
   const reportingControlsPresent = hasDocument && Boolean(document.getElementById("manualReportBtn") || document.getElementById("manualReportType") || document.getElementById("mobileReportBtn"));
   const aboutSignalsPresent = Boolean(APP_BUILD || (hasDocument && document.querySelector?.("[data-gridly-about], #about, #aboutModal")));
 
@@ -3809,12 +3814,12 @@ window.gridlySettingsBlueprint = function gridlySettingsBlueprint() {
     blueprintVersion: GRIDLY_USER_TRUST_BLUEPRINT_VERSION,
     settingsOwnershipInventory: {
       routeWatch: gridlyBlueprintSectionStatus({ existing: routeWatchControlsPresent && places.routablePlaceCount >= 2, partial: routeWatchControlsPresent || places.routablePlaceCount > 0 }),
-      notifications: gridlyBlueprintSectionStatus({ existing: notificationControlsPresent && gridlySafeLocalStorageHas(SMART_ALERTS_STORAGE_KEY), partial: notificationControlsPresent || gridlySafeLocalStorageHas(SMART_ALERTS_STORAGE_KEY) }),
-      display: gridlyBlueprintSectionStatus({ existing: displayStoragePresent, partial: hasDocument }),
+      notifications: gridlyBlueprintSectionStatus({ existing: notificationControlsPresent && settingsStoragePresent, partial: notificationControlsPresent || settingsStoragePresent || gridlySafeLocalStorageHas(SMART_ALERTS_STORAGE_KEY) }),
+      display: gridlyBlueprintSectionStatus({ existing: displayControlsPresent && displayStoragePresent, partial: displayControlsPresent || displayStoragePresent }),
       reporting: gridlyBlueprintSectionStatus({ existing: reportingControlsPresent, partial: hasDocument }),
       about: gridlyBlueprintSectionStatus({ existing: aboutSignalsPresent })
     },
-    notes: ["Diagnostic blueprint only; no settings ownership or persistence changes are applied."]
+    notes: ["Settings preferences use dedicated local storage without changing protected system ownership."]
   };
 };
 
@@ -8492,6 +8497,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   injectHazardReportUI();
   loadSavedRoute();
   loadSmartAlertsPreferences();
+  loadGridlySettingsPreferences({ render: true, applyDisplay: true });
   initDailyDestinationHero();
   updateMobileWatchHeader();
   updateProfileUI();
@@ -8695,6 +8701,22 @@ function hydrateElements() {
     "settingsModal",
     "settingsModalBackdrop",
     "closeSettingsModalBtn",
+    "settingsHomeValue",
+    "settingsHomeMeta",
+    "settingsWorkValue",
+    "settingsWorkMeta",
+    "settingsSavedPlacesList",
+    "settingsManageSavedPlacesBtn",
+    "settingsRouteAlertsToggle",
+    "settingsRailAlertsToggle",
+    "settingsHazardAlertsToggle",
+    "settingsCommunityAlertsToggle",
+    "settingsMapStyleSelect",
+    "settingsThemeSelect",
+    "settingsBuildValue",
+    "settingsFeedbackBtn",
+    "settingsFeedbackStatus",
+    "settingsSaveStatus",
     "closeSmartAlertsModalBtn",
     "openSmartAlertsBtn",
     "mobileAlertsMirror",
@@ -20495,6 +20517,7 @@ function bindEvents() {
   els.saveSmartAlertsBtn?.addEventListener("click", saveSmartAlertsPreferences);
   els.closeSmartAlertsModalBtn?.addEventListener("click", closeSmartAlertsModal);
   els.closeSettingsModalBtn?.addEventListener("click", () => closeGridlySurface("settings"));
+  bindGridlySettingsPreferences();
   if (els.mobileSaveRouteBtn) {
     saveButtonHandlerAttached = true;
     els.mobileSaveRouteBtn.addEventListener("click", () => {
@@ -20976,6 +20999,7 @@ function closeSmartAlertsModal() {
 
 function openSettingsModal() {
   if (!els.settingsModal) return;
+  renderGridlySettingsPanel();
   openModal(els.settingsModal);
 }
 
@@ -23860,6 +23884,283 @@ function resetSavedPlaces() {
   scheduleRenderCrossings("state-change");
   setConfirmation("Saved places reset on this device.", "success");
 }
+
+
+const GRIDLY_SETTINGS_DEFAULTS = Object.freeze({
+  notifications: Object.freeze({
+    routeAlerts: true,
+    railAlerts: true,
+    hazardAlerts: true,
+    communityAlerts: false
+  }),
+  display: Object.freeze({
+    mapStyle: "standard",
+    theme: "system"
+  })
+});
+
+const GRIDLY_SETTINGS_MAP_STYLE_LABELS = {
+  standard: "Standard",
+  dark: "Dark",
+  satellite: "Satellite"
+};
+
+const GRIDLY_SETTINGS_VALID_THEMES = new Set(["system", "light", "dark"]);
+
+function gridlyStorageAvailable() {
+  try {
+    if (typeof localStorage === "undefined") return false;
+    const probeKey = "__gridly_settings_probe__";
+    localStorage.setItem(probeKey, "1");
+    localStorage.removeItem(probeKey);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+function normalizeGridlySettings(raw = null) {
+  const base = {
+    notifications: { ...GRIDLY_SETTINGS_DEFAULTS.notifications },
+    display: { ...GRIDLY_SETTINGS_DEFAULTS.display }
+  };
+  const source = raw && typeof raw === "object" ? raw : {};
+  const notifications = source.notifications && typeof source.notifications === "object" ? source.notifications : {};
+  const display = source.display && typeof source.display === "object" ? source.display : {};
+  Object.keys(base.notifications).forEach((key) => {
+    if (typeof notifications[key] === "boolean") base.notifications[key] = notifications[key];
+  });
+  const normalizedStyle = String(display.mapStyle || "").trim().toLowerCase();
+  if (GRIDLY_SETTINGS_MAP_STYLE_LABELS[normalizedStyle]) base.display.mapStyle = normalizedStyle;
+  const normalizedTheme = String(display.theme || "").trim().toLowerCase();
+  if (GRIDLY_SETTINGS_VALID_THEMES.has(normalizedTheme)) base.display.theme = normalizedTheme;
+  return base;
+}
+
+function getGridlySettingsPreferences() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(GRIDLY_SETTINGS_STORAGE_KEY) || "null");
+    return normalizeGridlySettings(parsed);
+  } catch (error) {
+    return normalizeGridlySettings();
+  }
+}
+
+function saveGridlySettingsPreferences(nextSettings, { applyDisplay = true, render = false, source = "settings" } = {}) {
+  const normalized = normalizeGridlySettings(nextSettings);
+  localStorage.setItem(GRIDLY_SETTINGS_STORAGE_KEY, JSON.stringify(normalized));
+  if (applyDisplay) applyGridlySettingsDisplayPreferences(normalized.display, source);
+  if (render) renderGridlySettingsPanel(normalized);
+  return normalized;
+}
+
+function loadGridlySettingsPreferences({ render = false, applyDisplay = false } = {}) {
+  const settings = getGridlySettingsPreferences();
+  try {
+    if (!localStorage.getItem(GRIDLY_SETTINGS_STORAGE_KEY)) {
+      localStorage.setItem(GRIDLY_SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+    }
+  } catch (error) {
+    // Settings remain usable in-memory if local storage is blocked.
+  }
+  if (applyDisplay) applyGridlySettingsDisplayPreferences(settings.display, "settings_load");
+  if (render) renderGridlySettingsPanel(settings);
+  return settings;
+}
+
+function applyGridlySettingsDisplayPreferences(display = {}, source = "settings") {
+  const normalized = normalizeGridlySettings({ display }).display;
+  const layerName = GRIDLY_SETTINGS_MAP_STYLE_LABELS[normalized.mapStyle] || "Standard";
+  try {
+    localStorage.setItem(MAP_STYLE_STORAGE_KEY, layerName);
+  } catch (error) {
+    // Existing map style storage may be unavailable; keep the in-memory UI preference.
+  }
+  if (!map || !mapBaseLayersByName?.[layerName]) return false;
+  Object.entries(mapBaseLayersByName).forEach(([, layer]) => {
+    if (map.hasLayer(layer)) map.removeLayer(layer);
+  });
+  map.addLayer(mapBaseLayersByName[layerName]);
+  if (!map.hasLayer(mapBaseLayersByName[layerName])) return false;
+  currentMapStyle = layerName;
+  activeBaseLayerName = layerName;
+  if (mapStyleClassByName[layerName]) {
+    Object.values(mapStyleClassByName).forEach((className) => map.getContainer().classList.remove(className));
+    map.getContainer().classList.add(mapStyleClassByName[layerName]);
+  }
+  map.fire("baselayerchange", { name: layerName, layer: mapBaseLayersByName[layerName], source });
+  return true;
+}
+
+function describeGridlySettingsPlace(place, fallbackLabel) {
+  if (!isConfiguredPlace(place)) {
+    return { label: "Not saved", meta: `Save ${fallbackLabel} to enable Route Watch context.` };
+  }
+  const address = String(place.address || "").trim();
+  const source = String(place.coordinateSource || "saved").trim();
+  return {
+    label: place.label || fallbackLabel,
+    meta: address || `Coordinates saved (${source}).`
+  };
+}
+
+function renderGridlySettingsSavedPlaces() {
+  const state = getSavedPlacesState();
+  const home = describeGridlySettingsPlace(state.home, "Home");
+  const work = describeGridlySettingsPlace(state.work, "Work");
+  safeText("settingsHomeValue", home.label);
+  safeText("settingsHomeMeta", home.meta);
+  safeText("settingsWorkValue", work.label);
+  safeText("settingsWorkMeta", work.meta);
+
+  if (!els.settingsSavedPlacesList) return;
+  const savedPlaces = [state.home, state.work, ...state.custom, ...state.favorites].filter((place) => place && !isLegacyPlace(place));
+  els.settingsSavedPlacesList.innerHTML = "";
+  if (!savedPlaces.length) {
+    els.settingsSavedPlacesList.textContent = "No saved places yet.";
+    return;
+  }
+  savedPlaces.forEach((place) => {
+    const row = document.createElement("div");
+    row.className = "settings-saved-place-row";
+    const label = document.createElement("strong");
+    label.textContent = place.label || place.name || "Saved Place";
+    const meta = document.createElement("small");
+    meta.textContent = place.address || (hasValidPlaceCoordinates(place) ? "Coordinates saved" : "Address pending");
+    row.append(label, meta);
+    els.settingsSavedPlacesList.appendChild(row);
+  });
+}
+
+function renderGridlySettingsPanel(settings = getGridlySettingsPreferences()) {
+  const normalized = normalizeGridlySettings(settings);
+  renderGridlySettingsSavedPlaces();
+  if (els.settingsRouteAlertsToggle) els.settingsRouteAlertsToggle.checked = Boolean(normalized.notifications.routeAlerts);
+  if (els.settingsRailAlertsToggle) els.settingsRailAlertsToggle.checked = Boolean(normalized.notifications.railAlerts);
+  if (els.settingsHazardAlertsToggle) els.settingsHazardAlertsToggle.checked = Boolean(normalized.notifications.hazardAlerts);
+  if (els.settingsCommunityAlertsToggle) els.settingsCommunityAlertsToggle.checked = Boolean(normalized.notifications.communityAlerts);
+  if (els.settingsMapStyleSelect) els.settingsMapStyleSelect.value = normalized.display.mapStyle;
+  if (els.settingsThemeSelect) els.settingsThemeSelect.value = normalized.display.theme;
+  safeText("settingsBuildValue", GRIDLY_APP_BUILD_LABEL);
+}
+
+function collectGridlySettingsFromUi() {
+  const current = getGridlySettingsPreferences();
+  return normalizeGridlySettings({
+    notifications: {
+      routeAlerts: Boolean(els.settingsRouteAlertsToggle?.checked),
+      railAlerts: Boolean(els.settingsRailAlertsToggle?.checked),
+      hazardAlerts: Boolean(els.settingsHazardAlertsToggle?.checked),
+      communityAlerts: Boolean(els.settingsCommunityAlertsToggle?.checked)
+    },
+    display: {
+      mapStyle: els.settingsMapStyleSelect?.value || current.display.mapStyle,
+      theme: els.settingsThemeSelect?.value || current.display.theme
+    }
+  });
+}
+
+function persistGridlySettingsFromUi(event) {
+  try {
+    const saved = saveGridlySettingsPreferences(collectGridlySettingsFromUi(), { applyDisplay: true, source: event?.target?.id || "settings_ui" });
+    safeText("settingsSaveStatus", "Settings saved on this device.");
+    return saved;
+  } catch (error) {
+    safeText("settingsSaveStatus", "Settings could not be saved on this device.");
+    return collectGridlySettingsFromUi();
+  }
+}
+
+function bindGridlySettingsPreferences() {
+  const controls = [
+    els.settingsRouteAlertsToggle,
+    els.settingsRailAlertsToggle,
+    els.settingsHazardAlertsToggle,
+    els.settingsCommunityAlertsToggle,
+    els.settingsMapStyleSelect,
+    els.settingsThemeSelect
+  ].filter(Boolean);
+  controls.forEach((control) => {
+    if (control.dataset.gridlySettingsBound === "1") return;
+    control.dataset.gridlySettingsBound = "1";
+    control.addEventListener("change", persistGridlySettingsFromUi);
+  });
+  if (els.settingsManageSavedPlacesBtn && els.settingsManageSavedPlacesBtn.dataset.gridlySettingsBound !== "1") {
+    els.settingsManageSavedPlacesBtn.dataset.gridlySettingsBound = "1";
+    els.settingsManageSavedPlacesBtn.addEventListener("click", () => {
+      if (typeof openRouteSetupModal === "function") openRouteSetupModal();
+    });
+  }
+  if (els.settingsFeedbackBtn && els.settingsFeedbackBtn.dataset.gridlySettingsBound !== "1") {
+    els.settingsFeedbackBtn.dataset.gridlySettingsBound = "1";
+    els.settingsFeedbackBtn.addEventListener("click", () => {
+      safeText("settingsFeedbackStatus", "Feedback placeholder acknowledged. No message was sent.");
+    });
+  }
+}
+
+function gridlySettingsCompleteness(settings = getGridlySettingsPreferences()) {
+  const normalized = normalizeGridlySettings(settings);
+  return {
+    notificationsComplete: ["routeAlerts", "railAlerts", "hazardAlerts", "communityAlerts"].every((key) => typeof normalized.notifications[key] === "boolean"),
+    displayComplete: Boolean(GRIDLY_SETTINGS_MAP_STYLE_LABELS[normalized.display.mapStyle] && GRIDLY_SETTINGS_VALID_THEMES.has(normalized.display.theme)),
+    routeWatchPlacesComplete: true,
+    aboutComplete: true
+  };
+}
+
+function buildGridlySettingsAudit(section = "all") {
+  const storageAvailable = gridlyStorageAvailable();
+  const settings = loadGridlySettingsPreferences({ render: false, applyDisplay: false });
+  const rawSettings = gridlySafeLocalStorageGet(GRIDLY_SETTINGS_STORAGE_KEY);
+  const places = gridlyGetSavedPlacesReadiness();
+  const completeness = gridlySettingsCompleteness(settings);
+  return {
+    loaded: true,
+    storageAvailable,
+    settingsDetected: Boolean(rawSettings) || Boolean(settings),
+    diagnosticOnly: true,
+    section,
+    storageKeys: {
+      settings: GRIDLY_SETTINGS_STORAGE_KEY,
+      savedPlaces: SAVED_PLACES_STORAGE_KEY,
+      mapStyle: MAP_STYLE_STORAGE_KEY
+    },
+    persistenceStatus: {
+      settingsKeyPresent: Boolean(rawSettings),
+      canPersistSettings: storageAvailable,
+      mapStyleMirrorPresent: gridlySafeLocalStorageHas(MAP_STYLE_STORAGE_KEY)
+    },
+    settingsCompleteness: completeness,
+    complete: Object.values(completeness).every(Boolean),
+    routeWatchSettings: {
+      homeVisible: Boolean(places.hasHome || typeof places.hasHome === "boolean"),
+      workVisible: Boolean(places.hasWork || typeof places.hasWork === "boolean"),
+      savedPlacesVisible: true,
+      homeConfigured: Boolean(places.hasHome),
+      workConfigured: Boolean(places.hasWork),
+      savedPlaceCount: Number(places.savedPlaceCount || places.routablePlaceCount || 0),
+      existingStorageReused: true,
+      storageKey: SAVED_PLACES_STORAGE_KEY
+    },
+    preferences: settings,
+    notificationDeliveryEnabled: false,
+    runtimeLoopsAdded: false,
+    geolocationPromptRequested: false
+  };
+}
+
+window.gridlySettingsAudit = function gridlySettingsAudit() {
+  return buildGridlySettingsAudit("all");
+};
+
+window.gridlyNotificationPreferenceAudit = function gridlyNotificationPreferenceAudit() {
+  return buildGridlySettingsAudit("notifications");
+};
+
+window.gridlyDisplayPreferenceAudit = function gridlyDisplayPreferenceAudit() {
+  return buildGridlySettingsAudit("display");
+};
 
 function getDefaultSmartAlertsPreferences() {
   return { enabled: false, nearbyBlocked: false, routeDelay: false, us90Clear: false, needsConfirm: false };
@@ -31248,11 +31549,63 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
 
 
+
+  function escapeV2SettingsText(value) {
+    return String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char]));
+  }
+
+  function buildSettingsSurfaceHtml() {
+    const settings = typeof getGridlySettingsPreferences === "function" ? getGridlySettingsPreferences() : normalizeGridlySettings();
+    const places = typeof getSavedPlacesState === "function" ? getSavedPlacesState() : { home: null, work: null, custom: [], favorites: [] };
+    const describe = (place, fallback) => (typeof isConfiguredPlace === "function" && isConfiguredPlace(place))
+      ? { label: place.label || fallback, meta: place.address || "Coordinates saved" }
+      : { label: "Not saved", meta: `Save ${fallback} in Manage Saved Places.` };
+    const home = describe(places.home, "Home");
+    const work = describe(places.work, "Work");
+    const saved = [places.home, places.work, ...(places.custom || []), ...(places.favorites || [])].filter(Boolean);
+    const savedRows = saved.length
+      ? saved.map((place) => `<div class="settings-saved-place-row"><strong>${escapeV2SettingsText(place.label || place.name || "Saved Place")}</strong><small>${escapeV2SettingsText(place.address || "Saved on this device")}</small></div>`).join("")
+      : `<div class="settings-saved-place-row"><strong>No saved places yet</strong><small>Use Manage Saved Places to add Home, Work, or Favorites.</small></div>`;
+    const checked = (value) => value ? " checked" : "";
+    const selected = (value, target) => value === target ? " selected" : "";
+    return `
+      <div class="gridly-v2-list gridly-settings-sheet" data-gridly-settings-v2="true">
+        <p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p>
+        <section class="settings-modal-section">
+          <div class="settings-section-head"><h3>Route Watch Settings</h3><button class="gridly-v2-tile" data-v2-action="route-manage-places-open" type="button">Manage Saved Places</button></div>
+          <div class="settings-place-grid">
+            <article class="settings-place-card"><span class="settings-place-label">Home</span><strong>${escapeV2SettingsText(home.label)}</strong><small>${escapeV2SettingsText(home.meta)}</small></article>
+            <article class="settings-place-card"><span class="settings-place-label">Work</span><strong>${escapeV2SettingsText(work.label)}</strong><small>${escapeV2SettingsText(work.meta)}</small></article>
+          </div>
+          <div class="settings-saved-places-list">${savedRows}</div>
+        </section>
+        <section class="settings-modal-section">
+          <h3>Notification Preferences</h3>
+          <p>Preference storage only. No notification delivery is enabled.</p>
+          <div class="settings-toggle-grid">
+            <label class="settings-toggle-row"><input type="checkbox" data-v2-settings-field="notifications.routeAlerts"${checked(settings.notifications.routeAlerts)}><span>Route Watch Alerts</span></label>
+            <label class="settings-toggle-row"><input type="checkbox" data-v2-settings-field="notifications.railAlerts"${checked(settings.notifications.railAlerts)}><span>Rail Crossing Alerts</span></label>
+            <label class="settings-toggle-row"><input type="checkbox" data-v2-settings-field="notifications.hazardAlerts"${checked(settings.notifications.hazardAlerts)}><span>Road Hazard Alerts</span></label>
+            <label class="settings-toggle-row"><input type="checkbox" data-v2-settings-field="notifications.communityAlerts"${checked(settings.notifications.communityAlerts)}><span>Community Activity Alerts</span></label>
+          </div>
+        </section>
+        <section class="settings-modal-section">
+          <h3>Display Preferences</h3>
+          <div class="settings-select-grid">
+            <label>Map Style<select data-v2-settings-field="display.mapStyle"><option value="standard"${selected(settings.display.mapStyle, "standard")}>Standard</option><option value="dark"${selected(settings.display.mapStyle, "dark")}>Dark</option><option value="satellite"${selected(settings.display.mapStyle, "satellite")}>Satellite</option></select></label>
+            <label>Theme<select data-v2-settings-field="display.theme"><option value="system"${selected(settings.display.theme, "system")}>System</option><option value="light"${selected(settings.display.theme, "light")}>Light</option><option value="dark"${selected(settings.display.theme, "dark")}>Dark</option></select></label>
+          </div>
+          <p class="settings-placeholder-note">Theme preference is persisted for the future theme engine.</p>
+        </section>
+        <section class="settings-modal-section" data-gridly-about><h3>About Gridly</h3><p><strong>${GRIDLY_APP_VERSION_LABEL}</strong><br>${GRIDLY_APP_BUILD_LABEL}</p><button class="gridly-v2-tile" data-v2-action="settings-feedback-placeholder" type="button">Send Feedback</button><p class="settings-placeholder-note" data-v2-settings-status>Settings saved locally.</p></section>
+      </div>`;
+  }
+
   const sheetTemplates = {
     report: { title: "Report Hazard", html: `<div class="gridly-v2-tiles gridly-v2-report-tiles">${V2_REPORT_HAZARD_OPTIONS.map((option)=>`<button class="gridly-v2-tile gridly-v2-report-action" data-v2-action="report-select-hazard" data-hazard-type="${option.type}" type="button"><span>${option.label}</span></button>`).join("")}</div><div class="gridly-v2-list gridly-v2-report-ctas"><p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p><button class="primary-btn" data-v2-action="report-use-location" type="button">Use My Location</button><button class="secondary-btn" data-v2-action="report-tap-map" type="button">Tap Map Location</button></div>` },
     route: { title: "Route Setup", html: buildRouteSurfaceHtml },
     alerts: { title: "Commute Command", html: buildAlertsSurfaceHtml },
-    settings: { title: "Settings", html: `<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p><button class="gridly-v2-tile" data-v2-action="settings-home-town" type="button">Set Home Town</button><button class="gridly-v2-tile" data-v2-action="settings-saved-places" type="button">Home / Work / Saved Places</button><button class="gridly-v2-tile" data-v2-action="settings-alert-preferences" type="button">Alert Preferences</button><button class="gridly-v2-tile" data-v2-action="settings-route-preferences" type="button">Route Preferences</button><button class="gridly-v2-tile" data-v2-action="settings-app-preferences" type="button">App Preferences</button></div>` },
+    settings: { title: "Settings", html: buildSettingsSurfaceHtml },
     layers: { title: "Map Layers", html: `<div class="gridly-v2-list"><p class="gridly-v2-sheet-copy">Choose map style:</p><button class="gridly-v2-tile" data-v2-action="layers-select" data-layer-name="Standard" type="button">Standard</button><button class="gridly-v2-tile" data-v2-action="layers-select" data-layer-name="Dark" type="button">Dark</button><button class="gridly-v2-tile" data-v2-action="layers-select" data-layer-name="Satellite" type="button">Satellite</button></div>` }
   };
   const v2DockAdapterState = { lastDockActionTriggered: "", lastDockAdapterTarget: "", adapterBridgeFailures: [], adapterFallbackCount: 0, lastV2Action: "", lastV2ActionResult: "", lastV2ActionError: "", lastReportAction: "", lastReportActionResult: "", lastReportActionError: "" };
@@ -31736,6 +32089,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       "settings-alert-preferences": () => triggerV2DockAdapter("settings-open"),
       "settings-route-preferences": () => triggerV2DockAdapter("settings-open"),
       "settings-app-preferences": () => triggerV2DockAdapter("settings-open"),
+      "settings-feedback-placeholder": () => setConfirmation("Feedback entry point is a placeholder for this phase.", "success"),
       "report-cancel": () => closePortraitV2Sheet(),
       "close": () => closePortraitV2Sheet(),
       "layers-select": () => {
@@ -31808,6 +32162,33 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         triggerV2DockAdapter(action, { hazardType: actionEl.dataset.hazardType || "", layerName: actionEl.dataset.layerName || "" });
       });
       body.dataset.v2DelegatedClickBound = "1";
+    }
+    if (activeSheet === "settings" && !body.dataset.gridlyV2SettingsChangeBound) {
+      body.addEventListener("change", (event) => {
+        const control = event.target instanceof Element ? event.target.closest("[data-v2-settings-field]") : null;
+        if (!control || !body.contains(control)) return;
+        const current = typeof getGridlySettingsPreferences === "function" ? getGridlySettingsPreferences() : normalizeGridlySettings();
+        const next = normalizeGridlySettings(current);
+        body.querySelectorAll("[data-v2-settings-field]").forEach((field) => {
+          const path = field.dataset.v2SettingsField || "";
+          const value = field instanceof HTMLInputElement && field.type === "checkbox" ? Boolean(field.checked) : field.value;
+          if (path === "notifications.routeAlerts") next.notifications.routeAlerts = Boolean(value);
+          if (path === "notifications.railAlerts") next.notifications.railAlerts = Boolean(value);
+          if (path === "notifications.hazardAlerts") next.notifications.hazardAlerts = Boolean(value);
+          if (path === "notifications.communityAlerts") next.notifications.communityAlerts = Boolean(value);
+          if (path === "display.mapStyle") next.display.mapStyle = String(value || "standard");
+          if (path === "display.theme") next.display.theme = String(value || "system");
+        });
+        try {
+          saveGridlySettingsPreferences(next, { applyDisplay: true, source: control.dataset.v2SettingsField || "portrait_v2_settings" });
+          const status = body.querySelector("[data-v2-settings-status]");
+          if (status) status.textContent = "Settings saved locally.";
+        } catch (error) {
+          const status = body.querySelector("[data-v2-settings-status]");
+          if (status) status.textContent = "Settings could not be saved on this device.";
+        }
+      });
+      body.dataset.gridlyV2SettingsChangeBound = "1";
     }
     const preconditions = getV2PreconditionsState();
     refreshPortraitV2ReportCtas(body, preconditions);
