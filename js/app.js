@@ -3312,6 +3312,120 @@ window.gridlyCommuteDisplayCopy = function gridlyCommuteDisplayCopy() {
   return gridlyBuildCommuteDisplayCopy();
 };
 
+
+let gridlyRouteWatchDisplayAuditState = {
+  commuteDisplayCopyAvailable: false,
+  displayTargetFound: false,
+  displayApplied: false,
+  displayText: "",
+  fallbackUsed: true,
+  displayReason: "not_rendered"
+};
+
+function gridlyGetRouteWatchCommuteDisplayCopy() {
+  const commuteDisplayCopy = typeof window.gridlyCommuteDisplayCopy === "function"
+    ? window.gridlyCommuteDisplayCopy()
+    : null;
+  const displayLines = commuteDisplayCopy
+    ? [
+        commuteDisplayCopy.headline,
+        commuteDisplayCopy.subline,
+        commuteDisplayCopy.detailLine,
+        commuteDisplayCopy.confidenceLine
+      ].map((line) => String(line || "").trim())
+    : [];
+  const completeDisplayCopy = displayLines.length === 4 && displayLines.every(Boolean);
+  const commuteDeltaSnapshot = typeof window.gridlyCommuteDeltaSnapshot === "function"
+    ? window.gridlyCommuteDeltaSnapshot()
+    : null;
+  const commuteDisplayCopyAvailable = Boolean(
+    completeDisplayCopy
+    && commuteDeltaSnapshot?.deltaAvailable
+    && Number.isFinite(Number(commuteDisplayCopy?.currentDurationMinutes))
+    && Number(commuteDisplayCopy.currentDurationMinutes) > 0
+  );
+
+  return {
+    commuteDisplayCopy,
+    commuteDisplayCopyAvailable,
+    displayLines,
+    displayText: commuteDisplayCopyAvailable ? displayLines.join("\n") : "",
+    displayReason: commuteDisplayCopyAvailable
+      ? "commute_display_copy_available"
+      : (completeDisplayCopy ? "commute_delta_unavailable" : "commute_display_copy_unavailable")
+  };
+}
+
+function gridlyBuildRouteWatchDisplayAudit(update = {}) {
+  gridlyRouteWatchDisplayAuditState = {
+    ...gridlyRouteWatchDisplayAuditState,
+    ...update,
+    fallbackUsed: !Boolean(update.displayApplied ?? gridlyRouteWatchDisplayAuditState.displayApplied)
+  };
+  return { ...gridlyRouteWatchDisplayAuditState };
+}
+
+function gridlyRenderRouteWatchDisplayCopy(container = null) {
+  const target = container || document.querySelector(".desktop-route-watch-strip .route-watch-metrics");
+  const display = gridlyGetRouteWatchCommuteDisplayCopy();
+  const baseAudit = {
+    commuteDisplayCopyAvailable: display.commuteDisplayCopyAvailable,
+    displayTargetFound: Boolean(target),
+    displayApplied: false,
+    displayText: display.displayText,
+    displayReason: display.displayReason
+  };
+
+  if (!target) {
+    return gridlyBuildRouteWatchDisplayAudit({ ...baseAudit, fallbackUsed: true, displayReason: "display_target_not_found" });
+  }
+  if (!display.commuteDisplayCopyAvailable) {
+    target.querySelector('[data-route-watch-display="commute-intelligence"]')?.remove();
+    return gridlyBuildRouteWatchDisplayAudit({ ...baseAudit, fallbackUsed: true });
+  }
+
+  const [headline, subline, detailLine, confidenceLine] = display.displayLines;
+  const markup = `
+    <span data-route-watch-display="commute-intelligence" class="route-watch-commute-display">
+      <b>${sanitizeText(headline)}</b>
+      <em>${sanitizeText(subline)}</em>
+      <em>${sanitizeText(detailLine)}</em>
+      <em>${sanitizeText(confidenceLine)}</em>
+    </span>
+  `;
+  const existing = target.querySelector('[data-route-watch-display="commute-intelligence"]');
+  if (existing) {
+    existing.outerHTML = markup;
+  } else {
+    target.insertAdjacentHTML("beforeend", markup);
+  }
+
+  return gridlyBuildRouteWatchDisplayAudit({
+    ...baseAudit,
+    displayApplied: true,
+    fallbackUsed: false,
+    displayReason: "route_watch_display_applied"
+  });
+}
+
+window.gridlyRouteWatchDisplayAudit = function gridlyRouteWatchDisplayAudit() {
+  const target = typeof document !== "undefined"
+    ? document.querySelector(".desktop-route-watch-strip .route-watch-metrics")
+    : null;
+  const renderedDisplay = target?.querySelector('[data-route-watch-display="commute-intelligence"]') || null;
+  const display = gridlyGetRouteWatchCommuteDisplayCopy();
+  return gridlyBuildRouteWatchDisplayAudit({
+    commuteDisplayCopyAvailable: display.commuteDisplayCopyAvailable,
+    displayTargetFound: Boolean(target),
+    displayApplied: Boolean(renderedDisplay && display.commuteDisplayCopyAvailable),
+    displayText: renderedDisplay ? String(renderedDisplay.textContent || "").replace(/\s+/g, " ").trim() : display.displayText,
+    fallbackUsed: !Boolean(renderedDisplay && display.commuteDisplayCopyAvailable),
+    displayReason: renderedDisplay && display.commuteDisplayCopyAvailable
+      ? "route_watch_display_applied"
+      : (target ? display.displayReason : "display_target_not_found")
+  });
+};
+
 window.gridlyTravelTimeAudit = function gridlyTravelTimeAudit() {
   const places = gridlyGetSavedPlacesReadiness();
   const routeGeometry = gridlyGetRouteGeometryDiagnostics();
@@ -3477,6 +3591,10 @@ window.gridlyTravelTimeBlueprint = function gridlyTravelTimeBlueprint() {
     && commuteDisplayCopy.detailLine
     && commuteDisplayCopy.confidenceLine
   );
+  const routeWatchDisplayAudit = typeof window.gridlyRouteWatchDisplayAudit === "function"
+    ? window.gridlyRouteWatchDisplayAudit()
+    : {};
+  const routeWatchDisplayAvailable = Boolean(routeWatchDisplayAudit.displayApplied);
   const estimatedInputInventory = {
     savedHome: places.hasHome,
     savedWork: places.hasWork,
@@ -3535,7 +3653,8 @@ window.gridlyTravelTimeBlueprint = function gridlyTravelTimeBlueprint() {
     commuteDeltaMinutes,
     commuteDeltaStatus,
     commuteDisplayCopyAvailable,
-    travelTimeIntelligencePhase: commuteDisplayCopyAvailable ? "commute_display_copy" : (commuteDeltaAvailable ? "commute_delta" : (Boolean(commuteBaselineBlueprint.normalCommuteBaselineAvailable) ? "normal_baseline" : (Boolean(commuteBaselineBlueprint.baselineStorageReady) && Number(commuteBaselineBlueprint.baselineSampleCount || 0) > 0 ? "baseline_storage" : (Boolean(commuteBaselineBlueprint.baselineCollectionReady) ? "baseline_blueprint" : (Boolean(audit.currentCommuteSnapshotAvailable) ? "current_commute_snapshot" : (Boolean(audit.routeMetricsAvailable) ? "metrics_persisted" : "foundation")))))),
+    routeWatchDisplayAvailable,
+    travelTimeIntelligencePhase: routeWatchDisplayAvailable ? "route_watch_display" : (commuteDisplayCopyAvailable ? "commute_display_copy" : (commuteDeltaAvailable ? "commute_delta" : (Boolean(commuteBaselineBlueprint.normalCommuteBaselineAvailable) ? "normal_baseline" : (Boolean(commuteBaselineBlueprint.baselineStorageReady) && Number(commuteBaselineBlueprint.baselineSampleCount || 0) > 0 ? "baseline_storage" : (Boolean(commuteBaselineBlueprint.baselineCollectionReady) ? "baseline_blueprint" : (Boolean(audit.currentCommuteSnapshotAvailable) ? "current_commute_snapshot" : (Boolean(audit.routeMetricsAvailable) ? "metrics_persisted" : "foundation"))))))),
     estimatedTravelTimeReady: Boolean(audit.estimatedTravelTimeReady),
     routeImpactReady: Boolean(audit.routeImpactReady),
     recommendedFutureModel: {
@@ -3623,8 +3742,9 @@ window.gridlyUserTrustBlueprintAudit = function gridlyUserTrustBlueprintAudit() 
     blueprintVersion: GRIDLY_USER_TRUST_BLUEPRINT_VERSION,
     hazardLifecycleReady,
     travelTimeReady,
-    travelTimeIntelligencePhase: travelBlueprint.commuteDisplayCopyAvailable ? "commute_display_copy" : (travelBlueprint.commuteDeltaAvailable ? "commute_delta" : (travelBlueprint.normalCommuteBaselineAvailable ? "normal_baseline" : (travelBlueprint.baselineStorageReady && Number(travelBlueprint.baselineSampleCount || 0) > 0 ? "baseline_storage" : (travelBlueprint.baselineCollectionReady ? "baseline_blueprint" : (travelBlueprint.currentCommuteSnapshotAvailable ? "current_commute_snapshot" : (travelBlueprint.routeMetricsAvailable ? "metrics_persisted" : "foundation")))))),
+    travelTimeIntelligencePhase: travelBlueprint.routeWatchDisplayAvailable ? "route_watch_display" : (travelBlueprint.commuteDisplayCopyAvailable ? "commute_display_copy" : (travelBlueprint.commuteDeltaAvailable ? "commute_delta" : (travelBlueprint.normalCommuteBaselineAvailable ? "normal_baseline" : (travelBlueprint.baselineStorageReady && Number(travelBlueprint.baselineSampleCount || 0) > 0 ? "baseline_storage" : (travelBlueprint.baselineCollectionReady ? "baseline_blueprint" : (travelBlueprint.currentCommuteSnapshotAvailable ? "current_commute_snapshot" : (travelBlueprint.routeMetricsAvailable ? "metrics_persisted" : "foundation"))))))),
     commuteDisplayCopyAvailable: Boolean(travelBlueprint.commuteDisplayCopyAvailable),
+    routeWatchDisplayAvailable: Boolean(travelBlueprint.routeWatchDisplayAvailable),
     commuteDeltaAvailable: Boolean(travelBlueprint.commuteDeltaAvailable),
     commuteDeltaMinutes: Number.isFinite(Number(travelBlueprint.commuteDeltaMinutes)) ? Number(travelBlueprint.commuteDeltaMinutes) : null,
     commuteDeltaStatus: travelBlueprint.commuteDeltaStatus || "unavailable",
@@ -23838,6 +23958,25 @@ function ensureRouteWatchLayoutPolishV331Styles() {
       line-height: 1.35;
       font-weight: 650;
     }
+    .route-watch-commute-display {
+      display: inline-grid;
+      gap: 2px;
+      min-width: min(100%, 220px);
+    }
+    .route-watch-commute-display b,
+    .route-watch-commute-display em {
+      display: block;
+      line-height: 1.22;
+    }
+    .route-watch-commute-display b {
+      color: #eef7ff;
+      font-weight: 750;
+    }
+    .route-watch-commute-display em {
+      color: #c6d5e5;
+      font-style: normal;
+      font-size: 0.78rem;
+    }
     @media (max-width: 640px) {
       .route-watch-intel-grid {
         grid-template-columns: minmax(0, 1fr);
@@ -23924,6 +24063,7 @@ function renderDesktopRouteWatchMetrics({
     ${routeEtaMarkup}
     ${routeDelayMarkup}
   `;
+  gridlyRenderRouteWatchDisplayCopy(desktopMetricsContainer);
 }
 
 function getRouteEtaMetricsFromState({
