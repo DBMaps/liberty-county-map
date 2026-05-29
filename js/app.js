@@ -13371,7 +13371,7 @@ window.gridlyTopStatusSelectionAudit = function gridlyTopStatusSelectionAudit(op
   } catch (error) {
     return {
       loaded: false,
-      version: "V182",
+      version: "V182.1",
       candidateCount: 0,
       winningCandidate: null,
       winningScore: 0,
@@ -13380,6 +13380,11 @@ window.gridlyTopStatusSelectionAudit = function gridlyTopStatusSelectionAudit(op
       corridorGroups: [],
       topCorridor: null,
       awarenessSelectionReason: "Top status selection audit failed before candidates could be evaluated.",
+      awarenessSelectionBreakdown: {
+        winnerReason: "Audit failed before candidates could be evaluated",
+        corridorInfluence: "No corridor diagnostics available",
+        suppressedReasonSummary: "No suppression summary available"
+      },
       error: error?.message || "unknown error"
     };
   }
@@ -24806,28 +24811,144 @@ function buildCorridorClusters(intelItems = [], recentlyCleared = []) {
 
 
 function normalizeGridlyTopStatusCorridorLabel(value = "") {
-  const cleaned = normalizeCorridorBaseLabel(String(value || "").replace(/\s+corridor$/i, "").trim());
+  const primitive = (typeof value === "string" || typeof value === "number") ? String(value) : "";
+  if (/\[object\s+Object\]/i.test(primitive)) return "Local corridors";
+  const cleaned = normalizeCorridorBaseLabel(primitive.replace(/\s+corridor$/i, "").trim());
   if (!cleaned || /^local\s+(road|crossing|corridors?|impact)/i.test(cleaned)) return "Local corridors";
   return `${cleaned} corridor`;
 }
 
-function resolveGridlyTopStatusCorridorGroup(item = {}) {
-  const incident = item?.incident || item || {};
-  const explicitLabel = item?.inferredCorridorLabel || incident?.corridor || incident?.corridorLabel || incident?.corridor_label;
-  const explicitNormalized = normalizeGridlyTopStatusCorridorLabel(explicitLabel);
-  if (explicitNormalized !== "Local corridors") return explicitNormalized;
+function getGridlyTopStatusDiagnosticText(value) {
+  if (value === undefined || value === null) return "";
+  if (typeof value === "string" || typeof value === "number") {
+    const text = String(value).trim();
+    return /\[object\s+Object\]/i.test(text) ? "" : text;
+  }
+  if (typeof value !== "object") return "";
+  const nestedKeys = ["displayName", "display_name", "name", "label", "roadName", "road_name", "primaryRoad", "route", "highway", "title"];
+  for (const key of nestedKeys) {
+    const nested = getGridlyTopStatusDiagnosticText(value?.[key]);
+    if (nested) return nested;
+  }
+  return "";
+}
 
-  const corridorText = normalizeGridlyCommunityPresenceToken([
-    incident?.roadName, incident?.road_name, incident?.street_name, incident?.nearest_road,
-    incident?.route, incident?.highway, incident?.location_name, incident?.area,
-    incident?.title, incident?.description, incident?.detail, incident?.details,
-    item?.localizedSummary
-  ].join(" "));
+function getGridlyTopStatusDiagnosticPathValue(root, path = "") {
+  const value = String(path || "").split(".").reduce((current, key) => current?.[key], root);
+  return getGridlyTopStatusDiagnosticText(value);
+}
+
+function getGridlyTopStatusCorridorEvidence(item = {}, incident = {}) {
+  const evidenceFields = [
+    ["primaryRoad", incident?.primaryRoad],
+    ["parsedPrimaryRoad", incident?.parsedPrimaryRoad],
+    ["roadName", incident?.roadName],
+    ["road_name", incident?.road_name],
+    ["route", incident?.route],
+    ["highway", incident?.highway],
+    ["corridorLabel", incident?.corridorLabel],
+    ["corridor_label", incident?.corridor_label],
+    ["corridor", incident?.corridor],
+    ["inferredCorridorLabel", item?.inferredCorridorLabel],
+    ["nearest_road", incident?.nearest_road],
+    ["street_name", incident?.street_name],
+    ["location_name", incident?.location_name],
+    ["area", incident?.area]
+  ];
+  const evidence = [];
+  evidenceFields.forEach(([, value]) => {
+    const text = getGridlyTopStatusDiagnosticText(value);
+    if (text && !evidence.some((entry) => normalizeGridlyCommunityPresenceToken(entry) === normalizeGridlyCommunityPresenceToken(text))) {
+      evidence.push(text);
+    }
+  });
+  const referenceRoads = [
+    getGridlyTopStatusDiagnosticText(incident?.referenceRoadA || incident?.reference_road_a),
+    getGridlyTopStatusDiagnosticText(incident?.referenceRoadB || incident?.reference_road_b)
+  ].filter(Boolean);
+  if (referenceRoads.length >= 2) evidence.push(`between ${referenceRoads[0]} and ${referenceRoads[1]}`);
+  else if (referenceRoads.length === 1) evidence.push(`near ${referenceRoads[0]}`);
+  const summary = getGridlyTopStatusDiagnosticText(item?.localizedSummary);
+  if (summary) evidence.push(summary);
+  return evidence.slice(0, 6);
+}
+
+function resolveGridlyTopStatusCorridorDiagnostics(item = {}) {
+  const incident = item?.incident || item || {};
+  const sourceCandidates = [
+    ["inferredCorridorLabel", item?.inferredCorridorLabel],
+    ["primaryRoad", incident?.primaryRoad],
+    ["parsedPrimaryRoad", incident?.parsedPrimaryRoad],
+    ["roadName", incident?.roadName],
+    ["road_name", incident?.road_name],
+    ["route", incident?.route],
+    ["highway", incident?.highway],
+    ["corridorLabel", incident?.corridorLabel],
+    ["corridor_label", incident?.corridor_label],
+    ["corridor", incident?.corridor],
+    ["raw.primaryRoad", getGridlyTopStatusDiagnosticPathValue(incident, "raw.primaryRoad")],
+    ["raw.roadName", getGridlyTopStatusDiagnosticPathValue(incident, "raw.roadName")],
+    ["source.primaryRoad", getGridlyTopStatusDiagnosticPathValue(incident, "source.primaryRoad")],
+    ["source.roadName", getGridlyTopStatusDiagnosticPathValue(incident, "source.roadName")]
+  ];
+  for (const [sourceField, value] of sourceCandidates) {
+    const text = getGridlyTopStatusDiagnosticText(value);
+    const normalized = normalizeGridlyTopStatusCorridorLabel(text);
+    if (normalized !== "Local corridors") {
+      return {
+        corridor: normalized,
+        corridorDisplayName: normalized,
+        corridorSourceField: sourceField,
+        corridorEvidence: getGridlyTopStatusCorridorEvidence(item, incident)
+      };
+    }
+  }
+
+  const textFields = [
+    ["location_name", incident?.location_name],
+    ["area", incident?.area],
+    ["title", incident?.title],
+    ["description", incident?.description],
+    ["detail", incident?.detail],
+    ["details", incident?.details],
+    ["localizedSummary", item?.localizedSummary]
+  ];
+  const corridorText = normalizeGridlyCommunityPresenceToken(textFields.map(([, value]) => getGridlyTopStatusDiagnosticText(value)).join(" "));
   const known = GRIDLY_COMMUNITY_CORRIDORS.find((corridor) => corridor.aliases.some((alias) => corridorText.includes(alias)));
-  if (known?.name) return normalizeGridlyTopStatusCorridorLabel(known.name);
+  if (known?.name) {
+    const sourceHit = textFields.find(([, value]) => {
+      const text = normalizeGridlyCommunityPresenceToken(getGridlyTopStatusDiagnosticText(value));
+      return known.aliases.some((alias) => text.includes(alias));
+    });
+    const normalized = normalizeGridlyTopStatusCorridorLabel(known.name);
+    return {
+      corridor: normalized,
+      corridorDisplayName: normalized,
+      corridorSourceField: sourceHit?.[0] || "knownCorridorAlias",
+      corridorEvidence: getGridlyTopStatusCorridorEvidence(item, incident)
+    };
+  }
   const match = corridorText.match(/\b(us|tx|fm)\s*(\d{2,4})\b/i);
-  if (match) return normalizeGridlyTopStatusCorridorLabel(`${match[1].toUpperCase()} ${match[2]}`);
-  return "Local corridors";
+  if (match) {
+    const normalized = normalizeGridlyTopStatusCorridorLabel(`${match[1].toUpperCase()} ${match[2]}`);
+    const sourceHit = textFields.find(([, value]) => /\b(us|tx|fm)\s*(\d{2,4})\b/i.test(getGridlyTopStatusDiagnosticText(value)));
+    return {
+      corridor: normalized,
+      corridorDisplayName: normalized,
+      corridorSourceField: sourceHit?.[0] || "textPattern",
+      corridorEvidence: getGridlyTopStatusCorridorEvidence(item, incident)
+    };
+  }
+  return {
+    corridor: "Local corridors",
+    corridorDisplayName: "Local corridors",
+    corridorSourceField: "fallback",
+    corridorEvidence: getGridlyTopStatusCorridorEvidence(item, incident)
+  };
+}
+
+function resolveGridlyTopStatusCorridorGroup(item = {}) {
+  return resolveGridlyTopStatusCorridorDiagnostics(item).corridor;
 }
 
 function getGridlyTopStatusCandidateSeverityContribution(item = {}) {
@@ -24865,15 +24986,26 @@ function buildGridlyTopStatusSelectionDiagnostics({
   const candidates = gridlySafeArray(intelItems);
   const corridorGroupsMap = new Map();
   candidates.forEach((item, index) => {
-    const corridor = resolveGridlyTopStatusCorridorGroup(item);
+    const corridorDiagnostics = resolveGridlyTopStatusCorridorDiagnostics(item);
+    const corridor = corridorDiagnostics.corridor;
     if (!corridorGroupsMap.has(corridor)) {
-      corridorGroupsMap.set(corridor, { corridor, candidateCount: 0, routeImpactCount: 0, maxModelPriorityScore: 0, candidateIndexes: [] });
+      corridorGroupsMap.set(corridor, {
+        corridor,
+        corridorDisplayName: corridorDiagnostics.corridorDisplayName,
+        candidateCount: 0,
+        routeImpactCount: 0,
+        maxModelPriorityScore: 0,
+        candidateIndexes: [],
+        supportingCandidateIds: []
+      });
     }
     const group = corridorGroupsMap.get(corridor);
+    const candidateId = String(item?.incident?.id || item?.incident?.report_id || item?.incident?.reportId || `candidate-${index}`);
     group.candidateCount += 1;
     if (item?.routeRelevant) group.routeImpactCount += 1;
     group.maxModelPriorityScore = Math.max(group.maxModelPriorityScore, Number(item?.priorityScore || 0));
     group.candidateIndexes.push(index);
+    group.supportingCandidateIds.push(candidateId);
   });
   const corridorGroups = Array.from(corridorGroupsMap.values()).sort((a, b) => {
     const aScore = (a.candidateCount * 12) + (a.routeImpactCount * 10) + (a.maxModelPriorityScore / 20);
@@ -24883,7 +25015,8 @@ function buildGridlyTopStatusSelectionDiagnostics({
   const topCorridor = corridorGroups[0] || null;
   const selectedKey = selectedItem ? `${selectedItem?.incident?.id || selectedItem?.incident?.report_id || selectedItem?.incident?.reportId || ""}:${selectedItem?.localizedSummary || ""}` : "";
   const candidateScores = candidates.map((item, index) => {
-    const corridor = resolveGridlyTopStatusCorridorGroup(item);
+    const corridorDiagnostics = resolveGridlyTopStatusCorridorDiagnostics(item);
+    const corridor = corridorDiagnostics.corridor;
     const group = corridorGroupsMap.get(corridor) || { candidateCount: 1 };
     const freshnessContribution = getGridlyTopStatusCandidateFreshnessContribution(item);
     const severityContribution = getGridlyTopStatusCandidateSeverityContribution(item);
@@ -24896,6 +25029,9 @@ function buildGridlyTopStatusSelectionDiagnostics({
       id: String(item?.incident?.id || item?.incident?.report_id || item?.incident?.reportId || `candidate-${index}`),
       summary: safeDisplayText(item?.localizedSummary || topStatus || "Movement alert active", "Movement alert active"),
       corridor,
+      corridorDisplayName: corridorDiagnostics.corridorDisplayName,
+      corridorSourceField: corridorDiagnostics.corridorSourceField,
+      corridorEvidence: corridorDiagnostics.corridorEvidence,
       freshnessContribution,
       severityContribution,
       routeImpactContribution,
@@ -24908,6 +25044,19 @@ function buildGridlyTopStatusSelectionDiagnostics({
     };
   }).sort((a, b) => b.finalScore - a.finalScore || b.modelPriorityScore - a.modelPriorityScore);
   const winningCandidate = candidateScores.find((candidate) => candidate.selected) || candidateScores[0] || null;
+  const suppressedTotal = winningCandidate ? Math.max(0, candidateScores.length - 1) : 0;
+  const topCorridorInfluence = topCorridor
+    ? `${topCorridor.corridorDisplayName || topCorridor.corridor} contained ${Number(topCorridor.candidateCount || 0)} active candidate${Number(topCorridor.candidateCount || 0) === 1 ? "" : "s"}`
+    : "No active corridor concentration was available for selection diagnostics";
+  const awarenessSelectionBreakdown = {
+    winnerReason: candidates.length
+      ? "Highest combined severity + freshness + route impact score"
+      : "No active candidates; quiet-state fallback remains in control",
+    corridorInfluence: topCorridorInfluence,
+    suppressedReasonSummary: suppressedTotal
+      ? `${suppressedTotal} lower-scoring candidate${suppressedTotal === 1 ? "" : "s"} remained below selection threshold`
+      : "No lower-scoring candidates were suppressed"
+  };
   const suppressedCandidates = candidateScores
     .filter((candidate) => !winningCandidate || candidate.id !== winningCandidate.id || candidate.index !== winningCandidate.index)
     .slice(0, 12)
@@ -24921,7 +25070,7 @@ function buildGridlyTopStatusSelectionDiagnostics({
     }));
   return {
     loaded: true,
-    version: "V182",
+    version: "V182.1",
     candidateCount: candidates.length,
     winningCandidate,
     winningScore: Number(winningCandidate?.finalScore || 0),
@@ -24933,6 +25082,7 @@ function buildGridlyTopStatusSelectionDiagnostics({
     awarenessSelectionReason: candidates.length
       ? `${selectionSource}; corridor density is diagnostic and contributes to candidate evidence without changing top-awareness layout.`
       : "No active top-status candidates available; quiet-state fallback remains in control.",
+    awarenessSelectionBreakdown,
     protectedRuntimeUsage: {
       crossingRuntimeUsed: false,
       crossingEnrichmentUsed: false,
