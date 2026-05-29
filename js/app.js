@@ -2849,9 +2849,80 @@ window.gridlyHazardLifecycleAudit = function gridlyHazardLifecycleAudit(options 
   };
 };
 
+function gridlyGetTravelTimeImpactReadiness(routeGeometry = gridlyGetRouteGeometryDiagnostics()) {
+  const counts = gridlyCommuteIntelligenceAuditState?.counts || {};
+  const hasRouteImpactSnapshot = Object.prototype.hasOwnProperty.call(counts, "routeIncidentCount");
+  const hasCorridorSnapshot = Object.prototype.hasOwnProperty.call(counts, "corridorCount");
+  const activeRouteImpactCount = Math.max(0, Number(counts.routeIncidentCount || 0));
+  const activeCorridorImpactCount = Math.max(0, Number(counts.corridorCount || 0));
+  return {
+    activeRouteImpactCount,
+    activeCorridorImpactCount,
+    routeImpactReady: Boolean(routeGeometry.routeGeometryAvailable && hasRouteImpactSnapshot && hasCorridorSnapshot),
+    routeImpactUnavailableReasons: [
+      !routeGeometry.routeGeometryAvailable ? "route_geometry_unavailable" : "",
+      !hasRouteImpactSnapshot ? "route_impact_snapshot_unavailable" : "",
+      !hasCorridorSnapshot ? "corridor_impact_snapshot_unavailable" : ""
+    ].filter(Boolean),
+    routeImpactSource: "gridlyCommuteIntelligenceAuditState.counts"
+  };
+}
+
+window.gridlyTravelTimeAudit = function gridlyTravelTimeAudit() {
+  const places = gridlyGetSavedPlacesReadiness();
+  const routeGeometry = gridlyGetRouteGeometryDiagnostics();
+  const routeWatchConfigured = Boolean(places.routablePlaceCount >= 2 && (places.hasHome || places.hasWork));
+  const routeDistanceMiles = Number.isFinite(Number(monitoredRouteDistanceMiles)) ? Number(monitoredRouteDistanceMiles) : null;
+  const routeDistanceAvailable = Number.isFinite(Number(routeDistanceMiles)) && Number(routeDistanceMiles) > 0;
+  const currentRouteDurationMinutes = Number.isFinite(Number(monitoredRouteDurationSeconds)) && Number(monitoredRouteDurationSeconds) > 0
+    ? Math.max(1, Math.round(Number(monitoredRouteDurationSeconds) / 60))
+    : null;
+  const routeDurationAvailable = Number.isFinite(Number(currentRouteDurationMinutes)) && Number(currentRouteDurationMinutes) > 0;
+  const missingRequirements = [
+    !routeWatchConfigured ? "route_watch_not_configured" : "",
+    !places.hasHome ? "home_not_configured" : "",
+    !places.hasWork ? "work_not_configured" : "",
+    !routeGeometry.routeGeometryAvailable ? "route_geometry_unavailable" : "",
+    !routeDistanceAvailable ? "route_distance_unavailable" : "",
+    !routeDurationAvailable ? "current_route_duration_unavailable" : ""
+  ].filter(Boolean);
+  const estimatedTravelTimeReady = Boolean(routeWatchConfigured && routeGeometry.routeGeometryAvailable && routeDurationAvailable);
+  const baselineReady = Boolean(places.hasHome && places.hasWork && routeWatchConfigured && routeGeometry.routeGeometryAvailable && routeDistanceAvailable && routeDurationAvailable);
+  const impactReadiness = gridlyGetTravelTimeImpactReadiness(routeGeometry);
+
+  return {
+    routeWatchConfigured,
+    homeConfigured: places.hasHome,
+    workConfigured: places.hasWork,
+    routeGeometryAvailable: routeGeometry.routeGeometryAvailable,
+    routePointCount: routeGeometry.routePointCount,
+    routeDistanceAvailable,
+    routeDistanceMiles,
+    routeDurationAvailable,
+    currentRouteDurationMinutes,
+    baselineReady,
+    missingRequirements,
+    estimatedTravelTimeReady,
+    activeRouteImpactCount: impactReadiness.activeRouteImpactCount,
+    activeCorridorImpactCount: impactReadiness.activeCorridorImpactCount,
+    routeImpactReady: impactReadiness.routeImpactReady,
+    unavailableReasons: {
+      routeWatchConfigured: routeWatchConfigured ? null : (places.routablePlaceCount < 2 ? "fewer_than_two_routable_places" : "home_or_work_required"),
+      homeConfigured: places.hasHome ? null : "saved_home_missing",
+      workConfigured: places.hasWork ? null : "saved_work_missing",
+      routeGeometryAvailable: routeGeometry.routeGeometryAvailable ? null : "active_route_polyline_missing",
+      routeDistanceAvailable: routeDistanceAvailable ? null : "osrm_distance_not_available_for_current_route",
+      routeDurationAvailable: routeDurationAvailable ? null : "osrm_duration_not_available_for_current_route",
+      routeImpactReady: impactReadiness.routeImpactReady ? null : impactReadiness.routeImpactUnavailableReasons.join(",")
+    },
+    notes: ["Diagnostic-only foundation; no historical commute prediction, machine learning, schedulers, polling, or route recomputation are used."]
+  };
+};
+
 window.gridlyTravelTimeBlueprint = function gridlyTravelTimeBlueprint() {
   const places = gridlyGetSavedPlacesReadiness();
   const routeGeometry = gridlyGetRouteGeometryDiagnostics();
+  const audit = window.gridlyTravelTimeAudit?.() || {};
   const routeWatchConfigured = Boolean(places.routablePlaceCount >= 2 && (places.hasHome || places.hasWork));
   const estimatedInputInventory = {
     savedHome: places.hasHome,
@@ -2859,7 +2930,11 @@ window.gridlyTravelTimeBlueprint = function gridlyTravelTimeBlueprint() {
     routeWatchConfigured,
     currentRouteAvailable: routeGeometry.currentRouteAvailable,
     routeGeometryAvailable: routeGeometry.routeGeometryAvailable,
-    routePointCount: routeGeometry.routePointCount
+    routePointCount: routeGeometry.routePointCount,
+    routeDistanceAvailable: Boolean(audit.routeDistanceAvailable),
+    routeDistanceMiles: Number.isFinite(Number(audit.routeDistanceMiles)) ? Number(audit.routeDistanceMiles) : null,
+    routeDurationAvailable: Boolean(audit.routeDurationAvailable),
+    currentRouteDurationMinutes: Number.isFinite(Number(audit.currentRouteDurationMinutes)) ? Number(audit.currentRouteDurationMinutes) : null
   };
   const estimatedInputsAvailable = Boolean(
     estimatedInputInventory.savedHome
@@ -2878,12 +2953,16 @@ window.gridlyTravelTimeBlueprint = function gridlyTravelTimeBlueprint() {
     routePointCount: routeGeometry.routePointCount,
     estimatedInputsAvailable,
     estimatedInputInventory,
+    travelTimeAuditAvailable: typeof window.gridlyTravelTimeAudit === "function",
+    baselineReady: Boolean(audit.baselineReady),
+    estimatedTravelTimeReady: Boolean(audit.estimatedTravelTimeReady),
+    routeImpactReady: Boolean(audit.routeImpactReady),
     recommendedFutureModel: {
       normalCommute: "baseline commute duration for a saved route",
       currentCommute: "live commute duration for the current route context",
       delta: "difference between current commute and normal commute"
     },
-    notes: ["Diagnostic blueprint only; no travel times are calculated."]
+    notes: ["Diagnostic blueprint only; no travel times are predicted or persisted."]
   };
 };
 
@@ -2963,6 +3042,7 @@ window.gridlyUserTrustBlueprintAudit = function gridlyUserTrustBlueprintAudit() 
     blueprintVersion: GRIDLY_USER_TRUST_BLUEPRINT_VERSION,
     hazardLifecycleReady,
     travelTimeReady,
+    travelTimeIntelligencePhase: "foundation",
     onboardingReady,
     settingsReady,
     launchCriticalGaps,
@@ -4736,6 +4816,7 @@ let osrmRouteSuccess = false;
 let monitoredRouteEtaMinutes = null;
 let monitoredRouteDelayMinutes = null;
 let monitoredRouteDurationSeconds = null;
+let monitoredRouteDistanceMiles = null;
 let lastRouteRequest = null;
 let lastRouteGeometryPointCount = 0;
 let lastRouteError = null;
@@ -21835,6 +21916,7 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
   monitoredRouteEtaMinutes = null;
   monitoredRouteDelayMinutes = null;
   monitoredRouteDurationSeconds = null;
+  monitoredRouteDistanceMiles = null;
 
   try {
     const startLat = Number(startCoordinates?.lat);
@@ -21885,6 +21967,10 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
     console.info("Gridly route geometry point count", { pointCount: convertedPoints.length, source: "osrm" });
     routeGeometrySource = "osrm";
     osrmRouteSuccess = true;
+    const osrmDistanceMeters = Number(primaryRoute?.distance);
+    if (Number.isFinite(osrmDistanceMeters) && osrmDistanceMeters > 0) {
+      monitoredRouteDistanceMiles = Number((osrmDistanceMeters / 1609.344).toFixed(2));
+    }
     const osrmDurationSeconds = Number(primaryRoute?.duration);
     if (Number.isFinite(osrmDurationSeconds) && osrmDurationSeconds > 0) {
       monitoredRouteDurationSeconds = Math.round(osrmDurationSeconds);
@@ -21895,6 +21981,7 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
     osrmRouteSuccess = false;
     lastRouteError = String(error?.message || error || "OSRM route failed");
     lastRouteGeometryPointCount = fallbackPoints.length;
+    monitoredRouteDistanceMiles = null;
     console.info("Gridly route geometry point count", { pointCount: fallbackPoints.length, source: "fallback" });
     captureRouteAttempt({ osrmCallSucceeded: false, finalFailureReason: lastRouteError });
   }
