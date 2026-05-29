@@ -2910,8 +2910,12 @@ function gridlyBuildCommuteBaselineStorageAudit() {
   };
 }
 
-function gridlyCaptureCommuteBaselineSample() {
+let gridlyCommuteBaselineSampleCaptureInProgress = false;
+
+function gridlyCaptureCommuteBaselineSampleImpl() {
   const emptyResult = (reason, extra = {}) => ({ captured: false, reason, sample: null, sampleCount: gridlyReadCommuteBaselineSamples().length, ...extra });
+  if (gridlyCommuteBaselineSampleCaptureInProgress) return emptyResult("capture_already_in_progress");
+  gridlyCommuteBaselineSampleCaptureInProgress = true;
   try {
     if (!gridlyCommuteBaselineStorageAvailable()) return emptyResult("storage_unavailable", { sampleCount: 0 });
     const places = gridlyGetSavedPlacesReadiness();
@@ -2946,6 +2950,8 @@ function gridlyCaptureCommuteBaselineSample() {
     return { captured: true, reason: "captured", sample, sampleCount: nextSamples.length };
   } catch (error) {
     return emptyResult("capture_failed");
+  } finally {
+    gridlyCommuteBaselineSampleCaptureInProgress = false;
   }
 }
 
@@ -2954,7 +2960,7 @@ window.gridlyCommuteBaselineStorageAudit = function gridlyCommuteBaselineStorage
 };
 
 window.gridlyCaptureCommuteBaselineSample = function gridlyCaptureCommuteBaselineSampleAudit() {
-  return gridlyCaptureCommuteBaselineSample();
+  return gridlyCaptureCommuteBaselineSampleImpl();
 };
 
 function gridlyGetLocationPermissionDiagnostic() {
