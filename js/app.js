@@ -14842,6 +14842,8 @@ function getGridlyPortraitActivationCssClassAudit(shell) {
       { selector: "#gridlyPortraitV2", effect: "base CSS sets display:none", matched: Boolean(shell) },
       { selector: 'body[data-layout-mode="portrait"] #gridlyPortraitV2', effect: "portrait CSS requests display:block, fixed inset shell", matched: Boolean(shell && body?.dataset?.layoutMode === "portrait") },
       { selector: 'body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2', effect: "raises V2 z-index when JS marks shell visually active", matched: Boolean(shell && body?.dataset?.layoutMode === "portrait" && body.classList.contains("gridly-v2-surface-containment")) },
+      { selector: 'body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2::before', effect: "V181.3 top shield isolates the header/status/segments stack from underlying map-card or Community Pulse surfaces inside the strict portrait-mobile containment gate", matched: Boolean(shell && body?.dataset?.layoutMode === "portrait" && body.classList.contains("gridly-v2-surface-containment")) },
+      { selector: 'body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 .gridly-v2-topbar, .gridly-v2-status-pill, .gridly-v2-segments', effect: "V181.3 applies opaque paint-contained backgrounds to prevent layer bleed inside the strict portrait-mobile containment gate", matched: Boolean(shell && body?.dataset?.layoutMode === "portrait" && body.classList.contains("gridly-v2-surface-containment")) },
       { selector: '[hidden]', effect: "HTML hidden attribute keeps the shell out of rendering until removed", matched: Boolean(shell?.hidden) }
     ],
     portraitV2StartupActivationApplied: Boolean(gridlyPortraitV2StartupActivationState.applied),
@@ -30085,6 +30087,94 @@ const v134ReportingRefinementApplied = true;
     };
   };
 
+  function getGridlyTopHeaderBleedAuditSnapshot() {
+    const body = document.body;
+    const shell = document.getElementById("gridlyPortraitV2");
+    const headerSelectors = [".gridly-v2-topbar", ".gridly-v2-status-pill", ".gridly-v2-segments"];
+    const headerElements = headerSelectors
+      .map((selector) => ({ selector, element: shell?.querySelector?.(selector) || null }))
+      .filter((entry) => entry.element);
+    const rectToJson = (rect) => rect ? {
+      top: Math.round(rect.top),
+      right: Math.round(rect.right),
+      bottom: Math.round(rect.bottom),
+      left: Math.round(rect.left),
+      width: Math.round(rect.width),
+      height: Math.round(rect.height)
+    } : null;
+    const rectsOverlap = (a, b) => Boolean(a && b && a.width > 0 && a.height > 0 && b.width > 0 && b.height > 0 && a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top);
+    const parseAlpha = (color = "") => {
+      const rgba = String(color || "").match(/rgba?\(([^)]+)\)/i);
+      if (!rgba) return color && color !== "transparent" ? 1 : 0;
+      const parts = rgba[1].split(",").map((part) => part.trim());
+      return parts.length >= 4 ? Number.parseFloat(parts[3]) : 1;
+    };
+    const headerRegionRect = headerElements.reduce((acc, entry) => {
+      const rect = entry.element.getBoundingClientRect();
+      if (!rect || rect.width <= 0 || rect.height <= 0) return acc;
+      if (!acc) return { top: rect.top, right: rect.right, bottom: rect.bottom, left: rect.left, width: rect.width, height: rect.height };
+      const top = Math.min(acc.top, rect.top);
+      const left = Math.min(acc.left, rect.left);
+      const right = Math.max(acc.right, rect.right);
+      const bottom = Math.max(acc.bottom, rect.bottom);
+      return { top, right, bottom, left, width: right - left, height: bottom - top };
+    }, null);
+    const headerSurfaces = headerElements.map(({ selector, element }) => {
+      const style = getComputedStyle(element);
+      const backgroundImageApplied = Boolean(style.backgroundImage && style.backgroundImage !== "none");
+      const backgroundAlpha = parseAlpha(style.backgroundColor);
+      return {
+        selector,
+        rect: rectToJson(element.getBoundingClientRect()),
+        zIndex: style.zIndex,
+        isolation: style.isolation,
+        contain: style.contain,
+        backgroundColor: style.backgroundColor,
+        backgroundImageApplied,
+        backgroundAlpha,
+        opaqueOrIsolated: Boolean((backgroundImageApplied || backgroundAlpha >= 0.96) && style.isolation === "isolate" && String(style.contain || "").includes("paint"))
+      };
+    });
+    const overlapCandidates = [
+      { name: "gridlyCommunityPulseSurface", selector: "#gridlyCommunityPulseSurface" },
+      { name: "map-card", selector: ".map-card" },
+      { name: "map", selector: "#map" }
+    ];
+    const overlappingTopRegionElements = overlapCandidates.map((candidate) => {
+      const element = document.querySelector(candidate.selector);
+      const style = element ? getComputedStyle(element) : null;
+      const rect = element ? element.getBoundingClientRect() : null;
+      return {
+        ...candidate,
+        exists: Boolean(element),
+        hidden: Boolean(element?.hidden),
+        display: style?.display || null,
+        visibility: style?.visibility || null,
+        opacity: style?.opacity || null,
+        rect: rectToJson(rect),
+        overlapsTopRegion: rectsOverlap(headerRegionRect, rect)
+      };
+    });
+    const communityPulseOverlap = overlappingTopRegionElements.find((entry) => entry.name === "gridlyCommunityPulseSurface");
+    const headerBackgroundIsolationApplied = headerSurfaces.length === headerSelectors.length && headerSurfaces.every((surface) => surface.opaqueOrIsolated);
+    const portraitShieldApplied = Boolean(body?.dataset?.layoutMode === "portrait" && shell && body.classList.contains("gridly-v2-surface-containment"));
+    const communityPulseVisuallyContained = Boolean(!communityPulseOverlap?.overlapsTopRegion || (portraitShieldApplied && headerBackgroundIsolationApplied));
+    const topHeaderBleedCheck = {
+      checked: true,
+      status: headerBackgroundIsolationApplied && communityPulseVisuallyContained ? "ok" : "needs_attention",
+      portraitShieldApplied,
+      headerRegionRect: rectToJson(headerRegionRect),
+      checkedSelectors: headerSelectors
+    };
+    return {
+      topHeaderBleedCheck,
+      overlappingTopRegionElements,
+      communityPulseVisuallyContained,
+      headerBackgroundIsolationApplied,
+      headerSurfaces
+    };
+  }
+
   const gridlyPortraitV2LayerAudit = function gridlyPortraitV2LayerAudit() {
     return new Promise((resolve) => requestAnimationFrame(() => {
     const backdrop = document.getElementById("gridlyPortraitV2SheetBackdrop");
@@ -30137,6 +30227,7 @@ const v134ReportingRefinementApplied = true;
       elementFromPointAtSheetCenter: centerTarget,
       elementFromPointAtRouteButtons: routeButtonHits,
       backdropCoveringSheet,
+      ...getGridlyTopHeaderBleedAuditSnapshot(),
       recommendedStatus: backdropCoveringSheet ? "needs-fix" : "ok"
     });
     }));
