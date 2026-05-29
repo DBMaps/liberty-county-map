@@ -14741,8 +14741,15 @@ function gridlyPortraitStabilitySmokeAudit() {
     const activeAlertCount = Number.isFinite(renderedAlertCount)
       ? renderedAlertCount
       : (Number.isFinite(unifiedIncidentCount) ? unifiedIncidentCount : localActiveAlertCount);
+    const isApprovedSupportingPortraitModule = (system) => {
+      const containmentProfile = GRIDLY_PORTRAIT_CONTAINMENT_PROFILE[system.name] || {};
+      return Boolean(
+        system.ownerClass === "portrait_module" ||
+        (containmentProfile.supportsPortraitV2 && !containmentProfile.competesWithPortraitOwnership && containmentProfile.recommendedAction === "keep")
+      );
+    };
     const leakedVisibleLegacyOwners = visibleSystems
-      .filter((system) => system.name !== GRIDLY_PORTRAIT_PRIMARY_OWNER && system.name !== "map-card" && !system.portraitContainedStructuralWrapper && !system.retirement)
+      .filter((system) => system.name !== GRIDLY_PORTRAIT_PRIMARY_OWNER && system.name !== "map-card" && !system.portraitContainedStructuralWrapper && !system.retirement && !isApprovedSupportingPortraitModule(system))
       .map((system) => system.name);
     const leakedVisibleRetiredSurfaces = retiredSurfaces.filter((surface) => surface.visible).map((surface) => surface.name);
     const duplicateElementIds = {
