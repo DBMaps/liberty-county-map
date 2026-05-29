@@ -3034,10 +3034,64 @@ window.gridlyTravelTimeAudit = function gridlyTravelTimeAudit() {
   };
 };
 
+
+function gridlyBuildCommuteBaselineBlueprint() {
+  const places = gridlyGetSavedPlacesReadiness();
+  const routeGeometry = gridlyGetRouteGeometryDiagnostics();
+  const routeConfigured = Boolean(places.hasHome && places.hasWork && places.routablePlaceCount >= 2);
+  const routeMetrics = gridlyGetTravelTimeRouteMetrics(routeGeometry);
+  const routeMetricsAvailable = Boolean(routeMetrics.routeMetricsAvailable);
+  const currentCommuteSnapshot = typeof window.gridlyCurrentCommuteSnapshot === "function"
+    ? window.gridlyCurrentCommuteSnapshot()
+    : null;
+  const currentCommuteSnapshotAvailable = Boolean(
+    currentCommuteSnapshot?.routeConfigured
+    && currentCommuteSnapshot?.routeMetricsAvailable
+  );
+  const baselineCollectionReady = Boolean(
+    places.hasHome
+    && places.hasWork
+    && routeConfigured
+    && routeMetricsAvailable
+    && currentCommuteSnapshotAvailable
+  );
+  const baselineStorageReady = false;
+  const deltaComputationReady = false;
+  const missingRequirements = [
+    !places.hasHome ? "home_not_configured" : "",
+    !places.hasWork ? "work_not_configured" : "",
+    !routeConfigured ? "route_watch_not_configured_for_home_and_work" : "",
+    !routeMetricsAvailable ? "route_metrics_unavailable" : "",
+    !currentCommuteSnapshotAvailable ? "current_commute_snapshot_unavailable" : "",
+    !baselineStorageReady ? "baseline_storage_model_not_implemented" : "",
+    !deltaComputationReady ? "baseline_delta_computation_not_implemented" : ""
+  ].filter(Boolean);
+
+  return {
+    routeConfigured,
+    routeMetricsAvailable,
+    currentCommuteSnapshotAvailable,
+    baselineCollectionReady,
+    baselineStorageReady,
+    deltaComputationReady,
+    missingRequirements,
+    recommendedFutureModel: {
+      normalCommute: "rolling baseline duration",
+      currentCommute: "latest route duration",
+      delta: "difference between current and baseline duration"
+    }
+  };
+}
+
+window.gridlyCommuteBaselineBlueprint = function gridlyCommuteBaselineBlueprint() {
+  return gridlyBuildCommuteBaselineBlueprint();
+};
+
 window.gridlyTravelTimeBlueprint = function gridlyTravelTimeBlueprint() {
   const places = gridlyGetSavedPlacesReadiness();
   const routeGeometry = gridlyGetRouteGeometryDiagnostics();
   const audit = window.gridlyTravelTimeAudit?.() || {};
+  const commuteBaselineBlueprint = window.gridlyCommuteBaselineBlueprint?.() || {};
   const routeWatchConfigured = Boolean(places.routablePlaceCount >= 2 && (places.hasHome || places.hasWork));
   const estimatedInputInventory = {
     savedHome: places.hasHome,
@@ -3084,12 +3138,15 @@ window.gridlyTravelTimeBlueprint = function gridlyTravelTimeBlueprint() {
     estimatedInputInventory,
     travelTimeAuditAvailable: typeof window.gridlyTravelTimeAudit === "function",
     baselineReady: Boolean(audit.baselineReady),
+    baselineCollectionReady: Boolean(commuteBaselineBlueprint.baselineCollectionReady),
+    baselineStorageReady: Boolean(commuteBaselineBlueprint.baselineStorageReady),
+    deltaComputationReady: Boolean(commuteBaselineBlueprint.deltaComputationReady),
     estimatedTravelTimeReady: Boolean(audit.estimatedTravelTimeReady),
     routeImpactReady: Boolean(audit.routeImpactReady),
     recommendedFutureModel: {
-      normalCommute: "baseline commute duration for a saved route",
-      currentCommute: "live commute duration for the current route context",
-      delta: "difference between current commute and normal commute"
+      normalCommute: "rolling baseline duration",
+      currentCommute: "latest route duration",
+      delta: "difference between current and baseline duration"
     },
     notes: ["Diagnostic blueprint only; no travel times are predicted and only the latest successful route render metrics are retained."]
   };
@@ -3171,7 +3228,7 @@ window.gridlyUserTrustBlueprintAudit = function gridlyUserTrustBlueprintAudit() 
     blueprintVersion: GRIDLY_USER_TRUST_BLUEPRINT_VERSION,
     hazardLifecycleReady,
     travelTimeReady,
-    travelTimeIntelligencePhase: travelBlueprint.currentCommuteSnapshotAvailable ? "current_commute_snapshot" : (travelBlueprint.routeMetricsAvailable ? "metrics_persisted" : "foundation"),
+    travelTimeIntelligencePhase: travelBlueprint.baselineCollectionReady ? "baseline_blueprint" : (travelBlueprint.currentCommuteSnapshotAvailable ? "current_commute_snapshot" : (travelBlueprint.routeMetricsAvailable ? "metrics_persisted" : "foundation")),
     onboardingReady,
     settingsReady,
     launchCriticalGaps,
