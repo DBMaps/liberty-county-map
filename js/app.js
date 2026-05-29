@@ -13348,6 +13348,43 @@ function classifyGridlyTopAwarenessPulseField(fieldName, value, context = {}) {
   return { uniqueSignal: false, duplicateSignal: false, weakSignal: true, strongSignal: false, rationale: "Unrecognized pulse field." };
 }
 
+window.gridlyTopStatusSelectionAudit = function gridlyTopStatusSelectionAudit(options = {}) {
+  try {
+    const intel = buildUnifiedLocalizedCommuteIntelligence({ limit: Number(options?.limit || 6) });
+    const audit = intel?.topStatusSelectionAudit || buildGridlyTopStatusSelectionDiagnostics({
+      intelItems: intel?.items || [],
+      corridorClusters: intel?.corridorClusters || [],
+      selectedItem: (intel?.items || [])[0] || null,
+      topStatus: intel?.topStatus || "",
+      selectionSource: "audit fallback from localized commute intelligence"
+    });
+    return {
+      ...audit,
+      activeLocalizedAlertCount: Number(intel?.activeLocalizedAlertCount || audit.candidateCount || 0),
+      routeImpactIncidentCount: Number(intel?.routeImpactIncidentCount || 0),
+      currentTopAwarenessContent: {
+        topStatusPrimary: safeDisplayText(document.getElementById("gridlyV2TopStatusPrimary")?.textContent, ""),
+        topStatusSecondary: safeDisplayText(document.getElementById("gridlyV2TopStatusSecondary")?.textContent, ""),
+        computedTopStatus: safeDisplayText(intel?.topStatus || audit.renderedTopStatus || "", "")
+      }
+    };
+  } catch (error) {
+    return {
+      loaded: false,
+      version: "V182",
+      candidateCount: 0,
+      winningCandidate: null,
+      winningScore: 0,
+      candidateScores: [],
+      suppressedCandidates: [],
+      corridorGroups: [],
+      topCorridor: null,
+      awarenessSelectionReason: "Top status selection audit failed before candidates could be evaluated.",
+      error: error?.message || "unknown error"
+    };
+  }
+};
+
 window.gridlyTopAwarenessIntegrationAudit = function gridlyTopAwarenessIntegrationAudit(options = {}) {
   try {
     const topStatusPrimary = safeDisplayText(document.getElementById("gridlyV2TopStatusPrimary")?.textContent, "");
@@ -24767,6 +24804,150 @@ function buildCorridorClusters(intelItems = [], recentlyCleared = []) {
   }).sort((a, b) => (b.maxPriority + b.routeImpactCount * 35) - (a.maxPriority + a.routeImpactCount * 35));
 }
 
+
+function normalizeGridlyTopStatusCorridorLabel(value = "") {
+  const cleaned = normalizeCorridorBaseLabel(String(value || "").replace(/\s+corridor$/i, "").trim());
+  if (!cleaned || /^local\s+(road|crossing|corridors?|impact)/i.test(cleaned)) return "Local corridors";
+  return `${cleaned} corridor`;
+}
+
+function resolveGridlyTopStatusCorridorGroup(item = {}) {
+  const incident = item?.incident || item || {};
+  const explicitLabel = item?.inferredCorridorLabel || incident?.corridor || incident?.corridorLabel || incident?.corridor_label;
+  const explicitNormalized = normalizeGridlyTopStatusCorridorLabel(explicitLabel);
+  if (explicitNormalized !== "Local corridors") return explicitNormalized;
+
+  const corridorText = normalizeGridlyCommunityPresenceToken([
+    incident?.roadName, incident?.road_name, incident?.street_name, incident?.nearest_road,
+    incident?.route, incident?.highway, incident?.location_name, incident?.area,
+    incident?.title, incident?.description, incident?.detail, incident?.details,
+    item?.localizedSummary
+  ].join(" "));
+  const known = GRIDLY_COMMUNITY_CORRIDORS.find((corridor) => corridor.aliases.some((alias) => corridorText.includes(alias)));
+  if (known?.name) return normalizeGridlyTopStatusCorridorLabel(known.name);
+  const match = corridorText.match(/\b(us|tx|fm)\s*(\d{2,4})\b/i);
+  if (match) return normalizeGridlyTopStatusCorridorLabel(`${match[1].toUpperCase()} ${match[2]}`);
+  return "Local corridors";
+}
+
+function getGridlyTopStatusCandidateSeverityContribution(item = {}) {
+  const incident = item?.incident || item || {};
+  const severity = String(incident?.severity || incident?.severityLevel || incident?.severity_level || "").toLowerCase();
+  if (severity === "critical") return 30;
+  if (severity === "high" || severity === "severe") return 24;
+  if (severity === "medium" || severity === "moderate") return 16;
+  if (severity === "low") return 8;
+  const typeText = String(incident?.report_type || incident?.type || incident?.category || item?.localizedSummary || "").toLowerCase();
+  if (/blocked|closure|crash|collision|flood|standing water|train/.test(typeText)) return 22;
+  if (/construction|debris|hazard|slow|delay/.test(typeText)) return 14;
+  return 8;
+}
+
+function getGridlyTopStatusCandidateFreshnessContribution(item = {}) {
+  const incident = item?.incident || item || {};
+  const ageMinutes = Number.isFinite(Number(item?.ageMinutes))
+    ? Number(item.ageMinutes)
+    : (Number.isFinite(Number(incident?.age_minutes)) ? Number(incident.age_minutes) : Number(incident?.minutesAgo));
+  if (!Number.isFinite(ageMinutes)) return 10;
+  if (ageMinutes <= 30) return 30;
+  if (ageMinutes <= 180) return 24;
+  if (ageMinutes <= 720) return 14;
+  return 6;
+}
+
+function buildGridlyTopStatusSelectionDiagnostics({
+  intelItems = [],
+  corridorClusters = [],
+  selectedItem = null,
+  topStatus = "",
+  selectionSource = "unknown"
+} = {}) {
+  const candidates = gridlySafeArray(intelItems);
+  const corridorGroupsMap = new Map();
+  candidates.forEach((item, index) => {
+    const corridor = resolveGridlyTopStatusCorridorGroup(item);
+    if (!corridorGroupsMap.has(corridor)) {
+      corridorGroupsMap.set(corridor, { corridor, candidateCount: 0, routeImpactCount: 0, maxModelPriorityScore: 0, candidateIndexes: [] });
+    }
+    const group = corridorGroupsMap.get(corridor);
+    group.candidateCount += 1;
+    if (item?.routeRelevant) group.routeImpactCount += 1;
+    group.maxModelPriorityScore = Math.max(group.maxModelPriorityScore, Number(item?.priorityScore || 0));
+    group.candidateIndexes.push(index);
+  });
+  const corridorGroups = Array.from(corridorGroupsMap.values()).sort((a, b) => {
+    const aScore = (a.candidateCount * 12) + (a.routeImpactCount * 10) + (a.maxModelPriorityScore / 20);
+    const bScore = (b.candidateCount * 12) + (b.routeImpactCount * 10) + (b.maxModelPriorityScore / 20);
+    return bScore - aScore || a.corridor.localeCompare(b.corridor);
+  });
+  const topCorridor = corridorGroups[0] || null;
+  const selectedKey = selectedItem ? `${selectedItem?.incident?.id || selectedItem?.incident?.report_id || selectedItem?.incident?.reportId || ""}:${selectedItem?.localizedSummary || ""}` : "";
+  const candidateScores = candidates.map((item, index) => {
+    const corridor = resolveGridlyTopStatusCorridorGroup(item);
+    const group = corridorGroupsMap.get(corridor) || { candidateCount: 1 };
+    const freshnessContribution = getGridlyTopStatusCandidateFreshnessContribution(item);
+    const severityContribution = getGridlyTopStatusCandidateSeverityContribution(item);
+    const routeImpactContribution = item?.routeRelevant ? 25 : (Number(item?.etaImpact || 0) > 0 ? 14 : 0);
+    const corridorDensityContribution = corridor === "Local corridors" ? Math.min(8, Math.max(0, Number(group.candidateCount || 1) - 1) * 4) : Math.min(28, Math.max(0, Number(group.candidateCount || 1) - 1) * 9);
+    const finalScore = freshnessContribution + severityContribution + routeImpactContribution + corridorDensityContribution;
+    const candidateKey = `${item?.incident?.id || item?.incident?.report_id || item?.incident?.reportId || ""}:${item?.localizedSummary || ""}`;
+    return {
+      index,
+      id: String(item?.incident?.id || item?.incident?.report_id || item?.incident?.reportId || `candidate-${index}`),
+      summary: safeDisplayText(item?.localizedSummary || topStatus || "Movement alert active", "Movement alert active"),
+      corridor,
+      freshnessContribution,
+      severityContribution,
+      routeImpactContribution,
+      corridorDensityContribution,
+      finalScore,
+      modelPriorityScore: Number(item?.priorityScore || 0),
+      routeRelevant: Boolean(item?.routeRelevant),
+      ageMinutes: Number.isFinite(Number(item?.ageMinutes)) ? Number(item.ageMinutes) : null,
+      selected: Boolean(selectedKey && candidateKey === selectedKey)
+    };
+  }).sort((a, b) => b.finalScore - a.finalScore || b.modelPriorityScore - a.modelPriorityScore);
+  const winningCandidate = candidateScores.find((candidate) => candidate.selected) || candidateScores[0] || null;
+  const suppressedCandidates = candidateScores
+    .filter((candidate) => !winningCandidate || candidate.id !== winningCandidate.id || candidate.index !== winningCandidate.index)
+    .slice(0, 12)
+    .map((candidate) => ({
+      ...candidate,
+      suppressedReason: winningCandidate
+        ? (candidate.corridor === winningCandidate.corridor
+          ? "same corridor pressure retained as supporting evidence behind selected top awareness"
+          : "lower current top-status selection priority than winning candidate/corridor")
+        : "no winning candidate available"
+    }));
+  return {
+    loaded: true,
+    version: "V182",
+    candidateCount: candidates.length,
+    winningCandidate,
+    winningScore: Number(winningCandidate?.finalScore || 0),
+    renderedTopStatus: safeDisplayText(topStatus, ""),
+    candidateScores,
+    suppressedCandidates,
+    corridorGroups,
+    topCorridor,
+    awarenessSelectionReason: candidates.length
+      ? `${selectionSource}; corridor density is diagnostic and contributes to candidate evidence without changing top-awareness layout.`
+      : "No active top-status candidates available; quiet-state fallback remains in control.",
+    protectedRuntimeUsage: {
+      crossingRuntimeUsed: false,
+      crossingEnrichmentUsed: false,
+      sourceJoinRuntimeUsed: false,
+      heavyCommunityRuntimeUsed: false
+    },
+    sourceCorridorClusters: gridlySafeArray(corridorClusters).map((cluster) => ({
+      label: cluster?.label || "",
+      disruptionDensity: Number(cluster?.disruptionDensity || 0),
+      routeImpactCount: Number(cluster?.routeImpactCount || 0),
+      healthState: cluster?.healthState || "unknown"
+    })).slice(0, 12)
+  };
+}
+
 function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   const unifiedIncidentsForAudit = getUnifiedIncidents();
   const unifiedIncidentsBeforeBuildCount = Array.isArray(unifiedIncidentsForAudit) ? unifiedIncidentsForAudit.length : 0;
@@ -25365,7 +25546,18 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   const highestPriorityCorridor = safeCorridorClusters[0] || null;
   const corridorSeverityMap = timeSection("object_construction_output_shaping", () => safeCorridorClusters.reduce((acc, corridor) => { acc[corridor.label] = corridor.healthState; return acc; }, {}));
   const routeImpactSummary = timeSection("impact_calculations", () => (routeImpactItems.length > 0 ? `Expect delays into Dayton · ${routeImpactItems.length} route impact${routeImpactItems.length === 1 ? "" : "s"}` : "Route into Liberty moving normally"));
+  const selectedTopStatusItem = highestPriorityCorridor?.items?.[0] || top || null;
+  const topStatusSelectionSource = highestPriorityCorridor
+    ? `highestPriorityCorridor:${highestPriorityCorridor.label}; candidateCount=${highestPriorityCorridor.items?.length || 0}; routeImpactCount=${highestPriorityCorridor.routeImpactCount || 0}`
+    : (top ? "top priority incident after active candidate sorting" : "quiet fallback");
   const topStatus = timeSection("alert_generation", () => (highestPriorityCorridor ? buildCommunityConsequenceLabel(highestPriorityCorridor.items?.[0]?.incident || {}, `${highestPriorityCorridor.label.replace(/ Corridor$/, "")} moving with caution`) : (top ? top.localizedSummary : "US 90 moving normally")));
+  const topStatusSelectionAudit = timeSection("top_status_selection_audit", () => buildGridlyTopStatusSelectionDiagnostics({
+    intelItems: safeIntelItems,
+    corridorClusters: safeCorridorClusters,
+    selectedItem: selectedTopStatusItem,
+    topStatus,
+    selectionSource: topStatusSelectionSource
+  }));
   const consequenceSecondaryMessage = timeSection("recommendation_generation", () => topSecondary);
   counts.alertCount = Math.min(Number(limit || 0), safeIntelItems.length);
   counts.recommendationCount = consequenceSecondaryMessage ? 1 : 0;
@@ -25601,6 +25793,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     highestPriorityCorridor: highestPriorityCorridor?.label || null,
     corridorSeverityMap,
     topStatus,
+    topStatusSelectionAudit,
     commuteImpactHeadline: consequencePrimaryMessage,
     topStatusLocalizedDetail: topSecondary,
     nearbySummary: topSecondary,
