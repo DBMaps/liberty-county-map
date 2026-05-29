@@ -2552,6 +2552,9 @@ const SAVED_PLACES_STORAGE_KEY = "gridlySavedPlacesV1";
 const SELECTED_PLACE_STORAGE_KEY = "gridlySelectedPlaceIdV1";
 const GRIDLY_PROFILE_STORAGE_KEY = "gridlyUserProfileV1";
 const MOVEMENT_INTELLIGENCE_STORAGE_KEY = "gridlyMovementIntelligenceV1";
+const COMMUTE_BASELINE_SAMPLES_STORAGE_KEY = "gridly_commute_baseline_samples_v1";
+const COMMUTE_BASELINE_MAX_SAMPLES_PER_ROUTE = 30;
+const COMMUTE_BASELINE_DUPLICATE_GUARD_MS = 10 * 60 * 1000;
 const OSRM_ROUTE_API = "https://router.project-osrm.org/route/v1/driving";
 const OSRM_NEAREST_API = "https://router.project-osrm.org/nearest/v1/driving";
 
@@ -2817,6 +2820,143 @@ function persistGridlyRouteMetrics({ routePointCount, routeDistanceMiles, routeD
   return window.gridlyRouteMetrics;
 }
 
+function gridlyCommuteBaselineStorageAvailable() {
+  try {
+    if (typeof localStorage === "undefined") return false;
+    const probeKey = `${COMMUTE_BASELINE_SAMPLES_STORAGE_KEY}_probe`;
+    localStorage.setItem(probeKey, "1");
+    localStorage.removeItem(probeKey);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+function gridlyReadCommuteBaselineSamples() {
+  try {
+    const raw = gridlySafeLocalStorageGet(COMMUTE_BASELINE_SAMPLES_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.filter((sample) => sample && typeof sample === "object") : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function gridlyWriteCommuteBaselineSamples(samples = []) {
+  try {
+    if (!gridlyCommuteBaselineStorageAvailable()) return false;
+    const normalized = Array.isArray(samples) ? samples : [];
+    localStorage.setItem(COMMUTE_BASELINE_SAMPLES_STORAGE_KEY, JSON.stringify(normalized));
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+function gridlyBuildCommuteBaselineRouteKey(places = gridlyGetSavedPlacesReadiness()) {
+  const normalizePlacePart = (place, fallback) => {
+    if (!place || typeof place !== "object") return fallback;
+    const id = String(place.id || place.type || fallback).trim().toLowerCase();
+    const lat = Number.isFinite(Number(place.lat)) ? Number(place.lat).toFixed(4) : "lat";
+    const lng = Number.isFinite(Number(place.lng)) ? Number(place.lng).toFixed(4) : "lng";
+    const label = String(place.label || place.address || fallback).trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40) || fallback;
+    return `${id}:${label}:${lat},${lng}`;
+  };
+  const homePart = normalizePlacePart(places?.state?.home, "home");
+  const workPart = normalizePlacePart(places?.state?.work, "work");
+  const key = `home_work:${homePart}>${workPart}`;
+  return key.length > 240 ? `home_work:${homePart.slice(0, 100)}>${workPart.slice(0, 100)}` : key;
+}
+
+function gridlyGetLatestCommuteBaselineSample(samples = gridlyReadCommuteBaselineSamples(), routeKey = "") {
+  const candidates = gridlyDiagnosticArray(samples)
+    .filter((sample) => !routeKey || sample?.routeKey === routeKey)
+    .sort((a, b) => Date.parse(b?.capturedAt || "") - Date.parse(a?.capturedAt || ""));
+  return candidates[0] || null;
+}
+
+function gridlyTrimCommuteBaselineSamples(samples = []) {
+  const buckets = new Map();
+  gridlyDiagnosticArray(samples).forEach((sample) => {
+    const routeKey = String(sample?.routeKey || "fallback_route");
+    if (!buckets.has(routeKey)) buckets.set(routeKey, []);
+    buckets.get(routeKey).push(sample);
+  });
+  return Array.from(buckets.values()).flatMap((routeSamples) => routeSamples
+    .sort((a, b) => Date.parse(b?.capturedAt || "") - Date.parse(a?.capturedAt || ""))
+    .slice(0, COMMUTE_BASELINE_MAX_SAMPLES_PER_ROUTE)
+  );
+}
+
+function gridlyBuildCommuteBaselineStorageAudit() {
+  const storageAvailable = gridlyCommuteBaselineStorageAvailable();
+  const samples = storageAvailable ? gridlyReadCommuteBaselineSamples() : [];
+  const latestSample = gridlyGetLatestCommuteBaselineSample(samples);
+  const routeKeys = [...new Set(samples.map((sample) => String(sample?.routeKey || "fallback_route")))];
+  const latestCapturedAt = latestSample?.capturedAt ? Date.parse(latestSample.capturedAt) : NaN;
+  const duplicateGuardActive = Number.isFinite(latestCapturedAt)
+    ? Date.now() - latestCapturedAt < COMMUTE_BASELINE_DUPLICATE_GUARD_MS
+    : false;
+  return {
+    storageAvailable,
+    sampleCount: samples.length,
+    routeKeys,
+    latestSample,
+    baselineStorageReady: Boolean(storageAvailable && samples.length > 0),
+    duplicateGuardActive,
+    maxSamplesPerRoute: COMMUTE_BASELINE_MAX_SAMPLES_PER_ROUTE,
+    destructiveActionsTaken: false
+  };
+}
+
+function gridlyCaptureCommuteBaselineSample() {
+  const emptyResult = (reason, extra = {}) => ({ captured: false, reason, sample: null, sampleCount: gridlyReadCommuteBaselineSamples().length, ...extra });
+  try {
+    if (!gridlyCommuteBaselineStorageAvailable()) return emptyResult("storage_unavailable", { sampleCount: 0 });
+    const places = gridlyGetSavedPlacesReadiness();
+    const routeWatchConfigured = Boolean(places.hasHome && places.hasWork && places.routablePlaceCount >= 2);
+    if (!routeWatchConfigured) return emptyResult("route_watch_not_configured");
+    if (!places.hasHome) return emptyResult("home_not_configured");
+    if (!places.hasWork) return emptyResult("work_not_configured");
+    const currentCommuteSnapshot = typeof window.gridlyCurrentCommuteSnapshot === "function" ? window.gridlyCurrentCommuteSnapshot() : null;
+    if (!currentCommuteSnapshot?.routeConfigured || !currentCommuteSnapshot?.routeMetricsAvailable) return emptyResult("current_commute_snapshot_unavailable");
+    const durationMinutes = Number(currentCommuteSnapshot.currentDurationMinutes);
+    const distanceMiles = Number(currentCommuteSnapshot.distanceMiles);
+    if (!Number.isFinite(durationMinutes) || durationMinutes <= 0) return emptyResult("duration_minutes_unavailable");
+    if (!Number.isFinite(distanceMiles) || distanceMiles <= 0) return emptyResult("distance_miles_unavailable");
+    const routeKey = gridlyBuildCommuteBaselineRouteKey(places) || "fallback_route";
+    const samples = gridlyReadCommuteBaselineSamples();
+    const latestForRoute = gridlyGetLatestCommuteBaselineSample(samples, routeKey);
+    const latestCapturedAt = latestForRoute?.capturedAt ? Date.parse(latestForRoute.capturedAt) : NaN;
+    if (Number.isFinite(latestCapturedAt) && Date.now() - latestCapturedAt < COMMUTE_BASELINE_DUPLICATE_GUARD_MS) {
+      return emptyResult("duplicate_guard_active", { sample: latestForRoute, sampleCount: samples.length });
+    }
+    const sample = {
+      routeKey,
+      durationMinutes,
+      distanceMiles,
+      routePointCount: Math.max(0, Number(currentCommuteSnapshot.routePointCount || 0)),
+      capturedAt: new Date().toISOString(),
+      source: "route_watch_route_render"
+    };
+    const nextSamples = gridlyTrimCommuteBaselineSamples([...samples, sample]);
+    const written = gridlyWriteCommuteBaselineSamples(nextSamples);
+    if (!written) return emptyResult("storage_write_failed", { sampleCount: samples.length });
+    return { captured: true, reason: "captured", sample, sampleCount: nextSamples.length };
+  } catch (error) {
+    return emptyResult("capture_failed");
+  }
+}
+
+window.gridlyCommuteBaselineStorageAudit = function gridlyCommuteBaselineStorageAudit() {
+  return gridlyBuildCommuteBaselineStorageAudit();
+};
+
+window.gridlyCaptureCommuteBaselineSample = function gridlyCaptureCommuteBaselineSampleAudit() {
+  return gridlyCaptureCommuteBaselineSample();
+};
+
 function gridlyGetLocationPermissionDiagnostic() {
   if (typeof navigator === "undefined") return "navigator_unavailable";
   if (typeof navigator.geolocation === "undefined") return "geolocation_unavailable";
@@ -3055,7 +3195,12 @@ function gridlyBuildCommuteBaselineBlueprint() {
     && routeMetricsAvailable
     && currentCommuteSnapshotAvailable
   );
-  const baselineStorageReady = false;
+  const baselineStorageAudit = typeof window.gridlyCommuteBaselineStorageAudit === "function"
+    ? window.gridlyCommuteBaselineStorageAudit()
+    : { baselineStorageReady: false, sampleCount: 0, latestSample: null };
+  const baselineStorageReady = Boolean(baselineStorageAudit.baselineStorageReady);
+  const baselineSampleCount = Math.max(0, Number(baselineStorageAudit.sampleCount || 0));
+  const latestBaselineSampleAt = baselineStorageAudit.latestSample?.capturedAt || null;
   const deltaComputationReady = false;
   const missingRequirements = [
     !places.hasHome ? "home_not_configured" : "",
@@ -3063,7 +3208,7 @@ function gridlyBuildCommuteBaselineBlueprint() {
     !routeConfigured ? "route_watch_not_configured_for_home_and_work" : "",
     !routeMetricsAvailable ? "route_metrics_unavailable" : "",
     !currentCommuteSnapshotAvailable ? "current_commute_snapshot_unavailable" : "",
-    !baselineStorageReady ? "baseline_storage_model_not_implemented" : "",
+    !baselineStorageReady ? "baseline_storage_empty_or_unavailable" : "",
     !deltaComputationReady ? "baseline_delta_computation_not_implemented" : ""
   ].filter(Boolean);
 
@@ -3073,6 +3218,8 @@ function gridlyBuildCommuteBaselineBlueprint() {
     currentCommuteSnapshotAvailable,
     baselineCollectionReady,
     baselineStorageReady,
+    baselineSampleCount,
+    latestBaselineSampleAt,
     deltaComputationReady,
     missingRequirements,
     recommendedFutureModel: {
@@ -3140,6 +3287,8 @@ window.gridlyTravelTimeBlueprint = function gridlyTravelTimeBlueprint() {
     baselineReady: Boolean(audit.baselineReady),
     baselineCollectionReady: Boolean(commuteBaselineBlueprint.baselineCollectionReady),
     baselineStorageReady: Boolean(commuteBaselineBlueprint.baselineStorageReady),
+    baselineSampleCount: Math.max(0, Number(commuteBaselineBlueprint.baselineSampleCount || 0)),
+    latestBaselineSampleAt: commuteBaselineBlueprint.latestBaselineSampleAt || null,
     deltaComputationReady: Boolean(commuteBaselineBlueprint.deltaComputationReady),
     estimatedTravelTimeReady: Boolean(audit.estimatedTravelTimeReady),
     routeImpactReady: Boolean(audit.routeImpactReady),
@@ -3228,7 +3377,7 @@ window.gridlyUserTrustBlueprintAudit = function gridlyUserTrustBlueprintAudit() 
     blueprintVersion: GRIDLY_USER_TRUST_BLUEPRINT_VERSION,
     hazardLifecycleReady,
     travelTimeReady,
-    travelTimeIntelligencePhase: travelBlueprint.baselineCollectionReady ? "baseline_blueprint" : (travelBlueprint.currentCommuteSnapshotAvailable ? "current_commute_snapshot" : (travelBlueprint.routeMetricsAvailable ? "metrics_persisted" : "foundation")),
+    travelTimeIntelligencePhase: travelBlueprint.baselineStorageReady && Number(travelBlueprint.baselineSampleCount || 0) > 0 ? "baseline_storage" : (travelBlueprint.baselineCollectionReady ? "baseline_blueprint" : (travelBlueprint.currentCommuteSnapshotAvailable ? "current_commute_snapshot" : (travelBlueprint.routeMetricsAvailable ? "metrics_persisted" : "foundation"))),
     onboardingReady,
     settingsReady,
     launchCriticalGaps,
@@ -22275,6 +22424,19 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
   console.info("Gridly route render success", { pointCount: routePreviewPolylinePointCount });
   if (typeof safeApplyRouteIntelligenceAfterRouteRender === "function") {
     safeApplyRouteIntelligenceAfterRouteRender("route_render_success");
+  }
+  try {
+    const captureBaselineSample = () => {
+      try {
+        window.gridlyCaptureCommuteBaselineSample?.();
+      } catch (error) {
+        // Silent by design: baseline storage must never block route rendering.
+      }
+    };
+    if (typeof queueMicrotask === "function") queueMicrotask(captureBaselineSample);
+    else setTimeout(captureBaselineSample, 0);
+  } catch (error) {
+    // Silent by design: baseline storage must never block route rendering.
   }
 
   if (map) {
