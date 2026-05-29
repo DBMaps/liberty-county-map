@@ -2677,6 +2677,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyPortraitV2LayerAudit",
   "gridlyPortraitContainmentAudit",
   "gridlyLegacySurfaceDependencyAudit",
+  "gridlyLegacyTruthAudit",
   "gridlyAuditCycleDebug",
   "gridlyAuditHelpersCheck",
   "loadSharedReports"
@@ -2742,6 +2743,7 @@ function exposeAllGridlyAuditHelpers() {
     gridlyPortraitV2LayerAudit: typeof gridlyPortraitV2LayerAudit === "function" ? gridlyPortraitV2LayerAudit : null,
     gridlyPortraitContainmentAudit: typeof gridlyPortraitContainmentAudit === "function" ? gridlyPortraitContainmentAudit : null,
     gridlyLegacySurfaceDependencyAudit: typeof gridlyLegacySurfaceDependencyAudit === "function" ? gridlyLegacySurfaceDependencyAudit : null,
+    gridlyLegacyTruthAudit: typeof gridlyLegacyTruthAudit === "function" ? gridlyLegacyTruthAudit : null,
     gridlyAuditCycleDebug: typeof gridlyAuditCycleDebug === "function" ? gridlyAuditCycleDebug : null,
     gridlyAuditHelpersCheck: typeof gridlyAuditHelpersCheck === "function" ? gridlyAuditHelpersCheck : null,
     loadSharedReports: typeof loadSharedReports === "function" ? loadSharedReports : null
@@ -13669,6 +13671,7 @@ function gridlyPortraitContainmentAudit() {
 }
 
 const GRIDLY_LEGACY_SURFACE_DEPENDENCY_AUDIT_VERSION = "V180.7";
+const GRIDLY_LEGACY_TRUTH_AUDIT_VERSION = "V180.8";
 const GRIDLY_LEGACY_SURFACE_DEPENDENCY_PROFILES = {
   dashboardSection: {
     domUpdateSelectors: ["#greetingTitle", "#habitStatusHeadline", "#routeStatus", "#lastUpdated", "#dataStatus", "#syncStatus", "[data-bind-text]"],
@@ -13808,6 +13811,213 @@ function scoreGridlyLegacySurfaceRemovalRisk(surface) {
   ].filter(Boolean).length;
 }
 
+const GRIDLY_LEGACY_TRUTH_AUDIT_SURFACE_NAMES = [
+  "dashboardSection",
+  "future-map-hero",
+  "mobile-home-cards",
+  "mobile-community-card",
+  "mobile-corridor-intel-card",
+  "desktop-command-strip",
+  "desktop-left-rail",
+  "future-hero-overlay"
+];
+
+const GRIDLY_LEGACY_TRUTH_CONTENT_PROFILES = {
+  dashboardSection: {
+    visibleSelectors: [".future-map-hero", ".mobile-home-cards", ".desktop-command-strip", ".destination-control", "#routeStatus", "#reportSection"],
+    alertSelectors: ["#nearbyAlertCount", "#activeAlertText", "[data-bind-text='communityTrust']"],
+    pulseSelectors: ["[data-bind-text='communityTrust']", "[data-bind-text='communityTrustReason']"],
+    routeSelectors: ["#routeStatus", "#habitStatusHeadline", "#mobileCommuteRouteBtn", "#mobileQuickRouteBtn", ".destination-control"],
+    mapSelectors: ["[data-section-jump='map']", "[data-section='map']", ".map-card"],
+    reportSelectors: ["#mobileQuickReportBtn", "#desktopReportNearMeBtnRail", "[data-section-jump='report']", "#reportSection"]
+  },
+  "future-map-hero": {
+    visibleSelectors: [".future-hero-overlay", "[data-section-jump]", "button"],
+    alertSelectors: ["[data-section-jump='alerts']"],
+    pulseSelectors: [],
+    routeSelectors: [],
+    mapSelectors: ["[data-section-jump='map']"],
+    reportSelectors: []
+  },
+  "mobile-home-cards": {
+    visibleSelectors: [".mobile-home-card", "button", "[data-bind-text]"],
+    alertSelectors: ["#nearbyAlertCount", "#activeAlertText", "[data-bind-text='communityTrust']", "[data-bind-text='communityTrustReason']"],
+    pulseSelectors: [".mobile-community-card", "[data-bind-text='communityTrust']", "[data-bind-text='communityTrustReason']"],
+    routeSelectors: ["#delayRisk", "#delayReason", "#mobileCommuteRouteBtn", "#mobileQuickRouteBtn"],
+    mapSelectors: ["#mobileCorridorSummaryHeadline", "#mobileCorridorSummaryDetail", "#mobileCorridorBadges", "[data-section-jump='map']"],
+    reportSelectors: ["#mobileQuickReportBtn", "#mobileQuickClearedBtn", "#mobileQuickFavoritesBtn", "[data-section-jump='report']"]
+  },
+  "mobile-community-card": {
+    visibleSelectors: ["[data-bind-text='communityTrust']", "[data-bind-text='communityTrustReason']"],
+    alertSelectors: ["[data-bind-text='communityTrust']", "[data-bind-text='communityTrustReason']"],
+    pulseSelectors: ["[data-bind-text='communityTrust']", "[data-bind-text='communityTrustReason']"],
+    routeSelectors: [],
+    mapSelectors: [],
+    reportSelectors: []
+  },
+  "mobile-corridor-intel-card": {
+    visibleSelectors: ["#mobileCorridorSummaryHeadline", "#mobileCorridorSummaryDetail", "#mobileCorridorBadges"],
+    alertSelectors: [],
+    pulseSelectors: [],
+    routeSelectors: ["#mobileCorridorSummaryHeadline", "#mobileCorridorSummaryDetail", "#mobileCorridorBadges"],
+    mapSelectors: ["#mobileCorridorSummaryHeadline", "#mobileCorridorSummaryDetail", "#mobileCorridorBadges"],
+    reportSelectors: []
+  },
+  "desktop-command-strip": {
+    visibleSelectors: ["#freshestReport", "#freshestReportReason", "#corridorSummaryHeadline", "#corridorSummaryDetail", "#corridorSummaryBadges", "[data-bind-text]"],
+    alertSelectors: ["#freshestReport", "#freshestReportReason", "[data-bind-text='communityTrust']", "[data-bind-text='communityTrustReason']"],
+    pulseSelectors: ["[data-bind-text='communityTrust']", "[data-bind-text='communityTrustReason']"],
+    routeSelectors: ["#corridorSummaryHeadline", "#corridorSummaryDetail", "#corridorSummaryBadges"],
+    mapSelectors: ["#corridorSummaryHeadline", "#corridorSummaryDetail", "#corridorSummaryBadges"],
+    reportSelectors: ["#freshestReport", "#freshestReportReason"]
+  },
+  "desktop-left-rail": {
+    visibleSelectors: [".nav-btn[data-section]", "#desktopReportNearMeBtnRail", "button"],
+    alertSelectors: ["[data-section='alerts']"],
+    pulseSelectors: [],
+    routeSelectors: ["[data-section='dashboard']"],
+    mapSelectors: ["[data-section='map']"],
+    reportSelectors: ["[data-section='report']", "#desktopReportNearMeBtnRail"]
+  },
+  "future-hero-overlay": {
+    visibleSelectors: ["[data-section-jump]", "button", "h1", "p"],
+    alertSelectors: ["[data-section-jump='alerts']"],
+    pulseSelectors: [],
+    routeSelectors: [],
+    mapSelectors: ["[data-section-jump='map']"],
+    reportSelectors: []
+  }
+};
+
+function getGridlyLegacyTruthMatchedSelectors(element, selectors = []) {
+  if (!element || !Array.isArray(selectors) || selectors.length === 0) return [];
+  return selectors.filter((selector) => gridlyLegacySurfaceHasAnySelector(element, [selector]));
+}
+
+function classifyGridlyLegacyTruthSurface(surface) {
+  if (!surface.loaded) return "deadSurface";
+  if (surface.contributesVisibleContent || surface.contributesAlertContent || surface.contributesPulseContent || surface.contributesRouteContent || surface.contributesMapContent || surface.contributesReportContent) {
+    return "trueDependency";
+  }
+  if (surface.receivesUpdates || surface.receivesEvents || surface.referencedByPortraitV2 || surface.referencedByCurrentUserFlow) {
+    return "passiveDependency";
+  }
+  return "legacyReferenceOnly";
+}
+
+function gridlyLegacyTruthAudit() {
+  try {
+    const remainingSurfaceNames = new Set(GRIDLY_LEGACY_TRUTH_AUDIT_SURFACE_NAMES);
+    const legacyDefinitions = GRIDLY_PORTRAIT_OWNERSHIP_SYSTEMS.filter((definition) => remainingSurfaceNames.has(definition.name));
+    const surfaces = legacyDefinitions.map((definition) => {
+      const dependencyProfile = GRIDLY_LEGACY_SURFACE_DEPENDENCY_PROFILES[definition.name] || {};
+      const contentProfile = GRIDLY_LEGACY_TRUTH_CONTENT_PROFILES[definition.name] || {};
+      const state = getGridlyLegacySurfaceDependencyElementState(definition);
+      const { element } = state;
+      const updateSelectors = [
+        ...(dependencyProfile.domUpdateSelectors || []),
+        ...(dependencyProfile.dataUpdateSelectors || [])
+      ];
+      const eventSelectors = dependencyProfile.eventSelectors || [];
+      const receivesUpdates = Boolean(
+        state.loaded &&
+        (gridlyLegacySurfaceHasAnySelector(element, updateSelectors) || element?.querySelector?.("[data-bind-text]"))
+      );
+      const receivesEvents = Boolean(state.loaded && gridlyLegacySurfaceHasAnySelector(element, eventSelectors));
+      const matchedVisibleSelectors = getGridlyLegacyTruthMatchedSelectors(element, contentProfile.visibleSelectors);
+      const matchedAlertSelectors = getGridlyLegacyTruthMatchedSelectors(element, contentProfile.alertSelectors);
+      const matchedPulseSelectors = getGridlyLegacyTruthMatchedSelectors(element, contentProfile.pulseSelectors);
+      const matchedRouteSelectors = getGridlyLegacyTruthMatchedSelectors(element, contentProfile.routeSelectors);
+      const matchedMapSelectors = getGridlyLegacyTruthMatchedSelectors(element, contentProfile.mapSelectors);
+      const matchedReportSelectors = getGridlyLegacyTruthMatchedSelectors(element, contentProfile.reportSelectors);
+      const referencedByPortraitV2 = Boolean(dependencyProfile.referencedByPortraitV2);
+      const referencedByCurrentUserFlow = Boolean(
+        dependencyProfile.referencedByAlerts ||
+        dependencyProfile.referencedByPulse ||
+        dependencyProfile.referencedByHeader ||
+        dependencyProfile.referencedByMap ||
+        dependencyProfile.referencedByRouteFlow ||
+        dependencyProfile.referencedByReportFlow
+      );
+      const contributesVisibleContent = Boolean(state.visible && matchedVisibleSelectors.length > 0);
+      const surface = {
+        name: definition.name,
+        selector: definition.selector,
+        loaded: Boolean(state.loaded),
+        visible: Boolean(state.visible),
+        receivesUpdates,
+        receivesEvents,
+        contributesVisibleContent,
+        contributesAlertContent: Boolean(contributesVisibleContent && matchedAlertSelectors.length > 0),
+        contributesPulseContent: Boolean(contributesVisibleContent && matchedPulseSelectors.length > 0),
+        contributesRouteContent: Boolean(contributesVisibleContent && matchedRouteSelectors.length > 0),
+        contributesMapContent: Boolean(contributesVisibleContent && matchedMapSelectors.length > 0),
+        contributesReportContent: Boolean(contributesVisibleContent && matchedReportSelectors.length > 0),
+        referencedByPortraitV2,
+        referencedByCurrentUserFlow,
+        dependencyReason: dependencyProfile.dependencyReason || "No explicit dependency profile is registered for this legacy surface.",
+        evidence: {
+          display: state.display || state.style?.display || null,
+          visibility: state.visibility || state.style?.visibility || null,
+          opacity: state.opacity || state.style?.opacity || null,
+          inLayoutFlow: Boolean(state.inLayoutFlow),
+          updateSelectorsFound: getGridlyLegacyTruthMatchedSelectors(element, updateSelectors),
+          eventSelectorsFound: getGridlyLegacyTruthMatchedSelectors(element, eventSelectors),
+          visibleContentSelectorsFound: matchedVisibleSelectors,
+          alertContentSelectorsFound: matchedAlertSelectors,
+          pulseContentSelectorsFound: matchedPulseSelectors,
+          routeContentSelectorsFound: matchedRouteSelectors,
+          mapContentSelectorsFound: matchedMapSelectors,
+          reportContentSelectorsFound: matchedReportSelectors
+        }
+      };
+      surface.classification = classifyGridlyLegacyTruthSurface(surface);
+      return surface;
+    });
+    const namesForClassification = (classification) => surfaces.filter((surface) => surface.classification === classification).map((surface) => surface.name);
+    const trueDependencies = namesForClassification("trueDependency");
+    const passiveDependencies = namesForClassification("passiveDependency");
+    const legacyReferenceOnly = namesForClassification("legacyReferenceOnly");
+    const deadSurfaces = namesForClassification("deadSurface");
+
+    return {
+      loaded: true,
+      version: GRIDLY_LEGACY_TRUTH_AUDIT_VERSION,
+      auditOnly: true,
+      surfaces,
+      trueDependencies,
+      passiveDependencies,
+      legacyReferenceOnly,
+      deadSurfaces,
+      firstLikelyDeadSurface: deadSurfaces[0] || null,
+      firstLikelyPassiveDependency: passiveDependencies[0] || null,
+      answer: trueDependencies.length
+        ? `Remaining legacy surfaces contributing visible active-product content today: ${trueDependencies.join(", ")}.`
+        : "No remaining legacy surfaces are currently contributing visible active-product content.",
+      notes: [
+        "Audit only: this helper reads the current DOM, computed visibility, descendant update/event targets, and registered dependency profiles; it does not remove, hide, restyle, or deauthorize any surface.",
+        "trueDependency means the surface is loaded, visible, and contains matched active content/functionality selectors for alerts, pulse, route, map, report, or other visible product content.",
+        "passiveDependency means no visible active content was detected, but the surface still receives updates/events or remains referenced by registered active user-flow profiles.",
+        "legacyReferenceOnly means the surface is loaded without detected visible contribution, updates/events, or current user-flow references; deadSurface means the surface is not loaded."
+      ]
+    };
+  } catch (error) {
+    return {
+      loaded: false,
+      version: GRIDLY_LEGACY_TRUTH_AUDIT_VERSION,
+      auditOnly: true,
+      surfaces: [],
+      trueDependencies: [],
+      passiveDependencies: [],
+      legacyReferenceOnly: [],
+      deadSurfaces: [],
+      firstLikelyDeadSurface: null,
+      firstLikelyPassiveDependency: null,
+      error: error?.message || "unknown error"
+    };
+  }
+}
+
 function gridlyLegacySurfaceDependencyAudit() {
   try {
     const portraitInventory = typeof window.gridlyPortraitOwnershipInventory === "function" ? window.gridlyPortraitOwnershipInventory() : null;
@@ -13929,6 +14139,7 @@ function gridlyLegacySurfaceDependencyAudit() {
 
 window.gridlyPortraitContainmentAudit = gridlyPortraitContainmentAudit;
 window.gridlyLegacySurfaceDependencyAudit = gridlyLegacySurfaceDependencyAudit;
+window.gridlyLegacyTruthAudit = gridlyLegacyTruthAudit;
 
 window.gridlyPortraitOwnershipInventory = function gridlyPortraitOwnershipInventory() {
   try {
