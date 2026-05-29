@@ -2571,6 +2571,240 @@ let unifiedIncidentLayer;
 let userLocation = null;
 let userMarker = null;
 
+const GRIDLY_USER_TRUST_BLUEPRINT_VERSION = "V186";
+
+function gridlySafeLocalStorageGet(key) {
+  try {
+    return typeof localStorage !== "undefined" ? localStorage.getItem(key) : null;
+  } catch (error) {
+    return null;
+  }
+}
+
+function gridlySafeLocalStorageHas(key) {
+  return gridlySafeLocalStorageGet(key) !== null;
+}
+
+function gridlyDiagnosticArray(value) {
+  return Array.isArray(value) ? value : [];
+}
+
+function gridlyIsActiveHazardRecord(hazard = {}) {
+  const lifecycleState = String(hazard?.lifecycleState || hazard?.lifecycle || hazard?.status || "").toLowerCase();
+  const type = String(hazard?.type || hazard?.report_type || "").toLowerCase();
+  return !hazard?.expired && type !== "hazard_cleared" && !["cleared", "expired", "inactive"].includes(lifecycleState);
+}
+
+function gridlyNormalizeHazardType(hazard = {}) {
+  const rawType = String(hazard?.type || hazard?.report_type || hazard?.category || hazard?.hazardCategory || "other_hazard").trim().toLowerCase();
+  return getHazardCategory(rawType || "other_hazard");
+}
+
+function gridlyIsConfirmedHazardRecord(hazard = {}) {
+  const sourceText = [hazard?.source, hazard?.provider, hazard?.externalSource, hazard?.reportSource, hazard?.verifiedBy].map((value) => String(value || "").toLowerCase()).join(" ");
+  const statusText = [hazard?.status, hazard?.lifecycleState, hazard?.verificationStatus, hazard?.confidence].map((value) => String(value || "").toLowerCase()).join(" ");
+  return Boolean(
+    hazard?.confirmed === true
+    || hazard?.verified === true
+    || hazard?.isVerified === true
+    || /confirmed|verified|official|agency|txdot|fra|system/.test(statusText)
+    || /txdot|fra|official|agency|system/.test(sourceText)
+  );
+}
+
+function gridlyGetSavedPlacesReadiness() {
+  const state = typeof getSavedPlacesState === "function"
+    ? getSavedPlacesState()
+    : (typeof normalizeSavedPlaces === "function" ? normalizeSavedPlaces() : { home: null, work: null, custom: [], favorites: [] });
+  const hasHome = typeof isConfiguredPlace === "function" ? isConfiguredPlace(state?.home) : Boolean(state?.home);
+  const hasWork = typeof isConfiguredPlace === "function" ? isConfiguredPlace(state?.work) : Boolean(state?.work);
+  const customCount = Array.isArray(state?.custom) ? state.custom.length : 0;
+  const favoriteCount = Array.isArray(state?.favorites) ? state.favorites.length : 0;
+  const routablePlaces = typeof getSavedPlaces === "function" ? getSavedPlaces() : [];
+  return { state, hasHome, hasWork, customCount, favoriteCount, routablePlaceCount: gridlyDiagnosticArray(routablePlaces).length };
+}
+
+function gridlyGetRouteGeometryDiagnostics() {
+  const routeLatLngs = typeof getRoutePolylineLatLngs === "function" ? getRoutePolylineLatLngs() : [];
+  const routePointCount = Array.isArray(routeLatLngs) ? routeLatLngs.length : 0;
+  return {
+    currentRouteAvailable: routePointCount >= 2 || Boolean(routePreviewRendered || routeWatchActivated || window.__gridlyRouteWatchActive),
+    routeGeometryAvailable: routePointCount >= 2,
+    routePointCount
+  };
+}
+
+function gridlyGetLocationPermissionDiagnostic() {
+  if (typeof navigator === "undefined") return "navigator_unavailable";
+  if (typeof navigator.geolocation === "undefined") return "geolocation_unavailable";
+  if (navigator.permissions?.query) return "permissions_api_available_async_status_not_queried";
+  return "geolocation_available_permission_unknown";
+}
+
+window.gridlyHazardLifecycleBlueprint = function gridlyHazardLifecycleBlueprint() {
+  const hazardRecords = gridlyDiagnosticArray(activeHazards).filter((hazard) => hazard && typeof hazard === "object");
+  const activeHazardRecords = hazardRecords.filter((hazard) => gridlyIsActiveHazardRecord(hazard));
+  const confirmedHazards = activeHazardRecords.filter((hazard) => gridlyIsConfirmedHazardRecord(hazard));
+  const hazardTypeCounts = activeHazardRecords.reduce((counts, hazard) => {
+    const type = gridlyNormalizeHazardType(hazard);
+    counts[type] = (counts[type] || 0) + 1;
+    return counts;
+  }, {});
+
+  return {
+    blueprintVersion: GRIDLY_USER_TRUST_BLUEPRINT_VERSION,
+    activeHazardCount: activeHazardRecords.length,
+    confirmedHazardCount: confirmedHazards.length,
+    unverifiedHazardCount: Math.max(0, activeHazardRecords.length - confirmedHazards.length),
+    hazardTypeCounts,
+    recommendedLifecycleRules: {
+      unverified: [
+        { age: "0-30m", lifecycleState: "new" },
+        { age: "30-60m", lifecycleState: "active" },
+        { age: "60-120m", lifecycleState: "aging" },
+        { age: "120m+", lifecycleState: "expire" }
+      ],
+      confirmed: [
+        { age: "0-2h", lifecycleState: "active" },
+        { age: "2-6h", lifecycleState: "verified" },
+        { age: "6-12h", lifecycleState: "aging" },
+        { age: "12h+", lifecycleState: "expire" }
+      ],
+      construction: "24-72h",
+      flooding: "extended retention candidate",
+      railBlockage: "event-driven candidate"
+    },
+    notes: ["Diagnostic blueprint only; no expiration logic changes are applied."]
+  };
+};
+
+window.gridlyTravelTimeBlueprint = function gridlyTravelTimeBlueprint() {
+  const places = gridlyGetSavedPlacesReadiness();
+  const routeGeometry = gridlyGetRouteGeometryDiagnostics();
+  const routeWatchConfigured = Boolean(places.routablePlaceCount >= 2 && (places.hasHome || places.hasWork));
+  const estimatedInputInventory = {
+    savedHome: places.hasHome,
+    savedWork: places.hasWork,
+    routeWatchConfigured,
+    currentRouteAvailable: routeGeometry.currentRouteAvailable,
+    routeGeometryAvailable: routeGeometry.routeGeometryAvailable,
+    routePointCount: routeGeometry.routePointCount
+  };
+  const estimatedInputsAvailable = Boolean(
+    estimatedInputInventory.savedHome
+    && estimatedInputInventory.savedWork
+    && estimatedInputInventory.routeWatchConfigured
+    && estimatedInputInventory.currentRouteAvailable
+  );
+
+  return {
+    blueprintVersion: GRIDLY_USER_TRUST_BLUEPRINT_VERSION,
+    homeConfigured: places.hasHome,
+    workConfigured: places.hasWork,
+    routeWatchConfigured,
+    currentRouteAvailable: routeGeometry.currentRouteAvailable,
+    routeGeometryAvailable: routeGeometry.routeGeometryAvailable,
+    routePointCount: routeGeometry.routePointCount,
+    estimatedInputsAvailable,
+    estimatedInputInventory,
+    recommendedFutureModel: {
+      normalCommute: "baseline commute duration for a saved route",
+      currentCommute: "live commute duration for the current route context",
+      delta: "difference between current commute and normal commute"
+    },
+    notes: ["Diagnostic blueprint only; no travel times are calculated."]
+  };
+};
+
+window.gridlyOnboardingBlueprint = function gridlyOnboardingBlueprint() {
+  const places = gridlyGetSavedPlacesReadiness();
+  const notificationSettingsPresent = gridlySafeLocalStorageHas(SMART_ALERTS_STORAGE_KEY);
+  const readinessChecks = [
+    gridlyGetLocationPermissionDiagnostic() !== "geolocation_unavailable" && gridlyGetLocationPermissionDiagnostic() !== "navigator_unavailable",
+    places.hasHome,
+    places.hasWork,
+    notificationSettingsPresent
+  ];
+  const onboardingReadinessScore = Math.round((readinessChecks.filter(Boolean).length / readinessChecks.length) * 100);
+
+  return {
+    blueprintVersion: GRIDLY_USER_TRUST_BLUEPRINT_VERSION,
+    locationPermissionStatus: gridlyGetLocationPermissionDiagnostic(),
+    homeConfigured: places.hasHome,
+    workConfigured: places.hasWork,
+    notificationSettingsPresent,
+    onboardingReadinessScore,
+    recommendedOnboardingFlow: ["Location", "Home", "Work", "Notification preferences"],
+    notes: ["Diagnostic blueprint only; no onboarding flow is started."]
+  };
+};
+
+function gridlyBlueprintSectionStatus({ existing = false, partial = false, missing = false } = {}) {
+  return { existing: Boolean(existing), partial: Boolean(partial), missing: Boolean(missing || (!existing && !partial)) };
+}
+
+window.gridlySettingsBlueprint = function gridlySettingsBlueprint() {
+  const hasDocument = typeof document !== "undefined";
+  const places = gridlyGetSavedPlacesReadiness();
+  const routeWatchControlsPresent = hasDocument && Boolean(document.getElementById("routeWatchStartSelect") || document.getElementById("routeWatchDestinationSelect") || document.getElementById("routeWatchStartBtn"));
+  const notificationControlsPresent = hasDocument && Boolean(document.getElementById("smartAlertNearbyBlocked") || document.getElementById("smartAlertRouteDelay") || document.getElementById("smartAlertUs90Clear") || document.getElementById("smartAlertNeedsConfirm"));
+  const displayStoragePresent = gridlySafeLocalStorageHas(MAP_STYLE_STORAGE_KEY);
+  const reportingControlsPresent = hasDocument && Boolean(document.getElementById("manualReportBtn") || document.getElementById("manualReportType") || document.getElementById("mobileReportBtn"));
+  const aboutSignalsPresent = Boolean(APP_BUILD || (hasDocument && document.querySelector?.("[data-gridly-about], #about, #aboutModal")));
+
+  return {
+    blueprintVersion: GRIDLY_USER_TRUST_BLUEPRINT_VERSION,
+    settingsOwnershipInventory: {
+      routeWatch: gridlyBlueprintSectionStatus({ existing: routeWatchControlsPresent && places.routablePlaceCount >= 2, partial: routeWatchControlsPresent || places.routablePlaceCount > 0 }),
+      notifications: gridlyBlueprintSectionStatus({ existing: notificationControlsPresent && gridlySafeLocalStorageHas(SMART_ALERTS_STORAGE_KEY), partial: notificationControlsPresent || gridlySafeLocalStorageHas(SMART_ALERTS_STORAGE_KEY) }),
+      display: gridlyBlueprintSectionStatus({ existing: displayStoragePresent, partial: hasDocument }),
+      reporting: gridlyBlueprintSectionStatus({ existing: reportingControlsPresent, partial: hasDocument }),
+      about: gridlyBlueprintSectionStatus({ existing: aboutSignalsPresent })
+    },
+    notes: ["Diagnostic blueprint only; no settings ownership or persistence changes are applied."]
+  };
+};
+
+window.gridlyUserTrustBlueprintAudit = function gridlyUserTrustBlueprintAudit() {
+  const hazardBlueprint = window.gridlyHazardLifecycleBlueprint?.() || {};
+  const travelBlueprint = window.gridlyTravelTimeBlueprint?.() || {};
+  const onboardingBlueprint = window.gridlyOnboardingBlueprint?.() || {};
+  const settingsBlueprint = window.gridlySettingsBlueprint?.() || {};
+  const settingsInventory = settingsBlueprint.settingsOwnershipInventory || {};
+  const launchCriticalGaps = [];
+
+  const hazardLifecycleReady = Boolean(hazardBlueprint.recommendedLifecycleRules && typeof hazardBlueprint.activeHazardCount === "number");
+  const travelTimeReady = Boolean(travelBlueprint.recommendedFutureModel && "estimatedInputsAvailable" in travelBlueprint);
+  const onboardingReady = Boolean(onboardingBlueprint.recommendedOnboardingFlow && typeof onboardingBlueprint.onboardingReadinessScore === "number");
+  const settingsReady = ["routeWatch", "notifications", "display", "reporting", "about"].every((section) => {
+    const status = settingsInventory[section];
+    return Boolean(status && !status.missing);
+  });
+
+  if (!hazardLifecycleReady) launchCriticalGaps.push("hazard_lifecycle_blueprint_unavailable");
+  if (!travelTimeReady) launchCriticalGaps.push("travel_time_blueprint_unavailable");
+  if (!onboardingReady) launchCriticalGaps.push("onboarding_blueprint_unavailable");
+  Object.entries(settingsInventory).forEach(([section, status]) => {
+    if (status?.missing) launchCriticalGaps.push(`settings_${section}_missing`);
+  });
+
+  return {
+    blueprintVersion: GRIDLY_USER_TRUST_BLUEPRINT_VERSION,
+    hazardLifecycleReady,
+    travelTimeReady,
+    onboardingReady,
+    settingsReady,
+    launchCriticalGaps,
+    recommendedImplementationOrder: [
+      "Hazard lifecycle engine",
+      "Travel time intelligence",
+      "Onboarding flow",
+      "Settings functionality"
+    ],
+    notes: ["Master audit is diagnostic-only and does not change runtime behavior."]
+  };
+};
+
 window.gridlyCrossingRecordDebug = function gridlyCrossingRecordDebug(crossingId) {
   const normalizedId = String(crossingId || "").trim();
   const emptyResult = {
