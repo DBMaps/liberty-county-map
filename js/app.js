@@ -13356,7 +13356,10 @@ window.gridlyTopStatusSelectionAudit = function gridlyTopStatusSelectionAudit(op
       corridorClusters: intel?.corridorClusters || [],
       selectedItem: (intel?.items || [])[0] || null,
       topStatus: intel?.topStatus || "",
-      selectionSource: "audit fallback from localized commute intelligence"
+      selectionSource: "audit fallback from localized commute intelligence",
+      activityLevel: intel?.consequenceTrendState || "",
+      routeImpactIncidentCount: Number(intel?.routeImpactIncidentCount || 0),
+      awarenessMode: typeof getGridlyAwarenessMode === "function" ? getGridlyAwarenessMode(options) : "community"
     });
     return {
       ...audit,
@@ -13384,6 +13387,11 @@ window.gridlyTopStatusSelectionAudit = function gridlyTopStatusSelectionAudit(op
       corridorAwareHeadline: "",
       corridorAwareReason: "Top status selection audit failed before corridor-aware candidates could be evaluated.",
       corridorEvidenceQuality: "unknown",
+      mobilityLanguageGenerated: false,
+      mobilityLanguageAccepted: false,
+      mobilityLanguageHeadline: "",
+      mobilityLanguageReason: "Top status selection audit failed before mobility language could be evaluated.",
+      mobilityLanguageEvidence: {},
       awarenessSelectionReason: "Top status selection audit failed before candidates could be evaluated.",
       awarenessSelectionBreakdown: {
         winnerReason: "Audit failed before candidates could be evaluated",
@@ -25061,12 +25069,117 @@ function buildGridlyCorridorAwareTopStatusCandidate({ corridorGroups = [], candi
   };
 }
 
+
+function normalizeGridlyMobilityLanguageActivityLevel(activityLevel = "", evidence = {}) {
+  const level = String(activityLevel || "").trim().toLowerCase();
+  if (/improving|easing|clearing/.test(level)) return "improving";
+  if (/worsening/.test(level)) return "worsening";
+  if (/building|increasing/.test(level)) return "building";
+  if (/elevated|heavy|high|severe|moderate|active/.test(level)) return "elevated";
+  const candidateCount = Number(evidence.candidateCount || 0);
+  const freshCount = Number(evidence.freshCandidateCount || 0);
+  const routeImpact = Number(evidence.routeImpactIncidentCount || 0);
+  if (freshCount >= 3) return "building";
+  if (candidateCount >= 6 || routeImpact >= 2) return "elevated";
+  if (candidateCount >= 3) return "active";
+  return level || "quiet";
+}
+
+function buildGridlyMobilityLanguageCandidate({
+  candidates = [],
+  corridorGroups = [],
+  topStatus = "",
+  activityLevel = "",
+  routeImpactIncidentCount = 0,
+  awarenessMode = "community"
+} = {}) {
+  const safeCandidates = gridlySafeArray(candidates);
+  const safeGroups = gridlySafeArray(corridorGroups);
+  const candidateCount = safeCandidates.length;
+  const topGroup = safeGroups[0] || null;
+  const corridorDensity = Number(topGroup?.candidateCount || 0);
+  const routeImpact = Math.max(Number(routeImpactIncidentCount || 0), Number(topGroup?.routeImpactCount || 0));
+  const freshCandidateCount = safeCandidates.filter((item) => Number(item?.ageMinutes) <= 30).length;
+  const highestScore = Math.max(0, ...safeCandidates.map((item) => Number(item?.priorityScore || 0)));
+  const normalizedActivityLevel = normalizeGridlyMobilityLanguageActivityLevel(activityLevel, {
+    candidateCount,
+    corridorDensity,
+    freshCandidateCount,
+    routeImpactIncidentCount: routeImpact
+  });
+  const evidence = {
+    candidateCount,
+    corridorDensity,
+    activityLevel: normalizedActivityLevel,
+    freshness: freshCandidateCount >= 3 ? "fresh_cluster" : freshCandidateCount > 0 ? "recent" : "unknown",
+    routeImpactIncidentCount: routeImpact,
+    awarenessMode: String(awarenessMode || "community").toLowerCase(),
+    highestPriorityScore: highestScore
+  };
+
+  if (candidateCount < 3) {
+    return {
+      mobilityLanguageGenerated: false,
+      mobilityLanguageAccepted: false,
+      mobilityLanguageHeadline: "",
+      mobilityLanguageReason: `${candidateCount} active localized candidate${candidateCount === 1 ? "" : "s"}; mobility language requires 3+ active localized incidents.`,
+      mobilityLanguageEvidence: evidence
+    };
+  }
+
+  const supportItems = topGroup?.candidateIndexes
+    ? gridlySafeArray(topGroup.candidateIndexes).map((index) => safeCandidates[Number(index)]).filter(Boolean)
+    : safeCandidates;
+  const placeLabel = getGridlyTopStatusCorridorPlaceLabel(supportItems.length ? supportItems : safeCandidates, topStatus);
+  const placePhrase = placeLabel === "nearby" ? "nearby" : `near ${placeLabel}`;
+  const namedCorridor = topGroup && topGroup.corridor !== "Local corridors";
+  const corridorName = namedCorridor ? getGridlyTopStatusCorridorBaseName(topGroup.corridorDisplayName || topGroup.corridor) : "Local roads";
+  const hasHighRouteImpact = routeImpact >= 2;
+  const hasDenseCorridor = corridorDensity >= 3;
+
+  let headline = "";
+  let reason = "";
+  if (normalizedActivityLevel === "improving") {
+    headline = `Traffic conditions improving ${placePhrase}`;
+    reason = `${candidateCount} active localized incidents with improving activity evidence`;
+  } else if (normalizedActivityLevel === "worsening") {
+    headline = `Travel conditions worsening ${placePhrase}`;
+    reason = `${candidateCount} active localized incidents with worsening activity evidence`;
+  } else if (normalizedActivityLevel === "building") {
+    headline = `Traffic pressure building ${placePhrase}`;
+    reason = `${candidateCount} active localized incidents with building activity evidence`;
+  } else if (hasHighRouteImpact) {
+    headline = `Mobility conditions elevated ${placePhrase}`;
+    reason = `${candidateCount} active localized incidents with ${routeImpact} route-impacting candidates`;
+  } else if (namedCorridor && hasDenseCorridor) {
+    headline = `${corridorName} impacts reported ${placePhrase}`;
+    reason = `${candidateCount} active localized incidents with ${corridorDensity} on ${corridorName}`;
+  } else if (hasDenseCorridor) {
+    headline = `Multiple road disruptions ${placePhrase}`;
+    reason = `${candidateCount} active localized incidents with elevated corridor pressure`;
+  } else {
+    headline = `Road impacts reported ${placePhrase}`;
+    reason = `${candidateCount} active localized incidents support calm mobility wording`;
+  }
+
+  return {
+    mobilityLanguageGenerated: Boolean(headline),
+    mobilityLanguageAccepted: Boolean(headline),
+    mobilityLanguageHeadline: safeDisplayText(headline, ""),
+    mobilityLanguageReason: reason,
+    mobilityLanguageEvidence: evidence
+  };
+}
+
 function buildGridlyTopStatusSelectionDiagnostics({
   intelItems = [],
   corridorClusters = [],
   selectedItem = null,
   topStatus = "",
-  selectionSource = "unknown"
+  selectionSource = "unknown",
+  activityLevel = "",
+  routeImpactIncidentCount = 0,
+  awarenessMode = "community"
 } = {}) {
   const candidates = gridlySafeArray(intelItems);
   const corridorGroupsMap = new Map();
@@ -25158,6 +25271,14 @@ function buildGridlyTopStatusSelectionDiagnostics({
           : "lower current top-status selection priority than winning candidate/corridor")
         : "no winning candidate available"
     }));
+  const mobilityLanguageCandidate = buildGridlyMobilityLanguageCandidate({
+    candidates,
+    corridorGroups,
+    topStatus,
+    activityLevel,
+    routeImpactIncidentCount,
+    awarenessMode
+  });
   return {
     loaded: true,
     version: "V182.1",
@@ -25174,6 +25295,11 @@ function buildGridlyTopStatusSelectionDiagnostics({
     corridorAwareHeadline: safeDisplayText(corridorAwareCandidate.corridorAwareHeadline, ""),
     corridorAwareReason: safeDisplayText(corridorAwareCandidate.corridorAwareReason, ""),
     corridorEvidenceQuality: safeDisplayText(corridorAwareCandidate.corridorEvidenceQuality, "weak"),
+    mobilityLanguageGenerated: Boolean(mobilityLanguageCandidate.mobilityLanguageGenerated),
+    mobilityLanguageAccepted: Boolean(mobilityLanguageCandidate.mobilityLanguageAccepted),
+    mobilityLanguageHeadline: safeDisplayText(mobilityLanguageCandidate.mobilityLanguageHeadline, ""),
+    mobilityLanguageReason: safeDisplayText(mobilityLanguageCandidate.mobilityLanguageReason, ""),
+    mobilityLanguageEvidence: mobilityLanguageCandidate.mobilityLanguageEvidence || {},
     awarenessSelectionReason: candidates.length
       ? `${selectionSource}; corridor density is diagnostic and contributes to candidate evidence without changing top-awareness layout.`
       : "No active top-status candidates available; quiet-state fallback remains in control.",
@@ -25801,11 +25927,18 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     corridorClusters: safeCorridorClusters,
     selectedItem: selectedTopStatusItem,
     topStatus,
-    selectionSource: topStatusSelectionSource
+    selectionSource: topStatusSelectionSource,
+    activityLevel: trendState,
+    routeImpactIncidentCount: routeImpactItems.length,
+    awarenessMode: typeof getGridlyAwarenessMode === "function" ? getGridlyAwarenessMode() : "community"
   }));
+  const languageAwareTopStatus = topStatusSelectionAudit?.mobilityLanguageAccepted
+    ? safeDisplayText(topStatusSelectionAudit.mobilityLanguageHeadline, topStatus)
+    : "";
   const corridorAwareTopStatus = topStatusSelectionAudit?.corridorAwareCandidateAccepted
     ? safeDisplayText(topStatusSelectionAudit.corridorAwareHeadline, topStatus)
     : topStatus;
+  const selectedLanguageTopStatus = safeDisplayText(languageAwareTopStatus || corridorAwareTopStatus, topStatus);
   const consequenceSecondaryMessage = timeSection("recommendation_generation", () => topSecondary);
   counts.alertCount = Math.min(Number(limit || 0), safeIntelItems.length);
   counts.recommendationCount = consequenceSecondaryMessage ? 1 : 0;
@@ -26040,7 +26173,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     corridorClusters,
     highestPriorityCorridor: highestPriorityCorridor?.label || null,
     corridorSeverityMap,
-    topStatus: corridorAwareTopStatus,
+    topStatus: selectedLanguageTopStatus,
     topStatusSelectionAudit,
     commuteImpactHeadline: consequencePrimaryMessage,
     topStatusLocalizedDetail: topSecondary,
@@ -26104,11 +26237,14 @@ function refreshPortraitV2LocalizedIntelligence() {
     const guardedPrimaryFallback = railFallbackRejectReason
       ? safeDisplayText(activeFallbackCandidate, "Routes currently clear")
       : rawPrimaryFallback;
+    const mobilityLanguagePrimaryCandidate = intel.topStatusSelectionAudit?.mobilityLanguageAccepted
+      ? safeDisplayText(intel.topStatusSelectionAudit.mobilityLanguageHeadline, "")
+      : "";
     const corridorAwarePrimaryCandidate = intel.topStatusSelectionAudit?.corridorAwareCandidateAccepted
       ? safeDisplayText(intel.topStatusSelectionAudit.corridorAwareHeadline, "")
       : "";
     const primaryValue = intel.hasActiveAlerts
-      ? safeDisplayText(corridorAwarePrimaryCandidate || existingAlertWording?.text || guardedPrimaryFallback, safeDisplayText(intel.commuteImpactHeadline, "Routes currently clear"))
+      ? safeDisplayText(mobilityLanguagePrimaryCandidate || corridorAwarePrimaryCandidate || existingAlertWording?.text || guardedPrimaryFallback, safeDisplayText(intel.commuteImpactHeadline, "Routes currently clear"))
       : safeDisplayText(intel.commuteImpactHeadline, "Routes currently clear");
     logTopPanelWrite("refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusPrimary", primaryValue);
     if (topPrimaryEl) topPrimaryEl.textContent = safeDisplayText(primaryValue, "Routes currently clear");
