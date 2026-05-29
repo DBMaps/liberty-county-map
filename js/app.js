@@ -2676,6 +2676,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyRouteAuditGlobalsCheck",
   "gridlyPortraitV2LayerAudit",
   "gridlyPortraitContainmentAudit",
+  "gridlyLegacySurfaceDependencyAudit",
   "gridlyAuditCycleDebug",
   "gridlyAuditHelpersCheck",
   "loadSharedReports"
@@ -2740,6 +2741,7 @@ function exposeAllGridlyAuditHelpers() {
     gridlyRouteAuditGlobalsCheck: typeof gridlyRouteAuditGlobalsCheck === "function" ? gridlyRouteAuditGlobalsCheck : null,
     gridlyPortraitV2LayerAudit: typeof gridlyPortraitV2LayerAudit === "function" ? gridlyPortraitV2LayerAudit : null,
     gridlyPortraitContainmentAudit: typeof gridlyPortraitContainmentAudit === "function" ? gridlyPortraitContainmentAudit : null,
+    gridlyLegacySurfaceDependencyAudit: typeof gridlyLegacySurfaceDependencyAudit === "function" ? gridlyLegacySurfaceDependencyAudit : null,
     gridlyAuditCycleDebug: typeof gridlyAuditCycleDebug === "function" ? gridlyAuditCycleDebug : null,
     gridlyAuditHelpersCheck: typeof gridlyAuditHelpersCheck === "function" ? gridlyAuditHelpersCheck : null,
     loadSharedReports: typeof loadSharedReports === "function" ? loadSharedReports : null
@@ -13660,7 +13662,258 @@ function gridlyPortraitContainmentAudit() {
   }
 }
 
+const GRIDLY_LEGACY_SURFACE_DEPENDENCY_AUDIT_VERSION = "V180.6";
+const GRIDLY_LEGACY_SURFACE_DEPENDENCY_PROFILES = {
+  dashboardSection: {
+    domUpdateSelectors: ["#greetingTitle", "#habitStatusHeadline", "#routeStatus", "#lastUpdated", "#dataStatus", "#syncStatus", "[data-bind-text]"],
+    dataUpdateSelectors: ["#routeStatus", "#lastUpdated", "#dataStatus", "#syncStatus", "[data-bind-text]"],
+    eventSelectors: ["[data-section-jump]", "button", "input", "select"],
+    referencedByHeader: true,
+    referencedByMap: true,
+    referencedByRouteFlow: true,
+    referencedByReportFlow: true,
+    affectsLayoutWhenLoaded: true,
+    dependencyReason: "Legacy dashboard wrapper still contains hero, mobile cards, desktop strip, destination controls, and route/report setup descendants."
+  },
+  "future-map-hero": {
+    domUpdateSelectors: [],
+    dataUpdateSelectors: [],
+    eventSelectors: ["[data-section-jump]", "button"],
+    referencedByHeader: true,
+    referencedByMap: true,
+    affectsLayoutWhenLoaded: true,
+    dependencyReason: "Hero shell has map/alerts jump controls and owns a visible header/map marketing block when not CSS-contained."
+  },
+  "mobile-home-cards": {
+    domUpdateSelectors: ["#delayRisk", "#delayReason", "#nearbyAlertCount", "#activeAlertText", "#mobileCorridorSummaryHeadline", "#mobileCorridorSummaryDetail", "#mobileCorridorBadges", "#liveOpsStatus", "#liveOpsDetail", "[data-bind-text]"],
+    dataUpdateSelectors: ["#delayRisk", "#delayReason", "#nearbyAlertCount", "#activeAlertText", "#mobileCorridorSummaryHeadline", "#mobileCorridorSummaryDetail", "#mobileCorridorBadges", "#liveOpsStatus", "#liveOpsDetail", "[data-bind-text]"],
+    eventSelectors: ["#mobileCommuteRouteBtn", "#mobileQuickRouteBtn", "#mobileQuickReportBtn", "#mobileQuickClearedBtn", "#mobileQuickFavoritesBtn", "[data-section-jump]", "button"],
+    referencedByAlerts: true,
+    referencedByMap: true,
+    referencedByRouteFlow: true,
+    referencedByReportFlow: true,
+    affectsLayoutWhenLoaded: true,
+    dependencyReason: "Legacy mobile card stack includes live route, report, map, alert, community, and corridor descendants."
+  },
+  "mobile-community-card": {
+    domUpdateSelectors: ["[data-bind-text='communityTrust']", "[data-bind-text='communityTrustReason']"],
+    dataUpdateSelectors: ["[data-bind-text='communityTrust']", "[data-bind-text='communityTrustReason']"],
+    eventSelectors: [],
+    referencedByAlerts: true,
+    referencedByPulse: true,
+    dependencyReason: "Community card mirrors live communityTrust bindings that are updated by shared community/alert signal code."
+  },
+  "mobile-active-crossings-card": {
+    domUpdateSelectors: [],
+    dataUpdateSelectors: [],
+    eventSelectors: [],
+    dependencyReason: "Static card has no known IDs, data-bind targets, or direct click controls in the active runtime."
+  },
+  "mobile-corridor-intel-card": {
+    domUpdateSelectors: ["#mobileCorridorSummaryHeadline", "#mobileCorridorSummaryDetail", "#mobileCorridorBadges"],
+    dataUpdateSelectors: ["#mobileCorridorSummaryHeadline", "#mobileCorridorSummaryDetail", "#mobileCorridorBadges"],
+    eventSelectors: [],
+    referencedByMap: true,
+    referencedByRouteFlow: true,
+    dependencyReason: "Corridor card receives live corridor summary text, badge HTML, and severity styling updates."
+  },
+  "desktop-command-strip": {
+    domUpdateSelectors: ["#freshestReport", "#freshestReportReason", "#corridorSummaryHeadline", "#corridorSummaryDetail", "#corridorSummaryBadges", "[data-bind-text]"],
+    dataUpdateSelectors: ["#freshestReport", "#freshestReportReason", "#corridorSummaryHeadline", "#corridorSummaryDetail", "#corridorSummaryBadges", "[data-bind-text]"],
+    eventSelectors: [],
+    referencedByAlerts: true,
+    referencedByPulse: true,
+    referencedByRouteFlow: true,
+    affectsLayoutWhenLoaded: true,
+    dependencyReason: "Desktop strip mirrors route recommendation, community trust, latest report, and corridor data bindings."
+  },
+  "desktop-left-rail": {
+    domUpdateSelectors: [],
+    dataUpdateSelectors: [],
+    eventSelectors: [".nav-btn[data-section]", "#desktopReportNearMeBtnRail", "button"],
+    referencedByHeader: true,
+    referencedByMap: true,
+    referencedByRouteFlow: true,
+    referencedByReportFlow: true,
+    affectsLayoutWhenLoaded: true,
+    dependencyReason: "Left rail is included in nav button event binding and routes sections through the desktop command handler."
+  },
+  "future-hero-overlay": {
+    domUpdateSelectors: [],
+    dataUpdateSelectors: [],
+    eventSelectors: ["[data-section-jump]", "button"],
+    referencedByAlerts: true,
+    referencedByHeader: true,
+    referencedByMap: true,
+    dependencyReason: "Hero overlay owns the legacy header copy and map/alerts jump controls inside the future hero."
+  }
+};
+
+function getGridlyLegacySurfaceDependencyElementState(definition) {
+  const state = getGridlyPortraitOwnershipElementState(definition);
+  const element = state.loaded ? document.querySelector(definition.selector) : null;
+  const style = element ? window.getComputedStyle(element) : null;
+  const rect = element && typeof element.getBoundingClientRect === "function" ? element.getBoundingClientRect() : null;
+  const inLayoutFlow = Boolean(
+    element &&
+    style &&
+    style.display !== "none" &&
+    !["absolute", "fixed"].includes(style.position) &&
+    ((rect && (rect.width > 0 || rect.height > 0)) || element.offsetParent || element.offsetHeight || element.offsetWidth)
+  );
+  return { ...state, element, style, rect, inLayoutFlow };
+}
+
+function gridlyLegacySurfaceHasAnySelector(element, selectors = []) {
+  if (!element || !Array.isArray(selectors) || selectors.length === 0) return false;
+  return selectors.some((selector) => {
+    try {
+      return Boolean(element.matches?.(selector) || element.querySelector?.(selector));
+    } catch (_error) {
+      return false;
+    }
+  });
+}
+
+function classifyGridlyLegacySurfaceDependency(surface) {
+  if (!surface.loaded) return "unknown";
+  if (surface.receivesDomUpdates || surface.receivesEventBindings || surface.receivesDataUpdates || surface.referencedByActiveSystems || surface.visible) {
+    return "activeDependency";
+  }
+  if (surface.affectsLayout) return "safeToContain";
+  return "safeToRetire";
+}
+
+function scoreGridlyLegacySurfaceRemovalRisk(surface) {
+  return [
+    surface.visible,
+    surface.receivesDomUpdates,
+    surface.receivesEventBindings,
+    surface.receivesDataUpdates,
+    surface.affectsLayout,
+    surface.referencedByActiveSystems,
+    surface.referencedByPortraitV2,
+    surface.referencedByAlerts,
+    surface.referencedByPulse,
+    surface.referencedByHeader,
+    surface.referencedByMap,
+    surface.referencedByRouteFlow,
+    surface.referencedByReportFlow
+  ].filter(Boolean).length;
+}
+
+function gridlyLegacySurfaceDependencyAudit() {
+  try {
+    const portraitInventory = typeof window.gridlyPortraitOwnershipInventory === "function" ? window.gridlyPortraitOwnershipInventory() : null;
+    const containmentAudit = typeof window.gridlyPortraitContainmentAudit === "function" ? window.gridlyPortraitContainmentAudit() : null;
+    const legacyDefinitions = GRIDLY_PORTRAIT_OWNERSHIP_SYSTEMS.filter((definition) => GRIDLY_PORTRAIT_RECOMMENDED_DEAUTHORIZE.includes(definition.name));
+    const surfaces = legacyDefinitions.map((definition) => {
+      const profile = GRIDLY_LEGACY_SURFACE_DEPENDENCY_PROFILES[definition.name] || {};
+      const state = getGridlyLegacySurfaceDependencyElementState(definition);
+      const { element } = state;
+      const receivesDomUpdates = Boolean(state.loaded && gridlyLegacySurfaceHasAnySelector(element, profile.domUpdateSelectors));
+      const receivesDataUpdates = Boolean(state.loaded && (gridlyLegacySurfaceHasAnySelector(element, profile.dataUpdateSelectors) || element?.querySelector?.("[data-bind-text]")));
+      const receivesEventBindings = Boolean(state.loaded && gridlyLegacySurfaceHasAnySelector(element, profile.eventSelectors));
+      const affectsLayout = Boolean(state.loaded && (state.inLayoutFlow || (profile.affectsLayoutWhenLoaded && state.visible)));
+      const referencedByPortraitV2 = Boolean(profile.referencedByPortraitV2);
+      const referencedByAlerts = Boolean(profile.referencedByAlerts);
+      const referencedByPulse = Boolean(profile.referencedByPulse);
+      const referencedByHeader = Boolean(profile.referencedByHeader);
+      const referencedByMap = Boolean(profile.referencedByMap);
+      const referencedByRouteFlow = Boolean(profile.referencedByRouteFlow);
+      const referencedByReportFlow = Boolean(profile.referencedByReportFlow);
+      const referencedByActiveSystems = Boolean(
+        referencedByPortraitV2 ||
+        referencedByAlerts ||
+        referencedByPulse ||
+        referencedByHeader ||
+        referencedByMap ||
+        referencedByRouteFlow ||
+        referencedByReportFlow
+      );
+      const surface = {
+        name: definition.name,
+        selector: definition.selector,
+        loaded: Boolean(state.loaded),
+        visible: Boolean(state.visible),
+        receivesDomUpdates,
+        receivesEventBindings,
+        receivesDataUpdates,
+        affectsLayout,
+        referencedByActiveSystems,
+        referencedByPortraitV2,
+        referencedByAlerts,
+        referencedByPulse,
+        referencedByHeader,
+        referencedByMap,
+        referencedByRouteFlow,
+        referencedByReportFlow,
+        dependencyReason: profile.dependencyReason || "No explicit dependency profile is registered for this legacy surface.",
+        evidence: {
+          display: state.display || state.style?.display || null,
+          visibility: state.visibility || state.style?.visibility || null,
+          opacity: state.opacity || state.style?.opacity || null,
+          inLayoutFlow: Boolean(state.inLayoutFlow),
+          domUpdateSelectorsFound: (profile.domUpdateSelectors || []).filter((selector) => gridlyLegacySurfaceHasAnySelector(element, [selector])),
+          dataUpdateSelectorsFound: (profile.dataUpdateSelectors || []).filter((selector) => gridlyLegacySurfaceHasAnySelector(element, [selector])),
+          eventSelectorsFound: (profile.eventSelectors || []).filter((selector) => gridlyLegacySurfaceHasAnySelector(element, [selector]))
+        }
+      };
+      surface.classification = classifyGridlyLegacySurfaceDependency(surface);
+      surface.safeToRetire = surface.classification === "safeToRetire";
+      surface.safeToContain = surface.classification === "safeToContain";
+      surface.activeDependency = surface.classification === "activeDependency";
+      surface.unknown = surface.classification === "unknown";
+      surface.removalRiskScore = scoreGridlyLegacySurfaceRemovalRisk(surface);
+      return surface;
+    });
+    const safeRetirementCandidates = surfaces.filter((surface) => surface.safeToRetire).map((surface) => surface.name);
+    const containmentCandidates = surfaces.filter((surface) => surface.safeToContain).map((surface) => surface.name);
+    const activeDependencyCandidates = surfaces.filter((surface) => surface.activeDependency).map((surface) => surface.name);
+    const highestRiskRemovals = surfaces
+      .filter((surface) => surface.removalRiskScore > 0)
+      .slice()
+      .sort((a, b) => b.removalRiskScore - a.removalRiskScore || a.name.localeCompare(b.name))
+      .slice(0, 5)
+      .map((surface) => ({ name: surface.name, removalRiskScore: surface.removalRiskScore, classification: surface.classification }));
+
+    return {
+      loaded: true,
+      version: GRIDLY_LEGACY_SURFACE_DEPENDENCY_AUDIT_VERSION,
+      auditOnly: true,
+      portraitPrimaryOwner: portraitInventory?.portraitPrimaryOwner || containmentAudit?.portraitPrimaryOwner || GRIDLY_PORTRAIT_PRIMARY_OWNER,
+      duplicateOwnershipWarnings: portraitInventory?.duplicateOwnershipWarnings || [],
+      recommendedDeauthorize: GRIDLY_PORTRAIT_RECOMMENDED_DEAUTHORIZE.slice(),
+      surfaces,
+      safeRetirementCandidates,
+      containmentCandidates,
+      activeDependencyCandidates,
+      highestRiskRemovals,
+      firstSafeLegacySurfaceToRetire: safeRetirementCandidates[0] || null,
+      notes: [
+        "Audit only: this helper reads DOM visibility, descendant bindings, and registered dependency profiles; it does not remove, hide, restyle, or rebind any surface.",
+        "safeToRetire means the loaded surface is hidden, has no detected DOM/data/event dependency, is not in layout flow, and is not referenced by a registered active system profile.",
+        "activeDependency means removal risk was detected through visibility, updates, events, or active-system references."
+      ]
+    };
+  } catch (error) {
+    return {
+      loaded: false,
+      version: GRIDLY_LEGACY_SURFACE_DEPENDENCY_AUDIT_VERSION,
+      auditOnly: true,
+      surfaces: [],
+      safeRetirementCandidates: [],
+      containmentCandidates: [],
+      activeDependencyCandidates: [],
+      highestRiskRemovals: [],
+      firstSafeLegacySurfaceToRetire: null,
+      error: error?.message || "unknown error"
+    };
+  }
+}
+
 window.gridlyPortraitContainmentAudit = gridlyPortraitContainmentAudit;
+window.gridlyLegacySurfaceDependencyAudit = gridlyLegacySurfaceDependencyAudit;
 
 window.gridlyPortraitOwnershipInventory = function gridlyPortraitOwnershipInventory() {
   try {
