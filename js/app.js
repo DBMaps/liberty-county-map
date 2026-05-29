@@ -13162,7 +13162,7 @@ window.gridlyCommunityPulseAudit = function gridlyCommunityPulseAudit(options = 
   };
 };
 
-const GRIDLY_PORTRAIT_OWNERSHIP_INVENTORY_VERSION = "V180.10";
+const GRIDLY_PORTRAIT_OWNERSHIP_INVENTORY_VERSION = "V180.11";
 const GRIDLY_PORTRAIT_OWNERSHIP_SYSTEMS = [
   {
     name: "gridlyPortraitV2",
@@ -13311,6 +13311,11 @@ const GRIDLY_PORTRAIT_RETIRED_SURFACES = {
     retiredIn: "V180.10",
     reason: "Legacy dashboard wrapper is deauthorized after Portrait V2 assumed visible active-product ownership; passive text updates are suppressed and only raw evidence is retained for audit reference."
   },
+  "future-map-hero": {
+    status: "retired",
+    retiredIn: "V180.11",
+    reason: "Future map hero is hidden, has no visible active-product contribution, and is deauthorized while Portrait V2 remains the portrait owner."
+  },
   "mobile-active-crossings-card": {
     status: "retired",
     retiredIn: "V180.7",
@@ -13318,7 +13323,6 @@ const GRIDLY_PORTRAIT_RETIRED_SURFACES = {
   }
 };
 const GRIDLY_PORTRAIT_RECOMMENDED_DEAUTHORIZE = [
-  "future-map-hero",
   "mobile-home-cards",
   "mobile-community-card",
   "mobile-corridor-intel-card",
@@ -13477,13 +13481,13 @@ const GRIDLY_PORTRAIT_CONTAINMENT_PROFILE = {
   },
   "future-map-hero": {
     supportsPortraitV2: false,
-    competesWithPortraitOwnership: true,
-    ownsLayout: true,
+    competesWithPortraitOwnership: false,
+    ownsLayout: false,
     ownsNavigation: false,
-    ownsMap: true,
+    ownsMap: false,
     ownsAlerts: false,
-    ownsHeader: true,
-    recommendedAction: "contain"
+    ownsHeader: false,
+    recommendedAction: "retired"
   },
   "mobile-home-cards": {
     supportsPortraitV2: false,
@@ -13674,8 +13678,8 @@ function gridlyPortraitContainmentAudit() {
   }
 }
 
-const GRIDLY_LEGACY_SURFACE_DEPENDENCY_AUDIT_VERSION = "V180.10";
-const GRIDLY_LEGACY_TRUTH_AUDIT_VERSION = "V180.10";
+const GRIDLY_LEGACY_SURFACE_DEPENDENCY_AUDIT_VERSION = "V180.11";
+const GRIDLY_LEGACY_TRUTH_AUDIT_VERSION = "V180.11";
 const GRIDLY_DASHBOARD_SECTION_PASSIVE_SUPPRESSION_SELECTOR = "#dashboardSection";
 const GRIDLY_DASHBOARD_SECTION_PASSIVE_SUPPRESSION_OWNER_SELECTOR = "#gridlyPortraitV2";
 const gridlyDashboardSectionPassiveUpdateSuppressionState = {
