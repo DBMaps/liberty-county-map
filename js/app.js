@@ -2678,6 +2678,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyPortraitContainmentAudit",
   "gridlyLegacySurfaceDependencyAudit",
   "gridlyLegacyTruthAudit",
+  "gridlyPortraitStabilitySmokeAudit",
   "gridlyAuditCycleDebug",
   "gridlyAuditHelpersCheck",
   "loadSharedReports"
@@ -2744,6 +2745,7 @@ function exposeAllGridlyAuditHelpers() {
     gridlyPortraitContainmentAudit: typeof gridlyPortraitContainmentAudit === "function" ? gridlyPortraitContainmentAudit : null,
     gridlyLegacySurfaceDependencyAudit: typeof gridlyLegacySurfaceDependencyAudit === "function" ? gridlyLegacySurfaceDependencyAudit : null,
     gridlyLegacyTruthAudit: typeof gridlyLegacyTruthAudit === "function" ? gridlyLegacyTruthAudit : null,
+    gridlyPortraitStabilitySmokeAudit: typeof gridlyPortraitStabilitySmokeAudit === "function" ? gridlyPortraitStabilitySmokeAudit : null,
     gridlyAuditCycleDebug: typeof gridlyAuditCycleDebug === "function" ? gridlyAuditCycleDebug : null,
     gridlyAuditHelpersCheck: typeof gridlyAuditHelpersCheck === "function" ? gridlyAuditHelpersCheck : null,
     loadSharedReports: typeof loadSharedReports === "function" ? loadSharedReports : null
@@ -14655,6 +14657,172 @@ window.gridlyPortraitActivationAudit = function gridlyPortraitActivationAudit() 
     };
   }
 };
+
+
+function gridlyPortraitStabilitySmokeAudit() {
+  const safeText = (selector) => String(document.querySelector(selector)?.textContent || "").replace(/\s+/g, " ").trim();
+  const isVisible = (element) => {
+    if (!element || element.hidden) return false;
+    const style = typeof window.getComputedStyle === "function" ? window.getComputedStyle(element) : null;
+    const rect = typeof element.getBoundingClientRect === "function" ? element.getBoundingClientRect() : null;
+    return Boolean(
+      (!style || (style.display !== "none" && style.visibility !== "hidden" && Number.parseFloat(style.opacity || "1") !== 0)) &&
+      (!rect || (rect.width > 0 && rect.height > 0))
+    );
+  };
+  const countSelector = (selector) => {
+    try {
+      return document.querySelectorAll(selector).length;
+    } catch (_error) {
+      return 0;
+    }
+  };
+  const findVisibleSelector = (selectors) => selectors.find((selector) => {
+    try {
+      return Array.from(document.querySelectorAll(selector)).some(isVisible);
+    } catch (_error) {
+      return false;
+    }
+  }) || "";
+
+  try {
+    const layoutMode = getCanonicalGridlyPortraitLayoutMode();
+    const cleanupGate = getGridlyPortraitCleanupGateState(layoutMode);
+    const ownershipAudit = typeof window.gridlyPortraitOwnershipInventory === "function" ? window.gridlyPortraitOwnershipInventory() : null;
+    const containmentAudit = typeof window.gridlyPortraitContainmentAudit === "function" ? window.gridlyPortraitContainmentAudit() : null;
+    const legacyTruthAudit = typeof window.gridlyLegacyTruthAudit === "function" ? window.gridlyLegacyTruthAudit() : null;
+    const visibleSystems = Array.isArray(ownershipAudit?.portraitVisibleSystems) ? ownershipAudit.portraitVisibleSystems : [];
+    const duplicateOwnershipWarnings = Array.isArray(ownershipAudit?.duplicateOwnershipWarnings) ? ownershipAudit.duplicateOwnershipWarnings : [];
+    const containedStructuralWrappers = Array.from(new Set([
+      ...(Array.isArray(ownershipAudit?.containedStructuralWrappers) ? ownershipAudit.containedStructuralWrappers : []),
+      ...(Array.isArray(containmentAudit?.containedStructuralWrappers) ? containmentAudit.containedStructuralWrappers : [])
+    ]));
+    const retiredSurfaceNames = Object.keys(GRIDLY_PORTRAIT_RETIRED_SURFACES);
+    const retiredSurfaces = retiredSurfaceNames.map((name) => {
+      const system = visibleSystems.find((candidate) => candidate.name === name)
+        || (Array.isArray(legacyTruthAudit?.surfaces) ? legacyTruthAudit.surfaces.find((candidate) => candidate.name === name) : null)
+        || null;
+      return {
+        name,
+        status: GRIDLY_PORTRAIT_RETIRED_SURFACES[name]?.status || "retired",
+        retiredIn: GRIDLY_PORTRAIT_RETIRED_SURFACES[name]?.retiredIn || "",
+        loaded: Boolean(system?.loaded),
+        visible: Boolean(system?.visible)
+      };
+    });
+    const protectedRuntimeFlags = {
+      crossingRuntimeEnabled: GRIDLY_CROSSING_RUNTIME_ENABLED,
+      crossingEnrichmentEnabled: GRIDLY_CROSSING_ENRICHMENT_ENABLED,
+      sourceJoinRuntimeEnabled: GRIDLY_SOURCE_JOIN_RUNTIME_ENABLED,
+      heavyCommunityRuntimeDisabled: GRIDLY_HEAVY_COMMUNITY_RUNTIME_DISABLED
+    };
+
+    const classifiedDockButtons = (typeof getBottomDockButtons === "function" ? getBottomDockButtons() : [])
+      .map((button) => ({ button, intent: classifyBottomDockIntent(button) }));
+    const buttonBound = (intent) => classifiedDockButtons.some((entry) => entry.intent === intent && entry.button.dataset.gridlyDockBound === "true");
+    const bottomDockVisible = Boolean(findVisibleSelector([
+      ".gridly-v2-bottom-dock",
+      ".gridly-bottom-dock",
+      ".tactical-dock",
+      ".mobile-floating-action-dock",
+      ".mobile-bottom-nav",
+      ".mobile-bottom-dock",
+      ".mobile-dock"
+    ]));
+    const mapVisible = isVisible(document.getElementById("map"));
+    const alertsHeadingText = safeText("[data-gridly-alerts-panel-heading='true']")
+      || safeText("#alertsSection h2, #alertsSection h3, .gridly-alerts-active h2, .gridly-alerts-active h3");
+    const renderedAlertCount = Array.isArray(window.__gridlyLatestAlertsForRender)
+      ? window.__gridlyLatestAlertsForRender.length
+      : (Array.isArray(window.__gridlyAlertsForRenderSample) ? window.__gridlyAlertsForRenderSample.length : null);
+    const unifiedIncidents = typeof getUnifiedIncidents === "function" ? getUnifiedIncidents() : null;
+    const unifiedIncidentCount = Array.isArray(unifiedIncidents) ? unifiedIncidents.length : null;
+    const localActiveAlertCount = (Array.isArray(activeReports) ? activeReports.length : 0) + (Array.isArray(activeHazards) ? activeHazards.length : 0);
+    const activeAlertCount = Number.isFinite(renderedAlertCount)
+      ? renderedAlertCount
+      : (Number.isFinite(unifiedIncidentCount) ? unifiedIncidentCount : localActiveAlertCount);
+    const leakedVisibleLegacyOwners = visibleSystems
+      .filter((system) => system.name !== GRIDLY_PORTRAIT_PRIMARY_OWNER && system.name !== "map-card" && !system.portraitContainedStructuralWrapper && !system.retirement)
+      .map((system) => system.name);
+    const leakedVisibleRetiredSurfaces = retiredSurfaces.filter((surface) => surface.visible).map((surface) => surface.name);
+    const duplicateElementIds = {
+      gridlyPortraitV2: countSelector("#gridlyPortraitV2"),
+      gridlyPortraitV2Sheet: countSelector("#gridlyPortraitV2Sheet"),
+      map: countSelector("#map"),
+      alertsSection: countSelector("#alertsSection")
+    };
+    const objectLeakCheck = {
+      ok: !Object.values(duplicateElementIds).some((count) => count > 1) && leakedVisibleLegacyOwners.length === 0 && leakedVisibleRetiredSurfaces.length === 0,
+      duplicateElementIds,
+      leakedVisibleLegacyOwners,
+      leakedVisibleRetiredSurfaces,
+      inspectedOnly: true
+    };
+
+    const majorProblems = [];
+    if (cleanupGate.isStrictPortraitMobile && !cleanupGate.portraitCleanupGateActive) majorProblems.push("strict_portrait_mobile_cleanup_gate_inactive");
+    if (cleanupGate.isStrictPortraitMobile && ownershipAudit?.portraitPrimaryOwner !== GRIDLY_PORTRAIT_PRIMARY_OWNER) majorProblems.push("portrait_primary_owner_not_gridlyPortraitV2");
+    if (duplicateOwnershipWarnings.length) majorProblems.push("duplicate_portrait_ownership_warnings_present");
+    if (cleanupGate.isStrictPortraitMobile && !mapVisible) majorProblems.push("map_not_visible_in_portrait");
+    if (cleanupGate.isStrictPortraitMobile && !bottomDockVisible) majorProblems.push("bottom_dock_not_visible_in_portrait");
+    if (!buttonBound("route")) majorProblems.push("route_button_not_bound");
+    if (!buttonBound("report")) majorProblems.push("report_button_not_bound");
+    if (!buttonBound("alerts")) majorProblems.push("alerts_button_not_bound");
+    if (!buttonBound("settings")) majorProblems.push("settings_button_not_bound");
+    if (!protectedRuntimeFlags.heavyCommunityRuntimeDisabled || protectedRuntimeFlags.crossingRuntimeEnabled || protectedRuntimeFlags.crossingEnrichmentEnabled || protectedRuntimeFlags.sourceJoinRuntimeEnabled) majorProblems.push("protected_runtime_flags_not_preserved");
+    if (!objectLeakCheck.ok) majorProblems.push("portrait_object_or_surface_leak_detected");
+
+    return {
+      layoutMode,
+      viewportWidth: cleanupGate.viewportWidth,
+      viewportHeight: cleanupGate.viewportHeight,
+      isStrictPortraitMobile: cleanupGate.isStrictPortraitMobile,
+      portraitCleanupGateActive: cleanupGate.portraitCleanupGateActive,
+      portraitPrimaryOwner: ownershipAudit?.portraitPrimaryOwner || GRIDLY_PORTRAIT_PRIMARY_OWNER,
+      duplicateOwnershipWarnings,
+      containedStructuralWrappers,
+      retiredSurfaces,
+      protectedRuntimeFlags,
+      headerText: safeText("#gridlyV2TopStatusPrimary"),
+      alertsHeadingText,
+      activeAlertCount,
+      mapVisible,
+      bottomDockVisible,
+      routeButtonBound: buttonBound("route"),
+      reportButtonBound: buttonBound("report"),
+      alertsButtonBound: buttonBound("alerts"),
+      settingsButtonBound: buttonBound("settings"),
+      objectLeakCheck,
+      majorProblems
+    };
+  } catch (error) {
+    return {
+      layoutMode: document.body?.dataset?.layoutMode || "unknown",
+      viewportWidth: Math.round(window.visualViewport?.width || window.innerWidth || 0),
+      viewportHeight: Math.round(window.visualViewport?.height || window.innerHeight || 0),
+      isStrictPortraitMobile: false,
+      portraitCleanupGateActive: false,
+      portraitPrimaryOwner: GRIDLY_PORTRAIT_PRIMARY_OWNER,
+      duplicateOwnershipWarnings: [{ type: "audit_error", message: error?.message || "unknown error", systems: [] }],
+      containedStructuralWrappers: [],
+      retiredSurfaces: Object.keys(GRIDLY_PORTRAIT_RETIRED_SURFACES),
+      protectedRuntimeFlags: {},
+      headerText: "",
+      alertsHeadingText: "",
+      activeAlertCount: 0,
+      mapVisible: false,
+      bottomDockVisible: false,
+      routeButtonBound: false,
+      reportButtonBound: false,
+      alertsButtonBound: false,
+      settingsButtonBound: false,
+      objectLeakCheck: { ok: false, auditError: error?.message || "unknown error", inspectedOnly: true },
+      majorProblems: ["portrait_stability_smoke_audit_error"]
+    };
+  }
+}
+
+window.gridlyPortraitStabilitySmokeAudit = gridlyPortraitStabilitySmokeAudit;
 
 function getGridlyHeaderOwnershipStaticWriters() {
   return [
