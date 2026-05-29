@@ -13392,6 +13392,11 @@ window.gridlyTopStatusSelectionAudit = function gridlyTopStatusSelectionAudit(op
       mobilityLanguageHeadline: "",
       mobilityLanguageReason: "Top status selection audit failed before mobility language could be evaluated.",
       mobilityLanguageEvidence: {},
+      travelConsequenceGenerated: false,
+      travelConsequenceAccepted: false,
+      travelConsequenceHeadline: "",
+      travelConsequenceReason: "Top status selection audit failed before travel consequence language could be evaluated.",
+      travelConsequenceEvidence: {},
       awarenessSelectionReason: "Top status selection audit failed before candidates could be evaluated.",
       awarenessSelectionBreakdown: {
         winnerReason: "Audit failed before candidates could be evaluated",
@@ -25171,6 +25176,96 @@ function buildGridlyMobilityLanguageCandidate({
   };
 }
 
+function buildGridlyTravelConsequenceCandidate({
+  candidates = [],
+  corridorGroups = [],
+  topStatus = "",
+  activityLevel = "",
+  routeImpactIncidentCount = 0,
+  awarenessMode = "community",
+  mobilityLanguageCandidate = null
+} = {}) {
+  const safeCandidates = gridlySafeArray(candidates);
+  const safeGroups = gridlySafeArray(corridorGroups);
+  const candidateCount = safeCandidates.length;
+  const topGroup = safeGroups[0] || null;
+  const corridorDensity = Number(topGroup?.candidateCount || 0);
+  const routeImpactCount = Math.max(Number(routeImpactIncidentCount || 0), Number(topGroup?.routeImpactCount || 0));
+  const freshCandidateCount = safeCandidates.filter((item) => Number(item?.ageMinutes) <= 30).length;
+  const normalizedActivityLevel = normalizeGridlyMobilityLanguageActivityLevel(activityLevel, {
+    candidateCount,
+    corridorDensity,
+    freshCandidateCount,
+    routeImpactIncidentCount: routeImpactCount
+  });
+  const freshness = freshCandidateCount >= 3 ? "fresh_cluster" : freshCandidateCount > 0 ? "recent" : "unknown";
+  const evidence = {
+    routeImpactCount,
+    activityLevel: normalizedActivityLevel,
+    candidateCount,
+    corridorDensity,
+    freshness,
+    awarenessMode: String(awarenessMode || "community").toLowerCase(),
+    mobilityLanguageHeadline: safeDisplayText(mobilityLanguageCandidate?.mobilityLanguageHeadline, "")
+  };
+  const mobilityGenerated = Boolean(mobilityLanguageCandidate?.mobilityLanguageGenerated);
+  const isImproving = normalizedActivityLevel === "improving";
+  const isBuilding = normalizedActivityLevel === "building";
+  const isElevated = normalizedActivityLevel === "elevated" || normalizedActivityLevel === "worsening";
+  const hasModerateEvidence = candidateCount >= 3 || routeImpactCount >= 3 || corridorDensity >= 3 || isBuilding || isElevated || isImproving;
+  const hasStrongEvidence = routeImpactCount >= 3 || isBuilding || isElevated || (isImproving && (candidateCount >= 3 || routeImpactCount > 0));
+
+  if (!mobilityGenerated || !hasModerateEvidence) {
+    return {
+      travelConsequenceGenerated: false,
+      travelConsequenceAccepted: false,
+      travelConsequenceHeadline: "",
+      travelConsequenceReason: mobilityGenerated
+        ? "Weak consequence evidence; retaining current mobility-language headline."
+        : "Mobility language was not generated, so consequence wording remains inactive.",
+      travelConsequenceEvidence: evidence
+    };
+  }
+
+  const supportItems = topGroup?.candidateIndexes
+    ? gridlySafeArray(topGroup.candidateIndexes).map((index) => safeCandidates[Number(index)]).filter(Boolean)
+    : safeCandidates;
+  const placeLabel = getGridlyTopStatusCorridorPlaceLabel(supportItems.length ? supportItems : safeCandidates, topStatus);
+  const placePhrase = placeLabel === "nearby" ? "nearby" : `near ${placeLabel}`;
+
+  let headline = "";
+  let reason = "";
+  if (isImproving) {
+    headline = `Travel conditions improving ${placePhrase}`;
+    reason = `${candidateCount} active localized incident${candidateCount === 1 ? "" : "s"} with improving activity evidence`;
+  } else if (routeImpactCount >= 4 && isBuilding) {
+    headline = `Expect delays ${placePhrase}`;
+    reason = `${routeImpactCount} route-impacting incidents with building activity`;
+  } else if (isBuilding) {
+    headline = `Route impacts building ${placePhrase}`;
+    reason = `${candidateCount} active localized incident${candidateCount === 1 ? "" : "s"} with building activity`;
+  } else if (isElevated) {
+    headline = `Travel conditions slowing ${placePhrase}`;
+    reason = `${candidateCount} active localized incident${candidateCount === 1 ? "" : "s"} with elevated activity evidence`;
+  } else if (routeImpactCount >= 3) {
+    headline = `Delays possible ${placePhrase}`;
+    reason = `${routeImpactCount} route-impacting incident${routeImpactCount === 1 ? "" : "s"}`;
+  } else {
+    headline = `Multiple disruptions may affect travel ${placePhrase}`;
+    reason = `${candidateCount} active localized incident${candidateCount === 1 ? "" : "s"} with moderate consequence evidence`;
+  }
+
+  return {
+    travelConsequenceGenerated: Boolean(headline),
+    travelConsequenceAccepted: Boolean(headline && hasStrongEvidence),
+    travelConsequenceHeadline: safeDisplayText(headline, ""),
+    travelConsequenceReason: hasStrongEvidence
+      ? reason
+      : `${reason}; moderate evidence only, retaining current mobility-language headline.`,
+    travelConsequenceEvidence: evidence
+  };
+}
+
 function buildGridlyTopStatusSelectionDiagnostics({
   intelItems = [],
   corridorClusters = [],
@@ -25279,6 +25374,15 @@ function buildGridlyTopStatusSelectionDiagnostics({
     routeImpactIncidentCount,
     awarenessMode
   });
+  const travelConsequenceCandidate = buildGridlyTravelConsequenceCandidate({
+    candidates,
+    corridorGroups,
+    topStatus,
+    activityLevel,
+    routeImpactIncidentCount,
+    awarenessMode,
+    mobilityLanguageCandidate
+  });
   return {
     loaded: true,
     version: "V182.1",
@@ -25300,6 +25404,11 @@ function buildGridlyTopStatusSelectionDiagnostics({
     mobilityLanguageHeadline: safeDisplayText(mobilityLanguageCandidate.mobilityLanguageHeadline, ""),
     mobilityLanguageReason: safeDisplayText(mobilityLanguageCandidate.mobilityLanguageReason, ""),
     mobilityLanguageEvidence: mobilityLanguageCandidate.mobilityLanguageEvidence || {},
+    travelConsequenceGenerated: Boolean(travelConsequenceCandidate.travelConsequenceGenerated),
+    travelConsequenceAccepted: Boolean(travelConsequenceCandidate.travelConsequenceAccepted),
+    travelConsequenceHeadline: safeDisplayText(travelConsequenceCandidate.travelConsequenceHeadline, ""),
+    travelConsequenceReason: safeDisplayText(travelConsequenceCandidate.travelConsequenceReason, ""),
+    travelConsequenceEvidence: travelConsequenceCandidate.travelConsequenceEvidence || {},
     awarenessSelectionReason: candidates.length
       ? `${selectionSource}; corridor density is diagnostic and contributes to candidate evidence without changing top-awareness layout.`
       : "No active top-status candidates available; quiet-state fallback remains in control.",
@@ -25932,13 +26041,16 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     routeImpactIncidentCount: routeImpactItems.length,
     awarenessMode: typeof getGridlyAwarenessMode === "function" ? getGridlyAwarenessMode() : "community"
   }));
+  const travelConsequenceTopStatus = topStatusSelectionAudit?.travelConsequenceAccepted
+    ? safeDisplayText(topStatusSelectionAudit.travelConsequenceHeadline, topStatus)
+    : "";
   const languageAwareTopStatus = topStatusSelectionAudit?.mobilityLanguageAccepted
     ? safeDisplayText(topStatusSelectionAudit.mobilityLanguageHeadline, topStatus)
     : "";
   const corridorAwareTopStatus = topStatusSelectionAudit?.corridorAwareCandidateAccepted
     ? safeDisplayText(topStatusSelectionAudit.corridorAwareHeadline, topStatus)
     : topStatus;
-  const selectedLanguageTopStatus = safeDisplayText(languageAwareTopStatus || corridorAwareTopStatus, topStatus);
+  const selectedLanguageTopStatus = safeDisplayText(travelConsequenceTopStatus || languageAwareTopStatus || corridorAwareTopStatus, topStatus);
   const consequenceSecondaryMessage = timeSection("recommendation_generation", () => topSecondary);
   counts.alertCount = Math.min(Number(limit || 0), safeIntelItems.length);
   counts.recommendationCount = consequenceSecondaryMessage ? 1 : 0;
@@ -26240,11 +26352,14 @@ function refreshPortraitV2LocalizedIntelligence() {
     const mobilityLanguagePrimaryCandidate = intel.topStatusSelectionAudit?.mobilityLanguageAccepted
       ? safeDisplayText(intel.topStatusSelectionAudit.mobilityLanguageHeadline, "")
       : "";
+    const travelConsequencePrimaryCandidate = intel.topStatusSelectionAudit?.travelConsequenceAccepted
+      ? safeDisplayText(intel.topStatusSelectionAudit.travelConsequenceHeadline, "")
+      : "";
     const corridorAwarePrimaryCandidate = intel.topStatusSelectionAudit?.corridorAwareCandidateAccepted
       ? safeDisplayText(intel.topStatusSelectionAudit.corridorAwareHeadline, "")
       : "";
     const primaryValue = intel.hasActiveAlerts
-      ? safeDisplayText(mobilityLanguagePrimaryCandidate || corridorAwarePrimaryCandidate || existingAlertWording?.text || guardedPrimaryFallback, safeDisplayText(intel.commuteImpactHeadline, "Routes currently clear"))
+      ? safeDisplayText(travelConsequencePrimaryCandidate || mobilityLanguagePrimaryCandidate || corridorAwarePrimaryCandidate || existingAlertWording?.text || guardedPrimaryFallback, safeDisplayText(intel.commuteImpactHeadline, "Routes currently clear"))
       : safeDisplayText(intel.commuteImpactHeadline, "Routes currently clear");
     logTopPanelWrite("refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusPrimary", primaryValue);
     if (topPrimaryEl) topPrimaryEl.textContent = safeDisplayText(primaryValue, "Routes currently clear");
