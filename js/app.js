@@ -12116,6 +12116,264 @@ window.gridlyCommunityPulseAudit = function gridlyCommunityPulseAudit(options = 
     repetitionAvoidanceApplied: Boolean(state.repetitionAvoidanceApplied)
   };
 };
+function getGridlyHeaderOwnershipStaticWriters() {
+  return [
+    {
+      targetElement: "gridlyV2TopStatusPrimary",
+      sourceFunction: "refreshPortraitV2LocalizedIntelligence",
+      writeType: "direct textContent assignment",
+      selectionPath: "resolveGridlyExistingAlertWording().text || buildUnifiedLocalizedCommuteIntelligence().topStatus || commuteImpactHeadline || clear fallback",
+      ownerSystem: "route_intelligence_with_alert_summary_reuse"
+    },
+    {
+      targetElement: "gridlyV2TopStatusSecondary",
+      sourceFunction: "refreshPortraitV2LocalizedIntelligence",
+      writeType: "direct textContent assignment",
+      selectionPath: "formatPortraitTopStripImpactLabel(commuteConsequenceTier) + topIncidentFreshnessText, else clear fallback",
+      ownerSystem: "route_intelligence"
+    },
+    {
+      targetElement: "gridlyV2TopStatusPrimary",
+      sourceFunction: "index.html initial markup",
+      writeType: "static default text",
+      selectionPath: "Routes currently clear",
+      ownerSystem: "static_initial_dom"
+    },
+    {
+      targetElement: "gridlyV2TopStatusSecondary",
+      sourceFunction: "index.html initial markup",
+      writeType: "static default text",
+      selectionPath: "No major disruptions nearby",
+      ownerSystem: "static_initial_dom"
+    }
+  ];
+}
+
+function getGridlyHeaderOwnershipPhrasePaths() {
+  return {
+    trainBlocking: [
+      {
+        sourceFunction: "buildCommuteConsequenceIntelligence",
+        path: "topPrimaryByTier.severe when no routeImpactItems",
+        output: "Train blocking US 90",
+        canReachTopStatusPrimary: true,
+        via: "commuteImpactHeadline fallback in refreshPortraitV2LocalizedIntelligence when active alert wording is unavailable"
+      },
+      {
+        sourceFunction: "buildCommunityConsequenceLabel",
+        path: "blocked/crossing_blocked + US 90 road template",
+        output: "Train blocking {localized spot}",
+        canReachTopStatusPrimary: true,
+        via: "buildUnifiedLocalizedCommuteIntelligence().topStatus when selected as top/corridor incident"
+      },
+      {
+        sourceFunction: "buildAlertTitle",
+        path: "rail/crossing alert title templates",
+        output: "Train blocking {road/crossing/location}",
+        canReachTopStatusPrimary: true,
+        via: "rendered alert row text may be reused by resolveGridlyExistingAlertWording when classified reusable"
+      }
+    ],
+    flooding: [
+      {
+        sourceFunction: "buildCommunityConsequenceLabel",
+        path: "flood incident + road template",
+        output: "Flooding on {localized spot}",
+        canReachTopStatusPrimary: true,
+        via: "buildUnifiedLocalizedCommuteIntelligence().topStatus when selected as top/corridor incident"
+      },
+      {
+        sourceFunction: "buildAlertTitle",
+        path: "roadHazardMap flood/high water title template",
+        output: "Flooding on {road}",
+        canReachTopStatusPrimary: true,
+        via: "rendered alert row text may be reused by resolveGridlyExistingAlertWording when classified reusable"
+      },
+      {
+        sourceFunction: "buildGridlyHeaderCandidateFromCategoryLocation",
+        path: "lightweight active awareness resolvedCategory + resolvedLocationLabel",
+        output: "Flooding on {location}",
+        canReachTopStatusPrimary: true,
+        via: "resolveGridlyExistingAlertWording candidate list"
+      }
+    ],
+    routesCurrentlyClear: [
+      {
+        sourceFunction: "index.html initial markup",
+        path: "static top status primary default",
+        output: "Routes currently clear",
+        canReachTopStatusPrimary: true,
+        via: "initial DOM before refreshPortraitV2LocalizedIntelligence writes"
+      },
+      {
+        sourceFunction: "buildCommuteConsequenceIntelligence",
+        path: "topPrimaryByTier.clear/minor or trend/secondary fallback",
+        output: "Routes currently clear",
+        canReachTopStatusPrimary: true,
+        via: "commuteImpactHeadline fallback in refreshPortraitV2LocalizedIntelligence"
+      },
+      {
+        sourceFunction: "refreshPortraitV2LocalizedIntelligence",
+        path: "safeDisplayText fallback for primary/secondary values",
+        output: "Routes currently clear",
+        canReachTopStatusPrimary: true,
+        via: "direct top strip write fallback"
+      },
+      {
+        sourceFunction: "renderGridlyCommunityPulse",
+        path: "pulse headline fallback only",
+        output: "Routes currently clear",
+        canReachTopStatusPrimary: false,
+        via: "writes #gridlyCommunityPulseHeadline, not #gridlyV2TopStatusPrimary"
+      }
+    ]
+  };
+}
+
+function inferGridlyHeaderOwnerSystem(lastPrimaryWrite, currentPrimaryText = "") {
+  const source = String(lastPrimaryWrite?.sourceFunction || "");
+  const value = String(currentPrimaryText || lastPrimaryWrite?.value || "");
+  const routeIntel = gridlyCommuteIntelligenceAuditState || {};
+  const normalizedValue = normalizeGridlyLightweightAlertSummaryText(value);
+  const matchesRouteConsequence = normalizedValue && normalizedValue === normalizeGridlyLightweightAlertSummaryText(routeIntel.consequencePrimaryMessage || "");
+  const matchesRouteTopStatus = normalizedValue && normalizedValue === normalizeGridlyLightweightAlertSummaryText(routeIntel.topStatus || "");
+  const matchesRailFallback = /train blocking/i.test(value);
+  if (source === "refreshPortraitV2LocalizedIntelligence") {
+    return {
+      activeAwareness: false,
+      communityPulse: false,
+      routeIntelligence: true,
+      railIntelligence: matchesRailFallback,
+      legacyDashboardSystem: false,
+      otherSource: false,
+      ownerLabel: matchesRailFallback ? "route intelligence / rail consequence fallback" : "route intelligence",
+      evidence: {
+        lastPrimaryWriteSource: source,
+        matchesRouteConsequence,
+        matchesRouteTopStatus,
+        matchesRailFallback
+      }
+    };
+  }
+  if (!source) {
+    return {
+      activeAwareness: false,
+      communityPulse: false,
+      routeIntelligence: false,
+      railIntelligence: false,
+      legacyDashboardSystem: false,
+      otherSource: true,
+      ownerLabel: "untraced initial DOM or pre-audit writer",
+      evidence: { lastPrimaryWriteSource: "" }
+    };
+  }
+  return {
+    activeAwareness: false,
+    communityPulse: source === "renderGridlyCommunityPulse",
+    routeIntelligence: false,
+    railIntelligence: false,
+    legacyDashboardSystem: source === "updateDailyHabitStatus",
+    otherSource: source !== "renderGridlyCommunityPulse" && source !== "updateDailyHabitStatus",
+    ownerLabel: source,
+    evidence: { lastPrimaryWriteSource: source }
+  };
+}
+
+window.gridlyHeaderOwnershipAudit = function gridlyHeaderOwnershipAudit(options = {}) {
+  try {
+    const currentPrimaryText = safeDisplayText(document.getElementById("gridlyV2TopStatusPrimary")?.textContent, "");
+    const currentSecondaryText = safeDisplayText(document.getElementById("gridlyV2TopStatusSecondary")?.textContent, "");
+    const pulseState = gridlyCommunityPulseAuditState || {};
+    const activeAwareness = pulseState.activeAwareness || null;
+    const routeIntelState = gridlyCommuteIntelligenceAuditState || {};
+    const lastPrimaryWrite = gridlyHeaderOwnershipTraceState.lastWriteByTarget.gridlyV2TopStatusPrimary || null;
+    const lastSecondaryWrite = gridlyHeaderOwnershipTraceState.lastWriteByTarget.gridlyV2TopStatusSecondary || null;
+    const owner = inferGridlyHeaderOwnerSystem(lastPrimaryWrite, currentPrimaryText);
+    return {
+      loaded: true,
+      version: GRIDLY_HEADER_OWNERSHIP_AUDIT_VERSION,
+      currentPrimaryText,
+      currentSecondaryText,
+      writers: getGridlyHeaderOwnershipStaticWriters(),
+      lastKnownWriteSource: {
+        primary: lastPrimaryWrite,
+        secondary: lastSecondaryWrite,
+        recentWrites: gridlyHeaderOwnershipTraceState.writes.slice(-8)
+      },
+      capableTextPaths: getGridlyHeaderOwnershipPhrasePaths(),
+      activeAwarenessSourceValues: activeAwareness ? {
+        loaded: Boolean(activeAwareness.loaded),
+        runtimeMode: activeAwareness.runtimeMode || "",
+        activeAwarenessCount: Number(activeAwareness.activeAwarenessCount || 0),
+        activeHazardCount: Number(activeAwareness.activeHazardCount || 0),
+        activeReportCount: Number(activeAwareness.activeReportCount || 0),
+        topCategory: activeAwareness.topCategory || null,
+        resolvedCategory: activeAwareness.resolvedCategory || null,
+        categorySource: activeAwareness.categorySource || "",
+        resolvedLocationLabel: activeAwareness.resolvedLocationLabel || "",
+        reusedAlertSummary: Boolean(activeAwareness.reusedAlertSummary),
+        reusedAlertSource: activeAwareness.reusedAlertSource || "",
+        reusedAlertText: activeAwareness.reusedAlertText || "",
+        lightweightSummaryReuseApplied: Boolean(activeAwareness.lightweightSummaryReuseApplied),
+        headline: activeAwareness.headline || "",
+        subline: activeAwareness.subline || "",
+        lightweightLocationSourcesUsed: Array.isArray(activeAwareness.lightweightLocationSourcesUsed) ? activeAwareness.lightweightLocationSourcesUsed : []
+      } : null,
+      pulseSourceValues: {
+        awarenessMode: pulseState.awarenessMode || "",
+        pulseVisible: Boolean(pulseState.pulseVisible),
+        renderedPulseHeadline: pulseState.renderedPulseHeadline || "",
+        renderedPulseSubline: pulseState.renderedPulseSubline || "",
+        pulseSummaryReuseApplied: Boolean(pulseState.pulseSummaryReuseApplied),
+        pulseSummarySource: pulseState.pulseSummarySource || "",
+        pulseSummaryText: pulseState.pulseSummaryText || "",
+        phraseGenerationMode: pulseState.phraseGenerationMode || "",
+        selectedHeadlineTemplate: pulseState.selectedHeadlineTemplate || "",
+        selectedSublineTemplate: pulseState.selectedSublineTemplate || ""
+      },
+      routeIntelligenceSourceValues: {
+        topStatus: routeIntelState.topStatus || "",
+        consequencePrimaryMessage: routeIntelState.consequencePrimaryMessage || "",
+        consequenceSecondaryMessage: routeIntelState.consequenceSecondaryMessage || "",
+        commuteConsequenceTier: routeIntelState.commuteConsequenceTier || "",
+        routeConsequenceSeverity: routeIntelState.routeConsequenceSeverity || "",
+        topIncidentFreshnessText: routeIntelState.topIncidentFreshnessText || "",
+        activeLocalizedAlertCount: Number(routeIntelState.activeLocalizedAlertCount || routeIntelState.counts?.alertCount || 0),
+        highestPriorityCorridor: routeIntelState.highestPriorityCorridor || null
+      },
+      topStatusOwnership: owner,
+      answer: `Portrait V2 header owner: ${owner.ownerLabel}.`,
+      notes: [
+        "Audit reports static writer inventory, already-published source states, and lightweight write tracing captured after V179.6 loads.",
+        "No rendering behavior, text selection, location logic, source joins, enrichment, or runtime scans are changed or started by this audit."
+      ]
+    };
+  } catch (error) {
+    return {
+      loaded: false,
+      version: GRIDLY_HEADER_OWNERSHIP_AUDIT_VERSION,
+      currentPrimaryText: "",
+      currentSecondaryText: "",
+      writers: getGridlyHeaderOwnershipStaticWriters(),
+      lastKnownWriteSource: { primary: null, secondary: null, recentWrites: [] },
+      capableTextPaths: getGridlyHeaderOwnershipPhrasePaths(),
+      activeAwarenessSourceValues: null,
+      pulseSourceValues: {},
+      routeIntelligenceSourceValues: {},
+      topStatusOwnership: {
+        activeAwareness: false,
+        communityPulse: false,
+        routeIntelligence: false,
+        railIntelligence: false,
+        legacyDashboardSystem: false,
+        otherSource: true,
+        ownerLabel: "audit_error"
+      },
+      error: error?.message || "unknown error"
+    };
+  }
+};
+
 window.gridlyActiveAwarenessSourceAudit = function gridlyActiveAwarenessSourceAudit(options = {}) {
   try {
     const activeAwareness = buildGridlyLightweightActiveAwareness(options);
@@ -19525,11 +19783,47 @@ function getLiveCommuteSignalLine({ impact = 0, urgentBlockedCount = 0, recommen
   return recommendation || "Route clear • Leave now";
 }
 
+const GRIDLY_HEADER_OWNERSHIP_AUDIT_VERSION = "V179.6";
+const gridlyHeaderOwnershipTraceState = {
+  writes: [],
+  lastWriteByTarget: {}
+};
+const GRIDLY_HEADER_OWNERSHIP_TARGETS = new Set([
+  "gridlyV2TopStatusPrimary",
+  "gridlyV2TopStatusSecondary",
+  "#gridlyV2TopStatusPrimary",
+  "#gridlyV2TopStatusSecondary"
+]);
+
+function normalizeGridlyHeaderOwnershipTarget(targetElement = "") {
+  const target = String(targetElement || "").trim();
+  if (target === "#gridlyV2TopStatusPrimary") return "gridlyV2TopStatusPrimary";
+  if (target === "#gridlyV2TopStatusSecondary") return "gridlyV2TopStatusSecondary";
+  return target;
+}
+
+function recordGridlyHeaderOwnershipWrite(sourceFunction, targetElement, value, metadata = {}) {
+  const normalizedTarget = normalizeGridlyHeaderOwnershipTarget(targetElement);
+  if (!GRIDLY_HEADER_OWNERSHIP_TARGETS.has(normalizedTarget)) return;
+  const entry = {
+    at: Date.now(),
+    sourceFunction: String(sourceFunction || "unknown"),
+    targetElement: normalizedTarget,
+    value: typeof value === "string" ? value : (value == null ? "" : String(value)),
+    metadata: metadata && typeof metadata === "object" ? { ...metadata } : {}
+  };
+  gridlyHeaderOwnershipTraceState.writes.push(entry);
+  if (gridlyHeaderOwnershipTraceState.writes.length > 20) gridlyHeaderOwnershipTraceState.writes.shift();
+  gridlyHeaderOwnershipTraceState.lastWriteByTarget[normalizedTarget] = entry;
+}
+
 function logTopPanelWrite(sourceFunction, targetElement, value) {
+  const serializedValue = typeof value === "string" ? value : (value == null ? "" : String(value));
+  recordGridlyHeaderOwnershipWrite(sourceFunction, targetElement, serializedValue, { trace: "logTopPanelWrite" });
   console.debug("[V159.2 TOP PANEL WRITE]", {
     sourceFunction,
     targetElement,
-    value: typeof value === "string" ? value : (value == null ? "" : String(value))
+    value: serializedValue
   });
 }
 
