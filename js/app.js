@@ -13158,7 +13158,7 @@ window.gridlyCommunityPulseAudit = function gridlyCommunityPulseAudit(options = 
   };
 };
 
-const GRIDLY_PORTRAIT_OWNERSHIP_INVENTORY_VERSION = "V180.1";
+const GRIDLY_PORTRAIT_OWNERSHIP_INVENTORY_VERSION = "V180.5";
 const GRIDLY_PORTRAIT_OWNERSHIP_SYSTEMS = [
   {
     name: "gridlyPortraitV2",
@@ -13310,9 +13310,54 @@ const GRIDLY_PORTRAIT_RECOMMENDED_DEAUTHORIZE = [
   "mobile-corridor-intel-card",
   "desktop-command-strip",
   "desktop-left-rail",
-  "future-hero-overlay",
-  "command-center"
+  "future-hero-overlay"
 ];
+const GRIDLY_PORTRAIT_CONTAINED_STRUCTURAL_WRAPPERS = ["command-center"];
+
+function isGridlyPortraitModeActiveForContainment() {
+  const body = document.body;
+  const layoutMode = body?.dataset?.layoutMode || "";
+  const legacyLayoutMode = body?.dataset?.layoutModeLegacy || "";
+  const portraitMedia = Boolean(window.matchMedia?.("(orientation: portrait)")?.matches);
+  return layoutMode === "portrait" || legacyLayoutMode === "mobile" || portraitMedia;
+}
+
+function syncGridlyPortraitCommandCenterContainmentMarker(active = isGridlyPortraitModeActiveForContainment()) {
+  const body = document.body;
+  const commandCenter = document.querySelector(".command-center");
+  const contained = Boolean(active && commandCenter);
+  if (body) {
+    body.classList.toggle("gridly-command-center-portrait-contained", contained);
+    if (contained) {
+      body.dataset.commandCenterPortraitOwnership = "contained-structural-wrapper";
+    } else if (body.dataset.commandCenterPortraitOwnership === "contained-structural-wrapper") {
+      delete body.dataset.commandCenterPortraitOwnership;
+    }
+  }
+  if (commandCenter) {
+    commandCenter.classList.toggle("is-portrait-contained", contained);
+    if (contained) {
+      commandCenter.dataset.portraitOwnership = "contained-structural-wrapper";
+    } else if (commandCenter.dataset.portraitOwnership === "contained-structural-wrapper") {
+      delete commandCenter.dataset.portraitOwnership;
+    }
+  }
+  return contained;
+}
+
+function isGridlyPortraitContainedStructuralWrapper(system, element = null) {
+  if (!GRIDLY_PORTRAIT_CONTAINED_STRUCTURAL_WRAPPERS.includes(system?.name)) return false;
+  const candidate = element || (system?.selector ? document.querySelector(system.selector) : null);
+  return Boolean(
+    isGridlyPortraitModeActiveForContainment() &&
+    candidate &&
+    (candidate.dataset?.portraitOwnership === "contained-structural-wrapper" ||
+      candidate.classList?.contains("is-portrait-contained") ||
+      document.body?.dataset?.commandCenterPortraitOwnership === "contained-structural-wrapper" ||
+      document.body?.classList?.contains("gridly-command-center-portrait-contained") ||
+      system.name === "command-center")
+  );
+}
 
 function getGridlyPortraitOwnershipElementState(definition) {
   const element = document.querySelector(definition.selector);
@@ -13357,7 +13402,7 @@ function getGridlyPortraitOwnershipElementState(definition) {
 function buildGridlyPortraitDuplicateOwnershipWarnings(systems, portraitModeActive) {
   const visibleSystems = systems.filter((system) => system.visible);
   const activePrimary = systems.find((system) => system.name === GRIDLY_PORTRAIT_PRIMARY_OWNER && system.active);
-  const activeLegacyOwners = visibleSystems.filter((system) => GRIDLY_PORTRAIT_RECOMMENDED_DEAUTHORIZE.includes(system.name));
+  const activeLegacyOwners = visibleSystems.filter((system) => GRIDLY_PORTRAIT_RECOMMENDED_DEAUTHORIZE.includes(system.name) && !system.portraitContainedStructuralWrapper);
   const warnings = [];
   if (portraitModeActive && !activePrimary) {
     warnings.push({
@@ -13373,7 +13418,7 @@ function buildGridlyPortraitDuplicateOwnershipWarnings(systems, portraitModeActi
       systems: activeLegacyOwners.map((system) => system.name)
     });
   }
-  const visiblePrimaryCompetitors = visibleSystems.filter((system) => system.name !== GRIDLY_PORTRAIT_PRIMARY_OWNER && system.ownerClass !== "shared_map" && system.ownerClass !== "portrait_module");
+  const visiblePrimaryCompetitors = visibleSystems.filter((system) => system.name !== GRIDLY_PORTRAIT_PRIMARY_OWNER && system.ownerClass !== "shared_map" && system.ownerClass !== "portrait_module" && !system.portraitContainedStructuralWrapper);
   if (activePrimary && visiblePrimaryCompetitors.length > 0) {
     warnings.push({
       type: "duplicate_visible_primary_surfaces",
@@ -13384,7 +13429,7 @@ function buildGridlyPortraitDuplicateOwnershipWarnings(systems, portraitModeActi
   return warnings;
 }
 
-const GRIDLY_PORTRAIT_CONTAINMENT_AUDIT_VERSION = "V180.4";
+const GRIDLY_PORTRAIT_CONTAINMENT_AUDIT_VERSION = "V180.5";
 const GRIDLY_PORTRAIT_CONTAINMENT_PROFILE = {
   gridlyPortraitV2: {
     supportsPortraitV2: true,
@@ -13514,7 +13559,7 @@ const GRIDLY_PORTRAIT_CONTAINMENT_PROFILE = {
     ownsMap: true,
     ownsAlerts: true,
     ownsHeader: true,
-    recommendedAction: "deauthorize"
+    recommendedAction: "contain"
   }
 };
 
@@ -13532,9 +13577,12 @@ function getGridlyPortraitContainmentSystemAudit(definition) {
   const state = getGridlyPortraitOwnershipElementState(definition);
   const element = state.loaded ? document.querySelector(definition.selector) : null;
   const profile = GRIDLY_PORTRAIT_CONTAINMENT_PROFILE[definition.name] || {};
+  const portraitContainedStructuralWrapper = isGridlyPortraitContainedStructuralWrapper(state, element);
   const supportsPortraitV2 = Boolean(profile.supportsPortraitV2);
-  const competesWithPortraitOwnership = Boolean(profile.competesWithPortraitOwnership);
-  const recommendedAction = profile.recommendedAction || (supportsPortraitV2 ? "keep" : competesWithPortraitOwnership ? "contain" : "unknown");
+  const competesWithPortraitOwnership = Boolean(profile.competesWithPortraitOwnership && !portraitContainedStructuralWrapper);
+  const recommendedAction = portraitContainedStructuralWrapper
+    ? "contained_structural_wrapper"
+    : (profile.recommendedAction || (supportsPortraitV2 ? "keep" : competesWithPortraitOwnership ? "contain" : "unknown"));
   return {
     name: state.name,
     selector: state.selector,
@@ -13543,7 +13591,8 @@ function getGridlyPortraitContainmentSystemAudit(definition) {
     loaded: Boolean(state.loaded),
     supportsPortraitV2,
     competesWithPortraitOwnership,
-    receivesUserInteraction: Boolean(state.visible && gridlyPortraitContainmentReceivesUserInteraction(element)),
+    portraitContainedStructuralWrapper,
+    receivesUserInteraction: Boolean(state.visible && !portraitContainedStructuralWrapper && gridlyPortraitContainmentReceivesUserInteraction(element)),
     ownsLayout: Boolean(profile.ownsLayout),
     ownsNavigation: Boolean(profile.ownsNavigation),
     ownsMap: Boolean(profile.ownsMap),
@@ -13572,6 +13621,9 @@ function gridlyPortraitContainmentAudit() {
     const deauthorizationCandidates = visiblePortraitSystems
       .filter((system) => system.recommendedAction === "deauthorize")
       .map((system) => system.name);
+    const containedStructuralWrappers = visiblePortraitSystems
+      .filter((system) => system.portraitContainedStructuralWrapper)
+      .map((system) => system.name);
 
     return {
       loaded: true,
@@ -13582,12 +13634,14 @@ function gridlyPortraitContainmentAudit() {
       competingPortraitOwners,
       containmentCandidates,
       deauthorizationCandidates,
+      containedStructuralWrappers,
       answer: competingPortraitOwners.length
         ? `Visible systems competing with Portrait V2 ownership: ${competingPortraitOwners.join(", ")}.`
         : "No visible systems are currently classified as competing with Portrait V2 ownership.",
       notes: [
         "Audit only: this helper reads visible portrait systems and does not hide, remove, reparent, or deauthorize anything.",
-        "supportsPortraitV2 marks required/supporting modules for the active Portrait V2 owner; competesWithPortraitOwnership marks legacy or desktop surfaces that can own layout/navigation/map/alert/header responsibilities in parallel."
+        "supportsPortraitV2 marks required/supporting modules for the active Portrait V2 owner; competesWithPortraitOwnership marks legacy or desktop surfaces that can own layout/navigation/map/alert/header responsibilities in parallel.",
+        "In portrait, .command-center is marked as a contained structural wrapper so its children can remain visible without classifying the wrapper as a desktop command owner."
       ]
     };
   } catch (error) {
@@ -13600,6 +13654,7 @@ function gridlyPortraitContainmentAudit() {
       competingPortraitOwners: [],
       containmentCandidates: [],
       deauthorizationCandidates: [],
+      containedStructuralWrappers: [],
       error: error?.message || "unknown error"
     };
   }
@@ -13615,6 +13670,8 @@ window.gridlyPortraitOwnershipInventory = function gridlyPortraitOwnershipInvent
     const portraitModeActive = layoutMode === "portrait" || legacyLayoutMode === "mobile" || portraitMedia;
     const systems = GRIDLY_PORTRAIT_OWNERSHIP_SYSTEMS.map((definition) => {
       const state = getGridlyPortraitOwnershipElementState(definition);
+      const element = state.loaded ? document.querySelector(definition.selector) : null;
+      const portraitContainedStructuralWrapper = isGridlyPortraitContainedStructuralWrapper(state, element);
       return {
         name: state.name,
         selector: state.selector,
@@ -13622,7 +13679,8 @@ window.gridlyPortraitOwnershipInventory = function gridlyPortraitOwnershipInvent
         ownerClass: state.ownerClass,
         visible: state.visible,
         loaded: state.loaded,
-        active: Boolean(state.active && (portraitModeActive || state.name === GRIDLY_PORTRAIT_PRIMARY_OWNER || state.ownerClass === "shared_map" || state.ownerClass === "portrait_module"))
+        active: Boolean(state.active && !portraitContainedStructuralWrapper && (portraitModeActive || state.name === GRIDLY_PORTRAIT_PRIMARY_OWNER || state.ownerClass === "shared_map" || state.ownerClass === "portrait_module")),
+        portraitContainedStructuralWrapper
       };
     });
     const portraitVisibleSystems = systems.filter((system) => system.visible);
@@ -13631,7 +13689,7 @@ window.gridlyPortraitOwnershipInventory = function gridlyPortraitOwnershipInvent
     const portraitDormantSystems = systems.filter((system) => !system.loaded || !system.active);
     const duplicateOwnershipWarnings = buildGridlyPortraitDuplicateOwnershipWarnings(systems, portraitModeActive);
     const activePrimary = systems.find((system) => system.name === GRIDLY_PORTRAIT_PRIMARY_OWNER && system.active);
-    const firstVisibleOwner = portraitVisibleSystems.find((system) => system.name !== "map-card") || portraitVisibleSystems[0] || null;
+    const firstVisibleOwner = portraitVisibleSystems.find((system) => system.name !== "map-card" && !system.portraitContainedStructuralWrapper) || portraitVisibleSystems[0] || null;
     return {
       loaded: true,
       version: GRIDLY_PORTRAIT_OWNERSHIP_INVENTORY_VERSION,
@@ -13646,6 +13704,7 @@ window.gridlyPortraitOwnershipInventory = function gridlyPortraitOwnershipInvent
       portraitPrimaryOwner: activePrimary ? GRIDLY_PORTRAIT_PRIMARY_OWNER : (firstVisibleOwner?.name || GRIDLY_PORTRAIT_PRIMARY_OWNER),
       recommendedKeep: GRIDLY_PORTRAIT_RECOMMENDED_KEEP,
       recommendedDeauthorize: GRIDLY_PORTRAIT_RECOMMENDED_DEAUTHORIZE,
+      containedStructuralWrappers: systems.filter((system) => system.portraitContainedStructuralWrapper).map((system) => system.name),
       portraitV2StartupActivationApplied: Boolean(gridlyPortraitV2StartupActivationState.applied),
       portraitV2StartupActivationReason: gridlyPortraitV2StartupActivationState.reason,
       portraitV2StartupActivation: { ...gridlyPortraitV2StartupActivationState },
@@ -13670,6 +13729,7 @@ window.gridlyPortraitOwnershipInventory = function gridlyPortraitOwnershipInvent
       portraitPrimaryOwner: GRIDLY_PORTRAIT_PRIMARY_OWNER,
       recommendedKeep: GRIDLY_PORTRAIT_RECOMMENDED_KEEP,
       recommendedDeauthorize: GRIDLY_PORTRAIT_RECOMMENDED_DEAUTHORIZE,
+      containedStructuralWrappers: [],
       portraitV2StartupActivationApplied: Boolean(gridlyPortraitV2StartupActivationState.applied),
       portraitV2StartupActivationReason: gridlyPortraitV2StartupActivationState.reason,
       portraitV2StartupActivation: { ...gridlyPortraitV2StartupActivationState }
@@ -27933,6 +27993,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       if (!body) return;
       const active = isPortraitV2VisuallyActive();
       body.classList.toggle(V2_CONTAINMENT_CLASS, active);
+      syncGridlyPortraitCommandCenterContainmentMarker(active);
       if (!active) {
         legacySurfaceState.lastSuppressed = "";
         legacySurfaceState.visibleCount = 0;
