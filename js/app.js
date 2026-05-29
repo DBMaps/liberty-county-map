@@ -3255,6 +3255,63 @@ window.gridlyCommuteDeltaSnapshot = function gridlyCommuteDeltaSnapshot() {
   return gridlyBuildCommuteDeltaSnapshot();
 };
 
+function gridlyFormatCommuteDisplayMinutes(value) {
+  if (!Number.isFinite(Number(value))) return null;
+  const rounded = Math.round(Number(value));
+  return rounded > 0 ? rounded : null;
+}
+
+function gridlyBuildCommuteDisplayCopy() {
+  const commuteDeltaSnapshot = typeof window.gridlyCommuteDeltaSnapshot === "function"
+    ? window.gridlyCommuteDeltaSnapshot()
+    : gridlyBuildCommuteDeltaSnapshot();
+  const currentDurationMinutes = gridlyFormatCommuteDisplayMinutes(commuteDeltaSnapshot.currentDurationMinutes);
+  const normalCommuteMinutes = gridlyFormatCommuteDisplayMinutes(commuteDeltaSnapshot.normalCommuteMinutes);
+  const deltaMinutes = Number.isFinite(Number(commuteDeltaSnapshot.deltaMinutes))
+    ? Math.round(Number(commuteDeltaSnapshot.deltaMinutes))
+    : null;
+  const deltaDirection = commuteDeltaSnapshot.deltaDirection || "unavailable";
+  const baselineConfidence = commuteDeltaSnapshot.baselineConfidence || "none";
+  const absoluteDeltaMinutes = Number.isFinite(Number(deltaMinutes)) ? Math.abs(deltaMinutes) : null;
+
+  let headline = currentDurationMinutes !== null
+    ? `Current route: ${currentDurationMinutes} min`
+    : "Current route unavailable";
+  let subline = "Commute comparison unavailable";
+  let detailLine = "Normal commute history is needed before comparing this route";
+
+  if (deltaDirection === "about_normal") {
+    subline = "About normal for this route";
+    detailLine = "No significant travel difference detected";
+  } else if (deltaDirection === "slower") {
+    subline = `About ${absoluteDeltaMinutes} min slower than normal`;
+    detailLine = "Travel conditions may be affecting this route";
+  } else if (deltaDirection === "faster") {
+    subline = `About ${absoluteDeltaMinutes} min faster than normal`;
+    detailLine = "Travel conditions are lighter than normal";
+  }
+
+  const confidenceLine = baselineConfidence === "high"
+    ? "Based on established commute history"
+    : (baselineConfidence === "medium" ? "Based on recent commute history" : "Still learning this route");
+
+  return {
+    headline,
+    subline,
+    detailLine,
+    confidenceLine,
+    currentDurationMinutes,
+    normalCommuteMinutes,
+    deltaMinutes,
+    deltaDirection,
+    baselineConfidence
+  };
+}
+
+window.gridlyCommuteDisplayCopy = function gridlyCommuteDisplayCopy() {
+  return gridlyBuildCommuteDisplayCopy();
+};
+
 window.gridlyTravelTimeAudit = function gridlyTravelTimeAudit() {
   const places = gridlyGetSavedPlacesReadiness();
   const routeGeometry = gridlyGetRouteGeometryDiagnostics();
@@ -3409,6 +3466,17 @@ window.gridlyTravelTimeBlueprint = function gridlyTravelTimeBlueprint() {
   const commuteDeltaAvailable = Boolean(commuteBaselineBlueprint.commuteDeltaAvailable);
   const commuteDeltaMinutes = Number.isFinite(Number(commuteBaselineBlueprint.commuteDeltaMinutes)) ? Number(commuteBaselineBlueprint.commuteDeltaMinutes) : null;
   const commuteDeltaStatus = commuteBaselineBlueprint.commuteDeltaStatus || "unavailable";
+  const commuteDisplayCopy = typeof window.gridlyCommuteDisplayCopy === "function"
+    ? window.gridlyCommuteDisplayCopy()
+    : null;
+  const commuteDisplayCopyAvailable = Boolean(
+    commuteDeltaAvailable
+    && commuteDisplayCopy
+    && commuteDisplayCopy.headline
+    && commuteDisplayCopy.subline
+    && commuteDisplayCopy.detailLine
+    && commuteDisplayCopy.confidenceLine
+  );
   const estimatedInputInventory = {
     savedHome: places.hasHome,
     savedWork: places.hasWork,
@@ -3466,7 +3534,8 @@ window.gridlyTravelTimeBlueprint = function gridlyTravelTimeBlueprint() {
     commuteDeltaAvailable,
     commuteDeltaMinutes,
     commuteDeltaStatus,
-    travelTimeIntelligencePhase: commuteDeltaAvailable ? "commute_delta" : (Boolean(commuteBaselineBlueprint.normalCommuteBaselineAvailable) ? "normal_baseline" : (Boolean(commuteBaselineBlueprint.baselineStorageReady) && Number(commuteBaselineBlueprint.baselineSampleCount || 0) > 0 ? "baseline_storage" : (Boolean(commuteBaselineBlueprint.baselineCollectionReady) ? "baseline_blueprint" : (Boolean(audit.currentCommuteSnapshotAvailable) ? "current_commute_snapshot" : (Boolean(audit.routeMetricsAvailable) ? "metrics_persisted" : "foundation"))))),
+    commuteDisplayCopyAvailable,
+    travelTimeIntelligencePhase: commuteDisplayCopyAvailable ? "commute_display_copy" : (commuteDeltaAvailable ? "commute_delta" : (Boolean(commuteBaselineBlueprint.normalCommuteBaselineAvailable) ? "normal_baseline" : (Boolean(commuteBaselineBlueprint.baselineStorageReady) && Number(commuteBaselineBlueprint.baselineSampleCount || 0) > 0 ? "baseline_storage" : (Boolean(commuteBaselineBlueprint.baselineCollectionReady) ? "baseline_blueprint" : (Boolean(audit.currentCommuteSnapshotAvailable) ? "current_commute_snapshot" : (Boolean(audit.routeMetricsAvailable) ? "metrics_persisted" : "foundation")))))),
     estimatedTravelTimeReady: Boolean(audit.estimatedTravelTimeReady),
     routeImpactReady: Boolean(audit.routeImpactReady),
     recommendedFutureModel: {
@@ -3554,7 +3623,8 @@ window.gridlyUserTrustBlueprintAudit = function gridlyUserTrustBlueprintAudit() 
     blueprintVersion: GRIDLY_USER_TRUST_BLUEPRINT_VERSION,
     hazardLifecycleReady,
     travelTimeReady,
-    travelTimeIntelligencePhase: travelBlueprint.commuteDeltaAvailable ? "commute_delta" : (travelBlueprint.normalCommuteBaselineAvailable ? "normal_baseline" : (travelBlueprint.baselineStorageReady && Number(travelBlueprint.baselineSampleCount || 0) > 0 ? "baseline_storage" : (travelBlueprint.baselineCollectionReady ? "baseline_blueprint" : (travelBlueprint.currentCommuteSnapshotAvailable ? "current_commute_snapshot" : (travelBlueprint.routeMetricsAvailable ? "metrics_persisted" : "foundation"))))),
+    travelTimeIntelligencePhase: travelBlueprint.commuteDisplayCopyAvailable ? "commute_display_copy" : (travelBlueprint.commuteDeltaAvailable ? "commute_delta" : (travelBlueprint.normalCommuteBaselineAvailable ? "normal_baseline" : (travelBlueprint.baselineStorageReady && Number(travelBlueprint.baselineSampleCount || 0) > 0 ? "baseline_storage" : (travelBlueprint.baselineCollectionReady ? "baseline_blueprint" : (travelBlueprint.currentCommuteSnapshotAvailable ? "current_commute_snapshot" : (travelBlueprint.routeMetricsAvailable ? "metrics_persisted" : "foundation")))))),
+    commuteDisplayCopyAvailable: Boolean(travelBlueprint.commuteDisplayCopyAvailable),
     commuteDeltaAvailable: Boolean(travelBlueprint.commuteDeltaAvailable),
     commuteDeltaMinutes: Number.isFinite(Number(travelBlueprint.commuteDeltaMinutes)) ? Number(travelBlueprint.commuteDeltaMinutes) : null,
     commuteDeltaStatus: travelBlueprint.commuteDeltaStatus || "unavailable",
