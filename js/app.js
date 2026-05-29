@@ -13162,7 +13162,7 @@ window.gridlyCommunityPulseAudit = function gridlyCommunityPulseAudit(options = 
   };
 };
 
-const GRIDLY_PORTRAIT_OWNERSHIP_INVENTORY_VERSION = "V180.11";
+const GRIDLY_PORTRAIT_OWNERSHIP_INVENTORY_VERSION = "V180.13";
 const GRIDLY_PORTRAIT_OWNERSHIP_SYSTEMS = [
   {
     name: "gridlyPortraitV2",
@@ -13254,7 +13254,13 @@ const gridlyPortraitV2StartupActivationState = {
   shellHadHiddenAttribute: false,
   containmentRequested: false,
   source: "",
-  lastAttemptAt: 0
+  lastAttemptAt: 0,
+  viewportWidth: 0,
+  viewportHeight: 0,
+  isStrictPortraitMobile: false,
+  portraitCleanupGateActive: false,
+  desktopProtectedFromPortraitCleanup: false,
+  portraitCleanupGateReason: "not_evaluated"
 };
 
 function getCanonicalGridlyPortraitLayoutMode() {
@@ -13265,12 +13271,41 @@ function getCanonicalGridlyPortraitLayoutMode() {
   return document.body?.dataset?.layoutMode || "";
 }
 
+function getGridlyPortraitCleanupGateState(layoutMode = getCanonicalGridlyPortraitLayoutMode()) {
+  const viewportWidth = Math.round(window.visualViewport?.width || window.innerWidth || document.documentElement?.clientWidth || 0);
+  const viewportHeight = Math.round(window.visualViewport?.height || window.innerHeight || document.documentElement?.clientHeight || 0);
+  const portraitMedia = Boolean(window.matchMedia?.("(orientation: portrait)")?.matches || (viewportHeight >= viewportWidth && viewportWidth > 0));
+  const mobileWidth = viewportWidth > 0 && viewportWidth <= 980;
+  const isStrictPortraitMobile = Boolean(layoutMode === "portrait" && mobileWidth && portraitMedia);
+  const desktopProtectedFromPortraitCleanup = Boolean(!isStrictPortraitMobile && (viewportWidth > 980 || layoutMode === "desktop" || layoutMode === "tactical-landscape" || !portraitMedia));
+  const portraitCleanupGateReason = isStrictPortraitMobile
+    ? "strict_portrait_mobile"
+    : layoutMode !== "portrait"
+      ? `layout_mode_${layoutMode || "missing"}_not_portrait`
+      : !mobileWidth
+        ? `viewport_width_${viewportWidth || "missing"}_above_mobile_gate`
+        : !portraitMedia
+          ? "orientation_not_portrait"
+          : "portrait_cleanup_gate_inactive";
+  return {
+    viewportWidth,
+    viewportHeight,
+    isStrictPortraitMobile,
+    portraitCleanupGateActive: isStrictPortraitMobile,
+    desktopProtectedFromPortraitCleanup,
+    portraitCleanupGateReason
+  };
+}
+
 function activateGridlyPortraitV2StartupOwner(source = "portrait_startup_activation") {
   const body = document.body;
   const layoutMode = getCanonicalGridlyPortraitLayoutMode();
+  const cleanupGate = getGridlyPortraitCleanupGateState(layoutMode);
   const shell = document.getElementById("gridlyPortraitV2");
   const shellHadHiddenAttribute = Boolean(shell?.hasAttribute?.("hidden") || shell?.hidden);
+  Object.assign(gridlyPortraitV2StartupActivationState, cleanupGate);
   gridlyPortraitV2StartupActivationState.attempted = true;
+  gridlyPortraitV2StartupActivationState.applied = false;
   gridlyPortraitV2StartupActivationState.reason = "not_applied";
   gridlyPortraitV2StartupActivationState.layoutMode = layoutMode;
   gridlyPortraitV2StartupActivationState.shellFound = Boolean(shell);
@@ -13283,8 +13318,8 @@ function activateGridlyPortraitV2StartupOwner(source = "portrait_startup_activat
     gridlyPortraitV2StartupActivationState.reason = "body_missing";
     return false;
   }
-  if (layoutMode !== "portrait") {
-    gridlyPortraitV2StartupActivationState.reason = `layout_mode_${layoutMode || "missing"}_not_portrait`;
+  if (!cleanupGate.portraitCleanupGateActive) {
+    gridlyPortraitV2StartupActivationState.reason = cleanupGate.portraitCleanupGateReason;
     return false;
   }
   if (!shell) {
@@ -13333,11 +13368,7 @@ const GRIDLY_PORTRAIT_RECOMMENDED_DEAUTHORIZE = [
 const GRIDLY_PORTRAIT_CONTAINED_STRUCTURAL_WRAPPERS = ["command-center"];
 
 function isGridlyPortraitModeActiveForContainment() {
-  const body = document.body;
-  const layoutMode = body?.dataset?.layoutMode || "";
-  const legacyLayoutMode = body?.dataset?.layoutModeLegacy || "";
-  const portraitMedia = Boolean(window.matchMedia?.("(orientation: portrait)")?.matches);
-  return layoutMode === "portrait" || legacyLayoutMode === "mobile" || portraitMedia;
+  return getGridlyPortraitCleanupGateState().portraitCleanupGateActive;
 }
 
 function syncGridlyPortraitCommandCenterContainmentMarker(active = isGridlyPortraitModeActiveForContainment()) {
@@ -13447,7 +13478,7 @@ function buildGridlyPortraitDuplicateOwnershipWarnings(systems, portraitModeActi
   return warnings;
 }
 
-const GRIDLY_PORTRAIT_CONTAINMENT_AUDIT_VERSION = "V180.5";
+const GRIDLY_PORTRAIT_CONTAINMENT_AUDIT_VERSION = "V180.13";
 const GRIDLY_PORTRAIT_CONTAINMENT_PROFILE = {
   gridlyPortraitV2: {
     supportsPortraitV2: true,
@@ -13623,6 +13654,7 @@ function getGridlyPortraitContainmentSystemAudit(definition) {
 function gridlyPortraitContainmentAudit() {
   try {
     const activationAudit = typeof window.gridlyPortraitActivationAudit === "function" ? window.gridlyPortraitActivationAudit() : null;
+    const cleanupGate = getGridlyPortraitCleanupGateState();
     const portraitPrimaryOwner = activationAudit?.currentActivePortraitOwner || GRIDLY_PORTRAIT_PRIMARY_OWNER;
     const visiblePortraitSystems = GRIDLY_PORTRAIT_OWNERSHIP_SYSTEMS
       .map(getGridlyPortraitContainmentSystemAudit)
@@ -13646,6 +13678,12 @@ function gridlyPortraitContainmentAudit() {
     return {
       loaded: true,
       version: GRIDLY_PORTRAIT_CONTAINMENT_AUDIT_VERSION,
+      viewportWidth: cleanupGate.viewportWidth,
+      viewportHeight: cleanupGate.viewportHeight,
+      isStrictPortraitMobile: cleanupGate.isStrictPortraitMobile,
+      portraitCleanupGateActive: cleanupGate.portraitCleanupGateActive,
+      desktopProtectedFromPortraitCleanup: cleanupGate.desktopProtectedFromPortraitCleanup,
+      portraitCleanupGateReason: cleanupGate.portraitCleanupGateReason,
       portraitPrimaryOwner,
       visiblePortraitSystems,
       supportingPortraitModules,
@@ -14257,7 +14295,8 @@ window.gridlyPortraitOwnershipInventory = function gridlyPortraitOwnershipInvent
     const layoutMode = document.body?.dataset?.layoutMode || "";
     const legacyLayoutMode = document.body?.dataset?.layoutModeLegacy || "";
     const portraitMedia = Boolean(window.matchMedia?.("(orientation: portrait)")?.matches);
-    const portraitModeActive = layoutMode === "portrait" || legacyLayoutMode === "mobile" || portraitMedia;
+    const cleanupGate = getGridlyPortraitCleanupGateState(layoutMode);
+    const portraitModeActive = cleanupGate.portraitCleanupGateActive;
     const systems = GRIDLY_PORTRAIT_OWNERSHIP_SYSTEMS.map((definition) => {
       const state = getGridlyPortraitOwnershipElementState(definition);
       const element = state.loaded ? document.querySelector(definition.selector) : null;
@@ -14269,7 +14308,7 @@ window.gridlyPortraitOwnershipInventory = function gridlyPortraitOwnershipInvent
         ownerClass: state.ownerClass,
         visible: state.visible,
         loaded: state.loaded,
-        active: Boolean(!GRIDLY_PORTRAIT_RETIRED_SURFACES[state.name] && state.active && !portraitContainedStructuralWrapper && (portraitModeActive || state.name === GRIDLY_PORTRAIT_PRIMARY_OWNER || state.ownerClass === "shared_map" || state.ownerClass === "portrait_module")),
+        active: Boolean(!GRIDLY_PORTRAIT_RETIRED_SURFACES[state.name] && state.active && !portraitContainedStructuralWrapper && (portraitModeActive || state.ownerClass === "shared_map" || state.ownerClass === "portrait_module")),
         portraitContainedStructuralWrapper,
         retirement: GRIDLY_PORTRAIT_RETIRED_SURFACES[state.name] || null
       };
@@ -14287,6 +14326,12 @@ window.gridlyPortraitOwnershipInventory = function gridlyPortraitOwnershipInvent
       layoutMode,
       legacyLayoutMode,
       portraitModeActive,
+      viewportWidth: cleanupGate.viewportWidth,
+      viewportHeight: cleanupGate.viewportHeight,
+      isStrictPortraitMobile: cleanupGate.isStrictPortraitMobile,
+      portraitCleanupGateActive: cleanupGate.portraitCleanupGateActive,
+      desktopProtectedFromPortraitCleanup: cleanupGate.desktopProtectedFromPortraitCleanup,
+      portraitCleanupGateReason: cleanupGate.portraitCleanupGateReason,
       portraitVisibleSystems,
       portraitLoadedSystems,
       portraitHiddenSystems,
@@ -14519,14 +14564,16 @@ window.gridlyPortraitActivationAudit = function gridlyPortraitActivationAudit() 
     const layoutMode = body?.dataset?.layoutMode || "";
     const legacyLayoutMode = body?.dataset?.layoutModeLegacy || "";
     const portraitMedia = Boolean(window.matchMedia?.("(orientation: portrait)")?.matches);
-    const portraitModeActive = layoutMode === "portrait" || legacyLayoutMode === "mobile" || portraitMedia;
+    const cleanupGate = getGridlyPortraitCleanupGateState(layoutMode);
+    const portraitModeActive = cleanupGate.portraitCleanupGateActive;
     const shell = document.getElementById("gridlyPortraitV2");
     const shellStyle = shell ? window.getComputedStyle(shell) : null;
     const shellRect = getGridlyPortraitActivationRectSnapshot(shell);
     const gridlyPortraitV2Visible = isGridlyPortraitActivationElementVisible(shell);
+    const gridlyPortraitV2Active = Boolean(portraitModeActive && gridlyPortraitV2Visible);
     const ownershipInventory = typeof window.gridlyPortraitOwnershipInventory === "function" ? window.gridlyPortraitOwnershipInventory() : null;
     const visibleSystems = Array.isArray(ownershipInventory?.portraitVisibleSystems) ? ownershipInventory.portraitVisibleSystems : [];
-    const activeOwner = gridlyPortraitV2Visible
+    const activeOwner = portraitModeActive && gridlyPortraitV2Visible
       ? "gridlyPortraitV2"
       : (visibleSystems.find((system) => system.name !== "map-card")?.name || visibleSystems[0]?.name || ownershipInventory?.portraitPrimaryOwner || null);
     const activationBlockers = [
@@ -14539,9 +14586,11 @@ window.gridlyPortraitActivationAudit = function gridlyPortraitActivationAudit() 
       portraitModeActive && !body?.classList.contains("gridly-v2-surface-containment") ? "v2_surface_containment_not_active_because_shell_not_visually_active" : "",
       portraitModeActive && visibleSystems.some((system) => system.name !== "gridlyPortraitV2" && system.name !== "map-card") ? "legacy_or_module_portrait_owner_visible_before_v2" : ""
     ].filter(Boolean);
-    const whyInactive = gridlyPortraitV2Visible
-      ? "gridlyPortraitV2 is active and visible."
-      : shell?.hidden
+    const whyInactive = gridlyPortraitV2Active
+      ? "gridlyPortraitV2 is active and visible inside the strict portrait mobile cleanup gate."
+      : !portraitModeActive
+        ? `Portrait cleanup gate is inactive: ${cleanupGate.portraitCleanupGateReason}.`
+        : shell?.hidden
         ? "gridlyPortraitV2 is loaded, but the shell still has the hidden attribute. Portrait CSS targets the shell, but no portrait-startup activation path has removed [hidden]; only the V2 sheet-open path removes it."
         : shellStyle?.display === "none"
           ? "gridlyPortraitV2 is loaded, but computed display is none."
@@ -14550,14 +14599,21 @@ window.gridlyPortraitActivationAudit = function gridlyPortraitActivationAudit() 
             : "gridlyPortraitV2 fails the visibility gate for computed style, attributes, or geometry.";
     return {
       loaded: true,
-      auditVersion: "V180.3",
+      auditVersion: "V180.13",
       portraitModeActive,
+      viewportWidth: cleanupGate.viewportWidth,
+      viewportHeight: cleanupGate.viewportHeight,
+      isStrictPortraitMobile: cleanupGate.isStrictPortraitMobile,
+      portraitCleanupGateActive: cleanupGate.portraitCleanupGateActive,
+      desktopProtectedFromPortraitCleanup: cleanupGate.desktopProtectedFromPortraitCleanup,
+      portraitCleanupGateReason: cleanupGate.portraitCleanupGateReason,
       layoutMode,
       legacyLayoutMode,
       portraitMedia,
       gridlyPortraitV2Exists: Boolean(shell),
       gridlyPortraitV2Loaded: Boolean(shell),
       gridlyPortraitV2Visible,
+      gridlyPortraitV2Active,
       gridlyPortraitV2ComputedDisplay: shellStyle?.display || null,
       gridlyPortraitV2ComputedVisibility: shellStyle?.visibility || null,
       gridlyPortraitV2ComputedOpacity: shellStyle?.opacity || null,
@@ -14585,7 +14641,7 @@ window.gridlyPortraitActivationAudit = function gridlyPortraitActivationAudit() 
   } catch (error) {
     return {
       loaded: false,
-      auditVersion: "V180.3",
+      auditVersion: "V180.13",
       error: error?.message || "unknown error",
       portraitModeActive: false,
       gridlyPortraitV2Exists: false,
@@ -28574,8 +28630,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const body = document.body;
     const v2 = document.getElementById("gridlyPortraitV2");
     if (!body || !v2) return false;
-    const mode = body.dataset?.layoutMode || "";
-    if (mode !== "portrait") return false;
+    const cleanupGate = getGridlyPortraitCleanupGateState(body.dataset?.layoutMode || "");
+    if (!cleanupGate.portraitCleanupGateActive) return false;
     const style = getComputedStyle(v2);
     return style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity || 1) !== 0;
   }
