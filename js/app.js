@@ -13383,6 +13383,260 @@ window.gridlyPortraitOwnershipInventory = function gridlyPortraitOwnershipInvent
   }
 };
 
+
+function getGridlyPortraitActivationRectSnapshot(element) {
+  if (!element || typeof element.getBoundingClientRect !== "function") return null;
+  const rect = element.getBoundingClientRect();
+  return {
+    x: Math.round(Number(rect.x || 0) * 100) / 100,
+    y: Math.round(Number(rect.y || 0) * 100) / 100,
+    width: Math.round(Number(rect.width || 0) * 100) / 100,
+    height: Math.round(Number(rect.height || 0) * 100) / 100,
+    top: Math.round(Number(rect.top || 0) * 100) / 100,
+    right: Math.round(Number(rect.right || 0) * 100) / 100,
+    bottom: Math.round(Number(rect.bottom || 0) * 100) / 100,
+    left: Math.round(Number(rect.left || 0) * 100) / 100
+  };
+}
+
+function isGridlyPortraitActivationElementVisible(element) {
+  if (!element) return false;
+  const style = window.getComputedStyle(element);
+  const rect = getGridlyPortraitActivationRectSnapshot(element);
+  return Boolean(
+    !element.hidden &&
+    element.getAttribute("aria-hidden") !== "true" &&
+    style.display !== "none" &&
+    style.visibility !== "hidden" &&
+    Number.parseFloat(style.opacity || "1") !== 0 &&
+    rect &&
+    rect.width > 0 &&
+    rect.height > 0
+  );
+}
+
+function getGridlyPortraitActivationParentChain(element) {
+  const chain = [];
+  let current = element;
+  while (current && current.nodeType === 1) {
+    const style = window.getComputedStyle(current);
+    const rect = getGridlyPortraitActivationRectSnapshot(current);
+    const hiddenAttribute = Boolean(current.hidden);
+    const ariaHidden = current.getAttribute("aria-hidden");
+    const visible = Boolean(
+      !hiddenAttribute &&
+      ariaHidden !== "true" &&
+      style.display !== "none" &&
+      style.visibility !== "hidden" &&
+      Number.parseFloat(style.opacity || "1") !== 0 &&
+      rect &&
+      rect.width > 0 &&
+      rect.height > 0
+    );
+    chain.push({
+      tagName: current.tagName.toLowerCase(),
+      id: current.id || "",
+      className: typeof current.className === "string" ? current.className : "",
+      hidden: hiddenAttribute,
+      ariaHidden,
+      display: style.display,
+      visibility: style.visibility,
+      opacity: style.opacity,
+      pointerEvents: style.pointerEvents,
+      rect,
+      visible,
+      blockers: [
+        hiddenAttribute ? "hidden_attribute" : "",
+        ariaHidden === "true" ? "aria_hidden_true" : "",
+        style.display === "none" ? "display_none" : "",
+        style.visibility === "hidden" ? "visibility_hidden" : "",
+        Number.parseFloat(style.opacity || "1") === 0 ? "opacity_zero" : "",
+        !rect || rect.width <= 0 || rect.height <= 0 ? "zero_or_missing_rect" : ""
+      ].filter(Boolean)
+    });
+    current = current.parentElement;
+  }
+  return chain;
+}
+
+function getGridlyPortraitActivationCssClassAudit(shell) {
+  const body = document.body;
+  return {
+    bodyClasses: Array.from(body?.classList || []),
+    bodyDataset: {
+      layoutMode: body?.dataset?.layoutMode || "",
+      layoutModeLegacy: body?.dataset?.layoutModeLegacy || "",
+      mobileMode: body?.dataset?.mobileMode || ""
+    },
+    shellClasses: Array.from(shell?.classList || []),
+    shellHiddenAttribute: Boolean(shell?.hidden),
+    shellAriaHidden: shell?.getAttribute?.("aria-hidden") || null,
+    matchedVisibilitySelectors: [
+      { selector: "#gridlyPortraitV2", effect: "base CSS sets display:none", matched: Boolean(shell) },
+      { selector: 'body[data-layout-mode="portrait"] #gridlyPortraitV2', effect: "portrait CSS requests display:block, fixed inset shell", matched: Boolean(shell && body?.dataset?.layoutMode === "portrait") },
+      { selector: 'body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2', effect: "raises V2 z-index when JS marks shell visually active", matched: Boolean(shell && body?.dataset?.layoutMode === "portrait" && body.classList.contains("gridly-v2-surface-containment")) },
+      { selector: '[hidden]', effect: "HTML hidden attribute keeps the shell out of rendering until removed", matched: Boolean(shell?.hidden) }
+    ],
+    descendantVisibilityClasses: [
+      ".gridly-v2-topbar",
+      ".gridly-v2-status-pill",
+      ".gridly-v2-segments",
+      ".gridly-v2-control-rail",
+      ".gridly-v2-bottom-dock",
+      ".gridly-v2-sheet"
+    ].map((selector) => {
+      const element = shell?.querySelector?.(selector);
+      const style = element ? window.getComputedStyle(element) : null;
+      return {
+        selector,
+        exists: Boolean(element),
+        display: style?.display || null,
+        visibility: style?.visibility || null,
+        opacity: style?.opacity || null,
+        visible: isGridlyPortraitActivationElementVisible(element)
+      };
+    })
+  };
+}
+
+function getGridlyPortraitActivationJsGateAudit(shell) {
+  return [
+    {
+      gate: "index.html initial shell state",
+      controlsVisibility: true,
+      currentState: shell?.hidden ? "blocked_by_hidden_attribute" : "hidden_attribute_removed",
+      notes: "#gridlyPortraitV2 ships with the hidden attribute; it is not active until a JS path removes that attribute."
+    },
+    {
+      gate: "openGridlyPortraitV2Sheet(sheetName)",
+      controlsVisibility: true,
+      currentState: typeof window.openGridlyPortraitV2Sheet === "function" ? "available" : "not_exposed_yet_or_missing",
+      notes: "This path removes the shell hidden attribute, but only when a V2 sheet is opened."
+    },
+    {
+      gate: "openPortraitV2Sheet(type)",
+      controlsVisibility: true,
+      currentState: typeof window.openPortraitV2Sheet === "function" ? "available" : "not_exposed_yet_or_missing",
+      notes: "Wrapper around openGridlyPortraitV2Sheet; it does not run automatically just because layoutMode is portrait."
+    },
+    {
+      gate: "isPortraitV2VisuallyActive()",
+      controlsVisibility: false,
+      currentState: typeof isPortraitV2VisuallyActive === "function" ? Boolean(isPortraitV2VisuallyActive()) : "missing",
+      notes: "Reads body[data-layout-mode='portrait'] plus computed shell visibility; returns false while [hidden] forces display:none."
+    },
+    {
+      gate: "applyPortraitV2SurfaceContainment()",
+      controlsVisibility: false,
+      currentState: typeof applyPortraitV2SurfaceContainment === "function" ? "available" : "missing",
+      notes: "Toggles containment only after V2 is already visually active; it does not activate the shell."
+    },
+    {
+      gate: "bindV2()",
+      controlsVisibility: false,
+      currentState: typeof bindV2 === "function" ? "available" : "missing",
+      notes: "Binds dock/sheet controls and runs containment audit, but does not remove #gridlyPortraitV2 hidden during portrait startup."
+    },
+    {
+      gate: "gridlyPortraitV2SheetState portrait mode check",
+      controlsVisibility: false,
+      currentState: "diagnostic_checks_body_data_layout_mode_portrait_v2",
+      notes: "Existing sheet diagnostic checks for 'portrait-v2', while canonical portrait mode is 'portrait'; this can make diagnostics say detached even when portrait mode is active."
+    }
+  ];
+}
+
+function getGridlyPortraitActivationFunctionAudit() {
+  return [
+    { name: "openGridlyPortraitV2Sheet", role: "removes #gridlyPortraitV2 hidden and opens a V2 bottom sheet", available: typeof window.openGridlyPortraitV2Sheet === "function" },
+    { name: "openPortraitV2Sheet", role: "public wrapper for opening V2 sheets", available: typeof window.openPortraitV2Sheet === "function" },
+    { name: "bindV2", role: "binds V2 buttons and applies containment; does not activate shell on portrait mode by itself", available: typeof bindV2 === "function" },
+    { name: "isPortraitV2VisuallyActive", role: "computed visibility gate used by containment", available: typeof isPortraitV2VisuallyActive === "function" },
+    { name: "applyPortraitV2SurfaceContainment", role: "adds body.gridly-v2-surface-containment only after V2 is visible", available: typeof applyPortraitV2SurfaceContainment === "function" },
+    { name: "setLayoutMode/getCurrentLayoutMode", role: "sets/reads canonical layout mode, but no observed startup handoff removes V2 hidden", available: typeof getCurrentLayoutMode === "function" }
+  ];
+}
+
+window.gridlyPortraitActivationAudit = function gridlyPortraitActivationAudit() {
+  try {
+    const body = document.body;
+    const layoutMode = body?.dataset?.layoutMode || "";
+    const legacyLayoutMode = body?.dataset?.layoutModeLegacy || "";
+    const portraitMedia = Boolean(window.matchMedia?.("(orientation: portrait)")?.matches);
+    const portraitModeActive = layoutMode === "portrait" || legacyLayoutMode === "mobile" || portraitMedia;
+    const shell = document.getElementById("gridlyPortraitV2");
+    const shellStyle = shell ? window.getComputedStyle(shell) : null;
+    const shellRect = getGridlyPortraitActivationRectSnapshot(shell);
+    const gridlyPortraitV2Visible = isGridlyPortraitActivationElementVisible(shell);
+    const ownershipInventory = typeof window.gridlyPortraitOwnershipInventory === "function" ? window.gridlyPortraitOwnershipInventory() : null;
+    const visibleSystems = Array.isArray(ownershipInventory?.portraitVisibleSystems) ? ownershipInventory.portraitVisibleSystems : [];
+    const activeOwner = gridlyPortraitV2Visible
+      ? "gridlyPortraitV2"
+      : (visibleSystems.find((system) => system.name !== "map-card")?.name || visibleSystems[0]?.name || ownershipInventory?.portraitPrimaryOwner || null);
+    const activationBlockers = [
+      !shell ? "gridlyPortraitV2_missing" : "",
+      shell?.hidden ? "gridlyPortraitV2_hidden_attribute_present" : "",
+      shellStyle?.display === "none" ? "gridlyPortraitV2_computed_display_none" : "",
+      shellStyle?.visibility === "hidden" ? "gridlyPortraitV2_computed_visibility_hidden" : "",
+      shellStyle && Number.parseFloat(shellStyle.opacity || "1") === 0 ? "gridlyPortraitV2_computed_opacity_zero" : "",
+      !shellRect || shellRect.width <= 0 || shellRect.height <= 0 ? "gridlyPortraitV2_zero_or_missing_bounds" : "",
+      portraitModeActive && !body?.classList.contains("gridly-v2-surface-containment") ? "v2_surface_containment_not_active_because_shell_not_visually_active" : "",
+      portraitModeActive && visibleSystems.some((system) => system.name !== "gridlyPortraitV2" && system.name !== "map-card") ? "legacy_or_module_portrait_owner_visible_before_v2" : ""
+    ].filter(Boolean);
+    const whyInactive = gridlyPortraitV2Visible
+      ? "gridlyPortraitV2 is active and visible."
+      : shell?.hidden
+        ? "gridlyPortraitV2 is loaded, but the shell still has the hidden attribute. Portrait CSS targets the shell, but no portrait-startup activation path has removed [hidden]; only the V2 sheet-open path removes it."
+        : shellStyle?.display === "none"
+          ? "gridlyPortraitV2 is loaded, but computed display is none."
+          : !shellRect || shellRect.width <= 0 || shellRect.height <= 0
+            ? "gridlyPortraitV2 is loaded, but it has no visible bounds."
+            : "gridlyPortraitV2 fails the visibility gate for computed style, attributes, or geometry.";
+    return {
+      loaded: true,
+      auditVersion: "V180.2",
+      portraitModeActive,
+      layoutMode,
+      legacyLayoutMode,
+      portraitMedia,
+      gridlyPortraitV2Exists: Boolean(shell),
+      gridlyPortraitV2Loaded: Boolean(shell),
+      gridlyPortraitV2Visible,
+      gridlyPortraitV2ComputedDisplay: shellStyle?.display || null,
+      gridlyPortraitV2ComputedVisibility: shellStyle?.visibility || null,
+      gridlyPortraitV2ComputedOpacity: shellStyle?.opacity || null,
+      gridlyPortraitV2BoundingRect: shellRect,
+      parentChainVisibilityAudit: getGridlyPortraitActivationParentChain(shell),
+      cssClassesAffectingVisibility: getGridlyPortraitActivationCssClassAudit(shell),
+      jsGatesAffectingVisibility: getGridlyPortraitActivationJsGateAudit(shell),
+      functionsControllingPortraitActivation: getGridlyPortraitActivationFunctionAudit(),
+      currentActivePortraitOwner: activeOwner,
+      visiblePortraitSystems: visibleSystems.map((system) => system.name),
+      ownershipWarnings: ownershipInventory?.duplicateOwnershipWarnings || [],
+      whyGridlyPortraitV2IsConsideredInactive: whyInactive,
+      activationBlockers,
+      recommendedActivationPath: [
+        "Keep audit-only behavior for this helper; do not mutate UI from diagnostics.",
+        "Make the portrait startup owner handoff explicit in production code: when body[data-layout-mode='portrait'] is the intended V2 owner, remove #gridlyPortraitV2 [hidden] before visibility/containment checks.",
+        "After the shell is visible, let applyPortraitV2SurfaceContainment mark body.gridly-v2-surface-containment so legacy surfaces are contained by existing CSS.",
+        "Align diagnostics that check 'portrait-v2' with the canonical layoutMode value 'portrait' if V2 is meant to own portrait mode."
+      ]
+    };
+  } catch (error) {
+    return {
+      loaded: false,
+      auditVersion: "V180.2",
+      error: error?.message || "unknown error",
+      portraitModeActive: false,
+      gridlyPortraitV2Exists: false,
+      gridlyPortraitV2Loaded: false,
+      gridlyPortraitV2Visible: false,
+      activationBlockers: ["audit_error"],
+      whyGridlyPortraitV2IsConsideredInactive: "Activation audit failed before visibility could be evaluated."
+    };
+  }
+};
+
 function getGridlyHeaderOwnershipStaticWriters() {
   return [
     {
