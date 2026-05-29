@@ -2936,6 +2936,44 @@ function gridlyGetTravelTimeImpactReadiness(routeGeometry = gridlyGetRouteGeomet
   };
 }
 
+function gridlyResolveCurrentCommuteRouteStatus(routeImpactCount = 0, corridorImpactCount = 0) {
+  const safeRouteImpactCount = Math.max(0, Number(routeImpactCount || 0));
+  const safeCorridorImpactCount = Math.max(0, Number(corridorImpactCount || 0));
+  if (safeRouteImpactCount >= 2 || safeCorridorImpactCount >= 2) return "impacted";
+  if (safeRouteImpactCount > 0 || safeCorridorImpactCount > 0) return "minor_impacts";
+  return "normal";
+}
+
+function gridlyBuildCurrentCommuteSnapshot() {
+  const places = gridlyGetSavedPlacesReadiness();
+  const routeGeometry = gridlyGetRouteGeometryDiagnostics();
+  const routeConfigured = Boolean(places.routablePlaceCount >= 2 && (places.hasHome || places.hasWork));
+  const routeMetrics = gridlyGetTravelTimeRouteMetrics(routeGeometry);
+  const impactReadiness = gridlyGetTravelTimeImpactReadiness(routeGeometry);
+  const routeImpactCount = impactReadiness.activeRouteImpactCount;
+  const corridorImpactCount = impactReadiness.activeCorridorImpactCount;
+
+  return {
+    routeConfigured,
+    routeMetricsAvailable: Boolean(routeMetrics.routeMetricsAvailable),
+
+    distanceMiles: Number.isFinite(Number(routeMetrics.routeDistanceMiles)) ? Number(routeMetrics.routeDistanceMiles) : null,
+    currentDurationMinutes: Number.isFinite(Number(routeMetrics.routeDurationMinutes)) ? Number(routeMetrics.routeDurationMinutes) : null,
+
+    routePointCount: Number.isFinite(Number(routeMetrics.routePointCount)) ? Number(routeMetrics.routePointCount) : 0,
+    routeGeneratedAt: routeMetrics.routeGeneratedAt || null,
+
+    routeStatus: gridlyResolveCurrentCommuteRouteStatus(routeImpactCount, corridorImpactCount),
+
+    routeImpactCount,
+    corridorImpactCount
+  };
+}
+
+window.gridlyCurrentCommuteSnapshot = function gridlyCurrentCommuteSnapshot() {
+  return gridlyBuildCurrentCommuteSnapshot();
+};
+
 window.gridlyTravelTimeAudit = function gridlyTravelTimeAudit() {
   const places = gridlyGetSavedPlacesReadiness();
   const routeGeometry = gridlyGetRouteGeometryDiagnostics();
@@ -2958,6 +2996,8 @@ window.gridlyTravelTimeAudit = function gridlyTravelTimeAudit() {
   const estimatedTravelTimeReady = Boolean(routeWatchConfigured && routeGeometry.routeGeometryAvailable && routeDurationAvailable);
   const baselineReady = Boolean(places.hasHome && places.hasWork && routeWatchConfigured && routeGeometry.routeGeometryAvailable && routeDistanceAvailable && routeDurationAvailable);
   const impactReadiness = gridlyGetTravelTimeImpactReadiness(routeGeometry);
+  const currentCommuteSnapshot = window.gridlyCurrentCommuteSnapshot?.() || null;
+  const currentCommuteSnapshotAvailable = Boolean(currentCommuteSnapshot?.routeConfigured && currentCommuteSnapshot?.routeMetricsAvailable);
 
   return {
     routeWatchConfigured,
@@ -2975,6 +3015,8 @@ window.gridlyTravelTimeAudit = function gridlyTravelTimeAudit() {
     baselineReady,
     missingRequirements,
     estimatedTravelTimeReady,
+    currentCommuteSnapshotAvailable,
+    currentCommuteSnapshot,
     activeRouteImpactCount: impactReadiness.activeRouteImpactCount,
     activeCorridorImpactCount: impactReadiness.activeCorridorImpactCount,
     routeImpactReady: impactReadiness.routeImpactReady,
@@ -3010,7 +3052,8 @@ window.gridlyTravelTimeBlueprint = function gridlyTravelTimeBlueprint() {
     routeDistanceAvailable: Boolean(audit.routeDistanceAvailable),
     routeDistanceMiles: Number.isFinite(Number(audit.routeDistanceMiles)) ? Number(audit.routeDistanceMiles) : null,
     routeDurationAvailable: Boolean(audit.routeDurationAvailable),
-    currentRouteDurationMinutes: Number.isFinite(Number(audit.currentRouteDurationMinutes)) ? Number(audit.currentRouteDurationMinutes) : null
+    currentRouteDurationMinutes: Number.isFinite(Number(audit.currentRouteDurationMinutes)) ? Number(audit.currentRouteDurationMinutes) : null,
+    currentCommuteSnapshotAvailable: Boolean(audit.currentCommuteSnapshotAvailable)
   };
   const estimatedInputsAvailable = Boolean(
     estimatedInputInventory.savedHome
@@ -3033,6 +3076,7 @@ window.gridlyTravelTimeBlueprint = function gridlyTravelTimeBlueprint() {
     currentRouteAvailable: routeGeometry.currentRouteAvailable,
     routeGeometryAvailable: routeGeometry.routeGeometryAvailable,
     routeMetricsAvailable: Boolean(audit.routeMetricsAvailable),
+    currentCommuteSnapshotAvailable: Boolean(audit.currentCommuteSnapshotAvailable),
     routeGeneratedAt: audit.routeGeneratedAt || null,
     routePointCount: Number.isFinite(Number(audit.routePointCount)) ? Number(audit.routePointCount) : routeGeometry.routePointCount,
     travelTimeFoundationReady,
@@ -3127,7 +3171,7 @@ window.gridlyUserTrustBlueprintAudit = function gridlyUserTrustBlueprintAudit() 
     blueprintVersion: GRIDLY_USER_TRUST_BLUEPRINT_VERSION,
     hazardLifecycleReady,
     travelTimeReady,
-    travelTimeIntelligencePhase: travelBlueprint.routeMetricsAvailable ? "metrics_persisted" : "foundation",
+    travelTimeIntelligencePhase: travelBlueprint.currentCommuteSnapshotAvailable ? "current_commute_snapshot" : (travelBlueprint.routeMetricsAvailable ? "metrics_persisted" : "foundation"),
     onboardingReady,
     settingsReady,
     launchCriticalGaps,
