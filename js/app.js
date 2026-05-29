@@ -10327,7 +10327,7 @@ function getRouteHazardAssessmentForPath(routeLatLngs = []) {
 
 
 const GRIDLY_COMMUNITY_PRESENCE_VERSION = "V177.4";
-const GRIDLY_COMMUNITY_ACTIVE_AWARENESS_VERSION = "V179.3";
+const GRIDLY_COMMUNITY_ACTIVE_AWARENESS_VERSION = "V179.5";
 const GRIDLY_RECOVERY_BASELINE_VERSION = "V178-RECOVERY.1";
 const GRIDLY_MAIN_BASELINE_VERSION = GRIDLY_RECOVERY_BASELINE_VERSION;
 const GRIDLY_MAIN_BASELINE_STATUS = "protected_main_baseline";
@@ -10782,43 +10782,81 @@ function buildGridlyLightweightSummaryFromResolvedDetail(detail = {}) {
   return { value: `${category} ${preposition}${locationLabel}`, source: "lightweightActiveAwareness.resolvedCategory+resolvedLocationLabel" };
 }
 
+function isGridlyRailOrCrossingCategory(category = "") {
+  return /(?:^|\b)(rail|crossing|train)(?:\b|$)/i.test(normalizeGridlyLightweightCategoryValue(category));
+}
+
+function isGridlyRoadHazardCategory(category = "") {
+  const normalized = normalizeGridlyLightweightCategoryValue(category);
+  return /flood|standing water|high water|closure|closed|road closure|crash|wreck|collision|accident|hazard|debris|tree|obstruction|ice|slick|disabled|stalled|construction|road work|utility|maintenance/.test(normalized)
+    && !isGridlyRailOrCrossingCategory(normalized);
+}
+
+function getGridlyHeaderRailTextRejectionReason(text = "", activeCategory = "") {
+  if (!isGridlyRoadHazardCategory(activeCategory)) return "";
+  const normalized = normalizeGridlyLightweightAlertSummaryText(text).toLowerCase();
+  if (/\btrain blocking\b/.test(normalized)) return "rail_text_for_road_hazard_train_blocking";
+  if (/\bcrossing blocked\b|\bblocked crossing\b/.test(normalized)) return "rail_text_for_road_hazard_crossing_blocked";
+  if (/\brail(?:road)?\b/.test(normalized)) return "rail_text_for_road_hazard_rail";
+  return "";
+}
+
 function resolveGridlyLightweightReusableAlertSummary(detail = {}) {
   const item = detail?.item || {};
   const sourceKind = detail?.sourceKind || "activeItem";
   const candidates = [
-    ["finalHeadline", `${sourceKind}.finalHeadline`],
-    ["resolvedHeadline", `${sourceKind}.resolvedHeadline`],
+    ["summary", `${sourceKind}.summary`],
+    ["raw.summary", `${sourceKind}.raw.summary`],
     ["headline", `${sourceKind}.headline`],
+    ["resolvedHeadline", `${sourceKind}.resolvedHeadline`],
+    ["localizedSummary", `${sourceKind}.localizedSummary`],
     ["title", `${sourceKind}.title`],
-    ["subtitle", `${sourceKind}.subtitle`],
+    ["raw.headline", `${sourceKind}.raw.headline`],
+    ["raw.resolvedHeadline", `${sourceKind}.raw.resolvedHeadline`],
+    ["raw.localizedSummary", `${sourceKind}.raw.localizedSummary`],
+    ["raw.title", `${sourceKind}.raw.title`],
     ["lightweightAlertSummary", `${sourceKind}.lightweightAlertSummary`],
     ["lightweightSummary", `${sourceKind}.lightweightSummary`],
-    ["localizedSummary", `${sourceKind}.localizedSummary`],
+    ["subtitle", `${sourceKind}.subtitle`],
     ["renderedAlertRowLabel", `${sourceKind}.renderedAlertRowLabel`],
     ["alertRowLabel", `${sourceKind}.alertRowLabel`],
     ["renderedMarkerSummary", `${sourceKind}.renderedMarkerSummary`],
     ["markerSummary", `${sourceKind}.markerSummary`],
-    ["raw.finalHeadline", `${sourceKind}.raw.finalHeadline`],
-    ["raw.resolvedHeadline", `${sourceKind}.raw.resolvedHeadline`],
-    ["raw.headline", `${sourceKind}.raw.headline`],
-    ["raw.title", `${sourceKind}.raw.title`],
-    ["raw.subtitle", `${sourceKind}.raw.subtitle`],
+    ["finalHeadline", `${sourceKind}.finalHeadline`],
     ["raw.lightweightAlertSummary", `${sourceKind}.raw.lightweightAlertSummary`],
     ["raw.lightweightSummary", `${sourceKind}.raw.lightweightSummary`],
-    ["raw.localizedSummary", `${sourceKind}.raw.localizedSummary`],
-    ["raw.renderedAlertRowLabel", `${sourceKind}.raw.renderedAlertRowLabel`]
+    ["raw.subtitle", `${sourceKind}.raw.subtitle`],
+    ["raw.renderedAlertRowLabel", `${sourceKind}.raw.renderedAlertRowLabel`],
+    ["raw.finalHeadline", `${sourceKind}.raw.finalHeadline`]
   ];
   for (const [path, source] of candidates) {
     const text = normalizeGridlyLightweightAlertSummaryText(getGridlyLightweightNestedValue(item, path));
-    if (isGridlyLightweightReusableAlertSummary(text)) return { value: text, source };
+    if (!isGridlyLightweightReusableAlertSummary(text)) continue;
+    if (getGridlyHeaderRailTextRejectionReason(text, detail?.resolvedCategory)) continue;
+    return { value: text, source };
   }
   const resolved = buildGridlyLightweightSummaryFromResolvedDetail(detail);
   if (isGridlyLightweightReusableAlertSummary(resolved.value)) return resolved;
   return { value: "", source: "" };
 }
 
-function getGridlyRenderedAlertTextSamples(limit = 8) {
+function classifyGridlyRenderedAlertTextNode(node, text = "", activeContext = {}) {
+  const tag = String(node?.tagName || "").toLowerCase();
+  const className = String(node?.className || "");
+  const role = String(node?.getAttribute?.("role") || "").toLowerCase();
+  const hasAlertDataset = Boolean(node?.dataset?.gridlyAlertRow !== undefined || node?.dataset?.gridlyAlertSummary || node?.dataset?.gridlyAlertTitle || node?.dataset?.gridlyAlertHeadline);
+  const isHeading = /^(h1|h2|h3|h4|h5|h6)$/.test(tag) || role === "heading" || /(?:^|\s)(?:section|group|panel|card)?-?(?:heading|header|title)(?:\s|$)/i.test(className);
+  const containsMultipleRows = typeof node?.querySelectorAll === "function" && node.querySelectorAll(".gridly-alert-row,[data-gridly-alert-row]").length > 1;
+  const railReject = getGridlyHeaderRailTextRejectionReason(text, activeContext?.activeCategory);
+  if (railReject) return { type: "stale_rail_summary", rejectionReason: railReject };
+  if (isHeading && !hasAlertDataset) return { type: "group_heading", rejectionReason: "heading_or_section_title" };
+  if (containsMultipleRows || normalizeGridlyLightweightAlertSummaryText(text).length > 180) return { type: "generic_container", rejectionReason: "container_or_overlong_text" };
+  return { type: hasAlertDataset || /(?:^|\s)gridly-alert-row(?:\s|$)/i.test(className) ? "actual_alert_item" : "generic_container", rejectionReason: hasAlertDataset ? "" : "generic_dom_text" };
+}
+
+function getGridlyRenderedAlertTextSamples(limit = 8, options = {}) {
   if (typeof document === "undefined") return [];
+  const includeMetadata = Boolean(options?.includeMetadata);
   const selectors = [
     ".gridly-alert-row",
     "[data-gridly-alert-row]",
@@ -10826,45 +10864,87 @@ function getGridlyRenderedAlertTextSamples(limit = 8) {
     "[data-gridly-alert-title]",
     "[data-gridly-alert-headline]"
   ];
+  const activeContext = {
+    activeCategory: options?.activeCategory || options?.activeAwareness?.resolvedCategory || options?.activeAwareness?.topCategory || "",
+    activeLocationLabel: options?.activeLocationLabel || options?.activeAwareness?.resolvedLocationLabel || ""
+  };
   const seen = new Set();
-  return selectors
-    .flatMap((selector) => Array.from(document.querySelectorAll(selector)))
-    .map((node) => safeDisplayText(node?.dataset?.gridlyAlertSummary || node?.dataset?.gridlyAlertTitle || node?.dataset?.gridlyAlertHeadline || node?.textContent, ""))
-    .map((text) => normalizeGridlyLightweightAlertSummaryText(text))
-    .filter((text) => {
-      const key = text.toLowerCase();
-      if (!text || seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    })
-    .slice(0, limit);
+  const samples = [];
+  selectors.flatMap((selector) => Array.from(document.querySelectorAll(selector))).forEach((node) => {
+    const rawText = safeDisplayText(node?.dataset?.gridlyAlertSummary || node?.dataset?.gridlyAlertTitle || node?.dataset?.gridlyAlertHeadline || node?.textContent, "");
+    const text = normalizeGridlyLightweightAlertSummaryText(rawText);
+    const key = text.toLowerCase();
+    if (!text || seen.has(key)) return;
+    seen.add(key);
+    const classification = classifyGridlyRenderedAlertTextNode(node, text, activeContext);
+    samples.push({
+      text,
+      source: node?.dataset?.gridlyAlertSummary ? "dom.data-gridly-alert-summary"
+        : node?.dataset?.gridlyAlertTitle ? "dom.data-gridly-alert-title"
+          : node?.dataset?.gridlyAlertHeadline ? "dom.data-gridly-alert-headline"
+            : "dom.gridlyAlertRows.textContent",
+      type: classification.type,
+      classification: classification.type,
+      rejectionReason: classification.rejectionReason || "",
+      tagName: String(node?.tagName || "").toLowerCase(),
+      className: String(node?.className || "").slice(0, 120)
+    });
+  });
+  const limited = samples.slice(0, limit);
+  return includeMetadata ? limited : limited.map((sample) => sample.text);
 }
 
 function getGridlyLightweightAlertSummarySourceFields() {
   return [
-    "finalHeadline",
-    "resolvedHeadline",
+    "summary",
     "headline",
+    "resolvedHeadline",
+    "localizedSummary",
     "title",
+    "finalHeadline",
     "subtitle",
     "lightweightAlertSummary",
     "lightweightSummary",
-    "localizedSummary",
     "renderedAlertRowLabel",
     "alertRowLabel",
     "renderedMarkerSummary",
     "markerSummary",
-    "raw.finalHeadline",
-    "raw.resolvedHeadline",
+    "raw.summary",
     "raw.headline",
+    "raw.resolvedHeadline",
+    "raw.localizedSummary",
     "raw.title",
+    "raw.finalHeadline",
     "raw.subtitle",
     "raw.lightweightAlertSummary",
     "raw.lightweightSummary",
-    "raw.localizedSummary",
     "raw.renderedAlertRowLabel",
     "dom.gridlyAlertRows.textContent"
   ];
+}
+
+function buildGridlyHeaderCandidateFromCategoryLocation(category = "", locationLabel = "") {
+  const normalizedCategory = getGridlyLightweightTitleCaseCategory(category);
+  const normalizedLocation = normalizeGridlyLightweightAlertSummaryText(locationLabel);
+  if (!normalizedCategory || !normalizedLocation) return "";
+  const preposition = /^(?:near|on|at|between|along|from|over|under)\b/i.test(normalizedLocation) ? "" : "on ";
+  return `${normalizedCategory} ${preposition}${normalizedLocation}`;
+}
+
+function classifyGridlyHeaderCandidate(candidate = {}, activeContext = {}) {
+  const text = normalizeGridlyLightweightAlertSummaryText(candidate.text);
+  if (!text) return { ...candidate, text: "", type: candidate.type || "empty", accepted: false, rejectionReason: "empty" };
+  if (!isGridlyLightweightReusableAlertSummary(text)) {
+    return { ...candidate, text, type: candidate.type || "generic_container", accepted: false, rejectionReason: "not_reusable_alert_summary" };
+  }
+  const railReject = getGridlyHeaderRailTextRejectionReason(text, activeContext.activeCategory);
+  if (railReject) {
+    return { ...candidate, text, type: "stale_rail_summary", accepted: false, rejectionReason: railReject };
+  }
+  if (candidate.type === "group_heading" || candidate.type === "generic_container") {
+    return { ...candidate, text, accepted: false, rejectionReason: candidate.rejectionReason || candidate.type };
+  }
+  return { ...candidate, text, type: candidate.type || "actual_alert_item", accepted: true, rejectionReason: "" };
 }
 
 function resolveGridlyExistingAlertWording(options = {}) {
@@ -10879,15 +10959,86 @@ function resolveGridlyExistingAlertWording(options = {}) {
   if (!awareness && typeof buildGridlyLightweightActiveAwareness === "function") {
     awareness = buildGridlyLightweightActiveAwareness(options);
   }
-  const awarenessText = safeDisplayText(awareness?.reusedAlertText, "");
-  if (awareness?.reusedAlertSummary && isGridlyLightweightReusableAlertSummary(awarenessText)) {
-    return { available: true, text: awarenessText, source: awareness.reusedAlertSource || "lightweightActiveAwareness.reusedAlertText", activeAwareness: awareness };
+
+  const activeCategory = awareness?.resolvedCategory || awareness?.topCategory || "";
+  const activeLocationLabel = safeDisplayText(awareness?.resolvedLocationLabel, "");
+  const activeContext = { activeCategory, activeLocationLabel };
+  const candidates = [];
+  const addCandidate = (text, source, type = "actual_alert_item") => {
+    const normalizedText = normalizeGridlyLightweightAlertSummaryText(text);
+    if (!normalizedText) return;
+    candidates.push({ text: normalizedText, source, type });
+  };
+
+  const activeSamples = Array.isArray(awareness?.activeAwarenessSamples) ? awareness.activeAwarenessSamples : [];
+  activeSamples.forEach((sample, index) => {
+    addCandidate(sample?.reusedAlertText, sample?.reusedAlertSource || `lightweightActiveAwareness.activeAwarenessSamples.${index}.reusedAlertText`, "actual_alert_item");
+    addCandidate(
+      buildGridlyHeaderCandidateFromCategoryLocation(sample?.resolvedCategory, sample?.resolvedLocationLabel),
+      `lightweightActiveAwareness.activeAwarenessSamples.${index}.resolvedCategory+resolvedLocationLabel`,
+      "actual_alert_item"
+    );
+  });
+  addCandidate(awareness?.reusedAlertText, awareness?.reusedAlertSource || "lightweightActiveAwareness.reusedAlertText", "actual_alert_item");
+  addCandidate(awareness?.headline, "lightweightActiveAwareness.headline", "actual_alert_item");
+  addCandidate(
+    buildGridlyHeaderCandidateFromCategoryLocation(activeCategory, activeLocationLabel),
+    "lightweightActiveAwareness.resolvedCategory+resolvedLocationLabel",
+    "actual_alert_item"
+  );
+
+  getGridlyRenderedAlertTextSamples(Number(options?.limit || 6), { includeMetadata: true, activeAwareness: awareness, activeCategory, activeLocationLabel })
+    .forEach((sample) => {
+      candidates.push({
+        text: sample.text,
+        source: sample.source || "dom.gridlyAlertRows.textContent",
+        type: sample.type || sample.classification || "generic_container",
+        rejectionReason: sample.rejectionReason || ""
+      });
+    });
+
+  const seen = new Set();
+  const rejectedHeaderCandidates = [];
+  for (const rawCandidate of candidates) {
+    const classified = classifyGridlyHeaderCandidate(rawCandidate, activeContext);
+    const key = `${classified.source}:${classified.text}`.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    if (classified.accepted) {
+      return {
+        available: true,
+        text: classified.text,
+        source: classified.source || "lightweightActiveAwareness",
+        type: classified.type || "actual_alert_item",
+        selectedHeaderCandidate: classified.text,
+        selectedHeaderCandidateSource: classified.source || "lightweightActiveAwareness",
+        selectedHeaderCandidateType: classified.type || "actual_alert_item",
+        rejectedHeaderCandidates,
+        activeCategory,
+        activeLocationLabel,
+        activeAwareness: awareness
+      };
+    }
+    rejectedHeaderCandidates.push({
+      text: classified.text,
+      source: classified.source || "",
+      type: classified.type || "",
+      rejectionReason: classified.rejectionReason || "rejected"
+    });
   }
-  const renderedSample = getGridlyRenderedAlertTextSamples(6).find((sample) => isGridlyLightweightReusableAlertSummary(sample)) || "";
-  if (renderedSample) {
-    return { available: true, text: renderedSample, source: "dom.gridlyAlertRows.textContent", activeAwareness: awareness };
-  }
-  return { available: false, text: "", source: "", activeAwareness: awareness };
+  return {
+    available: false,
+    text: "",
+    source: "",
+    type: "",
+    selectedHeaderCandidate: "",
+    selectedHeaderCandidateSource: "",
+    selectedHeaderCandidateType: "",
+    rejectedHeaderCandidates,
+    activeCategory,
+    activeLocationLabel,
+    activeAwareness: awareness
+  };
 }
 
 function getGridlyLightweightActivePriorityScore(detail = {}, index = 0) {
@@ -11969,7 +12120,7 @@ window.gridlyActiveAwarenessSourceAudit = function gridlyActiveAwarenessSourceAu
   try {
     const activeAwareness = buildGridlyLightweightActiveAwareness(options);
     const existingAlertWording = resolveGridlyExistingAlertWording({ ...options, activeAwareness });
-    const renderedAlertTextSamples = getGridlyRenderedAlertTextSamples(8);
+    const renderedAlertTextSamples = getGridlyRenderedAlertTextSamples(8, { includeMetadata: true, activeAwareness });
     const pulseHeadline = safeDisplayText(
       document.getElementById("gridlyCommunityPulseHeadline")?.textContent || gridlyCommunityPulseAuditState?.renderedPulseHeadline,
       ""
@@ -11991,7 +12142,7 @@ window.gridlyActiveAwarenessSourceAudit = function gridlyActiveAwarenessSourceAu
       activeAwareness.headline,
       activeAwareness.subline,
       activeAwareness.reusedAlertText,
-      ...renderedAlertTextSamples,
+      ...renderedAlertTextSamples.map((sample) => sample?.text || sample),
       ...activeAwarenessSamples.flatMap((sample) => [sample.reusedAlertText, sample.resolvedLocationLabel])
     ];
     const objectLikeTextSamples = rawObjectLikeCandidates
@@ -12002,7 +12153,7 @@ window.gridlyActiveAwarenessSourceAudit = function gridlyActiveAwarenessSourceAu
     const pulseHeaderText = [pulseHeadline, pulseSubline, topStatusPrimary, topStatusSecondary].map((text) => normalizeGridlyLightweightAlertSummaryText(text));
     return {
       loaded: true,
-      version: "V179.4",
+      version: "V179.5",
       activeAwarenessCount: Number(activeAwareness.activeAwarenessCount || 0),
       activeHazardCount: Number(activeAwareness.activeHazardCount || 0),
       activeReportCount: Number(activeAwareness.activeReportCount || 0),
@@ -12016,6 +12167,12 @@ window.gridlyActiveAwarenessSourceAudit = function gridlyActiveAwarenessSourceAu
       alertSummaryReuseAvailable: Boolean(existingAlertWording.available),
       alertSummaryReuseSource: existingAlertWording.source || activeAwareness.reusedAlertSource || "",
       alertSummaryReuseText: existingAlertWording.text || activeAwareness.reusedAlertText || "",
+      selectedHeaderCandidate: existingAlertWording.selectedHeaderCandidate || existingAlertWording.text || "",
+      selectedHeaderCandidateSource: existingAlertWording.selectedHeaderCandidateSource || existingAlertWording.source || "",
+      selectedHeaderCandidateType: existingAlertWording.selectedHeaderCandidateType || existingAlertWording.type || "",
+      rejectedHeaderCandidates: Array.isArray(existingAlertWording.rejectedHeaderCandidates) ? existingAlertWording.rejectedHeaderCandidates.slice(0, 12) : [],
+      activeCategory: existingAlertWording.activeCategory || activeAwareness.resolvedCategory || activeAwareness.topCategory || "",
+      activeLocationLabel: existingAlertWording.activeLocationLabel || activeAwareness.resolvedLocationLabel || "",
       pulseHeaderReusedAlertWording: Boolean(normalizedExistingAlertText && pulseHeaderText.some((text) => text === normalizedExistingAlertText)),
       pulseCurrentlyReusedAlertWording: Boolean(normalizedExistingAlertText && normalizeGridlyLightweightAlertSummaryText(pulseHeadline) === normalizedExistingAlertText),
       headerCurrentlyReusedAlertWording: Boolean(normalizedExistingAlertText && normalizeGridlyLightweightAlertSummaryText(topStatusPrimary) === normalizedExistingAlertText),
@@ -12035,7 +12192,7 @@ window.gridlyActiveAwarenessSourceAudit = function gridlyActiveAwarenessSourceAu
   } catch (error) {
     return {
       loaded: false,
-      version: "V179.4",
+      version: "V179.5",
       activeAwarenessCount: 0,
       activeHazardCount: 0,
       activeReportCount: 0,
@@ -12047,6 +12204,12 @@ window.gridlyActiveAwarenessSourceAudit = function gridlyActiveAwarenessSourceAu
       activeAwarenessSamples: [],
       alertSourceCandidates: getGridlyLightweightAlertSummarySourceFields(),
       alertSummaryReuseAvailable: false,
+      selectedHeaderCandidate: "",
+      selectedHeaderCandidateSource: "",
+      selectedHeaderCandidateType: "",
+      rejectedHeaderCandidates: [],
+      activeCategory: "",
+      activeLocationLabel: "",
       pulseHeaderReusedAlertWording: false,
       objectLikeTextDetected: false,
       objectLikeTextSamples: [],
