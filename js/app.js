@@ -2575,6 +2575,9 @@ let userLocation = null;
 let userMarker = null;
 
 const GRIDLY_USER_TRUST_BLUEPRINT_VERSION = "V186";
+const GRIDLY_FIRST_RUN_ONBOARDING_VERSION = "V197";
+let gridlyCachedGeolocationPermissionStatus = null;
+let gridlyGeolocationPermissionQueryInFlight = false;
 
 function gridlySafeLocalStorageGet(key) {
   try {
@@ -3042,8 +3045,50 @@ window.gridlyCaptureCommuteBaselineSample = function gridlyCaptureCommuteBaselin
 function gridlyGetLocationPermissionDiagnostic() {
   if (typeof navigator === "undefined") return "navigator_unavailable";
   if (typeof navigator.geolocation === "undefined") return "geolocation_unavailable";
+  if (gridlyCachedGeolocationPermissionStatus) return gridlyCachedGeolocationPermissionStatus;
   if (navigator.permissions?.query) return "permissions_api_available_async_status_not_queried";
   return "geolocation_available_permission_unknown";
+}
+
+function gridlyIsUsableLocationCoordinate(candidate = {}) {
+  const lat = Number(candidate?.lat ?? candidate?.latitude);
+  const lng = Number(candidate?.lng ?? candidate?.lon ?? candidate?.longitude);
+  return Number.isFinite(lat) && Number.isFinite(lng) && Math.abs(lat) <= 90 && Math.abs(lng) <= 180;
+}
+
+function gridlyGetUsableLocationReadiness() {
+  const candidates = [
+    typeof userLocation !== "undefined" ? userLocation : null,
+    typeof window !== "undefined" ? window.gridlyUserLocation : null,
+    typeof window !== "undefined" ? window.__gridlyUserLocation : null,
+    typeof window !== "undefined" ? window.gridlyCurrentLocation : null,
+    typeof window !== "undefined" ? window.__gridlyCurrentLocation : null
+  ];
+  return candidates.some((candidate) => gridlyIsUsableLocationCoordinate(candidate));
+}
+
+function gridlyPrimeGeolocationPermissionStatus() {
+  try {
+    if (typeof navigator === "undefined" || typeof navigator.geolocation === "undefined") return false;
+    if (!navigator.permissions?.query || gridlyGeolocationPermissionQueryInFlight) return false;
+    gridlyGeolocationPermissionQueryInFlight = true;
+    navigator.permissions.query({ name: "geolocation" }).then((status) => {
+      gridlyCachedGeolocationPermissionStatus = status?.state || null;
+      if (status && "onchange" in status) {
+        status.onchange = () => {
+          gridlyCachedGeolocationPermissionStatus = status.state || null;
+        };
+      }
+    }).catch(() => {
+      gridlyCachedGeolocationPermissionStatus = null;
+    }).finally(() => {
+      gridlyGeolocationPermissionQueryInFlight = false;
+    });
+    return true;
+  } catch (_error) {
+    gridlyGeolocationPermissionQueryInFlight = false;
+    return false;
+  }
 }
 
 window.gridlyHazardLifecycleBlueprint = function gridlyHazardLifecycleBlueprint() {
@@ -3666,6 +3711,64 @@ window.gridlyTravelTimeBlueprint = function gridlyTravelTimeBlueprint() {
   };
 };
 
+function gridlyBuildFirstRunOnboardingBlueprint() {
+  gridlyPrimeGeolocationPermissionStatus();
+  const places = gridlyGetSavedPlacesReadiness();
+  const locationPermissionStatus = gridlyGetLocationPermissionDiagnostic();
+  const usableLocationAvailable = gridlyGetUsableLocationReadiness();
+  const locationStepReady = locationPermissionStatus !== "navigator_unavailable" && locationPermissionStatus !== "geolocation_unavailable";
+  const locationStepComplete = locationPermissionStatus === "granted" || usableLocationAvailable;
+  const homeConfigured = Boolean(places.hasHome);
+  const workConfigured = Boolean(places.hasWork);
+  const notificationPreferencesAvailable = gridlySafeLocalStorageHas(SMART_ALERTS_STORAGE_KEY);
+  const notificationStepComplete = notificationPreferencesAvailable;
+  const recommendedStepOrder = ["location", "home", "work", "notifications"];
+  const completionByStep = {
+    location: locationStepComplete,
+    home: homeConfigured,
+    work: workConfigured,
+    notifications: notificationStepComplete
+  };
+  const missingSteps = recommendedStepOrder.filter((step) => !completionByStep[step]);
+  const requiredStepsComplete = Boolean(locationStepComplete && homeConfigured && workConfigured);
+
+  return {
+    onboardingVersion: GRIDLY_FIRST_RUN_ONBOARDING_VERSION,
+    locationPermissionStatus,
+    locationStepReady,
+    locationStepComplete,
+    homeConfigured,
+    homeStepComplete: homeConfigured,
+    workConfigured,
+    workStepComplete: workConfigured,
+    notificationPreferencesAvailable,
+    notificationStepComplete,
+    onboardingRequired: !requiredStepsComplete,
+    onboardingComplete: requiredStepsComplete,
+    missingSteps,
+    recommendedStepOrder,
+    nextRecommendedStep: missingSteps[0] || null,
+    notes: [
+      "Diagnostic blueprint only; no onboarding storage is written.",
+      "No location, notification, modal, layout, or navigation changes are triggered.",
+      "Notifications remain optional for V197 and are complete only when existing preference storage is present."
+    ]
+  };
+}
+
+window.gridlyFirstRunOnboardingBlueprint = function gridlyFirstRunOnboardingBlueprint() {
+  return gridlyBuildFirstRunOnboardingBlueprint();
+};
+
+window.gridlyOnboardingReadinessAudit = function gridlyOnboardingReadinessAudit() {
+  return {
+    ...gridlyBuildFirstRunOnboardingBlueprint(),
+    diagnosticOnly: true,
+    destructiveActionsTaken: false,
+    uiChangesApplied: false
+  };
+};
+
 window.gridlyOnboardingBlueprint = function gridlyOnboardingBlueprint() {
   const places = gridlyGetSavedPlacesReadiness();
   const notificationSettingsPresent = gridlySafeLocalStorageHas(SMART_ALERTS_STORAGE_KEY);
@@ -3719,13 +3822,15 @@ window.gridlyUserTrustBlueprintAudit = function gridlyUserTrustBlueprintAudit() 
   const hazardBlueprint = window.gridlyHazardLifecycleBlueprint?.() || {};
   const travelBlueprint = window.gridlyTravelTimeBlueprint?.() || {};
   const onboardingBlueprint = window.gridlyOnboardingBlueprint?.() || {};
+  const firstRunOnboardingBlueprint = window.gridlyFirstRunOnboardingBlueprint?.() || {};
   const settingsBlueprint = window.gridlySettingsBlueprint?.() || {};
   const settingsInventory = settingsBlueprint.settingsOwnershipInventory || {};
   const launchCriticalGaps = [];
 
   const hazardLifecycleReady = Boolean(hazardBlueprint.recommendedLifecycleRules && typeof hazardBlueprint.activeHazardCount === "number");
   const travelTimeReady = Boolean(travelBlueprint.recommendedFutureModel && "estimatedInputsAvailable" in travelBlueprint);
-  const onboardingReady = Boolean(onboardingBlueprint.recommendedOnboardingFlow && typeof onboardingBlueprint.onboardingReadinessScore === "number");
+  const firstRunOnboardingBlueprintAvailable = Boolean(firstRunOnboardingBlueprint.onboardingVersion && Array.isArray(firstRunOnboardingBlueprint.recommendedStepOrder));
+  const onboardingReady = Boolean(firstRunOnboardingBlueprintAvailable || (onboardingBlueprint.recommendedOnboardingFlow && typeof onboardingBlueprint.onboardingReadinessScore === "number"));
   const settingsReady = ["routeWatch", "notifications", "display", "reporting", "about"].every((section) => {
     const status = settingsInventory[section];
     return Boolean(status && !status.missing);
@@ -3749,9 +3854,20 @@ window.gridlyUserTrustBlueprintAudit = function gridlyUserTrustBlueprintAudit() 
     commuteDeltaMinutes: Number.isFinite(Number(travelBlueprint.commuteDeltaMinutes)) ? Number(travelBlueprint.commuteDeltaMinutes) : null,
     commuteDeltaStatus: travelBlueprint.commuteDeltaStatus || "unavailable",
     onboardingReady,
+    firstRunOnboardingBlueprintAvailable,
+    onboardingRequired: firstRunOnboardingBlueprintAvailable ? Boolean(firstRunOnboardingBlueprint.onboardingRequired) : null,
+    onboardingComplete: firstRunOnboardingBlueprintAvailable ? Boolean(firstRunOnboardingBlueprint.onboardingComplete) : null,
+    nextRecommendedOnboardingStep: firstRunOnboardingBlueprintAvailable ? (firstRunOnboardingBlueprint.nextRecommendedStep || null) : null,
     settingsReady,
     launchCriticalGaps,
-    recommendedImplementationOrder: [
+    recommendedImplementationOrder: firstRunOnboardingBlueprintAvailable ? [
+      "Hazard lifecycle engine",
+      "Travel time intelligence",
+      "First-run onboarding blueprint",
+      "Settings functionality",
+      "Notification preferences",
+      "Beta readiness review"
+    ] : [
       "Hazard lifecycle engine",
       "Travel time intelligence",
       "Onboarding flow",
@@ -3868,6 +3984,8 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyPortraitContainmentAudit",
   "gridlyLegacySurfaceDependencyAudit",
   "gridlyLegacyTruthAudit",
+  "gridlyFirstRunOnboardingBlueprint",
+  "gridlyOnboardingReadinessAudit",
   "gridlyPortraitStabilitySmokeAudit",
   "gridlyAuditCycleDebug",
   "gridlyAuditHelpersCheck",
@@ -3935,6 +4053,8 @@ function exposeAllGridlyAuditHelpers() {
     gridlyPortraitContainmentAudit: typeof gridlyPortraitContainmentAudit === "function" ? gridlyPortraitContainmentAudit : null,
     gridlyLegacySurfaceDependencyAudit: typeof gridlyLegacySurfaceDependencyAudit === "function" ? gridlyLegacySurfaceDependencyAudit : null,
     gridlyLegacyTruthAudit: typeof gridlyLegacyTruthAudit === "function" ? gridlyLegacyTruthAudit : null,
+    gridlyFirstRunOnboardingBlueprint: typeof target?.gridlyFirstRunOnboardingBlueprint === "function" ? target.gridlyFirstRunOnboardingBlueprint : null,
+    gridlyOnboardingReadinessAudit: typeof target?.gridlyOnboardingReadinessAudit === "function" ? target.gridlyOnboardingReadinessAudit : null,
     gridlyPortraitStabilitySmokeAudit: typeof gridlyPortraitStabilitySmokeAudit === "function" ? gridlyPortraitStabilitySmokeAudit : null,
     gridlyAuditCycleDebug: typeof gridlyAuditCycleDebug === "function" ? gridlyAuditCycleDebug : null,
     gridlyAuditHelpersCheck: typeof gridlyAuditHelpersCheck === "function" ? gridlyAuditHelpersCheck : null,
