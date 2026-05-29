@@ -704,23 +704,26 @@
       </div>
       <p class="settings-modal-subtitle">Manage saved route anchors and device preferences. Settings are stored locally on this device.</p>
       <section class="settings-modal-section" id="settingsSavedPlacesSection">
-        <div class="settings-section-head">
-          <h3>Route Watch Settings</h3>
-          <button type="button" class="secondary-btn compact-btn" id="settingsManageSavedPlacesBtn">Manage Saved Places</button>
-        </div>
+        <h3>Route Watch Settings</h3>
         <div class="settings-place-grid" aria-label="Route Watch saved places">
           <article class="settings-place-card">
             <span class="settings-place-label">Home</span>
             <strong id="settingsHomeValue">Not saved</strong>
-            <small id="settingsHomeMeta">Save Home to enable route awareness.</small>
+            <small id="settingsHomeMeta">Save Home to enable Route Watch context.</small>
+            <button type="button" class="secondary-btn compact-btn" id="settingsEditHomeBtn">Edit Home</button>
           </article>
           <article class="settings-place-card">
             <span class="settings-place-label">Work</span>
             <strong id="settingsWorkValue">Not saved</strong>
-            <small id="settingsWorkMeta">Save Work to enable commute context.</small>
+            <small id="settingsWorkMeta">Save Work to enable Route Watch context.</small>
+            <button type="button" class="secondary-btn compact-btn" id="settingsEditWorkBtn">Edit Work</button>
+          </article>
+          <article class="settings-place-card settings-place-card-wide">
+            <span class="settings-place-label">Saved Places</span>
+            <button type="button" class="secondary-btn compact-btn" id="settingsManageSavedPlacesBtn">Manage Saved Places</button>
           </article>
         </div>
-        <div class="settings-saved-places-list" id="settingsSavedPlacesList" aria-live="polite">No saved places yet.</div>
+        <div class="settings-saved-places-list" id="settingsSavedPlacesList" aria-live="polite" hidden></div>
       </section>
       <section class="settings-modal-section" id="settingsAlertPreferencesSection">
         <h3>Notification Preferences</h3>
@@ -747,6 +750,13 @@
               <option value="system">System</option>
               <option value="light">Light</option>
               <option value="dark">Dark</option>
+            </select>
+          </label>
+          <label>Text Size
+            <select id="settingsTextSizeSelect">
+              <option value="standard">Standard</option>
+              <option value="large">Large</option>
+              <option value="extra-large">Extra Large</option>
             </select>
           </label>
         </div>

@@ -3804,7 +3804,7 @@ window.gridlySettingsBlueprint = function gridlySettingsBlueprint() {
   const places = gridlyGetSavedPlacesReadiness();
   const routeWatchControlsPresent = hasDocument && Boolean(document.getElementById("routeWatchStartSelect") || document.getElementById("routeWatchDestinationSelect") || document.getElementById("routeWatchStartBtn"));
   const notificationControlsPresent = hasDocument && Boolean(document.getElementById("settingsRouteAlertsToggle") || document.getElementById("settingsRailAlertsToggle") || document.getElementById("settingsHazardAlertsToggle") || document.getElementById("settingsCommunityAlertsToggle") || document.getElementById("smartAlertNearbyBlocked") || document.getElementById("smartAlertRouteDelay") || document.getElementById("smartAlertUs90Clear") || document.getElementById("smartAlertNeedsConfirm"));
-  const displayControlsPresent = hasDocument && Boolean(document.getElementById("settingsMapStyleSelect") || document.getElementById("settingsThemeSelect"));
+  const displayControlsPresent = hasDocument && Boolean(document.getElementById("settingsMapStyleSelect") || document.getElementById("settingsThemeSelect") || document.getElementById("settingsTextSizeSelect"));
   const settingsStoragePresent = gridlySafeLocalStorageHas(GRIDLY_SETTINGS_STORAGE_KEY);
   const displayStoragePresent = settingsStoragePresent || gridlySafeLocalStorageHas(MAP_STYLE_STORAGE_KEY);
   const reportingControlsPresent = hasDocument && Boolean(document.getElementById("manualReportBtn") || document.getElementById("manualReportType") || document.getElementById("mobileReportBtn"));
@@ -8707,12 +8707,15 @@ function hydrateElements() {
     "settingsWorkMeta",
     "settingsSavedPlacesList",
     "settingsManageSavedPlacesBtn",
+    "settingsEditHomeBtn",
+    "settingsEditWorkBtn",
     "settingsRouteAlertsToggle",
     "settingsRailAlertsToggle",
     "settingsHazardAlertsToggle",
     "settingsCommunityAlertsToggle",
     "settingsMapStyleSelect",
     "settingsThemeSelect",
+    "settingsTextSizeSelect",
     "settingsBuildValue",
     "settingsFeedbackBtn",
     "settingsFeedbackStatus",
@@ -23895,7 +23898,8 @@ const GRIDLY_SETTINGS_DEFAULTS = Object.freeze({
   }),
   display: Object.freeze({
     mapStyle: "standard",
-    theme: "system"
+    theme: "system",
+    textSize: "standard"
   })
 });
 
@@ -23906,6 +23910,7 @@ const GRIDLY_SETTINGS_MAP_STYLE_LABELS = {
 };
 
 const GRIDLY_SETTINGS_VALID_THEMES = new Set(["system", "light", "dark"]);
+const GRIDLY_SETTINGS_VALID_TEXT_SIZES = new Set(["standard", "large", "extra-large"]);
 
 function gridlyStorageAvailable() {
   try {
@@ -23934,6 +23939,8 @@ function normalizeGridlySettings(raw = null) {
   if (GRIDLY_SETTINGS_MAP_STYLE_LABELS[normalizedStyle]) base.display.mapStyle = normalizedStyle;
   const normalizedTheme = String(display.theme || "").trim().toLowerCase();
   if (GRIDLY_SETTINGS_VALID_THEMES.has(normalizedTheme)) base.display.theme = normalizedTheme;
+  const normalizedTextSize = String(display.textSize || "").trim().toLowerCase();
+  if (GRIDLY_SETTINGS_VALID_TEXT_SIZES.has(normalizedTextSize)) base.display.textSize = normalizedTextSize;
   return base;
 }
 
@@ -23992,15 +23999,53 @@ function applyGridlySettingsDisplayPreferences(display = {}, source = "settings"
   return true;
 }
 
+function gridlyIsZipOnlyValue(value = "") {
+  return /^\d{5}(?:-\d{4})?$/.test(String(value || "").trim());
+}
+
+function gridlyJoinCityState(city = "", state = "") {
+  return [city, state].map((value) => String(value || "").trim()).filter(Boolean).join(", ");
+}
+
+function resolveGridlySettingsPlaceDisplay(place, fallbackLabel = "Saved Place") {
+  if (!isConfiguredPlace(place)) {
+    return { value: "Not saved", source: "not_saved", zipUsedAsPrimary: false };
+  }
+  const rawAddress = place?.address;
+  const addressObject = rawAddress && typeof rawAddress === "object" && !Array.isArray(rawAddress) ? rawAddress : null;
+  const rawPayload = place?.raw && typeof place.raw === "object" ? place.raw : {};
+  const rawPayloadAddress = rawPayload.address && typeof rawPayload.address === "object" && !Array.isArray(rawPayload.address) ? rawPayload.address : null;
+  const candidates = [
+    ["address", typeof rawAddress === "string" ? rawAddress : ""],
+    ["formattedAddress", place?.formattedAddress],
+    ["fullAddress", place?.fullAddress],
+    ["placeName", place?.placeName],
+    ["label", place?.label],
+    ["name", place?.name],
+    ["city/state", gridlyJoinCityState(place?.city || addressObject?.city || addressObject?.town || rawPayloadAddress?.city || rawPayloadAddress?.town, place?.state || addressObject?.state || rawPayloadAddress?.state)]
+  ];
+  for (const [source, candidate] of candidates) {
+    const value = String(candidate || "").trim();
+    if (value && !gridlyIsZipOnlyValue(value)) return { value, source, zipUsedAsPrimary: false };
+  }
+  const zipCandidate = [place?.zip, place?.zipCode, place?.postalCode, addressObject?.postcode, rawPayloadAddress?.postcode, rawAddress].find((value) => gridlyIsZipOnlyValue(value));
+  if (zipCandidate) return { value: String(zipCandidate).trim(), source: "zip", zipUsedAsPrimary: true };
+  const coordinates = normalizeCoordinatePair(place?.lat ?? place?.coordinates?.lat, place?.lng ?? place?.coordinates?.lng);
+  if (coordinates) return { value: `${coordinates.lat.toFixed(5)}, ${coordinates.lng.toFixed(5)}`, source: "coordinates", zipUsedAsPrimary: false };
+  return { value: String(place?.label || place?.name || fallbackLabel).trim() || fallbackLabel, source: "fallback", zipUsedAsPrimary: false };
+}
+
 function describeGridlySettingsPlace(place, fallbackLabel) {
   if (!isConfiguredPlace(place)) {
-    return { label: "Not saved", meta: `Save ${fallbackLabel} to enable Route Watch context.` };
+    return { label: "Not saved", meta: `Save ${fallbackLabel} to enable Route Watch context.`, source: "not_saved", zipUsedAsPrimary: false };
   }
-  const address = String(place.address || "").trim();
+  const display = resolveGridlySettingsPlaceDisplay(place, fallbackLabel);
   const source = String(place.coordinateSource || "saved").trim();
   return {
-    label: place.label || fallbackLabel,
-    meta: address || `Coordinates saved (${source}).`
+    label: display.value,
+    meta: display.source === "coordinates" ? `Coordinates saved (${source}).` : `Saved ${fallbackLabel}.`,
+    source: display.source,
+    zipUsedAsPrimary: display.zipUsedAsPrimary
   };
 }
 
@@ -24014,22 +24059,8 @@ function renderGridlySettingsSavedPlaces() {
   safeText("settingsWorkMeta", work.meta);
 
   if (!els.settingsSavedPlacesList) return;
-  const savedPlaces = [state.home, state.work, ...state.custom, ...state.favorites].filter((place) => place && !isLegacyPlace(place));
   els.settingsSavedPlacesList.innerHTML = "";
-  if (!savedPlaces.length) {
-    els.settingsSavedPlacesList.textContent = "No saved places yet.";
-    return;
-  }
-  savedPlaces.forEach((place) => {
-    const row = document.createElement("div");
-    row.className = "settings-saved-place-row";
-    const label = document.createElement("strong");
-    label.textContent = place.label || place.name || "Saved Place";
-    const meta = document.createElement("small");
-    meta.textContent = place.address || (hasValidPlaceCoordinates(place) ? "Coordinates saved" : "Address pending");
-    row.append(label, meta);
-    els.settingsSavedPlacesList.appendChild(row);
-  });
+  els.settingsSavedPlacesList.hidden = true;
 }
 
 function renderGridlySettingsPanel(settings = getGridlySettingsPreferences()) {
@@ -24041,6 +24072,7 @@ function renderGridlySettingsPanel(settings = getGridlySettingsPreferences()) {
   if (els.settingsCommunityAlertsToggle) els.settingsCommunityAlertsToggle.checked = Boolean(normalized.notifications.communityAlerts);
   if (els.settingsMapStyleSelect) els.settingsMapStyleSelect.value = normalized.display.mapStyle;
   if (els.settingsThemeSelect) els.settingsThemeSelect.value = normalized.display.theme;
+  if (els.settingsTextSizeSelect) els.settingsTextSizeSelect.value = normalized.display.textSize;
   safeText("settingsBuildValue", GRIDLY_APP_BUILD_LABEL);
 }
 
@@ -24055,7 +24087,8 @@ function collectGridlySettingsFromUi() {
     },
     display: {
       mapStyle: els.settingsMapStyleSelect?.value || current.display.mapStyle,
-      theme: els.settingsThemeSelect?.value || current.display.theme
+      theme: els.settingsThemeSelect?.value || current.display.theme,
+      textSize: els.settingsTextSizeSelect?.value || current.display.textSize
     }
   });
 }
@@ -24078,12 +24111,21 @@ function bindGridlySettingsPreferences() {
     els.settingsHazardAlertsToggle,
     els.settingsCommunityAlertsToggle,
     els.settingsMapStyleSelect,
-    els.settingsThemeSelect
+    els.settingsThemeSelect,
+    els.settingsTextSizeSelect
   ].filter(Boolean);
   controls.forEach((control) => {
     if (control.dataset.gridlySettingsBound === "1") return;
     control.dataset.gridlySettingsBound = "1";
     control.addEventListener("change", persistGridlySettingsFromUi);
+  });
+  [[els.settingsEditHomeBtn, "home"], [els.settingsEditWorkBtn, "work"]].forEach(([button, type]) => {
+    if (!button || button.dataset.gridlySettingsBound === "1") return;
+    button.dataset.gridlySettingsBound = "1";
+    button.addEventListener("click", () => {
+      if (typeof openRouteSetupModalForType === "function") openRouteSetupModalForType(type);
+      else if (typeof openRouteSetupModal === "function") openRouteSetupModal();
+    });
   });
   if (els.settingsManageSavedPlacesBtn && els.settingsManageSavedPlacesBtn.dataset.gridlySettingsBound !== "1") {
     els.settingsManageSavedPlacesBtn.dataset.gridlySettingsBound = "1";
@@ -24103,7 +24145,7 @@ function gridlySettingsCompleteness(settings = getGridlySettingsPreferences()) {
   const normalized = normalizeGridlySettings(settings);
   return {
     notificationsComplete: ["routeAlerts", "railAlerts", "hazardAlerts", "communityAlerts"].every((key) => typeof normalized.notifications[key] === "boolean"),
-    displayComplete: Boolean(GRIDLY_SETTINGS_MAP_STYLE_LABELS[normalized.display.mapStyle] && GRIDLY_SETTINGS_VALID_THEMES.has(normalized.display.theme)),
+    displayComplete: Boolean(GRIDLY_SETTINGS_MAP_STYLE_LABELS[normalized.display.mapStyle] && GRIDLY_SETTINGS_VALID_THEMES.has(normalized.display.theme) && GRIDLY_SETTINGS_VALID_TEXT_SIZES.has(normalized.display.textSize)),
     routeWatchPlacesComplete: true,
     aboutComplete: true
   };
@@ -24114,6 +24156,12 @@ function buildGridlySettingsAudit(section = "all") {
   const settings = loadGridlySettingsPreferences({ render: false, applyDisplay: false });
   const rawSettings = gridlySafeLocalStorageGet(GRIDLY_SETTINGS_STORAGE_KEY);
   const places = gridlyGetSavedPlacesReadiness();
+  const savedPlacesState = getSavedPlacesState();
+  const homeDisplay = resolveGridlySettingsPlaceDisplay(savedPlacesState.home, "Home");
+  const workDisplay = resolveGridlySettingsPlaceDisplay(savedPlacesState.work, "Work");
+  const duplicateRouteWatchRowsFound = typeof document !== "undefined"
+    ? Boolean(document.querySelector("#settingsSavedPlacesSection #settingsSavedPlacesList:not([hidden]) .settings-saved-place-row"))
+    : false;
   const completeness = gridlySettingsCompleteness(settings);
   return {
     loaded: true,
@@ -24143,6 +24191,14 @@ function buildGridlySettingsAudit(section = "all") {
       existingStorageReused: true,
       storageKey: SAVED_PLACES_STORAGE_KEY
     },
+    homeDisplayValue: homeDisplay.value,
+    workDisplayValue: workDisplay.value,
+    homeDisplaySource: homeDisplay.source,
+    workDisplaySource: workDisplay.source,
+    zipUsedAsPrimary: Boolean(homeDisplay.zipUsedAsPrimary || workDisplay.zipUsedAsPrimary),
+    duplicateRouteWatchRowsFound,
+    textSizePreferenceAvailable: Boolean(GRIDLY_SETTINGS_VALID_TEXT_SIZES.has(settings.display.textSize)),
+    textSizePreferencePersisted: rawSettings ? Boolean(GRIDLY_SETTINGS_VALID_TEXT_SIZES.has(settings.display.textSize)) : false,
     preferences: settings,
     notificationDeliveryEnabled: false,
     runtimeLoopsAdded: false,
@@ -31557,27 +31613,25 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   function buildSettingsSurfaceHtml() {
     const settings = typeof getGridlySettingsPreferences === "function" ? getGridlySettingsPreferences() : normalizeGridlySettings();
     const places = typeof getSavedPlacesState === "function" ? getSavedPlacesState() : { home: null, work: null, custom: [], favorites: [] };
-    const describe = (place, fallback) => (typeof isConfiguredPlace === "function" && isConfiguredPlace(place))
-      ? { label: place.label || fallback, meta: place.address || "Coordinates saved" }
-      : { label: "Not saved", meta: `Save ${fallback} in Manage Saved Places.` };
+    const describe = (place, fallback) => (typeof describeGridlySettingsPlace === "function")
+      ? describeGridlySettingsPlace(place, fallback)
+      : ((typeof isConfiguredPlace === "function" && isConfiguredPlace(place))
+        ? { label: place.address || place.label || place.name || fallback, meta: "Saved place." }
+        : { label: "Not saved", meta: `Save ${fallback} in Manage Saved Places.` });
     const home = describe(places.home, "Home");
     const work = describe(places.work, "Work");
-    const saved = [places.home, places.work, ...(places.custom || []), ...(places.favorites || [])].filter(Boolean);
-    const savedRows = saved.length
-      ? saved.map((place) => `<div class="settings-saved-place-row"><strong>${escapeV2SettingsText(place.label || place.name || "Saved Place")}</strong><small>${escapeV2SettingsText(place.address || "Saved on this device")}</small></div>`).join("")
-      : `<div class="settings-saved-place-row"><strong>No saved places yet</strong><small>Use Manage Saved Places to add Home, Work, or Favorites.</small></div>`;
     const checked = (value) => value ? " checked" : "";
     const selected = (value, target) => value === target ? " selected" : "";
     return `
       <div class="gridly-v2-list gridly-settings-sheet" data-gridly-settings-v2="true">
         <p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p>
         <section class="settings-modal-section">
-          <div class="settings-section-head"><h3>Route Watch Settings</h3><button class="gridly-v2-tile" data-v2-action="route-manage-places-open" type="button">Manage Saved Places</button></div>
+          <h3>Route Watch Settings</h3>
           <div class="settings-place-grid">
-            <article class="settings-place-card"><span class="settings-place-label">Home</span><strong>${escapeV2SettingsText(home.label)}</strong><small>${escapeV2SettingsText(home.meta)}</small></article>
-            <article class="settings-place-card"><span class="settings-place-label">Work</span><strong>${escapeV2SettingsText(work.label)}</strong><small>${escapeV2SettingsText(work.meta)}</small></article>
+            <article class="settings-place-card"><span class="settings-place-label">Home</span><strong>${escapeV2SettingsText(home.label)}</strong><small>${escapeV2SettingsText(home.meta)}</small><button class="gridly-v2-tile" data-v2-action="route-edit-home-open" type="button">Edit Home</button></article>
+            <article class="settings-place-card"><span class="settings-place-label">Work</span><strong>${escapeV2SettingsText(work.label)}</strong><small>${escapeV2SettingsText(work.meta)}</small><button class="gridly-v2-tile" data-v2-action="route-edit-work-open" type="button">Edit Work</button></article>
+            <article class="settings-place-card settings-place-card-wide"><span class="settings-place-label">Saved Places</span><button class="gridly-v2-tile" data-v2-action="route-manage-places-open" type="button">Manage Saved Places</button></article>
           </div>
-          <div class="settings-saved-places-list">${savedRows}</div>
         </section>
         <section class="settings-modal-section">
           <h3>Notification Preferences</h3>
@@ -31594,6 +31648,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           <div class="settings-select-grid">
             <label>Map Style<select data-v2-settings-field="display.mapStyle"><option value="standard"${selected(settings.display.mapStyle, "standard")}>Standard</option><option value="dark"${selected(settings.display.mapStyle, "dark")}>Dark</option><option value="satellite"${selected(settings.display.mapStyle, "satellite")}>Satellite</option></select></label>
             <label>Theme<select data-v2-settings-field="display.theme"><option value="system"${selected(settings.display.theme, "system")}>System</option><option value="light"${selected(settings.display.theme, "light")}>Light</option><option value="dark"${selected(settings.display.theme, "dark")}>Dark</option></select></label>
+            <label>Text Size<select data-v2-settings-field="display.textSize"><option value="standard"${selected(settings.display.textSize, "standard")}>Standard</option><option value="large"${selected(settings.display.textSize, "large")}>Large</option><option value="extra-large"${selected(settings.display.textSize, "extra-large")}>Extra Large</option></select></label>
           </div>
           <p class="settings-placeholder-note">Theme preference is persisted for the future theme engine.</p>
         </section>
@@ -32061,6 +32116,14 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           v1363RouteActionDebug.lastRouteActionFailureReason = v1365ManagePlacesAdapterDebug.managePlacesFailureReason || "manage_places_target_missing";
         }
       },
+      "route-edit-home-open": () => {
+        if (typeof openRouteSetupModalForType === "function") openRouteSetupModalForType("home");
+        else if (typeof openRouteSetupModal === "function") openRouteSetupModal();
+      },
+      "route-edit-work-open": () => {
+        if (typeof openRouteSetupModalForType === "function") openRouteSetupModalForType("work");
+        else if (typeof openRouteSetupModal === "function") openRouteSetupModal();
+      },
       "alerts-open": () => document.getElementById("mobileDockAlertsBtn")?.click(),
       "alerts-manage-open": () => {
         v1372AlertsActionDebug.manageAlertsActionHandled = true;
@@ -32178,6 +32241,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           if (path === "notifications.communityAlerts") next.notifications.communityAlerts = Boolean(value);
           if (path === "display.mapStyle") next.display.mapStyle = String(value || "standard");
           if (path === "display.theme") next.display.theme = String(value || "system");
+          if (path === "display.textSize") next.display.textSize = String(value || "standard");
         });
         try {
           saveGridlySettingsPreferences(next, { applyDisplay: true, source: control.dataset.v2SettingsField || "portrait_v2_settings" });

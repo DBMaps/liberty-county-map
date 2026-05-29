@@ -1326,7 +1326,8 @@ body.route-setup-open #gridlyHazardLauncher {
   padding: 10px;
 }
 
-.settings-place-card { display: grid; gap: 4px; }
+.settings-place-card { display: grid; gap: 4px; align-content: start; }
+.settings-place-card-wide { grid-column: 1 / -1; }
 .settings-place-label { color: var(--muted); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.08em; }
 .settings-place-card small,
 .settings-placeholder-note,
