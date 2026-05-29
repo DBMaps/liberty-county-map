@@ -11338,6 +11338,88 @@ function getGridlyRenderedAlertTextSamples(limit = 8, options = {}) {
   return includeMetadata ? limited : limited.map((sample) => sample.text);
 }
 
+
+function isGridlyCleanRoadHazardHeadingText(value = "") {
+  const text = normalizeGridlyLightweightAlertSummaryText(value);
+  if (!isGridlyLightweightReusableAlertSummary(text)) return false;
+  if (/\b(?:crossing blocked|blocked crossing|rail(?:road)?|train blocking)\b/i.test(text)) return false;
+  if (!/\b(?:crash|collision|wreck|accident|flood|flooding|high water|road closed|closure|closed|debris|hazard|construction|road work|ice|disabled|stalled)\b/i.test(text)) return false;
+  return /\b(?:on|near|at|between|along|from|over|under)\b\s+.+\b(?:tx|sh|us|ih|i-|fm|road|rd|street|st|avenue|ave|drive|dr|lane|ln|loop|spur|county|cr)\b/i.test(text)
+    || /\b(?:tx|sh|us|ih|i-|fm|loop|spur)\s*-?\d+\b/i.test(text);
+}
+
+function buildGridlyRenderedRoadHazardHeadingRecord(text = "", source = "") {
+  const normalizedText = normalizeGridlyLightweightAlertSummaryText(text);
+  if (!isGridlyCleanRoadHazardHeadingText(normalizedText)) return null;
+  const parsed = parseGridlyRoadHazardRoadsFromText(normalizedText);
+  return {
+    text: normalizedText,
+    source: source || "dom.renderedAlertsPanelHeading",
+    hazard: getGridlyRoadHazardLabel({ title: normalizedText }),
+    road: parsed.road || "",
+    referenceRoadA: parsed.referenceRoadA || "",
+    referenceRoadB: parsed.referenceRoadB || "",
+    nearestRoadName: parsed.referenceRoadA && !parsed.referenceRoadB ? parsed.referenceRoadA : ""
+  };
+}
+
+function getGridlyRenderedAlertsPanelHeadingCandidate(options = {}) {
+  if (typeof document === "undefined") {
+    return {
+      renderedAlertsPanelHeadingText: "",
+      renderedRoadHazardHeadingCandidate: "",
+      renderedRoadHazardHeadingSource: "",
+      roadHazardTxDotStyleCandidate: null,
+      rejectedCrossingCandidates: []
+    };
+  }
+  const panel = document.querySelector("#alertsPanel, #gridlyAlertsPanel, #alertsSection:not([hidden]), .alerts-panel, [data-gridly-alerts-panel], .gridly-alerts-active") || document;
+  const headingNode = panel?.querySelector?.("[data-gridly-alerts-panel-heading], .gridly-alert-headline") || null;
+  const renderedAlertsPanelHeadingText = normalizeGridlyLightweightAlertSummaryText(headingNode?.textContent || "");
+  const rejectedCrossingCandidates = [];
+  const inspectCandidate = (text, source) => {
+    const normalizedText = normalizeGridlyLightweightAlertSummaryText(text);
+    if (!normalizedText) return null;
+    const crossingReject = /\b(?:crossing blocked|blocked crossing|rail(?:road)?|train blocking)\b/i.test(normalizedText);
+    if (crossingReject) {
+      rejectedCrossingCandidates.push({ text: normalizedText, source, rejectionReason: "crossing_candidate_preserved_but_lower_priority_than_road_hazard" });
+      return null;
+    }
+    return buildGridlyRenderedRoadHazardHeadingRecord(normalizedText, source);
+  };
+  const headingSource = headingNode?.dataset?.gridlyAlertsPanelHeadingSource || "dom.renderedAlertsPanelHeading.textContent";
+  const headingRecord = inspectCandidate(renderedAlertsPanelHeadingText, headingSource);
+  if (headingRecord) {
+    return {
+      renderedAlertsPanelHeadingText,
+      renderedRoadHazardHeadingCandidate: headingRecord.text,
+      renderedRoadHazardHeadingSource: headingRecord.source,
+      roadHazardTxDotStyleCandidate: headingRecord,
+      rejectedCrossingCandidates
+    };
+  }
+  const rowSamples = getGridlyRenderedAlertTextSamples(Number(options?.limit || 8), { ...options, includeMetadata: true });
+  for (const sample of rowSamples) {
+    const record = inspectCandidate(sample?.text, sample?.source || "dom.renderedAlertRow.textContent");
+    if (record) {
+      return {
+        renderedAlertsPanelHeadingText,
+        renderedRoadHazardHeadingCandidate: record.text,
+        renderedRoadHazardHeadingSource: record.source,
+        roadHazardTxDotStyleCandidate: record,
+        rejectedCrossingCandidates
+      };
+    }
+  }
+  return {
+    renderedAlertsPanelHeadingText,
+    renderedRoadHazardHeadingCandidate: "",
+    renderedRoadHazardHeadingSource: "",
+    roadHazardTxDotStyleCandidate: null,
+    rejectedCrossingCandidates
+  };
+}
+
 function getGridlyLightweightAlertSummarySourceFields() {
   return [
     "summary",
@@ -11408,11 +11490,25 @@ function resolveGridlyExistingAlertWording(options = {}) {
   const activeLocationLabel = safeDisplayText(awareness?.resolvedLocationLabel, "");
   const activeContext = { activeCategory, activeLocationLabel };
   const candidates = [];
-  const addCandidate = (text, source, type = "actual_alert_item") => {
+  const addCandidate = (text, source, type = "actual_alert_item", metadata = {}) => {
     const normalizedText = normalizeGridlyLightweightAlertSummaryText(text);
     if (!normalizedText) return;
-    candidates.push({ text: normalizedText, source, type });
+    candidates.push({ text: normalizedText, source, type, ...metadata });
   };
+
+  const renderedHeadingBridge = getGridlyRenderedAlertsPanelHeadingCandidate(options);
+  if (renderedHeadingBridge.renderedRoadHazardHeadingCandidate) {
+    addCandidate(
+      renderedHeadingBridge.renderedRoadHazardHeadingCandidate,
+      renderedHeadingBridge.renderedRoadHazardHeadingSource || "dom.renderedAlertsPanelHeading",
+      "road_hazard_txdot_style_candidate",
+      {
+        priorityReason: "already-rendered alerts panel road hazard heading outranks generic active report title",
+        roadHazardTxDotStyleCandidate: renderedHeadingBridge.roadHazardTxDotStyleCandidate,
+        renderedAlertsPanelHeadingText: renderedHeadingBridge.renderedAlertsPanelHeadingText
+      }
+    );
+  }
 
   const activeRoadHazardItems = [
     ...(Array.isArray(options?.activeHazards) ? options.activeHazards : (Array.isArray(typeof activeHazards !== "undefined" ? activeHazards : null) ? activeHazards : [])),
@@ -11467,7 +11563,13 @@ function resolveGridlyExistingAlertWording(options = {}) {
         selectedHeaderCandidateSource: classified.source || "lightweightActiveAwareness",
         selectedHeaderCandidateType: classified.type || "actual_alert_item",
         rejectedHeaderCandidates,
+        rejectedCrossingCandidates: renderedHeadingBridge.rejectedCrossingCandidates || [],
         rejectedRailFallbackReason: (rejectedHeaderCandidates.find((candidate) => /rail_text_for_road_hazard|stale_rail/i.test(candidate.rejectionReason || candidate.type || "")) || {}).rejectionReason || "",
+        renderedAlertsPanelHeadingText: renderedHeadingBridge.renderedAlertsPanelHeadingText || "",
+        renderedRoadHazardHeadingCandidate: renderedHeadingBridge.renderedRoadHazardHeadingCandidate || "",
+        renderedRoadHazardHeadingSource: renderedHeadingBridge.renderedRoadHazardHeadingSource || "",
+        roadHazardTxDotStyleCandidate: classified.roadHazardTxDotStyleCandidate || renderedHeadingBridge.roadHazardTxDotStyleCandidate || null,
+        alertsPanelHeadingPriorityReason: classified.priorityReason || "first accepted header candidate",
         activeCategory,
         activeLocationLabel,
         activeAwareness: awareness
@@ -11489,7 +11591,13 @@ function resolveGridlyExistingAlertWording(options = {}) {
     selectedHeaderCandidateSource: "",
     selectedHeaderCandidateType: "",
     rejectedHeaderCandidates,
+    rejectedCrossingCandidates: renderedHeadingBridge.rejectedCrossingCandidates || [],
     rejectedRailFallbackReason: (rejectedHeaderCandidates.find((candidate) => /rail_text_for_road_hazard|stale_rail/i.test(candidate.rejectionReason || candidate.type || "")) || {}).rejectionReason || "",
+    renderedAlertsPanelHeadingText: renderedHeadingBridge.renderedAlertsPanelHeadingText || "",
+    renderedRoadHazardHeadingCandidate: renderedHeadingBridge.renderedRoadHazardHeadingCandidate || "",
+    renderedRoadHazardHeadingSource: renderedHeadingBridge.renderedRoadHazardHeadingSource || "",
+    roadHazardTxDotStyleCandidate: renderedHeadingBridge.roadHazardTxDotStyleCandidate || null,
+    alertsPanelHeadingPriorityReason: renderedHeadingBridge.renderedRoadHazardHeadingCandidate ? "rendered road hazard heading available but no header candidate accepted" : "no accepted header candidate",
     activeCategory,
     activeLocationLabel,
     activeAwareness: awareness
@@ -11796,10 +11904,23 @@ function resolveGridlyAlertsPanelHeadingCandidate(options = {}) {
   const activeCategory = existingAlertWording?.activeCategory || activeAwareness?.resolvedCategory || activeAwareness?.topCategory || "";
   const activeLocationLabel = existingAlertWording?.activeLocationLabel || activeAwareness?.resolvedLocationLabel || "";
   const rankedActiveAlertCandidates = getGridlyRankedAlertsPanelHeadingCandidates(snapshot);
+  const renderedHeadingBridge = getGridlyRenderedAlertsPanelHeadingCandidate({ ...options, activeAwareness, activeCategory, activeLocationLabel });
+  if (renderedHeadingBridge.renderedRoadHazardHeadingCandidate) {
+    rankedActiveAlertCandidates.unshift({
+      index: -1,
+      text: renderedHeadingBridge.renderedRoadHazardHeadingCandidate,
+      source: renderedHeadingBridge.renderedRoadHazardHeadingSource || "dom.renderedAlertsPanelHeading",
+      type: "road_hazard_txdot_style_candidate",
+      priority: 10000,
+      priorityReason: "already-rendered alerts panel road hazard heading bridges into active awareness/header priority",
+      roadHazardTxDotStyleCandidate: renderedHeadingBridge.roadHazardTxDotStyleCandidate,
+      crossingAlertCandidate: null
+    });
+  }
   const topRankedAlert = rankedActiveAlertCandidates[0] || null;
   const topRoadHazardCandidate = rankedActiveAlertCandidates.find((candidate) => candidate.type === "road_hazard_txdot_style_candidate") || null;
   const topCrossingCandidate = rankedActiveAlertCandidates.find((candidate) => candidate.type === "crossing_alert_candidate") || null;
-  const roadHazardIsActiveTopConcern = Boolean(topRoadHazardCandidate && (!topRankedAlert || topRankedAlert === topRoadHazardCandidate || Number(topRoadHazardCandidate.priority || 0) >= Number(topRankedAlert.priority || 0)));
+  const roadHazardIsActiveTopConcern = Boolean(topRoadHazardCandidate && (Number(activeAwareness?.activeHazardCount || 0) > 0 || !topRankedAlert || topRankedAlert === topRoadHazardCandidate || Number(topRoadHazardCandidate.priority || 0) >= Number(topRankedAlert.priority || 0)));
   const candidates = [];
   const addCandidate = (text, source, type = "actual_alert_item", metadata = {}) => {
     const normalizedText = normalizeGridlyLightweightAlertSummaryText(text);
@@ -11834,8 +11955,12 @@ function resolveGridlyAlertsPanelHeadingCandidate(options = {}) {
         selectedAlertsPanelHeadingSource: classified.source || "lightweightActiveAwareness",
         alertsPanelHeadingPriorityReason: candidate.priorityReason || (candidate.type === "road_hazard_txdot_style_candidate" ? "highest-priority active road/community hazard selected before generic fallback" : "first accepted heading candidate"),
         activeAlertRankingSamples: rankedActiveAlertCandidates.slice(0, 6).map(({ index, text, source, type, priority, priorityReason }) => ({ index, text, source, type, priority, priorityReason })),
-        roadHazardTxDotStyleCandidate: topRoadHazardCandidate?.roadHazardTxDotStyleCandidate || null,
+        renderedAlertsPanelHeadingText: renderedHeadingBridge.renderedAlertsPanelHeadingText || "",
+        renderedRoadHazardHeadingCandidate: renderedHeadingBridge.renderedRoadHazardHeadingCandidate || "",
+        renderedRoadHazardHeadingSource: renderedHeadingBridge.renderedRoadHazardHeadingSource || "",
+        roadHazardTxDotStyleCandidate: topRoadHazardCandidate?.roadHazardTxDotStyleCandidate || renderedHeadingBridge.roadHazardTxDotStyleCandidate || null,
         crossingAlertCandidate: topCrossingCandidate?.crossingAlertCandidate || null,
+        rejectedCrossingCandidates: renderedHeadingBridge.rejectedCrossingCandidates || [],
         rejectedAlertsPanelHeadingCandidates,
         rejectedRailFallbackReason: "",
         activeAwareness,
@@ -11859,8 +11984,12 @@ function resolveGridlyAlertsPanelHeadingCandidate(options = {}) {
     selectedAlertsPanelHeadingSource: topRoadHazardCandidate?.source || "fallback",
     alertsPanelHeadingPriorityReason: topRoadHazardCandidate ? "fallback preserved highest-ranked road/community hazard wording" : "fallback after no accepted candidate",
     activeAlertRankingSamples: rankedActiveAlertCandidates.slice(0, 6).map(({ index, text, source, type, priority, priorityReason }) => ({ index, text, source, type, priority, priorityReason })),
-    roadHazardTxDotStyleCandidate: topRoadHazardCandidate?.roadHazardTxDotStyleCandidate || null,
+    renderedAlertsPanelHeadingText: renderedHeadingBridge.renderedAlertsPanelHeadingText || "",
+    renderedRoadHazardHeadingCandidate: renderedHeadingBridge.renderedRoadHazardHeadingCandidate || "",
+    renderedRoadHazardHeadingSource: renderedHeadingBridge.renderedRoadHazardHeadingSource || "",
+    roadHazardTxDotStyleCandidate: topRoadHazardCandidate?.roadHazardTxDotStyleCandidate || renderedHeadingBridge.roadHazardTxDotStyleCandidate || null,
     crossingAlertCandidate: topCrossingCandidate?.crossingAlertCandidate || null,
+    rejectedCrossingCandidates: renderedHeadingBridge.rejectedCrossingCandidates || [],
     rejectedAlertsPanelHeadingCandidates,
     rejectedRailFallbackReason: railRejection?.rejectionReason || "",
     activeAwareness,
@@ -11882,6 +12011,9 @@ function getGridlyAlertsPanelAuditSnapshot(options = {}) {
     .slice(0, 12);
   return {
     alertsPanelHeadingText: normalizeGridlyLightweightAlertSummaryText(headingNode?.textContent || headingCandidate.text || ""),
+    renderedAlertsPanelHeadingText: headingCandidate.renderedAlertsPanelHeadingText || normalizeGridlyLightweightAlertSummaryText(headingNode?.textContent || ""),
+    renderedRoadHazardHeadingCandidate: headingCandidate.renderedRoadHazardHeadingCandidate || "",
+    renderedRoadHazardHeadingSource: headingCandidate.renderedRoadHazardHeadingSource || "",
     alertsPanelItemTexts,
     selectedAlertsPanelHeadingCandidate: headingCandidate.selectedAlertsPanelHeadingCandidate || headingCandidate.text || "",
     selectedAlertsPanelHeadingSource: headingCandidate.selectedAlertsPanelHeadingSource || headingCandidate.source || "",
@@ -11889,6 +12021,7 @@ function getGridlyAlertsPanelAuditSnapshot(options = {}) {
     activeAlertRankingSamples: Array.isArray(headingCandidate.activeAlertRankingSamples) ? headingCandidate.activeAlertRankingSamples.slice(0, 8) : [],
     roadHazardTxDotStyleCandidate: headingCandidate.roadHazardTxDotStyleCandidate || null,
     crossingAlertCandidate: headingCandidate.crossingAlertCandidate || null,
+    rejectedCrossingCandidates: Array.isArray(headingCandidate.rejectedCrossingCandidates) ? headingCandidate.rejectedCrossingCandidates.slice(0, 12) : [],
     rejectedAlertsPanelHeadingCandidates: Array.isArray(headingCandidate.rejectedAlertsPanelHeadingCandidates) ? headingCandidate.rejectedAlertsPanelHeadingCandidates.slice(0, 12) : [],
     rejectedRailFallbackReason: headingCandidate.rejectedRailFallbackReason || ""
   };
@@ -12938,13 +13071,17 @@ window.gridlyLightweightActiveAwarenessAudit = function gridlyLightweightActiveA
       selectedHeaderCandidate: existingAlertWording?.selectedHeaderCandidate || existingAlertWording?.text || "",
       selectedHeaderCandidateSource: existingAlertWording?.selectedHeaderCandidateSource || existingAlertWording?.source || "",
       alertsPanelHeadingText: alertsPanelAudit.alertsPanelHeadingText,
+      renderedAlertsPanelHeadingText: alertsPanelAudit.renderedAlertsPanelHeadingText || existingAlertWording.renderedAlertsPanelHeadingText || "",
+      renderedRoadHazardHeadingCandidate: alertsPanelAudit.renderedRoadHazardHeadingCandidate || existingAlertWording.renderedRoadHazardHeadingCandidate || "",
+      renderedRoadHazardHeadingSource: alertsPanelAudit.renderedRoadHazardHeadingSource || existingAlertWording.renderedRoadHazardHeadingSource || "",
       alertsPanelItemTexts: alertsPanelAudit.alertsPanelItemTexts,
       selectedAlertsPanelHeadingCandidate: alertsPanelAudit.selectedAlertsPanelHeadingCandidate,
       selectedAlertsPanelHeadingSource: alertsPanelAudit.selectedAlertsPanelHeadingSource,
       alertsPanelHeadingPriorityReason: alertsPanelAudit.alertsPanelHeadingPriorityReason,
       activeAlertRankingSamples: alertsPanelAudit.activeAlertRankingSamples,
-      roadHazardTxDotStyleCandidate: alertsPanelAudit.roadHazardTxDotStyleCandidate,
+      roadHazardTxDotStyleCandidate: alertsPanelAudit.roadHazardTxDotStyleCandidate || existingAlertWording.roadHazardTxDotStyleCandidate || null,
       crossingAlertCandidate: alertsPanelAudit.crossingAlertCandidate,
+      rejectedCrossingCandidates: alertsPanelAudit.rejectedCrossingCandidates || existingAlertWording.rejectedCrossingCandidates || [],
       rejectedAlertsPanelHeadingCandidates: alertsPanelAudit.rejectedAlertsPanelHeadingCandidates,
       rejectedRailFallbackReason: railRejection?.rejectionReason || alertsPanelAudit.rejectedRailFallbackReason || ""
     };
@@ -13346,13 +13483,17 @@ window.gridlyActiveAwarenessSourceAudit = function gridlyActiveAwarenessSourceAu
       selectedHeaderCandidateType: existingAlertWording.selectedHeaderCandidateType || existingAlertWording.type || "",
       rejectedHeaderCandidates: Array.isArray(existingAlertWording.rejectedHeaderCandidates) ? existingAlertWording.rejectedHeaderCandidates.slice(0, 12) : [],
       alertsPanelHeadingText: alertsPanelAudit.alertsPanelHeadingText,
+      renderedAlertsPanelHeadingText: alertsPanelAudit.renderedAlertsPanelHeadingText || existingAlertWording.renderedAlertsPanelHeadingText || "",
+      renderedRoadHazardHeadingCandidate: alertsPanelAudit.renderedRoadHazardHeadingCandidate || existingAlertWording.renderedRoadHazardHeadingCandidate || "",
+      renderedRoadHazardHeadingSource: alertsPanelAudit.renderedRoadHazardHeadingSource || existingAlertWording.renderedRoadHazardHeadingSource || "",
       alertsPanelItemTexts: alertsPanelAudit.alertsPanelItemTexts,
       selectedAlertsPanelHeadingCandidate: alertsPanelAudit.selectedAlertsPanelHeadingCandidate,
       selectedAlertsPanelHeadingSource: alertsPanelAudit.selectedAlertsPanelHeadingSource,
       alertsPanelHeadingPriorityReason: alertsPanelAudit.alertsPanelHeadingPriorityReason,
       activeAlertRankingSamples: alertsPanelAudit.activeAlertRankingSamples,
-      roadHazardTxDotStyleCandidate: alertsPanelAudit.roadHazardTxDotStyleCandidate,
+      roadHazardTxDotStyleCandidate: alertsPanelAudit.roadHazardTxDotStyleCandidate || existingAlertWording.roadHazardTxDotStyleCandidate || null,
       crossingAlertCandidate: alertsPanelAudit.crossingAlertCandidate,
+      rejectedCrossingCandidates: alertsPanelAudit.rejectedCrossingCandidates || existingAlertWording.rejectedCrossingCandidates || [],
       rejectedAlertsPanelHeadingCandidates: alertsPanelAudit.rejectedAlertsPanelHeadingCandidates,
       rejectedRailFallbackReason: existingAlertWording.rejectedRailFallbackReason || alertsPanelAudit.rejectedRailFallbackReason || "",
       resolvedLocationLabel: activeAwareness.resolvedLocationLabel || "",
@@ -13390,6 +13531,11 @@ window.gridlyActiveAwarenessSourceAudit = function gridlyActiveAwarenessSourceAu
       topStatusPrimary: "",
       topStatusSecondary: "",
       activeAwarenessSamples: [],
+      renderedAlertsPanelHeadingText: "",
+      renderedRoadHazardHeadingCandidate: "",
+      renderedRoadHazardHeadingSource: "",
+      roadHazardTxDotStyleCandidate: null,
+      rejectedCrossingCandidates: [],
       alertSourceCandidates: getGridlyLightweightAlertSummarySourceFields(),
       alertSummaryReuseAvailable: false,
       selectedHeaderCandidate: "",
