@@ -14104,3 +14104,114 @@ body[data-layout-mode="portrait"].gridly-v2-surface-containment.route-setup-open
   visibility: visible !important;
   pointer-events: auto !important;
 }
+
+/* Gridly V202 visual consistency polish */
+.route-watch-strip-copy {
+  display: grid;
+  gap: 5px;
+}
+
+.route-watch-status-line {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.98rem;
+  letter-spacing: 0.01em;
+}
+
+.route-watch-arrow {
+  color: rgba(142, 239, 255, 0.78);
+  font-weight: 800;
+}
+
+.route-watch-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.route-watch-metrics span {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 5px 7px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.route-watch-metrics b {
+  color: rgba(205, 224, 241, 0.76);
+  font-size: 0.69rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.route-watch-metrics em {
+  color: #f3fbff;
+  font-style: normal;
+  font-weight: 750;
+  text-align: right;
+}
+
+.settings-place-card strong {
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+}
+
+.settings-clean-note {
+  color: rgba(185, 207, 226, 0.7) !important;
+  font-size: 0.72rem;
+}
+
+.settings-field-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 6px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(142, 239, 255, 0.18);
+  background: rgba(142, 239, 255, 0.08);
+  color: rgba(208, 241, 255, 0.9);
+  font-size: 0.62rem;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.alert-row-main {
+  grid-template-columns: minmax(70px, auto) minmax(0, 1fr) auto;
+  align-items: start;
+}
+
+.alert-item strong,
+.gridly-alert-title,
+.gridly-alert-headline {
+  text-transform: none !important;
+  letter-spacing: 0.01em;
+}
+
+.alert-severity-chip {
+  min-width: 64px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.alert-row-time {
+  padding-top: 1px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.alert-row-subline,
+.gridly-alert-subtitle {
+  color: rgba(199, 211, 226, 0.82);
+}
+
+@media (max-width: 760px) {
+  .route-watch-metrics {
+    grid-template-columns: 1fr;
+  }
+}
