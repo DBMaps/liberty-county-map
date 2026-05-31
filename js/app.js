@@ -7991,6 +7991,239 @@ window.gridlyAlertLocationSpecificityFramework = function gridlyAlertLocationSpe
   };
 };
 
+
+window.gridlyAlertLocationSpecificityAudit = function gridlyAlertLocationSpecificityAudit(options = {}) {
+  const asArray = (value) => Array.isArray(value) ? value : [];
+  const safePercent = (count, total) => total > 0 ? Number(((count / total) * 100).toFixed(1)) : 0;
+  const safeText = (value) => String(value ?? "").replace(/\s+/g, " ").trim();
+  const readPath = (item = {}, path = "") => String(path).split(".").reduce((current, key) => current?.[key], item);
+  const firstUsefulPath = (item = {}, paths = []) => {
+    for (const path of paths) {
+      const value = readPath(item, path);
+      const text = safeText(value);
+      if (text) return { path, value: text };
+    }
+    return null;
+  };
+  const isUsefulLocationValue = (value = "") => {
+    const text = safeText(value);
+    return Boolean(text && !/^(?:unknown|unknown road|unknown crossing|local roadway|nearby|n\/a)$/i.test(text));
+  };
+  const normalizeForCompare = (value = "") => safeText(value).toLowerCase().replace(/\b(?:county road|farm to market|road|rd|street|st|avenue|ave|highway|hwy|fm|cr)\b/g, "").replace(/[^a-z0-9]/g, "");
+  const distinctFrom = (candidate = "", comparisons = []) => {
+    const normalized = normalizeForCompare(candidate);
+    if (!normalized) return false;
+    return comparisons.every((comparison) => normalizeForCompare(comparison) !== normalized);
+  };
+  const crossingLookup = (crossingId) => {
+    const id = safeText(crossingId);
+    if (!id || !Array.isArray(crossings)) return null;
+    return crossings.find((crossing) => safeText(crossing?.id) === id) || null;
+  };
+  const getCrossingMetadata = (record = {}) => {
+    const crossingId = record?.crossingId || record?.crossing_id || record?.raw?.crossingId || record?.raw?.crossing_id;
+    if (crossingId && typeof gridlyGetCrossingHistoryMetadata === "function") {
+      return gridlyGetCrossingHistoryMetadata(crossingId, record) || {};
+    }
+    const crossing = crossingLookup(crossingId);
+    return crossing ? { crossingName: crossing.name || crossing.crossingName || crossing.road || "", roadName: crossing.roadName || crossing.road || "", city: crossing.city || "" } : {};
+  };
+  const titlePaths = ["title", "headline", "resolvedHeadline", "localizedSummary", "finalHeadline", "segmentHeadline", "description", "detail", "subtitle", "label"];
+  const roadPaths = ["roadName", "primaryRoad", "resolvedRoadName", "displayRoadName", "routeNameDisplay", "routeName", "road", "route", "corridor", "highway", "nearestRoad", "raw.roadName", "raw.primaryRoad", "raw.route", "raw.corridor", "source.roadName", "source.primaryRoad"];
+  const referencePaths = ["referenceRoad", "nearestRoadName", "nearestCrossStreet", "nearbyCrossStreet", "crossStreet", "parsedCrossRoad", "crossingRoad", "knownLocation", "locationName", "raw.referenceRoad", "raw.nearestRoadName", "raw.nearestCrossStreet", "raw.crossStreet", "raw.parsedCrossRoad", "raw.crossingRoad", "source.referenceRoad"];
+  const referenceAPaths = ["referenceRoadA", "crossStreetA", "crossStreet1", "fromStreet", "crossStreet", "parsedCrossRoad", "raw.referenceRoadA", "raw.crossStreetA", "raw.crossStreet1", "raw.fromStreet", "raw.parsedCrossRoad"];
+  const referenceBPaths = ["referenceRoadB", "crossStreetB", "crossStreet2", "toStreet", "raw.referenceRoadB", "raw.crossStreetB", "raw.crossStreet2", "raw.toStreet"];
+  const crossingNamePaths = ["crossingName", "crossing_name", "resolvedCrossingName", "crossingLabel", "crossingRoad", "area", "raw.crossingName", "raw.crossing_name", "raw.crossingRoad", "source.crossingName"];
+  const cityPaths = ["city", "place", "areaCity", "raw.city", "raw.place", "source.city"];
+  const directionPaths = ["direction", "travelDirection", "laneDirection", "side", "routeImpact", "routeImpactStatus", "raw.direction", "raw.travelDirection", "raw.routeImpact"];
+  const extractBetweenOrNear = (record = {}) => {
+    const text = [titlePaths, ["location", "locationLabel", "resolvedLocationLabel", "area"]].flat().map((path) => firstUsefulPath(record, [path])?.value).filter(Boolean).join(" • ");
+    const between = text.match(/\bon\s+(.+?)\s+between\s+(.+?)\s+and\s+(.+?)(?:\s*[•·-]|$)/i);
+    if (between) return { road: safeText(between[1]), refA: safeText(between[2]), refB: safeText(between[3]) };
+    const near = text.match(/\bon\s+(.+?)\s+near\s+(.+?)(?:\s*[•·-]|$)/i);
+    if (near) return { road: safeText(near[1]), refA: safeText(near[2]), refB: "" };
+    const at = text.match(/\bat\s+(.+?)\s+and\s+(.+?)(?:\s*[•·-]|$)/i);
+    if (at) return { road: safeText(at[1]), refA: safeText(at[2]), refB: "" };
+    return {};
+  };
+  const resolveLocationParts = (record = {}) => {
+    const crossingMeta = getCrossingMetadata(record);
+    const parsed = extractBetweenOrNear(record);
+    const roadDirect = firstUsefulPath(record, roadPaths)?.value;
+    let roadName = [roadDirect, crossingMeta.roadName, parsed.road].find(isUsefulLocationValue) || "";
+    if ((!roadName || gridlyIsHazardTypeRoadName?.(roadName, record)) && typeof gridlyResolveHazardHistoryRoadName === "function") {
+      const resolved = gridlyResolveHazardHistoryRoadName(record);
+      if (isUsefulLocationValue(resolved)) roadName = resolved;
+    }
+    if (!isUsefulLocationValue(roadName) || gridlyIsHazardTypeRoadName?.(roadName, record)) roadName = "";
+    const referenceRoadA = [firstUsefulPath(record, referenceAPaths)?.value, parsed.refA].find(isUsefulLocationValue) || "";
+    const referenceRoadB = [firstUsefulPath(record, referenceBPaths)?.value, parsed.refB].find(isUsefulLocationValue) || "";
+    let referenceRoad = [firstUsefulPath(record, referencePaths)?.value, referenceRoadA].find(isUsefulLocationValue) || "";
+    const crossingName = [firstUsefulPath(record, crossingNamePaths)?.value, crossingMeta.crossingName].find(isUsefulLocationValue) || "";
+    if (!referenceRoad && crossingName) referenceRoad = crossingName;
+    const title = firstUsefulPath(record, titlePaths)?.value || "";
+    const city = firstUsefulPath(record, cityPaths)?.value || crossingMeta.city || (typeof gridlyResolveCityFromText === "function" ? gridlyResolveCityFromText(roadName, referenceRoad, crossingName, title, record?.detail, record?.description) : "");
+    const direction = firstUsefulPath(record, directionPaths)?.value || "";
+    return {
+      title,
+      roadName: safeText(roadName),
+      referenceRoad: distinctFrom(referenceRoad, [roadName]) ? safeText(referenceRoad) : "",
+      referenceRoadA: distinctFrom(referenceRoadA, [roadName]) ? safeText(referenceRoadA) : "",
+      referenceRoadB: distinctFrom(referenceRoadB, [roadName, referenceRoadA]) ? safeText(referenceRoadB) : "",
+      crossingName: distinctFrom(crossingName, [roadName]) ? safeText(crossingName) : safeText(crossingName),
+      city: safeText(city),
+      direction: safeText(direction),
+      lat: Number.isFinite(Number(record?.lat ?? record?.latitude ?? record?.rawLat ?? record?.coordinates?.lat)) ? Number(record?.lat ?? record?.latitude ?? record?.rawLat ?? record?.coordinates?.lat) : null,
+      lng: Number.isFinite(Number(record?.lng ?? record?.lon ?? record?.longitude ?? record?.rawLng ?? record?.coordinates?.lng)) ? Number(record?.lng ?? record?.lon ?? record?.longitude ?? record?.rawLng ?? record?.coordinates?.lng) : null
+    };
+  };
+  const classify = (record = {}, sourceName = "unknown", index = 0) => {
+    const parts = resolveLocationParts(record);
+    const hasRoad = Boolean(parts.roadName);
+    const hasRef = Boolean(parts.referenceRoad);
+    const hasA = Boolean(parts.referenceRoadA);
+    const hasB = Boolean(parts.referenceRoadB);
+    const hasCrossing = Boolean(parts.crossingName);
+    const hasContext = Boolean(parts.city || parts.direction);
+    let assignedLevel = 0;
+    let reason = "No road, crossing, or distinct reference could be resolved.";
+    if (hasRoad && (hasCrossing || hasRef) && hasContext) {
+      assignedLevel = 4;
+      reason = "Primary road plus an exact crossing/reference and city or direction context are available.";
+    } else if (hasRoad && hasA && hasB) {
+      assignedLevel = 3;
+      reason = "Primary road plus two distinct bounding references are available.";
+    } else if (hasRoad && (hasRef || hasA || hasCrossing)) {
+      assignedLevel = 2;
+      reason = "Primary road plus one distinct reference or crossing is available.";
+    } else if (hasRoad) {
+      assignedLevel = 1;
+      reason = "Only a credible primary road is available.";
+    } else if (parts.lat !== null && parts.lng !== null) {
+      reason = "Coordinates exist, but no display-safe road/reference label is available.";
+    }
+    const gaps = [];
+    if (!hasRoad) gaps.push("missingRoadName");
+    if (!hasRef) gaps.push("missingReferenceRoad");
+    if (!hasA) gaps.push("missingReferenceRoadA");
+    if (!hasB) gaps.push("missingReferenceRoadB");
+    if (!hasCrossing) gaps.push("missingCrossingName");
+    if (!parts.city) gaps.push("missingCity");
+    if (!parts.direction) gaps.push("missingDirection");
+    if (parts.lat !== null && parts.lng !== null && !hasRoad) gaps.push("resolverFailure");
+    if (hasRoad && !hasRef && !hasA && !hasB && !hasCrossing) gaps.push("dataSourceLimitations");
+    return { sourceName, index, ...parts, assignedLevel, reason, gaps };
+  };
+  const safeCallArray = (fn) => {
+    try {
+      const value = fn?.();
+      return Array.isArray(value) ? value : [];
+    } catch (error) {
+      return [];
+    }
+  };
+  const safeSnapshot = (() => {
+    try {
+      return typeof window.getAlertsSurfaceSnapshot === "function" ? window.getAlertsSurfaceSnapshot() : null;
+    } catch (error) {
+      return null;
+    }
+  })();
+  const historyState = (() => {
+    try {
+      return typeof gridlyReadEventHistoryState === "function" ? gridlyReadEventHistoryState() : null;
+    } catch (error) {
+      return null;
+    }
+  })();
+  const sourceGroups = [
+    { sourceName: "activeHazards", rows: asArray(options.hazards || activeHazards) },
+    { sourceName: "activeReports", rows: asArray(options.reports || activeReports) },
+    { sourceName: "unifiedIncidents", rows: asArray(options.unifiedIncidents || safeCallArray(() => getUnifiedIncidents())) },
+    { sourceName: "alertSnapshotRows", rows: asArray(options.alerts || safeSnapshot?.alerts) },
+    { sourceName: "alertRenderCache", rows: asArray(options.renderedAlerts || window.__gridlyLatestAlertsForRender) },
+    { sourceName: "historicalHazardSamples", rows: asArray(options.historicalHazards || historyState?.hazardEvents).slice(0, 25) },
+    { sourceName: "historicalCrossingSamples", rows: asArray(options.historicalCrossings || historyState?.crossingEvents).slice(0, 25) }
+  ];
+  const auditedRows = sourceGroups.flatMap((group) => group.rows
+    .filter((record) => record && typeof record === "object")
+    .map((record, index) => classify(record, group.sourceName, index)));
+  const totalAuditedRows = auditedRows.length;
+  const levelCounts = [0, 1, 2, 3, 4].reduce((acc, level) => ({ ...acc, [`level${level}`]: auditedRows.filter((row) => row.assignedLevel === level).length }), {});
+  const coverage = (field) => ({ count: auditedRows.filter((row) => Boolean(row[field])).length, percent: safePercent(auditedRows.filter((row) => Boolean(row[field])).length, totalAuditedRows) });
+  const gapCounts = auditedRows.reduce((acc, row) => {
+    row.gaps.forEach((gap) => { acc[gap] = (acc[gap] || 0) + 1; });
+    return acc;
+  }, {
+    missingRoadName: 0,
+    missingReferenceRoad: 0,
+    missingReferenceRoadA: 0,
+    missingReferenceRoadB: 0,
+    missingCrossingName: 0,
+    missingCity: 0,
+    missingDirection: 0,
+    resolverFailure: 0,
+    normalizationFailure: 0,
+    dataSourceLimitations: 0
+  });
+  const percentLevel2Plus = safePercent(levelCounts.level2 + levelCounts.level3 + levelCounts.level4, totalAuditedRows);
+  const estimatedFormatterReadiness = totalAuditedRows === 0
+    ? "not_ready_no_rows_available"
+    : (percentLevel2Plus >= 80 ? "high_formatter_readiness" : (percentLevel2Plus >= 50 ? "moderate_formatter_readiness" : "low_formatter_readiness"));
+  const blockers = {
+    ...gapCounts,
+    level0Rows: levelCounts.level0,
+    belowPreferredMinimumRows: levelCounts.level0 + levelCounts.level1,
+    sourcesAudited: sourceGroups.map((group) => ({ sourceName: group.sourceName, count: group.rows.length }))
+  };
+  const recommendations = [
+    gapCounts.missingRoadName > 0 || gapCounts.resolverFailure > 0 ? "Add a resolver helper that converts coordinates/crossing ids into display-safe primary road labels before any formatter rollout." : "Keep road-name normalization as a required formatter input gate.",
+    gapCounts.missingReferenceRoad > 0 ? "Prioritize distinct reference-road extraction so more rows can reach LEVEL 2, the preferred mobile minimum." : "Preserve current reference-road fields and continue distinctness checks.",
+    gapCounts.missingReferenceRoadB > 0 ? "Treat LEVEL 3 between-language as opportunistic until source rows reliably expose two bounding references." : "LEVEL 3 between-language appears structurally ready when formatter audits begin.",
+    gapCounts.missingCity > 0 && gapCounts.missingDirection > 0 ? "Do not require LEVEL 4 for rollout; city/direction context remains inconsistent in current rows." : "Use city or direction context only when explicit, concise, and non-duplicative.",
+    "Keep live alert text unchanged; proceed with resolver helper, no-op formatter, side-by-side audit, then live rollout."
+  ];
+  return {
+    totalAuditedRows,
+    levelCounts,
+    roadNameCoverage: coverage("roadName"),
+    referenceRoadCoverage: coverage("referenceRoad"),
+    referenceRoadACoverage: coverage("referenceRoadA"),
+    referenceRoadBCoverage: coverage("referenceRoadB"),
+    crossingNameCoverage: coverage("crossingName"),
+    cityCoverage: coverage("city"),
+    directionCoverage: coverage("direction"),
+    sampleRows: auditedRows.slice(0, 10).map((row) => ({
+      title: row.title,
+      roadName: row.roadName,
+      referenceRoad: row.referenceRoad,
+      referenceRoadA: row.referenceRoadA,
+      referenceRoadB: row.referenceRoadB,
+      crossingName: row.crossingName,
+      assignedLevel: row.assignedLevel,
+      reason: row.reason
+    })),
+    blockers,
+    recommendations,
+    gapAnalysis: gapCounts,
+    futureImplementationReadiness: {
+      percentLevel0: safePercent(levelCounts.level0, totalAuditedRows),
+      percentLevel1: safePercent(levelCounts.level1, totalAuditedRows),
+      percentLevel2: safePercent(levelCounts.level2, totalAuditedRows),
+      percentLevel3: safePercent(levelCounts.level3, totalAuditedRows),
+      percentLevel4: safePercent(levelCounts.level4, totalAuditedRows),
+      estimatedFormatterReadiness,
+      safestNextStep: [
+        "1. resolver helper",
+        "2. no-op formatter",
+        "3. side-by-side audit",
+        "4. live rollout"
+      ]
+    },
+    noLiveAlertTextChanges: true
+  };
+};
+
 function openAlertsSurfaceFromDock() {
 
   const bindAlertsPanelClick = () => {
