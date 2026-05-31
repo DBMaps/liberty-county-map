@@ -6360,6 +6360,7 @@ function markRouteRenderAuditState(patch = {}) {
     updatedAt: Date.now()
   };
   window.gridlyLastRouteRenderAuditState = { ...lastRouteRenderAuditState };
+  window.__gridlyRouteRenderAuditState = { ...lastRouteRenderAuditState };
 }
 
 const GRIDLY_REFLOW_TRACE_WINDOW_MS = 10000;
@@ -23969,6 +23970,13 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
     console.info("Gridly route geometry point count", { pointCount: convertedPoints.length, source: "osrm" });
     routeGeometrySource = "osrm";
     osrmRouteSuccess = true;
+    markRouteRenderAuditState({
+      rendered: false,
+      source: "osrm",
+      pointCount: convertedPoints.length,
+      osrmRouteSuccess: true,
+      renderedAt: null
+    });
     const osrmDistanceMeters = Number(primaryRoute?.distance);
     if (Number.isFinite(osrmDistanceMeters) && osrmDistanceMeters > 0) {
       monitoredRouteDistanceMiles = Number((osrmDistanceMeters / 1609.344).toFixed(2));
@@ -23985,6 +23993,13 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
     lastRouteGeometryPointCount = fallbackPoints.length;
     monitoredRouteDistanceMiles = null;
     console.info("Gridly route geometry point count", { pointCount: fallbackPoints.length, source: "fallback" });
+    markRouteRenderAuditState({
+      rendered: false,
+      source: "fallback",
+      pointCount: fallbackPoints.length,
+      osrmRouteSuccess: false,
+      renderedAt: null
+    });
     captureRouteAttempt({ osrmCallSucceeded: false, finalFailureReason: lastRouteError });
   }
 
@@ -33967,7 +33982,26 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       v2DockAdapterState.lastReportActionResult = "pending";
       v2DockAdapterState.lastReportActionError = "";
     }
-    if (shouldTraceV146PAction) console.log("[V146P] V2 action", canonicalAction);
+    if (shouldTraceV146PAction) {
+      console.log("[V146P] V2 action", canonicalAction);
+      if (canonicalAction === "report-use-location") {
+        markReportActionCompletionAudit({
+          reportUseLocationAttempted: true,
+          reportUseLocationSubmitted: false,
+          reportUseLocationError: "",
+          lastReportAction: "report-use-location",
+          lastReportActionCompleted: false
+        });
+      } else if (canonicalAction === "report-tap-map") {
+        markReportActionCompletionAudit({
+          reportTapMapAttempted: true,
+          reportTapMapPlacementArmed: false,
+          reportTapMapError: "",
+          lastReportAction: "report-tap-map",
+          lastReportActionCompleted: false
+        });
+      }
+    }
     const hasActiveRouteForPreview = () => {
       const hasSelection = Boolean(lastRouteWatchSelection.startId && lastRouteWatchSelection.destinationId);
       const hasLayer = Boolean(window.__gridlyRoutePreviewLayer && typeof window.__gridlyRoutePreviewLayer.getLatLngs === "function");
@@ -35085,7 +35119,8 @@ function getGridlyAuditRouteRenderSnapshot() {
     currentRoutePointCount: 0,
     currentRouteGeometrySource: null,
     routeUsesOsrmGeometry: false,
-    routeRenderedAsStraightLine: false
+    routeRenderedAsStraightLine: false,
+    routeGeometryPointCount: 0
   };
   try {
     const countLatLngs = (value) => {
@@ -35112,15 +35147,22 @@ function getGridlyAuditRouteRenderSnapshot() {
       routeLayerLatLngs = null;
     }
     const renderedRoutePointCount = countLatLngs(routeLayerLatLngs);
-    const routeRenderAudit = (window.gridlyLastRouteRenderAuditState && typeof window.gridlyLastRouteRenderAuditState === "object")
-      ? window.gridlyLastRouteRenderAuditState
-      : (typeof lastRouteRenderAuditState !== "undefined" && lastRouteRenderAuditState && typeof lastRouteRenderAuditState === "object" ? lastRouteRenderAuditState : null);
+    const routeRenderAuditCandidates = [
+      window.__gridlyRouteRenderAuditState,
+      window.gridlyLastRouteRenderAuditState,
+      typeof lastRouteRenderAuditState !== "undefined" ? lastRouteRenderAuditState : null
+    ].filter((candidate) => candidate && typeof candidate === "object");
+    const routeRenderAudit = routeRenderAuditCandidates.find((candidate) => String(candidate.source || "").toLowerCase() === "osrm" && readFiniteNumber(candidate.pointCount, 0) > 2)
+      || routeRenderAuditCandidates[0]
+      || null;
     const auditPointCount = readFiniteNumber(routeRenderAudit?.pointCount, 0);
     const previewPointCount = typeof routePreviewPolylinePointCount !== "undefined" ? readFiniteNumber(routePreviewPolylinePointCount, 0) : 0;
     const geometryPointCount = typeof lastRouteGeometryPointCount !== "undefined" ? readFiniteNumber(lastRouteGeometryPointCount, 0) : 0;
     const currentRoutePointCount = Math.max(auditPointCount, previewPointCount, renderedRoutePointCount, geometryPointCount, 0);
     const routeGeometrySourceCandidates = [
       routeRenderAudit?.source,
+      window.__gridlyRouteRenderAuditState?.source,
+      window.gridlyLastRouteRenderAuditState?.source,
       typeof routeGeometrySource !== "undefined" ? routeGeometrySource : null
     ].map((source) => String(source || "").toLowerCase()).filter(Boolean);
     const currentRouteGeometrySource = routeGeometrySourceCandidates[0] || null;
@@ -35143,7 +35185,8 @@ function getGridlyAuditRouteRenderSnapshot() {
       currentRoutePointCount,
       currentRouteGeometrySource,
       routeUsesOsrmGeometry,
-      routeRenderedAsStraightLine
+      routeRenderedAsStraightLine,
+      routeGeometryPointCount: currentRoutePointCount
     };
   } catch (error) {
     return safeRouteSnapshot;
@@ -35151,8 +35194,8 @@ function getGridlyAuditRouteRenderSnapshot() {
 }
 
 function getGridlyAuditAlertCardNodes(isAuditVisible) {
-  const activeAlertsSurface = document.querySelector("#gridlyPortraitV2Sheet[data-active-sheet='alerts']:not([hidden]) #gridlyPortraitV2SheetBody .gridly-alerts-active")
-    || document.querySelector("#gridlyPortraitV2Sheet[data-active-sheet='alerts']:not([hidden]) .gridly-alerts-active")
+  const activeAlertsSheet = document.querySelector("#gridlyPortraitV2Sheet[data-active-sheet='alerts']:not([hidden])");
+  const activeAlertsSurface = activeAlertsSheet?.querySelector?.("#gridlyPortraitV2SheetBody .gridly-alerts-active, .gridly-alerts-active")
     || document.querySelector(".gridly-alerts-active");
   const cardSelector = [
     "[data-gridly-alert-row='true']",
@@ -35169,10 +35212,33 @@ function getGridlyAuditAlertCardNodes(isAuditVisible) {
     : [];
   const fallbackCards = Array.from(document.querySelectorAll(cardSelector));
   const uniqueCards = Array.from(new Set([...scopedCards, ...fallbackCards]));
+  const hasVisibleComputedChain = (node) => {
+    if (!(node instanceof Element)) return false;
+    if (node.hidden || node.getAttribute("aria-hidden") === "true") return false;
+    let current = node;
+    while (current && current instanceof Element) {
+      const style = window.getComputedStyle(current);
+      if (style.display === "none" || style.visibility === "hidden" || style.opacity === "0") return false;
+      current = current.parentElement;
+    }
+    return true;
+  };
+  const hasRenderedBoxOrContent = (node) => {
+    if (!(node instanceof Element)) return false;
+    const rects = typeof node.getClientRects === "function" ? node.getClientRects() : [];
+    if (rects && rects.length > 0) return true;
+    const rect = typeof node.getBoundingClientRect === "function" ? node.getBoundingClientRect() : null;
+    if (rect && rect.width > 0 && rect.height > 0) return true;
+    return String(node.textContent || "").trim().length > 0 && hasVisibleComputedChain(node);
+  };
   const visibleCards = uniqueCards.filter((node) => {
     if (node?.getAttribute?.("data-gridly-alert-hidden") === "true") return false;
     if (node?.hasAttribute?.("data-gridly-alert-expand")) return false;
-    return typeof isAuditVisible === "function" ? isAuditVisible(node) : true;
+    const belongsToVisibleAlertsSheet = Boolean(activeAlertsSheet && activeAlertsSheet.contains(node));
+    const belongsToVisibleAlertsSurface = Boolean(activeAlertsSurface && activeAlertsSurface.contains(node));
+    if (!belongsToVisibleAlertsSheet && !belongsToVisibleAlertsSurface && node.closest?.("#gridlyPortraitV2Sheet") && !node.closest?.("#gridlyPortraitV2Sheet[data-active-sheet='alerts']:not([hidden])")) return false;
+    if (!hasVisibleComputedChain(node) || !hasRenderedBoxOrContent(node)) return false;
+    return typeof isAuditVisible === "function" ? (isAuditVisible(node) || hasRenderedBoxOrContent(node)) : true;
   });
   return {
     activeAlertsSurface,
@@ -35198,7 +35264,7 @@ window.gridlyVisualRegressionAudit = function gridlyVisualRegressionAudit() {
   const reportUseLocationButtons = Array.from(document.querySelectorAll('[data-v2-action="report-use-location"], [data-action="submit-hazard"]'));
   const reportTapMapButtons = Array.from(document.querySelectorAll('[data-v2-action="report-tap-map"], [data-action="start-map-placement"]'));
   const routeAuditSnapshot = getGridlyAuditRouteRenderSnapshot();
-  const { routeUsesOsrmGeometry, routeRenderedAsStraightLine } = routeAuditSnapshot;
+  const { routeUsesOsrmGeometry, routeRenderedAsStraightLine, routeGeometryPointCount } = routeAuditSnapshot;
   const isAuditVisible = (node) => {
     if (!node || typeof node.getBoundingClientRect !== "function") return false;
     const rect = node.getBoundingClientRect();
@@ -35271,6 +35337,7 @@ window.gridlyVisualRegressionAudit = function gridlyVisualRegressionAudit() {
     visibleAlertRowCount: visibleAlertRows.length,
     routeUsesOsrmGeometry,
     routeRenderedAsStraightLine,
+    routeGeometryPointCount,
     alertsVisualPolishPreserved,
     protectedSystemsRegressed
   };
@@ -35298,6 +35365,7 @@ window.gridlyVisualRegressionAudit = function gridlyVisualRegressionAudit() {
       visibleAlertRowCount: 0,
       routeUsesOsrmGeometry: false,
       routeRenderedAsStraightLine: false,
+      routeGeometryPointCount: 0,
       alertsVisualPolishPreserved: false,
       protectedSystemsRegressed: false,
       auditError: String(error?.message || error || "")
