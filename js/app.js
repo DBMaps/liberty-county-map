@@ -19650,6 +19650,83 @@ function resetQuickHazardReportState() {
   useMyLocationBtn?.removeAttribute("aria-pressed");
 }
 
+function closeVisiblePortraitV2ReportSurfaceAfterSubmit() {
+  const safeTrace = (stage, details = {}) => {
+    try {
+      if (typeof pushTapMapTrace === "function") pushTapMapTrace(stage, details);
+    } catch (error) {
+      console.warn("Gridly report surface close trace failed", error);
+    }
+  };
+  const safeIsVisible = (el) => {
+    try {
+      if (!el) return false;
+      const style = getComputedStyle(el);
+      if (el.hidden || style.display === "none" || style.visibility === "hidden" || Number(style.opacity || "1") === 0) return false;
+      const rect = el.getBoundingClientRect();
+      return rect.width > 0 && rect.height > 0;
+    } catch (error) {
+      return false;
+    }
+  };
+  const sheet = document.getElementById("gridlyPortraitV2Sheet");
+  const sheetBody = document.getElementById("gridlyPortraitV2SheetBody");
+  const backdrop = document.getElementById("gridlyPortraitV2SheetBackdrop");
+  const legacyHazardPanel = document.getElementById("gridlyHazardPanel");
+
+  safeTrace("portrait-v2-use-location-success-close-start", {
+    source: "use-my-location-post-submit",
+    sheetVisible: safeIsVisible(sheet),
+    backdropVisible: safeIsVisible(backdrop),
+    hazardPanelVisible: Boolean(legacyHazardPanel?.classList.contains("visible")) && safeIsVisible(legacyHazardPanel)
+  });
+
+  const fallbackClose = () => {
+    if (sheet) {
+      sheet.hidden = true;
+      sheet.style.display = "none";
+      sheet.style.pointerEvents = "none";
+      sheet.style.transform = "translate3d(0, 100%, 0)";
+      sheet.style.translate = "0 100%";
+      sheet.classList.remove("visible", "is-open", "active", "open");
+      sheet.classList.add("is-closing", "is-closed");
+    }
+    if (sheetBody) {
+      sheetBody.hidden = true;
+      sheetBody.classList.remove("visible", "is-open", "active", "open");
+    }
+    if (backdrop) {
+      backdrop.hidden = true;
+      backdrop.style.display = "none";
+      backdrop.style.pointerEvents = "none";
+      backdrop.classList.remove("visible", "is-open", "active", "open");
+    }
+    document.body.classList.remove("modal-open", "report-pulse", "portrait-alerts-open");
+    if (typeof updateReportingState === "function") {
+      updateReportingState({ reportModeActive: false, placementModeActive: false });
+    }
+  };
+
+  if (typeof window.closePortraitV2Sheet === "function") {
+    try {
+      window.closePortraitV2Sheet();
+    } catch (error) {
+      console.warn("Gridly Portrait V2 sheet close helper failed; applying fallback close", error);
+      fallbackClose();
+    }
+  } else {
+    fallbackClose();
+  }
+
+  if (legacyHazardPanel?.classList.contains("visible")) legacyHazardPanel.classList.remove("visible");
+  safeTrace("portrait-v2-use-location-success-close-complete", {
+    source: "use-my-location-post-submit",
+    sheetVisible: safeIsVisible(sheet),
+    backdropVisible: safeIsVisible(backdrop),
+    hazardPanelVisible: Boolean(legacyHazardPanel?.classList.contains("visible")) && safeIsVisible(legacyHazardPanel)
+  });
+}
+
 window.submitHazardNearMe = function (hazardType) {
   lastMobileReportSubmitDebug.lastSubmitAttempt = "use_my_location_clicked";
   markReportActionCompletionAudit({
@@ -19720,16 +19797,45 @@ window.submitHazardNearMe = function (hazardType) {
           reportUseLocationError: "",
           lastReportAction: "report-use-location",
           lastReportActionCompleted: true,
-          lastReportCompletionState: "submitted"
+          lastReportCompletionState: "success"
         });
 
-        if (map) {
-          map.setView([snapped.lat, snapped.lng], 16);
-        }
+        try {
+          if (map) {
+            map.setView([snapped.lat, snapped.lng], 16);
+          }
 
-        resetQuickHazardReportState();
-        closeVisiblePortraitV2ReportSurfaceAfterSubmit();
-        closeHazardPanel();
+          resetQuickHazardReportState();
+          closeVisiblePortraitV2ReportSurfaceAfterSubmit();
+          closeHazardPanel({ preserveLastReportMessage: true });
+          setConfirmation("Report accepted and shared.", "success");
+          updateReportingState({
+            locationLookupInProgress: false,
+            submissionInProgress: false,
+            lastReportError: "",
+            lastReportMessage: "Report added"
+          });
+        } catch (cleanupError) {
+          console.warn("Gridly Use My Location post-submit cleanup warning", cleanupError);
+          lastMobileReportSubmitDebug.postSubmitUiResetSucceeded = false;
+          lastMobileReportSubmitDebug.lastSubmitAttempt = "use_my_location_cleanup_warning";
+          lastMobileReportSubmitDebug.lastSubmitError = "";
+          markReportActionCompletionAudit({
+            reportUseLocationSubmitted: true,
+            reportUseLocationCompleted: true,
+            reportUseLocationError: "",
+            lastReportAction: "report-use-location",
+            lastReportActionCompleted: true,
+            lastReportCompletionState: "success"
+          });
+          updateReportingState({
+            locationLookupInProgress: false,
+            submissionInProgress: false,
+            lastReportError: "",
+            lastReportMessage: "Report added"
+          });
+          setConfirmation("Report accepted and shared.", "success");
+        }
       } catch (error) {
         const message = error?.message || "Hazard report was not submitted.";
         markReportActionCompletionAudit({ reportUseLocationError: message, lastReportActionCompleted: false });
