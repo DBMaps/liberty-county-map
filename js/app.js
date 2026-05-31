@@ -4642,6 +4642,8 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyGeoAudit",
   "gridlyActiveIncidentAudit",
   "gridlyIncidentSourceAudit",
+  "gridlyTxDotSourceAudit",
+  "gridlyAuditHelperExposureAudit",
   "gridlySupabaseHazardInventoryAudit",
   "gridlySupabaseHazardPurgeAudit",
   "gridlyClearSupabaseTestHazards",
@@ -4719,7 +4721,9 @@ function exposeAllGridlyAuditHelpers() {
     gridlyRefreshAudit: typeof gridlyRefreshAudit === "function" ? gridlyRefreshAudit : null,
     gridlyGeoAudit: typeof gridlyGeoAudit === "function" ? gridlyGeoAudit : null,
     gridlyActiveIncidentAudit: typeof gridlyActiveIncidentAudit === "function" ? gridlyActiveIncidentAudit : null,
-    gridlyIncidentSourceAudit: typeof target?.gridlyIncidentSourceAudit === "function" ? target.gridlyIncidentSourceAudit : null,
+    gridlyIncidentSourceAudit: typeof gridlyIncidentSourceAudit === "function" ? gridlyIncidentSourceAudit : (typeof target?.gridlyIncidentSourceAudit === "function" ? target.gridlyIncidentSourceAudit : null),
+    gridlyTxDotSourceAudit: typeof gridlyTxDotSourceAudit === "function" ? gridlyTxDotSourceAudit : (typeof target?.gridlyTxDotSourceAudit === "function" ? target.gridlyTxDotSourceAudit : null),
+    gridlyAuditHelperExposureAudit: typeof gridlyAuditHelperExposureAudit === "function" ? gridlyAuditHelperExposureAudit : (typeof target?.gridlyAuditHelperExposureAudit === "function" ? target.gridlyAuditHelperExposureAudit : null),
     gridlySupabaseHazardInventoryAudit: typeof target?.gridlySupabaseHazardInventoryAudit === "function" ? target.gridlySupabaseHazardInventoryAudit : null,
     gridlySupabaseHazardPurgeAudit: typeof target?.gridlySupabaseHazardPurgeAudit === "function" ? target.gridlySupabaseHazardPurgeAudit : null,
     gridlyClearSupabaseTestHazards: typeof target?.gridlyClearSupabaseTestHazards === "function" ? target.gridlyClearSupabaseTestHazards : null,
@@ -12164,10 +12168,12 @@ function gridlyBuildIncidentSourceTrace(options = {}) {
   return audit;
 }
 
-window.gridlyIncidentSourceAudit = function gridlyIncidentSourceAudit(options = {}) {
+function gridlyIncidentSourceAudit(options = {}) {
   return gridlyBuildIncidentSourceTrace(options);
-};
+}
 
+window.gridlyIncidentSourceAudit = gridlyIncidentSourceAudit;
+exposeGridlyAuditHelper("gridlyIncidentSourceAudit", gridlyIncidentSourceAudit);
 
 function gridlyReadTxdotDiagnostics() {
   if (typeof window === "undefined") return {};
@@ -12267,7 +12273,7 @@ function gridlyBuildTxdotSourceBlockers(details = {}) {
   return blockers;
 }
 
-window.gridlyTxDotSourceAudit = function gridlyTxDotSourceAudit() {
+function gridlyTxDotSourceAudit() {
   const txdotService = window.gridlyTxdot || null;
   const txdotConfig = window.GRIDLY_CONFIG?.txdot || null;
   const txdotState = window.gridlyTxdotState || {};
@@ -12363,7 +12369,39 @@ window.gridlyTxDotSourceAudit = function gridlyTxDotSourceAudit() {
       ? "TxDOT cached normalized rows are wired through futureTxdotIncidents()/futureTxdotConstruction(); if startup automation is needed, add a cache-respecting one-time fetch in a later patch."
       : "After a manual await window.gridlyTxdot?.fetchRoadConditions?.(), verify cached rows have finite coordinates and flow through futureTxdotIncidents()/futureTxdotConstruction(); keep Supabase activeHazards/user hazard ownership unchanged."
   };
-};
+}
+
+window.gridlyTxDotSourceAudit = gridlyTxDotSourceAudit;
+exposeGridlyAuditHelper("gridlyTxDotSourceAudit", gridlyTxDotSourceAudit);
+
+function gridlyAuditHelperExposureAudit() {
+  const target = typeof window !== "undefined" ? window : globalThis;
+  const helperNames = Object.keys(target || {}).filter((name) => typeof name === "string");
+  const helperNamesContainingTxdot = helperNames
+    .filter((name) => name.toLowerCase().includes("txdot"))
+    .sort();
+  const helperNamesContainingIncident = helperNames
+    .filter((name) => name.toLowerCase().includes("incident"))
+    .sort();
+  const appVersionParts = [
+    typeof GRIDLY_APP_VERSION_LABEL === "string" ? GRIDLY_APP_VERSION_LABEL : null,
+    typeof GRIDLY_APP_BUILD_LABEL === "string" ? GRIDLY_APP_BUILD_LABEL : null,
+    typeof APP_BUILD === "string" ? `APP_BUILD ${APP_BUILD}` : null,
+    "V203.4B"
+  ].filter(Boolean);
+
+  return {
+    gridlyTxDotSourceAudit: typeof target?.gridlyTxDotSourceAudit,
+    gridlyIncidentSourceAudit: typeof target?.gridlyIncidentSourceAudit,
+    gridlyTxdotFetch: typeof target?.gridlyTxdot?.fetchRoadConditions,
+    helperNamesContainingTxdot,
+    helperNamesContainingIncident,
+    appVersionTag: appVersionParts.join(" / ")
+  };
+}
+
+window.gridlyAuditHelperExposureAudit = gridlyAuditHelperExposureAudit;
+exposeGridlyAuditHelper("gridlyAuditHelperExposureAudit", gridlyAuditHelperExposureAudit);
 
 
 const GRIDLY_CORE_ROAD_HAZARD_CLEANUP_TYPES = Object.freeze(["flooding", "ice", "debris", "crash", "construction", "road_closed", "disabled_vehicle", "other_hazard"]);
