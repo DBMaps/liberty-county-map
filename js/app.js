@@ -7763,6 +7763,234 @@ window.gridlyAlertDataDiagnostic = function () {
   });
 };
 
+
+window.gridlyAlertLocationSpecificityFramework = function gridlyAlertLocationSpecificityFramework(options = {}) {
+  const asArray = (value) => Array.isArray(value) ? value : [];
+  const readPath = (item = {}, path = "") => String(path).split(".").reduce((current, key) => current?.[key], item);
+  const isUsefulValue = (value) => {
+    if (value === null || value === undefined) return false;
+    if (typeof value === "number") return Number.isFinite(value);
+    if (typeof value === "string") return Boolean(value.trim());
+    if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === "object") return Object.keys(value).length > 0;
+    return true;
+  };
+  const firstUsefulPath = (item, paths = []) => {
+    for (const path of paths) {
+      const value = readPath(item, path);
+      if (isUsefulValue(value)) return { path, value };
+    }
+    return null;
+  };
+  const hasResolvedRoadName = (record) => {
+    if (!record || typeof record !== "object") return false;
+    const direct = firstUsefulPath(record, ["roadName", "primaryRoad", "resolvedRoadName", "nearestRoad", "routeNameDisplay", "routeName", "road", "route", "corridor", "highway", "locationName"]);
+    if (direct?.value && !gridlyIsHazardTypeRoadName?.(direct.value, record)) return true;
+    const resolved = typeof gridlyResolveHazardHistoryRoadName === "function" ? gridlyResolveHazardHistoryRoadName(record) : "";
+    return Boolean(resolved && resolved !== "Unknown road");
+  };
+  const hasCrossingLookup = (record) => {
+    const crossingId = record?.crossingId || record?.crossing_id;
+    return Boolean(crossingId && Array.isArray(crossings) && crossings.some((crossing) => String(crossing?.id) === String(crossingId)));
+  };
+  const runtimeSources = [
+    { name: "renderAlerts latest sample", records: asArray(options.alertsSample || window.__gridlyAlertsForRenderSample) },
+    { name: "renderAlerts latest cache", records: asArray(options.alerts || window.__gridlyLatestAlertsForRender) },
+    { name: "activeHazards", records: asArray(options.hazards || activeHazards) },
+    { name: "activeReports", records: asArray(options.reports || activeReports) }
+  ];
+  const sourceRecords = runtimeSources.flatMap((source) => source.records
+    .filter((record) => record && typeof record === "object")
+    .map((record, index) => ({ sourceName: source.name, index, record })));
+  const fieldDefinitions = {
+    roadName: {
+      aliases: ["roadName", "resolvedRoadName", "displayRoadName", "routeNameDisplay", "routeName", "road", "route", "corridor", "highway", "nearestRoad", "raw.roadName", "source.roadName"],
+      inferredBy: ["gridlyResolveHazardHistoryRoadName(record)", "nearest road lookup from lat/lng when resolver data is loaded"],
+      schemaStatus: "available_or_inferable",
+      notes: "Current hazard history and lightweight alert helpers already prefer roadName/route/corridor aliases before falling back."
+    },
+    primaryRoad: {
+      aliases: ["primaryRoad", "roadName", "corridor", "route", "road", "raw.primaryRoad", "source.primaryRoad"],
+      inferredBy: ["same normalized value as roadName when the record only stores roadName/route/corridor"],
+      schemaStatus: "available_or_inferable",
+      notes: "Primary road can be normalized from the same fields used for roadName; do not persist it during this audit."
+    },
+    referenceRoad: {
+      aliases: ["referenceRoad", "nearestRoad", "nearestRoadName", "nearestCrossStreet", "nearbyCrossStreet", "crossStreet", "crossingRoad", "knownLocation", "locationName", "raw.referenceRoad", "source.referenceRoad"],
+      inferredBy: ["nearest/cross-street fields when distinct from primaryRoad"],
+      schemaStatus: "partially_available",
+      notes: "Useful for LEVEL 2 near-reference headlines, but distinctness checks are required."
+    },
+    referenceRoadA: {
+      aliases: ["referenceRoadA", "crossStreetA", "crossStreet1", "fromStreet", "crossStreet", "raw.referenceRoadA", "raw.crossStreetA"],
+      inferredBy: ["first distinct cross-street/reference parsed from composite location text"],
+      schemaStatus: "partially_available",
+      notes: "Can support LEVEL 3 only when paired with referenceRoadB."
+    },
+    referenceRoadB: {
+      aliases: ["referenceRoadB", "crossStreetB", "crossStreet2", "toStreet", "raw.referenceRoadB", "raw.crossStreetB"],
+      inferredBy: ["second distinct cross-street/reference parsed from composite location text"],
+      schemaStatus: "partially_available",
+      notes: "Missing more often than referenceRoadA; between-language should be gated on both references."
+    },
+    crossingName: {
+      aliases: ["crossingName", "crossing_name", "crossingRoad", "resolvedCrossingName", "crossingLabel", "raw.crossingName", "source.crossingName"],
+      inferredBy: ["crossings lookup by crossingId/crossing_id", "gridlyGetCrossingHistoryMetadata(crossingId)"],
+      schemaStatus: "available_or_inferable",
+      notes: "Rail reports can usually resolve a crossing name from crossing records even when the report only has crossingId."
+    },
+    city: {
+      aliases: ["city", "place", "raw.city", "source.city"],
+      inferredBy: ["gridlyResolveCityFromText(road/detail/title)", "crossing metadata lookup"],
+      schemaStatus: "available_or_inferable",
+      notes: "City is helpful context for LEVEL 4 but should not outrank road + reference language."
+    },
+    county: {
+      aliases: ["county", "countyName", "raw.county", "source.county"],
+      inferredBy: ["LOCATION_DEFAULTS.county for local records"],
+      schemaStatus: "available_or_defaultable",
+      notes: "County-only language is too vague for a mobile alert headline."
+    },
+    lat: {
+      aliases: ["lat", "latitude", "rawLat", "raw.lat", "source.lat", "coordinates.lat"],
+      inferredBy: ["marker or crossing lookup only for audit/resolver support"],
+      schemaStatus: "available",
+      notes: "Coordinates can power future nearest-reference resolution but should not appear in user-facing titles."
+    },
+    lng: {
+      aliases: ["lng", "lon", "longitude", "rawLng", "raw.lng", "source.lng", "coordinates.lng"],
+      inferredBy: ["marker or crossing lookup only for audit/resolver support"],
+      schemaStatus: "available",
+      notes: "Longitude has lng/lon/longitude aliases; pair with lat before any future resolver use."
+    },
+    direction: {
+      aliases: ["direction", "travelDirection", "laneDirection", "side", "routeImpact", "raw.direction", "raw.travelDirection"],
+      inferredBy: ["parsed directional text only when unambiguous"],
+      schemaStatus: "partially_available",
+      notes: "Direction can enrich LEVEL 4, but should be omitted unless explicit and short."
+    },
+    mileMarker: {
+      aliases: ["mileMarker", "mile_marker", "milepost", "marker"],
+      inferredBy: [],
+      schemaStatus: "missing",
+      notes: "No reliable current mile-marker input was identified; do not use mile markers in generated headlines yet."
+    },
+    source: {
+      aliases: ["source", "provider", "externalSource", "reportSource", "raw.source", "source.name"],
+      inferredBy: ["sourceKind from activeHazards/activeReports/render cache when direct source is absent"],
+      schemaStatus: "available_or_inferable",
+      notes: "Useful for audit confidence only; should not be part of alert location text."
+    },
+    hazardType: {
+      aliases: ["hazardType", "type", "report_type", "reportType", "category", "hazardCategory", "condition", "conditionType", "eventType"],
+      inferredBy: ["gridlyNormalizeHazardType(record)", "getHazardCategory(type)"],
+      schemaStatus: "available_or_inferable",
+      notes: "Determines preferred wording pattern before location specificity is selected."
+    }
+  };
+  const inferenceChecks = {
+    roadName: (record) => hasResolvedRoadName(record),
+    primaryRoad: (record) => hasResolvedRoadName(record),
+    referenceRoad: (record) => Boolean(firstUsefulPath(record, fieldDefinitions.referenceRoad.aliases)),
+    referenceRoadA: (record) => Boolean(firstUsefulPath(record, fieldDefinitions.referenceRoadA.aliases)),
+    referenceRoadB: (record) => Boolean(firstUsefulPath(record, fieldDefinitions.referenceRoadB.aliases)),
+    crossingName: (record) => Boolean(firstUsefulPath(record, fieldDefinitions.crossingName.aliases) || hasCrossingLookup(record)),
+    city: (record) => Boolean(firstUsefulPath(record, fieldDefinitions.city.aliases) || (typeof gridlyResolveCityFromText === "function" && gridlyResolveCityFromText(record?.roadName, record?.detail, record?.title))),
+    county: (record) => Boolean(firstUsefulPath(record, fieldDefinitions.county.aliases) || (typeof LOCATION_DEFAULTS === "object" && LOCATION_DEFAULTS.county)),
+    lat: (record) => Number.isFinite(Number(firstUsefulPath(record, fieldDefinitions.lat.aliases)?.value)),
+    lng: (record) => Number.isFinite(Number(firstUsefulPath(record, fieldDefinitions.lng.aliases)?.value)),
+    direction: (record) => Boolean(firstUsefulPath(record, fieldDefinitions.direction.aliases)),
+    mileMarker: (record) => Boolean(firstUsefulPath(record, fieldDefinitions.mileMarker.aliases)),
+    source: (record) => Boolean(firstUsefulPath(record, fieldDefinitions.source.aliases)),
+    hazardType: (record) => Boolean(firstUsefulPath(record, fieldDefinitions.hazardType.aliases) || (typeof gridlyNormalizeHazardType === "function" && gridlyNormalizeHazardType(record)))
+  };
+  const availableLocationInputs = Object.entries(fieldDefinitions).map(([field, definition]) => {
+    const directMatches = [];
+    const inferredMatches = [];
+    sourceRecords.forEach(({ sourceName, index, record }) => {
+      const direct = firstUsefulPath(record, definition.aliases);
+      if (direct && directMatches.length < 6) directMatches.push({ sourceName, index, path: direct.path, valuePreview: String(direct.value).slice(0, 80) });
+      if (!direct && inferenceChecks[field]?.(record) && inferredMatches.length < 6) inferredMatches.push({ sourceName, index, inferred: true });
+    });
+    return {
+      field,
+      schemaStatus: definition.schemaStatus,
+      runtimeStatus: directMatches.length ? "present" : (inferredMatches.length ? "inferable" : "not_observed_in_current_runtime_sample"),
+      directObservedCount: sourceRecords.filter(({ record }) => Boolean(firstUsefulPath(record, definition.aliases))).length,
+      inferredObservedCount: sourceRecords.filter(({ record }) => !firstUsefulPath(record, definition.aliases) && Boolean(inferenceChecks[field]?.(record))).length,
+      aliases: definition.aliases,
+      inferredBy: definition.inferredBy,
+      samples: directMatches.concat(inferredMatches).slice(0, 6),
+      notes: definition.notes
+    };
+  });
+  const missingLocationInputs = availableLocationInputs
+    .filter((entry) => entry.schemaStatus === "missing" || (entry.directObservedCount === 0 && entry.inferredObservedCount === 0 && entry.schemaStatus !== "available_or_defaultable"))
+    .map((entry) => ({ field: entry.field, schemaStatus: entry.schemaStatus, runtimeStatus: entry.runtimeStatus, neededFor: entry.field === "mileMarker" ? "optional future mile-marker phrasing" : "higher-specificity alert language", notes: entry.notes }));
+
+  return {
+    locationSpecificityLevels: [
+      { level: 0, name: "No useful location", requiredInputs: [], example: "Road hazard nearby", useWhen: "No road, crossing, coordinates, or reliable nearby reference is available.", betaGuidance: "Avoid as a headline whenever any road/reference can be safely resolved." },
+      { level: 1, name: "Road only", requiredInputs: ["roadName or primaryRoad"], example: "Flooding on TX 146", useWhen: "Only a credible primary road is known.", betaGuidance: "Acceptable fallback, but mark as needing specificity audit." },
+      { level: 2, name: "Road + near reference", requiredInputs: ["roadName or primaryRoad", "referenceRoad"], example: "Flooding on TX 146 near CR 490", useWhen: "One distinct nearby road/cross-street/known crossing reference is known.", betaGuidance: "Preferred minimum target for mobile alerts." },
+      { level: 3, name: "Road + between two references", requiredInputs: ["roadName or primaryRoad", "referenceRoadA", "referenceRoadB"], example: "Flooding on TX 146 between CR 490 and US 90", useWhen: "Two distinct bounding references are available and not duplicates of the primary road.", betaGuidance: "Preferred for closures, flooding, and construction segments." },
+      { level: 4, name: "Road + crossing/intersection + direction/city context", requiredInputs: ["roadName or primaryRoad", "crossingName or referenceRoad", "city and/or direction"], example: "Road closed on US 90 at Waco Street in Dayton", useWhen: "An exact crossing/intersection plus concise direction or city context is known.", betaGuidance: "Highest specificity; keep short enough for portrait mobile cards." }
+    ],
+    preferredAlertPatterns: {
+      flooding: ["Flooding on {roadName} near {referenceRoad}", "Flooding on {roadName} between {referenceA} and {referenceB}"],
+      roadClosed: ["Road closed on {roadName} at {referenceRoad}", "Road closed on {roadName} between {referenceA} and {referenceB}"],
+      construction: ["Construction on {roadName} near {referenceRoad}", "Construction on {roadName} between {referenceA} and {referenceB}"],
+      crashOrWreck: ["Crash on {roadName} near {referenceRoad}"],
+      debris: ["Debris on {roadName} near {referenceRoad}"],
+      disabledVehicle: ["Disabled vehicle on {roadName} near {referenceRoad}"],
+      railCrossing: ["Train blocking {roadName} at {crossingName}"]
+    },
+    availableLocationInputs,
+    missingLocationInputs,
+    roadReferenceRules: [
+      "Prefer LEVEL 3 between-language when two distinct references are available.",
+      "Prefer LEVEL 2 near-language when exactly one distinct reference is available.",
+      "Use at-language for exact intersections/crossings, especially road closures and rail blockages.",
+      "Reject any reference that normalizes to the same label as the primary road.",
+      "Do not use county-only or city-only text as the headline when a road/reference exists.",
+      "Do not stack duplicate prepositions such as 'near Near Waco Street'.",
+      "Keep mobile titles concise; move source/trust/freshness wording outside the location headline."
+    ],
+    sampleTransformations: [
+      { before: "Flooding on TX 146", after: "Flooding on TX 146 between CR 490 and US 90", targetLevel: 3, inputsNeeded: ["roadName=TX 146", "referenceRoadA=CR 490", "referenceRoadB=US 90"], dataSource: "safe mock example" },
+      { before: "Road hazard on US 90", after: "Road closed on US 90 near Waco Street", targetLevel: 2, inputsNeeded: ["roadName=US 90", "hazardType=road_closed", "referenceRoad=Waco Street"], dataSource: "safe mock example" },
+      { before: "Rail crossing blocked", after: "Train blocking Waco Street at the US 90 crossing", targetLevel: 4, inputsNeeded: ["roadName=Waco Street", "crossingName=US 90 crossing"], dataSource: "safe mock example" }
+    ],
+    implementationRecommendations: {
+      safePath: [
+        "Add resolver helper only.",
+        "Audit alert rows for specificity level.",
+        "Add no-op formatter.",
+        "Run side-by-side old/new text audit.",
+        "Only then replace live alert text."
+      ],
+      guardrails: [
+        "Never replace a specific location with a vague one.",
+        "Never use county-only fallback as headline.",
+        "Prefer road + reference over city-only.",
+        "Suppress duplicate 'near' phrases.",
+        "Keep titles short enough for mobile."
+      ],
+      noChangeGuarantee: "This framework is audit-only; it does not mutate alert objects, render rows, markers, routes, Supabase state, TxDOT state, or refresh loops.",
+      auditSampleCount: sourceRecords.length,
+      runtimeSources: runtimeSources.map((source) => ({ name: source.name, count: source.records.length })),
+      nextNoOpAuditShape: {
+        oldHeadline: "existing rendered alert title",
+        proposedHeadline: "candidate formatter output",
+        oldSpecificityLevel: "0-4",
+        proposedSpecificityLevel: "0-4",
+        acceptedForReplacement: false,
+        rejectionReason: "replacement_disabled_until_side_by_side_audit_passes"
+      }
+    }
+  };
+};
+
 function openAlertsSurfaceFromDock() {
 
   const bindAlertsPanelClick = () => {
