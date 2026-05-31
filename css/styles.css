@@ -9729,6 +9729,7 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
   padding:2px 2px 0!important;
 }
 #mobileResetPlacesBtn{font-size:.69rem;padding:6px 8px}
+.manage-places-fallback-btn{width:100%;margin-top:8px;font-weight:800}
 
 .mobile-floating-action-dock{
   background:rgba(9,13,20,.66)!important;
