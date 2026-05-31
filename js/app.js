@@ -6283,7 +6283,7 @@ function openAlertsSurfaceFromDock() {
         type: matchingAlert?.reportKind || matchingAlert?.type || "alerts_panel",
         closeSurface: () => {
           if (closeButton) closeButton.click();
-          else if (typeof closePortraitV2Sheet === "function") closePortraitV2Sheet();
+          else if (typeof window.closePortraitV2Sheet === "function") window.closePortraitV2Sheet();
         },
         openPopup: true,
         source: "alerts_panel_row"
@@ -24061,6 +24061,14 @@ function gridlyJoinCityState(city = "", state = "") {
   return [city, state].map((value) => String(value || "").trim()).filter(Boolean).join(", ");
 }
 
+function resolveGridlySettingsAddressObjectDisplay(addressObject = null) {
+  if (!addressObject || typeof addressObject !== "object" || Array.isArray(addressObject)) return "";
+  const street = [addressObject.house_number, addressObject.road || addressObject.street].map((value) => String(value || "").trim()).filter(Boolean).join(" ");
+  const city = addressObject.city || addressObject.town || addressObject.village || addressObject.hamlet || addressObject.municipality || "";
+  const state = addressObject.state || addressObject.region || "";
+  return [street, gridlyJoinCityState(city, state)].map((value) => String(value || "").trim()).filter(Boolean).join(", ");
+}
+
 function resolveGridlySettingsPlaceDisplay(place, fallbackLabel = "Saved Place") {
   if (!isConfiguredPlace(place)) {
     return { value: "Not saved", source: "not_saved", zipUsedAsPrimary: false };
@@ -24069,18 +24077,25 @@ function resolveGridlySettingsPlaceDisplay(place, fallbackLabel = "Saved Place")
   const addressObject = rawAddress && typeof rawAddress === "object" && !Array.isArray(rawAddress) ? rawAddress : null;
   const rawPayload = place?.raw && typeof place.raw === "object" ? place.raw : {};
   const rawPayloadAddress = rawPayload.address && typeof rawPayload.address === "object" && !Array.isArray(rawPayload.address) ? rawPayload.address : null;
+  const genericLabels = new Set([String(fallbackLabel || "").trim().toLowerCase(), "home", "work", "saved place", "favorite place"].filter(Boolean));
+  const isGenericLabel = (value = "") => genericLabels.has(String(value || "").trim().toLowerCase());
   const candidates = [
     ["address", typeof rawAddress === "string" ? rawAddress : ""],
     ["formattedAddress", place?.formattedAddress],
     ["fullAddress", place?.fullAddress],
+    ["displayName", place?.displayName || place?.display_name || rawPayload.display_name],
+    ["addressObject", resolveGridlySettingsAddressObjectDisplay(addressObject)],
+    ["rawAddressObject", resolveGridlySettingsAddressObjectDisplay(rawPayloadAddress)],
     ["placeName", place?.placeName],
+    ["city/state", gridlyJoinCityState(place?.city || addressObject?.city || addressObject?.town || rawPayloadAddress?.city || rawPayloadAddress?.town, place?.state || addressObject?.state || rawPayloadAddress?.state)],
     ["label", place?.label],
-    ["name", place?.name],
-    ["city/state", gridlyJoinCityState(place?.city || addressObject?.city || addressObject?.town || rawPayloadAddress?.city || rawPayloadAddress?.town, place?.state || addressObject?.state || rawPayloadAddress?.state)]
+    ["name", place?.name]
   ];
   for (const [source, candidate] of candidates) {
     const value = String(candidate || "").trim();
-    if (value && !gridlyIsZipOnlyValue(value)) return { value, source, zipUsedAsPrimary: false };
+    if (!value || gridlyIsZipOnlyValue(value)) continue;
+    if ((source === "label" || source === "name" || source === "placeName") && isGenericLabel(value)) continue;
+    return { value, source, zipUsedAsPrimary: false };
   }
   const zipCandidate = [place?.zip, place?.zipCode, place?.postalCode, addressObject?.postcode, rawPayloadAddress?.postcode, rawAddress].find((value) => gridlyIsZipOnlyValue(value));
   if (zipCandidate) return { value: String(zipCandidate).trim(), source: "zip", zipUsedAsPrimary: true };
@@ -24158,18 +24173,44 @@ function persistGridlySettingsFromUi(event) {
   }
 }
 
+function prepareGridlySettingsRouteSetupVisibility(source = "legacy_settings") {
+  const portraitSheet = typeof document !== "undefined" ? document.getElementById("gridlyPortraitV2Sheet") : null;
+  const portraitBackdrop = typeof document !== "undefined" ? document.getElementById("gridlyPortraitV2SheetBackdrop") : null;
+  const portraitBody = typeof document !== "undefined" ? document.getElementById("gridlyPortraitV2SheetBody") : null;
+  const portraitSettingsOpen = Boolean(portraitSheet && !portraitSheet.hidden && portraitSheet.dataset?.activeSheet === "settings");
+  if (source === "portrait_v2_settings" || portraitSettingsOpen) {
+    if (typeof window.closePortraitV2Sheet === "function") window.closePortraitV2Sheet();
+    else {
+      if (portraitSheet) {
+        portraitSheet.hidden = true;
+        portraitSheet.style.display = "none";
+        portraitSheet.style.pointerEvents = "none";
+        portraitSheet.setAttribute("aria-hidden", "true");
+        portraitSheet.classList.remove("visible", "is-open", "active", "open");
+      }
+      if (portraitBody) portraitBody.hidden = true;
+      if (portraitBackdrop) {
+        portraitBackdrop.hidden = true;
+        portraitBackdrop.style.display = "none";
+        portraitBackdrop.style.pointerEvents = "none";
+      }
+    }
+  }
+  document.body?.classList?.remove?.("gridly-v2-surface-containment");
+}
+
 function openGridlySettingsSavedPlaceAction(action = "", type = "manage", source = "legacy_settings") {
   const normalizedType = type === "home" || type === "work" ? type : "manage";
   gridlyLastSettingsAction = action || (normalizedType === "home" ? "edit_home" : normalizedType === "work" ? "edit_work" : "manage_saved_places");
   const openHandler = () => {
-    if (source === "portrait_v2_settings" && typeof closePortraitV2Sheet === "function") closePortraitV2Sheet();
+    prepareGridlySettingsRouteSetupVisibility(source);
     if (normalizedType === "home" || normalizedType === "work") {
       if (typeof openRouteSetupModal === "function") openRouteSetupModal();
       if (typeof configureRouteSetupModal === "function") configureRouteSetupModal({ mode: "manage", prefillType: normalizedType });
       return;
     }
-    if (typeof openRouteSetupModalForType === "function") openRouteSetupModalForType("manage");
-    else if (typeof openRouteSetupModal === "function") openRouteSetupModal();
+    if (typeof openRouteSetupModal === "function") openRouteSetupModal();
+    if (typeof configureRouteSetupModal === "function") configureRouteSetupModal({ mode: "manage", prefillType: "custom" });
   };
   if (typeof openGridlySurface === "function") openGridlySurface("route", openHandler);
   else openHandler();
@@ -32308,6 +32349,79 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
 
     document.body.classList.remove("modal-open", "report-pulse");
   }
+
+  window.gridlySettingsVisibilityAudit = function gridlySettingsVisibilityAudit() {
+    const isElementVisible = (el) => {
+      if (!(el instanceof HTMLElement) || el.hidden) return false;
+      const style = getComputedStyle(el);
+      if (style.display === "none" || style.visibility === "hidden" || Number(style.opacity || "1") === 0) return false;
+      const rect = el.getBoundingClientRect();
+      return rect.width > 0 && rect.height > 0;
+    };
+    const zIndexOf = (el) => {
+      const value = Number.parseInt(getComputedStyle(el).zIndex, 10);
+      return Number.isFinite(value) ? value : 0;
+    };
+    const describeSurface = (el) => ({
+      element: el,
+      id: el.id || "",
+      className: el.className || "",
+      zIndex: zIndexOf(el),
+      visible: isElementVisible(el)
+    });
+    const routeSetup = document.getElementById("routeSetupModal");
+    const routeSetupCard = routeSetup?.querySelector?.(".route-setup-modal-card") || null;
+    const routeSetupBackdrop = document.getElementById("routeSetupModalBackdrop") || routeSetup?.querySelector?.(".route-setup-modal-backdrop") || null;
+    const routeSetupOpen = Boolean(routeSetup && (!routeSetup.hidden || routeSetup.classList.contains("open") || document.body.classList.contains("route-setup-open")));
+    const routeSetupVisible = Boolean(isElementVisible(routeSetup) && isElementVisible(routeSetupCard));
+    const routeSetupHiddenReason = (() => {
+      if (!routeSetup) return "route_setup_missing";
+      const style = getComputedStyle(routeSetup);
+      const cardStyle = routeSetupCard ? getComputedStyle(routeSetupCard) : null;
+      const sheet = document.getElementById("gridlyPortraitV2Sheet");
+      if (routeSetup.hidden) return "route_setup_hidden_attribute";
+      if (style.display === "none") return document.body.classList.contains("gridly-v2-surface-containment") ? "portrait_v2_containment_display_none" : "route_setup_display_none";
+      if (style.visibility === "hidden") return "route_setup_visibility_hidden";
+      if (Number(style.opacity || "1") === 0) return "route_setup_opacity_zero";
+      if (cardStyle?.display === "none") return "route_setup_card_display_none";
+      if (cardStyle?.visibility === "hidden") return "route_setup_card_visibility_hidden";
+      if (routeSetupBackdrop && !isElementVisible(routeSetupBackdrop)) return "route_setup_backdrop_hidden";
+      if (sheet && isElementVisible(sheet) && zIndexOf(sheet) > zIndexOf(routeSetup)) return "portrait_v2_sheet_above_route_setup";
+      return routeSetupVisible ? "visible" : "route_setup_has_no_visible_rect";
+    })();
+    const modalSurfaces = Array.from(document.querySelectorAll("#settingsModal, #smartAlertsModal, #routeSetupModal, .route-setup-modal, .smart-alerts-modal, .place-name-modal"))
+      .filter((el, index, list) => el instanceof HTMLElement && list.indexOf(el) === index)
+      .map(describeSurface)
+      .filter((surface) => surface.visible);
+    const sheetSurfaces = Array.from(document.querySelectorAll("#gridlyPortraitV2Sheet, .gridly-v2-sheet, #mobileNativeSurfaceLayer"))
+      .filter((el, index, list) => el instanceof HTMLElement && list.indexOf(el) === index)
+      .map(describeSurface)
+      .filter((surface) => surface.visible);
+    const allVisibleSurfaces = modalSurfaces.concat(sheetSurfaces).sort((a, b) => b.zIndex - a.zIndex);
+    const topVisible = allVisibleSurfaces[0] || null;
+    const activeModalSurface = modalSurfaces.slice().sort((a, b) => b.zIndex - a.zIndex)[0] || null;
+    const places = typeof getSavedPlacesState === "function" ? getSavedPlacesState() : { home: null, work: null };
+    const homeDisplay = typeof resolveGridlySettingsPlaceDisplay === "function" ? resolveGridlySettingsPlaceDisplay(places.home, "Home") : { value: "", source: "unavailable" };
+    const workDisplay = typeof resolveGridlySettingsPlaceDisplay === "function" ? resolveGridlySettingsPlaceDisplay(places.work, "Work") : { value: "", source: "unavailable" };
+    const placeNameModal = document.querySelector(".place-name-modal");
+    return {
+      activeSheet: activeSheet || document.getElementById("gridlyPortraitV2Sheet")?.dataset?.activeSheet || "",
+      activeModal: activeModalSurface?.id || activeModalSurface?.className || "",
+      routeSetupOpen,
+      routeSetupVisible,
+      routeSetupHiddenReason,
+      visibleModalCount: modalSurfaces.length,
+      visibleSheetCount: sheetSurfaces.length,
+      topVisibleSurface: topVisible?.id || topVisible?.className || "",
+      topVisibleZIndex: topVisible?.zIndex ?? null,
+      lastSettingsAction: gridlyLastSettingsAction || null,
+      savedPlaceModalVisible: Boolean((routeSetupVisible && routeSetup?.dataset?.mode === "manage") || isElementVisible(placeNameModal)),
+      homeLabelResolved: homeDisplay.value,
+      workLabelResolved: workDisplay.value,
+      homeLabelSource: homeDisplay.source,
+      workLabelSource: workDisplay.source
+    };
+  };
   function closeVisiblePortraitV2ReportSurfaceAfterSubmit() {
     pushTapMapTrace("portrait-v2-use-location-success-close-start", { source: "portrait-v2-report" });
     const isVisible = (el) => {
@@ -32763,6 +32877,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     document.querySelector("[data-v2-control='layers']")?.addEventListener("click",()=>document.querySelector("#mobileDockLayersBtn")?.click());
   }
   window.openPortraitV2Sheet = openPortraitV2Sheet;
+  window.closePortraitV2Sheet = closePortraitV2Sheet;
   window.openGridlyPortraitV2Sheet = openGridlyPortraitV2Sheet;
   window.gridlyOpenSheetDebug = function gridlyOpenSheetDebug(sheetName) {
     return openGridlyPortraitV2Sheet(sheetName);

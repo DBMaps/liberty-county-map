@@ -14082,3 +14082,20 @@ body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyCommunity
   outline: 2px solid rgba(147, 197, 253, 0.95);
   outline-offset: 3px;
 }
+
+/* V198.4 settings-to-route visibility: allow Route Setup to own the top surface after Settings actions. */
+body[data-layout-mode="portrait"].gridly-v2-surface-containment.route-setup-open #routeSetupModal:not([hidden]) {
+  display: grid !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  z-index: 100001 !important;
+}
+
+body[data-layout-mode="portrait"].gridly-v2-surface-containment.route-setup-open #routeSetupModal:not([hidden]) #routeSetupModalBackdrop,
+body[data-layout-mode="portrait"].gridly-v2-surface-containment.route-setup-open #routeSetupModal:not([hidden]) .route-setup-modal-backdrop {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
