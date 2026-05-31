@@ -35078,46 +35078,76 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
 
 
 function getGridlyAuditRouteRenderSnapshot() {
-  const layerLatLngs = typeof window.__gridlyRoutePreviewLayer?.getLatLngs === "function"
-    ? window.__gridlyRoutePreviewLayer.getLatLngs()
-    : [];
-  const countLatLngs = (value) => {
-    if (!Array.isArray(value)) return 0;
-    return value.reduce((count, item) => {
-      if (Array.isArray(item)) return count + countLatLngs(item);
-      const lat = Number(item?.lat ?? item?.[0]);
-      const lng = Number(item?.lng ?? item?.[1]);
-      return count + (Number.isFinite(lat) && Number.isFinite(lng) ? 1 : 0);
-    }, 0);
+  const safeRouteSnapshot = {
+    routeLayerLatLngs: null,
+    renderedRoutePointCount: 0,
+    routeRenderAudit: null,
+    currentRoutePointCount: 0,
+    currentRouteGeometrySource: null,
+    routeUsesOsrmGeometry: false,
+    routeRenderedAsStraightLine: false
   };
-  const renderedRoutePointCount = countLatLngs(layerLatLngs);
-  const routeRenderAudit = window.gridlyLastRouteRenderAuditState || lastRouteRenderAuditState || {};
-  const currentRoutePointCount = Number(routeRenderAudit.pointCount || routePreviewPolylinePointCount || renderedRoutePointCount || lastRouteGeometryPointCount || 0);
-  const routeGeometrySourceCandidates = [routeRenderAudit.source, routeGeometrySource].map((source) => String(source || "").toLowerCase());
-  const currentRouteGeometrySource = routeGeometrySourceCandidates.find(Boolean) || "fallback";
-  const latestRouteWasRendered = Boolean(routeRenderAudit.rendered || routePreviewRendered || renderedRoutePointCount >= 2);
-  const osrmGeometryEvidence = routeGeometrySourceCandidates.includes("osrm")
-    || Boolean(routeRenderAudit.osrmRouteSuccess || osrmRouteSuccess)
-    || (renderedRoutePointCount > 2 && currentRoutePointCount > 2);
-  const routeUsesOsrmGeometry = Boolean(
-    osrmGeometryEvidence
-    && currentRoutePointCount > 2
-    && (latestRouteWasRendered || renderedRoutePointCount > 2 || Number(lastRouteGeometryPointCount || 0) > 2)
-  );
-  const routeRenderedAsStraightLine = Boolean(
-    latestRouteWasRendered
-    && currentRouteGeometrySource !== "osrm"
-    && currentRoutePointCount <= 2
-  );
-  return {
-    routeLayerLatLngs,
-    renderedRoutePointCount,
-    routeRenderAudit,
-    currentRoutePointCount,
-    currentRouteGeometrySource,
-    routeUsesOsrmGeometry,
-    routeRenderedAsStraightLine
-  };
+  try {
+    const countLatLngs = (value) => {
+      if (!Array.isArray(value)) return 0;
+      return value.reduce((count, item) => {
+        if (Array.isArray(item)) return count + countLatLngs(item);
+        const lat = Number(item?.lat ?? item?.[0]);
+        const lng = Number(item?.lng ?? item?.[1]);
+        return count + (Number.isFinite(lat) && Number.isFinite(lng) ? 1 : 0);
+      }, 0);
+    };
+    const readFiniteNumber = (value, fallback = 0) => {
+      const number = Number(value);
+      return Number.isFinite(number) ? number : fallback;
+    };
+    const readBoolean = (value) => Boolean(value);
+    const routeLayer = window.__gridlyRoutePreviewLayer || null;
+    let routeLayerLatLngs = null;
+    try {
+      routeLayerLatLngs = routeLayer && typeof routeLayer.getLatLngs === "function"
+        ? routeLayer.getLatLngs()
+        : null;
+    } catch (error) {
+      routeLayerLatLngs = null;
+    }
+    const renderedRoutePointCount = countLatLngs(routeLayerLatLngs);
+    const routeRenderAudit = (window.gridlyLastRouteRenderAuditState && typeof window.gridlyLastRouteRenderAuditState === "object")
+      ? window.gridlyLastRouteRenderAuditState
+      : (typeof lastRouteRenderAuditState !== "undefined" && lastRouteRenderAuditState && typeof lastRouteRenderAuditState === "object" ? lastRouteRenderAuditState : null);
+    const auditPointCount = readFiniteNumber(routeRenderAudit?.pointCount, 0);
+    const previewPointCount = typeof routePreviewPolylinePointCount !== "undefined" ? readFiniteNumber(routePreviewPolylinePointCount, 0) : 0;
+    const geometryPointCount = typeof lastRouteGeometryPointCount !== "undefined" ? readFiniteNumber(lastRouteGeometryPointCount, 0) : 0;
+    const currentRoutePointCount = Math.max(auditPointCount, previewPointCount, renderedRoutePointCount, geometryPointCount, 0);
+    const routeGeometrySourceCandidates = [
+      routeRenderAudit?.source,
+      typeof routeGeometrySource !== "undefined" ? routeGeometrySource : null
+    ].map((source) => String(source || "").toLowerCase()).filter(Boolean);
+    const currentRouteGeometrySource = routeGeometrySourceCandidates[0] || null;
+    const previewRendered = typeof routePreviewRendered !== "undefined" ? readBoolean(routePreviewRendered) : false;
+    const latestRouteWasRendered = Boolean(routeRenderAudit?.rendered || previewRendered || renderedRoutePointCount >= 2);
+    const osrmSucceeded = typeof osrmRouteSuccess !== "undefined" ? readBoolean(osrmRouteSuccess) : false;
+    const osrmGeometryEvidence = routeGeometrySourceCandidates.includes("osrm")
+      || Boolean(routeRenderAudit?.osrmRouteSuccess || osrmSucceeded);
+    const routeUsesOsrmGeometry = Boolean(osrmGeometryEvidence && currentRoutePointCount > 2);
+    const routeRenderedAsStraightLine = Boolean(
+      latestRouteWasRendered
+      && currentRouteGeometrySource !== "osrm"
+      && currentRoutePointCount > 0
+      && currentRoutePointCount <= 2
+    );
+    return {
+      routeLayerLatLngs,
+      renderedRoutePointCount,
+      routeRenderAudit: routeRenderAudit || {},
+      currentRoutePointCount,
+      currentRouteGeometrySource,
+      routeUsesOsrmGeometry,
+      routeRenderedAsStraightLine
+    };
+  } catch (error) {
+    return safeRouteSnapshot;
+  }
 }
 
 function getGridlyAuditAlertCardNodes(isAuditVisible) {
@@ -35154,6 +35184,7 @@ function getGridlyAuditAlertCardNodes(isAuditVisible) {
 
 
 window.gridlyVisualRegressionAudit = function gridlyVisualRegressionAudit() {
+  try {
   const settingButtons = [
     document.getElementById("settingsEditHomeBtn"),
     document.getElementById("settingsEditWorkBtn"),
@@ -35243,9 +35274,39 @@ window.gridlyVisualRegressionAudit = function gridlyVisualRegressionAudit() {
     alertsVisualPolishPreserved,
     protectedSystemsRegressed
   };
+  } catch (error) {
+    return {
+      settingsButtonsFunctional: false,
+      reportUseLocationFunctional: false,
+      reportTapMapFunctional: false,
+      crossingReportFunctional: false,
+      reportHazardTypeResolved: false,
+      reportUseLocationAttempted: false,
+      reportUseLocationSubmitted: false,
+      reportUseLocationCompleted: false,
+      reportUseLocationError: "",
+      reportTapMapAttempted: false,
+      reportTapMapPlacementArmed: false,
+      reportTapMapSubmitted: false,
+      reportTapMapCompleted: false,
+      reportTapMapError: "",
+      lastReportAction: "",
+      lastReportActionCompleted: false,
+      lastReportCompletedAt: null,
+      lastReportCompletionState: "",
+      reportSuccessOrErrorStateVisible: false,
+      visibleAlertRowCount: 0,
+      routeUsesOsrmGeometry: false,
+      routeRenderedAsStraightLine: false,
+      alertsVisualPolishPreserved: false,
+      protectedSystemsRegressed: false,
+      auditError: String(error?.message || error || "")
+    };
+  }
 };
 
 window.gridlyVisualConsistencyAudit = function gridlyVisualConsistencyAudit() {
+  try {
   const isAuditVisible = (node) => {
     if (!node || typeof node.getBoundingClientRect !== "function") return false;
     const rect = node.getBoundingClientRect();
@@ -35303,6 +35364,34 @@ window.gridlyVisualConsistencyAudit = function gridlyVisualConsistencyAudit() {
       "TxDOT ingestion"
     ]
   };
+  } catch (error) {
+    return {
+      lowercaseAlertStartCount: 0,
+      allCapsRoadNameCount: 0,
+      headlineSample: [],
+      settingsPlaceholderLabelsApplied: false,
+      routeWatchVisualPolishApplied: false,
+      visibleAlertRowsDetected: false,
+      visibleAlertRowCount: 0,
+      alertCardSelectorsDetected: false,
+      visualOnlyChange: true,
+      betaPolishReady: false,
+      protectedSystemsUnchanged: [
+        "Route Watch calculations",
+        "OSRM routing",
+        "Route rendering",
+        "Analytics storage",
+        "Event history",
+        "Alert focus",
+        "Hazard lifecycle",
+        "Settings storage",
+        "Notification architecture",
+        "Supabase sync",
+        "TxDOT ingestion"
+      ],
+      auditError: String(error?.message || error || "")
+    };
+  }
 };
 
 exposeGridlyAuditHelper("gridlyAuditRegistryDebug", gridlyAuditRegistryDebug);
