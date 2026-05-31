@@ -3855,6 +3855,170 @@ if (typeof window !== "undefined") {
       ]
     };
   };
+
+  window.gridlyHazardLifecycleSimulation = function gridlyHazardLifecycleSimulation(options = {}) {
+    const nowMs = Number.isFinite(Number(options?.nowMs)) ? Number(options.nowMs) : Date.now();
+    const isoMinutesAgo = (minutesAgo) => new Date(nowMs - minutesAgo * 60000).toISOString();
+    const simulatedRecords = [
+      {
+        id: "sim-hazard-a-flooding-new",
+        simulationCase: "A",
+        type: "flooding",
+        hazardType: "flooding",
+        title: "Simulated flooding",
+        source: "simulation",
+        createdAt: isoMinutesAgo(10),
+        confirmationCount: 0,
+        expectedState: "NEW"
+      },
+      {
+        id: "sim-hazard-b-debris-active",
+        simulationCase: "B",
+        type: "debris",
+        hazardType: "debris",
+        title: "Simulated debris",
+        source: "simulation",
+        createdAt: isoMinutesAgo(90),
+        confirmationCount: 0,
+        expectedState: "ACTIVE"
+      },
+      {
+        id: "sim-hazard-c-construction-confirmed",
+        simulationCase: "C",
+        type: "construction",
+        hazardType: "construction",
+        title: "Simulated construction",
+        source: "simulation",
+        createdAt: isoMinutesAgo(240),
+        confirmationCount: 2,
+        expectedState: "CONFIRMED"
+      },
+      {
+        id: "sim-hazard-d-flooding-low-confidence",
+        simulationCase: "D",
+        type: "flooding",
+        hazardType: "flooding",
+        title: "Simulated older flooding",
+        source: "simulation",
+        createdAt: isoMinutesAgo(720),
+        confirmationCount: 0,
+        expectedState: "LOW_CONFIDENCE"
+      },
+      {
+        id: "sim-hazard-e-road-closed-stale",
+        simulationCase: "E",
+        type: "road_closed",
+        hazardType: "road_closed",
+        title: "Simulated road closure",
+        source: "simulation",
+        createdAt: isoMinutesAgo(1800),
+        confirmationCount: 2,
+        expectedState: "STALE"
+      },
+      {
+        id: "sim-hazard-f-disabled-vehicle-expired",
+        simulationCase: "F",
+        type: "disabled_vehicle",
+        hazardType: "disabled_vehicle",
+        title: "Simulated disabled vehicle",
+        source: "simulation",
+        createdAt: isoMinutesAgo(1800),
+        confirmationCount: 0,
+        expectedState: "EXPIRED"
+      },
+      {
+        id: "sim-hazard-g-flooding-historical",
+        simulationCase: "G",
+        type: "flooding",
+        hazardType: "flooding",
+        title: "Simulated manually cleared flooding",
+        source: "simulation",
+        createdAt: isoMinutesAgo(180),
+        clearedAt: isoMinutesAgo(30),
+        manuallyCleared: true,
+        clearedBy: "simulation",
+        confirmationCount: 1,
+        expectedState: "HISTORICAL"
+      }
+    ];
+    const classifiedRecords = simulatedRecords.map((record, index) => {
+      const classification = gridlyClassifyHazardLifecycleFrameworkRecord({
+        record,
+        sourceKind: "simulatedRecords",
+        index,
+        sourceHazards: [],
+        sourceReports: [],
+        nowMs
+      });
+      return {
+        id: record.id,
+        simulationCase: record.simulationCase,
+        hazardType: classification.hazardType,
+        ageMinutes: classification.ageMinutes,
+        confirmationCount: classification.confirmationCount,
+        expectedState: record.expectedState,
+        actualState: classification.lifecycleState,
+        confidenceScore: classification.confidenceScore,
+        confidenceBucket: classification.confidenceBucket,
+        recommendedAction: classification.recommendedAction,
+        mismatch: record.expectedState !== classification.lifecycleState,
+        destructiveActionTaken: classification.destructiveActionTaken
+      };
+    });
+    const countBy = (items, field, allowed = []) => {
+      const seed = allowed.reduce((acc, key) => ({ ...acc, [key]: 0 }), {});
+      return items.reduce((acc, item) => {
+        const key = item?.[field] || "unknown";
+        acc[key] = (acc[key] || 0) + 1;
+        return acc;
+      }, seed);
+    };
+    const mismatches = classifiedRecords.filter((record) => record.mismatch);
+    const lifecycleCounts = countBy(classifiedRecords, "actualState", GRIDLY_HAZARD_LIFECYCLE_FRAMEWORK_STATES);
+    const confidenceCounts = countBy(classifiedRecords, "confidenceBucket", ["high", "medium", "low", "expiration_candidate", "historical"]);
+
+    return {
+      simulatedRecords,
+      classifiedRecords,
+      lifecycleCounts,
+      confidenceCounts,
+      recommendations: {
+        validationFindings: {
+          mismatchCount: mismatches.length,
+          mismatches,
+          frameworkBehavesAsExpected: mismatches.length === 0,
+          readOnlySimulation: true,
+          liveSystemsTouched: false,
+          activeHazardsModified: false,
+          alertsModified: false,
+          markersModified: false,
+          routeWatchModified: false,
+          portraitV2Modified: false
+        },
+        activationRisks: [
+          "Automatic expiration could hide still-valid hazards unless LOW_CONFIDENCE and STALE records receive reconfirmation prompts first.",
+          "Telemetry schemas need explicit counters before activation so expiration candidates are measurable without implying deletion happened.",
+          "Historical transitions need durable cleared-event storage before any live lifecycle action removes a record from active surfaces."
+        ],
+        activationBenefits: [
+          "Cleaner live hazard surfaces by separating NEW, ACTIVE, CONFIRMED, LOW_CONFIDENCE, STALE, EXPIRED, and HISTORICAL states.",
+          "Better driver trust because stale records become confirmation requests instead of silently remaining high-confidence.",
+          "Stronger historical intelligence for recurring roads, durations, and hazard-type trends once cleared events are retained."
+        ],
+        telemetryImpact: {
+          currentSimulationImpact: "none; no counters are incremented and no storage/Supabase writes are performed",
+          futureActivationNeeds: ["candidate counts", "confirmation prompt outcomes", "historical transition counts", "expiration suppression reasons"]
+        },
+        analyticsImpact: {
+          currentSimulationImpact: "none; only in-memory simulated records are classified",
+          futureActivationNeeds: ["cleared hazard duration quality", "road-name normalization coverage", "repeat-location aggregation", "confidence decay trend reporting"]
+        },
+        betaReadinessAssessment: mismatches.length === 0
+          ? "Simulation-ready: lifecycle classification logic matches the requested expected states, but activation should remain gated behind a separate telemetry and analytics pass."
+          : "Not activation-ready: resolve lifecycle mismatches before any future expiration or historical-transition behavior is enabled."
+      }
+    };
+  };
 }
 
 function gridlyGetSavedPlacesReadiness() {
