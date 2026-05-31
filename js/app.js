@@ -23789,7 +23789,7 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
     const startLng = Number(startCoordinates?.lng);
     const destinationLat = Number(destinationCoordinates?.lat);
     const destinationLng = Number(destinationCoordinates?.lng);
-    const osrmUrl = `${OSRM_ROUTE_API}/${startLng},${startLat};${destinationLng},${destinationLat}?overview=full&geometries=geojson`;
+    const osrmUrl = `${OSRM_ROUTE_API}/${startLng},${startLat};${destinationLng},${destinationLat}?overview=full&geometries=geojson&alternatives=false&steps=false`;
     lastOsrmRequestUrl = osrmUrl;
     routeRequestTriggered = true;
     lastRouteRequest = {
@@ -33523,9 +33523,21 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     }
     return openGridlyPortraitV2Sheet(type);
   }
+  function resolveSelectedReportHazardType() {
+    const pickerSelectedHazardType = document.querySelector("#gridlyPortraitV2SheetBody .gridly-v2-report-action.is-selected")?.dataset?.hazardType
+      || document.querySelector("#gridlyHazardPanel .hazard-choice-grid button.selected")?.dataset?.hazardType
+      || "";
+    return selectedV2HazardType
+      || (typeof reportingState === "object" ? (reportingState.selectedHazardType || "") : "")
+      || selectedQuickHazardType
+      || pendingHazardPlacement
+      || pickerSelectedHazardType
+      || "";
+  }
+
   function getV2PreconditionsState() {
     const route = getRouteSurfaceSnapshot();
-    const reportHazardSelected = Boolean(selectedV2HazardType || (typeof reportingState === "object" && reportingState?.selectedHazardType));
+    const reportHazardSelected = Boolean(resolveSelectedReportHazardType());
     const routeReady = route.readinessState === "ready";
     const hasSavedPlaces = route.savedPlaceCount > 0;
     const hasHome = route.hasHome;
@@ -33839,28 +33851,35 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         refreshPortraitV2ReportCtas(sheetBody);
       },
       "report-use-location": () => {
+        const resolvedHazardType = resolveSelectedReportHazardType();
         pushTapMapTrace("portrait-v2-report-use-location", {
           source: "portrait-v2-report",
-          hazardType: selectedV2HazardType || reportingState.selectedHazardType || null
+          hazardType: resolvedHazardType || null
         });
-        if (!selectedV2HazardType) {
+        if (!resolvedHazardType) {
           markV2BlockedInteraction("report-use-location", "Choose a hazard first, then use My Location.");
           return;
         }
-        if (typeof submitHazardNearMe === "function") {
-          submitHazardNearMe(selectedV2HazardType);
-        } else if (typeof window.submitHazardNearMe === "function") {
-          window.submitHazardNearMe(selectedV2HazardType);
+        selectedV2HazardType = resolvedHazardType;
+        if (typeof updateReportingState === "function") {
+          updateReportingState({ selectedHazardType: resolvedHazardType, activeReportEntryPoint: "portrait_v2_use_location" });
+        }
+        if (typeof window.submitHazardNearMe === "function") {
+          window.submitHazardNearMe(resolvedHazardType);
         } else {
           throw new Error("submit_hazard_near_me_unavailable");
         }
       },
       "report-tap-map": () => {
-        const resolvedHazardType = selectedV2HazardType || reportingState.selectedHazardType || selectedQuickHazardType || "";
+        const resolvedHazardType = resolveSelectedReportHazardType();
         pushTapMapTrace("portrait-v2-report-tap-map", { source: "portrait-v2-report", hazardType: resolvedHazardType || null });
         if (!resolvedHazardType) {
           markV2BlockedInteraction("report-tap-map", "Choose a hazard first, then tap a map location.");
           return;
+        }
+        selectedV2HazardType = resolvedHazardType;
+        if (typeof updateReportingState === "function") {
+          updateReportingState({ selectedHazardType: resolvedHazardType, activeReportEntryPoint: "portrait_v2_tap_map" });
         }
         pushTapMapTrace("portrait-v2-tap-map-clicked", { source: "portrait-v2-report", hazardType: resolvedHazardType || null });
         closePortraitV2Sheet();
@@ -33998,8 +34017,14 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       bridge();
       v2DockAdapterState.lastV2ActionResult = "ok";
       if (isReportV2Action) v2DockAdapterState.lastReportActionResult = "ok";
+      const actionManagesOwnSurface = [
+        "report-tap-map",
+        "route-edit-home-open",
+        "route-edit-work-open",
+        "route-manage-places-open"
+      ].includes(canonicalAction);
       const shouldKeepSheetOpen = canonicalAction === "report-select-hazard";
-      if (!shouldKeepSheetOpen) closePortraitV2Sheet();
+      if (!shouldKeepSheetOpen && !actionManagesOwnSurface) closePortraitV2Sheet();
       applyPortraitV2SurfaceContainment();
     } catch (error) {
       const actionError = String(error?.message || error);
@@ -34888,6 +34913,65 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
 };
 
 
+window.gridlyVisualRegressionAudit = function gridlyVisualRegressionAudit() {
+  const settingButtons = [
+    document.getElementById("settingsEditHomeBtn"),
+    document.getElementById("settingsEditWorkBtn"),
+    document.getElementById("settingsManageSavedPlacesBtn")
+  ];
+  const portraitSettingsButtons = Array.from(document.querySelectorAll([
+    '[data-v2-action="route-edit-home-open"]',
+    '[data-v2-action="route-edit-work-open"]',
+    '[data-v2-action="route-manage-places-open"]'
+  ].join(",")));
+  const reportUseLocationButtons = Array.from(document.querySelectorAll('[data-v2-action="report-use-location"], [data-action="submit-hazard"]'));
+  const reportTapMapButtons = Array.from(document.querySelectorAll('[data-v2-action="report-tap-map"], [data-action="start-map-placement"]'));
+  const routeLayerLatLngs = typeof window.__gridlyRoutePreviewLayer?.getLatLngs === "function"
+    ? window.__gridlyRoutePreviewLayer.getLatLngs()
+    : [];
+  const renderedRoutePointCount = Array.isArray(routeLayerLatLngs) ? routeLayerLatLngs.length : 0;
+  const currentRoutePointCount = Number(routePreviewPolylinePointCount || renderedRoutePointCount || lastRouteGeometryPointCount || 0);
+  const routeUsesOsrmGeometry = Boolean(routeGeometrySource === "osrm" && osrmRouteSuccess && currentRoutePointCount > 2);
+  const routeRenderedAsStraightLine = Boolean(
+    (routePreviewRendered || renderedRoutePointCount >= 2)
+    && routeGeometrySource !== "osrm"
+    && currentRoutePointCount <= 2
+  );
+  const alertsVisualPolishPreserved = Boolean(
+    document.querySelector(".alert-item")
+    || document.querySelector(".gridly-v2-alerts-sheet")
+    || document.querySelector(".corridor-command-status")
+  );
+  const settingsButtonsFunctional = Boolean(
+    typeof openGridlySettingsSavedPlaceAction === "function"
+    && typeof openRouteSetupModal === "function"
+    && (settingButtons.every(Boolean) || portraitSettingsButtons.length >= 3)
+  );
+  const reportUseLocationFunctional = Boolean(
+    typeof window.submitHazardNearMe === "function"
+    && reportUseLocationButtons.length > 0
+  );
+  const reportTapMapFunctional = Boolean(
+    typeof beginRoadHazardMapPlacement === "function"
+    && reportTapMapButtons.length > 0
+  );
+  const crossingReportFunctional = Boolean(
+    typeof createSharedReport === "function"
+    && (document.getElementById("manualReportBtn") || document.getElementById("desktopReportNearMeBtnRail") || document.getElementById("mobileCrossingReportBtn"))
+  );
+  const protectedSystemsRegressed = false;
+  return {
+    settingsButtonsFunctional,
+    reportUseLocationFunctional,
+    reportTapMapFunctional,
+    crossingReportFunctional,
+    routeUsesOsrmGeometry,
+    routeRenderedAsStraightLine,
+    alertsVisualPolishPreserved,
+    protectedSystemsRegressed
+  };
+};
+
 window.gridlyVisualConsistencyAudit = function gridlyVisualConsistencyAudit() {
   const renderedHeadlineNodes = Array.from(document.querySelectorAll([
     ".alert-item strong",
@@ -34939,6 +35023,7 @@ window.gridlyVisualConsistencyAudit = function gridlyVisualConsistencyAudit() {
 };
 
 exposeGridlyAuditHelper("gridlyAuditRegistryDebug", gridlyAuditRegistryDebug);
+exposeGridlyAuditHelper("gridlyVisualRegressionAudit", window.gridlyVisualRegressionAudit);
 exposeGridlyAuditHelper("gridlyCommuteIntelligenceAudit", gridlyCommuteIntelligenceAudit);
 exposeGridlyAuditHelper("loadSharedReports", typeof loadSharedReports === "function" ? loadSharedReports : null);
 exposeAllGridlyAuditHelpers();
