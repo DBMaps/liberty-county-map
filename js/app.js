@@ -3776,7 +3776,108 @@ function gridlyHazardLifecycleFrameworkAudit(classifications = [], historicalSta
   };
 }
 
+
+function gridlyHazardTrustLanguage() {
+  const lifecycleStates = [
+    "NEW",
+    "ACTIVE",
+    "CONFIRMED",
+    "LOW_CONFIDENCE",
+    "STALE",
+    "EXPIRED",
+    "HISTORICAL"
+  ];
+  const userFacingLabels = {
+    NEW: "Recently Reported",
+    ACTIVE: "Active Report",
+    CONFIRMED: "Confirmed by Drivers",
+    LOW_CONFIDENCE: "Needs Confirmation",
+    STALE: "Older Report",
+    EXPIRED: "No Longer Active",
+    HISTORICAL: "Historical Event"
+  };
+  const userFacingDescriptions = {
+    NEW: "This was just reported nearby. Use normal caution while other drivers have a chance to confirm it.",
+    ACTIVE: "This report is still recent and may affect your drive. Check the road ahead and share an update if you pass it.",
+    CONFIRMED: "Other drivers or trusted sources have recently supported this report. Continue to use caution near the location.",
+    LOW_CONFIDENCE: "This report is getting older and needs a fresh driver update before it should be treated as reliable.",
+    STALE: "This report may no longer match current road conditions. Please confirm whether it is still there if you pass by.",
+    EXPIRED: "This report should no longer be shown as an active road issue unless a new report is submitted.",
+    HISTORICAL: "This event is kept only for past-road-pattern learning and should not be presented as a current hazard."
+  };
+
+  return {
+    lifecycleStates,
+    userFacingLabels,
+    userFacingDescriptions,
+    badgeRecommendations: {
+      NEW: { text: userFacingLabels.NEW, style: "soft info badge", emphasis: "medium", icon: "new report dot" },
+      ACTIVE: { text: userFacingLabels.ACTIVE, style: "standard active badge", emphasis: "medium", icon: "road alert" },
+      CONFIRMED: { text: userFacingLabels.CONFIRMED, style: "positive trust badge", emphasis: "high", icon: "driver check" },
+      LOW_CONFIDENCE: { text: userFacingLabels.LOW_CONFIDENCE, style: "neutral prompt badge", emphasis: "medium", icon: "question check" },
+      STALE: { text: userFacingLabels.STALE, style: "muted age badge", emphasis: "low", icon: "clock" },
+      EXPIRED: { text: userFacingLabels.EXPIRED, style: "inactive badge", emphasis: "low", icon: "ended" },
+      HISTORICAL: { text: userFacingLabels.HISTORICAL, style: "archive badge", emphasis: "low", icon: "history" },
+      guidance: [
+        "Use short labels instead of lifecycle codes.",
+        "Pair age-sensitive states with a driver action when possible.",
+        "Avoid confidence percentages, scoring language, and internal classifications.",
+        "Keep EXPIRED and HISTORICAL styling out of the live map until a separate UI pass approves it."
+      ]
+    },
+    colorRecommendations: {
+      NEW: "fresh blue or teal to indicate a recent community report without implying certainty",
+      ACTIVE: "standard alert color already used for active hazards",
+      CONFIRMED: "green or blue-green trust accent that communicates driver support without reducing caution",
+      LOW_CONFIDENCE: "amber or soft yellow to invite confirmation without alarming users",
+      STALE: "muted gray or gray-amber to show age and lower urgency",
+      EXPIRED: "disabled gray if shown in review tools only",
+      HISTORICAL: "archive gray or muted purple if shown in analytics tools only",
+      accessibility: "Do not rely on color alone; always include the plain-language label."
+    },
+    betaRecommendations: {
+      usersShouldSee: [
+        "Plain-language labels such as Recently Reported, Active Report, and Needs Confirmation.",
+        "Short age cues like just reported, reported earlier today, or older report.",
+        "Driver-focused prompts asking whether the issue is still there.",
+        "Reassuring wording that reports help other drivers when conditions change."
+      ],
+      usersShouldNotSee: [
+        "Lifecycle state codes such as LOW_CONFIDENCE, STALE, EXPIRED, or HISTORICAL.",
+        "Confidence percentages, scoring formulas, or trust buckets.",
+        "Internal classifications, expiration candidates, telemetry notes, or database status.",
+        "Language that says Gridly knows a hazard is gone unless the product has an explicit clearing signal."
+      ],
+      statusLanguage: {
+        recentlyReported: "Recently reported by the community.",
+        activeReport: "Report may still affect this road.",
+        confirmed: "Drivers have recently confirmed this.",
+        needsConfirmation: "Can you confirm if this is still there?",
+        olderReport: "Older report — conditions may have changed.",
+        noLongerActive: "No longer shown as an active report.",
+        historicalEvent: "Saved for road history, not current conditions."
+      },
+      confirmationPrompts: [
+        "Still there? Confirm this report to help other drivers.",
+        "Passed this spot? Let others know if the hazard is still active.",
+        "Is this road issue still affecting traffic?"
+      ],
+      reconfirmationPrompts: [
+        "This report is getting older. Please reconfirm before other drivers rely on it.",
+        "Conditions may have changed. Can you update this report?",
+        "Help keep the map current by confirming whether this is still active."
+      ],
+      implementationNotes: [
+        "Framework only; do not attach this language to markers, alerts, headers, or refresh loops in this pass.",
+        "Use these strings as future UI copy guidance after a separate implementation review.",
+        "Keep beta messaging simple, driver-focused, and age-aware."
+      ]
+    }
+  };
+}
+
 if (typeof window !== "undefined") {
+  window.gridlyHazardTrustLanguage = gridlyHazardTrustLanguage;
   window.gridlyHazardLifecycleFramework = function gridlyHazardLifecycleFramework(options = {}) {
     const nowMs = Number.isFinite(Number(options?.nowMs)) ? Number(options.nowMs) : Date.now();
     const sourceHazards = Array.isArray(options?.hazards) ? options.hazards : gridlyDiagnosticArray(activeHazards);
