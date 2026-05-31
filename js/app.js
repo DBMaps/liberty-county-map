@@ -8224,6 +8224,261 @@ window.gridlyAlertLocationSpecificityAudit = function gridlyAlertLocationSpecifi
   };
 };
 
+
+window.gridlyReferenceRoadResolverAudit = function gridlyReferenceRoadResolverAudit(options = {}) {
+  const asArray = (value) => Array.isArray(value) ? value : [];
+  const safeText = (value) => String(value ?? "").replace(/\s+/g, " ").trim();
+  const safePercent = (count, total) => total > 0 ? Number(((count / total) * 100).toFixed(1)) : 0;
+  const readPath = (item = {}, path = "") => String(path).split(".").reduce((current, key) => current?.[key], item);
+  const firstUsefulPath = (item = {}, paths = []) => {
+    for (const path of paths) {
+      const value = readPath(item, path);
+      const text = safeText(value);
+      if (text && !/^(?:unknown|unknown road|unknown crossing|local roadway|nearby|n\/a|null|undefined)$/i.test(text)) return { path, value: text };
+    }
+    return null;
+  };
+  const countBy = (rows = [], getter = () => "unknown") => rows.reduce((acc, row) => {
+    const key = safeText(getter(row)) || "unknown";
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+  const normalizeCompare = (value = "") => safeText(value).toLowerCase()
+    .replace(/\b(?:county road|farm to market|state highway|highway|road|rd|street|st|avenue|ave|fm|cr|tx|sh|us)\b/g, "")
+    .replace(/[^a-z0-9]/g, "");
+  const equivalentRoads = (left = "", right = "") => {
+    const a = normalizeCompare(left);
+    const b = normalizeCompare(right);
+    return Boolean(a && b && (a === b || a.includes(b) || b.includes(a)));
+  };
+  const hasLatLng = (record = {}) => {
+    const lat = Number(record?.lat ?? record?.latitude ?? record?.rawLat ?? record?.raw?.lat ?? record?.raw?.latitude ?? record?.coordinates?.lat);
+    const lng = Number(record?.lng ?? record?.lon ?? record?.longitude ?? record?.rawLng ?? record?.raw?.lng ?? record?.raw?.lon ?? record?.raw?.longitude ?? record?.coordinates?.lng ?? record?.coordinates?.lon);
+    return { lat: Number.isFinite(lat) ? lat : null, lng: Number.isFinite(lng) ? lng : null, valid: Number.isFinite(lat) && Number.isFinite(lng) };
+  };
+  const safeCallArray = (fn) => {
+    try {
+      const value = fn?.();
+      return Array.isArray(value) ? value : [];
+    } catch (error) {
+      return [];
+    }
+  };
+  const safeSnapshot = (() => {
+    try {
+      return typeof window.getAlertsSurfaceSnapshot === "function" ? window.getAlertsSurfaceSnapshot() : null;
+    } catch (error) {
+      return null;
+    }
+  })();
+  const historyState = (() => {
+    try {
+      return typeof gridlyReadEventHistoryState === "function" ? gridlyReadEventHistoryState() : null;
+    } catch (error) {
+      return null;
+    }
+  })();
+  const sourceGroups = [
+    { sourceName: "activeHazards", rows: asArray(options.hazards || activeHazards) },
+    { sourceName: "activeReports", rows: asArray(options.reports || activeReports) },
+    { sourceName: "unifiedIncidents", rows: asArray(options.unifiedIncidents || safeCallArray(() => getUnifiedIncidents())) },
+    { sourceName: "alertSnapshotRows", rows: asArray(options.alerts || safeSnapshot?.alerts) },
+    { sourceName: "alertRenderCache", rows: asArray(options.renderedAlerts || window.__gridlyLatestAlertsForRender) },
+    { sourceName: "historicalHazardSamples", rows: asArray(options.historicalHazards || historyState?.hazardEvents).slice(0, 25) },
+    { sourceName: "historicalCrossingSamples", rows: asArray(options.historicalCrossings || historyState?.crossingEvents).slice(0, 25) }
+  ];
+  const roadPaths = ["primaryRoad", "parsedPrimaryRoad", "roadName", "resolvedRoadName", "corridorLabel", "displayRoadName", "corridor", "route", "road", "titleRoad", "raw.primaryRoad", "raw.parsedPrimaryRoad", "raw.roadName", "raw.corridorLabel", "raw.displayRoadName", "raw.corridor", "raw.route", "source.primaryRoad", "source.parsedPrimaryRoad", "source.roadName", "source.corridorLabel", "source.displayRoadName", "source.corridor", "source.route"];
+  const referencePaths = ["referenceRoad", "raw.referenceRoad", "source.referenceRoad"];
+  const referenceAPaths = ["referenceRoadA", "crossStreetA", "crossStreet1", "fromStreet", "startStreet", "parsedCrossRoad", "raw.referenceRoadA", "raw.crossStreetA", "raw.crossStreet1", "raw.fromStreet", "raw.startStreet", "raw.parsedCrossRoad", "source.referenceRoadA", "source.crossStreetA", "source.crossStreet1", "source.fromStreet", "source.startStreet", "source.parsedCrossRoad"];
+  const referenceBPaths = ["referenceRoadB", "crossStreetB", "crossStreet2", "toStreet", "endStreet", "raw.referenceRoadB", "raw.crossStreetB", "raw.crossStreet2", "raw.toStreet", "raw.endStreet", "source.referenceRoadB", "source.crossStreetB", "source.crossStreet2", "source.toStreet", "source.endStreet"];
+  const nearestReferencePaths = ["nearestRoadName", "nearestRoad", "nearestCrossStreet", "nearbyCrossStreet", "nearbyRoad", "knownLocation", "locationName", "crossingRoad", "location", "raw.nearestRoadName", "raw.nearestRoad", "raw.nearestCrossStreet", "raw.nearbyCrossStreet", "raw.nearbyRoad", "raw.knownLocation", "raw.locationName", "raw.crossingRoad", "raw.location", "source.nearestRoadName", "source.nearestRoad", "source.nearestCrossStreet", "source.nearbyCrossStreet", "source.nearbyRoad", "source.knownLocation", "source.locationName", "source.crossingRoad", "source.location"];
+  const textPaths = ["resolvedHeadline", "finalHeadline", "segmentHeadline", "localizedSummary", "summary", "title", "headline", "description", "detail", "subtitle", "locationLabel", "resolvedLocationLabel", "locationPhrase", "raw.resolvedHeadline", "raw.finalHeadline", "raw.segmentHeadline", "raw.localizedSummary", "raw.summary", "raw.title", "raw.headline", "raw.description", "raw.locationLabel", "source.resolvedHeadline", "source.finalHeadline", "source.segmentHeadline", "source.localizedSummary", "source.summary", "source.title", "source.headline", "source.locationLabel"];
+  const crossingNamePaths = ["crossingName", "crossing_name", "resolvedCrossingName", "crossingLabel", "raw.crossingName", "raw.crossing_name", "source.crossingName"];
+  const getCrossingMetadata = (record = {}) => {
+    const crossingId = record?.crossingId || record?.crossing_id || record?.raw?.crossingId || record?.raw?.crossing_id;
+    if (crossingId && typeof gridlyGetCrossingHistoryMetadata === "function") return gridlyGetCrossingHistoryMetadata(crossingId, record) || {};
+    if (!crossingId || !Array.isArray(crossings)) return {};
+    const crossing = crossings.find((entry) => safeText(entry?.id) === safeText(crossingId));
+    return crossing ? { crossingName: crossing.name || crossing.crossingName || crossing.road || "", roadName: crossing.roadName || crossing.road || "", city: crossing.city || "" } : {};
+  };
+  const parseRendered = (record = {}) => {
+    const text = textPaths.map((path) => firstUsefulPath(record, [path])?.value).filter(Boolean).join(" • ");
+    if (typeof parseGridlyRoadHazardRoadsFromText === "function") {
+      const parsed = parseGridlyRoadHazardRoadsFromText(text);
+      if (parsed?.road || parsed?.referenceRoadA || parsed?.referenceRoadB) return { ...parsed, text };
+    }
+    const near = text.match(/\bon\s+(.+?)\s+near\s+(.+?)(?:\s*[•·-]|$|[.,;:])/i);
+    if (near) return { road: safeText(near[1]), referenceRoadA: safeText(near[2]), referenceRoadB: "", text };
+    const roadOnly = text.match(/\bon\s+(.+?)(?:\s*[•·-]|$|[.,;:])/i);
+    return { road: roadOnly ? safeText(roadOnly[1]) : "", referenceRoadA: "", referenceRoadB: "", text };
+  };
+  const inferOrigin = (path = "", sourceName = "", record = {}) => {
+    if (!path) return "none";
+    if (/rendered/i.test(path)) return "rendered alert text";
+    if (/crossing/i.test(path)) return "crossing metadata";
+    if (/nearest|nearby/i.test(path)) return "nearest road lookup";
+    if (/raw\.|source\./.test(path) || /report/i.test(sourceName)) return "report payload";
+    if (/historical/i.test(sourceName)) return "historical enrichment";
+    if (/(referenceRoad|crossStreet|fromStreet|toStreet|startStreet|endStreet|parsedCrossRoad)/i.test(path)) return "manual source field";
+    if (hasLatLng(record).valid) return "geospatial inference";
+    return "road resolver";
+  };
+  const analyzeRecord = (record = {}, sourceName = "unknown", index = 0) => {
+    const coords = hasLatLng(record);
+    const parsed = parseRendered(record);
+    const crossingMeta = getCrossingMetadata(record);
+    const directRoad = firstUsefulPath(record, roadPaths);
+    let roadName = safeText(directRoad?.value || parsed.road || crossingMeta.roadName || "");
+    let roadSource = directRoad?.path || (parsed.road ? "renderedText.primaryRoad" : (crossingMeta.roadName ? "crossingMetadata.roadName" : ""));
+    if ((!roadName || gridlyIsHazardTypeRoadName?.(roadName, record)) && typeof gridlyResolveHazardHistoryRoadName === "function") {
+      const resolved = safeText(gridlyResolveHazardHistoryRoadName(record));
+      if (resolved && resolved !== "Unknown road") {
+        roadName = resolved;
+        roadSource = "gridlyResolveHazardHistoryRoadName";
+      }
+    }
+    if (typeof normalizeGridlyRoadHazardRoadComponent === "function") roadName = normalizeGridlyRoadHazardRoadComponent(roadName) || roadName;
+    if (gridlyIsHazardTypeRoadName?.(roadName, record)) roadName = "";
+
+    const directRef = firstUsefulPath(record, referencePaths);
+    const directA = firstUsefulPath(record, referenceAPaths);
+    const directB = firstUsefulPath(record, referenceBPaths);
+    const nearestRef = firstUsefulPath(record, nearestReferencePaths);
+    const crossingRef = firstUsefulPath(record, crossingNamePaths) || (crossingMeta.crossingName ? { path: "crossingMetadata.crossingName", value: crossingMeta.crossingName } : null);
+    const rawRefs = [
+      { field: "referenceRoad", value: directRef?.value, path: directRef?.path },
+      { field: "referenceRoadA", value: directA?.value || parsed.referenceRoadA, path: directA?.path || (parsed.referenceRoadA ? "renderedText.referenceRoadA" : "") },
+      { field: "referenceRoadB", value: directB?.value || parsed.referenceRoadB, path: directB?.path || (parsed.referenceRoadB ? "renderedText.referenceRoadB" : "") },
+      { field: "nearestReference", value: nearestRef?.value, path: nearestRef?.path },
+      { field: "crossingReference", value: crossingRef?.value, path: crossingRef?.path }
+    ].filter((entry) => safeText(entry.value));
+    const distinctRefs = [];
+    rawRefs.forEach((entry) => {
+      let value = safeText(entry.value);
+      if (typeof normalizeGridlyRoadHazardRoadComponent === "function") value = normalizeGridlyRoadHazardRoadComponent(value) || value;
+      if (!value || equivalentRoads(value, roadName) || distinctRefs.some((existing) => equivalentRoads(existing.value, value))) return;
+      distinctRefs.push({ ...entry, value, origin: inferOrigin(entry.path, sourceName, record) });
+    });
+    const resolverCandidate = typeof buildGridlyRoadHazardTxDotStyleCandidate === "function" ? buildGridlyRoadHazardTxDotStyleCandidate(record) : {};
+    const resolverReferenceRoad = safeText(resolverCandidate?.nearestRoadName || resolverCandidate?.referenceRoadA || "");
+    const resolverSucceeded = Boolean(resolverCandidate?.road && /\bnear\b|\bbetween\b/i.test(resolverCandidate?.text || ""));
+    const hasReferenceRoad = distinctRefs.length > 0;
+    const referenceRoadA = distinctRefs[0]?.value || "";
+    const referenceRoadB = distinctRefs[1]?.value || "";
+    const duplicateReferenceRoad = rawRefs.some((entry) => equivalentRoads(entry.value, roadName)) || rawRefs.length > distinctRefs.length;
+    const title = firstUsefulPath(record, textPaths)?.value || "";
+    const renderedText = safeText(resolverCandidate?.text || parsed.text || title);
+    const resolverReturnedPrimaryRoadOnly = Boolean(resolverCandidate?.road && !resolverSucceeded && !hasReferenceRoad);
+    const normalizationFailure = rawRefs.length > 0 && !hasReferenceRoad && !duplicateReferenceRoad;
+    const crossingLookupFailure = Boolean(record?.crossingId || record?.crossing_id || record?.raw?.crossingId || record?.raw?.crossing_id) && !crossingMeta.crossingName && !crossingMeta.roadName;
+    const insufficientNearbyRoadCandidates = coords.valid && !hasReferenceRoad && !nearestRef;
+    const blockers = [];
+    if (!coords.valid) blockers.push("missingLatLng");
+    if (!roadName) blockers.push("missingRoadName");
+    if (!hasReferenceRoad) blockers.push("missingReferenceRoad");
+    if (duplicateReferenceRoad) blockers.push("duplicateReferenceRoad");
+    if (resolverReturnedPrimaryRoadOnly) blockers.push("resolverReturnedPrimaryRoadOnly");
+    if (normalizationFailure) blockers.push("normalizationFailure");
+    if (crossingLookupFailure) blockers.push("crossingLookupFailure");
+    if (insufficientNearbyRoadCandidates) blockers.push("insufficientNearbyRoadCandidates");
+    return {
+      sourceName,
+      index,
+      title,
+      renderedText,
+      roadName,
+      roadSource,
+      lat: coords.lat,
+      lng: coords.lng,
+      hasValidLatLng: coords.valid,
+      referenceRoad: referenceRoadA,
+      referenceRoadA,
+      referenceRoadB,
+      referenceOrigins: distinctRefs.map((entry) => ({ field: entry.field, value: entry.value, path: entry.path, origin: entry.origin })),
+      rawReferenceCandidates: rawRefs.map((entry) => ({ field: entry.field, value: safeText(entry.value), path: entry.path || "", origin: inferOrigin(entry.path, sourceName, record) })),
+      resolverOutput: { text: resolverCandidate?.text || "", source: resolverCandidate?.source || "", road: resolverCandidate?.road || "", nearestRoadName: resolverCandidate?.nearestRoadName || "", referenceRoadA: resolverCandidate?.referenceRoadA || "", referenceRoadB: resolverCandidate?.referenceRoadB || "" },
+      resolverSucceeded,
+      resolverReferenceRoad,
+      resolverReturnedPrimaryRoadOnly,
+      duplicateReferenceRoad,
+      normalizationFailure,
+      crossingLookupFailure,
+      insufficientNearbyRoadCandidates,
+      blockers
+    };
+  };
+  const rows = sourceGroups.flatMap((group) => group.rows
+    .filter((record) => record && typeof record === "object")
+    .map((record, index) => analyzeRecord(record, group.sourceName, index)));
+  const auditedRows = rows.length;
+  const resolverSuccessRows = rows.filter((row) => row.resolverSucceeded || row.referenceRoad || row.referenceRoadA || row.referenceRoadB);
+  const resolverFailureRows = rows.filter((row) => row.roadName && !row.referenceRoad && !row.referenceRoadA && !row.referenceRoadB);
+  const coverage = (field) => ({ count: rows.filter((row) => Boolean(row[field])).length, percent: safePercent(rows.filter((row) => Boolean(row[field])).length, auditedRows) });
+  const gapNames = ["missingLatLng", "missingRoadName", "missingReferenceRoad", "duplicateReferenceRoad", "resolverReturnedPrimaryRoadOnly", "normalizationFailure", "crossingLookupFailure", "insufficientNearbyRoadCandidates"];
+  const gapAnalysis = gapNames.reduce((acc, gap) => ({ ...acc, [gap]: rows.filter((row) => row.blockers.includes(gap)).length }), {});
+  const originRows = rows.flatMap((row) => row.referenceOrigins.length ? row.referenceOrigins.map((origin) => ({ ...origin, sourceName: row.sourceName })) : []);
+  const stilsonSuccessRows = rows.filter((row) => /\bnear\s+stilson\s+road\b/i.test(row.renderedText) || /\bstilson\s+road\b/i.test(row.referenceRoad));
+  const tx146RoadOnlyRows = rows.filter((row) => /\b(?:TX|SH|State Highway)\s*-?146\b/i.test(row.roadName || row.renderedText) && !/\bnear\b|\bbetween\b/i.test(row.renderedText) && !row.referenceRoad && !row.referenceRoadA && !row.referenceRoadB);
+  const summarizeComparisonGroup = (groupRows = []) => ({
+    count: groupRows.length,
+    validLatLng: groupRows.filter((row) => row.hasValidLatLng).length,
+    roadLookupSuccess: groupRows.filter((row) => Boolean(row.roadName)).length,
+    referenceRoadAvailable: groupRows.filter((row) => Boolean(row.referenceRoad || row.referenceRoadA || row.referenceRoadB)).length,
+    crossingMetadataAvailable: groupRows.filter((row) => row.referenceOrigins.some((origin) => origin.origin === "crossing metadata")).length,
+    resolverNearOrBetweenOutput: groupRows.filter((row) => row.resolverSucceeded).length,
+    normalizationFailures: groupRows.filter((row) => row.normalizationFailure).length,
+    commonBlockers: countBy(groupRows.flatMap((row) => row.blockers.map((blocker) => ({ blocker }))), (entry) => entry.blocker),
+    samples: groupRows.slice(0, 5).map((row) => ({ sourceName: row.sourceName, title: row.title, renderedText: row.renderedText, roadName: row.roadName, referenceRoad: row.referenceRoad, resolverOutput: row.resolverOutput, blockers: row.blockers }))
+  });
+  const currentLevel2Potential = rows.filter((row) => row.roadName && (row.referenceRoad || row.referenceRoadA || row.resolverReferenceRoad)).length;
+  const currentLevel3Potential = rows.filter((row) => row.roadName && row.referenceRoadA && row.referenceRoadB).length;
+  const recommendations = [
+    "The existing road-hazard candidate builder can produce near-language only when a distinct reference survives the reference field, nearest-road, crossing, or rendered-text parsing gates.",
+    "Rows that remain road-only usually have a primary road but no distinct reference candidate, or the candidate normalizes as a duplicate of the primary road.",
+    "Before implementing formatter changes, audit upstream payloads for nearestRoadName/referenceRoadA/referenceRoadB population and add side-by-side resolver telemetry for coordinate rows with no nearby-road candidates.",
+    "Keep Level 3 between-language gated until two distinct references are present; current evidence should be treated as Level 2-ready first."
+  ];
+  return {
+    auditedRows,
+    auditedRowDetails: rows.slice(0, 50),
+    resolverSuccessCount: resolverSuccessRows.length,
+    resolverFailureCount: resolverFailureRows.length,
+    referenceRoadCoverage: coverage("referenceRoad"),
+    referenceRoadACoverage: coverage("referenceRoadA"),
+    referenceRoadBCoverage: coverage("referenceRoadB"),
+    successSamples: resolverSuccessRows.slice(0, 8).map((row) => ({ sourceName: row.sourceName, title: row.title, renderedText: row.renderedText, roadName: row.roadName, referenceRoad: row.referenceRoad, referenceRoadA: row.referenceRoadA, referenceRoadB: row.referenceRoadB, origins: row.referenceOrigins, resolverOutput: row.resolverOutput })),
+    failureSamples: resolverFailureRows.slice(0, 8).map((row) => ({ sourceName: row.sourceName, title: row.title, renderedText: row.renderedText, roadName: row.roadName, rawReferenceCandidates: row.rawReferenceCandidates, resolverOutput: row.resolverOutput, blockers: row.blockers })),
+    resolverSources: {
+      originCounts: countBy(originRows, (entry) => entry.origin),
+      fieldCounts: countBy(originRows, (entry) => entry.field),
+      pathCounts: countBy(originRows, (entry) => entry.path),
+      rowSourceCounts: countBy(rows, (row) => row.sourceName),
+      resolverOutputSources: countBy(rows.filter((row) => row.resolverOutput.source), (row) => row.resolverOutput.source),
+      tracedRowsWithReferenceRoad: originRows.length
+    },
+    successFailureComparison: {
+      nearStilsonRoad: summarizeComparisonGroup(stilsonSuccessRows),
+      tx146RoadOnly: summarizeComparisonGroup(tx146RoadOnlyRows),
+      differences: [
+        stilsonSuccessRows.length ? "Stilson rows contain a distinct reference candidate that survives normalization and is not equivalent to TX 146." : "No live Stilson sample is currently present in the audited runtime rows; rerun after that alert is loaded to inspect row-level origins.",
+        tx146RoadOnlyRows.length ? "TX 146 road-only rows have road lookup success but lack a surviving reference candidate or nearest-road lookup output." : "No TX 146 road-only sample is currently present in the audited runtime rows.",
+        "The resolver does not invent near-language from coordinates alone in this path; it needs an explicit nearest/cross/reference value, crossing metadata, or parseable rendered near/between text."
+      ]
+    },
+    blockers: gapAnalysis,
+    gapAnalysis,
+    recommendations,
+    futureReadiness: {
+      currentLevel2Potential,
+      currentLevel3Potential,
+      percentRowsUpgradeableToLevel2: safePercent(currentLevel2Potential, auditedRows),
+      percentRowsUpgradeableToLevel3: safePercent(currentLevel3Potential, auditedRows),
+      safestNextStep: "Do not implement formatter changes yet; first add side-by-side resolver instrumentation around nearest/reference-road candidate availability for coordinate-bearing road-only rows."
+    },
+    noLiveAlertTextChanges: true
+  };
+};
+
 function openAlertsSurfaceFromDock() {
 
   const bindAlertsPanelClick = () => {
