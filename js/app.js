@@ -20585,6 +20585,14 @@ function bindEvents() {
     els.routeSetupModal.dataset.prefillType = nextType;
     syncManagePlaceSlotsAndCta(nextType);
   });
+  els.mobileWorkInput?.addEventListener("input", () => {
+    if (els.routeSetupModal?.dataset.mode !== "manage") return;
+    if (!String(els.mobileWorkInput.value || "").trim()) return;
+    if (managePlacesSourceMode === "address") return;
+    setManagePlacesSourceMode("address");
+    setManagePlacesSaveStatus("");
+    setManagePlacesValidationState(null, "not_checked", "");
+  });
   [["managePlaceHomeBtn", "home"], ["managePlaceWorkBtn", "work"], ["managePlaceFavoriteBtn", "custom"]].forEach(([id, type]) => {
     els[id]?.addEventListener("click", () => {
       if (!els.routeSetupModal) return;
@@ -21696,6 +21704,18 @@ function setManagePlacesValidationState(ok = null, reason = "not_checked", messa
   return managePlacesAddressValidationState;
 }
 
+function inferManagePlacesAddressSourceMode(sourceMode = "", address = "") {
+  const normalizedMode = String(sourceMode || "").trim();
+  if (["location", "address", "saved"].includes(normalizedMode)) return normalizedMode;
+  return String(address || "").trim() ? "address" : "";
+}
+
+function getManagePlacesSelectedSourceAuditValue(sourceMode = "", address = "") {
+  const normalizedMode = String(sourceMode || "").trim();
+  if (["location", "address", "saved"].includes(normalizedMode)) return normalizedMode;
+  return String(address || "").trim() ? "address_inferred_from_input" : null;
+}
+
 function validateManagePlacesAddressValue(address = "", sourceMode = "") {
   const normalized = String(address || "").trim();
   if (sourceMode === "address" && gridlyIsZipOnlyValue(normalized)) {
@@ -21746,13 +21766,21 @@ async function saveRoute(source = "desktop") {
   let { home, work, button } = getRouteInputValues(source);
   const modalMode = source === "mobile" ? (els.routeSetupModal?.dataset.mode || "add") : "add";
   const isManageSave = source === "mobile" && modalMode === "manage";
-  const manageSourceMode = isManageSave ? managePlacesSourceMode : "";
+  const explicitManageSourceMode = isManageSave ? managePlacesSourceMode : "";
+  const manageSourceMode = isManageSave
+    ? inferManagePlacesAddressSourceMode(explicitManageSourceMode, work)
+    : "";
+  const selectedSaveSourceAudit = isManageSave
+    ? getManagePlacesSelectedSourceAuditValue(explicitManageSourceMode, work)
+    : null;
   const prefillType = source === "mobile" ? (els.routeSetupModal?.dataset.prefillType || "custom") : "custom";
   lastManagePlacesSaveAttempt = {
     at: new Date().toISOString(),
     source,
     modalMode,
     manageSourceMode,
+    explicitManageSourceMode,
+    selectedSaveSource: selectedSaveSourceAudit,
     selectedSlot: prefillType,
     placeName: String(home || "").trim(),
     address: String(work || "").trim()
@@ -22819,7 +22847,7 @@ function attachSavedPlacesDebugGlobal() {
     return {
       modalOpen: Boolean(modal && !modal.hidden),
       selectedSlot: modal?.dataset?.prefillType || null,
-      selectedSource: managePlacesSourceMode || null,
+      selectedSource: getManagePlacesSelectedSourceAuditValue(managePlacesSourceMode, addressInput?.value || ""),
       placeNameValue: (els.mobileHomeInput?.value || "").trim(),
       addressValue: (addressInput?.value || "").trim(),
       addressInputFocused: document.activeElement === addressInput,
@@ -32516,7 +32544,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     }) || null;
     const saveButton = document.getElementById("mobileSaveRouteBtn");
     const selectedSlot = routeSetup?.dataset?.prefillType || lastManagePlacesSaveAttempt?.selectedSlot || null;
-    const selectedSource = managePlacesSourceMode || lastManagePlacesSaveAttempt?.manageSourceMode || null;
+    const selectedSource = managePlacesSourceMode || lastManagePlacesSaveAttempt?.selectedSaveSource || lastManagePlacesSaveAttempt?.manageSourceMode || null;
     return {
       activeSheet: activeSheet || document.getElementById("gridlyPortraitV2Sheet")?.dataset?.activeSheet || "",
       activeModal: activeModalSurface?.id || activeModalSurface?.className || "",
