@@ -4090,9 +4090,284 @@ function gridlyHazardTrustProgressionFramework() {
   };
 }
 
+
+function gridlyCommunityIntelligenceFramework() {
+  const intelligenceCategories = [
+    {
+      category: "RECURRING_HAZARDS",
+      purpose: "Identify places where the same kind of road issue is repeatedly reported over time.",
+      userValue: "Helps drivers recognize roads that commonly develop problems before they begin a trip.",
+      requiredInputs: ["activeHazards", "activeReports", "historical event storage", "hazard history", "gridlyEventHistoryV1"]
+    },
+    {
+      category: "FREQUENT_FLOOD_LOCATIONS",
+      purpose: "Recognize road segments where flood or high-water reports recur after rain events.",
+      userValue: "Gives drivers plain advance awareness of roads that often become risky during wet weather.",
+      requiredInputs: ["activeHazards", "activeReports", "historical event storage", "hazard history", "lifecycle framework"]
+    },
+    {
+      category: "MOST_BLOCKED_CROSSINGS",
+      purpose: "Summarize railroad crossings with repeated blockage events in recent history.",
+      userValue: "Helps drivers anticipate crossings that commonly cause delays and choose alternates sooner.",
+      requiredInputs: ["crossing history", "historical event storage", "gridlyEventHistoryV1"]
+    },
+    {
+      category: "REPEAT_CONSTRUCTION_ZONES",
+      purpose: "Find road segments where construction, lane closures, or work-zone reports repeatedly appear.",
+      userValue: "Helps commuters understand which work areas are likely to affect regular routes.",
+      requiredInputs: ["activeHazards", "activeReports", "historical event storage", "hazard history"]
+    },
+    {
+      category: "HIGH_DELAY_CORRIDORS",
+      purpose: "Identify corridors that repeatedly accumulate hazards, blocked crossings, or delay reports.",
+      userValue: "Shows drivers where disruption is common without requiring them to interpret raw reports.",
+      requiredInputs: ["activeHazards", "activeReports", "crossing history", "hazard history", "gridlyEventHistoryV1"]
+    },
+    {
+      category: "COMMUNITY_CONFIRMED_HOTSPOTS",
+      purpose: "Recognize locations where repeated community confirmations support a recurring pattern.",
+      userValue: "Highlights places local drivers consistently validate as worth watching.",
+      requiredInputs: ["activeReports", "hazard history", "trust progression framework", "lifecycle framework"]
+    },
+    {
+      category: "TIME_OF_DAY_PATTERNS",
+      purpose: "Describe locations that tend to create reports during repeat daily windows such as morning or evening commute.",
+      userValue: "Helps drivers plan around common delay windows using simple, local language.",
+      requiredInputs: ["historical event storage", "gridlyEventHistoryV1", "crossing history", "hazard history"]
+    },
+    {
+      category: "SEASONAL_PATTERNS",
+      purpose: "Describe recurring road issues tied to seasonal conditions such as heavy rain, school traffic, or construction cycles.",
+      userValue: "Helps the community prepare for issues that return during predictable parts of the year.",
+      requiredInputs: ["historical event storage", "gridlyEventHistoryV1", "hazard history", "lifecycle framework"]
+    }
+  ];
+
+  const intelligenceSources = [
+    {
+      source: "activeHazards",
+      role: "Provides current hazard context that can later be compared with historical patterns.",
+      activationState: "read_only_reference",
+      constraints: ["Do not change live hazard rendering.", "Do not modify lifecycle behavior."]
+    },
+    {
+      source: "activeReports",
+      role: "Provides community report context for future recurrence matching and confirmation review.",
+      activationState: "read_only_reference",
+      constraints: ["Do not change alert ownership.", "Do not change marker ownership."]
+    },
+    {
+      source: "historical event storage",
+      role: "Stores cleared or past event records that can support future pattern summaries.",
+      activationState: "available_foundation_only",
+      constraints: ["Do not activate new historical processing.", "Do not migrate or rewrite storage."]
+    },
+    {
+      source: "gridlyEventHistoryV1",
+      role: "Existing historical storage key for crossing and hazard event history.",
+      activationState: "available_foundation_only",
+      constraints: ["Do not alter schema.", "Do not add telemetry or analytics writes."]
+    },
+    {
+      source: "crossing history",
+      role: "Provides past railroad crossing blockage context for future crossing intelligence.",
+      activationState: "read_only_reference",
+      constraints: ["Do not alter rail crossing behavior.", "Do not alter Route Watch or routing."]
+    },
+    {
+      source: "hazard history",
+      role: "Provides past hazard context for future recurring-location and corridor intelligence.",
+      activationState: "read_only_reference",
+      constraints: ["Do not change active hazard lifecycle behavior.", "Do not activate cleanup or expiration."]
+    },
+    {
+      source: "trust progression framework",
+      role: "Provides future guidance for distinguishing fresh community support from stale or unconfirmed patterns.",
+      activationState: "framework_reference_only",
+      constraints: ["Do not change trust progression behavior.", "Do not expose scores or internal trust states."]
+    },
+    {
+      source: "lifecycle framework",
+      role: "Provides future guidance for deciding whether past events should inform community knowledge instead of live alerts.",
+      activationState: "framework_reference_only",
+      constraints: ["Do not change lifecycle behavior.", "Do not convert active records to historical records in this pass."]
+    }
+  ];
+
+  const intelligenceRules = {
+    frameworkOnly: true,
+    processingEnabled: false,
+    runtimeBehaviorChanges: false,
+    eligibleUse: [
+      "Describe historical patterns after a separate activation task approves processing.",
+      "Use recurring community evidence to create plain-language location knowledge.",
+      "Keep intelligence advisory and separate from active hazard certainty."
+    ],
+    prohibitedUse: [
+      "Do not change Portrait V2, headers, alerts, markers, map ownership, or refresh loops.",
+      "Do not change Route Watch, OSRM routing, Supabase, TxDOT, rail crossings, settings, analytics, or telemetry.",
+      "Do not show historical intelligence as a current hazard.",
+      "Do not activate background jobs, migrations, or historical processing from this framework."
+    ],
+    matchingGuidance: [
+      "Match patterns by road segment or crossing identity before using broader nearby labels.",
+      "Prefer location-specific evidence over citywide or countywide grouping.",
+      "Separate hazard types so flooding, construction, crashes, and blocked crossings do not create misleading combined labels.",
+      "Use lifecycle and trust progression guidance only as future review inputs, not active behavior."
+    ],
+    languageGuidance: [
+      "Use driver-focused phrases.",
+      "Avoid scores, percentages, confidence buckets, and internal analytics labels.",
+      "Make every label advisory, not absolute.",
+      "Prefer common, frequent, recurring, and often reported over technical trend language."
+    ]
+  };
+
+  const trendRules = {
+    recurringLocations: [
+      {
+        pattern: "3 flooding reports within 30 days on the same road segment",
+        recommendation: "classify as a recurring flooding location",
+        category: "FREQUENT_FLOOD_LOCATIONS",
+        activationState: "recommendation_only"
+      },
+      {
+        pattern: "3 similar hazard reports within 30 days on the same road segment",
+        recommendation: "classify as a recurring hazard location",
+        category: "RECURRING_HAZARDS",
+        activationState: "recommendation_only"
+      }
+    ],
+    recurringCrossings: [
+      {
+        pattern: "5 blockage events within 30 days at the same crossing",
+        recommendation: "classify as a frequently blocked crossing",
+        category: "MOST_BLOCKED_CROSSINGS",
+        activationState: "recommendation_only"
+      }
+    ],
+    recurringCorridors: [
+      {
+        pattern: "Multiple hazard events on the same road segment or connected corridor within a recent review window",
+        recommendation: "classify as a high disruption corridor",
+        category: "HIGH_DELAY_CORRIDORS",
+        activationState: "recommendation_only"
+      }
+    ],
+    repeatConstruction: [
+      {
+        pattern: "3 construction or lane-closure reports within 45 days on the same road segment",
+        recommendation: "classify as a recurring construction zone",
+        category: "REPEAT_CONSTRUCTION_ZONES",
+        activationState: "recommendation_only"
+      }
+    ],
+    communityConfirmedHotspots: [
+      {
+        pattern: "Repeated reports plus recent community confirmations for the same location and issue type",
+        recommendation: "classify as a community-confirmed hotspot",
+        category: "COMMUNITY_CONFIRMED_HOTSPOTS",
+        activationState: "recommendation_only"
+      }
+    ],
+    timePatterns: [
+      {
+        pattern: "Recurring events at the same location during the same broad daypart across multiple days",
+        recommendation: "describe as a common delay area during that time window",
+        category: "TIME_OF_DAY_PATTERNS",
+        activationState: "recommendation_only"
+      }
+    ],
+    seasonalPatterns: [
+      {
+        pattern: "Recurring event type at the same location across a seasonal review window",
+        recommendation: "describe as a seasonal watch area only after enough historical review confirms the pattern",
+        category: "SEASONAL_PATTERNS",
+        activationState: "recommendation_only"
+      }
+    ],
+    safeguards: [
+      "Require same road segment or same crossing identity before creating a location-specific trend.",
+      "Require enough recency to help drivers without presenting old history as current conditions.",
+      "Keep active hazard alerts separate from historical intelligence summaries.",
+      "Review local road naming and reference-road resolution before any future activation."
+    ]
+  };
+
+  const recommendations = {
+    userFacingLanguage: {
+      recommended: [
+        "Frequently reported flooding location",
+        "Common delay area",
+        "Frequently blocked crossing",
+        "Recurring construction zone",
+        "Area drivers often report issues",
+        "Road segment to watch",
+        "Common high-water spot",
+        "Often delayed during commute times"
+      ],
+      avoid: [
+        "87% hotspot confidence",
+        "Trend score 0.82",
+        "Analytics cluster detected",
+        "Predictive risk index",
+        "LOW_CONFIDENCE historical model",
+        "Statistically significant road segment"
+      ],
+      style: [
+        "Use plain language that helps drivers decide whether to watch an area.",
+        "Avoid implying that a historical pattern means a hazard is happening right now.",
+        "Keep labels short enough for future mobile surfaces.",
+        "Use community-centered wording without exposing individual reporters."
+      ]
+    },
+    trendModel: {
+      modelType: "historical_pattern_recommendation_only",
+      minimumEvidence: "Prefer multiple events of the same type on the same road segment or crossing before recommending a trend.",
+      locationPriority: ["same crossing id", "same road segment", "same resolved road reference", "nearby fallback only after review"],
+      timeWindows: ["30 days for flooding and crossing blockage review", "45 days for construction review", "broad dayparts for time-of-day patterns", "seasonal review windows for seasonal patterns"],
+      outputPrinciple: "Produce community knowledge labels, not scores or live hazard assertions."
+    },
+    betaReadinessReview: {
+      userBenefits: [
+        "Drivers can learn what usually happens on familiar roads without reading raw historical reports.",
+        "Commuters can anticipate common delay areas and frequently blocked crossings before departure.",
+        "Plain-language patterns make Gridly feel locally informed while preserving live-alert clarity."
+      ],
+      communityBenefits: [
+        "Community reports become lasting local knowledge instead of disappearing after the live event ends.",
+        "Repeated confirmations can help identify places the community consistently watches.",
+        "Historical intelligence can guide future safety and road-awareness improvements without exposing individual users."
+      ],
+      betaRisks: [
+        "Users may confuse historical patterns with current hazards if language is too urgent.",
+        "Poor road-segment matching could group nearby but different locations into a misleading trend.",
+        "Sparse early beta data may make some community intelligence feel incomplete or uneven by area.",
+        "Activating processing without separate review could unintentionally affect alerts, markers, analytics, or telemetry."
+      ],
+      futureActivationGuardrails: [
+        "Require a separate activation task before processing historical events into user-visible intelligence.",
+        "Validate road-segment, crossing, and location-specificity matching before showing trends.",
+        "Keep historical intelligence visually and linguistically distinct from active alerts.",
+        "Add privacy, analytics, telemetry, and safety reviews before any runtime behavior change.",
+        "Provide a rollback path that disables community intelligence without affecting active reports or hazards."
+      ]
+    }
+  };
+
+  return {
+    intelligenceCategories,
+    intelligenceSources,
+    intelligenceRules,
+    trendRules,
+    recommendations
+  };
+}
+
 if (typeof window !== "undefined") {
   window.gridlyHazardTrustLanguage = gridlyHazardTrustLanguage;
   window.gridlyHazardTrustProgressionFramework = gridlyHazardTrustProgressionFramework;
+  window.gridlyCommunityIntelligenceFramework = gridlyCommunityIntelligenceFramework;
   window.gridlyHazardLifecycleFramework = function gridlyHazardLifecycleFramework(options = {}) {
     const nowMs = Number.isFinite(Number(options?.nowMs)) ? Number(options.nowMs) : Date.now();
     const sourceHazards = Array.isArray(options?.hazards) ? options.hazards : gridlyDiagnosticArray(activeHazards);
