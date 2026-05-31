@@ -12161,6 +12161,190 @@ window.gridlyIncidentSourceAudit = function gridlyIncidentSourceAudit(options = 
 };
 
 
+function gridlyReadTxdotDiagnostics() {
+  if (typeof window === "undefined") return {};
+  if (typeof window.gridlyTxdot?.getDiagnostics === "function") return window.gridlyTxdot.getDiagnostics() || {};
+  const normalizedRows = Array.isArray(window.gridlyTxdot?.getRoadConditions?.()) ? window.gridlyTxdot.getRoadConditions() : [];
+  const rawRows = Array.isArray(window.gridlyTxdot?.getRawRoadConditions?.())
+    ? window.gridlyTxdot.getRawRoadConditions()
+    : (Array.isArray(window.gridlyTxdotRawRoadConditions) ? window.gridlyTxdotRawRoadConditions : []);
+  return {
+    rawCount: rawRows.length,
+    normalizedCount: normalizedRows.length,
+    rawIncidentCount: rawRows.length,
+    rawConstructionCount: rawRows.filter((row) => /construct|maintenance|lane closure|work zone/i.test(`${row?.condition || ""} ${row?.type || ""} ${row?.description || ""}`)).length,
+    rawConditionCount: rawRows.length,
+    sampleRawRows: rawRows.slice(0, 3),
+    sampleNormalizedRows: normalizedRows.slice(0, 3)
+  };
+}
+
+function gridlyHasFiniteTxdotCoordinates(item = {}) {
+  const lat = item?.lat ?? item?.latitude ?? item?.rawLat;
+  const lng = item?.lng ?? item?.lon ?? item?.longitude ?? item?.rawLng;
+  return Number.isFinite(Number(lat)) && Number.isFinite(Number(lng));
+}
+
+function gridlyIsTxdotActiveByDate(item = {}, now = new Date()) {
+  const status = String(item?.status || item?.state || "active").toLowerCase();
+  if (["cleared", "closed", "expired", "inactive"].includes(status)) return false;
+  const startRaw = item?.startTime || item?.start_time || item?.created_at || item?.updated_at;
+  const endRaw = item?.endTime || item?.end_time || item?.expires_at;
+  const startMs = startRaw ? Date.parse(startRaw) : NaN;
+  const endMs = endRaw ? Date.parse(endRaw) : NaN;
+  const nowMs = now.getTime();
+  if (Number.isFinite(startMs) && startMs > nowMs) return false;
+  if (Number.isFinite(endMs) && endMs < nowMs) return false;
+  return true;
+}
+
+function gridlyFindTxdotRowsInCollection(collection = []) {
+  return (Array.isArray(collection) ? collection : []).filter((item) => {
+    const source = String(item?.source || item?.provider || item?.agency || "").toLowerCase();
+    const id = String(item?.id || item?.incidentId || item?.reportId || item?.raw?.id || "").toLowerCase();
+    const title = String(item?.title || item?.headline || item?.description || item?.raw?.title || "").toLowerCase();
+    return source.includes("txdot") || source.includes("drive texas") || id.includes("txdot") || title.includes("txdot") || title.includes("drive texas");
+  });
+}
+
+function gridlyBuildTxdotSourceBlockers(details = {}) {
+  const blockers = [];
+  const configured = Boolean(details.txdotFetchConfigured);
+  const hasFetched = Boolean(details.txdotLastFetchAttempt);
+  const rawCount = Number(details.txdotRawConditionCount || 0);
+  const normalizedCount = Number(details.txdotNormalizedCount || 0);
+  const unifiedCount = Number(details.txdotUnifiedIncidentCount || 0);
+  const renderedCount = Number(details.txdotRenderedMarkerCount || 0);
+  const alertCount = Number(details.txdotRenderedAlertCount || 0);
+
+  if (!configured) {
+    blockers.push("no TxDOT fetch configured: gridlyTxdot service/config is present only when an endpoint, fetch helper, and API key are available.");
+  } else if (!hasFetched) {
+    blockers.push("fetch configured but not called: gridlyTxdot.fetchRoadConditions exists, but no runtime fetch attempt has been recorded.");
+  } else if (details.txdotLastFetchSuccess === false) {
+    blockers.push(`fetch called but failed: ${details.txdotLastFetchError || "unknown TxDOT fetch error"}.`);
+  } else if (rawCount === 0) {
+    blockers.push("fetch called but returns 0: no raw TxDOT condition rows are currently cached.");
+  }
+
+  if (rawCount > 0 && normalizedCount === 0) {
+    blockers.push("data exists but not normalized: raw TxDOT rows are cached, but gridlyTxdot normalized road conditions are empty.");
+  }
+
+  if (normalizedCount > 0 && unifiedCount === 0) {
+    blockers.push("normalized but not added to activeHazards/unified incidents: TxDOT service rows remain in gridlyExternalRoadConditions and are not emitted by futureTxdotIncidents(), futureTxdotConstruction(), or activeHazards.");
+  }
+
+  if (unifiedCount > 0 && renderedCount === 0) {
+    blockers.push("incidents exist but not rendered as markers: TxDOT rows are present in unified incidents but no TxDOT marker DOM/layer entries were detected.");
+  }
+
+  if (unifiedCount > 0 && alertCount === 0) {
+    blockers.push("incidents exist but not rendered on the alert surface: TxDOT unified incidents were found, but the current alerts snapshot/cache contains no TxDOT rows.");
+  }
+
+  if (normalizedCount > 0 && details.txdotDateFilteredCount > 0) {
+    blockers.push(`incidents exist but filtered out by date/status: ${details.txdotDateFilteredCount} normalized TxDOT row(s) are outside the active status/time window.`);
+  }
+
+  if (normalizedCount > 0 && details.txdotSourceFilteredCount > 0) {
+    blockers.push(`incidents exist but filtered out by source: ${details.txdotSourceFilteredCount} normalized TxDOT row(s) do not carry a txdot source label.`);
+  }
+
+  if (normalizedCount > 0 && details.txdotMissingCoordinateCount > 0) {
+    blockers.push(`incidents exist but filtered out by bounds/marker eligibility: ${details.txdotMissingCoordinateCount} normalized TxDOT row(s) lack finite latitude/longitude for map marker rendering.`);
+  }
+
+  if (!blockers.length) blockers.push("no TxDOT source blocker detected in the current cached runtime state.");
+  return blockers;
+}
+
+window.gridlyTxDotSourceAudit = function gridlyTxDotSourceAudit() {
+  const txdotService = window.gridlyTxdot || null;
+  const txdotConfig = window.GRIDLY_CONFIG?.txdot || null;
+  const txdotState = window.gridlyTxdotState || {};
+  const diagnostics = gridlyReadTxdotDiagnostics();
+  const normalizedRows = Array.isArray(txdotService?.getRoadConditions?.()) ? txdotService.getRoadConditions() : (Array.isArray(window.gridlyExternalRoadConditions) ? window.gridlyExternalRoadConditions : []);
+  const rawRows = Array.isArray(txdotService?.getRawRoadConditions?.()) ? txdotService.getRawRoadConditions() : (Array.isArray(window.gridlyTxdotRawRoadConditions) ? window.gridlyTxdotRawRoadConditions : []);
+  const now = new Date();
+  const txdotFutureIncidents = typeof futureTxdotIncidents === "function" ? futureTxdotIncidents() : [];
+  const txdotFutureConstruction = typeof futureTxdotConstruction === "function" ? futureTxdotConstruction() : [];
+  const unifiedIncidents = typeof getUnifiedIncidents === "function" ? getUnifiedIncidents() : [];
+  const alertsSnapshot = typeof window.getAlertsSurfaceSnapshot === "function" ? window.getAlertsSurfaceSnapshot() : null;
+  const alertItems = Array.isArray(alertsSnapshot?.alerts) ? alertsSnapshot.alerts : (Array.isArray(window.__gridlyLatestAlertsForRender) ? window.__gridlyLatestAlertsForRender : []);
+  const txdotUnifiedRows = gridlyFindTxdotRowsInCollection(unifiedIncidents);
+  const txdotAlertRows = gridlyFindTxdotRowsInCollection(alertItems);
+  const renderedTxdotMarkerCount = typeof document !== "undefined"
+    ? document.querySelectorAll("#map .gridly-marker-txdot-single, #map .gridly-marker-txdot-corridor, #map .gridly-marker-txdot-route-impact, #map [data-visual-style^='txdot'], #map [data-incident-id*='txdot' i]").length
+    : 0;
+  const mapEligibleRows = normalizedRows.filter((row) => gridlyHasFiniteTxdotCoordinates(row) && gridlyIsTxdotActiveByDate(row, now));
+  const alertEligibleRows = normalizedRows.filter((row) => gridlyIsTxdotActiveByDate(row, now) && (row?.title || row?.description || row?.roadName || row?.routeNameDisplay));
+  const dateFilteredCount = normalizedRows.filter((row) => !gridlyIsTxdotActiveByDate(row, now)).length;
+  const sourceFilteredCount = normalizedRows.filter((row) => !String(row?.source || "").toLowerCase().includes("txdot")).length;
+  const missingCoordinateCount = normalizedRows.filter((row) => !gridlyHasFiniteTxdotCoordinates(row)).length;
+  const helpersFound = {
+    gridlyTxdot: Boolean(txdotService),
+    fetchRoadConditions: typeof txdotService?.fetchRoadConditions === "function",
+    normalizeIncident: typeof txdotService?.normalizeIncident === "function",
+    getRoadConditions: typeof txdotService?.getRoadConditions === "function",
+    getRawRoadConditions: typeof txdotService?.getRawRoadConditions === "function",
+    getDiagnostics: typeof txdotService?.getDiagnostics === "function",
+    futureTxdotIncidents: typeof futureTxdotIncidents === "function",
+    futureTxdotConstruction: typeof futureTxdotConstruction === "function"
+  };
+  const configFound = {
+    hasConfigObject: Boolean(txdotConfig && typeof txdotConfig === "object"),
+    hasApiKey: Boolean(String(txdotConfig?.apiKey || "").trim()),
+    hasEndpointTemplate: Boolean(String(txdotConfig?.endpointTemplate || "").trim()),
+    refreshIntervalMs: Number.isFinite(Number(txdotConfig?.refreshIntervalMs)) ? Number(txdotConfig.refreshIntervalMs) : null
+  };
+  const txdotFetchConfigured = Boolean(helpersFound.fetchRoadConditions && configFound.hasEndpointTemplate && configFound.hasApiKey);
+  const auditDetails = {
+    txdotFetchConfigured,
+    txdotLastFetchAttempt: txdotState.lastFetchTime || diagnostics.lastFetchTime || null,
+    txdotLastFetchSuccess: txdotState.lastFetchOk ?? diagnostics.lastFetchOk ?? null,
+    txdotLastFetchError: txdotState.lastError || diagnostics.lastError || null,
+    txdotRawConditionCount: Number(diagnostics.rawConditionCount ?? diagnostics.rawCount ?? rawRows.length) || 0,
+    txdotNormalizedCount: normalizedRows.length,
+    txdotUnifiedIncidentCount: txdotUnifiedRows.length + txdotFutureIncidents.length + txdotFutureConstruction.length,
+    txdotRenderedMarkerCount: renderedTxdotMarkerCount,
+    txdotRenderedAlertCount: txdotAlertRows.length,
+    txdotDateFilteredCount: dateFilteredCount,
+    txdotSourceFilteredCount: sourceFilteredCount,
+    txdotMissingCoordinateCount: missingCoordinateCount
+  };
+  return {
+    txdotHelpersFound: helpersFound,
+    txdotConfigFound: configFound,
+    txdotFetchConfigured,
+    txdotLastFetchAttempt: auditDetails.txdotLastFetchAttempt,
+    txdotLastFetchSuccess: auditDetails.txdotLastFetchSuccess,
+    txdotRawIncidentCount: Number(diagnostics.rawIncidentCount ?? rawRows.length) || 0,
+    txdotRawConstructionCount: Number(diagnostics.rawConstructionCount ?? 0) || 0,
+    txdotRawConditionCount: auditDetails.txdotRawConditionCount,
+    txdotNormalizedCount: normalizedRows.length,
+    txdotMapEligibleCount: mapEligibleRows.length,
+    txdotAlertEligibleCount: alertEligibleRows.length,
+    sampleRawRows: Array.isArray(diagnostics.sampleRawRows) ? diagnostics.sampleRawRows : rawRows.slice(0, 3),
+    sampleNormalizedRows: Array.isArray(diagnostics.sampleNormalizedRows) ? diagnostics.sampleNormalizedRows : normalizedRows.slice(0, 3),
+    blockers: gridlyBuildTxdotSourceBlockers(auditDetails),
+    trace: {
+      fetchConfig: configFound,
+      rawRows: auditDetails.txdotRawConditionCount,
+      normalizedRows: normalizedRows.length,
+      activeHazardCandidates: normalizedRows.filter((row) => String(row?.source || "").toLowerCase().includes("txdot")).length,
+      activeHazardsRows: gridlyFindTxdotRowsInCollection(Array.isArray(activeHazards) ? activeHazards : []).length,
+      futureTxdotIncidents: txdotFutureIncidents.length,
+      futureTxdotConstruction: txdotFutureConstruction.length,
+      unifiedIncidents: txdotUnifiedRows.length,
+      alertSurfaceRows: txdotAlertRows.length,
+      mapMarkers: renderedTxdotMarkerCount
+    },
+    nextPatchRecommendation: "Wire a read-only TxDOT adapter into futureTxdotIncidents()/futureTxdotConstruction() or a dedicated external unified-incident source after validating sample live rows; keep Supabase activeHazards/user hazard ownership unchanged."
+  };
+};
+
+
 const GRIDLY_CORE_ROAD_HAZARD_CLEANUP_TYPES = Object.freeze(["flooding", "ice", "debris", "crash", "construction", "road_closed", "disabled_vehicle", "other_hazard"]);
 const GRIDLY_SHARED_ROAD_HAZARD_REPORT_TYPES = Object.freeze([...GRIDLY_CORE_ROAD_HAZARD_CLEANUP_TYPES, "hazard_cleared", "wreck"]);
 const GRIDLY_SUPABASE_TEST_HAZARD_CONFIRMATION = "CLEAR_SUPABASE_TEST_HAZARDS";

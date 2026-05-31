@@ -7,7 +7,9 @@
 
   globalScope.GRIDLY_CONFIG = globalScope.GRIDLY_CONFIG || {};
   globalScope.GRIDLY_CONFIG.txdot = globalScope.GRIDLY_CONFIG.txdot || {};
-  globalScope.GRIDLY_CONFIG.txdot.apiKey = globalScope.GRIDLY_TXDOT_API_KEY || "";
+  const configuredApiKey = typeof globalScope.GRIDLY_CONFIG.txdot.apiKey === "string" ? globalScope.GRIDLY_CONFIG.txdot.apiKey.trim() : "";
+  const globalApiKey = typeof globalScope.GRIDLY_TXDOT_API_KEY === "string" ? globalScope.GRIDLY_TXDOT_API_KEY.trim() : "";
+  globalScope.GRIDLY_CONFIG.txdot.apiKey = globalApiKey || configuredApiKey;
 
   const txdotConfig = (globalScope.GRIDLY_CONFIG.txdot && typeof globalScope.GRIDLY_CONFIG.txdot === "object")
     ? globalScope.GRIDLY_CONFIG.txdot
@@ -27,6 +29,11 @@
     : [];
   globalScope.gridlyExternalRoadConditions = externalStore;
 
+  const rawStore = Array.isArray(globalScope.gridlyTxdotRawRoadConditions)
+    ? globalScope.gridlyTxdotRawRoadConditions
+    : [];
+  globalScope.gridlyTxdotRawRoadConditions = rawStore;
+
   const txdotState = (globalScope.gridlyTxdotState && typeof globalScope.gridlyTxdotState === "object")
     ? globalScope.gridlyTxdotState
     : {};
@@ -34,6 +41,11 @@
   txdotState.lastFetchOk = null;
   txdotState.lastFetchTime = null;
   txdotState.lastError = null;
+  txdotState.lastRawCount = 0;
+  txdotState.lastNormalizedCount = 0;
+  txdotState.lastRawIncidentCount = 0;
+  txdotState.lastRawConstructionCount = 0;
+  txdotState.lastRawConditionCount = 0;
   globalScope.gridlyTxdotState = txdotState;
 
   function toSafeString(value) {
@@ -176,6 +188,35 @@
     };
   }
 
+
+  function getRecordConditionText(record) {
+    return [
+      readRawField(record, ["condition", "type", "event_type", "category"]),
+      readRawField(record, ["description", "title", "summary"])
+    ].map((value) => toSafeString(value).toLowerCase()).filter(Boolean).join(" ");
+  }
+
+  function summarizeRawRecords(rawRecords) {
+    const records = Array.isArray(rawRecords) ? rawRecords : [];
+    let construction = 0;
+    let incidents = 0;
+
+    records.forEach((record) => {
+      const conditionText = getRecordConditionText(record);
+      if (/construct|maintenance|lane closure|work zone/.test(conditionText)) {
+        construction += 1;
+      } else {
+        incidents += 1;
+      }
+    });
+
+    return {
+      rawIncidentCount: incidents,
+      rawConstructionCount: construction,
+      rawConditionCount: records.length
+    };
+  }
+
   function extractRawRecords(payload) {
     if (Array.isArray(payload)) return payload;
 
@@ -209,6 +250,12 @@
     if (!apiKey) {
       txdotState.lastFetchOk = false;
       txdotState.lastError = "TxDOT API key is not configured";
+      txdotState.lastRawCount = 0;
+      txdotState.lastNormalizedCount = 0;
+      txdotState.lastRawIncidentCount = 0;
+      txdotState.lastRawConstructionCount = 0;
+      txdotState.lastRawConditionCount = 0;
+      rawStore.length = 0;
       externalStore.length = 0;
       return [];
     }
@@ -221,18 +268,32 @@
 
       const payload = await response.json();
       const rawRecords = extractRawRecords(payload);
+      const rawCounts = summarizeRawRecords(rawRecords);
 
       const normalized = rawRecords
         .map((record) => normalizeIncident(record, record?.__geometry))
         .filter(Boolean);
 
+      rawStore.length = 0;
+      rawStore.push(...rawRecords);
       externalStore.length = 0;
       externalStore.push(...normalized);
       txdotState.lastFetchOk = true;
+      txdotState.lastRawCount = rawRecords.length;
+      txdotState.lastNormalizedCount = normalized.length;
+      txdotState.lastRawIncidentCount = rawCounts.rawIncidentCount;
+      txdotState.lastRawConstructionCount = rawCounts.rawConstructionCount;
+      txdotState.lastRawConditionCount = rawCounts.rawConditionCount;
       return normalized;
     } catch (error) {
       txdotState.lastFetchOk = false;
       txdotState.lastError = error instanceof Error ? error.message : String(error);
+      txdotState.lastRawCount = 0;
+      txdotState.lastNormalizedCount = 0;
+      txdotState.lastRawIncidentCount = 0;
+      txdotState.lastRawConstructionCount = 0;
+      txdotState.lastRawConditionCount = 0;
+      rawStore.length = 0;
       externalStore.length = 0;
       return [];
     }
@@ -240,6 +301,27 @@
 
   function getRoadConditions() {
     return externalStore.slice();
+  }
+
+  function getRawRoadConditions() {
+    return rawStore.slice();
+  }
+
+  function getDiagnostics() {
+    const rawCounts = summarizeRawRecords(rawStore);
+    return {
+      hasFetched: !!txdotState.hasFetched,
+      lastFetchOk: txdotState.lastFetchOk,
+      lastFetchTime: txdotState.lastFetchTime,
+      lastError: txdotState.lastError,
+      rawCount: rawStore.length,
+      normalizedCount: externalStore.length,
+      rawIncidentCount: rawCounts.rawIncidentCount,
+      rawConstructionCount: rawCounts.rawConstructionCount,
+      rawConditionCount: rawCounts.rawConditionCount,
+      sampleRawRows: rawStore.slice(0, 3),
+      sampleNormalizedRows: externalStore.slice(0, 3)
+    };
   }
 
 
@@ -317,7 +399,9 @@
   globalScope.gridlyTxdot = {
     fetchRoadConditions,
     normalizeIncident,
-    getRoadConditions
+    getRoadConditions,
+    getRawRoadConditions,
+    getDiagnostics
   };
 
 
@@ -380,7 +464,9 @@
       serviceLoaded,
       apiAvailable,
       loadedCount: externalStore.length,
+      rawCount: rawStore.length,
       sampleRecords: externalStore.slice(0, 3),
+      sampleRawRecords: rawStore.slice(0, 3),
       hasFetched: !!txdotState.hasFetched,
       lastFetchOk: txdotState.lastFetchOk,
       lastFetchTime: txdotState.lastFetchTime,
