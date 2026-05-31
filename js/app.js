@@ -4122,6 +4122,15 @@ let lastValidationError = null;
 let lastManagePlacesSaveAttempt = null;
 let lastManagePlacesSaveError = null;
 let managePlacesAddressValidationState = { ok: null, reason: "not_checked", message: "" };
+let managePlacesGeocodeFallbackState = {
+  available: false,
+  used: false,
+  coordinateSource: null,
+  coordinates: null,
+  address: "",
+  slot: null,
+  at: null
+};
 let savedPlacesStorageAfterSave = null;
 let saveButtonHandlerAttached = false;
 let routePreviewRendered = false;
@@ -8790,6 +8799,7 @@ function hydrateElements() {
     "managePlaceFavoriteBtn",
     "mobileResetPlacesBtn",
     "mobileUseLocationBtn",
+    "mobileUseMapCenterFallbackBtn",
     "routeSetupModal",
     "routeSetupModalBackdrop",
     "closeRouteSetupModalBtn",
@@ -20625,6 +20635,16 @@ function bindEvents() {
       if (mode === "saved") els.mobileSavedDestinationSelect?.focus();
     });
   });
+  els.mobileUseMapCenterFallbackBtn?.addEventListener("click", () => {
+    managePlacesGeocodeFallbackState = {
+      ...managePlacesGeocodeFallbackState,
+      used: true,
+      coordinateSource: "map_center_fallback",
+      coordinates: getCurrentMapCenterCoordinates(),
+      at: new Date().toISOString()
+    };
+    saveRoute("mobile", { useMapCenterFallback: true });
+  });
   els.mobileResetPlacesBtn?.addEventListener("click", () => {
     if (!window.confirm("Reset saved Home, Work, and Favorite places on this device?")) return;
     resetSavedPlaces();
@@ -21657,6 +21677,7 @@ function setManagePlacesSourceMode(mode = "") {
   if (savedGroup) savedGroup.hidden = mode !== "saved";
   if (saveGroup) saveGroup.hidden = !mode;
   if (useLocationBtn) useLocationBtn.hidden = mode !== "location";
+  if (mode !== "address" && els.mobileUseMapCenterFallbackBtn) els.mobileUseMapCenterFallbackBtn.hidden = true;
   [["manageSourceLocationBtn", "location"], ["manageSourceAddressBtn", "address"], ["manageSourceSavedBtn", "saved"]].forEach(([id, value]) => {
     const btn = document.getElementById(id);
     if (!btn) return;
@@ -21702,6 +21723,44 @@ function setManagePlacesValidationState(ok = null, reason = "not_checked", messa
     at: new Date().toISOString()
   };
   return managePlacesAddressValidationState;
+}
+
+function getCurrentMapCenterCoordinates() {
+  const mapInstance = typeof getGridlyMapInstance === "function" ? getGridlyMapInstance() : null;
+  const center = typeof mapInstance?.getCenter === "function" ? mapInstance.getCenter() : null;
+  return normalizeCoordinatePair(center?.lat, center?.lng);
+}
+
+function resetManagePlacesGeocodeFallback(options = {}) {
+  managePlacesGeocodeFallbackState = {
+    available: false,
+    used: options?.preserveUsed ? Boolean(managePlacesGeocodeFallbackState.used) : false,
+    coordinateSource: null,
+    coordinates: null,
+    address: "",
+    slot: null,
+    at: null
+  };
+  if (els.mobileUseMapCenterFallbackBtn) els.mobileUseMapCenterFallbackBtn.hidden = true;
+}
+
+function offerManagePlacesMapCenterFallback({ address = "", slot = "custom" } = {}) {
+  const coordinates = getCurrentMapCenterCoordinates();
+  const available = Boolean(coordinates);
+  managePlacesGeocodeFallbackState = {
+    available,
+    used: false,
+    coordinateSource: available ? "map_center_fallback" : null,
+    coordinates: coordinates ? { lat: coordinates.lat, lng: coordinates.lng } : null,
+    address: String(address || "").trim(),
+    slot: slot || null,
+    at: new Date().toISOString()
+  };
+  if (els.mobileUseMapCenterFallbackBtn) {
+    els.mobileUseMapCenterFallbackBtn.hidden = !available;
+    els.mobileUseMapCenterFallbackBtn.textContent = "Use Current Map Center for This Place";
+  }
+  return managePlacesGeocodeFallbackState;
 }
 
 function inferManagePlacesAddressSourceMode(sourceMode = "", address = "") {
@@ -21762,7 +21821,7 @@ function syncManagePlaceSlotsAndCta(targetType = "custom") {
   });
 }
 
-async function saveRoute(source = "desktop") {
+async function saveRoute(source = "desktop", options = {}) {
   let { home, work, button } = getRouteInputValues(source);
   const modalMode = source === "mobile" ? (els.routeSetupModal?.dataset.mode || "add") : "add";
   const isManageSave = source === "mobile" && modalMode === "manage";
@@ -21786,6 +21845,8 @@ async function saveRoute(source = "desktop") {
     address: String(work || "").trim()
   };
   lastManagePlacesSaveError = null;
+  const useMapCenterFallback = Boolean(options?.useMapCenterFallback);
+  if (!useMapCenterFallback) resetManagePlacesGeocodeFallback();
   savedPlacesStorageAfterSave = localStorage.getItem(SAVED_PLACES_STORAGE_KEY);
 
   const failSave = (message, label = "Fix entry", reason = "validation_failed", extra = {}) => {
@@ -21864,19 +21925,44 @@ async function saveRoute(source = "desktop") {
   if (normalizedType === "home" || normalizedType === "work") {
     id = normalizedType;
   }
-  const coordinateResolution = selectedSaved
+  let coordinateResolution = selectedSaved
     ? { coordinates: normalizeCoordinatePair(selectedSaved.lat, selectedSaved.lng), source: selectedSaved.source || "saved place" }
-    : await resolvePlaceCoordinates({
-        label: home,
-        address: work,
-        allowGeocode: true,
-        preferGeolocation: manageSourceMode === "location"
-      });
+    : null;
+  if (!coordinateResolution && useMapCenterFallback) {
+    const fallbackCoordinates = getCurrentMapCenterCoordinates();
+    if (fallbackCoordinates) {
+      coordinateResolution = { coordinates: fallbackCoordinates, source: "map_center_fallback" };
+      managePlacesGeocodeFallbackState = {
+        available: true,
+        used: true,
+        coordinateSource: "map_center_fallback",
+        coordinates: { lat: fallbackCoordinates.lat, lng: fallbackCoordinates.lng },
+        address: String(work || "").trim(),
+        slot: normalizedType,
+        at: new Date().toISOString()
+      };
+    }
+  }
+  if (!coordinateResolution) {
+    coordinateResolution = await resolvePlaceCoordinates({
+      label: home,
+      address: work,
+      allowGeocode: true,
+      preferGeolocation: manageSourceMode === "location"
+    });
+  }
   // Saved places must include valid coordinates before they are eligible for Route Watch routing.
   const coordinates = coordinateResolution?.coordinates || null;
   if (!coordinates) {
+    const fallbackState = isManageSave && (manageSourceMode === "address" || selectedSaveSourceAudit === "address_inferred_from_input")
+      ? offerManagePlacesMapCenterFallback({ address: work, slot: normalizedType })
+      : managePlacesGeocodeFallbackState;
     return failSave("We couldn't find that location. Try a full address or use My Location.", "Location not found", "coordinates_not_found", {
-      coordinateSource: coordinateResolution?.source || "null"
+      coordinateSource: coordinateResolution?.source || "null",
+      geocodeFailedFallbackAvailable: Boolean(fallbackState?.available),
+      geocodeFailedFallbackUsed: Boolean(useMapCenterFallback && managePlacesGeocodeFallbackState.used),
+      fallbackCoordinateSource: fallbackState?.coordinateSource || null,
+      fallbackCoordinates: fallbackState?.coordinates || null
     });
   }
   const createdAt = new Date().toISOString();
@@ -21918,8 +22004,15 @@ async function saveRoute(source = "desktop") {
     message: saveMessage,
     at: createdAt,
     savedPlaceId: id,
-    coordinateSource: coordinateResolution?.source || "unknown"
+    coordinateSource: coordinateResolution?.source || "unknown",
+    geocodeFailedFallbackAvailable: Boolean(managePlacesGeocodeFallbackState.available),
+    geocodeFailedFallbackUsed: coordinateResolution?.source === "map_center_fallback",
+    fallbackCoordinateSource: coordinateResolution?.source === "map_center_fallback" ? "map_center_fallback" : (managePlacesGeocodeFallbackState.coordinateSource || null),
+    fallbackCoordinates: coordinateResolution?.source === "map_center_fallback" ? { lat: coordinates.lat, lng: coordinates.lng } : (managePlacesGeocodeFallbackState.coordinates || null)
   };
+  if (coordinateResolution?.source === "map_center_fallback" && els.mobileUseMapCenterFallbackBtn) {
+    els.mobileUseMapCenterFallbackBtn.hidden = true;
+  }
   savedPlacesStorageAfterSave = localStorage.getItem(SAVED_PLACES_STORAGE_KEY);
   const savedButtonLabel = normalizedType === "home" ? "Home Saved" : normalizedType === "work" ? "Work Saved" : (modalMode === "manage" ? "Saved" : "Place Saved");
   flashButton(button, savedButtonLabel);
@@ -22860,6 +22953,10 @@ function attachSavedPlacesDebugGlobal() {
       lastSaveError: lastManagePlacesSaveError || lastValidationError,
       savedPlacesStorageAfterSave,
       addressValidationState: managePlacesAddressValidationState,
+      geocodeFailedFallbackAvailable: Boolean(managePlacesGeocodeFallbackState.available),
+      geocodeFailedFallbackUsed: Boolean(managePlacesGeocodeFallbackState.used),
+      fallbackCoordinateSource: managePlacesGeocodeFallbackState.coordinateSource || null,
+      fallbackCoordinates: managePlacesGeocodeFallbackState.coordinates || null,
       visualViewportHeight: window.visualViewport?.height || null,
       windowInnerHeight: window.innerHeight,
       modalRect: modal?.getBoundingClientRect?.() || null,
@@ -32568,6 +32665,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       selectedSaveSlot: selectedSlot,
       selectedSaveSource: selectedSource,
       addressValidationState: managePlacesAddressValidationState,
+      geocodeFailedFallbackAvailable: Boolean(managePlacesGeocodeFallbackState.available),
+      geocodeFailedFallbackUsed: Boolean(managePlacesGeocodeFallbackState.used),
+      fallbackCoordinateSource: managePlacesGeocodeFallbackState.coordinateSource || null,
+      fallbackCoordinates: managePlacesGeocodeFallbackState.coordinates || null,
       homeLabelResolved: homeDisplay.value,
       workLabelResolved: workDisplay.value,
       homeLabelSource: homeDisplay.source,
