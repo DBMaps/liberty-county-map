@@ -4641,6 +4641,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyRefreshAudit",
   "gridlyGeoAudit",
   "gridlyActiveIncidentAudit",
+  "gridlyIncidentSourceAudit",
   "gridlyDevPurgeRecentRoadHazards",
   "gridlyTestDataCleanupAudit",
   "gridlyClearTestData",
@@ -4715,6 +4716,7 @@ function exposeAllGridlyAuditHelpers() {
     gridlyRefreshAudit: typeof gridlyRefreshAudit === "function" ? gridlyRefreshAudit : null,
     gridlyGeoAudit: typeof gridlyGeoAudit === "function" ? gridlyGeoAudit : null,
     gridlyActiveIncidentAudit: typeof gridlyActiveIncidentAudit === "function" ? gridlyActiveIncidentAudit : null,
+    gridlyIncidentSourceAudit: typeof target?.gridlyIncidentSourceAudit === "function" ? target.gridlyIncidentSourceAudit : null,
     gridlyDevPurgeRecentRoadHazards: typeof gridlyDevPurgeRecentRoadHazards === "function" ? gridlyDevPurgeRecentRoadHazards : null,
     gridlyTestDataCleanupAudit: typeof target?.gridlyTestDataCleanupAudit === "function" ? target.gridlyTestDataCleanupAudit : null,
     gridlyClearTestData: typeof target?.gridlyClearTestData === "function" ? target.gridlyClearTestData : null,
@@ -11962,6 +11964,194 @@ const gridlyActiveIncidentAudit = function gridlyActiveIncidentAudit() {
   const audit = { generatedRoadIncidents, summary };
   console.info("gridlyActiveIncidentAudit", audit);
   return audit;
+};
+
+
+function gridlyCountArrayItems(value) {
+  return Array.isArray(value) ? value.length : 0;
+}
+
+function gridlyIncidentAuditSampleReport(report = {}) {
+  return {
+    id: report?.id || null,
+    crossingId: report?.crossingId || report?.crossing_id || null,
+    reportKind: report?.reportKind || null,
+    type: report?.type || report?.report_type || null,
+    source: report?.source || null,
+    submittedAt: report?.submittedAt || report?.created_at || null,
+    expiresAt: report?.expiresAt || report?.expires_at || null,
+    expired: Boolean(report?.expired),
+    lat: Number.isFinite(Number(report?.lat ?? report?.latitude ?? report?.rawLat)) ? Number(report?.lat ?? report?.latitude ?? report?.rawLat) : null,
+    lng: Number.isFinite(Number(report?.lng ?? report?.lon ?? report?.longitude ?? report?.rawLng)) ? Number(report?.lng ?? report?.lon ?? report?.longitude ?? report?.rawLng) : null,
+    clusterKey: typeof getHazardClusterKey === "function" ? getHazardClusterKey(report) : null,
+    title: report?.title || null
+  };
+}
+
+function gridlyBuildIncidentSourceTrace(options = {}) {
+  const now = new Date();
+  const liveHazardIncidents = typeof getLiveHazardIncidents === "function" ? getLiveHazardIncidents() : [];
+  const safeActiveReports = Array.isArray(activeReports) ? activeReports : [];
+  const safeActiveHazards = Array.isArray(activeHazards) ? activeHazards : [];
+  const safeUnifiedIncidents = typeof getUnifiedIncidents === "function" ? getUnifiedIncidents() : [];
+  const safeActiveUnifiedIncidents = typeof getActiveUnifiedIncidents === "function" ? getActiveUnifiedIncidents() : [];
+  const txdotFutureIncidents = typeof futureTxdotIncidents === "function" ? futureTxdotIncidents() : [];
+  const txdotFutureConstruction = typeof futureTxdotConstruction === "function" ? futureTxdotConstruction() : [];
+  const txdotServiceItems = Array.isArray(window?.gridlyTxdot?.getRoadConditions?.()) ? window.gridlyTxdot.getRoadConditions() : [];
+  const historicalState = typeof gridlyReadEventHistoryState === "function" ? gridlyReadEventHistoryState() : gridlyCreateEmptyEventHistoryState();
+  const historicalHazardEvents = Array.isArray(historicalState?.hazardEvents) ? historicalState.hazardEvents : [];
+  const historicalCrossingEvents = Array.isArray(historicalState?.crossingEvents) ? historicalState.crossingEvents : [];
+  const alertsSnapshot = typeof window?.getAlertsSurfaceSnapshot === "function" ? window.getAlertsSurfaceSnapshot() : null;
+  const latestAlerts = Array.isArray(window?.__gridlyLatestAlertsForRender) ? window.__gridlyLatestAlertsForRender : [];
+  const alertItems = Array.isArray(alertsSnapshot?.alerts) ? alertsSnapshot.alerts : latestAlerts;
+  const sourceBreakdown = {};
+  const sourceIncidentBreakdown = {};
+  const liveActiveHazards = safeActiveHazards.filter((hazard) => hazard && !hazard.expired && hazard.type !== "hazard_cleared");
+
+  liveHazardIncidents.forEach((incident) => {
+    const reports = Array.isArray(incident?.reports)
+      ? incident.reports
+      : liveActiveHazards.filter((hazard) => getHazardClusterKey(hazard) === incident.key);
+    const incidentSources = new Set();
+    reports.forEach((report) => {
+      const source = String(report?.source || "unknown").toLowerCase() || "unknown";
+      sourceBreakdown[source] = (sourceBreakdown[source] || 0) + 1;
+      incidentSources.add(source);
+    });
+    incidentSources.forEach((source) => {
+      sourceIncidentBreakdown[source] = (sourceIncidentBreakdown[source] || 0) + 1;
+    });
+  });
+
+  const roadUnifiedIncidents = (Array.isArray(safeUnifiedIncidents) ? safeUnifiedIncidents : [])
+    .filter((incident) => String(incident?.id || "").startsWith("road-"));
+  const roadActiveUnifiedIncidents = (Array.isArray(safeActiveUnifiedIncidents) ? safeActiveUnifiedIncidents : [])
+    .filter((incident) => String(incident?.id || "").startsWith("road-"));
+  const activeReportHazardMatches = safeActiveReports.filter((report) => String(report?.reportKind || "").toLowerCase() === "hazard" || Object.prototype.hasOwnProperty.call(HAZARD_TYPES, String(report?.type || report?.report_type || "").toLowerCase()));
+  const historicalOpenHazards = historicalHazardEvents.filter((event) => !event?.clearedAt);
+  const cachedRoadAlerts = latestAlerts.filter((alert) => {
+    const id = String(alert?.id || alert?.incidentId || alert?.reportId || "");
+    const rawId = String(alert?.raw?.id || alert?.raw?.incidentId || alert?.raw?.reportId || "");
+    const kind = String(alert?.reportKind || alert?.raw?.reportKind || "").toLowerCase();
+    return id.startsWith("road-") || rawId.startsWith("road-") || kind === "hazard" || kind === "road";
+  });
+  const alertRoadItems = alertItems.filter((alert) => {
+    const id = String(alert?.id || alert?.incidentId || alert?.reportId || "");
+    const rawId = String(alert?.raw?.id || alert?.raw?.incidentId || alert?.raw?.reportId || "");
+    const kind = String(alert?.reportKind || alert?.raw?.reportKind || "").toLowerCase();
+    return id.startsWith("road-") || rawId.startsWith("road-") || kind === "hazard" || kind === "road";
+  });
+  const incidentSamples = liveHazardIncidents.slice(0, Math.max(1, Math.min(10, Number(options?.sampleLimit) || 10))).map((incident) => {
+    const reports = Array.isArray(incident?.reports)
+      ? incident.reports
+      : liveActiveHazards.filter((hazard) => getHazardClusterKey(hazard) === incident.key);
+    const latestReport = incident?.latestReport || reports[0] || null;
+    const roadIncidentId = `road-${incident?.key || "unknown"}`;
+    const matchingUnified = roadUnifiedIncidents.find((item) => String(item?.id || "") === roadIncidentId) || null;
+    const matchingAlerts = alertItems.filter((alert) => String(alert?.id || alert?.raw?.id || alert?.incidentId || "") === roadIncidentId).slice(0, 3);
+    const matchingHistory = historicalHazardEvents.filter((event) => {
+      const eventId = String(event?.incidentId || "");
+      return reports.some((report) => eventId === String(report?.id || report?.crossingId || report?.crossing_id || ""));
+    }).slice(0, 3);
+    return {
+      roadIncidentId,
+      clusterKey: incident?.key || null,
+      reportCount: reports.length,
+      sourceReportIds: reports.map((report) => report?.id).filter(Boolean),
+      sourceReportTypes: reports.map((report) => String(report?.type || report?.report_type || "unknown").toLowerCase()),
+      sourceReportSources: [...new Set(reports.map((report) => String(report?.source || "unknown").toLowerCase()))],
+      lifecycleState: latestReport ? getIncidentLifecycleState(latestReport, now) : "unknown",
+      fromActiveHazards: reports.length,
+      fromActiveReports: activeReportHazardMatches.filter((report) => reports.some((hazard) => String(hazard?.id || "") === String(report?.id || ""))).length,
+      fromUnifiedIncidents: Boolean(matchingUnified),
+      fromRenderedAlerts: matchingAlerts.length,
+      fromHistoricalEvents: matchingHistory.length,
+      latestReport: gridlyIncidentAuditSampleReport(latestReport),
+      alertSamples: matchingAlerts.map((alert) => ({
+        id: alert?.id || null,
+        title: alert?.resolvedHeadline || alert?.title || alert?.localizedSummary || null,
+        reportKind: alert?.reportKind || alert?.raw?.reportKind || null,
+        rawId: alert?.raw?.id || null,
+        source: alert?.source || alert?.raw?.source || null
+      })),
+      historicalEventSamples: matchingHistory.map((event) => ({
+        incidentId: event?.incidentId || null,
+        hazardType: event?.hazardType || null,
+        createdAt: event?.createdAt || null,
+        clearedAt: event?.clearedAt || null,
+        roadName: event?.roadName || null
+      }))
+    };
+  });
+
+  const audit = {
+    generatedRoadIncidents: liveHazardIncidents.length,
+    sourceBreakdown: {
+      sourceRowsBySource: sourceBreakdown,
+      generatedIncidentsBySource: sourceIncidentBreakdown,
+      pipeline: "activeHazards[] -> getLiveHazardIncidents() -> getUnifiedIncidents() road-* -> buildCommuteConsequenceIntelligence()/getAlertsSurfaceSnapshot() -> Alerts"
+    },
+    fromActiveReports: {
+      sourceRows: activeReportHazardMatches.length,
+      activeReportsTotal: safeActiveReports.length,
+      generatedRoadIncidents: 0,
+      note: "getLiveHazardIncidents() reads activeHazards[], not activeReports[]."
+    },
+    fromActiveHazards: {
+      sourceRows: liveActiveHazards.length,
+      activeHazardsTotal: safeActiveHazards.length,
+      generatedRoadIncidents: liveHazardIncidents.length,
+      clusterKeys: liveHazardIncidents.map((incident) => incident?.key).filter(Boolean)
+    },
+    fromSharedReports: {
+      sourceRows: safeActiveHazards.length,
+      activeSourceRows: liveActiveHazards.length,
+      generatedRoadIncidents: liveHazardIncidents.length,
+      lastLoadSharedReportsSuccessAt: gridlyNetworkAuditState?.loadSharedReports?.lastSuccessAt || null,
+      lastLoadSharedReportsSuccessIso: gridlyNetworkAuditState?.loadSharedReports?.lastSuccessAt ? new Date(gridlyNetworkAuditState.loadSharedReports.lastSuccessAt).toISOString() : null,
+      sourceOwner: "loadSharedReports() selects non-expired Supabase reports, normalizeReports() marks road hazard rows, then assigns activeHazards."
+    },
+    fromTxDot: {
+      futureTxdotIncidents: gridlyCountArrayItems(txdotFutureIncidents),
+      futureTxdotConstruction: gridlyCountArrayItems(txdotFutureConstruction),
+      serviceRoadConditions: gridlyCountArrayItems(txdotServiceItems),
+      generatedRoadIncidents: 0,
+      note: "futureTxdotIncidents() and futureTxdotConstruction() are separate getUnifiedIncidents() sources and do not create road-* generated incidents."
+    },
+    fromHistoricalEvents: {
+      hazardEvents: historicalHazardEvents.length,
+      openHazardEvents: historicalOpenHazards.length,
+      crossingEvents: historicalCrossingEvents.length,
+      generatedRoadIncidents: 0,
+      note: "Event history is analytics/history storage; getLiveHazardIncidents() does not read it."
+    },
+    fromDerivedIntelligence: {
+      unifiedIncidents: gridlyCountArrayItems(safeUnifiedIncidents),
+      roadUnifiedIncidents: roadUnifiedIncidents.length,
+      activeUnifiedIncidents: gridlyCountArrayItems(safeActiveUnifiedIncidents),
+      activeRoadUnifiedIncidents: roadActiveUnifiedIncidents.length,
+      alertsSnapshotCount: gridlyCountArrayItems(alertItems),
+      roadAlertsSnapshotCount: alertRoadItems.length,
+      generatedRoadIncidents: roadUnifiedIncidents.length,
+      note: "Derived intelligence consumes generated road-* unified incidents for alert surfaces; it is not the root source."
+    },
+    fromCachedState: {
+      latestAlertsForRender: latestAlerts.length,
+      latestRoadAlertsForRender: cachedRoadAlerts.length,
+      alertsForRenderSample: gridlyCountArrayItems(window?.__gridlyAlertsForRenderSample),
+      refreshCycleCacheActive: Boolean(gridlyRefreshCycleCache),
+      refreshAuditLastRefreshAt: gridlyRefreshAuditState?.lastRefreshAt || null,
+      generatedRoadIncidents: 0,
+      note: "Cached alert arrays/DOM can keep an alert surface visible until rerender, but generatedRoadIncidents are recomputed from activeHazards."
+    },
+    incidentSamples
+  };
+  console.info("gridlyIncidentSourceAudit", audit);
+  return audit;
+}
+
+window.gridlyIncidentSourceAudit = function gridlyIncidentSourceAudit(options = {}) {
+  return gridlyBuildIncidentSourceTrace(options);
 };
 
 const gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoadHazards(options = {}) {
