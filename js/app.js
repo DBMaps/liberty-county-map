@@ -2539,7 +2539,7 @@ const REPORT_EXPIRATION_MINUTES = 90;
 const RECENTLY_CLEARED_WINDOW_MINUTES = 20;
 const LIVE_REFRESH_MS = 15000;
 const APP_BUILD = "6D0";
-const GRIDLY_APP_VERSION_LABEL = "Gridly V199";
+const GRIDLY_APP_VERSION_LABEL = "Gridly V204.0A";
 const GRIDLY_APP_BUILD_LABEL = "Build 1710";
 const DEFAULT_NEARBY_RADIUS_MILES = 8;
 const PRIORITY_NEARBY_MILES = 3;
@@ -35353,6 +35353,207 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
 
     document.body.classList.remove("modal-open", "report-pulse");
   }
+
+
+  const gridlyLiveServerRuntimeRecoveryState = {
+    lastResetAt: 0,
+    lastResetSource: "not_run",
+    lastResetActions: [],
+    lastResetErrors: [],
+    mobileSurfaceResetCompleted: false
+  };
+
+  function gridlyIsRuntimeElementVisible(el) {
+    if (!(el instanceof HTMLElement) || el.hidden) return false;
+    const style = getComputedStyle(el);
+    if (style.display === "none" || style.visibility === "hidden" || Number(style.opacity || "1") === 0) return false;
+    const rect = el.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.right > 0 && rect.top < window.innerHeight && rect.left < window.innerWidth;
+  }
+
+  function gridlyCollectDuplicateElementIds() {
+    const counts = new Map();
+    document.querySelectorAll("[id]").forEach((node) => {
+      const id = String(node.id || "").trim();
+      if (!id) return;
+      counts.set(id, (counts.get(id) || 0) + 1);
+    });
+    return Array.from(counts.entries())
+      .filter(([, count]) => count > 1)
+      .map(([id, count]) => ({ id, count }));
+  }
+
+  function gridlyCollectVisibleLegacySurfaces() {
+    const selectors = [
+      "#dashboardSection",
+      ".future-map-hero",
+      ".mobile-home-cards",
+      ".mobile-community-card",
+      ".mobile-corridor-intel-card",
+      ".desktop-command-strip",
+      ".desktop-left-rail",
+      ".future-hero-overlay",
+      "#reportSection",
+      "#alertsSection",
+      "#settingsModal",
+      "#routeSetupModal",
+      "#gridlyMobileRouteQuickPanel",
+      "#gridlyHazardPanel",
+      "#mobileNativeSurfaceLayer",
+      "#gridlyTacticalDockSheet"
+    ];
+    return selectors.flatMap((selector) => Array.from(document.querySelectorAll(selector)).map((el) => ({ selector, el })))
+      .filter(({ el }) => gridlyIsRuntimeElementVisible(el) && !el.closest?.("#gridlyPortraitV2"))
+      .map(({ selector, el }) => ({
+        selector,
+        id: el.id || "",
+        className: String(el.className || "").trim(),
+        dataAction: el.getAttribute("data-action") || "",
+        dataActiveSheet: el.getAttribute("data-active-sheet") || ""
+      }));
+  }
+
+  function gridlyLiveReloadDetected() {
+    const srcSignals = Array.from(document.scripts || []).some((script) => /live-?reload|live-?server|35729|\/ws\b|socket\.io/i.test(script.src || ""));
+    const resourceSignals = typeof performance !== "undefined" && typeof performance.getEntriesByType === "function"
+      ? performance.getEntriesByType("resource").some((entry) => /live-?reload|live-?server|35729|\/ws\b|socket\.io/i.test(entry.name || ""))
+      : false;
+    return Boolean(srcSignals || resourceSignals || window.LiveReload || window.__liveReload || window.__gridlyLiveReloadDetected);
+  }
+
+  function gridlyGetRuntimeStaleFlags() {
+    const sheet = document.getElementById("gridlyPortraitV2Sheet");
+    const backdrop = document.getElementById("gridlyPortraitV2SheetBackdrop");
+    const staleFlags = [];
+    const activeSheetValue = activeSheet || sheet?.dataset?.activeSheet || "";
+    if (activeSheetValue && !gridlyIsRuntimeElementVisible(sheet)) staleFlags.push("active_sheet_points_to_hidden_sheet");
+    if (gridlyActiveSurface) staleFlags.push(`gridlyActiveSurface:${gridlyActiveSurface}`);
+    if (mobileUiMode && mobileUiMode !== "live") staleFlags.push(`mobileUiMode:${mobileUiMode}`);
+    if (document.body?.classList.contains("modal-open") && !gridlyIsRuntimeElementVisible(sheet) && !gridlyIsRuntimeElementVisible(backdrop)) staleFlags.push("body_modal_open_without_visible_sheet");
+    if (document.body?.classList.contains("report-pulse")) staleFlags.push("body_report_pulse");
+    if (reportingState?.reportModeActive || reportingState?.placementModeActive) staleFlags.push("reporting_state_active");
+    if (gridlyTxdotStartupFetchAttempted) staleFlags.push("txdot_startup_attempted");
+    if (gridlyTxdotStartupFetchPromise) staleFlags.push("txdot_startup_promise_pending");
+    return staleFlags;
+  }
+
+  function gridlyLiveServerRuntimeAudit() {
+    const portraitRoots = Array.from(document.querySelectorAll("#gridlyPortraitV2"));
+    const portraitRoot = portraitRoots[0] || null;
+    const sheet = document.getElementById("gridlyPortraitV2Sheet");
+    const duplicateElementIds = gridlyCollectDuplicateElementIds();
+    const duplicatePortraitRoots = Math.max(0, portraitRoots.length - 1);
+    const visibleLegacySurfaces = gridlyCollectVisibleLegacySurfaces();
+    const activeSheetValue = activeSheet || sheet?.dataset?.activeSheet || "";
+    const staleRuntimeFlags = gridlyGetRuntimeStaleFlags();
+    const blockers = [];
+    const portraitRootVisible = gridlyIsRuntimeElementVisible(portraitRoot);
+    const portraitContentNodeCount = portraitRoot ? portraitRoot.querySelectorAll("*").length : 0;
+    const cachedRows = typeof window.gridlyTxdot?.getRoadConditions === "function" ? window.gridlyTxdot.getRoadConditions() : gridlyReadCachedTxdotRows();
+
+    if (!portraitRoot) blockers.push("portrait_root_missing");
+    if (portraitRoot && !portraitRootVisible) blockers.push("portrait_root_not_visible");
+    if (portraitRoot && portraitContentNodeCount === 0) blockers.push("portrait_root_empty");
+    if (duplicatePortraitRoots > 0) blockers.push("duplicate_portrait_roots");
+    if (duplicateElementIds.length) blockers.push("duplicate_element_ids");
+    if (visibleLegacySurfaces.length) blockers.push("visible_legacy_surfaces");
+    if (staleRuntimeFlags.length) blockers.push("stale_runtime_flags");
+
+    const resetAvailable = {
+      gridlyResetStaleRuntimeState: typeof window.gridlyResetStaleRuntimeState === "function",
+      closePortraitV2Sheet: typeof closePortraitV2Sheet === "function",
+      activateGridlyPortraitV2StartupOwner: typeof activateGridlyPortraitV2StartupOwner === "function",
+      applyPortraitV2SurfaceContainment: typeof applyPortraitV2SurfaceContainment === "function",
+      refreshReportHazardViews: typeof refreshReportHazardViews === "function",
+      renderUnifiedIncidents: typeof renderUnifiedIncidents === "function"
+    };
+
+    return {
+      appVersion: `${GRIDLY_APP_VERSION_LABEL} ${GRIDLY_APP_BUILD_LABEL}`,
+      liveReloadDetected: gridlyLiveReloadDetected(),
+      portraitRootFound: Boolean(portraitRoot),
+      portraitRootVisible,
+      portraitContentNodeCount,
+      mobileSurfaceResetCompleted: Boolean(gridlyLiveServerRuntimeRecoveryState.mobileSurfaceResetCompleted),
+      activeSheet: activeSheetValue || null,
+      staleRuntimeFlags,
+      txdotStartupEnabled: gridlyIsTxdotStartupFetchEnabled(),
+      txdotStartupAttempted: Boolean(gridlyTxdotStartupFetchAttempted || window.gridlyTxdotState?.hasFetched || window.gridlyTxdotState?.lastFetchTime),
+      cachedTxdotRows: Array.isArray(cachedRows) ? cachedRows.length : 0,
+      duplicateElementIds,
+      duplicatePortraitRoots,
+      visibleLegacySurfaces,
+      resetFunctionAvailability: resetAvailable,
+      blockers,
+      recommendation: blockers.length
+        ? "Run window.gridlyResetStaleRuntimeState() once, then rerun window.gridlyLiveServerRuntimeAudit(). If portraitRootVisible stays false or duplicate roots remain, close the Live Server tab/session and reopen from VS Code."
+        : "No stale portrait runtime blockers detected in the current tab."
+    };
+  }
+
+  function gridlyResetStaleRuntimeState() {
+    const actions = [];
+    const errors = [];
+    const record = (action, fn) => {
+      try {
+        fn();
+        actions.push(action);
+      } catch (error) {
+        errors.push(`${action}: ${error?.message || error}`);
+      }
+    };
+
+    record("clear_active_sheet_flag", () => { activeSheet = ""; });
+    record("clear_surface_owner_flags", () => {
+      if (gridlyActiveSurface === "report" || gridlyActiveSurface === "route" || gridlyActiveSurface === "alerts" || gridlyActiveSurface === "settings" || gridlyActiveSurface === "layers") gridlyActiveSurface = null;
+      if (mobileUiMode && mobileUiMode !== "live") setMobileUiMode("live", { silent: true });
+    });
+    record("clear_reporting_overlay_flags", () => {
+      if (typeof updateReportingState === "function") updateReportingState({ reportModeActive: false, placementModeActive: false });
+      selectedV2HazardType = "";
+      selectedQuickHazardType = "";
+      pendingHazardPlacement = null;
+      document.body?.classList.remove("modal-open", "report-pulse");
+    });
+    record("clear_txdot_startup_attempt_flags", () => {
+      gridlyTxdotStartupFetchAttempted = false;
+      gridlyTxdotStartupFetchPromise = null;
+      if (window.gridlyTxdotState && typeof window.gridlyTxdotState === "object") {
+        delete window.gridlyTxdotState.hasFetched;
+        delete window.gridlyTxdotState.lastFetchTime;
+      }
+    });
+    record("close_v2_sheet_and_backdrop", () => closePortraitV2Sheet());
+    record("hide_transient_mobile_overlays", () => {
+      document.querySelectorAll("#gridlyMobileRouteQuickPanel, #gridlyHazardPanel, #mobileNativeSurfaceLayer, #gridlyTacticalDockSheet").forEach((el) => {
+        el.classList.remove("visible", "active", "open", "is-open");
+        el.hidden = true;
+        el.style.display = "none";
+        el.style.pointerEvents = "none";
+      });
+      document.getElementById("gridlyPortraitV2Sheet")?.removeAttribute("data-active-sheet");
+    });
+    record("rerun_safe_portrait_activation", () => activateGridlyPortraitV2StartupOwner("manual_stale_runtime_reset"));
+    record("rerun_safe_portrait_containment", () => applyPortraitV2SurfaceContainment());
+
+    gridlyLiveServerRuntimeRecoveryState.lastResetAt = Date.now();
+    gridlyLiveServerRuntimeRecoveryState.lastResetSource = "gridlyResetStaleRuntimeState";
+    gridlyLiveServerRuntimeRecoveryState.lastResetActions = actions.slice();
+    gridlyLiveServerRuntimeRecoveryState.lastResetErrors = errors.slice();
+    gridlyLiveServerRuntimeRecoveryState.mobileSurfaceResetCompleted = errors.length === 0;
+
+    const audit = gridlyLiveServerRuntimeAudit();
+    return {
+      ok: errors.length === 0,
+      actions,
+      errors,
+      preserved: ["settings", "saved places", "analytics", "telemetry", "reports", "Supabase data", "cached TxDOT rows"],
+      audit
+    };
+  }
+
+  window.gridlyLiveServerRuntimeAudit = gridlyLiveServerRuntimeAudit;
+  window.gridlyResetStaleRuntimeState = gridlyResetStaleRuntimeState;
 
   window.gridlySettingsVisibilityAudit = function gridlySettingsVisibilityAudit() {
     const isElementVisible = (el) => {
