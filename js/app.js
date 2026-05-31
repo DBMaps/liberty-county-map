@@ -4121,6 +4121,8 @@ let lastSavedPlaceResult = null;
 let lastValidationError = null;
 let lastManagePlacesSaveAttempt = null;
 let lastManagePlacesSaveError = null;
+let managePlacesAddressValidationState = { ok: null, reason: "not_checked", message: "" };
+let savedPlacesStorageAfterSave = null;
 let saveButtonHandlerAttached = false;
 let routePreviewRendered = false;
 let routePreviewLayerExists = false;
@@ -8781,6 +8783,7 @@ function hydrateElements() {
     "mobileWorkInput",
     "mobileSavedDestinationSelect",
     "mobileSaveRouteBtn",
+    "managePlacesSaveStatus",
     "managePlaceSlotRow",
     "managePlaceHomeBtn",
     "managePlaceWorkBtn",
@@ -20571,6 +20574,7 @@ function bindEvents() {
   bindGridlySettingsPreferences();
   if (els.mobileSaveRouteBtn) {
     saveButtonHandlerAttached = true;
+    els.mobileSaveRouteBtn.dataset.savePlaceBound = "1";
     els.mobileSaveRouteBtn.addEventListener("click", () => {
       saveRoute("mobile");
     });
@@ -20585,20 +20589,31 @@ function bindEvents() {
     els[id]?.addEventListener("click", () => {
       if (!els.routeSetupModal) return;
       els.routeSetupModal.dataset.prefillType = type;
+      const state = getSavedPlacesState();
+      const activePlace = type === "home" || type === "work" ? state[type] : null;
       if (els.mobileHomeInput) {
-        els.mobileHomeInput.value = type === "home" ? "Home" : type === "work" ? "Work" : "";
+        els.mobileHomeInput.value = activePlace?.name || activePlace?.label || (type === "home" ? "Home" : type === "work" ? "Work" : "");
         els.mobileHomeInput.focus();
       }
+      if (els.mobileWorkInput) els.mobileWorkInput.value = activePlace?.address || "";
+      setManagePlacesSourceMode("");
+      setManagePlacesSaveStatus("");
+      setManagePlacesValidationState(null, "not_checked", "");
       syncManagePlaceSlotsAndCta(type);
     });
   });
   [["manageSourceLocationBtn", "location"], ["manageSourceAddressBtn", "address"], ["manageSourceSavedBtn", "saved"]].forEach(([id, mode]) => {
     els[id]?.addEventListener("click", () => {
       setManagePlacesSourceMode(mode);
+      setManagePlacesSaveStatus("");
+      setManagePlacesValidationState(null, "not_checked", "");
       if (mode === "location") {
-        if (els.mobileWorkInput && !els.mobileWorkInput.value.trim()) els.mobileWorkInput.value = "Current location";
+        if (els.mobileWorkInput) els.mobileWorkInput.value = "Current location";
       }
-      if (mode === "address") els.mobileWorkInput?.focus();
+      if (mode === "address") {
+        if (els.mobileWorkInput && els.mobileWorkInput.value.trim() === "Current location") els.mobileWorkInput.value = "";
+        els.mobileWorkInput?.focus();
+      }
       if (mode === "saved") els.mobileSavedDestinationSelect?.focus();
     });
   });
@@ -21628,7 +21643,8 @@ function setManagePlacesSourceMode(mode = "") {
   const saveGroup = document.getElementById("managePlacesSaveGroup");
   const sourceGroup = document.getElementById("managePlacesSourceGroup");
   const useLocationBtn = els.mobileUseLocationBtn;
-  if (sourceGroup) sourceGroup.hidden = !mode;
+  const isManageMode = els.routeSetupModal?.dataset?.mode === "manage";
+  if (sourceGroup) sourceGroup.hidden = !isManageMode;
   if (addressGroup) addressGroup.hidden = mode !== "address";
   if (savedGroup) savedGroup.hidden = mode !== "saved";
   if (saveGroup) saveGroup.hidden = !mode;
@@ -21662,6 +21678,55 @@ function getManageModalTargetType(nameValue = "") {
   return "custom";
 }
 
+function setManagePlacesSaveStatus(message = "", state = "") {
+  const statusEl = els.managePlacesSaveStatus || document.getElementById("managePlacesSaveStatus");
+  if (!statusEl) return;
+  statusEl.textContent = message;
+  if (state) statusEl.dataset.state = state;
+  else statusEl.removeAttribute("data-state");
+}
+
+function setManagePlacesValidationState(ok = null, reason = "not_checked", message = "") {
+  managePlacesAddressValidationState = {
+    ok,
+    reason: String(reason || "not_checked"),
+    message: String(message || ""),
+    at: new Date().toISOString()
+  };
+  return managePlacesAddressValidationState;
+}
+
+function validateManagePlacesAddressValue(address = "", sourceMode = "") {
+  const normalized = String(address || "").trim();
+  if (sourceMode === "address" && gridlyIsZipOnlyValue(normalized)) {
+    return setManagePlacesValidationState(false, "zip_only", "Please enter a full address or choose a saved place.");
+  }
+  if (sourceMode === "address" && !normalized) {
+    return setManagePlacesValidationState(false, "missing_address", "Please enter a full address or choose a saved place.");
+  }
+  return setManagePlacesValidationState(true, "valid", "");
+}
+
+function selectRouteWatchPlaceAfterSave(savedType = "custom", savedId = "") {
+  const places = getSavedPlaces();
+  const currentId = getSelectedPlaceId();
+  const current = places.find((place) => place.id === currentId && place.id !== "home");
+  const preferred = savedType === "home"
+    ? (current || places.find((place) => place.id === "work") || places.find((place) => place.id !== "home"))
+    : places.find((place) => place.id === savedId) || places.find((place) => place.id === "work") || places.find((place) => place.id !== "home");
+  if (preferred?.id) setSelectedPlaceId(preferred.id);
+  else if (savedType !== "home" && savedId) setSelectedPlaceId(savedId);
+}
+
+function refreshSavedPlaceSurfacesAfterSave(reason = "save_place") {
+  loadSavedRoute();
+  initDailyDestinationHero();
+  updateRouteIntelligence();
+  updateGrowthWidgets();
+  if (typeof renderGridlySettingsPanel === "function") renderGridlySettingsPanel();
+  if (typeof window.gridlyRefreshRouteButtonStates === "function") window.gridlyRefreshRouteButtonStates(reason);
+}
+
 function syncManagePlaceSlotsAndCta(targetType = "custom") {
   if (els.mobileSaveRouteBtn) {
     els.mobileSaveRouteBtn.textContent = targetType === "home" ? "Save Home" : targetType === "work" ? "Save Work" : "Save Place";
@@ -21680,42 +21745,79 @@ function syncManagePlaceSlotsAndCta(targetType = "custom") {
 async function saveRoute(source = "desktop") {
   let { home, work, button } = getRouteInputValues(source);
   const modalMode = source === "mobile" ? (els.routeSetupModal?.dataset.mode || "add") : "add";
-  const manageSourceMode = source === "mobile" && modalMode === "manage" ? managePlacesSourceMode : "";
+  const isManageSave = source === "mobile" && modalMode === "manage";
+  const manageSourceMode = isManageSave ? managePlacesSourceMode : "";
+  const prefillType = source === "mobile" ? (els.routeSetupModal?.dataset.prefillType || "custom") : "custom";
   lastManagePlacesSaveAttempt = {
     at: new Date().toISOString(),
     source,
     modalMode,
     manageSourceMode,
-    selectedSlot: source === "mobile" ? (els.routeSetupModal?.dataset.prefillType || "custom") : "custom",
+    selectedSlot: prefillType,
     placeName: String(home || "").trim(),
     address: String(work || "").trim()
   };
   lastManagePlacesSaveError = null;
-  if (manageSourceMode === "saved") {
-    const selectedSaved = getSavedPlaces().find((place) => place.id === (els.mobileSavedDestinationSelect?.value || ""));
-    if (selectedSaved) {
-      home = home || selectedSaved.name || selectedSaved.label;
-      work = work || selectedSaved.address || selectedSaved.name;
+  savedPlacesStorageAfterSave = localStorage.getItem(SAVED_PLACES_STORAGE_KEY);
+
+  const failSave = (message, label = "Fix entry", reason = "validation_failed", extra = {}) => {
+    lastValidationError = message;
+    lastManagePlacesSaveError = message;
+    setManagePlacesValidationState(false, reason, message);
+    flashButton(button, label);
+    setConfirmation(message, "error");
+    setManagePlacesSaveStatus(message, "error");
+    lastSavedPlaceResult = {
+      ok: false,
+      type: prefillType,
+      message,
+      at: new Date().toISOString(),
+      ...extra
+    };
+    savedPlacesStorageAfterSave = localStorage.getItem(SAVED_PLACES_STORAGE_KEY);
+    return false;
+  };
+
+  if (isManageSave) {
+    if (!["home", "work", "custom", "favorite"].includes(prefillType)) {
+      return failSave("Choose Home, Work, or Favorite before saving.", "Choose slot", "missing_slot");
+    }
+    if (!["location", "address", "saved"].includes(manageSourceMode)) {
+      return failSave("Choose Current Location, Enter Address, or Choose Saved Place before saving.", "Choose source", "missing_source");
     }
   }
-  if (manageSourceMode === "location") {
-    home = home || (els.routeSetupModal?.dataset.prefillType === "home" ? "Home" : els.routeSetupModal?.dataset.prefillType === "work" ? "Work" : "Favorite");
-    work = work || "Current location";
+
+  let selectedSaved = null;
+  if (manageSourceMode === "saved") {
+    selectedSaved = getSavedPlaces().find((place) => place.id === (els.mobileSavedDestinationSelect?.value || ""));
+    if (!selectedSaved) {
+      return failSave("Please choose a saved place before saving.", "Choose place", "missing_saved_place");
+    }
+    home = prefillType === "home" ? "Home" : prefillType === "work" ? "Work" : (selectedSaved.name || selectedSaved.label || "Favorite");
+    work = selectedSaved.address || selectedSaved.name || selectedSaved.label || "Saved place";
   }
-  const prefillType = source === "mobile" ? (els.routeSetupModal?.dataset.prefillType || "custom") : "custom";
+  if (manageSourceMode === "location") {
+    if (!userLocation) {
+      return failSave("Current location is unavailable. Please enter a full address or choose a saved place.", "Location needed", "location_unavailable");
+    }
+    home = home || (prefillType === "home" ? "Home" : prefillType === "work" ? "Work" : "Favorite");
+    work = "Current location";
+  }
+
+  const addressValidation = validateManagePlacesAddressValue(work, manageSourceMode || (source === "desktop" ? "address" : ""));
+  if (addressValidation.ok === false) {
+    return failSave(addressValidation.message, "Full address", addressValidation.reason);
+  }
+
   if (!home || !work) {
-    const errorMessage = "Missing place name or address. Please fill both fields.";
-    lastValidationError = errorMessage;
-    flashButton(button, "Add name + place");
-    setConfirmation(errorMessage, "error");
-    lastSavedPlaceResult = { ok: false, message: errorMessage, at: new Date().toISOString() };
-    lastManagePlacesSaveError = errorMessage;
-    return;
+    return failSave("Missing place name or address. Please fill both fields.", "Add name + place", "missing_name_or_address");
   }
   lastValidationError = null;
+  setManagePlacesValidationState(true, "valid", "");
+
   let normalizedType = prefillType === "favorite" ? "custom" : prefillType;
   const current = normalizeSavedPlaces();
-  if (source === "mobile" && modalMode === "manage" && normalizedType === "custom") {
+  if (source === "mobile" && modalMode !== "manage" && normalizedType === "custom") {
     const normalizedName = String(home || "").trim().toLowerCase();
     if (normalizedName === "home") normalizedType = "home";
     else if (normalizedName === "work") normalizedType = "work";
@@ -21734,28 +21836,20 @@ async function saveRoute(source = "desktop") {
   if (normalizedType === "home" || normalizedType === "work") {
     id = normalizedType;
   }
-  const coordinateResolution = await resolvePlaceCoordinates({
-    label: home,
-    address: work,
-    allowGeocode: true,
-    preferGeolocation: manageSourceMode === "location"
-  });
+  const coordinateResolution = selectedSaved
+    ? { coordinates: normalizeCoordinatePair(selectedSaved.lat, selectedSaved.lng), source: selectedSaved.source || "saved place" }
+    : await resolvePlaceCoordinates({
+        label: home,
+        address: work,
+        allowGeocode: true,
+        preferGeolocation: manageSourceMode === "location"
+      });
   // Saved places must include valid coordinates before they are eligible for Route Watch routing.
   const coordinates = coordinateResolution?.coordinates || null;
   if (!coordinates) {
-    const errorMessage = "We couldn't find that location. Try a full address or use My Location.";
-    lastValidationError = errorMessage;
-    flashButton(button, "Location not found");
-    setConfirmation(errorMessage, "error");
-    lastSavedPlaceResult = {
-      ok: false,
-      type: normalizedType,
-      message: errorMessage,
-      at: new Date().toISOString(),
+    return failSave("We couldn't find that location. Try a full address or use My Location.", "Location not found", "coordinates_not_found", {
       coordinateSource: coordinateResolution?.source || "null"
-    };
-    lastManagePlacesSaveError = errorMessage;
-    return;
+    });
   }
   const createdAt = new Date().toISOString();
   const placeType = normalizedType === "custom" ? "favorite" : normalizedType;
@@ -21782,17 +21876,14 @@ async function saveRoute(source = "desktop") {
     else nextState.custom.push(nextPlace);
   }
   saveSavedPlacesState(nextState);
-  setSelectedPlaceId(id);
+  selectRouteWatchPlaceAfterSave(normalizedType, id);
 
   routeWatchActivated = false;
-  loadSavedRoute();
-  initDailyDestinationHero();
-  updateRouteIntelligence();
-  updateGrowthWidgets();
-  if (typeof window.gridlyRefreshRouteButtonStates === "function") window.gridlyRefreshRouteButtonStates("saveRoute");
+  refreshSavedPlaceSurfacesAfterSave("saveRoute");
   const placeLabel = normalizedType === "home" ? "Home" : normalizedType === "work" ? "Work" : (home || "Favorite");
   const saveMessage = `${placeLabel} saved with resolved coordinates (${coordinateResolution.source}).`;
   setConfirmation(saveMessage, "success");
+  setManagePlacesSaveStatus(saveMessage, "success");
   lastSavedPlaceResult = {
     ok: true,
     type: normalizedType,
@@ -21801,10 +21892,15 @@ async function saveRoute(source = "desktop") {
     savedPlaceId: id,
     coordinateSource: coordinateResolution?.source || "unknown"
   };
+  savedPlacesStorageAfterSave = localStorage.getItem(SAVED_PLACES_STORAGE_KEY);
   const savedButtonLabel = normalizedType === "home" ? "Home Saved" : normalizedType === "work" ? "Work Saved" : (modalMode === "manage" ? "Saved" : "Place Saved");
   flashButton(button, savedButtonLabel);
+  if (els.routeSetupModal?.dataset.mode === "manage") {
+    configureRouteSetupModal({ mode: "manage", prefillType: normalizedType });
+    setManagePlacesSaveStatus(saveMessage, "success");
+  }
 
-  if (source === "mobile") {
+  if (source === "mobile" && modalMode !== "manage") {
     closeRouteSetupModal();
   }
 }
@@ -22564,6 +22660,8 @@ function configureRouteSetupModal({ mode = "add", prefillType = "custom" } = {})
   const normalizedType = prefillType === "favorite" ? "custom" : prefillType;
   els.routeSetupModal.dataset.mode = mode;
   els.routeSetupModal.dataset.prefillType = normalizedType;
+  setManagePlacesSaveStatus("");
+  setManagePlacesValidationState(null, "not_checked", "");
   const titleEl = document.getElementById("routeSetupTitle");
   const subtitleEl = els.routeSetupModal.querySelector(".smart-alerts-subtitle");
   const destinationLabel = document.getElementById("savedPlacesSelectLabel") || els.mobileSavedDestinationSelect?.closest("label");
@@ -22571,9 +22669,9 @@ function configureRouteSetupModal({ mode = "add", prefillType = "custom" } = {})
   if (titleEl) titleEl.textContent = mode === "manage" ? "Manage Places" : mode === "home" ? "Set Home" : mode === "work" ? "Set Work" : mode === "favorite" ? "Add Favorite" : "Add Place";
   if (subtitleEl) subtitleEl.textContent = "Saved places stay on this device. Pick one destination for today.";
   if (els.mobileSaveRouteBtn) els.mobileSaveRouteBtn.textContent = mode === "manage" ? "Save Place" : mode === "home" ? "Save Home" : mode === "work" ? "Save Work" : "Save Place";
-  if (destinationLabel) destinationLabel.hidden = mode === "manage";
+  if (destinationLabel) destinationLabel.hidden = false;
   if (els.mobileSavedDestinationSelect) {
-    els.mobileSavedDestinationSelect.disabled = mode === "manage";
+    els.mobileSavedDestinationSelect.disabled = false;
   }
 
   if (mode === "manage") {
@@ -22730,7 +22828,10 @@ function attachSavedPlacesDebugGlobal() {
       saveButtonDisabled: Boolean(saveButton?.disabled),
       savedPlacesState: getSavedPlacesState(),
       lastSaveAttempt: lastManagePlacesSaveAttempt,
+      lastSaveSucceeded: typeof lastSavedPlaceResult?.ok === "boolean" ? lastSavedPlaceResult.ok : null,
       lastSaveError: lastManagePlacesSaveError || lastValidationError,
+      savedPlacesStorageAfterSave,
+      addressValidationState: managePlacesAddressValidationState,
       visualViewportHeight: window.visualViewport?.height || null,
       windowInnerHeight: window.innerHeight,
       modalRect: modal?.getBoundingClientRect?.() || null,
@@ -32404,6 +32505,18 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const homeDisplay = typeof resolveGridlySettingsPlaceDisplay === "function" ? resolveGridlySettingsPlaceDisplay(places.home, "Home") : { value: "", source: "unavailable" };
     const workDisplay = typeof resolveGridlySettingsPlaceDisplay === "function" ? resolveGridlySettingsPlaceDisplay(places.work, "Work") : { value: "", source: "unavailable" };
     const placeNameModal = document.querySelector(".place-name-modal");
+    const visibleManageSurface = allVisibleSurfaces.find((surface) => {
+      const node = surface.element;
+      const text = String(node.textContent || "").toLowerCase();
+      return Boolean(
+        (node.id === "routeSetupModal" && routeSetup?.dataset?.mode === "manage")
+        || node.querySelector?.("#mobileSaveRouteBtn")
+        || /manage places|save places|save place|edit home|edit work/.test(text)
+      );
+    }) || null;
+    const saveButton = document.getElementById("mobileSaveRouteBtn");
+    const selectedSlot = routeSetup?.dataset?.prefillType || lastManagePlacesSaveAttempt?.selectedSlot || null;
+    const selectedSource = managePlacesSourceMode || lastManagePlacesSaveAttempt?.manageSourceMode || null;
     return {
       activeSheet: activeSheet || document.getElementById("gridlyPortraitV2Sheet")?.dataset?.activeSheet || "",
       activeModal: activeModalSurface?.id || activeModalSurface?.className || "",
@@ -32415,7 +32528,18 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       topVisibleSurface: topVisible?.id || topVisible?.className || "",
       topVisibleZIndex: topVisible?.zIndex ?? null,
       lastSettingsAction: gridlyLastSettingsAction || null,
-      savedPlaceModalVisible: Boolean((routeSetupVisible && routeSetup?.dataset?.mode === "manage") || isElementVisible(placeNameModal)),
+      savedPlaceModalVisible: Boolean((routeSetupVisible && routeSetup?.dataset?.mode === "manage") || isElementVisible(placeNameModal) || visibleManageSurface),
+      visibleManagePlacesSurfaceFound: Boolean(visibleManageSurface),
+      visibleManagePlacesSurfaceId: visibleManageSurface?.id || visibleManageSurface?.className || "",
+      savePlaceButtonFound: Boolean(saveButton),
+      savePlaceButtonBound: Boolean(saveButtonHandlerAttached || saveButton?.dataset?.savePlaceBound === "1"),
+      lastSavePlaceAttempt: lastManagePlacesSaveAttempt,
+      lastSavePlaceSucceeded: typeof lastSavedPlaceResult?.ok === "boolean" ? lastSavedPlaceResult.ok : null,
+      lastSavePlaceError: lastManagePlacesSaveError || lastValidationError || (lastSavedPlaceResult?.ok === false ? lastSavedPlaceResult.message : null),
+      savedPlacesStorageAfterSave,
+      selectedSaveSlot: selectedSlot,
+      selectedSaveSource: selectedSource,
+      addressValidationState: managePlacesAddressValidationState,
       homeLabelResolved: homeDisplay.value,
       workLabelResolved: workDisplay.value,
       homeLabelSource: homeDisplay.source,

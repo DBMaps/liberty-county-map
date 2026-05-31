@@ -9565,6 +9565,10 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu-toggle,body[data-mobile-mo
 .manage-places-group-utility{opacity:.8}
 .manage-places-group .destination-chip-row{display:grid;grid-template-columns:1fr;gap:8px}
 .manage-places-group .destination-chip{width:100%}
+
+.manage-places-save-status{margin:0;font-size:.74rem;line-height:1.35;color:rgba(214,232,246,.86)}
+.manage-places-save-status[data-state="success"]{color:#9be7b0}
+.manage-places-save-status[data-state="error"]{color:#ffb5b5}
 .subtle-secondary-btn{background:rgba(255,255,255,.04)!important;border-color:rgba(255,255,255,.11)!important;color:rgba(219,236,248,.86)!important}
 .manage-places-group-utility .subtle-secondary-btn{opacity:.78}
 
