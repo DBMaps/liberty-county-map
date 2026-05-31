@@ -2539,7 +2539,7 @@ const REPORT_EXPIRATION_MINUTES = 90;
 const RECENTLY_CLEARED_WINDOW_MINUTES = 20;
 const LIVE_REFRESH_MS = 15000;
 const APP_BUILD = "6D0";
-const GRIDLY_APP_VERSION_LABEL = "Gridly V198";
+const GRIDLY_APP_VERSION_LABEL = "Gridly V199";
 const GRIDLY_APP_BUILD_LABEL = "Build 1710";
 const DEFAULT_NEARBY_RADIUS_MILES = 8;
 const PRIORITY_NEARBY_MILES = 3;
@@ -24634,6 +24634,258 @@ window.gridlyNotificationPreferenceAudit = function gridlyNotificationPreference
 
 window.gridlyDisplayPreferenceAudit = function gridlyDisplayPreferenceAudit() {
   return buildGridlySettingsAudit("display");
+};
+
+
+const GRIDLY_NOTIFICATION_ARCHITECTURE_VERSION = "V199";
+const GRIDLY_NOTIFICATION_FRESHNESS_WINDOWS_MINUTES = Object.freeze({
+  route: 90,
+  rail: 90,
+  hazard: 180,
+  community: 75,
+  cleared: RECENTLY_CLEARED_WINDOW_MINUTES
+});
+const GRIDLY_NOTIFICATION_ROUTE_DISTANCE_MILES = 0.8;
+const GRIDLY_NOTIFICATION_COMMUNITY_DISTANCE_MILES = 1.25;
+
+function gridlyNotificationStableIssueKey(type = "unknown", issue = {}) {
+  const explicitId = issue?.id || issue?.reportId || issue?.report_id || issue?.crossingId || issue?.crossing_id || "";
+  if (String(explicitId || "").trim()) return `${type}:${String(explicitId).trim()}`;
+  const lat = Number(issue?.lat ?? issue?.latitude ?? issue?.rawLat);
+  const lng = Number(issue?.lng ?? issue?.lon ?? issue?.longitude ?? issue?.rawLng);
+  const category = getHazardCategory(issue?.report_type || issue?.type || issue?.category || type);
+  if (Number.isFinite(lat) && Number.isFinite(lng)) return `${type}:${category}:${lat.toFixed(3)}:${lng.toFixed(3)}`;
+  return `${type}:${category}:${String(issue?.title || issue?.description || "unknown").slice(0, 60).toLowerCase()}`;
+}
+
+function gridlyNotificationIssueAgeMinutes(issue = {}, nowMs = Date.now()) {
+  const direct = Number(issue?.minutesAgo ?? issue?.age_minutes ?? issue?.ageMinutes);
+  if (Number.isFinite(direct) && direct >= 0) return direct;
+  const timestamp = issue?.submittedAt || issue?.created_at || issue?.updated_at || issue?.timestamp || issue?.reportedAt;
+  const parsed = timestamp ? Date.parse(timestamp) : NaN;
+  if (!Number.isFinite(parsed) || parsed <= 0) return null;
+  return Math.max(0, Math.round((nowMs - parsed) / 60000));
+}
+
+function gridlyNotificationCoordinates(issue = {}) {
+  if (typeof getGridlyIncidentCoordinate === "function") {
+    const resolved = getGridlyIncidentCoordinate(issue);
+    if (resolved && Number.isFinite(Number(resolved.lat)) && Number.isFinite(Number(resolved.lng))) {
+      return { lat: Number(resolved.lat), lng: Number(resolved.lng) };
+    }
+  }
+  const lat = Number(issue?.lat ?? issue?.latitude ?? issue?.rawLat);
+  const lng = Number(issue?.lng ?? issue?.lon ?? issue?.longitude ?? issue?.rawLng);
+  return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
+}
+
+function gridlyNotificationDistanceToRoute(issue = {}, routeLatLngs = []) {
+  const coords = gridlyNotificationCoordinates(issue);
+  if (!coords || !Array.isArray(routeLatLngs) || routeLatLngs.length < 2) return null;
+  const minDistance = routeLatLngs.reduce((min, pt) => {
+    const lat = Number(pt?.lat);
+    const lng = Number(pt?.lng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return min;
+    return Math.min(min, getDistanceMiles(coords.lat, coords.lng, lat, lng));
+  }, Number.POSITIVE_INFINITY);
+  return Number.isFinite(minDistance) ? Number(minDistance.toFixed(2)) : null;
+}
+
+function gridlyNotificationIsNearRoute(issue = {}, routeLatLngs = [], maxMiles = GRIDLY_NOTIFICATION_ROUTE_DISTANCE_MILES) {
+  const distanceMiles = gridlyNotificationDistanceToRoute(issue, routeLatLngs);
+  return distanceMiles !== null && distanceMiles <= maxMiles;
+}
+
+function gridlyNotificationAddCandidate(collection, type, subtype, issue = {}, reasons = [], context = {}) {
+  const key = gridlyNotificationStableIssueKey(type, issue);
+  if (collection.seenKeys.has(key)) {
+    collection.suppressedReasons.push(`${type}:${subtype}:duplicate_issue_suppressed`);
+    return false;
+  }
+  collection.seenKeys.add(key);
+  collection.candidates.push({
+    type,
+    subtype,
+    key,
+    eligible: true,
+    reasons,
+    issueSummary: {
+      id: issue?.id || issue?.reportId || issue?.report_id || issue?.crossingId || issue?.crossing_id || null,
+      title: safeDisplayText(issue?.title || issue?.crossingName || issue?.area || issue?.description || subtype, subtype),
+      category: getHazardCategory(issue?.report_type || issue?.type || issue?.category || subtype),
+      status: issue?.status || issue?.lifecycleState || null,
+      ageMinutes: gridlyNotificationIssueAgeMinutes(issue, context.nowMs),
+      distanceMiles: context.distanceMiles ?? null
+    }
+  });
+  return true;
+}
+
+function gridlyNotificationBuildCollection() {
+  return { candidates: [], suppressedReasons: [], seenKeys: new Set() };
+}
+
+function gridlyNotificationFinalizeType(collection, enabled, readinessReasons = []) {
+  const typeSuppressed = [...collection.suppressedReasons, ...readinessReasons];
+  return {
+    preferenceEnabled: Boolean(enabled),
+    eligible: Boolean(enabled && collection.candidates.length > 0 && readinessReasons.length === 0),
+    candidateCount: collection.candidates.length,
+    candidates: collection.candidates,
+    suppressedReasons: typeSuppressed
+  };
+}
+
+function buildGridlyNotificationArchitectureAudit() {
+  const nowMs = Date.now();
+  const settings = typeof getGridlySettingsPreferences === "function" ? getGridlySettingsPreferences() : normalizeGridlySettings();
+  const preferencesLoaded = Boolean(settings?.notifications && ["routeAlerts", "railAlerts", "hazardAlerts", "communityAlerts"].every((key) => typeof settings.notifications[key] === "boolean"));
+  const places = typeof gridlyGetSavedPlacesReadiness === "function" ? gridlyGetSavedPlacesReadiness() : { hasHome: false, hasWork: false, routablePlaceCount: 0, state: {} };
+  const routeGeometry = typeof gridlyGetRouteGeometryDiagnostics === "function" ? gridlyGetRouteGeometryDiagnostics() : { currentRouteAvailable: false, routeGeometryAvailable: false, routePointCount: 0 };
+  const routeLatLngs = typeof getRoutePolylineLatLngs === "function" ? getRoutePolylineLatLngs() : [];
+  const savedRouteContextAvailable = Boolean(places.hasHome && places.hasWork);
+  const routeContextAvailable = Boolean(routeGeometry.currentRouteAvailable || savedRouteContextAvailable);
+  const routeHazard = typeof getRouteHazardAssessment === "function" ? getRouteHazardAssessment() : { level: "clear", score: 0, nearbyReports: [] };
+  const commuteDelta = typeof window.gridlyCommuteDeltaSnapshot === "function" ? window.gridlyCommuteDeltaSnapshot() : { deltaAvailable: false };
+  const unifiedIncidents = Array.isArray(getUnifiedIncidents?.()) ? getUnifiedIncidents() : [];
+  const railReports = Array.isArray(activeReports) ? activeReports : [];
+  const roadHazards = Array.isArray(activeHazards) ? activeHazards : [];
+  const routeCollection = gridlyNotificationBuildCollection();
+  const railCollection = gridlyNotificationBuildCollection();
+  const hazardCollection = gridlyNotificationBuildCollection();
+  const communityCollection = gridlyNotificationBuildCollection();
+
+  const routeReadinessReasons = [];
+  if (!settings.notifications.routeAlerts) routeReadinessReasons.push("preference_disabled:notifications.routeAlerts");
+  if (!routeContextAvailable) routeReadinessReasons.push("route_context_unavailable");
+  if (routeContextAvailable) {
+    if (commuteDelta?.deltaAvailable && commuteDelta.deltaDirection === "slower" && Number(commuteDelta.deltaMinutes) >= 5) {
+      gridlyNotificationAddCandidate(routeCollection, "route", "route_delay_increased", { id: commuteDelta.routeKey || "route-delay", type: "delay", title: "Route delay increased", status: commuteDelta.deltaStatus, age_minutes: 0 }, ["current commute is at least 5 minutes slower than normal"], { nowMs });
+    }
+    if (routeHazard?.level === "blocked" || (Array.isArray(routeHazard?.nearbyReports) && routeHazard.nearbyReports.some((report) => report.reportType === "blocked" && report.lifecycleState === "active"))) {
+      gridlyNotificationAddCandidate(routeCollection, "route", "route_blocked", routeHazard.nearestIssue || { id: "route-blocked", type: "blocked", title: "Route blocked" }, ["active blocking issue intersects saved route"], { nowMs, distanceMiles: routeHazard.nearestIssue?.distanceMiles });
+    }
+    if (routeComparisonStatus === "alternate_safer" && alternateRouteAvailable && Number(primaryRouteScore) > Number(alternateRouteScore)) {
+      gridlyNotificationAddCandidate(routeCollection, "route", "better_alternate_route_found", { id: "alternate-route", type: "alternate", title: "Better alternate route found", status: routeComparisonStatus, age_minutes: 0 }, ["alternate route has lower route pressure than primary route"], { nowMs });
+    }
+    if (["slower_than_normal", "normal"].includes(String(commuteDelta?.deltaStatus || "")) || ["blocked", "heavy", "caution", "clear"].includes(String(routeHazard?.level || ""))) {
+      const changed = Boolean(commuteDelta?.deltaAvailable && Math.abs(Number(commuteDelta.deltaMinutes || 0)) >= 3) || ["blocked", "heavy", "caution"].includes(String(routeHazard?.level || ""));
+      if (changed) gridlyNotificationAddCandidate(routeCollection, "route", "commute_condition_changed", { id: `commute-${commuteDelta.routeKey || routeHazard?.level || "route"}`, type: routeHazard?.level || "commute", title: "Commute condition changed", status: commuteDelta?.deltaStatus || routeHazard?.level, age_minutes: 0 }, ["route status changed enough to explain to the user"], { nowMs });
+    }
+  }
+
+  const railReadinessReasons = [];
+  if (!settings.notifications.railAlerts) railReadinessReasons.push("preference_disabled:notifications.railAlerts");
+  if (!routeContextAvailable) railReadinessReasons.push("route_context_unavailable");
+  railReports.forEach((report) => {
+    const age = gridlyNotificationIssueAgeMinutes(report, nowMs);
+    const crossing = (Array.isArray(crossings) ? crossings : []).find((item) => String(item?.id) === String(report?.crossingId));
+    const issue = { ...crossing, ...report, id: report?.id || report?.crossingId, lat: report?.lat ?? crossing?.lat, lng: report?.lng ?? crossing?.lng };
+    const nearRoute = routeGeometry.routeGeometryAvailable ? gridlyNotificationIsNearRoute(issue, routeLatLngs) : savedRouteContextAvailable;
+    if (!nearRoute) return;
+    if (age !== null && age > GRIDLY_NOTIFICATION_FRESHNESS_WINDOWS_MINUTES.rail && !isClearedReportType(report?.type)) {
+      railCollection.suppressedReasons.push("rail:stale_report_suppressed");
+      return;
+    }
+    const distanceMiles = routeGeometry.routeGeometryAvailable ? gridlyNotificationDistanceToRoute(issue, routeLatLngs) : null;
+    if (isActiveReportType(report?.type) && /blocked|delay|delayed|heavy/.test(String(report?.type || ""))) {
+      gridlyNotificationAddCandidate(railCollection, "rail", "crossing_blocked_near_saved_route", issue, ["rail crossing blockage is near saved route"], { nowMs, distanceMiles });
+    }
+    if (isClearedReportType(report?.type) && (age === null || age <= GRIDLY_NOTIFICATION_FRESHNESS_WINDOWS_MINUTES.cleared)) {
+      gridlyNotificationAddCandidate(railCollection, "rail", "crossing_cleared_near_saved_route", issue, ["recent clearance is near saved route"], { nowMs, distanceMiles });
+    }
+    if (Number(report?.reports_count || report?.count || 0) >= 2 || Number(report?.confirmations || 0) >= 2) {
+      gridlyNotificationAddCandidate(railCollection, "rail", "repeated_blockage_pattern", issue, ["multiple rail reports indicate a repeated pattern"], { nowMs, distanceMiles });
+    }
+  });
+
+  const hazardReadinessReasons = [];
+  if (!settings.notifications.hazardAlerts) hazardReadinessReasons.push("preference_disabled:notifications.hazardAlerts");
+  if (!routeContextAvailable) hazardReadinessReasons.push("route_context_unavailable");
+  roadHazards.forEach((hazard) => {
+    const lifecycle = typeof gridlyClassifyHazardLifecycle === "function" ? gridlyClassifyHazardLifecycle(hazard, { nowMs }) : { lifecycleStage: "active", lifecycleRecommendedAction: "keep_active" };
+    const age = gridlyNotificationIssueAgeMinutes(hazard, nowMs);
+    const nearRoute = routeGeometry.routeGeometryAvailable ? gridlyNotificationIsNearRoute(hazard, routeLatLngs) : savedRouteContextAvailable;
+    if (!nearRoute) return;
+    if (lifecycle.lifecycleStage === "expired_candidate") {
+      hazardCollection.suppressedReasons.push("hazard:expired_candidate_suppressed");
+      return;
+    }
+    if (age !== null && age > GRIDLY_NOTIFICATION_FRESHNESS_WINDOWS_MINUTES.hazard && lifecycle.lifecycleStage !== "aging") {
+      hazardCollection.suppressedReasons.push("hazard:stale_hazard_suppressed");
+      return;
+    }
+    const distanceMiles = routeGeometry.routeGeometryAvailable ? gridlyNotificationDistanceToRoute(hazard, routeLatLngs) : null;
+    const category = getHazardCategory(hazard?.type || hazard?.report_type || hazard?.category);
+    const highImpact = ["road_closed", "flooding", "crash", "rail_blockage_delay"].includes(category) || ["high", "critical"].includes(String(hazard?.severity || "").toLowerCase());
+    if (highImpact && gridlyIsActiveHazardRecord(hazard)) {
+      gridlyNotificationAddCandidate(hazardCollection, "hazard", "new_high_impact_hazard_near_user_route", hazard, ["high-impact active hazard is near user route"], { nowMs, distanceMiles });
+    }
+    if (isClearedReportType(hazard?.type || hazard?.report_type) || String(hazard?.status || "").toLowerCase() === "cleared") {
+      gridlyNotificationAddCandidate(hazardCollection, "hazard", "hazard_cleared", hazard, ["hazard lifecycle indicates cleared"], { nowMs, distanceMiles });
+    }
+    if (["aging", "verified"].includes(lifecycle.lifecycleStage) || ["request_confirmation", "reduce_confidence"].includes(lifecycle.lifecycleRecommendedAction)) {
+      gridlyNotificationAddCandidate(hazardCollection, "hazard", "hazard_aging_confirmation_changed", hazard, [lifecycle.lifecycleReason || "hazard lifecycle changed"], { nowMs, distanceMiles });
+    }
+  });
+
+  const communityReadinessReasons = [];
+  if (!settings.notifications.communityAlerts) communityReadinessReasons.push("preference_disabled:notifications.communityAlerts");
+  if (!routeContextAvailable) communityReadinessReasons.push("route_context_unavailable");
+  const communityNearRoute = unifiedIncidents.filter((incident) => {
+    const age = gridlyNotificationIssueAgeMinutes(incident, nowMs);
+    if (age !== null && age > GRIDLY_NOTIFICATION_FRESHNESS_WINDOWS_MINUTES.community) return false;
+    return routeGeometry.routeGeometryAvailable ? gridlyNotificationIsNearRoute(incident, routeLatLngs, GRIDLY_NOTIFICATION_COMMUNITY_DISTANCE_MILES) : savedRouteContextAvailable;
+  });
+  if (communityNearRoute.length >= 2) {
+    gridlyNotificationAddCandidate(communityCollection, "community", "multiple_nearby_reports", { id: "community-multiple-near-route", type: "community_activity", title: `${communityNearRoute.length} nearby reports`, reports_count: communityNearRoute.length, age_minutes: 0 }, ["multiple fresh reports near saved route"], { nowMs });
+  }
+  const buildingActivity = communityNearRoute.find((incident) => Number(incident?.reports_count || incident?.count || 0) >= 2);
+  if (buildingActivity) {
+    gridlyNotificationAddCandidate(communityCollection, "community", "activity_building", buildingActivity, ["report count is increasing around a local issue"], { nowMs, distanceMiles: routeGeometry.routeGeometryAvailable ? gridlyNotificationDistanceToRoute(buildingActivity, routeLatLngs) : null });
+  }
+  const highConfidence = communityNearRoute.find((incident) => ["high", "confirmed", "verified"].includes(String(incident?.confidence || incident?.confidenceLevel || "").toLowerCase()) || Number(incident?.reports_count || 0) >= 3);
+  if (highConfidence) {
+    gridlyNotificationAddCandidate(communityCollection, "community", "high_confidence_local_issue", highConfidence, ["high-confidence local issue is near saved route"], { nowMs, distanceMiles: routeGeometry.routeGeometryAvailable ? gridlyNotificationDistanceToRoute(highConfidence, routeLatLngs) : null });
+  }
+
+  const routeType = gridlyNotificationFinalizeType(routeCollection, settings.notifications.routeAlerts, routeReadinessReasons);
+  const railType = gridlyNotificationFinalizeType(railCollection, settings.notifications.railAlerts, railReadinessReasons);
+  const hazardType = gridlyNotificationFinalizeType(hazardCollection, settings.notifications.hazardAlerts, hazardReadinessReasons);
+  const communityType = gridlyNotificationFinalizeType(communityCollection, settings.notifications.communityAlerts, communityReadinessReasons);
+  const notificationTypes = { route: routeType, rail: railType, hazard: hazardType, community: communityType };
+  const nextEligible = ["route", "rail", "hazard", "community"].find((type) => notificationTypes[type].eligible) || null;
+  const suppressedReasons = [...new Set(Object.values(notificationTypes).flatMap((type) => type.suppressedReasons))];
+
+  return {
+    loaded: true,
+    version: GRIDLY_NOTIFICATION_ARCHITECTURE_VERSION,
+    diagnosticOnly: true,
+    deliveryEnabled: false,
+    runtimeLoopsAdded: false,
+    schedulerAdded: false,
+    preferencesLoaded,
+    notificationTypes,
+    routeAlertEligible: routeType.eligible,
+    railAlertEligible: railType.eligible,
+    hazardAlertEligible: hazardType.eligible,
+    communityAlertEligible: communityType.eligible,
+    suppressedReasons,
+    nextEligibleNotificationType: nextEligible,
+    routeContext: {
+      currentRouteAvailable: Boolean(routeGeometry.currentRouteAvailable),
+      routeGeometryAvailable: Boolean(routeGeometry.routeGeometryAvailable),
+      routePointCount: Number(routeGeometry.routePointCount || 0),
+      savedHomeAvailable: Boolean(places.hasHome),
+      savedWorkAvailable: Boolean(places.hasWork),
+      routeContextAvailable
+    },
+    betaSafe: true
+  };
+}
+
+window.gridlyNotificationArchitectureAudit = function gridlyNotificationArchitectureAudit() {
+  return buildGridlyNotificationArchitectureAudit();
 };
 
 function getDefaultSmartAlertsPreferences() {
