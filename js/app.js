@@ -11841,7 +11841,7 @@ window.gridlyUnifiedHazardSourceAudit = async function gridlyUnifiedHazardSource
     return missing;
   }
 
-  const ROAD_HAZARD_TYPES = ["flooding", "ice", "debris", "crash", "construction", "road_closed", "disabled_vehicle", "other_hazard", "hazard_cleared", "wreck"];
+  const ROAD_HAZARD_TYPES = gridlyGetSharedRoadHazardReportTypes();
   const hours = Math.max(1, Number(options?.hours) || 24);
   const cutoffIso = new Date(Date.now() - (hours * 60 * 60 * 1000)).toISOString();
   const rawSourceFilter = options?.sourceFilter;
@@ -12161,8 +12161,13 @@ window.gridlyIncidentSourceAudit = function gridlyIncidentSourceAudit(options = 
 };
 
 
-const GRIDLY_SHARED_ROAD_HAZARD_REPORT_TYPES = ["flooding", "ice", "debris", "crash", "construction", "road_closed", "disabled_vehicle", "other_hazard", "hazard_cleared", "wreck"];
+const GRIDLY_CORE_ROAD_HAZARD_CLEANUP_TYPES = Object.freeze(["flooding", "ice", "debris", "crash", "construction", "road_closed", "disabled_vehicle", "other_hazard"]);
+const GRIDLY_SHARED_ROAD_HAZARD_REPORT_TYPES = Object.freeze([...GRIDLY_CORE_ROAD_HAZARD_CLEANUP_TYPES, "hazard_cleared", "wreck"]);
 const GRIDLY_SUPABASE_TEST_HAZARD_CONFIRMATION = "CLEAR_SUPABASE_TEST_HAZARDS";
+
+function gridlyGetSharedRoadHazardReportTypes() {
+  return [...GRIDLY_SHARED_ROAD_HAZARD_REPORT_TYPES];
+}
 
 function gridlyNormalizeSharedRoadHazardType(type = "") {
   const normalized = String(type || "").trim().toLowerCase();
@@ -12208,7 +12213,7 @@ async function gridlyFetchActiveSupabaseRoadHazardRows(limit = 1000) {
     .from("reports")
     .select("id,report_type,source,created_at,expires_at,crossing_id,crossing_name,railroad,detail,lat,lng")
     .gt("expires_at", nowIso)
-    .in("report_type", GRIDLY_SHARED_ROAD_HAZARD_REPORT_TYPES)
+    .in("report_type", gridlyGetSharedRoadHazardReportTypes())
     .order("created_at", { ascending: true })
     .limit(maxRows);
 
@@ -12233,6 +12238,11 @@ function gridlyBuildSupabaseHazardInventory(rows = []) {
   return {
     activeHazardRows: activeRows.length,
     byType,
+    cleanupTypeCoverage: {
+      requiredTypes: [...GRIDLY_CORE_ROAD_HAZARD_CLEANUP_TYPES],
+      sharedReportTypes: gridlyGetSharedRoadHazardReportTypes(),
+      includesIce: GRIDLY_SHARED_ROAD_HAZARD_REPORT_TYPES.includes("ice")
+    },
     oldestCreatedAt: createdTimes.length ? createdTimes.reduce((oldest, entry) => entry.time < oldest.time ? entry : oldest).iso : null,
     newestCreatedAt: createdTimes.length ? createdTimes.reduce((newest, entry) => entry.time > newest.time ? entry : newest).iso : null,
     sampleRows: activeRows.slice(0, 10).map((row) => ({
@@ -12272,6 +12282,11 @@ window.gridlySupabaseHazardPurgeAudit = async function gridlySupabaseHazardPurge
     supabaseActiveHazardsFound: rows.length,
     supabaseActiveHazardsWouldDelete: deleteCandidates.length,
     purgeScope: "active Supabase reports where report_type is a shared road hazard type; excludes TxDOT-tagged rows and never targets rail crossing report types or other storage",
+    cleanupTypeCoverage: {
+      requiredTypes: [...GRIDLY_CORE_ROAD_HAZARD_CLEANUP_TYPES],
+      sharedReportTypes: gridlyGetSharedRoadHazardReportTypes(),
+      includesIce: GRIDLY_SHARED_ROAD_HAZARD_REPORT_TYPES.includes("ice")
+    },
     preservedRailReports: true,
     preservedTxDot: txdotRows.length
   };
@@ -12335,7 +12350,7 @@ const gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoadH
     return missing;
   }
 
-  const ROAD_HAZARD_TYPES = ["flooding", "ice", "debris", "crash", "construction", "road_closed", "disabled_vehicle", "other_hazard", "hazard_cleared"];
+  const ROAD_HAZARD_TYPES = gridlyGetSharedRoadHazardReportTypes();
   const {
     dryRun = true,
     hours = 24,
