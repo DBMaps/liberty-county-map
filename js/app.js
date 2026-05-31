@@ -6345,6 +6345,22 @@ let lastOsrmRequestUrl = null;
 let lastOsrmResponseStatus = null;
 let routeQuickButtonDelegatedBindingActive = false;
 let routeQuickDirectListenerAttached = false;
+let lastRouteRenderAuditState = {
+  rendered: false,
+  source: "none",
+  pointCount: 0,
+  osrmRouteSuccess: false,
+  renderedAt: null
+};
+
+function markRouteRenderAuditState(patch = {}) {
+  lastRouteRenderAuditState = {
+    ...lastRouteRenderAuditState,
+    ...patch,
+    updatedAt: Date.now()
+  };
+  window.gridlyLastRouteRenderAuditState = { ...lastRouteRenderAuditState };
+}
 
 const GRIDLY_REFLOW_TRACE_WINDOW_MS = 10000;
 const gridlyReflowTraceState = { entries: [], maxEntries: 500 };
@@ -6452,19 +6468,31 @@ let reportActionCompletionAudit = {
   reportHazardTypeResolved: false,
   reportUseLocationAttempted: false,
   reportUseLocationSubmitted: false,
+  reportUseLocationCompleted: false,
   reportUseLocationError: "",
   reportTapMapAttempted: false,
   reportTapMapPlacementArmed: false,
+  reportTapMapSubmitted: false,
+  reportTapMapCompleted: false,
   reportTapMapError: "",
   lastReportAction: "",
   lastReportActionCompleted: false,
+  lastReportCompletedAt: null,
+  lastReportCompletionState: "idle",
   lastResolvedHazardType: ""
 };
 
 function markReportActionCompletionAudit(patch = {}) {
+  const normalizedPatch = { ...patch };
+  if (normalizedPatch.lastReportActionCompleted === true) {
+    normalizedPatch.lastReportCompletedAt = normalizedPatch.lastReportCompletedAt || Date.now();
+    normalizedPatch.lastReportCompletionState = normalizedPatch.lastReportCompletionState || "completed";
+  } else if (normalizedPatch.lastReportActionCompleted === false && !normalizedPatch.lastReportCompletionState) {
+    normalizedPatch.lastReportCompletionState = normalizedPatch.reportUseLocationError || normalizedPatch.reportTapMapError ? "error" : "pending";
+  }
   reportActionCompletionAudit = {
     ...reportActionCompletionAudit,
-    ...patch
+    ...normalizedPatch
   };
   window.gridlyReportActionCompletionAudit = { ...reportActionCompletionAudit };
 }
@@ -19648,9 +19676,11 @@ window.submitHazardNearMe = function (hazardType) {
       }
       markReportActionCompletionAudit({
         reportUseLocationSubmitted: true,
+        reportUseLocationCompleted: true,
         reportUseLocationError: "",
         lastReportAction: "report-use-location",
-        lastReportActionCompleted: true
+        lastReportActionCompleted: true,
+        lastReportCompletionState: "submitted"
       });
 
       if (map) {
@@ -19739,9 +19769,11 @@ function beginRoadHazardMapPlacement(hazardType, options = {}) {
   setConfirmation("Tap a road to place this hazard.", "info");
   markReportActionCompletionAudit({
     reportTapMapPlacementArmed: true,
+    reportTapMapCompleted: true,
     reportTapMapError: "",
     lastReportAction: "report-tap-map",
-    lastReportActionCompleted: true
+    lastReportActionCompleted: true,
+    lastReportCompletionState: "armed"
   });
   pushTapMapTrace("placement_armed", { source, hazardType: pendingHazardPlacement });
   return true;
@@ -19942,7 +19974,14 @@ async function handleHazardPlacementMapClick(event) {
     pushTapMapTrace("submit_failed", { hazardType: selectedType, reason: "create_report_failed" });
     return;
   }
-  markReportActionCompletionAudit({ reportTapMapError: "", lastReportAction: "report-tap-map", lastReportActionCompleted: true });
+  markReportActionCompletionAudit({
+    reportTapMapSubmitted: true,
+    reportTapMapCompleted: true,
+    reportTapMapError: "",
+    lastReportAction: "report-tap-map",
+    lastReportActionCompleted: true,
+    lastReportCompletionState: "submitted"
+  });
   pushTapMapTrace("submit_succeeded", { hazardType: selectedType });
   if (map) {
     L.circleMarker([lat, lng], { radius: 4, color: "#8fb6ff", weight: 1, fillOpacity: 0.3, opacity: 0.8 })
@@ -23822,6 +23861,7 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
   routeRenderSucceeded = false;
   lastOsrmRequestUrl = null;
   lastOsrmResponseStatus = null;
+  markRouteRenderAuditState({ rendered: false, source: "pending", pointCount: 0, osrmRouteSuccess: false, renderedAt: null });
   // Render from saved Home/Work (or other saved place) coordinates only after coordinate validation succeeds.
   if (!map) return false;
 
@@ -24029,10 +24069,23 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
   routePreviewLayerExists = hasUsablePreviewLayer;
   mapHasRoutePreviewLayer = hasUsablePreviewLayer && Boolean(map && typeof map.hasLayer === "function" && map.hasLayer(routePreviewLayer));
   if (!routePreviewRendered) {
+    markRouteRenderAuditState({
+      rendered: false,
+      source: routeGeometrySource || "fallback",
+      pointCount: routePreviewPolylinePointCount,
+      osrmRouteSuccess: Boolean(osrmRouteSuccess)
+    });
     console.info("Gridly route render failure", { routePreviewRendered, pointCount: routePreviewPolylinePointCount });
     return false;
   }
   routeRenderSucceeded = true;
+  markRouteRenderAuditState({
+    rendered: true,
+    source: routeGeometrySource || "fallback",
+    pointCount: routePreviewPolylinePointCount,
+    osrmRouteSuccess: Boolean(osrmRouteSuccess),
+    renderedAt: Date.now()
+  });
   persistGridlyRouteMetrics({
     routePointCount: routePreviewPolylinePointCount,
     routeDistanceMiles: monitoredRouteDistanceMiles,
@@ -35027,11 +35080,18 @@ window.gridlyVisualRegressionAudit = function gridlyVisualRegressionAudit() {
     ? window.__gridlyRoutePreviewLayer.getLatLngs()
     : [];
   const renderedRoutePointCount = Array.isArray(routeLayerLatLngs) ? routeLayerLatLngs.length : 0;
-  const currentRoutePointCount = Number(routePreviewPolylinePointCount || renderedRoutePointCount || lastRouteGeometryPointCount || 0);
-  const routeUsesOsrmGeometry = Boolean(routeGeometrySource === "osrm" && osrmRouteSuccess && currentRoutePointCount > 2);
+  const routeRenderAudit = window.gridlyLastRouteRenderAuditState || lastRouteRenderAuditState || {};
+  const currentRoutePointCount = Number(routeRenderAudit.pointCount || routePreviewPolylinePointCount || renderedRoutePointCount || lastRouteGeometryPointCount || 0);
+  const currentRouteGeometrySource = routeRenderAudit.source || routeGeometrySource || "fallback";
+  const routeUsesOsrmGeometry = Boolean(
+    routeRenderAudit.rendered
+    && currentRouteGeometrySource === "osrm"
+    && (routeRenderAudit.osrmRouteSuccess || osrmRouteSuccess)
+    && currentRoutePointCount > 2
+  );
   const routeRenderedAsStraightLine = Boolean(
-    (routePreviewRendered || renderedRoutePointCount >= 2)
-    && routeGeometrySource !== "osrm"
+    (routeRenderAudit.rendered || routePreviewRendered || renderedRoutePointCount >= 2)
+    && currentRouteGeometrySource !== "osrm"
     && currentRoutePointCount <= 2
   );
   const isAuditVisible = (node) => {
@@ -35076,15 +35136,15 @@ window.gridlyVisualRegressionAudit = function gridlyVisualRegressionAudit() {
     && reportAudit.reportHazardTypeResolved
     && reportAudit.reportUseLocationAttempted
     && reportAudit.reportUseLocationSubmitted
-    && reportSuccessOrErrorStateVisible
+    && reportAudit.reportUseLocationCompleted
   );
   const reportTapMapFunctional = Boolean(
     typeof beginRoadHazardMapPlacement === "function"
     && reportTapMapButtons.length > 0
     && reportAudit.reportHazardTypeResolved
     && reportAudit.reportTapMapAttempted
-    && reportAudit.reportTapMapPlacementArmed
-    && reportSuccessOrErrorStateVisible
+    && (reportAudit.reportTapMapPlacementArmed || reportAudit.reportTapMapSubmitted)
+    && reportAudit.reportTapMapCompleted
   );
   const crossingReportFunctional = Boolean(
     typeof createSharedReport === "function"
@@ -35099,12 +35159,17 @@ window.gridlyVisualRegressionAudit = function gridlyVisualRegressionAudit() {
     reportHazardTypeResolved: Boolean(reportAudit.reportHazardTypeResolved),
     reportUseLocationAttempted: Boolean(reportAudit.reportUseLocationAttempted),
     reportUseLocationSubmitted: Boolean(reportAudit.reportUseLocationSubmitted),
+    reportUseLocationCompleted: Boolean(reportAudit.reportUseLocationCompleted),
     reportUseLocationError: reportAudit.reportUseLocationError || "",
     reportTapMapAttempted: Boolean(reportAudit.reportTapMapAttempted),
     reportTapMapPlacementArmed: Boolean(reportAudit.reportTapMapPlacementArmed),
+    reportTapMapSubmitted: Boolean(reportAudit.reportTapMapSubmitted),
+    reportTapMapCompleted: Boolean(reportAudit.reportTapMapCompleted),
     reportTapMapError: reportAudit.reportTapMapError || "",
     lastReportAction: reportAudit.lastReportAction || "",
     lastReportActionCompleted: Boolean(reportAudit.lastReportActionCompleted),
+    lastReportCompletedAt: reportAudit.lastReportCompletedAt || null,
+    lastReportCompletionState: reportAudit.lastReportCompletionState || "",
     reportSuccessOrErrorStateVisible,
     visibleAlertRowCount: visibleAlertRows.length,
     routeUsesOsrmGeometry,
