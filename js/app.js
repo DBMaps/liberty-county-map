@@ -12378,6 +12378,10 @@ exposeGridlyAuditHelper("gridlyTxDotSourceAudit", gridlyTxDotSourceAudit);
 let gridlyTxdotStartupFetchPromise = null;
 let gridlyTxdotStartupFetchAttempted = false;
 
+function gridlyIsTxdotStartupFetchEnabled() {
+  return typeof window !== "undefined" && window.GRIDLY_ENABLE_TXDOT_STARTUP_FETCH === true;
+}
+
 function gridlyIsTxdotFetchAvailable() {
   const txdotService = window.gridlyTxdot || null;
   const txdotConfig = window.GRIDLY_CONFIG?.txdot || null;
@@ -12411,6 +12415,16 @@ async function gridlyRunTxdotFetchAndRefresh(options = {}) {
   const txdotState = window.gridlyTxdotState || {};
   const cachedRows = typeof txdotService?.getRoadConditions === "function" ? txdotService.getRoadConditions() : gridlyReadCachedTxdotRows();
   const cachedRowCount = Array.isArray(cachedRows) ? cachedRows.length : 0;
+
+  if (!force && !gridlyIsTxdotStartupFetchEnabled()) {
+    return {
+      attempted: false,
+      skipped: true,
+      skipReason: "txdot_startup_fetch_disabled",
+      refreshMethod: "none",
+      fetchedRows: cachedRowCount
+    };
+  }
 
   if (!gridlyIsTxdotFetchAvailable()) {
     return {
@@ -12537,6 +12551,7 @@ async function gridlyTxdotFullValidation() {
 
 function gridlyScheduleStartupTxdotFetch() {
   if (gridlyTxdotStartupFetchAttempted) return;
+  if (!gridlyIsTxdotStartupFetchEnabled()) return;
   gridlyTxdotStartupFetchAttempted = true;
   const start = () => {
     gridlyRunTxdotFetchAndRefresh({ force: false, reason: "txdot-startup-once" })
