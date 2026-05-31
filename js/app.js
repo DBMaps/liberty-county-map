@@ -3876,8 +3876,223 @@ function gridlyHazardTrustLanguage() {
   };
 }
 
+
+function gridlyHazardTrustProgressionFramework() {
+  const trustStages = [
+    {
+      stage: "RECENTLY_REPORTED",
+      purpose: "Introduce a newly submitted hazard without implying that the community has validated it yet.",
+      userFacingLabel: "Recently Reported",
+      trustMeaning: "A driver or source just reported this issue; drivers should use caution while Gridly waits for more current feedback."
+    },
+    {
+      stage: "ACTIVE_REPORT",
+      purpose: "Keep a still-recent report visible as potentially useful road awareness.",
+      userFacingLabel: "Active Report",
+      trustMeaning: "The report is recent enough to help nearby drivers, but it may not have enough community support to be treated as confirmed."
+    },
+    {
+      stage: "CONFIRMED_BY_DRIVERS",
+      purpose: "Show that multiple recent community signals support the same hazard.",
+      userFacingLabel: "Confirmed by Drivers",
+      trustMeaning: "Drivers have recently supported this report, so it deserves higher user trust while still being treated as road-condition guidance rather than a guarantee."
+    },
+    {
+      stage: "NEEDS_CONFIRMATION",
+      purpose: "Ask the community for a fresh update before older information is relied on.",
+      userFacingLabel: "Needs Confirmation",
+      trustMeaning: "The report may still be useful, but Gridly should invite a current driver update because conditions may have changed."
+    },
+    {
+      stage: "OLDER_REPORT",
+      purpose: "Clearly communicate that an unresolved report is aging and should not be treated with the same trust as a fresh or confirmed report.",
+      userFacingLabel: "Older Report",
+      trustMeaning: "The report has aged beyond the strongest trust window and should require fresh confirmation before being emphasized."
+    },
+    {
+      stage: "HISTORICAL_EVENT",
+      purpose: "Preserve past hazard knowledge for learning, trends, and future context without presenting it as current road information.",
+      userFacingLabel: "Historical Event",
+      trustMeaning: "This is retained as past road history only and should not be shown or messaged as an active hazard."
+    }
+  ];
+
+  return {
+    trustStages,
+    progressionRules: {
+      enabled: false,
+      frameworkOnly: true,
+      defaultProgression: [
+        "RECENTLY_REPORTED",
+        "ACTIVE_REPORT",
+        "CONFIRMED_BY_DRIVERS",
+        "NEEDS_CONFIRMATION",
+        "OLDER_REPORT",
+        "HISTORICAL_EVENT"
+      ],
+      recentlyReported: "Use for a newly submitted hazard with one community signal or no independent confirmation yet.",
+      activeReport: "Use while the report remains recent enough to help drivers but before it has enough fresh community support to become confirmed.",
+      confirmedByDrivers: "Use when at least two recent driver confirmations or equivalent trusted signals support the same location-aware hazard.",
+      needsConfirmation: "Use when a report is old enough that Gridly should ask drivers for a fresh update before continuing to emphasize it.",
+      olderReport: "Use when a report is beyond the normal active trust window and should be visually or verbally deemphasized in a future UI pass.",
+      historicalEvent: "Use only after a future approved lifecycle path determines that the record is no longer a live report and should be retained for history.",
+      nonGoals: [
+        "Do not expire or delete reports.",
+        "Do not alter alert rendering, map markers, Route Watch, refresh loops, Supabase, TxDOT, OSRM, or telemetry.",
+        "Do not activate any UI badge, prompt, or runtime classification from this framework."
+      ]
+    },
+    confirmationRules: {
+      enabled: false,
+      frameworkOnly: true,
+      oneDriver: {
+        stage: "RECENTLY_REPORTED",
+        label: "Recently Reported",
+        recommendation: "Treat one driver signal as helpful but not yet community-confirmed."
+      },
+      twoDrivers: {
+        stage: "CONFIRMED_BY_DRIVERS",
+        label: "Confirmed by Drivers",
+        recommendation: "Treat two recent independent driver signals as the baseline for community confirmation."
+      },
+      threeOrMoreDrivers: {
+        stage: "CONFIRMED_BY_DRIVERS",
+        label: "Strong community confidence",
+        recommendation: "Use stronger plain-language support such as multiple drivers confirmed this, without showing percentages or scores."
+      },
+      olderReports: {
+        stage: "NEEDS_CONFIRMATION",
+        label: "Needs Confirmation",
+        recommendation: "Require a fresh confirmation for aging reports before continuing to present them as strongly supported."
+      },
+      independenceGuidance: [
+        "Prefer independent driver confirmations over repeated taps from the same person or device.",
+        "Cluster confirmations by hazard type and nearby road location so drivers confirm the same real-world issue.",
+        "Keep confirmation copy recent and local, for example drivers near this road confirmed it."
+      ],
+      avoid: [
+        "confidence percentages",
+        "technical scores",
+        "internal classifications",
+        "system jargon"
+      ]
+    },
+    reconfirmationRules: {
+      enabled: false,
+      frameworkOnly: true,
+      askStillThereWhen: [
+        "A report has moved beyond the fresh active window.",
+        "The hazard type is likely to change quickly, such as flooding, debris, disabled vehicles, or rail blockage delays.",
+        "A driver is near the reported location and can safely provide an update in a future approved UI flow."
+      ],
+      askConditionsChangedWhen: [
+        "A report has prior confirmations but no fresh update in the current trust window.",
+        "Weather, traffic, or time-sensitive conditions may have changed since the last report.",
+        "The hazard appears to be aging from CONFIRMED_BY_DRIVERS toward NEEDS_CONFIRMATION or OLDER_REPORT."
+      ],
+      askCanYouConfirmWhen: [
+        "A report has only one driver signal.",
+        "A report lacks a clear recent confirmation timestamp.",
+        "The same location has historical activity but no current driver support."
+      ],
+      promptRecommendations: [
+        "Still there?",
+        "Conditions changed?",
+        "Can you confirm this report?"
+      ],
+      guardrails: [
+        "Do not prompt while driving unless a future safety-reviewed interaction model permits it.",
+        "Do not imply Gridly knows the hazard is present or gone without a fresh driver or trusted-source signal.",
+        "Do not activate notification, analytics, or telemetry changes from this framework-only pass."
+      ]
+    },
+    communityContributionRules: {
+      enabled: false,
+      frameworkOnly: true,
+      contributionTypes: {
+        report: "Starts the trust progression as Recently Reported.",
+        confirm: "Supports the existing report and may move future trust language toward Confirmed by Drivers.",
+        reconfirm: "Refreshes trust for an aging report and may keep it out of Needs Confirmation in a future activation.",
+        changed: "Signals that conditions may have shifted and the report should be reviewed before reuse.",
+        cleared: "Could support a future transition away from active reporting, but this framework does not activate clearing behavior."
+      },
+      fairnessGuidance: [
+        "Value fresh local updates more than old activity.",
+        "Avoid over-weighting repeated confirmations from the same driver.",
+        "Use plain language that thanks the community without exposing internal scoring."
+      ],
+      privacyGuidance: [
+        "Do not expose who confirmed a hazard.",
+        "Summarize community support in aggregate language only.",
+        "Avoid precise driver counts in UI copy unless a future privacy review approves it."
+      ]
+    },
+    recommendations: {
+      goodMessaging: [
+        "Drivers recently confirmed this report.",
+        "This report needs a fresh update.",
+        "Conditions may have changed.",
+        "Recently reported by another driver.",
+        "Multiple drivers have confirmed this road issue.",
+        "Can you confirm whether this is still there?"
+      ],
+      avoidMessaging: [
+        "87% confidence.",
+        "Trust score: 0.74.",
+        "LOW_CONFIDENCE state active.",
+        "Expired candidate detected.",
+        "System classification changed."
+      ],
+      userTrustBenefits: [
+        "Drivers understand why a report is being shown.",
+        "Fresh and community-supported reports feel more trustworthy than unqualified alerts.",
+        "Aging reports can ask for help instead of silently becoming less reliable."
+      ],
+      communityBenefits: [
+        "Drivers see how their confirmations help others.",
+        "The community can refresh changing conditions without needing a new duplicate report.",
+        "Plain-language prompts encourage useful updates while avoiding technical burden."
+      ],
+      betaRisks: [
+        "Overstating confirmation may create false certainty if reports are clustered incorrectly.",
+        "Prompting too often may annoy users or create unsafe interaction moments.",
+        "Older reports may still be useful, so future activation should avoid automatic removal without review."
+      ],
+      futureActivationGuardrails: [
+        "Require a separate UI, safety, telemetry, and analytics review before activation.",
+        "Keep runtime alert rendering, markers, route logic, and refresh loops unchanged until explicitly approved.",
+        "Test confirmation clustering with location specificity so confirmations match the same hazard and road segment.",
+        "Use copy testing to ensure users understand that reports are community guidance, not guarantees."
+      ],
+      betaReadinessReview: {
+        userTrustBenefits: [
+          "Creates a plain-language path from new report to confirmed report to historical event.",
+          "Makes aging reports transparent by saying they need fresh updates.",
+          "Avoids technical trust scores that could confuse beta users."
+        ],
+        communityBenefits: [
+          "Gives drivers clear reasons to confirm or update reports.",
+          "Supports community-maintained road awareness for fast-changing hazards.",
+          "Encourages fresh local knowledge without exposing individual driver identity."
+        ],
+        betaRisks: [
+          "Confirmation counts could be misunderstood as certainty if future UI copy is too strong.",
+          "Bad clustering could let drivers confirm nearby but different hazards.",
+          "Activation without safety guardrails could create distracting prompts."
+        ],
+        futureActivationGuardrails: [
+          "Keep this framework read-only until a separate activation task is approved.",
+          "Validate hazard clustering, age windows, and driver-safety prompts before launch.",
+          "Avoid destructive expiration or historical transitions until lifecycle activation is separately reviewed."
+        ]
+      }
+    }
+  };
+}
+
 if (typeof window !== "undefined") {
   window.gridlyHazardTrustLanguage = gridlyHazardTrustLanguage;
+  window.gridlyHazardTrustProgressionFramework = gridlyHazardTrustProgressionFramework;
   window.gridlyHazardLifecycleFramework = function gridlyHazardLifecycleFramework(options = {}) {
     const nowMs = Number.isFinite(Number(options?.nowMs)) ? Number(options.nowMs) : Date.now();
     const sourceHazards = Array.isArray(options?.hazards) ? options.hazards : gridlyDiagnosticArray(activeHazards);
