@@ -6074,6 +6074,17 @@ function classifyBottomDockIntent(button) {
 }
 
 const GRIDLY_ALERT_ROW_SELECTOR = "[data-gridly-alert-id]";
+const GRIDLY_ALERT_FOCUS_ROW_SELECTOR = "[data-gridly-alert-id], [data-alert-focus]";
+const gridlyAlertFocusAuditState = {
+  alertRowsBound: false,
+  lastFocusedIncident: null,
+  focusAttemptSucceeded: false
+};
+const gridlyRouteDockAuditState = {
+  routeButtonBound: false,
+  routeSheetOpened: false,
+  lastRouteDockAction: ""
+};
 
 function getGridlyAlertMapInstance() {
   return window.map || window.gridlyMap || window.__gridlyMap || (typeof getMapInstance === "function" ? getMapInstance() : null);
@@ -6081,7 +6092,7 @@ function getGridlyAlertMapInstance() {
 
 window.gridlyAlertPanelDiagnostic = function () {
   const panel = document.querySelector(".gridly-alerts-active");
-  const rowSelectorUsed = GRIDLY_ALERT_ROW_SELECTOR;
+  const rowSelectorUsed = GRIDLY_ALERT_FOCUS_ROW_SELECTOR;
   const rows = panel ? Array.from(panel.querySelectorAll(rowSelectorUsed)) : [];
   const delegatedContainer = panel;
   const mapInstance = getGridlyAlertMapInstance();
@@ -6250,48 +6261,31 @@ function openAlertsSurfaceFromDock() {
         if (activeSheet instanceof HTMLElement) return isVisible(activeSheet);
         return isVisible(alertsPanel);
       };
-      const mapInstance = getGridlyAlertMapInstance();
-      const readMapCenter = () => {
-        const center = typeof mapInstance?.getCenter === "function" ? mapInstance.getCenter() : null;
-        if (!center) return null;
-        return { lat: Number(center.lat), lng: Number(center.lng) };
-      };
-      const readMapZoom = () => {
-        const zoom = typeof mapInstance?.getZoom === "function" ? Number(mapInstance.getZoom()) : null;
-        return Number.isFinite(zoom) ? zoom : null;
-      };
-      const beforeCenter = readMapCenter();
-      const beforeZoom = readMapZoom();
-      let attemptedFlyTo = false;
-      if (Number.isFinite(lat) && Number.isFinite(lng)) {
-        if (closeButton) closeButton.click();
-        if (typeof mapInstance?.flyTo === "function") {
-          mapInstance.flyTo([lat, lng], 16, { animate: true, duration: 0.35 });
-          attemptedFlyTo = true;
-        } else if (typeof mapInstance?.setView === "function") {
-          mapInstance.setView([lat, lng], 16, { animate: true });
-          attemptedFlyTo = true;
-        }
-        if (typeof window.focusAlertMarkerOnMap === "function") window.focusAlertMarkerOnMap(id, { lat, lng });
-      }
+      const focusSucceeded = focusGridlyAlertIncident({
+        id,
+        lat,
+        lng,
+        type: matchingAlert?.reportKind || matchingAlert?.type || "alerts_panel",
+        closeSurface: () => {
+          if (closeButton) closeButton.click();
+          else if (typeof closePortraitV2Sheet === "function") closePortraitV2Sheet();
+        },
+        openPopup: true,
+        source: "alerts_panel_row"
+      });
       window.setTimeout(() => {
-        if (Number.isFinite(lat) && Number.isFinite(lng) && readMapZoom() !== null && readMapZoom() < 15 && typeof mapInstance?.setView === "function") {
-          mapInstance.setView([lat, lng], 16, { animate: false });
-        }
-        console.log("[V157.7 ALERT MAP FOCUS RESULT]", {
+        console.log("[V198.2 ALERT MAP FOCUS RESULT]", {
           id,
           lat,
           lng,
-          beforeCenter,
-          beforeZoom,
-          afterCenter: readMapCenter(),
-          afterZoom: readMapZoom(),
-          attemptedFlyTo,
-          panelVisibleAfter: isPanelVisible()
+          focusSucceeded,
+          panelVisibleAfter: isPanelVisible(),
+          audit: window.gridlyAlertFocusAudit?.()
         });
       }, 450);
     });
     alertsPanel.dataset.alertFocusBound = "true";
+    gridlyAlertFocusAuditState.alertRowsBound = true;
   };
   const normalizeToken = (value) => String(value || "").replace(/[\s_]+/g, " ").trim();
   const titleCase = (value) => normalizeToken(value).toLowerCase().replace(/\b\w/g, (match) => match.toUpperCase());
@@ -7416,6 +7410,38 @@ function hardenBottomDockInteractivity() {
   });
 }
 
+function openGridlyRouteDock(source = "route_dock") {
+  const button = document.getElementById("mobileDockRouteBtn") || document.querySelector("[data-v2-sheet='route'], [data-mode='route'], [data-section='routes']");
+  gridlyRouteDockAuditState.routeButtonBound = Boolean(button?.dataset?.gridlyDockBound === "true" || button?.dataset?.gridlyRouteDockBound === "true");
+  gridlyRouteDockAuditState.lastRouteDockAction = `${source}:start`;
+  try {
+    closeGridlySurface("alerts", { silent: true });
+    closeAllTacticalDockSurfaces({ except: "route" });
+    const nativeLayer = document.getElementById("mobileNativeSurfaceLayer");
+    if (nativeLayer && !nativeLayer.hidden) {
+      nativeLayer.hidden = true;
+      nativeLayer.setAttribute("aria-hidden", "true");
+      nativeLayer.classList.remove("is-open", "is-active", "active", "open");
+    }
+    routeLauncherSource = source;
+    openGridlySurface("route", () => openMobileRouteQuickPanel());
+    const panel = document.getElementById("gridlyMobileRouteQuickPanel");
+    const opened = Boolean(panel?.classList?.contains("visible"));
+    gridlyRouteDockAuditState.routeSheetOpened = opened;
+    gridlyRouteDockAuditState.lastRouteDockAction = opened ? `${source}:quick_panel_opened` : `${source}:quick_panel_not_visible`;
+    if (!opened && typeof openPortraitV2Sheet === "function") {
+      const fallbackOpened = Boolean(openPortraitV2Sheet("route"));
+      gridlyRouteDockAuditState.routeSheetOpened = fallbackOpened;
+      gridlyRouteDockAuditState.lastRouteDockAction = fallbackOpened ? `${source}:v2_route_sheet_opened` : `${source}:failed`;
+    }
+    return Boolean(gridlyRouteDockAuditState.routeSheetOpened);
+  } catch (error) {
+    gridlyRouteDockAuditState.routeSheetOpened = false;
+    gridlyRouteDockAuditState.lastRouteDockAction = `${source}:error:${String(error?.message || error)}`;
+    return false;
+  }
+}
+
 function bindBottomDockRealButtons() {
   const buttons = getBottomDockButtons();
   buttons.forEach((button) => {
@@ -7426,7 +7452,7 @@ function bindBottomDockRealButtons() {
       event.preventDefault();
       event.stopPropagation();
       if (intent === 'report') return invokeMobileReportEntry?.('bottom_dock_runtime_bind', event);
-      if (intent === 'route') return openGridlySurface?.('route', () => openMobileRouteQuickPanel?.());
+      if (intent === 'route') return openGridlyRouteDock('bottom_dock_runtime_bind');
       if (intent === 'alerts') return openAlertsSurfaceFromDock();
       if (intent === 'settings') return openSettingsSurfaceFromDock();
       if (intent === 'layers') return openGridlyPortraitV2Sheet?.('layers') || openPortraitLayersSurface?.();
@@ -11564,7 +11590,7 @@ function renderCrossings(reason = "unspecified", options = {}) {
       iconAnchor: [24, 22]
     });
 
-    const marker = L.marker([crossing.lat, crossing.lng], { icon })
+    const marker = L.marker([crossing.lat, crossing.lng], { icon, incidentId: `rail-${crossing.id}`, crossingId: String(crossing.id) })
       .bindPopup(buildPopup(crossing, report), {
         maxWidth: 350,
         autoPan: false,
@@ -17962,7 +17988,7 @@ function renderUnifiedIncidents(reason = "auto") {
     });
 
     try {
-      L.marker([lat, lng], { icon })
+      L.marker([lat, lng], { icon, incidentId: String(incident?.id || incident?.report_id || incident?.key || ""), incidentSource: String(incident?.source || "") })
         .bindPopup(buildUnifiedIncidentPopup(incident), { maxWidth: 340 })
         .addTo(unifiedIncidentLayer);
     } catch (error) {
@@ -20175,11 +20201,9 @@ function bindEvents() {
     });
   });
   document.getElementById("mobileDockRouteBtn")?.addEventListener("click", () => {
-    closeGridlySurface("alerts", { silent: true });
-    closeAllTacticalDockSurfaces({ except: "route" });
-    routeLauncherSource = "route-dock-button";
-    openGridlySurface("route", () => openMobileRouteQuickPanel());
+    openGridlyRouteDock("route-dock-button");
   });
+  if (document.getElementById("mobileDockRouteBtn")) document.getElementById("mobileDockRouteBtn").dataset.gridlyRouteDockBound = "true";
   document.getElementById("mobileDockAlertsBtn")?.addEventListener("click", () => {
     if (!isTacticalLandscapeDockMode()) return invokeMobileAlertsEntry("mobile_dock_alerts");
     const rows = (getUnifiedIncidents?.() || []).slice(0, 8).map((incident) => {
@@ -20352,7 +20376,15 @@ function bindEvents() {
       focusAlertLocation(focusCard.dataset.lat, focusCard.dataset.lng, {
         incidentId: focusCard.dataset.incidentId,
         type: focusCard.closest("#roadHazardsList") ? "road" : "rail",
-        openPopup: false
+        openPopup: true,
+        closeSurface: () => {
+          const mobileSurfaceLayer = document.getElementById("mobileNativeSurfaceLayer");
+          if (mobileSurfaceLayer && !mobileSurfaceLayer.hidden) {
+            mobileSurfaceLayer.hidden = true;
+            mobileSurfaceLayer.setAttribute("aria-hidden", "true");
+          }
+          if (typeof closePortraitV2Sheet === "function") closePortraitV2Sheet();
+        }
       });
       const mobileSurfaceLayer = document.getElementById("mobileNativeSurfaceLayer");
       const mobileSurfaceBody = document.getElementById("mobileNativeSurfaceBody");
@@ -20495,7 +20527,7 @@ function bindEvents() {
     const focusCard = event.target?.closest?.("[data-alert-focus]");
     if (!focusCard) return;
     event.preventDefault();
-    focusAlertLocation(focusCard.dataset.lat, focusCard.dataset.lng, { incidentId: focusCard.dataset.incidentId, type: focusCard.closest("#roadHazardsList") ? "road" : "rail", openPopup: false });
+    focusAlertLocation(focusCard.dataset.lat, focusCard.dataset.lng, { incidentId: focusCard.dataset.incidentId, type: focusCard.closest("#roadHazardsList") ? "road" : "rail", openPopup: true });
   });
   els.mobileOpenLiveMapBtn?.addEventListener("click", () => {
     setConfirmation("Opening Live Map.", "success");
@@ -25872,32 +25904,177 @@ function buildAlertFocusDataset(incidentLike = {}, defaults = {}) {
   return `${focusAttrs} data-incident-id="${sanitizeText(incidentId || "unknown")}"`;
 }
 
-function focusAlertLocation(lat, lng, options = {}) {
-  const coords = normalizeCoordinatePair(lat, lng);
-  if (!map || !coords) return false;
-  map.flyTo([coords.lat, coords.lng], Math.max(14, Number(map.getZoom?.() || 14)), { duration: 0.45 });
-  const incidentId = String(options?.incidentId || "").trim();
-  const tolerance = Number(options?.tolerance || 0.00025);
-  const matchedMarker = unifiedIncidentLayer?.getLayers?.().find((layer) => {
-    const markerPos = layer?.getLatLng?.();
-    const markerIncidentId = String(layer?.options?.incidentId || "").trim();
-    if (incidentId && markerIncidentId && markerIncidentId === incidentId) return true;
-    return markerPos && Math.abs(markerPos.lat - coords.lat) < tolerance && Math.abs(markerPos.lng - coords.lng) < tolerance;
-  });
-  const shouldOpenPopup = Boolean(options?.openPopup && matchedMarker?.openPopup);
-  if (shouldOpenPopup) setTimeout(() => matchedMarker.openPopup(), 180);
-  window.__gridlyAlertFocusDebugState = {
-    lastAlertFocusIncidentId: incidentId || null,
-    lastAlertFocusLat: coords.lat,
-    lastAlertFocusLng: coords.lng,
-    lastAlertFocusType: String(options?.type || "unknown"),
-    lastAlertFocusMatchedMarker: Boolean(matchedMarker),
-    lastAlertFocusPopupOpened: shouldOpenPopup,
-    lastAlertFocusReason: shouldOpenPopup ? "popup-opened" : matchedMarker ? "pan-only-matched-marker" : "pan-only-no-marker"
-  };
-  return true;
+function getGridlyAlertFocusRows() {
+  return Array.from(document.querySelectorAll(GRIDLY_ALERT_FOCUS_ROW_SELECTOR)).filter((row) => row instanceof HTMLElement);
 }
 
+function getGridlyAlertFocusCoordinates(row) {
+  if (!(row instanceof HTMLElement)) return null;
+  const lat = Number(row.dataset?.lat ?? row.getAttribute("data-gridly-alert-lat"));
+  const lng = Number(row.dataset?.lng ?? row.getAttribute("data-gridly-alert-lng"));
+  return normalizeCoordinatePair(lat, lng);
+}
+
+function clearGridlyFocusedAlertMarker() {
+  document.querySelectorAll(".gridly-alert-focused-marker").forEach((node) => node.classList.remove("gridly-alert-focused-marker"));
+}
+
+function findGridlyAlertMarker(coords, options = {}) {
+  const incidentId = String(options?.incidentId || options?.id || "").trim();
+  const normalizedId = incidentId.replace(/^(rail|road|txdot)-/i, "");
+  const tolerance = Number(options?.tolerance || 0.00035);
+  const coordinateMatches = (layer) => {
+    const markerPos = layer?.getLatLng?.();
+    return Boolean(markerPos && coords && Math.abs(markerPos.lat - coords.lat) < tolerance && Math.abs(markerPos.lng - coords.lng) < tolerance);
+  };
+
+  if (crossingMarkers instanceof Map) {
+    const direct = crossingMarkers.get(incidentId) || crossingMarkers.get(normalizedId);
+    if (direct) return direct;
+    const crossingMatch = Array.from(crossingMarkers.values()).find((layer) => {
+      const layerIncidentId = String(layer?.options?.incidentId || layer?.options?.crossingId || "").trim();
+      return (incidentId && (layerIncidentId === incidentId || layerIncidentId === normalizedId || layerIncidentId === `rail-${normalizedId}`)) || coordinateMatches(layer);
+    });
+    if (crossingMatch) return crossingMatch;
+  }
+
+  return unifiedIncidentLayer?.getLayers?.().find((layer) => {
+    const markerIncidentId = String(layer?.options?.incidentId || "").trim();
+    if (incidentId && markerIncidentId && markerIncidentId === incidentId) return true;
+    return coordinateMatches(layer);
+  }) || null;
+}
+
+function focusGridlyAlertIncident(focus = {}) {
+  const coords = normalizeCoordinatePair(focus?.lat, focus?.lng);
+  const incidentId = String(focus?.incidentId || focus?.id || "").trim();
+  const mapRef = getGridlyAlertMapInstance();
+  const mapCenterActionAvailable = Boolean(mapRef && (typeof mapRef.flyTo === "function" || typeof mapRef.setView === "function"));
+  const zoomActionAvailable = Boolean(mapRef && (typeof mapRef.flyTo === "function" || typeof mapRef.setView === "function"));
+  const marker = coords ? findGridlyAlertMarker(coords, { incidentId }) : null;
+  const markerFocusAvailable = Boolean(marker && (typeof marker.openPopup === "function" || typeof marker.getElement === "function"));
+  let focusAttemptSucceeded = false;
+
+  gridlyAlertFocusAuditState.lastFocusedIncident = {
+    id: incidentId || null,
+    lat: coords?.lat ?? null,
+    lng: coords?.lng ?? null,
+    type: String(focus?.type || "unknown"),
+    source: String(focus?.source || "unknown"),
+    at: new Date().toISOString()
+  };
+
+  if (coords && mapRef && mapCenterActionAvailable) {
+    try {
+      if (typeof focus?.closeSurface === "function") focus.closeSurface();
+      else if (typeof closePortraitV2Sheet === "function") closePortraitV2Sheet();
+      const zoom = Math.max(16, Number(mapRef.getZoom?.() || 0));
+      if (typeof mapRef.flyTo === "function") mapRef.flyTo([coords.lat, coords.lng], zoom, { animate: true, duration: 0.35 });
+      else mapRef.setView([coords.lat, coords.lng], zoom, { animate: true });
+      window.setTimeout(() => {
+        if (typeof mapRef.getZoom === "function" && mapRef.getZoom() < 15 && typeof mapRef.setView === "function") {
+          mapRef.setView([coords.lat, coords.lng], 16, { animate: false });
+        }
+      }, 380);
+      focusAttemptSucceeded = true;
+    } catch (error) {
+      focusAttemptSucceeded = false;
+    }
+  }
+
+  clearGridlyFocusedAlertMarker();
+  if (marker) {
+    window.setTimeout(() => {
+      const markerEl = marker.getElement?.();
+      markerEl?.classList?.add("gridly-alert-focused-marker");
+      if (focus?.openPopup !== false && typeof marker.openPopup === "function") marker.openPopup();
+    }, 220);
+  }
+
+  gridlyAlertFocusAuditState.focusAttemptSucceeded = Boolean(focusAttemptSucceeded);
+  window.__gridlyAlertFocusDebugState = {
+    lastAlertFocusIncidentId: incidentId || null,
+    lastAlertFocusLat: coords?.lat ?? null,
+    lastAlertFocusLng: coords?.lng ?? null,
+    lastAlertFocusType: String(focus?.type || "unknown"),
+    lastAlertFocusMatchedMarker: Boolean(marker),
+    lastAlertFocusPopupOpened: Boolean(marker && focus?.openPopup !== false),
+    lastAlertFocusReason: focusAttemptSucceeded ? (marker ? "map-centered-marker-focused" : "map-centered-no-marker") : "focus-unavailable"
+  };
+  return Boolean(focusAttemptSucceeded);
+}
+
+function focusAlertLocation(lat, lng, options = {}) {
+  return focusGridlyAlertIncident({
+    ...options,
+    lat,
+    lng,
+    id: options?.incidentId || options?.id || "",
+    source: options?.source || "data_alert_focus",
+    openPopup: options?.openPopup !== false
+  });
+}
+
+window.focusAlertMarkerOnMap = function focusAlertMarkerOnMap(id, coords = {}) {
+  const marker = findGridlyAlertMarker(normalizeCoordinatePair(coords?.lat, coords?.lng), { incidentId: id });
+  clearGridlyFocusedAlertMarker();
+  marker?.getElement?.()?.classList?.add("gridly-alert-focused-marker");
+  marker?.openPopup?.();
+  return Boolean(marker);
+};
+window.gridlyAlertFocusAudit = function gridlyAlertFocusAudit() {
+  const rows = getGridlyAlertFocusRows();
+  const coordinateRows = rows.filter((row) => Boolean(getGridlyAlertFocusCoordinates(row)));
+  const mapRef = getGridlyAlertMapInstance();
+  return {
+    alertRowsFound: rows.length,
+    alertRowsBound: Boolean(gridlyAlertFocusAuditState.alertRowsBound || window.__gridlyHandleDataActionClickBound || rows.some((row) => row.closest(".gridly-alerts-active")?.dataset?.alertFocusBound === "true")),
+    incidentCoordinatesFound: coordinateRows.length,
+    mapCenterActionAvailable: Boolean(mapRef && (typeof mapRef.flyTo === "function" || typeof mapRef.setView === "function")),
+    zoomActionAvailable: Boolean(mapRef && (typeof mapRef.flyTo === "function" || typeof mapRef.setView === "function")),
+    markerFocusAvailable: Boolean(typeof window.focusAlertMarkerOnMap === "function" || crossingMarkers?.size || unifiedIncidentLayer?.getLayers?.().length),
+    lastFocusedIncident: gridlyAlertFocusAuditState.lastFocusedIncident,
+    focusAttemptSucceeded: Boolean(gridlyAlertFocusAuditState.focusAttemptSucceeded)
+  };
+};
+
+window.gridlyRouteDockAudit = function gridlyRouteDockAudit() {
+  const routeButton = document.getElementById("mobileDockRouteBtn") || document.querySelector("[data-v2-sheet='route'], [data-mode='route'], [data-section='routes']");
+  const routePanel = document.getElementById("gridlyMobileRouteQuickPanel");
+  const routeSheet = document.getElementById("gridlyPortraitV2Sheet");
+  const routeSheetOpen = Boolean(routePanel?.classList?.contains("visible") || (routeSheet?.dataset?.activeSheet === "route" && !routeSheet.hidden));
+  return {
+    routeButtonFound: Boolean(routeButton),
+    routeButtonBound: Boolean(routeButton?.dataset?.gridlyDockBound === "true" || routeButton?.dataset?.gridlyRouteDockBound === "true" || gridlyRouteDockAuditState.routeButtonBound),
+    routeSheetAvailable: Boolean(routePanel || routeSheet || typeof openMobileRouteQuickPanel === "function"),
+    routeSheetOpened: routeSheetOpen || Boolean(gridlyRouteDockAuditState.routeSheetOpened),
+    routeWatchAvailable: Boolean(typeof startInlineRouteWatch === "function" || window.__gridlyRouteWatchActive !== undefined),
+    lastRouteDockAction: gridlyRouteDockAuditState.lastRouteDockAction || "none"
+  };
+};
+
+window.gridlyTxDotAudit = function gridlyTxDotAudit() {
+  const txdotItems = typeof futureTxdotIncidents === "function" ? futureTxdotIncidents() : [];
+  const serviceItems = Array.isArray(window.gridlyTxdot?.getRoadConditions?.()) ? window.gridlyTxdot.getRoadConditions() : [];
+  const allTxdot = [...txdotItems, ...serviceItems];
+  const alerts = Array.isArray(window.__gridlyLatestAlertsForRender) ? window.__gridlyLatestAlertsForRender : (window.getAlertsSurfaceSnapshot?.().alerts || []);
+  const stringifyAlertForAudit = (alert) => {
+    try {
+      return JSON.stringify(alert || {});
+    } catch (error) {
+      return String(alert?.source || alert?.provider || alert?.type || alert?.title || "");
+    }
+  };
+  const txdotAlertCount = alerts.filter((alert) => /txdot|drivetexas|drive texas/i.test(stringifyAlertForAudit(alert))).length;
+  const txdotRenderedCount = document.querySelectorAll("#map .gridly-marker-txdot-single, #map .gridly-marker-txdot-corridor, #map .gridly-marker-txdot-route-impact, #map [data-visual-style^='txdot']").length;
+  return {
+    txdotEnabled: Boolean(window.gridlyTxdot && window.GRIDLY_CONFIG?.txdot),
+    txdotIncidentCount: allTxdot.length,
+    txdotRenderedCount,
+    txdotVisibleInAlerts: txdotAlertCount > 0,
+    txdotContributingToAwareness: Boolean(txdotAlertCount > 0 || txdotRenderedCount > 0 || allTxdot.length > 0)
+  };
+};
 
 window.gridlyAlertFocusDebug = function () {
   return { ...(window.__gridlyAlertFocusDebugState || {}) };
@@ -32065,7 +32242,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           beginRoadHazardMapPlacement(resolvedHazardType, { source: "portrait-v2-report" });
         }
       },
-      "route-open": () => { v1363RouteActionDebug.routeDockClickHandled = true; document.getElementById("mobileDockRouteBtn")?.click(); },
+      "route-open": () => { v1363RouteActionDebug.routeDockClickHandled = true; openGridlyRouteDock("portrait_v2_route_open"); },
       "route-watch-open": async () => {
         v1363RouteActionDebug.routeWatchActionHandled = true;
         const result = await startInlineRouteWatch({ activateWatch: true, source: "portrait_v2_route_watch" });
