@@ -22580,18 +22580,23 @@ function configureRouteSetupModal({ mode = "add", prefillType = "custom" } = {})
     const selected = getSelectedPlace();
     const hasHome = isConfiguredPlace(state.home);
     const hasWork = isConfiguredPlace(state.work);
-    const effectiveType = selected?.id === "home" || selected?.id === "work"
-      ? selected.id
-      : !hasHome
-        ? "home"
-        : !hasWork
-          ? "work"
-          : "custom";
+    const requestedType = normalizedType === "home" || normalizedType === "work" || normalizedType === "custom" ? normalizedType : "";
+    const effectiveType = requestedType
+      || (selected?.id === "home" || selected?.id === "work"
+        ? selected.id
+        : !hasHome
+          ? "home"
+          : !hasWork
+            ? "work"
+            : "custom");
+    const activePlace = effectiveType === "home" || effectiveType === "work"
+      ? state[effectiveType]
+      : (selected?.id === "home" || selected?.id === "work" ? selected : null);
     els.routeSetupModal.dataset.prefillType = effectiveType;
     if (els.mobileHomeInput) {
-      els.mobileHomeInput.value = selected?.name || (effectiveType === "home" ? "Home" : effectiveType === "work" ? "Work" : "");
+      els.mobileHomeInput.value = activePlace?.name || activePlace?.label || (effectiveType === "home" ? "Home" : effectiveType === "work" ? "Work" : "");
     }
-    if (els.mobileWorkInput) els.mobileWorkInput.value = selected?.address || "";
+    if (els.mobileWorkInput) els.mobileWorkInput.value = activePlace?.address || activePlace?.formattedAddress || activePlace?.fullAddress || "";
     if (els.managePlaceSlotRow) els.managePlaceSlotRow.hidden = false;
     setManagePlacesSourceMode("");
     document.getElementById("managePlacesSlotsGroup")?.removeAttribute("hidden");
@@ -23959,6 +23964,7 @@ const GRIDLY_SETTINGS_MAP_STYLE_LABELS = {
 
 const GRIDLY_SETTINGS_VALID_THEMES = new Set(["system", "light", "dark"]);
 const GRIDLY_SETTINGS_VALID_TEXT_SIZES = new Set(["standard", "large", "extra-large"]);
+let gridlyLastSettingsAction = "";
 
 function gridlyStorageAvailable() {
   try {
@@ -24152,6 +24158,24 @@ function persistGridlySettingsFromUi(event) {
   }
 }
 
+function openGridlySettingsSavedPlaceAction(action = "", type = "manage", source = "legacy_settings") {
+  const normalizedType = type === "home" || type === "work" ? type : "manage";
+  gridlyLastSettingsAction = action || (normalizedType === "home" ? "edit_home" : normalizedType === "work" ? "edit_work" : "manage_saved_places");
+  const openHandler = () => {
+    if (source === "portrait_v2_settings" && typeof closePortraitV2Sheet === "function") closePortraitV2Sheet();
+    if (normalizedType === "home" || normalizedType === "work") {
+      if (typeof openRouteSetupModal === "function") openRouteSetupModal();
+      if (typeof configureRouteSetupModal === "function") configureRouteSetupModal({ mode: "manage", prefillType: normalizedType });
+      return;
+    }
+    if (typeof openRouteSetupModalForType === "function") openRouteSetupModalForType("manage");
+    else if (typeof openRouteSetupModal === "function") openRouteSetupModal();
+  };
+  if (typeof openGridlySurface === "function") openGridlySurface("route", openHandler);
+  else openHandler();
+  return true;
+}
+
 function bindGridlySettingsPreferences() {
   const controls = [
     els.settingsRouteAlertsToggle,
@@ -24171,14 +24195,13 @@ function bindGridlySettingsPreferences() {
     if (!button || button.dataset.gridlySettingsBound === "1") return;
     button.dataset.gridlySettingsBound = "1";
     button.addEventListener("click", () => {
-      if (typeof openRouteSetupModalForType === "function") openRouteSetupModalForType(type);
-      else if (typeof openRouteSetupModal === "function") openRouteSetupModal();
+      openGridlySettingsSavedPlaceAction(type === "home" ? "edit_home" : "edit_work", type, "legacy_settings");
     });
   });
   if (els.settingsManageSavedPlacesBtn && els.settingsManageSavedPlacesBtn.dataset.gridlySettingsBound !== "1") {
     els.settingsManageSavedPlacesBtn.dataset.gridlySettingsBound = "1";
     els.settingsManageSavedPlacesBtn.addEventListener("click", () => {
-      if (typeof openRouteSetupModal === "function") openRouteSetupModal();
+      openGridlySettingsSavedPlaceAction("manage_saved_places", "manage", "legacy_settings");
     });
   }
   if (els.settingsFeedbackBtn && els.settingsFeedbackBtn.dataset.gridlySettingsBound !== "1") {
@@ -24210,6 +24233,14 @@ function buildGridlySettingsAudit(section = "all") {
   const duplicateRouteWatchRowsFound = typeof document !== "undefined"
     ? Boolean(document.querySelector("#settingsSavedPlacesSection #settingsSavedPlacesList:not([hidden]) .settings-saved-place-row"))
     : false;
+  const settingsEditHomeButton = typeof document !== "undefined" ? document.getElementById("settingsEditHomeBtn") : null;
+  const settingsEditWorkButton = typeof document !== "undefined" ? document.getElementById("settingsEditWorkBtn") : null;
+  const settingsManageSavedPlacesButton = typeof document !== "undefined" ? document.getElementById("settingsManageSavedPlacesBtn") : null;
+  const portraitSettingsBody = typeof document !== "undefined" ? document.getElementById("gridlyPortraitV2SheetBody") : null;
+  const portraitSettingsEditHomeButton = portraitSettingsBody?.querySelector?.('[data-v2-action="route-edit-home-open"]') || null;
+  const portraitSettingsEditWorkButton = portraitSettingsBody?.querySelector?.('[data-v2-action="route-edit-work-open"]') || null;
+  const portraitSettingsManageSavedPlacesButton = portraitSettingsBody?.querySelector?.('[data-v2-action="route-manage-places-open"]') || null;
+  const portraitSettingsDelegatedBound = Boolean(portraitSettingsBody?.dataset?.v2DelegatedClickBound === "1");
   const completeness = gridlySettingsCompleteness(settings);
   return {
     loaded: true,
@@ -24245,6 +24276,19 @@ function buildGridlySettingsAudit(section = "all") {
     workDisplaySource: workDisplay.source,
     zipUsedAsPrimary: Boolean(homeDisplay.zipUsedAsPrimary || workDisplay.zipUsedAsPrimary),
     duplicateRouteWatchRowsFound,
+    settingsEditHomeButtonFound: Boolean(settingsEditHomeButton),
+    settingsEditHomeButtonBound: Boolean(settingsEditHomeButton?.dataset?.gridlySettingsBound === "1"),
+    settingsEditWorkButtonFound: Boolean(settingsEditWorkButton),
+    settingsEditWorkButtonBound: Boolean(settingsEditWorkButton?.dataset?.gridlySettingsBound === "1"),
+    settingsManageSavedPlacesButtonFound: Boolean(settingsManageSavedPlacesButton),
+    settingsManageSavedPlacesButtonBound: Boolean(settingsManageSavedPlacesButton?.dataset?.gridlySettingsBound === "1"),
+    portraitSettingsEditHomeButtonFound: Boolean(portraitSettingsEditHomeButton),
+    portraitSettingsEditHomeButtonBound: Boolean(portraitSettingsEditHomeButton?.dataset?.gridlySettingsBound === "1" || (portraitSettingsEditHomeButton && portraitSettingsDelegatedBound)),
+    portraitSettingsEditWorkButtonFound: Boolean(portraitSettingsEditWorkButton),
+    portraitSettingsEditWorkButtonBound: Boolean(portraitSettingsEditWorkButton?.dataset?.gridlySettingsBound === "1" || (portraitSettingsEditWorkButton && portraitSettingsDelegatedBound)),
+    portraitSettingsManageSavedPlacesButtonFound: Boolean(portraitSettingsManageSavedPlacesButton),
+    portraitSettingsManageSavedPlacesButtonBound: Boolean(portraitSettingsManageSavedPlacesButton?.dataset?.gridlySettingsBound === "1" || (portraitSettingsManageSavedPlacesButton && portraitSettingsDelegatedBound)),
+    lastSettingsAction: gridlyLastSettingsAction || null,
     textSizePreferenceAvailable: Boolean(GRIDLY_SETTINGS_VALID_TEXT_SIZES.has(settings.display.textSize)),
     textSizePreferencePersisted: rawSettings ? Boolean(GRIDLY_SETTINGS_VALID_TEXT_SIZES.has(settings.display.textSize)) : false,
     preferences: settings,
@@ -32447,16 +32491,28 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       },
       "route-manage-places-open": () => {
         v1363RouteActionDebug.routeManagePlacesActionHandled = true;
+        if (activeSheet === "settings") {
+          openGridlySettingsSavedPlaceAction("manage_saved_places", "manage", "portrait_v2_settings");
+          return;
+        }
         const handled = openV2ManagePlacesAdapter("route_sheet");
         if (!handled) {
           v1363RouteActionDebug.lastRouteActionFailureReason = v1365ManagePlacesAdapterDebug.managePlacesFailureReason || "manage_places_target_missing";
         }
       },
       "route-edit-home-open": () => {
+        if (activeSheet === "settings") {
+          openGridlySettingsSavedPlaceAction("edit_home", "home", "portrait_v2_settings");
+          return;
+        }
         if (typeof openRouteSetupModalForType === "function") openRouteSetupModalForType("home");
         else if (typeof openRouteSetupModal === "function") openRouteSetupModal();
       },
       "route-edit-work-open": () => {
+        if (activeSheet === "settings") {
+          openGridlySettingsSavedPlaceAction("edit_work", "work", "portrait_v2_settings");
+          return;
+        }
         if (typeof openRouteSetupModalForType === "function") openRouteSetupModalForType("work");
         else if (typeof openRouteSetupModal === "function") openRouteSetupModal();
       },
@@ -32594,6 +32650,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     refreshPortraitV2ReportCtas(body, preconditions);
     body.querySelectorAll("[data-v2-action], [data-action], [data-route-action]").forEach((button) => {
       const action = resolveV2SheetAction(button);
+      if (activeSheet === "settings" && (action === "route-edit-home-open" || action === "route-edit-work-open" || action === "route-manage-places-open")) {
+        button.dataset.gridlySettingsBound = "1";
+      }
       const isDisabledByPrecondition = (
         (action === "route-watch-open" && !preconditions.routeReady)
         || (action === "route-preview-open" && !preconditions.canViewRoute)
