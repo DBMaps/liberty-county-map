@@ -4642,6 +4642,9 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyGeoAudit",
   "gridlyActiveIncidentAudit",
   "gridlyDevPurgeRecentRoadHazards",
+  "gridlyTestDataCleanupAudit",
+  "gridlyClearTestData",
+  "gridlyClearLocalTestReports",
   "gridlyRouteButtonSystemAudit",
   "gridlyRouteSetupButtonAudit",
   "gridlyRouteAuditGlobalsCheck",
@@ -4713,6 +4716,9 @@ function exposeAllGridlyAuditHelpers() {
     gridlyGeoAudit: typeof gridlyGeoAudit === "function" ? gridlyGeoAudit : null,
     gridlyActiveIncidentAudit: typeof gridlyActiveIncidentAudit === "function" ? gridlyActiveIncidentAudit : null,
     gridlyDevPurgeRecentRoadHazards: typeof gridlyDevPurgeRecentRoadHazards === "function" ? gridlyDevPurgeRecentRoadHazards : null,
+    gridlyTestDataCleanupAudit: typeof target?.gridlyTestDataCleanupAudit === "function" ? target.gridlyTestDataCleanupAudit : null,
+    gridlyClearTestData: typeof target?.gridlyClearTestData === "function" ? target.gridlyClearTestData : null,
+    gridlyClearLocalTestReports: typeof target?.gridlyClearLocalTestReports === "function" ? target.gridlyClearLocalTestReports : null,
     gridlyRouteButtonSystemAudit: typeof gridlyRouteButtonSystemAudit === "function" ? gridlyRouteButtonSystemAudit : null,
     gridlyRouteSetupButtonAudit: typeof gridlyRouteSetupButtonAudit === "function" ? gridlyRouteSetupButtonAudit : null,
     gridlyRouteAuditGlobalsCheck: typeof gridlyRouteAuditGlobalsCheck === "function" ? gridlyRouteAuditGlobalsCheck : null,
@@ -11592,35 +11598,232 @@ function refreshReportHazardViews(source = "unspecified") {
   }
 }
 
-window.gridlyClearLocalTestReports = function gridlyClearLocalTestReports() {
-  const reportCountBefore = activeReports.length;
-  const hazardCountBefore = activeHazards.length;
+const GRIDLY_TEST_DATA_CLEAR_CONFIRMATION = "CLEAR_TEST_DATA";
+
+function gridlyGetProtectedCleanupStorageKeys() {
+  return [
+    SAVED_PLACES_STORAGE_KEY,
+    SELECTED_PLACE_STORAGE_KEY,
+    GRIDLY_SETTINGS_STORAGE_KEY,
+    MAP_STYLE_STORAGE_KEY,
+    GRIDLY_PROFILE_STORAGE_KEY,
+    SMART_ALERTS_STORAGE_KEY,
+    SMART_ALERTS_DRAWER_SEEN_KEY,
+    MAP_FIRST_HINT_SEEN_KEY,
+    MOVEMENT_INTELLIGENCE_STORAGE_KEY,
+    COMMUTE_BASELINE_SAMPLES_STORAGE_KEY,
+    "gridlyHome",
+    "gridlyWork"
+  ].filter(Boolean);
+}
+
+function gridlyIsProtectedCleanupStorageKey(key = "") {
+  const protectedKeys = new Set(gridlyGetProtectedCleanupStorageKeys());
+  return protectedKeys.has(String(key || ""));
+}
+
+function gridlyGetTestArtifactStorageKeys() {
+  if (typeof localStorage === "undefined") return [];
+  const artifactMatcher = /^gridly(?:Local)?(?:Test|Dev).*(?:Report|Reports|Hazard|Hazards|Artifact|Artifacts|Cache|Telemetry|Event|Events|History)$/i;
+  const staleSavedReportMatcher = /^gridly.*(?:Test|Dev|Local).*(?:Saved)?Report.*(?:Artifact|Draft|Cache|History)?$/i;
+  const keys = [];
+  try {
+    for (let i = 0; i < localStorage.length; i += 1) {
+      const key = localStorage.key(i);
+      if (!key || gridlyIsProtectedCleanupStorageKey(key)) continue;
+      if (artifactMatcher.test(key) || staleSavedReportMatcher.test(key)) keys.push(key);
+    }
+  } catch (_error) {
+    return [];
+  }
+  return keys.sort();
+}
+
+function gridlyReadCleanupEventHistoryCounts() {
+  const raw = gridlySafeLocalStorageGet(GRIDLY_EVENT_HISTORY_STORAGE_KEY);
+  if (!raw) return { crossingEvents: 0, hazardEvents: 0, telemetryFields: 0, parseError: false };
+  try {
+    const parsed = JSON.parse(raw);
+    const crossingEvents = Array.isArray(parsed?.crossingEvents) ? parsed.crossingEvents.length : 0;
+    const hazardEvents = Array.isArray(parsed?.hazardEvents) ? parsed.hazardEvents.length : 0;
+    const telemetry = parsed?.operationalTelemetry && typeof parsed.operationalTelemetry === "object" ? parsed.operationalTelemetry : {};
+    const telemetryFields = Object.values(telemetry).filter((value) => {
+      if (typeof value === "number") return value > 0;
+      return Boolean(value);
+    }).length;
+    return { crossingEvents, hazardEvents, telemetryFields, parseError: false };
+  } catch (_error) {
+    return { crossingEvents: 0, hazardEvents: 0, telemetryFields: 1, parseError: true };
+  }
+}
+
+function gridlyBuildTestDataCleanupAudit(options = {}) {
+  const historyCounts = gridlyReadCleanupEventHistoryCounts();
+  const artifactKeys = gridlyGetTestArtifactStorageKeys();
+  const reportCount = Array.isArray(activeReports) ? activeReports.length : 0;
+  const hazardCount = Array.isArray(activeHazards) ? activeHazards.length : 0;
+  const telemetryQualityCount = Number(gridlyCrossingEventQualityTelemetry?.duplicateCrossingEventsSuppressed || 0) > 0 ? 1 : 0;
+  const localEventHistoryFound = historyCounts.crossingEvents + historyCounts.hazardEvents + (historyCounts.parseError ? 1 : 0);
+  const telemetryFound = historyCounts.telemetryFields + telemetryQualityCount;
+  const protectedDataSkipped = gridlyGetProtectedCleanupStorageKeys().filter((key) => gridlySafeLocalStorageHas(key));
+  const supabaseCleanupAvailable = typeof gridlyDevPurgeRecentRoadHazards === "function";
+  const audit = {
+    dryRun: options?.dryRun !== false,
+    roadHazardsFound: hazardCount,
+    crossingReportsFound: reportCount,
+    localEventHistoryFound,
+    telemetryFound,
+    wouldDelete: {
+      inMemoryRoadHazards: hazardCount,
+      inMemoryCrossingReports: reportCount,
+      localStorageKeys: [
+        ...(localEventHistoryFound || telemetryFound ? [GRIDLY_EVENT_HISTORY_STORAGE_KEY] : []),
+        ...artifactKeys
+      ],
+      localStorageArtifactKeys: artifactKeys,
+      localEventHistory: {
+        key: GRIDLY_EVENT_HISTORY_STORAGE_KEY,
+        crossingEvents: historyCounts.crossingEvents,
+        hazardEvents: historyCounts.hazardEvents,
+        parseError: historyCounts.parseError
+      },
+      localTelemetry: {
+        key: GRIDLY_EVENT_HISTORY_STORAGE_KEY,
+        operationalTelemetryFields: historyCounts.telemetryFields,
+        crossingEventQualityTelemetryFields: telemetryQualityCount
+      },
+      duplicateAlerts: {
+        source: "derived from local event history and active report arrays",
+        safelyRemovableThroughLocalCleanup: true
+      },
+      supabase: supabaseCleanupAvailable
+        ? { available: true, helper: "gridlyDevPurgeRecentRoadHazards", scope: "recent road hazards only; crossing report purge is audit-only because no safe dev purge helper exists" }
+        : { available: false, reason: "Supabase cleanup helper is not available yet; audit only" }
+    },
+    protectedDataSkipped
+  };
+  console.info("gridlyTestDataCleanupAudit", audit);
+  return audit;
+}
+
+function gridlyRemoveLocalStorageKeys(keys = []) {
+  const removed = [];
+  const skipped = [];
+  if (typeof localStorage === "undefined") return { removed, skipped: keys };
+  keys.forEach((key) => {
+    if (!key || gridlyIsProtectedCleanupStorageKey(key)) {
+      skipped.push(key);
+      return;
+    }
+    try {
+      localStorage.removeItem(key);
+      removed.push(key);
+    } catch (_error) {
+      skipped.push(key);
+    }
+  });
+  return { removed: removed.sort(), skipped: skipped.filter(Boolean).sort() };
+}
+
+window.gridlyClearLocalTestReports = function gridlyClearLocalTestReports(options = {}) {
+  if (options?.confirm !== GRIDLY_TEST_DATA_CLEAR_CONFIRMATION) {
+    const blocked = {
+      ok: false,
+      reason: "confirm_CLEAR_TEST_DATA_required",
+      clearedLocalActiveReports: 0,
+      clearedLocalActiveHazards: 0,
+      removedLocalStorageKeys: [],
+      protectedDataSkipped: gridlyGetProtectedCleanupStorageKeys().filter((key) => gridlySafeLocalStorageHas(key))
+    };
+    console.warn("gridlyClearLocalTestReports blocked", blocked);
+    return blocked;
+  }
+
+  const reportCountBefore = Array.isArray(activeReports) ? activeReports.length : 0;
+  const hazardCountBefore = Array.isArray(activeHazards) ? activeHazards.length : 0;
 
   activeReports = [];
   activeHazards = [];
 
-  const removedLocalKeys = [];
-  const testKeyMatcher = /^gridly(?:Local)?(?:Test|Dev).*(?:Report|Hazard)/i;
-  for (let i = localStorage.length - 1; i >= 0; i -= 1) {
-    const key = localStorage.key(i);
-    if (key && testKeyMatcher.test(key)) {
-      localStorage.removeItem(key);
-      removedLocalKeys.push(key);
-    }
-  }
+  const removed = gridlyRemoveLocalStorageKeys(gridlyGetTestArtifactStorageKeys());
 
   refreshReportHazardViews("gridlyClearLocalTestReports");
 
   const summary = {
+    ok: true,
     clearedLocalActiveReports: reportCountBefore,
     clearedLocalActiveHazards: hazardCountBefore,
-    removedLocalStorageKeys: removedLocalKeys.sort(),
+    removedLocalStorageKeys: removed.removed,
+    skippedLocalStorageKeys: removed.skipped,
     supabaseRowsDeleted: 0,
     note: "Local in-memory report/hazard state cleared. Supabase production data was not deleted."
   };
 
   console.info("gridlyClearLocalTestReports summary", summary);
   return summary;
+};
+
+window.gridlyTestDataCleanupAudit = function gridlyTestDataCleanupAudit(options = {}) {
+  return gridlyBuildTestDataCleanupAudit({ ...options, dryRun: options?.dryRun !== false });
+};
+
+window.gridlyClearTestData = async function gridlyClearTestData(options = {}) {
+  const before = gridlyBuildTestDataCleanupAudit({ dryRun: true });
+  if (options?.confirm !== GRIDLY_TEST_DATA_CLEAR_CONFIRMATION) {
+    const blocked = {
+      ok: false,
+      dryRun: false,
+      reason: "confirm_CLEAR_TEST_DATA_required",
+      deleted: { localEventHistory: false, localTelemetry: false, localReports: false, supabaseRowsDeleted: 0 },
+      protectedDataSkipped: before.protectedDataSkipped,
+      audit: before
+    };
+    console.warn("gridlyClearTestData blocked", blocked);
+    return blocked;
+  }
+
+  console.warn("gridlyClearTestData confirmed cleanup plan", before.wouldDelete);
+
+  const localReportCleanup = window.gridlyClearLocalTestReports({ confirm: GRIDLY_TEST_DATA_CLEAR_CONFIRMATION });
+  const historyWrite = gridlyWriteEventHistoryState(gridlyCreateEmptyEventHistoryState());
+  gridlyCrossingEventQualityTelemetry = {
+    duplicateCrossingEventsSuppressed: 0,
+    lastSuppressedDuplicate: null
+  };
+
+  let supabaseCleanup = {
+    available: false,
+    deleted: 0,
+    reason: "Supabase cleanup helper is not available yet; audit only."
+  };
+  if (typeof gridlyDevPurgeRecentRoadHazards === "function") {
+    supabaseCleanup = await gridlyDevPurgeRecentRoadHazards({
+      ...(options?.supabaseOptions && typeof options.supabaseOptions === "object" ? options.supabaseOptions : {}),
+      dryRun: false,
+      confirm: true
+    });
+  }
+
+  const after = gridlyBuildTestDataCleanupAudit({ dryRun: true });
+  const result = {
+    ok: true,
+    dryRun: false,
+    deleted: {
+      localEventHistory: Boolean(historyWrite?.written),
+      localTelemetry: Boolean(historyWrite?.written),
+      localReports: Boolean(localReportCleanup?.ok),
+      localRoadHazards: Number(localReportCleanup?.clearedLocalActiveHazards || 0),
+      localCrossingReports: Number(localReportCleanup?.clearedLocalActiveReports || 0),
+      localStorageKeys: localReportCleanup?.removedLocalStorageKeys || [],
+      supabaseRowsDeleted: Number(supabaseCleanup?.deleted || 0)
+    },
+    supabaseCleanup,
+    protectedDataSkipped: before.protectedDataSkipped,
+    before,
+    after
+  };
+  console.info("gridlyClearTestData completed", result);
+  return result;
 };
 
 window.gridlyUnifiedHazardSourceAudit = async function gridlyUnifiedHazardSourceAudit(options = {}) {
