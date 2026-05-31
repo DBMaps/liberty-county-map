@@ -5169,33 +5169,64 @@ const gridlyCommuteIntelligenceAuditState = {
   cyclePublishState: "idle",
   at: 0
 };
-function recordNestedLookupOperation({ functionName = "", collectionName = "", collectionLength = 0, lookupType = "unknown", durationMs = 0 } = {}) {
-  const fn = String(functionName || "unknown");
-  const collection = String(collectionName || "unknown");
-  const type = String(lookupType || "unknown");
-  const key = `${fn}::${collection}::${type}`;
+function getSafeNestedLookupCallMapStore() {
   if (!gridlyCommuteIntelligenceAuditState.nestedLookupCallMap || typeof gridlyCommuteIntelligenceAuditState.nestedLookupCallMap !== "object") {
     gridlyCommuteIntelligenceAuditState.nestedLookupCallMap = { totals: {}, byFunction: {}, repeatedScans: [], indexCandidateRecommendations: [] };
   }
   const store = gridlyCommuteIntelligenceAuditState.nestedLookupCallMap;
-  if (!store.totals[key]) {
-    store.totals[key] = { functionName: fn, collectionName: collection, collectionLength: Number(collectionLength || 0), lookupType: type, callCount: 0, totalMs: 0, averageMs: 0, slowestCallMs: 0 };
+  if (!store.totals || typeof store.totals !== "object" || Array.isArray(store.totals)) store.totals = {};
+  if (!store.byFunction || typeof store.byFunction !== "object" || Array.isArray(store.byFunction)) store.byFunction = {};
+  if (!Array.isArray(store.repeatedScans)) store.repeatedScans = [];
+  if (!Array.isArray(store.indexCandidateRecommendations)) store.indexCandidateRecommendations = [];
+  return store;
+}
+function normalizeNestedLookupAuditEntry(entry = {}) {
+  const safeEntry = entry && typeof entry === "object" ? entry : {};
+  const functionName = String(safeEntry.functionName || "unknown");
+  const collectionName = String(safeEntry.collectionName || "unknown");
+  const lookupType = String(safeEntry.lookupType || "unknown");
+  const collectionLength = Number.isFinite(Number(safeEntry.collectionLength)) ? Math.max(0, Number(safeEntry.collectionLength)) : 0;
+  const callCount = Number.isFinite(Number(safeEntry.callCount)) ? Math.max(0, Number(safeEntry.callCount)) : 0;
+  const totalMs = Number.isFinite(Number(safeEntry.totalMs)) ? Math.max(0, Number(safeEntry.totalMs)) : 0;
+  const averageMs = Number.isFinite(Number(safeEntry.averageMs)) ? Math.max(0, Number(safeEntry.averageMs)) : 0;
+  const slowestCallMs = Number.isFinite(Number(safeEntry.slowestCallMs)) ? Math.max(0, Number(safeEntry.slowestCallMs)) : 0;
+  return { functionName, collectionName, collectionLength, lookupType, callCount, totalMs, averageMs, slowestCallMs };
+}
+function recordNestedLookupOperation({ functionName = "", collectionName = "", collectionLength = 0, lookupType = "unknown", durationMs = 0 } = {}) {
+  const fn = String(functionName || "unknown");
+  const collection = String(collectionName || "unknown");
+  const type = String(lookupType || "unknown");
+  const safeCollectionLength = Number.isFinite(Number(collectionLength)) ? Math.max(0, Number(collectionLength)) : 0;
+  const safeDurationMs = Number.isFinite(Number(durationMs)) ? Math.max(0, Number(durationMs)) : 0;
+  const key = `${fn}::${collection}::${type}`;
+  const store = getSafeNestedLookupCallMapStore();
+  if (!store.totals[key] || typeof store.totals[key] !== "object") {
+    store.totals[key] = { functionName: fn, collectionName: collection, collectionLength: safeCollectionLength, lookupType: type, callCount: 0, totalMs: 0, averageMs: 0, slowestCallMs: 0 };
   }
-  const item = store.totals[key];
-  item.collectionLength = Math.max(Number(item.collectionLength || 0), Number(collectionLength || 0));
+  const item = normalizeNestedLookupAuditEntry(store.totals[key]);
+  item.functionName = fn;
+  item.collectionName = collection;
+  item.lookupType = type;
+  item.collectionLength = Math.max(Number(item.collectionLength || 0), safeCollectionLength);
   item.callCount += 1;
-  item.totalMs += Number(durationMs || 0);
+  item.totalMs += safeDurationMs;
   item.averageMs = item.callCount > 0 ? Number((item.totalMs / item.callCount).toFixed(4)) : 0;
-  item.slowestCallMs = Math.max(Number(item.slowestCallMs || 0), Number(durationMs || 0));
+  item.slowestCallMs = Math.max(Number(item.slowestCallMs || 0), safeDurationMs);
+  store.totals[key] = item;
 }
 function runNestedLookupOperation(meta = {}, fn = () => null) {
   const startedAt = performance.now();
-  const value = fn();
-  recordNestedLookupOperation({ ...meta, durationMs: performance.now() - startedAt });
-  return value;
+  try {
+    return fn();
+  } finally {
+    recordNestedLookupOperation({ ...meta, durationMs: performance.now() - startedAt });
+  }
 }
 function finalizeNestedLookupCallMapAudit() {
-  const totalsEntries = Object.values(gridlyCommuteIntelligenceAuditState.nestedLookupCallMap?.totals || {});
+  const store = getSafeNestedLookupCallMapStore();
+  const totalsEntries = Object.values(store.totals || {})
+    .filter((entry) => entry && typeof entry === "object")
+    .map((entry) => normalizeNestedLookupAuditEntry(entry));
   const byFunction = {};
   totalsEntries.forEach((entry) => {
     if (!byFunction[entry.functionName]) byFunction[entry.functionName] = { totalMs: 0, callCount: 0, operations: [] };
@@ -5203,13 +5234,17 @@ function finalizeNestedLookupCallMapAudit() {
     byFunction[entry.functionName].callCount += Number(entry.callCount || 0);
     byFunction[entry.functionName].operations.push({
       collectionName: entry.collectionName,
-      collectionLength: entry.collectionLength,
+      collectionLength: Number(entry.collectionLength || 0),
       lookupType: entry.lookupType,
-      callCount: entry.callCount,
+      callCount: Number(entry.callCount || 0),
       totalMs: Number(Number(entry.totalMs || 0).toFixed(4)),
       averageMs: Number(Number(entry.averageMs || 0).toFixed(4)),
       slowestCallMs: Number(Number(entry.slowestCallMs || 0).toFixed(4))
     });
+  });
+  Object.values(byFunction).forEach((entry) => {
+    entry.totalMs = Number(Number(entry.totalMs || 0).toFixed(4));
+    entry.callCount = Number(entry.callCount || 0);
   });
   const repeatedScans = totalsEntries.filter((entry) => Number(entry.callCount || 0) > 1 && Number(entry.collectionLength || 0) > 10).map((entry) => ({
     functionName: entry.functionName, collectionName: entry.collectionName, lookupType: entry.lookupType, callCount: Number(entry.callCount || 0), collectionLength: Number(entry.collectionLength || 0), totalMs: Number(Number(entry.totalMs || 0).toFixed(4))
@@ -19655,42 +19690,52 @@ window.submitHazardNearMe = function (hazardType) {
   recordGridlyGeolocationRequest("hazard_use_my_location");
   navigator.geolocation.getCurrentPosition(
     async (position) => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
+      try {
+        const lat = Number(position?.coords?.latitude);
+        const lng = Number(position?.coords?.longitude);
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+          throw new Error("invalid_geolocation_coordinates");
+        }
 
-      const snapped = await snapHazardToRoad(lat, lng, { source: "use_my_location" });
-      if (snapped.invalid) {
-        const message = "No nearby roadway found. Move closer to a road or tap a road on the map.";
-        lastRoadSnapDebug.rawHazardCoordinatesBlockedWhenInvalid = true;
-        markReportActionCompletionAudit({ reportUseLocationError: message, lastReportActionCompleted: false });
-        setConfirmation("We couldn't place that hazard on a nearby road. Move closer to a roadway or tap a road on the map.", "error");
-        updateReportingState({ locationLookupInProgress: false, lastReportError: message, lastReportMessage: "" });
-        return;
-      }
-      const submitted = await createSharedHazardReport(selectedType, snapped.lat, snapped.lng, "gps hazard report", "", snapped.originalTapCoords);
-      if (!submitted) {
+        const snapped = await snapHazardToRoad(lat, lng, { source: "use_my_location" });
+        if (snapped.invalid) {
+          const message = "No nearby roadway found. Move closer to a road or tap a road on the map.";
+          lastRoadSnapDebug.rawHazardCoordinatesBlockedWhenInvalid = true;
+          markReportActionCompletionAudit({ reportUseLocationError: message, lastReportActionCompleted: false });
+          setConfirmation("We couldn't place that hazard on a nearby road. Move closer to a roadway or tap a road on the map.", "error");
+          updateReportingState({ locationLookupInProgress: false, lastReportError: message, lastReportMessage: "" });
+          return;
+        }
+        const submitted = await createSharedHazardReport(selectedType, snapped.lat, snapped.lng, "gps hazard report", "", snapped.originalTapCoords);
+        if (!submitted) {
+          markReportActionCompletionAudit({
+            reportUseLocationError: reportingState.lastReportError || lastMobileReportSubmitDebug.lastSubmitError || "Hazard report was not submitted.",
+            lastReportActionCompleted: false
+          });
+          return;
+        }
         markReportActionCompletionAudit({
-          reportUseLocationError: reportingState.lastReportError || lastMobileReportSubmitDebug.lastSubmitError || "Hazard report was not submitted.",
-          lastReportActionCompleted: false
+          reportUseLocationSubmitted: true,
+          reportUseLocationCompleted: true,
+          reportUseLocationError: "",
+          lastReportAction: "report-use-location",
+          lastReportActionCompleted: true,
+          lastReportCompletionState: "submitted"
         });
-        return;
-      }
-      markReportActionCompletionAudit({
-        reportUseLocationSubmitted: true,
-        reportUseLocationCompleted: true,
-        reportUseLocationError: "",
-        lastReportAction: "report-use-location",
-        lastReportActionCompleted: true,
-        lastReportCompletionState: "submitted"
-      });
 
-      if (map) {
-        map.setView([snapped.lat, snapped.lng], 16);
-      }
+        if (map) {
+          map.setView([snapped.lat, snapped.lng], 16);
+        }
 
-      resetQuickHazardReportState();
-      closeVisiblePortraitV2ReportSurfaceAfterSubmit();
-      closeHazardPanel();
+        resetQuickHazardReportState();
+        closeVisiblePortraitV2ReportSurfaceAfterSubmit();
+        closeHazardPanel();
+      } catch (error) {
+        const message = error?.message || "Hazard report was not submitted.";
+        markReportActionCompletionAudit({ reportUseLocationError: message, lastReportActionCompleted: false });
+        updateReportingState({ locationLookupInProgress: false, submissionInProgress: false, lastReportError: message, lastReportMessage: "" });
+        setConfirmation(`Hazard report failed: ${message}`, "error");
+      }
     },
     () => {
       const message = "We couldn't access your location. Allow GPS or tap the map to place this hazard.";
@@ -20184,18 +20229,42 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     gridlyNetworkAuditState.hazardSubmit.lastLifecycle = submitAudit;
     return true;
   } catch (error) {
+    const message = error?.message || "unknown_error";
+    const insertSucceeded = Boolean(lastMobileReportSubmitDebug.supabaseInsertSucceeded);
+    if (insertSucceeded) {
+      console.warn("Gridly hazard post-submit completion warning:", error);
+      lastMobileReportSubmitDebug.lastSubmitAttempt = "post_insert_completion_warning";
+      lastMobileReportSubmitDebug.lastSubmitError = "";
+      updateReportingState({
+        submissionInProgress: false,
+        locationLookupInProgress: false,
+        reportModeActive: false,
+        placementModeActive: false,
+        selectedHazardType: null,
+        lastReportError: "",
+        lastReportMessage: "Report added"
+      });
+      setConfirmation("Report accepted and shared.", "success");
+      setSync("Hazard report shared");
+      markSubmitStage("post_insert_completion_warning", { message });
+      submitAudit.completedAt = Date.now();
+      submitAudit.durationMs = submitAudit.completedAt - submitAudit.startedAt;
+      submitAudit.warning = message;
+      gridlyNetworkAuditState.hazardSubmit.lastLifecycle = submitAudit;
+      return true;
+    }
     console.error("Gridly hazard insert failed:", error);
     lastMobileReportSubmitDebug.lastSubmitAttempt = "supabase_insert_failed";
-    lastMobileReportSubmitDebug.supabaseInsertError = error?.message || "unknown_error";
-    lastMobileReportSubmitDebug.lastSubmitError = error?.message || "unknown_error";
-    updateReportingState({ lastReportError: `Hazard report failed: ${error.message || "permission denied"}` });
-    setConfirmation(`Hazard report failed: ${error.message || "permission denied"}`, "error");
+    lastMobileReportSubmitDebug.supabaseInsertError = message;
+    lastMobileReportSubmitDebug.lastSubmitError = message;
+    updateReportingState({ lastReportError: `Hazard report failed: ${message || "permission denied"}` });
+    setConfirmation(`Hazard report failed: ${message || "permission denied"}`, "error");
     setSync("Hazard report failed");
     updateReportingState({ submissionInProgress: false, locationLookupInProgress: false });
-    markSubmitStage("failed", { message: error?.message || "unknown_error" });
+    markSubmitStage("failed", { message });
     submitAudit.completedAt = Date.now();
     submitAudit.durationMs = submitAudit.completedAt - submitAudit.startedAt;
-    submitAudit.error = error?.message || "unknown_error";
+    submitAudit.error = message;
     gridlyNetworkAuditState.hazardSubmit.lastLifecycle = submitAudit;
     return false;
   }
