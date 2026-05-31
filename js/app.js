@@ -7,6 +7,239 @@ const CROSSING_REVIEW_OVERRIDES_URL = "data/gridly-crossing-review-overrides.jso
 const ROADWAY_SEGMENTS_URL = "data/liberty-county-road-segments.geojson";
 const HAZARD_REPORT_EXPIRATION_MINUTES = 180;
 
+
+const gridlyBackgroundLoopAuditState = {
+  topPanelWriteCount: 0,
+  topPanelOwnerCheckCount: 0,
+  portraitRefreshCount: 0,
+  dailyHabitUpdateCount: 0,
+  repeatedSameValueWrites: 0,
+  topPanelWrites: [],
+  topPanelOwnerChecks: [],
+  portraitRefreshes: [],
+  dailyHabitUpdates: [],
+  dedupedWrites: [],
+  activeIntervals: new Map(),
+  activeTimeouts: new Map(),
+  activeAnimationFrames: new Map(),
+  nextTimerAuditId: 1
+};
+
+const GRIDLY_BACKGROUND_LOOP_CALLERS = {
+  updateDailyHabitStatus: [
+    "loadCrossings() after curated crossings load",
+    "refreshReportHazardViews() refresh cycle"
+  ],
+  refreshPortraitV2LocalizedIntelligence: [
+    "applyGridlyAlertLocationSync() after alert location sync",
+    "refreshReportHazardViews() refresh cycle"
+  ],
+  topPanelBindingWriteHelpers: [
+    "updateDailyHabitStatus() via logTopPanelWrite()/safeText()",
+    "refreshPortraitV2LocalizedIntelligence() via logTopPanelWrite()/textContent"
+  ],
+  topStripOwnerDiagnosticLogging: [
+    "updateDailyHabitStatus()",
+    "refreshPortraitV2LocalizedIntelligence()"
+  ]
+};
+
+function trimGridlyBackgroundAuditList(list, maxLength = 60) {
+  while (list.length > maxLength) list.shift();
+}
+
+function getGridlyBackgroundAuditStack() {
+  try {
+    return String(new Error().stack || "")
+      .split("\n")
+      .slice(2, 7)
+      .map((line) => line.trim())
+      .filter(Boolean);
+  } catch (error) {
+    return [];
+  }
+}
+
+function recordGridlyBackgroundFunctionCall(functionName) {
+  const entry = {
+    at: Date.now(),
+    functionName,
+    stack: getGridlyBackgroundAuditStack()
+  };
+  if (functionName === "refreshPortraitV2LocalizedIntelligence") {
+    gridlyBackgroundLoopAuditState.portraitRefreshCount += 1;
+    gridlyBackgroundLoopAuditState.portraitRefreshes.push(entry);
+    trimGridlyBackgroundAuditList(gridlyBackgroundLoopAuditState.portraitRefreshes);
+  } else if (functionName === "updateDailyHabitStatus") {
+    gridlyBackgroundLoopAuditState.dailyHabitUpdateCount += 1;
+    gridlyBackgroundLoopAuditState.dailyHabitUpdates.push(entry);
+    trimGridlyBackgroundAuditList(gridlyBackgroundLoopAuditState.dailyHabitUpdates);
+  }
+}
+
+function isGridlyTopPanelDebugEnabled() {
+  return typeof window !== "undefined" && window.GRIDLY_DEBUG_TOP_PANEL === true;
+}
+
+function recordGridlyTopPanelDedupe(sourceFunction, targetElement, value) {
+  gridlyBackgroundLoopAuditState.repeatedSameValueWrites += 1;
+  gridlyBackgroundLoopAuditState.dedupedWrites.push({
+    at: Date.now(),
+    sourceFunction: String(sourceFunction || "unknown"),
+    targetElement: normalizeGridlyHeaderOwnershipTarget(targetElement),
+    value: typeof value === "string" ? value : (value == null ? "" : String(value))
+  });
+  trimGridlyBackgroundAuditList(gridlyBackgroundLoopAuditState.dedupedWrites);
+}
+
+function setGridlyTopPanelTextIfChanged(elementOrId, value, sourceFunction, targetElement = elementOrId) {
+  const element = typeof elementOrId === "string" ? document.getElementById(elementOrId) : elementOrId;
+  if (!element) return false;
+  const serializedValue = typeof value === "string" ? value : (value == null ? "" : String(value));
+  if (element.textContent === serializedValue) {
+    recordGridlyTopPanelDedupe(sourceFunction, targetElement, serializedValue);
+    return false;
+  }
+  element.textContent = serializedValue;
+  return true;
+}
+
+function safeTopPanelText(id, value, sourceFunction) {
+  if (shouldSuppressGridlyDashboardSectionPassiveTextUpdate(id)) return;
+  if (!els[id]) els[id] = document.getElementById(id);
+  setGridlyTopPanelTextIfChanged(els[id], value, sourceFunction, id);
+  document.querySelectorAll(`[data-bind-text="${id}"]`).forEach((node, index) => {
+    setGridlyTopPanelTextIfChanged(node, value, sourceFunction, `${id}:data-bind:${index}`);
+  });
+}
+
+function toGridlyTimerAuditRecord(record) {
+  return {
+    id: record.auditId,
+    nativeId: String(record.nativeId),
+    delay: record.delay,
+    createdAt: record.createdAt,
+    ageMs: Date.now() - record.createdAt,
+    stack: record.stack
+  };
+}
+
+function installGridlyBackgroundTimerTracking() {
+  if (typeof window === "undefined" || window.__gridlyBackgroundLoopTrackingInstalled) return;
+  window.__gridlyBackgroundLoopTrackingInstalled = true;
+  const nativeSetInterval = window.setInterval.bind(window);
+  const nativeClearInterval = window.clearInterval.bind(window);
+  const nativeSetTimeout = window.setTimeout.bind(window);
+  const nativeClearTimeout = window.clearTimeout.bind(window);
+  const nativeRequestAnimationFrame = window.requestAnimationFrame ? window.requestAnimationFrame.bind(window) : null;
+  const nativeCancelAnimationFrame = window.cancelAnimationFrame ? window.cancelAnimationFrame.bind(window) : null;
+
+  window.setInterval = (handler, delay, ...args) => {
+    const auditId = gridlyBackgroundLoopAuditState.nextTimerAuditId++;
+    const nativeId = nativeSetInterval(handler, delay, ...args);
+    gridlyBackgroundLoopAuditState.activeIntervals.set(nativeId, {
+      auditId,
+      nativeId,
+      delay: Number(delay) || 0,
+      createdAt: Date.now(),
+      stack: getGridlyBackgroundAuditStack()
+    });
+    return nativeId;
+  };
+  window.clearInterval = (nativeId) => {
+    gridlyBackgroundLoopAuditState.activeIntervals.delete(nativeId);
+    return nativeClearInterval(nativeId);
+  };
+  window.setTimeout = (handler, delay, ...args) => {
+    const auditId = gridlyBackgroundLoopAuditState.nextTimerAuditId++;
+    let nativeId;
+    const wrappedHandler = (...handlerArgs) => {
+      gridlyBackgroundLoopAuditState.activeTimeouts.delete(nativeId);
+      return typeof handler === "function" ? handler(...handlerArgs) : Function(String(handler || ""))();
+    };
+    nativeId = nativeSetTimeout(wrappedHandler, delay, ...args);
+    gridlyBackgroundLoopAuditState.activeTimeouts.set(nativeId, {
+      auditId,
+      nativeId,
+      delay: Number(delay) || 0,
+      createdAt: Date.now(),
+      stack: getGridlyBackgroundAuditStack()
+    });
+    return nativeId;
+  };
+  window.clearTimeout = (nativeId) => {
+    gridlyBackgroundLoopAuditState.activeTimeouts.delete(nativeId);
+    return nativeClearTimeout(nativeId);
+  };
+  if (nativeRequestAnimationFrame && nativeCancelAnimationFrame) {
+    window.requestAnimationFrame = (handler) => {
+      const auditId = gridlyBackgroundLoopAuditState.nextTimerAuditId++;
+      let nativeId;
+      const wrappedHandler = (timestamp) => {
+        gridlyBackgroundLoopAuditState.activeAnimationFrames.delete(nativeId);
+        return handler(timestamp);
+      };
+      nativeId = nativeRequestAnimationFrame(wrappedHandler);
+      gridlyBackgroundLoopAuditState.activeAnimationFrames.set(nativeId, {
+        auditId,
+        nativeId,
+        delay: 0,
+        createdAt: Date.now(),
+        stack: getGridlyBackgroundAuditStack()
+      });
+      return nativeId;
+    };
+    window.cancelAnimationFrame = (nativeId) => {
+      gridlyBackgroundLoopAuditState.activeAnimationFrames.delete(nativeId);
+      return nativeCancelAnimationFrame(nativeId);
+    };
+  }
+}
+
+function getGridlyBackgroundSuspectedLoops() {
+  const repeatedByKey = new Map();
+  for (const entry of gridlyBackgroundLoopAuditState.dedupedWrites) {
+    const key = `${entry.sourceFunction}:${entry.targetElement}:${entry.value}`;
+    repeatedByKey.set(key, (repeatedByKey.get(key) || 0) + 1);
+  }
+  return [...repeatedByKey.entries()]
+    .filter(([, count]) => count >= 2)
+    .map(([key, count]) => {
+      const [sourceFunction, targetElement, ...valueParts] = key.split(":");
+      return {
+        sourceFunction,
+        targetElement,
+        repeatedSameValueWrites: count,
+        value: valueParts.join(":")
+      };
+    });
+}
+
+function gridlyBackgroundLoopAudit() {
+  const suspectedLoops = getGridlyBackgroundSuspectedLoops();
+  const activeIntervals = [...gridlyBackgroundLoopAuditState.activeIntervals.values()].map(toGridlyTimerAuditRecord);
+  const activeTimeouts = [...gridlyBackgroundLoopAuditState.activeTimeouts.values()].map(toGridlyTimerAuditRecord);
+  const activeAnimationFrames = [...gridlyBackgroundLoopAuditState.activeAnimationFrames.values()].map(toGridlyTimerAuditRecord);
+  return {
+    topPanelWriteCount: gridlyBackgroundLoopAuditState.topPanelWriteCount,
+    topPanelOwnerCheckCount: gridlyBackgroundLoopAuditState.topPanelOwnerCheckCount,
+    portraitRefreshCount: gridlyBackgroundLoopAuditState.portraitRefreshCount,
+    dailyHabitUpdateCount: gridlyBackgroundLoopAuditState.dailyHabitUpdateCount,
+    repeatedSameValueWrites: gridlyBackgroundLoopAuditState.repeatedSameValueWrites,
+    activeIntervals,
+    activeTimeouts,
+    activeAnimationFrames,
+    suspectedLoops,
+    recommendation: suspectedLoops.length
+      ? "Repeated top-panel writes are being deduped. Inspect suspectedLoops stacks and activeIntervals for refresh sources before adding new refresh timers."
+      : "No repeated same-value top-panel write loop detected in the captured audit window.",
+    callers: GRIDLY_BACKGROUND_LOOP_CALLERS
+  };
+}
+
+installGridlyBackgroundTimerTracking();
+if (typeof window !== "undefined") window.gridlyBackgroundLoopAudit = gridlyBackgroundLoopAudit;
+
 const HAZARD_TYPES = {
   flooding: {
     label: "Flooding",
@@ -27990,21 +28223,33 @@ function recordGridlyHeaderOwnershipWrite(sourceFunction, targetElement, value, 
 
 function logTopPanelWrite(sourceFunction, targetElement, value) {
   const serializedValue = typeof value === "string" ? value : (value == null ? "" : String(value));
+  const normalizedTarget = normalizeGridlyHeaderOwnershipTarget(targetElement);
+  gridlyBackgroundLoopAuditState.topPanelWriteCount += 1;
+  gridlyBackgroundLoopAuditState.topPanelWrites.push({
+    at: Date.now(),
+    sourceFunction: String(sourceFunction || "unknown"),
+    targetElement: normalizedTarget,
+    value: serializedValue
+  });
+  trimGridlyBackgroundAuditList(gridlyBackgroundLoopAuditState.topPanelWrites);
   recordGridlyHeaderOwnershipWrite(sourceFunction, targetElement, serializedValue, { trace: "logTopPanelWrite" });
   recordGridlyActiveLocationLifecycleEvent("headerTopStatusWrite", {
     sourceFunction: String(sourceFunction || "unknown"),
-    targetElement: normalizeGridlyHeaderOwnershipTarget(targetElement),
+    targetElement: normalizedTarget,
     value: serializedValue
   });
-  console.debug("[V159.2 TOP PANEL WRITE]", {
-    sourceFunction,
-    targetElement,
-    value: serializedValue
-  });
+  if (isGridlyTopPanelDebugEnabled()) {
+    console.debug("[V159.2 TOP PANEL WRITE]", {
+      sourceFunction,
+      targetElement,
+      value: serializedValue
+    });
+  }
 }
 
 
 function logTopStripOwnershipDiagnostic(sourceFunction) {
+  gridlyBackgroundLoopAuditState.topPanelOwnerCheckCount += 1;
   const selectors = [
     "#habitStatusHeadline",
     "#habitStatusDetail",
@@ -28025,13 +28270,22 @@ function logTopStripOwnershipDiagnostic(sourceFunction) {
     const text = String(entry.innerText || "");
     return /Train blocking US 90|No major disruptions nearby/.test(text);
   }) || null;
-  console.debug("[V159.3 TOP STRIP OWNER]", {
-    visibleOwner,
-    candidates
+  gridlyBackgroundLoopAuditState.topPanelOwnerChecks.push({
+    at: Date.now(),
+    sourceFunction: String(sourceFunction || "unknown"),
+    visibleOwnerSelector: visibleOwner?.selector || null
   });
+  trimGridlyBackgroundAuditList(gridlyBackgroundLoopAuditState.topPanelOwnerChecks);
+  if (isGridlyTopPanelDebugEnabled()) {
+    console.debug("[V159.3 TOP STRIP OWNER]", {
+      visibleOwner,
+      candidates
+    });
+  }
 }
 
 function updateDailyHabitStatus() {
+  recordGridlyBackgroundFunctionCall("updateDailyHabitStatus");
   const functionStartedAt = performance.now();
   const sections = {};
   const timeSection = makeGridlySectionTimer(sections);
@@ -28076,21 +28330,23 @@ function updateDailyHabitStatus() {
     cardClass = highIssues.length > 0 ? "high" : "delayed";
   }
 
-  console.debug("[V159.1 TOP PANEL BINDING]", {
-    activeAlertCount,
-    topStatus,
-    topDetail,
-    renderedTitle: headline,
-    renderedSubtitle: detail
-  });
+  if (isGridlyTopPanelDebugEnabled()) {
+    console.debug("[V159.1 TOP PANEL BINDING]", {
+      activeAlertCount,
+      topStatus,
+      topDetail,
+      renderedTitle: headline,
+      renderedSubtitle: detail
+    });
+  }
 
   timeSection("text_content_updates", () => {
     logTopPanelWrite("updateDailyHabitStatus", "habitStatusPill", pill);
-    safeText("habitStatusPill", pill);
+    safeTopPanelText("habitStatusPill", pill, "updateDailyHabitStatus");
     logTopPanelWrite("updateDailyHabitStatus", "habitStatusHeadline", headline);
-    safeText("habitStatusHeadline", headline);
+    safeTopPanelText("habitStatusHeadline", headline, "updateDailyHabitStatus");
     logTopPanelWrite("updateDailyHabitStatus", "habitStatusDetail", detail);
-    safeText("habitStatusDetail", detail);
+    safeTopPanelText("habitStatusDetail", detail, "updateDailyHabitStatus");
     logTopStripOwnershipDiagnostic("updateDailyHabitStatus");
   });
 
@@ -31497,6 +31753,7 @@ function formatPortraitTopStripImpactLabel(tier = "") {
 }
 
 function refreshPortraitV2LocalizedIntelligence() {
+  recordGridlyBackgroundFunctionCall("refreshPortraitV2LocalizedIntelligence");
   const functionStartedAt = performance.now();
   const sections = {};
   const timeSection = makeGridlySectionTimer(sections);
@@ -31539,12 +31796,12 @@ function refreshPortraitV2LocalizedIntelligence() {
       ? safeDisplayText(travelConsequencePrimaryCandidate || mobilityLanguagePrimaryCandidate || corridorAwarePrimaryCandidate || existingAlertWording?.text || guardedPrimaryFallback, safeDisplayText(intel.commuteImpactHeadline, "Routes currently clear"))
       : safeDisplayText(intel.commuteImpactHeadline, "Routes currently clear");
     logTopPanelWrite("refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusPrimary", primaryValue);
-    if (topPrimaryEl) topPrimaryEl.textContent = safeDisplayText(primaryValue, "Routes currently clear");
+    setGridlyTopPanelTextIfChanged(topPrimaryEl, safeDisplayText(primaryValue, "Routes currently clear"), "refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusPrimary");
     const secondaryValue = intel.hasActiveAlerts
       ? safeDisplayText(`${formatPortraitTopStripImpactLabel(intel.commuteConsequenceTier)} • ${safeDisplayText(intel.topIncidentFreshnessText, "just now")}`, "No major disruptions nearby")
       : "No major disruptions nearby";
     logTopPanelWrite("refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusSecondary", secondaryValue);
-    if (topSecondaryEl) topSecondaryEl.textContent = safeDisplayText(secondaryValue, "No major disruptions nearby");
+    setGridlyTopPanelTextIfChanged(topSecondaryEl, safeDisplayText(secondaryValue, "No major disruptions nearby"), "refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusSecondary");
     const pulseModel = buildGridlyCommunityPulseModel({ topAwarenessMicrolineReadOnly: true });
     const activeAwareness = pulseModel.activeAwareness || {};
     const topAwarenessMicroline = buildGridlyTopAwarenessMicroline({
@@ -31556,7 +31813,7 @@ function refreshPortraitV2LocalizedIntelligence() {
       activityLevel: pulseModel.mobilityPressureCategory || activeAwareness.activityLevel || "quiet"
     });
     if (topMicrolineEl) {
-      topMicrolineEl.textContent = topAwarenessMicroline.visible ? topAwarenessMicroline.text : "";
+      setGridlyTopPanelTextIfChanged(topMicrolineEl, topAwarenessMicroline.visible ? topAwarenessMicroline.text : "", "refreshPortraitV2LocalizedIntelligence", "gridlyTopAwarenessMicroline");
       topMicrolineEl.hidden = !topAwarenessMicroline.visible;
       topMicrolineEl.dataset.gridlyMicrolineVisible = topAwarenessMicroline.visible ? "true" : "false";
       topMicrolineEl.dataset.gridlyMicrolineSourceFields = topAwarenessMicroline.sourceFields.join(",");
