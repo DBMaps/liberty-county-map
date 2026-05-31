@@ -12374,6 +12374,191 @@ function gridlyTxDotSourceAudit() {
 window.gridlyTxDotSourceAudit = gridlyTxDotSourceAudit;
 exposeGridlyAuditHelper("gridlyTxDotSourceAudit", gridlyTxDotSourceAudit);
 
+
+let gridlyTxdotStartupFetchPromise = null;
+let gridlyTxdotStartupFetchAttempted = false;
+
+function gridlyIsTxdotFetchAvailable() {
+  const txdotService = window.gridlyTxdot || null;
+  const txdotConfig = window.GRIDLY_CONFIG?.txdot || null;
+  return Boolean(
+    typeof txdotService?.fetchRoadConditions === "function"
+    && String(txdotConfig?.endpointTemplate || "").trim()
+    && String(txdotConfig?.apiKey || "").trim()
+  );
+}
+
+function gridlyRefreshAfterTxdotFetch(reason = "txdot-fetch") {
+  if (typeof refreshReportHazardViews === "function") {
+    refreshReportHazardViews(reason);
+    return "refreshReportHazardViews";
+  }
+  if (typeof renderUnifiedIncidents === "function") {
+    renderUnifiedIncidents(reason);
+    return "renderUnifiedIncidents";
+  }
+  if (typeof renderUnifiedIncidentMarkers === "function") {
+    renderUnifiedIncidentMarkers(reason);
+    return "renderUnifiedIncidentMarkers";
+  }
+  return "none";
+}
+
+async function gridlyRunTxdotFetchAndRefresh(options = {}) {
+  const force = Boolean(options.force);
+  const reason = String(options.reason || (force ? "txdot-manual-validation" : "txdot-startup"));
+  const txdotService = window.gridlyTxdot || null;
+  const txdotState = window.gridlyTxdotState || {};
+  const cachedRows = typeof txdotService?.getRoadConditions === "function" ? txdotService.getRoadConditions() : gridlyReadCachedTxdotRows();
+  const cachedRowCount = Array.isArray(cachedRows) ? cachedRows.length : 0;
+
+  if (!gridlyIsTxdotFetchAvailable()) {
+    return {
+      attempted: false,
+      skipped: true,
+      skipReason: "txdot_fetch_not_configured",
+      refreshMethod: "none",
+      fetchedRows: 0
+    };
+  }
+
+  if (!force && cachedRowCount > 0) {
+    const refreshMethod = gridlyRefreshAfterTxdotFetch(`${reason}:cached`);
+    return {
+      attempted: false,
+      skipped: true,
+      skipReason: "cached_rows_available",
+      refreshMethod,
+      fetchedRows: cachedRowCount
+    };
+  }
+
+  if (!force && (txdotState.hasFetched || txdotState.lastFetchTime)) {
+    return {
+      attempted: false,
+      skipped: true,
+      skipReason: "startup_fetch_already_attempted",
+      refreshMethod: "none",
+      fetchedRows: cachedRowCount
+    };
+  }
+
+  if (!force && gridlyTxdotStartupFetchPromise) {
+    return gridlyTxdotStartupFetchPromise;
+  }
+
+  const runFetch = (async () => {
+    let rows = [];
+    let fetchError = "";
+    let refreshMethod = "none";
+    try {
+      rows = await txdotService.fetchRoadConditions();
+    } catch (error) {
+      fetchError = error instanceof Error ? error.message : String(error);
+    }
+    try {
+      refreshMethod = gridlyRefreshAfterTxdotFetch(reason);
+    } catch (error) {
+      fetchError = [fetchError, error instanceof Error ? error.message : String(error)].filter(Boolean).join("; ");
+    }
+    const fetchedRows = Array.isArray(rows) ? rows.length : 0;
+    return {
+      attempted: true,
+      skipped: false,
+      skipReason: "",
+      refreshMethod,
+      fetchedRows,
+      error: fetchError
+    };
+  })();
+
+  if (!force) {
+    gridlyTxdotStartupFetchPromise = runFetch;
+    runFetch.then(
+      () => { gridlyTxdotStartupFetchPromise = null; },
+      () => { gridlyTxdotStartupFetchPromise = null; }
+    );
+  }
+
+  return runFetch;
+}
+
+function gridlyBuildTxdotValidationResult(fetchSummary = {}) {
+  const txdotAudit = typeof gridlyTxDotSourceAudit === "function" ? gridlyTxDotSourceAudit() : {};
+  const incidentAudit = typeof gridlyIncidentSourceAudit === "function" ? gridlyIncidentSourceAudit({ sampleLimit: 5 }) : {};
+  const normalizedRows = Number(txdotAudit.txdotNormalizedCount || 0);
+  const rawRows = Number(txdotAudit.txdotRawConditionCount || 0);
+  const txdotUnifiedIncidents = Number(txdotAudit.txdotUnifiedIncidents || 0);
+  const txdotMapEligibleCount = Number(txdotAudit.txdotMapEligibleCount || 0);
+  const txdotAlertEligibleCount = Number(txdotAudit.txdotAlertEligibleCount || 0);
+  const txdotRenderedMarkerCount = Number(txdotAudit.trace?.mapMarkers || 0);
+  const checks = {
+    txdotFetchSuccess: txdotAudit.txdotLastFetchSuccess === true,
+    rawRows: rawRows > 0,
+    normalizedRows: normalizedRows > 0,
+    futureTxdotIncidents: Number(txdotAudit.futureTxdotIncidents || 0) > 0,
+    futureTxdotConstruction: Number(txdotAudit.futureTxdotConstruction || 0) > 0,
+    txdotUnifiedIncidents: txdotUnifiedIncidents > 0,
+    txdotMapEligibleCount: txdotMapEligibleCount > 0,
+    txdotMarkersOrAlertsEligible: (txdotMapEligibleCount + txdotAlertEligibleCount + txdotRenderedMarkerCount) > 0
+  };
+  const failedChecks = Object.entries(checks)
+    .filter(([, passed]) => !passed)
+    .map(([name]) => name);
+
+  return {
+    result: failedChecks.length ? "FAIL" : "PASS",
+    txdotFetchSuccess: checks.txdotFetchSuccess,
+    rawRows,
+    normalizedRows,
+    futureTxdotIncidents: Number(txdotAudit.futureTxdotIncidents || 0),
+    futureTxdotConstruction: Number(txdotAudit.futureTxdotConstruction || 0),
+    txdotUnifiedIncidents,
+    txdotMapEligibleCount,
+    txdotAlertEligibleCount,
+    txdotRenderedMarkerCount,
+    txdotRowsSkippedNoCoordinates: Number(txdotAudit.txdotRowsSkippedNoCoordinates || 0),
+    fetchSummary,
+    refreshMethod: fetchSummary.refreshMethod || "none",
+    checks,
+    failedChecks,
+    blockers: Array.isArray(txdotAudit.blockers) ? txdotAudit.blockers : [],
+    txdotSourceAudit: txdotAudit,
+    incidentSourceAudit: incidentAudit
+  };
+}
+
+async function gridlyTxdotFullValidation() {
+  const fetchSummary = await gridlyRunTxdotFetchAndRefresh({ force: true, reason: "txdot-full-validation" });
+  const result = gridlyBuildTxdotValidationResult(fetchSummary);
+  console.info("gridlyTxdotFullValidation", result);
+  return result;
+}
+
+function gridlyScheduleStartupTxdotFetch() {
+  if (gridlyTxdotStartupFetchAttempted) return;
+  gridlyTxdotStartupFetchAttempted = true;
+  const start = () => {
+    gridlyRunTxdotFetchAndRefresh({ force: false, reason: "txdot-startup-once" })
+      .then((summary) => {
+        if (summary?.attempted) console.info("gridlyTxdotStartupFetch", summary);
+      })
+      .catch((error) => {
+        console.warn("gridlyTxdotStartupFetch failed", error);
+      });
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start, { once: true });
+  } else {
+    setTimeout(start, 0);
+  }
+}
+
+window.gridlyTxdotFullValidation = gridlyTxdotFullValidation;
+exposeGridlyAuditHelper("gridlyTxdotFullValidation", gridlyTxdotFullValidation);
+gridlyScheduleStartupTxdotFetch();
+
 function gridlyAuditHelperExposureAudit() {
   const target = typeof window !== "undefined" ? window : globalThis;
   const helperNames = Object.keys(target || {}).filter((name) => typeof name === "string");
