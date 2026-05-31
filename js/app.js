@@ -2608,6 +2608,176 @@ const GRIDLY_EVENT_HISTORY_STORAGE_KEY = "gridlyEventHistoryV1";
 const GRIDLY_EVENT_HISTORY_MAX_RECORDS = 800;
 const GRIDLY_EVENT_HISTORY_MODEL_VERSION = "V201-beta";
 
+const GRIDLY_CROSSING_EVENT_DEDUPE_WINDOW_MS = 2 * 60 * 1000;
+let gridlyCrossingEventQualityTelemetry = {
+  duplicateCrossingEventsSuppressed: 0,
+  lastSuppressedDuplicate: null
+};
+
+function gridlyStripLeadingRoadNumberZeros(value = "") {
+  return String(value || "").replace(/\b(US|SH|TX|FM|CR)\s+0+(\d)/gi, (_, prefix, digit) => `${prefix.toUpperCase()} ${digit}`);
+}
+
+function gridlyNormalizeAnalyticsRoadLabel(value = "") {
+  const cleaned = gridlyStripLeadingRoadNumberZeros(String(value || "").replace(/\s+/g, " ").trim());
+  if (!cleaned) return "";
+  if (typeof normalizeRoadDisplayCase === "function") return gridlyStripLeadingRoadNumberZeros(normalizeRoadDisplayCase(cleaned));
+  return cleaned;
+}
+
+function gridlyNormalizeCrossingEventType(report = {}) {
+  const rawType = String(report.eventType || report.type || report.report_type || "blocked").trim().toLowerCase();
+  if (isClearedReportType(rawType)) return "cleared";
+  if (["heavy", "delayed", "delay", "rail_delay"].includes(rawType)) return rawType;
+  return "blocked";
+}
+
+function gridlyEventTimeMs(value) {
+  const ms = new Date(value || 0).getTime();
+  return Number.isFinite(ms) ? ms : 0;
+}
+
+function gridlyIsCrossingEventDuplicate(existing = {}, nextEvent = {}, windowMs = GRIDLY_CROSSING_EVENT_DEDUPE_WINDOW_MS) {
+  if (String(existing.crossingId || "") !== String(nextEvent.crossingId || "")) return false;
+  const existingType = gridlyNormalizeCrossingEventType(existing);
+  const nextType = gridlyNormalizeCrossingEventType(nextEvent);
+  if (existingType !== nextType) return false;
+  const existingSource = String(existing.source || "user").trim().toLowerCase();
+  const nextSource = String(nextEvent.source || "user").trim().toLowerCase();
+  if (existingSource !== nextSource) return false;
+  const existingMs = gridlyEventTimeMs(existing.blockedAt);
+  const nextMs = gridlyEventTimeMs(nextEvent.blockedAt);
+  if (!existingMs || !nextMs) return existing.blockedAt === nextEvent.blockedAt;
+  return Math.abs(existingMs - nextMs) <= windowMs;
+}
+
+function gridlyFindDuplicateCrossingEvent(state = {}, nextEvent = {}) {
+  const crossingEvents = Array.isArray(state.crossingEvents) ? state.crossingEvents : [];
+  return crossingEvents.find((event) => gridlyIsCrossingEventDuplicate(event, nextEvent)) || null;
+}
+
+function gridlyDetectDuplicateCrossingEvents(crossingEvents = []) {
+  const events = Array.isArray(crossingEvents) ? crossingEvents : [];
+  let duplicates = 0;
+  const samples = [];
+  events.forEach((event, index) => {
+    const prior = events.slice(0, index).find((candidate) => gridlyIsCrossingEventDuplicate(candidate, event));
+    if (!prior) return;
+    duplicates += 1;
+    if (samples.length < 5) {
+      samples.push({
+        crossingId: event.crossingId || "",
+        blockedAt: event.blockedAt || null,
+        priorBlockedAt: prior.blockedAt || null,
+        source: event.source || "user",
+        eventType: gridlyNormalizeCrossingEventType(event)
+      });
+    }
+  });
+  return { count: duplicates, samples };
+}
+
+function gridlyHazardTypeRoadNameTokens(report = {}) {
+  const normalizedType = gridlyNormalizeHazardType(report);
+  const copy = HAZARD_TYPES[normalizedType] || HAZARD_TYPES[report?.type] || HAZARD_TYPES.other_hazard;
+  return new Set([
+    normalizedType,
+    String(report?.hazardType || "").toLowerCase(),
+    String(report?.type || report?.report_type || "").toLowerCase(),
+    String(copy?.label || "").toLowerCase(),
+    String(copy?.label || "").replace(/[^a-z0-9]/gi, "").toLowerCase(),
+    "road hazard",
+    "hazard"
+  ].filter(Boolean));
+}
+
+function gridlyIsHazardTypeRoadName(value = "", report = {}) {
+  const clean = String(value || "").replace(/^.+?·\s*/, "").trim();
+  if (!clean) return false;
+  const lowered = clean.toLowerCase();
+  const compact = lowered.replace(/[^a-z0-9]/g, "");
+  const tokens = gridlyHazardTypeRoadNameTokens(report);
+  return tokens.has(lowered) || tokens.has(compact);
+}
+
+function gridlyResolveHazardHistoryRoadName(report = {}) {
+  const candidates = [
+    report.roadName,
+    report.resolvedRoadName,
+    report.primaryRoad,
+    report.nearestRoad,
+    report.routeNameDisplay,
+    report.routeName,
+    report.road,
+    report.locationName,
+    report.crossingName,
+    report.crossing_name,
+    report.title
+  ];
+
+  for (const candidate of candidates) {
+    const cleaned = String(candidate || "").replace(/^.+?·\s*/, "").trim();
+    if (!cleaned || gridlyIsHazardTypeRoadName(cleaned, report)) continue;
+    const normalized = gridlyNormalizeAnalyticsRoadLabel(cleaned);
+    const evaluated = typeof evaluateRoadNameCandidate === "function" ? evaluateRoadNameCandidate(normalized) : { valid: Boolean(normalized) };
+    if (evaluated.valid && !gridlyIsHazardTypeRoadName(evaluated.normalized || normalized, report)) return evaluated.normalized || normalized;
+  }
+
+  if (typeof resolveNearestRoadName === "function") {
+    const nearest = resolveNearestRoadName(report.lat, report.lng);
+    const normalizedNearest = gridlyNormalizeAnalyticsRoadLabel(nearest || "");
+    if (normalizedNearest && !gridlyIsHazardTypeRoadName(normalizedNearest, report)) return normalizedNearest;
+  }
+
+  return "Unknown road";
+}
+
+function gridlyBuildHazardRoadNameQuality(hazardEvents = []) {
+  const events = Array.isArray(hazardEvents) ? hazardEvents : [];
+  const badSamples = [];
+  let hazardTypeRoadNameCount = 0;
+  let unknownRoadNameCount = 0;
+  events.forEach((event) => {
+    if (gridlyIsHazardTypeRoadName(event.roadName, event)) {
+      hazardTypeRoadNameCount += 1;
+      if (badSamples.length < 5) badSamples.push({ incidentId: event.incidentId || "", roadName: event.roadName || "", hazardType: event.hazardType || "" });
+    }
+    if (!event.roadName || String(event.roadName).toLowerCase() === "unknown road") unknownRoadNameCount += 1;
+  });
+  return {
+    total: events.length,
+    hazardTypeRoadNameCount,
+    unknownRoadNameCount,
+    validRoadNameCount: Math.max(0, events.length - hazardTypeRoadNameCount - unknownRoadNameCount),
+    status: hazardTypeRoadNameCount === 0 ? "ok" : "needs_cleanup",
+    samples: badSamples
+  };
+}
+
+function gridlyBuildCrossingRoadNameQuality(crossingEvents = []) {
+  const events = Array.isArray(crossingEvents) ? crossingEvents : [];
+  const unnormalizedSamples = [];
+  let unnormalizedCount = 0;
+  let unknownRoadNameCount = 0;
+  events.forEach((event) => {
+    const roadName = String(event.roadName || "").trim();
+    const normalized = gridlyNormalizeAnalyticsRoadLabel(roadName);
+    if (!roadName || roadName.toLowerCase() === "unknown road") unknownRoadNameCount += 1;
+    if (roadName && normalized && roadName !== normalized) {
+      unnormalizedCount += 1;
+      if (unnormalizedSamples.length < 5) unnormalizedSamples.push({ crossingId: event.crossingId || "", roadName, normalized });
+    }
+  });
+  return {
+    total: events.length,
+    unnormalizedRoadNameCount: unnormalizedCount,
+    unknownRoadNameCount,
+    normalizedRoadNameCount: Math.max(0, events.length - unnormalizedCount - unknownRoadNameCount),
+    status: unnormalizedCount === 0 ? "ok" : "needs_cleanup",
+    samples: unnormalizedSamples
+  };
+}
+
 function gridlyCreateEmptyEventHistoryState() {
   return {
     version: GRIDLY_EVENT_HISTORY_MODEL_VERSION,
@@ -2699,14 +2869,14 @@ function gridlyGetCrossingHistoryMetadata(crossingId, fallback = {}) {
   const debug = typeof gridlyCrossingRecordDebug === "function" ? gridlyCrossingRecordDebug(crossingId) : null;
   const fields = debug?.usefulFields || {};
   const crossingName = String(fallback.crossingName || crossing?.name || fields.crossingRoad || "Unknown crossing").trim();
-  const roadName = String(fallback.roadName || crossing?.roadName || crossing?.road || fields.roadName || fields.crossingRoad || crossingName).trim();
+  const roadName = gridlyNormalizeAnalyticsRoadLabel(fallback.roadName || crossing?.roadName || crossing?.road || fields.roadName || fields.crossingRoad || crossingName) || "Unknown road";
   const city = String(fallback.city || crossing?.city || fields.city || gridlyResolveCityFromText(crossingName, roadName)).trim();
   const county = String(fallback.county || crossing?.county || fields.county || LOCATION_DEFAULTS.county).trim();
   return { crossingName, roadName, city, county };
 }
 
 function gridlyGetHazardHistoryMetadata(report = {}) {
-  const roadName = String(report.roadName || report.locationName || report.crossingName || report.crossing_name || report.title || "Unknown road").replace(/^.+?·\s*/, "").trim() || "Unknown road";
+  const roadName = gridlyResolveHazardHistoryRoadName(report);
   return {
     roadName,
     city: String(report.city || gridlyResolveCityFromText(roadName, report.detail, report.title)).trim(),
@@ -2735,7 +2905,8 @@ function gridlyBuildCrossingEvent(report = {}, sourceReports = activeReports) {
   return {
     crossingId,
     crossingName: metadata.crossingName,
-    roadName: metadata.roadName,
+    roadName: gridlyNormalizeAnalyticsRoadLabel(metadata.roadName) || metadata.roadName,
+    eventType: gridlyNormalizeCrossingEventType(report),
     blockedAt: submittedAt,
     clearedAt: null,
     durationMinutes: null,
@@ -2757,7 +2928,7 @@ function gridlyBuildHazardEvent(report = {}, sourceHazards = activeHazards) {
     clearedAt: null,
     durationMinutes: null,
     confirmationCount: gridlyCountHazardConfirmations(report, sourceHazards),
-    roadName: metadata.roadName,
+    roadName: gridlyNormalizeAnalyticsRoadLabel(metadata.roadName) || metadata.roadName,
     city: metadata.city,
     county: metadata.county
   };
@@ -2780,10 +2951,21 @@ function gridlyCaptureCrossingHistoryEvent(report = {}, options = {}) {
     state.operationalTelemetry.reportsCleared = (Number(state.operationalTelemetry.reportsCleared) || 0) + (options.countTelemetry === false ? 0 : 1);
   } else {
     const nextEvent = gridlyBuildCrossingEvent(report, options.sourceReports || activeReports);
-    const duplicate = state.crossingEvents.some((event) => String(event.crossingId) === crossingId && event.blockedAt === nextEvent.blockedAt && event.source === nextEvent.source);
-    if (!duplicate) state.crossingEvents.push(nextEvent);
-    else if (openEvent) openEvent.confirmationCount = Math.max(Number(openEvent.confirmationCount) || 0, nextEvent.confirmationCount);
-    state.operationalTelemetry.reportsCreated = (Number(state.operationalTelemetry.reportsCreated) || 0) + (options.countTelemetry === false ? 0 : 1);
+    const duplicateEvent = gridlyFindDuplicateCrossingEvent(state, nextEvent);
+    if (!duplicateEvent) {
+      state.crossingEvents.push(nextEvent);
+      state.operationalTelemetry.reportsCreated = (Number(state.operationalTelemetry.reportsCreated) || 0) + (options.countTelemetry === false ? 0 : 1);
+    } else {
+      duplicateEvent.confirmationCount = Math.max(Number(duplicateEvent.confirmationCount) || 0, nextEvent.confirmationCount);
+      gridlyCrossingEventQualityTelemetry.duplicateCrossingEventsSuppressed += 1;
+      gridlyCrossingEventQualityTelemetry.lastSuppressedDuplicate = {
+        crossingId,
+        blockedAt: nextEvent.blockedAt,
+        matchedBlockedAt: duplicateEvent.blockedAt,
+        source: nextEvent.source || "user",
+        eventType: nextEvent.eventType || gridlyNormalizeCrossingEventType(nextEvent)
+      };
+    }
   }
   state.operationalTelemetry.lastCapturedAt = new Date().toISOString();
   if (!options.deferWrite) gridlyWriteEventHistoryState(state);
@@ -2858,13 +3040,20 @@ function gridlyGetAnalyticsReadinessModel() {
   const state = gridlyReadEventHistoryState();
   const crossingEvents = Array.isArray(state.crossingEvents) ? state.crossingEvents : [];
   const hazardEvents = Array.isArray(state.hazardEvents) ? state.hazardEvents : [];
+  const duplicateCrossingEvents = gridlyDetectDuplicateCrossingEvents(crossingEvents);
+  const duplicateCrossingEventsSuppressed = Number(gridlyCrossingEventQualityTelemetry.duplicateCrossingEventsSuppressed) || 0;
   return {
     crossingEventCount: crossingEvents.length,
     hazardEventCount: hazardEvents.length,
     averageCrossingDuration: gridlyAverageDuration(crossingEvents),
     averageHazardDuration: gridlyAverageDuration(hazardEvents),
     mostImpactedCrossing: gridlyMostImpacted(crossingEvents, "crossingName"),
-    mostImpactedRoad: gridlyMostImpacted(hazardEvents, "roadName")
+    mostImpactedRoad: gridlyMostImpacted(hazardEvents, "roadName"),
+    duplicateCrossingEventsDetected: duplicateCrossingEvents.count + duplicateCrossingEventsSuppressed,
+    duplicateCrossingEventSamples: duplicateCrossingEvents.samples,
+    duplicateCrossingEventsSuppressed,
+    hazardRoadNameQuality: gridlyBuildHazardRoadNameQuality(hazardEvents),
+    crossingRoadNameQuality: gridlyBuildCrossingRoadNameQuality(crossingEvents)
   };
 }
 
@@ -2897,6 +3086,11 @@ function gridlyAnalyticsAudit() {
     activeCrossingCount: telemetry.activeCrossings,
     activeHazardCount: telemetry.activeHazards,
     storageHealth: telemetry.storageHealth,
+    duplicateCrossingEventsDetected: analytics.duplicateCrossingEventsDetected,
+    duplicateCrossingEventsSuppressed: analytics.duplicateCrossingEventsSuppressed,
+    duplicateCrossingEventSamples: analytics.duplicateCrossingEventSamples,
+    hazardRoadNameQuality: analytics.hazardRoadNameQuality,
+    crossingRoadNameQuality: analytics.crossingRoadNameQuality,
     eventHistoryReady: Boolean(telemetry.storageHealth?.ok),
     betaReady: Boolean(telemetry.storageHealth?.ok)
   };
@@ -2930,7 +3124,7 @@ function gridlyIsActiveHazardRecord(hazard = {}) {
 }
 
 function gridlyNormalizeHazardType(hazard = {}) {
-  const rawType = String(hazard?.type || hazard?.report_type || hazard?.category || hazard?.hazardCategory || "other_hazard").trim().toLowerCase();
+  const rawType = String(hazard?.type || hazard?.report_type || hazard?.hazardType || hazard?.category || hazard?.hazardCategory || "other_hazard").trim().toLowerCase();
   return getHazardCategory(rawType || "other_hazard");
 }
 
