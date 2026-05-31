@@ -4667,6 +4667,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyAuditHelpersCheck",
   "gridlyAnalyticsAudit",
   "gridlyOperationalTelemetryAudit",
+  "gridlyBetaReadinessAudit",
   "loadSharedReports"
 ];
 
@@ -4749,6 +4750,7 @@ function exposeAllGridlyAuditHelpers() {
     gridlyAuditHelpersCheck: typeof gridlyAuditHelpersCheck === "function" ? gridlyAuditHelpersCheck : null,
     gridlyAnalyticsAudit: typeof gridlyAnalyticsAudit === "function" ? gridlyAnalyticsAudit : null,
     gridlyOperationalTelemetryAudit: typeof gridlyOperationalTelemetryAudit === "function" ? gridlyOperationalTelemetryAudit : null,
+    gridlyBetaReadinessAudit: typeof gridlyBetaReadinessAudit === "function" ? gridlyBetaReadinessAudit : (typeof target?.gridlyBetaReadinessAudit === "function" ? target.gridlyBetaReadinessAudit : null),
     loadSharedReports: typeof loadSharedReports === "function" ? loadSharedReports : null
   };
 
@@ -12381,6 +12383,10 @@ exposeGridlyAuditHelper("gridlyTxDotSourceAudit", gridlyTxDotSourceAudit);
 
 let gridlyTxdotStartupFetchPromise = null;
 let gridlyTxdotStartupFetchAttempted = false;
+
+if (typeof window !== "undefined" && window.GRIDLY_ENABLE_TXDOT_STARTUP_FETCH === undefined) {
+  window.GRIDLY_ENABLE_TXDOT_STARTUP_FETCH = false;
+}
 
 function gridlyIsTxdotStartupFetchEnabled() {
   return typeof window !== "undefined" && window.GRIDLY_ENABLE_TXDOT_STARTUP_FETCH === true;
@@ -36915,6 +36921,194 @@ window.gridlyVisualRegressionAudit = function gridlyVisualRegressionAudit() {
     };
   }
 };
+
+const GRIDLY_BETA_STATUS = Object.freeze({
+  pass: "PASS",
+  partial: "PARTIAL",
+  needsWork: "NEEDS WORK"
+});
+
+function gridlyBetaStatusFromSignals({ pass = false, partial = false } = {}) {
+  if (pass) return GRIDLY_BETA_STATUS.pass;
+  if (partial) return GRIDLY_BETA_STATUS.partial;
+  return GRIDLY_BETA_STATUS.needsWork;
+}
+
+function gridlyBetaReadinessScore(statuses = []) {
+  const weights = {
+    [GRIDLY_BETA_STATUS.pass]: 1,
+    [GRIDLY_BETA_STATUS.partial]: 0.5,
+    [GRIDLY_BETA_STATUS.needsWork]: 0
+  };
+  const safeStatuses = statuses.filter((status) => Object.prototype.hasOwnProperty.call(weights, status));
+  if (!safeStatuses.length) return 0;
+  const score = safeStatuses.reduce((total, status) => total + weights[status], 0) / safeStatuses.length;
+  return Math.round(score * 100);
+}
+
+function gridlyBetaReadinessAudit() {
+  const target = typeof window !== "undefined" ? window : globalThis;
+  const hasDocument = typeof document !== "undefined";
+  const safeArrayLength = (value) => Array.isArray(value) ? value.length : 0;
+  const helperAvailable = (name) => typeof target?.[name] === "function";
+  const elementPresent = (id) => hasDocument && Boolean(document.getElementById(id));
+  const selectorPresent = (selector) => hasDocument && Boolean(document.querySelector(selector));
+  const runAuditSafely = (fn, ...args) => {
+    if (typeof fn !== "function") return null;
+    try {
+      return fn(...args);
+    } catch (_error) {
+      return null;
+    }
+  };
+
+  const travelTimeAudit = runAuditSafely(target?.gridlyTravelTimeAudit);
+  const routeWatchDisplayAudit = runAuditSafely(target?.gridlyRouteWatchDisplayAudit);
+  const portraitAudit = runAuditSafely(target?.gridlyPortraitStabilitySmokeAudit);
+  const analyticsAudit = runAuditSafely(typeof gridlyAnalyticsAudit === "function" ? gridlyAnalyticsAudit : target?.gridlyAnalyticsAudit);
+  const telemetryAudit = runAuditSafely(typeof gridlyOperationalTelemetryAudit === "function" ? gridlyOperationalTelemetryAudit : target?.gridlyOperationalTelemetryAudit);
+  const hazardLifecycleAudit = runAuditSafely(target?.gridlyHazardLifecycleAudit, { auditOnly: true });
+
+  const routeWatchStatus = gridlyBetaStatusFromSignals({
+    pass: Boolean(travelTimeAudit?.baselineReady && travelTimeAudit?.routeImpactReady && routeWatchDisplayAudit?.displayApplied),
+    partial: Boolean(helperAvailable("gridlyTravelTimeAudit") || helperAvailable("gridlyRouteWatchDisplayAudit") || routeWatchActivated || target?.__gridlyRouteWatchActive)
+  });
+  const portraitStatus = gridlyBetaStatusFromSignals({
+    pass: Boolean(portraitAudit?.portraitReady || portraitAudit?.betaReady || portraitAudit?.smokeReady),
+    partial: Boolean(helperAvailable("gridlyPortraitStabilitySmokeAudit") || helperAvailable("gridlyPortraitV2LayerAudit") || elementPresent("gridlyPortraitV2"))
+  });
+  const alertStatus = gridlyBetaStatusFromSignals({
+    pass: Boolean(helperAvailable("gridlyVisualConsistencyAudit") && (safeArrayLength(target?.__gridlyLatestAlertsForRender) > 0 || selectorPresent(".alert-item, .gridly-alert-title, [data-gridly-alert-title]"))),
+    partial: Boolean(typeof getAlertsSurfaceSnapshot === "function" || typeof renderUnifiedIncidents === "function" || elementPresent("alertsList") || selectorPresent("[data-section='alerts']"))
+  });
+  const reportingStatus = gridlyBetaStatusFromSignals({
+    pass: Boolean(typeof createSharedHazardReport === "function" && typeof loadSharedReports === "function" && typeof normalizeReports === "function"),
+    partial: Boolean(typeof loadSharedReports === "function" || elementPresent("manualReportBtn") || elementPresent("desktopReportNearMeBtnRail") || elementPresent("mobileCrossingReportBtn"))
+  });
+  const railCrossingStatus = gridlyBetaStatusFromSignals({
+    pass: Boolean(safeArrayLength(crossings) > 0 && crossingMarkers instanceof Map && crossingMarkers.size > 0 && typeof loadCrossings === "function"),
+    partial: Boolean(typeof loadCrossings === "function" || typeof fetchFraCrossings === "function" || helperAvailable("gridlyCrossingPipelineAudit") || safeArrayLength(crossings) > 0)
+  });
+  const hazardStatus = gridlyBetaStatusFromSignals({
+    pass: Boolean(hazardLifecycleAudit?.lifecycleClassifierAvailable && hazardLifecycleAudit?.lifecycleAuditAvailable && safeArrayLength(activeHazards) > 0),
+    partial: Boolean(typeof gridlyClassifyHazardLifecycle === "function" || helperAvailable("gridlyHazardLifecycleAudit") || safeArrayLength(activeHazards) > 0 || typeof getLiveHazardIncidents === "function")
+  });
+  const analyticsStatus = gridlyBetaStatusFromSignals({
+    pass: Boolean(analyticsAudit?.betaReady && analyticsAudit?.eventHistoryReady && (Number(analyticsAudit?.crossingEventCount || 0) + Number(analyticsAudit?.hazardEventCount || 0) > 0)),
+    partial: Boolean(analyticsAudit?.loaded || typeof gridlyAnalyticsAudit === "function" || helperAvailable("gridlyAnalyticsAudit"))
+  });
+  const telemetryStatus = gridlyBetaStatusFromSignals({
+    pass: Boolean(telemetryAudit?.betaSafe && telemetryAudit?.telemetryReady && Number(telemetryAudit?.reportsCreated || 0) > 0),
+    partial: Boolean(telemetryAudit?.telemetryReady || typeof gridlyOperationalTelemetryAudit === "function" || helperAvailable("gridlyOperationalTelemetryAudit"))
+  });
+  const notificationStatus = gridlyBetaStatusFromSignals({
+    pass: false,
+    partial: Boolean(gridlySafeLocalStorageHas(SMART_ALERTS_STORAGE_KEY) || elementPresent("settingsRouteAlertsToggle") || selectorPresent("[data-v2-settings-field^='notifications.']"))
+  });
+
+  const knownRisks = [
+    {
+      risk: "hazard aging",
+      severity: "high",
+      status: hazardStatus === GRIDLY_BETA_STATUS.pass ? "partially mitigated" : "beta blocker",
+      rationale: "Hazard trust depends on age, confirmation count, and clear-state handling before stale reports can be trusted at beta scale."
+    },
+    {
+      risk: "stale reports",
+      severity: "high",
+      status: reportingStatus === GRIDLY_BETA_STATUS.pass ? "watch" : "beta blocker",
+      rationale: "Reports need visible freshness, validation, and lifecycle review so inactive road or rail reports do not remain prominent."
+    },
+    {
+      risk: "location specificity",
+      severity: "high",
+      status: alertStatus === GRIDLY_BETA_STATUS.pass ? "watch" : "needs validation",
+      rationale: "Alert trust improves only when road, crossing, corridor, and route-impact language points users to a specific location."
+    },
+    {
+      risk: "notification logic",
+      severity: "medium",
+      status: "deferred architecture",
+      rationale: "Notification preferences exist as storage/UI architecture, but delivery, targeting, throttling, and quiet-hour rules are not beta-ready."
+    },
+    {
+      risk: "historical intelligence gaps",
+      severity: "medium",
+      status: analyticsStatus === GRIDLY_BETA_STATUS.pass ? "watch" : "needs work",
+      rationale: "Historical confidence needs enough event history to support repeat-location patterns, typical duration, and commuter timing guidance."
+    },
+    {
+      risk: "report validation",
+      severity: "high",
+      status: "needs work",
+      rationale: "Community reports need confirmation, duplicate handling, and quality scoring before they should drive high-confidence beta decisions."
+    },
+    {
+      risk: "TxDOT integration",
+      severity: "low",
+      status: "deferred / experimental",
+      rationale: "TxDOT fetch is available but startup integration is disabled by default and is not beta-critical for mobile stability."
+    }
+  ];
+
+  const recommendedNextPriorities = [
+    {
+      rank: 1,
+      priority: "Hazard lifecycle framework",
+      reasoning: "This is the highest trust dependency: aging, stale-report handling, confirmations, and clear/expire candidates determine whether beta users can rely on hazard state."
+    },
+    {
+      rank: 2,
+      priority: "Historical intelligence",
+      reasoning: "Event history can turn repeated rail delays, recurring road hazards, and typical durations into useful beta guidance without adding new external systems."
+    },
+    {
+      rank: 3,
+      priority: "Alert quality/location specificity",
+      reasoning: "Alerts should consistently identify the affected road, crossing, corridor, route relevance, age, and confidence so users understand why an alert matters."
+    },
+    {
+      rank: 4,
+      priority: "Beta user testing",
+      reasoning: "User validation should test whether commuters understand alert phrasing, report flows, route-watch signals, and stale/clear states in real Liberty County conditions."
+    },
+    {
+      rank: 5,
+      priority: "Notification strategy",
+      reasoning: "Notification delivery should remain behind beta readiness work until targeting, consent, throttle, location specificity, and quiet-hour policies are defined."
+    }
+  ];
+
+  const statuses = [
+    routeWatchStatus,
+    portraitStatus,
+    alertStatus,
+    reportingStatus,
+    railCrossingStatus,
+    hazardStatus,
+    analyticsStatus,
+    telemetryStatus,
+    notificationStatus
+  ];
+
+  return {
+    routeWatchStatus,
+    portraitStatus,
+    alertStatus,
+    reportingStatus,
+    railCrossingStatus,
+    hazardStatus,
+    analyticsStatus,
+    telemetryStatus,
+    notificationStatus,
+    knownRisks,
+    betaReadinessScore: gridlyBetaReadinessScore(statuses),
+    recommendedNextPriorities
+  };
+}
+
+window.gridlyBetaReadinessAudit = gridlyBetaReadinessAudit;
+exposeGridlyAuditHelper("gridlyBetaReadinessAudit", gridlyBetaReadinessAudit);
 
 window.gridlyVisualConsistencyAudit = function gridlyVisualConsistencyAudit() {
   try {
