@@ -14070,3 +14070,15 @@ body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyCommunity
   z-index: 0;
   pointer-events: none;
 }
+
+.gridly-alert-focused-marker {
+  filter: drop-shadow(0 0 10px rgba(96, 165, 250, 0.95));
+  z-index: 1000 !important;
+}
+
+.gridly-alert-focused-marker .gridly-marker,
+.gridly-alert-focused-marker .gridly-hazard-marker,
+.gridly-alert-focused-marker .gridly-marker-wrap {
+  outline: 2px solid rgba(147, 197, 253, 0.95);
+  outline-offset: 3px;
+}
