@@ -4643,6 +4643,8 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyActiveIncidentAudit",
   "gridlyIncidentSourceAudit",
   "gridlyTxDotSourceAudit",
+  "gridlyTxdotLayerAudit",
+  "gridlyRunTxdotLayerAudit",
   "gridlyAuditHelperExposureAudit",
   "gridlySupabaseHazardInventoryAudit",
   "gridlySupabaseHazardPurgeAudit",
@@ -4723,6 +4725,8 @@ function exposeAllGridlyAuditHelpers() {
     gridlyActiveIncidentAudit: typeof gridlyActiveIncidentAudit === "function" ? gridlyActiveIncidentAudit : null,
     gridlyIncidentSourceAudit: typeof gridlyIncidentSourceAudit === "function" ? gridlyIncidentSourceAudit : (typeof target?.gridlyIncidentSourceAudit === "function" ? target.gridlyIncidentSourceAudit : null),
     gridlyTxDotSourceAudit: typeof gridlyTxDotSourceAudit === "function" ? gridlyTxDotSourceAudit : (typeof target?.gridlyTxDotSourceAudit === "function" ? target.gridlyTxDotSourceAudit : null),
+    gridlyTxdotLayerAudit: typeof gridlyTxdotLayerAudit === "function" ? gridlyTxdotLayerAudit : (typeof target?.gridlyTxdotLayerAudit === "function" ? target.gridlyTxdotLayerAudit : null),
+    gridlyRunTxdotLayerAudit: typeof gridlyRunTxdotLayerAudit === "function" ? gridlyRunTxdotLayerAudit : (typeof target?.gridlyRunTxdotLayerAudit === "function" ? target.gridlyRunTxdotLayerAudit : null),
     gridlyAuditHelperExposureAudit: typeof gridlyAuditHelperExposureAudit === "function" ? gridlyAuditHelperExposureAudit : (typeof target?.gridlyAuditHelperExposureAudit === "function" ? target.gridlyAuditHelperExposureAudit : null),
     gridlySupabaseHazardInventoryAudit: typeof target?.gridlySupabaseHazardInventoryAudit === "function" ? target.gridlySupabaseHazardInventoryAudit : null,
     gridlySupabaseHazardPurgeAudit: typeof target?.gridlySupabaseHazardPurgeAudit === "function" ? target.gridlySupabaseHazardPurgeAudit : null,
@@ -12592,6 +12596,9 @@ function gridlyAuditHelperExposureAudit() {
 
   return {
     gridlyTxDotSourceAudit: typeof target?.gridlyTxDotSourceAudit,
+    gridlyTxdotLayerAudit: typeof target?.gridlyTxdotLayerAudit,
+    gridlyRunTxdotLayerAudit: typeof target?.gridlyRunTxdotLayerAudit,
+    gridlyLastTxdotLayerAudit: target?.gridlyLastTxdotLayerAudit || null,
     gridlyIncidentSourceAudit: typeof target?.gridlyIncidentSourceAudit,
     gridlyTxdotFetch: typeof target?.gridlyTxdot?.fetchRoadConditions,
     helperNamesContainingTxdot,
@@ -20299,9 +20306,54 @@ function gridlyTxdotLayerAudit() {
   };
 }
 
+function gridlyRunTxdotLayerAudit() {
+  const target = typeof window !== "undefined" ? window : globalThis;
+  console.log("Gridly TxDOT layer audit started");
+
+  const auditPromise = Promise.resolve()
+    .then(async () => {
+      const txdotService = target?.gridlyTxdot || null;
+      if (!txdotService || typeof txdotService.fetchRoadConditions !== "function") {
+        throw new Error("Gridly TxDOT layer audit cannot run because window.gridlyTxdot.fetchRoadConditions is unavailable.");
+      }
+
+      await txdotService.fetchRoadConditions();
+
+      const auditFn = typeof target?.gridlyTxdotLayerAudit === "function"
+        ? target.gridlyTxdotLayerAudit
+        : (typeof gridlyTxdotLayerAudit === "function" ? gridlyTxdotLayerAudit : null);
+      if (typeof auditFn !== "function") {
+        throw new Error("Gridly TxDOT layer audit cannot run because window.gridlyTxdotLayerAudit is unavailable.");
+      }
+
+      const auditResult = auditFn();
+      target.gridlyLastTxdotLayerAudit = auditResult;
+      console.log(auditResult);
+      return auditResult;
+    })
+    .catch((error) => {
+      const auditError = {
+        error: true,
+        message: error instanceof Error ? error.message : String(error),
+        timestamp: new Date().toISOString()
+      };
+      target.gridlyLastTxdotLayerAudit = auditError;
+      console.error("Gridly TxDOT layer audit failed", error);
+      console.log(auditError);
+      return auditError;
+    });
+
+  return auditPromise;
+}
+
 if (typeof window !== "undefined") {
   window.gridlyTxdotLayerAudit = gridlyTxdotLayerAudit;
+  window.gridlyLastTxdotLayerAudit = window.gridlyLastTxdotLayerAudit || null;
+  window.gridlyRunTxdotLayerAudit = gridlyRunTxdotLayerAudit;
 }
+
+exposeGridlyAuditHelper("gridlyTxdotLayerAudit", gridlyTxdotLayerAudit);
+exposeGridlyAuditHelper("gridlyRunTxdotLayerAudit", gridlyRunTxdotLayerAudit);
 
 function mapRailReportType(type) {
   if (type === "blocked") return "rail_blocked";
