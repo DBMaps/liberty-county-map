@@ -20104,6 +20104,205 @@ function futureTxdotIncidents() { return gridlyBuildTxdotUnifiedRows({ construct
 function futureTxdotConstruction() { return gridlyBuildTxdotUnifiedRows({ construction: true }); }
 function futureFloodAlerts() { return []; }
 
+
+function gridlyTxdotLayerAudit() {
+  const toArray = (value) => Array.isArray(value) ? value : [];
+  const toText = (value) => String(value || "").trim();
+  const toLowerText = (value) => toText(value).toLowerCase();
+  const numberOrNull = (value) => {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+  const getLatLng = (item = {}) => {
+    const lat = numberOrNull(item?.lat ?? item?.latitude ?? item?.rawLat);
+    const lng = numberOrNull(item?.lng ?? item?.lon ?? item?.longitude ?? item?.rawLng);
+    return { lat, lng, hasCoordinates: Number.isFinite(lat) && Number.isFinite(lng) };
+  };
+  const getTxdotId = (item = {}) => toText(item?.rawTxdotId || item?.id || item?.incidentId || item?.reportId || item?.GLOBALID);
+  const isTxdotLike = (item = {}) => {
+    const haystack = [item?.source, item?.sourceType, item?.externalSource, item?.provider, item?.id, item?.rawTxdotId, item?.title, item?.headline]
+      .map(toLowerText)
+      .join(" ");
+    return /txdot|drive texas|drivetexas/.test(haystack);
+  };
+  const getTypeText = (item = {}) => [item?.type, item?.category, item?.condition, item?.report_type, item?.title, item?.description]
+    .map(toLowerText)
+    .join(" ");
+  const isConstruction = (item = {}) => gridlyTxdotIsConstructionRow(item) || /txdot_construction|\bconstruction\b|maintenance|lane closure|work zone|road work|utility work/.test(getTypeText(item));
+  const getTimestampMs = (item = {}) => {
+    const candidate = item?.updated_at || item?.updatedAt || item?.created_at || item?.createdAt || item?.startTime || item?.start_time || item?.reportedAt;
+    const parsed = candidate ? new Date(candidate).getTime() : Number.NaN;
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+  const getEndTimestampMs = (item = {}) => {
+    const candidate = item?.expires_at || item?.expiresAt || item?.endTime || item?.end_time;
+    const parsed = candidate ? new Date(candidate).getTime() : Number.NaN;
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+  const isDateFiltered = (item = {}) => {
+    const endMs = getEndTimestampMs(item);
+    if (!Number.isFinite(endMs)) return false;
+    return endMs < Date.now();
+  };
+  const mapBounds = map && typeof map.getBounds === "function" ? map.getBounds() : null;
+  const isInBounds = (item = {}) => {
+    const { lat, lng, hasCoordinates } = getLatLng(item);
+    if (!hasCoordinates || !mapBounds || typeof mapBounds.contains !== "function") return null;
+    return Boolean(mapBounds.contains([lat, lng]));
+  };
+  const getVisibleDomTxdotMarkers = () => {
+    if (typeof document === "undefined") return [];
+    const markerNodes = Array.from(document.querySelectorAll([
+      "#map .leaflet-marker-pane .gridly-hazard-marker",
+      "#map .leaflet-marker-pane [data-visual-style^='txdot_']",
+      "#map .gridly-marker-txdot-single",
+      "#map .gridly-marker-txdot-corridor",
+      "#map .gridly-marker-txdot-route-impact"
+    ].join(", ")));
+    const seen = new Set();
+    return markerNodes.filter((node) => {
+      if (!node || seen.has(node)) return false;
+      seen.add(node);
+      const style = toLowerText(node.dataset?.visualStyle);
+      const className = toLowerText(node.className);
+      const source = toLowerText(node.dataset?.incidentSource || node.closest?.(".leaflet-marker-icon")?.dataset?.incidentSource);
+      const id = toLowerText(node.dataset?.incidentId || node.dataset?.id || node.closest?.(".leaflet-marker-icon")?.dataset?.incidentId);
+      return style.startsWith("txdot_") || className.includes("txdot") || source.includes("txdot") || id.includes("txdot");
+    }).filter((node) => {
+      const iconNode = node.closest?.(".leaflet-marker-icon") || node;
+      const style = typeof window !== "undefined" && window.getComputedStyle ? window.getComputedStyle(iconNode) : null;
+      const rect = iconNode.getBoundingClientRect?.();
+      return !style || (style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity || 1) !== 0 && (!rect || (rect.width > 0 && rect.height > 0)));
+    });
+  };
+  const rawRows = typeof window !== "undefined" && typeof window.gridlyTxdot?.getRawRoadConditions === "function"
+    ? window.gridlyTxdot.getRawRoadConditions()
+    : toArray(window?.gridlyTxdotRawRoadConditions);
+  const normalizedRows = gridlyReadCachedTxdotRows().filter(isTxdotLike);
+  const unifiedRows = (typeof getUnifiedIncidents === "function" ? getUnifiedIncidents() : []).filter(isTxdotLike);
+  const activeUnifiedRows = unifiedRows.filter((incident) => toLowerText(incident?.status || "active") === "active");
+  const normalizedIds = new Set(normalizedRows.map(getTxdotId).filter(Boolean));
+  const unifiedIds = new Set(unifiedRows.map(getTxdotId).filter(Boolean));
+  const normalizedWithoutCoordinates = normalizedRows.filter((row) => !getLatLng(row).hasCoordinates);
+  const normalizedOutsideBounds = normalizedRows.filter((row) => getLatLng(row).hasCoordinates && isInBounds(row) === false);
+  const normalizedSourceFiltered = gridlyReadCachedTxdotRows().filter((row) => row && !isTxdotLike(row));
+  const unifiedStatusFiltered = unifiedRows.filter((row) => toLowerText(row?.status || "active") !== "active");
+  const unifiedDateFiltered = unifiedRows.filter(isDateFiltered);
+  const unifiedVisualStates = unifiedRows.map((incident) => ({ incident, visualState: getGridlyIncidentVisualState(incident) }));
+  const markerCandidates = unifiedVisualStates.filter(({ incident, visualState }) => {
+    const { hasCoordinates } = getLatLng(incident);
+    return hasCoordinates && toLowerText(incident?.status || "active") === "active" && !isDateFiltered(incident) && visualState?.shouldRender !== false;
+  });
+  const markerFilteredByVisualState = unifiedVisualStates.filter(({ incident, visualState }) => getLatLng(incident).hasCoordinates && visualState?.shouldRender === false);
+  const renderedLayerMarkers = (unifiedIncidentLayer && typeof unifiedIncidentLayer.getLayers === "function")
+    ? unifiedIncidentLayer.getLayers().filter((layer) => isTxdotLike({
+        source: layer?.options?.incidentSource,
+        id: layer?.options?.incidentId,
+        rawTxdotId: layer?.options?.incidentId
+      }))
+    : [];
+  const visibleDomTxdotMarkers = getVisibleDomTxdotMarkers();
+  const latestAlerts = toArray(window?.__gridlyLatestAlertsForRender);
+  const alertCandidates = activeUnifiedRows.filter((incident) => {
+    const { hasCoordinates } = getLatLng(incident);
+    return hasCoordinates && !isDateFiltered(incident);
+  });
+  const alertRendered = latestAlerts.filter(isTxdotLike);
+  const skippedByFilterBreakdown = {
+    source: normalizedSourceFiltered.length,
+    type: normalizedRows.filter((row) => !GRIDLY_NORMALIZED_INCIDENT_CATEGORIES.has(normalizeGridlyIncidentCategory({ ...row, source: "txdot" }))).length,
+    status: unifiedStatusFiltered.length,
+    date: unifiedDateFiltered.length,
+    visualShouldRenderFalse: markerFilteredByVisualState.length,
+    notInUnified: normalizedRows.filter((row) => {
+      const id = getTxdotId(row);
+      return id && !unifiedIds.has(id) && !unifiedIds.has(`txdot-${id}`) && !unifiedIds.has(`txdot-construction-${id}`);
+    }).length
+  };
+  const blockers = [];
+  if (!rawRows.length) blockers.push("No TxDOT raw rows are cached. Run await window.gridlyTxdot?.fetchRoadConditions?.() first and confirm the API key/fetch succeeds.");
+  if (rawRows.length && !normalizedRows.length) blockers.push("TxDOT rows were fetched but no cached normalized rows were found.");
+  if (normalizedRows.length && !unifiedRows.length) blockers.push("TxDOT rows are normalized but are not present in getUnifiedIncidents().");
+  if (normalizedWithoutCoordinates.length) blockers.push(`${normalizedWithoutCoordinates.length} normalized TxDOT row(s) have no finite coordinates.`);
+  if (normalizedOutsideBounds.length) blockers.push(`${normalizedOutsideBounds.length} normalized TxDOT row(s) are outside the current map bounds.`);
+  if (unifiedRows.length && !markerCandidates.length) blockers.push("TxDOT rows are unified, but current visual-state eligibility marks every TxDOT marker as non-renderable.");
+  if (markerFilteredByVisualState.length) blockers.push(`${markerFilteredByVisualState.length} unified TxDOT row(s) have visualState.shouldRender === false.`);
+  if (markerCandidates.length && !renderedLayerMarkers.length && !visibleDomTxdotMarkers.length) blockers.push("TxDOT marker candidates exist, but no TxDOT markers are currently rendered in the Leaflet layer/DOM. Manual fetch does not trigger marker rerender.");
+  if (renderedLayerMarkers.length && !visibleDomTxdotMarkers.length) blockers.push("TxDOT markers exist in the Leaflet layer but are not visible in the marker DOM.");
+  if (alertCandidates.length && !alertRendered.length) blockers.push("TxDOT alert candidates exist, but no TxDOT rows are present in __gridlyLatestAlertsForRender.");
+  const nextPatchRecommendation = !rawRows.length
+    ? "Run the manual TxDOT fetch, then rerun this audit."
+    : (!normalizedRows.length
+      ? "Patch TxDOT normalization/cache handoff before touching rendering."
+      : (!unifiedRows.length
+        ? "Patch getUnifiedIncidents()/futureTxdotIncidents handoff so cached TxDOT rows become unified incidents."
+        : (!markerCandidates.length
+          ? "Patch TxDOT marker eligibility deliberately; current visual-state policy sets TxDOT shouldRender=false."
+          : (!renderedLayerMarkers.length && !visibleDomTxdotMarkers.length
+            ? "Patch a manual, non-startup rerender path after explicit TxDOT fetch; do not add startup fetches, polling, or activeHazards forcing."
+            : (alertCandidates.length && !alertRendered.length
+              ? "Patch the alert candidate-to-render pipeline for TxDOT without changing startup fetch behavior."
+              : "TxDOT reaches the current rendered marker path; inspect visibility, styling, and alert surface separately.")))));
+
+  return {
+    txdotFetchedRows: rawRows.length,
+    txdotNormalizedRows: normalizedRows.length,
+    txdotUnifiedIncidents: unifiedRows.length,
+    txdotIncidentCount: unifiedRows.filter((row) => !isConstruction(row)).length,
+    txdotConstructionCount: unifiedRows.filter(isConstruction).length,
+    markerCandidates: markerCandidates.length,
+    markerRenderedCount: Math.max(renderedLayerMarkers.length, visibleDomTxdotMarkers.length),
+    alertCandidates: alertCandidates.length,
+    alertRenderedCount: alertRendered.length,
+    skippedNoCoordinates: normalizedWithoutCoordinates.length,
+    skippedByBounds: normalizedOutsideBounds.length,
+    skippedByFilters: skippedByFilterBreakdown.source + skippedByFilterBreakdown.type + skippedByFilterBreakdown.status + skippedByFilterBreakdown.date + skippedByFilterBreakdown.visualShouldRenderFalse + skippedByFilterBreakdown.notInUnified,
+    visibleTxdotMarkerSamples: visibleDomTxdotMarkers.slice(0, 5).map((node) => ({
+      incidentId: node.dataset?.incidentId || node.closest?.(".leaflet-marker-icon")?.dataset?.incidentId || "",
+      visualStyle: node.dataset?.visualStyle || "",
+      lat: numberOrNull(node.dataset?.lat),
+      lng: numberOrNull(node.dataset?.lng),
+      className: toText(node.className).slice(0, 160)
+    })),
+    unifiedTxdotSamples: unifiedRows.slice(0, 5).map((incident) => {
+      const { lat, lng, hasCoordinates } = getLatLng(incident);
+      const visualState = getGridlyIncidentVisualState(incident);
+      return {
+        id: incident?.id || null,
+        rawTxdotId: incident?.rawTxdotId || null,
+        type: incident?.type || incident?.category || null,
+        status: incident?.status || null,
+        lat,
+        lng,
+        hasCoordinates,
+        inBounds: isInBounds(incident),
+        shouldRender: visualState?.shouldRender,
+        markerStyle: visualState?.markerStyle,
+        updatedAt: incident?.updated_at || incident?.updatedAt || null,
+        expiresAt: incident?.expires_at || incident?.expiresAt || incident?.endTime || null
+      };
+    }),
+    blockers,
+    nextPatchRecommendation,
+    details: {
+      skippedByFilterBreakdown,
+      activeUnifiedTxdotCount: activeUnifiedRows.length,
+      markerLayerTxdotCount: renderedLayerMarkers.length,
+      visibleDomTxdotCount: visibleDomTxdotMarkers.length,
+      mapBoundsAvailable: Boolean(mapBounds),
+      normalizedTxdotIdsMissingFromUnified: normalizedRows.filter((row) => {
+        const id = getTxdotId(row);
+        return id && !unifiedIds.has(id) && !unifiedIds.has(`txdot-${id}`) && !unifiedIds.has(`txdot-construction-${id}`);
+      }).slice(0, 10).map(getTxdotId),
+      normalizedTxdotIdsPresent: normalizedRows.filter((row) => normalizedIds.has(getTxdotId(row))).slice(0, 10).map(getTxdotId)
+    }
+  };
+}
+
+if (typeof window !== "undefined") {
+  window.gridlyTxdotLayerAudit = gridlyTxdotLayerAudit;
+}
+
 function mapRailReportType(type) {
   if (type === "blocked") return "rail_blocked";
   if (type === "heavy") return "rail_delay";
