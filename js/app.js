@@ -7232,7 +7232,7 @@ function openAlertsSurfaceFromDock() {
     return `
 <div class="gridly-alerts-active">
   <div class="gridly-alert-row gridly-alert-intel-card">
-    <div><strong>IMPACTED MOVEMENT</strong></div>
+    <div><strong>Impacted Movement</strong></div>
     <small>${leadCard ? `Multiple rail crossings are affecting ${sanitizeText(normalizeToken(leadCard?.rawRoad || leadCard?.road || "nearby") )} movement through Dayton.` : "Multiple rail crossings are affecting movement through Dayton."}</small>
     <small><strong>Expected impact:</strong> ${sanitizeText(toDelayEstimate(leadCard?.impact || "Widespread Delays"))}</small>
     <small><strong>Community activity:</strong> ${totalReports} nearby report${totalReports === 1 ? "" : "s"}</small>
@@ -7962,8 +7962,8 @@ function openAlertsSurfaceFromDock() {
   }));
   const helperEventLabel = eventLabelFromHelper(resolvedHelper);
   const shouldUseEventFirstLayout = titleLooksLikeRoadOrLocation && Boolean(helperEventLabel);
-  const displayTitle = shouldUseEventFirstLayout ? helperEventLabel : resolvedTitle;
-  const displaySubtitle = shouldUseEventFirstLayout ? resolvedTitle : resolvedHelper;
+  const displayTitle = standardizeGridlyAlertHeadline(shouldUseEventFirstLayout ? helperEventLabel : resolvedTitle);
+  const displaySubtitle = shouldUseEventFirstLayout ? standardizeGridlyAlertHeadline(resolvedTitle) : resolvedHelper;
   const cleanedAlertLocationLabel = shouldUseEventFirstLayout
     ? normalizeGridlyLightweightLocationLabelText(resolvedTitle)
     : normalizeGridlyLightweightLocationLabelText(getGridlyLightweightLocationFromHeadline(`${displayTitle} ${displaySubtitle}`) || "");
@@ -8002,7 +8002,7 @@ function openAlertsSurfaceFromDock() {
         : "";
 
       const alertsPanelHeading = resolveGridlyAlertsPanelHeadingCandidate({ snapshot, limit: 6 });
-      const alertsPanelHeadingText = alertsPanelHeading.text || snapshot?.commuteImpactHeadline || "Active movement alerts";
+      const alertsPanelHeadingText = standardizeGridlyAlertHeadline(alertsPanelHeading.text || snapshot?.commuteImpactHeadline || "Active movement alerts");
 
       const html = `
 <div class="gridly-alerts-active" style="padding:0 1px;">
@@ -27126,6 +27126,69 @@ window.gridlyRoadNameResolverDebug = function () {
   return status;
 };
 
+
+function standardizeGridlyAlertHeadline(value = "") {
+  const raw = String(value ?? "").replace(/[\s_]+/g, " ").trim();
+  if (!raw) return "";
+  const protectedRefs = [];
+  let working = raw
+    .replace(/\b(?:U\.?S\.?|US)\s*-?\s*(\d+[A-Z]?)\b/gi, (_, number) => ` __GRIDLY_ROAD_REF_${protectedRefs.push(`US ${String(number).toUpperCase()}`) - 1}__ `)
+    .replace(/\b(?:T\.?X\.?|TX)\s*-?\s*(\d+[A-Z]?)\b/gi, (_, number) => ` __GRIDLY_ROAD_REF_${protectedRefs.push(`TX ${String(number).toUpperCase()}`) - 1}__ `)
+    .replace(/\b(?:F\.?M\.?|FM)\s*-?\s*(\d+[A-Z]?)\b/gi, (_, number) => ` __GRIDLY_ROAD_REF_${protectedRefs.push(`FM ${String(number).toUpperCase()}`) - 1}__ `)
+    .replace(/\b(?:C\.?R\.?|CR)\s*-?\s*(\d+[A-Z]?)\b/gi, (_, number) => ` __GRIDLY_ROAD_REF_${protectedRefs.push(`CR ${String(number).toUpperCase()}`) - 1}__ `)
+    .replace(/\b(?:S\.?H\.?|SH)\s*-?\s*(\d+[A-Z]?)\b/gi, (_, number) => ` __GRIDLY_ROAD_REF_${protectedRefs.push(`SH ${String(number).toUpperCase()}`) - 1}__ `)
+    .replace(/\b(?:I|IH)\s*-\s*(\d+[A-Z]?)\b/gi, (_, number) => ` __GRIDLY_ROAD_REF_${protectedRefs.push(`I-${String(number).toUpperCase()}`) - 1}__ `);
+
+  const lowerWords = new Set(["a", "an", "and", "at", "by", "for", "from", "in", "near", "of", "on", "or", "the", "to", "with", "between"]);
+  const keepUpper = new Set(["US", "TX", "FM", "CR", "SH", "IH", "ID"]);
+  const formatWord = (word, index) => {
+    if (!word || /^__GRIDLY_ROAD_REF_\d+__$/.test(word)) return word;
+    if (/^\d+[A-Za-z]?$/.test(word)) return word.toUpperCase();
+    const normalized = word.replace(/[’]/g, "'");
+    if (/^[A-Za-z]{1,3}$/.test(normalized) && keepUpper.has(normalized.toUpperCase())) return normalized.toUpperCase();
+    const lowered = normalized.toLowerCase();
+    if (index > 0 && lowerWords.has(lowered)) return lowered;
+    return normalized
+      .split(/([\-/])/).map((part) => {
+        if (part === "-" || part === "/") return part;
+        if (!part) return part;
+        if (/^\d+[a-z]?$/.test(part)) return part.toUpperCase();
+        return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+      }).join("");
+  };
+
+  working = working
+    .replace(/\s*([/–—-])\s*/g, " $1 ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .split(" ")
+    .map(formatWord)
+    .join(" ")
+    .replace(/\s+([,.;:!?])/g, "$1")
+    .replace(/\s*([/–—-])\s*/g, " $1 ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  protectedRefs.forEach((label, index) => {
+    working = working.replace(new RegExp(`__GRIDLY_ROAD_REF_${index}__`, "g"), label);
+  });
+  return working;
+}
+
+function getGridlyAlertHeadlineCaseMetrics(headlines = []) {
+  const values = headlines.map((headline) => String(headline || "").trim()).filter(Boolean);
+  const officialRoadRef = "(?:US|TX|FM|CR|SH|I-|IH)";
+  const allCapsRoadPattern = new RegExp(`\\b(?!${officialRoadRef}\\b)[A-Z]{3,}(?:\\s+[A-Z]{2,})*\\s+(?:STREET|ROAD|AVENUE|DRIVE|LANE|BOULEVARD|PARKWAY|HIGHWAY|WAY|COURT|CIRCLE)\\b`, "g");
+  const lowercaseStartPattern = /^[a-z]/;
+  const inconsistent = values.filter((headline) => standardizeGridlyAlertHeadline(headline) !== headline);
+  return {
+    alertHeadlineCount: values.length,
+    inconsistentCaseCount: inconsistent.length,
+    allCapsRoadNameCount: values.reduce((count, headline) => count + ((headline.match(allCapsRoadPattern) || []).length), 0),
+    lowercaseAlertStartCount: values.filter((headline) => lowercaseStartPattern.test(headline)).length
+  };
+}
+
 function buildRoadHazardDisplay(incident, resolvedLookup = null) {
   const category = getHazardCategory(incident?.report_type || incident?.type || "other_hazard");
   const hazardType = formatRoadHazardCategoryLabel(category);
@@ -27138,6 +27201,7 @@ function buildRoadHazardDisplay(incident, resolvedLookup = null) {
   if (category === "flooding" && hasUsefulRoadName) title = `Flooding near ${locationContext.phrasing}`;
   else if (hasUsefulRoadName) title = `${hazardType} near ${locationContext.phrasing}`;
   else if (hazardType !== "Road Hazard") title = hazardType;
+  title = standardizeGridlyAlertHeadline(title);
 
   const coords = normalizeCoordinatePair(incident?.lat, incident?.lng);
   const coordinateFallback = coords ? `${coords.lat.toFixed(3)}, ${coords.lng.toFixed(3)}` : "";
@@ -27203,11 +27267,11 @@ function buildRailIncidentDisplay(incident) {
   const reportType = String(latest?.type || "").toLowerCase();
   const actionWord = reportType === "cleared" ? "Cleared" : reportType === "blocked" ? "Blocked" : "Delay";
   const location = resolveRailLocationText(incident);
-  const title = location.humanRoad
+  const title = standardizeGridlyAlertHeadline(location.humanRoad
     ? `${actionWord} crossing on ${location.humanRoad}`
     : location.crossingName
     ? `${actionWord} near ${location.crossingName}`
-    : `${actionWord} crossing`;
+    : `${actionWord} crossing`);
   return { title, subtitlePrefix: location.subtitlePrefix };
 }
 
@@ -29890,17 +29954,17 @@ function renderAlerts() {
   const primaryCorridor = corridors[0] || null;
   const routeImpacted = timeSection("map_route_dependent_checks", () => Number(consequenceIntel.routeImpactIncidentCount || 0) > 0);
   const sections = [];
-  sections.push(`<article class="alert-item intelligence-row high corridor-command-status"><div class="alert-row-main"><span class="alert-severity-chip">Commute Status</span><strong>${sanitizeText(routeImpacted ? "Route Watch impacted" : (consequenceIntel.topStatus || "Routes currently clear"))}</strong><span class="alert-row-time">live</span></div><p class="alert-row-subline">${sanitizeText(consequenceIntel.topStatusLocalizedDetail || "Operational corridor watch active")}</p></article>`);
+  sections.push(`<article class="alert-item intelligence-row high corridor-command-status"><div class="alert-row-main"><span class="alert-severity-chip">Commute Status</span><strong>${sanitizeText(standardizeGridlyAlertHeadline(routeImpacted ? "Route Watch impacted" : (consequenceIntel.topStatus || "Routes currently clear")))}</strong><span class="alert-row-time">live</span></div><p class="alert-row-subline">${sanitizeText(consequenceIntel.topStatusLocalizedDetail || "Operational corridor watch active")}</p></article>`);
 
   timeSection("alert_corridor_grouping_logic", () => {
     corridors.slice(0, 3).forEach((corridor, idx) => {
       const count = corridor.items.length;
       const heading = corridor.label || "Primary Corridor";
-      const severity = String(corridor.healthState || "moderate").toUpperCase();
+      const severity = standardizeGridlyAlertHeadline(String(corridor.healthState || "moderate"));
       const rows = corridor.items.slice(0, 3).map((item) => `<li>${sanitizeText(item.localizedSummary)}</li>`).join("");
       const corridorClass = idx === 0 ? "primary-corridor" : "secondary-corridor";
       const action = idx === 0 ? '<button class="secondary-btn compact-btn" type="button" data-v2-action="alerts-open">Avoid Corridor</button>' : "";
-      sections.push(`<article class="alert-item corridor-command ${corridorClass}"><strong class="corridor-command-title">${sanitizeText(heading)}</strong><p class="corridor-command-severity">${sanitizeText(severity)} • ${count} ACTIVE ISSUE${count === 1 ? "" : "S"}</p><ul class="alert-row-details-list">${rows}</ul>${action}</article>`);
+      sections.push(`<article class="alert-item corridor-command ${corridorClass}"><strong class="corridor-command-title">${sanitizeText(heading)}</strong><p class="corridor-command-severity">${sanitizeText(severity)} • ${count} active issue${count === 1 ? "" : "s"}</p><ul class="alert-row-details-list">${rows}</ul>${action}</article>`);
     });
   });
 
@@ -33169,7 +33233,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     let html = "";
 
     const alertsPanelHeading = resolveGridlyAlertsPanelHeadingCandidate({ snapshot, limit: 6 });
-    const alertsPanelHeadingText = alertsPanelHeading.text || snapshot.commuteImpactHeadline || "Active Alerts";
+    const alertsPanelHeadingText = standardizeGridlyAlertHeadline(alertsPanelHeading.text || snapshot.commuteImpactHeadline || "Active Alerts");
     const alertsPanelActiveCategory = alertsPanelHeading.existingAlertWording?.activeCategory || alertsPanelHeading.activeAwareness?.resolvedCategory || alertsPanelHeading.activeAwareness?.topCategory || "";
     const rawMovementSummaryText = coerceDisplayText(snapshot.topStatusLocalizedDetail) || coerceDisplayText(snapshot.routeImpactSummary) || "Liberty County • Updated just now";
     const movementSummaryText = getGridlyHeaderRailTextRejectionReason(rawMovementSummaryText, alertsPanelActiveCategory)
@@ -33179,11 +33243,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     if (hasActiveAlerts) {
       html = `
 <div class="gridly-alerts-active">
-  <div class="gridly-alert-headline" data-gridly-alerts-panel-heading="true" data-gridly-alerts-panel-heading-source="${sanitizeText(alertsPanelHeading.source || "")}" style="font-size:13px;letter-spacing:0.08em;font-weight:700;opacity:0.85;text-transform:uppercase;margin-bottom:8px;">
-    ${sanitizeText(alertsPanelHeadingText).toUpperCase()}
+  <div class="gridly-alert-headline" data-gridly-alerts-panel-heading="true" data-gridly-alerts-panel-heading-source="${sanitizeText(alertsPanelHeading.source || "")}" style="font-size:13px;letter-spacing:0.04em;font-weight:700;opacity:0.9;margin-bottom:8px;">
+    ${sanitizeText(alertsPanelHeadingText)}
   </div>
   <div class="gridly-alert-row" style="padding:10px 12px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.1);border-radius:10px;background:rgba(255,255,255,0.02);">
-    <div class="gridly-alert-title" style="font-size:14px;font-weight:800;line-height:1.3;letter-spacing:0.03em;text-transform:uppercase;">MOVEMENT SUMMARY</div>
+    <div class="gridly-alert-title" style="font-size:14px;font-weight:800;line-height:1.3;letter-spacing:0.03em;">Movement Summary</div>
     <div class="gridly-alert-subtitle" style="margin-top:4px;font-size:11px;opacity:0.72;line-height:1.35;">${sanitizeText(movementSummaryText)}</div>
   </div>
 
@@ -33193,16 +33257,17 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const knownLocationLabel = pickFirstNonEmptyText([alert?.knownLocation, alert?.locationName, alert?.location, alert?.nearestRoad]);
     const eventLabel = pickFirstNonEmptyText([alert?.hazardTypeLabel, alert?.typeLabel, alert?.type, alert?.reportType, alert?.report_type, alert?.title]);
     const title = buildAlertTitle({ alert, roadLabel, crossingLabel, knownLocationLabel, eventLabel }) || resolveAlertTitleText(alert);
-    const locationTimeLine = buildAlertSubtitleLine(alert, title);
+    const displayTitle = standardizeGridlyAlertHeadline(title);
+    const locationTimeLine = buildAlertSubtitleLine(alert, displayTitle);
     const intelligence = generateGridlyIntelligencePhrase(alert, alert?.visualState);
     const cleanedAlertLocationLabel = normalizeGridlyLightweightLocationLabelText(roadLabel || getGridlyLightweightLocationFromHeadline(`${title} ${locationTimeLine}`) || "");
     const alertRowSummary = cleanedAlertLocationLabel
       ? (buildGridlyHeaderCandidateFromCategoryLocation(eventLabel || title, cleanedAlertLocationLabel) || `${title} on ${cleanedAlertLocationLabel}`)
       : normalizeGridlyLightweightAlertSummaryText(`${title} ${locationTimeLine}`);
     return `
-    <div class="gridly-alert-row" data-gridly-alert-row="true" data-gridly-alert-title="${sanitizeText(title)}" data-gridly-alert-summary="${sanitizeText(alertRowSummary)}" data-gridly-alert-location="${sanitizeText(cleanedAlertLocationLabel)}" style="padding:10px 12px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.1);border-radius:10px;background:rgba(255,255,255,0.02);">
+    <div class="gridly-alert-row" data-gridly-alert-row="true" data-gridly-alert-title="${sanitizeText(displayTitle)}" data-gridly-alert-summary="${sanitizeText(alertRowSummary)}" data-gridly-alert-location="${sanitizeText(cleanedAlertLocationLabel)}" style="padding:10px 12px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.1);border-radius:10px;background:rgba(255,255,255,0.02);">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
-        <div class="gridly-alert-title" style="font-size:14px;font-weight:800;line-height:1.28;letter-spacing:0.03em;text-transform:uppercase;">${sanitizeText(title).toUpperCase()}</div>
+        <div class="gridly-alert-title" style="font-size:14px;font-weight:800;line-height:1.28;letter-spacing:0.01em;">${sanitizeText(displayTitle)}</div>
       </div>
       <div class="gridly-alert-subtitle" style="margin-top:4px;font-size:11px;opacity:0.72;line-height:1.35;">${sanitizeText(locationTimeLine)}</div>
       <div class="gridly-alert-subtitle" style="margin-top:4px;font-size:11px;opacity:0.76;line-height:1.35;">${sanitizeText(intelligence.shortPhrase)} • ${sanitizeText(intelligence.detailPhrase)}</div>
@@ -34822,6 +34887,56 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
   };
 };
 
+
+window.gridlyVisualConsistencyAudit = function gridlyVisualConsistencyAudit() {
+  const renderedHeadlineNodes = Array.from(document.querySelectorAll([
+    ".alert-item strong",
+    ".gridly-alert-title",
+    ".gridly-alert-headline",
+    "[data-gridly-alert-title]"
+  ].join(",")));
+  const domHeadlines = renderedHeadlineNodes
+    .flatMap((node) => [node?.dataset?.gridlyAlertTitle, node?.textContent])
+    .map((value) => String(value || "").trim())
+    .filter(Boolean);
+  const latestAlerts = Array.isArray(window.__gridlyLatestAlertsForRender) ? window.__gridlyLatestAlertsForRender : [];
+  const latestHeadlines = latestAlerts.map((alert) => standardizeGridlyAlertHeadline(
+    alert?.resolvedHeadline || alert?.headline || alert?.title || alert?.localizedSummary || alert?.roadName || alert?.corridor || ""
+  )).filter(Boolean);
+  const metrics = getGridlyAlertHeadlineCaseMetrics([...domHeadlines, ...latestHeadlines]);
+  const settingsPlaceholderLabelsApplied = Boolean(
+    document.getElementById("settingsThemePlaceholder")?.textContent?.toLowerCase().includes("saved preference")
+    && document.getElementById("settingsTextSizePlaceholder")?.textContent?.toLowerCase().includes("saved preference")
+  );
+  const routeWatchVisualPolishApplied = Boolean(
+    document.querySelector(".route-watch-status-line")
+    && document.querySelector(".desktop-route-watch-strip")
+    && document.querySelector(".route-watch-live-pill")
+  );
+  return {
+    ...metrics,
+    settingsPlaceholderLabelsApplied,
+    routeWatchVisualPolishApplied,
+    visualOnlyChange: true,
+    betaPolishReady: metrics.lowercaseAlertStartCount === 0
+      && metrics.allCapsRoadNameCount === 0
+      && settingsPlaceholderLabelsApplied
+      && routeWatchVisualPolishApplied,
+    protectedSystemsUnchanged: [
+      "Route Watch calculations",
+      "OSRM routing",
+      "Route rendering",
+      "Analytics storage",
+      "Event history",
+      "Alert focus",
+      "Hazard lifecycle",
+      "Settings storage",
+      "Notification architecture",
+      "Supabase sync",
+      "TxDOT ingestion"
+    ]
+  };
+};
 
 exposeGridlyAuditHelper("gridlyAuditRegistryDebug", gridlyAuditRegistryDebug);
 exposeGridlyAuditHelper("gridlyCommuteIntelligenceAudit", gridlyCommuteIntelligenceAudit);

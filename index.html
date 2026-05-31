@@ -343,7 +343,7 @@
               <p class="eyebrow">Route Watch</p>
               <span class="route-watch-live-pill" id="routeWatchLivePill">Monitoring OFF</span>
             </div>
-            <strong><span id="desktopRouteHome">No destination selected</span> → <span id="desktopRouteWork">Route Watch</span></strong>
+            <strong class="route-watch-status-line"><span id="desktopRouteHome">No destination selected</span><span class="route-watch-arrow" aria-hidden="true">→</span><span id="desktopRouteWork">Route Watch</span></strong>
             <p id="desktopRouteStatus">Select a saved route to begin monitoring.</p>
             <p class="route-watch-setup-hint" id="routeWatchSetupHint">1. Add Home · 2. Add Work · 3. Start Route Watch</p>
             <div class="route-watch-metrics" aria-label="Route watch intelligence">
@@ -712,12 +712,14 @@
             <span class="settings-place-label">Home</span>
             <strong id="settingsHomeValue">Not saved</strong>
             <small id="settingsHomeMeta">Save Home to enable Route Watch context.</small>
+            <small class="settings-clean-note">Shown only on this device.</small>
             <button type="button" class="secondary-btn compact-btn" id="settingsEditHomeBtn">Edit Home</button>
           </article>
           <article class="settings-place-card">
             <span class="settings-place-label">Work</span>
             <strong id="settingsWorkValue">Not saved</strong>
             <small id="settingsWorkMeta">Save Work to enable Route Watch context.</small>
+            <small class="settings-clean-note">Shown only on this device.</small>
             <button type="button" class="secondary-btn compact-btn" id="settingsEditWorkBtn">Edit Work</button>
           </article>
           <article class="settings-place-card settings-place-card-wide">
@@ -747,14 +749,14 @@
               <option value="satellite">Satellite</option>
             </select>
           </label>
-          <label>Theme
+          <label><span>Theme <em class="settings-field-badge">Saved preference</em></span>
             <select id="settingsThemeSelect">
               <option value="system">System</option>
               <option value="light">Light</option>
               <option value="dark">Dark</option>
             </select>
           </label>
-          <label>Text Size
+          <label><span>Text Size <em class="settings-field-badge">Saved preference</em></span>
             <select id="settingsTextSizeSelect">
               <option value="standard">Standard</option>
               <option value="large">Large</option>
@@ -762,7 +764,8 @@
             </select>
           </label>
         </div>
-        <p class="settings-placeholder-note" id="settingsThemePlaceholder">Theme preference is saved for the future theme engine; no theme redesign is applied.</p>
+        <p class="settings-placeholder-note" id="settingsThemePlaceholder">Theme is a saved preference for a coming-soon theme engine; no live theme redesign is applied.</p>
+        <p class="settings-placeholder-note" id="settingsTextSizePlaceholder">Text Size is a saved preference for coming-soon display controls; current typography remains unchanged.</p>
       </section>
       <section class="settings-modal-section" id="settingsAboutSection" data-gridly-about>
         <h3>About Gridly</h3>
