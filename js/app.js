@@ -2594,6 +2594,331 @@ function gridlySafeLocalStorageHas(key) {
   return gridlySafeLocalStorageGet(key) !== null;
 }
 
+function gridlySafeLocalStorageSet(key, value) {
+  try {
+    if (typeof localStorage === "undefined") return false;
+    localStorage.setItem(key, value);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+const GRIDLY_EVENT_HISTORY_STORAGE_KEY = "gridlyEventHistoryV1";
+const GRIDLY_EVENT_HISTORY_MAX_RECORDS = 800;
+const GRIDLY_EVENT_HISTORY_MODEL_VERSION = "V201-beta";
+
+function gridlyCreateEmptyEventHistoryState() {
+  return {
+    version: GRIDLY_EVENT_HISTORY_MODEL_VERSION,
+    crossingEvents: [],
+    hazardEvents: [],
+    operationalTelemetry: {
+      reportsCreated: 0,
+      reportsCleared: 0,
+      lastCapturedAt: null,
+      lastStorageWriteAt: null
+    }
+  };
+}
+
+function gridlyReadEventHistoryState() {
+  const fallback = gridlyCreateEmptyEventHistoryState();
+  const raw = gridlySafeLocalStorageGet(GRIDLY_EVENT_HISTORY_STORAGE_KEY);
+  if (!raw) return fallback;
+  try {
+    const parsed = JSON.parse(raw);
+    return {
+      ...fallback,
+      ...(parsed && typeof parsed === "object" ? parsed : {}),
+      crossingEvents: Array.isArray(parsed?.crossingEvents) ? parsed.crossingEvents : [],
+      hazardEvents: Array.isArray(parsed?.hazardEvents) ? parsed.hazardEvents : [],
+      operationalTelemetry: {
+        ...fallback.operationalTelemetry,
+        ...(parsed?.operationalTelemetry && typeof parsed.operationalTelemetry === "object" ? parsed.operationalTelemetry : {})
+      }
+    };
+  } catch (error) {
+    return {
+      ...fallback,
+      storageReadError: error?.message || "invalid_event_history_storage"
+    };
+  }
+}
+
+function gridlyWriteEventHistoryState(state) {
+  const normalized = {
+    ...gridlyCreateEmptyEventHistoryState(),
+    ...(state && typeof state === "object" ? state : {}),
+    crossingEvents: Array.isArray(state?.crossingEvents) ? state.crossingEvents.slice(-GRIDLY_EVENT_HISTORY_MAX_RECORDS) : [],
+    hazardEvents: Array.isArray(state?.hazardEvents) ? state.hazardEvents.slice(-GRIDLY_EVENT_HISTORY_MAX_RECORDS) : [],
+    operationalTelemetry: {
+      ...gridlyCreateEmptyEventHistoryState().operationalTelemetry,
+      ...(state?.operationalTelemetry && typeof state.operationalTelemetry === "object" ? state.operationalTelemetry : {}),
+      lastStorageWriteAt: new Date().toISOString()
+    }
+  };
+  const written = gridlySafeLocalStorageSet(GRIDLY_EVENT_HISTORY_STORAGE_KEY, JSON.stringify(normalized));
+  return { written, state: normalized };
+}
+
+function gridlyMinutesBetween(startIso, endIso) {
+  const startMs = new Date(startIso || 0).getTime();
+  const endMs = new Date(endIso || 0).getTime();
+  if (!Number.isFinite(startMs) || !Number.isFinite(endMs) || startMs <= 0 || endMs <= 0 || endMs < startMs) return null;
+  return Math.max(0, Math.round((endMs - startMs) / 60000));
+}
+
+function gridlyGetStorageHealth() {
+  const probeKey = "gridlyEventHistoryHealthProbe";
+  try {
+    if (typeof localStorage === "undefined") return { ok: false, status: "unavailable", key: GRIDLY_EVENT_HISTORY_STORAGE_KEY };
+    localStorage.setItem(probeKey, "1");
+    localStorage.removeItem(probeKey);
+    const state = gridlyReadEventHistoryState();
+    return {
+      ok: !state.storageReadError,
+      status: state.storageReadError ? "read_error" : "ok",
+      key: GRIDLY_EVENT_HISTORY_STORAGE_KEY,
+      crossingEventCount: Array.isArray(state.crossingEvents) ? state.crossingEvents.length : 0,
+      hazardEventCount: Array.isArray(state.hazardEvents) ? state.hazardEvents.length : 0
+    };
+  } catch (error) {
+    return { ok: false, status: "error", message: error?.message || "storage_unavailable", key: GRIDLY_EVENT_HISTORY_STORAGE_KEY };
+  }
+}
+
+function gridlyResolveCityFromText(...values) {
+  const text = values.map((value) => String(value || "").toLowerCase()).join(" ");
+  const match = LIBERTY_COUNTY_CITY_RULES.find((rule) => rule.patterns.some((pattern) => text.includes(pattern)));
+  return match?.city || "";
+}
+
+function gridlyGetCrossingHistoryMetadata(crossingId, fallback = {}) {
+  const crossing = Array.isArray(crossings) ? crossings.find((item) => String(item?.id) === String(crossingId)) : null;
+  const debug = typeof gridlyCrossingRecordDebug === "function" ? gridlyCrossingRecordDebug(crossingId) : null;
+  const fields = debug?.usefulFields || {};
+  const crossingName = String(fallback.crossingName || crossing?.name || fields.crossingRoad || "Unknown crossing").trim();
+  const roadName = String(fallback.roadName || crossing?.roadName || crossing?.road || fields.roadName || fields.crossingRoad || crossingName).trim();
+  const city = String(fallback.city || crossing?.city || fields.city || gridlyResolveCityFromText(crossingName, roadName)).trim();
+  const county = String(fallback.county || crossing?.county || fields.county || LOCATION_DEFAULTS.county).trim();
+  return { crossingName, roadName, city, county };
+}
+
+function gridlyGetHazardHistoryMetadata(report = {}) {
+  const roadName = String(report.roadName || report.locationName || report.crossingName || report.crossing_name || report.title || "Unknown road").replace(/^.+?·\s*/, "").trim() || "Unknown road";
+  return {
+    roadName,
+    city: String(report.city || gridlyResolveCityFromText(roadName, report.detail, report.title)).trim(),
+    county: String(report.county || LOCATION_DEFAULTS.county).trim()
+  };
+}
+
+function gridlyCountCrossingConfirmations(crossingId, sourceReports = activeReports) {
+  const reports = Array.isArray(sourceReports) ? sourceReports : [];
+  return reports.filter((report) => String(report?.crossingId || report?.crossing_id || "") === String(crossingId || "") && !isClearedReportType(report?.type || report?.report_type)).length || 1;
+}
+
+function gridlyCountHazardConfirmations(report = {}, sourceHazards = activeHazards) {
+  const hazards = Array.isArray(sourceHazards) ? sourceHazards : [];
+  const key = typeof getHazardClusterKey === "function" ? getHazardClusterKey(report) : `${report?.type || "hazard"}-${Number(report?.lat || 0).toFixed(3)}-${Number(report?.lng || 0).toFixed(3)}`;
+  return hazards.filter((hazard) => {
+    const hazardKey = typeof getHazardClusterKey === "function" ? getHazardClusterKey(hazard) : `${hazard?.type || "hazard"}-${Number(hazard?.lat || 0).toFixed(3)}-${Number(hazard?.lng || 0).toFixed(3)}`;
+    return hazardKey === key && !isClearedReportType(hazard?.type || hazard?.report_type);
+  }).length || 1;
+}
+
+function gridlyBuildCrossingEvent(report = {}, sourceReports = activeReports) {
+  const crossingId = String(report.crossingId || report.crossing_id || "").trim();
+  const submittedAt = report.submittedAt || report.created_at || new Date().toISOString();
+  const metadata = gridlyGetCrossingHistoryMetadata(crossingId, report);
+  return {
+    crossingId,
+    crossingName: metadata.crossingName,
+    roadName: metadata.roadName,
+    blockedAt: submittedAt,
+    clearedAt: null,
+    durationMinutes: null,
+    confirmationCount: gridlyCountCrossingConfirmations(crossingId, sourceReports),
+    city: metadata.city,
+    county: metadata.county,
+    source: report.source || "user"
+  };
+}
+
+function gridlyBuildHazardEvent(report = {}, sourceHazards = activeHazards) {
+  const metadata = gridlyGetHazardHistoryMetadata(report);
+  const createdAt = report.submittedAt || report.created_at || new Date().toISOString();
+  const incidentId = String(report.id || report.crossingId || report.crossing_id || (typeof getHazardClusterKey === "function" ? getHazardClusterKey(report) : "hazard-incident")).trim();
+  return {
+    incidentId,
+    hazardType: gridlyNormalizeHazardType(report),
+    createdAt,
+    clearedAt: null,
+    durationMinutes: null,
+    confirmationCount: gridlyCountHazardConfirmations(report, sourceHazards),
+    roadName: metadata.roadName,
+    city: metadata.city,
+    county: metadata.county
+  };
+}
+
+function gridlyCaptureCrossingHistoryEvent(report = {}, options = {}) {
+  const crossingId = String(report.crossingId || report.crossing_id || "").trim();
+  if (!crossingId) return null;
+  const isClear = isClearedReportType(report.type || report.report_type);
+  const state = options.historyState || gridlyReadEventHistoryState();
+  const submittedAt = report.submittedAt || report.created_at || new Date().toISOString();
+  const openEvent = [...state.crossingEvents].reverse().find((event) => String(event.crossingId) === crossingId && !event.clearedAt);
+
+  if (isClear) {
+    const target = openEvent || gridlyBuildCrossingEvent({ ...report, type: "blocked", submittedAt }, options.sourceReports || activeReports);
+    target.clearedAt = submittedAt;
+    target.durationMinutes = gridlyMinutesBetween(target.blockedAt, target.clearedAt);
+    target.confirmationCount = Math.max(Number(target.confirmationCount) || 0, gridlyCountCrossingConfirmations(crossingId, options.sourceReports || activeReports));
+    if (!openEvent) state.crossingEvents.push(target);
+    state.operationalTelemetry.reportsCleared = (Number(state.operationalTelemetry.reportsCleared) || 0) + (options.countTelemetry === false ? 0 : 1);
+  } else {
+    const nextEvent = gridlyBuildCrossingEvent(report, options.sourceReports || activeReports);
+    const duplicate = state.crossingEvents.some((event) => String(event.crossingId) === crossingId && event.blockedAt === nextEvent.blockedAt && event.source === nextEvent.source);
+    if (!duplicate) state.crossingEvents.push(nextEvent);
+    else if (openEvent) openEvent.confirmationCount = Math.max(Number(openEvent.confirmationCount) || 0, nextEvent.confirmationCount);
+    state.operationalTelemetry.reportsCreated = (Number(state.operationalTelemetry.reportsCreated) || 0) + (options.countTelemetry === false ? 0 : 1);
+  }
+  state.operationalTelemetry.lastCapturedAt = new Date().toISOString();
+  if (!options.deferWrite) gridlyWriteEventHistoryState(state);
+  return state;
+}
+
+function gridlyCaptureHazardHistoryEvent(report = {}, options = {}) {
+  const isClear = isClearedReportType(report.type || report.report_type);
+  const state = options.historyState || gridlyReadEventHistoryState();
+  const submittedAt = report.submittedAt || report.created_at || new Date().toISOString();
+  const effectiveReport = options.hazardType ? { ...report, type: options.hazardType } : report;
+  const effectiveRoadName = gridlyGetHazardHistoryMetadata(effectiveReport).roadName;
+  const openEvent = [...state.hazardEvents].reverse().find((event) => {
+    if (event.clearedAt) return false;
+    if (String(event.incidentId) === String(report.id || report.crossingId || report.crossing_id || "")) return true;
+    return event.hazardType === gridlyNormalizeHazardType(effectiveReport) && String(event.roadName || "").toLowerCase() === String(effectiveRoadName || "").toLowerCase();
+  });
+
+  if (isClear) {
+    const target = openEvent || gridlyBuildHazardEvent({ ...effectiveReport, submittedAt }, options.sourceHazards || activeHazards);
+    target.clearedAt = submittedAt;
+    target.durationMinutes = gridlyMinutesBetween(target.createdAt, target.clearedAt);
+    target.confirmationCount = Math.max(Number(target.confirmationCount) || 0, gridlyCountHazardConfirmations(report, options.sourceHazards || activeHazards));
+    if (!openEvent) state.hazardEvents.push(target);
+    state.operationalTelemetry.reportsCleared = (Number(state.operationalTelemetry.reportsCleared) || 0) + (options.countTelemetry === false ? 0 : 1);
+  } else {
+    const nextEvent = gridlyBuildHazardEvent(effectiveReport, options.sourceHazards || activeHazards);
+    const duplicate = state.hazardEvents.some((event) => String(event.incidentId) === String(nextEvent.incidentId) && event.createdAt === nextEvent.createdAt);
+    if (!duplicate) state.hazardEvents.push(nextEvent);
+    else if (openEvent) openEvent.confirmationCount = Math.max(Number(openEvent.confirmationCount) || 0, nextEvent.confirmationCount);
+    state.operationalTelemetry.reportsCreated = (Number(state.operationalTelemetry.reportsCreated) || 0) + (options.countTelemetry === false ? 0 : 1);
+  }
+  state.operationalTelemetry.lastCapturedAt = new Date().toISOString();
+  if (!options.deferWrite) gridlyWriteEventHistoryState(state);
+  return state;
+}
+
+function gridlyCaptureHistoryFromReports(reports = [], options = {}) {
+  if (!Array.isArray(reports) || !reports.length) return gridlyReadEventHistoryState();
+  const state = gridlyReadEventHistoryState();
+  const sourceHazards = reports.filter((item) => item?.reportKind === "hazard");
+  const sourceReports = reports.filter((item) => item?.reportKind !== "hazard");
+  reports.forEach((report) => {
+    if (report?.reportKind === "hazard") {
+      gridlyCaptureHazardHistoryEvent(report, { ...options, countTelemetry: false, sourceHazards, historyState: state, deferWrite: true });
+    } else {
+      gridlyCaptureCrossingHistoryEvent(report, { ...options, countTelemetry: false, sourceReports, historyState: state, deferWrite: true });
+    }
+  });
+  gridlyWriteEventHistoryState(state);
+  return state;
+}
+
+function gridlyAverageDuration(events = []) {
+  const durations = events.map((event) => Number(event.durationMinutes)).filter((value) => Number.isFinite(value));
+  if (!durations.length) return null;
+  return Math.round(durations.reduce((sum, value) => sum + value, 0) / durations.length);
+}
+
+function gridlyMostImpacted(events = [], key) {
+  const counts = events.reduce((acc, event) => {
+    const value = String(event?.[key] || "").trim();
+    if (!value) return acc;
+    acc[value] = (acc[value] || 0) + 1;
+    return acc;
+  }, {});
+  const [name, count] = Object.entries(counts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0] || [];
+  return name ? { name, count } : null;
+}
+
+function gridlyGetAnalyticsReadinessModel() {
+  const state = gridlyReadEventHistoryState();
+  const crossingEvents = Array.isArray(state.crossingEvents) ? state.crossingEvents : [];
+  const hazardEvents = Array.isArray(state.hazardEvents) ? state.hazardEvents : [];
+  return {
+    crossingEventCount: crossingEvents.length,
+    hazardEventCount: hazardEvents.length,
+    averageCrossingDuration: gridlyAverageDuration(crossingEvents),
+    averageHazardDuration: gridlyAverageDuration(hazardEvents),
+    mostImpactedCrossing: gridlyMostImpacted(crossingEvents, "crossingName"),
+    mostImpactedRoad: gridlyMostImpacted(hazardEvents, "roadName")
+  };
+}
+
+function gridlyGetOperationalTelemetryModel() {
+  const state = gridlyReadEventHistoryState();
+  const telemetry = state.operationalTelemetry || {};
+  const crossingEvents = Array.isArray(state.crossingEvents) ? state.crossingEvents : [];
+  const hazardEvents = Array.isArray(state.hazardEvents) ? state.hazardEvents : [];
+  const closedEvents = [...crossingEvents, ...hazardEvents].filter((event) => Number.isFinite(Number(event.durationMinutes)));
+  return {
+    reportsCreated: Number(telemetry.reportsCreated) || 0,
+    reportsCleared: Number(telemetry.reportsCleared) || 0,
+    activeCrossings: Array.isArray(activeReports) ? activeReports.filter((report) => getIncidentLifecycleState(report) === "active").length : 0,
+    activeHazards: Array.isArray(activeHazards) ? activeHazards.filter((hazard) => gridlyIsActiveHazardRecord(hazard)).length : 0,
+    averageClearTime: gridlyAverageDuration(closedEvents),
+    storageHealth: gridlyGetStorageHealth(),
+    eventHistoryCount: crossingEvents.length + hazardEvents.length
+  };
+}
+
+function gridlyAnalyticsAudit() {
+  const analytics = gridlyGetAnalyticsReadinessModel();
+  const telemetry = gridlyGetOperationalTelemetryModel();
+  return {
+    loaded: true,
+    crossingEventCount: analytics.crossingEventCount,
+    hazardEventCount: analytics.hazardEventCount,
+    averageCrossingDuration: analytics.averageCrossingDuration,
+    averageHazardDuration: analytics.averageHazardDuration,
+    activeCrossingCount: telemetry.activeCrossings,
+    activeHazardCount: telemetry.activeHazards,
+    storageHealth: telemetry.storageHealth,
+    eventHistoryReady: Boolean(telemetry.storageHealth?.ok),
+    betaReady: Boolean(telemetry.storageHealth?.ok)
+  };
+}
+
+function gridlyOperationalTelemetryAudit() {
+  const telemetry = gridlyGetOperationalTelemetryModel();
+  return {
+    reportsCreated: telemetry.reportsCreated,
+    reportsCleared: telemetry.reportsCleared,
+    activeCrossings: telemetry.activeCrossings,
+    activeHazards: telemetry.activeHazards,
+    telemetryReady: Boolean(telemetry.storageHealth?.ok),
+    betaSafe: Boolean(telemetry.storageHealth?.ok)
+  };
+}
+
+if (typeof window !== "undefined") {
+  window.gridlyAnalyticsAudit = gridlyAnalyticsAudit;
+  window.gridlyOperationalTelemetryAudit = gridlyOperationalTelemetryAudit;
+}
+
 function gridlyDiagnosticArray(value) {
   return Array.isArray(value) ? value : [];
 }
@@ -3994,6 +4319,8 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyPortraitStabilitySmokeAudit",
   "gridlyAuditCycleDebug",
   "gridlyAuditHelpersCheck",
+  "gridlyAnalyticsAudit",
+  "gridlyOperationalTelemetryAudit",
   "loadSharedReports"
 ];
 
@@ -4063,6 +4390,8 @@ function exposeAllGridlyAuditHelpers() {
     gridlyPortraitStabilitySmokeAudit: typeof gridlyPortraitStabilitySmokeAudit === "function" ? gridlyPortraitStabilitySmokeAudit : null,
     gridlyAuditCycleDebug: typeof gridlyAuditCycleDebug === "function" ? gridlyAuditCycleDebug : null,
     gridlyAuditHelpersCheck: typeof gridlyAuditHelpersCheck === "function" ? gridlyAuditHelpersCheck : null,
+    gridlyAnalyticsAudit: typeof gridlyAnalyticsAudit === "function" ? gridlyAnalyticsAudit : null,
+    gridlyOperationalTelemetryAudit: typeof gridlyOperationalTelemetryAudit === "function" ? gridlyOperationalTelemetryAudit : null,
     loadSharedReports: typeof loadSharedReports === "function" ? loadSharedReports : null
   };
 
@@ -11368,6 +11697,7 @@ async function loadSharedReports(reason = "manual") {
 
     activeHazards = normalized.filter((report) => report.reportKind === "hazard");
     activeReports = normalized.filter((report) => report.reportKind !== "hazard");
+    gridlyCaptureHistoryFromReports(normalized, { source: `loadSharedReports:${reason}` });
     recordGridlyActiveLocationLifecycleEvent("loadSharedReports:activeCollectionsUpdated", {
       reason,
       rawRowCount: rawRows.length,
@@ -19322,9 +19652,10 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     lastMobileReportSubmitDebug.lastSubmitAttempt = "supabase_insert_succeeded";
     markSubmitStage("supabase_insert_succeeded");
     lastMobileReportSubmitDebug.supabaseInsertSucceeded = true;
-    const localHazardRows = normalizeReports([row]);
+    const localHazardRows = normalizeReports([{ ...row, created_at: new Date().toISOString() }]);
     const localHazardEntry = localHazardRows[0] || null;
     if (localHazardEntry) {
+      gridlyCaptureHazardHistoryEvent(localHazardEntry, { sourceHazards: [localHazardEntry, ...(Array.isArray(activeHazards) ? activeHazards : [])] });
       activeHazards = [localHazardEntry, ...activeHazards.filter((hazard) => hazard.crossingId !== localHazardEntry.crossingId)];
       if (activeGeoFilter !== "all" && activeGeoFilter !== "active-delays" && typeof applyGeoFilterFromPill === "function") {
         applyGeoFilterFromPill("all", "post_hazard_submit_visibility");
@@ -19431,6 +19762,11 @@ window.clearHazard = async function (hazardType, lat, lng) {
     const { error } = await supabaseClient.from("reports").insert(row);
 
     if (error) throw error;
+
+    const localClearRows = normalizeReports([{ ...row, created_at: new Date().toISOString() }]);
+    if (localClearRows[0]) {
+      gridlyCaptureHazardHistoryEvent(localClearRows[0], { hazardType, sourceHazards: Array.isArray(activeHazards) ? activeHazards : [] });
+    }
 
     setConfirmation(`${copy.label} marked cleared.`, "success");
     setSync("Hazard cleared");
@@ -21386,6 +21722,11 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
     const { error } = await supabaseClient.from("reports").insert(row);
 
     if (error) throw error;
+
+    const localCrossingRows = normalizeReports([{ ...row, created_at: new Date().toISOString() }]);
+    if (localCrossingRows[0]) {
+      gridlyCaptureCrossingHistoryEvent(localCrossingRows[0], { sourceReports: [localCrossingRows[0], ...(Array.isArray(activeReports) ? activeReports : [])] });
+    }
 
     runUnifiedReportSuccessLifecycle({
       flow: "crossing",
