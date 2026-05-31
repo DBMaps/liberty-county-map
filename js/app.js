@@ -4642,6 +4642,9 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyGeoAudit",
   "gridlyActiveIncidentAudit",
   "gridlyIncidentSourceAudit",
+  "gridlySupabaseHazardInventoryAudit",
+  "gridlySupabaseHazardPurgeAudit",
+  "gridlyClearSupabaseTestHazards",
   "gridlyDevPurgeRecentRoadHazards",
   "gridlyTestDataCleanupAudit",
   "gridlyClearTestData",
@@ -4717,6 +4720,9 @@ function exposeAllGridlyAuditHelpers() {
     gridlyGeoAudit: typeof gridlyGeoAudit === "function" ? gridlyGeoAudit : null,
     gridlyActiveIncidentAudit: typeof gridlyActiveIncidentAudit === "function" ? gridlyActiveIncidentAudit : null,
     gridlyIncidentSourceAudit: typeof target?.gridlyIncidentSourceAudit === "function" ? target.gridlyIncidentSourceAudit : null,
+    gridlySupabaseHazardInventoryAudit: typeof target?.gridlySupabaseHazardInventoryAudit === "function" ? target.gridlySupabaseHazardInventoryAudit : null,
+    gridlySupabaseHazardPurgeAudit: typeof target?.gridlySupabaseHazardPurgeAudit === "function" ? target.gridlySupabaseHazardPurgeAudit : null,
+    gridlyClearSupabaseTestHazards: typeof target?.gridlyClearSupabaseTestHazards === "function" ? target.gridlyClearSupabaseTestHazards : null,
     gridlyDevPurgeRecentRoadHazards: typeof gridlyDevPurgeRecentRoadHazards === "function" ? gridlyDevPurgeRecentRoadHazards : null,
     gridlyTestDataCleanupAudit: typeof target?.gridlyTestDataCleanupAudit === "function" ? target.gridlyTestDataCleanupAudit : null,
     gridlyClearTestData: typeof target?.gridlyClearTestData === "function" ? target.gridlyClearTestData : null,
@@ -12152,6 +12158,167 @@ function gridlyBuildIncidentSourceTrace(options = {}) {
 
 window.gridlyIncidentSourceAudit = function gridlyIncidentSourceAudit(options = {}) {
   return gridlyBuildIncidentSourceTrace(options);
+};
+
+
+const GRIDLY_SHARED_ROAD_HAZARD_REPORT_TYPES = ["flooding", "ice", "debris", "crash", "construction", "road_closed", "disabled_vehicle", "other_hazard", "hazard_cleared", "wreck"];
+const GRIDLY_SUPABASE_TEST_HAZARD_CONFIRMATION = "CLEAR_SUPABASE_TEST_HAZARDS";
+
+function gridlyNormalizeSharedRoadHazardType(type = "") {
+  const normalized = String(type || "").trim().toLowerCase();
+  return normalized === "wreck" ? "crash" : normalized;
+}
+
+function gridlyIsSharedRoadHazardReportRow(row = {}) {
+  const rawType = String(row?.report_type || row?.type || "").trim().toLowerCase();
+  return GRIDLY_SHARED_ROAD_HAZARD_REPORT_TYPES.includes(rawType);
+}
+
+function gridlyIsTxDotReportSource(row = {}) {
+  const sourceText = [row?.source, row?.provider, row?.external_source]
+    .map((value) => String(value || "").toLowerCase())
+    .join(" ");
+  return /\btx\s*dot\b|\btxdot\b|texas department of transportation/.test(sourceText);
+}
+
+function gridlySupabaseHazardRoadName(row = {}) {
+  return gridlyNormalizeAnalyticsRoadLabel(
+    row?.road_name
+      || row?.roadName
+      || row?.primary_road
+      || row?.primaryRoad
+      || row?.nearest_road
+      || row?.nearestRoad
+      || row?.location_name
+      || row?.locationName
+      || row?.crossing_name
+      || row?.crossingName
+      || ""
+  ) || "Unknown road";
+}
+
+async function gridlyFetchActiveSupabaseRoadHazardRows(limit = 1000) {
+  if (!supabaseClient) {
+    return { ok: false, rows: [], error: "Supabase client not initialized." };
+  }
+
+  const nowIso = new Date().toISOString();
+  const maxRows = Math.max(1, Math.min(1000, Number(limit) || 1000));
+  const { data, error } = await supabaseClient
+    .from("reports")
+    .select("id,report_type,source,created_at,expires_at,crossing_id,crossing_name,railroad,detail,lat,lng")
+    .gt("expires_at", nowIso)
+    .in("report_type", GRIDLY_SHARED_ROAD_HAZARD_REPORT_TYPES)
+    .order("created_at", { ascending: true })
+    .limit(maxRows);
+
+  if (error) {
+    return { ok: false, rows: [], error: error.message || "query_failed" };
+  }
+
+  return { ok: true, rows: (Array.isArray(data) ? data : []).filter(gridlyIsSharedRoadHazardReportRow), error: "" };
+}
+
+function gridlyBuildSupabaseHazardInventory(rows = []) {
+  const activeRows = Array.isArray(rows) ? rows.filter(gridlyIsSharedRoadHazardReportRow) : [];
+  const byType = activeRows.reduce((acc, row) => {
+    const type = gridlyNormalizeSharedRoadHazardType(row?.report_type || row?.type || "unknown") || "unknown";
+    acc[type] = (acc[type] || 0) + 1;
+    return acc;
+  }, {});
+  const createdTimes = activeRows
+    .map((row) => ({ iso: row?.created_at || row?.createdAt || null, time: new Date(row?.created_at || row?.createdAt || 0).getTime() }))
+    .filter((entry) => entry.iso && Number.isFinite(entry.time));
+
+  return {
+    activeHazardRows: activeRows.length,
+    byType,
+    oldestCreatedAt: createdTimes.length ? createdTimes.reduce((oldest, entry) => entry.time < oldest.time ? entry : oldest).iso : null,
+    newestCreatedAt: createdTimes.length ? createdTimes.reduce((newest, entry) => entry.time > newest.time ? entry : newest).iso : null,
+    sampleRows: activeRows.slice(0, 10).map((row) => ({
+      id: row?.id || null,
+      type: gridlyNormalizeSharedRoadHazardType(row?.report_type || row?.type || "unknown") || "unknown",
+      source: row?.source || "user",
+      createdAt: row?.created_at || row?.createdAt || null,
+      roadName: gridlySupabaseHazardRoadName(row)
+    }))
+  };
+}
+
+window.gridlySupabaseHazardInventoryAudit = async function gridlySupabaseHazardInventoryAudit(options = {}) {
+  const fetchResult = await gridlyFetchActiveSupabaseRoadHazardRows(options?.limit || 1000);
+  if (!fetchResult.ok) {
+    const failed = { activeHazardRows: 0, byType: {}, oldestCreatedAt: null, newestCreatedAt: null, sampleRows: [], ok: false, error: fetchResult.error };
+    console.warn("gridlySupabaseHazardInventoryAudit failed", failed);
+    return failed;
+  }
+  const audit = gridlyBuildSupabaseHazardInventory(fetchResult.rows);
+  console.info("gridlySupabaseHazardInventoryAudit", audit);
+  return audit;
+};
+
+window.gridlySupabaseHazardPurgeAudit = async function gridlySupabaseHazardPurgeAudit(options = {}) {
+  const fetchResult = await gridlyFetchActiveSupabaseRoadHazardRows(options?.limit || 1000);
+  if (!fetchResult.ok) {
+    const failed = { supabaseActiveHazardsFound: 0, supabaseActiveHazardsWouldDelete: 0, purgeScope: "shared road hazard reports only", preservedRailReports: true, preservedTxDot: true, ok: false, error: fetchResult.error };
+    console.warn("gridlySupabaseHazardPurgeAudit failed", failed);
+    return failed;
+  }
+
+  const rows = fetchResult.rows;
+  const deleteCandidates = rows.filter((row) => gridlyIsSharedRoadHazardReportRow(row) && !gridlyIsTxDotReportSource(row));
+  const txdotRows = rows.filter(gridlyIsTxDotReportSource);
+  const audit = {
+    supabaseActiveHazardsFound: rows.length,
+    supabaseActiveHazardsWouldDelete: deleteCandidates.length,
+    purgeScope: "active Supabase reports where report_type is a shared road hazard type; excludes TxDOT-tagged rows and never targets rail crossing report types or other storage",
+    preservedRailReports: true,
+    preservedTxDot: txdotRows.length
+  };
+  console.info("gridlySupabaseHazardPurgeAudit", audit);
+  return audit;
+};
+
+window.gridlyClearSupabaseTestHazards = async function gridlyClearSupabaseTestHazards(options = {}) {
+  if (options?.confirm !== GRIDLY_SUPABASE_TEST_HAZARD_CONFIRMATION) {
+    const blocked = { deleted: 0, failed: 0, ok: false, reason: "confirm_CLEAR_SUPABASE_TEST_HAZARDS_required" };
+    console.warn("gridlyClearSupabaseTestHazards blocked", blocked);
+    return blocked;
+  }
+  if (!supabaseClient) {
+    const missing = { deleted: 0, failed: 0, ok: false, reason: "Supabase client not initialized." };
+    console.warn("gridlyClearSupabaseTestHazards unavailable", missing);
+    return missing;
+  }
+
+  const fetchResult = await gridlyFetchActiveSupabaseRoadHazardRows(options?.limit || 1000);
+  if (!fetchResult.ok) {
+    const failed = { deleted: 0, failed: 0, ok: false, error: fetchResult.error };
+    console.warn("gridlyClearSupabaseTestHazards query failed", failed);
+    return failed;
+  }
+  const idsToDelete = fetchResult.rows
+    .filter((row) => gridlyIsSharedRoadHazardReportRow(row) && !gridlyIsTxDotReportSource(row))
+    .map((row) => row.id)
+    .filter(Boolean);
+  if (!idsToDelete.length) {
+    await loadSharedReports("clear_supabase_test_hazards_noop_validation");
+    const trace = typeof gridlyBuildIncidentSourceTrace === "function" ? gridlyBuildIncidentSourceTrace({ sampleLimit: 5 }) : null;
+    return { deleted: 0, failed: 0, ok: true, validation: trace };
+  }
+
+  const { error } = await supabaseClient.from("reports").delete().in("id", idsToDelete);
+  if (error) {
+    const failed = { deleted: 0, failed: idsToDelete.length, ok: false, error: error.message || "delete_failed" };
+    console.error("gridlyClearSupabaseTestHazards delete failed", failed);
+    return failed;
+  }
+
+  await loadSharedReports("clear_supabase_test_hazards_validation");
+  const validation = typeof gridlyBuildIncidentSourceTrace === "function" ? gridlyBuildIncidentSourceTrace({ sampleLimit: 5 }) : null;
+  const result = { deleted: idsToDelete.length, failed: 0, ok: true, validation };
+  console.info("gridlyClearSupabaseTestHazards completed", result);
+  return result;
 };
 
 const gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoadHazards(options = {}) {
