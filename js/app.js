@@ -4131,7 +4131,12 @@ let managePlacesGeocodeFallbackState = {
   slot: null,
   at: null
 };
+let savedPlacesStorageBeforeSave = null;
 let savedPlacesStorageAfterSave = null;
+let storagePreservedOnFailure = null;
+let storageClearedDuringFailedSave = false;
+let failedSaveDidMutateStorage = false;
+let lastSaveFailureReason = null;
 let saveButtonHandlerAttached = false;
 let routePreviewRendered = false;
 let routePreviewLayerExists = false;
@@ -21847,7 +21852,41 @@ async function saveRoute(source = "desktop", options = {}) {
   lastManagePlacesSaveError = null;
   const useMapCenterFallback = Boolean(options?.useMapCenterFallback);
   if (!useMapCenterFallback) resetManagePlacesGeocodeFallback();
-  savedPlacesStorageAfterSave = localStorage.getItem(SAVED_PLACES_STORAGE_KEY);
+  savedPlacesStorageBeforeSave = localStorage.getItem(SAVED_PLACES_STORAGE_KEY);
+  savedPlacesStorageAfterSave = savedPlacesStorageBeforeSave;
+  storagePreservedOnFailure = null;
+  storageClearedDuringFailedSave = false;
+  failedSaveDidMutateStorage = false;
+  lastSaveFailureReason = null;
+
+  const isEffectivelyEmptySavedPlacesStorage = (rawValue) => {
+    if (!rawValue) return true;
+    try {
+      const parsed = JSON.parse(rawValue);
+      if (!parsed || typeof parsed !== "object") return true;
+      const custom = Array.isArray(parsed.custom) ? parsed.custom : [];
+      const favorites = Array.isArray(parsed.favorites) ? parsed.favorites : [];
+      return !parsed.home && !parsed.work && custom.length === 0 && favorites.length === 0;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const restoreSavedPlacesStorageSnapshot = () => {
+    if (savedPlacesStorageBeforeSave == null) localStorage.removeItem(SAVED_PLACES_STORAGE_KEY);
+    else localStorage.setItem(SAVED_PLACES_STORAGE_KEY, savedPlacesStorageBeforeSave);
+    savedPlacesStorageAfterSave = localStorage.getItem(SAVED_PLACES_STORAGE_KEY);
+  };
+
+  const updateFailedSaveStorageAudit = (reason) => {
+    savedPlacesStorageAfterSave = localStorage.getItem(SAVED_PLACES_STORAGE_KEY);
+    const beforeHadPlaces = !isEffectivelyEmptySavedPlacesStorage(savedPlacesStorageBeforeSave);
+    const afterIsEmpty = isEffectivelyEmptySavedPlacesStorage(savedPlacesStorageAfterSave);
+    lastSaveFailureReason = reason || "save_failed";
+    failedSaveDidMutateStorage = savedPlacesStorageBeforeSave !== savedPlacesStorageAfterSave;
+    storageClearedDuringFailedSave = Boolean(beforeHadPlaces && afterIsEmpty && savedPlacesStorageBeforeSave !== savedPlacesStorageAfterSave);
+    storagePreservedOnFailure = !failedSaveDidMutateStorage && !storageClearedDuringFailedSave;
+  };
 
   const failSave = (message, label = "Fix entry", reason = "validation_failed", extra = {}) => {
     lastValidationError = message;
@@ -21863,9 +21902,12 @@ async function saveRoute(source = "desktop", options = {}) {
       at: new Date().toISOString(),
       ...extra
     };
-    savedPlacesStorageAfterSave = localStorage.getItem(SAVED_PLACES_STORAGE_KEY);
+    restoreSavedPlacesStorageSnapshot();
+    updateFailedSaveStorageAudit(reason);
     return false;
   };
+
+  try {
 
   if (isManageSave) {
     if (!["home", "work", "custom", "favorite"].includes(prefillType)) {
@@ -22023,6 +22065,18 @@ async function saveRoute(source = "desktop", options = {}) {
 
   if (source === "mobile" && modalMode !== "manage") {
     closeRouteSetupModal();
+  }
+  storagePreservedOnFailure = null;
+  storageClearedDuringFailedSave = false;
+  failedSaveDidMutateStorage = false;
+  lastSaveFailureReason = null;
+  return true;
+  } catch (error) {
+    console.error("Save place failed", error);
+    restoreSavedPlacesStorageSnapshot();
+    return failSave("We couldn't save that place. Your existing saved places were preserved.", "Save failed", "unexpected_exception", {
+      errorMessage: error?.message || String(error || "unknown_error")
+    });
   }
 }
 
@@ -22951,7 +23005,12 @@ function attachSavedPlacesDebugGlobal() {
       lastSaveAttempt: lastManagePlacesSaveAttempt,
       lastSaveSucceeded: typeof lastSavedPlaceResult?.ok === "boolean" ? lastSavedPlaceResult.ok : null,
       lastSaveError: lastManagePlacesSaveError || lastValidationError,
+      savedPlacesStorageBeforeSave,
       savedPlacesStorageAfterSave,
+      storagePreservedOnFailure,
+      storageClearedDuringFailedSave,
+      failedSaveDidMutateStorage,
+      lastSaveFailureReason,
       addressValidationState: managePlacesAddressValidationState,
       geocodeFailedFallbackAvailable: Boolean(managePlacesGeocodeFallbackState.available),
       geocodeFailedFallbackUsed: Boolean(managePlacesGeocodeFallbackState.used),
@@ -32661,7 +32720,12 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       lastSavePlaceAttempt: lastManagePlacesSaveAttempt,
       lastSavePlaceSucceeded: typeof lastSavedPlaceResult?.ok === "boolean" ? lastSavedPlaceResult.ok : null,
       lastSavePlaceError: lastManagePlacesSaveError || lastValidationError || (lastSavedPlaceResult?.ok === false ? lastSavedPlaceResult.message : null),
+      savedPlacesStorageBeforeSave,
       savedPlacesStorageAfterSave,
+      storagePreservedOnFailure,
+      storageClearedDuringFailedSave,
+      failedSaveDidMutateStorage,
+      lastSaveFailureReason,
       selectedSaveSlot: selectedSlot,
       selectedSaveSource: selectedSource,
       addressValidationState: managePlacesAddressValidationState,
