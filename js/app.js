@@ -6078,7 +6078,8 @@ const GRIDLY_ALERT_FOCUS_ROW_SELECTOR = "[data-gridly-alert-id], [data-alert-foc
 const gridlyAlertFocusAuditState = {
   alertRowsBound: false,
   lastFocusedIncident: null,
-  focusAttemptSucceeded: false
+  focusAttemptSucceeded: false,
+  lastFocusResult: null
 };
 const gridlyRouteDockAuditState = {
   routeButtonBound: false,
@@ -6087,7 +6088,21 @@ const gridlyRouteDockAuditState = {
 };
 
 function getGridlyAlertMapInstance() {
-  return window.map || window.gridlyMap || window.__gridlyMap || (typeof getMapInstance === "function" ? getMapInstance() : null);
+  const candidates = [
+    (typeof map !== "undefined" ? map : null),
+    window.map,
+    window.gridlyMapInstance,
+    window.gridlyMap,
+    window.__gridlyMap,
+    (typeof getMapInstance === "function" ? getMapInstance() : null),
+    (typeof getGridlyMapInstance === "function" ? getGridlyMapInstance() : null)
+  ];
+  return candidates.find((candidate) => Boolean(
+    candidate &&
+    typeof candidate.getCenter === "function" &&
+    typeof candidate.getZoom === "function" &&
+    (typeof candidate.flyTo === "function" || typeof candidate.setView === "function")
+  )) || null;
 }
 
 window.gridlyAlertPanelDiagnostic = function () {
@@ -6274,13 +6289,14 @@ function openAlertsSurfaceFromDock() {
         source: "alerts_panel_row"
       });
       window.setTimeout(() => {
+        const audit = window.gridlyAlertFocusAudit?.();
         console.log("[V198.2 ALERT MAP FOCUS RESULT]", {
           id,
           lat,
           lng,
-          focusSucceeded,
+          focusSucceeded: Boolean(audit?.focusSucceeded ?? (focusSucceeded && !isPanelVisible())),
           panelVisibleAfter: isPanelVisible(),
-          audit: window.gridlyAlertFocusAudit?.()
+          audit
         });
       }, 450);
     });
@@ -25915,6 +25931,85 @@ function getGridlyAlertFocusCoordinates(row) {
   return normalizeCoordinatePair(lat, lng);
 }
 
+function getGridlyAlertMapCenter(mapRef) {
+  const center = mapRef?.getCenter?.();
+  return normalizeCoordinatePair(center?.lat, center?.lng);
+}
+
+function isGridlyAlertSurfaceVisible() {
+  const isVisibleElement = (el) => {
+    if (!(el instanceof HTMLElement)) return false;
+    const style = getComputedStyle(el);
+    if (el.hidden || el.getAttribute("aria-hidden") === "true" || style.display === "none" || style.visibility === "hidden" || Number(style.opacity || "1") === 0) return false;
+    const rect = el.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0;
+  };
+  const activeAlertsSheet = document.querySelector("#gridlyPortraitV2Sheet[data-active-sheet='alerts']");
+  const nativeLayer = document.getElementById("mobileNativeSurfaceLayer");
+  const nativeBody = document.getElementById("mobileNativeSurfaceBody");
+  const nativeAlertsOpen = Boolean(
+    nativeLayer &&
+    !nativeLayer.hidden &&
+    nativeLayer.getAttribute("aria-hidden") !== "true" &&
+    ["alerts-center", "alerts"].includes(String(nativeBody?.dataset?.mobileSurfaceView || ""))
+  );
+  return Boolean(
+    isVisibleElement(activeAlertsSheet) ||
+    nativeAlertsOpen ||
+    Array.from(document.querySelectorAll(".gridly-alerts-active")).some((panel) => isVisibleElement(panel) && !panel.closest("#gridlyPortraitV2Sheet:not([data-active-sheet='alerts'])"))
+  );
+}
+
+function isGridlyAlertMapCenteredNear(coords, mapRef, tolerance = 0.0012) {
+  const center = getGridlyAlertMapCenter(mapRef);
+  return Boolean(center && coords && Math.abs(center.lat - coords.lat) <= tolerance && Math.abs(center.lng - coords.lng) <= tolerance);
+}
+
+function confirmGridlyAlertFocusResult({ coords, mapRef, centerBefore = null, incidentId = "", source = "unknown", marker = null } = {}) {
+  const centerAfter = getGridlyAlertMapCenter(mapRef);
+  const zoom = typeof mapRef?.getZoom === "function" ? mapRef.getZoom() : null;
+  const finalCenterNearSelectedIncident = isGridlyAlertMapCenteredNear(coords, mapRef);
+  const mapMovedOrCentered = Boolean(
+    finalCenterNearSelectedIncident && (
+      !centerBefore ||
+      Math.abs(centerBefore.lat - centerAfter?.lat) > 0.00001 ||
+      Math.abs(centerBefore.lng - centerAfter?.lng) > 0.00001 ||
+      (coords && Math.abs(centerAfter?.lat - coords.lat) <= 0.0012 && Math.abs(centerAfter?.lng - coords.lng) <= 0.0012)
+    )
+  );
+  const panelClosed = !isGridlyAlertSurfaceVisible();
+  const mapCenterActionAvailable = Boolean(mapRef && (typeof mapRef.flyTo === "function" || typeof mapRef.setView === "function"));
+  const zoomActionAvailable = Boolean(mapRef && (typeof mapRef.setZoom === "function" || typeof mapRef.setView === "function" || typeof mapRef.flyTo === "function"));
+  const currentZoomAction = typeof mapRef?.flyTo === "function"
+    ? "flyTo"
+    : typeof mapRef?.setView === "function"
+      ? "setView"
+      : typeof mapRef?.setZoom === "function"
+        ? "setZoom"
+        : "none";
+  const focusSucceeded = Boolean(mapMovedOrCentered && panelClosed);
+  const result = {
+    incidentId: incidentId || null,
+    source,
+    activeMapReferenceDetected: Boolean(mapRef),
+    mapCenterActionAvailable,
+    zoomActionAvailable,
+    currentZoomAction,
+    centerBefore,
+    centerAfter,
+    targetCenter: coords || null,
+    currentZoom: Number.isFinite(Number(zoom)) ? Number(zoom) : null,
+    finalCenterNearSelectedIncident,
+    panelClosed,
+    markerFocusAvailable: Boolean(marker && (typeof marker.openPopup === "function" || typeof marker.getElement === "function")),
+    focusSucceeded,
+    at: new Date().toISOString()
+  };
+  gridlyAlertFocusAuditState.focusAttemptSucceeded = focusSucceeded;
+  gridlyAlertFocusAuditState.lastFocusResult = result;
+  return result;
+}
+
 function clearGridlyFocusedAlertMarker() {
   document.querySelectorAll(".gridly-alert-focused-marker").forEach((node) => node.classList.remove("gridly-alert-focused-marker"));
 }
@@ -25950,10 +26045,9 @@ function focusGridlyAlertIncident(focus = {}) {
   const incidentId = String(focus?.incidentId || focus?.id || "").trim();
   const mapRef = getGridlyAlertMapInstance();
   const mapCenterActionAvailable = Boolean(mapRef && (typeof mapRef.flyTo === "function" || typeof mapRef.setView === "function"));
-  const zoomActionAvailable = Boolean(mapRef && (typeof mapRef.flyTo === "function" || typeof mapRef.setView === "function"));
   const marker = coords ? findGridlyAlertMarker(coords, { incidentId }) : null;
-  const markerFocusAvailable = Boolean(marker && (typeof marker.openPopup === "function" || typeof marker.getElement === "function"));
-  let focusAttemptSucceeded = false;
+  const centerBefore = getGridlyAlertMapCenter(mapRef);
+  let focusActionDispatched = false;
 
   gridlyAlertFocusAuditState.lastFocusedIncident = {
     id: incidentId || null,
@@ -25964,21 +26058,57 @@ function focusGridlyAlertIncident(focus = {}) {
     at: new Date().toISOString()
   };
 
+  confirmGridlyAlertFocusResult({
+    coords,
+    mapRef,
+    centerBefore,
+    incidentId,
+    source: String(focus?.source || "unknown"),
+    marker
+  });
+
   if (coords && mapRef && mapCenterActionAvailable) {
     try {
       if (typeof focus?.closeSurface === "function") focus.closeSurface();
       else if (typeof closePortraitV2Sheet === "function") closePortraitV2Sheet();
+      if (isGridlyAlertSurfaceVisible()) {
+        if (typeof closePortraitV2Sheet === "function") closePortraitV2Sheet();
+        const mobileSurfaceLayer = document.getElementById("mobileNativeSurfaceLayer");
+        const mobileSurfaceBody = document.getElementById("mobileNativeSurfaceBody");
+        if (mobileSurfaceLayer && ["alerts-center", "alerts"].includes(String(mobileSurfaceBody?.dataset?.mobileSurfaceView || ""))) {
+          mobileSurfaceLayer.hidden = true;
+          mobileSurfaceLayer.setAttribute("aria-hidden", "true");
+        }
+      }
       const zoom = Math.max(16, Number(mapRef.getZoom?.() || 0));
       if (typeof mapRef.flyTo === "function") mapRef.flyTo([coords.lat, coords.lng], zoom, { animate: true, duration: 0.35 });
       else mapRef.setView([coords.lat, coords.lng], zoom, { animate: true });
+      focusActionDispatched = true;
       window.setTimeout(() => {
-        if (typeof mapRef.getZoom === "function" && mapRef.getZoom() < 15 && typeof mapRef.setView === "function") {
+        if (!isGridlyAlertMapCenteredNear(coords, mapRef) && typeof mapRef.setView === "function") {
+          mapRef.setView([coords.lat, coords.lng], Math.max(16, Number(mapRef.getZoom?.() || 0)), { animate: false });
+        } else if (typeof mapRef.getZoom === "function" && mapRef.getZoom() < 15 && typeof mapRef.setView === "function") {
           mapRef.setView([coords.lat, coords.lng], 16, { animate: false });
         }
+        confirmGridlyAlertFocusResult({
+          coords,
+          mapRef,
+          centerBefore,
+          incidentId,
+          source: String(focus?.source || "unknown"),
+          marker
+        });
       }, 380);
-      focusAttemptSucceeded = true;
     } catch (error) {
-      focusAttemptSucceeded = false;
+      focusActionDispatched = false;
+      confirmGridlyAlertFocusResult({
+        coords,
+        mapRef,
+        centerBefore,
+        incidentId,
+        source: String(focus?.source || "unknown"),
+        marker
+      });
     }
   }
 
@@ -25991,7 +26121,14 @@ function focusGridlyAlertIncident(focus = {}) {
     }, 220);
   }
 
-  gridlyAlertFocusAuditState.focusAttemptSucceeded = Boolean(focusAttemptSucceeded);
+  const finalResult = confirmGridlyAlertFocusResult({
+    coords,
+    mapRef,
+    centerBefore,
+    incidentId,
+    source: String(focus?.source || "unknown"),
+    marker
+  });
   window.__gridlyAlertFocusDebugState = {
     lastAlertFocusIncidentId: incidentId || null,
     lastAlertFocusLat: coords?.lat ?? null,
@@ -25999,9 +26136,13 @@ function focusGridlyAlertIncident(focus = {}) {
     lastAlertFocusType: String(focus?.type || "unknown"),
     lastAlertFocusMatchedMarker: Boolean(marker),
     lastAlertFocusPopupOpened: Boolean(marker && focus?.openPopup !== false),
-    lastAlertFocusReason: focusAttemptSucceeded ? (marker ? "map-centered-marker-focused" : "map-centered-no-marker") : "focus-unavailable"
+    lastAlertFocusReason: finalResult.focusSucceeded
+      ? (marker ? "map-centered-panel-closed-marker-focused" : "map-centered-panel-closed")
+      : focusActionDispatched
+        ? "focus-dispatched-awaiting-confirmation"
+        : "focus-unavailable"
   };
-  return Boolean(focusAttemptSucceeded);
+  return Boolean(finalResult.focusSucceeded);
 }
 
 function focusAlertLocation(lat, lng, options = {}) {
@@ -26026,15 +26167,33 @@ window.gridlyAlertFocusAudit = function gridlyAlertFocusAudit() {
   const rows = getGridlyAlertFocusRows();
   const coordinateRows = rows.filter((row) => Boolean(getGridlyAlertFocusCoordinates(row)));
   const mapRef = getGridlyAlertMapInstance();
+  const lastResult = gridlyAlertFocusAuditState.lastFocusResult || null;
+  const mapCenterActionAvailable = Boolean(mapRef && (typeof mapRef.flyTo === "function" || typeof mapRef.setView === "function"));
+  const zoomActionAvailable = Boolean(mapRef && (typeof mapRef.setZoom === "function" || typeof mapRef.setView === "function" || typeof mapRef.flyTo === "function"));
+  const currentZoomAction = typeof mapRef?.flyTo === "function"
+    ? "flyTo"
+    : typeof mapRef?.setView === "function"
+      ? "setView"
+      : typeof mapRef?.setZoom === "function"
+        ? "setZoom"
+        : "none";
   return {
     alertRowsFound: rows.length,
     alertRowsBound: Boolean(gridlyAlertFocusAuditState.alertRowsBound || window.__gridlyHandleDataActionClickBound || rows.some((row) => row.closest(".gridly-alerts-active")?.dataset?.alertFocusBound === "true")),
     incidentCoordinatesFound: coordinateRows.length,
-    mapCenterActionAvailable: Boolean(mapRef && (typeof mapRef.flyTo === "function" || typeof mapRef.setView === "function")),
-    zoomActionAvailable: Boolean(mapRef && (typeof mapRef.flyTo === "function" || typeof mapRef.setView === "function")),
+    activeMapReferenceDetected: Boolean(mapRef),
+    mapCenterActionAvailable,
+    zoomActionAvailable,
+    currentZoomAction,
+    currentMapCenter: getGridlyAlertMapCenter(mapRef),
+    currentMapZoom: typeof mapRef?.getZoom === "function" ? mapRef.getZoom() : null,
+    finalCenterNearSelectedIncident: Boolean(lastResult?.finalCenterNearSelectedIncident),
+    panelClosed: lastResult ? Boolean(lastResult.panelClosed) : !isGridlyAlertSurfaceVisible(),
     markerFocusAvailable: Boolean(typeof window.focusAlertMarkerOnMap === "function" || crossingMarkers?.size || unifiedIncidentLayer?.getLayers?.().length),
     lastFocusedIncident: gridlyAlertFocusAuditState.lastFocusedIncident,
-    focusAttemptSucceeded: Boolean(gridlyAlertFocusAuditState.focusAttemptSucceeded)
+    lastFocusResult: lastResult,
+    focusAttemptSucceeded: Boolean(gridlyAlertFocusAuditState.focusAttemptSucceeded),
+    focusSucceeded: Boolean(lastResult?.focusSucceeded)
   };
 };
 
