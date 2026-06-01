@@ -4611,11 +4611,348 @@ function gridlyCommunityIntelligenceFramework() {
   };
 }
 
+
+function gridlyReadHistoricalIntelligenceStorageSnapshot() {
+  const fallback = gridlyCreateEmptyEventHistoryState();
+  const raw = gridlySafeLocalStorageGet(GRIDLY_EVENT_HISTORY_STORAGE_KEY);
+  if (!raw) {
+    return {
+      key: GRIDLY_EVENT_HISTORY_STORAGE_KEY,
+      found: false,
+      parseOk: true,
+      state: fallback,
+      storageReadError: null
+    };
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    return {
+      key: GRIDLY_EVENT_HISTORY_STORAGE_KEY,
+      found: true,
+      parseOk: true,
+      state: {
+        ...fallback,
+        ...(parsed && typeof parsed === "object" ? parsed : {}),
+        crossingEvents: Array.isArray(parsed?.crossingEvents) ? parsed.crossingEvents : [],
+        hazardEvents: Array.isArray(parsed?.hazardEvents) ? parsed.hazardEvents : [],
+        operationalTelemetry: {
+          ...fallback.operationalTelemetry,
+          ...(parsed?.operationalTelemetry && typeof parsed.operationalTelemetry === "object" ? parsed.operationalTelemetry : {})
+        }
+      },
+      storageReadError: null
+    };
+  } catch (error) {
+    return {
+      key: GRIDLY_EVENT_HISTORY_STORAGE_KEY,
+      found: true,
+      parseOk: false,
+      state: fallback,
+      storageReadError: error?.message || "invalid_event_history_storage"
+    };
+  }
+}
+
+function gridlyListHistoricalIntelligenceStorageKeys() {
+  const matches = [];
+  try {
+    if (typeof localStorage === "undefined") return matches;
+    for (let index = 0; index < localStorage.length; index += 1) {
+      const key = localStorage.key(index);
+      if (!key || !/gridly|history|historical|analytics|archive|event/i.test(key)) continue;
+      const value = localStorage.getItem(key);
+      matches.push({
+        key,
+        bytes: String(value || "").length,
+        primaryHistoricalSource: key === GRIDLY_EVENT_HISTORY_STORAGE_KEY
+      });
+    }
+  } catch (error) {
+    matches.push({ key: "localStorage", readError: error?.message || "storage_key_scan_failed" });
+  }
+  return matches.sort((a, b) => Number(b.primaryHistoricalSource) - Number(a.primaryHistoricalSource) || String(a.key).localeCompare(String(b.key)));
+}
+
+function gridlyHistoricalAuditTimestamp(record = {}) {
+  return record?.createdAt || record?.blockedAt || record?.submittedAt || record?.created_at || record?.reportedAt || record?.timestamp || null;
+}
+
+function gridlyHistoricalAuditDuration(record = {}) {
+  const explicit = Number(record?.durationMinutes ?? record?.duration ?? record?.duration_min ?? record?.durationMins);
+  if (Number.isFinite(explicit)) return Math.round(explicit);
+  return gridlyMinutesBetween(gridlyHistoricalAuditTimestamp(record), record?.clearedAt || record?.cleared_at || null);
+}
+
+function gridlyHistoricalAuditRoad(record = {}) {
+  const road = String(record?.roadName || record?.road || record?.resolvedRoadName || record?.primaryRoad || record?.routeName || "").trim();
+  if (!road || road.toLowerCase() === "unknown road") return "";
+  return road;
+}
+
+function gridlyHistoricalAuditCrossing(record = {}) {
+  return String(record?.crossingName || record?.crossing || record?.crossing_id || record?.crossingId || "").trim();
+}
+
+function gridlyHistoricalAuditHazardType(record = {}) {
+  return String(record?.hazardType || record?.type || record?.report_type || "").trim();
+}
+
+function gridlyHistoricalAuditLocationKey(record = {}, kind = "event") {
+  if (kind === "crossing") return String(record?.crossingId || record?.crossing_id || gridlyHistoricalAuditCrossing(record) || "").trim().toLowerCase();
+  return [gridlyHistoricalAuditHazardType(record), gridlyHistoricalAuditRoad(record)].filter(Boolean).join("|").toLowerCase();
+}
+
+function gridlyHistoricalAuditCountGroups(records = [], keyBuilder = () => "") {
+  const counts = records.reduce((acc, record) => {
+    const key = keyBuilder(record);
+    if (!key) return acc;
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+  return {
+    unique: Object.keys(counts).length,
+    repeated: Object.values(counts).filter((count) => count >= 2).length,
+    maxCount: Math.max(0, ...Object.values(counts))
+  };
+}
+
+function gridlyHistoricalAuditReadiness({ ready, limited }) {
+  if (ready) return "READY";
+  if (limited) return "LIMITED";
+  return "NOT_READY";
+}
+
+function gridlyBuildHistoricalIntelligenceReadiness(combinedEvents = [], crossingEvents = [], hazardEvents = []) {
+  const repeatedHazards = gridlyHistoricalAuditCountGroups(hazardEvents, (event) => gridlyHistoricalAuditLocationKey(event, "hazard"));
+  const floodEvents = hazardEvents.filter((event) => /flood|high_water|high water|water/.test(gridlyHistoricalAuditHazardType(event).toLowerCase()));
+  const repeatedFloods = gridlyHistoricalAuditCountGroups(floodEvents, (event) => gridlyHistoricalAuditRoad(event).toLowerCase());
+  const repeatedCrossings = gridlyHistoricalAuditCountGroups(crossingEvents, (event) => gridlyHistoricalAuditLocationKey(event, "crossing"));
+  const constructionEvents = hazardEvents.filter((event) => /construction|roadwork|work_zone|work zone|lane_closure|closure/.test(gridlyHistoricalAuditHazardType(event).toLowerCase()));
+  const repeatedConstruction = gridlyHistoricalAuditCountGroups(constructionEvents, (event) => gridlyHistoricalAuditRoad(event).toLowerCase());
+  const durationEvents = combinedEvents.filter((event) => Boolean(gridlyHistoricalAuditRoad(event.record)) && Number.isFinite(Number(gridlyHistoricalAuditDuration(event.record))));
+  const delayedCorridors = gridlyHistoricalAuditCountGroups(durationEvents.map((event) => event.record), (event) => gridlyHistoricalAuditRoad(event).toLowerCase());
+  const confirmedEvents = combinedEvents.filter((event) => Number(event.record?.confirmationCount ?? event.record?.confirmations ?? event.record?.confirmation_count) >= 2);
+  const confirmedHotspots = gridlyHistoricalAuditCountGroups(confirmedEvents, (event) => {
+    const record = event.record || {};
+    return gridlyHistoricalAuditRoad(record).toLowerCase() || gridlyHistoricalAuditLocationKey(record, event.kind);
+  });
+  const timestampedEvents = combinedEvents.filter((event) => Number.isFinite(new Date(gridlyHistoricalAuditTimestamp(event.record) || 0).getTime()) && new Date(gridlyHistoricalAuditTimestamp(event.record) || 0).getTime() > 0);
+  const dayKeys = new Set(timestampedEvents.map((event) => new Date(gridlyHistoricalAuditTimestamp(event.record)).toISOString().slice(0, 10)));
+  const hourBuckets = new Set(timestampedEvents.map((event) => Math.floor(new Date(gridlyHistoricalAuditTimestamp(event.record)).getUTCHours() / 4)));
+  const timestamps = timestampedEvents.map((event) => new Date(gridlyHistoricalAuditTimestamp(event.record)).getTime()).sort((a, b) => a - b);
+  const spanDays = timestamps.length > 1 ? Math.round((timestamps[timestamps.length - 1] - timestamps[0]) / 86400000) : 0;
+
+  const categories = [
+    {
+      category: "RECURRING_HAZARDS",
+      readiness: gridlyHistoricalAuditReadiness({ ready: hazardEvents.length >= 20 && repeatedHazards.repeated >= 3, limited: hazardEvents.length >= 3 && repeatedHazards.repeated >= 1 }),
+      availableEventCount: hazardEvents.length,
+      blockers: [
+        hazardEvents.length < 20 ? "Needs more hazard history before broad recurring-hazard summaries are safe." : "",
+        repeatedHazards.repeated < 3 ? "Needs more repeated same-type/same-road hazard clusters." : ""
+      ].filter(Boolean)
+    },
+    {
+      category: "FREQUENT_FLOOD_LOCATIONS",
+      readiness: gridlyHistoricalAuditReadiness({ ready: floodEvents.length >= 10 && repeatedFloods.repeated >= 2, limited: floodEvents.length >= 2 && repeatedFloods.repeated >= 1 }),
+      availableEventCount: floodEvents.length,
+      blockers: [
+        floodEvents.length < 10 ? "Needs more real flood or high-water events." : "",
+        repeatedFloods.repeated < 2 ? "Needs repeated flood events on the same road/location." : ""
+      ].filter(Boolean)
+    },
+    {
+      category: "MOST_BLOCKED_CROSSINGS",
+      readiness: gridlyHistoricalAuditReadiness({ ready: crossingEvents.length >= 20 && repeatedCrossings.repeated >= 3, limited: crossingEvents.length >= 3 && repeatedCrossings.repeated >= 1 }),
+      availableEventCount: crossingEvents.length,
+      blockers: [
+        crossingEvents.length < 20 ? "Needs more crossing history." : "",
+        repeatedCrossings.repeated < 3 ? "Needs repeated blockage records for multiple specific crossings." : ""
+      ].filter(Boolean)
+    },
+    {
+      category: "REPEAT_CONSTRUCTION_ZONES",
+      readiness: gridlyHistoricalAuditReadiness({ ready: constructionEvents.length >= 8 && repeatedConstruction.repeated >= 2, limited: constructionEvents.length >= 2 && repeatedConstruction.repeated >= 1 }),
+      availableEventCount: constructionEvents.length,
+      blockers: [
+        constructionEvents.length < 8 ? "Needs more construction/work-zone history." : "",
+        repeatedConstruction.repeated < 2 ? "Needs repeated construction records by road/zone." : ""
+      ].filter(Boolean)
+    },
+    {
+      category: "HIGH_DELAY_CORRIDORS",
+      readiness: gridlyHistoricalAuditReadiness({ ready: durationEvents.length >= 20 && delayedCorridors.repeated >= 3, limited: durationEvents.length >= 5 && delayedCorridors.repeated >= 1 }),
+      availableEventCount: durationEvents.length,
+      blockers: [
+        durationEvents.length < 20 ? "Needs more closed events with usable durations and roads." : "",
+        delayedCorridors.repeated < 3 ? "Needs repeated duration evidence on the same corridors." : ""
+      ].filter(Boolean)
+    },
+    {
+      category: "COMMUNITY_CONFIRMED_HOTSPOTS",
+      readiness: gridlyHistoricalAuditReadiness({ ready: confirmedEvents.length >= 15 && confirmedHotspots.repeated >= 3, limited: confirmedEvents.length >= 3 && confirmedHotspots.repeated >= 1 }),
+      availableEventCount: confirmedEvents.length,
+      blockers: [
+        confirmedEvents.length < 15 ? "Needs more records with two or more confirmations." : "",
+        confirmedHotspots.repeated < 3 ? "Needs repeated confirmed records at the same locations." : ""
+      ].filter(Boolean)
+    },
+    {
+      category: "TIME_OF_DAY_PATTERNS",
+      readiness: gridlyHistoricalAuditReadiness({ ready: timestampedEvents.length >= 30 && dayKeys.size >= 7 && hourBuckets.size >= 2, limited: timestampedEvents.length >= 10 && dayKeys.size >= 2 }),
+      availableEventCount: timestampedEvents.length,
+      blockers: [
+        timestampedEvents.length < 30 ? "Needs more timestamped historical events." : "",
+        dayKeys.size < 7 ? "Needs events across more distinct days." : "",
+        hourBuckets.size < 2 ? "Needs enough variety to compare dayparts." : ""
+      ].filter(Boolean)
+    },
+    {
+      category: "SEASONAL_PATTERNS",
+      readiness: gridlyHistoricalAuditReadiness({ ready: timestampedEvents.length >= 30 && spanDays >= 90, limited: timestampedEvents.length >= 10 && spanDays >= 30 }),
+      availableEventCount: timestampedEvents.length,
+      blockers: [
+        timestampedEvents.length < 30 ? "Needs more timestamped historical events." : "",
+        spanDays < 90 ? "Needs a longer historical time span before seasonal claims are safe." : ""
+      ].filter(Boolean)
+    }
+  ];
+
+  return { categories, diagnostics: { repeatedHazards, repeatedFloods, repeatedCrossings, repeatedConstruction, delayedCorridors, confirmedHotspots, distinctDays: dayKeys.size, daypartBuckets: hourBuckets.size, spanDays } };
+}
+
+function gridlyHistoricalIntelligenceAudit() {
+  const storageSnapshot = gridlyReadHistoricalIntelligenceStorageSnapshot();
+  const historicalState = storageSnapshot.state || gridlyCreateEmptyEventHistoryState();
+  const crossingEvents = Array.isArray(historicalState.crossingEvents) ? historicalState.crossingEvents : [];
+  const hazardEvents = Array.isArray(historicalState.hazardEvents) ? historicalState.hazardEvents : [];
+  const combinedEvents = [
+    ...crossingEvents.map((record, index) => ({ kind: "crossing", record, index })),
+    ...hazardEvents.map((record, index) => ({ kind: "hazard", record, index }))
+  ];
+  const closedEvents = combinedEvents.filter((event) => Boolean(event.record?.clearedAt || event.record?.cleared_at || Number.isFinite(Number(gridlyHistoricalAuditDuration(event.record)))));
+  const openEvents = combinedEvents.filter((event) => !event.record?.clearedAt && !event.record?.cleared_at && !Number.isFinite(Number(gridlyHistoricalAuditDuration(event.record))));
+  const timestamped = combinedEvents
+    .map((event) => gridlyHistoricalAuditTimestamp(event.record))
+    .filter((value) => Number.isFinite(new Date(value || 0).getTime()) && new Date(value || 0).getTime() > 0)
+    .sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+  const readinessModel = gridlyBuildHistoricalIntelligenceReadiness(combinedEvents, crossingEvents, hazardEvents);
+  const readyCategories = readinessModel.categories.filter((item) => item.readiness === "READY").map((item) => item.category);
+  const limitedCategories = readinessModel.categories.filter((item) => item.readiness === "LIMITED").map((item) => item.category);
+  const notReadyCategories = readinessModel.categories.filter((item) => item.readiness === "NOT_READY").map((item) => item.category);
+  const totalHistoricalEvents = combinedEvents.length;
+  const gapAnalysis = combinedEvents.reduce((acc, event) => {
+    const record = event.record || {};
+    if (!gridlyHistoricalAuditRoad(record)) acc.missingRoadNames += 1;
+    if (!Number.isFinite(Number(gridlyHistoricalAuditDuration(record)))) acc.missingDurations += 1;
+    if (!Number.isFinite(Number(record.confirmationCount ?? record.confirmations ?? record.confirmation_count))) acc.missingConfirmations += 1;
+    if (!record.clearedAt && !record.cleared_at) acc.missingClearTimes += 1;
+    if (event.kind === "crossing" && !String(record.crossingId || record.crossing_id || "").trim()) acc.missingCrossingIds += 1;
+    if (event.kind === "hazard" && !gridlyHistoricalAuditHazardType(record)) acc.missingHazardTypes += 1;
+    return acc;
+  }, {
+    missingRoadNames: 0,
+    missingDurations: 0,
+    missingConfirmations: 0,
+    missingClearTimes: 0,
+    missingCrossingIds: 0,
+    missingHazardTypes: 0,
+    insufficientHistoricalVolume: totalHistoricalEvents < 30 ? 30 - totalHistoricalEvents : 0
+  });
+  const sampleHistoricalRecords = combinedEvents.slice(0, 10).map((event) => {
+    const record = event.record || {};
+    return {
+      type: event.kind === "crossing" ? (record.eventType || gridlyNormalizeCrossingEventType(record)) : gridlyHistoricalAuditHazardType(record),
+      road: gridlyHistoricalAuditRoad(record),
+      crossing: event.kind === "crossing" ? gridlyHistoricalAuditCrossing(record) : "",
+      createdAt: gridlyHistoricalAuditTimestamp(record),
+      clearedAt: record.clearedAt || record.cleared_at || null,
+      duration: gridlyHistoricalAuditDuration(record),
+      confirmationCount: Number.isFinite(Number(record.confirmationCount ?? record.confirmations ?? record.confirmation_count)) ? Number(record.confirmationCount ?? record.confirmations ?? record.confirmation_count) : null
+    };
+  });
+  const eventCounts = {
+    totalHistoricalEvents,
+    crossingEvents: crossingEvents.length,
+    hazardEvents: hazardEvents.length,
+    openEvents: openEvents.length,
+    closedEvents: closedEvents.length,
+    earliestEvent: timestamped[0] || null,
+    latestEvent: timestamped[timestamped.length - 1] || null
+  };
+  const historicalSources = [
+    {
+      source: "gridlyEventHistoryV1",
+      storageKey: GRIDLY_EVENT_HISTORY_STORAGE_KEY,
+      found: storageSnapshot.found,
+      parseOk: storageSnapshot.parseOk,
+      storageReadError: storageSnapshot.storageReadError,
+      crossingEvents: crossingEvents.length,
+      hazardEvents: hazardEvents.length,
+      writesPerformed: false
+    },
+    {
+      source: "crossing history",
+      storageKey: GRIDLY_EVENT_HISTORY_STORAGE_KEY,
+      found: crossingEvents.length > 0,
+      eventCount: crossingEvents.length,
+      writesPerformed: false
+    },
+    {
+      source: "hazard history",
+      storageKey: GRIDLY_EVENT_HISTORY_STORAGE_KEY,
+      found: hazardEvents.length > 0,
+      eventCount: hazardEvents.length,
+      writesPerformed: false
+    },
+    {
+      source: "historical analytics storage / existing event archives",
+      localStorageKeys: gridlyListHistoricalIntelligenceStorageKeys(),
+      writesPerformed: false
+    }
+  ];
+  const intelligenceReadiness = {
+    overallReadiness: readyCategories.length >= 3 ? "READY" : (readyCategories.length + limitedCategories.length > 0 ? "LIMITED" : "NOT_READY"),
+    answer: readyCategories.length >= 3
+      ? "Gridly appears to have enough real historical volume for limited community-intelligence pilots, but activation still needs a separate safety/UI/analytics review."
+      : (readyCategories.length + limitedCategories.length > 0
+        ? "Gridly has some useful real history, but it is only limited and should not yet produce broad community intelligence."
+        : "Gridly does not currently have enough real historical data to produce meaningful community intelligence."),
+    categories: readinessModel.categories,
+    diagnostics: readinessModel.diagnostics
+  };
+  const recommendations = {
+    gapAnalysis,
+    futureReadiness: {
+      currentHistoricalVolume: totalHistoricalEvents,
+      estimatedTrendReadiness: intelligenceReadiness.overallReadiness,
+      strongestCategories: [...readyCategories, ...limitedCategories].slice(0, 4),
+      weakestCategories: notReadyCategories,
+      safestNextStep: totalHistoricalEvents >= 30
+        ? "Continue read-only validation with representative real records; require a separate activation task before generating or displaying trends."
+        : "Keep collecting real closed/open historical events with road names, crossing IDs, clear times, durations, hazard types, and confirmation counts before activating intelligence."
+    },
+    auditOnly: true,
+    activationPerformed: false,
+    protectedSystemsChanged: false
+  };
+
+  return {
+    historicalSources,
+    eventCounts,
+    intelligenceReadiness,
+    sampleHistoricalRecords,
+    recommendations
+  };
+}
+
 if (typeof window !== "undefined") {
   window.gridlyHazardTrustLanguage = gridlyHazardTrustLanguage;
   window.gridlyHazardTrustProgressionFramework = gridlyHazardTrustProgressionFramework;
   window.gridlyCommunityIntelligenceFramework = gridlyCommunityIntelligenceFramework;
   window.gridlyCommunityIntelligenceSimulation = gridlyCommunityIntelligenceSimulation;
+  window.gridlyHistoricalIntelligenceAudit = gridlyHistoricalIntelligenceAudit;
   window.gridlyHazardLifecycleFramework = function gridlyHazardLifecycleFramework(options = {}) {
     const nowMs = Number.isFinite(Number(options?.nowMs)) ? Number(options.nowMs) : Date.now();
     const sourceHazards = Array.isArray(options?.hazards) ? options.hazards : gridlyDiagnosticArray(activeHazards);
