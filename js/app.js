@@ -4319,7 +4319,7 @@ function gridlyDiagnosticArray(value) {
 function gridlyIsActiveHazardRecord(hazard = {}) {
   const rawLifecycleState = String(hazard?.lifecycleState || hazard?.lifecycle || hazard?.status || "").toLowerCase();
   const type = String(hazard?.type || hazard?.report_type || "").toLowerCase();
-  if (hazard?.expired || type === "hazard_cleared" || ["cleared", "expired", "inactive", "historical", "stale"].includes(rawLifecycleState)) return false;
+  if (hazard?.expired || type === "hazard_cleared" || ["cleared", "recently_cleared", "expired", "inactive", "historical", "stale"].includes(rawLifecycleState)) return false;
   if (typeof gridlyRoadHazardLatestLifecycleState === "function") {
     const latestState = gridlyRoadHazardLatestLifecycleState(hazard, Array.isArray(activeHazards) ? activeHazards : []);
     if (latestState === "cleared") return false;
@@ -25347,6 +25347,16 @@ function ensureUnifiedIncidentLayerOnMap() {
   return Boolean(unifiedIncidentLayer && typeof map.hasLayer === "function" ? map.hasLayer(unifiedIncidentLayer) : unifiedIncidentLayer);
 }
 
+function gridlyIncidentEligibleForMapMarker(incident = {}) {
+  const type = String(incident?.report_type || incident?.type || "").trim().toLowerCase();
+  const status = String(incident?.status || incident?.state || "").trim().toLowerCase();
+  const lifecycleState = String(incident?.lifecycleState || incident?.lifecycle || incident?.lifecycle_state || "").trim().toLowerCase();
+  if (type === "hazard_cleared") return false;
+  if (status === "cleared" || status === "hazard_cleared") return false;
+  if (["recently_cleared", "cleared", "hazard_cleared"].includes(lifecycleState)) return false;
+  return true;
+}
+
 function renderUnifiedIncidents(reason = "auto") {
   const endRenderUnifiedTrace = timeGridlyReflowTrace("renderUnifiedIncidents");
   if (!ensureUnifiedIncidentLayerOnMap()) return;
@@ -25369,7 +25379,7 @@ function renderUnifiedIncidents(reason = "auto") {
   const fallbackCoordinateCount = fallbackHazards.filter(hasFiniteCoordinates).length;
   const shouldUseFallbackHazards = primaryCoordinateCount === 0 && fallbackCoordinateCount > 0;
   const incidents = shouldUseFallbackHazards ? fallbackHazards : primaryIncidents;
-  const markerRenderSkipReasons = { missing_lat_lng: 0, invalid_lat_lng: 0, filtered_out: 0, missing_marker_layer: 0, render_exception: 0 };
+  const markerRenderSkipReasons = { missing_lat_lng: 0, invalid_lat_lng: 0, filtered_out: 0, cleared_or_recently_cleared: 0, missing_marker_layer: 0, render_exception: 0 };
   const markerSourceUsed = shouldUseFallbackHazards ? "activeHazards_fallback" : "unifiedIncidents";
   const sourceCounts = {
     primaryCount: primaryIncidents.length,
@@ -25395,6 +25405,11 @@ function renderUnifiedIncidents(reason = "auto") {
     dedupedMap.set(renderKey, choosePreferredIncidentCandidate(dedupedMap.get(renderKey), incident, routeHazard));
   });
   const dedupedIncidents = [...dedupedMap.values()];
+  const markerEligibleIncidents = dedupedIncidents.filter((incident) => {
+    const eligible = gridlyIncidentEligibleForMapMarker(incident);
+    if (!eligible) markerRenderSkipReasons.cleared_or_recently_cleared += 1;
+    return eligible;
+  });
 
   const markersByCategory = {};
   const markerTypesRendered = new Set();
@@ -25402,7 +25417,7 @@ function renderUnifiedIncidents(reason = "auto") {
   let markersAffectingRoute = 0;
   let routeHighlightedMarkers = 0;
 
-  dedupedIncidents.forEach((incident) => {
+  markerEligibleIncidents.forEach((incident) => {
     if (!unifiedIncidentLayer) { markerRenderSkipReasons.missing_marker_layer += 1; return; }
     const { lat: rawLat, lng: rawLng } = getIncidentCoordinate(incident);
     if (rawLat == null || rawLng == null) { markerRenderSkipReasons.missing_lat_lng += 1; return; }
@@ -25537,16 +25552,18 @@ function renderUnifiedIncidents(reason = "auto") {
   const duplicateEntries = [...duplicateCounts.entries()].filter(([, count]) => count > 1);
   const duplicateIncidentCount = duplicateEntries.reduce((sum, [, count]) => sum + (count - 1), 0);
 
-  updateHazardCounter(dedupedIncidents);
+  updateHazardCounter(markerEligibleIncidents);
   lastMarkerAuditDebug = {
-    activeMarkerCount: dedupedIncidents.length,
+    activeMarkerCount: markerEligibleIncidents.length,
     totalIncidentsInput: incidents.length,
-    uniqueIncidentRenderCount: dedupedIncidents.length,
+    uniqueIncidentRenderCount: markerEligibleIncidents.length,
+    markerEligibleIncidentCount: markerEligibleIncidents.length,
+    markerSuppressedClearedOrRecentlyClearedCount: markerRenderSkipReasons.cleared_or_recently_cleared,
     duplicateIncidentCount,
     duplicateKeysPreview: duplicateEntries.slice(0, 8).map(([key, count]) => `${key}×${count}`),
-    activeRenderedCount: dedupedIncidents.filter((item) => String(item?.status || "").toLowerCase() !== "cleared").length,
-    clearedRenderedCount: dedupedIncidents.filter((item) => String(item?.status || "").toLowerCase() === "cleared").length,
-    routeRelevantRenderedCount: dedupedIncidents.filter((item) => isIncidentRouteRelevant(item, routeHazard)).length,
+    activeRenderedCount: markerEligibleIncidents.filter((item) => String(item?.status || "").toLowerCase() !== "cleared").length,
+    clearedRenderedCount: markerEligibleIncidents.filter((item) => String(item?.status || "").toLowerCase() === "cleared").length,
+    routeRelevantRenderedCount: markerEligibleIncidents.filter((item) => isIncidentRouteRelevant(item, routeHazard)).length,
     lastRenderAt: new Date().toISOString(),
     markerLayerCount: typeof unifiedIncidentLayer?.getLayers === "function" ? unifiedIncidentLayer.getLayers().length : null,
     markersByCategory,
