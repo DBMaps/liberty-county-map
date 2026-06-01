@@ -14591,3 +14591,180 @@ body.gridly-theme-light .settings-select-grid select {
   background: #ffffff;
   border-color: rgba(27, 58, 87, 0.2);
 }
+
+/* V206.19 — Settings Route Watch saved-place card polish */
+.settings-modal-section#settingsSavedPlacesSection,
+.gridly-settings-sheet .settings-modal-section:first-of-type {
+  padding-top: 2px;
+}
+
+.settings-place-grid {
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.settings-place-card {
+  position: relative;
+  gap: 8px;
+  min-width: 0;
+  padding: 14px;
+  overflow: hidden;
+  border-color: rgba(142, 239, 255, 0.18);
+  background:
+    radial-gradient(circle at 18% 0%, rgba(67, 230, 160, 0.12), transparent 34%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.032));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 14px 30px rgba(0, 0, 0, 0.16);
+}
+
+.settings-place-card-anchor::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: linear-gradient(180deg, rgba(67, 230, 160, 0.95), rgba(142, 239, 255, 0.28));
+  opacity: 0.9;
+}
+
+.settings-place-label {
+  width: fit-content;
+  padding: 3px 8px;
+  border: 1px solid rgba(142, 239, 255, 0.2);
+  border-radius: 999px;
+  background: rgba(142, 239, 255, 0.08);
+  color: rgba(218, 246, 255, 0.88);
+  font-size: 0.66rem;
+  font-weight: 850;
+  letter-spacing: 0.13em;
+  line-height: 1;
+}
+
+.settings-place-card strong {
+  display: block;
+  min-width: 0;
+  color: #f4fbff;
+  font-size: clamp(0.98rem, 2vw, 1.08rem);
+  font-weight: 820;
+  letter-spacing: 0.005em;
+  line-height: 1.22;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.settings-place-card small {
+  min-width: 0;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.settings-place-card .settings-clean-note {
+  margin-top: -2px;
+}
+
+.settings-place-action,
+.settings-place-card .gridly-v2-tile.settings-place-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: start;
+  min-height: 34px;
+  margin-top: 2px;
+  padding: 8px 12px;
+  border: 1px solid rgba(142, 239, 255, 0.25);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(142, 239, 255, 0.14), rgba(142, 239, 255, 0.06));
+  color: #eaf9ff;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.015em;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.16);
+}
+
+.settings-place-action:hover,
+.settings-place-action:focus-visible,
+.settings-place-card .gridly-v2-tile.settings-place-action:hover,
+.settings-place-card .gridly-v2-tile.settings-place-action:focus-visible {
+  border-color: rgba(142, 239, 255, 0.46);
+  background: linear-gradient(180deg, rgba(142, 239, 255, 0.22), rgba(67, 230, 160, 0.09));
+  transform: translateY(-1px);
+}
+
+.settings-saved-places-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 2px;
+  padding-block: 12px;
+  background: linear-gradient(135deg, rgba(67, 230, 160, 0.085), rgba(142, 239, 255, 0.04));
+}
+
+.settings-saved-places-card .settings-place-action {
+  margin-top: 0;
+  white-space: nowrap;
+}
+
+.settings-saved-places-list {
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 2px;
+}
+
+.settings-saved-place-row {
+  padding: 10px 12px;
+  border: 1px solid rgba(142, 239, 255, 0.13);
+  border-radius: 14px;
+  background: rgba(12, 24, 38, 0.68);
+}
+
+@media (max-width: 640px), (max-width: 1100px) and (orientation: portrait) {
+  .settings-place-grid,
+  body[data-layout-mode="portrait"] .gridly-settings-sheet .settings-place-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    margin-top: 10px !important;
+  }
+
+  .settings-place-card,
+  body[data-layout-mode="portrait"] .gridly-settings-sheet .settings-place-card {
+    padding: 13px !important;
+    border-radius: 16px !important;
+  }
+
+  .settings-saved-places-card,
+  body[data-layout-mode="portrait"] .gridly-settings-sheet .settings-saved-places-card {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .settings-saved-places-card .settings-place-action,
+  body[data-layout-mode="portrait"] .gridly-settings-sheet .settings-saved-places-card .settings-place-action {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+body.gridly-theme-light .settings-place-card {
+  border-color: rgba(27, 58, 87, 0.14) !important;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(26, 128, 96, 0.1), transparent 34%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(244, 250, 255, 0.82)) !important;
+  box-shadow: 0 12px 26px rgba(20, 42, 64, 0.08);
+}
+
+body.gridly-theme-light .settings-place-card strong {
+  color: #12263a;
+}
+
+body.gridly-theme-light .settings-place-label {
+  border-color: rgba(27, 99, 132, 0.18);
+  background: rgba(27, 99, 132, 0.07);
+  color: #24506f !important;
+}
+
+body.gridly-theme-light .settings-place-action,
+body.gridly-theme-light .settings-place-card .gridly-v2-tile.settings-place-action {
+  border-color: rgba(27, 99, 132, 0.2);
+  background: linear-gradient(180deg, rgba(27, 99, 132, 0.09), rgba(27, 99, 132, 0.045));
+  color: #183a52;
+}

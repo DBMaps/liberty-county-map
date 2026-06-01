@@ -43570,9 +43570,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         <section class="settings-modal-section">
           <h3>Route Watch Settings</h3>
           <div class="settings-place-grid">
-            <article class="settings-place-card"><span class="settings-place-label">Home</span><strong>${escapeV2SettingsText(home.label)}</strong><small>${escapeV2SettingsText(home.meta)}</small><button class="gridly-v2-tile" data-v2-action="route-edit-home-open" type="button">Edit Home</button></article>
-            <article class="settings-place-card"><span class="settings-place-label">Work</span><strong>${escapeV2SettingsText(work.label)}</strong><small>${escapeV2SettingsText(work.meta)}</small><button class="gridly-v2-tile" data-v2-action="route-edit-work-open" type="button">Edit Work</button></article>
-            <article class="settings-place-card settings-place-card-wide"><span class="settings-place-label">Saved Places</span><button class="gridly-v2-tile" data-v2-action="route-manage-places-open" type="button">Manage Saved Places</button></article>
+            <article class="settings-place-card settings-place-card-anchor"><span class="settings-place-label">HOME</span><strong>${escapeV2SettingsText(home.label)}</strong><small>${escapeV2SettingsText(home.meta)}</small><button class="gridly-v2-tile settings-place-action" data-v2-action="route-edit-home-open" type="button">Edit Home</button></article>
+            <article class="settings-place-card settings-place-card-anchor"><span class="settings-place-label">WORK</span><strong>${escapeV2SettingsText(work.label)}</strong><small>${escapeV2SettingsText(work.meta)}</small><button class="gridly-v2-tile settings-place-action" data-v2-action="route-edit-work-open" type="button">Edit Work</button></article>
+            <article class="settings-place-card settings-place-card-wide settings-saved-places-card"><span class="settings-place-label">Saved Places</span><button class="gridly-v2-tile settings-place-action" data-v2-action="route-manage-places-open" type="button">Manage Saved Places</button></article>
           </div>
         </section>
         <section class="settings-modal-section">
