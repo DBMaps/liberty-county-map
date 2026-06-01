@@ -4091,6 +4091,253 @@ function gridlyHazardTrustProgressionFramework() {
 }
 
 
+function gridlyCommunityIntelligenceSimulation() {
+  const simulationNowMs = Date.UTC(2026, 4, 31, 12, 0, 0);
+  const dayMs = 24 * 60 * 60 * 1000;
+  const eventAt = (daysAgo, hour = 9) => new Date(simulationNowMs - (daysAgo * dayMs) - ((12 - hour) * 60 * 60 * 1000)).toISOString();
+  const makeEvent = ({ id, scenario, type, road, corridor, locationKey, crossingId = "", daysAgo, hour = 9, confirmations = 0, season = "spring" }) => ({
+    id,
+    scenario,
+    type,
+    road,
+    corridor,
+    locationKey,
+    crossingId,
+    occurredAt: eventAt(daysAgo, hour),
+    daypart: hour < 11 ? "morning" : (hour < 16 ? "midday" : "evening"),
+    confirmations,
+    season,
+    simulatedOnly: true
+  });
+
+  const simulatedEvents = [
+    makeEvent({ id: "sim-flood-tx146-1", scenario: "A_FLOODING", type: "flooding", road: "TX 146", corridor: "TX 146", locationKey: "tx-146-low-water", daysAgo: 28, confirmations: 1 }),
+    makeEvent({ id: "sim-flood-tx146-2", scenario: "A_FLOODING", type: "flooding", road: "TX 146", corridor: "TX 146", locationKey: "tx-146-low-water", daysAgo: 17, confirmations: 1 }),
+    makeEvent({ id: "sim-flood-tx146-3", scenario: "A_FLOODING", type: "flooding", road: "TX 146", corridor: "TX 146", locationKey: "tx-146-low-water", daysAgo: 4, confirmations: 2 }),
+
+    makeEvent({ id: "sim-rail-us90-1", scenario: "B_RAIL_CROSSING", type: "rail_blockage", road: "US 90", corridor: "US 90", locationKey: "us-90-rail-crossing", crossingId: "US90-CROSSING", daysAgo: 27 }),
+    makeEvent({ id: "sim-rail-us90-2", scenario: "B_RAIL_CROSSING", type: "rail_blockage", road: "US 90", corridor: "US 90", locationKey: "us-90-rail-crossing", crossingId: "US90-CROSSING", daysAgo: 22 }),
+    makeEvent({ id: "sim-rail-us90-3", scenario: "B_RAIL_CROSSING", type: "rail_blockage", road: "US 90", corridor: "US 90", locationKey: "us-90-rail-crossing", crossingId: "US90-CROSSING", daysAgo: 15 }),
+    makeEvent({ id: "sim-rail-us90-4", scenario: "B_RAIL_CROSSING", type: "rail_blockage", road: "US 90", corridor: "US 90", locationKey: "us-90-rail-crossing", crossingId: "US90-CROSSING", daysAgo: 9 }),
+    makeEvent({ id: "sim-rail-us90-5", scenario: "B_RAIL_CROSSING", type: "rail_blockage", road: "US 90", corridor: "US 90", locationKey: "us-90-rail-crossing", crossingId: "US90-CROSSING", daysAgo: 2 }),
+
+    makeEvent({ id: "sim-construction-fm1960-1", scenario: "C_CONSTRUCTION", type: "construction", road: "FM 1960", corridor: "FM 1960 east corridor", locationKey: "fm-1960-work-zone", daysAgo: 41 }),
+    makeEvent({ id: "sim-construction-fm1960-2", scenario: "C_CONSTRUCTION", type: "lane_closure", road: "FM 1960", corridor: "FM 1960 east corridor", locationKey: "fm-1960-work-zone", daysAgo: 26 }),
+    makeEvent({ id: "sim-construction-fm1960-3", scenario: "C_CONSTRUCTION", type: "construction", road: "FM 1960", corridor: "FM 1960 east corridor", locationKey: "fm-1960-work-zone", daysAgo: 12 }),
+    makeEvent({ id: "sim-construction-fm1960-4", scenario: "C_CONSTRUCTION", type: "lane_closure", road: "FM 1960", corridor: "FM 1960 east corridor", locationKey: "fm-1960-work-zone", daysAgo: 1 }),
+
+    makeEvent({ id: "sim-delay-us59-1", scenario: "D_MIXED_HAZARDS", type: "crash", road: "US 59", corridor: "US 59 north corridor", locationKey: "us-59-north-corridor", daysAgo: 23 }),
+    makeEvent({ id: "sim-delay-us59-2", scenario: "D_MIXED_HAZARDS", type: "flooding", road: "US 59", corridor: "US 59 north corridor", locationKey: "us-59-north-corridor", daysAgo: 18 }),
+    makeEvent({ id: "sim-delay-us59-3", scenario: "D_MIXED_HAZARDS", type: "rail_blockage", road: "US 59", corridor: "US 59 north corridor", locationKey: "us-59-north-corridor", daysAgo: 11 }),
+    makeEvent({ id: "sim-delay-us59-4", scenario: "D_MIXED_HAZARDS", type: "construction", road: "US 59", corridor: "US 59 north corridor", locationKey: "us-59-north-corridor", daysAgo: 5 }),
+
+    makeEvent({ id: "sim-hotspot-sh321-1", scenario: "E_COMMUNITY_CONFIRMATIONS", type: "road_hazard", road: "SH 321", corridor: "SH 321", locationKey: "sh-321-hotspot", daysAgo: 21, confirmations: 3 }),
+    makeEvent({ id: "sim-hotspot-sh321-2", scenario: "E_COMMUNITY_CONFIRMATIONS", type: "road_hazard", road: "SH 321", corridor: "SH 321", locationKey: "sh-321-hotspot", daysAgo: 13, confirmations: 2 }),
+    makeEvent({ id: "sim-hotspot-sh321-3", scenario: "E_COMMUNITY_CONFIRMATIONS", type: "road_hazard", road: "SH 321", corridor: "SH 321", locationKey: "sh-321-hotspot", daysAgo: 6, confirmations: 3 }),
+
+    makeEvent({ id: "sim-morning-fm2100-1", scenario: "F_MORNING_ONLY", type: "delay", road: "FM 2100", corridor: "FM 2100", locationKey: "fm-2100-morning-delay", daysAgo: 24, hour: 7 }),
+    makeEvent({ id: "sim-morning-fm2100-2", scenario: "F_MORNING_ONLY", type: "delay", road: "FM 2100", corridor: "FM 2100", locationKey: "fm-2100-morning-delay", daysAgo: 16, hour: 8 }),
+    makeEvent({ id: "sim-morning-fm2100-3", scenario: "F_MORNING_ONLY", type: "delay", road: "FM 2100", corridor: "FM 2100", locationKey: "fm-2100-morning-delay", daysAgo: 8, hour: 7 }),
+    makeEvent({ id: "sim-morning-fm2100-4", scenario: "F_MORNING_ONLY", type: "delay", road: "FM 2100", corridor: "FM 2100", locationKey: "fm-2100-morning-delay", daysAgo: 3, hour: 8 }),
+
+    makeEvent({ id: "sim-seasonal-flood-1", scenario: "G_SEASONAL_FLOODING", type: "flooding", road: "CR 602", corridor: "CR 602", locationKey: "cr-602-seasonal-flood", daysAgo: 80, season: "spring" }),
+    makeEvent({ id: "sim-seasonal-flood-2", scenario: "G_SEASONAL_FLOODING", type: "flooding", road: "CR 602", corridor: "CR 602", locationKey: "cr-602-seasonal-flood", daysAgo: 52, season: "spring" }),
+    makeEvent({ id: "sim-seasonal-flood-3", scenario: "G_SEASONAL_FLOODING", type: "flooding", road: "CR 602", corridor: "CR 602", locationKey: "cr-602-seasonal-flood", daysAgo: 18, season: "spring" })
+  ];
+
+  const eventsWithinDays = (events, days) => events.filter((event) => {
+    const eventMs = Date.parse(event.occurredAt);
+    return Number.isFinite(eventMs) && (simulationNowMs - eventMs) <= days * dayMs;
+  });
+  const eventTypes = (events) => Array.from(new Set(events.map((event) => event.type)));
+  const countByCategory = (items) => items.reduce((counts, item) => {
+    const category = String(item?.category || "UNKNOWN");
+    counts[category] = Number(counts[category] || 0) + 1;
+    return counts;
+  }, {});
+
+  const scenarios = [
+    {
+      scenario: "A_FLOODING",
+      expectedCategory: "RECURRING_HAZARD",
+      evaluate(events) {
+        const recentFloods = eventsWithinDays(events, 30).filter((event) => event.type === "flooding" && event.locationKey === "tx-146-low-water");
+        return recentFloods.length >= 3 ? {
+          category: "RECURRING_HAZARD",
+          companionCategories: ["FREQUENT_FLOOD_LOCATION"],
+          userFacingExample: "Frequently reported flooding location",
+          reasoning: "Three simulated flooding reports occurred on TX 146 within 30 days, so the recurring hazard rule and flood-location rule both match."
+        } : null;
+      }
+    },
+    {
+      scenario: "A_FLOODING_FREQUENT_LOCATION",
+      expectedCategory: "FREQUENT_FLOOD_LOCATION",
+      sourceScenario: "A_FLOODING",
+      evaluate(events) {
+        const recentFloods = eventsWithinDays(events, 30).filter((event) => event.type === "flooding" && event.locationKey === "tx-146-low-water");
+        return recentFloods.length >= 3 ? {
+          category: "FREQUENT_FLOOD_LOCATION",
+          companionCategories: ["RECURRING_HAZARD"],
+          userFacingExample: "Frequently reported flooding location",
+          reasoning: "The same three TX 146 simulated flooding reports also satisfy the frequent flood location rule."
+        } : null;
+      }
+    },
+    {
+      scenario: "B_RAIL_CROSSING",
+      expectedCategory: "MOST_BLOCKED_CROSSING",
+      evaluate(events) {
+        const blockedCrossings = eventsWithinDays(events, 30).filter((event) => event.type === "rail_blockage" && event.crossingId === "US90-CROSSING");
+        return blockedCrossings.length >= 5 ? {
+          category: "MOST_BLOCKED_CROSSING",
+          companionCategories: [],
+          userFacingExample: "Frequently blocked crossing",
+          reasoning: "Five simulated blockage events occurred at the US 90 crossing within 30 days."
+        } : null;
+      }
+    },
+    {
+      scenario: "C_CONSTRUCTION",
+      expectedCategory: "REPEAT_CONSTRUCTION_ZONE",
+      evaluate(events) {
+        const constructionReports = eventsWithinDays(events, 45).filter((event) => ["construction", "lane_closure"].includes(event.type) && event.locationKey === "fm-1960-work-zone");
+        return constructionReports.length >= 3 ? {
+          category: "REPEAT_CONSTRUCTION_ZONE",
+          companionCategories: [],
+          userFacingExample: "Recurring construction zone",
+          reasoning: "Four simulated construction or lane-closure reports occurred on the same corridor within 45 days."
+        } : null;
+      }
+    },
+    {
+      scenario: "D_MIXED_HAZARDS",
+      expectedCategory: "HIGH_DELAY_CORRIDOR",
+      evaluate(events) {
+        const corridorEvents = eventsWithinDays(events, 30).filter((event) => event.locationKey === "us-59-north-corridor");
+        return corridorEvents.length >= 4 && eventTypes(corridorEvents).length >= 3 ? {
+          category: "HIGH_DELAY_CORRIDOR",
+          companionCategories: [],
+          userFacingExample: "Common delay area",
+          reasoning: "The same corridor has multiple simulated hazard types in the review window, matching the high-delay corridor rule."
+        } : null;
+      }
+    },
+    {
+      scenario: "E_COMMUNITY_CONFIRMATIONS",
+      expectedCategory: "COMMUNITY_CONFIRMED_HOTSPOT",
+      evaluate(events) {
+        const hotspotEvents = eventsWithinDays(events, 30).filter((event) => event.locationKey === "sh-321-hotspot");
+        const confirmationTotal = hotspotEvents.reduce((total, event) => total + Number(event.confirmations || 0), 0);
+        return hotspotEvents.length >= 3 && confirmationTotal >= 6 ? {
+          category: "COMMUNITY_CONFIRMED_HOTSPOT",
+          companionCategories: [],
+          userFacingExample: "Area drivers often report issues",
+          reasoning: "Repeated simulated reports at the same location include repeated community support, matching the confirmed-hotspot rule."
+        } : null;
+      }
+    },
+    {
+      scenario: "F_MORNING_ONLY",
+      expectedCategory: "TIME_OF_DAY_PATTERN",
+      evaluate(events) {
+        const morningEvents = eventsWithinDays(events, 30).filter((event) => event.locationKey === "fm-2100-morning-delay" && event.daypart === "morning");
+        return morningEvents.length >= 3 ? {
+          category: "TIME_OF_DAY_PATTERN",
+          companionCategories: [],
+          userFacingExample: "Drivers often report issues here during morning travel",
+          reasoning: "All simulated FM 2100 delay reports occurred in the morning daypart across multiple days."
+        } : null;
+      }
+    },
+    {
+      scenario: "G_SEASONAL_FLOODING",
+      expectedCategory: "SEASONAL_PATTERN",
+      evaluate(events) {
+        const seasonalFloods = events.filter((event) => event.locationKey === "cr-602-seasonal-flood" && event.type === "flooding" && event.season === "spring");
+        return seasonalFloods.length >= 3 ? {
+          category: "SEASONAL_PATTERN",
+          companionCategories: [],
+          userFacingExample: "Seasonal flooding area",
+          reasoning: "Three simulated flooding reports recur at the same location during the same seasonal review period."
+        } : null;
+      }
+    }
+  ];
+
+  const generatedIntelligence = scenarios.map((scenario) => {
+    const scenarioEvents = simulatedEvents.filter((event) => event.scenario === (scenario.sourceScenario || scenario.scenario));
+    const result = scenario.evaluate(scenarioEvents);
+    return {
+      scenario: scenario.scenario,
+      category: result?.category || "NO_MATCH",
+      companionCategories: result?.companionCategories || [],
+      userFacingExample: result?.userFacingExample || "No intelligence generated",
+      eventCount: scenarioEvents.length,
+      simulatedOnly: true,
+      activationState: "simulation_only_no_runtime_activation",
+      reasoning: result?.reasoning || "The simulated event set did not meet the configured trend threshold."
+    };
+  });
+
+  const validationResults = scenarios.map((scenario) => {
+    const generated = generatedIntelligence.find((item) => item.scenario === scenario.scenario);
+    const actualCategory = generated?.category || "NO_MATCH";
+    return {
+      scenario: scenario.scenario,
+      expectedCategory: scenario.expectedCategory,
+      actualCategory,
+      matched: actualCategory === scenario.expectedCategory,
+      reasoning: generated?.reasoning || "No generated intelligence was available for this scenario."
+    };
+  });
+
+  const intelligenceCounts = {
+    totalSimulatedEvents: simulatedEvents.length,
+    totalGeneratedIntelligence: generatedIntelligence.length,
+    byCategory: countByCategory(generatedIntelligence),
+    validationMatched: validationResults.filter((result) => result.matched).length,
+    validationMismatched: validationResults.filter((result) => !result.matched).length,
+    liveProcessingEnabled: false,
+    historicalActivationEnabled: false,
+    analyticsActivationEnabled: false
+  };
+
+  const recommendations = {
+    userFacingIntelligenceExamples: generatedIntelligence.map((item) => item.userFacingExample),
+    mismatches: validationResults.filter((result) => !result.matched),
+    activationReview: {
+      activationBenefits: [
+        "Could turn repeated simulated or future historical reports into simple local road knowledge.",
+        "Could help drivers recognize frequently flooded roads, blocked crossings, recurring work zones, and common delay corridors.",
+        "Could preserve the value of community confirmations without exposing individual reporter details."
+      ],
+      activationRisks: [
+        "Historical pattern labels may be mistaken for current live hazards if future UI copy is too urgent.",
+        "Weak road, crossing, or corridor matching could group nearby but different issues into a misleading trend.",
+        "Sparse beta history may make intelligence uneven across locations until enough events accumulate."
+      ],
+      telemetryImpact: "No telemetry impact in this simulation. Future activation should require a separate telemetry review before adding counters or events.",
+      analyticsImpact: "No analytics impact in this simulation. Future activation should require a separate analytics review before writing trend outputs or schemas.",
+      betaReadinessAssessment: "Framework appears beta-ready for simulated validation because all expected trend categories match, but runtime activation should remain blocked until separate UI, privacy, telemetry, analytics, and safety reviews are approved."
+    },
+    guardrails: [
+      "Uses an internal simulated event set only.",
+      "Does not read live hazards, reports, Supabase, TxDOT, rail crossings, analytics, telemetry, or map state.",
+      "Does not activate community intelligence, historical processing, refresh loops, alert rendering, marker rendering, or UI changes."
+    ]
+  };
+
+  return {
+    simulatedEvents,
+    generatedIntelligence,
+    intelligenceCounts,
+    validationResults,
+    recommendations
+  };
+}
+
+
 function gridlyCommunityIntelligenceFramework() {
   const intelligenceCategories = [
     {
@@ -4368,6 +4615,7 @@ if (typeof window !== "undefined") {
   window.gridlyHazardTrustLanguage = gridlyHazardTrustLanguage;
   window.gridlyHazardTrustProgressionFramework = gridlyHazardTrustProgressionFramework;
   window.gridlyCommunityIntelligenceFramework = gridlyCommunityIntelligenceFramework;
+  window.gridlyCommunityIntelligenceSimulation = gridlyCommunityIntelligenceSimulation;
   window.gridlyHazardLifecycleFramework = function gridlyHazardLifecycleFramework(options = {}) {
     const nowMs = Number.isFinite(Number(options?.nowMs)) ? Number(options.nowMs) : Date.now();
     const sourceHazards = Array.isArray(options?.hazards) ? options.hazards : gridlyDiagnosticArray(activeHazards);
