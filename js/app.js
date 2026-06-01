@@ -7873,6 +7873,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyTxdotDirectionalReadinessAudit",
   "gridlyRoadwayGeometryCapabilityAudit",
   "gridlyGeometryAwarePlacementAudit",
+  "gridlyAuditPerformanceReview",
   "gridlyAuditHelperExposureAudit",
   "gridlySupabaseHazardInventoryAudit",
   "gridlySupabaseHazardPurgeAudit",
@@ -7962,6 +7963,7 @@ function exposeAllGridlyAuditHelpers() {
     gridlyTxdotDirectionalReadinessAudit: typeof gridlyTxdotDirectionalReadinessAudit === "function" ? gridlyTxdotDirectionalReadinessAudit : (typeof target?.gridlyTxdotDirectionalReadinessAudit === "function" ? target.gridlyTxdotDirectionalReadinessAudit : null),
     gridlyRoadwayGeometryCapabilityAudit: typeof gridlyRoadwayGeometryCapabilityAudit === "function" ? gridlyRoadwayGeometryCapabilityAudit : (typeof target?.gridlyRoadwayGeometryCapabilityAudit === "function" ? target.gridlyRoadwayGeometryCapabilityAudit : null),
     gridlyGeometryAwarePlacementAudit: typeof gridlyGeometryAwarePlacementAudit === "function" ? gridlyGeometryAwarePlacementAudit : (typeof target?.gridlyGeometryAwarePlacementAudit === "function" ? target.gridlyGeometryAwarePlacementAudit : null),
+    gridlyAuditPerformanceReview: typeof gridlyAuditPerformanceReview === "function" ? gridlyAuditPerformanceReview : (typeof target?.gridlyAuditPerformanceReview === "function" ? target.gridlyAuditPerformanceReview : null),
     gridlyAuditHelperExposureAudit: typeof gridlyAuditHelperExposureAudit === "function" ? gridlyAuditHelperExposureAudit : (typeof target?.gridlyAuditHelperExposureAudit === "function" ? target.gridlyAuditHelperExposureAudit : null),
     gridlySupabaseHazardInventoryAudit: typeof target?.gridlySupabaseHazardInventoryAudit === "function" ? target.gridlySupabaseHazardInventoryAudit : null,
     gridlySupabaseHazardPurgeAudit: typeof target?.gridlySupabaseHazardPurgeAudit === "function" ? target.gridlySupabaseHazardPurgeAudit : null,
@@ -16451,7 +16453,8 @@ function gridlyTxdotFieldInventoryRow(config = {}, rawRows = [], normalizedRows 
   };
 }
 
-function gridlyTxdotDirectionalReadinessAudit() {
+function gridlyTxdotDirectionalReadinessAudit(options = {}) {
+  const includeConnectedAudits = gridlyShouldRunConnectedAuditSnapshots(options);
   const target = typeof window !== "undefined" ? window : globalThis;
   const txdotService = target?.gridlyTxdot || null;
   const rawRows = typeof txdotService?.getRawRoadConditions === "function"
@@ -16463,8 +16466,8 @@ function gridlyTxdotDirectionalReadinessAudit() {
   const unifiedRows = typeof getUnifiedIncidents === "function"
     ? gridlyFindTxdotRowsInCollection(getUnifiedIncidents())
     : [];
-  const sourceAudit = typeof gridlyTxDotSourceAudit === "function" ? gridlyTxDotSourceAudit() : null;
-  const directionalRoadAudit = typeof gridlyDirectionalRoadAudit === "function" ? gridlyDirectionalRoadAudit({ maxDistanceMeters: 75 }) : null;
+  const sourceAudit = includeConnectedAudits && typeof gridlyTxDotSourceAudit === "function" ? gridlyTxDotSourceAudit() : null;
+  const directionalRoadAudit = includeConnectedAudits && typeof gridlyDirectionalRoadAudit === "function" ? gridlyDirectionalRoadAudit({ maxDistanceMeters: 75, includeConnectedAudits: false }) : null;
   const rawObservedFields = Array.from(new Set(rawRows.flatMap((row) => row && typeof row === "object" ? Object.keys(row) : []))).sort();
   const normalizedObservedFields = Array.from(new Set(normalizedRows.flatMap((row) => row && typeof row === "object" ? Object.keys(row) : []))).sort();
   const unifiedObservedFields = Array.from(new Set(unifiedRows.flatMap((row) => row && typeof row === "object" ? Object.keys(row) : []))).sort();
@@ -16804,6 +16807,7 @@ function gridlyTxdotDirectionalReadinessAudit() {
         carriagewayAwareness: "None strong today; TxDOT could become strongest if full geometry plus carriageway/lane fields are retained",
         sideOfRoadConfidence: "Current local roadway same-name candidate distance gap is best available but still insufficient for high-confidence divided roads"
       },
+      linkedDirectionalRoadAuditSkippedByDefault: !includeConnectedAudits,
       linkedDirectionalRoadAudit: directionalRoadAudit ? {
         safeDirectionalLabelAnswer: directionalRoadAudit.safeDirectionalLabelAnswer,
         roadGeometryAvailable: directionalRoadAudit.roadGeometryAvailable,
@@ -16812,6 +16816,7 @@ function gridlyTxdotDirectionalReadinessAudit() {
       } : null
     },
     recommendations,
+    sourceAuditSkippedByDefault: !includeConnectedAudits,
     sourceAuditSummary: sourceAudit ? {
       txdotFetchConfigured: sourceAudit.txdotFetchConfigured,
       txdotLastFetchAttempt: sourceAudit.txdotLastFetchAttempt,
@@ -26671,6 +26676,7 @@ function gridlyDirectionalSampleIncidents(limit = 6) {
 }
 
 function gridlyDirectionalRoadAudit(options = {}) {
+  const includeConnectedAudits = gridlyShouldRunConnectedAuditSnapshots(options);
   const lastTapCoordinate = gridlyLatestDirectionalTapCoordinate(options);
   const localCandidates = gridlyBuildLocalDirectionalRoadCandidates(lastTapCoordinate, options);
   const osrmCandidates = gridlyNormalizeOsrmDirectionalCandidates(lastRoadSnapDebug?.nearestRoadCandidates || []);
@@ -26727,8 +26733,8 @@ function gridlyDirectionalRoadAudit(options = {}) {
       : `rejected_by_rank_distance_${candidate.distanceFromTapMeters ?? "unknown"}m`,
     bearingDifferenceFromSelected: index === 0 ? 0 : gridlyBearingDifferenceDegrees(selectedRoadCandidate?.bearing, candidate?.bearing)
   }));
-  const placementAuditSnapshot = typeof gridlyHazardPlacementAccuracyAudit === "function" ? gridlyHazardPlacementAccuracyAudit() : null;
-  const roadClusterAuditSnapshot = typeof gridlyBuildRoadClusterAudit === "function" ? gridlyBuildRoadClusterAudit({ sampleLimit: 4 }) : null;
+  const placementAuditSnapshot = includeConnectedAudits && typeof gridlyHazardPlacementAccuracyAudit === "function" ? gridlyHazardPlacementAccuracyAudit() : null;
+  const roadClusterAuditSnapshot = includeConnectedAudits && typeof gridlyBuildRoadClusterAudit === "function" ? gridlyBuildRoadClusterAudit({ sampleLimit: 4 }) : null;
   const audit = {
     auditVersion: "V206.10.4-directional-road-placement-bearing-audit",
     auditOnly: true,
@@ -26766,6 +26772,7 @@ function gridlyDirectionalRoadAudit(options = {}) {
     connectedAudits: {
       hazardPlacementAccuracyAuditAvailable: typeof gridlyHazardPlacementAccuracyAudit === "function",
       roadClusterAuditAvailable: typeof gridlyRoadClusterAudit === "function",
+      nestedSnapshotsSkippedByDefault: !includeConnectedAudits,
       placementCoordinate: placementAuditSnapshot?.finalPlacementCoordinate || placementAuditSnapshot?.renderedMarkerCoordinate || null,
       placementMode: placementAuditSnapshot?.placementMode || null,
       clusteringApplied: placementAuditSnapshot?.clusteringApplied ?? null,
@@ -26813,14 +26820,15 @@ function gridlyGeometryAwarePlacementSampleIncidents(limit = 8) {
 }
 
 function gridlyGeometryAwarePlacementAudit(options = {}) {
+  const includeConnectedAudits = gridlyShouldRunConnectedAuditSnapshots(options);
   const tapCoordinate = gridlyLatestDirectionalTapCoordinate(options);
   const geometryDecision = gridlyGeometryAwarePlacementDecision(tapCoordinate, { maxDistanceMeters: options.maxDistanceMeters || 75, limit: options.limit || 16 });
   const selectedSegment = geometryDecision.selectedSegment || lastRoadSnapDebug?.selectedRoadwaySegment || lastRoadSnapDebug?.geometryAwarePlacement?.selectedSegment || null;
   const selectedRoadName = selectedSegment?.roadName || lastRoadSnapDebug?.selectedRoadName || null;
-  const placementAuditSnapshot = typeof gridlyHazardPlacementAccuracyAudit === "function" ? gridlyHazardPlacementAccuracyAudit() : null;
-  const roadClusterAuditSnapshot = typeof gridlyBuildRoadClusterAudit === "function" ? gridlyBuildRoadClusterAudit({ sampleLimit: 4 }) : null;
-  const directionalAuditSnapshot = typeof gridlyDirectionalRoadAudit === "function" ? gridlyDirectionalRoadAudit({ maxDistanceMeters: options.maxDistanceMeters || 75 }) : null;
-  const geometryCapabilitySnapshot = typeof gridlyRoadwayGeometryCapabilityAudit === "function" ? gridlyRoadwayGeometryCapabilityAudit() : null;
+  const placementAuditSnapshot = includeConnectedAudits && typeof gridlyHazardPlacementAccuracyAudit === "function" ? gridlyHazardPlacementAccuracyAudit() : null;
+  const roadClusterAuditSnapshot = includeConnectedAudits && typeof gridlyBuildRoadClusterAudit === "function" ? gridlyBuildRoadClusterAudit({ sampleLimit: 4 }) : null;
+  const directionalAuditSnapshot = includeConnectedAudits && typeof gridlyDirectionalRoadAudit === "function" ? gridlyDirectionalRoadAudit({ maxDistanceMeters: options.maxDistanceMeters || 75, includeConnectedAudits: false }) : null;
+  const geometryCapabilitySnapshot = includeConnectedAudits && typeof gridlyRoadwayGeometryCapabilityAudit === "function" ? gridlyRoadwayGeometryCapabilityAudit() : null;
   const candidateCount = geometryDecision.candidateCount || 0;
   const selectedSegmentDistanceMeters = selectedSegment?.distanceFromTapMeters ?? lastRoadSnapDebug?.selectedSegmentDistanceMeters ?? null;
   const selectedSegmentBearing = selectedSegment?.bearing ?? lastRoadSnapDebug?.selectedSegmentBearing ?? null;
@@ -26865,6 +26873,7 @@ function gridlyGeometryAwarePlacementAudit(options = {}) {
       roadClusterAuditAvailable: typeof gridlyRoadClusterAudit === "function",
       directionalRoadAuditAvailable: typeof gridlyDirectionalRoadAudit === "function",
       roadwayGeometryCapabilityAuditAvailable: typeof gridlyRoadwayGeometryCapabilityAudit === "function",
+      nestedSnapshotsSkippedByDefault: !includeConnectedAudits,
       placementMode: placementAuditSnapshot?.placementMode || null,
       finalPlacementCoordinate: placementAuditSnapshot?.finalPlacementCoordinate || null,
       renderedMarkerCoordinate: placementAuditSnapshot?.renderedMarkerCoordinate || null,
@@ -27072,6 +27081,257 @@ if (typeof window !== "undefined") {
   window.gridlyHazardPlacementAccuracyAudit = gridlyHazardPlacementAccuracyAudit;
 }
 exposeGridlyAuditHelper("gridlyHazardPlacementAccuracyAudit", gridlyHazardPlacementAccuracyAudit);
+
+function gridlyShouldRunConnectedAuditSnapshots(options = {}) {
+  return Boolean(options?.includeConnectedAudits || options?.includeHeavyConnectedAudits || options?.nestedAuditSnapshots);
+}
+
+function gridlyRecentAuditPerformanceInventory() {
+  return [
+    {
+      helperName: "gridlyHazardPlacementAccuracyAudit",
+      classification: ["manual-only", "called indirectly by another audit when includeConnectedAudits is true"],
+      estimatedCost: "medium",
+      geometryScanCount: 0,
+      incidentScanCount: "activeHazards + getLiveHazardIncidents + getUnifiedIncidents, then up to 8 road samples",
+      domScanCount: "bounded marker lookup for latest road incident plus up to 8 road samples",
+      networkCalls: 0,
+      localStorageReads: 0,
+      supabaseReads: 0,
+      supabaseWrites: 0,
+      callsOtherAudits: [],
+      calledDuringNormalRuntime: false,
+      calledDuringRenderRefreshLoops: false,
+      calledDuringReportSubmit: false,
+      calledDuringMapMovement: false,
+      shouldBeLazy: true,
+      notes: "Reads current in-memory incident/marker diagnostics only when manually called. Nested callers now skip this snapshot unless explicitly requested."
+    },
+    {
+      helperName: "gridlyRoadClusterAudit",
+      classification: ["manual-only", "called indirectly by another audit through gridlyBuildRoadClusterAudit when includeConnectedAudits is true"],
+      estimatedCost: "medium",
+      geometryScanCount: 0,
+      incidentScanCount: "activeHazards + activeReports + unified/rendered diagnostic samples; sampleLimit defaults to 12",
+      domScanCount: 0,
+      networkCalls: 0,
+      localStorageReads: 0,
+      supabaseReads: 0,
+      supabaseWrites: 0,
+      callsOtherAudits: [],
+      calledDuringNormalRuntime: false,
+      calledDuringRenderRefreshLoops: false,
+      calledDuringReportSubmit: false,
+      calledDuringMapMovement: false,
+      shouldBeLazy: true,
+      notes: "Cluster inventory is bounded by sampleLimit for diagnostics but still touches active in-memory report collections."
+    },
+    {
+      helperName: "gridlyDirectionalRoadAudit",
+      classification: ["manual-only", "called indirectly by TxDOT/geometry audits only when includeConnectedAudits is true"],
+      estimatedCost: "high when local roadway geometry is loaded",
+      geometryScanCount: "one full roadwaySegmentFeatures pass near the latest tap; approximately 8,405 LineString features when loaded",
+      incidentScanCount: "bounded sample incidents plus optional nested snapshots only when requested",
+      domScanCount: 0,
+      networkCalls: 0,
+      localStorageReads: 0,
+      supabaseReads: 0,
+      supabaseWrites: 0,
+      callsOtherAudits: ["gridlyHazardPlacementAccuracyAudit", "gridlyBuildRoadClusterAudit"],
+      calledDuringNormalRuntime: false,
+      calledDuringRenderRefreshLoops: false,
+      calledDuringReportSubmit: false,
+      calledDuringMapMovement: false,
+      shouldBeLazy: true,
+      notes: "Nested placement/cluster snapshots are skipped by default to avoid compounding geometry and incident scans."
+    },
+    {
+      helperName: "gridlyTxdotDirectionalReadinessAudit",
+      classification: ["manual-only", "called indirectly by none in normal runtime"],
+      estimatedCost: "medium by default; high only when includeConnectedAudits is true",
+      geometryScanCount: "0 by default; optional nested directional audit performs one full local roadway scan",
+      incidentScanCount: "getUnifiedIncidents for current TxDOT rows; no Supabase reads",
+      domScanCount: 0,
+      networkCalls: 0,
+      localStorageReads: 0,
+      supabaseReads: 0,
+      supabaseWrites: 0,
+      callsOtherAudits: ["gridlyTxDotSourceAudit", "gridlyDirectionalRoadAudit"],
+      calledDuringNormalRuntime: false,
+      calledDuringRenderRefreshLoops: false,
+      calledDuringReportSubmit: false,
+      calledDuringMapMovement: false,
+      shouldBeLazy: true,
+      notes: "Reads cached TxDOT service arrays and never starts a TxDOT fetch. Connected source/directional snapshots are opt-in."
+    },
+    {
+      helperName: "gridlyRoadwayGeometryCapabilityAudit",
+      classification: ["manual-only"],
+      estimatedCost: "high",
+      geometryScanCount: "multiple full loaded roadway feature passes, including field discovery, corridor filters, bearing samples, and parallel-candidate search",
+      incidentScanCount: "cached TxDOT rows only; no active report scan required",
+      domScanCount: 0,
+      networkCalls: 0,
+      localStorageReads: 0,
+      supabaseReads: 0,
+      supabaseWrites: 0,
+      callsOtherAudits: [],
+      calledDuringNormalRuntime: false,
+      calledDuringRenderRefreshLoops: false,
+      calledDuringReportSubmit: false,
+      calledDuringMapMovement: false,
+      shouldBeLazy: true,
+      notes: "This is intentionally manual-only because it can walk all 8,405 roadway features several times."
+    },
+    {
+      helperName: "gridlyGeometryAwarePlacementAudit",
+      classification: ["manual-only", "called indirectly by none in normal runtime"],
+      estimatedCost: "high when local roadway geometry is loaded",
+      geometryScanCount: "one full roadwaySegmentFeatures pass for nearest segment decision; optional nested capability/directional audits add more full scans when requested",
+      incidentScanCount: "bounded sample incidents plus optional nested snapshots only when requested",
+      domScanCount: 0,
+      networkCalls: 0,
+      localStorageReads: 0,
+      supabaseReads: 0,
+      supabaseWrites: 0,
+      callsOtherAudits: ["gridlyHazardPlacementAccuracyAudit", "gridlyBuildRoadClusterAudit", "gridlyDirectionalRoadAudit", "gridlyRoadwayGeometryCapabilityAudit"],
+      calledDuringNormalRuntime: false,
+      calledDuringRenderRefreshLoops: false,
+      calledDuringReportSubmit: false,
+      calledDuringMapMovement: false,
+      shouldBeLazy: true,
+      notes: "Nested audit snapshots are skipped by default; pass includeConnectedAudits: true for the old connected snapshot bundle."
+    },
+    {
+      helperName: "gridlyGeometryAwarePlacementDecision",
+      classification: ["called during report submit", "not exposed as a manual audit helper"],
+      estimatedCost: "high but one-shot during road hazard submission only",
+      geometryScanCount: "one full pass across loaded roadwaySegmentFeatures with a bounded-radius filter when road geometry exists",
+      incidentScanCount: 0,
+      domScanCount: 0,
+      networkCalls: 0,
+      localStorageReads: 0,
+      supabaseReads: 0,
+      supabaseWrites: 0,
+      callsOtherAudits: [],
+      calledDuringNormalRuntime: false,
+      calledDuringRenderRefreshLoops: false,
+      calledDuringReportSubmit: true,
+      calledDuringMapMovement: false,
+      shouldBeLazy: false,
+      notes: "This is placement logic, not an audit. It runs after OSRM nearest returns during actual road hazard submit and does not run during marker render or map movement."
+    }
+  ];
+}
+
+function gridlyAuditPerformanceReview() {
+  const target = typeof window !== "undefined" ? window : globalThis;
+  const recentAuditHelpers = gridlyRecentAuditPerformanceInventory();
+  const helperNames = recentAuditHelpers.map((entry) => entry.helperName);
+  const manualOnlyHelpers = recentAuditHelpers
+    .filter((entry) => Array.isArray(entry.classification) && entry.classification.includes("manual-only") && !entry.calledDuringReportSubmit)
+    .map((entry) => entry.helperName);
+  const runtimeCalledHelpers = recentAuditHelpers
+    .filter((entry) => entry.calledDuringNormalRuntime || entry.calledDuringRenderRefreshLoops || entry.calledDuringReportSubmit || entry.calledDuringMapMovement)
+    .map((entry) => ({
+      helperName: entry.helperName,
+      duringReportSubmit: Boolean(entry.calledDuringReportSubmit),
+      duringRenderRefreshLoops: Boolean(entry.calledDuringRenderRefreshLoops),
+      duringMapMovement: Boolean(entry.calledDuringMapMovement),
+      note: entry.notes
+    }));
+  const nestedAuditCalls = recentAuditHelpers
+    .filter((entry) => Array.isArray(entry.callsOtherAudits) && entry.callsOtherAudits.length)
+    .map((entry) => ({
+      helperName: entry.helperName,
+      callsOtherAudits: entry.callsOtherAudits,
+      defaultBehavior: "skipped unless includeConnectedAudits/includeHeavyConnectedAudits/nestedAuditSnapshots is true"
+    }));
+  const loadedRoadwayFeatureCount = Array.isArray(roadwaySegmentFeatures) ? roadwaySegmentFeatures.length : 0;
+  const loadedIncidentCounts = {
+    activeHazards: Array.isArray(activeHazards) ? activeHazards.length : 0,
+    activeReports: Array.isArray(activeReports) ? activeReports.length : 0,
+    roadwaySegmentFeatures: loadedRoadwayFeatureCount,
+    roadwayDatasetLoaded: Boolean(roadwayDatasetLoaded)
+  };
+  const heavyGeometryScans = recentAuditHelpers
+    .filter((entry) => String(entry.geometryScanCount).toLowerCase().includes("full") || entry.estimatedCost === "high" || String(entry.estimatedCost).includes("high"))
+    .map((entry) => ({
+      helperName: entry.helperName,
+      geometryScanCount: entry.geometryScanCount,
+      estimatedCost: entry.estimatedCost,
+      runsAutomatically: Boolean(entry.calledDuringNormalRuntime || entry.calledDuringRenderRefreshLoops || entry.calledDuringMapMovement),
+      runsOnSubmit: Boolean(entry.calledDuringReportSubmit)
+    }));
+  const renderLoopRisks = {
+    riskLevel: "low",
+    auditHelpersInRenderLoop: recentAuditHelpers.filter((entry) => entry.calledDuringRenderRefreshLoops).map((entry) => entry.helperName),
+    finding: "No recent audit helper is called from marker render or refresh loops. Marker diagnostics reuse stored render metadata and are inspected only by manual audits."
+  };
+  const reportSubmitRisks = {
+    riskLevel: roadwayDatasetLoaded ? "medium" : "low",
+    runtimeCalls: runtimeCalledHelpers.filter((entry) => entry.duringReportSubmit).map((entry) => entry.helperName),
+    finding: "No audit helper runs on submit. The non-audit gridlyGeometryAwarePlacementDecision can scan local roadway geometry once during a road hazard submit after OSRM nearest succeeds."
+  };
+  const startupRisks = {
+    riskLevel: "low",
+    auditHelpersOnStartup: [],
+    finding: "Audit helpers are exposed on window at startup, but exposing function references does not execute their diagnostic bodies."
+  };
+  const txdotNetworkRisk = {
+    riskLevel: "low",
+    fetchesStartedByTxdotDirectionalReadinessAudit: false,
+    finding: "gridlyTxdotDirectionalReadinessAudit reads cached TxDOT arrays and getUnifiedIncidents; it does not call fetch or change the TxDOT startup fetch path."
+  };
+  const markerRenderDiagnosticCost = {
+    riskLevel: "low",
+    perMarkerAuditWorkAdded: false,
+    finding: "Recent audit helpers do not add geometry, incident, DOM, network, localStorage, or Supabase work per marker render. Manual placement audits may inspect a bounded set of existing rendered marker diagnostics."
+  };
+  const recommendations = [
+    "Keep roadway geometry capability and geometry-aware placement audits manual-only; they are the most expensive because they can scan all loaded LineString features.",
+    "Use includeConnectedAudits: true only for deliberate deep investigations; default manual audit calls avoid nested heavy snapshots.",
+    "Before beta, consider a lightweight roadway spatial index for the report-submit placement decision if field testing shows submit latency on lower-end devices.",
+    "Do not attach audit helpers to map move, filter, render, Alerts, History, Route Watch, or startup fetch flows.",
+    "Keep TxDOT readiness audits cache-only and avoid diagnostic fetches inside audits."
+  ];
+  const audit = {
+    auditVersion: "V206.13.1-audit-weight-runtime-performance-review",
+    auditOnly: true,
+    destructiveActionsTaken: false,
+    recentAuditHelpers,
+    manualOnlyHelpers,
+    runtimeCalledHelpers,
+    nestedAuditCalls,
+    heavyGeometryScans,
+    renderLoopRisks,
+    reportSubmitRisks,
+    startupRisks,
+    txdotNetworkRisk,
+    markerRenderDiagnosticCost,
+    loadedIncidentCounts,
+    estimatedPerformanceRisk: {
+      overall: roadwayDatasetLoaded ? "low_to_medium" : "low",
+      answer: "Audits are not slowing normal app use because recent audit helpers are manual-only by default. The main runtime weight is the non-audit geometry-aware placement decision during actual road hazard submit.",
+      expensiveAudits: heavyGeometryScans.map((entry) => entry.helperName),
+      lazyAuditCalls: recentAuditHelpers.filter((entry) => entry.shouldBeLazy).map((entry) => entry.helperName)
+    },
+    recommendations,
+    protectedSystemsChanged: false,
+    exposedHelperTypes: helperNames.reduce((memo, helperName) => {
+      memo[helperName] = typeof target?.[helperName];
+      return memo;
+    }, {})
+  };
+  target.gridlyLastAuditPerformanceReview = audit;
+  return audit;
+}
+
+if (typeof window !== "undefined") {
+  window.gridlyAuditPerformanceReview = gridlyAuditPerformanceReview;
+  window.gridlyLastAuditPerformanceReview = window.gridlyLastAuditPerformanceReview || null;
+}
+exposeGridlyAuditHelper("gridlyAuditPerformanceReview", gridlyAuditPerformanceReview);
 
 
 function getUnifiedIncidents() {
