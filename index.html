@@ -800,41 +800,80 @@
         <span data-gridly-welcome-dot="2"></span>
         <span data-gridly-welcome-dot="3"></span>
         <span data-gridly-welcome-dot="4"></span>
+        <span data-gridly-welcome-dot="5"></span>
       </div>
 
       <div class="gridly-welcome-steps" id="gridlyWelcomeSteps">
         <article class="gridly-welcome-step" data-gridly-welcome-step="0">
           <p class="eyebrow">Welcome</p>
           <h2 id="gridlyWelcomeTitle">Welcome to Gridly</h2>
-          <p class="gridly-welcome-tagline">Know before you go.</p>
-          <p id="gridlyWelcomeCopy">Gridly watches nearby crossings, road hazards, and route delays so you can make better decisions before you leave.</p>
+          <div class="gridly-welcome-hero-copy" id="gridlyWelcomeCopy">
+            <p class="gridly-welcome-tagline">Know before you go.</p>
+            <p class="gridly-welcome-tagline">Help others do the same.</p>
+          </div>
+          <p>Gridly watches crossings, road hazards, and route delays so you can make better decisions before you leave.</p>
         </article>
         <article class="gridly-welcome-step" data-gridly-welcome-step="1" hidden>
-          <p class="eyebrow">Daily routes</p>
-          <h2>Set your places</h2>
-          <p>Add Home and Work so Gridly can watch your daily route. You can skip this now and add them later.</p>
+          <p class="eyebrow">Community purpose</p>
+          <h2>Why Gridly Matters</h2>
+          <div class="gridly-welcome-impact-list" aria-label="Examples Gridly can help with">
+            <span>A flooded road.</span>
+            <span>A blocked crossing.</span>
+            <span>A disabled vehicle.</span>
+          </div>
+          <p>Knowing before you leave can save time, fuel, money, and frustration.</p>
+          <p>Small pieces of information can make a big difference.</p>
+        </article>
+        <article class="gridly-welcome-step" data-gridly-welcome-step="2" hidden>
+          <p class="eyebrow">Personalize</p>
+          <h2>Choose Your Home Town</h2>
+          <p>Your town helps Gridly personalize My Town, Nearby, Community Intelligence, and Local Alerts. This is separate from Route Watch and will not overwrite Home or Work.</p>
+          <div class="gridly-welcome-town-grid" role="group" aria-label="Choose your home town">
+            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Dayton">Dayton</button>
+            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Liberty">Liberty</button>
+            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Cleveland">Cleveland</button>
+            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Ames">Ames</button>
+            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Other">Other</button>
+          </div>
+          <p class="gridly-welcome-status" id="gridlyWelcomeTownStatus" aria-live="polite"></p>
+        </article>
+        <article class="gridly-welcome-step" data-gridly-welcome-step="3" hidden>
+          <p class="eyebrow">Daily route</p>
+          <h2>Set Your Daily Route</h2>
+          <p>We'll watch your route and help you stay aware of delays, crossings, and hazards along the way.</p>
+          <div class="gridly-welcome-route-stack" aria-label="Daily route from Home to Work">
+            <span>Home</span>
+            <strong aria-hidden="true">↓</strong>
+            <span>Work</span>
+          </div>
           <div class="gridly-welcome-action-row">
             <button class="secondary-btn" type="button" id="gridlyWelcomeSetHomeBtn">Set Home</button>
             <button class="secondary-btn" type="button" id="gridlyWelcomeSetWorkBtn">Set Work</button>
           </div>
         </article>
-        <article class="gridly-welcome-step" data-gridly-welcome-step="2" hidden>
-          <p class="eyebrow">Preferences</p>
-          <h2>Choose your alerts</h2>
-          <p>Pick which alerts matter most: rail crossings, road hazards, route delays, and community activity.</p>
-          <button class="secondary-btn" type="button" id="gridlyWelcomeOpenSettingsBtn">Open Settings</button>
-        </article>
-        <article class="gridly-welcome-step" data-gridly-welcome-step="3" hidden>
-          <p class="eyebrow">Nearby awareness</p>
-          <h2>Enable location</h2>
-          <p>Location helps Gridly show nearby reports and route impacts. Gridly will only ask when you choose to enable it.</p>
-          <button class="primary-btn" type="button" id="gridlyWelcomeEnableLocationBtn">Enable Location</button>
-          <p class="gridly-welcome-status" id="gridlyWelcomeLocationStatus" aria-live="polite"></p>
-        </article>
         <article class="gridly-welcome-step" data-gridly-welcome-step="4" hidden>
           <p class="eyebrow">Community reports</p>
-          <h2>Report what you see</h2>
-          <p>Drivers can quickly report blocked crossings, road hazards, and cleared conditions to help the whole county move better.</p>
+          <h2>Community Powered Awareness</h2>
+          <p>Drivers report what they see.</p>
+          <p>Other drivers benefit.</p>
+          <p>Every report helps someone else make a better decision.</p>
+          <div class="gridly-welcome-pill-row" aria-label="Report types">
+            <span>crossings</span>
+            <span>hazards</span>
+            <span>cleared conditions</span>
+          </div>
+        </article>
+        <article class="gridly-welcome-step" data-gridly-welcome-step="5" hidden>
+          <p class="eyebrow">Ready</p>
+          <h2>You're Part of the Network</h2>
+          <p class="gridly-welcome-watching-label">Watching:</p>
+          <ul class="gridly-welcome-checklist">
+            <li>✓ Your Town</li>
+            <li>✓ Your Routes</li>
+            <li>✓ Community Reports</li>
+            <li>✓ Local Alerts</li>
+          </ul>
+          <p class="gridly-welcome-final-note">Every report helps someone else know before they go.</p>
         </article>
       </div>
 
