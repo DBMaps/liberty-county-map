@@ -12195,17 +12195,177 @@ function invokeMobileAlertsEntry(sourceLabel, event) {
   }
 }
 
-function openSettingsSurfaceFromDock() {
-  const v2SettingsBtn = document.querySelector('#gridlyPortraitV2 [data-v2-sheet="settings"]');
-  if (v2SettingsBtn && typeof openPortraitV2Sheet === 'function') {
-    openPortraitV2Sheet('settings');
-    return true;
+const gridlySettingsDockTapTrace = {
+  lastPointerdown: null,
+  lastClick: null,
+  settingsDockHandlerRuns: 0,
+  openSettingsSurfaceFromDockRuns: 0,
+  openPortraitV2SheetSettingsRuns: 0,
+  forcedDockOwnershipOpens: 0,
+  lastOpenResult: null
+};
+
+function describeGridlyTapElement(el) {
+  if (!el || !(el instanceof Element)) return null;
+  const classes = typeof el.className === "string" ? el.className.trim() : "";
+  const dataset = {};
+  Object.entries(el.dataset || {}).forEach(([key, value]) => { dataset[key] = value; });
+  return {
+    tag: el.tagName?.toLowerCase?.() || "",
+    id: el.id || "",
+    className: classes,
+    text: (el.textContent || "").trim().replace(/\s+/g, " ").slice(0, 80),
+    dataset
+  };
+}
+
+function getGridlySettingsDockButton() {
+  return document.querySelector('#gridlyPortraitV2 .gridly-v2-bottom-dock [data-v2-sheet="settings"]')
+    || document.querySelector('#gridlyPortraitV2 [data-v2-sheet="settings"]')
+    || document.querySelector('.gridly-v2-bottom-dock [data-v2-sheet="settings"]');
+}
+
+function getGridlyTapLayerSnapshot(point = null) {
+  const readLayer = (selector) => {
+    const el = document.querySelector(selector);
+    if (!el) return { selector, found: false };
+    const style = getComputedStyle(el);
+    const rect = el.getBoundingClientRect();
+    return {
+      selector,
+      found: true,
+      zIndex: style.zIndex,
+      pointerEvents: style.pointerEvents,
+      display: style.display,
+      visibility: style.visibility,
+      opacity: style.opacity,
+      hidden: Boolean(el.hidden),
+      rect: { left: Math.round(rect.left), top: Math.round(rect.top), right: Math.round(rect.right), bottom: Math.round(rect.bottom), width: Math.round(rect.width), height: Math.round(rect.height) }
+    };
+  };
+  const settingsButton = getGridlySettingsDockButton();
+  const settingsRect = settingsButton?.getBoundingClientRect?.();
+  const center = settingsRect ? { x: Math.round(settingsRect.left + settingsRect.width / 2), y: Math.round(settingsRect.top + settingsRect.height / 2) } : null;
+  const elementAtSettingsCenter = center ? document.elementFromPoint(center.x, center.y) : null;
+  const elementAtPoint = point && Number.isFinite(point.x) && Number.isFinite(point.y) ? document.elementFromPoint(point.x, point.y) : null;
+  return {
+    settingsButton: describeGridlyTapElement(settingsButton),
+    settingsButtonRect: settingsRect ? { left: Math.round(settingsRect.left), top: Math.round(settingsRect.top), right: Math.round(settingsRect.right), bottom: Math.round(settingsRect.bottom), width: Math.round(settingsRect.width), height: Math.round(settingsRect.height) } : null,
+    settingsButtonCenter: center,
+    elementFromPointAtSettingsCenter: describeGridlyTapElement(elementAtSettingsCenter),
+    elementFromPointAtEventPoint: describeGridlyTapElement(elementAtPoint),
+    layers: {
+      bottomDock: readLayer('#gridlyPortraitV2 .gridly-v2-bottom-dock'),
+      backdrop: readLayer('#gridlyPortraitV2SheetBackdrop'),
+      portraitV2Sheet: readLayer('#gridlyPortraitV2Sheet'),
+      routeWatchFilterLayer: readLayer('#gridlyPortraitV2 .gridly-v2-segments'),
+      legacyRouteWatchFilterLayer: readLayer('.map-tools-overlay'),
+      mobileMapFloatingChips: readLayer('.mobile-map-floating-chips'),
+      mapContainer: readLayer('#map')
+    }
+  };
+}
+
+function gridlyVisibleSettingsSurfaceProduced() {
+  const isVisible = (el) => {
+    if (!el || el.hidden) return false;
+    const style = getComputedStyle(el);
+    const rect = el.getBoundingClientRect();
+    return style.display !== "none" && style.visibility !== "hidden" && style.opacity !== "0" && rect.width > 0 && rect.height > 0;
+  };
+  const sheet = document.getElementById("gridlyPortraitV2Sheet");
+  return Boolean((sheet?.dataset?.activeSheet === "settings" && isVisible(sheet)) || isVisible(document.getElementById("settingsModal")));
+}
+
+function recordGridlySettingsDockTapEvent(event, phase, extra = {}) {
+  const target = event?.target instanceof Element ? event.target : null;
+  const closestDockButton = target?.closest?.('.gridly-v2-bottom-dock button, .gridly-bottom-dock button, .tactical-dock button, .mobile-floating-action-dock button, [data-v2-sheet]') || null;
+  const point = { x: Math.round(Number(event?.clientX ?? NaN)), y: Math.round(Number(event?.clientY ?? NaN)) };
+  const trace = {
+    phase,
+    at: Date.now(),
+    eventType: event?.type || "",
+    point,
+    actualElementReceivingEvent: describeGridlyTapElement(target),
+    closestDockButton: describeGridlyTapElement(closestDockButton),
+    closestDockAction: closestDockButton?.dataset?.v2Sheet || closestDockButton?.dataset?.action || closestDockButton?.dataset?.mode || closestDockButton?.dataset?.sectionJump || null,
+    ...getGridlyTapLayerSnapshot(point),
+    settingsDockHandlerRuns: gridlySettingsDockTapTrace.settingsDockHandlerRuns,
+    openSettingsSurfaceFromDockRuns: gridlySettingsDockTapTrace.openSettingsSurfaceFromDockRuns,
+    openPortraitV2SheetSettingsRuns: gridlySettingsDockTapTrace.openPortraitV2SheetSettingsRuns,
+    visibleSettingsSurfaceProduced: gridlyVisibleSettingsSurfaceProduced(),
+    ...extra
+  };
+  if (phase === "pointerdown") gridlySettingsDockTapTrace.lastPointerdown = trace;
+  if (phase === "click") gridlySettingsDockTapTrace.lastClick = trace;
+  return trace;
+}
+
+function openSettingsSurfaceFromDock(source = "dock") {
+  gridlySettingsDockTapTrace.openSettingsSurfaceFromDockRuns += 1;
+  const v2SettingsBtn = getGridlySettingsDockButton();
+  const openV2Sheet = window.openPortraitV2Sheet || window.openGridlyPortraitV2Sheet;
+  if (v2SettingsBtn && typeof openV2Sheet === 'function') {
+    gridlySettingsDockTapTrace.openPortraitV2SheetSettingsRuns += 1;
+    const opened = Boolean(openV2Sheet('settings'));
+    const visible = gridlyVisibleSettingsSurfaceProduced();
+    gridlySettingsDockTapTrace.lastOpenResult = { source, opened, visible, target: 'portrait_v2_settings', at: Date.now() };
+    return opened && visible;
   }
   if (typeof openGridlySurface === 'function') {
     openGridlySurface('settings', () => openSettingsModal?.());
-    return true;
+    const visible = gridlyVisibleSettingsSurfaceProduced();
+    gridlySettingsDockTapTrace.lastOpenResult = { source, opened: true, visible, target: 'legacy_settings', at: Date.now() };
+    return visible;
   }
+  gridlySettingsDockTapTrace.lastOpenResult = { source, opened: false, visible: false, target: 'missing_handler', at: Date.now() };
   return false;
+}
+
+function bindGridlySettingsDockTapDiagnostics() {
+  if (document.documentElement?.dataset?.gridlySettingsDockTapDiagnosticsBound === "true") return;
+  document.documentElement.dataset.gridlySettingsDockTapDiagnosticsBound = "true";
+  document.addEventListener("pointerdown", (event) => {
+    const target = event.target instanceof Element ? event.target : null;
+    const settingsButton = getGridlySettingsDockButton();
+    const isSettingsPath = Boolean(target?.closest?.('#gridlyPortraitV2 .gridly-v2-bottom-dock [data-v2-sheet="settings"]'));
+    if (!settingsButton && !isSettingsPath) return;
+    recordGridlySettingsDockTapEvent(event, "pointerdown", { settingsPathMatched: isSettingsPath });
+  }, true);
+  document.addEventListener("click", (event) => {
+    const target = event.target instanceof Element ? event.target : null;
+    const settingsButton = getGridlySettingsDockButton();
+    if (!settingsButton) return;
+    const rect = settingsButton.getBoundingClientRect();
+    const x = Number(event.clientX);
+    const y = Number(event.clientY);
+    const pointInsideSettingsButton = Number.isFinite(x) && Number.isFinite(y) && x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+    const isSettingsPath = Boolean(target?.closest?.('#gridlyPortraitV2 .gridly-v2-bottom-dock [data-v2-sheet="settings"]'));
+    if (!pointInsideSettingsButton && !isSettingsPath) return;
+    gridlySettingsDockTapTrace.settingsDockHandlerRuns += 1;
+    const trace = recordGridlySettingsDockTapEvent(event, "click", { pointInsideSettingsButton, settingsPathMatched: isSettingsPath });
+    if (!isSettingsPath || trace.closestDockAction !== "settings" || !gridlyVisibleSettingsSurfaceProduced()) {
+      event.preventDefault();
+      event.stopPropagation();
+      gridlySettingsDockTapTrace.forcedDockOwnershipOpens += 1;
+      openSettingsSurfaceFromDock("settings_dock_click_path_guard");
+      recordGridlySettingsDockTapEvent(event, "click", { pointInsideSettingsButton, settingsPathMatched: isSettingsPath, guardOpenedSettings: true });
+    }
+  }, true);
+  window.gridlySettingsDockTapDiagnostic = function gridlySettingsDockTapDiagnostic() {
+    return {
+      ...getGridlyTapLayerSnapshot(),
+      lastPointerdown: gridlySettingsDockTapTrace.lastPointerdown,
+      lastClick: gridlySettingsDockTapTrace.lastClick,
+      settingsDockHandlerRuns: gridlySettingsDockTapTrace.settingsDockHandlerRuns,
+      openSettingsSurfaceFromDockRuns: gridlySettingsDockTapTrace.openSettingsSurfaceFromDockRuns,
+      openPortraitV2SheetSettingsRuns: gridlySettingsDockTapTrace.openPortraitV2SheetSettingsRuns,
+      forcedDockOwnershipOpens: gridlySettingsDockTapTrace.forcedDockOwnershipOpens,
+      lastOpenResult: gridlySettingsDockTapTrace.lastOpenResult,
+      visibleSettingsSurfaceProduced: gridlyVisibleSettingsSurfaceProduced()
+    };
+  };
+  window.gridlyLastSettingsDockTapTrace = gridlySettingsDockTapTrace;
 }
 
 function hardenBottomDockInteractivity() {
@@ -12269,7 +12429,11 @@ function bindBottomDockRealButtons() {
       if (intent === 'report') return invokeMobileReportEntry?.('bottom_dock_runtime_bind', event);
       if (intent === 'route') return openGridlyRouteDock('bottom_dock_runtime_bind');
       if (intent === 'alerts') return openAlertsSurfaceFromDock();
-      if (intent === 'settings') return openSettingsSurfaceFromDock();
+      if (intent === 'settings') {
+        gridlySettingsDockTapTrace.settingsDockHandlerRuns += 1;
+        recordGridlySettingsDockTapEvent(event, 'click', { runtimeBoundHandler: true });
+        return openSettingsSurfaceFromDock('bottom_dock_runtime_bind');
+      }
       if (intent === 'layers') return openGridlyPortraitV2Sheet?.('layers') || openPortraitLayersSurface?.();
     }, true);
     button.dataset.gridlyDockBound = 'true';
@@ -44988,6 +45152,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
   function bindV2(){
     activateGridlyPortraitV2StartupOwner("bindV2");
+    bindGridlySettingsDockTapDiagnostics();
     applyPortraitV2SurfaceContainment();
     window.addEventListener("resize", () => {
       activateGridlyPortraitV2StartupOwner("resize");
@@ -44997,7 +45162,13 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       activateGridlyPortraitV2StartupOwner("orientationchange");
       applyPortraitV2SurfaceContainment();
     });
-    document.querySelectorAll("[data-v2-sheet]").forEach((b)=>b.addEventListener("click",()=>openPortraitV2Sheet(b.dataset.v2Sheet)));
+    document.querySelectorAll("[data-v2-sheet]").forEach((b)=>b.addEventListener("click",(event)=>{
+      if (b.dataset.v2Sheet === "settings") {
+        gridlySettingsDockTapTrace.settingsDockHandlerRuns += 1;
+        recordGridlySettingsDockTapEvent(event, "click", { directV2SheetHandler: true });
+      }
+      openPortraitV2Sheet(b.dataset.v2Sheet);
+    }));
     document.getElementById("gridlyPortraitV2SheetClose")?.addEventListener("click",closePortraitV2Sheet);
     document.getElementById("gridlyPortraitV2SheetBackdrop")?.addEventListener("click",closePortraitV2Sheet);
     document.querySelectorAll(".gridly-v2-segments button").forEach((b)=>b.addEventListener("click",()=>{document.querySelectorAll(".gridly-v2-segments button").forEach(x=>x.classList.remove("is-active"));b.classList.add("is-active");const gf=b.dataset.geoFilter;document.querySelector(`.geo-filter-pill[data-geo-filter='${gf}']`)?.click();}));
