@@ -26049,7 +26049,7 @@ function gridlyClassifyPlacementSource({ tapCoordinate, projectionCoordinate, sn
   if (projectionCoordinate && gridlyCoordinatesWithinMeters(finalPlacementCoordinate, projectionCoordinate)) return "projected_point";
   if (snappedCoordinate && gridlyCoordinatesWithinMeters(finalPlacementCoordinate, snappedCoordinate)) return "snapped_point";
   if (tapCoordinate && gridlyCoordinatesWithinMeters(finalPlacementCoordinate, tapCoordinate)) return "raw_tap";
-  if (["raw_tap", "tap_preserved_near_road", "snap_rejected_divided_road_risk", "snap_rejected_too_far", "raw_tap_no_candidate", "raw_tap_projection_missing", "raw_tap_snap_too_far", "raw_tap_divided_road_ambiguous"].includes(placementMode)) return "raw_tap";
+  if (["raw_tap", "raw_tap_preserved_user_intent", "tap_preserved_near_road", "snap_rejected_divided_road_risk", "snap_rejected_too_far", "raw_tap_no_candidate", "raw_tap_projection_missing", "raw_tap_snap_too_far", "raw_tap_divided_road_ambiguous"].includes(placementMode)) return "raw_tap";
   if (placementMode === "projected_point_used") return "projected_point";
   if (placementMode === "road_snapped") return projectionCoordinate ? "projected_point" : "snapped_point";
   return "unknown";
@@ -28786,6 +28786,12 @@ async function handleHazardPlacementMapClick(event) {
   lastMobileReportSubmitDebug.snapToFinalDeltaMeters = snapped.snapToFinalDeltaMeters ?? null;
   lastMobileReportSubmitDebug.roadCandidateCount = snapped.roadCandidateCount ?? null;
   lastMobileReportSubmitDebug.nearestCandidateDistanceMeters = snapped.nearestCandidateDistanceMeters ?? null;
+  lastMobileReportSubmitDebug.projectionCoordinate = snapped.projectionCoordinate || null;
+  lastMobileReportSubmitDebug.selectedRoadName = snapped.selectedRoadName || null;
+  lastMobileReportSubmitDebug.selectedSegmentDistanceMeters = snapped.selectedSegmentDistanceMeters ?? null;
+  lastMobileReportSubmitDebug.recommendedDirection = snapped.recommendedDirection || null;
+  lastMobileReportSubmitDebug.selectedSideConfidence = snapped.selectedSideConfidence || "low";
+  lastMobileReportSubmitDebug.geometryAwarePlacementAvailable = Boolean(snapped.geometryAwarePlacementAvailable);
   lastMobileReportSubmitDebug.placementCoordinateReason = snapped.representativeCoordinateReason || "Road-aware placement selected the final hazard marker coordinate from the raw tap and nearest road candidate.";
   lastMobileReportSubmitDebug.lastSubmitAttempt = "snap_completed";
   pushTapMapTrace("submit_started", { hazardType: selectedType, coordinateSourceUsed: lastMobileReportSubmitDebug.coordinateSourceUsed });
@@ -28810,7 +28816,6 @@ async function handleHazardPlacementMapClick(event) {
     L.circleMarker([finalPlacement.lat, finalPlacement.lng], { radius: 4, color: "#8fb6ff", weight: 1, fillOpacity: 0.3, opacity: 0.8 })
       .addTo(unifiedIncidentLayer)
       .bindTooltip("Tap", { permanent: false, direction: "top" });
-    map.flyTo([finalPlacement.lat, finalPlacement.lng], Math.max(map.getZoom(), 15), { duration: 0.35 });
   }
   setConfirmation("Hazard placed at the intended roadway location", "success");
   resetQuickHazardReportState();
@@ -28886,12 +28891,19 @@ function gridlyBuildRoadAwareHazardPlacement(rawCoordinate, snappedCoordinate, o
     return entry.passed;
   };
 
+  const placementSource = String(options.source || options.placementSource || "").trim();
+  const preserveTapMapUserIntent = placementSource === "tap_map";
+
   let finalCoordinate = rawFallback;
-  let placementMode = "raw_tap_no_candidate";
+  let placementMode = preserveTapMapUserIntent ? "raw_tap_preserved_user_intent" : "raw_tap_no_candidate";
   let placementRiskLevel = "medium";
-  let representativeCoordinateReason = "No usable roadway candidate was available, so Gridly preserved the original tap coordinate.";
-  let finalDecisionOwner = "gridlyBuildRoadAwareHazardPlacement:default_raw_fallback";
-  let rejectionReason = null;
+  let representativeCoordinateReason = preserveTapMapUserIntent
+    ? "Tap Map placement preserves the user's raw tap coordinate; roadway projection is retained only as diagnostic context."
+    : "No usable roadway candidate was available, so Gridly preserved the original tap coordinate.";
+  let finalDecisionOwner = preserveTapMapUserIntent
+    ? "gridlyBuildRoadAwareHazardPlacement:raw_tap_preserved_user_intent"
+    : "gridlyBuildRoadAwareHazardPlacement:default_raw_fallback";
+  let rejectionReason = preserveTapMapUserIntent ? "tap_map_user_intent_preserved" : null;
 
   const hasSelectedRoadwaySegment = recordDecisionRule("selected_roadway_segment_exists", Boolean(selectedSegment), {
     reason: selectedSegment ? "local roadway dataset selected a segment for this tap" : "no selected roadway segment is available"
@@ -28944,7 +28956,9 @@ function gridlyBuildRoadAwareHazardPlacement(rawCoordinate, snappedCoordinate, o
       : "divided-road ambiguity rejection did not apply"
   });
 
-  if (!hasSelectedRoadwaySegment) {
+  if (preserveTapMapUserIntent) {
+    finalCoordinate = raw || rawFallback;
+  } else if (!hasSelectedRoadwaySegment) {
     finalCoordinate = rawFallback;
     placementMode = "raw_tap_no_candidate";
     placementRiskLevel = "high";
@@ -29021,9 +29035,13 @@ function gridlyBuildRoadAwareHazardPlacement(rawCoordinate, snappedCoordinate, o
     rawTapCoordinate: raw,
     snappedRoadCoordinate: snapped,
     projectedRoadCoordinate: projected,
+    projectionCoordinate: projected,
     selectedRoadwaySegment: selectedSegment,
     selectedRoadName: selectedRoadName || null,
     selectedSideConfidence,
+    selectedSegmentDistanceMeters: selectedSegment?.distanceFromTapMeters ?? null,
+    recommendedDirection: options.recommendedDirection || options.geometryAwarePlacement?.recommendedDirection || geometryDecision?.recommendedDirection || null,
+    geometryAwarePlacementAvailable: Boolean(selectedSegment),
     finalPlacementCoordinate: finalCoordinate,
     renderedMarkerCoordinate: finalCoordinate,
     tapToSnapDeltaMeters: gridlyCoordinateDeltaMeters(raw, snapped),
@@ -29133,7 +29151,14 @@ async function snapHazardToRoad(lat, lng, options = {}) {
         {
           nearestCandidateDistanceMeters: Number.isFinite(geometryNearestDistanceMeters) ? geometryNearestDistanceMeters : snapDistanceMeters,
           roadCandidateCount: geometryAwareSelection?.candidateCount || candidates.length,
-          candidateDistancesMeters
+          candidateDistancesMeters,
+          source: options?.source || "hazard_snap",
+          geometryAwarePlacement: geometryAwareSelection,
+          selectedRoadwaySegment: geometryAwareSelection?.selectedSegment || null,
+          projectionCoordinate: geometrySelectedCoordinate || null,
+          selectedRoadName: geometryAwareSelection?.selectedSegment?.roadName || null,
+          selectedSideConfidence: geometryAwareSelection?.selectedSideConfidence || "low",
+          recommendedDirection: geometryAwareSelection?.recommendedDirection || null
         }
       );
       const selectedSideConfidence = geometryAwareSelection?.selectedSideConfidence || "low";
@@ -29158,6 +29183,7 @@ async function snapHazardToRoad(lat, lng, options = {}) {
       debug.snappedCoords = { lat: snappedLat, lng: snappedLng };
       debug.snappedRoadCoordinate = { lat: snappedLat, lng: snappedLng };
       debug.finalPlacementCoordinate = placementDecision.finalPlacementCoordinate;
+      debug.projectionCoordinate = placementDecision.projectionCoordinate || placementDecision.projectedRoadCoordinate || null;
       debug.placementMode = placementDecision.placementMode;
       debug.placementRiskLevel = placementDecision.placementRiskLevel;
       debug.representativeCoordinateReason = placementDecision.representativeCoordinateReason;
@@ -29188,6 +29214,7 @@ async function snapHazardToRoad(lat, lng, options = {}) {
       debug.oppositeSideCandidateCount = geometryAwareSelection?.oppositeSideCandidateCount ?? 0;
       debug.selectedSideConfidence = geometryAwareSelection?.selectedSideConfidence || "low";
       debug.canSupportFutureDirectionalLabels = Boolean(geometryAwareSelection?.canSupportFutureDirectionalLabels);
+      debug.geometryAwarePlacementAvailable = Boolean(placementDecision.geometryAwarePlacementAvailable || geometryAwareSelection?.selectedSegment);
       debug.recommendedDirection = geometryAwareSelection?.recommendedDirection || null;
       debug.directionConfidence = geometryAwareSelection?.directionConfidence || "low";
       debug.dividedRoadRisk = Boolean(placementDecision.dividedRoadRisk || geometryAwareSelection?.dividedRoadRisk);
@@ -29211,6 +29238,7 @@ async function snapHazardToRoad(lat, lng, options = {}) {
         snappedRoadCoordinate: placementDecision.snappedRoadCoordinate,
         finalPlacementCoordinate: placementDecision.finalPlacementCoordinate,
         renderedMarkerCoordinate: placementDecision.renderedMarkerCoordinate,
+        projectionCoordinate: placementDecision.projectionCoordinate || placementDecision.projectedRoadCoordinate || null,
         tapToSnapDeltaMeters: placementDecision.tapToSnapDeltaMeters,
         tapToFinalDeltaMeters: placementDecision.tapToFinalDeltaMeters,
         snapToFinalDeltaMeters: placementDecision.snapToFinalDeltaMeters,
@@ -29227,6 +29255,7 @@ async function snapHazardToRoad(lat, lng, options = {}) {
         selectedSegmentBearing: geometryAwareSelection?.selectedSegment?.bearing ?? null,
         selectedSegmentReason: geometryAwareSelection?.selectedSegmentReason || null,
         selectedSideConfidence: geometryAwareSelection?.selectedSideConfidence || "low",
+        geometryAwarePlacementAvailable: Boolean(placementDecision.geometryAwarePlacementAvailable || geometryAwareSelection?.selectedSegment),
         canSupportFutureDirectionalLabels: Boolean(geometryAwareSelection?.canSupportFutureDirectionalLabels),
         recommendedDirection: geometryAwareSelection?.recommendedDirection || null,
         directionConfidence: geometryAwareSelection?.directionConfidence || "low"
@@ -29342,7 +29371,10 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
       localHazardEntry.selectedSegmentDistanceMeters = lastRoadSnapDebug?.selectedSegmentDistanceMeters ?? lastRoadSnapDebug?.geometryAwarePlacement?.selectedSegment?.distanceFromTapMeters ?? null;
       localHazardEntry.selectedSegmentBearing = lastRoadSnapDebug?.selectedSegmentBearing ?? lastRoadSnapDebug?.geometryAwarePlacement?.selectedSegment?.bearing ?? null;
       localHazardEntry.geometryAwarePlacement = lastRoadSnapDebug?.geometryAwarePlacement || null;
+      localHazardEntry.projectionCoordinate = lastRoadSnapDebug?.projectionCoordinate || lastMobileReportSubmitDebug.projectionCoordinate || null;
       localHazardEntry.selectedSideConfidence = lastRoadSnapDebug?.selectedSideConfidence || lastRoadSnapDebug?.geometryAwarePlacement?.selectedSideConfidence || "low";
+      localHazardEntry.geometryAwarePlacementAvailable = Boolean(lastRoadSnapDebug?.geometryAwarePlacementAvailable || lastRoadSnapDebug?.geometryAwarePlacement?.selectedSegment);
+      localHazardEntry.recommendedDirection = lastRoadSnapDebug?.recommendedDirection || null;
       localHazardEntry.representativeCoordinateReason = lastMobileReportSubmitDebug.placementCoordinateReason || lastRoadSnapDebug?.representativeCoordinateReason || "Road-aware placement coordinate selected during hazard submission.";
     }
     if (localHazardEntry) {
