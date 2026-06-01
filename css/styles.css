@@ -14446,11 +14446,11 @@ body.gridly-text-standard { --gridly-settings-text-scale: 1; --gridly-settings-d
 body.gridly-text-large { --gridly-settings-text-scale: 1.1; --gridly-settings-density-scale: 1.04; }
 body.gridly-text-compact { --gridly-settings-text-scale: 0.92; --gridly-settings-density-scale: 0.92; }
 
-body.gridly-text-large :is(.settings-modal-card, .gridly-settings-sheet, #gridlyPortraitV2, .mobile-alerts-panel, .route-setup-modal-card) {
+body.gridly-text-large :is(.settings-modal-card, .gridly-settings-sheet, #gridlyPortraitV2, .mobile-alerts-panel, .route-setup-modal-card, .gridly-welcome-sheet) {
   font-size: calc(1rem * var(--gridly-settings-text-scale));
 }
 
-body.gridly-text-compact :is(.settings-modal-card, .gridly-settings-sheet, #gridlyPortraitV2, .mobile-alerts-panel, .route-setup-modal-card) {
+body.gridly-text-compact :is(.settings-modal-card, .gridly-settings-sheet, #gridlyPortraitV2, .mobile-alerts-panel, .route-setup-modal-card, .gridly-welcome-sheet) {
   font-size: calc(1rem * var(--gridly-settings-text-scale));
 }
 
@@ -14586,11 +14586,33 @@ body.gridly-theme-light :is(.settings-modal-subtitle, .settings-placeholder-note
   color: var(--muted) !important;
 }
 
-body.gridly-theme-light .settings-select-grid select {
+body.gridly-theme-light .settings-select-grid select,
+body.gridly-theme-light .settings-select-grid input {
   color: #0d1b2a;
   background: #ffffff;
   border-color: rgba(27, 58, 87, 0.2);
 }
+body.gridly-theme-light .gridly-welcome-sheet {
+  color: #102234;
+  border-color: rgba(27, 58, 87, 0.14);
+  background: linear-gradient(145deg, rgba(249, 253, 255, 0.97), rgba(231, 242, 250, 0.94));
+}
+body.gridly-theme-light .gridly-welcome-step p { color: #435b72; }
+body.gridly-theme-light .gridly-welcome-step h2,
+body.gridly-theme-light .gridly-welcome-tagline,
+body.gridly-theme-light .gridly-welcome-watching-label,
+body.gridly-theme-light .gridly-welcome-final-note { color: #102234 !important; }
+body.gridly-theme-light :is(.gridly-welcome-hero-copy, .gridly-welcome-impact-list, .gridly-welcome-route-stack, .gridly-welcome-checklist, .gridly-welcome-personalization-grid label) {
+  color: #102234;
+  border-color: rgba(27, 58, 87, 0.14);
+  background: rgba(255, 255, 255, 0.72);
+}
+body.gridly-theme-light .gridly-welcome-personalization-grid :is(select, input) {
+  color: #102234;
+  background: #ffffff;
+  border-color: rgba(27, 58, 87, 0.16);
+}
+body.gridly-theme-light .gridly-welcome-name-field small { color: #61778c; }
 
 /* V206.19 — Settings Route Watch saved-place card polish */
 .settings-modal-section#settingsSavedPlacesSection,
@@ -14853,7 +14875,7 @@ body.gridly-theme-light .settings-place-card .gridly-v2-tile.settings-place-acti
   background: rgba(255, 255, 255, 0.08);
   font-weight: 800;
 }
-.gridly-welcome-progress { display: grid; grid-template-columns: repeat(6, 1fr); gap: 7px; margin: 4px 0 26px; }
+.gridly-welcome-progress { display: grid; grid-template-columns: repeat(7, 1fr); gap: 7px; margin: 4px 0 28px; }
 .gridly-welcome-progress span {
   height: 4px;
   border-radius: 999px;
@@ -14862,17 +14884,17 @@ body.gridly-theme-light .settings-place-card .gridly-v2-tile.settings-place-acti
 }
 .gridly-welcome-progress span.is-active,
 .gridly-welcome-progress span.is-complete { background: linear-gradient(90deg, #4aa4ff, #69f0cf); }
-.gridly-welcome-steps { min-height: 350px; }
+.gridly-welcome-steps { min-height: 390px; }
 .gridly-welcome-step {
   display: grid;
-  gap: 16px;
-  padding: 10px 2px 24px;
+  gap: 18px;
+  padding: 12px 2px 26px;
 }
 .gridly-welcome-step[hidden] { display: none !important; }
-.gridly-welcome-step h2 { margin: 0; font-size: clamp(2rem, 9vw, 3.2rem); line-height: 0.95; letter-spacing: -0.055em; }
-.gridly-welcome-step p { margin: 0; color: rgba(226, 239, 255, 0.8); font-size: 1rem; line-height: 1.6; }
-.gridly-welcome-step .eyebrow { color: #80d7ff; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 900; }
-.gridly-welcome-tagline { color: #ffffff !important; font-weight: 900; font-size: 1.16rem !important; }
+.gridly-welcome-step h2 { margin: 0; font-size: clamp(1.88rem, 8vw, 2.9rem); line-height: 1.06; letter-spacing: -0.04em; font-weight: 760; }
+.gridly-welcome-step p { margin: 0; color: rgba(226, 239, 255, 0.84); font-size: 1.03rem; line-height: 1.68; }
+.gridly-welcome-step .eyebrow { color: #8bdcff; font-size: 0.73rem; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 780; }
+.gridly-welcome-tagline { color: #ffffff !important; font-weight: 760; font-size: 1.12rem !important; line-height: 1.35 !important; }
 .gridly-welcome-hero-copy,
 .gridly-welcome-impact-list,
 .gridly-welcome-route-stack,
@@ -14883,7 +14905,68 @@ body.gridly-theme-light .settings-place-card .gridly-v2-tile.settings-place-acti
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 .gridly-welcome-hero-copy { display: grid; gap: 6px; padding: 18px; }
-.gridly-welcome-impact-list { display: grid; gap: 10px; padding: 18px; color: #ffffff; font-size: 1.08rem; font-weight: 900; }
+.gridly-welcome-impact-list { display: grid; gap: 10px; padding: 18px; color: #ffffff; font-size: 1.06rem; font-weight: 760; }
+
+.gridly-welcome-personalization-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.gridly-welcome-personalization-grid label,
+.settings-select-grid input {
+  min-width: 0;
+}
+.gridly-welcome-personalization-grid label {
+  display: grid;
+  gap: 7px;
+  padding: 12px;
+  border: 1px solid rgba(156, 211, 255, 0.16);
+  border-radius: 18px;
+  color: rgba(226, 239, 255, 0.82);
+  background: rgba(255, 255, 255, 0.055);
+  font-size: 0.82rem;
+  font-weight: 760;
+}
+.gridly-welcome-personalization-grid select,
+.gridly-welcome-personalization-grid input,
+.settings-select-grid input {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid rgba(156, 211, 255, 0.2);
+  border-radius: 12px;
+  padding: 0 12px;
+  color: #f8fbff;
+  background: rgba(4, 12, 24, 0.62);
+  font: inherit;
+}
+.gridly-welcome-name-field { grid-column: 1 / -1; }
+.gridly-welcome-name-field small {
+  color: rgba(226, 239, 255, 0.64);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+.gridly-welcome-preview-card {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid rgba(105, 240, 207, 0.2);
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.095), rgba(105, 240, 207, 0.045));
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+.gridly-welcome-preview-card[data-gridly-theme="light"] {
+  color: #102234;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(232, 246, 255, 0.86));
+  border-color: rgba(27, 58, 87, 0.14);
+}
+.gridly-welcome-preview-card[data-gridly-text-size="compact"] { font-size: 0.9em; }
+.gridly-welcome-preview-card[data-gridly-text-size="large"] { font-size: 1.1em; }
+.gridly-welcome-preview-greeting { color: inherit !important; font-weight: 760; font-size: 1.12em !important; line-height: 1.35 !important; }
+.gridly-welcome-preview-card span { display: block; color: #8ee8ff; font-size: 0.72em; text-transform: uppercase; letter-spacing: 0.14em; font-weight: 820; }
+.gridly-welcome-preview-card strong { display: block; margin-top: 4px; color: inherit; font-size: 1.05em; line-height: 1.35; }
+.gridly-welcome-preview-card small { display: block; margin-top: 3px; color: rgba(226, 239, 255, 0.66); }
+.gridly-welcome-preview-card[data-gridly-theme="light"] :is(span, small) { color: #55718b; }
+
 .gridly-welcome-town-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .gridly-welcome-town-btn {
   min-height: 48px;
@@ -14899,7 +14982,7 @@ body.gridly-theme-light .settings-place-card .gridly-v2-tile.settings-place-acti
   background: linear-gradient(135deg, rgba(74, 164, 255, 0.28), rgba(105, 240, 207, 0.16));
   box-shadow: 0 12px 30px rgba(30, 170, 215, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
-.gridly-welcome-route-stack { display: grid; place-items: center; gap: 8px; padding: 18px; text-transform: uppercase; letter-spacing: 0.14em; color: #ffffff; font-weight: 950; }
+.gridly-welcome-route-stack { display: grid; place-items: center; gap: 10px; padding: 22px; text-transform: uppercase; letter-spacing: 0.18em; color: #ffffff; font-weight: 820; font-size: 1.02rem; }
 .gridly-welcome-route-stack strong { color: #69f0cf; font-size: 1.6rem; line-height: 1; }
 .gridly-welcome-pill-row { display: flex; flex-wrap: wrap; gap: 9px; }
 .gridly-welcome-pill-row span {
@@ -14912,8 +14995,9 @@ body.gridly-theme-light .settings-place-card .gridly-v2-tile.settings-place-acti
   font-weight: 900;
 }
 .gridly-welcome-watching-label { color: #ffffff !important; font-weight: 900; }
-.gridly-welcome-checklist { display: grid; gap: 10px; margin: 0; padding: 18px; list-style: none; color: #f6fbff; font-weight: 900; }
-.gridly-welcome-final-note { color: #ffffff !important; font-weight: 900; }
+.gridly-welcome-checklist { display: grid; gap: 10px; margin: 0; padding: 18px; list-style: none; color: #f6fbff; font-weight: 780; }
+.gridly-welcome-final-copy { color: rgba(226, 239, 255, 0.86) !important; }
+.gridly-welcome-final-note { color: #ffffff !important; font-weight: 780; }
 
 .gridly-welcome-action-row { flex-wrap: wrap; }
 .gridly-welcome-action-row .secondary-btn,

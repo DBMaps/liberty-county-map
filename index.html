@@ -743,6 +743,9 @@
       <section class="settings-modal-section" id="settingsDisplayPreferencesSection">
         <h3>Display Preferences</h3>
         <div class="settings-select-grid">
+          <label><span>Preferred Name <em class="settings-field-badge">Optional</em></span>
+            <input id="settingsPreferredNameInput" type="text" maxlength="32" autocomplete="given-name" placeholder="Denise, Joe, Mom, Dispatcher">
+          </label>
           <label>Map Style
             <select id="settingsMapStyleSelect">
               <option value="standard">Standard</option>
@@ -765,6 +768,7 @@
             </select>
           </label>
         </div>
+        <p class="settings-placeholder-note" id="settingsPreferredNamePlaceholder">Preferred Name stays on this device and only personalizes your Gridly experience.</p>
         <p class="settings-placeholder-note" id="settingsThemePlaceholder">Theme applies a basic light, dark, or system visual treatment.</p>
         <p class="settings-placeholder-note" id="settingsTextSizePlaceholder">Text Size adjusts app typography density immediately.</p>
       </section>
@@ -801,6 +805,7 @@
         <span data-gridly-welcome-dot="3"></span>
         <span data-gridly-welcome-dot="4"></span>
         <span data-gridly-welcome-dot="5"></span>
+        <span data-gridly-welcome-dot="6"></span>
       </div>
 
       <div class="gridly-welcome-steps" id="gridlyWelcomeSteps">
@@ -814,6 +819,39 @@
           <p>Gridly watches crossings, road hazards, and route delays so you can make better decisions before you leave.</p>
         </article>
         <article class="gridly-welcome-step" data-gridly-welcome-step="1" hidden>
+          <p class="eyebrow">Personalize</p>
+          <h2>Make Gridly Yours</h2>
+          <p>Choose a comfortable look and tell Gridly what to call you. Nothing here creates an account or leaves this device.</p>
+          <div class="gridly-welcome-personalization-grid">
+            <label>Theme
+              <select id="gridlyWelcomeThemeSelect" aria-label="Choose Gridly theme">
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+                <option value="system">System</option>
+              </select>
+            </label>
+            <label>Text Size
+              <select id="gridlyWelcomeTextSizeSelect" aria-label="Choose Gridly text size">
+                <option value="compact">Compact</option>
+                <option value="standard">Standard</option>
+                <option value="large">Large</option>
+              </select>
+            </label>
+            <label class="gridly-welcome-name-field">What should Gridly call you?
+              <input id="gridlyWelcomePreferredNameInput" type="text" maxlength="32" autocomplete="given-name" placeholder="Denise, Joe, Mom, Dispatcher">
+              <small>Optional. Used only to personalize your Gridly experience.</small>
+            </label>
+          </div>
+          <div class="gridly-welcome-preview-card" id="gridlyWelcomePreviewCard" aria-live="polite">
+            <p class="gridly-welcome-preview-greeting" id="gridlyWelcomePreviewGreeting">Good morning.</p>
+            <div>
+              <span>Nearby Alert</span>
+              <strong>Flooding on US 90</strong>
+              <small>Reported 12 minutes ago</small>
+            </div>
+          </div>
+        </article>
+        <article class="gridly-welcome-step" data-gridly-welcome-step="2" hidden>
           <p class="eyebrow">Community purpose</p>
           <h2>Why Gridly Matters</h2>
           <div class="gridly-welcome-impact-list" aria-label="Examples Gridly can help with">
@@ -822,12 +860,12 @@
             <span>A disabled vehicle.</span>
           </div>
           <p>Knowing before you leave can save time, fuel, money, and frustration.</p>
-          <p>Small pieces of information can make a big difference.</p>
+          <p>Community awareness can help drivers, families, and emergency responders make more informed decisions during changing conditions.</p>
         </article>
-        <article class="gridly-welcome-step" data-gridly-welcome-step="2" hidden>
-          <p class="eyebrow">Personalize</p>
+        <article class="gridly-welcome-step" data-gridly-welcome-step="3" hidden>
+          <p class="eyebrow">My Town</p>
           <h2>Choose Your Home Town</h2>
-          <p>Your town helps Gridly personalize My Town, Nearby, Community Intelligence, and Local Alerts. This is separate from Route Watch and will not overwrite Home or Work.</p>
+          <p>Your town helps Gridly personalize My Town, nearby awareness, community intelligence, and local alerts. This is separate from Route Watch and will not overwrite Home or Work.</p>
           <div class="gridly-welcome-town-grid" role="group" aria-label="Choose your home town">
             <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Dayton">Dayton</button>
             <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Liberty">Liberty</button>
@@ -837,21 +875,21 @@
           </div>
           <p class="gridly-welcome-status" id="gridlyWelcomeTownStatus" aria-live="polite"></p>
         </article>
-        <article class="gridly-welcome-step" data-gridly-welcome-step="3" hidden>
+        <article class="gridly-welcome-step" data-gridly-welcome-step="4" hidden>
           <p class="eyebrow">Daily route</p>
           <h2>Set Your Daily Route</h2>
           <p>We'll watch your route and help you stay aware of delays, crossings, and hazards along the way.</p>
           <div class="gridly-welcome-route-stack" aria-label="Daily route from Home to Work">
-            <span>Home</span>
+            <span>HOME</span>
             <strong aria-hidden="true">↓</strong>
-            <span>Work</span>
+            <span>WORK</span>
           </div>
           <div class="gridly-welcome-action-row">
             <button class="secondary-btn" type="button" id="gridlyWelcomeSetHomeBtn">Set Home</button>
             <button class="secondary-btn" type="button" id="gridlyWelcomeSetWorkBtn">Set Work</button>
           </div>
         </article>
-        <article class="gridly-welcome-step" data-gridly-welcome-step="4" hidden>
+        <article class="gridly-welcome-step" data-gridly-welcome-step="5" hidden>
           <p class="eyebrow">Community reports</p>
           <h2>Community Powered Awareness</h2>
           <p>Drivers report what they see.</p>
@@ -863,7 +901,7 @@
             <span>cleared conditions</span>
           </div>
         </article>
-        <article class="gridly-welcome-step" data-gridly-welcome-step="5" hidden>
+        <article class="gridly-welcome-step" data-gridly-welcome-step="6" hidden>
           <p class="eyebrow">Ready</p>
           <h2>You're Part of the Network</h2>
           <p class="gridly-welcome-watching-label">Watching:</p>
@@ -873,6 +911,7 @@
             <li>✓ Community Reports</li>
             <li>✓ Local Alerts</li>
           </ul>
+          <p class="gridly-welcome-final-copy" id="gridlyWelcomeFinalCopy">Gridly is ready to keep your town, routes, community reports, and local alerts connected.</p>
           <p class="gridly-welcome-final-note">Every report helps someone else know before they go.</p>
         </article>
       </div>
