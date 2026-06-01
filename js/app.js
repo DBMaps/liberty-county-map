@@ -4822,6 +4822,230 @@ function gridlyBuildHistoricalIntelligenceReadiness(combinedEvents = [], crossin
   return { categories, diagnostics: { repeatedHazards, repeatedFloods, repeatedCrossings, repeatedConstruction, delayedCorridors, confirmedHotspots, distinctDays: dayKeys.size, daypartBuckets: hourBuckets.size, spanDays } };
 }
 
+
+function gridlyHistoricalClearTimeField(record = {}) {
+  if (record?.clearedAt) return { field: "clearedAt", value: record.clearedAt };
+  if (record?.cleared_at) return { field: "cleared_at", value: record.cleared_at };
+  return { field: "", value: null };
+}
+
+function gridlyHistoricalCreatedTimeField(record = {}, kind = "event") {
+  const fields = kind === "crossing"
+    ? ["blockedAt", "createdAt", "submittedAt", "created_at", "reportedAt", "timestamp"]
+    : ["createdAt", "submittedAt", "created_at", "reportedAt", "timestamp", "blockedAt"];
+  for (const field of fields) {
+    if (record?.[field]) return { field, value: record[field] };
+  }
+  return { field: "", value: null };
+}
+
+function gridlyHistoricalHasUsableIso(value) {
+  const ms = new Date(value || 0).getTime();
+  return Number.isFinite(ms) && ms > 0;
+}
+
+function gridlyHistoricalClearTimeCoverage(records = [], kind = "event") {
+  const totalRecords = records.length;
+  const created = records.filter((record) => gridlyHistoricalHasUsableIso(gridlyHistoricalCreatedTimeField(record, kind).value));
+  const cleared = records.filter((record) => gridlyHistoricalHasUsableIso(gridlyHistoricalClearTimeField(record).value));
+  const duration = records.filter((record) => Number.isFinite(Number(gridlyHistoricalAuditDuration(record))));
+  const confirmed = records.filter((record) => Number.isFinite(Number(record?.confirmationCount ?? record?.confirmations ?? record?.confirmation_count)));
+  return {
+    totalRecords,
+    createdAtCoverage: { count: created.length, missing: totalRecords - created.length, percent: totalRecords ? Math.round((created.length / totalRecords) * 100) : 0 },
+    clearedAtCoverage: { count: cleared.length, missing: totalRecords - cleared.length, percent: totalRecords ? Math.round((cleared.length / totalRecords) * 100) : 0 },
+    durationCoverage: { count: duration.length, missing: totalRecords - duration.length, percent: totalRecords ? Math.round((duration.length / totalRecords) * 100) : 0 },
+    confirmationCoverage: { count: confirmed.length, missing: totalRecords - confirmed.length, percent: totalRecords ? Math.round((confirmed.length / totalRecords) * 100) : 0 }
+  };
+}
+
+function gridlyHistoricalClearTimeSample(event = {}) {
+  const record = event.record || {};
+  const created = gridlyHistoricalCreatedTimeField(record, event.kind);
+  const cleared = gridlyHistoricalClearTimeField(record);
+  return {
+    kind: event.kind,
+    index: event.index,
+    id: event.kind === "crossing" ? String(record.crossingId || record.crossing_id || "") : String(record.incidentId || record.id || record.crossingId || record.crossing_id || ""),
+    roadName: gridlyHistoricalAuditRoad(record) || null,
+    createdAt: created.value,
+    createdAtSourceField: created.field || null,
+    clearedAt: cleared.value,
+    clearedAtSourceField: cleared.field || null,
+    durationMinutes: Number.isFinite(Number(gridlyHistoricalAuditDuration(record))) ? Number(gridlyHistoricalAuditDuration(record)) : null,
+    confirmationCount: Number.isFinite(Number(record.confirmationCount ?? record.confirmations ?? record.confirmation_count)) ? Number(record.confirmationCount ?? record.confirmations ?? record.confirmation_count) : null
+  };
+}
+
+function gridlyHistoricalClearTimeAudit() {
+  const storageSnapshot = gridlyReadHistoricalIntelligenceStorageSnapshot();
+  const historicalState = storageSnapshot.state || gridlyCreateEmptyEventHistoryState();
+  const crossingEvents = Array.isArray(historicalState.crossingEvents) ? historicalState.crossingEvents : [];
+  const hazardEvents = Array.isArray(historicalState.hazardEvents) ? historicalState.hazardEvents : [];
+  const combinedEvents = [
+    ...crossingEvents.map((record, index) => ({ kind: "crossing", record, index })),
+    ...hazardEvents.map((record, index) => ({ kind: "hazard", record, index }))
+  ];
+  const recordsWithCreatedAt = combinedEvents.filter((event) => gridlyHistoricalHasUsableIso(gridlyHistoricalCreatedTimeField(event.record, event.kind).value));
+  const recordsWithClearedAt = combinedEvents.filter((event) => gridlyHistoricalHasUsableIso(gridlyHistoricalClearTimeField(event.record).value));
+  const durationEligibleRecords = combinedEvents.filter((event) => {
+    const created = gridlyHistoricalCreatedTimeField(event.record, event.kind).value;
+    const cleared = gridlyHistoricalClearTimeField(event.record).value;
+    return gridlyHistoricalHasUsableIso(created) && gridlyHistoricalHasUsableIso(cleared) && Number.isFinite(Number(gridlyMinutesBetween(created, cleared)));
+  });
+  const createdNoClear = combinedEvents.filter((event) => gridlyHistoricalHasUsableIso(gridlyHistoricalCreatedTimeField(event.record, event.kind).value) && !gridlyHistoricalHasUsableIso(gridlyHistoricalClearTimeField(event.record).value));
+  const clearedNoDuration = combinedEvents.filter((event) => gridlyHistoricalHasUsableIso(gridlyHistoricalClearTimeField(event.record).value) && !Number.isFinite(Number(gridlyHistoricalAuditDuration(event.record))));
+  const durationWithoutClear = combinedEvents.filter((event) => !gridlyHistoricalHasUsableIso(gridlyHistoricalClearTimeField(event.record).value) && Number.isFinite(Number(gridlyHistoricalAuditDuration(event.record))));
+  const alternateClearOnly = combinedEvents.filter((event) => !event.record?.clearedAt && event.record?.cleared_at);
+  const historyWritePaths = [
+    {
+      path: "gridlyCaptureCrossingHistoryEvent(report)",
+      writesTo: "crossingEvents",
+      trigger: "Crossing report submission, crossing clear submission, or batch capture from live reports.",
+      createdAtSource: "gridlyBuildCrossingEvent() stores report.submittedAt || report.created_at || now as blockedAt.",
+      clearedAtSource: "Only clear report types set target.clearedAt to report.submittedAt || report.created_at || now.",
+      durationSource: "Only the clear branch sets durationMinutes with gridlyMinutesBetween(target.blockedAt, target.clearedAt)."
+    },
+    {
+      path: "gridlyCaptureHazardHistoryEvent(report)",
+      writesTo: "hazardEvents",
+      trigger: "Hazard report submission, hazard clear submission, or batch capture from live reports.",
+      createdAtSource: "gridlyBuildHazardEvent() stores report.submittedAt || report.created_at || now as createdAt.",
+      clearedAtSource: "Only clear report types set target.clearedAt to report.submittedAt || report.created_at || now.",
+      durationSource: "Only the clear branch sets durationMinutes with gridlyMinutesBetween(target.createdAt, target.clearedAt)."
+    },
+    {
+      path: "gridlyCaptureHistoryFromReports(reports)",
+      writesTo: "crossingEvents and hazardEvents through deferred capture helpers",
+      trigger: "loadSharedReports() passes currently unexpired live reports after normalization.",
+      createdAtSource: "Inherited from each normalized live report's created_at/submittedAt.",
+      clearedAtSource: "Only present if the fetched report itself is a clear report or matches an existing open history event.",
+      durationSource: "Inherited from the capture helper clear branch; active non-clear reports remain open."
+    },
+    {
+      path: "gridlyReadEventHistoryState() normalization repair",
+      writesTo: "gridlyEventHistoryV1 when duplicate/road-name cleanup changes stored history",
+      trigger: "Read-time cleanup only after localStorage parse.",
+      createdAtSource: "Preserves existing event timestamps.",
+      clearedAtSource: "May preserve a duplicate event's clearedAt, but does not create new clear timestamps.",
+      durationSource: "May preserve a duplicate event's durationMinutes, but does not calculate new durations."
+    },
+    {
+      path: "gridlyClearTestData()",
+      writesTo: "gridlyEventHistoryV1 reset to an empty history state",
+      trigger: "Manual test cleanup with explicit confirmation.",
+      createdAtSource: "None; deletes local history.",
+      clearedAtSource: "None; bypasses clear conversion because it replaces the history state.",
+      durationSource: "None; bypasses duration calculation because it replaces the history state."
+    }
+  ];
+  const missingSources = [
+    createdNoClear.length ? "Stored records are mostly open event captures: creation/blocked timestamps are written on report creation, while clear timestamps are only written by explicit clear report paths." : "Current records do not show a created-without-clear gap.",
+    durationWithoutClear.length ? "Some records have duration without a clear timestamp; verify legacy conversion before trusting durations." : "No records currently prove duration was calculated while clear timestamps were discarded.",
+    clearedNoDuration.length ? "Some cleared records lack durationMinutes, so duration calculation should be audited before activation." : "No cleared records currently show a missing-duration calculation gap.",
+    "loadSharedReports() only selects unexpired reports; older clear rows can be absent from the batch path, leaving earlier created/open history records without a clear event.",
+    "gridlyClearTestData() can erase local event history without first converting active records into cleared history."
+  ];
+  const gapAnalysis = {
+    reportsNeverEnteringClearedState: {
+      count: createdNoClear.length,
+      examples: createdNoClear.slice(0, 5).map(gridlyHistoricalClearTimeSample),
+      finding: createdNoClear.length ? "Current history contains creation timestamps but no clear timestamps, so these records still look open to duration analytics." : "No current examples."
+    },
+    clearEventsNotWrittenToHistory: {
+      count: Math.max(0, (Number(historicalState?.operationalTelemetry?.reportsCreated) || 0) - (Number(historicalState?.operationalTelemetry?.reportsCleared) || 0)),
+      examples: createdNoClear.slice(0, 5).map(gridlyHistoricalClearTimeSample),
+      finding: "Evidence is indirect: clear timestamps are only added by clear report branches, and current created/open records have not been matched by those branches."
+    },
+    durationCalculationNeverTriggered: {
+      count: createdNoClear.filter((event) => !Number.isFinite(Number(gridlyHistoricalAuditDuration(event.record)))).length,
+      examples: createdNoClear.filter((event) => !Number.isFinite(Number(gridlyHistoricalAuditDuration(event.record)))).slice(0, 5).map(gridlyHistoricalClearTimeSample),
+      finding: "Duration calculation is gated behind clear timestamps, so open records never become duration eligible."
+    },
+    clearTimestampsDiscarded: {
+      count: alternateClearOnly.length + durationWithoutClear.length,
+      examples: [...alternateClearOnly, ...durationWithoutClear].slice(0, 5).map(gridlyHistoricalClearTimeSample),
+      finding: alternateClearOnly.length || durationWithoutClear.length ? "Potential legacy field mismatch or discarded clear timestamp evidence exists." : "No current stored records show clear timestamps being discarded after they were captured."
+    },
+    historicalConversionPathMissingFields: {
+      count: createdNoClear.length,
+      examples: createdNoClear.slice(0, 5).map(gridlyHistoricalClearTimeSample),
+      finding: "The creation conversion path intentionally initializes clearedAt and durationMinutes as null; it depends on a later clear report to complete the record."
+    },
+    cleanupPathBypassingClearLogic: {
+      count: 1,
+      examples: [{ path: "gridlyClearTestData()", effect: "writes an empty gridlyEventHistoryV1 state instead of clearing active events" }],
+      finding: "A manual cleanup path exists that bypasses clear-time and duration logic by resetting the local history store."
+    },
+    manualTestCleanupDeletingActiveRecordsBeforeClearHistoryIsWritten: {
+      count: 1,
+      examples: [{ path: "gridlyClearTestData()", requiredConfirmation: "CLEAR_TEST_DATA" }],
+      finding: "This is possible when the cleanup helper is used before clear reports are submitted; current storage alone cannot prove how often it happened."
+    }
+  };
+  const recordTypeAnalysis = {
+    crossingHistory: gridlyHistoricalClearTimeCoverage(crossingEvents, "crossing"),
+    hazardHistory: gridlyHistoricalClearTimeCoverage(hazardEvents, "hazard")
+  };
+  const currentClearTimeReadiness = recordsWithClearedAt.length === combinedEvents.length && combinedEvents.length > 0 ? "READY" : (recordsWithClearedAt.length > 0 ? "LIMITED" : "NOT_READY");
+  const currentDurationReadiness = durationEligibleRecords.length >= 10 ? "LIMITED" : (durationEligibleRecords.length > 0 ? "LIMITED_SAMPLE_ONLY" : "NOT_READY");
+  const futureReadiness = {
+    currentDurationReadiness,
+    currentClearTimeReadiness,
+    canCalculateAverageDurations: durationEligibleRecords.length >= 10,
+    canCalculateRecurringBlockageLength: crossingEvents.filter((record) => gridlyHistoricalHasUsableIso(gridlyHistoricalClearTimeField(record).value) && Number.isFinite(Number(gridlyHistoricalAuditDuration(record)))).length >= 10,
+    canCalculateHazardPersistence: hazardEvents.filter((record) => gridlyHistoricalHasUsableIso(gridlyHistoricalClearTimeField(record).value) && Number.isFinite(Number(gridlyHistoricalAuditDuration(record)))).length >= 10,
+    safestNextStep: "Keep this audit read-only; next, add a separate reviewed lifecycle/history-close design that writes clear timestamps and durations before any active record is removed or cleanup path resets history."
+  };
+
+  return {
+    totalHistoricalRecords: combinedEvents.length,
+    recordsWithCreatedAt: recordsWithCreatedAt.length,
+    recordsWithClearedAt: recordsWithClearedAt.length,
+    recordsMissingCreatedAt: combinedEvents.length - recordsWithCreatedAt.length,
+    recordsMissingClearedAt: combinedEvents.length - recordsWithClearedAt.length,
+    durationEligibleRecords: durationEligibleRecords.length,
+    sampleRecords: combinedEvents.slice(0, 10).map(gridlyHistoricalClearTimeSample),
+    recommendations: [
+      "Do not activate duration intelligence until clearedAt coverage is representative and durationEligibleRecords is non-zero across both crossing and hazard history.",
+      "Treat existing created-without-cleared records as open/incomplete, not as duration samples.",
+      "Design the future fix around the clear transition: persist clearedAt and durationMinutes before active records expire, are filtered out, or are manually cleaned up."
+    ],
+    historyWritePaths,
+    createdAtSources: historyWritePaths.map((path) => ({ path: path.path, source: path.createdAtSource })),
+    clearedAtSources: historyWritePaths.map((path) => ({ path: path.path, source: path.clearedAtSource })),
+    durationSources: historyWritePaths.map((path) => ({ path: path.path, source: path.durationSource })),
+    missingSources,
+    historyWritePathAnalysis: {
+      historyWritePaths,
+      createdAtSources: historyWritePaths.map((path) => ({ path: path.path, source: path.createdAtSource })),
+      clearedAtSources: historyWritePaths.map((path) => ({ path: path.path, source: path.clearedAtSource })),
+      durationSources: historyWritePaths.map((path) => ({ path: path.path, source: path.durationSource })),
+      missingSources
+    },
+    recordTypeAnalysis,
+    crossingHistory: recordTypeAnalysis.crossingHistory,
+    hazardHistory: recordTypeAnalysis.hazardHistory,
+    gapAnalysis,
+    futureReadiness,
+    currentDurationReadiness: futureReadiness.currentDurationReadiness,
+    currentClearTimeReadiness: futureReadiness.currentClearTimeReadiness,
+    canCalculateAverageDurations: futureReadiness.canCalculateAverageDurations,
+    canCalculateRecurringBlockageLength: futureReadiness.canCalculateRecurringBlockageLength,
+    canCalculateHazardPersistence: futureReadiness.canCalculateHazardPersistence,
+    safestNextStep: futureReadiness.safestNextStep,
+    auditOnly: true,
+    writesPerformed: false,
+    storage: {
+      key: GRIDLY_EVENT_HISTORY_STORAGE_KEY,
+      found: storageSnapshot.found,
+      parseOk: storageSnapshot.parseOk,
+      storageReadError: storageSnapshot.storageReadError || null,
+      operationalTelemetry: historicalState.operationalTelemetry || null
+    }
+  };
+}
+
 function gridlyHistoricalIntelligenceAudit() {
   const storageSnapshot = gridlyReadHistoricalIntelligenceStorageSnapshot();
   const historicalState = storageSnapshot.state || gridlyCreateEmptyEventHistoryState();
@@ -4953,6 +5177,7 @@ if (typeof window !== "undefined") {
   window.gridlyCommunityIntelligenceFramework = gridlyCommunityIntelligenceFramework;
   window.gridlyCommunityIntelligenceSimulation = gridlyCommunityIntelligenceSimulation;
   window.gridlyHistoricalIntelligenceAudit = gridlyHistoricalIntelligenceAudit;
+  window.gridlyHistoricalClearTimeAudit = gridlyHistoricalClearTimeAudit;
   window.gridlyHazardLifecycleFramework = function gridlyHazardLifecycleFramework(options = {}) {
     const nowMs = Number.isFinite(Number(options?.nowMs)) ? Number(options.nowMs) : Date.now();
     const sourceHazards = Array.isArray(options?.hazards) ? options.hazards : gridlyDiagnosticArray(activeHazards);
