@@ -624,6 +624,242 @@ function gridlyHistoricalClosePathSimulation(options = {}) {
   };
 }
 
+
+function gridlyHistoricalCloseWriteAuditIso(value) {
+  const ms = new Date(value || 0).getTime();
+  return Number.isFinite(ms) && ms > 0 ? new Date(ms).toISOString() : null;
+}
+
+function gridlyHistoricalCloseWriteAuditCreatedAt(record = {}, type = "hazard") {
+  if (type === "crossing" || record?.crossingId || record?.crossing_id) {
+    return gridlyHistoricalCloseWriteAuditIso(record.blockedAt || record.createdAt || record.created_at || record.submittedAt || record.reportedAt || record.timestamp || record.updatedAt || record.updated_at);
+  }
+  return gridlyHistoricalCloseWriteAuditIso(record.createdAt || record.created_at || record.submittedAt || record.reportedAt || record.timestamp || record.updatedAt || record.updated_at || record.blockedAt);
+}
+
+function gridlyHistoricalCloseWriteAuditClearedAt(record = {}) {
+  return gridlyHistoricalCloseWriteAuditIso(record.clearedAt || record.cleared_at || record.resolvedAt || record.resolved_at || record.closedAt || record.closed_at);
+}
+
+function gridlyHistoricalCloseWriteAuditRoadName(record = {}, type = "hazard") {
+  if (type === "crossing" || record?.crossingId || record?.crossing_id) {
+    const crossingId = record?.crossingId || record?.crossing_id || "";
+    const metadata = gridlyGetCrossingHistoryMetadata(crossingId, record);
+    return gridlyNormalizeAnalyticsRoadLabel(record?.roadName || record?.road || metadata.roadName) || metadata.roadName || "Unknown road";
+  }
+  const road = gridlyHistoricalAuditRoad(record) || gridlyGetHazardHistoryMetadata(record).roadName || record?.road || "Unknown road";
+  return gridlyNormalizeAnalyticsRoadLabel(road) || road || "Unknown road";
+}
+
+function gridlyHistoricalCloseWriteAuditCrossingName(record = {}, type = "hazard") {
+  if (!(type === "crossing" || record?.crossingId || record?.crossing_id)) return "";
+  const metadata = gridlyGetCrossingHistoryMetadata(record?.crossingId || record?.crossing_id || "", record);
+  return String(record?.crossingName || record?.crossing || metadata.crossingName || "").trim();
+}
+
+function gridlyHistoricalCloseWriteAuditHazardType(record = {}, type = "hazard") {
+  if (type === "crossing" || record?.crossingId || record?.crossing_id) return "rail_crossing_blocked";
+  return gridlyNormalizeHazardType(record) || gridlyHistoricalAuditHazardType(record) || "unknown";
+}
+
+function gridlyHistoricalCloseWriteAuditIncidentId(record = {}, type = "hazard", fallback = "candidate") {
+  if (type === "crossing" || record?.crossingId || record?.crossing_id) {
+    return String(record?.incidentId || record?.id || record?.reportId || record?.crossingId || record?.crossing_id || fallback).trim();
+  }
+  return String(record?.incidentId || record?.id || record?.reportId || record?.crossingId || record?.crossing_id || (typeof getHazardClusterKey === "function" ? getHazardClusterKey(record) : fallback)).trim();
+}
+
+function gridlyHistoricalCloseWriteAuditSource(record = {}, sourceKind = "unknown") {
+  return String(record?.source || record?.provider || record?.reportSource || record?.submittedBy || sourceKind || "unknown").trim() || "unknown";
+}
+
+function gridlyHistoricalCloseWriteAuditLocationKey(record = {}, type = "hazard") {
+  if (type === "crossing" || record?.crossingId || record?.crossing_id) {
+    return String(record?.crossingId || record?.crossing_id || gridlyHistoricalCloseWriteAuditCrossingName(record, "crossing") || gridlyHistoricalCloseWriteAuditRoadName(record, "crossing") || "").trim().toLowerCase();
+  }
+  return [gridlyHistoricalCloseWriteAuditHazardType(record, type), gridlyHistoricalCloseWriteAuditRoadName(record, type)]
+    .filter(Boolean)
+    .join("|")
+    .toLowerCase();
+}
+
+function gridlyHistoricalCloseWriteAuditCurrentState(record = {}, sourceKind = "activeHazards") {
+  const explicitState = String(record?.lifecycleState || record?.lifecycle || record?.status || record?.state || "").trim();
+  if (explicitState) return explicitState;
+  const type = String(record?.type || record?.report_type || record?.eventType || "").trim();
+  if (isClearedReportType(type) || gridlyHistoricalCloseWriteAuditClearedAt(record)) return "cleared";
+  if (sourceKind === "historicalCrossingEvents" || sourceKind === "historicalHazardEvents") return "open_history_record";
+  if (sourceKind === "activeReports" && typeof getIncidentLifecycleState === "function") return getIncidentLifecycleState(record) || "active";
+  if (sourceKind === "activeHazards" && typeof gridlyIsActiveHazardRecord === "function") return gridlyIsActiveHazardRecord(record) ? "active" : "inactive_or_expired";
+  return "active";
+}
+
+function gridlyHistoricalCloseWriteAuditCloseReason(record = {}, sourceKind = "unknown", currentState = "active") {
+  if (gridlyHistoricalCloseWriteAuditClearedAt(record)) return "Existing cleared timestamp would be preserved as close provenance.";
+  if (sourceKind === "historicalCrossingEvents" || sourceKind === "historicalHazardEvents") return "Open historical event would receive a close timestamp during a future close transition.";
+  if (String(currentState).toLowerCase().includes("expired")) return "Expired or inactive record would only be eligible if a future close policy explicitly selected it.";
+  return "Active record would receive a close timestamp only after a future explicit close transition.";
+}
+
+function gridlyHistoricalCloseWriteAuditCandidateFromRecord(record = {}, sourceKind = "activeHazards", index = 0, nowIso = new Date().toISOString()) {
+  const type = sourceKind === "activeReports" || sourceKind === "historicalCrossingEvents" || record?.crossingId || record?.crossing_id ? "crossing" : "hazard";
+  const createdAt = gridlyHistoricalCloseWriteAuditCreatedAt(record, type);
+  const currentState = gridlyHistoricalCloseWriteAuditCurrentState(record, sourceKind);
+  const closeReason = gridlyHistoricalCloseWriteAuditCloseReason(record, sourceKind, currentState);
+  const candidateId = `${sourceKind}:${gridlyHistoricalCloseWriteAuditIncidentId(record, type, `${type}-${index}`) || `${type}-${index}`}`;
+  return {
+    candidateId,
+    type,
+    sourceKind,
+    recordIndex: index,
+    incidentId: gridlyHistoricalCloseWriteAuditIncidentId(record, type, `${type}-${index}`),
+    roadName: gridlyHistoricalCloseWriteAuditRoadName(record, type),
+    crossingName: gridlyHistoricalCloseWriteAuditCrossingName(record, type),
+    createdAt,
+    currentState,
+    closeEligibilityReason: closeReason,
+    hypotheticalClearedAt: nowIso,
+    sourceRecord: record
+  };
+}
+
+function gridlyHistoricalCloseWriteAuditCandidateEligible(record = {}, sourceKind = "activeHazards") {
+  const typeText = String(record?.type || record?.report_type || record?.eventType || "").toLowerCase();
+  if (isClearedReportType(typeText) || gridlyHistoricalCloseWriteAuditClearedAt(record)) return false;
+  if (sourceKind === "historicalCrossingEvents" || sourceKind === "historicalHazardEvents") return true;
+  if (sourceKind === "activeReports") return typeof getIncidentLifecycleState === "function" ? getIncidentLifecycleState(record) === "active" : true;
+  if (sourceKind === "activeHazards") return typeof gridlyIsActiveHazardRecord === "function" ? gridlyIsActiveHazardRecord(record) : true;
+  return false;
+}
+
+function gridlyHistoricalCloseWriteAuditProposedRecord(candidate = {}) {
+  const record = candidate.sourceRecord || {};
+  const createdAt = candidate.createdAt || null;
+  const clearedAt = candidate.hypotheticalClearedAt || null;
+  const durationMinutes = gridlyMinutesBetween(createdAt, clearedAt);
+  const durationEligible = Number.isFinite(Number(durationMinutes));
+  const confirmationCount = candidate.type === "crossing"
+    ? gridlyCountCrossingConfirmations(record.crossingId || record.crossing_id || candidate.incidentId, activeReports)
+    : gridlyHazardLifecycleConfirmationCount(record, candidate.sourceKind === "activeReports" ? "activeReports" : "activeHazards", activeHazards, activeReports);
+  return {
+    incidentId: candidate.incidentId,
+    hazardType: gridlyHistoricalCloseWriteAuditHazardType(record, candidate.type),
+    roadName: candidate.roadName,
+    crossingName: candidate.crossingName,
+    createdAt,
+    clearedAt,
+    durationMinutes: durationEligible ? durationMinutes : null,
+    durationBucket: durationEligible ? gridlyHistoricalClosePathDurationBucket(durationMinutes) : null,
+    confirmationCount: Number.isFinite(Number(confirmationCount)) ? Number(confirmationCount) : 0,
+    source: gridlyHistoricalCloseWriteAuditSource(record, candidate.sourceKind),
+    closeState: "PENDING_FUTURE_CLOSE_TRANSITION",
+    closeReason: candidate.closeEligibilityReason,
+    locationKey: gridlyHistoricalCloseWriteAuditLocationKey(record, candidate.type),
+    auditOnly: true,
+    storageWritePerformed: false,
+    runtimeActivationPerformed: false
+  };
+}
+
+function gridlyHistoricalCloseWriteAuditComparison(candidate = {}, proposed = {}) {
+  const record = candidate.sourceRecord || {};
+  const currentFields = {
+    incidentId: gridlyHistoricalCloseWriteAuditIncidentId(record, candidate.type, candidate.incidentId),
+    hazardType: gridlyHistoricalCloseWriteAuditHazardType(record, candidate.type),
+    roadName: candidate.roadName,
+    crossingName: candidate.crossingName,
+    createdAt: candidate.createdAt,
+    clearedAt: gridlyHistoricalCloseWriteAuditClearedAt(record),
+    durationMinutes: Number.isFinite(Number(record?.durationMinutes)) ? Number(record.durationMinutes) : null,
+    confirmationCount: Number.isFinite(Number(record?.confirmationCount ?? record?.confirmations ?? record?.confirmation_count)) ? Number(record?.confirmationCount ?? record?.confirmations ?? record?.confirmation_count) : null,
+    source: gridlyHistoricalCloseWriteAuditSource(record, candidate.sourceKind),
+    closeState: record?.closeState || record?.lifecycleState || record?.status || null,
+    closeReason: record?.closeReason || null,
+    locationKey: gridlyHistoricalCloseWriteAuditLocationKey(record, candidate.type)
+  };
+  const required = ["incidentId", "hazardType", "roadName", "createdAt", "clearedAt", "durationMinutes", "durationBucket", "confirmationCount", "source", "closeState", "closeReason", "locationKey"];
+  const missingFields = required.filter((field) => proposed[field] === null || proposed[field] === undefined || proposed[field] === "");
+  const durationEligible = Number.isFinite(Number(proposed.durationMinutes));
+  return {
+    candidateId: candidate.candidateId,
+    currentFields,
+    proposedFields: proposed,
+    missingFields,
+    durationEligible,
+    readiness: missingFields.length === 0 && durationEligible ? "READY_FOR_FUTURE_CLOSE_WRITE_SHAPE" : (durationEligible ? "PARTIAL_MISSING_OPTIONAL_OR_PROVENANCE_FIELDS" : "NOT_READY_MISSING_DURATION_INPUTS")
+  };
+}
+
+function gridlyHistoricalCloseWriteAudit(options = {}) {
+  const nowMs = Number.isFinite(Number(options?.nowMs)) ? Number(options.nowMs) : Date.now();
+  const nowIso = new Date(nowMs).toISOString();
+  const storageSnapshot = gridlyReadHistoricalIntelligenceStorageSnapshot();
+  const historicalState = storageSnapshot.state || gridlyCreateEmptyEventHistoryState();
+  const historicalCrossingEvents = Array.isArray(historicalState.crossingEvents) ? historicalState.crossingEvents : [];
+  const historicalHazardEvents = Array.isArray(historicalState.hazardEvents) ? historicalState.hazardEvents : [];
+  const candidateSources = [
+    { sourceKind: "activeHazards", records: Array.isArray(activeHazards) ? activeHazards : [] },
+    { sourceKind: "activeReports", records: Array.isArray(activeReports) ? activeReports : [] },
+    { sourceKind: "historicalHazardEvents", records: historicalHazardEvents },
+    { sourceKind: "historicalCrossingEvents", records: historicalCrossingEvents }
+  ];
+  const candidateRecords = candidateSources.flatMap((source) => source.records
+    .map((record, index) => ({ record, index }))
+    .filter(({ record }) => gridlyHistoricalCloseWriteAuditCandidateEligible(record, source.sourceKind))
+    .map(({ record, index }) => gridlyHistoricalCloseWriteAuditCandidateFromRecord(record, source.sourceKind, index, nowIso)));
+  const proposedHistoricalWrites = candidateRecords.map((candidate) => gridlyHistoricalCloseWriteAuditProposedRecord(candidate));
+  const writeComparisons = candidateRecords.map((candidate, index) => gridlyHistoricalCloseWriteAuditComparison(candidate, proposedHistoricalWrites[index]));
+  const canPopulate = (field) => writeComparisons.filter((comparison) => comparison.proposedFields[field] !== null && comparison.proposedFields[field] !== undefined && comparison.proposedFields[field] !== "").length;
+  const validationResults = {
+    candidateCount: candidateRecords.length,
+    proposedWriteCount: proposedHistoricalWrites.length,
+    historicalRecordsInspected: historicalCrossingEvents.length + historicalHazardEvents.length,
+    activeHazardsInspected: Array.isArray(activeHazards) ? activeHazards.length : 0,
+    activeReportsInspected: Array.isArray(activeReports) ? activeReports.length : 0,
+    canPopulateCounts: {
+      createdAt: canPopulate("createdAt"),
+      clearedAt: canPopulate("clearedAt"),
+      durationMinutes: canPopulate("durationMinutes"),
+      closeState: canPopulate("closeState"),
+      closeReason: canPopulate("closeReason"),
+      locationKey: canPopulate("locationKey")
+    },
+    durationEligibleCount: writeComparisons.filter((comparison) => comparison.durationEligible).length,
+    missingCreatedAtCount: writeComparisons.filter((comparison) => comparison.missingFields.includes("createdAt")).length,
+    missingLocationKeyCount: writeComparisons.filter((comparison) => comparison.missingFields.includes("locationKey")).length,
+    allCandidatesDurationEligible: writeComparisons.length > 0 && writeComparisons.every((comparison) => comparison.durationEligible),
+    storageWritePerformed: false,
+    runtimeActivationPerformed: false,
+    destructiveActionTaken: false
+  };
+  const recommendations = {
+    currentWriteReadiness: writeComparisons.length > 0 && writeComparisons.every((comparison) => comparison.missingFields.length === 0) ? "READY_SHAPE_ONLY" : "PARTIAL_AUDIT_ONLY",
+    durationWriteReadiness: validationResults.candidateCount > 0 && validationResults.durationEligibleCount === validationResults.candidateCount ? "READY_WHEN_CLOSE_TIMESTAMP_EXISTS" : "BLOCKED_BY_MISSING_CREATED_AT_OR_CLOSE_TIMESTAMP",
+    closeStateReadiness: validationResults.canPopulateCounts.closeState === validationResults.candidateCount ? "AUDIT_PLACEHOLDER_AVAILABLE" : "NEEDS_REAL_CLOSE_STATE_MAPPING_BEFORE_ACTIVATION",
+    activationBenefits: [
+      "Would turn explicit close transitions into deterministic durationMinutes and durationBucket values.",
+      "Would preserve side-by-side provenance for road, crossing, source, confirmation, close state, and location key.",
+      "Would let future historical intelligence reason over cleared events instead of open-ended active records."
+    ],
+    activationRisks: [
+      "A real close path still needs exact matching between a clear signal and the intended active record.",
+      "Placeholder closeState values in this audit are not sufficient for analytics activation.",
+      "Historical storage writes should remain disabled until close reason and identity matching are product-approved."
+    ],
+    safestNextStep: "Keep this helper audit-only; next add a non-writing close-state mapping fixture with explicit identity matching before enabling any storage, analytics, telemetry, UI, or lifecycle activation.",
+    auditOnly: true,
+    storageWritesPerformed: false,
+    runtimeActivationPerformed: false
+  };
+  return {
+    candidateRecords: candidateRecords.map(({ sourceRecord, ...candidate }) => candidate),
+    proposedHistoricalWrites,
+    writeComparisons,
+    validationResults,
+    recommendations
+  };
+}
+
 if (typeof window !== "undefined") {
   window.safeDisplayText = safeDisplayText;
 }
@@ -40636,6 +40872,7 @@ exposeGridlyAuditHelper("gridlyAuditRegistryDebug", gridlyAuditRegistryDebug);
 exposeGridlyAuditHelper("gridlyVisualRegressionAudit", window.gridlyVisualRegressionAudit);
 exposeGridlyAuditHelper("gridlyHistoricalClosePathFramework", gridlyHistoricalClosePathFramework);
 exposeGridlyAuditHelper("gridlyHistoricalClosePathSimulation", gridlyHistoricalClosePathSimulation);
+exposeGridlyAuditHelper("gridlyHistoricalCloseWriteAudit", gridlyHistoricalCloseWriteAudit);
 exposeGridlyAuditHelper("gridlyCommuteIntelligenceAudit", gridlyCommuteIntelligenceAudit);
 exposeGridlyAuditHelper("loadSharedReports", typeof loadSharedReports === "function" ? loadSharedReports : null);
 exposeAllGridlyAuditHelpers();
