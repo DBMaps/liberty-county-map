@@ -7871,6 +7871,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyTxdotLayerAudit",
   "gridlyRunTxdotLayerAudit",
   "gridlyTxdotDirectionalReadinessAudit",
+  "gridlyRoadwayGeometryCapabilityAudit",
   "gridlyAuditHelperExposureAudit",
   "gridlySupabaseHazardInventoryAudit",
   "gridlySupabaseHazardPurgeAudit",
@@ -7958,6 +7959,7 @@ function exposeAllGridlyAuditHelpers() {
     gridlyTxdotLayerAudit: typeof gridlyTxdotLayerAudit === "function" ? gridlyTxdotLayerAudit : (typeof target?.gridlyTxdotLayerAudit === "function" ? target.gridlyTxdotLayerAudit : null),
     gridlyRunTxdotLayerAudit: typeof gridlyRunTxdotLayerAudit === "function" ? gridlyRunTxdotLayerAudit : (typeof target?.gridlyRunTxdotLayerAudit === "function" ? target.gridlyRunTxdotLayerAudit : null),
     gridlyTxdotDirectionalReadinessAudit: typeof gridlyTxdotDirectionalReadinessAudit === "function" ? gridlyTxdotDirectionalReadinessAudit : (typeof target?.gridlyTxdotDirectionalReadinessAudit === "function" ? target.gridlyTxdotDirectionalReadinessAudit : null),
+    gridlyRoadwayGeometryCapabilityAudit: typeof gridlyRoadwayGeometryCapabilityAudit === "function" ? gridlyRoadwayGeometryCapabilityAudit : (typeof target?.gridlyRoadwayGeometryCapabilityAudit === "function" ? target.gridlyRoadwayGeometryCapabilityAudit : null),
     gridlyAuditHelperExposureAudit: typeof gridlyAuditHelperExposureAudit === "function" ? gridlyAuditHelperExposureAudit : (typeof target?.gridlyAuditHelperExposureAudit === "function" ? target.gridlyAuditHelperExposureAudit : null),
     gridlySupabaseHazardInventoryAudit: typeof target?.gridlySupabaseHazardInventoryAudit === "function" ? target.gridlySupabaseHazardInventoryAudit : null,
     gridlySupabaseHazardPurgeAudit: typeof target?.gridlySupabaseHazardPurgeAudit === "function" ? target.gridlySupabaseHazardPurgeAudit : null,
@@ -26031,6 +26033,335 @@ function gridlyFindRenderedMarkerPlacementAudit(incidentId) {
   }
   return null;
 }
+
+
+function gridlyRoadwayAuditNormalizeText(value) {
+  return String(value ?? "").trim();
+}
+
+function gridlyRoadwayAuditLower(value) {
+  return gridlyRoadwayAuditNormalizeText(value).toLowerCase();
+}
+
+function gridlyRoadwayAuditFeatureNameValues(feature) {
+  const props = feature?.properties || {};
+  return [
+    props.name,
+    props.ref,
+    props.highway,
+    props.route,
+    props.route_name,
+    props.routeName,
+    props.alt_name,
+    props.official_name,
+    props["tiger:name_base"],
+    props["tiger:name_base_1"],
+    props["tiger:name_base_2"],
+    props["tiger:name_base_3"]
+  ].map(gridlyRoadwayAuditNormalizeText).filter(Boolean);
+}
+
+function gridlyRoadwayAuditFeatureText(feature) {
+  const props = feature?.properties || {};
+  return gridlyRoadwayAuditLower([...gridlyRoadwayAuditFeatureNameValues(feature), props["@id"]].join(" | "));
+}
+
+function gridlyRoadwayAuditMatchesCorridor(feature, corridorKey) {
+  const text = gridlyRoadwayAuditFeatureText(feature);
+  if (corridorKey === "us90") return /\b(us\s*90|us-90|u\.?s\.?\s*highway\s*90|united\s+states\s+highway\s+90|highway\s+90)\b/.test(text);
+  if (corridorKey === "tx146") return /\b(tx\s*146|tx-146|sh\s*146|state\s+highway\s+146|highway\s+146)\b/.test(text);
+  return false;
+}
+
+function gridlyRoadwayAuditCountValues(values) {
+  return values.reduce((counts, value) => {
+    const key = gridlyRoadwayAuditNormalizeText(value);
+    if (key) counts[key] = (counts[key] || 0) + 1;
+    return counts;
+  }, {});
+}
+
+function gridlyRoadwayAuditRound(value, digits = 3) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return null;
+  const factor = 10 ** digits;
+  return Math.round(number * factor) / factor;
+}
+
+function gridlyRoadwayAuditMilesToMeters(value) {
+  const number = Number(value);
+  return Number.isFinite(number) ? gridlyRoadwayAuditRound(number * 1609.344, 1) : null;
+}
+
+function gridlyRoadwayAuditFeatureCenter(feature) {
+  const segments = flattenRoadGeometrySegments(feature?.geometry);
+  if (!segments.length) return null;
+  const points = [];
+  segments.forEach((segment) => {
+    points.push([segment.startLat, segment.startLng], [segment.endLat, segment.endLng]);
+  });
+  const totals = points.reduce((acc, point) => ({ lat: acc.lat + point[0], lng: acc.lng + point[1] }), { lat: 0, lng: 0 });
+  return { lat: totals.lat / points.length, lng: totals.lng / points.length };
+}
+
+function gridlyRoadwayAuditFeatureBearing(feature) {
+  const segments = flattenRoadGeometrySegments(feature?.geometry).filter((segment) => {
+    return haversineDistance(segment.startLat, segment.startLng, segment.endLat, segment.endLng) > 0.0005;
+  });
+  if (!segments.length) return null;
+  const middle = segments[Math.floor(segments.length / 2)];
+  return gridlyRoadBearingDegrees(middle.startLat, middle.startLng, middle.endLat, middle.endLng);
+}
+
+function gridlyRoadwayAuditSampleFeature(feature) {
+  const props = feature?.properties || {};
+  const bearing = gridlyRoadwayAuditFeatureBearing(feature);
+  const center = gridlyRoadwayAuditFeatureCenter(feature);
+  return {
+    id: props["@id"] || props.id || null,
+    geometryType: feature?.geometry?.type || null,
+    name: props.name || null,
+    ref: props.ref || null,
+    highway: props.highway || null,
+    oneway: props.oneway || null,
+    lanes: props.lanes || null,
+    lanesForward: props["lanes:forward"] || null,
+    lanesBackward: props["lanes:backward"] || null,
+    tigerSeparated: props["tiger:separated"] || null,
+    placement: props.placement || null,
+    bearing,
+    inferredDirection: gridlyInferCardinalRoadDirection(bearing),
+    center: center ? { lat: gridlyRoadwayAuditRound(center.lat, 6), lng: gridlyRoadwayAuditRound(center.lng, 6) } : null
+  };
+}
+
+function gridlyRoadwayAuditFieldCandidates(features, patterns) {
+  const counts = {};
+  features.forEach((feature) => {
+    Object.keys(feature?.properties || {}).forEach((field) => {
+      if (patterns.some((pattern) => pattern.test(field))) counts[field] = (counts[field] || 0) + 1;
+    });
+  });
+  return Object.entries(counts)
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([field, count]) => ({ field, count }));
+}
+
+function gridlyRoadwayAuditFindParallelCandidates(features, maxPairs = 8) {
+  const candidates = [];
+  const sampled = features.slice(0, 220);
+  for (let i = 0; i < sampled.length; i += 1) {
+    const a = sampled[i];
+    const centerA = gridlyRoadwayAuditFeatureCenter(a);
+    const bearingA = gridlyRoadwayAuditFeatureBearing(a);
+    const namesA = new Set(gridlyRoadwayAuditFeatureNameValues(a).map(gridlyRoadwayAuditLower));
+    if (!centerA || !Number.isFinite(Number(bearingA)) || !namesA.size) continue;
+    for (let j = i + 1; j < sampled.length; j += 1) {
+      const b = sampled[j];
+      const centerB = gridlyRoadwayAuditFeatureCenter(b);
+      const bearingB = gridlyRoadwayAuditFeatureBearing(b);
+      if (!centerB || !Number.isFinite(Number(bearingB))) continue;
+      const sharedName = gridlyRoadwayAuditFeatureNameValues(b).map(gridlyRoadwayAuditLower).find((name) => namesA.has(name));
+      if (!sharedName) continue;
+      const distanceMeters = haversineDistance(centerA.lat, centerA.lng, centerB.lat, centerB.lng) * 1609.344;
+      const bearingDifference = gridlyBearingDifferenceDegrees(bearingA, bearingB);
+      if (distanceMeters >= 8 && distanceMeters <= 90 && Number.isFinite(bearingDifference) && bearingDifference <= 25) {
+        candidates.push({
+          sharedName,
+          distanceMeters: gridlyRoadwayAuditRound(distanceMeters, 1),
+          bearingDifferenceDegrees: gridlyRoadwayAuditRound(bearingDifference, 1),
+          first: gridlyRoadwayAuditSampleFeature(a),
+          second: gridlyRoadwayAuditSampleFeature(b)
+        });
+      }
+    }
+  }
+  return candidates.sort((a, b) => a.distanceMeters - b.distanceMeters).slice(0, maxPairs);
+}
+
+function gridlyRoadwayAuditAssessCorridor(label, corridorKey) {
+  const features = Array.isArray(roadwaySegmentFeatures) ? roadwaySegmentFeatures.filter((feature) => gridlyRoadwayAuditMatchesCorridor(feature, corridorKey)) : [];
+  const geometryTypeCount = gridlyRoadwayAuditCountValues(features.map((feature) => feature?.geometry?.type));
+  const roadNameVariants = gridlyRoadwayAuditCountValues(features.flatMap(gridlyRoadwayAuditFeatureNameValues));
+  const bearingSamples = features.map(gridlyRoadwayAuditSampleFeature).filter((sample) => Number.isFinite(Number(sample.bearing))).slice(0, 12);
+  const duplicateParallelSegmentCandidates = gridlyRoadwayAuditFindParallelCandidates(features, 8);
+  const hasOneWayPairs = features.filter((feature) => gridlyRoadwayAuditLower(feature?.properties?.oneway) === "yes").length >= 2;
+  const hasMultiLaneBidirectionalCenterline = features.some((feature) => {
+    const props = feature?.properties || {};
+    return gridlyRoadwayAuditLower(props.oneway) !== "yes" && (Number(props.lanes) >= 3 || props["lanes:forward"] || props["lanes:backward"] || props["lanes:both_ways"]);
+  });
+  const separateCarriagewaysAppearPresent = hasOneWayPairs || duplicateParallelSegmentCandidates.length > 0;
+  const appearsCenterlineOnly = features.length > 0 && !separateCarriagewaysAppearPresent && hasMultiLaneBidirectionalCenterline;
+  const bearingComputable = bearingSamples.length > 0;
+  const confidenceLevel = !features.length ? "none" : (separateCarriagewaysAppearPresent && bearingComputable ? "medium" : (bearingComputable ? "low" : "none"));
+  const directionalLabelsCanBeInferredSafely = Boolean(separateCarriagewaysAppearPresent && bearingComputable && confidenceLevel !== "low");
+  const readiness = !features.length
+    ? "no_geometry_loaded"
+    : (directionalLabelsCanBeInferredSafely ? "usable_with_caution" : "insufficient_geometry");
+  return {
+    road: label,
+    directionalReadiness: readiness,
+    segmentCount: features.length,
+    geometryTypeCount,
+    roadNameVariants,
+    bearingSamples,
+    parallelCandidateDistanceMeters: duplicateParallelSegmentCandidates.map((candidate) => candidate.distanceMeters),
+    duplicateParallelSegmentCandidates,
+    appearsCenterlineOnly,
+    separateCarriagewaysAppearPresent,
+    directionalLabelsCanBeInferredSafely,
+    confidenceLevel,
+    assessment: !features.length
+      ? "No matching local roadway geometry is loaded for this corridor."
+      : (directionalLabelsCanBeInferredSafely
+        ? "Local geometry includes computable bearings and probable separate carriageway/parallel candidates, but this remains audit-only without authoritative carriageway direction metadata."
+        : "Local geometry can identify the corridor and usually compute bearings, but it is not sufficient to safely publish directional/carriageway labels by itself.")
+  };
+}
+
+function gridlyRoadwayGeometryCapabilityAudit() {
+  const features = Array.isArray(roadwaySegmentFeatures) ? roadwaySegmentFeatures : [];
+  const loadedFeatures = roadwayDatasetLoaded ? features : [];
+  const geometryTypes = gridlyRoadwayAuditCountValues(loadedFeatures.map((feature) => feature?.geometry?.type));
+  const roadNameFieldCandidates = gridlyRoadwayAuditFieldCandidates(loadedFeatures, [/name/i, /^ref$/i, /route/i, /highway/i]);
+  const directionFieldCandidates = gridlyRoadwayAuditFieldCandidates(loadedFeatures, [/direction/i, /bearing/i, /heading/i, /forward/i, /backward/i, /prefix/i, /suffix/i]);
+  const oneWayFieldCandidates = gridlyRoadwayAuditFieldCandidates(loadedFeatures, [/oneway/i, /one_way/i]);
+  const bearingFieldCandidates = gridlyRoadwayAuditFieldCandidates(loadedFeatures, [/bearing/i, /heading/i, /azimuth/i]);
+  const carriagewayFieldCandidates = gridlyRoadwayAuditFieldCandidates(loadedFeatures, [/carriage/i, /separat/i, /divider/i, /median/i, /placement/i, /^lanes/i, /turn:lanes/i]);
+  const bearingAvailable = bearingFieldCandidates.length > 0;
+  const bearingComputable = loadedFeatures.some((feature) => Number.isFinite(Number(gridlyRoadwayAuditFeatureBearing(feature))));
+  const carriagewayMetadataAvailable = carriagewayFieldCandidates.some((entry) => /carriage|separat|divider|median|placement/i.test(entry.field));
+  const dividedRoadRepresentationAvailable = loadedFeatures.some((feature) => gridlyRoadwayAuditLower(feature?.properties?.oneway) === "yes") || carriagewayMetadataAvailable;
+  const sampleRoadSegments = loadedFeatures.slice(0, 10).map(gridlyRoadwayAuditSampleFeature);
+  const sampleUs90Segments = loadedFeatures.filter((feature) => gridlyRoadwayAuditMatchesCorridor(feature, "us90")).slice(0, 10).map(gridlyRoadwayAuditSampleFeature);
+  const sampleTx146Segments = loadedFeatures.filter((feature) => gridlyRoadwayAuditMatchesCorridor(feature, "tx146")).slice(0, 10).map(gridlyRoadwayAuditSampleFeature);
+  const estimatedBearingSamples = loadedFeatures.map(gridlyRoadwayAuditSampleFeature).filter((sample) => Number.isFinite(Number(sample.bearing))).slice(0, 20);
+  const us90GeometryAssessment = gridlyRoadwayAuditAssessCorridor("US 90", "us90");
+  const tx146GeometryAssessment = gridlyRoadwayAuditAssessCorridor("TX 146", "tx146");
+  const duplicateParallelSegmentCandidates = gridlyRoadwayAuditFindParallelCandidates(loadedFeatures, 12);
+  const target = typeof window !== "undefined" ? window : globalThis;
+  const rawTxdotRows = typeof target?.gridlyTxdot?.getRawRoadConditions === "function" ? target.gridlyTxdot.getRawRoadConditions() : toArray(target?.gridlyTxdotRawRoadConditions);
+  const normalizedTxdotRows = typeof gridlyReadCachedTxdotRows === "function" ? gridlyReadCachedTxdotRows() : [];
+  const txdotRows = [...toArray(rawTxdotRows), ...toArray(normalizedTxdotRows)];
+  const txdotHasGeometry = txdotRows.some((row) => row?.__geometry?.type || row?.geometry?.type);
+  const txdotHasLineGeometry = txdotRows.some((row) => [row?.__geometry?.type, row?.geometry?.type].includes("LineString") || [row?.__geometry?.type, row?.geometry?.type].includes("MultiLineString"));
+  const txdotHasDirection = txdotRows.some((row) => row?.travel_direction || row?.travelDirection || row?.direction);
+  const routeLatLngs = typeof savedRouteLayer?.getLatLngs === "function" ? (savedRouteLayer.getLatLngs() || []) : [];
+  const routeGeometryAvailable = Array.isArray(routeLatLngs) && routeLatLngs.length >= 2;
+  const localLoaded = Boolean(roadwayDatasetLoaded && loadedFeatures.length);
+  const missingData = [];
+  if (!localLoaded) missingData.push("local roadway segment geometry not loaded");
+  if (!bearingAvailable) missingData.push("authoritative bearing fields on local roadway segments");
+  if (!carriagewayMetadataAvailable) missingData.push("explicit carriageway/side-of-road metadata");
+  if (!directionFieldCandidates.some((entry) => /direction/i.test(entry.field))) missingData.push("explicit EB/WB/NB/SB direction metadata on local roadway segments");
+  if (!txdotHasLineGeometry) missingData.push("retained TxDOT LineString/MultiLineString geometry in normalized incident cache");
+  if (!txdotHasDirection) missingData.push("observed/current TxDOT travel_direction values for geometry validation");
+  const sourceComparison = {
+    localRoadwaySegments: {
+      loaded: localLoaded,
+      source: ROADWAY_SEGMENTS_URL,
+      roadNameSupport: roadNameFieldCandidates.length ? "yes_name_ref_highway_fields" : "missing",
+      bearingSupport: bearingComputable ? "computable_from_linestring_coordinates" : "missing",
+      directionSupport: directionFieldCandidates.some((entry) => /direction/i.test(entry.field)) ? "limited_name_direction_fields" : "no_explicit_direction",
+      carriagewaySupport: dividedRoadRepresentationAvailable ? "partial_oneway_or_separation_tags" : "missing",
+      sideOfRoadSupport: carriagewayMetadataAvailable ? "partial_metadata_not_validated" : "insufficient",
+      betaUsability: localLoaded && bearingComputable ? "usable_with_caution_for_audit_only" : "insufficient"
+    },
+    osrmNearestCandidates: {
+      loaded: Boolean(lastRoadSnapDebug?.nearestCandidates?.length || lastRoadSnapDebug?.osrmNearestCandidates?.length),
+      roadNameSupport: "yes_when_nearest_response_has_name",
+      bearingSupport: "not_retained_in_current_nearest_debug_path",
+      directionSupport: "missing",
+      carriagewaySupport: "missing",
+      sideOfRoadSupport: "insufficient_point_snap_only",
+      betaUsability: "insufficient_for_directional_labels"
+    },
+    txdotCachedCurrentGeometry: {
+      loaded: txdotRows.length > 0,
+      roadNameSupport: txdotRows.some((row) => row?.roadway || row?.roadName || row?.routeName || row?.route_name) ? "yes_when_rows_present" : "unknown_or_missing",
+      bearingSupport: txdotHasLineGeometry ? "potential_if_full_geometry_retained" : "discarded_or_midpoint_only_today",
+      directionSupport: txdotHasDirection ? "official_direction_present_in_some_rows" : "not_observed_in_current_cache",
+      carriagewaySupport: "not_structured_in_current_normalized_cache",
+      sideOfRoadSupport: "insufficient_without_retained_line_and_carriageway_metadata",
+      betaUsability: txdotHasDirection ? "usable_with_caution_for_official_event_direction_only" : "insufficient"
+    },
+    routeGeometry: {
+      loaded: routeGeometryAvailable,
+      roadNameSupport: "missing_route_polyline_has_shape_not_road_names",
+      bearingSupport: routeGeometryAvailable ? "computable_for_active_route_path" : "missing_when_no_active_route",
+      directionSupport: "route_travel_direction_only_not_road_carriageway_direction",
+      carriagewaySupport: "missing",
+      sideOfRoadSupport: "insufficient",
+      betaUsability: "not_suitable_for_roadway_intelligence_labels"
+    }
+  };
+  const scoreParts = {
+    localGeometryLoaded: localLoaded ? 20 : 0,
+    lineGeometryPresent: Object.keys(geometryTypes).some((type) => /LineString/.test(type)) ? 20 : 0,
+    roadNamesPresent: roadNameFieldCandidates.length ? 15 : 0,
+    bearingComputable: bearingComputable ? 20 : 0,
+    dividedRepresentationPartial: dividedRoadRepresentationAvailable ? 10 : 0,
+    explicitDirectionMetadata: directionFieldCandidates.some((entry) => /direction/i.test(entry.field)) ? 5 : 0,
+    carriagewayMetadata: carriagewayMetadataAvailable ? 5 : 0,
+    txdotRetainedGeometry: txdotHasLineGeometry ? 5 : 0
+  };
+  const directionalReadinessScore = Object.values(scoreParts).reduce((sum, value) => sum + value, 0);
+  const directionalReadiness = !localLoaded
+    ? "no_geometry_loaded"
+    : (directionalReadinessScore >= 85 && us90GeometryAssessment.directionalReadiness !== "insufficient_geometry" && tx146GeometryAssessment.directionalReadiness !== "insufficient_geometry"
+      ? "ready_high_confidence"
+      : (directionalReadinessScore >= 55 ? "usable_with_caution" : "insufficient_geometry"));
+  const recommendation = directionalReadiness === "ready_high_confidence"
+    ? "Use local roadway geometry only behind conservative validation against explicit direction/carriageway metadata; keep audit-only until live incident labeling is designed."
+    : "Do not claim US 90 EB/WB or TX 146 NB/SB production support yet. Next required data is authoritative carriageway-aware roadway geometry with explicit direction/one-way semantics, plus retained TxDOT LineString geometry and travel_direction for validation.";
+  const audit = {
+    auditVersion: "V206.12-roadway-geometry-capability-audit",
+    auditOnly: true,
+    destructiveActionsTaken: false,
+    geometrySourcesFound: [
+      { source: "localRoadwaySegments", url: ROADWAY_SEGMENTS_URL, found: true },
+      { source: "osrmNearestCandidates", url: OSRM_NEAREST_API, found: true },
+      { source: "txdotCachedCurrentGeometry", found: txdotRows.length > 0 || Boolean(target?.gridlyTxdot) },
+      { source: "routeGeometry", found: true }
+    ],
+    geometrySourcesLoaded: {
+      localRoadwaySegments: localLoaded,
+      osrmNearestCandidates: Boolean(sourceComparison.osrmNearestCandidates.loaded),
+      txdotCachedCurrentGeometry: txdotRows.length > 0,
+      routeGeometry: routeGeometryAvailable
+    },
+    roadSegmentFeatureCount: loadedFeatures.length,
+    roadSegmentGeometryTypes: geometryTypes,
+    roadNameFieldCandidates,
+    directionFieldCandidates,
+    oneWayFieldCandidates,
+    bearingAvailable,
+    bearingComputable,
+    carriagewayMetadataAvailable,
+    dividedRoadRepresentationAvailable,
+    us90GeometryAssessment,
+    tx146GeometryAssessment,
+    sampleRoadSegments,
+    sampleUs90Segments,
+    sampleTx146Segments,
+    estimatedBearingSamples,
+    duplicateParallelSegmentCandidates,
+    missingData,
+    directionalReadiness,
+    directionalReadinessScore,
+    scoreParts,
+    dataSourceComparison: sourceComparison,
+    recommendation,
+    guardrailConclusion: "Current local geometry can support audit bearing calculations and corridor identification. It should not be treated as high-confidence directional/carriageway reporting unless explicit direction, selected-segment reliability, and separated same-name carriageway candidates are all validated."
+  };
+  console.info("gridlyRoadwayGeometryCapabilityAudit", audit);
+  return audit;
+}
+
+if (typeof window !== "undefined") {
+  window.gridlyRoadwayGeometryCapabilityAudit = gridlyRoadwayGeometryCapabilityAudit;
+}
+exposeGridlyAuditHelper("gridlyRoadwayGeometryCapabilityAudit", gridlyRoadwayGeometryCapabilityAudit);
 
 function gridlyInferCardinalRoadDirection(bearing) {
   const value = Number(bearing);
