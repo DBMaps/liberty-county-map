@@ -340,7 +340,7 @@ const ROAD_HAZARD_SOURCE_MAP = {
 
 
 const GRIDLY_HAZARD_CATEGORY_REVIEW_MODEL = Object.freeze({
-  version: "V206.8",
+  version: "V206.9.1",
   objective: "Audit supported hazard categories for beta readiness without changing reporting UI, routing, alerts ownership, Portrait V2, History UI, TxDOT, or Supabase writes.",
   recommendedCategories: Object.freeze([
     { group: "ROADWAY", userFacingName: "Flooding", internalCategory: "flooding", currentStatus: "keep", alertBehavior: "High severity roadway weather alert; should remain high-priority near route and map surfaces.", agingPolicy: "Extended weather-sensitive aging: active 0-6h, needs confirmation 6-24h, stale 24-48h, historical 48h+.", trustBehavior: "Needs reconfirmation as age increases; official/system or repeated confirmations raise trust.", historicalIntelligenceUsefulness: "HIGH", historyRecommendation: "Contribute to historical intelligence after clear/stale transition because repeated high-water locations are valuable.", betaRecommendation: "Launch beta" },
@@ -492,6 +492,60 @@ function gridlyBuildHazardCategoryReviewAudit(options = {}) {
     { group: "RAIL", userFacingName: "Rail Issue", internalCategory: "rail_issue" },
     { group: "COMMUNITY", userFacingName: "Other Hazard", internalCategory: "other_hazard" }
   ];
+  const betaCategoryCoverage = implementedBetaCategoryList.map((entry) => {
+    const category = entry.internalCategory;
+    const visualCategory = category === "rail_blockage_delay" ? "rail" : category;
+    const sample = { type: category, report_type: category, category, title: entry.userFacingName, description: entry.userFacingName, source: "community report" };
+    const normalizedCategory = typeof normalizeGridlyIncidentCategory === "function" ? normalizeGridlyIncidentCategory(sample) : category;
+    const lifecycleType = typeof gridlyResolveHazardLifecycleType === "function" ? gridlyResolveHazardLifecycleType(sample) : category;
+    const severity = typeof getGridlyIncidentSeverity === "function" ? getGridlyIncidentSeverity(sample, visualCategory) : HAZARD_TYPES[category]?.severity || "unknown";
+    const markerStyle = typeof getGridlyMarkerStyle === "function" ? getGridlyMarkerStyle(visualCategory, severity, sample, category.startsWith("rail") ? "rail" : "community") : "unknown_quiet";
+    const glyph = category === "rail_issue" ? HAZARD_TYPES.rail_issue?.icon : (typeof getCategoryMarkerGlyph === "function" ? getCategoryMarkerGlyph(category, sample) : HAZARD_TYPES[category]?.icon);
+    const copy = HAZARD_TYPES[category] || (category === "rail_blockage_delay" ? HAZARD_TYPES.rail_blockage_delay : null);
+    const popupTitle = category === "rail_blockage_delay" ? "Train blocking crossing" : (copy?.label || "");
+    const alertWording = copy?.detail || GRIDLY_HAZARD_CATEGORY_REVIEW_MODEL.recommendedCategories.find((item) => item.internalCategory === category)?.alertBehavior || "";
+    const historicalSupport = Boolean(
+      GRIDLY_HAZARD_LIFECYCLE_RULES?.[lifecycleType]
+      || GRIDLY_HAZARD_CATEGORY_REVIEW_MODEL.recommendedCategories.some((item) => item.internalCategory === category && item.historicalIntelligenceUsefulness)
+    );
+    return {
+      userFacingName: entry.userFacingName,
+      internalCategory: category,
+      categoryMapping: normalizedCategory === visualCategory || normalizedCategory === category || (category === "rail_blockage_delay" && normalizedCategory === "rail"),
+      normalizedCategory,
+      glyph: glyph || "",
+      hasGlyph: Boolean(glyph),
+      definedSeverity: copy?.severity || (category === "rail_blockage_delay" ? "high" : "moderate"),
+      renderedSeverity: severity,
+      severityClass: severity,
+      severityConsistent: category === "road_closed" ? ["high", "critical"].includes(severity) : ((copy?.severity || (category === "rail_blockage_delay" ? "high" : "moderate")) === severity || (category === "rail_blockage_delay" && ["moderate", "high"].includes(severity))),
+      markerStyle,
+      visualTreatment: markerStyle !== "unknown_quiet",
+      popupTitle,
+      hasPopupTitle: Boolean(popupTitle),
+      alertWording,
+      hasAlertWording: Boolean(alertWording),
+      lifecycleType,
+      historicalCategorySupport: historicalSupport
+    };
+  });
+  const missingGlyphMappings = betaCategoryCoverage.filter((item) => !item.hasGlyph).map((item) => item.internalCategory);
+  const missingVisualTreatments = betaCategoryCoverage.filter((item) => !item.visualTreatment).map((item) => item.internalCategory);
+  const severityConsistencyFindings = betaCategoryCoverage
+    .filter((item) => !item.severityConsistent)
+    .map((item) => ({ category: item.internalCategory, definedSeverity: item.definedSeverity, renderedSeverity: item.renderedSeverity, normalizedCategory: item.normalizedCategory }));
+  const trafficBackupCoverage = betaCategoryCoverage.find((item) => item.internalCategory === "traffic_backup") || null;
+  const disabledVehicleSeverityReview = {
+    category: "disabled_vehicle",
+    definedSeverity: HAZARD_TYPES.disabled_vehicle.severity,
+    unifiedIncidentType: typeof mapRoadHazardType === "function" ? mapRoadHazardType("disabled_vehicle") : "disabled_vehicle",
+    renderedSeverity: typeof getMapSeverityClass === "function" ? getMapSeverityClass({ type: "disabled_vehicle", report_type: "disabled_vehicle", status: "active" }) : "moderate",
+    normalizedCategory: typeof normalizeGridlyIncidentCategory === "function" ? normalizeGridlyIncidentCategory({ type: "disabled_vehicle", title: "Disabled Vehicle", source: "community report" }) : "disabled_vehicle",
+    conclusion: "Disabled Vehicle remains moderate; it no longer maps through wreck/crash for unified marker rendering.",
+    safetyVisibilityPreserved: true,
+    routeRelevancePreserved: true,
+    alertFunctionalityPreserved: true
+  };
   const legacyCategoryMappings = {
     debris: { resolvesTo: "debris", userFacingName: "Debris in Road", compatibility: "label-only cleanup" },
     rail_blockage: { resolvesTo: "rail_blockage_delay", userFacingName: "Train Blocking Crossing" },
@@ -518,6 +572,12 @@ function gridlyBuildHazardCategoryReviewAudit(options = {}) {
     destructiveActionsTaken: false,
     scopedOut: ["reporting UI redesign", "routing changes", "alerts ownership changes", "Portrait V2 changes", "History UI changes", "TxDOT changes", "Supabase writes", "new frameworks", "simulations"],
     implementedBetaCategoryList,
+    trafficBackupCoverage,
+    severityConsistencyFindings,
+    categoryVisualCoverage: betaCategoryCoverage,
+    missingGlyphMappings,
+    missingVisualTreatments,
+    disabledVehicleSeverityReview,
     legacyCategoryMappings,
     activeCategoryInventory: currentInventory,
     currentCategoryInventory: currentInventory,
@@ -1153,6 +1213,15 @@ function isGridlyRailShapedObject(input = {}) {
 }
 
 function normalizeGridlyIncidentCategory(input) {
+  if (input && typeof input === "object") {
+    const explicitCategory = [input.type, input.report_type, input.reportType, input.hazardType, input.category, input.hazardCategory]
+      .map((value) => String(value || "").trim().toLowerCase().replace(/[\s-]+/g, "_"))
+      .find(Boolean);
+    if (explicitCategory === "rail_issue") return "rail_issue";
+    if (explicitCategory === "traffic_backup") return "traffic_backup";
+    if (explicitCategory === "disabled_vehicle") return "disabled_vehicle";
+    if (explicitCategory !== "rail_blockage_delay" && HAZARD_TYPES[explicitCategory]) return explicitCategory;
+  }
   if (isGridlyRailShapedObject(input)) return "rail";
   const raw = typeof input === "object" && input
     ? [
@@ -1245,6 +1314,7 @@ function normalizeGridlyCommunityVisualCategory(category = "unknown") {
     "construction",
     "road_closed",
     "disabled_vehicle",
+    "traffic_backup",
     "standing_water",
     "fallen_tree",
     "signal_outage",
@@ -1282,6 +1352,7 @@ function getGridlyIncidentSeverity(incident = {}, category = "unknown") {
   if (category === "flooding" || category === "txdot_flooding") return "high";
   if (category === "ice") return "high";
   if (category === "construction" || category === "txdot_construction") return "moderate";
+  if (category === "traffic_backup") return "moderate";
   if (category === "disabled_vehicle") return "moderate";
   if (category === "debris") return isMinor ? "low" : "moderate";
   if (category === "standing_water" || category === "fallen_tree" || category === "signal_outage" || category === "utility_work" || category === "emergency_response_impact") return "moderate";
@@ -5213,6 +5284,15 @@ function gridlyCommunityIntelligenceFramework() {
       requiredInputs: ["activeHazards", "activeReports", "historical event storage", "hazard history"]
     },
     {
+      category: "TRAFFIC_BACKUP_CORRIDORS",
+      readiness: gridlyHistoricalAuditReadiness({ ready: trafficBackupEvents.length >= 8 && repeatedTrafficBackups.repeated >= 2, limited: trafficBackupEvents.length >= 2 && repeatedTrafficBackups.repeated >= 1 }),
+      availableEventCount: trafficBackupEvents.length,
+      blockers: [
+        trafficBackupEvents.length < 8 ? "Needs more traffic backup/heavy-delay history." : "",
+        repeatedTrafficBackups.repeated < 2 ? "Needs repeated traffic backup records on the same corridors." : ""
+      ].filter(Boolean)
+    },
+    {
       category: "HIGH_DELAY_CORRIDORS",
       purpose: "Identify corridors that repeatedly accumulate hazards, blocked crossings, or delay reports.",
       userValue: "Shows drivers where disruption is common without requiring them to interpret raw reports.",
@@ -5578,6 +5658,8 @@ function gridlyBuildHistoricalIntelligenceReadiness(combinedEvents = [], crossin
   const repeatedCrossings = gridlyHistoricalAuditCountGroups(crossingEvents, (event) => gridlyHistoricalAuditLocationKey(event, "crossing"));
   const constructionEvents = hazardEvents.filter((event) => /construction|roadwork|work_zone|work zone|lane_closure|closure/.test(gridlyHistoricalAuditHazardType(event).toLowerCase()));
   const repeatedConstruction = gridlyHistoricalAuditCountGroups(constructionEvents, (event) => gridlyHistoricalAuditRoad(event).toLowerCase());
+  const trafficBackupEvents = hazardEvents.filter((event) => /traffic[_\s-]*backup|heavy[_\s-]*traffic|traffic[_\s-]*delay|congestion|heavy[_\s-]*delay/.test(gridlyHistoricalAuditHazardType(event).toLowerCase()));
+  const repeatedTrafficBackups = gridlyHistoricalAuditCountGroups(trafficBackupEvents, (event) => gridlyHistoricalAuditRoad(event).toLowerCase());
   const durationEvents = combinedEvents.filter((event) => Boolean(gridlyHistoricalAuditRoad(event.record)) && Number.isFinite(Number(gridlyHistoricalAuditDuration(event.record))));
   const delayedCorridors = gridlyHistoricalAuditCountGroups(durationEvents.map((event) => event.record), (event) => gridlyHistoricalAuditRoad(event).toLowerCase());
   const confirmedEvents = combinedEvents.filter((event) => Number(event.record?.confirmationCount ?? event.record?.confirmations ?? event.record?.confirmation_count) >= 2);
@@ -5629,6 +5711,15 @@ function gridlyBuildHistoricalIntelligenceReadiness(combinedEvents = [], crossin
       ].filter(Boolean)
     },
     {
+      category: "TRAFFIC_BACKUP_CORRIDORS",
+      readiness: gridlyHistoricalAuditReadiness({ ready: trafficBackupEvents.length >= 8 && repeatedTrafficBackups.repeated >= 2, limited: trafficBackupEvents.length >= 2 && repeatedTrafficBackups.repeated >= 1 }),
+      availableEventCount: trafficBackupEvents.length,
+      blockers: [
+        trafficBackupEvents.length < 8 ? "Needs more traffic backup/heavy-delay history." : "",
+        repeatedTrafficBackups.repeated < 2 ? "Needs repeated traffic backup records on the same corridors." : ""
+      ].filter(Boolean)
+    },
+    {
       category: "HIGH_DELAY_CORRIDORS",
       readiness: gridlyHistoricalAuditReadiness({ ready: durationEvents.length >= 20 && delayedCorridors.repeated >= 3, limited: durationEvents.length >= 5 && delayedCorridors.repeated >= 1 }),
       availableEventCount: durationEvents.length,
@@ -5667,7 +5758,7 @@ function gridlyBuildHistoricalIntelligenceReadiness(combinedEvents = [], crossin
     }
   ];
 
-  return { categories, diagnostics: { repeatedHazards, repeatedFloods, repeatedCrossings, repeatedConstruction, delayedCorridors, confirmedHotspots, distinctDays: dayKeys.size, daypartBuckets: hourBuckets.size, spanDays } };
+  return { categories, diagnostics: { repeatedHazards, repeatedFloods, repeatedCrossings, repeatedConstruction, repeatedTrafficBackups, delayedCorridors, confirmedHotspots, distinctDays: dayKeys.size, daypartBuckets: hourBuckets.size, spanDays } };
 }
 
 
@@ -16460,7 +16551,7 @@ window.gridlyAuditHelperExposureAudit = gridlyAuditHelperExposureAudit;
 exposeGridlyAuditHelper("gridlyAuditHelperExposureAudit", gridlyAuditHelperExposureAudit);
 
 
-const GRIDLY_CORE_ROAD_HAZARD_CLEANUP_TYPES = Object.freeze(["flooding", "ice", "debris", "crash", "construction", "road_closed", "disabled_vehicle", "other_hazard"]);
+const GRIDLY_CORE_ROAD_HAZARD_CLEANUP_TYPES = Object.freeze(["flooding", "ice", "debris", "crash", "construction", "road_closed", "disabled_vehicle", "traffic_backup", "other_hazard"]);
 const GRIDLY_SHARED_ROAD_HAZARD_REPORT_TYPES = Object.freeze([...GRIDLY_CORE_ROAD_HAZARD_CLEANUP_TYPES, "hazard_cleared", "wreck"]);
 const GRIDLY_SUPABASE_TEST_HAZARD_CONFIRMATION = "CLEAR_SUPABASE_TEST_HAZARDS";
 
@@ -17443,7 +17534,7 @@ function buildRouteHazardAssessment(routeLatLngs = []) {
   const nearReports = [];
   const severityWeight = {
     blocked: 12, heavy: 7, delayed: 5, delay: 5, clear: 0, cleared: 0,
-    crash: 10, flooding: 10, debris: 6, construction: 5, road_closed: 12, disabled_vehicle: 5, rail_blockage_delay: 9, other_hazard: 4
+    crash: 10, flooding: 10, debris: 6, construction: 5, road_closed: 12, disabled_vehicle: 5, traffic_backup: 7, rail_blockage_delay: 9, other_hazard: 4
   };
   const crossingLookup = new Map((Array.isArray(crossings) ? crossings : []).map((crossing) => [String(crossing?.id), crossing]));
 
@@ -24446,6 +24537,7 @@ function getCategoryMarkerGlyph(category, incident) {
     construction: "▧",
     road_closed: "⛔",
     disabled_vehicle: "◌",
+    traffic_backup: "◍",
     other_hazard: "•"
   };
   return glyphMap[category] || "•";
@@ -24902,7 +24994,7 @@ function mapRailReportType(type) {
 
 function mapRoadHazardType(type) {
   const map = { crash: "wreck", flooding: "flooding",
-  ice: "ice", construction: "construction", debris: "debris", road_closed: "closure", disabled_vehicle: "wreck", traffic_backup: "traffic_backup", hazard_cleared: "cleared" };
+  ice: "ice", construction: "construction", debris: "debris", road_closed: "closure", disabled_vehicle: "disabled_vehicle", traffic_backup: "traffic_backup", hazard_cleared: "cleared" };
   return map[type] || "debris";
 }
 
@@ -25022,15 +25114,18 @@ function choosePreferredIncidentCandidate(current, candidate, routeHazard) {
 
 function getMapSeverityClass(incident){
   if (incident.status === "cleared") return "low";
-  if (incident.type === "flooding") return "high";
-  if (["rail_blocked","wreck","closure"].includes(incident.type)) return "high";
-  if (["rail_delay","construction"].includes(incident.type)) return "moderate";
+  const normalizedType = String(incident?.type || incident?.report_type || "").toLowerCase();
+  const metadataSeverity = HAZARD_TYPES[normalizedType]?.severity;
+  if (metadataSeverity === "high") return "high";
+  if (metadataSeverity === "moderate") return "moderate";
+  if (["flooding", "rail_blocked", "wreck", "closure"].includes(normalizedType)) return "high";
+  if (["rail_delay", "construction", "disabled_vehicle", "traffic_backup"].includes(normalizedType)) return "moderate";
   return "low";
 }
 
 function getUnifiedIncidentIcon(incident){
   if (incident.status === "cleared") return "✅";
-  const m={rail_blocked:"⛔", rail_delay:"🚦", wreck:"🚗", flooding:"🌊", construction:"🚧", closure:"⛔", debris:"⚠️", cleared:"✅"};
+  const m={rail_blocked:"⛔", rail_delay:"🚦", wreck:"🚗", flooding:"🌊", construction:"🚧", closure:"⛔", debris:"⚠️", disabled_vehicle:"🚙", traffic_backup:"🚦", cleared:"✅"};
   return m[incident.type]||"❗";
 }
 
@@ -26443,6 +26538,7 @@ function injectHazardStyles() {
     .gridly-hazard-marker[data-category="construction"] { --gridly-marker-border: rgba(255, 176, 46, 0.98); --gridly-marker-glow: rgba(255, 176, 46, 0.44); }
     .gridly-hazard-marker[data-category="road_closed"] { --gridly-marker-border: rgba(255, 78, 111, 0.98); --gridly-marker-glow: rgba(255, 78, 111, 0.52); }
     .gridly-hazard-marker[data-category="disabled_vehicle"] { --gridly-marker-border: rgba(183, 197, 214, 0.95); --gridly-marker-glow: rgba(183, 197, 214, 0.4); }
+    .gridly-hazard-marker[data-category="traffic_backup"] { --gridly-marker-border: rgba(57, 200, 255, 0.98); --gridly-marker-glow: rgba(57, 200, 255, 0.46); }
     .gridly-hazard-marker[data-category="other_hazard"] { --gridly-marker-border: rgba(181, 210, 255, 0.9); --gridly-marker-glow: rgba(181, 210, 255, 0.36); }
 
     .gridly-marker-hazard-low .gridly-hazard-marker {
@@ -28371,6 +28467,16 @@ function getReportCopy(type) {
     }
   };
 
+  const normalizedHazardType = typeof getHazardCategory === "function" ? getHazardCategory(type) : String(type || "").trim().toLowerCase();
+  const hazardCopy = HAZARD_TYPES[normalizedHazardType];
+  if (hazardCopy) {
+    return {
+      label: hazardCopy.label,
+      shortTitle: hazardCopy.label.toLowerCase(),
+      detail: hazardCopy.detail,
+      severity: hazardCopy.severity
+    };
+  }
   return types[type] || types.other;
 }
 
@@ -39150,6 +39256,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const txDotStyleCandidate = buildGridlyRoadHazardTxDotStyleCandidate(alert);
     if (txDotStyleCandidate.text) return txDotStyleCandidate.text;
     const normalizedEvent = String(eventLabel || "").toLowerCase();
+    const metadataLabel = HAZARD_TYPES[getHazardCategory(normalizedEvent)]?.label || "";
     const roadHazardMap = [
       { test: /road[_\s-]*closed|closure|closed/, label: "Road closed" },
       { test: /construction|work ?zone|lane ?work/, label: "Construction" },
@@ -39158,7 +39265,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       { test: /flood|high water/, label: "Flooding" },
       { test: /crash|collision|wreck|accident/, label: "Crash / Wreck" }
     ];
-    const hazardLabel = (roadHazardMap.find((entry) => entry.test.test(normalizedEvent)) || {}).label || "Other Hazard";
+    const hazardLabel = (roadHazardMap.find((entry) => entry.test.test(normalizedEvent)) || {}).label || metadataLabel || "Other Hazard";
     if (roadLabel) return `${hazardLabel} on ${roadLabel}`;
     return hazardLabel === "Road hazard" ? "Road hazard reported" : `${hazardLabel} reported`;
   }
