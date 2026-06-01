@@ -3609,6 +3609,7 @@ const MAP_FIRST_HINT_SEEN_KEY = "gridlyMapFirstHintSeenV1";
 const MAP_STYLE_STORAGE_KEY = "gridlyMapStyleV1";
 const GRIDLY_SETTINGS_STORAGE_KEY = "gridlySettingsV1";
 const GRIDLY_WELCOME_SEEN_STORAGE_KEY = "gridlyWelcomeSeenV1";
+const GRIDLY_HOME_TOWN_OPTIONS = ["Dayton", "Liberty", "Cleveland", "Ames", "Other"];
 const SAVED_PLACES_STORAGE_KEY = "gridlySavedPlacesV1";
 const SELECTED_PLACE_STORAGE_KEY = "gridlySelectedPlaceIdV1";
 const GRIDLY_PROFILE_STORAGE_KEY = "gridlyUserProfileV1";
@@ -13575,6 +13576,7 @@ function hydrateElements() {
     "gridlyWelcomeOpenSettingsBtn",
     "gridlyWelcomeEnableLocationBtn",
     "gridlyWelcomeLocationStatus",
+    "gridlyWelcomeTownStatus",
     "closeSmartAlertsModalBtn",
     "openSmartAlertsBtn",
     "mobileAlertsMirror",
@@ -14305,10 +14307,39 @@ function closeFirstRunSetupModal() {
 }
 
 let gridlyWelcomeCurrentStep = 0;
-const GRIDLY_WELCOME_TOTAL_STEPS = 5;
+const GRIDLY_WELCOME_TOTAL_STEPS = 6;
 
 function markGridlyWelcomeSeen() {
   gridlySafeLocalStorageSet(GRIDLY_WELCOME_SEEN_STORAGE_KEY, "yes");
+}
+
+function normalizeGridlyHomeTown(value = "") {
+  const town = String(value || "").trim();
+  return GRIDLY_HOME_TOWN_OPTIONS.includes(town) ? town : "";
+}
+
+function getGridlyHomeTownPreference() {
+  return normalizeGridlyHomeTown(getGridlySettingsPreferences()?.community?.homeTown);
+}
+
+function saveGridlyHomeTownPreference(town) {
+  const homeTown = normalizeGridlyHomeTown(town);
+  if (!homeTown) return "";
+  const settings = getGridlySettingsPreferences();
+  saveGridlySettingsPreferences({ ...settings, community: { ...(settings.community || {}), homeTown } }, { applyDisplay: false, render: false, source: "welcome_home_town" });
+  return homeTown;
+}
+
+function renderGridlyWelcomeHomeTownSelection() {
+  const selectedTown = getGridlyHomeTownPreference();
+  document.querySelectorAll("[data-gridly-town]").forEach((button) => {
+    const isSelected = button.dataset.gridlyTown === selectedTown;
+    button.classList.toggle("is-selected", isSelected);
+    button.setAttribute("aria-pressed", isSelected ? "true" : "false");
+  });
+  if (els.gridlyWelcomeTownStatus) {
+    els.gridlyWelcomeTownStatus.textContent = selectedTown ? `${selectedTown} selected for My Town and Local Alerts.` : "Choose a town to personalize your local awareness.";
+  }
 }
 
 function renderGridlyWelcomeStep(step = gridlyWelcomeCurrentStep) {
@@ -14327,6 +14358,7 @@ function renderGridlyWelcomeStep(step = gridlyWelcomeCurrentStep) {
   if (els.gridlyWelcomeBackBtn) els.gridlyWelcomeBackBtn.disabled = boundedStep === 0;
   if (els.gridlyWelcomeNextBtn) els.gridlyWelcomeNextBtn.hidden = boundedStep >= GRIDLY_WELCOME_TOTAL_STEPS - 1;
   if (els.gridlyWelcomeFinishBtn) els.gridlyWelcomeFinishBtn.hidden = boundedStep < GRIDLY_WELCOME_TOTAL_STEPS - 1;
+  renderGridlyWelcomeHomeTownSelection();
 }
 
 function openGridlyWelcomeOnboarding(options = {}) {
@@ -14411,6 +14443,12 @@ function bindGridlyWelcomeOnboarding() {
   els.gridlyWelcomeOpenSettingsBtn?.addEventListener("click", () => {
     closeGridlyWelcomeOnboarding({ persist: true, restoreFocus: false, source: "open_settings" });
     openGridlySurface("settings", () => openSettingsModal());
+  });
+  document.querySelectorAll("[data-gridly-town]").forEach((button) => {
+    button.addEventListener("click", () => {
+      saveGridlyHomeTownPreference(button.dataset.gridlyTown);
+      renderGridlyWelcomeHomeTownSelection();
+    });
   });
   els.gridlyWelcomeEnableLocationBtn?.addEventListener("click", requestGridlyWelcomeLocation);
   document.addEventListener("keydown", (event) => {
@@ -35211,11 +35249,13 @@ function gridlyStorageAvailable() {
 function normalizeGridlySettings(raw = null) {
   const base = {
     notifications: { ...GRIDLY_SETTINGS_DEFAULTS.notifications },
-    display: { ...GRIDLY_SETTINGS_DEFAULTS.display }
+    display: { ...GRIDLY_SETTINGS_DEFAULTS.display },
+    community: { homeTown: "" }
   };
   const source = raw && typeof raw === "object" ? raw : {};
   const notifications = source.notifications && typeof source.notifications === "object" ? source.notifications : {};
   const display = source.display && typeof source.display === "object" ? source.display : {};
+  const community = source.community && typeof source.community === "object" ? source.community : {};
   Object.keys(base.notifications).forEach((key) => {
     if (typeof notifications[key] === "boolean") base.notifications[key] = notifications[key];
   });
@@ -35226,6 +35266,7 @@ function normalizeGridlySettings(raw = null) {
   const normalizedTextSize = String(display.textSize || "").trim().toLowerCase();
   if (normalizedTextSize === "extra-large") base.display.textSize = "large";
   else if (GRIDLY_SETTINGS_VALID_TEXT_SIZES.has(normalizedTextSize)) base.display.textSize = normalizedTextSize;
+  base.community.homeTown = normalizeGridlyHomeTown(community.homeTown);
   return base;
 }
 
