@@ -7881,6 +7881,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlySupabaseHazardPurgeAudit",
   "gridlyClearSupabaseTestHazards",
   "gridlyDevPurgeRecentRoadHazards",
+  "gridlyDevPurgeRecentCrossingReports",
   "gridlyTestDataCleanupAudit",
   "gridlyClearTestData",
   "gridlyClearLocalTestReports",
@@ -7973,6 +7974,7 @@ function exposeAllGridlyAuditHelpers() {
     gridlySupabaseHazardPurgeAudit: typeof target?.gridlySupabaseHazardPurgeAudit === "function" ? target.gridlySupabaseHazardPurgeAudit : null,
     gridlyClearSupabaseTestHazards: typeof target?.gridlyClearSupabaseTestHazards === "function" ? target.gridlyClearSupabaseTestHazards : null,
     gridlyDevPurgeRecentRoadHazards: typeof gridlyDevPurgeRecentRoadHazards === "function" ? gridlyDevPurgeRecentRoadHazards : null,
+    gridlyDevPurgeRecentCrossingReports: typeof gridlyDevPurgeRecentCrossingReports === "function" ? gridlyDevPurgeRecentCrossingReports : null,
     gridlyTestDataCleanupAudit: typeof target?.gridlyTestDataCleanupAudit === "function" ? target.gridlyTestDataCleanupAudit : null,
     gridlyClearTestData: typeof target?.gridlyClearTestData === "function" ? target.gridlyClearTestData : null,
     gridlyClearLocalTestReports: typeof target?.gridlyClearLocalTestReports === "function" ? target.gridlyClearLocalTestReports : null,
@@ -15622,6 +15624,112 @@ function refreshReportHazardViews(source = "unspecified") {
 
 const GRIDLY_TEST_DATA_CLEAR_CONFIRMATION = "CLEAR_TEST_DATA";
 
+const GRIDLY_TEST_DATA_SHARED_SUPPRESSION_MS = 10 * 60 * 1000;
+const gridlyDevCleanupSharedSuppressionState = {
+  active: false,
+  suppressUntil: 0,
+  startedAt: 0,
+  reason: "",
+  reportIds: new Set(),
+  reportKeys: new Set(),
+  deviceIds: new Set(),
+  suppressedCount: 0,
+  lastSuppressedCount: 0,
+  lastReloadSource: "",
+  reloadSources: [],
+  samples: []
+};
+
+function gridlyBuildSharedReportSuppressionKey(report = {}) {
+  const kind = String(report?.reportKind || (report?.crossingId || report?.crossing_id ? "crossing" : "hazard")).toLowerCase();
+  const type = String(report?.type || report?.report_type || "other").toLowerCase();
+  const crossingId = String(report?.crossingId || report?.crossing_id || "").trim();
+  const latNum = Number(report?.lat ?? report?.latitude ?? report?.rawLat);
+  const lngNum = Number(report?.lng ?? report?.lon ?? report?.longitude ?? report?.rawLng);
+  const lat = Number.isFinite(latNum) ? latNum.toFixed(4) : "na";
+  const lng = Number.isFinite(lngNum) ? lngNum.toFixed(4) : "na";
+  return `${kind}|${type}|${crossingId || "no-crossing"}|${lat}|${lng}`;
+}
+
+function gridlyArmDevCleanupSharedSuppression(records = [], options = {}) {
+  const now = Date.now();
+  const suppressMs = Math.max(60 * 1000, Number(options?.suppressMs) || GRIDLY_TEST_DATA_SHARED_SUPPRESSION_MS);
+  gridlyDevCleanupSharedSuppressionState.active = true;
+  gridlyDevCleanupSharedSuppressionState.suppressUntil = now + suppressMs;
+  gridlyDevCleanupSharedSuppressionState.startedAt = now;
+  gridlyDevCleanupSharedSuppressionState.reason = options?.reason || "gridlyClearTestData";
+  gridlyDevCleanupSharedSuppressionState.reportIds = new Set();
+  gridlyDevCleanupSharedSuppressionState.reportKeys = new Set();
+  gridlyDevCleanupSharedSuppressionState.deviceIds = new Set([String(deviceId || "").trim()].filter(Boolean));
+  gridlyDevCleanupSharedSuppressionState.suppressedCount = 0;
+  gridlyDevCleanupSharedSuppressionState.lastSuppressedCount = 0;
+  gridlyDevCleanupSharedSuppressionState.lastReloadSource = "";
+  gridlyDevCleanupSharedSuppressionState.reloadSources = [];
+  gridlyDevCleanupSharedSuppressionState.samples = [];
+
+  (Array.isArray(records) ? records : []).forEach((record) => {
+    const id = String(record?.id || "").trim();
+    if (id) gridlyDevCleanupSharedSuppressionState.reportIds.add(id);
+    const key = gridlyBuildSharedReportSuppressionKey(record);
+    if (key) gridlyDevCleanupSharedSuppressionState.reportKeys.add(key);
+    const recordDeviceId = String(record?.deviceId || record?.device_id || "").trim();
+    if (recordDeviceId) gridlyDevCleanupSharedSuppressionState.deviceIds.add(recordDeviceId);
+  });
+
+  return {
+    active: true,
+    suppressUntil: gridlyDevCleanupSharedSuppressionState.suppressUntil,
+    suppressUntilIso: new Date(gridlyDevCleanupSharedSuppressionState.suppressUntil).toISOString(),
+    reportIdCount: gridlyDevCleanupSharedSuppressionState.reportIds.size,
+    reportKeyCount: gridlyDevCleanupSharedSuppressionState.reportKeys.size,
+    deviceIdCount: gridlyDevCleanupSharedSuppressionState.deviceIds.size
+  };
+}
+
+function gridlyShouldSuppressSharedReportDuringDevCleanup(report = {}, reason = "") {
+  const state = gridlyDevCleanupSharedSuppressionState;
+  const now = Date.now();
+  if (!state.active || now > state.suppressUntil) {
+    state.active = false;
+    return false;
+  }
+  const id = String(report?.id || "").trim();
+  const reportDeviceId = String(report?.deviceId || report?.device_id || "").trim();
+  const submittedAtMs = new Date(report?.submittedAt || report?.created_at || 0).getTime();
+  const isRecent = Number.isFinite(submittedAtMs) && submittedAtMs > 0 && submittedAtMs >= state.startedAt - (24 * 60 * 60 * 1000);
+  const suppressed = Boolean(
+    (id && state.reportIds.has(id)) ||
+    state.reportKeys.has(gridlyBuildSharedReportSuppressionKey(report)) ||
+    (reportDeviceId && state.deviceIds.has(reportDeviceId) && isRecent)
+  );
+  if (suppressed) {
+    state.suppressedCount += 1;
+    state.lastSuppressedCount += 1;
+    state.lastReloadSource = reason;
+    if (!state.reloadSources.includes(reason)) state.reloadSources.push(reason);
+    if (state.samples.length < 5) {
+      state.samples.push({ id: id || null, type: report?.type || report?.report_type || null, reportKind: report?.reportKind || null, source: report?.source || null, deviceId: reportDeviceId || null });
+    }
+  }
+  return suppressed;
+}
+
+function gridlyGetDevCleanupSuppressionAudit() {
+  const state = gridlyDevCleanupSharedSuppressionState;
+  return {
+    active: Boolean(state.active && Date.now() <= state.suppressUntil),
+    suppressUntilIso: state.suppressUntil ? new Date(state.suppressUntil).toISOString() : null,
+    suppressedSharedReportsCount: state.suppressedCount,
+    lastSuppressedSharedReportsCount: state.lastSuppressedCount,
+    reloadSource: state.lastReloadSource || (state.reloadSources.length ? state.reloadSources[state.reloadSources.length - 1] : (state.active && Date.now() <= state.suppressUntil ? "suppression_armed_waiting_for_shared_reload" : "none")),
+    reloadSources: [...state.reloadSources],
+    reportIdCount: state.reportIds.size,
+    reportKeyCount: state.reportKeys.size,
+    deviceIdCount: state.deviceIds.size,
+    samples: [...state.samples]
+  };
+}
+
 function gridlyGetProtectedCleanupStorageKeys() {
   return [
     SAVED_PLACES_STORAGE_KEY,
@@ -15728,6 +15836,33 @@ function gridlyBuildTestDataCleanupAudit(options = {}) {
   return audit;
 }
 
+
+function gridlyClearVisibleDevCleanupSurfaces(reason = "gridlyClearTestData") {
+  activeReports = [];
+  activeHazards = [];
+  if (unifiedIncidentLayer && typeof unifiedIncidentLayer.clearLayers === "function") {
+    unifiedIncidentLayer.clearLayers();
+  }
+  if (typeof renderUnifiedIncidents === "function") renderUnifiedIncidents(`${reason}:render-empty`);
+  if (typeof renderAlerts === "function") renderAlerts();
+  refreshReportHazardViews(reason);
+  if (typeof renderUnifiedIncidents === "function") renderUnifiedIncidents(`${reason}:post-refresh`);
+  if (unifiedIncidentLayer && typeof unifiedIncidentLayer.clearLayers === "function" && !activeReports.length && !activeHazards.length) {
+    unifiedIncidentLayer.clearLayers();
+  }
+}
+
+function gridlyGetVisibleDevCleanupCounts() {
+  const alertsSnapshot = typeof window !== "undefined" && typeof window.getAlertsSurfaceSnapshot === "function" ? window.getAlertsSurfaceSnapshot() : null;
+  const markerCount = typeof unifiedIncidentLayer?.getLayers === "function" ? unifiedIncidentLayer.getLayers().length : 0;
+  return {
+    activeHazardsAfterCleanup: Array.isArray(activeHazards) ? activeHazards.length : 0,
+    activeReportsAfterCleanup: Array.isArray(activeReports) ? activeReports.length : 0,
+    visibleMarkersAfterCleanup: markerCount,
+    activeAlertsAfterCleanup: Number(alertsSnapshot?.activeIncidentCount ?? alertsSnapshot?.count ?? 0)
+  };
+}
+
 function gridlyRemoveLocalStorageKeys(keys = []) {
   const removed = [];
   const skipped = [];
@@ -15769,7 +15904,7 @@ window.gridlyClearLocalTestReports = function gridlyClearLocalTestReports(option
 
   const removed = gridlyRemoveLocalStorageKeys(gridlyGetTestArtifactStorageKeys());
 
-  refreshReportHazardViews("gridlyClearLocalTestReports");
+  gridlyClearVisibleDevCleanupSurfaces("gridlyClearLocalTestReports");
 
   const summary = {
     ok: true,
@@ -15806,6 +15941,12 @@ window.gridlyClearTestData = async function gridlyClearTestData(options = {}) {
 
   console.warn("gridlyClearTestData confirmed cleanup plan", before.wouldDelete);
 
+  const suppressionSeedRecords = [
+    ...(Array.isArray(activeHazards) ? activeHazards : []),
+    ...(Array.isArray(activeReports) ? activeReports : [])
+  ];
+  const suppression = gridlyArmDevCleanupSharedSuppression(suppressionSeedRecords, { reason: "gridlyClearTestData" });
+
   const localReportCleanup = window.gridlyClearLocalTestReports({ confirm: GRIDLY_TEST_DATA_CLEAR_CONFIRMATION });
   const historyWrite = gridlyWriteEventHistoryState(gridlyCreateEmptyEventHistoryState());
   gridlyCrossingEventQualityTelemetry = {
@@ -15820,11 +15961,33 @@ window.gridlyClearTestData = async function gridlyClearTestData(options = {}) {
   };
   if (typeof gridlyDevPurgeRecentRoadHazards === "function") {
     supabaseCleanup = await gridlyDevPurgeRecentRoadHazards({
+      hours: 24,
+      radiusMiles: DEFAULT_NEARBY_RADIUS_MILES,
+      sourceFilter: ["user"],
+      deviceIdFilter: [deviceId],
+      limit: 100,
       ...(options?.supabaseOptions && typeof options.supabaseOptions === "object" ? options.supabaseOptions : {}),
       dryRun: false,
       confirm: true
     });
   }
+
+  let supabaseCrossingCleanup = { available: false, deleted: 0, reason: "Crossing report Supabase cleanup helper is not available." };
+  if (typeof gridlyDevPurgeRecentCrossingReports === "function") {
+    supabaseCrossingCleanup = await gridlyDevPurgeRecentCrossingReports({
+      hours: 24,
+      radiusMiles: DEFAULT_NEARBY_RADIUS_MILES,
+      sourceFilter: ["user"],
+      deviceIdFilter: [deviceId],
+      limit: 100,
+      ...(options?.crossingSupabaseOptions && typeof options.crossingSupabaseOptions === "object" ? options.crossingSupabaseOptions : {}),
+      dryRun: false,
+      confirm: true
+    });
+  }
+
+  gridlyWriteEventHistoryState(gridlyCreateEmptyEventHistoryState());
+  gridlyClearVisibleDevCleanupSurfaces("gridlyClearTestData:finalize");
 
   const after = gridlyBuildTestDataCleanupAudit({ dryRun: true });
   const result = {
@@ -15837,9 +16000,17 @@ window.gridlyClearTestData = async function gridlyClearTestData(options = {}) {
       localRoadHazards: Number(localReportCleanup?.clearedLocalActiveHazards || 0),
       localCrossingReports: Number(localReportCleanup?.clearedLocalActiveReports || 0),
       localStorageKeys: localReportCleanup?.removedLocalStorageKeys || [],
-      supabaseRowsDeleted: Number(supabaseCleanup?.deleted || 0)
+      supabaseRowsDeleted: Number(supabaseCleanup?.deleted || 0) + Number(supabaseCrossingCleanup?.deleted || 0)
     },
+    suppression,
+    repopulationDetected: Boolean((after?.roadHazardsFound || 0) > 0 || (after?.crossingReportsFound || 0) > 0),
+    reloadSource: gridlyGetDevCleanupSuppressionAudit().reloadSource,
+    suppressedSharedReportsCount: gridlyGetDevCleanupSuppressionAudit().suppressedSharedReportsCount,
+    purgedSupabaseRoadHazardsCount: Number(supabaseCleanup?.deleted || 0),
+    purgedSupabaseCrossingReportsCount: Number(supabaseCrossingCleanup?.deleted || 0),
+    ...gridlyGetVisibleDevCleanupCounts(),
     supabaseCleanup,
+    supabaseCrossingCleanup,
     protectedDataSkipped: before.protectedDataSkipped,
     before,
     after
@@ -16022,7 +16193,7 @@ function gridlyBuildIncidentSourceTrace(options = {}) {
   const historicalState = typeof gridlyReadEventHistoryState === "function" ? gridlyReadEventHistoryState() : gridlyCreateEmptyEventHistoryState();
   const historicalHazardEvents = Array.isArray(historicalState?.hazardEvents) ? historicalState.hazardEvents : [];
   const historicalCrossingEvents = Array.isArray(historicalState?.crossingEvents) ? historicalState.crossingEvents : [];
-  const alertsSnapshot = typeof window?.getAlertsSurfaceSnapshot === "function" ? window.getAlertsSurfaceSnapshot() : null;
+  const alertsSnapshot = typeof window !== "undefined" && typeof window.getAlertsSurfaceSnapshot === "function" ? window.getAlertsSurfaceSnapshot() : null;
   const latestAlerts = Array.isArray(window?.__gridlyLatestAlertsForRender) ? window.__gridlyLatestAlertsForRender : [];
   const alertItems = Array.isArray(alertsSnapshot?.alerts) ? alertsSnapshot.alerts : latestAlerts;
   const sourceBreakdown = {};
@@ -17265,10 +17436,11 @@ const gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoadH
   const {
     dryRun = true,
     hours = 24,
-    radiusMiles = 0,
+    radiusMiles = DEFAULT_NEARBY_RADIUS_MILES,
     nearLocation = null,
-    sourceFilter = [],
+    sourceFilter = ["user"],
     typeFilter = [],
+    deviceIdFilter = [deviceId],
     limit = 50,
     confirm = false
   } = options || {};
@@ -17278,6 +17450,9 @@ const gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoadH
     : [];
   const normalizedSourceFilter = Array.isArray(sourceFilter)
     ? sourceFilter.map((v) => String(v || "").trim().toLowerCase()).filter(Boolean)
+    : [];
+  const normalizedDeviceIdFilter = Array.isArray(deviceIdFilter)
+    ? deviceIdFilter.map((v) => String(v || "").trim()).filter(Boolean)
     : [];
   const explicitTypeFilter = normalizedTypeFilter.length > 0;
   const maxRows = Math.max(1, Math.min(500, Number(limit) || 50));
@@ -17295,7 +17470,7 @@ const gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoadH
 
   const { data, error } = await supabaseClient
     .from("reports")
-    .select("id,report_type,source,created_at,lat,lng,crossing_id,crossing_name,detail")
+    .select("id,report_type,source,created_at,lat,lng,crossing_id,crossing_name,detail,device_id")
     .gte("created_at", cutoffIso)
     .in("report_type", ROAD_HAZARD_TYPES)
     .order("created_at", { ascending: false })
@@ -17316,6 +17491,7 @@ const gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoadH
     if (!explicitTypeFilter && isRail) return false;
     if (explicitTypeFilter && !normalizedTypeFilter.includes(type)) return false;
     if (normalizedSourceFilter.length && !normalizedSourceFilter.includes(effectiveSource)) return false;
+    if (normalizedDeviceIdFilter.length && !normalizedDeviceIdFilter.includes(String(row?.device_id || "").trim())) return false;
     if (!radius || !centerCandidate) return true;
 
     return getDistanceMiles(centerCandidate.lat, centerCandidate.lng, Number(row?.lat), Number(row?.lng)) <= radius;
@@ -17332,7 +17508,8 @@ const gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoadH
     lng: row.lng,
     crossing_id: row.crossing_id || "",
     crossing_name: row.crossing_name || "",
-    detail: row.detail || ""
+    detail: row.detail || "",
+    device_id: row.device_id || ""
   }));
 
   if (candidates.length) console.table(candidates);
@@ -17346,6 +17523,8 @@ const gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoadH
     limit: maxRows,
     sourceFilter: normalizedSourceFilter,
     typeFilter: normalizedTypeFilter,
+    deviceIdFilter: normalizedDeviceIdFilter,
+    safeDeleteScope: "dev host only; report rows must be recent, user-sourced by default, from the current device by default, non-rail road hazard types, and within the dev radius when a center is available",
     center: centerCandidate,
     candidateCount: candidates.length,
     candidates,
@@ -17384,6 +17563,126 @@ const gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoadH
   return summary;
 };
 
+
+
+const gridlyDevPurgeRecentCrossingReports = async function gridlyDevPurgeRecentCrossingReports(options = {}) {
+  const host = String(window?.location?.hostname || "").toLowerCase();
+  const isDevHost = host === "localhost" || host === "127.0.0.1" || host.endsWith(".local") || host === "";
+  if (!isDevHost) {
+    const blocked = { ok: false, deleted: 0, reason: `Blocked outside dev host (${host || "unknown"}).` };
+    console.warn("gridlyDevPurgeRecentCrossingReports blocked", blocked);
+    return blocked;
+  }
+  if (!supabaseClient) {
+    const missing = { ok: false, deleted: 0, reason: "Supabase client not initialized." };
+    console.warn("gridlyDevPurgeRecentCrossingReports unavailable", missing);
+    return missing;
+  }
+
+  const {
+    dryRun = true,
+    hours = 24,
+    radiusMiles = DEFAULT_NEARBY_RADIUS_MILES,
+    nearLocation = null,
+    sourceFilter = ["user"],
+    deviceIdFilter = [deviceId],
+    limit = 50,
+    confirm = false
+  } = options || {};
+
+  const roadHazardTypes = gridlyGetSharedRoadHazardReportTypes();
+  const normalizedSourceFilter = Array.isArray(sourceFilter)
+    ? sourceFilter.map((v) => String(v || "").trim().toLowerCase()).filter(Boolean)
+    : [];
+  const normalizedDeviceIdFilter = Array.isArray(deviceIdFilter)
+    ? deviceIdFilter.map((v) => String(v || "").trim()).filter(Boolean)
+    : [];
+  const maxRows = Math.max(1, Math.min(500, Number(limit) || 50));
+  const radius = Number(radiusMiles) > 0 ? Number(radiusMiles) : 0;
+  const cutoffIso = new Date(Date.now() - (Math.max(1, Number(hours) || 24) * 60 * 60 * 1000)).toISOString();
+  const centerCandidate = nearLocation && Number.isFinite(Number(nearLocation.lat)) && Number.isFinite(Number(nearLocation.lng))
+    ? { lat: Number(nearLocation.lat), lng: Number(nearLocation.lng), source: "nearLocation" }
+    : userLocation && Number.isFinite(Number(userLocation.lat)) && Number.isFinite(Number(userLocation.lng))
+    ? { lat: Number(userLocation.lat), lng: Number(userLocation.lng), source: "userLocation" }
+    : map?.getCenter
+    ? { lat: Number(map.getCenter().lat), lng: Number(map.getCenter().lng), source: "mapCenter" }
+    : null;
+
+  const { data, error } = await supabaseClient
+    .from("reports")
+    .select("id,report_type,source,created_at,lat,lng,crossing_id,crossing_name,detail,device_id")
+    .gte("created_at", cutoffIso)
+    .order("created_at", { ascending: false })
+    .limit(1000);
+
+  if (error) {
+    console.error("gridlyDevPurgeRecentCrossingReports query failed", error);
+    return { ok: false, deleted: 0, error: error.message || "query_failed" };
+  }
+
+  const matches = (Array.isArray(data) ? data : []).filter((row) => {
+    const type = String(row?.report_type || "").toLowerCase();
+    const effectiveSource = String(row?.source || "user").toLowerCase();
+    const crossingId = String(row?.crossing_id || "").trim();
+    if (roadHazardTypes.includes(type)) return false;
+    if (!crossingId || crossingId.startsWith("hazard-")) return false;
+    if (normalizedSourceFilter.length && !normalizedSourceFilter.includes(effectiveSource)) return false;
+    if (normalizedDeviceIdFilter.length && !normalizedDeviceIdFilter.includes(String(row?.device_id || "").trim())) return false;
+    if (!radius || !centerCandidate) return true;
+    return getDistanceMiles(centerCandidate.lat, centerCandidate.lng, Number(row?.lat), Number(row?.lng)) <= radius;
+  }).slice(0, maxRows);
+
+  const candidates = matches.map((row) => ({
+    id: row.id,
+    type: row.report_type,
+    source: row.source || "user",
+    created_at: row.created_at,
+    lat: row.lat,
+    lng: row.lng,
+    crossing_id: row.crossing_id || "",
+    crossing_name: row.crossing_name || "",
+    detail: row.detail || "",
+    device_id: row.device_id || ""
+  }));
+
+  const summary = {
+    ok: true,
+    dryRun: Boolean(dryRun),
+    cutoffIso,
+    radiusMiles: radius,
+    hours: Math.max(1, Number(hours) || 24),
+    limit: maxRows,
+    sourceFilter: normalizedSourceFilter,
+    deviceIdFilter: normalizedDeviceIdFilter,
+    safeDeleteScope: "dev host only; recent crossing rows from the current device by default, user-sourced by default, non-road-hazard report types, and within the dev radius when a center is available",
+    center: centerCandidate,
+    candidateCount: candidates.length,
+    candidates,
+    deleted: 0
+  };
+
+  if (dryRun !== false) {
+    console.info("gridlyDevPurgeRecentCrossingReports dry run", summary);
+    return summary;
+  }
+  if (confirm !== true) return { ...summary, ok: false, reason: "confirm_true_required_for_delete" };
+
+  const idsToDelete = candidates.map((row) => row.id).filter(Boolean);
+  if (!idsToDelete.length) {
+    console.info("gridlyDevPurgeRecentCrossingReports no matches to delete", summary);
+    return summary;
+  }
+
+  const { error: deleteError } = await supabaseClient.from("reports").delete().in("id", idsToDelete);
+  if (deleteError) {
+    console.error("gridlyDevPurgeRecentCrossingReports delete failed", deleteError);
+    return { ...summary, ok: false, error: deleteError.message || "delete_failed" };
+  }
+
+  summary.deleted = idsToDelete.length;
+  console.info("gridlyDevPurgeRecentCrossingReports completed", summary);
+  return summary;
+};
 
 
 const gridlyPostSubmitRefreshAuditState = {
@@ -17648,14 +17947,18 @@ async function loadSharedReports(reason = "manual") {
     const rawRows = [...rawRowsByKey.values()];
 
     const normalized = normalizeReports(rawRows);
+    gridlyDevCleanupSharedSuppressionState.lastSuppressedCount = 0;
+    const visibleNormalized = normalized.filter((report) => !gridlyShouldSuppressSharedReportDuringDevCleanup(report, reason));
 
-    activeHazards = normalized.filter((report) => report.reportKind === "hazard");
-    activeReports = normalized.filter((report) => report.reportKind !== "hazard");
-    gridlyCaptureHistoryFromReports(normalized, { source: `loadSharedReports:${reason}` });
+    activeHazards = visibleNormalized.filter((report) => report.reportKind === "hazard");
+    activeReports = visibleNormalized.filter((report) => report.reportKind !== "hazard");
+    gridlyCaptureHistoryFromReports(visibleNormalized, { source: `loadSharedReports:${reason}` });
     recordGridlyActiveLocationLifecycleEvent("loadSharedReports:activeCollectionsUpdated", {
       reason,
       rawRowCount: rawRows.length,
       normalizedCount: normalized.length,
+      visibleNormalizedCount: visibleNormalized.length,
+      suppressedSharedReportsCount: gridlyDevCleanupSharedSuppressionState.lastSuppressedCount,
       activeHazardCount: activeHazards.length,
       activeReportCount: activeReports.length
     });
