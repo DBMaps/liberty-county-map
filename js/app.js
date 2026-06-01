@@ -15919,7 +15919,7 @@ const gridlyActiveIncidentAudit = function gridlyActiveIncidentAudit() {
           "active hazards require hazard.expired === false",
           "recent hazard_cleared rows are retained for Recently Cleared visibility",
           "newer hazard_cleared rows suppress active road hazards at the same rounded coordinates",
-          "clustered by getHazardClusterKey(type + lat/lng rounded to 3 decimals), with cleared rows keyed by cleared location"
+          "clustered by getHazardClusterKey(type + lat/lng rounded to 4 decimals), with cleared rows keyed by cleared location"
         ],
         filterSnapshot: {
           reportKind: latestReport?.reportKind || null,
@@ -24754,7 +24754,7 @@ function getLiveHazardIncidents() {
         latestReport: sorted[0],
         reports: sorted,
         representativeCoordinateReason: sorted.length > 1
-          ? "latest_report_coordinate_within_rounded_0.001_degree_hazard_cluster"
+          ? "latest_report_coordinate_within_tight_0.0001_degree_hazard_cluster"
           : "single_report_coordinate",
         oldestMinutes: Math.max(...sorted.map((r) => r.minutesAgo)),
         newestMinutes: Math.min(...sorted.map((r) => r.minutesAgo))
@@ -24763,8 +24763,11 @@ function getLiveHazardIncidents() {
     .sort((a, b) => b.count - a.count || a.newestMinutes - b.newestMinutes);
 }
 
-const GRIDLY_ROAD_CLUSTER_ROUNDING_DECIMALS = 3;
-const GRIDLY_ROAD_CLUSTER_ROUNDING_PRECISION_DEGREES = 0.001;
+const GRIDLY_ROAD_CLUSTER_PREVIOUS_ROUNDING_DECIMALS = 3;
+const GRIDLY_ROAD_CLUSTER_PREVIOUS_PRECISION_DEGREES = 0.001;
+const GRIDLY_ROAD_CLUSTER_ROUNDING_DECIMALS = 4;
+const GRIDLY_ROAD_CLUSTER_ROUNDING_PRECISION_DEGREES = 0.0001;
+const GRIDLY_ROAD_CLUSTER_METHOD = "type_plus_tight_0.0001_degree_coordinate_bucket";
 
 function getHazardClusterKey(hazard) {
   const rawLat = hazard?.lat ?? hazard?.latitude ?? hazard?.rawLat;
@@ -24785,7 +24788,7 @@ function gridlyRoadClusterCoordinateFromRecord(record = {}) {
 }
 
 function gridlyRoadClusterRoundedCoordinateFromKey(clusterKey = "") {
-  const match = String(clusterKey || "").match(/(-?\d+\.\d{3})-(-?\d+\.\d{3})$/);
+  const match = String(clusterKey || "").match(/(-?\d+\.\d+)-(-?\d+\.\d+)$/);
   if (!match) return null;
   const lat = Number(match[1]);
   const lng = Number(match[2]);
@@ -24793,10 +24796,11 @@ function gridlyRoadClusterRoundedCoordinateFromKey(clusterKey = "") {
   return { lat, lng };
 }
 
-function gridlyEstimateRoadClusterRadiusMeters(latitude = LOCATION_DEFAULTS?.center?.[0] || 30) {
+function gridlyEstimateRoadClusterRadiusMeters(latitude = LOCATION_DEFAULTS?.center?.[0] || 30, precisionDegrees = GRIDLY_ROAD_CLUSTER_ROUNDING_PRECISION_DEGREES) {
   const lat = Number.isFinite(Number(latitude)) ? Number(latitude) : 30;
-  const latMeters = GRIDLY_ROAD_CLUSTER_ROUNDING_PRECISION_DEGREES * 111320;
-  const lngMeters = GRIDLY_ROAD_CLUSTER_ROUNDING_PRECISION_DEGREES * 111320 * Math.cos(lat * Math.PI / 180);
+  const precision = Number.isFinite(Number(precisionDegrees)) ? Number(precisionDegrees) : GRIDLY_ROAD_CLUSTER_ROUNDING_PRECISION_DEGREES;
+  const latMeters = precision * 111320;
+  const lngMeters = precision * 111320 * Math.cos(lat * Math.PI / 180);
   return Math.round(Math.sqrt((latMeters ** 2) + (lngMeters ** 2)) * 10) / 10;
 }
 
@@ -24878,6 +24882,7 @@ function gridlyBuildRoadClusterAudit(options = {}) {
   const reportById = new Map(sourceReports.map((report) => [gridlyRoadClusterReportId(report), report]).filter(([id]) => id));
   const latitudeForEstimate = sourceHazards.map((hazard) => Number(gridlyRoadClusterCoordinateFromRecord(hazard)?.lat)).find(Number.isFinite) || LOCATION_DEFAULTS?.center?.[0] || 30;
   const estimatedClusterRadiusMeters = gridlyEstimateRoadClusterRadiusMeters(latitudeForEstimate);
+  const previousEstimatedClusterRadiusMeters = gridlyEstimateRoadClusterRadiusMeters(latitudeForEstimate, GRIDLY_ROAD_CLUSTER_PREVIOUS_PRECISION_DEGREES);
 
   const sampleClusters = liveHazardIncidents.slice(0, sampleLimit).map((incident) => {
     const reports = Array.isArray(incident?.reports) ? incident.reports : sourceHazards.filter((hazard) => getHazardClusterKey(hazard) === incident?.key);
@@ -24905,6 +24910,9 @@ function gridlyBuildRoadClusterAudit(options = {}) {
     const highZoomPlacementRisk = gridlyClassifyRoadClusterHighZoomRisk({
       clusterMemberCount: reports.length,
       maxClusterDistanceMeters,
+      maxMemberDistanceMeters: maxClusterDistanceMeters,
+      dividedRoadRisk: containsDividedRoadName || containsMultipleRoadSides || maxClusterDistanceMeters >= previousEstimatedClusterRadiusMeters * 0.25 ? "elevated" : "reduced",
+      carriagewayRisk: containsMultipleRoadSides || maxClusterDistanceMeters >= 25 ? "elevated" : "reduced",
       containsClearedReports,
       containsMultipleRoadSides,
       containsMultipleRoadNames,
@@ -24952,7 +24960,7 @@ function gridlyBuildRoadClusterAudit(options = {}) {
       clusterCoordinate,
       clusterMembers,
       representativeCoordinate,
-      representativeCoordinateReason: incident?.representativeCoordinateReason || (reports.length > 1 ? "latest_report_coordinate_within_rounded_0.001_degree_hazard_cluster" : "single_report_coordinate"),
+      representativeCoordinateReason: incident?.representativeCoordinateReason || (reports.length > 1 ? "latest_report_coordinate_within_tight_0.0001_degree_hazard_cluster" : "single_report_coordinate"),
       representativeReportId: representativeReportId || null,
       representativeReportAge: gridlyRoadClusterReportAgeMinutes(representative, nowMs),
       representativeReportType: representative?.type || representative?.report_type || null,
@@ -24960,6 +24968,9 @@ function gridlyBuildRoadClusterAudit(options = {}) {
       representativeIsHighestConfidenceReport: representative ? representativeRank >= highestConfidenceRank : null,
       distanceToRepresentativeMeters: clusterMembers.map((member) => ({ reportId: member.reportId, meters: member.distanceToRepresentativeMeters })),
       maxClusterDistanceMeters,
+      maxMemberDistanceMeters: maxClusterDistanceMeters,
+      dividedRoadRisk: containsDividedRoadName || containsMultipleRoadSides || maxClusterDistanceMeters >= previousEstimatedClusterRadiusMeters * 0.25 ? "elevated" : "reduced",
+      carriagewayRisk: containsMultipleRoadSides || maxClusterDistanceMeters >= 25 ? "elevated" : "reduced",
       containsClearedReports,
       containsMultipleRoadSides,
       containsMultipleRoadNames,
@@ -24985,42 +24996,63 @@ function gridlyBuildRoadClusterAudit(options = {}) {
   const highRiskClusters = sampleClusters.filter((cluster) => cluster.highZoomPlacementRisk === "high").length;
   const mediumRiskClusters = sampleClusters.filter((cluster) => cluster.highZoomPlacementRisk === "medium").length;
   const clusteredSamples = sampleClusters.filter((cluster) => cluster.clusterMemberCount > 1);
+  const largestClusterMemberCount = sampleClusters.reduce((max, cluster) => Math.max(max, Number(cluster.clusterMemberCount || 0)), 0);
+  const largestMaxMemberDistanceMeters = sampleClusters.reduce((max, cluster) => Math.max(max, Number(cluster.maxMemberDistanceMeters || cluster.maxClusterDistanceMeters || 0)), 0);
+  const dividedRoadRisk = sampleClusters.some((cluster) => cluster.dividedRoadRisk === "elevated") ? "elevated_in_sample" : "reduced_by_tight_coordinate_bucket";
+  const carriagewayRisk = sampleClusters.some((cluster) => cluster.carriagewayRisk === "elevated") ? "elevated_in_sample" : "reduced_by_tight_coordinate_bucket";
 
   return {
     clusteringEnabled: true,
+    clusterPrecision: GRIDLY_ROAD_CLUSTER_ROUNDING_PRECISION_DEGREES,
+    clusterMethod: GRIDLY_ROAD_CLUSTER_METHOD,
     clusterRoundingPrecision: GRIDLY_ROAD_CLUSTER_ROUNDING_PRECISION_DEGREES,
     clusterRoundingDecimals: GRIDLY_ROAD_CLUSTER_ROUNDING_DECIMALS,
     estimatedClusterRadiusMeters,
-    clusterKeyGeneration: "`${type}-${lat.toFixed(3)}-${lng.toFixed(3)}`; recently cleared rows use `hazard_cleared-${coordinateKey}` and are separated from active hazard clusters.",
-    distanceGrouping: "No explicit distance threshold is checked before grouping; matching type plus rounded 0.001-degree lat/lng key determines membership.",
-    representativeSelectionRules: "Each cluster sorts reports by submittedAt descending; the latest report becomes latestReport and supplies the unified incident/rendered marker coordinate.",
+    previousClusterPrecision: GRIDLY_ROAD_CLUSTER_PREVIOUS_PRECISION_DEGREES,
+    previousEstimatedClusterRadiusMeters,
+    preChangeClusterRisk: "high: the former 0.001-degree bucket could span roughly " + previousEstimatedClusterRadiusMeters + "m diagonally near the sampled latitude, so opposite sides of divided roads or separate carriageways could share one key.",
+    postChangeClusterRisk: "lower: active road hazards now use a 0.0001-degree bucket with an estimated diagonal of roughly " + estimatedClusterRadiusMeters + "m; duplicate reports at the same spot can still merge, while broad cross-road merges are less likely.",
+    clusterMemberCount: largestClusterMemberCount,
+    maxMemberDistanceMeters: largestMaxMemberDistanceMeters,
+    representativeCoordinateReason: clusteredSamples.length ? "latest_report_coordinate_within_tight_0.0001_degree_hazard_cluster" : "single_report_coordinate_or_no_clustered_samples",
+    dividedRoadRisk,
+    carriagewayRisk,
+    clusterKeyGeneration: "`${type}-${lat.toFixed(4)}-${lng.toFixed(4)}` for active road hazards; recently cleared rows continue to use `hazard_cleared-${coordinateKey}` and remain separated from active clusters.",
+    distanceGrouping: "Option A selected for beta: a tighter 0.0001-degree coordinate bucket. It avoids broad 0.001-degree merges without adding a new road-geometry dependency or changing rail behavior.",
+    representativeSelectionRules: "Each tight cluster sorts reports by submittedAt descending; the latest report remains the representative because the tighter bucket bounds representative drift to a small duplicate-report area.",
     suppressionRules: "Expired hazards and non-recent hazard_cleared rows are excluded. Active hazards sharing a cleared coordinate key are suppressed when a recent clear is newer than or equal to the hazard.",
     dedupeRules: "renderUnifiedIncidents dedupes by unified incident id first; road clusters normally render one marker per road-${clusterKey} incident.",
     clearedHazardInteraction: "Recently cleared road rows are included as separate cleared clusters keyed by cleared coordinate; they do not become representatives for active clusters unless their type/key is explicitly the cleared cluster.",
+    reviewedOptions: {
+      optionA: "Selected: 0.0001 precision is the smallest beta-ready change and directly fixes broad rounded-cell clustering.",
+      optionB: "Deferred: distance-based clustering would improve bucket-boundary behavior but adds more membership logic and tuning risk.",
+      optionC: "Deferred: road-aware clustering needs reliable carriageway/side geometry that is not currently part of the report payload.",
+      optionD: "Deferred: hybrid road/distance logic is likely best long term, but it is more complex than needed for this precision fix."
+    },
     primaryQuestions: {
       whenRoadClusteringOccurs: "getLiveHazardIncidents groups filtered activeHazards before getUnifiedIncidents creates road unified incidents and before renderUnifiedIncidents renders markers.",
       coordinateRoundingUsed: GRIDLY_ROAD_CLUSTER_ROUNDING_PRECISION_DEGREES,
       effectiveClusteringRadiusMeters: estimatedClusterRadiusMeters,
-      oppositeSidesCanEnterSameCluster: "Yes, if report type and 0.001-degree rounded lat/lng match; road side/carriageway is not part of the key.",
-      separateCarriagewaysCanEnterSameCluster: "Yes, if both carriageways fall in the same rounded 0.001-degree cell for the same report type.",
-      newerReportCanMoveRepresentativeCoordinate: true,
+      oppositeSidesCanEnterSameCluster: "Less likely; active road hazards now need matching type and matching 0.0001-degree rounded lat/lng instead of the former broad 0.001-degree cell.",
+      separateCarriagewaysCanEnterSameCluster: "Less likely for typical divided carriageway separation; exact same-location duplicates still merge.",
+      newerReportCanMoveRepresentativeCoordinate: "Only within the tighter active road hazard bucket; newest remains the representative to preserve existing dedupe behavior.",
       clearedReportCanBecomeRepresentativeCoordinate: "Only for the separate recently-cleared cluster; active hazard clusters filter cleared rows out or suppress matching active rows.",
       representativeAlwaysNewestReport: clusteredSamples.length ? clusteredSamples.every((cluster) => cluster.representativeIsNewestReport === true) : null,
       representativeAlwaysHighestConfidenceReport: clusteredSamples.length ? clusteredSamples.every((cluster) => cluster.representativeIsHighestConfidenceReport === true) : null,
-      shouldClusteringDetermineHighZoomPlacement: highRiskClusters > 0 || mediumRiskClusters > 0 ? "Review recommended: high zoom marker placement can be visibly misleading when the representative is far from some members or spans divided-road sides." : "Current samples are low risk, but the key still lacks road-side/carriageway awareness."
+      shouldClusteringDetermineHighZoomPlacement: highRiskClusters > 0 || mediumRiskClusters > 0 ? "Review recommended for sampled elevated-risk clusters, but the active road hazard bucket is now much tighter than the pre-change 0.001-degree key." : "Current samples are low risk under the tighter key."
     },
     dividedRoadReview: {
       routesChecked: ["US 90", "TX 146", "other divided highways inferred from road-side/direction text"],
       sampleMatches: sampleClusters.filter((cluster) => cluster.containsDividedRoadName || cluster.containsMultipleRoadSides),
-      conclusion: "Opposite sides or separate carriageways can cluster because the key uses only type plus rounded coordinates, not road side, carriageway, heading, or road geometry."
+      conclusion: "The tighter active-road key reduces accidental divided-road and carriageway merges without changing rail clustering, reporting payloads, or historical record validity."
     },
     sampleClusters,
     highZoomRiskSummary: { low: sampleClusters.filter((cluster) => cluster.highZoomPlacementRisk === "low").length, medium: mediumRiskClusters, high: highRiskClusters },
     recommendations: [
       "Use this audit at high zoom on suspected divided roads to compare each member's originalReportCoordinate with the representativeCoordinate and renderedCoordinate.",
-      "Treat clusters with containsMultipleRoadSides, containsDividedRoadName, cleared rows, or maxClusterDistanceMeters >= 75 as high-zoom placement risks.",
-      "If the marker appears away from the tap while raw/stored/active coordinates match, check whether the cluster representative is a newer report in the same rounded 0.001-degree key.",
-      "Consider preserving per-report marker placement or disabling representative-coordinate placement at very high zoom in a future change; this audit is diagnostic-only."
+      "Expect same-location duplicate reports to merge, but reports on opposite sides of divided roads to split unless their final coordinates are extremely close.",
+      "If a sampled cluster still shows elevated dividedRoadRisk or carriagewayRisk, review the report finalPlacementCoordinate values before considering a future distance-based or road-aware clustering pass.",
+      "Keep rail reporting, rail markers, TxDOT, and Supabase payload shape out of this road-cluster precision path."
     ]
   };
 }
@@ -25675,7 +25707,7 @@ function gridlyHazardPlacementAccuracyAudit() {
       "gridlyBuildRoadAwareHazardPlacement selects finalPlacementCoordinate according to near-road, safe-snap, too-far, and divided-road-risk thresholds.",
       "createSharedHazardReport writes the unchanged reports payload shape with lat/lng set to finalPlacementCoordinate.",
       "normalizeReports maps reports.lat/lng into activeHazards while local diagnostics preserve raw/snapped/final coordinates.",
-      "getLiveHazardIncidents groups road hazards by type + lat/lng rounded to 3 decimals and selects the newest report as representative.",
+      "getLiveHazardIncidents groups active road hazards by type + lat/lng rounded to 4 decimals and selects the newest report as representative inside that tighter bucket.",
       "getUnifiedIncidents copies final placement diagnostics into the road unified incident.",
       "renderUnifiedIncidents places the Leaflet marker at the unified incident lat/lng with a centered iconAnchor; no marker offset is applied."
     ],
