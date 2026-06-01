@@ -12809,6 +12809,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadRoadwayDataset();
   await loadSharedReports("initial_bootstrap");
   renderGridlyCommunityPulse({ reason: "initial_bootstrap" });
+  renderGridlyIntelligencePreviewCard({ reason: "initial_bootstrap" });
 
   setInterval(() => loadSharedReports("interval_live_refresh"), LIVE_REFRESH_MS);
 });
@@ -15012,6 +15013,7 @@ function refreshReportHazardViews(source = "unspecified") {
     timeRefreshChild("recomputeMovementIntelligence", () => recomputeMovementIntelligence());
     timeRefreshChild("updateCorridorSummaryCards", () => updateCorridorSummaryCards());
     timeRefreshChild("renderGridlyCommunityPulse", () => renderGridlyCommunityPulse({ reason: source }));
+    timeRefreshChild("renderGridlyIntelligencePreviewCard", () => renderGridlyIntelligencePreviewCard({ reason: source }));
     const refreshDuration = Number((performance.now() - refreshStart).toFixed(2));
     gridlyRefreshAuditState.lastRefreshDuration = refreshDuration;
     gridlyRefreshAuditState.lastChildDurations = childDurations;
@@ -19711,6 +19713,124 @@ function renderGridlyCommunityPulse(options = {}) {
   return gridlyCommunityPulseAuditState;
 }
 
+
+
+function getGridlyIntelligencePreviewCategory(model = {}) {
+  const signalTypes = Array.isArray(model.blendedSignalTypes) ? model.blendedSignalTypes.map((signalType) => String(signalType || "").toLowerCase()) : [];
+  const activeAwarenessCategory = String(model.activeAwareness?.resolvedCategory || model.activeAwareness?.topCategory || "").toLowerCase();
+  const joinedSignals = `${signalTypes.join(" ")} ${activeAwarenessCategory}`;
+  if (/rail|crossing|train|blocked/.test(joinedSignals)) return "frequently_blocked_crossing";
+  if (/flood|water|high_water/.test(joinedSignals)) return "recurring_flooding_location";
+  if (/closure|crash|wreck|traffic|delay|slow/.test(joinedSignals)) return "common_delay_area";
+  return "community_hotspot";
+}
+
+function getGridlyIntelligencePreviewCategoryLabel(category = "community_hotspot") {
+  if (category === "frequently_blocked_crossing") return "Frequently blocked crossing";
+  if (category === "recurring_flooding_location") return "Recurring flooding location";
+  if (category === "common_delay_area") return "Common delay area";
+  return "Community hotspot";
+}
+
+function buildGridlyIntelligencePreviewCardModel(options = {}) {
+  const suppliedModel = options?.model && typeof options.model === "object" ? options.model : null;
+  const frameworkModel = suppliedModel
+    || (gridlyCommunityPulseAuditState && typeof gridlyCommunityPulseAuditState === "object" ? gridlyCommunityPulseAuditState : null)
+    || (typeof buildGridlyCommunityPulseModel === "function" ? buildGridlyCommunityPulseModel({ intelligencePreviewReadOnly: true }) : {});
+  const activeAwareness = frameworkModel.activeAwareness || {};
+  const selectedCategory = getGridlyIntelligencePreviewCategory(frameworkModel);
+  const categoryLabel = getGridlyIntelligencePreviewCategoryLabel(selectedCategory);
+  const corridor = safeDisplayText(frameworkModel.dominantCorridor || activeAwareness.resolvedLocationLabel || "nearby corridors", "nearby corridors");
+  const selectedCommunityCount = Math.max(0, Number(frameworkModel.selectedCommunityCount || 0));
+  const activeAwarenessCount = Math.max(0, Number(activeAwareness.activeAwarenessCount ?? activeAwareness.activeReportCount ?? 0));
+  const supportCount = Math.max(selectedCommunityCount, activeAwarenessCount);
+  const signalTypes = Array.isArray(frameworkModel.blendedSignalTypes) ? frameworkModel.blendedSignalTypes.filter(Boolean) : [];
+  const previewMode = true;
+  const selectedTitle = `Preview: ${categoryLabel}`;
+  const selectedDescription = supportCount > 0
+    ? `${categoryLabel} signal based on existing community framework output near ${corridor}. This preview is informational only and does not affect routing or alerts.`
+    : `${categoryLabel} preview based on existing framework output. More community history is needed before this becomes active intelligence.`;
+  const supportingData = {
+    source: "Community Pulse framework output",
+    selectedCommunityCount,
+    activeAwarenessCount,
+    dominantCorridor: frameworkModel.dominantCorridor || null,
+    dominantCorridorScore: Number(frameworkModel.dominantCorridorScore || 0),
+    mobilityPressureCategory: frameworkModel.mobilityPressureCategory || "quiet",
+    blendedSignalTypes: signalTypes,
+    renderedPulseHeadline: frameworkModel.renderedPulseHeadline || "",
+    renderedPulseSubline: frameworkModel.renderedPulseSubline || "",
+    readOnly: true,
+    writesAnalytics: false,
+    writesTelemetry: false,
+    writesSupabase: false,
+    changesRouting: false,
+    changesAlerts: false
+  };
+  return {
+    cardAvailable: true,
+    selectedCategory,
+    selectedTitle,
+    selectedDescription,
+    supportingData,
+    previewMode,
+    renderingLocation: "#gridlyPortraitV2 #gridlyIntelligencePreviewCard"
+  };
+}
+
+function renderGridlyIntelligencePreviewCard(options = {}) {
+  const card = document.getElementById("gridlyIntelligencePreviewCard");
+  const mode = document.getElementById("gridlyIntelligencePreviewMode");
+  const category = document.getElementById("gridlyIntelligencePreviewCategory");
+  const title = document.getElementById("gridlyIntelligencePreviewTitle");
+  const description = document.getElementById("gridlyIntelligencePreviewDescription");
+  const support = document.getElementById("gridlyIntelligencePreviewSupport");
+  const model = buildGridlyIntelligencePreviewCardModel(options);
+  if (!card) return { ...model, cardAvailable: false, renderingLocation: "#gridlyPortraitV2 #gridlyIntelligencePreviewCard missing" };
+  card.hidden = false;
+  card.dataset.gridlyPreviewMode = model.previewMode ? "true" : "false";
+  card.dataset.gridlySelectedCategory = model.selectedCategory;
+  if (mode) mode.textContent = model.previewMode ? "Preview" : "Intelligence";
+  if (category) category.textContent = getGridlyIntelligencePreviewCategoryLabel(model.selectedCategory);
+  if (title) title.textContent = model.selectedTitle;
+  if (description) description.textContent = model.selectedDescription;
+  if (support) {
+    const data = model.supportingData || {};
+    const countText = Number(data.selectedCommunityCount || data.activeAwarenessCount || 0) > 0
+      ? `${Number(data.selectedCommunityCount || data.activeAwarenessCount || 0)} framework ${Number(data.selectedCommunityCount || data.activeAwarenessCount || 0) === 1 ? "signal" : "signals"}`
+      : "framework output only";
+    support.textContent = `${countText} · no routing, alert, telemetry, or Supabase writes`;
+  }
+  window.gridlyIntelligencePreviewCardState = model;
+  return model;
+}
+
+window.gridlyIntelligencePreviewCardAudit = function gridlyIntelligencePreviewCardAudit(options = {}) {
+  try {
+    const card = document.getElementById("gridlyIntelligencePreviewCard");
+    const state = window.gridlyIntelligencePreviewCardState || buildGridlyIntelligencePreviewCardModel(options);
+    return {
+      cardAvailable: Boolean(card && !card.hidden),
+      selectedCategory: state.selectedCategory,
+      selectedTitle: state.selectedTitle,
+      selectedDescription: state.selectedDescription,
+      supportingData: state.supportingData,
+      previewMode: Boolean(state.previewMode),
+      renderingLocation: state.renderingLocation
+    };
+  } catch (error) {
+    return {
+      cardAvailable: false,
+      selectedCategory: "community_hotspot",
+      selectedTitle: "Preview: Community hotspot",
+      selectedDescription: "Community intelligence preview could not be evaluated.",
+      supportingData: { error: error?.message || "unknown error", readOnly: true },
+      previewMode: true,
+      renderingLocation: "#gridlyPortraitV2 #gridlyIntelligencePreviewCard"
+    };
+  }
+};
+window.renderGridlyIntelligencePreviewCard = renderGridlyIntelligencePreviewCard;
 
 function isGridlyTopAwarenessActivityLevelMeaningful(activityLevel = "") {
   const level = String(activityLevel || "").trim().toLowerCase();
@@ -35037,6 +35157,7 @@ function refreshPortraitV2LocalizedIntelligence() {
       activeHazardCount: activeAwareness.activeHazardCount ?? 0,
       activityLevel: pulseModel.mobilityPressureCategory || activeAwareness.activityLevel || "quiet"
     };
+    renderGridlyIntelligencePreviewCard({ reason: "refreshPortraitV2LocalizedIntelligence", model: pulseModel });
     logTopStripOwnershipDiagnostic("refreshPortraitV2LocalizedIntelligence");
   });
   recordPortraitIntelligenceBreakdown("refreshPortraitV2LocalizedIntelligence", functionStartedAt, sections);

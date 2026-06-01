@@ -14222,3 +14222,78 @@ body[data-layout-mode="portrait"].gridly-v2-surface-containment.route-setup-open
     grid-template-columns: 1fr;
   }
 }
+
+/* V206.0 — beta-facing Community Intelligence preview card (passive/read-only). */
+.gridly-intelligence-preview-card {
+  pointer-events: none;
+  position: fixed;
+  top: calc(158px + env(safe-area-inset-top, 0px));
+  left: 12px;
+  right: 66px;
+  display: grid;
+  gap: 6px;
+  max-width: 460px;
+  padding: 11px 12px;
+  border: 1px solid rgba(132, 199, 255, 0.24);
+  border-radius: 16px;
+  background: linear-gradient(160deg, rgba(7, 19, 34, 0.9), rgba(6, 13, 25, 0.82));
+  box-shadow: 0 14px 32px rgba(3, 8, 18, 0.28), inset 0 1px 0 rgba(218, 238, 255, 0.08);
+  color: #eef7ff;
+  z-index: 2;
+}
+
+.gridly-intelligence-preview-meta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  color: rgba(191, 218, 247, 0.84);
+  font-size: 0.62rem;
+  font-weight: 820;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.gridly-intelligence-preview-badge {
+  flex: 0 0 auto;
+  padding: 3px 7px;
+  border: 1px solid rgba(120, 226, 255, 0.26);
+  border-radius: 999px;
+  background: rgba(93, 201, 255, 0.12);
+  color: #9af0ff;
+}
+
+.gridly-intelligence-preview-card strong {
+  display: block;
+  font-size: 0.94rem;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.gridly-intelligence-preview-card p,
+.gridly-intelligence-preview-support {
+  margin: 0;
+  color: rgba(220, 235, 250, 0.76);
+  font-size: 0.72rem;
+  line-height: 1.28;
+}
+
+.gridly-intelligence-preview-support {
+  color: rgba(153, 190, 229, 0.78);
+}
+
+@media (max-width: 420px) {
+  .gridly-intelligence-preview-card {
+    right: 60px;
+    padding: 10px 11px;
+  }
+
+  .gridly-intelligence-preview-card strong {
+    font-size: 0.86rem;
+  }
+
+  .gridly-intelligence-preview-card p,
+  .gridly-intelligence-preview-support {
+    font-size: 0.68rem;
+  }
+}
