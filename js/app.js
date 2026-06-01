@@ -7870,6 +7870,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyTxDotSourceAudit",
   "gridlyTxdotLayerAudit",
   "gridlyRunTxdotLayerAudit",
+  "gridlyTxdotDirectionalReadinessAudit",
   "gridlyAuditHelperExposureAudit",
   "gridlySupabaseHazardInventoryAudit",
   "gridlySupabaseHazardPurgeAudit",
@@ -7956,6 +7957,7 @@ function exposeAllGridlyAuditHelpers() {
     gridlyTxDotSourceAudit: typeof gridlyTxDotSourceAudit === "function" ? gridlyTxDotSourceAudit : (typeof target?.gridlyTxDotSourceAudit === "function" ? target.gridlyTxDotSourceAudit : null),
     gridlyTxdotLayerAudit: typeof gridlyTxdotLayerAudit === "function" ? gridlyTxdotLayerAudit : (typeof target?.gridlyTxdotLayerAudit === "function" ? target.gridlyTxdotLayerAudit : null),
     gridlyRunTxdotLayerAudit: typeof gridlyRunTxdotLayerAudit === "function" ? gridlyRunTxdotLayerAudit : (typeof target?.gridlyRunTxdotLayerAudit === "function" ? target.gridlyRunTxdotLayerAudit : null),
+    gridlyTxdotDirectionalReadinessAudit: typeof gridlyTxdotDirectionalReadinessAudit === "function" ? gridlyTxdotDirectionalReadinessAudit : (typeof target?.gridlyTxdotDirectionalReadinessAudit === "function" ? target.gridlyTxdotDirectionalReadinessAudit : null),
     gridlyAuditHelperExposureAudit: typeof gridlyAuditHelperExposureAudit === "function" ? gridlyAuditHelperExposureAudit : (typeof target?.gridlyAuditHelperExposureAudit === "function" ? target.gridlyAuditHelperExposureAudit : null),
     gridlySupabaseHazardInventoryAudit: typeof target?.gridlySupabaseHazardInventoryAudit === "function" ? target.gridlySupabaseHazardInventoryAudit : null,
     gridlySupabaseHazardPurgeAudit: typeof target?.gridlySupabaseHazardPurgeAudit === "function" ? target.gridlySupabaseHazardPurgeAudit : null,
@@ -16394,6 +16396,453 @@ function gridlyIsTxdotFetchAvailable() {
     && String(txdotConfig?.apiKey || "").trim()
   );
 }
+
+function gridlyTxdotPickFirstPresent(record = {}, keys = []) {
+  if (!record || typeof record !== "object") return undefined;
+  for (const key of keys) {
+    if (record[key] !== undefined && record[key] !== null && String(record[key]).trim() !== "") return record[key];
+  }
+  return undefined;
+}
+
+function gridlyTxdotDirectionalFieldExample(rows = [], aliases = []) {
+  const safeRows = Array.isArray(rows) ? rows : [];
+  for (const row of safeRows) {
+    const value = gridlyTxdotPickFirstPresent(row, aliases);
+    if (value !== undefined) return value;
+  }
+  return null;
+}
+
+function gridlyTxdotFieldInventoryRow(config = {}, rawRows = [], normalizedRows = [], unifiedRows = []) {
+  const rawAliases = Array.isArray(config.rawAliases) ? config.rawAliases : [];
+  const normalizedAliases = Array.isArray(config.normalizedAliases) ? config.normalizedAliases : [];
+  const storedAliases = Array.isArray(config.storedAliases) ? config.storedAliases : [];
+  const rawExample = gridlyTxdotDirectionalFieldExample(rawRows, rawAliases);
+  const normalizedExample = gridlyTxdotDirectionalFieldExample(normalizedRows, normalizedAliases);
+  const storedExample = gridlyTxdotDirectionalFieldExample(unifiedRows, storedAliases);
+  const observedRaw = rawExample !== null;
+  const observedNormalized = normalizedExample !== null;
+  const observedStored = storedExample !== null;
+  const normalizedField = normalizedAliases[0] || null;
+  const storedField = storedAliases[0] || null;
+  const preserved = Boolean(config.preserved || observedStored || (config.storage === "memory_normalized_cache" && observedNormalized));
+  return {
+    rawField: rawAliases[0] || null,
+    rawAliases,
+    normalizedField,
+    normalizedAliases,
+    storedField,
+    storedAliases,
+    storage: config.storage || (storedField ? "unified_incident_memory" : (normalizedField ? "normalized_cache_only" : "not_stored")),
+    usedByGridly: config.usedByGridly || "not_used_for_directional_labeling",
+    ignoredByGridly: config.ignoredByGridly || "not promoted beyond current TxDOT cache/unified incident path",
+    directionalUse: config.directionalUse || "LOW VALUE",
+    helps: config.helps || [],
+    preserved,
+    discarded: Boolean(config.discarded || (!preserved && (rawAliases.length || normalizedAliases.length))),
+    observed: { raw: observedRaw, normalized: observedNormalized, stored: observedStored },
+    examples: { raw: rawExample, normalized: normalizedExample, stored: storedExample },
+    note: config.note || ""
+  };
+}
+
+function gridlyTxdotDirectionalReadinessAudit() {
+  const target = typeof window !== "undefined" ? window : globalThis;
+  const txdotService = target?.gridlyTxdot || null;
+  const rawRows = typeof txdotService?.getRawRoadConditions === "function"
+    ? txdotService.getRawRoadConditions()
+    : (Array.isArray(target?.gridlyTxdotRawRoadConditions) ? target.gridlyTxdotRawRoadConditions : []);
+  const normalizedRows = typeof txdotService?.getRoadConditions === "function"
+    ? txdotService.getRoadConditions()
+    : (Array.isArray(target?.gridlyExternalRoadConditions) ? target.gridlyExternalRoadConditions : []);
+  const unifiedRows = typeof getUnifiedIncidents === "function"
+    ? gridlyFindTxdotRowsInCollection(getUnifiedIncidents())
+    : [];
+  const sourceAudit = typeof gridlyTxDotSourceAudit === "function" ? gridlyTxDotSourceAudit() : null;
+  const directionalRoadAudit = typeof gridlyDirectionalRoadAudit === "function" ? gridlyDirectionalRoadAudit({ maxDistanceMeters: 75 }) : null;
+  const rawObservedFields = Array.from(new Set(rawRows.flatMap((row) => row && typeof row === "object" ? Object.keys(row) : []))).sort();
+  const normalizedObservedFields = Array.from(new Set(normalizedRows.flatMap((row) => row && typeof row === "object" ? Object.keys(row) : []))).sort();
+  const unifiedObservedFields = Array.from(new Set(unifiedRows.flatMap((row) => row && typeof row === "object" ? Object.keys(row) : []))).sort();
+  const inventoryConfig = [
+    {
+      rawAliases: ["travel_direction", "direction", "route_direction"],
+      normalizedAliases: ["direction"],
+      storedAliases: ["direction"],
+      storage: "normalized_cache_and_unified_incident_memory",
+      usedByGridly: "preserved on TxDOT normalized/unified objects but not used for marker placement, side-of-road selection, or alert labels",
+      ignoredByGridly: "not used by gridlyDirectionalRoadAudit and not displayed as NB/SB/EB/WB in current reporting output",
+      directionalUse: "HIGH VALUE",
+      helps: ["road direction", "hazard direction"],
+      preserved: true,
+      note: "normalizeDirection() maps N/S/E/W and NB/SB/EB/WB into cardinal labels; unknown or missing values remain unknown."
+    },
+    {
+      rawAliases: ["route_name", "route", "highway"],
+      normalizedAliases: ["routeName", "routeNameRaw", "routeNameDisplay"],
+      storedAliases: ["routeName", "routeNameDisplay"],
+      storage: "normalized_cache_and_unified_incident_memory",
+      usedByGridly: "used for TxDOT titles, roadName fallback, local focus matching, and unified incident road/area labels",
+      ignoredByGridly: "not joined to local roadway geometry or OSRM candidates for carriageway-aware placement",
+      directionalUse: "HIGH VALUE",
+      helps: ["corridor identity", "road direction when combined with travel_direction"],
+      preserved: true
+    },
+    {
+      rawAliases: ["roadway", "road_name"],
+      normalizedAliases: ["roadName"],
+      storedAliases: ["roadName", "area"],
+      storage: "normalized_cache_and_unified_incident_memory",
+      usedByGridly: "used as display road label and area fallback",
+      ignoredByGridly: "not authoritative enough by itself for EB/WB/NB/SB labeling",
+      directionalUse: "MEDIUM VALUE",
+      helps: ["corridor identity"],
+      preserved: true
+    },
+    {
+      rawAliases: ["from_limit", "fromLimit"],
+      normalizedAliases: ["fromLimit", "fromLimitRaw", "fromLimitDisplay"],
+      storedAliases: [],
+      storage: "normalized_cache_only",
+      usedByGridly: "available to TxDOT analytics/local summaries but not copied into unified incidents",
+      ignoredByGridly: "discarded at gridlyBuildTxdotUnifiedIncident(), so alerts/markers cannot use from-limit context",
+      directionalUse: "HIGH VALUE",
+      helps: ["corridor identity", "hazard direction", "reference limits"],
+      preserved: true,
+      note: "Retain in a future unified payload if directional labels need official limits."
+    },
+    {
+      rawAliases: ["to_limit", "toLimit"],
+      normalizedAliases: ["toLimit", "toLimitRaw", "toLimitDisplay"],
+      storedAliases: [],
+      storage: "normalized_cache_only",
+      usedByGridly: "available to TxDOT analytics/local summaries but not copied into unified incidents",
+      ignoredByGridly: "discarded at gridlyBuildTxdotUnifiedIncident(), so alerts/markers cannot use to-limit context",
+      directionalUse: "HIGH VALUE",
+      helps: ["corridor identity", "hazard direction", "reference limits"],
+      preserved: true
+    },
+    {
+      rawAliases: ["__geometry", "geometry"],
+      normalizedAliases: ["latitude", "longitude"],
+      storedAliases: ["lat", "lng", "latitude", "longitude"],
+      storage: "midpoint_only_in_normalized_and_unified_memory",
+      usedByGridly: "LineString midpoint becomes latitude/longitude for TxDOT marker eligibility",
+      ignoredByGridly: "full route geometry is not retained, so segment bearing and carriageway shape are unavailable after normalization",
+      directionalUse: "HIGH VALUE",
+      helps: ["bearing if retained", "corridor identity", "side of divided roadway if combined with carriageway metadata"],
+      preserved: true,
+      note: "Current code keeps only a midpoint from LineString geometry and discards the coordinate array."
+    },
+    {
+      rawAliases: ["condition", "type", "event_type", "category"],
+      normalizedAliases: ["type"],
+      storedAliases: ["type", "category", "report_type"],
+      storage: "normalized_cache_and_unified_incident_memory",
+      usedByGridly: "used for construction/incident split, severity, marker style, and alert category eligibility",
+      ignoredByGridly: "does not identify side or route direction by itself",
+      directionalUse: "LOW VALUE",
+      helps: ["lane impact only when condition text contains lane closure/work zone wording"],
+      preserved: true
+    },
+    {
+      rawAliases: ["description", "summary", "detail"],
+      normalizedAliases: ["description"],
+      storedAliases: ["description", "summary"],
+      storage: "normalized_cache_and_unified_incident_memory",
+      usedByGridly: "used as unified description/summary fallback",
+      ignoredByGridly: "not parsed for embedded EB/WB/NB/SB, lanes closed, or side-of-road semantics",
+      directionalUse: "MEDIUM VALUE",
+      helps: ["hazard direction", "lane impact", "corridor identity"],
+      preserved: true
+    },
+    {
+      rawAliases: ["delay_flag"],
+      normalizedAliases: ["delayFlag"],
+      storedAliases: [],
+      storage: "normalized_cache_only",
+      usedByGridly: "used by TxDOT local summary recommendation text",
+      ignoredByGridly: "not copied into unified incidents and not used for lane-level placement",
+      directionalUse: "LOW VALUE",
+      helps: ["lane impact"],
+      preserved: true
+    },
+    {
+      rawAliases: ["detour_flag"],
+      normalizedAliases: ["detourFlag"],
+      storedAliases: [],
+      storage: "normalized_cache_only",
+      usedByGridly: "used by TxDOT local summary recommendation text",
+      ignoredByGridly: "not copied into unified incidents and not used for directional placement",
+      directionalUse: "LOW VALUE",
+      helps: ["lane impact", "corridor identity"],
+      preserved: true
+    },
+    {
+      rawAliases: ["county_num"],
+      normalizedAliases: ["countyNum"],
+      storedAliases: [],
+      storage: "normalized_cache_only",
+      usedByGridly: "used by TxDOT local focus filtering for Liberty County",
+      ignoredByGridly: "not copied into unified incidents",
+      directionalUse: "LOW VALUE",
+      helps: ["corridor identity"],
+      preserved: true
+    },
+    {
+      rawAliases: ["start_time"],
+      normalizedAliases: ["startTime"],
+      storedAliases: ["createdAt", "created_at"],
+      storage: "normalized_cache_and_unified_incident_memory",
+      usedByGridly: "used for active-date filtering and incident timestamps",
+      ignoredByGridly: "not relevant to carriageway side",
+      directionalUse: "LOW VALUE",
+      helps: [],
+      preserved: true
+    },
+    {
+      rawAliases: ["end_time"],
+      normalizedAliases: ["endTime"],
+      storedAliases: ["endTime", "expiresAt", "expires_at"],
+      storage: "normalized_cache_and_unified_incident_memory",
+      usedByGridly: "used for active-date filtering and expiration",
+      ignoredByGridly: "not relevant to carriageway side",
+      directionalUse: "LOW VALUE",
+      helps: [],
+      preserved: true
+    },
+    {
+      rawAliases: ["GLOBALID", "id"],
+      normalizedAliases: ["id"],
+      storedAliases: ["rawTxdotId", "id"],
+      storage: "normalized_cache_and_unified_incident_memory",
+      usedByGridly: "used for TxDOT identity and duplicate tracing",
+      ignoredByGridly: "not directional",
+      directionalUse: "LOW VALUE",
+      helps: [],
+      preserved: true
+    },
+    {
+      rawAliases: ["reference_marker", "ref_marker", "mile_marker", "begin_milepoint", "end_milepoint"],
+      normalizedAliases: [],
+      storedAliases: [],
+      storage: "not_currently_normalized",
+      usedByGridly: "not fetched/recognized by current normalizer unless present only inside description/from/to text",
+      ignoredByGridly: "no dedicated field inventory or unified incident field exists today",
+      directionalUse: "HIGH VALUE",
+      helps: ["reference markers", "mile markers", "corridor identity"],
+      discarded: true,
+      note: "No dedicated marker fields are mapped in current Gridly TxDOT normalization."
+    },
+    {
+      rawAliases: ["lane_closure", "lanes_closed", "lane_count", "closed_lanes", "lane_impacts"],
+      normalizedAliases: [],
+      storedAliases: [],
+      storage: "not_currently_normalized",
+      usedByGridly: "not fetched/recognized as structured lane data; condition/description text may mention lane closures",
+      ignoredByGridly: "no lane-level object is retained",
+      directionalUse: "HIGH VALUE",
+      helps: ["lane impact", "side of divided roadway"],
+      discarded: true,
+      note: "Current endpoint may expose lane context only as condition/description text in this integration."
+    },
+    {
+      rawAliases: ["carriageway", "roadbed", "side_of_road", "roadway_side"],
+      normalizedAliases: [],
+      storedAliases: [],
+      storage: "not_currently_normalized",
+      usedByGridly: "not available in the current mapped fields",
+      ignoredByGridly: "no current field exists to determine divided-road side with confidence",
+      directionalUse: "HIGH VALUE",
+      helps: ["side of divided roadway", "carriageway awareness"],
+      discarded: true,
+      note: "This remains the major missing geometry/metadata class for divided roads."
+    }
+  ];
+  const fullInventory = inventoryConfig.map((config) => gridlyTxdotFieldInventoryRow(config, rawRows, normalizedRows, unifiedRows));
+  const preservedFields = fullInventory.filter((field) => field.preserved).map((field) => ({ rawField: field.rawField, normalizedField: field.normalizedField, storedField: field.storedField, storage: field.storage, directionalUse: field.directionalUse }));
+  const discardedFields = fullInventory.filter((field) => field.discarded || field.storage === "not_currently_normalized" || field.storage === "not_stored").map((field) => ({ rawField: field.rawField, normalizedField: field.normalizedField, reason: field.ignoredByGridly, directionalUse: field.directionalUse }));
+  const directionalFields = fullInventory.filter((field) => field.helps.includes("road direction") || field.helps.includes("hazard direction") || /direction|limit|geometry|carriageway|lane/i.test(field.rawField || ""));
+  const corridorFields = fullInventory.filter((field) => field.helps.includes("corridor identity") || /route|roadway|limit|county|marker/i.test(field.rawField || ""));
+  const roadwayFields = fullInventory.filter((field) => /route|roadway|geometry|limit|marker|carriageway/i.test([field.rawField, field.normalizedField, field.storedField].filter(Boolean).join(" ")));
+  const laneFields = fullInventory.filter((field) => field.helps.includes("lane impact") || /lane|delay|detour|condition|description/i.test([field.rawField, field.normalizedField].filter(Boolean).join(" ")));
+  const hasDirectionField = fullInventory.some((field) => field.rawField === "travel_direction" && (field.observed.raw || field.observed.normalized || field.observed.stored || field.preserved));
+  const hasRouteField = fullInventory.some((field) => field.rawField === "route_name" && (field.observed.raw || field.observed.normalized || field.observed.stored || field.preserved));
+  const hasLimits = fullInventory.some((field) => field.rawField === "from_limit" && field.preserved) && fullInventory.some((field) => field.rawField === "to_limit" && field.preserved);
+  const hasFullGeometryObserved = rawRows.some((row) => row?.__geometry?.type === "LineString" && Array.isArray(row?.__geometry?.coordinates) && row.__geometry.coordinates.length > 1);
+  const hasFullGeometryPreserved = false;
+  const hasLaneStructured = laneFields.some((field) => field.storage !== "not_currently_normalized" && field.observed.raw && /lane/i.test(field.rawField || ""));
+  const hasCarriagewayStructured = fullInventory.some((field) => field.rawField === "carriageway" && (field.observed.raw || field.observed.normalized || field.observed.stored));
+  const scoreParts = {
+    officialRouteIdentity: hasRouteField ? 20 : 0,
+    explicitTravelDirection: hasDirectionField ? 25 : 0,
+    fromToLimits: hasLimits ? 15 : 0,
+    fullGeometryRetained: hasFullGeometryPreserved ? 20 : (hasFullGeometryObserved ? 8 : 0),
+    structuredLaneOrCarriageway: (hasLaneStructured || hasCarriagewayStructured) ? 20 : 0
+  };
+  const directionalReadinessScore = Object.values(scoreParts).reduce((sum, value) => sum + value, 0);
+  const readinessLabel = directionalReadinessScore >= 80 ? "HIGH" : directionalReadinessScore >= 50 ? "MEDIUM" : "LOW";
+  const buildCorridorAssessment = (displayName, rawPattern, directions) => {
+    const matchingNormalized = normalizedRows.filter((row) => {
+      const text = [row?.routeNameDisplay, row?.routeName, row?.roadName, row?.title, row?.description, row?.fromLimitDisplay, row?.toLimitDisplay].join(" ").toUpperCase();
+      return rawPattern.test(text);
+    });
+    const matchingUnified = unifiedRows.filter((row) => {
+      const text = [row?.routeNameDisplay, row?.routeName, row?.roadName, row?.title, row?.description, row?.area, row?.direction].join(" ").toUpperCase();
+      return rawPattern.test(text);
+    });
+    const directionsPreserved = Array.from(new Set([...matchingNormalized, ...matchingUnified].map((row) => String(row?.direction || "").toUpperCase()).filter(Boolean)));
+    return {
+      corridor: displayName,
+      testedDirections: directions,
+      currentRowsInNormalizedCache: matchingNormalized.length,
+      currentRowsInUnifiedIncidents: matchingUnified.length,
+      directionValuesObserved: directionsPreserved,
+      preservesIfTravelDirectionProvided: hasRouteField && hasDirectionField,
+      currentlyDisplayedAsDirectionalLabel: false,
+      wherePreserved: "route_name -> routeName/routeNameDisplay; travel_direction -> direction; gridlyBuildTxdotUnifiedIncident copies routeName/routeNameDisplay/direction into in-memory unified incidents",
+      whereLost: [
+        "full TxDOT LineString geometry is reduced to midpoint latitude/longitude during normalizeIncident()",
+        "fromLimit/toLimit remain in normalized cache but are not copied by gridlyBuildTxdotUnifiedIncident()",
+        "structured reference-marker, lane, and carriageway fields have no dedicated current mapping",
+        "direction is not consumed by marker placement, side-of-road confidence, Route Watch, routing, or alert label generation"
+      ],
+      retentionPoint: "Future work can retain full __geometry, from/to limits, and any lane/carriageway/reference-marker fields in the TxDOT normalized object and unified incident payload without re-enabling startup fetch."
+    };
+  };
+  const localSegmentsAssessment = {
+    available: Boolean(roadwayDatasetLoaded && Array.isArray(roadwaySegmentFeatures) && roadwaySegmentFeatures.length),
+    support: {
+      direction: "MEDIUM when a nearby segment is selected because bearing can be computed; LOW for divided-road side without carriageway metadata",
+      bearing: "STRONGEST current source when loaded; gridlyBuildLocalDirectionalRoadCandidates computes segmentBearing",
+      carriagewayAwareness: "LOW; OSM one-way/tags may exist but are not sufficient for every divided road",
+      sideOfRoadConfidence: "LOW to MEDIUM; based on nearest same-name candidate gap, not official carriageway IDs"
+    }
+  };
+  const osrmAssessment = {
+    available: Boolean(lastRoadSnapDebug?.nearestRoadCandidates?.length),
+    support: {
+      direction: "LOW; current normalized OSRM nearest candidates expose snapped point/name/distance but not bearing here",
+      bearing: "LOW in this app path",
+      carriagewayAwareness: "LOW",
+      sideOfRoadConfidence: "LOW"
+    }
+  };
+  const txdotAssessment = {
+    available: Boolean(txdotService && typeof txdotService.normalizeIncident === "function"),
+    cachedRows: normalizedRows.length,
+    support: {
+      direction: hasDirectionField ? "STRONG when travel_direction is present; currently preserved but unused for placement" : "LOW until travel_direction is present in fetched rows",
+      bearing: hasFullGeometryObserved ? "POTENTIALLY STRONG from raw LineString, but current normalizer discards full shape" : "LOW; midpoint only in current cache",
+      carriagewayAwareness: hasCarriagewayStructured ? "STRONG if observed raw carriageway fields are retained" : "LOW; no current mapped carriageway field",
+      sideOfRoadConfidence: "LOW until full geometry plus carriageway/lane/reference-marker fields are retained"
+    }
+  };
+  const recommendations = [
+    "Keep TxDOT startup fetch disabled; this audit reads only cached service rows and static mapping knowledge.",
+    "For future US 90 EB/WB and TX 146 NB/SB support, preserve travel_direction as the official direction candidate and join it with routeNameDisplay.",
+    "Retain full raw __geometry LineString coordinates in the normalized TxDOT object before attempting bearing or divided-road placement from TxDOT.",
+    "Promote fromLimit/toLimit into future unified TxDOT incidents because they provide official corridor/reference context that is currently lost after normalization.",
+    "Add dedicated retention for any future reference-marker, mile-marker, lane, closure-direction, or carriageway fields if the endpoint returns them; do not infer side-of-road from midpoint alone.",
+    "Compare TxDOT official direction with local roadway segment bearing before displaying NB/SB/EB/WB; if they conflict or carriageway side is ambiguous, keep safeDirectionalLabelAnswer as insufficient_geometry."
+  ];
+  const audit = {
+    auditVersion: "V206.11-txdot-directional-roadway-readiness-audit",
+    auditOnly: true,
+    txdotAvailable: Boolean(txdotService && typeof txdotService.normalizeIncident === "function"),
+    startupFetchEnabled: typeof gridlyIsTxdotStartupFetchEnabled === "function" ? gridlyIsTxdotStartupFetchEnabled() : false,
+    rawFieldInventory: {
+      endpointTemplate: target?.GRIDLY_CONFIG?.txdot?.endpointTemplate || null,
+      observedFields: rawObservedFields,
+      mappedFields: fullInventory.map((field) => ({ rawField: field.rawField, rawAliases: field.rawAliases, normalizedField: field.normalizedField, storedField: field.storedField, directionalUse: field.directionalUse, examples: field.examples }))
+    },
+    normalizedFieldInventory: {
+      observedFields: normalizedObservedFields,
+      mappedFields: fullInventory.map((field) => ({ normalizedField: field.normalizedField, normalizedAliases: field.normalizedAliases, storedField: field.storedField, storage: field.storage, usedByGridly: field.usedByGridly, ignoredByGridly: field.ignoredByGridly }))
+    },
+    preservedFields,
+    discardedFields,
+    directionalFields,
+    corridorFields,
+    roadwayFields,
+    laneFields,
+    directionalReadiness: {
+      label: readinessLabel,
+      scoreParts,
+      canDetermineRoadDirection: hasRouteField && hasDirectionField ? "yes_when_travel_direction_is_present" : "not_from_current_cache_alone",
+      canDetermineSideOfDividedRoadway: hasFullGeometryPreserved && hasCarriagewayStructured ? "potentially" : "no_full_geometry_and_carriageway_metadata_missing",
+      canDetermineCorridorIdentity: hasRouteField ? "yes_route_name_routeNameDisplay_preserved" : "limited",
+      canDetermineHazardDirection: hasDirectionField ? "yes_as_official_event_direction_but_not_geometry_validated" : "no_explicit_direction_observed",
+      canDetermineLaneImpact: hasLaneStructured ? "yes_if_structured_lane_fields_are_observed" : "only_from_condition_description_text_today"
+    },
+    directionalReadinessScore,
+    usableForEBWB: hasRouteField && hasDirectionField ? "conditionally_yes_for_official_event_label_not_side_of_road" : "no_explicit_EB_WB_field_not_available_in_current_rows",
+    usableForNBSB: hasRouteField && hasDirectionField ? "conditionally_yes_for_official_event_label_not_side_of_road" : "no_explicit_NB_SB_field_not_available_in_current_rows",
+    usableForDividedRoads: hasFullGeometryPreserved && hasCarriagewayStructured ? "potentially" : "no_current_full_geometry_or_carriageway_side_confidence",
+    usableForCorridorIntelligence: hasRouteField || hasLimits ? "yes_for_official_corridor_context" : "limited",
+    fieldValueExamples: {
+      travelDirection: gridlyTxdotDirectionalFieldExample([...rawRows, ...normalizedRows, ...unifiedRows], ["travel_direction", "direction"]),
+      routeName: gridlyTxdotDirectionalFieldExample([...rawRows, ...normalizedRows, ...unifiedRows], ["route_name", "routeNameDisplay", "routeName", "roadName"]),
+      fromLimit: gridlyTxdotDirectionalFieldExample([...rawRows, ...normalizedRows], ["from_limit", "fromLimitDisplay", "fromLimit"]),
+      toLimit: gridlyTxdotDirectionalFieldExample([...rawRows, ...normalizedRows], ["to_limit", "toLimitDisplay", "toLimit"]),
+      geometryType: rawRows.find((row) => row?.__geometry)?.__geometry?.type || null,
+      laneText: gridlyTxdotDirectionalFieldExample([...rawRows, ...normalizedRows], ["lane_closure", "lanes_closed", "description", "condition", "type"])
+    },
+    us90Assessment: buildCorridorAssessment("US 90", /\b(US\s*90|US0*90)\b/, ["EB", "WB"]),
+    tx146Assessment: buildCorridorAssessment("TX 146", /\b(TX\s*146|SH0*146|SH\s*146)\b/, ["NB", "SB"]),
+    dataSourceComparison: {
+      localRoadwaySegments: localSegmentsAssessment,
+      osrmNearestCandidates: osrmAssessment,
+      txdotRoadwayData: txdotAssessment,
+      strongestCurrentSupport: {
+        direction: "TxDOT when travel_direction is present; otherwise local segment bearing only gives inferred cardinal direction",
+        bearing: "Current local roadway segments",
+        carriagewayAwareness: "None strong today; TxDOT could become strongest if full geometry plus carriageway/lane fields are retained",
+        sideOfRoadConfidence: "Current local roadway same-name candidate distance gap is best available but still insufficient for high-confidence divided roads"
+      },
+      linkedDirectionalRoadAudit: directionalRoadAudit ? {
+        safeDirectionalLabelAnswer: directionalRoadAudit.safeDirectionalLabelAnswer,
+        roadGeometryAvailable: directionalRoadAudit.roadGeometryAvailable,
+        selectedSideConfidence: directionalRoadAudit.selectedSideConfidence,
+        missingData: directionalRoadAudit.missingData
+      } : null
+    },
+    recommendations,
+    sourceAuditSummary: sourceAudit ? {
+      txdotFetchConfigured: sourceAudit.txdotFetchConfigured,
+      txdotLastFetchAttempt: sourceAudit.txdotLastFetchAttempt,
+      txdotLastFetchSuccess: sourceAudit.txdotLastFetchSuccess,
+      txdotRawConditionCount: sourceAudit.txdotRawConditionCount,
+      txdotNormalizedCount: sourceAudit.txdotNormalizedCount,
+      txdotUnifiedIncidents: sourceAudit.txdotUnifiedIncidents,
+      blockers: sourceAudit.blockers
+    } : null,
+    trace: [
+      "No fetch is started by this audit; it reads cached gridlyTxdot raw/normalized rows only.",
+      "Current TxDOT service endpoint is DriveTexas conditions.geojson; normalizeIncident maps route_name, roadway, condition, travel_direction, from/to limits, times, flags, county, and midpoint coordinates.",
+      "gridlyBuildTxdotUnifiedIncident preserves routeName, routeNameDisplay, direction, roadName, type/category, timestamps, coordinates, and rawTxdotId.",
+      "The full raw LineString is not preserved after normalization, and no structured carriageway/lane/reference-marker fields are currently mapped.",
+      "This audit does not change reporting, routing, Route Watch, rail, alerts, Portrait V2, Supabase schema, marker placement, clustering, schedules, or startup fetch behavior."
+    ],
+    observedRuntime: {
+      rawRowCount: rawRows.length,
+      normalizedRowCount: normalizedRows.length,
+      unifiedTxdotRowCount: unifiedRows.length,
+      rawObservedFields,
+      normalizedObservedFields,
+      unifiedObservedFields
+    }
+  };
+  target.gridlyLastTxdotDirectionalReadinessAudit = audit;
+  console.info("gridlyTxdotDirectionalReadinessAudit", audit);
+  return audit;
+}
+
+if (typeof window !== "undefined") {
+  window.gridlyTxdotDirectionalReadinessAudit = gridlyTxdotDirectionalReadinessAudit;
+  window.gridlyLastTxdotDirectionalReadinessAudit = window.gridlyLastTxdotDirectionalReadinessAudit || null;
+}
+exposeGridlyAuditHelper("gridlyTxdotDirectionalReadinessAudit", gridlyTxdotDirectionalReadinessAudit);
 
 function gridlyRefreshAfterTxdotFetch(reason = "txdot-fetch") {
   if (typeof refreshReportHazardViews === "function") {
