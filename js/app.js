@@ -13884,6 +13884,8 @@ function hydrateElements() {
     "gridlyWelcomeFinishBtn",
     "gridlyWelcomeSkipBtn",
     "gridlyWelcomeSkipTopBtn",
+    "gridlyWelcomeStepCount",
+    "gridlyWelcomeStepTitle",
     "gridlyWelcomeSetHomeBtn",
     "gridlyWelcomeSetWorkBtn",
     "gridlyWelcomeThemeSelect",
@@ -14627,6 +14629,15 @@ function closeFirstRunSetupModal() {
 
 let gridlyWelcomeCurrentStep = 0;
 const GRIDLY_WELCOME_TOTAL_STEPS = 7;
+const GRIDLY_WELCOME_COMPACT_STEP_TITLES = [
+  "Brand Moment",
+  "Personalize",
+  "Local Awareness",
+  "My Town",
+  "Daily Route",
+  "Community Reports",
+  "Ready"
+];
 
 function markGridlyWelcomeSeen() {
   gridlySafeLocalStorageSet(GRIDLY_WELCOME_SEEN_STORAGE_KEY, "yes");
@@ -14657,7 +14668,7 @@ function renderGridlyWelcomeHomeTownSelection() {
     button.setAttribute("aria-pressed", isSelected ? "true" : "false");
   });
   if (els.gridlyWelcomeTownStatus) {
-    els.gridlyWelcomeTownStatus.textContent = selectedTown ? `Watching ${selectedTown}. Community awareness centered around your town.` : "Choose the community that matters most to you.";
+    els.gridlyWelcomeTownStatus.textContent = selectedTown ? `Watching ${selectedTown}. Local awareness centered around your town.` : "Choose the community that matters most to you.";
   }
 }
 
@@ -14697,9 +14708,12 @@ function renderGridlyWelcomePersonalization() {
   if (els.gridlyWelcomeFinalCopy) {
     const homeTown = getGridlyHomeTownPreference();
     const townLine = homeTown ? `Watching ${homeTown}.` : "Watching your town.";
-    els.gridlyWelcomeFinalCopy.textContent = preferredName
-      ? `${preferredName}, you’re part of the network. ${townLine} Watching your routes. Helping your community know before they go.`
-      : `You’re part of the network. ${townLine} Watching your routes. Helping your community know before they go.`;
+    const welcomeLine = preferredName ? `${preferredName}, you’re part of the network.` : "You’re part of the network.";
+    els.gridlyWelcomeFinalCopy.textContent = `${welcomeLine}
+
+${townLine}
+Watching your routes.
+Helping your community know before they go.`;
   }
 }
 
@@ -14716,6 +14730,10 @@ function renderGridlyWelcomeStep(step = gridlyWelcomeCurrentStep) {
     node.classList.toggle("is-active", dotIndex === boundedStep);
     node.classList.toggle("is-complete", dotIndex < boundedStep);
   });
+  const welcomeHeader = document.querySelector(".gridly-welcome-header");
+  welcomeHeader?.classList.toggle("is-compact", boundedStep > 0);
+  if (els.gridlyWelcomeStepCount) els.gridlyWelcomeStepCount.textContent = `Step ${boundedStep + 1} of ${GRIDLY_WELCOME_TOTAL_STEPS}`;
+  if (els.gridlyWelcomeStepTitle) els.gridlyWelcomeStepTitle.textContent = GRIDLY_WELCOME_COMPACT_STEP_TITLES[boundedStep] || "Setup";
   if (els.gridlyWelcomeBackBtn) els.gridlyWelcomeBackBtn.disabled = boundedStep === 0;
   if (els.gridlyWelcomeNextBtn) els.gridlyWelcomeNextBtn.hidden = boundedStep >= GRIDLY_WELCOME_TOTAL_STEPS - 1;
   if (els.gridlyWelcomeFinishBtn) els.gridlyWelcomeFinishBtn.hidden = boundedStep < GRIDLY_WELCOME_TOTAL_STEPS - 1;
