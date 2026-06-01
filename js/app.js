@@ -24763,17 +24763,278 @@ function getLiveHazardIncidents() {
     .sort((a, b) => b.count - a.count || a.newestMinutes - b.newestMinutes);
 }
 
+const GRIDLY_ROAD_CLUSTER_ROUNDING_DECIMALS = 3;
+const GRIDLY_ROAD_CLUSTER_ROUNDING_PRECISION_DEGREES = 0.001;
+
 function getHazardClusterKey(hazard) {
   const rawLat = hazard?.lat ?? hazard?.latitude ?? hazard?.rawLat;
   const rawLng = hazard?.lng ?? hazard?.lon ?? hazard?.longitude ?? hazard?.rawLng;
   const latNum = Number(rawLat);
   const lngNum = Number(rawLng);
-  const lat = Number.isFinite(latNum) ? latNum.toFixed(3) : "na";
-  const lng = Number.isFinite(lngNum) ? lngNum.toFixed(3) : "na";
+  const lat = Number.isFinite(latNum) ? latNum.toFixed(GRIDLY_ROAD_CLUSTER_ROUNDING_DECIMALS) : "na";
+  const lng = Number.isFinite(lngNum) ? lngNum.toFixed(GRIDLY_ROAD_CLUSTER_ROUNDING_DECIMALS) : "na";
   return `${hazard?.type || "hazard"}-${lat}-${lng}`;
 }
 
+function gridlyRoadClusterCoordinateFromRecord(record = {}) {
+  return gridlyCoordinateFromRecord(record)
+    || gridlyCoordinateFromRecord(record?.finalPlacementCoordinate)
+    || gridlyCoordinateFromRecord(record?.storedReportCoordinate)
+    || gridlyCoordinateFromRecord(record?.activeHazardCoordinate)
+    || null;
+}
 
+function gridlyRoadClusterRoundedCoordinateFromKey(clusterKey = "") {
+  const match = String(clusterKey || "").match(/(-?\d+\.\d{3})-(-?\d+\.\d{3})$/);
+  if (!match) return null;
+  const lat = Number(match[1]);
+  const lng = Number(match[2]);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  return { lat, lng };
+}
+
+function gridlyEstimateRoadClusterRadiusMeters(latitude = LOCATION_DEFAULTS?.center?.[0] || 30) {
+  const lat = Number.isFinite(Number(latitude)) ? Number(latitude) : 30;
+  const latMeters = GRIDLY_ROAD_CLUSTER_ROUNDING_PRECISION_DEGREES * 111320;
+  const lngMeters = GRIDLY_ROAD_CLUSTER_ROUNDING_PRECISION_DEGREES * 111320 * Math.cos(lat * Math.PI / 180);
+  return Math.round(Math.sqrt((latMeters ** 2) + (lngMeters ** 2)) * 10) / 10;
+}
+
+function gridlyRoadClusterReportId(record = {}) {
+  return String(record?.id || record?.report_id || record?.reportId || record?.incidentId || "").trim();
+}
+
+function gridlyRoadClusterReportTimeMs(record = {}) {
+  const value = record?.submittedAt || record?.created_at || record?.createdAt || record?.updated_at || record?.updatedAt || 0;
+  const ms = new Date(value).getTime();
+  return Number.isFinite(ms) ? ms : 0;
+}
+
+function gridlyRoadClusterReportAgeMinutes(record = {}, nowMs = Date.now()) {
+  const ms = gridlyRoadClusterReportTimeMs(record);
+  if (!ms || ms > nowMs) return null;
+  return Math.max(0, Math.round((nowMs - ms) / 60000));
+}
+
+function gridlyRoadClusterRoadName(record = {}) {
+  return String(record?.roadName || record?.road_name || record?.street || record?.nearest_road || record?.location_name || record?.area || "Unknown road").trim() || "Unknown road";
+}
+
+function gridlyRoadClusterRoadSide(record = {}) {
+  const text = [
+    record?.roadSide,
+    record?.road_side,
+    record?.direction,
+    record?.bearing,
+    record?.laneDirection,
+    record?.lane_direction,
+    record?.description,
+    record?.detail,
+    record?.title,
+    record?.roadName,
+    record?.road_name
+  ].map((value) => String(value || "").toLowerCase()).join(" ");
+  if (/\b(northbound|north bound|nb)\b/.test(text)) return "northbound";
+  if (/\b(southbound|south bound|sb)\b/.test(text)) return "southbound";
+  if (/\b(eastbound|east bound|eb)\b/.test(text)) return "eastbound";
+  if (/\b(westbound|west bound|wb)\b/.test(text)) return "westbound";
+  if (/\b(left shoulder|inside shoulder|median)\b/.test(text)) return "inside_or_median";
+  if (/\b(right shoulder|outside shoulder)\b/.test(text)) return "outside_shoulder";
+  return "unknown";
+}
+
+function gridlyRoadClusterConfidenceRank(record = {}) {
+  const text = String(record?.confidence || record?.source || "").toLowerCase();
+  if (/official|txdot|moderator|trusted|system/.test(text)) return 3;
+  if (/community|verified|confirm/.test(text)) return 2;
+  return 1;
+}
+
+function gridlyClassifyRoadClusterHighZoomRisk(details = {}) {
+  const maxDistance = Number(details.maxClusterDistanceMeters || 0);
+  if (details.containsClearedReports || details.containsMultipleRoadSides || details.containsDividedRoadName || maxDistance >= 75) return "high";
+  if (details.containsMultipleRoadNames || details.containsMultipleReportTypes || maxDistance >= 25 || Number(details.clusterMemberCount || 0) > 1) return "medium";
+  return "low";
+}
+
+function gridlyBuildRoadClusterAudit(options = {}) {
+  const nowMs = Number.isFinite(Number(options?.nowMs)) ? Number(options.nowMs) : Date.now();
+  const sampleLimit = Math.max(1, Math.min(50, Number(options?.sampleLimit) || 12));
+  const sourceHazards = Array.isArray(options?.hazards) ? options.hazards : gridlyDiagnosticArray(activeHazards);
+  const sourceReports = Array.isArray(options?.reports) ? options.reports : gridlyDiagnosticArray(activeReports);
+  const unifiedIncidents = Array.isArray(options?.unifiedIncidents)
+    ? options.unifiedIncidents
+    : (typeof getUnifiedIncidents === "function" ? getUnifiedIncidents() : []);
+  const liveHazardIncidents = Array.isArray(options?.liveHazardIncidents)
+    ? options.liveHazardIncidents
+    : (typeof getLiveHazardIncidents === "function" ? getLiveHazardIncidents() : []);
+  const renderedAudits = typeof unifiedIncidentLayer?.getLayers === "function"
+    ? unifiedIncidentLayer.getLayers().map((layer) => {
+      const audit = layer?.options?.gridlyPlacementAudit || {};
+      const latLng = typeof layer?.getLatLng === "function" ? layer.getLatLng() : null;
+      return { ...audit, incidentId: audit?.incidentId || layer?.options?.incidentId || "", renderedMarkerCoordinate: gridlyCoordinateFromRecord(latLng) || audit?.renderedMarkerCoordinate || null };
+    })
+    : [];
+  const reportById = new Map(sourceReports.map((report) => [gridlyRoadClusterReportId(report), report]).filter(([id]) => id));
+  const latitudeForEstimate = sourceHazards.map((hazard) => Number(gridlyRoadClusterCoordinateFromRecord(hazard)?.lat)).find(Number.isFinite) || LOCATION_DEFAULTS?.center?.[0] || 30;
+  const estimatedClusterRadiusMeters = gridlyEstimateRoadClusterRadiusMeters(latitudeForEstimate);
+
+  const sampleClusters = liveHazardIncidents.slice(0, sampleLimit).map((incident) => {
+    const reports = Array.isArray(incident?.reports) ? incident.reports : sourceHazards.filter((hazard) => getHazardClusterKey(hazard) === incident?.key);
+    const sortedReports = [...reports].sort((a, b) => gridlyRoadClusterReportTimeMs(b) - gridlyRoadClusterReportTimeMs(a));
+    const representative = incident?.latestReport || sortedReports[0] || null;
+    const representativeCoordinate = gridlyRoadClusterCoordinateFromRecord(representative);
+    const clusterCoordinate = gridlyRoadClusterRoundedCoordinateFromKey(incident?.key);
+    const roadIncidentId = `road-${incident?.key || "unknown"}`;
+    const unified = unifiedIncidents.find((item) => String(item?.id || "") === roadIncidentId) || null;
+    const rendered = renderedAudits.find((audit) => String(audit?.incidentId || "") === roadIncidentId) || gridlyFindRenderedMarkerPlacementAudit(roadIncidentId);
+    const reportTypes = [...new Set(reports.map((report) => String(report?.type || report?.report_type || "unknown").toLowerCase()))];
+    const roadNames = [...new Set(reports.map(gridlyRoadClusterRoadName).filter(Boolean))];
+    const roadSides = [...new Set(reports.map(gridlyRoadClusterRoadSide).filter((side) => side && side !== "unknown"))];
+    const containsClearedReports = reports.some(gridlyIsRoadClearedHazardRecord);
+    const containsMultipleRoadNames = roadNames.length > 1;
+    const containsMultipleRoadSides = roadSides.length > 1;
+    const containsMultipleReportTypes = reportTypes.length > 1;
+    const containsDividedRoadName = roadNames.some((name) => /\b(us\s*90|u\.?s\.?\s*90|tx\s*146|sh\s*146|state\s*highway\s*146|highway\s*146)\b/i.test(name));
+    const distancesToRepresentative = reports.map((report) => gridlyCoordinateDeltaMeters(gridlyRoadClusterCoordinateFromRecord(report), representativeCoordinate)).filter((distance) => Number.isFinite(Number(distance)));
+    const maxClusterDistanceMeters = distancesToRepresentative.length ? Math.max(...distancesToRepresentative) : 0;
+    const highestConfidenceRank = Math.max(...reports.map(gridlyRoadClusterConfidenceRank), 0);
+    const representativeRank = gridlyRoadClusterConfidenceRank(representative);
+    const newestReport = sortedReports[0] || null;
+    const representativeReportId = gridlyRoadClusterReportId(representative);
+    const highZoomPlacementRisk = gridlyClassifyRoadClusterHighZoomRisk({
+      clusterMemberCount: reports.length,
+      maxClusterDistanceMeters,
+      containsClearedReports,
+      containsMultipleRoadSides,
+      containsMultipleRoadNames,
+      containsMultipleReportTypes,
+      containsDividedRoadName
+    });
+
+    const clusterMembers = reports.map((report) => {
+      const reportId = gridlyRoadClusterReportId(report);
+      const originalReport = reportById.get(reportId) || null;
+      const originalReportCoordinate = gridlyRoadClusterCoordinateFromRecord(originalReport) || gridlyCoordinateFromRecord(report?.rawTapCoordinate || report?.reportCaptureCoordinate) || gridlyRoadClusterCoordinateFromRecord(report);
+      const activeHazardCoordinate = gridlyRoadClusterCoordinateFromRecord(report);
+      const distanceToRepresentativeMeters = gridlyCoordinateDeltaMeters(activeHazardCoordinate, representativeCoordinate);
+      return {
+        reportId: reportId || null,
+        reportType: report?.type || report?.report_type || null,
+        source: report?.source || null,
+        confidence: report?.confidence || null,
+        ageMinutes: gridlyRoadClusterReportAgeMinutes(report, nowMs),
+        isCleared: gridlyIsRoadClearedHazardRecord(report),
+        roadName: gridlyRoadClusterRoadName(report),
+        roadSide: gridlyRoadClusterRoadSide(report),
+        originalReportCoordinate,
+        activeHazardCoordinate,
+        clusterCoordinate,
+        representativeCoordinate,
+        unifiedIncidentCoordinate: gridlyRoadClusterCoordinateFromRecord(unified),
+        renderedCoordinate: gridlyRoadClusterCoordinateFromRecord(rendered?.renderedMarkerCoordinate),
+        distanceToRepresentativeMeters,
+        clusterKey: incident?.key || null,
+        trace: {
+          report: originalReportCoordinate,
+          activeHazards: activeHazardCoordinate,
+          roadClustering: clusterCoordinate,
+          representativeSelection: representativeCoordinate,
+          unifiedIncidents: gridlyRoadClusterCoordinateFromRecord(unified),
+          renderedMarker: gridlyRoadClusterCoordinateFromRecord(rendered?.renderedMarkerCoordinate)
+        }
+      };
+    });
+
+    return {
+      clusterKey: incident?.key || null,
+      clusterMemberCount: reports.length,
+      clusterCoordinate,
+      clusterMembers,
+      representativeCoordinate,
+      representativeCoordinateReason: incident?.representativeCoordinateReason || (reports.length > 1 ? "latest_report_coordinate_within_rounded_0.001_degree_hazard_cluster" : "single_report_coordinate"),
+      representativeReportId: representativeReportId || null,
+      representativeReportAge: gridlyRoadClusterReportAgeMinutes(representative, nowMs),
+      representativeReportType: representative?.type || representative?.report_type || null,
+      representativeIsNewestReport: representativeReportId && newestReport ? representativeReportId === gridlyRoadClusterReportId(newestReport) : null,
+      representativeIsHighestConfidenceReport: representative ? representativeRank >= highestConfidenceRank : null,
+      distanceToRepresentativeMeters: clusterMembers.map((member) => ({ reportId: member.reportId, meters: member.distanceToRepresentativeMeters })),
+      maxClusterDistanceMeters,
+      containsClearedReports,
+      containsMultipleRoadSides,
+      containsMultipleRoadNames,
+      containsMultipleReportTypes,
+      containsDividedRoadName,
+      roadNames,
+      roadSides,
+      reportTypes,
+      unifiedIncidentCoordinate: gridlyRoadClusterCoordinateFromRecord(unified),
+      renderedCoordinate: gridlyRoadClusterCoordinateFromRecord(rendered?.renderedMarkerCoordinate),
+      highZoomPlacementRisk,
+      highZoomPlacementRiskReasons: [
+        containsDividedRoadName ? "known_divided_highway_name" : "",
+        containsMultipleRoadSides ? "multiple_detected_road_sides" : "",
+        containsClearedReports ? "cleared_report_in_cluster" : "",
+        maxClusterDistanceMeters >= 75 ? "representative_far_from_member" : "",
+        containsMultipleRoadNames ? "multiple_road_names" : "",
+        containsMultipleReportTypes ? "multiple_report_types" : ""
+      ].filter(Boolean)
+    };
+  });
+
+  const highRiskClusters = sampleClusters.filter((cluster) => cluster.highZoomPlacementRisk === "high").length;
+  const mediumRiskClusters = sampleClusters.filter((cluster) => cluster.highZoomPlacementRisk === "medium").length;
+  const clusteredSamples = sampleClusters.filter((cluster) => cluster.clusterMemberCount > 1);
+
+  return {
+    clusteringEnabled: true,
+    clusterRoundingPrecision: GRIDLY_ROAD_CLUSTER_ROUNDING_PRECISION_DEGREES,
+    clusterRoundingDecimals: GRIDLY_ROAD_CLUSTER_ROUNDING_DECIMALS,
+    estimatedClusterRadiusMeters,
+    clusterKeyGeneration: "`${type}-${lat.toFixed(3)}-${lng.toFixed(3)}`; recently cleared rows use `hazard_cleared-${coordinateKey}` and are separated from active hazard clusters.",
+    distanceGrouping: "No explicit distance threshold is checked before grouping; matching type plus rounded 0.001-degree lat/lng key determines membership.",
+    representativeSelectionRules: "Each cluster sorts reports by submittedAt descending; the latest report becomes latestReport and supplies the unified incident/rendered marker coordinate.",
+    suppressionRules: "Expired hazards and non-recent hazard_cleared rows are excluded. Active hazards sharing a cleared coordinate key are suppressed when a recent clear is newer than or equal to the hazard.",
+    dedupeRules: "renderUnifiedIncidents dedupes by unified incident id first; road clusters normally render one marker per road-${clusterKey} incident.",
+    clearedHazardInteraction: "Recently cleared road rows are included as separate cleared clusters keyed by cleared coordinate; they do not become representatives for active clusters unless their type/key is explicitly the cleared cluster.",
+    primaryQuestions: {
+      whenRoadClusteringOccurs: "getLiveHazardIncidents groups filtered activeHazards before getUnifiedIncidents creates road unified incidents and before renderUnifiedIncidents renders markers.",
+      coordinateRoundingUsed: GRIDLY_ROAD_CLUSTER_ROUNDING_PRECISION_DEGREES,
+      effectiveClusteringRadiusMeters: estimatedClusterRadiusMeters,
+      oppositeSidesCanEnterSameCluster: "Yes, if report type and 0.001-degree rounded lat/lng match; road side/carriageway is not part of the key.",
+      separateCarriagewaysCanEnterSameCluster: "Yes, if both carriageways fall in the same rounded 0.001-degree cell for the same report type.",
+      newerReportCanMoveRepresentativeCoordinate: true,
+      clearedReportCanBecomeRepresentativeCoordinate: "Only for the separate recently-cleared cluster; active hazard clusters filter cleared rows out or suppress matching active rows.",
+      representativeAlwaysNewestReport: clusteredSamples.length ? clusteredSamples.every((cluster) => cluster.representativeIsNewestReport === true) : null,
+      representativeAlwaysHighestConfidenceReport: clusteredSamples.length ? clusteredSamples.every((cluster) => cluster.representativeIsHighestConfidenceReport === true) : null,
+      shouldClusteringDetermineHighZoomPlacement: highRiskClusters > 0 || mediumRiskClusters > 0 ? "Review recommended: high zoom marker placement can be visibly misleading when the representative is far from some members or spans divided-road sides." : "Current samples are low risk, but the key still lacks road-side/carriageway awareness."
+    },
+    dividedRoadReview: {
+      routesChecked: ["US 90", "TX 146", "other divided highways inferred from road-side/direction text"],
+      sampleMatches: sampleClusters.filter((cluster) => cluster.containsDividedRoadName || cluster.containsMultipleRoadSides),
+      conclusion: "Opposite sides or separate carriageways can cluster because the key uses only type plus rounded coordinates, not road side, carriageway, heading, or road geometry."
+    },
+    sampleClusters,
+    highZoomRiskSummary: { low: sampleClusters.filter((cluster) => cluster.highZoomPlacementRisk === "low").length, medium: mediumRiskClusters, high: highRiskClusters },
+    recommendations: [
+      "Use this audit at high zoom on suspected divided roads to compare each member's originalReportCoordinate with the representativeCoordinate and renderedCoordinate.",
+      "Treat clusters with containsMultipleRoadSides, containsDividedRoadName, cleared rows, or maxClusterDistanceMeters >= 75 as high-zoom placement risks.",
+      "If the marker appears away from the tap while raw/stored/active coordinates match, check whether the cluster representative is a newer report in the same rounded 0.001-degree key.",
+      "Consider preserving per-report marker placement or disabling representative-coordinate placement at very high zoom in a future change; this audit is diagnostic-only."
+    ]
+  };
+}
+
+function gridlyRoadClusterAudit(options = {}) {
+  const audit = gridlyBuildRoadClusterAudit(options);
+  console.info("gridlyRoadClusterAudit", audit);
+  return audit;
+}
+
+if (typeof window !== "undefined") {
+  window.gridlyRoadClusterAudit = gridlyRoadClusterAudit;
+}
+exposeGridlyAuditHelper("gridlyRoadClusterAudit", gridlyRoadClusterAudit);
 
 function gridlyBuildRoadClearedLifecycleTrace(options = {}) {
   const nowMs = Number.isFinite(Number(options?.nowMs)) ? Number(options.nowMs) : Date.now();
