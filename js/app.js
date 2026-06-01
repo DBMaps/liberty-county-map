@@ -254,13 +254,13 @@ const HAZARD_TYPES = {
     detail: "Shared report: icy roadway conditions may affect travel."
   },
   debris: {
-    label: "Debris",
+    label: "Debris in Road",
     icon: "⚠️",
     severity: "moderate",
-    detail: "Shared report: debris may affect the road."
+    detail: "Shared report: debris in the road may affect travel."
   },
   crash: {
-    label: "Crash",
+    label: "Crash / Wreck",
     icon: "🚗",
     severity: "high",
     detail: "Shared report: crash may affect traffic."
@@ -272,7 +272,7 @@ const HAZARD_TYPES = {
     detail: "Shared report: construction may slow travel."
   },
   road_closed: {
-    label: "Road Closure",
+    label: "Road Closed",
     icon: "⛔",
     severity: "high",
     detail: "Shared report: road closure is blocking travel."
@@ -283,11 +283,23 @@ const HAZARD_TYPES = {
     severity: "moderate",
     detail: "Shared report: disabled vehicle may slow travel."
   },
+  traffic_backup: {
+    label: "Traffic Backup / Heavy Delay",
+    icon: "🚦",
+    severity: "moderate",
+    detail: "Shared report: traffic backup or heavy delay may affect travel."
+  },
   rail_blockage_delay: {
-    label: "Rail Blockage / Delay",
+    label: "Train Blocking Crossing",
     icon: "🚆",
     severity: "high",
-    detail: "Shared report: rail blockage or delay may affect travel."
+    detail: "Shared report: a train is blocking a crossing and may affect travel."
+  },
+  rail_issue: {
+    label: "Rail Issue",
+    icon: "🚉",
+    severity: "moderate",
+    detail: "Shared report: rail issue may affect a crossing."
   },
   other_hazard: {
     label: "Other Hazard",
@@ -303,13 +315,13 @@ const REPORT_MODES = {
 };
 
 const ROAD_HAZARD_TYPE_OPTIONS = [
-  { value: "crash", label: "Wreck / Crash" },
   { value: "flooding", label: "Flooding" },
-  { value: "ice", label: "Ice" },
-  { value: "debris", label: "Debris" },
-  { value: "construction", label: "Construction" },
-  { value: "road_closed", label: "Road Closed" },
+  { value: "crash", label: "Crash / Wreck" },
   { value: "disabled_vehicle", label: "Disabled Vehicle" },
+  { value: "debris", label: "Debris in Road" },
+  { value: "road_closed", label: "Road Closed" },
+  { value: "construction", label: "Construction" },
+  { value: "traffic_backup", label: "Traffic Backup / Heavy Delay" },
   { value: "other_hazard", label: "Other Hazard" }
 ];
 
@@ -322,23 +334,24 @@ const ROAD_HAZARD_SOURCE_MAP = {
   ice: "community_report",
   construction: "txdot_construction",
   road_closed: "txdot_closure",
+  traffic_backup: "community_report",
   other_hazard: "community_report"
 };
 
 
 const GRIDLY_HAZARD_CATEGORY_REVIEW_MODEL = Object.freeze({
-  version: "V206.7",
+  version: "V206.8",
   objective: "Audit supported hazard categories for beta readiness without changing reporting UI, routing, alerts ownership, Portrait V2, History UI, TxDOT, or Supabase writes.",
   recommendedCategories: Object.freeze([
     { group: "ROADWAY", userFacingName: "Flooding", internalCategory: "flooding", currentStatus: "keep", alertBehavior: "High severity roadway weather alert; should remain high-priority near route and map surfaces.", agingPolicy: "Extended weather-sensitive aging: active 0-6h, needs confirmation 6-24h, stale 24-48h, historical 48h+.", trustBehavior: "Needs reconfirmation as age increases; official/system or repeated confirmations raise trust.", historicalIntelligenceUsefulness: "HIGH", historyRecommendation: "Contribute to historical intelligence after clear/stale transition because repeated high-water locations are valuable.", betaRecommendation: "Launch beta" },
-    { group: "ROADWAY", userFacingName: "Crash / Wreck", internalCategory: "crash", currentStatus: "keep but add lifecycle policy", alertBehavior: "High severity traffic-impact alert; currently normalized and rendered but falls back to other_hazard lifecycle aging.", agingPolicy: "Recommended medium-duration roadway incident aging: active 0-2h, needs confirmation 2-6h, stale 6-12h, temporary history only after clear.", trustBehavior: "Driver confirmations improve confidence; stale crashes should lose trust quickly.", historicalIntelligenceUsefulness: "MEDIUM", historyRecommendation: "Contribute temporarily or in aggregates; avoid long-term recurring-location intelligence unless repeated and cleared.", betaRecommendation: "Launch beta" },
+    { group: "ROADWAY", userFacingName: "Crash / Wreck", internalCategory: "crash", currentStatus: "keep with explicit lifecycle policy", alertBehavior: "High severity traffic-impact alert with crash-specific aging.", agingPolicy: "Crash aging: active 0-6h, needs confirmation 6-24h, stale 24-48h, historical 48h+.", trustBehavior: "Driver confirmations improve confidence; stale crashes should lose trust quickly.", historicalIntelligenceUsefulness: "MEDIUM", historyRecommendation: "Contribute temporarily or in aggregates; avoid long-term recurring-location intelligence unless repeated and cleared.", betaRecommendation: "Launch beta" },
     { group: "ROADWAY", userFacingName: "Disabled Vehicle", internalCategory: "disabled_vehicle", currentStatus: "keep", alertBehavior: "Moderate severity short-lived roadway alert.", agingPolicy: "Short-lived aging: active 0-2h, needs confirmation 2-6h, stale 6-12h, historical 12h+ in current policy.", trustBehavior: "Trust should decay quickly unless reconfirmed by multiple drivers or official source.", historicalIntelligenceUsefulness: "LOW", historyRecommendation: "Do not use for durable historical intelligence; retain only temporary cleared-event context.", betaRecommendation: "Launch beta" },
     { group: "ROADWAY", userFacingName: "Debris in Road", internalCategory: "debris", currentStatus: "rename label", alertBehavior: "Moderate severity roadway obstruction alert.", agingPolicy: "Short-to-medium aging: active 0-4h, needs confirmation 4-12h, stale 12-24h, historical 24h+ in current policy.", trustBehavior: "Trust decays with age; confirmation prompts are important because debris can clear quickly.", historicalIntelligenceUsefulness: "LOW", historyRecommendation: "Do not produce durable historical intelligence; temporary event history is enough unless repeated severe debris patterns emerge.", betaRecommendation: "Launch beta as 'Debris in Road'" },
     { group: "ROADWAY", userFacingName: "Road Closed", internalCategory: "road_closed", currentStatus: "keep", alertBehavior: "High severity/critical route-impact closure alert.", agingPolicy: "Longer closure aging: active 0-12h, needs confirmation 12-48h, stale 48-72h, historical 72h+.", trustBehavior: "Needs stronger source or reconfirmation before long active retention.", historicalIntelligenceUsefulness: "MEDIUM", historyRecommendation: "Contribute to history after clear with duration and road context; avoid over-weighting one-off closures.", betaRecommendation: "Launch beta" },
     { group: "ROADWAY", userFacingName: "Construction", internalCategory: "construction", currentStatus: "keep but source-sensitive", alertBehavior: "Moderate severity road-work alert.", agingPolicy: "Current policy stays active until cleared and does not auto-expire; community-only construction should still require source confidence.", trustBehavior: "Best when official/system sourced; community-only construction needs age and reconfirmation copy.", historicalIntelligenceUsefulness: "HIGH", historyRecommendation: "Contribute to historical intelligence because recurring work zones and duration patterns are useful.", betaRecommendation: "Launch beta" },
-    { group: "ROADWAY", userFacingName: "Traffic Backup / Heavy Delay", internalCategory: "traffic_backup", currentStatus: "add", alertBehavior: "Should be moderate-to-high delay alert distinct from crash, construction, or rail delay.", agingPolicy: "Very short event aging recommended: active 0-30m, needs confirmation 30-90m, stale 90-180m, temporary history only.", trustBehavior: "Requires freshness or multiple confirmations; stale backups should not remain active.", historicalIntelligenceUsefulness: "HIGH", historyRecommendation: "Contribute to corridor/time-of-day historical intelligence in aggregate, not as one-off point hazards.", betaRecommendation: "Add for beta if scope allows; otherwise note as beta gap" },
+    { group: "ROADWAY", userFacingName: "Traffic Backup / Heavy Delay", internalCategory: "traffic_backup", currentStatus: "implemented", alertBehavior: "Moderate-to-high delay alert distinct from crash, construction, road closure, flooding, or train blockage.", agingPolicy: "Traffic backup aging: active 0-2h, needs confirmation 2-6h, stale 6-12h, historical 12h+.", trustBehavior: "Requires freshness or multiple confirmations; stale backups should not remain active.", historicalIntelligenceUsefulness: "HIGH", historyRecommendation: "Contribute to corridor/time-of-day historical intelligence in aggregate, not as one-off point hazards.", betaRecommendation: "Launch beta" },
     { group: "RAIL", userFacingName: "Train Blocking Crossing", internalCategory: "rail_blockage_delay", currentStatus: "rename/split", alertBehavior: "High severity rail crossing blockage/delay alert.", agingPolicy: "Event-driven rail aging: active 0-30m, needs confirmation 30-90m, stale 90-180m, historical 180m+.", trustBehavior: "Fresh driver confirmation is critical; recurring crossing history is valuable but must not imply current blockage.", historicalIntelligenceUsefulness: "HIGH", historyRecommendation: "Contribute to historical intelligence for recurring blocked crossings and typical durations.", betaRecommendation: "Launch beta as the primary rail report type" },
-    { group: "RAIL", userFacingName: "Rail Issue", internalCategory: "rail_issue", currentStatus: "add or reserve", alertBehavior: "Lower-confidence rail-related issue distinct from an actively blocked crossing.", agingPolicy: "Short rail issue aging recommended: active 0-30m, needs confirmation 30-90m, stale 90-180m; history only if explicitly cleared and useful.", trustBehavior: "Needs clear copy because broad rail issues can confuse users with blocked-crossing reports.", historicalIntelligenceUsefulness: "MEDIUM", historyRecommendation: "Contribute only temporarily unless issue repeats at a known crossing.", betaRecommendation: "Reserve/add only if users need non-blocking rail reports" },
+    { group: "RAIL", userFacingName: "Rail Issue", internalCategory: "rail_issue", currentStatus: "reserved/implemented", alertBehavior: "Lower-confidence rail-related issue distinct from an actively blocked crossing.", agingPolicy: "Short rail issue aging recommended: active 0-30m, needs confirmation 30-90m, stale 90-180m; history only if explicitly cleared and useful.", trustBehavior: "Needs clear copy because broad rail issues can confuse users with blocked-crossing reports.", historicalIntelligenceUsefulness: "MEDIUM", historyRecommendation: "Contribute only temporarily unless issue repeats at a known crossing.", betaRecommendation: "Reserve as distinct beta rail category" },
     { group: "COMMUNITY", userFacingName: "Other Hazard", internalCategory: "other_hazard", currentStatus: "keep as escape hatch", alertBehavior: "Moderate generic community alert with lower intelligence specificity.", agingPolicy: "Generic aging: active 0-4h, needs confirmation 4-12h, stale 12-24h, historical 24h+ in current policy.", trustBehavior: "Trust should be lower because the category lacks specific hazard semantics.", historicalIntelligenceUsefulness: "LOW", historyRecommendation: "Never produce durable historical intelligence unless reclassified into a specific category.", betaRecommendation: "Launch beta only as a last option" }
   ]),
   currentCategoryNotes: Object.freeze({
@@ -358,8 +371,8 @@ function gridlyHazardCategoryReviewLabelFor(internalCategory = "") {
   const copy = HAZARD_TYPES[normalized];
   if (option?.label) return option.label;
   if (copy?.label) return copy.label;
-  if (normalized === "rail") return "Rail Issue";
-  if (normalized === "rail_blockage") return "Train Blocking Crossing";
+  if (normalized === "rail") return "Train Blocking Crossing";
+  if (["rail_blockage", "rail_delay", "blocked_crossing"].includes(normalized)) return "Train Blocking Crossing";
   if (normalized === "traffic_backup") return "Traffic Backup / Heavy Delay";
   if (normalized === "standing_water") return "Standing Water";
   if (normalized === "fallen_tree") return "Fallen Tree";
@@ -406,6 +419,9 @@ function gridlyBuildHazardCategoryReviewAudit(options = {}) {
     ...reportableCategories,
     ...Object.keys(ROAD_HAZARD_SOURCE_MAP || {}),
     "rail",
+    "rail_delay",
+    "rail_blockage",
+    "blocked_crossing",
     "road_hazard",
     "standing_water",
     "fallen_tree",
@@ -421,16 +437,16 @@ function gridlyBuildHazardCategoryReviewAudit(options = {}) {
   ])];
   const currentInventory = supportedCategories.map((category) => {
     const txdotLifecycleMap = { txdot_construction: "construction", txdot_closure: "road_closed", txdot_flooding: "flooding", txdot_damage: "debris", txdot_other: "other_hazard" };
-    const lifecycleType = category === "rail_blockage_delay" || category === "rail"
+    const lifecycleType = ["rail_blockage_delay", "rail_blockage", "rail_delay", "blocked_crossing", "rail"].includes(category)
       ? "rail_blockage"
       : (txdotLifecycleMap[category] || (lifecycleRules[category] ? category : "other_hazard"));
     const copy = HAZARD_TYPES[category] || HAZARD_TYPES.other_hazard;
-    const reportable = reportableCategories.includes(category) || category === "rail_blockage_delay";
+    const reportable = reportableCategories.includes(category) || ["rail_blockage_delay", "rail_issue"].includes(category);
     return {
       userFacingName: gridlyHazardCategoryReviewLabelFor(category),
       internalCategory: category,
       reportableToday: reportable,
-      reportMode: category === "rail_blockage_delay" ? REPORT_MODES.rail : (reportable ? REPORT_MODES.roadHazard : "normalized_or_ingested_only"),
+      reportMode: ["rail_blockage_delay", "rail_issue"].includes(category) ? REPORT_MODES.rail : (reportable ? REPORT_MODES.roadHazard : "normalized_or_ingested_only"),
       alertBehavior: {
         severity: copy?.severity || (category === "rail" ? "high" : "unknown"),
         detail: copy?.detail || "Normalized incident category; rendered through unified incident/visual category handling.",
@@ -464,13 +480,52 @@ function gridlyBuildHazardCategoryReviewAudit(options = {}) {
     overlap: ["debris", "disabled_vehicle", "crash", "flooding", "road_closed"],
     recommendation: GRIDLY_HAZARD_CATEGORY_REVIEW_MODEL.currentCategoryNotes.road_hazard.recommendation
   };
+  const implementedBetaCategoryList = [
+    { group: "ROADWAY", userFacingName: "Flooding", internalCategory: "flooding" },
+    { group: "ROADWAY", userFacingName: "Crash / Wreck", internalCategory: "crash" },
+    { group: "ROADWAY", userFacingName: "Disabled Vehicle", internalCategory: "disabled_vehicle" },
+    { group: "ROADWAY", userFacingName: "Debris in Road", internalCategory: "debris" },
+    { group: "ROADWAY", userFacingName: "Road Closed", internalCategory: "road_closed" },
+    { group: "ROADWAY", userFacingName: "Construction", internalCategory: "construction" },
+    { group: "ROADWAY", userFacingName: "Traffic Backup / Heavy Delay", internalCategory: "traffic_backup" },
+    { group: "RAIL", userFacingName: "Train Blocking Crossing", internalCategory: "rail_blockage_delay" },
+    { group: "RAIL", userFacingName: "Rail Issue", internalCategory: "rail_issue" },
+    { group: "COMMUNITY", userFacingName: "Other Hazard", internalCategory: "other_hazard" }
+  ];
+  const legacyCategoryMappings = {
+    debris: { resolvesTo: "debris", userFacingName: "Debris in Road", compatibility: "label-only cleanup" },
+    rail_blockage: { resolvesTo: "rail_blockage_delay", userFacingName: "Train Blocking Crossing" },
+    rail_delay: { resolvesTo: "rail_blockage_delay", userFacingName: "Train Blocking Crossing" },
+    blocked_crossing: { resolvesTo: "rail_blockage_delay", userFacingName: "Train Blocking Crossing" },
+    road_hazard: { resolvesTo: "other_hazard", userFacingName: "Other Hazard", compatibility: "legacy alias remains readable/searchable/mappable" }
+  };
+  const categoryNormalizationRules = [
+    "Debris renders as Debris in Road without mutating stored records.",
+    "rail_blockage, rail_delay, and blocked_crossing render as Train Blocking Crossing.",
+    "road_hazard resolves through the legacy alias path to Other Hazard and is no longer a preferred beta report type.",
+    "traffic_backup is a first-class roadway category for congestion not caused by flooding, crash, closure, construction, or train blockage.",
+    "rail_issue is distinct from Train Blocking Crossing for non-blocking rail/crossing infrastructure concerns."
+  ];
+  const categoryAgingPolicies = {
+    crash: lifecycleRules.crash || [],
+    traffic_backup: lifecycleRules.traffic_backup || [],
+    rail_issue: lifecycleRules.rail_issue || [],
+    rail_blockage: lifecycleRules.rail_blockage || []
+  };
   return {
     auditVersion: GRIDLY_HAZARD_CATEGORY_REVIEW_MODEL.version,
     auditOnly: true,
     destructiveActionsTaken: false,
     scopedOut: ["reporting UI redesign", "routing changes", "alerts ownership changes", "Portrait V2 changes", "History UI changes", "TxDOT changes", "Supabase writes", "new frameworks", "simulations"],
+    implementedBetaCategoryList,
+    legacyCategoryMappings,
+    activeCategoryInventory: currentInventory,
     currentCategoryInventory: currentInventory,
     recommendedCategoryInventory: GRIDLY_HAZARD_CATEGORY_REVIEW_MODEL.recommendedCategories,
+    deprecatedCategories: ["road_hazard", "ice"],
+    newCategories: ["traffic_backup", "rail_issue"],
+    categoryNormalizationRules,
+    categoryAgingPolicies,
     categoriesToMerge: [
       { from: ["standing_water", "txdot_flooding"], into: "flooding", reason: "Users understand high water as flooding; improves alert and history aggregation." },
       { from: ["fallen_tree"], into: "debris", recommendedUserFacingName: "Debris in Road", reason: "Fallen tree is a debris subtype for beta simplicity." },
@@ -498,8 +553,9 @@ function gridlyBuildHazardCategoryReviewAudit(options = {}) {
     })),
     agingSuitability: {
       goodFit: ["flooding", "disabled_vehicle", "debris", "road_closed", "construction", "rail_blockage_delay"],
-      needsPolicy: ["crash", "traffic_backup", "rail_issue"],
-      concern: "Current crash reports are supported for alerts but fall back to other_hazard lifecycle timing; traffic_backup and rail_issue are proposed additions and need explicit aging before launch."
+      goodFitBetaAdded: ["crash", "traffic_backup", "rail_issue"],
+      needsPolicy: [],
+      concern: "Crash and Traffic Backup / Heavy Delay now have explicit beta aging policies; Rail Issue is reserved with rail-style aging while remaining distinct from Train Blocking Crossing."
     },
     userComprehensionConcerns: [
       "Road Hazard overlaps debris, disabled vehicles, crashes, flooding, and closures.",
@@ -517,7 +573,7 @@ function gridlyBuildHazardCategoryReviewAudit(options = {}) {
       "Construction",
       "Traffic Backup / Heavy Delay",
       "Train Blocking Crossing",
-      "Rail Issue (optional/reserved)",
+      "Rail Issue",
       "Other Hazard"
     ],
     answer: "Gridly should launch beta with specific roadway and rail categories, keep Other Hazard only as an escape hatch, and deprecate generic Road Hazard as a primary category because it weakens alert specificity, trust decay, and Historical Intelligence quality."
@@ -533,6 +589,9 @@ const HAZARD_CATEGORY_MAP = {
   heavy: "rail_blockage_delay",
   delayed: "rail_blockage_delay",
   delay: "rail_blockage_delay",
+  blocked_crossing: "rail_blockage_delay",
+  crossing_blocked: "rail_blockage_delay",
+  train_blocking_crossing: "rail_blockage_delay",
   crash: "crash",
   wreck: "crash",
   flooding: "flooding",
@@ -542,8 +601,14 @@ const HAZARD_CATEGORY_MAP = {
   road_closed: "road_closed",
   disabled_vehicle: "disabled_vehicle",
   rail_blockage_delay: "rail_blockage_delay",
+  rail_blockage: "rail_blockage_delay",
   rail_blocked: "rail_blockage_delay",
   rail_delay: "rail_blockage_delay",
+  rail_issue: "rail_issue",
+  traffic_backup: "traffic_backup",
+  heavy_traffic: "traffic_backup",
+  traffic_delay: "traffic_backup",
+  road_hazard: "other_hazard",
   other: "other_hazard",
   other_hazard: "other_hazard",
   hazard_cleared: "other_hazard"
@@ -551,7 +616,7 @@ const HAZARD_CATEGORY_MAP = {
 
 const GRIDLY_NORMALIZED_INCIDENT_CATEGORIES = new Set([
   "rail", "flooding", "ice", "debris", "crash", "construction", "road_closed",
-  "disabled_vehicle", "standing_water", "fallen_tree", "signal_outage", "utility_work",
+  "disabled_vehicle", "traffic_backup", "rail_blockage_delay", "rail_issue", "standing_water", "fallen_tree", "signal_outage", "utility_work",
   "emergency_response_impact", "txdot_construction", "txdot_closure", "txdot_flooding",
   "txdot_damage", "txdot_other", "unknown"
 ]);
@@ -1109,13 +1174,15 @@ function normalizeGridlyIncidentCategory(input) {
   const compact = value.replace(/\s+/g, "");
   const txdotLike = /txdot|drivetexas|drive texas/.test(value);
 
-  if (/blocked crossing|train blocking|active rail report|fra crossing|crossing id|crossing number/.test(value)) return "rail";
+  if (/rail issue|crossing malfunction|gate issue|signal issue|rail infrastructure/.test(value) && !/train blocking|blocked crossing|crossing blocked/.test(value)) return "rail_issue";
+  if (/blocked crossing|crossing blocked|train blocking|active rail report|fra crossing|crossing id|crossing number/.test(value)) return "rail";
   if (/\brail\b/.test(value) && /crossing|train|blocked|fra/.test(value)) return "rail";
   if (/standing water/.test(value)) return txdotLike ? "txdot_flooding" : "standing_water";
   if (/fallen tree|down(ed)? tree|tree in road/.test(value)) return "fallen_tree";
   if (/signal outage|traffic signal|signal out/.test(value)) return "signal_outage";
   if (/utility work|power line|downed line/.test(value)) return "utility_work";
   if (/emergency response impact|crash response|fire blocking road|ambulance delay/.test(value)) return "emergency_response_impact";
+  if (/traffic backup|heavy traffic|traffic delay|severe delay|major congestion|unexpected backup/.test(value)) return "traffic_backup";
   if (/wreck|crash|collision/.test(value)) return "crash";
   if (/flood|high water|impassable/.test(value)) return txdotLike ? "txdot_flooding" : "flooding";
   if (/ice|black ice/.test(value)) return "ice";
@@ -1124,10 +1191,14 @@ function normalizeGridlyIncidentCategory(input) {
   if (/disabled vehicle|stalled|vehicle disabled/.test(value)) return "disabled_vehicle";
   if (/damage|washout|road damage/.test(value)) return txdotLike ? "txdot_damage" : "unknown";
   if (/closure|closed|road closed/.test(value)) return txdotLike ? "txdot_closure" : "road_closed";
+  if (/road hazard/.test(value)) return "unknown";
   if (/other/.test(value) && txdotLike) return "txdot_other";
-  if (compact in HAZARD_CATEGORY_MAP) {
-    const mapped = HAZARD_CATEGORY_MAP[compact];
+  const underscoredValue = value.replace(/\s+/g, "_");
+  if (compact in HAZARD_CATEGORY_MAP || underscoredValue in HAZARD_CATEGORY_MAP) {
+    const mapped = HAZARD_CATEGORY_MAP[compact] || HAZARD_CATEGORY_MAP[underscoredValue];
     if (mapped === "rail_blockage_delay") return "rail";
+    if (mapped === "rail_issue") return "rail_issue";
+    if (mapped === "traffic_backup") return "traffic_backup";
     if (mapped === "other_hazard") return "unknown";
     if (GRIDLY_NORMALIZED_INCIDENT_CATEGORIES.has(mapped)) return mapped;
   }
@@ -4236,7 +4307,25 @@ const GRIDLY_HAZARD_LIFECYCLE_RULES = {
   construction: [
     { maxMinutes: Infinity, lifecycleState: "ACTIVE", ageBucket: "until cleared", lifecycleRecommendedAction: "keep_active", autoExpires: false }
   ],
+  crash: [
+    { maxMinutes: 360, lifecycleState: "ACTIVE", ageBucket: "0-6h", lifecycleRecommendedAction: "keep_active" },
+    { maxMinutes: 1440, lifecycleState: "NEEDS_CONFIRMATION", ageBucket: "6-24h", lifecycleRecommendedAction: "request_confirmation" },
+    { maxMinutes: 2880, lifecycleState: "STALE", ageBucket: "24-48h", lifecycleRecommendedAction: "stop_treating_as_active" },
+    { maxMinutes: Infinity, lifecycleState: "HISTORICAL", ageBucket: "48h+", lifecycleRecommendedAction: "retain_as_historical_intelligence" }
+  ],
+  traffic_backup: [
+    { maxMinutes: 120, lifecycleState: "ACTIVE", ageBucket: "0-2h", lifecycleRecommendedAction: "keep_active" },
+    { maxMinutes: 360, lifecycleState: "NEEDS_CONFIRMATION", ageBucket: "2-6h", lifecycleRecommendedAction: "request_confirmation" },
+    { maxMinutes: 720, lifecycleState: "STALE", ageBucket: "6-12h", lifecycleRecommendedAction: "stop_treating_as_active" },
+    { maxMinutes: Infinity, lifecycleState: "HISTORICAL", ageBucket: "12h+", lifecycleRecommendedAction: "retain_as_historical_intelligence" }
+  ],
   rail_blockage: [
+    { maxMinutes: 30, lifecycleState: "ACTIVE", ageBucket: "0-30m", lifecycleRecommendedAction: "keep_active" },
+    { maxMinutes: 90, lifecycleState: "NEEDS_CONFIRMATION", ageBucket: "30-90m", lifecycleRecommendedAction: "request_confirmation" },
+    { maxMinutes: 180, lifecycleState: "STALE", ageBucket: "90-180m", lifecycleRecommendedAction: "stop_treating_as_active" },
+    { maxMinutes: Infinity, lifecycleState: "HISTORICAL", ageBucket: "180m+", lifecycleRecommendedAction: "retain_as_historical_intelligence" }
+  ],
+  rail_issue: [
     { maxMinutes: 30, lifecycleState: "ACTIVE", ageBucket: "0-30m", lifecycleRecommendedAction: "keep_active" },
     { maxMinutes: 90, lifecycleState: "NEEDS_CONFIRMATION", ageBucket: "30-90m", lifecycleRecommendedAction: "request_confirmation" },
     { maxMinutes: 180, lifecycleState: "STALE", ageBucket: "90-180m", lifecycleRecommendedAction: "stop_treating_as_active" },
@@ -4264,7 +4353,10 @@ function gridlyResolveHazardLifecycleType(hazard = {}) {
     hazard?.description,
     hazard?.status
   ].map((value) => String(value || "").toLowerCase()).join(" ");
-  if (normalizedIncidentCategory === "rail" || hazardCategory === "rail_blockage_delay" || /rail|crossing|train.*block|blocked.*train/.test(text)) return "rail_blockage";
+  if (normalizedIncidentCategory === "rail_issue" || hazardCategory === "rail_issue" || (/rail issue|crossing malfunction|gate issue|signal issue|rail infrastructure/.test(text) && !/train.*block|blocked.*train|blocked crossing|crossing blocked/.test(text))) return "rail_issue";
+  if (normalizedIncidentCategory === "rail" || hazardCategory === "rail_blockage_delay" || /rail|crossing|train.*block|blocked.*train|blocked crossing|crossing blocked/.test(text)) return "rail_blockage";
+  if (normalizedIncidentCategory === "traffic_backup" || hazardCategory === "traffic_backup" || /traffic backup|heavy traffic|traffic delay|severe delay|major congestion|unexpected backup/.test(text)) return "traffic_backup";
+  if (normalizedIncidentCategory === "crash" || hazardCategory === "crash" || /crash|wreck|collision/.test(text)) return "crash";
   if (["flooding", "standing_water", "txdot_flooding"].includes(normalizedIncidentCategory) || hazardCategory === "flooding" || /flood|high water|standing water/.test(text)) return "flooding";
   if (["construction", "utility_work", "txdot_construction"].includes(normalizedIncidentCategory) || hazardCategory === "construction" || /construction|road work|work zone|utility work|maintenance/.test(text)) return "construction";
   if (normalizedIncidentCategory === "debris" || hazardCategory === "debris" || /debris|obstruction|tree in road|downed tree/.test(text)) return "debris";
@@ -4413,6 +4505,9 @@ function gridlyHazardLifecyclePolicyValidationSamples(nowMs = Date.now()) {
     ["disabled_vehicle", [60, 240, 600, 1440]],
     ["road_closed", [360, 1440, 3600, 5760]],
     ["rail_blockage", [15, 60, 120, 240]],
+    ["crash", [120, 720, 2160, 4320]],
+    ["traffic_backup", [60, 240, 540, 900]],
+    ["rail_issue", [15, 60, 120, 240]],
     ["construction", [43200]]
   ];
   return cases.flatMap(([category, ages]) => ages.map((ageMinutes, index) => {
@@ -10242,7 +10337,7 @@ window.gridlyAlertLocationSpecificityFramework = function gridlyAlertLocationSpe
       roadClosed: ["Road closed on {roadName} at {referenceRoad}", "Road closed on {roadName} between {referenceA} and {referenceB}"],
       construction: ["Construction on {roadName} near {referenceRoad}", "Construction on {roadName} between {referenceA} and {referenceB}"],
       crashOrWreck: ["Crash on {roadName} near {referenceRoad}"],
-      debris: ["Debris on {roadName} near {referenceRoad}"],
+      debris: ["Debris in Road on {roadName} near {referenceRoad}"],
       disabledVehicle: ["Disabled vehicle on {roadName} near {referenceRoad}"],
       railCrossing: ["Train blocking {roadName} at {crossingName}"]
     },
@@ -11561,8 +11656,9 @@ function openAlertsSurfaceFromDock() {
         if (normalized.includes("flood")) return "Flooding";
         if (normalized.includes("construct")) return "Construction";
         if (normalized.includes("closed") || normalized.includes("closure")) return "Road closed";
-        if (normalized.includes("debris")) return "Debris";
-        if (normalized.includes("crash") || normalized.includes("accident")) return "Crash";
+        if (normalized.includes("debris")) return "Debris in Road";
+        if (normalized.includes("traffic") || normalized.includes("backup")) return "Traffic Backup";
+        if (normalized.includes("crash") || normalized.includes("wreck") || normalized.includes("accident")) return "Crash / Wreck";
         return value;
       };
       const resolveRoadHazardSegmentHeadline = (alert = {}) => {
@@ -11797,8 +11893,10 @@ function openAlertsSurfaceFromDock() {
     { token: "construction", label: "Construction" },
     { token: "blocked", label: "Blocked" },
     { token: "flooding", label: "Flooding" },
-    { token: "debris", label: "Debris" },
-    { token: "crash", label: "Crash" },
+    { token: "debris", label: "Debris in Road" },
+    { token: "traffic backup", label: "Traffic Backup" },
+    { token: "heavy delay", label: "Traffic Backup" },
+    { token: "crash", label: "Crash / Wreck" },
     { token: "accident", label: "Accident" }
   ];
   const eventLabelFromHelper = helper => {
@@ -17306,7 +17404,8 @@ function getRoutePolylineLatLngs() {
 
 function getHazardCategory(type = "") {
   const normalizedType = String(type || "").trim().toLowerCase();
-  return HAZARD_CATEGORY_MAP[normalizedType] || "other_hazard";
+  const underscoredType = normalizedType.replace(/[\s-]+/g, "_");
+  return HAZARD_CATEGORY_MAP[normalizedType] || HAZARD_CATEGORY_MAP[underscoredType] || (HAZARD_TYPES[underscoredType] ? underscoredType : "other_hazard");
 }
 
 function getHazardMetadata(type = "") {
@@ -18082,7 +18181,8 @@ function buildGridlyLightweightActiveHeadline(category = "unknown", location = {
   const locationPhrase = hasLocation ? `${preposition ? ` ${preposition} ` : " "}${locationLabel}` : " nearby";
   if (category === "flooding") return `Flooding${hasLocation ? locationPhrase : " nearby"}`;
   if (category === "road closure") return `Road closure reported${locationPhrase}`;
-  if (category === "debris") return `Debris reported${locationPhrase}`;
+  if (category === "debris") return `Debris in Road reported${locationPhrase}`;
+  if (category === "traffic_backup") return `Traffic Backup reported${locationPhrase}`;
   if (category === "rail") return `Rail report visible${hasLocation ? ` near ${locationLabel}` : " nearby"}`;
   if (category === "crash") return `Crash reported${locationPhrase}`;
   if (category === "road work") return `Road work reported${locationPhrase}`;
@@ -18599,13 +18699,14 @@ function getGridlyRoadHazardLabel(alert = {}) {
     alert?.raw?.title
   ].filter(Boolean).join(" "));
   if (/flood|standing water|high water/.test(text)) return "Flooding";
-  if (/crash|collision|wreck|accident/.test(text)) return "Crash";
+  if (/crash|collision|wreck|accident/.test(text)) return "Crash / Wreck";
   if (/road[_\s-]*closed|closure|closed/.test(text)) return "Road closed";
   if (/construction|work ?zone|road work|lane ?work/.test(text)) return "Construction";
-  if (/debris|object|tree|obstruction/.test(text)) return "Debris";
+  if (/debris|object|tree|obstruction/.test(text)) return "Debris in Road";
+  if (/traffic|backup|congestion|heavy delay/.test(text)) return "Traffic Backup";
   if (/ice|slick/.test(text)) return "Ice";
   if (/disabled|stalled/.test(text)) return "Disabled vehicle";
-  return "Road hazard";
+  return "Other Hazard";
 }
 
 function stripGridlyRoadHazardLocationMetadata(value = "") {
@@ -19280,7 +19381,7 @@ function buildCommunityPresencePhrases(scoredItems = []) {
     const corridor = item?.corridor || "Local corridors";
     const count = Number(corridorCounts[corridor] || 0);
     if (/flood|standing water/.test(typeText) && corridor !== "Local corridors") return `Flooding activity increasing along ${corridor}`;
-    if (/rail|blocked|train/.test(typeText) && count > 1) return corridor === "Local corridors" ? "Rail activity reported across nearby corridors" : `Rail delays continuing near ${corridor}`;
+    if (/rail|blocked|train/.test(typeText) && count > 1) return corridor === "Local corridors" ? "Train blocking crossing reports across nearby corridors" : `Train blocking crossing reports continuing near ${corridor}`;
     if (corridor !== "Local corridors" && count > 1) return `Movement pressure building along ${corridor}`;
     return corridor === "Local corridors" ? "Light activity across nearby corridors" : `Mobility activity under watch near ${corridor}`;
   });
@@ -19785,7 +19886,7 @@ function buildGridlyMobilityPressurePhrase(context = {}) {
   }
   if (primarySignal === "rail") {
     return { phraseGenerationMode, templates: [
-      { id: "rail_delays_continuing", text: `Rail delays continuing ${formatGridlyCommunityPulsePlace(corridor)}` },
+      { id: "rail_delays_continuing", text: `Train blocking crossing reports continuing ${formatGridlyCommunityPulsePlace(corridor)}` },
       { id: "rail_activity_across", text: corridorIsLocal ? "Rail activity reported across nearby corridors" : `Rail activity reported across ${corridor}` }
     ] };
   }
@@ -24801,7 +24902,7 @@ function mapRailReportType(type) {
 
 function mapRoadHazardType(type) {
   const map = { crash: "wreck", flooding: "flooding",
-  ice: "ice", construction: "construction", debris: "debris", road_closed: "closure", disabled_vehicle: "wreck", hazard_cleared: "cleared" };
+  ice: "ice", construction: "construction", debris: "debris", road_closed: "closure", disabled_vehicle: "wreck", traffic_backup: "traffic_backup", hazard_cleared: "cleared" };
   return map[type] || "debris";
 }
 
@@ -25036,7 +25137,7 @@ function injectHazardReportUI() {
   launcher.id = "gridlyHazardLauncher";
   launcher.className = "gridly-hazard-launcher";
   launcher.type = "button";
-  launcher.textContent = "Report Road Hazard";
+  launcher.textContent = "Report Hazard";
   const counter = document.createElement("div");
 counter.id = "gridlyHazardCounter";
 counter.className = "gridly-hazard-counter";
@@ -25049,18 +25150,18 @@ counter.textContent = "Road conditions appear calm";
   panel.dataset.scrollTarget = "hazard-choice-grid";
   panel.innerHTML = `
     <div class="hazard-panel-header">
-      <strong>Report Road Hazard</strong>
+      <strong>Report Hazard</strong>
       <button type="button" class="gridly-surface-close gridly-v2-close-btn" data-action="close-hazard-panel" aria-label="Close road hazard panel">×</button>
     </div>
     <p>Choose a hazard, then use your location or tap the map.</p>
     <div class="hazard-choice-grid">
       <button type="button" data-action="open-hazard-placement" data-hazard-type="flooding">🌊 Flooding</button>
-      <button type="button" data-action="open-hazard-placement" data-hazard-type="ice">🧊 Ice</button>
-      <button type="button" data-action="open-hazard-placement" data-hazard-type="debris">⚠️ Debris</button>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="crash">🚗 Crash / Wreck</button>
-      <button type="button" data-action="open-hazard-placement" data-hazard-type="construction">🚧 Construction</button>
-      <button type="button" data-action="open-hazard-placement" data-hazard-type="road_closed">⛔ Road Closed</button>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="disabled_vehicle">🚙 Disabled Vehicle</button>
+      <button type="button" data-action="open-hazard-placement" data-hazard-type="debris">⚠️ Debris in Road</button>
+      <button type="button" data-action="open-hazard-placement" data-hazard-type="road_closed">⛔ Road Closed</button>
+      <button type="button" data-action="open-hazard-placement" data-hazard-type="construction">🚧 Construction</button>
+      <button type="button" data-action="open-hazard-placement" data-hazard-type="traffic_backup">🚦 Traffic Backup / Heavy Delay</button>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="other_hazard">❗ Other Hazard</button>
     </div>
     <div class="hazard-panel-placement-actions">
@@ -26795,7 +26896,7 @@ function setReportMode(mode) {
   }
 
   if (els.manualReportBtn) {
-    els.manualReportBtn.textContent = isRoadHazardMode ? "Submit Road Hazard" : "Submit Shared Report";
+    els.manualReportBtn.textContent = isRoadHazardMode ? "Submit Hazard" : "Submit Shared Report";
   }
 }
 
@@ -32842,18 +32943,20 @@ function getCorridorSeverityTheme(severityLabel = "Clear") {
   return { border: "rgba(34, 197, 94, 0.65)", glow: "rgba(34, 197, 94, 0.14)", badge: "rgba(34, 197, 94, 0.2)", text: "#86efac" };
 }
 
-const ROAD_HAZARD_DISPLAY_CATEGORIES = new Set(["road_closed", "flooding", "crash", "construction", "disabled_vehicle", "other_hazard"]);
+const ROAD_HAZARD_DISPLAY_CATEGORIES = new Set(["road_closed", "flooding", "crash", "construction", "disabled_vehicle", "debris", "traffic_backup", "other_hazard"]);
 
 function formatRoadHazardCategoryLabel(category) {
   const labels = {
-    road_closed: "Road Closure",
+    road_closed: "Road Closed",
     flooding: "Flooding",
-    crash: "Crash",
+    crash: "Crash / Wreck",
     construction: "Construction",
     disabled_vehicle: "Disabled Vehicle",
-    other_hazard: "Road Hazard"
+    debris: "Debris in Road",
+    traffic_backup: "Traffic Backup",
+    other_hazard: "Other Hazard"
   };
-  return labels[category] || "Road Hazard";
+  return labels[category] || "Other Hazard";
 }
 
 function extractRoadHintFromText(text = "") {
@@ -33363,10 +33466,10 @@ function buildRoadHazardDisplay(incident, resolvedLookup = null) {
   const nearestKnownLocation = lookup.nearestKnownLocation || "";
   const hasUsefulRoadName = locationContext.primary && !/liberty county/i.test(locationContext.primary);
 
-  let title = "Road Hazard";
+  let title = "Other Hazard";
   if (category === "flooding" && hasUsefulRoadName) title = `Flooding near ${locationContext.phrasing}`;
   else if (hasUsefulRoadName) title = `${hazardType} near ${locationContext.phrasing}`;
-  else if (hazardType !== "Road Hazard") title = hazardType;
+  else if (hazardType !== "Other Hazard") title = hazardType;
   title = standardizeGridlyAlertHeadline(title);
 
   const coords = normalizeCoordinatePair(incident?.lat, incident?.lng);
@@ -33904,7 +34007,7 @@ function buildLocalizedIncidentLabel(incident = {}) {
   });
   if (reportType === "cleared") return finalizeAudit(recordSection("string_template_construction", () => `Crossing cleared${nearSuffix}`), { path: "cleared" });
   if (reportType === "blocked" || reportType === "crossing_blocked") return finalizeAudit(recordSection("string_template_construction", () => `Blocked crossing${nearSuffix}`), { path: "blocked" });
-  if (["delay", "delayed", "heavy", "rail_blockage_delay", "rail_blockage"].includes(reportType)) return finalizeAudit(recordSection("string_template_construction", () => `Rail delay${nearSuffix}`), { path: "delay" });
+  if (["delay", "delayed", "heavy", "rail_blockage_delay", "rail_blockage", "rail_delay", "blocked_crossing"].includes(reportType)) return finalizeAudit(recordSection("string_template_construction", () => `Train blocking crossing${nearSuffix}`), { path: "delay" });
   return finalizeAudit(recordSection("fallback_logic", () => `Crossing disruption${nearSuffix}`), { path: "crossing_fallback" });
 }
 
@@ -38382,10 +38485,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
               <button class="secondary-btn" type="button" data-mobile-surface-action="prep-report-blocked">Blocked</button>
               <button class="secondary-btn" type="button" data-mobile-surface-action="prep-report-heavy">Delayed</button>
               <button class="secondary-btn" type="button" data-mobile-surface-action="quick-cleared">Cleared</button>
-              <button class="secondary-btn" type="button" data-mobile-surface-action="prep-hazard-other_hazard">Road Hazard</button>
-              <button class="secondary-btn" type="button" data-mobile-surface-action="prep-hazard-crash">Crash</button>
+              <button class="secondary-btn" type="button" data-mobile-surface-action="prep-hazard-other_hazard">Other Hazard</button>
+              <button class="secondary-btn" type="button" data-mobile-surface-action="prep-hazard-crash">Crash / Wreck</button>
               <button class="secondary-btn" type="button" data-mobile-surface-action="prep-hazard-flooding">Flooding</button>
-              <button class="secondary-btn" type="button" data-mobile-surface-action="prep-hazard-debris">Debris</button>
+              <button class="secondary-btn" type="button" data-mobile-surface-action="prep-hazard-debris">Debris in Road</button>
               <button class="primary-btn" type="button" data-mobile-surface-action="quick-report">Report Hazard Fast</button>
             </div>
           </article>`
@@ -38881,12 +38984,13 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
 (() => {
   const V2_REPORT_HAZARD_OPTIONS = [
     { label: "Flooding", type: "flooding" },
-    { label: "Ice", type: "ice" },
-    { label: "Debris", type: "debris" },
     { label: "Crash / Wreck", type: "crash" },
-    { label: "Construction", type: "construction" },
+    { label: "Disabled Vehicle", type: "disabled_vehicle" },
+    { label: "Debris in Road", type: "debris" },
     { label: "Road Closed", type: "road_closed" },
-    { label: "Disabled Vehicle", type: "disabled_vehicle" }
+    { label: "Construction", type: "construction" },
+    { label: "Traffic Backup / Heavy Delay", type: "traffic_backup" },
+    { label: "Other Hazard", type: "other_hazard" }
   ];
   let selectedV2HazardType = "";
   function normalizeSavedPlacesForRouteSnapshot(rawSavedPlaces) {
@@ -39049,11 +39153,12 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const roadHazardMap = [
       { test: /road[_\s-]*closed|closure|closed/, label: "Road closed" },
       { test: /construction|work ?zone|lane ?work/, label: "Construction" },
-      { test: /debris|object/, label: "Debris" },
+      { test: /debris|object/, label: "Debris in Road" },
+      { test: /traffic|backup|congestion|heavy delay/, label: "Traffic Backup" },
       { test: /flood|high water/, label: "Flooding" },
-      { test: /crash|collision|wreck|accident/, label: "Crash" }
+      { test: /crash|collision|wreck|accident/, label: "Crash / Wreck" }
     ];
-    const hazardLabel = (roadHazardMap.find((entry) => entry.test.test(normalizedEvent)) || {}).label || "Road hazard";
+    const hazardLabel = (roadHazardMap.find((entry) => entry.test.test(normalizedEvent)) || {}).label || "Other Hazard";
     if (roadLabel) return `${hazardLabel} on ${roadLabel}`;
     return hazardLabel === "Road hazard" ? "Road hazard reported" : `${hazardLabel} reported`;
   }
