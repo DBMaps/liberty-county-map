@@ -35059,7 +35059,7 @@ const GRIDLY_SETTINGS_MAP_STYLE_LABELS = {
 };
 
 const GRIDLY_SETTINGS_VALID_THEMES = new Set(["system", "light", "dark"]);
-const GRIDLY_SETTINGS_VALID_TEXT_SIZES = new Set(["standard", "large", "extra-large"]);
+const GRIDLY_SETTINGS_VALID_TEXT_SIZES = new Set(["standard", "large", "compact", "extra-large"]);
 let gridlyLastSettingsAction = "";
 
 function gridlyStorageAvailable() {
@@ -35090,7 +35090,8 @@ function normalizeGridlySettings(raw = null) {
   const normalizedTheme = String(display.theme || "").trim().toLowerCase();
   if (GRIDLY_SETTINGS_VALID_THEMES.has(normalizedTheme)) base.display.theme = normalizedTheme;
   const normalizedTextSize = String(display.textSize || "").trim().toLowerCase();
-  if (GRIDLY_SETTINGS_VALID_TEXT_SIZES.has(normalizedTextSize)) base.display.textSize = normalizedTextSize;
+  if (normalizedTextSize === "extra-large") base.display.textSize = "large";
+  else if (GRIDLY_SETTINGS_VALID_TEXT_SIZES.has(normalizedTextSize)) base.display.textSize = normalizedTextSize;
   return base;
 }
 
@@ -35128,6 +35129,21 @@ function loadGridlySettingsPreferences({ render = false, applyDisplay = false } 
 function applyGridlySettingsDisplayPreferences(display = {}, source = "settings") {
   const normalized = normalizeGridlySettings({ display }).display;
   const layerName = GRIDLY_SETTINGS_MAP_STYLE_LABELS[normalized.mapStyle] || "Standard";
+  const body = typeof document !== "undefined" ? document.body : null;
+  const root = typeof document !== "undefined" ? document.documentElement : null;
+  const themeClass = `gridly-theme-${normalized.theme}`;
+  const textSizeClass = `gridly-text-${normalized.textSize}`;
+  if (body) {
+    ["gridly-theme-system", "gridly-theme-light", "gridly-theme-dark"].forEach((className) => body.classList.remove(className));
+    ["gridly-text-standard", "gridly-text-large", "gridly-text-compact", "gridly-text-extra-large"].forEach((className) => body.classList.remove(className));
+    body.classList.add(themeClass, textSizeClass);
+    body.dataset.gridlyTheme = normalized.theme;
+    body.dataset.gridlyTextSize = normalized.textSize;
+  }
+  if (root) {
+    root.dataset.gridlyTheme = normalized.theme;
+    root.dataset.gridlyTextSize = normalized.textSize;
+  }
   try {
     localStorage.setItem(MAP_STYLE_STORAGE_KEY, layerName);
   } catch (error) {
@@ -35311,6 +35327,66 @@ function openGridlySettingsSavedPlaceAction(action = "", type = "manage", source
   if (typeof openGridlySurface === "function") openGridlySurface("route", openHandler);
   else openHandler();
   return true;
+}
+
+
+function gridlySettingsPanelAudit() {
+  const hasDocument = typeof document !== "undefined";
+  const settings = getGridlySettingsPreferences();
+  const body = hasDocument ? document.body : null;
+  const root = hasDocument ? document.documentElement : null;
+  const legacyPanel = hasDocument ? document.getElementById("settingsModal") : null;
+  const v2Panel = hasDocument ? document.querySelector("[data-gridly-settings-v2]") : null;
+  const mapStyleSelect = hasDocument ? (document.getElementById("settingsMapStyleSelect") || document.querySelector('[data-v2-settings-field="display.mapStyle"]')) : null;
+  const themeSelect = hasDocument ? (document.getElementById("settingsThemeSelect") || document.querySelector('[data-v2-settings-field="display.theme"]')) : null;
+  const textSizeSelect = hasDocument ? (document.getElementById("settingsTextSizeSelect") || document.querySelector('[data-v2-settings-field="display.textSize"]')) : null;
+  const notificationToggles = hasDocument ? Array.from(document.querySelectorAll('#settingsRouteAlertsToggle, #settingsRailAlertsToggle, #settingsHazardAlertsToggle, #settingsCommunityAlertsToggle, [data-v2-settings-field^="notifications."]')) : [];
+  const rawSettings = gridlySafeLocalStorageGet(GRIDLY_SETTINGS_STORAGE_KEY);
+  const appliedThemeClass = body ? ["gridly-theme-system", "gridly-theme-light", "gridly-theme-dark"].find((className) => body.classList.contains(className)) || "" : "";
+  const appliedTextSizeClass = body ? ["gridly-text-standard", "gridly-text-large", "gridly-text-compact", "gridly-text-extra-large"].find((className) => body.classList.contains(className)) || "" : "";
+  const visualIssuesDetected = [];
+  if (hasDocument) {
+    document.querySelectorAll(".settings-toggle-row").forEach((row, index) => {
+      const input = row.querySelector('input[type="checkbox"]');
+      const labelText = row.querySelector("span");
+      if (!input) visualIssuesDetected.push(`notification_row_${index}_missing_checkbox`);
+      if (!labelText || !String(labelText.textContent || "").trim()) visualIssuesDetected.push(`notification_row_${index}_missing_label`);
+      if (input && input.getBoundingClientRect && row.getBoundingClientRect) {
+        const inputRect = input.getBoundingClientRect();
+        const rowRect = row.getBoundingClientRect();
+        if (inputRect.width > 34 || inputRect.height > 34) visualIssuesDetected.push(`notification_row_${index}_oversized_checkbox`);
+        if (rowRect.height > 72) visualIssuesDetected.push(`notification_row_${index}_oversized_row`);
+      }
+    });
+  }
+  const controlsFunctional = Boolean(
+    mapStyleSelect &&
+    themeSelect &&
+    textSizeSelect &&
+    notificationToggles.length >= 4 &&
+    rawSettings &&
+    appliedThemeClass === `gridly-theme-${settings.display.theme}` &&
+    appliedTextSizeClass === `gridly-text-${settings.display.textSize}`
+  );
+  return {
+    settingsPanelFound: Boolean(legacyPanel || v2Panel),
+    mapStyleSelectFound: Boolean(mapStyleSelect),
+    themeSelectFound: Boolean(themeSelect),
+    textSizeSelectFound: Boolean(textSizeSelect),
+    notificationTogglesFound: notificationToggles.length,
+    currentSettings: settings,
+    appliedThemeClass,
+    appliedTextSizeClass,
+    persistedSettingsFound: Boolean(rawSettings),
+    visualIssuesDetected,
+    controlsFunctional,
+    appliedRootTheme: root?.dataset?.gridlyTheme || "",
+    appliedRootTextSize: root?.dataset?.gridlyTextSize || ""
+  };
+}
+
+if (typeof window !== "undefined") {
+  window.gridlySettingsPanelAudit = gridlySettingsPanelAudit;
 }
 
 function bindGridlySettingsPreferences() {
@@ -43514,9 +43590,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           <div class="settings-select-grid">
             <label>Map Style<select data-v2-settings-field="display.mapStyle"><option value="standard"${selected(settings.display.mapStyle, "standard")}>Standard</option><option value="dark"${selected(settings.display.mapStyle, "dark")}>Dark</option><option value="satellite"${selected(settings.display.mapStyle, "satellite")}>Satellite</option></select></label>
             <label>Theme<select data-v2-settings-field="display.theme"><option value="system"${selected(settings.display.theme, "system")}>System</option><option value="light"${selected(settings.display.theme, "light")}>Light</option><option value="dark"${selected(settings.display.theme, "dark")}>Dark</option></select></label>
-            <label>Text Size<select data-v2-settings-field="display.textSize"><option value="standard"${selected(settings.display.textSize, "standard")}>Standard</option><option value="large"${selected(settings.display.textSize, "large")}>Large</option><option value="extra-large"${selected(settings.display.textSize, "extra-large")}>Extra Large</option></select></label>
+            <label>Text Size<select data-v2-settings-field="display.textSize"><option value="standard"${selected(settings.display.textSize, "standard")}>Standard</option><option value="large"${selected(settings.display.textSize, "large")}>Large</option><option value="compact"${selected(settings.display.textSize, "compact")}>Compact</option></select></label>
           </div>
-          <p class="settings-placeholder-note">Theme preference is persisted for the future theme engine.</p>
+          <p class="settings-placeholder-note">Theme and Text Size apply immediately and are saved locally.</p>
         </section>
         <section class="settings-modal-section" data-gridly-about><h3>About Gridly</h3><p><strong>${GRIDLY_APP_VERSION_LABEL}</strong><br>${GRIDLY_APP_BUILD_LABEL}</p><button class="gridly-v2-tile" data-v2-action="settings-feedback-placeholder" type="button">Send Feedback</button><p class="settings-placeholder-note" data-v2-settings-status>Settings saved locally.</p></section>
       </div>`;

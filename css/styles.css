@@ -14401,3 +14401,193 @@ body[data-layout-mode="portrait"].gridly-v2-surface-containment.route-setup-open
     display: none;
   }
 }
+
+/* V206.18 — Settings panel functionality + mobile visual polish. */
+body.gridly-theme-light {
+  --bg: #f4f8fb;
+  --bg-elev: #ffffff;
+  --bg-panel: #eef5fa;
+  --card: rgba(255, 255, 255, 0.9);
+  --card-soft: rgba(15, 41, 67, 0.05);
+  --border: rgba(27, 58, 87, 0.18);
+  --text: #0d1b2a;
+  --muted: #516473;
+  background:
+    radial-gradient(circle at 18% -10%, rgba(57, 243, 164, 0.18), transparent 30%),
+    radial-gradient(circle at 82% 0%, rgba(102, 232, 255, 0.16), transparent 28%),
+    linear-gradient(180deg, #f6fbff 0%, #edf5fa 48%, #e9f0f5 100%);
+  color: var(--text);
+}
+
+body.gridly-theme-dark,
+body.gridly-theme-system {
+  color: var(--text);
+}
+
+@media (prefers-color-scheme: light) {
+  body.gridly-theme-system {
+    --bg: #f4f8fb;
+    --bg-elev: #ffffff;
+    --bg-panel: #eef5fa;
+    --card: rgba(255, 255, 255, 0.9);
+    --card-soft: rgba(15, 41, 67, 0.05);
+    --border: rgba(27, 58, 87, 0.18);
+    --text: #0d1b2a;
+    --muted: #516473;
+    background:
+      radial-gradient(circle at 18% -10%, rgba(57, 243, 164, 0.18), transparent 30%),
+      radial-gradient(circle at 82% 0%, rgba(102, 232, 255, 0.16), transparent 28%),
+      linear-gradient(180deg, #f6fbff 0%, #edf5fa 48%, #e9f0f5 100%);
+    color: var(--text);
+  }
+}
+
+body.gridly-text-standard { --gridly-settings-text-scale: 1; --gridly-settings-density-scale: 1; }
+body.gridly-text-large { --gridly-settings-text-scale: 1.1; --gridly-settings-density-scale: 1.04; }
+body.gridly-text-compact { --gridly-settings-text-scale: 0.92; --gridly-settings-density-scale: 0.92; }
+
+body.gridly-text-large :is(.settings-modal-card, .gridly-settings-sheet, #gridlyPortraitV2, .mobile-alerts-panel, .route-setup-modal-card) {
+  font-size: calc(1rem * var(--gridly-settings-text-scale));
+}
+
+body.gridly-text-compact :is(.settings-modal-card, .gridly-settings-sheet, #gridlyPortraitV2, .mobile-alerts-panel, .route-setup-modal-card) {
+  font-size: calc(1rem * var(--gridly-settings-text-scale));
+}
+
+.settings-toggle-grid {
+  align-items: stretch;
+}
+
+.settings-toggle-row {
+  min-height: 46px;
+  cursor: pointer;
+  line-height: 1.25;
+}
+
+.settings-toggle-row input[type="checkbox"] {
+  flex: 0 0 auto;
+  inline-size: 20px;
+  block-size: 20px;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.settings-toggle-row span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.settings-select-grid label > span:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.settings-modal-section {
+  margin-top: 12px;
+}
+
+.settings-modal-section + .settings-modal-section {
+  margin-top: 14px;
+}
+
+.settings-modal-section h3 {
+  margin-top: 0;
+  margin-bottom: 6px;
+}
+
+@media (max-width: 700px), (max-width: 1100px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] .settings-modal-subtitle {
+    margin: 10px 14px 12px !important;
+    padding: 10px 12px;
+    border: 1px solid rgba(164, 205, 247, 0.14);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.035);
+  }
+
+  body[data-layout-mode="portrait"] .settings-modal-section,
+  body[data-layout-mode="portrait"] .gridly-settings-sheet .settings-modal-section {
+    margin: 0 12px 12px !important;
+    padding: 12px !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(166, 204, 246, 0.16) !important;
+    background: linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.025)) !important;
+  }
+
+  body[data-layout-mode="portrait"] .settings-toggle-grid,
+  body[data-layout-mode="portrait"] .gridly-settings-sheet .settings-toggle-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+    margin-top: 8px !important;
+  }
+
+  body[data-layout-mode="portrait"] .settings-toggle-row,
+  body[data-layout-mode="portrait"] .gridly-settings-sheet .settings-toggle-row {
+    display: grid !important;
+    grid-template-columns: 22px minmax(0, 1fr);
+    align-items: center !important;
+    gap: 10px !important;
+    min-height: 48px !important;
+    padding: 10px 12px !important;
+    border-radius: 13px !important;
+    background: rgba(255, 255, 255, 0.045) !important;
+  }
+
+  body[data-layout-mode="portrait"] .settings-toggle-row input[type="checkbox"] {
+    inline-size: 20px !important;
+    block-size: 20px !important;
+  }
+
+  body[data-layout-mode="portrait"] .settings-toggle-row span {
+    font-size: 0.86rem !important;
+    font-weight: 740;
+  }
+
+  body[data-layout-mode="portrait"] .settings-select-grid,
+  body[data-layout-mode="portrait"] .gridly-settings-sheet .settings-select-grid {
+    grid-template-columns: 1fr !important;
+    gap: 9px !important;
+  }
+
+  body[data-layout-mode="portrait"] .settings-select-grid label {
+    padding: 10px 12px !important;
+    border-radius: 13px !important;
+  }
+
+  body[data-layout-mode="portrait"] .settings-placeholder-note,
+  body[data-layout-mode="portrait"] .settings-save-status {
+    font-size: 0.74rem !important;
+    line-height: 1.35 !important;
+  }
+}
+
+body.gridly-theme-light .settings-modal-card,
+body.gridly-theme-light .gridly-settings-sheet .settings-modal-section,
+body.gridly-theme-light .settings-modal-section,
+body.gridly-theme-light .settings-place-card,
+body.gridly-theme-light .settings-toggle-row,
+body.gridly-theme-light .settings-select-grid label {
+  color: var(--text);
+  border-color: rgba(27, 58, 87, 0.16) !important;
+  background: rgba(255, 255, 255, 0.78) !important;
+}
+
+body.gridly-theme-light .settings-modal-head {
+  background: rgba(247, 252, 255, 0.94) !important;
+  border-bottom-color: rgba(27, 58, 87, 0.12) !important;
+}
+
+body.gridly-theme-light .settings-modal-backdrop {
+  background: rgba(14, 35, 55, 0.28);
+}
+
+body.gridly-theme-light :is(.settings-modal-subtitle, .settings-placeholder-note, .settings-save-status, .settings-place-label, .settings-select-grid label, .settings-place-card small) {
+  color: var(--muted) !important;
+}
+
+body.gridly-theme-light .settings-select-grid select {
+  color: #0d1b2a;
+  background: #ffffff;
+  border-color: rgba(27, 58, 87, 0.2);
+}
