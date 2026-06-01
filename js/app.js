@@ -25570,23 +25570,40 @@ function gridlyBuildRoadHazardLifecycleIndex(hazards = activeHazards) {
   return index;
 }
 
+function gridlyFindNewestMatchingRoadHazardLifecycleEntry(hazard = {}, hazards = activeHazards, stateFilter = null) {
+  const keys = gridlyRoadHazardLifecycleMatchKeys(hazard);
+  if (!keys.length) return null;
+  const lifecycleIndex = gridlyBuildRoadHazardLifecycleIndex(hazards);
+  const states = Array.isArray(stateFilter)
+    ? new Set(stateFilter.map((state) => String(state || "").toLowerCase()))
+    : (stateFilter ? new Set([String(stateFilter).toLowerCase()]) : null);
+  return keys
+    .map((key) => lifecycleIndex.get(key))
+    .filter((entry) => entry && (!states || states.has(String(entry.state || "").toLowerCase())))
+    .sort((a, b) => Number(b.eventTime || 0) - Number(a.eventTime || 0))[0] || null;
+}
+
 function gridlyRoadHazardLatestLifecycleState(hazard = {}, hazards = activeHazards) {
   const eventTime = gridlyRoadClusterReportTimeMs(hazard);
-  const keys = gridlyRoadHazardLifecycleMatchKeys(hazard);
-  if (!keys.length) return gridlyIsRoadClearedHazardRecord(hazard) ? "cleared" : "active";
-  const lifecycleIndex = gridlyBuildRoadHazardLifecycleIndex(hazards);
-  const latest = keys
-    .map((key) => lifecycleIndex.get(key))
-    .filter(Boolean)
-    .sort((a, b) => Number(b.eventTime || 0) - Number(a.eventTime || 0))[0];
-  if (!latest) return gridlyIsRoadClearedHazardRecord(hazard) ? "cleared" : "active";
-  if (Number.isFinite(eventTime) && eventTime > Number(latest.eventTime || 0)) return gridlyIsRoadClearedHazardRecord(hazard) ? "cleared" : "active";
-  return latest.state;
+  const isClear = gridlyIsRoadClearedHazardRecord(hazard);
+  const latest = gridlyFindNewestMatchingRoadHazardLifecycleEntry(hazard, hazards);
+  if (!latest) return isClear ? "cleared" : "active";
+  if (isClear) {
+    const newerActive = gridlyFindNewestMatchingRoadHazardLifecycleEntry(hazard, hazards, "active");
+    const activeTime = Number(newerActive?.eventTime || 0);
+    return Number.isFinite(eventTime) && eventTime > 0 && Number.isFinite(activeTime) && activeTime > eventTime ? "active" : "cleared";
+  }
+  const latestClear = gridlyFindNewestMatchingRoadHazardLifecycleEntry(hazard, hazards, "cleared");
+  const clearTime = Number(latestClear?.eventTime || 0);
+  return Number.isFinite(eventTime) && eventTime > 0 && Number.isFinite(clearTime) && clearTime > eventTime ? "cleared" : "active";
 }
 
 function gridlyRoadClearSupersededByNewerActive(hazard = {}, hazards = activeHazards) {
   if (!gridlyIsRoadClearedHazardRecord(hazard)) return false;
-  return gridlyRoadHazardLatestLifecycleState(hazard, hazards) === "active";
+  const clearTime = gridlyRoadClusterReportTimeMs(hazard);
+  const newerActive = gridlyFindNewestMatchingRoadHazardLifecycleEntry(hazard, hazards, "active");
+  const activeTime = Number(newerActive?.eventTime || 0);
+  return Number.isFinite(clearTime) && clearTime > 0 && Number.isFinite(activeTime) && activeTime > clearTime;
 }
 
 function gridlyRoadClearedAgeMinutes(hazard = {}, nowMs = Date.now()) {
@@ -25624,7 +25641,7 @@ function gridlyRoadHazardSuppressedByRecentClear(hazard = {}, recentClearIndex =
     .sort((a, b) => gridlyRoadClusterReportTimeMs(b) - gridlyRoadClusterReportTimeMs(a))[0] || null;
   if (!clear) return false;
   const clearTime = gridlyRoadClusterReportTimeMs(clear);
-  return Number.isFinite(clearTime) && clearTime > 0 && (!Number.isFinite(hazardTime) || clearTime >= hazardTime) && gridlyIsRecentlyClearedRoadHazardRecord(clear, nowMs);
+  return Number.isFinite(clearTime) && clearTime > 0 && Number.isFinite(hazardTime) && hazardTime > 0 && clearTime > hazardTime && gridlyIsRecentlyClearedRoadHazardRecord(clear, nowMs);
 }
 
 function gridlyFilterRoadHazardsByLatestLifecycle(hazards = activeHazards, nowMs = Date.now()) {
@@ -25941,7 +25958,7 @@ function gridlyBuildRoadClusterAudit(options = {}) {
     clusterKeyGeneration: "`${type}-${lat.toFixed(4)}-${lng.toFixed(4)}` for active road hazards; recently cleared rows continue to use `hazard_cleared-${coordinateKey}` and remain separated from active clusters.",
     distanceGrouping: "Option A selected for beta: a tighter 0.0001-degree coordinate bucket. It avoids broad 0.001-degree merges without adding a new road-geometry dependency or changing rail behavior.",
     representativeSelectionRules: "Each tight cluster sorts reports by submittedAt descending; the latest report remains the representative because the tighter bucket bounds representative drift to a small duplicate-report area.",
-    suppressionRules: "Expired hazards and non-recent hazard_cleared rows are excluded. Active hazards sharing a cleared coordinate key are suppressed when a recent clear is newer than or equal to the hazard.",
+    suppressionRules: "Expired hazards and non-recent hazard_cleared rows are excluded. Active hazards sharing a cleared coordinate key are suppressed only when a recent clear is actually newer than the hazard.",
     dedupeRules: "renderUnifiedIncidents dedupes by unified incident id first; road clusters normally render one marker per road-${clusterKey} incident.",
     clearedHazardInteraction: "Recently cleared road rows are included as separate cleared clusters keyed by cleared coordinate; they do not become representatives for active clusters unless their type/key is explicitly the cleared cluster.",
     reviewedOptions: {
