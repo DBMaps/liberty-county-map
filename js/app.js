@@ -19715,21 +19715,71 @@ function renderGridlyCommunityPulse(options = {}) {
 
 
 
+const GRIDLY_INTELLIGENCE_PREVIEW_LANGUAGE_GUIDE = Object.freeze({
+  frequently_blocked_crossing: Object.freeze({
+    title: "Frequently Blocked Crossing",
+    category: "Rail Crossing",
+    currentWording: "Preview: Frequently blocked crossing — Frequently blocked crossing signal based on existing community framework output.",
+    recommendedWording: "Frequently Blocked Crossing — Drivers frequently report train delays near this crossing.",
+    descriptionWithReports: "Drivers frequently report train delays near this crossing.",
+    descriptionWithoutReports: "Community reports can help identify crossings with recurring train delays.",
+    reasoning: "Names the driver problem directly and explains why the crossing may matter without exposing model or signal language."
+  }),
+  recurring_flooding_location: Object.freeze({
+    title: "Recurring Flooding Location",
+    category: "Flooding",
+    currentWording: "Preview: Recurring flooding location — Recurring flooding location signal based on existing community framework output.",
+    recommendedWording: "Recurring Flooding Location — Drivers have reported water on the road in this area before.",
+    descriptionWithReports: "Drivers have reported water on the road in this area before.",
+    descriptionWithoutReports: "Community reports can help flag roads that may flood again during storms.",
+    reasoning: "Uses simple road-safety language and makes the relevance clear for drivers approaching the area."
+  }),
+  common_delay_area: Object.freeze({
+    title: "Common Delay Area",
+    category: "Delays",
+    currentWording: "Preview: Common delay area — Common delay area signal based on existing community framework output.",
+    recommendedWording: "Common Delay Area — Drivers often report slowdowns in this area.",
+    descriptionWithReports: "Drivers often report slowdowns in this area.",
+    descriptionWithoutReports: "Community reports can help spot places where delays happen often.",
+    reasoning: "Focuses on what drivers experience and avoids technical scoring or trend terms."
+  }),
+  community_hotspot: Object.freeze({
+    title: "Community Hotspot",
+    category: "Community Reports",
+    currentWording: "Preview: Community hotspot — Community hotspot preview based on existing framework output.",
+    recommendedWording: "Community Hotspot — Drivers are sharing multiple reports around this area.",
+    descriptionWithReports: "Drivers are sharing multiple reports around this area.",
+    descriptionWithoutReports: "Community reports will appear here when nearby drivers share useful updates.",
+    reasoning: "Explains that the card is powered by nearby driver reports instead of internal output."
+  }),
+  recurring_construction_zone: Object.freeze({
+    title: "Recurring Construction Zone",
+    category: "Construction",
+    currentWording: "Preview: Recurring construction zone — Recurring construction zone signal based on existing community framework output.",
+    recommendedWording: "Recurring Construction Zone — Drivers have reported road work in this area more than once.",
+    descriptionWithReports: "Drivers have reported road work in this area more than once.",
+    descriptionWithoutReports: "Community reports can help show where road work may cause repeat slowdowns.",
+    reasoning: "States the likely driver impact in plain language without implying live construction activation."
+  })
+});
+
+function getGridlyIntelligencePreviewLanguage(category = "community_hotspot") {
+  return GRIDLY_INTELLIGENCE_PREVIEW_LANGUAGE_GUIDE[category] || GRIDLY_INTELLIGENCE_PREVIEW_LANGUAGE_GUIDE.community_hotspot;
+}
+
 function getGridlyIntelligencePreviewCategory(model = {}) {
   const signalTypes = Array.isArray(model.blendedSignalTypes) ? model.blendedSignalTypes.map((signalType) => String(signalType || "").toLowerCase()) : [];
   const activeAwarenessCategory = String(model.activeAwareness?.resolvedCategory || model.activeAwareness?.topCategory || "").toLowerCase();
   const joinedSignals = `${signalTypes.join(" ")} ${activeAwarenessCategory}`;
   if (/rail|crossing|train|blocked/.test(joinedSignals)) return "frequently_blocked_crossing";
   if (/flood|water|high_water/.test(joinedSignals)) return "recurring_flooding_location";
+  if (/construction|roadwork|road_work|work_zone|work zone|crew|lane/.test(joinedSignals)) return "recurring_construction_zone";
   if (/closure|crash|wreck|traffic|delay|slow/.test(joinedSignals)) return "common_delay_area";
   return "community_hotspot";
 }
 
 function getGridlyIntelligencePreviewCategoryLabel(category = "community_hotspot") {
-  if (category === "frequently_blocked_crossing") return "Frequently blocked crossing";
-  if (category === "recurring_flooding_location") return "Recurring flooding location";
-  if (category === "common_delay_area") return "Common delay area";
-  return "Community hotspot";
+  return getGridlyIntelligencePreviewLanguage(category).category;
 }
 
 function buildGridlyIntelligencePreviewCardModel(options = {}) {
@@ -19739,19 +19789,21 @@ function buildGridlyIntelligencePreviewCardModel(options = {}) {
     || (typeof buildGridlyCommunityPulseModel === "function" ? buildGridlyCommunityPulseModel({ intelligencePreviewReadOnly: true }) : {});
   const activeAwareness = frameworkModel.activeAwareness || {};
   const selectedCategory = getGridlyIntelligencePreviewCategory(frameworkModel);
-  const categoryLabel = getGridlyIntelligencePreviewCategoryLabel(selectedCategory);
-  const corridor = safeDisplayText(frameworkModel.dominantCorridor || activeAwareness.resolvedLocationLabel || "nearby corridors", "nearby corridors");
+  const previewLanguage = getGridlyIntelligencePreviewLanguage(selectedCategory);
+  const categoryLabel = previewLanguage.title;
+  const corridor = safeDisplayText(frameworkModel.dominantCorridor || activeAwareness.resolvedLocationLabel || "nearby roads", "nearby roads");
   const selectedCommunityCount = Math.max(0, Number(frameworkModel.selectedCommunityCount || 0));
   const activeAwarenessCount = Math.max(0, Number(activeAwareness.activeAwarenessCount ?? activeAwareness.activeReportCount ?? 0));
   const supportCount = Math.max(selectedCommunityCount, activeAwarenessCount);
   const signalTypes = Array.isArray(frameworkModel.blendedSignalTypes) ? frameworkModel.blendedSignalTypes.filter(Boolean) : [];
   const previewMode = true;
-  const selectedTitle = `Preview: ${categoryLabel}`;
-  const selectedDescription = supportCount > 0
-    ? `${categoryLabel} signal based on existing community framework output near ${corridor}. This preview is informational only and does not affect routing or alerts.`
-    : `${categoryLabel} preview based on existing framework output. More community history is needed before this becomes active intelligence.`;
+  const selectedTitle = categoryLabel;
+  const baseDescription = supportCount > 0 ? previewLanguage.descriptionWithReports : previewLanguage.descriptionWithoutReports;
+  const selectedDescription = supportCount > 0 && corridor
+    ? `${baseDescription} Near ${corridor}. Preview only.`
+    : `${baseDescription} Preview only.`;
   const supportingData = {
-    source: "Community Pulse framework output",
+    source: "Community reports",
     selectedCommunityCount,
     activeAwarenessCount,
     dominantCorridor: frameworkModel.dominantCorridor || null,
@@ -19796,10 +19848,11 @@ function renderGridlyIntelligencePreviewCard(options = {}) {
   if (description) description.textContent = model.selectedDescription;
   if (support) {
     const data = model.supportingData || {};
-    const countText = Number(data.selectedCommunityCount || data.activeAwarenessCount || 0) > 0
-      ? `${Number(data.selectedCommunityCount || data.activeAwarenessCount || 0)} framework ${Number(data.selectedCommunityCount || data.activeAwarenessCount || 0) === 1 ? "signal" : "signals"}`
-      : "framework output only";
-    support.textContent = `${countText} · no routing, alert, telemetry, or Supabase writes`;
+    const reportCount = Number(data.selectedCommunityCount || data.activeAwarenessCount || 0);
+    const countText = reportCount > 0
+      ? `${reportCount} community ${reportCount === 1 ? "report" : "reports"}`
+      : "Waiting for more community reports";
+    support.textContent = `${countText} · preview only · routes and alerts unchanged`;
   }
   window.gridlyIntelligencePreviewCardState = model;
   return model;
@@ -19822,11 +19875,57 @@ window.gridlyIntelligencePreviewCardAudit = function gridlyIntelligencePreviewCa
     return {
       cardAvailable: false,
       selectedCategory: "community_hotspot",
-      selectedTitle: "Preview: Community hotspot",
-      selectedDescription: "Community intelligence preview could not be evaluated.",
+      selectedTitle: "Community Hotspot",
+      selectedDescription: "Community reports will appear here when nearby drivers share useful updates. Preview only.",
       supportingData: { error: error?.message || "unknown error", readOnly: true },
       previewMode: true,
       renderingLocation: "#gridlyPortraitV2 #gridlyIntelligencePreviewCard"
+    };
+  }
+};
+
+function buildGridlyIntelligenceContentReadabilityAssessment() {
+  return Object.entries(GRIDLY_INTELLIGENCE_PREVIEW_LANGUAGE_GUIDE).reduce((assessment, [categoryKey, language]) => {
+    assessment[categoryKey] = {
+      currentWording: language.currentWording,
+      recommendedWording: language.recommendedWording,
+      reasoning: language.reasoning
+    };
+    return assessment;
+  }, {});
+}
+
+window.gridlyIntelligenceContentAudit = function gridlyIntelligenceContentAudit(options = {}) {
+  try {
+    const state = window.gridlyIntelligencePreviewCardState || buildGridlyIntelligencePreviewCardModel(options);
+    const language = getGridlyIntelligencePreviewLanguage(state.selectedCategory);
+    const title = state.selectedTitle || language.title;
+    const description = state.selectedDescription || `${language.descriptionWithoutReports} Preview only.`;
+    const avoidedInternalTerms = !/(signal|framework output|analytics cluster|confidence score|trend engine|internal model)/i.test(`${title} ${description}`);
+    return {
+      title,
+      description,
+      category: state.selectedCategory || "community_hotspot",
+      userFacingLanguage: avoidedInternalTerms,
+      previewMode: Boolean(state.previewMode),
+      readabilityAssessment: buildGridlyIntelligenceContentReadabilityAssessment(),
+      recommendations: [
+        "Use short, driver-facing titles without the Preview prefix.",
+        "Describe what drivers may experience in the area.",
+        "Keep Preview only as a status note, not the main headline.",
+        "Avoid internal words such as signal, framework output, analytics cluster, confidence score, trend engine, and internal model."
+      ]
+    };
+  } catch (error) {
+    return {
+      title: "Community Hotspot",
+      description: "Community reports will appear here when nearby drivers share useful updates. Preview only.",
+      category: "community_hotspot",
+      userFacingLanguage: true,
+      previewMode: true,
+      readabilityAssessment: buildGridlyIntelligenceContentReadabilityAssessment(),
+      recommendations: ["Keep language plain, short, and focused on what drivers need to know."],
+      error: error?.message || "unknown error"
     };
   }
 };
