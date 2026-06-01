@@ -26073,6 +26073,17 @@ function gridlyRoadwayAuditMatchesCorridor(feature, corridorKey) {
   return false;
 }
 
+function gridlyRoadwayAuditToArray(value) {
+  if (Array.isArray(value)) return value;
+  if (value == null) return [];
+  if (value?.type === "FeatureCollection" && Array.isArray(value.features)) return value.features;
+  if (value && typeof value === "object" && value.type !== "Feature" && !value.geometry) {
+    const values = Object.values(value);
+    if (values.length && values.every((entry) => entry && typeof entry === "object")) return values;
+  }
+  return [];
+}
+
 function gridlyRoadwayAuditCountValues(values) {
   return values.reduce((counts, value) => {
     const key = gridlyRoadwayAuditNormalizeText(value);
@@ -26240,9 +26251,9 @@ function gridlyRoadwayGeometryCapabilityAudit() {
   const tx146GeometryAssessment = gridlyRoadwayAuditAssessCorridor("TX 146", "tx146");
   const duplicateParallelSegmentCandidates = gridlyRoadwayAuditFindParallelCandidates(loadedFeatures, 12);
   const target = typeof window !== "undefined" ? window : globalThis;
-  const rawTxdotRows = typeof target?.gridlyTxdot?.getRawRoadConditions === "function" ? target.gridlyTxdot.getRawRoadConditions() : toArray(target?.gridlyTxdotRawRoadConditions);
+  const rawTxdotRows = typeof target?.gridlyTxdot?.getRawRoadConditions === "function" ? target.gridlyTxdot.getRawRoadConditions() : gridlyRoadwayAuditToArray(target?.gridlyTxdotRawRoadConditions);
   const normalizedTxdotRows = typeof gridlyReadCachedTxdotRows === "function" ? gridlyReadCachedTxdotRows() : [];
-  const txdotRows = [...toArray(rawTxdotRows), ...toArray(normalizedTxdotRows)];
+  const txdotRows = [...gridlyRoadwayAuditToArray(rawTxdotRows), ...gridlyRoadwayAuditToArray(normalizedTxdotRows)];
   const txdotHasGeometry = txdotRows.some((row) => row?.__geometry?.type || row?.geometry?.type);
   const txdotHasLineGeometry = txdotRows.some((row) => [row?.__geometry?.type, row?.geometry?.type].includes("LineString") || [row?.__geometry?.type, row?.geometry?.type].includes("MultiLineString"));
   const txdotHasDirection = txdotRows.some((row) => row?.travel_direction || row?.travelDirection || row?.direction);
