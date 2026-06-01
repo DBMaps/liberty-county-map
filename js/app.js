@@ -19948,8 +19948,10 @@ function buildGridlyIntelligencePreviewCardModel(options = {}) {
   const findingCount = Array.isArray(historical.rankedFindings) ? historical.rankedFindings.length : 0;
   const fallbackMode = Number(historical.historicalRecordCount || 0) === 0;
   return {
-    cardAvailable: true,
-    chipRendered: true,
+    cardAvailable: Boolean(document.getElementById("gridlyHistoryDockButton")),
+    chipRendered: false,
+    historyChipRemoved: true,
+    historyDockButtonRendered: Boolean(document.getElementById("gridlyHistoryDockButton")),
     sheetAvailable: true,
     selectedCategory,
     selectedTitle: "History",
@@ -19967,7 +19969,7 @@ function buildGridlyIntelligencePreviewCardModel(options = {}) {
     fallbackMode,
     noPreviewLanguage: true,
     supportText: String(findingCount),
-    renderingLocation: "#gridlyPortraitV2 #gridlyIntelligencePreviewCard"
+    renderingLocation: "#gridlyPortraitV2 .gridly-v2-bottom-dock [data-v2-sheet='history']"
   };
 }
 
@@ -19996,19 +19998,28 @@ function buildGridlyHistoricalIntelligenceSheetHtml(options = {}) {
 }
 
 function renderGridlyIntelligencePreviewCard(options = {}) {
-  const card = document.getElementById("gridlyIntelligencePreviewCard");
+  const chip = document.getElementById("gridlyIntelligencePreviewCard");
+  const dockButton = document.getElementById("gridlyHistoryDockButton") || document.querySelector("#gridlyPortraitV2 .gridly-v2-bottom-dock [data-v2-sheet='history']");
   const mode = document.getElementById("gridlyIntelligencePreviewMode");
   const category = document.getElementById("gridlyIntelligencePreviewCategory");
   const title = document.getElementById("gridlyIntelligencePreviewTitle");
   const description = document.getElementById("gridlyIntelligencePreviewDescription");
   const support = document.getElementById("gridlyIntelligencePreviewSupport");
-  const model = buildGridlyIntelligencePreviewCardModel(options);
-  if (!card) return { ...model, cardAvailable: false, chipRendered: false, renderingLocation: "#gridlyPortraitV2 #gridlyIntelligencePreviewCard missing" };
-  card.hidden = false;
-  card.dataset.gridlyPreviewMode = "false";
-  card.dataset.gridlySelectedCategory = model.selectedCategory;
-  card.dataset.gridlyFallbackMode = model.fallbackMode ? "true" : "false";
-  card.setAttribute("aria-label", `Open historical intelligence, ${model.findingCount} ${model.findingCount === 1 ? "finding" : "findings"}`);
+  const model = {
+    ...buildGridlyIntelligencePreviewCardModel(options),
+    cardAvailable: Boolean(dockButton),
+    chipRendered: false,
+    historyChipRemoved: !chip,
+    historyDockButtonRendered: Boolean(dockButton),
+    renderingLocation: "#gridlyPortraitV2 .gridly-v2-bottom-dock [data-v2-sheet='history']"
+  };
+  if (chip) chip.hidden = true;
+  if (dockButton) {
+    dockButton.dataset.gridlyPreviewMode = "false";
+    dockButton.dataset.gridlySelectedCategory = model.selectedCategory;
+    dockButton.dataset.gridlyFallbackMode = model.fallbackMode ? "true" : "false";
+    dockButton.setAttribute("aria-label", `Open historical intelligence, ${model.findingCount} ${model.findingCount === 1 ? "finding" : "findings"}`);
+  }
   if (mode) mode.textContent = "History";
   if (category) category.textContent = "Local patterns";
   if (title) title.textContent = "History";
@@ -20021,16 +20032,19 @@ function renderGridlyIntelligencePreviewCard(options = {}) {
 window.gridlyIntelligencePreviewCardAudit = function gridlyIntelligencePreviewCardAudit(options = {}) {
   try {
     const chip = document.getElementById("gridlyIntelligencePreviewCard");
+    const dockButton = document.getElementById("gridlyHistoryDockButton") || document.querySelector("#gridlyPortraitV2 .gridly-v2-bottom-dock [data-v2-sheet='history']");
     const state = window.gridlyIntelligencePreviewCardState || buildGridlyIntelligencePreviewCardModel(options);
     const rankedFindings = state.rankedFindings || state.supportingData?.rankedFindings || [];
     const findingCount = Number(state.findingCount ?? rankedFindings.length ?? 0);
     const historicalRecordCount = Number(state.supportingData?.historicalRecordCount || 0);
     return {
-      chipRendered: Boolean(chip && !chip.hidden),
+      historyDockButtonRendered: Boolean(dockButton),
       sheetAvailable: Boolean(document.getElementById("gridlyPortraitV2Sheet")),
       findingCount,
       strongestFinding: state.strongestFinding || state.supportingData?.strongestFinding || null,
       rankedFindings,
+      historyChipRemoved: !chip,
+      chipRendered: Boolean(chip && !chip.hidden),
       previewMode: false,
       fallbackMode: historicalRecordCount === 0,
       noPreviewLanguage: true,
@@ -20042,11 +20056,13 @@ window.gridlyIntelligencePreviewCardAudit = function gridlyIntelligencePreviewCa
     };
   } catch (error) {
     return {
-      chipRendered: false,
+      historyDockButtonRendered: Boolean(document.getElementById("gridlyHistoryDockButton") || document.querySelector("#gridlyPortraitV2 .gridly-v2-bottom-dock [data-v2-sheet='history']")),
       sheetAvailable: Boolean(document.getElementById("gridlyPortraitV2Sheet")),
       findingCount: 0,
       strongestFinding: null,
       rankedFindings: [],
+      historyChipRemoved: !document.getElementById("gridlyIntelligencePreviewCard"),
+      chipRendered: false,
       previewMode: false,
       fallbackMode: true,
       noPreviewLanguage: true,
@@ -20054,7 +20070,7 @@ window.gridlyIntelligencePreviewCardAudit = function gridlyIntelligencePreviewCa
       selectedTitle: "History",
       selectedDescription: "Local patterns",
       supportingData: { error: error?.message || "unknown error", readOnly: true, changesAlerts: false, changesRouting: false },
-      renderingLocation: "#gridlyPortraitV2 #gridlyIntelligencePreviewCard"
+      renderingLocation: "#gridlyPortraitV2 .gridly-v2-bottom-dock [data-v2-sheet='history']"
     };
   }
 };
@@ -20085,6 +20101,8 @@ window.gridlyIntelligenceContentAudit = function gridlyIntelligenceContentAudit(
       chipTitle: state.selectedTitle || "History",
       chipDescription: state.selectedDescription || "Local patterns",
       category: state.selectedCategory || "no_history",
+      historyDockButtonRendered: Boolean(document.getElementById("gridlyHistoryDockButton") || document.querySelector("#gridlyPortraitV2 .gridly-v2-bottom-dock [data-v2-sheet='history']")),
+      historyChipRemoved: !document.getElementById("gridlyIntelligencePreviewCard"),
       chipRendered: Boolean(document.getElementById("gridlyIntelligencePreviewCard") && !document.getElementById("gridlyIntelligencePreviewCard").hidden),
       sheetAvailable: Boolean(document.getElementById("gridlyPortraitV2Sheet")),
       findingCount,
@@ -20108,6 +20126,8 @@ window.gridlyIntelligenceContentAudit = function gridlyIntelligenceContentAudit(
       chipTitle: "History",
       chipDescription: "Local patterns",
       category: "no_history",
+      historyDockButtonRendered: Boolean(document.getElementById("gridlyHistoryDockButton") || document.querySelector("#gridlyPortraitV2 .gridly-v2-bottom-dock [data-v2-sheet='history']")),
+      historyChipRemoved: !document.getElementById("gridlyIntelligencePreviewCard"),
       chipRendered: false,
       sheetAvailable: Boolean(document.getElementById("gridlyPortraitV2Sheet")),
       findingCount: 0,
@@ -40197,8 +40217,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const reportDockProductionWired = Boolean(document.querySelector("#gridlyPortraitV2 [data-v2-sheet='report']"));
     const routeDockProductionWired = Boolean(document.querySelector("#gridlyPortraitV2 [data-v2-sheet='route']"));
     const alertsDockProductionWired = Boolean(document.querySelector("#gridlyPortraitV2 [data-v2-sheet='alerts']"));
+    const historyDockProductionWired = Boolean(document.querySelector("#gridlyPortraitV2 [data-v2-sheet='history']"));
     const settingsDockProductionWired = Boolean(document.querySelector("#gridlyPortraitV2 [data-v2-sheet='settings']"));
-    const v2ShellParityImproved = reportDockProductionWired && routeDockProductionWired && alertsDockProductionWired && settingsDockProductionWired;
+    const v2ShellParityImproved = reportDockProductionWired && routeDockProductionWired && alertsDockProductionWired && historyDockProductionWired && settingsDockProductionWired;
     const v1369PreconditionsUxApplied = true;
     const disabledStateSystemApplied = true;
     const silentNoOpsReduced = v1369PreconditionsDebug.disabledInteractionCount >= 0;
