@@ -381,6 +381,249 @@ function safeDisplayText(value, fallback = "") {
   return safeFallback;
 }
 
+function gridlyHistoricalClosePathDurationBucket(durationMinutes) {
+  const minutes = Number(durationMinutes);
+  if (!Number.isFinite(minutes) || minutes < 0) return null;
+  if (minutes < 15) return "0-15 min";
+  if (minutes < 60) return "15-60 min";
+  if (minutes < 240) return "1-4 hr";
+  if (minutes < 720) return "4-12 hr";
+  if (minutes < 1440) return "12-24 hr";
+  return "24+ hr";
+}
+
+function gridlyHistoricalClosePathSimulation(options = {}) {
+  const nowMs = Number.isFinite(Number(options?.nowMs)) ? Number(options.nowMs) : Date.now();
+  const nowIso = new Date(nowMs).toISOString();
+  const minutesAgoIso = (minutes) => new Date(nowMs - (Number(minutes) * 60000)).toISOString();
+
+  const simulatedCloseEvents = [
+    {
+      caseId: "A",
+      incidentId: "sim-hazard-driver-clear",
+      hazardType: "road_hazard",
+      roadName: "US 90",
+      crossingName: "",
+      createdAt: minutesAgoIso(20),
+      clearedAt: nowIso,
+      expectedCloseState: "CLEARED_BY_DRIVER",
+      closeState: "CLEARED_BY_DRIVER",
+      closeReason: "Driver reported the hazard cleared in the simulation.",
+      confirmationCount: 1,
+      source: "driver_clear_simulation",
+      locationKey: "road_hazard|us-90"
+    },
+    {
+      caseId: "B",
+      incidentId: "sim-hazard-community-clear",
+      hazardType: "debris",
+      roadName: "FM 1960",
+      crossingName: "",
+      createdAt: minutesAgoIso(120),
+      clearedAt: nowIso,
+      expectedCloseState: "CLEARED_BY_COMMUNITY",
+      closeState: "CLEARED_BY_COMMUNITY",
+      closeReason: "Multiple community confirmations reported clear in the simulation.",
+      confirmationCount: 3,
+      source: "community_clear_simulation",
+      locationKey: "debris|fm-1960"
+    },
+    {
+      caseId: "C",
+      incidentId: "sim-crossing-quick-clear",
+      hazardType: "rail_crossing_blocked",
+      roadName: "Main Street",
+      crossingName: "Main Street Crossing",
+      createdAt: minutesAgoIso(10),
+      clearedAt: nowIso,
+      expectedCloseState: "CLEARED_BY_DRIVER",
+      closeState: "CLEARED_BY_DRIVER",
+      closeReason: "Blocked crossing was reported clear quickly in the simulation.",
+      confirmationCount: 1,
+      source: "driver_crossing_clear_simulation",
+      locationKey: "main-street-crossing"
+    },
+    {
+      caseId: "D",
+      incidentId: "sim-trusted-source-closure",
+      hazardType: "road_closure",
+      roadName: "SH 146",
+      crossingName: "",
+      createdAt: minutesAgoIso(360),
+      clearedAt: nowIso,
+      expectedCloseState: "CLEARED_BY_TRUSTED_SOURCE",
+      closeState: "CLEARED_BY_TRUSTED_SOURCE",
+      closeReason: "Trusted-source closure resolved in the simulation.",
+      confirmationCount: 1,
+      source: "trusted_source_simulation",
+      locationKey: "road_closure|sh-146"
+    },
+    {
+      caseId: "E",
+      incidentId: "sim-expired-unconfirmed",
+      hazardType: "unconfirmed_hazard",
+      roadName: "CR 2145",
+      crossingName: "",
+      createdAt: minutesAgoIso(1800),
+      clearedAt: nowIso,
+      expectedCloseState: "EXPIRED_UNCONFIRMED",
+      closeState: "EXPIRED_UNCONFIRMED",
+      closeReason: "Old unconfirmed hazard reached the simulated expiration state; clearedAt is a simulated terminal timestamp, not a live clear write.",
+      confirmationCount: 0,
+      source: "expiration_policy_simulation",
+      locationKey: "unconfirmed_hazard|cr-2145"
+    },
+    {
+      caseId: "F",
+      incidentId: "sim-missing-cleared-at",
+      hazardType: "road_hazard",
+      roadName: "FM 1010",
+      crossingName: "",
+      createdAt: minutesAgoIso(60),
+      clearedAt: null,
+      expectedCloseState: "ACTIVE",
+      closeState: "ACTIVE",
+      closeReason: "Malformed simulated record is missing clearedAt and remains duration-ineligible.",
+      confirmationCount: 1,
+      source: "malformed_record_simulation",
+      locationKey: "road_hazard|fm-1010"
+    },
+    {
+      caseId: "G",
+      incidentId: "sim-missing-created-at",
+      hazardType: "debris",
+      roadName: "Loop 494",
+      crossingName: "",
+      createdAt: null,
+      clearedAt: nowIso,
+      expectedCloseState: "ACTIVE",
+      closeState: "ACTIVE",
+      closeReason: "Malformed simulated record is missing createdAt and remains duration-ineligible.",
+      confirmationCount: 1,
+      source: "malformed_record_simulation",
+      locationKey: "debris|loop-494"
+    }
+  ];
+
+  const expectations = {
+    A: { expectedCloseState: "CLEARED_BY_DRIVER", expectedDurationBucket: "15-60 min" },
+    B: { expectedCloseState: "CLEARED_BY_COMMUNITY", expectedDurationBucket: "1-4 hr" },
+    C: { expectedCloseState: "CLEARED_BY_DRIVER", expectedDurationBucket: "0-15 min" },
+    D: { expectedCloseState: "CLEARED_BY_TRUSTED_SOURCE", expectedDurationBucket: "4-12 hr" },
+    E: { expectedCloseState: "EXPIRED_UNCONFIRMED", expectedDurationBucket: "24+ hr" },
+    F: { expectedCloseState: "ACTIVE", expectedDurationBucket: null },
+    G: { expectedCloseState: "ACTIVE", expectedDurationBucket: null }
+  };
+
+  const durationCalculations = simulatedCloseEvents.map((event) => {
+    const durationMinutes = gridlyMinutesBetween(event.createdAt, event.clearedAt);
+    const durationEligible = durationMinutes !== null && Number.isFinite(Number(durationMinutes));
+    return {
+      caseId: event.caseId,
+      incidentId: event.incidentId,
+      createdAt: event.createdAt,
+      clearedAt: event.clearedAt,
+      durationMinutes,
+      durationBucket: durationEligible ? gridlyHistoricalClosePathDurationBucket(durationMinutes) : null,
+      durationEligible,
+      calculationOnly: true,
+      storageWritePerformed: false,
+      runtimeActivationPerformed: false
+    };
+  });
+
+  const calculationByCase = durationCalculations.reduce((acc, calculation) => {
+    acc[calculation.caseId] = calculation;
+    return acc;
+  }, {});
+
+  const simulatedHistoricalRecords = simulatedCloseEvents.flatMap((event) => {
+    const calculation = calculationByCase[event.caseId];
+    if (!calculation?.durationEligible) return [];
+    return [{
+      incidentId: event.incidentId,
+      hazardType: event.hazardType,
+      roadName: event.roadName,
+      crossingName: event.crossingName,
+      createdAt: event.createdAt,
+      clearedAt: event.clearedAt,
+      durationMinutes: calculation.durationMinutes,
+      durationBucket: calculation.durationBucket,
+      confirmationCount: event.confirmationCount,
+      source: event.source,
+      closeState: event.closeState,
+      closeReason: event.closeReason,
+      locationKey: event.locationKey
+    }];
+  });
+
+  const historicalRecordCases = simulatedHistoricalRecords.reduce((acc, record) => {
+    const sourceEvent = simulatedCloseEvents.find((event) => event.incidentId === record.incidentId);
+    if (sourceEvent?.caseId) acc[sourceEvent.caseId] = true;
+    return acc;
+  }, {});
+
+  const validationResults = simulatedCloseEvents.map((event) => {
+    const expected = expectations[event.caseId] || {};
+    const calculation = calculationByCase[event.caseId] || {};
+    const actualDurationBucket = calculation.durationBucket || null;
+    const actualCloseState = event.closeState;
+    const durationEligible = Boolean(calculation.durationEligible);
+    const historicalRecordCreated = Boolean(historicalRecordCases[event.caseId]);
+    return {
+      caseId: event.caseId,
+      expectedCloseState: expected.expectedCloseState || event.expectedCloseState,
+      actualCloseState,
+      expectedDurationBucket: expected.expectedDurationBucket || null,
+      actualDurationBucket,
+      durationMinutes: calculation.durationMinutes !== null && Number.isFinite(Number(calculation.durationMinutes)) ? calculation.durationMinutes : null,
+      durationEligible,
+      historicalRecordCreated,
+      matched: actualCloseState === (expected.expectedCloseState || event.expectedCloseState)
+        && actualDurationBucket === (expected.expectedDurationBucket || null)
+        && historicalRecordCreated === durationEligible,
+      destructiveActionTaken: false
+    };
+  });
+
+  const allMatched = validationResults.every((result) => result.matched && result.destructiveActionTaken === false);
+  const futureActivationReview = {
+    activationBenefits: [
+      "Proves createdAt plus clearedAt can produce deterministic durationMinutes and duration buckets.",
+      "Shows the historical record shape can preserve source, confirmation, location, and close provenance.",
+      "Provides a safe fixture for future side-by-side write audits before any live close-path activation."
+    ],
+    activationRisks: [
+      "Live activation could still mis-match a clear report to the wrong active incident without stronger identity checks.",
+      "Expired-unconfirmed terminal timestamps must remain distinct from true clear timestamps in analytics.",
+      "Sparse driver clear reports may bias duration averages until real coverage is measured."
+    ],
+    telemetryImpact: "None in this simulation; no counters, telemetry schema, beacon, or storage writes are touched.",
+    analyticsImpact: "None in this simulation; duration and bucket outputs are returned only as in-memory simulated objects.",
+    betaReadinessAssessment: allMatched
+      ? "Simulation-ready: close-path duration math and record shaping validate against all expected simulated cases, but runtime activation still requires a separate side-by-side write audit."
+      : "Not ready: one or more simulated close-path validations failed and must be corrected before any activation review.",
+    safestNextStep: "Keep the helper read-only and use it as an audit fixture for the next side-by-side historical write review; do not activate live writes, storage, analytics, telemetry, alerts, or map changes from this simulation."
+  };
+
+  const recommendations = {
+    simulationOnly: true,
+    storageWritesPerformed: false,
+    runtimeActivationPerformed: false,
+    protectedSystemsChanged: false,
+    allValidationCasesMatched: allMatched,
+    futureActivationReview
+  };
+
+  return {
+    simulatedCloseEvents,
+    simulatedHistoricalRecords,
+    durationCalculations,
+    validationResults,
+    recommendations
+  };
+}
+
 if (typeof window !== "undefined") {
   window.safeDisplayText = safeDisplayText;
 }
@@ -5397,6 +5640,7 @@ if (typeof window !== "undefined") {
   window.gridlyHistoricalIntelligenceAudit = gridlyHistoricalIntelligenceAudit;
   window.gridlyHistoricalClearTimeAudit = gridlyHistoricalClearTimeAudit;
   window.gridlyHistoricalClosePathFramework = gridlyHistoricalClosePathFramework;
+  window.gridlyHistoricalClosePathSimulation = gridlyHistoricalClosePathSimulation;
   window.gridlyHazardLifecycleFramework = function gridlyHazardLifecycleFramework(options = {}) {
     const nowMs = Number.isFinite(Number(options?.nowMs)) ? Number(options.nowMs) : Date.now();
     const sourceHazards = Array.isArray(options?.hazards) ? options.hazards : gridlyDiagnosticArray(activeHazards);
@@ -6914,6 +7158,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyOperationalTelemetryAudit",
   "gridlyBetaReadinessAudit",
   "gridlyHistoricalClosePathFramework",
+  "gridlyHistoricalClosePathSimulation",
   "loadSharedReports"
 ];
 
@@ -40390,6 +40635,7 @@ window.gridlyVisualConsistencyAudit = function gridlyVisualConsistencyAudit() {
 exposeGridlyAuditHelper("gridlyAuditRegistryDebug", gridlyAuditRegistryDebug);
 exposeGridlyAuditHelper("gridlyVisualRegressionAudit", window.gridlyVisualRegressionAudit);
 exposeGridlyAuditHelper("gridlyHistoricalClosePathFramework", gridlyHistoricalClosePathFramework);
+exposeGridlyAuditHelper("gridlyHistoricalClosePathSimulation", gridlyHistoricalClosePathSimulation);
 exposeGridlyAuditHelper("gridlyCommuteIntelligenceAudit", gridlyCommuteIntelligenceAudit);
 exposeGridlyAuditHelper("loadSharedReports", typeof loadSharedReports === "function" ? loadSharedReports : null);
 exposeAllGridlyAuditHelpers();
