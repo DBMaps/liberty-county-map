@@ -13200,7 +13200,7 @@ body[data-layout-mode="portrait"] #map{height:100vh;}
 .gridly-v2-segments{top:112px;display:flex;gap:6px;overflow:auto;padding:4px;background:rgba(6,14,24,.7);border-radius:12px;border:1px solid rgba(255,255,255,.16)}
 .gridly-v2-segments button{border:0;background:transparent;color:#b9d2ef;padding:8px 10px;border-radius:9px;font-size:11px;white-space:nowrap}.gridly-v2-segments button.is-active{background:rgba(90,157,255,.24);color:#fff}
 .gridly-v2-control-rail{right:12px;left:auto;top:160px;display:grid;gap:8px}.gridly-v2-control-rail button{width:42px;height:42px;border:1px solid rgba(255,255,255,.26);background:rgba(6,14,24,.75);color:#fff;border-radius:12px}
-.gridly-v2-bottom-dock{bottom:12px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:rgba(6,14,24,.76);backdrop-filter:blur(16px);padding:8px;border-radius:16px;border:1px solid rgba(255,255,255,.2)}
+.gridly-v2-bottom-dock{bottom:12px;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;background:rgba(6,14,24,.76);backdrop-filter:blur(16px);padding:8px;border-radius:16px;border:1px solid rgba(255,255,255,.2)}
 .gridly-v2-bottom-dock button{border:0;background:rgba(255,255,255,.03);color:#e9f3ff;border-radius:12px;padding:8px 4px;display:grid;justify-items:center;gap:2px}.gridly-v2-bottom-dock em{font-style:normal;font-size:11px}
 .gridly-v2-sheet-backdrop{position:fixed;inset:0;background:rgba(1,5,12,.45);z-index:9001}
 .gridly-v2-sheet{z-index:9002;bottom:82px;background:linear-gradient(180deg,rgba(7,15,28,.96),rgba(4,10,20,.98));border-radius:18px 18px 12px 12px;border:1px solid rgba(178,211,255,.24);max-height:65vh;overflow:auto;padding:12px}
