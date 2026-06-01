@@ -7872,6 +7872,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyRunTxdotLayerAudit",
   "gridlyTxdotDirectionalReadinessAudit",
   "gridlyRoadwayGeometryCapabilityAudit",
+  "gridlyGeometryAwarePlacementAudit",
   "gridlyAuditHelperExposureAudit",
   "gridlySupabaseHazardInventoryAudit",
   "gridlySupabaseHazardPurgeAudit",
@@ -7960,6 +7961,7 @@ function exposeAllGridlyAuditHelpers() {
     gridlyRunTxdotLayerAudit: typeof gridlyRunTxdotLayerAudit === "function" ? gridlyRunTxdotLayerAudit : (typeof target?.gridlyRunTxdotLayerAudit === "function" ? target.gridlyRunTxdotLayerAudit : null),
     gridlyTxdotDirectionalReadinessAudit: typeof gridlyTxdotDirectionalReadinessAudit === "function" ? gridlyTxdotDirectionalReadinessAudit : (typeof target?.gridlyTxdotDirectionalReadinessAudit === "function" ? target.gridlyTxdotDirectionalReadinessAudit : null),
     gridlyRoadwayGeometryCapabilityAudit: typeof gridlyRoadwayGeometryCapabilityAudit === "function" ? gridlyRoadwayGeometryCapabilityAudit : (typeof target?.gridlyRoadwayGeometryCapabilityAudit === "function" ? target.gridlyRoadwayGeometryCapabilityAudit : null),
+    gridlyGeometryAwarePlacementAudit: typeof gridlyGeometryAwarePlacementAudit === "function" ? gridlyGeometryAwarePlacementAudit : (typeof target?.gridlyGeometryAwarePlacementAudit === "function" ? target.gridlyGeometryAwarePlacementAudit : null),
     gridlyAuditHelperExposureAudit: typeof gridlyAuditHelperExposureAudit === "function" ? gridlyAuditHelperExposureAudit : (typeof target?.gridlyAuditHelperExposureAudit === "function" ? target.gridlyAuditHelperExposureAudit : null),
     gridlySupabaseHazardInventoryAudit: typeof target?.gridlySupabaseHazardInventoryAudit === "function" ? target.gridlySupabaseHazardInventoryAudit : null,
     gridlySupabaseHazardPurgeAudit: typeof target?.gridlySupabaseHazardPurgeAudit === "function" ? target.gridlySupabaseHazardPurgeAudit : null,
@@ -26438,6 +26440,184 @@ function gridlyBuildLocalDirectionalRoadCandidates(tapCoordinate, options = {}) 
     .map((candidate, index) => ({ ...candidate, rank: index + 1 }));
 }
 
+
+function gridlyRoadwaySegmentId(feature, featureIndex, segmentIndex) {
+  const props = feature?.properties || {};
+  const baseId = props["@id"] || props.id || props.osm_id || props.way_id || props.gid || `feature_${featureIndex}`;
+  return `${baseId}::segment_${segmentIndex}`;
+}
+
+function gridlyRoadwayGeometryLengthMeters(startLat, startLng, endLat, endLng) {
+  const miles = haversineDistance(startLat, startLng, endLat, endLng);
+  return Number.isFinite(miles) ? gridlyRoadwayAuditRound(miles * 1609.344, 1) : null;
+}
+
+function gridlyRoadNameKey(value) {
+  return gridlyRoadwayAuditNormalizeText(value).toLowerCase();
+}
+
+function gridlyBuildGeometryAwareRoadCandidates(tapCoordinate, options = {}) {
+  const tap = gridlyCoordinateFromRecord(tapCoordinate);
+  if (!tap || !roadwayDatasetLoaded || !Array.isArray(roadwaySegmentFeatures) || !roadwaySegmentFeatures.length) return [];
+  const maxDistanceMeters = Number.isFinite(Number(options.maxDistanceMeters)) ? Number(options.maxDistanceMeters) : 75;
+  const limit = Number.isFinite(Number(options.limit)) ? Math.max(1, Number(options.limit)) : 16;
+  const maxDistanceMiles = maxDistanceMeters / 1609.344;
+  const candidates = [];
+  roadwaySegmentFeatures.forEach((feature, featureIndex) => {
+    const segments = flattenRoadGeometrySegments(feature?.geometry);
+    segments.forEach((segment, segmentIndex) => {
+      const projection = projectPointToRoadSegment(tap.lat, tap.lng, segment.startLat, segment.startLng, segment.endLat, segment.endLng);
+      if (!projection || !Number.isFinite(projection.distanceMiles) || projection.distanceMiles > maxDistanceMiles) return;
+      const distanceMeters = projection.distanceMiles * 1609.344;
+      const roadName = gridlyDirectionalRoadNameFromFeature(feature);
+      const bearing = projection.segmentBearing;
+      const segmentLengthMeters = gridlyRoadwayGeometryLengthMeters(segment.startLat, segment.startLng, segment.endLat, segment.endLng);
+      const props = feature?.properties || {};
+      candidates.push({
+        source: "local_roadway_dataset_geometry",
+        segmentId: gridlyRoadwaySegmentId(feature, featureIndex, segmentIndex),
+        featureIndex,
+        segmentIndex,
+        featureId: props["@id"] || props.id || props.osm_id || props.way_id || props.gid || null,
+        roadName,
+        roadNameKey: gridlyRoadNameKey(roadName),
+        distanceFromTapMeters: gridlyRoadwayAuditRound(distanceMeters, 1),
+        candidateCoordinate: {
+          lat: gridlyRoadwayAuditRound(projection.coordinate.lat, 7),
+          lng: gridlyRoadwayAuditRound(projection.coordinate.lng, 7)
+        },
+        segmentStart: {
+          lat: gridlyRoadwayAuditRound(segment.startLat, 7),
+          lng: gridlyRoadwayAuditRound(segment.startLng, 7)
+        },
+        segmentEnd: {
+          lat: gridlyRoadwayAuditRound(segment.endLat, 7),
+          lng: gridlyRoadwayAuditRound(segment.endLng, 7)
+        },
+        segmentCenter: {
+          lat: gridlyRoadwayAuditRound((segment.startLat + segment.endLat) / 2, 7),
+          lng: gridlyRoadwayAuditRound((segment.startLng + segment.endLng) / 2, 7)
+        },
+        bearing: Number.isFinite(Number(bearing)) ? gridlyRoadwayAuditRound(bearing, 1) : null,
+        geometryLengthMeters: segmentLengthMeters,
+        oneWay: props.oneway || null,
+        highway: props.highway || null,
+        ref: props.ref || null,
+        placement: props.placement || null,
+        lanes: props.lanes || null,
+        inferredDirection: gridlyInferCardinalRoadDirection(bearing),
+        directionConfidence: Number.isFinite(Number(bearing)) ? "medium" : "low",
+        rank: 0,
+        selected: false,
+        selectionReason: "pending_geometry_aware_rank"
+      });
+    });
+  });
+  return candidates
+    .sort((a, b) => Number(a.distanceFromTapMeters || Infinity) - Number(b.distanceFromTapMeters || Infinity)
+      || String(a.roadName || "").localeCompare(String(b.roadName || ""))
+      || String(a.segmentId || "").localeCompare(String(b.segmentId || "")))
+    .slice(0, limit)
+    .map((candidate, index) => ({ ...candidate, rank: index + 1 }));
+}
+
+function gridlySelectGeometryAwareRoadSegment(candidates = []) {
+  const sorted = (Array.isArray(candidates) ? candidates : [])
+    .filter((candidate) => Number.isFinite(Number(candidate?.distanceFromTapMeters)))
+    .sort((a, b) => Number(a.distanceFromTapMeters) - Number(b.distanceFromTapMeters));
+  if (!sorted.length) {
+    return {
+      selectedSegment: null,
+      selectedSegmentReason: "no_local_roadway_geometry_candidate_within_radius",
+      sameRoadCandidateCount: 0,
+      oppositeSideCandidateCount: 0,
+      dividedRoadRisk: false,
+      selectedSideConfidence: "low",
+      canSupportFutureDirectionalLabels: false,
+      recommendedDirection: null,
+      directionConfidence: "low"
+    };
+  }
+  const selected = sorted[0];
+  const sameRoadCandidates = selected.roadNameKey
+    ? sorted.filter((candidate) => candidate.roadNameKey === selected.roadNameKey)
+    : [];
+  const sameRoadParallelCandidates = sameRoadCandidates.filter((candidate) => {
+    if (candidate.segmentId === selected.segmentId) return false;
+    const bearingDifference = gridlyBearingDifferenceDegrees(selected.bearing, candidate.bearing);
+    return Number(candidate.distanceFromTapMeters) <= 90
+      && (bearingDifference === null || bearingDifference <= 30 || bearingDifference >= 150);
+  });
+  const nearestOpposite = sameRoadParallelCandidates[0] || null;
+  const distanceGap = nearestOpposite && Number.isFinite(Number(nearestOpposite.distanceFromTapMeters))
+    ? gridlyRoadwayAuditRound(Number(nearestOpposite.distanceFromTapMeters) - Number(selected.distanceFromTapMeters), 1)
+    : null;
+  const bearingDifferences = sameRoadParallelCandidates
+    .map((candidate) => gridlyBearingDifferenceDegrees(selected.bearing, candidate.bearing))
+    .filter(Number.isFinite);
+  const bearingConsistent = !bearingDifferences.length || bearingDifferences.some((difference) => difference <= 30 || difference >= 150);
+  const dividedRoadRisk = sameRoadParallelCandidates.length > 0 && Number.isFinite(Number(nearestOpposite?.distanceFromTapMeters)) && Number(nearestOpposite.distanceFromTapMeters) <= 35;
+  const selectedDistance = Number(selected.distanceFromTapMeters);
+  const selectedSideConfidence = !Number.isFinite(selectedDistance) ? "low"
+    : (dividedRoadRisk && Number.isFinite(distanceGap) && distanceGap >= 10 && selectedDistance <= 12 && bearingConsistent) ? "high"
+      : (dividedRoadRisk && Number.isFinite(distanceGap) && distanceGap >= 5 && selectedDistance <= 20) ? "medium"
+        : dividedRoadRisk ? "low"
+          : selectedDistance <= 12 ? "high"
+            : selectedDistance <= 25 ? "medium" : "low";
+  const directionConfidence = Number.isFinite(Number(selected.bearing))
+    ? (selectedSideConfidence === "high" ? "medium" : selectedSideConfidence === "medium" ? "low" : "low")
+    : "low";
+  const canSupportFutureDirectionalLabels = Boolean(
+    Number.isFinite(Number(selected.bearing))
+    && selectedSideConfidence !== "low"
+    && sameRoadCandidates.length > 0
+  );
+  return {
+    selectedSegment: {
+      ...selected,
+      selected: true,
+      selectionReason: "nearest_geometry_segment_selected; same-road continuity and divided-road separation checked before directional confidence is assigned"
+    },
+    selectedSegmentReason: "nearest_geometry_segment_selected_with_same_road_and_parallel_carriageway_diagnostics",
+    sameRoadCandidateCount: sameRoadCandidates.length,
+    oppositeSideCandidateCount: sameRoadParallelCandidates.length,
+    dividedRoadRisk,
+    selectedSideConfidence,
+    canSupportFutureDirectionalLabels,
+    recommendedDirection: gridlyInferCardinalRoadDirection(selected.bearing),
+    directionConfidence,
+    sameRoadParallelCandidates: sameRoadParallelCandidates.slice(0, 6).map((candidate) => ({
+      segmentId: candidate.segmentId,
+      roadName: candidate.roadName,
+      distanceFromTapMeters: candidate.distanceFromTapMeters,
+      bearing: candidate.bearing,
+      bearingDifferenceFromSelected: gridlyBearingDifferenceDegrees(selected.bearing, candidate.bearing),
+      segmentCenter: candidate.segmentCenter
+    })),
+    candidateDistanceGapMeters: distanceGap
+  };
+}
+
+function gridlyGeometryAwarePlacementDecision(tapCoordinate, options = {}) {
+  const tap = gridlyCoordinateFromRecord(tapCoordinate);
+  const candidateSegments = gridlyBuildGeometryAwareRoadCandidates(tap, options);
+  const selection = gridlySelectGeometryAwareRoadSegment(candidateSegments);
+  const decoratedCandidates = candidateSegments.map((candidate) => ({
+    ...candidate,
+    selected: candidate.segmentId === selection.selectedSegment?.segmentId,
+    selectionReason: candidate.segmentId === selection.selectedSegment?.segmentId
+      ? selection.selectedSegmentReason
+      : `rejected_by_geometry_distance_rank_${candidate.rank}`,
+    bearingDifferenceFromSelected: candidate.segmentId === selection.selectedSegment?.segmentId ? 0 : gridlyBearingDifferenceDegrees(selection.selectedSegment?.bearing, candidate.bearing)
+  }));
+  return {
+    tapCoordinate: tap,
+    candidateSegments: decoratedCandidates,
+    candidateCount: decoratedCandidates.length,
+    ...selection
+  };
+}
+
 function gridlyNormalizeOsrmDirectionalCandidates(candidates = []) {
   return (Array.isArray(candidates) ? candidates : [])
     .map((candidate, index) => {
@@ -26613,6 +26793,109 @@ if (typeof window !== "undefined") {
 }
 exposeGridlyAuditHelper("gridlyDirectionalRoadAudit", gridlyDirectionalRoadAudit);
 
+
+function gridlyGeometryAwarePlacementSampleIncidents(limit = 8) {
+  const unifiedIncidents = typeof getUnifiedIncidents === "function" ? getUnifiedIncidents() : [];
+  return unifiedIncidents
+    .filter((incident) => String(incident?.id || "").startsWith("road-"))
+    .slice(0, limit)
+    .map((incident) => ({
+      id: incident.id,
+      type: incident.report_type || incident.type,
+      rawTapCoordinate: gridlyCoordinateFromRecord(incident.rawTapCoordinate || incident.reportCaptureCoordinate),
+      finalPlacementCoordinate: gridlyCoordinateFromRecord(incident.finalPlacementCoordinate) || gridlyCoordinateFromRecord(incident),
+      selectedRoadwaySegment: incident.selectedRoadwaySegment || null,
+      selectedRoadName: incident.selectedRoadName || incident.roadName || incident.nearestRoad || "Unknown road",
+      selectedSegmentDistanceMeters: incident.selectedSegmentDistanceMeters ?? null,
+      selectedSideConfidence: incident.selectedSideConfidence || "unknown",
+      placementMode: incident.placementMode || "unknown"
+    }));
+}
+
+function gridlyGeometryAwarePlacementAudit(options = {}) {
+  const tapCoordinate = gridlyLatestDirectionalTapCoordinate(options);
+  const geometryDecision = gridlyGeometryAwarePlacementDecision(tapCoordinate, { maxDistanceMeters: options.maxDistanceMeters || 75, limit: options.limit || 16 });
+  const selectedSegment = geometryDecision.selectedSegment || lastRoadSnapDebug?.selectedRoadwaySegment || lastRoadSnapDebug?.geometryAwarePlacement?.selectedSegment || null;
+  const selectedRoadName = selectedSegment?.roadName || lastRoadSnapDebug?.selectedRoadName || null;
+  const placementAuditSnapshot = typeof gridlyHazardPlacementAccuracyAudit === "function" ? gridlyHazardPlacementAccuracyAudit() : null;
+  const roadClusterAuditSnapshot = typeof gridlyBuildRoadClusterAudit === "function" ? gridlyBuildRoadClusterAudit({ sampleLimit: 4 }) : null;
+  const directionalAuditSnapshot = typeof gridlyDirectionalRoadAudit === "function" ? gridlyDirectionalRoadAudit({ maxDistanceMeters: options.maxDistanceMeters || 75 }) : null;
+  const geometryCapabilitySnapshot = typeof gridlyRoadwayGeometryCapabilityAudit === "function" ? gridlyRoadwayGeometryCapabilityAudit() : null;
+  const candidateCount = geometryDecision.candidateCount || 0;
+  const selectedSegmentDistanceMeters = selectedSegment?.distanceFromTapMeters ?? lastRoadSnapDebug?.selectedSegmentDistanceMeters ?? null;
+  const selectedSegmentBearing = selectedSegment?.bearing ?? lastRoadSnapDebug?.selectedSegmentBearing ?? null;
+  const geometryAwarePlacementAvailable = Boolean(candidateCount && selectedSegment);
+  const dividedRoadRisk = Boolean(geometryDecision.dividedRoadRisk || lastRoadSnapDebug?.dividedRoadRisk);
+  const selectedSideConfidence = geometryDecision.selectedSideConfidence || lastRoadSnapDebug?.selectedSideConfidence || "low";
+  const recommendedDirection = geometryDecision.recommendedDirection || lastRoadSnapDebug?.recommendedDirection || null;
+  const directionConfidence = geometryDecision.directionConfidence || lastRoadSnapDebug?.directionConfidence || "low";
+  const canSupportFutureDirectionalLabels = Boolean(geometryDecision.canSupportFutureDirectionalLabels || lastRoadSnapDebug?.canSupportFutureDirectionalLabels);
+  const recommendations = [
+    "Use the selected local roadway segment as the internal road-hazard attachment point before considering any future EB/WB/NB/SB display labels.",
+    "Keep directional labels audit-only; require stable segment selection, sufficient same-road carriageway separation, and explicit metadata review before exposing labels to users.",
+    "For US 90 and TX 146 validation, run two real taps on opposite carriageways and compare selectedSegment.segmentId plus selectedSegmentDistanceMeters in this audit.",
+    "Do not alter rail reporting, crossing workflows, TxDOT startup fetch, Supabase schema, Route Watch, Alerts, or Historical Intelligence from this prototype."
+  ];
+  const audit = {
+    auditVersion: "V206.13-geometry-aware-road-hazard-placement-prototype",
+    auditOnly: true,
+    destructiveActionsTaken: false,
+    tapCoordinate,
+    candidateCount,
+    candidateSegments: geometryDecision.candidateSegments || [],
+    selectedSegment,
+    selectedRoadName,
+    selectedSegmentDistanceMeters,
+    selectedSegmentBearing,
+    selectedSegmentReason: geometryDecision.selectedSegmentReason || lastRoadSnapDebug?.selectedSegmentReason || "no_geometry_aware_selection_available",
+    sameRoadCandidateCount: geometryDecision.sameRoadCandidateCount || 0,
+    oppositeSideCandidateCount: geometryDecision.oppositeSideCandidateCount || 0,
+    dividedRoadRisk,
+    selectedSideConfidence,
+    geometryAwarePlacementAvailable,
+    canSupportFutureDirectionalLabels,
+    recommendedDirection,
+    directionConfidence,
+    sameRoadParallelCandidates: geometryDecision.sameRoadParallelCandidates || [],
+    candidateDistanceGapMeters: geometryDecision.candidateDistanceGapMeters ?? null,
+    sampleIncidents: gridlyGeometryAwarePlacementSampleIncidents(),
+    recommendations,
+    connectedAudits: {
+      hazardPlacementAccuracyAuditAvailable: typeof gridlyHazardPlacementAccuracyAudit === "function",
+      roadClusterAuditAvailable: typeof gridlyRoadClusterAudit === "function",
+      directionalRoadAuditAvailable: typeof gridlyDirectionalRoadAudit === "function",
+      roadwayGeometryCapabilityAuditAvailable: typeof gridlyRoadwayGeometryCapabilityAudit === "function",
+      placementMode: placementAuditSnapshot?.placementMode || null,
+      finalPlacementCoordinate: placementAuditSnapshot?.finalPlacementCoordinate || null,
+      renderedMarkerCoordinate: placementAuditSnapshot?.renderedMarkerCoordinate || null,
+      clusterSampleCount: Array.isArray(roadClusterAuditSnapshot?.sampleClusters) ? roadClusterAuditSnapshot.sampleClusters.length : null,
+      directionalSelectedRoadCandidate: directionalAuditSnapshot?.selectedRoadCandidate || null,
+      directionalReadiness: geometryCapabilitySnapshot?.directionalReadiness || null,
+      localRoadwayFeatureCount: geometryCapabilitySnapshot?.roadSegmentFeatureCount ?? null
+    },
+    validationGuide: {
+      us90: "Zoom to US 90, tap one carriageway, record selectedSegment.segmentId, then tap the opposite carriageway and confirm the segmentId changes while selectedSegmentDistanceMeters stays small.",
+      tx146: "Repeat the same opposite-carriageway check on TX 146 before promoting any future NB/SB diagnostic label confidence.",
+      success: "Selected segments differ, selected distances remain small, and the rendered/final marker coordinate remains visually consistent with the user's tap."
+    },
+    trace: [
+      "Tap Coordinate -> local LineString/MultiLineString segment candidates from the loaded roadway dataset.",
+      "Each candidate records segment id, road name, projected tap distance, start/end, center, bearing, and geometry length.",
+      "Selection is nearest-first, with same-road continuity, divided-road separation, and bearing consistency diagnostics layered on top.",
+      "Selected segment is internal diagnostic state only; no EB/WB/NB/SB label is exposed to users."
+    ],
+    lastRoadSnapDebug: { ...lastRoadSnapDebug },
+    lastMobileReportSubmitDebug: { ...lastMobileReportSubmitDebug }
+  };
+  console.info("gridlyGeometryAwarePlacementAudit", audit);
+  return audit;
+}
+
+if (typeof window !== "undefined") {
+  window.gridlyGeometryAwarePlacementAudit = gridlyGeometryAwarePlacementAudit;
+}
+exposeGridlyAuditHelper("gridlyGeometryAwarePlacementAudit", gridlyGeometryAwarePlacementAudit);
+
 function gridlyClassifyPlacementRisk(deltaMeters, details = {}) {
   if (details.snappingApplied && Number(deltaMeters) > 8) return "inaccurate_due_to_snapping";
   if (details.dedupeApplied && Number(deltaMeters) > 8) return "inaccurate_due_to_dedupe";
@@ -26698,6 +26981,7 @@ function gridlyHazardPlacementAccuracyAudit() {
     || lastMobileReportSubmitDebug.coordinateSourceUsed
     || placementMode
     || "stored_report_lat_lng";
+  const geometryAwarePlacementSnapshot = lastRoadSnapDebug?.geometryAwarePlacement || null;
   const sampleIncidents = roadUnifiedIncidents.slice(0, 8).map((incident) => {
     const rendered = gridlyFindRenderedMarkerPlacementAudit(incident.id);
     const capture = gridlyCoordinateFromRecord(incident.rawTapCoordinate || incident.reportCaptureCoordinate) || gridlyCoordinateFromRecord(lastMobileReportSubmitDebug.originalTapCoords);
@@ -26741,6 +27025,15 @@ function gridlyHazardPlacementAccuracyAudit() {
     placementRiskLevel,
     roadCandidateCount,
     nearestCandidateDistanceMeters,
+    geometryAwarePlacementAvailable: Boolean(geometryAwarePlacementSnapshot?.selectedSegment || lastRoadSnapDebug?.selectedRoadwaySegment),
+    selectedSegment: geometryAwarePlacementSnapshot?.selectedSegment || lastRoadSnapDebug?.selectedRoadwaySegment || null,
+    selectedRoadName: geometryAwarePlacementSnapshot?.selectedSegment?.roadName || lastRoadSnapDebug?.selectedRoadName || null,
+    selectedSegmentDistanceMeters: geometryAwarePlacementSnapshot?.selectedSegment?.distanceFromTapMeters ?? lastRoadSnapDebug?.selectedSegmentDistanceMeters ?? null,
+    selectedSegmentBearing: geometryAwarePlacementSnapshot?.selectedSegment?.bearing ?? lastRoadSnapDebug?.selectedSegmentBearing ?? null,
+    selectedSideConfidence: geometryAwarePlacementSnapshot?.selectedSideConfidence || lastRoadSnapDebug?.selectedSideConfidence || "low",
+    canSupportFutureDirectionalLabels: Boolean(geometryAwarePlacementSnapshot?.canSupportFutureDirectionalLabels || lastRoadSnapDebug?.canSupportFutureDirectionalLabels),
+    recommendedDirection: geometryAwarePlacementSnapshot?.recommendedDirection || lastRoadSnapDebug?.recommendedDirection || null,
+    directionConfidence: geometryAwarePlacementSnapshot?.directionConfidence || lastRoadSnapDebug?.directionConfidence || "low",
     representativeCoordinateReason,
     reportCaptureCoordinate: rawTapCoordinate,
     storedReportCoordinate,
@@ -26839,6 +27132,12 @@ function getUnifiedIncidents() {
       snapToFinalDeltaMeters: latest.snapToFinalDeltaMeters ?? gridlyCoordinateDeltaMeters(snappedRoadCoordinate, finalPlacementCoordinate),
       roadCandidateCount: latest.roadCandidateCount ?? null,
       nearestCandidateDistanceMeters: latest.nearestCandidateDistanceMeters ?? null,
+      selectedRoadwaySegment: latest.selectedRoadwaySegment || latest.geometryAwarePlacement?.selectedSegment || null,
+      selectedRoadName: latest.selectedRoadName || latest.geometryAwarePlacement?.selectedSegment?.roadName || null,
+      selectedSegmentDistanceMeters: latest.selectedSegmentDistanceMeters ?? latest.geometryAwarePlacement?.selectedSegment?.distanceFromTapMeters ?? null,
+      selectedSegmentBearing: latest.selectedSegmentBearing ?? latest.geometryAwarePlacement?.selectedSegment?.bearing ?? null,
+      selectedSideConfidence: latest.selectedSideConfidence || latest.geometryAwarePlacement?.selectedSideConfidence || "low",
+      geometryAwarePlacement: latest.geometryAwarePlacement || null,
       snappingApplied: Boolean(snappedRoadCoordinate),
       clusteringApplied: incident.count > 1,
       representativeCoordinateReason: latest.representativeCoordinateReason || incident.representativeCoordinateReason,
@@ -28125,13 +28424,21 @@ async function snapHazardToRoad(lat, lng, options = {}) {
       const snappedLng = Number(nearest?.location?.[0]);
       if (!Number.isFinite(snappedLat) || !Number.isFinite(snappedLng)) throw new Error("nearest_no_geometry");
       const snapDistanceMeters = Number(nearest?.distance || 0);
-      const candidateDistancesMeters = candidates.map((candidate) => Number(candidate?.distance)).filter(Number.isFinite).sort((a, b) => a - b);
+      const geometryAwareSelection = gridlyGeometryAwarePlacementDecision({ lat, lng }, { maxDistanceMeters: radiusMeters, limit: 16 });
+      const geometrySelectedCoordinate = gridlyCoordinateFromRecord(geometryAwareSelection?.selectedSegment?.candidateCoordinate);
+      const geometryCandidateDistancesMeters = Array.isArray(geometryAwareSelection?.candidateSegments)
+        ? geometryAwareSelection.candidateSegments.map((candidate) => Number(candidate?.distanceFromTapMeters)).filter(Number.isFinite).sort((a, b) => a - b)
+        : [];
+      const candidateDistancesMeters = geometryCandidateDistancesMeters.length
+        ? geometryCandidateDistancesMeters
+        : candidates.map((candidate) => Number(candidate?.distance)).filter(Number.isFinite).sort((a, b) => a - b);
+      const geometryNearestDistanceMeters = Number(geometryAwareSelection?.selectedSegment?.distanceFromTapMeters);
       const placementDecision = gridlyBuildRoadAwareHazardPlacement(
         { lat, lng },
-        { lat: snappedLat, lng: snappedLng },
+        geometrySelectedCoordinate || { lat: snappedLat, lng: snappedLng },
         {
-          nearestCandidateDistanceMeters: snapDistanceMeters,
-          roadCandidateCount: candidates.length,
+          nearestCandidateDistanceMeters: Number.isFinite(geometryNearestDistanceMeters) ? geometryNearestDistanceMeters : snapDistanceMeters,
+          roadCandidateCount: geometryAwareSelection?.candidateCount || candidates.length,
           candidateDistancesMeters
         }
       );
@@ -28147,8 +28454,21 @@ async function snapHazardToRoad(lat, lng, options = {}) {
       debug.tapToFinalDeltaMeters = placementDecision.tapToFinalDeltaMeters;
       debug.snapToFinalDeltaMeters = placementDecision.snapToFinalDeltaMeters;
       debug.candidateDistancesMeters = placementDecision.candidateDistancesMeters;
-      debug.nearestRoadCandidates = diagnosticCandidates;
-      debug.dividedRoadRisk = placementDecision.dividedRoadRisk;
+      debug.nearestRoadCandidates = geometryAwareSelection?.candidateSegments?.length ? geometryAwareSelection.candidateSegments : diagnosticCandidates;
+      debug.osrmNearestCandidates = diagnosticCandidates;
+      debug.geometryAwarePlacement = geometryAwareSelection;
+      debug.selectedRoadwaySegment = geometryAwareSelection?.selectedSegment || null;
+      debug.selectedRoadName = geometryAwareSelection?.selectedSegment?.roadName || null;
+      debug.selectedSegmentDistanceMeters = geometryAwareSelection?.selectedSegment?.distanceFromTapMeters ?? null;
+      debug.selectedSegmentBearing = geometryAwareSelection?.selectedSegment?.bearing ?? null;
+      debug.selectedSegmentReason = geometryAwareSelection?.selectedSegmentReason || null;
+      debug.sameRoadCandidateCount = geometryAwareSelection?.sameRoadCandidateCount ?? 0;
+      debug.oppositeSideCandidateCount = geometryAwareSelection?.oppositeSideCandidateCount ?? 0;
+      debug.selectedSideConfidence = geometryAwareSelection?.selectedSideConfidence || "low";
+      debug.canSupportFutureDirectionalLabels = Boolean(geometryAwareSelection?.canSupportFutureDirectionalLabels);
+      debug.recommendedDirection = geometryAwareSelection?.recommendedDirection || null;
+      debug.directionConfidence = geometryAwareSelection?.directionConfidence || "low";
+      debug.dividedRoadRisk = Boolean(placementDecision.dividedRoadRisk || geometryAwareSelection?.dividedRoadRisk);
       debug.snapDistanceMeters = snapDistanceMeters;
       debug.finalSnapRadiusUsed = radiusMeters;
       debug.nearestRoadFound = true;
@@ -28176,7 +28496,17 @@ async function snapHazardToRoad(lat, lng, options = {}) {
         placementRiskLevel: placementDecision.placementRiskLevel,
         roadCandidateCount: placementDecision.roadCandidateCount,
         nearestCandidateDistanceMeters: placementDecision.nearestCandidateDistanceMeters,
-        representativeCoordinateReason: placementDecision.representativeCoordinateReason
+        representativeCoordinateReason: placementDecision.representativeCoordinateReason,
+        geometryAwarePlacement: geometryAwareSelection,
+        selectedRoadwaySegment: geometryAwareSelection?.selectedSegment || null,
+        selectedRoadName: geometryAwareSelection?.selectedSegment?.roadName || null,
+        selectedSegmentDistanceMeters: geometryAwareSelection?.selectedSegment?.distanceFromTapMeters ?? null,
+        selectedSegmentBearing: geometryAwareSelection?.selectedSegment?.bearing ?? null,
+        selectedSegmentReason: geometryAwareSelection?.selectedSegmentReason || null,
+        selectedSideConfidence: geometryAwareSelection?.selectedSideConfidence || "low",
+        canSupportFutureDirectionalLabels: Boolean(geometryAwareSelection?.canSupportFutureDirectionalLabels),
+        recommendedDirection: geometryAwareSelection?.recommendedDirection || null,
+        directionConfidence: geometryAwareSelection?.directionConfidence || "low"
       };
     } catch (error) {
       debug.fallbackReason = String(error?.message || error || "nearest_unknown_failure");
@@ -28284,6 +28614,12 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
       localHazardEntry.snapToFinalDeltaMeters = lastMobileReportSubmitDebug.snapToFinalDeltaMeters ?? lastRoadSnapDebug?.snapToFinalDeltaMeters ?? null;
       localHazardEntry.roadCandidateCount = lastMobileReportSubmitDebug.roadCandidateCount ?? lastRoadSnapDebug?.roadCandidateCount ?? null;
       localHazardEntry.nearestCandidateDistanceMeters = lastMobileReportSubmitDebug.nearestCandidateDistanceMeters ?? lastRoadSnapDebug?.nearestCandidateDistanceMeters ?? null;
+      localHazardEntry.selectedRoadwaySegment = lastRoadSnapDebug?.selectedRoadwaySegment || lastRoadSnapDebug?.geometryAwarePlacement?.selectedSegment || null;
+      localHazardEntry.selectedRoadName = lastRoadSnapDebug?.selectedRoadName || lastRoadSnapDebug?.geometryAwarePlacement?.selectedSegment?.roadName || null;
+      localHazardEntry.selectedSegmentDistanceMeters = lastRoadSnapDebug?.selectedSegmentDistanceMeters ?? lastRoadSnapDebug?.geometryAwarePlacement?.selectedSegment?.distanceFromTapMeters ?? null;
+      localHazardEntry.selectedSegmentBearing = lastRoadSnapDebug?.selectedSegmentBearing ?? lastRoadSnapDebug?.geometryAwarePlacement?.selectedSegment?.bearing ?? null;
+      localHazardEntry.geometryAwarePlacement = lastRoadSnapDebug?.geometryAwarePlacement || null;
+      localHazardEntry.selectedSideConfidence = lastRoadSnapDebug?.selectedSideConfidence || lastRoadSnapDebug?.geometryAwarePlacement?.selectedSideConfidence || "low";
       localHazardEntry.representativeCoordinateReason = lastMobileReportSubmitDebug.placementCoordinateReason || lastRoadSnapDebug?.representativeCoordinateReason || "Road-aware placement coordinate selected during hazard submission.";
     }
     if (localHazardEntry) {
