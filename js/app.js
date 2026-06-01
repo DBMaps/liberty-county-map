@@ -3608,6 +3608,7 @@ const SMART_ALERTS_DRAWER_SEEN_KEY = "gridlySmartAlertsDrawerSeenV1";
 const MAP_FIRST_HINT_SEEN_KEY = "gridlyMapFirstHintSeenV1";
 const MAP_STYLE_STORAGE_KEY = "gridlyMapStyleV1";
 const GRIDLY_SETTINGS_STORAGE_KEY = "gridlySettingsV1";
+const GRIDLY_WELCOME_SEEN_STORAGE_KEY = "gridlyWelcomeSeenV1";
 const SAVED_PLACES_STORAGE_KEY = "gridlySavedPlacesV1";
 const SELECTED_PLACE_STORAGE_KEY = "gridlySelectedPlaceIdV1";
 const GRIDLY_PROFILE_STORAGE_KEY = "gridlyUserProfileV1";
@@ -13558,9 +13559,22 @@ function hydrateElements() {
     "settingsThemeSelect",
     "settingsTextSizeSelect",
     "settingsBuildValue",
+    "settingsReplaySetupBtn",
     "settingsFeedbackBtn",
     "settingsFeedbackStatus",
     "settingsSaveStatus",
+    "gridlyWelcomeOnboarding",
+    "gridlyWelcomeBackdrop",
+    "gridlyWelcomeBackBtn",
+    "gridlyWelcomeNextBtn",
+    "gridlyWelcomeFinishBtn",
+    "gridlyWelcomeSkipBtn",
+    "gridlyWelcomeSkipTopBtn",
+    "gridlyWelcomeSetHomeBtn",
+    "gridlyWelcomeSetWorkBtn",
+    "gridlyWelcomeOpenSettingsBtn",
+    "gridlyWelcomeEnableLocationBtn",
+    "gridlyWelcomeLocationStatus",
     "closeSmartAlertsModalBtn",
     "openSmartAlertsBtn",
     "mobileAlertsMirror",
@@ -14242,14 +14256,15 @@ function updateProfileUI() {
   }
 }
 function maybeOpenFirstRunSetup() {
-  // First-run onboarding auto-open disabled (Gridly V18 clean stable).
-  return;
+  if (gridlySafeLocalStorageHas(GRIDLY_WELCOME_SEEN_STORAGE_KEY)) return;
+  openGridlyWelcomeOnboarding({ source: "first_run" });
 }
 function syncModalScrollLock() {
   const hasPlaceNameModal = Boolean(document.querySelector(".place-name-modal"));
   const hasOpenModal = Boolean(
     (els.routeSetupModal && !els.routeSetupModal.hidden) ||
     (els.smartAlertsModal && !els.smartAlertsModal.hidden) ||
+    (els.gridlyWelcomeOnboarding && !els.gridlyWelcomeOnboarding.hidden) ||
     hasPlaceNameModal
   );
   document.body.classList.toggle("modal-open", hasOpenModal);
@@ -14264,7 +14279,7 @@ function setRouteActiveBodyState(isActive) {
   document.body.classList.toggle("route-active", Boolean(isActive));
 }
 function openFirstRunSetupModal() {
-  return;
+  openGridlyWelcomeOnboarding({ source: "legacy_first_run_alias" });
 }
 let setupStep = 1;
 let setupPlacesSummary = { home: false, work: false };
@@ -14286,7 +14301,124 @@ function refreshSetupSummary() {
   if (els.setupSummaryPlaces) els.setupSummaryPlaces.textContent = `Saved places: ${items.length ? items.join(", ") : "None yet"}`;
 }
 function closeFirstRunSetupModal() {
-  return;
+  closeGridlyWelcomeOnboarding({ persist: true, source: "legacy_first_run_alias" });
+}
+
+let gridlyWelcomeCurrentStep = 0;
+const GRIDLY_WELCOME_TOTAL_STEPS = 5;
+
+function markGridlyWelcomeSeen() {
+  gridlySafeLocalStorageSet(GRIDLY_WELCOME_SEEN_STORAGE_KEY, "yes");
+}
+
+function renderGridlyWelcomeStep(step = gridlyWelcomeCurrentStep) {
+  const boundedStep = Math.min(Math.max(Number(step) || 0, 0), GRIDLY_WELCOME_TOTAL_STEPS - 1);
+  gridlyWelcomeCurrentStep = boundedStep;
+  document.querySelectorAll("[data-gridly-welcome-step]").forEach((node) => {
+    const isActive = Number(node.dataset.gridlyWelcomeStep) === boundedStep;
+    node.hidden = !isActive;
+    node.classList.toggle("is-active", isActive);
+  });
+  document.querySelectorAll("[data-gridly-welcome-dot]").forEach((node) => {
+    const dotIndex = Number(node.dataset.gridlyWelcomeDot) || 0;
+    node.classList.toggle("is-active", dotIndex === boundedStep);
+    node.classList.toggle("is-complete", dotIndex < boundedStep);
+  });
+  if (els.gridlyWelcomeBackBtn) els.gridlyWelcomeBackBtn.disabled = boundedStep === 0;
+  if (els.gridlyWelcomeNextBtn) els.gridlyWelcomeNextBtn.hidden = boundedStep >= GRIDLY_WELCOME_TOTAL_STEPS - 1;
+  if (els.gridlyWelcomeFinishBtn) els.gridlyWelcomeFinishBtn.hidden = boundedStep < GRIDLY_WELCOME_TOTAL_STEPS - 1;
+}
+
+function openGridlyWelcomeOnboarding(options = {}) {
+  const overlay = els.gridlyWelcomeOnboarding || document.getElementById("gridlyWelcomeOnboarding");
+  if (!overlay) return false;
+  overlay.__opener = options.opener || document.activeElement;
+  overlay.hidden = false;
+  overlay.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open", "gridly-welcome-open");
+  syncModalScrollLock();
+  renderGridlyWelcomeStep(0);
+  requestAnimationFrame(() => {
+    const firstButton = overlay.querySelector("button:not([hidden]):not(:disabled)");
+    firstButton?.focus?.({ preventScroll: true });
+  });
+  return true;
+}
+
+function closeGridlyWelcomeOnboarding(options = {}) {
+  const { persist = true, restoreFocus = true } = options;
+  const overlay = els.gridlyWelcomeOnboarding || document.getElementById("gridlyWelcomeOnboarding");
+  if (!overlay) return false;
+  if (persist) markGridlyWelcomeSeen();
+  const focusedElement = document.activeElement;
+  if (focusedElement && overlay.contains(focusedElement) && typeof focusedElement.blur === "function") focusedElement.blur();
+  overlay.hidden = true;
+  overlay.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("gridly-welcome-open");
+  syncModalScrollLock();
+  if (restoreFocus && overlay.__opener && typeof overlay.__opener.focus === "function") {
+    requestAnimationFrame(() => overlay.__opener.focus());
+  }
+  return true;
+}
+
+function requestGridlyWelcomeLocation() {
+  if (!els.gridlyWelcomeLocationStatus) return;
+  if (!navigator.geolocation) {
+    els.gridlyWelcomeLocationStatus.textContent = "Location is not available in this browser.";
+    return;
+  }
+  els.gridlyWelcomeLocationStatus.textContent = "Requesting location permission…";
+  recordGridlyGeolocationRequest("welcome_onboarding_enable_location");
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const lat = Number(position?.coords?.latitude);
+      const lng = Number(position?.coords?.longitude);
+      if (Number.isFinite(lat) && Number.isFinite(lng)) {
+        userLocation = { lat, lng };
+        renderUserLocationDot();
+        updateNearestContext();
+        els.gridlyWelcomeLocationStatus.textContent = "Location enabled. Gridly can now highlight nearby reports.";
+        return;
+      }
+      els.gridlyWelcomeLocationStatus.textContent = "Location was enabled, but Gridly could not read coordinates.";
+    },
+    () => {
+      els.gridlyWelcomeLocationStatus.textContent = "Location was not enabled. You can keep using Gridly and try again later.";
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+  );
+}
+
+function bindGridlyWelcomeOnboarding() {
+  const overlay = els.gridlyWelcomeOnboarding || document.getElementById("gridlyWelcomeOnboarding");
+  if (!overlay || overlay.dataset.gridlyWelcomeBound === "1") return;
+  overlay.dataset.gridlyWelcomeBound = "1";
+  els.gridlyWelcomeBackBtn?.addEventListener("click", () => renderGridlyWelcomeStep(gridlyWelcomeCurrentStep - 1));
+  els.gridlyWelcomeNextBtn?.addEventListener("click", () => renderGridlyWelcomeStep(gridlyWelcomeCurrentStep + 1));
+  els.gridlyWelcomeFinishBtn?.addEventListener("click", () => closeGridlyWelcomeOnboarding({ persist: true, source: "finish" }));
+  [els.gridlyWelcomeSkipBtn, els.gridlyWelcomeSkipTopBtn, els.gridlyWelcomeBackdrop].forEach((button) => {
+    button?.addEventListener("click", () => closeGridlyWelcomeOnboarding({ persist: true, source: "skip" }));
+  });
+  els.gridlyWelcomeSetHomeBtn?.addEventListener("click", () => {
+    closeGridlyWelcomeOnboarding({ persist: true, restoreFocus: false, source: "set_home" });
+    openGridlySettingsSavedPlaceAction("edit_home", "home", "welcome_onboarding");
+  });
+  els.gridlyWelcomeSetWorkBtn?.addEventListener("click", () => {
+    closeGridlyWelcomeOnboarding({ persist: true, restoreFocus: false, source: "set_work" });
+    openGridlySettingsSavedPlaceAction("edit_work", "work", "welcome_onboarding");
+  });
+  els.gridlyWelcomeOpenSettingsBtn?.addEventListener("click", () => {
+    closeGridlyWelcomeOnboarding({ persist: true, restoreFocus: false, source: "open_settings" });
+    openGridlySurface("settings", () => openSettingsModal());
+  });
+  els.gridlyWelcomeEnableLocationBtn?.addEventListener("click", requestGridlyWelcomeLocation);
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    const isOpen = overlay && !overlay.hidden;
+    if (!isOpen) return;
+    closeGridlyWelcomeOnboarding({ persist: true, source: "escape" });
+  });
 }
 function openModal(modalEl, opener = null) {
   if (!modalEl) return;
@@ -31354,6 +31486,8 @@ function bindEvents() {
   els.saveSmartAlertsBtn?.addEventListener("click", saveSmartAlertsPreferences);
   els.closeSmartAlertsModalBtn?.addEventListener("click", closeSmartAlertsModal);
   els.closeSettingsModalBtn?.addEventListener("click", () => closeGridlySurface("settings"));
+  els.settingsReplaySetupBtn?.addEventListener("click", () => openGridlyWelcomeOnboarding({ source: "settings_replay", opener: els.settingsReplaySetupBtn }));
+  bindGridlyWelcomeOnboarding();
   bindGridlySettingsPreferences();
   if (els.mobileSaveRouteBtn) {
     saveButtonHandlerAttached = true;
@@ -35327,6 +35461,40 @@ function openGridlySettingsSavedPlaceAction(action = "", type = "manage", source
   if (typeof openGridlySurface === "function") openGridlySurface("route", openHandler);
   else openHandler();
   return true;
+}
+
+function gridlyWelcomeOnboardingAudit() {
+  const hasDocument = typeof document !== "undefined";
+  const overlay = hasDocument ? document.getElementById("gridlyWelcomeOnboarding") : null;
+  const currentStepNode = hasDocument ? document.querySelector("[data-gridly-welcome-step].is-active") : null;
+  const stepNodes = hasDocument ? Array.from(document.querySelectorAll("[data-gridly-welcome-step]")) : [];
+  const replaySetupFound = hasDocument ? Boolean(
+    document.getElementById("settingsReplaySetupBtn") ||
+    document.querySelector('[data-v2-action="settings-replay-setup"]')
+  ) : false;
+  const controlSelectors = [
+    "#gridlyWelcomeBackBtn",
+    "#gridlyWelcomeNextBtn",
+    "#gridlyWelcomeSkipBtn",
+    "#gridlyWelcomeFinishBtn"
+  ];
+  const controlsFound = hasDocument ? controlSelectors.every((selector) => Boolean(document.querySelector(selector))) : false;
+  return {
+    onboardingDomFound: Boolean(overlay),
+    welcomeSeen: gridlySafeLocalStorageGet(GRIDLY_WELCOME_SEEN_STORAGE_KEY) === "yes",
+    currentStep: currentStepNode ? Number(currentStepNode.dataset.gridlyWelcomeStep) + 1 : gridlyWelcomeCurrentStep + 1,
+    totalSteps: stepNodes.length || GRIDLY_WELCOME_TOTAL_STEPS,
+    replaySetupFound,
+    controlsFound,
+    canOpen: typeof openGridlyWelcomeOnboarding === "function" && Boolean(overlay),
+    canClose: typeof closeGridlyWelcomeOnboarding === "function" && Boolean(overlay),
+    persistenceKey: GRIDLY_WELCOME_SEEN_STORAGE_KEY,
+    protectedSystemsChanged: false
+  };
+}
+
+if (typeof window !== "undefined") {
+  window.gridlyWelcomeOnboardingAudit = gridlyWelcomeOnboardingAudit;
 }
 
 
@@ -43594,7 +43762,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           </div>
           <p class="settings-placeholder-note">Theme and Text Size apply immediately and are saved locally.</p>
         </section>
-        <section class="settings-modal-section" data-gridly-about><h3>About Gridly</h3><p><strong>${GRIDLY_APP_VERSION_LABEL}</strong><br>${GRIDLY_APP_BUILD_LABEL}</p><button class="gridly-v2-tile" data-v2-action="settings-feedback-placeholder" type="button">Send Feedback</button><p class="settings-placeholder-note" data-v2-settings-status>Settings saved locally.</p></section>
+        <section class="settings-modal-section" data-gridly-about><h3>About Gridly</h3><p><strong>${GRIDLY_APP_VERSION_LABEL}</strong><br>${GRIDLY_APP_BUILD_LABEL}</p><button class="gridly-v2-tile" data-v2-action="settings-replay-setup" type="button">Replay Setup</button><button class="gridly-v2-tile" data-v2-action="settings-feedback-placeholder" type="button">Send Feedback</button><p class="settings-placeholder-note" data-v2-settings-status>Settings saved locally.</p></section>
       </div>`;
   }
 
@@ -44466,6 +44634,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       "settings-alert-preferences": () => triggerV2DockAdapter("settings-open"),
       "settings-route-preferences": () => triggerV2DockAdapter("settings-open"),
       "settings-app-preferences": () => triggerV2DockAdapter("settings-open"),
+      "settings-replay-setup": () => openGridlyWelcomeOnboarding({ source: "portrait_v2_settings_replay" }),
       "settings-feedback-placeholder": () => setConfirmation("Feedback entry point is a placeholder for this phase.", "success"),
       "report-cancel": () => closePortraitV2Sheet(),
       "close": () => closePortraitV2Sheet(),
@@ -44500,7 +44669,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         "report-tap-map",
         "route-edit-home-open",
         "route-edit-work-open",
-        "route-manage-places-open"
+        "route-manage-places-open",
+        "settings-replay-setup"
       ].includes(canonicalAction);
       const shouldKeepSheetOpen = canonicalAction === "report-select-hazard";
       if (!shouldKeepSheetOpen && !actionManagesOwnSurface) closePortraitV2Sheet();

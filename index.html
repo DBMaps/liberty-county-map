@@ -771,6 +771,7 @@
       <section class="settings-modal-section" id="settingsAboutSection" data-gridly-about>
         <h3>About Gridly</h3>
         <p><strong>Gridly V198</strong><br><span id="settingsBuildValue">Build 1710</span></p>
+        <button type="button" class="secondary-btn compact-btn" id="settingsReplaySetupBtn">Replay Setup</button>
         <button type="button" class="secondary-btn compact-btn" id="settingsFeedbackBtn">Send Feedback</button>
         <p class="settings-placeholder-note" id="settingsFeedbackStatus" aria-live="polite">Feedback entry point is a placeholder for this phase.</p>
       </section>
@@ -781,6 +782,70 @@
   <footer class="app-footer">
     Gridly Beta • Liberty County
   </footer>
+
+  <div class="gridly-welcome-overlay" id="gridlyWelcomeOnboarding" hidden aria-hidden="true">
+    <div class="gridly-welcome-backdrop" id="gridlyWelcomeBackdrop"></div>
+    <section class="gridly-welcome-sheet" role="dialog" aria-modal="true" aria-labelledby="gridlyWelcomeTitle" aria-describedby="gridlyWelcomeCopy">
+      <header class="gridly-welcome-header">
+        <div class="gridly-welcome-brand">
+          <span class="gridly-welcome-mark" aria-hidden="true"><span></span></span>
+          <img src="assets/gridly-logo-primary.png" alt="Gridly logo" />
+        </div>
+        <button class="gridly-welcome-skip" type="button" id="gridlyWelcomeSkipTopBtn">Skip</button>
+      </header>
+
+      <div class="gridly-welcome-progress" aria-label="Setup progress">
+        <span data-gridly-welcome-dot="0"></span>
+        <span data-gridly-welcome-dot="1"></span>
+        <span data-gridly-welcome-dot="2"></span>
+        <span data-gridly-welcome-dot="3"></span>
+        <span data-gridly-welcome-dot="4"></span>
+      </div>
+
+      <div class="gridly-welcome-steps" id="gridlyWelcomeSteps">
+        <article class="gridly-welcome-step" data-gridly-welcome-step="0">
+          <p class="eyebrow">Welcome</p>
+          <h2 id="gridlyWelcomeTitle">Welcome to Gridly</h2>
+          <p class="gridly-welcome-tagline">Know before you go.</p>
+          <p id="gridlyWelcomeCopy">Gridly watches nearby crossings, road hazards, and route delays so you can make better decisions before you leave.</p>
+        </article>
+        <article class="gridly-welcome-step" data-gridly-welcome-step="1" hidden>
+          <p class="eyebrow">Daily routes</p>
+          <h2>Set your places</h2>
+          <p>Add Home and Work so Gridly can watch your daily route. You can skip this now and add them later.</p>
+          <div class="gridly-welcome-action-row">
+            <button class="secondary-btn" type="button" id="gridlyWelcomeSetHomeBtn">Set Home</button>
+            <button class="secondary-btn" type="button" id="gridlyWelcomeSetWorkBtn">Set Work</button>
+          </div>
+        </article>
+        <article class="gridly-welcome-step" data-gridly-welcome-step="2" hidden>
+          <p class="eyebrow">Preferences</p>
+          <h2>Choose your alerts</h2>
+          <p>Pick which alerts matter most: rail crossings, road hazards, route delays, and community activity.</p>
+          <button class="secondary-btn" type="button" id="gridlyWelcomeOpenSettingsBtn">Open Settings</button>
+        </article>
+        <article class="gridly-welcome-step" data-gridly-welcome-step="3" hidden>
+          <p class="eyebrow">Nearby awareness</p>
+          <h2>Enable location</h2>
+          <p>Location helps Gridly show nearby reports and route impacts. Gridly will only ask when you choose to enable it.</p>
+          <button class="primary-btn" type="button" id="gridlyWelcomeEnableLocationBtn">Enable Location</button>
+          <p class="gridly-welcome-status" id="gridlyWelcomeLocationStatus" aria-live="polite"></p>
+        </article>
+        <article class="gridly-welcome-step" data-gridly-welcome-step="4" hidden>
+          <p class="eyebrow">Community reports</p>
+          <h2>Report what you see</h2>
+          <p>Drivers can quickly report blocked crossings, road hazards, and cleared conditions to help the whole county move better.</p>
+        </article>
+      </div>
+
+      <footer class="gridly-welcome-footer">
+        <button class="secondary-btn" type="button" id="gridlyWelcomeBackBtn">Back</button>
+        <button class="secondary-btn" type="button" id="gridlyWelcomeSkipBtn">Skip</button>
+        <button class="primary-btn" type="button" id="gridlyWelcomeNextBtn">Next</button>
+        <button class="primary-btn" type="button" id="gridlyWelcomeFinishBtn" hidden>Start Using Gridly</button>
+      </footer>
+    </section>
+  </div>
 
   <nav class="mobile-bottom-nav" aria-label="Mobile app navigation">
     <button class="mobile-bottom-nav-btn nav-btn active" data-section="dashboard" type="button">Today</button>
