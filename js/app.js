@@ -9745,6 +9745,8 @@ let lastMobileReportSubmitDebug = {
   snappedCoords: null,
   activeSubmitCoords: null,
   snapComplete: false,
+  coordinateSourceUsed: "",
+  placementCoordinateReason: "",
   insertPayloadPreview: null,
   supabaseInsertStarted: false,
   supabaseInsertSucceeded: false,
@@ -24494,7 +24496,20 @@ function renderUnifiedIncidents(reason = "auto") {
     });
 
     try {
-      L.marker([lat, lng], { icon, incidentId: String(incident?.id || incident?.report_id || incident?.key || ""), incidentSource: String(incident?.source || "") })
+      L.marker([lat, lng], {
+        icon,
+        incidentId: String(incident?.id || incident?.report_id || incident?.key || ""),
+        incidentSource: String(incident?.source || ""),
+        gridlyPlacementAudit: {
+          incidentId: String(incident?.id || incident?.report_id || incident?.key || ""),
+          coordinateSourceUsed: incident?.coordinateSourceUsed || "unified_incident_lat_lng",
+          renderedMarkerCoordinate: { lat, lng },
+          reportCaptureCoordinate: incident?.reportCaptureCoordinate || null,
+          storedReportCoordinate: incident?.storedReportCoordinate || null,
+          activeHazardCoordinate: incident?.activeHazardCoordinate || null,
+          unifiedIncidentCoordinate: { lat, lng }
+        }
+      })
         .bindPopup(buildUnifiedIncidentPopup(incident), { maxWidth: 340 })
         .addTo(unifiedIncidentLayer);
     } catch (error) {
@@ -24715,6 +24730,10 @@ function getLiveHazardIncidents() {
         key: incident.key,
         count: sorted.length,
         latestReport: sorted[0],
+        reports: sorted,
+        representativeCoordinateReason: sorted.length > 1
+          ? "latest_report_coordinate_within_rounded_0.001_degree_hazard_cluster"
+          : "single_report_coordinate",
         oldestMinutes: Math.max(...sorted.map((r) => r.minutesAgo)),
         newestMinutes: Math.min(...sorted.map((r) => r.minutesAgo))
       };
@@ -25182,6 +25201,141 @@ function normalizeUnifiedIncident(base) {
   return { ...base, updated_at: base.updated_at || base.created_at, confidence: base.confidence || "community", reports_count: Number(base.reports_count || 1) };
 }
 
+
+function gridlyCoordinateFromRecord(record = {}) {
+  const lat = Number(record?.lat ?? record?.latitude ?? record?.rawLat);
+  const lng = Number(record?.lng ?? record?.lon ?? record?.longitude ?? record?.rawLng);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  return { lat, lng };
+}
+
+function gridlyCoordinateDeltaMeters(a, b) {
+  if (!a || !b) return null;
+  const lat1 = Number(a.lat);
+  const lng1 = Number(a.lng);
+  const lat2 = Number(b.lat);
+  const lng2 = Number(b.lng);
+  if (![lat1, lng1, lat2, lng2].every(Number.isFinite)) return null;
+  const earthRadiusMeters = 6371000;
+  const toRad = (value) => value * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const h = Math.sin(dLat / 2) ** 2
+    + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return Math.round(earthRadiusMeters * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h)) * 10) / 10;
+}
+
+function gridlyFindRenderedMarkerPlacementAudit(incidentId) {
+  const layers = typeof unifiedIncidentLayer?.getLayers === "function" ? unifiedIncidentLayer.getLayers() : [];
+  const targetId = String(incidentId || "");
+  for (const layer of layers) {
+    const audit = layer?.options?.gridlyPlacementAudit || null;
+    const layerIncidentId = String(audit?.incidentId || layer?.options?.incidentId || "");
+    if (targetId && layerIncidentId && layerIncidentId !== targetId) continue;
+    const latLng = typeof layer?.getLatLng === "function" ? layer.getLatLng() : null;
+    const renderedMarkerCoordinate = gridlyCoordinateFromRecord(latLng) || audit?.renderedMarkerCoordinate || null;
+    return { ...(audit || {}), renderedMarkerCoordinate };
+  }
+  return null;
+}
+
+function gridlyClassifyPlacementRisk(deltaMeters, details = {}) {
+  if (details.snappingApplied && Number(deltaMeters) > 8) return "inaccurate_due_to_snapping";
+  if (details.dedupeApplied && Number(deltaMeters) > 8) return "inaccurate_due_to_dedupe";
+  if (details.clusteringApplied && Number(deltaMeters) > 8) return "inaccurate_due_to_clustering";
+  if (Number(deltaMeters) > 15) return "inaccurate_due_to_marker_coordinate_delta";
+  if (Number(deltaMeters) > 5) return "acceptable_small_delta";
+  return "correct_or_near_tap";
+}
+
+function gridlyHazardPlacementAccuracyAudit() {
+  const activeHazardRows = Array.isArray(activeHazards) ? activeHazards : [];
+  const liveHazardIncidents = typeof getLiveHazardIncidents === "function" ? getLiveHazardIncidents() : [];
+  const unifiedIncidents = typeof getUnifiedIncidents === "function" ? getUnifiedIncidents() : [];
+  const roadUnifiedIncidents = unifiedIncidents.filter((incident) => String(incident?.id || "").startsWith("road-"));
+  const latestUnified = roadUnifiedIncidents[0] || null;
+  const latestActiveHazard = activeHazardRows[0] || null;
+  const renderedAudit = latestUnified ? gridlyFindRenderedMarkerPlacementAudit(latestUnified.id) : null;
+  const reportCaptureCoordinate = gridlyCoordinateFromRecord(latestUnified?.reportCaptureCoordinate)
+    || gridlyCoordinateFromRecord(latestActiveHazard?.reportCaptureCoordinate || latestActiveHazard?.originalTapCoords)
+    || gridlyCoordinateFromRecord(lastMobileReportSubmitDebug.originalTapCoords);
+  const storedReportCoordinate = gridlyCoordinateFromRecord(latestUnified?.storedReportCoordinate)
+    || gridlyCoordinateFromRecord(latestActiveHazard)
+    || gridlyCoordinateFromRecord(lastMobileReportSubmitDebug.insertPayloadPreview);
+  const activeHazardCoordinate = gridlyCoordinateFromRecord(latestUnified?.activeHazardCoordinate)
+    || gridlyCoordinateFromRecord(latestActiveHazard);
+  const unifiedIncidentCoordinate = gridlyCoordinateFromRecord(latestUnified);
+  const renderedMarkerCoordinate = gridlyCoordinateFromRecord(renderedAudit?.renderedMarkerCoordinate) || unifiedIncidentCoordinate;
+  const coordinateDeltaMeters = gridlyCoordinateDeltaMeters(reportCaptureCoordinate || storedReportCoordinate, renderedMarkerCoordinate);
+  const clusteringApplied = Boolean(latestUnified?.clusteringApplied || liveHazardIncidents.some((incident) => Number(incident?.count || 0) > 1));
+  const dedupeApplied = Boolean(lastMarkerAuditDebug?.duplicateIncidentCount > 0);
+  const snappingApplied = Boolean(lastRoadSnapDebug?.nearestRoadFound || latestUnified?.snappingApplied);
+  const roundingApplied = true;
+  const coordinateSourceUsed = latestUnified?.coordinateSourceUsed
+    || lastMobileReportSubmitDebug.coordinateSourceUsed
+    || "stored_report_lat_lng";
+  const sampleIncidents = roadUnifiedIncidents.slice(0, 8).map((incident) => {
+    const rendered = gridlyFindRenderedMarkerPlacementAudit(incident.id);
+    const capture = gridlyCoordinateFromRecord(incident.reportCaptureCoordinate) || gridlyCoordinateFromRecord(lastMobileReportSubmitDebug.originalTapCoords);
+    const unified = gridlyCoordinateFromRecord(incident);
+    const renderedCoordinate = gridlyCoordinateFromRecord(rendered?.renderedMarkerCoordinate) || unified;
+    return {
+      id: incident.id,
+      type: incident.report_type || incident.type,
+      reportCaptureCoordinate: capture,
+      storedReportCoordinate: gridlyCoordinateFromRecord(incident.storedReportCoordinate),
+      activeHazardCoordinate: gridlyCoordinateFromRecord(incident.activeHazardCoordinate),
+      unifiedIncidentCoordinate: unified,
+      renderedMarkerCoordinate: renderedCoordinate,
+      coordinateDeltaMeters: gridlyCoordinateDeltaMeters(capture || unified, renderedCoordinate),
+      coordinateSourceUsed: incident.coordinateSourceUsed || "stored_report_lat_lng",
+      clusteringApplied: Boolean(incident.clusteringApplied),
+      representativeCoordinateReason: incident.representativeCoordinateReason || "latest_report_coordinate"
+    };
+  });
+  const placementRiskLevel = gridlyClassifyPlacementRisk(coordinateDeltaMeters, { snappingApplied, clusteringApplied, dedupeApplied });
+  return {
+    reportCaptureCoordinate,
+    storedReportCoordinate,
+    activeHazardCoordinate,
+    unifiedIncidentCoordinate,
+    renderedMarkerCoordinate,
+    coordinateDeltaMeters,
+    coordinateSourceUsed,
+    roundingApplied,
+    snappingApplied,
+    clusteringApplied,
+    dedupeApplied,
+    representativeCoordinateReason: latestUnified?.representativeCoordinateReason || "latest road unified incident coordinate",
+    sampleIncidents,
+    placementRiskLevel,
+    recommendations: [
+      "Tap-map road hazards now submit and render the raw tap coordinate after road proximity validation, so OSRM nearest should not move markers across divided roadways.",
+      "getHazardClusterKey still rounds to 0.001 degrees for grouping; clustered markers use the latest report coordinate as representative.",
+      "Directional carriageway/lane-level distinction is not implemented; avoid lane-level snapping unless a future road-segment model can preserve side-of-road intent.",
+      "Rail crossing markers and rail reporting coordinates are intentionally excluded from this audit."
+    ],
+    trace: [
+      "Report Hazard -> Tap Map Location captures Leaflet event.latlng as reportCaptureCoordinate.",
+      "snapHazardToRoad validates nearby road with OSRM nearest but no longer replaces the submitted marker coordinate.",
+      "createSharedHazardReport writes the same reports payload shape with lat/lng set to the preserved tap coordinate.",
+      "normalizeReports maps reports.lat/lng into activeHazards.",
+      "getLiveHazardIncidents groups road hazards by type + lat/lng rounded to 3 decimals and selects the newest report as representative.",
+      "getUnifiedIncidents copies that representative lat/lng into the road unified incident.",
+      "renderUnifiedIncidents places the Leaflet marker at the unified incident lat/lng with a centered iconAnchor; no marker offset is applied."
+    ],
+    lastRoadSnapDebug: { ...lastRoadSnapDebug },
+    lastMobileReportSubmitDebug: { ...lastMobileReportSubmitDebug },
+    markerSourceUsed: lastMarkerAuditDebug?.markerSourceUsed || lastMarkerAuditDebug?.lastMarkerRenderResult?.selectedSourceName || "unknown"
+  };
+}
+
+if (typeof window !== "undefined") {
+  window.gridlyHazardPlacementAccuracyAudit = gridlyHazardPlacementAccuracyAudit;
+}
+exposeGridlyAuditHelper("gridlyHazardPlacementAccuracyAudit", gridlyHazardPlacementAccuracyAudit);
+
+
 function getUnifiedIncidents() {
   const railIncidents = getConsolidatedIncidents().map((incident) => {
     const latest = incident.latestReport;
@@ -25210,6 +25364,9 @@ function getUnifiedIncidents() {
 
   const roadIncidents = getLiveHazardIncidents().map((incident) => {
     const latest = incident.latestReport;
+    const activeHazardCoordinate = gridlyCoordinateFromRecord(latest);
+    const reportCaptureCoordinate = gridlyCoordinateFromRecord(latest?.reportCaptureCoordinate || latest?.originalTapCoords);
+    const storedReportCoordinate = activeHazardCoordinate;
     return normalizeUnifiedIncident({
       id: `road-${incident.key}`,
       type: mapRoadHazardType(latest.type),
@@ -25220,6 +25377,14 @@ function getUnifiedIncidents() {
       description: latest.detail,
       lat: latest.lat ?? latest.latitude ?? latest.rawLat,
       lng: latest.lng ?? latest.lon ?? latest.longitude ?? latest.rawLng,
+      reportCaptureCoordinate,
+      storedReportCoordinate,
+      activeHazardCoordinate,
+      coordinateSourceUsed: latest.coordinateSourceUsed || "stored_report_lat_lng",
+      snappingApplied: Boolean(latest.snappedRoadCoordinate),
+      snappedRoadCoordinate: latest.snappedRoadCoordinate || null,
+      clusteringApplied: incident.count > 1,
+      representativeCoordinateReason: incident.representativeCoordinateReason,
       area: latest.location_name || latest.area || latest.city || incident.location_name || incident.area || incident.city || "",
       created_at: latest.submittedAt,
       confidence: latest.confidence,
@@ -26294,11 +26459,13 @@ async function handleHazardPlacementMapClick(event) {
   }
   pushTapMapTrace("snap_succeeded", { lat: snapped.lat, lng: snapped.lng });
   lastMobileReportSubmitDebug.snappedCoords = { lat: snapped.lat, lng: snapped.lng };
-  lastMobileReportSubmitDebug.activeSubmitCoords = { lat: snapped.lat, lng: snapped.lng };
+  lastMobileReportSubmitDebug.activeSubmitCoords = { lat, lng };
   lastMobileReportSubmitDebug.snapComplete = true;
+  lastMobileReportSubmitDebug.coordinateSourceUsed = "raw_tap_after_road_proximity_validation";
+  lastMobileReportSubmitDebug.placementCoordinateReason = "Tap-map road hazards preserve the user tap coordinate for marker placement; OSRM nearest is diagnostic/validation only to avoid divided-road carriageway jumps.";
   lastMobileReportSubmitDebug.lastSubmitAttempt = "snap_completed";
-  pushTapMapTrace("submit_started", { hazardType: selectedType });
-  const submitted = await createSharedHazardReport(selectedType, snapped.lat, snapped.lng, "tap map placement", "", snapped.originalTapCoords);
+  pushTapMapTrace("submit_started", { hazardType: selectedType, coordinateSourceUsed: lastMobileReportSubmitDebug.coordinateSourceUsed });
+  const submitted = await createSharedHazardReport(selectedType, lat, lng, "tap map placement", "", snapped.originalTapCoords);
   if (!submitted) {
     const message = reportingState.lastReportError || lastMobileReportSubmitDebug.lastSubmitError || "Hazard report was not submitted.";
     updateReportingState({ placementModeActive: true });
@@ -26319,9 +26486,9 @@ async function handleHazardPlacementMapClick(event) {
     L.circleMarker([lat, lng], { radius: 4, color: "#8fb6ff", weight: 1, fillOpacity: 0.3, opacity: 0.8 })
       .addTo(unifiedIncidentLayer)
       .bindTooltip("Tap", { permanent: false, direction: "top" });
-    map.flyTo([snapped.lat, snapped.lng], Math.max(map.getZoom(), 15), { duration: 0.35 });
+    map.flyTo([lat, lng], Math.max(map.getZoom(), 15), { duration: 0.35 });
   }
-  setConfirmation("Snapped to roadway", "success");
+  setConfirmation("Hazard placed at tapped roadway location", "success");
   resetQuickHazardReportState();
   closeHazardPanel();
   pushTapMapTrace("placement_mode_cleared_restored", { outcome: "success" });
@@ -26344,7 +26511,8 @@ async function snapHazardToRoad(lat, lng, options = {}) {
     osrmNearestStatus: null,
     regionContext,
     routeImpactDetected: false,
-    hazardPlacementUsesCanonicalSnap: true,
+    hazardPlacementUsesCanonicalSnap: false,
+    hazardPlacementUsesTapCoordinate: true,
     lastHazardPlacementSource: options?.source || "unknown",
     lastHazardSnapResult: "pending",
     rawHazardCoordinatesBlockedWhenInvalid: false
@@ -26460,6 +26628,12 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     lastMobileReportSubmitDebug.supabaseInsertSucceeded = true;
     const localHazardRows = normalizeReports([{ ...row, created_at: new Date().toISOString() }]);
     const localHazardEntry = localHazardRows[0] || null;
+    if (localHazardEntry && originalTapCoords) {
+      localHazardEntry.originalTapCoords = { ...originalTapCoords };
+      localHazardEntry.reportCaptureCoordinate = { ...originalTapCoords };
+      localHazardEntry.coordinateSourceUsed = "raw_tap_after_road_proximity_validation";
+      localHazardEntry.snappedRoadCoordinate = lastMobileReportSubmitDebug.snappedCoords ? { ...lastMobileReportSubmitDebug.snappedCoords } : null;
+    }
     if (localHazardEntry) {
       gridlyCaptureHazardHistoryEvent(localHazardEntry, { sourceHazards: [localHazardEntry, ...(Array.isArray(activeHazards) ? activeHazards : [])] });
       activeHazards = [localHazardEntry, ...activeHazards.filter((hazard) => hazard.crossingId !== localHazardEntry.crossingId)];
