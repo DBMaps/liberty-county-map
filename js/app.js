@@ -4319,6 +4319,10 @@ function gridlyIsActiveHazardRecord(hazard = {}) {
   const rawLifecycleState = String(hazard?.lifecycleState || hazard?.lifecycle || hazard?.status || "").toLowerCase();
   const type = String(hazard?.type || hazard?.report_type || "").toLowerCase();
   if (hazard?.expired || type === "hazard_cleared" || ["cleared", "expired", "inactive", "historical", "stale"].includes(rawLifecycleState)) return false;
+  if (typeof gridlyRoadHazardLatestLifecycleState === "function") {
+    const latestState = gridlyRoadHazardLatestLifecycleState(hazard, Array.isArray(activeHazards) ? activeHazards : []);
+    if (latestState === "cleared") return false;
+  }
   const resolved = typeof gridlyClassifyHazardLifecycle === "function" ? gridlyClassifyHazardLifecycle(hazard) : null;
   if (!resolved?.lifecycleState) return true;
   return ["ACTIVE", "NEEDS_CONFIRMATION", "CONFIRMED"].includes(resolved.lifecycleState);
@@ -17950,7 +17954,8 @@ async function loadSharedReports(reason = "manual") {
     gridlyDevCleanupSharedSuppressionState.lastSuppressedCount = 0;
     const visibleNormalized = normalized.filter((report) => !gridlyShouldSuppressSharedReportDuringDevCleanup(report, reason));
 
-    activeHazards = visibleNormalized.filter((report) => report.reportKind === "hazard");
+    const visibleHazards = visibleNormalized.filter((report) => report.reportKind === "hazard");
+    activeHazards = gridlyFilterRoadHazardsByLatestLifecycle(visibleHazards, Date.now());
     activeReports = visibleNormalized.filter((report) => report.reportKind !== "hazard");
     gridlyCaptureHistoryFromReports(visibleNormalized, { source: `loadSharedReports:${reason}` });
     recordGridlyActiveLocationLifecycleEvent("loadSharedReports:activeCollectionsUpdated", {
@@ -18020,6 +18025,11 @@ function normalizeReports(rows) {
     const isHazard =
   Object.prototype.hasOwnProperty.call(HAZARD_TYPES, reportType) ||
   reportType === "hazard_cleared";
+    const clearedHazardType = reportType === "hazard_cleared" ? gridlyInferRoadClearedHazardType({
+      ...row,
+      type: "hazard_cleared",
+      report_type: "hazard_cleared"
+    }) : "";
     const copy =
   reportType === "hazard_cleared"
     ? {
@@ -18040,6 +18050,7 @@ function normalizeReports(rows) {
       lat: Number(row.lat),
       lng: Number(row.lng),
       type: reportType,
+      clearedHazardType,
       reportKind: isHazard ? "hazard" : "crossing",
       icon: isHazard ? copy.icon : "",
       severity: row.severity || copy.severity,
@@ -25475,6 +25486,109 @@ function gridlyIsRoadClearedHazardRecord(hazard = {}) {
   return String(hazard?.type || hazard?.report_type || "").toLowerCase() === "hazard_cleared";
 }
 
+function gridlyInferRoadClearedHazardType(hazard = {}) {
+  const explicitType = String(hazard?.clearedHazardType || hazard?.originalHazardType || hazard?.hazardType || hazard?.hazard_type || "").trim().toLowerCase();
+  if (explicitType && explicitType !== "hazard_cleared") return gridlyNormalizeHazardType({ type: explicitType });
+
+  const recordType = String(hazard?.type || hazard?.report_type || "").trim().toLowerCase();
+  if (recordType && recordType !== "hazard_cleared") return gridlyNormalizeHazardType({ type: recordType });
+
+  const text = [hazard?.detail, hazard?.title, hazard?.crossingName, hazard?.crossing_name, hazard?.label]
+    .map((value) => String(value || "").toLowerCase())
+    .join(" ");
+  const normalizedText = text.replace(/[^a-z0-9]+/g, " ").trim();
+  for (const [type, copy] of Object.entries(HAZARD_TYPES || {})) {
+    if (type === "rail_blockage_delay" || type === "rail_issue") continue;
+    const typeText = String(type || "").replace(/_/g, " ");
+    const labelText = String(copy?.label || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+    const labelLead = labelText.split(" ")[0] || "";
+    if ((typeText && normalizedText.includes(typeText)) || (labelText && normalizedText.includes(labelText)) || (labelLead && labelLead.length >= 4 && normalizedText.includes(labelLead))) {
+      return gridlyNormalizeHazardType({ type });
+    }
+  }
+  return "other_hazard";
+}
+
+function gridlyRoadHazardLifecycleMatchType(hazard = {}) {
+  return gridlyIsRoadClearedHazardRecord(hazard) ? gridlyInferRoadClearedHazardType(hazard) : gridlyNormalizeHazardType(hazard);
+}
+
+function gridlyRoadHazardIncidentKey(hazard = {}) {
+  const value = hazard?.incidentKey || hazard?.incident_key || hazard?.incidentId || hazard?.incident_id || hazard?.groupKey || hazard?.group_key || hazard?.clusterId || hazard?.cluster_id;
+  const text = String(value || "").trim();
+  return text ? `incident:${text.toLowerCase()}` : "";
+}
+
+function gridlyRoadHazardRoundedCoordinateKey(hazard = {}, decimals = GRIDLY_ROAD_CLUSTER_ROUNDING_DECIMALS) {
+  const coordinate = gridlyRoadClusterCoordinateFromRecord(hazard);
+  const lat = Number(coordinate?.lat ?? hazard?.lat ?? hazard?.latitude ?? hazard?.rawLat);
+  const lng = Number(coordinate?.lng ?? hazard?.lng ?? hazard?.lon ?? hazard?.longitude ?? hazard?.rawLng);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return "";
+  const safeDecimals = Number.isFinite(Number(decimals)) ? Number(decimals) : GRIDLY_ROAD_CLUSTER_ROUNDING_DECIMALS;
+  return `${lat.toFixed(safeDecimals)}-${lng.toFixed(safeDecimals)}`;
+}
+
+function gridlyRoadHazardLifecycleMatchKeys(hazard = {}) {
+  const keys = new Set();
+  const incidentKey = gridlyRoadHazardIncidentKey(hazard);
+  if (incidentKey) keys.add(incidentKey);
+
+  const hazardType = gridlyRoadHazardLifecycleMatchType(hazard);
+  const explicitRoadCluster = String(hazard?.roadClusterKey || hazard?.road_cluster_key || hazard?.clusterKey || hazard?.cluster_key || "").trim();
+  if (explicitRoadCluster) keys.add(`roadcluster:${explicitRoadCluster.toLowerCase()}`);
+
+  const coordinateKey = gridlyRoadHazardRoundedCoordinateKey(hazard, GRIDLY_ROAD_CLUSTER_ROUNDING_DECIMALS);
+  if (coordinateKey) {
+    keys.add(`roadcluster:${hazardType}-${coordinateKey}`);
+    keys.add(`coordtype:${hazardType}-${coordinateKey}`);
+  }
+
+  const previousCoordinateKey = gridlyRoadHazardRoundedCoordinateKey(hazard, GRIDLY_ROAD_CLUSTER_PREVIOUS_ROUNDING_DECIMALS);
+  if (previousCoordinateKey) keys.add(`coordtype:${hazardType}-${previousCoordinateKey}`);
+
+  return [...keys];
+}
+
+function gridlyBuildRoadHazardLifecycleIndex(hazards = activeHazards) {
+  const index = new Map();
+  gridlyDiagnosticArray(hazards).forEach((hazard) => {
+    if (!hazard || hazard?.expired) return;
+    const type = String(hazard?.type || hazard?.report_type || "").toLowerCase();
+    const isRoadHazard = hazard?.reportKind === "hazard" || type === "hazard_cleared" || Object.prototype.hasOwnProperty.call(HAZARD_TYPES, type);
+    if (!isRoadHazard) return;
+    const eventTime = gridlyRoadClusterReportTimeMs(hazard);
+    if (!Number.isFinite(eventTime) || eventTime <= 0) return;
+    const state = gridlyIsRoadClearedHazardRecord(hazard) ? "cleared" : "active";
+    gridlyRoadHazardLifecycleMatchKeys(hazard).forEach((key) => {
+      const previous = index.get(key);
+      const previousTime = Number(previous?.eventTime) || 0;
+      if (!previous || eventTime > previousTime || (eventTime === previousTime && state === "cleared")) {
+        index.set(key, { hazard, state, eventTime, key });
+      }
+    });
+  });
+  return index;
+}
+
+function gridlyRoadHazardLatestLifecycleState(hazard = {}, hazards = activeHazards) {
+  const eventTime = gridlyRoadClusterReportTimeMs(hazard);
+  const keys = gridlyRoadHazardLifecycleMatchKeys(hazard);
+  if (!keys.length) return gridlyIsRoadClearedHazardRecord(hazard) ? "cleared" : "active";
+  const lifecycleIndex = gridlyBuildRoadHazardLifecycleIndex(hazards);
+  const latest = keys
+    .map((key) => lifecycleIndex.get(key))
+    .filter(Boolean)
+    .sort((a, b) => Number(b.eventTime || 0) - Number(a.eventTime || 0))[0];
+  if (!latest) return gridlyIsRoadClearedHazardRecord(hazard) ? "cleared" : "active";
+  if (Number.isFinite(eventTime) && eventTime > Number(latest.eventTime || 0)) return gridlyIsRoadClearedHazardRecord(hazard) ? "cleared" : "active";
+  return latest.state;
+}
+
+function gridlyRoadClearSupersededByNewerActive(hazard = {}, hazards = activeHazards) {
+  if (!gridlyIsRoadClearedHazardRecord(hazard)) return false;
+  return gridlyRoadHazardLatestLifecycleState(hazard, hazards) === "active";
+}
+
 function gridlyRoadClearedAgeMinutes(hazard = {}, nowMs = Date.now()) {
   const submittedAtMs = new Date(hazard?.submittedAt || hazard?.created_at || hazard?.createdAt || hazard?.updated_at || 0).getTime();
   if (!Number.isFinite(submittedAtMs) || submittedAtMs <= 0 || submittedAtMs > nowMs) return null;
@@ -25490,24 +25604,37 @@ function gridlyIsRecentlyClearedRoadHazardRecord(hazard = {}, nowMs = Date.now()
 function gridlyBuildRecentRoadClearIndex(hazards = activeHazards, nowMs = Date.now()) {
   return gridlyDiagnosticArray(hazards).reduce((acc, hazard) => {
     if (!gridlyIsRecentlyClearedRoadHazardRecord(hazard, nowMs)) return acc;
-    const key = gridlyRoadClearedCoordinateKey(hazard);
-    if (!key) return acc;
-    const previous = acc.get(key);
-    const hazardTime = new Date(hazard?.submittedAt || hazard?.created_at || hazard?.createdAt || 0).getTime();
-    const previousTime = new Date(previous?.submittedAt || previous?.created_at || previous?.createdAt || 0).getTime();
-    if (!previous || hazardTime >= previousTime) acc.set(key, hazard);
+    if (gridlyRoadClearSupersededByNewerActive(hazard, hazards)) return acc;
+    const hazardTime = gridlyRoadClusterReportTimeMs(hazard);
+    gridlyRoadHazardLifecycleMatchKeys(hazard).forEach((key) => {
+      const previous = acc.get(key);
+      const previousTime = gridlyRoadClusterReportTimeMs(previous);
+      if (!previous || hazardTime >= previousTime) acc.set(key, hazard);
+    });
     return acc;
   }, new Map());
 }
 
 function gridlyRoadHazardSuppressedByRecentClear(hazard = {}, recentClearIndex = gridlyBuildRecentRoadClearIndex(), nowMs = Date.now()) {
   if (!hazard || gridlyIsRoadClearedHazardRecord(hazard)) return false;
-  const key = gridlyRoadClearedCoordinateKey(hazard);
-  const clear = key ? recentClearIndex.get(key) : null;
+  const hazardTime = gridlyRoadClusterReportTimeMs(hazard);
+  const clear = gridlyRoadHazardLifecycleMatchKeys(hazard)
+    .map((key) => recentClearIndex.get(key))
+    .filter(Boolean)
+    .sort((a, b) => gridlyRoadClusterReportTimeMs(b) - gridlyRoadClusterReportTimeMs(a))[0] || null;
   if (!clear) return false;
-  const hazardTime = new Date(hazard?.submittedAt || hazard?.created_at || hazard?.createdAt || 0).getTime();
-  const clearTime = new Date(clear?.submittedAt || clear?.created_at || clear?.createdAt || 0).getTime();
+  const clearTime = gridlyRoadClusterReportTimeMs(clear);
   return Number.isFinite(clearTime) && clearTime > 0 && (!Number.isFinite(hazardTime) || clearTime >= hazardTime) && gridlyIsRecentlyClearedRoadHazardRecord(clear, nowMs);
+}
+
+function gridlyFilterRoadHazardsByLatestLifecycle(hazards = activeHazards, nowMs = Date.now()) {
+  const sourceHazards = gridlyDiagnosticArray(hazards);
+  const recentClearIndex = gridlyBuildRecentRoadClearIndex(sourceHazards, nowMs);
+  return sourceHazards.filter((hazard) => {
+    if (gridlyIsRecentlyClearedRoadHazardRecord(hazard, nowMs)) return !gridlyRoadClearSupersededByNewerActive(hazard, sourceHazards);
+    if (hazard?.expired || gridlyIsRoadClearedHazardRecord(hazard)) return false;
+    return !gridlyRoadHazardSuppressedByRecentClear(hazard, recentClearIndex, nowMs);
+  });
 }
 
 function getLiveHazardIncidents() {
@@ -25517,13 +25644,13 @@ function getLiveHazardIncidents() {
 
   activeHazards
     .filter((hazard) => {
-      if (gridlyIsRecentlyClearedRoadHazardRecord(hazard, nowMs)) return true;
+      if (gridlyIsRecentlyClearedRoadHazardRecord(hazard, nowMs)) return !gridlyRoadClearSupersededByNewerActive(hazard, activeHazards);
       if (hazard?.expired || gridlyIsRoadClearedHazardRecord(hazard)) return false;
       return !gridlyRoadHazardSuppressedByRecentClear(hazard, recentClearIndex, nowMs);
     })
     .forEach((hazard) => {
       const key = gridlyIsRoadClearedHazardRecord(hazard)
-        ? `hazard_cleared-${gridlyRoadClearedCoordinateKey(hazard) || getHazardClusterKey(hazard)}`
+        ? `hazard_cleared-${gridlyRoadHazardLifecycleMatchType(hazard)}-${gridlyRoadClearedCoordinateKey(hazard) || gridlyRoadHazardRoundedCoordinateKey(hazard) || getHazardClusterKey(hazard)}`
         : getHazardClusterKey(hazard);
 
       if (!grouped.has(key)) {
@@ -25885,7 +26012,7 @@ function gridlyBuildRoadClearedLifecycleTrace(options = {}) {
     const reportType = String(incident?.report_type || "").toLowerCase();
     return reportType === "hazard_cleared" || (id.startsWith("road-") && !/rail|txdot/.test(source));
   });
-  const alertEligibleRows = roadClearedUnifiedIncidents.filter((incident) => Number(incident?.age_minutes) <= RECENTLY_CLEARED_WINDOW_MINUTES);
+  const alertEligibleRows = roadClearedUnifiedIncidents.filter((incident) => String(incident?.status || "").toLowerCase() === "active");
   const historicalEligibleRows = roadClearedRows.filter((row, index) => gridlyClassifyHazardLifecycleFrameworkRecord({
     record: row,
     sourceKind: "activeHazards",
@@ -25902,8 +26029,8 @@ function gridlyBuildRoadClearedLifecycleTrace(options = {}) {
       sourcePath: [
         "activeHazards receives normalized hazard_cleared rows from loadSharedReports() recent-clear read",
         "getLiveHazardIncidents() keeps hazard_cleared rows inside the recently-cleared window",
-        "getUnifiedIncidents() emits road incidents with status=cleared",
-        "Alerts Recently Cleared filters cleared unified incidents by age_minutes",
+        "getUnifiedIncidents() emits road incidents with status=cleared when the clear is the latest credible lifecycle event",
+        "Alerts keep cleared unified incidents out of active eligibility; Recently Cleared may still read cleared rows by age_minutes",
         "gridlyHazardLifecycleFramework/gridlyHistoricalIntelligenceAudit mark cleared road rows historical-eligible without active treatment"
       ],
       sourceCounts: {
@@ -25936,8 +26063,8 @@ function gridlyBuildRoadClearedLifecycleTrace(options = {}) {
     roadClearedHistoricalEligible: historicalEligibleRows.length > 0,
     recentlyClearedVisibilityWindow: RECENTLY_CLEARED_WINDOW_MINUTES,
     roadClearedFilteringFindings: [
-      "Previous getLiveHazardIncidents() filtering removed hazard_cleared before unified road incidents could be generated.",
-      "Current getLiveHazardIncidents() retains recently cleared road rows and suppresses older active rows at the same rounded coordinates.",
+      "Previous active-alert eligibility could count cleared unified road incidents inside the recent-clear window.",
+      "Current getLiveHazardIncidents() retains latest recently cleared road rows for Recently Cleared and suppresses older active rows by incident key, road cluster, or rounded coordinate plus hazard type.",
       "Expired hazard_cleared rows can still be loaded by the recent-clear read path for the visibility window, without changing Supabase writes.",
       "Rail cleared paths are not modified by this road-only lifecycle trace."
     ],
