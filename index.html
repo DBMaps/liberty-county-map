@@ -709,23 +709,23 @@
       <section class="settings-modal-section" id="settingsSavedPlacesSection">
         <h3>Route Watch Settings</h3>
         <div class="settings-place-grid" aria-label="Route Watch saved places">
-          <article class="settings-place-card">
-            <span class="settings-place-label">Home</span>
+          <article class="settings-place-card settings-place-card-anchor">
+            <span class="settings-place-label">HOME</span>
             <strong id="settingsHomeValue">Not saved</strong>
             <small id="settingsHomeMeta">Save Home to enable Route Watch context.</small>
             <small class="settings-clean-note">Shown only on this device.</small>
-            <button type="button" class="secondary-btn compact-btn" id="settingsEditHomeBtn">Edit Home</button>
+            <button type="button" class="secondary-btn compact-btn settings-place-action" id="settingsEditHomeBtn">Edit Home</button>
           </article>
-          <article class="settings-place-card">
-            <span class="settings-place-label">Work</span>
+          <article class="settings-place-card settings-place-card-anchor">
+            <span class="settings-place-label">WORK</span>
             <strong id="settingsWorkValue">Not saved</strong>
             <small id="settingsWorkMeta">Save Work to enable Route Watch context.</small>
             <small class="settings-clean-note">Shown only on this device.</small>
-            <button type="button" class="secondary-btn compact-btn" id="settingsEditWorkBtn">Edit Work</button>
+            <button type="button" class="secondary-btn compact-btn settings-place-action" id="settingsEditWorkBtn">Edit Work</button>
           </article>
-          <article class="settings-place-card settings-place-card-wide">
+          <article class="settings-place-card settings-place-card-wide settings-saved-places-card">
             <span class="settings-place-label">Saved Places</span>
-            <button type="button" class="secondary-btn compact-btn" id="settingsManageSavedPlacesBtn">Manage Saved Places</button>
+            <button type="button" class="secondary-btn compact-btn settings-place-action" id="settingsManageSavedPlacesBtn">Manage Saved Places</button>
           </article>
         </div>
         <div class="settings-saved-places-list" id="settingsSavedPlacesList" aria-live="polite" hidden></div>
