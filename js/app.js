@@ -5709,6 +5709,7 @@ function gridlyHistoricalIntelligenceAudit() {
     categories: readinessModel.categories,
     diagnostics: readinessModel.diagnostics
   };
+  const findingAudit = gridlyBuildHistoricalIntelligenceFindings();
   const recommendations = {
     gapAnalysis,
     futureReadiness: {
@@ -5731,6 +5732,16 @@ function gridlyHistoricalIntelligenceAudit() {
     intelligenceReadiness,
     sampleHistoricalRecords,
     sampleLifecycleHistoricalCandidates,
+    rawFindingCount: Number(findingAudit.rawFindingCount || 0),
+    dedupedFindingCount: Number(findingAudit.dedupedFindingCount || 0),
+    groupedFindingCount: Number(findingAudit.groupedFindingCount || 0),
+    suppressedFindingCount: Number(findingAudit.suppressedFindingCount || 0),
+    strongestFinding: findingAudit.strongestFinding || null,
+    rankedFindings: findingAudit.rankedFindings || [],
+    dedupedRankedFindings: findingAudit.dedupedRankedFindings || [],
+    suppressedFindingsSample: findingAudit.suppressedFindingsSample || [],
+    groupingReasons: findingAudit.groupingReasons || [],
+    noPreviewLanguage: true,
     recommendations
   };
 }
@@ -19885,6 +19896,67 @@ function gridlyHistoricalIntelligenceGroupRecords(records = [], keyBuilder = () 
   return groups;
 }
 
+function gridlyHistoricalIntelligenceNormalizeLocationToken(value = "") {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/\b(state highway|state hwy|highway|hwy|texas|tx)\b/g, "tx")
+    .replace(/\b(farm to market|farm road|fm road|f m)\b/g, "fm")
+    .replace(/\b(road|rd)\b/g, "rd")
+    .replace(/\b(street|st)\b/g, "st")
+    .replace(/\b(avenue|ave)\b/g, "ave")
+    .replace(/\b(boulevard|blvd)\b/g, "blvd")
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function gridlyHistoricalIntelligenceReferenceRoad(record = {}) {
+  return safeDisplayText(
+    record?.referenceRoad
+      || record?.reference_road
+      || record?.crossStreet
+      || record?.cross_street
+      || record?.nearestCrossStreet
+      || record?.nearest_cross_street
+      || record?.intersection
+      || record?.referenceLocation
+      || record?.reference_location
+      || "",
+    ""
+  );
+}
+
+function gridlyHistoricalIntelligenceRecordId(record = {}, index = 0) {
+  const explicit = record?.id || record?.incidentId || record?.incident_id || record?.reportId || record?.report_id || record?.historicalRecordId || record?.historical_record_id || record?.eventId || record?.event_id || record?.uuid;
+  if (explicit) return String(explicit);
+  return [
+    gridlyHistoricalAuditTimestamp(record),
+    record?.clearedAt || record?.cleared_at || "",
+    gridlyHistoricalAuditHazardType(record),
+    gridlyHistoricalAuditRoad(record),
+    gridlyHistoricalAuditCrossing(record),
+    gridlyHistoricalIntelligenceReferenceRoad(record)
+  ].map((part) => String(part || "").trim().toLowerCase()).join("|");
+}
+
+function gridlyHistoricalIntelligenceFindingSpecificity(category = "") {
+  if (category === "community_confirmed_hotspot") return 0;
+  if (category === "high_delay_corridor") return 1;
+  if (category === "recurring_hazard") return 2;
+  if (category === "most_blocked_crossing" || category === "recurring_flooding_location" || category === "repeat_construction_zone") return 3;
+  return 1;
+}
+
+function gridlyHistoricalIntelligenceFindingFamily(finding = {}) {
+  const category = String(finding.category || "");
+  if (category === "community_confirmed_hotspot") return "hotspot";
+  if (category === "recurring_flooding_location") return "flooding";
+  if (category === "repeat_construction_zone") return "construction";
+  if (category === "most_blocked_crossing") return "crossing";
+  if (category === "high_delay_corridor") return "delay";
+  return "road_hazard";
+}
+
 function gridlyHistoricalIntelligenceBuildFinding({ category, records, locationLabel = "", hazardLabel = "", baseScore = 0 } = {}) {
   const usableRecords = Array.isArray(records) ? records : [];
   const count = usableRecords.length;
@@ -19893,18 +19965,161 @@ function gridlyHistoricalIntelligenceBuildFinding({ category, records, locationL
   const durationScore = averageDurationMinutes ? Math.min(35, Math.round(averageDurationMinutes / 3)) : 0;
   const confirmationScore = Math.min(40, confirmationCount * 4);
   const significanceScore = Math.round(baseScore + count * 25 + durationScore + confirmationScore + gridlyHistoricalIntelligenceRecencyBoost(usableRecords));
+  const normalizedRoadName = gridlyHistoricalIntelligenceNormalizeLocationToken(gridlyHistoricalAuditRoad(usableRecords[0] || {}) || locationLabel);
+  const referenceRoad = usableRecords.map((record) => gridlyHistoricalIntelligenceReferenceRoad(record)).find(Boolean) || "";
+  const normalizedReferenceRoad = gridlyHistoricalIntelligenceNormalizeLocationToken(referenceRoad);
+  const normalizedLocationLabel = gridlyHistoricalIntelligenceNormalizeLocationToken(locationLabel);
+  const sourceRecordIds = usableRecords.map((record, index) => gridlyHistoricalIntelligenceRecordId(record, index)).filter(Boolean);
   return {
     category,
     title: getGridlyIntelligencePreviewLanguage(category).title,
     categoryLabel: getGridlyIntelligencePreviewLanguage(category).category,
     locationLabel: safeDisplayText(locationLabel, ""),
+    nearbyLocationLabel: safeDisplayText(locationLabel, ""),
     hazardLabel: safeDisplayText(hazardLabel, ""),
     count,
     averageDurationMinutes,
     confirmationCount,
     latestAt: gridlyHistoricalIntelligenceLatestTimestamp(usableRecords) ? new Date(gridlyHistoricalIntelligenceLatestTimestamp(usableRecords)).toISOString() : null,
     significanceScore,
+    sourceRecordIds,
+    normalizedRoadName,
+    referenceRoad,
+    normalizedReferenceRoad,
+    normalizedLocationLabel,
+    groupingKey: [normalizedRoadName, normalizedReferenceRoad, normalizedLocationLabel, gridlyHistoricalIntelligenceFindingFamily({ category })].filter(Boolean).join("|"),
     source: "real_historical_records"
+  };
+}
+
+function gridlyHistoricalIntelligenceSharedRecordCount(a = {}, b = {}) {
+  const left = new Set(Array.isArray(a.sourceRecordIds) ? a.sourceRecordIds : []);
+  if (!left.size) return 0;
+  return (Array.isArray(b.sourceRecordIds) ? b.sourceRecordIds : []).filter((id) => left.has(id)).length;
+}
+
+function gridlyHistoricalIntelligenceSameLocalPattern(a = {}, b = {}) {
+  const sharedRecordCount = gridlyHistoricalIntelligenceSharedRecordCount(a, b);
+  if (sharedRecordCount > 0) return { grouped: true, reason: "shared historical record ids" };
+
+  const sameRoad = Boolean(a.normalizedRoadName && b.normalizedRoadName && a.normalizedRoadName === b.normalizedRoadName);
+  const sameReference = Boolean(a.normalizedReferenceRoad && b.normalizedReferenceRoad && a.normalizedReferenceRoad === b.normalizedReferenceRoad);
+  const sameLabel = Boolean(a.normalizedLocationLabel && b.normalizedLocationLabel && a.normalizedLocationLabel === b.normalizedLocationLabel);
+  if (!sameRoad && !sameReference && !sameLabel) return { grouped: false, reason: "different local labels" };
+
+  const aFamily = gridlyHistoricalIntelligenceFindingFamily(a);
+  const bFamily = gridlyHistoricalIntelligenceFindingFamily(b);
+  const genericOverlap = aFamily === "hotspot" || bFamily === "hotspot";
+  if (genericOverlap) return { grouped: true, reason: "generic hotspot overlaps a category-specific local pattern" };
+  if (aFamily === bFamily) return { grouped: true, reason: "same category and nearby road/corridor label" };
+  if (sameReference && sameRoad) return { grouped: true, reason: "same road and reference road" };
+
+  return { grouped: false, reason: "different category-specific patterns" };
+}
+
+function gridlyHistoricalIntelligencePreferFinding(a = {}, b = {}) {
+  const specificityDelta = gridlyHistoricalIntelligenceFindingSpecificity(a.category) - gridlyHistoricalIntelligenceFindingSpecificity(b.category);
+  if (specificityDelta !== 0) return specificityDelta > 0 ? a : b;
+  const scoreDelta = Number(a.significanceScore || 0) - Number(b.significanceScore || 0);
+  if (scoreDelta !== 0) return scoreDelta > 0 ? a : b;
+  const countDelta = Number(a.count || 0) - Number(b.count || 0);
+  if (countDelta !== 0) return countDelta > 0 ? a : b;
+  const latestDelta = new Date(a.latestAt || 0).getTime() - new Date(b.latestAt || 0).getTime();
+  if (latestDelta !== 0) return latestDelta > 0 ? a : b;
+  return String(a.title || "").localeCompare(String(b.title || "")) <= 0 ? a : b;
+}
+
+function gridlyHistoricalIntelligenceMergeFindingGroup(keeper = {}, suppressed = {}, reason = "related local pattern") {
+  const sourceRecordIds = Array.from(new Set([
+    ...(Array.isArray(keeper.sourceRecordIds) ? keeper.sourceRecordIds : []),
+    ...(Array.isArray(suppressed.sourceRecordIds) ? suppressed.sourceRecordIds : [])
+  ].filter(Boolean)));
+  const groupingReasons = Array.from(new Set([
+    ...(Array.isArray(keeper.groupingReasons) ? keeper.groupingReasons : []),
+    reason
+  ].filter(Boolean)));
+  const groupedFindingCount = Number(keeper.groupedFindingCount || 0) + 1 + Number(suppressed.groupedFindingCount || 0);
+  const groupedRelatedReportCount = Math.max(Number(keeper.count || 0), sourceRecordIds.length, Number(suppressed.count || 0));
+  return {
+    ...keeper,
+    sourceRecordIds,
+    groupedFindingCount,
+    groupedRelatedReportCount,
+    groupingReasons,
+    groupedFromCategories: Array.from(new Set([
+      ...(Array.isArray(keeper.groupedFromCategories) ? keeper.groupedFromCategories : []),
+      keeper.categoryLabel || getGridlyIntelligencePreviewCategoryLabel(keeper.category),
+      suppressed.categoryLabel || getGridlyIntelligencePreviewCategoryLabel(suppressed.category)
+    ].filter(Boolean)))
+  };
+}
+
+function gridlyDeduplicateHistoricalIntelligenceFindings(rankedFindings = []) {
+  const rawFindings = Array.isArray(rankedFindings) ? rankedFindings : [];
+  if (rawFindings.length <= 1) {
+    return {
+      dedupedRankedFindings: rawFindings.map((finding, index) => ({ ...finding, rank: index + 1 })),
+      suppressedFindings: [],
+      suppressedFindingsSample: [],
+      groupingReasons: [],
+      groupedFindingCount: 0,
+      suppressedFindingCount: 0
+    };
+  }
+
+  const candidates = rawFindings
+    .map((finding) => ({ ...finding }))
+    .sort((a, b) => {
+      const preferred = gridlyHistoricalIntelligencePreferFinding(a, b);
+      if (preferred === a && preferred !== b) return -1;
+      if (preferred === b && preferred !== a) return 1;
+      return Number(a.rank || 0) - Number(b.rank || 0);
+    });
+  const keepers = [];
+  const suppressedFindings = [];
+  const groupingReasons = [];
+
+  candidates.forEach((candidate) => {
+    let grouped = false;
+    for (let index = 0; index < keepers.length; index += 1) {
+      const comparison = gridlyHistoricalIntelligenceSameLocalPattern(candidate, keepers[index]);
+      if (!comparison.grouped) continue;
+      const preferred = gridlyHistoricalIntelligencePreferFinding(candidate, keepers[index]);
+      const suppressed = preferred === candidate ? keepers[index] : candidate;
+      const keeper = preferred === candidate ? candidate : keepers[index];
+      keepers[index] = gridlyHistoricalIntelligenceMergeFindingGroup(keeper, suppressed, comparison.reason);
+      suppressedFindings.push({
+        rank: suppressed.rank,
+        title: suppressed.title,
+        category: suppressed.category,
+        categoryLabel: suppressed.categoryLabel,
+        locationLabel: suppressed.locationLabel,
+        count: suppressed.count,
+        suppressedBy: keeper.title,
+        reason: comparison.reason
+      });
+      groupingReasons.push(comparison.reason);
+      grouped = true;
+      break;
+    }
+    if (!grouped) keepers.push(candidate);
+  });
+
+  const dedupedRankedFindings = keepers
+    .sort((a, b) => {
+      const adjustedA = Number(a.significanceScore || 0) + gridlyHistoricalIntelligenceFindingSpecificity(a.category) * 10;
+      const adjustedB = Number(b.significanceScore || 0) + gridlyHistoricalIntelligenceFindingSpecificity(b.category) * 10;
+      return adjustedB - adjustedA || Number(b.count || 0) - Number(a.count || 0) || String(a.title || "").localeCompare(String(b.title || ""));
+    })
+    .map((finding, index) => ({ ...finding, rank: index + 1 }));
+
+  return {
+    dedupedRankedFindings,
+    suppressedFindings,
+    suppressedFindingsSample: suppressedFindings.slice(0, 6),
+    groupingReasons: Array.from(new Set(groupingReasons)),
+    groupedFindingCount: suppressedFindings.length,
+    suppressedFindingCount: suppressedFindings.length
   };
 }
 
@@ -19975,10 +20190,19 @@ function gridlyBuildHistoricalIntelligenceFindings() {
     .filter((finding) => finding.count > 0 && Number.isFinite(Number(finding.significanceScore)))
     .sort((a, b) => Number(b.significanceScore) - Number(a.significanceScore) || Number(b.count) - Number(a.count) || String(a.title).localeCompare(String(b.title)))
     .map((finding, index) => ({ ...finding, rank: index + 1 }));
+  const dedupe = gridlyDeduplicateHistoricalIntelligenceFindings(rankedFindings);
+  const dedupedRankedFindings = dedupe.dedupedRankedFindings;
 
   return {
+    rawFindingCount: rankedFindings.length,
+    dedupedFindingCount: dedupedRankedFindings.length,
+    groupedFindingCount: dedupe.groupedFindingCount,
+    suppressedFindingCount: dedupe.suppressedFindingCount,
     rankedFindings,
-    strongestFinding: rankedFindings[0] || null,
+    dedupedRankedFindings,
+    suppressedFindingsSample: dedupe.suppressedFindingsSample,
+    groupingReasons: dedupe.groupingReasons,
+    strongestFinding: dedupedRankedFindings[0] || null,
     historicalRecordCount: crossingEvents.length + hazardEvents.length,
     crossingEventCount: crossingEvents.length,
     hazardEventCount: hazardEvents.length,
@@ -20029,7 +20253,8 @@ function buildGridlyIntelligencePreviewCardModel(options = {}) {
   const historical = gridlyBuildHistoricalIntelligenceFindings(options);
   const strongest = historical.strongestFinding;
   const selectedCategory = strongest?.category || "no_history";
-  const findingCount = Array.isArray(historical.rankedFindings) ? historical.rankedFindings.length : 0;
+  const dedupedRankedFindings = Array.isArray(historical.dedupedRankedFindings) ? historical.dedupedRankedFindings : [];
+  const findingCount = dedupedRankedFindings.length;
   const fallbackMode = Number(historical.historicalRecordCount || 0) === 0;
   return {
     cardAvailable: Boolean(document.getElementById("gridlyHistoryDockButton")),
@@ -20047,7 +20272,14 @@ function buildGridlyIntelligencePreviewCardModel(options = {}) {
       activeAwarenessCount: 0
     },
     findingCount,
+    rawFindingCount: Number(historical.rawFindingCount || 0),
+    dedupedFindingCount: findingCount,
+    groupedFindingCount: Number(historical.groupedFindingCount || 0),
+    suppressedFindingCount: Number(historical.suppressedFindingCount || 0),
     rankedFindings: historical.rankedFindings,
+    dedupedRankedFindings,
+    suppressedFindingsSample: historical.suppressedFindingsSample || [],
+    groupingReasons: historical.groupingReasons || [],
     strongestFinding: strongest,
     previewMode: false,
     fallbackMode,
@@ -20059,7 +20291,7 @@ function buildGridlyIntelligencePreviewCardModel(options = {}) {
 
 function buildGridlyHistoricalIntelligenceSheetHtml(options = {}) {
   const state = buildGridlyIntelligencePreviewCardModel(options);
-  const rankedFindings = Array.isArray(state.rankedFindings) ? state.rankedFindings : [];
+  const rankedFindings = Array.isArray(state.dedupedRankedFindings) ? state.dedupedRankedFindings : (Array.isArray(state.rankedFindings) ? state.rankedFindings : []);
   if (!rankedFindings.length) {
     return `<div class="gridly-historical-intelligence-sheet"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Based on cleared community reports</p><div class="gridly-historical-intelligence-empty"><strong>Not enough history yet</strong><p>Gridly will show local patterns here after more cleared reports are collected.</p></div></div>`;
   }
@@ -20076,7 +20308,11 @@ function buildGridlyHistoricalIntelligenceSheetHtml(options = {}) {
       lastSeen ? `Last seen ${lastSeen}` : ""
     ].filter(Boolean);
     const clearTimeLine = duration ? `Average clear time ${duration}` : "Clear-time data not available yet";
-    return `<article class="gridly-historical-intelligence-row"><div class="gridly-historical-intelligence-row-head"><span class="gridly-historical-intelligence-rank">${Number(finding.rank || 0)}</span><span class="gridly-historical-intelligence-category">${category}</span></div><strong>${title}</strong><p>${description}</p><div class="gridly-historical-intelligence-stats">${stats.map((stat) => `<span>${sanitizeText(stat)}</span>`).join("")}</div><div class="gridly-historical-intelligence-clear-time">${sanitizeText(clearTimeLine)}</div></article>`;
+    const groupedReportCount = Number(finding.groupedRelatedReportCount || 0);
+    const groupingLine = Number(finding.groupedFindingCount || 0) > 0 && groupedReportCount > 1
+      ? `<div class="gridly-historical-intelligence-grouping">Grouped from ${groupedReportCount} related ${groupedReportCount === 1 ? "report" : "reports"}</div>`
+      : "";
+    return `<article class="gridly-historical-intelligence-row"><div class="gridly-historical-intelligence-row-head"><span class="gridly-historical-intelligence-rank">${Number(finding.rank || 0)}</span><span class="gridly-historical-intelligence-category">${category}</span></div><strong>${title}</strong><p>${description}</p><div class="gridly-historical-intelligence-stats">${stats.map((stat) => `<span>${sanitizeText(stat)}</span>`).join("")}</div><div class="gridly-historical-intelligence-clear-time">${sanitizeText(clearTimeLine)}</div>${groupingLine}</article>`;
   }).join("");
   return `<div class="gridly-historical-intelligence-sheet"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Based on cleared community reports</p><div class="gridly-historical-intelligence-list">${rows}</div></div>`;
 }
@@ -20118,15 +20354,23 @@ window.gridlyIntelligencePreviewCardAudit = function gridlyIntelligencePreviewCa
     const chip = document.getElementById("gridlyIntelligencePreviewCard");
     const dockButton = document.getElementById("gridlyHistoryDockButton") || document.querySelector("#gridlyPortraitV2 .gridly-v2-bottom-dock [data-v2-sheet='history']");
     const state = window.gridlyIntelligencePreviewCardState || buildGridlyIntelligencePreviewCardModel(options);
-    const rankedFindings = state.rankedFindings || state.supportingData?.rankedFindings || [];
-    const findingCount = Number(state.findingCount ?? rankedFindings.length ?? 0);
+    const rankedFindings = state.supportingData?.rankedFindings || state.rankedFindings || [];
+    const dedupedRankedFindings = state.dedupedRankedFindings || state.supportingData?.dedupedRankedFindings || rankedFindings;
+    const findingCount = Number(state.findingCount ?? dedupedRankedFindings.length ?? 0);
     const historicalRecordCount = Number(state.supportingData?.historicalRecordCount || 0);
     return {
       historyDockButtonRendered: Boolean(dockButton),
       sheetAvailable: Boolean(document.getElementById("gridlyPortraitV2Sheet")),
       findingCount,
+      rawFindingCount: Number(state.rawFindingCount ?? state.supportingData?.rawFindingCount ?? rankedFindings.length ?? 0),
+      dedupedFindingCount: Number(state.dedupedFindingCount ?? state.supportingData?.dedupedFindingCount ?? dedupedRankedFindings.length ?? 0),
+      groupedFindingCount: Number(state.groupedFindingCount ?? state.supportingData?.groupedFindingCount ?? 0),
+      suppressedFindingCount: Number(state.suppressedFindingCount ?? state.supportingData?.suppressedFindingCount ?? 0),
       strongestFinding: state.strongestFinding || state.supportingData?.strongestFinding || null,
       rankedFindings,
+      dedupedRankedFindings,
+      suppressedFindingsSample: state.suppressedFindingsSample || state.supportingData?.suppressedFindingsSample || [],
+      groupingReasons: state.groupingReasons || state.supportingData?.groupingReasons || [],
       historyChipRemoved: !chip,
       chipRendered: Boolean(chip && !chip.hidden),
       previewMode: false,
@@ -20143,8 +20387,15 @@ window.gridlyIntelligencePreviewCardAudit = function gridlyIntelligencePreviewCa
       historyDockButtonRendered: Boolean(document.getElementById("gridlyHistoryDockButton") || document.querySelector("#gridlyPortraitV2 .gridly-v2-bottom-dock [data-v2-sheet='history']")),
       sheetAvailable: Boolean(document.getElementById("gridlyPortraitV2Sheet")),
       findingCount: 0,
+      rawFindingCount: 0,
+      dedupedFindingCount: 0,
+      groupedFindingCount: 0,
+      suppressedFindingCount: 0,
       strongestFinding: null,
       rankedFindings: [],
+      dedupedRankedFindings: [],
+      suppressedFindingsSample: [],
+      groupingReasons: [],
       historyChipRemoved: !document.getElementById("gridlyIntelligencePreviewCard"),
       chipRendered: false,
       previewMode: false,
@@ -20173,8 +20424,9 @@ function buildGridlyIntelligenceContentReadabilityAssessment() {
 window.gridlyIntelligenceContentAudit = function gridlyIntelligenceContentAudit(options = {}) {
   try {
     const state = window.gridlyIntelligencePreviewCardState || buildGridlyIntelligencePreviewCardModel(options);
-    const rankedFindings = state.rankedFindings || state.supportingData?.rankedFindings || [];
-    const findingCount = Number(state.findingCount ?? rankedFindings.length ?? 0);
+    const rankedFindings = state.supportingData?.rankedFindings || state.rankedFindings || [];
+    const dedupedRankedFindings = state.dedupedRankedFindings || state.supportingData?.dedupedRankedFindings || rankedFindings;
+    const findingCount = Number(state.findingCount ?? dedupedRankedFindings.length ?? 0);
     const historicalRecordCount = Number(state.supportingData?.historicalRecordCount || 0);
     const sheetCopy = "Historical Intelligence Based on cleared community reports History Local patterns Not enough history yet Gridly will show local patterns here after more cleared reports are collected.";
     const noPreviewLanguage = !/simulated/i.test(sheetCopy);
@@ -20190,8 +20442,15 @@ window.gridlyIntelligenceContentAudit = function gridlyIntelligenceContentAudit(
       chipRendered: Boolean(document.getElementById("gridlyIntelligencePreviewCard") && !document.getElementById("gridlyIntelligencePreviewCard").hidden),
       sheetAvailable: Boolean(document.getElementById("gridlyPortraitV2Sheet")),
       findingCount,
+      rawFindingCount: Number(state.rawFindingCount ?? state.supportingData?.rawFindingCount ?? rankedFindings.length ?? 0),
+      dedupedFindingCount: Number(state.dedupedFindingCount ?? state.supportingData?.dedupedFindingCount ?? dedupedRankedFindings.length ?? 0),
+      groupedFindingCount: Number(state.groupedFindingCount ?? state.supportingData?.groupedFindingCount ?? 0),
+      suppressedFindingCount: Number(state.suppressedFindingCount ?? state.supportingData?.suppressedFindingCount ?? 0),
       strongestFinding: state.strongestFinding || state.supportingData?.strongestFinding || null,
       rankedFindings,
+      dedupedRankedFindings,
+      suppressedFindingsSample: state.suppressedFindingsSample || state.supportingData?.suppressedFindingsSample || [],
+      groupingReasons: state.groupingReasons || state.supportingData?.groupingReasons || [],
       userFacingLanguage: Boolean(avoidedInternalTerms),
       previewMode: false,
       fallbackMode: historicalRecordCount === 0,
@@ -20215,8 +20474,15 @@ window.gridlyIntelligenceContentAudit = function gridlyIntelligenceContentAudit(
       chipRendered: false,
       sheetAvailable: Boolean(document.getElementById("gridlyPortraitV2Sheet")),
       findingCount: 0,
+      rawFindingCount: 0,
+      dedupedFindingCount: 0,
+      groupedFindingCount: 0,
+      suppressedFindingCount: 0,
       strongestFinding: null,
       rankedFindings: [],
+      dedupedRankedFindings: [],
+      suppressedFindingsSample: [],
+      groupingReasons: [],
       userFacingLanguage: true,
       previewMode: false,
       fallbackMode: true,
