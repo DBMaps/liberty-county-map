@@ -29245,6 +29245,7 @@ function closeVisiblePortraitV2ReportSurfaceAfterSubmit() {
   const fallbackClose = () => {
     if (sheet) {
       sheet.hidden = true;
+      sheet.removeAttribute("data-active-sheet");
       sheet.style.display = "none";
       sheet.style.pointerEvents = "none";
       sheet.style.transform = "translate3d(0, 100%, 0)";
@@ -44168,6 +44169,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
 
     if (sheet) {
       sheet.hidden = true;
+      sheet.removeAttribute("data-active-sheet");
       sheet.style.display = "none";
       sheet.style.pointerEvents = "none";
       sheet.style.transform = "translate3d(0, 100%, 0)";
