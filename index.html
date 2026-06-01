@@ -791,22 +791,27 @@
     <div class="gridly-welcome-backdrop" id="gridlyWelcomeBackdrop"></div>
     <section class="gridly-welcome-sheet" role="dialog" aria-modal="true" aria-labelledby="gridlyWelcomeTitle" aria-describedby="gridlyWelcomeCopy">
       <header class="gridly-welcome-header">
-        <div class="gridly-welcome-brand">
-          <span class="gridly-welcome-mark" aria-hidden="true"><span></span></span>
-          <img src="assets/gridly-logo-primary.png" alt="Gridly logo" />
+        <div class="gridly-welcome-brand-hero" aria-label="Gridly onboarding">
+          <div class="gridly-welcome-brand">
+            <img src="assets/gridly-logo-primary.png" alt="Gridly logo" />
+          </div>
+          <p class="gridly-welcome-brand-promise">Know Before You Go</p>
+          <div class="gridly-welcome-signal" aria-label="Community awareness for your town">
+            <span class="gridly-welcome-mark" aria-hidden="true"><span></span></span>
+            <span>Community awareness for your town</span>
+          </div>
         </div>
         <button class="gridly-welcome-skip" type="button" id="gridlyWelcomeSkipTopBtn">Skip</button>
+        <div class="gridly-welcome-progress" aria-label="Setup progress">
+          <span data-gridly-welcome-dot="0"></span>
+          <span data-gridly-welcome-dot="1"></span>
+          <span data-gridly-welcome-dot="2"></span>
+          <span data-gridly-welcome-dot="3"></span>
+          <span data-gridly-welcome-dot="4"></span>
+          <span data-gridly-welcome-dot="5"></span>
+          <span data-gridly-welcome-dot="6"></span>
+        </div>
       </header>
-
-      <div class="gridly-welcome-progress" aria-label="Setup progress">
-        <span data-gridly-welcome-dot="0"></span>
-        <span data-gridly-welcome-dot="1"></span>
-        <span data-gridly-welcome-dot="2"></span>
-        <span data-gridly-welcome-dot="3"></span>
-        <span data-gridly-welcome-dot="4"></span>
-        <span data-gridly-welcome-dot="5"></span>
-        <span data-gridly-welcome-dot="6"></span>
-      </div>
 
       <div class="gridly-welcome-steps" id="gridlyWelcomeSteps">
         <article class="gridly-welcome-step" data-gridly-welcome-step="0">
