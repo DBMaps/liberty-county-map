@@ -3971,9 +3971,12 @@ function gridlyDiagnosticArray(value) {
 }
 
 function gridlyIsActiveHazardRecord(hazard = {}) {
-  const lifecycleState = String(hazard?.lifecycleState || hazard?.lifecycle || hazard?.status || "").toLowerCase();
+  const rawLifecycleState = String(hazard?.lifecycleState || hazard?.lifecycle || hazard?.status || "").toLowerCase();
   const type = String(hazard?.type || hazard?.report_type || "").toLowerCase();
-  return !hazard?.expired && type !== "hazard_cleared" && !["cleared", "expired", "inactive"].includes(lifecycleState);
+  if (hazard?.expired || type === "hazard_cleared" || ["cleared", "expired", "inactive", "historical", "stale"].includes(rawLifecycleState)) return false;
+  const resolved = typeof gridlyClassifyHazardLifecycle === "function" ? gridlyClassifyHazardLifecycle(hazard) : null;
+  if (!resolved?.lifecycleState) return true;
+  return ["ACTIVE", "NEEDS_CONFIRMATION", "CONFIRMED"].includes(resolved.lifecycleState);
 }
 
 function gridlyNormalizeHazardType(hazard = {}) {
@@ -3994,33 +3997,53 @@ function gridlyIsConfirmedHazardRecord(hazard = {}) {
 }
 
 
+const GRIDLY_HAZARD_TRUST_LABELS = Object.freeze({
+  ACTIVE: "Recently reported",
+  NEEDS_CONFIRMATION: "Needs confirmation",
+  STALE: "Older report",
+  CONFIRMED: "Confirmed by drivers",
+  HISTORICAL: "Historical event"
+});
+
 const GRIDLY_HAZARD_LIFECYCLE_RULES = {
-  unverified: [
-    { maxMinutes: 30, lifecycleStage: "new", lifecycleRecommendedAction: "keep_active" },
-    { maxMinutes: 60, lifecycleStage: "active", lifecycleRecommendedAction: "keep_active" },
-    { maxMinutes: 120, lifecycleStage: "aging", lifecycleRecommendedAction: "request_confirmation" },
-    { maxMinutes: Infinity, lifecycleStage: "expired_candidate", lifecycleRecommendedAction: "expired_candidate" }
+  flooding: [
+    { maxMinutes: 360, lifecycleState: "ACTIVE", ageBucket: "0-6h", lifecycleRecommendedAction: "keep_active" },
+    { maxMinutes: 1440, lifecycleState: "NEEDS_CONFIRMATION", ageBucket: "6-24h", lifecycleRecommendedAction: "request_confirmation" },
+    { maxMinutes: 2880, lifecycleState: "STALE", ageBucket: "24-48h", lifecycleRecommendedAction: "stop_treating_as_active" },
+    { maxMinutes: Infinity, lifecycleState: "HISTORICAL", ageBucket: "48h+", lifecycleRecommendedAction: "retain_as_historical_intelligence" }
   ],
-  confirmed: [
-    { maxMinutes: 120, lifecycleStage: "active", lifecycleRecommendedAction: "keep_active" },
-    { maxMinutes: 360, lifecycleStage: "verified", lifecycleRecommendedAction: "keep_active" },
-    { maxMinutes: 720, lifecycleStage: "aging", lifecycleRecommendedAction: "reduce_confidence" },
-    { maxMinutes: Infinity, lifecycleStage: "expired_candidate", lifecycleRecommendedAction: "expired_candidate" }
+  debris: [
+    { maxMinutes: 240, lifecycleState: "ACTIVE", ageBucket: "0-4h", lifecycleRecommendedAction: "keep_active" },
+    { maxMinutes: 720, lifecycleState: "NEEDS_CONFIRMATION", ageBucket: "4-12h", lifecycleRecommendedAction: "request_confirmation" },
+    { maxMinutes: 1440, lifecycleState: "STALE", ageBucket: "12-24h", lifecycleRecommendedAction: "stop_treating_as_active" },
+    { maxMinutes: Infinity, lifecycleState: "HISTORICAL", ageBucket: "24h+", lifecycleRecommendedAction: "retain_as_historical_intelligence" }
+  ],
+  disabled_vehicle: [
+    { maxMinutes: 120, lifecycleState: "ACTIVE", ageBucket: "0-2h", lifecycleRecommendedAction: "keep_active" },
+    { maxMinutes: 360, lifecycleState: "NEEDS_CONFIRMATION", ageBucket: "2-6h", lifecycleRecommendedAction: "request_confirmation" },
+    { maxMinutes: 720, lifecycleState: "STALE", ageBucket: "6-12h", lifecycleRecommendedAction: "stop_treating_as_active" },
+    { maxMinutes: Infinity, lifecycleState: "HISTORICAL", ageBucket: "12h+", lifecycleRecommendedAction: "retain_as_historical_intelligence" }
+  ],
+  road_closed: [
+    { maxMinutes: 720, lifecycleState: "ACTIVE", ageBucket: "0-12h", lifecycleRecommendedAction: "keep_active" },
+    { maxMinutes: 2880, lifecycleState: "NEEDS_CONFIRMATION", ageBucket: "12-48h", lifecycleRecommendedAction: "request_confirmation" },
+    { maxMinutes: 4320, lifecycleState: "STALE", ageBucket: "48-72h", lifecycleRecommendedAction: "stop_treating_as_active" },
+    { maxMinutes: Infinity, lifecycleState: "HISTORICAL", ageBucket: "72h+", lifecycleRecommendedAction: "retain_as_historical_intelligence" }
   ],
   construction: [
-    { maxMinutes: 1440, lifecycleStage: "active", lifecycleRecommendedAction: "keep_active" },
-    { maxMinutes: 4320, lifecycleStage: "aging", lifecycleRecommendedAction: "reduce_confidence" },
-    { maxMinutes: Infinity, lifecycleStage: "expired_candidate", lifecycleRecommendedAction: "expired_candidate" }
-  ],
-  flooding: [
-    { maxMinutes: 360, lifecycleStage: "active", lifecycleRecommendedAction: "keep_active" },
-    { maxMinutes: 1440, lifecycleStage: "aging", lifecycleRecommendedAction: "request_confirmation" },
-    { maxMinutes: Infinity, lifecycleStage: "expired_candidate", lifecycleRecommendedAction: "expired_candidate" }
+    { maxMinutes: Infinity, lifecycleState: "ACTIVE", ageBucket: "until cleared", lifecycleRecommendedAction: "keep_active", autoExpires: false }
   ],
   rail_blockage: [
-    { maxMinutes: 30, lifecycleStage: "active", lifecycleRecommendedAction: "keep_active" },
-    { maxMinutes: 60, lifecycleStage: "aging", lifecycleRecommendedAction: "request_confirmation" },
-    { maxMinutes: Infinity, lifecycleStage: "expired_candidate", lifecycleRecommendedAction: "expired_candidate" }
+    { maxMinutes: 30, lifecycleState: "ACTIVE", ageBucket: "0-30m", lifecycleRecommendedAction: "keep_active" },
+    { maxMinutes: 90, lifecycleState: "NEEDS_CONFIRMATION", ageBucket: "30-90m", lifecycleRecommendedAction: "request_confirmation" },
+    { maxMinutes: 180, lifecycleState: "STALE", ageBucket: "90-180m", lifecycleRecommendedAction: "stop_treating_as_active" },
+    { maxMinutes: Infinity, lifecycleState: "HISTORICAL", ageBucket: "180m+", lifecycleRecommendedAction: "retain_as_historical_intelligence" }
+  ],
+  other_hazard: [
+    { maxMinutes: 240, lifecycleState: "ACTIVE", ageBucket: "0-4h", lifecycleRecommendedAction: "keep_active" },
+    { maxMinutes: 720, lifecycleState: "NEEDS_CONFIRMATION", ageBucket: "4-12h", lifecycleRecommendedAction: "request_confirmation" },
+    { maxMinutes: 1440, lifecycleState: "STALE", ageBucket: "12-24h", lifecycleRecommendedAction: "stop_treating_as_active" },
+    { maxMinutes: Infinity, lifecycleState: "HISTORICAL", ageBucket: "24h+", lifecycleRecommendedAction: "retain_as_historical_intelligence" }
   ]
 };
 
@@ -4041,7 +4064,10 @@ function gridlyResolveHazardLifecycleType(hazard = {}) {
   if (normalizedIncidentCategory === "rail" || hazardCategory === "rail_blockage_delay" || /rail|crossing|train.*block|blocked.*train/.test(text)) return "rail_blockage";
   if (["flooding", "standing_water", "txdot_flooding"].includes(normalizedIncidentCategory) || hazardCategory === "flooding" || /flood|high water|standing water/.test(text)) return "flooding";
   if (["construction", "utility_work", "txdot_construction"].includes(normalizedIncidentCategory) || hazardCategory === "construction" || /construction|road work|work zone|utility work|maintenance/.test(text)) return "construction";
-  return gridlyIsConfirmedHazardRecord(hazard) ? "confirmed" : "unverified";
+  if (normalizedIncidentCategory === "debris" || hazardCategory === "debris" || /debris|obstruction|tree in road|downed tree/.test(text)) return "debris";
+  if (normalizedIncidentCategory === "disabled_vehicle" || hazardCategory === "disabled_vehicle" || /disabled vehicle|stalled vehicle|vehicle disabled/.test(text)) return "disabled_vehicle";
+  if (["road_closed", "txdot_closure"].includes(normalizedIncidentCategory) || hazardCategory === "road_closed" || /road closed|road closure|closure|closed road/.test(text)) return "road_closed";
+  return "other_hazard";
 }
 
 function gridlyGetHazardLifecycleAgeMinutes(hazard = {}, options = {}) {
@@ -4057,38 +4083,53 @@ function gridlyGetHazardLifecycleAgeMinutes(hazard = {}, options = {}) {
 }
 
 function gridlyFindHazardLifecycleRule(lifecycleType, ageMinutes) {
-  const safeType = GRIDLY_HAZARD_LIFECYCLE_RULES[lifecycleType] ? lifecycleType : "unverified";
+  const safeType = GRIDLY_HAZARD_LIFECYCLE_RULES[lifecycleType] ? lifecycleType : "other_hazard";
   const rules = GRIDLY_HAZARD_LIFECYCLE_RULES[safeType];
+  if (safeType === "construction") return rules[0];
   if (!Number.isFinite(Number(ageMinutes))) {
-    return { lifecycleStage: "aging", lifecycleRecommendedAction: "request_confirmation", missingTimestamp: true };
+    return { lifecycleState: "NEEDS_CONFIRMATION", ageBucket: "unknown", lifecycleRecommendedAction: "request_confirmation", missingTimestamp: true };
   }
   return rules.find((rule) => Number(ageMinutes) <= Number(rule.maxMinutes)) || rules[rules.length - 1];
 }
 
-function gridlyBuildHazardLifecycleReason({ lifecycleType, lifecycleStage, lifecycleAgeMinutes, lifecycleConfidence, timestampSourceUsed, timestampParseValid }) {
+function gridlyHazardLifecycleTrustLabel(lifecycleState, confirmed = false) {
+  if (confirmed && lifecycleState !== "HISTORICAL") return GRIDLY_HAZARD_TRUST_LABELS.CONFIRMED;
+  return GRIDLY_HAZARD_TRUST_LABELS[lifecycleState] || GRIDLY_HAZARD_TRUST_LABELS.NEEDS_CONFIRMATION;
+}
+
+function gridlyHazardLifecycleHistoricalEligible(lifecycleState, record = {}) {
+  return lifecycleState === "HISTORICAL" || Boolean(record?.clearedAt || record?.cleared_at || record?.archivedAt || record?.archived_at);
+}
+
+function gridlyBuildHazardLifecycleReason({ lifecycleType, lifecycleState, lifecycleAgeMinutes, trustLabel, timestampSourceUsed, timestampParseValid }) {
   const ageText = Number.isFinite(Number(lifecycleAgeMinutes)) ? `${lifecycleAgeMinutes}m` : "unknown age";
   const timestampText = timestampParseValid ? `timestamp=${timestampSourceUsed}` : "timestamp missing/invalid";
-  const retentionNote = lifecycleType === "flooding"
-    ? "; extended_retention_candidate"
-    : (lifecycleType === "rail_blockage" ? "; event_driven_candidate" : "");
-  return `${lifecycleType} hazard classified ${lifecycleStage}; age=${ageText}; confidence=${lifecycleConfidence}; ${timestampText}${retentionNote}`;
+  return `${lifecycleType} report is ${trustLabel}; age=${ageText}; ${timestampText}; state=${lifecycleState}`;
 }
 
 function gridlyClassifyHazardLifecycle(hazard = {}, options = {}) {
   const lifecycleType = gridlyResolveHazardLifecycleType(hazard);
   const lifecycleConfidence = gridlyIsConfirmedHazardRecord(hazard) ? "confirmed" : "unverified";
   const age = gridlyGetHazardLifecycleAgeMinutes(hazard, options);
-  const rule = gridlyFindHazardLifecycleRule(lifecycleType, age.ageMinutes);
-  const lifecycleStage = rule.lifecycleStage || "aging";
+  const manuallyCleared = gridlyHazardLifecycleIsManuallyCleared(hazard);
+  const rule = manuallyCleared
+    ? { lifecycleState: "HISTORICAL", ageBucket: "cleared", lifecycleRecommendedAction: "retain_as_historical_intelligence" }
+    : gridlyFindHazardLifecycleRule(lifecycleType, age.ageMinutes);
+  const lifecycleState = rule.lifecycleState || "NEEDS_CONFIRMATION";
   const lifecycleRecommendedAction = rule.lifecycleRecommendedAction || "request_confirmation";
   const lifecycleAgeMinutes = Number.isFinite(Number(age.ageMinutes)) ? Number(age.ageMinutes) : null;
+  const trustLabel = gridlyHazardLifecycleTrustLabel(lifecycleState, lifecycleConfidence === "confirmed");
   return {
-    lifecycleStage,
+    lifecycleState,
+    lifecycleStage: lifecycleState,
+    trustLabel,
+    ageBucket: rule.ageBucket || gridlyHazardLifecycleAgeBucket(lifecycleAgeMinutes, lifecycleType),
+    historicalEligible: gridlyHazardLifecycleHistoricalEligible(lifecycleState, hazard),
     lifecycleReason: gridlyBuildHazardLifecycleReason({
       lifecycleType,
-      lifecycleStage,
+      lifecycleState,
       lifecycleAgeMinutes,
-      lifecycleConfidence,
+      trustLabel,
       timestampSourceUsed: age.timestampSourceUsed,
       timestampParseValid: age.timestampParseValid
     }),
@@ -4108,7 +4149,7 @@ if (typeof window !== "undefined") {
   window.gridlyClassifyHazardLifecycle = gridlyClassifyHazardLifecycle;
 }
 
-const GRIDLY_HAZARD_LIFECYCLE_FRAMEWORK_STATES = ["NEW", "ACTIVE", "CONFIRMED", "LOW_CONFIDENCE", "STALE", "EXPIRED", "HISTORICAL"];
+const GRIDLY_HAZARD_LIFECYCLE_FRAMEWORK_STATES = ["ACTIVE", "NEEDS_CONFIRMATION", "CONFIRMED", "STALE", "HISTORICAL"];
 
 function gridlyHazardLifecycleTimestampMs(record = {}, fields = []) {
   for (const field of fields) {
@@ -4146,13 +4187,11 @@ function gridlyHazardLifecycleIsManuallyCleared(record = {}) {
   return Boolean(record?.manuallyCleared || record?.clearedBy || record?.clearedAt || isClearedReportType(type) || ["cleared", "recently_cleared", "manual_clear"].includes(lifecycleState));
 }
 
-function gridlyHazardLifecycleAgeBucket(ageMinutes) {
+function gridlyHazardLifecycleAgeBucket(ageMinutes, lifecycleType = "other_hazard") {
   if (!Number.isFinite(Number(ageMinutes))) return "unknown";
-  if (ageMinutes <= 30) return "0-30m";
-  if (ageMinutes <= 120) return "30m-2h";
-  if (ageMinutes <= 480) return "2-8h";
-  if (ageMinutes <= 1440) return "8-24h";
-  return "24h+";
+  const rules = GRIDLY_HAZARD_LIFECYCLE_RULES[lifecycleType] || GRIDLY_HAZARD_LIFECYCLE_RULES.other_hazard;
+  const rule = rules.find((item) => Number(ageMinutes) <= Number(item.maxMinutes)) || rules[rules.length - 1];
+  return rule?.ageBucket || "unknown";
 }
 
 function gridlyHazardLifecycleConfidenceBucket(score, state) {
@@ -4161,6 +4200,45 @@ function gridlyHazardLifecycleConfidenceBucket(score, state) {
   if (score >= 75) return "high";
   if (score >= 50) return "medium";
   return "low";
+}
+
+function gridlyHazardLifecyclePolicyValidationSamples(nowMs = Date.now()) {
+  const isoMinutesAgo = (minutesAgo) => new Date(nowMs - minutesAgo * 60000).toISOString();
+  const cases = [
+    ["flooding", [60, 720, 2160, 4320]],
+    ["debris", [120, 480, 1080, 1800]],
+    ["disabled_vehicle", [60, 240, 600, 1440]],
+    ["road_closed", [360, 1440, 3600, 5760]],
+    ["rail_blockage", [15, 60, 120, 240]],
+    ["construction", [43200]]
+  ];
+  return cases.flatMap(([category, ages]) => ages.map((ageMinutes, index) => {
+    const recordType = category === "rail_blockage" ? "rail_blockage_delay" : category;
+    const classification = gridlyClassifyHazardLifecycleFrameworkRecord({
+      record: {
+        id: `policy-${category}-${index}`,
+        type: recordType,
+        hazardType: recordType,
+        reportKind: category === "rail_blockage" ? "rail crossing blocked" : "hazard",
+        createdAt: isoMinutesAgo(ageMinutes),
+        confirmationCount: 0,
+        source: "policy_validation"
+      },
+      sourceKind: "policyValidation",
+      index,
+      sourceHazards: [],
+      sourceReports: [],
+      nowMs
+    });
+    return {
+      category,
+      ageHours: classification.ageHours,
+      lifecycleState: classification.lifecycleState,
+      trustLabel: classification.trustLabel,
+      ageBucket: classification.ageBucket,
+      historicalEligible: classification.historicalEligible
+    };
+  }));
 }
 
 function gridlyHazardLifecycleScore({ ageMinutes, confirmationCount, sourceTrust, recentlyReconfirmed, manuallyCleared }) {
@@ -4194,24 +4272,27 @@ function gridlyClassifyHazardLifecycleFrameworkRecord({ record = {}, sourceKind 
   const manuallyCleared = gridlyHazardLifecycleIsManuallyCleared(record);
   const confirmed = gridlyIsConfirmedHazardRecord(record) || confirmationCount >= 2 || recentlyReconfirmed;
   const confidenceScore = gridlyHazardLifecycleScore({ ageMinutes, confirmationCount, sourceTrust, recentlyReconfirmed, manuallyCleared });
-  let lifecycleState = "LOW_CONFIDENCE";
-  if (manuallyCleared) lifecycleState = "HISTORICAL";
-  else if (confirmed && (recentlyReconfirmed || !Number.isFinite(Number(ageMinutes)) || ageMinutes <= 1440)) lifecycleState = "CONFIRMED";
-  else if (Number.isFinite(Number(ageMinutes)) && ageMinutes <= 30) lifecycleState = "NEW";
-  else if (Number.isFinite(Number(ageMinutes)) && ageMinutes <= 480) lifecycleState = "ACTIVE";
-  else if (Number.isFinite(Number(ageMinutes)) && ageMinutes <= 1440) lifecycleState = "LOW_CONFIDENCE";
-  else if (Number.isFinite(Number(ageMinutes)) && ageMinutes > 1440 && (confirmed || recentlyReconfirmed)) lifecycleState = "STALE";
-  else if (Number.isFinite(Number(ageMinutes)) && ageMinutes > 1440) lifecycleState = "EXPIRED";
-
-  const expirationCandidate = lifecycleState === "EXPIRED" || (lifecycleState === "STALE" && !recentlyReconfirmed);
-  const staleCandidate = lifecycleState === "STALE" || lifecycleState === "LOW_CONFIDENCE" || expirationCandidate;
+  const lifecycleType = gridlyResolveHazardLifecycleType(record);
+  const rule = manuallyCleared
+    ? { lifecycleState: "HISTORICAL", ageBucket: "cleared", lifecycleRecommendedAction: "retain_as_historical_intelligence" }
+    : gridlyFindHazardLifecycleRule(lifecycleType, ageMinutes);
+  const baseLifecycleState = rule.lifecycleState || "NEEDS_CONFIRMATION";
+  const lifecycleState = confirmed && lifecycleType !== "construction" && !["HISTORICAL", "STALE"].includes(baseLifecycleState) ? "CONFIRMED" : baseLifecycleState;
+  const trustLabel = gridlyHazardLifecycleTrustLabel(lifecycleState, confirmed);
+  const historicalEligible = gridlyHazardLifecycleHistoricalEligible(lifecycleState, record);
+  const expirationCandidate = lifecycleState === "HISTORICAL" && !manuallyCleared;
+  const staleCandidate = lifecycleState === "STALE" || expirationCandidate;
   return {
     id: record?.id || record?.reportId || record?.crossingId || record?.incidentId || `${record?.type || record?.report_type || "hazard"}-${index}`,
     sourceKind,
     hazardType: gridlyNormalizeHazardType(record),
+    category: lifecycleType,
     lifecycleState,
+    trustLabel,
     ageMinutes: Number.isFinite(Number(ageMinutes)) ? Number(ageMinutes) : null,
-    ageBucket: gridlyHazardLifecycleAgeBucket(ageMinutes),
+    ageHours: Number.isFinite(Number(ageMinutes)) ? Math.round((Number(ageMinutes) / 60) * 100) / 100 : null,
+    ageBucket: rule.ageBucket || gridlyHazardLifecycleAgeBucket(ageMinutes, lifecycleType),
+    historicalEligible,
     confidenceScore,
     confidenceBucket: gridlyHazardLifecycleConfidenceBucket(confidenceScore, lifecycleState),
     confirmationCount,
@@ -4220,10 +4301,10 @@ function gridlyClassifyHazardLifecycleFrameworkRecord({ record = {}, sourceKind 
     manuallyCleared,
     staleCandidate,
     expirationCandidate,
-    historicalTransitionCandidate: manuallyCleared || Boolean(record?.clearedAt),
-    recommendedAction: lifecycleState === "HISTORICAL"
+    historicalTransitionCandidate: historicalEligible,
+    recommendedAction: rule.lifecycleRecommendedAction || (lifecycleState === "HISTORICAL"
       ? "retain_as_historical_intelligence"
-      : (expirationCandidate ? "future_expiration_candidate_only" : (staleCandidate ? "request_confirmation_before_expiration" : "keep_active")),
+      : (staleCandidate ? "request_confirmation_before_expiration" : "keep_active")),
     destructiveActionTaken: false
   };
 }
@@ -4238,14 +4319,24 @@ function gridlyHazardLifecycleFrameworkAudit(classifications = [], historicalSta
     }, seed);
   };
   return {
-    currentHazardCount: classifications.filter((item) => !["HISTORICAL", "EXPIRED"].includes(item.lifecycleState)).length,
+    currentHazardCount: classifications.filter((item) => ["ACTIVE", "NEEDS_CONFIRMATION", "CONFIRMED"].includes(item.lifecycleState)).length,
     totalClassifiedCount: classifications.length,
-    ageBuckets: countBy("ageBucket", ["0-30m", "30m-2h", "2-8h", "8-24h", "24h+", "unknown"]),
+    ageBuckets: countBy("ageBucket", ["0-30m", "30-90m", "90-180m", "0-2h", "2-6h", "6-12h", "0-4h", "4-12h", "12-24h", "0-6h", "6-24h", "24-48h", "0-12h", "12-48h", "48-72h", "24h+", "48h+", "72h+", "180m+", "until cleared", "cleared", "unknown"]),
+    categoryCounts: countBy("category", Object.keys(GRIDLY_HAZARD_LIFECYCLE_RULES)),
+    trustLabels: countBy("trustLabel", Object.values(GRIDLY_HAZARD_TRUST_LABELS)),
     confidenceBuckets: countBy("confidenceBucket", ["high", "medium", "low", "expiration_candidate", "historical"]),
     lifecycleStateCounts: countBy("lifecycleState", GRIDLY_HAZARD_LIFECYCLE_FRAMEWORK_STATES),
     staleCandidates: classifications.filter((item) => item.staleCandidate).map((item) => item.id).slice(0, 25),
     expirationCandidates: classifications.filter((item) => item.expirationCandidate).map((item) => item.id).slice(0, 25),
     historicalTransitionCandidates: classifications.filter((item) => item.historicalTransitionCandidate).map((item) => item.id).slice(0, 25),
+    historicalEligibleCount: classifications.filter((item) => item.historicalEligible).length,
+    lifecycleSamples: classifications.slice(0, 10).map((item) => ({
+      category: item.category,
+      ageHours: item.ageHours,
+      lifecycleState: item.lifecycleState,
+      trustLabel: item.trustLabel,
+      historicalEligible: item.historicalEligible
+    })),
     historicalStorage: {
       crossingEventCount: Array.isArray(historicalState.crossingEvents) ? historicalState.crossingEvents.length : 0,
       hazardEventCount: Array.isArray(historicalState.hazardEvents) ? historicalState.hazardEvents.length : 0,
@@ -4258,31 +4349,19 @@ function gridlyHazardLifecycleFrameworkAudit(classifications = [], historicalSta
 
 function gridlyHazardTrustLanguage() {
   const lifecycleStates = [
-    "NEW",
     "ACTIVE",
+    "NEEDS_CONFIRMATION",
     "CONFIRMED",
-    "LOW_CONFIDENCE",
     "STALE",
-    "EXPIRED",
     "HISTORICAL"
   ];
-  const userFacingLabels = {
-    NEW: "Recently Reported",
-    ACTIVE: "Active Report",
-    CONFIRMED: "Confirmed by Drivers",
-    LOW_CONFIDENCE: "Needs Confirmation",
-    STALE: "Older Report",
-    EXPIRED: "No Longer Active",
-    HISTORICAL: "Historical Event"
-  };
+  const userFacingLabels = { ...GRIDLY_HAZARD_TRUST_LABELS };
   const userFacingDescriptions = {
-    NEW: "This was just reported nearby. Use normal caution while other drivers have a chance to confirm it.",
-    ACTIVE: "This report is still recent and may affect your drive. Check the road ahead and share an update if you pass it.",
-    CONFIRMED: "Other drivers or trusted sources have recently supported this report. Continue to use caution near the location.",
-    LOW_CONFIDENCE: "This report is getting older and needs a fresh driver update before it should be treated as reliable.",
-    STALE: "This report may no longer match current road conditions. Please confirm whether it is still there if you pass by.",
-    EXPIRED: "This report should no longer be shown as an active road issue unless a new report is submitted.",
-    HISTORICAL: "This event is kept only for past-road-pattern learning and should not be presented as a current hazard."
+    ACTIVE: "This was recently reported. Use normal caution and share an update if you pass it.",
+    NEEDS_CONFIRMATION: "This report is getting older and needs a fresh driver update before it should be relied on.",
+    CONFIRMED: "Drivers have recently supported this report. Continue to use caution near the location.",
+    STALE: "This is an older report and may no longer match current road conditions.",
+    HISTORICAL: "This event is kept for past-road-pattern learning and should not be presented as a current hazard."
   };
 
   return {
@@ -4290,51 +4369,45 @@ function gridlyHazardTrustLanguage() {
     userFacingLabels,
     userFacingDescriptions,
     badgeRecommendations: {
-      NEW: { text: userFacingLabels.NEW, style: "soft info badge", emphasis: "medium", icon: "new report dot" },
       ACTIVE: { text: userFacingLabels.ACTIVE, style: "standard active badge", emphasis: "medium", icon: "road alert" },
+      NEEDS_CONFIRMATION: { text: userFacingLabels.NEEDS_CONFIRMATION, style: "neutral prompt badge", emphasis: "medium", icon: "question check" },
       CONFIRMED: { text: userFacingLabels.CONFIRMED, style: "positive trust badge", emphasis: "high", icon: "driver check" },
-      LOW_CONFIDENCE: { text: userFacingLabels.LOW_CONFIDENCE, style: "neutral prompt badge", emphasis: "medium", icon: "question check" },
       STALE: { text: userFacingLabels.STALE, style: "muted age badge", emphasis: "low", icon: "clock" },
-      EXPIRED: { text: userFacingLabels.EXPIRED, style: "inactive badge", emphasis: "low", icon: "ended" },
       HISTORICAL: { text: userFacingLabels.HISTORICAL, style: "archive badge", emphasis: "low", icon: "history" },
       guidance: [
-        "Use short labels instead of lifecycle codes.",
+        "Use short user-facing labels instead of lifecycle codes.",
         "Pair age-sensitive states with a driver action when possible.",
         "Avoid confidence percentages, scoring language, and internal classifications.",
-        "Keep EXPIRED and HISTORICAL styling out of the live map until a separate UI pass approves it."
+        "Keep Historical event styling out of active alert surfaces unless a separate UI pass approves it."
       ]
     },
     colorRecommendations: {
-      NEW: "fresh blue or teal to indicate a recent community report without implying certainty",
       ACTIVE: "standard alert color already used for active hazards",
+      NEEDS_CONFIRMATION: "amber or soft yellow to invite confirmation without alarming users",
       CONFIRMED: "green or blue-green trust accent that communicates driver support without reducing caution",
-      LOW_CONFIDENCE: "amber or soft yellow to invite confirmation without alarming users",
       STALE: "muted gray or gray-amber to show age and lower urgency",
-      EXPIRED: "disabled gray if shown in review tools only",
       HISTORICAL: "archive gray or muted purple if shown in analytics tools only",
       accessibility: "Do not rely on color alone; always include the plain-language label."
     },
     betaRecommendations: {
       usersShouldSee: [
-        "Plain-language labels such as Recently Reported, Active Report, and Needs Confirmation.",
+        "Plain-language labels such as Recently reported, Needs confirmation, Older report, Confirmed by drivers, and Historical event.",
         "Short age cues like just reported, reported earlier today, or older report.",
         "Driver-focused prompts asking whether the issue is still there.",
         "Reassuring wording that reports help other drivers when conditions change."
       ],
       usersShouldNotSee: [
-        "Lifecycle state codes such as LOW_CONFIDENCE, STALE, EXPIRED, or HISTORICAL.",
+        "Lifecycle state codes such as NEEDS_CONFIRMATION, STALE, or HISTORICAL.",
         "Confidence percentages, scoring formulas, or trust buckets.",
         "Internal classifications, expiration candidates, telemetry notes, or database status.",
         "Language that says Gridly knows a hazard is gone unless the product has an explicit clearing signal."
       ],
       statusLanguage: {
-        recentlyReported: "Recently reported by the community.",
-        activeReport: "Report may still affect this road.",
-        confirmed: "Drivers have recently confirmed this.",
-        needsConfirmation: "Can you confirm if this is still there?",
-        olderReport: "Older report — conditions may have changed.",
-        noLongerActive: "No longer shown as an active report.",
-        historicalEvent: "Saved for road history, not current conditions."
+        recentlyReported: userFacingLabels.ACTIVE,
+        confirmed: userFacingLabels.CONFIRMED,
+        needsConfirmation: userFacingLabels.NEEDS_CONFIRMATION,
+        olderReport: userFacingLabels.STALE,
+        historicalEvent: userFacingLabels.HISTORICAL
       },
       confirmationPrompts: [
         "Still there? Confirm this report to help other drivers.",
@@ -4347,14 +4420,12 @@ function gridlyHazardTrustLanguage() {
         "Help keep the map current by confirming whether this is still active."
       ],
       implementationNotes: [
-        "Framework only; do not attach this language to markers, alerts, headers, or refresh loops in this pass.",
-        "Use these strings as future UI copy guidance after a separate implementation review.",
-        "Keep beta messaging simple, driver-focused, and age-aware."
+        "Use these strings as runtime-safe copy without changing marker, alert, header, or route-watch ownership.",
+        "Keep messaging simple, driver-focused, and age-aware."
       ]
     }
   };
 }
-
 
 function gridlyHazardTrustProgressionFramework() {
   const trustStages = [
@@ -5540,6 +5611,11 @@ function gridlyHistoricalIntelligenceAudit() {
     .map((event) => gridlyHistoricalAuditTimestamp(event.record))
     .filter((value) => Number.isFinite(new Date(value || 0).getTime()) && new Date(value || 0).getTime() > 0)
     .sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+  const activeLifecycleClassifications = [
+    ...gridlyDiagnosticArray(activeHazards).map((record, index) => gridlyClassifyHazardLifecycleFrameworkRecord({ record, sourceKind: "activeHazards", index, sourceHazards: gridlyDiagnosticArray(activeHazards), sourceReports: gridlyDiagnosticArray(activeReports) })),
+    ...gridlyDiagnosticArray(activeReports).map((record, index) => gridlyClassifyHazardLifecycleFrameworkRecord({ record, sourceKind: "activeReports", index, sourceHazards: gridlyDiagnosticArray(activeHazards), sourceReports: gridlyDiagnosticArray(activeReports) }))
+  ];
+  const lifecycleHistoricalCandidates = activeLifecycleClassifications.filter((item) => item.historicalEligible);
   const readinessModel = gridlyBuildHistoricalIntelligenceReadiness(combinedEvents, crossingEvents, hazardEvents);
   const readyCategories = readinessModel.categories.filter((item) => item.readiness === "READY").map((item) => item.category);
   const limitedCategories = readinessModel.categories.filter((item) => item.readiness === "LIMITED").map((item) => item.category);
@@ -5575,6 +5651,13 @@ function gridlyHistoricalIntelligenceAudit() {
       confirmationCount: Number.isFinite(Number(record.confirmationCount ?? record.confirmations ?? record.confirmation_count)) ? Number(record.confirmationCount ?? record.confirmations ?? record.confirmation_count) : null
     };
   });
+  const sampleLifecycleHistoricalCandidates = lifecycleHistoricalCandidates.slice(0, 10).map((item) => ({
+    category: item.category,
+    ageHours: item.ageHours,
+    lifecycleState: item.lifecycleState,
+    trustLabel: item.trustLabel,
+    historicalEligible: item.historicalEligible
+  }));
   const eventCounts = {
     totalHistoricalEvents,
     crossingEvents: crossingEvents.length,
@@ -5582,7 +5665,8 @@ function gridlyHistoricalIntelligenceAudit() {
     openEvents: openEvents.length,
     closedEvents: closedEvents.length,
     earliestEvent: timestamped[0] || null,
-    latestEvent: timestamped[timestamped.length - 1] || null
+    latestEvent: timestamped[timestamped.length - 1] || null,
+    lifecycleHistoricalCandidates: lifecycleHistoricalCandidates.length
   };
   const historicalSources = [
     {
@@ -5646,6 +5730,7 @@ function gridlyHistoricalIntelligenceAudit() {
     eventCounts,
     intelligenceReadiness,
     sampleHistoricalRecords,
+    sampleLifecycleHistoricalCandidates,
     recommendations
   };
 }
@@ -5896,21 +5981,20 @@ if (typeof window !== "undefined") {
 
     return {
       lifecycleStates: [
-        { state: "NEW", ageWindow: "0-30 minutes", meaning: "Freshly submitted hazard that should remain visible while evidence accumulates." },
-        { state: "ACTIVE", ageWindow: "30 minutes-8 hours", meaning: "Hazard remains operationally relevant; confirmation is encouraged after 2 hours." },
-        { state: "CONFIRMED", ageWindow: "any active window with confirmation", meaning: "Hazard has official/system trust, multiple confirmations, or recent reconfirmation." },
-        { state: "LOW_CONFIDENCE", ageWindow: "8-24 hours without confirmation", meaning: "Hazard may still matter but should be treated as needing driver confirmation." },
-        { state: "STALE", ageWindow: "24+ hours with some supporting evidence", meaning: "Hazard should be queued for reconfirmation before future expiration is enabled." },
-        { state: "EXPIRED", ageWindow: "24+ hours without sufficient support", meaning: "Future expiration candidate only; this framework does not remove records." },
-        { state: "HISTORICAL", ageWindow: "cleared/manual clear/stored closed event", meaning: "Cleared hazard retained for historical intelligence and analytics." }
+        { state: "ACTIVE", trustLabel: GRIDLY_HAZARD_TRUST_LABELS.ACTIVE, meaning: "Report is still inside its category-specific active window." },
+        { state: "NEEDS_CONFIRMATION", trustLabel: GRIDLY_HAZARD_TRUST_LABELS.NEEDS_CONFIRMATION, meaning: "Report is old enough to ask drivers for a fresh update, but remains current enough to keep in active awareness." },
+        { state: "CONFIRMED", trustLabel: GRIDLY_HAZARD_TRUST_LABELS.CONFIRMED, meaning: "Report has driver or trusted-source support while still inside an active or confirmation window." },
+        { state: "STALE", trustLabel: GRIDLY_HAZARD_TRUST_LABELS.STALE, meaning: "Report is outside the useful active window and should no longer be treated as an active hazard." },
+        { state: "HISTORICAL", trustLabel: GRIDLY_HAZARD_TRUST_LABELS.HISTORICAL, meaning: "Report aged into historical intelligence or was explicitly cleared/archived." }
       ],
       stateRules: {
-        new: "0-30 minutes maps to NEW unless manually cleared.",
-        active: "30 minutes-2 hours maps to ACTIVE; 2-8 hours remains ACTIVE but should request confirmation.",
-        lowConfidence: "8-24 hours maps to LOW_CONFIDENCE unless confirmed or recently reconfirmed.",
-        stale: "24+ hours maps to STALE when there is confirmation evidence but no recent reconfirmation.",
-        expired: "24+ hours maps to EXPIRED when there is no sufficient confirmation evidence; no deletion is performed.",
-        historical: "Cleared hazards transition to HISTORICAL and should be written through existing historical event storage when activation is approved."
+        flooding: "ACTIVE 0-6h, NEEDS_CONFIRMATION 6-24h, STALE 24-48h, HISTORICAL 48h+.",
+        debris: "ACTIVE 0-4h, NEEDS_CONFIRMATION 4-12h, STALE 12-24h, HISTORICAL 24h+.",
+        disabledVehicle: "ACTIVE 0-2h, NEEDS_CONFIRMATION 2-6h, STALE 6-12h, HISTORICAL 12h+.",
+        roadClosure: "ACTIVE 0-12h, NEEDS_CONFIRMATION 12-48h, STALE 48-72h, HISTORICAL 72h+.",
+        construction: "ACTIVE until explicitly cleared, manually closed, or archived; construction does not auto-expire.",
+        railCrossingBlocked: "ACTIVE 0-30m, NEEDS_CONFIRMATION 30-90m, STALE 90-180m, HISTORICAL 180m+.",
+        historical: "Cleared, manually closed, archived, or policy-aged historical records become candidates for historical intelligence through existing storage/audit paths."
       },
       confidenceRules: {
         scoreRange: "0-100",
@@ -5922,18 +6006,17 @@ if (typeof window !== "undefined") {
         manualClear: "Manual clear forces score 0 and HISTORICAL classification."
       },
       expirationRules: {
-        enabled: false,
-        candidateOnly: true,
-        staleThreshold: "24+ hours without recent reconfirmation",
-        expirationThreshold: "24+ hours without sufficient confirmations/source trust/reconfirmation",
-        guardrails: ["Do not delete from Supabase", "Do not remove markers", "Do not change alert/header ownership", "Do not alter refresh loops"],
-        activationRequirement: "Future activation should require a separate migration with analytics and telemetry review."
+        enabled: true,
+        destructiveActionTaken: false,
+        staleRecordsTreatedAsActive: false,
+        historicalRecordsTreatedAsActive: false,
+        constructionAutoExpires: false,
+        guardrails: ["Do not delete from Supabase", "Do not change alert rendering", "Do not change route calculations", "Do not alter map rendering"]
       },
       confirmationRules: {
-        encouragedAfter: "2 hours",
-        requiredForConfidenceAfter: "8 hours",
-        recentReconfirmationWindow: "8 hours",
-        confirmedSignals: ["official/system source", "verified/confirmed flag", "confirmation count >= 2", "recent reconfirmation timestamp"]
+        source: "category-specific aging policy",
+        confirmedSignals: ["official/system source", "verified/confirmed flag", "confirmation count >= 2", "recent reconfirmation timestamp"],
+        userFacingLabels: GRIDLY_HAZARD_TRUST_LABELS
       },
       historicalTransitionRules: {
         storage: GRIDLY_EVENT_HISTORY_STORAGE_KEY,
@@ -5944,12 +6027,13 @@ if (typeof window !== "undefined") {
       },
       sampleClassifications: {
         audit,
-        samples: classifications.slice(0, 10)
+        samples: classifications.slice(0, 10),
+        policyValidationSamples: gridlyHazardLifecyclePolicyValidationSamples(nowMs)
       },
       recommendations: [
-        "Keep this framework read-only until a separate expiration activation pass is approved.",
-        "Surface LOW_CONFIDENCE and STALE records as confirmation prompts before enabling automatic expiration.",
-        "Write cleared hazards into existing event history before removing them from live intelligence.",
+        "Use category-specific aging to classify active, confirmation-needed, stale, and historical records at runtime.",
+        "Surface NEEDS_CONFIRMATION records as confirmation prompts while keeping STALE and HISTORICAL records out of active-hazard treatment.",
+        "Keep construction active until an explicit clear, manual close, or archive signal exists.",
         "Use analytics readiness outputs to validate historical road names and durations before beta.",
         "Add telemetry counters only in a future activation pass so current telemetry schema remains unchanged."
       ]
@@ -5969,7 +6053,7 @@ if (typeof window !== "undefined") {
         source: "simulation",
         createdAt: isoMinutesAgo(10),
         confirmationCount: 0,
-        expectedState: "NEW"
+        expectedState: "ACTIVE"
       },
       {
         id: "sim-hazard-b-debris-active",
@@ -5991,7 +6075,7 @@ if (typeof window !== "undefined") {
         source: "simulation",
         createdAt: isoMinutesAgo(240),
         confirmationCount: 2,
-        expectedState: "CONFIRMED"
+        expectedState: "ACTIVE"
       },
       {
         id: "sim-hazard-d-flooding-low-confidence",
@@ -6002,17 +6086,17 @@ if (typeof window !== "undefined") {
         source: "simulation",
         createdAt: isoMinutesAgo(720),
         confirmationCount: 0,
-        expectedState: "LOW_CONFIDENCE"
+        expectedState: "NEEDS_CONFIRMATION"
       },
       {
-        id: "sim-hazard-e-road-closed-stale",
+        id: "sim-hazard-e-road-closed-needs-confirmation",
         simulationCase: "E",
         type: "road_closed",
         hazardType: "road_closed",
         title: "Simulated road closure",
         source: "simulation",
-        createdAt: isoMinutesAgo(1800),
-        confirmationCount: 2,
+        createdAt: isoMinutesAgo(3600),
+        confirmationCount: 0,
         expectedState: "STALE"
       },
       {
@@ -6024,7 +6108,7 @@ if (typeof window !== "undefined") {
         source: "simulation",
         createdAt: isoMinutesAgo(1800),
         confirmationCount: 0,
-        expectedState: "EXPIRED"
+        expectedState: "HISTORICAL"
       },
       {
         id: "sim-hazard-g-flooding-historical",
