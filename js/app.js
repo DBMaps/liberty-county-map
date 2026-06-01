@@ -5171,6 +5171,224 @@ function gridlyHistoricalIntelligenceAudit() {
   };
 }
 
+
+function gridlyHistoricalClosePathFramework() {
+  const closeStates = [
+    {
+      state: "ACTIVE",
+      purpose: "Represents a live report that has a createdAt timestamp but has not entered any reviewed close path.",
+      requiredInputs: ["incidentId or stable record id", "hazardType or crossing/event type", "createdAt", "locationKey", "source"],
+      historicalOutcome: "Remain excluded from duration intelligence because clearedAt and durationMinutes are not available."
+    },
+    {
+      state: "CLEARED_BY_DRIVER",
+      purpose: "Documents a direct driver clear report for the same incident, road segment, crossing, or location key.",
+      requiredInputs: ["incidentId/locationKey match", "createdAt", "driver clear submittedAt used as clearedAt", "clearedBy/source metadata"],
+      historicalOutcome: "Eligible to become a closed historical record after audit validation confirms the clear report matches the active record."
+    },
+    {
+      state: "CLEARED_BY_COMMUNITY",
+      purpose: "Documents multiple independent community clear confirmations for the same active condition.",
+      requiredInputs: ["incidentId/locationKey match", "createdAt", "clear confirmation count", "latest qualifying clear timestamp as clearedAt", "confirmation source summary"],
+      historicalOutcome: "Eligible for historical storage with community confidence context, while preserving that the clear signal was community-derived."
+    },
+    {
+      state: "CLEARED_BY_TRUSTED_SOURCE",
+      purpose: "Documents a clear signal from a trusted, reviewed, official, or system-owned source.",
+      requiredInputs: ["incidentId/locationKey match", "createdAt", "trusted-source clear timestamp as clearedAt", "trusted source identity/category"],
+      historicalOutcome: "Highest-confidence close candidate for duration analytics once side-by-side write audits prove field quality."
+    },
+    {
+      state: "EXPIRED_UNCONFIRMED",
+      purpose: "Represents a future non-destructive expiration candidate when an active record ages out without a clear signal.",
+      requiredInputs: ["incidentId/locationKey", "createdAt", "age threshold", "absence of recent confirmation", "expiration reason"],
+      historicalOutcome: "Should not produce durationMinutes unless a reviewed policy explicitly treats expiration time as a separate non-clear terminal timestamp."
+    },
+    {
+      state: "HISTORICAL",
+      purpose: "Represents a closed record preserved for audit, duration, recurrence, and future community intelligence review.",
+      requiredInputs: ["incidentId", "createdAt", "clearedAt for duration-eligible records", "durationMinutes", "hazardType/event type", "location fields", "source and confirmation metadata"],
+      historicalOutcome: "Available for read-only duration and trend audits after the close path is activated in a separate implementation task."
+    }
+  ];
+
+  const closeTriggers = [
+    {
+      trigger: "User reports clear",
+      recommendedState: "CLEARED_BY_DRIVER",
+      recommendationOnly: true,
+      recommendedInputs: ["active incident match", "clear report timestamp", "reporter/source category", "locationKey"],
+      notes: "Use only after a future write path validates that the clear report is tied to the active record being closed."
+    },
+    {
+      trigger: "Multiple users report clear",
+      recommendedState: "CLEARED_BY_COMMUNITY",
+      recommendationOnly: true,
+      recommendedInputs: ["active incident match", "minimum independent clear confirmations", "latest or policy-selected clear timestamp", "confirmationCount"],
+      notes: "Require deduplication and anti-spam review before this can close a live record."
+    },
+    {
+      trigger: "Trusted source indicates clear",
+      recommendedState: "CLEARED_BY_TRUSTED_SOURCE",
+      recommendationOnly: true,
+      recommendedInputs: ["trusted source identity", "active incident match", "trusted clear timestamp", "source confidence"],
+      notes: "Safest future close trigger, but still needs audit-only validation before runtime writes."
+    },
+    {
+      trigger: "Future expiration path",
+      recommendedState: "EXPIRED_UNCONFIRMED",
+      recommendationOnly: true,
+      recommendedInputs: ["createdAt", "age threshold", "confirmation freshness", "expiration reason"],
+      notes: "Expiration is not equivalent to clearedAt; keep it separate from duration analytics unless a future policy explicitly defines it."
+    },
+    {
+      trigger: "Manual moderation action",
+      recommendedState: "CLEARED_BY_TRUSTED_SOURCE",
+      recommendationOnly: true,
+      recommendedInputs: ["moderator action timestamp", "reason", "active incident match", "moderation source"],
+      notes: "Preserve moderation provenance so historical records remain auditable."
+    }
+  ];
+
+  const closeRules = {
+    frameworkOnly: true,
+    activationPerformed: false,
+    runtimeWritesPerformed: false,
+    requiredCloseTimestamp: "clearedAt must be written by an explicit close transition, not inferred from createdAt.",
+    matchingPrinciples: [
+      "Prefer incidentId when available.",
+      "Fall back to locationKey plus hazardType/crossing identity only after audit validation.",
+      "Do not close unrelated records that merely share a road name.",
+      "Preserve source provenance for every close path."
+    ],
+    nonDestructiveRequirement: "A future close path should persist the historical record before any active-list cleanup removes or hides the live record.",
+    explicitNonGoals: [
+      "No Supabase writes in this framework.",
+      "No active hazard mutation in this framework.",
+      "No map, marker, alert, header, route, refresh, analytics, or telemetry behavior changes.",
+      "No duration or community-intelligence activation."
+    ]
+  };
+
+  const durationRules = {
+    fields: {
+      createdAt: "Required ISO timestamp captured when the report first becomes active or historically stored.",
+      clearedAt: "Required ISO timestamp captured only by a reviewed close transition.",
+      durationMinutes: "Computed in a future write path as the non-negative minute difference between createdAt and clearedAt.",
+      durationHours: "Derived display/audit value equal to durationMinutes / 60, rounded only for presentation.",
+      durationBuckets: ["0-15 min", "15-60 min", "1-4 hr", "4-12 hr", "12-24 hr", "24+ hr"]
+    },
+    eligibility: [
+      "createdAt and clearedAt must both be valid timestamps.",
+      "clearedAt must be greater than or equal to createdAt.",
+      "durationMinutes must be finite and non-negative.",
+      "EXPIRED_UNCONFIRMED records are excluded from clear-time duration analytics unless separately modeled."
+    ],
+    bucketDefinitions: [
+      { bucket: "0-15 min", minInclusive: 0, maxExclusive: 15 },
+      { bucket: "15-60 min", minInclusive: 15, maxExclusive: 60 },
+      { bucket: "1-4 hr", minInclusive: 60, maxExclusive: 240 },
+      { bucket: "4-12 hr", minInclusive: 240, maxExclusive: 720 },
+      { bucket: "12-24 hr", minInclusive: 720, maxExclusive: 1440 },
+      { bucket: "24+ hr", minInclusive: 1440, maxExclusive: null }
+    ],
+    activationState: "framework_only"
+  };
+
+  const historicalTransitionRules = {
+    whenRecordBecomesHistorical: [
+      "After a future close trigger selects a terminal close state and writes clearedAt, durationMinutes, and close provenance.",
+      "After a future audited expiration path marks EXPIRED_UNCONFIRMED without treating it as a cleared duration sample.",
+      "After side-by-side history write audits confirm no active runtime behavior changes and no historical field loss."
+    ],
+    fieldsToPreserve: [
+      "incidentId",
+      "hazardType",
+      "roadName",
+      "crossingName",
+      "createdAt",
+      "clearedAt",
+      "durationMinutes",
+      "confirmationCount",
+      "source",
+      "locationKey",
+      "closeState",
+      "closeTrigger",
+      "clearedBy",
+      "latitude",
+      "longitude"
+    ],
+    transitionGuardrails: [
+      "Do not overwrite createdAt during close.",
+      "Do not synthesize clearedAt from page refresh time or cleanup time.",
+      "Write historical data before removing an active record from live collections.",
+      "Keep expired-unconfirmed records distinguishable from cleared records.",
+      "Keep transition auditing read-only until a separate runtime write-path task is approved."
+    ],
+    activationState: "not_active"
+  };
+
+  const communityIntelligenceReadiness = {
+    supportsAverageDurations: true,
+    supportsRecurringBlockageLength: true,
+    supportsHazardPersistence: true,
+    supportsFutureCommunityIntelligence: true,
+    readinessBenefits: [
+      "A formal close path would make clearedAt coverage measurable instead of absent.",
+      "DurationMinutes would allow average blockage and persistence audits without guessing from active record age.",
+      "Historical records could preserve source and confirmation context for safer future trend labels."
+    ],
+    activationRisks: [
+      "Premature activation could misclassify open records as cleared.",
+      "Expiration timestamps could be mistaken for true clear times if not modeled separately.",
+      "Sparse or biased clear reporting could produce misleading duration averages.",
+      "Runtime writes need schema, telemetry, analytics, and rollback review before use."
+    ],
+    guardrails: [
+      "Keep this framework recommendation-only.",
+      "Require audit-only validation before writing clearedAt.",
+      "Require side-by-side history write audit before mutating runtime data.",
+      "Separate cleared, trusted-cleared, community-cleared, and expired-unconfirmed outcomes.",
+      "Do not activate community intelligence until duration coverage is representative."
+    ]
+  };
+
+  const recommendations = {
+    safestSequence: [
+      "1. Close-path framework",
+      "2. Audit-only validation",
+      "3. Side-by-side history write audit",
+      "4. Runtime write path",
+      "5. Duration analytics",
+      "6. Community intelligence activation"
+    ],
+    immediateNextStep: "Validate this returned framework against real historical clear-time audit outputs without writing storage or changing UI/runtime behavior.",
+    protectedSystemsUnchanged: [
+      "Portrait V2",
+      "Header ownership",
+      "Alert ownership/rendering",
+      "Route Watch and OSRM routing",
+      "Supabase",
+      "TxDOT and rail crossings",
+      "Settings",
+      "Analytics and telemetry schemas",
+      "Map and marker ownership",
+      "Refresh loops and lifecycle behavior",
+      "Trust progression and community intelligence activation"
+    ],
+    communityIntelligenceReadiness
+  };
+
+  return {
+    closeStates,
+    closeTriggers,
+    closeRules,
+    durationRules,
+    historicalTransitionRules,
+    recommendations
+  };
+}
+
 if (typeof window !== "undefined") {
   window.gridlyHazardTrustLanguage = gridlyHazardTrustLanguage;
   window.gridlyHazardTrustProgressionFramework = gridlyHazardTrustProgressionFramework;
@@ -5178,6 +5396,7 @@ if (typeof window !== "undefined") {
   window.gridlyCommunityIntelligenceSimulation = gridlyCommunityIntelligenceSimulation;
   window.gridlyHistoricalIntelligenceAudit = gridlyHistoricalIntelligenceAudit;
   window.gridlyHistoricalClearTimeAudit = gridlyHistoricalClearTimeAudit;
+  window.gridlyHistoricalClosePathFramework = gridlyHistoricalClosePathFramework;
   window.gridlyHazardLifecycleFramework = function gridlyHazardLifecycleFramework(options = {}) {
     const nowMs = Number.isFinite(Number(options?.nowMs)) ? Number(options.nowMs) : Date.now();
     const sourceHazards = Array.isArray(options?.hazards) ? options.hazards : gridlyDiagnosticArray(activeHazards);
@@ -6694,6 +6913,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyAnalyticsAudit",
   "gridlyOperationalTelemetryAudit",
   "gridlyBetaReadinessAudit",
+  "gridlyHistoricalClosePathFramework",
   "loadSharedReports"
 ];
 
@@ -6777,6 +6997,7 @@ function exposeAllGridlyAuditHelpers() {
     gridlyAnalyticsAudit: typeof gridlyAnalyticsAudit === "function" ? gridlyAnalyticsAudit : null,
     gridlyOperationalTelemetryAudit: typeof gridlyOperationalTelemetryAudit === "function" ? gridlyOperationalTelemetryAudit : null,
     gridlyBetaReadinessAudit: typeof gridlyBetaReadinessAudit === "function" ? gridlyBetaReadinessAudit : (typeof target?.gridlyBetaReadinessAudit === "function" ? target.gridlyBetaReadinessAudit : null),
+    gridlyHistoricalClosePathFramework: typeof gridlyHistoricalClosePathFramework === "function" ? gridlyHistoricalClosePathFramework : (typeof target?.gridlyHistoricalClosePathFramework === "function" ? target.gridlyHistoricalClosePathFramework : null),
     loadSharedReports: typeof loadSharedReports === "function" ? loadSharedReports : null
   };
 
@@ -40168,6 +40389,7 @@ window.gridlyVisualConsistencyAudit = function gridlyVisualConsistencyAudit() {
 
 exposeGridlyAuditHelper("gridlyAuditRegistryDebug", gridlyAuditRegistryDebug);
 exposeGridlyAuditHelper("gridlyVisualRegressionAudit", window.gridlyVisualRegressionAudit);
+exposeGridlyAuditHelper("gridlyHistoricalClosePathFramework", gridlyHistoricalClosePathFramework);
 exposeGridlyAuditHelper("gridlyCommuteIntelligenceAudit", gridlyCommuteIntelligenceAudit);
 exposeGridlyAuditHelper("loadSharedReports", typeof loadSharedReports === "function" ? loadSharedReports : null);
 exposeAllGridlyAuditHelpers();
