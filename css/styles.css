@@ -13255,6 +13255,9 @@ body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV
   pointer-events: none;
 }
 
+body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 .gridly-v2-bottom-dock {
+  z-index: 9503;
+}
 body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2SheetBackdrop {
   z-index: 9501;
   pointer-events: none;
