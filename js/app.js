@@ -7873,6 +7873,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyTxdotDirectionalReadinessAudit",
   "gridlyRoadwayGeometryCapabilityAudit",
   "gridlyGeometryAwarePlacementAudit",
+  "gridlyPlacementPipelineTraceAudit",
   "gridlyAuditPerformanceReview",
   "gridlyAuditHelperExposureAudit",
   "gridlySupabaseHazardInventoryAudit",
@@ -7963,6 +7964,7 @@ function exposeAllGridlyAuditHelpers() {
     gridlyTxdotDirectionalReadinessAudit: typeof gridlyTxdotDirectionalReadinessAudit === "function" ? gridlyTxdotDirectionalReadinessAudit : (typeof target?.gridlyTxdotDirectionalReadinessAudit === "function" ? target.gridlyTxdotDirectionalReadinessAudit : null),
     gridlyRoadwayGeometryCapabilityAudit: typeof gridlyRoadwayGeometryCapabilityAudit === "function" ? gridlyRoadwayGeometryCapabilityAudit : (typeof target?.gridlyRoadwayGeometryCapabilityAudit === "function" ? target.gridlyRoadwayGeometryCapabilityAudit : null),
     gridlyGeometryAwarePlacementAudit: typeof gridlyGeometryAwarePlacementAudit === "function" ? gridlyGeometryAwarePlacementAudit : (typeof target?.gridlyGeometryAwarePlacementAudit === "function" ? target.gridlyGeometryAwarePlacementAudit : null),
+    gridlyPlacementPipelineTraceAudit: typeof gridlyPlacementPipelineTraceAudit === "function" ? gridlyPlacementPipelineTraceAudit : (typeof target?.gridlyPlacementPipelineTraceAudit === "function" ? target.gridlyPlacementPipelineTraceAudit : null),
     gridlyAuditPerformanceReview: typeof gridlyAuditPerformanceReview === "function" ? gridlyAuditPerformanceReview : (typeof target?.gridlyAuditPerformanceReview === "function" ? target.gridlyAuditPerformanceReview : null),
     gridlyAuditHelperExposureAudit: typeof gridlyAuditHelperExposureAudit === "function" ? gridlyAuditHelperExposureAudit : (typeof target?.gridlyAuditHelperExposureAudit === "function" ? target.gridlyAuditHelperExposureAudit : null),
     gridlySupabaseHazardInventoryAudit: typeof target?.gridlySupabaseHazardInventoryAudit === "function" ? target.gridlySupabaseHazardInventoryAudit : null,
@@ -26027,6 +26029,29 @@ function gridlyCoordinateDeltaMeters(a, b) {
   return Math.round(earthRadiusMeters * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h)) * 10) / 10;
 }
 
+function gridlyCoordinatesWithinMeters(a, b, toleranceMeters = 0.5) {
+  const deltaMeters = gridlyCoordinateDeltaMeters(a, b);
+  return Number.isFinite(Number(deltaMeters)) && Number(deltaMeters) <= toleranceMeters;
+}
+
+function gridlyLatestRoadIncidentForPlacementTrace() {
+  const roadIncidents = typeof getUnifiedIncidents === "function"
+    ? getUnifiedIncidents().filter((incident) => String(incident?.id || "").startsWith("road-"))
+    : [];
+  return roadIncidents
+    .slice()
+    .sort((a, b) => new Date(b?.created_at || b?.updated_at || 0).getTime() - new Date(a?.created_at || a?.updated_at || 0).getTime())[0] || null;
+}
+
+function gridlyClassifyPlacementSource({ tapCoordinate, projectionCoordinate, snappedCoordinate, finalPlacementCoordinate, placementMode }) {
+  if (projectionCoordinate && gridlyCoordinatesWithinMeters(finalPlacementCoordinate, projectionCoordinate)) return "projected_point";
+  if (snappedCoordinate && gridlyCoordinatesWithinMeters(finalPlacementCoordinate, snappedCoordinate)) return "snapped_point";
+  if (tapCoordinate && gridlyCoordinatesWithinMeters(finalPlacementCoordinate, tapCoordinate)) return "raw_tap";
+  if (["raw_tap", "tap_preserved_near_road", "snap_rejected_divided_road_risk", "snap_rejected_too_far"].includes(placementMode)) return "raw_tap";
+  if (placementMode === "road_snapped") return projectionCoordinate ? "projected_point" : "snapped_point";
+  return "unknown";
+}
+
 function gridlyFindRenderedMarkerPlacementAudit(incidentId) {
   const layers = typeof unifiedIncidentLayer?.getLayers === "function" ? unifiedIncidentLayer.getLayers() : [];
   const targetId = String(incidentId || "");
@@ -26904,6 +26929,159 @@ if (typeof window !== "undefined") {
   window.gridlyGeometryAwarePlacementAudit = gridlyGeometryAwarePlacementAudit;
 }
 exposeGridlyAuditHelper("gridlyGeometryAwarePlacementAudit", gridlyGeometryAwarePlacementAudit);
+
+function gridlyPlacementPipelineTraceAudit(options = {}) {
+  const tapCoordinate = gridlyCoordinateFromRecord(options.tapCoordinate) || gridlyLatestDirectionalTapCoordinate(options);
+  const geometryDecision = tapCoordinate
+    ? gridlyGeometryAwarePlacementDecision(tapCoordinate, { maxDistanceMeters: options.maxDistanceMeters || 75, limit: options.limit || 16 })
+    : null;
+  const latestRoadIncident = gridlyLatestRoadIncidentForPlacementTrace();
+  const selectedSegment = geometryDecision?.selectedSegment
+    || lastRoadSnapDebug?.geometryAwarePlacement?.selectedSegment
+    || lastRoadSnapDebug?.selectedRoadwaySegment
+    || latestRoadIncident?.geometryAwarePlacement?.selectedSegment
+    || latestRoadIncident?.selectedRoadwaySegment
+    || null;
+  const projectionCoordinate = gridlyCoordinateFromRecord(selectedSegment?.candidateCoordinate)
+    || gridlyCoordinateFromRecord(lastRoadSnapDebug?.geometryAwarePlacement?.selectedSegment?.candidateCoordinate)
+    || gridlyCoordinateFromRecord(latestRoadIncident?.geometryAwarePlacement?.selectedSegment?.candidateCoordinate);
+  const snappedCoordinate = gridlyCoordinateFromRecord(lastMobileReportSubmitDebug.snappedRoadCoordinate)
+    || gridlyCoordinateFromRecord(latestRoadIncident?.snappedRoadCoordinate)
+    || gridlyCoordinateFromRecord(lastRoadSnapDebug.snappedRoadCoordinate);
+  const osrmNearestCoordinate = gridlyCoordinateFromRecord(lastRoadSnapDebug.snappedRoadCoordinate);
+  const finalPlacementCoordinate = gridlyCoordinateFromRecord(options.finalPlacementCoordinate)
+    || gridlyCoordinateFromRecord(lastMobileReportSubmitDebug.finalPlacementCoordinate)
+    || gridlyCoordinateFromRecord(lastRoadSnapDebug.finalPlacementCoordinate)
+    || gridlyCoordinateFromRecord(latestRoadIncident?.finalPlacementCoordinate)
+    || gridlyCoordinateFromRecord(latestRoadIncident);
+  const hazardCoordinate = gridlyCoordinateFromRecord(lastMobileReportSubmitDebug.activeSubmitCoords)
+    || gridlyCoordinateFromRecord(lastMobileReportSubmitDebug.insertPayloadPreview)
+    || gridlyCoordinateFromRecord(latestRoadIncident?.storedReportCoordinate)
+    || gridlyCoordinateFromRecord(latestRoadIncident);
+  const renderedAudit = latestRoadIncident?.id ? gridlyFindRenderedMarkerPlacementAudit(latestRoadIncident.id) : gridlyFindRenderedMarkerPlacementAudit();
+  const markerCoordinate = gridlyCoordinateFromRecord(renderedAudit?.renderedMarkerCoordinate)
+    || gridlyCoordinateFromRecord(lastMobileReportSubmitDebug.renderedMarkerCoordinate)
+    || gridlyCoordinateFromRecord(latestRoadIncident?.renderedMarkerCoordinate)
+    || gridlyCoordinateFromRecord(latestRoadIncident);
+  const placementMode = lastMobileReportSubmitDebug.placementMode || latestRoadIncident?.placementMode || lastRoadSnapDebug?.placementMode || null;
+  const placementSource = gridlyClassifyPlacementSource({
+    tapCoordinate,
+    projectionCoordinate,
+    snappedCoordinate,
+    finalPlacementCoordinate,
+    placementMode
+  });
+  const projectionComputed = Boolean(projectionCoordinate);
+  const projectionStored = Boolean(
+    projectionCoordinate
+    && (selectedSegment?.candidateCoordinate
+      || lastRoadSnapDebug?.geometryAwarePlacement?.selectedSegment?.candidateCoordinate
+      || latestRoadIncident?.geometryAwarePlacement?.selectedSegment?.candidateCoordinate
+      || lastMobileReportSubmitDebug?.snappedRoadCoordinate
+      || latestRoadIncident?.snappedRoadCoordinate)
+  );
+  const projectionUsed = Boolean(projectionCoordinate && gridlyCoordinatesWithinMeters(finalPlacementCoordinate, projectionCoordinate));
+  const projectionDiscarded = Boolean(projectionComputed && !projectionUsed);
+  const hazardCoordinateSource = gridlyCoordinatesWithinMeters(hazardCoordinate, projectionCoordinate) ? "projected_point"
+    : gridlyCoordinatesWithinMeters(hazardCoordinate, osrmNearestCoordinate) ? "snapped_point"
+      : gridlyCoordinatesWithinMeters(hazardCoordinate, tapCoordinate) ? "raw_tap"
+        : hazardCoordinate ? "unknown" : "none";
+  const markerCoordinateSource = gridlyCoordinatesWithinMeters(markerCoordinate, projectionCoordinate) ? "projected_point"
+    : gridlyCoordinatesWithinMeters(markerCoordinate, osrmNearestCoordinate) ? "snapped_point"
+      : gridlyCoordinatesWithinMeters(markerCoordinate, tapCoordinate) ? "raw_tap"
+        : markerCoordinate ? "unknown" : "none";
+  const audit = {
+    auditVersion: "V206.14-geometry-projection-placement-trace",
+    auditOnly: true,
+    destructiveActionsTaken: false,
+    tapCoordinate,
+    projectionCoordinate,
+    finalPlacementCoordinate,
+    placementSource,
+    projectionComputed,
+    projectionStored,
+    projectionUsed,
+    projectionDiscarded,
+    markerCoordinateSource,
+    hazardCoordinateSource,
+    markerCoordinate,
+    hazardCoordinate,
+    snappedCoordinate,
+    osrmNearestCoordinate,
+    placementMode,
+    tapToProjectionDeltaMeters: gridlyCoordinateDeltaMeters(tapCoordinate, projectionCoordinate),
+    tapToFinalDeltaMeters: gridlyCoordinateDeltaMeters(tapCoordinate, finalPlacementCoordinate),
+    projectionToFinalDeltaMeters: gridlyCoordinateDeltaMeters(projectionCoordinate, finalPlacementCoordinate),
+    selectedRoadName: selectedSegment?.roadName || latestRoadIncident?.selectedRoadName || null,
+    selectedSegmentDistanceMeters: selectedSegment?.distanceFromTapMeters ?? latestRoadIncident?.selectedSegmentDistanceMeters ?? null,
+    selectedSegmentBearing: selectedSegment?.bearing ?? latestRoadIncident?.selectedSegmentBearing ?? null,
+    selectedSideConfidence: geometryDecision?.selectedSideConfidence || lastRoadSnapDebug?.selectedSideConfidence || latestRoadIncident?.selectedSideConfidence || "low",
+    recommendedDirection: geometryDecision?.recommendedDirection || lastRoadSnapDebug?.recommendedDirection || latestRoadIncident?.recommendedDirection || null,
+    pipelineStages: [
+      {
+        stage: "user_tap",
+        coordinate: tapCoordinate,
+        storedAt: ["lastMobileReportSubmitDebug.rawTapCoordinate", "lastRoadSnapDebug.rawTapCoordinate", "rawTapCoordinate/reportCaptureCoordinate on local hazard when available"],
+        note: "Original click/GPS coordinate captured before road validation."
+      },
+      {
+        stage: "nearest_road_selection",
+        coordinate: osrmNearestCoordinate,
+        storedAt: ["lastRoadSnapDebug.snappedRoadCoordinate", "OSRM diagnostic candidates"],
+        note: "OSRM nearest validates that a road exists and provides a snapped waypoint, but local geometry may replace this as the candidate supplied to placement selection."
+      },
+      {
+        stage: "segment_selection",
+        coordinate: projectionCoordinate,
+        storedAt: ["geometryAwarePlacement.selectedSegment.candidateCoordinate", "selectedRoadwaySegment.candidateCoordinate"],
+        note: "Local LineString/MultiLineString geometry candidates are ranked and the selected segment retains the projection coordinate."
+      },
+      {
+        stage: "projection_calculation",
+        coordinate: projectionCoordinate,
+        storedAt: ["candidateSegments[].candidateCoordinate", "selectedSegment.candidateCoordinate"],
+        note: "projectPointToRoadSegment calculates the closest point on each segment; gridlyBuildGeometryAwareRoadCandidates copies it into candidateCoordinate."
+      },
+      {
+        stage: "road_aware_final_choice",
+        coordinate: finalPlacementCoordinate,
+        source: placementSource,
+        storedAt: ["placementDecision.finalPlacementCoordinate", "lastMobileReportSubmitDebug.finalPlacementCoordinate"],
+        note: "gridlyBuildRoadAwareHazardPlacement decides whether to preserve the raw tap or use the candidate supplied as snappedCoordinate. This audit only observes that decision."
+      },
+      {
+        stage: "hazard_object_creation",
+        coordinate: hazardCoordinate,
+        source: hazardCoordinateSource,
+        storedAt: ["reports row lat/lng", "localHazardEntry.finalPlacementCoordinate"],
+        note: "createSharedHazardReport receives the chosen final coordinate as lat/lng and stores those values on the hazard row/local hazard object."
+      },
+      {
+        stage: "marker_placement",
+        coordinate: markerCoordinate,
+        source: markerCoordinateSource,
+        storedAt: ["unified incident lat/lng", "Leaflet marker [lat,lng]", "layer.options.gridlyPlacementAudit.renderedMarkerCoordinate"],
+        note: "renderUnifiedIncidents renders Leaflet markers from unified incident lat/lng, which are derived from stored hazard lat/lng."
+      }
+    ],
+    ownershipFinding: projectionUsed
+      ? "The geometry-derived projection point currently survives into final hazard/marker placement for the inspected event."
+      : projectionComputed
+        ? "The geometry projection is computed and stored for diagnostics, but final hazard/marker placement for the inspected event resolves to a different coordinate; the loss occurs at gridlyBuildRoadAwareHazardPlacement when it chooses raw tap for the current placement conditions."
+        : "No projection coordinate was available for the inspected event; load roadway geometry and run a tap-map hazard flow before using this trace.",
+    latestRoadIncidentId: latestRoadIncident?.id || null,
+    renderedPlacementAudit: renderedAudit || null,
+    lastRoadSnapDebug: { ...lastRoadSnapDebug },
+    lastMobileReportSubmitDebug: { ...lastMobileReportSubmitDebug }
+  };
+  console.info("gridlyPlacementPipelineTraceAudit", audit);
+  return audit;
+}
+
+if (typeof window !== "undefined") {
+  window.gridlyPlacementPipelineTraceAudit = gridlyPlacementPipelineTraceAudit;
+}
+exposeGridlyAuditHelper("gridlyPlacementPipelineTraceAudit", gridlyPlacementPipelineTraceAudit);
 
 function gridlyClassifyPlacementRisk(deltaMeters, details = {}) {
   if (details.snappingApplied && Number(deltaMeters) > 8) return "inaccurate_due_to_snapping";
