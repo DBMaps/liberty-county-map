@@ -13559,6 +13559,7 @@ function hydrateElements() {
     "settingsMapStyleSelect",
     "settingsThemeSelect",
     "settingsTextSizeSelect",
+    "settingsPreferredNameInput",
     "settingsBuildValue",
     "settingsReplaySetupBtn",
     "settingsFeedbackBtn",
@@ -13573,6 +13574,12 @@ function hydrateElements() {
     "gridlyWelcomeSkipTopBtn",
     "gridlyWelcomeSetHomeBtn",
     "gridlyWelcomeSetWorkBtn",
+    "gridlyWelcomeThemeSelect",
+    "gridlyWelcomeTextSizeSelect",
+    "gridlyWelcomePreferredNameInput",
+    "gridlyWelcomePreviewCard",
+    "gridlyWelcomePreviewGreeting",
+    "gridlyWelcomeFinalCopy",
     "gridlyWelcomeOpenSettingsBtn",
     "gridlyWelcomeEnableLocationBtn",
     "gridlyWelcomeLocationStatus",
@@ -14307,7 +14314,7 @@ function closeFirstRunSetupModal() {
 }
 
 let gridlyWelcomeCurrentStep = 0;
-const GRIDLY_WELCOME_TOTAL_STEPS = 6;
+const GRIDLY_WELCOME_TOTAL_STEPS = 7;
 
 function markGridlyWelcomeSeen() {
   gridlySafeLocalStorageSet(GRIDLY_WELCOME_SEEN_STORAGE_KEY, "yes");
@@ -14338,7 +14345,47 @@ function renderGridlyWelcomeHomeTownSelection() {
     button.setAttribute("aria-pressed", isSelected ? "true" : "false");
   });
   if (els.gridlyWelcomeTownStatus) {
-    els.gridlyWelcomeTownStatus.textContent = selectedTown ? `${selectedTown} selected for My Town and Local Alerts.` : "Choose a town to personalize your local awareness.";
+    els.gridlyWelcomeTownStatus.textContent = selectedTown ? `Watching ${selectedTown} ✓` : "Choose a town to personalize your local awareness.";
+  }
+}
+
+function normalizeGridlyPreferredName(value = "") {
+  return String(value || "").replace(/[<>]/g, "").replace(/\s+/g, " ").trim().slice(0, 32);
+}
+
+function getGridlyPreferredNamePreference() {
+  return normalizeGridlyPreferredName(getGridlySettingsPreferences()?.personalization?.preferredName);
+}
+
+function saveGridlyPreferredNamePreference(preferredName = "", options = {}) {
+  const settings = getGridlySettingsPreferences();
+  const next = {
+    ...settings,
+    personalization: {
+      ...(settings.personalization || {}),
+      preferredName: normalizeGridlyPreferredName(preferredName)
+    }
+  };
+  return saveGridlySettingsPreferences(next, { applyDisplay: false, render: Boolean(options.render), source: options.source || "preferred_name" });
+}
+
+function renderGridlyWelcomePersonalization() {
+  const settings = getGridlySettingsPreferences();
+  const preferredName = normalizeGridlyPreferredName(settings.personalization?.preferredName);
+  if (els.gridlyWelcomeThemeSelect) els.gridlyWelcomeThemeSelect.value = settings.display.theme;
+  if (els.gridlyWelcomeTextSizeSelect) els.gridlyWelcomeTextSizeSelect.value = settings.display.textSize;
+  if (els.gridlyWelcomePreferredNameInput && els.gridlyWelcomePreferredNameInput.value !== preferredName) els.gridlyWelcomePreferredNameInput.value = preferredName;
+  if (els.gridlyWelcomePreviewGreeting) {
+    els.gridlyWelcomePreviewGreeting.textContent = preferredName ? `Good morning, ${preferredName}.` : "Good morning.";
+  }
+  if (els.gridlyWelcomePreviewCard) {
+    els.gridlyWelcomePreviewCard.dataset.gridlyTheme = settings.display.theme;
+    els.gridlyWelcomePreviewCard.dataset.gridlyTextSize = settings.display.textSize;
+  }
+  if (els.gridlyWelcomeFinalCopy) {
+    els.gridlyWelcomeFinalCopy.textContent = preferredName
+      ? `${preferredName}, Gridly is ready to keep your town, routes, community reports, and local alerts connected.`
+      : "Gridly is ready to keep your town, routes, community reports, and local alerts connected.";
   }
 }
 
@@ -14358,6 +14405,7 @@ function renderGridlyWelcomeStep(step = gridlyWelcomeCurrentStep) {
   if (els.gridlyWelcomeBackBtn) els.gridlyWelcomeBackBtn.disabled = boundedStep === 0;
   if (els.gridlyWelcomeNextBtn) els.gridlyWelcomeNextBtn.hidden = boundedStep >= GRIDLY_WELCOME_TOTAL_STEPS - 1;
   if (els.gridlyWelcomeFinishBtn) els.gridlyWelcomeFinishBtn.hidden = boundedStep < GRIDLY_WELCOME_TOTAL_STEPS - 1;
+  renderGridlyWelcomePersonalization();
   renderGridlyWelcomeHomeTownSelection();
 }
 
@@ -14443,6 +14491,22 @@ function bindGridlyWelcomeOnboarding() {
   els.gridlyWelcomeOpenSettingsBtn?.addEventListener("click", () => {
     closeGridlyWelcomeOnboarding({ persist: true, restoreFocus: false, source: "open_settings" });
     openGridlySurface("settings", () => openSettingsModal());
+  });
+  [els.gridlyWelcomeThemeSelect, els.gridlyWelcomeTextSizeSelect].forEach((control) => {
+    control?.addEventListener("change", () => {
+      const settings = getGridlySettingsPreferences();
+      const display = {
+        ...settings.display,
+        theme: els.gridlyWelcomeThemeSelect?.value || settings.display.theme,
+        textSize: els.gridlyWelcomeTextSizeSelect?.value || settings.display.textSize
+      };
+      saveGridlySettingsPreferences({ ...settings, display }, { applyDisplay: true, render: true, source: control.id || "welcome_personalization" });
+      renderGridlyWelcomePersonalization();
+    });
+  });
+  els.gridlyWelcomePreferredNameInput?.addEventListener("input", () => {
+    saveGridlyPreferredNamePreference(els.gridlyWelcomePreferredNameInput.value, { render: false, source: "welcome_preferred_name" });
+    renderGridlyWelcomePersonalization();
   });
   document.querySelectorAll("[data-gridly-town]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -35221,6 +35285,9 @@ const GRIDLY_SETTINGS_DEFAULTS = Object.freeze({
     mapStyle: "standard",
     theme: "system",
     textSize: "standard"
+  }),
+  personalization: Object.freeze({
+    preferredName: ""
   })
 });
 
@@ -35250,11 +35317,13 @@ function normalizeGridlySettings(raw = null) {
   const base = {
     notifications: { ...GRIDLY_SETTINGS_DEFAULTS.notifications },
     display: { ...GRIDLY_SETTINGS_DEFAULTS.display },
+    personalization: { ...GRIDLY_SETTINGS_DEFAULTS.personalization },
     community: { homeTown: "" }
   };
   const source = raw && typeof raw === "object" ? raw : {};
   const notifications = source.notifications && typeof source.notifications === "object" ? source.notifications : {};
   const display = source.display && typeof source.display === "object" ? source.display : {};
+  const personalization = source.personalization && typeof source.personalization === "object" ? source.personalization : {};
   const community = source.community && typeof source.community === "object" ? source.community : {};
   Object.keys(base.notifications).forEach((key) => {
     if (typeof notifications[key] === "boolean") base.notifications[key] = notifications[key];
@@ -35266,6 +35335,7 @@ function normalizeGridlySettings(raw = null) {
   const normalizedTextSize = String(display.textSize || "").trim().toLowerCase();
   if (normalizedTextSize === "extra-large") base.display.textSize = "large";
   else if (GRIDLY_SETTINGS_VALID_TEXT_SIZES.has(normalizedTextSize)) base.display.textSize = normalizedTextSize;
+  base.personalization.preferredName = normalizeGridlyPreferredName(personalization.preferredName);
   base.community.homeTown = normalizeGridlyHomeTown(community.homeTown);
   return base;
 }
@@ -35429,6 +35499,7 @@ function renderGridlySettingsPanel(settings = getGridlySettingsPreferences()) {
   if (els.settingsMapStyleSelect) els.settingsMapStyleSelect.value = normalized.display.mapStyle;
   if (els.settingsThemeSelect) els.settingsThemeSelect.value = normalized.display.theme;
   if (els.settingsTextSizeSelect) els.settingsTextSizeSelect.value = normalized.display.textSize;
+  if (els.settingsPreferredNameInput) els.settingsPreferredNameInput.value = normalized.personalization.preferredName;
   safeText("settingsBuildValue", GRIDLY_APP_BUILD_LABEL);
 }
 
@@ -35445,7 +35516,11 @@ function collectGridlySettingsFromUi() {
       mapStyle: els.settingsMapStyleSelect?.value || current.display.mapStyle,
       theme: els.settingsThemeSelect?.value || current.display.theme,
       textSize: els.settingsTextSizeSelect?.value || current.display.textSize
-    }
+    },
+    personalization: {
+      preferredName: els.settingsPreferredNameInput?.value ?? current.personalization.preferredName
+    },
+    community: current.community
   });
 }
 
@@ -35520,8 +35595,23 @@ function gridlyWelcomeOnboardingAudit() {
     "#gridlyWelcomeFinishBtn"
   ];
   const controlsFound = hasDocument ? controlSelectors.every((selector) => Boolean(document.querySelector(selector))) : false;
+  const rawSettings = gridlySafeLocalStorageGet(GRIDLY_SETTINGS_STORAGE_KEY);
+  let preferredNamePersisted = false;
+  try {
+    const parsedSettings = rawSettings ? JSON.parse(rawSettings) : null;
+    preferredNamePersisted = typeof parsedSettings?.personalization?.preferredName === "string";
+  } catch (error) {
+    preferredNamePersisted = false;
+  }
   return {
     onboardingDomFound: Boolean(overlay),
+    preferredNameInputFound: hasDocument ? Boolean(document.getElementById("gridlyWelcomePreferredNameInput")) : false,
+    preferredNamePersisted,
+    previewCardFound: hasDocument ? Boolean(document.getElementById("gridlyWelcomePreviewCard")) : false,
+    themeControlsFound: hasDocument ? Boolean(document.getElementById("gridlyWelcomeThemeSelect")) : false,
+    textSizeControlsFound: hasDocument ? Boolean(document.getElementById("gridlyWelcomeTextSizeSelect")) : false,
+    personalizationStepFound: hasDocument ? Boolean(document.querySelector('[data-gridly-welcome-step="1"] #gridlyWelcomePreferredNameInput')) : false,
+    homeTownSelectionFound: hasDocument ? document.querySelectorAll("[data-gridly-town]").length >= GRIDLY_HOME_TOWN_OPTIONS.length : false,
     welcomeSeen: gridlySafeLocalStorageGet(GRIDLY_WELCOME_SEEN_STORAGE_KEY) === "yes",
     currentStep: currentStepNode ? Number(currentStepNode.dataset.gridlyWelcomeStep) + 1 : gridlyWelcomeCurrentStep + 1,
     totalSteps: stepNodes.length || GRIDLY_WELCOME_TOTAL_STEPS,
@@ -35549,6 +35639,7 @@ function gridlySettingsPanelAudit() {
   const mapStyleSelect = hasDocument ? (document.getElementById("settingsMapStyleSelect") || document.querySelector('[data-v2-settings-field="display.mapStyle"]')) : null;
   const themeSelect = hasDocument ? (document.getElementById("settingsThemeSelect") || document.querySelector('[data-v2-settings-field="display.theme"]')) : null;
   const textSizeSelect = hasDocument ? (document.getElementById("settingsTextSizeSelect") || document.querySelector('[data-v2-settings-field="display.textSize"]')) : null;
+  const preferredNameControl = hasDocument ? (document.getElementById("settingsPreferredNameInput") || document.querySelector('[data-v2-settings-field="personalization.preferredName"]')) : null;
   const notificationToggles = hasDocument ? Array.from(document.querySelectorAll('#settingsRouteAlertsToggle, #settingsRailAlertsToggle, #settingsHazardAlertsToggle, #settingsCommunityAlertsToggle, [data-v2-settings-field^="notifications."]')) : [];
   const rawSettings = gridlySafeLocalStorageGet(GRIDLY_SETTINGS_STORAGE_KEY);
   const appliedThemeClass = body ? ["gridly-theme-system", "gridly-theme-light", "gridly-theme-dark"].find((className) => body.classList.contains(className)) || "" : "";
@@ -35572,6 +35663,7 @@ function gridlySettingsPanelAudit() {
     mapStyleSelect &&
     themeSelect &&
     textSizeSelect &&
+    preferredNameControl &&
     notificationToggles.length >= 4 &&
     rawSettings &&
     appliedThemeClass === `gridly-theme-${settings.display.theme}` &&
@@ -35582,6 +35674,7 @@ function gridlySettingsPanelAudit() {
     mapStyleSelectFound: Boolean(mapStyleSelect),
     themeSelectFound: Boolean(themeSelect),
     textSizeSelectFound: Boolean(textSizeSelect),
+    preferredNameControlFound: Boolean(preferredNameControl),
     notificationTogglesFound: notificationToggles.length,
     currentSettings: settings,
     appliedThemeClass,
@@ -35606,12 +35699,14 @@ function bindGridlySettingsPreferences() {
     els.settingsCommunityAlertsToggle,
     els.settingsMapStyleSelect,
     els.settingsThemeSelect,
-    els.settingsTextSizeSelect
+    els.settingsTextSizeSelect,
+    els.settingsPreferredNameInput
   ].filter(Boolean);
   controls.forEach((control) => {
     if (control.dataset.gridlySettingsBound === "1") return;
     control.dataset.gridlySettingsBound = "1";
     control.addEventListener("change", persistGridlySettingsFromUi);
+    if (control === els.settingsPreferredNameInput) control.addEventListener("input", persistGridlySettingsFromUi);
   });
   [[els.settingsEditHomeBtn, "home"], [els.settingsEditWorkBtn, "work"]].forEach(([button, type]) => {
     if (!button || button.dataset.gridlySettingsBound === "1") return;
@@ -43797,11 +43892,12 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         <section class="settings-modal-section">
           <h3>Display Preferences</h3>
           <div class="settings-select-grid">
+            <label>Preferred Name<input data-v2-settings-field="personalization.preferredName" type="text" maxlength="32" autocomplete="given-name" placeholder="Denise, Joe, Mom, Dispatcher" value="${escapeHtml(settings.personalization?.preferredName || "")}"></label>
             <label>Map Style<select data-v2-settings-field="display.mapStyle"><option value="standard"${selected(settings.display.mapStyle, "standard")}>Standard</option><option value="dark"${selected(settings.display.mapStyle, "dark")}>Dark</option><option value="satellite"${selected(settings.display.mapStyle, "satellite")}>Satellite</option></select></label>
             <label>Theme<select data-v2-settings-field="display.theme"><option value="system"${selected(settings.display.theme, "system")}>System</option><option value="light"${selected(settings.display.theme, "light")}>Light</option><option value="dark"${selected(settings.display.theme, "dark")}>Dark</option></select></label>
             <label>Text Size<select data-v2-settings-field="display.textSize"><option value="standard"${selected(settings.display.textSize, "standard")}>Standard</option><option value="large"${selected(settings.display.textSize, "large")}>Large</option><option value="compact"${selected(settings.display.textSize, "compact")}>Compact</option></select></label>
           </div>
-          <p class="settings-placeholder-note">Theme and Text Size apply immediately and are saved locally.</p>
+          <p class="settings-placeholder-note">Preferred Name, Theme, and Text Size apply immediately and are saved locally on this device.</p>
         </section>
         <section class="settings-modal-section" data-gridly-about><h3>About Gridly</h3><p><strong>${GRIDLY_APP_VERSION_LABEL}</strong><br>${GRIDLY_APP_BUILD_LABEL}</p><button class="gridly-v2-tile" data-v2-action="settings-replay-setup" type="button">Replay Setup</button><button class="gridly-v2-tile" data-v2-action="settings-feedback-placeholder" type="button">Send Feedback</button><p class="settings-placeholder-note" data-v2-settings-status>Settings saved locally.</p></section>
       </div>`;
@@ -44758,7 +44854,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       body.dataset.v2DelegatedClickBound = "1";
     }
     if (activeSheet === "settings" && !body.dataset.gridlyV2SettingsChangeBound) {
-      body.addEventListener("change", (event) => {
+      const handleV2SettingsChange = (event) => {
         const control = event.target instanceof Element ? event.target.closest("[data-v2-settings-field]") : null;
         if (!control || !body.contains(control)) return;
         const current = typeof getGridlySettingsPreferences === "function" ? getGridlySettingsPreferences() : normalizeGridlySettings();
@@ -44773,6 +44869,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           if (path === "display.mapStyle") next.display.mapStyle = String(value || "standard");
           if (path === "display.theme") next.display.theme = String(value || "system");
           if (path === "display.textSize") next.display.textSize = String(value || "standard");
+          if (path === "personalization.preferredName") next.personalization.preferredName = String(value || "");
         });
         try {
           saveGridlySettingsPreferences(next, { applyDisplay: true, source: control.dataset.v2SettingsField || "portrait_v2_settings" });
@@ -44782,6 +44879,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           const status = body.querySelector("[data-v2-settings-status]");
           if (status) status.textContent = "Settings could not be saved on this device.";
         }
+      };
+      body.addEventListener("change", handleV2SettingsChange);
+      body.addEventListener("input", (event) => {
+        const control = event.target instanceof Element ? event.target.closest('[data-v2-settings-field="personalization.preferredName"]') : null;
+        if (control && body.contains(control)) handleV2SettingsChange(event);
       });
       body.dataset.gridlyV2SettingsChangeBound = "1";
     }
