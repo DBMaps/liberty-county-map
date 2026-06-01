@@ -14768,3 +14768,134 @@ body.gridly-theme-light .settings-place-card .gridly-v2-tile.settings-place-acti
   background: linear-gradient(180deg, rgba(27, 99, 132, 0.09), rgba(27, 99, 132, 0.045));
   color: #183a52;
 }
+
+/* Gridly first-run welcome onboarding */
+.gridly-welcome-overlay[hidden] { display: none !important; }
+.gridly-welcome-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: end center;
+  padding: 18px;
+  min-height: 100dvh;
+  color: #f7fbff;
+}
+.gridly-welcome-backdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 10%, rgba(74, 164, 255, 0.18), transparent 34%),
+    linear-gradient(180deg, rgba(3, 8, 18, 0.62), rgba(3, 8, 18, 0.9));
+  backdrop-filter: blur(12px);
+}
+.gridly-welcome-sheet {
+  position: relative;
+  width: min(100%, 520px);
+  max-height: min(92dvh, 680px);
+  overflow-y: auto;
+  border: 1px solid rgba(156, 211, 255, 0.2);
+  border-radius: 28px;
+  padding: 18px;
+  background:
+    linear-gradient(145deg, rgba(12, 28, 48, 0.94), rgba(8, 16, 30, 0.92)),
+    rgba(8, 18, 32, 0.86);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.46), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+.gridly-welcome-header,
+.gridly-welcome-footer,
+.gridly-welcome-action-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.gridly-welcome-header { justify-content: space-between; margin-bottom: 14px; }
+.gridly-welcome-brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.gridly-welcome-brand img { width: 112px; max-width: 40vw; height: auto; display: block; }
+.gridly-welcome-mark {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, rgba(45, 143, 255, 0.32), rgba(73, 255, 202, 0.12));
+  border: 1px solid rgba(126, 203, 255, 0.24);
+  box-shadow: 0 0 28px rgba(47, 134, 255, 0.24);
+}
+.gridly-welcome-mark::before,
+.gridly-welcome-mark::after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(92, 186, 255, 0.38);
+  border-radius: 999px;
+  animation: gridlyWelcomePulse 2.8s ease-out infinite;
+}
+.gridly-welcome-mark::after { animation-delay: 1.15s; }
+.gridly-welcome-mark span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #72d8ff;
+  box-shadow: 0 0 16px rgba(114, 216, 255, 0.9);
+}
+@keyframes gridlyWelcomePulse {
+  0% { transform: scale(0.65); opacity: 0.8; }
+  100% { transform: scale(1.75); opacity: 0; }
+}
+.gridly-welcome-skip {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  color: #d8eaff;
+  background: rgba(255, 255, 255, 0.08);
+  font-weight: 800;
+}
+.gridly-welcome-progress { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; margin: 4px 0 22px; }
+.gridly-welcome-progress span {
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(156, 211, 255, 0.18);
+  overflow: hidden;
+}
+.gridly-welcome-progress span.is-active,
+.gridly-welcome-progress span.is-complete { background: linear-gradient(90deg, #4aa4ff, #69f0cf); }
+.gridly-welcome-steps { min-height: 285px; }
+.gridly-welcome-step {
+  display: grid;
+  gap: 14px;
+  padding: 8px 2px 20px;
+}
+.gridly-welcome-step[hidden] { display: none !important; }
+.gridly-welcome-step h2 { margin: 0; font-size: clamp(2rem, 9vw, 3.2rem); line-height: 0.95; letter-spacing: -0.055em; }
+.gridly-welcome-step p { margin: 0; color: rgba(226, 239, 255, 0.78); font-size: 1rem; line-height: 1.55; }
+.gridly-welcome-step .eyebrow { color: #80d7ff; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 900; }
+.gridly-welcome-tagline { color: #ffffff !important; font-weight: 900; font-size: 1.16rem !important; }
+.gridly-welcome-action-row { flex-wrap: wrap; }
+.gridly-welcome-action-row .secondary-btn,
+.gridly-welcome-step > .secondary-btn,
+.gridly-welcome-step > .primary-btn { min-height: 48px; justify-content: center; }
+.gridly-welcome-status { min-height: 1.3em; font-size: 0.9rem !important; color: #9de8d5 !important; }
+.gridly-welcome-footer {
+  position: sticky;
+  bottom: -18px;
+  z-index: 1;
+  margin: 4px -18px -18px;
+  padding: 14px 18px calc(14px + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, rgba(8, 16, 30, 0), rgba(8, 16, 30, 0.96) 28%);
+}
+.gridly-welcome-footer .secondary-btn,
+.gridly-welcome-footer .primary-btn { min-height: 48px; flex: 1 1 auto; }
+#gridlyWelcomeNextBtn,
+#gridlyWelcomeFinishBtn { flex-grow: 2; }
+@media (min-width: 680px) {
+  .gridly-welcome-overlay { place-items: center; }
+  .gridly-welcome-sheet { padding: 24px; }
+  .gridly-welcome-footer { margin: 8px -24px -24px; padding-left: 24px; padding-right: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gridly-welcome-mark::before,
+  .gridly-welcome-mark::after { animation: none; opacity: 0.5; }
+}
