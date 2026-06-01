@@ -7885,6 +7885,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlySupabaseHazardPurgeAudit",
   "gridlyClearSupabaseTestHazards",
   "gridlyDevPurgeRecentRoadHazards",
+  "gridlyDevPurgeFailureAudit",
   "gridlyDevPurgeRecentCrossingReports",
   "gridlyTestDataCleanupAudit",
   "gridlyClearTestData",
@@ -7978,6 +7979,7 @@ function exposeAllGridlyAuditHelpers() {
     gridlySupabaseHazardPurgeAudit: typeof target?.gridlySupabaseHazardPurgeAudit === "function" ? target.gridlySupabaseHazardPurgeAudit : null,
     gridlyClearSupabaseTestHazards: typeof target?.gridlyClearSupabaseTestHazards === "function" ? target.gridlyClearSupabaseTestHazards : null,
     gridlyDevPurgeRecentRoadHazards: typeof gridlyDevPurgeRecentRoadHazards === "function" ? gridlyDevPurgeRecentRoadHazards : null,
+    gridlyDevPurgeFailureAudit: typeof target?.gridlyDevPurgeFailureAudit === "function" ? target.gridlyDevPurgeFailureAudit : null,
     gridlyDevPurgeRecentCrossingReports: typeof gridlyDevPurgeRecentCrossingReports === "function" ? gridlyDevPurgeRecentCrossingReports : null,
     gridlyTestDataCleanupAudit: typeof target?.gridlyTestDataCleanupAudit === "function" ? target.gridlyTestDataCleanupAudit : null,
     gridlyClearTestData: typeof target?.gridlyClearTestData === "function" ? target.gridlyClearTestData : null,
@@ -17380,6 +17382,39 @@ window.gridlySupabaseHazardPurgeAudit = async function gridlySupabaseHazardPurge
   return audit;
 };
 
+function gridlyNormalizeSupabaseMutationError(error = null) {
+  if (!error) return null;
+  return {
+    message: error.message || "",
+    code: error.code || "",
+    details: error.details || "",
+    hint: error.hint || "",
+    name: error.name || ""
+  };
+}
+
+function gridlyLooksLikeSupabaseRlsError(error = null) {
+  const normalized = gridlyNormalizeSupabaseMutationError(error);
+  if (!normalized) return false;
+  const text = [normalized.message, normalized.code, normalized.details, normalized.hint, normalized.name].join(" ").toLowerCase();
+  return text.includes("row-level security")
+    || text.includes("rls")
+    || text.includes("policy")
+    || text.includes("permission denied")
+    || text.includes("42501")
+    || text.includes("insufficient privilege");
+}
+
+function gridlyBuildNonMatchingIdProbeValue(candidateIds = []) {
+  const sample = candidateIds.find((id) => id !== null && typeof id !== "undefined");
+  const sampleText = String(sample || "").trim();
+  if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sampleText)) {
+    return "00000000-0000-0000-0000-000000000000";
+  }
+  if (typeof sample === "number" || (/^-?\d+$/.test(sampleText) && sampleText !== "")) return -1;
+  return "gridly-dev-purge-failure-audit-non-matching-id";
+}
+
 window.gridlyClearSupabaseTestHazards = async function gridlyClearSupabaseTestHazards(options = {}) {
   if (options?.confirm !== GRIDLY_SUPABASE_TEST_HAZARD_CONFIRMATION) {
     const blocked = { deleted: 0, failed: 0, ok: false, reason: "confirm_CLEAR_SUPABASE_TEST_HAZARDS_required" };
@@ -17420,6 +17455,151 @@ window.gridlyClearSupabaseTestHazards = async function gridlyClearSupabaseTestHa
   const result = { deleted: idsToDelete.length, failed: 0, ok: true, validation };
   console.info("gridlyClearSupabaseTestHazards completed", result);
   return result;
+};
+
+window.gridlyDevPurgeFailureAudit = async function gridlyDevPurgeFailureAudit(options = {}) {
+  const deleteTargetTable = "reports";
+  const emptyAudit = {
+    deleteAttempted: false,
+    deleteCandidateCount: 0,
+    deleteTargetTable,
+    deleteError: null,
+    deleteResponse: null,
+    rlsSuspected: false,
+    candidateIdsSample: [],
+    dryRunCount: 0,
+    actualDeleteCount: 0
+  };
+
+  if (!supabaseClient) {
+    const missing = { ...emptyAudit, deleteError: { message: "Supabase client not initialized." }, deleteResponse: { ok: false, reason: "supabase_client_missing" } };
+    console.warn("gridlyDevPurgeFailureAudit unavailable", missing);
+    return missing;
+  }
+
+  const ROAD_HAZARD_TYPES = gridlyGetSharedRoadHazardReportTypes();
+  const {
+    hours = 24,
+    radiusMiles = DEFAULT_NEARBY_RADIUS_MILES,
+    nearLocation = null,
+    sourceFilter = ["user"],
+    typeFilter = [],
+    deviceIdFilter = [deviceId],
+    limit = 50
+  } = options || {};
+
+  const normalizedTypeFilter = Array.isArray(typeFilter)
+    ? typeFilter.map((v) => String(v || "").trim().toLowerCase()).filter(Boolean)
+    : [];
+  const normalizedSourceFilter = Array.isArray(sourceFilter)
+    ? sourceFilter.map((v) => String(v || "").trim().toLowerCase()).filter(Boolean)
+    : [];
+  const normalizedDeviceIdFilter = Array.isArray(deviceIdFilter)
+    ? deviceIdFilter.map((v) => String(v || "").trim()).filter(Boolean)
+    : [];
+  const explicitTypeFilter = normalizedTypeFilter.length > 0;
+  const maxRows = Math.max(1, Math.min(500, Number(limit) || 50));
+  const radius = Number(radiusMiles) > 0 ? Number(radiusMiles) : 0;
+  const cutoffIso = new Date(Date.now() - (Math.max(1, Number(hours) || 24) * 60 * 60 * 1000)).toISOString();
+  const centerCandidate = nearLocation && Number.isFinite(Number(nearLocation.lat)) && Number.isFinite(Number(nearLocation.lng))
+    ? { lat: Number(nearLocation.lat), lng: Number(nearLocation.lng), source: "nearLocation" }
+    : userLocation && Number.isFinite(Number(userLocation.lat)) && Number.isFinite(Number(userLocation.lng))
+    ? { lat: Number(userLocation.lat), lng: Number(userLocation.lng), source: "userLocation" }
+    : map?.getCenter
+    ? { lat: Number(map.getCenter().lat), lng: Number(map.getCenter().lng), source: "mapCenter" }
+    : null;
+
+  const { data, error } = await supabaseClient
+    .from(deleteTargetTable)
+    .select("id,report_type,source,created_at,lat,lng,crossing_id,crossing_name,detail,device_id")
+    .gte("created_at", cutoffIso)
+    .in("report_type", ROAD_HAZARD_TYPES)
+    .order("created_at", { ascending: false })
+    .limit(1000);
+
+  if (error) {
+    const queryError = gridlyNormalizeSupabaseMutationError(error) || { message: error.message || "query_failed" };
+    const failed = {
+      ...emptyAudit,
+      deleteError: queryError,
+      deleteResponse: { ok: false, stage: "candidate_query", error: queryError },
+      rlsSuspected: gridlyLooksLikeSupabaseRlsError(error)
+    };
+    console.warn("gridlyDevPurgeFailureAudit query failed", failed);
+    return failed;
+  }
+
+  const matches = (Array.isArray(data) ? data : []).filter((row) => {
+    const type = String(row?.report_type || "").toLowerCase();
+    const effectiveSource = String(row?.source || "user").toLowerCase();
+    const isRail = String(row?.crossing_id || "").trim().length > 0;
+
+    if (!ROAD_HAZARD_TYPES.includes(type)) return false;
+    if (!explicitTypeFilter && type === "hazard_cleared") return false;
+    if (!explicitTypeFilter && isRail) return false;
+    if (explicitTypeFilter && !normalizedTypeFilter.includes(type)) return false;
+    if (normalizedSourceFilter.length && !normalizedSourceFilter.includes(effectiveSource)) return false;
+    if (normalizedDeviceIdFilter.length && !normalizedDeviceIdFilter.includes(String(row?.device_id || "").trim())) return false;
+    if (!radius || !centerCandidate) return true;
+
+    return getDistanceMiles(centerCandidate.lat, centerCandidate.lng, Number(row?.lat), Number(row?.lng)) <= radius;
+  }).slice(0, maxRows);
+
+  const candidateIds = matches.map((row) => row?.id).filter(Boolean);
+  const impossibleId = gridlyBuildNonMatchingIdProbeValue(candidateIds);
+  const deleteProbe = candidateIds.length
+    ? await supabaseClient
+      .from(deleteTargetTable)
+      .delete({ count: "exact" })
+      .eq("id", impossibleId)
+      .select("id")
+    : { data: null, error: null, count: 0, status: null, statusText: "Skipped: no delete candidates." };
+  const normalizedDeleteError = gridlyNormalizeSupabaseMutationError(deleteProbe?.error);
+  const deleteResponse = {
+    ok: !deleteProbe?.error,
+    nonMutatingProbe: Boolean(candidateIds.length),
+    probeFilter: candidateIds.length ? { id: impossibleId } : null,
+    data: Array.isArray(deleteProbe?.data) ? deleteProbe.data : deleteProbe?.data ?? null,
+    count: Number.isFinite(Number(deleteProbe?.count)) ? Number(deleteProbe.count) : null,
+    status: deleteProbe?.status ?? null,
+    statusText: deleteProbe?.statusText ?? null,
+    error: normalizedDeleteError,
+    filterComparison: {
+      dryRunFilters: {
+        table: deleteTargetTable,
+        createdAtGte: cutoffIso,
+        reportTypeIn: ROAD_HAZARD_TYPES,
+        sourceFilter: normalizedSourceFilter,
+        typeFilter: normalizedTypeFilter,
+        deviceIdFilter: normalizedDeviceIdFilter,
+        excludesHazardClearedUnlessExplicit: !explicitTypeFilter,
+        excludesRailUnlessExplicit: !explicitTypeFilter,
+        radiusMiles: radius,
+        center: centerCandidate,
+        limit: maxRows
+      },
+      actualDeleteFiltersInPurgeHelper: {
+        table: deleteTargetTable,
+        idInCandidateIdsOnly: true
+      },
+      filtersDiffer: true,
+      note: "gridlyDevPurgeRecentRoadHazards builds candidates with the dry-run filters, then deletes by candidate id only; this audit probes delete permissions with an impossible id and does not delete candidate rows."
+    }
+  };
+  const audit = {
+    deleteAttempted: Boolean(candidateIds.length),
+    deleteCandidateCount: candidateIds.length,
+    deleteTargetTable,
+    deleteError: normalizedDeleteError,
+    deleteResponse,
+    rlsSuspected: gridlyLooksLikeSupabaseRlsError(deleteProbe?.error),
+    candidateIdsSample: candidateIds.slice(0, 10),
+    dryRunCount: matches.length,
+    actualDeleteCount: Number.isFinite(Number(deleteProbe?.count)) ? Number(deleteProbe.count) : 0
+  };
+
+  console.info("gridlyDevPurgeFailureAudit", audit);
+  return audit;
 };
 
 const gridlyDevPurgeRecentRoadHazards = async function gridlyDevPurgeRecentRoadHazards(options = {}) {
