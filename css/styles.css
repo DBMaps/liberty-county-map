@@ -15180,8 +15180,38 @@ body.gridly-theme-light .settings-place-card .gridly-v2-tile.settings-place-acti
   background: rgba(255, 255, 255, 0.045);
 }
 .gridly-welcome-checklist li::first-letter { color: #8df6dd; }
-.gridly-welcome-final-copy { color: rgba(226, 239, 255, 0.86) !important; font-size: 1.08rem !important; }
-.gridly-welcome-final-note { color: #ffffff !important; font-weight: 780; }
+.gridly-welcome-step[data-gridly-welcome-step="6"] { gap: 18px; padding-bottom: 38px; }
+.gridly-welcome-step[data-gridly-welcome-step="6"] h2 { max-width: 12ch; }
+.gridly-welcome-final-copy {
+  max-width: 28rem !important;
+  color: rgba(226, 239, 255, 0.88) !important;
+  font-size: 1.08rem !important;
+  line-height: 1.55 !important;
+}
+.gridly-welcome-step[data-gridly-welcome-step="6"] .gridly-welcome-checklist {
+  gap: 12px;
+  margin: 4px 0 2px;
+  padding: 20px;
+  border-color: rgba(105, 240, 207, 0.24);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(105, 240, 207, 0.045));
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+.gridly-welcome-step[data-gridly-welcome-step="6"] .gridly-welcome-checklist li {
+  min-height: 46px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 1.02rem;
+}
+.gridly-welcome-final-note {
+  max-width: 20rem !important;
+  margin-top: 4px !important;
+  color: #ffffff !important;
+  font-size: clamp(1.18rem, 4.4vw, 1.42rem) !important;
+  line-height: 1.28 !important;
+  font-weight: 820;
+  letter-spacing: -0.018em;
+  text-wrap: balance;
+}
 
 .gridly-welcome-action-row { flex-wrap: wrap; }
 .gridly-welcome-action-row .secondary-btn,

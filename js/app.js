@@ -14696,10 +14696,12 @@ function renderGridlyWelcomePersonalization() {
   }
   if (els.gridlyWelcomeFinalCopy) {
     const homeTown = getGridlyHomeTownPreference();
-    const townLine = homeTown ? `Watching ${homeTown}.` : "Watching your town.";
+    const networkName = homeTown ? `the ${homeTown} awareness network` : "your local awareness network";
     els.gridlyWelcomeFinalCopy.textContent = preferredName
-      ? `${preferredName}, you’re part of the network. ${townLine} Watching your routes. Helping your community know before they go.`
-      : `You’re part of the network. ${townLine} Watching your routes. Helping your community know before they go.`;
+      ? `${preferredName}, you’re connected to ${networkName}.`
+      : homeTown
+        ? `You’re connected to ${networkName}.`
+        : `You’re connected to your town, your routes, and your community.`;
   }
 }
 
