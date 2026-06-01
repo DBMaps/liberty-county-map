@@ -14657,7 +14657,7 @@ function renderGridlyWelcomeHomeTownSelection() {
     button.setAttribute("aria-pressed", isSelected ? "true" : "false");
   });
   if (els.gridlyWelcomeTownStatus) {
-    els.gridlyWelcomeTownStatus.textContent = selectedTown ? `Watching ${selectedTown} ✓` : "Choose a town to personalize your local awareness.";
+    els.gridlyWelcomeTownStatus.textContent = selectedTown ? `Watching ${selectedTown}. Your Home and Work stay separate.` : "Choose a town to personalize local awareness.";
   }
 }
 
@@ -14696,8 +14696,8 @@ function renderGridlyWelcomePersonalization() {
   }
   if (els.gridlyWelcomeFinalCopy) {
     els.gridlyWelcomeFinalCopy.textContent = preferredName
-      ? `${preferredName}, Gridly is ready to keep your town, routes, community reports, and local alerts connected.`
-      : "Gridly is ready to keep your town, routes, community reports, and local alerts connected.";
+      ? `${preferredName}, you’re part of the network. Town, routes, community reports, and local alerts are ready when you are.`
+      : "You’re part of the network. Town, routes, community reports, and local alerts are ready when you are.";
   }
 }
 
