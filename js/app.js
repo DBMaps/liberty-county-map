@@ -19715,103 +19715,198 @@ function renderGridlyCommunityPulse(options = {}) {
 
 
 
-const GRIDLY_INTELLIGENCE_PREVIEW_LANGUAGE_GUIDE = Object.freeze({
-  frequently_blocked_crossing: Object.freeze({
+const GRIDLY_HISTORICAL_INTELLIGENCE_LANGUAGE = Object.freeze({
+  most_blocked_crossing: Object.freeze({
     title: "Frequently Blocked Crossing",
     category: "Rail Crossing",
-    currentWording: "Preview: Frequently blocked crossing — Frequently blocked crossing signal based on existing community framework output.",
-    recommendedWording: "Frequently Blocked Crossing — Drivers frequently report train delays near this crossing.",
-    descriptionWithReports: "Drivers frequently report train delays near this crossing.",
-    descriptionWithoutReports: "Community reports can help identify crossings with recurring train delays.",
-    reasoning: "Names the driver problem directly and explains why the crossing may matter without exposing model or signal language."
+    description: (finding) => `Drivers have reported ${finding.count} past train ${finding.count === 1 ? "delay" : "delays"}${finding.locationLabel ? ` near ${finding.locationLabel}` : " at this crossing"}.`
   }),
   recurring_flooding_location: Object.freeze({
     title: "Recurring Flooding Location",
     category: "Flooding",
-    currentWording: "Preview: Recurring flooding location — Recurring flooding location signal based on existing community framework output.",
-    recommendedWording: "Recurring Flooding Location — Drivers have reported water on the road in this area before.",
-    descriptionWithReports: "Drivers have reported water on the road in this area before.",
-    descriptionWithoutReports: "Community reports can help flag roads that may flood again during storms.",
-    reasoning: "Uses simple road-safety language and makes the relevance clear for drivers approaching the area."
+    description: (finding) => `Drivers have reported water on the road ${finding.count} ${finding.count === 1 ? "time" : "times"}${finding.locationLabel ? ` near ${finding.locationLabel}` : " in this area"}.`
   }),
-  common_delay_area: Object.freeze({
-    title: "Common Delay Area",
-    category: "Delays",
-    currentWording: "Preview: Common delay area — Common delay area signal based on existing community framework output.",
-    recommendedWording: "Common Delay Area — Drivers often report slowdowns in this area.",
-    descriptionWithReports: "Drivers often report slowdowns in this area.",
-    descriptionWithoutReports: "Community reports can help spot places where delays happen often.",
-    reasoning: "Focuses on what drivers experience and avoids technical scoring or trend terms."
-  }),
-  community_hotspot: Object.freeze({
-    title: "Community Hotspot",
-    category: "Community Reports",
-    currentWording: "Preview: Community hotspot — Community hotspot preview based on existing framework output.",
-    recommendedWording: "Community Hotspot — Drivers are sharing multiple reports around this area.",
-    descriptionWithReports: "Drivers are sharing multiple reports around this area.",
-    descriptionWithoutReports: "Community reports will appear here when nearby drivers share useful updates.",
-    reasoning: "Explains that the card is powered by nearby driver reports instead of internal output."
-  }),
-  recurring_construction_zone: Object.freeze({
+  repeat_construction_zone: Object.freeze({
     title: "Recurring Construction Zone",
     category: "Construction",
-    currentWording: "Preview: Recurring construction zone — Recurring construction zone signal based on existing community framework output.",
-    recommendedWording: "Recurring Construction Zone — Drivers have reported road work in this area more than once.",
-    descriptionWithReports: "Drivers have reported road work in this area more than once.",
-    descriptionWithoutReports: "Community reports can help show where road work may cause repeat slowdowns.",
-    reasoning: "States the likely driver impact in plain language without implying live construction activation."
+    description: (finding) => `Drivers have reported road work ${finding.count} ${finding.count === 1 ? "time" : "times"}${finding.locationLabel ? ` near ${finding.locationLabel}` : " in this area"}.`
+  }),
+  high_delay_corridor: Object.freeze({
+    title: "Common Delay Area",
+    category: "Delays",
+    description: (finding) => `Past cleared reports on ${finding.locationLabel || "this road"} averaged about ${finding.averageDurationMinutes} minutes before clearing.`
+  }),
+  community_confirmed_hotspot: Object.freeze({
+    title: "Confirmed Community Hotspot",
+    category: "Community Reports",
+    description: (finding) => `Drivers have confirmed ${finding.confirmationCount} past ${finding.confirmationCount === 1 ? "report" : "reports"}${finding.locationLabel ? ` near ${finding.locationLabel}` : " in this area"}.`
+  }),
+  recurring_hazard: Object.freeze({
+    title: "Recurring Road Hazard",
+    category: "Road Hazards",
+    description: (finding) => `Drivers have reported ${finding.hazardLabel || "a road hazard"} ${finding.count} ${finding.count === 1 ? "time" : "times"}${finding.locationLabel ? ` near ${finding.locationLabel}` : " in this area"}.`
+  }),
+  no_history: Object.freeze({
+    title: "No historical pattern yet",
+    category: "Historical Intelligence",
+    description: () => "As drivers clear more real reports, repeat locations will appear here."
   })
 });
 
-function getGridlyIntelligencePreviewLanguage(category = "community_hotspot") {
-  return GRIDLY_INTELLIGENCE_PREVIEW_LANGUAGE_GUIDE[category] || GRIDLY_INTELLIGENCE_PREVIEW_LANGUAGE_GUIDE.community_hotspot;
+function getGridlyIntelligencePreviewLanguage(category = "no_history") {
+  return GRIDLY_HISTORICAL_INTELLIGENCE_LANGUAGE[category] || GRIDLY_HISTORICAL_INTELLIGENCE_LANGUAGE.no_history;
 }
 
-function getGridlyIntelligencePreviewCategory(model = {}) {
-  const signalTypes = Array.isArray(model.blendedSignalTypes) ? model.blendedSignalTypes.map((signalType) => String(signalType || "").toLowerCase()) : [];
-  const activeAwarenessCategory = String(model.activeAwareness?.resolvedCategory || model.activeAwareness?.topCategory || "").toLowerCase();
-  const joinedSignals = `${signalTypes.join(" ")} ${activeAwarenessCategory}`;
-  if (/rail|crossing|train|blocked/.test(joinedSignals)) return "frequently_blocked_crossing";
-  if (/flood|water|high_water/.test(joinedSignals)) return "recurring_flooding_location";
-  if (/construction|roadwork|road_work|work_zone|work zone|crew|lane/.test(joinedSignals)) return "recurring_construction_zone";
-  if (/closure|crash|wreck|traffic|delay|slow/.test(joinedSignals)) return "common_delay_area";
-  return "community_hotspot";
-}
-
-function getGridlyIntelligencePreviewCategoryLabel(category = "community_hotspot") {
+function getGridlyIntelligencePreviewCategoryLabel(category = "no_history") {
   return getGridlyIntelligencePreviewLanguage(category).category;
 }
 
-function buildGridlyIntelligencePreviewCardModel(options = {}) {
-  const suppliedModel = options?.model && typeof options.model === "object" ? options.model : null;
-  const frameworkModel = suppliedModel
-    || (gridlyCommunityPulseAuditState && typeof gridlyCommunityPulseAuditState === "object" ? gridlyCommunityPulseAuditState : null)
-    || (typeof buildGridlyCommunityPulseModel === "function" ? buildGridlyCommunityPulseModel({ intelligencePreviewReadOnly: true }) : {});
-  const activeAwareness = frameworkModel.activeAwareness || {};
-  const selectedCategory = getGridlyIntelligencePreviewCategory(frameworkModel);
-  const previewLanguage = getGridlyIntelligencePreviewLanguage(selectedCategory);
-  const categoryLabel = previewLanguage.title;
-  const corridor = safeDisplayText(frameworkModel.dominantCorridor || activeAwareness.resolvedLocationLabel || "nearby roads", "nearby roads");
-  const selectedCommunityCount = Math.max(0, Number(frameworkModel.selectedCommunityCount || 0));
-  const activeAwarenessCount = Math.max(0, Number(activeAwareness.activeAwarenessCount ?? activeAwareness.activeReportCount ?? 0));
-  const supportCount = Math.max(selectedCommunityCount, activeAwarenessCount);
-  const signalTypes = Array.isArray(frameworkModel.blendedSignalTypes) ? frameworkModel.blendedSignalTypes.filter(Boolean) : [];
-  const previewMode = true;
-  const selectedTitle = categoryLabel;
-  const baseDescription = supportCount > 0 ? previewLanguage.descriptionWithReports : previewLanguage.descriptionWithoutReports;
-  const selectedDescription = supportCount > 0 && corridor
-    ? `${baseDescription} Near ${corridor}. Preview only.`
-    : `${baseDescription} Preview only.`;
-  const supportingData = {
-    source: "Community reports",
-    selectedCommunityCount,
-    activeAwarenessCount,
-    dominantCorridor: frameworkModel.dominantCorridor || null,
-    dominantCorridorScore: Number(frameworkModel.dominantCorridorScore || 0),
-    mobilityPressureCategory: frameworkModel.mobilityPressureCategory || "quiet",
-    blendedSignalTypes: signalTypes,
-    renderedPulseHeadline: frameworkModel.renderedPulseHeadline || "",
-    renderedPulseSubline: frameworkModel.renderedPulseSubline || "",
+function gridlyHistoricalIntelligenceConfirmationCount(record = {}) {
+  const explicit = Number(record?.confirmationCount ?? record?.confirmations ?? record?.confirmation_count);
+  return Number.isFinite(explicit) ? Math.max(0, Math.round(explicit)) : 0;
+}
+
+function gridlyHistoricalIntelligenceAverageDuration(records = []) {
+  const durations = records.map((record) => Number(gridlyHistoricalAuditDuration(record))).filter((value) => Number.isFinite(value) && value >= 0);
+  if (!durations.length) return null;
+  return Math.max(1, Math.round(durations.reduce((sum, value) => sum + value, 0) / durations.length));
+}
+
+function gridlyHistoricalIntelligenceLatestTimestamp(records = []) {
+  return records.reduce((latest, record) => {
+    const ms = new Date(gridlyHistoricalAuditTimestamp(record) || record?.clearedAt || record?.cleared_at || 0).getTime();
+    return Number.isFinite(ms) && ms > latest ? ms : latest;
+  }, 0);
+}
+
+function gridlyHistoricalIntelligenceRecencyBoost(records = []) {
+  const latest = gridlyHistoricalIntelligenceLatestTimestamp(records);
+  if (!latest) return 0;
+  const ageDays = Math.max(0, (Date.now() - latest) / 86400000);
+  if (ageDays <= 7) return 20;
+  if (ageDays <= 30) return 12;
+  if (ageDays <= 90) return 6;
+  return 0;
+}
+
+function gridlyHistoricalIntelligenceHazardLabel(record = {}) {
+  const raw = gridlyHistoricalAuditHazardType(record);
+  const normalized = typeof gridlyNormalizeHazardType === "function" ? gridlyNormalizeHazardType({ type: raw }) : raw;
+  const copy = HAZARD_TYPES?.[normalized] || HAZARD_TYPES?.[raw] || null;
+  return safeDisplayText(copy?.label || raw, "road hazard").toLowerCase();
+}
+
+function gridlyHistoricalIntelligenceGroupRecords(records = [], keyBuilder = () => "") {
+  const groups = new Map();
+  records.forEach((record) => {
+    const key = String(keyBuilder(record) || "").trim().toLowerCase();
+    if (!key) return;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(record);
+  });
+  return groups;
+}
+
+function gridlyHistoricalIntelligenceBuildFinding({ category, records, locationLabel = "", hazardLabel = "", baseScore = 0 } = {}) {
+  const usableRecords = Array.isArray(records) ? records : [];
+  const count = usableRecords.length;
+  const averageDurationMinutes = gridlyHistoricalIntelligenceAverageDuration(usableRecords);
+  const confirmationCount = usableRecords.reduce((sum, record) => sum + gridlyHistoricalIntelligenceConfirmationCount(record), 0);
+  const durationScore = averageDurationMinutes ? Math.min(35, Math.round(averageDurationMinutes / 3)) : 0;
+  const confirmationScore = Math.min(40, confirmationCount * 4);
+  const significanceScore = Math.round(baseScore + count * 25 + durationScore + confirmationScore + gridlyHistoricalIntelligenceRecencyBoost(usableRecords));
+  return {
+    category,
+    title: getGridlyIntelligencePreviewLanguage(category).title,
+    categoryLabel: getGridlyIntelligencePreviewLanguage(category).category,
+    locationLabel: safeDisplayText(locationLabel, ""),
+    hazardLabel: safeDisplayText(hazardLabel, ""),
+    count,
+    averageDurationMinutes,
+    confirmationCount,
+    latestAt: gridlyHistoricalIntelligenceLatestTimestamp(usableRecords) ? new Date(gridlyHistoricalIntelligenceLatestTimestamp(usableRecords)).toISOString() : null,
+    significanceScore,
+    source: "real_historical_records"
+  };
+}
+
+function gridlyBuildHistoricalIntelligenceFindings() {
+  const snapshot = gridlyReadHistoricalIntelligenceStorageSnapshot();
+  const crossingEvents = Array.isArray(snapshot.state?.crossingEvents) ? snapshot.state.crossingEvents : [];
+  const hazardEvents = Array.isArray(snapshot.state?.hazardEvents) ? snapshot.state.hazardEvents : [];
+  const findings = [];
+
+  const crossingGroups = gridlyHistoricalIntelligenceGroupRecords(crossingEvents, (record) => gridlyHistoricalAuditLocationKey(record, "crossing"));
+  crossingGroups.forEach((records) => {
+    if (records.length < 2) return;
+    const sample = records[0] || {};
+    findings.push(gridlyHistoricalIntelligenceBuildFinding({
+      category: "most_blocked_crossing",
+      records,
+      locationLabel: gridlyHistoricalAuditCrossing(sample) || sample.crossingName || sample.crossingId || "this crossing",
+      baseScore: 35
+    }));
+  });
+
+  const floodEvents = hazardEvents.filter((record) => /flood|high_water|high water|water/.test(gridlyHistoricalAuditHazardType(record).toLowerCase()));
+  const floodGroups = gridlyHistoricalIntelligenceGroupRecords(floodEvents, (record) => gridlyHistoricalAuditRoad(record));
+  floodGroups.forEach((records) => {
+    if (records.length < 2) return;
+    findings.push(gridlyHistoricalIntelligenceBuildFinding({ category: "recurring_flooding_location", records, locationLabel: gridlyHistoricalAuditRoad(records[0]), baseScore: 45 }));
+  });
+
+  const constructionEvents = hazardEvents.filter((record) => /construction|roadwork|road_work|work_zone|work zone|lane_closure|closure/.test(gridlyHistoricalAuditHazardType(record).toLowerCase()));
+  const constructionGroups = gridlyHistoricalIntelligenceGroupRecords(constructionEvents, (record) => gridlyHistoricalAuditRoad(record));
+  constructionGroups.forEach((records) => {
+    if (records.length < 2) return;
+    findings.push(gridlyHistoricalIntelligenceBuildFinding({ category: "repeat_construction_zone", records, locationLabel: gridlyHistoricalAuditRoad(records[0]), baseScore: 30 }));
+  });
+
+  const hazardGroups = gridlyHistoricalIntelligenceGroupRecords(hazardEvents, (record) => gridlyHistoricalAuditLocationKey(record, "hazard"));
+  hazardGroups.forEach((records) => {
+    if (records.length < 2) return;
+    const sample = records[0] || {};
+    findings.push(gridlyHistoricalIntelligenceBuildFinding({
+      category: "recurring_hazard",
+      records,
+      locationLabel: gridlyHistoricalAuditRoad(sample),
+      hazardLabel: gridlyHistoricalIntelligenceHazardLabel(sample),
+      baseScore: 20
+    }));
+  });
+
+  const durationEvents = [...crossingEvents, ...hazardEvents].filter((record) => Boolean(gridlyHistoricalAuditRoad(record)) && Number.isFinite(Number(gridlyHistoricalAuditDuration(record))));
+  const durationGroups = gridlyHistoricalIntelligenceGroupRecords(durationEvents, (record) => gridlyHistoricalAuditRoad(record));
+  durationGroups.forEach((records) => {
+    if (records.length < 2) return;
+    const averageDurationMinutes = gridlyHistoricalIntelligenceAverageDuration(records);
+    if (!averageDurationMinutes) return;
+    const finding = gridlyHistoricalIntelligenceBuildFinding({ category: "high_delay_corridor", records, locationLabel: gridlyHistoricalAuditRoad(records[0]), baseScore: 25 });
+    findings.push({ ...finding, significanceScore: finding.significanceScore + Math.min(30, Math.round(averageDurationMinutes / 2)) });
+  });
+
+  const confirmedEvents = [...crossingEvents, ...hazardEvents].filter((record) => gridlyHistoricalIntelligenceConfirmationCount(record) > 0);
+  const confirmedGroups = gridlyHistoricalIntelligenceGroupRecords(confirmedEvents, (record) => gridlyHistoricalAuditRoad(record) || gridlyHistoricalAuditLocationKey(record, record?.crossingId || record?.crossing_id ? "crossing" : "hazard"));
+  confirmedGroups.forEach((records) => {
+    const confirmationCount = records.reduce((sum, record) => sum + gridlyHistoricalIntelligenceConfirmationCount(record), 0);
+    if (records.length < 2 && confirmationCount < 2) return;
+    findings.push(gridlyHistoricalIntelligenceBuildFinding({ category: "community_confirmed_hotspot", records, locationLabel: gridlyHistoricalAuditRoad(records[0]) || gridlyHistoricalAuditCrossing(records[0]), baseScore: 15 }));
+  });
+
+  const rankedFindings = findings
+    .filter((finding) => finding.count > 0 && Number.isFinite(Number(finding.significanceScore)))
+    .sort((a, b) => Number(b.significanceScore) - Number(a.significanceScore) || Number(b.count) - Number(a.count) || String(a.title).localeCompare(String(b.title)))
+    .map((finding, index) => ({ ...finding, rank: index + 1 }));
+
+  return {
+    rankedFindings,
+    strongestFinding: rankedFindings[0] || null,
+    historicalRecordCount: crossingEvents.length + hazardEvents.length,
+    crossingEventCount: crossingEvents.length,
+    hazardEventCount: hazardEvents.length,
+    storageFound: Boolean(snapshot.found),
+    parseOk: Boolean(snapshot.parseOk),
+    storageReadError: snapshot.storageReadError || null,
     readOnly: true,
     writesAnalytics: false,
     writesTelemetry: false,
@@ -19819,13 +19914,33 @@ function buildGridlyIntelligencePreviewCardModel(options = {}) {
     changesRouting: false,
     changesAlerts: false
   };
+}
+
+function buildGridlyIntelligencePreviewCardModel(options = {}) {
+  const historical = gridlyBuildHistoricalIntelligenceFindings(options);
+  const strongest = historical.strongestFinding;
+  const selectedCategory = strongest?.category || "no_history";
+  const language = getGridlyIntelligencePreviewLanguage(selectedCategory);
+  const selectedTitle = strongest?.title || language.title;
+  const selectedDescription = strongest ? language.description(strongest) : language.description();
+  const supportText = strongest
+    ? `${historical.rankedFindings.length} ranked historical ${historical.rankedFindings.length === 1 ? "finding" : "findings"} · ${historical.historicalRecordCount} real historical ${historical.historicalRecordCount === 1 ? "record" : "records"} reviewed`
+    : `${historical.historicalRecordCount} real historical ${historical.historicalRecordCount === 1 ? "record" : "records"} reviewed · routes and alerts unchanged`;
   return {
     cardAvailable: true,
     selectedCategory,
     selectedTitle,
     selectedDescription,
-    supportingData,
-    previewMode,
+    supportingData: {
+      ...historical,
+      source: "Real historical records",
+      selectedCommunityCount: 0,
+      activeAwarenessCount: 0
+    },
+    rankedFindings: historical.rankedFindings,
+    strongestFinding: strongest,
+    previewMode: false,
+    supportText,
     renderingLocation: "#gridlyPortraitV2 #gridlyIntelligencePreviewCard"
   };
 }
@@ -19842,18 +19957,11 @@ function renderGridlyIntelligencePreviewCard(options = {}) {
   card.hidden = false;
   card.dataset.gridlyPreviewMode = model.previewMode ? "true" : "false";
   card.dataset.gridlySelectedCategory = model.selectedCategory;
-  if (mode) mode.textContent = model.previewMode ? "Preview" : "Intelligence";
+  if (mode) mode.textContent = model.previewMode ? "Preview" : "History";
   if (category) category.textContent = getGridlyIntelligencePreviewCategoryLabel(model.selectedCategory);
   if (title) title.textContent = model.selectedTitle;
   if (description) description.textContent = model.selectedDescription;
-  if (support) {
-    const data = model.supportingData || {};
-    const reportCount = Number(data.selectedCommunityCount || data.activeAwarenessCount || 0);
-    const countText = reportCount > 0
-      ? `${reportCount} community ${reportCount === 1 ? "report" : "reports"}`
-      : "Waiting for more community reports";
-    support.textContent = `${countText} · preview only · routes and alerts unchanged`;
-  }
+  if (support) support.textContent = model.supportText || "Using real historical records only · routes and alerts unchanged";
   window.gridlyIntelligencePreviewCardState = model;
   return model;
 }
@@ -19868,28 +19976,30 @@ window.gridlyIntelligencePreviewCardAudit = function gridlyIntelligencePreviewCa
       selectedTitle: state.selectedTitle,
       selectedDescription: state.selectedDescription,
       supportingData: state.supportingData,
+      rankedFindings: state.rankedFindings || state.supportingData?.rankedFindings || [],
+      strongestFinding: state.strongestFinding || state.supportingData?.strongestFinding || null,
       previewMode: Boolean(state.previewMode),
       renderingLocation: state.renderingLocation
     };
   } catch (error) {
     return {
       cardAvailable: false,
-      selectedCategory: "community_hotspot",
-      selectedTitle: "Community Hotspot",
-      selectedDescription: "Community reports will appear here when nearby drivers share useful updates. Preview only.",
-      supportingData: { error: error?.message || "unknown error", readOnly: true },
-      previewMode: true,
+      selectedCategory: "no_history",
+      selectedTitle: "No historical pattern yet",
+      selectedDescription: "As drivers clear more real reports, repeat locations will appear here.",
+      supportingData: { error: error?.message || "unknown error", readOnly: true, changesAlerts: false, changesRouting: false },
+      previewMode: false,
       renderingLocation: "#gridlyPortraitV2 #gridlyIntelligencePreviewCard"
     };
   }
 };
 
 function buildGridlyIntelligenceContentReadabilityAssessment() {
-  return Object.entries(GRIDLY_INTELLIGENCE_PREVIEW_LANGUAGE_GUIDE).reduce((assessment, [categoryKey, language]) => {
+  return Object.entries(GRIDLY_HISTORICAL_INTELLIGENCE_LANGUAGE).reduce((assessment, [categoryKey, language]) => {
     assessment[categoryKey] = {
-      currentWording: language.currentWording,
-      recommendedWording: language.recommendedWording,
-      reasoning: language.reasoning
+      title: language.title,
+      category: language.category,
+      userFacing: true
     };
     return assessment;
   }, {});
@@ -19900,29 +20010,29 @@ window.gridlyIntelligenceContentAudit = function gridlyIntelligenceContentAudit(
     const state = window.gridlyIntelligencePreviewCardState || buildGridlyIntelligencePreviewCardModel(options);
     const language = getGridlyIntelligencePreviewLanguage(state.selectedCategory);
     const title = state.selectedTitle || language.title;
-    const description = state.selectedDescription || `${language.descriptionWithoutReports} Preview only.`;
+    const description = state.selectedDescription || language.description(state.strongestFinding || {});
     const avoidedInternalTerms = !/(signal|framework output|analytics cluster|confidence score|trend engine|internal model)/i.test(`${title} ${description}`);
     return {
       title,
       description,
-      category: state.selectedCategory || "community_hotspot",
+      category: state.selectedCategory || "no_history",
       userFacingLanguage: avoidedInternalTerms,
       previewMode: Boolean(state.previewMode),
       readabilityAssessment: buildGridlyIntelligenceContentReadabilityAssessment(),
       recommendations: [
-        "Use short, driver-facing titles without the Preview prefix.",
-        "Describe what drivers may experience in the area.",
-        "Keep Preview only as a status note, not the main headline.",
+        "Use short, driver-facing titles based on real historical records.",
+        "Describe what drivers have reported before without implying a live hazard.",
+        "Keep routing and alerts unchanged.",
         "Avoid internal words such as signal, framework output, analytics cluster, confidence score, trend engine, and internal model."
       ]
     };
   } catch (error) {
     return {
-      title: "Community Hotspot",
-      description: "Community reports will appear here when nearby drivers share useful updates. Preview only.",
-      category: "community_hotspot",
+      title: "No historical pattern yet",
+      description: "As drivers clear more real reports, repeat locations will appear here.",
+      category: "no_history",
       userFacingLanguage: true,
-      previewMode: true,
+      previewMode: false,
       readabilityAssessment: buildGridlyIntelligenceContentReadabilityAssessment(),
       recommendations: ["Keep language plain, short, and focused on what drivers need to know."],
       error: error?.message || "unknown error"
