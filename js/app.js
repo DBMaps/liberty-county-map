@@ -2785,6 +2785,27 @@ function gridlyCensusKnownLayerEntries() {
   return entries;
 }
 
+
+function gridlyCensusIsKnownOwner(owner) {
+  const text = String(owner || "").trim();
+  return Boolean(text && !/^unknown(?:_|\b)/i.test(text) && !/unknown ownership/i.test(text));
+}
+
+function gridlyCensusHasSafeInferredOwner(inferredOwner, confidence) {
+  const text = String(inferredOwner || "").trim();
+  return Boolean(text && text !== "unknown" && text !== "unknown_layer" && /^(medium|high)$/i.test(String(confidence || "")));
+}
+
+function gridlyCensusEffectiveOwner(owner, inferredOwner, confidence) {
+  if (gridlyCensusIsKnownOwner(owner)) return owner;
+  if (gridlyCensusHasSafeInferredOwner(inferredOwner, confidence)) return inferredOwner;
+  return "unknown";
+}
+
+function gridlyCensusOwnershipResolvedByInference(owner, inferredOwner, confidence) {
+  return !gridlyCensusIsKnownOwner(owner) && gridlyCensusEffectiveOwner(owner, inferredOwner, confidence) !== "unknown";
+}
+
 function gridlyCensusBuildLayerRecord({ layer, name = "unnamed layer", owner = "", sourceName = "", expectedType = "" } = {}) {
   const inferredType = expectedType || gridlyCensusLayerKind(layer, name);
   const pane = gridlyCensusLayerPane(layer);
@@ -2792,11 +2813,14 @@ function gridlyCensusBuildLayerRecord({ layer, name = "unnamed layer", owner = "
   const diagnostics = gridlyCensusLayerDiagnostics(layer, { type: inferredType, pane, zIndex });
   const ownershipInference = gridlyCensusInferLayerOwnership({ name, type: inferredType, layer, diagnostics });
   const resolvedOwner = owner || gridlyCensusOwnerLabel(ownershipInference.inferredOwner);
+  const effectiveOwner = gridlyCensusEffectiveOwner(resolvedOwner, ownershipInference.inferredOwner, ownershipInference.confidence);
   return {
     id: layer?._leaflet_id || null,
     type: inferredType,
     owner: resolvedOwner,
     inferredOwner: ownershipInference.inferredOwner,
+    effectiveOwner,
+    ownershipResolved: gridlyCensusOwnershipResolvedByInference(resolvedOwner, ownershipInference.inferredOwner, ownershipInference.confidence),
     ownershipConfidence: ownershipInference.confidence,
     ownershipReason: ownershipInference.reason,
     visible: diagnostics.visible,
@@ -2818,6 +2842,9 @@ function gridlyCensusBuildDomMarkerRecord(marker, index) {
     id: marker?.id || `dom-marker-${index + 1}`,
     type: "dom_marker",
     owner,
+    inferredOwner: marker?.owner || "unknown_layer",
+    effectiveOwner: gridlyCensusIsKnownOwner(owner) ? owner : "unknown",
+    ownershipResolved: false,
     visible: marker?.visible !== false,
     pane: marker?.pane || "unknown",
     zIndex: marker?.zIndex || "unknown_z_index",
@@ -2894,13 +2921,13 @@ function gridlyGetRenderedMapChildLayerInventory(parentRecords = []) {
 }
 
 function gridlyBuildRenderedMapSpecificInventories(layerInventory, renderedObjects) {
-  const byText = (pattern) => layerInventory.filter((item) => pattern.test(`${item.layerName} ${item.sourceName} ${item.owner} ${item.type}`));
+  const byText = (pattern) => layerInventory.filter((item) => pattern.test(`${item.layerName} ${item.sourceName} ${item.effectiveOwner || item.owner} ${item.type}`));
   const domByOwner = (pattern) => renderedObjects.filter((item) => item.type === "dom_marker" && pattern.test(`${item.owner} ${item.sourceName} ${item.className || ""} ${item.visualStyle || ""}`));
   const routeLayers = byText(/route|destination|watch|preview|impact|awareness/i);
   const hazardLayers = byText(/hazard|incident|txdot|road.*condition/i);
   const crossingLayers = byText(/crossing|rail/i);
   const historicalLayers = byText(/historical|history|hotspot|pattern|corridor/i);
-  const clusterLayers = layerInventory.filter((item) => item.type === "cluster_group" || /cluster/i.test(`${item.layerName} ${item.owner} ${item.sourceName}`));
+  const clusterLayers = layerInventory.filter((item) => item.type === "cluster_group" || /cluster/i.test(`${item.layerName} ${item.effectiveOwner || item.owner} ${item.sourceName}`));
   return {
     routeInventory: [
       { name: "destination route preview layer", exists: Boolean(destinationRoutePreviewLayer), visible: gridlyCensusLayerVisible(destinationRoutePreviewLayer), featureCount: gridlyCensusLayerFeatureCount(destinationRoutePreviewLayer), ownership: "destination ownership" },
@@ -2940,13 +2967,13 @@ function gridlyEvaluateRenderedMapCensusFindings(census) {
     findings.push({ severity: "check", area: "DOM marker coverage", finding: `Only ${counts.domMarkers} DOM marker(s) were detected; verify this matches the expected visible map state.` });
   }
   census.layerInventory.filter((layer) => layer.visible && Number(layer.featureCount || 0) > 0 && !census.renderedObjects.some((object) => object.sourceName === layer.layerName || object.layerName === layer.layerName)).forEach((layer) => {
-    findings.push({ severity: "coverage", area: "visible layer contents", finding: `${layer.layerName} is visible with ${layer.featureCount} child/feature object(s), but no rendered object is directly attributed to it.`, layerRecord: layer, leafletId: layer.id, inferredOwner: layer.inferredOwner, ownershipConfidence: layer.ownershipConfidence });
+    findings.push({ severity: "coverage", area: "visible layer contents", finding: `${layer.layerName} is visible with ${layer.featureCount} child/feature object(s), but no rendered object is directly attributed to it.`, layerRecord: layer, leafletId: layer.id, inferredOwner: layer.inferredOwner, effectiveOwner: layer.effectiveOwner, ownershipResolved: layer.ownershipResolved, ownershipConfidence: layer.ownershipConfidence });
   });
-  census.layerInventory.filter((layer) => !layer.owner || layer.owner === "unknown").forEach((layer) => {
-    findings.push({ severity: "ownership", area: "layer ownership", finding: `${layer.layerName} exists without clear ownership.`, layerRecord: layer, leafletId: layer.id, inferredOwner: layer.inferredOwner, ownershipConfidence: layer.ownershipConfidence });
+  census.layerInventory.filter((layer) => !layer.effectiveOwner || layer.effectiveOwner === "unknown").forEach((layer) => {
+    findings.push({ severity: "ownership", area: "layer ownership", finding: `${layer.layerName} exists without clear effective ownership.`, layerRecord: layer, leafletId: layer.id, inferredOwner: layer.inferredOwner, effectiveOwner: layer.effectiveOwner, ownershipResolved: layer.ownershipResolved, ownershipConfidence: layer.ownershipConfidence });
   });
   census.layerInventory.filter((layer) => layer.type === "unknown_layer").forEach((layer) => {
-    findings.push({ severity: "coverage", area: "unknown layer type", finding: `${layer.layerName} has unknown Leaflet layer type (${layer.constructorName}).`, layerRecord: layer, leafletId: layer.id, inferredOwner: layer.inferredOwner, ownershipConfidence: layer.ownershipConfidence });
+    findings.push({ severity: "coverage", area: "unknown layer type", finding: `${layer.layerName} has unknown Leaflet layer type (${layer.constructorName}).`, layerRecord: layer, leafletId: layer.id, inferredOwner: layer.inferredOwner, effectiveOwner: layer.effectiveOwner, ownershipResolved: layer.ownershipResolved, ownershipConfidence: layer.ownershipConfidence });
   });
   census.renderedObjects.filter((object) => object.zIndex === "unknown_z_index").slice(0, 12).forEach((object) => {
     findings.push({ severity: "coverage", area: "z-index ownership", finding: `${object.layerName || object.id} does not expose a determinable z-index.` });
@@ -2981,11 +3008,11 @@ function gridlyBuildRenderedMapObjectCensus(options = {}) {
     polylines: layerInventory.filter((item) => /polyline/.test(item.type)).length,
     polygons: layerInventory.filter((item) => item.type === "polygon").length,
     clusterGroups: specifics.clusterInventory.length,
-    crossingLayers: layerInventory.filter((item) => /crossing|rail/i.test(`${item.type} ${item.owner} ${item.layerName}`)).length,
-    hazardLayers: layerInventory.filter((item) => /hazard|incident|txdot/i.test(`${item.type} ${item.owner} ${item.layerName}`)).length,
-    routeLayers: layerInventory.filter((item) => /route|destination|watch|preview|impact|awareness/i.test(`${item.type} ${item.owner} ${item.layerName}`)).length,
-    historicalLayers: layerInventory.filter((item) => /historical|history|hotspot|pattern|corridor/i.test(`${item.type} ${item.owner} ${item.layerName}`)).length,
-    txdotLayers: layerInventory.filter((item) => /txdot/i.test(`${item.type} ${item.owner} ${item.layerName} ${item.sourceName}`)).length,
+    crossingLayers: layerInventory.filter((item) => /crossing|rail/i.test(`${item.type} ${item.effectiveOwner || item.owner} ${item.layerName}`)).length,
+    hazardLayers: layerInventory.filter((item) => /hazard|incident|txdot/i.test(`${item.type} ${item.effectiveOwner || item.owner} ${item.layerName}`)).length,
+    routeLayers: layerInventory.filter((item) => /route|destination|watch|preview|impact|awareness/i.test(`${item.type} ${item.effectiveOwner || item.owner} ${item.layerName}`)).length,
+    historicalLayers: layerInventory.filter((item) => /historical|history|hotspot|pattern|corridor/i.test(`${item.type} ${item.effectiveOwner || item.owner} ${item.layerName}`)).length,
+    txdotLayers: layerInventory.filter((item) => /txdot/i.test(`${item.type} ${item.effectiveOwner || item.owner} ${item.layerName} ${item.sourceName}`)).length,
     overlays: layerInventory.filter((item) => /overlay|tile_layer/.test(item.type)).length,
     panes: paneInventory.length
   };
@@ -3085,7 +3112,7 @@ function gridlyFindingsAuditLayerRecord(sourceFinding = {}, census = {}) {
 
 function gridlyFindingsAuditLayerParticipatesInHierarchy(layer = null) {
   const looksLike = layer?.diagnostics?.looksLike || {};
-  const text = `${layer?.type || ""} ${layer?.owner || ""} ${layer?.inferredOwner || ""} ${layer?.pane || ""} ${layer?.layerName || ""} ${layer?.sourceName || ""}`.toLowerCase();
+  const text = `${layer?.type || ""} ${layer?.effectiveOwner || ""} ${layer?.owner || ""} ${layer?.inferredOwner || ""} ${layer?.pane || ""} ${layer?.layerName || ""} ${layer?.sourceName || ""}`.toLowerCase();
   if (looksLike.tileLayer || /base_tile_layer|base map|tile_layer|tilepane/.test(text)) return false;
   if (looksLike.marker || looksLike.polyline || looksLike.polygon || looksLike.geoJSON) return true;
   if (looksLike.layerGroup || looksLike.featureGroup) return Number(layer?.childCount || layer?.diagnostics?.childLayerCount || 0) > 0;
@@ -3094,7 +3121,7 @@ function gridlyFindingsAuditLayerParticipatesInHierarchy(layer = null) {
 
 function gridlyFindingsAuditLayerHasDirectVisualFootprint(layer = null) {
   const looksLike = layer?.diagnostics?.looksLike || {};
-  const text = `${layer?.type || ""} ${layer?.owner || ""} ${layer?.inferredOwner || ""} ${layer?.pane || ""} ${layer?.layerName || ""} ${layer?.sourceName || ""} ${layer?.diagnostics?.knownClassNames?.join?.(" ") || ""}`.toLowerCase();
+  const text = `${layer?.type || ""} ${layer?.effectiveOwner || ""} ${layer?.owner || ""} ${layer?.inferredOwner || ""} ${layer?.pane || ""} ${layer?.layerName || ""} ${layer?.sourceName || ""} ${layer?.diagnostics?.knownClassNames?.join?.(" ") || ""}`.toLowerCase();
   if (looksLike.tileLayer || /base_tile_layer|base map|tile_layer|tilepane/.test(text)) return false;
   if (looksLike.marker || looksLike.polyline || looksLike.polygon || looksLike.geoJSON) return true;
   if (/cluster/.test(text) || layer?.type === "cluster_group") return true;
@@ -3103,7 +3130,7 @@ function gridlyFindingsAuditLayerHasDirectVisualFootprint(layer = null) {
 }
 
 function gridlyFindingsAuditMayCompeteWithPrimaryVisuals(layer = null) {
-  const text = `${layer?.type || ""} ${layer?.owner || ""} ${layer?.inferredOwner || ""} ${layer?.pane || ""} ${layer?.layerName || ""} ${layer?.sourceName || ""} ${layer?.diagnostics?.knownClassNames?.join?.(" ") || ""}`.toLowerCase();
+  const text = `${layer?.type || ""} ${layer?.effectiveOwner || ""} ${layer?.owner || ""} ${layer?.inferredOwner || ""} ${layer?.pane || ""} ${layer?.layerName || ""} ${layer?.sourceName || ""} ${layer?.diagnostics?.knownClassNames?.join?.(" ") || ""}`.toLowerCase();
   if (/base_tile_layer|base map|tile_layer|tilepane/.test(text)) return false;
   if (!gridlyFindingsAuditLayerHasDirectVisualFootprint(layer)) return false;
   if (/route|hazard|incident|crossing|rail|historical|pattern|alert|report|location|infrastructure|markerpane|overlaypane|routepane/.test(text)) return true;
@@ -3112,21 +3139,29 @@ function gridlyFindingsAuditMayCompeteWithPrimaryVisuals(layer = null) {
 
 function gridlyBuildUnknownLayerDiagnostics(census = {}) {
   return gridlyCensusSafeArray(census?.layerInventory)
-    .filter((layer) => layer?.inferredOwner === "unknown_layer" || !layer?.owner || layer?.owner === "unknown" || /^mapLayer:/i.test(String(layer?.layerName || "")))
+    .filter((layer) => layer?.inferredOwner === "unknown_layer" || !gridlyCensusIsKnownOwner(layer?.owner) || layer?.effectiveOwner === "unknown" || /^mapLayer:/i.test(String(layer?.layerName || "")))
     .map((layer) => {
       const diagnostics = layer?.diagnostics || {};
-      const participates = gridlyFindingsAuditLayerParticipatesInHierarchy(layer);
-      const directVisualFootprint = gridlyFindingsAuditLayerHasDirectVisualFootprint(layer);
-      const competes = gridlyFindingsAuditMayCompeteWithPrimaryVisuals(layer);
-      const unresolved = layer?.inferredOwner === "unknown_layer" || !layer?.owner || layer?.owner === "unknown";
-      const critical = Boolean(layer?.visible && directVisualFootprint && participates && competes && unresolved);
+      const owner = layer?.owner || "unknown";
+      const inferredOwner = layer?.inferredOwner || "unknown_layer";
+      const confidence = layer?.ownershipConfidence || "low";
+      const effectiveOwner = layer?.effectiveOwner || gridlyCensusEffectiveOwner(owner, inferredOwner, confidence);
+      const ownershipResolved = layer?.ownershipResolved ?? gridlyCensusOwnershipResolvedByInference(owner, inferredOwner, confidence);
+      const participates = gridlyFindingsAuditLayerParticipatesInHierarchy({ ...layer, effectiveOwner });
+      const directVisualFootprint = gridlyFindingsAuditLayerHasDirectVisualFootprint({ ...layer, effectiveOwner });
+      const competes = gridlyFindingsAuditMayCompeteWithPrimaryVisuals({ ...layer, effectiveOwner });
+      const unresolved = effectiveOwner === "unknown";
+      const critical = Boolean(unresolved && layer?.visible && directVisualFootprint && participates);
       return {
         leafletId: layer?.id || diagnostics.leafletId || null,
         layerName: layer?.layerName || "unknown layer",
         sourceName: layer?.sourceName || "unknown source",
         layerRecord: layer,
-        inferredOwner: layer?.inferredOwner || "unknown_layer",
-        confidence: layer?.ownershipConfidence || "low",
+        owner,
+        inferredOwner,
+        effectiveOwner,
+        ownershipResolved,
+        confidence,
         reason: layer?.ownershipReason || "No ownership inference reason was recorded.",
         type: layer?.type || diagnostics.type || "unknown_layer",
         pane: layer?.pane || diagnostics.pane || "unknown",
@@ -3134,10 +3169,10 @@ function gridlyBuildUnknownLayerDiagnostics(census = {}) {
         visible: Boolean(layer?.visible),
         diagnostics,
         recommendedAction: critical
-          ? "Keep as a blocker: visible hierarchy-participating layer may compete with route/hazard/crossing/historical visuals and still lacks safe ownership. Inspect this diagnostics row and attach stable metadata or a known layer entry."
+          ? "Keep as a blocker: visible hierarchy-participating layer still has unknown effective ownership. Inspect this diagnostics row and attach stable metadata or a known layer entry."
           : (unresolved
             ? "Review when convenient; current diagnostics do not prove this layer directly competes with visual hierarchy work."
-            : "Treat inferred ownership as an audit warning unless runtime evidence contradicts it."),
+            : "Effective ownership is resolved for audit purposes; keep this row as context unless runtime evidence contradicts it."),
         participatesInVisualHierarchy: participates,
         hasDirectVisualFootprint: directVisualFootprint,
         mayCompeteWithPrimaryVisuals: competes,
@@ -3161,12 +3196,16 @@ function gridlyClassifyVisualHierarchyFinding(sourceFinding = {}, census = {}) {
   const renderedCount = Number(census?.renderedObjects?.length || census?.objectCounts?.leafletMarkers || 0);
   const domCount = Number(census?.objectCounts?.domMarkers || 0);
   const layerRecord = gridlyFindingsAuditLayerRecord(sourceFinding, census);
+  const owner = layerRecord?.owner || "unknown";
   const inferredOwner = sourceFinding?.inferredOwner || layerRecord?.inferredOwner || "unknown_layer";
   const ownershipConfidence = sourceFinding?.ownershipConfidence || layerRecord?.ownershipConfidence || "low";
-  const hasSafeInferredOwner = inferredOwner !== "unknown_layer" && /^(medium|high)$/.test(String(ownershipConfidence));
+  const effectiveOwner = sourceFinding?.effectiveOwner || layerRecord?.effectiveOwner || gridlyCensusEffectiveOwner(owner, inferredOwner, ownershipConfidence);
+  const ownershipResolved = sourceFinding?.ownershipResolved ?? layerRecord?.ownershipResolved ?? gridlyCensusOwnershipResolvedByInference(owner, inferredOwner, ownershipConfidence);
+  const hasEffectiveOwner = effectiveOwner !== "unknown";
   const participatesInHierarchy = gridlyFindingsAuditLayerParticipatesInHierarchy(layerRecord);
   const mayCompeteWithPrimaryVisuals = gridlyFindingsAuditMayCompeteWithPrimaryVisuals(layerRecord);
-  const trueUnknownVisibleHierarchyLayer = Boolean(layerRecord?.visible && participatesInHierarchy && mayCompeteWithPrimaryVisuals && !hasSafeInferredOwner);
+  const directVisualFootprint = gridlyFindingsAuditLayerHasDirectVisualFootprint(layerRecord);
+  const trueUnknownVisibleHierarchyLayer = Boolean(layerRecord?.visible && participatesInHierarchy && directVisualFootprint && effectiveOwner === "unknown");
 
   let severity = "info";
   let reason = "Useful context for the V219 visual hierarchy baseline.";
@@ -3176,9 +3215,11 @@ function gridlyClassifyVisualHierarchyFinding(sourceFinding = {}, census = {}) {
     severity = "expected";
     reason = "The census did not detect coverage gaps in the current rendered map state.";
     recommendedAction = "Proceed using this passing census as baseline context.";
-  } else if ((isUnknownOwnership || isUnknownLayerType) && hasSafeInferredOwner) {
+  } else if ((isUnknownOwnership || isUnknownLayerType || isVisibleLayerGap) && hasEffectiveOwner) {
     severity = "warning";
-    reason = `Layer ownership was safely inferred as ${inferredOwner} with ${ownershipConfidence} confidence; keep as a guardrail instead of a blocker.`;
+    reason = ownershipResolved
+      ? `Layer effective ownership resolves to ${effectiveOwner} from ${ownershipConfidence}-confidence inference (${inferredOwner}); keep as a guardrail instead of a blocker.`
+      : `Layer effective ownership is ${effectiveOwner}; keep as a guardrail instead of a blocker.`;
     recommendedAction = "Verify the inferred ownership in unknownLayerDiagnostics before visual work, but do not block solely on this resolved census gap.";
   } else if (isUnknownOwnership && layerRecord && !trueUnknownVisibleHierarchyLayer) {
     severity = "warning";
@@ -3244,9 +3285,13 @@ function gridlyClassifyVisualHierarchyFinding(sourceFinding = {}, census = {}) {
     message: gridlyFindingsAuditMessage(sourceFinding),
     sourceFinding,
     layerRecord,
+    owner,
     inferredOwner,
+    effectiveOwner,
+    ownershipResolved,
     ownershipConfidence,
     participatesInVisualHierarchy: participatesInHierarchy,
+    hasDirectVisualFootprint: directVisualFootprint,
     mayCompeteWithPrimaryVisuals,
     trueUnknownVisibleHierarchyLayer,
     reason,
@@ -3264,16 +3309,20 @@ function gridlyBuildVisualHierarchyFindingsAudit(options = {}) {
   const blockerCriticalFindings = trueUnknownVisibleHierarchyBlockers.map((blocker) => ({
     severity: "critical",
     title: "True Unknown Visible Hierarchy Blocker",
-    message: `${blocker.layerName || `mapLayer:${blocker.leafletId || "unknown"}`} is visible, has a direct visual footprint, participates in hierarchy, may compete with primary visuals, and still lacks safe ownership.`,
+    message: `${blocker.layerName || `mapLayer:${blocker.leafletId || "unknown"}`} is visible, has a direct visual footprint, participates in hierarchy, and still has unknown effective ownership.`,
     sourceFinding: { severity: "ownership", area: "true unknown visible hierarchy blocker", finding: blocker.reason },
     layerRecord: blocker.layerRecord || null,
     blockerDiagnostic: blocker,
+    owner: blocker.owner,
     inferredOwner: blocker.inferredOwner,
+    effectiveOwner: blocker.effectiveOwner,
+    ownershipResolved: blocker.ownershipResolved,
     ownershipConfidence: blocker.confidence,
     participatesInVisualHierarchy: blocker.participatesInVisualHierarchy,
+    hasDirectVisualFootprint: blocker.hasDirectVisualFootprint,
     mayCompeteWithPrimaryVisuals: blocker.mayCompeteWithPrimaryVisuals,
     trueUnknownVisibleHierarchyLayer: true,
-    reason: "A true unknown visible hierarchy-participating layer is intentionally promoted to critical so blocker and proceed status stay consistent.",
+    reason: "A visible hierarchy-participating layer with direct visual footprint and unknown effective ownership is intentionally promoted to critical so blocker and proceed status stay consistent.",
     recommendedAction: blocker.recommendedAction,
     blocksVisualChanges: true
   }));
@@ -3289,9 +3338,9 @@ function gridlyBuildVisualHierarchyFindingsAudit(options = {}) {
   const canProceedToVisualChanges = criticalCount === 0 && trueUnknownVisibleHierarchyBlockerCount === 0;
   const decisionReason = canProceedToVisualChanges
     ? (baselineValidation.visualHierarchyBaselineReady
-      ? "No critical findings or true unknown visible hierarchy blockers remain; V219.5 baseline is ready and warnings are guardrails only."
-      : "No critical findings or true unknown visible hierarchy blockers remain, but V219.5 baseline validation still needs review.")
-    : "Critical findings or true unknown visible hierarchy blockers remain; proceed state is blocked until they are resolved.";
+      ? "Proceed allowed: every visible hierarchy-participating layer with a direct visual footprint has known effective ownership, no critical findings remain, and the V219.5 baseline is ready; warnings are guardrails only."
+      : "Proceed allowed by ownership: every visible hierarchy-participating layer with a direct visual footprint has known effective ownership and no critical findings remain, but V219.5 baseline validation still needs review.")
+    : "Proceed blocked: at least one critical finding or visible hierarchy-participating layer with direct visual footprint still has unknown effective ownership.";
   const decisionBasis = {
     criticalCount,
     trueUnknownVisibleHierarchyBlockerCount,
@@ -3301,7 +3350,7 @@ function gridlyBuildVisualHierarchyFindingsAudit(options = {}) {
     reason: decisionReason
   };
   const recommendations = [];
-  if (!canProceedToVisualChanges) recommendations.push("Resolve critical findings, including any true unknown visible hierarchy-participating layers, before changing marker visuals.");
+  if (!canProceedToVisualChanges) recommendations.push("Resolve critical findings, including any visible hierarchy-participating layers with unknown effective ownership, before changing marker visuals.");
   if (!baselineValidation.visualHierarchyBaselineReady) recommendations.push("Review V219.5 visual hierarchy baseline validation fields before expanding visual changes.");
   if (canProceedToVisualChanges && baselineValidation.visualHierarchyBaselineReady) recommendations.push("V219.5 visual hierarchy baseline is ready; continue using warnings as guardrails.");
   if (canProceedToVisualChanges && warningCount > 0 && !baselineValidation.visualHierarchyBaselineReady) recommendations.push("Warnings remain non-blocking; use them as guardrails while reviewing baseline validation.");
