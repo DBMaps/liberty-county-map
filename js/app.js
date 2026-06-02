@@ -2817,6 +2817,186 @@ window.gridlyRenderedMapObjectCensus = function gridlyRenderedMapObjectCensus(op
 window.gridlyMapObjectCensus = window.gridlyRenderedMapObjectCensus;
 
 
+const GRIDLY_VISUAL_HIERARCHY_FINDINGS_AUDIT_VERSION = "V219.3";
+
+function gridlyFindingsAuditText(value) {
+  return String(value || "").toLowerCase();
+}
+
+function gridlyFindingsAuditSourceText(sourceFinding = {}) {
+  return [sourceFinding?.area, sourceFinding?.severity, sourceFinding?.finding, sourceFinding?.message, sourceFinding?.title]
+    .map(gridlyFindingsAuditText)
+    .filter(Boolean)
+    .join(" ");
+}
+
+function gridlyFindingsAuditTitle(sourceFinding = {}) {
+  const area = String(sourceFinding?.area || "rendered map census").trim();
+  return area ? area.replace(/(^|\s)\S/g, (letter) => letter.toUpperCase()) : "Rendered Map Census Finding";
+}
+
+function gridlyFindingsAuditMessage(sourceFinding = {}) {
+  return String(sourceFinding?.finding || sourceFinding?.message || sourceFinding?.title || "Census finding requires review.");
+}
+
+function gridlyClassifyVisualHierarchyFinding(sourceFinding = {}, census = {}) {
+  const text = gridlyFindingsAuditSourceText(sourceFinding);
+  const isVisibleLayerGap = /visible layer contents/.test(text);
+  const isRoute = /route|destination|watch|preview|impact|awareness/.test(text);
+  const isHazard = /hazard|incident|txdot|road.*condition/.test(text);
+  const isCrossing = /crossing|rail/.test(text);
+  const isHistorical = /historical|history|hotspot|pattern|corridor/.test(text);
+  const isBaseMap = /base map|tile|satellite|standard|dark/.test(text);
+  const isUnknownOwnership = /without clear ownership|ownership.*ambiguous|unknown.*owner|owner.*unknown/.test(text);
+  const isUnknownLayerType = /unknown layer type|unknown_layer/.test(text);
+  const isUnknownZIndex = /z-index|z index|unknown_z_index/.test(text);
+  const isDomCoverage = /dom marker|object counts|marker coverage/.test(text);
+  const renderedCount = Number(census?.renderedObjects?.length || census?.objectCounts?.leafletMarkers || 0);
+  const domCount = Number(census?.objectCounts?.domMarkers || 0);
+
+  let severity = "info";
+  let reason = "Useful context for the V219 visual hierarchy baseline.";
+  let recommendedAction = "Keep this context in mind while planning visual hierarchy changes.";
+
+  if (sourceFinding?.severity === "pass") {
+    severity = "expected";
+    reason = "The census did not detect coverage gaps in the current rendered map state.";
+    recommendedAction = "Proceed using this passing census as baseline context.";
+  } else if (isVisibleLayerGap && (isHazard || isCrossing)) {
+    severity = "critical";
+    reason = "An active visible hazard or crossing layer has child/feature content that is not directly attributed in the rendered object inventory.";
+    recommendedAction = "Resolve the visible hazard/crossing inventory attribution gap before changing marker visuals.";
+  } else if (isRoute && isUnknownOwnership) {
+    severity = "critical";
+    reason = "Route impact ownership is ambiguous, and route relevance is the top V219 visual hierarchy owner.";
+    recommendedAction = "Clarify route layer ownership before changing marker visuals or hierarchy ordering.";
+  } else if (isUnknownOwnership && !isHistorical && !isBaseMap) {
+    severity = "critical";
+    reason = "Rendered map objects exist without a reliable owner, which can block safe hierarchy decisions.";
+    recommendedAction = "Attach or infer stable ownership metadata for these rendered objects before implementation.";
+  } else if (isUnknownLayerType && /visible/.test(text)) {
+    severity = "critical";
+    reason = "A visible layer cannot be typed, so its visual hierarchy impact cannot be evaluated safely.";
+    recommendedAction = "Identify the visible layer type or add audit metadata before visual hierarchy changes.";
+  } else if (isUnknownZIndex) {
+    severity = "warning";
+    reason = "Some layers or markers do not expose a determinable z-index; this should be understood but does not by itself block V219 work.";
+    recommendedAction = "Use z-index warnings as guardrails and verify dominance manually before changing visuals.";
+  } else if (isDomCoverage && domCount > 0 && renderedCount > domCount) {
+    severity = "expected";
+    reason = "The rendered map stack includes layer-based objects beyond DOM markers, so a low DOM marker count can be acceptable for the current state.";
+    recommendedAction = "Treat DOM marker counts as one slice of the stack and continue using the full census for decisions.";
+  } else if (isDomCoverage) {
+    severity = "warning";
+    reason = "DOM marker coverage may not represent every rendered map object.";
+    recommendedAction = "Compare DOM markers against layer inventory before making visual changes.";
+  } else if (isVisibleLayerGap && isRoute) {
+    severity = "critical";
+    reason = "A visible route-related layer is not directly attributed to rendered objects, which can obscure route impact dominance.";
+    recommendedAction = "Resolve route layer attribution before visual hierarchy implementation.";
+  } else if (isVisibleLayerGap && isHistorical) {
+    severity = "warning";
+    reason = "Historical/context layers should be understood before changes, but they do not normally block live-incident hierarchy work.";
+    recommendedAction = "Verify historical/context visibility expectations before implementation.";
+  } else if (isVisibleLayerGap) {
+    severity = "warning";
+    reason = "A visible layer attribution gap should be reviewed before changing visuals.";
+    recommendedAction = "Review the layer inventory row and decide whether direct rendered-object attribution is needed.";
+  } else if (isUnknownLayerType) {
+    severity = "warning";
+    reason = "A layer type could not be inferred; this may need audit metadata but is not currently proven to block visual changes.";
+    recommendedAction = "Document or add audit classification metadata for the unknown layer type.";
+  } else if (isHistorical) {
+    severity = "warning";
+    reason = "Historical/context rendering can be hidden or state-dependent and should be understood before visual changes.";
+    recommendedAction = "Verify historical panel/layer state when using this finding as a guardrail.";
+  } else if (isBaseMap) {
+    severity = "info";
+    reason = "Base map and tile layer details are useful context only.";
+    recommendedAction = "No action required unless base layers unexpectedly overlap marker panes.";
+  }
+
+  return {
+    severity,
+    title: gridlyFindingsAuditTitle(sourceFinding),
+    message: gridlyFindingsAuditMessage(sourceFinding),
+    sourceFinding,
+    reason,
+    recommendedAction,
+    blocksVisualChanges: severity === "critical"
+  };
+}
+
+function gridlyBuildVisualHierarchyFindingsAudit(options = {}) {
+  const maybeCensus = options?.sourceCensus || options?.census || (options?.version === GRIDLY_RENDERED_MAP_OBJECT_CENSUS_VERSION ? options : null);
+  const sourceCensus = maybeCensus || window.gridlyRenderedMapObjectCensus?.({ silent: true }) || gridlyBuildRenderedMapObjectCensus({ silent: true });
+  const classifiedFindings = gridlyCensusSafeArray(sourceCensus?.findings).map((finding) => gridlyClassifyVisualHierarchyFinding(finding, sourceCensus));
+  const criticalFindings = classifiedFindings.filter((finding) => finding.severity === "critical");
+  const warningFindings = classifiedFindings.filter((finding) => finding.severity === "warning");
+  const infoFindings = classifiedFindings.filter((finding) => finding.severity === "info");
+  const expectedFindings = classifiedFindings.filter((finding) => finding.severity === "expected");
+  const recommendations = [];
+  if (criticalFindings.length > 0) recommendations.push("Resolve critical ownership/inventory gaps before changing marker visuals.");
+  if (warningFindings.length > 0 && criticalFindings.length === 0) recommendations.push("Proceed carefully with V219 visual hierarchy changes, using warnings as guardrails.");
+  if (criticalFindings.length === 0 && warningFindings.length === 0) recommendations.push("Proceed to V219.4 visual hierarchy implementation baseline.");
+  if (!sourceCensus?.mapLoaded) recommendations.push("Re-run the classifier after the map is loaded to confirm findings against the rendered state.");
+  if ((sourceCensus?.clusterInventory || []).length === 0) recommendations.push("No cluster groups are currently rendered or exposed; treat that as expected unless clustering is enabled for the tested state.");
+
+  const canProceedToVisualChanges = criticalFindings.length === 0;
+  const recommendedNextStep = canProceedToVisualChanges
+    ? (warningFindings.length > 0 ? "Proceed carefully with V219 visual hierarchy changes, using warnings as guardrails." : "Proceed to V219.4 visual hierarchy implementation baseline.")
+    : "Resolve or clarify critical ownership/inventory gaps before changing marker visuals.";
+
+  const audit = {
+    version: GRIDLY_VISUAL_HIERARCHY_FINDINGS_AUDIT_VERSION,
+    generatedAt: new Date().toISOString(),
+    sourceCensusVersion: sourceCensus?.version || null,
+    mapLoaded: sourceCensus?.mapLoaded ?? null,
+    mapZoom: sourceCensus?.mapZoom ?? null,
+    summary: {
+      totalFindings: classifiedFindings.length,
+      criticalCount: criticalFindings.length,
+      warningCount: warningFindings.length,
+      infoCount: infoFindings.length,
+      expectedCount: expectedFindings.length,
+      canProceedToVisualChanges,
+      recommendedNextStep
+    },
+    classifiedFindings,
+    criticalFindings,
+    warningFindings,
+    infoFindings,
+    expectedFindings,
+    recommendations,
+    sourceCensus
+  };
+  if (options?.silent !== true) gridlyLogVisualHierarchyFindingsAudit(audit);
+  return audit;
+}
+
+function gridlyLogVisualHierarchyFindingsAudit(audit) {
+  if (typeof console === "undefined") return;
+  console.groupCollapsed("GRIDLY V219.3 VISUAL HIERARCHY FINDINGS CLASSIFIER");
+  console.log("Total Findings:", audit?.summary?.totalFindings || 0);
+  console.log("Critical:", audit?.summary?.criticalCount || 0);
+  console.log("Warning:", audit?.summary?.warningCount || 0);
+  console.log("Info:", audit?.summary?.infoCount || 0);
+  console.log("Expected:", audit?.summary?.expectedCount || 0);
+  console.log("Can Proceed:", audit?.summary?.canProceedToVisualChanges ? "Yes" : "No");
+  console.log("Recommended Next Step:", audit?.summary?.recommendedNextStep || "Review classified findings.");
+  console.log(audit);
+  console.table(audit?.criticalFindings || []);
+  console.table(audit?.warningFindings || []);
+  console.table(audit?.expectedFindings || []);
+  console.groupEnd();
+}
+
+window.gridlyVisualHierarchyFindingsAudit = function gridlyVisualHierarchyFindingsAudit(options = {}) {
+  return gridlyBuildVisualHierarchyFindingsAudit(options && typeof options === "object" ? options : {});
+};
+window.gridlyMapFindingsAudit = window.gridlyVisualHierarchyFindingsAudit;
+
+
 
 window.gridlyRailMarkerSourceTrace = function gridlyRailMarkerSourceTrace() {
   try {
