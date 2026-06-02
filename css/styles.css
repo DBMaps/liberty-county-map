@@ -15429,6 +15429,36 @@ body[data-layout-mode="portrait"] .gridly-v2-control-rail {
   top: 222px;
 }
 
+
+/* V212.1 — portrait destination search tap target isolation */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) {
+    top: calc(168px + env(safe-area-inset-top, 0px)) !important;
+    z-index: 9700 !important;
+    pointer-events: none !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-card {
+    position: relative !important;
+    z-index: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-input-row,
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) #gridlyAddressSearchInput,
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) #gridlySearchClearBtn,
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) #gridlySearchResults,
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) #gridlySearchResults * {
+    pointer-events: auto !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) #gridlySearchResults {
+    max-height: min(44dvh, 360px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 /* V212.1 — portrait destination command visibility fix */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command {
