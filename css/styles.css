@@ -12226,6 +12226,16 @@ body[data-layout-mode="portrait"] .mobile-destination-command p {
   color: #d5e8ff;
 }
 
+body[data-layout-mode="portrait"] .mobile-destination-command .destination-route-impact-line {
+  min-height: 0;
+  color: rgba(186, 230, 253, 0.86);
+  font-size: 0.76rem;
+}
+
+body[data-layout-mode="portrait"] .mobile-destination-command .destination-route-impact-line:empty {
+  display: none;
+}
+
 body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
   display: none;
 }
@@ -15489,7 +15499,7 @@ body[data-layout-mode="portrait"] .gridly-v2-control-rail {
 
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .mobile-destination-command-copy {
     display: grid !important;
-    grid-template-rows: auto auto !important;
+    grid-template-rows: auto auto auto !important;
     align-content: center !important;
     gap: 2px !important;
     min-width: 0 !important;
@@ -15518,6 +15528,15 @@ body[data-layout-mode="portrait"] .gridly-v2-control-rail {
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .destination-route-impact-line {
+    color: rgba(186, 230, 253, 0.86) !important;
+    font-size: 0.68rem !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .destination-route-impact-line:empty {
+    display: none !important;
   }
 
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .compact-btn {
