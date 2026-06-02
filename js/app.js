@@ -14156,10 +14156,35 @@ function getGridlyDestinationPreviewMetaText() {
   return "";
 }
 
+function getGridlyDestinationRouteImpactCopy(level = "none") {
+  const normalizedLevel = String(level || "none").toLowerCase();
+  if (normalizedLevel === "high") return "Conditions along this route may affect travel";
+  if (normalizedLevel === "moderate") return "Hazards reported near your route";
+  if (normalizedLevel === "low") return "Minor activity reported nearby";
+  return "No active hazards reported";
+}
+
+function getGridlyDestinationRouteImpactCardText() {
+  const preview = window.GridlyDestinationRoutePreview && typeof window.GridlyDestinationRoutePreview === "object"
+    ? window.GridlyDestinationRoutePreview
+    : {};
+  if (preview.status === "loading") return "";
+  if (preview.status !== "ready") return "";
+  try {
+    const audit = typeof window.gridlyDestinationRouteImpactAudit === "function"
+      ? window.gridlyDestinationRouteImpactAudit()
+      : null;
+    return audit?.primaryImpactReason || getGridlyDestinationRouteImpactCopy(audit?.impactLevel || "none");
+  } catch (_) {
+    return "";
+  }
+}
+
 function syncMobileDestinationCommandCard() {
   const routeIsMonitoring = Boolean(routeWatchActivated || window.__gridlyRouteWatchActive);
   const selectedLabel = getSelectedDestinationLabel();
   const previewMeta = selectedLabel ? getGridlyDestinationPreviewMetaText() : "";
+  const impactText = selectedLabel ? getGridlyDestinationRouteImpactCardText() : "";
   safeText("mobileDestinationCommandTitle", selectedLabel || (routeIsMonitoring ? "Destination selected" : "Destination"));
   safeText(
     "mobileDestinationCommandMeta",
@@ -14169,6 +14194,7 @@ function syncMobileDestinationCommandCard() {
         ? "Selected: Saved destination"
         : "Choose where you're going"
   );
+  safeText("mobileDestinationCommandImpact", impactText);
   safeText("mobileDestinationCommandBtn", selectedLabel ? "Change" : "Choose Route");
 }
 
@@ -14445,7 +14471,19 @@ function buildGridlyDestinationRouteMatch(record = {}, routePoints = [], fallbac
       title: getGridlyDestinationRouteObjectTitle(record, fallback.title || "Route intelligence"),
       lat: Number(coord.lat),
       lng: Number(coord.lng),
-      distanceFromRouteFeet
+      distanceFromRouteFeet,
+      category: getGridlyDestinationRouteObjectType(record, fallback.type || "intelligence"),
+      severity: pickGridlyDestinationRouteFirstText(record?.severity, record?.priority, record?.impactLevel, record?.raw?.severity, record?.latestReport?.severity),
+      status: pickGridlyDestinationRouteFirstText(record?.status, record?.state, record?.lifecycle, record?.raw?.status, record?.latestReport?.status),
+      sourceType: pickGridlyDestinationRouteFirstText(record?.sourceType, record?.source, record?.provider, record?.raw?.source),
+      impactText: pickGridlyDestinationRouteFirstText(
+        record?.routeImpact,
+        record?.description,
+        record?.summary,
+        record?.message,
+        record?.raw?.description,
+        record?.latestReport?.description
+      )
     };
   } catch (_) {
     return null;
@@ -14580,6 +14618,101 @@ window.gridlyDestinationRouteIntelligenceDebug = function gridlyDestinationRoute
     reportMatches: audit.reportsNearRoute,
     crossingMatches: audit.crossingsNearRoute,
     alertMatches: audit.alertsNearRoute
+  };
+};
+
+function getGridlyDestinationRouteImpactInspectionText(item = {}) {
+  return [
+    item?.type,
+    item?.category,
+    item?.title,
+    item?.severity,
+    item?.status,
+    item?.sourceType,
+    item?.impactText
+  ].map((value) => String(value || "").toLowerCase()).join(" ");
+}
+
+function isGridlyDestinationRouteHighImpactMatch(item = {}) {
+  const text = getGridlyDestinationRouteImpactInspectionText(item);
+  return /road[_\s-]*(closed|closure)|\bclosure\b|\bclosed\b|\bblocked\b|\bblockage\b|impassable|all lanes|critical|severe|major|high severity/.test(text);
+}
+
+function buildGridlyDestinationRouteImpactAudit() {
+  const intelligence = typeof window.gridlyDestinationRouteIntelligenceAudit === "function"
+    ? window.gridlyDestinationRouteIntelligenceAudit()
+    : buildEmptyGridlyDestinationRouteIntelligenceAudit();
+  const routeFound = Boolean(intelligence?.routeFound);
+  const matchedHazards = routeFound && Array.isArray(intelligence?.matchedHazards) ? intelligence.matchedHazards : [];
+  const matchedAlerts = routeFound && Array.isArray(intelligence?.matchedAlerts) ? intelligence.matchedAlerts : [];
+  const matchedReports = routeFound && Array.isArray(intelligence?.matchedReports) ? intelligence.matchedReports : [];
+  const matchedCrossings = routeFound && Array.isArray(intelligence?.matchedCrossings) ? intelligence.matchedCrossings : [];
+  const hazardsConsidered = matchedHazards.length;
+  const alertsConsidered = matchedAlerts.length;
+  const reportsConsidered = matchedReports.length;
+  const crossingsConsidered = matchedCrossings.length;
+  const highImpactHazards = matchedHazards.filter((item) => isGridlyDestinationRouteHighImpactMatch(item));
+  const highImpactAlerts = matchedAlerts.filter((item) => isGridlyDestinationRouteHighImpactMatch(item));
+  const reasoning = [];
+  let impactLevel = "none";
+
+  if (!routeFound) {
+    reasoning.push("No destination route available for impact assessment");
+  } else {
+    if (hazardsConsidered > 0) reasoning.push(`${hazardsConsidered} active hazard${hazardsConsidered === 1 ? "" : "s"} near route`);
+    else reasoning.push("No active hazards detected");
+
+    if (alertsConsidered > 0) reasoning.push(`${alertsConsidered} active alert${alertsConsidered === 1 ? "" : "s"} near route`);
+    if (reportsConsidered > 0) reasoning.push(`${reportsConsidered} community report${reportsConsidered === 1 ? "" : "s"} nearby`);
+    if (crossingsConsidered > 0) reasoning.push(`${crossingsConsidered} rail crossing${crossingsConsidered === 1 ? "" : "s"} along corridor`);
+
+    if (highImpactHazards.length > 0 || highImpactAlerts.length > 0) {
+      impactLevel = "high";
+      reasoning.push("High-impact closure, blocked route, or major hazard signal detected");
+    } else if (hazardsConsidered > 0 || alertsConsidered > 0) {
+      impactLevel = "moderate";
+    } else if (reportsConsidered > 0) {
+      impactLevel = "low";
+    }
+  }
+
+  return {
+    loaded: true,
+    routeFound,
+    impactLevel,
+    primaryImpactReason: routeFound ? getGridlyDestinationRouteImpactCopy(impactLevel) : "",
+    hazardsConsidered,
+    alertsConsidered,
+    reportsConsidered,
+    crossingsConsidered,
+    reasoning
+  };
+}
+
+window.gridlyDestinationRouteImpactAudit = function gridlyDestinationRouteImpactAudit() {
+  try {
+    return buildGridlyDestinationRouteImpactAudit();
+  } catch (error) {
+    return {
+      loaded: true,
+      routeFound: false,
+      impactLevel: "none",
+      primaryImpactReason: "",
+      hazardsConsidered: 0,
+      alertsConsidered: 0,
+      reportsConsidered: 0,
+      crossingsConsidered: 0,
+      reasoning: [String(error?.message || error || "destination_route_impact_error")]
+    };
+  }
+};
+
+window.gridlyDestinationRouteImpactDebug = function gridlyDestinationRouteImpactDebug() {
+  const audit = window.gridlyDestinationRouteImpactAudit();
+  return {
+    impactLevel: audit.impactLevel,
+    primaryImpactReason: audit.primaryImpactReason,
+    reasoning: audit.reasoning
   };
 };
 
@@ -15218,6 +15351,7 @@ function hydrateElements() {
     "mobileDestinationCommandBtn",
     "mobileDestinationCommandTitle",
     "mobileDestinationCommandMeta",
+    "mobileDestinationCommandImpact",
     "mobileLiveRouteActionBtn",
     "mobileLiveRouteStatus",
     "mobileLiveRouteMeta",
