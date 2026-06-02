@@ -13437,7 +13437,7 @@ function syncMobileDestinationCommandCard() {
     "mobileDestinationCommandMeta",
     routeIsMonitoring
       ? `Selected: ${selectedLabel || "Saved destination"}`
-      : (selectedLabel || "Choose Route to set a destination and open search.")
+      : (selectedLabel || "Choose where you're going")
   );
   safeText("mobileDestinationCommandBtn", selectedLabel ? "Change" : "Choose Route");
 }
