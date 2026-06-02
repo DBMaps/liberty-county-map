@@ -14187,8 +14187,12 @@ function getGridlyDestinationRouteImpactCardText() {
       : null;
     const impactLevel = audit?.impactLevel || "none";
     const reason = audit?.primaryImpactReason || getGridlyDestinationRouteImpactCopy(impactLevel);
-    return `Potential Impact: ${getGridlyDestinationRouteImpactLabel(impactLevel)}
-${reason}`;
+    const locationLine = String(audit?.primaryImpactLocation || "").trim();
+    return [
+      `Potential Impact: ${getGridlyDestinationRouteImpactLabel(impactLevel)}`,
+      reason,
+      locationLine
+    ].filter((line) => String(line || "").trim()).join("\n");
   } catch (_) {
     return "";
   }
@@ -14291,6 +14295,9 @@ function getGridlyDestinationImpactPaneReasonModel() {
     reasons.push(`${pluralizeGridlyDestinationImpactReason(reports, "community report")} nearby`);
   }
 
+  const primaryImpactLocation = String(audit?.primaryImpactLocation || "").trim();
+  if (primaryImpactLocation) reasons.push(`Best available location: ${primaryImpactLocation}`);
+
   const quiet = !routeFound || (hazards === 0 && alerts === 0 && reports === 0 && activeRail === 0);
 
   const impactLabel = audit?.impactLabel || getGridlyDestinationRouteImpactLabel(impactLevel);
@@ -14307,6 +14314,7 @@ function getGridlyDestinationImpactPaneReasonModel() {
     impactLabel,
     confidenceLabel,
     summary: routeFound ? (audit?.primaryImpactReason || getGridlyDestinationRouteImpactCopy(impactLevel)) : "No active hazards reported nearby",
+    primaryImpactLocation,
     reasons: quiet ? [] : reasons.slice(0, 6),
     quiet
   };
@@ -14730,6 +14738,193 @@ function getGridlyDestinationRouteObjectId(record = {}, fallback = "") {
   ).trim() || fallback;
 }
 
+function readGridlyDestinationRoutePath(record = {}, path = "") {
+  if (!record || typeof record !== "object" || !path) return undefined;
+  return String(path).split(".").reduce((current, key) => current?.[key], record);
+}
+
+function getGridlyDestinationRouteFirstUsefulPath(record = {}, paths = []) {
+  for (const path of Array.isArray(paths) ? paths : []) {
+    const value = readGridlyDestinationRoutePath(record, path);
+    if (typeof value === "string" && value.trim()) return value.trim();
+    if (typeof value === "number" && Number.isFinite(value)) return String(value);
+  }
+  return "";
+}
+
+function normalizeGridlyDestinationLocationToken(value = "") {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/\b(street|st)\b/g, "st")
+    .replace(/\b(road|rd)\b/g, "rd")
+    .replace(/\b(avenue|ave)\b/g, "ave")
+    .replace(/\b(highway|hwy)\b/g, "hwy")
+    .replace(/\s+/g, " ")
+    .replace(/[^a-z0-9 ]+/g, "")
+    .trim();
+}
+
+function formatGridlyDestinationRouteLocationLabel(value = "") {
+  const cleaned = String(value || "")
+    .replace(/\s+/g, " ")
+    .replace(/\bnear\s+near\b/ig, "near")
+    .replace(/^\s*(at|near|between|on)\s+/i, "")
+    .trim();
+  if (!cleaned) return "";
+  if (typeof gridlyNormalizeAnalyticsRoadLabel === "function") {
+    const normalized = gridlyNormalizeAnalyticsRoadLabel(cleaned);
+    if (normalized) return normalized;
+  }
+  if (typeof normalizeRoadDisplayCase === "function") return normalizeRoadDisplayCase(cleaned);
+  return cleaned;
+}
+
+function isGridlyDestinationRouteUsefulLocationLabel(value = "", primaryRoad = "") {
+  const label = formatGridlyDestinationRouteLocationLabel(value);
+  if (!label) return false;
+  const normalized = normalizeGridlyDestinationLocationToken(label);
+  if (!normalized) return false;
+  if (primaryRoad && normalized === normalizeGridlyDestinationLocationToken(primaryRoad)) return false;
+  if (/^(unknown|unknown road|active hazard|active alert|route intelligence|road closure|road closed|closure|construction|flooding|hazard|report|nearby|community report)$/i.test(label)) return false;
+  if (/reported nearby|near your route|potential impact|active hazards reported/i.test(label)) return false;
+  return true;
+}
+
+function getGridlyDestinationRouteRoadName(record = {}) {
+  const directRoad = getGridlyDestinationRouteFirstUsefulPath(record, [
+    "roadName", "primaryRoad", "resolvedRoadName", "displayRoadName", "routeNameDisplay", "routeName", "road", "roadway", "corridor", "highway", "nearestRoadName", "nearestRoad",
+    "raw.roadName", "raw.primaryRoad", "raw.resolvedRoadName", "raw.routeName", "raw.road", "raw.corridor", "raw.highway", "raw.nearestRoad",
+    "source.roadName", "source.primaryRoad", "source.road", "latestReport.roadName", "latestReport.primaryRoad", "latestReport.road"
+  ]);
+  const resolvedRoad = directRoad || (typeof gridlyResolveHazardHistoryRoadName === "function" ? gridlyResolveHazardHistoryRoadName(record) : "");
+  const label = formatGridlyDestinationRouteLocationLabel(resolvedRoad);
+  if (!isGridlyDestinationRouteUsefulLocationLabel(label)) return "";
+  if (typeof gridlyIsHazardTypeRoadName === "function" && gridlyIsHazardTypeRoadName(label, record)) return "";
+  return label;
+}
+
+function getGridlyDestinationRouteReferenceLabels(record = {}, primaryRoad = "") {
+  const candidates = [
+    getGridlyDestinationRouteFirstUsefulPath(record, ["referenceRoadA", "crossStreetA", "crossStreet1", "fromStreet", "fromRoad", "raw.referenceRoadA", "raw.crossStreetA", "latestReport.referenceRoadA"]),
+    getGridlyDestinationRouteFirstUsefulPath(record, ["referenceRoadB", "crossStreetB", "crossStreet2", "toStreet", "toRoad", "raw.referenceRoadB", "raw.crossStreetB", "latestReport.referenceRoadB"]),
+    getGridlyDestinationRouteFirstUsefulPath(record, ["referenceRoad", "nearestCrossStreet", "nearbyCrossStreet", "crossStreet", "crossingRoad", "intersectingRoad", "knownLocation", "locationName", "raw.referenceRoad", "raw.nearestCrossStreet", "raw.crossStreet", "raw.crossingRoad", "latestReport.referenceRoad", "latestReport.crossStreet"])
+  ];
+  const seen = new Set();
+  return candidates
+    .map((candidate) => formatGridlyDestinationRouteLocationLabel(candidate))
+    .filter((candidate) => isGridlyDestinationRouteUsefulLocationLabel(candidate, primaryRoad))
+    .filter((candidate) => {
+      const key = normalizeGridlyDestinationLocationToken(candidate);
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+}
+
+function getGridlyDestinationRouteCrossingLabel(record = {}, primaryRoad = "") {
+  const label = formatGridlyDestinationRouteLocationLabel(getGridlyDestinationRouteFirstUsefulPath(record, [
+    "crossingName", "resolvedCrossingName", "crossingLabel", "crossingRoad", "crossing", "name", "raw.crossingName", "raw.resolvedCrossingName", "raw.crossingLabel", "raw.crossingRoad", "latestReport.crossingName"
+  ]));
+  return isGridlyDestinationRouteUsefulLocationLabel(label, primaryRoad) ? label : "";
+}
+
+function getGridlyDestinationRouteCompositeLocationText(record = {}) {
+  return pickGridlyDestinationRouteFirstText(
+    record?.resolvedLocationLabel,
+    record?.locationLabel,
+    record?.locationPhrase,
+    record?.localizedLocation,
+    record?.localizedSpot,
+    record?.knownLocation,
+    record?.title,
+    record?.headline,
+    record?.resolvedHeadline,
+    record?.localizedSummary,
+    record?.description,
+    record?.summary,
+    record?.message,
+    record?.raw?.resolvedLocationLabel,
+    record?.raw?.locationLabel,
+    record?.raw?.locationPhrase,
+    record?.raw?.localizedSummary,
+    record?.latestReport?.resolvedLocationLabel,
+    record?.latestReport?.locationLabel,
+    record?.latestReport?.locationPhrase,
+    record?.latestReport?.description
+  );
+}
+
+function stripGridlyDestinationRouteHazardPrefix(value = "") {
+  return String(value || "")
+    .replace(/^\s*(road\s+closed|road\s+closure|closure|flooding|construction|roadwork|crash|wreck|debris(?:\s+in\s+road)?|disabled\s+vehicle|train\s+blocking(?:\s+crossing)?|blocked\s+rail\s+crossing|rail\s+issue|active\s+hazard|hazard|community\s+report)\s+(?:reported\s+)?(?:on|at|near)?\s*/i, "")
+    .replace(/\s+(?:reported|nearby|near\s+your\s+route).*$/i, "")
+    .trim();
+}
+
+function parseGridlyDestinationRouteCompositeLocation(record = {}) {
+  const text = stripGridlyDestinationRouteHazardPrefix(getGridlyDestinationRouteCompositeLocationText(record));
+  if (!text) return {};
+  const between = text.match(/^(.+?)\s+between\s+(.+?)\s+and\s+(.+)$/i);
+  if (between) {
+    const roadName = formatGridlyDestinationRouteLocationLabel(between[1]);
+    const referenceRoadA = formatGridlyDestinationRouteLocationLabel(between[2]);
+    const referenceRoadB = formatGridlyDestinationRouteLocationLabel(between[3]);
+    if (roadName && referenceRoadA && referenceRoadB) return { roadName, referenceRoadA, referenceRoadB, referenceRoad: referenceRoadA };
+  }
+  const atOrNear = text.match(/^(.+?)\s+(at|near)\s+(.+)$/i);
+  if (atOrNear) {
+    const roadName = formatGridlyDestinationRouteLocationLabel(atOrNear[1]);
+    const referenceRoad = formatGridlyDestinationRouteLocationLabel(atOrNear[3]);
+    if (roadName && referenceRoad) return { roadName, referenceRoad, referenceRoadA: referenceRoad };
+  }
+  return {};
+}
+
+function buildGridlyDestinationRouteLocationMeta(record = {}) {
+  const composite = parseGridlyDestinationRouteCompositeLocation(record);
+  const roadName = getGridlyDestinationRouteRoadName(record) || composite.roadName || "";
+  const references = getGridlyDestinationRouteReferenceLabels(record, roadName);
+  const crossingName = getGridlyDestinationRouteCrossingLabel(record, roadName);
+  return {
+    roadName,
+    referenceRoad: references[0] || composite.referenceRoad || "",
+    referenceRoadA: references[0] || composite.referenceRoadA || "",
+    referenceRoadB: references[1] || composite.referenceRoadB || "",
+    crossingName
+  };
+}
+
+function getGridlyDestinationRouteBestLocationLine(item = {}, options = {}) {
+  const roadName = formatGridlyDestinationRouteLocationLabel(item?.roadName);
+  const referenceRoadA = formatGridlyDestinationRouteLocationLabel(item?.referenceRoadA || item?.referenceRoad);
+  const referenceRoadB = formatGridlyDestinationRouteLocationLabel(item?.referenceRoadB);
+  const crossingName = formatGridlyDestinationRouteLocationLabel(item?.crossingName);
+  const preferAt = Boolean(options.preferAt) || isGridlyDestinationRouteActiveRailReason(item) || isGridlyDestinationRouteClosureMatch(item);
+  if (roadName && isGridlyDestinationRouteUsefulLocationLabel(referenceRoadA, roadName) && isGridlyDestinationRouteUsefulLocationLabel(referenceRoadB, roadName)) {
+    return `${roadName} between ${referenceRoadA} and ${referenceRoadB}`;
+  }
+  if (roadName && isGridlyDestinationRouteUsefulLocationLabel(referenceRoadA, roadName)) {
+    return `${roadName} ${preferAt ? "at" : "near"} ${referenceRoadA}`;
+  }
+  if (roadName && isGridlyDestinationRouteUsefulLocationLabel(crossingName, roadName)) return `${roadName} at ${crossingName}`;
+  if (!roadName && crossingName) return crossingName;
+  if (roadName) return roadName;
+  return "";
+}
+
+function selectGridlyDestinationRouteBestLocationMatch(matches = [], options = {}) {
+  const usableMatches = (Array.isArray(matches) ? matches : [])
+    .map((match) => ({ match, line: getGridlyDestinationRouteBestLocationLine(match, options) }))
+    .filter((entry) => entry.line);
+  if (usableMatches.length === 0) return { match: null, locationLine: "" };
+  return usableMatches.sort((a, b) => {
+    const aSpecificity = a.match?.referenceRoadB ? 4 : a.match?.referenceRoadA || a.match?.referenceRoad || a.match?.crossingName ? 3 : a.match?.roadName ? 1 : 0;
+    const bSpecificity = b.match?.referenceRoadB ? 4 : b.match?.referenceRoadA || b.match?.referenceRoad || b.match?.crossingName ? 3 : b.match?.roadName ? 1 : 0;
+    if (bSpecificity !== aSpecificity) return bSpecificity - aSpecificity;
+    return Number(a.match?.distanceFromRouteFeet || 0) - Number(b.match?.distanceFromRouteFeet || 0);
+  })[0];
+}
+
 function getGridlyDistanceFromDestinationRouteFeet(lat, lng, routePoints = []) {
   if (!Number.isFinite(Number(lat)) || !Number.isFinite(Number(lng)) || !Array.isArray(routePoints) || routePoints.length < 2) return null;
   let nearestMiles = Infinity;
@@ -14768,7 +14963,8 @@ function buildGridlyDestinationRouteMatch(record = {}, routePoints = [], fallbac
         record?.message,
         record?.raw?.description,
         record?.latestReport?.description
-      )
+      ),
+      ...buildGridlyDestinationRouteLocationMeta(record)
     };
   } catch (_) {
     return null;
@@ -14956,6 +15152,27 @@ function getGridlyDestinationRoutePrimaryImpactReason(impactLevel = "none", matc
   return getGridlyDestinationRouteImpactCopy(impactLevel);
 }
 
+function getGridlyDestinationRoutePrimaryImpactLocation(impactLevel = "none", matches = {}) {
+  const railMatches = Array.isArray(matches.railMatches) ? matches.railMatches : [];
+  const closureMatches = Array.isArray(matches.closureMatches) ? matches.closureMatches : [];
+  const constructionMatches = Array.isArray(matches.constructionMatches) ? matches.constructionMatches : [];
+  const hazardMatches = Array.isArray(matches.hazardMatches) ? matches.hazardMatches : [];
+  const alertMatches = Array.isArray(matches.alertMatches) ? matches.alertMatches : [];
+  const reportMatches = Array.isArray(matches.reportMatches) ? matches.reportMatches : [];
+  const orderedGroups = [];
+  if (String(impactLevel || "none") === "high" && railMatches.length > 0) orderedGroups.push({ matches: railMatches, preferAt: true });
+  if (closureMatches.length > 0) orderedGroups.push({ matches: closureMatches, preferAt: true });
+  if (constructionMatches.length > 0) orderedGroups.push({ matches: constructionMatches, preferAt: false });
+  if (hazardMatches.length > 0 || alertMatches.length > 0) orderedGroups.push({ matches: [...hazardMatches, ...alertMatches], preferAt: false });
+  if (reportMatches.length > 0) orderedGroups.push({ matches: reportMatches, preferAt: false });
+
+  for (const group of orderedGroups) {
+    const selected = selectGridlyDestinationRouteBestLocationMatch(group.matches, { preferAt: group.preferAt });
+    if (selected?.locationLine) return selected.locationLine;
+  }
+  return "";
+}
+
 function isGridlyDestinationRouteHighImpactMatch(item = {}) {
   const text = getGridlyDestinationRouteImpactInspectionText(item);
   return /road[_\s-]*(closed|closure)|\bclosure\b|\bclosed\b|\bblocked\b|\bblockage\b|impassable|all lanes|critical|severe|major|high severity/.test(text);
@@ -15007,16 +15224,21 @@ function buildGridlyDestinationRouteImpactAudit() {
   }
 
   const confidenceLabel = getGridlyDestinationRouteConfidenceLabel({ routeFound, impactLevel, hazardsConsidered, alertsConsidered, reportsConsidered });
+  const primaryImpactReasonMatches = {
+    railMatches: railImpactMatches,
+    closureMatches,
+    constructionMatches,
+    hazardMatches: matchedHazards,
+    alertMatches: matchedAlerts,
+    reportMatches: matchedReports
+  };
   const primaryImpactReason = routeFound
-    ? getGridlyDestinationRoutePrimaryImpactReason(impactLevel, {
-        railMatches: railImpactMatches,
-        closureMatches,
-        constructionMatches,
-        hazardMatches: matchedHazards,
-        alertMatches: matchedAlerts,
-        reportMatches: matchedReports
-      })
+    ? getGridlyDestinationRoutePrimaryImpactReason(impactLevel, primaryImpactReasonMatches)
     : "";
+  const primaryImpactLocation = routeFound
+    ? getGridlyDestinationRoutePrimaryImpactLocation(impactLevel, primaryImpactReasonMatches)
+    : "";
+  if (primaryImpactLocation) reasoning.push(`Best available location: ${primaryImpactLocation}`);
 
   return {
     loaded: true,
@@ -15025,6 +15247,7 @@ function buildGridlyDestinationRouteImpactAudit() {
     impactLabel: getGridlyDestinationRouteImpactLabel(impactLevel),
     confidenceLabel,
     primaryImpactReason,
+    primaryImpactLocation,
     hazardsConsidered,
     alertsConsidered,
     reportsConsidered,
@@ -15044,6 +15267,7 @@ window.gridlyDestinationRouteImpactAudit = function gridlyDestinationRouteImpact
       impactLabel: "None",
       confidenceLabel: "Low confidence",
       primaryImpactReason: "",
+      primaryImpactLocation: "",
       hazardsConsidered: 0,
       alertsConsidered: 0,
       reportsConsidered: 0,
@@ -15060,6 +15284,7 @@ window.gridlyDestinationRouteImpactDebug = function gridlyDestinationRouteImpact
     impactLabel: audit.impactLabel,
     confidenceLabel: audit.confidenceLabel,
     primaryImpactReason: audit.primaryImpactReason,
+    primaryImpactLocation: audit.primaryImpactLocation,
     reasoning: audit.reasoning
   };
 };
