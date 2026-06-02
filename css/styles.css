@@ -15159,15 +15159,27 @@ body.gridly-theme-light .settings-place-card .gridly-v2-tile.settings-place-acti
   border-radius: 999px;
   background: linear-gradient(180deg, rgba(123, 203, 255, 0.24), rgba(105, 240, 207, 0.78));
 }
-.gridly-welcome-pill-row { display: flex; flex-wrap: wrap; gap: 9px; }
-.gridly-welcome-pill-row span {
-  padding: 9px 12px;
-  border: 1px solid rgba(105, 240, 207, 0.2);
-  border-radius: 999px;
-  color: #dffcf5;
-  background: rgba(105, 240, 207, 0.08);
-  font-size: 0.88rem;
-  font-weight: 900;
+.gridly-welcome-step[data-gridly-welcome-step="5"] {
+  gap: 18px;
+  min-height: 330px;
+  align-content: start;
+  padding-top: 8px;
+  padding-bottom: 72px;
+}
+.gridly-welcome-step[data-gridly-welcome-step="5"] h2 { max-width: 12ch; }
+.gridly-welcome-step[data-gridly-welcome-step="5"] > p:not(.eyebrow) {
+  max-width: 28rem;
+  color: rgba(236, 246, 255, 0.88);
+  font-size: clamp(1.07rem, 3vw, 1.18rem);
+  line-height: 1.68;
+}
+.gridly-welcome-step[data-gridly-welcome-step="5"] > p:last-child {
+  max-width: 30rem;
+  margin-top: 2px;
+  color: #ffffff;
+  font-weight: 720;
+  letter-spacing: -0.012em;
+  text-wrap: balance;
 }
 .gridly-welcome-watching-label { color: #ffffff !important; font-weight: 900; }
 .gridly-welcome-checklist { display: grid; gap: 10px; margin: 0; padding: 18px; list-style: none; color: #f6fbff; font-weight: 780; }
