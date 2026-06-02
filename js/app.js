@@ -8087,6 +8087,8 @@ let routePreviewLayerExists = false;
 let mapHasRoutePreviewLayer = false;
 let routePreviewPolylinePointCount = 0;
 let routePreviewCorridorLayer = null;
+let gridlyDestinationRouteIntelligenceCache = null;
+let gridlyDestinationRouteImpactCache = null;
 const gridlyDestinationPerformanceAuditState = {
   routePreviewStatus: "idle",
   routePreviewRequestStartedAt: null,
@@ -8134,7 +8136,27 @@ function addGridlyDestinationPerformanceNote(note) {
   gridlyDestinationPerformanceAuditState.lastUpdatedAt = Date.now();
 }
 
+function cloneGridlyDestinationAuditSnapshot(snapshot) {
+  if (!snapshot || typeof snapshot !== "object") return snapshot;
+  try {
+    if (typeof structuredClone === "function") return structuredClone(snapshot);
+  } catch (_) {
+    // Fall through to JSON cloning for plain audit objects.
+  }
+  try {
+    return JSON.parse(JSON.stringify(snapshot));
+  } catch (_) {
+    return { ...snapshot };
+  }
+}
+
+function invalidateGridlyDestinationRouteIntelligenceCache() {
+  gridlyDestinationRouteIntelligenceCache = null;
+  gridlyDestinationRouteImpactCache = null;
+}
+
 function resetGridlyDestinationPerformanceAudit(status = "idle") {
+  invalidateGridlyDestinationRouteIntelligenceCache();
   Object.assign(gridlyDestinationPerformanceAuditState, {
     routePreviewStatus: status,
     routePreviewRequestStartedAt: null,
@@ -14622,6 +14644,7 @@ function syncMobileDestinationCommandCard() {
 
 function clearGridlyDestinationRoutePreview(options = {}) {
   if (options?.preservePerformanceAudit !== true) resetGridlyDestinationPerformanceAudit("idle");
+  else invalidateGridlyDestinationRouteIntelligenceCache();
   const preview = getGridlyDestinationRoutePreviewState();
   preview.requestId = Number(preview.requestId || 0) + 1;
   preview.active = false;
@@ -14787,12 +14810,12 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
   latestPreview.error = renderedLayer ? "" : "render_unavailable";
   gridlyDestinationPerformanceAuditState.routePreviewStatus = latestPreview.status;
   gridlyDestinationPerformanceAuditState.routeGeometryPointCount = Array.isArray(latestPreview.geometry) ? latestPreview.geometry.length : 0;
-  gridlyDestinationPerformanceAuditState.routePreviewRequestEndedAt = getGridlyDestinationPerfNow();
-  setGridlyDestinationPerformanceTiming("totalDestinationRouteMs", gridlyDestinationPerformanceAuditState.routePreviewRequestEndedAt - flowStartedAt);
   if (!renderedLayer) addGridlyDestinationPerformanceNote(latestPreview.error);
   window.GridlyDestinationRoutePreview = latestPreview;
+  if (latestPreview.status === "ready") primeGridlyDestinationRouteImpactCache();
   syncMobileDestinationCommandCard();
-  setGridlyDestinationPerformanceTiming("totalDestinationRouteMs", getGridlyDestinationPerfNow() - flowStartedAt);
+  gridlyDestinationPerformanceAuditState.routePreviewRequestEndedAt = getGridlyDestinationPerfNow();
+  setGridlyDestinationPerformanceTiming("totalDestinationRouteMs", gridlyDestinationPerformanceAuditState.routePreviewRequestEndedAt - flowStartedAt);
   return latestPreview;
 }
 
@@ -15303,14 +15326,47 @@ function buildGridlyDestinationRouteMatch(record = {}, routePoints = [], fallbac
   }
 }
 
+function getGridlyDestinationRouteExpandedBounds(routePoints = [], corridorWidthFeet = GRIDLY_DESTINATION_ROUTE_INTELLIGENCE_CORRIDOR_FEET) {
+  const points = Array.isArray(routePoints) ? routePoints.filter((point) => Number.isFinite(Number(point?.lat)) && Number.isFinite(Number(point?.lng))) : [];
+  if (points.length === 0) return null;
+  const latitudes = points.map((point) => Number(point.lat));
+  const longitudes = points.map((point) => Number(point.lng));
+  const minLat = Math.min(...latitudes);
+  const maxLat = Math.max(...latitudes);
+  const minLng = Math.min(...longitudes);
+  const maxLng = Math.max(...longitudes);
+  const centerLat = (minLat + maxLat) / 2;
+  const corridorMiles = Math.max(0, Number(corridorWidthFeet) || 0) / GRIDLY_FEET_PER_MILE;
+  const latPaddingDegrees = (corridorMiles / 69) + 0.002;
+  const lngMilesPerDegree = Math.max(1, 69 * Math.cos(centerLat * Math.PI / 180));
+  const lngPaddingDegrees = (corridorMiles / lngMilesPerDegree) + 0.002;
+  return {
+    minLat: minLat - latPaddingDegrees,
+    maxLat: maxLat + latPaddingDegrees,
+    minLng: minLng - lngPaddingDegrees,
+    maxLng: maxLng + lngPaddingDegrees
+  };
+}
+
+function isGridlyDestinationRouteCoordinateInsideBounds(coord = null, bounds = null) {
+  if (!bounds) return true;
+  const lat = Number(coord?.lat);
+  const lng = Number(coord?.lng);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return false;
+  return lat >= bounds.minLat && lat <= bounds.maxLat && lng >= bounds.minLng && lng <= bounds.maxLng;
+}
+
 function findGridlyDestinationRouteCorridorMatches(records = [], routePoints = [], options = {}) {
   const corridorWidthFeet = Number.isFinite(Number(options.corridorWidthFeet))
     ? Number(options.corridorWidthFeet)
     : GRIDLY_DESTINATION_ROUTE_INTELLIGENCE_CORRIDOR_FEET;
   const fallbackType = options.type || "intelligence";
   const fallbackTitle = options.title || "Route intelligence";
+  const routeBounds = options.routeBounds || getGridlyDestinationRouteExpandedBounds(routePoints, corridorWidthFeet);
   return (Array.isArray(records) ? records : [])
-    .map((record, index) => buildGridlyDestinationRouteMatch(record, routePoints, { type: fallbackType, title: fallbackTitle, index }))
+    .map((record, index) => ({ record, index, coord: getGridlyDestinationRouteObjectCoordinate(record) }))
+    .filter((entry) => entry.coord && isGridlyDestinationRouteCoordinateInsideBounds(entry.coord, routeBounds))
+    .map((entry) => buildGridlyDestinationRouteMatch(entry.record, routePoints, { type: fallbackType, title: fallbackTitle, index: entry.index }))
     .filter((match) => match && match.distanceFromRouteFeet <= corridorWidthFeet)
     .sort((a, b) => a.distanceFromRouteFeet - b.distanceFromRouteFeet);
 }
@@ -15374,7 +15430,74 @@ function getGridlyDestinationRouteAlertSource() {
   return [];
 }
 
-function buildGridlyDestinationRouteIntelligenceAudit() {
+function getGridlyDestinationRouteSourceSignature() {
+  const buildSignature = (records = []) => (Array.isArray(records) ? records : [])
+    .map((record, index) => [
+      getGridlyDestinationRouteObjectId(record, `${index}`),
+      getGridlyDestinationRouteObjectType(record, ""),
+      pickGridlyDestinationRouteFirstText(record?.severity, record?.priority, record?.impactLevel, record?.raw?.severity, record?.latestReport?.severity),
+      pickGridlyDestinationRouteFirstText(record?.status, record?.state, record?.lifecycle, record?.raw?.status, record?.latestReport?.status),
+      getGridlyDestinationRouteObjectTitle(record, "")
+    ].join(":"))
+    .join("|");
+  return {
+    hazards: buildSignature(getGridlyDestinationRouteHazardSource()),
+    reports: buildSignature(getGridlyDestinationRouteReportSource()),
+    crossings: buildSignature(getGridlyDestinationRouteCrossingSource()),
+    alerts: buildSignature(getGridlyDestinationRouteAlertSource())
+  };
+}
+
+function getGridlyDestinationRouteCacheKey() {
+  const preview = window.GridlyDestinationRoutePreview && typeof window.GridlyDestinationRoutePreview === "object"
+    ? window.GridlyDestinationRoutePreview
+    : {};
+  const routePoints = getGridlyDestinationRoutePreviewPoints();
+  return JSON.stringify({
+    requestId: Number(preview.requestId || 0),
+    status: String(preview.status || ""),
+    routePointCount: routePoints.length,
+    firstPoint: routePoints[0] ? [routePoints[0].lat, routePoints[0].lng] : null,
+    lastPoint: routePoints[routePoints.length - 1] ? [routePoints[routePoints.length - 1].lat, routePoints[routePoints.length - 1].lng] : null,
+    distanceMeters: Number.isFinite(Number(preview.distanceMeters)) ? Math.round(Number(preview.distanceMeters)) : null,
+    sourceSignature: getGridlyDestinationRouteSourceSignature()
+  });
+}
+
+function getCachedGridlyDestinationRouteIntelligenceAudit(cacheKey = getGridlyDestinationRouteCacheKey()) {
+  if (!gridlyDestinationRouteIntelligenceCache || gridlyDestinationRouteIntelligenceCache.cacheKey !== cacheKey) return null;
+  return cloneGridlyDestinationAuditSnapshot(gridlyDestinationRouteIntelligenceCache.audit);
+}
+
+function setCachedGridlyDestinationRouteIntelligenceAudit(cacheKey, audit) {
+  gridlyDestinationRouteIntelligenceCache = { cacheKey, audit: cloneGridlyDestinationAuditSnapshot(audit) };
+  gridlyDestinationRouteImpactCache = null;
+  return cloneGridlyDestinationAuditSnapshot(audit);
+}
+
+function getCachedGridlyDestinationRouteImpactAudit(cacheKey = getGridlyDestinationRouteCacheKey()) {
+  if (!gridlyDestinationRouteImpactCache || gridlyDestinationRouteImpactCache.cacheKey !== cacheKey) return null;
+  return cloneGridlyDestinationAuditSnapshot(gridlyDestinationRouteImpactCache.audit);
+}
+
+function setCachedGridlyDestinationRouteImpactAudit(cacheKey, audit) {
+  gridlyDestinationRouteImpactCache = { cacheKey, audit: cloneGridlyDestinationAuditSnapshot(audit) };
+  return cloneGridlyDestinationAuditSnapshot(audit);
+}
+
+function primeGridlyDestinationRouteImpactCache() {
+  const cacheKey = getGridlyDestinationRouteCacheKey();
+  const intelligence = getCachedGridlyDestinationRouteIntelligenceAudit(cacheKey) || buildGridlyDestinationRouteIntelligenceAudit({ cacheKey, skipCacheRead: true });
+  const impact = buildGridlyDestinationRouteImpactAudit({ cacheKey, intelligence, skipCacheRead: true });
+  return { intelligence, impact };
+}
+
+function buildGridlyDestinationRouteIntelligenceAudit(options = {}) {
+  const cacheKey = options.cacheKey || getGridlyDestinationRouteCacheKey();
+  if (options.skipCacheRead !== true) {
+    const cached = getCachedGridlyDestinationRouteIntelligenceAudit(cacheKey);
+    if (cached) return cached;
+  }
   const preview = window.GridlyDestinationRoutePreview && typeof window.GridlyDestinationRoutePreview === "object"
     ? window.GridlyDestinationRoutePreview
     : {};
@@ -15383,21 +15506,22 @@ function buildGridlyDestinationRouteIntelligenceAudit() {
   const corridorWidthFeet = GRIDLY_DESTINATION_ROUTE_INTELLIGENCE_CORRIDOR_FEET;
   const corridorMatchStartedAt = getGridlyDestinationPerfNow();
   if (routeFound) gridlyDestinationPerformanceAuditState.locationEnrichmentMs = 0;
+  const routeBounds = routeFound ? getGridlyDestinationRouteExpandedBounds(routePoints, corridorWidthFeet) : null;
   const matchedHazards = routeFound
-    ? findGridlyDestinationRouteCorridorMatches(getGridlyDestinationRouteHazardSource(), routePoints, { type: "hazard", title: "Active hazard", corridorWidthFeet })
+    ? findGridlyDestinationRouteCorridorMatches(getGridlyDestinationRouteHazardSource(), routePoints, { type: "hazard", title: "Active hazard", corridorWidthFeet, routeBounds })
     : [];
   const matchedReports = routeFound
-    ? findGridlyDestinationRouteCorridorMatches(getGridlyDestinationRouteReportSource(), routePoints, { type: "report", title: "Active report", corridorWidthFeet })
+    ? findGridlyDestinationRouteCorridorMatches(getGridlyDestinationRouteReportSource(), routePoints, { type: "report", title: "Active report", corridorWidthFeet, routeBounds })
     : [];
   const matchedCrossings = routeFound
-    ? findGridlyDestinationRouteCorridorMatches(getGridlyDestinationRouteCrossingSource(), routePoints, { type: "rail_crossing", title: "Rail crossing", corridorWidthFeet })
+    ? findGridlyDestinationRouteCorridorMatches(getGridlyDestinationRouteCrossingSource(), routePoints, { type: "rail_crossing", title: "Rail crossing", corridorWidthFeet, routeBounds })
     : [];
   const matchedAlerts = routeFound
-    ? findGridlyDestinationRouteCorridorMatches(getGridlyDestinationRouteAlertSource(), routePoints, { type: "alert", title: "Active alert", corridorWidthFeet })
+    ? findGridlyDestinationRouteCorridorMatches(getGridlyDestinationRouteAlertSource(), routePoints, { type: "alert", title: "Active alert", corridorWidthFeet, routeBounds })
     : [];
   setGridlyDestinationPerformanceTiming("corridorMatchMs", getGridlyDestinationPerfNow() - corridorMatchStartedAt);
 
-  return {
+  const audit = {
     loaded: true,
     routeFound,
     routeStatus: String(preview.status || ""),
@@ -15414,6 +15538,7 @@ function buildGridlyDestinationRouteIntelligenceAudit() {
     matchedCrossings,
     matchedAlerts
   };
+  return setCachedGridlyDestinationRouteIntelligenceAudit(cacheKey, audit);
 }
 
 window.gridlyDestinationRouteIntelligenceAudit = function gridlyDestinationRouteIntelligenceAudit() {
@@ -15546,10 +15671,15 @@ function isGridlyDestinationRouteHighImpactMatch(item = {}) {
   return /road[_\s-]*(closed|closure)|\bclosure\b|\bclosed\b|\bblocked\b|\bblockage\b|impassable|all lanes|critical|severe|major|high severity/.test(text);
 }
 
-function buildGridlyDestinationRouteImpactAudit() {
-  const intelligence = typeof window.gridlyDestinationRouteIntelligenceAudit === "function"
+function buildGridlyDestinationRouteImpactAudit(options = {}) {
+  const cacheKey = options.cacheKey || getGridlyDestinationRouteCacheKey();
+  if (options.skipCacheRead !== true) {
+    const cached = getCachedGridlyDestinationRouteImpactAudit(cacheKey);
+    if (cached) return cached;
+  }
+  const intelligence = options.intelligence || (typeof window.gridlyDestinationRouteIntelligenceAudit === "function"
     ? window.gridlyDestinationRouteIntelligenceAudit()
-    : buildEmptyGridlyDestinationRouteIntelligenceAudit();
+    : buildEmptyGridlyDestinationRouteIntelligenceAudit());
   const routeFound = Boolean(intelligence?.routeFound);
   const impactScoreStartedAt = getGridlyDestinationPerfNow();
   const matchedHazards = routeFound && Array.isArray(intelligence?.matchedHazards) ? intelligence.matchedHazards : [];
@@ -15628,7 +15758,7 @@ function buildGridlyDestinationRouteImpactAudit() {
   else if (routeFound) reasoning.push(`Primary impact location empty: ${primaryImpactLocationSelection.emptyReason || "unknown"}`);
   setGridlyDestinationPerformanceTiming("impactScoreMs", getGridlyDestinationPerfNow() - impactScoreStartedAt);
 
-  return {
+  const audit = {
     loaded: true,
     routeFound,
     impactLevel,
@@ -15656,6 +15786,7 @@ function buildGridlyDestinationRouteImpactAudit() {
     crossingsConsidered,
     reasoning
   };
+  return setCachedGridlyDestinationRouteImpactAudit(cacheKey, audit);
 }
 
 window.gridlyDestinationRouteImpactAudit = function gridlyDestinationRouteImpactAudit() {
