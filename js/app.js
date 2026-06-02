@@ -3629,6 +3629,7 @@ let map;
 let crossingLayer;
 let crossingMarkers = new Map();
 let savedRouteLayer;
+let destinationRoutePreviewLayer;
 let corridorIntelLayer;
 let lastRenderedRouteKey = "";
 let routeFocusArmed = true;
@@ -13786,7 +13787,10 @@ function clearGridlySearchResults(options = {}) {
   gridlySearchUiState.lastRenderedResults = [];
   gridlySearchUiState.lastResultShapePreview = [];
   if (options?.clearActiveResult === true) state.activeResult = null;
-  if (options?.clearSelectedDestination === true) state.selectedDestination = null;
+  if (options?.clearSelectedDestination === true) {
+    state.selectedDestination = null;
+    clearGridlyDestinationRoutePreview({ silent: true });
+  }
   if (options?.clearDestinationMarker === true) clearGridlyDestinationMarker({ silent: true });
   return true;
 }
@@ -13935,18 +13939,231 @@ function getSelectedDestinationLabel() {
   return normalized.title || normalized.displayName || normalized.context || normalized.address || "";
 }
 
+function getGridlyDestinationRoutePreviewState() {
+  const existingState = window.GridlyDestinationRoutePreview;
+  const nextState = {
+    active: false,
+    status: "idle",
+    requestId: 0,
+    routeLayer: null,
+    source: null,
+    destination: null,
+    distanceMeters: null,
+    distanceMiles: null,
+    etaMinutes: null,
+    durationSeconds: null,
+    geometry: [],
+    routeProvider: "osrm",
+    error: ""
+  };
+  if (existingState && typeof existingState === "object") {
+    Object.keys(nextState).forEach((key) => {
+      if (Object.hasOwn(existingState, key)) nextState[key] = existingState[key];
+    });
+  }
+  window.GridlyDestinationRoutePreview = nextState;
+  return window.GridlyDestinationRoutePreview;
+}
+
+function formatGridlyDestinationPreviewDistance(miles) {
+  const value = Number(miles);
+  if (!Number.isFinite(value) || value <= 0) return "";
+  return value >= 10 ? `${value.toFixed(1)} mi` : `${Math.max(0.1, value).toFixed(1)} mi`;
+}
+
+function formatGridlyDestinationPreviewEta(minutes) {
+  const value = Number(minutes);
+  if (!Number.isFinite(value) || value <= 0) return "";
+  return `${Math.max(1, Math.round(value))} min`;
+}
+
+function getGridlyDestinationPreviewMetaText() {
+  const preview = getGridlyDestinationRoutePreviewState();
+  if (preview.status === "loading") return "Calculating route…";
+  if (preview.status === "unavailable") return "Route unavailable";
+  if (preview.status === "ready") {
+    const distanceText = formatGridlyDestinationPreviewDistance(preview.distanceMiles);
+    const etaText = formatGridlyDestinationPreviewEta(preview.etaMinutes);
+    if (distanceText && etaText) return `${distanceText} • ${etaText}`;
+    if (distanceText) return distanceText;
+    if (etaText) return etaText;
+    return "Route unavailable";
+  }
+  return "";
+}
+
 function syncMobileDestinationCommandCard() {
   const routeIsMonitoring = Boolean(routeWatchActivated || window.__gridlyRouteWatchActive);
   const selectedLabel = getSelectedDestinationLabel();
-  safeText("mobileDestinationCommandTitle", routeIsMonitoring ? "Destination selected" : "Destination");
+  const previewMeta = selectedLabel ? getGridlyDestinationPreviewMetaText() : "";
+  safeText("mobileDestinationCommandTitle", selectedLabel || (routeIsMonitoring ? "Destination selected" : "Destination"));
   safeText(
     "mobileDestinationCommandMeta",
-    routeIsMonitoring
-      ? `Selected: ${selectedLabel || "Saved destination"}`
-      : (selectedLabel || "Choose where you're going")
+    selectedLabel
+      ? (previewMeta || "Calculating route…")
+      : routeIsMonitoring
+        ? "Selected: Saved destination"
+        : "Choose where you're going"
   );
   safeText("mobileDestinationCommandBtn", selectedLabel ? "Change" : "Choose Route");
 }
+
+function clearGridlyDestinationRoutePreview(options = {}) {
+  const preview = getGridlyDestinationRoutePreviewState();
+  preview.requestId = Number(preview.requestId || 0) + 1;
+  preview.active = false;
+  preview.status = "idle";
+  preview.source = null;
+  preview.destination = null;
+  preview.distanceMeters = null;
+  preview.distanceMiles = null;
+  preview.etaMinutes = null;
+  preview.durationSeconds = null;
+  preview.geometry = [];
+  preview.error = "";
+  try {
+    destinationRoutePreviewLayer?.clearLayers?.();
+  } catch (error) {
+    if (options?.silent !== true) console.warn("Failed to clear destination route preview:", error);
+  }
+  preview.routeLayer = null;
+  window.GridlyDestinationRoutePreview = preview;
+  if (options?.syncCard !== false) syncMobileDestinationCommandCard();
+  return true;
+}
+
+function getGridlyDestinationRouteOrigin() {
+  const gpsCoords = normalizeCoordinatePair(userLocation?.lat, userLocation?.lng);
+  if (gpsCoords) return { ...gpsCoords, label: "Current location", source: "gps" };
+
+  const savedHome = typeof getSavedPlacesState === "function" ? getSavedPlacesState()?.home : null;
+  const homeCoords = normalizeCoordinatePair(savedHome?.lat, savedHome?.lng);
+  if (homeCoords) return { ...homeCoords, label: savedHome?.label || savedHome?.name || "Home", source: "home" };
+
+  const mapCenter = typeof map?.getCenter === "function" ? map.getCenter() : null;
+  const centerCoords = normalizeCoordinatePair(mapCenter?.lat ?? defaultCenter[0], mapCenter?.lng ?? defaultCenter[1]);
+  return centerCoords ? { ...centerCoords, label: "Map center", source: "map_center" } : null;
+}
+
+function drawGridlyDestinationRoutePreviewLine(latLngs = []) {
+  const leaflet = window.L;
+  if (!map || !Array.isArray(latLngs) || latLngs.length < 2 || typeof leaflet?.polyline !== "function") return null;
+  if (!destinationRoutePreviewLayer && typeof leaflet?.layerGroup === "function") destinationRoutePreviewLayer = leaflet.layerGroup().addTo(map);
+  if (!destinationRoutePreviewLayer) return null;
+  destinationRoutePreviewLayer.clearLayers();
+  const underlay = leaflet.polyline(latLngs, {
+    pane: "routePane",
+    color: "#8b5cf6",
+    weight: 11,
+    opacity: 0.2,
+    lineCap: "round",
+    lineJoin: "round",
+    interactive: false
+  });
+  const core = leaflet.polyline(latLngs, {
+    pane: "routePane",
+    color: "#a78bfa",
+    weight: 5,
+    opacity: 0.92,
+    lineCap: "round",
+    lineJoin: "round",
+    interactive: false
+  });
+  destinationRoutePreviewLayer.addLayer(underlay);
+  destinationRoutePreviewLayer.addLayer(core);
+  return destinationRoutePreviewLayer;
+}
+
+async function buildGridlyDestinationRoutePreview(options = {}) {
+  const state = ensureGridlySearchState();
+  const destination = normalizeGridlySearchResult(state?.selectedDestination);
+  clearGridlyDestinationRoutePreview({ silent: true, syncCard: false });
+  const preview = getGridlyDestinationRoutePreviewState();
+  const requestId = Number(preview.requestId || 0) + 1;
+  preview.requestId = requestId;
+  preview.destination = destination ? {
+    label: destination.title || destination.displayName || destination.address || "Destination",
+    lat: destination.lat,
+    lng: destination.lng,
+    id: destination.id || null
+  } : null;
+
+  if (!destination || !Number.isFinite(destination.lat) || !Number.isFinite(destination.lng)) {
+    preview.status = destination ? "unavailable" : "idle";
+    preview.error = destination ? "invalid_destination" : "";
+    window.GridlyDestinationRoutePreview = preview;
+    syncMobileDestinationCommandCard();
+    return preview;
+  }
+
+  const origin = getGridlyDestinationRouteOrigin();
+  if (!origin) {
+    preview.status = "unavailable";
+    preview.error = "origin_unavailable";
+    window.GridlyDestinationRoutePreview = preview;
+    syncMobileDestinationCommandCard();
+    return preview;
+  }
+
+  preview.active = true;
+  preview.status = "loading";
+  preview.source = origin;
+  preview.error = "";
+  window.GridlyDestinationRoutePreview = preview;
+  syncMobileDestinationCommandCard();
+
+  const routeData = await fetchRoadRoutePreviewData([origin.lat, origin.lng], [destination.lat, destination.lng]);
+  const latestPreview = getGridlyDestinationRoutePreviewState();
+  if (latestPreview.requestId !== requestId) return latestPreview;
+
+  if (!routeData?.geometry?.length || routeData.geometry.length < 2) {
+    destinationRoutePreviewLayer?.clearLayers?.();
+    latestPreview.active = true;
+    latestPreview.status = "unavailable";
+    latestPreview.geometry = [];
+    latestPreview.distanceMeters = null;
+    latestPreview.distanceMiles = null;
+    latestPreview.durationSeconds = null;
+    latestPreview.etaMinutes = null;
+    latestPreview.error = "route_unavailable";
+    latestPreview.routeLayer = null;
+    window.GridlyDestinationRoutePreview = latestPreview;
+    syncMobileDestinationCommandCard();
+    return latestPreview;
+  }
+
+  const renderedLayer = drawGridlyDestinationRoutePreviewLine(routeData.geometry);
+  latestPreview.active = true;
+  latestPreview.status = renderedLayer ? "ready" : "unavailable";
+  latestPreview.routeLayer = renderedLayer;
+  latestPreview.geometry = routeData.geometry;
+  latestPreview.distanceMeters = routeData.distanceMeters;
+  latestPreview.distanceMiles = routeData.distanceMiles;
+  latestPreview.durationSeconds = routeData.durationSeconds;
+  latestPreview.etaMinutes = routeData.etaMinutes;
+  latestPreview.routeProvider = routeData.provider || "osrm";
+  latestPreview.error = renderedLayer ? "" : "render_unavailable";
+  window.GridlyDestinationRoutePreview = latestPreview;
+  syncMobileDestinationCommandCard();
+  return latestPreview;
+}
+
+window.gridlyDestinationRoutePreviewDebug = function gridlyDestinationRoutePreviewDebug() {
+  const preview = getGridlyDestinationRoutePreviewState();
+  return {
+    active: Boolean(preview.active),
+    status: preview.status,
+    source: preview.source,
+    destination: preview.destination,
+    distanceMiles: preview.distanceMiles,
+    etaMinutes: preview.etaMinutes,
+    geometryPointCount: Array.isArray(preview.geometry) ? preview.geometry.length : 0,
+    layerOwnsRenderedRoute: Boolean(destinationRoutePreviewLayer && preview.routeLayer === destinationRoutePreviewLayer),
+    routeWatchLayerUntouched: Boolean(savedRouteLayer && destinationRoutePreviewLayer !== savedRouteLayer),
+    routeProvider: preview.routeProvider,
+    error: preview.error
+  };
+};
 
 function selectGridlySearchResult(result, options = {}) {
   const normalized = normalizeGridlySearchResult(result);
@@ -13985,6 +14202,7 @@ function selectGridlySearchResult(result, options = {}) {
   collapseGridlySearchResults();
   hideGridlySearchShell({ clear: false });
   syncMobileDestinationCommandCard();
+  buildGridlyDestinationRoutePreview({ reason: options?.reason || "destination-selected" });
   return normalized;
 }
 
@@ -15747,6 +15965,7 @@ function initMap() {
 
   crossingLayer = L.layerGroup().addTo(map);
   savedRouteLayer = L.layerGroup().addTo(map);
+  destinationRoutePreviewLayer = L.layerGroup().addTo(map);
   corridorIntelLayer = L.layerGroup().addTo(map);
   unifiedIncidentLayer = L.layerGroup().addTo(map);
   installGridlyMapLineDebugHelper();
@@ -26436,14 +26655,15 @@ function inferSavedRouteCrossings() {
   return corridor;
 }
 
-async function fetchRoadRouteCoordinates(from, to) {
+async function fetchRoadRoutePreviewData(from, to, options = {}) {
   if (!Array.isArray(from) || !Array.isArray(to)) return null;
-  const [fromLat, fromLng] = from;
-  const [toLat, toLng] = to;
+  const [fromLat, fromLng] = from.map(Number);
+  const [toLat, toLng] = to.map(Number);
   if (![fromLat, fromLng, toLat, toLng].every((n) => Number.isFinite(n))) return null;
 
+  const timeoutMs = Number.isFinite(Number(options.timeoutMs)) ? Number(options.timeoutMs) : 4500;
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 4500);
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
     const response = await fetch(
@@ -26452,14 +26672,33 @@ async function fetchRoadRouteCoordinates(from, to) {
     );
     if (!response.ok) return null;
     const data = await response.json();
-    const coordinates = data?.routes?.[0]?.geometry?.coordinates;
+    const route = data?.routes?.[0] || null;
+    const coordinates = route?.geometry?.coordinates;
     if (!Array.isArray(coordinates) || coordinates.length < 2) return null;
-    return coordinates.map(([lng, lat]) => [lat, lng]).filter((pt) => Number.isFinite(pt[0]) && Number.isFinite(pt[1]));
+    const latLngs = coordinates
+      .map(([lng, lat]) => [Number(lat), Number(lng)])
+      .filter((pt) => Number.isFinite(pt[0]) && Number.isFinite(pt[1]));
+    if (latLngs.length < 2) return null;
+    const distanceMeters = Number(route?.distance);
+    const durationSeconds = Number(route?.duration);
+    return {
+      geometry: latLngs,
+      distanceMeters: Number.isFinite(distanceMeters) && distanceMeters > 0 ? distanceMeters : null,
+      distanceMiles: Number.isFinite(distanceMeters) && distanceMeters > 0 ? distanceMeters / 1609.344 : null,
+      durationSeconds: Number.isFinite(durationSeconds) && durationSeconds > 0 ? durationSeconds : null,
+      etaMinutes: Number.isFinite(durationSeconds) && durationSeconds > 0 ? Math.max(1, Math.round(durationSeconds / 60)) : null,
+      provider: "osrm"
+    };
   } catch (error) {
     return null;
   } finally {
     clearTimeout(timeout);
   }
+}
+
+async function fetchRoadRouteCoordinates(from, to) {
+  const routePreview = await fetchRoadRoutePreviewData(from, to);
+  return routePreview?.geometry || null;
 }
 
 async function fetchAlternateRouteCoordinates(from, to, primaryPoints = []) {
@@ -35399,7 +35638,10 @@ function clearGridlyDestinationMarker(options = {}) {
   const marker = state.destinationMarker;
 
   if (!marker) {
-    if (!preserveSelectedDestination) state.selectedDestination = null;
+    if (!preserveSelectedDestination) {
+      state.selectedDestination = null;
+      clearGridlyDestinationRoutePreview({ silent: true });
+    }
     state.destinationMarker = null;
     return true;
   }
@@ -35418,12 +35660,16 @@ function clearGridlyDestinationMarker(options = {}) {
   }
 
   state.destinationMarker = null;
+  if (!preserveSelectedDestination) clearGridlyDestinationRoutePreview({ silent: true });
   setGridlyMarkerDiagnostics({
     markerAssignedToState: false,
     destinationMarkerStatePresent: false,
     lastMarkerStateCheckAt: Date.now()
   });
-  if (!preserveSelectedDestination) state.selectedDestination = null;
+  if (!preserveSelectedDestination) {
+    state.selectedDestination = null;
+    syncMobileDestinationCommandCard();
+  }
   return true;
 }
 
