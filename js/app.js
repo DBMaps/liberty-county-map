@@ -11322,7 +11322,7 @@ function openAlertsSurfaceFromDock() {
       const mins = Math.max(0, Math.round((Date.now() - item.latestAtMs) / 60000));
       return {
         ...item,
-        clusterInfo: item.reportCount > 1 ? `${item.reportCount} nearby reports • latest ${mins}m ago` : ""
+        clusterInfo: item.reportCount > 1 ? `${item.reportCount} community reports nearby • latest ${mins}m ago` : ""
       };
     });
   };
@@ -11357,7 +11357,7 @@ function openAlertsSurfaceFromDock() {
     <div><strong>Impacted Movement</strong></div>
     <small>${leadCard ? `Multiple rail crossings are affecting ${sanitizeText(normalizeToken(leadCard?.rawRoad || leadCard?.road || "nearby") )} movement through Dayton.` : "Multiple rail crossings are affecting movement through Dayton."}</small>
     <small><strong>Expected impact:</strong> ${sanitizeText(toDelayEstimate(leadCard?.impact || "Widespread Delays"))}</small>
-    <small><strong>Community activity:</strong> ${totalReports} nearby report${totalReports === 1 ? "" : "s"}</small>
+    <small><strong>Based on community reports:</strong> ${totalReports} nearby report${totalReports === 1 ? "" : "s"}</small>
   </div>
   ${detailCards.map((card) => `
     <div class="gridly-alert-row gridly-alert-intel-card">
@@ -12114,7 +12114,7 @@ function openAlertsSurfaceFromDock() {
       <div style="display:grid;gap:4px;">
         <strong style="display:block;font-size:14px;line-height:1.3;color:#fff;letter-spacing:0.01em;">${esc(displayTitle)}</strong>
         <div style="font-size:11px;line-height:1.35;color:rgba(199,211,226,0.86);">${esc(displaySubtitle)}</div>
-        <small style="font-size:11px;line-height:1.25;color:rgba(225,232,244,0.72);">${esc(timeTextFor(alert))} • ${esc(communityCountText)}</small>
+        <small style="font-size:11px;line-height:1.25;color:rgba(225,232,244,0.72);">${esc(timeTextFor(alert))} • Based on community reports: ${esc(communityCountText)}</small>
       </div>
     </div>
   </div>
@@ -12125,7 +12125,7 @@ function openAlertsSurfaceFromDock() {
       const hiddenRows = alertsForRender.slice(3).map((a, i) => renderAlertCard(a, i + 3, true)).join("");
 
       const extra = alertsForRender.length > 3
-        ? `<div class="gridly-alert-row gridly-alert-intel-card" data-gridly-alert-expand="true" style="margin-top:6px;padding:10px 12px;border:1px solid rgba(255,255,255,0.09);border-radius:11px;background:rgba(255,255,255,0.018);text-align:center;cursor:pointer;"><small style="font-size:11px;line-height:1.35;color:rgba(206,218,235,0.85);letter-spacing:0.02em;"><strong style="color:#f2f6ff;">+ ${alertsForRender.length - 3} more active reports</strong></small></div>`
+        ? `<div class="gridly-alert-row gridly-alert-intel-card" data-gridly-alert-expand="true" style="margin-top:6px;padding:10px 12px;border:1px solid rgba(255,255,255,0.09);border-radius:11px;background:rgba(255,255,255,0.018);text-align:center;cursor:pointer;"><small style="font-size:11px;line-height:1.35;color:rgba(206,218,235,0.85);letter-spacing:0.02em;"><strong style="color:#f2f6ff;">+ ${alertsForRender.length - 3} more community reports</strong></small></div>`
         : "";
 
       const alertsPanelHeading = resolveGridlyAlertsPanelHeadingCandidate({ snapshot, limit: 6 });
@@ -20895,7 +20895,7 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
     lifecycleRecommendedAction: detail.lifecycleClassification?.lifecycleRecommendedAction || "",
     lifecyclePriorityAdjustment: Number(detail.lifecyclePriorityAdjustment || 0)
   }));
-  let headline = "No active mobility reports nearby";
+  let headline = "No active alerts right now";
   if (lightweightSummaryReuseApplied) {
     headline = reusedAlertText;
   } else if (activeAwarenessCount === 1 && selectedActiveDetail) {
@@ -20904,8 +20904,8 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
     headline = `${activeAwarenessCount} active ${topCategory === "rail" ? "rail" : "mobility"} reports${placePhrase}`;
   }
   const subline = activeAwarenessCount > 0
-    ? (topCorridorLabel ? `Localized activity remains visible near ${topCorridorLabel}.` : "Active reports are limited nearby.")
-    : "Local movement looks quiet from active reports.";
+    ? (topCorridorLabel ? `Community activity remains visible near ${topCorridorLabel}.` : "Active reports are limited nearby.")
+    : "Community activity is quiet.";
   const dataSourceSummary = {
     activeReports: activeReportCount,
     activeHazards: activeHazardCount,
@@ -21651,7 +21651,7 @@ function buildGridlyCommunityPulseModel(options = {}) {
   const headlinePhrase = selectedCommunityCount > 0
     ? buildGridlyCommunityPulseHeadline(phraseContext)
     : {
-        text: "Community pulse is quiet",
+        text: "Community activity is quiet",
         selectedHeadlineTemplate: "headline_quiet",
         phraseGenerationMode: "quiet",
         repetitionAvoidanceApplied: false
@@ -21659,12 +21659,12 @@ function buildGridlyCommunityPulseModel(options = {}) {
   const sublinePhrase = selectedCommunityCount > 0
     ? buildGridlyCommunityPulseSubline(phraseContext)
     : {
-        text: "Town moving normally",
+        text: "No major mobility issues reported nearby.",
         selectedSublineTemplate: "subline_quiet",
         repetitionAvoidanceApplied: false
       };
 
-  let renderedPulseHeadline = safeDisplayText(activeAwareness.headline || headlinePhrase.text, "Routes currently clear");
+  let renderedPulseHeadline = safeDisplayText(activeAwareness.headline || headlinePhrase.text, "Community activity is quiet");
   let renderedPulseSubline = safeDisplayText(activeAwareness.subline || sublinePhrase.text, "No major disruptions nearby");
   const pulseSummaryReuseApplied = Boolean(activeAwareness.lightweightSummaryReuseApplied && activeAwareness.reusedAlertText && renderedPulseHeadline === activeAwareness.reusedAlertText);
   const pulseSummarySource = pulseSummaryReuseApplied ? activeAwareness.reusedAlertSource : "";
@@ -21763,7 +21763,7 @@ function renderGridlyCommunityPulse(options = {}) {
   surface.dataset.awarenessMode = model.awarenessMode;
   surface.dataset.gridlyPulseVisible = model.pulseVisible ? "true" : "false";
   surface.dataset.gridlyPulseRenderTarget = GRIDLY_COMMUNITY_PULSE_RENDER_TARGET;
-  const renderedPulseHeadlineText = safeDisplayText(model.renderedPulseHeadline, "Routes currently clear");
+  const renderedPulseHeadlineText = safeDisplayText(model.renderedPulseHeadline, "Community activity is quiet");
   const renderedPulseSublineText = safeDisplayText(model.renderedPulseSubline, "No major disruptions nearby");
   if (headline) headline.textContent = renderedPulseHeadlineText;
   if (subline) subline.textContent = renderedPulseSublineText;
@@ -22693,8 +22693,8 @@ window.gridlyLightweightActiveAwarenessAudit = function gridlyLightweightActiveA
       reusedAlertSource: "",
       reusedAlertText: "",
       lightweightSummaryReuseApplied: false,
-      headline: "No active mobility reports nearby",
-      subline: "Local movement looks quiet from active reports.",
+      headline: "No active alerts right now",
+      subline: "Community activity is quiet.",
       dataSourceSummary: {},
       crossingRuntimeUsed: false,
       sourceJoinRuntimeUsed: false,
@@ -22715,7 +22715,7 @@ function classifyGridlyTopAwarenessPulseField(fieldName, value, context = {}) {
   const topHasValue = Boolean(normalizedValue && topTexts.some((text) => text === normalizedValue));
   const activeReportCount = Number(context.activeReportCount || 0);
   const activeHazardCount = Number(context.activeHazardCount || 0);
-  const genericQuiet = !normalizedValue || /^(?:no active|local movement looks quiet|community pulse is quiet|town moving normally|routes currently clear|no major disruptions nearby)$/i.test(String(value || "").trim());
+  const genericQuiet = !normalizedValue || /^(?:no active|local movement looks quiet|community pulse is quiet|community activity is quiet|town moving normally|routes currently clear|no major mobility issues reported nearby\.?|no major disruptions nearby)$/i.test(String(value || "").trim());
   const topMentionsSameCount = Number(value || 0) > 0 && topTexts.some((text) => new RegExp(`\\b${Number(value || 0)}\\b`).test(text));
 
   if (fieldName === "pulseHeadline") {
@@ -40578,18 +40578,18 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   const routeConsequenceSeverity = routeImpactItems.length === 0 ? "clear" : (maxScore >= 300 ? "severe" : maxScore >= 230 ? "heavy" : "moderate");
 
   const topPrimaryByTier = {
-    clear: "Routes currently clear",
-    minor: "Routes currently clear",
+    clear: "No major mobility issues reported nearby",
+    minor: "No major mobility issues reported nearby",
     moderate: trendState === "worsening" ? "Delays building into Dayton" : "Traffic slowing near Liberty",
     heavy: routeImpactItems.length ? "Your route is slowing near Liberty" : "US 90 backed up near Dayton",
     severe: routeImpactItems.length ? "Alternate route recommended" : "Train blocking US 90"
   };
 
-  const topSecondary = top ? `${top.localizedSummary}${top.etaImpact ? ` • +${top.etaImpact}m` : ""}` : "Routes currently clear";
+  const topSecondary = top ? `${top.localizedSummary}${top.etaImpact ? ` • +${top.etaImpact}m` : ""}` : "Community activity is quiet";
   const consequencePrimaryMessage = routeWatchActivated && routeImpactItems.length >= 2
     ? `${routeImpactItems.length} disruptions affecting your route`
     : topPrimaryByTier[consequenceTier];
-  const trendMessage = trendState === "worsening" ? "Delays building across town routes" : trendState === "improving" ? "Traffic easing on major roads" : trendState === "stable" ? "Live local commute watch active" : "Routes currently clear";
+  const trendMessage = trendState === "worsening" ? "Delays building across town routes" : trendState === "improving" ? "Traffic easing on major roads" : trendState === "stable" ? "Live local commute watch active"  : "No major mobility issues reported nearby";
   const lastTopType = String(top?.incident?.report_type || top?.incident?.type || "").toLowerCase() || null;
   v1381CrossingClassificationDebug = {
     v1381CrossingClassificationFixed: true,
@@ -41053,10 +41053,10 @@ function refreshPortraitV2LocalizedIntelligence() {
     const activeCategory = existingAlertWording?.activeCategory || existingAlertWording?.activeAwareness?.resolvedCategory || existingAlertWording?.activeAwareness?.topCategory || "";
     const activeLocationLabel = existingAlertWording?.activeLocationLabel || existingAlertWording?.activeAwareness?.resolvedLocationLabel || "";
     const activeFallbackCandidate = buildGridlyHeaderCandidateFromCategoryLocation(activeCategory, activeLocationLabel) || existingAlertWording?.activeAwareness?.headline || "";
-    const rawPrimaryFallback = safeDisplayText(intel.topStatus, safeDisplayText(intel.commuteImpactHeadline, "Routes currently clear"));
+    const rawPrimaryFallback = safeDisplayText(intel.topStatus, safeDisplayText(intel.commuteImpactHeadline, "No major mobility issues reported nearby"));
     const railFallbackRejectReason = getGridlyHeaderRailTextRejectionReason(rawPrimaryFallback, activeCategory);
     const guardedPrimaryFallback = railFallbackRejectReason
-      ? safeDisplayText(activeFallbackCandidate, "Routes currently clear")
+      ? safeDisplayText(activeFallbackCandidate, "No major mobility issues reported nearby")
       : rawPrimaryFallback;
     const mobilityLanguagePrimaryCandidate = intel.topStatusSelectionAudit?.mobilityLanguageAccepted
       ? safeDisplayText(intel.topStatusSelectionAudit.mobilityLanguageHeadline, "")
@@ -41075,8 +41075,8 @@ function refreshPortraitV2LocalizedIntelligence() {
     const awarenessBrief = buildGridlyAwarenessBriefCopy({ intel, existingAlertWording, pulseModel });
     if (awarenessBrief.state === "quiet") {
       pulseModel.pulseVisible = false;
-      pulseModel.renderedPulseHeadline = "Community pulse is quiet";
-      pulseModel.renderedPulseSubline = "Town moving normally";
+      pulseModel.renderedPulseHeadline = "Community activity is quiet";
+      pulseModel.renderedPulseSubline = "No major mobility issues reported nearby.";
       pulseModel.pulseSuppressedReason = "quiet awareness brief active-state counts are clear";
     }
     const awarenessPrimary = safeDisplayText(awarenessBrief.primary, "No major mobility issues reported nearby.");
@@ -41158,7 +41158,7 @@ function getPrioritizedRailAlertIncidents(limit = 6) {
 function getOperationalFeedSummaryLine() {
   const consolidatedIncidents = getConsolidatedIncidents();
   if (!consolidatedIncidents.length) {
-    return "No active community alerts";
+    return "No active alerts right now.";
   }
   const topIncident = consolidatedIncidents[0];
   const topReport = topIncident?.latestReport || {};
@@ -41187,7 +41187,7 @@ function renderAlerts() {
   const corridors = consequenceIntel.corridorClusters || [];
   if (!corridors.length) {
     timeSection("text_content_updates", () => {
-      els.alertsList.innerHTML = `<div class="alert-item corridor-command-status"><strong>COMMUTE STATUS</strong><p>Routes currently clear</p></div>`;
+      els.alertsList.innerHTML = `<div class="alert-item corridor-command-status"><strong>Community Awareness</strong><p>No active alerts right now.</p></div>`;
     });
     recordGridlyActiveLocationLifecycleEvent("renderAlerts", {
       source: "renderAlerts",
@@ -41204,7 +41204,7 @@ function renderAlerts() {
   const primaryCorridor = corridors[0] || null;
   const routeImpacted = timeSection("map_route_dependent_checks", () => Number(consequenceIntel.routeImpactIncidentCount || 0) > 0);
   const sections = [];
-  sections.push(`<article class="alert-item intelligence-row high corridor-command-status"><div class="alert-row-main"><span class="alert-severity-chip">Commute Status</span><strong>${sanitizeText(standardizeGridlyAlertHeadline(routeImpacted ? "Route Watch impacted" : (consequenceIntel.topStatus || "Routes currently clear")))}</strong><span class="alert-row-time">live</span></div><p class="alert-row-subline">${sanitizeText(consequenceIntel.topStatusLocalizedDetail || "Operational corridor watch active")}</p></article>`);
+  sections.push(`<article class="alert-item intelligence-row high corridor-command-status"><div class="alert-row-main"><span class="alert-severity-chip">Community Awareness</span><strong>${sanitizeText(standardizeGridlyAlertHeadline(routeImpacted ? "Route Watch impacted" : (consequenceIntel.topStatus || "No major mobility issues reported nearby")))}</strong><span class="alert-row-time">live</span></div><p class="alert-row-subline">${sanitizeText(consequenceIntel.topStatusLocalizedDetail || "Based on community reports.")}</p></article>`);
 
   timeSection("alert_corridor_grouping_logic", () => {
     corridors.slice(0, 3).forEach((corridor, idx) => {
@@ -43253,7 +43253,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   function buildPriorityIncidentItems(limit = 3) {
     const incidents = getUnifiedIncidents().filter((incident) => incident.status === "active").slice(0, limit);
     if (!incidents.length) {
-      return '<li class="mobile-intel-feed-item"><span class="chip chip-clear">Clear</span><p><strong>No priority incidents</strong><span>No high-impact disruptions right now.</span></p></li>';
+      return '<li class="mobile-intel-feed-item"><span class="chip chip-clear">Clear</span><p><strong>No active alerts right now.</strong><span>No major mobility issues reported nearby.</span></p></li>';
     }
     return incidents.map((incident) => {
       const isRailIncident = String(incident?.id || "").startsWith("rail-") || String(incident?.type || "").startsWith("rail_");
@@ -43334,7 +43334,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
               <p class="alert-row-subline">${sanitizeText(railDisplay.subtitlePrefix)} · ${sanitizeText(reportState)} · ${sanitizeText(freshnessLabel)}</p>
             </article>`;
         }).join("")
-      : '<div class="alert-item"><strong>No active community alerts</strong><p>No high-impact disruptions detected nearby.</p></div>';
+      : '<div class="alert-item"><strong>No active alerts right now.</strong><p>No major mobility issues reported nearby.</p></div>';
 
     const hazardRows = roadHazards.length
       ? roadHazards.map((incident) => {
@@ -44201,7 +44201,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const cityText = city ? `${city}` : "";
     const timeText = coerceDisplayText(alert?.minutesText || alert?.timeText || "");
     const parts = [nearText, cityText, timeText].filter(Boolean);
-    if (!parts.length) return "Liberty County • Updated just now";
+    if (!parts.length) return "Liberty County • Last checked just now";
     return parts.join(" • ");
   }
 
@@ -44492,7 +44492,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const alertsPanelHeading = resolveGridlyAlertsPanelHeadingCandidate({ snapshot, limit: 6 });
     const alertsPanelHeadingText = standardizeGridlyAlertHeadline(alertsPanelHeading.text || snapshot.commuteImpactHeadline || "Active Alerts");
     const alertsPanelActiveCategory = alertsPanelHeading.existingAlertWording?.activeCategory || alertsPanelHeading.activeAwareness?.resolvedCategory || alertsPanelHeading.activeAwareness?.topCategory || "";
-    const rawMovementSummaryText = coerceDisplayText(snapshot.topStatusLocalizedDetail) || coerceDisplayText(snapshot.routeImpactSummary) || "Liberty County • Updated just now";
+    const rawMovementSummaryText = coerceDisplayText(snapshot.topStatusLocalizedDetail) || coerceDisplayText(snapshot.routeImpactSummary) || "Liberty County • Last checked just now";
     const movementSummaryText = getGridlyHeaderRailTextRejectionReason(rawMovementSummaryText, alertsPanelActiveCategory)
       ? "Active road hazard details are being verified from community reports."
       : rawMovementSummaryText;
@@ -44504,7 +44504,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     ${sanitizeText(alertsPanelHeadingText)}
   </div>
   <div class="gridly-alert-row" style="padding:10px 12px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.1);border-radius:10px;background:rgba(255,255,255,0.02);">
-    <div class="gridly-alert-title" style="font-size:14px;font-weight:800;line-height:1.3;letter-spacing:0.03em;">Movement Summary</div>
+    <div class="gridly-alert-title" style="font-size:14px;font-weight:800;line-height:1.3;letter-spacing:0.03em;">Community Awareness</div>
     <div class="gridly-alert-subtitle" style="margin-top:4px;font-size:11px;opacity:0.72;line-height:1.35;">${sanitizeText(movementSummaryText)}</div>
   </div>
 
@@ -44528,18 +44528,18 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       </div>
       <div class="gridly-alert-subtitle" style="margin-top:4px;font-size:11px;opacity:0.72;line-height:1.35;">${sanitizeText(locationTimeLine)}</div>
       <div class="gridly-alert-subtitle" style="margin-top:4px;font-size:11px;opacity:0.76;line-height:1.35;">${sanitizeText(intelligence.shortPhrase)} • ${sanitizeText(intelligence.detailPhrase)}</div>
-      <div class="gridly-alert-subtitle" style="margin-top:6px;font-size:11px;opacity:0.78;"><span style="display:inline-block;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,0.12);font-weight:600;font-size:10px;letter-spacing:0.04em;text-transform:uppercase;">${sanitizeText(getSeverityChipLabel(alert))}</span>${alert?.extraCount > 0 ? ` <span style="opacity:0.85;">+${alert.extraCount} more nearby reports</span>` : ""}</div>
+      <div class="gridly-alert-subtitle" style="margin-top:6px;font-size:11px;opacity:0.78;"><span style="display:inline-block;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,0.12);font-weight:600;font-size:10px;letter-spacing:0.04em;text-transform:uppercase;">${sanitizeText(getSeverityChipLabel(alert))}</span>${alert?.extraCount > 0 ? ` <span style="opacity:0.85;">+${alert.extraCount} more community reports nearby</span>` : ""}</div>
     </div>
   `;
   }).join("")}
   ${affectedCrossingsMoreCount > 0 ? `<div class="gridly-alert-row" style="padding:8px 12px;margin-top:4px;border-top:1px dashed rgba(255,255,255,0.14);"><div class="gridly-alert-subtitle" style="font-size:11px;opacity:0.65;">+ ${affectedCrossingsMoreCount} more affected crossings</div></div>` : ""}
-  ${hiddenCount > 0 ? `<div class="gridly-alert-row" style="padding:8px 12px;margin-top:4px;border:1px solid rgba(255,255,255,0.08);border-radius:10px;background:rgba(255,255,255,0.015);"><div class="gridly-alert-subtitle" style="font-size:11px;opacity:0.68;letter-spacing:0.02em;">+ ${hiddenCount} more active reports</div></div>` : ""}
+  ${hiddenCount > 0 ? `<div class="gridly-alert-row" style="padding:8px 12px;margin-top:4px;border:1px solid rgba(255,255,255,0.08);border-radius:10px;background:rgba(255,255,255,0.015);"><div class="gridly-alert-subtitle" style="font-size:11px;opacity:0.68;letter-spacing:0.02em;">+ ${hiddenCount} more community reports</div></div>` : ""}
 </div>
 `;
     } else {
       html = `
 <div class="gridly-alerts-active">
-  <div class="gridly-alert-headline">Active Alerts</div>
+  <div class="gridly-alert-headline">Community Awareness</div>
   <div class="gridly-alert-row">
     <div class="gridly-alert-title">No active alerts right now.</div>
     <div class="gridly-alert-subtitle"></div>
