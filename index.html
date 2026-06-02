@@ -332,7 +332,7 @@
           <div class="mobile-destination-command-copy">
             <strong id="mobileDestinationCommandTitle">Destination</strong>
             <p id="mobileDestinationCommandMeta">Choose where you're going</p>
-            <p class="destination-route-impact-line" id="mobileDestinationCommandImpact"></p>
+            <p class="destination-route-impact-line" id="mobileDestinationCommandImpact" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="gridlyDestinationImpactPane" aria-expanded="false"></p>
           </div>
           <button class="secondary-btn compact-btn" id="mobileDestinationCommandBtn" type="button">Choose Route</button>
         </article>
@@ -627,6 +627,28 @@
     <button class="mobile-dock-btn layers" type="button" id="mobileDockLayersBtn" data-mode="layers" hidden>Layers</button>
   </div>
 
+
+
+  <section class="gridly-destination-impact-pane" id="gridlyDestinationImpactPane" hidden aria-hidden="true">
+    <div class="gridly-destination-impact-backdrop" id="gridlyDestinationImpactPaneBackdrop"></div>
+    <article class="gridly-destination-impact-card" role="dialog" aria-modal="true" aria-labelledby="gridlyDestinationImpactPaneTitle" aria-describedby="gridlyDestinationImpactPaneSubtitle">
+      <header class="gridly-destination-impact-head">
+        <div>
+          <p class="eyebrow">Route Awareness</p>
+          <h2 id="gridlyDestinationImpactPaneTitle">Route Awareness</h2>
+        </div>
+        <button type="button" class="gridly-surface-close" id="gridlyDestinationImpactPaneClose" aria-label="Close Route Awareness details">×</button>
+      </header>
+      <p class="gridly-destination-impact-subtitle" id="gridlyDestinationImpactPaneSubtitle">Based on community reports and route activity.</p>
+      <section class="gridly-destination-impact-body" aria-label="Why Gridly is showing this route awareness summary">
+        <strong id="gridlyDestinationImpactPaneSummary">No active hazards reported nearby</strong>
+        <p class="gridly-destination-impact-why" id="gridlyDestinationImpactPaneWhy">Why:</p>
+        <ul id="gridlyDestinationImpactPaneReasons" class="gridly-destination-impact-reasons"></ul>
+        <p id="gridlyDestinationImpactPaneQuietNote" class="gridly-destination-impact-quiet-note" hidden>Rail crossings and community reports will appear here when activity is detected.</p>
+      </section>
+      <button type="button" class="secondary-btn gridly-destination-impact-done" id="gridlyDestinationImpactPaneDone">Close</button>
+    </article>
+  </section>
 
   <div class="route-setup-modal" id="routeSetupModal" hidden>
     <div class="route-setup-modal-backdrop" id="routeSetupModalBackdrop"></div>

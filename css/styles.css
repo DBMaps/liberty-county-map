@@ -15553,3 +15553,142 @@ body[data-layout-mode="portrait"] .gridly-v2-control-rail {
     pointer-events: auto !important;
   }
 }
+
+
+/* V214.4 — Route Impact Details Pane (explainability only). */
+body[data-layout-mode="portrait"] .mobile-destination-command .destination-route-impact-line:not(:empty) {
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: rgba(186, 230, 253, 0.34);
+  text-underline-offset: 3px;
+}
+
+body[data-layout-mode="portrait"] .mobile-destination-command .destination-route-impact-line:not(:empty):focus-visible {
+  outline: 2px solid rgba(125, 211, 252, 0.8);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+.gridly-destination-impact-pane[hidden] {
+  display: none !important;
+}
+
+.gridly-destination-impact-pane {
+  position: fixed;
+  inset: 0;
+  z-index: 10070;
+  display: grid;
+  place-items: end center;
+  padding: 16px;
+  min-height: 100dvh;
+  color: #f8fbff;
+}
+
+.gridly-destination-impact-backdrop {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(4, 10, 20, 0.46), rgba(4, 10, 20, 0.78));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.gridly-destination-impact-card {
+  position: relative;
+  width: min(100%, 430px);
+  max-height: min(82dvh, 560px);
+  overflow-y: auto;
+  border: 1px solid rgba(156, 211, 255, 0.24);
+  border-radius: 24px;
+  padding: 18px;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(74, 222, 255, 0.12), transparent 32%),
+    linear-gradient(145deg, rgba(13, 29, 50, 0.97), rgba(6, 13, 25, 0.96));
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.gridly-destination-impact-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+
+.gridly-destination-impact-head h2 {
+  margin: 2px 0 0;
+  font-size: 1.24rem;
+  letter-spacing: -0.02em;
+}
+
+.gridly-destination-impact-subtitle {
+  margin: 0 0 16px;
+  color: rgba(219, 234, 254, 0.82);
+  line-height: 1.45;
+}
+
+.gridly-destination-impact-body {
+  display: grid;
+  gap: 10px;
+  border: 1px solid rgba(148, 203, 255, 0.16);
+  border-radius: 18px;
+  padding: 14px;
+  background: rgba(5, 15, 28, 0.44);
+}
+
+.gridly-destination-impact-body > strong {
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.gridly-destination-impact-why,
+.gridly-destination-impact-quiet-note {
+  margin: 0;
+  color: rgba(219, 234, 254, 0.78);
+  line-height: 1.42;
+}
+
+.gridly-destination-impact-reasons {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 20px;
+  color: #eef7ff;
+}
+
+.gridly-destination-impact-reasons li {
+  line-height: 1.38;
+}
+
+.gridly-destination-impact-done {
+  width: 100%;
+  margin-top: 14px;
+}
+
+body.gridly-theme-light .gridly-destination-impact-pane {
+  color: #0d1b2a;
+}
+
+body.gridly-theme-light .gridly-destination-impact-backdrop {
+  background: linear-gradient(180deg, rgba(15, 40, 67, 0.22), rgba(15, 40, 67, 0.46));
+}
+
+body.gridly-theme-light .gridly-destination-impact-card {
+  border-color: rgba(27, 99, 132, 0.2);
+  background:
+    radial-gradient(circle at 18% 0%, rgba(14, 165, 233, 0.12), transparent 32%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(238, 245, 250, 0.96));
+  box-shadow: 0 24px 70px rgba(24, 58, 82, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+body.gridly-theme-light :is(.gridly-destination-impact-subtitle, .gridly-destination-impact-why, .gridly-destination-impact-quiet-note) {
+  color: #516473;
+}
+
+body.gridly-theme-light .gridly-destination-impact-body {
+  border-color: rgba(27, 99, 132, 0.14);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+body.gridly-theme-light .gridly-destination-impact-reasons {
+  color: #12324a;
+}
