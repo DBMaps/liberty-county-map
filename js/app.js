@@ -14165,6 +14165,206 @@ window.gridlyDestinationRoutePreviewDebug = function gridlyDestinationRoutePrevi
   };
 };
 
+const GRIDLY_DESTINATION_ROUTE_INTELLIGENCE_CORRIDOR_FEET = 750;
+const GRIDLY_FEET_PER_MILE = 5280;
+
+function normalizeGridlyDestinationRoutePoint(point) {
+  if (Array.isArray(point)) return normalizeCoordinatePair(point[0], point[1]);
+  if (point && typeof point === "object") return normalizeCoordinatePair(point.lat ?? point.latitude, point.lng ?? point.lon ?? point.longitude);
+  return null;
+}
+
+function getGridlyDestinationRoutePreviewPoints() {
+  const preview = window.GridlyDestinationRoutePreview && typeof window.GridlyDestinationRoutePreview === "object"
+    ? window.GridlyDestinationRoutePreview
+    : {};
+  return (Array.isArray(preview.geometry) ? preview.geometry : [])
+    .map((point) => normalizeGridlyDestinationRoutePoint(point))
+    .filter(Boolean);
+}
+
+function getGridlyDestinationRouteObjectCoordinate(record = {}) {
+  return gridlyCoordinateFromRecord(record)
+    || gridlyCoordinateFromRecord(record?.raw)
+    || gridlyCoordinateFromRecord(record?.source)
+    || gridlyCoordinateFromRecord(record?.incident)
+    || gridlyCoordinateFromRecord(record?.latestReport)
+    || gridlyCoordinateFromRecord(record?.finalPlacementCoordinate)
+    || gridlyCoordinateFromRecord(record?.storedReportCoordinate)
+    || gridlyCoordinateFromRecord(record?.activeHazardCoordinate)
+    || gridlyCoordinateFromRecord(record?.representativeCoordinate)
+    || null;
+}
+
+function getGridlyDestinationRouteObjectTitle(record = {}, fallback = "Route intelligence") {
+  return pickFirstNonEmptyText([
+    record?.title,
+    record?.headline,
+    record?.resolvedHeadline,
+    record?.localizedSummary,
+    record?.finalHeadline,
+    record?.segmentHeadline,
+    record?.label,
+    record?.crossingName,
+    record?.roadName,
+    record?.nearestRoad,
+    record?.locationName,
+    record?.location,
+    record?.raw?.title,
+    record?.latestReport?.title
+  ]) || fallback;
+}
+
+function getGridlyDestinationRouteObjectType(record = {}, fallback = "intelligence") {
+  return String(
+    record?.type
+      || record?.reportType
+      || record?.report_type
+      || record?.reportKind
+      || record?.category
+      || record?.status
+      || record?.raw?.type
+      || record?.latestReport?.type
+      || fallback
+  ).trim() || fallback;
+}
+
+function getGridlyDestinationRouteObjectId(record = {}, fallback = "") {
+  return String(
+    record?.id
+      || record?.report_id
+      || record?.reportId
+      || record?.incidentId
+      || record?.crossingId
+      || record?.crossing_id
+      || record?.objectid
+      || record?.objectId
+      || record?.raw?.id
+      || record?.latestReport?.id
+      || fallback
+  ).trim() || fallback;
+}
+
+function getGridlyDistanceFromDestinationRouteFeet(lat, lng, routePoints = []) {
+  if (!Number.isFinite(Number(lat)) || !Number.isFinite(Number(lng)) || !Array.isArray(routePoints) || routePoints.length < 2) return null;
+  let nearestMiles = Infinity;
+  for (let index = 1; index < routePoints.length; index += 1) {
+    const start = routePoints[index - 1];
+    const end = routePoints[index];
+    if (!start || !end) continue;
+    const distanceMiles = distancePointToSegmentMiles(Number(lat), Number(lng), start.lat, start.lng, end.lat, end.lng);
+    if (Number.isFinite(distanceMiles) && distanceMiles < nearestMiles) nearestMiles = distanceMiles;
+  }
+  if (!Number.isFinite(nearestMiles)) return null;
+  return Math.round(nearestMiles * GRIDLY_FEET_PER_MILE);
+}
+
+function buildGridlyDestinationRouteMatch(record = {}, routePoints = [], fallback = {}) {
+  const coord = getGridlyDestinationRouteObjectCoordinate(record);
+  if (!coord) return null;
+  const distanceFromRouteFeet = getGridlyDistanceFromDestinationRouteFeet(coord.lat, coord.lng, routePoints);
+  if (!Number.isFinite(Number(distanceFromRouteFeet))) return null;
+  return {
+    id: getGridlyDestinationRouteObjectId(record, fallback.id || `${fallback.type || "item"}-${fallback.index ?? 0}`),
+    type: getGridlyDestinationRouteObjectType(record, fallback.type || "intelligence"),
+    title: getGridlyDestinationRouteObjectTitle(record, fallback.title || "Route intelligence"),
+    lat: Number(coord.lat),
+    lng: Number(coord.lng),
+    distanceFromRouteFeet
+  };
+}
+
+function findGridlyDestinationRouteCorridorMatches(records = [], routePoints = [], options = {}) {
+  const corridorWidthFeet = Number.isFinite(Number(options.corridorWidthFeet))
+    ? Number(options.corridorWidthFeet)
+    : GRIDLY_DESTINATION_ROUTE_INTELLIGENCE_CORRIDOR_FEET;
+  const fallbackType = options.type || "intelligence";
+  const fallbackTitle = options.title || "Route intelligence";
+  return (Array.isArray(records) ? records : [])
+    .map((record, index) => buildGridlyDestinationRouteMatch(record, routePoints, { type: fallbackType, title: fallbackTitle, index }))
+    .filter((match) => match && match.distanceFromRouteFeet <= corridorWidthFeet)
+    .sort((a, b) => a.distanceFromRouteFeet - b.distanceFromRouteFeet);
+}
+
+function getGridlyDestinationRouteHazardSource() {
+  return (Array.isArray(activeHazards) ? activeHazards : [])
+    .filter((hazard) => hazard && !hazard.expired && hazard.type !== "hazard_cleared");
+}
+
+function getGridlyDestinationRouteReportSource() {
+  return (Array.isArray(activeReports) ? activeReports : [])
+    .filter((report) => report && !report.expired);
+}
+
+function getGridlyDestinationRouteCrossingSource() {
+  return (Array.isArray(crossings) ? crossings : [])
+    .filter((crossing) => crossing && getGridlyDestinationRouteObjectCoordinate(crossing));
+}
+
+function getGridlyDestinationRouteAlertSource() {
+  const snapshot = typeof window.getAlertsSurfaceSnapshot === "function" ? window.getAlertsSurfaceSnapshot() : null;
+  if (Array.isArray(snapshot?.alerts)) return snapshot.alerts;
+  if (Array.isArray(snapshot?.normalizedAlertItems)) return snapshot.normalizedAlertItems;
+  if (Array.isArray(window.__gridlyLatestAlertsForRender)) return window.__gridlyLatestAlertsForRender;
+  return [];
+}
+
+function buildGridlyDestinationRouteIntelligenceAudit() {
+  const preview = window.GridlyDestinationRoutePreview && typeof window.GridlyDestinationRoutePreview === "object"
+    ? window.GridlyDestinationRoutePreview
+    : {};
+  const routePoints = getGridlyDestinationRoutePreviewPoints();
+  const routeFound = routePoints.length >= 2;
+  const corridorWidthFeet = GRIDLY_DESTINATION_ROUTE_INTELLIGENCE_CORRIDOR_FEET;
+  const matchedHazards = routeFound
+    ? findGridlyDestinationRouteCorridorMatches(getGridlyDestinationRouteHazardSource(), routePoints, { type: "hazard", title: "Active hazard", corridorWidthFeet })
+    : [];
+  const matchedReports = routeFound
+    ? findGridlyDestinationRouteCorridorMatches(getGridlyDestinationRouteReportSource(), routePoints, { type: "report", title: "Active report", corridorWidthFeet })
+    : [];
+  const matchedCrossings = routeFound
+    ? findGridlyDestinationRouteCorridorMatches(getGridlyDestinationRouteCrossingSource(), routePoints, { type: "rail_crossing", title: "Rail crossing", corridorWidthFeet })
+    : [];
+  const matchedAlerts = routeFound
+    ? findGridlyDestinationRouteCorridorMatches(getGridlyDestinationRouteAlertSource(), routePoints, { type: "alert", title: "Active alert", corridorWidthFeet })
+    : [];
+
+  return {
+    loaded: true,
+    routeFound,
+    routeStatus: String(preview.status || ""),
+    routeMiles: Number.isFinite(Number(preview.distanceMiles)) ? Number(preview.distanceMiles) : 0,
+    etaMinutes: Number.isFinite(Number(preview.etaMinutes)) ? Number(preview.etaMinutes) : 0,
+    routePointCount: routePoints.length,
+    corridorWidthFeet,
+    hazardsNearRoute: matchedHazards.length,
+    reportsNearRoute: matchedReports.length,
+    crossingsNearRoute: matchedCrossings.length,
+    alertsNearRoute: matchedAlerts.length,
+    matchedHazards,
+    matchedReports,
+    matchedCrossings,
+    matchedAlerts
+  };
+}
+
+window.gridlyDestinationRouteIntelligenceAudit = function gridlyDestinationRouteIntelligenceAudit() {
+  return buildGridlyDestinationRouteIntelligenceAudit();
+};
+
+window.gridlyDestinationRouteIntelligenceDebug = function gridlyDestinationRouteIntelligenceDebug() {
+  const audit = buildGridlyDestinationRouteIntelligenceAudit();
+  return {
+    routeFound: audit.routeFound,
+    routePointCount: audit.routePointCount,
+    corridorWidthFeet: audit.corridorWidthFeet,
+    hazardMatches: audit.hazardsNearRoute,
+    reportMatches: audit.reportsNearRoute,
+    crossingMatches: audit.crossingsNearRoute,
+    alertMatches: audit.alertsNearRoute
+  };
+};
+
 function selectGridlySearchResult(result, options = {}) {
   const normalized = normalizeGridlySearchResult(result);
   if (!normalized) return null;
