@@ -9276,6 +9276,7 @@ function gridlyCommuteIntelligenceAudit() {
 }
 
 exposeGridlyAuditHelper("gridlyCommuteIntelligenceAudit", gridlyCommuteIntelligenceAudit);
+exposeGridlyAuditHelper("gridlyAwarenessBriefQuietStateCopyTest", gridlyAwarenessBriefQuietStateCopyTest);
 
 const gridlyCommuteAuditGlobalsCheck = function () {
   return {
@@ -41042,10 +41043,31 @@ function getGridlyAwarenessCommunityCount(intel = {}, activeAwareness = {}) {
   return Math.max(0, ...candidates.map((value) => Number(value)).filter((value) => Number.isFinite(value)));
 }
 
+function getGridlyAwarenessBriefActiveCounts(intel = {}, activeAwareness = {}) {
+  const inferredCommunityCount = getGridlyAwarenessCommunityCount(intel, activeAwareness);
+  const reportCount = Math.max(0, Number(activeAwareness?.activeReportCount ?? activeAwareness?.activeAwarenessCount ?? inferredCommunityCount) || 0);
+  const hazardCount = Math.max(0, Number(activeAwareness?.activeHazardCount ?? 0) || 0);
+  return {
+    reportCount,
+    hazardCount,
+    communityCount: reportCount,
+    hasActiveReportsOrHazards: reportCount > 0 || hazardCount > 0
+  };
+}
+
+function getGridlyAwarenessBriefCommunityActivityCopy({ activityLevel = "quiet", activeReportCount = 0, activeHazardCount = 0 } = {}) {
+  const reportCount = Math.max(0, Number(activeReportCount || 0));
+  const hazardCount = Math.max(0, Number(activeHazardCount || 0));
+  if (reportCount <= 0 && hazardCount <= 0) return "Community activity is quiet.";
+  const activity = safeDisplayText(activityLevel, "quiet").toLowerCase();
+  return activity && activity !== "quiet" ? `Community activity ${activity}.` : "Community activity is quiet.";
+}
+
 function buildGridlyAwarenessBriefCopy({ intel = {}, existingAlertWording = {}, pulseModel = {} } = {}) {
   const town = getGridlyAwarenessBriefTownLabel();
   const activeAwareness = pulseModel?.activeAwareness || existingAlertWording?.activeAwareness || {};
-  const activeCount = getGridlyAwarenessCommunityCount(intel, activeAwareness);
+  const activeCounts = getGridlyAwarenessBriefActiveCounts(intel, activeAwareness);
+  const activeCount = activeCounts.communityCount;
   const activeCategory = existingAlertWording?.activeCategory || activeAwareness?.resolvedCategory || activeAwareness?.topCategory || "";
   const activeLocation = safeDisplayText(existingAlertWording?.activeLocationLabel || activeAwareness?.resolvedLocationLabel, "");
   const activeTitle = safeDisplayText(
@@ -41057,9 +41079,11 @@ function buildGridlyAwarenessBriefCopy({ intel = {}, existingAlertWording = {}, 
   );
   const freshness = safeDisplayText(intel?.topIncidentFreshnessText || activeAwareness?.freshnessText, "just now");
   const activity = safeDisplayText(pulseModel?.mobilityPressureCategory || activeAwareness?.activityLevel, "quiet").toLowerCase();
-  const communityCountLabel = pluralizeGridlyCommunityReports(activeCount);
+  const activityEvidenceLabel = activeCounts.reportCount > 0
+    ? pluralizeGridlyCommunityReports(activeCounts.reportCount)
+    : `${activeCounts.hazardCount} active ${activeCounts.hazardCount === 1 ? "hazard" : "hazards"}`;
 
-  if (activeCount >= 6) {
+  if (activeCounts.hasActiveReportsOrHazards && activeCount >= 6) {
     return {
       state: "high",
       greeting: getGridlyAwarenessGreetingText(),
@@ -41070,13 +41094,13 @@ function buildGridlyAwarenessBriefCopy({ intel = {}, existingAlertWording = {}, 
     };
   }
 
-  if (activeCount > 0 || intel?.hasActiveAlerts) {
+  if (activeCounts.hasActiveReportsOrHazards && (activeCount > 0 || activeCounts.hazardCount > 0 || intel?.hasActiveAlerts)) {
     return {
       state: "moderate",
       greeting: getGridlyAwarenessGreetingText(),
       primary: activeTitle || `Mobility issue reported in ${town}.`,
       secondary: activeLocation ? activeLocation : `Across ${town}`,
-      microline: `${freshness} • ${communityCountLabel}`,
+      microline: `${freshness} • ${activityEvidenceLabel}`,
       microlineVisible: true
     };
   }
@@ -41085,9 +41109,28 @@ function buildGridlyAwarenessBriefCopy({ intel = {}, existingAlertWording = {}, 
     state: "quiet",
     greeting: getGridlyAwarenessGreetingText(),
     primary: `No major mobility issues reported in ${town}.`,
-    secondary: activity && activity !== "quiet" ? `Community activity ${activity}.` : "Community activity is quiet.",
+    secondary: getGridlyAwarenessBriefCommunityActivityCopy({
+      activityLevel: activity,
+      activeReportCount: activeCounts.reportCount,
+      activeHazardCount: activeCounts.hazardCount
+    }),
     microline: "Last checked just now.",
     microlineVisible: true
+  };
+}
+
+
+function gridlyAwarenessBriefQuietStateCopyTest() {
+  const secondary = getGridlyAwarenessBriefCommunityActivityCopy({
+    activityLevel: "building",
+    activeReportCount: 0,
+    activeHazardCount: 0
+  });
+  return {
+    scenario: "0 active reports/hazards with building pulse input",
+    expected: "Community activity is quiet.",
+    actual: secondary,
+    pass: secondary === "Community activity is quiet."
   };
 }
 
