@@ -13011,8 +13011,29 @@ const LOCAL_PLACE_LOOKUP = {
   crosby: { lat: 29.9111, lng: -95.0622 },
   baytown: { lat: 29.7355, lng: -94.9774 },
   liberty: { lat: 30.0572, lng: -94.795 },
-  cleveland: { lat: 30.3413, lng: -95.0858 }
+  cleveland: { lat: 30.3413, lng: -95.0858 },
+  ames: { lat: 30.0536, lng: -94.7435 }
 };
+
+const GRIDLY_DESTINATION_INTENTS = {
+  GENERIC_LOCAL: "generic_local",
+  EXPLICIT_DESTINATION: "explicit_destination",
+  ADDRESS: "address"
+};
+
+const GRIDLY_SEARCH_ADDRESS_WORDS = new Set([
+  "street", "st", "road", "rd", "drive", "dr", "lane", "ln", "avenue", "ave",
+  "boulevard", "blvd", "court", "ct", "circle", "cir", "parkway", "pkwy", "place",
+  "pl", "terrace", "ter", "trail", "trl", "way", "highway", "hwy", "fm", "cr"
+]);
+
+const GRIDLY_SEARCH_DESTINATION_LOCATION_WORDS = new Set([
+  "texas", "tx", "county", "dallas", "houston", "austin", "san", "antonio", "fort",
+  "worth", "beaumont", "temple", "lufkin", "conroe", "humble", "pasadena", "pearland",
+  "galveston", "waco", "tyler", "college", "station", "bryan", "katy", "spring",
+  "tomball", "woodlands", "porter", "splendora", "kenefick", "devers", "hardin", "hull",
+  "daisetta", "raywood", "plum", "grove", "crosby", "baytown", "mont", "belvieu"
+]);
 
 const GRIDLY_SEARCH_STATE_DEFAULTS = {
   activeQuery: "",
@@ -13081,6 +13102,66 @@ function normalizeGridlySearchDisplayLabel(value) {
     .toLowerCase()
     .trim()
     .replace(/\s+/g, " ");
+}
+
+function getGridlySearchQueryTokens(query = "") {
+  return normalizeGridlySearchDisplayLabel(query)
+    .replace(/[’']/g, "")
+    .split(/[^a-z0-9]+/i)
+    .map((token) => token.trim())
+    .filter(Boolean);
+}
+
+function gridlySearchQueryHasAddressIndicator(query = "") {
+  const normalized = normalizeGridlySearchDisplayLabel(query);
+  if (!normalized) return false;
+  const tokens = getGridlySearchQueryTokens(normalized);
+  if (/^\d{1,6}\s+[a-z0-9]/i.test(normalized)) return true;
+  if (/\b\d{5}(?:-\d{4})?\b/.test(normalized)) return true;
+  return tokens.some((token) => GRIDLY_SEARCH_ADDRESS_WORDS.has(token));
+}
+
+function gridlySearchQueryHasDestinationIndicator(query = "") {
+  const normalized = normalizeGridlySearchDisplayLabel(query);
+  if (!normalized) return false;
+  if (/[,@]/.test(normalized)) return true;
+  if (/\b(?:near|in)\s+[a-z0-9]/i.test(normalized)) return true;
+  const tokens = getGridlySearchQueryTokens(normalized);
+  if (tokens.some((token) => GRIDLY_SEARCH_DESTINATION_LOCATION_WORDS.has(token))) return true;
+  return tokens.some((token) => Boolean(LOCAL_PLACE_LOOKUP[token]));
+}
+
+function classifyGridlyDestinationSearchIntent(query = "") {
+  const normalized = normalizeGridlySearchDisplayLabel(query);
+  if (!normalized) return { type: GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL, reason: "empty" };
+  if (gridlySearchQueryHasAddressIndicator(normalized)) {
+    return { type: GRIDLY_DESTINATION_INTENTS.ADDRESS, reason: "address_indicator" };
+  }
+  if (gridlySearchQueryHasDestinationIndicator(normalized)) {
+    return { type: GRIDLY_DESTINATION_INTENTS.EXPLICIT_DESTINATION, reason: "destination_indicator" };
+  }
+  return { type: GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL, reason: "no_destination_indicator" };
+}
+
+function getGridlySelectedHomeTownAnchor() {
+  const profileTown = normalizeGridlySearchDisplayLabel(gridlyUserProfile?.homeTown || gridlyUserProfile?.homeTownLabel || "");
+  const settingsTown = typeof getGridlyHomeTownPreference === "function" ? normalizeGridlySearchDisplayLabel(getGridlyHomeTownPreference()) : "";
+  const selectedTown = settingsTown || profileTown;
+  if (!selectedTown || selectedTown === "other") return null;
+  const lookup = LOCAL_PLACE_LOOKUP[selectedTown];
+  if (!lookup) return null;
+  const label = selectedTown.split(/\s+/).map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(" ");
+  return { label, lat: lookup.lat, lng: lookup.lng, source: "home_town" };
+}
+
+function getGridlySearchAnchorContext(searchContext = null) {
+  const homeTownAnchor = getGridlySelectedHomeTownAnchor();
+  if (homeTownAnchor) return homeTownAnchor;
+  const center = searchContext?.center || getGridlySearchMapContext()?.center || null;
+  if (center && Number.isFinite(center.lat) && Number.isFinite(center.lng)) {
+    return { label: "Map center", lat: center.lat, lng: center.lng, source: "map_center" };
+  }
+  return { label: "Liberty County", lat: defaultCenter[0], lng: defaultCenter[1], source: "default_center" };
 }
 
 function buildGridlySearchDisplayLines(result) {
@@ -13274,8 +13355,13 @@ function gridlySearchResultContainsTexas(haystack) {
   return /(^|[\s,])(texas|tx)([\s,]|$)/i.test(String(haystack || ""));
 }
 
-function gridlySearchResultContainsLocality(haystack) {
-  return /\b(dayton|liberty county|liberty, texas|liberty, tx)\b/i.test(String(haystack || ""));
+function gridlySearchResultContainsLocality(haystack, anchor = null) {
+  const normalized = normalizeGridlySearchDisplayLabel(haystack);
+  if (!normalized) return false;
+  if (/\b(liberty county|liberty, texas|liberty, tx)\b/i.test(normalized)) return true;
+  const anchorLabel = normalizeGridlySearchDisplayLabel(anchor?.label || "");
+  if (anchorLabel && anchorLabel !== "map center" && new RegExp(`\\b${anchorLabel.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(normalized)) return true;
+  return Object.keys(LOCAL_PLACE_LOOKUP).some((town) => new RegExp(`\\b${town.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(normalized));
 }
 
 function getGridlySearchResultHaystack(result, context = "") {
@@ -13297,38 +13383,89 @@ function getGridlySearchResultTitleMatchScore(result, rawQuery = "") {
 function prioritizeGridlySearchResults(results = [], options = {}) {
   if (!Array.isArray(results) || !results.length) return [];
   const searchContext = getGridlySearchMapContext();
+  const intent = options.intent || classifyGridlyDestinationSearchIntent(options.query || ensureGridlySearchState().activeQuery || "");
+  const isGenericLocalSearch = intent.type === GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL;
+  const anchor = getGridlySearchAnchorContext(searchContext);
   const scored = results.map((result, index) => {
     const context = buildGridlyLocationContext(result);
     const haystack = getGridlySearchResultHaystack(result, context);
     const hasCoordinates = Number.isFinite(result?.lat) && Number.isFinite(result?.lng);
     const inBounds = Boolean(searchContext.bounds && hasCoordinates && searchContext.bounds.contains([result.lat, result.lng]));
     const isTexas = gridlySearchResultContainsTexas(haystack);
-    const isLocality = gridlySearchResultContainsLocality(haystack);
+    const isLibertyCounty = /\bliberty county\b/i.test(haystack);
+    const isLocality = gridlySearchResultContainsLocality(haystack, anchor);
     const distanceMiles = hasCoordinates && searchContext.center
       ? haversineDistance(searchContext.center.lat, searchContext.center.lng, result.lat, result.lng)
       : null;
+    const anchorDistanceMiles = hasCoordinates && anchor
+      ? haversineDistance(anchor.lat, anchor.lng, result.lat, result.lng)
+      : distanceMiles;
     let score = Math.max(0, GRIDLY_SEARCH_RENDER_LIMIT - index) * 0.25;
-    if (inBounds) score += 90;
-    if (isTexas) score += 65;
-    if (isLocality) score += 60;
-    if (Number.isFinite(distanceMiles)) {
-      if (distanceMiles <= 5) score += 45;
-      else if (distanceMiles <= 15) score += 35;
-      else if (distanceMiles <= 35) score += 24;
-      else if (distanceMiles <= 75) score += 14;
-      else if (distanceMiles <= 150) score += 6;
+    if (isGenericLocalSearch) {
+      if (Number.isFinite(anchorDistanceMiles)) {
+        if (anchorDistanceMiles <= 10) score += 135;
+        else if (anchorDistanceMiles <= 25) score += 115;
+        else if (anchorDistanceMiles <= 50) score += 95;
+        else if (anchorDistanceMiles <= 75) score += 40;
+        else if (anchorDistanceMiles <= 150) score += 12;
+      }
+      if (inBounds) score += 70;
+      if (isLibertyCounty) score += 55;
+      if (isLocality) score += 40;
+      if (isTexas) score += 25;
+      if (Number.isFinite(anchorDistanceMiles) && anchorDistanceMiles > 250) score -= 40;
+    } else {
+      if (inBounds) score += 25;
+      if (isTexas) score += 12;
+      if (isLocality) score += 8;
+      if (Number.isFinite(distanceMiles) && distanceMiles <= 75) score += 6;
     }
     score += getGridlySearchResultTitleMatchScore(result, options.query || ensureGridlySearchState().activeQuery || "");
-    return { result, score, index, inBounds, isTexas, isLocality, distanceMiles };
+    const resultBucket = isGenericLocalSearch && Number.isFinite(anchorDistanceMiles) && anchorDistanceMiles <= 50
+      ? "nearby_your_town"
+      : isTexas
+        ? "other_texas_results"
+        : "farther_away";
+    const rankedResult = {
+      ...result,
+      searchIntent: intent.type,
+      searchRank: {
+        score,
+        bucket: resultBucket,
+        inBounds,
+        isTexas,
+        isLibertyCounty,
+        isLocality,
+        distanceMiles,
+        anchorDistanceMiles,
+        anchor: anchor ? { label: anchor.label, source: anchor.source } : null
+      }
+    };
+    return { result: rankedResult, score, index, inBounds, isTexas, isLibertyCounty, isLocality, distanceMiles, anchorDistanceMiles };
   });
-  const hasLocalOrTexasMatch = scored.some((entry) => entry.inBounds || entry.isLocality || entry.isTexas);
-  if (hasLocalOrTexasMatch) {
-    scored.forEach((entry) => {
-      if (!entry.inBounds && !entry.isLocality && !entry.isTexas) entry.score -= 120;
-    });
+  if (isGenericLocalSearch) {
+    const hasNearbyMatch = scored.some((entry) => Number.isFinite(entry.anchorDistanceMiles) && entry.anchorDistanceMiles <= 50);
+    if (hasNearbyMatch) {
+      scored.forEach((entry) => {
+        if (!Number.isFinite(entry.anchorDistanceMiles) || entry.anchorDistanceMiles > 50) entry.score -= 60;
+      });
+    }
+  } else {
+    const hasLocalOrTexasMatch = scored.some((entry) => entry.inBounds || entry.isLocality || entry.isTexas);
+    if (hasLocalOrTexasMatch) {
+      scored.forEach((entry) => {
+        if (!entry.inBounds && !entry.isLocality && !entry.isTexas) entry.score -= 20;
+      });
+    }
   }
   const prioritized = scored.sort((a, b) => (b.score - a.score) || (a.index - b.index));
-  gridlySearchUiState.prioritizedLocalResultsCount = prioritized.filter((entry) => entry.inBounds || entry.isLocality || entry.isTexas).length;
+  prioritized.forEach((entry, sortedIndex) => {
+    if (entry.result?.searchRank) {
+      entry.result.searchRank.score = entry.score;
+      entry.result.searchRank.rank = sortedIndex + 1;
+    }
+  });
+  gridlySearchUiState.prioritizedLocalResultsCount = prioritized.filter((entry) => entry.inBounds || entry.isLocality || entry.isTexas || (Number.isFinite(entry.anchorDistanceMiles) && entry.anchorDistanceMiles <= 50)).length;
   return prioritized.map((entry) => entry.result);
 }
 
@@ -33961,20 +34098,24 @@ function normalizeGridlySearchResult(result) {
   };
 }
 
-function shouldAddGridlyLocalSearchExpansions(query = "") {
+function shouldAddGridlyLocalSearchExpansions(query = "", intent = null) {
   const normalized = normalizeGridlySearchDisplayLabel(query);
-  if (!normalized || normalized.length > 48) return false;
-  if (/[,@]|\b(texas|tx|county|near|dayton|liberty|houston|beaumont|crosby|baytown|cleveland)\b/i.test(normalized)) return false;
+  const resolvedIntent = intent || classifyGridlyDestinationSearchIntent(normalized);
+  if (!normalized || normalized.length > 64) return false;
+  if (resolvedIntent.type !== GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL) return false;
   const tokens = normalized.split(/\s+/).filter(Boolean);
   return tokens.length >= 1 && tokens.length <= 4;
 }
 
-function buildGridlySearchQueryVariants(rawQuery = "") {
+function buildGridlySearchQueryVariants(rawQuery = "", options = {}) {
   const query = String(rawQuery || "").trim();
   if (!query) return [];
+  const intent = options.intent || classifyGridlyDestinationSearchIntent(query);
   const variants = [query];
-  if (shouldAddGridlyLocalSearchExpansions(query)) {
-    variants.push(`${query} near Dayton Texas`);
+  if (shouldAddGridlyLocalSearchExpansions(query, intent)) {
+    const searchContext = getGridlySearchMapContext();
+    const anchor = getGridlySearchAnchorContext(searchContext);
+    if (anchor?.source === "home_town" && anchor.label) variants.push(`${query} near ${anchor.label} Texas`);
     variants.push(`${query} Liberty County Texas`);
     variants.push(`${query} Texas`);
   }
@@ -33986,6 +34127,7 @@ function buildGridlySearchQueryVariants(rawQuery = "") {
     return true;
   });
 }
+
 
 async function fetchGridlyNominatimSearch(query, { limit, countryCodes, searchContext, bounded = "0" } = {}) {
   const params = new URLSearchParams({
@@ -34017,7 +34159,8 @@ async function gridlySearchAddress(query, options = {}) {
   const limit = Number.isFinite(parsedLimit) ? Math.min(Math.max(Math.floor(parsedLimit), 1), 10) : 5;
   const countryCodes = String(options.countryCodes || "us").trim() || "us";
   const searchContext = getGridlySearchMapContext();
-  const queryVariants = buildGridlySearchQueryVariants(rawQuery);
+  const intent = classifyGridlyDestinationSearchIntent(rawQuery);
+  const queryVariants = buildGridlySearchQueryVariants(rawQuery, { intent });
   const providerResults = [];
 
   try {
@@ -34030,19 +34173,28 @@ async function gridlySearchAddress(query, options = {}) {
       });
       providerResults.push(...variantResults);
       const normalizedPreview = providerResults.map((result) => normalizeGridlySearchResult(result)).filter(Boolean);
-      const prioritizedPreview = prioritizeGridlySearchResults(normalizedPreview, { query: rawQuery });
-      const hasLocalOrTexas = prioritizedPreview.slice(0, GRIDLY_SEARCH_RENDER_LIMIT).some((result) => {
+      const prioritizedPreview = prioritizeGridlySearchResults(normalizedPreview, { query: rawQuery, intent });
+      const anchor = getGridlySearchAnchorContext(searchContext);
+      const hasRelevantMatch = prioritizedPreview.slice(0, GRIDLY_SEARCH_RENDER_LIMIT).some((result) => {
         const context = buildGridlyLocationContext(result);
         const haystack = getGridlySearchResultHaystack(result, context);
-        return gridlySearchResultContainsLocality(haystack) || gridlySearchResultContainsTexas(haystack)
+        const anchorDistanceMiles = Number.isFinite(result?.lat) && Number.isFinite(result?.lng) && anchor
+          ? haversineDistance(anchor.lat, anchor.lng, result.lat, result.lng)
+          : null;
+        if (intent.type === GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL) {
+          return (Number.isFinite(anchorDistanceMiles) && anchorDistanceMiles <= 50)
+            || gridlySearchResultContainsLocality(haystack, anchor)
+            || Boolean(searchContext.bounds && searchContext.bounds.contains([result.lat, result.lng]));
+        }
+        return gridlySearchResultContainsLocality(haystack, anchor) || gridlySearchResultContainsTexas(haystack)
           || Boolean(searchContext.bounds && searchContext.bounds.contains([result.lat, result.lng]));
       });
-      if (hasLocalOrTexas && providerResults.length >= limit) break;
+      if (hasRelevantMatch && providerResults.length >= limit) break;
     }
     return dedupeGridlySearchResults(
       prioritizeGridlySearchResults(
         providerResults.map((result) => normalizeGridlySearchResult(result)).filter(Boolean),
-        { query: rawQuery }
+        { query: rawQuery, intent }
       )
     ).slice(0, limit);
   } catch (error) {
