@@ -15552,7 +15552,7 @@ body[data-layout-mode="portrait"] .gridly-v2-control-rail {
     font-size: 0.73rem !important;
     font-weight: 760 !important;
     line-height: 1.22 !important;
-    white-space: normal !important;
+    white-space: pre-line !important;
     overflow-wrap: anywhere !important;
   }
 
