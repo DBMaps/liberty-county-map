@@ -2522,6 +2522,167 @@ function gridlyCensusLayerZIndex(layer) {
   return "unknown_z_index";
 }
 
+function gridlyCensusObjectKeys(value) {
+  return value && typeof value === "object" && !Array.isArray(value) ? Object.keys(value).sort() : [];
+}
+
+function gridlyCensusLimitArray(value, max = 12) {
+  return gridlyCensusSafeArray(value).slice(0, max);
+}
+
+function gridlyCensusLayerElement(layer) {
+  return layer?.getElement?.() || layer?._icon || layer?._path || layer?._container || null;
+}
+
+function gridlyCensusKnownClassNames(layer) {
+  const names = [];
+  const add = (value) => {
+    const text = gridlyCensusNormalizeClassName(value).trim();
+    if (text && !names.includes(text)) names.push(text);
+  };
+  add(layer?.constructor?.name || "");
+  add(layer?.options?.className || "");
+  add(layer?.options?.icon?.options?.className || "");
+  add(layer?.options?.icon?.options?.iconClass || "");
+  const element = gridlyCensusLayerElement(layer);
+  add(element?.className || "");
+  add(element?.querySelector?.("[class]")?.className || "");
+  return names;
+}
+
+function gridlyCensusLayerSampleCoordinates(layer) {
+  const normalizePoint = (point) => {
+    const lat = Number(point?.lat ?? (Array.isArray(point) ? point[0] : null));
+    const lng = Number(point?.lng ?? point?.lon ?? (Array.isArray(point) ? point[1] : null));
+    return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
+  };
+  const flatten = (value) => {
+    if (!Array.isArray(value)) return [];
+    return value.flat ? value.flat(Infinity) : value.reduce((acc, item) => acc.concat(Array.isArray(item) ? flatten(item) : item), []);
+  };
+  const samples = [];
+  const addPoint = (point) => {
+    const normalized = normalizePoint(point);
+    if (normalized && samples.length < 5) samples.push(normalized);
+  };
+  addPoint(layer?.getLatLng?.());
+  flatten(layer?.getLatLngs?.() || []).forEach(addPoint);
+  const bounds = layer?.getBounds?.();
+  if (bounds?.isValid?.() !== false) {
+    addPoint(bounds?.getCenter?.());
+    addPoint(bounds?.getSouthWest?.());
+    addPoint(bounds?.getNorthEast?.());
+  }
+  const coords = layer?.feature?.geometry?.coordinates;
+  flatten(coords || []).forEach((value, index, list) => {
+    if (samples.length >= 5) return;
+    if (typeof value === "number" && typeof list[index + 1] === "number") addPoint([list[index + 1], value]);
+  });
+  return samples;
+}
+
+function gridlyCensusLayerLooksLike(layer, diagnostics = {}) {
+  const typeText = `${diagnostics.type || ""} ${diagnostics.constructorName || ""} ${gridlyCensusKnownClassNames(layer).join(" ")}`.toLowerCase();
+  return {
+    marker: gridlyCensusHasLeafletClass(layer, "Marker") || Boolean(layer?._icon) || /marker/.test(typeText),
+    polyline: gridlyCensusHasLeafletClass(layer, "Polyline") || typeof layer?.getLatLngs === "function" || /polyline/.test(typeText),
+    polygon: gridlyCensusHasLeafletClass(layer, "Polygon") || /polygon/.test(typeText),
+    tileLayer: typeof layer?.getTileUrl === "function" || /tile/.test(typeText),
+    geoJSON: Boolean(layer?.feature) || (typeof layer?.toGeoJSON === "function" && typeof layer?.getLayers === "function") || /geojson/.test(typeText),
+    featureGroup: gridlyCensusHasLeafletClass(layer, "FeatureGroup") || /featuregroup|feature group/.test(typeText),
+    layerGroup: gridlyCensusHasLeafletClass(layer, "LayerGroup") || typeof layer?.getLayers === "function" || /layergroup|layer group/.test(typeText)
+  };
+}
+
+function gridlyCensusLayerDiagnostics(layer, { type = "", pane = "", zIndex = "" } = {}) {
+  const children = typeof layer?.getLayers === "function" ? layer.getLayers() : [];
+  const feature = layer?.feature || null;
+  const geometry = feature?.geometry || layer?.toGeoJSON?.()?.geometry || null;
+  const element = gridlyCensusLayerElement(layer);
+  const diagnostics = {
+    leafletId: layer?._leaflet_id || null,
+    constructorName: layer?.constructor?.name || "unknown",
+    type: type || gridlyCensusLayerKind(layer),
+    pane: pane || gridlyCensusLayerPane(layer),
+    zIndex: zIndex || gridlyCensusLayerZIndex(layer),
+    visible: gridlyCensusLayerVisible(layer),
+    hasLatLng: typeof layer?.getLatLng === "function" && Boolean(layer.getLatLng()),
+    hasBounds: typeof layer?.getBounds === "function",
+    hasLayers: typeof layer?.getLayers === "function",
+    childLayerCount: children.length,
+    hasFeature: Boolean(feature),
+    featureGeometryType: geometry?.type || null,
+    featurePropertiesKeys: gridlyCensusObjectKeys(feature?.properties),
+    knownClassNames: gridlyCensusKnownClassNames(layer),
+    optionsKeys: gridlyCensusObjectKeys(layer?.options),
+    sampleCoordinates: gridlyCensusLayerSampleCoordinates(layer),
+    markerDomMetadata: element ? {
+      id: element.id || "",
+      className: gridlyCensusNormalizeClassName(element.className || ""),
+      dataKeys: gridlyCensusObjectKeys(element.dataset || {}),
+      visualOwner: element.dataset?.visualOwner || element.querySelector?.("[data-visual-owner]")?.getAttribute?.("data-visual-owner") || "",
+      visualStyle: element.dataset?.visualStyle || element.querySelector?.("[data-visual-style]")?.getAttribute?.("data-visual-style") || ""
+    } : null,
+    childLayerTypes: gridlyCensusLimitArray(children.map((child) => gridlyCensusLayerKind(child)), 8),
+    childLayerConstructorNames: gridlyCensusLimitArray(children.map((child) => child?.constructor?.name || "unknown"), 8)
+  };
+  diagnostics.looksLike = gridlyCensusLayerLooksLike(layer, diagnostics);
+  return diagnostics;
+}
+
+function gridlyCensusOwnerLabel(inferredOwner) {
+  const labels = {
+    base_tile_layer: "base map ownership",
+    crossing_layer: "crossing ownership",
+    blocked_crossing_layer: "crossing ownership",
+    active_hazard_layer: "hazard ownership",
+    hazard_marker_layer: "hazard ownership",
+    route_layer: "route ownership",
+    route_preview_layer: "route ownership",
+    destination_route_layer: "destination ownership",
+    route_watch_layer: "route ownership",
+    historical_layer: "historical/context ownership",
+    pattern_layer: "historical/context ownership",
+    alert_focus_layer: "alert ownership",
+    user_location_layer: "user location ownership",
+    report_draft_layer: "report draft ownership",
+    infrastructure_layer: "infrastructure ownership"
+  };
+  return labels[inferredOwner] || "unknown";
+}
+
+function gridlyCensusInferLayerOwnership({ name = "", type = "", layer = null, domNode = null, diagnostics = null } = {}) {
+  const layerDiagnostics = diagnostics || gridlyCensusLayerDiagnostics(layer, { type });
+  const domOwner = domNode?.getAttribute?.("data-visual-owner") || domNode?.querySelector?.("[data-visual-owner]")?.getAttribute?.("data-visual-owner") || layerDiagnostics.markerDomMetadata?.visualOwner;
+  const visualStyle = domNode?.getAttribute?.("data-visual-style") || domNode?.querySelector?.("[data-visual-style]")?.getAttribute?.("data-visual-style") || layerDiagnostics.markerDomMetadata?.visualStyle;
+  const propertiesKeys = layerDiagnostics.featurePropertiesKeys.join(" ");
+  const optionsKeys = layerDiagnostics.optionsKeys.join(" ");
+  const classText = layerDiagnostics.knownClassNames.join(" ");
+  const text = `${name} ${type} ${layerDiagnostics.constructorName} ${layerDiagnostics.pane} ${classText} ${optionsKeys} ${propertiesKeys} ${visualStyle || ""} ${domOwner || ""}`.toLowerCase();
+  const high = (inferredOwner, reason) => ({ inferredOwner, confidence: "high", reason });
+  const medium = (inferredOwner, reason) => ({ inferredOwner, confidence: "medium", reason });
+  const low = (inferredOwner, reason) => ({ inferredOwner, confidence: "low", reason });
+
+  if (domOwner) return high(domOwner, "Marker DOM data-visual-owner metadata names the owner.");
+  if (layerDiagnostics.looksLike.tileLayer || type === "tile_layer" || typeof layer?.getTileUrl === "function") return high("base_tile_layer", "Layer exposes tile-layer behavior and does not participate in marker hierarchy.");
+  if (/destination.*route|destination_route|gridlydestination/.test(text)) return high("destination_route_layer", "Destination route naming/metadata was found on the layer.");
+  if (/route.*watch|watch.*route|savedroute/.test(text)) return high("route_watch_layer", "Route Watch/saved route naming or metadata was found on the layer.");
+  if (/route.*preview|preview.*route|__gridlyroutepreview|routepreview/.test(text)) return high("route_preview_layer", "Route preview naming or metadata was found on the layer.");
+  if (/routepane/.test(text) && layerDiagnostics.looksLike.polyline) return high("route_layer", "Polyline is rendered in routePane.");
+  if (/route|impact|awareness/.test(text) && (layerDiagnostics.looksLike.polyline || layerDiagnostics.looksLike.layerGroup || layerDiagnostics.looksLike.marker)) return medium("route_layer", "Route-related naming/metadata appears on a visual layer.");
+  if (/blocked|blocking/.test(text) && /crossing|rail|fra/.test(text)) return high("blocked_crossing_layer", "Blocked rail/crossing metadata was found on the layer.");
+  if (/crossing|rail|fra|infrastructure/.test(text)) return medium(/blocked|blocking/.test(text) ? "blocked_crossing_layer" : "crossing_layer", "Crossing/rail/infrastructure metadata was found on the layer.");
+  if (/hazard|incident|txdot|road.*condition|community.*report/.test(text)) return medium(layerDiagnostics.looksLike.marker ? "hazard_marker_layer" : "active_hazard_layer", "Hazard/incident/report metadata was found on the layer.");
+  if (/historical|history|hotspot|corridor/.test(text)) return medium("historical_layer", "Historical/context/corridor metadata was found on the layer.");
+  if (/pattern|recurring/.test(text)) return medium("pattern_layer", "Pattern/recurring metadata was found on the layer.");
+  if (/alert|focus/.test(text)) return medium("alert_focus_layer", "Alert/focus metadata was found on the layer.");
+  if (/user.*location|geolocation|you are here|location/.test(text) && layerDiagnostics.looksLike.marker) return medium("user_location_layer", "User-location marker metadata was found on the layer.");
+  if (/draft|report.*draft/.test(text)) return medium("report_draft_layer", "Report-draft metadata was found on the layer.");
+  if (layerDiagnostics.looksLike.marker && /markerpane/.test(text) && !visualStyle) return low("unknown_layer", "Marker-like layer is visible in markerPane, but stable Gridly ownership metadata was not found.");
+  if (layerDiagnostics.looksLike.layerGroup && layerDiagnostics.childLayerCount === 0) return low("unknown_layer", "Empty layer group has no children or metadata to support safe ownership inference.");
+  return low("unknown_layer", "No safe ownership signal was found in names, options, feature properties, pane, geometry, child layers, classes, or marker DOM metadata.");
+}
+
 function gridlyCensusLayerKind(layer, fallbackName = "") {
   const nameText = String(fallbackName || "").toLowerCase();
   const classText = String(layer?.constructor?.name || "").toLowerCase();
@@ -2536,17 +2697,9 @@ function gridlyCensusLayerKind(layer, fallbackName = "") {
   return "unknown_layer";
 }
 
-function gridlyCensusInferOwner({ name = "", type = "", layer = null, domNode = null } = {}) {
-  const dataOwner = domNode?.getAttribute?.("data-visual-owner") || domNode?.querySelector?.("[data-visual-owner]")?.getAttribute?.("data-visual-owner");
-  if (dataOwner) return dataOwner;
-  const text = `${name} ${type} ${String(layer?.options?.className || "")} ${String(domNode?.className || "")}`.toLowerCase();
-  if (/route|destination|preview|watch|impact|awareness/.test(text)) return "route ownership";
-  if (/hazard|incident|report|txdot|road.*condition/.test(text)) return /txdot/.test(text) ? "txdot ownership" : "hazard ownership";
-  if (/crossing|rail/.test(text)) return "crossing ownership";
-  if (/historical|history|hotspot|pattern|corridor/.test(text)) return "historical/context ownership";
-  if (/cluster/.test(text)) return "cluster ownership ambiguous";
-  if (/tile|base|satellite|standard|dark/.test(text)) return "base map ownership";
-  return "unknown";
+function gridlyCensusInferOwner({ name = "", type = "", layer = null, domNode = null, diagnostics = null } = {}) {
+  const inference = gridlyCensusInferLayerOwnership({ name, type, layer, domNode, diagnostics });
+  return gridlyCensusOwnerLabel(inference.inferredOwner);
 }
 
 function gridlyCensusKnownLayerEntries() {
@@ -2558,7 +2711,9 @@ function gridlyCensusKnownLayerEntries() {
     { name: "corridorIntelLayer", layer: corridorIntelLayer, owner: "historical/context ownership", sourceName: "corridor intelligence overlays", expectedType: "historical_layer" },
     { name: "routePreviewCorridorLayer", layer: routePreviewCorridorLayer, owner: "route ownership", sourceName: "route preview corridor", expectedType: "route_layer" },
     { name: "alternateRouteLayer", layer: alternateRouteLayer, owner: "route ownership", sourceName: "alternate route", expectedType: "route_layer" },
-    { name: "window.__gridlyRoutePreviewLayer", layer: window.__gridlyRoutePreviewLayer || null, owner: "route ownership", sourceName: "route preview polyline", expectedType: "route_polyline" }
+    { name: "window.__gridlyRoutePreviewLayer", layer: window.__gridlyRoutePreviewLayer || null, owner: "route ownership", sourceName: "route preview polyline", expectedType: "route_polyline" },
+    { name: "userMarker", layer: userMarker, owner: "user location ownership", sourceName: "user location dot", expectedType: "user_location_layer" },
+    { name: "window.GridlySearchState.destinationMarker", layer: window.GridlySearchState?.destinationMarker || null, owner: "destination ownership", sourceName: "selected destination marker", expectedType: "destination_route_layer" }
   ];
   Object.entries(mapBaseLayersByName || {}).forEach(([name, layer]) => {
     entries.push({ name: `baseLayer:${name}`, layer, owner: "base map ownership", sourceName: "map base layer", expectedType: "overlay" });
@@ -2568,20 +2723,28 @@ function gridlyCensusKnownLayerEntries() {
 
 function gridlyCensusBuildLayerRecord({ layer, name = "unnamed layer", owner = "", sourceName = "", expectedType = "" } = {}) {
   const inferredType = expectedType || gridlyCensusLayerKind(layer, name);
-  const resolvedOwner = owner || gridlyCensusInferOwner({ name, type: inferredType, layer });
+  const pane = gridlyCensusLayerPane(layer);
+  const zIndex = gridlyCensusLayerZIndex(layer);
+  const diagnostics = gridlyCensusLayerDiagnostics(layer, { type: inferredType, pane, zIndex });
+  const ownershipInference = gridlyCensusInferLayerOwnership({ name, type: inferredType, layer, diagnostics });
+  const resolvedOwner = owner || gridlyCensusOwnerLabel(ownershipInference.inferredOwner);
   return {
     id: layer?._leaflet_id || null,
     type: inferredType,
     owner: resolvedOwner,
-    visible: gridlyCensusLayerVisible(layer),
+    inferredOwner: ownershipInference.inferredOwner,
+    ownershipConfidence: ownershipInference.confidence,
+    ownershipReason: ownershipInference.reason,
+    visible: diagnostics.visible,
     onMap: Boolean(map && layer && typeof map.hasLayer === "function" ? map.hasLayer(layer) : layer),
-    pane: gridlyCensusLayerPane(layer),
-    zIndex: gridlyCensusLayerZIndex(layer),
+    pane,
+    zIndex,
     layerName: name,
     sourceName: sourceName || name,
     featureCount: gridlyCensusLayerFeatureCount(layer),
-    childCount: gridlyCensusLayerChildCount(layer),
-    constructorName: layer?.constructor?.name || "unknown"
+    childCount: diagnostics.childLayerCount,
+    constructorName: diagnostics.constructorName,
+    diagnostics
   };
 }
 
@@ -2657,7 +2820,7 @@ function gridlyGetRenderedMapChildLayerInventory(parentRecords = []) {
       childRecords.push(gridlyCensusBuildLayerRecord({
         layer: child,
         name: `${parent.layerName}.child[${index}]`,
-        owner: parent.owner || gridlyCensusInferOwner({ name: parent.layerName, type, layer: child }),
+        owner: parent.owner && parent.owner !== "unknown" ? parent.owner : gridlyCensusInferOwner({ name: parent.layerName, type, layer: child }),
         sourceName: parent.layerName,
         expectedType: type
       }));
@@ -2713,13 +2876,13 @@ function gridlyEvaluateRenderedMapCensusFindings(census) {
     findings.push({ severity: "check", area: "DOM marker coverage", finding: `Only ${counts.domMarkers} DOM marker(s) were detected; verify this matches the expected visible map state.` });
   }
   census.layerInventory.filter((layer) => layer.visible && Number(layer.featureCount || 0) > 0 && !census.renderedObjects.some((object) => object.sourceName === layer.layerName || object.layerName === layer.layerName)).forEach((layer) => {
-    findings.push({ severity: "coverage", area: "visible layer contents", finding: `${layer.layerName} is visible with ${layer.featureCount} child/feature object(s), but no rendered object is directly attributed to it.` });
+    findings.push({ severity: "coverage", area: "visible layer contents", finding: `${layer.layerName} is visible with ${layer.featureCount} child/feature object(s), but no rendered object is directly attributed to it.`, layerRecord: layer, leafletId: layer.id, inferredOwner: layer.inferredOwner, ownershipConfidence: layer.ownershipConfidence });
   });
   census.layerInventory.filter((layer) => !layer.owner || layer.owner === "unknown").forEach((layer) => {
-    findings.push({ severity: "ownership", area: "layer ownership", finding: `${layer.layerName} exists without clear ownership.` });
+    findings.push({ severity: "ownership", area: "layer ownership", finding: `${layer.layerName} exists without clear ownership.`, layerRecord: layer, leafletId: layer.id, inferredOwner: layer.inferredOwner, ownershipConfidence: layer.ownershipConfidence });
   });
   census.layerInventory.filter((layer) => layer.type === "unknown_layer").forEach((layer) => {
-    findings.push({ severity: "coverage", area: "unknown layer type", finding: `${layer.layerName} has unknown Leaflet layer type (${layer.constructorName}).` });
+    findings.push({ severity: "coverage", area: "unknown layer type", finding: `${layer.layerName} has unknown Leaflet layer type (${layer.constructorName}).`, layerRecord: layer, leafletId: layer.id, inferredOwner: layer.inferredOwner, ownershipConfidence: layer.ownershipConfidence });
   });
   census.renderedObjects.filter((object) => object.zIndex === "unknown_z_index").slice(0, 12).forEach((object) => {
     findings.push({ severity: "coverage", area: "z-index ownership", finding: `${object.layerName || object.id} does not expose a determinable z-index.` });
@@ -2777,8 +2940,10 @@ function gridlyBuildRenderedMapObjectCensus(options = {}) {
     crossingInventory: specifics.crossingInventory,
     historicalInventory: specifics.historicalInventory,
     clusterInventory: specifics.clusterInventory,
+    unknownLayerDiagnostics: [],
     findings: []
   };
+  census.unknownLayerDiagnostics = gridlyBuildUnknownLayerDiagnostics(census);
   census.findings = gridlyEvaluateRenderedMapCensusFindings(census);
   if (options?.silent !== true) gridlyLogRenderedMapObjectCensus(census);
   return census;
@@ -2807,6 +2972,7 @@ function gridlyLogRenderedMapObjectCensus(census) {
   console.table(census?.crossingInventory || []);
   console.table(census?.historicalInventory || []);
   console.table(census?.clusterInventory || []);
+  console.table(census?.unknownLayerDiagnostics || []);
   console.table(census?.findings || []);
   console.groupEnd();
 }
@@ -2817,7 +2983,7 @@ window.gridlyRenderedMapObjectCensus = function gridlyRenderedMapObjectCensus(op
 window.gridlyMapObjectCensus = window.gridlyRenderedMapObjectCensus;
 
 
-const GRIDLY_VISUAL_HIERARCHY_FINDINGS_AUDIT_VERSION = "V219.3";
+const GRIDLY_VISUAL_HIERARCHY_FINDINGS_AUDIT_VERSION = "V219.4";
 
 function gridlyFindingsAuditText(value) {
   return String(value || "").toLowerCase();
@@ -2839,6 +3005,65 @@ function gridlyFindingsAuditMessage(sourceFinding = {}) {
   return String(sourceFinding?.finding || sourceFinding?.message || sourceFinding?.title || "Census finding requires review.");
 }
 
+function gridlyFindingsAuditLayerRecord(sourceFinding = {}, census = {}) {
+  if (sourceFinding?.layerRecord) return sourceFinding.layerRecord;
+  const text = `${sourceFinding?.finding || ""} ${sourceFinding?.message || ""}`;
+  const idMatch = text.match(/mapLayer:(\d+)/i);
+  const nameMatch = text.match(/((?:mapLayer|baseLayer|crossingLayer|unifiedIncidentLayer|savedRouteLayer|destinationRoutePreviewLayer|corridorIntelLayer|routePreviewCorridorLayer|alternateRouteLayer)[^\s]*)/i);
+  const leafletId = sourceFinding?.leafletId || (idMatch ? Number(idMatch[1]) : null);
+  return gridlyCensusSafeArray(census?.layerInventory).find((layer) => {
+    if (leafletId && Number(layer?.id) === Number(leafletId)) return true;
+    return nameMatch && String(layer?.layerName || "") === nameMatch[1];
+  }) || null;
+}
+
+function gridlyFindingsAuditLayerParticipatesInHierarchy(layer = null) {
+  const looksLike = layer?.diagnostics?.looksLike || {};
+  const text = `${layer?.type || ""} ${layer?.owner || ""} ${layer?.inferredOwner || ""} ${layer?.pane || ""} ${layer?.layerName || ""} ${layer?.sourceName || ""}`.toLowerCase();
+  if (looksLike.tileLayer || /base_tile_layer|base map|tile_layer|tilepane/.test(text)) return false;
+  if (looksLike.marker || looksLike.polyline || looksLike.polygon || looksLike.geoJSON) return true;
+  if (looksLike.layerGroup || looksLike.featureGroup) return Number(layer?.childCount || layer?.diagnostics?.childLayerCount || 0) > 0;
+  return /marker|route|hazard|incident|crossing|rail|historical|pattern|alert|report|location|infrastructure/.test(text);
+}
+
+function gridlyFindingsAuditMayCompeteWithPrimaryVisuals(layer = null) {
+  const text = `${layer?.type || ""} ${layer?.owner || ""} ${layer?.inferredOwner || ""} ${layer?.pane || ""} ${layer?.layerName || ""} ${layer?.sourceName || ""} ${layer?.diagnostics?.knownClassNames?.join?.(" ") || ""}`.toLowerCase();
+  if (/base_tile_layer|base map|tile_layer|tilepane/.test(text)) return false;
+  if (/route|hazard|incident|crossing|rail|historical|pattern|alert|report|location|infrastructure|markerpane|overlaypane|routepane/.test(text)) return true;
+  return gridlyFindingsAuditLayerParticipatesInHierarchy(layer);
+}
+
+function gridlyBuildUnknownLayerDiagnostics(census = {}) {
+  return gridlyCensusSafeArray(census?.layerInventory)
+    .filter((layer) => layer?.inferredOwner === "unknown_layer" || !layer?.owner || layer?.owner === "unknown" || /^mapLayer:/i.test(String(layer?.layerName || "")))
+    .map((layer) => {
+      const diagnostics = layer?.diagnostics || {};
+      const participates = gridlyFindingsAuditLayerParticipatesInHierarchy(layer);
+      const competes = gridlyFindingsAuditMayCompeteWithPrimaryVisuals(layer);
+      const unresolved = layer?.inferredOwner === "unknown_layer" || !layer?.owner || layer?.owner === "unknown";
+      const critical = Boolean(layer?.visible && participates && competes && unresolved);
+      return {
+        leafletId: layer?.id || diagnostics.leafletId || null,
+        inferredOwner: layer?.inferredOwner || "unknown_layer",
+        confidence: layer?.ownershipConfidence || "low",
+        reason: layer?.ownershipReason || "No ownership inference reason was recorded.",
+        type: layer?.type || diagnostics.type || "unknown_layer",
+        pane: layer?.pane || diagnostics.pane || "unknown",
+        zIndex: layer?.zIndex || diagnostics.zIndex || "unknown_z_index",
+        visible: Boolean(layer?.visible),
+        diagnostics,
+        recommendedAction: critical
+          ? "Keep as a blocker: visible hierarchy-participating layer may compete with route/hazard/crossing/historical visuals and still lacks safe ownership. Inspect this diagnostics row and attach stable metadata or a known layer entry."
+          : (unresolved
+            ? "Review when convenient; current diagnostics do not prove this layer blocks visual hierarchy work."
+            : "Treat inferred ownership as an audit warning unless runtime evidence contradicts it."),
+        participatesInVisualHierarchy: participates,
+        mayCompeteWithPrimaryVisuals: competes,
+        blocksVisualChanges: critical
+      };
+    });
+}
+
 function gridlyClassifyVisualHierarchyFinding(sourceFinding = {}, census = {}) {
   const text = gridlyFindingsAuditSourceText(sourceFinding);
   const isVisibleLayerGap = /visible layer contents/.test(text);
@@ -2853,6 +3078,13 @@ function gridlyClassifyVisualHierarchyFinding(sourceFinding = {}, census = {}) {
   const isDomCoverage = /dom marker|object counts|marker coverage/.test(text);
   const renderedCount = Number(census?.renderedObjects?.length || census?.objectCounts?.leafletMarkers || 0);
   const domCount = Number(census?.objectCounts?.domMarkers || 0);
+  const layerRecord = gridlyFindingsAuditLayerRecord(sourceFinding, census);
+  const inferredOwner = sourceFinding?.inferredOwner || layerRecord?.inferredOwner || "unknown_layer";
+  const ownershipConfidence = sourceFinding?.ownershipConfidence || layerRecord?.ownershipConfidence || "low";
+  const hasSafeInferredOwner = inferredOwner !== "unknown_layer" && /^(medium|high)$/.test(String(ownershipConfidence));
+  const participatesInHierarchy = gridlyFindingsAuditLayerParticipatesInHierarchy(layerRecord);
+  const mayCompeteWithPrimaryVisuals = gridlyFindingsAuditMayCompeteWithPrimaryVisuals(layerRecord);
+  const trueUnknownVisibleHierarchyLayer = Boolean(layerRecord?.visible && participatesInHierarchy && mayCompeteWithPrimaryVisuals && !hasSafeInferredOwner);
 
   let severity = "info";
   let reason = "Useful context for the V219 visual hierarchy baseline.";
@@ -2862,6 +3094,14 @@ function gridlyClassifyVisualHierarchyFinding(sourceFinding = {}, census = {}) {
     severity = "expected";
     reason = "The census did not detect coverage gaps in the current rendered map state.";
     recommendedAction = "Proceed using this passing census as baseline context.";
+  } else if ((isUnknownOwnership || isUnknownLayerType) && hasSafeInferredOwner) {
+    severity = "warning";
+    reason = `Layer ownership was safely inferred as ${inferredOwner} with ${ownershipConfidence} confidence; keep as a guardrail instead of a blocker.`;
+    recommendedAction = "Verify the inferred ownership in unknownLayerDiagnostics before visual work, but do not block solely on this resolved census gap.";
+  } else if (isUnknownOwnership && layerRecord && !trueUnknownVisibleHierarchyLayer) {
+    severity = "warning";
+    reason = "Layer ownership remains unresolved, but diagnostics do not show a visible hierarchy-participating layer that may compete with primary visuals.";
+    recommendedAction = "Review unknownLayerDiagnostics and add metadata when practical; current evidence does not block visual hierarchy work.";
   } else if (isVisibleLayerGap && (isHazard || isCrossing)) {
     severity = "critical";
     reason = "An active visible hazard or crossing layer has child/feature content that is not directly attributed in the rendered object inventory.";
@@ -2921,6 +3161,12 @@ function gridlyClassifyVisualHierarchyFinding(sourceFinding = {}, census = {}) {
     title: gridlyFindingsAuditTitle(sourceFinding),
     message: gridlyFindingsAuditMessage(sourceFinding),
     sourceFinding,
+    layerRecord,
+    inferredOwner,
+    ownershipConfidence,
+    participatesInVisualHierarchy: participatesInHierarchy,
+    mayCompeteWithPrimaryVisuals,
+    trueUnknownVisibleHierarchyLayer,
     reason,
     recommendedAction,
     blocksVisualChanges: severity === "critical"
@@ -2931,21 +3177,23 @@ function gridlyBuildVisualHierarchyFindingsAudit(options = {}) {
   const maybeCensus = options?.sourceCensus || options?.census || (options?.version === GRIDLY_RENDERED_MAP_OBJECT_CENSUS_VERSION ? options : null);
   const sourceCensus = maybeCensus || window.gridlyRenderedMapObjectCensus?.({ silent: true }) || gridlyBuildRenderedMapObjectCensus({ silent: true });
   const classifiedFindings = gridlyCensusSafeArray(sourceCensus?.findings).map((finding) => gridlyClassifyVisualHierarchyFinding(finding, sourceCensus));
+  const unknownLayerDiagnostics = gridlyBuildUnknownLayerDiagnostics(sourceCensus);
+  const trueUnknownVisibleHierarchyBlockers = unknownLayerDiagnostics.filter((item) => item.blocksVisualChanges);
   const criticalFindings = classifiedFindings.filter((finding) => finding.severity === "critical");
   const warningFindings = classifiedFindings.filter((finding) => finding.severity === "warning");
   const infoFindings = classifiedFindings.filter((finding) => finding.severity === "info");
   const expectedFindings = classifiedFindings.filter((finding) => finding.severity === "expected");
   const recommendations = [];
-  if (criticalFindings.length > 0) recommendations.push("Resolve critical ownership/inventory gaps before changing marker visuals.");
-  if (warningFindings.length > 0 && criticalFindings.length === 0) recommendations.push("Proceed carefully with V219 visual hierarchy changes, using warnings as guardrails.");
-  if (criticalFindings.length === 0 && warningFindings.length === 0) recommendations.push("Proceed to V219.4 visual hierarchy implementation baseline.");
+  if (trueUnknownVisibleHierarchyBlockers.length > 0) recommendations.push("Resolve true unknown visible hierarchy-participating layers before changing marker visuals.");
+  if (warningFindings.length > 0 && trueUnknownVisibleHierarchyBlockers.length === 0) recommendations.push("Proceed carefully with V219 visual hierarchy changes, using warnings as guardrails.");
+  if (trueUnknownVisibleHierarchyBlockers.length === 0 && warningFindings.length === 0) recommendations.push("Proceed to V219.4 visual hierarchy implementation baseline.");
   if (!sourceCensus?.mapLoaded) recommendations.push("Re-run the classifier after the map is loaded to confirm findings against the rendered state.");
   if ((sourceCensus?.clusterInventory || []).length === 0) recommendations.push("No cluster groups are currently rendered or exposed; treat that as expected unless clustering is enabled for the tested state.");
 
-  const canProceedToVisualChanges = criticalFindings.length === 0;
+  const canProceedToVisualChanges = trueUnknownVisibleHierarchyBlockers.length === 0;
   const recommendedNextStep = canProceedToVisualChanges
-    ? (warningFindings.length > 0 ? "Proceed carefully with V219 visual hierarchy changes, using warnings as guardrails." : "Proceed to V219.4 visual hierarchy implementation baseline.")
-    : "Resolve or clarify critical ownership/inventory gaps before changing marker visuals.";
+    ? (warningFindings.length > 0 || criticalFindings.length > 0 ? "Proceed carefully with V219 visual hierarchy changes, using warnings and non-blocking critical context as guardrails." : "Proceed to V219.4 visual hierarchy implementation baseline.")
+    : "Resolve or clarify true unknown visible hierarchy-participating layers before changing marker visuals.";
 
   const audit = {
     version: GRIDLY_VISUAL_HIERARCHY_FINDINGS_AUDIT_VERSION,
@@ -2959,6 +3207,7 @@ function gridlyBuildVisualHierarchyFindingsAudit(options = {}) {
       warningCount: warningFindings.length,
       infoCount: infoFindings.length,
       expectedCount: expectedFindings.length,
+      trueUnknownVisibleHierarchyBlockerCount: trueUnknownVisibleHierarchyBlockers.length,
       canProceedToVisualChanges,
       recommendedNextStep
     },
@@ -2967,6 +3216,8 @@ function gridlyBuildVisualHierarchyFindingsAudit(options = {}) {
     warningFindings,
     infoFindings,
     expectedFindings,
+    unknownLayerDiagnostics,
+    trueUnknownVisibleHierarchyBlockers,
     recommendations,
     sourceCensus
   };
@@ -2988,6 +3239,7 @@ function gridlyLogVisualHierarchyFindingsAudit(audit) {
   console.table(audit?.criticalFindings || []);
   console.table(audit?.warningFindings || []);
   console.table(audit?.expectedFindings || []);
+  console.table(audit?.unknownLayerDiagnostics || []);
   console.groupEnd();
 }
 
