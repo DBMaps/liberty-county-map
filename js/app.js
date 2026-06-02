@@ -3507,9 +3507,9 @@ function gridlyCreateRouteEndpointMarker(point, kind = "destination") {
   const isDestination = kind === "destination";
   return L.circleMarker(point, {
     pane: "routePane",
-    radius: isDestination ? 8 : 5,
+    radius: isDestination ? 10 : 5,
     color: isDestination ? "#f8fdff" : "rgba(215, 241, 255, 0.82)",
-    weight: isDestination ? 3 : 2,
+    weight: isDestination ? 4 : 2,
     fillColor: isDestination ? "#06324f" : "#0e5f87",
     fillOpacity: isDestination ? 0.96 : 0.82,
     opacity: isDestination ? 0.98 : 0.78,
