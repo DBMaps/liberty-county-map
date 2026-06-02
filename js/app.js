@@ -13277,7 +13277,8 @@ const gridlySearchUiState = {
   prioritizedLocalResultsCount: 0,
   debugWarningsSeen: new Set(),
   lastContextDiagnostics: null,
-  lastSearchShellOpenSource: ""
+  lastSearchShellOpenSource: "",
+  lastLiveSearchAudit: null
 };
 
 const GRIDLY_SEARCH_RENDER_LIMIT = 5;
@@ -13710,7 +13711,21 @@ function clearGridlySearchResults(options = {}) {
   return true;
 }
 
+function getGridlySearchActiveInputQuery() {
+  const input = gridlySearchUiRefs.input || document.getElementById("gridlyAddressSearchInput");
+  return String(input?.value || ensureGridlySearchState().activeQuery || "").trim();
+}
+
+function isGridlyLiveSearchRenderCurrent(options = {}) {
+  const requestId = Number(options.requestId);
+  if (Number.isFinite(requestId) && requestId !== gridlySearchUiState.activeSearchRequestId) return false;
+  const renderQuery = String(options.query || "").trim();
+  if (!renderQuery) return true;
+  return normalizeGridlySearchDisplayLabel(renderQuery) === normalizeGridlySearchDisplayLabel(getGridlySearchActiveInputQuery());
+}
+
 function renderGridlySearchResults(results = [], options = {}) {
+  if (!isGridlyLiveSearchRenderCurrent(options)) return false;
   const resultsContainer = gridlySearchUiRefs.results || document.getElementById("gridlySearchResults");
   if (!resultsContainer) return false;
   resultsContainer.textContent = "";
@@ -13747,9 +13762,10 @@ function renderGridlySearchResults(results = [], options = {}) {
     console.info("Gridly search normalized preview", preview);
     gridlySearchUiState.debugWarningsSeen.add("normalized-results-preview");
   }
-  const prioritizedResults = prioritizeGridlySearchResults(normalizedResults, { query: ensureGridlySearchState().activeQuery || "" });
+  const prioritizedResults = prioritizeGridlySearchResults(normalizedResults, { query: options?.query || ensureGridlySearchState().activeQuery || "" });
   const renderedResults = dedupeGridlySearchResults(prioritizedResults);
   gridlySearchUiState.lastRenderedResults = renderedResults;
+  gridlySearchUiState.lastRenderedResultsPreview = renderedResults.map((result) => summarizeGridlyDestinationSearchResult(result)).filter(Boolean);
 
   if (!renderedResults.length) {
     if (options?.state === "done" && options?.allowEmptyMessage === true) {
@@ -13892,6 +13908,93 @@ function selectGridlySearchResult(result, options = {}) {
   return normalized;
 }
 
+function getGridlyLiveDestinationSearchOptions() {
+  return { limit: GRIDLY_SEARCH_RENDER_LIMIT };
+}
+
+function beginGridlyLiveDestinationSearch(query = "") {
+  const state = ensureGridlySearchState();
+  const normalizedQuery = String(query || "").trim();
+  state.activeQuery = normalizedQuery;
+  const requestId = gridlySearchUiState.activeSearchRequestId + 1;
+  gridlySearchUiState.activeSearchRequestId = requestId;
+  gridlySearchUiState.isSearching = Boolean(normalizedQuery.length >= 3);
+  return requestId;
+}
+
+function buildGridlyLiveSearchAuditReport(query, results = [], metadata = {}) {
+  const normalizedResults = Array.isArray(results)
+    ? results.map((result) => normalizeGridlySearchResult(result)).filter(Boolean)
+    : [];
+  const first = summarizeGridlyDestinationSearchResult(normalizedResults[0]) || {};
+  return {
+    query: String(query || "").trim(),
+    detectedIntent: classifyGridlyDestinationSearchIntent(query),
+    resultCount: normalizedResults.length,
+    firstResult: {
+      title: first.title || "",
+      subtitle: first.subtitle || "",
+      provider: first.provider || ""
+    },
+    emptyStateWouldRender: normalizedResults.length === 0,
+    seedResultsIncluded: normalizedResults.some((result) => result.provider === "local_poi_seed" || result.localPoiSeed),
+    laterAsyncResponseOverwroteResults: Boolean(metadata.laterAsyncResponseOverwroteResults),
+    requestId: metadata.requestId ?? null,
+    rendered: Boolean(metadata.rendered),
+    staleRequestBlocked: Boolean(metadata.staleRequestBlocked)
+  };
+}
+
+async function runGridlyLiveDestinationSearch(query = "", options = {}) {
+  const normalizedQuery = String(query || "").trim();
+  const state = ensureGridlySearchState();
+  const requestId = Number.isFinite(Number(options.requestId)) ? Number(options.requestId) : beginGridlyLiveDestinationSearch(normalizedQuery);
+  const shouldRender = options.render !== false;
+  const auditOnly = options.auditOnly === true;
+  let staleRequestBlocked = false;
+  let rendered = false;
+  let results = [];
+
+  state.activeQuery = normalizedQuery;
+
+  try {
+    results = await gridlySearchAddress(normalizedQuery, getGridlyLiveDestinationSearchOptions());
+    const isCurrent = requestId === gridlySearchUiState.activeSearchRequestId
+      && normalizeGridlySearchDisplayLabel(normalizedQuery) === normalizeGridlySearchDisplayLabel(getGridlySearchActiveInputQuery());
+    staleRequestBlocked = !isCurrent;
+    if (shouldRender && !auditOnly && isCurrent) {
+      gridlySearchUiState.isSearching = false;
+      rendered = renderGridlySearchResults(results, { state: "done", allowEmptyMessage: true, query: normalizedQuery, requestId });
+    }
+  } catch (_error) {
+    const isCurrent = requestId === gridlySearchUiState.activeSearchRequestId
+      && normalizeGridlySearchDisplayLabel(normalizedQuery) === normalizeGridlySearchDisplayLabel(getGridlySearchActiveInputQuery());
+    staleRequestBlocked = !isCurrent;
+    if (shouldRender && !auditOnly && isCurrent) {
+      gridlySearchUiState.isSearching = false;
+      rendered = renderGridlySearchResults([], { state: "error", query: normalizedQuery, requestId });
+    }
+    results = [];
+  }
+
+  const audit = buildGridlyLiveSearchAuditReport(normalizedQuery, results, {
+    requestId,
+    rendered,
+    staleRequestBlocked,
+    laterAsyncResponseOverwroteResults: false
+  });
+  gridlySearchUiState.lastLiveSearchAudit = audit;
+  return auditOnly ? audit : results;
+}
+
+async function gridlyDestinationLiveSearchAudit(query = "") {
+  const normalizedQuery = String(query || "").trim();
+  const input = gridlySearchUiRefs.input || document.getElementById("gridlyAddressSearchInput");
+  if (input) input.value = normalizedQuery;
+  const requestId = beginGridlyLiveDestinationSearch(normalizedQuery);
+  return runGridlyLiveDestinationSearch(normalizedQuery, { requestId, render: false, auditOnly: true });
+}
+
 function initGridlySearchUI() {
   const shell = document.getElementById("gridlySearchShell");
   const input = document.getElementById("gridlyAddressSearchInput");
@@ -13917,6 +14020,7 @@ function initGridlySearchUI() {
       }
       if (gridlySearchUiRefs.input) gridlySearchUiRefs.input.value = "";
       state.activeQuery = "";
+      gridlySearchUiState.activeSearchRequestId += 1;
       clearGridlySearchResults();
     });
     clearBtn.dataset.gridlySearchClearBound = "true";
@@ -13935,27 +14039,17 @@ function initGridlySearchUI() {
 
       if (query.length < 3) {
         gridlySearchUiState.isSearching = false;
+        gridlySearchUiState.activeSearchRequestId += 1;
         clearGridlySearchResults();
         return;
       }
 
-      const requestId = gridlySearchUiState.activeSearchRequestId + 1;
-      gridlySearchUiState.activeSearchRequestId = requestId;
-      gridlySearchUiState.isSearching = true;
-      renderGridlySearchResults([], { state: "searching" });
+      const requestId = beginGridlyLiveDestinationSearch(query);
+      renderGridlySearchResults([], { state: "searching", query, requestId });
 
-      gridlySearchUiState.pendingSearchTimer = setTimeout(async () => {
+      gridlySearchUiState.pendingSearchTimer = setTimeout(() => {
         gridlySearchUiState.pendingSearchTimer = null;
-        try {
-          const searchResults = await gridlySearchAddress(query);
-          if (requestId !== gridlySearchUiState.activeSearchRequestId) return;
-          gridlySearchUiState.isSearching = false;
-          renderGridlySearchResults(searchResults, { state: "done", allowEmptyMessage: true });
-        } catch (_error) {
-          if (requestId !== gridlySearchUiState.activeSearchRequestId) return;
-          gridlySearchUiState.isSearching = false;
-          renderGridlySearchResults([], { state: "error" });
-        }
+        runGridlyLiveDestinationSearch(query, { requestId });
       }, 350);
     });
     const reopenResults = () => {
@@ -13963,12 +14057,11 @@ function initGridlySearchUI() {
       const query = String(input.value || state.activeQuery || "").trim();
       state.activeQuery = query;
       if (query.length >= 3) {
-        renderGridlySearchResults([], { state: "searching" });
-        gridlySearchAddress(query)
-          .then((resultsList) => renderGridlySearchResults(resultsList, { state: "done", allowEmptyMessage: true }))
-          .catch(() => renderGridlySearchResults([], { state: "error" }));
+        const requestId = beginGridlyLiveDestinationSearch(query);
+        renderGridlySearchResults([], { state: "searching", query, requestId });
+        runGridlyLiveDestinationSearch(query, { requestId });
       } else if (Array.isArray(state.recentSearches) && state.recentSearches.length) {
-        renderGridlySearchResults(state.recentSearches, { state: "done", allowEmptyMessage: false });
+        renderGridlySearchResults(state.recentSearches, { state: "done", allowEmptyMessage: false, query });
       }
     };
     input.addEventListener("focus", reopenResults);
@@ -34455,8 +34548,8 @@ async function gridlySearchAddress(query, options = {}) {
   const seedResults = searchGridlyLocalPoiSeeds(rawQuery, { intent });
   const providerResults = [...seedResults];
 
-  try {
-    for (const variant of queryVariants) {
+  for (const variant of queryVariants) {
+    try {
       const variantResults = await fetchGridlyNominatimSearch(variant, {
         limit: Math.max(limit, GRIDLY_SEARCH_RENDER_LIMIT),
         countryCodes,
@@ -34464,35 +34557,35 @@ async function gridlySearchAddress(query, options = {}) {
         bounded: options.bounded === "1" ? "1" : "0"
       });
       providerResults.push(...variantResults);
-      const normalizedPreview = providerResults.map((result) => normalizeGridlySearchResult(result)).filter(Boolean);
-      const prioritizedPreview = prioritizeGridlySearchResults(normalizedPreview, { query: rawQuery, intent });
-      const anchor = getGridlySearchAnchorContext(searchContext);
-      const hasRelevantMatch = prioritizedPreview.slice(0, GRIDLY_SEARCH_RENDER_LIMIT).some((result) => {
-        const context = buildGridlyLocationContext(result);
-        const haystack = getGridlySearchResultHaystack(result, context);
-        const anchorDistanceMiles = Number.isFinite(result?.lat) && Number.isFinite(result?.lng) && anchor
-          ? haversineDistance(anchor.lat, anchor.lng, result.lat, result.lng)
-          : null;
-        if (intent.type === GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL) {
-          return (Number.isFinite(anchorDistanceMiles) && anchorDistanceMiles <= 50)
-            || gridlySearchResultContainsLocality(haystack, anchor)
-            || Boolean(searchContext.bounds && searchContext.bounds.contains([result.lat, result.lng]));
-        }
-        return gridlySearchResultContainsLocality(haystack, anchor) || gridlySearchResultContainsTexas(haystack)
-          || Boolean(searchContext.bounds && searchContext.bounds.contains([result.lat, result.lng]));
-      });
-      if (hasRelevantMatch && providerResults.length >= limit && intent.type === GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL) break;
+    } catch (error) {
+      console.warn("Address search provider failed:", { variant, error });
     }
-    return dedupeGridlySearchResults(
-      prioritizeGridlySearchResults(
-        providerResults.map((result) => normalizeGridlySearchResult(result)).filter(Boolean),
-        { query: rawQuery, intent }
-      )
-    ).slice(0, limit);
-  } catch (error) {
-    console.warn("Address search failed:", error);
-    return [];
+    const normalizedPreview = providerResults.map((result) => normalizeGridlySearchResult(result)).filter(Boolean);
+    const prioritizedPreview = prioritizeGridlySearchResults(normalizedPreview, { query: rawQuery, intent });
+    const anchor = getGridlySearchAnchorContext(searchContext);
+    const hasRelevantMatch = prioritizedPreview.slice(0, GRIDLY_SEARCH_RENDER_LIMIT).some((result) => {
+      const context = buildGridlyLocationContext(result);
+      const haystack = getGridlySearchResultHaystack(result, context);
+      const anchorDistanceMiles = Number.isFinite(result?.lat) && Number.isFinite(result?.lng) && anchor
+        ? haversineDistance(anchor.lat, anchor.lng, result.lat, result.lng)
+        : null;
+      if (intent.type === GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL) {
+        return (Number.isFinite(anchorDistanceMiles) && anchorDistanceMiles <= 50)
+          || gridlySearchResultContainsLocality(haystack, anchor)
+          || Boolean(searchContext.bounds && searchContext.bounds.contains([result.lat, result.lng]));
+      }
+      return gridlySearchResultContainsLocality(haystack, anchor) || gridlySearchResultContainsTexas(haystack)
+        || Boolean(searchContext.bounds && searchContext.bounds.contains([result.lat, result.lng]));
+    });
+    if (hasRelevantMatch && providerResults.length >= limit && intent.type === GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL) break;
   }
+
+  return dedupeGridlySearchResults(
+    prioritizeGridlySearchResults(
+      providerResults.map((result) => normalizeGridlySearchResult(result)).filter(Boolean),
+      { query: rawQuery, intent }
+    )
+  ).slice(0, limit);
 }
 
 const GRIDLY_DESTINATION_SEARCH_BATCH_DEFAULT_QUERIES = [
@@ -34620,6 +34713,8 @@ function buildGridlyResultShapePreviewItem(result) {
 }
 
 window.gridlySearchAddress = gridlySearchAddress;
+window.gridlyDestinationLiveSearchAudit = gridlyDestinationLiveSearchAudit;
+window.gridlyRunLiveDestinationSearch = runGridlyLiveDestinationSearch;
 window.gridlyReverseGeocode = gridlyReverseGeocode;
 window.normalizeGridlySearchResult = normalizeGridlySearchResult;
 window.setGridlyDestinationMarker = setGridlyDestinationMarker;
