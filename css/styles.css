@@ -16409,10 +16409,15 @@ body[data-layout-mode="portrait"] .mobile-destination-command,
 
 /* V221.2 — destination experience composition pass: anchor route, destination, card, and nav as one lower command zone. */
 @media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] {
+    --gridly-destination-card-nav-clearance: 132px;
+    --gridly-destination-card-nav-gap: 16px;
+  }
+
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command {
     left: calc(14px + env(safe-area-inset-left, 0px)) !important;
     right: calc(14px + env(safe-area-inset-right, 0px)) !important;
-    bottom: calc(82px + env(safe-area-inset-bottom, 0px)) !important;
+    bottom: calc(var(--gridly-destination-card-nav-clearance) + env(safe-area-inset-bottom, 0px)) !important;
     z-index: 9600 !important;
     min-height: 84px !important;
     gap: 12px !important;
@@ -16444,7 +16449,7 @@ body[data-layout-mode="portrait"] .mobile-destination-command,
     position: absolute;
     left: 24px;
     right: 24px;
-    bottom: -13px;
+    bottom: calc(-1 * var(--gridly-destination-card-nav-gap));
     height: 1px;
     border-radius: 999px;
     background: linear-gradient(90deg, transparent, rgba(121, 225, 255, 0.42), transparent);
@@ -16471,14 +16476,26 @@ body[data-layout-mode="portrait"] .mobile-destination-command,
     right: calc(14px + env(safe-area-inset-right, 0px)) !important;
     bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
     z-index: 9500 !important;
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    padding: 7px !important;
+    padding-bottom: calc(7px + env(safe-area-inset-bottom, 0px)) !important;
     border-radius: 20px !important;
     border-color: rgba(135, 203, 244, 0.2) !important;
     background: rgba(5, 13, 24, 0.92) !important;
     box-shadow: 0 14px 30px rgba(0, 5, 13, 0.46), inset 0 1px 0 rgba(225, 245, 255, 0.08) !important;
   }
 
+  body[data-layout-mode="portrait"] .mobile-bottom-nav-btn {
+    min-width: 0 !important;
+    min-height: 42px !important;
+    padding: 9px 2px !important;
+    white-space: nowrap !important;
+  }
+
   body[data-layout-mode="portrait"] #map .leaflet-control-zoom {
-    margin-bottom: calc(178px + env(safe-area-inset-bottom, 0px)) !important;
+    margin-bottom: calc(var(--gridly-destination-card-nav-clearance) + 96px + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
 
