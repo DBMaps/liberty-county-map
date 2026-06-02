@@ -3425,6 +3425,103 @@ window.gridlyVisualHierarchyFindingsAudit = function gridlyVisualHierarchyFindin
 window.gridlyMapFindingsAudit = window.gridlyVisualHierarchyFindingsAudit;
 
 
+const GRIDLY_MAP_VISUAL_REFINEMENT_AUDIT_VERSION = "V220";
+
+function gridlyStylesheetContainsSelectorFragment(fragment = "") {
+  if (typeof document === "undefined" || !fragment) return false;
+  const expected = String(fragment);
+  try {
+    return Array.from(document.styleSheets || []).some((sheet) => {
+      let rules;
+      try {
+        rules = sheet.cssRules;
+      } catch (_error) {
+        return false;
+      }
+      return Array.from(rules || []).some((rule) => String(rule?.selectorText || "").includes(expected) || String(rule?.cssText || "").includes(expected));
+    });
+  } catch (_error) {
+    return false;
+  }
+}
+
+function gridlyMapVisualRefinementDetection(selector = "", cssFragment = "") {
+  const domCount = typeof document !== "undefined" && selector
+    ? document.querySelectorAll(selector).length
+    : 0;
+  return {
+    selector,
+    domCount,
+    cssDetected: gridlyStylesheetContainsSelectorFragment(cssFragment || selector),
+    detected: domCount > 0 || gridlyStylesheetContainsSelectorFragment(cssFragment || selector)
+  };
+}
+
+window.gridlyMapVisualRefinementAudit = function gridlyMapVisualRefinementAudit(options = {}) {
+  const selectedItemStyling = gridlyMapVisualRefinementDetection(
+    '#map .gridly-alert-focused-marker, #map [data-gridly-selected="true"]',
+    'gridly-alert-focused-marker'
+  );
+  const routeDestinationImpactStyling = gridlyMapVisualRefinementDetection(
+    '#map [data-gridly-route-relevant="true"], #map [data-gridly-visual-state="route_impact"], #map .gridly-marker-rail-route-impact, #map .gridly-marker-txdot-route-impact',
+    'data-gridly-route-relevant="true"'
+  );
+  const highHazardStyling = gridlyMapVisualRefinementDetection(
+    '#map .gridly-marker-hazard-critical, #map .gridly-marker-hazard-high, #map [data-gridly-impact-level="critical"], #map [data-gridly-impact-level="high"]',
+    'data-gridly-impact-level="critical"'
+  );
+  const historicalDeemphasis = gridlyMapVisualRefinementDetection(
+    '#map .gridly-historical-pattern-marker, #map [data-gridly-map-owner="historical_pattern"], #map [data-visual-owner="historical_pattern"]',
+    'historical_pattern'
+  );
+  const infrastructureLowestPriority = gridlyMapVisualRefinementDetection(
+    '#map .gridly-marker-rail-clear, #map [data-gridly-map-owner="infrastructure"], #map [data-gridly-visual-state="infrastructure"]',
+    'data-gridly-map-owner="infrastructure"'
+  );
+  const existingHierarchyAudit = typeof window.gridlyVisualHierarchyFindingsAudit === "function"
+    ? window.gridlyVisualHierarchyFindingsAudit({ silent: true })
+    : null;
+  const noVisualHierarchyBlockersDetected = !existingHierarchyAudit || (
+    Number(existingHierarchyAudit?.criticalCount || existingHierarchyAudit?.summary?.criticalCount || 0) === 0
+    && Number(existingHierarchyAudit?.trueUnknownVisibleHierarchyBlockerCount || existingHierarchyAudit?.summary?.trueUnknownVisibleHierarchyBlockerCount || 0) === 0
+  );
+  const requiredDetections = [
+    selectedItemStyling,
+    routeDestinationImpactStyling,
+    highHazardStyling,
+    historicalDeemphasis,
+    infrastructureLowestPriority
+  ];
+  const canProceedToBetaVisualReview = requiredDetections.every((item) => item.detected) && noVisualHierarchyBlockersDetected;
+  const audit = {
+    version: GRIDLY_MAP_VISUAL_REFINEMENT_AUDIT_VERSION,
+    generatedAt: new Date().toISOString(),
+    selectedItemStylingDetected: selectedItemStyling.detected,
+    routeDestinationImpactStylingDetected: routeDestinationImpactStyling.detected,
+    highHazardStylingDetected: highHazardStyling.detected,
+    historicalDeemphasisDetected: historicalDeemphasis.detected,
+    infrastructureLowestPriorityStylingDetected: infrastructureLowestPriority.detected,
+    noVisualHierarchyBlockersDetected,
+    canProceedToBetaVisualReview,
+    detections: {
+      selectedItemStyling,
+      routeDestinationImpactStyling,
+      highHazardStyling,
+      historicalDeemphasis,
+      infrastructureLowestPriority
+    },
+    existingVisualHierarchySummary: existingHierarchyAudit?.summary || existingHierarchyAudit || null
+  };
+  if (options?.silent !== true && typeof console !== "undefined") {
+    console.groupCollapsed("GRIDLY V220 MAP VISUAL REFINEMENT AUDIT");
+    console.log("Can Proceed To Beta Visual Review:", canProceedToBetaVisualReview ? "Yes" : "No");
+    console.log(audit);
+    console.groupEnd();
+  }
+  return audit;
+};
+
+
 
 window.gridlyRailMarkerSourceTrace = function gridlyRailMarkerSourceTrace() {
   try {
