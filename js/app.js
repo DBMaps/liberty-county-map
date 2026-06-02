@@ -13588,6 +13588,15 @@ function showGridlySearchShell(options = {}) {
   return true;
 }
 
+function openGridlyDestinationSearchSurface(options = {}) {
+  const openSearch = () => showGridlySearchShell({ focusInput: true, ...options });
+  if (typeof openGridlySurface === "function") {
+    openGridlySurface("search", openSearch);
+    return true;
+  }
+  return openSearch();
+}
+
 function hideGridlySearchShell(options = {}) {
   const shell = gridlySearchUiRefs.shell || document.getElementById("gridlySearchShell");
   if (!shell) return false;
@@ -31870,7 +31879,7 @@ function bindEvents() {
       routeLauncherSource = "choose-route-button";
       event?.preventDefault?.();
       event?.stopPropagation?.();
-      showGridlySearchShell({ focusInput: true, source: "destinationCommandButton" });
+      openGridlyDestinationSearchSurface({ source: "destinationCommandButton" });
     });
     els.mobileDestinationCommandBtn.dataset.searchBound = "true";
   };
@@ -32329,7 +32338,7 @@ function bindEvents() {
   const openDestinationSearchShell = (event, source = "manual") => {
     event?.preventDefault?.();
     event?.stopPropagation?.();
-    showGridlySearchShell({ focusInput: true, source });
+    openGridlyDestinationSearchSurface({ source });
   };
 
   if (els.destinationAddBtn && els.destinationAddBtn.dataset.searchBound !== "true") {
