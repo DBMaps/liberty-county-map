@@ -328,10 +328,22 @@
 
     <section class="command-center" id="mapSection">
       <section class="map-card">
-        <article class="mobile-destination-command" aria-label="Destination search command">
+        <article class="mobile-destination-command" aria-label="Trip command center" data-destination-active="false">
           <div class="mobile-destination-command-copy">
+            <span class="mobile-destination-command-kicker">Trip Command Center</span>
             <strong id="mobileDestinationCommandTitle">Destination</strong>
             <p id="mobileDestinationCommandMeta">Choose where you're going</p>
+            <div class="mobile-destination-travel-summary" aria-label="Travel summary">
+              <span class="mobile-destination-summary-item">
+                <small>ETA</small>
+                <strong id="mobileDestinationCommandEta">—</strong>
+              </span>
+              <span class="mobile-destination-summary-divider" aria-hidden="true"></span>
+              <span class="mobile-destination-summary-item">
+                <small>Distance</small>
+                <strong id="mobileDestinationCommandDistance">—</strong>
+              </span>
+            </div>
             <p class="destination-route-impact-line" id="mobileDestinationCommandImpact" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="gridlyDestinationImpactPane" aria-expanded="false"></p>
           </div>
           <button class="secondary-btn compact-btn" id="mobileDestinationCommandBtn" type="button">Choose Route</button>

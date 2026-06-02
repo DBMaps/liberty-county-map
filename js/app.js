@@ -15972,12 +15972,57 @@ function getGridlyDestinationPreviewMetaText() {
   if (preview.status === "ready") {
     const distanceText = formatGridlyDestinationPreviewDistance(preview.distanceMiles);
     const etaText = formatGridlyDestinationPreviewEta(preview.etaMinutes);
-    if (distanceText && etaText) return `${distanceText} • ${etaText}`;
-    if (distanceText) return distanceText;
+    if (distanceText && etaText) return `${etaText} • ${distanceText}`;
     if (etaText) return etaText;
+    if (distanceText) return distanceText;
     return "Route unavailable";
   }
   return "";
+}
+
+function getGridlySelectedDestinationContextText(destination = null) {
+  const normalized = destination || normalizeGridlySearchResult(ensureGridlySearchState()?.selectedDestination);
+  if (!normalized) return "";
+  const title = String(normalized.title || normalized.displayName || normalized.label || "").trim();
+  const context = typeof buildGridlyLocationContext === "function" ? buildGridlyLocationContext(normalized) : "";
+  const subtitle = String(normalized.subtitle || "").trim();
+  return [context, subtitle]
+    .map((entry) => String(entry || "").trim())
+    .find((entry) => entry && normalizeGridlySearchDisplayLabel(entry) !== normalizeGridlySearchDisplayLabel(title)) || "";
+}
+
+function getGridlyDestinationTravelSummary() {
+  const preview = getGridlyDestinationRoutePreviewState();
+  if (preview.status === "loading") return { etaText: "Calculating", distanceText: "—" };
+  if (preview.status === "unavailable") return { etaText: "Unavailable", distanceText: "—" };
+  if (preview.status === "ready") {
+    return {
+      etaText: formatGridlyDestinationPreviewEta(preview.etaMinutes) || "—",
+      distanceText: formatGridlyDestinationPreviewDistance(preview.distanceMiles) || "—"
+    };
+  }
+  return { etaText: "—", distanceText: "—" };
+}
+
+function getGridlyDestinationTripStatusText() {
+  const preview = window.GridlyDestinationRoutePreview && typeof window.GridlyDestinationRoutePreview === "object"
+    ? window.GridlyDestinationRoutePreview
+    : {};
+  if (preview.status === "loading") return "Checking route conditions…";
+  if (preview.status !== "ready") return "";
+  try {
+    const audit = typeof window.gridlyDestinationRouteImpactAudit === "function"
+      ? window.gridlyDestinationRouteImpactAudit()
+      : null;
+    const impactLevel = String(audit?.impactLevel || "none").toLowerCase();
+    const reason = String(audit?.primaryImpactReason || getGridlyDestinationRouteImpactCopy(impactLevel)).trim();
+    if (impactLevel === "high") return reason || "Route conditions may affect travel";
+    if (impactLevel === "moderate") return reason || "Route conditions may affect travel";
+    if (impactLevel === "low") return reason || "Minor impacts reported";
+    return "No active hazards";
+  } catch (_) {
+    return "";
+  }
 }
 
 const GRIDLY_DESTINATION_ROUTE_IMPACT_LABELS = {
@@ -16000,28 +16045,7 @@ function getGridlyDestinationRouteImpactCopy(level = "none") {
 }
 
 function getGridlyDestinationRouteImpactCardText() {
-  const preview = window.GridlyDestinationRoutePreview && typeof window.GridlyDestinationRoutePreview === "object"
-    ? window.GridlyDestinationRoutePreview
-    : {};
-  if (preview.status === "loading") return "";
-  if (preview.status !== "ready") return "";
-  try {
-    const audit = typeof window.gridlyDestinationRouteImpactAudit === "function"
-      ? window.gridlyDestinationRouteImpactAudit()
-      : null;
-    const impactLevel = audit?.impactLevel || "none";
-    const reason = audit?.primaryImpactReason || getGridlyDestinationRouteImpactCopy(impactLevel);
-    const locationLine = String(audit?.primaryImpactLocation || "").trim();
-    const proximityLine = String(audit?.primaryImpactProximityLabel || "").trim();
-    return [
-      `Potential Impact: ${getGridlyDestinationRouteImpactLabel(impactLevel)}`,
-      reason,
-      locationLine,
-      proximityLine
-    ].filter((line) => String(line || "").trim()).join("\n");
-  } catch (_) {
-    return "";
-  }
+  return getGridlyDestinationTripStatusText();
 }
 
 function getGridlyDestinationRouteReasonInspectionText(item = {}) {
@@ -16314,22 +16338,36 @@ window.gridlyDestinationImpactPaneAudit = function gridlyDestinationImpactPaneAu
 function syncMobileDestinationCommandCard() {
   const cardRenderStartedAt = getGridlyDestinationPerfNow();
   const routeIsMonitoring = Boolean(routeWatchActivated || window.__gridlyRouteWatchActive);
+  const selectedDestination = normalizeGridlySearchResult(ensureGridlySearchState()?.selectedDestination);
   const selectedLabel = getSelectedDestinationLabel();
+  const destinationContext = selectedLabel ? getGridlySelectedDestinationContextText(selectedDestination) : "";
   const previewMeta = selectedLabel ? getGridlyDestinationPreviewMetaText() : "";
+  const travelSummary = selectedLabel ? getGridlyDestinationTravelSummary() : { etaText: "—", distanceText: "—" };
   const impactText = selectedLabel ? getGridlyDestinationRouteImpactCardText() : "";
+  const destinationCard = document.getElementById("mobileDestinationCommandTitle")?.closest?.(".mobile-destination-command");
+  if (destinationCard) destinationCard.dataset.destinationActive = selectedLabel ? "true" : "false";
   safeText("mobileDestinationCommandTitle", selectedLabel || (routeIsMonitoring ? "Destination selected" : "Destination"));
   safeText(
     "mobileDestinationCommandMeta",
     selectedLabel
-      ? (previewMeta || "Calculating route…")
+      ? (destinationContext || previewMeta || "Route selected")
       : routeIsMonitoring
         ? "Selected: Saved destination"
         : "Choose where you're going"
   );
+  safeText("mobileDestinationCommandEta", selectedLabel ? travelSummary.etaText : "—");
+  safeText("mobileDestinationCommandDistance", selectedLabel ? travelSummary.distanceText : "—");
   safeText("mobileDestinationCommandImpact", impactText);
   const impactLine = document.getElementById("mobileDestinationCommandImpact");
   if (impactLine) {
     const hasImpactText = Boolean(String(impactText || "").trim());
+    let impactLevel = "none";
+    try {
+      impactLevel = String(window.gridlyDestinationRouteImpactAudit?.()?.impactLevel || "none").toLowerCase();
+    } catch (_) {
+      impactLevel = "none";
+    }
+    impactLine.dataset.impactLevel = hasImpactText ? impactLevel : "none";
     impactLine.setAttribute("aria-disabled", hasImpactText ? "false" : "true");
     impactLine.title = hasImpactText ? "Open route awareness details" : "";
   }
@@ -18199,6 +18237,8 @@ function hydrateElements() {
     "mobileDestinationCommandBtn",
     "mobileDestinationCommandTitle",
     "mobileDestinationCommandMeta",
+    "mobileDestinationCommandEta",
+    "mobileDestinationCommandDistance",
     "mobileDestinationCommandImpact",
     "gridlyDestinationImpactPane",
     "gridlyDestinationImpactPaneBackdrop",
