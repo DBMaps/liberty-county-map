@@ -15434,56 +15434,73 @@ body[data-layout-mode="portrait"] .gridly-v2-control-rail {
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command {
     display: grid !important;
     position: fixed !important;
-    left: calc(24px + env(safe-area-inset-left, 0px)) !important;
-    right: calc(76px + env(safe-area-inset-right, 0px)) !important;
-    bottom: calc(138px + env(safe-area-inset-bottom, 0px)) !important;
+    left: calc(22px + env(safe-area-inset-left, 0px)) !important;
+    right: calc(88px + env(safe-area-inset-right, 0px)) !important;
+    bottom: calc(140px + env(safe-area-inset-bottom, 0px)) !important;
     z-index: 9600 !important;
     grid-template-columns: minmax(0, 1fr) auto !important;
     align-items: center !important;
-    gap: 8px !important;
-    min-height: 0 !important;
+    gap: 10px !important;
+    min-height: 54px !important;
+    height: 54px !important;
+    max-height: 54px !important;
+    box-sizing: border-box !important;
     margin: 0 !important;
-    padding: 8px 9px !important;
-    border-radius: 16px !important;
-    border: 1px solid rgba(161, 211, 255, 0.34) !important;
-    background: linear-gradient(145deg, rgba(7, 16, 29, 0.74), rgba(6, 13, 23, 0.86)) !important;
-    box-shadow: 0 10px 24px rgba(2, 8, 20, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
-    backdrop-filter: blur(18px) saturate(118%) !important;
-    -webkit-backdrop-filter: blur(18px) saturate(118%) !important;
+    padding: 8px 10px 8px 12px !important;
+    border-radius: 18px !important;
+    border: 1px solid rgba(161, 211, 255, 0.38) !important;
+    background: linear-gradient(145deg, rgba(9, 19, 33, 0.86), rgba(5, 12, 22, 0.94)) !important;
+    box-shadow: 0 14px 30px rgba(2, 8, 20, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(18px) saturate(124%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(124%) !important;
     pointer-events: auto !important;
+    overflow: hidden !important;
   }
 
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .mobile-destination-command-copy {
     display: grid !important;
-    gap: 1px !important;
+    grid-template-rows: auto auto !important;
+    align-content: center !important;
+    gap: 2px !important;
     min-width: 0 !important;
+    overflow: hidden !important;
   }
 
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command strong {
-    font-size: 0.78rem !important;
-    line-height: 1.15 !important;
-    letter-spacing: 0.01em !important;
+    display: block !important;
+    min-width: 0 !important;
+    font-size: 0.9rem !important;
+    line-height: 1.08 !important;
+    letter-spacing: 0.005em !important;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
   }
 
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command p {
+    display: block !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
     margin: 0 !important;
-    color: rgba(219, 236, 255, 0.78) !important;
-    font-size: 0.66rem !important;
-    line-height: 1.2 !important;
+    color: rgba(219, 236, 255, 0.8) !important;
+    font-size: 0.72rem !important;
+    line-height: 1.15 !important;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
   }
 
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .compact-btn {
-    min-height: 28px !important;
-    padding: 5px 9px !important;
+    flex: 0 0 auto !important;
+    min-height: 34px !important;
+    height: 34px !important;
+    max-width: 112px !important;
+    padding: 7px 12px !important;
     border-radius: 999px !important;
-    font-size: 0.67rem !important;
-    font-weight: 800 !important;
+    font-size: 0.72rem !important;
+    line-height: 1 !important;
+    font-weight: 850 !important;
     white-space: nowrap !important;
+    pointer-events: auto !important;
   }
 }
