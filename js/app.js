@@ -44686,8 +44686,16 @@ function buildGridlyAwarenessBriefCopy({ intel = {}, existingAlertWording = {}, 
   if (hasTruthfulTopAwarenessCount && activeCount <= 0) return getGridlyQuietAwarenessBriefCopy();
   const activeCategory = existingAlertWording?.activeCategory || activeAwareness?.resolvedCategory || activeAwareness?.topCategory || "";
   const activeLocation = safeDisplayText(existingAlertWording?.activeLocationLabel || activeAwareness?.resolvedLocationLabel, "");
+  const hybridPrimaryHeadline = activeAwareness?.topAwarenessHybridApplied
+    ? safeDisplayText(activeAwareness?.topAwarenessPrimaryHeadline, "")
+    : "";
+  const hybridSecondaryContext = hybridPrimaryHeadline
+    ? safeDisplayText(activeAwareness?.topAwarenessSecondaryContext, "")
+    : "";
+  const hybridHeadlineRendered = Boolean(hybridPrimaryHeadline);
   const activeTitle = safeDisplayText(
-    existingAlertWording?.text
+    hybridPrimaryHeadline
+      || existingAlertWording?.text
       || buildGridlyHeaderCandidateFromCategoryLocation(activeCategory, activeLocation)
       || activeAwareness?.headline
       || intel?.topStatus,
@@ -44696,15 +44704,30 @@ function buildGridlyAwarenessBriefCopy({ intel = {}, existingAlertWording = {}, 
   const freshness = safeDisplayText(intel?.topIncidentFreshnessText || activeAwareness?.freshnessText, "just now");
   const communityCountLabel = pluralizeGridlyCommunityReports(activeCount);
   const topAwarenessPrimaryHeadline = activeTitle || (activeCount >= 6 ? `Multiple disruptions reported across ${town}.` : `Mobility issue reported in ${town}.`);
-  const topAwarenessCommunityContext = buildGridlyTopAwarenessCommunityContext({
+  const computedTopAwarenessCommunityContext = buildGridlyTopAwarenessCommunityContext({
     intel,
     activeAwareness,
     pulseModel,
     activeState,
     primaryHeadline: topAwarenessPrimaryHeadline
   });
+  const topAwarenessCommunityContext = hybridSecondaryContext
+    ? {
+        text: hybridSecondaryContext,
+        source: activeAwareness?.topAwarenessCommunityContextSource || "activeAwareness.topAwarenessSecondaryContext",
+        fallbackReason: ""
+      }
+    : computedTopAwarenessCommunityContext;
   const topAwarenessMode = safeDisplayText(pulseModel?.awarenessMode || activeAwareness?.awarenessMode || (typeof getGridlyAwarenessMode === "function" ? getGridlyAwarenessMode() : "community"), "community");
-  const topAwarenessHybridApplied = Boolean((existingAlertWording?.available || activeAwareness?.topAwarenessSpecificLocationApplied || activeAwareness?.lightweightSummaryReuseApplied) && activeTitle && topAwarenessCommunityContext.text);
+  const topAwarenessHybridApplied = hybridHeadlineRendered
+    ? Boolean(topAwarenessCommunityContext.text)
+    : Boolean((existingAlertWording?.available || activeAwareness?.topAwarenessSpecificLocationApplied || activeAwareness?.lightweightSummaryReuseApplied) && activeTitle && topAwarenessCommunityContext.text);
+  const topAwarenessSelectedSource = hybridHeadlineRendered
+    ? (activeAwareness?.topAwarenessHeadlineSource || "activeAwareness.topAwarenessPrimaryHeadline")
+    : (existingAlertWording?.source || activeAwareness?.topAwarenessHeadlineSource || "");
+  const topAwarenessFallbackReason = hybridHeadlineRendered
+    ? (activeAwareness?.topAwarenessFallbackReason || "")
+    : activeAwareness?.topAwarenessFallbackReason;
 
   if (activeCount >= 6) {
     return {
@@ -44715,9 +44738,9 @@ function buildGridlyAwarenessBriefCopy({ intel = {}, existingAlertWording = {}, 
       microline: "Review before you go.",
       microlineVisible: true,
       selectedHeadline: topAwarenessPrimaryHeadline,
-      selectedSource: existingAlertWording?.source || activeAwareness?.topAwarenessHeadlineSource || "active_count_fallback",
+      selectedSource: topAwarenessSelectedSource || "active_count_fallback",
       selectedLocationIntelligence: activeAwareness?.topAwarenessSelectedLocationIntelligence || null,
-      fallbackReason: activeAwareness?.topAwarenessFallbackReason || (activeTitle ? "" : "high_activity_generic_count_fallback"),
+      fallbackReason: topAwarenessFallbackReason || (activeTitle ? "" : "high_activity_generic_count_fallback"),
       topAwarenessPrimaryHeadline,
       topAwarenessSecondaryContext: topAwarenessCommunityContext.text,
       topAwarenessCommunityContextSource: topAwarenessCommunityContext.source,
@@ -44746,9 +44769,9 @@ function buildGridlyAwarenessBriefCopy({ intel = {}, existingAlertWording = {}, 
       microline: `${freshness} • ${communityCountLabel}`,
       microlineVisible: true,
       selectedHeadline: topAwarenessPrimaryHeadline,
-      selectedSource: existingAlertWording?.source || activeAwareness?.topAwarenessHeadlineSource || "awareness_brief_fallback",
+      selectedSource: topAwarenessSelectedSource || "awareness_brief_fallback",
       selectedLocationIntelligence: activeAwareness?.topAwarenessSelectedLocationIntelligence || null,
-      fallbackReason: activeAwareness?.topAwarenessFallbackReason || (activeTitle ? "" : "no_active_title_available"),
+      fallbackReason: topAwarenessFallbackReason || (activeTitle ? "" : "no_active_title_available"),
       topAwarenessPrimaryHeadline,
       topAwarenessSecondaryContext: topAwarenessCommunityContext.text,
       topAwarenessCommunityContextSource: topAwarenessCommunityContext.source,
