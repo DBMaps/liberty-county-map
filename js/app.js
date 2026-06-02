@@ -21787,39 +21787,56 @@ function renderGridlyCommunityPulse(options = {}) {
 
 
 
+function gridlyHistoricalIntelligenceTitleCaseLocation(value = "") {
+  const preservedAbbreviations = new Set(["US", "TX", "FM", "SH", "IH", "I", "CR", "RR"]);
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\b[a-z0-9]+\b/g, (word) => {
+      const upper = word.toUpperCase();
+      if (preservedAbbreviations.has(upper) || /^\d+[a-z]?$/.test(word)) return upper;
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .replace(/\b(Mc)([a-z])/g, (_, prefix, letter) => `${prefix}${letter.toUpperCase()}`);
+}
+
+function gridlyHistoricalIntelligenceDisplayLocation(finding = {}) {
+  return gridlyHistoricalIntelligenceTitleCaseLocation(finding.locationLabel || finding.nearbyLocationLabel || finding.referenceRoad || "Local Area") || "Local Area";
+}
+
 const GRIDLY_HISTORICAL_INTELLIGENCE_LANGUAGE = Object.freeze({
   most_blocked_crossing: Object.freeze({
     title: "Frequently Blocked Crossing",
     category: "Crossing",
-    description: (finding) => `Drivers have reported ${finding.count} past train ${finding.count === 1 ? "delay" : "delays"}${finding.locationLabel ? ` near ${finding.locationLabel}` : " at this crossing"}.`
+    description: () => "Drivers have reported recurring train delays here."
   }),
   recurring_flooding_location: Object.freeze({
     title: "Recurring Flooding Location",
     category: "Flooding",
-    description: (finding) => `Drivers have reported water on the road ${finding.count} ${finding.count === 1 ? "time" : "times"}${finding.locationLabel ? ` near ${finding.locationLabel}` : " in this area"}.`
+    description: () => "Drivers have frequently reported water on the road here."
   }),
   repeat_construction_zone: Object.freeze({
     title: "Recurring Construction Zone",
     category: "Construction",
-    description: (finding) => `Drivers have reported road work ${finding.count} ${finding.count === 1 ? "time" : "times"}${finding.locationLabel ? ` near ${finding.locationLabel}` : " in this area"}.`
+    description: () => "Drivers have reported recurring road work in this area."
   }),
   high_delay_corridor: Object.freeze({
     title: "Common Delay Area",
     category: "Delay",
-    description: (finding) => `Past cleared reports on ${finding.locationLabel || "this road"} averaged about ${finding.averageDurationMinutes} minutes before clearing.`
+    description: () => "Community reports show delays here often take time to clear."
   }),
   community_confirmed_hotspot: Object.freeze({
-    title: "Confirmed Local Hotspot",
+    title: "Community Hotspot",
     category: "Hotspot",
-    description: (finding) => `Drivers have confirmed ${finding.confirmationCount} past ${finding.confirmationCount === 1 ? "report" : "reports"}${finding.locationLabel ? ` near ${finding.locationLabel}` : " in this area"}.`
+    description: () => "Local drivers have repeatedly confirmed activity in this area."
   }),
   recurring_hazard: Object.freeze({
     title: "Recurring Road Hazard",
     category: "Road Hazard",
-    description: (finding) => `Drivers have reported ${finding.hazardLabel || "a road hazard"} ${finding.count} ${finding.count === 1 ? "time" : "times"}${finding.locationLabel ? ` near ${finding.locationLabel}` : " in this area"}.`
+    description: (finding) => `Drivers have frequently reported ${finding.hazardLabel || "a road hazard"} here.`
   }),
   no_history: Object.freeze({
-    title: "Not enough history yet",
+    title: "Not Enough History Yet",
     category: "History",
     description: () => "Gridly will show local patterns here after more cleared reports are collected."
   })
@@ -22270,26 +22287,24 @@ function buildGridlyHistoricalIntelligenceSheetHtml(options = {}) {
   const state = buildGridlyIntelligencePreviewCardModel(options);
   const rankedFindings = Array.isArray(state.dedupedRankedFindings) ? state.dedupedRankedFindings : (Array.isArray(state.rankedFindings) ? state.rankedFindings : []);
   if (!rankedFindings.length) {
-    return `<div class="gridly-historical-intelligence-sheet"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Based on cleared community reports</p><div class="gridly-historical-intelligence-empty"><strong>Not enough history yet</strong><p>Gridly will show local patterns here after more cleared reports are collected.</p></div></div>`;
+    return `<div class="gridly-historical-intelligence-sheet"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Based on cleared community reports</p><div class="gridly-historical-intelligence-empty"><strong>Not Enough History Yet</strong><p>Gridly will show local patterns here after more cleared reports are collected.</p></div></div>`;
   }
   const rows = rankedFindings.map((finding) => {
     const language = getGridlyIntelligencePreviewLanguage(finding.category);
-    const title = sanitizeText(finding.title || language.title || "Historical pattern");
+    const title = sanitizeText(finding.title || language.title || "Historical Pattern");
     const description = sanitizeText(language.description(finding));
     const category = sanitizeText(finding.categoryLabel || language.category || "Hotspot");
+    const location = sanitizeText(gridlyHistoricalIntelligenceDisplayLocation(finding));
     const lastSeen = formatGridlyHistoricalIntelligenceDate(finding.latestAt);
     const duration = formatGridlyHistoricalIntelligenceDuration(finding.averageDurationMinutes);
-    const stats = [
-      `${Number(finding.count || 0)} ${Number(finding.count || 0) === 1 ? "report" : "reports"}`,
-      `${Number(finding.count || 0)} historical ${Number(finding.count || 0) === 1 ? "record" : "records"}`,
-      lastSeen ? `Last seen ${lastSeen}` : ""
-    ].filter(Boolean);
-    const clearTimeLine = duration ? `Average clear time ${duration}` : "Clear-time data not available yet";
-    const groupedReportCount = Number(finding.groupedRelatedReportCount || 0);
-    const groupingLine = Number(finding.groupedFindingCount || 0) > 0 && groupedReportCount > 1
-      ? `<div class="gridly-historical-intelligence-grouping">Grouped from ${groupedReportCount} related ${groupedReportCount === 1 ? "report" : "reports"}</div>`
-      : "";
-    return `<article class="gridly-historical-intelligence-row"><div class="gridly-historical-intelligence-row-head"><span class="gridly-historical-intelligence-rank">${Number(finding.rank || 0)}</span><span class="gridly-historical-intelligence-category">${category}</span></div><strong>${title}</strong><p>${description}</p><div class="gridly-historical-intelligence-stats">${stats.map((stat) => `<span>${sanitizeText(stat)}</span>`).join("")}</div><div class="gridly-historical-intelligence-clear-time">${sanitizeText(clearTimeLine)}</div>${groupingLine}</article>`;
+    const count = Number(finding.count || 0);
+    const durationLabel = finding.category === "most_blocked_crossing" || finding.category === "high_delay_corridor" ? "Average delay" : "Average clear time";
+    const supportLines = [
+      duration ? `<div class="gridly-historical-intelligence-stat"><span>${sanitizeText(durationLabel)}:</span><strong>${sanitizeText(duration)}</strong></div>` : "",
+      `<div class="gridly-historical-intelligence-stat"><span>Based on</span><strong>${sanitizeText(`${count} community ${count === 1 ? "report" : "reports"}`)}</strong></div>`,
+      lastSeen ? `<div class="gridly-historical-intelligence-stat gridly-historical-intelligence-stat-muted"><span>Last reported</span><strong>${sanitizeText(lastSeen)}</strong></div>` : ""
+    ].filter(Boolean).join("");
+    return `<article class="gridly-historical-intelligence-row"><div class="gridly-historical-intelligence-row-head"><span class="gridly-historical-intelligence-rank">${Number(finding.rank || 0)}</span><span class="gridly-historical-intelligence-category">${category}</span></div><strong>${title}</strong><div class="gridly-historical-intelligence-location">${location}</div><p>${description}</p><div class="gridly-historical-intelligence-stats">${supportLines}</div></article>`;
   }).join("");
   return `<div class="gridly-historical-intelligence-sheet"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Based on cleared community reports</p><div class="gridly-historical-intelligence-list">${rows}</div></div>`;
 }
