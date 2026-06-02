@@ -23570,9 +23570,23 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
     topAwarenessHeadlineSource = "lightweightActiveAwareness.categoryCountFallback";
     topAwarenessFallbackReason = topAwarenessHeadlineSelection.fallbackReason || (topAwarenessLocationIntelligence.usable ? "specific_location_candidate_unavailable" : "multiple_reports_without_single_specific_location_headline");
   }
-  const subline = activeAwarenessCount > 0
-    ? (topCorridorLabel ? `Community activity remains visible near ${topCorridorLabel}.` : "Active reports are limited nearby.")
-    : "Community activity is quiet.";
+  const topAwarenessCommunityContext = typeof buildGridlyTopAwarenessCommunityContext === "function"
+    ? buildGridlyTopAwarenessCommunityContext({
+        activeAwareness: {
+          activeAwarenessCount,
+          activeHazardCount,
+          activeReportCount
+        },
+        primaryHeadline: headline
+      })
+    : {
+        text: activeAwarenessCount > 0 ? `${activeAwarenessCount} active mobility ${activeAwarenessCount === 1 ? "report" : "reports"} across ${getGridlyAwarenessBriefTownLabel()}` : `No major mobility issues reported across ${getGridlyAwarenessBriefTownLabel()}`,
+        source: "lightweightActiveAwareness.fallback",
+        fallbackReason: activeAwarenessCount > 0 ? "" : "no_active_awareness_items"
+      };
+  const subline = topAwarenessCommunityContext.text;
+  const topAwarenessMode = safeDisplayText(typeof getGridlyAwarenessMode === "function" ? getGridlyAwarenessMode(options) : "community", "community");
+  const topAwarenessHybridApplied = Boolean((topAwarenessSpecificLocationApplied || lightweightSummaryReuseApplied) && headline && activeAwarenessCount > 0 && subline);
   const dataSourceSummary = {
     activeReports: activeReportCount,
     activeHazards: activeHazardCount,
@@ -23619,6 +23633,12 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
     reusedAlertText,
     lightweightSummaryReuseApplied,
     headline,
+    topAwarenessPrimaryHeadline: headline,
+    topAwarenessSecondaryContext: subline,
+    topAwarenessCommunityContextSource: topAwarenessCommunityContext.source || "",
+    topAwarenessMode,
+    topAwarenessHybridApplied,
+    topAwarenessHybridFallbackReason: topAwarenessHybridApplied ? "" : (topAwarenessCommunityContext.fallbackReason || topAwarenessFallbackReason || ""),
     topAwarenessHeadlineSource,
     topAwarenessSpecificLocationApplied,
     topAwarenessSelectedLocationIntelligence: topAwarenessLocationIntelligence,
@@ -27885,6 +27905,12 @@ window.gridlyHeaderOwnershipAudit = function gridlyHeaderOwnershipAudit(options 
         lightweightSummaryReuseApplied: Boolean(activeAwareness.lightweightSummaryReuseApplied),
         headline: activeAwareness.headline || "",
         subline: activeAwareness.subline || "",
+        topAwarenessPrimaryHeadline: activeAwareness.topAwarenessPrimaryHeadline || activeAwareness.headline || "",
+        topAwarenessSecondaryContext: activeAwareness.topAwarenessSecondaryContext || activeAwareness.subline || "",
+        topAwarenessCommunityContextSource: activeAwareness.topAwarenessCommunityContextSource || "",
+        topAwarenessMode: activeAwareness.topAwarenessMode || pulseState.awarenessMode || "community",
+        topAwarenessHybridApplied: Boolean(activeAwareness.topAwarenessHybridApplied),
+        topAwarenessHybridFallbackReason: activeAwareness.topAwarenessHybridFallbackReason || "",
         lightweightLocationSourcesUsed: Array.isArray(activeAwareness.lightweightLocationSourcesUsed) ? activeAwareness.lightweightLocationSourcesUsed : [],
         lightweightLocationSourceField: activeAwareness.lightweightLocationSourceField || "",
         activeSourceTruthLayers: Array.isArray(activeAwareness.activeSourceTruthLayers) ? activeAwareness.activeSourceTruthLayers : [],
@@ -28023,6 +28049,12 @@ window.gridlyActiveAwarenessSourceAudit = function gridlyActiveAwarenessSourceAu
       rejectedAlertsPanelHeadingCandidates: alertsPanelAudit.rejectedAlertsPanelHeadingCandidates,
       rejectedRailFallbackReason: existingAlertWording.rejectedRailFallbackReason || alertsPanelAudit.rejectedRailFallbackReason || "",
       resolvedLocationLabel: activeAwareness.resolvedLocationLabel || "",
+      topAwarenessPrimaryHeadline: activeAwareness.topAwarenessPrimaryHeadline || activeAwareness.headline || topStatusPrimary || "",
+      topAwarenessSecondaryContext: activeAwareness.topAwarenessSecondaryContext || activeAwareness.subline || topStatusSecondary || "",
+      topAwarenessCommunityContextSource: activeAwareness.topAwarenessCommunityContextSource || "",
+      topAwarenessMode: activeAwareness.topAwarenessMode || gridlyCommunityPulseAuditState?.awarenessMode || "community",
+      topAwarenessHybridApplied: Boolean(activeAwareness.topAwarenessHybridApplied),
+      topAwarenessHybridFallbackReason: activeAwareness.topAwarenessHybridFallbackReason || "",
       lightweightLocationSourcesUsed: Array.isArray(activeAwareness.lightweightLocationSourcesUsed) ? activeAwareness.lightweightLocationSourcesUsed : [],
       lightweightLocationSourceField: activeAwareness.lightweightLocationSourceField || "",
       activeSourceTruthLayers: Array.isArray(activeAwareness.activeSourceTruthLayers) ? activeAwareness.activeSourceTruthLayers : [],
@@ -28118,6 +28150,12 @@ window.gridlyActiveLocationLifecycleAudit = function gridlyActiveLocationLifecyc
       activeAwarenessCount: Number(activeAwareness.activeAwarenessCount || 0),
       resolvedCategory: activeAwareness.resolvedCategory || activeAwareness.topCategory || null,
       resolvedLocationLabel: activeAwareness.resolvedLocationLabel || "",
+      topAwarenessPrimaryHeadline: activeAwareness.topAwarenessPrimaryHeadline || activeAwareness.headline || topStatusPrimary || "",
+      topAwarenessSecondaryContext: activeAwareness.topAwarenessSecondaryContext || activeAwareness.subline || topStatusSecondary || "",
+      topAwarenessCommunityContextSource: activeAwareness.topAwarenessCommunityContextSource || "",
+      topAwarenessMode: activeAwareness.topAwarenessMode || gridlyCommunityPulseAuditState?.awarenessMode || "community",
+      topAwarenessHybridApplied: Boolean(activeAwareness.topAwarenessHybridApplied),
+      topAwarenessHybridFallbackReason: activeAwareness.topAwarenessHybridFallbackReason || "",
       lightweightLocationSourcesUsed: Array.isArray(activeAwareness.lightweightLocationSourcesUsed) ? activeAwareness.lightweightLocationSourcesUsed : [],
       lightweightLocationSourceField: activeAwareness.lightweightLocationSourceField || "",
       durableLocationLabelUsed: durableLocationLabelUsed || null,
@@ -44294,15 +44332,79 @@ function getGridlyAwarenessBriefActiveState({ intel = {}, pulseModel = {} } = {}
   };
 }
 
-function getGridlyQuietAwarenessBriefCopy() {
+function buildGridlyTopAwarenessCommunityContext({ intel = {}, activeAwareness = {}, pulseModel = {}, activeState = {}, primaryHeadline = "" } = {}) {
   const town = getGridlyAwarenessBriefTownLabel();
+  const activeAwarenessCount = Math.max(0, Number(activeAwareness?.activeAwarenessCount || 0));
+  const activeReportCount = Math.max(0, Number(activeAwareness?.activeReportCount || 0));
+  const activeHazardCount = Math.max(0, Number(activeAwareness?.activeHazardCount || activeState?.activeHazardSourceCount || 0));
+  const selectedCommunityCount = Math.max(0, Number(pulseModel?.selectedCommunityCount || 0));
+  const activeLocalizedAlertCount = Math.max(0, Number(intel?.activeLocalizedAlertCount || activeState?.activeLocalizedAlertCount || 0));
+  const communityCount = Math.max(activeAwarenessCount, activeReportCount, activeHazardCount, selectedCommunityCount, activeLocalizedAlertCount);
+  const pressure = safeDisplayText(pulseModel?.mobilityPressureCategory || activeAwareness?.activityLevel || "", "").toLowerCase();
+  const normalizedPrimary = safeDisplayText(primaryHeadline, "").toLowerCase();
+  const primaryAlreadyCountSummary = /^\d+\s+active\s+(?:mobility|community|hazard|hazards|rail|road)/i.test(normalizedPrimary);
+
+  if (communityCount <= 0) {
+    return {
+      text: `No major mobility issues reported across ${town}`,
+      source: "quiet_awareness_no_active_counts",
+      fallbackReason: "no_active_awareness_items"
+    };
+  }
+
+  if (primaryAlreadyCountSummary) {
+    if (/high|heavy|elevated|severe/.test(pressure) || communityCount >= 4) {
+      return {
+        text: `Community activity elevated across ${town}`,
+        source: pressure ? "community_pulse.mobilityPressureCategory" : "active_awareness_count_threshold",
+        fallbackReason: "primary_already_contains_count_summary"
+      };
+    }
+    return {
+      text: `Community activity building across ${town}`,
+      source: pressure ? "community_pulse.mobilityPressureCategory" : "active_awareness_count_context",
+      fallbackReason: "primary_already_contains_count_summary"
+    };
+  }
+
+  if (activeHazardCount > 0 && activeHazardCount === communityCount && activeReportCount <= 0) {
+    return {
+      text: `${activeHazardCount} active ${activeHazardCount === 1 ? "hazard" : "hazards"} reported across ${town}`,
+      source: "activeAwareness.activeHazardCount",
+      fallbackReason: ""
+    };
+  }
+
+  if (communityCount > 0) {
+    return {
+      text: `${communityCount} active mobility ${communityCount === 1 ? "report" : "reports"} across ${town}`,
+      source: activeAwarenessCount > 0 ? "activeAwareness.activeAwarenessCount" : (selectedCommunityCount > 0 ? "communityPulse.selectedCommunityCount" : "localizedIntel.activeLocalizedAlertCount"),
+      fallbackReason: ""
+    };
+  }
+
+  return {
+    text: /high|heavy|elevated|severe/.test(pressure) ? `Community activity elevated across ${town}` : `Community activity building across ${town}`,
+    source: pressure ? "community_pulse.mobilityPressureCategory" : "community_context_fallback",
+    fallbackReason: pressure ? "" : "community_count_unavailable"
+  };
+}
+
+function getGridlyQuietAwarenessBriefCopy() {
+  const context = buildGridlyTopAwarenessCommunityContext();
   return {
     state: "quiet",
     greeting: getGridlyAwarenessGreetingText(),
-    primary: `No major mobility issues reported in ${town}.`,
-    secondary: "Community activity is quiet.",
+    primary: "Community Conditions Normal",
+    secondary: context.text,
     microline: "Last checked just now.",
-    microlineVisible: true
+    microlineVisible: true,
+    topAwarenessPrimaryHeadline: "Community Conditions Normal",
+    topAwarenessSecondaryContext: context.text,
+    topAwarenessCommunityContextSource: context.source,
+    topAwarenessMode: "community",
+    topAwarenessHybridApplied: false,
+    topAwarenessHybridFallbackReason: context.fallbackReason || "quiet_state_no_specific_incident"
   };
 }
 
@@ -44322,21 +44424,36 @@ function buildGridlyAwarenessBriefCopy({ intel = {}, existingAlertWording = {}, 
     ""
   );
   const freshness = safeDisplayText(intel?.topIncidentFreshnessText || activeAwareness?.freshnessText, "just now");
-  const activity = safeDisplayText(pulseModel?.mobilityPressureCategory || activeAwareness?.activityLevel, "quiet").toLowerCase();
   const communityCountLabel = pluralizeGridlyCommunityReports(activeCount);
+  const topAwarenessPrimaryHeadline = activeTitle || (activeCount >= 6 ? `Multiple disruptions reported across ${town}.` : `Mobility issue reported in ${town}.`);
+  const topAwarenessCommunityContext = buildGridlyTopAwarenessCommunityContext({
+    intel,
+    activeAwareness,
+    pulseModel,
+    activeState,
+    primaryHeadline: topAwarenessPrimaryHeadline
+  });
+  const topAwarenessMode = safeDisplayText(pulseModel?.awarenessMode || activeAwareness?.awarenessMode || (typeof getGridlyAwarenessMode === "function" ? getGridlyAwarenessMode() : "community"), "community");
+  const topAwarenessHybridApplied = Boolean((existingAlertWording?.available || activeAwareness?.topAwarenessSpecificLocationApplied || activeAwareness?.lightweightSummaryReuseApplied) && activeTitle && topAwarenessCommunityContext.text);
 
   if (activeCount >= 6) {
     return {
       state: "high",
       greeting: getGridlyAwarenessGreetingText(),
-      primary: activeTitle || `Multiple disruptions reported across ${town}.`,
-      secondary: `${activeCount} active ${activeCount === 1 ? "community report" : "community reports"}.`,
+      primary: topAwarenessPrimaryHeadline,
+      secondary: topAwarenessCommunityContext.text,
       microline: "Review before you go.",
       microlineVisible: true,
-      selectedHeadline: activeTitle || `Multiple disruptions reported across ${town}.`,
+      selectedHeadline: topAwarenessPrimaryHeadline,
       selectedSource: existingAlertWording?.source || activeAwareness?.topAwarenessHeadlineSource || "active_count_fallback",
       selectedLocationIntelligence: activeAwareness?.topAwarenessSelectedLocationIntelligence || null,
-      fallbackReason: activeAwareness?.topAwarenessFallbackReason || (activeTitle ? "" : "high_activity_generic_count_fallback")
+      fallbackReason: activeAwareness?.topAwarenessFallbackReason || (activeTitle ? "" : "high_activity_generic_count_fallback"),
+      topAwarenessPrimaryHeadline,
+      topAwarenessSecondaryContext: topAwarenessCommunityContext.text,
+      topAwarenessCommunityContextSource: topAwarenessCommunityContext.source,
+      topAwarenessMode,
+      topAwarenessHybridApplied,
+      topAwarenessHybridFallbackReason: topAwarenessHybridApplied ? "" : (topAwarenessCommunityContext.fallbackReason || "high_activity_generic_count_fallback")
     };
   }
 
@@ -44344,14 +44461,20 @@ function buildGridlyAwarenessBriefCopy({ intel = {}, existingAlertWording = {}, 
     return {
       state: "moderate",
       greeting: getGridlyAwarenessGreetingText(),
-      primary: activeTitle || `Mobility issue reported in ${town}.`,
-      secondary: activeLocation ? activeLocation : `Across ${town}`,
+      primary: topAwarenessPrimaryHeadline,
+      secondary: topAwarenessCommunityContext.text,
       microline: `${freshness} • ${communityCountLabel}`,
       microlineVisible: true,
-      selectedHeadline: activeTitle || `Mobility issue reported in ${town}.`,
+      selectedHeadline: topAwarenessPrimaryHeadline,
       selectedSource: existingAlertWording?.source || activeAwareness?.topAwarenessHeadlineSource || "awareness_brief_fallback",
       selectedLocationIntelligence: activeAwareness?.topAwarenessSelectedLocationIntelligence || null,
-      fallbackReason: activeAwareness?.topAwarenessFallbackReason || (activeTitle ? "" : "no_active_title_available")
+      fallbackReason: activeAwareness?.topAwarenessFallbackReason || (activeTitle ? "" : "no_active_title_available"),
+      topAwarenessPrimaryHeadline,
+      topAwarenessSecondaryContext: topAwarenessCommunityContext.text,
+      topAwarenessCommunityContextSource: topAwarenessCommunityContext.source,
+      topAwarenessMode,
+      topAwarenessHybridApplied,
+      topAwarenessHybridFallbackReason: topAwarenessHybridApplied ? "" : (topAwarenessCommunityContext.fallbackReason || "no_active_title_available")
     };
   }
 
@@ -44435,6 +44558,12 @@ function refreshPortraitV2LocalizedIntelligence() {
       selectedSource: awarenessBrief.selectedSource || existingAlertWording?.source || activeAwareness.topAwarenessHeadlineSource || "",
       selectedLocationIntelligence: awarenessBrief.selectedLocationIntelligence || activeAwareness.topAwarenessSelectedLocationIntelligence || null,
       fallbackReason: awarenessBrief.fallbackReason || activeAwareness.topAwarenessFallbackReason || "",
+      topAwarenessPrimaryHeadline: awarenessBrief.topAwarenessPrimaryHeadline || awarenessPrimary,
+      topAwarenessSecondaryContext: awarenessBrief.topAwarenessSecondaryContext || awarenessSecondary,
+      topAwarenessCommunityContextSource: awarenessBrief.topAwarenessCommunityContextSource || "",
+      topAwarenessMode: awarenessBrief.topAwarenessMode || pulseModel.awarenessMode || activeAwareness.awarenessMode || "community",
+      topAwarenessHybridApplied: Boolean(awarenessBrief.topAwarenessHybridApplied),
+      topAwarenessHybridFallbackReason: awarenessBrief.topAwarenessHybridFallbackReason || "",
       pulseHeadline: pulseModel.renderedPulseHeadline || activeAwareness.headline || "",
       activeReportCount: quietAwarenessState ? 0 : getGridlyAwarenessCommunityCount(intel, activeAwareness),
       activeHazardCount: quietAwarenessState ? 0 : (activeAwareness.activeHazardCount ?? 0),
