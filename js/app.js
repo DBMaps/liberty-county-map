@@ -14791,11 +14791,7 @@ function isGridlyDestinationRouteUsefulLocationLabel(value = "", primaryRoad = "
 }
 
 function getGridlyDestinationRouteRoadName(record = {}) {
-  const directRoad = getGridlyDestinationRouteFirstUsefulPath(record, [
-    "roadName", "primaryRoad", "resolvedRoadName", "displayRoadName", "routeNameDisplay", "routeName", "road", "roadway", "corridor", "highway", "nearestRoadName", "nearestRoad",
-    "raw.roadName", "raw.primaryRoad", "raw.resolvedRoadName", "raw.routeName", "raw.road", "raw.corridor", "raw.highway", "raw.nearestRoad",
-    "source.roadName", "source.primaryRoad", "source.road", "latestReport.roadName", "latestReport.primaryRoad", "latestReport.road"
-  ]);
+  const directRoad = getGridlyDestinationRouteFirstUsefulPath(record, GRIDLY_DESTINATION_ROUTE_LOCATION_FIELD_PATHS.roadName);
   const resolvedRoad = directRoad || (typeof gridlyResolveHazardHistoryRoadName === "function" ? gridlyResolveHazardHistoryRoadName(record) : "");
   const label = formatGridlyDestinationRouteLocationLabel(resolvedRoad);
   if (!isGridlyDestinationRouteUsefulLocationLabel(label)) return "";
@@ -14803,11 +14799,50 @@ function getGridlyDestinationRouteRoadName(record = {}) {
   return label;
 }
 
+const GRIDLY_DESTINATION_ROUTE_LOCATION_FIELD_PATHS = {
+  roadName: [
+    "roadName", "primaryRoad", "parsedPrimaryRoad", "resolvedRoadName", "displayRoadName", "routeNameDisplay", "routeName", "road", "roadway", "corridor", "corridorLabel", "route", "highway", "nearestRoadName", "nearestRoad",
+    "raw.roadName", "raw.primaryRoad", "raw.parsedPrimaryRoad", "raw.resolvedRoadName", "raw.displayRoadName", "raw.routeName", "raw.road", "raw.roadway", "raw.corridor", "raw.corridorLabel", "raw.route", "raw.highway", "raw.nearestRoad",
+    "source.roadName", "source.primaryRoad", "source.parsedPrimaryRoad", "source.resolvedRoadName", "source.displayRoadName", "source.routeName", "source.road", "source.roadway", "source.corridor", "source.corridorLabel", "source.route", "source.highway", "source.nearestRoad",
+    "latestReport.roadName", "latestReport.primaryRoad", "latestReport.parsedPrimaryRoad", "latestReport.resolvedRoadName", "latestReport.displayRoadName", "latestReport.routeName", "latestReport.road", "latestReport.corridor", "latestReport.route", "latestReport.highway", "latestReport.nearestRoad"
+  ],
+  referenceRoadA: [
+    "referenceRoadA", "crossStreetA", "crossStreet1", "fromStreet", "fromRoad", "startStreet", "parsedCrossRoad",
+    "raw.referenceRoadA", "raw.crossStreetA", "raw.crossStreet1", "raw.fromStreet", "raw.fromRoad", "raw.startStreet", "raw.parsedCrossRoad",
+    "source.referenceRoadA", "source.crossStreetA", "source.crossStreet1", "source.fromStreet", "source.fromRoad", "source.startStreet", "source.parsedCrossRoad",
+    "latestReport.referenceRoadA", "latestReport.crossStreetA", "latestReport.crossStreet1", "latestReport.fromStreet", "latestReport.fromRoad", "latestReport.startStreet", "latestReport.parsedCrossRoad"
+  ],
+  referenceRoadB: [
+    "referenceRoadB", "crossStreetB", "crossStreet2", "toStreet", "toRoad", "endStreet",
+    "raw.referenceRoadB", "raw.crossStreetB", "raw.crossStreet2", "raw.toStreet", "raw.toRoad", "raw.endStreet",
+    "source.referenceRoadB", "source.crossStreetB", "source.crossStreet2", "source.toStreet", "source.toRoad", "source.endStreet",
+    "latestReport.referenceRoadB", "latestReport.crossStreetB", "latestReport.crossStreet2", "latestReport.toStreet", "latestReport.toRoad", "latestReport.endStreet"
+  ],
+  referenceRoad: [
+    "referenceRoad", "nearestRoadName", "nearestCrossStreet", "nearbyCrossStreet", "nearbyRoad", "crossStreet", "crossingRoad", "intersectingRoad", "knownLocation", "locationName", "location",
+    "raw.referenceRoad", "raw.nearestRoadName", "raw.nearestCrossStreet", "raw.nearbyCrossStreet", "raw.nearbyRoad", "raw.crossStreet", "raw.crossingRoad", "raw.intersectingRoad", "raw.knownLocation", "raw.locationName", "raw.location",
+    "source.referenceRoad", "source.nearestRoadName", "source.nearestCrossStreet", "source.nearbyCrossStreet", "source.nearbyRoad", "source.crossStreet", "source.crossingRoad", "source.intersectingRoad", "source.knownLocation", "source.locationName", "source.location",
+    "latestReport.referenceRoad", "latestReport.nearestRoadName", "latestReport.nearestCrossStreet", "latestReport.nearbyCrossStreet", "latestReport.nearbyRoad", "latestReport.crossStreet", "latestReport.crossingRoad", "latestReport.intersectingRoad", "latestReport.knownLocation", "latestReport.locationName", "latestReport.location"
+  ],
+  crossingName: [
+    "crossingName", "crossing_name", "resolvedCrossingName", "crossingLabel", "crossingRoad", "crossing", "name", "area",
+    "raw.crossingName", "raw.crossing_name", "raw.resolvedCrossingName", "raw.crossingLabel", "raw.crossingRoad", "raw.crossing", "raw.name", "raw.area",
+    "source.crossingName", "source.crossing_name", "source.resolvedCrossingName", "source.crossingLabel", "source.crossingRoad", "source.crossing", "source.name", "source.area",
+    "latestReport.crossingName", "latestReport.crossing_name", "latestReport.resolvedCrossingName", "latestReport.crossingLabel", "latestReport.crossingRoad", "latestReport.crossing", "latestReport.name", "latestReport.area"
+  ],
+  locationText: [
+    "resolvedLocationLabel", "locationLabel", "locationPhrase", "localizedLocation", "localizedSpot", "knownLocation", "title", "headline", "resolvedHeadline", "localizedSummary", "description", "summary", "message", "detail",
+    "raw.resolvedLocationLabel", "raw.locationLabel", "raw.locationPhrase", "raw.localizedLocation", "raw.localizedSpot", "raw.knownLocation", "raw.title", "raw.headline", "raw.resolvedHeadline", "raw.localizedSummary", "raw.description", "raw.summary", "raw.message", "raw.detail",
+    "source.resolvedLocationLabel", "source.locationLabel", "source.locationPhrase", "source.localizedLocation", "source.localizedSpot", "source.knownLocation", "source.title", "source.headline", "source.resolvedHeadline", "source.localizedSummary", "source.description", "source.summary", "source.message", "source.detail",
+    "latestReport.resolvedLocationLabel", "latestReport.locationLabel", "latestReport.locationPhrase", "latestReport.localizedLocation", "latestReport.localizedSpot", "latestReport.knownLocation", "latestReport.title", "latestReport.headline", "latestReport.resolvedHeadline", "latestReport.localizedSummary", "latestReport.description", "latestReport.summary", "latestReport.message", "latestReport.detail"
+  ]
+};
+
 function getGridlyDestinationRouteReferenceLabels(record = {}, primaryRoad = "") {
   const candidates = [
-    getGridlyDestinationRouteFirstUsefulPath(record, ["referenceRoadA", "crossStreetA", "crossStreet1", "fromStreet", "fromRoad", "raw.referenceRoadA", "raw.crossStreetA", "latestReport.referenceRoadA"]),
-    getGridlyDestinationRouteFirstUsefulPath(record, ["referenceRoadB", "crossStreetB", "crossStreet2", "toStreet", "toRoad", "raw.referenceRoadB", "raw.crossStreetB", "latestReport.referenceRoadB"]),
-    getGridlyDestinationRouteFirstUsefulPath(record, ["referenceRoad", "nearestCrossStreet", "nearbyCrossStreet", "crossStreet", "crossingRoad", "intersectingRoad", "knownLocation", "locationName", "raw.referenceRoad", "raw.nearestCrossStreet", "raw.crossStreet", "raw.crossingRoad", "latestReport.referenceRoad", "latestReport.crossStreet"])
+    getGridlyDestinationRouteFirstUsefulPath(record, GRIDLY_DESTINATION_ROUTE_LOCATION_FIELD_PATHS.referenceRoadA),
+    getGridlyDestinationRouteFirstUsefulPath(record, GRIDLY_DESTINATION_ROUTE_LOCATION_FIELD_PATHS.referenceRoadB),
+    getGridlyDestinationRouteFirstUsefulPath(record, GRIDLY_DESTINATION_ROUTE_LOCATION_FIELD_PATHS.referenceRoad)
   ];
   const seen = new Set();
   return candidates
@@ -14822,36 +14857,12 @@ function getGridlyDestinationRouteReferenceLabels(record = {}, primaryRoad = "")
 }
 
 function getGridlyDestinationRouteCrossingLabel(record = {}, primaryRoad = "") {
-  const label = formatGridlyDestinationRouteLocationLabel(getGridlyDestinationRouteFirstUsefulPath(record, [
-    "crossingName", "resolvedCrossingName", "crossingLabel", "crossingRoad", "crossing", "name", "raw.crossingName", "raw.resolvedCrossingName", "raw.crossingLabel", "raw.crossingRoad", "latestReport.crossingName"
-  ]));
+  const label = formatGridlyDestinationRouteLocationLabel(getGridlyDestinationRouteFirstUsefulPath(record, GRIDLY_DESTINATION_ROUTE_LOCATION_FIELD_PATHS.crossingName));
   return isGridlyDestinationRouteUsefulLocationLabel(label, primaryRoad) ? label : "";
 }
 
 function getGridlyDestinationRouteCompositeLocationText(record = {}) {
-  return pickGridlyDestinationRouteFirstText(
-    record?.resolvedLocationLabel,
-    record?.locationLabel,
-    record?.locationPhrase,
-    record?.localizedLocation,
-    record?.localizedSpot,
-    record?.knownLocation,
-    record?.title,
-    record?.headline,
-    record?.resolvedHeadline,
-    record?.localizedSummary,
-    record?.description,
-    record?.summary,
-    record?.message,
-    record?.raw?.resolvedLocationLabel,
-    record?.raw?.locationLabel,
-    record?.raw?.locationPhrase,
-    record?.raw?.localizedSummary,
-    record?.latestReport?.resolvedLocationLabel,
-    record?.latestReport?.locationLabel,
-    record?.latestReport?.locationPhrase,
-    record?.latestReport?.description
-  );
+  return getGridlyDestinationRouteFirstUsefulPath(record, GRIDLY_DESTINATION_ROUTE_LOCATION_FIELD_PATHS.locationText);
 }
 
 function stripGridlyDestinationRouteHazardPrefix(value = "") {
@@ -14864,20 +14875,39 @@ function stripGridlyDestinationRouteHazardPrefix(value = "") {
 function parseGridlyDestinationRouteCompositeLocation(record = {}) {
   const text = stripGridlyDestinationRouteHazardPrefix(getGridlyDestinationRouteCompositeLocationText(record));
   if (!text) return {};
-  const between = text.match(/^(.+?)\s+between\s+(.+?)\s+and\s+(.+)$/i);
+  const between = text.match(/^(?:on\s+)?(.+?)\s+between\s+(.+?)\s+and\s+(.+?)(?:\s*[•·|].*)?$/i);
   if (between) {
     const roadName = formatGridlyDestinationRouteLocationLabel(between[1]);
     const referenceRoadA = formatGridlyDestinationRouteLocationLabel(between[2]);
     const referenceRoadB = formatGridlyDestinationRouteLocationLabel(between[3]);
     if (roadName && referenceRoadA && referenceRoadB) return { roadName, referenceRoadA, referenceRoadB, referenceRoad: referenceRoadA };
   }
-  const atOrNear = text.match(/^(.+?)\s+(at|near)\s+(.+)$/i);
+  const atOrNear = text.match(/^(?:on\s+)?(.+?)\s+(at|near)\s+(.+?)(?:\s*[•·|].*)?$/i);
   if (atOrNear) {
     const roadName = formatGridlyDestinationRouteLocationLabel(atOrNear[1]);
     const referenceRoad = formatGridlyDestinationRouteLocationLabel(atOrNear[3]);
     if (roadName && referenceRoad) return { roadName, referenceRoad, referenceRoadA: referenceRoad };
   }
+  const atIntersection = text.match(/^at\s+(.+?)\s+(?:and|&)\s+(.+?)(?:\s*[•·|].*)?$/i);
+  if (atIntersection) {
+    const roadName = formatGridlyDestinationRouteLocationLabel(atIntersection[1]);
+    const referenceRoad = formatGridlyDestinationRouteLocationLabel(atIntersection[2]);
+    if (roadName && referenceRoad) return { roadName, referenceRoad, referenceRoadA: referenceRoad };
+  }
   return {};
+}
+
+function collectGridlyDestinationRouteAvailableLocationFields(record = {}, meta = {}) {
+  const fields = {};
+  Object.entries(GRIDLY_DESTINATION_ROUTE_LOCATION_FIELD_PATHS).forEach(([groupName, paths]) => {
+    const value = getGridlyDestinationRouteFirstUsefulPath(record, paths);
+    if (value) fields[groupName] = value;
+  });
+  ["roadName", "referenceRoad", "referenceRoadA", "referenceRoadB", "crossingName"].forEach((key) => {
+    const value = String(meta?.[key] || "").trim();
+    if (value) fields[`resolved.${key}`] = value;
+  });
+  return fields;
 }
 
 function buildGridlyDestinationRouteLocationMeta(record = {}) {
@@ -14912,17 +14942,50 @@ function getGridlyDestinationRouteBestLocationLine(item = {}, options = {}) {
   return "";
 }
 
+function getGridlyDestinationRouteLocationRank(match = {}) {
+  const roadName = formatGridlyDestinationRouteLocationLabel(match?.roadName);
+  const referenceRoadA = formatGridlyDestinationRouteLocationLabel(match?.referenceRoadA || match?.referenceRoad);
+  const referenceRoadB = formatGridlyDestinationRouteLocationLabel(match?.referenceRoadB);
+  const crossingName = formatGridlyDestinationRouteLocationLabel(match?.crossingName);
+  if (roadName && isGridlyDestinationRouteUsefulLocationLabel(referenceRoadA, roadName) && isGridlyDestinationRouteUsefulLocationLabel(referenceRoadB, roadName)) return 4;
+  if (roadName && isGridlyDestinationRouteUsefulLocationLabel(referenceRoadA, roadName)) return 3;
+  if (roadName && isGridlyDestinationRouteUsefulLocationLabel(crossingName, roadName)) return 2;
+  if (roadName) return 1;
+  if (crossingName) return 1;
+  return 0;
+}
+
 function selectGridlyDestinationRouteBestLocationMatch(matches = [], options = {}) {
-  const usableMatches = (Array.isArray(matches) ? matches : [])
-    .map((match) => ({ match, line: getGridlyDestinationRouteBestLocationLine(match, options) }))
-    .filter((entry) => entry.line);
-  if (usableMatches.length === 0) return { match: null, locationLine: "" };
-  return usableMatches.sort((a, b) => {
-    const aSpecificity = a.match?.referenceRoadB ? 4 : a.match?.referenceRoadA || a.match?.referenceRoad || a.match?.crossingName ? 3 : a.match?.roadName ? 1 : 0;
-    const bSpecificity = b.match?.referenceRoadB ? 4 : b.match?.referenceRoadA || b.match?.referenceRoad || b.match?.crossingName ? 3 : b.match?.roadName ? 1 : 0;
-    if (bSpecificity !== aSpecificity) return bSpecificity - aSpecificity;
+  const inspectedMatches = (Array.isArray(matches) ? matches : [])
+    .map((match) => ({
+      match,
+      line: getGridlyDestinationRouteBestLocationLine(match, options),
+      rank: getGridlyDestinationRouteLocationRank(match)
+    }));
+  const usableMatches = inspectedMatches.filter((entry) => entry.line && entry.rank > 0);
+  if (usableMatches.length === 0) {
+    const consideredWithFields = inspectedMatches.filter((entry) => Object.keys(entry.match?.sourceLocationFields || {}).length > 0).length;
+    return {
+      match: null,
+      locationLine: "",
+      locationRank: 0,
+      availableLocationFields: [],
+      emptyReason: inspectedMatches.length === 0
+        ? "no_matches_considered"
+        : (consideredWithFields > 0 ? "matched_sources_have_no_display_safe_location" : "matched_sources_have_no_location_fields")
+    };
+  }
+  const selected = usableMatches.sort((a, b) => {
+    if (b.rank !== a.rank) return b.rank - a.rank;
     return Number(a.match?.distanceFromRouteFeet || 0) - Number(b.match?.distanceFromRouteFeet || 0);
   })[0];
+  return {
+    match: selected.match,
+    locationLine: selected.line,
+    locationRank: selected.rank,
+    availableLocationFields: selected.match?.sourceLocationFields || {},
+    emptyReason: ""
+  };
 }
 
 function getGridlyDistanceFromDestinationRouteFeet(lat, lng, routePoints = []) {
@@ -14945,6 +15008,7 @@ function buildGridlyDestinationRouteMatch(record = {}, routePoints = [], fallbac
     if (!coord) return null;
     const distanceFromRouteFeet = getGridlyDistanceFromDestinationRouteFeet(coord.lat, coord.lng, routePoints);
     if (!Number.isFinite(Number(distanceFromRouteFeet))) return null;
+    const locationMeta = buildGridlyDestinationRouteLocationMeta(record);
     return {
       id: getGridlyDestinationRouteObjectId(record, fallback.id || `${fallback.type || "item"}-${fallback.index ?? 0}`),
       type: getGridlyDestinationRouteObjectType(record, fallback.type || "intelligence"),
@@ -14964,7 +15028,8 @@ function buildGridlyDestinationRouteMatch(record = {}, routePoints = [], fallbac
         record?.raw?.description,
         record?.latestReport?.description
       ),
-      ...buildGridlyDestinationRouteLocationMeta(record)
+      sourceLocationFields: collectGridlyDestinationRouteAvailableLocationFields(record, locationMeta),
+      ...locationMeta
     };
   } catch (_) {
     return null;
@@ -15152,7 +15217,7 @@ function getGridlyDestinationRoutePrimaryImpactReason(impactLevel = "none", matc
   return getGridlyDestinationRouteImpactCopy(impactLevel);
 }
 
-function getGridlyDestinationRoutePrimaryImpactLocation(impactLevel = "none", matches = {}) {
+function getGridlyDestinationRoutePrimaryImpactLocationSelection(impactLevel = "none", matches = {}) {
   const railMatches = Array.isArray(matches.railMatches) ? matches.railMatches : [];
   const closureMatches = Array.isArray(matches.closureMatches) ? matches.closureMatches : [];
   const constructionMatches = Array.isArray(matches.constructionMatches) ? matches.constructionMatches : [];
@@ -15160,17 +15225,45 @@ function getGridlyDestinationRoutePrimaryImpactLocation(impactLevel = "none", ma
   const alertMatches = Array.isArray(matches.alertMatches) ? matches.alertMatches : [];
   const reportMatches = Array.isArray(matches.reportMatches) ? matches.reportMatches : [];
   const orderedGroups = [];
-  if (String(impactLevel || "none") === "high" && railMatches.length > 0) orderedGroups.push({ matches: railMatches, preferAt: true });
-  if (closureMatches.length > 0) orderedGroups.push({ matches: closureMatches, preferAt: true });
-  if (constructionMatches.length > 0) orderedGroups.push({ matches: constructionMatches, preferAt: false });
-  if (hazardMatches.length > 0 || alertMatches.length > 0) orderedGroups.push({ matches: [...hazardMatches, ...alertMatches], preferAt: false });
-  if (reportMatches.length > 0) orderedGroups.push({ matches: reportMatches, preferAt: false });
+  if (String(impactLevel || "none") === "high" && railMatches.length > 0) orderedGroups.push({ name: "railMatches", matches: railMatches, preferAt: true });
+  if (closureMatches.length > 0) orderedGroups.push({ name: "closureMatches", matches: closureMatches, preferAt: true });
+  if (constructionMatches.length > 0) orderedGroups.push({ name: "constructionMatches", matches: constructionMatches, preferAt: false });
+  if (hazardMatches.length > 0 || alertMatches.length > 0) orderedGroups.push({ name: "hazardAlertMatches", matches: [...hazardMatches, ...alertMatches], preferAt: false });
+  if (reportMatches.length > 0) orderedGroups.push({ name: "reportMatches", matches: reportMatches, preferAt: false });
 
+  let lastEmptyReason = orderedGroups.length > 0 ? "matched_sources_have_no_location_fields" : "no_impact_source_matches";
   for (const group of orderedGroups) {
     const selected = selectGridlyDestinationRouteBestLocationMatch(group.matches, { preferAt: group.preferAt });
-    if (selected?.locationLine) return selected.locationLine;
+    if (selected?.locationLine) {
+      return {
+        selectedImpactSourceId: getGridlyDestinationRouteObjectId(selected.match, ""),
+        selectedImpactSourceType: getGridlyDestinationRouteObjectType(selected.match, ""),
+        selectedImpactSourceGroup: group.name,
+        selectedImpactSourceTitle: selected.match?.title || "",
+        selectedImpactSourceDistanceFeet: Number.isFinite(Number(selected.match?.distanceFromRouteFeet)) ? Number(selected.match.distanceFromRouteFeet) : null,
+        selectedImpactSourceLocationRank: selected.locationRank || 0,
+        availableLocationFields: selected.availableLocationFields || {},
+        selectedPrimaryImpactLocation: selected.locationLine,
+        emptyReason: ""
+      };
+    }
+    if (selected?.emptyReason) lastEmptyReason = selected.emptyReason;
   }
-  return "";
+  return {
+    selectedImpactSourceId: "",
+    selectedImpactSourceType: "",
+    selectedImpactSourceGroup: "",
+    selectedImpactSourceTitle: "",
+    selectedImpactSourceDistanceFeet: null,
+    selectedImpactSourceLocationRank: 0,
+    availableLocationFields: {},
+    selectedPrimaryImpactLocation: "",
+    emptyReason: lastEmptyReason
+  };
+}
+
+function getGridlyDestinationRoutePrimaryImpactLocation(impactLevel = "none", matches = {}) {
+  return getGridlyDestinationRoutePrimaryImpactLocationSelection(impactLevel, matches).selectedPrimaryImpactLocation || "";
 }
 
 function isGridlyDestinationRouteHighImpactMatch(item = {}) {
@@ -15235,10 +15328,12 @@ function buildGridlyDestinationRouteImpactAudit() {
   const primaryImpactReason = routeFound
     ? getGridlyDestinationRoutePrimaryImpactReason(impactLevel, primaryImpactReasonMatches)
     : "";
-  const primaryImpactLocation = routeFound
-    ? getGridlyDestinationRoutePrimaryImpactLocation(impactLevel, primaryImpactReasonMatches)
-    : "";
+  const primaryImpactLocationSelection = routeFound
+    ? getGridlyDestinationRoutePrimaryImpactLocationSelection(impactLevel, primaryImpactReasonMatches)
+    : { selectedPrimaryImpactLocation: "", emptyReason: "route_not_found", availableLocationFields: {} };
+  const primaryImpactLocation = primaryImpactLocationSelection.selectedPrimaryImpactLocation || "";
   if (primaryImpactLocation) reasoning.push(`Best available location: ${primaryImpactLocation}`);
+  else if (routeFound) reasoning.push(`Primary impact location empty: ${primaryImpactLocationSelection.emptyReason || "unknown"}`);
 
   return {
     loaded: true,
@@ -15248,6 +15343,14 @@ function buildGridlyDestinationRouteImpactAudit() {
     confidenceLabel,
     primaryImpactReason,
     primaryImpactLocation,
+    selectedImpactSourceId: primaryImpactLocationSelection.selectedImpactSourceId || "",
+    selectedImpactSourceType: primaryImpactLocationSelection.selectedImpactSourceType || "",
+    selectedImpactSourceGroup: primaryImpactLocationSelection.selectedImpactSourceGroup || "",
+    selectedImpactSourceTitle: primaryImpactLocationSelection.selectedImpactSourceTitle || "",
+    selectedImpactSourceDistanceFeet: primaryImpactLocationSelection.selectedImpactSourceDistanceFeet ?? null,
+    selectedImpactSourceLocationRank: primaryImpactLocationSelection.selectedImpactSourceLocationRank || 0,
+    selectedImpactSourceLocationFields: primaryImpactLocationSelection.availableLocationFields || {},
+    primaryImpactLocationEmptyReason: primaryImpactLocationSelection.emptyReason || "",
     hazardsConsidered,
     alertsConsidered,
     reportsConsidered,
@@ -15268,6 +15371,14 @@ window.gridlyDestinationRouteImpactAudit = function gridlyDestinationRouteImpact
       confidenceLabel: "Low confidence",
       primaryImpactReason: "",
       primaryImpactLocation: "",
+      selectedImpactSourceId: "",
+      selectedImpactSourceType: "",
+      selectedImpactSourceGroup: "",
+      selectedImpactSourceTitle: "",
+      selectedImpactSourceDistanceFeet: null,
+      selectedImpactSourceLocationRank: 0,
+      selectedImpactSourceLocationFields: {},
+      primaryImpactLocationEmptyReason: "destination_route_impact_error",
       hazardsConsidered: 0,
       alertsConsidered: 0,
       reportsConsidered: 0,
@@ -15285,6 +15396,15 @@ window.gridlyDestinationRouteImpactDebug = function gridlyDestinationRouteImpact
     confidenceLabel: audit.confidenceLabel,
     primaryImpactReason: audit.primaryImpactReason,
     primaryImpactLocation: audit.primaryImpactLocation,
+    selectedImpactSourceId: audit.selectedImpactSourceId || "",
+    selectedImpactSourceType: audit.selectedImpactSourceType || "",
+    selectedImpactSourceGroup: audit.selectedImpactSourceGroup || "",
+    selectedImpactSourceTitle: audit.selectedImpactSourceTitle || "",
+    selectedImpactSourceDistanceFeet: audit.selectedImpactSourceDistanceFeet ?? null,
+    selectedImpactSourceLocationRank: audit.selectedImpactSourceLocationRank || 0,
+    selectedImpactSourceLocationFields: audit.selectedImpactSourceLocationFields || {},
+    selectedPrimaryImpactLocation: audit.primaryImpactLocation || "",
+    primaryImpactLocationEmptyReason: audit.primaryImpactLocationEmptyReason || "",
     reasoning: audit.reasoning
   };
 };
