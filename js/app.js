@@ -1964,6 +1964,265 @@ window.gridlyMarkerVisualAudit = function gridlyMarkerVisualAudit() {
   };
 };
 
+const GRIDLY_VISUAL_HIERARCHY_AUDIT_VERSION = "V219";
+const GRIDLY_VISUAL_HIERARCHY_OWNERSHIP_MODEL = [
+  { rank: 1, owner: "route_impact", label: "Route Impact", beats: "Everything generic; personal route relevance wins.", expectedStyles: ["rail_route_impact", "txdot_route_impact"], expectedZoom: "far", expectedZIndexFloor: 34 },
+  { rank: 2, owner: "high_impact_hazard", label: "High Impact Hazard", beats: "Major non-route disruption.", expectedStyles: ["hazard_critical"], expectedZoom: "far", expectedZIndexFloor: 40 },
+  { rank: 3, owner: "blocked_crossing", label: "Blocked Crossing", beats: "Immediate rail mobility delay.", expectedStyles: ["rail_blocked"], expectedZoom: "mid", expectedZIndexFloor: 30 },
+  { rank: 4, owner: "active_hazard", label: "Road Hazard", beats: "Live roadway/community issue.", expectedStyles: ["hazard_high", "hazard_moderate", "txdot_corridor"], expectedZoom: "mid", expectedZIndexFloor: 16 },
+  { rank: 5, owner: "community_alert", label: "Community Alert", beats: "Report context that is active but lower urgency.", expectedStyles: ["hazard_low", "txdot_single"], expectedZoom: "near", expectedZIndexFloor: 10 },
+  { rank: 6, owner: "historical_pattern", label: "Historical Pattern", beats: "Context only; must not compete with live incidents.", expectedStyles: [], expectedZoom: "close", expectedZIndexFloor: 0 },
+  { rank: 7, owner: "infrastructure", label: "Normal Crossing", beats: "Baseline crossing inventory only.", expectedStyles: ["rail_clear", "unknown_quiet"], expectedZoom: "close", expectedZIndexFloor: 0 }
+];
+const GRIDLY_VISUAL_HIERARCHY_CLUSTER_RULE = [
+  "route_impact",
+  "high_impact_hazard",
+  "blocked_crossing",
+  "active_hazard",
+  "historical_pattern",
+  "infrastructure"
+];
+
+function gridlyVisualHierarchySafeArray(value) {
+  return Array.isArray(value) ? value : [];
+}
+
+function gridlyVisualHierarchyCountBy(list, keyFn) {
+  return gridlyVisualHierarchySafeArray(list).reduce((acc, item) => {
+    const key = String(keyFn(item) || "unknown");
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+}
+
+function gridlyGetMarkerDomInventory() {
+  if (typeof document === "undefined") return { markerDomAvailable: false, markers: [], countsByVisualStyle: {}, countsByOwner: {} };
+  const nodes = Array.from(document.querySelectorAll("#map .leaflet-marker-pane .leaflet-marker-icon"));
+  const markers = nodes.map((node, index) => {
+    const visualNode = node.matches?.("[data-visual-style]") ? node : node.querySelector?.("[data-visual-style]");
+    const markerNode = node.querySelector?.(".gridly-marker, .gridly-hazard-marker") || visualNode || node;
+    const visualStyle = visualNode?.getAttribute?.("data-visual-style") || "unclassified_dom_marker";
+    const config = getGridlyMarkerHierarchyConfig(visualStyle);
+    const style = typeof getComputedStyle === "function" ? getComputedStyle(node) : {};
+    const lat = visualNode?.getAttribute?.("data-lat") || markerNode?.getAttribute?.("data-lat") || null;
+    const lng = visualNode?.getAttribute?.("data-lng") || markerNode?.getAttribute?.("data-lng") || null;
+    const owner = gridlyResolveVisualHierarchyOwner({ visualStyle, markerNode, config });
+    return {
+      index,
+      visualStyle,
+      owner,
+      priorityRank: config.priorityRank,
+      zIndexOffset: config.zIndexOffset,
+      cssZIndex: style?.zIndex || "",
+      className: String(node.className || ""),
+      dataState: markerNode?.getAttribute?.("data-state") || "",
+      dataRouteRelevance: markerNode?.getAttribute?.("data-route-relevance") || "",
+      dataConsequence: markerNode?.getAttribute?.("data-gridly-consequence") || "",
+      lat,
+      lng
+    };
+  });
+  return {
+    markerDomAvailable: true,
+    markers,
+    totalMarkerDomCount: markers.length,
+    countsByVisualStyle: gridlyVisualHierarchyCountBy(markers, (marker) => marker.visualStyle),
+    countsByOwner: gridlyVisualHierarchyCountBy(markers, (marker) => marker.owner),
+    topDomMarkersByHierarchy: markers
+      .slice()
+      .sort((a, b) => Number(a.priorityRank || 99) - Number(b.priorityRank || 99))
+      .slice(0, 12)
+  };
+}
+
+function gridlyResolveVisualHierarchyOwner({ visualStyle = "", markerNode = null, config = null, incident = null } = {}) {
+  const style = String(visualStyle || "").toLowerCase();
+  const text = `${style} ${String(markerNode?.className || "").toLowerCase()} ${String(incident?.type || incident?.category || incident?.status || incident?.report_type || "").toLowerCase()}`;
+  const routeRelevant = /route-impact|route_impact|route-relevant/.test(text) || Boolean(incident?.routeImpact);
+  if (routeRelevant) return "route_impact";
+  if (/critical|road_closed|closure|impassable/.test(text)) return "high_impact_hazard";
+  if (/rail_blocked|state-blocked|blocked crossing|train blocking|\bblocked\b/.test(text)) return "blocked_crossing";
+  if (/hazard_high|hazard_moderate|txdot_corridor|active|crash|flood|debris|construction|disabled|traffic_backup/.test(text)) return "active_hazard";
+  if (/history|historical|pattern/.test(text)) return "historical_pattern";
+  if (/hazard_low|txdot_single|community|alert/.test(text)) return "community_alert";
+  if (/rail_clear|normal|unknown_quiet|infrastructure|crossing/.test(text)) return "infrastructure";
+  if (config?.emphasisLevel === "route-impact") return "route_impact";
+  if (config?.emphasisLevel === "critical") return "high_impact_hazard";
+  if (config?.emphasisLevel === "high") return style.includes("rail") ? "blocked_crossing" : "active_hazard";
+  return "infrastructure";
+}
+
+function gridlyGetLayerInventory() {
+  const layerRows = [
+    { name: "crossingLayer", layer: crossingLayer, owner: "crossing ownership", expectedRole: "normal, blocked, and recently cleared rail crossings" },
+    { name: "unifiedIncidentLayer", layer: unifiedIncidentLayer, owner: "hazard ownership", expectedRole: "active community roadway hazards" },
+    { name: "savedRouteLayer", layer: savedRouteLayer, owner: "route ownership", expectedRole: "selected/saved route polyline" },
+    { name: "destinationRoutePreviewLayer", layer: destinationRoutePreviewLayer, owner: "destination ownership", expectedRole: "destination route preview" },
+    { name: "corridorIntelLayer", layer: corridorIntelLayer, owner: "historical/context ownership", expectedRole: "corridor intelligence overlays" }
+  ];
+  return layerRows.map((row) => ({
+    name: row.name,
+    owner: row.owner,
+    expectedRole: row.expectedRole,
+    exists: Boolean(row.layer),
+    onMap: Boolean(map && row.layer && typeof map.hasLayer === "function" ? map.hasLayer(row.layer) : row.layer),
+    layerCount: typeof row.layer?.getLayers === "function" ? row.layer.getLayers().length : null
+  }));
+}
+
+function gridlyGetZoomOwnershipAudit() {
+  const zoom = map?.getZoom?.() ?? null;
+  return {
+    currentZoom: zoom,
+    thresholds: {
+      far: "route impacts, major hazards, blocked crossings only",
+      mid: "active hazards, active crossings, route impacts",
+      close: "individual reports, crossings, details, history",
+      distantCrossingMinZoom: typeof DISTANT_CROSSING_MIN_ZOOM !== "undefined" ? DISTANT_CROSSING_MIN_ZOOM : null
+    },
+    implementationSignals: {
+      crossingVisibilityFunction: typeof shouldShowDistantInactiveCrossing === "function" ? "shouldShowDistantInactiveCrossing() hides inactive crossings below DISTANT_CROSSING_MIN_ZOOM" : "missing",
+      incidentZoomFunction: typeof getGridlyZoomBehavior === "function" ? "getGridlyZoomBehavior() classifies incidents as far/mid/near" : "missing",
+      renderCrossingsOnZoomMove: typeof scheduleRenderCrossings === "function" ? "map zoomend/moveend schedules crossing rerender" : "missing"
+    }
+  };
+}
+
+function gridlyGetClusterOwnershipAudit() {
+  const visibleCrossings = typeof getVisibleCrossingsForFilter === "function" ? getVisibleCrossingsForFilter("visual-hierarchy-audit") : [];
+  const crossingClusterState = typeof buildSmartIncidentClusters === "function" ? buildSmartIncidentClusters(visibleCrossings) : null;
+  return {
+    universalClusterRule: GRIDLY_VISUAL_HIERARCHY_CLUSTER_RULE,
+    currentCrossingClusterBehavior: crossingClusterState ? {
+      hiddenCrossingCount: crossingClusterState.hiddenIds?.size || 0,
+      clusterLeadCount: crossingClusterState.leadCounts?.size || 0,
+      leadCounts: crossingClusterState.leadCounts ? Array.from(crossingClusterState.leadCounts.entries()).slice(0, 12) : [],
+      ruleObserved: "Crossing clusters choose active crossing leader by blocked/heavy severity, then freshest report.",
+      gap: "Only active crossings use smart clustering today; route impacts and hazards are not yet resolved through one universal cluster winner function."
+    } : {
+      hiddenCrossingCount: 0,
+      clusterLeadCount: 0,
+      ruleObserved: "No crossing cluster state available.",
+      gap: "Cluster audit could not execute buildSmartIncidentClusters()."
+    },
+    hazardClusterBehavior: {
+      dedupeFunction: typeof getUnifiedIncidentRenderKey === "function" && typeof choosePreferredIncidentCandidate === "function" ? "Unified incidents dedupe before render." : "missing or unknown",
+      lastDuplicateIncidentCount: Number(lastMarkerAuditDebug?.duplicateIncidentCount || 0),
+      gap: "Hazard dedupe is not the same as visual cluster ownership; it does not yet apply the V219 winner stack across all object types."
+    }
+  };
+}
+
+function gridlyGetOwnershipSamples() {
+  const visualStates = typeof window.gridlyIncidentVisualStateAudit === "function" ? window.gridlyIncidentVisualStateAudit() : {};
+  const crossingSamples = gridlyVisualHierarchySafeArray(crossings).slice(0, 8).map((crossing) => {
+    const report = typeof getLatestReportForCrossing === "function" ? getLatestReportForCrossing(crossing.id) : null;
+    const lifecycleState = typeof getIncidentLifecycleState === "function" ? getIncidentLifecycleState(report) : "unknown";
+    const isOnSavedRoute = typeof savedRouteCrossingIds !== "undefined" && savedRouteCrossingIds?.has?.(String(crossing.id));
+    const reportType = String(report?.type || "").toLowerCase();
+    const visualStyle = isOnSavedRoute && lifecycleState === "active" ? "rail_route_impact" : reportType === "blocked" ? "rail_blocked" : "rail_clear";
+    return {
+      id: crossing.id,
+      name: crossing.name || crossing.road || crossing.street || "Crossing",
+      lifecycleState,
+      reportType: reportType || "none",
+      isOnSavedRoute: Boolean(isOnSavedRoute),
+      visualStyle,
+      owner: gridlyResolveVisualHierarchyOwner({ visualStyle, incident: report })
+    };
+  });
+  const historicalState = typeof gridlyReadEventHistoryState === "function" ? gridlyReadEventHistoryState() : {};
+  return {
+    routeOwnership: {
+      routeWatchActivated: Boolean(routeWatchActivated),
+      savedRouteCrossingCount: typeof savedRouteCrossingIds !== "undefined" ? savedRouteCrossingIds.size : null,
+      routeLayerCount: typeof savedRouteLayer?.getLayers === "function" ? savedRouteLayer.getLayers().length : null
+    },
+    hazardOwnership: {
+      activeHazards: gridlyVisualHierarchySafeArray(activeHazards).length,
+      activeReports: gridlyVisualHierarchySafeArray(activeReports).length,
+      unifiedIncidentSamples: gridlyVisualHierarchySafeArray(visualStates?.samples).slice(0, 8)
+    },
+    crossingOwnership: {
+      crossingCount: gridlyVisualHierarchySafeArray(crossings).length,
+      renderedCrossingMarkerCount: crossingMarkers instanceof Map ? crossingMarkers.size : null,
+      samples: crossingSamples
+    },
+    historicalOwnership: {
+      hazardEvents: gridlyVisualHierarchySafeArray(historicalState?.hazardEvents).length,
+      crossingEvents: gridlyVisualHierarchySafeArray(historicalState?.crossingEvents).length,
+      renderedHistoricalPatternMarkers: typeof document !== "undefined" ? document.querySelectorAll("#map .gridly-historical-pattern-marker, #map [data-visual-owner='historical_pattern']").length : 0,
+      guidance: "Historical records exist as context/intelligence; this audit expects them to remain below live map objects."
+    }
+  };
+}
+
+function gridlyEvaluateVisualHierarchyFindings(audit) {
+  const findings = [];
+  const configs = audit?.markerVisualConfigs || {};
+  if (configs.hazard_critical?.priorityRank >= configs.rail_route_impact?.priorityRank) {
+    findings.push({ severity: "review", area: "priority stack", finding: "Critical hazards are ranked equal to or below rail route impact; V219 says route impact should win, but equality should be intentional and documented." });
+  }
+  if ((configs.txdot_route_impact?.zIndexOffset || 0) < (configs.hazard_critical?.zIndexOffset || 0)) {
+    findings.push({ severity: "gap", area: "z-index ownership", finding: "TxDOT route impact has lower configured zIndexOffset than critical hazard, so route relevance may not visually outrank high impact hazards." });
+  }
+  if ((configs.rail_route_impact?.zIndexOffset || 0) < (configs.hazard_critical?.zIndexOffset || 0)) {
+    findings.push({ severity: "gap", area: "z-index ownership", finding: "Rail route impact has lower configured zIndexOffset than critical hazard, so personal relevance may not always dominate generic critical hazard markers." });
+  }
+  if (!audit?.selectionBehavior?.selectedMarkerDominanceFunctionFound) {
+    findings.push({ severity: "gap", area: "selection behavior", finding: "No dedicated selected-marker dominance function was found by the audit; selected incidents may not become the single dominant object on screen." });
+  }
+  if (audit?.clusterOwnership?.currentCrossingClusterBehavior?.gap) {
+    findings.push({ severity: "gap", area: "cluster rule", finding: audit.clusterOwnership.currentCrossingClusterBehavior.gap });
+  }
+  if (Number(audit?.ownershipSamples?.historicalOwnership?.renderedHistoricalPatternMarkers || 0) > 0) {
+    findings.push({ severity: "check", area: "historical ownership", finding: "Historical pattern markers are currently rendered; verify they remain visually below all live hazard and route-impact markers." });
+  }
+  if (!findings.length) {
+    findings.push({ severity: "pass", area: "baseline inventory", finding: "No obvious hierarchy violations detected from static configs and current DOM inventory." });
+  }
+  return findings;
+}
+
+window.gridlyVisualHierarchyAudit = function gridlyVisualHierarchyAudit(options = {}) {
+  const markerVisualConfigs = Object.fromEntries(Object.entries(GRIDLY_MARKER_VISUALS).map(([style, config]) => [style, getGridlyMarkerHierarchyConfig(style)]));
+  const audit = {
+    version: GRIDLY_VISUAL_HIERARCHY_AUDIT_VERSION,
+    mission: "Inventory the current map rendering hierarchy before changing visuals.",
+    principle: "The map is the product; live and personally relevant information must beat historical/contextual information.",
+    generatedAt: new Date().toISOString(),
+    ownershipModel: GRIDLY_VISUAL_HIERARCHY_OWNERSHIP_MODEL,
+    clusterRule: GRIDLY_VISUAL_HIERARCHY_CLUSTER_RULE,
+    markerVisualConfigs,
+    layerInventory: gridlyGetLayerInventory(),
+    domInventory: gridlyGetMarkerDomInventory(),
+    zoomOwnership: gridlyGetZoomOwnershipAudit(),
+    clusterOwnership: gridlyGetClusterOwnershipAudit(),
+    ownershipSamples: gridlyGetOwnershipSamples(),
+    selectionBehavior: {
+      focusAlertMarkerOnMap: typeof window.focusAlertMarkerOnMap === "function" ? "available" : "missing",
+      crossingPopupFocus: typeof finalizeOpenCrossingPopup === "function" ? "available" : "missing",
+      selectedMarkerDominanceFunctionFound: Boolean(typeof window.focusAlertMarkerOnMap === "function" || typeof finalizeOpenCrossingPopup === "function"),
+      expectation: "Tapped/selected incident should become dominant and non-selected markers should not compete."
+    }
+  };
+  audit.findings = gridlyEvaluateVisualHierarchyFindings(audit);
+  audit.recommendation = "Use this read-only audit as the V219 baseline. Resolve findings before changing marker visuals, z-indexes, cluster winners, or zoom rules.";
+
+  if (options?.silent !== true && typeof console !== "undefined") {
+    console.groupCollapsed("Gridly V219 Visual Hierarchy Audit");
+    console.log(audit);
+    console.table(audit.ownershipModel.map(({ rank, owner, label, expectedStyles, expectedZoom, expectedZIndexFloor }) => ({ rank, owner, label, expectedStyles: expectedStyles.join(", "), expectedZoom, expectedZIndexFloor })));
+    console.table(audit.layerInventory);
+    console.table(audit.findings);
+    console.groupEnd();
+  }
+  return audit;
+};
+
+window.gridlyMapVisualHierarchyAudit = window.gridlyVisualHierarchyAudit;
+
+
 window.gridlyRailMarkerSourceTrace = function gridlyRailMarkerSourceTrace() {
   try {
     const hasDocument = typeof document !== "undefined" && Boolean(document?.querySelectorAll);
