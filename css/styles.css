@@ -15436,7 +15436,7 @@ body[data-layout-mode="portrait"] .gridly-v2-control-rail {
     position: fixed !important;
     left: calc(24px + env(safe-area-inset-left, 0px)) !important;
     right: calc(76px + env(safe-area-inset-right, 0px)) !important;
-    bottom: calc(86px + env(safe-area-inset-bottom, 0px)) !important;
+    bottom: calc(138px + env(safe-area-inset-bottom, 0px)) !important;
     z-index: 9600 !important;
     grid-template-columns: minmax(0, 1fr) auto !important;
     align-items: center !important;
