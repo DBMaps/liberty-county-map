@@ -15793,3 +15793,106 @@ body.gridly-theme-light .gridly-destination-impact-significance em {
 body.gridly-theme-light .gridly-destination-impact-significance strong {
   color: #0d1b2a;
 }
+
+/* V219.5 — Map visual hierarchy baseline.
+   Stack, strongest to quietest: selected/focused > route/destination impact > critical hazard > blocked crossing > active hazard > recently cleared > historical/context > normal infrastructure. */
+#map .leaflet-marker-icon.gridly-alert-focused-marker,
+#map .leaflet-marker-icon[data-gridly-selected="true"],
+#map .gridly-alert-focused-marker {
+  z-index: 1000 !important;
+  filter: drop-shadow(0 0 14px rgba(96, 165, 250, 0.98)) saturate(1.18) brightness(1.08) !important;
+}
+
+#map .gridly-alert-focused-marker :is(.gridly-marker, .gridly-hazard-marker, .gridly-marker-wrap),
+#map [data-gridly-selected="true"]:is(.gridly-marker, .gridly-hazard-marker, .gridly-marker-wrap),
+#map [data-gridly-selected="true"] :is(.gridly-marker, .gridly-hazard-marker, .gridly-marker-wrap) {
+  outline: 3px solid rgba(147, 197, 253, 0.98);
+  outline-offset: 4px;
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.72), 0 0 24px rgba(96, 165, 250, 0.72) !important;
+  animation-duration: 1.45s;
+}
+
+#map .gridly-marker-rail-route-impact,
+#map .gridly-marker-txdot-route-impact,
+#map [data-gridly-route-relevant="true"],
+#map [data-gridly-visual-state="route_impact"] {
+  z-index: 560 !important;
+  filter: saturate(1.14) brightness(1.07);
+}
+
+#map .gridly-marker-wrap.gridly-marker-rail-route-impact .gridly-marker,
+#map .gridly-marker-rail-route-impact .gridly-marker,
+#map .gridly-marker-txdot-route-impact .gridly-hazard-marker,
+#map .gridly-hazard-marker[data-gridly-route-relevant="true"],
+#map .gridly-hazard-marker.route-relevant {
+  transform: scale(1.14);
+  border-color: rgba(255, 213, 94, 0.98) !important;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.22), 0 0 20px rgba(255, 213, 94, 0.58) !important;
+}
+
+#map .gridly-marker-hazard-critical,
+#map .gridly-marker-priority-critical,
+#map [data-gridly-impact-level="critical"] {
+  z-index: 545 !important;
+}
+
+#map .gridly-marker-hazard-critical .gridly-hazard-marker,
+#map .gridly-hazard-marker[data-gridly-impact-level="critical"] {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2), 0 0 18px rgba(255, 78, 111, 0.56) !important;
+}
+
+#map .gridly-marker-wrap.gridly-marker-rail-blocked,
+#map .gridly-marker-rail-blocked,
+#map [data-gridly-visual-state="blocked"] {
+  z-index: 535 !important;
+}
+
+#map .gridly-marker-wrap.gridly-marker-rail-blocked .gridly-marker,
+#map .gridly-marker.state-blocked,
+#map .gridly-marker[data-gridly-visual-state="blocked"] {
+  transform: scale(1.07);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.18), 0 0 16px rgba(255, 92, 61, 0.5);
+}
+
+#map .gridly-marker-hazard-high,
+#map .gridly-marker-priority-high,
+#map [data-gridly-impact-level="high"] {
+  z-index: 530 !important;
+}
+
+#map .gridly-marker-hazard-moderate,
+#map .gridly-marker-priority-moderate,
+#map [data-gridly-impact-level="moderate"] {
+  z-index: 520 !important;
+}
+
+#map .gridly-marker[data-gridly-visual-state="recently_cleared"],
+#map .gridly-hazard-marker[data-gridly-visual-state="recently_cleared"],
+#map [data-gridly-visual-state="recently_cleared"] :is(.gridly-marker, .gridly-hazard-marker) {
+  opacity: 0.58;
+  filter: saturate(0.72) brightness(0.92);
+  animation: none !important;
+}
+
+#map .gridly-historical-pattern-marker,
+#map [data-gridly-map-owner="historical_pattern"],
+#map [data-visual-owner="historical_pattern"] {
+  z-index: 505 !important;
+  opacity: 0.42;
+  filter: saturate(0.62) brightness(0.86);
+}
+
+#map .gridly-marker-rail-clear,
+#map [data-gridly-map-owner="infrastructure"],
+#map [data-gridly-visual-state="infrastructure"] {
+  z-index: 500 !important;
+}
+
+#map .gridly-marker-wrap.gridly-marker-rail-clear .gridly-marker,
+#map .gridly-marker.state-normal,
+#map .gridly-marker[data-gridly-map-owner="infrastructure"] {
+  transform: scale(0.88);
+  opacity: 0.7;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 0 6px rgba(75, 199, 255, 0.18);
+}
