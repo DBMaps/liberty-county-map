@@ -13250,23 +13250,85 @@ function buildGridlyLocationContext(result) {
   }
 }
 
-function prioritizeGridlySearchResults(results = []) {
+function getGridlySearchMapContext() {
+  const mapInstance = typeof getGridlyMapInstance === "function" ? getGridlyMapInstance() : (typeof map !== "undefined" ? map : null);
+  const centerCandidate = mapInstance && typeof mapInstance.getCenter === "function" ? mapInstance.getCenter() : null;
+  const center = normalizeCoordinatePair(
+    centerCandidate?.lat ?? userLocation?.lat ?? defaultCenter[0],
+    centerCandidate?.lng ?? userLocation?.lng ?? defaultCenter[1]
+  );
+  const bounds = mapInstance && typeof mapInstance.getBounds === "function" ? mapInstance.getBounds() : null;
+  const south = Number(bounds?.getSouth?.());
+  const north = Number(bounds?.getNorth?.());
+  const west = Number(bounds?.getWest?.());
+  const east = Number(bounds?.getEast?.());
+  const hasBounds = Number.isFinite(south) && Number.isFinite(north) && Number.isFinite(west) && Number.isFinite(east);
+  return {
+    center: center || { lat: defaultCenter[0], lng: defaultCenter[1] },
+    bounds: hasBounds ? bounds : null,
+    viewbox: hasBounds ? `${west},${north},${east},${south}` : ""
+  };
+}
+
+function gridlySearchResultContainsTexas(haystack) {
+  return /(^|[\s,])(texas|tx)([\s,]|$)/i.test(String(haystack || ""));
+}
+
+function gridlySearchResultContainsLocality(haystack) {
+  return /\b(dayton|liberty county|liberty, texas|liberty, tx)\b/i.test(String(haystack || ""));
+}
+
+function getGridlySearchResultHaystack(result, context = "") {
+  return normalizeGridlySearchDisplayLabel(
+    `${result?.label || ""} ${result?.title || ""} ${result?.address || ""} ${result?.subtitle || ""} ${context} ${result?.raw?.display_name || ""}`
+  );
+}
+
+function getGridlySearchResultTitleMatchScore(result, rawQuery = "") {
+  const query = normalizeGridlySearchDisplayLabel(rawQuery).replace(/\b(near|in)\b.*$/i, "").trim();
+  const title = normalizeGridlySearchDisplayLabel(result?.title || result?.label || "");
+  if (!query || !title) return 0;
+  if (title === query) return 28;
+  if (title.startsWith(query)) return 20;
+  if (title.includes(query)) return 10;
+  return 0;
+}
+
+function prioritizeGridlySearchResults(results = [], options = {}) {
   if (!Array.isArray(results) || !results.length) return [];
-  const bounds = map?.getBounds?.();
+  const searchContext = getGridlySearchMapContext();
   const scored = results.map((result, index) => {
     const context = buildGridlyLocationContext(result);
-    const haystack = normalizeGridlySearchDisplayLabel(
-      `${result?.label || ""} ${result?.address || ""} ${context} ${result?.raw?.display_name || ""}`
-    );
-    let score = 0;
-    if (haystack.includes("liberty county")) score += 6;
-    if (haystack.includes(" texas") || haystack.endsWith("texas") || haystack.includes(", tx") || haystack.includes(" tx ")) score += 4;
-    if (bounds && Number.isFinite(result?.lat) && Number.isFinite(result?.lng) && bounds.contains([result.lat, result.lng])) score += 3;
-    if (score > 0) score += Math.max(0, GRIDLY_SEARCH_RENDER_LIMIT - index) * 0.05;
-    return { result, score, index };
+    const haystack = getGridlySearchResultHaystack(result, context);
+    const hasCoordinates = Number.isFinite(result?.lat) && Number.isFinite(result?.lng);
+    const inBounds = Boolean(searchContext.bounds && hasCoordinates && searchContext.bounds.contains([result.lat, result.lng]));
+    const isTexas = gridlySearchResultContainsTexas(haystack);
+    const isLocality = gridlySearchResultContainsLocality(haystack);
+    const distanceMiles = hasCoordinates && searchContext.center
+      ? haversineDistance(searchContext.center.lat, searchContext.center.lng, result.lat, result.lng)
+      : null;
+    let score = Math.max(0, GRIDLY_SEARCH_RENDER_LIMIT - index) * 0.25;
+    if (inBounds) score += 90;
+    if (isTexas) score += 65;
+    if (isLocality) score += 60;
+    if (Number.isFinite(distanceMiles)) {
+      if (distanceMiles <= 5) score += 45;
+      else if (distanceMiles <= 15) score += 35;
+      else if (distanceMiles <= 35) score += 24;
+      else if (distanceMiles <= 75) score += 14;
+      else if (distanceMiles <= 150) score += 6;
+    }
+    score += getGridlySearchResultTitleMatchScore(result, options.query || ensureGridlySearchState().activeQuery || "");
+    return { result, score, index, inBounds, isTexas, isLocality, distanceMiles };
   });
+  const hasLocalOrTexasMatch = scored.some((entry) => entry.inBounds || entry.isLocality || entry.isTexas);
+  if (hasLocalOrTexasMatch) {
+    scored.forEach((entry) => {
+      if (!entry.inBounds && !entry.isLocality && !entry.isTexas) entry.score -= 120;
+    });
+  }
   const prioritized = scored.sort((a, b) => (b.score - a.score) || (a.index - b.index));
-  gridlySearchUiState.prioritizedLocalResultsCount = prioritized.filter((entry) => entry.score > 0).length;
+  gridlySearchUiState.prioritizedLocalResultsCount = prioritized.filter((entry) => entry.inBounds || entry.isLocality || entry.isTexas).length;
   return prioritized.map((entry) => entry.result);
 }
 
@@ -13337,7 +13399,7 @@ function renderGridlySearchResults(results = [], options = {}) {
     console.info("Gridly search normalized preview", preview);
     gridlySearchUiState.debugWarningsSeen.add("normalized-results-preview");
   }
-  const prioritizedResults = prioritizeGridlySearchResults(normalizedResults);
+  const prioritizedResults = prioritizeGridlySearchResults(normalizedResults, { query: ensureGridlySearchState().activeQuery || "" });
   const renderedResults = dedupeGridlySearchResults(prioritizedResults);
   gridlySearchUiState.lastRenderedResults = renderedResults;
 
@@ -33899,6 +33961,54 @@ function normalizeGridlySearchResult(result) {
   };
 }
 
+function shouldAddGridlyLocalSearchExpansions(query = "") {
+  const normalized = normalizeGridlySearchDisplayLabel(query);
+  if (!normalized || normalized.length > 48) return false;
+  if (/[,@]|\b(texas|tx|county|near|dayton|liberty|houston|beaumont|crosby|baytown|cleveland)\b/i.test(normalized)) return false;
+  const tokens = normalized.split(/\s+/).filter(Boolean);
+  return tokens.length >= 1 && tokens.length <= 4;
+}
+
+function buildGridlySearchQueryVariants(rawQuery = "") {
+  const query = String(rawQuery || "").trim();
+  if (!query) return [];
+  const variants = [query];
+  if (shouldAddGridlyLocalSearchExpansions(query)) {
+    variants.push(`${query} near Dayton Texas`);
+    variants.push(`${query} Liberty County Texas`);
+    variants.push(`${query} Texas`);
+  }
+  const seen = new Set();
+  return variants.filter((variant) => {
+    const key = normalizeGridlySearchDisplayLabel(variant);
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+async function fetchGridlyNominatimSearch(query, { limit, countryCodes, searchContext, bounded = "0" } = {}) {
+  const params = new URLSearchParams({
+    q: query,
+    format: "jsonv2",
+    limit: String(limit),
+    addressdetails: "1",
+    extratags: "0",
+    namedetails: "0",
+    countrycodes: countryCodes
+  });
+  if (searchContext?.viewbox) {
+    params.set("viewbox", searchContext.viewbox);
+    params.set("bounded", bounded);
+  }
+  const response = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`, {
+    headers: { Accept: "application/json" }
+  });
+  if (!response.ok) return [];
+  const providerResults = await response.json();
+  return Array.isArray(providerResults) ? providerResults : [];
+}
+
 async function gridlySearchAddress(query, options = {}) {
   const rawQuery = String(query || "").trim();
   if (!rawQuery) return [];
@@ -33906,27 +34016,35 @@ async function gridlySearchAddress(query, options = {}) {
   const parsedLimit = Number(options.limit);
   const limit = Number.isFinite(parsedLimit) ? Math.min(Math.max(Math.floor(parsedLimit), 1), 10) : 5;
   const countryCodes = String(options.countryCodes || "us").trim() || "us";
+  const searchContext = getGridlySearchMapContext();
+  const queryVariants = buildGridlySearchQueryVariants(rawQuery);
+  const providerResults = [];
 
   try {
-    const params = new URLSearchParams({
-      q: rawQuery,
-      format: "jsonv2",
-      limit: String(limit),
-      addressdetails: "1",
-      extratags: "0",
-      namedetails: "0",
-      countrycodes: countryCodes
-    });
-    const response = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`, {
-      headers: { Accept: "application/json" }
-    });
-    if (!response.ok) return [];
-    const providerResults = await response.json();
-    if (!Array.isArray(providerResults)) return [];
-    return providerResults
-      .map((result) => normalizeGridlySearchResult(result))
-      .filter(Boolean)
-      .slice(0, limit);
+    for (const variant of queryVariants) {
+      const variantResults = await fetchGridlyNominatimSearch(variant, {
+        limit: Math.max(limit, GRIDLY_SEARCH_RENDER_LIMIT),
+        countryCodes,
+        searchContext,
+        bounded: options.bounded === "1" ? "1" : "0"
+      });
+      providerResults.push(...variantResults);
+      const normalizedPreview = providerResults.map((result) => normalizeGridlySearchResult(result)).filter(Boolean);
+      const prioritizedPreview = prioritizeGridlySearchResults(normalizedPreview, { query: rawQuery });
+      const hasLocalOrTexas = prioritizedPreview.slice(0, GRIDLY_SEARCH_RENDER_LIMIT).some((result) => {
+        const context = buildGridlyLocationContext(result);
+        const haystack = getGridlySearchResultHaystack(result, context);
+        return gridlySearchResultContainsLocality(haystack) || gridlySearchResultContainsTexas(haystack)
+          || Boolean(searchContext.bounds && searchContext.bounds.contains([result.lat, result.lng]));
+      });
+      if (hasLocalOrTexas && providerResults.length >= limit) break;
+    }
+    return dedupeGridlySearchResults(
+      prioritizeGridlySearchResults(
+        providerResults.map((result) => normalizeGridlySearchResult(result)).filter(Boolean),
+        { query: rawQuery }
+      )
+    ).slice(0, limit);
   } catch (error) {
     console.warn("Address search failed:", error);
     return [];
