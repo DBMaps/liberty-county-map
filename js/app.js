@@ -40889,11 +40889,18 @@ function getGridlyAwarenessBriefTownLabel() {
   return safeDisplayText(profile?.homeTownLabel || profile?.homeTown || profile?.city || profile?.town, "Dayton");
 }
 
-function getGridlyAwarenessGreetingText() {
+function getGridlyAwarenessTimeOfDayGreetingPart(date = new Date()) {
+  const hour = Number(date instanceof Date ? date.getHours() : new Date(date).getHours());
+  if (hour >= 5 && hour < 12) return "Good Morning";
+  if (hour >= 12 && hour < 17) return "Good Afternoon";
+  return "Good Evening";
+}
+
+function getGridlyAwarenessGreetingText(options = {}) {
   const profile = typeof getGridlyUserProfile === "function" ? getGridlyUserProfile() : (gridlyUserProfile || {});
-  const name = safeDisplayText(profile?.name, "");
-  const hour = new Date().getHours();
-  const part = hour >= 5 && hour < 12 ? "Good morning" : hour >= 12 && hour < 17 ? "Good afternoon" : hour >= 17 && hour < 22 ? "Good evening" : "Late night check";
+  const preferredName = typeof getGridlyPreferredNamePreference === "function" ? getGridlyPreferredNamePreference() : "";
+  const name = safeDisplayText(preferredName || profile?.preferredName || profile?.name, "");
+  const part = getGridlyAwarenessTimeOfDayGreetingPart(options.date || options.now || new Date());
   return name ? `${part} ${name}` : part;
 }
 
@@ -46234,6 +46241,14 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
   const dockButtons = getBottomDockButtons();
   const classified = dockButtons.map((btn) => ({ btn, intent: classifyBottomDockIntent(btn) }));
   const byIntent = (intent) => classified.some((entry) => entry.intent === intent && entry.btn.dataset.gridlyDockBound === "true");
+  const settingsButtonBound = classified.some((entry) => (
+    entry.intent === "settings"
+    && (
+      entry.btn.dataset.gridlyDockBound === "true"
+      || entry.btn.dataset.gridlyV2SheetBound === "true"
+      || gridlyGlobalDockEventTrace.settingsButtonBindings.nodeBound
+    )
+  ));
   const alertsPanel = document.querySelector("#alertsSection:not([hidden]), .gridly-tactical-dock-sheet:not([hidden])[data-action='alerts']");
   const markerAudit = window.gridlyMarkerAuditDebug?.() || {};
   const markerRendererPresent = (
@@ -46328,7 +46343,7 @@ window.gridlyUiSmokeTest = function gridlyUiSmokeTest() {
     reportButtonBound: byIntent("report"),
     routeButtonBound: byIntent("route"),
     alertsButtonBound: byIntent("alerts"),
-    settingsButtonBound: byIntent("settings"),
+    settingsButtonBound,
     layersButtonBound: byIntent("layers"),
     alertsPanelFound: Boolean(alertsPanel),
     alertsSurfaceSelectorsFound,
