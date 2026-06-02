@@ -13681,8 +13681,12 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
   return prioritized.map((entry) => entry.result);
 }
 
-function dedupeGridlySearchResults(results) {
+function dedupeGridlySearchResults(results, options = {}) {
   if (!Array.isArray(results) || !results.length) return [];
+  const parsedLimit = Number(options.limit);
+  const maxResults = Number.isFinite(parsedLimit)
+    ? Math.min(Math.max(Math.floor(parsedLimit), 1), 25)
+    : GRIDLY_SEARCH_RENDER_LIMIT;
   const seen = new Set();
   const deduped = [];
   for (const result of results) {
@@ -13694,9 +13698,85 @@ function dedupeGridlySearchResults(results) {
     if (seen.has(dedupeKey)) continue;
     seen.add(dedupeKey);
     deduped.push(result);
-    if (deduped.length >= GRIDLY_SEARCH_RENDER_LIMIT) break;
+    if (deduped.length >= maxResults) break;
   }
   return deduped;
+}
+
+function isGridlyLocalQualitySearchResult(result) {
+  if (!result || typeof result !== "object") return false;
+  const rank = result.searchRank && typeof result.searchRank === "object" ? result.searchRank : {};
+  const anchorDistanceMiles = Number(rank.anchorDistanceMiles);
+  return Boolean(
+    result.provider === "local_poi_seed"
+      || result.localPoiSeed
+      || rank.inBounds
+      || rank.isLibertyCounty
+      || rank.isLocality
+      || (Number.isFinite(anchorDistanceMiles) && anchorDistanceMiles <= 150)
+      || (rank.isTexas && Number.isFinite(anchorDistanceMiles) && anchorDistanceMiles <= 250)
+  );
+}
+
+function isGridlyCountyOnlyProviderDuplicate(result, localSeedTitles = new Set()) {
+  if (!result || result.provider === "local_poi_seed" || result.localPoiSeed) return false;
+  const display = buildGridlySearchDisplayLines(result);
+  const titleKey = normalizeGridlySearchDisplayLabel(display.title);
+  if (!titleKey || !localSeedTitles.has(titleKey)) return false;
+  const context = buildGridlyLocationContext(result);
+  const haystack = getGridlySearchResultHaystack(result, context);
+  const hasPreciseAddress = /\b(near|road|rd|street|st|avenue|ave|drive|dr|highway|hwy|fm|i-?\d+|us\s*\d+|tx\s*\d+)\b/i.test(haystack);
+  const countyOnlyContext = /\bcounty\b/i.test(context) && !/\b(city|town|village|hamlet|road|street|highway)\b/i.test(haystack);
+  return countyOnlyContext && !hasPreciseAddress;
+}
+
+function filterGridlyGenericLocalQualityResults(results = [], options = {}) {
+  const intent = options.intent || classifyGridlyDestinationSearchIntent(options.query || ensureGridlySearchState().activeQuery || "");
+  const diagnostics = options.diagnostics && typeof options.diagnostics === "object" ? options.diagnostics : null;
+  if (!Array.isArray(results) || !results.length || intent.type !== GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL) {
+    if (diagnostics) {
+      diagnostics.suppressedFarAwayCount = Number(diagnostics.suppressedFarAwayCount) || 0;
+      diagnostics.visibleQualityFiltered = Boolean(diagnostics.visibleQualityFiltered);
+      diagnostics.localQualityResultCount = Number(diagnostics.localQualityResultCount) || 0;
+      diagnostics.genericLocalProviderFillerSuppressed = Boolean(diagnostics.genericLocalProviderFillerSuppressed);
+    }
+    return results;
+  }
+
+  const localQualityResultCount = results.filter((result) => isGridlyLocalQualitySearchResult(result)).length;
+  const localSeedTitles = new Set(results
+    .filter((result) => result.provider === "local_poi_seed" || result.localPoiSeed)
+    .map((result) => normalizeGridlySearchDisplayLabel(buildGridlySearchDisplayLines(result).title))
+    .filter(Boolean));
+
+  let suppressedFarAwayCount = 0;
+  const filtered = localQualityResultCount > 0
+    ? results.filter((result) => {
+        const rank = result.searchRank && typeof result.searchRank === "object" ? result.searchRank : {};
+        const anchorDistanceMiles = Number(rank.anchorDistanceMiles);
+        const providerResult = result.provider !== "local_poi_seed" && !result.localPoiSeed;
+        const farAwayProvider = providerResult
+          && !rank.inBounds
+          && !rank.isLibertyCounty
+          && !rank.isLocality
+          && !rank.isTexas
+          && (!Number.isFinite(anchorDistanceMiles) || anchorDistanceMiles > 150);
+        const countyOnlyProviderDuplicate = isGridlyCountyOnlyProviderDuplicate(result, localSeedTitles);
+        if (farAwayProvider || countyOnlyProviderDuplicate) {
+          suppressedFarAwayCount += 1;
+          return false;
+        }
+        return true;
+      })
+    : results;
+
+  if (diagnostics) {
+    diagnostics.suppressedFarAwayCount = suppressedFarAwayCount;
+    diagnostics.visibleQualityFiltered = suppressedFarAwayCount > 0 && filtered.length < results.length;
+    diagnostics.localQualityResultCount = localQualityResultCount;
+    diagnostics.genericLocalProviderFillerSuppressed = suppressedFarAwayCount > 0;
+  }
+  return filtered;
 }
 
 function clearGridlySearchResults(options = {}) {
@@ -13947,6 +14027,10 @@ function buildGridlyLiveSearchAuditReport(query, results = [], metadata = {}) {
     cooldownActive: Boolean(providerDiagnostics.cooldownActive),
     duplicateSuppressed: Boolean(providerDiagnostics.duplicateSuppressed),
     throttled: Boolean(providerDiagnostics.throttled),
+    suppressedFarAwayCount: Number(providerDiagnostics.suppressedFarAwayCount) || 0,
+    visibleQualityFiltered: Boolean(providerDiagnostics.visibleQualityFiltered),
+    localQualityResultCount: Number(providerDiagnostics.localQualityResultCount) || normalizedResults.filter((result) => isGridlyLocalQualitySearchResult(result)).length,
+    genericLocalProviderFillerSuppressed: Boolean(providerDiagnostics.genericLocalProviderFillerSuppressed),
     finalResultCount,
     resultCount: finalResultCount,
     firstResult: {
@@ -34591,6 +34675,10 @@ function createGridlyDestinationProviderDiagnostics(query, intent, localSeedCoun
     cooldownActive: false,
     duplicateSuppressed: false,
     throttled: false,
+    suppressedFarAwayCount: 0,
+    visibleQualityFiltered: false,
+    localQualityResultCount: 0,
+    genericLocalProviderFillerSuppressed: false,
     finalResultCount: 0,
     variants: [],
     seedResultsRenderImmediately: Number(localSeedCount) > 0,
@@ -34627,6 +34715,10 @@ function finalizeGridlyDestinationProviderDiagnostics(diagnostics, providerResul
   if (!diagnostics || typeof diagnostics !== "object") return diagnostics;
   diagnostics.providerResultCount = Number(providerResultCount) || 0;
   diagnostics.finalResultCount = Number(finalResultCount) || 0;
+  diagnostics.suppressedFarAwayCount = Number(diagnostics.suppressedFarAwayCount) || 0;
+  diagnostics.visibleQualityFiltered = Boolean(diagnostics.visibleQualityFiltered);
+  diagnostics.localQualityResultCount = Number(diagnostics.localQualityResultCount) || 0;
+  diagnostics.genericLocalProviderFillerSuppressed = Boolean(diagnostics.genericLocalProviderFillerSuppressed);
   diagnostics.seedResultsRenderImmediately = diagnostics.localSeedCount > 0;
   diagnostics.emptyStateWouldRender = diagnostics.finalResultCount === 0 && diagnostics.localSeedCount === 0;
   if (diagnostics.providerStatus === "not_attempted" && diagnostics.providerSkippedReason) {
@@ -34782,12 +34874,13 @@ async function gridlySearchAddress(query, options = {}) {
     if (hasRelevantMatch && providerResults.length >= limit && intent.type === GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL) break;
   }
 
-  const finalResults = dedupeGridlySearchResults(
-    prioritizeGridlySearchResults(
-      providerResults.map((result) => normalizeGridlySearchResult(result)).filter(Boolean),
-      { query: rawQuery, intent }
-    )
-  ).slice(0, limit);
+  const prioritizedResults = prioritizeGridlySearchResults(
+    providerResults.map((result) => normalizeGridlySearchResult(result)).filter(Boolean),
+    { query: rawQuery, intent }
+  );
+  const dedupedResults = dedupeGridlySearchResults(prioritizedResults, { limit: Math.max(limit, GRIDLY_SEARCH_RENDER_LIMIT) });
+  const qualityFilteredResults = filterGridlyGenericLocalQualityResults(dedupedResults, { query: rawQuery, intent, diagnostics });
+  const finalResults = qualityFilteredResults.slice(0, limit);
   finalizeGridlyDestinationProviderDiagnostics(diagnostics, remoteProviderResultCount, finalResults.length);
   Object.defineProperty(finalResults, "gridlyProviderDiagnostics", { value: diagnostics, enumerable: false });
   return finalResults;
@@ -34839,10 +34932,15 @@ async function gridlyDestinationSearchBatchTest(queries = GRIDLY_DESTINATION_SEA
     const queryText = String(query || "").trim();
     if (!queryText) continue;
     const results = await gridlySearchAddress(queryText, { limit: 5 });
+    const diagnostics = results?.gridlyProviderDiagnostics || gridlyDestinationProviderState.lastDiagnostics || {};
     const top5 = results.map((result) => summarizeGridlyDestinationSearchResult(result)).filter(Boolean).slice(0, 5);
     rows.push({
       query: queryText,
       count: results.length,
+      suppressedFarAwayCount: Number(diagnostics.suppressedFarAwayCount) || 0,
+      visibleQualityFiltered: Boolean(diagnostics.visibleQualityFiltered),
+      localQualityResultCount: Number(diagnostics.localQualityResultCount) || 0,
+      genericLocalProviderFillerSuppressed: Boolean(diagnostics.genericLocalProviderFillerSuppressed),
       firstTitle: top5[0]?.title || "",
       firstSubtitle: top5[0]?.subtitle || "",
       provider: top5[0]?.provider || "",
@@ -34934,6 +35032,10 @@ window.gridlyDestinationProviderAudit = async function gridlyDestinationProvider
     cooldownActive: audit.cooldownActive,
     duplicateSuppressed: audit.duplicateSuppressed,
     throttled: audit.throttled,
+    suppressedFarAwayCount: audit.suppressedFarAwayCount,
+    visibleQualityFiltered: audit.visibleQualityFiltered,
+    localQualityResultCount: audit.localQualityResultCount,
+    genericLocalProviderFillerSuppressed: audit.genericLocalProviderFillerSuppressed,
     finalResultCount: audit.finalResultCount,
     firstResult: audit.firstResult,
     seedResultsRenderImmediately: audit.seedResultsRenderImmediately,
