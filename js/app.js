@@ -13939,6 +13939,170 @@ function getSelectedDestinationLabel() {
   return normalized.title || normalized.displayName || normalized.context || normalized.address || "";
 }
 
+const GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE = {
+  viewportAdjusted: false,
+  bottomInsetApplied: false,
+  destinationCardDetected: false,
+  lastAppliedKey: "",
+  lastReason: "not_applied",
+  destinationLat: null,
+  destinationLng: null
+};
+
+function isGridlyElementVisible(element) {
+  if (!element || typeof window === "undefined") return false;
+  const style = window.getComputedStyle(element);
+  if (!style || style.display === "none" || style.visibility === "hidden" || Number(style.opacity || "1") <= 0) return false;
+  const rect = typeof element.getBoundingClientRect === "function" ? element.getBoundingClientRect() : null;
+  return Boolean(rect && rect.width > 0 && rect.height > 0);
+}
+
+function getGridlyDestinationVisibilityLayout(mapInstance = getGridlyMapInstance()) {
+  const mapContainer = typeof mapInstance?.getContainer === "function" ? mapInstance.getContainer() : document.getElementById("map");
+  const mapRect = typeof mapContainer?.getBoundingClientRect === "function" ? mapContainer.getBoundingClientRect() : null;
+  const destinationCard = document.getElementById("mobileDestinationCommandTitle")?.closest?.(".mobile-destination-command")
+    || document.querySelector(".mobile-destination-command");
+  const bottomNav = document.querySelector(".mobile-bottom-nav");
+  const destinationCardDetected = isGridlyElementVisible(destinationCard);
+  const bottomNavDetected = isGridlyElementVisible(bottomNav);
+  const cardRect = destinationCardDetected ? destinationCard.getBoundingClientRect() : null;
+  const navRect = bottomNavDetected ? bottomNav.getBoundingClientRect() : null;
+  const viewportHeight = Number(window.visualViewport?.height || window.innerHeight || 0);
+  const viewportOffsetTop = Number(window.visualViewport?.offsetTop || 0);
+  const safeAreaInset = Math.max(0, Math.round(Number(window.innerHeight || 0) - viewportHeight - viewportOffsetTop));
+
+  if (!mapRect || !mapRect.width || !mapRect.height) {
+    return {
+      mapRect: null,
+      destinationCardDetected,
+      bottomNavDetected,
+      bottomInsetApplied: false,
+      bottomInsetPx: 0,
+      safeAreaInset
+    };
+  }
+
+  let obstructionTop = mapRect.bottom;
+  if (cardRect && cardRect.bottom > mapRect.top && cardRect.top < mapRect.bottom) obstructionTop = Math.min(obstructionTop, cardRect.top);
+  if (navRect && navRect.bottom > mapRect.top && navRect.top < mapRect.bottom) obstructionTop = Math.min(obstructionTop, navRect.top);
+  const stackedOverlayHeight = Math.max(0, mapRect.bottom - obstructionTop);
+  const cappedInset = Math.min(Math.max(stackedOverlayHeight + safeAreaInset + 28, 0), Math.max(96, mapRect.height * 0.46));
+
+  return {
+    mapRect,
+    destinationCardDetected,
+    bottomNavDetected,
+    bottomInsetApplied: cappedInset > 0,
+    bottomInsetPx: Math.round(cappedInset),
+    safeAreaInset
+  };
+}
+
+function isGridlyDestinationVisibilityCardPresent() {
+  return Boolean(getGridlyDestinationVisibilityLayout().destinationCardDetected);
+}
+
+function applyGridlyDestinationVisibilityOffset(destinationInput, options = {}) {
+  const destination = normalizeGridlySearchResult(destinationInput) || normalizeCoordinatePair(destinationInput?.lat, destinationInput?.lng);
+  const coordinates = normalizeCoordinatePair(destination?.lat, destination?.lng);
+  const preview = getGridlyDestinationRoutePreviewState();
+  const mapInstance = getGridlyMapInstance();
+  const layout = getGridlyDestinationVisibilityLayout(mapInstance);
+  const routePreviewActive = Boolean(preview.active);
+  const destinationSelected = Boolean(normalizeGridlySearchResult(ensureGridlySearchState()?.selectedDestination));
+
+  GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.destinationCardDetected = Boolean(layout.destinationCardDetected);
+  GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.bottomInsetApplied = Boolean(layout.bottomInsetApplied && layout.destinationCardDetected);
+  GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.destinationLat = coordinates?.lat ?? null;
+  GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.destinationLng = coordinates?.lng ?? null;
+
+  if (!destinationSelected || !routePreviewActive || !layout.destinationCardDetected || !coordinates || !mapInstance) {
+    GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.viewportAdjusted = false;
+    GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.lastReason = !destinationSelected
+      ? "destination_not_selected"
+      : !routePreviewActive
+        ? "route_preview_inactive"
+        : !layout.destinationCardDetected
+          ? "destination_card_not_detected"
+          : !coordinates
+            ? "invalid_destination"
+            : "map_not_ready";
+    return false;
+  }
+
+  const requestId = Number(preview.requestId || 0);
+  const applyKey = [
+    requestId,
+    coordinates.lat.toFixed(6),
+    coordinates.lng.toFixed(6),
+    Math.round(layout.bottomInsetPx || 0),
+    options?.reason || "destination_visibility"
+  ].join("|");
+  if (GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.lastAppliedKey === applyKey) {
+    GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.viewportAdjusted = true;
+    GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.lastReason = "already_adjusted";
+    return true;
+  }
+
+  const currentZoom = typeof mapInstance.getZoom === "function" ? Number(mapInstance.getZoom()) : null;
+  const minFocusZoom = Number.isFinite(options?.minZoom) ? options.minZoom : 12;
+  const maxFocusZoom = Number.isFinite(options?.maxZoom) ? options.maxZoom : 14;
+  const targetZoom = Number.isFinite(currentZoom)
+    ? Math.min(maxFocusZoom, Math.max(currentZoom, minFocusZoom))
+    : maxFocusZoom;
+  const offsetPx = Math.min(Math.max((layout.bottomInsetPx || 0) / 2, 54), Math.max(72, (layout.mapRect?.height || 0) * 0.24));
+
+  try {
+    if (typeof mapInstance.project === "function" && typeof mapInstance.unproject === "function" && typeof mapInstance.setView === "function") {
+      const destinationPoint = mapInstance.project([coordinates.lat, coordinates.lng], targetZoom);
+      const adjustedCenterPoint = destinationPoint.add([0, offsetPx]);
+      const adjustedCenter = mapInstance.unproject(adjustedCenterPoint, targetZoom);
+      mapInstance.setView(adjustedCenter, targetZoom, { animate: false });
+    } else if (typeof mapInstance.setView === "function") {
+      mapInstance.setView([coordinates.lat, coordinates.lng], targetZoom, { animate: false });
+      if (typeof mapInstance.panBy === "function") mapInstance.panBy([0, offsetPx], { animate: false });
+    } else {
+      GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.viewportAdjusted = false;
+      GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.lastReason = "camera_unavailable";
+      return false;
+    }
+  } catch (_error) {
+    GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.viewportAdjusted = false;
+    GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.lastReason = "camera_adjust_failed";
+    return false;
+  }
+
+  GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.viewportAdjusted = true;
+  GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.bottomInsetApplied = true;
+  GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.lastAppliedKey = applyKey;
+  GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.lastReason = options?.reason || "destination_visibility_offset_applied";
+  setGridlyMarkerDiagnostics({
+    lastMapFocusSuccess: true,
+    lastMapFocusLat: coordinates.lat,
+    lastMapFocusLng: coordinates.lng,
+    lastMapFocusZoom: targetZoom,
+    destinationVisibilityOffsetApplied: true,
+    destinationVisibilityBottomInsetPx: layout.bottomInsetPx
+  });
+  return true;
+}
+
+window.gridlyDestinationVisibilityAudit = function gridlyDestinationVisibilityAudit() {
+  const state = ensureGridlySearchState();
+  const destination = normalizeGridlySearchResult(state?.selectedDestination);
+  const preview = getGridlyDestinationRoutePreviewState();
+  const layout = getGridlyDestinationVisibilityLayout();
+  return {
+    destinationSelected: Boolean(destination),
+    routePreviewActive: Boolean(preview.active),
+    viewportAdjusted: Boolean(GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.viewportAdjusted),
+    bottomInsetApplied: Boolean(GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.bottomInsetApplied || (layout.bottomInsetApplied && layout.destinationCardDetected)),
+    destinationCardDetected: Boolean(layout.destinationCardDetected),
+    destinationLat: Number.isFinite(Number(destination?.lat)) ? Number(destination.lat) : null,
+    destinationLng: Number.isFinite(Number(destination?.lng)) ? Number(destination.lng) : null
+  };
+};
+
 function getGridlyDestinationRoutePreviewState() {
   const existingState = window.GridlyDestinationRoutePreview;
   const nextState = {
@@ -14111,6 +14275,7 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
   preview.error = "";
   window.GridlyDestinationRoutePreview = preview;
   syncMobileDestinationCommandCard();
+  applyGridlyDestinationVisibilityOffset(destination, { reason: "destination-preview-loading" });
 
   const routeData = await fetchRoadRoutePreviewData([origin.lat, origin.lng], [destination.lat, destination.lng]);
   const latestPreview = getGridlyDestinationRoutePreviewState();
@@ -14450,11 +14615,10 @@ function selectGridlySearchResult(result, options = {}) {
     console.warn("Gridly selection warning: destination marker was not created.");
     gridlySearchUiState.debugWarningsSeen.add("select-marker-failed");
   }
-  if (marker) focusGridlyDestinationOnMap(normalized.lat, normalized.lng);
-
   collapseGridlySearchResults();
   hideGridlySearchShell({ clear: false });
   syncMobileDestinationCommandCard();
+  if (marker && !isGridlyDestinationVisibilityCardPresent()) focusGridlyDestinationOnMap(normalized.lat, normalized.lng);
   buildGridlyDestinationRoutePreview({ reason: options?.reason || "destination-selected" });
   return normalized;
 }
