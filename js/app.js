@@ -22175,6 +22175,8 @@ function getGridlyLightweightLocationFromHeadline(headline = "") {
   if (onBetween?.[1] && onBetween?.[2] && onBetween?.[3]) return cleanLocation(`${onBetween[1].trim()} between ${onBetween[2].trim()} and ${onBetween[3].trim()}`);
   const onNear = text.match(/\bon\s+(.+?)\s+near\s+(.+?)$/i);
   if (onNear?.[1] && onNear?.[2]) return cleanLocation(`${onNear[1].trim()} near ${onNear[2].trim()}`);
+  const atIntersection = text.match(/\bat\s+(.+?)\s+and\s+(.+?)(?:[.;,]|$)/i);
+  if (atIntersection?.[1] && atIntersection?.[2]) return cleanLocation(`${atIntersection[1].trim()} at ${atIntersection[2].trim()}`);
   const onRoad = text.match(/\bon\s+(.+?)(?:[.;,]|$)/i);
   if (onRoad?.[1]) return cleanLocation(onRoad[1]);
   const nearRoad = text.match(/\bnear\s+(.+?)(?:[.;,]|$)/i);
@@ -23229,13 +23231,77 @@ function buildGridlyRoadHazardTxDotStyleCandidate(alert = {}) {
   return { text: normalizeGridlyLightweightAlertSummaryText(text), source, hazard, road, referenceRoadA, referenceRoadB, nearestRoadName };
 }
 
+function parseGridlyCrossingLocationPartsFromText(value = "") {
+  const text = normalizeGridlyLightweightAlertSummaryText(value);
+  if (!text) return { road: "", referenceRoad: "" };
+  const patterns = [
+    /\bat\s+(.+?)\s+and\s+(.+?)(?:$|[.,;:•·-])/i,
+    /\bon\s+(.+?)\s+(?:at|near)\s+(.+?)(?:$|[.,;:•·-])/i,
+    /\b(.+?)\s+(?:at|near)\s+(.+?)\s+crossing\b/i
+  ];
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    const road = normalizeGridlyRoadHazardRoadComponent(match?.[1] || "");
+    const referenceRoad = normalizeGridlyRoadHazardRoadComponent(match?.[2] || "");
+    if (road || referenceRoad) return { road, referenceRoad };
+  }
+  const roadOnly = text.match(/\bon\s+(.+?)(?:$|[.,;:•·-])/i) || text.match(/\b(?:at|near)\s+(.+?)\s+crossing\b/i);
+  return { road: normalizeGridlyRoadHazardRoadComponent(roadOnly?.[1] || ""), referenceRoad: "" };
+}
+
+function getGridlyCrossingMetadataForAlert(alert = {}) {
+  const crossingId = String(alert?.crossingId || alert?.crossing_id || alert?.raw?.crossingId || alert?.raw?.crossing_id || alert?.source?.crossingId || alert?.source?.crossing_id || "").trim();
+  if (crossingId && typeof gridlyGetCrossingHistoryMetadata === "function") {
+    return gridlyGetCrossingHistoryMetadata(crossingId, alert) || {};
+  }
+  return {};
+}
+
 function buildGridlyCrossingAlertCandidate(alert = {}) {
   if (!alert || typeof alert !== "object" || !isGridlyAlertRailOrCrossingRelated(alert)) return { text: "", source: "" };
-  const text = getGridlyAlertFirstTextValue(alert, ["resolvedHeadline", "finalHeadline", "localizedSummary", "summary", "title", "raw.resolvedHeadline", "raw.finalHeadline", "raw.localizedSummary", "raw.summary", "raw.title"]);
-  if (text) return { text, source: "crossing.alreadyRenderedCleanAlertText" };
-  const road = getGridlyAlertFirstTextValue(alert, ["roadName", "primaryRoad", "crossingRoad", "raw.roadName", "raw.primaryRoad", "raw.crossingRoad"]);
-  const crossing = getGridlyAlertFirstTextValue(alert, ["crossingName", "nearestRoadName", "nearestRoad", "referenceRoadA", "raw.crossingName", "raw.nearestRoadName", "raw.nearestRoad", "raw.referenceRoadA"]);
-  return { text: road && crossing ? `Crossing blocked at ${road} and ${crossing}` : (road ? `Crossing blocked at ${road}` : "Rail crossing blocked"), source: "crossing.locationFields" };
+  const metadata = getGridlyCrossingMetadataForAlert(alert);
+  const renderedText = getGridlyAlertFirstTextValue(alert, [
+    "resolvedHeadline", "finalHeadline", "localizedSummary", "summary", "headline", "title",
+    "raw.resolvedHeadline", "raw.finalHeadline", "raw.localizedSummary", "raw.summary", "raw.headline", "raw.title",
+    "source.resolvedHeadline", "source.finalHeadline", "source.localizedSummary", "source.summary", "source.headline", "source.title"
+  ]);
+  const parsedRendered = parseGridlyCrossingLocationPartsFromText(renderedText);
+  const parsedLocationLabel = parseGridlyCrossingLocationPartsFromText(getGridlyAlertFirstTextValue(alert, [
+    "resolvedLocationLabel", "locationLabel", "location", "localizedLocation", "locationPhrase",
+    "raw.resolvedLocationLabel", "raw.locationLabel", "raw.location", "raw.localizedLocation", "raw.locationPhrase",
+    "source.resolvedLocationLabel", "source.locationLabel", "source.location", "source.localizedLocation", "source.locationPhrase"
+  ]));
+  const road = normalizeGridlyRoadHazardRoadComponent(getGridlyAlertFirstTextValue(alert, [
+    "roadName", "primaryRoad", "resolvedRoadName", "displayRoadName", "routeName", "route", "corridor", "highway",
+    "raw.roadName", "raw.primaryRoad", "raw.resolvedRoadName", "raw.displayRoadName", "raw.routeName", "raw.route", "raw.corridor", "raw.highway",
+    "source.roadName", "source.primaryRoad", "source.resolvedRoadName", "source.displayRoadName", "source.routeName", "source.route", "source.corridor", "source.highway"
+  ])) || parsedLocationLabel.road || parsedRendered.road || normalizeGridlyRoadHazardRoadComponent(metadata.roadName || "");
+  const refs = [];
+  const pushRef = (value = "", source = "") => pushGridlyRoadHazardReferenceRoad(refs, value, road, source);
+  pushRef(getGridlyAlertFirstTextValue(alert, [
+    "referenceRoad", "referenceRoadA", "crossStreet", "crossStreetA", "nearestCrossStreet", "nearbyCrossStreet", "nearestRoadName", "nearestRoad",
+    "raw.referenceRoad", "raw.referenceRoadA", "raw.crossStreet", "raw.crossStreetA", "raw.nearestCrossStreet", "raw.nearbyCrossStreet", "raw.nearestRoadName", "raw.nearestRoad",
+    "source.referenceRoad", "source.referenceRoadA", "source.crossStreet", "source.crossStreetA", "source.nearestCrossStreet", "source.nearbyCrossStreet", "source.nearestRoadName", "source.nearestRoad"
+  ]), "crossing.referenceRoad");
+  pushRef(getGridlyAlertFirstTextValue(alert, [
+    "crossingName", "crossing_name", "resolvedCrossingName", "crossingLabel", "crossingRoad", "knownLocation", "locationName",
+    "raw.crossingName", "raw.crossing_name", "raw.resolvedCrossingName", "raw.crossingLabel", "raw.crossingRoad", "raw.knownLocation", "raw.locationName",
+    "source.crossingName", "source.crossing_name", "source.resolvedCrossingName", "source.crossingLabel", "source.crossingRoad", "source.knownLocation", "source.locationName"
+  ]), "crossing.crossingName");
+  pushRef(parsedLocationLabel.referenceRoad, "crossing.resolvedLocationLabel:parsed_reference");
+  pushRef(parsedRendered.referenceRoad, "crossing.renderedText:parsed_reference");
+  pushRef(metadata.crossingName || "", "crossing.metadata.crossingName");
+  const referenceRoad = refs[0]?.road || "";
+  if (road && referenceRoad) {
+    return { text: normalizeGridlyLightweightAlertSummaryText(`Crossing Blocked at ${road} and ${referenceRoad}`), source: refs[0]?.source || "crossing.locationFields.road+reference", road, referenceRoad };
+  }
+  if (road) {
+    return { text: normalizeGridlyLightweightAlertSummaryText(`Crossing Blocked on ${road}`), source: "crossing.locationFields.road", road, referenceRoad: "" };
+  }
+  if (renderedText && hasGridlyTopAwarenessUsableLocationIntelligence(getGridlyLightweightLocationFromHeadline(renderedText))) {
+    return { text: renderedText, source: "crossing.alreadyRenderedLocationAwareText", road: "", referenceRoad: "" };
+  }
+  return { text: renderedText || "Rail crossing blocked", source: renderedText ? "crossing.renderedTextFallback" : "crossing.default", road: "", referenceRoad: "" };
 }
 
 function getGridlyAlertsPanelHeadingSeverityScore(alert = {}) {
