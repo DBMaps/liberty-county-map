@@ -14325,14 +14325,44 @@ function bindGridlyDestinationImpactPane() {
   }
 }
 
+function isGridlyDestinationImpactLineVisible(node) {
+  if (!node || !String(node.textContent || "").trim()) return false;
+  const style = window.getComputedStyle ? window.getComputedStyle(node) : null;
+  if (style) {
+    const hiddenByStyle = style.display === "none"
+      || style.visibility === "hidden"
+      || Number(style.opacity || 1) <= 0;
+    if (hiddenByStyle) return false;
+  }
+  const rect = typeof node.getBoundingClientRect === "function" ? node.getBoundingClientRect() : null;
+  if (!rect || rect.width <= 0 || rect.height <= 0) return false;
+  const viewportWidth = window.innerWidth || document.documentElement?.clientWidth || 0;
+  const viewportHeight = window.innerHeight || document.documentElement?.clientHeight || 0;
+  const intersectsViewport = rect.bottom > 0
+    && rect.right > 0
+    && rect.top < viewportHeight
+    && rect.left < viewportWidth;
+  if (!intersectsViewport) return false;
+  if (typeof document.elementFromPoint !== "function") return true;
+  const sampleX = Math.min(Math.max(rect.left + (rect.width / 2), 0), Math.max(viewportWidth - 1, 0));
+  const sampleY = Math.min(Math.max(rect.top + (rect.height / 2), 0), Math.max(viewportHeight - 1, 0));
+  const sampledNode = document.elementFromPoint(sampleX, sampleY);
+  return sampledNode === node || Boolean(node.contains(sampledNode));
+}
+
 window.gridlyDestinationImpactPaneAudit = function gridlyDestinationImpactPaneAudit() {
   const paneEls = getGridlyDestinationImpactPaneElements();
   if (paneEls.pane && !GRIDLY_DESTINATION_IMPACT_PANE_STATE.paneOpen) {
     renderGridlyDestinationImpactPane();
   }
+  const impactLineText = String(paneEls.trigger?.textContent || "").trim();
+  const paneAvailable = Boolean(paneEls.pane);
   return {
-    available: Boolean(paneEls.pane),
+    available: paneAvailable,
+    paneAvailable,
     paneOpen: Boolean(GRIDLY_DESTINATION_IMPACT_PANE_STATE.paneOpen),
+    impactLineVisible: isGridlyDestinationImpactLineVisible(paneEls.trigger),
+    impactLineText,
     impactLevel: String(GRIDLY_DESTINATION_IMPACT_PANE_STATE.impactLevel || ""),
     displayedReasonCount: GRIDLY_DESTINATION_IMPACT_PANE_STATE.displayedReasons.length,
     displayedReasons: [...GRIDLY_DESTINATION_IMPACT_PANE_STATE.displayedReasons]

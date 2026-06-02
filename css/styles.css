@@ -12227,9 +12227,10 @@ body[data-layout-mode="portrait"] .mobile-destination-command p {
 }
 
 body[data-layout-mode="portrait"] .mobile-destination-command .destination-route-impact-line {
-  min-height: 0;
-  color: rgba(186, 230, 253, 0.86);
+  min-height: 18px;
+  color: rgba(186, 230, 253, 0.9);
   font-size: 0.76rem;
+  line-height: 1.18;
 }
 
 body[data-layout-mode="portrait"] .mobile-destination-command .destination-route-impact-line:empty {
@@ -15481,12 +15482,12 @@ body[data-layout-mode="portrait"] .gridly-v2-control-rail {
     grid-template-columns: minmax(0, 1fr) auto !important;
     align-items: center !important;
     gap: 10px !important;
-    min-height: 54px !important;
-    height: 54px !important;
-    max-height: 54px !important;
+    min-height: 64px !important;
+    height: 64px !important;
+    max-height: 64px !important;
     box-sizing: border-box !important;
     margin: 0 !important;
-    padding: 8px 10px 8px 12px !important;
+    padding: 9px 10px 10px 12px !important;
     border-radius: 18px !important;
     border: 1px solid rgba(161, 211, 255, 0.38) !important;
     background: linear-gradient(145deg, rgba(9, 19, 33, 0.86), rgba(5, 12, 22, 0.94)) !important;
@@ -15501,7 +15502,7 @@ body[data-layout-mode="portrait"] .gridly-v2-control-rail {
     display: grid !important;
     grid-template-rows: auto auto auto !important;
     align-content: center !important;
-    gap: 2px !important;
+    gap: 3px !important;
     min-width: 0 !important;
     overflow: hidden !important;
   }
@@ -15531,8 +15532,27 @@ body[data-layout-mode="portrait"] .gridly-v2-control-rail {
   }
 
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .destination-route-impact-line {
-    color: rgba(186, 230, 253, 0.86) !important;
-    font-size: 0.68rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 3px !important;
+    width: fit-content !important;
+    max-width: 100% !important;
+    min-height: 17px !important;
+    margin-top: 2px !important;
+    padding-right: 2px !important;
+    color: rgba(186, 230, 253, 0.94) !important;
+    font-size: 0.7rem !important;
+    line-height: 1.18 !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .destination-route-impact-line:not(:empty)::after {
+    content: "›";
+    flex: 0 0 auto;
+    color: rgba(186, 230, 253, 0.78);
+    font-size: 0.92rem;
+    font-weight: 800;
+    line-height: 0.8;
+    transform: translateY(-0.5px);
   }
 
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .destination-route-impact-line:empty {
@@ -15561,6 +15581,7 @@ body[data-layout-mode="portrait"] .mobile-destination-command .destination-route
   text-decoration: underline;
   text-decoration-color: rgba(186, 230, 253, 0.34);
   text-underline-offset: 3px;
+  touch-action: manipulation;
 }
 
 body[data-layout-mode="portrait"] .mobile-destination-command .destination-route-impact-line:not(:empty):focus-visible {
