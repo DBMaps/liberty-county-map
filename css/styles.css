@@ -16529,3 +16529,163 @@ body[data-layout-mode="portrait"] .mobile-destination-command,
   height: 11px !important;
   background: linear-gradient(180deg, rgba(237, 253, 255, 0.98), rgba(65, 189, 229, 0.86) 72%, rgba(6, 49, 79, 0.92)) !important;
 }
+
+/* V222 — trip command center architecture: destination-first lower-screen composition. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] {
+    --gridly-destination-card-nav-clearance: 120px;
+    --gridly-destination-card-nav-gap: 12px;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: end !important;
+    min-height: 164px !important;
+    padding: 18px 18px 16px !important;
+    border-radius: 26px !important;
+    border-color: rgba(168, 218, 255, 0.36) !important;
+    background:
+      linear-gradient(180deg, rgba(9, 24, 40, 0.94), rgba(4, 12, 22, 0.97)) !important;
+    box-shadow:
+      0 20px 42px rgba(0, 6, 15, 0.54),
+      0 48px 72px rgba(3, 9, 17, 0.48),
+      inset 0 1px 0 rgba(239, 252, 255, 0.1) !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command[data-destination-active="true"] {
+    min-height: 188px !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command::before {
+    content: none !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .mobile-destination-command-copy {
+    gap: 8px !important;
+    align-content: start !important;
+    overflow: visible !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command-kicker {
+    display: block;
+    color: rgba(173, 202, 230, 0.78);
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command strong#mobileDestinationCommandTitle {
+    color: #f7fbff !important;
+    font-size: clamp(1.42rem, 6.1vw, 2rem) !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.045em !important;
+    line-height: 1.02 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command #mobileDestinationCommandMeta {
+    color: rgba(208, 226, 244, 0.82) !important;
+    font-size: 0.82rem !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-travel-summary {
+    display: grid;
+    grid-template-columns: minmax(0, auto) 1px minmax(0, auto);
+    align-items: center;
+    justify-content: start;
+    gap: 14px;
+    margin-top: 2px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(150, 196, 232, 0.16);
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-summary-item {
+    display: grid;
+    gap: 2px;
+    min-width: 74px;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-summary-item small {
+    color: rgba(157, 185, 214, 0.78);
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .mobile-destination-summary-item strong {
+    color: rgba(247, 252, 255, 0.96) !important;
+    font-size: 1rem !important;
+    font-weight: 850 !important;
+    letter-spacing: -0.015em !important;
+    line-height: 1.1 !important;
+    white-space: nowrap !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-summary-divider {
+    width: 1px;
+    height: 28px;
+    background: rgba(143, 188, 224, 0.18);
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .destination-route-impact-line {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    min-height: 34px !important;
+    margin-top: 0 !important;
+    padding: 8px 28px 8px 10px !important;
+    border: 1px solid rgba(126, 178, 216, 0.16) !important;
+    border-radius: 14px !important;
+    background: rgba(4, 14, 25, 0.46) !important;
+    color: rgba(232, 244, 255, 0.94) !important;
+    font-size: 0.82rem !important;
+    font-weight: 760 !important;
+    line-height: 1.18 !important;
+    white-space: normal !important;
+    text-decoration: none !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .destination-route-impact-line:not(:empty)::before {
+    content: "" !important;
+    display: inline-block !important;
+    flex: 0 0 auto !important;
+    width: 8px !important;
+    height: 8px !important;
+    border-radius: 999px !important;
+    background: rgba(70, 211, 143, 0.92) !important;
+    box-shadow: 0 0 0 3px rgba(70, 211, 143, 0.14) !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .compact-btn {
+    align-self: end !important;
+    min-height: 42px !important;
+    height: 42px !important;
+    min-width: 92px !important;
+    border-radius: 16px !important;
+  }
+}
+
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .destination-route-impact-line:empty {
+    display: none !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .destination-route-impact-line[data-impact-level="low"]::before,
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .destination-route-impact-line[data-impact-level="moderate"]::before {
+    background: rgba(245, 158, 11, 0.92) !important;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.14) !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .destination-route-impact-line[data-impact-level="high"]::before {
+    background: rgba(248, 113, 113, 0.92) !important;
+    box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.14) !important;
+  }
+}
