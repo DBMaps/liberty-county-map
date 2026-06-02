@@ -1379,14 +1379,14 @@ function getGridlyZoomBehavior(category = "unknown", severity = "low", incident 
 const GRIDLY_MARKER_VISUALS = {
   rail_clear: { className: "gridly-marker-rail-clear", priority: 1, scale: 0.9, glow: false, pulse: false, priorityRank: 7, zIndexOffset: 7, visualWeight: "light", emphasisLevel: "passive", calmLabel: "Rail clear" },
   rail_blocked: { className: "gridly-marker-rail-blocked", priority: 3, scale: 1.1, glow: true, pulse: false, priorityRank: 3, zIndexOffset: 30, visualWeight: "strong", emphasisLevel: "high", calmLabel: "Rail blocked" },
-  rail_route_impact: { className: "gridly-marker-rail-route-impact", priority: 4, scale: 1.13, glow: true, pulse: false, priorityRank: 2, zIndexOffset: 34, visualWeight: "strong", emphasisLevel: "route-impact", calmLabel: "Rail route impact" },
+  rail_route_impact: { className: "gridly-marker-rail-route-impact", priority: 4, scale: 1.13, glow: true, pulse: false, priorityRank: 1, zIndexOffset: 44, visualWeight: "strong", emphasisLevel: "route-impact", calmLabel: "Rail route impact" },
   hazard_low: { className: "gridly-marker-hazard-low", priority: 1, scale: 0.95, glow: false, pulse: false, priorityRank: 6, zIndexOffset: 10, visualWeight: "light", emphasisLevel: "low", calmLabel: "Low hazard" },
   hazard_moderate: { className: "gridly-marker-hazard-moderate", priority: 2, scale: 1, glow: false, pulse: false, priorityRank: 5, zIndexOffset: 16, visualWeight: "medium", emphasisLevel: "moderate", calmLabel: "Moderate hazard" },
   hazard_high: { className: "gridly-marker-hazard-high", priority: 3, scale: 1.08, glow: true, pulse: false, priorityRank: 4, zIndexOffset: 24, visualWeight: "strong", emphasisLevel: "high", calmLabel: "High hazard" },
   hazard_critical: { className: "gridly-marker-hazard-critical", priority: 5, scale: 1.18, glow: true, pulse: true, priorityRank: 2, zIndexOffset: 40, visualWeight: "strong", emphasisLevel: "critical", calmLabel: "Critical hazard" },
   txdot_single: { className: "gridly-marker-txdot-single", priority: 2, scale: 1, glow: false, pulse: false, priorityRank: 6, zIndexOffset: 10, visualWeight: "light", emphasisLevel: "low", calmLabel: "TxDOT single" },
   txdot_corridor: { className: "gridly-marker-txdot-corridor", priority: 3, scale: 1.08, glow: true, pulse: false, priorityRank: 4, zIndexOffset: 22, visualWeight: "medium", emphasisLevel: "moderate", calmLabel: "TxDOT corridor" },
-  txdot_route_impact: { className: "gridly-marker-txdot-route-impact", priority: 5, scale: 1.2, glow: true, pulse: true, priorityRank: 1, zIndexOffset: 36, visualWeight: "strong", emphasisLevel: "route-impact", calmLabel: "TxDOT route impact" },
+  txdot_route_impact: { className: "gridly-marker-txdot-route-impact", priority: 5, scale: 1.2, glow: true, pulse: true, priorityRank: 1, zIndexOffset: 46, visualWeight: "strong", emphasisLevel: "route-impact", calmLabel: "TxDOT route impact" },
   unknown_quiet: { className: "gridly-marker-unknown-quiet", priority: 0, scale: 0.9, glow: false, pulse: false, priorityRank: 8, zIndexOffset: 0, visualWeight: "light", emphasisLevel: "passive", calmLabel: "Unknown quiet" }
 };
 
@@ -1964,9 +1964,9 @@ window.gridlyMarkerVisualAudit = function gridlyMarkerVisualAudit() {
   };
 };
 
-const GRIDLY_VISUAL_HIERARCHY_AUDIT_VERSION = "V219";
+const GRIDLY_VISUAL_HIERARCHY_AUDIT_VERSION = "V219.5";
 const GRIDLY_VISUAL_HIERARCHY_OWNERSHIP_MODEL = [
-  { rank: 1, owner: "route_impact", label: "Route Impact", beats: "Everything generic; personal route relevance wins.", expectedStyles: ["rail_route_impact", "txdot_route_impact"], expectedZoom: "far", expectedZIndexFloor: 34 },
+  { rank: 1, owner: "route_impact", label: "Route Impact", beats: "Everything generic; personal route relevance wins.", expectedStyles: ["rail_route_impact", "txdot_route_impact"], expectedZoom: "far", expectedZIndexFloor: 44 },
   { rank: 2, owner: "high_impact_hazard", label: "High Impact Hazard", beats: "Major non-route disruption.", expectedStyles: ["hazard_critical"], expectedZoom: "far", expectedZIndexFloor: 40 },
   { rank: 3, owner: "blocked_crossing", label: "Blocked Crossing", beats: "Immediate rail mobility delay.", expectedStyles: ["rail_blocked"], expectedZoom: "mid", expectedZIndexFloor: 30 },
   { rank: 4, owner: "active_hazard", label: "Road Hazard", beats: "Live roadway/community issue.", expectedStyles: ["hazard_high", "hazard_moderate", "txdot_corridor"], expectedZoom: "mid", expectedZIndexFloor: 16 },
@@ -2144,7 +2144,7 @@ function gridlyGetMarkerDomInventory() {
     const className = String(node.className || "");
     const markerClassName = String(markerNode?.className || "");
     const text = `${className} ${markerClassName}`.toLowerCase();
-    const selectedOrFocused = Boolean(node.matches?.(":focus, .selected, .is-selected, .focused, .is-focused, .leaflet-interactive:focus") || node.querySelector?.(":focus, .selected, .is-selected, .focused, .is-focused"));
+    const selectedOrFocused = Boolean(node.matches?.(":focus, .selected, .is-selected, .focused, .is-focused, .gridly-alert-focused-marker, [data-gridly-selected='true'], .leaflet-interactive:focus") || node.querySelector?.(":focus, .selected, .is-selected, .focused, .is-focused, .gridly-alert-focused-marker, [data-gridly-selected='true']"));
     const ownerInferred = owner !== "unknown";
     const zIndexDetermined = cssZIndex !== "unknown_z_index";
     return {
@@ -2160,9 +2160,9 @@ function gridlyGetMarkerDomInventory() {
       inExpectedPane: pane === "markerPane" || pane === "overlayPane",
       className,
       markerClassName,
-      dataAttributes: gridlyGetVisualHierarchyDataAttributes(markerNode),
+      dataAttributes: { ...gridlyGetVisualHierarchyDataAttributes(node), ...gridlyGetVisualHierarchyDataAttributes(markerNode) },
       dataState: markerNode?.getAttribute?.("data-state") || "",
-      dataRouteRelevance: markerNode?.getAttribute?.("data-route-relevance") || "",
+      dataRouteRelevance: markerNode?.getAttribute?.("data-gridly-route-relevant") || markerNode?.getAttribute?.("data-route-relevance") || "",
       dataConsequence: markerNode?.getAttribute?.("data-gridly-consequence") || "",
       selectedOrFocused,
       detectedRoles: {
@@ -2213,6 +2213,66 @@ function gridlyResolveVisualHierarchyOwner({ visualStyle = "", markerNode = null
   if (config?.emphasisLevel === "critical") return "high_impact_hazard";
   if (config?.emphasisLevel === "high") return style.includes("rail") ? "blocked_crossing" : "active_hazard";
   return returnUnknownWhenUnresolved ? "unknown" : "infrastructure";
+}
+
+
+function gridlyBuildVisualPriorityMetadata({ owner = "infrastructure", visualState = "normal", routeRelevant = false, selected = false, impactLevel = "passive", priorityRank = 8 } = {}) {
+  const safeOwner = String(owner || "infrastructure").toLowerCase().replace(/[^a-z0-9_-]/g, "_");
+  const safeState = String(visualState || "normal").toLowerCase().replace(/[^a-z0-9_-]/g, "_");
+  const safeImpact = String(impactLevel || "passive").toLowerCase().replace(/[^a-z0-9_-]/g, "_");
+  const safePriority = Number.isFinite(Number(priorityRank)) ? String(Number(priorityRank)) : "8";
+  return {
+    owner: safeOwner,
+    visualState: safeState,
+    routeRelevant: Boolean(routeRelevant),
+    selected: Boolean(selected),
+    impactLevel: safeImpact,
+    priorityRank: safePriority,
+    className: `gridly-visual-owner-${safeOwner} gridly-visual-state-${safeState} gridly-visual-priority-${safePriority} gridly-impact-${safeImpact}`,
+    attributes: `data-gridly-map-owner="${sanitizeText(safeOwner)}" data-gridly-visual-priority="${sanitizeText(safePriority)}" data-gridly-visual-state="${sanitizeText(safeState)}" data-gridly-route-relevant="${Boolean(routeRelevant) ? "true" : "false"}" data-gridly-selected="${Boolean(selected) ? "true" : "false"}" data-gridly-impact-level="${sanitizeText(safeImpact)}" data-visual-owner="${sanitizeText(safeOwner)}"`
+  };
+}
+
+function gridlyApplySelectedVisualDominanceToMarker(marker, selected = true) {
+  const node = marker?.getElement?.() || marker?._icon || null;
+  if (!node) return false;
+  node.classList.toggle("gridly-alert-focused-marker", Boolean(selected));
+  node.dataset.gridlySelected = Boolean(selected) ? "true" : "false";
+  node.querySelectorAll?.(".gridly-marker, .gridly-hazard-marker, .gridly-marker-wrap, [data-gridly-selected]").forEach((child) => {
+    child.dataset.gridlySelected = Boolean(selected) ? "true" : "false";
+  });
+  return true;
+}
+
+function gridlyGetVisualHierarchyBaselineValidation(audit = {}) {
+  const configs = audit?.markerVisualConfigs || Object.fromEntries(Object.entries(GRIDLY_MARKER_VISUALS || {}).map(([style]) => [style, getGridlyMarkerHierarchyConfig(style)]));
+  const markers = gridlyVisualHierarchySafeArray(audit?.domInventory?.markers);
+  const hasDom = markers.length > 0;
+  const hasPriorityMetadata = !hasDom || markers.some((marker) => marker.dataAttributes?.["data-gridly-visual-priority"] || marker.dataAttributes?.["data-gridly-marker-priority"] || marker.dataAttributes?.["data-visual-priority"]);
+  const routeBeatsCritical = Number(configs.rail_route_impact?.priorityRank || 99) < Number(configs.hazard_critical?.priorityRank || 99)
+    && Number(configs.txdot_route_impact?.priorityRank || 99) < Number(configs.hazard_critical?.priorityRank || 99)
+    && Number(configs.rail_route_impact?.zIndexOffset || 0) > Number(configs.hazard_critical?.zIndexOffset || 0)
+    && Number(configs.txdot_route_impact?.zIndexOffset || 0) > Number(configs.hazard_critical?.zIndexOffset || 0);
+  const activeBeatsHistorical = Number(configs.hazard_high?.priorityRank || 99) < Number(configs.unknown_quiet?.priorityRank || 99)
+    && Number(configs.hazard_moderate?.priorityRank || 99) < Number(configs.unknown_quiet?.priorityRank || 99);
+  const infrastructureLowest = Number(configs.rail_clear?.priorityRank || 99) >= Number(configs.hazard_low?.priorityRank || 99)
+    && Number(configs.rail_clear?.zIndexOffset || 0) < Number(configs.hazard_moderate?.zIndexOffset || 0);
+  const selectedDominanceDetected = Boolean(typeof window !== "undefined" && typeof window.focusAlertMarkerOnMap === "function" && typeof gridlyApplySelectedVisualDominanceToMarker === "function");
+  const visualPriorityApplied = Boolean(hasPriorityMetadata && routeBeatsCritical && activeBeatsHistorical && infrastructureLowest);
+  const visualHierarchyBaselineReady = Boolean(visualPriorityApplied && selectedDominanceDetected && routeBeatsCritical && activeBeatsHistorical && infrastructureLowest);
+  return {
+    version: "V219.5",
+    visualPriorityApplied,
+    selectedDominanceDetected,
+    routeRelevantPriorityDetected: routeBeatsCritical,
+    activeBeatsHistoricalDetected: activeBeatsHistorical,
+    infrastructureLowestPriorityDetected: infrastructureLowest,
+    visualHierarchyBaselineReady,
+    notes: [
+      "V219.5 validates visual metadata/classes and the configured priority/z-index stack only; it does not recalculate route or destination intelligence.",
+      hasDom ? "Rendered DOM markers were sampled for priority metadata." : "No rendered DOM markers were available; validation used safe marker visual configs."
+    ]
+  };
 }
 
 function gridlyGetLayerInventory() {
@@ -2394,8 +2454,12 @@ function gridlyBuildVisualHierarchyAudit(options = {}) {
       expectation: "Tapped/selected incident should become dominant and non-selected markers should not compete."
     }
   };
+  audit.baselineValidation = gridlyGetVisualHierarchyBaselineValidation(audit);
+  Object.assign(audit, audit.baselineValidation);
   audit.findings = gridlyEvaluateVisualHierarchyFindings(audit);
-  audit.recommendation = "Use this read-only audit as the V219 baseline. Resolve findings before changing marker visuals, z-indexes, cluster winners, or zoom rules.";
+  audit.recommendation = audit.visualHierarchyBaselineReady
+    ? "V219.5 visual hierarchy baseline is ready; keep using findings as guardrails for state-dependent warnings."
+    : "Review V219.5 baseline validation fields before expanding visual hierarchy changes.";
   return audit;
 }
 
@@ -2943,6 +3007,8 @@ function gridlyBuildRenderedMapObjectCensus(options = {}) {
     unknownLayerDiagnostics: [],
     findings: []
   };
+  census.baselineValidation = gridlyGetVisualHierarchyBaselineValidation({ domInventory, markerVisualConfigs: Object.fromEntries(Object.entries(GRIDLY_MARKER_VISUALS).map(([style]) => [style, getGridlyMarkerHierarchyConfig(style)])) });
+  Object.assign(census, census.baselineValidation);
   census.unknownLayerDiagnostics = gridlyBuildUnknownLayerDiagnostics(census);
   census.findings = gridlyEvaluateRenderedMapCensusFindings(census);
   if (options?.silent !== true) gridlyLogRenderedMapObjectCensus(census);
@@ -2983,7 +3049,7 @@ window.gridlyRenderedMapObjectCensus = function gridlyRenderedMapObjectCensus(op
 window.gridlyMapObjectCensus = window.gridlyRenderedMapObjectCensus;
 
 
-const GRIDLY_VISUAL_HIERARCHY_FINDINGS_AUDIT_VERSION = "V219.4";
+const GRIDLY_VISUAL_HIERARCHY_FINDINGS_AUDIT_VERSION = "V219.5";
 
 function gridlyFindingsAuditText(value) {
   return String(value || "").toLowerCase();
@@ -3183,16 +3249,21 @@ function gridlyBuildVisualHierarchyFindingsAudit(options = {}) {
   const warningFindings = classifiedFindings.filter((finding) => finding.severity === "warning");
   const infoFindings = classifiedFindings.filter((finding) => finding.severity === "info");
   const expectedFindings = classifiedFindings.filter((finding) => finding.severity === "expected");
+  const visualAudit = options?.sourceVisualAudit || window.gridlyVisualHierarchyAudit?.({ silent: true }) || gridlyBuildVisualHierarchyAudit();
+  const baselineValidation = gridlyGetVisualHierarchyBaselineValidation(visualAudit);
   const recommendations = [];
   if (trueUnknownVisibleHierarchyBlockers.length > 0) recommendations.push("Resolve true unknown visible hierarchy-participating layers before changing marker visuals.");
+  if (!baselineValidation.visualHierarchyBaselineReady) recommendations.push("Review V219.5 visual hierarchy baseline validation fields before expanding visual changes.");
   if (warningFindings.length > 0 && trueUnknownVisibleHierarchyBlockers.length === 0) recommendations.push("Proceed carefully with V219 visual hierarchy changes, using warnings as guardrails.");
-  if (trueUnknownVisibleHierarchyBlockers.length === 0 && warningFindings.length === 0) recommendations.push("Proceed to V219.4 visual hierarchy implementation baseline.");
+  if (trueUnknownVisibleHierarchyBlockers.length === 0 && warningFindings.length === 0 && baselineValidation.visualHierarchyBaselineReady) recommendations.push("V219.5 visual hierarchy baseline is ready.");
   if (!sourceCensus?.mapLoaded) recommendations.push("Re-run the classifier after the map is loaded to confirm findings against the rendered state.");
   if ((sourceCensus?.clusterInventory || []).length === 0) recommendations.push("No cluster groups are currently rendered or exposed; treat that as expected unless clustering is enabled for the tested state.");
 
   const canProceedToVisualChanges = trueUnknownVisibleHierarchyBlockers.length === 0;
   const recommendedNextStep = canProceedToVisualChanges
-    ? (warningFindings.length > 0 || criticalFindings.length > 0 ? "Proceed carefully with V219 visual hierarchy changes, using warnings and non-blocking critical context as guardrails." : "Proceed to V219.4 visual hierarchy implementation baseline.")
+    ? (baselineValidation.visualHierarchyBaselineReady
+      ? (warningFindings.length > 0 || criticalFindings.length > 0 ? "Proceed carefully with the V219.5 visual hierarchy baseline, using warnings and non-blocking critical context as guardrails." : "V219.5 visual hierarchy baseline is ready.")
+      : "Proceed only after reviewing V219.5 baseline validation fields.")
     : "Resolve or clarify true unknown visible hierarchy-participating layers before changing marker visuals.";
 
   const audit = {
@@ -3209,6 +3280,7 @@ function gridlyBuildVisualHierarchyFindingsAudit(options = {}) {
       expectedCount: expectedFindings.length,
       trueUnknownVisibleHierarchyBlockerCount: trueUnknownVisibleHierarchyBlockers.length,
       canProceedToVisualChanges,
+      ...baselineValidation,
       recommendedNextStep
     },
     classifiedFindings,
@@ -3216,6 +3288,11 @@ function gridlyBuildVisualHierarchyFindingsAudit(options = {}) {
     warningFindings,
     infoFindings,
     expectedFindings,
+    baselineValidation,
+    ...baselineValidation,
+    criticalCount: criticalFindings.length,
+    warningCount: warningFindings.length,
+    canProceedToVisualChanges,
     unknownLayerDiagnostics,
     trueUnknownVisibleHierarchyBlockers,
     recommendations,
@@ -3227,7 +3304,7 @@ function gridlyBuildVisualHierarchyFindingsAudit(options = {}) {
 
 function gridlyLogVisualHierarchyFindingsAudit(audit) {
   if (typeof console === "undefined") return;
-  console.groupCollapsed("GRIDLY V219.3 VISUAL HIERARCHY FINDINGS CLASSIFIER");
+  console.groupCollapsed("GRIDLY V219.5 VISUAL HIERARCHY FINDINGS CLASSIFIER");
   console.log("Total Findings:", audit?.summary?.totalFindings || 0);
   console.log("Critical:", audit?.summary?.criticalCount || 0);
   console.log("Warning:", audit?.summary?.warningCount || 0);
@@ -22767,12 +22844,32 @@ function renderCrossings(reason = "unspecified", options = {}) {
       : markerStateClass === "state-blocked"
         ? "rail_blocked"
         : "rail_clear";
-    const railMarkerVisualClass = getGridlyMarkerVisualConfig(railMarkerStyle).className;
+    const railMarkerVisual = getGridlyMarkerVisualConfig(railMarkerStyle);
+    const railHierarchyConfig = getGridlyMarkerHierarchyConfig(railMarkerStyle);
+    const railMarkerVisualClass = railMarkerVisual.className;
+    const railVisualOwner = gridlyResolveVisualHierarchyOwner({ visualStyle: railMarkerStyle, config: railHierarchyConfig });
+    const railVisualState = isImpactedOnRoute
+      ? "route_impact"
+      : isCleared
+        ? "recently_cleared"
+        : markerStateClass === "state-blocked"
+          ? "blocked"
+          : hasActiveIssue
+            ? "active"
+            : "infrastructure";
+    const railVisualMetadata = gridlyBuildVisualPriorityMetadata({
+      owner: railVisualOwner,
+      visualState: railVisualState,
+      routeRelevant: isImpactedOnRoute,
+      selected: false,
+      impactLevel: railHierarchyConfig.emphasisLevel,
+      priorityRank: railHierarchyConfig.priorityRank
+    });
 
     const icon = L.divIcon({
-      className: `gridly-rail-marker ${sanitizeText(railMarkerVisualClass)}`,
-      html: `<div class="gridly-marker-wrap ${sanitizeText(railMarkerVisualClass)}" data-visual-style="${sanitizeText(railMarkerStyle)}">
-        <div class="gridly-marker ${markerStateClass} ${hasActiveIssue ? "alert" : ""} ${isCleared ? "cleared" : ""} ${isNearby ? "nearby" : ""} ${clusterCount > 1 ? "cluster-lead" : ""}">${markerLabel}</div>
+      className: `gridly-rail-marker ${sanitizeText(railMarkerVisualClass)} ${sanitizeText(railVisualMetadata.className)}`,
+      html: `<div class="gridly-marker-wrap ${sanitizeText(railMarkerVisualClass)} ${sanitizeText(railVisualMetadata.className)}" data-visual-style="${sanitizeText(railMarkerStyle)}" ${railVisualMetadata.attributes} data-crossing-id="${sanitizeText(String(crossing.id))}">
+        <div class="gridly-marker ${markerStateClass} ${hasActiveIssue ? "alert" : ""} ${isCleared ? "cleared" : ""} ${isNearby ? "nearby" : ""} ${clusterCount > 1 ? "cluster-lead" : ""}" ${railVisualMetadata.attributes}>${markerLabel}</div>
         ${clusterCount > 1 ? `<span class="gridly-marker-cluster-badge">${clusterCount}</span>` : ""}
         ${markerMinutes ? `<span class="gridly-marker-minutes">${markerMinutes}</span>` : ""}
       </div>`,
@@ -30426,6 +30523,16 @@ function renderUnifiedIncidents(reason = "auto") {
     const confidenceEval = evaluateGridlyIncidentConfidence(incident, { visualState, freshnessOptions: { nowMs: Date.now() } });
     const confidenceLevel = String(confidenceEval?.confidenceLevel || "low").toLowerCase();
     const confidenceVisualClass = `gridly-confidence-${confidenceLevel.replace(/_/g, "-")}`;
+    const hazardVisualOwner = gridlyResolveVisualHierarchyOwner({ visualStyle: visualState.markerStyle, markerNode: null, config: hierarchyConfig, incident });
+    const markerState = incident?.status === "cleared" || incident?.report_type === "hazard_cleared" ? "cleared" : "active";
+    const hazardVisualMetadata = gridlyBuildVisualPriorityMetadata({
+      owner: hazardVisualOwner,
+      visualState: markerState === "cleared" ? "recently_cleared" : (routeRelevanceClass === "route-relevant" ? "route_impact" : "active"),
+      routeRelevant: routeRelevanceClass === "route-relevant",
+      selected: false,
+      impactLevel: hierarchyConfig.emphasisLevel,
+      priorityRank: hierarchyConfig.priorityRank
+    });
     const intelligence = generateGridlyIntelligencePhrase(incident, visualState);
     const communityPresence = typeof scoreCommunityPresenceIncident === "function"
       ? scoreCommunityPresenceIncident(incident, { allCandidates: dedupedIncidents })
@@ -30435,6 +30542,7 @@ function renderUnifiedIncidents(reason = "auto") {
           data-visual-priority="${sanitizeText(String(markerVisual.priority))}"
           data-gridly-marker-priority="${sanitizeText(String(hierarchyConfig.priorityRank))}"
           data-gridly-marker-weight="${sanitizeText(String(hierarchyConfig.visualWeight))}"
+          ${hazardVisualMetadata.attributes}
           data-gridly-consequence="${sanitizeText(consequenceLevel)}"
           data-gridly-freshness="${sanitizeText(freshnessLevel)}"
           data-gridly-confidence="${sanitizeText(confidenceLevel)}"
@@ -30465,11 +30573,10 @@ function renderUnifiedIncidents(reason = "auto") {
       routeHighlightedMarkers += 1;
     }
 
-    const markerState = incident?.status === "cleared" || incident?.report_type === "hazard_cleared" ? "cleared" : "active";
     const icon = L.divIcon({
-      className: markerVisualClassSafe,
+      className: `${markerVisualClassSafe} ${sanitizeText(hazardVisualMetadata.className)}`,
       html: `
-        <div class="gridly-hazard-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass} ${proximityClass} ${routeRelevanceClass} ${sanitizeText(markerVariantClass)} ${sanitizeText(confidenceClass)} ${sanitizeText(hierarchyPriorityClass)} ${sanitizeText(consequenceClass)} ${sanitizeText(freshnessClass)} ${sanitizeText(confidenceVisualClass)}${hazardVisualClassSegment}"
+        <div class="gridly-hazard-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass} ${proximityClass} ${routeRelevanceClass} ${sanitizeText(markerVariantClass)} ${sanitizeText(confidenceClass)} ${sanitizeText(hierarchyPriorityClass)} ${sanitizeText(consequenceClass)} ${sanitizeText(freshnessClass)} ${sanitizeText(confidenceVisualClass)} ${sanitizeText(hazardVisualMetadata.className)}${hazardVisualClassSegment}"
           data-category="${sanitizeText(category)}"
           ${hazardVisualMetadataAttributes}
           data-freshness="${sanitizeText(ageClass)}"
@@ -43266,7 +43373,7 @@ function confirmGridlyAlertFocusResult({ coords, mapRef, centerBefore = null, in
 }
 
 function clearGridlyFocusedAlertMarker() {
-  document.querySelectorAll(".gridly-alert-focused-marker").forEach((node) => node.classList.remove("gridly-alert-focused-marker"));
+  document.querySelectorAll(".gridly-alert-focused-marker, [data-gridly-selected='true']").forEach((node) => { node.classList.remove("gridly-alert-focused-marker"); if (node?.dataset) node.dataset.gridlySelected = "false"; });
 }
 
 function findGridlyAlertMarker(coords, options = {}) {
@@ -43414,7 +43521,7 @@ function focusAlertLocation(lat, lng, options = {}) {
 window.focusAlertMarkerOnMap = function focusAlertMarkerOnMap(id, coords = {}) {
   const marker = findGridlyAlertMarker(normalizeCoordinatePair(coords?.lat, coords?.lng), { incidentId: id });
   clearGridlyFocusedAlertMarker();
-  marker?.getElement?.()?.classList?.add("gridly-alert-focused-marker");
+  gridlyApplySelectedVisualDominanceToMarker(marker, true);
   marker?.openPopup?.();
   return Boolean(marker);
 };
