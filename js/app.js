@@ -2456,7 +2456,365 @@ window.gridlyVisualHierarchyAudit = function gridlyVisualHierarchyAudit(options 
   return audit;
 };
 
+
 window.gridlyMapVisualHierarchyAudit = window.gridlyVisualHierarchyAudit;
+
+const GRIDLY_RENDERED_MAP_OBJECT_CENSUS_VERSION = "V219.2";
+
+function gridlyCensusSafeArray(value) {
+  return Array.isArray(value) ? value : [];
+}
+
+function gridlyCensusHasLeafletClass(layer, className) {
+  return typeof L !== "undefined" && typeof L?.[className] === "function" && layer instanceof L[className];
+}
+
+function gridlyCensusNormalizeClassName(value) {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  if (typeof value.baseVal === "string") return value.baseVal;
+  return String(value || "");
+}
+
+function gridlyCensusElementVisible(node) {
+  if (!node) return false;
+  const style = typeof getComputedStyle === "function" ? getComputedStyle(node) : null;
+  const hiddenByStyle = style && (style.display === "none" || style.visibility === "hidden" || style.opacity === "0");
+  return !hiddenByStyle && !node.hidden && !node.closest?.("[hidden], [aria-hidden='true']");
+}
+
+function gridlyCensusLayerVisible(layer) {
+  const element = layer?.getElement?.() || layer?._icon || layer?._path || layer?._container || null;
+  if (element) return gridlyCensusElementVisible(element);
+  if (typeof map?.hasLayer === "function" && layer) return map.hasLayer(layer);
+  return Boolean(layer);
+}
+
+function gridlyCensusLayerFeatureCount(layer) {
+  if (!layer) return 0;
+  if (typeof layer.getLayers === "function") return layer.getLayers().length;
+  if (typeof layer.getLatLngs === "function") {
+    const latLngs = layer.getLatLngs() || [];
+    return Array.isArray(latLngs) ? latLngs.flat?.(Infinity)?.length || latLngs.length : 0;
+  }
+  if (layer.feature) return 1;
+  return 0;
+}
+
+function gridlyCensusLayerChildCount(layer) {
+  if (!layer || typeof layer.getLayers !== "function") return 0;
+  return layer.getLayers().length;
+}
+
+function gridlyCensusLayerPane(layer) {
+  const pane = layer?.options?.pane || layer?._pane?.className || layer?.getPane?.()?.className || "unknown";
+  if (typeof pane === "string" && /^[a-z]+Pane$/.test(pane)) return pane;
+  const paneText = gridlyCensusNormalizeClassName(pane);
+  const match = paneText.match(/leaflet-([a-z-]+)-pane/);
+  return match ? `${match[1]}Pane` : (paneText || "unknown");
+}
+
+function gridlyCensusLayerZIndex(layer) {
+  const direct = layer?.options?.zIndex ?? layer?.options?.zIndexOffset ?? layer?._zIndex;
+  if (direct !== undefined && direct !== null && direct !== "") return String(direct);
+  const element = layer?.getElement?.() || layer?._icon || layer?._path || layer?._container || null;
+  if (element) return gridlyGetVisualHierarchyZIndex(element);
+  return "unknown_z_index";
+}
+
+function gridlyCensusLayerKind(layer, fallbackName = "") {
+  const nameText = String(fallbackName || "").toLowerCase();
+  const classText = String(layer?.constructor?.name || "").toLowerCase();
+  const combined = `${nameText} ${classText} ${String(layer?.options?.className || "").toLowerCase()}`;
+  if (/cluster/.test(combined) || typeof layer?.getAllChildMarkers === "function") return "cluster_group";
+  if (gridlyCensusHasLeafletClass(layer, "Marker") || layer?._icon) return "leaflet_marker";
+  if (gridlyCensusHasLeafletClass(layer, "Polygon")) return "polygon";
+  if (gridlyCensusHasLeafletClass(layer, "Polyline") || typeof layer?.getLatLngs === "function") return /route|destination|watch|preview/.test(combined) ? "route_polyline" : "polyline";
+  if (layer?.feature || (typeof layer?.toGeoJSON === "function" && typeof layer?.getLayers === "function")) return "geojson_layer";
+  if (typeof layer?.getLayers === "function") return "overlay";
+  if (typeof layer?.getTileUrl === "function") return "tile_layer";
+  return "unknown_layer";
+}
+
+function gridlyCensusInferOwner({ name = "", type = "", layer = null, domNode = null } = {}) {
+  const dataOwner = domNode?.getAttribute?.("data-visual-owner") || domNode?.querySelector?.("[data-visual-owner]")?.getAttribute?.("data-visual-owner");
+  if (dataOwner) return dataOwner;
+  const text = `${name} ${type} ${String(layer?.options?.className || "")} ${String(domNode?.className || "")}`.toLowerCase();
+  if (/route|destination|preview|watch|impact|awareness/.test(text)) return "route ownership";
+  if (/hazard|incident|report|txdot|road.*condition/.test(text)) return /txdot/.test(text) ? "txdot ownership" : "hazard ownership";
+  if (/crossing|rail/.test(text)) return "crossing ownership";
+  if (/historical|history|hotspot|pattern|corridor/.test(text)) return "historical/context ownership";
+  if (/cluster/.test(text)) return "cluster ownership ambiguous";
+  if (/tile|base|satellite|standard|dark/.test(text)) return "base map ownership";
+  return "unknown";
+}
+
+function gridlyCensusKnownLayerEntries() {
+  const entries = [
+    { name: "crossingLayer", layer: crossingLayer, owner: "crossing ownership", sourceName: "rail crossings", expectedType: "crossing_layer" },
+    { name: "unifiedIncidentLayer", layer: unifiedIncidentLayer, owner: "hazard ownership", sourceName: "active hazards / incidents / TxDOT", expectedType: "hazard_layer" },
+    { name: "savedRouteLayer", layer: savedRouteLayer, owner: "route ownership", sourceName: "saved route / Route Watch", expectedType: "route_layer" },
+    { name: "destinationRoutePreviewLayer", layer: destinationRoutePreviewLayer, owner: "destination ownership", sourceName: "destination route preview", expectedType: "route_layer" },
+    { name: "corridorIntelLayer", layer: corridorIntelLayer, owner: "historical/context ownership", sourceName: "corridor intelligence overlays", expectedType: "historical_layer" },
+    { name: "routePreviewCorridorLayer", layer: routePreviewCorridorLayer, owner: "route ownership", sourceName: "route preview corridor", expectedType: "route_layer" },
+    { name: "alternateRouteLayer", layer: alternateRouteLayer, owner: "route ownership", sourceName: "alternate route", expectedType: "route_layer" },
+    { name: "window.__gridlyRoutePreviewLayer", layer: window.__gridlyRoutePreviewLayer || null, owner: "route ownership", sourceName: "route preview polyline", expectedType: "route_polyline" }
+  ];
+  Object.entries(mapBaseLayersByName || {}).forEach(([name, layer]) => {
+    entries.push({ name: `baseLayer:${name}`, layer, owner: "base map ownership", sourceName: "map base layer", expectedType: "overlay" });
+  });
+  return entries;
+}
+
+function gridlyCensusBuildLayerRecord({ layer, name = "unnamed layer", owner = "", sourceName = "", expectedType = "" } = {}) {
+  const inferredType = expectedType || gridlyCensusLayerKind(layer, name);
+  const resolvedOwner = owner || gridlyCensusInferOwner({ name, type: inferredType, layer });
+  return {
+    id: layer?._leaflet_id || null,
+    type: inferredType,
+    owner: resolvedOwner,
+    visible: gridlyCensusLayerVisible(layer),
+    onMap: Boolean(map && layer && typeof map.hasLayer === "function" ? map.hasLayer(layer) : layer),
+    pane: gridlyCensusLayerPane(layer),
+    zIndex: gridlyCensusLayerZIndex(layer),
+    layerName: name,
+    sourceName: sourceName || name,
+    featureCount: gridlyCensusLayerFeatureCount(layer),
+    childCount: gridlyCensusLayerChildCount(layer),
+    constructorName: layer?.constructor?.name || "unknown"
+  };
+}
+
+function gridlyCensusBuildDomMarkerRecord(marker, index) {
+  const owner = marker?.owner || gridlyCensusInferOwner({ name: marker?.id || `dom_marker_${index + 1}`, type: "dom_marker" });
+  return {
+    id: marker?.id || `dom-marker-${index + 1}`,
+    type: "dom_marker",
+    owner,
+    visible: marker?.visible !== false,
+    pane: marker?.pane || "unknown",
+    zIndex: marker?.zIndex || "unknown_z_index",
+    layerName: "Leaflet DOM marker pane",
+    sourceName: marker?.visualStyle || "dom marker",
+    featureCount: 1,
+    className: marker?.className || "",
+    visualStyle: marker?.visualStyle || "unclassified_dom_marker"
+  };
+}
+
+function gridlyGetRenderedMapPaneInventory() {
+  const panes = map?._panes || {};
+  const entries = Object.entries(panes).map(([name, pane]) => ({ name, pane }));
+  if (typeof document !== "undefined") {
+    Array.from(document.querySelectorAll("#map [class*='leaflet-'][class*='-pane']")).forEach((pane) => {
+      const className = gridlyCensusNormalizeClassName(pane.className);
+      const match = className.match(/leaflet-([a-z-]+)-pane/);
+      const name = match ? `${match[1]}Pane` : className;
+      if (!entries.some((entry) => entry.pane === pane || entry.name === name)) entries.push({ name, pane });
+    });
+  }
+  return entries.map(({ name, pane }) => ({
+    name,
+    childCount: pane?.children?.length || 0,
+    zIndex: pane ? gridlyGetVisualHierarchyZIndex(pane) : "unknown_z_index",
+    visible: gridlyCensusElementVisible(pane),
+    className: gridlyCensusNormalizeClassName(pane?.className || "")
+  }));
+}
+
+function gridlyGetRenderedMapLayerInventory() {
+  const knownEntries = gridlyCensusKnownLayerEntries();
+  const records = [];
+  const seen = new Set();
+  const addRecord = (entry) => {
+    if (!entry?.layer) return;
+    const key = entry.layer._leaflet_id || entry.name;
+    if (seen.has(key)) return;
+    seen.add(key);
+    records.push(gridlyCensusBuildLayerRecord(entry));
+  };
+  knownEntries.forEach(addRecord);
+  if (typeof map?.eachLayer === "function") {
+    map.eachLayer((layer) => {
+      const known = knownEntries.find((entry) => entry.layer === layer);
+      addRecord(known || { layer, name: `mapLayer:${layer?._leaflet_id || records.length + 1}`, owner: "", sourceName: "map.eachLayer()" });
+    });
+  }
+  return records;
+}
+
+function gridlyGetRenderedMapChildLayerInventory(parentRecords = []) {
+  const childRecords = [];
+  const seen = new Set(parentRecords.map((record) => record.id).filter(Boolean));
+  parentRecords.forEach((parent) => {
+    const layer = gridlyCensusKnownLayerEntries().find((entry) => entry.layer?._leaflet_id === parent.id)?.layer;
+    const children = typeof layer?.getLayers === "function" ? layer.getLayers() : [];
+    children.forEach((child, index) => {
+      const id = child?._leaflet_id || `${parent.layerName}:child:${index}`;
+      if (seen.has(id)) return;
+      seen.add(id);
+      const type = gridlyCensusLayerKind(child, parent.layerName);
+      childRecords.push(gridlyCensusBuildLayerRecord({
+        layer: child,
+        name: `${parent.layerName}.child[${index}]`,
+        owner: parent.owner || gridlyCensusInferOwner({ name: parent.layerName, type, layer: child }),
+        sourceName: parent.layerName,
+        expectedType: type
+      }));
+    });
+  });
+  return childRecords;
+}
+
+function gridlyBuildRenderedMapSpecificInventories(layerInventory, renderedObjects) {
+  const byText = (pattern) => layerInventory.filter((item) => pattern.test(`${item.layerName} ${item.sourceName} ${item.owner} ${item.type}`));
+  const domByOwner = (pattern) => renderedObjects.filter((item) => item.type === "dom_marker" && pattern.test(`${item.owner} ${item.sourceName} ${item.className || ""} ${item.visualStyle || ""}`));
+  const routeLayers = byText(/route|destination|watch|preview|impact|awareness/i);
+  const hazardLayers = byText(/hazard|incident|txdot|road.*condition/i);
+  const crossingLayers = byText(/crossing|rail/i);
+  const historicalLayers = byText(/historical|history|hotspot|pattern|corridor/i);
+  const clusterLayers = layerInventory.filter((item) => item.type === "cluster_group" || /cluster/i.test(`${item.layerName} ${item.owner} ${item.sourceName}`));
+  return {
+    routeInventory: [
+      { name: "destination route preview layer", exists: Boolean(destinationRoutePreviewLayer), visible: gridlyCensusLayerVisible(destinationRoutePreviewLayer), featureCount: gridlyCensusLayerFeatureCount(destinationRoutePreviewLayer), ownership: "destination ownership" },
+      { name: "Route Watch layer", exists: Boolean(savedRouteLayer), visible: gridlyCensusLayerVisible(savedRouteLayer), featureCount: gridlyCensusLayerFeatureCount(savedRouteLayer), ownership: "route ownership" },
+      { name: "route impact layers", exists: routeLayers.some((item) => /impact/i.test(`${item.layerName} ${item.sourceName}`)), visible: routeLayers.some((item) => item.visible && /impact/i.test(`${item.layerName} ${item.sourceName}`)), featureCount: routeLayers.filter((item) => /impact/i.test(`${item.layerName} ${item.sourceName}`)).reduce((sum, item) => sum + Number(item.featureCount || 0), 0), ownership: "route ownership" },
+      { name: "route awareness layers", exists: routeLayers.some((item) => /awareness/i.test(`${item.layerName} ${item.sourceName}`)), visible: routeLayers.some((item) => item.visible && /awareness/i.test(`${item.layerName} ${item.sourceName}`)), featureCount: routeLayers.filter((item) => /awareness/i.test(`${item.layerName} ${item.sourceName}`)).reduce((sum, item) => sum + Number(item.featureCount || 0), 0), ownership: "route ownership" },
+      { name: "route polylines", exists: routeLayers.some((item) => /polyline|route_layer/.test(item.type)), visible: routeLayers.some((item) => item.visible && /polyline|route_layer/.test(item.type)), featureCount: routeLayers.filter((item) => /polyline|route_layer/.test(item.type)).reduce((sum, item) => sum + Number(item.featureCount || 0), 0), ownership: "route ownership" }
+    ],
+    hazardInventory: [
+      { name: "active hazard layers", visible: hazardLayers.some((item) => item.visible), count: hazardLayers.length, ownership: "hazard ownership" },
+      { name: "hazard markers", visible: domByOwner(/hazard|incident|community_alert|high_impact/).some((item) => item.visible), count: domByOwner(/hazard|incident|community_alert|high_impact/).length, ownership: "hazard ownership" },
+      { name: "hazard clusters", visible: clusterLayers.some((item) => /hazard|incident/i.test(`${item.owner} ${item.layerName}`) && item.visible), count: clusterLayers.filter((item) => /hazard|incident/i.test(`${item.owner} ${item.layerName}`)).length, ownership: "hazard ownership" }
+    ],
+    crossingInventory: [
+      { name: "rail crossing layers", visible: crossingLayers.some((item) => item.visible), count: crossingLayers.length, ownership: "crossing ownership" },
+      { name: "blocked crossing layers", visible: crossingLayers.some((item) => /blocked/i.test(`${item.layerName} ${item.sourceName}`) && item.visible), count: crossingLayers.filter((item) => /blocked/i.test(`${item.layerName} ${item.sourceName}`)).length, ownership: "crossing ownership" },
+      { name: "crossing markers", visible: domByOwner(/crossing|rail|infrastructure|blocked_crossing/).some((item) => item.visible), count: domByOwner(/crossing|rail|infrastructure|blocked_crossing/).length, ownership: "crossing ownership" },
+      { name: "crossing clusters", visible: clusterLayers.some((item) => /crossing|rail/i.test(`${item.owner} ${item.layerName}`) && item.visible), count: clusterLayers.filter((item) => /crossing|rail/i.test(`${item.owner} ${item.layerName}`)).length, ownership: "crossing ownership" }
+    ],
+    historicalInventory: [
+      { name: "historical layers", visible: historicalLayers.some((item) => item.visible), count: historicalLayers.length, ownership: "historical/context ownership" },
+      { name: "historical markers", visible: domByOwner(/historical|history|pattern/).some((item) => item.visible), count: domByOwner(/historical|history|pattern/).length, ownership: "historical/context ownership" },
+      { name: "hotspot layers", visible: historicalLayers.some((item) => /hotspot/i.test(`${item.layerName} ${item.sourceName}`) && item.visible), count: historicalLayers.filter((item) => /hotspot/i.test(`${item.layerName} ${item.sourceName}`)).length, ownership: "historical/context ownership" },
+      { name: "recurring pattern layers", visible: historicalLayers.some((item) => /pattern|recurring/i.test(`${item.layerName} ${item.sourceName}`) && item.visible), count: historicalLayers.filter((item) => /pattern|recurring/i.test(`${item.layerName} ${item.sourceName}`)).length, ownership: "historical/context ownership" }
+    ],
+    clusterInventory: clusterLayers.map((item) => ({ name: item.layerName, owner: item.owner, childCount: item.childCount, visible: item.visible, sourceName: item.sourceName }))
+  };
+}
+
+function gridlyEvaluateRenderedMapCensusFindings(census) {
+  const findings = [];
+  const counts = census?.objectCounts || {};
+  if (Number(counts.domMarkers || 0) < Number(counts.leafletMarkers || 0)) {
+    findings.push({ severity: "check", area: "object counts", finding: `DOM marker count (${counts.domMarkers}) is lower than Leaflet marker count (${counts.leafletMarkers}); this can indicate hidden markers, cluster ownership, or selector coverage gaps.` });
+  }
+  if (Number(counts.domMarkers || 0) > 0 && Number(counts.domMarkers || 0) <= 5) {
+    findings.push({ severity: "check", area: "DOM marker coverage", finding: `Only ${counts.domMarkers} DOM marker(s) were detected; verify this matches the expected visible map state.` });
+  }
+  census.layerInventory.filter((layer) => layer.visible && Number(layer.featureCount || 0) > 0 && !census.renderedObjects.some((object) => object.sourceName === layer.layerName || object.layerName === layer.layerName)).forEach((layer) => {
+    findings.push({ severity: "coverage", area: "visible layer contents", finding: `${layer.layerName} is visible with ${layer.featureCount} child/feature object(s), but no rendered object is directly attributed to it.` });
+  });
+  census.layerInventory.filter((layer) => !layer.owner || layer.owner === "unknown").forEach((layer) => {
+    findings.push({ severity: "ownership", area: "layer ownership", finding: `${layer.layerName} exists without clear ownership.` });
+  });
+  census.layerInventory.filter((layer) => layer.type === "unknown_layer").forEach((layer) => {
+    findings.push({ severity: "coverage", area: "unknown layer type", finding: `${layer.layerName} has unknown Leaflet layer type (${layer.constructorName}).` });
+  });
+  census.renderedObjects.filter((object) => object.zIndex === "unknown_z_index").slice(0, 12).forEach((object) => {
+    findings.push({ severity: "coverage", area: "z-index ownership", finding: `${object.layerName || object.id} does not expose a determinable z-index.` });
+  });
+  [
+    { key: "routeInventory", label: "route ownership" },
+    { key: "hazardInventory", label: "hazard ownership" },
+    { key: "crossingInventory", label: "crossing ownership" },
+    { key: "historicalInventory", label: "historical ownership" }
+  ].forEach(({ key, label }) => {
+    if (gridlyCensusSafeArray(census[key]).some((item) => item.exists !== false && (!item.ownership || /ambiguous|unknown/i.test(String(item.ownership))))) {
+      findings.push({ severity: "ownership", area: label, finding: `${label} is ambiguous for at least one census row.` });
+    }
+  });
+  if (!findings.length) findings.push({ severity: "pass", area: "rendered map census", finding: "No census coverage gaps were detected from the current rendered map inventory." });
+  return findings;
+}
+
+function gridlyBuildRenderedMapObjectCensus(options = {}) {
+  const domInventory = gridlyGetMarkerDomInventory();
+  const paneInventory = gridlyGetRenderedMapPaneInventory();
+  const topLevelLayerInventory = gridlyGetRenderedMapLayerInventory();
+  const childLayerInventory = gridlyGetRenderedMapChildLayerInventory(topLevelLayerInventory);
+  const layerInventory = [...topLevelLayerInventory, ...childLayerInventory];
+  const domObjects = gridlyCensusSafeArray(domInventory.markers).map(gridlyCensusBuildDomMarkerRecord);
+  const renderedObjects = [...domObjects, ...layerInventory];
+  const specifics = gridlyBuildRenderedMapSpecificInventories(layerInventory, renderedObjects);
+  const objectCounts = {
+    leafletMarkers: layerInventory.filter((item) => item.type === "leaflet_marker").length,
+    domMarkers: domInventory.totalMarkerDomCount || domObjects.length,
+    geoJsonLayers: layerInventory.filter((item) => item.type === "geojson_layer").length,
+    polylines: layerInventory.filter((item) => /polyline/.test(item.type)).length,
+    polygons: layerInventory.filter((item) => item.type === "polygon").length,
+    clusterGroups: specifics.clusterInventory.length,
+    crossingLayers: layerInventory.filter((item) => /crossing|rail/i.test(`${item.type} ${item.owner} ${item.layerName}`)).length,
+    hazardLayers: layerInventory.filter((item) => /hazard|incident|txdot/i.test(`${item.type} ${item.owner} ${item.layerName}`)).length,
+    routeLayers: layerInventory.filter((item) => /route|destination|watch|preview|impact|awareness/i.test(`${item.type} ${item.owner} ${item.layerName}`)).length,
+    historicalLayers: layerInventory.filter((item) => /historical|history|hotspot|pattern|corridor/i.test(`${item.type} ${item.owner} ${item.layerName}`)).length,
+    txdotLayers: layerInventory.filter((item) => /txdot/i.test(`${item.type} ${item.owner} ${item.layerName} ${item.sourceName}`)).length,
+    overlays: layerInventory.filter((item) => /overlay|tile_layer/.test(item.type)).length,
+    panes: paneInventory.length
+  };
+  const census = {
+    version: GRIDLY_RENDERED_MAP_OBJECT_CENSUS_VERSION,
+    generatedAt: new Date().toISOString(),
+    mapLoaded: typeof map?.loaded === "function" ? map.loaded() : Boolean(map),
+    mapZoom: map?.getZoom?.() ?? null,
+    totalObjectsDiscovered: renderedObjects.length + paneInventory.length,
+    objectCounts,
+    renderedObjects,
+    paneInventory,
+    layerInventory,
+    routeInventory: specifics.routeInventory,
+    hazardInventory: specifics.hazardInventory,
+    crossingInventory: specifics.crossingInventory,
+    historicalInventory: specifics.historicalInventory,
+    clusterInventory: specifics.clusterInventory,
+    findings: []
+  };
+  census.findings = gridlyEvaluateRenderedMapCensusFindings(census);
+  if (options?.silent !== true) gridlyLogRenderedMapObjectCensus(census);
+  return census;
+}
+
+function gridlyLogRenderedMapObjectCensus(census) {
+  if (typeof console === "undefined") return;
+  console.groupCollapsed("GRIDLY RENDERED MAP OBJECT CENSUS");
+  console.log(census);
+  console.log("Map Loaded:", census?.mapLoaded ? "Yes" : "No");
+  console.log("Zoom:", census?.mapZoom ?? "unknown");
+  console.table({
+    "DOM Markers": census?.objectCounts?.domMarkers || 0,
+    "Leaflet Markers": census?.objectCounts?.leafletMarkers || 0,
+    "Hazard Layers": census?.objectCounts?.hazardLayers || 0,
+    "Crossing Layers": census?.objectCounts?.crossingLayers || 0,
+    "Route Layers": census?.objectCounts?.routeLayers || 0,
+    "Historical Layers": census?.objectCounts?.historicalLayers || 0,
+    "Cluster Groups": census?.objectCounts?.clusterGroups || 0,
+    Findings: census?.findings?.length || 0
+  });
+  console.table(census?.paneInventory || []);
+  console.table(census?.layerInventory || []);
+  console.table(census?.routeInventory || []);
+  console.table(census?.hazardInventory || []);
+  console.table(census?.crossingInventory || []);
+  console.table(census?.historicalInventory || []);
+  console.table(census?.clusterInventory || []);
+  console.table(census?.findings || []);
+  console.groupEnd();
+}
+
+window.gridlyRenderedMapObjectCensus = function gridlyRenderedMapObjectCensus(options = {}) {
+  return gridlyBuildRenderedMapObjectCensus(options && typeof options === "object" ? options : {});
+};
+window.gridlyMapObjectCensus = window.gridlyRenderedMapObjectCensus;
 
 
 
