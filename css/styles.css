@@ -15504,7 +15504,7 @@ body[data-layout-mode="portrait"] .gridly-v2-control-rail {
     align-content: center !important;
     gap: 4px !important;
     min-width: 0 !important;
-    overflow: visible !important;
+    overflow: hidden !important;
   }
 
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command strong {
@@ -15531,48 +15531,45 @@ body[data-layout-mode="portrait"] .gridly-v2-control-rail {
     text-overflow: ellipsis !important;
   }
 
+  /* V214.4.3 — keep the impact statement primary on narrow destination cards. */
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .destination-route-impact-line {
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 3px !important;
-    width: fit-content !important;
+    display: block !important;
+    width: 100% !important;
     max-width: 100% !important;
-    overflow: visible !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
     text-overflow: clip !important;
     position: relative !important;
     z-index: 2 !important;
     min-height: 20px !important;
     margin-top: 2px !important;
-    padding: 2px 7px 2px 8px !important;
-    border: 1px solid rgba(125, 211, 252, 0.28) !important;
-    border-radius: 999px !important;
-    background: rgba(14, 116, 144, 0.24) !important;
+    padding: 2px 16px 2px 0 !important;
+    border: 0 !important;
+    border-radius: 8px !important;
+    background: transparent !important;
     color: rgba(224, 242, 254, 0.98) !important;
-    box-shadow: 0 0 0 1px rgba(12, 74, 110, 0.18), 0 6px 14px rgba(8, 47, 73, 0.16) !important;
-    font-size: 0.7rem !important;
+    box-shadow: none !important;
+    font-size: 0.73rem !important;
     font-weight: 760 !important;
-    line-height: 1.18 !important;
+    line-height: 1.22 !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
   }
 
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .destination-route-impact-line:not(:empty)::before {
-    content: "Route Awareness";
-    flex: 0 0 auto;
-    color: rgba(125, 211, 252, 0.92);
-    font-size: 0.54rem;
-    font-weight: 900;
-    letter-spacing: 0.055em;
-    line-height: 1;
-    text-transform: uppercase;
+    content: none !important;
   }
 
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .destination-route-impact-line:not(:empty)::after {
     content: "›";
-    flex: 0 0 auto;
-    color: rgba(186, 230, 253, 0.84);
-    font-size: 0.92rem;
+    position: absolute;
+    right: 2px;
+    top: 50%;
+    color: rgba(186, 230, 253, 0.86);
+    font-size: 1rem;
     font-weight: 900;
-    line-height: 0.8;
-    transform: translateY(-0.5px);
+    line-height: 1;
+    transform: translateY(-52%);
   }
 
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .destination-route-impact-line:empty {
@@ -15604,10 +15601,16 @@ body[data-layout-mode="portrait"] .mobile-destination-command .destination-route
   touch-action: manipulation;
 }
 
+body[data-layout-mode="portrait"] .mobile-destination-command .destination-route-impact-line:not(:empty):is(:hover, :active) {
+  background: rgba(14, 116, 144, 0.16);
+  text-decoration-color: rgba(186, 230, 253, 0.58);
+}
+
 body[data-layout-mode="portrait"] .mobile-destination-command .destination-route-impact-line:not(:empty):focus-visible {
   outline: 2px solid rgba(125, 211, 252, 0.8);
-  outline-offset: 3px;
+  outline-offset: 1px;
   border-radius: 8px;
+  background: rgba(14, 116, 144, 0.16);
 }
 
 .gridly-destination-impact-pane[hidden] {
