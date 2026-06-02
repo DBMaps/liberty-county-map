@@ -16014,3 +16014,141 @@ body[data-layout-mode="portrait"] .mobile-destination-command .destination-route
     animation-iteration-count: 1 !important;
   }
 }
+
+/* V221 visual signature pass: calm, premium route-first map language. */
+#map .leaflet-pane.leaflet-routePane-pane path.gridly-route-signature-halo,
+#map .leaflet-pane.leaflet-routePane-pane path.gridly-route-signature-shoulder,
+#map .leaflet-pane.leaflet-routePane-pane path.gridly-route-signature-core,
+#map .leaflet-pane.leaflet-routePane-pane path.gridly-route-signature-alternate {
+  animation: none !important;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+#map .leaflet-pane.leaflet-routePane-pane path.gridly-route-signature-halo {
+  filter: drop-shadow(0 10px 18px rgba(2, 13, 25, 0.48));
+  stroke: rgba(220, 249, 255, 0.72);
+}
+
+#map .leaflet-pane.leaflet-routePane-pane path.gridly-route-signature-shoulder {
+  filter: drop-shadow(0 7px 13px rgba(3, 18, 31, 0.42));
+}
+
+#map .leaflet-pane.leaflet-routePane-pane path.gridly-route-signature-core {
+  filter:
+    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.44))
+    drop-shadow(0 8px 14px rgba(9, 35, 56, 0.38));
+}
+
+#map .leaflet-pane.leaflet-routePane-pane path.gridly-route-signature-alternate {
+  filter: drop-shadow(0 5px 10px rgba(39, 24, 5, 0.28));
+}
+
+#map .gridly-route-endpoint {
+  filter: drop-shadow(0 8px 14px rgba(0, 9, 18, 0.42));
+}
+
+#map .gridly-route-endpoint-destination {
+  filter:
+    drop-shadow(0 0 0 rgba(255, 255, 255, 0))
+    drop-shadow(0 10px 18px rgba(0, 13, 24, 0.48));
+}
+
+.gridly-destination-signature-icon {
+  background: transparent;
+  border: 0;
+}
+
+.gridly-destination-signature-marker {
+  position: relative;
+  width: 34px;
+  height: 42px;
+  transform: translate(4px, 1px);
+  filter: drop-shadow(0 14px 18px rgba(0, 10, 20, 0.42));
+}
+
+.gridly-destination-signature-marker::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px 999px 999px 4px;
+  transform: rotate(45deg);
+  background: linear-gradient(135deg, #fafdff 0%, #9cecff 46%, #0d78a4 100%);
+  border: 2px solid rgba(255, 255, 255, 0.94);
+  box-shadow: inset 0 1px 5px rgba(255, 255, 255, 0.42), 0 0 0 4px rgba(7, 32, 51, 0.34);
+}
+
+.gridly-destination-signature-marker span {
+  position: absolute;
+  left: 14px;
+  top: 10px;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #05334c;
+  box-shadow: 0 0 0 2px rgba(244, 252, 255, 0.72);
+  z-index: 1;
+}
+
+.gridly-alert-focused-marker,
+#map [data-gridly-selected="true"] .gridly-marker,
+#map [data-gridly-selected="true"].gridly-hazard-marker,
+#map [data-gridly-selected="true"].gridly-destination-signature-marker {
+  transform: scale(1.12);
+  z-index: 760 !important;
+  filter: drop-shadow(0 16px 22px rgba(0, 12, 24, 0.48));
+}
+
+.gridly-hazard-marker.route-relevant {
+  animation: none !important;
+  transform: scale(1.1);
+  border-width: 2px;
+  box-shadow: 0 0 0 3px rgba(209, 243, 255, 0.32), 0 12px 22px rgba(9, 42, 72, 0.34);
+  z-index: 430;
+}
+
+.gridly-hazard-marker.route-deemphasized {
+  opacity: 0.48;
+  filter: saturate(0.62) contrast(0.94);
+}
+
+.gridly-marker-rail-route-impact .gridly-marker {
+  transform: scale(1.08);
+  background: #f05f48;
+  border-color: rgba(255, 243, 238, 0.96);
+  box-shadow: 0 0 0 3px rgba(255, 226, 216, 0.26), 0 12px 20px rgba(14, 18, 24, 0.38);
+}
+
+.gridly-marker-rail-blocked .gridly-marker {
+  box-shadow: 0 0 0 2px rgba(255, 124, 95, 0.2), 0 9px 16px rgba(0, 0, 0, 0.34);
+}
+
+.gridly-marker-rail-clear .gridly-marker,
+.gridly-visual-owner-infrastructure .gridly-marker,
+#map [data-gridly-map-owner="infrastructure"] .gridly-marker {
+  opacity: 0.64;
+  filter: saturate(0.58) brightness(0.92);
+  box-shadow: 0 4px 9px rgba(0, 0, 0, 0.22);
+}
+
+.gridly-visual-owner-historical_pattern,
+#map [data-gridly-map-owner="historical_pattern"],
+#map [data-visual-owner="historical_pattern"],
+.gridly-historical-pattern-marker,
+.gridly-hazard-marker.gridly-freshness-stale,
+.gridly-hazard-marker.gridly-freshness-unknown,
+.gridly-hazard-marker[data-state="cleared"] {
+  opacity: 0.3 !important;
+  filter: grayscale(0.62) saturate(0.46) contrast(0.9) !important;
+}
+
+#map .gridly-destination-signature-marker[data-gridly-selected="true"] {
+  transform: translate(4px, 1px) scale(1.08);
+}
+
+#map .leaflet-pane.leaflet-routePane-pane path.gridly-route-endpoint {
+  animation: none !important;
+}
