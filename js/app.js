@@ -12004,6 +12004,62 @@ function openAlertsSurfaceFromDock() {
       };
 
       const timeTextFor = alert => text(alert.minutesText) || text(alert.timeAgo) || text(alert.updatedText) || toMinutesAgoLabel(alert);
+      const isGridlyAlertWeakLocationLine = value => {
+        const normalized = cleanDisplayValue(value).toLowerCase().replace(/^(?:near|at|between)\s+/i, "");
+        return !normalized || /^(road hazard reported|hazard reported|alert reported|active rail report|moderate movement impact|minor impact|moderate impact|high impact|now|just now|dayton area)$/i.test(normalized);
+      };
+      const stripGridlyAlertMetadataFromLine = value => cleanDisplayValue(value)
+        .split("•")
+        .map(part => cleanDisplayValue(part))
+        .filter(part => part && !/^(?:just now|now|\d+\s*(?:m|min|mins|minute|minutes|h|hr|hrs|hour|hours)\s*ago|\d+\s*(?:report|reports|confirmation|confirmations)|community confirmed)$/i.test(part))
+        .find(Boolean) || "";
+      const collectGridlyAlertLocationLineCandidates = (alert = {}, displayTitle = "", displaySubtitle = "", alertContext = {}) => {
+        const enriched = alertContext?.enriched || {};
+        const railPair = isRailAlert(alert) ? resolveRailCrossingPair(alert) : null;
+        const roadHazard = !isRailAlert(alert) ? resolveRoadHazardSegmentHeadline(alert) : null;
+        const fromHeadline = cleanDisplayValue(displayTitle).match(/\b(between|at|near)\s+(.+)$/i);
+        const explicitLocationFields = [
+          alert?.locationPhrase,
+          alert?.locationText,
+          alert?.locationLabel,
+          alert?.localizedLocation,
+          alert?.localizedSpot,
+          alert?.resolvedLocationLabel,
+          alert?.raw?.locationPhrase,
+          alert?.raw?.locationText,
+          alert?.raw?.locationLabel,
+          alert?.source?.locationPhrase,
+          alert?.source?.locationText,
+          alert?.source?.locationLabel
+        ];
+        const candidates = [
+          railPair?.finalSubtitle,
+          roadHazard?.finalSubtitle,
+          ...explicitLocationFields,
+          fromHeadline ? `${fromHeadline[1]} ${fromHeadline[2]}` : "",
+          displaySubtitle,
+          enriched.crossStreet && isRailAlert(alert) ? `At ${enriched.crossStreet.split(/\s+and\s+/i)[0]}` : "",
+          enriched.crossStreet && !isRailAlert(alert) ? `Between ${enriched.crossStreet.replace(/\s+and\s+/i, " and ")}` : "",
+          enriched.nearbyKnownLocation ? `Near ${enriched.nearbyKnownLocation}` : "",
+          alertContext?.crossingFieldUsed ? `At ${alertContext.crossingFieldUsed}` : ""
+        ];
+        return candidates
+          .map(stripGridlyAlertMetadataFromLine)
+          .map(value => {
+            const prefix = cleanDisplayValue(value).match(/^(between|at|near)\b/i)?.[1] || "Near";
+            const normalized = normalizeGridlyLightweightLocationLabelText(value);
+            return normalized ? `${standardizeGridlyAlertHeadline(prefix)} ${normalized}` : "";
+          })
+          .filter(value => !isGridlyAlertWeakLocationLine(value));
+      };
+      const formatGridlyAlertCommunitySignal = alert => {
+        const confirmations = Number(alert?.confirmations || alert?.confirmationCount || alert?.confirmed_count || alert?.users_confirmed || 0);
+        const reports = Number(alert?.reports_count || alert?.reportCount || alert?.count || alert?.users_count || 0);
+        if (confirmations > 1) return `${confirmations} confirmations`;
+        if (confirmations === 1 && /confirm/i.test(cleanDisplayValue(alert?.status || alert?.state || alert?.trustLabel || alert?.confirmationStatus))) return "Community confirmed";
+        const reportCount = Math.max(1, reports || confirmations || 1);
+        return `${reportCount} ${reportCount === 1 ? "report" : "reports"}`;
+      };
       const railImpactTextFor = alert => {
         const impact = cleanDisplayValue(getImpact(alert));
         if (impact === "Widespread Delays") return "High impact";
@@ -12084,16 +12140,26 @@ function openAlertsSurfaceFromDock() {
   }));
   const helperEventLabel = eventLabelFromHelper(resolvedHelper);
   const shouldUseEventFirstLayout = titleLooksLikeRoadOrLocation && Boolean(helperEventLabel);
-  const displayTitle = standardizeGridlyAlertHeadline(shouldUseEventFirstLayout ? helperEventLabel : resolvedTitle);
+  let displayTitle = standardizeGridlyAlertHeadline(shouldUseEventFirstLayout ? helperEventLabel : resolvedTitle);
   const displaySubtitle = shouldUseEventFirstLayout ? standardizeGridlyAlertHeadline(resolvedTitle) : resolvedHelper;
-  const cleanedAlertLocationLabel = shouldUseEventFirstLayout
-    ? normalizeGridlyLightweightLocationLabelText(resolvedTitle)
-    : normalizeGridlyLightweightLocationLabelText(getGridlyLightweightLocationFromHeadline(`${displayTitle} ${displaySubtitle}`) || "");
+  const titleRoad = normalizeGridlyLightweightLocationLabelText(alertContext?.enriched?.resolvedRoadName || alert?.roadName || alert?.primaryRoad || alert?.corridor || alert?.route || alert?.titleRoad || "");
+  const fallbackEventLabel = eventLabelFromHelper(`${resolvedTitle} ${resolvedHelper}`) || standardizeGridlyAlertHeadline(getHazardType(alert));
+  if ((isGenericPrimaryTitle(displayTitle) || !/\b(?:on|at|near|blocking)\b/i.test(displayTitle)) && fallbackEventLabel && titleRoad && !/^dayton area$/i.test(titleRoad)) {
+    displayTitle = isRailAlert(alert) ? `Train blocking ${titleRoad}` : `${fallbackEventLabel} on ${titleRoad}`;
+  }
+  const locationLineCandidates = collectGridlyAlertLocationLineCandidates(alert, displayTitle, displaySubtitle, alertContext);
+  if (locationLineCandidates.length) {
+    displayTitle = standardizeGridlyAlertHeadline(displayTitle.replace(/\s+(?:between|at|near)\s+.+$/i, ""));
+  }
+  const cleanedAlertLocationLabel = locationLineCandidates[0]
+    || (shouldUseEventFirstLayout
+      ? normalizeGridlyLightweightLocationLabelText(resolvedTitle)
+      : normalizeGridlyLightweightLocationLabelText(getGridlyLightweightLocationFromHeadline(`${displayTitle} ${displaySubtitle}`) || ""));
   const alertRowSummary = cleanedAlertLocationLabel
-    ? (buildGridlyHeaderCandidateFromCategoryLocation(displayTitle, cleanedAlertLocationLabel) || `${displayTitle} on ${cleanedAlertLocationLabel}`)
+    ? (buildGridlyHeaderCandidateFromCategoryLocation(displayTitle, cleanedAlertLocationLabel) || `${displayTitle} ${cleanedAlertLocationLabel}`)
     : normalizeGridlyLightweightAlertSummaryText(`${displayTitle} ${displaySubtitle}`);
-  const communityCount = Math.max(1, Number(alert?.reports_count || alert?.count || alert?.confirmations || alert?.users_count || 1) || 1);
-  const communityCountText = `${communityCount} ${communityCount === 1 ? "report" : "reports"}`;
+  const communitySignalText = formatGridlyAlertCommunitySignal(alert);
+  const freshnessText = cleanSubtitleText(timeTextFor(alert)) || "Now";
   recordGridlyActiveLocationLifecycleEvent("alertRowRender", {
     index,
     id,
@@ -12105,14 +12171,12 @@ function openAlertsSurfaceFromDock() {
     locationSources: alertContext?.enriched ? Object.keys(alertContext.enriched).slice(0, 8) : []
   });
   return `
-  <div class="gridly-alert-row gridly-alert-intel-card" data-gridly-alert-row="true" data-gridly-alert-id="${esc(id)}" data-gridly-alert-title="${esc(displayTitle)}" data-gridly-alert-summary="${esc(alertRowSummary)}" data-gridly-alert-location="${esc(cleanedAlertLocationLabel)}"${coordAttrs} data-gridly-alert-hidden="${isHidden ? "true" : "false"}" style="display:${isHidden ? "none" : "flex"};gap:10px;align-items:flex-start;padding:12px 12px ${index === 2 ? 12 : 10}px 12px;border:1px solid rgba(255,255,255,0.09);border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018));box-shadow:0 6px 20px rgba(0,0,0,0.28);margin-bottom:${index === 2 ? 0 : 8}px;cursor:${Number.isFinite(lat) && Number.isFinite(lng) ? "pointer" : "default"};">
-    <div style="width:18px;min-width:18px;height:18px;margin-top:1px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,179,71,0.18);border:1px solid rgba(255,179,71,0.5);color:#ffd28a;font-size:11px;line-height:1;">!</div>
-    <div style="min-width:0;flex:1;">
-      <div style="display:grid;gap:4px;">
-        <strong style="display:block;font-size:14px;line-height:1.3;color:#fff;letter-spacing:0.01em;">${esc(displayTitle)}</strong>
-        <div style="font-size:11px;line-height:1.35;color:rgba(199,211,226,0.86);">${esc(displaySubtitle)}</div>
-        <small style="font-size:11px;line-height:1.25;color:rgba(225,232,244,0.72);">${esc(timeTextFor(alert))} • ${esc(communityCountText)}</small>
-      </div>
+  <div class="gridly-alert-row gridly-alert-intel-card gridly-alert-brief-card" data-gridly-alert-row="true" data-gridly-alert-id="${esc(id)}" data-gridly-alert-title="${esc(displayTitle)}" data-gridly-alert-summary="${esc(alertRowSummary)}" data-gridly-alert-location="${esc(cleanedAlertLocationLabel)}"${coordAttrs} data-gridly-alert-hidden="${isHidden ? "true" : "false"}" style="display:${isHidden ? "none" : "flex"};cursor:${Number.isFinite(lat) && Number.isFinite(lng) ? "pointer" : "default"};">
+    <div class="gridly-alert-brief-accent" aria-hidden="true">!</div>
+    <div class="gridly-alert-brief-copy">
+      <strong class="gridly-alert-brief-title">${esc(displayTitle)}</strong>
+      <div class="gridly-alert-brief-location">${esc(cleanedAlertLocationLabel || displaySubtitle || "Reported locally")}</div>
+      <small class="gridly-alert-brief-meta">${esc(freshnessText)} • ${esc(communitySignalText)}</small>
     </div>
   </div>
 `;

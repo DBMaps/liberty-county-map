@@ -15404,3 +15404,89 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button.is-active {
 body[data-layout-mode="portrait"] .gridly-v2-control-rail {
   top: 222px;
 }
+
+/* V209 alert card briefing hierarchy: event, place, freshness/community */
+.gridly-alert-brief-card {
+  gap: 12px;
+  align-items: flex-start;
+  padding: 15px 14px;
+  border: 1px solid rgba(177, 218, 255, 0.13);
+  border-radius: 17px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.062), rgba(255, 255, 255, 0.022)),
+    rgba(8, 15, 25, 0.72);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.26);
+  margin-bottom: 10px;
+  min-height: 92px;
+}
+
+.gridly-alert-brief-card[data-gridly-alert-hidden="true"] {
+  margin-bottom: 0;
+}
+
+.gridly-alert-brief-accent {
+  width: 22px;
+  min-width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 179, 71, 0.18);
+  border: 1px solid rgba(255, 191, 102, 0.58);
+  color: #ffe0a3;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.gridly-alert-brief-copy {
+  min-width: 0;
+  flex: 1;
+  display: grid;
+  gap: 7px;
+}
+
+.gridly-alert-brief-title {
+  display: block;
+  font-size: clamp(0.98rem, 2.8vw, 1.08rem);
+  line-height: 1.22;
+  color: #ffffff;
+  font-weight: 850;
+  letter-spacing: 0.005em;
+}
+
+.gridly-alert-brief-location {
+  font-size: clamp(0.82rem, 2.35vw, 0.9rem);
+  line-height: 1.32;
+  color: rgba(222, 235, 248, 0.9);
+  font-weight: 650;
+}
+
+.gridly-alert-brief-meta {
+  font-size: clamp(0.75rem, 2.15vw, 0.8rem);
+  line-height: 1.25;
+  color: rgba(190, 209, 226, 0.78);
+  font-weight: 600;
+  letter-spacing: 0.012em;
+}
+
+.gridly-alert-brief-card:hover,
+.gridly-alert-brief-card:focus-visible {
+  border-color: rgba(142, 239, 255, 0.34);
+  box-shadow: 0 12px 28px rgba(7, 16, 29, 0.34);
+  outline: none;
+}
+
+@media (max-width: 760px) {
+  .gridly-alert-brief-card {
+    padding: 16px 14px;
+    border-radius: 18px;
+    min-height: 96px;
+  }
+
+  .gridly-alert-brief-copy {
+    gap: 8px;
+  }
+}
