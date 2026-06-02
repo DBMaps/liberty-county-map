@@ -3457,6 +3457,67 @@ function gridlyMapVisualRefinementDetection(selector = "", cssFragment = "") {
   };
 }
 
+function gridlyGetVisualSignatureRouteStyle(kind = "core") {
+  const styles = {
+    halo: {
+      pane: "routePane",
+      color: "#d9f8ff",
+      weight: 24,
+      opacity: 0.18,
+      lineCap: "round",
+      lineJoin: "round",
+      interactive: false,
+      className: "gridly-route-signature-halo"
+    },
+    shoulder: {
+      pane: "routePane",
+      color: "#1b6f9f",
+      weight: 15,
+      opacity: 0.54,
+      lineCap: "round",
+      lineJoin: "round",
+      interactive: false,
+      className: "gridly-route-signature-shoulder"
+    },
+    core: {
+      pane: "routePane",
+      color: "#7ce7ff",
+      weight: 8,
+      opacity: 0.96,
+      lineCap: "round",
+      lineJoin: "round",
+      className: "gridly-route-signature-core"
+    },
+    alternate: {
+      pane: "routePane",
+      color: "#f3b33f",
+      weight: 5,
+      opacity: 0.76,
+      dashArray: "12 10",
+      lineCap: "round",
+      lineJoin: "round",
+      className: "gridly-route-signature-alternate"
+    }
+  };
+  return { ...(styles[kind] || styles.core) };
+}
+
+function gridlyCreateRouteEndpointMarker(point, kind = "destination") {
+  if (!Array.isArray(point) || point.length < 2 || !window.L?.circleMarker) return null;
+  const isDestination = kind === "destination";
+  return L.circleMarker(point, {
+    pane: "routePane",
+    radius: isDestination ? 8 : 5,
+    color: isDestination ? "#f8fdff" : "rgba(215, 241, 255, 0.82)",
+    weight: isDestination ? 3 : 2,
+    fillColor: isDestination ? "#06324f" : "#0e5f87",
+    fillOpacity: isDestination ? 0.96 : 0.82,
+    opacity: isDestination ? 0.98 : 0.78,
+    interactive: false,
+    className: `gridly-route-endpoint gridly-route-endpoint-${sanitizeText(kind)}`
+  });
+}
+
 window.gridlyMapVisualRefinementAudit = function gridlyMapVisualRefinementAudit(options = {}) {
   const selectedItemStyling = gridlyMapVisualRefinementDetection(
     '#map .gridly-alert-focused-marker, #map [data-gridly-selected="true"]',
@@ -3521,6 +3582,82 @@ window.gridlyMapVisualRefinementAudit = function gridlyMapVisualRefinementAudit(
   return audit;
 };
 
+
+
+window.gridlyVisualSignatureAudit = function gridlyVisualSignatureAudit(options = {}) {
+  const routeHero = gridlyMapVisualRefinementDetection(
+    '#map .gridly-route-signature-core, #map .gridly-route-signature-halo, #map .leaflet-routePane-pane path',
+    'gridly-route-signature-core'
+  );
+  const destinationConnection = gridlyMapVisualRefinementDetection(
+    '#map .gridly-destination-signature-marker, #map .gridly-route-endpoint-destination, #map .gridly-route-signature-core',
+    'gridly-destination-signature-marker'
+  );
+  const selectedDominance = gridlyMapVisualRefinementDetection(
+    '#map .gridly-alert-focused-marker, #map [data-gridly-selected="true"], #map .gridly-destination-signature-marker',
+    'gridly-alert-focused-marker'
+  );
+  const routeImpactVisualization = gridlyMapVisualRefinementDetection(
+    '#map [data-gridly-route-relevant="true"], #map [data-gridly-visual-state="route_impact"], #map .gridly-marker-rail-route-impact, #map .gridly-hazard-marker.route-relevant',
+    'route-relevant'
+  );
+  const historicalDeemphasis = gridlyMapVisualRefinementDetection(
+    '#map .gridly-historical-pattern-marker, #map [data-gridly-map-owner="historical_pattern"], #map [data-visual-owner="historical_pattern"]',
+    'gridly-visual-owner-historical_pattern'
+  );
+  const infrastructureQuieting = gridlyMapVisualRefinementDetection(
+    '#map .gridly-marker-rail-clear, #map [data-gridly-map-owner="infrastructure"], #map [data-gridly-visual-state="infrastructure"]',
+    'gridly-visual-owner-infrastructure'
+  );
+  const existingHierarchyAudit = typeof window.gridlyVisualHierarchyFindingsAudit === "function"
+    ? window.gridlyVisualHierarchyFindingsAudit({ silent: true })
+    : null;
+  const noVisualHierarchyRegression = !existingHierarchyAudit || (
+    Number(existingHierarchyAudit?.criticalCount || existingHierarchyAudit?.summary?.criticalCount || 0) === 0
+    && existingHierarchyAudit?.canProceedToVisualChanges !== false
+    && existingHierarchyAudit?.summary?.canProceedToVisualChanges !== false
+    && existingHierarchyAudit?.selectedDominanceDetected !== false
+    && existingHierarchyAudit?.routeRelevantPriorityDetected !== false
+    && existingHierarchyAudit?.activeBeatsHistoricalDetected !== false
+    && existingHierarchyAudit?.infrastructureLowestPriorityDetected !== false
+  );
+  const canProceedToBetaVisualReview = [
+    routeHero,
+    destinationConnection,
+    selectedDominance,
+    routeImpactVisualization,
+    historicalDeemphasis,
+    infrastructureQuieting
+  ].every((item) => item.detected) && noVisualHierarchyRegression;
+  const audit = {
+    version: "V221",
+    generatedAt: new Date().toISOString(),
+    routeHeroDetected: routeHero.detected,
+    destinationConnectionDetected: destinationConnection.detected,
+    selectedDominanceDetected: selectedDominance.detected,
+    routeImpactVisualizationDetected: routeImpactVisualization.detected,
+    historicalDeemphasisDetected: historicalDeemphasis.detected,
+    infrastructureQuietingDetected: infrastructureQuieting.detected,
+    noVisualHierarchyRegression,
+    canProceedToBetaVisualReview,
+    detections: {
+      routeHero,
+      destinationConnection,
+      selectedDominance,
+      routeImpactVisualization,
+      historicalDeemphasis,
+      infrastructureQuieting
+    },
+    existingVisualHierarchySummary: existingHierarchyAudit?.summary || existingHierarchyAudit || null
+  };
+  if (options?.silent !== true && typeof console !== "undefined") {
+    console.groupCollapsed("GRIDLY V221 VISUAL SIGNATURE AUDIT");
+    console.log("Can Proceed To Beta Visual Review:", canProceedToBetaVisualReview ? "Yes" : "No");
+    console.log(audit);
+    console.groupEnd();
+  }
+  return audit;
+};
 
 
 window.gridlyRailMarkerSourceTrace = function gridlyRailMarkerSourceTrace() {
@@ -30130,13 +30267,13 @@ window.gridlyAwarenessModeDebug = {
 
 function applyRouteVisualEmphasis() {
   const primaryStyle = preferredRoute === "primary"
-    ? { weight: 8, opacity: 0.96 }
-    : { weight: 6, opacity: 0.55 };
+    ? { ...gridlyGetVisualSignatureRouteStyle("core"), weight: 8, opacity: 0.96 }
+    : { ...gridlyGetVisualSignatureRouteStyle("core"), weight: 6, opacity: 0.58 };
   const alternateStyle = preferredRoute === "alternate"
-    ? { weight: 7, opacity: 0.98 }
-    : { weight: 5, opacity: 0.55 };
+    ? { ...gridlyGetVisualSignatureRouteStyle("alternate"), weight: 6, opacity: 0.9 }
+    : { ...gridlyGetVisualSignatureRouteStyle("alternate"), weight: 4, opacity: 0.48 };
   if (window.__gridlyRoutePreviewLayer?.setStyle) window.__gridlyRoutePreviewLayer.setStyle(primaryStyle);
-  if (alternateRouteLayer?.setStyle) alternateRouteLayer.setStyle({ dashArray: "12 10", ...alternateStyle });
+  if (alternateRouteLayer?.setStyle) alternateRouteLayer.setStyle(alternateStyle);
 }
 
 
@@ -39314,8 +39451,18 @@ function setGridlyDestinationMarker(result, options = {}) {
 
   let marker = null;
   try {
+    const destinationTitle = String(normalized.title || normalized.address || "Selected destination");
+    const destinationIcon = window.L.divIcon({
+      className: "gridly-destination-signature-icon",
+      html: `<div class="gridly-destination-signature-marker" data-gridly-map-owner="destination" data-gridly-visual-state="destination_selected" data-gridly-selected="true" aria-hidden="true"><span></span></div>`,
+      iconSize: [42, 50],
+      iconAnchor: [21, 42],
+      popupAnchor: [0, -42]
+    });
     marker = window.L.marker([coordinates.lat, coordinates.lng], {
-      title: String(normalized.title || normalized.address || "Selected destination")
+      title: destinationTitle,
+      icon: destinationIcon,
+      zIndexOffset: 620
     });
     marker.addTo(mapInstance);
     if (options?.tooltip !== false && typeof marker.bindTooltip === "function") {
@@ -39868,37 +40015,18 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
     captureRouteAttempt({ osrmCallSucceeded: false, finalFailureReason: lastRouteError });
   }
 
-  const corridorUnderlay = L.polyline(previewPoints, {
-    pane: "routePane",
-    color: "#6ee7ff",
-    weight: 20,
-    opacity: 0.14,
-    lineCap: "round",
-    lineJoin: "round",
-    interactive: false
-  });
+  const corridorUnderlay = L.polyline(previewPoints, gridlyGetVisualSignatureRouteStyle("halo"));
 
-  const corridorBase = L.polyline(previewPoints, {
-    pane: "routePane",
-    color: "#38d8ff",
-    weight: 14,
-    opacity: 0.24,
-    lineCap: "round",
-    lineJoin: "round",
-    interactive: false
-  });
+  const corridorBase = L.polyline(previewPoints, gridlyGetVisualSignatureRouteStyle("shoulder"));
 
-  const routePreviewLayer = L.polyline(previewPoints, {
-    pane: "routePane",
-    color: "#00ffff",
-    weight: 8,
-    opacity: 0.92,
-    lineCap: "round",
-    lineJoin: "round"
-  });
+  const routePreviewLayer = L.polyline(previewPoints, gridlyGetVisualSignatureRouteStyle("core"));
+
+  const routeStartEndpoint = gridlyCreateRouteEndpointMarker(previewPoints[0], "origin");
+  const routeDestinationEndpoint = gridlyCreateRouteEndpointMarker(previewPoints[previewPoints.length - 1], "destination");
+  const routeSignatureLayers = [corridorUnderlay, corridorBase, routePreviewLayer, routeStartEndpoint, routeDestinationEndpoint].filter(Boolean);
 
   routeRenderAttempted = true;
-  routePreviewCorridorLayer = L.layerGroup([corridorUnderlay, corridorBase, routePreviewLayer]).addTo(map);
+  routePreviewCorridorLayer = L.layerGroup(routeSignatureLayers).addTo(map);
   console.info("Gridly route layer render result", {
     routeLayerExists: Boolean(routePreviewLayer),
     routeLayerOnMap: Boolean(map && routePreviewLayer && map.hasLayer(routePreviewLayer)),
@@ -39918,13 +40046,9 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
       );
       if (Array.isArray(alternatePoints) && alternatePoints.length >= 2) {
         alternateRouteLayer = L.polyline(alternatePoints, {
-          pane: "routePane",
-          color: "#fbbf24",
-          weight: 6,
-          opacity: 0.95,
-          dashArray: "12 10",
-          lineCap: "round",
-          lineJoin: "round"
+          ...gridlyGetVisualSignatureRouteStyle("alternate"),
+          weight: 5,
+          opacity: 0.72
         }).addTo(map);
         alternateRouteVertexCount = alternatePoints.length;
         alternateRouteGeometrySource = "osrm_alternative";
@@ -40160,7 +40284,7 @@ async function useAlternateRoute() {
     alternateRouteGeometrySource = "none";
 
     if (Array.isArray(nextAlternate) && nextAlternate.length >= 2) {
-      alternateRouteLayer = L.polyline(nextAlternate, { pane: "routePane", color: "#fbbf24", weight: 6, opacity: 0.95, dashArray: "12 10", lineCap: "round", lineJoin: "round" }).addTo(map);
+      alternateRouteLayer = L.polyline(nextAlternate, { ...gridlyGetVisualSignatureRouteStyle("alternate"), weight: 5, opacity: 0.72 }).addTo(map);
       alternateRouteVertexCount = nextAlternate.length;
       alternateRouteGeometrySource = "osrm_alternative";
       alternateRouteStatus = "available";
