@@ -14188,10 +14188,12 @@ function getGridlyDestinationRouteImpactCardText() {
     const impactLevel = audit?.impactLevel || "none";
     const reason = audit?.primaryImpactReason || getGridlyDestinationRouteImpactCopy(impactLevel);
     const locationLine = String(audit?.primaryImpactLocation || "").trim();
+    const proximityLine = String(audit?.primaryImpactProximityLabel || "").trim();
     return [
       `Potential Impact: ${getGridlyDestinationRouteImpactLabel(impactLevel)}`,
       reason,
-      locationLine
+      locationLine,
+      proximityLine
     ].filter((line) => String(line || "").trim()).join("\n");
   } catch (_) {
     return "";
@@ -14296,8 +14298,14 @@ function getGridlyDestinationImpactPaneReasonModel() {
   }
 
   const primaryImpactLocation = String(audit?.primaryImpactLocation || "").trim();
+  const primaryImpactProximityLabel = String(audit?.primaryImpactProximityLabel || "").trim();
 
   const quiet = !routeFound || (hazards === 0 && alerts === 0 && reports === 0 && activeRail === 0);
+  const detailReasons = quiet ? [] : [
+    primaryImpactLocation,
+    primaryImpactProximityLabel,
+    ...reasons
+  ].filter((line) => String(line || "").trim());
 
   const impactLabel = audit?.impactLabel || getGridlyDestinationRouteImpactLabel(impactLevel);
   const confidenceLabel = audit?.confidenceLabel || getGridlyDestinationRouteConfidenceLabel({
@@ -14314,7 +14322,8 @@ function getGridlyDestinationImpactPaneReasonModel() {
     confidenceLabel,
     summary: routeFound ? (audit?.primaryImpactReason || getGridlyDestinationRouteImpactCopy(impactLevel)) : "No active hazards reported nearby",
     primaryImpactLocation,
-    reasons: quiet ? [] : reasons.slice(0, 6),
+    primaryImpactProximityLabel,
+    reasons: detailReasons.slice(0, 6),
     quiet
   };
 }
@@ -14451,6 +14460,9 @@ window.gridlyDestinationImpactPaneAudit = function gridlyDestinationImpactPaneAu
     renderGridlyDestinationImpactPane();
   }
   const impactLineText = String(paneEls.trigger?.textContent || "").trim();
+  const routeAudit = typeof window.gridlyDestinationRouteImpactAudit === "function"
+    ? window.gridlyDestinationRouteImpactAudit()
+    : null;
   const paneAvailable = Boolean(paneEls.pane);
   return {
     available: paneAvailable,
@@ -14461,7 +14473,14 @@ window.gridlyDestinationImpactPaneAudit = function gridlyDestinationImpactPaneAu
     impactLevel: String(GRIDLY_DESTINATION_IMPACT_PANE_STATE.impactLevel || ""),
     impactLabel: getGridlyDestinationRouteImpactLabel(GRIDLY_DESTINATION_IMPACT_PANE_STATE.impactLevel || "none"),
     displayedReasonCount: GRIDLY_DESTINATION_IMPACT_PANE_STATE.displayedReasons.length,
-    displayedReasons: [...GRIDLY_DESTINATION_IMPACT_PANE_STATE.displayedReasons]
+    displayedReasons: [...GRIDLY_DESTINATION_IMPACT_PANE_STATE.displayedReasons],
+    primaryImpactProximityLabel: String(routeAudit?.primaryImpactProximityLabel || ""),
+    selectedImpactSourceDistanceFeet: routeAudit?.selectedImpactSourceDistanceFeet ?? null,
+    selectedImpactRoutePointIndex: routeAudit?.selectedImpactRoutePointIndex ?? null,
+    selectedImpactRouteProgressRatio: routeAudit?.selectedImpactRouteProgressRatio ?? null,
+    selectedImpactDistanceFromStartMiles: routeAudit?.selectedImpactDistanceFromStartMiles ?? null,
+    selectedImpactDistanceToDestinationMiles: routeAudit?.selectedImpactDistanceToDestinationMiles ?? null,
+    primaryImpactProximityEmptyReason: String(routeAudit?.primaryImpactProximityEmptyReason || "")
   };
 };
 
@@ -15012,6 +15031,90 @@ function getGridlyDistanceFromDestinationRouteFeet(lat, lng, routePoints = []) {
   return Math.round(nearestMiles * GRIDLY_FEET_PER_MILE);
 }
 
+function formatGridlyDestinationImpactProximityMiles(value) {
+  const miles = Number(value);
+  if (!Number.isFinite(miles) || miles < 0) return "";
+  return `${Math.max(0.1, Math.round(miles * 10) / 10).toFixed(1)} miles`;
+}
+
+function buildGridlyDestinationRouteDistanceProfile(routePoints = []) {
+  const points = Array.isArray(routePoints) ? routePoints : [];
+  const cumulativeMiles = [0];
+  let totalMiles = 0;
+  for (let index = 1; index < points.length; index += 1) {
+    const previous = points[index - 1];
+    const current = points[index];
+    const segmentMiles = previous && current
+      ? haversineDistance(previous.lat, previous.lng, current.lat, current.lng)
+      : 0;
+    totalMiles += Number.isFinite(segmentMiles) && segmentMiles > 0 ? segmentMiles : 0;
+    cumulativeMiles[index] = totalMiles;
+  }
+  return { cumulativeMiles, totalMiles };
+}
+
+function buildGridlyDestinationRouteImpactProximity(sourceCoordinate = null, routePoints = [], options = {}) {
+  const source = normalizeCoordinatePair(sourceCoordinate?.lat, sourceCoordinate?.lng);
+  if (!source) return { primaryImpactProximityLabel: "", primaryImpactProximityEmptyReason: "selected_source_missing_coordinates" };
+  const points = Array.isArray(routePoints) ? routePoints : [];
+  if (points.length < 2) return { primaryImpactProximityLabel: "", primaryImpactProximityEmptyReason: "route_geometry_unavailable" };
+
+  let nearestIndex = -1;
+  let nearestMiles = Infinity;
+  for (let index = 0; index < points.length; index += 1) {
+    const point = points[index];
+    if (!point) continue;
+    const distanceMiles = haversineDistance(source.lat, source.lng, point.lat, point.lng);
+    if (Number.isFinite(distanceMiles) && distanceMiles < nearestMiles) {
+      nearestMiles = distanceMiles;
+      nearestIndex = index;
+    }
+  }
+
+  if (nearestIndex < 0) return { primaryImpactProximityLabel: "", primaryImpactProximityEmptyReason: "nearest_route_point_unavailable" };
+
+  const { cumulativeMiles, totalMiles } = buildGridlyDestinationRouteDistanceProfile(points);
+  const previewRouteMiles = Number(options.routeMiles);
+  const routeMiles = Number.isFinite(previewRouteMiles) && previewRouteMiles > 0
+    ? previewRouteMiles
+    : totalMiles;
+  const indexRatio = points.length > 1 ? nearestIndex / (points.length - 1) : null;
+  const cumulativeRatio = totalMiles > 0 ? (Number(cumulativeMiles[nearestIndex]) || 0) / totalMiles : null;
+  const progressRatio = Number.isFinite(cumulativeRatio) ? cumulativeRatio : indexRatio;
+  const distanceFromStartMiles = Number.isFinite(routeMiles) && routeMiles > 0 && Number.isFinite(progressRatio)
+    ? routeMiles * Math.max(0, Math.min(1, progressRatio))
+    : null;
+  const distanceToDestinationMiles = Number.isFinite(routeMiles) && routeMiles > 0 && Number.isFinite(distanceFromStartMiles)
+    ? Math.max(0, routeMiles - distanceFromStartMiles)
+    : null;
+
+  let label = "";
+  if (Number.isFinite(distanceFromStartMiles) && distanceFromStartMiles <= 0.2) {
+    label = "Near your starting point";
+  } else if (Number.isFinite(distanceToDestinationMiles) && distanceToDestinationMiles <= 0.1) {
+    label = "Near your destination";
+  } else if (Number.isFinite(distanceToDestinationMiles) && distanceToDestinationMiles <= 0.5) {
+    label = `${formatGridlyDestinationImpactProximityMiles(distanceToDestinationMiles)} from destination`;
+  } else if (Number.isFinite(distanceFromStartMiles)) {
+    label = `${formatGridlyDestinationImpactProximityMiles(distanceFromStartMiles)} ahead`;
+  } else if (Number.isFinite(progressRatio) && progressRatio >= 0.9) {
+    label = "Near your destination";
+  } else if (Number.isFinite(progressRatio) && progressRatio <= 0.08) {
+    label = "Near your starting point";
+  } else {
+    label = "Along your route";
+  }
+
+  return {
+    primaryImpactProximityLabel: label,
+    selectedImpactRoutePointIndex: nearestIndex,
+    selectedImpactRouteProgressRatio: Number.isFinite(progressRatio) ? Math.round(Math.max(0, Math.min(1, progressRatio)) * 1000) / 1000 : null,
+    selectedImpactDistanceFromStartMiles: Number.isFinite(distanceFromStartMiles) ? Math.round(distanceFromStartMiles * 10) / 10 : null,
+    selectedImpactDistanceToDestinationMiles: Number.isFinite(distanceToDestinationMiles) ? Math.round(distanceToDestinationMiles * 10) / 10 : null,
+    primaryImpactProximityEmptyReason: label ? "" : "proximity_label_unavailable"
+  };
+}
+
 function buildGridlyDestinationRouteMatch(record = {}, routePoints = [], fallback = {}) {
   try {
     const coord = getGridlyDestinationRouteObjectCoordinate(record);
@@ -15245,11 +15348,14 @@ function getGridlyDestinationRoutePrimaryImpactLocationSelection(impactLevel = "
   for (const group of orderedGroups) {
     const selected = selectGridlyDestinationRouteBestLocationMatch(group.matches, { preferAt: group.preferAt });
     if (selected?.locationLine) {
+      const selectedCoordinate = normalizeCoordinatePair(selected.match?.lat, selected.match?.lng);
       return {
         selectedImpactSourceId: getGridlyDestinationRouteObjectId(selected.match, ""),
         selectedImpactSourceType: getGridlyDestinationRouteObjectType(selected.match, ""),
         selectedImpactSourceGroup: group.name,
         selectedImpactSourceTitle: selected.match?.title || "",
+        selectedImpactSourceLat: selectedCoordinate?.lat ?? null,
+        selectedImpactSourceLng: selectedCoordinate?.lng ?? null,
         selectedImpactSourceDistanceFeet: Number.isFinite(Number(selected.match?.distanceFromRouteFeet)) ? Number(selected.match.distanceFromRouteFeet) : null,
         selectedImpactSourceLocationRank: selected.locationRank || 0,
         availableLocationFields: selected.availableLocationFields || {},
@@ -15264,6 +15370,8 @@ function getGridlyDestinationRoutePrimaryImpactLocationSelection(impactLevel = "
     selectedImpactSourceType: "",
     selectedImpactSourceGroup: "",
     selectedImpactSourceTitle: "",
+    selectedImpactSourceLat: null,
+    selectedImpactSourceLng: null,
     selectedImpactSourceDistanceFeet: null,
     selectedImpactSourceLocationRank: 0,
     availableLocationFields: {},
@@ -15342,6 +15450,20 @@ function buildGridlyDestinationRouteImpactAudit() {
     ? getGridlyDestinationRoutePrimaryImpactLocationSelection(impactLevel, primaryImpactReasonMatches)
     : { selectedPrimaryImpactLocation: "", emptyReason: "route_not_found", availableLocationFields: {} };
   const primaryImpactLocation = primaryImpactLocationSelection.selectedPrimaryImpactLocation || "";
+  const selectedImpactSourceCoordinate = normalizeCoordinatePair(
+    primaryImpactLocationSelection.selectedImpactSourceLat,
+    primaryImpactLocationSelection.selectedImpactSourceLng
+  );
+  const impactProximity = routeFound && selectedImpactSourceCoordinate
+    ? buildGridlyDestinationRouteImpactProximity(selectedImpactSourceCoordinate, getGridlyDestinationRoutePreviewPoints(), { routeMiles: intelligence?.routeMiles })
+    : {
+      primaryImpactProximityLabel: "",
+      selectedImpactRoutePointIndex: null,
+      selectedImpactRouteProgressRatio: null,
+      selectedImpactDistanceFromStartMiles: null,
+      selectedImpactDistanceToDestinationMiles: null,
+      primaryImpactProximityEmptyReason: routeFound ? "selected_source_missing_coordinates" : "route_not_found"
+    };
   if (primaryImpactLocation) reasoning.push(`Best available location: ${primaryImpactLocation}`);
   else if (routeFound) reasoning.push(`Primary impact location empty: ${primaryImpactLocationSelection.emptyReason || "unknown"}`);
 
@@ -15358,9 +15480,15 @@ function buildGridlyDestinationRouteImpactAudit() {
     selectedImpactSourceGroup: primaryImpactLocationSelection.selectedImpactSourceGroup || "",
     selectedImpactSourceTitle: primaryImpactLocationSelection.selectedImpactSourceTitle || "",
     selectedImpactSourceDistanceFeet: primaryImpactLocationSelection.selectedImpactSourceDistanceFeet ?? null,
+    selectedImpactRoutePointIndex: impactProximity.selectedImpactRoutePointIndex ?? null,
+    selectedImpactRouteProgressRatio: impactProximity.selectedImpactRouteProgressRatio ?? null,
+    selectedImpactDistanceFromStartMiles: impactProximity.selectedImpactDistanceFromStartMiles ?? null,
+    selectedImpactDistanceToDestinationMiles: impactProximity.selectedImpactDistanceToDestinationMiles ?? null,
     selectedImpactSourceLocationRank: primaryImpactLocationSelection.selectedImpactSourceLocationRank || 0,
     selectedImpactSourceLocationFields: primaryImpactLocationSelection.availableLocationFields || {},
     primaryImpactLocationEmptyReason: primaryImpactLocationSelection.emptyReason || "",
+    primaryImpactProximityLabel: impactProximity.primaryImpactProximityLabel || "",
+    primaryImpactProximityEmptyReason: impactProximity.primaryImpactProximityEmptyReason || "",
     hazardsConsidered,
     alertsConsidered,
     reportsConsidered,
@@ -15386,9 +15514,15 @@ window.gridlyDestinationRouteImpactAudit = function gridlyDestinationRouteImpact
       selectedImpactSourceGroup: "",
       selectedImpactSourceTitle: "",
       selectedImpactSourceDistanceFeet: null,
+      selectedImpactRoutePointIndex: null,
+      selectedImpactRouteProgressRatio: null,
+      selectedImpactDistanceFromStartMiles: null,
+      selectedImpactDistanceToDestinationMiles: null,
       selectedImpactSourceLocationRank: 0,
       selectedImpactSourceLocationFields: {},
       primaryImpactLocationEmptyReason: "destination_route_impact_error",
+      primaryImpactProximityLabel: "",
+      primaryImpactProximityEmptyReason: "destination_route_impact_error",
       hazardsConsidered: 0,
       alertsConsidered: 0,
       reportsConsidered: 0,
@@ -15411,10 +15545,16 @@ window.gridlyDestinationRouteImpactDebug = function gridlyDestinationRouteImpact
     selectedImpactSourceGroup: audit.selectedImpactSourceGroup || "",
     selectedImpactSourceTitle: audit.selectedImpactSourceTitle || "",
     selectedImpactSourceDistanceFeet: audit.selectedImpactSourceDistanceFeet ?? null,
+    selectedImpactRoutePointIndex: audit.selectedImpactRoutePointIndex ?? null,
+    selectedImpactRouteProgressRatio: audit.selectedImpactRouteProgressRatio ?? null,
+    selectedImpactDistanceFromStartMiles: audit.selectedImpactDistanceFromStartMiles ?? null,
+    selectedImpactDistanceToDestinationMiles: audit.selectedImpactDistanceToDestinationMiles ?? null,
     selectedImpactSourceLocationRank: audit.selectedImpactSourceLocationRank || 0,
     selectedImpactSourceLocationFields: audit.selectedImpactSourceLocationFields || {},
     selectedPrimaryImpactLocation: audit.primaryImpactLocation || "",
     primaryImpactLocationEmptyReason: audit.primaryImpactLocationEmptyReason || "",
+    primaryImpactProximityLabel: audit.primaryImpactProximityLabel || "",
+    primaryImpactProximityEmptyReason: audit.primaryImpactProximityEmptyReason || "",
     reasoning: audit.reasoning
   };
 };
