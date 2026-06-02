@@ -15482,12 +15482,12 @@ body[data-layout-mode="portrait"] .gridly-v2-control-rail {
     grid-template-columns: minmax(0, 1fr) auto !important;
     align-items: center !important;
     gap: 10px !important;
-    min-height: 64px !important;
-    height: 64px !important;
-    max-height: 64px !important;
+    min-height: 76px !important;
+    height: auto !important;
+    max-height: none !important;
     box-sizing: border-box !important;
     margin: 0 !important;
-    padding: 9px 10px 10px 12px !important;
+    padding: 10px 10px 11px 12px !important;
     border-radius: 18px !important;
     border: 1px solid rgba(161, 211, 255, 0.38) !important;
     background: linear-gradient(145deg, rgba(9, 19, 33, 0.86), rgba(5, 12, 22, 0.94)) !important;
@@ -15495,16 +15495,16 @@ body[data-layout-mode="portrait"] .gridly-v2-control-rail {
     backdrop-filter: blur(18px) saturate(124%) !important;
     -webkit-backdrop-filter: blur(18px) saturate(124%) !important;
     pointer-events: auto !important;
-    overflow: hidden !important;
+    overflow: visible !important;
   }
 
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .mobile-destination-command-copy {
     display: grid !important;
     grid-template-rows: auto auto auto !important;
     align-content: center !important;
-    gap: 3px !important;
+    gap: 4px !important;
     min-width: 0 !important;
-    overflow: hidden !important;
+    overflow: visible !important;
   }
 
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command strong {
@@ -15537,20 +15537,40 @@ body[data-layout-mode="portrait"] .gridly-v2-control-rail {
     gap: 3px !important;
     width: fit-content !important;
     max-width: 100% !important;
-    min-height: 17px !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    position: relative !important;
+    z-index: 2 !important;
+    min-height: 20px !important;
     margin-top: 2px !important;
-    padding-right: 2px !important;
-    color: rgba(186, 230, 253, 0.94) !important;
+    padding: 2px 7px 2px 8px !important;
+    border: 1px solid rgba(125, 211, 252, 0.28) !important;
+    border-radius: 999px !important;
+    background: rgba(14, 116, 144, 0.24) !important;
+    color: rgba(224, 242, 254, 0.98) !important;
+    box-shadow: 0 0 0 1px rgba(12, 74, 110, 0.18), 0 6px 14px rgba(8, 47, 73, 0.16) !important;
     font-size: 0.7rem !important;
+    font-weight: 760 !important;
     line-height: 1.18 !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .destination-route-impact-line:not(:empty)::before {
+    content: "Route Awareness";
+    flex: 0 0 auto;
+    color: rgba(125, 211, 252, 0.92);
+    font-size: 0.54rem;
+    font-weight: 900;
+    letter-spacing: 0.055em;
+    line-height: 1;
+    text-transform: uppercase;
   }
 
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .destination-route-impact-line:not(:empty)::after {
     content: "›";
     flex: 0 0 auto;
-    color: rgba(186, 230, 253, 0.78);
+    color: rgba(186, 230, 253, 0.84);
     font-size: 0.92rem;
-    font-weight: 800;
+    font-weight: 900;
     line-height: 0.8;
     transform: translateY(-0.5px);
   }

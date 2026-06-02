@@ -14180,6 +14180,33 @@ function getGridlyDestinationRouteImpactCardText() {
   }
 }
 
+function getGridlyDestinationRouteReasonInspectionText(item = {}) {
+  return [
+    item?.type,
+    item?.category,
+    item?.title,
+    item?.severity,
+    item?.status,
+    item?.sourceType,
+    item?.impactText
+  ].map((value) => String(value || "").toLowerCase()).join(" ");
+}
+
+function isGridlyDestinationRouteActiveRailReason(item = {}) {
+  const text = getGridlyDestinationRouteReasonInspectionText(item);
+  const railRelated = /rail|train|crossing/.test(text);
+  if (!railRelated) return false;
+  return /rail[_\s-]*(blockage|delay|issue)|blocked[_\s-]*crossing|train[_\s-]*(blocking|blocked|stopped|delay)|\b(blocked|blocking|active|issue|problem|delay|stopped)\b/.test(text);
+}
+
+function getGridlyDestinationRouteActiveRailReasonCopy(matches = []) {
+  const text = (Array.isArray(matches) ? matches : [])
+    .map((item) => getGridlyDestinationRouteReasonInspectionText(item))
+    .join(" ");
+  if (/train[_\s-]*(blocking|blocked|stopped)|\b(blocked|blocking)\b/.test(text)) return "Train blocking crossing near your route";
+  if (/rail[_\s-]*(blockage|delay)|blocked[_\s-]*crossing/.test(text)) return "Blocked rail crossing reported nearby";
+  return "Rail issue reported nearby";
+}
 
 const GRIDLY_DESTINATION_IMPACT_PANE_STATE = {
   paneOpen: false,
@@ -14217,13 +14244,22 @@ function getGridlyDestinationImpactPaneReasonModel() {
   const impactLevel = String(audit?.impactLevel || "none").toLowerCase();
   const matchedHazards = routeFound && Array.isArray(intelligence?.matchedHazards) ? intelligence.matchedHazards : [];
   const matchedAlerts = routeFound && Array.isArray(intelligence?.matchedAlerts) ? intelligence.matchedAlerts : [];
-  const highImpactNearby = matchedHazards.some((item) => isGridlyDestinationRouteHighImpactMatch(item))
-    || matchedAlerts.some((item) => isGridlyDestinationRouteHighImpactMatch(item));
-  const hazards = Math.max(0, Number(audit?.hazardsConsidered || 0));
-  const alerts = Math.max(0, Number(audit?.alertsConsidered || 0));
+  const matchedReports = routeFound && Array.isArray(intelligence?.matchedReports) ? intelligence.matchedReports : [];
+  const activeRailMatches = [...matchedHazards, ...matchedAlerts, ...matchedReports]
+    .filter((item) => isGridlyDestinationRouteActiveRailReason(item));
+  const displayHazards = matchedHazards.filter((item) => !isGridlyDestinationRouteActiveRailReason(item));
+  const displayAlerts = matchedAlerts.filter((item) => !isGridlyDestinationRouteActiveRailReason(item));
+  const highImpactNearby = displayHazards.some((item) => isGridlyDestinationRouteHighImpactMatch(item))
+    || displayAlerts.some((item) => isGridlyDestinationRouteHighImpactMatch(item));
+  const hazards = displayHazards.length;
+  const alerts = displayAlerts.length;
   const reports = Math.max(0, Number(audit?.reportsConsidered || 0));
-  const crossings = Math.max(0, Number(audit?.crossingsConsidered || 0));
+  const activeRail = activeRailMatches.length;
   const reasons = [];
+
+  if (activeRail > 0) {
+    reasons.push(getGridlyDestinationRouteActiveRailReasonCopy(activeRailMatches));
+  }
 
   if (highImpactNearby) {
     reasons.push("Road closure reported nearby");
@@ -14239,11 +14275,7 @@ function getGridlyDestinationImpactPaneReasonModel() {
     reasons.push(`${pluralizeGridlyDestinationImpactReason(reports, "community report")} nearby`);
   }
 
-  if (crossings > 0) {
-    reasons.push(`${pluralizeGridlyDestinationImpactReason(crossings, "rail crossing")} nearby`);
-  }
-
-  const quiet = !routeFound || (hazards === 0 && alerts === 0 && reports === 0 && crossings === 0);
+  const quiet = !routeFound || (hazards === 0 && alerts === 0 && reports === 0 && activeRail === 0);
 
   return {
     impactLevel,
@@ -14334,20 +14366,47 @@ function isGridlyDestinationImpactLineVisible(node) {
       || Number(style.opacity || 1) <= 0;
     if (hiddenByStyle) return false;
   }
+
   const rect = typeof node.getBoundingClientRect === "function" ? node.getBoundingClientRect() : null;
   if (!rect || rect.width <= 0 || rect.height <= 0) return false;
   const viewportWidth = window.innerWidth || document.documentElement?.clientWidth || 0;
   const viewportHeight = window.innerHeight || document.documentElement?.clientHeight || 0;
-  const intersectsViewport = rect.bottom > 0
-    && rect.right > 0
-    && rect.top < viewportHeight
-    && rect.left < viewportWidth;
-  if (!intersectsViewport) return false;
+  if (viewportWidth <= 0 || viewportHeight <= 0) return true;
+
+  let visibleLeft = Math.max(rect.left, 0);
+  let visibleTop = Math.max(rect.top, 0);
+  let visibleRight = Math.min(rect.right, viewportWidth);
+  let visibleBottom = Math.min(rect.bottom, viewportHeight);
+  for (let ancestor = node.parentElement; ancestor && ancestor !== document.body; ancestor = ancestor.parentElement) {
+    const ancestorStyle = window.getComputedStyle ? window.getComputedStyle(ancestor) : null;
+    const clipsOverflow = ancestorStyle && /(hidden|clip|auto|scroll)/.test(`${ancestorStyle.overflow} ${ancestorStyle.overflowX} ${ancestorStyle.overflowY}`);
+    if (!clipsOverflow || typeof ancestor.getBoundingClientRect !== "function") continue;
+    const ancestorRect = ancestor.getBoundingClientRect();
+    visibleLeft = Math.max(visibleLeft, ancestorRect.left);
+    visibleTop = Math.max(visibleTop, ancestorRect.top);
+    visibleRight = Math.min(visibleRight, ancestorRect.right);
+    visibleBottom = Math.min(visibleBottom, ancestorRect.bottom);
+  }
+  if (visibleRight - visibleLeft <= 1 || visibleBottom - visibleTop <= 1) return false;
+
   if (typeof document.elementFromPoint !== "function") return true;
-  const sampleX = Math.min(Math.max(rect.left + (rect.width / 2), 0), Math.max(viewportWidth - 1, 0));
-  const sampleY = Math.min(Math.max(rect.top + (rect.height / 2), 0), Math.max(viewportHeight - 1, 0));
-  const sampledNode = document.elementFromPoint(sampleX, sampleY);
-  return sampledNode === node || Boolean(node.contains(sampledNode));
+  const paneEls = getGridlyDestinationImpactPaneElements();
+  const samples = [
+    [visibleLeft + ((visibleRight - visibleLeft) / 2), visibleTop + ((visibleBottom - visibleTop) / 2)],
+    [visibleLeft + 2, visibleTop + 2],
+    [visibleRight - 2, visibleTop + 2],
+    [visibleLeft + 2, visibleBottom - 2],
+    [visibleRight - 2, visibleBottom - 2]
+  ];
+  return samples.some(([x, y]) => {
+    const sampleX = Math.min(Math.max(x, 0), Math.max(viewportWidth - 1, 0));
+    const sampleY = Math.min(Math.max(y, 0), Math.max(viewportHeight - 1, 0));
+    const sampledNode = document.elementFromPoint(sampleX, sampleY);
+    if (!sampledNode) return false;
+    if (sampledNode === node || Boolean(node.contains(sampledNode))) return true;
+    if (GRIDLY_DESTINATION_IMPACT_PANE_STATE.paneOpen && (paneEls.pane === sampledNode || paneEls.pane?.contains(sampledNode))) return true;
+    return false;
+  });
 }
 
 window.gridlyDestinationImpactPaneAudit = function gridlyDestinationImpactPaneAudit() {
