@@ -23049,6 +23049,272 @@ window.gridlyTopAwarenessIntegrationAudit = function gridlyTopAwarenessIntegrati
   }
 };
 
+
+window.gridlyAwarenessBriefDesignV1 = function gridlyAwarenessBriefDesignV1() {
+  return {
+    version: "Awareness Brief Card V1 / Portrait V2 design prototype",
+    designPhilosophy: {
+      northStar: "Your town's awareness network.",
+      productPromise: "Know Before You Go.",
+      positioning: "Community-powered local awareness that turns what drivers report into a calm daily briefing for neighbors.",
+      shouldFeelLike: ["premium", "calm", "local", "neighbor-powered", "editorial", "glanceable"],
+      shouldNotFeelLike: ["a traffic app", "a map app", "a rail app", "an operations dashboard", "a dense incident console"],
+      designPrinciples: [
+        "Lead with the human takeaway before operational controls.",
+        "Use one confident awareness headline, one location line, and one compact freshness/community line.",
+        "Let the map support the briefing; do not make the first screen feel like map tooling.",
+        "Community participation is proof and reassurance, not a scoreboard.",
+        "Quiet states should still feel valuable by confirming that the local network is calm."
+      ]
+    },
+    cardPurpose: {
+      primaryQuestion: "What should I know before I go?",
+      twoSecondGoal: "The user can identify what happened, where it happened, how recent it is, and whether the community is active within two seconds.",
+      jobToBeDone: "Before touching filters, route tools, or the map, provide a local mobility awareness briefing that helps a resident decide whether to leave normally, pay attention, or check route details.",
+      successCriteria: [
+        "One dominant message is visible without scanning controls.",
+        "Location is stated in plain local language.",
+        "Freshness and report volume appear together as a compact trust line.",
+        "Route intelligence is present only as a secondary support action."
+      ]
+    },
+    hierarchyModel: {
+      exactHierarchy: [
+        {
+          level: 1,
+          name: "Greeting / local network label",
+          role: "Sets the experience as a daily local briefing, not a control panel.",
+          examples: ["Good morning, Denise", "Dayton Awareness Brief", "Liberty County Awareness Brief"]
+        },
+        {
+          level: 2,
+          name: "Primary awareness headline",
+          role: "States the most important thing in one sentence: condition + road/place.",
+          examples: ["Flooding reported on TX 146", "Crash activity reported near US 90", "No major mobility issues reported in Dayton"]
+        },
+        {
+          level: 3,
+          name: "Location / corridor detail",
+          role: "Clarifies where using local landmarks, corridors, or between-points.",
+          examples: ["Between US 90 and Brown Road", "Near the Dayton rail corridor", "Community activity is quiet"]
+        },
+        {
+          level: 4,
+          name: "Freshness + community proof",
+          role: "Combines recency and participation into one glanceable trust line.",
+          examples: ["8 min ago • 3 community reports", "Updated 2 min ago • 8 drivers reporting", "Checked just now • Community quiet"]
+        },
+        {
+          level: 5,
+          name: "Support row",
+          role: "Optional secondary actions such as Route Watch or view filters; never competes with the brief headline.",
+          examples: ["Route Watch: Check my drive", "View nearby reports", "Filters"]
+        }
+      ],
+      recommendedCopyFormula: {
+        active: "[Condition] reported [on/near] [local place] / [specific location] / [freshness] • [community count]",
+        quiet: "No major mobility issues reported in [town] / Community activity is quiet / Checked just now • Local network standing by",
+        elevated: "Heavy community reporting near [corridor] / [between-points or landmark] / [freshness] • [drivers reporting]"
+      },
+      deliberateTradeoff: "Do not lead with filters, counts, or route tooling. Those are useful after the user understands the brief."
+    },
+    typographyModel: {
+      cardLabel: { size: "12px", weight: 700, letterSpacing: "0.08em", transform: "uppercase", colorRole: "muted premium label" },
+      greeting: { size: "15px", weight: 650, lineHeight: "20px", colorRole: "warm secondary text" },
+      headline: { size: "22px", weight: 760, lineHeight: "27px", colorRole: "primary ink", maxLines: 2 },
+      location: { size: "15px", weight: 560, lineHeight: "21px", colorRole: "secondary ink", maxLines: 2 },
+      metadata: { size: "13px", weight: 650, lineHeight: "18px", colorRole: "muted trust text" },
+      action: { size: "13px", weight: 750, lineHeight: "18px", colorRole: "accent text" },
+      emphasisRules: [
+        "Only the headline receives the strongest weight.",
+        "Location should feel descriptive, not subordinate fine print.",
+        "Freshness and report count should share the same metadata line to reduce scanning.",
+        "Avoid all-caps in the headline; reserve uppercase for the tiny card label only."
+      ]
+    },
+    spacingModel: {
+      topPadding: "18px from the top of the portrait sheet or safe-area edge before the card label.",
+      cardPadding: "18px top / 18px sides / 16px bottom on compact phones; 20px / 20px / 18px on larger phones.",
+      labelToGreeting: "6px",
+      greetingToHeadline: "8px",
+      headlineToLocation: "7px",
+      locationToMetadata: "10px",
+      metadataToSupportRow: "14px",
+      internalRowGap: "8px between compact metadata chips when split is required; prefer one metadata line when possible.",
+      cardToFilters: "16px minimum; filters should visually belong below the brief, not inside the core message.",
+      breathingRoom: "Use generous line height and one clear content column so the card feels editorial rather than cramped."
+    },
+    quietStateDesign: {
+      intent: "Make quiet feel reassuring and useful, not empty.",
+      example: {
+        label: "Awareness Brief",
+        greeting: "Good morning, Denise",
+        headline: "No major mobility issues reported in Dayton",
+        location: "Community activity is quiet across nearby roads",
+        metadata: "Checked just now • Local network standing by",
+        support: "Route Watch available if you want to check your drive"
+      },
+      visualTreatment: {
+        accent: "soft green/blue calm accent",
+        icon: "small calm status dot or shield; avoid celebratory graphics",
+        density: "lowest density; no stacked counts unless helpful"
+      },
+      wordingRules: [
+        "Say 'No major mobility issues reported' instead of 'All clear' to avoid overpromising.",
+        "Use 'Community activity is quiet' as the participation signal.",
+        "Confirm freshness with 'Checked just now' or 'Updated X min ago'."
+      ]
+    },
+    moderateStateDesign: {
+      intent: "Present one active issue with enough context to decide whether to pay attention.",
+      example: {
+        label: "Awareness Brief",
+        greeting: "Good morning, Denise",
+        headline: "Flooding reported on TX 146",
+        location: "Between US 90 and Brown Road",
+        metadata: "8 min ago • 3 community reports",
+        support: "Route Watch: check if this affects your drive"
+      },
+      visualTreatment: {
+        accent: "warm amber accent with restrained contrast",
+        icon: "small condition glyph or status dot",
+        density: "headline, location, one metadata line, one quiet support action"
+      },
+      wordingRules: [
+        "Use 'reported' to communicate community-sourced confidence without sounding official-only.",
+        "Name the road or corridor in the headline when known.",
+        "Put between-points or landmarks in the location line, not in the headline."
+      ]
+    },
+    highActivityDesign: {
+      intent: "Communicate elevated local activity without panic or alarmism.",
+      example: {
+        label: "Awareness Brief",
+        greeting: "Liberty County Awareness Brief",
+        headline: "Heavy community reporting near US 90",
+        location: "Delays and road hazards reported around Dayton and Kenefick",
+        metadata: "Updated 2 min ago • 8 drivers reporting",
+        support: "Route Watch recommended before leaving"
+      },
+      visualTreatment: {
+        accent: "deeper amber/red accent used as a slim rail or dot, not a full warning block",
+        icon: "activity pulse mark; avoid siren-like emergency styling unless the underlying alert warrants it",
+        density: "allow one extra sublocation phrase, but keep the card to four readable lines before actions"
+      },
+      wordingRules: [
+        "Prefer 'Heavy community reporting' or 'Community activity building' over dramatic language.",
+        "If multiple reports cluster, lead with the corridor/town cluster instead of listing every item.",
+        "Use 'Route Watch recommended' as support, not as the headline."
+      ]
+    },
+    communityVisibilityModel: {
+      recommendedApproach: "Show community participation as a compact trust signal in the metadata line, adapting wording by volume and state.",
+      quiet: "Community activity quiet",
+      oneReport: "1 community report",
+      fewReports: "3 community reports",
+      manyReports: "8 drivers reporting",
+      building: "Community activity building",
+      rationale: "'Community reports' is clearest for low/moderate counts; 'drivers reporting' feels more alive at higher activity; 'activity building' summarizes momentum when exact count is less important than trend.",
+      avoid: ["leaderboard-style counts", "overly technical source labels", "anonymous social feed language", "burying community proof behind a tap"]
+    },
+    freshnessModel: {
+      placement: "Always paired with community proof on the metadata line.",
+      tiers: [
+        { age: "0-4 minutes", display: "Just now", useWhen: "fresh report or fresh refresh" },
+        { age: "5-59 minutes", display: "8 min ago", useWhen: "single report or active cluster" },
+        { age: "1-3 hours", display: "Updated 2 hr ago", useWhen: "still relevant but not brand new" },
+        { age: "quiet check", display: "Checked just now", useWhen: "no major active issue" }
+      ],
+      staleRule: "Do not feature stale reports in the primary brief. If the best available signal is aging, downgrade the language to 'Earlier report' and move it below fresher local context."
+    },
+    reportCountModel: {
+      displayRule: "Use counts as confidence and community presence, not as the primary headline.",
+      countFormats: [
+        { range: "0", copy: "Community quiet" },
+        { range: "1", copy: "1 community report" },
+        { range: "2-4", copy: "{n} community reports" },
+        { range: "5+", copy: "{n} drivers reporting" }
+      ],
+      aggregationRule: "When multiple reports are about the same corridor or condition, aggregate them into one count on the metadata line instead of creating multiple competing headlines.",
+      confidenceRule: "If report quality is uncertain, keep the count but soften the headline with 'reported near' rather than definitive incident language."
+    },
+    routeIntelligencePlacement: {
+      recommendation: "Route Watch belongs below the awareness metadata as a secondary support row or compact call-to-action.",
+      principle: "Route intelligence should answer 'does this affect my drive?' after the awareness brief answers 'what should I know?'",
+      placement: "Bottom of the brief card or immediately below it as a small pill: 'Route Watch: check my drive'.",
+      notRecommended: [
+        "Do not make Route Watch the card headline.",
+        "Do not place route setup controls above the awareness headline.",
+        "Do not replace the local community brief with route-only status."
+      ],
+      escalation: "In high activity, the support row can strengthen to 'Route Watch recommended before leaving' while remaining secondary."
+    },
+    filterPlacementRecommendation: {
+      recommendation: "Move Nearby / My Town / My County / Active Delays / All below the Awareness Brief Card, visually after the user has received the briefing.",
+      layout: "Use a horizontally scrollable segmented row or compact chips 16px below the card, with lower visual weight than the card headline.",
+      defaultOrder: ["Nearby", "My Town", "My County", "Active Delays", "All"],
+      hierarchyRule: "Filters are exploration tools, not the first awareness experience.",
+      visualGuidance: [
+        "Use smaller 13px labels and a quieter selected state than the brief card accent.",
+        "Keep filter row sticky only after the user scrolls or begins exploring; avoid making it the top-most element on initial load.",
+        "If space is constrained, show Nearby, My Town, and Active Delays first, with My County and All accessible by horizontal scroll."
+      ]
+    },
+    premiumDesignRecommendations: [
+      "Use a soft elevated card with subtle border, low shadow, and a restrained local accent rail.",
+      "Favor editorial copy over dashboard labels: 'Awareness Brief' beats 'Status'.",
+      "Keep one dominant type moment and avoid competing chips above the headline.",
+      "Use calm motion only for freshness changes, such as a gentle metadata fade, not pulsing emergency effects.",
+      "Use location language residents recognize: roads, towns, between-points, and local corridors.",
+      "Treat quiet as a first-class state with reassuring copy and premium spacing.",
+      "Avoid placing raw counts, filters, and route setup in the same visual tier as the main awareness sentence."
+    ],
+    implementationComplexity: {
+      estimatedLevel: "medium",
+      reason: "The design can reuse existing awareness, freshness, report count, and route-watch data, but requires a new top-card composition layer and careful responsive spacing.",
+      lowRiskParts: ["copy model", "metadata line", "filter repositioning recommendation", "static state examples"],
+      mediumRiskParts: ["cluster selection for high activity", "freshness downgrade rules", "route-watch support-row priority"],
+      highRiskParts: ["none for this design prototype because no production rendering, route logic, alert logic, hazard placement, lifecycle, cleanup, onboarding, or settings changes are included"],
+      nonGoals: [
+        "No production UI rendering changes in this sprint.",
+        "No onboarding changes.",
+        "No settings changes.",
+        "No lifecycle or cleanup changes.",
+        "No route, alert, or hazard placement logic changes."
+      ]
+    },
+    recommendedV1Layout: {
+      wireframe: [
+        "┌────────────────────────────────────┐",
+        "│ AWARENESS BRIEF                    │",
+        "│ Good morning, Denise               │",
+        "│                                    │",
+        "│ Flooding reported on TX 146        │",
+        "│ Between US 90 and Brown Road       │",
+        "│ 8 min ago • 3 community reports    │",
+        "│                                    │",
+        "│ Route Watch: check if this affects │",
+        "│ your drive                         │",
+        "└────────────────────────────────────┘",
+        "  [Nearby] [My Town] [My County]     ",
+        "  [Active Delays] [All]              "
+      ],
+      contentOrder: ["label", "greeting/local brief", "headline", "location", "freshness + community", "route support", "filters"],
+      maxInitialLines: "Four content lines plus one optional support row before filters.",
+      preferredInitialViewport: "The full card and the start of filters should fit on common portrait phones without crowding the map below."
+    },
+    recommendedV2FutureEnhancements: [
+      "Personalized greeting by time of day and saved town, while preserving a non-personal fallback such as 'Liberty County Awareness Brief'.",
+      "Confidence-aware language that adapts between 'reported', 'confirmed by multiple drivers', and 'activity building'.",
+      "Small corridor sparkline or activity pulse only after the text hierarchy is proven.",
+      "One-tap 'Why am I seeing this?' explanation for community-powered trust and freshness.",
+      "Adaptive briefing that can summarize multiple towns during county-wide high activity without becoming a list.",
+      "Optional saved-route relevance badge under the community brief, not above it.",
+      "A/B test quiet-state copy: 'Community activity is quiet' versus 'Local network is quiet'."
+    ]
+  };
+};
+
 window.gridlyCommunityPulseAudit = function gridlyCommunityPulseAudit(options = {}) {
   const shouldRender = options?.render !== false;
   const state = shouldRender ? renderGridlyCommunityPulse(options) : { ...gridlyCommunityPulseAuditState };
