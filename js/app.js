@@ -683,7 +683,10 @@ const GRIDLY_NORMALIZED_INCIDENT_CATEGORIES = new Set([
 
 
 function safeDisplayText(value, fallback = "") {
-  const safeFallback = typeof fallback === "string" ? fallback : String(fallback ?? "");
+  const rawFallback = typeof fallback === "string"
+    ? fallback
+    : (typeof fallback === "number" || typeof fallback === "boolean" ? String(fallback) : "");
+  const safeFallback = rawFallback.replace(/\s+/g, " ").trim().toLowerCase() === "[object object]" ? "" : rawFallback;
   if (value == null) return safeFallback;
   if (typeof value === "string") {
     const text = value.replace(/\s+/g, " ").trim();
@@ -40920,9 +40923,56 @@ function getGridlyAwarenessCommunityCount(intel = {}, activeAwareness = {}) {
   return Math.max(0, ...candidates.map((value) => Number(value)).filter((value) => Number.isFinite(value)));
 }
 
+function getGridlyAwarenessBriefActiveState({ intel = {}, pulseModel = {} } = {}) {
+  const snapshot = typeof window !== "undefined" && typeof window.getAlertsSurfaceSnapshot === "function"
+    ? window.getAlertsSurfaceSnapshot()
+    : null;
+  const latestAlerts = typeof window !== "undefined" && Array.isArray(window.__gridlyLatestAlertsForRender)
+    ? window.__gridlyLatestAlertsForRender
+    : [];
+  const alerts = Array.isArray(snapshot?.alerts) ? snapshot.alerts : latestAlerts;
+  const activeLocalizedAlertCount = Math.max(0, Number(intel?.activeLocalizedAlertCount || 0));
+  const activeIncidentCount = Math.max(0, Number(
+    snapshot?.activeIncidentCount
+    ?? snapshot?.count
+    ?? activeLocalizedAlertCount
+  ) || 0);
+  const activeHazardSourceCount = Math.max(0, Number(
+    snapshot?.activeHazardSourceCount
+    ?? pulseModel?.activeAwareness?.activeHazardCount
+    ?? 0
+  ) || 0);
+  const activeAlertLength = alerts.length;
+  const activeCountsAreClear = activeIncidentCount === 0
+    && activeLocalizedAlertCount === 0
+    && activeAlertLength === 0
+    && activeHazardSourceCount === 0;
+  return {
+    activeCountsAreClear,
+    activeIncidentCount,
+    activeLocalizedAlertCount,
+    activeAlertLength,
+    activeHazardSourceCount
+  };
+}
+
+function getGridlyQuietAwarenessBriefCopy() {
+  const town = getGridlyAwarenessBriefTownLabel();
+  return {
+    state: "quiet",
+    greeting: getGridlyAwarenessGreetingText(),
+    primary: `No major mobility issues reported in ${town}.`,
+    secondary: "Community activity is quiet.",
+    microline: "Last checked just now.",
+    microlineVisible: true
+  };
+}
+
 function buildGridlyAwarenessBriefCopy({ intel = {}, existingAlertWording = {}, pulseModel = {} } = {}) {
   const town = getGridlyAwarenessBriefTownLabel();
   const activeAwareness = pulseModel?.activeAwareness || existingAlertWording?.activeAwareness || {};
+  const activeState = getGridlyAwarenessBriefActiveState({ intel, pulseModel });
+  if (activeState.activeCountsAreClear) return getGridlyQuietAwarenessBriefCopy();
   const activeCount = getGridlyAwarenessCommunityCount(intel, activeAwareness);
   const activeCategory = existingAlertWording?.activeCategory || activeAwareness?.resolvedCategory || activeAwareness?.topCategory || "";
   const activeLocation = safeDisplayText(existingAlertWording?.activeLocationLabel || activeAwareness?.resolvedLocationLabel, "");
@@ -40959,14 +41009,7 @@ function buildGridlyAwarenessBriefCopy({ intel = {}, existingAlertWording = {}, 
     };
   }
 
-  return {
-    state: "quiet",
-    greeting: getGridlyAwarenessGreetingText(),
-    primary: `No major mobility issues reported in ${town}.`,
-    secondary: activity && activity !== "quiet" ? `Community activity ${activity}.` : "Community activity is quiet.",
-    microline: "Last checked just now.",
-    microlineVisible: true
-  };
+  return getGridlyQuietAwarenessBriefCopy();
 }
 
 function refreshPortraitV2LocalizedIntelligence() {
@@ -41015,12 +41058,20 @@ function refreshPortraitV2LocalizedIntelligence() {
     void corridorAwarePrimaryCandidate;
     const pulseModel = buildGridlyCommunityPulseModel({ topAwarenessMicrolineReadOnly: true });
     const awarenessBrief = buildGridlyAwarenessBriefCopy({ intel, existingAlertWording, pulseModel });
+    if (awarenessBrief.state === "quiet") {
+      pulseModel.pulseVisible = false;
+      pulseModel.renderedPulseHeadline = "Community pulse is quiet";
+      pulseModel.renderedPulseSubline = "Town moving normally";
+      pulseModel.pulseSuppressedReason = "quiet awareness brief active-state counts are clear";
+    }
+    const awarenessPrimary = safeDisplayText(awarenessBrief.primary, "No major mobility issues reported nearby.");
+    const awarenessSecondary = safeDisplayText(awarenessBrief.secondary, "Community activity is quiet.");
     const greetingEl = document.getElementById("gridlyV2AwarenessGreeting");
     setGridlyTopPanelTextIfChanged(greetingEl, awarenessBrief.greeting, "refreshPortraitV2LocalizedIntelligence", "gridlyV2AwarenessGreeting");
-    logTopPanelWrite("refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusPrimary", awarenessBrief.primary);
-    setGridlyTopPanelTextIfChanged(topPrimaryEl, safeDisplayText(awarenessBrief.primary, "No major mobility issues reported nearby."), "refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusPrimary");
-    logTopPanelWrite("refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusSecondary", awarenessBrief.secondary);
-    setGridlyTopPanelTextIfChanged(topSecondaryEl, safeDisplayText(awarenessBrief.secondary, "Community activity is quiet."), "refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusSecondary");
+    logTopPanelWrite("refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusPrimary", awarenessPrimary);
+    setGridlyTopPanelTextIfChanged(topPrimaryEl, awarenessPrimary, "refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusPrimary");
+    logTopPanelWrite("refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusSecondary", awarenessSecondary);
+    setGridlyTopPanelTextIfChanged(topSecondaryEl, awarenessSecondary, "refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusSecondary");
     if (topMicrolineEl) {
       setGridlyTopPanelTextIfChanged(topMicrolineEl, awarenessBrief.microlineVisible ? awarenessBrief.microline : "", "refreshPortraitV2LocalizedIntelligence", "gridlyTopAwarenessMicroline");
       topMicrolineEl.hidden = !awarenessBrief.microlineVisible;
@@ -41029,14 +41080,15 @@ function refreshPortraitV2LocalizedIntelligence() {
       topMicrolineEl.dataset.gridlyMicrolineSuppressedReason = "";
     }
     const activeAwareness = pulseModel.activeAwareness || {};
+    const quietAwarenessState = awarenessBrief.state === "quiet";
     window.gridlyTopAwarenessMicrolineState = {
       text: awarenessBrief.microline,
       visible: awarenessBrief.microlineVisible,
       state: awarenessBrief.state,
       pulseHeadline: pulseModel.renderedPulseHeadline || activeAwareness.headline || "",
-      activeReportCount: getGridlyAwarenessCommunityCount(intel, activeAwareness),
-      activeHazardCount: activeAwareness.activeHazardCount ?? 0,
-      activityLevel: pulseModel.mobilityPressureCategory || activeAwareness.activityLevel || "quiet"
+      activeReportCount: quietAwarenessState ? 0 : getGridlyAwarenessCommunityCount(intel, activeAwareness),
+      activeHazardCount: quietAwarenessState ? 0 : (activeAwareness.activeHazardCount ?? 0),
+      activityLevel: quietAwarenessState ? "quiet" : (pulseModel.mobilityPressureCategory || activeAwareness.activityLevel || "quiet")
     };
     renderGridlyIntelligencePreviewCard({ reason: "refreshPortraitV2LocalizedIntelligence", model: pulseModel });
     logTopStripOwnershipDiagnostic("refreshPortraitV2LocalizedIntelligence");
@@ -44008,7 +44060,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
 
   function safeDisplayText(value, fallback = "") {
-    const safeFallback = typeof fallback === "string" ? fallback : String(fallback ?? "");
+    const rawFallback = typeof fallback === "string"
+      ? fallback
+      : (typeof fallback === "number" || typeof fallback === "boolean" ? String(fallback) : "");
+    const safeFallback = rawFallback.replace(/\s+/g, " ").trim().toLowerCase() === "[object object]" ? "" : rawFallback;
     if (value == null) return safeFallback;
     if (typeof value === "string") {
       const text = value.replace(/\s+/g, " ").trim();
@@ -46552,8 +46607,8 @@ function gridlyAwarenessExperienceAudit() {
       borderRadius: style.borderRadius
     };
   };
-  const primaryHeadline = readText("#gridlyV2TopStatusPrimary") || "Routes currently clear";
-  const secondaryHeadline = readText("#gridlyV2TopStatusSecondary") || "No major disruptions nearby";
+  const primaryHeadline = readText("#gridlyV2TopStatusPrimary") || "No major mobility issues reported in Dayton.";
+  const secondaryHeadline = readText("#gridlyV2TopStatusSecondary") || "Community activity is quiet.";
   const microline = readText("#gridlyTopAwarenessMicroline, .gridly-v2-top-awareness-microline");
   const scopeFilters = Array.from(document.querySelectorAll("#gridlyPortraitV2 .gridly-v2-segments button")).map((button) => ({
     label: String(button.textContent || "").trim(),
