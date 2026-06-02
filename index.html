@@ -124,16 +124,16 @@
 
       <div class="hero-card driver-hero">
         <div class="hero-main-copy">
-          <p class="eyebrow" id="timeContext">Daily Habit Mode</p>
+          <p class="eyebrow" id="timeContext">Awareness Brief</p>
           <h1 id="greetingTitle">Checking Gridly</h1>
           <p class="subtext" id="greetingSubtitle">
-            Your 10-second pre-drive check. See blocked, delayed, or cleared crossings near Liberty County before you go.
+            Your town's awareness briefing: what drivers are seeing, where it is happening, and how fresh the community signal is.
           </p>
 
           <div class="habit-status-strip" id="habitStatusStrip">
-            <span id="habitStatusPill">Checking</span>
-            <strong id="habitStatusHeadline">Building today’s route picture...</strong>
-            <p id="habitStatusDetail">Gridly is scanning active reports, confirmations, and freshness so you can trust what is on the map.</p>
+            <span id="habitStatusPill">Community check</span>
+            <strong id="habitStatusHeadline">Building your town’s awareness briefing...</strong>
+            <p id="habitStatusDetail">Gridly is scanning active community reports, locations, and freshness before you go.</p>
           </div>
 
           <div class="trust-row">
@@ -145,7 +145,7 @@
 
         <div class="hero-command-card">
           <div class="route-status-card delayed" id="routeStatusCard" role="button" tabindex="0" aria-label="Set or review route">
-            <span class="status-label" id="routeCardLabel">Route Confidence</span>
+            <span class="status-label" id="routeCardLabel">Supporting Route Watch</span>
             <strong id="routeStatus">Checking...</strong>
             <span id="routeEta">ETA calculating</span>
             <button type="button" class="route-edit-link" id="mobileEditRouteBtn" aria-label="Edit saved route">Edit Route</button>
@@ -191,9 +191,9 @@
 
       <div class="mobile-home-cards" aria-label="Today quick view">
         <article class="mobile-home-card mobile-route-decision-card mobile-priority-card">
-          <span>Commute Command</span>
-          <strong id="delayRisk">CLEAR TO LEAVE</strong>
-          <p id="delayReason">Live engine is scanning crossings, incidents, and confirmations to guide your departure decision.</p>
+          <span>Awareness Brief</span>
+          <strong id="delayRisk">COMMUNITY QUIET</strong>
+          <p id="delayReason">Community reports are being checked for what happened, where, and how recent the signal is.</p>
           <div class="mobile-route-priority-actions">
             <button class="primary-btn mobile-commute-cta" id="mobileCommuteRouteBtn" type="button" data-section-jump="map">View Route</button>
             <button class="secondary-btn" id="mobileQuickRouteBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg> Start Route Watch</button>
@@ -211,9 +211,9 @@
         </article>
 
         <article class="mobile-home-card mobile-map-preview-card">
-          <span>Map Status</span>
+          <span>Community Map</span>
           <strong id="nearbyAlertCount">0 active now</strong>
-          <p id="activeAlertText">Live map already active below route status.</p>
+          <p id="activeAlertText">Live map supports the awareness briefing below.</p>
           <button class="secondary-btn" type="button" data-section-jump="map">Map Live</button>
         </article>
 
@@ -578,14 +578,14 @@
         <img src="assets/gridly-header-ultra-compact-fixed.png" alt="Gridly" decoding="async" fetchpriority="high">
       </div></div>
       <div class="gridly-v2-header-region gridly-v2-header-center">
-        <div class="gridly-v2-watch" aria-hidden="true"><span>WATCH • LIBERTY COUNTY</span></div>
+        <div class="gridly-v2-watch" aria-hidden="true"><span id="gridlyV2AwarenessGreeting">Good morning</span></div>
       </div>
     </div>
-    <div class="gridly-v2-status-pill">
-      <strong id="gridlyV2TopStatusPrimary">Routes currently clear</strong>
-      <span id="gridlyV2TopStatusSecondary">No major disruptions nearby</span>
+    <div class="gridly-v2-status-pill gridly-v2-awareness-brief-card" aria-label="Your town awareness briefing">
+      <strong id="gridlyV2TopStatusPrimary">No major mobility issues reported nearby.</strong>
+      <span id="gridlyV2TopStatusSecondary">Community activity is quiet.</span>
     </div>
-    <div class="gridly-v2-segments" role="tablist" aria-label="Map scope filters">
+    <div class="gridly-v2-segments" role="tablist" aria-label="Briefing filters">
       <button class="is-active" type="button" data-v2-filter="nearby" data-geo-filter="nearby">Nearby</button>
       <button type="button" data-v2-filter="route" data-geo-filter="town">My Route</button>
       <button type="button" data-v2-filter="town" data-geo-filter="county">My Town</button>
