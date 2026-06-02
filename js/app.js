@@ -23444,17 +23444,39 @@ function getGridlyTopAwarenessPolishedHeadline(value = "") {
     .trim();
 }
 
+function getGridlyTopAwarenessDetailSearchText(detail = {}) {
+  const item = detail?.item && typeof detail.item === "object" ? detail.item : (detail || {});
+  return normalizeGridlyLightweightAlertSummaryText([
+    detail?.resolvedCategory, detail?.rawCategoryValue, detail?.resolvedLocationLabel, detail?.reusedAlertText,
+    item?.title, item?.headline, item?.summary, item?.description, item?.detail, item?.details,
+    item?.type, item?.report_type, item?.reportType, item?.hazardType, item?.category, item?.hazardCategory,
+    item?.status, item?.crossingStatus, item?.crossing_status,
+    item?.raw?.title, item?.raw?.headline, item?.raw?.summary, item?.raw?.description, item?.raw?.detail, item?.raw?.details,
+    item?.raw?.type, item?.raw?.report_type, item?.raw?.reportType, item?.raw?.hazardType, item?.raw?.category, item?.raw?.hazardCategory,
+    item?.raw?.status, item?.raw?.crossingStatus, item?.raw?.crossing_status
+  ].filter(Boolean).join(" ")).toLowerCase();
+}
+
+function getGridlyTopAwarenessPrimaryPriorityRank(detail = {}) {
+  const text = getGridlyTopAwarenessDetailSearchText(detail);
+  const normalizedCategory = normalizeGridlyLightweightCategoryValue(detail?.resolvedCategory || detail?.item?.type || detail?.item?.report_type || detail?.item?.hazardType || detail?.item?.category || "");
+  if (/\b(?:road closed|road closure|closed road|closure|closures|lane closure|lanes closed)\b/i.test(text) || normalizedCategory === "road_closed" || normalizedCategory === "txdot_closure") return 1;
+  if (/\b(?:blocked crossing|crossing blocked|train blocking|blocked by train|stopped train|closed crossing|rail crossing blocked)\b/i.test(text) || normalizedCategory === "rail" || normalizedCategory === "rail_blockage_delay") return 2;
+  if (/\b(?:flood|flooding|high water|standing water|impassable water)\b/i.test(text) || normalizedCategory === "flooding" || normalizedCategory === "standing_water" || normalizedCategory === "txdot_flooding") return 3;
+  if (/\b(?:crash|wreck|collision|accident)\b/i.test(text) || normalizedCategory === "crash") return 4;
+  if (/\b(?:construction|road work|work zone|utility work|maintenance)\b/i.test(text) || normalizedCategory === "construction" || normalizedCategory === "txdot_construction" || normalizedCategory === "utility_work") return 5;
+  if (/\b(?:disabled vehicle|stalled vehicle|vehicle disabled|stalled)\b/i.test(text) || normalizedCategory === "disabled_vehicle") return 6;
+  if (/\b(?:debris|tree down|downed tree|tree in road|obstruction)\b/i.test(text) || normalizedCategory === "debris" || normalizedCategory === "fallen_tree" || normalizedCategory === "txdot_damage") return 7;
+  return 8;
+}
+
 function isGridlyTopAwarenessMeaningfulMobilityDetail(detail = {}) {
   if (!detail || typeof detail !== "object") return false;
   if (detail.lifecycleClassification?.lifecycleStage === "expired_candidate") return false;
   const item = detail.item && typeof detail.item === "object" ? detail.item : detail;
   const state = getGridlyLightweightLifecycleState(item);
   if (state !== "active") return false;
-  const text = normalizeGridlyLightweightAlertSummaryText([
-    detail.resolvedCategory, detail.rawCategoryValue, detail.resolvedLocationLabel, detail.reusedAlertText,
-    item?.title, item?.headline, item?.summary, item?.description, item?.detail, item?.details, item?.type, item?.report_type,
-    item?.status, item?.raw?.title, item?.raw?.headline, item?.raw?.summary, item?.raw?.description, item?.raw?.type, item?.raw?.report_type
-  ].filter(Boolean).join(" ")).toLowerCase();
+  const text = getGridlyTopAwarenessDetailSearchText(detail);
   if (!text) return false;
   if (/\b(?:cleared|resolved|expired|historical|history|sample|audit|route intelligence|destination|eta|osrm|community pulse|conditions normal)\b/i.test(text)) return false;
   if (/\b(?:road closure|closed|closure|blocked crossing|crossing blocked|train blocking|blocked by train|flood|high water|standing water|crash|wreck|collision|accident|construction|road work|utility work|disabled vehicle|stalled vehicle|debris|tree down|obstruction|road hazard|hazard)\b/i.test(text)) return true;
@@ -23611,7 +23633,12 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
     .map(([category]) => category)
     .slice(0, 6);
   const topCategory = activeCategories[0] || null;
-  const priorityOrderedDetails = (topAwarenessMeaningfulDetails.length ? topAwarenessMeaningfulDetails : activeItemDetails).slice().sort((a, b) => Number(b.priorityScore || 0) - Number(a.priorityScore || 0));
+  const priorityOrderedDetails = (topAwarenessMeaningfulDetails.length ? topAwarenessMeaningfulDetails : activeItemDetails).slice().sort((a, b) => {
+    const aPrimaryRank = getGridlyTopAwarenessPrimaryPriorityRank(a);
+    const bPrimaryRank = getGridlyTopAwarenessPrimaryPriorityRank(b);
+    if (aPrimaryRank !== bPrimaryRank) return aPrimaryRank - bPrimaryRank;
+    return Number(b.priorityScore || 0) - Number(a.priorityScore || 0);
+  });
   const selectedActiveDetail = priorityOrderedDetails[0] || null;
   const lifecycleSuppressedDetails = activeItemDetails
     .filter((detail) => detail.lifecycleClassification?.lifecycleStage === "expired_candidate" || Number(detail.lifecyclePriorityAdjustment || 0) < 0)
