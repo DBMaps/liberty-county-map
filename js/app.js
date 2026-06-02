@@ -14187,7 +14187,8 @@ function getGridlyDestinationRouteImpactCardText() {
       : null;
     const impactLevel = audit?.impactLevel || "none";
     const reason = audit?.primaryImpactReason || getGridlyDestinationRouteImpactCopy(impactLevel);
-    return `Potential Impact: ${getGridlyDestinationRouteImpactLabel(impactLevel)} — ${reason}`;
+    return `Potential Impact: ${getGridlyDestinationRouteImpactLabel(impactLevel)}
+${reason}`;
   } catch (_) {
     return "";
   }
