@@ -34076,6 +34076,106 @@ window.gridlySearchDebug = function gridlySearchDebug() {
   return debug;
 };
 
+
+window.gridlyDestinationSearchShellAudit = function gridlyDestinationSearchShellAudit() {
+  const shell = gridlySearchUiRefs.shell || document.getElementById("gridlySearchShell");
+  const card = shell?.querySelector?.(".gridly-search-card") || document.querySelector(".gridly-search-card");
+  const input = gridlySearchUiRefs.input || document.getElementById("gridlyAddressSearchInput");
+  const results = gridlySearchUiRefs.results || document.getElementById("gridlySearchResults");
+  const readRect = (node) => {
+    if (!node || typeof node.getBoundingClientRect !== "function") return null;
+    const rect = node.getBoundingClientRect();
+    return {
+      x: rect.x,
+      y: rect.y,
+      width: rect.width,
+      height: rect.height,
+      top: rect.top,
+      right: rect.right,
+      bottom: rect.bottom,
+      left: rect.left
+    };
+  };
+  const describeElement = (node) => {
+    if (!node) return null;
+    const style = window.getComputedStyle(node);
+    return {
+      tagName: node.tagName || "",
+      id: node.id || "",
+      className: typeof node.className === "string" ? node.className : "",
+      display: style.display,
+      visibility: style.visibility,
+      opacity: style.opacity,
+      position: style.position,
+      zIndex: style.zIndex,
+      pointerEvents: style.pointerEvents,
+      rect: readRect(node)
+    };
+  };
+  const readComputed = (node) => {
+    if (!node) return null;
+    const style = window.getComputedStyle(node);
+    return {
+      display: style.display,
+      visibility: style.visibility,
+      opacity: style.opacity,
+      position: style.position,
+      zIndex: style.zIndex,
+      pointerEvents: style.pointerEvents
+    };
+  };
+  const inputRect = readRect(input);
+  const inputCenter = inputRect
+    ? {
+        x: Math.max(0, Math.min(window.innerWidth - 1, inputRect.left + (inputRect.width / 2))),
+        y: Math.max(0, Math.min(window.innerHeight - 1, inputRect.top + (inputRect.height / 2)))
+      }
+    : null;
+  const topElementAtInputCenter = inputCenter ? document.elementFromPoint(inputCenter.x, inputCenter.y) : null;
+  const inputOwnsTapTarget = Boolean(
+    input
+      && topElementAtInputCenter
+      && (topElementAtInputCenter === input || input.contains(topElementAtInputCenter))
+  );
+  const cardOwnsTapTarget = Boolean(
+    card
+      && topElementAtInputCenter
+      && (topElementAtInputCenter === card || card.contains(topElementAtInputCenter))
+  );
+  const inputTappable = Boolean(inputOwnsTapTarget || cardOwnsTapTarget);
+  const audit = {
+    shellExists: Boolean(shell),
+    cardExists: Boolean(card),
+    inputExists: Boolean(input),
+    resultsExists: Boolean(results),
+    shellHidden: Boolean(shell?.hidden),
+    shellHasHiddenAttribute: Boolean(shell?.hasAttribute("hidden")),
+    bodyLayoutMode: document.body?.dataset?.layoutMode || null,
+    computed: {
+      shell: readComputed(shell),
+      card: readComputed(card),
+      input: readComputed(input),
+      results: readComputed(results)
+    },
+    boundingRects: {
+      shell: readRect(shell),
+      card: readRect(card),
+      input: inputRect,
+      results: readRect(results)
+    },
+    inputCenter,
+    topElementAtInputCenter: describeElement(topElementAtInputCenter),
+    inputOwnsTapTarget,
+    cardOwnsTapTarget,
+    inputTappable,
+    inputTopmostOrInsideSearchCard: inputTappable,
+    resultsChildCount: Number(results?.childElementCount || 0),
+    resultsText: String(results?.textContent || "").trim().slice(0, 500)
+  };
+  console.info("Gridly Destination Search Shell Audit", audit);
+  return audit;
+};
+
 window.gridlyMobileDestinationCommandAudit = function gridlyMobileDestinationCommandAudit() {
   const card = document.querySelector(".mobile-destination-command");
   const button = document.getElementById("mobileDestinationCommandBtn");
