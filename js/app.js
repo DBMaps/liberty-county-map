@@ -3092,9 +3092,20 @@ function gridlyFindingsAuditLayerParticipatesInHierarchy(layer = null) {
   return /marker|route|hazard|incident|crossing|rail|historical|pattern|alert|report|location|infrastructure/.test(text);
 }
 
+function gridlyFindingsAuditLayerHasDirectVisualFootprint(layer = null) {
+  const looksLike = layer?.diagnostics?.looksLike || {};
+  const text = `${layer?.type || ""} ${layer?.owner || ""} ${layer?.inferredOwner || ""} ${layer?.pane || ""} ${layer?.layerName || ""} ${layer?.sourceName || ""} ${layer?.diagnostics?.knownClassNames?.join?.(" ") || ""}`.toLowerCase();
+  if (looksLike.tileLayer || /base_tile_layer|base map|tile_layer|tilepane/.test(text)) return false;
+  if (looksLike.marker || looksLike.polyline || looksLike.polygon || looksLike.geoJSON) return true;
+  if (/cluster/.test(text) || layer?.type === "cluster_group") return true;
+  if ((looksLike.layerGroup || looksLike.featureGroup || /overlay|featuregroup|layergroup/.test(text)) && Number(layer?.featureCount || 0) === 0) return false;
+  return /marker|polyline|polygon|geojson|route|hazard|incident|crossing|rail|historical|pattern|alert|report|location|infrastructure/.test(text);
+}
+
 function gridlyFindingsAuditMayCompeteWithPrimaryVisuals(layer = null) {
   const text = `${layer?.type || ""} ${layer?.owner || ""} ${layer?.inferredOwner || ""} ${layer?.pane || ""} ${layer?.layerName || ""} ${layer?.sourceName || ""} ${layer?.diagnostics?.knownClassNames?.join?.(" ") || ""}`.toLowerCase();
   if (/base_tile_layer|base map|tile_layer|tilepane/.test(text)) return false;
+  if (!gridlyFindingsAuditLayerHasDirectVisualFootprint(layer)) return false;
   if (/route|hazard|incident|crossing|rail|historical|pattern|alert|report|location|infrastructure|markerpane|overlaypane|routepane/.test(text)) return true;
   return gridlyFindingsAuditLayerParticipatesInHierarchy(layer);
 }
@@ -3105,11 +3116,15 @@ function gridlyBuildUnknownLayerDiagnostics(census = {}) {
     .map((layer) => {
       const diagnostics = layer?.diagnostics || {};
       const participates = gridlyFindingsAuditLayerParticipatesInHierarchy(layer);
+      const directVisualFootprint = gridlyFindingsAuditLayerHasDirectVisualFootprint(layer);
       const competes = gridlyFindingsAuditMayCompeteWithPrimaryVisuals(layer);
       const unresolved = layer?.inferredOwner === "unknown_layer" || !layer?.owner || layer?.owner === "unknown";
-      const critical = Boolean(layer?.visible && participates && competes && unresolved);
+      const critical = Boolean(layer?.visible && directVisualFootprint && participates && competes && unresolved);
       return {
         leafletId: layer?.id || diagnostics.leafletId || null,
+        layerName: layer?.layerName || "unknown layer",
+        sourceName: layer?.sourceName || "unknown source",
+        layerRecord: layer,
         inferredOwner: layer?.inferredOwner || "unknown_layer",
         confidence: layer?.ownershipConfidence || "low",
         reason: layer?.ownershipReason || "No ownership inference reason was recorded.",
@@ -3121,9 +3136,10 @@ function gridlyBuildUnknownLayerDiagnostics(census = {}) {
         recommendedAction: critical
           ? "Keep as a blocker: visible hierarchy-participating layer may compete with route/hazard/crossing/historical visuals and still lacks safe ownership. Inspect this diagnostics row and attach stable metadata or a known layer entry."
           : (unresolved
-            ? "Review when convenient; current diagnostics do not prove this layer blocks visual hierarchy work."
+            ? "Review when convenient; current diagnostics do not prove this layer directly competes with visual hierarchy work."
             : "Treat inferred ownership as an audit warning unless runtime evidence contradicts it."),
         participatesInVisualHierarchy: participates,
+        hasDirectVisualFootprint: directVisualFootprint,
         mayCompeteWithPrimaryVisuals: competes,
         blocksVisualChanges: critical
       };
@@ -3245,26 +3261,58 @@ function gridlyBuildVisualHierarchyFindingsAudit(options = {}) {
   const classifiedFindings = gridlyCensusSafeArray(sourceCensus?.findings).map((finding) => gridlyClassifyVisualHierarchyFinding(finding, sourceCensus));
   const unknownLayerDiagnostics = gridlyBuildUnknownLayerDiagnostics(sourceCensus);
   const trueUnknownVisibleHierarchyBlockers = unknownLayerDiagnostics.filter((item) => item.blocksVisualChanges);
-  const criticalFindings = classifiedFindings.filter((finding) => finding.severity === "critical");
+  const blockerCriticalFindings = trueUnknownVisibleHierarchyBlockers.map((blocker) => ({
+    severity: "critical",
+    title: "True Unknown Visible Hierarchy Blocker",
+    message: `${blocker.layerName || `mapLayer:${blocker.leafletId || "unknown"}`} is visible, has a direct visual footprint, participates in hierarchy, may compete with primary visuals, and still lacks safe ownership.`,
+    sourceFinding: { severity: "ownership", area: "true unknown visible hierarchy blocker", finding: blocker.reason },
+    layerRecord: blocker.layerRecord || null,
+    blockerDiagnostic: blocker,
+    inferredOwner: blocker.inferredOwner,
+    ownershipConfidence: blocker.confidence,
+    participatesInVisualHierarchy: blocker.participatesInVisualHierarchy,
+    mayCompeteWithPrimaryVisuals: blocker.mayCompeteWithPrimaryVisuals,
+    trueUnknownVisibleHierarchyLayer: true,
+    reason: "A true unknown visible hierarchy-participating layer is intentionally promoted to critical so blocker and proceed status stay consistent.",
+    recommendedAction: blocker.recommendedAction,
+    blocksVisualChanges: true
+  }));
+  const criticalFindings = [...classifiedFindings.filter((finding) => finding.severity === "critical"), ...blockerCriticalFindings];
   const warningFindings = classifiedFindings.filter((finding) => finding.severity === "warning");
   const infoFindings = classifiedFindings.filter((finding) => finding.severity === "info");
   const expectedFindings = classifiedFindings.filter((finding) => finding.severity === "expected");
   const visualAudit = options?.sourceVisualAudit || window.gridlyVisualHierarchyAudit?.({ silent: true }) || gridlyBuildVisualHierarchyAudit();
   const baselineValidation = gridlyGetVisualHierarchyBaselineValidation(visualAudit);
+  const criticalCount = criticalFindings.length;
+  const warningCount = warningFindings.length;
+  const trueUnknownVisibleHierarchyBlockerCount = trueUnknownVisibleHierarchyBlockers.length;
+  const canProceedToVisualChanges = criticalCount === 0 && trueUnknownVisibleHierarchyBlockerCount === 0;
+  const decisionReason = canProceedToVisualChanges
+    ? (baselineValidation.visualHierarchyBaselineReady
+      ? "No critical findings or true unknown visible hierarchy blockers remain; V219.5 baseline is ready and warnings are guardrails only."
+      : "No critical findings or true unknown visible hierarchy blockers remain, but V219.5 baseline validation still needs review.")
+    : "Critical findings or true unknown visible hierarchy blockers remain; proceed state is blocked until they are resolved.";
+  const decisionBasis = {
+    criticalCount,
+    trueUnknownVisibleHierarchyBlockerCount,
+    warningCount,
+    visualHierarchyBaselineReady: baselineValidation.visualHierarchyBaselineReady,
+    canProceedToVisualChanges,
+    reason: decisionReason
+  };
   const recommendations = [];
-  if (trueUnknownVisibleHierarchyBlockers.length > 0) recommendations.push("Resolve true unknown visible hierarchy-participating layers before changing marker visuals.");
+  if (!canProceedToVisualChanges) recommendations.push("Resolve critical findings, including any true unknown visible hierarchy-participating layers, before changing marker visuals.");
   if (!baselineValidation.visualHierarchyBaselineReady) recommendations.push("Review V219.5 visual hierarchy baseline validation fields before expanding visual changes.");
-  if (warningFindings.length > 0 && trueUnknownVisibleHierarchyBlockers.length === 0) recommendations.push("Proceed carefully with V219 visual hierarchy changes, using warnings as guardrails.");
-  if (trueUnknownVisibleHierarchyBlockers.length === 0 && warningFindings.length === 0 && baselineValidation.visualHierarchyBaselineReady) recommendations.push("V219.5 visual hierarchy baseline is ready.");
+  if (canProceedToVisualChanges && baselineValidation.visualHierarchyBaselineReady) recommendations.push("V219.5 visual hierarchy baseline is ready; continue using warnings as guardrails.");
+  if (canProceedToVisualChanges && warningCount > 0 && !baselineValidation.visualHierarchyBaselineReady) recommendations.push("Warnings remain non-blocking; use them as guardrails while reviewing baseline validation.");
   if (!sourceCensus?.mapLoaded) recommendations.push("Re-run the classifier after the map is loaded to confirm findings against the rendered state.");
   if ((sourceCensus?.clusterInventory || []).length === 0) recommendations.push("No cluster groups are currently rendered or exposed; treat that as expected unless clustering is enabled for the tested state.");
 
-  const canProceedToVisualChanges = trueUnknownVisibleHierarchyBlockers.length === 0;
   const recommendedNextStep = canProceedToVisualChanges
     ? (baselineValidation.visualHierarchyBaselineReady
-      ? (warningFindings.length > 0 || criticalFindings.length > 0 ? "Proceed carefully with the V219.5 visual hierarchy baseline, using warnings and non-blocking critical context as guardrails." : "V219.5 visual hierarchy baseline is ready.")
-      : "Proceed only after reviewing V219.5 baseline validation fields.")
-    : "Resolve or clarify true unknown visible hierarchy-participating layers before changing marker visuals.";
+      ? "V219.5 visual hierarchy baseline is ready; continue using warnings as guardrails."
+      : "Proceed only after reviewing V219.5 baseline validation fields; warnings remain non-blocking guardrails.")
+    : "Resolve critical blockers before changing marker visuals.";
 
   const audit = {
     version: GRIDLY_VISUAL_HIERARCHY_FINDINGS_AUDIT_VERSION,
@@ -3273,15 +3321,16 @@ function gridlyBuildVisualHierarchyFindingsAudit(options = {}) {
     mapLoaded: sourceCensus?.mapLoaded ?? null,
     mapZoom: sourceCensus?.mapZoom ?? null,
     summary: {
-      totalFindings: classifiedFindings.length,
-      criticalCount: criticalFindings.length,
-      warningCount: warningFindings.length,
+      totalFindings: classifiedFindings.length + blockerCriticalFindings.length,
+      criticalCount,
+      warningCount,
       infoCount: infoFindings.length,
       expectedCount: expectedFindings.length,
-      trueUnknownVisibleHierarchyBlockerCount: trueUnknownVisibleHierarchyBlockers.length,
+      trueUnknownVisibleHierarchyBlockerCount,
       canProceedToVisualChanges,
       ...baselineValidation,
-      recommendedNextStep
+      recommendedNextStep,
+      decisionBasis
     },
     classifiedFindings,
     criticalFindings,
@@ -3290,9 +3339,10 @@ function gridlyBuildVisualHierarchyFindingsAudit(options = {}) {
     expectedFindings,
     baselineValidation,
     ...baselineValidation,
-    criticalCount: criticalFindings.length,
-    warningCount: warningFindings.length,
+    criticalCount,
+    warningCount,
     canProceedToVisualChanges,
+    decisionBasis,
     unknownLayerDiagnostics,
     trueUnknownVisibleHierarchyBlockers,
     recommendations,
