@@ -14196,8 +14196,16 @@ function getGridlyDestinationRouteObjectCoordinate(record = {}) {
     || null;
 }
 
+function pickGridlyDestinationRouteFirstText() {
+  for (let index = 0; index < arguments.length; index += 1) {
+    const value = arguments[index];
+    if (typeof value === "string" && value.trim()) return value.trim();
+  }
+  return "";
+}
+
 function getGridlyDestinationRouteObjectTitle(record = {}, fallback = "Route intelligence") {
-  return pickFirstNonEmptyText([
+  return pickGridlyDestinationRouteFirstText(
     record?.title,
     record?.headline,
     record?.resolvedHeadline,
@@ -14211,8 +14219,9 @@ function getGridlyDestinationRouteObjectTitle(record = {}, fallback = "Route int
     record?.locationName,
     record?.location,
     record?.raw?.title,
-    record?.latestReport?.title
-  ]) || fallback;
+    record?.latestReport?.title,
+    fallback
+  );
 }
 
 function getGridlyDestinationRouteObjectType(record = {}, fallback = "intelligence") {
@@ -14260,18 +14269,22 @@ function getGridlyDistanceFromDestinationRouteFeet(lat, lng, routePoints = []) {
 }
 
 function buildGridlyDestinationRouteMatch(record = {}, routePoints = [], fallback = {}) {
-  const coord = getGridlyDestinationRouteObjectCoordinate(record);
-  if (!coord) return null;
-  const distanceFromRouteFeet = getGridlyDistanceFromDestinationRouteFeet(coord.lat, coord.lng, routePoints);
-  if (!Number.isFinite(Number(distanceFromRouteFeet))) return null;
-  return {
-    id: getGridlyDestinationRouteObjectId(record, fallback.id || `${fallback.type || "item"}-${fallback.index ?? 0}`),
-    type: getGridlyDestinationRouteObjectType(record, fallback.type || "intelligence"),
-    title: getGridlyDestinationRouteObjectTitle(record, fallback.title || "Route intelligence"),
-    lat: Number(coord.lat),
-    lng: Number(coord.lng),
-    distanceFromRouteFeet
-  };
+  try {
+    const coord = getGridlyDestinationRouteObjectCoordinate(record);
+    if (!coord) return null;
+    const distanceFromRouteFeet = getGridlyDistanceFromDestinationRouteFeet(coord.lat, coord.lng, routePoints);
+    if (!Number.isFinite(Number(distanceFromRouteFeet))) return null;
+    return {
+      id: getGridlyDestinationRouteObjectId(record, fallback.id || `${fallback.type || "item"}-${fallback.index ?? 0}`),
+      type: getGridlyDestinationRouteObjectType(record, fallback.type || "intelligence"),
+      title: getGridlyDestinationRouteObjectTitle(record, fallback.title || "Route intelligence"),
+      lat: Number(coord.lat),
+      lng: Number(coord.lng),
+      distanceFromRouteFeet
+    };
+  } catch (_) {
+    return null;
+  }
 }
 
 function findGridlyDestinationRouteCorridorMatches(records = [], routePoints = [], options = {}) {
@@ -14284,6 +14297,38 @@ function findGridlyDestinationRouteCorridorMatches(records = [], routePoints = [
     .map((record, index) => buildGridlyDestinationRouteMatch(record, routePoints, { type: fallbackType, title: fallbackTitle, index }))
     .filter((match) => match && match.distanceFromRouteFeet <= corridorWidthFeet)
     .sort((a, b) => a.distanceFromRouteFeet - b.distanceFromRouteFeet);
+}
+
+function buildEmptyGridlyDestinationRouteIntelligenceAudit(error = "") {
+  let preview = {};
+  let routePoints = [];
+  try {
+    preview = window.GridlyDestinationRoutePreview && typeof window.GridlyDestinationRoutePreview === "object"
+      ? window.GridlyDestinationRoutePreview
+      : {};
+    routePoints = getGridlyDestinationRoutePreviewPoints();
+  } catch (_) {
+    preview = {};
+    routePoints = [];
+  }
+  return {
+    loaded: true,
+    routeFound: routePoints.length >= 2,
+    routeStatus: String(preview.status || ""),
+    routeMiles: Number.isFinite(Number(preview.distanceMiles)) ? Number(preview.distanceMiles) : 0,
+    etaMinutes: Number.isFinite(Number(preview.etaMinutes)) ? Number(preview.etaMinutes) : 0,
+    routePointCount: routePoints.length,
+    corridorWidthFeet: GRIDLY_DESTINATION_ROUTE_INTELLIGENCE_CORRIDOR_FEET,
+    hazardsNearRoute: 0,
+    reportsNearRoute: 0,
+    crossingsNearRoute: 0,
+    alertsNearRoute: 0,
+    matchedHazards: [],
+    matchedReports: [],
+    matchedCrossings: [],
+    matchedAlerts: [],
+    error
+  };
 }
 
 function getGridlyDestinationRouteHazardSource() {
@@ -14302,10 +14347,14 @@ function getGridlyDestinationRouteCrossingSource() {
 }
 
 function getGridlyDestinationRouteAlertSource() {
-  const snapshot = typeof window.getAlertsSurfaceSnapshot === "function" ? window.getAlertsSurfaceSnapshot() : null;
-  if (Array.isArray(snapshot?.alerts)) return snapshot.alerts;
-  if (Array.isArray(snapshot?.normalizedAlertItems)) return snapshot.normalizedAlertItems;
-  if (Array.isArray(window.__gridlyLatestAlertsForRender)) return window.__gridlyLatestAlertsForRender;
+  try {
+    const snapshot = typeof window.getAlertsSurfaceSnapshot === "function" ? window.getAlertsSurfaceSnapshot() : null;
+    if (Array.isArray(snapshot?.alerts)) return snapshot.alerts;
+    if (Array.isArray(snapshot?.normalizedAlertItems)) return snapshot.normalizedAlertItems;
+    if (Array.isArray(window.__gridlyLatestAlertsForRender)) return window.__gridlyLatestAlertsForRender;
+  } catch (_) {
+    return [];
+  }
   return [];
 }
 
@@ -14349,11 +14398,15 @@ function buildGridlyDestinationRouteIntelligenceAudit() {
 }
 
 window.gridlyDestinationRouteIntelligenceAudit = function gridlyDestinationRouteIntelligenceAudit() {
-  return buildGridlyDestinationRouteIntelligenceAudit();
+  try {
+    return buildGridlyDestinationRouteIntelligenceAudit();
+  } catch (error) {
+    return buildEmptyGridlyDestinationRouteIntelligenceAudit(String(error?.message || error || "destination_route_intelligence_error"));
+  }
 };
 
 window.gridlyDestinationRouteIntelligenceDebug = function gridlyDestinationRouteIntelligenceDebug() {
-  const audit = buildGridlyDestinationRouteIntelligenceAudit();
+  const audit = window.gridlyDestinationRouteIntelligenceAudit();
   return {
     routeFound: audit.routeFound,
     routePointCount: audit.routePointCount,
