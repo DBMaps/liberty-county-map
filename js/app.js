@@ -8087,6 +8087,112 @@ let routePreviewLayerExists = false;
 let mapHasRoutePreviewLayer = false;
 let routePreviewPolylinePointCount = 0;
 let routePreviewCorridorLayer = null;
+const gridlyDestinationPerformanceAuditState = {
+  routePreviewStatus: "idle",
+  routePreviewRequestStartedAt: null,
+  routePreviewRequestEndedAt: null,
+  totalDestinationRouteMs: null,
+  destinationSelectMs: null,
+  routeRequestMs: null,
+  osrmFetchMs: null,
+  routeGeometryParseMs: null,
+  routeGeometryPointCount: 0,
+  corridorMatchMs: null,
+  impactScoreMs: null,
+  locationEnrichmentMs: null,
+  proximityMs: null,
+  renderMs: null,
+  routeAwarenessPaneModelMs: null,
+  destinationFlowStartedAt: null,
+  lastUpdatedAt: null,
+  notes: []
+};
+
+function getGridlyDestinationPerfNow() {
+  return (typeof performance !== "undefined" && typeof performance.now === "function") ? performance.now() : Date.now();
+}
+
+function roundGridlyDestinationPerfMs(value) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? Number(numeric.toFixed(2)) : null;
+}
+
+function setGridlyDestinationPerformanceTiming(name, durationMs) {
+  if (!Object.hasOwn(gridlyDestinationPerformanceAuditState, name)) return null;
+  const rounded = roundGridlyDestinationPerfMs(durationMs);
+  gridlyDestinationPerformanceAuditState[name] = rounded;
+  gridlyDestinationPerformanceAuditState.lastUpdatedAt = Date.now();
+  return rounded;
+}
+
+function addGridlyDestinationPerformanceNote(note) {
+  const normalized = String(note || "").trim();
+  if (!normalized) return;
+  const notes = Array.isArray(gridlyDestinationPerformanceAuditState.notes) ? gridlyDestinationPerformanceAuditState.notes : [];
+  if (!notes.includes(normalized)) notes.push(normalized);
+  gridlyDestinationPerformanceAuditState.notes = notes.slice(-12);
+  gridlyDestinationPerformanceAuditState.lastUpdatedAt = Date.now();
+}
+
+function resetGridlyDestinationPerformanceAudit(status = "idle") {
+  Object.assign(gridlyDestinationPerformanceAuditState, {
+    routePreviewStatus: status,
+    routePreviewRequestStartedAt: null,
+    routePreviewRequestEndedAt: null,
+    totalDestinationRouteMs: null,
+    destinationSelectMs: null,
+    routeRequestMs: null,
+    osrmFetchMs: null,
+    routeGeometryParseMs: null,
+    routeGeometryPointCount: 0,
+    corridorMatchMs: null,
+    impactScoreMs: null,
+    locationEnrichmentMs: null,
+    proximityMs: null,
+    renderMs: null,
+    routeAwarenessPaneModelMs: null,
+    destinationFlowStartedAt: null,
+    lastUpdatedAt: Date.now(),
+    notes: []
+  });
+}
+
+function buildGridlyDestinationPerformanceAuditReport() {
+  const state = gridlyDestinationPerformanceAuditState;
+  const steps = {
+    destinationSearchResultSelectMs: state.destinationSelectMs,
+    routeRequestMs: state.routeRequestMs,
+    osrmFetchMs: state.osrmFetchMs,
+    routeGeometryParseMs: state.routeGeometryParseMs,
+    corridorMatchMs: state.corridorMatchMs,
+    impactScoreMs: state.impactScoreMs,
+    locationEnrichmentMs: state.locationEnrichmentMs,
+    proximityMs: state.proximityMs,
+    renderMs: state.renderMs,
+    routeAwarenessPaneModelMs: state.routeAwarenessPaneModelMs
+  };
+  const slowestEntry = Object.entries(steps)
+    .filter(([, value]) => Number.isFinite(Number(value)))
+    .sort((a, b) => Number(b[1]) - Number(a[1]))[0] || null;
+  const preview = window.GridlyDestinationRoutePreview && typeof window.GridlyDestinationRoutePreview === "object" ? window.GridlyDestinationRoutePreview : {};
+  return {
+    routePreviewStatus: state.routePreviewStatus || preview.status || "idle",
+    totalDestinationRouteMs: state.totalDestinationRouteMs,
+    destinationSearchResultSelectMs: state.destinationSelectMs,
+    routeRequestMs: state.routeRequestMs,
+    osrmFetchMs: state.osrmFetchMs,
+    routeGeometryParseMs: state.routeGeometryParseMs,
+    routeGeometryPointCount: Number.isFinite(Number(state.routeGeometryPointCount)) ? Number(state.routeGeometryPointCount) : 0,
+    corridorMatchMs: state.corridorMatchMs,
+    impactScoreMs: state.impactScoreMs,
+    locationEnrichmentMs: state.locationEnrichmentMs,
+    proximityMs: state.proximityMs,
+    renderMs: state.renderMs,
+    routeAwarenessPaneModelMs: state.routeAwarenessPaneModelMs,
+    slowestStep: slowestEntry ? { name: slowestEntry[0], durationMs: Number(slowestEntry[1]) } : null,
+    notes: Array.isArray(state.notes) ? [...state.notes] : []
+  };
+}
 let alternateRouteLayer = null;
 let alternateRouteVertexCount = 0;
 let alternateRouteGeometrySource = "none";
@@ -14256,6 +14362,7 @@ function getGridlyDestinationImpactPaneElements() {
 }
 
 function getGridlyDestinationImpactPaneReasonModel() {
+  const paneModelStartedAt = getGridlyDestinationPerfNow();
   const audit = typeof window.gridlyDestinationRouteImpactAudit === "function"
     ? window.gridlyDestinationRouteImpactAudit()
     : null;
@@ -14316,7 +14423,7 @@ function getGridlyDestinationImpactPaneReasonModel() {
     reportsConsidered: reports
   });
 
-  return {
+  const model = {
     impactLevel,
     impactLabel,
     confidenceLabel,
@@ -14326,6 +14433,8 @@ function getGridlyDestinationImpactPaneReasonModel() {
     reasons: detailReasons.slice(0, 6),
     quiet
   };
+  setGridlyDestinationPerformanceTiming("routeAwarenessPaneModelMs", getGridlyDestinationPerfNow() - paneModelStartedAt);
+  return model;
 }
 
 function renderGridlyDestinationImpactPane() {
@@ -14485,6 +14594,7 @@ window.gridlyDestinationImpactPaneAudit = function gridlyDestinationImpactPaneAu
 };
 
 function syncMobileDestinationCommandCard() {
+  const cardRenderStartedAt = getGridlyDestinationPerfNow();
   const routeIsMonitoring = Boolean(routeWatchActivated || window.__gridlyRouteWatchActive);
   const selectedLabel = getSelectedDestinationLabel();
   const previewMeta = selectedLabel ? getGridlyDestinationPreviewMetaText() : "";
@@ -14507,9 +14617,11 @@ function syncMobileDestinationCommandCard() {
   }
   if (GRIDLY_DESTINATION_IMPACT_PANE_STATE.paneOpen) renderGridlyDestinationImpactPane();
   safeText("mobileDestinationCommandBtn", selectedLabel ? "Change" : "Choose Route");
+  setGridlyDestinationPerformanceTiming("renderMs", getGridlyDestinationPerfNow() - cardRenderStartedAt);
 }
 
 function clearGridlyDestinationRoutePreview(options = {}) {
+  if (options?.preservePerformanceAudit !== true) resetGridlyDestinationPerformanceAudit("idle");
   const preview = getGridlyDestinationRoutePreviewState();
   preview.requestId = Number(preview.requestId || 0) + 1;
   preview.active = false;
@@ -14578,7 +14690,15 @@ function drawGridlyDestinationRoutePreviewLine(latLngs = []) {
 async function buildGridlyDestinationRoutePreview(options = {}) {
   const state = ensureGridlySearchState();
   const destination = normalizeGridlySearchResult(state?.selectedDestination);
-  clearGridlyDestinationRoutePreview({ silent: true, syncCard: false });
+  clearGridlyDestinationRoutePreview({ silent: true, syncCard: false, preservePerformanceAudit: true });
+  const flowStartedAt = Number.isFinite(Number(gridlyDestinationPerformanceAuditState.destinationFlowStartedAt))
+    ? Number(gridlyDestinationPerformanceAuditState.destinationFlowStartedAt)
+    : getGridlyDestinationPerfNow();
+  const routePreviewStartedAt = getGridlyDestinationPerfNow();
+  gridlyDestinationPerformanceAuditState.routePreviewRequestStartedAt = routePreviewStartedAt;
+  gridlyDestinationPerformanceAuditState.routePreviewRequestEndedAt = null;
+  gridlyDestinationPerformanceAuditState.routePreviewStatus = "preparing";
+  gridlyDestinationPerformanceAuditState.lastUpdatedAt = Date.now();
   const preview = getGridlyDestinationRoutePreviewState();
   const requestId = Number(preview.requestId || 0) + 1;
   preview.requestId = requestId;
@@ -14593,6 +14713,10 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
     preview.status = destination ? "unavailable" : "idle";
     preview.error = destination ? "invalid_destination" : "";
     window.GridlyDestinationRoutePreview = preview;
+    gridlyDestinationPerformanceAuditState.routePreviewStatus = preview.status;
+    gridlyDestinationPerformanceAuditState.routePreviewRequestEndedAt = getGridlyDestinationPerfNow();
+    setGridlyDestinationPerformanceTiming("totalDestinationRouteMs", gridlyDestinationPerformanceAuditState.routePreviewRequestEndedAt - flowStartedAt);
+    addGridlyDestinationPerformanceNote(preview.error || "destination route preview did not start");
     syncMobileDestinationCommandCard();
     return preview;
   }
@@ -14602,21 +14726,31 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
     preview.status = "unavailable";
     preview.error = "origin_unavailable";
     window.GridlyDestinationRoutePreview = preview;
+    gridlyDestinationPerformanceAuditState.routePreviewStatus = preview.status;
+    gridlyDestinationPerformanceAuditState.routePreviewRequestEndedAt = getGridlyDestinationPerfNow();
+    setGridlyDestinationPerformanceTiming("totalDestinationRouteMs", gridlyDestinationPerformanceAuditState.routePreviewRequestEndedAt - flowStartedAt);
+    addGridlyDestinationPerformanceNote(preview.error || "destination route origin unavailable");
     syncMobileDestinationCommandCard();
     return preview;
   }
 
   preview.active = true;
   preview.status = "loading";
+  gridlyDestinationPerformanceAuditState.routePreviewStatus = "loading";
   preview.source = origin;
   preview.error = "";
   window.GridlyDestinationRoutePreview = preview;
   syncMobileDestinationCommandCard();
   applyGridlyDestinationVisibilityOffset(destination, { reason: "destination-preview-loading" });
 
-  const routeData = await fetchRoadRoutePreviewData([origin.lat, origin.lng], [destination.lat, destination.lng]);
+  const routeRequestStartedAt = getGridlyDestinationPerfNow();
+  const routeData = await fetchRoadRoutePreviewData([origin.lat, origin.lng], [destination.lat, destination.lng], { auditSource: "destination_route_preview" });
+  setGridlyDestinationPerformanceTiming("routeRequestMs", getGridlyDestinationPerfNow() - routeRequestStartedAt);
   const latestPreview = getGridlyDestinationRoutePreviewState();
-  if (latestPreview.requestId !== requestId) return latestPreview;
+  if (latestPreview.requestId !== requestId) {
+    addGridlyDestinationPerformanceNote("stale destination route preview request ignored");
+    return latestPreview;
+  }
 
   if (!routeData?.geometry?.length || routeData.geometry.length < 2) {
     destinationRoutePreviewLayer?.clearLayers?.();
@@ -14630,11 +14764,17 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
     latestPreview.error = "route_unavailable";
     latestPreview.routeLayer = null;
     window.GridlyDestinationRoutePreview = latestPreview;
+    gridlyDestinationPerformanceAuditState.routePreviewStatus = latestPreview.status;
+    gridlyDestinationPerformanceAuditState.routePreviewRequestEndedAt = getGridlyDestinationPerfNow();
+    setGridlyDestinationPerformanceTiming("totalDestinationRouteMs", gridlyDestinationPerformanceAuditState.routePreviewRequestEndedAt - flowStartedAt);
+    addGridlyDestinationPerformanceNote(latestPreview.error || "route preview unavailable");
     syncMobileDestinationCommandCard();
     return latestPreview;
   }
 
+  const renderStartedAt = getGridlyDestinationPerfNow();
   const renderedLayer = drawGridlyDestinationRoutePreviewLine(routeData.geometry);
+  setGridlyDestinationPerformanceTiming("renderMs", getGridlyDestinationPerfNow() - renderStartedAt);
   latestPreview.active = true;
   latestPreview.status = renderedLayer ? "ready" : "unavailable";
   latestPreview.routeLayer = renderedLayer;
@@ -14645,8 +14785,14 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
   latestPreview.etaMinutes = routeData.etaMinutes;
   latestPreview.routeProvider = routeData.provider || "osrm";
   latestPreview.error = renderedLayer ? "" : "render_unavailable";
+  gridlyDestinationPerformanceAuditState.routePreviewStatus = latestPreview.status;
+  gridlyDestinationPerformanceAuditState.routeGeometryPointCount = Array.isArray(latestPreview.geometry) ? latestPreview.geometry.length : 0;
+  gridlyDestinationPerformanceAuditState.routePreviewRequestEndedAt = getGridlyDestinationPerfNow();
+  setGridlyDestinationPerformanceTiming("totalDestinationRouteMs", gridlyDestinationPerformanceAuditState.routePreviewRequestEndedAt - flowStartedAt);
+  if (!renderedLayer) addGridlyDestinationPerformanceNote(latestPreview.error);
   window.GridlyDestinationRoutePreview = latestPreview;
   syncMobileDestinationCommandCard();
+  setGridlyDestinationPerformanceTiming("totalDestinationRouteMs", getGridlyDestinationPerfNow() - flowStartedAt);
   return latestPreview;
 }
 
@@ -14665,6 +14811,10 @@ window.gridlyDestinationRoutePreviewDebug = function gridlyDestinationRoutePrevi
     routeProvider: preview.routeProvider,
     error: preview.error
   };
+};
+
+window.gridlyDestinationPerformanceAudit = function gridlyDestinationPerformanceAudit() {
+  return buildGridlyDestinationPerformanceAuditReport();
 };
 
 const GRIDLY_DESTINATION_ROUTE_INTELLIGENCE_CORRIDOR_FEET = 750;
@@ -15121,7 +15271,11 @@ function buildGridlyDestinationRouteMatch(record = {}, routePoints = [], fallbac
     if (!coord) return null;
     const distanceFromRouteFeet = getGridlyDistanceFromDestinationRouteFeet(coord.lat, coord.lng, routePoints);
     if (!Number.isFinite(Number(distanceFromRouteFeet))) return null;
+    const locationEnrichmentStartedAt = getGridlyDestinationPerfNow();
     const locationMeta = buildGridlyDestinationRouteLocationMeta(record);
+    const sourceLocationFields = collectGridlyDestinationRouteAvailableLocationFields(record, locationMeta);
+    const currentLocationEnrichmentMs = Number(gridlyDestinationPerformanceAuditState.locationEnrichmentMs || 0);
+    setGridlyDestinationPerformanceTiming("locationEnrichmentMs", currentLocationEnrichmentMs + (getGridlyDestinationPerfNow() - locationEnrichmentStartedAt));
     return {
       id: getGridlyDestinationRouteObjectId(record, fallback.id || `${fallback.type || "item"}-${fallback.index ?? 0}`),
       type: getGridlyDestinationRouteObjectType(record, fallback.type || "intelligence"),
@@ -15141,7 +15295,7 @@ function buildGridlyDestinationRouteMatch(record = {}, routePoints = [], fallbac
         record?.raw?.description,
         record?.latestReport?.description
       ),
-      sourceLocationFields: collectGridlyDestinationRouteAvailableLocationFields(record, locationMeta),
+      sourceLocationFields,
       ...locationMeta
     };
   } catch (_) {
@@ -15227,6 +15381,8 @@ function buildGridlyDestinationRouteIntelligenceAudit() {
   const routePoints = getGridlyDestinationRoutePreviewPoints();
   const routeFound = routePoints.length >= 2;
   const corridorWidthFeet = GRIDLY_DESTINATION_ROUTE_INTELLIGENCE_CORRIDOR_FEET;
+  const corridorMatchStartedAt = getGridlyDestinationPerfNow();
+  if (routeFound) gridlyDestinationPerformanceAuditState.locationEnrichmentMs = 0;
   const matchedHazards = routeFound
     ? findGridlyDestinationRouteCorridorMatches(getGridlyDestinationRouteHazardSource(), routePoints, { type: "hazard", title: "Active hazard", corridorWidthFeet })
     : [];
@@ -15239,6 +15395,7 @@ function buildGridlyDestinationRouteIntelligenceAudit() {
   const matchedAlerts = routeFound
     ? findGridlyDestinationRouteCorridorMatches(getGridlyDestinationRouteAlertSource(), routePoints, { type: "alert", title: "Active alert", corridorWidthFeet })
     : [];
+  setGridlyDestinationPerformanceTiming("corridorMatchMs", getGridlyDestinationPerfNow() - corridorMatchStartedAt);
 
   return {
     loaded: true,
@@ -15394,6 +15551,7 @@ function buildGridlyDestinationRouteImpactAudit() {
     ? window.gridlyDestinationRouteIntelligenceAudit()
     : buildEmptyGridlyDestinationRouteIntelligenceAudit();
   const routeFound = Boolean(intelligence?.routeFound);
+  const impactScoreStartedAt = getGridlyDestinationPerfNow();
   const matchedHazards = routeFound && Array.isArray(intelligence?.matchedHazards) ? intelligence.matchedHazards : [];
   const matchedAlerts = routeFound && Array.isArray(intelligence?.matchedAlerts) ? intelligence.matchedAlerts : [];
   const matchedReports = routeFound && Array.isArray(intelligence?.matchedReports) ? intelligence.matchedReports : [];
@@ -15454,6 +15612,7 @@ function buildGridlyDestinationRouteImpactAudit() {
     primaryImpactLocationSelection.selectedImpactSourceLat,
     primaryImpactLocationSelection.selectedImpactSourceLng
   );
+  const proximityStartedAt = getGridlyDestinationPerfNow();
   const impactProximity = routeFound && selectedImpactSourceCoordinate
     ? buildGridlyDestinationRouteImpactProximity(selectedImpactSourceCoordinate, getGridlyDestinationRoutePreviewPoints(), { routeMiles: intelligence?.routeMiles })
     : {
@@ -15464,8 +15623,10 @@ function buildGridlyDestinationRouteImpactAudit() {
       selectedImpactDistanceToDestinationMiles: null,
       primaryImpactProximityEmptyReason: routeFound ? "selected_source_missing_coordinates" : "route_not_found"
     };
+  setGridlyDestinationPerformanceTiming("proximityMs", getGridlyDestinationPerfNow() - proximityStartedAt);
   if (primaryImpactLocation) reasoning.push(`Best available location: ${primaryImpactLocation}`);
   else if (routeFound) reasoning.push(`Primary impact location empty: ${primaryImpactLocationSelection.emptyReason || "unknown"}`);
+  setGridlyDestinationPerformanceTiming("impactScoreMs", getGridlyDestinationPerfNow() - impactScoreStartedAt);
 
   return {
     loaded: true,
@@ -15560,6 +15721,9 @@ window.gridlyDestinationRouteImpactDebug = function gridlyDestinationRouteImpact
 };
 
 function selectGridlySearchResult(result, options = {}) {
+  resetGridlyDestinationPerformanceAudit("selecting");
+  const destinationSelectStartedAt = getGridlyDestinationPerfNow();
+  gridlyDestinationPerformanceAuditState.destinationFlowStartedAt = destinationSelectStartedAt;
   const normalized = normalizeGridlySearchResult(result);
   if (!normalized) return null;
   if (!Number.isFinite(normalized?.lat) || !Number.isFinite(normalized?.lng)) {
@@ -15595,6 +15759,7 @@ function selectGridlySearchResult(result, options = {}) {
   hideGridlySearchShell({ clear: false });
   syncMobileDestinationCommandCard();
   if (marker && !isGridlyDestinationVisibilityCardPresent()) focusGridlyDestinationOnMap(normalized.lat, normalized.lng);
+  setGridlyDestinationPerformanceTiming("destinationSelectMs", getGridlyDestinationPerfNow() - destinationSelectStartedAt);
   buildGridlyDestinationRoutePreview({ reason: options?.reason || "destination-selected" });
   return normalized;
 }
@@ -28070,18 +28235,30 @@ async function fetchRoadRoutePreviewData(from, to, options = {}) {
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
+    const osrmFetchStartedAt = getGridlyDestinationPerfNow();
     const response = await fetch(
       `${OSRM_ROUTE_API}/${fromLng},${fromLat};${toLng},${toLat}?overview=full&geometries=geojson&alternatives=false&steps=false`,
       { signal: controller.signal }
     );
-    if (!response.ok) return null;
+    setGridlyDestinationPerformanceTiming("osrmFetchMs", getGridlyDestinationPerfNow() - osrmFetchStartedAt);
+    if (!response.ok) {
+      addGridlyDestinationPerformanceNote(`OSRM response not ok: ${response.status}`);
+      return null;
+    }
+    const parseStartedAt = getGridlyDestinationPerfNow();
     const data = await response.json();
     const route = data?.routes?.[0] || null;
     const coordinates = route?.geometry?.coordinates;
-    if (!Array.isArray(coordinates) || coordinates.length < 2) return null;
+    if (!Array.isArray(coordinates) || coordinates.length < 2) {
+      setGridlyDestinationPerformanceTiming("routeGeometryParseMs", getGridlyDestinationPerfNow() - parseStartedAt);
+      addGridlyDestinationPerformanceNote("OSRM route geometry missing or too short");
+      return null;
+    }
     const latLngs = coordinates
       .map(([lng, lat]) => [Number(lat), Number(lng)])
       .filter((pt) => Number.isFinite(pt[0]) && Number.isFinite(pt[1]));
+    setGridlyDestinationPerformanceTiming("routeGeometryParseMs", getGridlyDestinationPerfNow() - parseStartedAt);
+    gridlyDestinationPerformanceAuditState.routeGeometryPointCount = latLngs.length;
     if (latLngs.length < 2) return null;
     const distanceMeters = Number(route?.distance);
     const durationSeconds = Number(route?.duration);
@@ -28094,6 +28271,7 @@ async function fetchRoadRoutePreviewData(from, to, options = {}) {
       provider: "osrm"
     };
   } catch (error) {
+    addGridlyDestinationPerformanceNote(`OSRM route preview fetch failed: ${String(error?.name || error?.message || error || "unknown")}`);
     return null;
   } finally {
     clearTimeout(timeout);
