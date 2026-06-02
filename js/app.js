@@ -13035,6 +13035,192 @@ const GRIDLY_SEARCH_DESTINATION_LOCATION_WORDS = new Set([
   "daisetta", "raywood", "plum", "grove", "crosby", "baytown", "mont", "belvieu"
 ]);
 
+const GRIDLY_SEARCH_BRAND_ALIASES = [
+  { canonical: "mcdonalds", aliases: ["mcdonalds", "mcdonald's", "mc donalds", "mc donald's"] },
+  { canonical: "buc ees", aliases: ["buc ees", "buc-ee's", "bucees", "buc ee's", "buckees"] },
+  { canonical: "lowes", aliases: ["lowes", "lowe's", "lowe"] },
+  { canonical: "heb", aliases: ["heb", "h-e-b", "h e b"] },
+  { canonical: "walmart", aliases: ["walmart", "wal mart", "wal-mart"] },
+  { canonical: "kfc", aliases: ["kfc", "kentucky fried chicken"] },
+  { canonical: "home depot", aliases: ["home depot", "the home depot"] },
+  { canonical: "tractor supply", aliases: ["tractor supply", "tractor supply co", "tractor supply company"] },
+  { canonical: "dollar general", aliases: ["dollar general", "dg"] },
+  { canonical: "urgent care", aliases: ["urgent care", "walk in clinic", "walk-in clinic"] },
+  { canonical: "hospital", aliases: ["hospital", "medical center", "er", "emergency room"] }
+];
+
+const GRIDLY_LOCAL_POI_SEEDS = [
+  {
+    id: "seed-walmart-cleveland-tx",
+    title: "Walmart Supercenter",
+    brands: ["walmart"],
+    categories: ["store", "grocery"],
+    lat: 30.3338,
+    lng: -95.0857,
+    road: "US 59",
+    city: "Cleveland",
+    state: "TX",
+    addressLine: "831 Highway 59 S",
+    source: "official_store_locator"
+  },
+  {
+    id: "seed-walmart-liberty-tx",
+    title: "Walmart Supercenter",
+    brands: ["walmart"],
+    categories: ["store", "grocery"],
+    lat: 30.0751,
+    lng: -94.7844,
+    road: "Highway 146 Bypass",
+    city: "Liberty",
+    state: "TX",
+    addressLine: "2121 Highway 146 Byp",
+    source: "official_store_locator"
+  },
+  {
+    id: "seed-dollar-general-dayton-tx",
+    title: "Dollar General",
+    brands: ["dollar general"],
+    categories: ["store"],
+    lat: 30.0499,
+    lng: -94.8897,
+    road: "W Clayton St",
+    city: "Dayton",
+    state: "TX",
+    addressLine: "403 W Clayton St",
+    source: "public_business_listing"
+  },
+  {
+    id: "seed-kfc-dayton-tx",
+    title: "KFC",
+    brands: ["kfc"],
+    categories: ["restaurant", "food"],
+    lat: 30.0462,
+    lng: -94.8938,
+    road: "US 90",
+    city: "Dayton",
+    state: "TX",
+    addressLine: "US 90",
+    source: "public_business_listing"
+  },
+  {
+    id: "seed-mcdonalds-dayton-tx",
+    title: "McDonald's",
+    brands: ["mcdonalds"],
+    categories: ["restaurant", "food"],
+    lat: 30.0459,
+    lng: -94.8951,
+    road: "US 90",
+    city: "Dayton",
+    state: "TX",
+    addressLine: "US 90",
+    source: "public_business_listing"
+  },
+  {
+    id: "seed-tractor-supply-liberty-tx",
+    title: "Tractor Supply Co.",
+    brands: ["tractor supply"],
+    categories: ["store", "hardware"],
+    lat: 30.0725,
+    lng: -94.7828,
+    road: "Highway 146 Bypass",
+    city: "Liberty",
+    state: "TX",
+    addressLine: "Highway 146 Bypass",
+    source: "public_business_listing"
+  },
+  {
+    id: "seed-lowes-baytown-tx",
+    title: "Lowe's Home Improvement",
+    brands: ["lowes"],
+    categories: ["store", "hardware"],
+    lat: 29.8027,
+    lng: -94.9788,
+    road: "Garth Rd",
+    city: "Baytown",
+    state: "TX",
+    addressLine: "Garth Rd",
+    source: "public_business_listing"
+  },
+  {
+    id: "seed-home-depot-baytown-tx",
+    title: "The Home Depot",
+    brands: ["home depot"],
+    categories: ["store", "hardware"],
+    lat: 29.8043,
+    lng: -94.9783,
+    road: "Garth Rd",
+    city: "Baytown",
+    state: "TX",
+    addressLine: "Garth Rd",
+    source: "public_business_listing"
+  },
+  {
+    id: "seed-heb-mont-belvieu-tx",
+    title: "H-E-B",
+    brands: ["heb"],
+    categories: ["grocery", "store"],
+    lat: 29.8478,
+    lng: -94.8647,
+    road: "Eagle Dr",
+    city: "Mont Belvieu",
+    state: "TX",
+    addressLine: "Eagle Dr",
+    source: "public_business_listing"
+  },
+  {
+    id: "seed-bucees-baytown-tx",
+    title: "Buc-ee's",
+    brands: ["buc ees"],
+    categories: ["gas", "convenience", "store"],
+    lat: 29.8024,
+    lng: -94.9837,
+    road: "I-10",
+    city: "Baytown",
+    state: "TX",
+    addressLine: "I-10 at Garth Rd",
+    source: "public_business_listing"
+  },
+  {
+    id: "seed-dayton-high-school-tx",
+    title: "Dayton High School",
+    brands: [],
+    categories: ["school", "high school"],
+    lat: 30.0667,
+    lng: -94.8918,
+    road: "N Cleveland St",
+    city: "Dayton",
+    state: "TX",
+    addressLine: "3200 N Cleveland St",
+    source: "school_district_listing"
+  },
+  {
+    id: "seed-liberty-dayton-regional-medical-center-tx",
+    title: "Liberty Dayton Regional Medical Center",
+    brands: [],
+    categories: ["hospital", "medical center"],
+    lat: 30.0562,
+    lng: -94.7936,
+    road: "N Travis St",
+    city: "Liberty",
+    state: "TX",
+    addressLine: "1353 N Travis St",
+    source: "hospital_listing"
+  },
+  {
+    id: "seed-urgent-care-cleveland-tx",
+    title: "Cleveland Emergency Hospital",
+    brands: [],
+    categories: ["urgent care", "hospital", "emergency care"],
+    lat: 30.3308,
+    lng: -95.0885,
+    road: "US 59",
+    city: "Cleveland",
+    state: "TX",
+    addressLine: "US 59",
+    source: "hospital_listing"
+  }
+];
+
 const GRIDLY_SEARCH_STATE_DEFAULTS = {
   activeQuery: "",
   activeResult: null,
@@ -13110,6 +13296,29 @@ function getGridlySearchQueryTokens(query = "") {
     .split(/[^a-z0-9]+/i)
     .map((token) => token.trim())
     .filter(Boolean);
+}
+
+function normalizeGridlyBrandSearchText(value = "") {
+  let normalized = normalizeGridlySearchDisplayLabel(value)
+    .replace(/[’']/g, "")
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  for (const entry of GRIDLY_SEARCH_BRAND_ALIASES) {
+    for (const alias of entry.aliases) {
+      const aliasPattern = normalizeGridlySearchDisplayLabel(alias).replace(/[’']/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+      if (!aliasPattern) continue;
+      normalized = normalized.replace(new RegExp(`(^|\\s)${aliasPattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?=\\s|$)`, "g"), `$1${entry.canonical}`);
+    }
+  }
+  return normalized.replace(/\s+/g, " ").trim();
+}
+
+function getGridlyCanonicalSearchTerms(value = "") {
+  const normalized = normalizeGridlyBrandSearchText(value);
+  const tokens = getGridlySearchQueryTokens(normalized);
+  return { normalized, tokens };
 }
 
 function gridlySearchQueryHasAddressIndicator(query = "") {
@@ -13259,10 +13468,10 @@ function cleanGridlyNormalizedContext(contextValue, fallbackTitle = "") {
     const country = take("country");
 
     const objectCandidates = [];
-    if (county && state) objectCandidates.push([county, state]);
-    if (locality && state) objectCandidates.push([locality, state]);
+    if (road && locality && state) objectCandidates.push([`Near ${road} · ${locality}`, state]);
     if (suburb && locality && state) objectCandidates.push([suburb, locality, state]);
-    if (road && locality && state) objectCandidates.push([locality, state]);
+    if (locality && state) objectCandidates.push([locality, state]);
+    if (county && state) objectCandidates.push([county, state]);
     if (state && country) objectCandidates.push([state, country]);
 
     const objectEntries = Object.entries(location)
@@ -13371,8 +13580,8 @@ function getGridlySearchResultHaystack(result, context = "") {
 }
 
 function getGridlySearchResultTitleMatchScore(result, rawQuery = "") {
-  const query = normalizeGridlySearchDisplayLabel(rawQuery).replace(/\b(near|in)\b.*$/i, "").trim();
-  const title = normalizeGridlySearchDisplayLabel(result?.title || result?.label || "");
+  const query = normalizeGridlyBrandSearchText(rawQuery).replace(/\b(near|in)\b.*$/i, "").trim();
+  const title = normalizeGridlyBrandSearchText(result?.title || result?.label || "");
   if (!query || !title) return 0;
   if (title === query) return 28;
   if (title.startsWith(query)) return 20;
@@ -13402,6 +13611,7 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
       : distanceMiles;
     let score = Math.max(0, GRIDLY_SEARCH_RENDER_LIMIT - index) * 0.25;
     if (isGenericLocalSearch) {
+      if (result?.provider === "local_poi_seed" || result?.localPoiSeed) score += 18;
       if (Number.isFinite(anchorDistanceMiles)) {
         if (anchorDistanceMiles <= 10) score += 135;
         else if (anchorDistanceMiles <= 25) score += 115;
@@ -13415,6 +13625,7 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
       if (isTexas) score += 25;
       if (Number.isFinite(anchorDistanceMiles) && anchorDistanceMiles > 250) score -= 40;
     } else {
+      if ((result?.provider === "local_poi_seed" || result?.localPoiSeed) && isLocality) score += 8;
       if (inBounds) score += 25;
       if (isTexas) score += 12;
       if (isLocality) score += 8;
@@ -34093,18 +34304,98 @@ function normalizeGridlySearchResult(result) {
     providerId: providerId || null,
     type: rawType,
     confidence: Number.isFinite(Number(result.confidence)) ? Number(result.confidence) : null,
+    source: result.source || provider,
+    searchIntent: result.searchIntent || "",
+    searchRank: result.searchRank || null,
+    localPoiSeed: Boolean(result.localPoiSeed || rawPayload?.localSeed),
     display_name: displayName || "",
     raw: rawPayload
   };
 }
 
 function shouldAddGridlyLocalSearchExpansions(query = "", intent = null) {
-  const normalized = normalizeGridlySearchDisplayLabel(query);
+  const normalized = normalizeGridlyBrandSearchText(query);
   const resolvedIntent = intent || classifyGridlyDestinationSearchIntent(normalized);
   if (!normalized || normalized.length > 64) return false;
   if (resolvedIntent.type !== GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL) return false;
   const tokens = normalized.split(/\s+/).filter(Boolean);
   return tokens.length >= 1 && tokens.length <= 4;
+}
+
+function gridlySeedToSearchResult(seed) {
+  if (!seed || typeof seed !== "object") return null;
+  const subtitle = seed.road ? `Near ${seed.road} · ${seed.city}, ${seed.state}` : `${seed.city}, ${seed.state}`;
+  return normalizeGridlySearchResult({
+    id: seed.id,
+    provider: "local_poi_seed",
+    providerId: seed.id,
+    source: "local_poi_seed",
+    type: seed.categories?.[0] || "destination",
+    title: seed.title,
+    label: seed.title,
+    lat: seed.lat,
+    lng: seed.lng,
+    subtitle,
+    address: {
+      road: seed.road || seed.addressLine || "",
+      city: seed.city,
+      town: seed.city,
+      state: seed.state === "TX" ? "Texas" : seed.state,
+      state_code: seed.state,
+      country: "United States"
+    },
+    raw: {
+      display_name: [seed.title, seed.addressLine, seed.city, seed.state].filter(Boolean).join(", "),
+      address: {
+        road: seed.road || seed.addressLine || "",
+        city: seed.city,
+        town: seed.city,
+        state: seed.state === "TX" ? "Texas" : seed.state,
+        state_code: seed.state,
+        country: "United States"
+      },
+      localSeed: true,
+      seedSource: seed.source,
+      categories: seed.categories || [],
+      brands: seed.brands || []
+    }
+  });
+}
+
+function getGridlyExplicitQueryLocationTokens(query = "") {
+  const { tokens } = getGridlyCanonicalSearchTerms(query);
+  const brandTokens = new Set(GRIDLY_SEARCH_BRAND_ALIASES.flatMap((entry) => getGridlySearchQueryTokens(entry.canonical)));
+  const categoryTokens = new Set(["store", "restaurant", "hospital", "urgent", "care", "school", "high", "home", "depot", "tractor", "supply", "dollar", "general"]);
+  return tokens.filter((token) => !brandTokens.has(token) && !categoryTokens.has(token));
+}
+
+function gridlySeedMatchesQuery(seed, rawQuery = "", intent = null) {
+  const queryInfo = getGridlyCanonicalSearchTerms(rawQuery);
+  if (!queryInfo.normalized) return false;
+  const haystack = normalizeGridlyBrandSearchText([
+    seed.title,
+    seed.city,
+    seed.state,
+    seed.road,
+    seed.addressLine,
+    ...(seed.brands || []),
+    ...(seed.categories || [])
+  ].filter(Boolean).join(" "));
+  const brandMatch = (seed.brands || []).some((brand) => queryInfo.normalized.includes(normalizeGridlyBrandSearchText(brand)));
+  const categoryMatch = (seed.categories || []).some((category) => queryInfo.normalized.includes(normalizeGridlyBrandSearchText(category)));
+  const titleMatch = normalizeGridlyBrandSearchText(seed.title).includes(queryInfo.normalized) || queryInfo.normalized.includes(normalizeGridlyBrandSearchText(seed.title));
+  const explicitTokens = intent?.type === GRIDLY_DESTINATION_INTENTS.EXPLICIT_DESTINATION ? getGridlyExplicitQueryLocationTokens(rawQuery) : [];
+  const locationTokensSatisfied = !explicitTokens.length || explicitTokens.some((token) => haystack.split(" ").includes(token));
+  return locationTokensSatisfied && (brandMatch || categoryMatch || titleMatch || queryInfo.tokens.every((token) => haystack.split(" ").includes(token)));
+}
+
+function searchGridlyLocalPoiSeeds(rawQuery = "", options = {}) {
+  const intent = options.intent || classifyGridlyDestinationSearchIntent(rawQuery);
+  return GRIDLY_LOCAL_POI_SEEDS
+    .filter((seed) => gridlySeedMatchesQuery(seed, rawQuery, intent))
+    .map((seed) => gridlySeedToSearchResult(seed))
+    .filter(Boolean)
+    .map((result) => ({ ...result, searchIntent: intent.type, localPoiSeed: true }));
 }
 
 function buildGridlySearchQueryVariants(rawQuery = "", options = {}) {
@@ -34161,7 +34452,8 @@ async function gridlySearchAddress(query, options = {}) {
   const searchContext = getGridlySearchMapContext();
   const intent = classifyGridlyDestinationSearchIntent(rawQuery);
   const queryVariants = buildGridlySearchQueryVariants(rawQuery, { intent });
-  const providerResults = [];
+  const seedResults = searchGridlyLocalPoiSeeds(rawQuery, { intent });
+  const providerResults = [...seedResults];
 
   try {
     for (const variant of queryVariants) {
@@ -34189,7 +34481,7 @@ async function gridlySearchAddress(query, options = {}) {
         return gridlySearchResultContainsLocality(haystack, anchor) || gridlySearchResultContainsTexas(haystack)
           || Boolean(searchContext.bounds && searchContext.bounds.contains([result.lat, result.lng]));
       });
-      if (hasRelevantMatch && providerResults.length >= limit) break;
+      if (hasRelevantMatch && providerResults.length >= limit && intent.type === GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL) break;
     }
     return dedupeGridlySearchResults(
       prioritizeGridlySearchResults(
@@ -34202,6 +34494,71 @@ async function gridlySearchAddress(query, options = {}) {
     return [];
   }
 }
+
+const GRIDLY_DESTINATION_SEARCH_BATCH_DEFAULT_QUERIES = [
+  "walmart",
+  "walmart dallas",
+  "dollar general",
+  "dollar general dayton tx",
+  "heb",
+  "buc-ee's",
+  "hospital",
+  "dayton high school",
+  "kfc",
+  "mcdonalds",
+  "tractor supply",
+  "lowes",
+  "home depot",
+  "urgent care",
+  "liberty walmart",
+  "cleveland walmart"
+];
+
+function summarizeGridlyDestinationSearchResult(result) {
+  const normalized = normalizeGridlySearchResult(result);
+  if (!normalized) return null;
+  const display = buildGridlySearchDisplayLines(normalized);
+  const subtitle = buildGridlyLocationContext(normalized) || normalized.subtitle || "";
+  return {
+    title: display.title,
+    subtitle,
+    provider: normalized.provider || normalized.source || "unknown",
+    source: normalized.provider || normalized.source || "unknown",
+    intent: normalized.searchIntent || "",
+    bucket: normalized.searchRank?.bucket || "",
+    distanceMiles: Number.isFinite(normalized.searchRank?.anchorDistanceMiles)
+      ? Number(normalized.searchRank.anchorDistanceMiles.toFixed(1))
+      : (Number.isFinite(normalized.searchRank?.distanceMiles) ? Number(normalized.searchRank.distanceMiles.toFixed(1)) : null),
+    lat: Number.isFinite(normalized.lat) ? Number(normalized.lat.toFixed(6)) : null,
+    lng: Number.isFinite(normalized.lng) ? Number(normalized.lng.toFixed(6)) : null
+  };
+}
+
+async function gridlyDestinationSearchBatchTest(queries = GRIDLY_DESTINATION_SEARCH_BATCH_DEFAULT_QUERIES) {
+  const queryList = Array.isArray(queries) && queries.length ? queries : GRIDLY_DESTINATION_SEARCH_BATCH_DEFAULT_QUERIES;
+  const rows = [];
+  for (const query of queryList) {
+    const queryText = String(query || "").trim();
+    if (!queryText) continue;
+    const results = await gridlySearchAddress(queryText, { limit: 5 });
+    const top5 = results.map((result) => summarizeGridlyDestinationSearchResult(result)).filter(Boolean).slice(0, 5);
+    rows.push({
+      query: queryText,
+      count: results.length,
+      firstTitle: top5[0]?.title || "",
+      firstSubtitle: top5[0]?.subtitle || "",
+      provider: top5[0]?.provider || "",
+      source: top5[0]?.source || "",
+      intent: top5[0]?.intent || classifyGridlyDestinationSearchIntent(queryText).type,
+      bucket: top5[0]?.bucket || "",
+      distanceMiles: top5[0]?.distanceMiles ?? null,
+      top5
+    });
+  }
+  return rows;
+}
+
+if (typeof window !== "undefined") window.gridlyDestinationSearchBatchTest = gridlyDestinationSearchBatchTest;
 
 async function gridlyReverseGeocode(lat, lng, options = {}) {
   const coordinates = normalizeCoordinatePair(lat, lng);
