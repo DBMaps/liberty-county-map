@@ -11745,30 +11745,39 @@ function openAlertsSurfaceFromDock() {
         const nearestRoadLookup = isGenericAreaLikeLabel(nearestRoadLookupRaw).invalid ? "" : nearestRoadLookupRaw;
         const nearestRoadByCrossingCoords = isGenericAreaLikeLabel(nearestRoadByCrossingCoordsRaw).invalid ? "" : nearestRoadByCrossingCoordsRaw;
         let finalHeadline = "";
+        let finalSubtitle = "";
         let replacementSource = "primaryRoad";
         let rejectedLabel = "";
         let rejectionReason = "";
         if (!primaryRoadValidity.invalid && primaryRoad && resolvedSecondaryWithLocal) {
-          finalHeadline = `Crossing blocked at ${primaryRoad} and ${resolvedSecondaryWithLocal}`;
+          finalHeadline = `Train blocking ${primaryRoad}`;
+          finalSubtitle = `At ${primaryRoad} and ${resolvedSecondaryWithLocal}`;
         } else if (!primaryRoadValidity.invalid && !singleRoadValidity.invalid && singleRoadCandidate) {
-          finalHeadline = `Crossing blocked at ${singleRoadCandidate}`;
+          finalHeadline = `Train blocking ${singleRoadCandidate}`;
+          finalSubtitle = `At ${singleRoadCandidate} crossing`;
         } else if (usedLocalContext && localDisplayName) {
-          finalHeadline = `Crossing blocked at ${localDisplayName}`;
+          finalHeadline = `Train blocking ${localDisplayName}`;
+          finalSubtitle = `At ${localDisplayName}`;
           replacementSource = "localCrossingContextStreet";
         } else if (nearbyRoadCandidate) {
-          finalHeadline = `Crossing blocked near ${nearbyRoadCandidate}`;
+          finalHeadline = `Train blocking ${nearbyRoadCandidate}`;
+          finalSubtitle = `Near ${nearbyRoadCandidate}`;
           replacementSource = "nearbyRoadCandidate";
         } else if (nearbyReferenceRoad) {
-          finalHeadline = `Crossing blocked near ${nearbyReferenceRoad}`;
+          finalHeadline = `Train blocking ${nearbyReferenceRoad}`;
+          finalSubtitle = `Near ${nearbyReferenceRoad}`;
           replacementSource = "nearbyReferenceRoad";
         } else if (nearestRoadLookup) {
-          finalHeadline = `Crossing blocked near ${nearestRoadLookup}`;
+          finalHeadline = `Train blocking ${nearestRoadLookup}`;
+          finalSubtitle = `Near ${nearestRoadLookup}`;
           replacementSource = "nearestRoadLookup";
         } else if (nearestRoadByCrossingCoords) {
-          finalHeadline = `Crossing blocked near ${nearestRoadByCrossingCoords}`;
+          finalHeadline = `Train blocking ${nearestRoadByCrossingCoords}`;
+          finalSubtitle = `Near ${nearestRoadByCrossingCoords}`;
           replacementSource = "nearestRoadByCrossingCoords";
         } else {
-          finalHeadline = "Crossing blocked nearby";
+          finalHeadline = "Rail crossing blocked nearby";
+          finalSubtitle = "Active rail report";
           replacementSource = "fallbackNearby";
         }
         if (primaryRoadValidity.invalid) {
@@ -11786,7 +11795,8 @@ function openAlertsSurfaceFromDock() {
           secondaryCrossingLabel: resolvedSecondaryForOutput,
           resolvedSecondaryCrossingLabel: resolvedSecondaryForOutput,
           sourceFieldUsed: sourceFieldUsedForOutput,
-          finalHeadline
+          finalHeadline,
+          finalSubtitle
         };
       };
       
@@ -20242,16 +20252,51 @@ function getGridlyLightweightAlertSummarySourceFields() {
   ];
 }
 
+function normalizeGridlyRailDisplayRoadName(value = "") {
+  const cleaned = normalizeGridlyLightweightLocationLabelText(value)
+    .replace(/\b(?:rail\s+)?crossing\b/gi, " ")
+    .replace(/\s+\band\b\s+.+$/i, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!cleaned) return "";
+  const normalized = standardizeGridlyAlertHeadline(cleaned);
+  return normalized && !/^(?:blocked|rail|train|crossing|active rail report|dayton area|nearby|reported locally)$/i.test(normalized) ? normalized : "";
+}
+
+function buildGridlyRailAlertTitleFromLocation(locationLabel = "") {
+  const road = normalizeGridlyRailDisplayRoadName(locationLabel);
+  return road ? `Train blocking ${road}` : "";
+}
+
+function normalizeGridlyRailAlertCandidateTitle(value = "", locationLabel = "") {
+  const text = normalizeGridlyLightweightAlertSummaryText(value);
+  if (!text) return "";
+  const rawRoadFirst = text.match(/^(.+?)\s+train\s+blocking\s+(?:rail\s+)?crossing\b/i);
+  const trainFirst = text.match(/^train\s+blocking\s+(.+?)(?:\s+(?:rail\s+)?crossing)?$/i);
+  const crossingBlocked = text.match(/^(?:rail\s+)?crossing\s+blocked(?:\s+(?:at|near)\s+(.+?))?$/i);
+  const road = normalizeGridlyRailDisplayRoadName(rawRoadFirst?.[1] || trainFirst?.[1] || crossingBlocked?.[1] || "");
+  if (road) return `Train blocking ${road}`;
+  const locationTitle = buildGridlyRailAlertTitleFromLocation(locationLabel);
+  if (locationTitle && /^(?:rail\s+)?crossing\s+blocked(?:\s+nearby)?$/i.test(text)) return locationTitle;
+  if (/^(?:rail\s+)?crossing\s+blocked\s+nearby$/i.test(text)) return "Rail crossing blocked nearby";
+  return standardizeGridlyAlertHeadline(text);
+}
+
 function buildGridlyHeaderCandidateFromCategoryLocation(category = "", locationLabel = "") {
   const normalizedCategory = getGridlyLightweightTitleCaseCategory(category);
   const normalizedLocation = normalizeGridlyLightweightLocationLabelText(locationLabel);
   if (!normalizedCategory || !normalizedLocation) return "";
+  const railTitle = normalizedCategory === "Rail" ? buildGridlyRailAlertTitleFromLocation(normalizedLocation) : "";
+  if (railTitle) return railTitle;
   const preposition = /^(?:near|on|at|between|along|from|over|under)\b/i.test(normalizedLocation) ? "" : "on ";
   return `${normalizedCategory} ${preposition}${normalizedLocation}`;
 }
 
 function classifyGridlyHeaderCandidate(candidate = {}, activeContext = {}) {
-  const text = normalizeGridlyLightweightAlertSummaryText(candidate.text);
+  const rawText = normalizeGridlyLightweightAlertSummaryText(candidate.text);
+  const text = getGridlyLightweightCategoryLabel(activeContext?.activeCategory) === "rail"
+    ? normalizeGridlyRailAlertCandidateTitle(rawText, activeContext?.activeLocationLabel)
+    : rawText;
   if (!text) return { ...candidate, text: "", type: candidate.type || "empty", accepted: false, rejectionReason: "empty" };
   if (!isGridlyLightweightReusableAlertSummary(text)) {
     return { ...candidate, text, type: candidate.type || "generic_container", accepted: false, rejectionReason: "not_reusable_alert_summary" };
@@ -20644,11 +20689,24 @@ function buildGridlyRoadHazardTxDotStyleCandidate(alert = {}) {
 
 function buildGridlyCrossingAlertCandidate(alert = {}) {
   if (!alert || typeof alert !== "object" || !isGridlyAlertRailOrCrossingRelated(alert)) return { text: "", source: "" };
-  const text = getGridlyAlertFirstTextValue(alert, ["resolvedHeadline", "finalHeadline", "localizedSummary", "summary", "title", "raw.resolvedHeadline", "raw.finalHeadline", "raw.localizedSummary", "raw.summary", "raw.title"]);
-  if (text) return { text, source: "crossing.alreadyRenderedCleanAlertText" };
-  const road = getGridlyAlertFirstTextValue(alert, ["roadName", "primaryRoad", "crossingRoad", "raw.roadName", "raw.primaryRoad", "raw.crossingRoad"]);
-  const crossing = getGridlyAlertFirstTextValue(alert, ["crossingName", "nearestRoadName", "nearestRoad", "referenceRoadA", "raw.crossingName", "raw.nearestRoadName", "raw.nearestRoad", "raw.referenceRoadA"]);
-  return { text: road && crossing ? `Crossing blocked at ${road} and ${crossing}` : (road ? `Crossing blocked at ${road}` : "Rail crossing blocked"), source: "crossing.locationFields" };
+  const road = normalizeGridlyRailDisplayRoadName(getGridlyAlertFirstTextValue(alert, [
+    "roadName", "primaryRoad", "crossingRoad", "titleRoad", "corridor", "route",
+    "raw.roadName", "raw.primaryRoad", "raw.crossingRoad", "raw.titleRoad", "raw.corridor", "raw.route",
+    "source.roadName", "source.primaryRoad", "source.crossingRoad", "source.titleRoad", "source.corridor", "source.route"
+  ]));
+  if (road) return { text: `Train blocking ${road}`, source: "crossing.primaryRoadTitle" };
+  const crossing = normalizeGridlyRailDisplayRoadName(getGridlyAlertFirstTextValue(alert, [
+    "crossingName", "nearestRoadName", "nearestRoad", "referenceRoadA", "locationName", "locationLabel",
+    "raw.crossingName", "raw.nearestRoadName", "raw.nearestRoad", "raw.referenceRoadA", "raw.locationName", "raw.locationLabel",
+    "source.crossingName", "source.nearestRoadName", "source.nearestRoad", "source.referenceRoadA", "source.locationName", "source.locationLabel"
+  ]));
+  if (crossing) return { text: `Train blocking ${crossing}`, source: "crossing.locationTitle" };
+  const existingTitle = normalizeGridlyRailAlertCandidateTitle(getGridlyAlertFirstTextValue(alert, [
+    "resolvedHeadline", "finalHeadline", "localizedSummary", "summary", "title",
+    "raw.resolvedHeadline", "raw.finalHeadline", "raw.localizedSummary", "raw.summary", "raw.title"
+  ]));
+  if (existingTitle && existingTitle !== "Rail crossing blocked nearby") return { text: existingTitle, source: "crossing.polishedExistingTitle" };
+  return { text: "Rail crossing blocked nearby", source: "crossing.locationFieldsFallback" };
 }
 
 function getGridlyAlertsPanelHeadingSeverityScore(alert = {}) {
