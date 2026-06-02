@@ -13927,20 +13927,42 @@ function buildGridlyLiveSearchAuditReport(query, results = [], metadata = {}) {
     ? results.map((result) => normalizeGridlySearchResult(result)).filter(Boolean)
     : [];
   const first = summarizeGridlyDestinationSearchResult(normalizedResults[0]) || {};
+  const providerDiagnostics = metadata.providerDiagnostics
+    || results?.gridlyProviderDiagnostics
+    || gridlyDestinationProviderState.lastDiagnostics
+    || createGridlyDestinationProviderDiagnostics(query, classifyGridlyDestinationSearchIntent(query), 0);
+  const localSeedCount = Number(providerDiagnostics.localSeedCount) || normalizedResults.filter((result) => result.provider === "local_poi_seed" || result.localPoiSeed).length;
+  const finalResultCount = normalizedResults.length;
   return {
     query: String(query || "").trim(),
+    intent: providerDiagnostics.intent || classifyGridlyDestinationSearchIntent(query).type,
     detectedIntent: classifyGridlyDestinationSearchIntent(query),
-    resultCount: normalizedResults.length,
+    localSeedCount,
+    providerAttempted: Boolean(providerDiagnostics.providerAttempted),
+    providerSkippedReason: providerDiagnostics.providerSkippedReason || "",
+    providerError: providerDiagnostics.providerError || "",
+    providerStatus: providerDiagnostics.providerStatus || "not_attempted",
+    providerResultCount: Number(providerDiagnostics.providerResultCount) || 0,
+    cacheHit: Boolean(providerDiagnostics.cacheHit),
+    cooldownActive: Boolean(providerDiagnostics.cooldownActive),
+    duplicateSuppressed: Boolean(providerDiagnostics.duplicateSuppressed),
+    throttled: Boolean(providerDiagnostics.throttled),
+    finalResultCount,
+    resultCount: finalResultCount,
     firstResult: {
       title: first.title || "",
       subtitle: first.subtitle || "",
       provider: first.provider || ""
     },
-    emptyStateWouldRender: normalizedResults.length === 0,
+    seedResultsRenderImmediately: localSeedCount > 0,
+    emptyStateWouldRender: finalResultCount === 0 && localSeedCount === 0,
     seedResultsIncluded: normalizedResults.some((result) => result.provider === "local_poi_seed" || result.localPoiSeed),
+    providerVariants: Array.isArray(providerDiagnostics.variants) ? providerDiagnostics.variants : [],
+    futureArchitecture: providerDiagnostics.futureArchitecture || gridlyDestinationProviderState.futureArchitecture,
     laterAsyncResponseOverwroteResults: Boolean(metadata.laterAsyncResponseOverwroteResults),
     requestId: metadata.requestId ?? null,
     rendered: Boolean(metadata.rendered),
+    seedRenderedImmediately: Boolean(metadata.seedRenderedImmediately),
     staleRequestBlocked: Boolean(metadata.staleRequestBlocked)
   };
 }
@@ -13953,11 +13975,22 @@ async function runGridlyLiveDestinationSearch(query = "", options = {}) {
   const auditOnly = options.auditOnly === true;
   let staleRequestBlocked = false;
   let rendered = false;
+  let seedRenderedImmediately = false;
   let results = [];
 
   state.activeQuery = normalizedQuery;
 
   try {
+    const intent = classifyGridlyDestinationSearchIntent(normalizedQuery);
+    const immediateSeedResults = normalizedQuery.length >= 3
+      ? dedupeGridlySearchResults(prioritizeGridlySearchResults(searchGridlyLocalPoiSeeds(normalizedQuery, { intent }), { query: normalizedQuery, intent })).slice(0, GRIDLY_SEARCH_RENDER_LIMIT)
+      : [];
+    const seedRenderCurrent = requestId === gridlySearchUiState.activeSearchRequestId
+      && normalizeGridlySearchDisplayLabel(normalizedQuery) === normalizeGridlySearchDisplayLabel(getGridlySearchActiveInputQuery());
+    if (shouldRender && !auditOnly && seedRenderCurrent && immediateSeedResults.length) {
+      seedRenderedImmediately = renderGridlySearchResults(immediateSeedResults, { state: "done", allowEmptyMessage: false, query: normalizedQuery, requestId });
+    }
+
     results = await gridlySearchAddress(normalizedQuery, getGridlyLiveDestinationSearchOptions());
     const isCurrent = requestId === gridlySearchUiState.activeSearchRequestId
       && normalizeGridlySearchDisplayLabel(normalizedQuery) === normalizeGridlySearchDisplayLabel(getGridlySearchActiveInputQuery());
@@ -13980,6 +14013,8 @@ async function runGridlyLiveDestinationSearch(query = "", options = {}) {
   const audit = buildGridlyLiveSearchAuditReport(normalizedQuery, results, {
     requestId,
     rendered,
+    seedRenderedImmediately,
+    providerDiagnostics: results?.gridlyProviderDiagnostics,
     staleRequestBlocked,
     laterAsyncResponseOverwroteResults: false
   });
@@ -34513,26 +34548,192 @@ function buildGridlySearchQueryVariants(rawQuery = "", options = {}) {
 }
 
 
-async function fetchGridlyNominatimSearch(query, { limit, countryCodes, searchContext, bounded = "0" } = {}) {
-  const params = new URLSearchParams({
-    q: query,
-    format: "jsonv2",
-    limit: String(limit),
-    addressdetails: "1",
-    extratags: "0",
-    namedetails: "0",
-    countrycodes: countryCodes
+const GRIDLY_DESTINATION_PROVIDER_CACHE_TTL_MS = 2 * 60 * 1000;
+const GRIDLY_DESTINATION_PROVIDER_MIN_REQUEST_INTERVAL_MS = 1250;
+const GRIDLY_DESTINATION_PROVIDER_FAILURE_COOLDOWN_MS = 30 * 1000;
+const GRIDLY_DESTINATION_PROVIDER_RATE_LIMIT_COOLDOWN_MS = 2 * 60 * 1000;
+
+const gridlyDestinationProviderState = {
+  cache: new Map(),
+  inflight: new Map(),
+  cooldownUntil: 0,
+  cooldownReason: "",
+  lastRequestAt: 0,
+  lastDiagnostics: null,
+  futureArchitecture: "Recommended production path: Browser → Gridly Search API / proxy → provider. Future provider options: OpenStreetMap/Overpass, Google Places, Mapbox Places, HERE, TomTom, or a Supabase curated POI table."
+};
+
+function waitForGridlyDestinationProviderThrottle(ms) {
+  return new Promise((resolve) => setTimeout(resolve, Math.max(0, Number(ms) || 0)));
+}
+
+function buildGridlyDestinationProviderCacheKey(query, { limit, countryCodes, searchContext, bounded = "0" } = {}) {
+  return [
+    normalizeGridlySearchDisplayLabel(query),
+    Math.max(1, Number(limit) || GRIDLY_SEARCH_RENDER_LIMIT),
+    String(countryCodes || "us").toLowerCase(),
+    String(searchContext?.viewbox || ""),
+    String(bounded || "0")
+  ].join("|");
+}
+
+function createGridlyDestinationProviderDiagnostics(query, intent, localSeedCount = 0) {
+  return {
+    query: String(query || "").trim(),
+    intent: intent?.type || classifyGridlyDestinationSearchIntent(query).type,
+    localSeedCount: Number(localSeedCount) || 0,
+    providerAttempted: false,
+    providerSkippedReason: "",
+    providerError: "",
+    providerStatus: "not_attempted",
+    providerResultCount: 0,
+    cacheHit: false,
+    cooldownActive: false,
+    duplicateSuppressed: false,
+    throttled: false,
+    finalResultCount: 0,
+    variants: [],
+    seedResultsRenderImmediately: Number(localSeedCount) > 0,
+    emptyStateWouldRender: Number(localSeedCount) === 0,
+    futureArchitecture: gridlyDestinationProviderState.futureArchitecture
+  };
+}
+
+function recordGridlyDestinationProviderEvent(diagnostics, event = {}) {
+  if (!diagnostics || typeof diagnostics !== "object") return;
+  diagnostics.variants.push({
+    variant: String(event.variant || ""),
+    status: event.status || "unknown",
+    skippedReason: event.skippedReason || "",
+    count: Number(event.count) || 0,
+    error: event.error || ""
   });
-  if (searchContext?.viewbox) {
-    params.set("viewbox", searchContext.viewbox);
-    params.set("bounded", bounded);
+  if (event.attempted) diagnostics.providerAttempted = true;
+  if (event.cacheHit) diagnostics.cacheHit = true;
+  if (event.cooldownActive) diagnostics.cooldownActive = true;
+  if (event.duplicateSuppressed) diagnostics.duplicateSuppressed = true;
+  if (event.throttled) diagnostics.throttled = true;
+  if (event.skippedReason && !diagnostics.providerSkippedReason) diagnostics.providerSkippedReason = event.skippedReason;
+  if (event.error && !diagnostics.providerError) diagnostics.providerError = event.error;
+  if (event.status === "rate_limited") diagnostics.providerStatus = "rate_limited";
+  else if (event.status === "failed" && diagnostics.providerStatus !== "rate_limited") diagnostics.providerStatus = "failed";
+  else if (event.status === "ok" && !["failed", "rate_limited"].includes(diagnostics.providerStatus)) diagnostics.providerStatus = "ok";
+  else if (event.status === "cache_hit" && diagnostics.providerStatus === "not_attempted") diagnostics.providerStatus = "cache_hit";
+  else if (event.status === "cooldown" && diagnostics.providerStatus === "not_attempted") diagnostics.providerStatus = "cooldown";
+  else if (event.status === "duplicate_reused" && diagnostics.providerStatus === "not_attempted") diagnostics.providerStatus = "duplicate_reused";
+}
+
+function finalizeGridlyDestinationProviderDiagnostics(diagnostics, providerResultCount, finalResultCount) {
+  if (!diagnostics || typeof diagnostics !== "object") return diagnostics;
+  diagnostics.providerResultCount = Number(providerResultCount) || 0;
+  diagnostics.finalResultCount = Number(finalResultCount) || 0;
+  diagnostics.seedResultsRenderImmediately = diagnostics.localSeedCount > 0;
+  diagnostics.emptyStateWouldRender = diagnostics.finalResultCount === 0 && diagnostics.localSeedCount === 0;
+  if (diagnostics.providerStatus === "not_attempted" && diagnostics.providerSkippedReason) {
+    diagnostics.providerStatus = diagnostics.providerSkippedReason;
   }
-  const response = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`, {
-    headers: { Accept: "application/json" }
-  });
-  if (!response.ok) return [];
-  const providerResults = await response.json();
-  return Array.isArray(providerResults) ? providerResults : [];
+  gridlyDestinationProviderState.lastDiagnostics = diagnostics;
+  return diagnostics;
+}
+
+async function fetchGridlyNominatimSearch(query, { limit, countryCodes, searchContext, bounded = "0", diagnostics = null } = {}) {
+  const cacheKey = buildGridlyDestinationProviderCacheKey(query, { limit, countryCodes, searchContext, bounded });
+  const cached = gridlyDestinationProviderState.cache.get(cacheKey);
+  const now = Date.now();
+  if (cached && cached.expiresAt > now) {
+    const cachedResults = Array.isArray(cached.results) ? cached.results.map((result) => ({ ...result })) : [];
+    recordGridlyDestinationProviderEvent(diagnostics, { variant: query, status: "cache_hit", skippedReason: "cache", cacheHit: true, count: cachedResults.length });
+    return cachedResults;
+  }
+  if (cached) gridlyDestinationProviderState.cache.delete(cacheKey);
+
+  if (gridlyDestinationProviderState.cooldownUntil > now) {
+    recordGridlyDestinationProviderEvent(diagnostics, {
+      variant: query,
+      status: "cooldown",
+      skippedReason: gridlyDestinationProviderState.cooldownReason || "cooldown",
+      cooldownActive: true
+    });
+    return [];
+  }
+
+  if (gridlyDestinationProviderState.inflight.has(cacheKey)) {
+    const reusedResults = await gridlyDestinationProviderState.inflight.get(cacheKey);
+    recordGridlyDestinationProviderEvent(diagnostics, { variant: query, status: "duplicate_reused", skippedReason: "duplicate_inflight", duplicateSuppressed: true, count: reusedResults.length });
+    return reusedResults.map((result) => ({ ...result }));
+  }
+
+  const requestPromise = (async () => {
+    const elapsed = Date.now() - gridlyDestinationProviderState.lastRequestAt;
+    const throttleWait = gridlyDestinationProviderState.lastRequestAt
+      ? GRIDLY_DESTINATION_PROVIDER_MIN_REQUEST_INTERVAL_MS - elapsed
+      : 0;
+    if (throttleWait > 0) {
+      recordGridlyDestinationProviderEvent(diagnostics, { variant: query, status: "throttled", skippedReason: "throttle_wait", throttled: true });
+      await waitForGridlyDestinationProviderThrottle(throttleWait);
+    }
+
+    const params = new URLSearchParams({
+      q: query,
+      format: "jsonv2",
+      limit: String(limit),
+      addressdetails: "1",
+      extratags: "0",
+      namedetails: "0",
+      countrycodes: countryCodes
+    });
+    if (searchContext?.viewbox) {
+      params.set("viewbox", searchContext.viewbox);
+      params.set("bounded", bounded);
+    }
+
+    try {
+      gridlyDestinationProviderState.lastRequestAt = Date.now();
+      recordGridlyDestinationProviderEvent(diagnostics, { variant: query, status: "attempting", attempted: true });
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`, {
+        headers: { Accept: "application/json" }
+      });
+      if (!response.ok) {
+        const isRateLimited = response.status === 429;
+        gridlyDestinationProviderState.cooldownUntil = Date.now() + (isRateLimited
+          ? GRIDLY_DESTINATION_PROVIDER_RATE_LIMIT_COOLDOWN_MS
+          : GRIDLY_DESTINATION_PROVIDER_FAILURE_COOLDOWN_MS);
+        gridlyDestinationProviderState.cooldownReason = isRateLimited ? "rate_limited" : `http_${response.status}`;
+        recordGridlyDestinationProviderEvent(diagnostics, {
+          variant: query,
+          status: isRateLimited ? "rate_limited" : "failed",
+          error: `Nominatim HTTP ${response.status}`
+        });
+        return [];
+      }
+      const providerResults = await response.json();
+      const results = Array.isArray(providerResults) ? providerResults : [];
+      gridlyDestinationProviderState.cache.set(cacheKey, {
+        expiresAt: Date.now() + GRIDLY_DESTINATION_PROVIDER_CACHE_TTL_MS,
+        results
+      });
+      recordGridlyDestinationProviderEvent(diagnostics, { variant: query, status: "ok", count: results.length });
+      return results;
+    } catch (error) {
+      gridlyDestinationProviderState.cooldownUntil = Date.now() + GRIDLY_DESTINATION_PROVIDER_FAILURE_COOLDOWN_MS;
+      gridlyDestinationProviderState.cooldownReason = "provider_failed";
+      recordGridlyDestinationProviderEvent(diagnostics, {
+        variant: query,
+        status: "failed",
+        error: error?.message || "Nominatim request failed"
+      });
+      console.warn("Address search provider failed:", { variant: query, error });
+      return [];
+    }
+  })();
+
+  gridlyDestinationProviderState.inflight.set(cacheKey, requestPromise);
+  try {
+    const results = await requestPromise;
+    return Array.isArray(results) ? results.map((result) => ({ ...result })) : [];
+  } finally {
+    gridlyDestinationProviderState.inflight.delete(cacheKey);
+  }
 }
 
 async function gridlySearchAddress(query, options = {}) {
@@ -34546,20 +34747,21 @@ async function gridlySearchAddress(query, options = {}) {
   const intent = classifyGridlyDestinationSearchIntent(rawQuery);
   const queryVariants = buildGridlySearchQueryVariants(rawQuery, { intent });
   const seedResults = searchGridlyLocalPoiSeeds(rawQuery, { intent });
+  const diagnostics = createGridlyDestinationProviderDiagnostics(rawQuery, intent, seedResults.length);
   const providerResults = [...seedResults];
+  let remoteProviderResultCount = 0;
 
   for (const variant of queryVariants) {
-    try {
-      const variantResults = await fetchGridlyNominatimSearch(variant, {
-        limit: Math.max(limit, GRIDLY_SEARCH_RENDER_LIMIT),
-        countryCodes,
-        searchContext,
-        bounded: options.bounded === "1" ? "1" : "0"
-      });
-      providerResults.push(...variantResults);
-    } catch (error) {
-      console.warn("Address search provider failed:", { variant, error });
-    }
+    const variantResults = await fetchGridlyNominatimSearch(variant, {
+      limit: Math.max(limit, GRIDLY_SEARCH_RENDER_LIMIT),
+      countryCodes,
+      searchContext,
+      bounded: options.bounded === "1" ? "1" : "0",
+      diagnostics
+    });
+    remoteProviderResultCount += variantResults.length;
+    providerResults.push(...variantResults);
+
     const normalizedPreview = providerResults.map((result) => normalizeGridlySearchResult(result)).filter(Boolean);
     const prioritizedPreview = prioritizeGridlySearchResults(normalizedPreview, { query: rawQuery, intent });
     const anchor = getGridlySearchAnchorContext(searchContext);
@@ -34580,12 +34782,15 @@ async function gridlySearchAddress(query, options = {}) {
     if (hasRelevantMatch && providerResults.length >= limit && intent.type === GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL) break;
   }
 
-  return dedupeGridlySearchResults(
+  const finalResults = dedupeGridlySearchResults(
     prioritizeGridlySearchResults(
       providerResults.map((result) => normalizeGridlySearchResult(result)).filter(Boolean),
       { query: rawQuery, intent }
     )
   ).slice(0, limit);
+  finalizeGridlyDestinationProviderDiagnostics(diagnostics, remoteProviderResultCount, finalResults.length);
+  Object.defineProperty(finalResults, "gridlyProviderDiagnostics", { value: diagnostics, enumerable: false });
+  return finalResults;
 }
 
 const GRIDLY_DESTINATION_SEARCH_BATCH_DEFAULT_QUERIES = [
@@ -34714,6 +34919,29 @@ function buildGridlyResultShapePreviewItem(result) {
 
 window.gridlySearchAddress = gridlySearchAddress;
 window.gridlyDestinationLiveSearchAudit = gridlyDestinationLiveSearchAudit;
+window.gridlyDestinationProviderAudit = async function gridlyDestinationProviderAudit(query = "") {
+  const audit = await gridlyDestinationLiveSearchAudit(query);
+  return {
+    query: audit.query,
+    intent: audit.intent,
+    localSeedCount: audit.localSeedCount,
+    providerAttempted: audit.providerAttempted,
+    providerSkippedReason: audit.providerSkippedReason,
+    providerError: audit.providerError,
+    providerStatus: audit.providerStatus,
+    providerResultCount: audit.providerResultCount,
+    cacheHit: audit.cacheHit,
+    cooldownActive: audit.cooldownActive,
+    duplicateSuppressed: audit.duplicateSuppressed,
+    throttled: audit.throttled,
+    finalResultCount: audit.finalResultCount,
+    firstResult: audit.firstResult,
+    seedResultsRenderImmediately: audit.seedResultsRenderImmediately,
+    emptyStateWouldRender: audit.emptyStateWouldRender,
+    providerVariants: audit.providerVariants,
+    futureArchitecture: audit.futureArchitecture
+  };
+};
 window.gridlyRunLiveDestinationSearch = runGridlyLiveDestinationSearch;
 window.gridlyReverseGeocode = gridlyReverseGeocode;
 window.normalizeGridlySearchResult = normalizeGridlySearchResult;
