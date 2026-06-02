@@ -46184,6 +46184,255 @@ function getGridlyAuditAlertCardNodes(isAuditVisible) {
 }
 
 
+function gridlyAwarenessExperienceAudit() {
+  const readText = (selector) => String(document.querySelector(selector)?.textContent || "").replace(/\s+/g, " ").trim();
+  const visibleNode = (node) => {
+    if (!node || typeof node.getBoundingClientRect !== "function") return false;
+    const style = window.getComputedStyle(node);
+    const rect = node.getBoundingClientRect();
+    return !node.hidden && style.display !== "none" && style.visibility !== "hidden" && style.opacity !== "0" && rect.width > 0 && rect.height > 0;
+  };
+  const readFont = (selector) => {
+    const node = document.querySelector(selector);
+    if (!node) return { selector, found: false };
+    const style = window.getComputedStyle(node);
+    return {
+      selector,
+      found: true,
+      text: String(node.textContent || "").replace(/\s+/g, " ").trim(),
+      fontSize: style.fontSize,
+      fontWeight: style.fontWeight,
+      lineHeight: style.lineHeight,
+      letterSpacing: style.letterSpacing
+    };
+  };
+  const readBox = (selector) => {
+    const node = document.querySelector(selector);
+    if (!node) return { selector, found: false };
+    const style = window.getComputedStyle(node);
+    const rect = node.getBoundingClientRect();
+    return {
+      selector,
+      found: true,
+      visible: visibleNode(node),
+      top: Math.round(rect.top),
+      height: Math.round(rect.height),
+      padding: style.padding,
+      margin: style.margin,
+      borderRadius: style.borderRadius
+    };
+  };
+  const primaryHeadline = readText("#gridlyV2TopStatusPrimary") || "Routes currently clear";
+  const secondaryHeadline = readText("#gridlyV2TopStatusSecondary") || "No major disruptions nearby";
+  const microline = readText("#gridlyTopAwarenessMicroline, .gridly-v2-top-awareness-microline");
+  const scopeFilters = Array.from(document.querySelectorAll("#gridlyPortraitV2 .gridly-v2-segments button")).map((button) => ({
+    label: String(button.textContent || "").trim(),
+    active: button.classList.contains("is-active"),
+    filter: button.dataset.v2Filter || button.dataset.geoFilter || ""
+  }));
+  const pulseHeadline = readText("#gridlyCommunityPulseHeadline, .community-pulse-copy strong");
+  const pulseCopy = readText("#gridlyCommunityPulseCopy, .community-pulse-copy p");
+  const latestAlerts = Array.isArray(window.__gridlyLatestAlertsForRender) ? window.__gridlyLatestAlertsForRender : [];
+  const activeAwareness = window.gridlyTopAwarenessMicrolineState || {};
+  const activeReportCount = Number(activeAwareness.activeReportCount ?? activeAwareness.activeAwarenessCount ?? latestAlerts.length ?? 0) || 0;
+  const hasActiveAlertLanguage = /(reported|blocked|flood|delay|disruption|hazard|train|crash|closure|slow|impact)/i.test(`${primaryHeadline} ${secondaryHeadline} ${microline}`);
+  const hasCommunityLanguage = /(community|driver|neighbor|reported|report)/i.test(`${primaryHeadline} ${secondaryHeadline} ${microline} ${pulseHeadline} ${pulseCopy}`);
+  const hasRouteLanguage = /(route|commute|movement|corridor|delays?|travel)/i.test(`${primaryHeadline} ${secondaryHeadline} ${microline}`);
+  const { visibleAlertCards = [], alertCardNodes = [] } = typeof getGridlyAuditAlertCardNodes === "function"
+    ? getGridlyAuditAlertCardNodes(visibleNode)
+    : { visibleAlertCards: [], alertCardNodes: [] };
+  const alertSamples = visibleAlertCards.slice(0, 3).map((card) => {
+    const text = String(card.textContent || "").replace(/\s+/g, " ").trim();
+    const title = String(card.querySelector?.("strong, .gridly-alert-title, .gridly-alert-headline, [data-gridly-alert-title]")?.textContent || "").replace(/\s+/g, " ").trim();
+    const locationSpecific = /\b(?:at|near|between|on|tx|sh|us|fm|cr|road|rd|street|st|avenue|ave|crossing|county road)\b|\b\d{2,4}\b/i.test(text);
+    const freshnessVisible = /\b(?:just now|\d+\s*(?:m|min|minute|h|hr|hour)s?\s*ago|latest|updated|now)\b/i.test(text);
+    const whatVisible = /(blocked|flood|hazard|train|crash|closure|delay|slowing|impact|disruption|reported|stable)/i.test(text);
+    return {
+      title,
+      textPreview: text.slice(0, 180),
+      whatVisible,
+      locationSpecific,
+      freshnessVisible,
+      twoSecondComprehension: Boolean(whatVisible && locationSpecific && freshnessVisible)
+    };
+  });
+  const twoSecondPassCount = alertSamples.filter((sample) => sample.twoSecondComprehension).length;
+  const typography = {
+    topbar: readFont("#gridlyPortraitV2 .gridly-v2-watch"),
+    primaryHeadline: readFont("#gridlyV2TopStatusPrimary"),
+    secondaryHeadline: readFont("#gridlyV2TopStatusSecondary"),
+    microline: readFont("#gridlyTopAwarenessMicroline, .gridly-v2-top-awareness-microline"),
+    alertTitle: readFont(".gridly-alert-row strong, .alert-item strong"),
+    dockLabel: readFont("#gridlyPortraitV2 .gridly-v2-bottom-dock em")
+  };
+  const spacing = {
+    topbar: readBox("#gridlyPortraitV2 .gridly-v2-topbar"),
+    statusPill: readBox("#gridlyPortraitV2 .gridly-v2-status-pill"),
+    segments: readBox("#gridlyPortraitV2 .gridly-v2-segments"),
+    bottomDock: readBox("#gridlyPortraitV2 .gridly-v2-bottom-dock"),
+    visibleAlertCardCount: visibleAlertCards.length,
+    alertCardSample: visibleAlertCards.slice(0, 2).map((card) => {
+      const style = window.getComputedStyle(card);
+      const rect = card.getBoundingClientRect();
+      return { height: Math.round(rect.height), padding: style.padding, margin: style.margin, gap: style.gap || "" };
+    })
+  };
+  const currentDominance = hasActiveAlertLanguage
+    ? "An active incident or mobility consequence dominates the top panel."
+    : "A generic route-clear status dominates the top panel.";
+  const shouldDominate = "The user-first awareness answer should dominate: what changed locally, where it is, how recent it is, and whether the community is quiet or active.";
+  const premiumScore = Math.max(1, Math.min(10,
+    5
+    + (hasActiveAlertLanguage ? 1 : 0)
+    + (hasCommunityLanguage ? 1 : 0)
+    + (microline ? 1 : 0)
+    + (visibleAlertCards.length ? 1 : 0)
+    - (primaryHeadline.length < 18 ? 1 : 0)
+    - (twoSecondPassCount < Math.min(alertSamples.length, 1) ? 1 : 0)
+  ));
+
+  return {
+    auditVersion: "V207-awareness-experience-audit",
+    currentTopPanelAnalysis: {
+      primaryHeadline,
+      secondaryHeadline,
+      awarenessMicroline: microline || "Not visible or not populated in the current state.",
+      scopeFilters,
+      communityPulseHeadline: pulseHeadline || "Not visible in the Portrait V2 top stack.",
+      communityPulseCopy: pulseCopy || "Not visible in the Portrait V2 top stack.",
+      activeReportCount,
+      currentDominance,
+      shouldDominate,
+      findings: [
+        "The status pill is compact and operational, but it reads more like route status than a daily awareness briefing.",
+        "The secondary line is useful for impact/freshness when alerts exist; quiet states fall back to generic reassurance.",
+        "The filter row consumes early visual attention even though filters are a secondary control after the awareness answer."
+      ]
+    },
+    awarenessHierarchyAnalysis: {
+      currentHierarchy: ["brand/watch label", "status pill headline", "status pill subline", "scope filters", "map"],
+      recommendedHierarchy: ["personal/local greeting or awareness headline", "specific disruption or quiet-day summary", "where + freshness + community report count", "map", "filters/actions"],
+      gap: "The current top panel answers whether routes are clear, but Gridly's product promise should first answer what neighbors have reported before the driver goes."
+    },
+    informationDensityAnalysis: {
+      densityAssessment: "Medium-high in the top 150px because brand, status, microline, and five filters compete for attention.",
+      usefulDensity: "The primary and secondary status lines carry the right data primitives but need clearer hierarchy and less generic quiet-state copy.",
+      overloadRisks: ["Five scope chips appear before the user has read the core awareness summary.", "Microline text can become too small to carry important community context."],
+      underusedAreas: ["The quiet-state headline has room to be warmer and more community-aware.", "Alert cards can expose location and freshness as structured metadata instead of secondary small text only."]
+    },
+    typographyAnalysis: {
+      sampledTypography: typography,
+      recommendations: [
+        "Make the daily primary headline larger/stronger than the current compact status label when this becomes an implementation sprint.",
+        "Keep freshness/community metadata lighter, but not below comfortable mobile scan size.",
+        "Use title case or sentence case for premium awareness copy; reserve all-caps for short route/crossing identifiers only.",
+        "Give alert titles a clear first line, then use smaller but legible metadata chips for where and how recent."
+      ]
+    },
+    spacingAnalysis: {
+      sampledSpacing: spacing,
+      findings: [
+        "The top stack is efficient, but efficiency currently wins over breathing room and premium briefing feel.",
+        "Status-to-filter spacing is tight; filters feel coupled to the headline rather than secondary controls.",
+        "Bottom dock spacing feels polished and should remain action-oriented, while the top panel can become more editorial."
+      ],
+      opportunities: ["Add more vertical breathing room inside the awareness card.", "Separate controls from the awareness summary with clearer spacing or lower emphasis.", "Allow alert cards enough vertical rhythm for title, location, and freshness to scan independently."]
+    },
+    alertCardAnalysis: {
+      visibleAlertCardCount: visibleAlertCards.length,
+      detectedAlertCardCount: alertCardNodes.length,
+      samples: alertSamples,
+      twoSecondComprehensionPassCount: twoSecondPassCount,
+      twoSecondComprehensionSummary: alertSamples.length
+        ? (twoSecondPassCount === alertSamples.length ? "Current visible sample passes the what/where/freshness scan." : "At least one visible sample does not make what/where/freshness obvious within a 2-second scan.")
+        : "No visible alert cards are available in the current DOM state; evaluate with active report fixtures before implementation.",
+      recommendations: [
+        "Structure each card as: event title, exact location/corridor, freshness + community count.",
+        "Avoid generic first lines such as 'Impacted Movement' unless the next line immediately states the specific place.",
+        "Make freshness visible without opening details."
+      ]
+    },
+    routeIntelligenceAnalysis: {
+      currentSignal: hasRouteLanguage ? "Route/movement language is present in the top copy." : "Route language is minimal in the current top copy.",
+      recommendation: "Route intelligence should support the awareness headline, not replace it. Prefer 'No major mobility issues reported near your route' or 'Flooding reported on TX 146' over generic route-clear copy.",
+      guardrail: "No route logic changes are recommended for this sprint; this is copy and hierarchy strategy only."
+    },
+    communityAwarenessAnalysis: {
+      currentFeel: hasCommunityLanguage ? "Emerging community-powered awareness network" : "Closer to a compact map/traffic status app than a community-powered awareness network",
+      evidence: { hasCommunityLanguage, activeReportCount, pulseHeadline, pulseCopy, microline },
+      recommendations: [
+        "Use 'reported' and 'community activity' language in the daily top state so the source of awareness is obvious.",
+        "Quiet days should still feel community-powered: 'No major issues reported' plus 'Community activity is quiet.'",
+        "Moderate/high activity should make report count and freshness visible before filters."
+      ]
+    },
+    premiumExperienceScore: {
+      score: premiumScore,
+      scale: "1-10",
+      rationale: "The shell has polished glass styling and functional intelligence, but the daily-use hierarchy still feels utilitarian compared with onboarding because the first read lacks a warmer awareness brief and explicit community positioning."
+    },
+    strongestElements: [
+      "Compact always-available Portrait V2 shell with strong dock affordances.",
+      "Existing top-status data model already includes active alert, impact, freshness, and microline inputs.",
+      "Alert rendering pipeline has location-resolution and freshness primitives available for clearer cards.",
+      "Community Pulse model provides the right foundation for 'neighbors reporting for neighbors' positioning."
+    ],
+    weakestElements: [
+      "Generic quiet-state copy under-expresses Gridly's 'Know Before You Go' promise.",
+      "Scope filters compete too early with the awareness headline.",
+      "Community report counts are not consistently dominant in the first screen.",
+      "Alert cards can require too much reading to separate what happened, where, and how recent."
+    ],
+    topImprovementOpportunities: [
+      { rank: 1, opportunity: "Replace generic route-clear top copy with a daily local awareness brief.", expectedImpact: "Higher premium feel and clearer product positioning." },
+      { rank: 2, opportunity: "Promote what/where/freshness/community count as the top panel's canonical information order.", expectedImpact: "Faster comprehension and stronger trust." },
+      { rank: 3, opportunity: "Demote filters visually until after the awareness answer.", expectedImpact: "Less clutter on first read without changing route/filter logic." },
+      { rank: 4, opportunity: "Standardize alert card anatomy around title, location, age, and report count.", expectedImpact: "Better 2-second scanning." },
+      { rank: 5, opportunity: "Introduce quiet/moderate/high state copy models that all feel community-powered.", expectedImpact: "Daily-use experience catches up to onboarding quality." }
+    ],
+    recommendedNextSprint: {
+      name: "Portrait V2 Awareness Brief UI Refinement",
+      scope: ["top panel copy hierarchy", "quiet/moderate/high state content models", "alert card visual hierarchy", "community report-count visibility", "spacing/typography polish"],
+      explicitNonScope: ["onboarding", "settings", "lifecycle systems", "cleanup systems", "hazard placement", "route logic", "alert logic"],
+      successCriteria: [
+        "A user can identify what happened, where, and freshness in under 2 seconds.",
+        "Quiet state still communicates community-powered local awareness.",
+        "Top panel feels like Gridly, not a generic traffic/map status widget."
+      ]
+    },
+    recommendedHeadlineModels: {
+      quiet: "Good Morning Denise — No major mobility issues reported in Dayton.",
+      moderate: "Good Morning Denise — Flooding reported on TX 146.",
+      high: "Good Morning Denise — Multiple disruptions reported across Dayton."
+    },
+    recommendedQuietState: {
+      headline: "Good Morning Denise",
+      primary: "No major mobility issues reported in Dayton.",
+      secondary: "Community activity is quiet.",
+      metadata: "Last checked just now",
+      designIntent: "Warm, calm, and community-powered without pretending nothing could change."
+    },
+    recommendedModerateState: {
+      headline: "Good Morning Denise",
+      primary: "Flooding reported on TX 146",
+      secondary: "Between US 90 and Brown Road",
+      metadata: "Latest community report 8 min ago",
+      designIntent: "Specific event first, precise place second, freshness third."
+    },
+    recommendedHighActivityState: {
+      headline: "Good Morning Denise",
+      primary: "Multiple disruptions reported across Dayton.",
+      secondary: "8 active community reports.",
+      metadata: "Review before you go",
+      designIntent: "Escalate urgency and community volume while avoiding panic language."
+    }
+  };
+}
+
+window.gridlyAwarenessExperienceAudit = gridlyAwarenessExperienceAudit;
+exposeGridlyAuditHelper("gridlyAwarenessExperienceAudit", gridlyAwarenessExperienceAudit);
+
+
 window.gridlyVisualRegressionAudit = function gridlyVisualRegressionAudit() {
   try {
   const settingButtons = [
