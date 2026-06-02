@@ -22498,13 +22498,14 @@ function getGridlyTopAwarenessHeadlineLocationIntelligence(text = "", detail = {
   return classifyGridlyTopAwarenessLocationIntelligence(detail);
 }
 
-function buildGridlyTopAwarenessSpecificHeadlineSelection(detail = {}) {
+function buildGridlyTopAwarenessSpecificHeadlineSelection(detail = {}, options = {}) {
   const empty = {
     headline: "",
     source: "",
     type: "generic_fallback",
     locationIntelligence: classifyGridlyTopAwarenessLocationIntelligence(detail),
-    fallbackReason: "no_selected_awareness_detail"
+    fallbackReason: "no_selected_awareness_detail",
+    crossingCandidate: null
   };
   if (!detail || typeof detail !== "object") return empty;
   const candidates = [];
@@ -22514,7 +22515,13 @@ function buildGridlyTopAwarenessSpecificHeadlineSelection(detail = {}) {
     const locationIntelligence = getGridlyTopAwarenessHeadlineLocationIntelligence(text, detail);
     candidates.push({ headline: text, source, type, locationIntelligence });
   };
-  if (typeof buildGridlyRoadHazardTxDotStyleCandidate === "function") {
+  const isCrossingDetail = isGridlyRailOrCrossingCategory(detail?.resolvedCategory || detail?.category || detail?.type || "") || isGridlyAlertRailOrCrossingRelated(detail.item || detail);
+  let crossingCandidate = null;
+  if (isCrossingDetail && typeof buildGridlyCrossingAlertCandidate === "function") {
+    crossingCandidate = buildGridlyCrossingAlertCandidate(detail.item || detail, options);
+    addCandidate(crossingCandidate.text, crossingCandidate.source || "crossing.locationFields", "crossing_location_headline");
+  }
+  if (!isCrossingDetail && typeof buildGridlyRoadHazardTxDotStyleCandidate === "function") {
     const roadHazard = buildGridlyRoadHazardTxDotStyleCandidate(detail.item || detail);
     const roadHazardLocation = roadHazard.referenceRoadA && roadHazard.referenceRoadB
       ? `${roadHazard.road} between ${roadHazard.referenceRoadA} and ${roadHazard.referenceRoadB}`
@@ -22524,9 +22531,9 @@ function buildGridlyTopAwarenessSpecificHeadlineSelection(detail = {}) {
       : { value: roadHazard.text, source: roadHazard.source };
     addCandidate(resolvedRoadHazardSummary.value, resolvedRoadHazardSummary.source || roadHazard.source || "roadHazard.txdotStyle", "road_hazard_location_headline");
   }
-  if (typeof buildGridlyCrossingAlertCandidate === "function") {
-    const crossing = buildGridlyCrossingAlertCandidate(detail.item || detail);
-    addCandidate(crossing.text, crossing.source || "crossing.locationFields", "crossing_location_headline");
+  if (!isCrossingDetail && typeof buildGridlyCrossingAlertCandidate === "function") {
+    crossingCandidate = buildGridlyCrossingAlertCandidate(detail.item || detail, options);
+    addCandidate(crossingCandidate.text, crossingCandidate.source || "crossing.locationFields", "crossing_location_headline");
   }
   addCandidate(detail.reusedAlertText || detail.locationReusedAlertText, detail.reusedAlertSource || detail.lightweightLocationSourceField || "lightweightActiveAwareness.reusedAlertText", "reused_alert_location_headline");
   const resolvedSummary = buildGridlyLightweightSummaryFromResolvedDetail(detail);
@@ -22534,12 +22541,13 @@ function buildGridlyTopAwarenessSpecificHeadlineSelection(detail = {}) {
 
   const selected = candidates.find((candidate) => candidate.locationIntelligence?.usable && isGridlyLightweightReusableAlertSummary(candidate.headline));
   if (selected) {
-    return { ...selected, fallbackReason: "" };
+    return { ...selected, fallbackReason: "", crossingCandidate };
   }
   return {
     ...empty,
     locationIntelligence: classifyGridlyTopAwarenessLocationIntelligence(detail),
-    fallbackReason: candidates.length ? "candidate_headlines_lacked_usable_location_intelligence" : "no_location_headline_candidates_available"
+    fallbackReason: candidates.length ? "candidate_headlines_lacked_usable_location_intelligence" : "no_location_headline_candidates_available",
+    crossingCandidate
   };
 }
 
@@ -22992,12 +23000,25 @@ function getGridlyAlertNestedTextValue(source = {}, path = "") {
   return normalizeGridlyLightweightAlertSummaryText(value);
 }
 
-function getGridlyAlertFirstTextValue(alert = {}, paths = []) {
+function getGridlyAlertTextEntries(alert = {}, paths = [], sourcePrefix = "") {
+  const entries = [];
+  const seen = new Set();
   for (const path of paths) {
     const text = getGridlyAlertNestedTextValue(alert, path);
-    if (text) return text;
+    const key = text.toLowerCase();
+    if (!text || seen.has(key)) continue;
+    seen.add(key);
+    entries.push({ value: text, source: sourcePrefix ? `${sourcePrefix}.${path}` : path });
   }
-  return "";
+  return entries;
+}
+
+function getGridlyAlertFirstTextEntry(alert = {}, paths = [], sourcePrefix = "") {
+  return getGridlyAlertTextEntries(alert, paths, sourcePrefix)[0] || { value: "", source: "" };
+}
+
+function getGridlyAlertFirstTextValue(alert = {}, paths = []) {
+  return getGridlyAlertFirstTextEntry(alert, paths).value;
 }
 
 function getGridlyRoadHazardLabel(alert = {}) {
@@ -23257,51 +23278,148 @@ function getGridlyCrossingMetadataForAlert(alert = {}) {
   return {};
 }
 
-function buildGridlyCrossingAlertCandidate(alert = {}) {
-  if (!alert || typeof alert !== "object" || !isGridlyAlertRailOrCrossingRelated(alert)) return { text: "", source: "" };
+const GRIDLY_CROSSING_LOCATION_FIELD_NAMES = [
+  "crossingRoad",
+  "crossingName",
+  "street",
+  "road",
+  "roadName",
+  "primaryRoad",
+  "referenceRoad",
+  "referenceRoadA",
+  "referenceRoadB",
+  "intersectingRoad",
+  "crossStreet",
+  "nearestCrossStreet",
+  "roadwayRef",
+  "normalizedLocation",
+  "resolvedLocation",
+  "localizedSummary",
+  "renderedAlertRowLabel",
+  "alertRowLabel",
+  "raw",
+  "source",
+  "latestReport"
+];
+
+function expandGridlyCrossingLocationFieldPaths(fieldNames = GRIDLY_CROSSING_LOCATION_FIELD_NAMES) {
+  const containerPrefixes = ["", "raw.", "source.", "latestReport.", "raw.latestReport.", "source.latestReport.", "latestReport.raw.", "latestReport.source."];
+  const paths = [];
+  const seen = new Set();
+  containerPrefixes.forEach((prefix) => {
+    fieldNames.forEach((field) => {
+      const path = `${prefix}${field}`;
+      if (!seen.has(path)) {
+        seen.add(path);
+        paths.push(path);
+      }
+    });
+  });
+  return paths;
+}
+
+function isGridlyLocationAwareCrossingHeadline(value = "") {
+  const text = normalizeGridlyLightweightAlertSummaryText(value);
+  if (!/\b(?:crossing blocked|blocked crossing|train blocking|rail(?:road)? crossing)\b/i.test(text)) return false;
+  const parsed = parseGridlyCrossingLocationPartsFromText(text);
+  return Boolean(parsed.road && parsed.referenceRoad);
+}
+
+function getGridlyRenderedAlertsCrossingHeadlineCandidate(options = {}) {
+  if (typeof document === "undefined") return { text: "", source: "", road: "", referenceRoad: "", usedRenderedAlertsCrossingHeadline: false };
+  const panel = document.querySelector("#alertsPanel, #gridlyAlertsPanel, #alertsSection:not([hidden]), .alerts-panel, [data-gridly-alerts-panel], .gridly-alerts-active") || document;
+  const nodes = [];
+  const headingNode = panel?.querySelector?.("[data-gridly-alerts-panel-heading], .gridly-alert-headline") || null;
+  if (headingNode) nodes.push({ node: headingNode, source: headingNode?.dataset?.gridlyAlertsPanelHeadingSource || "dom.renderedAlertsPanelHeading.textContent" });
+  [
+    ".gridly-alert-row",
+    "[data-gridly-alert-row]",
+    "[data-gridly-alert-summary]",
+    "[data-gridly-alert-title]",
+    "[data-gridly-alert-headline]"
+  ].flatMap((selector) => Array.from(panel.querySelectorAll(selector))).forEach((node) => {
+    nodes.push({
+      node,
+      source: node?.dataset?.gridlyAlertSummary ? "dom.data-gridly-alert-summary"
+        : node?.dataset?.gridlyAlertTitle ? "dom.data-gridly-alert-title"
+          : node?.dataset?.gridlyAlertHeadline ? "dom.data-gridly-alert-headline"
+            : "dom.gridlyAlertRows.textContent"
+    });
+  });
+  const seen = new Set();
+  for (const entry of nodes) {
+    const rawText = safeDisplayText(entry.node?.dataset?.gridlyAlertSummary || entry.node?.dataset?.gridlyAlertTitle || entry.node?.dataset?.gridlyAlertHeadline || entry.node?.textContent, "");
+    const text = normalizeGridlyLightweightAlertSummaryText(rawText);
+    const key = text.toLowerCase();
+    if (!text || seen.has(key) || !isGridlyLocationAwareCrossingHeadline(text)) continue;
+    seen.add(key);
+    const parsed = parseGridlyCrossingLocationPartsFromText(text);
+    return { text, source: entry.source, road: parsed.road, referenceRoad: parsed.referenceRoad, usedRenderedAlertsCrossingHeadline: true };
+  }
+  return { text: "", source: "", road: "", referenceRoad: "", usedRenderedAlertsCrossingHeadline: false };
+}
+
+function getGridlyCrossingLocationTextEntry(alert = {}, role = "reference") {
+  const baseFields = role === "road"
+    ? ["road", "roadName", "primaryRoad", "roadwayRef", "resolvedRoadName", "displayRoadName", "routeName", "route", "corridor", "highway"]
+    : ["referenceRoad", "referenceRoadA", "referenceRoadB", "intersectingRoad", "crossStreet", "nearestCrossStreet", "crossingRoad", "crossingName", "street", "road", "roadName", "roadwayRef", "normalizedLocation", "resolvedLocation", "localizedSummary", "renderedAlertRowLabel", "alertRowLabel"];
+  const paths = expandGridlyCrossingLocationFieldPaths(baseFields);
+  return getGridlyAlertFirstTextEntry(alert, paths, "crossing.locationFields");
+}
+
+function buildGridlyCrossingAlertCandidate(alert = {}, options = {}) {
+  if (!alert || typeof alert !== "object" || !isGridlyAlertRailOrCrossingRelated(alert)) return { text: "", source: "", road: "", referenceRoad: "", usedRenderedAlertsCrossingHeadline: false };
   const metadata = getGridlyCrossingMetadataForAlert(alert);
-  const renderedText = getGridlyAlertFirstTextValue(alert, [
-    "resolvedHeadline", "finalHeadline", "localizedSummary", "summary", "headline", "title",
-    "raw.resolvedHeadline", "raw.finalHeadline", "raw.localizedSummary", "raw.summary", "raw.headline", "raw.title",
-    "source.resolvedHeadline", "source.finalHeadline", "source.localizedSummary", "source.summary", "source.headline", "source.title"
-  ]);
+  const renderedCandidate = getGridlyRenderedAlertsCrossingHeadlineCandidate(options);
+  const renderedTextEntry = getGridlyAlertFirstTextEntry(alert, [
+    "renderedAlertRowLabel", "alertRowLabel", "resolvedHeadline", "finalHeadline", "localizedSummary", "summary", "headline", "title",
+    "raw.renderedAlertRowLabel", "raw.alertRowLabel", "raw.resolvedHeadline", "raw.finalHeadline", "raw.localizedSummary", "raw.summary", "raw.headline", "raw.title",
+    "source.renderedAlertRowLabel", "source.alertRowLabel", "source.resolvedHeadline", "source.finalHeadline", "source.localizedSummary", "source.summary", "source.headline", "source.title",
+    "latestReport.renderedAlertRowLabel", "latestReport.alertRowLabel", "latestReport.resolvedHeadline", "latestReport.finalHeadline", "latestReport.localizedSummary", "latestReport.summary", "latestReport.headline", "latestReport.title"
+  ], "crossing.renderedText");
+  const renderedText = renderedTextEntry.value;
   const parsedRendered = parseGridlyCrossingLocationPartsFromText(renderedText);
-  const parsedLocationLabel = parseGridlyCrossingLocationPartsFromText(getGridlyAlertFirstTextValue(alert, [
-    "resolvedLocationLabel", "locationLabel", "location", "localizedLocation", "locationPhrase",
-    "raw.resolvedLocationLabel", "raw.locationLabel", "raw.location", "raw.localizedLocation", "raw.locationPhrase",
-    "source.resolvedLocationLabel", "source.locationLabel", "source.location", "source.localizedLocation", "source.locationPhrase"
-  ]));
-  const road = normalizeGridlyRoadHazardRoadComponent(getGridlyAlertFirstTextValue(alert, [
-    "roadName", "primaryRoad", "resolvedRoadName", "displayRoadName", "routeName", "route", "corridor", "highway",
-    "raw.roadName", "raw.primaryRoad", "raw.resolvedRoadName", "raw.displayRoadName", "raw.routeName", "raw.route", "raw.corridor", "raw.highway",
-    "source.roadName", "source.primaryRoad", "source.resolvedRoadName", "source.displayRoadName", "source.routeName", "source.route", "source.corridor", "source.highway"
-  ])) || parsedLocationLabel.road || parsedRendered.road || normalizeGridlyRoadHazardRoadComponent(metadata.roadName || "");
+  const parsedRenderedPanel = parseGridlyCrossingLocationPartsFromText(renderedCandidate.text);
+  const locationTextEntry = getGridlyAlertFirstTextEntry(alert, expandGridlyCrossingLocationFieldPaths([
+    "normalizedLocation", "resolvedLocation", "resolvedLocationLabel", "locationLabel", "location", "localizedLocation", "locationPhrase", "localizedSummary", "renderedAlertRowLabel", "alertRowLabel"
+  ]), "crossing.locationText");
+  const parsedLocationLabel = parseGridlyCrossingLocationPartsFromText(locationTextEntry.value);
+  const roadEntry = getGridlyCrossingLocationTextEntry(alert, "road");
+  const road = normalizeGridlyRoadHazardRoadComponent(roadEntry.value)
+    || parsedLocationLabel.road
+    || parsedRendered.road
+    || parsedRenderedPanel.road
+    || normalizeGridlyRoadHazardRoadComponent(metadata.roadName || "");
   const refs = [];
   const pushRef = (value = "", source = "") => pushGridlyRoadHazardReferenceRoad(refs, value, road, source);
-  pushRef(getGridlyAlertFirstTextValue(alert, [
-    "referenceRoad", "referenceRoadA", "crossStreet", "crossStreetA", "nearestCrossStreet", "nearbyCrossStreet", "nearestRoadName", "nearestRoad",
-    "raw.referenceRoad", "raw.referenceRoadA", "raw.crossStreet", "raw.crossStreetA", "raw.nearestCrossStreet", "raw.nearbyCrossStreet", "raw.nearestRoadName", "raw.nearestRoad",
-    "source.referenceRoad", "source.referenceRoadA", "source.crossStreet", "source.crossStreetA", "source.nearestCrossStreet", "source.nearbyCrossStreet", "source.nearestRoadName", "source.nearestRoad"
-  ]), "crossing.referenceRoad");
-  pushRef(getGridlyAlertFirstTextValue(alert, [
-    "crossingName", "crossing_name", "resolvedCrossingName", "crossingLabel", "crossingRoad", "knownLocation", "locationName",
-    "raw.crossingName", "raw.crossing_name", "raw.resolvedCrossingName", "raw.crossingLabel", "raw.crossingRoad", "raw.knownLocation", "raw.locationName",
-    "source.crossingName", "source.crossing_name", "source.resolvedCrossingName", "source.crossingLabel", "source.crossingRoad", "source.knownLocation", "source.locationName"
-  ]), "crossing.crossingName");
-  pushRef(parsedLocationLabel.referenceRoad, "crossing.resolvedLocationLabel:parsed_reference");
-  pushRef(parsedRendered.referenceRoad, "crossing.renderedText:parsed_reference");
+  const referencePaths = expandGridlyCrossingLocationFieldPaths(["referenceRoad", "referenceRoadA", "referenceRoadB", "intersectingRoad", "crossStreet", "nearestCrossStreet", "crossingRoad", "crossingName", "street", "road", "roadName", "roadwayRef", "normalizedLocation", "resolvedLocation", "localizedSummary", "renderedAlertRowLabel", "alertRowLabel"]);
+  getGridlyAlertTextEntries(alert, referencePaths, "crossing.locationFields").forEach((entry) => {
+    pushRef(entry.value, entry.source || "crossing.locationFields.referenceRoad");
+  });
+  pushRef(parsedLocationLabel.referenceRoad, `${locationTextEntry.source || "crossing.locationText"}:parsed_reference`);
+  pushRef(parsedRendered.referenceRoad, `${renderedTextEntry.source || "crossing.renderedText"}:parsed_reference`);
+  pushRef(parsedRenderedPanel.referenceRoad, `${renderedCandidate.source || "dom.renderedAlertsCrossingHeadline"}:parsed_reference`);
   pushRef(metadata.crossingName || "", "crossing.metadata.crossingName");
   const referenceRoad = refs[0]?.road || "";
   if (road && referenceRoad) {
-    return { text: normalizeGridlyLightweightAlertSummaryText(`Crossing Blocked at ${road} and ${referenceRoad}`), source: refs[0]?.source || "crossing.locationFields.road+reference", road, referenceRoad };
+    return {
+      text: normalizeGridlyLightweightAlertSummaryText(`Crossing Blocked at ${road} and ${referenceRoad}`),
+      source: refs[0]?.source || "crossing.locationFields.road+reference",
+      road,
+      referenceRoad,
+      usedRenderedAlertsCrossingHeadline: Boolean(renderedCandidate.usedRenderedAlertsCrossingHeadline && areGridlyRoadHazardRoadsEquivalent(referenceRoad, renderedCandidate.referenceRoad))
+    };
+  }
+  if (renderedCandidate.text) {
+    return { ...renderedCandidate, source: renderedCandidate.source || "dom.renderedAlertsCrossingHeadline", usedRenderedAlertsCrossingHeadline: true };
   }
   if (road) {
-    return { text: normalizeGridlyLightweightAlertSummaryText(`Crossing Blocked on ${road}`), source: "crossing.locationFields.road", road, referenceRoad: "" };
+    return { text: normalizeGridlyLightweightAlertSummaryText(`Crossing Blocked on ${road}`), source: roadEntry.source || "crossing.locationFields.road", road, referenceRoad: "", usedRenderedAlertsCrossingHeadline: false };
   }
   if (renderedText && hasGridlyTopAwarenessUsableLocationIntelligence(getGridlyLightweightLocationFromHeadline(renderedText))) {
-    return { text: renderedText, source: "crossing.alreadyRenderedLocationAwareText", road: "", referenceRoad: "" };
+    return { text: renderedText, source: renderedTextEntry.source || "crossing.alreadyRenderedLocationAwareText", road: "", referenceRoad: "", usedRenderedAlertsCrossingHeadline: false };
   }
-  return { text: renderedText || "Rail crossing blocked", source: renderedText ? "crossing.renderedTextFallback" : "crossing.default", road: "", referenceRoad: "" };
+  return { text: renderedText || "Rail crossing blocked", source: renderedText ? (renderedTextEntry.source || "crossing.renderedTextFallback") : "crossing.default", road: "", referenceRoad: "", usedRenderedAlertsCrossingHeadline: false };
 }
 
 function getGridlyAlertsPanelHeadingSeverityScore(alert = {}) {
@@ -23744,7 +23862,8 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
   const reusedAlertSummary = Boolean(selectedActiveDetail?.reusedAlertSummary);
   const reusedAlertSource = selectedActiveDetail?.reusedAlertSource || "";
   const reusedAlertText = safeDisplayText(selectedActiveDetail?.reusedAlertText, "");
-  const topAwarenessHeadlineSelection = buildGridlyTopAwarenessSpecificHeadlineSelection(selectedActiveDetail || {});
+  const topAwarenessHeadlineSelection = buildGridlyTopAwarenessSpecificHeadlineSelection(selectedActiveDetail || {}, options);
+  const topAwarenessCrossingCandidate = topAwarenessHeadlineSelection.crossingCandidate || null;
   const topAwarenessLocationIntelligence = topAwarenessHeadlineSelection.locationIntelligence || classifyGridlyTopAwarenessLocationIntelligence(selectedActiveDetail || {});
   const topAwarenessSpecificLocationApplied = Boolean(topAwarenessHeadlineSelection.headline && topAwarenessLocationIntelligence.usable);
   const lightweightSummaryReuseApplied = Boolean(!topAwarenessSpecificLocationApplied && reusedAlertSummary && reusedAlertText);
@@ -23874,6 +23993,11 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
     topAwarenessHybridApplied,
     topAwarenessHybridFallbackReason: topAwarenessHybridApplied ? "" : (topAwarenessCommunityContext.fallbackReason || topAwarenessFallbackReason || ""),
     topAwarenessHeadlineSource,
+    topAwarenessCrossingHeadlineSource: topAwarenessCrossingCandidate?.source || "",
+    topAwarenessCrossingRoad: topAwarenessCrossingCandidate?.road || "",
+    topAwarenessCrossingReferenceRoad: topAwarenessCrossingCandidate?.referenceRoad || "",
+    topAwarenessCrossingCandidateText: topAwarenessCrossingCandidate?.text || "",
+    topAwarenessUsedRenderedAlertsCrossingHeadline: Boolean(topAwarenessCrossingCandidate?.usedRenderedAlertsCrossingHeadline),
     topAwarenessSpecificLocationApplied,
     topAwarenessSelectedLocationIntelligence: topAwarenessLocationIntelligence,
     topAwarenessFallbackReason,
