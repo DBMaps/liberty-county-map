@@ -34076,6 +34076,87 @@ window.gridlySearchDebug = function gridlySearchDebug() {
   return debug;
 };
 
+window.gridlyMobileDestinationCommandAudit = function gridlyMobileDestinationCommandAudit() {
+  const card = document.querySelector(".mobile-destination-command");
+  const button = document.getElementById("mobileDestinationCommandBtn");
+  const readRect = (node) => {
+    if (!node || typeof node.getBoundingClientRect !== "function") return null;
+    const rect = node.getBoundingClientRect();
+    return {
+      x: rect.x,
+      y: rect.y,
+      width: rect.width,
+      height: rect.height,
+      top: rect.top,
+      right: rect.right,
+      bottom: rect.bottom,
+      left: rect.left
+    };
+  };
+  const describeElement = (node) => {
+    if (!node) return null;
+    const style = window.getComputedStyle(node);
+    return {
+      tagName: node.tagName || "",
+      id: node.id || "",
+      className: typeof node.className === "string" ? node.className : "",
+      display: style.display,
+      visibility: style.visibility,
+      opacity: style.opacity,
+      position: style.position,
+      zIndex: style.zIndex,
+      pointerEvents: style.pointerEvents,
+      rect: readRect(node)
+    };
+  };
+  const computed = card ? window.getComputedStyle(card) : null;
+  const rect = readRect(card);
+  const center = rect
+    ? {
+        x: Math.max(0, Math.min(window.innerWidth - 1, rect.left + (rect.width / 2))),
+        y: Math.max(0, Math.min(window.innerHeight - 1, rect.top + (rect.height / 2)))
+      }
+    : null;
+  const topElementAtCardCenter = center ? document.elementFromPoint(center.x, center.y) : null;
+  const cardVisible = Boolean(
+    card
+      && computed
+      && computed.display !== "none"
+      && computed.visibility !== "hidden"
+      && Number(computed.opacity || "1") > 0
+      && rect
+      && rect.width > 0
+      && rect.height > 0
+  );
+  const cardCovered = Boolean(cardVisible && topElementAtCardCenter && topElementAtCardCenter !== card && !card.contains(topElementAtCardCenter));
+  const searchSurfaceCallable = typeof openGridlyDestinationSearchSurface === "function";
+  return {
+    exists: Boolean(card),
+    buttonExists: Boolean(button),
+    bodyLayoutMode: document.body?.dataset?.layoutMode || null,
+    computed: computed
+      ? {
+          display: computed.display,
+          visibility: computed.visibility,
+          opacity: computed.opacity,
+          position: computed.position,
+          zIndex: computed.zIndex
+        }
+      : null,
+    boundingRect: rect,
+    parentInfo: describeElement(card?.parentElement || null),
+    topElementAtCardCenter: describeElement(topElementAtCardCenter),
+    cardCovered,
+    clickingButtonWouldCallOpenGridlyDestinationSearchSurface: Boolean(
+      button
+        && button.dataset?.searchBound === "true"
+        && searchSurfaceCallable
+        && cardVisible
+        && !cardCovered
+    )
+  };
+};
+
 
 function getGridlyMapInstance() {
   const candidates = [
