@@ -14626,7 +14626,13 @@ body.gridly-theme-light .gridly-welcome-step p { color: #435b72; }
 body.gridly-theme-light .gridly-welcome-step h2,
 body.gridly-theme-light .gridly-welcome-tagline,
 body.gridly-theme-light .gridly-welcome-watching-label,
-body.gridly-theme-light .gridly-welcome-final-note { color: #102234 !important; }
+body.gridly-theme-light .gridly-welcome-final-note,
+body.gridly-theme-light .gridly-welcome-final-copy strong { color: #102234 !important; }
+body.gridly-theme-light .gridly-welcome-final-copy {
+  border-color: rgba(27, 58, 87, 0.14);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(232, 246, 255, 0.68));
+}
+body.gridly-theme-light .gridly-welcome-final-copy span { color: #347061; }
 body.gridly-theme-light :is(.gridly-welcome-hero-copy, .gridly-welcome-impact-list, .gridly-welcome-route-stack, .gridly-welcome-checklist, .gridly-welcome-personalization-grid label) {
   color: #102234;
   border-color: rgba(27, 58, 87, 0.14);
@@ -15192,17 +15198,43 @@ body.gridly-theme-light .settings-place-card .gridly-v2-tile.settings-place-acti
   background: rgba(255, 255, 255, 0.045);
 }
 .gridly-welcome-checklist li::first-letter { color: #8df6dd; }
-.gridly-welcome-step[data-gridly-welcome-step="6"] { gap: 18px; padding-bottom: 38px; }
-.gridly-welcome-step[data-gridly-welcome-step="6"] h2 { max-width: 12ch; }
+.gridly-welcome-step[data-gridly-welcome-step="6"] { gap: 20px; padding-bottom: 40px; }
+.gridly-welcome-step[data-gridly-welcome-step="6"] h2 { max-width: 12ch; margin-bottom: 2px; }
 .gridly-welcome-final-copy {
-  max-width: 28rem !important;
-  color: rgba(226, 239, 255, 0.88) !important;
-  font-size: 1.08rem !important;
-  line-height: 1.55 !important;
+  display: grid;
+  gap: 6px;
+  width: min(100%, 24rem);
+  margin: 0 auto 2px !important;
+  padding: 16px 18px;
+  border: 1px solid rgba(105, 240, 207, 0.22);
+  border-radius: 20px;
+  color: #ffffff !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(105, 240, 207, 0.16), transparent 58%),
+    linear-gradient(145deg, rgba(74, 164, 255, 0.12), rgba(255, 255, 255, 0.045));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  text-align: center;
+}
+.gridly-welcome-final-copy span {
+  display: block;
+  color: rgba(157, 232, 213, 0.84);
+  font-size: 0.72rem;
+  font-weight: 860;
+  letter-spacing: 0.16em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+.gridly-welcome-final-copy strong {
+  display: block;
+  color: #ffffff;
+  font-size: clamp(1.16rem, 4.2vw, 1.42rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.12;
 }
 .gridly-welcome-step[data-gridly-welcome-step="6"] .gridly-welcome-checklist {
   gap: 12px;
-  margin: 4px 0 2px;
+  margin: 2px 0 4px;
   padding: 20px;
   border-color: rgba(105, 240, 207, 0.24);
   background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(105, 240, 207, 0.045));

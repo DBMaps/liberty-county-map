@@ -14696,12 +14696,13 @@ function renderGridlyWelcomePersonalization() {
   }
   if (els.gridlyWelcomeFinalCopy) {
     const homeTown = getGridlyHomeTownPreference();
-    const networkName = homeTown ? `the ${homeTown} awareness network` : "your local awareness network";
-    els.gridlyWelcomeFinalCopy.textContent = preferredName
-      ? `${preferredName}, you’re connected to ${networkName}.`
-      : homeTown
-        ? `You’re connected to ${networkName}.`
-        : `You’re connected to your town, your routes, and your community.`;
+    const networkTown = homeTown && homeTown !== "Other" ? homeTown : "Local";
+    els.gridlyWelcomeFinalCopy.replaceChildren();
+    const lead = document.createElement("span");
+    lead.textContent = "Connected to the";
+    const identity = document.createElement("strong");
+    identity.textContent = `${networkTown} Awareness Network`;
+    els.gridlyWelcomeFinalCopy.append(lead, identity);
   }
 }
 
