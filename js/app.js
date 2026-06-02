@@ -14296,7 +14296,6 @@ function getGridlyDestinationImpactPaneReasonModel() {
   }
 
   const primaryImpactLocation = String(audit?.primaryImpactLocation || "").trim();
-  if (primaryImpactLocation) reasons.push(`Best available location: ${primaryImpactLocation}`);
 
   const quiet = !routeFound || (hazards === 0 && alerts === 0 && reports === 0 && activeRail === 0);
 
@@ -14790,6 +14789,17 @@ function isGridlyDestinationRouteUsefulLocationLabel(value = "", primaryRoad = "
   return true;
 }
 
+function formatGridlyDestinationRouteDelimitedIntersection(value = "") {
+  const parts = String(value || "")
+    .split(/\s*[;|]\s*/g)
+    .map((part) => formatGridlyDestinationRouteLocationLabel(part))
+    .filter((part) => isGridlyDestinationRouteUsefulLocationLabel(part));
+  if (parts.length !== 2) return "";
+  const [primaryRoad, referenceRoad] = parts;
+  if (!isGridlyDestinationRouteUsefulLocationLabel(referenceRoad, primaryRoad)) return "";
+  return `${primaryRoad} at ${referenceRoad}`;
+}
+
 function getGridlyDestinationRouteRoadName(record = {}) {
   const directRoad = getGridlyDestinationRouteFirstUsefulPath(record, GRIDLY_DESTINATION_ROUTE_LOCATION_FIELD_PATHS.roadName);
   const resolvedRoad = directRoad || (typeof gridlyResolveHazardHistoryRoadName === "function" ? gridlyResolveHazardHistoryRoadName(record) : "");
@@ -14938,7 +14948,7 @@ function getGridlyDestinationRouteBestLocationLine(item = {}, options = {}) {
   }
   if (roadName && isGridlyDestinationRouteUsefulLocationLabel(crossingName, roadName)) return `${roadName} at ${crossingName}`;
   if (!roadName && crossingName) return crossingName;
-  if (roadName) return roadName;
+  if (roadName) return formatGridlyDestinationRouteDelimitedIntersection(roadName) || roadName;
   return "";
 }
 
