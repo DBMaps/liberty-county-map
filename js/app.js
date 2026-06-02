@@ -16383,25 +16383,38 @@ function drawGridlyDestinationRoutePreviewLine(latLngs = []) {
   if (!destinationRoutePreviewLayer && typeof leaflet?.layerGroup === "function") destinationRoutePreviewLayer = leaflet.layerGroup().addTo(map);
   if (!destinationRoutePreviewLayer) return null;
   destinationRoutePreviewLayer.clearLayers();
-  const underlay = leaflet.polyline(latLngs, {
+  const halo = leaflet.polyline(latLngs, {
     pane: "routePane",
-    color: "#8b5cf6",
-    weight: 11,
-    opacity: 0.2,
+    color: "#e8fbff",
+    weight: 24,
+    opacity: 0.18,
     lineCap: "round",
     lineJoin: "round",
-    interactive: false
+    interactive: false,
+    className: "gridly-route-signature-halo gridly-destination-route-hero-halo"
+  });
+  const shoulder = leaflet.polyline(latLngs, {
+    pane: "routePane",
+    color: "#0b5f92",
+    weight: 15,
+    opacity: 0.62,
+    lineCap: "round",
+    lineJoin: "round",
+    interactive: false,
+    className: "gridly-route-signature-shoulder gridly-destination-route-hero-shoulder"
   });
   const core = leaflet.polyline(latLngs, {
     pane: "routePane",
-    color: "#a78bfa",
-    weight: 5,
-    opacity: 0.92,
+    color: "#8ff1ff",
+    weight: 8,
+    opacity: 0.98,
     lineCap: "round",
     lineJoin: "round",
-    interactive: false
+    interactive: false,
+    className: "gridly-route-signature-core gridly-destination-route-hero-core"
   });
-  destinationRoutePreviewLayer.addLayer(underlay);
+  destinationRoutePreviewLayer.addLayer(halo);
+  destinationRoutePreviewLayer.addLayer(shoulder);
   destinationRoutePreviewLayer.addLayer(core);
   return destinationRoutePreviewLayer;
 }
@@ -39454,10 +39467,10 @@ function setGridlyDestinationMarker(result, options = {}) {
     const destinationTitle = String(normalized.title || normalized.address || "Selected destination");
     const destinationIcon = window.L.divIcon({
       className: "gridly-destination-signature-icon",
-      html: `<div class="gridly-destination-signature-marker" data-gridly-map-owner="destination" data-gridly-visual-state="destination_selected" data-gridly-selected="true" aria-hidden="true"><span></span></div>`,
-      iconSize: [42, 50],
-      iconAnchor: [21, 42],
-      popupAnchor: [0, -42]
+      html: `<div class="gridly-destination-signature-marker" data-gridly-map-owner="destination" data-gridly-visual-state="destination_selected" data-gridly-selected="true" aria-hidden="true"><span class="gridly-destination-ring"></span><span class="gridly-destination-core"></span><span class="gridly-destination-stem"></span></div>`,
+      iconSize: [48, 48],
+      iconAnchor: [24, 24],
+      popupAnchor: [0, -26]
     });
     marker = window.L.marker([coordinates.lat, coordinates.lng], {
       title: destinationTitle,
