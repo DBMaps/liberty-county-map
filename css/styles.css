@@ -16406,3 +16406,109 @@ body[data-layout-mode="portrait"] .mobile-destination-command,
   background: linear-gradient(180deg, rgba(237, 253, 255, 0.96), rgba(50, 167, 211, 0.82));
   box-shadow: 0 3px 7px rgba(0, 8, 16, 0.4);
 }
+
+/* V221.2 — destination experience composition pass: anchor route, destination, card, and nav as one lower command zone. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command {
+    left: calc(14px + env(safe-area-inset-left, 0px)) !important;
+    right: calc(14px + env(safe-area-inset-right, 0px)) !important;
+    bottom: calc(82px + env(safe-area-inset-bottom, 0px)) !important;
+    z-index: 9600 !important;
+    min-height: 84px !important;
+    gap: 12px !important;
+    padding: 12px 12px 12px 14px !important;
+    border-radius: 22px !important;
+    border-color: rgba(152, 224, 255, 0.44) !important;
+    background:
+      linear-gradient(180deg, rgba(10, 26, 43, 0.92), rgba(4, 12, 22, 0.96)) !important;
+    box-shadow:
+      0 18px 34px rgba(0, 6, 15, 0.5),
+      0 54px 70px rgba(3, 9, 17, 0.56),
+      0 -1px 0 rgba(162, 234, 255, 0.18),
+      inset 0 1px 0 rgba(239, 252, 255, 0.12) !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command::before {
+    left: 26px !important;
+    right: 26px !important;
+    top: -9px !important;
+    height: 9px !important;
+    border-radius: 999px 999px 0 0 !important;
+    background:
+      linear-gradient(90deg, transparent, rgba(145, 244, 255, 0.78) 42%, rgba(145, 244, 255, 0.78) 58%, transparent) !important;
+    opacity: 0.82 !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command::after {
+    content: "";
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    bottom: -13px;
+    height: 1px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, rgba(121, 225, 255, 0.42), transparent);
+    pointer-events: none;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command strong {
+    font-size: 0.96rem !important;
+    line-height: 1.1 !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command p {
+    color: rgba(225, 240, 255, 0.82) !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .destination-route-impact-line {
+    color: rgba(231, 250, 255, 0.98) !important;
+    font-size: 0.75rem !important;
+    font-weight: 780 !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-bottom-nav {
+    left: calc(14px + env(safe-area-inset-left, 0px)) !important;
+    right: calc(14px + env(safe-area-inset-right, 0px)) !important;
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+    z-index: 9500 !important;
+    border-radius: 20px !important;
+    border-color: rgba(135, 203, 244, 0.2) !important;
+    background: rgba(5, 13, 24, 0.92) !important;
+    box-shadow: 0 14px 30px rgba(0, 5, 13, 0.46), inset 0 1px 0 rgba(225, 245, 255, 0.08) !important;
+  }
+
+  body[data-layout-mode="portrait"] #map .leaflet-control-zoom {
+    margin-bottom: calc(178px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+#map .leaflet-pane.leaflet-routePane-pane path.gridly-route-endpoint-origin {
+  stroke: rgba(222, 246, 255, 0.88) !important;
+  stroke-width: 2 !important;
+  fill: rgba(8, 80, 116, 0.9) !important;
+  fill-opacity: 0.86 !important;
+}
+
+#map .leaflet-pane.leaflet-routePane-pane path.gridly-route-endpoint-destination {
+  stroke: rgba(250, 254, 255, 0.98) !important;
+  stroke-width: 4 !important;
+  fill: rgba(6, 49, 79, 0.98) !important;
+  fill-opacity: 0.98 !important;
+  filter:
+    drop-shadow(0 0 0 rgba(255, 255, 255, 0))
+    drop-shadow(0 10px 18px rgba(0, 13, 24, 0.54))
+    drop-shadow(0 0 10px rgba(137, 239, 255, 0.2)) !important;
+}
+
+.gridly-destination-signature-marker::before {
+  box-shadow:
+    inset 0 1px 7px rgba(255, 255, 255, 0.5),
+    0 0 0 5px rgba(5, 23, 38, 0.56),
+    0 0 0 10px rgba(108, 218, 255, 0.16) !important;
+}
+
+.gridly-destination-stem,
+.gridly-destination-signature-marker span.gridly-destination-stem {
+  height: 11px !important;
+  background: linear-gradient(180deg, rgba(237, 253, 255, 0.98), rgba(65, 189, 229, 0.86) 72%, rgba(6, 49, 79, 0.92)) !important;
+}
