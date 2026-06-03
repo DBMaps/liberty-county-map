@@ -18046,37 +18046,104 @@ function initGridlyAwarenessPanelDockContract() {
   let scheduled = false;
   let resizeObserver = null;
 
-  const readBox = (selector) => {
+  const getElementBox = (selector) => {
     const element = document.querySelector(selector);
     if (!element) return null;
     const rect = element.getBoundingClientRect();
     const style = typeof getComputedStyle === "function" ? getComputedStyle(element) : null;
     const hidden = element.hidden || style?.display === "none" || style?.visibility === "hidden" || rect.width <= 0 || rect.height <= 0;
-    return hidden ? null : rect;
+    return hidden ? null : { element, rect, style };
   };
+
+  const readBox = (selector) => getElementBox(selector)?.rect || null;
 
   const getViewportHeight = () => window.visualViewport?.height || window.innerHeight || document.documentElement.clientHeight || 0;
 
+  const createsFixedContainingBlock = (style) => {
+    if (!style) return false;
+    const contain = String(style.contain || "").toLowerCase();
+    const willChange = String(style.willChange || "").toLowerCase();
+    return (style.transform && style.transform !== "none")
+      || (style.perspective && style.perspective !== "none")
+      || (style.filter && style.filter !== "none")
+      || (style.backdropFilter && style.backdropFilter !== "none")
+      || (style.webkitBackdropFilter && style.webkitBackdropFilter !== "none")
+      || contain.includes("paint")
+      || contain.includes("layout")
+      || contain.includes("strict")
+      || contain.includes("content")
+      || willChange.includes("transform")
+      || willChange.includes("filter")
+      || willChange.includes("perspective");
+  };
+
+  const getPanelContainingBlock = (panel) => {
+    let current = panel?.parentElement || null;
+    while (current && current !== document.documentElement) {
+      const style = typeof getComputedStyle === "function" ? getComputedStyle(current) : null;
+      if (createsFixedContainingBlock(style)) return current;
+      current = current.parentElement;
+    }
+    return document.documentElement;
+  };
+
+  const getContainingBlockMeta = (panel) => {
+    const containingBlock = getPanelContainingBlock(panel);
+    const rect = containingBlock === document.documentElement
+      ? { top: 0, bottom: getViewportHeight(), height: getViewportHeight() }
+      : containingBlock.getBoundingClientRect();
+    return {
+      element: containingBlock,
+      rect,
+      label: containingBlock === document.documentElement
+        ? "documentElement(viewport)"
+        : `${containingBlock.tagName.toLowerCase()}${containingBlock.id ? `#${containingBlock.id}` : ""}${containingBlock.className ? `.${String(containingBlock.className).trim().replace(/\s+/g, ".")}` : ""}`
+    };
+  };
+
   const measure = () => {
     scheduled = false;
-    const dockRect = readBox(dockSelector);
-    if (!dockRect) return null;
+    const dockBox = getElementBox(dockSelector);
+    const panelBox = getElementBox(panelSelector);
+    if (!dockBox) return null;
     const viewportHeight = getViewportHeight();
-    const dockFootprint = Math.max(0, viewportHeight - dockRect.top);
+    const dockFootprint = Math.max(0, viewportHeight - dockBox.rect.top);
     root.style.setProperty("--gridly-awareness-dock-footprint", `${Math.ceil(dockFootprint)}px`);
     root.style.setProperty("--gridly-awareness-panel-dock-gap", `${gapPixels}px`);
-    return dockRect;
+
+    if (panelBox) {
+      const containingBlock = getContainingBlockMeta(panelBox.element);
+      const desiredPanelBottom = dockBox.rect.top - gapPixels;
+      const desiredViewportTop = desiredPanelBottom - panelBox.rect.height;
+      const safeViewportTop = Math.max(10, desiredViewportTop);
+      const containingBlockTop = Number(containingBlock.rect?.top || 0);
+      const appliedTop = Math.max(10, safeViewportTop - containingBlockTop);
+      const availableHeight = Math.max(0, desiredPanelBottom - Math.max(10, containingBlockTop));
+      root.style.setProperty("--gridly-awareness-panel-top", `${Math.round(appliedTop)}px`);
+      root.style.setProperty("--gridly-awareness-panel-available-height", `${Math.round(availableHeight)}px`);
+      root.style.setProperty("--gridly-awareness-panel-target-bottom", `${Math.round(desiredPanelBottom)}px`);
+    }
+    return dockBox.rect;
   };
 
   const schedule = () => {
     if (scheduled) return;
     scheduled = true;
-    requestAnimationFrame(measure);
+    requestAnimationFrame(() => {
+      measure();
+      requestAnimationFrame(measure);
+    });
   };
 
   window.gridlyAwarenessPanelLayoutDebug = () => {
     const dockRect = measure() || readBox(dockSelector);
-    const panelRect = readBox(panelSelector);
+    const panelBox = getElementBox(panelSelector);
+    const panelRect = panelBox?.rect || null;
+    const panelStyle = panelBox?.style || null;
+    const dockBox = getElementBox(dockSelector);
+    const dockStyle = dockBox?.style || null;
+    const containingBlock = panelBox ? getContainingBlockMeta(panelBox.element) : null;
+    const offsetParent = panelBox?.element?.offsetParent || null;
     const panelTop = panelRect ? Math.round(panelRect.top) : null;
     const panelBottom = panelRect ? Math.round(panelRect.bottom) : null;
     const dockTop = dockRect ? Math.round(dockRect.top) : null;
@@ -18090,7 +18157,25 @@ function initGridlyAwarenessPanelDockContract() {
       dockBottom,
       overlapPixels: overlap === null ? null : Math.round(overlap),
       gapPixels: gap === null ? null : Math.round(gap),
-      pass: overlap !== null && overlap <= 0
+      pass: overlap !== null && overlap <= 0 && gap >= gapPixels,
+      computedPanelPosition: panelStyle?.position || null,
+      computedPanelTopCss: panelStyle?.top || null,
+      computedPanelBottomCss: panelStyle?.bottom || null,
+      computedPanelTransform: panelStyle?.transform || null,
+      computedDockPosition: dockStyle?.position || null,
+      computedDockTopCss: dockStyle?.top || null,
+      computedDockBottomCss: dockStyle?.bottom || null,
+      computedDockFootprintVariable: root.style.getPropertyValue("--gridly-awareness-dock-footprint") || null,
+      computedGapVariable: root.style.getPropertyValue("--gridly-awareness-panel-dock-gap") || null,
+      computedPanelTopVariable: root.style.getPropertyValue("--gridly-awareness-panel-top") || null,
+      computedPanelTargetBottomVariable: root.style.getPropertyValue("--gridly-awareness-panel-target-bottom") || null,
+      containingBlock: containingBlock ? {
+        label: containingBlock.label,
+        top: Math.round(containingBlock.rect.top),
+        bottom: Math.round(containingBlock.rect.bottom),
+        height: Math.round(containingBlock.rect.height)
+      } : null,
+      offsetParent: offsetParent ? `${offsetParent.tagName.toLowerCase()}${offsetParent.id ? `#${offsetParent.id}` : ""}${offsetParent.className ? `.${String(offsetParent.className).trim().replace(/\s+/g, ".")}` : ""}` : null
     };
   };
 
@@ -18101,12 +18186,14 @@ function initGridlyAwarenessPanelDockContract() {
 
   if (typeof ResizeObserver === "function") {
     resizeObserver = new ResizeObserver(schedule);
-    const observeDock = () => {
+    const observeDockAndPanel = () => {
       const dock = document.querySelector(dockSelector);
+      const panel = document.querySelector(panelSelector);
       if (dock) resizeObserver.observe(dock);
+      if (panel) resizeObserver.observe(panel);
     };
-    observeDock();
-    document.addEventListener("DOMContentLoaded", observeDock, { once: true });
+    observeDockAndPanel();
+    document.addEventListener("DOMContentLoaded", observeDockAndPanel, { once: true });
   }
 
   const mutationObserver = typeof MutationObserver === "function"
