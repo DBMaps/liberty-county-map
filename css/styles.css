@@ -16618,18 +16618,23 @@ body[data-layout-mode="portrait"] .mobile-destination-command,
   -webkit-backdrop-filter: blur(10px);
 }
 
-/* V225.5.3 — awareness panel/dock layout contract.
-   JS measures the actual Portrait V2 dock footprint and writes
-   --gridly-awareness-dock-footprint, making the dock the source of truth for
-   the fixed awareness panel's bottom edge instead of relying on device-height
-   or fixed-offset assumptions. */
+/* V225.5.4 — awareness panel/dock measured placement contract.
+   Bottom offsets proved unreliable when the fixed panel is evaluated inside
+   nested portrait containment, so JS now measures the real dock top and panel
+   height, then writes --gridly-awareness-panel-top. The final applied CSS uses
+   top-based placement to land the panel bottom exactly above the dock gap. */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command.is-awareness-panel,
   body.gridly-mobile-awareness-panel-present[data-layout-mode="portrait"] .map-card > .mobile-destination-command,
   body.gridly-text-large[data-layout-mode="portrait"] .map-card > .mobile-destination-command.is-awareness-panel,
   body.gridly-text-large.gridly-mobile-awareness-panel-present[data-layout-mode="portrait"] .map-card > .mobile-destination-command {
-    bottom: calc(var(--gridly-awareness-dock-footprint, 118px) + var(--gridly-awareness-panel-dock-gap, 10px)) !important;
-    max-height: calc(100dvh - var(--gridly-awareness-dock-footprint, 118px) - var(--gridly-awareness-panel-dock-gap, 10px) - env(safe-area-inset-top, 0px) - 10px) !important;
+    top: max(
+      calc(env(safe-area-inset-top, 0px) + 10px),
+      var(--gridly-awareness-panel-top, calc(100dvh - var(--gridly-awareness-dock-footprint, 118px) - var(--gridly-awareness-panel-dock-gap, 10px) - 86px))
+    ) !important;
+    bottom: auto !important;
+    transform: none !important;
+    max-height: calc(var(--gridly-awareness-panel-available-height, 100dvh) - env(safe-area-inset-top, 0px) - 10px) !important;
     overflow: visible !important;
   }
 }
