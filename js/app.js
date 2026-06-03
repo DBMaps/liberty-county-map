@@ -415,6 +415,34 @@ if (typeof window !== "undefined") {
 }
 
 let selectedOtherHazardSubtype = "";
+let lastOtherHazardSubtypeClick = null;
+let lastOtherHazardReportPayloadSubtype = "";
+
+function gridlyOtherHazardDebug() {
+  const selectedCategory = (typeof selectedV2HazardType !== "undefined" && selectedV2HazardType)
+    || (typeof reportingState === "object" && reportingState ? (reportingState.selectedHazardType || "") : "")
+    || (typeof selectedQuickHazardType !== "undefined" && selectedQuickHazardType)
+    || (typeof pendingHazardPlacement !== "undefined" && pendingHazardPlacement)
+    || "";
+  const selectedSubtype = normalizeOtherHazardSubtype(selectedOtherHazardSubtype);
+  const subtypeSelectorVisible = Array.from(document.querySelectorAll("#gridlyPortraitV2SheetBody [data-v2-other-hazard-subtypes], #gridlyHazardPanel [data-other-hazard-subtype-panel]"))
+    .some((panel) => panel && !panel.hidden);
+  const placementBlocked = Boolean(selectedCategory === "other_hazard" && !selectedSubtype);
+  return {
+    selectedCategory,
+    selectedSubtype,
+    selectedSubtypeLabel: selectedSubtype ? getOtherHazardSubtypeLabel(selectedSubtype) : "",
+    subtypeSelectorVisible,
+    placementBlocked,
+    reportReady: Boolean(selectedCategory && !placementBlocked),
+    lastSubtypeClick: lastOtherHazardSubtypeClick,
+    lastReportPayloadSubtype: lastOtherHazardReportPayloadSubtype
+  };
+}
+
+if (typeof window !== "undefined") {
+  window.gridlyOtherHazardDebug = gridlyOtherHazardDebug;
+}
 
 // TxDOT-ready mapping for future ingestion. No external API calls yet.
 const ROAD_HAZARD_SOURCE_MAP = {
@@ -39006,6 +39034,8 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     ? `Shared report: ${subtypeLabel.toLowerCase()} may affect travel. (future_source: ${sourceTag})`
     : `${copy.detail} (future_source: ${sourceTag})`;
 
+  lastOtherHazardReportPayloadSubtype = normalizedOtherSubtype;
+
   const row = {
     crossing_id: `hazard-${deviceId}-${Date.now()}`,
     crossing_name: locationName
@@ -39029,7 +39059,8 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
   try {
     lastMobileReportSubmitDebug.activeSubmitCoords = { lat, lng };
     if (originalTapCoords) lastMobileReportSubmitDebug.originalTapCoords = { ...originalTapCoords };
-    lastMobileReportSubmitDebug.insertPayloadPreview = { ...row };
+    lastMobileReportSubmitDebug.insertPayloadPreview = normalizedOtherSubtype ? { ...row, subtype: normalizedOtherSubtype } : { ...row };
+    lastMobileReportSubmitDebug.lastReportPayloadSubtype = normalizedOtherSubtype;
     lastMobileReportSubmitDebug.supabaseInsertStarted = false;
     lastMobileReportSubmitDebug.supabaseInsertSucceeded = false;
     lastMobileReportSubmitDebug.supabaseInsertError = "";
@@ -40288,6 +40319,12 @@ function bindEvents() {
       const selectedSubtype = normalizeOtherHazardSubtype(actionEl.dataset.otherHazardSubtype || "");
       if (!selectedSubtype) return;
       selectedOtherHazardSubtype = selectedSubtype;
+      lastOtherHazardSubtypeClick = {
+        subtype: selectedSubtype,
+        label: getOtherHazardSubtypeLabel(selectedSubtype),
+        source: "legacy-hazard-panel",
+        at: new Date().toISOString()
+      };
       selectedQuickHazardType = "other_hazard";
       pendingHazardPlacement = null;
       document.querySelectorAll("#gridlyHazardPanel .hazard-choice-grid button").forEach((btn) => {
@@ -47178,6 +47215,17 @@ function buildRoadHazardDisplay(incident, resolvedLookup = null) {
   const areaName = [incident?.location_name, incident?.area, incident?.city, incident?.county]
     .map((value) => String(value || "").trim())
     .find((value) => value && !isNonInformativeRoadArea(value)) || "";
+  const otherHazardSubtype = category === "other_hazard"
+    ? normalizeOtherHazardSubtype(extractOtherHazardStructuredMetadata(incident).subtype)
+    : "";
+  if (otherHazardSubtype) {
+    const roadName = hasUsefulRoadName
+      ? locationContext.primary
+      : [incident?.selectedRoadName, incident?.roadName, incident?.road_name, incident?.street_name, incident?.nearest_road, incident?.crossing_name]
+        .map((value) => String(value || "").trim())
+        .find((value) => value && !isNonInformativeRoadArea(value)) || "this road";
+    title = standardizeGridlyAlertHeadline(buildOtherHazardSubtypeNarrative({ ...incident, subtype: otherHazardSubtype }, roadName, areaName));
+  }
   let locationText = "";
   if (hasUsefulRoadName) locationText = `Near ${locationContext.phrasing}`;
   else if (nearestKnownLocation && !isNonInformativeRoadArea(nearestKnownLocation)) locationText = `Near ${nearestKnownLocation}`;
@@ -53712,10 +53760,12 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   window.gridlyRefreshRouteButtonStates = refreshRouteButtonStates;
   function refreshPortraitV2ReportCtas(body, preconditions = getV2PreconditionsState()) {
     if (!body) return;
+    const disablePlacementActions = !preconditions.reportHazardSelected;
     body.querySelectorAll('[data-v2-action="report-use-location"], [data-v2-action="report-tap-map"]').forEach((button) => {
-      button.disabled = false;
-      button.classList.remove("is-disabled");
-      button.removeAttribute("aria-disabled");
+      button.disabled = disablePlacementActions;
+      button.classList.toggle("is-disabled", disablePlacementActions);
+      if (disablePlacementActions) button.setAttribute("aria-disabled", "true");
+      else button.removeAttribute("aria-disabled");
     });
   }
   function markV2BlockedInteraction(action, reason) {
@@ -54216,6 +54266,12 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         selectedV2HazardType = "other_hazard";
         selectedQuickHazardType = "other_hazard";
         selectedOtherHazardSubtype = selectedSubtype;
+        lastOtherHazardSubtypeClick = {
+          subtype: selectedSubtype,
+          label: getOtherHazardSubtypeLabel(selectedSubtype),
+          source: "portrait-v2-report",
+          at: new Date().toISOString()
+        };
         pushTapMapTrace("portrait-v2-other-hazard-subtype-selection", { source: "portrait-v2-report", subtype: selectedSubtype });
         if (typeof updateReportingState === "function") {
           updateReportingState({
@@ -54514,7 +54570,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         button.dataset.gridlySettingsBound = "1";
       }
       const isDisabledByPrecondition = (
-        (action === "route-watch-open" && !preconditions.routeReady)
+        (activeSheet === "report" && ["report-use-location", "report-tap-map"].includes(action) && !preconditions.reportHazardSelected)
+        || (action === "route-watch-open" && !preconditions.routeReady)
         || (action === "route-preview-open" && !preconditions.canViewRoute)
         || (action === "route-manage-places-open" && !preconditions.canOpenManagePlaces)
       );
