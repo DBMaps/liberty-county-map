@@ -682,7 +682,7 @@ const GRIDLY_NORMALIZED_INCIDENT_CATEGORIES = new Set([
   "txdot_damage", "txdot_other", "unknown"
 ]);
 
-const GRIDLY_ROAD_NAME_STANDARDIZATION_AUDIT_VERSION = "V233.0";
+const GRIDLY_ROAD_NAME_STANDARDIZATION_AUDIT_VERSION = "V233.1";
 const GRIDLY_ROAD_DISPLAY_STANDARDIZATION_SAMPLES = Object.freeze([
   ["Farm-to-Market Road 770", "FM 770"],
   ["Farm to Market Road 770", "FM 770"],
@@ -706,6 +706,7 @@ const GRIDLY_ROAD_DISPLAY_SURFACE_SELECTORS = Object.freeze([
   "#gridlyCommunityPulseHeadline",
   "#gridlyCommunityPulseSubline",
   "#alertsList",
+  "#gridlyPortraitV2SheetBody",
   "#roadHazardsList",
   "#mobileDestinationCommandImpact",
   "#gridlyDestinationImpactPaneSummary",
@@ -714,6 +715,14 @@ const GRIDLY_ROAD_DISPLAY_SURFACE_SELECTORS = Object.freeze([
   "#mobileAlertsMirror",
   "#routeRecommendation",
   "#routeRecommendationReason"
+]);
+const GRIDLY_ROAD_DISPLAY_NESTED_ALERT_CARD_SELECTORS = Object.freeze([
+  "#gridlyPortraitV2SheetBody [data-gridly-alert-row='true']",
+  "#gridlyPortraitV2SheetBody .gridly-alert-row",
+  "#gridlyPortraitV2SheetBody .gridly-alert-intel-card",
+  ".gridly-alerts-active [data-gridly-alert-row='true']",
+  ".gridly-alerts-active .gridly-alert-row",
+  ".gridly-alerts-active .gridly-alert-intel-card"
 ]);
 const GRIDLY_ROAD_DISPLAY_UNNORMALIZED_PATTERN = /\b(?:farm[-\s]+to[-\s]+market(?:\s+road)?|farm\s+road|county\s+road|state\s+highway|texas\s+highway|u\.?s\.?\s+highway|us\s+highway|interstate)\s*[- ]?\d+[a-z]?\b/i;
 
@@ -771,7 +780,9 @@ function gridlyRoadNameStandardizationAudit() {
     return { input, output, expected, matched: output === expected };
   });
   const userFacingSurfacesChecked = [];
+  const nestedAlertCardsChecked = [];
   const findings = [];
+  const nestedAlertInconsistencyFindings = [];
   if (typeof document !== "undefined" && document?.querySelectorAll) {
     GRIDLY_ROAD_DISPLAY_SURFACE_SELECTORS.forEach((selector) => {
       const nodes = Array.from(document.querySelectorAll(selector));
@@ -783,15 +794,41 @@ function gridlyRoadNameStandardizationAudit() {
         });
       });
     });
+
+    const seenNestedAlertCards = new Set();
+    GRIDLY_ROAD_DISPLAY_NESTED_ALERT_CARD_SELECTORS.forEach((selector) => {
+      const nodes = Array.from(document.querySelectorAll(selector));
+      nestedAlertCardsChecked.push({ selector, found: nodes.length });
+      nodes.forEach((node, index) => {
+        if (!node || seenNestedAlertCards.has(node)) return;
+        seenNestedAlertCards.add(node);
+        const text = String(node?.textContent || "").replace(/\s+/g, " ").trim();
+        findGridlyRoadDisplayInconsistencies(text).forEach((finding) => {
+          const nestedFinding = {
+            type: "nested_alert_card_raw_road_name",
+            surface: selector,
+            nodeIndex: index,
+            ...finding
+          };
+          nestedAlertInconsistencyFindings.push(nestedFinding);
+          findings.push(nestedFinding);
+        });
+      });
+    });
   } else {
     userFacingSurfacesChecked.push({ selector: "document", found: 0, note: "DOM unavailable in this environment" });
+    nestedAlertCardsChecked.push({ selector: "document", found: 0, note: "DOM unavailable in this environment" });
   }
   const failedSamples = sampleConversions.filter((sample) => !sample.matched);
+  const remainingRawRoadNames = [...new Set(findings.map((finding) => finding.text).filter(Boolean))];
   return {
     auditVersion: GRIDLY_ROAD_NAME_STANDARDIZATION_AUDIT_VERSION,
     normalizationRulesLoaded: failedSamples.length === 0,
     sampleConversions,
     userFacingSurfacesChecked,
+    nestedAlertCardsChecked,
+    nestedAlertInconsistencies: nestedAlertInconsistencyFindings.length,
+    remainingRawRoadNames,
     inconsistenciesFound: findings.length + failedSamples.length,
     findings: [
       ...failedSamples.map((sample) => ({ type: "sample_mismatch", ...sample })),
@@ -14125,13 +14162,15 @@ function openAlertsSurfaceFromDock() {
   const helperEventLabel = eventLabelFromHelper(resolvedHelper);
   const shouldUseEventFirstLayout = titleLooksLikeRoadOrLocation && Boolean(helperEventLabel);
   const displayTitle = standardizeGridlyAlertHeadline(shouldUseEventFirstLayout ? helperEventLabel : resolvedTitle);
-  const displaySubtitle = shouldUseEventFirstLayout ? standardizeGridlyAlertHeadline(resolvedTitle) : resolvedHelper;
+  const displaySubtitle = shouldUseEventFirstLayout
+    ? standardizeGridlyAlertHeadline(resolvedTitle)
+    : normalizeGridlyUserFacingRoadText(resolvedHelper);
   const cleanedAlertLocationLabel = shouldUseEventFirstLayout
     ? normalizeGridlyLightweightLocationLabelText(resolvedTitle)
     : normalizeGridlyLightweightLocationLabelText(getGridlyLightweightLocationFromHeadline(`${displayTitle} ${displaySubtitle}`) || "");
-  const alertRowSummary = cleanedAlertLocationLabel
+  const alertRowSummary = normalizeGridlyUserFacingRoadText(cleanedAlertLocationLabel
     ? (buildGridlyHeaderCandidateFromCategoryLocation(displayTitle, cleanedAlertLocationLabel) || `${displayTitle} on ${cleanedAlertLocationLabel}`)
-    : normalizeGridlyLightweightAlertSummaryText(`${displayTitle} ${displaySubtitle}`);
+    : normalizeGridlyLightweightAlertSummaryText(`${displayTitle} ${displaySubtitle}`));
   const communityCount = Math.max(1, Number(alert?.reports_count || alert?.count || alert?.confirmations || alert?.users_count || 1) || 1);
   const communityCountText = `${communityCount} ${communityCount === 1 ? "report" : "reports"}`;
   recordGridlyActiveLocationLifecycleEvent("alertRowRender", {
@@ -25434,7 +25473,7 @@ function normalizeGridlyLightweightRenderedAlertText(value = "") {
   for (let index = 0; index < 3 && categoryTail.test(text); index += 1) {
     text = text.replace(categoryTail, "").replace(/\s+/g, " ").trim();
   }
-  return text;
+  return normalizeGridlyUserFacingRoadText(text);
 }
 
 function normalizeGridlyLightweightLocationLabelText(value = "") {
@@ -46652,7 +46691,7 @@ window.gridlyRoadNameResolverDebug = function () {
 
 
 function standardizeGridlyAlertHeadline(value = "") {
-  const raw = String(value ?? "").replace(/[\s_]+/g, " ").trim();
+  const raw = normalizeGridlyUserFacingRoadText(String(value ?? "").replace(/[\s_]+/g, " ").trim());
   if (!raw) return "";
   const protectedRefs = [];
   let working = raw
@@ -52920,7 +52959,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const rawMovementSummaryText = coerceDisplayText(snapshot.topStatusLocalizedDetail) || coerceDisplayText(snapshot.routeImpactSummary) || "Liberty County • Last checked just now";
     const movementSummaryText = getGridlyHeaderRailTextRejectionReason(rawMovementSummaryText, alertsPanelActiveCategory)
       ? "Active road hazard details are being verified from community reports."
-      : rawMovementSummaryText;
+      : normalizeGridlyUserFacingRoadText(rawMovementSummaryText);
 
     if (hasActiveAlerts) {
       html = `
@@ -52940,12 +52979,12 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const eventLabel = pickFirstNonEmptyText([alert?.hazardTypeLabel, alert?.typeLabel, alert?.type, alert?.reportType, alert?.report_type, alert?.title]);
     const title = buildAlertTitle({ alert, roadLabel, crossingLabel, knownLocationLabel, eventLabel }) || resolveAlertTitleText(alert);
     const displayTitle = standardizeGridlyAlertHeadline(title);
-    const locationTimeLine = buildAlertSubtitleLine(alert, displayTitle);
+    const locationTimeLine = normalizeGridlyUserFacingRoadText(buildAlertSubtitleLine(alert, displayTitle));
     const intelligence = generateGridlyIntelligencePhrase(alert, alert?.visualState);
     const cleanedAlertLocationLabel = normalizeGridlyLightweightLocationLabelText(roadLabel || getGridlyLightweightLocationFromHeadline(`${title} ${locationTimeLine}`) || "");
-    const alertRowSummary = cleanedAlertLocationLabel
-      ? (buildGridlyHeaderCandidateFromCategoryLocation(eventLabel || title, cleanedAlertLocationLabel) || `${title} on ${cleanedAlertLocationLabel}`)
-      : normalizeGridlyLightweightAlertSummaryText(`${title} ${locationTimeLine}`);
+    const alertRowSummary = normalizeGridlyUserFacingRoadText(cleanedAlertLocationLabel
+      ? (buildGridlyHeaderCandidateFromCategoryLocation(eventLabel || displayTitle, cleanedAlertLocationLabel) || `${displayTitle} on ${cleanedAlertLocationLabel}`)
+      : normalizeGridlyLightweightAlertSummaryText(`${displayTitle} ${locationTimeLine}`));
     return `
     <div class="gridly-alert-row" data-gridly-alert-row="true" data-gridly-alert-title="${sanitizeText(displayTitle)}" data-gridly-alert-summary="${sanitizeText(alertRowSummary)}" data-gridly-alert-location="${sanitizeText(cleanedAlertLocationLabel)}" style="padding:10px 12px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.1);border-radius:10px;background:rgba(255,255,255,0.02);">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
