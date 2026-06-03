@@ -328,10 +328,13 @@
 
     <section class="command-center" id="mapSection">
       <section class="map-card">
-        <article class="mobile-destination-command" aria-label="Destination search command">
+        <article class="mobile-destination-command" aria-label="Awareness area and route command">
           <div class="mobile-destination-command-copy">
+            <span class="mobile-awareness-panel-kicker" id="mobileAwarenessPanelKicker">Awareness Area</span>
             <strong id="mobileDestinationCommandTitle">Destination</strong>
             <p id="mobileDestinationCommandMeta">Choose where you're going</p>
+            <p class="mobile-awareness-panel-crossings" id="mobileAwarenessPanelCrossings" hidden></p>
+            <p class="mobile-awareness-panel-issues" id="mobileAwarenessPanelIssues" hidden></p>
             <p class="destination-route-impact-line" id="mobileDestinationCommandImpact" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="gridlyDestinationImpactPane" aria-expanded="false"></p>
           </div>
           <button class="secondary-btn compact-btn" id="mobileDestinationCommandBtn" type="button">Choose Route</button>

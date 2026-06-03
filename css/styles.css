@@ -15592,6 +15592,54 @@ body[data-layout-mode="portrait"] .gridly-v2-control-rail {
   }
 }
 
+/* V225.4 — awareness-first bottom panel replaces idle destination card. */
+body[data-layout-mode="portrait"] .mobile-destination-command .mobile-awareness-panel-kicker {
+  display: none;
+}
+
+body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel,
+body.gridly-mobile-awareness-panel-present[data-layout-mode="portrait"] .map-card > .mobile-destination-command {
+  border-color: rgba(124, 231, 255, 0.42) !important;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(124, 231, 255, 0.18), transparent 42%),
+    linear-gradient(145deg, rgba(7, 22, 34, 0.9), rgba(5, 13, 23, 0.95)) !important;
+}
+
+body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel .mobile-destination-command-copy {
+  grid-template-rows: auto auto auto auto !important;
+  gap: 3px !important;
+}
+
+body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel .mobile-awareness-panel-kicker {
+  display: block;
+  color: rgba(142, 230, 255, 0.76);
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.11em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel strong {
+  color: rgba(239, 253, 255, 0.98) !important;
+  font-size: 0.98rem !important;
+}
+
+body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel .mobile-awareness-panel-crossings,
+body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel .mobile-awareness-panel-issues {
+  color: rgba(189, 224, 241, 0.86) !important;
+  font-weight: 760 !important;
+}
+
+body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel .compact-btn {
+  max-width: 72px !important;
+  padding-inline: 11px !important;
+}
+
+body.gridly-mobile-awareness-panel-present #map .gridly-awareness-identity-label {
+  display: none !important;
+}
+
 
 /* V214.4 — Route Impact Details Pane (explainability only). */
 body[data-layout-mode="portrait"] .mobile-destination-command .destination-route-impact-line:not(:empty) {
