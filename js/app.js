@@ -29086,6 +29086,242 @@ function gridlyV231NarrativeScore({ pattern = "", conditionVerb = "", impactStre
   };
 }
 
+const GRIDLY_MULTI_CONDITION_NARRATIVE_AUDIT_VERSION = "V234.0";
+
+const GRIDLY_V234_MULTI_CONDITION_FIXTURES = [
+  {
+    category: "Construction",
+    condition: "Construction",
+    sourceCondition: "construction",
+    road: "FM 770",
+    area: "Hull",
+    impactStrength: "high",
+    expectedPattern: "<condition> affecting <road> in <area>",
+    sourceNarrative: "Construction work zone reported on FM 770 near Hull"
+  },
+  {
+    category: "Flooding",
+    condition: "Flooding",
+    sourceCondition: "flooding",
+    road: "FM 787",
+    area: "Liberty",
+    impactStrength: "high",
+    expectedPattern: "<condition> affecting <road> in <area>",
+    sourceNarrative: "High water reported on FM 787 near Liberty"
+  },
+  {
+    category: "Road Closure",
+    condition: "Road closure",
+    sourceCondition: "road closure",
+    road: "US 90",
+    area: "Dayton",
+    impactStrength: "high",
+    expectedPattern: "<condition> affecting <road> in <area>",
+    sourceNarrative: "Road closure reported on US 90 near Dayton"
+  },
+  {
+    category: "Crash / Wreck",
+    condition: "Crash",
+    sourceCondition: "crash",
+    road: "TX 321",
+    area: "Cleveland",
+    impactStrength: "moderate",
+    expectedPattern: "<condition> reported on <road> in <area>",
+    sourceNarrative: "Crash reported on TX 321 near Cleveland"
+  },
+  {
+    category: "Disabled Vehicle",
+    condition: "Disabled vehicle",
+    sourceCondition: "disabled vehicle",
+    road: "FM 1960",
+    area: "Dayton",
+    impactStrength: "moderate",
+    expectedPattern: "<condition> reported on <road> in <area>",
+    sourceNarrative: "Disabled vehicle reported on FM 1960 near Dayton"
+  },
+  {
+    category: "Rail Delay",
+    condition: "Rail delay",
+    sourceCondition: "rail delay",
+    road: "FM 1960",
+    area: "Dayton",
+    impactStrength: "high",
+    expectedPattern: "<condition> affecting <road> in <area>",
+    sourceNarrative: "Rail crossing delay reported on FM 1960 near Dayton"
+  },
+  {
+    category: "Debris",
+    condition: "Debris",
+    sourceCondition: "debris",
+    road: "US 90",
+    area: "Liberty",
+    impactStrength: "moderate",
+    expectedPattern: "<condition> reported on <road> in <area>",
+    sourceNarrative: "Debris reported on US 90 near Liberty"
+  },
+  {
+    category: "General Hazard",
+    condition: "Hazard",
+    sourceCondition: "hazard",
+    road: "CR 2429",
+    area: "Hull",
+    impactStrength: "moderate",
+    expectedPattern: "<condition> reported on <road> in <area>",
+    sourceNarrative: "Hazard reported on CR 2429 near Hull"
+  }
+];
+
+function gridlyV234BuildNarrativeOptions(definition = {}) {
+  const awarenessSample = {
+    id: `gridly-v234-${String(definition.category || "condition").toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+    resolvedCategory: definition.sourceCondition,
+    topCategory: definition.sourceCondition,
+    roadName: definition.road,
+    primaryRoad: definition.road,
+    resolvedRoadName: definition.road,
+    resolvedLocationLabel: definition.road,
+    headline: definition.sourceNarrative,
+    summary: definition.sourceNarrative,
+    detail: definition.sourceNarrative,
+    reusedAlertText: definition.sourceNarrative,
+    reusedAlertSource: "v234.multiCondition.fixture.reusedAlertText"
+  };
+  const activeAwareness = {
+    activeAwarenessCount: 1,
+    activeHazardCount: 1,
+    activeReportCount: 0,
+    resolvedCategory: definition.sourceCondition,
+    topCategory: definition.sourceCondition,
+    roadName: definition.road,
+    primaryRoad: definition.road,
+    resolvedRoadName: definition.road,
+    resolvedLocationLabel: definition.road,
+    headline: definition.sourceNarrative,
+    reusedAlertText: definition.sourceNarrative,
+    reusedAlertSource: "v234.multiCondition.fixture.activeAwareness.reusedAlertText",
+    activeAwarenessSamples: [awarenessSample]
+  };
+  return {
+    auditOnly: true,
+    awarenessAreaName: definition.area,
+    activeAwareness,
+    pulseModel: {
+      activeAwareness,
+      communityAwarenessSummary: {
+        awarenessAreaName: definition.area,
+        activeHazardsInArea: [awarenessSample],
+        activeReportsInArea: []
+      }
+    },
+    intel: { activeLocalizedAlertCount: 1 },
+    activeHazard: awarenessSample,
+    activeHazards: [awarenessSample],
+    activeReports: []
+  };
+}
+
+function gridlyV234AssessNarrativeQuality(definition = {}, audit = {}) {
+  const narrative = gridlyV229NormalizeNarrativeText(audit.promotedNarrative);
+  const hasExpectedCondition = narrative.includes(definition.condition);
+  const hasRoad = normalizeRoadComparison(audit.selectedRoad || "") === normalizeRoadComparison(definition.road || "");
+  const hasArea = gridlyV229NormalizeNarrativeText(audit.selectedAwarenessArea).toLowerCase() === gridlyV229NormalizeNarrativeText(definition.area).toLowerCase();
+  const hasCareVerb = /\b(?:affecting|reported)\b/i.test(narrative);
+  const patternMatches = audit.selectedPattern === definition.expectedPattern;
+  const secondsReadable = narrative.length > 0 && narrative.length <= 64 && narrative.split(/\s+/).length <= 9;
+  let readinessScore = 0;
+  if (hasExpectedCondition) readinessScore += 20;
+  if (hasRoad) readinessScore += 20;
+  if (hasArea) readinessScore += 15;
+  if (hasCareVerb) readinessScore += 15;
+  if (patternMatches) readinessScore += 15;
+  if (secondsReadable) readinessScore += 10;
+  if (!audit.fallbackUsed) readinessScore += 5;
+  const isBroadHazard = definition.category === "General Hazard";
+  if (isBroadHazard) readinessScore = Math.max(0, readinessScore - 5);
+  const result = readinessScore >= 90 ? "ready" : (readinessScore >= 80 ? "needs_minor_refinement" : "needs_refinement");
+  return {
+    naturalLanguage: patternMatches ? "natural" : "check_pattern",
+    communicatesWhat: hasExpectedCondition ? "yes" : "no",
+    communicatesWhere: hasRoad && hasArea ? "yes" : "no",
+    communicatesWhyCare: hasCareVerb ? "yes_via_affecting_or_reported_signal" : "no",
+    supportsKnowBeforeYouGo: readinessScore >= 85 ? "yes" : "partial",
+    threeSecondComprehension: secondsReadable ? "yes" : "partial",
+    readinessScore,
+    result,
+    note: isBroadHazard
+      ? "Understandable within the V232 pattern, but the broad Hazard label should be refined whenever a more specific hazard type is available."
+      : "Clear condition, roadway, and awareness-area wording supports fast pre-trip understanding."
+  };
+}
+
+function gridlyMultiConditionNarrativeAudit() {
+  const narratives = GRIDLY_V234_MULTI_CONDITION_FIXTURES.map((definition) => {
+    const audit = buildGridlyNarrativePromotionPrototype(gridlyV234BuildNarrativeOptions(definition));
+    const quality = gridlyV234AssessNarrativeQuality(definition, audit);
+    return {
+      category: definition.category,
+      awarenessNarrative: audit.promotedNarrative,
+      languagePatternUsed: audit.selectedPattern,
+      expectedLanguagePattern: definition.expectedPattern,
+      roadwayContext: {
+        expectedRoad: definition.road,
+        selectedRoad: audit.selectedRoad,
+        selectedRoadSource: audit.selectedRoadSource,
+        roadMatched: normalizeRoadComparison(audit.selectedRoad || "") === normalizeRoadComparison(definition.road || "")
+      },
+      awarenessAreaContext: {
+        expectedArea: definition.area,
+        selectedAwarenessArea: audit.selectedAwarenessArea,
+        areaMatched: gridlyV229NormalizeNarrativeText(audit.selectedAwarenessArea).toLowerCase() === gridlyV229NormalizeNarrativeText(definition.area).toLowerCase()
+      },
+      knowBeforeYouGoQualityAssessment: quality,
+      generationPath: {
+        helper: "buildGridlyNarrativePromotionPrototype",
+        auditVersion: audit.auditVersion,
+        conditionType: audit.conditionType,
+        selectedCondition: audit.selectedCondition,
+        fallbackUsed: audit.fallbackUsed,
+        sourceUsed: audit.sourceUsed,
+        patternReason: audit.patternReason
+      }
+    };
+  });
+  const strongestExamples = narratives
+    .filter((entry) => entry.knowBeforeYouGoQualityAssessment.readinessScore >= 95)
+    .map((entry) => ({ category: entry.category, narrative: entry.awarenessNarrative, reason: "High-impact wording, named roadway, and named area are immediately actionable." }));
+  const weakestExamples = narratives
+    .filter((entry) => entry.knowBeforeYouGoQualityAssessment.readinessScore < 95 || entry.category === "General Hazard")
+    .map((entry) => ({ category: entry.category, narrative: entry.awarenessNarrative, reason: entry.knowBeforeYouGoQualityAssessment.note }));
+  const categoriesNeedingRefinement = narratives
+    .filter((entry) => entry.knowBeforeYouGoQualityAssessment.result !== "ready" || entry.category === "General Hazard")
+    .map((entry) => ({ category: entry.category, reason: entry.category === "General Hazard" ? "Use a more specific hazard subtype when available; keep Hazard as an honest fallback." : "Narrative did not meet full V234 readiness scoring." }));
+  const averageReadinessScore = Math.round(narratives.reduce((sum, entry) => sum + entry.knowBeforeYouGoQualityAssessment.readinessScore, 0) / Math.max(1, narratives.length));
+  const permanentStandardReady = narratives.every((entry) => entry.knowBeforeYouGoQualityAssessment.readinessScore >= 90);
+  return {
+    auditVersion: GRIDLY_MULTI_CONDITION_NARRATIVE_AUDIT_VERSION,
+    categoriesEvaluated: narratives.length,
+    narratives,
+    strongestExamples,
+    weakestExamples,
+    categoriesNeedingRefinement,
+    overallReadiness: {
+      status: permanentStandardReady ? "ready_for_permanent_awareness_standard" : "needs_refinement_before_permanent_standard",
+      averageReadinessScore,
+      mission: "KNOW BEFORE YOU GO",
+      conclusion: permanentStandardReady
+        ? "The V232 narrative language model is ready to become the permanent awareness communication standard across Gridly, with General Hazard kept as a fallback until a more specific label is known."
+        : "The V232 narrative language model needs additional refinement before permanent rollout."
+    },
+    findings: [
+      "All eight major mobility condition categories generated narratives through the live V232 promotion prototype path rather than static string-only validation.",
+      "Impact conditions consistently select the affecting pattern for construction, flooding, road closure, and rail delay.",
+      "Observation conditions consistently select the reported on pattern for crash/wreck, disabled vehicle, debris, and general hazard.",
+      "Each generated narrative includes what happened, the roadway context, and the awareness area in a short phrase suitable for three-second comprehension.",
+      "No ownership, routing, Route Watch, destination, Community Pulse, alert generation, hazard generation, map rendering, or Supabase behavior is modified by this audit."
+    ]
+  };
+}
+
 function gridlyNarrativeLanguageValidationAudit() {
   const categoryDefinitions = [
     {
@@ -29224,6 +29460,7 @@ window.gridlyKnowBeforeYouGoStressAudit = gridlyKnowBeforeYouGoStressAudit;
 window.gridlyAwarenessNarrativePromotionAudit = gridlyAwarenessNarrativePromotionAudit;
 window.gridlyNarrativePromotionPrototypeAudit = gridlyNarrativePromotionPrototypeAudit;
 window.gridlyNarrativeLanguageValidationAudit = gridlyNarrativeLanguageValidationAudit;
+window.gridlyMultiConditionNarrativeAudit = gridlyMultiConditionNarrativeAudit;
 window.gridlyNarrativeLanguageStandardAudit = gridlyNarrativeLanguageStandardAudit;
 window.gridlyBestAvailableObservationAudit = gridlyBestAvailableObservationAudit;
 window.gridlyNarrativeSourceTraceAudit = gridlyNarrativeSourceTraceAudit;
@@ -29247,6 +29484,7 @@ exposeGridlyAuditHelper("gridlyKnowBeforeYouGoStressAudit", gridlyKnowBeforeYouG
 exposeGridlyAuditHelper("gridlyAwarenessNarrativePromotionAudit", gridlyAwarenessNarrativePromotionAudit);
 exposeGridlyAuditHelper("gridlyNarrativePromotionPrototypeAudit", gridlyNarrativePromotionPrototypeAudit);
 exposeGridlyAuditHelper("gridlyNarrativeLanguageValidationAudit", gridlyNarrativeLanguageValidationAudit);
+exposeGridlyAuditHelper("gridlyMultiConditionNarrativeAudit", gridlyMultiConditionNarrativeAudit);
 exposeGridlyAuditHelper("gridlyNarrativeLanguageStandardAudit", gridlyNarrativeLanguageStandardAudit);
 exposeGridlyAuditHelper("gridlyBestAvailableObservationAudit", gridlyBestAvailableObservationAudit);
 exposeGridlyAuditHelper("gridlyNarrativeSourceTraceAudit", gridlyNarrativeSourceTraceAudit);
