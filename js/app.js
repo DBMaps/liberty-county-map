@@ -96,7 +96,7 @@ function recordGridlyTopPanelDedupe(sourceFunction, targetElement, value) {
 function setGridlyTopPanelTextIfChanged(elementOrId, value, sourceFunction, targetElement = elementOrId) {
   const element = typeof elementOrId === "string" ? document.getElementById(elementOrId) : elementOrId;
   if (!element) return false;
-  const serializedValue = typeof value === "string" ? value : (value == null ? "" : String(value));
+  const serializedValue = normalizeGridlyUserFacingRoadText(typeof value === "string" ? value : (value == null ? "" : String(value)));
   if (element.textContent === serializedValue) {
     recordGridlyTopPanelDedupe(sourceFunction, targetElement, serializedValue);
     return false;
@@ -682,21 +682,145 @@ const GRIDLY_NORMALIZED_INCIDENT_CATEGORIES = new Set([
   "txdot_damage", "txdot_other", "unknown"
 ]);
 
+const GRIDLY_ROAD_NAME_STANDARDIZATION_AUDIT_VERSION = "V233.0";
+const GRIDLY_ROAD_DISPLAY_STANDARDIZATION_SAMPLES = Object.freeze([
+  ["Farm-to-Market Road 770", "FM 770"],
+  ["Farm to Market Road 770", "FM 770"],
+  ["Farm-to-Market 770", "FM 770"],
+  ["Farm Road 770", "FM 770"],
+  ["County Road 2429", "CR 2429"],
+  ["State Highway 146", "TX 146"],
+  ["Texas Highway 146", "TX 146"],
+  ["US Highway 90", "US 90"],
+  ["Interstate 10", "I-10"],
+  ["FM 770", "FM 770"],
+  ["CR 2429", "CR 2429"],
+  ["TX 146", "TX 146"],
+  ["US 90", "US 90"],
+  ["I-10", "I-10"]
+]);
+const GRIDLY_ROAD_DISPLAY_SURFACE_SELECTORS = Object.freeze([
+  "#gridlyV2TopStatusPrimary",
+  "#gridlyV2TopStatusSecondary",
+  "#gridlyTopAwarenessMicroline",
+  "#gridlyCommunityPulseHeadline",
+  "#gridlyCommunityPulseSubline",
+  "#alertsList",
+  "#roadHazardsList",
+  "#mobileDestinationCommandImpact",
+  "#gridlyDestinationImpactPaneSummary",
+  "#gridlyDestinationImpactPaneReasons",
+  "#activeAlertText",
+  "#mobileAlertsMirror",
+  "#routeRecommendation",
+  "#routeRecommendationReason"
+]);
+const GRIDLY_ROAD_DISPLAY_UNNORMALIZED_PATTERN = /\b(?:farm[-\s]+to[-\s]+market(?:\s+road)?|farm\s+road|county\s+road|state\s+highway|texas\s+highway|u\.?s\.?\s+highway|us\s+highway|interstate)\s*[- ]?\d+[a-z]?\b/i;
+
+function normalizeGridlyRoadDisplayName(roadName = "") {
+  const raw = String(roadName || "").replace(/\s+/g, " ").trim();
+  if (!raw) return "";
+  const compact = raw
+    .replace(/\bwestbound\b|\beastbound\b|\bnorthbound\b|\bsouthbound\b/gi, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  const patterns = [
+    { re: /^(?:farm[-\s]+to[-\s]+market(?:\s+road)?|farm\s+road|fm)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `FM ${n.toUpperCase().replace(/^0+(?=\d)/, "")}` },
+    { re: /^(?:county\s+road|cr)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `CR ${n.toUpperCase().replace(/^0+(?=\d)/, "")}` },
+    { re: /^(?:state\s+highway|texas\s+highway|texas\s+state\s+highway|tx)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `TX ${n.toUpperCase().replace(/^0+(?=\d)/, "")}` },
+    { re: /^(?:u\.?s\.?\s+highway|united\s+states\s+highway|us)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `US ${n.toUpperCase().replace(/^0+(?=\d)/, "")}` },
+    { re: /^(?:interstate|ih|i)\s*[- ]?(\d+[a-z]?)$/i, format: (n) => `I-${n.toUpperCase().replace(/^0+(?=\d)/, "")}` }
+  ];
+  for (const pattern of patterns) {
+    const match = compact.match(pattern.re);
+    if (match?.[1]) return pattern.format(match[1]);
+  }
+  return raw;
+}
+
+function normalizeGridlyUserFacingRoadText(value = "") {
+  if (value == null) return "";
+  let text = String(value);
+  const replacements = [
+    { re: /\b(?:farm[-\s]+to[-\s]+market(?:\s+road)?|farm\s+road|fm)\s*[- ]?(\d+[a-z]?)\b/gi, format: (n) => `FM ${n.toUpperCase().replace(/^0+(?=\d)/, "")}` },
+    { re: /\b(?:county\s+road|cr)\s*[- ]?(\d+[a-z]?)\b/gi, format: (n) => `CR ${n.toUpperCase().replace(/^0+(?=\d)/, "")}` },
+    { re: /\b(?:state\s+highway|texas\s+highway|texas\s+state\s+highway|tx)\s*[- ]?(\d+[a-z]?)\b/gi, format: (n) => `TX ${n.toUpperCase().replace(/^0+(?=\d)/, "")}` },
+    { re: /\b(?:u\.?s\.?\s+highway|united\s+states\s+highway|us)\s*[- ]?(\d+[a-z]?)\b/gi, format: (n) => `US ${n.toUpperCase().replace(/^0+(?=\d)/, "")}` },
+    { re: /\b(?:interstate|ih|i)\s*[- ]?(\d+[a-z]?)\b/gi, format: (n) => `I-${n.toUpperCase().replace(/^0+(?=\d)/, "")}` }
+  ];
+  replacements.forEach((rule) => {
+    text = text.replace(rule.re, (_match, number) => rule.format(number));
+  });
+  return text.replace(/\s+/g, " ").trim();
+}
+
+function findGridlyRoadDisplayInconsistencies(text = "") {
+  const source = String(text || "");
+  const findings = [];
+  const matcher = new RegExp(GRIDLY_ROAD_DISPLAY_UNNORMALIZED_PATTERN.source, "ig");
+  let match;
+  while ((match = matcher.exec(source)) && findings.length < 20) {
+    findings.push({ text: match[0], normalized: normalizeGridlyRoadDisplayName(match[0]), index: match.index });
+  }
+  return findings;
+}
+
+function gridlyRoadNameStandardizationAudit() {
+  const sampleConversions = GRIDLY_ROAD_DISPLAY_STANDARDIZATION_SAMPLES.map(([input, expected]) => {
+    const output = normalizeGridlyRoadDisplayName(input);
+    return { input, output, expected, matched: output === expected };
+  });
+  const userFacingSurfacesChecked = [];
+  const findings = [];
+  if (typeof document !== "undefined" && document?.querySelectorAll) {
+    GRIDLY_ROAD_DISPLAY_SURFACE_SELECTORS.forEach((selector) => {
+      const nodes = Array.from(document.querySelectorAll(selector));
+      userFacingSurfacesChecked.push({ selector, found: nodes.length });
+      nodes.forEach((node, index) => {
+        const text = String(node?.textContent || "").trim();
+        findGridlyRoadDisplayInconsistencies(text).forEach((finding) => {
+          findings.push({ surface: selector, nodeIndex: index, ...finding });
+        });
+      });
+    });
+  } else {
+    userFacingSurfacesChecked.push({ selector: "document", found: 0, note: "DOM unavailable in this environment" });
+  }
+  const failedSamples = sampleConversions.filter((sample) => !sample.matched);
+  return {
+    auditVersion: GRIDLY_ROAD_NAME_STANDARDIZATION_AUDIT_VERSION,
+    normalizationRulesLoaded: failedSamples.length === 0,
+    sampleConversions,
+    userFacingSurfacesChecked,
+    inconsistenciesFound: findings.length + failedSamples.length,
+    findings: [
+      ...failedSamples.map((sample) => ({ type: "sample_mismatch", ...sample })),
+      ...findings
+    ]
+  };
+}
+
+if (typeof window !== "undefined") {
+  window.normalizeGridlyRoadDisplayName = normalizeGridlyRoadDisplayName;
+  window.normalizeGridlyUserFacingRoadText = normalizeGridlyUserFacingRoadText;
+  window.gridlyRoadNameStandardizationAudit = gridlyRoadNameStandardizationAudit;
+}
+
 
 function safeDisplayText(value, fallback = "") {
   const rawFallback = typeof fallback === "string"
     ? fallback
     : (typeof fallback === "number" || typeof fallback === "boolean" ? String(fallback) : "");
   const safeFallback = rawFallback.replace(/\s+/g, " ").trim().toLowerCase() === "[object object]" ? "" : rawFallback;
-  if (value == null) return safeFallback;
+  if (value == null) return normalizeGridlyUserFacingRoadText(safeFallback);
   if (typeof value === "string") {
-    const text = value.replace(/\s+/g, " ").trim();
-    return text && text.toLowerCase() !== "[object object]" ? text : safeFallback;
+    const text = normalizeGridlyUserFacingRoadText(value.replace(/\s+/g, " ").trim());
+    return text && text.toLowerCase() !== "[object object]" ? text : normalizeGridlyUserFacingRoadText(safeFallback);
   }
   if (typeof value === "number" || typeof value === "boolean") return String(value);
   if (Array.isArray(value)) {
     const joined = value.map((entry) => safeDisplayText(entry, "")).filter(Boolean).join(" ");
-    return joined || safeFallback;
+    return joined || normalizeGridlyUserFacingRoadText(safeFallback);
   }
   if (typeof value === "object") {
     const candidate =
@@ -710,7 +834,7 @@ function safeDisplayText(value, fallback = "") {
       value.description;
     return safeDisplayText(candidate, safeFallback);
   }
-  return safeFallback;
+  return normalizeGridlyUserFacingRoadText(safeFallback);
 }
 
 function gridlyHistoricalClosePathDurationBucket(durationMinutes) {
@@ -16104,12 +16228,12 @@ function getGridlyDestinationRouteImpactCardText() {
     const reason = audit?.primaryImpactReason || getGridlyDestinationRouteImpactCopy(impactLevel);
     const locationLine = String(audit?.primaryImpactLocation || "").trim();
     const proximityLine = String(audit?.primaryImpactProximityLabel || "").trim();
-    return [
+    return normalizeGridlyUserFacingRoadText([
       `Potential Impact: ${getGridlyDestinationRouteImpactLabel(impactLevel)}`,
       reason,
       locationLine,
       proximityLine
-    ].filter((line) => String(line || "").trim()).join("\n");
+    ].filter((line) => String(line || "").trim()).join("\n"));
   } catch (_) {
     return "";
   }
@@ -16236,10 +16360,10 @@ function getGridlyDestinationImpactPaneReasonModel() {
     impactLevel,
     impactLabel,
     confidenceLabel,
-    summary: routeFound ? (audit?.primaryImpactReason || getGridlyDestinationRouteImpactCopy(impactLevel)) : "No active hazards reported nearby",
-    primaryImpactLocation,
-    primaryImpactProximityLabel,
-    reasons: detailReasons.slice(0, 6),
+    summary: normalizeGridlyUserFacingRoadText(routeFound ? (audit?.primaryImpactReason || getGridlyDestinationRouteImpactCopy(impactLevel)) : "No active hazards reported nearby"),
+    primaryImpactLocation: normalizeGridlyUserFacingRoadText(primaryImpactLocation),
+    primaryImpactProximityLabel: normalizeGridlyUserFacingRoadText(primaryImpactProximityLabel),
+    reasons: detailReasons.slice(0, 6).map((reason) => normalizeGridlyUserFacingRoadText(reason)),
     quiet
   };
   setGridlyDestinationPerformanceTiming("routeAwarenessPaneModelMs", getGridlyDestinationPerfNow() - paneModelStartedAt);
@@ -16252,14 +16376,14 @@ function renderGridlyDestinationImpactPane() {
   GRIDLY_DESTINATION_IMPACT_PANE_STATE.impactLevel = model.impactLevel;
   GRIDLY_DESTINATION_IMPACT_PANE_STATE.displayedReasons = [...model.reasons];
 
-  if (paneEls.severity) paneEls.severity.textContent = model.impactLabel || getGridlyDestinationRouteImpactLabel(model.impactLevel);
-  if (paneEls.confidence) paneEls.confidence.textContent = model.confidenceLabel || "Low confidence";
-  if (paneEls.summary) paneEls.summary.textContent = model.summary || "No active hazards reported nearby";
+  if (paneEls.severity) paneEls.severity.textContent = normalizeGridlyUserFacingRoadText(model.impactLabel || getGridlyDestinationRouteImpactLabel(model.impactLevel));
+  if (paneEls.confidence) paneEls.confidence.textContent = normalizeGridlyUserFacingRoadText(model.confidenceLabel || "Low confidence");
+  if (paneEls.summary) paneEls.summary.textContent = normalizeGridlyUserFacingRoadText(model.summary || "No active hazards reported nearby");
   if (paneEls.reasons) {
     paneEls.reasons.innerHTML = "";
     model.reasons.forEach((reason) => {
       const item = document.createElement("li");
-      item.textContent = reason;
+      item.textContent = normalizeGridlyUserFacingRoadText(reason);
       paneEls.reasons.appendChild(item);
     });
   }
@@ -49430,11 +49554,11 @@ function renderRoadHazards() {
     return `
       <article class="alert-item intelligence-row ${display.rowClass}" tabindex="0" role="button" ${buildAlertFocusDataset(incident)}>
         <div class="alert-row-main">
-          <span class="alert-severity-chip">${sanitizeText(display.meta)}</span>
-          <strong>${sanitizeText(display.title)}</strong>
+          <span class="alert-severity-chip">${sanitizeText(normalizeGridlyUserFacingRoadText(display.meta))}</span>
+          <strong>${sanitizeText(normalizeGridlyUserFacingRoadText(display.title))}</strong>
           <span class="alert-row-time">${sanitizeText(age)}</span>
         </div>
-        <p class="alert-row-subline">${sanitizeText(display.subtitle)}</p>
+        <p class="alert-row-subline">${sanitizeText(normalizeGridlyUserFacingRoadText(display.subtitle))}</p>
       </article>
     `;
   }).join("");
@@ -49504,17 +49628,17 @@ function renderAlerts() {
   const primaryCorridor = corridors[0] || null;
   const routeImpacted = timeSection("map_route_dependent_checks", () => Number(consequenceIntel.routeImpactIncidentCount || 0) > 0);
   const sections = [];
-  sections.push(`<article class="alert-item intelligence-row high corridor-command-status"><div class="alert-row-main"><span class="alert-severity-chip">Community Awareness</span><strong>${sanitizeText(standardizeGridlyAlertHeadline(routeImpacted ? "Route Watch impacted" : (consequenceIntel.topStatus || "No major mobility issues reported nearby")))}</strong><span class="alert-row-time">live</span></div><p class="alert-row-subline">${sanitizeText(consequenceIntel.topStatusLocalizedDetail || "Based on community reports.")}</p></article>`);
+  sections.push(`<article class="alert-item intelligence-row high corridor-command-status"><div class="alert-row-main"><span class="alert-severity-chip">Community Awareness</span><strong>${sanitizeText(normalizeGridlyUserFacingRoadText(standardizeGridlyAlertHeadline(routeImpacted ? "Route Watch impacted" : (consequenceIntel.topStatus || "No major mobility issues reported nearby"))))}</strong><span class="alert-row-time">live</span></div><p class="alert-row-subline">${sanitizeText(normalizeGridlyUserFacingRoadText(consequenceIntel.topStatusLocalizedDetail || "Based on community reports."))}</p></article>`);
 
   timeSection("alert_corridor_grouping_logic", () => {
     corridors.slice(0, 3).forEach((corridor, idx) => {
       const count = corridor.items.length;
       const heading = corridor.label || "Primary Corridor";
       const severity = standardizeGridlyAlertHeadline(String(corridor.healthState || "moderate"));
-      const rows = corridor.items.slice(0, 3).map((item) => `<li>${sanitizeText(item.localizedSummary)}</li>`).join("");
+      const rows = corridor.items.slice(0, 3).map((item) => `<li>${sanitizeText(normalizeGridlyUserFacingRoadText(item.localizedSummary))}</li>`).join("");
       const corridorClass = idx === 0 ? "primary-corridor" : "secondary-corridor";
       const action = idx === 0 ? '<button class="secondary-btn compact-btn" type="button" data-v2-action="alerts-open">Avoid Corridor</button>' : "";
-      sections.push(`<article class="alert-item corridor-command ${corridorClass}"><strong class="corridor-command-title">${sanitizeText(heading)}</strong><p class="corridor-command-severity">${sanitizeText(severity)} • ${count} active issue${count === 1 ? "" : "s"}</p><ul class="alert-row-details-list">${rows}</ul>${action}</article>`);
+      sections.push(`<article class="alert-item corridor-command ${corridorClass}"><strong class="corridor-command-title">${sanitizeText(normalizeGridlyUserFacingRoadText(heading))}</strong><p class="corridor-command-severity">${sanitizeText(normalizeGridlyUserFacingRoadText(severity))} • ${count} active issue${count === 1 ? "" : "s"}</p><ul class="alert-row-details-list">${rows}</ul>${action}</article>`);
     });
   });
 
@@ -49527,7 +49651,7 @@ function renderAlerts() {
     .slice(0, 3)
     .map((incident) => buildLocalizedIncidentLabel(incident)));
   if (cleared.length) {
-    sections.push(`<article class="alert-item cleared"><strong>Recently Cleared</strong><p>${cleared.map((label) => sanitizeText(label)).join(" · ")}</p></article>`);
+    sections.push(`<article class="alert-item cleared"><strong>Recently Cleared</strong><p>${cleared.map((label) => sanitizeText(normalizeGridlyUserFacingRoadText(label))).join(" · ")}</p></article>`);
   }
 
   void primaryCorridor;
@@ -50034,10 +50158,11 @@ function setSync(value) {
 
 function safeText(id, value) {
   if (shouldSuppressGridlyDashboardSectionPassiveTextUpdate(id)) return;
+  const displayValue = normalizeGridlyUserFacingRoadText(value);
   if (!els[id]) els[id] = document.getElementById(id);
-  if (els[id]) els[id].textContent = value;
+  if (els[id]) els[id].textContent = displayValue;
   document.querySelectorAll(`[data-bind-text="${id}"]`).forEach((node) => {
-    node.textContent = value;
+    node.textContent = displayValue;
   });
 }
 
@@ -51628,10 +51753,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
             <article class="alert-item intelligence-row ${itemClass}" tabindex="0" role="button" ${buildAlertFocusDataset(latest, { incidentId: incident.crossingId })}>
               <div class="alert-row-main">
                 <span class="alert-severity-chip">${sanitizeText(severityLabel)}</span>
-                <strong>${sanitizeText(railDisplay.title)}</strong>
+                <strong>${sanitizeText(normalizeGridlyUserFacingRoadText(railDisplay.title))}</strong>
                 <span class="alert-row-time">${sanitizeText(`${incident.newestMinutes}m`)}</span>
               </div>
-              <p class="alert-row-subline">${sanitizeText(railDisplay.subtitlePrefix)} · ${sanitizeText(reportState)} · ${sanitizeText(freshnessLabel)}</p>
+              <p class="alert-row-subline">${sanitizeText(normalizeGridlyUserFacingRoadText(railDisplay.subtitlePrefix))} · ${sanitizeText(reportState)} · ${sanitizeText(freshnessLabel)}</p>
             </article>`;
         }).join("")
       : '<div class="alert-item"><strong>No active alerts right now.</strong><p>No major mobility issues reported nearby.</p></div>';
@@ -51643,11 +51768,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           return `
             <article class="alert-item intelligence-row ${sanitizeText(display.rowClass || "")}" tabindex="0" role="button" ${buildAlertFocusDataset(incident)}>
               <div class="alert-row-main">
-                <span class="alert-severity-chip">${sanitizeText(display.meta)}</span>
-                <strong>${sanitizeText(display.title)}</strong>
+                <span class="alert-severity-chip">${sanitizeText(normalizeGridlyUserFacingRoadText(display.meta))}</span>
+                <strong>${sanitizeText(normalizeGridlyUserFacingRoadText(display.title))}</strong>
                 <span class="alert-row-time">${sanitizeText(age)}</span>
               </div>
-              <p class="alert-row-subline">${sanitizeText(display.subtitle)}</p>
+              <p class="alert-row-subline">${sanitizeText(normalizeGridlyUserFacingRoadText(display.subtitle))}</p>
             </article>`;
         }).join("")
       : '<div class="alert-item"><strong>Road conditions appear calm</strong><p>No high-impact road hazards detected nearby.</p></div>';
