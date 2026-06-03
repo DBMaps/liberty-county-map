@@ -16356,30 +16356,80 @@ window.gridlyDestinationImpactPaneAudit = function gridlyDestinationImpactPaneAu
   };
 };
 
+function getGridlyMobileAwarenessPanelSummary() {
+  const summary = typeof buildGridlyCommunityAwarenessIntelligenceSummary === "function"
+    ? buildGridlyCommunityAwarenessIntelligenceSummary()
+    : {};
+  const areaName = safeDisplayText(summary.awarenessAreaName, "Liberty County");
+  const crossingsCount = Array.isArray(summary.crossingsInArea) ? summary.crossingsInArea.length : Number(summary.crossingsInArea || 0);
+  const hazardCount = Array.isArray(summary.activeHazardsInArea) ? summary.activeHazardsInArea.length : Number(summary.activeHazardsInArea || 0);
+  const reportCount = Array.isArray(summary.activeReportsInArea) ? summary.activeReportsInArea.length : Number(summary.activeReportsInArea || 0);
+  const activeIssueCount = hazardCount + reportCount;
+  return {
+    ...summary,
+    areaName,
+    panelTitle: `${areaName} Awareness`,
+    status: safeDisplayText(summary.awarenessStatus, "No active local issues reported"),
+    crossingsLine: crossingsCount === 1 ? "1 crossing watched" : `${crossingsCount} crossings watched`,
+    activeIssueCount,
+    activeIssuesLine: activeIssueCount === 1 ? "1 active hazard/report" : `${activeIssueCount} active hazards/reports`
+  };
+}
+
+function isGridlyAwarenessPanelModeActive() {
+  const routeIsMonitoring = Boolean(routeWatchActivated || window.__gridlyRouteWatchActive);
+  return !routeIsMonitoring && !getSelectedDestinationLabel();
+}
+
 function syncMobileDestinationCommandCard() {
   const cardRenderStartedAt = getGridlyDestinationPerfNow();
   const routeIsMonitoring = Boolean(routeWatchActivated || window.__gridlyRouteWatchActive);
   const selectedLabel = getSelectedDestinationLabel();
-  const previewMeta = selectedLabel ? getGridlyDestinationPreviewMetaText() : "";
-  const impactText = selectedLabel ? getGridlyDestinationRouteImpactCardText() : "";
-  safeText("mobileDestinationCommandTitle", selectedLabel || (routeIsMonitoring ? "Destination selected" : "Destination"));
-  safeText(
-    "mobileDestinationCommandMeta",
-    selectedLabel
-      ? (previewMeta || "Calculating route…")
-      : routeIsMonitoring
-        ? "Selected: Saved destination"
-        : "Choose where you're going"
-  );
-  safeText("mobileDestinationCommandImpact", impactText);
+  const awarenessPanelMode = !selectedLabel && !routeIsMonitoring;
+  const card = document.getElementById("mobileDestinationCommandTitle")?.closest?.(".mobile-destination-command");
+  card?.classList.toggle("is-awareness-panel", awarenessPanelMode);
+  card?.classList.toggle("is-destination-panel", !awarenessPanelMode);
+  document.body?.classList.toggle("gridly-mobile-awareness-panel-present", awarenessPanelMode);
+
+  if (awarenessPanelMode) {
+    const awarenessSummary = getGridlyMobileAwarenessPanelSummary();
+    safeText("mobileAwarenessPanelKicker", "Awareness Area");
+    safeText("mobileDestinationCommandTitle", awarenessSummary.panelTitle);
+    safeText("mobileDestinationCommandMeta", awarenessSummary.status);
+    safeText("mobileAwarenessPanelCrossings", awarenessSummary.crossingsLine);
+    safeText("mobileAwarenessPanelIssues", awarenessSummary.activeIssueCount > 0 ? awarenessSummary.activeIssuesLine : "");
+    document.getElementById("mobileAwarenessPanelCrossings")?.toggleAttribute("hidden", false);
+    document.getElementById("mobileAwarenessPanelIssues")?.toggleAttribute("hidden", awarenessSummary.activeIssueCount <= 0);
+    safeText("mobileDestinationCommandImpact", "");
+    safeText("mobileDestinationCommandBtn", "Route");
+  } else {
+    const previewMeta = selectedLabel ? getGridlyDestinationPreviewMetaText() : "";
+    const impactText = selectedLabel ? getGridlyDestinationRouteImpactCardText() : "";
+    safeText("mobileAwarenessPanelKicker", "Route");
+    safeText("mobileDestinationCommandTitle", selectedLabel || (routeIsMonitoring ? "Destination selected" : "Destination"));
+    safeText(
+      "mobileDestinationCommandMeta",
+      selectedLabel
+        ? (previewMeta || "Calculating route…")
+        : routeIsMonitoring
+          ? "Selected: Saved destination"
+          : "Choose where you're going"
+    );
+    safeText("mobileAwarenessPanelCrossings", "");
+    safeText("mobileAwarenessPanelIssues", "");
+    document.getElementById("mobileAwarenessPanelCrossings")?.toggleAttribute("hidden", true);
+    document.getElementById("mobileAwarenessPanelIssues")?.toggleAttribute("hidden", true);
+    safeText("mobileDestinationCommandImpact", impactText);
+    safeText("mobileDestinationCommandBtn", selectedLabel ? "Change" : "Choose Route");
+  }
+
   const impactLine = document.getElementById("mobileDestinationCommandImpact");
   if (impactLine) {
-    const hasImpactText = Boolean(String(impactText || "").trim());
+    const hasImpactText = Boolean(String(impactLine.textContent || "").trim());
     impactLine.setAttribute("aria-disabled", hasImpactText ? "false" : "true");
     impactLine.title = hasImpactText ? "Open route awareness details" : "";
   }
   if (GRIDLY_DESTINATION_IMPACT_PANE_STATE.paneOpen) renderGridlyDestinationImpactPane();
-  safeText("mobileDestinationCommandBtn", selectedLabel ? "Change" : "Choose Route");
   setGridlyDestinationPerformanceTiming("renderMs", getGridlyDestinationPerfNow() - cardRenderStartedAt);
 }
 
@@ -18247,6 +18297,9 @@ function hydrateElements() {
     "mobileDestinationCommandBtn",
     "mobileDestinationCommandTitle",
     "mobileDestinationCommandMeta",
+    "mobileAwarenessPanelKicker",
+    "mobileAwarenessPanelCrossings",
+    "mobileAwarenessPanelIssues",
     "mobileDestinationCommandImpact",
     "gridlyDestinationImpactPane",
     "gridlyDestinationImpactPaneBackdrop",
@@ -19694,7 +19747,10 @@ function renderGridlyAwarenessMapIdentity(reason = "unknown") {
     }
   }
 
-  if (L.marker && L.divIcon && Number.isFinite(Number(labelPlacement.latLng?.[0])) && Number.isFinite(Number(labelPlacement.latLng?.[1]))) {
+  const awarenessPanelOwnsIdentity = typeof isGridlyAwarenessPanelModeActive === "function" && isGridlyAwarenessPanelModeActive();
+  if (awarenessPanelOwnsIdentity) {
+    warnings.push("Awareness map label suppressed because the bottom Awareness Area panel owns area identity.");
+  } else if (L.marker && L.divIcon && Number.isFinite(Number(labelPlacement.latLng?.[0])) && Number.isFinite(Number(labelPlacement.latLng?.[1]))) {
     gridlyAwarenessIdentityLabelLayer = L.marker(labelPlacement.latLng, {
       pane: "awarenessLabelPane",
       interactive: false,
