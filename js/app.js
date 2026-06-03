@@ -9650,6 +9650,11 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyAnalyticsAudit",
   "gridlyOperationalTelemetryAudit",
   "gridlyBetaReadinessAudit",
+  "gridlyAwarenessIntelligenceAudit",
+  "gridlyCommunityPulseIntelligenceAudit",
+  "gridlyAwarenessStoryAudit",
+  "gridlyDestinationAwarenessAudit",
+  "gridlyKnowBeforeYouGoAudit",
   "gridlyHazardCategoryReviewAudit",
   "gridlyHistoricalClosePathFramework",
   "gridlyHistoricalClosePathSimulation",
@@ -9744,6 +9749,11 @@ function exposeAllGridlyAuditHelpers() {
     gridlyAnalyticsAudit: typeof gridlyAnalyticsAudit === "function" ? gridlyAnalyticsAudit : null,
     gridlyOperationalTelemetryAudit: typeof gridlyOperationalTelemetryAudit === "function" ? gridlyOperationalTelemetryAudit : null,
     gridlyBetaReadinessAudit: typeof gridlyBetaReadinessAudit === "function" ? gridlyBetaReadinessAudit : (typeof target?.gridlyBetaReadinessAudit === "function" ? target.gridlyBetaReadinessAudit : null),
+    gridlyAwarenessIntelligenceAudit: typeof gridlyAwarenessStatusAudit === "function" ? gridlyAwarenessStatusAudit : (typeof target?.gridlyAwarenessIntelligenceAudit === "function" ? target.gridlyAwarenessIntelligenceAudit : null),
+    gridlyCommunityPulseIntelligenceAudit: typeof gridlyCommunityPulseIntelligenceAudit === "function" ? gridlyCommunityPulseIntelligenceAudit : (typeof target?.gridlyCommunityPulseIntelligenceAudit === "function" ? target.gridlyCommunityPulseIntelligenceAudit : null),
+    gridlyAwarenessStoryAudit: typeof gridlyAwarenessStoryAudit === "function" ? gridlyAwarenessStoryAudit : (typeof target?.gridlyAwarenessStoryAudit === "function" ? target.gridlyAwarenessStoryAudit : null),
+    gridlyDestinationAwarenessAudit: typeof gridlyDestinationAwarenessAudit === "function" ? gridlyDestinationAwarenessAudit : (typeof target?.gridlyDestinationAwarenessAudit === "function" ? target.gridlyDestinationAwarenessAudit : null),
+    gridlyKnowBeforeYouGoAudit: typeof gridlyKnowBeforeYouGoAudit === "function" ? gridlyKnowBeforeYouGoAudit : (typeof target?.gridlyKnowBeforeYouGoAudit === "function" ? target.gridlyKnowBeforeYouGoAudit : null),
     gridlyHistoricalClosePathFramework: typeof gridlyHistoricalClosePathFramework === "function" ? gridlyHistoricalClosePathFramework : (typeof target?.gridlyHistoricalClosePathFramework === "function" ? target.gridlyHistoricalClosePathFramework : null),
     loadSharedReports: typeof loadSharedReports === "function" ? loadSharedReports : null
   };
@@ -27428,6 +27438,321 @@ function renderGridlyCommunityPulse(options = {}) {
   return gridlyCommunityPulseAuditState;
 }
 
+
+
+const GRIDLY_AWARENESS_INTELLIGENCE_AUDIT_VERSION = "V227.0";
+
+function getGridlyV227SafeText(selectorOrId = "") {
+  try {
+    const selector = String(selectorOrId || "");
+    const node = selector.startsWith("#") || selector.startsWith(".") || selector.startsWith("[")
+      ? document.querySelector(selector)
+      : document.getElementById(selector);
+    return safeDisplayText(node?.textContent, "");
+  } catch (error) {
+    return "";
+  }
+}
+
+function getGridlyV227Visibility(selectorOrId = "") {
+  try {
+    const selector = String(selectorOrId || "");
+    const node = selector.startsWith("#") || selector.startsWith(".") || selector.startsWith("[")
+      ? document.querySelector(selector)
+      : document.getElementById(selector);
+    if (!node) return false;
+    const style = typeof getComputedStyle === "function" ? getComputedStyle(node) : null;
+    const rect = typeof node.getBoundingClientRect === "function" ? node.getBoundingClientRect() : null;
+    return !node.hidden && style?.display !== "none" && style?.visibility !== "hidden" && style?.opacity !== "0" && (!rect || rect.width > 0 || rect.height > 0);
+  } catch (error) {
+    return false;
+  }
+}
+
+function getGridlyV227PulseModelSnapshot(options = {}) {
+  const existingState = typeof gridlyCommunityPulseAuditState === "object" && gridlyCommunityPulseAuditState ? { ...gridlyCommunityPulseAuditState } : {};
+  if (existingState.pulseSuppressedReason !== "not_rendered_yet" || existingState.activeAwareness || existingState.communityAwarenessSummary) return existingState;
+  try {
+    if (typeof buildGridlyCommunityPulseModel === "function") return buildGridlyCommunityPulseModel({ ...options, auditOnly: true });
+  } catch (error) {
+    return { ...existingState, error: error?.message || "pulse model unavailable" };
+  }
+  return existingState;
+}
+
+function getGridlyV227AwarenessSnapshot(options = {}) {
+  const pulseModel = getGridlyV227PulseModelSnapshot(options);
+  const activeAwareness = pulseModel?.activeAwareness || gridlyCommunityPulseAuditState?.activeAwareness || {};
+  const communityAwarenessSummary = pulseModel?.communityAwarenessSummary || safeCall(() => (
+    typeof buildGridlyCommunityAwarenessIntelligenceSummary === "function"
+      ? buildGridlyCommunityAwarenessIntelligenceSummary({ ...options, auditOnly: true })
+      : null
+  ), null) || {};
+  const mobileSummary = safeCall(() => (typeof getGridlyMobileAwarenessPanelSummary === "function" ? getGridlyMobileAwarenessPanelSummary() : null), null) || {};
+  const topPrimary = getGridlyV227SafeText("gridlyV2TopStatusPrimary");
+  const topSecondary = getGridlyV227SafeText("gridlyV2TopStatusSecondary");
+  const topMicroline = getGridlyV227SafeText("gridlyTopAwarenessMicroline");
+  const pulseHeadline = getGridlyV227SafeText("gridlyCommunityPulseHeadline") || safeDisplayText(pulseModel?.renderedPulseHeadline, "");
+  const pulseSubline = getGridlyV227SafeText("gridlyCommunityPulseSubline") || safeDisplayText(pulseModel?.renderedPulseSubline, "");
+  const commandCard = {
+    kicker: getGridlyV227SafeText("mobileAwarenessPanelKicker"),
+    title: getGridlyV227SafeText("mobileDestinationCommandTitle"),
+    meta: getGridlyV227SafeText("mobileDestinationCommandMeta"),
+    crossings: getGridlyV227SafeText("mobileAwarenessPanelCrossings"),
+    issues: getGridlyV227SafeText("mobileAwarenessPanelIssues"),
+    impact: getGridlyV227SafeText("mobileDestinationCommandImpact"),
+    button: getGridlyV227SafeText("mobileDestinationCommandBtn")
+  };
+  const activeHazardCount = Number(activeAwareness?.activeHazardCount ?? (Array.isArray(typeof activeHazards !== "undefined" ? activeHazards : null) ? activeHazards.length : 0) ?? 0);
+  const activeReportCount = Number(activeAwareness?.activeReportCount ?? (Array.isArray(typeof activeReports !== "undefined" ? activeReports : null) ? activeReports.length : 0) ?? 0);
+  const activeAwarenessCount = Number(activeAwareness?.activeAwarenessCount ?? (activeHazardCount + activeReportCount) ?? 0);
+  const selectedCommunityCount = Number(pulseModel?.selectedCommunityCount || 0);
+  const textBundle = [topPrimary, topSecondary, topMicroline, pulseHeadline, pulseSubline, commandCard.title, commandCard.meta, commandCard.crossings, commandCard.issues, commandCard.impact].filter(Boolean).join(" ");
+  return {
+    version: GRIDLY_AWARENESS_INTELLIGENCE_AUDIT_VERSION,
+    generatedAt: new Date().toISOString(),
+    pulseModel,
+    activeAwareness,
+    communityAwarenessSummary,
+    mobileSummary,
+    visibleText: { topPrimary, topSecondary, topMicroline, pulseHeadline, pulseSubline, commandCard },
+    visibility: {
+      topStatusPrimaryVisible: getGridlyV227Visibility("gridlyV2TopStatusPrimary"),
+      topStatusSecondaryVisible: getGridlyV227Visibility("gridlyV2TopStatusSecondary"),
+      communityPulseVisible: getGridlyV227Visibility("gridlyCommunityPulseSurface"),
+      commandCardVisible: getGridlyV227Visibility(".mobile-destination-command")
+    },
+    counts: {
+      activeHazardCount,
+      activeReportCount,
+      activeAwarenessCount,
+      selectedCommunityCount,
+      communityPhraseCount: Number(pulseModel?.communityPhraseCount || 0),
+      dominantCorridorScore: Number(pulseModel?.dominantCorridorScore || 0),
+      highestPresenceScore: Number(pulseModel?.highestPresenceScore || 0),
+      crossingsInArea: Array.isArray(mobileSummary?.crossingsInArea) ? mobileSummary.crossingsInArea.length : Number(mobileSummary?.crossingsInArea || 0)
+    },
+    locations: {
+      awarenessAreaName: safeDisplayText(mobileSummary?.areaName || communityAwarenessSummary?.awarenessAreaName, ""),
+      resolvedLocationLabel: safeDisplayText(activeAwareness?.resolvedLocationLabel, ""),
+      dominantCorridor: safeDisplayText(pulseModel?.dominantCorridor, "")
+    },
+    categories: {
+      resolvedCategory: activeAwareness?.resolvedCategory || null,
+      topCategory: activeAwareness?.topCategory || null,
+      mobilityPressureCategory: pulseModel?.mobilityPressureCategory || "quiet",
+      blendedSignalTypes: Array.isArray(pulseModel?.blendedSignalTypes) ? pulseModel.blendedSignalTypes : []
+    },
+    samples: Array.isArray(activeAwareness?.activeAwarenessSamples) ? activeAwareness.activeAwarenessSamples : [],
+    textBundle
+  };
+}
+
+function gridlyV227TextHasCounts(text = "") {
+  return /\b\d+\b|\b(no|zero|one|two|three|four|five|six|seven|eight|nine|ten)\b/i.test(String(text || ""));
+}
+
+function gridlyV227TextHasObservation(text = "") {
+  return /reported|seeing|active|quiet|clear|normal|building|elevated|impacted|hazard|flood|water|crash|closure|debris|rail|train|crossing|issue|mobility|activity|disruption/i.test(String(text || ""));
+}
+
+function gridlyV227TextHasLocation(text = "") {
+  return /nearby|county|area|town|corridor|road|route|crossing|on\s+[A-Z]{1,4}\s*\d+|TX\s*\d+|US\s*\d+|I-\d+|Dayton|Liberty/i.test(String(text || ""));
+}
+
+function gridlyV227TextHasWhy(text = "") {
+  return /because|due to|caused|reported|active|quiet|no major|\d+\s+(hazard|report|issue|crossing|disruption|mobility)/i.test(String(text || ""));
+}
+
+function inferGridlyV227DisplayedAwarenessStatus(snapshot) {
+  const topState = safeDisplayText(window.gridlyTopAwarenessMicrolineState?.state, "");
+  if (topState) return topState;
+  const { activeHazardCount, activeReportCount, activeAwarenessCount, selectedCommunityCount } = snapshot.counts;
+  const pressure = safeDisplayText(snapshot.categories.mobilityPressureCategory, "quiet");
+  if (activeHazardCount > 0 || /high|elevated|impacted/i.test(pressure)) return "impacted";
+  if (activeAwarenessCount > 0 || selectedCommunityCount >= 3 || /moderate|building/i.test(pressure)) return "building";
+  return "quiet";
+}
+
+function gridlyAwarenessStatusAudit(options = {}) {
+  const snapshot = getGridlyV227AwarenessSnapshot(options);
+  const awarenessStatus = inferGridlyV227DisplayedAwarenessStatus(snapshot);
+  const explanationText = [snapshot.visibleText.topPrimary, snapshot.visibleText.topSecondary, snapshot.visibleText.topMicroline].filter(Boolean).join(" ");
+  const countDriven = gridlyV227TextHasCounts(explanationText) || Object.values(snapshot.counts).some((value) => Number(value || 0) > 0);
+  const observationDriven = gridlyV227TextHasObservation(explanationText) || snapshot.samples.length > 0 || Boolean(snapshot.categories.resolvedCategory);
+  const explainsConditions = gridlyV227TextHasObservation(explanationText);
+  return {
+    awarenessStatus,
+    statusReasoning: {
+      displayedPrimary: snapshot.visibleText.topPrimary,
+      displayedSecondary: snapshot.visibleText.topSecondary,
+      displayedMicroline: snapshot.visibleText.topMicroline,
+      inferredFrom: window.gridlyTopAwarenessMicrolineState?.state ? "gridlyTopAwarenessMicrolineState.state" : "active awareness, community count, and mobility pressure signals",
+      quietState: awarenessStatus === "quiet",
+      findings: explainsConditions
+        ? "Top awareness copy communicates a condition in addition to raw counts."
+        : "Top awareness copy leans on status/count language and does not strongly explain observed conditions."
+    },
+    underlyingSignals: {
+      counts: snapshot.counts,
+      locations: snapshot.locations,
+      categories: snapshot.categories,
+      activeAwarenessLoaded: Boolean(snapshot.activeAwareness?.loaded),
+      pulseSuppressedReason: snapshot.pulseModel?.pulseSuppressedReason || ""
+    },
+    userVisibleExplanation: explanationText,
+    explanationQuality: explainsConditions && gridlyV227TextHasLocation(explanationText)
+      ? "condition_and_place_explained"
+      : (explainsConditions ? "condition_explained_location_light" : "counts_or_status_label_heavy"),
+    countDriven,
+    observationDriven
+  };
+}
+
+function gridlyCommunityPulseIntelligenceAudit(options = {}) {
+  const snapshot = getGridlyV227AwarenessSnapshot(options);
+  const pulseText = [snapshot.visibleText.pulseHeadline, snapshot.visibleText.pulseSubline].filter(Boolean).join(" ");
+  const containsTrendInformation = /trend|building|increasing|rising|easing|fresh|recent|last|again|repeat|multiple|across|pressure/i.test(pulseText)
+    || Number(snapshot.counts.dominantCorridorScore || 0) > 0
+    || (Array.isArray(snapshot.pulseModel?.corridorPriorityBreakdown) && snapshot.pulseModel.corridorPriorityBreakdown.length > 0);
+  const containsObservationInformation = gridlyV227TextHasObservation(pulseText) || snapshot.samples.length > 0 || Boolean(snapshot.categories.resolvedCategory);
+  const containsLocationContext = gridlyV227TextHasLocation(pulseText) || Boolean(snapshot.locations.resolvedLocationLabel || snapshot.locations.dominantCorridor || snapshot.locations.awarenessAreaName);
+  const containsActionableContext = /review|avoid|before you go|heading|expect|delay|blocked|active|nearby|reported/i.test(pulseText);
+  const visibleTextAvailable = Boolean(pulseText.trim());
+  const intelligenceScore = [containsTrendInformation, containsObservationInformation, containsLocationContext, containsActionableContext]
+    .reduce((score, passed) => score + (passed ? 25 : 0), visibleTextAvailable ? 0 : -10);
+  const findings = [];
+  findings.push(snapshot.visibility.communityPulseVisible ? "Community Pulse is visible." : `Community Pulse is not visible (${snapshot.pulseModel?.pulseSuppressedReason || "no rendered pulse copy"}).`);
+  findings.push(containsObservationInformation ? "Pulse includes condition/observation language." : "Pulse is mostly label/count oriented and lacks observation detail.");
+  findings.push(containsTrendInformation ? "Pulse exposes trend/pressure/freshness signals." : "Pulse does not expose clear trend information in the visible summary.");
+  findings.push(containsLocationContext ? "Pulse model has location context available." : "Pulse lacks visible where/context language.");
+  return {
+    pulseState: {
+      awarenessMode: snapshot.pulseModel?.awarenessMode || "unknown",
+      pulseVisible: Boolean(snapshot.visibility.communityPulseVisible),
+      mobilityPressureCategory: snapshot.categories.mobilityPressureCategory,
+      pulseSuppressedReason: snapshot.pulseModel?.pulseSuppressedReason || ""
+    },
+    pulseInputs: {
+      counts: snapshot.counts,
+      locations: snapshot.locations,
+      categories: snapshot.categories,
+      selectedHeadlineTemplate: snapshot.pulseModel?.selectedHeadlineTemplate || "",
+      selectedSublineTemplate: snapshot.pulseModel?.selectedSublineTemplate || "",
+      phraseGenerationMode: snapshot.pulseModel?.phraseGenerationMode || ""
+    },
+    userVisibleSummary: pulseText,
+    containsTrendInformation,
+    containsObservationInformation,
+    containsLocationContext,
+    containsActionableContext,
+    intelligenceScore: Math.max(0, Math.min(100, intelligenceScore)),
+    findings
+  };
+}
+
+function gridlyAwarenessStoryAudit(options = {}) {
+  const snapshot = getGridlyV227AwarenessSnapshot(options);
+  const visibleNarrative = [
+    snapshot.visibleText.topPrimary,
+    snapshot.visibleText.topSecondary,
+    snapshot.visibleText.topMicroline,
+    snapshot.visibleText.commandCard.title,
+    snapshot.visibleText.commandCard.meta,
+    snapshot.visibleText.commandCard.crossings,
+    snapshot.visibleText.pulseHeadline,
+    snapshot.visibleText.pulseSubline
+  ].filter(Boolean).join(" | ");
+  const explainsWhat = gridlyV227TextHasObservation(visibleNarrative);
+  const explainsWhere = gridlyV227TextHasLocation(visibleNarrative) || Boolean(snapshot.locations.awarenessAreaName || snapshot.locations.resolvedLocationLabel || snapshot.locations.dominantCorridor);
+  const explainsWhy = gridlyV227TextHasWhy(visibleNarrative) || Number(snapshot.counts.activeAwarenessCount || 0) > 0;
+  const storyCompleteness = Math.round(([explainsWhat, explainsWhere, explainsWhy].filter(Boolean).length / 3) * 100);
+  return {
+    awarenessArea: snapshot.locations.awarenessAreaName || snapshot.visibleText.commandCard.title || "",
+    visibleNarrative,
+    explainsWhat,
+    explainsWhere,
+    explainsWhy,
+    storyCompleteness,
+    findings: [
+      explainsWhat ? "The glanceable story says what condition is present." : "The glanceable story does not clearly say what is happening.",
+      explainsWhere ? "The story provides area/location context." : "The story lacks specific where context.",
+      explainsWhy ? "The status has a visible reason or signal basis." : "The status reason is not obvious from a single glance."
+    ]
+  };
+}
+
+function gridlyDestinationAwarenessAudit(options = {}) {
+  const snapshot = getGridlyV227AwarenessSnapshot(options);
+  const selectedLabel = safeCall(() => (typeof getSelectedDestinationLabel === "function" ? getSelectedDestinationLabel() : ""), "");
+  const destinationPresent = Boolean(selectedLabel || snapshot.visibleText.commandCard.title || snapshot.visibleText.commandCard.impact);
+  const destinationContextText = [snapshot.visibleText.commandCard.title, snapshot.visibleText.commandCard.meta, snapshot.visibleText.commandCard.impact].filter(Boolean).join(" ");
+  const awarenessContextText = [snapshot.visibleText.commandCard.kicker, snapshot.visibleText.commandCard.title, snapshot.visibleText.commandCard.meta, snapshot.visibleText.commandCard.crossings, snapshot.visibleText.commandCard.issues].filter(Boolean).join(" ");
+  const routeOnlyInformation = /route|navigate|preview|calculating|monitoring|destination selected|choose route|view route/i.test(destinationContextText)
+    && !/awareness|hazard|report|issue|quiet|county|area|crossing|community/i.test(awarenessContextText);
+  const awarenessEnhancedInformation = /awareness|hazard|report|issue|quiet|county|area|crossing|community/i.test(awarenessContextText);
+  return {
+    destinationPresent,
+    destinationContextPresent: Boolean(destinationContextText),
+    awarenessContextPresent: awarenessEnhancedInformation,
+    routeOnlyInformation,
+    awarenessEnhancedInformation,
+    findings: [
+      awarenessEnhancedInformation ? "Destination/command card context inherits awareness-area language without changing ownership." : "Destination context currently reads as route-only or destination-only.",
+      snapshot.visibleText.commandCard.crossings ? "The card includes watched crossings/hazards/reports counts as awareness context." : "No supporting awareness details are visible on the destination card.",
+      snapshot.visibleText.commandCard.impact ? "Route support text exists separately from awareness context." : "No route impact support text is visible."
+    ]
+  };
+}
+
+function gridlyKnowBeforeYouGoAudit(options = {}) {
+  const statusAudit = gridlyAwarenessStatusAudit(options);
+  const pulseAudit = gridlyCommunityPulseIntelligenceAudit(options);
+  const storyAudit = gridlyAwarenessStoryAudit(options);
+  const destinationAudit = gridlyDestinationAwarenessAudit(options);
+  const explainsConditions = Boolean(statusAudit.observationDriven || storyAudit.explainsWhat);
+  const explainsLocation = Boolean(storyAudit.explainsWhere || pulseAudit.containsLocationContext);
+  const explainsImpact = /impact|delay|blocked|avoid|review|before you go|active|hazard|issue|clear|quiet|no major/i.test([
+    statusAudit.userVisibleExplanation,
+    pulseAudit.userVisibleSummary,
+    destinationAudit.findings.join(" ")
+  ].join(" "));
+  const requiresAdditionalPanels = !(explainsConditions && explainsLocation && explainsImpact && storyAudit.storyCompleteness >= 67);
+  const decisionUseful = Boolean(explainsConditions && explainsLocation && explainsImpact && !requiresAdditionalPanels);
+  const missionScore = Math.round(([
+    explainsConditions,
+    explainsLocation,
+    explainsImpact,
+    !requiresAdditionalPanels,
+    pulseAudit.intelligenceScore >= 50
+  ].filter(Boolean).length / 5) * 100);
+  return {
+    decisionUseful,
+    explainsConditions,
+    explainsLocation,
+    explainsImpact,
+    requiresAdditionalPanels,
+    missionScore,
+    findings: [
+      decisionUseful ? "Visible awareness information can improve a travel decision." : "Visible awareness information is not yet complete enough to reliably improve a travel decision at a glance.",
+      explainsConditions ? "Conditions are communicated." : "Conditions are not clearly communicated.",
+      explainsLocation ? "Location/area context is present." : "Location/area context is missing or too weak.",
+      explainsImpact ? "Impact language is present or inferable." : "Impact on travel is not explicit.",
+      requiresAdditionalPanels ? "A user likely needs additional panels for full Know Before You Go context." : "The primary visible surfaces carry enough context without additional panels."
+    ]
+  };
+}
+
+window.gridlyAwarenessIntelligenceAudit = gridlyAwarenessStatusAudit;
+window.gridlyCommunityPulseIntelligenceAudit = gridlyCommunityPulseIntelligenceAudit;
+window.gridlyAwarenessStoryAudit = gridlyAwarenessStoryAudit;
+window.gridlyDestinationAwarenessAudit = gridlyDestinationAwarenessAudit;
+window.gridlyKnowBeforeYouGoAudit = gridlyKnowBeforeYouGoAudit;
+exposeGridlyAuditHelper("gridlyAwarenessIntelligenceAudit", gridlyAwarenessStatusAudit);
+exposeGridlyAuditHelper("gridlyCommunityPulseIntelligenceAudit", gridlyCommunityPulseIntelligenceAudit);
+exposeGridlyAuditHelper("gridlyAwarenessStoryAudit", gridlyAwarenessStoryAudit);
+exposeGridlyAuditHelper("gridlyDestinationAwarenessAudit", gridlyDestinationAwarenessAudit);
+exposeGridlyAuditHelper("gridlyKnowBeforeYouGoAudit", gridlyKnowBeforeYouGoAudit);
 
 function buildGridlyOwnershipStateAudit(options = {}) {
   const auditVersion = "V226.4";
