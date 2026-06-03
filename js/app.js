@@ -326,6 +326,96 @@ const ROAD_HAZARD_TYPE_OPTIONS = [
   { value: "other_hazard", label: "Other Hazard" }
 ];
 
+const OTHER_HAZARD_SUBTYPE_OPTIONS = Object.freeze([
+  { value: "livestock_on_road", label: "Livestock on Road", narrativeLabel: "Livestock" },
+  { value: "traffic_signal_issue", label: "Traffic Signal Issue", narrativeLabel: "Traffic signal issue" },
+  { value: "downed_power_line", label: "Downed Power Line", narrativeLabel: "Downed power line" },
+  { value: "emergency_response_activity", label: "Emergency Response Activity", narrativeLabel: "Emergency response activity" },
+  { value: "other", label: "Other", narrativeLabel: "Hazard" }
+]);
+
+const OTHER_HAZARD_SUBTYPE_VALUES = new Set(OTHER_HAZARD_SUBTYPE_OPTIONS.map((option) => option.value));
+const OTHER_HAZARD_STRUCTURED_METADATA_PREFIX = "gridly_structured=";
+
+function normalizeOtherHazardSubtype(value = "") {
+  const normalized = String(value || "").trim().toLowerCase();
+  return OTHER_HAZARD_SUBTYPE_VALUES.has(normalized) ? normalized : "";
+}
+
+function getOtherHazardSubtypeOption(value = "") {
+  const normalized = normalizeOtherHazardSubtype(value);
+  return OTHER_HAZARD_SUBTYPE_OPTIONS.find((option) => option.value === normalized) || null;
+}
+
+function getOtherHazardSubtypeLabel(value = "") {
+  return getOtherHazardSubtypeOption(value)?.label || "Other Hazard";
+}
+
+function buildOtherHazardStructuredMetadata(subtype = "") {
+  const normalizedSubtype = normalizeOtherHazardSubtype(subtype);
+  return normalizedSubtype ? { category: "other_hazard", subtype: normalizedSubtype } : { category: "other_hazard" };
+}
+
+function appendOtherHazardStructuredMetadata(detail = "", subtype = "") {
+  const normalizedSubtype = normalizeOtherHazardSubtype(subtype);
+  if (!normalizedSubtype) return detail;
+  return `${detail} ${OTHER_HAZARD_STRUCTURED_METADATA_PREFIX}${JSON.stringify(buildOtherHazardStructuredMetadata(normalizedSubtype))}`;
+}
+
+function extractOtherHazardStructuredMetadata(record = {}) {
+  const directSubtype = normalizeOtherHazardSubtype(record?.subtype || record?.hazardSubtype || record?.otherHazardSubtype);
+  if (directSubtype) return buildOtherHazardStructuredMetadata(directSubtype);
+  const detail = String(record?.detail || record?.description || "");
+  const markerIndex = detail.indexOf(OTHER_HAZARD_STRUCTURED_METADATA_PREFIX);
+  if (markerIndex < 0) return { category: "other_hazard" };
+  const rawJson = detail.slice(markerIndex + OTHER_HAZARD_STRUCTURED_METADATA_PREFIX.length).trim();
+  const jsonMatch = rawJson.match(/^\{[^}]*\}/);
+  if (!jsonMatch) return { category: "other_hazard" };
+  try {
+    const parsed = JSON.parse(jsonMatch[0]);
+    const parsedSubtype = normalizeOtherHazardSubtype(parsed?.subtype);
+    return parsedSubtype ? buildOtherHazardStructuredMetadata(parsedSubtype) : { category: "other_hazard" };
+  } catch (error) {
+    return { category: "other_hazard" };
+  }
+}
+
+function buildOtherHazardSubtypeNarrative(report = {}, roadName = "", communityName = "") {
+  const metadata = extractOtherHazardStructuredMetadata(report);
+  const subtypeOption = getOtherHazardSubtypeOption(metadata.subtype);
+  const lead = subtypeOption?.narrativeLabel || "Hazard";
+  const road = String(roadName || report?.roadName || report?.selectedRoadName || report?.crossingName || report?.crossing_name || "this road").trim();
+  const place = String(communityName || report?.communityName || report?.town || report?.city || "").trim();
+  return `${lead} reported on ${road}${place ? ` in ${place}` : ""}`;
+}
+
+function gridlyOtherHazardSubtypeAudit() {
+  const sample = buildOtherHazardStructuredMetadata("livestock_on_road");
+  const fallback = extractOtherHazardStructuredMetadata({ report_type: "other_hazard", detail: "Shared report: road hazard may affect travel." });
+  return {
+    auditVersion: "GRIDLY_V235_OTHER_HAZARD_STRUCTURED_SUBTYPES",
+    subtypeSupportEnabled: true,
+    supportedSubtypes: OTHER_HAZARD_SUBTYPE_OPTIONS.map((option) => ({
+      value: option.value,
+      label: option.label
+    })),
+    backwardCompatibilityMaintained: fallback.category === "other_hazard" && !fallback.subtype,
+    narrativeSupportAvailable: buildOtherHazardSubtypeNarrative({ category: sample.category, subtype: sample.subtype }, "FM 770", "Hull") === "Livestock reported on FM 770 in Hull",
+    findings: [
+      "Other Hazard keeps category=other_hazard and can add a structured subtype without free text.",
+      "Reports without subtype continue to normalize and render as standard Other Hazard.",
+      "Subtype narratives are generated from structured values and supplied road/community context."
+    ]
+  };
+}
+
+if (typeof window !== "undefined") {
+  window.gridlyOtherHazardSubtypeAudit = gridlyOtherHazardSubtypeAudit;
+  window.gridlyBuildOtherHazardSubtypeNarrative = buildOtherHazardSubtypeNarrative;
+}
+
+let selectedOtherHazardSubtype = "";
+
 // TxDOT-ready mapping for future ingestion. No external API calls yet.
 const ROAD_HAZARD_SOURCE_MAP = {
   crash: "txdot_incident",
@@ -24311,6 +24401,8 @@ function normalizeReports(rows) {
 
     const incomingType = String(row.report_type || "other").toLowerCase();
     const reportType = incomingType === "wreck" ? "crash" : incomingType;
+    const otherHazardMetadata = reportType === "other_hazard" ? extractOtherHazardStructuredMetadata(row) : { category: reportType };
+    const otherHazardSubtype = reportType === "other_hazard" ? normalizeOtherHazardSubtype(otherHazardMetadata.subtype) : "";
     const isHazard =
   Object.prototype.hasOwnProperty.call(HAZARD_TYPES, reportType) ||
   reportType === "hazard_cleared";
@@ -24339,12 +24431,15 @@ function normalizeReports(rows) {
       lat: Number(row.lat),
       lng: Number(row.lng),
       type: reportType,
+      category: reportType,
+      subtype: otherHazardSubtype || undefined,
+      hazardSubtype: otherHazardSubtype || undefined,
       clearedHazardType,
       reportKind: isHazard ? "hazard" : "crossing",
       icon: isHazard ? copy.icon : "",
       severity: row.severity || copy.severity,
       title: isHazard
-        ? `${copy.icon} ${copy.label}`
+        ? `${copy.icon} ${otherHazardSubtype ? getOtherHazardSubtypeLabel(otherHazardSubtype) : copy.label}`
         : `${row.crossing_name || "Crossing"} ${copy.shortTitle}`,
       detail: row.detail || copy.detail,
       source: row.source || "user",
@@ -37472,6 +37567,12 @@ counter.textContent = "Road conditions appear calm";
       <button type="button" data-action="open-hazard-placement" data-hazard-type="traffic_backup">🚦 Traffic Backup / Heavy Delay</button>
       <button type="button" data-action="open-hazard-placement" data-hazard-type="other_hazard">❗ Other Hazard</button>
     </div>
+    <div class="hazard-subtype-panel" data-other-hazard-subtype-panel hidden>
+      <strong>Select Hazard Type</strong>
+      <div class="hazard-subtype-grid">
+        ${OTHER_HAZARD_SUBTYPE_OPTIONS.map((option) => `<button type="button" data-action="select-other-hazard-subtype" data-other-hazard-subtype="${option.value}">○ ${option.label}</button>`).join("")}
+      </div>
+    </div>
     <div class="hazard-panel-placement-actions">
       <button type="button" data-action="submit-hazard">Use My Location</button>
       <button type="button" data-action="start-map-placement">Tap Map Location</button>
@@ -37490,9 +37591,18 @@ function syncHazardPickerUiState() {
   const picker = document.getElementById("gridlyHazardPanel");
   if (!picker) return;
   const selectedType = reportingState.selectedHazardType || selectedQuickHazardType || pendingHazardPlacement || null;
+  const requiresOtherSubtype = selectedType === "other_hazard";
+  const selectedSubtype = normalizeOtherHazardSubtype(selectedOtherHazardSubtype);
+  const subtypePanel = picker.querySelector("[data-other-hazard-subtype-panel]");
+  if (subtypePanel) subtypePanel.hidden = !requiresOtherSubtype;
+  picker.querySelectorAll("[data-other-hazard-subtype]").forEach((btn) => {
+    const isSelected = selectedSubtype && btn.dataset.otherHazardSubtype === selectedSubtype;
+    btn.classList.toggle("selected", Boolean(isSelected));
+    btn.setAttribute("aria-pressed", String(Boolean(isSelected)));
+  });
   const disablePlacementActions = Boolean(reportingState.submissionInProgress || reportingState.locationLookupInProgress);
   picker.querySelectorAll('[data-action="submit-hazard"], [data-action="start-map-placement"]').forEach((btn) => {
-    btn.disabled = disablePlacementActions;
+    btn.disabled = disablePlacementActions || (requiresOtherSubtype && !selectedSubtype);
     btn.setAttribute("aria-busy", reportingState.locationLookupInProgress ? "true" : "false");
   });
   const cancelBtn = picker.querySelector('[data-action="cancel-hazard-placement"]');
@@ -37854,13 +37964,19 @@ function resetQuickHazardReportState() {
   if (reportingState.placementModeActive) return;
   pendingHazardPlacement = null;
   selectedQuickHazardType = null;
+  selectedOtherHazardSubtype = "";
   updateReportingState({ selectedHazardType: null, placementModeActive: false, reportModeActive: false });
   document.querySelectorAll("#gridlyHazardPanel .hazard-choice-grid button").forEach((btn) => {
     btn.classList.remove("selected");
   });
+  document.querySelectorAll("#gridlyHazardPanel [data-other-hazard-subtype]").forEach((btn) => {
+    btn.classList.remove("selected");
+    btn.removeAttribute("aria-pressed");
+  });
   const useMyLocationBtn = document.querySelector('#gridlyHazardPanel [data-action="submit-hazard"]');
   useMyLocationBtn?.classList.remove("selected", "active", "armed");
   useMyLocationBtn?.removeAttribute("aria-pressed");
+  syncHazardPickerUiState();
 }
 
 function closeVisiblePortraitV2ReportSurfaceAfterSubmit() {
@@ -38857,7 +38973,7 @@ function isPointNearActiveRoute(lat, lng) {
   return points.some((p) => getDistanceMiles(lat, lng, p.lat, p.lng) <= 0.08);
 }
 
-async function createSharedHazardReport(hazardType, lat, lng, confidence, locationName = "", originalTapCoords = null) {
+async function createSharedHazardReport(hazardType, lat, lng, confidence, locationName = "", originalTapCoords = null, options = {}) {
   const submitAudit = {
     startedAt: Date.now(),
     startedIso: new Date().toISOString(),
@@ -38879,24 +38995,36 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     return false;
   }
 
+  const normalizedOtherSubtype = hazardType === "other_hazard"
+    ? normalizeOtherHazardSubtype(options?.subtype || selectedOtherHazardSubtype)
+    : "";
   const copy = HAZARD_TYPES[hazardType] || HAZARD_TYPES.other_hazard;
+  const subtypeLabel = normalizedOtherSubtype ? getOtherHazardSubtypeLabel(normalizedOtherSubtype) : "";
   const sourceTag = ROAD_HAZARD_SOURCE_MAP[hazardType] || "community_report";
   const expiresAt = new Date(Date.now() + HAZARD_REPORT_EXPIRATION_MINUTES * 60000).toISOString();
+  const baseDetail = normalizedOtherSubtype
+    ? `Shared report: ${subtypeLabel.toLowerCase()} may affect travel. (future_source: ${sourceTag})`
+    : `${copy.detail} (future_source: ${sourceTag})`;
 
   const row = {
     crossing_id: `hazard-${deviceId}-${Date.now()}`,
-    crossing_name: locationName ? `${copy.label} · ${locationName}` : copy.label,
+    crossing_name: locationName
+      ? `${subtypeLabel || copy.label} · ${locationName}`
+      : (subtypeLabel || copy.label),
     railroad: "Road hazard",
     lat,
     lng,
     report_type: hazardType,
     severity: copy.severity,
-    detail: `${copy.detail} (future_source: ${sourceTag})`,
+    detail: appendOtherHazardStructuredMetadata(baseDetail, normalizedOtherSubtype),
     source: "user",
     confidence,
     device_id: deviceId,
     expires_at: expiresAt
   };
+  const localRow = normalizedOtherSubtype
+    ? { ...row, category: "other_hazard", subtype: normalizedOtherSubtype, hazardSubtype: normalizedOtherSubtype }
+    : row;
 
   try {
     lastMobileReportSubmitDebug.activeSubmitCoords = { lat, lng };
@@ -38921,7 +39049,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     lastMobileReportSubmitDebug.lastSubmitAttempt = "supabase_insert_succeeded";
     markSubmitStage("supabase_insert_succeeded");
     lastMobileReportSubmitDebug.supabaseInsertSucceeded = true;
-    const localHazardRows = normalizeReports([{ ...row, created_at: new Date().toISOString() }]);
+    const localHazardRows = normalizeReports([{ ...localRow, created_at: new Date().toISOString() }]);
     const localHazardEntry = localHazardRows[0] || null;
     if (localHazardEntry && originalTapCoords) {
       const finalPlacementCoordinate = gridlyCoordinateFromRecord(lastMobileReportSubmitDebug.finalPlacementCoordinate) || gridlyCoordinateFromRecord(localHazardEntry);
@@ -38993,6 +39121,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
         placementModeActive: false,
         selectedHazardType: null
       });
+      selectedOtherHazardSubtype = "";
       closeHazardPanel({ preserveLastReportMessage: true });
       returnMobileToLiveMode("submit_hazard_success");
       lastMobileReportSubmitDebug.postSubmitUiResetSucceeded = true;
@@ -39022,6 +39151,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
         lastReportError: "",
         lastReportMessage: "Report added"
       });
+      selectedOtherHazardSubtype = "";
       setConfirmation("Report accepted and shared.", "success");
       setSync("Hazard report shared");
       markSubmitStage("post_insert_completion_warning", { message });
@@ -40123,6 +40253,11 @@ function bindEvents() {
     }
     if (action === "submit-hazard") {
       event.preventDefault();
+      if ((actionEl.dataset.hazardType || reportingState.selectedHazardType || selectedQuickHazardType || pendingHazardPlacement) === "other_hazard" && !normalizeOtherHazardSubtype(selectedOtherHazardSubtype)) {
+        setConfirmation("Select Hazard Type before continuing.", "info", { persist: true });
+        syncHazardPickerUiState();
+        return;
+      }
       submitHazardNearMe(actionEl.dataset.hazardType || reportingState.selectedHazardType || selectedQuickHazardType || pendingHazardPlacement);
       return;
     }
@@ -40134,20 +40269,50 @@ function bindEvents() {
       });
       selectedQuickHazardType = selectedType;
       pendingHazardPlacement = null;
+      selectedOtherHazardSubtype = "";
       updateReportingState({
         selectedHazardType: selectedType,
         placementModeActive: false,
         activeReportEntryPoint: "hazard_select",
         lastReportError: "",
-        lastReportMessage: `${(HAZARD_TYPES[selectedType] || HAZARD_TYPES.other_hazard).label} selected.`
+        lastReportMessage: selectedType === "other_hazard"
+          ? "Select Hazard Type for Other Hazard."
+          : `${(HAZARD_TYPES[selectedType] || HAZARD_TYPES.other_hazard).label} selected.`
       });
-      setConfirmation("Hazard selected. Choose Use My Location or Tap Map Location.", "success");
+      syncHazardPickerUiState();
+      setConfirmation(selectedType === "other_hazard" ? "Select Hazard Type." : "Hazard selected. Choose Use My Location or Tap Map Location.", selectedType === "other_hazard" ? "info" : "success");
+      return;
+    }
+    if (action === "select-other-hazard-subtype") {
+      event.preventDefault();
+      const selectedSubtype = normalizeOtherHazardSubtype(actionEl.dataset.otherHazardSubtype || "");
+      if (!selectedSubtype) return;
+      selectedOtherHazardSubtype = selectedSubtype;
+      selectedQuickHazardType = "other_hazard";
+      pendingHazardPlacement = null;
+      document.querySelectorAll("#gridlyHazardPanel .hazard-choice-grid button").forEach((btn) => {
+        btn.classList.toggle("selected", btn.dataset.hazardType === "other_hazard");
+      });
+      updateReportingState({
+        selectedHazardType: "other_hazard",
+        placementModeActive: false,
+        activeReportEntryPoint: "hazard_subtype_select",
+        lastReportError: "",
+        lastReportMessage: `${getOtherHazardSubtypeLabel(selectedSubtype)} selected.`
+      });
+      syncHazardPickerUiState();
+      setConfirmation(`${getOtherHazardSubtypeLabel(selectedSubtype)} selected. Choose Use My Location or Tap Map Location.`, "success");
       return;
     }
     if (action === "start-map-placement") {
       event.preventDefault();
       const resolved = resolveRoadHazardReportTypeForAction(reportingState.selectedHazardType || selectedQuickHazardType, { announceDefault: true });
       const selectedType = resolved.type;
+      if (selectedType === "other_hazard" && !normalizeOtherHazardSubtype(selectedOtherHazardSubtype)) {
+        setConfirmation("Select Hazard Type before tapping the map.", "info", { persist: true });
+        syncHazardPickerUiState();
+        return;
+      }
       pushTapMapTrace("actual-tap-map-button-clicked", { source: "legacy_start_map_placement", hazardType: selectedType || null });
       const placementBefore = reportingState.placementModeActive;
       beginRoadHazardMapPlacement(selectedType, { source: "legacy-visible-or-actual" });
@@ -53316,7 +53481,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
 
   const sheetTemplates = {
-    report: { title: "Report Hazard", html: `<div class="gridly-v2-tiles gridly-v2-report-tiles">${V2_REPORT_HAZARD_OPTIONS.map((option)=>`<button class="gridly-v2-tile gridly-v2-report-action" data-v2-action="report-select-hazard" data-hazard-type="${option.type}" type="button"><span>${option.label}</span></button>`).join("")}</div><div class="gridly-v2-list gridly-v2-report-ctas"><p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p><button class="primary-btn" data-v2-action="report-use-location" type="button">Use My Location</button><button class="secondary-btn" data-v2-action="report-tap-map" type="button">Tap Map Location</button></div>` },
+    report: { title: "Report Hazard", html: `<div class="gridly-v2-tiles gridly-v2-report-tiles">${V2_REPORT_HAZARD_OPTIONS.map((option)=>`<button class="gridly-v2-tile gridly-v2-report-action" data-v2-action="report-select-hazard" data-hazard-type="${option.type}" type="button"><span>${option.label}</span></button>`).join("")}</div><div class="gridly-v2-list gridly-v2-other-hazard-subtypes" data-v2-other-hazard-subtypes hidden><p class="gridly-v2-sheet-copy"><strong>Select Hazard Type</strong></p>${OTHER_HAZARD_SUBTYPE_OPTIONS.map((option)=>`<button class="gridly-v2-tile gridly-v2-other-hazard-subtype-action" data-v2-action="report-select-other-hazard-subtype" data-other-hazard-subtype="${option.value}" type="button">○ ${option.label}</button>`).join("")}</div><div class="gridly-v2-list gridly-v2-report-ctas"><p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p><button class="primary-btn" data-v2-action="report-use-location" type="button">Use My Location</button><button class="secondary-btn" data-v2-action="report-tap-map" type="button">Tap Map Location</button></div>` },
     route: { title: "Route Setup", html: buildRouteSurfaceHtml },
     alerts: { title: "Commute Command", html: buildAlertsSurfaceHtml },
     settings: { title: "Settings", html: buildSettingsSurfaceHtml },
@@ -53494,6 +53659,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       || pendingHazardPlacement
       || pickerSelectedHazardType
       || "";
+    if (candidate === "other_hazard" && !normalizeOtherHazardSubtype(selectedOtherHazardSubtype)) return "";
     if (candidate && HAZARD_TYPES[candidate]) return candidate;
     if (options.allowDefault === false) return "";
     return DEFAULT_REPORT_HAZARD_TYPE;
@@ -53501,7 +53667,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
 
   function getV2PreconditionsState() {
     const route = getRouteSurfaceSnapshot();
-    const reportHazardSelected = Boolean(resolveSelectedReportHazardType({ allowDefault: true }));
+    const reportHazardSelected = Boolean(resolveSelectedReportHazardType({ allowDefault: false }));
     const routeReady = route.readinessState === "ready";
     const hasSavedPlaces = route.savedPlaceCount > 0;
     const hasHome = route.hasHome;
@@ -53521,7 +53687,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         : "No route preview available.";
     return {
       reportHazardSelected,
-      reportReason: reportHazardSelected ? "" : "Choose a hazard to enable placement actions.",
+      reportReason: reportHazardSelected ? "" : (selectedV2HazardType === "other_hazard" ? "Select Hazard Type for Other Hazard." : "Choose a hazard to enable placement actions."),
       routeReady,
       hasHome,
       hasWork,
@@ -54023,12 +54189,48 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       "report-open": () => document.getElementById("mobileDockReportBtn")?.click(),
       "report-select-hazard": () => {
         selectedV2HazardType = payload.hazardType || selectedV2HazardType || "";
+        selectedOtherHazardSubtype = "";
         pushTapMapTrace("portrait-v2-hazard-selection", { source: "portrait-v2-report", hazardType: selectedV2HazardType || null });
         if (typeof updateReportingState === "function" && selectedV2HazardType) {
-          updateReportingState({ selectedHazardType: selectedV2HazardType, activeReportEntryPoint: "portrait_v2_sheet" });
+          updateReportingState({
+            selectedHazardType: selectedV2HazardType,
+            activeReportEntryPoint: "portrait_v2_sheet",
+            lastReportMessage: selectedV2HazardType === "other_hazard" ? "Select Hazard Type for Other Hazard." : ""
+          });
         }
         document.querySelectorAll("#gridlyPortraitV2SheetBody .gridly-v2-report-action").forEach((button) => {
           button.classList.toggle("is-selected", (button.dataset.hazardType || "") === selectedV2HazardType);
+        });
+        const subtypePanel = document.querySelector("#gridlyPortraitV2SheetBody [data-v2-other-hazard-subtypes]");
+        if (subtypePanel) subtypePanel.hidden = selectedV2HazardType !== "other_hazard";
+        document.querySelectorAll("#gridlyPortraitV2SheetBody [data-other-hazard-subtype]").forEach((button) => {
+          button.classList.toggle("is-selected", false);
+          button.setAttribute("aria-pressed", "false");
+        });
+        const sheetBody = document.getElementById("gridlyPortraitV2SheetBody");
+        refreshPortraitV2ReportCtas(sheetBody);
+      },
+      "report-select-other-hazard-subtype": () => {
+        const selectedSubtype = normalizeOtherHazardSubtype(payload.otherHazardSubtype || "");
+        if (!selectedSubtype) return;
+        selectedV2HazardType = "other_hazard";
+        selectedQuickHazardType = "other_hazard";
+        selectedOtherHazardSubtype = selectedSubtype;
+        pushTapMapTrace("portrait-v2-other-hazard-subtype-selection", { source: "portrait-v2-report", subtype: selectedSubtype });
+        if (typeof updateReportingState === "function") {
+          updateReportingState({
+            selectedHazardType: "other_hazard",
+            activeReportEntryPoint: "portrait_v2_subtype_sheet",
+            lastReportMessage: `${getOtherHazardSubtypeLabel(selectedSubtype)} selected.`
+          });
+        }
+        document.querySelectorAll("#gridlyPortraitV2SheetBody .gridly-v2-report-action").forEach((button) => {
+          button.classList.toggle("is-selected", (button.dataset.hazardType || "") === "other_hazard");
+        });
+        document.querySelectorAll("#gridlyPortraitV2SheetBody [data-other-hazard-subtype]").forEach((button) => {
+          const isSelected = button.dataset.otherHazardSubtype === selectedSubtype;
+          button.classList.toggle("is-selected", isSelected);
+          button.setAttribute("aria-pressed", String(isSelected));
         });
         const sheetBody = document.getElementById("gridlyPortraitV2SheetBody");
         refreshPortraitV2ReportCtas(sheetBody);
@@ -54222,7 +54424,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         "route-manage-places-open",
         "settings-replay-setup"
       ].includes(canonicalAction);
-      const shouldKeepSheetOpen = canonicalAction === "report-select-hazard";
+      const shouldKeepSheetOpen = canonicalAction === "report-select-hazard" || canonicalAction === "report-select-other-hazard-subtype";
       if (!shouldKeepSheetOpen && !actionManagesOwnSurface) closePortraitV2Sheet();
       applyPortraitV2SurfaceContainment();
     } catch (error) {
@@ -54262,7 +54464,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         if (!action) return;
         event.preventDefault();
         event.stopPropagation();
-        triggerV2DockAdapter(action, { hazardType: actionEl.dataset.hazardType || "", layerName: actionEl.dataset.layerName || "" });
+        triggerV2DockAdapter(action, {
+          hazardType: actionEl.dataset.hazardType || "",
+          otherHazardSubtype: actionEl.dataset.otherHazardSubtype || "",
+          layerName: actionEl.dataset.layerName || ""
+        });
       });
       body.dataset.v2DelegatedClickBound = "1";
     }
@@ -54324,6 +54530,14 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         button.classList.toggle("is-selected", (button.dataset.hazardType || "") === seededType);
       });
     }
+    const subtypePanel = body.querySelector("[data-v2-other-hazard-subtypes]");
+    if (subtypePanel) subtypePanel.hidden = seededType !== "other_hazard";
+    const seededSubtype = normalizeOtherHazardSubtype(selectedOtherHazardSubtype);
+    body.querySelectorAll("[data-other-hazard-subtype]").forEach((button) => {
+      const isSelected = Boolean(seededSubtype && button.dataset.otherHazardSubtype === seededSubtype);
+      button.classList.toggle("is-selected", isSelected);
+      button.setAttribute("aria-pressed", String(isSelected));
+    });
     const helper = body.querySelector("[data-v2-precondition-helper]");
     if (helper) {
       let helperText = "";
