@@ -27418,6 +27418,246 @@ function renderGridlyCommunityPulse(options = {}) {
 }
 
 
+function buildGridlyOwnershipStateAudit(options = {}) {
+  const auditVersion = "V226.2";
+  const safeNow = () => {
+    try {
+      return new Date().toISOString();
+    } catch (error) {
+      return "";
+    }
+  };
+  const safeTextById = (id) => {
+    try {
+      if (typeof document === "undefined") return null;
+      const element = document.getElementById(id);
+      if (!element) return null;
+      return String(element.textContent || "").replace(/\s+/g, " ").trim();
+    } catch (error) {
+      return null;
+    }
+  };
+  const safeCall = (fn, fallback = null) => {
+    try {
+      return typeof fn === "function" ? fn() : fallback;
+    } catch (error) {
+      return fallback;
+    }
+  };
+  const safeBoolean = (fn) => {
+    try {
+      return Boolean(fn());
+    } catch (error) {
+      return false;
+    }
+  };
+  const safeClassPresent = (element, className) => {
+    try {
+      return Boolean(element?.classList?.contains?.(className));
+    } catch (error) {
+      return false;
+    }
+  };
+  const routeLatLngs = safeCall(() => (typeof getRoutePolylineLatLngs === "function" ? getRoutePolylineLatLngs() : null), null);
+  const activeRouteCoordinateCount = Array.isArray(routeLatLngs)
+    ? routeLatLngs.filter((pt) => Number.isFinite(Number(pt?.lat)) && Number.isFinite(Number(pt?.lng))).length
+    : 0;
+  const activeRoutePresent = activeRouteCoordinateCount > 1;
+  const selectedDestinationLabel = safeCall(() => (typeof getSelectedDestinationLabel === "function" ? getSelectedDestinationLabel() : null), null);
+  const selectedLabel = String(selectedDestinationLabel || "").trim();
+  const routeIsMonitoring = safeBoolean(() => routeWatchActivated || window.__gridlyRouteWatchActive);
+  const awarenessPanelMode = !selectedLabel && !routeIsMonitoring;
+
+  let commandCardOwner = "unknown";
+  if (awarenessPanelMode) commandCardOwner = "awareness";
+  else if (selectedLabel) commandCardOwner = "destination";
+  else if (routeIsMonitoring) commandCardOwner = "route";
+
+  const selectedAwarenessArea = safeCall(() => {
+    if (typeof getSelectedGridlyAwarenessArea === "function") return getSelectedGridlyAwarenessArea();
+    if (typeof getGridlySelectedAwarenessArea === "function") return getGridlySelectedAwarenessArea();
+    return null;
+  }, null);
+  const awarenessStorageValue = safeCall(() => {
+    if (typeof gridlySafeLocalStorageGet === "function") return gridlySafeLocalStorageGet("gridlyHomeTown");
+    if (typeof window !== "undefined" && window.localStorage) return window.localStorage.getItem("gridlyHomeTown");
+    return null;
+  }, null);
+
+  const awarenessDiagnostics = safeCall(() => (
+    typeof getGridlyAwarenessModeDiagnostics === "function"
+      ? getGridlyAwarenessModeDiagnostics({ ...options, ownershipAuditReadOnly: true, routeLatLngs: Array.isArray(routeLatLngs) ? routeLatLngs : [] })
+      : null
+  ), null);
+  const pulseModel = options?.includeFreshPulseModel === true
+    ? safeCall(() => (typeof buildGridlyCommunityPulseModel === "function" ? buildGridlyCommunityPulseModel({ ...options, ownershipAuditReadOnly: true, routeLatLngs: Array.isArray(routeLatLngs) ? routeLatLngs : [] }) : null), null)
+    : null;
+  const pulseState = pulseModel || (typeof gridlyCommunityPulseAuditState === "object" && gridlyCommunityPulseAuditState ? gridlyCommunityPulseAuditState : null);
+  const pulseSurface = safeCall(() => (typeof document !== "undefined" ? document.getElementById("gridlyCommunityPulseSurface") : null), null);
+  const pulseVisible = safeBoolean(() => {
+    if (pulseSurface) return !pulseSurface.hidden;
+    return pulseState?.pulseVisible;
+  });
+  const pulseSuppressedReason = String(pulseState?.pulseSuppressedReason || (awarenessDiagnostics?.awarenessMode === "route" ? "route-priority suppression: active route intelligence is primary" : "") || "");
+
+  const commandCard = safeCall(() => (typeof document !== "undefined" ? document.getElementById("mobileDestinationCommandTitle")?.closest?.(".mobile-destination-command") || document.querySelector(".mobile-destination-command") : null), null);
+  const crossingsElement = safeCall(() => (typeof document !== "undefined" ? document.getElementById("mobileAwarenessPanelCrossings") : null), null);
+  const issuesElement = safeCall(() => (typeof document !== "undefined" ? document.getElementById("mobileAwarenessPanelIssues") : null), null);
+  const destinationPreview = safeCall(() => (typeof window !== "undefined" && window.GridlyDestinationRoutePreview ? window.GridlyDestinationRoutePreview : null), null);
+  const selectedDestination = safeCall(() => {
+    if (typeof ensureGridlySearchState !== "function" || typeof normalizeGridlySearchResult !== "function") return null;
+    return normalizeGridlySearchResult(ensureGridlySearchState()?.selectedDestination);
+  }, null);
+
+  const routeTakingCommandCardOwnership = commandCardOwner === "route" || Boolean(routeIsMonitoring && !awarenessPanelMode);
+  const destinationTakingCommandCardOwnership = commandCardOwner === "destination" || Boolean(selectedLabel);
+  const routeSuppressingCommunityPulse = Boolean(activeRoutePresent && (awarenessDiagnostics?.awarenessMode === "route" || /route-priority suppression/i.test(pulseSuppressedReason)) && !pulseVisible);
+  const awarenessLanguagePattern = /awareness|community|county|area|crossing|hazard|quiet|nearby/i;
+  const commandCardTextForConflict = [
+    safeTextById("mobileAwarenessPanelKicker"),
+    safeTextById("mobileDestinationCommandTitle"),
+    safeTextById("mobileDestinationCommandMeta"),
+    safeTextById("mobileAwarenessPanelCrossings"),
+    safeTextById("mobileAwarenessPanelIssues")
+  ].filter(Boolean).join(" ");
+  const awarenessLanguageStillShowing = awarenessLanguagePattern.test(commandCardTextForConflict);
+  const conflictingOwners = Boolean(
+    ((commandCardOwner === "route" || commandCardOwner === "destination") && awarenessLanguageStillShowing)
+    || (commandCardOwner === "awareness" && routeSuppressingCommunityPulse)
+  );
+  const awarenessPrimary = Boolean(
+    commandCardOwner === "awareness"
+    && (pulseVisible || !routeSuppressingCommunityPulse)
+    && !routeTakingCommandCardOwnership
+    && !destinationTakingCommandCardOwnership
+  );
+  let summary = "Awareness is primary; no route or destination is taking command-card ownership.";
+  if (conflictingOwners) summary = "Potential ownership conflict detected between command card language and route/community pulse state.";
+  else if (destinationTakingCommandCardOwnership) summary = "Destination state is taking command-card ownership under current behavior.";
+  else if (routeTakingCommandCardOwnership || routeSuppressingCommunityPulse) summary = "Route state is taking priority under current behavior.";
+  else if (!awarenessPrimary) summary = "Ownership is indeterminate from the current runtime state.";
+
+  return {
+    available: true,
+    version: auditVersion,
+    generatedAt: safeNow(),
+    awarenessArea: {
+      selectedName: selectedAwarenessArea?.label || selectedAwarenessArea?.storageValue || null,
+      selectedKey: selectedAwarenessArea?.key || null,
+      storageValue: selectedAwarenessArea?.storageValue || awarenessStorageValue || null
+    },
+    commandCard: {
+      selectedLabel: selectedLabel || null,
+      routeIsMonitoring,
+      awarenessPanelMode,
+      owner: commandCardOwner,
+      kickerText: safeTextById("mobileAwarenessPanelKicker"),
+      titleText: safeTextById("mobileDestinationCommandTitle"),
+      metaText: safeTextById("mobileDestinationCommandMeta"),
+      crossingsText: safeTextById("mobileAwarenessPanelCrossings"),
+      issuesText: safeTextById("mobileAwarenessPanelIssues"),
+      impactText: safeTextById("mobileDestinationCommandImpact"),
+      buttonText: safeTextById("mobileDestinationCommandBtn"),
+      awarenessLinesVisible: Boolean((crossingsElement && !crossingsElement.hidden) || (issuesElement && !issuesElement.hidden)),
+      destinationPanelClassPresent: safeClassPresent(commandCard, "is-destination-panel") || safeClassPresent(commandCard, "destination-panel"),
+      bodyDestinationPanelClassPresent: safeBoolean(() => document.body?.classList?.contains?.("is-destination-panel") || document.body?.classList?.contains?.("destination-panel"))
+    },
+    communityPulse: {
+      awarenessMode: awarenessDiagnostics?.awarenessMode || pulseState?.awarenessMode || null,
+      pulseVisible,
+      pulseSuppressedReason: pulseSuppressedReason || null,
+      activeRouteCoordinateCount,
+      activeRoutePresent,
+      headlineText: safeTextById("gridlyCommunityPulseHeadline") || pulseState?.renderedPulseHeadline || null,
+      sublineText: safeTextById("gridlyCommunityPulseSubline") || pulseState?.renderedPulseSubline || null
+    },
+    routeState: {
+      routeWatchActivated: safeBoolean(() => routeWatchActivated),
+      windowRouteWatchActive: safeBoolean(() => window.__gridlyRouteWatchActive),
+      activeRouteCoordinateCount,
+      savedRouteLayerPresent: safeBoolean(() => savedRouteLayer && typeof savedRouteLayer.getLayers === "function" && savedRouteLayer.getLayers().length > 0),
+      routePreviewLayerPresent: safeBoolean(() => window.__gridlyRoutePreviewLayer && typeof window.__gridlyRoutePreviewLayer.getLatLngs === "function" && window.__gridlyRoutePreviewLayer.getLatLngs().length > 0)
+    },
+    destinationState: {
+      selectedDestinationPresent: Boolean(selectedDestination || selectedLabel),
+      selectedDestinationLabel: selectedLabel || null,
+      routePreviewActive: Boolean(destinationPreview?.active),
+      routePreviewStatus: destinationPreview?.status || null
+    },
+    ownershipAssessment: {
+      awarenessPrimary,
+      routeTakingCommandCardOwnership,
+      destinationTakingCommandCardOwnership,
+      routeSuppressingCommunityPulse,
+      conflictingOwners,
+      summary
+    }
+  };
+}
+
+window.gridlyOwnershipStateAudit = function gridlyOwnershipStateAudit(options = {}) {
+  try {
+    return buildGridlyOwnershipStateAudit(options || {});
+  } catch (error) {
+    return {
+      available: true,
+      version: "V226.2",
+      generatedAt: (() => {
+        try { return new Date().toISOString(); } catch (dateError) { return ""; }
+      })(),
+      error: error?.message || "ownership audit unavailable",
+      awarenessArea: { selectedName: null, selectedKey: null, storageValue: null },
+      commandCard: {
+        selectedLabel: null,
+        routeIsMonitoring: null,
+        awarenessPanelMode: null,
+        owner: "unknown",
+        kickerText: null,
+        titleText: null,
+        metaText: null,
+        crossingsText: null,
+        issuesText: null,
+        impactText: null,
+        buttonText: null,
+        awarenessLinesVisible: false,
+        destinationPanelClassPresent: false,
+        bodyDestinationPanelClassPresent: false
+      },
+      communityPulse: {
+        awarenessMode: null,
+        pulseVisible: false,
+        pulseSuppressedReason: null,
+        activeRouteCoordinateCount: 0,
+        activeRoutePresent: false,
+        headlineText: null,
+        sublineText: null
+      },
+      routeState: {
+        routeWatchActivated: null,
+        windowRouteWatchActive: null,
+        activeRouteCoordinateCount: 0,
+        savedRouteLayerPresent: false,
+        routePreviewLayerPresent: false
+      },
+      destinationState: {
+        selectedDestinationPresent: false,
+        selectedDestinationLabel: null,
+        routePreviewActive: false,
+        routePreviewStatus: null
+      },
+      ownershipAssessment: {
+        awarenessPrimary: false,
+        routeTakingCommandCardOwnership: false,
+        destinationTakingCommandCardOwnership: false,
+        routeSuppressingCommunityPulse: false,
+        conflictingOwners: false,
+        summary: "Ownership audit caught an error and returned a safe fallback."
+      }
+    };
+  }
+};
+
+
 
 function gridlyHistoricalIntelligenceTitleCaseLocation(value = "") {
   const preservedAbbreviations = new Set(["US", "TX", "FM", "SH", "IH", "I", "CR", "RR"]);
