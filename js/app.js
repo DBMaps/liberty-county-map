@@ -27430,7 +27430,7 @@ function renderGridlyCommunityPulse(options = {}) {
 
 
 function buildGridlyOwnershipStateAudit(options = {}) {
-  const auditVersion = "V226.3";
+  const auditVersion = "V226.4";
   const safeNow = () => {
     try {
       return new Date().toISOString();
@@ -27612,7 +27612,7 @@ window.gridlyOwnershipStateAudit = function gridlyOwnershipStateAudit(options = 
   } catch (error) {
     return {
       available: true,
-      version: "V226.3",
+      version: "V226.4",
       generatedAt: (() => {
         try { return new Date().toISOString(); } catch (dateError) { return ""; }
       })(),
