@@ -9750,6 +9750,9 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
   .gridly-hazard-panel>p{font-size:.77rem!important;margin-bottom:6px!important}
   .hazard-choice-grid{gap:6px!important;padding-bottom:6px!important}
   .hazard-choice-grid button{min-height:36px!important;padding:7px 9px!important;font-size:.79rem!important;border-radius:10px!important}
+  .hazard-subtype-panel{margin-top:5px!important;padding:6px!important}
+  .hazard-subtype-grid{gap:5px!important}
+  .hazard-subtype-grid button{min-height:32px!important;padding:6px 9px!important;font-size:.75rem!important;border-radius:9px!important}
   .hazard-choice-grid button span,.hazard-choice-grid button svg{transform:scale(.92)}
   .hazard-panel-placement-actions{padding-top:5px!important;padding-bottom:calc(5px + env(safe-area-inset-bottom,0px))!important;gap:5px!important;margin-top:3px!important}
   .hazard-panel-placement-actions button{min-height:31px!important;padding:6px 9px!important;font-size:.74rem!important}
@@ -13928,9 +13931,34 @@ body[data-layout-mode="portrait"] #reportSection.report-drawer[data-popup-suppre
 #gridlyHazardPanel .hazard-panel-header strong { font-size: 0.94rem; letter-spacing: 0.01em; }
 #gridlyHazardPanel .hazard-choice-grid { gap: 6px; }
 #gridlyHazardPanel .hazard-choice-grid button,
+#gridlyHazardPanel .hazard-subtype-grid button,
 #gridlyHazardPanel .hazard-panel-placement-actions button {
   border-radius: 10px;
   border: 1px solid rgba(167, 196, 235, 0.2);
+}
+#gridlyHazardPanel .hazard-subtype-panel {
+  margin-top: 8px;
+  padding: 8px;
+  border: 1px solid rgba(167, 196, 235, 0.16);
+  border-radius: 12px;
+  background: rgba(7, 15, 25, 0.62);
+}
+#gridlyHazardPanel .hazard-subtype-panel[hidden] { display: none; }
+#gridlyHazardPanel .hazard-subtype-panel strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.82rem;
+  color: rgba(238, 247, 255, 0.94);
+}
+#gridlyHazardPanel .hazard-subtype-grid {
+  display: grid;
+  gap: 6px;
+}
+#gridlyHazardPanel .hazard-subtype-grid button.selected,
+#gridlyHazardPanel .hazard-subtype-grid button[aria-pressed="true"] {
+  border-color: rgba(97, 213, 255, 0.72);
+  background: rgba(38, 128, 188, 0.3);
+  color: #f2fbff;
 }
 #gridlyHazardPanel .hazard-panel-placement-actions {
   display: grid;
