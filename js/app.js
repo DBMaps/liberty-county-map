@@ -5308,7 +5308,12 @@ const MAP_FIRST_HINT_SEEN_KEY = "gridlyMapFirstHintSeenV1";
 const MAP_STYLE_STORAGE_KEY = "gridlyMapStyleV1";
 const GRIDLY_SETTINGS_STORAGE_KEY = "gridlySettingsV1";
 const GRIDLY_WELCOME_SEEN_STORAGE_KEY = "gridlyWelcomeSeenV1";
-const GRIDLY_HOME_TOWN_OPTIONS = ["Dayton", "Liberty", "Cleveland", "Ames", "Other"];
+const GRIDLY_HOME_TOWN_OPTIONS = ["Dayton", "Liberty", "Cleveland", "Ames", "Entire Liberty County", "Other"];
+const GRIDLY_COUNTY_WIDE_HOME_TOWN = "Entire Liberty County";
+const GRIDLY_COUNTY_WIDE_AWARENESS_LABEL = "Liberty County";
+const LIBERTY_COUNTY_AWARENESS_BOUNDS = { south: 29.884282, west: -95.165897, north: 30.493553, east: -94.442235 };
+const GRIDLY_TOWN_STARTUP_ZOOM = 14;
+const GRIDLY_COUNTY_STARTUP_ZOOM = 10;
 const SAVED_PLACES_STORAGE_KEY = "gridlySavedPlacesV1";
 const SELECTED_PLACE_STORAGE_KEY = "gridlySelectedPlaceIdV1";
 const GRIDLY_PROFILE_STORAGE_KEY = "gridlyUserProfileV1";
@@ -17894,7 +17899,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   attachRouteQuickPanelDebugGlobal();
   initGreeting();
   updateLastUpdated();
-  activeGeoFilter = getGridlyHomeTownAwarenessAnchor() ? "town" : activeGeoFilter;
+  const initialHomeTownAnchor = getGridlyHomeTownAwarenessAnchor();
+  activeGeoFilter = initialHomeTownAnchor ? (initialHomeTownAnchor.countyWide ? "county" : "town") : activeGeoFilter;
   initMap();
   installMapClickDiagnostics();
   initSupabase();
@@ -18808,7 +18814,9 @@ function attachGridlyMovementDebugGlobal() {
 function getMyTownKey() {
   const settingsTown = typeof getGridlyHomeTownPreference === "function" ? getGridlyHomeTownPreference() : "";
   const profileTown = gridlyUserProfile?.homeTown || gridlyUserProfile?.homeTownLabel || "";
-  return String(settingsTown || profileTown || "Liberty County").trim().toLowerCase() || "liberty county";
+  const selectedTown = normalizeGridlyHomeTown(settingsTown || profileTown);
+  if (selectedTown === GRIDLY_COUNTY_WIDE_HOME_TOWN) return "liberty county";
+  return String(selectedTown || settingsTown || profileTown || "Liberty County").trim().toLowerCase() || "liberty county";
 }
 
 function getGridlyHomeTownAwarenessAnchor() {
@@ -18816,9 +18824,12 @@ function getGridlyHomeTownAwarenessAnchor() {
   const profileTown = gridlyUserProfile?.homeTown || gridlyUserProfile?.homeTownLabel || "";
   const selectedTown = normalizeGridlyHomeTown(settingsTown || profileTown);
   if (!selectedTown || selectedTown === "Other") return null;
+  if (selectedTown === GRIDLY_COUNTY_WIDE_HOME_TOWN) {
+    return { label: GRIDLY_COUNTY_WIDE_AWARENESS_LABEL, lat: 30.1889175, lng: -94.804066, source: "home_county", countyWide: true };
+  }
   const lookup = LOCAL_PLACE_LOOKUP[String(selectedTown).toLowerCase()];
   if (!lookup) return null;
-  return { label: selectedTown, lat: lookup.lat, lng: lookup.lng, source: "home_town" };
+  return { label: selectedTown, lat: lookup.lat, lng: lookup.lng, source: "home_town", countyWide: false };
 }
 
 function getGridlyAwarenessAnchor({ preferUserLocation = true } = {}) {
@@ -18892,7 +18903,9 @@ function markGridlyWelcomeSeen() {
 }
 
 function normalizeGridlyHomeTown(value = "") {
-  const town = String(value || "").trim();
+  const town = String(value || "").replace(/\s+/g, " ").trim();
+  const lowerTown = town.toLowerCase();
+  if (["entire county", "liberty county", "entire liberty county", "county-wide", "county wide"].includes(lowerTown)) return GRIDLY_COUNTY_WIDE_HOME_TOWN;
   return GRIDLY_HOME_TOWN_OPTIONS.includes(town) ? town : "";
 }
 
@@ -18905,14 +18918,16 @@ function saveGridlyHomeTownPreference(town) {
   if (!homeTown) return "";
   const settings = getGridlySettingsPreferences();
   saveGridlySettingsPreferences({ ...settings, community: { ...(settings.community || {}), homeTown } }, { applyDisplay: false, render: false, source: "welcome_home_town" });
-  const lookup = LOCAL_PLACE_LOOKUP[String(homeTown).toLowerCase()] || null;
+  const lookup = homeTown === GRIDLY_COUNTY_WIDE_HOME_TOWN
+    ? { lat: 30.1889175, lng: -94.804066 }
+    : (LOCAL_PLACE_LOOKUP[String(homeTown).toLowerCase()] || null);
   saveGridlyUserProfile({
     homeTown,
     homeTownLabel: homeTown,
     homeTownLat: lookup?.lat ?? null,
     homeTownLng: lookup?.lng ?? null
   });
-  activeGeoFilter = homeTown === "Other" ? "county" : "town";
+  activeGeoFilter = (homeTown === "Other" || homeTown === GRIDLY_COUNTY_WIDE_HOME_TOWN) ? "county" : "town";
   crossingRenderFilterVersion += 1;
   applyGridlyHomeTownAwarenessContext({ source: "save_home_town", fitMap: true });
   return homeTown;
@@ -18926,7 +18941,8 @@ function renderGridlyWelcomeHomeTownSelection() {
     button.setAttribute("aria-pressed", isSelected ? "true" : "false");
   });
   if (els.gridlyWelcomeTownStatus) {
-    els.gridlyWelcomeTownStatus.textContent = selectedTown ? `Watching ${selectedTown}. Community awareness centered around your town.` : "Choose the community that matters most to you.";
+    const awarenessLabel = selectedTown === GRIDLY_COUNTY_WIDE_HOME_TOWN ? GRIDLY_COUNTY_WIDE_AWARENESS_LABEL : selectedTown;
+    els.gridlyWelcomeTownStatus.textContent = selectedTown ? `Watching ${awarenessLabel}. Community awareness centered around ${selectedTown === GRIDLY_COUNTY_WIDE_HOME_TOWN ? "the county" : "your town"}.` : "Choose the community that matters most to you.";
   }
 }
 
@@ -18965,7 +18981,7 @@ function renderGridlyWelcomePersonalization() {
   }
   if (els.gridlyWelcomeFinalCopy) {
     const homeTown = getGridlyHomeTownPreference();
-    const networkTown = homeTown && homeTown !== "Other" ? homeTown : "Local";
+    const networkTown = homeTown === GRIDLY_COUNTY_WIDE_HOME_TOWN ? GRIDLY_COUNTY_WIDE_AWARENESS_LABEL : (homeTown && homeTown !== "Other" ? homeTown : "Local");
     els.gridlyWelcomeFinalCopy.replaceChildren();
     const lead = document.createElement("span");
     lead.textContent = "Connected to the";
@@ -19317,10 +19333,83 @@ function updateLastUpdated() {
   );
 }
 
+function getGridlyLibertyCountyBounds() {
+  if (typeof L === "undefined" || !L.latLngBounds) return null;
+  const bounds = L.latLngBounds(
+    [LIBERTY_COUNTY_AWARENESS_BOUNDS.south, LIBERTY_COUNTY_AWARENESS_BOUNDS.west],
+    [LIBERTY_COUNTY_AWARENESS_BOUNDS.north, LIBERTY_COUNTY_AWARENESS_BOUNDS.east]
+  );
+  return bounds.isValid() ? bounds : null;
+}
+
+function getGridlyVisibleMapChromeInsets(mapInstance = map) {
+  if (typeof document === "undefined" || !mapInstance?.getContainer) return { top: 88, bottom: 144, left: 16, right: 16 };
+  const mapRect = mapInstance.getContainer().getBoundingClientRect();
+  const isVisible = (node) => {
+    if (!node || node === mapInstance.getContainer()) return false;
+    const style = window.getComputedStyle(node);
+    if (style.display === "none" || style.visibility === "hidden" || style.opacity === "0") return false;
+    const rect = node.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0;
+  };
+  const overlapsMap = (rect) => rect.bottom > mapRect.top && rect.top < mapRect.bottom && rect.right > mapRect.left && rect.left < mapRect.right;
+  const topSelectors = [".app-header", ".gridly-v2-topbar", ".gridly-v2-status-pill", ".gridly-v2-segments", ".mobile-location-chip"];
+  const bottomSelectors = [".mobile-floating-action-dock", ".mobile-bottom-dock", ".mobile-bottom-nav", ".mobile-dock", "#gridlyPortraitV2 .gridly-v2-sheet", ".gridly-v2-sheet"];
+  let top = 0;
+  let bottom = 0;
+  topSelectors.forEach((selector) => {
+    document.querySelectorAll(selector).forEach((node) => {
+      if (!isVisible(node)) return;
+      const rect = node.getBoundingClientRect();
+      if (!overlapsMap(rect) || rect.top > mapRect.top + mapRect.height * 0.45) return;
+      top = Math.max(top, Math.min(mapRect.height * 0.38, rect.bottom - mapRect.top));
+    });
+  });
+  bottomSelectors.forEach((selector) => {
+    document.querySelectorAll(selector).forEach((node) => {
+      if (!isVisible(node)) return;
+      const rect = node.getBoundingClientRect();
+      if (!overlapsMap(rect) || rect.bottom < mapRect.top + mapRect.height * 0.55) return;
+      bottom = Math.max(bottom, Math.min(mapRect.height * 0.42, mapRect.bottom - rect.top));
+    });
+  });
+  const isMobile = window.matchMedia && window.matchMedia("(max-width: 768px)").matches;
+  return {
+    top: Math.round(Math.max(top, isMobile ? 112 : 48)),
+    bottom: Math.round(Math.max(bottom, isMobile ? 148 : 88)),
+    left: isMobile ? 20 : 24,
+    right: isMobile ? 20 : 24
+  };
+}
+
+function getGridlyAwarenessFitPadding(mapInstance = map) {
+  const insets = getGridlyVisibleMapChromeInsets(mapInstance);
+  return {
+    paddingTopLeft: [insets.left, insets.top],
+    paddingBottomRight: [insets.right, insets.bottom]
+  };
+}
+
+function setGridlyAwarenessView(center, zoom, options = {}) {
+  if (!map || !center || !Number.isFinite(Number(center.lat)) || !Number.isFinite(Number(center.lng))) return false;
+  const targetZoom = Math.max(1, Number(zoom) || GRIDLY_TOWN_STARTUP_ZOOM);
+  map.setView([Number(center.lat), Number(center.lng)], targetZoom, { animate: options.animate === true });
+  const insets = getGridlyVisibleMapChromeInsets(map);
+  const containerPoint = map.latLngToContainerPoint([Number(center.lat), Number(center.lng)]);
+  const size = map.getSize();
+  const usableCenterY = insets.top + (Math.max(1, size.y - insets.top - insets.bottom) / 2);
+  const desiredPoint = L.point(size.x / 2, usableCenterY);
+  const panOffset = containerPoint.subtract(desiredPoint);
+  if (Math.abs(panOffset.x) > 1 || Math.abs(panOffset.y) > 1) {
+    map.panBy(panOffset, { animate: false });
+  }
+  return true;
+}
+
 function initMap() {
   const startupAnchor = getGridlyHomeTownAwarenessAnchor();
   const startupCenter = startupAnchor ? [startupAnchor.lat, startupAnchor.lng] : defaultCenter;
-  const startupZoom = startupAnchor ? 13 : 13;
+  const startupZoom = startupAnchor?.countyWide ? GRIDLY_COUNTY_STARTUP_ZOOM : (startupAnchor ? GRIDLY_TOWN_STARTUP_ZOOM : 13);
   map = L.map("map", { zoomControl: false }).setView(startupCenter, startupZoom);
   window.gridlyMapInstance = map;
 
@@ -19427,6 +19516,9 @@ function initMap() {
 
 function getGridlyHomeTownCrossings(homeTownAnchor = getGridlyHomeTownAwarenessAnchor()) {
   if (!homeTownAnchor || !Array.isArray(crossings) || !crossings.length) return [];
+  if (homeTownAnchor.countyWide) {
+    return crossings.filter((crossing) => String(crossing.county || "").trim().toLowerCase() === "liberty county");
+  }
   const townKey = String(homeTownAnchor.label || "").trim().toLowerCase();
   const directTownMatches = crossings.filter((crossing) => String(crossing.city || "").trim().toLowerCase() === townKey);
   if (directTownMatches.length) return directTownMatches;
@@ -19438,13 +19530,18 @@ function getGridlyHomeTownCrossings(homeTownAnchor = getGridlyHomeTownAwarenessA
 function applyGridlyHomeTownAwarenessContext({ source = "unknown", fitMap = false } = {}) {
   const homeTownAnchor = getGridlyHomeTownAwarenessAnchor();
   if (!map || !homeTownAnchor) return false;
+  if (homeTownAnchor.countyWide && userLocation) return false;
   if (activeGeoFilter === "nearby") {
-    activeGeoFilter = "town";
+    activeGeoFilter = homeTownAnchor.countyWide ? "county" : "town";
+    crossingRenderFilterVersion += 1;
+  }
+  if (homeTownAnchor.countyWide && activeGeoFilter === "town") {
+    activeGeoFilter = "county";
     crossingRenderFilterVersion += 1;
   }
   if (!fitMap || !Array.isArray(crossings) || !crossings.length) {
     if (source === "map_init" || !Array.isArray(crossings) || !crossings.length) {
-      map.setView([homeTownAnchor.lat, homeTownAnchor.lng], Math.max(13, Number(map.getZoom?.() || 13)), { animate: false });
+      setGridlyAwarenessView(homeTownAnchor, homeTownAnchor.countyWide ? GRIDLY_COUNTY_STARTUP_ZOOM : GRIDLY_TOWN_STARTUP_ZOOM, { animate: false });
     }
     return true;
   }
@@ -19454,15 +19551,22 @@ function applyGridlyHomeTownAwarenessContext({ source = "unknown", fitMap = fals
     .map((crossing) => [Number(crossing.lat), Number(crossing.lng)])
     .filter(([lat, lng]) => Number.isFinite(lat) && Number.isFinite(lng));
   if (!latLngs.length) {
-    map.setView([homeTownAnchor.lat, homeTownAnchor.lng], 13, { animate: false });
+    if (homeTownAnchor.countyWide) {
+      const countyBounds = getGridlyLibertyCountyBounds();
+      if (countyBounds) {
+        map.fitBounds(countyBounds, { ...getGridlyAwarenessFitPadding(), animate: false, maxZoom: GRIDLY_COUNTY_STARTUP_ZOOM });
+        return true;
+      }
+    }
+    setGridlyAwarenessView(homeTownAnchor, homeTownAnchor.countyWide ? GRIDLY_COUNTY_STARTUP_ZOOM : GRIDLY_TOWN_STARTUP_ZOOM, { animate: false });
     return true;
   }
   const bounds = L.latLngBounds(latLngs);
   if (!bounds.isValid()) return false;
-  map.fitBounds(bounds, {
-    ...getFilterFitPadding(),
+  map.fitBounds(homeTownAnchor.countyWide ? (getGridlyLibertyCountyBounds() || bounds) : bounds, {
+    ...getGridlyAwarenessFitPadding(),
     animate: false,
-    maxZoom: 14
+    maxZoom: homeTownAnchor.countyWide ? GRIDLY_COUNTY_STARTUP_ZOOM : GRIDLY_TOWN_STARTUP_ZOOM
   });
   return true;
 }
@@ -30708,8 +30812,9 @@ function highlightNearestCrossingOnFirstLoad() {
 }
 
 function getFilterFitPadding() {
+  if (typeof getGridlyAwarenessFitPadding === "function") return getGridlyAwarenessFitPadding();
   const isMobile = window.matchMedia && window.matchMedia("(max-width: 768px)").matches;
-  return isMobile ? { topLeft: [20, 16], bottomRight: [20, 132] } : { topLeft: [24, 24], bottomRight: [24, 96] };
+  return isMobile ? { paddingTopLeft: [20, 112], paddingBottomRight: [20, 148] } : { paddingTopLeft: [24, 48], paddingBottomRight: [24, 96] };
 }
 
 function fitMapToCrossingsForActiveFilter(visibleCrossings = []) {
@@ -46201,6 +46306,8 @@ function formatPortraitTopStripImpactLabel(tier = "") {
 function getGridlyAwarenessBriefTownLabel() {
   const settingsTown = typeof getGridlyHomeTownPreference === "function" ? getGridlyHomeTownPreference() : "";
   const profile = typeof getGridlyUserProfile === "function" ? getGridlyUserProfile() : (gridlyUserProfile || {});
+  const selectedTown = normalizeGridlyHomeTown(settingsTown || profile?.homeTownLabel || profile?.homeTown || "");
+  if (selectedTown === GRIDLY_COUNTY_WIDE_HOME_TOWN) return GRIDLY_COUNTY_WIDE_AWARENESS_LABEL;
   return safeDisplayText(settingsTown || profile?.homeTownLabel || profile?.homeTown || profile?.city || profile?.town, "Dayton");
 }
 
