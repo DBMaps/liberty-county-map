@@ -16666,3 +16666,11 @@ body[data-layout-mode="portrait"] .mobile-destination-command,
     overflow: visible !important;
   }
 }
+
+.gridly-v2-other-hazard-subtype-action.is-selected,
+.gridly-v2-other-hazard-subtype-action[aria-pressed="true"] {
+  background: rgba(90, 178, 255, .2);
+  border-color: rgba(120, 199, 255, .78);
+  box-shadow: inset 0 0 0 1px rgba(173, 228, 255, .45);
+  color: #f5f9ff;
+}
