@@ -16365,14 +16365,20 @@ function getGridlyMobileAwarenessPanelSummary() {
   const hazardCount = Array.isArray(summary.activeHazardsInArea) ? summary.activeHazardsInArea.length : Number(summary.activeHazardsInArea || 0);
   const reportCount = Array.isArray(summary.activeReportsInArea) ? summary.activeReportsInArea.length : Number(summary.activeReportsInArea || 0);
   const activeIssueCount = hazardCount + reportCount;
+  const selectedArea = summary.selectedAwarenessArea || {};
+  const countyMode = Boolean(selectedArea.countyWide || selectedArea.fallback || normalizeGridlyAwarenessAreaLookupText(areaName) === "liberty county");
+  const quietStatus = countyMode ? "No active countywide issues reported" : "No active local issues reported";
+  const activeStatus = hazardCount > 0
+    ? "Active hazards reported nearby"
+    : "Active reports posted nearby";
   return {
     ...summary,
     areaName,
     panelTitle: `${areaName} Awareness`,
-    status: safeDisplayText(summary.awarenessStatus, "No active local issues reported"),
-    crossingsLine: crossingsCount === 1 ? "1 crossing watched" : `${crossingsCount} crossings watched`,
+    status: activeIssueCount > 0 ? activeStatus : quietStatus,
+    crossingsLine: `${crossingsCount} crossing${crossingsCount === 1 ? "" : "s"} watched · ${hazardCount} hazard${hazardCount === 1 ? "" : "s"} · ${reportCount} report${reportCount === 1 ? "" : "s"}`,
     activeIssueCount,
-    activeIssuesLine: activeIssueCount === 1 ? "1 active hazard/report" : `${activeIssueCount} active hazards/reports`
+    activeIssuesLine: ""
   };
 }
 
@@ -16397,9 +16403,9 @@ function syncMobileDestinationCommandCard() {
     safeText("mobileDestinationCommandTitle", awarenessSummary.panelTitle);
     safeText("mobileDestinationCommandMeta", awarenessSummary.status);
     safeText("mobileAwarenessPanelCrossings", awarenessSummary.crossingsLine);
-    safeText("mobileAwarenessPanelIssues", awarenessSummary.activeIssueCount > 0 ? awarenessSummary.activeIssuesLine : "");
+    safeText("mobileAwarenessPanelIssues", "");
     document.getElementById("mobileAwarenessPanelCrossings")?.toggleAttribute("hidden", false);
-    document.getElementById("mobileAwarenessPanelIssues")?.toggleAttribute("hidden", awarenessSummary.activeIssueCount <= 0);
+    document.getElementById("mobileAwarenessPanelIssues")?.toggleAttribute("hidden", true);
     safeText("mobileDestinationCommandImpact", "");
     safeText("mobileDestinationCommandBtn", "Route");
   } else {
