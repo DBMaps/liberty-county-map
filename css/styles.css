@@ -16617,3 +16617,19 @@ body[data-layout-mode="portrait"] .mobile-destination-command,
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
+
+/* V225.5.3 — awareness panel/dock layout contract.
+   JS measures the actual Portrait V2 dock footprint and writes
+   --gridly-awareness-dock-footprint, making the dock the source of truth for
+   the fixed awareness panel's bottom edge instead of relying on device-height
+   or fixed-offset assumptions. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command.is-awareness-panel,
+  body.gridly-mobile-awareness-panel-present[data-layout-mode="portrait"] .map-card > .mobile-destination-command,
+  body.gridly-text-large[data-layout-mode="portrait"] .map-card > .mobile-destination-command.is-awareness-panel,
+  body.gridly-text-large.gridly-mobile-awareness-panel-present[data-layout-mode="portrait"] .map-card > .mobile-destination-command {
+    bottom: calc(var(--gridly-awareness-dock-footprint, 118px) + var(--gridly-awareness-panel-dock-gap, 10px)) !important;
+    max-height: calc(100dvh - var(--gridly-awareness-dock-footprint, 118px) - var(--gridly-awareness-panel-dock-gap, 10px) - env(safe-area-inset-top, 0px) - 10px) !important;
+    overflow: visible !important;
+  }
+}

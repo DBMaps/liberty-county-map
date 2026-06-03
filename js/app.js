@@ -16396,6 +16396,7 @@ function syncMobileDestinationCommandCard() {
   card?.classList.toggle("is-awareness-panel", awarenessPanelMode);
   card?.classList.toggle("is-destination-panel", !awarenessPanelMode);
   document.body?.classList.toggle("gridly-mobile-awareness-panel-present", awarenessPanelMode);
+  window.__gridlySyncAwarenessPanelDockContract?.();
 
   if (awarenessPanelMode) {
     const awarenessSummary = getGridlyMobileAwarenessPanelSummary();
@@ -17985,6 +17986,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   ensureGridlySearchState();
   initGridlySearchUI();
   initVisualViewportHeightVar();
+  initGridlyAwarenessPanelDockContract();
   hydrateElements();
   gridlyHealthCheck();
   setManualFallbackDefaultState();
@@ -18035,6 +18037,87 @@ function initVisualViewportHeightVar() {
   }
 }
 
+
+function initGridlyAwarenessPanelDockContract() {
+  const root = document.documentElement;
+  const panelSelector = ".map-card > .mobile-destination-command.is-awareness-panel";
+  const dockSelector = "#gridlyPortraitV2 .gridly-v2-bottom-dock";
+  const gapPixels = 10;
+  let scheduled = false;
+  let resizeObserver = null;
+
+  const readBox = (selector) => {
+    const element = document.querySelector(selector);
+    if (!element) return null;
+    const rect = element.getBoundingClientRect();
+    const style = typeof getComputedStyle === "function" ? getComputedStyle(element) : null;
+    const hidden = element.hidden || style?.display === "none" || style?.visibility === "hidden" || rect.width <= 0 || rect.height <= 0;
+    return hidden ? null : rect;
+  };
+
+  const getViewportHeight = () => window.visualViewport?.height || window.innerHeight || document.documentElement.clientHeight || 0;
+
+  const measure = () => {
+    scheduled = false;
+    const dockRect = readBox(dockSelector);
+    if (!dockRect) return null;
+    const viewportHeight = getViewportHeight();
+    const dockFootprint = Math.max(0, viewportHeight - dockRect.top);
+    root.style.setProperty("--gridly-awareness-dock-footprint", `${Math.ceil(dockFootprint)}px`);
+    root.style.setProperty("--gridly-awareness-panel-dock-gap", `${gapPixels}px`);
+    return dockRect;
+  };
+
+  const schedule = () => {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(measure);
+  };
+
+  window.gridlyAwarenessPanelLayoutDebug = () => {
+    const dockRect = measure() || readBox(dockSelector);
+    const panelRect = readBox(panelSelector);
+    const panelTop = panelRect ? Math.round(panelRect.top) : null;
+    const panelBottom = panelRect ? Math.round(panelRect.bottom) : null;
+    const dockTop = dockRect ? Math.round(dockRect.top) : null;
+    const dockBottom = dockRect ? Math.round(dockRect.bottom) : null;
+    const gap = panelRect && dockRect ? dockRect.top - panelRect.bottom : null;
+    const overlap = panelRect && dockRect ? Math.max(0, panelRect.bottom - dockRect.top) : null;
+    return {
+      panelTop,
+      panelBottom,
+      dockTop,
+      dockBottom,
+      overlapPixels: overlap === null ? null : Math.round(overlap),
+      gapPixels: gap === null ? null : Math.round(gap),
+      pass: overlap !== null && overlap <= 0
+    };
+  };
+
+  schedule();
+  window.addEventListener("resize", schedule, { passive: true });
+  window.visualViewport?.addEventListener("resize", schedule, { passive: true });
+  window.visualViewport?.addEventListener("scroll", schedule, { passive: true });
+
+  if (typeof ResizeObserver === "function") {
+    resizeObserver = new ResizeObserver(schedule);
+    const observeDock = () => {
+      const dock = document.querySelector(dockSelector);
+      if (dock) resizeObserver.observe(dock);
+    };
+    observeDock();
+    document.addEventListener("DOMContentLoaded", observeDock, { once: true });
+  }
+
+  const mutationObserver = typeof MutationObserver === "function"
+    ? new MutationObserver(schedule)
+    : null;
+  if (mutationObserver && document.body) {
+    mutationObserver.observe(document.body, { attributes: true, subtree: true, attributeFilter: ["class", "data-layout-mode", "hidden"] });
+  }
+
+  window.__gridlySyncAwarenessPanelDockContract = schedule;
+}
 
 
 function installMapClickDiagnostics() {
