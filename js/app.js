@@ -28625,12 +28625,22 @@ function gridlyV230ExtractRoadReferences(text = "") {
 
 function gridlyV230VisibleAlertTextCandidates() {
   if (typeof document === "undefined" || !document?.querySelectorAll) return [];
-  const alertRowSelector = typeof GRIDLY_ALERT_ROW_SELECTOR === "string" ? GRIDLY_ALERT_ROW_SELECTOR : "[data-gridly-alert-id]";
+  const alertRowSelector = [
+    typeof GRIDLY_ALERT_ROW_SELECTOR === "string" ? GRIDLY_ALERT_ROW_SELECTOR : "[data-gridly-alert-id]",
+    "[data-gridly-alert-row='true']",
+    "[data-gridly-alert-summary]",
+    "[data-gridly-alert-title]",
+    "[data-gridly-alert-headline]",
+    ".gridly-alert-row"
+  ].join(",");
   const rows = Array.from(document.querySelectorAll(alertRowSelector));
   const candidates = [];
+  const seen = new Set();
   const addVisibleAlertText = (text, source, index) => {
     const narrative = gridlyV229NormalizeNarrativeText(text);
-    if (!narrative) return;
+    const key = `${source}|${narrative}`.toLowerCase();
+    if (!narrative || seen.has(key)) return;
+    seen.add(key);
     candidates.push({
       narrative,
       source,
@@ -28643,8 +28653,10 @@ function gridlyV230VisibleAlertTextCandidates() {
   rows.forEach((row, index) => {
     if (!row || typeof row.getAttribute !== "function") return;
     if (row.getAttribute("data-gridly-alert-hidden") === "true" || row.hidden) return;
+    if (typeof row.hasAttribute === "function" && row.hasAttribute("data-gridly-alert-expand")) return;
     addVisibleAlertText(row.getAttribute("data-gridly-alert-summary"), "visibleAlertCard.data-gridly-alert-summary", index);
     addVisibleAlertText(row.getAttribute("data-gridly-alert-title"), "visibleAlertCard.data-gridly-alert-title", index);
+    addVisibleAlertText(row.getAttribute("data-gridly-alert-headline"), "visibleAlertCard.data-gridly-alert-headline", index);
     addVisibleAlertText(row.getAttribute("data-gridly-alert-location"), "visibleAlertCard.data-gridly-alert-location", index);
     addVisibleAlertText(row.textContent, "visibleAlertCard.textContent", index);
   });
@@ -28698,9 +28710,12 @@ function buildGridlyNarrativePromotionPrototype(options = {}) {
     || gridlyV2291ConditionLabelFromText(selectedCandidate?.narrative || "", context?.snapshot?.activeAwareness?.resolvedCategory || context?.snapshot?.activeAwareness?.topCategory || "");
   const standardizedCondition = gridlyV232ResolveNarrativeCondition(selectedRawCondition);
   const selectedCondition = standardizedCondition.label;
-  const selectedRoad = (selectedCandidate?.roadNames || [])[0]
-    || allCandidates.flatMap((candidate) => gridlyV230ExtractRoadReferences(candidate.narrative))[0]
-    || "";
+  const v230RoadExtractionPool = [
+    ...(selectedCandidate?.roadNames || []),
+    ...visibleAlertCandidates.flatMap((candidate) => gridlyV230ExtractRoadReferences(candidate.narrative)),
+    ...allCandidates.flatMap((candidate) => gridlyV230ExtractRoadReferences(candidate.narrative))
+  ];
+  const selectedRoad = v230RoadExtractionPool.find(Boolean) || "";
   const conditionType = activeConditionPresent && selectedCondition ? standardizedCondition.conditionType : "";
   const selectedPattern = activeConditionPresent && selectedCondition
     ? (selectedRoad ? standardizedCondition.selectedPattern : standardizedCondition.fallbackPattern)
