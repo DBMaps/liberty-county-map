@@ -15707,6 +15707,63 @@ body.gridly-text-large.gridly-mobile-awareness-panel-present[data-layout-mode="p
   bottom: calc(110px + env(safe-area-inset-bottom, 0px)) !important;
 }
 
+/* V225.5.1 — awareness panel / dock containment fix.
+   Keep the complete awareness card above the Portrait V2 dock while allowing
+   large-font and narrow-device copy to wrap inside the panel instead of being
+   clipped behind the dock. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command.is-awareness-panel,
+  body.gridly-mobile-awareness-panel-present[data-layout-mode="portrait"] .map-card > .mobile-destination-command {
+    bottom: max(
+      calc(118px + env(safe-area-inset-bottom, 0px)),
+      calc(var(--gridly-portrait-dock-h, 78px) + 34px + env(safe-area-inset-bottom, 0px))
+    ) !important;
+    align-items: stretch !important;
+    overflow: visible !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel .mobile-destination-command-copy {
+    align-content: center !important;
+    overflow: visible !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel strong,
+  body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel #mobileDestinationCommandMeta,
+  body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel .mobile-awareness-panel-crossings {
+    overflow: visible !important;
+    text-overflow: clip !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel strong {
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel #mobileDestinationCommandMeta {
+    display: block !important;
+    -webkit-line-clamp: unset;
+    -webkit-box-orient: initial;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel .mobile-awareness-panel-crossings[hidden],
+  body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel .mobile-awareness-panel-issues[hidden] {
+    display: none !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel .compact-btn {
+    align-self: center !important;
+    justify-self: end !important;
+  }
+}
+
+body.gridly-text-large[data-layout-mode="portrait"] .map-card > .mobile-destination-command.is-awareness-panel,
+body.gridly-text-large.gridly-mobile-awareness-panel-present[data-layout-mode="portrait"] .map-card > .mobile-destination-command {
+  bottom: max(
+    calc(132px + env(safe-area-inset-bottom, 0px)),
+    calc(var(--gridly-portrait-dock-h, 78px) + 48px + env(safe-area-inset-bottom, 0px))
+  ) !important;
+}
+
 
 /* V214.4 — Route Impact Details Pane (explainability only). */
 body[data-layout-mode="portrait"] .mobile-destination-command .destination-route-impact-line:not(:empty) {
