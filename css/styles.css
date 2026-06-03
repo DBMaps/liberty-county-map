@@ -16442,3 +16442,57 @@ body[data-layout-mode="portrait"] .mobile-destination-command,
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
+
+/* V225.5.2 — awareness panel natural-height content fix above the portrait dock. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command {
+    bottom: calc(116px + env(safe-area-inset-bottom, 0px)) !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    padding: 12px 12px 12px 14px !important;
+    overflow: visible !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .mobile-destination-command-copy {
+    grid-template-rows: none !important;
+    align-content: start !important;
+    gap: 5px !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command :is(strong, p, .destination-route-impact-line) {
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command strong {
+    font-size: clamp(0.92rem, 4vw, 1.08rem) !important;
+    line-height: 1.16 !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command p {
+    font-size: clamp(0.74rem, 3.2vw, 0.86rem) !important;
+    line-height: 1.25 !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .destination-route-impact-line {
+    min-height: 0 !important;
+    line-height: 1.25 !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .compact-btn {
+    align-self: center !important;
+    min-height: 38px !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+}
