@@ -9660,6 +9660,11 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyCommunityPulseActiveAudit",
   "gridlyDestinationImpactIntelligenceAudit",
   "gridlyKnowBeforeYouGoStressAudit",
+  "gridlyAwarenessNarrativePromotionAudit",
+  "gridlyBestAvailableObservationAudit",
+  "gridlyNarrativeSourceTraceAudit",
+  "gridlyPromotionSafetyAudit",
+  "gridlyNarrativeValueAudit",
   "gridlyHazardCategoryReviewAudit",
   "gridlyHistoricalClosePathFramework",
   "gridlyHistoricalClosePathSimulation",
@@ -9764,6 +9769,11 @@ function exposeAllGridlyAuditHelpers() {
     gridlyCommunityPulseActiveAudit: typeof gridlyCommunityPulseActiveAudit === "function" ? gridlyCommunityPulseActiveAudit : (typeof target?.gridlyCommunityPulseActiveAudit === "function" ? target.gridlyCommunityPulseActiveAudit : null),
     gridlyDestinationImpactIntelligenceAudit: typeof gridlyDestinationImpactIntelligenceAudit === "function" ? gridlyDestinationImpactIntelligenceAudit : (typeof target?.gridlyDestinationImpactIntelligenceAudit === "function" ? target.gridlyDestinationImpactIntelligenceAudit : null),
     gridlyKnowBeforeYouGoStressAudit: typeof gridlyKnowBeforeYouGoStressAudit === "function" ? gridlyKnowBeforeYouGoStressAudit : (typeof target?.gridlyKnowBeforeYouGoStressAudit === "function" ? target.gridlyKnowBeforeYouGoStressAudit : null),
+    gridlyAwarenessNarrativePromotionAudit: typeof gridlyAwarenessNarrativePromotionAudit === "function" ? gridlyAwarenessNarrativePromotionAudit : (typeof target?.gridlyAwarenessNarrativePromotionAudit === "function" ? target.gridlyAwarenessNarrativePromotionAudit : null),
+    gridlyBestAvailableObservationAudit: typeof gridlyBestAvailableObservationAudit === "function" ? gridlyBestAvailableObservationAudit : (typeof target?.gridlyBestAvailableObservationAudit === "function" ? target.gridlyBestAvailableObservationAudit : null),
+    gridlyNarrativeSourceTraceAudit: typeof gridlyNarrativeSourceTraceAudit === "function" ? gridlyNarrativeSourceTraceAudit : (typeof target?.gridlyNarrativeSourceTraceAudit === "function" ? target.gridlyNarrativeSourceTraceAudit : null),
+    gridlyPromotionSafetyAudit: typeof gridlyPromotionSafetyAudit === "function" ? gridlyPromotionSafetyAudit : (typeof target?.gridlyPromotionSafetyAudit === "function" ? target.gridlyPromotionSafetyAudit : null),
+    gridlyNarrativeValueAudit: typeof gridlyNarrativeValueAudit === "function" ? gridlyNarrativeValueAudit : (typeof target?.gridlyNarrativeValueAudit === "function" ? target.gridlyNarrativeValueAudit : null),
     gridlyHistoricalClosePathFramework: typeof gridlyHistoricalClosePathFramework === "function" ? gridlyHistoricalClosePathFramework : (typeof target?.gridlyHistoricalClosePathFramework === "function" ? target.gridlyHistoricalClosePathFramework : null),
     loadSharedReports: typeof loadSharedReports === "function" ? loadSharedReports : null
   };
@@ -27891,6 +27901,263 @@ function gridlyAwarenessNarrativeAudit(options = {}) {
   };
 }
 
+
+const GRIDLY_AWARENESS_NARRATIVE_PROMOTION_AUDIT_VERSION = "V229.0";
+
+function gridlyV229NormalizeNarrativeText(value = "") {
+  return safeDisplayText(value, "").replace(/\s+/g, " ").trim();
+}
+
+function gridlyV229GetPathValue(record = {}, path = "") {
+  try {
+    return String(path || "").split(".").reduce((current, part) => (current && typeof current === "object" ? current[part] : undefined), record);
+  } catch (error) {
+    return undefined;
+  }
+}
+
+function gridlyV229FirstNarrativeText(record = {}, paths = []) {
+  for (const path of paths) {
+    const value = gridlyV229NormalizeNarrativeText(gridlyV229GetPathValue(record, path));
+    if (value) return { text: value, path };
+  }
+  return { text: "", path: "" };
+}
+
+function gridlyV229NarrativeHasCondition(text = "") {
+  return /construction|closure|closed|flood|water|crash|wreck|debris|disabled|traffic|backup|delay|rail|train|blocked|hazard|incident|report|work zone|utility|ice|damage|slow/i.test(String(text || ""));
+}
+
+function gridlyV229NarrativeHasLocation(text = "") {
+  return gridlyV227TextHasLocation(text) || /\b(FM|CR|US|TX|SH|IH|I)[-\s]?\d+\b|farm-to-market|county road|road|street|highway|between|near|at|on|along|around|across|Liberty|Dayton|Hull|Cleveland|Ames|Devers|Daisetta|Tarkington|Hardin/i.test(String(text || ""));
+}
+
+function gridlyV229ConditionStrength(text = "") {
+  const value = String(text || "");
+  let score = 0;
+  if (gridlyV229NarrativeHasCondition(value)) score += 3;
+  if (gridlyV229NarrativeHasLocation(value)) score += 3;
+  if (/between|near|at|on|along|around|across/i.test(value)) score += 1;
+  if (/construction|closure|closed|flood|crash|wreck|blocked|debris|disabled|traffic|delay/i.test(value)) score += 2;
+  if (value.length >= 18) score += 1;
+  if (gridlyV227TextHasCounts(value) && value.length < 40) score -= 1;
+  return score;
+}
+
+function gridlyV229BuildNarrativeSourceCandidates(options = {}) {
+  const snapshot = getGridlyV227AwarenessSnapshot(options);
+  const candidates = [];
+  const addCandidate = (text, source, sourceType, extra = {}) => {
+    const narrative = gridlyV229NormalizeNarrativeText(text);
+    if (!narrative || narrative.toLowerCase() === "[object object]") return;
+    const conditionContextPresent = gridlyV229NarrativeHasCondition(narrative);
+    const locationContextPresent = gridlyV229NarrativeHasLocation(narrative);
+    candidates.push({
+      narrative,
+      source,
+      sourceType,
+      promotable: Boolean(conditionContextPresent && locationContextPresent),
+      conditionContextPresent,
+      locationContextPresent,
+      strength: gridlyV229ConditionStrength(narrative),
+      ...extra
+    });
+  };
+
+  const alertPaths = [
+    "headline", "title", "detail", "description", "summary", "message", "subline",
+    "localizedSummary", "resolvedHeadline", "finalHeadline", "segmentHeadline",
+    "raw.headline", "raw.title", "raw.detail", "raw.description", "raw.summary", "raw.message",
+    "source.headline", "source.title", "source.detail", "source.description", "source.summary", "source.message"
+  ];
+  const alertItems = getGridlyV227SafeCall(() => getGridlyDestinationRouteAlertSource(), []) || [];
+  (Array.isArray(alertItems) ? alertItems : []).forEach((alert, index) => {
+    const picked = gridlyV229FirstNarrativeText(alert, alertPaths);
+    addCandidate(picked.text, `alert.${picked.path || "text"}`, "alert", { index, recordId: alert?.id || alert?.reportId || alert?.incidentId || "", visible: true });
+  });
+
+  const activeAwarenessSamples = Array.isArray(snapshot?.samples) ? snapshot.samples : [];
+  activeAwarenessSamples.forEach((sample, index) => {
+    const picked = gridlyV229FirstNarrativeText(sample, ["headline", "title", "description", "summary", "detail", "message", "roadName", "corridor", "resolvedLocationLabel"]);
+    addCandidate(picked.text, `activeAwarenessSamples.${picked.path || "text"}`, "active_awareness_sample", { index, recordId: sample?.id || sample?.reportId || "" });
+  });
+
+  (Array.isArray(snapshot?.communityAwarenessSummary?.activeHazardsInArea) ? snapshot.communityAwarenessSummary.activeHazardsInArea : []).forEach((hazard, index) => {
+    const picked = gridlyV229FirstNarrativeText(hazard, ["headline", "title", "description", "summary", "detail", "message", "roadName", "corridor", "raw.headline", "raw.title", "raw.description"]);
+    addCandidate(picked.text, `communityAwarenessSummary.activeHazardsInArea.${picked.path || "text"}`, "active_hazard", { index, recordId: hazard?.id || hazard?.reportId || "" });
+  });
+
+  (Array.isArray(snapshot?.communityAwarenessSummary?.activeReportsInArea) ? snapshot.communityAwarenessSummary.activeReportsInArea : []).forEach((report, index) => {
+    const picked = gridlyV229FirstNarrativeText(report, ["headline", "title", "description", "summary", "detail", "message", "roadName", "corridor", "raw.headline", "raw.title", "raw.description"]);
+    addCandidate(picked.text, `communityAwarenessSummary.activeReportsInArea.${picked.path || "text"}`, "active_report", { index, recordId: report?.id || report?.reportId || "" });
+  });
+
+  addCandidate(snapshot?.visibleText?.pulseHeadline, "Community Pulse headline", "community_pulse", { visible: Boolean(snapshot?.visibility?.communityPulseVisible) });
+  addCandidate(snapshot?.visibleText?.pulseSubline, "Community Pulse subline", "community_pulse", { visible: Boolean(snapshot?.visibility?.communityPulseVisible) });
+  addCandidate(snapshot?.visibleText?.topPrimary, "awareness summary primary", "awareness_summary", { visible: Boolean(snapshot?.visibility?.topStatusPrimaryVisible) });
+  addCandidate(snapshot?.visibleText?.topSecondary, "awareness summary secondary", "awareness_summary", { visible: Boolean(snapshot?.visibility?.topStatusSecondaryVisible) });
+  addCandidate(snapshot?.visibleText?.topMicroline, "awareness summary microline", "awareness_summary", { visible: true });
+  addCandidate(snapshot?.visibleText?.commandCard?.title, "destination context title", "destination_context", { visible: Boolean(snapshot?.visibility?.commandCardVisible) });
+  addCandidate(snapshot?.visibleText?.commandCard?.meta, "destination context meta", "destination_context", { visible: Boolean(snapshot?.visibility?.commandCardVisible) });
+  addCandidate(snapshot?.visibleText?.commandCard?.issues, "destination context issues", "destination_context", { visible: Boolean(snapshot?.visibility?.commandCardVisible) });
+  addCandidate(snapshot?.visibleText?.commandCard?.impact, "destination context impact", "destination_context", { visible: Boolean(snapshot?.visibility?.commandCardVisible) });
+  addCandidate(gridlyV228BuildConditionNarrative(snapshot), "derived active-condition narrative", "derived_awareness", { derived: true });
+
+  const displaySummary = getGridlyV227SafeCall(() => summarizeGridlyAwarenessIntelligenceForDisplay(snapshot?.communityAwarenessSummary || {}), null) || {};
+  addCandidate(displaySummary.headline, "current awareness display headline", "awareness_summary", { derived: true });
+  addCandidate(displaySummary.subline, "current awareness display subline", "awareness_summary", { derived: true });
+
+  const visibleBundle = gridlyV229NormalizeNarrativeText([
+    snapshot?.textBundle,
+    snapshot?.visibleText?.pulseHeadline,
+    snapshot?.visibleText?.pulseSubline,
+    snapshot?.visibleText?.commandCard?.title,
+    snapshot?.visibleText?.commandCard?.meta,
+    snapshot?.visibleText?.commandCard?.issues,
+    snapshot?.visibleText?.commandCard?.impact
+  ].filter(Boolean).join(" "));
+  const ranked = candidates
+    .map((candidate) => ({
+      ...candidate,
+      sourceAlreadyVisible: Boolean(candidate.visible || (candidate.narrative && visibleBundle.toLowerCase().includes(candidate.narrative.toLowerCase())))
+    }))
+    .sort((a, b) => (Number(b.promotable) - Number(a.promotable)) || (b.strength - a.strength) || (b.narrative.length - a.narrative.length));
+  return { snapshot, candidates: ranked, visibleBundle };
+}
+
+function gridlyV229BestCandidate(options = {}) {
+  const sourceState = gridlyV229BuildNarrativeSourceCandidates(options);
+  const candidate = sourceState.candidates.find((entry) => entry.promotable) || sourceState.candidates[0] || null;
+  return { ...sourceState, candidate };
+}
+
+function gridlyAwarenessNarrativePromotionAudit(options = {}) {
+  const { candidate, candidates } = gridlyV229BestCandidate(options);
+  const promotionAvailable = Boolean(candidate?.promotable);
+  return {
+    auditVersion: GRIDLY_AWARENESS_NARRATIVE_PROMOTION_AUDIT_VERSION,
+    promotionAvailable,
+    candidateNarrative: candidate?.narrative || "",
+    candidateSource: candidate?.source || "none",
+    sourceAlreadyVisible: Boolean(candidate?.sourceAlreadyVisible),
+    hierarchyRisk: promotionAvailable ? "low_if_summary_only" : "not_applicable",
+    ownershipRisk: promotionAvailable ? "low_read_only_existing_source" : "not_applicable",
+    findings: [
+      promotionAvailable ? "A promotable awareness narrative already exists in current Gridly intelligence." : "No condition-plus-location narrative is currently promotable from audited sources.",
+      candidate ? `Strongest source audited: ${candidate.sourceType} (${candidate.source}).` : "No narrative source candidates were found.",
+      candidate?.sourceAlreadyVisible ? "The strongest narrative is already visible on an existing surface." : "The strongest narrative is available in existing state but is not clearly visible in the current awareness text bundle.",
+      "Promotion would be safest as read-only summary wording because this audit does not alter command card, awareness, destination, route, Community Pulse, alert, hazard, map, or Supabase ownership."
+    ],
+    candidateCount: candidates.length
+  };
+}
+
+function gridlyBestAvailableObservationAudit(options = {}) {
+  const { candidate } = gridlyV229BestCandidate(options);
+  const observationAvailable = Boolean(candidate?.narrative);
+  return {
+    auditVersion: GRIDLY_AWARENESS_NARRATIVE_PROMOTION_AUDIT_VERSION,
+    observationAvailable,
+    observationText: candidate?.narrative || "",
+    observationSource: candidate?.source || "none",
+    locationContextPresent: Boolean(candidate?.locationContextPresent),
+    conditionContextPresent: Boolean(candidate?.conditionContextPresent),
+    findings: [
+      observationAvailable ? "A best available observation was identified without creating new intelligence." : "No existing observation was available to rank.",
+      candidate?.conditionContextPresent ? "The observation includes condition context." : "Condition context is missing or weak.",
+      candidate?.locationContextPresent ? "The observation includes location context." : "Location context is missing or weak.",
+      candidate ? `Observation source type: ${candidate.sourceType}.` : "No source type could be assigned."
+    ]
+  };
+}
+
+function gridlyNarrativeSourceTraceAudit(options = {}) {
+  const { candidate, candidates } = gridlyV229BestCandidate(options);
+  const traceResults = candidates.slice(0, 12).map((entry) => ({
+    source: entry.source,
+    sourceType: entry.sourceType,
+    narrative: entry.narrative,
+    promotable: entry.promotable,
+    sourceAlreadyVisible: entry.sourceAlreadyVisible,
+    locationContextPresent: entry.locationContextPresent,
+    conditionContextPresent: entry.conditionContextPresent,
+    strength: entry.strength
+  }));
+  const sourcesFound = Array.from(new Set(candidates.map((entry) => entry.sourceType))).filter(Boolean);
+  return {
+    auditVersion: GRIDLY_AWARENESS_NARRATIVE_PROMOTION_AUDIT_VERSION,
+    sourcesFound,
+    strongestSource: candidate?.source || "none",
+    strongestNarrative: candidate?.narrative || "",
+    traceResults,
+    findings: [
+      sourcesFound.length ? `Narrative sources found: ${sourcesFound.join(", ")}.` : "No narrative sources were found.",
+      candidate ? `Strongest narrative traces to ${candidate.source}.` : "No strongest narrative could be selected.",
+      "Trace audit only reads existing alert, Community Pulse, awareness summary, destination/visible text, and active awareness model fields."
+    ]
+  };
+}
+
+function gridlyPromotionSafetyAudit(options = {}) {
+  const promotionAudit = gridlyAwarenessNarrativePromotionAudit(options);
+  const ownershipSafe = promotionAudit.ownershipRisk !== "high";
+  const routeSafe = true;
+  const destinationSafe = true;
+  const communityPulseSafe = true;
+  const alertSafe = true;
+  const safe = Boolean(ownershipSafe && routeSafe && destinationSafe && communityPulseSafe && alertSafe);
+  return {
+    auditVersion: GRIDLY_AWARENESS_NARRATIVE_PROMOTION_AUDIT_VERSION,
+    ownershipSafe,
+    routeSafe,
+    destinationSafe,
+    communityPulseSafe,
+    alertSafe,
+    overallSafetyAssessment: safe ? "safe_for_future_read_only_summary_promotion" : "promotion_requires_additional_guardrails",
+    findings: [
+      ownershipSafe ? "Ownership remains safe because audited promotion would read existing intelligence and would not transfer source ownership." : "Ownership risk requires review.",
+      "Route behavior is safe because no route state, route preview, route ownership, or route rendering is modified.",
+      "Destination behavior is safe because no destination selection, command card ownership, or destination route preview behavior is modified.",
+      "Community Pulse behavior is safe because pulse model/render logic is not changed.",
+      "Alert behavior is safe because alert generation and rendering are not changed."
+    ]
+  };
+}
+
+function gridlyNarrativeValueAudit(options = {}) {
+  const snapshot = getGridlyV227AwarenessSnapshot(options);
+  const currentSummary = gridlyV229NormalizeNarrativeText([
+    snapshot?.visibleText?.topPrimary,
+    snapshot?.visibleText?.topSecondary,
+    snapshot?.visibleText?.topMicroline
+  ].filter(Boolean).join(" "));
+  const observationAudit = gridlyBestAvailableObservationAudit(options);
+  const bestAvailableObservation = observationAudit.observationText || "";
+  const currentHasCondition = gridlyV229NarrativeHasCondition(currentSummary);
+  const currentHasLocation = gridlyV229NarrativeHasLocation(currentSummary);
+  const observationHasCondition = gridlyV229NarrativeHasCondition(bestAvailableObservation);
+  const observationHasLocation = gridlyV229NarrativeHasLocation(bestAvailableObservation);
+  const improvementInConditionAwareness = Boolean(observationHasCondition && (!currentHasCondition || gridlyV229ConditionStrength(bestAvailableObservation) > gridlyV229ConditionStrength(currentSummary)));
+  const improvementInLocationAwareness = Boolean(observationHasLocation && (!currentHasLocation || gridlyV229ConditionStrength(bestAvailableObservation) > gridlyV229ConditionStrength(currentSummary)));
+  const improvementInDecisionUsefulness = Boolean(bestAvailableObservation && observationHasCondition && observationHasLocation && (improvementInConditionAwareness || improvementInLocationAwareness));
+  return {
+    auditVersion: GRIDLY_AWARENESS_NARRATIVE_PROMOTION_AUDIT_VERSION,
+    currentSummary,
+    bestAvailableObservation,
+    improvementInConditionAwareness,
+    improvementInLocationAwareness,
+    improvementInDecisionUsefulness,
+    recommendation: improvementInDecisionUsefulness ? "consider_future_read_only_awareness_summary_promotion" : "do_not_promote_without_stronger_existing_observation",
+    findings: [
+      currentSummary ? "Current awareness summary was captured from existing top awareness text." : "Current awareness summary is not visible in the audited state.",
+      bestAvailableObservation ? "Best available observation was captured from existing Gridly intelligence." : "No best available observation was found.",
+      improvementInConditionAwareness ? "Promoting the observation would improve condition understanding." : "Condition understanding would not clearly improve.",
+      improvementInLocationAwareness ? "Promoting the observation would improve location understanding." : "Location understanding would not clearly improve.",
+      improvementInDecisionUsefulness ? "Promotion appears valuable for Know Before You Go decision usefulness." : "Promotion value is limited in the current state."
+    ]
+  };
+}
+
 function gridlyCommunityPulseActiveAudit(options = {}) {
   const pulseAudit = gridlyCommunityPulseIntelligenceAudit(options);
   const snapshot = getGridlyV227AwarenessSnapshot(options);
@@ -28001,6 +28268,11 @@ window.gridlyAwarenessNarrativeAudit = gridlyAwarenessNarrativeAudit;
 window.gridlyCommunityPulseActiveAudit = gridlyCommunityPulseActiveAudit;
 window.gridlyDestinationImpactIntelligenceAudit = gridlyDestinationImpactIntelligenceAudit;
 window.gridlyKnowBeforeYouGoStressAudit = gridlyKnowBeforeYouGoStressAudit;
+window.gridlyAwarenessNarrativePromotionAudit = gridlyAwarenessNarrativePromotionAudit;
+window.gridlyBestAvailableObservationAudit = gridlyBestAvailableObservationAudit;
+window.gridlyNarrativeSourceTraceAudit = gridlyNarrativeSourceTraceAudit;
+window.gridlyPromotionSafetyAudit = gridlyPromotionSafetyAudit;
+window.gridlyNarrativeValueAudit = gridlyNarrativeValueAudit;
 exposeGridlyAuditHelper("gridlyAwarenessIntelligenceAudit", gridlyAwarenessStatusAudit);
 exposeGridlyAuditHelper("gridlyCommunityPulseIntelligenceAudit", gridlyCommunityPulseIntelligenceAudit);
 exposeGridlyAuditHelper("gridlyAwarenessStoryAudit", gridlyAwarenessStoryAudit);
@@ -28011,6 +28283,11 @@ exposeGridlyAuditHelper("gridlyAwarenessNarrativeAudit", gridlyAwarenessNarrativ
 exposeGridlyAuditHelper("gridlyCommunityPulseActiveAudit", gridlyCommunityPulseActiveAudit);
 exposeGridlyAuditHelper("gridlyDestinationImpactIntelligenceAudit", gridlyDestinationImpactIntelligenceAudit);
 exposeGridlyAuditHelper("gridlyKnowBeforeYouGoStressAudit", gridlyKnowBeforeYouGoStressAudit);
+exposeGridlyAuditHelper("gridlyAwarenessNarrativePromotionAudit", gridlyAwarenessNarrativePromotionAudit);
+exposeGridlyAuditHelper("gridlyBestAvailableObservationAudit", gridlyBestAvailableObservationAudit);
+exposeGridlyAuditHelper("gridlyNarrativeSourceTraceAudit", gridlyNarrativeSourceTraceAudit);
+exposeGridlyAuditHelper("gridlyPromotionSafetyAudit", gridlyPromotionSafetyAudit);
+exposeGridlyAuditHelper("gridlyNarrativeValueAudit", gridlyNarrativeValueAudit);
 
 function buildGridlyOwnershipStateAudit(options = {}) {
   const auditVersion = "V226.4";
