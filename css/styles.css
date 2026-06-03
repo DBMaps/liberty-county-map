@@ -16406,3 +16406,39 @@ body[data-layout-mode="portrait"] .mobile-destination-command,
   background: linear-gradient(180deg, rgba(237, 253, 255, 0.96), rgba(50, 167, 211, 0.82));
   box-shadow: 0 3px 7px rgba(0, 8, 16, 0.4);
 }
+
+.gridly-awareness-area-halo {
+  filter: drop-shadow(0 0 10px rgba(124, 231, 255, 0.16));
+}
+
+.gridly-county-awareness-boundary {
+  filter: drop-shadow(0 0 5px rgba(126, 218, 242, 0.18));
+}
+
+.gridly-county-awareness-boundary-emphasis {
+  filter: drop-shadow(0 0 8px rgba(126, 218, 242, 0.26));
+}
+
+.gridly-awareness-identity-label {
+  background: transparent;
+  border: 0;
+  pointer-events: none;
+}
+
+.gridly-awareness-identity-label span {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  padding: 5px 9px;
+  border: 1px solid rgba(124, 231, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(7, 16, 22, 0.58);
+  color: rgba(218, 247, 255, 0.86);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}

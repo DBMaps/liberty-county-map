@@ -5,6 +5,7 @@ const FRA_URL =
   "https://data.transportation.gov/resource/m2f8-22s6.geojson?$limit=5000&statename=TEXAS&countyname=LIBERTY";
 const CROSSING_REVIEW_OVERRIDES_URL = "data/gridly-crossing-review-overrides.json";
 const ROADWAY_SEGMENTS_URL = "data/liberty-county-road-segments.geojson";
+const LIBERTY_COUNTY_BOUNDARY_URL = "data/liberty-county-boundary.geojson";
 const HAZARD_REPORT_EXPIRATION_MINUTES = 180;
 
 
@@ -5348,6 +5349,22 @@ let supabaseClient = null;
 let realtimeChannel = null;
 let map;
 let crossingLayer;
+let gridlyAwarenessIdentityLayer;
+let gridlyCountyBoundaryLayer;
+let gridlyAwarenessRadiusLayer;
+let gridlyAwarenessIdentityLabelLayer;
+let gridlyCountyBoundaryGeoJson = null;
+let gridlyAwarenessMapIdentityState = {
+  selectedAwarenessArea: null,
+  countyBoundaryLoaded: false,
+  countyBoundaryVisible: false,
+  radiusHaloVisible: false,
+  labelVisible: false,
+  currentFilter: null,
+  mapZoomCenter: null,
+  warnings: [],
+  errors: []
+};
 let crossingMarkers = new Map();
 let savedRouteLayer;
 let destinationRoutePreviewLayer;
@@ -19060,6 +19077,7 @@ function installGridlyAwarenessAreaTestHelpers() {
     activeGeoFilter = shouldUseCounty ? "county" : "town";
     crossingRenderFilterVersion += 1;
     syncGridlyGeoFilterPillSelectionForTest();
+    renderGridlyAwarenessMapIdentity("test-awareness-area-switcher");
 
     let mapCenterZoomApplied = null;
     if (map && area.countyWide) {
@@ -19111,6 +19129,10 @@ function installGridlyAwarenessAreaTestHelpers() {
     };
   };
 }
+
+window.gridlyAwarenessMapIdentityDebug = function gridlyAwarenessMapIdentityDebug() {
+  return renderGridlyAwarenessMapIdentity("debug-helper");
+};
 
 function renderGridlyWelcomeHomeTownSelection() {
   const selectedTown = getGridlyHomeTownPreference();
@@ -19521,6 +19543,160 @@ function getGridlyLibertyCountyBounds() {
   return bounds.isValid() ? bounds : null;
 }
 
+
+function gridlyMilesToMeters(miles) {
+  const value = Number(miles);
+  return Number.isFinite(value) && value > 0 ? value * 1609.344 : 0;
+}
+
+function getGridlyAwarenessIdentityArea() {
+  const area = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  return area || GRIDLY_AWARENESS_AREA_BY_KEY?.["liberty-county"] || null;
+}
+
+function getGridlyAwarenessIdentityBoundaryStyle() {
+  const area = getGridlyAwarenessIdentityArea();
+  const countyMode = Boolean(area?.countyWide || area?.fallback || activeGeoFilter === "county");
+  return {
+    pane: "awarenessIdentityPane",
+    color: countyMode ? "#8ee6ff" : "#94dff3",
+    weight: countyMode ? 2.4 : 1.6,
+    opacity: countyMode ? 0.72 : 0.42,
+    fill: false,
+    dashArray: countyMode ? "" : "10 12",
+    lineCap: "round",
+    lineJoin: "round",
+    interactive: false,
+    className: `gridly-county-awareness-boundary${countyMode ? " gridly-county-awareness-boundary-emphasis" : ""}`
+  };
+}
+
+function getGridlyAwarenessIdentitySnapshot(extra = {}) {
+  const center = map?.getCenter?.();
+  return {
+    selectedAwarenessArea: extra.selectedAwarenessArea ?? gridlyAwarenessMapIdentityState.selectedAwarenessArea,
+    countyBoundaryLoaded: extra.countyBoundaryLoaded ?? Boolean(gridlyAwarenessMapIdentityState.countyBoundaryLoaded),
+    countyBoundaryVisible: extra.countyBoundaryVisible ?? Boolean(gridlyAwarenessMapIdentityState.countyBoundaryVisible),
+    radiusHaloVisible: extra.radiusHaloVisible ?? Boolean(gridlyAwarenessMapIdentityState.radiusHaloVisible),
+    labelVisible: extra.labelVisible ?? Boolean(gridlyAwarenessMapIdentityState.labelVisible),
+    currentFilter: extra.currentFilter ?? activeGeoFilter ?? null,
+    mapZoomCenter: map ? {
+      zoom: map.getZoom?.() ?? null,
+      center: center ? { lat: Number(center.lat.toFixed(6)), lng: Number(center.lng.toFixed(6)) } : null
+    } : null,
+    warnings: Array.isArray(extra.warnings) ? extra.warnings : (gridlyAwarenessMapIdentityState.warnings || []),
+    errors: Array.isArray(extra.errors) ? extra.errors : (gridlyAwarenessMapIdentityState.errors || [])
+  };
+}
+
+function setGridlyAwarenessMapIdentityState(patch = {}) {
+  gridlyAwarenessMapIdentityState = getGridlyAwarenessIdentitySnapshot(patch);
+  return gridlyAwarenessMapIdentityState;
+}
+
+function renderGridlyAwarenessMapIdentity(reason = "unknown") {
+  const warnings = [];
+  const errors = [];
+  if (!map || typeof L === "undefined") {
+    warnings.push("Map or Leaflet is not initialized yet.");
+    return setGridlyAwarenessMapIdentityState({ warnings, errors });
+  }
+  if (!gridlyAwarenessIdentityLayer) {
+    warnings.push("Awareness identity layer is not initialized yet.");
+    return setGridlyAwarenessMapIdentityState({ warnings, errors });
+  }
+
+  const area = getGridlyAwarenessIdentityArea();
+  if (!area) {
+    errors.push("No selected awareness area could be resolved.");
+    gridlyAwarenessIdentityLayer.clearLayers();
+    return setGridlyAwarenessMapIdentityState({ warnings, errors });
+  }
+
+  gridlyAwarenessIdentityLayer.clearLayers();
+  gridlyCountyBoundaryLayer = null;
+  gridlyAwarenessRadiusLayer = null;
+  gridlyAwarenessIdentityLabelLayer = null;
+
+  if (gridlyCountyBoundaryGeoJson && L.geoJSON) {
+    gridlyCountyBoundaryLayer = L.geoJSON(gridlyCountyBoundaryGeoJson, {
+      style: getGridlyAwarenessIdentityBoundaryStyle,
+      interactive: false
+    }).addTo(gridlyAwarenessIdentityLayer);
+  } else {
+    warnings.push("Liberty County boundary data is not loaded; using bounds-only awareness orientation until it loads.");
+  }
+
+  const countyMode = Boolean(area.countyWide || area.fallback);
+  const labelText = `${area.label || GRIDLY_COUNTY_WIDE_AWARENESS_LABEL} Awareness`;
+  const labelLatLng = countyMode
+    ? [Number(area.lat), Number(area.lng)]
+    : [Number(area.lat) + 0.006, Number(area.lng)];
+
+  if (!countyMode && Number.isFinite(Number(area.lat)) && Number.isFinite(Number(area.lng))) {
+    const radiusMeters = gridlyMilesToMeters(area.radiusMiles || DEFAULT_NEARBY_RADIUS_MILES);
+    if (radiusMeters > 0 && L.circle) {
+      gridlyAwarenessRadiusLayer = L.circle([Number(area.lat), Number(area.lng)], {
+        pane: "awarenessIdentityPane",
+        radius: radiusMeters,
+        color: "#7ce7ff",
+        weight: 1.5,
+        opacity: 0.5,
+        fillColor: "#7ce7ff",
+        fillOpacity: 0.045,
+        dashArray: "8 10",
+        interactive: false,
+        className: "gridly-awareness-area-halo"
+      }).addTo(gridlyAwarenessIdentityLayer);
+    } else {
+      warnings.push(`Awareness radius is unavailable for ${area.label}.`);
+    }
+  }
+
+  if (L.marker && L.divIcon && Number.isFinite(Number(labelLatLng[0])) && Number.isFinite(Number(labelLatLng[1]))) {
+    gridlyAwarenessIdentityLabelLayer = L.marker(labelLatLng, {
+      pane: "awarenessLabelPane",
+      interactive: false,
+      keyboard: false,
+      icon: L.divIcon({
+        className: "gridly-awareness-identity-label",
+        html: `<span>${safeDisplayText(labelText, "Awareness")}</span>`,
+        iconSize: null,
+        iconAnchor: [0, 0]
+      })
+    }).addTo(gridlyAwarenessIdentityLayer);
+  } else {
+    warnings.push(`Awareness label is unavailable for ${area.label}.`);
+  }
+
+  return setGridlyAwarenessMapIdentityState({
+    selectedAwarenessArea: getGridlyAwarenessAreaDebugOption(area),
+    countyBoundaryLoaded: Boolean(gridlyCountyBoundaryGeoJson),
+    countyBoundaryVisible: Boolean(gridlyCountyBoundaryLayer && map.hasLayer(gridlyAwarenessIdentityLayer)),
+    radiusHaloVisible: Boolean(gridlyAwarenessRadiusLayer && map.hasLayer(gridlyAwarenessIdentityLayer)),
+    labelVisible: Boolean(gridlyAwarenessIdentityLabelLayer && map.hasLayer(gridlyAwarenessIdentityLayer)),
+    currentFilter: activeGeoFilter || null,
+    warnings: warnings.concat(reason ? [`Last render reason: ${reason}`] : []),
+    errors
+  });
+}
+
+async function loadGridlyLibertyCountyBoundary() {
+  if (!gridlyAwarenessIdentityLayer) return renderGridlyAwarenessMapIdentity("boundary-layer-not-ready");
+  try {
+    const response = await fetch(LIBERTY_COUNTY_BOUNDARY_URL, { cache: "no-store" });
+    if (!response.ok) throw new Error(`Liberty County boundary returned ${response.status}`);
+    const geojson = await response.json();
+    const features = Array.isArray(geojson?.features) ? geojson.features : [];
+    if (!features.length) throw new Error("Liberty County boundary GeoJSON has no features.");
+    gridlyCountyBoundaryGeoJson = geojson;
+  } catch (error) {
+    gridlyCountyBoundaryGeoJson = null;
+    gridlyAwarenessMapIdentityState.errors = [`Unable to load Liberty County boundary: ${error?.message || error || "unknown_error"}`];
+  }
+  return renderGridlyAwarenessMapIdentity("county-boundary-load");
+}
+
 function getGridlyVisibleMapChromeInsets(mapInstance = map) {
   if (typeof document === "undefined" || !mapInstance?.getContainer) return { top: 88, bottom: 144, left: 16, right: 16 };
   const mapRect = mapInstance.getContainer().getBoundingClientRect();
@@ -19599,6 +19775,12 @@ function initMap() {
   map.getPane("routePane").style.pointerEvents = "none";
   map.createPane("satLabelsPane");
   map.getPane("satLabelsPane").style.zIndex = 640;
+  map.createPane("awarenessIdentityPane");
+  map.getPane("awarenessIdentityPane").style.zIndex = 430;
+  map.getPane("awarenessIdentityPane").style.pointerEvents = "none";
+  map.createPane("awarenessLabelPane");
+  map.getPane("awarenessLabelPane").style.zIndex = 635;
+  map.getPane("awarenessLabelPane").style.pointerEvents = "none";
 
   const standardLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     subdomains: "abc",
@@ -19666,6 +19848,7 @@ function initMap() {
     currentMapStyle = selectedName;
     activeBaseLayerName = selectedName;
     localStorage.setItem(MAP_STYLE_STORAGE_KEY, selectedName);
+    renderGridlyAwarenessMapIdentity("base-layer-change");
     layerDebugLog("[Gridly][LayerPicker] baselayerchange fired", {
       selectedLayer: selectedName,
       changed: previousStyle !== selectedName,
@@ -19673,6 +19856,8 @@ function initMap() {
     });
   });
 
+  gridlyAwarenessIdentityLayer = L.layerGroup().addTo(map);
+  loadGridlyLibertyCountyBoundary();
   crossingLayer = L.layerGroup().addTo(map);
   savedRouteLayer = L.layerGroup().addTo(map);
   destinationRoutePreviewLayer = L.layerGroup().addTo(map);
@@ -19726,6 +19911,7 @@ function applyGridlyHomeTownAwarenessContext({ source = "unknown", fitMap = fals
     activeGeoFilter = "county";
     crossingRenderFilterVersion += 1;
   }
+  renderGridlyAwarenessMapIdentity("home-town-awareness-context");
   if (!fitMap || !Array.isArray(crossings) || !crossings.length) {
     if (source === "map_init" || !Array.isArray(crossings) || !crossings.length) {
       setGridlyAwarenessView(homeTownAnchor, (homeTownAnchor.countyWide || homeTownAnchor.fallback) ? GRIDLY_COUNTY_STARTUP_ZOOM : (homeTownAnchor.startupZoom || GRIDLY_TOWN_STARTUP_ZOOM), { animate: false });
@@ -37489,6 +37675,7 @@ function bindEvents() {
 
     activeGeoFilter = selectedFilter;
     crossingRenderFilterVersion += 1;
+    renderGridlyAwarenessMapIdentity(`filter-change:${reason}`);
     scheduleRenderCrossings(`filter-change:${reason}`, { force: true });
 
     const visibleCrossings = getVisibleCrossingsForFilter(`render:${reason}`).filter((crossing) => {
