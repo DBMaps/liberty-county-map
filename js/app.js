@@ -365,7 +365,13 @@ function appendOtherHazardStructuredMetadata(detail = "", subtype = "") {
 function extractOtherHazardStructuredMetadata(record = {}) {
   const directSubtype = normalizeOtherHazardSubtype(record?.subtype || record?.hazardSubtype || record?.otherHazardSubtype);
   if (directSubtype) return buildOtherHazardStructuredMetadata(directSubtype);
-  const detail = String(record?.detail || record?.description || "");
+  const nestedCandidates = [record?.raw, record?.source, record?.incident, record?.latestReport].filter((candidate) => candidate && typeof candidate === "object");
+  for (const candidate of nestedCandidates) {
+    const nestedSubtype = normalizeOtherHazardSubtype(candidate?.subtype || candidate?.hazardSubtype || candidate?.otherHazardSubtype);
+    if (nestedSubtype) return buildOtherHazardStructuredMetadata(nestedSubtype);
+  }
+  const detailCandidates = [record?.detail, record?.description, record?.subtitle, record?.raw?.detail, record?.raw?.description, record?.source?.detail, record?.source?.description];
+  const detail = detailCandidates.map((value) => String(value || "")).find((value) => value.includes(OTHER_HAZARD_STRUCTURED_METADATA_PREFIX)) || String(record?.detail || record?.description || "");
   const markerIndex = detail.indexOf(OTHER_HAZARD_STRUCTURED_METADATA_PREFIX);
   if (markerIndex < 0) return { category: "other_hazard" };
   const rawJson = detail.slice(markerIndex + OTHER_HAZARD_STRUCTURED_METADATA_PREFIX.length).trim();
@@ -378,6 +384,25 @@ function extractOtherHazardStructuredMetadata(record = {}) {
   } catch (error) {
     return { category: "other_hazard" };
   }
+}
+
+function resolveOtherHazardSubtypeFromRecord(record = {}) {
+  const category = String(record?.category || record?.report_type || record?.reportType || record?.type || record?.raw?.category || record?.raw?.report_type || record?.raw?.type || record?.source?.category || record?.source?.report_type || record?.source?.type || "").trim().toLowerCase();
+  const normalizedCategory = category ? getHazardCategory(category) : "other_hazard";
+  if (normalizedCategory !== "other_hazard" && category !== "other_hazard") return "";
+  return normalizeOtherHazardSubtype(extractOtherHazardStructuredMetadata(record).subtype);
+}
+
+let lastOtherHazardRenderedSubtype = "";
+let lastOtherHazardRenderedSubtypeLabel = "";
+let lastOtherHazardRenderedAlertTitle = "";
+
+function recordOtherHazardRenderedAlert(record = {}, title = "") {
+  const subtype = resolveOtherHazardSubtypeFromRecord(record);
+  if (!subtype) return;
+  lastOtherHazardRenderedSubtype = subtype;
+  lastOtherHazardRenderedSubtypeLabel = getOtherHazardSubtypeLabel(subtype);
+  lastOtherHazardRenderedAlertTitle = String(title || "").trim();
 }
 
 function buildOtherHazardSubtypeNarrative(report = {}, roadName = "", communityName = "") {
@@ -436,7 +461,10 @@ function gridlyOtherHazardDebug() {
     placementBlocked,
     reportReady: Boolean(selectedCategory && !placementBlocked),
     lastSubtypeClick: lastOtherHazardSubtypeClick,
-    lastReportPayloadSubtype: lastOtherHazardReportPayloadSubtype
+    lastReportPayloadSubtype: lastOtherHazardReportPayloadSubtype,
+    lastRenderedSubtype: lastOtherHazardRenderedSubtype,
+    lastRenderedSubtypeLabel: lastOtherHazardRenderedSubtypeLabel,
+    lastRenderedAlertTitle: lastOtherHazardRenderedAlertTitle
   };
 }
 
@@ -26160,6 +26188,8 @@ function getGridlyAlertFirstTextValue(alert = {}, paths = []) {
 }
 
 function getGridlyRoadHazardLabel(alert = {}) {
+  const otherHazardSubtype = resolveOtherHazardSubtypeFromRecord(alert);
+  if (otherHazardSubtype) return getOtherHazardSubtypeLabel(otherHazardSubtype);
   const text = normalizeGridlyLightweightCategoryValue([
     alert?.hazardTypeLabel,
     alert?.typeLabel,
@@ -47216,7 +47246,7 @@ function buildRoadHazardDisplay(incident, resolvedLookup = null) {
     .map((value) => String(value || "").trim())
     .find((value) => value && !isNonInformativeRoadArea(value)) || "";
   const otherHazardSubtype = category === "other_hazard"
-    ? normalizeOtherHazardSubtype(extractOtherHazardStructuredMetadata(incident).subtype)
+    ? resolveOtherHazardSubtypeFromRecord(incident)
     : "";
   if (otherHazardSubtype) {
     const roadName = hasUsefulRoadName
@@ -47226,6 +47256,7 @@ function buildRoadHazardDisplay(incident, resolvedLookup = null) {
         .find((value) => value && !isNonInformativeRoadArea(value)) || "this road";
     title = standardizeGridlyAlertHeadline(buildOtherHazardSubtypeNarrative({ ...incident, subtype: otherHazardSubtype }, roadName, areaName));
   }
+  recordOtherHazardRenderedAlert({ ...incident, subtype: otherHazardSubtype }, title);
   let locationText = "";
   if (hasUsefulRoadName) locationText = `Near ${locationContext.phrasing}`;
   else if (nearestKnownLocation && !isNonInformativeRoadArea(nearestKnownLocation)) locationText = `Near ${nearestKnownLocation}`;
@@ -53044,6 +53075,19 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       if (crossingLabel) return `Train blocking at ${crossingLabel}`;
       return "Rail crossing blocked";
     }
+    const otherHazardSubtype = resolveOtherHazardSubtypeFromRecord(alert);
+    if (otherHazardSubtype) {
+      const subtypeRoadName = roadLabel || alert?.roadName || alert?.corridor || alert?.primaryRoad || "this road";
+      const subtypePlaceName = [alert?.city, alert?.town, alert?.municipality, alert?.area, alert?.locationName]
+        .map((value) => String(value || "").trim())
+        .find((value) => value && value.toLowerCase() !== String(subtypeRoadName).trim().toLowerCase()) || "";
+      const subtypeTitle = buildOtherHazardSubtypeNarrative(
+        { ...alert, subtype: otherHazardSubtype },
+        subtypeRoadName,
+        subtypePlaceName
+      );
+      return subtypeTitle;
+    }
     const txDotStyleCandidate = buildGridlyRoadHazardTxDotStyleCandidate(alert);
     if (txDotStyleCandidate.text) return txDotStyleCandidate.text;
     const normalizedEvent = String(eventLabel || "").toLowerCase();
@@ -53056,7 +53100,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       { test: /flood|high water/, label: "Flooding" },
       { test: /crash|collision|wreck|accident/, label: "Crash / Wreck" }
     ];
-    const hazardLabel = (roadHazardMap.find((entry) => entry.test.test(normalizedEvent)) || {}).label || metadataLabel || "Other Hazard";
+    const subtypeLabel = getOtherHazardSubtypeLabel(resolveOtherHazardSubtypeFromRecord(alert));
+    const hazardLabel = subtypeLabel !== "Other Hazard"
+      ? subtypeLabel
+      : ((roadHazardMap.find((entry) => entry.test.test(normalizedEvent)) || {}).label || metadataLabel || "Other Hazard");
     if (roadLabel) return `${hazardLabel} on ${roadLabel}`;
     return hazardLabel === "Road hazard" ? "Road hazard reported" : `${hazardLabel} reported`;
   }
@@ -53086,12 +53133,14 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       return "Rail crossing blocked";
     }
 
+    const otherHazardSubtype = resolveOtherHazardSubtypeFromRecord(alert);
+    const subtypeAwareAlert = otherHazardSubtype ? { ...alert, subtype: otherHazardSubtype, hazardSubtype: otherHazardSubtype } : alert;
     const cardTitle = buildAlertTitle({
-      alert,
+      alert: subtypeAwareAlert,
       roadLabel: road,
       crossingLabel: atStreet,
       knownLocationLabel: pickFirstNonEmptyText([alert?.knownLocation, alert?.nearestRoad, alert?.locationName, alert?.location]),
-      eventLabel: hazardType
+      eventLabel: otherHazardSubtype ? getOtherHazardSubtypeLabel(otherHazardSubtype) : hazardType
     });
     if (road && crossA && crossB && !isRail) {
       const dirText = direction ? ` ${direction}` : "";
@@ -53239,6 +53288,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           severity: severityKey,
           minutesText: item?.minutesText || "now",
           type: incident?.report_type || incident?.type || item?.type || "hazard",
+          category: incident?.category || incident?.report_type || incident?.type || item?.type || "hazard",
+          subtype: incident?.subtype || incident?.hazardSubtype || raw?.subtype || raw?.hazardSubtype,
+          hazardSubtype: incident?.hazardSubtype || incident?.subtype || raw?.hazardSubtype || raw?.subtype,
           reportKind: incident?.reportKind || (String(incident?.crossingId || "").trim() ? "crossing" : "hazard"),
           primaryRoad: raw?.primaryRoad ?? incident?.primaryRoad,
           roadName: raw?.roadName ?? incident?.roadName ?? incident?.corridor,
@@ -53259,6 +53311,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           lat: incident?.lat ?? incident?.latitude ?? incident?.rawLat ?? null,
           lng: incident?.lng ?? incident?.lon ?? incident?.longitude ?? incident?.rawLng ?? null,
           source: incident?.source || item?.source || null,
+          detail: incident?.detail || raw?.detail || item?.detail || "",
+          description: incident?.description || raw?.description || item?.description || "",
           raw: raw || incident || item || null,
           crossStreetA: incident?.crossStreetA,
           crossStreetB: incident?.crossStreetB,
@@ -53297,6 +53351,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           severity: String(item?.severity || "moderate").toLowerCase(),
           minutesText: "now",
           type: rawType,
+          category: item?.category || item?.report_type || rawType,
+          subtype: item?.subtype || item?.hazardSubtype || raw?.subtype || raw?.hazardSubtype,
+          hazardSubtype: item?.hazardSubtype || item?.subtype || raw?.hazardSubtype || raw?.subtype,
           reportKind: item?.reportKind,
           primaryRoad: raw?.primaryRoad ?? item?.primaryRoad,
           roadName: raw?.roadName ?? item?.roadName,
@@ -53317,10 +53374,16 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           lat: item?.lat ?? item?.latitude ?? item?.rawLat ?? null,
           lng: item?.lng ?? item?.lon ?? item?.longitude ?? item?.rawLng ?? null,
           source: item?.source || item?.latestReport || null,
+          detail: item?.detail || raw?.detail || item?.latestReport?.detail || "",
+          description: item?.description || raw?.description || item?.latestReport?.description || "",
           raw: raw || item || null
         };
       });
-    const normalizedAlertItems = normalizedAlertItemsFromIntel.map((alert) => applyRoadSnapshotFallback(alert));
+    const normalizedAlertItems = normalizedAlertItemsFromIntel.map((alert) => {
+      const subtype = resolveOtherHazardSubtypeFromRecord(alert);
+      const subtypeTitle = subtype ? buildSpecificAlertTitle({ ...alert, category: "other_hazard", subtype, hazardSubtype: subtype }) : "";
+      return applyRoadSnapshotFallback(subtype ? { ...alert, category: "other_hazard", subtype, hazardSubtype: subtype, title: subtypeTitle || alert.title, resolvedHeadline: subtypeTitle || alert.resolvedHeadline } : alert);
+    });
     const activeIncidentCount = normalizedAlertItems.length || incidents.length;
     const hasFallbackSignals = activeHazardSourceCount > 0 || unifiedIncidentSourceCount > 0;
     const nearbySummary = unifiedIntel.nearbySummary;
@@ -53428,13 +53491,17 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const crossingLabel = pickFirstNonEmptyText([alert?.crossingName, alert?.crossingRoad, alert?.nearestRoad, alert?.knownLocation, alert?.locationName, alert?.location]);
     const knownLocationLabel = pickFirstNonEmptyText([alert?.knownLocation, alert?.locationName, alert?.location, alert?.nearestRoad]);
     const eventLabel = pickFirstNonEmptyText([alert?.hazardTypeLabel, alert?.typeLabel, alert?.type, alert?.reportType, alert?.report_type, alert?.title]);
-    const title = buildAlertTitle({ alert, roadLabel, crossingLabel, knownLocationLabel, eventLabel }) || resolveAlertTitleText(alert);
+    const otherHazardSubtype = resolveOtherHazardSubtypeFromRecord(alert);
+    const subtypeAwareAlert = otherHazardSubtype ? { ...alert, category: "other_hazard", subtype: otherHazardSubtype, hazardSubtype: otherHazardSubtype } : alert;
+    const subtypeEventLabel = otherHazardSubtype ? getOtherHazardSubtypeLabel(otherHazardSubtype) : eventLabel;
+    const title = buildAlertTitle({ alert: subtypeAwareAlert, roadLabel, crossingLabel, knownLocationLabel, eventLabel: subtypeEventLabel }) || resolveAlertTitleText(subtypeAwareAlert);
     const displayTitle = standardizeGridlyAlertHeadline(title);
-    const locationTimeLine = normalizeGridlyUserFacingRoadText(buildAlertSubtitleLine(alert, displayTitle));
+    recordOtherHazardRenderedAlert(subtypeAwareAlert, displayTitle);
+    const locationTimeLine = normalizeGridlyUserFacingRoadText(buildAlertSubtitleLine(subtypeAwareAlert, displayTitle));
     const intelligence = generateGridlyIntelligencePhrase(alert, alert?.visualState);
     const cleanedAlertLocationLabel = normalizeGridlyLightweightLocationLabelText(roadLabel || getGridlyLightweightLocationFromHeadline(`${title} ${locationTimeLine}`) || "");
     const alertRowSummary = normalizeGridlyUserFacingRoadText(cleanedAlertLocationLabel
-      ? (buildGridlyHeaderCandidateFromCategoryLocation(eventLabel || displayTitle, cleanedAlertLocationLabel) || `${displayTitle} on ${cleanedAlertLocationLabel}`)
+      ? (buildGridlyHeaderCandidateFromCategoryLocation(subtypeEventLabel || displayTitle, cleanedAlertLocationLabel) || `${displayTitle} on ${cleanedAlertLocationLabel}`)
       : normalizeGridlyLightweightAlertSummaryText(`${displayTitle} ${locationTimeLine}`));
     return `
     <div class="gridly-alert-row" data-gridly-alert-row="true" data-gridly-alert-title="${sanitizeText(displayTitle)}" data-gridly-alert-summary="${sanitizeText(alertRowSummary)}" data-gridly-alert-location="${sanitizeText(cleanedAlertLocationLabel)}" style="padding:10px 12px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.1);border-radius:10px;background:rgba(255,255,255,0.02);">
