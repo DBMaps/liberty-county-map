@@ -16452,7 +16452,11 @@ function syncMobileDestinationCommandCard() {
   const cardRenderStartedAt = getGridlyDestinationPerfNow();
   const routeIsMonitoring = Boolean(routeWatchActivated || window.__gridlyRouteWatchActive);
   const selectedLabel = getSelectedDestinationLabel();
-  const awarenessPanelMode = !selectedLabel && !routeIsMonitoring;
+  const previewMeta = selectedLabel ? getGridlyDestinationPreviewMetaText() : "";
+  const destinationSupportText = selectedLabel
+    ? `Destination: ${selectedLabel}${previewMeta ? ` · ${previewMeta}` : " · Route preview loading"}`
+    : "";
+  const awarenessPanelMode = !routeIsMonitoring;
   const card = document.getElementById("mobileDestinationCommandTitle")?.closest?.(".mobile-destination-command");
   card?.classList.toggle("is-awareness-panel", awarenessPanelMode);
   card?.classList.toggle("is-destination-panel", !awarenessPanelMode);
@@ -16468,10 +16472,9 @@ function syncMobileDestinationCommandCard() {
     safeText("mobileAwarenessPanelIssues", "");
     document.getElementById("mobileAwarenessPanelCrossings")?.toggleAttribute("hidden", false);
     document.getElementById("mobileAwarenessPanelIssues")?.toggleAttribute("hidden", true);
-    safeText("mobileDestinationCommandImpact", "");
-    safeText("mobileDestinationCommandBtn", "Route");
+    safeText("mobileDestinationCommandImpact", destinationSupportText);
+    safeText("mobileDestinationCommandBtn", selectedLabel ? "Change" : "Route");
   } else {
-    const previewMeta = selectedLabel ? getGridlyDestinationPreviewMetaText() : "";
     const impactText = selectedLabel ? getGridlyDestinationRouteImpactCardText() : "";
     safeText("mobileAwarenessPanelKicker", "Route");
     safeText("mobileDestinationCommandTitle", selectedLabel || (routeIsMonitoring ? "Destination selected" : "Destination"));
@@ -27419,7 +27422,7 @@ function renderGridlyCommunityPulse(options = {}) {
 
 
 function buildGridlyOwnershipStateAudit(options = {}) {
-  const auditVersion = "V226.2";
+  const auditVersion = "V226.3";
   const safeNow = () => {
     try {
       return new Date().toISOString();
@@ -27466,12 +27469,12 @@ function buildGridlyOwnershipStateAudit(options = {}) {
   const selectedDestinationLabel = safeCall(() => (typeof getSelectedDestinationLabel === "function" ? getSelectedDestinationLabel() : null), null);
   const selectedLabel = String(selectedDestinationLabel || "").trim();
   const routeIsMonitoring = safeBoolean(() => routeWatchActivated || window.__gridlyRouteWatchActive);
-  const awarenessPanelMode = !selectedLabel && !routeIsMonitoring;
+  const awarenessPanelMode = !routeIsMonitoring;
 
   let commandCardOwner = "unknown";
   if (awarenessPanelMode) commandCardOwner = "awareness";
-  else if (selectedLabel) commandCardOwner = "destination";
   else if (routeIsMonitoring) commandCardOwner = "route";
+  else if (selectedLabel) commandCardOwner = "destination";
 
   const selectedAwarenessArea = safeCall(() => {
     if (typeof getSelectedGridlyAwarenessArea === "function") return getSelectedGridlyAwarenessArea();
@@ -27510,7 +27513,7 @@ function buildGridlyOwnershipStateAudit(options = {}) {
   }, null);
 
   const routeTakingCommandCardOwnership = commandCardOwner === "route" || Boolean(routeIsMonitoring && !awarenessPanelMode);
-  const destinationTakingCommandCardOwnership = commandCardOwner === "destination" || Boolean(selectedLabel);
+  const destinationTakingCommandCardOwnership = commandCardOwner === "destination";
   const routeSuppressingCommunityPulse = Boolean(activeRoutePresent && (awarenessDiagnostics?.awarenessMode === "route" || /route-priority suppression/i.test(pulseSuppressedReason)) && !pulseVisible);
   const awarenessLanguagePattern = /awareness|community|county|area|crossing|hazard|quiet|nearby/i;
   const commandCardTextForConflict = [
@@ -27601,7 +27604,7 @@ window.gridlyOwnershipStateAudit = function gridlyOwnershipStateAudit(options = 
   } catch (error) {
     return {
       available: true,
-      version: "V226.2",
+      version: "V226.3",
       generatedAt: (() => {
         try { return new Date().toISOString(); } catch (dateError) { return ""; }
       })(),
