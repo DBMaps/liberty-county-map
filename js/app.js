@@ -396,22 +396,155 @@ function resolveOtherHazardSubtypeFromRecord(record = {}) {
 let lastOtherHazardRenderedSubtype = "";
 let lastOtherHazardRenderedSubtypeLabel = "";
 let lastOtherHazardRenderedAlertTitle = "";
+let lastOtherHazardNarrativeAuditState = null;
+
+function isOtherHazardGenericRoadLabel(value = "") {
+  const text = String(value || "").replace(/\s+/g, " ").trim();
+  if (!text) return true;
+  return /^(?:this road|local roadway|local road|local road impact|road|roadway|street|unknown|location pending|liberty county|county)$/i.test(text);
+}
+
+function normalizeOtherHazardNarrativeRoadName(value = "") {
+  const raw = String(value || "").replace(/\s+/g, " ").trim();
+  if (!raw || isOtherHazardGenericRoadLabel(raw)) return "";
+  const standardizedReference = typeof gridlyV230NormalizeRoadReference === "function" ? gridlyV230NormalizeRoadReference(raw) : "";
+  if (standardizedReference) return standardizedReference;
+  if (typeof normalizeRoadDisplayCase === "function") return normalizeRoadDisplayCase(raw);
+  if (typeof normalizeRoadwayReference === "function") return normalizeRoadwayReference(raw);
+  if (typeof normalizeCorridorBaseLabel === "function") return normalizeCorridorBaseLabel(raw);
+  return raw;
+}
+
+function resolveOtherHazardNarrativeRoadName(report = {}, explicitRoadName = "") {
+  const coordinate = typeof normalizeCoordinatePair === "function"
+    ? normalizeCoordinatePair(report?.lat ?? report?.latitude ?? report?.rawLat ?? report?.source?.lat ?? report?.source?.latitude ?? report?.raw?.lat ?? report?.raw?.latitude, report?.lng ?? report?.lon ?? report?.longitude ?? report?.rawLng ?? report?.source?.lng ?? report?.source?.lon ?? report?.source?.longitude ?? report?.raw?.lng ?? report?.raw?.lon ?? report?.raw?.longitude)
+    : null;
+  const resolvedFromCoordinate = coordinate && typeof resolveNearestRoadName === "function"
+    ? resolveNearestRoadName(coordinate.lat, coordinate.lng)
+    : "";
+  const candidates = [
+    explicitRoadName,
+    report?.resolvedRoadName,
+    report?.lastResolvedRoadName,
+    report?.selectedRoadName,
+    report?.roadName,
+    report?.road_name,
+    report?.street_name,
+    report?.nearest_road,
+    report?.snapped_road_name,
+    report?.primaryRoad,
+    report?.corridor,
+    report?.titleRoad,
+    report?.raw?.resolvedRoadName,
+    report?.raw?.selectedRoadName,
+    report?.raw?.roadName,
+    report?.raw?.road_name,
+    report?.raw?.street_name,
+    report?.raw?.nearest_road,
+    report?.source?.resolvedRoadName,
+    report?.source?.selectedRoadName,
+    report?.source?.roadName,
+    report?.source?.road_name,
+    report?.source?.street_name,
+    report?.source?.nearest_road,
+    resolvedFromCoordinate
+  ];
+  for (const candidate of candidates) {
+    const normalized = normalizeOtherHazardNarrativeRoadName(candidate);
+    if (normalized && !isOtherHazardGenericRoadLabel(normalized)) {
+      return {
+        roadName: normalized,
+        roadResolutionAvailable: true,
+        normalizationApplied: typeof normalizeRoadDisplayCase === "function" || typeof normalizeRoadwayReference === "function" || typeof normalizeCorridorBaseLabel === "function",
+        source: candidate === resolvedFromCoordinate ? "coordinate_resolver" : "record"
+      };
+    }
+  }
+  return {
+    roadName: "",
+    roadResolutionAvailable: false,
+    normalizationApplied: false,
+    source: "fallback"
+  };
+}
+
+function resolveOtherHazardNarrativeArea(report = {}, explicitCommunityName = "", resolvedRoadName = "") {
+  const coordinate = typeof normalizeCoordinatePair === "function"
+    ? normalizeCoordinatePair(report?.lat ?? report?.latitude ?? report?.rawLat ?? report?.source?.lat ?? report?.source?.latitude ?? report?.raw?.lat ?? report?.raw?.latitude, report?.lng ?? report?.lon ?? report?.longitude ?? report?.rawLng ?? report?.source?.lng ?? report?.source?.lon ?? report?.source?.longitude ?? report?.raw?.lng ?? report?.raw?.lon ?? report?.raw?.longitude)
+    : null;
+  const nearbyKnownLocation = coordinate && typeof resolveNearbyKnownLocation === "function"
+    ? resolveNearbyKnownLocation(coordinate.lat, coordinate.lng)
+    : "";
+  const candidates = [
+    explicitCommunityName,
+    report?.awarenessArea,
+    report?.communityName,
+    report?.town,
+    report?.city,
+    report?.municipality,
+    report?.area,
+    report?.location_name,
+    report?.locationName,
+    report?.raw?.awarenessArea,
+    report?.raw?.communityName,
+    report?.raw?.town,
+    report?.raw?.city,
+    report?.raw?.area,
+    report?.source?.awarenessArea,
+    report?.source?.communityName,
+    report?.source?.town,
+    report?.source?.city,
+    report?.source?.area,
+    nearbyKnownLocation
+  ];
+  const roadNorm = String(resolvedRoadName || "").trim().toLowerCase();
+  return candidates
+    .map((value) => String(value || "").replace(/\s+/g, " ").trim())
+    .find((value) => value && value.toLowerCase() !== roadNorm && !/^(?:liberty county|county|this road|local roadway|location pending)$/i.test(value)) || "";
+}
+
+function buildOtherHazardNarrativeModel(report = {}, roadName = "", communityName = "") {
+  const metadata = extractOtherHazardStructuredMetadata(report);
+  const subtypeOption = getOtherHazardSubtypeOption(metadata.subtype);
+  const subtype = subtypeOption?.value || metadata.subtype || "other";
+  const subtypeLabel = subtypeOption?.narrativeLabel || "Hazard";
+  const roadResolution = resolveOtherHazardNarrativeRoadName(report, roadName);
+  const resolvedRoadName = roadResolution.roadName;
+  const awarenessArea = resolvedRoadName ? resolveOtherHazardNarrativeArea(report, communityName, resolvedRoadName) : "";
+  const fallbackLevel = resolvedRoadName && awarenessArea ? 1 : (resolvedRoadName ? 2 : 3);
+  const narrative = fallbackLevel === 1
+    ? `${subtypeLabel} reported on ${resolvedRoadName} in ${awarenessArea}`
+    : (fallbackLevel === 2 ? `${subtypeLabel} reported on ${resolvedRoadName}` : `${subtypeLabel} reported on this road`);
+  const wordingQualityPass = Boolean(narrative && !/\bon\s+this\s+road\s+on\b/i.test(narrative) && !/\bon\s+road\s+on\b/i.test(narrative) && !/on\s+This\s+Road/.test(narrative) && !/\bLivestock on Road on\b/i.test(narrative));
+  return {
+    subtype,
+    subtypeLabel,
+    resolvedRoadName,
+    awarenessArea,
+    narrative,
+    fallbackLevel,
+    roadResolutionAvailable: roadResolution.roadResolutionAvailable,
+    normalizationApplied: roadResolution.normalizationApplied,
+    wordingQualityPass
+  };
+}
 
 function recordOtherHazardRenderedAlert(record = {}, title = "") {
   const subtype = resolveOtherHazardSubtypeFromRecord(record);
   if (!subtype) return;
   lastOtherHazardRenderedSubtype = subtype;
-  lastOtherHazardRenderedSubtypeLabel = getOtherHazardSubtypeLabel(subtype);
+  lastOtherHazardRenderedSubtypeLabel = getOtherHazardSubtypeOption(subtype)?.narrativeLabel || getOtherHazardSubtypeLabel(subtype);
   lastOtherHazardRenderedAlertTitle = String(title || "").trim();
+  const model = buildOtherHazardNarrativeModel({ ...record, subtype });
+  lastOtherHazardNarrativeAuditState = {
+    ...model,
+    narrative: lastOtherHazardRenderedAlertTitle || model.narrative,
+    wordingQualityPass: Boolean((lastOtherHazardRenderedAlertTitle || model.narrative) && model.wordingQualityPass && !/\bon\s+This\s+Road\b/.test(lastOtherHazardRenderedAlertTitle))
+  };
 }
 
 function buildOtherHazardSubtypeNarrative(report = {}, roadName = "", communityName = "") {
-  const metadata = extractOtherHazardStructuredMetadata(report);
-  const subtypeOption = getOtherHazardSubtypeOption(metadata.subtype);
-  const lead = subtypeOption?.narrativeLabel || "Hazard";
-  const road = String(roadName || report?.roadName || report?.selectedRoadName || report?.crossingName || report?.crossing_name || "this road").trim();
-  const place = String(communityName || report?.communityName || report?.town || report?.city || "").trim();
-  return `${lead} reported on ${road}${place ? ` in ${place}` : ""}`;
+  return buildOtherHazardNarrativeModel(report, roadName, communityName).narrative;
 }
 
 function gridlyOtherHazardSubtypeAudit() {
@@ -434,8 +567,33 @@ function gridlyOtherHazardSubtypeAudit() {
   };
 }
 
+function gridlyOtherHazardNarrativeAudit() {
+  const activeRecords = [
+    ...(Array.isArray(activeHazards) ? activeHazards : []),
+    ...(Array.isArray(activeReports) ? activeReports : []),
+    ...(typeof getActiveUnifiedIncidents === "function" ? getActiveUnifiedIncidents() : []),
+    ...(typeof getUnifiedIncidents === "function" ? getUnifiedIncidents() : [])
+  ];
+  const liveOtherHazard = activeRecords.find((record) => resolveOtherHazardSubtypeFromRecord(record));
+  const model = liveOtherHazard
+    ? buildOtherHazardNarrativeModel(liveOtherHazard)
+    : (lastOtherHazardNarrativeAuditState || buildOtherHazardNarrativeModel({ category: "other_hazard", subtype: "livestock_on_road", resolvedRoadName: "FM 1410", awarenessArea: "Hull" }));
+  return {
+    subtype: model.subtype,
+    subtypeLabel: model.subtypeLabel,
+    resolvedRoadName: model.resolvedRoadName,
+    awarenessArea: model.awarenessArea,
+    narrative: model.narrative,
+    fallbackLevel: model.fallbackLevel,
+    roadResolutionAvailable: model.roadResolutionAvailable,
+    normalizationApplied: model.normalizationApplied,
+    wordingQualityPass: Boolean(model.wordingQualityPass && !/\bon\s+This\s+Road\b/.test(model.narrative))
+  };
+}
+
 if (typeof window !== "undefined") {
   window.gridlyOtherHazardSubtypeAudit = gridlyOtherHazardSubtypeAudit;
+  window.gridlyOtherHazardNarrativeAudit = gridlyOtherHazardNarrativeAudit;
   window.gridlyBuildOtherHazardSubtypeNarrative = buildOtherHazardSubtypeNarrative;
 }
 
@@ -54165,16 +54323,18 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const eventLabel = pickFirstNonEmptyText([alert?.hazardTypeLabel, alert?.typeLabel, alert?.type, alert?.reportType, alert?.report_type, alert?.title]);
     const otherHazardSubtype = resolveOtherHazardSubtypeFromRecord(alert);
     const subtypeAwareAlert = otherHazardSubtype ? { ...alert, category: "other_hazard", subtype: otherHazardSubtype, hazardSubtype: otherHazardSubtype } : alert;
-    const subtypeEventLabel = otherHazardSubtype ? getOtherHazardSubtypeLabel(otherHazardSubtype) : eventLabel;
+    const subtypeEventLabel = otherHazardSubtype ? (getOtherHazardSubtypeOption(otherHazardSubtype)?.narrativeLabel || getOtherHazardSubtypeLabel(otherHazardSubtype)) : eventLabel;
     const title = buildAlertTitle({ alert: subtypeAwareAlert, roadLabel, crossingLabel, knownLocationLabel, eventLabel: subtypeEventLabel }) || resolveAlertTitleText(subtypeAwareAlert);
     const displayTitle = standardizeGridlyAlertHeadline(title);
     recordOtherHazardRenderedAlert(subtypeAwareAlert, displayTitle);
     const locationTimeLine = normalizeGridlyUserFacingRoadText(buildAlertSubtitleLine(subtypeAwareAlert, displayTitle));
     const intelligence = generateGridlyIntelligencePhrase(alert, alert?.visualState);
     const cleanedAlertLocationLabel = normalizeGridlyLightweightLocationLabelText(roadLabel || getGridlyLightweightLocationFromHeadline(`${title} ${locationTimeLine}`) || "");
-    const alertRowSummary = normalizeGridlyUserFacingRoadText(cleanedAlertLocationLabel
-      ? (buildGridlyHeaderCandidateFromCategoryLocation(subtypeEventLabel || displayTitle, cleanedAlertLocationLabel) || `${displayTitle} on ${cleanedAlertLocationLabel}`)
-      : normalizeGridlyLightweightAlertSummaryText(`${displayTitle} ${locationTimeLine}`));
+    const alertRowSummary = otherHazardSubtype
+      ? normalizeGridlyUserFacingRoadText(displayTitle)
+      : normalizeGridlyUserFacingRoadText(cleanedAlertLocationLabel
+        ? (buildGridlyHeaderCandidateFromCategoryLocation(subtypeEventLabel || displayTitle, cleanedAlertLocationLabel) || `${displayTitle} on ${cleanedAlertLocationLabel}`)
+        : normalizeGridlyLightweightAlertSummaryText(`${displayTitle} ${locationTimeLine}`));
     return `
     <div class="gridly-alert-row" data-gridly-alert-row="true" data-gridly-alert-title="${sanitizeText(displayTitle)}" data-gridly-alert-summary="${sanitizeText(alertRowSummary)}" data-gridly-alert-location="${sanitizeText(cleanedAlertLocationLabel)}" style="padding:10px 12px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.1);border-radius:10px;background:rgba(255,255,255,0.02);">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
