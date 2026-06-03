@@ -11946,24 +11946,39 @@ window.gridlyLastRouteAttempt = null;
 let pendingHazardPlacement = null;
 let selectedQuickHazardType = null;
 let tapMapPlacementAccuracyState = {
-  auditVersion: "GRIDLY_V236_TAP_MAP_PLACEMENT_ACCURACY",
+  auditVersion: "GRIDLY_V236_1_TAP_MAP_TOUCH_COORDINATE_ACCURACY",
   tapMapModeActive: false,
   lastRawTapCoordinate: null,
   lastSubmittedReportCoordinate: null,
   lastRenderedMarkerCoordinate: null,
   lastResolvedRoadCoordinate: null,
+  rawPointerClient: null,
+  rawLeafletLatLng: null,
+  containerPointLatLng: null,
+  finalSubmittedCoordinate: null,
+  markerCoordinate: null,
+  visualDeltaWarning: "",
   coordinateSourceUsed: "",
   rawTapCapturedAt: null,
   rawTapCapturedIso: null,
   mapCenterAtTap: null,
   mapZoomAtTap: null,
+  mapContainerSizeAtTap: null,
+  mapContainerSizeAfterSubmit: null,
+  sheetStateAtTap: null,
+  sheetStateAfterSubmit: null,
   latestMapCenterAfterTap: null,
   latestMapZoomAfterTap: null,
   mapMovementDetectedAfterTap: false,
   mapMovementDeltaMeters: 0,
   mapMovementMonitoringActive: false,
+  pointerCapturedBeforeLeafletClick: false,
+  pointerCaptureAgeMs: null,
+  layoutChangedAfterTap: false,
+  visualAccuracyConfidence: "unknown",
   findings: []
 };
+let latestTapMapPointerCapture = null;
 let lastRoadSnapDebug = {
   originalTapCoords: null,
   snappedCoords: null,
@@ -12040,6 +12055,172 @@ function gridlyReadMapCenterCoordinate() {
   return gridlyCloneCoordinate(map.getCenter());
 }
 
+function gridlyNowMs() {
+  return (typeof performance !== "undefined" && typeof performance.now === "function") ? performance.now() : Date.now();
+}
+
+function gridlyReadMapContainerSnapshot() {
+  try {
+    const container = map && typeof map.getContainer === "function" ? map.getContainer() : null;
+    if (!container || typeof container.getBoundingClientRect !== "function") return null;
+    const rect = container.getBoundingClientRect();
+    return {
+      width: Math.round(rect.width * 10) / 10,
+      height: Math.round(rect.height * 10) / 10,
+      top: Math.round(rect.top * 10) / 10,
+      left: Math.round(rect.left * 10) / 10,
+      right: Math.round(rect.right * 10) / 10,
+      bottom: Math.round(rect.bottom * 10) / 10,
+      clientWidth: container.clientWidth || 0,
+      clientHeight: container.clientHeight || 0
+    };
+  } catch (error) {
+    return null;
+  }
+}
+
+function gridlySummarizeTapMapSheetState() {
+  const summarize = (selector) => {
+    const el = document.querySelector(selector);
+    if (!el) return null;
+    let rect = null;
+    let style = null;
+    try {
+      const bounds = el.getBoundingClientRect();
+      rect = {
+        top: Math.round(bounds.top * 10) / 10,
+        left: Math.round(bounds.left * 10) / 10,
+        width: Math.round(bounds.width * 10) / 10,
+        height: Math.round(bounds.height * 10) / 10,
+        bottom: Math.round(bounds.bottom * 10) / 10
+      };
+      const computed = getComputedStyle(el);
+      style = {
+        display: computed.display,
+        visibility: computed.visibility,
+        opacity: computed.opacity,
+        pointerEvents: computed.pointerEvents,
+        transform: computed.transform,
+        translate: computed.translate
+      };
+    } catch (error) {
+      rect = null;
+      style = null;
+    }
+    return {
+      selector,
+      hidden: Boolean(el.hidden),
+      className: typeof el.className === "string" ? el.className : "",
+      activeSheet: el.dataset?.activeSheet || null,
+      rect,
+      style
+    };
+  };
+  return {
+    portraitV2Sheet: summarize("#gridlyPortraitV2Sheet"),
+    portraitV2Backdrop: summarize("#gridlyPortraitV2SheetBackdrop"),
+    legacyHazardPanel: summarize("#gridlyHazardPanel"),
+    bodyClasses: document.body?.className || ""
+  };
+}
+
+function gridlyTapMapSnapshotsDiffer(before, after) {
+  if (!before || !after) return false;
+  return ["width", "height", "top", "left", "right", "bottom"].some((key) => Math.abs(Number(before[key]) - Number(after[key])) > 0.5);
+}
+
+function gridlySheetSnapshotsDiffer(before, after) {
+  if (!before || !after) return false;
+  const fields = ["hidden", "className", "activeSheet"];
+  const compareNode = (a, b) => {
+    if (!a && !b) return false;
+    if (!a || !b) return true;
+    if (fields.some((field) => String(a[field] ?? "") !== String(b[field] ?? ""))) return true;
+    const aRect = a.rect || {};
+    const bRect = b.rect || {};
+    return ["top", "left", "width", "height", "bottom"].some((key) => Math.abs(Number(aRect[key]) - Number(bRect[key])) > 0.5);
+  };
+  return compareNode(before.portraitV2Sheet, after.portraitV2Sheet)
+    || compareNode(before.portraitV2Backdrop, after.portraitV2Backdrop)
+    || compareNode(before.legacyHazardPanel, after.legacyHazardPanel)
+    || String(before.bodyClasses || "") !== String(after.bodyClasses || "");
+}
+
+function gridlyReadPointerClientFromEvent(event) {
+  const source = event?.touches?.[0] || event?.changedTouches?.[0] || event?.originalEvent?.touches?.[0] || event?.originalEvent?.changedTouches?.[0] || event?.originalEvent || event;
+  const clientX = Number(source?.clientX);
+  const clientY = Number(source?.clientY);
+  if (!Number.isFinite(clientX) || !Number.isFinite(clientY)) return null;
+  return {
+    clientX,
+    clientY,
+    timestamp: Date.now(),
+    performanceTimestamp: gridlyNowMs(),
+    eventType: event?.type || event?.originalEvent?.type || "unknown",
+    pointerType: source?.pointerType || event?.pointerType || ""
+  };
+}
+
+function gridlyConvertClientPointToMapLatLng(rawPointerClient) {
+  try {
+    if (!map || typeof map.getContainer !== "function" || typeof map.containerPointToLatLng !== "function" || !rawPointerClient) return null;
+    const container = map.getContainer();
+    const rect = container.getBoundingClientRect();
+    const x = rawPointerClient.clientX - rect.left;
+    const y = rawPointerClient.clientY - rect.top;
+    const point = typeof L !== "undefined" && typeof L.point === "function" ? L.point(x, y) : { x, y };
+    const latLng = map.containerPointToLatLng(point);
+    const coordinate = gridlyCloneCoordinate(latLng);
+    return coordinate ? {
+      lat: coordinate.lat,
+      lng: coordinate.lng,
+      containerPoint: {
+        x: Math.round(x * 10) / 10,
+        y: Math.round(y * 10) / 10
+      }
+    } : null;
+  } catch (error) {
+    return null;
+  }
+}
+
+function gridlyCaptureTapMapPointer(event, source = "map_pointer_event") {
+  if (!reportingState?.placementModeActive) return null;
+  if (!pendingHazardPlacement && !reportingState.selectedHazardType) return null;
+  const rawPointerClient = gridlyReadPointerClientFromEvent(event);
+  if (!rawPointerClient) return null;
+  const converted = gridlyConvertClientPointToMapLatLng(rawPointerClient);
+  if (!converted) return null;
+  const coordinate = { lat: converted.lat, lng: converted.lng };
+  latestTapMapPointerCapture = {
+    source,
+    rawPointerClient,
+    containerPointLatLng: coordinate,
+    containerPoint: converted.containerPoint,
+    capturedAt: Date.now(),
+    capturedAtPerformance: rawPointerClient.performanceTimestamp,
+    mapCenterAtTap: gridlyReadMapCenterCoordinate(),
+    mapZoomAtTap: typeof map?.getZoom === "function" ? map.getZoom() : null,
+    mapContainerSizeAtTap: gridlyReadMapContainerSnapshot(),
+    sheetStateAtTap: gridlySummarizeTapMapSheetState()
+  };
+  return latestTapMapPointerCapture;
+}
+
+function installTapMapImmediatePointerCapture() {
+  try {
+    const container = map && typeof map.getContainer === "function" ? map.getContainer() : null;
+    if (!container || container.dataset.gridlyTapMapPointerCapture === "1") return;
+    container.dataset.gridlyTapMapPointerCapture = "1";
+    const capture = (event) => gridlyCaptureTapMapPointer(event, `map_container_${event.type}`);
+    container.addEventListener("pointerdown", capture, { capture: true, passive: true });
+    container.addEventListener("touchstart", capture, { capture: true, passive: true });
+    container.addEventListener("mousedown", capture, { capture: true, passive: true });
+  } catch (error) {
+    console.warn("Gridly tap-map pointer capture install failed", error);
+  }
+}
+
 function gridlyRecordTapMapMovementCheckpoint(source = "unknown") {
   if (!tapMapPlacementAccuracyState.rawTapCapturedAt || tapMapPlacementAccuracyState.mapMovementMonitoringActive === false) return;
   const center = gridlyReadMapCenterCoordinate();
@@ -12057,29 +12238,56 @@ function gridlyRecordTapMapMovementCheckpoint(source = "unknown") {
   }
 }
 
-function gridlyStartTapMapPlacementAccuracyCapture(rawTapCoordinate, hazardType = "") {
+function gridlyStartTapMapPlacementAccuracyCapture(rawTapCoordinate, hazardType = "", options = {}) {
   const captured = gridlyCloneCoordinate(rawTapCoordinate);
   if (!captured) return null;
-  const center = gridlyReadMapCenterCoordinate();
+  const pointerCapture = options.pointerCapture || null;
+  const center = pointerCapture?.mapCenterAtTap || gridlyReadMapCenterCoordinate();
+  const mapContainerSizeAtTap = pointerCapture?.mapContainerSizeAtTap || gridlyReadMapContainerSnapshot();
+  const sheetStateAtTap = pointerCapture?.sheetStateAtTap || gridlySummarizeTapMapSheetState();
+  const rawPointerClient = pointerCapture?.rawPointerClient || options.rawPointerClient || null;
+  const containerPointLatLng = gridlyCloneCoordinate(pointerCapture?.containerPointLatLng || options.containerPointLatLng) || captured;
+  const rawLeafletLatLng = gridlyCloneCoordinate(options.rawLeafletLatLng) || null;
+  const pointerCapturedBeforeLeafletClick = Boolean(pointerCapture?.capturedAtPerformance && options.clickReceivedAtPerformance && pointerCapture.capturedAtPerformance <= options.clickReceivedAtPerformance);
+  const pointerCaptureAgeMs = pointerCapture?.capturedAtPerformance && options.clickReceivedAtPerformance
+    ? Math.round((options.clickReceivedAtPerformance - pointerCapture.capturedAtPerformance) * 10) / 10
+    : null;
+  const captureWasImmediate = Boolean(rawPointerClient && containerPointLatLng && pointerCapturedBeforeLeafletClick);
   tapMapPlacementAccuracyState = {
-    auditVersion: "GRIDLY_V236_TAP_MAP_PLACEMENT_ACCURACY",
+    auditVersion: "GRIDLY_V236_1_TAP_MAP_TOUCH_COORDINATE_ACCURACY",
     tapMapModeActive: Boolean(reportingState?.placementModeActive),
     lastRawTapCoordinate: captured,
     lastSubmittedReportCoordinate: null,
     lastRenderedMarkerCoordinate: null,
     lastResolvedRoadCoordinate: null,
-    coordinateSourceUsed: "raw_tap_coordinate",
+    rawPointerClient,
+    rawLeafletLatLng,
+    containerPointLatLng,
+    finalSubmittedCoordinate: null,
+    markerCoordinate: null,
+    visualDeltaWarning: "",
+    coordinateSourceUsed: captureWasImmediate ? "immediate_pointer_container_point" : "leaflet_click_latlng_fallback",
     rawTapCapturedAt: Date.now(),
     rawTapCapturedIso: new Date().toISOString(),
     mapCenterAtTap: center,
-    mapZoomAtTap: typeof map?.getZoom === "function" ? map.getZoom() : null,
+    mapZoomAtTap: pointerCapture?.mapZoomAtTap ?? (typeof map?.getZoom === "function" ? map.getZoom() : null),
+    mapContainerSizeAtTap,
+    mapContainerSizeAfterSubmit: null,
+    sheetStateAtTap,
+    sheetStateAfterSubmit: null,
     latestMapCenterAfterTap: center,
-    latestMapZoomAfterTap: typeof map?.getZoom === "function" ? map.getZoom() : null,
+    latestMapZoomAfterTap: pointerCapture?.mapZoomAtTap ?? (typeof map?.getZoom === "function" ? map.getZoom() : null),
     mapMovementDetectedAfterTap: false,
     mapMovementDeltaMeters: 0,
     mapMovementMonitoringActive: true,
+    pointerCapturedBeforeLeafletClick,
+    pointerCaptureAgeMs,
+    layoutChangedAfterTap: false,
+    visualAccuracyConfidence: captureWasImmediate ? "high" : "low",
     findings: [
-      "raw Leaflet event.latlng captured synchronously before road resolution or sheet cleanup can change placement",
+      captureWasImmediate
+        ? "pointer client coordinates and containerPointToLatLng were captured synchronously before Leaflet click handling or UI teardown"
+        : "tap coordinate fell back to Leaflet click latlng; immediate pointer capture was unavailable, so visual confidence is low",
       hazardType ? `hazard_type:${hazardType}` : "hazard_type:unknown"
     ]
   };
@@ -12090,15 +12298,49 @@ function gridlyFinishTapMapPlacementAccuracyCapture({ submittedReportCoordinate 
   const submitted = gridlyCloneCoordinate(submittedReportCoordinate);
   const rendered = gridlyCloneCoordinate(renderedMarkerCoordinate) || submitted;
   const resolvedRoad = gridlyCloneCoordinate(resolvedRoadCoordinate);
-  if (submitted) tapMapPlacementAccuracyState.lastSubmittedReportCoordinate = submitted;
-  if (rendered) tapMapPlacementAccuracyState.lastRenderedMarkerCoordinate = rendered;
+  if (submitted) {
+    tapMapPlacementAccuracyState.lastSubmittedReportCoordinate = submitted;
+    tapMapPlacementAccuracyState.finalSubmittedCoordinate = submitted;
+  }
+  if (rendered) {
+    tapMapPlacementAccuracyState.lastRenderedMarkerCoordinate = rendered;
+    tapMapPlacementAccuracyState.markerCoordinate = rendered;
+  }
   tapMapPlacementAccuracyState.lastResolvedRoadCoordinate = resolvedRoad;
-  tapMapPlacementAccuracyState.coordinateSourceUsed = "raw_tap_coordinate";
+  tapMapPlacementAccuracyState.coordinateSourceUsed = tapMapPlacementAccuracyState.pointerCapturedBeforeLeafletClick === true ? "immediate_pointer_container_point" : "leaflet_click_latlng_fallback";
   tapMapPlacementAccuracyState.tapMapModeActive = Boolean(reportingState?.placementModeActive);
+  tapMapPlacementAccuracyState.mapContainerSizeAfterSubmit = gridlyReadMapContainerSnapshot();
+  tapMapPlacementAccuracyState.sheetStateAfterSubmit = gridlySummarizeTapMapSheetState();
+  const mapContainerChanged = gridlyTapMapSnapshotsDiffer(tapMapPlacementAccuracyState.mapContainerSizeAtTap, tapMapPlacementAccuracyState.mapContainerSizeAfterSubmit);
+  const sheetChanged = gridlySheetSnapshotsDiffer(tapMapPlacementAccuracyState.sheetStateAtTap, tapMapPlacementAccuracyState.sheetStateAfterSubmit);
+  tapMapPlacementAccuracyState.layoutChangedAfterTap = Boolean(mapContainerChanged || sheetChanged);
+  const captureDeltaMeters = gridlyCoordinateDeltaMeters(tapMapPlacementAccuracyState.containerPointLatLng, submitted);
+  if (Number.isFinite(captureDeltaMeters) && captureDeltaMeters > 0.5) {
+    tapMapPlacementAccuracyState.visualDeltaWarning = `submitted coordinate differs from immediate container-point coordinate by ${Math.round(captureDeltaMeters * 10) / 10}m`;
+  } else if (!tapMapPlacementAccuracyState.rawPointerClient) {
+    tapMapPlacementAccuracyState.visualDeltaWarning = "immediate pointer coordinate was not captured before Leaflet click conversion";
+  } else if (tapMapPlacementAccuracyState.layoutChangedAfterTap) {
+    tapMapPlacementAccuracyState.visualDeltaWarning = "map or sheet layout changed after tap; coordinate remains trusted only because it was captured before the change";
+  } else {
+    tapMapPlacementAccuracyState.visualDeltaWarning = "";
+  }
+  if (!tapMapPlacementAccuracyState.rawPointerClient || tapMapPlacementAccuracyState.pointerCapturedBeforeLeafletClick !== true) {
+    tapMapPlacementAccuracyState.visualAccuracyConfidence = "low";
+  } else if (tapMapPlacementAccuracyState.mapMovementDetectedAfterTap || tapMapPlacementAccuracyState.layoutChangedAfterTap) {
+    tapMapPlacementAccuracyState.visualAccuracyConfidence = "medium";
+  } else {
+    tapMapPlacementAccuracyState.visualAccuracyConfidence = "high";
+  }
   if (finding && !tapMapPlacementAccuracyState.findings.includes(finding)) tapMapPlacementAccuracyState.findings.push(finding);
+  if (mapContainerChanged && !tapMapPlacementAccuracyState.findings.includes("map_container_changed_after_tap")) tapMapPlacementAccuracyState.findings.push("map_container_changed_after_tap");
+  if (sheetChanged && !tapMapPlacementAccuracyState.findings.includes("sheet_state_changed_after_tap")) tapMapPlacementAccuracyState.findings.push("sheet_state_changed_after_tap");
+  if (tapMapPlacementAccuracyState.visualDeltaWarning && !tapMapPlacementAccuracyState.findings.includes(tapMapPlacementAccuracyState.visualDeltaWarning)) {
+    tapMapPlacementAccuracyState.findings.push(tapMapPlacementAccuracyState.visualDeltaWarning);
+  }
   gridlyRecordTapMapMovementCheckpoint("finish_capture");
   if (monitoringComplete) tapMapPlacementAccuracyState.mapMovementMonitoringActive = false;
 }
+
 
 const DEFAULT_REPORT_HAZARD_TYPE = "other_hazard";
 let reportActionCompletionAudit = {
@@ -20666,6 +20908,7 @@ function initMap() {
     if (!crossings.length) return;
     scheduleRenderCrossings("map-move-or-zoom");
   });
+  installTapMapImmediatePointerCapture();
   map.on("click", handleHazardPlacementMapClick);
 
   applyGridlyHomeTownAwarenessContext({ source: "map_init", fitMap: false });
@@ -37171,43 +37414,75 @@ function gridlyHazardPlacementAccuracyAudit() {
 function gridlyTapMapPlacementAccuracyAudit() {
   const placementAudit = typeof gridlyHazardPlacementAccuracyAudit === "function" ? gridlyHazardPlacementAccuracyAudit() : {};
   const state = tapMapPlacementAccuracyState || {};
-  const lastRawTapCoordinate = gridlyCloneCoordinate(state.lastRawTapCoordinate)
-    || gridlyCloneCoordinate(placementAudit.rawTapCoordinate)
-    || gridlyCloneCoordinate(lastMobileReportSubmitDebug.rawTapCoordinate || lastMobileReportSubmitDebug.originalTapCoords);
-  const lastSubmittedReportCoordinate = gridlyCloneCoordinate(state.lastSubmittedReportCoordinate)
+  const rawPointerClient = state.rawPointerClient || null;
+  const rawLeafletLatLng = gridlyCloneCoordinate(state.rawLeafletLatLng);
+  const containerPointLatLng = gridlyCloneCoordinate(state.containerPointLatLng);
+  const finalSubmittedCoordinate = gridlyCloneCoordinate(state.finalSubmittedCoordinate)
+    || gridlyCloneCoordinate(state.lastSubmittedReportCoordinate)
     || gridlyCloneCoordinate(lastMobileReportSubmitDebug.activeSubmitCoords)
     || gridlyCloneCoordinate(placementAudit.storedReportCoordinate)
     || gridlyCloneCoordinate(placementAudit.finalPlacementCoordinate);
-  const lastRenderedMarkerCoordinate = gridlyCloneCoordinate(state.lastRenderedMarkerCoordinate)
+  const markerCoordinate = gridlyCloneCoordinate(state.markerCoordinate)
+    || gridlyCloneCoordinate(state.lastRenderedMarkerCoordinate)
     || gridlyCloneCoordinate(lastMobileReportSubmitDebug.renderedMarkerCoordinate)
     || gridlyCloneCoordinate(placementAudit.renderedMarkerCoordinate);
+  const lastRawTapCoordinate = gridlyCloneCoordinate(state.lastRawTapCoordinate)
+    || containerPointLatLng
+    || rawLeafletLatLng
+    || gridlyCloneCoordinate(placementAudit.rawTapCoordinate)
+    || gridlyCloneCoordinate(lastMobileReportSubmitDebug.rawTapCoordinate || lastMobileReportSubmitDebug.originalTapCoords);
   const lastResolvedRoadCoordinate = gridlyCloneCoordinate(state.lastResolvedRoadCoordinate)
     || gridlyCloneCoordinate(placementAudit.snappedRoadCoordinate)
     || gridlyCloneCoordinate(lastRoadSnapDebug?.snappedRoadCoordinate || lastRoadSnapDebug?.snappedCoords);
-  const coordinateDeltaMeters = gridlyCoordinateDeltaMeters(lastRawTapCoordinate, lastSubmittedReportCoordinate);
-  const markerDeltaMeters = gridlyCoordinateDeltaMeters(lastSubmittedReportCoordinate, lastRenderedMarkerCoordinate);
+  const coordinateDeltaMeters = gridlyCoordinateDeltaMeters(containerPointLatLng || lastRawTapCoordinate, finalSubmittedCoordinate);
+  const markerDeltaMeters = gridlyCoordinateDeltaMeters(finalSubmittedCoordinate, markerCoordinate);
+  const leafletVsPointerDeltaMeters = gridlyCoordinateDeltaMeters(rawLeafletLatLng, containerPointLatLng);
+  const capturedBeforeMovement = Boolean(rawPointerClient && containerPointLatLng && state.pointerCapturedBeforeLeafletClick === true);
+  const visualDeltaWarning = state.visualDeltaWarning
+    || (!capturedBeforeMovement ? "coordinate capture did not prove immediate pointer-before-layout conversion" : "")
+    || (Number.isFinite(coordinateDeltaMeters) && coordinateDeltaMeters > 0.5 ? `submitted coordinate differs from immediate pointer coordinate by ${Math.round(coordinateDeltaMeters * 10) / 10}m` : "");
+  const visualAccuracyConfidence = !capturedBeforeMovement
+    ? "low"
+    : (state.visualAccuracyConfidence || (state.mapMovementDetectedAfterTap || state.layoutChangedAfterTap ? "medium" : "high"));
   const findings = Array.from(new Set([
     ...(Array.isArray(state.findings) ? state.findings : []),
-    "Tap Map report coordinate source is locked to raw_tap_coordinate.",
-    lastResolvedRoadCoordinate ? "Resolved road coordinate is retained for diagnostics without replacing submittedReportCoordinate." : "No resolved road coordinate has been recorded yet.",
-    Number.isFinite(coordinateDeltaMeters) && coordinateDeltaMeters <= 0.5
-      ? "submittedReportCoordinate matches lastRawTapCoordinate."
-      : "submittedReportCoordinate does not match lastRawTapCoordinate; inspect coordinateDeltaMeters.",
+    capturedBeforeMovement
+      ? "Tap Map coordinate was captured from clientX/clientY and converted with containerPointToLatLng before Leaflet click completion or UI updates."
+      : "Tap Map coordinate was not proven to be captured before layout/sheet/map movement; visualAccuracyConfidence is low.",
+    lastResolvedRoadCoordinate ? "Resolved road coordinate is retained for diagnostics without replacing finalSubmittedCoordinate." : "No resolved road coordinate has been recorded yet.",
+    Number.isFinite(coordinateDeltaMeters) && coordinateDeltaMeters <= 0.5 && capturedBeforeMovement
+      ? "finalSubmittedCoordinate matches the immediate containerPointLatLng capture."
+      : "Audit does not pass solely on submitted-vs-marker equality; inspect immediate pointer capture diagnostics.",
     Number.isFinite(markerDeltaMeters) && markerDeltaMeters <= 0.5
-      ? "rendered marker coordinate matches submittedReportCoordinate."
-      : "rendered marker coordinate does not match submittedReportCoordinate; inspect markerDeltaMeters."
+      ? "markerCoordinate matches finalSubmittedCoordinate."
+      : "markerCoordinate does not match finalSubmittedCoordinate; inspect markerDeltaMeters.",
+    visualDeltaWarning || null
   ].filter(Boolean)));
   return {
-    auditVersion: state.auditVersion || "GRIDLY_V236_TAP_MAP_PLACEMENT_ACCURACY",
+    auditVersion: state.auditVersion || "GRIDLY_V236_1_TAP_MAP_TOUCH_COORDINATE_ACCURACY",
     tapMapModeActive: Boolean(reportingState?.placementModeActive),
+    rawPointerClient,
+    rawLeafletLatLng,
+    containerPointLatLng,
+    finalSubmittedCoordinate,
+    markerCoordinate,
     lastRawTapCoordinate,
-    lastSubmittedReportCoordinate,
-    lastRenderedMarkerCoordinate,
     lastResolvedRoadCoordinate,
     coordinateDeltaMeters,
     markerDeltaMeters,
+    leafletVsPointerDeltaMeters,
+    coordinateSourceUsed: state.coordinateSourceUsed || (capturedBeforeMovement ? "immediate_pointer_container_point" : "leaflet_click_latlng_fallback"),
+    mapContainerSizeAtTap: state.mapContainerSizeAtTap || null,
+    mapContainerSizeAfterSubmit: state.mapContainerSizeAfterSubmit || null,
+    sheetStateAtTap: state.sheetStateAtTap || null,
+    sheetStateAfterSubmit: state.sheetStateAfterSubmit || null,
     mapMovementDetectedAfterTap: Boolean(state.mapMovementDetectedAfterTap),
-    coordinateSourceUsed: "raw_tap_coordinate",
+    mapMovementDeltaMeters: state.mapMovementDeltaMeters || 0,
+    pointerCapturedBeforeLeafletClick: Boolean(state.pointerCapturedBeforeLeafletClick),
+    pointerCaptureAgeMs: state.pointerCaptureAgeMs ?? null,
+    layoutChangedAfterTap: Boolean(state.layoutChangedAfterTap),
+    visualDeltaWarning,
+    visualAccuracyConfidence,
     findings
   };
 }
@@ -38633,12 +38908,42 @@ window.gridlyPortraitV2HitboxAudit = function gridlyPortraitV2HitboxAudit() {
 async function handleHazardPlacementMapClick(event) {
   if (!reportingState.placementModeActive) return;
   if (!pendingHazardPlacement && !reportingState.selectedHazardType) return;
-  const lat = event?.latlng?.lat;
-  const lng = event?.latlng?.lng;
-  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+  const clickReceivedAtPerformance = gridlyNowMs();
+  const rawLeafletLatLng = gridlyCloneCoordinate(event?.latlng);
+  const fallbackPointerClient = gridlyReadPointerClientFromEvent(event);
+  const fallbackContainerPointLatLng = gridlyCloneCoordinate(gridlyConvertClientPointToMapLatLng(fallbackPointerClient));
+  const pointerCaptureAgeMs = latestTapMapPointerCapture?.capturedAtPerformance
+    ? clickReceivedAtPerformance - latestTapMapPointerCapture.capturedAtPerformance
+    : Infinity;
+  const pointerCapture = latestTapMapPointerCapture
+    && Number.isFinite(pointerCaptureAgeMs)
+    && pointerCaptureAgeMs >= -25
+    && pointerCaptureAgeMs <= 1500
+    ? latestTapMapPointerCapture
+    : null;
+  const immediateCoordinate = gridlyCloneCoordinate(pointerCapture?.containerPointLatLng) || fallbackContainerPointLatLng;
+  const leafletCoordinate = rawLeafletLatLng;
+  const selectedCoordinate = immediateCoordinate || leafletCoordinate;
+  if (!selectedCoordinate) return;
   const selectedType = pendingHazardPlacement || reportingState.selectedHazardType;
-  const rawTapCoordinate = gridlyStartTapMapPlacementAccuracyCapture({ lat, lng }, selectedType) || { lat, lng };
-  pushTapMapTrace("map_click_received", { lat: rawTapCoordinate.lat, lng: rawTapCoordinate.lng, hazardType: selectedType, source: lastRoadHazardPlacementSource, coordinateSourceUsed: "raw_tap_coordinate" });
+  const rawTapCoordinate = gridlyStartTapMapPlacementAccuracyCapture(selectedCoordinate, selectedType, {
+    pointerCapture,
+    rawPointerClient: pointerCapture?.rawPointerClient || fallbackPointerClient,
+    containerPointLatLng: immediateCoordinate,
+    rawLeafletLatLng,
+    clickReceivedAtPerformance
+  }) || selectedCoordinate;
+  pushTapMapTrace("map_click_received", {
+    lat: rawTapCoordinate.lat,
+    lng: rawTapCoordinate.lng,
+    hazardType: selectedType,
+    source: lastRoadHazardPlacementSource,
+    coordinateSourceUsed: tapMapPlacementAccuracyState.coordinateSourceUsed,
+    rawPointerClient: tapMapPlacementAccuracyState.rawPointerClient,
+    rawLeafletLatLng: tapMapPlacementAccuracyState.rawLeafletLatLng,
+    containerPointLatLng: tapMapPlacementAccuracyState.containerPointLatLng,
+    pointerCaptureAgeMs: tapMapPlacementAccuracyState.pointerCaptureAgeMs
+  });
   updateReportingState({ placementModeActive: false });
   lastMobileReportSubmitDebug.originalTapCoords = { ...rawTapCoordinate };
   lastMobileReportSubmitDebug.rawTapCoordinate = { ...rawTapCoordinate };
@@ -38723,6 +39028,13 @@ async function handleHazardPlacementMapClick(event) {
   setConfirmation("Hazard placed at the intended roadway location", "success");
   resetQuickHazardReportState();
   closeHazardPanel();
+  gridlyFinishTapMapPlacementAccuracyCapture({
+    submittedReportCoordinate: finalPlacement,
+    renderedMarkerCoordinate: finalPlacement,
+    resolvedRoadCoordinate,
+    finding: "post-submit sheet and map container state recorded after UI cleanup",
+    monitoringComplete: true
+  });
   pushTapMapTrace("placement_mode_cleared_restored", { outcome: "success" });
 }
 
