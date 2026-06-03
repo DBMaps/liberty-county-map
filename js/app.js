@@ -9661,6 +9661,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyDestinationImpactIntelligenceAudit",
   "gridlyKnowBeforeYouGoStressAudit",
   "gridlyAwarenessNarrativePromotionAudit",
+  "gridlyNarrativePromotionPrototypeAudit",
   "gridlyBestAvailableObservationAudit",
   "gridlyNarrativeSourceTraceAudit",
   "gridlyPromotionSafetyAudit",
@@ -9775,6 +9776,7 @@ function exposeAllGridlyAuditHelpers() {
     gridlyDestinationImpactIntelligenceAudit: typeof gridlyDestinationImpactIntelligenceAudit === "function" ? gridlyDestinationImpactIntelligenceAudit : (typeof target?.gridlyDestinationImpactIntelligenceAudit === "function" ? target.gridlyDestinationImpactIntelligenceAudit : null),
     gridlyKnowBeforeYouGoStressAudit: typeof gridlyKnowBeforeYouGoStressAudit === "function" ? gridlyKnowBeforeYouGoStressAudit : (typeof target?.gridlyKnowBeforeYouGoStressAudit === "function" ? target.gridlyKnowBeforeYouGoStressAudit : null),
     gridlyAwarenessNarrativePromotionAudit: typeof gridlyAwarenessNarrativePromotionAudit === "function" ? gridlyAwarenessNarrativePromotionAudit : (typeof target?.gridlyAwarenessNarrativePromotionAudit === "function" ? target.gridlyAwarenessNarrativePromotionAudit : null),
+    gridlyNarrativePromotionPrototypeAudit: typeof gridlyNarrativePromotionPrototypeAudit === "function" ? gridlyNarrativePromotionPrototypeAudit : (typeof target?.gridlyNarrativePromotionPrototypeAudit === "function" ? target.gridlyNarrativePromotionPrototypeAudit : null),
     gridlyBestAvailableObservationAudit: typeof gridlyBestAvailableObservationAudit === "function" ? gridlyBestAvailableObservationAudit : (typeof target?.gridlyBestAvailableObservationAudit === "function" ? target.gridlyBestAvailableObservationAudit : null),
     gridlyNarrativeSourceTraceAudit: typeof gridlyNarrativeSourceTraceAudit === "function" ? gridlyNarrativeSourceTraceAudit : (typeof target?.gridlyNarrativeSourceTraceAudit === "function" ? target.gridlyNarrativeSourceTraceAudit : null),
     gridlyPromotionSafetyAudit: typeof gridlyPromotionSafetyAudit === "function" ? gridlyPromotionSafetyAudit : (typeof target?.gridlyPromotionSafetyAudit === "function" ? target.gridlyPromotionSafetyAudit : null),
@@ -28519,6 +28521,138 @@ function gridlyKnowBeforeYouGoStressAudit(options = {}) {
   };
 }
 
+const GRIDLY_NARRATIVE_PROMOTION_PROTOTYPE_VERSION = "V230.0";
+
+function gridlyV230NormalizeConditionLabel(value = "") {
+  const label = gridlyV229NormalizeNarrativeText(value);
+  if (!label || /^active\s*condition$/i.test(label)) return "";
+  if (/^road\s*closed$/i.test(label)) return "Road closure";
+  if (/^crash\s*\/\s*wreck$/i.test(label)) return "Crash";
+  return label;
+}
+
+function gridlyV230NormalizeRoadReference(value = "") {
+  let road = gridlyV229NormalizeNarrativeText(value)
+    .replace(/^[,;:.\s]+|[,;:.\s]+$/g, "")
+    .replace(/\b(?:reported nearby|active mobility report|mobility report|affecting|travel|nearby)$/ig, "")
+    .trim();
+  if (!road) return "";
+  road = road.replace(/\bFarm\s*-?\s*to\s*-?\s*Market\s+(?:Road\s+)?(\d+)\b/i, "FM $1");
+  road = road.replace(/\bCounty\s+Road\s+(\d+)\b/i, "CR $1");
+  road = road.replace(/\b(?:U\.?S\.?|United\s+States)\s+(?:Highway\s+|Hwy\s+|Route\s+)?(\d+)\b/i, "US $1");
+  road = road.replace(/\b(?:Texas|State)\s+(?:Highway\s+|Hwy\s+|Route\s+)?(\d+)\b/i, "TX $1");
+  road = road.replace(/\bInterstate\s+(\d+)\b/i, "I-$1");
+  road = road.replace(/\b(FM|RM|RR|CR|US|TX|SH|IH|I|Loop|Spur)\s*-?\s*(\d+)\b/i, (_match, prefix, number) => {
+    const upper = String(prefix || "").toUpperCase();
+    if (upper === "I") return `I-${number}`;
+    return `${upper} ${number}`;
+  });
+  road = normalizeRoadDisplayCase(road);
+  const genericRoadLabel = /^(?:road\s*work\s*reported\s*nearby|active\s*mobility\s*report|reported\s*nearby|road|street|highway|travel)$/i.test(road);
+  if (genericRoadLabel) return "";
+  if (/\b(?:reported nearby|active mobility report|mobility report)\b/i.test(road)) return "";
+  return /\b(?:FM|RM|RR|CR|US|TX|SH|IH|I-|Loop|Spur)\s*\d+\b/i.test(road) ? road : "";
+}
+
+function gridlyV230ExtractRoadReferences(text = "") {
+  const normalized = gridlyV229NormalizeNarrativeText(text);
+  if (!normalized) return [];
+  const roads = [];
+  const pushRoad = (value = "") => {
+    const road = gridlyV230NormalizeRoadReference(value);
+    if (!road) return;
+    if (roads.some((entry) => normalizeRoadComparison(entry) === normalizeRoadComparison(road))) return;
+    roads.push(road);
+  };
+  (normalized.match(/\bFarm\s*-?\s*to\s*-?\s*Market\s+(?:Road\s+)?\d+\b/gi) || []).forEach(pushRoad);
+  (normalized.match(/\bCounty\s+Road\s+\d+\b/gi) || []).forEach(pushRoad);
+  (normalized.match(/\b(?:U\.?S\.?|United\s+States)\s+(?:Highway\s+|Hwy\s+|Route\s+)?\d+\b/gi) || []).forEach(pushRoad);
+  (normalized.match(/\b(?:Texas|State)\s+(?:Highway\s+|Hwy\s+|Route\s+)?\d+\b/gi) || []).forEach(pushRoad);
+  (normalized.match(/\bInterstate\s+\d+\b/gi) || []).forEach(pushRoad);
+  (normalized.match(/\b(?:FM|RM|RR|CR|US|TX|SH|IH|I|Loop|Spur)\s*-?\s*\d+\b/gi) || []).forEach(pushRoad);
+  return roads;
+}
+
+function buildGridlyNarrativePromotionPrototype(options = {}) {
+  const intel = options?.intel || {};
+  const pulseModel = options?.pulseModel || {};
+  const activeState = getGridlyAwarenessBriefActiveState({ intel, pulseModel });
+  const context = gridlyV2291BuildNarrativeAuditCandidates(options);
+  const activeConditionPresent = Boolean(
+    !activeState.activeCountsAreClear
+    || Number(context?.snapshot?.counts?.activeAwarenessCount || 0) > 0
+    || Number(context?.snapshot?.counts?.activeHazardCount || 0) > 0
+    || Number(context?.snapshot?.counts?.activeReportCount || 0) > 0
+  );
+  const area = gridlyV2291GetAwarenessAreaName(options);
+  const selectedAwarenessArea = gridlyV229NormalizeNarrativeText(options?.awarenessAreaName || area.name || getGridlyAwarenessBriefTownLabel());
+  const optionActiveAwareness = options?.activeAwareness || {};
+  const optionCandidates = [];
+  const addOptionCandidate = (narrative, source, sourceType = "active_awareness") => {
+    const text = gridlyV229NormalizeNarrativeText(narrative);
+    if (!text) return;
+    optionCandidates.push({ narrative: text, source, sourceType, derived: false });
+  };
+  (Array.isArray(optionActiveAwareness?.activeAwarenessSamples) ? optionActiveAwareness.activeAwarenessSamples : []).forEach((sample, index) => {
+    addOptionCandidate(sample?.reusedAlertText, `options.activeAwareness.activeAwarenessSamples.${index}.reusedAlertText`, "active_awareness_sample");
+    addOptionCandidate(sample?.headline || sample?.title || sample?.description || sample?.summary || sample?.detail || sample?.message, `options.activeAwareness.activeAwarenessSamples.${index}.narrative`, "active_awareness_sample");
+    addOptionCandidate(buildGridlyLightweightSummaryFromResolvedDetail({ resolvedCategory: sample?.resolvedCategory, resolvedLocationLabel: sample?.resolvedLocationLabel }).value, `options.activeAwareness.activeAwarenessSamples.${index}.resolvedCategory+resolvedLocationLabel`, "active_awareness_sample");
+  });
+  addOptionCandidate(optionActiveAwareness?.headline, "options.activeAwareness.headline");
+  addOptionCandidate(optionActiveAwareness?.reusedAlertText, optionActiveAwareness?.reusedAlertSource || "options.activeAwareness.reusedAlertText");
+  addOptionCandidate(buildGridlyLightweightSummaryFromResolvedDetail({ resolvedCategory: optionActiveAwareness?.resolvedCategory || optionActiveAwareness?.topCategory, resolvedLocationLabel: optionActiveAwareness?.resolvedLocationLabel }).value, "options.activeAwareness.resolvedCategory+resolvedLocationLabel");
+  const allCandidates = gridlyV2291UniqueTexts([...(context.candidates || []).map((candidate) => candidate.narrative), ...optionCandidates.map((candidate) => candidate.narrative)])
+    .map((narrative) => optionCandidates.find((candidate) => candidate.narrative === narrative) || (context.candidates || []).find((candidate) => candidate.narrative === narrative) || { narrative, source: "unknown", sourceType: "unknown" });
+  const scoredCandidates = allCandidates.map((candidate) => {
+    const score = gridlyV2291ScoreNarrative(candidate.narrative, context);
+    const roadNames = gridlyV230ExtractRoadReferences(candidate.narrative);
+    return {
+      ...candidate,
+      ...score,
+      roadNames,
+      v230Score: Number(score.specificityScore || 0) + (roadNames.length ? 18 : 0) + (candidate.derived ? -1 : 0)
+    };
+  }).sort((a, b) => b.v230Score - a.v230Score || b.narrative.length - a.narrative.length);
+  const selectedCandidate = scoredCandidates.find((candidate) => candidate.conditionLabel || candidate.roadNames.length) || scoredCandidates[0] || null;
+  const selectedCondition = gridlyV230NormalizeConditionLabel(
+    selectedCandidate?.conditionLabel
+      || context.strongestCondition
+      || gridlyV2291ConditionLabelFromText(selectedCandidate?.narrative || "", context?.snapshot?.activeAwareness?.resolvedCategory || context?.snapshot?.activeAwareness?.topCategory || "")
+  );
+  const selectedRoad = (selectedCandidate?.roadNames || [])[0]
+    || allCandidates.flatMap((candidate) => gridlyV230ExtractRoadReferences(candidate.narrative))[0]
+    || "";
+  const fallbackUsed = Boolean(activeConditionPresent && selectedCondition && !selectedRoad);
+  const promotedNarrative = activeConditionPresent && selectedCondition
+    ? (selectedRoad
+      ? `${selectedCondition} affecting ${selectedRoad} in ${selectedAwarenessArea}`
+      : `${selectedCondition} affecting travel in ${selectedAwarenessArea}`)
+    : "";
+  return {
+    activeConditionPresent,
+    selectedCondition: activeConditionPresent ? selectedCondition : "",
+    selectedRoad: activeConditionPresent ? selectedRoad : "",
+    selectedAwarenessArea,
+    promotedNarrative,
+    fallbackUsed,
+    sourceUsed: promotedNarrative ? (selectedCandidate?.source || context.sourceState?.candidate?.source || "read_only_existing_intelligence") : "none",
+    auditVersion: GRIDLY_NARRATIVE_PROMOTION_PROTOTYPE_VERSION
+  };
+}
+
+function gridlyNarrativePromotionPrototypeAudit(options = {}) {
+  const audit = buildGridlyNarrativePromotionPrototype(options);
+  return {
+    activeConditionPresent: audit.activeConditionPresent,
+    selectedCondition: audit.selectedCondition,
+    selectedRoad: audit.selectedRoad,
+    selectedAwarenessArea: audit.selectedAwarenessArea,
+    promotedNarrative: audit.promotedNarrative,
+    fallbackUsed: audit.fallbackUsed,
+    sourceUsed: audit.sourceUsed
+  };
+}
+
 window.gridlyAwarenessIntelligenceAudit = gridlyAwarenessStatusAudit;
 window.gridlyCommunityPulseIntelligenceAudit = gridlyCommunityPulseIntelligenceAudit;
 window.gridlyAwarenessStoryAudit = gridlyAwarenessStoryAudit;
@@ -28530,6 +28664,7 @@ window.gridlyCommunityPulseActiveAudit = gridlyCommunityPulseActiveAudit;
 window.gridlyDestinationImpactIntelligenceAudit = gridlyDestinationImpactIntelligenceAudit;
 window.gridlyKnowBeforeYouGoStressAudit = gridlyKnowBeforeYouGoStressAudit;
 window.gridlyAwarenessNarrativePromotionAudit = gridlyAwarenessNarrativePromotionAudit;
+window.gridlyNarrativePromotionPrototypeAudit = gridlyNarrativePromotionPrototypeAudit;
 window.gridlyBestAvailableObservationAudit = gridlyBestAvailableObservationAudit;
 window.gridlyNarrativeSourceTraceAudit = gridlyNarrativeSourceTraceAudit;
 window.gridlyPromotionSafetyAudit = gridlyPromotionSafetyAudit;
@@ -28550,6 +28685,7 @@ exposeGridlyAuditHelper("gridlyCommunityPulseActiveAudit", gridlyCommunityPulseA
 exposeGridlyAuditHelper("gridlyDestinationImpactIntelligenceAudit", gridlyDestinationImpactIntelligenceAudit);
 exposeGridlyAuditHelper("gridlyKnowBeforeYouGoStressAudit", gridlyKnowBeforeYouGoStressAudit);
 exposeGridlyAuditHelper("gridlyAwarenessNarrativePromotionAudit", gridlyAwarenessNarrativePromotionAudit);
+exposeGridlyAuditHelper("gridlyNarrativePromotionPrototypeAudit", gridlyNarrativePromotionPrototypeAudit);
 exposeGridlyAuditHelper("gridlyBestAvailableObservationAudit", gridlyBestAvailableObservationAudit);
 exposeGridlyAuditHelper("gridlyNarrativeSourceTraceAudit", gridlyNarrativeSourceTraceAudit);
 exposeGridlyAuditHelper("gridlyPromotionSafetyAudit", gridlyPromotionSafetyAudit);
@@ -48766,7 +48902,9 @@ function buildGridlyAwarenessBriefCopy({ intel = {}, existingAlertWording = {}, 
 
   if (activeCount > 0 || intel?.hasActiveAlerts) {
     const safeActiveCount = activeCount > 0 ? activeCount : 1;
-    const calmPrimary = "Community Activity Nearby";
+    const narrativePromotion = buildGridlyNarrativePromotionPrototype({ intel, pulseModel, activeAwareness, awarenessAreaName: town });
+    const promotedPrimary = safeDisplayText(narrativePromotion.promotedNarrative, "");
+    const calmPrimary = promotedPrimary || "Community Activity Nearby";
     return {
       state: safeActiveCount >= 6 ? "high" : "moderate",
       greeting: getGridlyAwarenessGreetingText(),
@@ -48775,14 +48913,16 @@ function buildGridlyAwarenessBriefCopy({ intel = {}, existingAlertWording = {}, 
       microline: "",
       microlineVisible: false,
       selectedHeadline: calmPrimary,
-      selectedSource: "calm_community_summary",
-      selectedLocationIntelligence: null,
-      fallbackReason: "specific_incident_headlines_suppressed"
+      selectedSource: promotedPrimary ? (narrativePromotion.sourceUsed || "narrative_promotion_prototype") : "calm_community_summary",
+      selectedLocationIntelligence: activeAwareness?.topAwarenessSelectedLocationIntelligence || null,
+      fallbackReason: promotedPrimary ? (narrativePromotion.fallbackUsed ? "road_reference_unavailable_travel_fallback" : "") : "specific_incident_headlines_suppressed",
+      narrativePromotion
     };
   }
 
   return getGridlyQuietAwarenessBriefCopy();
 }
+
 
 function refreshPortraitV2LocalizedIntelligence() {
   recordGridlyBackgroundFunctionCall("refreshPortraitV2LocalizedIntelligence");
