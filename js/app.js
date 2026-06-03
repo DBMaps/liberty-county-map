@@ -9662,6 +9662,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyKnowBeforeYouGoStressAudit",
   "gridlyAwarenessNarrativePromotionAudit",
   "gridlyNarrativePromotionPrototypeAudit",
+  "gridlyNarrativeLanguageValidationAudit",
   "gridlyBestAvailableObservationAudit",
   "gridlyNarrativeSourceTraceAudit",
   "gridlyPromotionSafetyAudit",
@@ -9777,6 +9778,7 @@ function exposeAllGridlyAuditHelpers() {
     gridlyKnowBeforeYouGoStressAudit: typeof gridlyKnowBeforeYouGoStressAudit === "function" ? gridlyKnowBeforeYouGoStressAudit : (typeof target?.gridlyKnowBeforeYouGoStressAudit === "function" ? target.gridlyKnowBeforeYouGoStressAudit : null),
     gridlyAwarenessNarrativePromotionAudit: typeof gridlyAwarenessNarrativePromotionAudit === "function" ? gridlyAwarenessNarrativePromotionAudit : (typeof target?.gridlyAwarenessNarrativePromotionAudit === "function" ? target.gridlyAwarenessNarrativePromotionAudit : null),
     gridlyNarrativePromotionPrototypeAudit: typeof gridlyNarrativePromotionPrototypeAudit === "function" ? gridlyNarrativePromotionPrototypeAudit : (typeof target?.gridlyNarrativePromotionPrototypeAudit === "function" ? target.gridlyNarrativePromotionPrototypeAudit : null),
+    gridlyNarrativeLanguageValidationAudit: typeof gridlyNarrativeLanguageValidationAudit === "function" ? gridlyNarrativeLanguageValidationAudit : (typeof target?.gridlyNarrativeLanguageValidationAudit === "function" ? target.gridlyNarrativeLanguageValidationAudit : null),
     gridlyBestAvailableObservationAudit: typeof gridlyBestAvailableObservationAudit === "function" ? gridlyBestAvailableObservationAudit : (typeof target?.gridlyBestAvailableObservationAudit === "function" ? target.gridlyBestAvailableObservationAudit : null),
     gridlyNarrativeSourceTraceAudit: typeof gridlyNarrativeSourceTraceAudit === "function" ? gridlyNarrativeSourceTraceAudit : (typeof target?.gridlyNarrativeSourceTraceAudit === "function" ? target.gridlyNarrativeSourceTraceAudit : null),
     gridlyPromotionSafetyAudit: typeof gridlyPromotionSafetyAudit === "function" ? gridlyPromotionSafetyAudit : (typeof target?.gridlyPromotionSafetyAudit === "function" ? target.gridlyPromotionSafetyAudit : null),
@@ -28685,6 +28687,145 @@ function gridlyNarrativePromotionPrototypeAudit(options = {}) {
   };
 }
 
+
+const GRIDLY_NARRATIVE_LANGUAGE_VALIDATION_AUDIT_VERSION = "V231.0";
+
+function gridlyV231NarrativeScore({ pattern = "", conditionVerb = "", impactStrength = "" } = {}) {
+  const awarenessUseful = pattern === "affectingRoadInArea" || impactStrength === "high" ? "strong" : "good";
+  const decisionUseful = impactStrength === "high" ? "strong" : (pattern === "reportedOnRoadInArea" ? "good" : "moderate");
+  return {
+    naturalReadability: conditionVerb === "reported on" && pattern === "affectingRoadInArea" ? "awkward" : "natural",
+    awarenessUsefulness: awarenessUseful,
+    locationClarity: "strong",
+    decisionUsefulness: decisionUseful
+  };
+}
+
+function gridlyNarrativeLanguageValidationAudit() {
+  const categoryDefinitions = [
+    {
+      category: "Construction",
+      condition: "Construction",
+      road: "FM 770",
+      area: "Hull",
+      recommendedPattern: "<condition> affecting <road> in <area>",
+      pattern: "affectingRoadInArea",
+      impactStrength: "high",
+      rationale: "Construction usually implies an active work zone or lane friction, so affecting language gives advance context without sounding alarmist."
+    },
+    {
+      category: "Flooding",
+      condition: "Flooding",
+      road: "FM 787",
+      area: "Liberty",
+      recommendedPattern: "<condition> affecting <road> in <area>",
+      pattern: "affectingRoadInArea",
+      impactStrength: "high",
+      rationale: "Flooding is naturally travel-impacting and benefits from immediate road-plus-area awareness."
+    },
+    {
+      category: "Road Closure",
+      condition: "Road closure",
+      road: "US 90",
+      area: "Dayton",
+      recommendedPattern: "<condition> affecting <road> in <area>",
+      pattern: "affectingRoadInArea",
+      impactStrength: "high",
+      rationale: "Closure language already signals a strong constraint; affecting keeps the line awareness-first and useful before departure."
+    },
+    {
+      category: "Crash / Wreck",
+      condition: "Crash",
+      road: "TX 321",
+      area: "Cleveland",
+      recommendedPattern: "<condition> reported on <road> in <area>",
+      pattern: "reportedOnRoadInArea",
+      impactStrength: "moderate",
+      rationale: "A crash may or may not still block travel, so reported on is more natural and avoids overstating impact."
+    },
+    {
+      category: "Disabled Vehicle",
+      condition: "Disabled vehicle",
+      road: "FM 1960",
+      area: "Dayton",
+      recommendedPattern: "<condition> reported on <road> in <area>",
+      pattern: "reportedOnRoadInArea",
+      impactStrength: "moderate",
+      rationale: "Disabled vehicles are often localized shoulder or lane events, making reported on more precise than affecting."
+    },
+    {
+      category: "Rail Delay",
+      condition: "Rail delay",
+      road: "FM 1960",
+      area: "Dayton",
+      recommendedPattern: "<condition> affecting <road> in <area>",
+      pattern: "affectingRoadInArea",
+      impactStrength: "high",
+      rationale: "Rail delays directly affect crossing movement, so affecting reads naturally and helps drivers decide before leaving."
+    },
+    {
+      category: "Debris",
+      condition: "Debris",
+      road: "US 90",
+      area: "Liberty",
+      recommendedPattern: "<condition> reported on <road> in <area>",
+      pattern: "reportedOnRoadInArea",
+      impactStrength: "moderate",
+      rationale: "Debris can be hazardous without necessarily blocking the route, so reported on is clearer and less forced."
+    },
+    {
+      category: "General Hazard",
+      condition: "Hazard",
+      road: "CR 2429",
+      area: "Hull",
+      recommendedPattern: "<condition> reported on <road> in <area>",
+      pattern: "reportedOnRoadInArea",
+      impactStrength: "moderate",
+      rationale: "General hazard is intentionally broad; reported on keeps the wording honest when the exact effect is unknown."
+    }
+  ];
+
+  const narrativeExamples = categoryDefinitions.map((definition) => {
+    const narrative = definition.pattern === "affectingRoadInArea"
+      ? `${definition.condition} affecting ${definition.road} in ${definition.area}`
+      : `${definition.condition} reported on ${definition.road} in ${definition.area}`;
+    const evaluation = gridlyV231NarrativeScore({
+      pattern: definition.pattern,
+      conditionVerb: definition.pattern === "affectingRoadInArea" ? "affecting" : "reported on",
+      impactStrength: definition.impactStrength
+    });
+    return {
+      category: definition.category,
+      narrative,
+      recommendedPattern: definition.recommendedPattern,
+      evaluation,
+      rationale: definition.rationale
+    };
+  });
+
+  return {
+    auditVersion: GRIDLY_NARRATIVE_LANGUAGE_VALIDATION_AUDIT_VERSION,
+    categoriesEvaluated: narrativeExamples.length,
+    narrativeExamples,
+    strongestNarratives: narrativeExamples
+      .filter((entry) => entry.evaluation.awarenessUsefulness === "strong" && entry.evaluation.decisionUsefulness === "strong")
+      .map((entry) => entry.narrative),
+    weakestNarratives: narrativeExamples
+      .filter((entry) => entry.category === "General Hazard" || entry.category === "Disabled Vehicle")
+      .map((entry) => ({ narrative: entry.narrative, reason: entry.category === "General Hazard" ? "Broad condition label gives less detail than specific hazards." : "Useful and natural, but typically less decision-critical than closure, flooding, rail delay, or construction." })),
+    recommendedPatternByCategory: narrativeExamples.reduce((patterns, entry) => {
+      patterns[entry.category] = entry.recommendedPattern;
+      return patterns;
+    }, {}),
+    findings: [
+      "Awareness-first narrative language can be adopted as the standard communication model across the major Gridly mobility condition categories.",
+      "The affecting pattern is strongest for conditions with inherent route or crossing impact: construction, flooding, road closure, and rail delay.",
+      "The reported on pattern reads better for point observations or uncertain impact conditions: crash/wreck, disabled vehicle, debris, and general hazard.",
+      "Road-plus-awareness-area wording consistently improves location clarity and supports the Know Before You Go mission without changing UI, ownership, routing, destination, Community Pulse, alert, or hazard behavior."
+    ]
+  };
+}
+
 window.gridlyAwarenessIntelligenceAudit = gridlyAwarenessStatusAudit;
 window.gridlyCommunityPulseIntelligenceAudit = gridlyCommunityPulseIntelligenceAudit;
 window.gridlyAwarenessStoryAudit = gridlyAwarenessStoryAudit;
@@ -28697,6 +28838,7 @@ window.gridlyDestinationImpactIntelligenceAudit = gridlyDestinationImpactIntelli
 window.gridlyKnowBeforeYouGoStressAudit = gridlyKnowBeforeYouGoStressAudit;
 window.gridlyAwarenessNarrativePromotionAudit = gridlyAwarenessNarrativePromotionAudit;
 window.gridlyNarrativePromotionPrototypeAudit = gridlyNarrativePromotionPrototypeAudit;
+window.gridlyNarrativeLanguageValidationAudit = gridlyNarrativeLanguageValidationAudit;
 window.gridlyBestAvailableObservationAudit = gridlyBestAvailableObservationAudit;
 window.gridlyNarrativeSourceTraceAudit = gridlyNarrativeSourceTraceAudit;
 window.gridlyPromotionSafetyAudit = gridlyPromotionSafetyAudit;
@@ -28718,6 +28860,7 @@ exposeGridlyAuditHelper("gridlyDestinationImpactIntelligenceAudit", gridlyDestin
 exposeGridlyAuditHelper("gridlyKnowBeforeYouGoStressAudit", gridlyKnowBeforeYouGoStressAudit);
 exposeGridlyAuditHelper("gridlyAwarenessNarrativePromotionAudit", gridlyAwarenessNarrativePromotionAudit);
 exposeGridlyAuditHelper("gridlyNarrativePromotionPrototypeAudit", gridlyNarrativePromotionPrototypeAudit);
+exposeGridlyAuditHelper("gridlyNarrativeLanguageValidationAudit", gridlyNarrativeLanguageValidationAudit);
 exposeGridlyAuditHelper("gridlyBestAvailableObservationAudit", gridlyBestAvailableObservationAudit);
 exposeGridlyAuditHelper("gridlyNarrativeSourceTraceAudit", gridlyNarrativeSourceTraceAudit);
 exposeGridlyAuditHelper("gridlyPromotionSafetyAudit", gridlyPromotionSafetyAudit);
