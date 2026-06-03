@@ -28537,7 +28537,8 @@ function gridlyV230NormalizeRoadReference(value = "") {
     .replace(/\b(?:reported nearby|active mobility report|mobility report|affecting|travel|nearby)$/ig, "")
     .trim();
   if (!road) return "";
-  road = road.replace(/\bFarm\s*-?\s*to\s*-?\s*Market\s+(?:Road\s+)?(\d+)\b/i, "FM $1");
+  road = road.replace(/\bFarm[\s\u2010-\u2015-]*to[\s\u2010-\u2015-]*Market\s+(?:Road\s+)?(\d+)\b/i, "FM $1");
+  road = road.replace(/\bFarm\s+Road\s+(\d+)\b/i, "FM $1");
   road = road.replace(/\bCounty\s+Road\s+(\d+)\b/i, "CR $1");
   road = road.replace(/\b(?:U\.?S\.?|United\s+States)\s+(?:Highway\s+|Hwy\s+|Route\s+)?(\d+)\b/i, "US $1");
   road = road.replace(/\b(?:Texas|State)\s+(?:Highway\s+|Hwy\s+|Route\s+)?(\d+)\b/i, "TX $1");
@@ -28551,7 +28552,8 @@ function gridlyV230NormalizeRoadReference(value = "") {
   const genericRoadLabel = /^(?:road\s*work\s*reported\s*nearby|active\s*mobility\s*report|reported\s*nearby|road|street|highway|travel)$/i.test(road);
   if (genericRoadLabel) return "";
   if (/\b(?:reported nearby|active mobility report|mobility report)\b/i.test(road)) return "";
-  return /\b(?:FM|RM|RR|CR|US|TX|SH|IH|I-|Loop|Spur)\s*\d+\b/i.test(road) ? road : "";
+  const roadReference = road.match(/\b(?:FM|RM|RR|CR|US|TX|SH|IH|I-|Loop|Spur)\s*\d+\b/i)?.[0] || "";
+  return roadReference ? normalizeRoadDisplayCase(roadReference) : "";
 }
 
 function gridlyV230ExtractRoadReferences(text = "") {
@@ -28564,13 +28566,42 @@ function gridlyV230ExtractRoadReferences(text = "") {
     if (roads.some((entry) => normalizeRoadComparison(entry) === normalizeRoadComparison(road))) return;
     roads.push(road);
   };
-  (normalized.match(/\bFarm\s*-?\s*to\s*-?\s*Market\s+(?:Road\s+)?\d+\b/gi) || []).forEach(pushRoad);
+  (normalized.match(/\bFarm[\s\u2010-\u2015-]*to[\s\u2010-\u2015-]*Market\s+(?:Road\s+)?\d+\b/gi) || []).forEach(pushRoad);
+  (normalized.match(/\bFarm\s+Road\s+\d+\b/gi) || []).forEach(pushRoad);
   (normalized.match(/\bCounty\s+Road\s+\d+\b/gi) || []).forEach(pushRoad);
   (normalized.match(/\b(?:U\.?S\.?|United\s+States)\s+(?:Highway\s+|Hwy\s+|Route\s+)?\d+\b/gi) || []).forEach(pushRoad);
   (normalized.match(/\b(?:Texas|State)\s+(?:Highway\s+|Hwy\s+|Route\s+)?\d+\b/gi) || []).forEach(pushRoad);
   (normalized.match(/\bInterstate\s+\d+\b/gi) || []).forEach(pushRoad);
   (normalized.match(/\b(?:FM|RM|RR|CR|US|TX|SH|IH|I|Loop|Spur)\s*-?\s*\d+\b/gi) || []).forEach(pushRoad);
   return roads;
+}
+
+function gridlyV230VisibleAlertTextCandidates() {
+  if (typeof document === "undefined" || !document?.querySelectorAll) return [];
+  const alertRowSelector = typeof GRIDLY_ALERT_ROW_SELECTOR === "string" ? GRIDLY_ALERT_ROW_SELECTOR : "[data-gridly-alert-id]";
+  const rows = Array.from(document.querySelectorAll(alertRowSelector));
+  const candidates = [];
+  const addVisibleAlertText = (text, source, index) => {
+    const narrative = gridlyV229NormalizeNarrativeText(text);
+    if (!narrative) return;
+    candidates.push({
+      narrative,
+      source,
+      sourceType: "visible_alert_card",
+      index,
+      visible: true,
+      derived: false
+    });
+  };
+  rows.forEach((row, index) => {
+    if (!row || typeof row.getAttribute !== "function") return;
+    if (row.getAttribute("data-gridly-alert-hidden") === "true" || row.hidden) return;
+    addVisibleAlertText(row.getAttribute("data-gridly-alert-summary"), "visibleAlertCard.data-gridly-alert-summary", index);
+    addVisibleAlertText(row.getAttribute("data-gridly-alert-title"), "visibleAlertCard.data-gridly-alert-title", index);
+    addVisibleAlertText(row.getAttribute("data-gridly-alert-location"), "visibleAlertCard.data-gridly-alert-location", index);
+    addVisibleAlertText(row.textContent, "visibleAlertCard.textContent", index);
+  });
+  return candidates;
 }
 
 function buildGridlyNarrativePromotionPrototype(options = {}) {
@@ -28601,8 +28632,9 @@ function buildGridlyNarrativePromotionPrototype(options = {}) {
   addOptionCandidate(optionActiveAwareness?.headline, "options.activeAwareness.headline");
   addOptionCandidate(optionActiveAwareness?.reusedAlertText, optionActiveAwareness?.reusedAlertSource || "options.activeAwareness.reusedAlertText");
   addOptionCandidate(buildGridlyLightweightSummaryFromResolvedDetail({ resolvedCategory: optionActiveAwareness?.resolvedCategory || optionActiveAwareness?.topCategory, resolvedLocationLabel: optionActiveAwareness?.resolvedLocationLabel }).value, "options.activeAwareness.resolvedCategory+resolvedLocationLabel");
-  const allCandidates = gridlyV2291UniqueTexts([...(context.candidates || []).map((candidate) => candidate.narrative), ...optionCandidates.map((candidate) => candidate.narrative)])
-    .map((narrative) => optionCandidates.find((candidate) => candidate.narrative === narrative) || (context.candidates || []).find((candidate) => candidate.narrative === narrative) || { narrative, source: "unknown", sourceType: "unknown" });
+  const visibleAlertCandidates = gridlyV230VisibleAlertTextCandidates();
+  const allCandidates = gridlyV2291UniqueTexts([...(context.candidates || []).map((candidate) => candidate.narrative), ...optionCandidates.map((candidate) => candidate.narrative), ...visibleAlertCandidates.map((candidate) => candidate.narrative)])
+    .map((narrative) => visibleAlertCandidates.find((candidate) => candidate.narrative === narrative) || optionCandidates.find((candidate) => candidate.narrative === narrative) || (context.candidates || []).find((candidate) => candidate.narrative === narrative) || { narrative, source: "unknown", sourceType: "unknown" });
   const scoredCandidates = allCandidates.map((candidate) => {
     const score = gridlyV2291ScoreNarrative(candidate.narrative, context);
     const roadNames = gridlyV230ExtractRoadReferences(candidate.narrative);
