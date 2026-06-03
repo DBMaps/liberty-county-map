@@ -17894,6 +17894,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   attachRouteQuickPanelDebugGlobal();
   initGreeting();
   updateLastUpdated();
+  activeGeoFilter = getGridlyHomeTownAwarenessAnchor() ? "town" : activeGeoFilter;
   initMap();
   installMapClickDiagnostics();
   initSupabase();
@@ -18805,7 +18806,26 @@ function attachGridlyMovementDebugGlobal() {
 }
 
 function getMyTownKey() {
-  return String(gridlyUserProfile?.homeTown || "Liberty County").trim().toLowerCase() || "liberty county";
+  const settingsTown = typeof getGridlyHomeTownPreference === "function" ? getGridlyHomeTownPreference() : "";
+  const profileTown = gridlyUserProfile?.homeTown || gridlyUserProfile?.homeTownLabel || "";
+  return String(settingsTown || profileTown || "Liberty County").trim().toLowerCase() || "liberty county";
+}
+
+function getGridlyHomeTownAwarenessAnchor() {
+  const settingsTown = typeof getGridlyHomeTownPreference === "function" ? getGridlyHomeTownPreference() : "";
+  const profileTown = gridlyUserProfile?.homeTown || gridlyUserProfile?.homeTownLabel || "";
+  const selectedTown = normalizeGridlyHomeTown(settingsTown || profileTown);
+  if (!selectedTown || selectedTown === "Other") return null;
+  const lookup = LOCAL_PLACE_LOOKUP[String(selectedTown).toLowerCase()];
+  if (!lookup) return null;
+  return { label: selectedTown, lat: lookup.lat, lng: lookup.lng, source: "home_town" };
+}
+
+function getGridlyAwarenessAnchor({ preferUserLocation = true } = {}) {
+  if (preferUserLocation && userLocation) return { label: "Current location", lat: userLocation.lat, lng: userLocation.lng, source: "user_location" };
+  const homeTownAnchor = getGridlyHomeTownAwarenessAnchor();
+  if (homeTownAnchor) return homeTownAnchor;
+  return { label: "Dayton", lat: defaultCenter[0], lng: defaultCenter[1], source: "default_center" };
 }
 function updateProfileUI() {
   const townLabel = gridlyUserProfile?.homeTownLabel || gridlyUserProfile?.homeTown || "My Town";
@@ -18885,6 +18905,16 @@ function saveGridlyHomeTownPreference(town) {
   if (!homeTown) return "";
   const settings = getGridlySettingsPreferences();
   saveGridlySettingsPreferences({ ...settings, community: { ...(settings.community || {}), homeTown } }, { applyDisplay: false, render: false, source: "welcome_home_town" });
+  const lookup = LOCAL_PLACE_LOOKUP[String(homeTown).toLowerCase()] || null;
+  saveGridlyUserProfile({
+    homeTown,
+    homeTownLabel: homeTown,
+    homeTownLat: lookup?.lat ?? null,
+    homeTownLng: lookup?.lng ?? null
+  });
+  activeGeoFilter = homeTown === "Other" ? "county" : "town";
+  crossingRenderFilterVersion += 1;
+  applyGridlyHomeTownAwarenessContext({ source: "save_home_town", fitMap: true });
   return homeTown;
 }
 
@@ -19288,7 +19318,10 @@ function updateLastUpdated() {
 }
 
 function initMap() {
-  map = L.map("map", { zoomControl: false }).setView(defaultCenter, 13);
+  const startupAnchor = getGridlyHomeTownAwarenessAnchor();
+  const startupCenter = startupAnchor ? [startupAnchor.lat, startupAnchor.lng] : defaultCenter;
+  const startupZoom = startupAnchor ? 13 : 13;
+  map = L.map("map", { zoomControl: false }).setView(startupCenter, startupZoom);
   window.gridlyMapInstance = map;
 
   L.control.zoom({ position: "bottomright" }).addTo(map);
@@ -19385,10 +19418,53 @@ function initMap() {
   });
   map.on("click", handleHazardPlacementMapClick);
 
+  applyGridlyHomeTownAwarenessContext({ source: "map_init", fitMap: false });
   centerMapOnUserIfAllowed();
   highlightNearestCrossingOnFirstLoad();
   installMapLayoutResizeSafety();
   if (typeof renderUnifiedIncidents === "function") renderUnifiedIncidents("auto-map-init");
+}
+
+function getGridlyHomeTownCrossings(homeTownAnchor = getGridlyHomeTownAwarenessAnchor()) {
+  if (!homeTownAnchor || !Array.isArray(crossings) || !crossings.length) return [];
+  const townKey = String(homeTownAnchor.label || "").trim().toLowerCase();
+  const directTownMatches = crossings.filter((crossing) => String(crossing.city || "").trim().toLowerCase() === townKey);
+  if (directTownMatches.length) return directTownMatches;
+  return findNearestCrossings(homeTownAnchor.lat, homeTownAnchor.lng, 18).filter((crossing) => {
+    return getDistanceMiles(homeTownAnchor.lat, homeTownAnchor.lng, crossing.lat, crossing.lng) <= DEFAULT_NEARBY_RADIUS_MILES;
+  });
+}
+
+function applyGridlyHomeTownAwarenessContext({ source = "unknown", fitMap = false } = {}) {
+  const homeTownAnchor = getGridlyHomeTownAwarenessAnchor();
+  if (!map || !homeTownAnchor) return false;
+  if (activeGeoFilter === "nearby") {
+    activeGeoFilter = "town";
+    crossingRenderFilterVersion += 1;
+  }
+  if (!fitMap || !Array.isArray(crossings) || !crossings.length) {
+    if (source === "map_init" || !Array.isArray(crossings) || !crossings.length) {
+      map.setView([homeTownAnchor.lat, homeTownAnchor.lng], Math.max(13, Number(map.getZoom?.() || 13)), { animate: false });
+    }
+    return true;
+  }
+
+  const townCrossings = getGridlyHomeTownCrossings(homeTownAnchor);
+  const latLngs = townCrossings
+    .map((crossing) => [Number(crossing.lat), Number(crossing.lng)])
+    .filter(([lat, lng]) => Number.isFinite(lat) && Number.isFinite(lng));
+  if (!latLngs.length) {
+    map.setView([homeTownAnchor.lat, homeTownAnchor.lng], 13, { animate: false });
+    return true;
+  }
+  const bounds = L.latLngBounds(latLngs);
+  if (!bounds.isValid()) return false;
+  map.fitBounds(bounds, {
+    ...getFilterFitPadding(),
+    animate: false,
+    maxZoom: 14
+  });
+  return true;
 }
 
 function installLayerPickerDebugDiagnostics() {
@@ -19982,13 +20058,14 @@ function centerMapOnUserIfAllowed() {
 }
 
 function updateNearestContext() {
-  if (!userLocation) return;
-  const nearestCrossing = findNearestCrossings(userLocation.lat, userLocation.lng, 1)[0];
+  const awarenessAnchor = getGridlyAwarenessAnchor();
+  if (!awarenessAnchor) return;
+  const nearestCrossing = findNearestCrossings(awarenessAnchor.lat, awarenessAnchor.lng, 1)[0];
   const nearestIssue = getUnifiedIncidents()
     .filter((incident) => incident.status === "active")
     .map((incident) => ({
       incident,
-      distance: getDistanceMiles(userLocation.lat, userLocation.lng, incident.lat, incident.lng)
+      distance: getDistanceMiles(awarenessAnchor.lat, awarenessAnchor.lng, incident.lat, incident.lng)
     }))
     .sort((a, b) => a.distance - b.distance)[0];
 
@@ -19997,7 +20074,8 @@ function updateNearestContext() {
     const issueText = nearestIssue
       ? `${nearestIssue.incident.title} · ${nearestIssue.distance.toFixed(1)} mi`
       : "No active issues nearby";
-    els.geoFilterStatus.textContent = `Nearest crossing: ${nearestCrossing.name} (${crossingDistance} mi) · Nearest issue: ${issueText}`;
+    const anchorLabel = awarenessAnchor.source === "home_town" ? `${awarenessAnchor.label} anchor` : "Nearest";
+    els.geoFilterStatus.textContent = `${anchorLabel} crossing: ${nearestCrossing.name} (${crossingDistance} mi) · Nearest issue: ${issueText}`;
   }
 }
 
@@ -20094,6 +20172,7 @@ async function loadCrossings() {
 
     crossingRenderCrossingsVersion += 1;
     populateCrossingSelect();
+    applyGridlyHomeTownAwarenessContext({ source: "crossings_loaded", fitMap: true });
     scheduleRenderCrossings("state-change", { force: true });
     updateRouteIntelligence();
     updateTrustStats();
@@ -23079,7 +23158,7 @@ function getDefaultRelevantCrossings() {
       .map((report) => String(report.crossingId))
   );
 
-  const nearbyCenter = userLocation || { lat: defaultCenter[0], lng: defaultCenter[1] };
+  const nearbyCenter = getGridlyAwarenessAnchor();
   const nearbyCrossings = findNearestCrossings(nearbyCenter.lat, nearbyCenter.lng, 60).filter(
     (crossing) => getDistanceMiles(nearbyCenter.lat, nearbyCenter.lng, crossing.lat, crossing.lng) <= DEFAULT_NEARBY_RADIUS_MILES
   );
@@ -23140,11 +23219,12 @@ function renderCrossings(reason = "unspecified", options = {}) {
     const inView = bounds ? bounds.contains([crossing.lat, crossing.lng]) : true;
     return (inDefaultSet || shouldShowDistantInactiveCrossing(crossing)) && inView;
   });
-  const prioritizedVisibleCrossings = userLocation
+  const priorityAnchor = getGridlyAwarenessAnchor();
+  const prioritizedVisibleCrossings = priorityAnchor
     ? visibleCrossings
         .map((crossing) => ({
           crossing,
-          distance: getDistanceMiles(userLocation.lat, userLocation.lng, crossing.lat, crossing.lng)
+          distance: getDistanceMiles(priorityAnchor.lat, priorityAnchor.lng, crossing.lat, crossing.lng)
         }))
         .sort((a, b) => a.distance - b.distance)
         .slice(0, 120)
@@ -30601,7 +30681,7 @@ function highlightNearestCrossingOnFirstLoad() {
   if (!map || !crossings.length) return;
   if (localStorage.getItem(MAP_FIRST_HINT_SEEN_KEY)) return;
 
-  const center = userLocation || { lat: defaultCenter[0], lng: defaultCenter[1] };
+  const center = getGridlyAwarenessAnchor();
   const nearest = findNearestCrossings(center.lat, center.lng, 1)[0];
   if (!nearest) return;
 
@@ -30726,7 +30806,7 @@ function getVisibleCrossingsForFilter(reason = "unknown") {
   }
 
   if (activeGeoFilter === "nearby") {
-    const center = userLocation || { lat: defaultCenter[0], lng: defaultCenter[1] };
+    const center = getGridlyAwarenessAnchor();
     const nearest = findNearestCrossings(center.lat, center.lng, 10);
     debugGeoFilter("Nearby", nearest.length, reason);
     return nearest;
@@ -46119,8 +46199,9 @@ function formatPortraitTopStripImpactLabel(tier = "") {
 
 
 function getGridlyAwarenessBriefTownLabel() {
+  const settingsTown = typeof getGridlyHomeTownPreference === "function" ? getGridlyHomeTownPreference() : "";
   const profile = typeof getGridlyUserProfile === "function" ? getGridlyUserProfile() : (gridlyUserProfile || {});
-  return safeDisplayText(profile?.homeTownLabel || profile?.homeTown || profile?.city || profile?.town, "Dayton");
+  return safeDisplayText(settingsTown || profile?.homeTownLabel || profile?.homeTown || profile?.city || profile?.town, "Dayton");
 }
 
 function getGridlyAwarenessTimeOfDayGreetingPart(date = new Date()) {
