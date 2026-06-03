@@ -11945,6 +11945,25 @@ let debugPipelineWrapperEntered = false;
 window.gridlyLastRouteAttempt = null;
 let pendingHazardPlacement = null;
 let selectedQuickHazardType = null;
+let tapMapPlacementAccuracyState = {
+  auditVersion: "GRIDLY_V236_TAP_MAP_PLACEMENT_ACCURACY",
+  tapMapModeActive: false,
+  lastRawTapCoordinate: null,
+  lastSubmittedReportCoordinate: null,
+  lastRenderedMarkerCoordinate: null,
+  lastResolvedRoadCoordinate: null,
+  coordinateSourceUsed: "",
+  rawTapCapturedAt: null,
+  rawTapCapturedIso: null,
+  mapCenterAtTap: null,
+  mapZoomAtTap: null,
+  latestMapCenterAfterTap: null,
+  latestMapZoomAfterTap: null,
+  mapMovementDetectedAfterTap: false,
+  mapMovementDeltaMeters: 0,
+  mapMovementMonitoringActive: false,
+  findings: []
+};
 let lastRoadSnapDebug = {
   originalTapCoords: null,
   snappedCoords: null,
@@ -12010,6 +12029,76 @@ let lastMobileReportSubmitDebug = {
   supabaseInsertError: "",
   postSubmitUiResetSucceeded: false
 };
+
+function gridlyCloneCoordinate(coordinate) {
+  const resolved = gridlyCoordinateFromRecord(coordinate);
+  return resolved ? { lat: resolved.lat, lng: resolved.lng } : null;
+}
+
+function gridlyReadMapCenterCoordinate() {
+  if (!map || typeof map.getCenter !== "function") return null;
+  return gridlyCloneCoordinate(map.getCenter());
+}
+
+function gridlyRecordTapMapMovementCheckpoint(source = "unknown") {
+  if (!tapMapPlacementAccuracyState.rawTapCapturedAt || tapMapPlacementAccuracyState.mapMovementMonitoringActive === false) return;
+  const center = gridlyReadMapCenterCoordinate();
+  if (!center) return;
+  const previousCenter = tapMapPlacementAccuracyState.mapCenterAtTap;
+  const deltaMeters = gridlyCoordinateDeltaMeters(previousCenter, center);
+  const zoom = typeof map?.getZoom === "function" ? map.getZoom() : null;
+  tapMapPlacementAccuracyState.latestMapCenterAfterTap = center;
+  tapMapPlacementAccuracyState.latestMapZoomAfterTap = zoom;
+  tapMapPlacementAccuracyState.mapMovementDeltaMeters = Number.isFinite(deltaMeters) ? deltaMeters : 0;
+  if ((Number.isFinite(deltaMeters) && deltaMeters > 0.5) || zoom !== tapMapPlacementAccuracyState.mapZoomAtTap) {
+    tapMapPlacementAccuracyState.mapMovementDetectedAfterTap = true;
+    const finding = `map_movement_after_tap_detected:${source}`;
+    if (!tapMapPlacementAccuracyState.findings.includes(finding)) tapMapPlacementAccuracyState.findings.push(finding);
+  }
+}
+
+function gridlyStartTapMapPlacementAccuracyCapture(rawTapCoordinate, hazardType = "") {
+  const captured = gridlyCloneCoordinate(rawTapCoordinate);
+  if (!captured) return null;
+  const center = gridlyReadMapCenterCoordinate();
+  tapMapPlacementAccuracyState = {
+    auditVersion: "GRIDLY_V236_TAP_MAP_PLACEMENT_ACCURACY",
+    tapMapModeActive: Boolean(reportingState?.placementModeActive),
+    lastRawTapCoordinate: captured,
+    lastSubmittedReportCoordinate: null,
+    lastRenderedMarkerCoordinate: null,
+    lastResolvedRoadCoordinate: null,
+    coordinateSourceUsed: "raw_tap_coordinate",
+    rawTapCapturedAt: Date.now(),
+    rawTapCapturedIso: new Date().toISOString(),
+    mapCenterAtTap: center,
+    mapZoomAtTap: typeof map?.getZoom === "function" ? map.getZoom() : null,
+    latestMapCenterAfterTap: center,
+    latestMapZoomAfterTap: typeof map?.getZoom === "function" ? map.getZoom() : null,
+    mapMovementDetectedAfterTap: false,
+    mapMovementDeltaMeters: 0,
+    mapMovementMonitoringActive: true,
+    findings: [
+      "raw Leaflet event.latlng captured synchronously before road resolution or sheet cleanup can change placement",
+      hazardType ? `hazard_type:${hazardType}` : "hazard_type:unknown"
+    ]
+  };
+  return captured;
+}
+
+function gridlyFinishTapMapPlacementAccuracyCapture({ submittedReportCoordinate = null, renderedMarkerCoordinate = null, resolvedRoadCoordinate = null, finding = "", monitoringComplete = false } = {}) {
+  const submitted = gridlyCloneCoordinate(submittedReportCoordinate);
+  const rendered = gridlyCloneCoordinate(renderedMarkerCoordinate) || submitted;
+  const resolvedRoad = gridlyCloneCoordinate(resolvedRoadCoordinate);
+  if (submitted) tapMapPlacementAccuracyState.lastSubmittedReportCoordinate = submitted;
+  if (rendered) tapMapPlacementAccuracyState.lastRenderedMarkerCoordinate = rendered;
+  tapMapPlacementAccuracyState.lastResolvedRoadCoordinate = resolvedRoad;
+  tapMapPlacementAccuracyState.coordinateSourceUsed = "raw_tap_coordinate";
+  tapMapPlacementAccuracyState.tapMapModeActive = Boolean(reportingState?.placementModeActive);
+  if (finding && !tapMapPlacementAccuracyState.findings.includes(finding)) tapMapPlacementAccuracyState.findings.push(finding);
+  gridlyRecordTapMapMovementCheckpoint("finish_capture");
+  if (monitoringComplete) tapMapPlacementAccuracyState.mapMovementMonitoringActive = false;
+}
 
 const DEFAULT_REPORT_HAZARD_TYPE = "other_hazard";
 let reportActionCompletionAudit = {
@@ -20573,6 +20662,7 @@ function initMap() {
   installGridlyMapLineDebugHelper();
 
   map.on("zoomend moveend", () => {
+    gridlyRecordTapMapMovementCheckpoint("map_move_or_zoom_end");
     if (!crossings.length) return;
     scheduleRenderCrossings("map-move-or-zoom");
   });
@@ -37066,8 +37156,8 @@ function gridlyHazardPlacementAccuracyAudit() {
     trace: [
       "Report Hazard -> Tap Map Location captures Leaflet event.latlng as rawTapCoordinate.",
       "snapHazardToRoad requests multiple OSRM nearest road candidates and records candidate distance diagnostics.",
-      "gridlyBuildRoadAwareHazardPlacement selects finalPlacementCoordinate according to near-road, safe-snap, too-far, and divided-road-risk thresholds.",
-      "createSharedHazardReport writes the unchanged reports payload shape with lat/lng set to finalPlacementCoordinate.",
+      "gridlyBuildRoadAwareHazardPlacement records road-resolution diagnostics while Tap Map submissions preserve the raw tap coordinate as finalPlacementCoordinate.",
+      "createSharedHazardReport writes the unchanged reports payload shape with lat/lng set to the raw tap coordinate for Tap Map submissions.",
       "normalizeReports maps reports.lat/lng into activeHazards while local diagnostics preserve raw/snapped/final coordinates.",
       "getLiveHazardIncidents groups active road hazards by type + lat/lng rounded to 4 decimals and selects the newest report as representative inside that tighter bucket.",
       "getUnifiedIncidents copies final placement diagnostics into the road unified incident.",
@@ -37078,10 +37168,56 @@ function gridlyHazardPlacementAccuracyAudit() {
     markerSourceUsed: lastMarkerAuditDebug?.markerSourceUsed || lastMarkerAuditDebug?.lastMarkerRenderResult?.selectedSourceName || "unknown"
   };
 }
+function gridlyTapMapPlacementAccuracyAudit() {
+  const placementAudit = typeof gridlyHazardPlacementAccuracyAudit === "function" ? gridlyHazardPlacementAccuracyAudit() : {};
+  const state = tapMapPlacementAccuracyState || {};
+  const lastRawTapCoordinate = gridlyCloneCoordinate(state.lastRawTapCoordinate)
+    || gridlyCloneCoordinate(placementAudit.rawTapCoordinate)
+    || gridlyCloneCoordinate(lastMobileReportSubmitDebug.rawTapCoordinate || lastMobileReportSubmitDebug.originalTapCoords);
+  const lastSubmittedReportCoordinate = gridlyCloneCoordinate(state.lastSubmittedReportCoordinate)
+    || gridlyCloneCoordinate(lastMobileReportSubmitDebug.activeSubmitCoords)
+    || gridlyCloneCoordinate(placementAudit.storedReportCoordinate)
+    || gridlyCloneCoordinate(placementAudit.finalPlacementCoordinate);
+  const lastRenderedMarkerCoordinate = gridlyCloneCoordinate(state.lastRenderedMarkerCoordinate)
+    || gridlyCloneCoordinate(lastMobileReportSubmitDebug.renderedMarkerCoordinate)
+    || gridlyCloneCoordinate(placementAudit.renderedMarkerCoordinate);
+  const lastResolvedRoadCoordinate = gridlyCloneCoordinate(state.lastResolvedRoadCoordinate)
+    || gridlyCloneCoordinate(placementAudit.snappedRoadCoordinate)
+    || gridlyCloneCoordinate(lastRoadSnapDebug?.snappedRoadCoordinate || lastRoadSnapDebug?.snappedCoords);
+  const coordinateDeltaMeters = gridlyCoordinateDeltaMeters(lastRawTapCoordinate, lastSubmittedReportCoordinate);
+  const markerDeltaMeters = gridlyCoordinateDeltaMeters(lastSubmittedReportCoordinate, lastRenderedMarkerCoordinate);
+  const findings = Array.from(new Set([
+    ...(Array.isArray(state.findings) ? state.findings : []),
+    "Tap Map report coordinate source is locked to raw_tap_coordinate.",
+    lastResolvedRoadCoordinate ? "Resolved road coordinate is retained for diagnostics without replacing submittedReportCoordinate." : "No resolved road coordinate has been recorded yet.",
+    Number.isFinite(coordinateDeltaMeters) && coordinateDeltaMeters <= 0.5
+      ? "submittedReportCoordinate matches lastRawTapCoordinate."
+      : "submittedReportCoordinate does not match lastRawTapCoordinate; inspect coordinateDeltaMeters.",
+    Number.isFinite(markerDeltaMeters) && markerDeltaMeters <= 0.5
+      ? "rendered marker coordinate matches submittedReportCoordinate."
+      : "rendered marker coordinate does not match submittedReportCoordinate; inspect markerDeltaMeters."
+  ].filter(Boolean)));
+  return {
+    auditVersion: state.auditVersion || "GRIDLY_V236_TAP_MAP_PLACEMENT_ACCURACY",
+    tapMapModeActive: Boolean(reportingState?.placementModeActive),
+    lastRawTapCoordinate,
+    lastSubmittedReportCoordinate,
+    lastRenderedMarkerCoordinate,
+    lastResolvedRoadCoordinate,
+    coordinateDeltaMeters,
+    markerDeltaMeters,
+    mapMovementDetectedAfterTap: Boolean(state.mapMovementDetectedAfterTap),
+    coordinateSourceUsed: "raw_tap_coordinate",
+    findings
+  };
+}
+
 if (typeof window !== "undefined") {
   window.gridlyHazardPlacementAccuracyAudit = gridlyHazardPlacementAccuracyAudit;
+  window.gridlyTapMapPlacementAccuracyAudit = gridlyTapMapPlacementAccuracyAudit;
 }
 exposeGridlyAuditHelper("gridlyHazardPlacementAccuracyAudit", gridlyHazardPlacementAccuracyAudit);
+exposeGridlyAuditHelper("gridlyTapMapPlacementAccuracyAudit", gridlyTapMapPlacementAccuracyAudit);
 
 function gridlyShouldRunConnectedAuditSnapshots(options = {}) {
   return Boolean(options?.includeConnectedAudits || options?.includeHeavyConnectedAudits || options?.nestedAuditSnapshots);
@@ -38501,12 +38637,15 @@ async function handleHazardPlacementMapClick(event) {
   const lng = event?.latlng?.lng;
   if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
   const selectedType = pendingHazardPlacement || reportingState.selectedHazardType;
-  pushTapMapTrace("map_click_received", { lat, lng, hazardType: selectedType, source: lastRoadHazardPlacementSource });
+  const rawTapCoordinate = gridlyStartTapMapPlacementAccuracyCapture({ lat, lng }, selectedType) || { lat, lng };
+  pushTapMapTrace("map_click_received", { lat: rawTapCoordinate.lat, lng: rawTapCoordinate.lng, hazardType: selectedType, source: lastRoadHazardPlacementSource, coordinateSourceUsed: "raw_tap_coordinate" });
   updateReportingState({ placementModeActive: false });
-  lastMobileReportSubmitDebug.originalTapCoords = { lat, lng };
+  lastMobileReportSubmitDebug.originalTapCoords = { ...rawTapCoordinate };
+  lastMobileReportSubmitDebug.rawTapCoordinate = { ...rawTapCoordinate };
   lastMobileReportSubmitDebug.lastSubmitAttempt = "tap_captured";
-  pushTapMapTrace("snap_started", { lat, lng });
-  const snapped = await snapHazardToRoad(lat, lng, { source: "tap_map" });
+  lastMobileReportSubmitDebug.coordinateSourceUsed = "raw_tap_coordinate";
+  pushTapMapTrace("snap_started", { lat: rawTapCoordinate.lat, lng: rawTapCoordinate.lng, coordinatePreservedForSubmission: true });
+  const snapped = await snapHazardToRoad(rawTapCoordinate.lat, rawTapCoordinate.lng, { source: "tap_map" });
   if (snapped.invalid) {
     const message = "Tap closer to a road to place this hazard.";
     updateReportingState({ placementModeActive: true });
@@ -38517,22 +38656,24 @@ async function handleHazardPlacementMapClick(event) {
     pushTapMapTrace("snap_failed", { reason: "no_nearby_road" });
     return;
   }
-  const finalPlacement = gridlyCoordinateFromRecord(snapped.finalPlacementCoordinate) || { lat: snapped.lat, lng: snapped.lng };
-  pushTapMapTrace("snap_succeeded", { lat: snapped.lat, lng: snapped.lng, placementMode: snapped.placementMode, placementRiskLevel: snapped.placementRiskLevel });
-  lastMobileReportSubmitDebug.rawTapCoordinate = snapped.rawTapCoordinate || { lat, lng };
-  lastMobileReportSubmitDebug.originalTapCoords = snapped.rawTapCoordinate || { lat, lng };
-  lastMobileReportSubmitDebug.snappedCoords = snapped.snappedRoadCoordinate || { lat: snapped.lat, lng: snapped.lng };
-  lastMobileReportSubmitDebug.snappedRoadCoordinate = snapped.snappedRoadCoordinate || { lat: snapped.lat, lng: snapped.lng };
-  lastMobileReportSubmitDebug.finalPlacementCoordinate = finalPlacement;
-  lastMobileReportSubmitDebug.renderedMarkerCoordinate = finalPlacement;
-  lastMobileReportSubmitDebug.activeSubmitCoords = finalPlacement;
+  const resolvedRoadCoordinate = gridlyCoordinateFromRecord(snapped.snappedRoadCoordinate) || gridlyCoordinateFromRecord(snapped.projectionCoordinate) || { lat: snapped.lat, lng: snapped.lng };
+  const submittedReportCoordinate = { ...rawTapCoordinate };
+  const finalPlacement = submittedReportCoordinate;
+  pushTapMapTrace("snap_succeeded", { lat: resolvedRoadCoordinate?.lat ?? snapped.lat, lng: resolvedRoadCoordinate?.lng ?? snapped.lng, placementMode: snapped.placementMode, placementRiskLevel: snapped.placementRiskLevel, submittedLat: submittedReportCoordinate.lat, submittedLng: submittedReportCoordinate.lng, coordinateSourceUsed: "raw_tap_coordinate" });
+  lastMobileReportSubmitDebug.rawTapCoordinate = { ...rawTapCoordinate };
+  lastMobileReportSubmitDebug.originalTapCoords = { ...rawTapCoordinate };
+  lastMobileReportSubmitDebug.snappedCoords = resolvedRoadCoordinate ? { ...resolvedRoadCoordinate } : null;
+  lastMobileReportSubmitDebug.snappedRoadCoordinate = resolvedRoadCoordinate ? { ...resolvedRoadCoordinate } : null;
+  lastMobileReportSubmitDebug.finalPlacementCoordinate = { ...submittedReportCoordinate };
+  lastMobileReportSubmitDebug.renderedMarkerCoordinate = { ...submittedReportCoordinate };
+  lastMobileReportSubmitDebug.activeSubmitCoords = { ...submittedReportCoordinate };
   lastMobileReportSubmitDebug.snapComplete = true;
-  lastMobileReportSubmitDebug.coordinateSourceUsed = snapped.placementMode || "road_aware_placement";
-  lastMobileReportSubmitDebug.placementMode = snapped.placementMode || "raw_tap";
+  lastMobileReportSubmitDebug.coordinateSourceUsed = "raw_tap_coordinate";
+  lastMobileReportSubmitDebug.placementMode = snapped.placementMode || "raw_tap_preserved_user_intent";
   lastMobileReportSubmitDebug.placementRiskLevel = snapped.placementRiskLevel || "medium";
-  lastMobileReportSubmitDebug.tapToSnapDeltaMeters = snapped.tapToSnapDeltaMeters ?? null;
-  lastMobileReportSubmitDebug.tapToFinalDeltaMeters = snapped.tapToFinalDeltaMeters ?? null;
-  lastMobileReportSubmitDebug.snapToFinalDeltaMeters = snapped.snapToFinalDeltaMeters ?? null;
+  lastMobileReportSubmitDebug.tapToSnapDeltaMeters = snapped.tapToSnapDeltaMeters ?? gridlyCoordinateDeltaMeters(rawTapCoordinate, resolvedRoadCoordinate);
+  lastMobileReportSubmitDebug.tapToFinalDeltaMeters = gridlyCoordinateDeltaMeters(rawTapCoordinate, submittedReportCoordinate);
+  lastMobileReportSubmitDebug.snapToFinalDeltaMeters = gridlyCoordinateDeltaMeters(resolvedRoadCoordinate, submittedReportCoordinate);
   lastMobileReportSubmitDebug.roadCandidateCount = snapped.roadCandidateCount ?? null;
   lastMobileReportSubmitDebug.nearestCandidateDistanceMeters = snapped.nearestCandidateDistanceMeters ?? null;
   lastMobileReportSubmitDebug.projectionCoordinate = snapped.projectionCoordinate || null;
@@ -38541,10 +38682,16 @@ async function handleHazardPlacementMapClick(event) {
   lastMobileReportSubmitDebug.recommendedDirection = snapped.recommendedDirection || null;
   lastMobileReportSubmitDebug.selectedSideConfidence = snapped.selectedSideConfidence || "low";
   lastMobileReportSubmitDebug.geometryAwarePlacementAvailable = Boolean(snapped.geometryAwarePlacementAvailable);
-  lastMobileReportSubmitDebug.placementCoordinateReason = snapped.representativeCoordinateReason || "Road-aware placement selected the final hazard marker coordinate from the raw tap and nearest road candidate.";
+  lastMobileReportSubmitDebug.placementCoordinateReason = "Tap Map placement submits the raw tap coordinate; road resolution is retained as diagnostic context only.";
   lastMobileReportSubmitDebug.lastSubmitAttempt = "snap_completed";
+  gridlyFinishTapMapPlacementAccuracyCapture({
+    submittedReportCoordinate,
+    renderedMarkerCoordinate: submittedReportCoordinate,
+    resolvedRoadCoordinate,
+    finding: "road resolver completed without replacing the report coordinate"
+  });
   pushTapMapTrace("submit_started", { hazardType: selectedType, coordinateSourceUsed: lastMobileReportSubmitDebug.coordinateSourceUsed });
-  const submitted = await createSharedHazardReport(selectedType, finalPlacement.lat, finalPlacement.lng, "tap map placement", "", snapped.originalTapCoords);
+  const submitted = await createSharedHazardReport(selectedType, finalPlacement.lat, finalPlacement.lng, "tap map placement", "", rawTapCoordinate);
   if (!submitted) {
     const message = reportingState.lastReportError || lastMobileReportSubmitDebug.lastSubmitError || "Hazard report was not submitted.";
     updateReportingState({ placementModeActive: true });
@@ -38566,6 +38713,13 @@ async function handleHazardPlacementMapClick(event) {
       .addTo(unifiedIncidentLayer)
       .bindTooltip("Tap", { permanent: false, direction: "top" });
   }
+  gridlyFinishTapMapPlacementAccuracyCapture({
+    submittedReportCoordinate: finalPlacement,
+    renderedMarkerCoordinate: finalPlacement,
+    resolvedRoadCoordinate,
+    finding: "submitted and rendered coordinates remained locked to the raw tap coordinate",
+    monitoringComplete: true
+  });
   setConfirmation("Hazard placed at the intended roadway location", "success");
   resetQuickHazardReportState();
   closeHazardPanel();
