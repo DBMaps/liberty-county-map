@@ -27442,6 +27442,14 @@ function renderGridlyCommunityPulse(options = {}) {
 
 const GRIDLY_AWARENESS_INTELLIGENCE_AUDIT_VERSION = "V227.0";
 
+function getGridlyV227SafeCall(fn, fallback = null) {
+  try {
+    return typeof fn === "function" ? fn() : fallback;
+  } catch (error) {
+    return fallback;
+  }
+}
+
 function getGridlyV227SafeText(selectorOrId = "") {
   try {
     const selector = String(selectorOrId || "");
@@ -27483,12 +27491,12 @@ function getGridlyV227PulseModelSnapshot(options = {}) {
 function getGridlyV227AwarenessSnapshot(options = {}) {
   const pulseModel = getGridlyV227PulseModelSnapshot(options);
   const activeAwareness = pulseModel?.activeAwareness || gridlyCommunityPulseAuditState?.activeAwareness || {};
-  const communityAwarenessSummary = pulseModel?.communityAwarenessSummary || safeCall(() => (
+  const communityAwarenessSummary = pulseModel?.communityAwarenessSummary || getGridlyV227SafeCall(() => (
     typeof buildGridlyCommunityAwarenessIntelligenceSummary === "function"
       ? buildGridlyCommunityAwarenessIntelligenceSummary({ ...options, auditOnly: true })
       : null
   ), null) || {};
-  const mobileSummary = safeCall(() => (typeof getGridlyMobileAwarenessPanelSummary === "function" ? getGridlyMobileAwarenessPanelSummary() : null), null) || {};
+  const mobileSummary = getGridlyV227SafeCall(() => (typeof getGridlyMobileAwarenessPanelSummary === "function" ? getGridlyMobileAwarenessPanelSummary() : null), null) || {};
   const topPrimary = getGridlyV227SafeText("gridlyV2TopStatusPrimary");
   const topSecondary = getGridlyV227SafeText("gridlyV2TopStatusSecondary");
   const topMicroline = getGridlyV227SafeText("gridlyTopAwarenessMicroline");
@@ -27684,7 +27692,7 @@ function gridlyAwarenessStoryAudit(options = {}) {
 
 function gridlyDestinationAwarenessAudit(options = {}) {
   const snapshot = getGridlyV227AwarenessSnapshot(options);
-  const selectedLabel = safeCall(() => (typeof getSelectedDestinationLabel === "function" ? getSelectedDestinationLabel() : ""), "");
+  const selectedLabel = getGridlyV227SafeCall(() => (typeof getSelectedDestinationLabel === "function" ? getSelectedDestinationLabel() : ""), "");
   const destinationPresent = Boolean(selectedLabel || snapshot.visibleText.commandCard.title || snapshot.visibleText.commandCard.impact);
   const destinationContextText = [snapshot.visibleText.commandCard.title, snapshot.visibleText.commandCard.meta, snapshot.visibleText.commandCard.impact].filter(Boolean).join(" ");
   const awarenessContextText = [snapshot.visibleText.commandCard.kicker, snapshot.visibleText.commandCard.title, snapshot.visibleText.commandCard.meta, snapshot.visibleText.commandCard.crossings, snapshot.visibleText.commandCard.issues].filter(Boolean).join(" ");
