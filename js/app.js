@@ -16387,6 +16387,67 @@ function isGridlyAwarenessPanelModeActive() {
   return !routeIsMonitoring && !getSelectedDestinationLabel();
 }
 
+let gridlyAwarenessAreaImmediateSyncState = {
+  lastReason: "",
+  lastSyncedAt: null,
+  awarenessAreaName: "",
+  panelSynced: false,
+  communityPulseSynced: false
+};
+
+function syncGridlyAwarenessAreaSurfacesImmediately(reason = "awareness-area-change", options = {}) {
+  const syncStartedAt = typeof performance !== "undefined" && typeof performance.now === "function" ? performance.now() : Date.now();
+  const summary = typeof buildGridlyCommunityAwarenessIntelligenceSummary === "function"
+    ? buildGridlyCommunityAwarenessIntelligenceSummary(options?.summaryOptions || {})
+    : null;
+  const awarenessAreaName = safeDisplayText(summary?.awarenessAreaName, "Liberty County");
+
+  if (typeof syncMobileDestinationCommandCard === "function") {
+    syncMobileDestinationCommandCard();
+  }
+
+  const communityPulseState = typeof renderGridlyCommunityPulse === "function"
+    ? renderGridlyCommunityPulse({ ...(options?.pulseOptions || {}), reason })
+    : null;
+
+  if (typeof refreshPortraitV2LocalizedIntelligence === "function" && options?.refreshPortrait !== false) {
+    refreshPortraitV2LocalizedIntelligence();
+  }
+
+  gridlyAwarenessAreaImmediateSyncState = {
+    lastReason: reason,
+    lastSyncedAt: new Date().toISOString(),
+    awarenessAreaName,
+    panelSynced: true,
+    communityPulseSynced: Boolean(communityPulseState),
+    durationMs: Number((((typeof performance !== "undefined" && typeof performance.now === "function") ? performance.now() : Date.now()) - syncStartedAt).toFixed(2)),
+    crossingsInArea: Array.isArray(summary?.crossingsInArea) ? summary.crossingsInArea.length : 0,
+    activeHazardsInArea: Array.isArray(summary?.activeHazardsInArea) ? summary.activeHazardsInArea.length : 0,
+    activeReportsInArea: Array.isArray(summary?.activeReportsInArea) ? summary.activeReportsInArea.length : 0,
+    pulseVisible: Boolean(communityPulseState?.pulseVisible)
+  };
+
+  if (typeof recordGridlyActiveLocationLifecycleEvent === "function") {
+    recordGridlyActiveLocationLifecycleEvent("syncGridlyAwarenessAreaSurfacesImmediately", {
+      reason,
+      awarenessAreaName,
+      panelSynced: true,
+      communityPulseSynced: Boolean(communityPulseState),
+      durationMs: gridlyAwarenessAreaImmediateSyncState.durationMs
+    });
+  }
+
+  return {
+    summary,
+    communityPulseState,
+    syncState: { ...gridlyAwarenessAreaImmediateSyncState }
+  };
+}
+
+window.gridlyAwarenessAreaImmediateSyncDebug = function gridlyAwarenessAreaImmediateSyncDebug() {
+  return { ...gridlyAwarenessAreaImmediateSyncState };
+};
+
 function syncMobileDestinationCommandCard() {
   const cardRenderStartedAt = getGridlyDestinationPerfNow();
   const routeIsMonitoring = Boolean(routeWatchActivated || window.__gridlyRouteWatchActive);
@@ -19233,9 +19294,13 @@ function saveGridlyHomeTownPreference(town, options = {}) {
   });
   activeGeoFilter = (area.fallback || area.countyWide) ? "county" : "town";
   crossingRenderFilterVersion += 1;
-  applyGridlyHomeTownAwarenessContext({ source: options.source || "save_awareness_area", fitMap: true });
+  const syncSource = options.source || "save_awareness_area";
+  applyGridlyHomeTownAwarenessContext({ source: syncSource, fitMap: true });
   scheduleRenderCrossings?.("awareness-area-change", { force: true });
   updateMobileWatchHeader?.();
+  if (options?.syncSurfaces !== false) {
+    syncGridlyAwarenessAreaSurfacesImmediately?.(`awareness-area-change:${syncSource}`, { summaryOptions: { awarenessArea: area } });
+  }
   return homeTown;
 }
 
@@ -19299,7 +19364,7 @@ function installGridlyAwarenessAreaTestHelpers() {
       return { requested, resolvedAwarenessArea: null, storedValuesUpdated: {}, mapCenterZoomApplied: null, filterSelected: activeGeoFilter || null, warnings, errors: [`Unsupported awareness area: ${requested || "(blank)"}`] };
     }
 
-    const storedHomeTown = saveGridlyHomeTownPreference(area.storageValue, { source: "test_awareness_area_switcher" });
+    const storedHomeTown = saveGridlyHomeTownPreference(area.storageValue, { source: "test_awareness_area_switcher", syncSurfaces: false });
     if (!storedHomeTown) errors.push("Unable to save awareness area through Gridly settings/profile persistence.");
 
     const shouldUseCounty = area.countyWide || area.fallback;
@@ -19337,6 +19402,7 @@ function installGridlyAwarenessAreaTestHelpers() {
     if (typeof renderGridlyWelcomeHomeTownSelection === "function") renderGridlyWelcomeHomeTownSelection();
     if (typeof updateGeoFilterStatus === "function") updateGeoFilterStatus(getVisibleCrossingsForFilter?.("test-awareness-area-switcher") || []);
     updateMobileWatchHeader?.();
+    const immediateSync = syncGridlyAwarenessAreaSurfacesImmediately?.("test-awareness-area-switcher", { summaryOptions: { awarenessArea: area } });
 
     const settings = getGridlySettingsPreferences();
     const profile = typeof getGridlyUserProfile === "function" ? getGridlyUserProfile() : (gridlyUserProfile || {});
@@ -19352,6 +19418,7 @@ function installGridlyAwarenessAreaTestHelpers() {
         profileAwarenessAreaKey: profile.awarenessAreaKey
       },
       mapCenterZoomApplied,
+      immediateSync: immediateSync?.syncState || null,
       filterSelected: activeGeoFilter || null,
       warnings,
       errors
