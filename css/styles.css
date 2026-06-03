@@ -16428,12 +16428,15 @@ body[data-layout-mode="portrait"] .mobile-destination-command,
 .gridly-awareness-identity-label span {
   display: inline-flex;
   align-items: center;
+  max-width: min(230px, calc(100vw - 40px));
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
   padding: 5px 9px;
   border: 1px solid rgba(124, 231, 255, 0.28);
   border-radius: 999px;
-  background: rgba(7, 16, 22, 0.58);
-  color: rgba(218, 247, 255, 0.86);
+  background: rgba(7, 16, 22, 0.52);
+  color: rgba(218, 247, 255, 0.82);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
   font-size: 0.72rem;
   font-weight: 800;

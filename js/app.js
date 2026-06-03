@@ -19579,6 +19579,7 @@ function getGridlyAwarenessIdentitySnapshot(extra = {}) {
     countyBoundaryVisible: extra.countyBoundaryVisible ?? Boolean(gridlyAwarenessMapIdentityState.countyBoundaryVisible),
     radiusHaloVisible: extra.radiusHaloVisible ?? Boolean(gridlyAwarenessMapIdentityState.radiusHaloVisible),
     labelVisible: extra.labelVisible ?? Boolean(gridlyAwarenessMapIdentityState.labelVisible),
+    labelPlacement: extra.labelPlacement ?? gridlyAwarenessMapIdentityState.labelPlacement ?? null,
     currentFilter: extra.currentFilter ?? activeGeoFilter ?? null,
     mapZoomCenter: map ? {
       zoom: map.getZoom?.() ?? null,
@@ -19592,6 +19593,48 @@ function getGridlyAwarenessIdentitySnapshot(extra = {}) {
 function setGridlyAwarenessMapIdentityState(patch = {}) {
   gridlyAwarenessMapIdentityState = getGridlyAwarenessIdentitySnapshot(patch);
   return gridlyAwarenessMapIdentityState;
+}
+
+function getGridlyAwarenessIdentityLabelPlacement(area = {}, labelText = "Awareness") {
+  const rawLat = Number(area?.lat);
+  const rawLng = Number(area?.lng);
+  if (!map || typeof L === "undefined" || !Number.isFinite(rawLat) || !Number.isFinite(rawLng)) {
+    return { latLng: [rawLat, rawLng], iconAnchor: [0, 0], adjusted: false, reason: "map_or_coordinates_unavailable" };
+  }
+
+  const countyMode = Boolean(area?.countyWide || area?.fallback);
+  const baseLatLng = countyMode ? L.latLng(rawLat, rawLng) : L.latLng(rawLat + 0.006, rawLng);
+  const size = map.getSize?.();
+  if (!size || !Number.isFinite(size.x) || !Number.isFinite(size.y)) {
+    return { latLng: [baseLatLng.lat, baseLatLng.lng], iconAnchor: [0, 0], adjusted: false, reason: "map_size_unavailable" };
+  }
+
+  const insets = getGridlyVisibleMapChromeInsets(map);
+  const labelWidth = Math.min(230, Math.max(132, String(labelText || "Awareness").length * 7.2 + 28));
+  const labelHeight = 32;
+  const margin = 10;
+  const minX = Math.max(margin, Number(insets.left || 0) + margin);
+  const maxX = Math.max(minX, Number(size.x) - Number(insets.right || 0) - labelWidth - margin);
+  const minY = Math.max(margin, Number(insets.top || 0) + margin);
+  const maxY = Math.max(minY, Number(size.y) - Number(insets.bottom || 0) - labelHeight - margin);
+  const basePoint = map.latLngToContainerPoint(baseLatLng);
+  const clampedPoint = L.point(
+    Math.min(Math.max(basePoint.x, minX), maxX),
+    Math.min(Math.max(basePoint.y, minY), maxY)
+  );
+  const adjusted = Math.abs(clampedPoint.x - basePoint.x) > 1 || Math.abs(clampedPoint.y - basePoint.y) > 1;
+  const adjustedLatLng = map.containerPointToLatLng(clampedPoint);
+
+  return {
+    latLng: [Number(adjustedLatLng.lat), Number(adjustedLatLng.lng)],
+    iconAnchor: [0, 0],
+    adjusted,
+    reason: adjusted ? "viewport_clamped_to_visible_map_area" : "anchor_visible",
+    estimatedLabelWidth: Math.round(labelWidth),
+    containerPoint: { x: Math.round(clampedPoint.x), y: Math.round(clampedPoint.y) },
+    baseContainerPoint: { x: Math.round(basePoint.x), y: Math.round(basePoint.y) },
+    safeBounds: { minX: Math.round(minX), maxX: Math.round(maxX), minY: Math.round(minY), maxY: Math.round(maxY) }
+  };
 }
 
 function renderGridlyAwarenessMapIdentity(reason = "unknown") {
@@ -19629,9 +19672,7 @@ function renderGridlyAwarenessMapIdentity(reason = "unknown") {
 
   const countyMode = Boolean(area.countyWide || area.fallback);
   const labelText = `${area.label || GRIDLY_COUNTY_WIDE_AWARENESS_LABEL} Awareness`;
-  const labelLatLng = countyMode
-    ? [Number(area.lat), Number(area.lng)]
-    : [Number(area.lat) + 0.006, Number(area.lng)];
+  const labelPlacement = getGridlyAwarenessIdentityLabelPlacement(area, labelText);
 
   if (!countyMode && Number.isFinite(Number(area.lat)) && Number.isFinite(Number(area.lng))) {
     const radiusMeters = gridlyMilesToMeters(area.radiusMiles || DEFAULT_NEARBY_RADIUS_MILES);
@@ -19653,8 +19694,8 @@ function renderGridlyAwarenessMapIdentity(reason = "unknown") {
     }
   }
 
-  if (L.marker && L.divIcon && Number.isFinite(Number(labelLatLng[0])) && Number.isFinite(Number(labelLatLng[1]))) {
-    gridlyAwarenessIdentityLabelLayer = L.marker(labelLatLng, {
+  if (L.marker && L.divIcon && Number.isFinite(Number(labelPlacement.latLng?.[0])) && Number.isFinite(Number(labelPlacement.latLng?.[1]))) {
+    gridlyAwarenessIdentityLabelLayer = L.marker(labelPlacement.latLng, {
       pane: "awarenessLabelPane",
       interactive: false,
       keyboard: false,
@@ -19662,7 +19703,7 @@ function renderGridlyAwarenessMapIdentity(reason = "unknown") {
         className: "gridly-awareness-identity-label",
         html: `<span>${safeDisplayText(labelText, "Awareness")}</span>`,
         iconSize: null,
-        iconAnchor: [0, 0]
+        iconAnchor: labelPlacement.iconAnchor || [0, 0]
       })
     }).addTo(gridlyAwarenessIdentityLayer);
   } else {
@@ -19675,6 +19716,7 @@ function renderGridlyAwarenessMapIdentity(reason = "unknown") {
     countyBoundaryVisible: Boolean(gridlyCountyBoundaryLayer && map.hasLayer(gridlyAwarenessIdentityLayer)),
     radiusHaloVisible: Boolean(gridlyAwarenessRadiusLayer && map.hasLayer(gridlyAwarenessIdentityLayer)),
     labelVisible: Boolean(gridlyAwarenessIdentityLabelLayer && map.hasLayer(gridlyAwarenessIdentityLayer)),
+    labelPlacement,
     currentFilter: activeGeoFilter || null,
     warnings: warnings.concat(reason ? [`Last render reason: ${reason}`] : []),
     errors
@@ -19955,24 +19997,35 @@ function isGridlyRecordInAwarenessArea(record = {}, area = getGridlySelectedAwar
   return getDistanceMiles(area.lat, area.lng, coords.lat, coords.lng) <= radiusMiles;
 }
 
-function getGridlyAwarenessIntelligenceActivityLevel({ activeHazardsInArea = [], activeReportsInArea = [], communityActivityCount = 0 } = {}) {
+function getGridlyAwarenessIntelligenceActivityLevel({ activeHazardsInArea = [], activeReportsInArea = [] } = {}) {
   const hazardCount = activeHazardsInArea.length;
   const reportCount = activeReportsInArea.length;
   const mobilityImpactCount = hazardCount + reportCount;
   if (mobilityImpactCount >= 4 || hazardCount >= 2) return "Elevated";
   if (mobilityImpactCount >= 2 || hazardCount >= 1) return "Active";
-  if (mobilityImpactCount === 1 || Number(communityActivityCount || 0) > 0) return "Building";
+  if (mobilityImpactCount === 1) return "Building";
   return "Quiet";
 }
 
-function getGridlyAwarenessIntelligenceStatus({ awarenessAreaName = "this area", activeHazardsInArea = [], activeReportsInArea = [], communityActivityCount = 0 } = {}) {
+function getGridlyAwarenessIntelligenceStatusReason({ activeHazardsInArea = [], activeReportsInArea = [], crossingsInArea = [], selectedArea = null, communityActivityCount = 0 } = {}) {
   const hazardCount = activeHazardsInArea.length;
   const reportCount = activeReportsInArea.length;
+  const crossingCount = Array.isArray(crossingsInArea) ? crossingsInArea.length : Number(crossingsInArea || 0);
+  if (hazardCount > 0 && reportCount > 0) return `${hazardCount} active hazards and ${reportCount} active reports matched the awareness area`;
+  if (hazardCount > 0) return `${hazardCount} active hazards matched the awareness area`;
+  if (reportCount > 0) return `${reportCount} active reports matched the awareness area`;
+  return `${selectedArea?.countyWide || selectedArea?.fallback ? "Countywide" : "Local"} area is quiet: 0 active hazards, 0 active reports, ${crossingCount} crossings watched; community activity signal ${Number(communityActivityCount || 0)} does not escalate quiet status without active local issues`;
+}
+
+function getGridlyAwarenessIntelligenceStatus({ awarenessAreaName = "this area", activeHazardsInArea = [], activeReportsInArea = [], crossingsInArea = [], selectedArea = null } = {}) {
+  const hazardCount = activeHazardsInArea.length;
+  const reportCount = activeReportsInArea.length;
+  const crossingCount = Array.isArray(crossingsInArea) ? crossingsInArea.length : Number(crossingsInArea || 0);
   if (hazardCount > 0 && reportCount > 0) return "Multiple mobility impacts reported";
   if (hazardCount > 0) return `Active hazards reported in ${awarenessAreaName}`;
   if (reportCount > 0) return `Active crossing reports in ${awarenessAreaName}`;
-  if (Number(communityActivityCount || 0) > 0) return "Community activity increasing";
-  return "No active mobility issues reported";
+  if (selectedArea?.countyWide || selectedArea?.fallback) return crossingCount > 0 ? "No active countywide issues reported" : "Countywide awareness active";
+  return crossingCount > 0 ? "No active local issues reported" : "No active local issues reported";
 }
 
 function buildGridlyCommunityAwarenessIntelligenceSummary(options = {}) {
@@ -20021,9 +20074,10 @@ function buildGridlyCommunityAwarenessIntelligenceSummary(options = {}) {
   const activeHazardsInArea = activeHazardItems.filter((record) => filterAreaRecord(record, "activeHazards"));
   const activeReportsInArea = activeReportItems.filter((record) => filterAreaRecord(record, "activeReports"));
   const communityActivityCount = Number(options?.communityActivityCount ?? 0) || 0;
-  const activityLevel = getGridlyAwarenessIntelligenceActivityLevel({ activeHazardsInArea, activeReportsInArea, communityActivityCount });
+  const activityLevel = getGridlyAwarenessIntelligenceActivityLevel({ activeHazardsInArea, activeReportsInArea });
   const awarenessAreaName = selectedArea.label || selectedArea.storageValue || "Liberty County";
-  const awarenessStatus = getGridlyAwarenessIntelligenceStatus({ awarenessAreaName, activeHazardsInArea, activeReportsInArea, communityActivityCount });
+  const awarenessStatus = getGridlyAwarenessIntelligenceStatus({ awarenessAreaName, activeHazardsInArea, activeReportsInArea, crossingsInArea, selectedArea });
+  const awarenessStatusReason = getGridlyAwarenessIntelligenceStatusReason({ activeHazardsInArea, activeReportsInArea, crossingsInArea, selectedArea, communityActivityCount });
 
   if (!Array.isArray(crossings) || crossings.length === 0) warnings.push("Crossing inventory is not loaded yet; crossingsInArea may be incomplete.");
   if (missingCoordinateRecords.activeHazards || missingCoordinateRecords.activeReports) warnings.push("Some active records did not include coordinates or crossing inventory links, so they were not assigned to the selected awareness area.");
@@ -20036,6 +20090,7 @@ function buildGridlyCommunityAwarenessIntelligenceSummary(options = {}) {
     activeReportsInArea,
     activityLevel,
     awarenessStatus,
+    awarenessStatusReason,
     lastUpdated: new Date().toISOString(),
     sourceBreakdown: {
       crossingInventory: { source: "crossings", totalAvailable: Array.isArray(crossings) ? crossings.length : 0, matchedInArea: crossingsInArea.length },
@@ -20053,17 +20108,27 @@ function buildGridlyCommunityAwarenessIntelligenceSummary(options = {}) {
 function summarizeGridlyAwarenessIntelligenceForDisplay(summary = {}) {
   const areaName = safeDisplayText(summary.awarenessAreaName, "Liberty County");
   const activityLevel = safeDisplayText(summary.activityLevel, "Quiet");
-  const status = safeDisplayText(summary.awarenessStatus, "No active mobility issues reported");
+  const status = safeDisplayText(summary.awarenessStatus, "No active local issues reported");
   const crossingsCount = Array.isArray(summary.crossingsInArea) ? summary.crossingsInArea.length : Number(summary.crossingsInArea || 0);
   const hazardCount = Array.isArray(summary.activeHazardsInArea) ? summary.activeHazardsInArea.length : Number(summary.activeHazardsInArea || 0);
   const reportCount = Array.isArray(summary.activeReportsInArea) ? summary.activeReportsInArea.length : Number(summary.activeReportsInArea || 0);
+  const selectedArea = summary.selectedAwarenessArea || {};
+  const countyMode = Boolean(selectedArea.countyWide || selectedArea.fallback || normalizeGridlyAwarenessAreaLookupText(areaName) === "liberty county");
+  const crossingsPhrase = crossingsCount === 1 ? "1 crossing watched" : `${crossingsCount} crossings watched`;
+
+  if (hazardCount <= 0 && reportCount <= 0) {
+    return {
+      headline: `${areaName} awareness`,
+      subline: `${countyMode ? "No active countywide issues reported" : "No active local issues reported"} • ${crossingsPhrase}`
+    };
+  }
+
   const issueParts = [];
   if (hazardCount > 0) issueParts.push(pluralizeGridlyCommunityReports(hazardCount, "active hazard", "active hazards"));
   if (reportCount > 0) issueParts.push(pluralizeGridlyCommunityReports(reportCount, "active crossing report", "active crossing reports"));
-  const issueText = issueParts.length ? issueParts.join(" • ") : "no active local issues";
   return {
     headline: `${areaName} awareness: ${activityLevel}`,
-    subline: `${status}. ${crossingsCount} crossings watched • ${issueText}.`
+    subline: `${status} • ${crossingsPhrase} • ${issueParts.join(" • ")}`
   };
 }
 
@@ -28637,6 +28702,9 @@ window.gridlyCommunityAwarenessIntelligenceDebug = function gridlyCommunityAware
     activeReportsInArea: { count: Array.isArray(summary.activeReportsInArea) ? summary.activeReportsInArea.length : 0, samples: compactRecords(summary.activeReportsInArea || []) },
     activityLevel: summary.activityLevel,
     awarenessStatus: summary.awarenessStatus,
+    awarenessStatusReason: summary.awarenessStatusReason || "",
+    statusTier: summary.activityLevel || "Quiet",
+    statusWhy: summary.awarenessStatusReason || "",
     lastUpdated: summary.lastUpdated,
     sourceBreakdown: summary.sourceBreakdown || {},
     warnings: summary.warnings || [],
