@@ -9663,6 +9663,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyAwarenessNarrativePromotionAudit",
   "gridlyNarrativePromotionPrototypeAudit",
   "gridlyNarrativeLanguageValidationAudit",
+  "gridlyNarrativeLanguageStandardAudit",
   "gridlyBestAvailableObservationAudit",
   "gridlyNarrativeSourceTraceAudit",
   "gridlyPromotionSafetyAudit",
@@ -9779,6 +9780,7 @@ function exposeAllGridlyAuditHelpers() {
     gridlyAwarenessNarrativePromotionAudit: typeof gridlyAwarenessNarrativePromotionAudit === "function" ? gridlyAwarenessNarrativePromotionAudit : (typeof target?.gridlyAwarenessNarrativePromotionAudit === "function" ? target.gridlyAwarenessNarrativePromotionAudit : null),
     gridlyNarrativePromotionPrototypeAudit: typeof gridlyNarrativePromotionPrototypeAudit === "function" ? gridlyNarrativePromotionPrototypeAudit : (typeof target?.gridlyNarrativePromotionPrototypeAudit === "function" ? target.gridlyNarrativePromotionPrototypeAudit : null),
     gridlyNarrativeLanguageValidationAudit: typeof gridlyNarrativeLanguageValidationAudit === "function" ? gridlyNarrativeLanguageValidationAudit : (typeof target?.gridlyNarrativeLanguageValidationAudit === "function" ? target.gridlyNarrativeLanguageValidationAudit : null),
+    gridlyNarrativeLanguageStandardAudit: typeof gridlyNarrativeLanguageStandardAudit === "function" ? gridlyNarrativeLanguageStandardAudit : (typeof target?.gridlyNarrativeLanguageStandardAudit === "function" ? target.gridlyNarrativeLanguageStandardAudit : null),
     gridlyBestAvailableObservationAudit: typeof gridlyBestAvailableObservationAudit === "function" ? gridlyBestAvailableObservationAudit : (typeof target?.gridlyBestAvailableObservationAudit === "function" ? target.gridlyBestAvailableObservationAudit : null),
     gridlyNarrativeSourceTraceAudit: typeof gridlyNarrativeSourceTraceAudit === "function" ? gridlyNarrativeSourceTraceAudit : (typeof target?.gridlyNarrativeSourceTraceAudit === "function" ? target.gridlyNarrativeSourceTraceAudit : null),
     gridlyPromotionSafetyAudit: typeof gridlyPromotionSafetyAudit === "function" ? gridlyPromotionSafetyAudit : (typeof target?.gridlyPromotionSafetyAudit === "function" ? target.gridlyPromotionSafetyAudit : null),
@@ -28523,14 +28525,57 @@ function gridlyKnowBeforeYouGoStressAudit(options = {}) {
   };
 }
 
-const GRIDLY_NARRATIVE_PROMOTION_PROTOTYPE_VERSION = "V230.0";
+const GRIDLY_NARRATIVE_PROMOTION_PROTOTYPE_VERSION = "V232.0";
+const GRIDLY_NARRATIVE_LANGUAGE_STANDARD_AUDIT_VERSION = "V232.0";
+
+const GRIDLY_V232_IMPACT_CONDITION_MATCHERS = [
+  { matcher: /construction|road\s*work|work\s*zone|utility\s*work|maintenance/i, label: "Construction", reason: "Construction is a validated V231 impact condition." },
+  { matcher: /flood|standing\s*water|high\s*water/i, label: "Flooding", reason: "Flooding is a validated V231 impact condition." },
+  { matcher: /road\s*closure|road\s*closed|closure|closed/i, label: "Road closure", reason: "Road closure is a validated V231 impact condition." },
+  { matcher: /rail|train|crossing|blocked/i, label: "Rail delay", reason: "Rail delay is a validated V231 impact condition." }
+];
+
+const GRIDLY_V232_OBSERVATION_CONDITION_MATCHERS = [
+  { matcher: /crash|wreck|collision|accident/i, label: "Crash", reason: "Crash / wreck is a validated V231 observation condition." },
+  { matcher: /disabled|stalled/i, label: "Disabled vehicle", reason: "Disabled vehicle is a validated V231 observation condition." },
+  { matcher: /debris|tree\s*down|obstruction|object/i, label: "Debris", reason: "Debris is a validated V231 observation condition." },
+  { matcher: /hazard|active\s*condition|unknown|ice|slick/i, label: "Hazard", reason: "General hazard is a validated V231 observation condition when exact impact is unknown." }
+];
+
+function gridlyV232ResolveNarrativeCondition(value = "") {
+  const label = gridlyV229NormalizeNarrativeText(value);
+  if (!label) return { label: "", conditionType: "", selectedPattern: "", patternReason: "No condition label was available." };
+  const impactMatch = GRIDLY_V232_IMPACT_CONDITION_MATCHERS.find((definition) => definition.matcher.test(label));
+  if (impactMatch) {
+    return {
+      label: impactMatch.label,
+      conditionType: "impact",
+      selectedPattern: "<condition> affecting <road> in <area>",
+      fallbackPattern: "<condition> affecting travel in <area>",
+      patternReason: impactMatch.reason
+    };
+  }
+  const observationMatch = GRIDLY_V232_OBSERVATION_CONDITION_MATCHERS.find((definition) => definition.matcher.test(label));
+  if (observationMatch) {
+    return {
+      label: observationMatch.label,
+      conditionType: "observation",
+      selectedPattern: "<condition> reported on <road> in <area>",
+      fallbackPattern: "<condition> reported in <area>",
+      patternReason: observationMatch.reason
+    };
+  }
+  return {
+    label: "Hazard",
+    conditionType: "observation",
+    selectedPattern: "<condition> reported on <road> in <area>",
+    fallbackPattern: "<condition> reported in <area>",
+    patternReason: "Unmapped active mobility conditions default to the V231 general hazard observation pattern."
+  };
+}
 
 function gridlyV230NormalizeConditionLabel(value = "") {
-  const label = gridlyV229NormalizeNarrativeText(value);
-  if (!label || /^active\s*condition$/i.test(label)) return "";
-  if (/^road\s*closed$/i.test(label)) return "Road closure";
-  if (/^crash\s*\/\s*wreck$/i.test(label)) return "Crash";
-  return label;
+  return gridlyV232ResolveNarrativeCondition(value).label;
 }
 
 function gridlyV230NormalizeRoadReference(value = "") {
@@ -28648,27 +28693,41 @@ function buildGridlyNarrativePromotionPrototype(options = {}) {
     };
   }).sort((a, b) => b.v230Score - a.v230Score || b.narrative.length - a.narrative.length);
   const selectedCandidate = scoredCandidates.find((candidate) => candidate.conditionLabel || candidate.roadNames.length) || scoredCandidates[0] || null;
-  const selectedCondition = gridlyV230NormalizeConditionLabel(
-    selectedCandidate?.conditionLabel
-      || context.strongestCondition
-      || gridlyV2291ConditionLabelFromText(selectedCandidate?.narrative || "", context?.snapshot?.activeAwareness?.resolvedCategory || context?.snapshot?.activeAwareness?.topCategory || "")
-  );
+  const selectedRawCondition = selectedCandidate?.conditionLabel
+    || context.strongestCondition
+    || gridlyV2291ConditionLabelFromText(selectedCandidate?.narrative || "", context?.snapshot?.activeAwareness?.resolvedCategory || context?.snapshot?.activeAwareness?.topCategory || "");
+  const standardizedCondition = gridlyV232ResolveNarrativeCondition(selectedRawCondition);
+  const selectedCondition = standardizedCondition.label;
   const selectedRoad = (selectedCandidate?.roadNames || [])[0]
     || allCandidates.flatMap((candidate) => gridlyV230ExtractRoadReferences(candidate.narrative))[0]
     || "";
-  const fallbackUsed = Boolean(activeConditionPresent && selectedCondition && !selectedRoad);
-  const promotedNarrative = activeConditionPresent && selectedCondition
-    ? (selectedRoad
-      ? `${selectedCondition} affecting ${selectedRoad} in ${selectedAwarenessArea}`
-      : `${selectedCondition} affecting travel in ${selectedAwarenessArea}`)
+  const conditionType = activeConditionPresent && selectedCondition ? standardizedCondition.conditionType : "";
+  const selectedPattern = activeConditionPresent && selectedCondition
+    ? (selectedRoad ? standardizedCondition.selectedPattern : standardizedCondition.fallbackPattern)
     : "";
+  const fallbackUsed = Boolean(activeConditionPresent && selectedCondition && !selectedRoad);
+  let promotedNarrative = "";
+  if (activeConditionPresent && selectedCondition) {
+    if (conditionType === "impact") {
+      promotedNarrative = selectedRoad
+        ? `${selectedCondition} affecting ${selectedRoad} in ${selectedAwarenessArea}`
+        : `${selectedCondition} affecting travel in ${selectedAwarenessArea}`;
+    } else {
+      promotedNarrative = selectedRoad
+        ? `${selectedCondition} reported on ${selectedRoad} in ${selectedAwarenessArea}`
+        : `${selectedCondition} reported in ${selectedAwarenessArea}`;
+    }
+  }
   return {
     activeConditionPresent,
     selectedCondition: activeConditionPresent ? selectedCondition : "",
+    conditionType,
+    selectedPattern,
     selectedRoad: activeConditionPresent ? selectedRoad : "",
     selectedAwarenessArea,
     promotedNarrative,
     fallbackUsed,
+    patternReason: activeConditionPresent && selectedCondition ? standardizedCondition.patternReason : "No active condition was available for narrative promotion.",
     sourceUsed: promotedNarrative ? (selectedCandidate?.source || context.sourceState?.candidate?.source || "read_only_existing_intelligence") : "none",
     auditVersion: GRIDLY_NARRATIVE_PROMOTION_PROTOTYPE_VERSION
   };
@@ -28679,11 +28738,28 @@ function gridlyNarrativePromotionPrototypeAudit(options = {}) {
   return {
     activeConditionPresent: audit.activeConditionPresent,
     selectedCondition: audit.selectedCondition,
+    conditionType: audit.conditionType,
+    selectedPattern: audit.selectedPattern,
     selectedRoad: audit.selectedRoad,
     selectedAwarenessArea: audit.selectedAwarenessArea,
     promotedNarrative: audit.promotedNarrative,
     fallbackUsed: audit.fallbackUsed,
+    patternReason: audit.patternReason,
     sourceUsed: audit.sourceUsed
+  };
+}
+
+function gridlyNarrativeLanguageStandardAudit(options = {}) {
+  const audit = buildGridlyNarrativePromotionPrototype(options);
+  return {
+    auditVersion: GRIDLY_NARRATIVE_LANGUAGE_STANDARD_AUDIT_VERSION,
+    conditionType: audit.conditionType || "",
+    selectedPattern: audit.selectedPattern || "",
+    selectedRoad: audit.selectedRoad || "",
+    selectedAwarenessArea: audit.selectedAwarenessArea || "",
+    promotedNarrative: audit.promotedNarrative || "",
+    fallbackUsed: Boolean(audit.fallbackUsed),
+    patternReason: audit.patternReason || ""
   };
 }
 
@@ -28839,6 +28915,7 @@ window.gridlyKnowBeforeYouGoStressAudit = gridlyKnowBeforeYouGoStressAudit;
 window.gridlyAwarenessNarrativePromotionAudit = gridlyAwarenessNarrativePromotionAudit;
 window.gridlyNarrativePromotionPrototypeAudit = gridlyNarrativePromotionPrototypeAudit;
 window.gridlyNarrativeLanguageValidationAudit = gridlyNarrativeLanguageValidationAudit;
+window.gridlyNarrativeLanguageStandardAudit = gridlyNarrativeLanguageStandardAudit;
 window.gridlyBestAvailableObservationAudit = gridlyBestAvailableObservationAudit;
 window.gridlyNarrativeSourceTraceAudit = gridlyNarrativeSourceTraceAudit;
 window.gridlyPromotionSafetyAudit = gridlyPromotionSafetyAudit;
@@ -28861,6 +28938,7 @@ exposeGridlyAuditHelper("gridlyKnowBeforeYouGoStressAudit", gridlyKnowBeforeYouG
 exposeGridlyAuditHelper("gridlyAwarenessNarrativePromotionAudit", gridlyAwarenessNarrativePromotionAudit);
 exposeGridlyAuditHelper("gridlyNarrativePromotionPrototypeAudit", gridlyNarrativePromotionPrototypeAudit);
 exposeGridlyAuditHelper("gridlyNarrativeLanguageValidationAudit", gridlyNarrativeLanguageValidationAudit);
+exposeGridlyAuditHelper("gridlyNarrativeLanguageStandardAudit", gridlyNarrativeLanguageStandardAudit);
 exposeGridlyAuditHelper("gridlyBestAvailableObservationAudit", gridlyBestAvailableObservationAudit);
 exposeGridlyAuditHelper("gridlyNarrativeSourceTraceAudit", gridlyNarrativeSourceTraceAudit);
 exposeGridlyAuditHelper("gridlyPromotionSafetyAudit", gridlyPromotionSafetyAudit);
