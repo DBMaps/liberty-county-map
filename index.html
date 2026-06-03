@@ -415,8 +415,8 @@
                 <p class="map-tools-section-label">Scope:</p>
                 <div class="geo-filter-shell" role="group" aria-label="Map filters">
                   <button class="geo-filter-pill selected" type="button" data-geo-filter="nearby">Nearby</button>
-                  <button class="geo-filter-pill" type="button" data-geo-filter="town">My Route</button>
-                  <button class="geo-filter-pill" type="button" data-geo-filter="county">My Town</button>
+                  <button class="geo-filter-pill" type="button" data-geo-filter="town">Area</button>
+                  <button class="geo-filter-pill" type="button" data-geo-filter="county">County</button>
                   <button class="geo-filter-pill" type="button" data-geo-filter="active-delays">Delays</button>
                   <button class="geo-filter-pill" type="button" data-geo-filter="all">All</button>
                 </div>
@@ -596,8 +596,8 @@
     </div>
     <div class="gridly-v2-segments" role="tablist" aria-label="Briefing filters">
       <button class="is-active" type="button" data-v2-filter="nearby" data-geo-filter="nearby">Nearby</button>
-      <button type="button" data-v2-filter="route" data-geo-filter="town">My Route</button>
-      <button type="button" data-v2-filter="town" data-geo-filter="county">My Town</button>
+      <button type="button" data-v2-filter="route" data-geo-filter="town">Area</button>
+      <button type="button" data-v2-filter="town" data-geo-filter="county">County</button>
       <button type="button" data-v2-filter="delays" data-geo-filter="active-delays">Delays</button>
       <button type="button" data-v2-filter="all" data-geo-filter="all">All</button>
     </div>
@@ -832,9 +832,9 @@
             <img src="assets/gridly-logo-primary.png" alt="Gridly logo" />
           </div>
           <p class="gridly-welcome-brand-promise">Know Before You Go</p>
-          <div class="gridly-welcome-signal" aria-label="Community awareness for your town">
+          <div class="gridly-welcome-signal" aria-label="Community awareness for your awareness area">
             <span class="gridly-welcome-mark" aria-hidden="true"><span></span></span>
-            <span>Community awareness for your town</span>
+            <span>Community awareness for your awareness area</span>
           </div>
         </div>
         <button class="gridly-welcome-skip" type="button" id="gridlyWelcomeSkipTopBtn">Skip</button>
@@ -862,7 +862,7 @@
         <article class="gridly-welcome-step" data-gridly-welcome-step="1" hidden>
           <p class="eyebrow">Personalize</p>
           <h2>Make Gridly Yours</h2>
-          <p>Gridly works best when it reflects your town, routes, and preferences.</p>
+          <p>Gridly works best when it reflects your awareness area, routes, and preferences.</p>
           <p>Small personalization. Big awareness.</p>
           <div class="gridly-welcome-personalization-grid">
             <label>Theme
@@ -906,14 +906,22 @@
           <p>Community awareness helps drivers, families, and emergency responders make better decisions when local conditions change.</p>
         </article>
         <article class="gridly-welcome-step" data-gridly-welcome-step="3" hidden>
-          <p class="eyebrow">My Town</p>
-          <h2>Choose Your Home Town</h2>
+          <p class="eyebrow">Awareness Area</p>
+          <h2>Choose Your Awareness Area</h2>
           <p>Gridly starts with the community that matters most to you.</p>
-          <div class="gridly-welcome-town-grid" role="group" aria-label="Choose your home town">
+          <div class="gridly-welcome-town-grid" role="group" aria-label="Choose the area you want Gridly to watch">
             <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Dayton">Dayton</button>
             <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Liberty">Liberty</button>
             <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Cleveland">Cleveland</button>
             <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Ames">Ames</button>
+            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Hardin">Hardin</button>
+            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Devers">Devers</button>
+            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Hull">Hull</button>
+            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Daisetta">Daisetta</button>
+            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Moss Hill">Moss Hill</button>
+            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Raywood">Raywood</button>
+            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Kenefick">Kenefick</button>
+            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Tarkington">Tarkington</button>
             <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Entire Liberty County">Entire Liberty County</button>
             <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Other">Other</button>
           </div>
