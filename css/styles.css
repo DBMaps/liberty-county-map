@@ -16444,6 +16444,7 @@ body[data-layout-mode="portrait"] .mobile-destination-command,
 }
 
 /* V225.5.2 — awareness panel natural-height content fix above the portrait dock. */
+/* Reapplied to V225.5.1 without changing awareness logic or routing. */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command {
     bottom: calc(116px + env(safe-area-inset-bottom, 0px)) !important;
