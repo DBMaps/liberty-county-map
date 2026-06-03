@@ -34,3 +34,12 @@
 3. Repeat for `Liberty`, `Cleveland`, and `Ames`; each town should become the initial awareness center and should show town-relevant crossings without requiring GPS.
 4. Enable location from onboarding/reporting and confirm current-location behavior still uses GPS for nearby calculations after permission is granted.
 5. Use the Route Watch controls and confirm route creation, route preview, and route watch behavior remain unchanged.
+
+## V224.1 town and county awareness refinement
+
+- Supported startup awareness options are now Dayton, Liberty, Cleveland, Ames, Entire Liberty County, and Other.
+- Dayton, Liberty, Cleveland, and Ames remain the only town-specific Home Town options because they have explicit Home Town coordinates and town/crossing matching paths in the current app data.
+- Entire Liberty County is structurally safe because the app already has a Liberty County crossing filter and the repository includes `data/liberty-county-boundary.geojson`; V224.1 uses those county bounds for a broader awareness viewport.
+- Additional communities listed in inference rules, such as Daisetta, Hardin, Hull, Kenefick, Moss Hill, Romayor, Raywood, Sour Lake, Plum Grove, and Devers, should not be added as selectable Home Towns until the app has explicit community anchors and enough reviewed crossing coverage to provide a recognizable startup view.
+- Startup town views use a stronger town-level zoom while applying top-header and bottom-dock/sheet padding so the selected awareness anchor is centered in the usable map area rather than under fixed UI chrome.
+- County-wide awareness fits the Liberty County awareness bounds and keeps GPS authoritative when a user location is available.
