@@ -16456,7 +16456,15 @@ function syncMobileDestinationCommandCard() {
   const destinationSupportText = selectedLabel
     ? `Destination: ${selectedLabel}${previewMeta ? ` · ${previewMeta}` : " · Route preview loading"}`
     : "";
-  const awarenessPanelMode = !routeIsMonitoring;
+  const routeImpactText = routeIsMonitoring && selectedLabel ? getGridlyDestinationRouteImpactCardText() : "";
+  const routeMonitoringSupportText = routeIsMonitoring
+    ? [
+        "Route Watch Active",
+        destinationSupportText || "Monitoring saved destination",
+        routeImpactText
+      ].filter((line) => String(line || "").trim()).join("\n")
+    : destinationSupportText;
+  const awarenessPanelMode = true;
   const card = document.getElementById("mobileDestinationCommandTitle")?.closest?.(".mobile-destination-command");
   card?.classList.toggle("is-awareness-panel", awarenessPanelMode);
   card?.classList.toggle("is-destination-panel", !awarenessPanelMode);
@@ -16472,8 +16480,8 @@ function syncMobileDestinationCommandCard() {
     safeText("mobileAwarenessPanelIssues", "");
     document.getElementById("mobileAwarenessPanelCrossings")?.toggleAttribute("hidden", false);
     document.getElementById("mobileAwarenessPanelIssues")?.toggleAttribute("hidden", true);
-    safeText("mobileDestinationCommandImpact", destinationSupportText);
-    safeText("mobileDestinationCommandBtn", selectedLabel ? "Change" : "Route");
+    safeText("mobileDestinationCommandImpact", routeMonitoringSupportText);
+    safeText("mobileDestinationCommandBtn", selectedLabel ? "Change" : (routeIsMonitoring ? "View Route" : "Route"));
   } else {
     const impactText = selectedLabel ? getGridlyDestinationRouteImpactCardText() : "";
     safeText("mobileAwarenessPanelKicker", "Route");
@@ -27469,7 +27477,7 @@ function buildGridlyOwnershipStateAudit(options = {}) {
   const selectedDestinationLabel = safeCall(() => (typeof getSelectedDestinationLabel === "function" ? getSelectedDestinationLabel() : null), null);
   const selectedLabel = String(selectedDestinationLabel || "").trim();
   const routeIsMonitoring = safeBoolean(() => routeWatchActivated || window.__gridlyRouteWatchActive);
-  const awarenessPanelMode = !routeIsMonitoring;
+  const awarenessPanelMode = true;
 
   let commandCardOwner = "unknown";
   if (awarenessPanelMode) commandCardOwner = "awareness";
