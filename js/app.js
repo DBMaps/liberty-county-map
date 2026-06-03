@@ -28631,11 +28631,30 @@ function gridlyV230VisibleAlertTextCandidates() {
     "[data-gridly-alert-summary]",
     "[data-gridly-alert-title]",
     "[data-gridly-alert-headline]",
-    ".gridly-alert-row"
+    "[data-gridly-alert-location]",
+    ".gridly-alert-row",
+    "[data-alert-id]",
+    "[data-alert-summary]",
+    "[data-alert-title]",
+    "[aria-label*='alert' i]",
+    "[class*='alert' i]",
+    "[class*='incident' i]",
+    "[class*='hazard' i]",
+    "article",
+    "li",
+    "[role='listitem']"
   ].join(",");
   const rows = Array.from(document.querySelectorAll(alertRowSelector));
   const candidates = [];
   const seen = new Set();
+  const isElementVisible = (element) => {
+    if (!element || element.hidden) return false;
+    if (typeof element.getAttribute === "function" && element.getAttribute("data-gridly-alert-hidden") === "true") return false;
+    const style = typeof window !== "undefined" && typeof window.getComputedStyle === "function" ? window.getComputedStyle(element) : null;
+    if (style && (style.display === "none" || style.visibility === "hidden" || Number(style.opacity) === 0)) return false;
+    const rect = typeof element.getBoundingClientRect === "function" ? element.getBoundingClientRect() : null;
+    return !rect || rect.width > 0 || rect.height > 0;
+  };
   const addVisibleAlertText = (text, source, index) => {
     const narrative = gridlyV229NormalizeNarrativeText(text);
     const key = `${source}|${narrative}`.toLowerCase();
@@ -28652,15 +28671,115 @@ function gridlyV230VisibleAlertTextCandidates() {
   };
   rows.forEach((row, index) => {
     if (!row || typeof row.getAttribute !== "function") return;
-    if (row.getAttribute("data-gridly-alert-hidden") === "true" || row.hidden) return;
+    if (!isElementVisible(row)) return;
     if (typeof row.hasAttribute === "function" && row.hasAttribute("data-gridly-alert-expand")) return;
     addVisibleAlertText(row.getAttribute("data-gridly-alert-summary"), "visibleAlertCard.data-gridly-alert-summary", index);
     addVisibleAlertText(row.getAttribute("data-gridly-alert-title"), "visibleAlertCard.data-gridly-alert-title", index);
     addVisibleAlertText(row.getAttribute("data-gridly-alert-headline"), "visibleAlertCard.data-gridly-alert-headline", index);
     addVisibleAlertText(row.getAttribute("data-gridly-alert-location"), "visibleAlertCard.data-gridly-alert-location", index);
-    addVisibleAlertText(row.textContent, "visibleAlertCard.textContent", index);
+    addVisibleAlertText(row.getAttribute("data-alert-summary"), "visibleAlertCard.data-alert-summary", index);
+    addVisibleAlertText(row.getAttribute("data-alert-title"), "visibleAlertCard.data-alert-title", index);
+    addVisibleAlertText(row.getAttribute("aria-label"), "visibleAlertCard.aria-label", index);
+    const textContent = gridlyV229NormalizeNarrativeText(row.textContent);
+    if (gridlyV229NarrativeHasCondition(textContent) && gridlyV230ExtractRoadReferences(textContent).length) {
+      addVisibleAlertText(textContent, "visibleAlertCard.textContent", index);
+    }
   });
+  if (!candidates.length && document.body) {
+    const bodyText = gridlyV229NormalizeNarrativeText(document.body.textContent);
+    const roadSentences = bodyText.split(/(?<=[.!?])\s+|\s+[•|]\s+/).filter((part) => gridlyV229NarrativeHasCondition(part) && gridlyV230ExtractRoadReferences(part).length).slice(0, 8);
+    roadSentences.forEach((text, index) => addVisibleAlertText(text, "visibleAlertCard.bodyTextRoadSentence", index));
+  }
   return candidates;
+}
+
+function gridlyV232CandidateSample(text = "") {
+  return gridlyV229NormalizeNarrativeText(text).slice(0, 220);
+}
+
+function gridlyV232AddRoadCandidateSource(collection, rejected, candidate = {}, priority = 99, priorityLabel = "unknown") {
+  const narrative = gridlyV229NormalizeNarrativeText(candidate?.narrative);
+  if (!narrative) return;
+  const roads = gridlyV230ExtractRoadReferences(narrative);
+  const entry = {
+    priority,
+    priorityLabel,
+    source: candidate?.source || "unknown",
+    sourceType: candidate?.sourceType || "unknown",
+    derived: Boolean(candidate?.derived),
+    visible: Boolean(candidate?.visible),
+    roads,
+    narrativeSample: gridlyV232CandidateSample(narrative)
+  };
+  collection.push(entry);
+  if (!roads.length) {
+    rejected.push({
+      source: entry.source,
+      sourceType: entry.sourceType,
+      priorityLabel,
+      reason: "no_valid_road_reference_extracted",
+      narrativeSample: entry.narrativeSample
+    });
+  }
+}
+
+function gridlyV232CollectDirectRoadFieldCandidates(options = {}, snapshot = {}) {
+  const candidates = [];
+  const addRoadField = (value, source, sourceType) => {
+    const road = gridlyV230NormalizeRoadReference(value);
+    const narrative = road || gridlyV229NormalizeNarrativeText(value);
+    if (!narrative) return;
+    candidates.push({ narrative, source, sourceType, derived: false, roadField: true });
+  };
+  const roadFieldNames = ["roadName", "primaryRoad", "resolvedRoadName", "nearestRoad", "nearestRoadName", "selectedRoadName", "displayRoadName", "routeNameDisplay", "routeName", "road", "route", "corridor", "highway", "locationName", "resolvedLocationLabel"];
+  const inspectRecord = (record, sourcePrefix, sourceType) => {
+    if (!record || typeof record !== "object") return;
+    roadFieldNames.forEach((field) => addRoadField(record?.[field], `${sourcePrefix}.${field}`, sourceType));
+    if (record.raw && typeof record.raw === "object") roadFieldNames.forEach((field) => addRoadField(record.raw?.[field], `${sourcePrefix}.raw.${field}`, sourceType));
+    if (record.source && typeof record.source === "object") roadFieldNames.forEach((field) => addRoadField(record.source?.[field], `${sourcePrefix}.source.${field}`, sourceType));
+  };
+  (Array.isArray(snapshot?.communityAwarenessSummary?.activeHazardsInArea) ? snapshot.communityAwarenessSummary.activeHazardsInArea : []).forEach((hazard, index) => inspectRecord(hazard, `communityAwarenessSummary.activeHazardsInArea.${index}`, "active_hazard_road_field"));
+  (Array.isArray(snapshot?.communityAwarenessSummary?.activeReportsInArea) ? snapshot.communityAwarenessSummary.activeReportsInArea : []).forEach((report, index) => inspectRecord(report, `communityAwarenessSummary.activeReportsInArea.${index}`, "active_report_road_field"));
+  (Array.isArray(snapshot?.samples) ? snapshot.samples : []).forEach((sample, index) => inspectRecord(sample, `activeAwarenessSamples.${index}`, "active_awareness_road_field"));
+  inspectRecord(options?.activeHazard, "options.activeHazard", "active_hazard_road_field");
+  inspectRecord(options?.activeReport, "options.activeReport", "active_report_road_field");
+  inspectRecord(options?.activeAwareness, "options.activeAwareness", "active_awareness_road_field");
+  (Array.isArray(options?.activeHazards) ? options.activeHazards : []).forEach((hazard, index) => inspectRecord(hazard, `options.activeHazards.${index}`, "active_hazard_road_field"));
+  (Array.isArray(options?.activeReports) ? options.activeReports : []).forEach((report, index) => inspectRecord(report, `options.activeReports.${index}`, "active_report_road_field"));
+  return candidates;
+}
+
+function gridlyV232SelectRoadBySourcePriority({ visibleAlertCandidates = [], allCandidates = [], directRoadFieldCandidates = [] } = {}) {
+  const roadCandidateSources = [];
+  const rejectedRoadCandidates = [];
+  const addBucket = (candidates, priority, priorityLabel) => (Array.isArray(candidates) ? candidates : []).forEach((candidate) => gridlyV232AddRoadCandidateSource(roadCandidateSources, rejectedRoadCandidates, candidate, priority, priorityLabel));
+  const alertTextCandidates = allCandidates.filter((candidate) => {
+    const sourceText = `${candidate?.source || ""} ${candidate?.sourceType || ""}`;
+    return !candidate?.derived && /alert|headline|title|support|subline|summary|description|detail|message|reusedAlertText/i.test(sourceText) && candidate?.sourceType !== "visible_alert_card";
+  });
+  const activeHazardReportCandidates = allCandidates.filter((candidate) => /active_(?:hazard|report|awareness)/i.test(`${candidate?.sourceType || ""}`) && !candidate?.derived);
+  const derivedCandidates = allCandidates.filter((candidate) => candidate?.derived || /derived|read_only_derived_candidate|readOnly\.condition\+road/i.test(`${candidate?.source || ""} ${candidate?.sourceType || ""}`));
+  addBucket(visibleAlertCandidates, 1, "visible_alert_card_roadway_reference");
+  addBucket(alertTextCandidates, 2, "alert_title_support_text_roadway_reference");
+  addBucket([...directRoadFieldCandidates, ...activeHazardReportCandidates], 3, "active_hazard_report_roadway_field");
+  addBucket(derivedCandidates, 4, "derived_candidate_roadway_reference");
+  addBucket(allCandidates.filter((candidate) => !roadCandidateSources.some((entry) => entry.source === (candidate?.source || "unknown") && entry.narrativeSample === gridlyV232CandidateSample(candidate?.narrative))), 5, "other_existing_text_roadway_reference");
+  const extractedRoadCandidates = [];
+  roadCandidateSources
+    .sort((a, b) => a.priority - b.priority)
+    .forEach((entry) => entry.roads.forEach((road) => {
+      if (extractedRoadCandidates.some((candidate) => normalizeRoadComparison(candidate.road) === normalizeRoadComparison(road))) return;
+      extractedRoadCandidates.push({ road, source: entry.source, sourceType: entry.sourceType, priority: entry.priority, priorityLabel: entry.priorityLabel, narrativeSample: entry.narrativeSample });
+    }));
+  const selected = extractedRoadCandidates.find((candidate) => candidate.road) || null;
+  return {
+    selectedRoad: selected?.road || "",
+    selectedRoadSource: selected ? `${selected.priorityLabel}:${selected.source}` : "fallback_travel_wording_no_road",
+    roadCandidateSources,
+    visibleAlertTextSamples: visibleAlertCandidates.map((candidate) => ({ source: candidate.source, index: candidate.index, text: gridlyV232CandidateSample(candidate.narrative), roads: gridlyV230ExtractRoadReferences(candidate.narrative) })).slice(0, 12),
+    extractedRoadCandidates,
+    rejectedRoadCandidates: rejectedRoadCandidates.slice(0, 24)
+  };
 }
 
 function buildGridlyNarrativePromotionPrototype(options = {}) {
@@ -28694,6 +28813,7 @@ function buildGridlyNarrativePromotionPrototype(options = {}) {
   const visibleAlertCandidates = gridlyV230VisibleAlertTextCandidates();
   const allCandidates = gridlyV2291UniqueTexts([...(context.candidates || []).map((candidate) => candidate.narrative), ...optionCandidates.map((candidate) => candidate.narrative), ...visibleAlertCandidates.map((candidate) => candidate.narrative)])
     .map((narrative) => visibleAlertCandidates.find((candidate) => candidate.narrative === narrative) || optionCandidates.find((candidate) => candidate.narrative === narrative) || (context.candidates || []).find((candidate) => candidate.narrative === narrative) || { narrative, source: "unknown", sourceType: "unknown" });
+  const directRoadFieldCandidates = gridlyV232CollectDirectRoadFieldCandidates(options, context.snapshot || {});
   const scoredCandidates = allCandidates.map((candidate) => {
     const score = gridlyV2291ScoreNarrative(candidate.narrative, context);
     const roadNames = gridlyV230ExtractRoadReferences(candidate.narrative);
@@ -28710,12 +28830,8 @@ function buildGridlyNarrativePromotionPrototype(options = {}) {
     || gridlyV2291ConditionLabelFromText(selectedCandidate?.narrative || "", context?.snapshot?.activeAwareness?.resolvedCategory || context?.snapshot?.activeAwareness?.topCategory || "");
   const standardizedCondition = gridlyV232ResolveNarrativeCondition(selectedRawCondition);
   const selectedCondition = standardizedCondition.label;
-  const v230RoadExtractionPool = [
-    ...(selectedCandidate?.roadNames || []),
-    ...visibleAlertCandidates.flatMap((candidate) => gridlyV230ExtractRoadReferences(candidate.narrative)),
-    ...allCandidates.flatMap((candidate) => gridlyV230ExtractRoadReferences(candidate.narrative))
-  ];
-  const selectedRoad = v230RoadExtractionPool.find(Boolean) || "";
+  const roadSelection = gridlyV232SelectRoadBySourcePriority({ visibleAlertCandidates, allCandidates, directRoadFieldCandidates });
+  const selectedRoad = roadSelection.selectedRoad || "";
   const conditionType = activeConditionPresent && selectedCondition ? standardizedCondition.conditionType : "";
   const selectedPattern = activeConditionPresent && selectedCondition
     ? (selectedRoad ? standardizedCondition.selectedPattern : standardizedCondition.fallbackPattern)
@@ -28743,7 +28859,12 @@ function buildGridlyNarrativePromotionPrototype(options = {}) {
     promotedNarrative,
     fallbackUsed,
     patternReason: activeConditionPresent && selectedCondition ? standardizedCondition.patternReason : "No active condition was available for narrative promotion.",
-    sourceUsed: promotedNarrative ? (selectedCandidate?.source || context.sourceState?.candidate?.source || "read_only_existing_intelligence") : "none",
+    sourceUsed: promotedNarrative ? (selectedRoad ? roadSelection.selectedRoadSource : (selectedCandidate?.source && selectedCandidate.source !== "readOnly.condition+road+awarenessAreaCandidate" ? selectedCandidate.source : "fallback_travel_wording")) : "none",
+    selectedRoadSource: activeConditionPresent && selectedRoad ? roadSelection.selectedRoadSource : "fallback_travel_wording_no_road",
+    roadCandidateSources: roadSelection.roadCandidateSources,
+    visibleAlertTextSamples: roadSelection.visibleAlertTextSamples,
+    extractedRoadCandidates: roadSelection.extractedRoadCandidates,
+    rejectedRoadCandidates: roadSelection.rejectedRoadCandidates,
     auditVersion: GRIDLY_NARRATIVE_PROMOTION_PROTOTYPE_VERSION
   };
 }
@@ -28760,7 +28881,12 @@ function gridlyNarrativePromotionPrototypeAudit(options = {}) {
     promotedNarrative: audit.promotedNarrative,
     fallbackUsed: audit.fallbackUsed,
     patternReason: audit.patternReason,
-    sourceUsed: audit.sourceUsed
+    sourceUsed: audit.sourceUsed,
+    roadCandidateSources: audit.roadCandidateSources || [],
+    visibleAlertTextSamples: audit.visibleAlertTextSamples || [],
+    extractedRoadCandidates: audit.extractedRoadCandidates || [],
+    rejectedRoadCandidates: audit.rejectedRoadCandidates || [],
+    selectedRoadSource: audit.selectedRoadSource || ""
   };
 }
 
@@ -28774,7 +28900,12 @@ function gridlyNarrativeLanguageStandardAudit(options = {}) {
     selectedAwarenessArea: audit.selectedAwarenessArea || "",
     promotedNarrative: audit.promotedNarrative || "",
     fallbackUsed: Boolean(audit.fallbackUsed),
-    patternReason: audit.patternReason || ""
+    patternReason: audit.patternReason || "",
+    roadCandidateSources: audit.roadCandidateSources || [],
+    visibleAlertTextSamples: audit.visibleAlertTextSamples || [],
+    extractedRoadCandidates: audit.extractedRoadCandidates || [],
+    rejectedRoadCandidates: audit.rejectedRoadCandidates || [],
+    selectedRoadSource: audit.selectedRoadSource || ""
   };
 }
 
