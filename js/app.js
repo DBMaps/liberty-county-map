@@ -40090,26 +40090,62 @@ function getGridlyHazardPopupReportCount(incident = {}) {
   return Math.max(1, Math.round(count || 1));
 }
 
+function getGridlyHazardFreshnessSource(incident = {}) {
+  const nestedIncident = incident?.incident && typeof incident.incident === "object" ? incident.incident : null;
+  if (!nestedIncident) return incident || {};
+  return { ...nestedIncident, ...incident, latestReport: incident?.latestReport || nestedIncident?.latestReport };
+}
+
+function parseGridlyFreshnessMinutesText(value) {
+  const text = String(value || "").trim().toLowerCase();
+  if (!text) return null;
+  if (/\b(?:just now|now)\b/.test(text) && !/\d/.test(text)) return 0;
+  const match = text.match(/(\d+(?:\.\d+)?)\s*(m|min|mins|minute|minutes|h|hr|hrs|hour|hours|d|day|days)\b/);
+  if (!match) return null;
+  const amount = Number(match[1]);
+  if (!Number.isFinite(amount)) return null;
+  const unit = match[2];
+  if (/^h/.test(unit)) return amount * 60;
+  if (/^d/.test(unit)) return amount * 1440;
+  return amount;
+}
+
 function getGridlyHazardPopupMinutesAgo(incident = {}) {
-  const numericAge = Number(incident?.age_minutes ?? incident?.minutesAgo ?? incident?.latestReport?.minutesAgo);
+  const freshnessSource = getGridlyHazardFreshnessSource(incident);
+  const numericAge = Number(
+    freshnessSource?.age_minutes
+    ?? freshnessSource?.ageMinutes
+    ?? freshnessSource?.minutesAgo
+    ?? freshnessSource?.latestReport?.age_minutes
+    ?? freshnessSource?.latestReport?.ageMinutes
+    ?? freshnessSource?.latestReport?.minutesAgo
+  );
   if (Number.isFinite(numericAge)) return Math.max(0, Math.round(numericAge));
   const timestampCandidates = [
-    incident?.updated_at, incident?.updatedAt, incident?.lastUpdatedAt, incident?.last_activity_at, incident?.lastActivityAt,
-    incident?.latestReport?.updated_at, incident?.latestReport?.updatedAt, incident?.latestReport?.submittedAt,
-    incident?.created_at, incident?.createdAt
+    freshnessSource?.updated_at, freshnessSource?.updatedAt, freshnessSource?.lastUpdatedAt, freshnessSource?.last_activity_at, freshnessSource?.lastActivityAt,
+    freshnessSource?.timestamp, freshnessSource?.reportedAt, freshnessSource?.lastSeenAt, freshnessSource?.last_report_at, freshnessSource?.lastReportAt, freshnessSource?.latest_report_at, freshnessSource?.latestReportAt,
+    freshnessSource?.latestReport?.updated_at, freshnessSource?.latestReport?.updatedAt, freshnessSource?.latestReport?.submittedAt, freshnessSource?.latestReport?.created_at, freshnessSource?.latestReport?.createdAt,
+    freshnessSource?.created_at, freshnessSource?.createdAt
   ];
   const newestMs = timestampCandidates
     .map((value) => new Date(value || 0).getTime())
     .filter((value) => Number.isFinite(value) && value > 0)
     .sort((a, b) => b - a)[0];
-  if (!newestMs) return 0;
-  return Math.max(0, Math.round((Date.now() - newestMs) / 60000));
+  if (newestMs) return Math.max(0, Math.round((Date.now() - newestMs) / 60000));
+  const displayAge = [freshnessSource?.minutesText, freshnessSource?.timeAgo, freshnessSource?.updatedText]
+    .map(parseGridlyFreshnessMinutesText)
+    .find((value) => Number.isFinite(value));
+  if (Number.isFinite(displayAge)) return Math.max(0, Math.round(displayAge));
+  return 0;
 }
 
 function formatGridlyHazardPopupFreshnessLine(incident = {}) {
-  const minutes = getGridlyHazardPopupMinutesAgo(incident);
-  const verb = [incident?.updated_at, incident?.updatedAt, incident?.lastUpdatedAt, incident?.last_activity_at, incident?.lastActivityAt, incident?.age_minutes]
-    .some((value) => value !== undefined && value !== null && String(value).trim() !== "") ? "Updated" : "Reported";
+  const freshnessSource = getGridlyHazardFreshnessSource(incident);
+  const minutes = getGridlyHazardPopupMinutesAgo(freshnessSource);
+  const verb = [
+    freshnessSource?.updated_at, freshnessSource?.updatedAt, freshnessSource?.lastUpdatedAt, freshnessSource?.last_activity_at, freshnessSource?.lastActivityAt,
+    freshnessSource?.age_minutes, freshnessSource?.ageMinutes, freshnessSource?.minutesAgo, freshnessSource?.updatedText
+  ].some((value) => value !== undefined && value !== null && String(value).trim() !== "") ? "Updated" : "Reported";
   if (minutes <= 1) return `${verb} just now`;
   if (minutes < 60) return `${verb} ${minutes} minutes ago`;
   const hours = Math.round(minutes / 60);
