@@ -16845,3 +16845,11 @@ body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV
   background: rgba(6, 14, 24, 0.3);
   box-shadow: 0 3px 8px rgba(2, 8, 18, 0.1);
 }
+
+/* V242.1 — align active route destination card with Portrait V2 panel rails. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command:not(.is-awareness-panel):not([hidden]):not(.is-command-card-suppressed) {
+    left: calc(12px + env(safe-area-inset-left, 0px)) !important;
+    right: calc(12px + env(safe-area-inset-right, 0px)) !important;
+  }
+}
