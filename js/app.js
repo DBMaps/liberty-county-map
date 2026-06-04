@@ -10213,6 +10213,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyAnalyticsAudit",
   "gridlyOperationalTelemetryAudit",
   "gridlyBetaReadinessAudit",
+  "gridlyRouteIntelligenceExperienceAudit",
   "gridlyAwarenessIntelligenceAudit",
   "gridlyCommunityPulseIntelligenceAudit",
   "gridlyAwarenessStoryAudit",
@@ -10330,6 +10331,7 @@ function exposeAllGridlyAuditHelpers() {
     gridlyAnalyticsAudit: typeof gridlyAnalyticsAudit === "function" ? gridlyAnalyticsAudit : null,
     gridlyOperationalTelemetryAudit: typeof gridlyOperationalTelemetryAudit === "function" ? gridlyOperationalTelemetryAudit : null,
     gridlyBetaReadinessAudit: typeof gridlyBetaReadinessAudit === "function" ? gridlyBetaReadinessAudit : (typeof target?.gridlyBetaReadinessAudit === "function" ? target.gridlyBetaReadinessAudit : null),
+    gridlyRouteIntelligenceExperienceAudit: typeof gridlyRouteIntelligenceExperienceAudit === "function" ? gridlyRouteIntelligenceExperienceAudit : (typeof target?.gridlyRouteIntelligenceExperienceAudit === "function" ? target.gridlyRouteIntelligenceExperienceAudit : null),
     gridlyAwarenessIntelligenceAudit: typeof gridlyAwarenessStatusAudit === "function" ? gridlyAwarenessStatusAudit : (typeof target?.gridlyAwarenessIntelligenceAudit === "function" ? target.gridlyAwarenessIntelligenceAudit : null),
     gridlyCommunityPulseIntelligenceAudit: typeof gridlyCommunityPulseIntelligenceAudit === "function" ? gridlyCommunityPulseIntelligenceAudit : (typeof target?.gridlyCommunityPulseIntelligenceAudit === "function" ? target.gridlyCommunityPulseIntelligenceAudit : null),
     gridlyAwarenessStoryAudit: typeof gridlyAwarenessStoryAudit === "function" ? gridlyAwarenessStoryAudit : (typeof target?.gridlyAwarenessStoryAudit === "function" ? target.gridlyAwarenessStoryAudit : null),
@@ -59522,6 +59524,221 @@ function gridlyAwarenessExperienceAudit() {
 
 window.gridlyAwarenessExperienceAudit = gridlyAwarenessExperienceAudit;
 exposeGridlyAuditHelper("gridlyAwarenessExperienceAudit", gridlyAwarenessExperienceAudit);
+
+function gridlyRouteIntelligenceExperienceAudit() {
+  const generatedAt = new Date().toISOString();
+  const findings = [];
+  const recommendations = [];
+  const safeDocument = typeof document !== "undefined" ? document : null;
+  const safeWindow = typeof window !== "undefined" ? window : globalThis;
+  const normalizeText = (value) => String(value || "").replace(/\s+/g, " ").trim();
+  const isVisible = (element) => {
+    if (!element || !safeWindow?.getComputedStyle) return false;
+    const style = safeWindow.getComputedStyle(element);
+    const rect = typeof element.getBoundingClientRect === "function" ? element.getBoundingClientRect() : null;
+    return !element.hidden
+      && element.getAttribute("aria-hidden") !== "true"
+      && style.display !== "none"
+      && style.visibility !== "hidden"
+      && Number(style.opacity || 1) !== 0
+      && (!rect || (rect.width > 0 && rect.height > 0));
+  };
+  const routeTerms = /\b(route|destination|trip|eta|delay|delayed|blocked|avoid|alternate|detour|travel|crossing|closure|watch|commute|movement)\b/i;
+  const awarenessTerms = /\b(awareness|reported|community|hazard|issue|condition|alert|near me|nearby|closure|crossing|flood|road)\b/i;
+  const technicalTerms = [
+    "risk_score",
+    "route_consequence_model",
+    "confidence_score",
+    "source metadata",
+    "internal classification",
+    "classification",
+    "database field",
+    "auto-expiration",
+    "debug",
+    "hydration",
+    "dom bridge",
+    "metadata",
+    "routeBridge",
+    "risk score",
+    "confidence score"
+  ];
+  const consumerPatterns = [
+    /conditions along this route/i,
+    /may affect travel/i,
+    /blocked crossing/i,
+    /may delay/i,
+    /road closure reported/i,
+    /alternate route/i,
+    /save time/i,
+    /no major route issues/i,
+    /reported near this route/i,
+    /route awareness/i,
+    /monitoring/i,
+    /start route watch/i,
+    /no destination selected/i,
+    /based on community reports/i
+  ];
+  const routeMeaningPatterns = /\b(okay|clear|delayed?|blocked|avoid|closure|closed|alternate|detour|save time|no major route issues|affect travel|may delay|conditions)\b/i;
+  const surfaceDefinitions = [
+    { key: "routeWatch", label: "Route Watch", selectors: ["#desktopRouteWatchCard", ".desktop-route-watch-strip", "#desktopRouteWatchRail", "#routeWatchStartBtn", "#routeWatchLivePill", "#routeWatchSetupHint", "#mobileQuickRouteBtn", "[data-mobile-panel-jump='routes']"] },
+    { key: "activeRoutePanel", label: "Active Route panel", selectors: ["#routePanel", "#activeRoutePanel", ".route-panel", ".active-route-panel", "[data-route-panel]", "[data-mobile-sheet='routes']", "#mobileRoutePanel"] },
+    { key: "routeDock", label: "Route button / dock", selectors: ["#mobileQuickRouteBtn", ".bottom-dock [data-mobile-panel-jump='routes']", ".mobile-bottom-dock [data-mobile-panel-jump='routes']", "[data-section-jump='routes']", ".hero-route-btn", "[data-route-action]"] },
+    { key: "destinationRoutePreview", label: "Destination route preview", selectors: ["#mobileDestinationCommandImpact", ".destination-route-impact-line", "#desktopRouteHome", "#desktopRouteWork", ".destination-route-preview", "[data-destination-route-preview]"] },
+    { key: "destinationImpactPane", label: "Destination impact pane", selectors: ["#gridlyDestinationImpactPane", "#gridlyDestinationImpactPaneSummary", "#gridlyDestinationImpactPaneWhy", "#gridlyDestinationImpactPaneReasons", "#gridlyDestinationImpactPaneSeverity", "#gridlyDestinationImpactPaneConfidence"] },
+    { key: "eta", label: "ETA display", selectors: ["#routeEta", "#destinationEta", ".route-eta", "[data-route-eta]", "[data-eta]"] },
+    { key: "delay", label: "Delay display", selectors: ["#routeDelay", ".route-delay", "[data-route-delay]", "[data-delay]"] },
+    { key: "alternateRoute", label: "Alternate route messaging", selectors: ["#alternateRoute", ".alternate-route", "[data-alternate-route]", "[data-route-alternate]"] },
+    { key: "routeImpactMessaging", label: "Route impact messaging", selectors: ["#mobileDestinationCommandImpact", "#gridlyDestinationImpactPaneSummary", "#gridlyDestinationImpactPaneWhy", "#gridlyDestinationImpactPaneReasons", ".route-impact", "[data-route-impact]", "[data-route-watch-display='commute-intelligence']"] }
+  ];
+  const collectElements = (selectors) => {
+    if (!safeDocument) return [];
+    const elements = [];
+    selectors.forEach((selector) => {
+      try {
+        safeDocument.querySelectorAll(selector).forEach((element) => {
+          if (!elements.includes(element)) elements.push(element);
+        });
+      } catch (_error) {}
+    });
+    return elements;
+  };
+  const describeSurface = (definition) => {
+    const elements = collectElements(definition.selectors);
+    const visibleElements = elements.filter(isVisible);
+    const textSamples = elements
+      .map((element) => normalizeText(element.textContent || element.getAttribute("aria-label") || element.value || ""))
+      .filter(Boolean)
+      .filter((text, index, list) => list.indexOf(text) === index)
+      .slice(0, 8);
+    const visibleTextSamples = visibleElements
+      .map((element) => normalizeText(element.textContent || element.getAttribute("aria-label") || element.value || ""))
+      .filter(Boolean)
+      .filter((text, index, list) => list.indexOf(text) === index)
+      .slice(0, 8);
+    return {
+      key: definition.key,
+      label: definition.label,
+      detected: elements.length > 0,
+      visibleInPortraitNow: visibleElements.length > 0,
+      elementCount: elements.length,
+      visibleElementCount: visibleElements.length,
+      hiddenElementCount: Math.max(0, elements.length - visibleElements.length),
+      selectors: definition.selectors,
+      textSamples,
+      visibleTextSamples
+    };
+  };
+  const surfaces = surfaceDefinitions.map(describeSurface);
+  const allSurfaceText = surfaces.flatMap((surface) => surface.textSamples || []);
+  const visibleRouteText = allSurfaceText.filter((text) => routeTerms.test(text));
+  const technicalLanguage = allSurfaceText.filter((text) => technicalTerms.some((term) => text.toLowerCase().includes(term.toLowerCase())));
+  const consumerFriendlyMessages = allSurfaceText.filter((text) => consumerPatterns.some((pattern) => pattern.test(text))).slice(0, 12);
+  const routeMeaningMessages = allSurfaceText.filter((text) => routeMeaningPatterns.test(text));
+  const awarenessLikeRouteMessages = allSurfaceText.filter((text) => routeTerms.test(text) && awarenessTerms.test(text));
+  const duplicateAwarenessMessagingDetected = awarenessLikeRouteMessages.length > 0 && routeMeaningMessages.length === 0;
+  const duplicateSamples = awarenessLikeRouteMessages.slice(0, 8);
+  const helperAvailability = {
+    gridlyRouteWatchDisplayAudit: typeof safeWindow?.gridlyRouteWatchDisplayAudit === "function",
+    gridlyRouteIntelligenceAudit: typeof safeWindow?.gridlyRouteIntelligenceAudit === "function",
+    gridlyDestinationRoutePreviewDebug: typeof safeWindow?.gridlyDestinationRoutePreviewDebug === "function",
+    gridlyDestinationImpactPaneAudit: typeof safeWindow?.gridlyDestinationImpactPaneAudit === "function",
+    gridlyRouteButtonSystemAudit: typeof safeWindow?.gridlyRouteButtonSystemAudit === "function"
+  };
+  const detectedByKey = surfaces.reduce((acc, surface) => {
+    acc[surface.key] = surface;
+    return acc;
+  }, {});
+  const hasDetectedRouteSurface = surfaces.some((surface) => surface.detected);
+  const hasVisibleRouteSurface = surfaces.some((surface) => surface.visibleInPortraitNow);
+  if (!hasDetectedRouteSurface) {
+    findings.push({ severity: "high", area: "inventory", message: "No Route Intelligence DOM surfaces were detected by the read-only audit selectors.", evidence: [] });
+    recommendations.push({ priority: "P0", target: "Route Intelligence inventory", action: "Verify route selectors and add stable data attributes before V246.1 patches." });
+  }
+  surfaces.filter((surface) => surface.detected && !surface.visibleInPortraitNow).forEach((surface) => {
+    findings.push({ severity: "medium", area: surface.label, message: `${surface.label} exists but is not visible in the current Portrait view.`, evidence: surface.textSamples.slice(0, 3) });
+  });
+  surfaces.filter((surface) => surface.detected && surface.hiddenElementCount > 0 && surface.visibleElementCount > 0).forEach((surface) => {
+    findings.push({ severity: "low", area: surface.label, message: `${surface.label} has both visible and hidden instances, which may indicate duplicated or mode-specific surfaces.`, evidence: surface.textSamples.slice(0, 4) });
+  });
+  if (technicalLanguage.length) {
+    findings.push({ severity: "high", area: "copy", message: "Technical or internal wording was found in route-related surface text.", evidence: technicalLanguage.slice(0, 8) });
+    recommendations.push({ priority: "P0", target: "Route copy", action: "Replace technical terms with consumer travel meaning such as delayed, blocked, avoid, or no major route issues." });
+  }
+  if (!routeMeaningMessages.length && hasVisibleRouteSurface) {
+    findings.push({ severity: "high", area: "route meaning", message: "Visible route surfaces do not clearly explain whether travel is okay, delayed, blocked, or worth avoiding.", evidence: visibleRouteText.slice(0, 8) });
+    recommendations.push({ priority: "P0", target: "Route consequence messaging", action: "Add consumer-facing consequence copy in V246.1 without changing route logic." });
+  }
+  if (duplicateAwarenessMessagingDetected) {
+    findings.push({ severity: "medium", area: "awareness duplication", message: "Route-related copy appears to reuse awareness language without adding clear route-specific travel consequence.", evidence: duplicateSamples });
+    recommendations.push({ priority: "P1", target: "Route/Awareness differentiation", action: "Keep awareness context, but add route-specific meaning: affect travel, may delay this trip, blocked crossing, or alternate route may save time." });
+  }
+  if (consumerFriendlyMessages.length) {
+    findings.push({ severity: "positive", area: "copy", message: "Some Route Intelligence copy is already consumer-friendly.", evidence: consumerFriendlyMessages.slice(0, 8) });
+  }
+  if (!detectedByKey.eta?.detected) {
+    findings.push({ severity: "medium", area: "ETA", message: "No dedicated ETA surface was detected by known selectors.", evidence: [] });
+    recommendations.push({ priority: "P1", target: "ETA display", action: "Audit whether ETA should remain absent, appear only after route selection, or be paired with delay language in V246.1." });
+  }
+  if (!detectedByKey.delay?.detected) {
+    findings.push({ severity: "medium", area: "delay", message: "No dedicated delay surface was detected by known selectors.", evidence: [] });
+    recommendations.push({ priority: "P1", target: "Delay display", action: "If delay data exists, expose it as plain travel impact copy rather than raw model output." });
+  }
+  if (!detectedByKey.alternateRoute?.detected) {
+    findings.push({ severity: "low", area: "alternate routes", message: "No alternate-route messaging surface was detected by known selectors.", evidence: [] });
+    recommendations.push({ priority: "P2", target: "Alternate route messaging", action: "Consider a V246.1 copy-only treatment for alternate route availability if existing route data already supports it." });
+  }
+  if (detectedByKey.destinationImpactPane?.detected) {
+    recommendations.push({ priority: "P1", target: "Destination impact pane", action: "Review pane copy for what happened, where, freshness, severity, and trip meaning; avoid exposing confidence/source internals in consumer UI." });
+  }
+  if (detectedByKey.routeWatch?.detected) {
+    recommendations.push({ priority: "P1", target: "Route Watch", action: "Make the visible Route Watch state answer: monitoring on/off, selected trip, route okay/delayed/blocked, and why." });
+  }
+  if (detectedByKey.routeDock?.detected) {
+    recommendations.push({ priority: "P2", target: "Route dock", action: "Ensure the dock/button opens the right route surface and does not compete with the Awareness-first Portrait hierarchy." });
+  }
+  return {
+    available: true,
+    auditVersion: "V246.0",
+    generatedAt,
+    portraitPrimary: true,
+    routeWatchDetected: Boolean(detectedByKey.routeWatch?.detected),
+    activeRoutePanelDetected: Boolean(detectedByKey.activeRoutePanel?.detected),
+    routeDockDetected: Boolean(detectedByKey.routeDock?.detected),
+    destinationRoutePreviewDetected: Boolean(detectedByKey.destinationRoutePreview?.detected),
+    destinationImpactPaneDetected: Boolean(detectedByKey.destinationImpactPane?.detected),
+    etaDetected: Boolean(detectedByKey.eta?.detected),
+    delayDetected: Boolean(detectedByKey.delay?.detected),
+    alternateRouteDetected: Boolean(detectedByKey.alternateRoute?.detected),
+    routeImpactMessagingDetected: Boolean(detectedByKey.routeImpactMessaging?.detected || routeMeaningMessages.length),
+    technicalLanguageDetected: technicalLanguage.length > 0,
+    duplicateAwarenessMessagingDetected,
+    consumerFriendlyMessagingDetected: consumerFriendlyMessages.length > 0,
+    missingRouteMeaningDetected: hasVisibleRouteSurface && routeMeaningMessages.length === 0,
+    protectedSystemsModified: false,
+    routeLogicModified: false,
+    readOnly: true,
+    noLocalStorageWrites: true,
+    noRouteRecalculation: true,
+    noForcedGeolocation: true,
+    noSupabaseWrites: true,
+    portraitVisibleSurfaceCount: surfaces.filter((surface) => surface.visibleInPortraitNow).length,
+    helperAvailability,
+    surfaces,
+    textInventory: {
+      visibleRouteText: visibleRouteText.slice(0, 12),
+      technicalLanguage: technicalLanguage.slice(0, 12),
+      consumerFriendlyMessages,
+      routeMeaningMessages: routeMeaningMessages.slice(0, 12),
+      duplicateAwarenessSamples: duplicateSamples
+    },
+    findings,
+    recommendations,
+    canProceedToV246_1: hasDetectedRouteSurface && findings.length > 0 && !technicalLanguage.some((text) => /supabase|write|create report/i.test(text))
+  };
+}
+
+window.gridlyRouteIntelligenceExperienceAudit = gridlyRouteIntelligenceExperienceAudit;
+exposeGridlyAuditHelper("gridlyRouteIntelligenceExperienceAudit", gridlyRouteIntelligenceExperienceAudit);
 
 
 window.gridlyVisualRegressionAudit = function gridlyVisualRegressionAudit() {
