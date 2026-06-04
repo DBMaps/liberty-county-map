@@ -17350,16 +17350,42 @@ const GRIDLY_DESTINATION_ROUTE_IMPACT_LABELS = {
   high: "High"
 };
 
+const GRIDLY_DESTINATION_ROUTE_TRAVEL_STATUS_LABELS = {
+  none: "Travel looks normal",
+  low: "Travel delays possible",
+  moderate: "Conditions may affect travel",
+  high: "Avoid if possible"
+};
+
 function getGridlyDestinationRouteImpactLabel(level = "none") {
   return GRIDLY_DESTINATION_ROUTE_IMPACT_LABELS[String(level || "none").toLowerCase()] || GRIDLY_DESTINATION_ROUTE_IMPACT_LABELS.none;
 }
 
+function getGridlyDestinationRouteTravelStatusLabel(level = "none") {
+  return GRIDLY_DESTINATION_ROUTE_TRAVEL_STATUS_LABELS[String(level || "none").toLowerCase()] || GRIDLY_DESTINATION_ROUTE_TRAVEL_STATUS_LABELS.none;
+}
+
 function getGridlyDestinationRouteImpactCopy(level = "none") {
   const normalizedLevel = String(level || "none").toLowerCase();
-  if (normalizedLevel === "high") return "Train blocking crossing near your route";
-  if (normalizedLevel === "moderate") return "Road closure reported nearby";
-  if (normalizedLevel === "low") return "Construction activity reported nearby";
-  return "No active hazards reported nearby";
+  if (normalizedLevel === "high") return "A blocked crossing may delay this trip";
+  if (normalizedLevel === "moderate") return "Road closure reported near this route";
+  if (normalizedLevel === "low") return "Construction activity reported near this route";
+  return "No active hazards reported near this route";
+}
+
+function getGridlyDestinationRouteImpactIntroCopy(level = "none") {
+  const normalizedLevel = String(level || "none").toLowerCase();
+  if (normalizedLevel === "high") return "Travel delays possible ahead";
+  if (normalizedLevel === "moderate") return "Conditions along this route may affect travel";
+  if (normalizedLevel === "low") return "Conditions along this route may affect travel";
+  return "Travel looks normal right now";
+}
+
+function getGridlyDestinationRouteImpactSupportCopy({ routeFound = false, quiet = false, impactLevel = "none" } = {}) {
+  if (!routeFound || quiet || String(impactLevel || "none").toLowerCase() === "none") {
+    return "No major issues reported along this route";
+  }
+  return "Review active reports before you leave";
 }
 
 function getGridlyDestinationRouteImpactCardText() {
@@ -17377,7 +17403,7 @@ function getGridlyDestinationRouteImpactCardText() {
     const locationLine = String(audit?.primaryImpactLocation || "").trim();
     const proximityLine = String(audit?.primaryImpactProximityLabel || "").trim();
     return normalizeGridlyUserFacingRoadText([
-      `Potential Impact: ${getGridlyDestinationRouteImpactLabel(impactLevel)}`,
+      getGridlyDestinationRouteImpactIntroCopy(impactLevel),
       reason,
       locationLine,
       proximityLine
@@ -17410,9 +17436,9 @@ function getGridlyDestinationRouteActiveRailReasonCopy(matches = []) {
   const text = (Array.isArray(matches) ? matches : [])
     .map((item) => getGridlyDestinationRouteReasonInspectionText(item))
     .join(" ");
-  if (/train[_\s-]*(blocking|blocked|stopped)|\b(blocked|blocking)\b/.test(text)) return "Train blocking crossing near your route";
-  if (/rail[_\s-]*(blockage|delay)|blocked[_\s-]*crossing/.test(text)) return "Blocked rail crossing reported nearby";
-  return "Rail issue reported nearby";
+  if (/train[_\s-]*(blocking|blocked|stopped)|\b(blocked|blocking)\b/.test(text)) return "A blocked crossing may delay this trip";
+  if (/rail[_\s-]*(blockage|delay)|blocked[_\s-]*crossing/.test(text)) return "A blocked crossing may delay this trip";
+  return "Train activity may delay this trip";
 }
 
 const GRIDLY_DESTINATION_IMPACT_PANE_STATE = {
@@ -17472,9 +17498,9 @@ function getGridlyDestinationImpactPaneReasonModel() {
   }
 
   if (highImpactNearby) {
-    reasons.push("Road closure reported nearby");
+    reasons.push("Road closure reported near this route");
   } else if (hazards > 0) {
-    reasons.push(`${pluralizeGridlyDestinationImpactReason(hazards, "active hazard")} reported near your route`);
+    reasons.push(`${pluralizeGridlyDestinationImpactReason(hazards, "active hazard")} reported near this route`);
   }
 
   if (alerts > 0) {
@@ -17504,11 +17530,16 @@ function getGridlyDestinationImpactPaneReasonModel() {
     reportsConsidered: reports
   });
 
+  const travelStatusLabel = getGridlyDestinationRouteTravelStatusLabel(impactLevel);
+  const supportLabel = getGridlyDestinationRouteImpactSupportCopy({ routeFound, quiet, impactLevel });
+
   const model = {
     impactLevel,
     impactLabel,
     confidenceLabel,
-    summary: normalizeGridlyUserFacingRoadText(routeFound ? (audit?.primaryImpactReason || getGridlyDestinationRouteImpactCopy(impactLevel)) : "No active hazards reported nearby"),
+    travelStatusLabel,
+    supportLabel,
+    summary: normalizeGridlyUserFacingRoadText(routeFound ? (audit?.primaryImpactReason || getGridlyDestinationRouteImpactCopy(impactLevel)) : "No active hazards reported near this route"),
     primaryImpactLocation: normalizeGridlyUserFacingRoadText(primaryImpactLocation),
     primaryImpactProximityLabel: normalizeGridlyUserFacingRoadText(primaryImpactProximityLabel),
     reasons: detailReasons.slice(0, 6).map((reason) => normalizeGridlyUserFacingRoadText(reason)),
@@ -17524,9 +17555,9 @@ function renderGridlyDestinationImpactPane() {
   GRIDLY_DESTINATION_IMPACT_PANE_STATE.impactLevel = model.impactLevel;
   GRIDLY_DESTINATION_IMPACT_PANE_STATE.displayedReasons = [...model.reasons];
 
-  if (paneEls.severity) paneEls.severity.textContent = normalizeGridlyUserFacingRoadText(model.impactLabel || getGridlyDestinationRouteImpactLabel(model.impactLevel));
-  if (paneEls.confidence) paneEls.confidence.textContent = normalizeGridlyUserFacingRoadText(model.confidenceLabel || "Low confidence");
-  if (paneEls.summary) paneEls.summary.textContent = normalizeGridlyUserFacingRoadText(model.summary || "No active hazards reported nearby");
+  if (paneEls.severity) paneEls.severity.textContent = normalizeGridlyUserFacingRoadText(model.travelStatusLabel || getGridlyDestinationRouteTravelStatusLabel(model.impactLevel));
+  if (paneEls.confidence) paneEls.confidence.textContent = normalizeGridlyUserFacingRoadText(model.supportLabel || "Live reports checked");
+  if (paneEls.summary) paneEls.summary.textContent = normalizeGridlyUserFacingRoadText(model.summary || "No active hazards reported near this route");
   if (paneEls.reasons) {
     paneEls.reasons.innerHTML = "";
     model.reasons.forEach((reason) => {
@@ -18873,10 +18904,10 @@ function getGridlyDestinationRoutePrimaryImpactReason(impactLevel = "none", matc
   const alertMatches = Array.isArray(matches.alertMatches) ? matches.alertMatches : [];
   const reportMatches = Array.isArray(matches.reportMatches) ? matches.reportMatches : [];
   if (String(impactLevel || "none") === "high" && railMatches.length > 0) return getGridlyDestinationRouteActiveRailReasonCopy(railMatches);
-  if (closureMatches.length > 0) return "Road closure reported nearby";
-  if (constructionMatches.length > 0) return "Construction activity reported nearby";
-  if (hazardMatches.length > 0 || alertMatches.length > 0) return "Active hazard reported near your route";
-  if (reportMatches.length > 0) return "Community report nearby";
+  if (closureMatches.length > 0) return "Road closure reported near this route";
+  if (constructionMatches.length > 0) return "Construction activity reported near this route";
+  if (hazardMatches.length > 0 || alertMatches.length > 0) return "Active hazard reported near this route";
+  if (reportMatches.length > 0) return "Community report near this route";
   return getGridlyDestinationRouteImpactCopy(impactLevel);
 }
 
@@ -49292,6 +49323,22 @@ function ensureRouteWatchLayoutPolishV331Styles() {
   document.head.appendChild(style);
 }
 
+function getRouteWatchMonitoringSignalCopy(value = "Unknown") {
+  const normalized = String(value || "").toLowerCase();
+  if (normalized.includes("high")) return "Live reports checked";
+  if (normalized.includes("medium") || normalized.includes("moderate")) return "Recent reports checked";
+  if (normalized.includes("low")) return "Still checking route";
+  return "Awaiting route";
+}
+
+function getRouteWatchGuidanceSignalCopy(value = "Unknown") {
+  const normalized = String(value || "").toLowerCase();
+  if (normalized.includes("high")) return "Strong travel signal";
+  if (normalized.includes("medium") || normalized.includes("moderate")) return "Travel signal updating";
+  if (normalized.includes("low")) return "Use latest route status";
+  return "Awaiting route";
+}
+
 function renderRouteWatchIntelligenceFields({
   systemConfidence = "Unknown",
   recommendationConfidence = "Unknown",
@@ -49317,20 +49364,20 @@ function renderRouteWatchIntelligenceFields({
     ? `<div class="route-watch-intel-item"><span class="route-watch-intel-label">Route ETA</span><span class="route-watch-intel-value">${routeEtaValue}</span></div>`
     : "";
   const routeDelayMarkup = hasRouteDelay
-    ? `<div class="route-watch-intel-item"><span class="route-watch-intel-label">Delay Impact</span><span class="route-watch-intel-value">${routeDelayValue}</span></div>`
+    ? `<div class="route-watch-intel-item"><span class="route-watch-intel-label">Possible Delay</span><span class="route-watch-intel-value">${routeDelayValue}</span></div>`
     : "";
   els.departureReason.innerHTML = `
     <div class="route-watch-intel-grid" aria-label="Route Watch intelligence">
-      <div class="route-watch-intel-item"><span class="route-watch-intel-label">System Confidence</span><span class="route-watch-intel-value">${systemConfidence}</span></div>
-      <div class="route-watch-intel-item"><span class="route-watch-intel-label">Recommendation Confidence</span><span class="route-watch-intel-value">${recommendationConfidence}</span></div>
-      <div class="route-watch-intel-item"><span class="route-watch-intel-label">Route Status</span><span class="route-watch-intel-value">${corridorHealth}</span></div>
+      <div class="route-watch-intel-item"><span class="route-watch-intel-label">Route Watch Status</span><span class="route-watch-intel-value">${sanitizeText(getRouteWatchMonitoringSignalCopy(systemConfidence))}</span></div>
+      <div class="route-watch-intel-item"><span class="route-watch-intel-label">Travel Guidance</span><span class="route-watch-intel-value">${sanitizeText(getRouteWatchGuidanceSignalCopy(recommendationConfidence))}</span></div>
+      <div class="route-watch-intel-item"><span class="route-watch-intel-label">Travel Condition</span><span class="route-watch-intel-value">${sanitizeText(corridorHealth)}</span></div>
       <div class="route-watch-intel-item"><span class="route-watch-intel-label">Delay Pressure</span><span class="route-watch-intel-value">${sanitizeText(routePressureBand)}</span></div>
       <div class="route-watch-intel-item"><span class="route-watch-intel-label">Hazards Affecting Route</span><span class="route-watch-intel-value">${Number(routeRelevantHazardCount || 0)}</span></div>
       <div class="route-watch-intel-item"><span class="route-watch-intel-label">Alternate Route Advantage</span><span class="route-watch-intel-value">${sanitizeText(alternateRouteAdvantageLabel)}</span></div>
-      <div class="route-watch-intel-item"><span class="route-watch-intel-label">Monitoring Confidence</span><span class="route-watch-intel-value">${sanitizeText(routeConfidence)}</span></div>
+      <div class="route-watch-intel-item"><span class="route-watch-intel-label">Monitoring Signal</span><span class="route-watch-intel-value">${sanitizeText(getRouteWatchMonitoringSignalCopy(routeConfidence))}</span></div>
       ${routeEtaMarkup}
       ${routeDelayMarkup}
-      <div class="route-watch-intel-item ${delayToneClass}"><span class="route-watch-intel-label">Estimated Delay Impact</span><span class="route-watch-intel-value">${estimatedDelayImpact}</span></div>
+      <div class="route-watch-intel-item ${delayToneClass}"><span class="route-watch-intel-label">Delay Outlook</span><span class="route-watch-intel-value">${estimatedDelayImpact}</span></div>
     </div>
   `;
 }
@@ -49357,15 +49404,15 @@ function renderDesktopRouteWatchMetrics({
     ? `<span><b>Route ETA:</b> <em>${sanitizeText(routeEtaValue)}</em></span>`
     : "";
   const routeDelayMarkup = hasRouteDelay
-    ? `<span><b>Delay Impact:</b> <em>${sanitizeText(routeDelayValue)}</em></span>`
+    ? `<span><b>Possible delay:</b> <em>${sanitizeText(routeDelayValue)}</em></span>`
     : "";
   desktopMetricsContainer.innerHTML = `
     <span><b>Freshness:</b> <em>${sanitizeText(freshness)}</em></span>
     <span><b>Reports near route:</b> <em>${sanitizeText(reportsNearRoute)}</em></span>
-    <span><b>System Confidence:</b> <em>${sanitizeText(systemConfidence)}</em></span>
-    <span><b>Recommendation Confidence:</b> <em>${sanitizeText(recommendationConfidence)}</em></span>
-    <span><b>Corridor Health:</b> <em>${sanitizeText(corridorHealth)}</em></span>
-    <span><b>Estimated Delay Impact:</b> <em>${sanitizeText(estimatedDelayImpact)}</em></span>
+    <span><b>Route Watch status:</b> <em>${sanitizeText(getRouteWatchMonitoringSignalCopy(systemConfidence))}</em></span>
+    <span><b>Travel guidance:</b> <em>${sanitizeText(getRouteWatchGuidanceSignalCopy(recommendationConfidence))}</em></span>
+    <span><b>Route condition:</b> <em>${sanitizeText(corridorHealth)}</em></span>
+    <span><b>Delay outlook:</b> <em>${sanitizeText(estimatedDelayImpact)}</em></span>
     ${routeEtaMarkup}
     ${routeDelayMarkup}
   `;
@@ -49550,7 +49597,7 @@ function updateRouteIntelligence(nearest = []) {
     safeText("routeEta", routeLabelParts.hasHome ? "Choose destination" : "Set Home");
     safeText("desktopRouteStatus", routeLabelParts.hasHome ? "Choose a saved destination to start Route Watch." : "Set Home and one destination to start Route Watch.");
     safeText("routeFreshness", "Unknown");
-    safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
+    safeText("routeConfidence", `Monitoring: ${getRouteWatchMonitoringSignalCopy(systemConfidence)} · Guidance: ${getRouteWatchGuidanceSignalCopy(recommendationConfidence)}`);
     safeText("routeReports", "0 active");
     safeText("routeRecommendation", recommendationMessage);
     safeText("sideRouteWatchHint", routeLabelParts.hasHome ? "Choose a saved destination to start Route Watch." : "Set Home and one destination to start Route Watch.");
@@ -49573,7 +49620,7 @@ function updateRouteIntelligence(nearest = []) {
     renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, routePressureBand, routeRelevantHazardCount: routeRelevantHazards.length, alternateRouteAdvantageLabel, routeConfidence, ...getRouteEtaMetricsFromState({ routeHazardLevel: routeHazard.level, fallbackExtraMinutes: extraMinutes }) });
     safeText("desktopRouteStatus", "Delay wall detected on your corridor. Switch routes now.");
     safeText("routeFreshness", freshnessTier);
-    safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
+    safeText("routeConfidence", `Monitoring: ${getRouteWatchMonitoringSignalCopy(systemConfidence)} · Guidance: ${getRouteWatchGuidanceSignalCopy(recommendationConfidence)}`);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
     safeText("routeRecommendation", recommendationMessage);
     safeText("sideRouteWatchHint", routeContextSummary);
@@ -49585,7 +49632,7 @@ function updateRouteIntelligence(nearest = []) {
     renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, routePressureBand, routeRelevantHazardCount: routeRelevantHazards.length, alternateRouteAdvantageLabel, routeConfidence, ...getRouteEtaMetricsFromState({ routeHazardLevel: routeHazard.level, fallbackExtraMinutes: extraMinutes }) });
     safeText("desktopRouteStatus", "Operational pressure is rising. Leave early or shift to an alternate.");
     safeText("routeFreshness", freshnessTier);
-    safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
+    safeText("routeConfidence", `Monitoring: ${getRouteWatchMonitoringSignalCopy(systemConfidence)} · Guidance: ${getRouteWatchGuidanceSignalCopy(recommendationConfidence)}`);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
     safeText("routeRecommendation", recommendationMessage);
     safeText("sideRouteWatchHint", routeContextSummary);
@@ -49597,7 +49644,7 @@ function updateRouteIntelligence(nearest = []) {
     renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, routePressureBand, routeRelevantHazardCount: routeRelevantHazards.length, alternateRouteAdvantageLabel, routeConfidence, ...getRouteEtaMetricsFromState({ routeHazardLevel: routeHazard.level, fallbackExtraMinutes: extraMinutes }) });
     safeText("desktopRouteStatus", "Early delay signal detected near your monitored corridor.");
     safeText("routeFreshness", freshnessTier);
-    safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
+    safeText("routeConfidence", `Monitoring: ${getRouteWatchMonitoringSignalCopy(systemConfidence)} · Guidance: ${getRouteWatchGuidanceSignalCopy(recommendationConfidence)}`);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
     safeText("routeRecommendation", recommendationMessage);
     safeText("sideRouteWatchHint", routeContextSummary);
@@ -49609,7 +49656,7 @@ function updateRouteIntelligence(nearest = []) {
     renderRouteWatchIntelligenceFields({ systemConfidence, recommendationConfidence, corridorHealth, estimatedDelayImpact, routePressureBand, routeRelevantHazardCount: routeRelevantHazards.length, alternateRouteAdvantageLabel, routeConfidence, ...getRouteEtaMetricsFromState({ routeHazardLevel: routeHazard.level, fallbackExtraMinutes: extraMinutes }) });
     safeText("desktopRouteStatus", "Route corridor is open. Continue live monitoring.");
     safeText("routeFreshness", freshnessTier);
-    safeText("routeConfidence", `System: ${systemConfidence} · Recommendation: ${recommendationConfidence}`);
+    safeText("routeConfidence", `Monitoring: ${getRouteWatchMonitoringSignalCopy(systemConfidence)} · Guidance: ${getRouteWatchGuidanceSignalCopy(recommendationConfidence)}`);
     safeText("routeReports", `${routeHazard.nearbyReports.length} near route`);
     safeText("routeRecommendation", recommendationMessage);
     safeText("sideRouteWatchHint", routeContextSummary);
@@ -55793,7 +55840,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       eta: document.getElementById("routeEta")?.textContent || "ETA pending",
       summary: document.getElementById("routeSummaryInline")?.textContent || "Live route intelligence is active.",
       recommendation: snapshot.recommendationMessage || document.getElementById("routeRecommendation")?.textContent || "Maintain route monitoring.",
-      confidence: snapshot.routeConfidence || "Unknown",
+      confidence: getRouteWatchMonitoringSignalCopy(snapshot.routeConfidence || "Unknown"),
       activeHazards: activeNearby.length,
       topHazards
     };
@@ -56003,7 +56050,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
             <p>${sanitizeText(intel.summary)}</p>
             <div class="mobile-kpi-row">
               <span class="chip chip-neutral">${sanitizeText(intel.eta)}</span>
-              <span class="chip chip-neutral">Confidence: ${sanitizeText(intel.confidence)}</span>
+              <span class="chip chip-neutral">Monitoring signal: ${sanitizeText(intel.confidence)}</span>
               <span class="chip ${intel.activeHazards ? "chip-alert" : "chip-clear"}">${intel.activeHazards} active hazards</span>
             </div>
             <p><b>Recommendation:</b> ${sanitizeText(intel.recommendation)}</p>
