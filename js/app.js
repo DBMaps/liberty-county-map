@@ -468,6 +468,40 @@ function resolveOtherHazardNarrativeRoadName(report = {}, explicitRoadName = "")
   };
 }
 
+function normalizeOtherHazardAwarenessAreaCandidate(value = "") {
+  return String(value || "").replace(/\s+/g, " ").trim();
+}
+
+function isOtherHazardRoadLikeAwarenessAreaCandidate(value = "") {
+  const text = normalizeOtherHazardAwarenessAreaCandidate(value);
+  if (!text) return false;
+  const normalizedReference = typeof gridlyV230NormalizeRoadReference === "function"
+    ? gridlyV230NormalizeRoadReference(text)
+    : "";
+  const normalizedText = normalizeOtherHazardAwarenessAreaCandidate(
+    typeof normalizeGridlyRoadDisplayName === "function" ? normalizeGridlyRoadDisplayName(text) : text
+  );
+  const roadOnlyPatterns = [
+    /^(?:farm[-\s]+to[-\s]+market(?:\s+road)?|farm\s+road|fm)\s*[- ]?\d+[a-z]?$/i,
+    /^(?:county\s+road|cr)\s*[- ]?\d+[a-z]?$/i,
+    /^(?:u\.?s\.?\s+highway|united\s+states\s+highway|us)\s*[- ]?\d+[a-z]?$/i,
+    /^(?:state\s+highway|texas\s+highway|texas\s+state\s+highway|tx|sh)\s*[- ]?\d+[a-z]?$/i,
+    /^(?:interstate|ih|i)\s*[- ]?\d+[a-z]?$/i
+  ];
+  if (roadOnlyPatterns.some((pattern) => pattern.test(text) || pattern.test(normalizedText))) return true;
+  return Boolean(normalizedReference && normalizeOtherHazardAwarenessAreaCandidate(normalizedReference).toLowerCase() === normalizedText.toLowerCase());
+}
+
+function getOtherHazardAwarenessAreaRejectionReason(value = "", resolvedRoadName = "") {
+  const text = normalizeOtherHazardAwarenessAreaCandidate(value);
+  if (!text) return "empty";
+  const roadNorm = normalizeOtherHazardAwarenessAreaCandidate(resolvedRoadName).toLowerCase();
+  if (roadNorm && text.toLowerCase() === roadNorm) return "matches_resolved_road";
+  if (/^(?:liberty county|county|this road|local roadway|local road|location pending)$/i.test(text)) return "generic_area";
+  if (isOtherHazardRoadLikeAwarenessAreaCandidate(text)) return "road_like_label";
+  return "";
+}
+
 function resolveOtherHazardNarrativeArea(report = {}, explicitCommunityName = "", resolvedRoadName = "") {
   const coordinate = typeof normalizeCoordinatePair === "function"
     ? normalizeCoordinatePair(report?.lat ?? report?.latitude ?? report?.rawLat ?? report?.source?.lat ?? report?.source?.latitude ?? report?.raw?.lat ?? report?.raw?.latitude, report?.lng ?? report?.lon ?? report?.longitude ?? report?.rawLng ?? report?.source?.lng ?? report?.source?.lon ?? report?.source?.longitude ?? report?.raw?.lng ?? report?.raw?.lon ?? report?.raw?.longitude)
@@ -497,10 +531,31 @@ function resolveOtherHazardNarrativeArea(report = {}, explicitCommunityName = ""
     report?.source?.area,
     nearbyKnownLocation
   ];
-  const roadNorm = String(resolvedRoadName || "").trim().toLowerCase();
-  return candidates
-    .map((value) => String(value || "").replace(/\s+/g, " ").trim())
-    .find((value) => value && value.toLowerCase() !== roadNorm && !/^(?:liberty county|county|this road|local roadway|location pending)$/i.test(value)) || "";
+  const resolution = {
+    awarenessArea: "",
+    rejectedAwarenessAreaCandidate: "",
+    awarenessAreaRejectedReason: "",
+    finalAwarenessArea: "",
+    areaQualityPass: true
+  };
+  for (const candidate of candidates) {
+    const value = normalizeOtherHazardAwarenessAreaCandidate(candidate);
+    const rejectionReason = getOtherHazardAwarenessAreaRejectionReason(value, resolvedRoadName);
+    if (!value) continue;
+    if (rejectionReason) {
+      if (!resolution.rejectedAwarenessAreaCandidate) {
+        resolution.rejectedAwarenessAreaCandidate = value;
+        resolution.awarenessAreaRejectedReason = rejectionReason;
+      }
+      continue;
+    }
+    resolution.awarenessArea = value;
+    resolution.finalAwarenessArea = value;
+    resolution.areaQualityPass = !isOtherHazardRoadLikeAwarenessAreaCandidate(value);
+    return resolution;
+  }
+  resolution.areaQualityPass = true;
+  return resolution;
 }
 
 function buildOtherHazardNarrativeModel(report = {}, roadName = "", communityName = "") {
@@ -510,17 +565,32 @@ function buildOtherHazardNarrativeModel(report = {}, roadName = "", communityNam
   const subtypeLabel = subtypeOption?.narrativeLabel || "Hazard";
   const roadResolution = resolveOtherHazardNarrativeRoadName(report, roadName);
   const resolvedRoadName = roadResolution.roadName;
-  const awarenessArea = resolvedRoadName ? resolveOtherHazardNarrativeArea(report, communityName, resolvedRoadName) : "";
+  const areaResolution = resolvedRoadName
+    ? resolveOtherHazardNarrativeArea(report, communityName, resolvedRoadName)
+    : {
+      awarenessArea: "",
+      rejectedAwarenessAreaCandidate: "",
+      awarenessAreaRejectedReason: "",
+      finalAwarenessArea: "",
+      areaQualityPass: true
+    };
+  const awarenessArea = areaResolution.finalAwarenessArea || areaResolution.awarenessArea || "";
   const fallbackLevel = resolvedRoadName && awarenessArea ? 1 : (resolvedRoadName ? 2 : 3);
   const narrative = fallbackLevel === 1
     ? `${subtypeLabel} reported on ${resolvedRoadName} in ${awarenessArea}`
     : (fallbackLevel === 2 ? `${subtypeLabel} reported on ${resolvedRoadName}` : `${subtypeLabel} reported on this road`);
-  const wordingQualityPass = Boolean(narrative && !/\bon\s+this\s+road\s+on\b/i.test(narrative) && !/\bon\s+road\s+on\b/i.test(narrative) && !/on\s+This\s+Road/.test(narrative) && !/\bLivestock on Road on\b/i.test(narrative));
+  const narrativeAreaMatch = narrative.match(/\breported\s+on\s+.+?\s+in\s+(.+)$/i);
+  const narrativeAreaRoadLike = Boolean(narrativeAreaMatch?.[1] && isOtherHazardRoadLikeAwarenessAreaCandidate(narrativeAreaMatch[1]));
+  const wordingQualityPass = Boolean(narrative && !narrativeAreaRoadLike && !/\bon\s+this\s+road\s+on\b/i.test(narrative) && !/\bon\s+road\s+on\b/i.test(narrative) && !/on\s+This\s+Road/.test(narrative) && !/\bLivestock on Road on\b/i.test(narrative));
   return {
     subtype,
     subtypeLabel,
     resolvedRoadName,
     awarenessArea,
+    rejectedAwarenessAreaCandidate: areaResolution.rejectedAwarenessAreaCandidate || "",
+    awarenessAreaRejectedReason: areaResolution.awarenessAreaRejectedReason || "",
+    finalAwarenessArea: awarenessArea,
+    areaQualityPass: Boolean(areaResolution.areaQualityPass && !narrativeAreaRoadLike),
     narrative,
     fallbackLevel,
     roadResolutionAvailable: roadResolution.roadResolutionAvailable,
@@ -536,10 +606,14 @@ function recordOtherHazardRenderedAlert(record = {}, title = "") {
   lastOtherHazardRenderedSubtypeLabel = getOtherHazardSubtypeOption(subtype)?.narrativeLabel || getOtherHazardSubtypeLabel(subtype);
   lastOtherHazardRenderedAlertTitle = String(title || "").trim();
   const model = buildOtherHazardNarrativeModel({ ...record, subtype });
+  const renderedNarrative = lastOtherHazardRenderedAlertTitle || model.narrative;
+  const renderedAreaMatch = renderedNarrative.match(/\breported\s+on\s+.+?\s+in\s+(.+)$/i);
+  const renderedAreaRoadLike = Boolean(renderedAreaMatch?.[1] && isOtherHazardRoadLikeAwarenessAreaCandidate(renderedAreaMatch[1]));
   lastOtherHazardNarrativeAuditState = {
     ...model,
-    narrative: lastOtherHazardRenderedAlertTitle || model.narrative,
-    wordingQualityPass: Boolean((lastOtherHazardRenderedAlertTitle || model.narrative) && model.wordingQualityPass && !/\bon\s+This\s+Road\b/.test(lastOtherHazardRenderedAlertTitle))
+    narrative: renderedNarrative,
+    areaQualityPass: Boolean(model.areaQualityPass && !renderedAreaRoadLike),
+    wordingQualityPass: Boolean(renderedNarrative && model.wordingQualityPass && !renderedAreaRoadLike && !/\bon\s+This\s+Road\b/.test(renderedNarrative))
   };
 }
 
@@ -583,11 +657,15 @@ function gridlyOtherHazardNarrativeAudit() {
     subtypeLabel: model.subtypeLabel,
     resolvedRoadName: model.resolvedRoadName,
     awarenessArea: model.awarenessArea,
+    rejectedAwarenessAreaCandidate: model.rejectedAwarenessAreaCandidate || "",
+    awarenessAreaRejectedReason: model.awarenessAreaRejectedReason || "",
+    finalAwarenessArea: model.finalAwarenessArea || model.awarenessArea || "",
+    areaQualityPass: Boolean(model.areaQualityPass),
     narrative: model.narrative,
     fallbackLevel: model.fallbackLevel,
     roadResolutionAvailable: model.roadResolutionAvailable,
     normalizationApplied: model.normalizationApplied,
-    wordingQualityPass: Boolean(model.wordingQualityPass && !/\bon\s+This\s+Road\b/.test(model.narrative))
+    wordingQualityPass: Boolean(model.wordingQualityPass && model.areaQualityPass && !/\bon\s+This\s+Road\b/.test(model.narrative))
   };
 }
 
