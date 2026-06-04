@@ -60143,6 +60143,192 @@ function gridlyRouteIntelligenceExperienceAudit() {
 window.gridlyRouteIntelligenceExperienceAudit = gridlyRouteIntelligenceExperienceAudit;
 exposeGridlyAuditHelper("gridlyRouteIntelligenceExperienceAudit", gridlyRouteIntelligenceExperienceAudit);
 
+function gridlyHistoricalIntelligenceExperienceAudit() {
+  const generatedAt = new Date().toISOString();
+  const findings = [];
+  const recommendations = [];
+  const safeDocument = typeof document !== "undefined" ? document : null;
+  const snapshot = typeof gridlyReadHistoricalIntelligenceStorageSnapshot === "function"
+    ? gridlyReadHistoricalIntelligenceStorageSnapshot()
+    : { found: false, parseOk: false, state: { crossingEvents: [], hazardEvents: [] }, storageReadError: "history_reader_unavailable" };
+  const state = snapshot.state || {};
+  const crossingEvents = Array.isArray(state.crossingEvents) ? state.crossingEvents : [];
+  const hazardEvents = Array.isArray(state.hazardEvents) ? state.hazardEvents : [];
+  const combinedEvents = [
+    ...crossingEvents.map((record, index) => ({ kind: "crossing", record, index })),
+    ...hazardEvents.map((record, index) => ({ kind: "hazard", record, index }))
+  ];
+  const findingsModel = typeof gridlyBuildHistoricalIntelligenceFindings === "function"
+    ? gridlyBuildHistoricalIntelligenceFindings()
+    : { rankedFindings: [], dedupedRankedFindings: [], historicalRecordCount: combinedEvents.length };
+  const rankedFindings = Array.isArray(findingsModel.rankedFindings) ? findingsModel.rankedFindings : [];
+  const dedupedRankedFindings = Array.isArray(findingsModel.dedupedRankedFindings) ? findingsModel.dedupedRankedFindings : rankedFindings;
+  const readiness = typeof gridlyBuildHistoricalIntelligenceReadiness === "function"
+    ? gridlyBuildHistoricalIntelligenceReadiness(combinedEvents, crossingEvents, hazardEvents)
+    : { categories: [], diagnostics: {} };
+  const hasUsableTimestamp = (record) => {
+    const value = typeof gridlyHistoricalAuditTimestamp === "function" ? gridlyHistoricalAuditTimestamp(record) : (record?.createdAt || record?.created_at || record?.timestamp || null);
+    const ms = new Date(value || 0).getTime();
+    return Number.isFinite(ms) && ms > 0;
+  };
+  const timestampMs = (record) => {
+    const value = typeof gridlyHistoricalAuditTimestamp === "function" ? gridlyHistoricalAuditTimestamp(record) : (record?.createdAt || record?.created_at || record?.timestamp || null);
+    const ms = new Date(value || 0).getTime();
+    return Number.isFinite(ms) && ms > 0 ? ms : null;
+  };
+  const durationValue = (record) => {
+    const value = typeof gridlyHistoricalAuditDuration === "function" ? gridlyHistoricalAuditDuration(record) : Number(record?.durationMinutes ?? record?.duration ?? record?.duration_min ?? record?.durationMins);
+    return Number.isFinite(Number(value)) && Number(value) >= 0 ? Number(value) : null;
+  };
+  const roadValue = (record) => typeof gridlyHistoricalAuditRoad === "function" ? gridlyHistoricalAuditRoad(record) : String(record?.roadName || record?.road || "").trim();
+  const crossingValue = (record) => typeof gridlyHistoricalAuditCrossing === "function" ? gridlyHistoricalAuditCrossing(record) : String(record?.crossingName || record?.crossingId || "").trim();
+  const hazardTypeValue = (record) => typeof gridlyHistoricalAuditHazardType === "function" ? gridlyHistoricalAuditHazardType(record) : String(record?.hazardType || record?.type || "").trim();
+  const confirmationValue = (record) => typeof gridlyHistoricalIntelligenceConfirmationCount === "function"
+    ? gridlyHistoricalIntelligenceConfirmationCount(record)
+    : Number(record?.confirmationCount ?? record?.confirmations ?? record?.confirmation_count ?? 0);
+  const contributorValue = (record) => Number(record?.uniqueContributorCount ?? record?.contributorCount ?? record?.contributors ?? record?.reporterCount ?? record?.reporter_count ?? record?.distinctReporters);
+  const groupCount = (events, keyBuilder) => {
+    const counts = new Map();
+    events.forEach((event) => {
+      const key = String(keyBuilder(event.record, event.kind) || "").trim().toLowerCase();
+      if (!key) return;
+      counts.set(key, (counts.get(key) || 0) + 1);
+    });
+    return {
+      unique: counts.size,
+      repeated: Array.from(counts.values()).filter((count) => count >= 2).length,
+      maxCount: Math.max(0, ...Array.from(counts.values()))
+    };
+  };
+  const timestamps = combinedEvents.map((event) => timestampMs(event.record)).filter((value) => Number.isFinite(value)).sort((a, b) => a - b);
+  const durationEvents = combinedEvents.filter((event) => durationValue(event.record) !== null);
+  const clearTimeEvents = combinedEvents.filter((event) => event.record?.clearedAt || event.record?.cleared_at || durationValue(event.record) !== null);
+  const routeImpactEvents = combinedEvents.filter((event) => Boolean(event.record?.routeImpact || event.record?.route_impact || event.record?.routeId || event.record?.route_id || event.record?.routeName || event.record?.route_name));
+  const contributorEvents = combinedEvents.filter((event) => Number.isFinite(contributorValue(event.record)) || confirmationValue(event.record) > 0);
+  const dayBuckets = groupCount(combinedEvents.filter((event) => hasUsableTimestamp(event.record)), (record) => new Date(timestampMs(record)).toISOString().slice(0, 10));
+  const hourBuckets = groupCount(combinedEvents.filter((event) => hasUsableTimestamp(event.record)), (record) => String(new Date(timestampMs(record)).getUTCHours()).padStart(2, "0"));
+  const monthBuckets = groupCount(combinedEvents.filter((event) => hasUsableTimestamp(event.record)), (record) => new Date(timestampMs(record)).toISOString().slice(0, 7));
+  const categoryGroups = groupCount(combinedEvents, (record, kind) => kind === "crossing" ? "rail_blockage_delay" : hazardTypeValue(record));
+  const locationGroups = groupCount(combinedEvents, (record, kind) => kind === "crossing" ? crossingValue(record) || roadValue(record) : [hazardTypeValue(record), roadValue(record)].filter(Boolean).join("|"));
+  const crossingGroups = groupCount(crossingEvents.map((record, index) => ({ kind: "crossing", record, index })), (record) => crossingValue(record) || record?.crossingId || record?.crossing_id);
+  const recurringFloodingFindings = dedupedRankedFindings.filter((finding) => finding.category === "recurring_flooding_location");
+  const blockedCrossingFindings = dedupedRankedFindings.filter((finding) => finding.category === "most_blocked_crossing");
+  const communityHotspotFindings = dedupedRankedFindings.filter((finding) => finding.category === "community_confirmed_hotspot");
+  const historySurfaceDetected = Boolean(
+    safeDocument?.getElementById("gridlyHistoryDockButton")
+    || safeDocument?.querySelector?.("#gridlyPortraitV2 .gridly-v2-bottom-dock [data-v2-sheet='history']")
+    || typeof buildGridlyHistoricalIntelligenceSheetHtml === "function"
+  );
+  const seedPattern = /seed|demo|fake|sample|test|mock|simulated/i;
+  const seededDataDetected = combinedEvents.some((event) => seedPattern.test([
+    event.record?.source,
+    event.record?.sourceType,
+    event.record?.source_type,
+    event.record?.id,
+    event.record?.reportId,
+    event.record?.incidentId,
+    event.record?.metadata?.source,
+    event.record?.metadata?.seedSource
+  ].map((value) => String(value || "")).join(" ")));
+  const availableSignals = [
+    { signal: "report counts", status: combinedEvents.length > 0 ? "AVAILABLE" : "READY_EMPTY", sourceFields: ["crossingEvents[]", "hazardEvents[]"], currentValue: combinedEvents.length, driverValue: "MEDIUM", intelligenceAssetValue: "HIGH", notes: "Base count used by every current card as 'Based on' community reports." },
+    { signal: "recurrence counts", status: locationGroups.repeated > 0 ? "AVAILABLE" : "DERIVABLE_WHEN_DATA_EXISTS", sourceFields: ["crossingId/crossingName", "hazardType + roadName"], currentValue: locationGroups.repeated, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Current findings require at least two records in the same grouped location/category." },
+    { signal: "unique locations", status: locationGroups.unique > 0 ? "AVAILABLE" : "DERIVABLE_WHEN_DATA_EXISTS", sourceFields: ["roadName", "crossingName", "crossingId"], currentValue: locationGroups.unique, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Supports repeat-location intelligence and dedupe." },
+    { signal: "category recurrence", status: categoryGroups.repeated > 0 ? "AVAILABLE" : "DERIVABLE_WHEN_DATA_EXISTS", sourceFields: ["hazardType", "type", "report_type", "crossingEvents"], currentValue: categoryGroups.repeated, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Currently generates flooding, construction, road hazard, delay, crossing, and hotspot categories." },
+    { signal: "timestamps", status: timestamps.length > 0 ? "AVAILABLE" : "READY_EMPTY", sourceFields: ["createdAt", "blockedAt", "submittedAt", "created_at", "reportedAt", "timestamp"], currentValue: timestamps.length, driverValue: "MEDIUM", intelligenceAssetValue: "HIGH", notes: "Used today for latestAt and recency boost; enough to derive first/last, hour/day/month patterns." },
+    { signal: "first reported", status: timestamps.length > 0 ? "DERIVABLE_TODAY" : "READY_EMPTY", sourceFields: ["timestamp fields"], currentValue: timestamps[0] ? new Date(timestamps[0]).toISOString() : null, driverValue: "MEDIUM", intelligenceAssetValue: "HIGH", notes: "Not displayed today but derivable from stored timestamps." },
+    { signal: "last reported", status: timestamps.length > 0 ? "AVAILABLE" : "READY_EMPTY", sourceFields: ["timestamp fields"], currentValue: timestamps[timestamps.length - 1] ? new Date(timestamps[timestamps.length - 1]).toISOString() : null, driverValue: "MEDIUM", intelligenceAssetValue: "HIGH", notes: "Displayed on current historical cards when latestAt exists." },
+    { signal: "average delay", status: durationEvents.length > 0 ? "AVAILABLE" : "READY_EMPTY", sourceFields: ["durationMinutes", "duration", "duration_min", "durationMins", "created/blocked + clearedAt"], currentValue: durationEvents.length, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Displayed for blocked crossing and high-delay corridor cards." },
+    { signal: "average clear time", status: clearTimeEvents.length > 0 ? "AVAILABLE" : "READY_EMPTY", sourceFields: ["clearedAt", "cleared_at", "durationMinutes"], currentValue: clearTimeEvents.length, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Displayed for non-crossing/non-delay historical cards when duration exists." },
+    { signal: "report frequency", status: timestamps.length >= 2 ? "DERIVABLE_TODAY" : "NEEDS_MORE_DATA", sourceFields: ["timestamp fields"], currentValue: dayBuckets.unique, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Not displayed today; can be computed as reports per day/week/month." },
+    { signal: "contributor counts", status: contributorEvents.length > 0 ? "PARTIAL" : "NOT_STORED_DIRECTLY", sourceFields: ["confirmationCount", "confirmations", "contributorCount variants"], currentValue: contributorEvents.length, driverValue: "MEDIUM", intelligenceAssetValue: "HIGH", notes: "Confirmations can estimate community support; true unique contributor identity is not guaranteed in current history records." },
+    { signal: "contributor estimates", status: contributorEvents.length > 0 ? "DERIVABLE_TODAY" : "LIMITED", sourceFields: ["confirmationCount", "confirmations", "report counts"], currentValue: contributorEvents.length, driverValue: "MEDIUM", intelligenceAssetValue: "MEDIUM", notes: "Can estimate with report count plus confirmations, but should be labeled as estimate only." },
+    { signal: "peak reporting hours", status: hourBuckets.unique >= 2 ? "DERIVABLE_TODAY" : "NEEDS_MORE_DATA", sourceFields: ["timestamp fields"], currentValue: hourBuckets.unique, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Readiness model already checks time-of-day pattern viability; current cards do not show it." },
+    { signal: "peak reporting days", status: dayBuckets.unique >= 2 ? "DERIVABLE_TODAY" : "NEEDS_MORE_DATA", sourceFields: ["timestamp fields"], currentValue: dayBuckets.unique, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Useful for school/work commute planning; current cards do not show it." },
+    { signal: "monthly activity", status: monthBuckets.unique >= 1 ? "DERIVABLE_TODAY" : "READY_EMPTY", sourceFields: ["timestamp fields"], currentValue: monthBuckets.unique, driverValue: "MEDIUM", intelligenceAssetValue: "HIGH", notes: "Can power trend direction, seasonality, and planning exports." },
+    { signal: "route impact recurrence", status: routeImpactEvents.length > 0 ? "PARTIAL" : "NOT_AVAILABLE_IN_HISTORY_RECORDS", sourceFields: ["routeImpact", "routeId", "routeName"], currentValue: routeImpactEvents.length, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "No current historical card consumes this; avoid touching Route Watch/route logic." },
+    { signal: "crossing recurrence", status: crossingGroups.repeated > 0 ? "AVAILABLE" : "DERIVABLE_WHEN_DATA_EXISTS", sourceFields: ["crossingEvents[].crossingId", "crossingName"], currentValue: crossingGroups.repeated, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Currently generates Frequently Blocked Crossing findings." }
+  ];
+  const currentCardInputs = [
+    { card: "Historical Intelligence sheet", fieldsUsed: ["dedupedRankedFindings", "rank", "categoryLabel", "title", "locationLabel", "description", "averageDurationMinutes", "count", "latestAt"], source: "buildGridlyHistoricalIntelligenceSheetHtml() from gridlyBuildHistoricalIntelligenceFindings()", derivedFields: ["rank", "description", "durationLabel", "formatted duration", "formatted last reported"], placeholderFields: ["Not Enough History Yet empty state"], seededOrDemoFields: seededDataDetected ? ["depends on local history record source"] : [] },
+    { card: "Recurring Flooding Location", fieldsUsed: ["hazardEvents", "hazardType", "roadName", "count", "averageDurationMinutes", "latestAt"], source: "hazard history filtered by flood/high water/water and grouped by road", derivedFields: ["recurring_flooding_location", "Average clear time", "report count", "Last reported"], placeholderFields: [], seededOrDemoFields: seededDataDetected ? ["hazardEvents seed/demo records"] : [] },
+    { card: "Frequently Blocked Crossing", fieldsUsed: ["crossingEvents", "crossingId", "crossingName", "count", "durationMinutes", "latestAt"], source: "crossing history grouped by crossing location key", derivedFields: ["most_blocked_crossing", "Average delay", "report count", "Last reported"], placeholderFields: [], seededOrDemoFields: seededDataDetected ? ["crossingEvents seed/demo records"] : [] },
+    { card: "Community Hotspot", fieldsUsed: ["confirmationCount", "confirmations", "roadName/crossingName", "count", "latestAt"], source: "confirmed crossing/hazard events grouped by road or crossing", derivedFields: ["community_confirmed_hotspot", "confirmationCount", "significanceScore"], placeholderFields: [], seededOrDemoFields: seededDataDetected ? ["confirmation seed/demo fields"] : [] },
+    { card: "Historical hazard summaries", fieldsUsed: ["hazardType", "roadName", "referenceRoad", "clearedAt", "durationMinutes", "confirmationCount", "latestAt"], source: "recurring_hazard, repeat_construction_zone, high_delay_corridor finding builders", derivedFields: ["hazardLabel", "averageDurationMinutes", "significanceScore", "normalizedRoadName", "groupingKey"], placeholderFields: ["Local Area fallback when no location label exists"], seededOrDemoFields: seededDataDetected ? ["hazardEvents seed/demo records"] : [] }
+  ];
+  const driverValueSignals = {
+    high: availableSignals.filter((item) => item.driverValue === "HIGH").map((item) => item.signal),
+    medium: availableSignals.filter((item) => item.driverValue === "MEDIUM").map((item) => item.signal),
+    low: ["significanceScore", "normalizedRoadName", "normalizedReferenceRoad", "groupingKey", "sourceRecordIds", "storage key/parse diagnostics"]
+  };
+  const intelligenceAssetSignals = availableSignals
+    .filter((item) => item.intelligenceAssetValue === "HIGH")
+    .map((item) => ({ signal: item.signal, value: item.currentValue, status: item.status, buyers: ["municipalities", "railroads", "logistics companies", "emergency management", "planning agencies"] }));
+  const realDataReadySignals = availableSignals
+    .filter((item) => ["AVAILABLE", "DERIVABLE_TODAY", "PARTIAL"].includes(item.status))
+    .map((item) => item.signal);
+  if (!historySurfaceDetected) findings.push({ severity: "high", area: "system", message: "Historical Intelligence surface was not detected by known selectors or builders." });
+  if (!combinedEvents.length) findings.push({ severity: "medium", area: "data", message: "Historical storage is ready but currently empty in this runtime." });
+  if (dedupedRankedFindings.length) findings.push({ severity: "info", area: "cards", message: `${dedupedRankedFindings.length} historical card finding(s) can be generated now.` });
+  if (seededDataDetected) findings.push({ severity: "info", area: "data", message: "Seed/demo/sample-like historical records detected; acceptable for audit but should be labeled before production decisions." });
+  findings.push({ severity: "medium", area: "card emphasis", message: "Current cards emphasize category/title and descriptive copy before the actionable time-window question drivers likely ask first." });
+  findings.push({ severity: "info", area: "card emphasis", message: "Current cards already show location, average delay/clear time when available, report count, and last reported date." });
+  findings.push({ severity: "medium", area: "missing driver question", message: "Peak time window, peak day, frequency rate, and trend direction are derivable from timestamps but not emphasized in current cards." });
+  recommendations.push({ priority: "P0", target: "V248.1 scope", action: "Keep the next step read-only or presentation-only until seeded/demo history is clearly separated from real collected reports." });
+  recommendations.push({ priority: "P1", target: "Driver value", action: "Prioritize location, when it usually happens, typical delay/clear time, recurrence count, and last report in that order." });
+  recommendations.push({ priority: "P1", target: "Historical analytics", action: "Add read-only peak-hour, peak-day, monthly trend, and first/last reported derivations before changing card UI." });
+  recommendations.push({ priority: "P1", target: "Commercial intelligence", action: "Preserve recurrence counts, average durations, repeat locations, and time-window aggregations as future municipality/railroad/logistics assets." });
+  recommendations.push({ priority: "P2", target: "Trust labeling", action: "Distinguish based-on count from unique contributor estimates; avoid implying more reporters than the stored data proves." });
+  recommendations.push({ priority: "P2", target: "Safety", action: "Continue keeping historical intelligence visually and semantically separate from live hazards and route decisions." });
+  return {
+    available: true,
+    auditVersion: "V248.0",
+    generatedAt,
+    historicalSystemDetected: historySurfaceDetected,
+    availableSignals,
+    currentCardInputs,
+    driverValueSignals,
+    intelligenceAssetSignals,
+    seededDataDetected,
+    realDataReadySignals,
+    findings,
+    recommendations,
+    protectedSystemsModified: false,
+    routeLogicModified: false,
+    awarenessFilteringModified: false,
+    supabaseModified: false,
+    readOnly: true,
+    noReportCreation: true,
+    noReportDeletion: true,
+    noSupabaseWrites: true,
+    noLifecycleChanges: true,
+    inventoryCounts: {
+      historicalRecordCount: combinedEvents.length,
+      crossingEventCount: crossingEvents.length,
+      hazardEventCount: hazardEvents.length,
+      rankedFindingCount: rankedFindings.length,
+      dedupedFindingCount: dedupedRankedFindings.length,
+      recurringFloodingFindingCount: recurringFloodingFindings.length,
+      blockedCrossingFindingCount: blockedCrossingFindings.length,
+      communityHotspotFindingCount: communityHotspotFindings.length,
+      timestampedEventCount: timestamps.length,
+      durationEventCount: durationEvents.length,
+      routeImpactEventCount: routeImpactEvents.length
+    },
+    readinessCategories: readiness.categories || [],
+    readinessDiagnostics: readiness.diagnostics || {},
+    cardCritique: {
+      usersLikelyCareAbout: ["Where is it?", "When does it usually happen?", "How bad is it?", "How many reports support it?", "How recent is the pattern?", "Is this live or historical?"],
+      currentlyEmphasized: ["rank", "category", "title", "location", "plain-language description", "average delay/clear time", "community report count", "last reported"],
+      shouldProbablyEmphasize: ["location", "peak time/day window", "average delay or clear time", "recurrence/report count", "last reported", "trend direction when enough months exist"]
+    },
+    canProceedToV248_1: Boolean(historySurfaceDetected && typeof gridlyBuildHistoricalIntelligenceFindings === "function" && !snapshot.storageReadError)
+  };
+}
+
+window.gridlyHistoricalIntelligenceExperienceAudit = gridlyHistoricalIntelligenceExperienceAudit;
+exposeGridlyAuditHelper("gridlyHistoricalIntelligenceExperienceAudit", gridlyHistoricalIntelligenceExperienceAudit);
+
 
 window.gridlyVisualRegressionAudit = function gridlyVisualRegressionAudit() {
   try {
