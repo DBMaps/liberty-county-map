@@ -14263,7 +14263,10 @@ function openAlertsSurfaceFromDock() {
   let template = fallbackTemplate;
   try {
     const snapshot = window.getAlertsSurfaceSnapshot?.() || getAlertsSurfaceSnapshot?.();
-    const alertsForRender = Array.isArray(snapshot?.alerts) ? snapshot.alerts : [];
+    const snapshotAlerts = Array.isArray(snapshot?.alerts) ? snapshot.alerts : [];
+    const alertsForRender = typeof gridlyFilterAlertRecordsBySelectedAwarenessArea === "function"
+      ? gridlyFilterAlertRecordsBySelectedAwarenessArea(snapshotAlerts, "openAlertsSurfaceFromDock")
+      : snapshotAlerts;
     window.__gridlyLatestAlertsForRender = alertsForRender;
     window.__gridlyAlertsForRenderSample = alertsForRender.slice(0, 5);
 
@@ -14919,6 +14922,7 @@ function openAlertsSurfaceFromDock() {
   const lng = getFirstNumber(alert, ["lng", "lon", "longitude", "rawLng", "raw.lng", "source.lng", "source.lon"]);
   const id = cleanDisplayValue(alert?.id || alert?.reportId || alert?.uuid || `alert-${index}`);
   const coordAttrs = Number.isFinite(lat) && Number.isFinite(lng) ? ` data-gridly-alert-lat="${esc(lat)}" data-gridly-alert-lng="${esc(lng)}"` : "";
+  const metadataAttrs = ` data-gridly-alert-crossing-id="${esc(alert?.crossingId || alert?.crossing_id || alert?.raw?.crossingId || alert?.raw?.crossing_id || "")}" data-gridly-alert-hazard-type="${esc(alert?.hazardType || alert?.type || alert?.category || alert?.reportType || alert?.report_type || "")}" data-gridly-alert-awareness-area="${esc(alert?.awarenessArea || alert?.awareness_area || alert?.area || alert?.city || alert?.town || alert?.raw?.awarenessArea || alert?.raw?.city || "")}"`;
   const resolvedTitle = titleFor(alert);
   const resolvedHelper = helperTextFor(alert);
   const alertContext = chooseBestAlertLocationContext(alert);
@@ -14997,7 +15001,7 @@ function openAlertsSurfaceFromDock() {
     locationSources: alertContext?.enriched ? Object.keys(alertContext.enriched).slice(0, 8) : []
   });
   return `
-  <div class="gridly-alert-row gridly-alert-intel-card" data-gridly-alert-row="true" data-gridly-alert-id="${esc(id)}" data-gridly-alert-title="${esc(displayTitle)}" data-gridly-alert-summary="${esc(alertRowSummary)}" data-gridly-alert-location="${esc(cleanedAlertLocationLabel)}"${coordAttrs} data-gridly-alert-hidden="${isHidden ? "true" : "false"}" style="display:${isHidden ? "none" : "flex"};gap:10px;align-items:flex-start;padding:12px 12px ${index === 2 ? 12 : 10}px 12px;border:1px solid rgba(255,255,255,0.09);border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018));box-shadow:0 6px 20px rgba(0,0,0,0.28);margin-bottom:${index === 2 ? 0 : 8}px;cursor:${Number.isFinite(lat) && Number.isFinite(lng) ? "pointer" : "default"};">
+  <div class="gridly-alert-row gridly-alert-intel-card" data-gridly-alert-row="true" data-gridly-alert-id="${esc(id)}" data-gridly-alert-title="${esc(displayTitle)}" data-gridly-alert-summary="${esc(alertRowSummary)}" data-gridly-alert-location="${esc(cleanedAlertLocationLabel)}"${coordAttrs}${metadataAttrs} data-gridly-alert-hidden="${isHidden ? "true" : "false"}" style="display:${isHidden ? "none" : "flex"};gap:10px;align-items:flex-start;padding:12px 12px ${index === 2 ? 12 : 10}px 12px;border:1px solid rgba(255,255,255,0.09);border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018));box-shadow:0 6px 20px rgba(0,0,0,0.28);margin-bottom:${index === 2 ? 0 : 8}px;cursor:${Number.isFinite(lat) && Number.isFinite(lng) ? "pointer" : "default"};">
     <div style="width:18px;min-width:18px;height:18px;margin-top:1px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,179,71,0.18);border:1px solid rgba(255,179,71,0.5);color:#ffd28a;font-size:11px;line-height:1;">!</div>
     <div style="min-width:0;flex:1;">
       <div style="display:grid;gap:4px;">
@@ -23578,18 +23582,37 @@ function gridlyClearedHazardPersistenceRecordsFromStorageArea(storage, storageNa
 }
 
 function gridlyClearedHazardPersistenceRenderedAlertRows() {
-  const cacheRows = gridlyClearedHazardPersistenceSafeArray(typeof window !== "undefined" ? window.__gridlyLatestAlertsForRender : []);
+  const cacheRows = gridlyClearedHazardPersistenceSafeArray(typeof window !== "undefined" ? window.__gridlyLatestAlertsForRender : [])
+    .map((record) => ({ ...record, renderedSurface: record?.renderedSurface || "alert_cache" }));
   const domRows = [];
   if (typeof document !== "undefined") {
-    document.querySelectorAll(".alert-item, .gridly-alert-title, .gridly-alert-headline, [data-gridly-alert-title], [data-incident-id]").forEach((node, index) => {
+    const cacheById = new Map(cacheRows.map((record) => [String(gridlyClearedHazardPersistenceId(record) || "").trim(), record]).filter(([id]) => Boolean(id)));
+    const cacheByTitle = new Map(cacheRows.map((record) => [String(record?.title || record?.headline || record?.resolvedHeadline || "").trim().toLowerCase(), record]).filter(([title]) => Boolean(title)));
+    document.querySelectorAll("[data-gridly-alert-row='true'], [data-incident-id]").forEach((node, index) => {
       const dataset = node?.dataset || {};
       const text = String(node?.innerText || node?.textContent || "").trim();
+      const rawId = dataset.gridlyAlertId || dataset.incidentId || dataset.id || "";
+      const rawTitle = dataset.gridlyAlertTitle || dataset.gridlyTitle || text.slice(0, 120);
+      const titleKey = String(rawTitle || "").trim().toLowerCase();
+      const matchedCache = (rawId ? cacheById.get(String(rawId).trim()) : null) || (titleKey ? cacheByTitle.get(titleKey) : null) || null;
+      if (!rawId && !matchedCache && !dataset.gridlyAlertTitle && !dataset.gridlyAlertSummary) return;
+      const lat = Number(dataset.gridlyAlertLat);
+      const lng = Number(dataset.gridlyAlertLng);
       domRows.push({
-        id: dataset.incidentId || dataset.id || `dom-alert-${index}`,
-        title: dataset.gridlyAlertTitle || dataset.gridlyTitle || text.slice(0, 120),
+        ...(matchedCache || {}),
+        id: rawId || gridlyClearedHazardPersistenceId(matchedCache) || `dom-alert-${index}`,
+        title: rawTitle || matchedCache?.title || "",
         detail: text,
-        status: dataset.state || dataset.status || "rendered",
-        source: "rendered_alert_dom"
+        status: dataset.state || dataset.status || matchedCache?.status || "rendered",
+        source: "rendered_alert_dom",
+        renderedSurface: "alert_panel_dom",
+        awarenessArea: dataset.gridlyAlertAwarenessArea || matchedCache?.awarenessArea || matchedCache?.area || "",
+        area: dataset.gridlyAlertAwarenessArea || matchedCache?.area || matchedCache?.city || matchedCache?.town || "",
+        locationName: dataset.gridlyAlertLocation || matchedCache?.locationName || matchedCache?.knownLocation || "",
+        lat: Number.isFinite(lat) ? lat : matchedCache?.lat,
+        lng: Number.isFinite(lng) ? lng : (matchedCache?.lng ?? matchedCache?.lon),
+        crossingId: dataset.gridlyAlertCrossingId || matchedCache?.crossingId || matchedCache?.crossing_id || "",
+        hazardType: dataset.gridlyAlertHazardType || matchedCache?.hazardType || matchedCache?.type || matchedCache?.category || ""
       });
     });
   }
@@ -23614,6 +23637,29 @@ function gridlyClearedHazardPersistenceRenderedMarkers() {
     });
   });
   return markerRows;
+}
+
+function gridlyExplainAlertAwarenessSurvival(record = {}, currentArea = null) {
+  const selectedLabel = currentArea?.label || currentArea?.storageValue || GRIDLY_COUNTY_WIDE_AWARENESS_LABEL;
+  const coord = typeof getGridlyAwarenessIntelligenceRecordCoordinate === "function" ? getGridlyAwarenessIntelligenceRecordCoordinate(record) : gridlyClearedHazardPersistenceCoord(record);
+  const textArea = record?.awarenessArea || record?.awareness_area || record?.area || record?.city || record?.town || record?.raw?.awarenessArea || record?.raw?.city || "";
+  const renderedSurface = record?.renderedSurface || (record?.source === "rendered_alert_dom" ? "alert_panel_dom" : "alert_cache");
+  if (!currentArea || currentArea.countyWide || currentArea.fallback) {
+    return {
+      renderedSurface,
+      whyItSurvivedFiltering: "County mode does not apply town awareness filtering."
+    };
+  }
+  if (!coord && !textArea && !(record?.crossingId || record?.crossing_id || record?.crossingName || record?.crossing_name)) {
+    return {
+      renderedSurface,
+      whyItSurvivedFiltering: `Rendered ${renderedSurface} row had no recoverable coordinates, crossing, city, or awarenessArea metadata for ${selectedLabel}; it should be linked to its filtered cache record or removed from mismatch auditing.`
+    };
+  }
+  return {
+    renderedSurface,
+    whyItSurvivedFiltering: `Rendered ${renderedSurface} row did not match selected awareness area ${selectedLabel}; source filtering failed or the DOM/cache row was stale.`
+  };
 }
 
 function gridlyClearedHazardPersistenceRecordSummary(record = {}, source = "unknown", membership = {}, nowMs = Date.now(), currentArea = null) {
@@ -23842,14 +23888,18 @@ async function gridlyClearedHazardPersistenceAudit(options = {}) {
   const awarenessAreaMismatchRecords = alertRecords.filter((record) => {
     if (!currentAwarenessAreaRaw || currentAwarenessAreaRaw.countyWide || currentAwarenessAreaRaw.fallback) return false;
     try { return !isGridlyRecordInAwarenessArea(record, currentAwarenessAreaRaw); } catch (_error) { return false; }
-  }).map((record) => gridlyClearedHazardPersistenceRecordSummary(record, "renderedAlerts", {
-    appearsInActiveHazards: appears(record, "activeHazards", safeActiveHazards),
-    appearsInUnifiedIncidents: appears(record, "unifiedIncidents", unifiedIncidents),
-    appearsInAlerts: true,
-    appearsOnMap: appears(record, "markers", renderedMarkers),
-    appearsInStorage: appears(record, "storage", storageRecords),
-    appearsInSupabaseInventory: appears(record, "supabase", supabaseRecords)
-  }, nowMs, currentAwarenessAreaRaw));
+  }).map((record) => ({
+    ...gridlyClearedHazardPersistenceRecordSummary(record, "renderedAlerts", {
+      appearsInActiveHazards: appears(record, "activeHazards", safeActiveHazards),
+      appearsInUnifiedIncidents: appears(record, "unifiedIncidents", unifiedIncidents),
+      appearsInAlerts: true,
+      appearsOnMap: appears(record, "markers", renderedMarkers),
+      appearsInStorage: appears(record, "storage", storageRecords),
+      appearsInSupabaseInventory: appears(record, "supabase", supabaseRecords)
+    }, nowMs, currentAwarenessAreaRaw),
+    crossingId: record?.crossingId || record?.crossing_id || record?.raw?.crossingId || record?.raw?.crossing_id || null,
+    ...gridlyExplainAlertAwarenessSurvival(record, currentAwarenessAreaRaw)
+  }));
   awarenessAreaMismatchRecords.forEach((record) => addSuspicious(record, "renderedAlerts", "awareness_mismatch", "Rendered alert is outside the selected awareness area."));
 
   storageRecords.filter((record) => gridlyClearedHazardPersistenceStatus(record, nowMs) !== "cleared" && coordinateMatch(record, safeRecentlyCleared)).forEach((record) => {
@@ -55448,9 +55498,12 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
 
   function buildAlertsSurfaceHtml() {
     const snapshot = getAlertsSurfaceSnapshot();
-    const rawAlerts = Array.isArray(snapshot.alerts)
+    const snapshotAlerts = Array.isArray(snapshot.alerts)
       ? snapshot.alerts
       : [];
+    const rawAlerts = typeof gridlyFilterAlertRecordsBySelectedAwarenessArea === "function"
+      ? gridlyFilterAlertRecordsBySelectedAwarenessArea(snapshotAlerts, "buildAlertsSurfaceHtml")
+      : snapshotAlerts;
 
     const hasActiveAlerts =
       snapshot.hasActiveAlerts === true ||
@@ -55527,8 +55580,13 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       : normalizeGridlyUserFacingRoadText(cleanedAlertLocationLabel
         ? (buildGridlyHeaderCandidateFromCategoryLocation(subtypeEventLabel || displayTitle, cleanedAlertLocationLabel) || `${displayTitle} on ${cleanedAlertLocationLabel}`)
         : normalizeGridlyLightweightAlertSummaryText(`${displayTitle} ${locationTimeLine}`));
+    const alertLat = Number(alert?.lat ?? alert?.latitude ?? alert?.rawLat);
+    const alertLng = Number(alert?.lng ?? alert?.lon ?? alert?.longitude ?? alert?.rawLng);
+    const alertCoordAttrs = Number.isFinite(alertLat) && Number.isFinite(alertLng)
+      ? ` data-gridly-alert-lat="${sanitizeText(alertLat)}" data-gridly-alert-lng="${sanitizeText(alertLng)}"`
+      : "";
     return `
-    <div class="gridly-alert-row" data-gridly-alert-row="true" data-gridly-alert-title="${sanitizeText(displayTitle)}" data-gridly-alert-summary="${sanitizeText(alertRowSummary)}" data-gridly-alert-location="${sanitizeText(cleanedAlertLocationLabel)}" style="padding:10px 12px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.1);border-radius:10px;background:rgba(255,255,255,0.02);">
+    <div class="gridly-alert-row" data-gridly-alert-row="true" data-gridly-alert-id="${sanitizeText(alert?.id || alert?.reportId || alert?.incidentId || alert?.crossingId || "")}" data-gridly-alert-title="${sanitizeText(displayTitle)}" data-gridly-alert-summary="${sanitizeText(alertRowSummary)}" data-gridly-alert-location="${sanitizeText(cleanedAlertLocationLabel)}" data-gridly-alert-crossing-id="${sanitizeText(alert?.crossingId || alert?.crossing_id || alert?.raw?.crossingId || alert?.raw?.crossing_id || "")}" data-gridly-alert-hazard-type="${sanitizeText(alert?.hazardType || alert?.type || alert?.category || alert?.reportType || alert?.report_type || "")}" data-gridly-alert-awareness-area="${sanitizeText(alert?.awarenessArea || alert?.awareness_area || alert?.area || alert?.city || alert?.town || alert?.raw?.awarenessArea || alert?.raw?.city || "")}"${alertCoordAttrs} style="padding:10px 12px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.1);border-radius:10px;background:rgba(255,255,255,0.02);">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
         <div class="gridly-alert-title" style="font-size:14px;font-weight:800;line-height:1.28;letter-spacing:0.01em;">${sanitizeText(displayTitle)}</div>
       </div>
