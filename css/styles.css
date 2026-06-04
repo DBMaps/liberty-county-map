@@ -15667,7 +15667,9 @@ body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel
 }
 
 body[data-layout-mode="portrait"] .mobile-destination-command.is-awareness-panel .compact-btn {
-  display: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   max-width: 72px !important;
   padding-inline: 11px !important;
 }
