@@ -12239,6 +12239,149 @@ function finalizeOpenCrossingPopup(marker, token, reason = "unknown") {
   });
   return true;
 }
+
+
+function openCrossingPopupFromMarkerInteraction(marker, crossing, source = "click") {
+  const now = Date.now();
+  const crossingId = String(crossing?.id || marker?.options?.crossingId || "");
+  console.log(source === "click" ? "Crossing marker clicked" : "Crossing marker early tap open", crossingId, source);
+  const mapRef = map;
+  gridlyPopupLastTapAt = now;
+  gridlyLastPopupTapCrossingId = crossingId;
+  gridlyPopupSingleTapFlowReady = true;
+  gridlyPopupSingleTapGuaranteed = true;
+  gridlyPopupReopenReady = false;
+  const token = `popup-${++gridlyPopupTapSeq}`;
+  cancelPendingCrossingPopup("replaced-by-new-tap");
+  const session = { token, marker, mapRef: mapRef || null, opened: false, openTimer: null, visibilityRetryCount: 0 };
+  window.__gridlyPopupPanSession = session;
+  setGridlyCrossingPopupSessionClass(true);
+  if (typeof syncMobileDestinationCommandCard === "function") syncMobileDestinationCommandCard();
+  mapRef?.closePopup?.();
+
+  if (!mapRef || typeof mapRef.latLngToContainerPoint !== "function" || typeof mapRef.panBy !== "function") {
+    gridlyLastPopupScheduledDelay = 100;
+    session.openTimer = setTimeout(() => {
+      gridlyLastPopupTimerFiredAt = Date.now();
+      finalizeOpenCrossingPopup(marker, token, `${source}-no-mapref-delay`);
+    }, gridlyLastPopupScheduledDelay);
+    return true;
+  }
+
+  const markerPoint = mapRef.latLngToContainerPoint(marker.getLatLng());
+  const viewport = mapRef.getSize?.();
+  const viewportWidth = viewport?.x || window.innerWidth || 0;
+  const viewportHeight = viewport?.y || window.innerHeight || 0;
+  const safeInsets = { left: 18, right: 18, top: 16, bottom: 16 };
+  const estimatedPopupSize = { width: Math.min(340, Math.max(260, viewportWidth - 44)), height: 220 };
+  const safeTargetX = Math.max(
+    safeInsets.left + Math.ceil(estimatedPopupSize.width / 2),
+    Math.min(viewportWidth - safeInsets.right - Math.ceil(estimatedPopupSize.width / 2), Math.round(viewportWidth * 0.5))
+  );
+  const safeTargetY = Math.max(
+    safeInsets.top + estimatedPopupSize.height + 10,
+    Math.min(viewportHeight - safeInsets.bottom - 20, Math.round(viewportHeight * 0.68))
+  );
+  const panX = Math.round(markerPoint.x - safeTargetX);
+  const panY = Math.round(markerPoint.y - safeTargetY);
+  const shouldAutoPan = Math.abs(panX) > 4 || Math.abs(panY) > 4;
+  window.__gridlyLastPopupAutoPanApplied = shouldAutoPan;
+  gridlyPopupCameraPanApplied = shouldAutoPan;
+  gridlyPopupAnchorMode = "manual-safe-lower-center";
+  gridlyPopupLastMarkerScreenPoint = { x: Math.round(markerPoint.x), y: Math.round(markerPoint.y) };
+  gridlyPopupLastSafeTargetPoint = { x: safeTargetX, y: safeTargetY };
+  gridlyPopupViewportBounds = { width: viewportWidth, height: viewportHeight, safeInsets };
+
+  const openDelay = shouldAutoPan ? 320 : 0;
+  gridlyLastPopupScheduledDelay = openDelay;
+  const scheduleFinalize = (delay, finalizeReason) => {
+    if (session.openTimer) clearTimeout(session.openTimer);
+    session.openTimer = setTimeout(() => {
+      gridlyLastPopupTimerFiredAt = Date.now();
+      finalizeOpenCrossingPopup(marker, token, `${source}-${finalizeReason}`);
+    }, delay);
+  };
+  if (!shouldAutoPan) {
+    requestAnimationFrame(() => {
+      gridlyLastPopupTimerFiredAt = Date.now();
+      finalizeOpenCrossingPopup(marker, token, `${source}-no-pan-immediate`);
+    });
+    return true;
+  }
+
+  gridlyLastPopupPanStartedAt = Date.now();
+  if (typeof mapRef.once === "function") {
+    mapRef.once("moveend", () => {
+      gridlyLastPopupTimerFiredAt = Date.now();
+      finalizeOpenCrossingPopup(marker, token, `${source}-post-pan-moveend`);
+    });
+  }
+  scheduleFinalize(openDelay, "post-pan-fallback");
+  mapRef.panBy([panX, panY], { animate: true, duration: 0.22 });
+  return true;
+}
+
+function getGridlyCrossingMarkerTouchPoint(event) {
+  const touch = event?.changedTouches?.[0] || event?.touches?.[0];
+  const x = Number(touch?.clientX ?? event?.clientX);
+  const y = Number(touch?.clientY ?? event?.clientY);
+  if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+  return { x, y, at: Date.now(), pointerId: event?.pointerId ?? touch?.identifier ?? null };
+}
+
+function wireCrossingMarkerEarlyTapOpen(marker, crossing) {
+  const markerEl = marker?.getElement?.();
+  if (!markerEl || marker.__gridlyEarlyTapOpenBound) return;
+  const crossingId = String(crossing?.id || marker?.options?.crossingId || "");
+  const maxMovePx = 12;
+  const maxTapMs = 900;
+  const suppressClickMs = 520;
+
+  const rememberStart = (event, source) => {
+    if (source === "pointer" && event?.pointerType === "mouse") return;
+    const point = getGridlyCrossingMarkerTouchPoint(event);
+    if (!point) return;
+    marker.__gridlyEarlyTapStart = { ...point, source, crossingId, moved: false };
+  };
+
+  const markMove = (event) => {
+    const start = marker.__gridlyEarlyTapStart;
+    if (!start) return;
+    const point = getGridlyCrossingMarkerTouchPoint(event);
+    if (!point) return;
+    const distance = Math.hypot(point.x - start.x, point.y - start.y);
+    if (distance > maxMovePx) start.moved = true;
+  };
+
+  const finishTap = (event, source) => {
+    if (source === "pointer" && event?.pointerType === "mouse") return;
+    const start = marker.__gridlyEarlyTapStart;
+    marker.__gridlyEarlyTapStart = null;
+    if (!start || start.crossingId !== crossingId || start.source !== source) return;
+    const point = getGridlyCrossingMarkerTouchPoint(event);
+    if (!point) return;
+    const elapsed = point.at - start.at;
+    const distance = Math.hypot(point.x - start.x, point.y - start.y);
+    if (start.moved || distance > maxMovePx || elapsed > maxTapMs) return;
+    const now = Date.now();
+    if (Number.isFinite(marker.__gridlyLastEarlyTapOpenAt) && now - marker.__gridlyLastEarlyTapOpenAt < suppressClickMs) return;
+    marker.__gridlyLastEarlyTapOpenAt = now;
+    marker.__gridlySuppressClickUntil = now + suppressClickMs;
+    event?.stopPropagation?.();
+    event?.preventDefault?.();
+    openCrossingPopupFromMarkerInteraction(marker, crossing, source === "touch" ? "touchend" : "pointerup");
+  };
+
+  markerEl.addEventListener("pointerdown", (event) => rememberStart(event, "pointer"), { passive: true });
+  markerEl.addEventListener("pointermove", markMove, { passive: true });
+  markerEl.addEventListener("pointercancel", () => { marker.__gridlyEarlyTapStart = null; }, { passive: true });
+  markerEl.addEventListener("pointerup", (event) => finishTap(event, "pointer"), { passive: false });
+  markerEl.addEventListener("touchstart", (event) => rememberStart(event, "touch"), { passive: true });
+  markerEl.addEventListener("touchmove", markMove, { passive: true });
+  markerEl.addEventListener("touchcancel", () => { marker.__gridlyEarlyTapStart = null; }, { passive: true });
+  markerEl.addEventListener("touchend", (event) => finishTap(event, "touch"), { passive: false });
+  marker.__gridlyEarlyTapOpenBound = true;
+}
 let lastRouteSwitchMessage = "";
 let routeUxState = "primary_clear";
 let routeRecommendationTone = "calm";
@@ -26397,85 +26540,16 @@ function renderCrossings(reason = "unspecified", options = {}) {
         event?.originalEvent?.stopPropagation?.();
         event?.originalEvent?.preventDefault?.();
         const now = Date.now();
+        if (Number.isFinite(marker.__gridlySuppressClickUntil) && now < marker.__gridlySuppressClickUntil) {
+          gridlyDuplicateMarkerClickCount += 1;
+          return;
+        }
         if (Number.isFinite(marker.__gridlyLastClickAt) && now - marker.__gridlyLastClickAt < 220) {
           gridlyDuplicateMarkerClickCount += 1;
           return;
         }
         marker.__gridlyLastClickAt = now;
-        console.log("Crossing marker clicked", String(crossing.id));
-        const mapRef = map;
-        gridlyPopupLastTapAt = now;
-        gridlyLastPopupTapCrossingId = String(crossing.id);
-        gridlyPopupSingleTapFlowReady = true;
-        gridlyPopupSingleTapGuaranteed = true;
-        gridlyPopupReopenReady = false;
-        const token = `popup-${++gridlyPopupTapSeq}`;
-        cancelPendingCrossingPopup("replaced-by-new-tap");
-        const session = { token, marker, mapRef: mapRef || null, opened: false, openTimer: null, visibilityRetryCount: 0 };
-        window.__gridlyPopupPanSession = session;
-        setGridlyCrossingPopupSessionClass(true);
-        if (typeof syncMobileDestinationCommandCard === "function") syncMobileDestinationCommandCard();
-        mapRef?.closePopup?.();
-
-      if (!mapRef || typeof mapRef.latLngToContainerPoint !== "function" || typeof mapRef.panBy !== "function") {
-        gridlyLastPopupScheduledDelay = 100;
-        session.openTimer = setTimeout(() => {
-          gridlyLastPopupTimerFiredAt = Date.now();
-          finalizeOpenCrossingPopup(marker, token, "no-mapref-delay");
-        }, gridlyLastPopupScheduledDelay);
-        return;
-      }
-
-      const markerPoint = mapRef.latLngToContainerPoint(marker.getLatLng());
-      const viewport = mapRef.getSize?.();
-      const viewportWidth = viewport?.x || window.innerWidth || 0;
-      const viewportHeight = viewport?.y || window.innerHeight || 0;
-      const safeInsets = { left: 18, right: 18, top: 16, bottom: 16 };
-      const estimatedPopupSize = { width: Math.min(340, Math.max(260, viewportWidth - 44)), height: 220 };
-      const safeTargetX = Math.max(
-        safeInsets.left + Math.ceil(estimatedPopupSize.width / 2),
-        Math.min(viewportWidth - safeInsets.right - Math.ceil(estimatedPopupSize.width / 2), Math.round(viewportWidth * 0.5))
-      );
-      const safeTargetY = Math.max(
-        safeInsets.top + estimatedPopupSize.height + 10,
-        Math.min(viewportHeight - safeInsets.bottom - 20, Math.round(viewportHeight * 0.68))
-      );
-      const panX = Math.round(markerPoint.x - safeTargetX);
-      const panY = Math.round(markerPoint.y - safeTargetY);
-      const shouldAutoPan = Math.abs(panX) > 4 || Math.abs(panY) > 4;
-      window.__gridlyLastPopupAutoPanApplied = shouldAutoPan;
-      gridlyPopupCameraPanApplied = shouldAutoPan;
-      gridlyPopupAnchorMode = "manual-safe-lower-center";
-      gridlyPopupLastMarkerScreenPoint = { x: Math.round(markerPoint.x), y: Math.round(markerPoint.y) };
-      gridlyPopupLastSafeTargetPoint = { x: safeTargetX, y: safeTargetY };
-      gridlyPopupViewportBounds = { width: viewportWidth, height: viewportHeight, safeInsets };
-
-      const openDelay = shouldAutoPan ? 320 : 0;
-      gridlyLastPopupScheduledDelay = openDelay;
-      const scheduleFinalize = (delay, finalizeReason) => {
-        if (session.openTimer) clearTimeout(session.openTimer);
-        session.openTimer = setTimeout(() => {
-          gridlyLastPopupTimerFiredAt = Date.now();
-          finalizeOpenCrossingPopup(marker, token, finalizeReason);
-        }, delay);
-      };
-      if (!shouldAutoPan) {
-        requestAnimationFrame(() => {
-          gridlyLastPopupTimerFiredAt = Date.now();
-          finalizeOpenCrossingPopup(marker, token, "no-pan-immediate");
-        });
-        return;
-      }
-
-      gridlyLastPopupPanStartedAt = Date.now();
-      if (typeof mapRef.once === "function") {
-        mapRef.once("moveend", () => {
-          gridlyLastPopupTimerFiredAt = Date.now();
-          finalizeOpenCrossingPopup(marker, token, "post-pan-moveend");
-        });
-      }
-      scheduleFinalize(openDelay, "post-pan-fallback");
-      mapRef.panBy([panX, panY], { animate: true, duration: 0.22 });
+        openCrossingPopupFromMarkerInteraction(marker, crossing, "click");
       });
       marker.__gridlyCrossingClickBound = true;
       gridlyMarkerClickHandlerGuardApplied = true;
@@ -26503,6 +26577,8 @@ function renderCrossings(reason = "unspecified", options = {}) {
       }
       if (typeof syncMobileDestinationCommandCard === "function") syncMobileDestinationCommandCard();
     });
+
+    wireCrossingMarkerEarlyTapOpen(marker, crossing);
 
     const markerEl = marker.getElement?.();
     if (markerEl) {
