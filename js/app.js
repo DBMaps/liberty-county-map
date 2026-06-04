@@ -12060,6 +12060,11 @@ function setGridlyCrossingPopupSessionClass(active) {
   document.body?.classList.toggle("gridly-crossing-popup-session-active", Boolean(active));
 }
 
+function isGridlyLeafletPopupInteractionActive() {
+  if (window.__gridlyPopupPanSession) return true;
+  return Boolean(document.querySelector("#map .leaflet-popup, #map .leaflet-popup-content"));
+}
+
 function isGridlyCrossingPopupInteractionActive() {
   if (window.__gridlyPopupPanSession) return true;
   return Boolean(document.querySelector("#map .leaflet-popup.gridly-crossing-popup, #map .leaflet-popup-content [data-gridly-crossing-popup='consumer']"));
@@ -15588,6 +15593,7 @@ function syncRouteQuickPanelUiState() {
   const panel = document.getElementById("gridlyMobileRouteQuickPanel");
   const routeQuickPanelOpen = Boolean(panel?.classList?.contains("visible"));
   document.body?.classList.toggle("route-quick-panel-open", routeQuickPanelOpen);
+  if (typeof syncMobileDestinationCommandCard === "function") syncMobileDestinationCommandCard();
 }
 function closeMobileRouteQuickPanel(reason = "") {
   const panel = document.getElementById("gridlyMobileRouteQuickPanel");
@@ -17479,11 +17485,46 @@ function shouldShowGridlyMobileAwarenessPanel(summary = null) {
 }
 
 function isGridlyAwarenessPanelModeActive(summary = null) {
+  // Awareness intelligence renders in its dedicated top/bottom awareness surfaces.
+  // The legacy mobile destination command card may not be claimed by awareness alone.
+  return false;
+}
+
+function getGridlyMobileCommandCardVisibilityState(summary = null) {
+  const searchState = typeof ensureGridlySearchState === "function" ? ensureGridlySearchState() : null;
+  const selectedDestination = typeof normalizeGridlySearchResult === "function"
+    ? normalizeGridlySearchResult(searchState?.selectedDestination)
+    : searchState?.selectedDestination;
+  const selectedLabel = String(getSelectedDestinationLabel?.() || "").trim();
+  const preview = typeof getGridlyDestinationRoutePreviewState === "function"
+    ? getGridlyDestinationRoutePreviewState()
+    : (window.GridlyDestinationRoutePreview || {});
+  const routePreviewActive = Boolean(preview?.active || ["loading", "ready"].includes(String(preview?.status || "")));
   const routeIsMonitoring = Boolean(routeWatchActivated || window.__gridlyRouteWatchActive);
-  return !routeIsMonitoring
-    && !getSelectedDestinationLabel()
-    && !isGridlyCrossingPopupInteractionActive()
-    && shouldShowGridlyMobileAwarenessPanel(summary);
+  const explicitDestinationPanelOpen = Boolean(
+    document.body?.classList?.contains?.("route-quick-panel-open")
+    || document.getElementById("gridlyMobileRouteQuickPanel")?.classList?.contains?.("visible")
+    || document.getElementById("gridlySearchShell")?.classList?.contains?.("visible")
+  );
+  const popupInteractionActive = Boolean(
+    (typeof isGridlyLeafletPopupInteractionActive === "function" && isGridlyLeafletPopupInteractionActive())
+    || (typeof isGridlyCrossingPopupInteractionActive === "function" && isGridlyCrossingPopupInteractionActive())
+  );
+  const hasSelectedDestination = Boolean(selectedDestination || selectedLabel);
+  const routeOrDestinationOwnership = Boolean(hasSelectedDestination || routePreviewActive || routeIsMonitoring || explicitDestinationPanelOpen);
+  return {
+    visible: Boolean(routeOrDestinationOwnership && !popupInteractionActive),
+    owner: routeIsMonitoring ? "route" : hasSelectedDestination ? "destination" : routePreviewActive ? "route-preview" : explicitDestinationPanelOpen ? "destination-panel" : "none",
+    hasSelectedDestination,
+    selectedLabel,
+    routePreviewActive,
+    routePreviewStatus: preview?.status || null,
+    routeIsMonitoring,
+    explicitDestinationPanelOpen,
+    popupInteractionActive,
+    awarenessPanelMode: false,
+    rule: "visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and never while a Leaflet popup is open"
+  };
 }
 
 let gridlyAwarenessAreaImmediateSyncState = {
@@ -17567,17 +17608,23 @@ function syncMobileDestinationCommandCard() {
       ].filter((line) => String(line || "").trim()).join("\n")
     : destinationSupportText;
   const awarenessSummary = getGridlyMobileAwarenessPanelSummary();
-  const popupInteractionActive = isGridlyCrossingPopupInteractionActive();
-  const awarenessPanelMode = isGridlyAwarenessPanelModeActive(awarenessSummary);
-  const cardVisible = Boolean(!popupInteractionActive && (awarenessPanelMode || routeIsMonitoring || selectedLabel));
+  const visibilityState = getGridlyMobileCommandCardVisibilityState(awarenessSummary);
+  const popupInteractionActive = visibilityState.popupInteractionActive;
+  const awarenessPanelMode = false;
+  const cardVisible = Boolean(visibilityState.visible);
   const card = document.getElementById("mobileDestinationCommandTitle")?.closest?.(".mobile-destination-command");
   if (card) {
     card.hidden = !cardVisible;
     card.setAttribute("aria-hidden", cardVisible ? "false" : "true");
+    card.classList.toggle("is-command-card-suppressed", !cardVisible);
+    if (!cardVisible) {
+      card.classList.remove("visible", "active", "is-awareness-panel", "awareness", "owner-awareness", "gridly-awareness-owner");
+    }
   }
-  card?.classList.toggle("is-awareness-panel", awarenessPanelMode);
-  card?.classList.toggle("is-destination-panel", cardVisible && !awarenessPanelMode);
-  document.body?.classList.toggle("gridly-mobile-awareness-panel-present", awarenessPanelMode);
+  card?.classList.toggle("is-awareness-panel", false);
+  card?.classList.toggle("is-destination-panel", cardVisible);
+  document.body?.classList.toggle("gridly-mobile-awareness-panel-present", false);
+  window.__gridlyMobileCommandCardVisibilityState = { ...visibilityState, visible: cardVisible };
   window.__gridlySyncAwarenessPanelDockContract?.();
 
   if (!cardVisible) {
@@ -21231,6 +21278,11 @@ function initMap() {
   const startupZoom = (startupAnchor?.countyWide || startupAnchor?.fallback) ? GRIDLY_COUNTY_STARTUP_ZOOM : (startupAnchor ? (startupAnchor.startupZoom || GRIDLY_TOWN_STARTUP_ZOOM) : 13);
   map = L.map("map", { zoomControl: false }).setView(startupCenter, startupZoom);
   window.gridlyMapInstance = map;
+  map.on("popupopen popupclose", () => {
+    if (typeof syncMobileDestinationCommandCard === "function") {
+      requestAnimationFrame(() => syncMobileDestinationCommandCard());
+    }
+  });
 
   L.control.zoom({ position: "bottomright" }).addTo(map);
 
@@ -26317,22 +26369,32 @@ function renderCrossings(reason = "unspecified", options = {}) {
       gridlyPopupLastSafeTargetPoint = { x: safeTargetX, y: safeTargetY };
       gridlyPopupViewportBounds = { width: viewportWidth, height: viewportHeight, safeInsets };
 
-      const openDelay = shouldAutoPan ? 360 : 100;
+      const openDelay = shouldAutoPan ? 320 : 0;
       gridlyLastPopupScheduledDelay = openDelay;
-      if (!shouldAutoPan) {
+      const scheduleFinalize = (delay, finalizeReason) => {
+        if (session.openTimer) clearTimeout(session.openTimer);
         session.openTimer = setTimeout(() => {
           gridlyLastPopupTimerFiredAt = Date.now();
-          finalizeOpenCrossingPopup(marker, token, "no-pan-guaranteed-delay");
-        }, openDelay);
+          finalizeOpenCrossingPopup(marker, token, finalizeReason);
+        }, delay);
+      };
+      if (!shouldAutoPan) {
+        requestAnimationFrame(() => {
+          gridlyLastPopupTimerFiredAt = Date.now();
+          finalizeOpenCrossingPopup(marker, token, "no-pan-immediate");
+        });
         return;
       }
 
       gridlyLastPopupPanStartedAt = Date.now();
-      session.openTimer = setTimeout(() => {
-        gridlyLastPopupTimerFiredAt = Date.now();
-        finalizeOpenCrossingPopup(marker, token, "post-pan-guaranteed-delay");
-      }, openDelay);
-      mapRef.panBy([panX, panY], { animate: true, duration: 0.27 });
+      if (typeof mapRef.once === "function") {
+        mapRef.once("moveend", () => {
+          gridlyLastPopupTimerFiredAt = Date.now();
+          finalizeOpenCrossingPopup(marker, token, "post-pan-moveend");
+        });
+      }
+      scheduleFinalize(openDelay, "post-pan-fallback");
+      mapRef.panBy([panX, panY], { animate: true, duration: 0.22 });
       });
       marker.__gridlyCrossingClickBound = true;
       gridlyMarkerClickHandlerGuardApplied = true;
@@ -31305,13 +31367,13 @@ function buildGridlyOwnershipStateAudit(options = {}) {
   const selectedDestinationLabel = safeCall(() => (typeof getSelectedDestinationLabel === "function" ? getSelectedDestinationLabel() : null), null);
   const selectedLabel = String(selectedDestinationLabel || "").trim();
   const routeIsMonitoring = safeBoolean(() => routeWatchActivated || window.__gridlyRouteWatchActive);
-  const popupInteractionActive = safeBoolean(() => typeof isGridlyCrossingPopupInteractionActive === "function" && isGridlyCrossingPopupInteractionActive());
-  const awarenessPanelMode = safeBoolean(() => typeof isGridlyAwarenessPanelModeActive === "function" && isGridlyAwarenessPanelModeActive());
+  const commandVisibilityState = safeCall(() => (typeof getGridlyMobileCommandCardVisibilityState === "function" ? getGridlyMobileCommandCardVisibilityState() : null), null);
+  const popupInteractionActive = safeBoolean(() => commandVisibilityState?.popupInteractionActive || (typeof isGridlyLeafletPopupInteractionActive === "function" && isGridlyLeafletPopupInteractionActive()) || (typeof isGridlyCrossingPopupInteractionActive === "function" && isGridlyCrossingPopupInteractionActive()));
+  const awarenessPanelMode = false;
 
-  let commandCardOwner = "unknown";
-  if (awarenessPanelMode) commandCardOwner = "awareness";
-  else if (routeIsMonitoring) commandCardOwner = "route";
-  else if (selectedLabel) commandCardOwner = "destination";
+  let commandCardOwner = commandVisibilityState?.visible ? (commandVisibilityState?.owner || "unknown") : "none";
+  if (commandCardOwner === "none" && routeIsMonitoring) commandCardOwner = "route";
+  else if (commandCardOwner === "none" && selectedLabel) commandCardOwner = "destination";
 
   const selectedAwarenessArea = safeCall(() => {
     if (typeof getSelectedGridlyAwarenessArea === "function") return getSelectedGridlyAwarenessArea();
@@ -31391,6 +31453,8 @@ function buildGridlyOwnershipStateAudit(options = {}) {
       routeIsMonitoring,
       awarenessPanelMode,
       popupInteractionActive,
+      visible: Boolean(commandVisibilityState?.visible),
+      visibilityRule: commandVisibilityState?.rule || null,
       owner: commandCardOwner,
       kickerText: safeTextById("mobileAwarenessPanelKicker"),
       titleText: safeTextById("mobileDestinationCommandTitle"),
