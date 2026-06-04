@@ -17259,3 +17259,27 @@ body.gridly-theme-light[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPo
 body.gridly-theme-light[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-list-meta {
   color: #516473;
 }
+
+/* V249.1 follow-up — Settings V2 runtime alignment fallback independent of body layout marker timing. */
+#gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] {
+  left: 12px !important;
+  right: 12px !important;
+  bottom: max(84px, calc(var(--gridly-portrait-dock-h, 76px) + 10px + env(safe-area-inset-bottom, 0px))) !important;
+  max-height: calc(100dvh - max(84px, calc(var(--gridly-portrait-dock-h, 76px) + 10px + env(safe-area-inset-bottom, 0px))) - 12px) !important;
+  overflow: hidden !important;
+  padding: 11px 11px 12px !important;
+}
+
+#gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] #gridlyPortraitV2SheetBody {
+  display: block;
+  max-height: calc(100dvh - max(84px, calc(var(--gridly-portrait-dock-h, 76px) + 10px + env(safe-area-inset-bottom, 0px))) - 70px) !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 1px calc(10px + env(safe-area-inset-bottom, 0px));
+  scrollbar-width: thin;
+}
+
+#gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .gridly-settings-sheet {
+  contain: layout paint;
+}
