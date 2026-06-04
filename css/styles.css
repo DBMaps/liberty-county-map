@@ -16853,3 +16853,64 @@ body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV
     right: calc(12px + env(safe-area-inset-right, 0px)) !important;
   }
 }
+
+.gridly-user-location-awareness-dot {
+  --gridly-user-location-blue: #3f9cff;
+  position: relative;
+  width: 30px;
+  height: 30px;
+  margin: 0;
+  background: transparent;
+  border: 0;
+  pointer-events: none;
+}
+
+.gridly-user-location-awareness-dot__ring,
+.gridly-user-location-awareness-dot__core {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: block;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+}
+
+.gridly-user-location-awareness-dot__ring {
+  width: 24px;
+  height: 24px;
+  border: 1px solid rgba(92, 176, 255, 0.56);
+  background: rgba(47, 134, 255, 0.12);
+  box-shadow: 0 0 18px rgba(63, 156, 255, 0.24);
+  animation: gridlyUserLocationAwarenessPulse 2.4s ease-out infinite;
+}
+
+.gridly-user-location-awareness-dot__core {
+  width: 9px;
+  height: 9px;
+  background: radial-gradient(circle at 35% 30%, #d9f0ff 0%, #72beff 32%, var(--gridly-user-location-blue) 72%, #1671e8 100%);
+  border: 1px solid rgba(224, 244, 255, 0.9);
+  box-shadow: 0 0 0 2px rgba(11, 24, 38, 0.78), 0 4px 12px rgba(42, 145, 255, 0.36);
+}
+
+@keyframes gridlyUserLocationAwarenessPulse {
+  0% {
+    opacity: 0.78;
+    transform: translate(-50%, -50%) scale(0.62);
+  }
+  70% {
+    opacity: 0.16;
+    transform: translate(-50%, -50%) scale(1.18);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.28);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gridly-user-location-awareness-dot__ring {
+    animation: none;
+    opacity: 0.45;
+    transform: translate(-50%, -50%) scale(0.92);
+  }
+}
