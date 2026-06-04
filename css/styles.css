@@ -12184,6 +12184,13 @@ body[data-layout-mode="portrait"].route-quick-panel-open .mobile-live-command {
   display: none;
 }
 
+body[data-layout-mode="portrait"] .mobile-destination-command[hidden],
+body.gridly-crossing-popup-session-active[data-layout-mode="portrait"] .mobile-destination-command,
+body.gridly-crossing-popup-visible[data-layout-mode="portrait"] .mobile-destination-command {
+  display: none !important;
+  pointer-events: none !important;
+}
+
 body[data-layout-mode="portrait"] .mobile-destination-command {
   display: grid;
   position: relative;
