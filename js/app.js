@@ -23264,6 +23264,460 @@ function gridlyIncidentSourceAudit(options = {}) {
 window.gridlyIncidentSourceAudit = gridlyIncidentSourceAudit;
 exposeGridlyAuditHelper("gridlyIncidentSourceAudit", gridlyIncidentSourceAudit);
 
+
+const GRIDLY_CLEARED_HAZARD_PERSISTENCE_AUDIT_VERSION = "V239-audit-only";
+
+function gridlyClearedHazardPersistenceSafeArray(value) {
+  return Array.isArray(value) ? value : [];
+}
+
+function gridlyClearedHazardPersistenceIso(value) {
+  if (!value) return null;
+  const ms = new Date(value).getTime();
+  return Number.isFinite(ms) ? new Date(ms).toISOString() : null;
+}
+
+function gridlyClearedHazardPersistenceCoord(record = {}) {
+  const coord = typeof gridlyCoordinateFromRecord === "function" ? gridlyCoordinateFromRecord(record) : null;
+  const lat = Number(coord?.lat ?? record?.lat ?? record?.latitude ?? record?.rawLat ?? record?.raw?.lat ?? record?.raw?.latitude);
+  const lng = Number(coord?.lng ?? record?.lng ?? record?.lon ?? record?.longitude ?? record?.rawLng ?? record?.raw?.lng ?? record?.raw?.longitude);
+  return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
+}
+
+function gridlyClearedHazardPersistenceId(record = {}) {
+  const value = record?.id ?? record?.report_id ?? record?.reportId ?? record?.incidentId ?? record?.incident_id ?? record?.key ?? record?.raw?.id ?? record?.raw?.report_id ?? record?.latestReport?.id;
+  return value === undefined || value === null || !String(value).trim() ? "" : String(value).trim();
+}
+
+function gridlyClearedHazardPersistenceType(record = {}) {
+  const type = record?.type || record?.report_type || record?.category || record?.hazardType || record?.raw?.type || record?.raw?.report_type || record?.latestReport?.type || record?.latestReport?.report_type || "unknown";
+  return String(type || "unknown").toLowerCase();
+}
+
+function gridlyClearedHazardPersistenceSourceReportId(record = {}) {
+  const value = record?.sourceReportId || record?.source_report_id || record?.reportId || record?.report_id || record?.raw?.id || record?.raw?.report_id || record?.latestReport?.id || record?.reports?.[0]?.id || record?.id;
+  return value === undefined || value === null || !String(value).trim() ? "" : String(value).trim();
+}
+
+function gridlyClearedHazardPersistenceTimestamp(record = {}) {
+  return record?.updatedAt || record?.updated_at || record?.createdAt || record?.created_at || record?.submittedAt || record?.timestamp || record?.raw?.updated_at || record?.raw?.created_at || record?.latestReport?.submittedAt || record?.latestReport?.created_at || null;
+}
+
+function gridlyClearedHazardPersistenceClearTime(record = {}) {
+  return record?.clearedAt || record?.cleared_at || record?.closedAt || record?.closed_at || (gridlyClearedHazardPersistenceType(record) === "hazard_cleared" ? gridlyClearedHazardPersistenceTimestamp(record) : null) || record?.raw?.clearedAt || record?.raw?.cleared_at || null;
+}
+
+function gridlyClearedHazardPersistenceLifecycle(record = {}, nowMs = Date.now(), allHazards = activeHazards) {
+  const explicit = String(record?.lifecycleState || record?.lifecycle_state || record?.lifecycle || record?.state || record?.status || record?.raw?.lifecycleState || record?.raw?.status || "").trim().toLowerCase();
+  if (explicit) return explicit;
+  if (gridlyClearedHazardPersistenceType(record) === "hazard_cleared") return "cleared";
+  try {
+    if (typeof getIncidentLifecycleState === "function") return String(getIncidentLifecycleState(record, nowMs) || "unknown").toLowerCase();
+  } catch (_error) {}
+  try {
+    if (typeof gridlyRoadHazardLatestLifecycleState === "function") return String(gridlyRoadHazardLatestLifecycleState(record, allHazards) || "unknown").toLowerCase();
+  } catch (_error) {}
+  return "unknown";
+}
+
+function gridlyClearedHazardPersistenceStatus(record = {}, nowMs = Date.now(), allHazards = activeHazards) {
+  const explicit = String(record?.status || record?.state || record?.raw?.status || "").trim().toLowerCase();
+  if (explicit) return explicit;
+  const lifecycle = gridlyClearedHazardPersistenceLifecycle(record, nowMs, allHazards);
+  if (["cleared", "recently_cleared", "hazard_cleared", "inactive", "expired", "stale", "historical"].includes(lifecycle)) return "cleared";
+  return "active";
+}
+
+function gridlyClearedHazardPersistenceRoadName(record = {}) {
+  return String(record?.roadName || record?.road_name || record?.selectedRoadName || record?.location_name || record?.area || record?.city || record?.crossingName || record?.title || record?.raw?.roadName || record?.raw?.road_name || record?.latestReport?.roadName || "").trim();
+}
+
+function gridlyClearedHazardPersistenceDuplicateKey(record = {}) {
+  const type = gridlyClearedHazardPersistenceType(record) === "hazard_cleared" ? (record?.clearedHazardType || record?.hazardType || "hazard_cleared") : gridlyClearedHazardPersistenceType(record);
+  const sourceReportId = gridlyClearedHazardPersistenceSourceReportId(record);
+  if (sourceReportId) return `source:${sourceReportId}`;
+  if (typeof getHazardClusterKey === "function") {
+    try { return `cluster:${getHazardClusterKey({ ...record, type })}`; } catch (_error) {}
+  }
+  const coord = gridlyClearedHazardPersistenceCoord(record);
+  return coord ? `coord:${type}:${coord.lat.toFixed(4)}:${coord.lng.toFixed(4)}` : `title:${type}:${gridlyClearedHazardPersistenceRoadName(record).toLowerCase()}`;
+}
+
+function gridlyClearedHazardPersistenceRecordsFromStorageArea(storage, storageName) {
+  const records = [];
+  const breakdown = { available: false, keyCount: 0, hazardKeyCount: 0, parsedHazardRecords: 0, keys: [] };
+  if (!storage) return { records, breakdown };
+  try {
+    breakdown.available = true;
+    breakdown.keyCount = Number(storage.length || 0);
+    const visit = (value, key, path, depth = 0) => {
+      if (depth > 4 || value == null) return;
+      if (Array.isArray(value)) {
+        value.forEach((entry, index) => visit(entry, key, `${path}[${index}]`, depth + 1));
+        return;
+      }
+      if (typeof value === "object") {
+        const text = `${value.type || ""} ${value.report_type || ""} ${value.reportKind || ""} ${value.title || ""} ${value.detail || ""}`.toLowerCase();
+        const hazardLike = /hazard|flood|crash|wreck|debris|construction|closed|disabled/.test(text) || Object.prototype.hasOwnProperty.call(value, "clearedAt") || Object.prototype.hasOwnProperty.call(value, "cleared_at");
+        if (hazardLike) records.push({ ...value, __gridlyStorageSource: storageName, __gridlyStorageKey: key, __gridlyStoragePath: path });
+        Object.entries(value).slice(0, 40).forEach(([childKey, childValue]) => visit(childValue, key, `${path}.${childKey}`, depth + 1));
+      }
+    };
+    for (let index = 0; index < storage.length; index += 1) {
+      const key = storage.key(index);
+      if (!key) continue;
+      const isHazardKey = /hazard|incident|report|alert|clear|gridly/i.test(key);
+      if (isHazardKey) {
+        breakdown.hazardKeyCount += 1;
+        breakdown.keys.push(key);
+      }
+      if (!isHazardKey) continue;
+      const raw = storage.getItem(key);
+      try { visit(JSON.parse(raw), key, key, 0); }
+      catch (_error) {
+        if (/hazard|cleared|incident|report/i.test(String(raw || ""))) records.push({ id: `${storageName}:${key}`, title: String(raw || "").slice(0, 120), __gridlyStorageSource: storageName, __gridlyStorageKey: key, __gridlyStoragePath: key });
+      }
+    }
+    breakdown.parsedHazardRecords = records.length;
+  } catch (error) {
+    breakdown.error = error?.message || "storage_read_failed";
+  }
+  return { records, breakdown };
+}
+
+function gridlyClearedHazardPersistenceRenderedAlertRows() {
+  const cacheRows = gridlyClearedHazardPersistenceSafeArray(typeof window !== "undefined" ? window.__gridlyLatestAlertsForRender : []);
+  const domRows = [];
+  if (typeof document !== "undefined") {
+    document.querySelectorAll(".alert-item, .gridly-alert-title, .gridly-alert-headline, [data-gridly-alert-title], [data-incident-id]").forEach((node, index) => {
+      const dataset = node?.dataset || {};
+      const text = String(node?.innerText || node?.textContent || "").trim();
+      domRows.push({
+        id: dataset.incidentId || dataset.id || `dom-alert-${index}`,
+        title: dataset.gridlyAlertTitle || dataset.gridlyTitle || text.slice(0, 120),
+        detail: text,
+        status: dataset.state || dataset.status || "rendered",
+        source: "rendered_alert_dom"
+      });
+    });
+  }
+  return { cacheRows, domRows };
+}
+
+function gridlyClearedHazardPersistenceRenderedMarkers() {
+  const markerRows = [];
+  const layers = typeof unifiedIncidentLayer?.getLayers === "function" ? unifiedIncidentLayer.getLayers() : [];
+  layers.forEach((layer, index) => {
+    const latLng = layer?.getLatLng?.();
+    const options = layer?.options || {};
+    const audit = options.gridlyPlacementAudit || {};
+    markerRows.push({
+      id: options.incidentId || audit.incidentId || `marker-${index}`,
+      incidentId: options.incidentId || audit.incidentId || "",
+      source: options.incidentSource || "unifiedIncidentLayer",
+      lat: latLng?.lat,
+      lng: latLng?.lng,
+      status: "rendered",
+      gridlyPlacementAudit: audit
+    });
+  });
+  return markerRows;
+}
+
+function gridlyClearedHazardPersistenceRecordSummary(record = {}, source = "unknown", membership = {}, nowMs = Date.now(), currentArea = null) {
+  const coord = gridlyClearedHazardPersistenceCoord(record);
+  const createdAt = gridlyClearedHazardPersistenceIso(record?.createdAt || record?.created_at || record?.submittedAt || record?.raw?.created_at || record?.latestReport?.submittedAt);
+  const updatedAt = gridlyClearedHazardPersistenceIso(record?.updatedAt || record?.updated_at || record?.raw?.updated_at || record?.latestReport?.updated_at || createdAt);
+  const clearedAt = gridlyClearedHazardPersistenceIso(gridlyClearedHazardPersistenceClearTime(record));
+  const ageMs = new Date(updatedAt || createdAt || 0).getTime();
+  const awarenessArea = (() => {
+    const explicit = record?.awarenessArea || record?.awareness_area || record?.area || record?.city || record?.town || record?.raw?.awarenessArea || "";
+    if (explicit) return String(explicit);
+    if (currentArea && typeof isGridlyRecordInAwarenessArea === "function") {
+      try { return isGridlyRecordInAwarenessArea(record, currentArea) ? (currentArea.label || currentArea.storageValue || "current") : "outside_current_awareness_area"; } catch (_error) {}
+    }
+    return "";
+  })();
+  return {
+    id: gridlyClearedHazardPersistenceId(record),
+    hazardType: gridlyClearedHazardPersistenceType(record),
+    subtype: record?.subtype || record?.hazardSubtype || record?.otherHazardSubtype || record?.raw?.subtype || null,
+    title: record?.title || record?.headline || record?.resolvedHeadline || record?.localizedSummary || record?.raw?.title || "",
+    roadName: gridlyClearedHazardPersistenceRoadName(record),
+    lat: coord ? coord.lat : null,
+    lng: coord ? coord.lng : null,
+    status: gridlyClearedHazardPersistenceStatus(record, nowMs),
+    lifecycleState: gridlyClearedHazardPersistenceLifecycle(record, nowMs),
+    source,
+    sourceReportId: gridlyClearedHazardPersistenceSourceReportId(record),
+    createdAt,
+    updatedAt,
+    clearedAt,
+    ageMinutes: Number.isFinite(ageMs) && ageMs > 0 ? Math.max(0, Math.floor((nowMs - ageMs) / 60000)) : null,
+    awarenessArea,
+    appearsInActiveHazards: Boolean(membership.appearsInActiveHazards),
+    appearsInUnifiedIncidents: Boolean(membership.appearsInUnifiedIncidents),
+    appearsInAlerts: Boolean(membership.appearsInAlerts),
+    appearsOnMap: Boolean(membership.appearsOnMap),
+    appearsInStorage: Boolean(membership.appearsInStorage),
+    appearsInSupabaseInventory: Boolean(membership.appearsInSupabaseInventory)
+  };
+}
+
+async function gridlyReadClearedHazardPersistenceSupabaseInventory(hours = 72) {
+  const result = { available: false, rows: [], normalizedRows: [], error: null, queriedHours: hours };
+  if (!supabaseClient) {
+    result.error = "Supabase client not initialized";
+    return result;
+  }
+  try {
+    const hazardTypes = typeof gridlyGetSharedRoadHazardReportTypes === "function" ? gridlyGetSharedRoadHazardReportTypes() : Object.keys(HAZARD_TYPES || {});
+    const cutoffIso = new Date(Date.now() - (Math.max(1, Number(hours) || 72) * 60 * 60 * 1000)).toISOString();
+    const { data, error } = await supabaseClient
+      .from("reports")
+      .select("*")
+      .gte("created_at", cutoffIso)
+      .in("report_type", [...new Set([...hazardTypes, "hazard_cleared"])])
+      .order("created_at", { ascending: false })
+      .limit(1000);
+    if (error) throw error;
+    result.available = true;
+    result.rows = Array.isArray(data) ? data : [];
+    result.normalizedRows = typeof normalizeReports === "function" ? normalizeReports(result.rows) : result.rows;
+  } catch (error) {
+    result.error = error?.message || "supabase_inventory_failed";
+  }
+  return result;
+}
+
+function gridlyClearedHazardPersistenceLikelyCause(findings = [], sourceBreakdown = {}) {
+  if (findings.some((finding) => finding.code === "supabase_active_after_local_clear")) return "A cleared hazard still has an active Supabase source row newer than, or not matched by, the local clear record; reload/area switch can rehydrate it into activeHazards.";
+  if (findings.some((finding) => finding.code === "active_after_clear")) return "activeHazards contains a record whose latest lifecycle appears cleared, so local activeHazards is the reintroduction source.";
+  if (findings.some((finding) => finding.code === "duplicate_hazard_ids")) return "The same hazard appears under multiple IDs or sourceReportIds, so clearing one record may leave a duplicate active record alive.";
+  if (findings.some((finding) => finding.code === "storage_revive_risk")) return "A hazard-like record remains in browser storage/cache and may be merged back into rendered state after reload.";
+  if (findings.some((finding) => finding.code === "awareness_mismatch")) return "The selected awareness area filter is admitting active records outside the current area.";
+  if (Number(sourceBreakdown?.activeHazards?.count || 0) > 0) return "No definitive cleared-record mismatch was found; active hazards currently originate from activeHazards populated by loadSharedReports().";
+  return "No active reintroduction source detected in the audited surfaces.";
+}
+
+async function gridlyClearedHazardPersistenceAudit(options = {}) {
+  const nowMs = Date.now();
+  const currentAwarenessAreaRaw = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  const currentAwarenessArea = currentAwarenessAreaRaw && typeof getGridlyAwarenessAreaDebugOption === "function" ? getGridlyAwarenessAreaDebugOption(currentAwarenessAreaRaw) : currentAwarenessAreaRaw;
+  const safeActiveHazards = gridlyClearedHazardPersistenceSafeArray(activeHazards);
+  const safeActiveReports = gridlyClearedHazardPersistenceSafeArray(activeReports);
+  const safeRecentlyCleared = gridlyClearedHazardPersistenceSafeArray(recentlyClearedRoadHazards);
+  const unifiedIncidents = typeof getUnifiedIncidents === "function" ? gridlyClearedHazardPersistenceSafeArray(getUnifiedIncidents()) : [];
+  const renderedAlerts = gridlyClearedHazardPersistenceRenderedAlertRows();
+  const renderedMarkers = gridlyClearedHazardPersistenceRenderedMarkers();
+  const localStorageAudit = gridlyClearedHazardPersistenceRecordsFromStorageArea(typeof localStorage !== "undefined" ? localStorage : null, "localStorage");
+  const sessionStorageAudit = gridlyClearedHazardPersistenceRecordsFromStorageArea(typeof sessionStorage !== "undefined" ? sessionStorage : null, "sessionStorage");
+  const storageRecords = [...localStorageAudit.records, ...sessionStorageAudit.records];
+  const supabaseInventory = await gridlyReadClearedHazardPersistenceSupabaseInventory(options?.hours || 72);
+  const supabaseRecords = gridlyClearedHazardPersistenceSafeArray(supabaseInventory.normalizedRows);
+  const alertRecords = [...renderedAlerts.cacheRows, ...renderedAlerts.domRows];
+
+  const idSets = {
+    activeHazards: new Set(safeActiveHazards.map(gridlyClearedHazardPersistenceId).filter(Boolean)),
+    unifiedIncidents: new Set(unifiedIncidents.map(gridlyClearedHazardPersistenceId).filter(Boolean)),
+    alerts: new Set(alertRecords.map(gridlyClearedHazardPersistenceId).filter(Boolean)),
+    markers: new Set(renderedMarkers.map(gridlyClearedHazardPersistenceId).filter(Boolean)),
+    storage: new Set(storageRecords.map(gridlyClearedHazardPersistenceId).filter(Boolean)),
+    supabase: new Set(supabaseRecords.map(gridlyClearedHazardPersistenceId).filter(Boolean))
+  };
+  const coordinateMatch = (record, rows) => {
+    const coord = gridlyClearedHazardPersistenceCoord(record);
+    if (!coord) return false;
+    return rows.some((row) => {
+      const rowCoord = gridlyClearedHazardPersistenceCoord(row);
+      return rowCoord && Math.abs(rowCoord.lat - coord.lat) <= 0.00015 && Math.abs(rowCoord.lng - coord.lng) <= 0.00015;
+    });
+  };
+  const appears = (record, setName, rows) => {
+    const id = gridlyClearedHazardPersistenceId(record);
+    return Boolean((id && idSets[setName]?.has(id)) || coordinateMatch(record, rows));
+  };
+
+  const allEntries = [
+    ...safeActiveHazards.map((record) => ({ record, source: "activeHazards" })),
+    ...safeActiveReports.map((record) => ({ record, source: "activeReports" })),
+    ...safeRecentlyCleared.map((record) => ({ record, source: "recentlyClearedRoadHazards" })),
+    ...unifiedIncidents.map((record) => ({ record, source: "unifiedIncidents" })),
+    ...alertRecords.map((record) => ({ record, source: record?.source === "rendered_alert_dom" ? "renderedAlertDom" : "renderedAlertCache" })),
+    ...renderedMarkers.map((record) => ({ record, source: "renderedMapMarkers" })),
+    ...storageRecords.map((record) => ({ record, source: record.__gridlyStorageSource || "storage" })),
+    ...supabaseRecords.map((record) => ({ record, source: "supabaseInventory" }))
+  ];
+
+  const canonical = new Map();
+  allEntries.forEach(({ record, source }) => {
+    const key = gridlyClearedHazardPersistenceDuplicateKey(record);
+    const existing = canonical.get(key) || { key, records: [], sources: new Set() };
+    existing.records.push(record);
+    existing.sources.add(source);
+    canonical.set(key, existing);
+  });
+
+  const sourceBreakdown = {
+    activeHazards: { count: safeActiveHazards.length, clearedLike: safeActiveHazards.filter((record) => gridlyClearedHazardPersistenceStatus(record, nowMs) === "cleared").length },
+    activeReports: { count: safeActiveReports.length },
+    unifiedIncidents: { count: unifiedIncidents.length, active: unifiedIncidents.filter((record) => String(record?.status || "").toLowerCase() === "active").length, cleared: unifiedIncidents.filter((record) => String(record?.status || "").toLowerCase() === "cleared").length },
+    renderedAlerts: { cacheCount: renderedAlerts.cacheRows.length, domCount: renderedAlerts.domRows.length, total: alertRecords.length },
+    renderedMapMarkers: { count: renderedMarkers.length },
+    recentlyClearedRoadHazards: { count: safeRecentlyCleared.length },
+    supabaseInventory: { available: supabaseInventory.available, count: supabaseRecords.length, error: supabaseInventory.error },
+    storage: { localStorage: localStorageAudit.breakdown, sessionStorage: sessionStorageAudit.breakdown }
+  };
+
+  const lifecycleBreakdown = allEntries.reduce((acc, { record, source }) => {
+    const state = gridlyClearedHazardPersistenceLifecycle(record, nowMs);
+    acc[state] = acc[state] || { total: 0, sources: {} };
+    acc[state].total += 1;
+    acc[state].sources[source] = (acc[state].sources[source] || 0) + 1;
+    return acc;
+  }, {});
+
+  const suspicious = [];
+  const addSuspicious = (record, source, reasonCode, reason) => {
+    const summary = gridlyClearedHazardPersistenceRecordSummary(record, source, {
+      appearsInActiveHazards: appears(record, "activeHazards", safeActiveHazards),
+      appearsInUnifiedIncidents: appears(record, "unifiedIncidents", unifiedIncidents),
+      appearsInAlerts: appears(record, "alerts", alertRecords),
+      appearsOnMap: appears(record, "markers", renderedMarkers),
+      appearsInStorage: appears(record, "storage", storageRecords),
+      appearsInSupabaseInventory: appears(record, "supabase", supabaseRecords)
+    }, nowMs, currentAwarenessAreaRaw);
+    suspicious.push({ ...summary, reasonCode, reason });
+  };
+
+  safeActiveHazards.forEach((hazard) => {
+    const latestState = typeof gridlyRoadHazardLatestLifecycleState === "function" ? gridlyRoadHazardLatestLifecycleState(hazard, [...safeActiveHazards, ...safeRecentlyCleared, ...supabaseRecords]) : gridlyClearedHazardPersistenceLifecycle(hazard, nowMs);
+    if (["cleared", "recently_cleared", "hazard_cleared"].includes(String(latestState || "").toLowerCase()) || gridlyClearedHazardPersistenceType(hazard) === "hazard_cleared") {
+      addSuspicious(hazard, "activeHazards", "active_after_clear", "Record is present in activeHazards even though latest lifecycle resolves to cleared/recently cleared.");
+    }
+  });
+
+  safeRecentlyCleared.forEach((clear) => {
+    if (appears(clear, "activeHazards", safeActiveHazards)) addSuspicious(clear, "recentlyClearedRoadHazards", "cleared_but_active", "Recently cleared record matches an activeHazards record by ID or coordinate.");
+    if (appears(clear, "markers", renderedMarkers)) addSuspicious(clear, "recentlyClearedRoadHazards", "cleared_marker", "Recently cleared record still has a rendered map marker.");
+    if (appears(clear, "alerts", alertRecords)) addSuspicious(clear, "recentlyClearedRoadHazards", "cleared_alert", "Recently cleared record still has a rendered alert row/cache entry.");
+    if (supabaseInventory.available && !appears(clear, "supabase", supabaseRecords)) addSuspicious(clear, "recentlyClearedRoadHazards", "local_clear_missing_supabase", "Local recently cleared record was not found in the Supabase hazard inventory window.");
+  });
+
+  supabaseRecords.forEach((record) => {
+    const status = gridlyClearedHazardPersistenceStatus(record, nowMs, supabaseRecords);
+    if (status === "cleared" && appears(record, "activeHazards", safeActiveHazards)) addSuspicious(record, "supabaseInventory", "supabase_cleared_local_active", "Supabase inventory has a cleared record that still matches local activeHazards.");
+    if (status !== "cleared" && coordinateMatch(record, safeRecentlyCleared)) addSuspicious(record, "supabaseInventory", "supabase_active_after_local_clear", "Supabase inventory has an active record matching a locally recently cleared hazard.");
+  });
+
+  const coordinateGroups = new Map();
+  allEntries.forEach(({ record, source }) => {
+    const coord = gridlyClearedHazardPersistenceCoord(record);
+    if (!coord) return;
+    const key = `coord:${gridlyClearedHazardPersistenceType(record)}:${coord.lat.toFixed(4)}:${coord.lng.toFixed(4)}`;
+    const existing = coordinateGroups.get(key) || { key, records: [], sources: new Set() };
+    existing.records.push(record);
+    existing.sources.add(source);
+    coordinateGroups.set(key, existing);
+  });
+  const sourceReportGroups = new Map();
+  allEntries.forEach(({ record, source }) => {
+    const sourceReportId = gridlyClearedHazardPersistenceSourceReportId(record);
+    if (!sourceReportId) return;
+    const key = `sourceReportId:${sourceReportId}`;
+    const existing = sourceReportGroups.get(key) || { key, records: [], sources: new Set() };
+    existing.records.push(record);
+    existing.sources.add(source);
+    sourceReportGroups.set(key, existing);
+  });
+  const duplicateHazardGroups = [...canonical.values(), ...coordinateGroups.values(), ...sourceReportGroups.values()]
+    .map((group) => {
+      const ids = [...new Set(group.records.map(gridlyClearedHazardPersistenceId).filter(Boolean))];
+      const sourceReportIds = [...new Set(group.records.map(gridlyClearedHazardPersistenceSourceReportId).filter(Boolean))];
+      return { key: group.key, count: group.records.length, ids, sourceReportIds, sources: [...group.sources] };
+    })
+    .filter((group, index, groups) => {
+      const duplicateSignature = `${group.key}|${group.ids.join(",")}|${group.sourceReportIds.join(",")}|${group.sources.join(",")}`;
+      const firstIndex = groups.findIndex((candidate) => `${candidate.key}|${candidate.ids.join(",")}|${candidate.sourceReportIds.join(",")}|${candidate.sources.join(",")}` === duplicateSignature);
+      return index === firstIndex && group.count > 1 && (group.ids.length > 1 || group.sourceReportIds.length > 1 || group.sources.length > 1);
+    });
+
+  duplicateHazardGroups.forEach((group) => {
+    const firstRecord = canonical.get(group.key)?.records?.[0];
+    if (firstRecord) addSuspicious(firstRecord, "duplicateHazardGroups", "duplicate_hazard_ids", "Same hazard cluster/source appears under multiple IDs, source IDs, or surfaces.");
+  });
+
+  const awarenessAreaMismatchRecords = safeActiveHazards.filter((record) => {
+    if (!currentAwarenessAreaRaw || currentAwarenessAreaRaw.countyWide || currentAwarenessAreaRaw.fallback) return false;
+    try { return !isGridlyRecordInAwarenessArea(record, currentAwarenessAreaRaw); } catch (_error) { return false; }
+  }).map((record) => gridlyClearedHazardPersistenceRecordSummary(record, "activeHazards", {
+    appearsInActiveHazards: true,
+    appearsInUnifiedIncidents: appears(record, "unifiedIncidents", unifiedIncidents),
+    appearsInAlerts: appears(record, "alerts", alertRecords),
+    appearsOnMap: appears(record, "markers", renderedMarkers),
+    appearsInStorage: appears(record, "storage", storageRecords),
+    appearsInSupabaseInventory: appears(record, "supabase", supabaseRecords)
+  }, nowMs, currentAwarenessAreaRaw));
+  awarenessAreaMismatchRecords.forEach((record) => addSuspicious(record, "activeHazards", "awareness_mismatch", "Active hazard is outside the selected awareness area."));
+
+  storageRecords.filter((record) => gridlyClearedHazardPersistenceStatus(record, nowMs) !== "cleared" && coordinateMatch(record, safeRecentlyCleared)).forEach((record) => {
+    addSuspicious(record, record.__gridlyStorageSource || "storage", "storage_revive_risk", "Browser storage contains an active-looking hazard matching a recently cleared hazard.");
+  });
+
+  const findingsMap = suspicious.reduce((acc, record) => {
+    const item = acc.get(record.reasonCode) || { code: record.reasonCode, count: 0, summary: record.reason, affectedSources: new Set() };
+    item.count += 1;
+    item.affectedSources.add(record.source);
+    acc.set(record.reasonCode, item);
+    return acc;
+  }, new Map());
+  const findings = [...findingsMap.values()].map((item) => ({ ...item, affectedSources: [...item.affectedSources] }));
+  if (!findings.length) findings.push({ code: "no_persistence_mismatch_detected", count: 0, summary: "No cleared hazard persistence mismatch was detected in the audited sources.", affectedSources: [] });
+
+  const clearedButStillActive = suspicious.filter((record) => ["active_after_clear", "cleared_but_active", "supabase_cleared_local_active"].includes(record.reasonCode));
+  const staleActiveRecords = suspicious.filter((record) => ["supabase_active_after_local_clear", "storage_revive_risk"].includes(record.reasonCode) || (record.status === "active" && Number(record.ageMinutes) > (RECENTLY_CLEARED_WINDOW_MINUTES || 90)));
+  const storageBreakdown = {
+    localStorage: localStorageAudit.breakdown,
+    sessionStorage: sessionStorageAudit.breakdown,
+    suspiciousStorageRecords: suspicious.filter((record) => record.appearsInStorage).length
+  };
+  const recentClearIndex = typeof gridlyBuildRecentRoadClearIndex === "function" ? gridlyBuildRecentRoadClearIndex([...safeActiveHazards, ...safeRecentlyCleared, ...supabaseRecords], nowMs) : new Map();
+
+  const audit = {
+    version: GRIDLY_CLEARED_HAZARD_PERSISTENCE_AUDIT_VERSION,
+    generatedAt: new Date(nowMs).toISOString(),
+    currentAwarenessArea,
+    activeHazardCount: safeActiveHazards.length,
+    activeReportCount: safeActiveReports.length,
+    unifiedIncidentCount: unifiedIncidents.length,
+    renderedAlertCount: alertRecords.length,
+    renderedMarkerCount: renderedMarkers.length,
+    recentlyClearedCount: safeRecentlyCleared.length,
+    clearedButStillActive,
+    duplicateHazardGroups,
+    staleActiveRecords,
+    sourceBreakdown,
+    lifecycleBreakdown,
+    storageBreakdown,
+    awarenessAreaMismatchRecords,
+    recentlyClearedIndex: {
+      count: recentClearIndex?.size || 0,
+      keys: recentClearIndex?.size ? [...recentClearIndex.keys()].slice(0, 40) : []
+    },
+    findings,
+    likelyCause: gridlyClearedHazardPersistenceLikelyCause(findings, sourceBreakdown),
+    safeToPatch: findings.some((finding) => finding.code !== "no_persistence_mismatch_detected"),
+    suspiciousRecords: suspicious
+  };
+  console.info("gridlyClearedHazardPersistenceAudit", audit);
+  return audit;
+}
+
+if (typeof window !== "undefined") {
+  window.gridlyClearedHazardPersistenceAudit = gridlyClearedHazardPersistenceAudit;
+}
+exposeGridlyAuditHelper("gridlyClearedHazardPersistenceAudit", gridlyClearedHazardPersistenceAudit);
+
 function gridlyReadTxdotDiagnostics() {
   if (typeof window === "undefined") return {};
   if (typeof window.gridlyTxdot?.getDiagnostics === "function") return window.gridlyTxdot.getDiagnostics() || {};
