@@ -32320,11 +32320,16 @@ function gridlyHistoricalIntelligenceTitleCaseLocation(value = "") {
 
 const GRIDLY_HISTORICAL_LOCATION_FALLBACK_LABEL = "Location not specified";
 const GRIDLY_HISTORICAL_SOURCE_ROAD_LOCATION_PATHS = Object.freeze([
-  "roadName", "road_name", "referenceRoad", "reference_road", "nearestRoad", "nearest_road",
-  "resolvedRoadName", "resolved_road_name", "displayRoad", "display_road",
-  "locationLabel", "location_label", "displayLocation", "display_location",
+  "roadName", "road_name", "roadLabel", "road_label", "roadTitle", "road_title",
+  "primaryRoad", "primary_road", "referenceRoad", "reference_road", "nearestRoad", "nearest_road",
+  "nearestRoadName", "nearest_road_name", "nearbyRoad", "nearby_road", "resolvedRoadName", "resolved_road_name",
+  "displayRoad", "display_road", "displayRoadName", "display_road_name",
+  "routeName", "route_name", "routeLabel", "route_label", "corridorName", "corridor_name",
+  "location", "locationLabel", "location_label", "locationName", "location_name", "locationTitle", "location_title",
+  "locationText", "location_text", "displayLocation", "display_location", "resolvedLocation", "resolved_location", "resolvedLocationLabel", "resolved_location_label",
+  "localizedLocation", "localized_location", "localizedSpot", "localized_spot", "knownLocation", "known_location",
   "crossingName", "crossing_name", "crossingLabel", "crossing_label",
-  "intersection", "street", "address"
+  "intersection", "street", "streetName", "street_name", "address"
 ]);
 const GRIDLY_HISTORICAL_SOURCE_ROAD_LOCATION_NESTS = Object.freeze(["", "raw", "source", "original", "metadata", "properties"]);
 const GRIDLY_HISTORICAL_TEXT_FALLBACK_LOCATION_PATHS = Object.freeze(["title", "description", "summary", "headline", "detail"]);
@@ -32427,6 +32432,142 @@ function gridlyHistoricalIntelligenceMostCommonSourceLocationContext(records = [
     const sourcePriority = Number(b.sourceType === "source_report_field") - Number(a.sourceType === "source_report_field");
     return Number(b.count) - Number(a.count) || sourcePriority || String(a.label).localeCompare(String(b.label));
   })[0] || null;
+}
+
+
+function gridlyHistoricalIntelligencePrimitiveAuditValue(value) {
+  if (value == null) return "";
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") return safeDisplayText(value, "");
+  return "";
+}
+
+function gridlyHistoricalIntelligenceAuditPathsWithNests(paths = []) {
+  return gridlyHistoricalIntelligenceBuildNestedPaths(paths);
+}
+
+function gridlyHistoricalIntelligenceSourceReportKeySample(records = [], limit = 3) {
+  return (Array.isArray(records) ? records : []).slice(0, limit).map((record, index) => ({
+    recordIndex: index,
+    keys: record && typeof record === "object" ? Object.keys(record).slice(0, 32) : []
+  }));
+}
+
+function gridlyHistoricalIntelligenceSourceReportRoadFieldSample(records = [], limit = 3) {
+  const paths = gridlyHistoricalIntelligenceAuditPathsWithNests(GRIDLY_HISTORICAL_SOURCE_ROAD_LOCATION_PATHS);
+  const output = [];
+  (Array.isArray(records) ? records : []).slice(0, limit).forEach((record, recordIndex) => {
+    const fields = paths.map((path) => {
+      const value = gridlyHistoricalIntelligencePrimitiveAuditValue(gridlyHistoricalIntelligenceReadPath(record, path));
+      return value ? { field: path, value, recoveredByPresentationResolver: Boolean(gridlyHistoricalIntelligenceCleanLocationCandidate(value)) } : null;
+    }).filter(Boolean).slice(0, 18);
+    output.push({ recordIndex, fields });
+  });
+  return output;
+}
+
+function gridlyHistoricalIntelligenceSourceNestedKeySample(records = [], limit = 3) {
+  const nestedKeys = ["raw", "source", "original", "metadata", "properties"];
+  return (Array.isArray(records) ? records : []).slice(0, limit).map((record, recordIndex) => ({
+    recordIndex,
+    nested: nestedKeys.reduce((acc, key) => {
+      const value = record?.[key];
+      if (value && typeof value === "object" && !Array.isArray(value)) acc[key] = Object.keys(value).slice(0, 32);
+      return acc;
+    }, {})
+  }));
+}
+
+function gridlyHistoricalIntelligenceRecordHasCoordinates(record = {}) {
+  const coordinatePairs = [
+    ["lat", "lng"], ["lat", "lon"], ["latitude", "longitude"], ["y", "x"],
+    ["raw.lat", "raw.lng"], ["raw.lat", "raw.lon"], ["raw.latitude", "raw.longitude"],
+    ["source.lat", "source.lng"], ["source.lat", "source.lon"], ["source.latitude", "source.longitude"],
+    ["original.lat", "original.lng"], ["original.lat", "original.lon"], ["original.latitude", "original.longitude"],
+    ["metadata.lat", "metadata.lng"], ["metadata.latitude", "metadata.longitude"],
+    ["properties.lat", "properties.lng"], ["properties.latitude", "properties.longitude"]
+  ];
+  const hasNumericPair = coordinatePairs.some(([latPath, lngPath]) => {
+    const lat = Number(gridlyHistoricalIntelligenceReadPath(record, latPath));
+    const lng = Number(gridlyHistoricalIntelligenceReadPath(record, lngPath));
+    return Number.isFinite(lat) && Number.isFinite(lng);
+  });
+  if (hasNumericPair) return true;
+  const arrayPaths = ["coordinates", "coords", "location.coordinates", "raw.coordinates", "raw.coords", "raw.location.coordinates", "source.coordinates", "source.coords", "source.location.coordinates", "original.coordinates", "original.coords", "original.location.coordinates", "geometry.coordinates"];
+  return arrayPaths.some((path) => {
+    const value = gridlyHistoricalIntelligenceReadPath(record, path);
+    return Array.isArray(value) && value.length >= 2 && Number.isFinite(Number(value[0])) && Number.isFinite(Number(value[1]));
+  });
+}
+
+function gridlyHistoricalIntelligenceRecordsHaveCoordinates(records = []) {
+  return (Array.isArray(records) ? records : []).some((record) => gridlyHistoricalIntelligenceRecordHasCoordinates(record));
+}
+
+function gridlyHistoricalIntelligenceSeedDemoLegacyAssessment(records = [], finding = {}) {
+  const seedPattern = /seed|demo|fake|sample|test|mock|simulated|fixture/i;
+  const legacyPattern = /legacy|migrated|old_schema|old-schema|schema[_ -]?v?1\b|historical[_ -]?v?1\b/i;
+  const sourceText = [
+    finding?.source,
+    finding?.groupingKey,
+    ...(Array.isArray(records) ? records : []).flatMap((record) => [
+      record?.source, record?.sourceType, record?.source_type, record?.id, record?.reportId, record?.report_id,
+      record?.incidentId, record?.incident_id, record?.historicalRecordId, record?.historical_record_id,
+      record?.metadata?.source, record?.metadata?.seedSource, record?.metadata?.schemaVersion, record?.schemaVersion, record?.schema_version
+    ])
+  ].map((value) => String(value || "")).join(" ");
+  const missingCurrentIds = (Array.isArray(records) ? records : []).some((record) => !(record?.reportId || record?.report_id || record?.incidentId || record?.incident_id || record?.id || record?.uuid));
+  const hasRawSourceOriginal = (Array.isArray(records) ? records : []).some((record) => record?.raw || record?.source || record?.original);
+  return {
+    appearsSeededDemoLegacy: Boolean(seedPattern.test(sourceText) || legacyPattern.test(sourceText) || (missingCurrentIds && hasRawSourceOriginal)),
+    seededOrDemo: seedPattern.test(sourceText),
+    legacyLike: legacyPattern.test(sourceText) || (missingCurrentIds && hasRawSourceOriginal),
+    evidence: [
+      seedPattern.test(sourceText) ? "seed/demo/test marker found in source/id/metadata" : "",
+      legacyPattern.test(sourceText) ? "legacy/schema marker found in source/id/metadata" : "",
+      missingCurrentIds && hasRawSourceOriginal ? "raw/source/original nested payload without current report id" : ""
+    ].filter(Boolean)
+  };
+}
+
+function gridlyHistoricalIntelligenceWeakTitleReasons({ title = "", context = null, coordinatesExist = false, locationAvailableOnlyAsCoordinates = false, seededAssessment = null } = {}) {
+  const normalized = safeDisplayText(title, "").replace(/\s+/g, " ").trim();
+  const reasons = [];
+  if (!normalized) reasons.push("final title is empty after rendering");
+  if (normalized === GRIDLY_HISTORICAL_LOCATION_FALLBACK_LABEL) reasons.push("rendered fallback because no usable road/location text field was found");
+  if (normalized && gridlyHistoricalIntelligenceIsWeakLocationTitle(normalized)) reasons.push("final title matches the generic/weak location-title pattern");
+  if (!context) reasons.push("presentation resolver found no recognized source road/location alias");
+  if (locationAvailableOnlyAsCoordinates) reasons.push("source report has coordinates but no road/location text; reverse geocoding is intentionally not attempted");
+  else if (coordinatesExist) reasons.push("source report includes coordinates, but a text location was still unavailable or weak");
+  if (seededAssessment?.appearsSeededDemoLegacy) reasons.push("row appears seeded/demo/legacy based on source/id/metadata shape");
+  return Array.from(new Set(reasons));
+}
+
+function gridlyHistoricalIntelligenceBuildDataCleanupRecommendations({ weakRows = [], seededDataDetected = false, rowCount = 0 } = {}) {
+  const coordinateOnlyCount = weakRows.filter((row) => row.locationAvailableOnlyAsCoordinates).length;
+  const seededWeakCount = weakRows.filter((row) => row.appearsSeededDemoLegacy).length;
+  const noTextLocationCount = weakRows.filter((row) => !row.sourceReportLocationResolved).length;
+  return {
+    clearTestSeedDataBeforeBeta: Boolean(seededDataDetected || seededWeakCount),
+    shouldClearTestSeedDataBeforeBeta: Boolean(seededDataDetected || seededWeakCount),
+    recommendation: (seededDataDetected || seededWeakCount)
+      ? "Clear or quarantine test/seed/demo historical records before beta so weak historical rows do not look like product defects."
+      : "No seed/demo marker was detected by this audit; keep monitoring weak rows and quarantine any non-production history before beta.",
+    presentationScopeOnly: true,
+    noStorageMutationPerformed: true,
+    noReverseGeocodingRecommended: coordinateOnlyCount > 0,
+    counts: {
+      rowCount,
+      weakRowCount: weakRows.length,
+      coordinateOnlyWeakRowCount: coordinateOnlyCount,
+      seededDemoLegacyWeakRowCount: seededWeakCount,
+      weakRowsWithoutRecognizedTextLocationCount: noTextLocationCount
+    },
+    actions: [
+      seededDataDetected || seededWeakCount ? "Delete or quarantine historical seed/demo/test records before beta validation." : "Keep production historical records; no seed/demo cleanup is currently proven by this audit.",
+      coordinateOnlyCount ? "For coordinate-only legacy rows, collect a road/location label at report capture or run an offline data-cleanup job outside this presentation resolver; do not invent names in UI." : "No coordinate-only weak rows were detected in this render audit.",
+      noTextLocationCount ? "Backfill missing road/location text from trusted original reports where available; leave Location not specified when no actual text field exists." : "Recognized source road/location text exists for all rendered rows."
+    ]
+  };
 }
 
 function gridlyHistoricalIntelligenceRecordLocationContext(record = {}) {
@@ -33303,29 +33444,66 @@ function gridlyHistoricalIntelligenceFinalRenderAudit(options = {}) {
     };
   }).filter(Boolean).slice(0, 8);
   const renderedRows = sourceRows.map((row, index) => {
+    const finding = findings[index] || {};
+    const sourceRecords = Array.isArray(finding.sourceRecords) ? finding.sourceRecords : [];
     const context = sourceContexts[index] || null;
     const title = safeDisplayText(row.title, GRIDLY_HISTORICAL_LOCATION_FALLBACK_LABEL);
     const weakTitle = !title || title === GRIDLY_HISTORICAL_LOCATION_FALLBACK_LABEL || gridlyHistoricalIntelligenceIsWeakLocationTitle(title);
+    const coordinatesExist = gridlyHistoricalIntelligenceRecordsHaveCoordinates(sourceRecords);
+    const locationAvailableOnlyAsCoordinates = Boolean(coordinatesExist && !context);
+    const seededAssessment = gridlyHistoricalIntelligenceSeedDemoLegacyAssessment(sourceRecords, finding);
+    const reportCount = Number(finding.count || sourceRecords.length || 0);
+    const sourceReportCount = sourceRecords.length;
+    const weakTitleReasons = gridlyHistoricalIntelligenceWeakTitleReasons({
+      title,
+      context,
+      coordinatesExist,
+      locationAvailableOnlyAsCoordinates,
+      seededAssessment
+    });
     return {
       row: index + 1,
       finalTitle: title || GRIDLY_HISTORICAL_LOCATION_FALLBACK_LABEL,
       detailLocation: row.detailLocation || "",
+      patternSubtitle: gridlyHistoricalIntelligencePatternSubtitle(finding),
+      supportLine: gridlyHistoricalIntelligenceSummaryLine(finding),
+      findingCategory: finding.category || "",
+      findingType: finding.categoryLabel || finding.title || "",
+      findingId: finding.id || finding.findingId || finding.finding_id || "",
+      findingKey: finding.key || finding.groupingKey || finding.normalizedRoadName || finding.normalizedLocationLabel || "",
+      reportCount,
+      sourceReportCount,
       source: row.source,
       sourceRoadField: context?.sourceField || "",
       sourceRoadValue: context?.label || "",
       sourceReportLocationResolved: Boolean(context),
+      sampleSourceReportKeys: gridlyHistoricalIntelligenceSourceReportKeySample(sourceRecords),
+      sampleSourceReportRoadLocationFields: gridlyHistoricalIntelligenceSourceReportRoadFieldSample(sourceRecords),
+      sampleRawSourceOriginalNestedKeys: gridlyHistoricalIntelligenceSourceNestedKeySample(sourceRecords),
+      coordinatesExist,
+      locationAvailableOnlyAsCoordinates,
+      appearsSeededDemoLegacy: seededAssessment.appearsSeededDemoLegacy,
+      seededDemoLegacyAssessment: seededAssessment,
       weakTitle,
+      weakTitleReasons,
+      whyTitleConsideredWeak: weakTitleReasons.join("; ") || "not weak",
       expandable: Boolean(row.expandable)
     };
   });
   const weakRows = renderedRows.filter((row) => row.weakTitle);
+  const seededDataDetected = renderedRows.some((row) => row.appearsSeededDemoLegacy);
   return {
     rowCount: renderedRows.length,
     sourceReportLocationResolvedCount: renderedRows.filter((row) => row.sourceReportLocationResolved).length,
     weakTitleCount: weakRows.length,
     weakTitleExamples: weakRows.slice(0, 8),
     finalRenderedExamples: renderedRows.slice(0, 8),
-    sourceRoadFieldExamples
+    sourceRoadFieldExamples,
+    historicalDataCleanupRecommendations: gridlyHistoricalIntelligenceBuildDataCleanupRecommendations({
+      weakRows,
+      seededDataDetected,
+      rowCount: renderedRows.length
+    })
   };
 }
 
@@ -60762,7 +60940,8 @@ function gridlyHistoricalIntelligenceExperienceAudit() {
     weakTitleCount: 0,
     weakTitleExamples: [],
     finalRenderedExamples: [],
-    sourceRoadFieldExamples: []
+    sourceRoadFieldExamples: [],
+    historicalDataCleanupRecommendations: gridlyHistoricalIntelligenceBuildDataCleanupRecommendations({ weakRows: [], seededDataDetected: false, rowCount: 0 })
   };
   const historicalMissingLocationAudit = {
     rowCount: historicalLocationRows.length,
@@ -60789,6 +60968,11 @@ function gridlyHistoricalIntelligenceExperienceAudit() {
     event.record?.metadata?.source,
     event.record?.metadata?.seedSource
   ].map((value) => String(value || "")).join(" ")));
+  const historicalDataCleanupRecommendations = historicalFinalRenderAudit.historicalDataCleanupRecommendations || gridlyHistoricalIntelligenceBuildDataCleanupRecommendations({
+    weakRows: historicalFinalRenderAudit.weakTitleExamples || [],
+    seededDataDetected,
+    rowCount: historicalFinalRenderAudit.rowCount || historicalLocationRows.length
+  });
   const availableSignals = [
     { signal: "report counts", status: combinedEvents.length > 0 ? "AVAILABLE" : "READY_EMPTY", sourceFields: ["crossingEvents[]", "hazardEvents[]"], currentValue: combinedEvents.length, driverValue: "MEDIUM", intelligenceAssetValue: "HIGH", notes: "Base count used by each compact history row as community-report support." },
     { signal: "recurrence counts", status: locationGroups.repeated > 0 ? "AVAILABLE" : "DERIVABLE_WHEN_DATA_EXISTS", sourceFields: ["crossingId/crossingName", "hazardType + roadName"], currentValue: locationGroups.repeated, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Current findings require at least two records in the same grouped location/category." },
@@ -60849,6 +61033,7 @@ function gridlyHistoricalIntelligenceExperienceAudit() {
     currentListInputs,
     historicalMissingLocationAudit,
     historicalFinalRenderAudit,
+    historicalDataCleanupRecommendations,
     driverValueSignals,
     intelligenceAssetSignals,
     seededDataDetected,
