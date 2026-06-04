@@ -32318,7 +32318,81 @@ function gridlyHistoricalIntelligenceTitleCaseLocation(value = "") {
 }
 
 function gridlyHistoricalIntelligenceDisplayLocation(finding = {}) {
-  return gridlyHistoricalIntelligenceTitleCaseLocation(finding.locationLabel || finding.nearbyLocationLabel || finding.referenceRoad || "Local Area") || "Local Area";
+  return gridlyHistoricalIntelligenceTitleCaseLocation(finding.locationLabel || finding.nearbyLocationLabel || finding.referenceRoad || "Location details unavailable") || "Location details unavailable";
+}
+
+
+function gridlyHistoricalIntelligenceRecordTimestampMs(record = {}) {
+  const value = typeof gridlyHistoricalAuditTimestamp === "function"
+    ? gridlyHistoricalAuditTimestamp(record)
+    : (record?.createdAt || record?.created_at || record?.timestamp || record?.reportedAt || record?.reported_at || null);
+  const ms = new Date(value || 0).getTime();
+  return Number.isFinite(ms) && ms > 0 ? ms : null;
+}
+
+function gridlyHistoricalIntelligenceHourLabel(hour) {
+  const value = Number(hour);
+  if (!Number.isFinite(value)) return "";
+  const normalized = ((Math.round(value) % 24) + 24) % 24;
+  if (normalized === 0) return "12 AM";
+  if (normalized === 12) return "12 PM";
+  return `${normalized % 12} ${normalized < 12 ? "AM" : "PM"}`;
+}
+
+function gridlyHistoricalIntelligencePeakWindowLabel(records = []) {
+  const buckets = new Map();
+  (Array.isArray(records) ? records : []).forEach((record) => {
+    const ms = gridlyHistoricalIntelligenceRecordTimestampMs(record);
+    if (!ms) return;
+    const hour = new Date(ms).getHours();
+    buckets.set(hour, (buckets.get(hour) || 0) + 1);
+  });
+  if (!buckets.size) return "";
+  const [peakHour] = Array.from(buckets.entries()).sort((a, b) => b[1] - a[1] || a[0] - b[0])[0] || [];
+  if (!Number.isFinite(Number(peakHour))) return "";
+  const endHour = (Number(peakHour) + 2) % 24;
+  return `${gridlyHistoricalIntelligenceHourLabel(peakHour)} – ${gridlyHistoricalIntelligenceHourLabel(endHour)}`;
+}
+
+function gridlyHistoricalIntelligenceCommunityMemberEstimate(records = []) {
+  const contributorIds = new Set();
+  let explicitMax = 0;
+  (Array.isArray(records) ? records : []).forEach((record) => {
+    [record?.userId, record?.user_id, record?.reporterId, record?.reporter_id, record?.contributorId, record?.contributor_id, record?.deviceId, record?.device_id]
+      .filter(Boolean)
+      .forEach((id) => contributorIds.add(String(id)));
+    const explicit = Number(record?.uniqueContributorCount ?? record?.contributorCount ?? record?.contributors ?? record?.reporterCount ?? record?.reporter_count ?? record?.distinctReporters);
+    if (Number.isFinite(explicit) && explicit > explicitMax) explicitMax = explicit;
+  });
+  return Math.max(contributorIds.size, Math.round(explicitMax));
+}
+
+function gridlyHistoricalIntelligenceDurationNoun(category = "") {
+  return category === "most_blocked_crossing" || category === "high_delay_corridor" ? "delay" : "clear time";
+}
+
+function gridlyHistoricalIntelligenceImpactLabel(category = "", minutes = null) {
+  const duration = formatGridlyHistoricalIntelligenceDuration(minutes);
+  if (!duration) return "";
+  return gridlyHistoricalIntelligenceDurationNoun(category) === "delay" ? `Typical delay ${duration}` : `Usually clears in ${duration}`;
+}
+
+function gridlyHistoricalIntelligenceSummaryLine(finding = {}) {
+  const pieces = [];
+  if (finding.peakWindowLabel) pieces.push(`Most reported ${finding.peakWindowLabel}`);
+  const impact = gridlyHistoricalIntelligenceImpactLabel(finding.category, finding.averageDurationMinutes);
+  if (impact) pieces.push(impact);
+  if (!pieces.length && Number(finding.count || 0) > 0) pieces.push(`${Number(finding.count || 0)} community ${Number(finding.count || 0) === 1 ? "report" : "reports"}`);
+  if (pieces.length < 2 && Number(finding.confirmationCount || 0) > 0) pieces.push("Reported by community members");
+  return pieces.slice(0, 2).join(" · ");
+}
+
+function gridlyHistoricalIntelligenceSupportingCopy(finding = {}) {
+  const language = getGridlyIntelligencePreviewLanguage(finding.category);
+  if (finding.category === "most_blocked_crossing") return "Drivers have repeatedly reported train delays at this crossing.";
+  if (finding.category === "recurring_flooding_location") return "Drivers have repeatedly reported flooding at this recurring location.";
+  if (finding.category === "community_confirmed_hotspot") return "Community activity has been reported here more than once.";
+  return typeof language.description === "function" ? language.description(finding) : "Drivers have repeatedly reported activity here.";
 }
 
 const GRIDLY_HISTORICAL_INTELLIGENCE_LANGUAGE = Object.freeze({
@@ -32481,6 +32555,8 @@ function gridlyHistoricalIntelligenceBuildFinding({ category, records, locationL
   const normalizedReferenceRoad = gridlyHistoricalIntelligenceNormalizeLocationToken(referenceRoad);
   const normalizedLocationLabel = gridlyHistoricalIntelligenceNormalizeLocationToken(locationLabel);
   const sourceRecordIds = usableRecords.map((record, index) => gridlyHistoricalIntelligenceRecordId(record, index)).filter(Boolean);
+  const peakWindowLabel = gridlyHistoricalIntelligencePeakWindowLabel(usableRecords);
+  const communityMemberEstimate = gridlyHistoricalIntelligenceCommunityMemberEstimate(usableRecords);
   return {
     category,
     title: getGridlyIntelligencePreviewLanguage(category).title,
@@ -32491,6 +32567,8 @@ function gridlyHistoricalIntelligenceBuildFinding({ category, records, locationL
     count,
     averageDurationMinutes,
     confirmationCount,
+    communityMemberEstimate,
+    peakWindowLabel,
     latestAt: gridlyHistoricalIntelligenceLatestTimestamp(usableRecords) ? new Date(gridlyHistoricalIntelligenceLatestTimestamp(usableRecords)).toISOString() : null,
     significanceScore,
     sourceRecordIds,
@@ -32647,7 +32725,7 @@ function gridlyBuildHistoricalIntelligenceFindings() {
     findings.push(gridlyHistoricalIntelligenceBuildFinding({
       category: "most_blocked_crossing",
       records,
-      locationLabel: gridlyHistoricalAuditCrossing(sample) || sample.crossingName || sample.crossingId || "this crossing",
+      locationLabel: gridlyHistoricalAuditCrossing(sample) || sample.crossingName || sample.crossingId || "Crossing location unavailable",
       baseScore: 35
     }));
   });
@@ -32804,26 +32882,29 @@ function buildGridlyHistoricalIntelligenceSheetHtml(options = {}) {
   const state = buildGridlyIntelligencePreviewCardModel(options);
   const rankedFindings = Array.isArray(state.dedupedRankedFindings) ? state.dedupedRankedFindings : (Array.isArray(state.rankedFindings) ? state.rankedFindings : []);
   if (!rankedFindings.length) {
-    return `<div class="gridly-historical-intelligence-sheet"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Based on cleared community reports</p><div class="gridly-historical-intelligence-empty"><strong>Not Enough History Yet</strong><p>Gridly will show local patterns here after more cleared reports are collected.</p></div></div>`;
+    return `<div class="gridly-historical-intelligence-sheet"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local patterns from cleared community reports</p><div class="gridly-historical-intelligence-empty"><strong>Not Enough History Yet</strong><p>Gridly will show local patterns here after more cleared reports are collected.</p></div></div>`;
   }
-  const rows = rankedFindings.map((finding) => {
+  const rows = rankedFindings.map((finding, index) => {
     const language = getGridlyIntelligencePreviewLanguage(finding.category);
     const title = sanitizeText(finding.title || language.title || "Historical Pattern");
-    const description = sanitizeText(language.description(finding));
     const category = sanitizeText(finding.categoryLabel || language.category || "Hotspot");
     const location = sanitizeText(gridlyHistoricalIntelligenceDisplayLocation(finding));
+    const summary = sanitizeText(gridlyHistoricalIntelligenceSummaryLine(finding));
+    const supportingCopy = sanitizeText(gridlyHistoricalIntelligenceSupportingCopy(finding));
     const lastSeen = formatGridlyHistoricalIntelligenceDate(finding.latestAt);
     const duration = formatGridlyHistoricalIntelligenceDuration(finding.averageDurationMinutes);
     const count = Number(finding.count || 0);
-    const durationLabel = finding.category === "most_blocked_crossing" || finding.category === "high_delay_corridor" ? "Average delay" : "Average clear time";
-    const supportLines = [
-      duration ? `<div class="gridly-historical-intelligence-stat"><span>${sanitizeText(durationLabel)}:</span><strong>${sanitizeText(duration)}</strong></div>` : "",
-      `<div class="gridly-historical-intelligence-stat"><span>Based on</span><strong>${sanitizeText(`${count} community ${count === 1 ? "report" : "reports"}`)}</strong></div>`,
+    const communityMembers = Number(finding.communityMemberEstimate || 0);
+    const durationLabel = gridlyHistoricalIntelligenceDurationNoun(finding.category) === "delay" ? "Typical delay" : "Usually clears";
+    const detailLines = [
+      finding.peakWindowLabel ? `<div class="gridly-historical-intelligence-stat"><span>Most reported</span><strong>${sanitizeText(finding.peakWindowLabel)}</strong></div>` : "",
+      duration ? `<div class="gridly-historical-intelligence-stat"><span>${sanitizeText(durationLabel)}</span><strong>${sanitizeText(durationLabel === "Usually clears" ? `in ${duration}` : duration)}</strong></div>` : "",
+      communityMembers ? `<div class="gridly-historical-intelligence-stat"><span>Reported by</span><strong>${sanitizeText(`${communityMembers} community ${communityMembers === 1 ? "member" : "members"}`)}</strong></div>` : `<div class="gridly-historical-intelligence-stat"><span>Community reports</span><strong>${sanitizeText(`${count} ${count === 1 ? "report" : "reports"}`)}</strong></div>`,
       lastSeen ? `<div class="gridly-historical-intelligence-stat gridly-historical-intelligence-stat-muted"><span>Last reported</span><strong>${sanitizeText(lastSeen)}</strong></div>` : ""
     ].filter(Boolean).join("");
-    return `<article class="gridly-historical-intelligence-row"><div class="gridly-historical-intelligence-row-head"><span class="gridly-historical-intelligence-rank">${Number(finding.rank || 0)}</span><span class="gridly-historical-intelligence-category">${category}</span></div><strong>${title}</strong><div class="gridly-historical-intelligence-location">${location}</div><p>${description}</p><div class="gridly-historical-intelligence-stats">${supportLines}</div></article>`;
+    return `<details class="gridly-historical-intelligence-row" data-history-row="${index + 1}"><summary class="gridly-historical-intelligence-summary"><span class="gridly-historical-intelligence-row-copy"><span class="gridly-historical-intelligence-category">${category}</span><strong>${title}</strong><span class="gridly-historical-intelligence-location">${location}</span>${summary ? `<span class="gridly-historical-intelligence-line">${summary}</span>` : ""}</span><span class="gridly-historical-intelligence-expand" aria-hidden="true"></span></summary><div class="gridly-historical-intelligence-details"><div class="gridly-historical-intelligence-detail-title"><span>${category}</span><strong>${title}</strong><em>${location}</em></div><div class="gridly-historical-intelligence-stats">${detailLines}</div><p>${supportingCopy}</p></div></details>`;
   }).join("");
-  return `<div class="gridly-historical-intelligence-sheet"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Based on cleared community reports</p><div class="gridly-historical-intelligence-list">${rows}</div></div>`;
+  return `<div class="gridly-historical-intelligence-sheet"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local patterns from cleared community reports</p><div class="gridly-historical-intelligence-list">${rows}</div></div>`;
 }
 
 function renderGridlyIntelligencePreviewCard(options = {}) {
@@ -32937,12 +33018,12 @@ window.gridlyIntelligenceContentAudit = function gridlyIntelligenceContentAudit(
     const dedupedRankedFindings = state.dedupedRankedFindings || state.supportingData?.dedupedRankedFindings || rankedFindings;
     const findingCount = Number(state.findingCount ?? dedupedRankedFindings.length ?? 0);
     const historicalRecordCount = Number(state.supportingData?.historicalRecordCount || 0);
-    const sheetCopy = "Historical Intelligence Based on cleared community reports History Local patterns Not enough history yet Gridly will show local patterns here after more cleared reports are collected.";
+    const sheetCopy = "Historical Intelligence Local patterns from cleared community reports History Local patterns Not enough history yet Gridly will show local patterns here after more cleared reports are collected.";
     const noPreviewLanguage = !/simulated/i.test(sheetCopy);
     const avoidedInternalTerms = !/(framework|simulation|score|model|confidence engine|signal)/i.test(sheetCopy);
     return {
       title: "Historical Intelligence",
-      subtitle: "Based on cleared community reports",
+      subtitle: "Local patterns from cleared community reports",
       chipTitle: state.selectedTitle || "History",
       chipDescription: state.selectedDescription || "Local patterns",
       category: state.selectedCategory || "no_history",
@@ -32974,7 +33055,7 @@ window.gridlyIntelligenceContentAudit = function gridlyIntelligenceContentAudit(
   } catch (error) {
     return {
       title: "Historical Intelligence",
-      subtitle: "Based on cleared community reports",
+      subtitle: "Local patterns from cleared community reports",
       chipTitle: "History",
       chipDescription: "Local patterns",
       category: "no_history",
@@ -60231,30 +60312,30 @@ function gridlyHistoricalIntelligenceExperienceAudit() {
     event.record?.metadata?.seedSource
   ].map((value) => String(value || "")).join(" ")));
   const availableSignals = [
-    { signal: "report counts", status: combinedEvents.length > 0 ? "AVAILABLE" : "READY_EMPTY", sourceFields: ["crossingEvents[]", "hazardEvents[]"], currentValue: combinedEvents.length, driverValue: "MEDIUM", intelligenceAssetValue: "HIGH", notes: "Base count used by every current card as 'Based on' community reports." },
+    { signal: "report counts", status: combinedEvents.length > 0 ? "AVAILABLE" : "READY_EMPTY", sourceFields: ["crossingEvents[]", "hazardEvents[]"], currentValue: combinedEvents.length, driverValue: "MEDIUM", intelligenceAssetValue: "HIGH", notes: "Base count used by each compact history row as community-report support." },
     { signal: "recurrence counts", status: locationGroups.repeated > 0 ? "AVAILABLE" : "DERIVABLE_WHEN_DATA_EXISTS", sourceFields: ["crossingId/crossingName", "hazardType + roadName"], currentValue: locationGroups.repeated, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Current findings require at least two records in the same grouped location/category." },
     { signal: "unique locations", status: locationGroups.unique > 0 ? "AVAILABLE" : "DERIVABLE_WHEN_DATA_EXISTS", sourceFields: ["roadName", "crossingName", "crossingId"], currentValue: locationGroups.unique, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Supports repeat-location intelligence and dedupe." },
     { signal: "category recurrence", status: categoryGroups.repeated > 0 ? "AVAILABLE" : "DERIVABLE_WHEN_DATA_EXISTS", sourceFields: ["hazardType", "type", "report_type", "crossingEvents"], currentValue: categoryGroups.repeated, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Currently generates flooding, construction, road hazard, delay, crossing, and hotspot categories." },
     { signal: "timestamps", status: timestamps.length > 0 ? "AVAILABLE" : "READY_EMPTY", sourceFields: ["createdAt", "blockedAt", "submittedAt", "created_at", "reportedAt", "timestamp"], currentValue: timestamps.length, driverValue: "MEDIUM", intelligenceAssetValue: "HIGH", notes: "Used today for latestAt and recency boost; enough to derive first/last, hour/day/month patterns." },
     { signal: "first reported", status: timestamps.length > 0 ? "DERIVABLE_TODAY" : "READY_EMPTY", sourceFields: ["timestamp fields"], currentValue: timestamps[0] ? new Date(timestamps[0]).toISOString() : null, driverValue: "MEDIUM", intelligenceAssetValue: "HIGH", notes: "Not displayed today but derivable from stored timestamps." },
-    { signal: "last reported", status: timestamps.length > 0 ? "AVAILABLE" : "READY_EMPTY", sourceFields: ["timestamp fields"], currentValue: timestamps[timestamps.length - 1] ? new Date(timestamps[timestamps.length - 1]).toISOString() : null, driverValue: "MEDIUM", intelligenceAssetValue: "HIGH", notes: "Displayed on current historical cards when latestAt exists." },
-    { signal: "average delay", status: durationEvents.length > 0 ? "AVAILABLE" : "READY_EMPTY", sourceFields: ["durationMinutes", "duration", "duration_min", "durationMins", "created/blocked + clearedAt"], currentValue: durationEvents.length, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Displayed for blocked crossing and high-delay corridor cards." },
-    { signal: "average clear time", status: clearTimeEvents.length > 0 ? "AVAILABLE" : "READY_EMPTY", sourceFields: ["clearedAt", "cleared_at", "durationMinutes"], currentValue: clearTimeEvents.length, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Displayed for non-crossing/non-delay historical cards when duration exists." },
+    { signal: "last reported", status: timestamps.length > 0 ? "AVAILABLE" : "READY_EMPTY", sourceFields: ["timestamp fields"], currentValue: timestamps[timestamps.length - 1] ? new Date(timestamps[timestamps.length - 1]).toISOString() : null, driverValue: "MEDIUM", intelligenceAssetValue: "HIGH", notes: "Displayed in expanded history row details when latestAt exists." },
+    { signal: "average delay", status: durationEvents.length > 0 ? "AVAILABLE" : "READY_EMPTY", sourceFields: ["durationMinutes", "duration", "duration_min", "durationMins", "created/blocked + clearedAt"], currentValue: durationEvents.length, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Displayed as Typical delay for blocked crossing and high-delay corridor rows." },
+    { signal: "average clear time", status: clearTimeEvents.length > 0 ? "AVAILABLE" : "READY_EMPTY", sourceFields: ["clearedAt", "cleared_at", "durationMinutes"], currentValue: clearTimeEvents.length, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Displayed as Usually clears for non-crossing/non-delay history rows when duration exists." },
     { signal: "report frequency", status: timestamps.length >= 2 ? "DERIVABLE_TODAY" : "NEEDS_MORE_DATA", sourceFields: ["timestamp fields"], currentValue: dayBuckets.unique, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Not displayed today; can be computed as reports per day/week/month." },
     { signal: "contributor counts", status: contributorEvents.length > 0 ? "PARTIAL" : "NOT_STORED_DIRECTLY", sourceFields: ["confirmationCount", "confirmations", "contributorCount variants"], currentValue: contributorEvents.length, driverValue: "MEDIUM", intelligenceAssetValue: "HIGH", notes: "Confirmations can estimate community support; true unique contributor identity is not guaranteed in current history records." },
     { signal: "contributor estimates", status: contributorEvents.length > 0 ? "DERIVABLE_TODAY" : "LIMITED", sourceFields: ["confirmationCount", "confirmations", "report counts"], currentValue: contributorEvents.length, driverValue: "MEDIUM", intelligenceAssetValue: "MEDIUM", notes: "Can estimate with report count plus confirmations, but should be labeled as estimate only." },
-    { signal: "peak reporting hours", status: hourBuckets.unique >= 2 ? "DERIVABLE_TODAY" : "NEEDS_MORE_DATA", sourceFields: ["timestamp fields"], currentValue: hourBuckets.unique, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Readiness model already checks time-of-day pattern viability; current cards do not show it." },
-    { signal: "peak reporting days", status: dayBuckets.unique >= 2 ? "DERIVABLE_TODAY" : "NEEDS_MORE_DATA", sourceFields: ["timestamp fields"], currentValue: dayBuckets.unique, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Useful for school/work commute planning; current cards do not show it." },
+    { signal: "peak reporting hours", status: hourBuckets.unique >= 2 ? "DERIVABLE_TODAY" : "NEEDS_MORE_DATA", sourceFields: ["timestamp fields"], currentValue: hourBuckets.unique, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Displayed as the row summary's Most reported window when timestamps exist." },
+    { signal: "peak reporting days", status: dayBuckets.unique >= 2 ? "DERIVABLE_TODAY" : "NEEDS_MORE_DATA", sourceFields: ["timestamp fields"], currentValue: dayBuckets.unique, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Useful for school/work commute planning; current history list does not show it yet." },
     { signal: "monthly activity", status: monthBuckets.unique >= 1 ? "DERIVABLE_TODAY" : "READY_EMPTY", sourceFields: ["timestamp fields"], currentValue: monthBuckets.unique, driverValue: "MEDIUM", intelligenceAssetValue: "HIGH", notes: "Can power trend direction, seasonality, and planning exports." },
-    { signal: "route impact recurrence", status: routeImpactEvents.length > 0 ? "PARTIAL" : "NOT_AVAILABLE_IN_HISTORY_RECORDS", sourceFields: ["routeImpact", "routeId", "routeName"], currentValue: routeImpactEvents.length, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "No current historical card consumes this; avoid touching Route Watch/route logic." },
+    { signal: "route impact recurrence", status: routeImpactEvents.length > 0 ? "PARTIAL" : "NOT_AVAILABLE_IN_HISTORY_RECORDS", sourceFields: ["routeImpact", "routeId", "routeName"], currentValue: routeImpactEvents.length, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "No history row consumes this; avoid touching Route Watch/route logic." },
     { signal: "crossing recurrence", status: crossingGroups.repeated > 0 ? "AVAILABLE" : "DERIVABLE_WHEN_DATA_EXISTS", sourceFields: ["crossingEvents[].crossingId", "crossingName"], currentValue: crossingGroups.repeated, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Currently generates Frequently Blocked Crossing findings." }
   ];
-  const currentCardInputs = [
-    { card: "Historical Intelligence sheet", fieldsUsed: ["dedupedRankedFindings", "rank", "categoryLabel", "title", "locationLabel", "description", "averageDurationMinutes", "count", "latestAt"], source: "buildGridlyHistoricalIntelligenceSheetHtml() from gridlyBuildHistoricalIntelligenceFindings()", derivedFields: ["rank", "description", "durationLabel", "formatted duration", "formatted last reported"], placeholderFields: ["Not Enough History Yet empty state"], seededOrDemoFields: seededDataDetected ? ["depends on local history record source"] : [] },
-    { card: "Recurring Flooding Location", fieldsUsed: ["hazardEvents", "hazardType", "roadName", "count", "averageDurationMinutes", "latestAt"], source: "hazard history filtered by flood/high water/water and grouped by road", derivedFields: ["recurring_flooding_location", "Average clear time", "report count", "Last reported"], placeholderFields: [], seededOrDemoFields: seededDataDetected ? ["hazardEvents seed/demo records"] : [] },
-    { card: "Frequently Blocked Crossing", fieldsUsed: ["crossingEvents", "crossingId", "crossingName", "count", "durationMinutes", "latestAt"], source: "crossing history grouped by crossing location key", derivedFields: ["most_blocked_crossing", "Average delay", "report count", "Last reported"], placeholderFields: [], seededOrDemoFields: seededDataDetected ? ["crossingEvents seed/demo records"] : [] },
-    { card: "Community Hotspot", fieldsUsed: ["confirmationCount", "confirmations", "roadName/crossingName", "count", "latestAt"], source: "confirmed crossing/hazard events grouped by road or crossing", derivedFields: ["community_confirmed_hotspot", "confirmationCount", "significanceScore"], placeholderFields: [], seededOrDemoFields: seededDataDetected ? ["confirmation seed/demo fields"] : [] },
-    { card: "Historical hazard summaries", fieldsUsed: ["hazardType", "roadName", "referenceRoad", "clearedAt", "durationMinutes", "confirmationCount", "latestAt"], source: "recurring_hazard, repeat_construction_zone, high_delay_corridor finding builders", derivedFields: ["hazardLabel", "averageDurationMinutes", "significanceScore", "normalizedRoadName", "groupingKey"], placeholderFields: ["Local Area fallback when no location label exists"], seededOrDemoFields: seededDataDetected ? ["hazardEvents seed/demo records"] : [] }
+  const currentListInputs = [
+    { row: "Historical Intelligence list", fieldsUsed: ["dedupedRankedFindings", "categoryLabel", "title", "locationLabel", "peakWindowLabel", "averageDurationMinutes", "communityMemberEstimate", "count", "latestAt"], source: "buildGridlyHistoricalIntelligenceSheetHtml() from gridlyBuildHistoricalIntelligenceFindings()", derivedFields: ["summary line", "Most reported", "Typical delay", "Usually clears", "formatted last reported"], placeholderFields: ["Not Enough History Yet empty state"], seededOrDemoFields: seededDataDetected ? ["depends on local history record source"] : [] },
+    { row: "Recurring Flooding Location", fieldsUsed: ["hazardEvents", "hazardType", "roadName", "count", "averageDurationMinutes", "latestAt"], source: "hazard history filtered by flood/high water/water and grouped by road", derivedFields: ["recurring_flooding_location", "Usually clears", "community report count", "Last reported"], placeholderFields: [], seededOrDemoFields: seededDataDetected ? ["hazardEvents seed/demo records"] : [] },
+    { row: "Frequently Blocked Crossing", fieldsUsed: ["crossingEvents", "crossingId", "crossingName", "count", "durationMinutes", "latestAt"], source: "crossing history grouped by crossing location key", derivedFields: ["most_blocked_crossing", "Most reported", "Typical delay", "community report count", "Last reported"], placeholderFields: [], seededOrDemoFields: seededDataDetected ? ["crossingEvents seed/demo records"] : [] },
+    { row: "Community Hotspot", fieldsUsed: ["confirmationCount", "confirmations", "roadName/crossingName", "count", "latestAt"], source: "confirmed crossing/hazard events grouped by road or crossing", derivedFields: ["community_confirmed_hotspot", "communityMemberEstimate", "confirmationCount"], placeholderFields: [], seededOrDemoFields: seededDataDetected ? ["confirmation seed/demo fields"] : [] },
+    { row: "Historical hazard summaries", fieldsUsed: ["hazardType", "roadName", "referenceRoad", "clearedAt", "durationMinutes", "confirmationCount", "latestAt"], source: "recurring_hazard, repeat_construction_zone, high_delay_corridor finding builders", derivedFields: ["hazardLabel", "averageDurationMinutes", "peakWindowLabel", "groupingKey"], placeholderFields: ["Location details unavailable fallback when no location label exists"], seededOrDemoFields: seededDataDetected ? ["hazardEvents seed/demo records"] : [] }
   ];
   const driverValueSignals = {
     high: availableSignals.filter((item) => item.driverValue === "HIGH").map((item) => item.signal),
@@ -60269,24 +60350,24 @@ function gridlyHistoricalIntelligenceExperienceAudit() {
     .map((item) => item.signal);
   if (!historySurfaceDetected) findings.push({ severity: "high", area: "system", message: "Historical Intelligence surface was not detected by known selectors or builders." });
   if (!combinedEvents.length) findings.push({ severity: "medium", area: "data", message: "Historical storage is ready but currently empty in this runtime." });
-  if (dedupedRankedFindings.length) findings.push({ severity: "info", area: "cards", message: `${dedupedRankedFindings.length} historical card finding(s) can be generated now.` });
+  if (dedupedRankedFindings.length) findings.push({ severity: "info", area: "list", message: `${dedupedRankedFindings.length} compact historical row finding(s) can be generated now.` });
   if (seededDataDetected) findings.push({ severity: "info", area: "data", message: "Seed/demo/sample-like historical records detected; acceptable for audit but should be labeled before production decisions." });
-  findings.push({ severity: "medium", area: "card emphasis", message: "Current cards emphasize category/title and descriptive copy before the actionable time-window question drivers likely ask first." });
-  findings.push({ severity: "info", area: "card emphasis", message: "Current cards already show location, average delay/clear time when available, report count, and last reported date." });
-  findings.push({ severity: "medium", area: "missing driver question", message: "Peak time window, peak day, frequency rate, and trend direction are derivable from timestamps but not emphasized in current cards." });
+  findings.push({ severity: "medium", area: "list emphasis", message: "Compact rows now put pattern, exact location, peak window, and typical impact before expanded supporting copy." });
+  findings.push({ severity: "info", area: "list emphasis", message: "Expanded row details preserve location, typical delay/clear time when available, community report/member support, and last reported date." });
+  findings.push({ severity: "medium", area: "missing driver question", message: "Peak time windows are now surfaced in rows when timestamps are available; peak day, frequency rate, and trend direction remain future read-only enhancements." });
   recommendations.push({ priority: "P0", target: "V248.1 scope", action: "Keep the next step read-only or presentation-only until seeded/demo history is clearly separated from real collected reports." });
   recommendations.push({ priority: "P1", target: "Driver value", action: "Prioritize location, when it usually happens, typical delay/clear time, recurrence count, and last report in that order." });
-  recommendations.push({ priority: "P1", target: "Historical analytics", action: "Add read-only peak-hour, peak-day, monthly trend, and first/last reported derivations before changing card UI." });
+  recommendations.push({ priority: "P1", target: "Historical analytics", action: "Keep future peak-day, monthly trend, and first/last reported enhancements read-only and presentation-scoped." });
   recommendations.push({ priority: "P1", target: "Commercial intelligence", action: "Preserve recurrence counts, average durations, repeat locations, and time-window aggregations as future municipality/railroad/logistics assets." });
   recommendations.push({ priority: "P2", target: "Trust labeling", action: "Distinguish based-on count from unique contributor estimates; avoid implying more reporters than the stored data proves." });
   recommendations.push({ priority: "P2", target: "Safety", action: "Continue keeping historical intelligence visually and semantically separate from live hazards and route decisions." });
   return {
     available: true,
-    auditVersion: "V248.0",
+    auditVersion: "V248.1",
     generatedAt,
     historicalSystemDetected: historySurfaceDetected,
     availableSignals,
-    currentCardInputs,
+    currentListInputs,
     driverValueSignals,
     intelligenceAssetSignals,
     seededDataDetected,
@@ -60317,12 +60398,12 @@ function gridlyHistoricalIntelligenceExperienceAudit() {
     },
     readinessCategories: readiness.categories || [],
     readinessDiagnostics: readiness.diagnostics || {},
-    cardCritique: {
+    listCritique: {
       usersLikelyCareAbout: ["Where is it?", "When does it usually happen?", "How bad is it?", "How many reports support it?", "How recent is the pattern?", "Is this live or historical?"],
-      currentlyEmphasized: ["rank", "category", "title", "location", "plain-language description", "average delay/clear time", "community report count", "last reported"],
-      shouldProbablyEmphasize: ["location", "peak time/day window", "average delay or clear time", "recurrence/report count", "last reported", "trend direction when enough months exist"]
+      currentlyEmphasized: ["pattern title", "exact location", "Most reported window when available", "Typical delay/Usually clears", "community report or member support", "last reported in expanded details"],
+      shouldProbablyEmphasize: ["location", "peak time window", "typical delay or clear time", "recurrence/report count", "last reported", "trend direction when enough months exist"]
     },
-    canProceedToV248_1: Boolean(historySurfaceDetected && typeof gridlyBuildHistoricalIntelligenceFindings === "function" && !snapshot.storageReadError)
+    v248_1PresentationReady: Boolean(historySurfaceDetected && typeof gridlyBuildHistoricalIntelligenceFindings === "function" && !snapshot.storageReadError)
   };
 }
 
