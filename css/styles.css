@@ -1289,6 +1289,8 @@ body.route-setup-open #gridlyHazardLauncher {
   border-radius: 22px;
   padding: 18px;
   box-shadow: 0 24px 56px rgba(0, 0, 0, 0.5);
+  max-height: calc(100vh - 18vh);
+  overflow-y: auto;
 }
 
 .settings-modal-head {
@@ -1339,7 +1341,83 @@ body.route-setup-open #gridlyHazardLauncher {
 .settings-select-grid select { width: 100%; min-height: 38px; border-radius: 10px; }
 .settings-save-status { min-height: 1.2em; margin: 10px 0 0; }
 
+.settings-list-experience {
+  display: grid;
+  gap: 8px;
+}
+
+.settings-list-section {
+  border: 1px solid rgba(171, 204, 238, 0.16);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.035);
+  overflow: hidden;
+}
+
+.settings-list-section.settings-modal-section {
+  margin: 0;
+}
+
+.settings-list-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px 12px;
+  align-items: center;
+  min-height: 48px;
+  padding: 10px 12px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.settings-list-summary::-webkit-details-marker {
+  display: none;
+}
+
+.settings-list-summary::after {
+  content: "▾";
+  color: var(--muted);
+  font-size: 0.9rem;
+  transition: transform 0.18s ease;
+}
+
+.settings-list-section[open] .settings-list-summary::after {
+  transform: rotate(180deg);
+}
+
+.settings-list-title {
+  color: var(--text);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+.settings-list-meta {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.25;
+}
+
+.settings-list-detail {
+  display: grid;
+  gap: 10px;
+  padding: 0 12px 12px;
+}
+
+.settings-list-detail > p:first-child,
+.settings-list-detail .settings-select-grid:first-child,
+.settings-list-detail .settings-place-grid:first-child,
+.settings-list-detail .settings-toggle-grid:first-child {
+  margin-top: 0;
+}
+
+
 @media (max-width: 640px) {
+  .settings-modal-card {
+    width: min(100% - 20px, 620px);
+    margin-top: 6vh;
+    padding: 14px;
+    max-height: calc(100vh - 12vh);
+  }
+
   .settings-section-head,
   .settings-place-grid,
   .settings-toggle-grid,
