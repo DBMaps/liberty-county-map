@@ -38151,6 +38151,10 @@ function getUnifiedIncidents() {
       status: isCleared ? "cleared" : "active",
       title: latest.title,
       description: latest.detail,
+      subtype: latest.subtype || latest.hazardSubtype || latest.otherHazardSubtype || null,
+      hazardSubtype: latest.hazardSubtype || latest.subtype || latest.otherHazardSubtype || null,
+      detail: latest.detail,
+      raw: latest,
       lat: latest.lat ?? latest.latitude ?? latest.rawLat,
       lng: latest.lng ?? latest.lon ?? latest.longitude ?? latest.rawLng,
       reportCaptureCoordinate,
@@ -38269,17 +38273,154 @@ function getUnifiedIncidentIcon(incident){
   return m[incident.type]||"❗";
 }
 
+const GRIDLY_HAZARD_POPUP_TECHNICAL_METADATA_PATTERN = /\b(?:other_hazard|emergency_response_activity|community_report|gridly\s+structured|gridly_structured|source\s*:|internal\s+(?:category|subtype|source)|report_type|hazard_subtype|confidence\s*(?:score|:|\d+%|percentage)|\d+\s*%)\b/i;
+let lastGridlyHazardPopupConsumerState = null;
+
+function getGridlyHazardConsumerTitle(incident = {}) {
+  const subtype = resolveOtherHazardSubtypeFromRecord(incident);
+  if (subtype) return getOtherHazardSubtypeLabel(subtype);
+  const category = getHazardCategory(incident?.report_type || incident?.type || "other_hazard");
+  return (typeof formatRoadHazardCategoryLabel === "function" ? formatRoadHazardCategoryLabel(category) : HAZARD_TYPES?.[category]?.label) || "Other Hazard";
+}
+
+function getGridlyHazardPopupReportCount(incident = {}) {
+  const candidates = [incident?.reports_count, incident?.count, Array.isArray(incident?.reports) ? incident.reports.length : null];
+  const count = candidates.map((value) => Number(value)).find((value) => Number.isFinite(value) && value > 0);
+  return Math.max(1, Math.round(count || 1));
+}
+
+function getGridlyHazardPopupMinutesAgo(incident = {}) {
+  const numericAge = Number(incident?.age_minutes ?? incident?.minutesAgo ?? incident?.latestReport?.minutesAgo);
+  if (Number.isFinite(numericAge)) return Math.max(0, Math.round(numericAge));
+  const timestampCandidates = [
+    incident?.updated_at, incident?.updatedAt, incident?.lastUpdatedAt, incident?.last_activity_at, incident?.lastActivityAt,
+    incident?.latestReport?.updated_at, incident?.latestReport?.updatedAt, incident?.latestReport?.submittedAt,
+    incident?.created_at, incident?.createdAt
+  ];
+  const newestMs = timestampCandidates
+    .map((value) => new Date(value || 0).getTime())
+    .filter((value) => Number.isFinite(value) && value > 0)
+    .sort((a, b) => b - a)[0];
+  if (!newestMs) return 0;
+  return Math.max(0, Math.round((Date.now() - newestMs) / 60000));
+}
+
+function formatGridlyHazardPopupFreshnessLine(incident = {}) {
+  const minutes = getGridlyHazardPopupMinutesAgo(incident);
+  const verb = [incident?.updated_at, incident?.updatedAt, incident?.lastUpdatedAt, incident?.last_activity_at, incident?.lastActivityAt, incident?.age_minutes]
+    .some((value) => value !== undefined && value !== null && String(value).trim() !== "") ? "Updated" : "Reported";
+  if (minutes <= 1) return `${verb} just now`;
+  if (minutes < 60) return `${verb} ${minutes} minutes ago`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `${verb} ${hours} hour${hours === 1 ? "" : "s"} ago`;
+  const days = Math.round(hours / 24);
+  return `${verb} ${days} day${days === 1 ? "" : "s"} ago`;
+}
+
+function getGridlyHazardPopupConfidenceLine(reportCount = 1) {
+  if (reportCount <= 1) return "Awaiting additional reports";
+  if (reportCount === 2) return "Community confirmed";
+  return "Multiple community reports";
+}
+
+function resolveGridlyHazardPopupRoadLabel(incident = {}) {
+  const lookup = typeof getSharedResolvedRoadLookup === "function" ? getSharedResolvedRoadLookup(incident) : null;
+  const lookupPhrase = lookup?.locationContext?.phrasing || lookup?.locationContext?.primary || "";
+  const candidates = [
+    lookupPhrase,
+    incident?.road_name, incident?.roadName, incident?.resolvedRoadName, incident?.primaryRoad, incident?.corridor,
+    incident?.street_name, incident?.nearest_road, incident?.snapped_road_name, incident?.location_name,
+    incident?.latestReport?.road_name, incident?.latestReport?.roadName, incident?.latestReport?.resolvedRoadName, incident?.latestReport?.nearest_road
+  ];
+  const label = candidates
+    .map((value) => normalizeGridlyUserFacingRoadText(value))
+    .find((value) => value && !isOtherHazardGenericRoadLabel(value) && !/^liberty county$/i.test(value));
+  return label || "this area";
+}
+
+function buildGridlyHazardPopupConsumerModel(incident = {}) {
+  const headline = typeof standardizeGridlyAlertHeadline === "function" ? standardizeGridlyAlertHeadline(getGridlyHazardConsumerTitle(incident)) : getGridlyHazardConsumerTitle(incident);
+  const title = normalizeGridlyUserFacingRoadText(headline);
+  const category = getHazardCategory(incident?.report_type || incident?.type || "other_hazard");
+  const roadLabel = resolveGridlyHazardPopupRoadLabel(incident);
+  const locationPreposition = category === "other_hazard" ? "near" : "on";
+  const locationLine = `Reported ${locationPreposition} ${roadLabel}`;
+  const reportCount = getGridlyHazardPopupReportCount(incident);
+  const reportCountLine = `${reportCount} active report${reportCount === 1 ? "" : "s"}`;
+  const freshnessLine = formatGridlyHazardPopupFreshnessLine(incident);
+  const confidenceLine = getGridlyHazardPopupConfidenceLine(reportCount);
+  const visibleText = [title, locationLine, reportCountLine, freshnessLine, confidenceLine].join(" ");
+  const containsTechnicalMetadata = GRIDLY_HAZARD_POPUP_TECHNICAL_METADATA_PATTERN.test(visibleText);
+  return {
+    title,
+    locationLine: normalizeGridlyUserFacingRoadText(locationLine),
+    reportCountLine,
+    freshnessLine,
+    confidenceLine,
+    containsTechnicalMetadata,
+    consumerFriendlyPass: Boolean(title && locationLine && reportCountLine && freshnessLine && confidenceLine && !containsTechnicalMetadata)
+  };
+}
+
 function buildUnifiedIncidentPopup(incident){
   const isActive = incident.status === "active";
   const typeCategory = incident.id?.startsWith("rail-") ? "rail" : "road";
-  const details = `<span>${incident.reports_count} report${incident.reports_count===1?"":"s"} · ${incident.status}</span>`;
-
-  if (!isActive) {
-    return `<div class="gridly-popup"><strong>${sanitizeText(incident.title)}</strong><span>${sanitizeText(incident.description || "Live incident")}</span><br />${details}</div>`;
+  if (typeCategory === "rail") {
+    const details = `<span>${incident.reports_count} report${incident.reports_count===1?"":"s"} · ${incident.status}</span>`;
+    if (!isActive) {
+      return `<div class="gridly-popup"><strong>${sanitizeText(incident.title)}</strong><span>${sanitizeText(incident.description || "Live incident")}</span><br />${details}</div>`;
+    }
+    return `<div class="gridly-popup"><strong>${sanitizeText(incident.title)}</strong><span>${sanitizeText(incident.description || "Live incident")}</span><br />${details}<div class="popup-report-grid"><button class="popup-report-btn warning" type="button" data-unified-action="confirm" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Confirm Still Active</button><button class="popup-report-btn blue" type="button" data-unified-action="cleared" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Mark Cleared</button><button class="popup-report-btn neutral" type="button" data-unified-action="view-area" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">View Area</button></div></div>`;
   }
 
-  return `<div class="gridly-popup"><strong>${sanitizeText(incident.title)}</strong><span>${sanitizeText(incident.description || "Live incident")}</span><br />${details}<div class="popup-report-grid"><button class="popup-report-btn warning" type="button" data-unified-action="confirm" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Confirm Still Active</button><button class="popup-report-btn blue" type="button" data-unified-action="cleared" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Mark Cleared</button><button class="popup-report-btn neutral" type="button" data-unified-action="view-area" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">View Area</button></div></div>`;
+  const model = buildGridlyHazardPopupConsumerModel(incident);
+  lastGridlyHazardPopupConsumerState = model;
+  const popupLines = `
+    <strong data-gridly-hazard-popup-field="title">${sanitizeText(model.title)}</strong>
+    <span data-gridly-hazard-popup-field="locationLine">${sanitizeText(model.locationLine)}</span><br />
+    <span data-gridly-hazard-popup-field="reportCountLine">${sanitizeText(model.reportCountLine)}</span><br />
+    <span data-gridly-hazard-popup-field="freshnessLine">${sanitizeText(model.freshnessLine)}</span><br />
+    <span data-gridly-hazard-popup-field="confidenceLine">${sanitizeText(model.confidenceLine)}</span>
+  `;
+
+  if (!isActive) {
+    return `<div class="gridly-popup" data-gridly-hazard-popup="consumer">${popupLines}</div>`;
+  }
+
+  return `<div class="gridly-popup" data-gridly-hazard-popup="consumer">${popupLines}<div class="popup-report-grid"><button class="popup-report-btn warning" type="button" data-unified-action="confirm" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Confirm Still Active</button><button class="popup-report-btn blue" type="button" data-unified-action="cleared" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Mark Cleared</button><button class="popup-report-btn neutral" type="button" data-unified-action="view-area" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">View Area</button></div></div>`;
 }
+
+function gridlyHazardPopupAudit() {
+  const popup = typeof document !== "undefined" ? document.querySelector("#map .leaflet-popup-content [data-gridly-hazard-popup='consumer'], [data-gridly-hazard-popup='consumer']") : null;
+  const readField = (field) => popup?.querySelector?.(`[data-gridly-hazard-popup-field='${field}']`)?.textContent?.trim() || "";
+  const domModel = popup ? {
+    title: readField("title"),
+    locationLine: readField("locationLine"),
+    reportCountLine: readField("reportCountLine"),
+    freshnessLine: readField("freshnessLine"),
+    confidenceLine: readField("confidenceLine")
+  } : null;
+  const model = domModel || lastGridlyHazardPopupConsumerState || buildGridlyHazardPopupConsumerModel({
+    report_type: "other_hazard",
+    subtype: "emergency_response_activity",
+    road_name: "CR 2418",
+    reports_count: 1,
+    age_minutes: 25,
+    status: "active"
+  });
+  const visibleText = [model.title, model.locationLine, model.reportCountLine, model.freshnessLine, model.confidenceLine, popup?.textContent || ""].join(" ");
+  const containsTechnicalMetadata = GRIDLY_HAZARD_POPUP_TECHNICAL_METADATA_PATTERN.test(visibleText);
+  return {
+    title: model.title,
+    locationLine: model.locationLine,
+    reportCountLine: model.reportCountLine,
+    freshnessLine: model.freshnessLine,
+    confidenceLine: model.confidenceLine,
+    containsTechnicalMetadata,
+    consumerFriendlyPass: Boolean(model.title && model.locationLine && model.reportCountLine && model.freshnessLine && model.confidenceLine && !containsTechnicalMetadata)
+  };
+}
+exposeGridlyAuditHelper("gridlyHazardPopupAudit", gridlyHazardPopupAudit);
 
 function mapUnifiedRailConfirmType(reportType) {
   if (reportType === "blocked" || reportType === "heavy" || reportType === "other") return reportType;
