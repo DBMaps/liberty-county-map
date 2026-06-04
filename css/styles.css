@@ -14465,6 +14465,13 @@ body[data-layout-mode="portrait"].gridly-v2-surface-containment.route-setup-open
   line-height: 1.18;
 }
 
+.gridly-historical-intelligence-pattern {
+  color: rgba(242, 248, 255, 0.9);
+  font-size: 0.8rem;
+  font-weight: 720;
+  line-height: 1.18;
+}
+
 .gridly-historical-intelligence-line,
 .gridly-historical-intelligence-row p,
 .gridly-historical-intelligence-empty p {

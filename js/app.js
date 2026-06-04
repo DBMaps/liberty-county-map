@@ -32401,6 +32401,36 @@ function gridlyHistoricalIntelligenceDisplayLocation(finding = {}) {
   );
 }
 
+function gridlyHistoricalIntelligenceCleanRowLocationTitle(value = "") {
+  const cleaned = gridlyHistoricalIntelligenceCleanLocationCandidate(value);
+  if (!cleaned) return "";
+  const withoutLocationPrefix = cleaned.replace(/^(?:near|on|at)\s+/i, "").trim();
+  return gridlyHistoricalIntelligenceCleanLocationCandidate(withoutLocationPrefix || cleaned) || cleaned;
+}
+
+function gridlyHistoricalIntelligenceRowLocationTitle(finding = {}) {
+  const context = gridlyHistoricalIntelligenceBestLocationContext(finding);
+  const directLocation = gridlyHistoricalIntelligenceCleanRowLocationTitle(context?.label || "");
+  if (directLocation) return gridlyHistoricalIntelligenceTitleCaseLocation(directLocation);
+  const displayLocation = gridlyHistoricalIntelligenceCleanRowLocationTitle(gridlyHistoricalIntelligenceFormatLocationLine(context, ""));
+  return displayLocation ? gridlyHistoricalIntelligenceTitleCaseLocation(displayLocation) : GRIDLY_HISTORICAL_LOCATION_FALLBACK_LABEL;
+}
+
+function gridlyHistoricalIntelligencePatternSubtitle(finding = {}) {
+  const hazard = safeDisplayText(finding.hazardLabel, "").toLowerCase();
+  if (finding.category === "most_blocked_crossing") return "Frequently blocked crossing";
+  if (finding.category === "recurring_flooding_location") return "Recurring flooding reported here";
+  if (finding.category === "repeat_construction_zone") return "Recurring construction zone";
+  if (finding.category === "high_delay_corridor") return "Common delay area";
+  if (finding.category === "community_confirmed_hotspot") return "Community-confirmed hotspot";
+  if (finding.category === "recurring_hazard") {
+    if (hazard && !gridlyHistoricalIntelligenceIsGenericOtherHazardLabel(hazard)) return `Recurring ${hazard} reported here`;
+    return "Recurring road issue reported here";
+  }
+  const language = getGridlyIntelligencePreviewLanguage(finding.category);
+  return safeDisplayText(language.title || finding.title || "Historical pattern", "Historical pattern");
+}
+
 
 function gridlyHistoricalIntelligenceRecordTimestampMs(record = {}) {
   const value = typeof gridlyHistoricalAuditTimestamp === "function"
@@ -33116,6 +33146,8 @@ function buildGridlyHistoricalIntelligenceSheetHtml(options = {}) {
     const title = sanitizeText(finding.title || language.title || "Historical Pattern");
     const category = sanitizeText(finding.categoryLabel || language.category || "Hotspot");
     const location = sanitizeText(gridlyHistoricalIntelligenceDisplayLocation(finding));
+    const rowTitle = sanitizeText(gridlyHistoricalIntelligenceRowLocationTitle(finding));
+    const patternSubtitle = sanitizeText(gridlyHistoricalIntelligencePatternSubtitle(finding));
     const summary = sanitizeText(gridlyHistoricalIntelligenceSummaryLine(finding));
     const supportingCopy = sanitizeText(gridlyHistoricalIntelligenceSupportingCopy(finding));
     const lastSeen = formatGridlyHistoricalIntelligenceDate(finding.latestAt);
@@ -33129,7 +33161,7 @@ function buildGridlyHistoricalIntelligenceSheetHtml(options = {}) {
       communityMembers ? `<div class="gridly-historical-intelligence-stat"><span>Reported by</span><strong>${sanitizeText(`${communityMembers} community ${communityMembers === 1 ? "member" : "members"}`)}</strong></div>` : `<div class="gridly-historical-intelligence-stat"><span>Community reports</span><strong>${sanitizeText(`${count} ${count === 1 ? "report" : "reports"}`)}</strong></div>`,
       lastSeen ? `<div class="gridly-historical-intelligence-stat gridly-historical-intelligence-stat-muted"><span>Last reported</span><strong>${sanitizeText(lastSeen)}</strong></div>` : ""
     ].filter(Boolean).join("");
-    return `<details class="gridly-historical-intelligence-row" data-history-row="${index + 1}"><summary class="gridly-historical-intelligence-summary"><span class="gridly-historical-intelligence-row-copy"><span class="gridly-historical-intelligence-category">${category}</span><strong>${title}</strong><span class="gridly-historical-intelligence-location">${location}</span>${summary ? `<span class="gridly-historical-intelligence-line">${summary}</span>` : ""}</span><span class="gridly-historical-intelligence-expand" aria-hidden="true"></span></summary><div class="gridly-historical-intelligence-details"><div class="gridly-historical-intelligence-detail-title"><span>${category}</span><strong>${title}</strong><em>${location}</em></div><div class="gridly-historical-intelligence-stats">${detailLines}</div><p>${supportingCopy}</p></div></details>`;
+    return `<details class="gridly-historical-intelligence-row" data-history-row="${index + 1}"><summary class="gridly-historical-intelligence-summary"><span class="gridly-historical-intelligence-row-copy"><span class="gridly-historical-intelligence-category">${category}</span><strong>${rowTitle}</strong><span class="gridly-historical-intelligence-pattern">${patternSubtitle}</span>${summary ? `<span class="gridly-historical-intelligence-line">${summary}</span>` : ""}</span><span class="gridly-historical-intelligence-expand" aria-hidden="true"></span></summary><div class="gridly-historical-intelligence-details"><div class="gridly-historical-intelligence-detail-title"><span>${category}</span><strong>${title}</strong><em>${location}</em></div><div class="gridly-historical-intelligence-stats">${detailLines}</div><p>${supportingCopy}</p></div></details>`;
   }).join("");
   return `<div class="gridly-historical-intelligence-sheet"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local patterns from cleared community reports</p><div class="gridly-historical-intelligence-list">${rows}</div></div>`;
 }
@@ -41253,7 +41285,11 @@ function gridlyLanguageConsistencyAudit() {
       index,
       selector: "gridlyBuildHistoricalIntelligenceFindings().dedupedRankedFindings",
       source: "model",
-      text: gridlyLanguageConsistencyNormalizeText([finding.title, typeof gridlyHistoricalIntelligenceDisplayLocation === "function" ? gridlyHistoricalIntelligenceDisplayLocation(finding) : finding.locationLabel, typeof gridlyHistoricalIntelligenceSummaryLine === "function" ? gridlyHistoricalIntelligenceSummaryLine(finding) : ""].filter(Boolean).join(" / "))
+      text: gridlyLanguageConsistencyNormalizeText([
+        typeof gridlyHistoricalIntelligenceRowLocationTitle === "function" ? gridlyHistoricalIntelligenceRowLocationTitle(finding) : (typeof gridlyHistoricalIntelligenceDisplayLocation === "function" ? gridlyHistoricalIntelligenceDisplayLocation(finding) : finding.locationLabel),
+        typeof gridlyHistoricalIntelligencePatternSubtitle === "function" ? gridlyHistoricalIntelligencePatternSubtitle(finding) : finding.title,
+        typeof gridlyHistoricalIntelligenceSummaryLine === "function" ? gridlyHistoricalIntelligenceSummaryLine(finding) : ""
+      ].filter(Boolean).join(" / "))
     }))
     : [];
   const surfaces = [
