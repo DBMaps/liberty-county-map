@@ -49566,6 +49566,365 @@ if (typeof window !== "undefined") {
   window.gridlySettingsPanelAudit = gridlySettingsPanelAudit;
 }
 
+function gridlySettingsListExperienceAudit() {
+  const hasDocument = typeof document !== "undefined";
+  const generatedAt = new Date().toISOString();
+  const settings = typeof getGridlySettingsPreferences === "function" ? getGridlySettingsPreferences() : normalizeGridlySettings();
+  const savedPlacesState = typeof getSavedPlacesState === "function" ? getSavedPlacesState() : { home: null, work: null, custom: [], favorites: [] };
+  const homeDisplay = typeof describeGridlySettingsPlace === "function"
+    ? describeGridlySettingsPlace(savedPlacesState.home, "Home")
+    : { label: "Home", meta: "Saved route anchor." };
+  const workDisplay = typeof describeGridlySettingsPlace === "function"
+    ? describeGridlySettingsPlace(savedPlacesState.work, "Work")
+    : { label: "Work", meta: "Saved route anchor." };
+  const settingsPanelAuditSnapshot = typeof gridlySettingsPanelAudit === "function" ? gridlySettingsPanelAudit() : null;
+  const visibleText = (selector) => {
+    const node = hasDocument ? document.querySelector(selector) : null;
+    return String(node?.textContent || "").trim();
+  };
+  const nodeExists = (selector) => Boolean(hasDocument && document.querySelector(selector));
+  const item = (id, label, options = {}) => ({
+    id,
+    label,
+    section: options.section || "",
+    type: options.type || "information",
+    currentValue: options.currentValue ?? null,
+    visibleImmediatelyToday: options.visibleImmediatelyToday !== false,
+    recommendedCollapsedVisibility: options.recommendedCollapsedVisibility || "summary",
+    recommendedExpandedVisibility: options.recommendedExpandedVisibility || "full_control",
+    frequency: options.frequency || "occasional",
+    lifecycle: options.lifecycle || "operational",
+    actions: options.actions || [],
+    notes: options.notes || []
+  });
+  const settingsItems = [
+    item("home", "HOME", {
+      section: "Route Watch Settings",
+      type: "saved_place_anchor",
+      currentValue: homeDisplay.label || visibleText("#settingsHomeValue") || "Not saved",
+      recommendedCollapsedVisibility: "label_and_saved_state",
+      recommendedExpandedVisibility: "address_meta_privacy_note_edit_button",
+      frequency: "frequent",
+      lifecycle: "setup_then_operational",
+      actions: ["Edit Home"],
+      notes: ["Primary Route Watch anchor; keep saved/not-saved state visible, move secondary meta/privacy copy behind expansion."]
+    }),
+    item("work", "WORK", {
+      section: "Route Watch Settings",
+      type: "saved_place_anchor",
+      currentValue: workDisplay.label || visibleText("#settingsWorkValue") || "Not saved",
+      recommendedCollapsedVisibility: "label_and_saved_state",
+      recommendedExpandedVisibility: "address_meta_privacy_note_edit_button",
+      frequency: "frequent",
+      lifecycle: "setup_then_operational",
+      actions: ["Edit Work"],
+      notes: ["Primary destination anchor; collapsed row can show configured state without changing Route Watch behavior."]
+    }),
+    item("saved_places", "Saved Places", {
+      section: "Route Watch Settings",
+      type: "navigation_action",
+      currentValue: `${Number(savedPlacesState.custom?.length || 0) + Number(savedPlacesState.favorites?.length || 0)} custom/favorite places detected`,
+      recommendedCollapsedVisibility: "label_and_count",
+      recommendedExpandedVisibility: "manage_button_and_dynamic_place_rows_when_available",
+      frequency: "frequent",
+      lifecycle: "setup_then_operational",
+      actions: ["Manage Saved Places"],
+      notes: ["Current hidden saved-places list can stay expanded-only to reduce portrait height."]
+    }),
+    item("route_alerts", "Route Watch Alerts", {
+      section: "Notification Preferences",
+      type: "toggle",
+      currentValue: Boolean(settings.notifications?.routeAlerts),
+      recommendedCollapsedVisibility: "label_and_on_off_state",
+      recommendedExpandedVisibility: "toggle_and_storage_only_explanation",
+      frequency: "occasional",
+      lifecycle: "operational",
+      notes: ["Preference only; no notification delivery is enabled."]
+    }),
+    item("rail_alerts", "Rail Crossing Alerts", {
+      section: "Notification Preferences",
+      type: "toggle",
+      currentValue: Boolean(settings.notifications?.railAlerts),
+      recommendedCollapsedVisibility: "label_and_on_off_state",
+      recommendedExpandedVisibility: "toggle_and_storage_only_explanation",
+      frequency: "occasional",
+      lifecycle: "operational",
+      notes: ["Useful as a stored intent but not an active delivery system today."]
+    }),
+    item("hazard_alerts", "Road Hazard Alerts", {
+      section: "Notification Preferences",
+      type: "toggle",
+      currentValue: Boolean(settings.notifications?.hazardAlerts),
+      recommendedCollapsedVisibility: "label_and_on_off_state",
+      recommendedExpandedVisibility: "toggle_and_storage_only_explanation",
+      frequency: "occasional",
+      lifecycle: "operational",
+      notes: ["Stored preference only; should not imply live push delivery in collapsed copy."]
+    }),
+    item("community_alerts", "Community Activity Alerts", {
+      section: "Notification Preferences",
+      type: "toggle",
+      currentValue: Boolean(settings.notifications?.communityAlerts),
+      recommendedCollapsedVisibility: "label_and_on_off_state",
+      recommendedExpandedVisibility: "toggle_and_storage_only_explanation",
+      frequency: "rare",
+      lifecycle: "operational",
+      notes: ["Lowest immediate value in the always-visible stack because it is not tied to delivery yet."]
+    }),
+    item("preferred_name", "Preferred Name", {
+      section: "Display Preferences",
+      type: "text_input",
+      currentValue: settings.personalization?.preferredName || "",
+      recommendedCollapsedVisibility: "label_and_set_state",
+      recommendedExpandedVisibility: "input_placeholder_privacy_note",
+      frequency: "rare",
+      lifecycle: "setup_only",
+      notes: ["Optional personalization; setup-only and safe to hide until Profile expansion."]
+    }),
+    item("map_style", "Map Style", {
+      section: "Display Preferences",
+      type: "select",
+      currentValue: settings.display?.mapStyle || "standard",
+      recommendedCollapsedVisibility: "label_and_current_value",
+      recommendedExpandedVisibility: "select_with_standard_dark_satellite_options",
+      frequency: "occasional",
+      lifecycle: "operational",
+      notes: ["Operational display control; current value is useful in a compact row."]
+    }),
+    item("theme", "Theme", {
+      section: "Display Preferences",
+      type: "select",
+      currentValue: settings.display?.theme || "system",
+      recommendedCollapsedVisibility: "label_and_current_value",
+      recommendedExpandedVisibility: "select_with_system_light_dark_options",
+      frequency: "rare",
+      lifecycle: "setup_only",
+      notes: ["Saved preference; lower operational value than map style and text size."]
+    }),
+    item("text_size", "Text Size", {
+      section: "Display Preferences",
+      type: "select",
+      currentValue: settings.display?.textSize || "standard",
+      recommendedCollapsedVisibility: "label_and_current_value",
+      recommendedExpandedVisibility: "select_with_standard_large_compact_options",
+      frequency: "occasional",
+      lifecycle: "operational",
+      notes: ["Accessibility/density control; current value should be visible in collapsed summary."]
+    }),
+    item("about_build", "About Gridly", {
+      section: "About Gridly",
+      type: "version_information",
+      currentValue: `${GRIDLY_APP_VERSION_LABEL} / ${GRIDLY_APP_BUILD_LABEL}`,
+      recommendedCollapsedVisibility: "label_and_version",
+      recommendedExpandedVisibility: "version_build_and_support_actions",
+      frequency: "rare",
+      lifecycle: "rare_support",
+      notes: ["Build metadata is low-value always-visible content for daily mobile use."]
+    }),
+    item("replay_setup", "Replay Setup", {
+      section: "About Gridly",
+      type: "button",
+      currentValue: null,
+      recommendedCollapsedVisibility: "hidden_in_about_summary",
+      recommendedExpandedVisibility: "button",
+      frequency: "rare",
+      lifecycle: "setup_only",
+      actions: ["Replay Setup"],
+      notes: ["Dead-end risk if exposed beside primary operational settings; should live in Support/About expansion."]
+    }),
+    item("send_feedback", "Send Feedback", {
+      section: "About Gridly",
+      type: "button_placeholder",
+      currentValue: visibleText("#settingsFeedbackStatus") || "Feedback entry point is a placeholder for this phase.",
+      recommendedCollapsedVisibility: "hidden_in_about_summary",
+      recommendedExpandedVisibility: "button_and_placeholder_status",
+      frequency: "rare",
+      lifecycle: "rare_support",
+      actions: ["Send Feedback"],
+      notes: ["Current action only acknowledges a placeholder and sends no message."]
+    })
+  ];
+  const sections = [
+    {
+      id: "route_watch_settings",
+      label: "Route Watch Settings",
+      detected: nodeExists("#settingsSavedPlacesSection") || nodeExists('[data-v2-action="route-edit-home-open"]'),
+      currentVisibleItems: ["HOME", "WORK", "Saved Places", "Edit Home", "Edit Work", "Manage Saved Places"],
+      hiddenLabels: ["settingsSavedPlacesList dynamic rows when hidden"],
+      actions: ["Edit Home", "Edit Work", "Manage Saved Places"],
+      toggles: [],
+      buttons: ["Edit Home", "Edit Work", "Manage Saved Places"],
+      recommendedGroup: "Route & Places",
+      collapsedRowCandidate: true,
+      collapsedRowShouldShow: ["Home saved state", "Work saved state", "Saved Places count"],
+      expandedShouldShow: ["address/meta text", "local-only note", "edit/manage actions", "saved-place rows when present"],
+      portraitUse: "high"
+    },
+    {
+      id: "notification_preferences",
+      label: "Notification Preferences",
+      detected: nodeExists("#settingsAlertPreferencesSection") || nodeExists('[data-v2-settings-field^="notifications."]'),
+      currentVisibleItems: ["Route Watch Alerts", "Rail Crossing Alerts", "Road Hazard Alerts", "Community Activity Alerts"],
+      hiddenLabels: [],
+      actions: [],
+      toggles: ["Route Watch Alerts", "Rail Crossing Alerts", "Road Hazard Alerts", "Community Activity Alerts"],
+      buttons: [],
+      recommendedGroup: "Alerts & Notifications",
+      collapsedRowCandidate: true,
+      collapsedRowShouldShow: ["Notification Preferences", "count of enabled stored preferences", "storage-only qualifier"],
+      expandedShouldShow: ["all four toggles", "clear copy that delivery is not active"],
+      portraitUse: "medium"
+    },
+    {
+      id: "display_preferences",
+      label: "Display Preferences",
+      detected: nodeExists("#settingsDisplayPreferencesSection") || nodeExists('[data-v2-settings-field^="display."]'),
+      currentVisibleItems: ["Preferred Name", "Map Style", "Theme", "Text Size"],
+      hiddenLabels: [],
+      actions: [],
+      toggles: [],
+      buttons: [],
+      recommendedGroup: "Map & Display",
+      collapsedRowCandidate: true,
+      collapsedRowShouldShow: ["Map Style", "Text Size", "Theme value if space allows"],
+      expandedShouldShow: ["Preferred Name input", "Map Style select", "Theme select", "Text Size select", "local-save notes"],
+      portraitUse: "medium"
+    },
+    {
+      id: "about_gridly",
+      label: "About Gridly",
+      detected: nodeExists("#settingsAboutSection") || nodeExists("[data-gridly-about]"),
+      currentVisibleItems: ["Gridly version", "Build", "Replay Setup", "Send Feedback", "Feedback status"],
+      hiddenLabels: [],
+      actions: ["Replay Setup", "Send Feedback"],
+      toggles: [],
+      buttons: ["Replay Setup", "Send Feedback"],
+      recommendedGroup: "Support & About",
+      collapsedRowCandidate: true,
+      collapsedRowShouldShow: ["About Gridly", "version/build summary"],
+      expandedShouldShow: ["Replay Setup", "Send Feedback placeholder", "feedback status"],
+      portraitUse: "low"
+    },
+    {
+      id: "not_detected_in_settings",
+      label: "Not Detected In Current Settings",
+      detected: false,
+      currentVisibleItems: [],
+      hiddenLabels: ["Awareness Area", "Location permission control", "Report settings", "Route logic tuning", "Testing tools", "Supabase sync controls"],
+      actions: [],
+      toggles: [],
+      buttons: [],
+      recommendedGroup: "Inventory Gap",
+      collapsedRowCandidate: false,
+      collapsedRowShouldShow: [],
+      expandedShouldShow: [],
+      portraitUse: "n/a"
+    }
+  ];
+  const frequentlyUsedItems = settingsItems.filter((entry) => entry.frequency === "frequent").map((entry) => entry.id);
+  const setupOnlyItems = settingsItems.filter((entry) => entry.lifecycle.includes("setup_only") || entry.lifecycle === "setup_then_operational").map((entry) => entry.id);
+  const operationalItems = settingsItems.filter((entry) => entry.lifecycle.includes("operational")).map((entry) => entry.id);
+  const groupingRecommendations = [
+    {
+      group: "Profile & Awareness",
+      immediatelyVisible: ["Preferred Name set/not set"],
+      expandOnly: ["Preferred Name input", "privacy/local-only note"],
+      rationale: "Profile is setup-only; Awareness Area is not currently present in Settings and should not be invented in V249.0."
+    },
+    {
+      group: "Alerts & Notifications",
+      immediatelyVisible: ["enabled stored preference count", "storage-only status"],
+      expandOnly: ["Route Watch Alerts", "Rail Crossing Alerts", "Road Hazard Alerts", "Community Activity Alerts"],
+      rationale: "Four always-visible toggles create height and imply delivery that is explicitly unavailable."
+    },
+    {
+      group: "Map & Display",
+      immediatelyVisible: ["Map Style current value", "Text Size current value"],
+      expandOnly: ["Theme select", "Preferred Name input", "explanatory notes"],
+      rationale: "Map Style and Text Size are operational; Theme and name are mostly setup preferences."
+    },
+    {
+      group: "Route & Places",
+      immediatelyVisible: ["Home saved/not saved", "Work saved/not saved", "Saved Places count"],
+      expandOnly: ["full address/meta", "local-only notes", "Edit Home", "Edit Work", "Manage Saved Places"],
+      rationale: "Route anchors are the most important settings, but current card metadata and buttons can be detail content."
+    },
+    {
+      group: "Support & About",
+      immediatelyVisible: ["version/build summary"],
+      expandOnly: ["Replay Setup", "Send Feedback placeholder", "feedback status"],
+      rationale: "About/support actions are rare and should not compete with operational controls in portrait."
+    },
+    {
+      group: "Data & Testing",
+      immediatelyVisible: [],
+      expandOnly: [],
+      rationale: "No Settings testing tools or Supabase sync controls were detected; protected data/sync systems should remain untouched."
+    }
+  ];
+  const clutterFindings = [
+    "Route Watch currently uses large place cards for Home, Work, and Saved Places, creating a tall first section on portrait.",
+    "Home and Work repeat label, value, meta copy, local-only note, and an edit button even when a compact saved/not-saved state would answer the immediate question.",
+    "Notification Preferences shows four toggles plus explanatory copy even though notification delivery is explicitly not enabled.",
+    "Display Preferences mixes setup-only personalization with operational map/text density controls in one always-visible grid.",
+    "About Gridly exposes build metadata and two rare/support buttons at the same visual level as daily settings.",
+    "Send Feedback is currently a placeholder acknowledgement, making it a low-value always-visible action.",
+    "Saved Places dynamic list is already hidden-capable, which is a strong signal for expandable-list readiness.",
+    "Current Settings has no detected Awareness Area, Location permission, Report settings, Route logic tuning, Testing tools, or Supabase controls to migrate."
+  ];
+  const visibleControlCount = settingsItems.filter((entry) => entry.visibleImmediatelyToday).length;
+  return {
+    available: true,
+    auditVersion: "V249.0",
+    generatedAt,
+    settingsDetected: Boolean(hasDocument ? (document.getElementById("settingsModal") || document.querySelector(".gridly-settings-sheet") || document.querySelector("[data-gridly-settings-v2]")) : settings),
+    totalSettingsItems: settingsItems.length,
+    visibleControlCount,
+    sections,
+    settingsItems,
+    frequentlyUsedItems,
+    setupOnlyItems,
+    operationalItems,
+    groupingRecommendations,
+    clutterFindings,
+    expandableListReady: true,
+    expandableListReadinessNotes: [
+      "Every current item can be represented as a collapsed label/value row with its existing control retained in expanded detail.",
+      "Route/place cards, notification toggles, display selects, and About actions do not require behavior changes to move into expandable rows.",
+      "V249.1 should keep Route Watch, awareness filtering, Supabase, hazard lifecycle, and popup consumer models unchanged."
+    ],
+    immediatelyVisibleRecommendation: [
+      "Home saved/not-saved state",
+      "Work saved/not-saved state",
+      "Saved Places count/manage summary",
+      "Notification preferences enabled count with storage-only language",
+      "Map Style current value",
+      "Text Size current value",
+      "Version/build summary"
+    ],
+    expandOnlyRecommendation: [
+      "full Home/Work meta and local-only notes",
+      "Edit Home / Edit Work / Manage Saved Places buttons",
+      "all notification toggles",
+      "Preferred Name input and privacy note",
+      "Theme select and explanatory copy",
+      "Replay Setup",
+      "Send Feedback placeholder and status"
+    ],
+    settingsPanelAuditAvailable: Boolean(settingsPanelAuditSnapshot),
+    settingsPanelAuditSnapshot,
+    protectedSystemsModified: false,
+    routeLogicModified: false,
+    awarenessFilteringModified: false,
+    supabaseModified: false,
+    canProceedToV249_1: true
+  };
+}
+
+if (typeof window !== "undefined") {
+  window.gridlySettingsListExperienceAudit = gridlySettingsListExperienceAudit;
+}
+
 function bindGridlySettingsPreferences() {
   const controls = [
     els.settingsRouteAlertsToggle,
