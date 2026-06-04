@@ -38422,6 +38422,181 @@ function gridlyHazardPopupAudit() {
 }
 exposeGridlyAuditHelper("gridlyHazardPopupAudit", gridlyHazardPopupAudit);
 
+const GRIDLY_LANGUAGE_CONSISTENCY_AUDIT_VERSION = "V238";
+
+function gridlyLanguageConsistencyNormalizeText(value = "") {
+  return String(value ?? "").replace(/\s+/g, " ").trim();
+}
+
+function gridlyLanguageConsistencyTextFromNode(node) {
+  return gridlyLanguageConsistencyNormalizeText(node?.textContent || node?.getAttribute?.("aria-label") || node?.getAttribute?.("title") || "");
+}
+
+function gridlyLanguageConsistencyReadSurface(label, selector, options = {}) {
+  const samples = [];
+  if (typeof document !== "undefined" && typeof document.querySelectorAll === "function") {
+    const nodes = Array.from(document.querySelectorAll(selector || ""));
+    nodes.slice(0, options.limit || 8).forEach((node, index) => {
+      const text = gridlyLanguageConsistencyTextFromNode(node);
+      if (!text && !options.includeEmpty) return;
+      samples.push({
+        index,
+        selector,
+        text,
+        source: "dom",
+        visible: typeof isElementVisiblyRendered === "function" ? isElementVisiblyRendered(node) : undefined
+      });
+    });
+  }
+  if (!samples.length && options.fallbackText) {
+    samples.push({ index: 0, selector, text: gridlyLanguageConsistencyNormalizeText(options.fallbackText), source: options.fallbackSource || "model_fallback" });
+  }
+  return { label, selector, count: samples.length, samples };
+}
+
+function gridlyLanguageConsistencyDetectIssues(surface = {}) {
+  const findings = [];
+  const samples = Array.isArray(surface.samples) ? surface.samples : [];
+  const rawInternalPattern = /\b(?:other_hazard|community_report|status_source|gridly_structured|gridly\s+structured|report_type|hazard_subtype)\b/i;
+  const onRoadInRoadPattern = /\bon\s+([^•,;]+?)\s+in\s+([^•,;]+?)(?:$|[•,;.])/i;
+  const duplicateNearPattern = /\b(?:near|on|at)\s+(.{3,60}?)\s+(?:near|on|at|in)\s+\1\b/i;
+  samples.forEach((sample) => {
+    const text = gridlyLanguageConsistencyNormalizeText(sample.text);
+    if (!text) return;
+    const lower = text.toLowerCase();
+    const push = (type, severity, evidence, recommendation) => findings.push({
+      surface: surface.label,
+      selector: surface.selector,
+      sampleIndex: sample.index,
+      type,
+      severity,
+      evidence,
+      recommendation
+    });
+    if (/\brail\s+delay\b/i.test(text)) {
+      push("railDelayLanguageDetected", "high", text, "For blocked crossings, prefer popup-style language such as 'Train blocking crossing' plus a clear location and freshness line.");
+    }
+    if (/\bmobility\s+report\b/i.test(text)) {
+      push("mobilityReportLanguageDetected", "medium", text, "Prefer 'community report' for source language or 'active report' for count/status language.");
+    }
+    if (rawInternalPattern.test(text)) {
+      push("technicalMetadataDetected", "high", text, "Remove raw internal tokens from user-facing copy; translate them through consumer labels before rendering.");
+    }
+    const onInMatch = text.match(onRoadInRoadPattern);
+    if (onInMatch) {
+      const first = gridlyLanguageConsistencyNormalizeText(onInMatch[1]);
+      const second = gridlyLanguageConsistencyNormalizeText(onInMatch[2]);
+      const firstRoadLike = /\b(?:road|street|st\.?|avenue|ave\.?|highway|hwy|fm|cr|tx|us|i-)\b|\d/.test(first.toLowerCase());
+      const secondRoadLike = /\b(?:road|street|st\.?|avenue|ave\.?|highway|hwy|fm|cr|tx|us|i-)\b|\d/.test(second.toLowerCase());
+      if (firstRoadLike && secondRoadLike) {
+        push("roadLikeAreaLanguageDetected", "high", text, "Avoid 'on <road> in <road>'; use popup-style location such as 'Reported near <area>' or a single road/intersection line.");
+      }
+    }
+    if (duplicateNearPattern.test(text) || /\b(.{4,40})\b(?:\s*[•·,/]\s*|\s+near\s+)\1\b/i.test(text)) {
+      push("duplicateLocationPhrasingDetected", "medium", text, "Deduplicate repeated location fragments before rendering the card or header.");
+    }
+    if (/alert card title/i.test(surface.label) || /alert card titles/i.test(surface.label)) {
+      const wordCount = text.split(/\s+/).filter(Boolean).length;
+      if (wordCount > 8 || text.length > 64) {
+        push("alertTitleTooLong", "medium", text, "Use popup-style title length: short event label first, then move location/freshness into subtitle or metadata lines.");
+      }
+    }
+    if (/\bactive hazards reported\b/i.test(text) || /\bmultiple mobility impacts\b/i.test(lower)) {
+      push("genericHazardLanguage", "low", text, "Prefer the popup model's specific event + location + count + freshness hierarchy when data is available.");
+    }
+  });
+  return findings;
+}
+
+function gridlyLanguageConsistencyPopupModelSample() {
+  const hazardModel = typeof gridlyHazardPopupAudit === "function"
+    ? gridlyHazardPopupAudit()
+    : (typeof buildGridlyHazardPopupConsumerModel === "function" ? buildGridlyHazardPopupConsumerModel({ report_type: "other_hazard", subtype: "downed_power_line", road_name: "Bowie Street", reports_count: 1, age_minutes: 6, status: "active" }) : null);
+  let crossingModel = null;
+  const crossingPopupNode = typeof document !== "undefined" ? document.querySelector("#map .leaflet-popup-content .gridly-popup:not([data-gridly-hazard-popup='consumer']), .gridly-popup:not([data-gridly-hazard-popup='consumer'])") : null;
+  if (crossingPopupNode) {
+    crossingModel = { source: "dom", text: gridlyLanguageConsistencyTextFromNode(crossingPopupNode) };
+  } else if (typeof buildPopup === "function") {
+    const sampleHtml = buildPopup({ id: "audit-crossing", name: "Sample crossing", railroad: "Railroad", risk: 50 }, { title: "Blocked", type: "blocked", minutesAgo: 6 });
+    crossingModel = { source: "sample_buildPopup", text: gridlyLanguageConsistencyNormalizeText(sampleHtml.replace(/<[^>]+>/g, " ")) };
+  }
+  return { hazardPopupModel: hazardModel, crossingPopupModel: crossingModel };
+}
+
+function gridlyLanguageConsistencyAudit() {
+  const generatedAt = new Date().toISOString();
+  const popupModels = gridlyLanguageConsistencyPopupModelSample();
+  const mobileAwareness = typeof getGridlyMobileAwarenessPanelSummary === "function" ? getGridlyMobileAwarenessPanelSummary() : null;
+  const awarenessSummary = typeof buildGridlyCommunityAwarenessIntelligenceSummary === "function" ? buildGridlyCommunityAwarenessIntelligenceSummary() : null;
+  const displaySummary = typeof summarizeGridlyAwarenessIntelligenceForDisplay === "function" && awarenessSummary ? summarizeGridlyAwarenessIntelligenceForDisplay(awarenessSummary) : null;
+  const surfaces = [
+    gridlyLanguageConsistencyReadSurface("top awareness/header headline", "#gridlyV2TopStatusPrimary", { fallbackText: displaySummary?.headline || awarenessSummary?.awarenessStatus || "", fallbackSource: "awareness_display_model" }),
+    gridlyLanguageConsistencyReadSurface("top awareness/header subline", "#gridlyV2TopStatusSecondary, #gridlyTopAwarenessMicroline", { fallbackText: displaySummary?.subline || awarenessSummary?.awarenessStatusReason || "", fallbackSource: "awareness_display_model" }),
+    gridlyLanguageConsistencyReadSurface("mobile awareness card headline", "#gridlyCommunityPulseHeadline, #gridlyMobileAwarenessPanel [data-gridly-awareness-headline]", { fallbackText: mobileAwareness?.status || "", fallbackSource: "mobile_awareness_model" }),
+    gridlyLanguageConsistencyReadSurface("mobile awareness card metric line", "#gridlyCommunityPulseSubline, #gridlyCommunityPulseCopy, #gridlyMobileAwarenessPanel [data-gridly-awareness-metric-line]", { fallbackText: mobileAwareness?.crossingsLine || "", fallbackSource: "mobile_awareness_model" }),
+    gridlyLanguageConsistencyReadSurface("alert panel header", "[data-gridly-alerts-panel-heading='true'], #alertsList h2, #alertsList h3, #roadHazardsList h2, #roadHazardsList h3", { fallbackText: "", includeEmpty: false }),
+    gridlyLanguageConsistencyReadSurface("alert card titles", "[data-gridly-alert-row='true'] strong, .gridly-alert-row strong, .alert-item strong", { limit: 12 }),
+    gridlyLanguageConsistencyReadSurface("alert card subtitles/summaries", "[data-gridly-alert-row='true'] small, [data-gridly-alert-row='true'] [data-gridly-alert-summary], .gridly-alert-row small, .alert-item small", { limit: 18 }),
+    {
+      label: "hazard popup model",
+      selector: "gridlyHazardPopupAudit()/buildGridlyHazardPopupConsumerModel",
+      count: popupModels.hazardPopupModel ? 1 : 0,
+      samples: popupModels.hazardPopupModel ? [{
+        index: 0,
+        selector: "hazardPopupModel",
+        source: "model",
+        text: gridlyLanguageConsistencyNormalizeText([
+          popupModels.hazardPopupModel.title,
+          popupModels.hazardPopupModel.locationLine,
+          popupModels.hazardPopupModel.reportCountLine,
+          popupModels.hazardPopupModel.freshnessLine,
+          popupModels.hazardPopupModel.confidenceLine
+        ].filter(Boolean).join(" / ")),
+        model: popupModels.hazardPopupModel
+      }] : []
+    },
+    {
+      label: "crossing popup model",
+      selector: "buildPopup()/visible crossing popup",
+      count: popupModels.crossingPopupModel ? 1 : 0,
+      samples: popupModels.crossingPopupModel ? [{ index: 0, selector: "crossingPopupModel", source: popupModels.crossingPopupModel.source, text: popupModels.crossingPopupModel.text }] : []
+    }
+  ];
+  const inconsistencies = surfaces.flatMap(gridlyLanguageConsistencyDetectIssues);
+  const hasType = (type) => inconsistencies.some((finding) => finding.type === type);
+  const recommendedRewrites = inconsistencies.map((finding) => ({
+    surface: finding.surface,
+    issue: finding.type,
+    currentText: finding.evidence,
+    recommendedRewrite: finding.recommendation
+  }));
+  const surfacesChecked = surfaces.map((surface) => ({
+    surface: surface.label,
+    selector: surface.selector,
+    sampleCount: surface.count,
+    samples: surface.samples.map((sample) => ({ text: sample.text, source: sample.source }))
+  }));
+  return {
+    version: GRIDLY_LANGUAGE_CONSISTENCY_AUDIT_VERSION,
+    generatedAt,
+    surfacesChecked,
+    preferredLanguageModel: {
+      source: "hazard popup consumer model",
+      hierarchy: ["short specific event title", "reported near/on location", "active report count", "freshness", "confidence/community confirmation"],
+      example: "Downed Power Line / Reported near Bowie Street / 1 active report / Updated 6 minutes ago",
+      hazardPopupModel: popupModels.hazardPopupModel || null
+    },
+    inconsistencies,
+    railDelayLanguageDetected: hasType("railDelayLanguageDetected"),
+    roadLikeAreaLanguageDetected: hasType("roadLikeAreaLanguageDetected"),
+    technicalMetadataDetected: hasType("technicalMetadataDetected"),
+    duplicateLocationPhrasingDetected: hasType("duplicateLocationPhrasingDetected"),
+    recommendedRewrites,
+    safeToProceedToCopyPatch: true
+  };
+}
+exposeGridlyAuditHelper("gridlyLanguageConsistencyAudit", gridlyLanguageConsistencyAudit);
+
 function mapUnifiedRailConfirmType(reportType) {
   if (reportType === "blocked" || reportType === "heavy" || reportType === "other") return reportType;
   if (reportType === "cleared") return "heavy";
