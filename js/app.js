@@ -15398,6 +15398,8 @@ const gridlySettingsDockTapTrace = {
 };
 const gridlySettingsPerformanceTrace = {
   openAttempts: 0,
+  settingsOpenCount: 0,
+  alignmentApplyCount: 0,
   lastOpenStartedAt: 0,
   lastOpenDurationMs: null,
   lastHtmlBuildDurationMs: null,
@@ -15405,6 +15407,7 @@ const gridlySettingsPerformanceTrace = {
   settingsBindingRuns: 0,
   settingsBindingSkippedRuns: 0,
   duplicateSettingsBindingDetected: false,
+  duplicateSettingsSurfaceDetected: false,
   slowInteractionSuspected: false,
   settingsOpenPerformanceNotes: [],
   settingsScrollPerformanceNotes: []
@@ -49617,7 +49620,15 @@ function gridlySettingsListExperienceAudit() {
   const workDisplay = typeof describeGridlySettingsPlace === "function"
     ? describeGridlySettingsPlace(savedPlacesState.work, "Work")
     : { label: "Work", meta: "Saved route anchor." };
-  const settingsPanelAuditSnapshot = typeof gridlySettingsPanelAudit === "function" ? gridlySettingsPanelAudit() : null;
+  let settingsPanelAuditSnapshot = null;
+  try {
+    settingsPanelAuditSnapshot = typeof gridlySettingsPanelAudit === "function" ? gridlySettingsPanelAudit() : null;
+  } catch (error) {
+    settingsPanelAuditSnapshot = {
+      available: false,
+      issues: [`settings_panel_audit_failed:${String(error?.message || error || "unknown")}`]
+    };
+  }
   const visibleText = (selector) => {
     const node = hasDocument ? document.querySelector(selector) : null;
     return String(node?.textContent || "").trim();
@@ -49640,6 +49651,11 @@ function gridlySettingsListExperienceAudit() {
         actionBindingsPreserved: false,
         slowInteractionSuspected: false,
         duplicateSettingsBindingDetected: false,
+        duplicateSettingsSurfaceDetected: false,
+        visibleSettingsSurfaceCount: 0,
+        alignmentApplyCount: gridlySettingsPerformanceTrace.alignmentApplyCount,
+        settingsOpenCount: gridlySettingsPerformanceTrace.settingsOpenCount,
+        performanceNotes: ["Document unavailable; Settings-specific performance counters only."],
         settingsOpenPerformanceNotes: [],
         settingsScrollPerformanceNotes: [],
         issues: ["document_unavailable"],
@@ -49650,7 +49666,20 @@ function gridlySettingsListExperienceAudit() {
     const sheetBody = document.getElementById("gridlyPortraitV2SheetBody");
     const activeSheetName = String(v2Sheet?.dataset?.activeSheet || "");
     const settingsSheet = sheetBody?.querySelector?.("[data-gridly-settings-v2]") || document.querySelector("[data-gridly-settings-v2]");
-    const visibleSettingsSheets = Array.from(document.querySelectorAll("[data-gridly-settings-v2], #settingsModal")).filter((node) => isVisible(node));
+    const safeSettingsElementVisible = (element) => {
+      try {
+        if (!element || element.hidden || element.hasAttribute?.("hidden") || element.hasAttribute?.("inert")) return false;
+        const style = typeof getComputedStyle === "function" ? getComputedStyle(element) : null;
+        if (style && (style.display === "none" || style.visibility === "hidden" || Number(style.opacity || 1) === 0)) return false;
+        const rect = typeof element.getBoundingClientRect === "function" ? element.getBoundingClientRect() : null;
+        if (rect && (rect.width <= 0 || rect.height <= 0)) return false;
+        return true;
+      } catch (error) {
+        issues.push(`settings_visibility_check_failed:${String(error?.message || error || "unknown")}`);
+        return false;
+      }
+    };
+    const visibleSettingsSheets = Array.from(document.querySelectorAll("[data-gridly-settings-v2], #settingsModal")).filter((node) => safeSettingsElementVisible(node));
     const settingsHost = settingsSheet?.closest?.("#gridlyPortraitV2Sheet") || document.getElementById("settingsModal") || settingsSheet;
     const header = settingsHost?.querySelector?.("header, .settings-modal-head") || v2Sheet?.querySelector?.("header") || document.querySelector(".settings-modal-head");
     const dock = document.querySelector("#gridlyPortraitV2 .gridly-v2-bottom-dock, .mobile-floating-action-dock");
@@ -49698,7 +49727,7 @@ function gridlySettingsListExperienceAudit() {
     ));
     const scrollContainmentOk = Boolean(sheetBody && bodyStyle && ["auto", "scroll"].includes(bodyStyle.overflowY) && settingsHost && hostStyle?.overflow === "hidden");
     const duplicateSettingsBindingDetected = Boolean(gridlySettingsPerformanceTrace.duplicateSettingsBindingDetected || (sheetBody?.dataset?.gridlyV2SettingsChangeBound === "1" && gridlySettingsPerformanceTrace.settingsBindingRuns > 1));
-    const slowInteractionSuspected = Boolean(gridlySettingsPerformanceTrace.slowInteractionSuspected || duplicateSettingsBindingDetected);
+    const slowInteractionSuspected = Boolean(gridlySettingsPerformanceTrace.slowInteractionSuspected || duplicateSettingsBindingDetected || visibleSettingsSheets.length > 1);
     const bottomDockOverlapDetected = Boolean(hostRect && dockRect && hostRect.width > 0 && dockRect.width > 0 && hostRect.bottom > dockRect.top - 4);
     const expandableRowsDetected = rows.length >= 7 && summaries.length >= 7;
     const collapsedRowHeightCompact = summaries.every((summary) => {
@@ -49728,7 +49757,7 @@ function gridlySettingsListExperienceAudit() {
     if (!actionBindingsPreserved) issues.push("settings_action_or_data_bindings_missing");
     if (visibleSettingsSheets.length > 1) {
       issues.push("duplicate_visible_settings_surfaces_detected");
-      gridlySettingsPerformanceTrace.duplicateSettingsBindingDetected = true;
+      gridlySettingsPerformanceTrace.duplicateSettingsSurfaceDetected = true;
       recordGridlySettingsPerformanceNote("settingsOpenPerformanceNotes", "More than one visible Settings surface was detected; legacy Settings should stay suppressed while the V2 sheet owns Settings.");
     }
     if (!historyLikeSheetDetected) recommendations.push("Open Settings from the Portrait V2 bottom dock and confirm it renders inside #gridlyPortraitV2Sheet like History/Hazards.");
@@ -49748,7 +49777,17 @@ function gridlySettingsListExperienceAudit() {
       detailSpacingAligned,
       collapsedRowHeightCompact,
       slowInteractionSuspected,
-      duplicateSettingsBindingDetected: Boolean(gridlySettingsPerformanceTrace.duplicateSettingsBindingDetected || duplicateSettingsBindingDetected || visibleSettingsSheets.length > 1),
+      duplicateSettingsBindingDetected: Boolean(gridlySettingsPerformanceTrace.duplicateSettingsBindingDetected || duplicateSettingsBindingDetected),
+      duplicateSettingsSurfaceDetected: Boolean(gridlySettingsPerformanceTrace.duplicateSettingsSurfaceDetected || visibleSettingsSheets.length > 1),
+      settingsOpenCount: gridlySettingsPerformanceTrace.settingsOpenCount,
+      alignmentApplyCount: gridlySettingsPerformanceTrace.alignmentApplyCount,
+      performanceNotes: [
+        `settingsOpenCount=${gridlySettingsPerformanceTrace.settingsOpenCount}`,
+        `alignmentApplyCount=${gridlySettingsPerformanceTrace.alignmentApplyCount}`,
+        visibleSettingsSheets.length > 1 ? "Duplicate visible Settings surfaces detected." : "No duplicate visible Settings surfaces detected by this audit.",
+        duplicateSettingsBindingDetected ? "Duplicate Settings delegated binding suspected." : "Settings delegated binding duplication not detected.",
+        gridlySettingsPerformanceTrace.slowInteractionSuspected ? "Settings-specific slow interaction suspected from measured open/bind time or duplication counters." : "Settings-specific slow interaction not currently suspected by measured counters."
+      ],
       settingsOpenPerformanceNotes: [
         `lastOpenDurationMs=${gridlySettingsPerformanceTrace.lastOpenDurationMs ?? "n/a"}`,
         `lastHtmlBuildDurationMs=${gridlySettingsPerformanceTrace.lastHtmlBuildDurationMs ?? "n/a"}`,
@@ -49770,7 +49809,33 @@ function gridlySettingsListExperienceAudit() {
       recommendations
     };
   };
-  const settingsSheetAlignmentAudit = buildSettingsSheetAlignmentAudit();
+  let settingsSheetAlignmentAudit;
+  try {
+    settingsSheetAlignmentAudit = buildSettingsSheetAlignmentAudit();
+  } catch (error) {
+    const message = String(error?.message || error || "unknown_settings_alignment_audit_error");
+    settingsSheetAlignmentAudit = {
+      historyLikeSheetDetected: false,
+      compactRailsAligned: false,
+      headerAligned: false,
+      scrollContainmentOk: false,
+      bottomDockOverlapDetected: false,
+      expandableRowsDetected: false,
+      expandedContentIndented: false,
+      actionBindingsPreserved: false,
+      slowInteractionSuspected: true,
+      duplicateSettingsBindingDetected: false,
+      duplicateSettingsSurfaceDetected: false,
+      visibleSettingsSurfaceCount: 0,
+      alignmentApplyCount: gridlySettingsPerformanceTrace.alignmentApplyCount,
+      settingsOpenCount: gridlySettingsPerformanceTrace.settingsOpenCount,
+      performanceNotes: ["settingsSheetAlignmentAudit failed defensively; see issues for the captured error."],
+      settingsOpenPerformanceNotes: [...gridlySettingsPerformanceTrace.settingsOpenPerformanceNotes],
+      settingsScrollPerformanceNotes: [...gridlySettingsPerformanceTrace.settingsScrollPerformanceNotes],
+      issues: [`settings_alignment_audit_failed:${message}`],
+      recommendations: ["Re-run after Settings renders; audit errors are captured here instead of being thrown to the console."]
+    };
+  }
   const item = (id, label, options = {}) => ({
     id,
     label,
@@ -59056,6 +59121,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   function applyGridlySettingsSheetRuntimeAlignment(sheet, body, sheetName) {
     if (!sheet || !body) return;
     const settingsActive = sheetName === "settings";
+    if (settingsActive) gridlySettingsPerformanceTrace.alignmentApplyCount += 1;
     const sheetStyleProps = ["left", "right", "bottom", "maxHeight", "overflow", "padding"];
     const bodyStyleProps = ["display", "maxHeight", "overflowY", "overscrollBehavior", "padding", "scrollbarWidth", "webkitOverflowScrolling"];
     if (!settingsActive) {
@@ -59081,8 +59147,30 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     recordGridlySettingsPerformanceNote("settingsScrollPerformanceNotes", "Settings scroll is contained on #gridlyPortraitV2SheetBody with dock clearance reserved on the fixed V2 sheet.");
   }
 
+  function suppressLegacySettingsSurfaceForPortraitV2Settings() {
+    const modal = document.getElementById("settingsModal");
+    if (!modal) return;
+    const wasOpen = Boolean(modal.classList?.contains("open") || modal.getAttribute("aria-hidden") === "false" || !modal.hidden);
+    modal.classList?.remove("open", "active", "visible", "is-open");
+    modal.hidden = true;
+    modal.setAttribute("hidden", "");
+    modal.setAttribute("aria-hidden", "true");
+    modal.setAttribute("inert", "");
+    modal.style.display = "none";
+    modal.style.pointerEvents = "none";
+    modal.style.visibility = "hidden";
+    modal.style.opacity = "0";
+    document.getElementById("settingsModalBackdrop")?.setAttribute?.("hidden", "");
+    if (wasOpen) {
+      gridlySettingsPerformanceTrace.duplicateSettingsSurfaceDetected = true;
+      recordGridlySettingsPerformanceNote("settingsOpenPerformanceNotes", "Suppressed the legacy Settings modal while the Portrait V2 Settings sheet owns Settings.");
+    }
+  }
+
   function openGridlyPortraitV2Sheet(sheetName, templateOverride = null) {
-    const openStartedAt = sheetName === "settings" ? getGridlySettingsPerfNow() : 0;
+    const settingsActive = sheetName === "settings";
+    const openStartedAt = settingsActive ? getGridlySettingsPerfNow() : 0;
+    if (settingsActive) gridlySettingsPerformanceTrace.settingsOpenCount += 1;
     const sheet = document.getElementById("gridlyPortraitV2Sheet");
     const backdrop = document.getElementById("gridlyPortraitV2SheetBackdrop");
     const shell = document.getElementById("gridlyPortraitV2");
@@ -59090,6 +59178,18 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const body = document.getElementById("gridlyPortraitV2SheetBody");
     const template = templateOverride || sheetTemplates[sheetName];
     if (!sheet || !backdrop || !title || !body || !template) return false;
+    if (settingsActive) suppressLegacySettingsSurfaceForPortraitV2Settings();
+    const settingsAlreadyOpen = settingsActive
+      && activeSheet === "settings"
+      && sheet.dataset?.activeSheet === "settings"
+      && !sheet.hidden
+      && body.querySelector?.("[data-gridly-settings-v2]");
+    if (settingsAlreadyOpen && !templateOverride) {
+      const duration = Number((getGridlySettingsPerfNow() - openStartedAt).toFixed(2));
+      gridlySettingsPerformanceTrace.lastOpenDurationMs = duration;
+      recordGridlySettingsPerformanceNote("settingsOpenPerformanceNotes", "Repeated Settings open request ignored because the Settings sheet is already active.");
+      return true;
+    }
     const templateHtml = typeof template.html === "function" ? template.html() : template.html;
 
     activeSheet = sheetName;
