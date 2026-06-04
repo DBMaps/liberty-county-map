@@ -39459,26 +39459,100 @@ function gridlyNormalizeAlertCardAuditText(value = "") {
 function gridlyAlertCardConsumerAudit(options = {}) {
   const samples = [];
   const maxSamples = Number(options.limit || 8);
+  let clearedRowsIgnored = 0;
+  let staleRowsIgnored = 0;
+  let headerRowsIgnored = 0;
   const readNodeText = (node, selector) => gridlyNormalizeAlertCardAuditText(node?.querySelector?.(selector)?.textContent || "");
+  const readNodeOwnText = (node) => gridlyNormalizeAlertCardAuditText(node?.textContent || node?.getAttribute?.("aria-label") || node?.getAttribute?.("title") || "");
+  const isClearedAlertCardAuditRow = (node) => {
+    const textValue = readNodeOwnText(node);
+    const typeText = gridlyNormalizeAlertCardAuditText([
+      node?.dataset?.gridlyAlertHazardType,
+      node?.dataset?.alertType,
+      node?.dataset?.reportType,
+      node?.dataset?.status,
+      node?.dataset?.state,
+      node?.className,
+      textValue
+    ].join(" ")).toLowerCase();
+    return /^cleared\b/i.test(textValue)
+      || /\b(?:hazard_cleared|recently_cleared|recently-cleared|cleared)\b/i.test(typeText);
+  };
+  const isHeaderAlertCardAuditRow = (node) => {
+    if (node?.hasAttribute?.("data-gridly-alerts-panel-heading") || node?.hasAttribute?.("data-gridly-alert-expand")) return true;
+    const textValue = readNodeOwnText(node);
+    return /^(?:community awareness|active movement alerts|no active alerts|road conditions appear calm|trending crossings are calm|\+\s*\d+\s+more)/i.test(textValue)
+      || /\bactive community report(?:s)?\b/i.test(textValue);
+  };
+  const hasRequiredV240CardMarkers = (node) => Boolean(
+    node?.getAttribute?.("data-gridly-alert-row") === "true"
+    && node?.hasAttribute?.("data-gridly-alert-id")
+    && node?.hasAttribute?.("data-gridly-alert-title")
+    && node?.hasAttribute?.("data-gridly-alert-summary")
+    && node?.hasAttribute?.("data-gridly-alert-location")
+    && !node?.hasAttribute?.("data-gridly-alert-expand")
+  );
+  const isCardVisiblyRendered = (node) => {
+    if (!node || !(node instanceof Element)) return false;
+    if (node.hidden || node.getAttribute("aria-hidden") === "true" || node.dataset?.gridlyAlertHidden === "true") return false;
+    if (typeof isElementVisiblyRendered === "function" && !isElementVisiblyRendered(node)) return false;
+    let current = node;
+    while (current && current instanceof Element) {
+      if (current.hidden || current.getAttribute("aria-hidden") === "true") return false;
+      const style = typeof window !== "undefined" && typeof window.getComputedStyle === "function" ? window.getComputedStyle(current) : null;
+      if (style && (style.display === "none" || style.visibility === "hidden" || style.opacity === "0")) return false;
+      current = current.parentElement;
+    }
+    return true;
+  };
+  const activeAlertsSheet = typeof document !== "undefined"
+    ? document.querySelector?.("#gridlyPortraitV2Sheet[data-active-sheet='alerts']:not([hidden])")
+    : null;
+  const activeAlertsSurface = activeAlertsSheet?.querySelector?.("#gridlyPortraitV2SheetBody .gridly-alerts-active, .gridly-alerts-active") || null;
+  const belongsToCurrentActiveSurface = (node) => {
+    if (activeAlertsSurface) return activeAlertsSurface.contains(node);
+    if (activeAlertsSheet) return activeAlertsSheet.contains(node);
+    return Boolean(node?.closest?.(".gridly-alerts-active")) || !node?.closest?.("#gridlyPortraitV2Sheet");
+  };
+  const toDomSample = (node, index) => {
+    const title = gridlyNormalizeAlertCardAuditText(node?.dataset?.gridlyAlertTitle || readNodeText(node, "strong, .gridly-alert-title, .gridly-alert-headline, [data-gridly-alert-title]"));
+    const locationLine = gridlyNormalizeAlertCardAuditText(
+      readNodeText(node, "[data-gridly-alert-location-line], .gridly-alert-subtitle, strong + div")
+      || readNodeText(node, ".gridly-alert-title + div, .gridly-alert-headline + div")
+    );
+    const freshnessCountLine = gridlyNormalizeAlertCardAuditText(readNodeText(node, "small, [data-gridly-alert-freshness], [data-gridly-alert-count-line]"));
+    const text = gridlyNormalizeAlertCardAuditText([title, locationLine, freshnessCountLine].filter(Boolean).join(" ") || node?.dataset?.gridlyAlertSummary || node?.textContent || "");
+    return { index, source: "dom", title, locationLine, freshnessCountLine, text };
+  };
+
   if (typeof document !== "undefined" && typeof document.querySelectorAll === "function") {
-    Array.from(document.querySelectorAll("[data-gridly-alert-row='true'], .gridly-alert-row, .alert-item"))
-      .filter((node) => {
-        const textValue = gridlyNormalizeAlertCardAuditText(node?.textContent || "");
-        if (!textValue || /^(community awareness|no active alerts|road conditions appear calm|trending crossings are calm|\+\s*\d+\s+more)/i.test(textValue)) return false;
-        if (node?.dataset?.gridlyAlertHidden === "true") return true;
-        return typeof isElementVisiblyRendered === "function" ? isElementVisiblyRendered(node) : true;
-      })
-      .slice(0, maxSamples)
-      .forEach((node, index) => {
-        const title = gridlyNormalizeAlertCardAuditText(node?.dataset?.gridlyAlertTitle || readNodeText(node, "strong, .gridly-alert-title, .gridly-alert-headline, [data-gridly-alert-title]"));
-        const subtitles = Array.from(node?.querySelectorAll?.(".gridly-alert-subtitle, small, p") || []).map((child) => gridlyNormalizeAlertCardAuditText(child.textContent)).filter(Boolean);
-        const text = gridlyNormalizeAlertCardAuditText(node?.textContent || "");
-        samples.push({ index, source: "dom", title, locationLine: subtitles[0] || "", freshnessCountLine: subtitles[1] || "", text });
-      });
+    const candidateNodes = Array.from(document.querySelectorAll([
+      "[data-gridly-alert-row='true']",
+      ".gridly-alert-row",
+      ".alert-item",
+      "[data-gridly-alerts-panel-heading='true']"
+    ].join(",")));
+    const activeCardNodes = [];
+    candidateNodes.forEach((node) => {
+      if (isHeaderAlertCardAuditRow(node)) {
+        headerRowsIgnored += 1;
+        return;
+      }
+      if (isClearedAlertCardAuditRow(node)) {
+        clearedRowsIgnored += 1;
+        return;
+      }
+      if (!hasRequiredV240CardMarkers(node) || !belongsToCurrentActiveSurface(node) || !isCardVisiblyRendered(node)) {
+        staleRowsIgnored += 1;
+        return;
+      }
+      activeCardNodes.push(node);
+    });
+    activeCardNodes.slice(0, maxSamples).forEach((node, index) => samples.push(toDomSample(node, index)));
   }
   if (!samples.length) {
     const latestAlerts = typeof window !== "undefined" && Array.isArray(window.__gridlyLatestAlertsForRender) ? window.__gridlyLatestAlertsForRender : [];
-    latestAlerts.slice(0, maxSamples).forEach((alert, index) => {
+    latestAlerts.filter((alert) => !isClearedReportType(alert?.type || alert?.report_type || alert?.status || alert?.state)).slice(0, maxSamples).forEach((alert, index) => {
       const model = buildGridlyAlertCardConsumerModel(alert);
       samples.push({ index, source: "render-cache", title: model.title, locationLine: model.locationLine, freshnessCountLine: model.freshnessCountLine, text: [model.title, model.locationLine, model.freshnessCountLine].join(" "), model });
     });
@@ -39516,6 +39590,9 @@ function gridlyAlertCardConsumerAudit(options = {}) {
     longTitleCount,
     duplicateLocationCount,
     technicalMetadataDetected,
+    clearedRowsIgnored,
+    staleRowsIgnored,
+    headerRowsIgnored,
     consumerFriendlyPass: Boolean(cardsChecked && samples.every((sample) => sample.title && sample.locationLine && sample.freshnessCountLine) && longTitleCount === 0 && duplicateLocationCount === 0 && !technicalMetadataDetected),
     samples: samples.slice(0, maxSamples)
   };
