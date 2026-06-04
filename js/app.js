@@ -22635,6 +22635,52 @@ function centerMapOnUserIfAllowed() {
   return false;
 }
 
+function softlyCenterMapOnGridlyUserLocation(coords) {
+  const target = getValidGridlyUserLocationCoordinates(coords);
+  if (!target || !map) return false;
+  const targetLatLng = [target.lat, target.lng];
+  if (typeof map.panTo === "function") {
+    map.panTo(targetLatLng, { animate: true, duration: 0.65 });
+    return true;
+  }
+  if (typeof map.setView === "function") {
+    map.setView(targetLatLng, map.getZoom?.(), { animate: true });
+    return true;
+  }
+  return false;
+}
+
+function refreshGridlyUserLocationAwarenessContext(source = "user_location_control") {
+  renderUserLocationDot();
+  updateNearestContext();
+  if (typeof scheduleRenderCrossings === "function") scheduleRenderCrossings(source);
+  if (typeof refreshPortraitV2LocalizedIntelligence === "function") refreshPortraitV2LocalizedIntelligence();
+}
+
+function requestGridlyUserLocationFromControl(source = "portrait_v2_location_control") {
+  recordGridlyGeolocationRequest(source);
+  if (typeof navigator === "undefined" || typeof navigator.geolocation === "undefined") return false;
+  const control = document.querySelector("[data-v2-control='use-location']");
+  control?.setAttribute("aria-busy", "true");
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      control?.removeAttribute("aria-busy");
+      gridlyCachedGeolocationPermissionStatus = "granted";
+      const coords = getValidGridlyUserLocationCoordinates(position);
+      if (!coords) return;
+      if (!setGridlyUserLocation(coords)) return;
+      softlyCenterMapOnGridlyUserLocation(coords);
+      refreshGridlyUserLocationAwarenessContext(source);
+    },
+    () => {
+      control?.removeAttribute("aria-busy");
+      gridlyCachedGeolocationPermissionStatus = "denied";
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+  );
+  return true;
+}
+
 function updateNearestContext() {
   const awarenessAnchor = getGridlyAwarenessAnchor();
   if (!awarenessAnchor) return;
@@ -22668,6 +22714,12 @@ function setGridlyUserLocation(candidate) {
   const coords = getValidGridlyUserLocationCoordinates(candidate);
   if (!coords) return false;
   userLocation = { lat: coords.lat, lng: coords.lng };
+  if (typeof window !== "undefined") {
+    window.gridlyUserLocation = { ...userLocation };
+    window.__gridlyUserLocation = { ...userLocation };
+    window.gridlyCurrentLocation = { ...userLocation };
+    window.__gridlyCurrentLocation = { ...userLocation };
+  }
   renderUserLocationDot();
   return true;
 }
@@ -57787,6 +57839,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     document.querySelector("[data-v2-control='zoom-in']")?.addEventListener("click",()=>document.querySelector("#map .leaflet-control-zoom-in")?.click());
     document.querySelector("[data-v2-control='zoom-out']")?.addEventListener("click",()=>document.querySelector("#map .leaflet-control-zoom-out")?.click());
     document.querySelector("[data-v2-control='layers']")?.addEventListener("click",()=>document.querySelector("#mobileDockLayersBtn")?.click());
+    document.querySelector("[data-v2-control='use-location']")?.addEventListener("click",()=>requestGridlyUserLocationFromControl("portrait_v2_location_control"));
   }
   window.openPortraitV2Sheet = openPortraitV2Sheet;
   window.closePortraitV2Sheet = closePortraitV2Sheet;

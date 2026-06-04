@@ -16914,3 +16914,14 @@ body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV
     transform: translate(-50%, -50%) scale(0.92);
   }
 }
+
+/* V243 — Portrait V2 explicit user-location utility control. */
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail [data-v2-control="use-location"] {
+  color: rgba(214, 235, 255, 0.94);
+  background: linear-gradient(170deg, rgba(10, 30, 52, 0.82), rgba(6, 17, 30, 0.9));
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail [data-v2-control="use-location"][aria-busy="true"] {
+  color: rgba(147, 197, 253, 0.98);
+  box-shadow: var(--gridly-v2-control-shadow), 0 0 0 2px rgba(96, 165, 250, 0.18);
+}
