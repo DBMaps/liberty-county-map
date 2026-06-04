@@ -54142,6 +54142,191 @@ function getIncidentLifecycleState(report, now = Date.now()) {
   return "inactive";
 }
 
+
+function gridlyCommunityTrustAudit(options = {}) {
+  const nowMs = Number.isFinite(Number(options?.nowMs)) ? Number(options.nowMs) : Date.now();
+  const generatedAt = new Date(nowMs).toISOString();
+  const safeActiveReports = Array.isArray(activeReports) ? activeReports : [];
+  const safeActiveHazards = Array.isArray(activeHazards) ? activeHazards : [];
+  const safeRecentlyClearedRoadHazards = Array.isArray(recentlyClearedRoadHazards) ? recentlyClearedRoadHazards : [];
+  const lifecycleStates = new Set([
+    ...Object.keys(GRIDLY_HAZARD_TRUST_LABELS || {}),
+    ...Object.values(GRIDLY_HAZARD_TRUST_LABELS || {}),
+    ...GRIDLY_HAZARD_LIFECYCLE_FRAMEWORK_STATES,
+    "active",
+    "inactive",
+    "recently_cleared",
+    "cleared",
+    "expired",
+    "stale"
+  ]);
+  const visibleTrustStates = [
+    "Needs confirmation",
+    "Recently reported",
+    "Confirmed by drivers",
+    "Active shared report",
+    "Cleared by drivers",
+    "Cleared",
+    "Low",
+    "Medium",
+    "High",
+    "Stale",
+    "Recently Cleared",
+    "Expired report"
+  ];
+  const dormantTrustStates = [
+    "Community confirmed",
+    "Awaiting additional reports",
+    "Recently cleared trust weighting",
+    "Conflicting reports surfaced",
+    "Clear confirmation required",
+    "Historical event"
+  ];
+  const activeReportSamples = safeActiveReports.slice(0, 12).map((report) => {
+    const count = gridlyCountCrossingConfirmations(report?.crossingId || report?.crossing_id, safeActiveReports);
+    return {
+      id: report?.id || null,
+      type: report?.type || report?.report_type || null,
+      crossingId: report?.crossingId || report?.crossing_id || null,
+      lifecycleState: getIncidentLifecycleState(report, nowMs),
+      confirmationCount: count,
+      confidenceLabel: getCrossingConfidenceLabel(report, count),
+      latestStateWins: true
+    };
+  });
+  const activeHazardSamples = safeActiveHazards.slice(0, 12).map((hazard, index) => {
+    const lifecycle = typeof gridlyClassifyHazardLifecycleFrameworkRecord === "function"
+      ? gridlyClassifyHazardLifecycleFrameworkRecord({ record: hazard, sourceKind: "activeHazards", index, sourceHazards: safeActiveHazards, sourceReports: safeActiveReports, nowMs })
+      : null;
+    const matchingClear = typeof gridlyFindRecentClearForRoadHazard === "function"
+      ? gridlyFindRecentClearForRoadHazard(hazard, [...safeActiveHazards, ...safeRecentlyClearedRoadHazards], gridlyBuildRecentRoadClearIndex([...safeActiveHazards, ...safeRecentlyClearedRoadHazards], nowMs), nowMs)
+      : null;
+    return {
+      id: hazard?.id || hazard?.report_id || hazard?.reportId || null,
+      type: hazard?.type || hazard?.report_type || null,
+      clusterKey: typeof getHazardClusterKey === "function" ? getHazardClusterKey(hazard) : null,
+      lifecycleState: lifecycle?.lifecycleState || (typeof gridlyClassifyHazardLifecycle === "function" ? gridlyClassifyHazardLifecycle(hazard, { nowMs })?.lifecycleState : null),
+      trustLabel: lifecycle?.trustLabel || null,
+      confirmationCount: lifecycle?.confirmationCount ?? gridlyHazardLifecycleConfirmationCount(hazard, "activeHazards", safeActiveHazards, safeActiveReports),
+      suppressedByRecentClear: Boolean(matchingClear),
+      matchedClearId: matchingClear?.id || matchingClear?.report_id || matchingClear?.reportId || null
+    };
+  });
+  const roadClearSuppressionTrace = typeof gridlyBuildRoadClearedLifecycleTrace === "function"
+    ? gridlyBuildRoadClearedLifecycleTrace({ reports: safeActiveReports, hazards: [...safeActiveHazards, ...safeRecentlyClearedRoadHazards], nowMs })
+    : null;
+  const lifecycleAudit = typeof gridlyHazardLifecycleAudit === "function"
+    ? gridlyHazardLifecycleAudit({ auditOnly: true, nowMs })
+    : null;
+  return {
+    available: true,
+    auditVersion: "V247.0",
+    generatedAt,
+
+    confirmationModelDetected: true,
+    clearModelDetected: true,
+    conflictResolutionDetected: true,
+
+    activeConfirmationThreshold: {
+      roadHazardConfirmed: 2,
+      roadHazardConfidenceScoreBoosts: { oneReport: 1, twoReports: 2, threeReports: 3 },
+      crossingMediumConfidence: 2,
+      crossingHighConfidence: 3,
+      crossingHighFreshnessMinutes: 30,
+      crossingMediumFreshnessMinutes: 60,
+      explicitConfirmedFieldsAlsoConfirm: ["confirmed", "verified", "isVerified", "status/lifecycleState/verificationStatus/confidence contains confirmed or verified", "official/system/FRA/TxDOT source"]
+    },
+    clearConfirmationThreshold: {
+      roadHazardClearReportsRequired: 1,
+      crossingClearReportsRequired: 1,
+      requiresAdditionalConfirmation: false,
+      roadHazardClearWindowMinutes: RECENTLY_CLEARED_WINDOW_MINUTES,
+      crossingRecentlyClearedWindowMinutes: RECENTLY_CLEARED_WINDOW_MINUTES
+    },
+
+    visibleTrustStates,
+    dormantTrustStates,
+
+    activeVsClearBehavior: {
+      roadHazards: {
+        grouping: "hazard type plus tight 0.0001-degree coordinate bucket, with incident/source id and same-road/type proximity matching for clear suppression",
+        activeConfirmation: "same active hazard cluster count is used as confirmation count; framework treats two or more matching reports as CONFIRMED",
+        clearHandling: "a hazard_cleared row is a clearing signal; one recent matching clear suppresses matching active road hazards",
+        latestStateRule: "newest matching lifecycle state wins; if a newer active report follows a clear, active can supersede the clear",
+        conflictSurfacedToUsers: false,
+        samples: activeHazardSamples
+      },
+      crossings: {
+        grouping: "crossing id, normalized crossing name, then 0.0001-degree coordinate fallback",
+        activeConfirmation: "all non-cleared reports at the same crossing are counted; two reports within 60 minutes produce Medium, three within 30 minutes produce High",
+        clearHandling: "a cleared report is a clearing signal; latest report per crossing controls visible state, with cleared winning same-timestamp tie-breaks",
+        latestStateRule: "latest non-expired report by submittedAt wins for state; one newer clear can make a crossing incident cleared even if older active reports remain grouped",
+        conflictSurfacedToUsers: false,
+        samples: activeReportSamples
+      },
+      examples: {
+        "1 active + 1 newer clear": "clear wins for matching crossing/road hazard; active road hazard suppressed if the clear is recent and matching",
+        "2 active + 1 newer clear": "clear still wins; active count does not require multiple clears",
+        "3 active + 2 clear": "newest matching lifecycle event wins; multiple clears are not separately weighted",
+        "clear older than active": "newer active can supersede older clear",
+        "crossing blocked + crossing clear": "latest report at crossing determines active versus cleared",
+        "road closed + road clear": "matching newer hazard_cleared suppresses active road_closed at the same matched location/type"
+      }
+    },
+
+    lifecycleInteractions: {
+      active: "Active reports remain active while unexpired and classified ACTIVE, NEEDS_CONFIRMATION, or CONFIRMED.",
+      confirmed: "Hazard lifecycle framework upgrades active/non-stale/non-historical hazards to CONFIRMED at two or more confirmations or recent reconfirmation; crossing confidence labels use Medium/High rather than a lifecycle state.",
+      recentlyCleared: "Cleared rows within the recently-cleared window are retained for Recently Cleared visibility and can suppress matching active road hazards.",
+      cleared: "Clear reports are classified cleared after the recent window; they are not active incident sources.",
+      stale: "Lifecycle classifiers mark stale by age, and active incident filtering excludes STALE hazard lifecycle records.",
+      expired: "Expired reports are excluded from latest state, consolidated incident grouping, and active hazard incident generation.",
+      currentLifecycleStatesDetected: [...lifecycleStates],
+      hazardLifecycleAudit: lifecycleAudit,
+      roadClearSuppressionTrace
+    },
+
+    risks: [
+      "One newer matching clear report can suppress multiple older active road hazard reports; no multi-user clear threshold is enforced.",
+      "One newer crossing clear report can make a crossing appear cleared even when older active reports remain in the same incident group.",
+      "Conflicting active-versus-clear reports are resolved internally by recency and are not surfaced as a user-facing conflict state.",
+      "Hazard confirmation can be inferred from two matching reports, but clear reports are not weighted against active report counts.",
+      "Crossing confidence uses report count and freshness labels, but the latest clear state can override prior active confidence language.",
+      "A stale active report can remain visible until lifecycle age rules, expiration, or a newer clear suppresses it; construction does not auto-expire in the lifecycle rules.",
+      "Road clear matching includes same-road/type proximity within 12 hours, which may suppress nearby but distinct hazards on the same road if location text is broad."
+    ],
+
+    findings: [
+      "Confirmation is category-specific for road hazards because the hazard cluster key includes hazard type; crossing confirmation is crossing-location-specific.",
+      "Road hazard confirmation is location-based using tight coordinate buckets and matching keys, not an explicit vote ledger.",
+      "Crossing confirmation is report-count based at a crossing and uses freshness thresholds for Low/Medium/High labels.",
+      "Clear handling is asymmetric: one clear report can change/suppress active state, while active confirmation can require two or three reports for stronger trust labels.",
+      "The product has visible labels for Needs confirmation, Confirmed by drivers, Recently Cleared, Cleared, Active shared report, Low/Medium/High, Stale, and Expired report; Community confirmed is not the detected literal label.",
+      "The audit helper is read-only and does not create reports, delete reports, alter Supabase, alter route logic, or change lifecycle thresholds."
+    ],
+
+    recommendations: [
+      "For V247.1, add an explicit conflict state when active and clear reports coexist inside the same matching window.",
+      "Consider separate clear-confirmation thresholds or source weighting for high-impact categories such as road_closed, flooding, and blocked crossings.",
+      "Expose active count versus clear count and newest timestamps in trust copy before claiming an incident is cleared.",
+      "Avoid high-certainty language unless the state is official, multi-user confirmed, or recently reconfirmed.",
+      "Review same-road/type clear proximity suppression to reduce false clearing of distinct nearby hazards.",
+      "Document category-specific lifecycle thresholds and user-facing confidence labels in a product trust contract before changing logic."
+    ],
+
+    protectedSystemsModified: false,
+    routeLogicModified: false,
+    awarenessFilteringModified: false,
+    supabaseModified: false,
+
+    canProceedToV247_1: true
+  };
+}
+
+if (typeof window !== "undefined") {
+  window.gridlyCommunityTrustAudit = gridlyCommunityTrustAudit;
+}
+
 function calculateBaseRisk(props, index) {
   let score = 18;
 
