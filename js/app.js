@@ -14306,9 +14306,9 @@ function openAlertsSurfaceFromDock() {
     return titleCase(raw);
   };
   const getLocationConfidence = (resolutionType = "") => {
-    if (resolutionType === "exact") return "High confidence";
-    if (resolutionType === "resolved") return "Medium confidence";
-    return "Low confidence";
+    if (resolutionType === "exact") return "Location confirmed";
+    if (resolutionType === "resolved") return "Location matched";
+    return "Approximate location";
   };
   const getLocationDetail = (resolutionType = "") => {
     if (resolutionType === "exact") return "Exact crossing";
@@ -14480,7 +14480,7 @@ function openAlertsSurfaceFromDock() {
     };
   };
   const rankImpact = (impact) => ({ "Widespread Delays": 4, "Impacted Movement": 3, "Slowing Areas": 2, "Flowing Normally": 1 }[impact] || 1);
-  const rankConfidence = (confidence) => ({ "High confidence": 3, "Medium confidence": 2, "Low confidence": 1 }[confidence] || 1);
+  const rankConfidence = (confidence) => ({ "Location confirmed": 3, "Location matched": 2, "Approximate location": 1 }[confidence] || 1);
   const clusterAlerts = (formattedAlerts) => {
     const map = new Map();
     formattedAlerts.forEach((item) => {
@@ -14544,7 +14544,7 @@ function openAlertsSurfaceFromDock() {
     <div class="gridly-alert-row gridly-alert-intel-card">
       <div><strong>${sanitizeText(getCrossingHeader(card))}</strong></div>
       <small>${sanitizeText(getCardLabel(card))}</small>
-      <small>${sanitizeText(card?.confidence || "Low confidence")} · ${sanitizeText(formatMinutesAgo(card?.latestAtMs))}</small>
+      <small>${sanitizeText(card?.confidence || "Approximate location")} · ${sanitizeText(formatMinutesAgo(card?.latestAtMs))}</small>
     </div>
   `).join("")}
   ${hiddenCount > 0 ? `<div class="gridly-alert-row gridly-alert-intel-card"><small><strong>+ ${hiddenCount} more affected crossing${hiddenCount === 1 ? "" : "s"}</strong></small></div>` : ""}
@@ -18906,13 +18906,13 @@ function isGridlyDestinationRouteHighImpactRailMatch(item = {}) {
 }
 
 function getGridlyDestinationRouteConfidenceLabel({ routeFound, impactLevel, hazardsConsidered, alertsConsidered, reportsConsidered } = {}) {
-  if (!routeFound) return "Low confidence";
+  if (!routeFound) return "Awaiting route reports";
   const hasOfficialOrStructuredSignal = Math.max(0, Number(hazardsConsidered) || 0) + Math.max(0, Number(alertsConsidered) || 0) > 0;
   const hasCommunitySignal = Math.max(0, Number(reportsConsidered) || 0) > 0;
-  if (String(impactLevel || "none") === "none") return "High confidence";
-  if (hasOfficialOrStructuredSignal) return "High confidence";
-  if (hasCommunitySignal) return "Medium confidence";
-  return "Low confidence";
+  if (String(impactLevel || "none") === "none") return "Live reports checked";
+  if (hasOfficialOrStructuredSignal) return "Live reports checked";
+  if (hasCommunitySignal) return "Community reports nearby";
+  return "Awaiting additional reports";
 }
 
 function getGridlyDestinationRoutePrimaryImpactReason(impactLevel = "none", matches = {}) {
@@ -19116,7 +19116,7 @@ window.gridlyDestinationRouteImpactAudit = function gridlyDestinationRouteImpact
       routeFound: false,
       impactLevel: "none",
       impactLabel: "None",
-      confidenceLabel: "Low confidence",
+      confidenceLabel: "Awaiting route reports",
       primaryImpactReason: "",
       primaryImpactLocation: "",
       selectedImpactSourceId: "",
@@ -40118,10 +40118,85 @@ function formatGridlyHazardPopupFreshnessLine(incident = {}) {
   return `${verb} ${days} day${days === 1 ? "" : "s"} ago`;
 }
 
-function getGridlyHazardPopupConfidenceLine(reportCount = 1) {
-  if (reportCount <= 1) return "Awaiting additional reports";
-  if (reportCount === 2) return "Community confirmed";
-  return "Multiple community reports";
+function getGridlyCommunityTrustPresentationModel(record = {}, options = {}) {
+  const statusText = String(record?.status || record?.state || record?.lifecycle || record?.lifecycleState || options?.state || "").toLowerCase();
+  const typeText = String(record?.report_type || record?.reportType || record?.type || record?.eventType || "").toLowerCase();
+  const popupState = String(options?.popupState || record?.popupState || record?.crossingPopupState || "").toLowerCase();
+  const activeCount = Math.max(0, Math.round(Number(options?.reportCount ?? record?.reports_count ?? record?.count ?? record?.confirmations ?? record?.confirmationCount ?? (Array.isArray(record?.reports) ? record.reports.length : 1)) || 0));
+  const clearCountCandidates = [
+    record?.clear_reports_count, record?.clearReportsCount, record?.cleared_reports_count, record?.clearedReportsCount,
+    record?.clear_count, record?.clearCount, record?.clears_count, record?.clearsCount, record?.cleared_count, record?.clearedCount,
+    Array.isArray(record?.clearReports) ? record.clearReports.length : null,
+    Array.isArray(record?.clearedReports) ? record.clearedReports.length : null
+  ];
+  const numericClearCount = clearCountCandidates
+    .map((value) => Number(value))
+    .find((value) => Number.isFinite(value) && value > 0);
+  const clearTypeReported = /\b(?:cleared|clear|hazard_cleared|rail_cleared)\b/.test(typeText) || /\b(?:cleared|recently_cleared)\b/.test(statusText) || popupState === "recently_cleared";
+  const clearanceReported = clearTypeReported || Number.isFinite(numericClearCount) || Boolean(record?.cleared_at || record?.clearedAt || record?.latestClear || record?.latestClearedReport);
+  const clearCount = Math.max(clearanceReported ? 1 : 0, Math.round(numericClearCount || 0));
+  const activeReportsPresent = activeCount > 0 && !clearTypeReported && popupState !== "recently_cleared";
+  const conflictDetected = activeReportsPresent && clearCount > 0;
+
+  if (popupState === "no_report") {
+    return {
+      reportCountLine: "No active reports",
+      trustLine: "Report if blocked or delayed",
+      clearanceReported,
+      conflictDetected: false,
+      recentlyCleared: false
+    };
+  }
+
+  if (clearTypeReported && !activeReportsPresent) {
+    return {
+      reportCountLine: "Recently cleared",
+      trustLine: "Community reports indicate conditions have improved",
+      clearanceReported: true,
+      conflictDetected: false,
+      recentlyCleared: true
+    };
+  }
+
+  if (conflictDetected) {
+    return {
+      reportCountLine: `${activeCount} active report${activeCount === 1 ? "" : "s"} · Clearance reported`,
+      trustLine: "Community reports conflict · Conditions may have changed",
+      clearanceReported: true,
+      conflictDetected: true,
+      recentlyCleared: false
+    };
+  }
+
+  if (activeCount >= 3) {
+    return {
+      reportCountLine: "Multiple drivers reporting",
+      trustLine: "Community confirmed",
+      clearanceReported: false,
+      conflictDetected: false,
+      recentlyCleared: false
+    };
+  }
+  if (activeCount >= 2) {
+    return {
+      reportCountLine: "Multiple drivers reporting",
+      trustLine: "Community confirmed",
+      clearanceReported: false,
+      conflictDetected: false,
+      recentlyCleared: false
+    };
+  }
+  return {
+    reportCountLine: "Reported by a community member",
+    trustLine: "Awaiting additional reports",
+    clearanceReported: false,
+    conflictDetected: false,
+    recentlyCleared: false
+  };
+}
+
+function getGridlyHazardPopupConfidenceLine(reportCount = 1, incident = {}) {
+  return getGridlyCommunityTrustPresentationModel(incident, { reportCount }).trustLine;
 }
 
 function resolveGridlyHazardPopupRoadLabel(incident = {}) {
@@ -40147,9 +40222,10 @@ function buildGridlyHazardPopupConsumerModel(incident = {}) {
   const locationPreposition = category === "other_hazard" ? "near" : "on";
   const locationLine = `Reported ${locationPreposition} ${roadLabel}`;
   const reportCount = getGridlyHazardPopupReportCount(incident);
-  const reportCountLine = `${reportCount} active report${reportCount === 1 ? "" : "s"}`;
+  const trustModel = getGridlyCommunityTrustPresentationModel(incident, { reportCount });
+  const reportCountLine = trustModel.reportCountLine;
   const freshnessLine = formatGridlyHazardPopupFreshnessLine(incident);
-  const confidenceLine = getGridlyHazardPopupConfidenceLine(reportCount);
+  const confidenceLine = trustModel.trustLine;
   const visibleText = [title, locationLine, reportCountLine, freshnessLine, confidenceLine].join(" ");
   const containsTechnicalMetadata = GRIDLY_HAZARD_POPUP_TECHNICAL_METADATA_PATTERN.test(visibleText);
   return {
@@ -40216,13 +40292,7 @@ function getGridlyCrossingPopupReportCount(incident = {}) {
 
 function getGridlyCrossingPopupConfidenceLine(incident = {}, reportCount = 1) {
   const popupState = resolveGridlyCrossingPopupState(incident);
-  if (popupState === "no_report") return "Report if blocked or delayed";
-  if (popupState === "recently_cleared") return "Recently cleared by community";
-
-  const confidenceText = String(incident?.confidence || incident?.confidenceLine || incident?.confidence_label || "").toLowerCase();
-  if (reportCount >= 3 || /multiple/.test(confidenceText)) return "Multiple community reports";
-  if (reportCount >= 2 || /confirmed|verified/.test(confidenceText)) return "Community confirmed";
-  return "Awaiting additional reports";
+  return getGridlyCommunityTrustPresentationModel(incident, { reportCount, popupState }).trustLine;
 }
 
 function buildGridlyCrossingPopupConsumerModel(incident = {}) {
@@ -40231,11 +40301,10 @@ function buildGridlyCrossingPopupConsumerModel(incident = {}) {
   const locationLabel = resolveGridlyCrossingPopupLocationLabel(incident);
   const locationLine = normalizeGridlyUserFacingRoadText(`${popupState === "no_report" ? "At" : "Reported at"} ${locationLabel}`);
   const reportCount = getGridlyCrossingPopupReportCount(incident);
-  const reportCountLine = popupState === "active"
-    ? `${reportCount} active report${reportCount === 1 ? "" : "s"}`
-    : "No active reports";
+  const trustModel = getGridlyCommunityTrustPresentationModel(incident, { reportCount, popupState });
+  const reportCountLine = trustModel.reportCountLine;
   const freshnessLine = popupState === "no_report" ? "Ready for reports" : formatGridlyHazardPopupFreshnessLine(incident);
-  const confidenceLine = getGridlyCrossingPopupConfidenceLine(incident, reportCount);
+  const confidenceLine = trustModel.trustLine;
   const visibleText = [title, locationLine, freshnessLine, reportCountLine, confidenceLine].join(" ");
   const technicalMetadataDetected = GRIDLY_HAZARD_POPUP_TECHNICAL_METADATA_PATTERN.test(visibleText);
   return {
@@ -40333,9 +40402,11 @@ function buildGridlyAlertCardConsumerModel(alert = {}, options = {}) {
     .map((value) => Number(value))
     .filter((value) => Number.isFinite(value) && value > 0);
   const reportCount = Math.max(1, Math.round(reportCountCandidates[0] || (typeof getGridlyHazardPopupReportCount === "function" ? getGridlyHazardPopupReportCount(alert) : 1)));
-  const reportCountLine = `${reportCount} active report${reportCount === 1 ? "" : "s"}`;
+  const trustModel = getGridlyCommunityTrustPresentationModel(alert, { reportCount });
+  const reportCountLine = trustModel.reportCountLine;
   const freshnessLine = typeof formatGridlyHazardPopupFreshnessLine === "function" ? formatGridlyHazardPopupFreshnessLine(alert) : normalizeGridlyUserFacingRoadText(alert?.minutesText || alert?.timeAgo || "Updated just now");
-  const freshnessCountLine = `${freshnessLine} • ${reportCountLine}`;
+  const trustLine = trustModel.trustLine;
+  const freshnessCountLine = `${freshnessLine} • ${reportCountLine} • ${trustLine}`;
   const visibleText = [title, locationLine, freshnessCountLine].join(" ");
   const technicalMetadataDetected = GRIDLY_HAZARD_POPUP_TECHNICAL_METADATA_PATTERN.test(visibleText);
   return {
@@ -40345,6 +40416,7 @@ function buildGridlyAlertCardConsumerModel(alert = {}, options = {}) {
     reportCount,
     reportCountLine,
     freshnessLine,
+    trustLine,
     freshnessCountLine,
     technicalMetadataDetected,
     consumerFriendlyPass: Boolean(title && locationLine && freshnessCountLine && !technicalMetadataDetected)
@@ -50020,15 +50092,15 @@ function updateGrowthWidgets() {
     alternateAvailable: Boolean(alternateRouteAvailable)
   });
   lastRouteRecommendationMessage = recommendationMessage;
-  if (confirmationCount >= 5) {
-    safeText("communityTrust", `${freshnessTier} · Strong local signal`);
-    safeText("communityTrustReason", `${confirmationCount} reports live. Confidence is ${freshnessTier.toLowerCase()}.`);
+  if (confirmationCount >= 2) {
+    safeText("communityTrust", `${freshnessTier} · Community confirmed`);
+    safeText("communityTrustReason", `${confirmationCount} active reports live. Multiple drivers are reporting.`);
   } else if (confirmationCount > 0) {
-    safeText("communityTrust", `${freshnessTier} · Early signal`);
-    safeText("communityTrustReason", `${confirmationCount} active report${confirmationCount === 1 ? "" : "s"}. Confidence is ${freshnessTier.toLowerCase()}.`);
+    safeText("communityTrust", `${freshnessTier} · Awaiting additional reports`);
+    safeText("communityTrustReason", "Reported by a community member. Conditions may change quickly.");
   } else {
-    safeText("communityTrust", "Fresh · Waiting for reports");
-    safeText("communityTrustReason", "No active reports yet. Confidence will increase as drivers report.");
+    safeText("communityTrust", "Fresh · Awaiting reports");
+    safeText("communityTrustReason", "No active reports yet. Community updates will appear as drivers report.");
   }
 
   if (lastReport) {
@@ -50056,19 +50128,20 @@ function updateCorridorSummaryCards() {
   const guidanceLine = getCorridorGuidanceMessage(state.severityLabel);
   const reportCountLabel = `${state.stackedReportCount || 0} active report${state.stackedReportCount === 1 ? "" : "s"}`;
   const freshnessLabel = state.freshness >= 70 ? "Fresh" : state.freshness >= 40 ? "Recent" : "Stale";
-  const detailLine = `${state.severityLabel} · ${guidanceLine} · ~${Math.round(state.delayMinutes || 0)} min delay · ${state.confidence}% confidence · ${freshnessLabel} · ${reportCountLabel}`;
+  const communitySupportLabel = state.confidence >= 70 ? "Community confirmed" : state.confidence >= 55 ? "Multiple drivers reporting" : "Awaiting additional reports";
+  const detailLine = `${state.severityLabel} · ${guidanceLine} · ~${Math.round(state.delayMinutes || 0)} min delay · ${communitySupportLabel} · ${freshnessLabel} · ${reportCountLabel}`;
   safeText("corridorSummaryHeadline", summaryLine);
   safeText("corridorSummaryDetail", detailLine);
   safeText("mobileCorridorSummaryHeadline", summaryLine);
   safeText("mobileCorridorSummaryDetail", detailLine);
   safeText("liveOpsStatus", `${state.severityLabel} · ~${Math.round(state.delayMinutes || 0)} min`);
-  safeText("liveOpsDetail", `${guidanceLine} · ${state.confidence}% confidence · ${reportCountLabel}`);
+  safeText("liveOpsDetail", `${guidanceLine} · ${communitySupportLabel} · ${reportCountLabel}`);
 
   const badges = [
     "LIVE",
     state.freshness < 35 ? "STALE" : null,
-    state.confidence >= 70 ? "HIGH CONFIDENCE" : null,
-    state.confidence >= 55 && state.freshness >= 45 ? "COMMUNITY VERIFIED" : null
+    state.confidence >= 70 ? "COMMUNITY CONFIRMED" : null,
+    state.confidence >= 55 && state.freshness >= 45 ? "MULTIPLE DRIVERS REPORTING" : null
   ].filter(Boolean);
 
   [els.corridorSummaryBadges, els.mobileCorridorBadges].forEach((node) => {
@@ -54093,12 +54166,11 @@ function getDriverConfirmationLabel(count) {
 }
 
 function getCrossingConfidenceLabel(report, count) {
-  if (!report) return "Low";
-  if (isClearedReportType(report.type)) return "Cleared";
-  if (count >= 3 && report.minutesAgo <= 30) return "High";
-  if (count >= 2 && report.minutesAgo <= 60) return "Medium";
-  if (report.minutesAgo > REPORT_EXPIRATION_MINUTES) return "Stale";
-  return "Low";
+  if (!report) return "Awaiting additional reports";
+  if (isClearedReportType(report.type)) return "Recently cleared";
+  if (count >= 2 && report.minutesAgo <= 60) return "Community confirmed";
+  if (report.minutesAgo > REPORT_EXPIRATION_MINUTES) return "Conditions may have changed";
+  return "Awaiting additional reports";
 }
 
 function getFreshnessLabel(report) {
