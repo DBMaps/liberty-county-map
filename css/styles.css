@@ -16681,3 +16681,22 @@ body[data-layout-mode="portrait"] .mobile-destination-command,
   box-shadow: inset 0 0 0 1px rgba(173, 228, 255, .45);
   color: #f5f9ff;
 }
+
+/* V241.2 — hard stop legacy mobile destination command leaks.
+   Awareness renders in dedicated awareness surfaces; this card is route/destination-only. */
+body[data-layout-mode="portrait"] .map-card > .mobile-destination-command[hidden],
+body[data-layout-mode="portrait"] .map-card > .mobile-destination-command.is-command-card-suppressed,
+body[data-layout-mode="portrait"] .mobile-destination-command[hidden],
+body[data-layout-mode="portrait"] .mobile-destination-command.is-command-card-suppressed,
+body[data-layout-mode="portrait"] #map:has(.leaflet-popup) ~ .mobile-destination-command,
+body.gridly-crossing-popup-session-active[data-layout-mode="portrait"] .mobile-destination-command,
+body.gridly-crossing-popup-visible[data-layout-mode="portrait"] .mobile-destination-command {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+body[data-layout-mode="portrait"] .mobile-destination-command[aria-hidden="true"] {
+  pointer-events: none !important;
+}
