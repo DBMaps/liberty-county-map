@@ -50728,6 +50728,164 @@ function isCrossingDisruptionIncident(incident = {}) {
   return false;
 }
 
+
+function getGridlyIncidentConfirmationCount(incident = {}) {
+  const raw = incident?.reports_count
+    ?? incident?.confirmationCount
+    ?? incident?.confirmations
+    ?? incident?.driverConfirmations
+    ?? incident?.communityConfirmations
+    ?? incident?.confirmedCount
+    ?? 1;
+  const value = Number(raw);
+  return Number.isFinite(value) ? Math.max(0, value) : 1;
+}
+
+function getGridlyIncidentAgeMinutes(incident = {}) {
+  const directAge = Number(incident?.age_minutes ?? incident?.minutesAgo ?? incident?.ageMinutes);
+  if (Number.isFinite(directAge)) return Math.max(0, directAge);
+  const timestamp = incident?.updated_at || incident?.updatedAt || incident?.created_at || incident?.createdAt || incident?.submittedAt || incident?.timestamp;
+  const parsed = timestamp ? new Date(timestamp).getTime() : NaN;
+  if (Number.isFinite(parsed)) return Math.max(0, Math.round((Date.now() - parsed) / 60000));
+  return null;
+}
+
+function getGridlyIncidentPriorityModel(incident = {}, options = {}) {
+  const reportType = String(incident?.report_type || incident?.type || incident?.category || "").trim().toLowerCase().replace(/[\s-]+/g, "_");
+  const hazardCategory = getHazardCategory(reportType || incident?.category || "other_hazard");
+  const text = [
+    incident?.title,
+    incident?.headline,
+    incident?.description,
+    incident?.detail,
+    incident?.status,
+    incident?.subtype,
+    incident?.hazardSubtype
+  ].filter(Boolean).join(" ").toLowerCase();
+  const crossingIncident = isCrossingDisruptionIncident(incident);
+  const confirmations = getGridlyIncidentConfirmationCount(incident);
+  const ageMinutes = getGridlyIncidentAgeMinutes(incident);
+  const lifecycle = String(incident?.lifecycle || incident?.lifecycleState || getIncidentLifecycleState?.(incident) || "").toLowerCase();
+  const status = String(incident?.status || "").toLowerCase();
+  const isCleared = status === "cleared" || lifecycle === "cleared" || reportType === "cleared" || reportType === "hazard_cleared";
+  const trainBlocking = crossingIncident && (
+    ["blocked", "delay", "delayed", "heavy", "rail_blockage", "rail_blockage_delay", "blocked_crossing", "crossing_blocked"].includes(reportType)
+    || /train|blocked crossing|crossing blocked|blocking crossing|stopped train/.test(text)
+  );
+  const roadClosure = hazardCategory === "road_closed" || /road closed|closure|closed road|lane closure|blocked road|road block/.test(text);
+  const flooding = hazardCategory === "flooding" || /flood|standing water|high water/.test(text);
+  const crash = hazardCategory === "crash" || /crash|wreck|collision|accident|rollover/.test(text);
+  const construction = hazardCategory === "construction" || /construction|work zone|road work|utility work/.test(text);
+  const disabledVehicle = hazardCategory === "disabled_vehicle" || /disabled vehicle|stalled vehicle|vehicle stalled|stranded vehicle/.test(text);
+  const confirmed = confirmations >= 2 || /confirmed|verified/.test(text);
+  const multipleConfirmed = confirmations >= 3;
+
+  let baseScore = 120;
+  let band = "medium";
+  let reason = "single active hazard report";
+  if (isCleared) {
+    baseScore = 52;
+    band = "lower";
+    reason = "recently cleared report";
+  } else if (trainBlocking) {
+    baseScore = 260;
+    band = "highest";
+    reason = "active train blocking a crossing";
+  } else if (crossingIncident && confirmed) {
+    baseScore = 248;
+    band = "highest";
+    reason = "active crossing blockage with community confirmation";
+  } else if (roadClosure) {
+    baseScore = 238;
+    band = "highest";
+    reason = "road closure";
+  } else if (flooding) {
+    baseScore = 214;
+    band = "high";
+    reason = "flooding report";
+  } else if (crash) {
+    baseScore = 206;
+    band = "high";
+    reason = "major crash report";
+  } else if (multipleConfirmed) {
+    baseScore = 198;
+    band = "high";
+    reason = "multiple confirmed hazard reports";
+  } else if (construction) {
+    baseScore = 132;
+    band = "medium";
+    reason = "construction report";
+  } else if (disabledVehicle) {
+    baseScore = 126;
+    band = "medium";
+    reason = "disabled vehicle report";
+  }
+
+  const severity = String(incident?.severity || "moderate").toLowerCase();
+  const severityBonus = ({ critical: 48, high: 42, severe: 42, moderate: 26, medium: 26, low: 10 }[severity] ?? 18);
+  const freshnessBonus = Number.isFinite(ageMinutes)
+    ? (ageMinutes <= 20 ? 34 : ageMinutes <= 60 ? 26 : ageMinutes <= 180 ? 14 : ageMinutes <= 360 ? 4 : -18)
+    : 12;
+  const confirmationBonus = Math.min(32, Math.max(0, confirmations - 1) * 10);
+  const lowConfidence = String(incident?.confidence || incident?.confidenceLevel || incident?.trust || "").toLowerCase();
+  const confidencePenalty = (/very[_ -]?low|low|unconfirmed|needs_confirmation/.test(lowConfidence) || (!confirmed && Number.isFinite(ageMinutes) && ageMinutes > 180)) ? 24 : 0;
+  const stalePenalty = Number.isFinite(ageMinutes) && ageMinutes > 360 ? 26 : 0;
+  const routeBonus = options.routeRelevant ? 55 : 0;
+  const roadBonus = Number(options.roadPriorityWeight || 0);
+  const townBonus = Number(options.townWeight || 0);
+  const score = Math.max(0, Math.round(baseScore + severityBonus + freshnessBonus + confirmationBonus + routeBonus + roadBonus + townBonus - confidencePenalty - stalePenalty));
+  return {
+    score,
+    baseScore,
+    band,
+    reason,
+    hazardCategory,
+    reportType,
+    confirmations,
+    ageMinutes,
+    freshnessBonus,
+    confirmationBonus,
+    confidencePenalty,
+    stalePenalty,
+    routeBonus,
+    roadBonus,
+    townBonus,
+    crossingIncident,
+    trainBlocking,
+    roadClosure,
+    flooding,
+    crash,
+    construction,
+    disabledVehicle,
+    cleared: isCleared
+  };
+}
+
+function compareGridlyIncidentPriorityModels(a = {}, b = {}) {
+  const aScore = Number(a?.priorityScore ?? a?.__gridlyPriorityScore ?? a?.priorityModel?.score ?? 0);
+  const bScore = Number(b?.priorityScore ?? b?.__gridlyPriorityScore ?? b?.priorityModel?.score ?? 0);
+  if (bScore !== aScore) return bScore - aScore;
+  const aAge = Number(a?.ageMinutes ?? a?.priorityModel?.ageMinutes ?? a?.__minutes ?? 999);
+  const bAge = Number(b?.ageMinutes ?? b?.priorityModel?.ageMinutes ?? b?.__minutes ?? 999);
+  return (Number.isFinite(aAge) ? aAge : 999) - (Number.isFinite(bAge) ? bAge : 999);
+}
+
+function buildGridlyPriorityReasonCopy(priorityModel = {}, item = {}) {
+  const reason = String(priorityModel?.reason || "active community report");
+  const confirmations = Number(priorityModel?.confirmations || 0);
+  const age = Number(priorityModel?.ageMinutes);
+  const confirmationText = confirmations >= 3
+    ? `${confirmations} confirmations`
+    : confirmations >= 2
+      ? "community confirmed"
+      : "single report";
+  const freshText = Number.isFinite(age)
+    ? (age <= 20 ? "fresh" : age <= 180 ? `${Math.round(age)}m old` : "aging")
+    : "freshness pending";
+  const routeText = item?.routeRelevant || priorityModel?.routeBonus ? "affects your watched route" : "near your awareness area";
+  return `${reason} • ${confirmationText} • ${freshText} • ${routeText}`;
+}
+
 function buildLocalizedIncidentLabel(incident = {}) {
   const helperName = "buildLocalizedIncidentLabel";
   const helperAuditCycleId = Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0);
@@ -52486,7 +52644,8 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
       perIncidentSections.confidence_impact_scoring += (performance.now() - sectionStartedAt);
       return value;
     })();
-    const priorityScore = typeScore + sevScore + freshnessScore + confirmationScore + routeScore + clusterScore + roadPriorityWeight + townWeight;
+    const priorityModel = getGridlyIncidentPriorityModel(incident, { routeRelevant, roadPriorityWeight, townWeight });
+    const priorityScore = priorityModel.score;
     const minutesText = (() => {
       const sectionStartedAt = performance.now();
       const value = Number.isFinite(ageMinutes) ? `${Math.max(0, Math.round(ageMinutes))}m ago` : "just now";
@@ -52510,7 +52669,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     })();
     const shapedItem = (() => {
       const sectionStartedAt = performance.now();
-      const value = { incident, routeRelevant, priorityScore, localizedSummary, minutesText, ageMinutes, etaImpact, inferredCorridorLabel };
+      const value = { incident, routeRelevant, priorityScore, priorityModel, priorityReasonCopy: buildGridlyPriorityReasonCopy(priorityModel, { routeRelevant }), localizedSummary, minutesText, ageMinutes, etaImpact, inferredCorridorLabel };
       perIncidentSections.object_cloning_spreading += (performance.now() - sectionStartedAt);
       return value;
     })();
@@ -52547,7 +52706,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
 
   const safeIntelItems = gridlySafeArray(intelItems);
 
-  timeSection("sorting", () => safeIntelItems.sort((a, b) => b.priorityScore - a.priorityScore));
+  timeSection("sorting", () => safeIntelItems.sort(compareGridlyIncidentPriorityModels));
 
   const routeImpactItems = timeSection("filtering", () => safeIntelItems.filter((item) => item.routeRelevant));
   counts.routeIncidentCount = routeImpactItems.length;
@@ -52555,9 +52714,9 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   const maxScore = top?.priorityScore || 0;
   const safeRecentlyCleared = gridlySafeArray(recentlyCleared);
   const trendState = timeSection("severity_calculations", () => inferConsequenceTrend({ activeItems: safeIntelItems, recentlyClearedCount: safeRecentlyCleared.length }));
-  const consequenceTier = maxScore >= 300 ? "severe" : maxScore >= 250 ? "heavy" : maxScore >= 190 ? "moderate" : maxScore > 0 ? "minor" : "clear";
+  const consequenceTier = maxScore >= 360 ? "severe" : maxScore >= 320 ? "heavy" : maxScore >= 245 ? "moderate" : maxScore > 0 ? "minor" : "clear";
   const rerouteReadinessDetected = routeWatchActivated && routeImpactItems.length > 0 && (consequenceTier === "heavy" || consequenceTier === "severe");
-  const routeConsequenceSeverity = routeImpactItems.length === 0 ? "clear" : (maxScore >= 300 ? "severe" : maxScore >= 230 ? "heavy" : "moderate");
+  const routeConsequenceSeverity = routeImpactItems.length === 0 ? "clear" : (maxScore >= 360 ? "severe" : maxScore >= 320 ? "heavy" : "moderate");
 
   const topPrimaryByTier = {
     clear: "No major mobility issues reported nearby",
@@ -52567,7 +52726,7 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     severe: routeImpactItems.length ? "Alternate route recommended" : "Train blocking US 90"
   };
 
-  const topSecondary = top ? `${top.localizedSummary}${top.etaImpact ? ` • +${top.etaImpact}m` : ""}` : "Community activity is quiet";
+  const topSecondary = top ? `${top.priorityReasonCopy || top.localizedSummary}${top.etaImpact ? ` • +${top.etaImpact}m` : ""}` : "Community activity is quiet";
   const consequencePrimaryMessage = routeWatchActivated && routeImpactItems.length >= 2
     ? `${routeImpactItems.length} disruptions affecting your route`
     : topPrimaryByTier[consequenceTier];
@@ -52590,11 +52749,11 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
   const highestPriorityCorridor = safeCorridorClusters[0] || null;
   const corridorSeverityMap = timeSection("object_construction_output_shaping", () => safeCorridorClusters.reduce((acc, corridor) => { acc[corridor.label] = corridor.healthState; return acc; }, {}));
   const routeImpactSummary = timeSection("impact_calculations", () => (routeImpactItems.length > 0 ? `Expect delays into Dayton · ${routeImpactItems.length} route impact${routeImpactItems.length === 1 ? "" : "s"}` : "Route into Liberty moving normally"));
-  const selectedTopStatusItem = highestPriorityCorridor?.items?.[0] || top || null;
-  const topStatusSelectionSource = highestPriorityCorridor
-    ? `highestPriorityCorridor:${highestPriorityCorridor.label}; candidateCount=${highestPriorityCorridor.items?.length || 0}; routeImpactCount=${highestPriorityCorridor.routeImpactCount || 0}`
-    : (top ? "top priority incident after active candidate sorting" : "quiet fallback");
-  const topStatus = timeSection("alert_generation", () => (highestPriorityCorridor ? buildCommunityConsequenceLabel(highestPriorityCorridor.items?.[0]?.incident || {}, `${highestPriorityCorridor.label.replace(/ Corridor$/, "")} moving with caution`) : (top ? top.localizedSummary : "US 90 moving normally")));
+  const selectedTopStatusItem = top || highestPriorityCorridor?.items?.[0] || null;
+  const topStatusSelectionSource = top
+    ? `priorityModel:${top.priorityModel?.band || "active"}; reason=${top.priorityModel?.reason || "score"}; score=${top.priorityScore || 0}`
+    : (highestPriorityCorridor ? `highestPriorityCorridor:${highestPriorityCorridor.label}; candidateCount=${highestPriorityCorridor.items?.length || 0}; routeImpactCount=${highestPriorityCorridor.routeImpactCount || 0}` : "quiet fallback");
+  const topStatus = timeSection("alert_generation", () => (top ? top.localizedSummary : (highestPriorityCorridor ? buildCommunityConsequenceLabel(highestPriorityCorridor.items?.[0]?.incident || {}, `${highestPriorityCorridor.label.replace(/ Corridor$/, "")} moving with caution`) : "US 90 moving normally")));
   const topStatusSelectionAudit = timeSection("top_status_selection_audit", () => buildGridlyTopStatusSelectionDiagnostics({
     intelItems: safeIntelItems,
     corridorClusters: safeCorridorClusters,
@@ -56441,9 +56600,17 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const normalizedAlertItemsBeforeAreaFilter = normalizedAlertItemsFromIntel.map((alert) => {
       const subtype = resolveOtherHazardSubtypeFromRecord(alert);
       const subtypeTitle = subtype ? buildSpecificAlertTitle({ ...alert, category: "other_hazard", subtype, hazardSubtype: subtype }) : "";
-      return applyRoadSnapshotFallback(subtype ? { ...alert, category: "other_hazard", subtype, hazardSubtype: subtype, title: subtypeTitle || alert.title, resolvedHeadline: subtypeTitle || alert.resolvedHeadline } : alert);
+      const shapedAlert = applyRoadSnapshotFallback(subtype ? { ...alert, category: "other_hazard", subtype, hazardSubtype: subtype, title: subtypeTitle || alert.title, resolvedHeadline: subtypeTitle || alert.resolvedHeadline } : alert);
+      const priorityModel = getGridlyIncidentPriorityModel(shapedAlert.raw || shapedAlert, { routeRelevant: Boolean(shapedAlert.routeRelevant) });
+      return {
+        ...shapedAlert,
+        priorityModel,
+        priorityScore: Number(shapedAlert.priorityScore ?? priorityModel.score),
+        priorityReasonCopy: buildGridlyPriorityReasonCopy(priorityModel, { routeRelevant: Boolean(shapedAlert.routeRelevant) })
+      };
     });
-    const normalizedAlertItems = gridlyFilterAlertRecordsBySelectedAwarenessArea(normalizedAlertItemsBeforeAreaFilter, "alertsSurfaceSnapshot");
+    const normalizedAlertItems = gridlyFilterAlertRecordsBySelectedAwarenessArea(normalizedAlertItemsBeforeAreaFilter, "alertsSurfaceSnapshot")
+      .sort(compareGridlyIncidentPriorityModels);
     const activeIncidentCount = normalizedAlertItems.length || (gridlyGetSelectedAlertAreaFilter().mode === "county" ? incidents.length : normalizedAlertItems.length);
     const hasFallbackSignals = gridlyGetSelectedAlertAreaFilter().mode === "county" && (activeHazardSourceCount > 0 || unifiedIncidentSourceCount > 0);
     const nearbySummary = unifiedIntel.nearbySummary;
@@ -56503,7 +56670,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       const key = getAlertClusterKey(alert);
       const minutes = Number.parseInt(String(alert?.minutesText || "").replace(/[^0-9]/g, ""), 10);
       const rank = severityRank[String(alert?.severity || "moderate").toLowerCase()] || 1;
-      const scored = { ...alert, __rank: rank, __minutes: Number.isFinite(minutes) ? minutes : 999 };
+      const priorityModel = alert?.priorityModel || getGridlyIncidentPriorityModel(alert?.raw || alert, { routeRelevant: Boolean(alert?.routeRelevant) });
+      const scored = { ...alert, priorityModel, __gridlyPriorityScore: Number(alert?.priorityScore ?? priorityModel.score), __rank: rank, __minutes: Number.isFinite(minutes) ? minutes : 999 };
       if (!groupedAlerts.has(key)) {
         groupedAlerts.set(key, { lead: scored, extras: 0 });
         return;
@@ -56516,7 +56684,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       }
     });
     const dedupedAlerts = [...groupedAlerts.values()].map((entry) => ({ ...entry.lead, extraCount: entry.extras }))
-      .sort((a, b) => (b.__rank - a.__rank) || (a.__minutes - b.__minutes));
+      .sort(compareGridlyIncidentPriorityModels);
 
     const groupedFailed = dedupedAlerts.length === 0 && rawAlerts.length > 0;
     const fallbackAlerts = rawAlerts.slice(0, 3).map((alert) => ({ ...alert, extraCount: 0 }));
