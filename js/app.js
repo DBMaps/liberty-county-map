@@ -14925,6 +14925,7 @@ function openAlertsSurfaceFromDock() {
   const metadataAttrs = ` data-gridly-alert-crossing-id="${esc(alert?.crossingId || alert?.crossing_id || alert?.raw?.crossingId || alert?.raw?.crossing_id || "")}" data-gridly-alert-hazard-type="${esc(alert?.hazardType || alert?.type || alert?.category || alert?.reportType || alert?.report_type || "")}" data-gridly-alert-awareness-area="${esc(alert?.awarenessArea || alert?.awareness_area || alert?.area || alert?.city || alert?.town || alert?.raw?.awarenessArea || alert?.raw?.city || "")}"`;
   const resolvedTitle = titleFor(alert);
   const resolvedHelper = helperTextFor(alert);
+  const consumerCard = buildGridlyAlertCardConsumerModel(alert, { fallbackTitle: resolvedTitle });
   const alertContext = chooseBestAlertLocationContext(alert);
   const normalizeAlertDisplayMatch = value => cleanDisplayValue(value).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
   const eventTokenLabels = [
@@ -14978,18 +14979,14 @@ function openAlertsSurfaceFromDock() {
   }));
   const helperEventLabel = eventLabelFromHelper(resolvedHelper);
   const shouldUseEventFirstLayout = titleLooksLikeRoadOrLocation && Boolean(helperEventLabel);
-  const displayTitle = standardizeGridlyAlertHeadline(shouldUseEventFirstLayout ? helperEventLabel : resolvedTitle);
-  const displaySubtitle = shouldUseEventFirstLayout
+  const displayTitle = consumerCard.title || standardizeGridlyAlertHeadline(shouldUseEventFirstLayout ? helperEventLabel : resolvedTitle);
+  const displaySubtitle = consumerCard.locationLine || (shouldUseEventFirstLayout
     ? standardizeGridlyAlertHeadline(resolvedTitle)
-    : normalizeGridlyUserFacingRoadText(resolvedHelper);
-  const cleanedAlertLocationLabel = shouldUseEventFirstLayout
+    : normalizeGridlyUserFacingRoadText(resolvedHelper));
+  const cleanedAlertLocationLabel = consumerCard.locationLabel || (shouldUseEventFirstLayout
     ? normalizeGridlyLightweightLocationLabelText(resolvedTitle)
-    : normalizeGridlyLightweightLocationLabelText(getGridlyLightweightLocationFromHeadline(`${displayTitle} ${displaySubtitle}`) || "");
-  const alertRowSummary = normalizeGridlyUserFacingRoadText(cleanedAlertLocationLabel
-    ? (buildGridlyHeaderCandidateFromCategoryLocation(displayTitle, cleanedAlertLocationLabel) || `${displayTitle} on ${cleanedAlertLocationLabel}`)
-    : normalizeGridlyLightweightAlertSummaryText(`${displayTitle} ${displaySubtitle}`));
-  const communityCount = Math.max(1, Number(alert?.reports_count || alert?.count || alert?.confirmations || alert?.users_count || 1) || 1);
-  const communityCountText = `${communityCount} ${communityCount === 1 ? "report" : "reports"}`;
+    : normalizeGridlyLightweightLocationLabelText(getGridlyLightweightLocationFromHeadline(`${displayTitle} ${displaySubtitle}`) || ""));
+  const alertRowSummary = normalizeGridlyUserFacingRoadText(`${displayTitle} ${displaySubtitle} ${consumerCard.freshnessCountLine || ""}`);
   recordGridlyActiveLocationLifecycleEvent("alertRowRender", {
     index,
     id,
@@ -15007,7 +15004,7 @@ function openAlertsSurfaceFromDock() {
       <div style="display:grid;gap:4px;">
         <strong style="display:block;font-size:14px;line-height:1.3;color:#fff;letter-spacing:0.01em;">${esc(displayTitle)}</strong>
         <div style="font-size:11px;line-height:1.35;color:rgba(199,211,226,0.86);">${esc(displaySubtitle)}</div>
-        <small style="font-size:11px;line-height:1.25;color:rgba(225,232,244,0.72);">${esc(timeTextFor(alert))} • Based on community reports: ${esc(communityCountText)}</small>
+        <small style="font-size:11px;line-height:1.25;color:rgba(225,232,244,0.72);">${esc(consumerCard.freshnessCountLine)}</small>
       </div>
     </div>
   </div>
@@ -39297,6 +39294,101 @@ function buildGridlyHazardPopupConsumerModel(incident = {}) {
   };
 }
 
+
+function isGridlyAlertCardCrossingRelated(alert = {}) {
+  const textValue = [
+    alert?.category, alert?.type, alert?.hazardType, alert?.hazard_type, alert?.reportType, alert?.report_type,
+    alert?.title, alert?.headline, alert?.resolvedHeadline, alert?.localizedSummary, alert?.crossingId, alert?.crossing_id,
+    alert?.crossingName, alert?.crossingRoad
+  ].map((value) => String(value || "")).join(" ");
+  if (typeof isGridlyAlertRailOrCrossingRelated === "function" && isGridlyAlertRailOrCrossingRelated(alert)) return true;
+  return /\b(?:rail|train|crossing|blocked\s+crossing|rail_blockage|rail_blocked)\b/i.test(textValue);
+}
+
+function stripGridlyAlertCardLocationFromTitle(value = "") {
+  const textValue = normalizeGridlyUserFacingRoadText(value);
+  if (!textValue) return "";
+  const protectedLabels = ["Debris in Road", "Livestock on Road", "Object in Road", "Water on Road", "Ice on Road"];
+  const protectedMatch = protectedLabels.find((label) => textValue.toLowerCase().startsWith(label.toLowerCase()));
+  if (protectedMatch) return protectedMatch;
+  return textValue
+    .replace(/\s+(?:on|near|at|in)\s+.+$/i, "")
+    .replace(/\s+between\s+.+$/i, "")
+    .replace(/\s+(?:eastbound|westbound|northbound|southbound)\b.*$/i, "")
+    .trim();
+}
+
+function normalizeGridlyAlertCardTitleCandidate(alert = {}, fallbackTitle = "") {
+  if (isGridlyAlertCardCrossingRelated(alert)) return "Crossing Blocked";
+  const subtype = typeof resolveOtherHazardSubtypeFromRecord === "function" ? resolveOtherHazardSubtypeFromRecord(alert) : "";
+  if (subtype && typeof getOtherHazardSubtypeLabel === "function") return getOtherHazardSubtypeLabel(subtype);
+  const popupTitle = typeof getGridlyHazardConsumerTitle === "function" ? getGridlyHazardConsumerTitle({
+    ...alert,
+    report_type: alert?.report_type || alert?.reportType || alert?.type || alert?.category || alert?.hazardType || alert?.hazard_type
+  }) : "";
+  const metadataLabel = popupTitle && !/^other hazard$/i.test(popupTitle) ? popupTitle : "";
+  const rawEvent = [alert?.hazardTypeLabel, alert?.typeLabel, alert?.label, alert?.reportType, alert?.report_type, alert?.hazardType, alert?.type, alert?.category, fallbackTitle, alert?.title, alert?.headline, alert?.resolvedHeadline, alert?.localizedSummary]
+    .map((value) => normalizeGridlyUserFacingRoadText(value))
+    .find(Boolean) || "";
+  const normalized = String(rawEvent || "").toLowerCase();
+  const eventMap = [
+    { test: /downed\s+power|power\s+line/, label: "Downed Power Line" },
+    { test: /livestock|animal/, label: "Livestock on Road" },
+    { test: /road[_\s-]*(?:closed|closure)|\bclosure\b|\bclosed\b/, label: "Road Closed" },
+    { test: /construction|work ?zone|lane ?work/, label: "Construction" },
+    { test: /debris|object/, label: "Debris in Road" },
+    { test: /traffic|backup|congestion|heavy delay/, label: "Traffic Backup" },
+    { test: /flood|high water/, label: "Flooding" },
+    { test: /crash|collision|wreck|accident/, label: "Crash / Wreck" },
+    { test: /disabled\s+vehicle|stalled/, label: "Disabled Vehicle" }
+  ];
+  return eventMap.find((entry) => entry.test.test(normalized))?.label || stripGridlyAlertCardLocationFromTitle(metadataLabel || rawEvent) || "Road Hazard";
+}
+
+function normalizeGridlyAlertCardLocationLabel(alert = {}) {
+  const isCrossing = isGridlyAlertCardCrossingRelated(alert);
+  const popupRoad = typeof resolveGridlyHazardPopupRoadLabel === "function" ? resolveGridlyHazardPopupRoadLabel({
+    ...alert,
+    road_name: alert?.road_name || alert?.roadName || alert?.primaryRoad || alert?.corridor || alert?.route,
+    nearest_road: alert?.nearest_road || alert?.nearestRoad || alert?.knownLocation || alert?.locationName
+  }) : "";
+  const crossingCandidates = [alert?.crossingName, alert?.crossingRoad, alert?.resolvedCrossingName, alert?.crossingLabel, alert?.nearestRoad, alert?.knownLocation, alert?.locationName, alert?.location, popupRoad];
+  const roadCandidates = [popupRoad, alert?.knownLocation, alert?.locationName, alert?.location, alert?.nearestRoad, alert?.roadName, alert?.primaryRoad, alert?.corridor, alert?.route, alert?.titleRoad, alert?.raw?.knownLocation, alert?.raw?.nearestRoad, alert?.raw?.roadName, alert?.source?.knownLocation, alert?.source?.nearestRoad, alert?.source?.roadName];
+  const candidates = (isCrossing ? crossingCandidates : roadCandidates)
+    .map((value) => normalizeGridlyLightweightLocationLabelText(normalizeGridlyUserFacingRoadText(value)))
+    .filter((value) => value && !/^(this area|liberty county|dayton area|unknown|undefined|null)$/i.test(value));
+  const first = candidates.find((value, index) => candidates.findIndex((candidate) => candidate.toLowerCase() === value.toLowerCase()) === index) || "this area";
+  return isCrossing && first && !/crossing/i.test(first) ? `${first} Crossing` : first;
+}
+
+function buildGridlyAlertCardConsumerModel(alert = {}, options = {}) {
+  const rawTitle = options.fallbackTitle || alert?.resolvedHeadline || alert?.headline || alert?.title || alert?.localizedSummary || "";
+  const title = standardizeGridlyAlertHeadline(normalizeGridlyAlertCardTitleCandidate(alert, rawTitle));
+  const locationLabel = normalizeGridlyAlertCardLocationLabel(alert);
+  const locationVerb = isGridlyAlertCardCrossingRelated(alert) ? "at" : "near";
+  const locationLine = normalizeGridlyUserFacingRoadText(`Reported ${locationVerb} ${locationLabel}`);
+  const reportCountCandidates = [alert?.reports_count, alert?.count, alert?.confirmations, alert?.users_count, Array.isArray(alert?.reports) ? alert.reports.length : null]
+    .map((value) => Number(value))
+    .filter((value) => Number.isFinite(value) && value > 0);
+  const reportCount = Math.max(1, Math.round(reportCountCandidates[0] || (typeof getGridlyHazardPopupReportCount === "function" ? getGridlyHazardPopupReportCount(alert) : 1)));
+  const reportCountLine = `${reportCount} active report${reportCount === 1 ? "" : "s"}`;
+  const freshnessLine = typeof formatGridlyHazardPopupFreshnessLine === "function" ? formatGridlyHazardPopupFreshnessLine(alert) : normalizeGridlyUserFacingRoadText(alert?.minutesText || alert?.timeAgo || "Updated just now");
+  const freshnessCountLine = `${freshnessLine} • ${reportCountLine}`;
+  const visibleText = [title, locationLine, freshnessCountLine].join(" ");
+  const technicalMetadataDetected = GRIDLY_HAZARD_POPUP_TECHNICAL_METADATA_PATTERN.test(visibleText);
+  return {
+    title,
+    locationLabel,
+    locationLine,
+    reportCount,
+    reportCountLine,
+    freshnessLine,
+    freshnessCountLine,
+    technicalMetadataDetected,
+    consumerFriendlyPass: Boolean(title && locationLine && freshnessCountLine && !technicalMetadataDetected)
+  };
+}
+
 function buildUnifiedIncidentPopup(incident){
   const isActive = incident.status === "active";
   const typeCategory = incident.id?.startsWith("rail-") ? "rail" : "road";
@@ -39358,6 +39450,77 @@ function gridlyHazardPopupAudit() {
 exposeGridlyAuditHelper("gridlyHazardPopupAudit", gridlyHazardPopupAudit);
 
 const GRIDLY_LANGUAGE_CONSISTENCY_AUDIT_VERSION = "V238";
+
+
+function gridlyNormalizeAlertCardAuditText(value = "") {
+  return String(value ?? "").replace(/\s+/g, " ").trim();
+}
+
+function gridlyAlertCardConsumerAudit(options = {}) {
+  const samples = [];
+  const maxSamples = Number(options.limit || 8);
+  const readNodeText = (node, selector) => gridlyNormalizeAlertCardAuditText(node?.querySelector?.(selector)?.textContent || "");
+  if (typeof document !== "undefined" && typeof document.querySelectorAll === "function") {
+    Array.from(document.querySelectorAll("[data-gridly-alert-row='true'], .gridly-alert-row, .alert-item"))
+      .filter((node) => {
+        const textValue = gridlyNormalizeAlertCardAuditText(node?.textContent || "");
+        if (!textValue || /^(community awareness|no active alerts|road conditions appear calm|trending crossings are calm|\+\s*\d+\s+more)/i.test(textValue)) return false;
+        if (node?.dataset?.gridlyAlertHidden === "true") return true;
+        return typeof isElementVisiblyRendered === "function" ? isElementVisiblyRendered(node) : true;
+      })
+      .slice(0, maxSamples)
+      .forEach((node, index) => {
+        const title = gridlyNormalizeAlertCardAuditText(node?.dataset?.gridlyAlertTitle || readNodeText(node, "strong, .gridly-alert-title, .gridly-alert-headline, [data-gridly-alert-title]"));
+        const subtitles = Array.from(node?.querySelectorAll?.(".gridly-alert-subtitle, small, p") || []).map((child) => gridlyNormalizeAlertCardAuditText(child.textContent)).filter(Boolean);
+        const text = gridlyNormalizeAlertCardAuditText(node?.textContent || "");
+        samples.push({ index, source: "dom", title, locationLine: subtitles[0] || "", freshnessCountLine: subtitles[1] || "", text });
+      });
+  }
+  if (!samples.length) {
+    const latestAlerts = typeof window !== "undefined" && Array.isArray(window.__gridlyLatestAlertsForRender) ? window.__gridlyLatestAlertsForRender : [];
+    latestAlerts.slice(0, maxSamples).forEach((alert, index) => {
+      const model = buildGridlyAlertCardConsumerModel(alert);
+      samples.push({ index, source: "render-cache", title: model.title, locationLine: model.locationLine, freshnessCountLine: model.freshnessCountLine, text: [model.title, model.locationLine, model.freshnessCountLine].join(" "), model });
+    });
+  }
+  if (!samples.length) {
+    [
+      { report_type: "other_hazard", subtype: "downed_power_line", road_name: "Bowie Street", reports_count: 1, age_minutes: 6 },
+      { type: "rail_blocked", crossingName: "Alabama Street Crossing", reports_count: 1, age_minutes: 4 },
+      { report_type: "other_hazard", subtype: "livestock_on_road", road_name: "CR 2414", reports_count: 1, age_minutes: 17 }
+    ].forEach((alert, index) => {
+      const model = buildGridlyAlertCardConsumerModel(alert);
+      samples.push({ index, source: "fixture", title: model.title, locationLine: model.locationLine, freshnessCountLine: model.freshnessCountLine, text: [model.title, model.locationLine, model.freshnessCountLine].join(" "), model });
+    });
+  }
+
+  const titleLooksLong = (title) => {
+    const cleanTitle = gridlyNormalizeAlertCardAuditText(title);
+    return cleanTitle.split(/\s+/).filter(Boolean).length > 8 || cleanTitle.length > 64 || /\b(?:on|near|at)\s+.+\s+in\s+/i.test(cleanTitle);
+  };
+  const duplicateLocationPattern = /\b(?:reported\s+)?(?:near|on|at)\s+(.{3,70}?)\s+(?:near|on|at|in)\s+\1\b/i;
+  const duplicateLocationCount = samples.filter((sample) => {
+    const text = gridlyNormalizeAlertCardAuditText(sample.text);
+    const title = gridlyNormalizeAlertCardAuditText(sample.title);
+    const locationLine = gridlyNormalizeAlertCardAuditText(sample.locationLine);
+    const locationValue = locationLine.replace(/^reported\s+(?:near|at|on)\s+/i, "").trim();
+    return duplicateLocationPattern.test(text)
+      || /\bon\s+([^•,;]+?)\s+in\s+\1\b/i.test(text)
+      || Boolean(locationValue && title && title.toLowerCase().includes(locationValue.toLowerCase()) && /\b(?:near|on|at|in)\b/i.test(title));
+  }).length;
+  const longTitleCount = samples.filter((sample) => titleLooksLong(sample.title)).length;
+  const technicalMetadataDetected = samples.some((sample) => GRIDLY_HAZARD_POPUP_TECHNICAL_METADATA_PATTERN.test(gridlyNormalizeAlertCardAuditText(sample.text)));
+  const cardsChecked = samples.length;
+  return {
+    cardsChecked,
+    longTitleCount,
+    duplicateLocationCount,
+    technicalMetadataDetected,
+    consumerFriendlyPass: Boolean(cardsChecked && samples.every((sample) => sample.title && sample.locationLine && sample.freshnessCountLine) && longTitleCount === 0 && duplicateLocationCount === 0 && !technicalMetadataDetected),
+    samples: samples.slice(0, maxSamples)
+  };
+}
+exposeGridlyAuditHelper("gridlyAlertCardConsumerAudit", gridlyAlertCardConsumerAudit);
 
 function gridlyLanguageConsistencyNormalizeText(value = "") {
   return String(value ?? "").replace(/\s+/g, " ").trim();
@@ -55662,16 +55825,12 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const subtypeAwareAlert = otherHazardSubtype ? { ...alert, category: "other_hazard", subtype: otherHazardSubtype, hazardSubtype: otherHazardSubtype } : alert;
     const subtypeEventLabel = otherHazardSubtype ? (getOtherHazardSubtypeOption(otherHazardSubtype)?.narrativeLabel || getOtherHazardSubtypeLabel(otherHazardSubtype)) : eventLabel;
     const title = buildAlertTitle({ alert: subtypeAwareAlert, roadLabel, crossingLabel, knownLocationLabel, eventLabel: subtypeEventLabel }) || resolveAlertTitleText(subtypeAwareAlert);
-    const displayTitle = standardizeGridlyAlertHeadline(title);
+    const consumerCard = buildGridlyAlertCardConsumerModel(subtypeAwareAlert, { fallbackTitle: title });
+    const displayTitle = consumerCard.title || standardizeGridlyAlertHeadline(title);
     recordOtherHazardRenderedAlert(subtypeAwareAlert, displayTitle);
-    const locationTimeLine = normalizeGridlyUserFacingRoadText(buildAlertSubtitleLine(subtypeAwareAlert, displayTitle));
-    const intelligence = generateGridlyIntelligencePhrase(alert, alert?.visualState);
-    const cleanedAlertLocationLabel = normalizeGridlyLightweightLocationLabelText(roadLabel || getGridlyLightweightLocationFromHeadline(`${title} ${locationTimeLine}`) || "");
-    const alertRowSummary = otherHazardSubtype
-      ? normalizeGridlyUserFacingRoadText(displayTitle)
-      : normalizeGridlyUserFacingRoadText(cleanedAlertLocationLabel
-        ? (buildGridlyHeaderCandidateFromCategoryLocation(subtypeEventLabel || displayTitle, cleanedAlertLocationLabel) || `${displayTitle} on ${cleanedAlertLocationLabel}`)
-        : normalizeGridlyLightweightAlertSummaryText(`${displayTitle} ${locationTimeLine}`));
+    const locationTimeLine = consumerCard.locationLine || normalizeGridlyUserFacingRoadText(buildAlertSubtitleLine(subtypeAwareAlert, displayTitle));
+    const cleanedAlertLocationLabel = consumerCard.locationLabel || normalizeGridlyLightweightLocationLabelText(roadLabel || getGridlyLightweightLocationFromHeadline(`${title} ${locationTimeLine}`) || "");
+    const alertRowSummary = normalizeGridlyUserFacingRoadText(`${displayTitle} ${locationTimeLine} ${consumerCard.freshnessCountLine || ""}`);
     const alertLat = Number(alert?.lat ?? alert?.latitude ?? alert?.rawLat);
     const alertLng = Number(alert?.lng ?? alert?.lon ?? alert?.longitude ?? alert?.rawLng);
     const alertCoordAttrs = Number.isFinite(alertLat) && Number.isFinite(alertLng)
@@ -55683,8 +55842,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         <div class="gridly-alert-title" style="font-size:14px;font-weight:800;line-height:1.28;letter-spacing:0.01em;">${sanitizeText(displayTitle)}</div>
       </div>
       <div class="gridly-alert-subtitle" style="margin-top:4px;font-size:11px;opacity:0.72;line-height:1.35;">${sanitizeText(locationTimeLine)}</div>
-      <div class="gridly-alert-subtitle" style="margin-top:4px;font-size:11px;opacity:0.76;line-height:1.35;">${sanitizeText(intelligence.shortPhrase)} • ${sanitizeText(intelligence.detailPhrase)}</div>
-      <div class="gridly-alert-subtitle" style="margin-top:6px;font-size:11px;opacity:0.78;"><span style="display:inline-block;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,0.12);font-weight:600;font-size:10px;letter-spacing:0.04em;text-transform:uppercase;">${sanitizeText(getSeverityChipLabel(alert))}</span>${alert?.extraCount > 0 ? ` <span style="opacity:0.85;">+${alert.extraCount} more community reports nearby</span>` : ""}</div>
+      <div class="gridly-alert-subtitle" style="margin-top:4px;font-size:11px;opacity:0.76;line-height:1.35;">${sanitizeText(consumerCard.freshnessCountLine)}</div>
     </div>
   `;
   }).join("")}
