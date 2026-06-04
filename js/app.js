@@ -12070,6 +12070,96 @@ function isGridlyCrossingPopupInteractionActive() {
   return Boolean(document.querySelector("#map .leaflet-popup.gridly-crossing-popup, #map .leaflet-popup-content [data-gridly-crossing-popup='consumer']"));
 }
 
+function getGridlyCrossingPopupContainmentBounds(mapRef = map) {
+  const mapEl = typeof mapRef?.getContainer === "function" ? mapRef.getContainer() : document.getElementById("map");
+  const mapRect = mapEl?.getBoundingClientRect?.();
+  if (!mapRect) return null;
+  const viewportLeft = Number(window.visualViewport?.offsetLeft || 0);
+  const viewportTop = Number(window.visualViewport?.offsetTop || 0);
+  const viewportWidth = Number(window.visualViewport?.width || window.innerWidth || document.documentElement.clientWidth || 0);
+  const viewportHeight = Number(window.visualViewport?.height || window.innerHeight || document.documentElement.clientHeight || 0);
+  const viewportRect = {
+    left: viewportLeft,
+    top: viewportTop,
+    right: viewportLeft + viewportWidth,
+    bottom: viewportTop + viewportHeight
+  };
+  const pad = 8;
+  return {
+    left: Math.max(mapRect.left, viewportRect.left) + pad,
+    right: Math.min(mapRect.right, viewportRect.right) - pad,
+    top: Math.max(mapRect.top, viewportRect.top) + pad,
+    bottom: Math.min(mapRect.bottom, viewportRect.bottom) - pad,
+    mapRect: { left: mapRect.left, right: mapRect.right, top: mapRect.top, bottom: mapRect.bottom, width: mapRect.width, height: mapRect.height },
+    viewportRect,
+    pad
+  };
+}
+
+function getGridlyCrossingPopupContainmentPan(popupRect, bounds) {
+  if (!popupRect || !bounds) return { clipped: false, panX: 0, panY: 0 };
+  let panX = 0;
+  let panY = 0;
+  const clippedLeft = popupRect.left < bounds.left;
+  const clippedRight = popupRect.right > bounds.right;
+  const clippedTop = popupRect.top < bounds.top;
+  const clippedBottom = popupRect.bottom > bounds.bottom;
+
+  if (clippedLeft) panX = Math.floor(popupRect.left - bounds.left);
+  else if (clippedRight) panX = Math.ceil(popupRect.right - bounds.right);
+
+  if (clippedTop) panY = Math.floor(popupRect.top - bounds.top);
+  else if (clippedBottom) panY = Math.ceil(popupRect.bottom - bounds.bottom);
+
+  return {
+    clipped: Boolean(clippedLeft || clippedRight || clippedTop || clippedBottom),
+    clippedLeft,
+    clippedRight,
+    clippedTop,
+    clippedBottom,
+    panX,
+    panY
+  };
+}
+
+function enforceGridlyCrossingPopupContainment(marker, session, reason = "post-open", retryCount = 0) {
+  const popupEl = marker?.getPopup?.()?.getElement?.();
+  const mapRef = session?.mapRef || map;
+  const bounds = getGridlyCrossingPopupContainmentBounds(mapRef);
+  const popupRect = popupEl?.getBoundingClientRect?.();
+  if (!popupEl || !popupRect || !bounds) {
+    gridlyPopupClippedAfterOpen = null;
+    return false;
+  }
+
+  const correction = getGridlyCrossingPopupContainmentPan(popupRect, bounds);
+  gridlyPopupClippedAfterOpen = Boolean(correction.clipped);
+  gridlyPopupViewportBounds = {
+    ...(gridlyPopupViewportBounds || {}),
+    containment: {
+      bounds,
+      correction,
+      retryCount,
+      reason,
+      popupRect: { left: popupRect.left, right: popupRect.right, top: popupRect.top, bottom: popupRect.bottom, width: popupRect.width, height: popupRect.height }
+    }
+  };
+
+  if (!correction.clipped || retryCount >= 1 || !mapRef || typeof mapRef.panBy !== "function") return correction.clipped;
+
+  const panX = Math.round(correction.panX);
+  const panY = Math.round(correction.panY);
+  if (Math.abs(panX) < 1 && Math.abs(panY) < 1) return correction.clipped;
+
+  gridlyPopupCameraPanApplied = true;
+  gridlyPopupAnchorMode = "post-open-dom-containment";
+  const remeasure = () => requestAnimationFrame(() => enforceGridlyCrossingPopupContainment(marker, session, `${reason}-retry`, retryCount + 1));
+  if (typeof mapRef.once === "function") mapRef.once("moveend", remeasure);
+  setTimeout(remeasure, 260);
+  mapRef.panBy([panX, panY], { animate: true, duration: 0.18 });
+  return true;
+}
+
 function completeVerifiedCrossingPopupOpen(marker, session, reason) {
   session.opened = true;
   if (session.openTimer) clearTimeout(session.openTimer);
@@ -12079,27 +12169,7 @@ function completeVerifiedCrossingPopupOpen(marker, session, reason) {
   gridlyPopupOpenCount += 1;
   gridlyPopupEarlyReturnReason = "";
   gridlyPopupLastFailureReason = reason === "fallback" ? "" : gridlyPopupLastFailureReason;
-  requestAnimationFrame(() => {
-    const popupEl = marker.getPopup?.()?.getElement?.();
-    const mapEl = document.getElementById("map");
-    if (!popupEl || !mapEl) {
-      gridlyPopupClippedAfterOpen = null;
-      return;
-    }
-    const popupRect = popupEl.getBoundingClientRect?.();
-    const mapRect = mapEl.getBoundingClientRect?.();
-    if (!popupRect || !mapRect) {
-      gridlyPopupClippedAfterOpen = null;
-      return;
-    }
-    const pad = 4;
-    gridlyPopupClippedAfterOpen = Boolean(
-      popupRect.left < mapRect.left + pad ||
-      popupRect.right > mapRect.right - pad ||
-      popupRect.top < mapRect.top + pad ||
-      popupRect.bottom > mapRect.bottom - pad
-    );
-  });
+  requestAnimationFrame(() => enforceGridlyCrossingPopupContainment(marker, session, reason, 0));
   window.__gridlyPopupPanSession = null;
   setGridlyCrossingPopupSessionClass(false);
   return true;
@@ -17481,13 +17551,12 @@ function getGridlyMobileAwarenessPanelSummary() {
 
 function shouldShowGridlyMobileAwarenessPanel(summary = null) {
   const awarenessSummary = summary || (typeof getGridlyMobileAwarenessPanelSummary === "function" ? getGridlyMobileAwarenessPanelSummary() : null);
-  return Number(awarenessSummary?.activeIssueCount || 0) > 0;
+  const areaName = String(awarenessSummary?.areaName || awarenessSummary?.awarenessAreaName || "").trim();
+  return Boolean(awarenessSummary && areaName);
 }
 
 function isGridlyAwarenessPanelModeActive(summary = null) {
-  // Awareness intelligence renders in its dedicated top/bottom awareness surfaces.
-  // The legacy mobile destination command card may not be claimed by awareness alone.
-  return false;
+  return shouldShowGridlyMobileAwarenessPanel(summary);
 }
 
 function getGridlyMobileCommandCardVisibilityState(summary = null) {
@@ -17512,9 +17581,11 @@ function getGridlyMobileCommandCardVisibilityState(summary = null) {
   );
   const hasSelectedDestination = Boolean(selectedDestination || selectedLabel);
   const routeOrDestinationOwnership = Boolean(hasSelectedDestination || routePreviewActive || routeIsMonitoring || explicitDestinationPanelOpen);
+  const awarenessPanelMode = Boolean(!routeOrDestinationOwnership && shouldShowGridlyMobileAwarenessPanel(summary));
+  const routeOrDestinationVisible = Boolean(routeOrDestinationOwnership && !popupInteractionActive);
   return {
-    visible: Boolean(routeOrDestinationOwnership && !popupInteractionActive),
-    owner: routeIsMonitoring ? "route" : hasSelectedDestination ? "destination" : routePreviewActive ? "route-preview" : explicitDestinationPanelOpen ? "destination-panel" : "none",
+    visible: Boolean(awarenessPanelMode || routeOrDestinationVisible),
+    owner: awarenessPanelMode ? "awareness" : routeIsMonitoring ? "route" : hasSelectedDestination ? "destination" : routePreviewActive ? "route-preview" : explicitDestinationPanelOpen ? "destination-panel" : "none",
     hasSelectedDestination,
     selectedLabel,
     routePreviewActive,
@@ -17522,8 +17593,9 @@ function getGridlyMobileCommandCardVisibilityState(summary = null) {
     routeIsMonitoring,
     explicitDestinationPanelOpen,
     popupInteractionActive,
-    awarenessPanelMode: false,
-    rule: "visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and never while a Leaflet popup is open"
+    awarenessPanelMode,
+    routeOrDestinationOwnership,
+    rule: "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
   };
 }
 
@@ -17610,7 +17682,7 @@ function syncMobileDestinationCommandCard() {
   const awarenessSummary = getGridlyMobileAwarenessPanelSummary();
   const visibilityState = getGridlyMobileCommandCardVisibilityState(awarenessSummary);
   const popupInteractionActive = visibilityState.popupInteractionActive;
-  const awarenessPanelMode = false;
+  const awarenessPanelMode = Boolean(visibilityState.awarenessPanelMode);
   const cardVisible = Boolean(visibilityState.visible);
   const card = document.getElementById("mobileDestinationCommandTitle")?.closest?.(".mobile-destination-command");
   if (card) {
@@ -17618,12 +17690,15 @@ function syncMobileDestinationCommandCard() {
     card.setAttribute("aria-hidden", cardVisible ? "false" : "true");
     card.classList.toggle("is-command-card-suppressed", !cardVisible);
     if (!cardVisible) {
-      card.classList.remove("visible", "active", "is-awareness-panel", "awareness", "owner-awareness", "gridly-awareness-owner");
+      card.classList.remove("visible", "active", "is-awareness-panel", "awareness", "owner-awareness", "gridly-awareness-owner", "is-destination-panel");
     }
   }
-  card?.classList.toggle("is-awareness-panel", false);
-  card?.classList.toggle("is-destination-panel", cardVisible);
-  document.body?.classList.toggle("gridly-mobile-awareness-panel-present", false);
+  card?.classList.toggle("is-awareness-panel", Boolean(cardVisible && awarenessPanelMode));
+  card?.classList.toggle("awareness", Boolean(cardVisible && awarenessPanelMode));
+  card?.classList.toggle("owner-awareness", Boolean(cardVisible && awarenessPanelMode));
+  card?.classList.toggle("gridly-awareness-owner", Boolean(cardVisible && awarenessPanelMode));
+  card?.classList.toggle("is-destination-panel", Boolean(cardVisible && !awarenessPanelMode));
+  document.body?.classList.toggle("gridly-mobile-awareness-panel-present", Boolean(cardVisible && awarenessPanelMode));
   window.__gridlyMobileCommandCardVisibilityState = { ...visibilityState, visible: cardVisible };
   window.__gridlySyncAwarenessPanelDockContract?.();
 
@@ -17639,8 +17714,8 @@ function syncMobileDestinationCommandCard() {
     safeText("mobileAwarenessPanelIssues", "");
     document.getElementById("mobileAwarenessPanelCrossings")?.toggleAttribute("hidden", false);
     document.getElementById("mobileAwarenessPanelIssues")?.toggleAttribute("hidden", true);
-    safeText("mobileDestinationCommandImpact", routeMonitoringSupportText);
-    safeText("mobileDestinationCommandBtn", selectedLabel ? "Change" : (routeIsMonitoring ? "View Route" : "Route"));
+    safeText("mobileDestinationCommandImpact", "");
+    safeText("mobileDestinationCommandBtn", "Route");
   } else {
     const impactText = selectedLabel ? getGridlyDestinationRouteImpactCardText() : "";
     safeText("mobileAwarenessPanelKicker", "Route");
@@ -21160,9 +21235,9 @@ function renderGridlyAwarenessMapIdentity(reason = "unknown") {
     }
   }
 
-  const awarenessPanelOwnsIdentity = typeof isGridlyAwarenessPanelModeActive === "function" && isGridlyAwarenessPanelModeActive();
+  const awarenessPanelOwnsIdentity = true;
   if (awarenessPanelOwnsIdentity) {
-    warnings.push("Awareness map label suppressed because the bottom Awareness Area panel owns area identity.");
+    warnings.push("Awareness map label suppressed because the Awareness Area panel owns area identity.");
   } else if (L.marker && L.divIcon && Number.isFinite(Number(labelPlacement.latLng?.[0])) && Number.isFinite(Number(labelPlacement.latLng?.[1]))) {
     gridlyAwarenessIdentityLabelLayer = L.marker(labelPlacement.latLng, {
       pane: "awarenessLabelPane",
