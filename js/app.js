@@ -39205,8 +39205,9 @@ function getUnifiedIncidentIcon(incident){
   return m[incident.type]||"❗";
 }
 
-const GRIDLY_HAZARD_POPUP_TECHNICAL_METADATA_PATTERN = /\b(?:other_hazard|emergency_response_activity|community_report|gridly\s+structured|gridly_structured|source\s*:|internal\s+(?:category|subtype|source)|report_type|hazard_subtype|confidence\s*(?:score|:|\d+%|percentage)|\d+\s*%)\b/i;
+const GRIDLY_HAZARD_POPUP_TECHNICAL_METADATA_PATTERN = /\b(?:other_hazard|emergency_response_activity|community_report|future_source|gridly\s+structured|gridly_structured|source\s*:|source\s+tag|source\s+tags|internal\s+(?:category|subtype|source)|report_type|hazard_subtype|confidence\s*(?:score|:|\d+%|percentage)|\d+\s*%)\b/i;
 let lastGridlyHazardPopupConsumerState = null;
+let lastGridlyCrossingPopupConsumerState = null;
 
 function getGridlyHazardConsumerTitle(incident = {}) {
   const subtype = resolveOtherHazardSubtypeFromRecord(incident);
@@ -39294,6 +39295,63 @@ function buildGridlyHazardPopupConsumerModel(incident = {}) {
   };
 }
 
+
+function getGridlyCrossingPopupTitle(incident = {}) {
+  const statusText = String(incident?.status || incident?.state || "").toLowerCase();
+  const typeText = String(incident?.report_type || incident?.reportType || incident?.type || incident?.eventType || incident?.title || "").toLowerCase();
+  if (statusText === "cleared" || /\b(?:cleared|clear|rail_cleared)\b/.test(typeText)) return "Crossing Clear";
+  if (/\b(?:blocked|blocking|rail_blocked|blocked_crossing|crossing_blocked)\b/.test(typeText)) return "Crossing Blocked";
+  if (/\b(?:heavy|delay|delayed|rail_delay|train)\b/.test(typeText)) return "Train Blocking Crossing";
+  return statusText === "active" ? "Crossing Blocked" : "Train Blocking Crossing";
+}
+
+function resolveGridlyCrossingPopupLocationLabel(incident = {}) {
+  const candidates = [
+    incident?.crossingName, incident?.crossing_name, incident?.crossingRoad, incident?.crossingLabel, incident?.resolvedCrossingName,
+    incident?.area, incident?.location_name, incident?.locationName, incident?.name, incident?.title,
+    incident?.latestReport?.crossingName, incident?.latestReport?.crossing_name, incident?.latestReport?.crossingRoad
+  ];
+  let label = candidates
+    .map((value) => normalizeGridlyLightweightLocationLabelText(normalizeGridlyUserFacingRoadText(value)))
+    .map((value) => value.replace(/\s+Rail Update$/i, "").replace(/^✅\s*/, "").replace(/\s+Cleared$/i, "").trim())
+    .find((value) => value && !/^(?:this area|liberty county|unknown|undefined|null|live incident)$/i.test(value));
+  if (!label) label = "this crossing";
+  const displayLabel = typeof standardizeGridlyAlertHeadline === "function" ? standardizeGridlyAlertHeadline(label) : label;
+  if (/^this crossing$/i.test(displayLabel) || /\bcrossing\b/i.test(displayLabel)) return displayLabel;
+  return `${displayLabel} Crossing`;
+}
+
+function getGridlyCrossingPopupReportCount(incident = {}) {
+  return getGridlyHazardPopupReportCount(incident);
+}
+
+function getGridlyCrossingPopupConfidenceLine(incident = {}, reportCount = 1) {
+  const confidenceText = String(incident?.confidence || incident?.confidenceLine || incident?.confidence_label || "").toLowerCase();
+  if (reportCount >= 3 || /multiple/.test(confidenceText)) return "Multiple community reports";
+  if (reportCount >= 2 || /confirmed|verified/.test(confidenceText)) return "Community confirmed";
+  return "Awaiting additional reports";
+}
+
+function buildGridlyCrossingPopupConsumerModel(incident = {}) {
+  const title = getGridlyCrossingPopupTitle(incident);
+  const locationLabel = resolveGridlyCrossingPopupLocationLabel(incident);
+  const locationLine = normalizeGridlyUserFacingRoadText(`Reported at ${locationLabel}`);
+  const reportCount = getGridlyCrossingPopupReportCount(incident);
+  const reportCountLine = `${reportCount} active report${reportCount === 1 ? "" : "s"}`;
+  const freshnessLine = formatGridlyHazardPopupFreshnessLine(incident);
+  const confidenceLine = getGridlyCrossingPopupConfidenceLine(incident, reportCount);
+  const visibleText = [title, locationLine, freshnessLine, reportCountLine, confidenceLine].join(" ");
+  const technicalMetadataDetected = GRIDLY_HAZARD_POPUP_TECHNICAL_METADATA_PATTERN.test(visibleText);
+  return {
+    title,
+    locationLine,
+    freshnessLine,
+    reportCountLine,
+    confidenceLine,
+    technicalMetadataDetected,
+    consumerFriendlyPass: Boolean(title && locationLine && freshnessLine && reportCountLine && confidenceLine && !technicalMetadataDetected)
+  };
+}
 
 function isGridlyAlertCardCrossingRelated(alert = {}) {
   const textValue = [
@@ -39393,11 +39451,18 @@ function buildUnifiedIncidentPopup(incident){
   const isActive = incident.status === "active";
   const typeCategory = incident.id?.startsWith("rail-") ? "rail" : "road";
   if (typeCategory === "rail") {
-    const details = `<span>${incident.reports_count} report${incident.reports_count===1?"":"s"} · ${incident.status}</span>`;
+    const model = buildGridlyCrossingPopupConsumerModel(incident);
+    lastGridlyCrossingPopupConsumerState = model;
+    const popupLines = `
+      <strong data-gridly-crossing-popup-field="title">${sanitizeText(model.title)}</strong>
+      <span data-gridly-crossing-popup-field="locationLine">${sanitizeText(model.locationLine)}</span><br />
+      <span data-gridly-crossing-popup-field="freshnessLine">${sanitizeText(model.freshnessLine)}</span> • <span data-gridly-crossing-popup-field="reportCountLine">${sanitizeText(model.reportCountLine)}</span><br />
+      <span data-gridly-crossing-popup-field="confidenceLine">${sanitizeText(model.confidenceLine)}</span>
+    `;
     if (!isActive) {
-      return `<div class="gridly-popup"><strong>${sanitizeText(incident.title)}</strong><span>${sanitizeText(incident.description || "Live incident")}</span><br />${details}</div>`;
+      return `<div class="gridly-popup" data-gridly-crossing-popup="consumer">${popupLines}</div>`;
     }
-    return `<div class="gridly-popup"><strong>${sanitizeText(incident.title)}</strong><span>${sanitizeText(incident.description || "Live incident")}</span><br />${details}<div class="popup-report-grid"><button class="popup-report-btn warning" type="button" data-unified-action="confirm" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Confirm Still Active</button><button class="popup-report-btn blue" type="button" data-unified-action="cleared" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Mark Cleared</button><button class="popup-report-btn neutral" type="button" data-unified-action="view-area" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">View Area</button></div></div>`;
+    return `<div class="gridly-popup" data-gridly-crossing-popup="consumer">${popupLines}<div class="popup-report-grid"><button class="popup-report-btn warning" type="button" data-unified-action="confirm" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Confirm Still Active</button><button class="popup-report-btn blue" type="button" data-unified-action="cleared" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Mark Cleared</button><button class="popup-report-btn neutral" type="button" data-unified-action="view-area" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">View Area</button></div></div>`;
   }
 
   const model = buildGridlyHazardPopupConsumerModel(incident);
@@ -39449,7 +39514,42 @@ function gridlyHazardPopupAudit() {
 }
 exposeGridlyAuditHelper("gridlyHazardPopupAudit", gridlyHazardPopupAudit);
 
-const GRIDLY_LANGUAGE_CONSISTENCY_AUDIT_VERSION = "V238";
+function gridlyCrossingPopupConsumerAudit() {
+  const popup = typeof document !== "undefined" ? document.querySelector("#map .leaflet-popup-content [data-gridly-crossing-popup='consumer'], [data-gridly-crossing-popup='consumer']") : null;
+  const readField = (field) => popup?.querySelector?.(`[data-gridly-crossing-popup-field='${field}']`)?.textContent?.trim() || "";
+  const domModel = popup ? {
+    title: readField("title"),
+    locationLine: readField("locationLine"),
+    freshnessLine: readField("freshnessLine"),
+    reportCountLine: readField("reportCountLine"),
+    confidenceLine: readField("confidenceLine")
+  } : null;
+  const model = domModel || lastGridlyCrossingPopupConsumerState || buildGridlyCrossingPopupConsumerModel({
+    id: "rail-audit-crossing",
+    type: "rail_blocked",
+    report_type: "blocked",
+    status: "active",
+    area: "Louisiana Street",
+    crossingName: "Louisiana Street",
+    reports_count: 1,
+    age_minutes: 0,
+    confidence: "community"
+  });
+  const visibleText = [model.title, model.locationLine, model.freshnessLine, model.reportCountLine, model.confidenceLine, popup?.textContent || ""].join(" ");
+  const technicalMetadataDetected = GRIDLY_HAZARD_POPUP_TECHNICAL_METADATA_PATTERN.test(visibleText);
+  return {
+    title: model.title,
+    locationLine: model.locationLine,
+    freshnessLine: model.freshnessLine,
+    reportCountLine: model.reportCountLine,
+    confidenceLine: model.confidenceLine,
+    technicalMetadataDetected,
+    consumerFriendlyPass: Boolean(model.title && model.locationLine && model.freshnessLine && model.reportCountLine && model.confidenceLine && !technicalMetadataDetected)
+  };
+}
+exposeGridlyAuditHelper("gridlyCrossingPopupConsumerAudit", gridlyCrossingPopupConsumerAudit);
+
+const GRIDLY_LANGUAGE_CONSISTENCY_AUDIT_VERSION = "V241";
 
 
 function gridlyNormalizeAlertCardAuditText(value = "") {
@@ -39632,7 +39732,7 @@ function gridlyLanguageConsistencyReadSurface(label, selector, options = {}) {
 function gridlyLanguageConsistencyDetectIssues(surface = {}) {
   const findings = [];
   const samples = Array.isArray(surface.samples) ? surface.samples : [];
-  const rawInternalPattern = /\b(?:other_hazard|community_report|status_source|gridly_structured|gridly\s+structured|report_type|hazard_subtype)\b/i;
+  const rawInternalPattern = /\b(?:other_hazard|community_report|future_source|status_source|gridly_structured|gridly\s+structured|source\s+tag|source\s+tags|report_type|hazard_subtype)\b/i;
   const onRoadInRoadPattern = /\bon\s+([^•,;]+?)\s+in\s+([^•,;]+?)(?:$|[•,;.])/i;
   const duplicateNearPattern = /\b(?:near|on|at)\s+(.{3,60}?)\s+(?:near|on|at|in)\s+\1\b/i;
   samples.forEach((sample) => {
@@ -39687,15 +39787,18 @@ function gridlyLanguageConsistencyPopupModelSample() {
   const hazardModel = typeof gridlyHazardPopupAudit === "function"
     ? gridlyHazardPopupAudit()
     : (typeof buildGridlyHazardPopupConsumerModel === "function" ? buildGridlyHazardPopupConsumerModel({ report_type: "other_hazard", subtype: "downed_power_line", road_name: "Bowie Street", reports_count: 1, age_minutes: 6, status: "active" }) : null);
+  const unifiedRailPopupModel = typeof gridlyCrossingPopupConsumerAudit === "function"
+    ? gridlyCrossingPopupConsumerAudit()
+    : (typeof buildGridlyCrossingPopupConsumerModel === "function" ? buildGridlyCrossingPopupConsumerModel({ type: "rail_blocked", report_type: "blocked", status: "active", crossingName: "Louisiana Street", reports_count: 1, age_minutes: 0, confidence: "community" }) : null);
   let crossingModel = null;
-  const crossingPopupNode = typeof document !== "undefined" ? document.querySelector("#map .leaflet-popup-content .gridly-popup:not([data-gridly-hazard-popup='consumer']), .gridly-popup:not([data-gridly-hazard-popup='consumer'])") : null;
+  const crossingPopupNode = typeof document !== "undefined" ? document.querySelector("#map .leaflet-popup-content .gridly-popup:not([data-gridly-hazard-popup='consumer']):not([data-gridly-crossing-popup='consumer']), .gridly-popup:not([data-gridly-hazard-popup='consumer']):not([data-gridly-crossing-popup='consumer'])") : null;
   if (crossingPopupNode) {
     crossingModel = { source: "dom", text: gridlyLanguageConsistencyTextFromNode(crossingPopupNode) };
   } else if (typeof buildPopup === "function") {
     const sampleHtml = buildPopup({ id: "audit-crossing", name: "Sample crossing", railroad: "Railroad", risk: 50 }, { title: "Blocked", type: "blocked", minutesAgo: 6 });
     crossingModel = { source: "sample_buildPopup", text: gridlyLanguageConsistencyNormalizeText(sampleHtml.replace(/<[^>]+>/g, " ")) };
   }
-  return { hazardPopupModel: hazardModel, crossingPopupModel: crossingModel };
+  return { hazardPopupModel: hazardModel, unifiedRailPopupModel, crossingPopupModel: crossingModel };
 }
 
 function gridlyLanguageConsistencyAudit() {
@@ -39731,6 +39834,24 @@ function gridlyLanguageConsistencyAudit() {
       }] : []
     },
     {
+      label: "unified rail popup fixture",
+      selector: "gridlyCrossingPopupConsumerAudit()/buildUnifiedIncidentPopup",
+      count: popupModels.unifiedRailPopupModel ? 1 : 0,
+      samples: popupModels.unifiedRailPopupModel ? [{
+        index: 0,
+        selector: "unifiedRailPopupModel",
+        source: "model",
+        text: gridlyLanguageConsistencyNormalizeText([
+          popupModels.unifiedRailPopupModel.title,
+          popupModels.unifiedRailPopupModel.locationLine,
+          popupModels.unifiedRailPopupModel.freshnessLine,
+          popupModels.unifiedRailPopupModel.reportCountLine,
+          popupModels.unifiedRailPopupModel.confidenceLine
+        ].filter(Boolean).join(" / ")),
+        model: popupModels.unifiedRailPopupModel
+      }] : []
+    },
+    {
       label: "crossing popup model",
       selector: "buildPopup()/visible crossing popup",
       count: popupModels.crossingPopupModel ? 1 : 0,
@@ -39759,7 +39880,8 @@ function gridlyLanguageConsistencyAudit() {
       source: "hazard popup consumer model",
       hierarchy: ["short specific event title", "reported near/on location", "active report count", "freshness", "confidence/community confirmation"],
       example: "Downed Power Line / Reported near Bowie Street / 1 active report / Updated 6 minutes ago",
-      hazardPopupModel: popupModels.hazardPopupModel || null
+      hazardPopupModel: popupModels.hazardPopupModel || null,
+      unifiedRailPopupModel: popupModels.unifiedRailPopupModel || null
     },
     inconsistencies,
     railDelayLanguageDetected: hasType("railDelayLanguageDetected"),
