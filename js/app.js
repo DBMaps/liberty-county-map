@@ -32318,7 +32318,15 @@ function gridlyHistoricalIntelligenceTitleCaseLocation(value = "") {
 }
 
 function gridlyHistoricalIntelligenceDisplayLocation(finding = {}) {
-  return gridlyHistoricalIntelligenceTitleCaseLocation(finding.locationLabel || finding.nearbyLocationLabel || finding.referenceRoad || "Location details unavailable") || "Location details unavailable";
+  if (finding.presentationLocationLabel) {
+    return String(finding.presentationLocationLabel || "")
+      .split(" · ")
+      .map((part) => GRIDLY_HISTORICAL_SPECIFIC_HAZARD_LABELS[gridlyHistoricalIntelligenceNormalizeHazardToken(part)] || gridlyHistoricalIntelligenceTitleCaseLocation(part))
+      .filter(Boolean)
+      .join(" · ") || "Location details unavailable";
+  }
+  const label = finding.locationLabel || finding.nearbyLocationLabel || finding.referenceRoad || "Location details unavailable";
+  return gridlyHistoricalIntelligenceTitleCaseLocation(label) || "Location details unavailable";
 }
 
 
@@ -32392,6 +32400,8 @@ function gridlyHistoricalIntelligenceSupportingCopy(finding = {}) {
   if (finding.category === "most_blocked_crossing") return "Drivers have repeatedly reported train delays at this crossing.";
   if (finding.category === "recurring_flooding_location") return "Drivers have repeatedly reported flooding at this recurring location.";
   if (finding.category === "community_confirmed_hotspot") return "Community activity has been reported here more than once.";
+  if (finding.category === "recurring_hazard" && finding.genericClearedHazard) return "Drivers previously reported this road issue.";
+  if (finding.category === "recurring_hazard" && finding.genericRoadIssue) return "Community-reported road issue.";
   return typeof language.description === "function" ? language.description(finding) : "Drivers have repeatedly reported activity here.";
 }
 
@@ -32422,9 +32432,11 @@ const GRIDLY_HISTORICAL_INTELLIGENCE_LANGUAGE = Object.freeze({
     description: () => "Local drivers have repeatedly confirmed activity in this area."
   }),
   recurring_hazard: Object.freeze({
-    title: "Recurring Road Hazard",
-    category: "Road Hazard",
-    description: (finding) => `Drivers have frequently reported ${finding.hazardLabel || "a road hazard"} here.`
+    title: "Recurring Road Issue",
+    category: "Road pattern",
+    description: (finding) => finding.hazardLabel
+      ? `Drivers have frequently reported ${finding.hazardLabel} here.`
+      : "Community members have repeatedly reported a road issue here."
   }),
   no_history: Object.freeze({
     title: "Not Enough History Yet",
@@ -32463,11 +32475,127 @@ function gridlyHistoricalIntelligenceRecencyBoost(records = []) {
   return 0;
 }
 
+const GRIDLY_HISTORICAL_SPECIFIC_HAZARD_LABELS = Object.freeze({
+  livestock_on_road: "Livestock on Road",
+  livestock: "Livestock on Road",
+  cattle: "Livestock on Road",
+  cow: "Livestock on Road",
+  cows: "Livestock on Road",
+  downed_power_line: "Downed Power Line",
+  power_line: "Downed Power Line",
+  debris: "Debris on Road",
+  debris_in_road: "Debris on Road",
+  debris_on_road: "Debris on Road",
+  disabled_vehicle: "Disabled Vehicle",
+  stalled_vehicle: "Disabled Vehicle",
+  emergency_response_activity: "Emergency Activity",
+  emergency_activity: "Emergency Activity",
+  emergency: "Emergency Activity",
+  construction: "Road Work",
+  roadwork: "Road Work",
+  road_work: "Road Work",
+  work_zone: "Road Work",
+  road_closed: "Road Closed",
+  closure: "Road Closed",
+  flooding: "Flooding",
+  flood: "Flooding",
+  high_water: "Flooding",
+  crash: "Crash Reported",
+  wreck: "Crash Reported",
+  crash_reported: "Crash Reported"
+});
+
+function gridlyHistoricalIntelligenceNormalizeHazardToken(value = "") {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+}
+
+function gridlyHistoricalIntelligenceHazardText(record = {}) {
+  return [
+    gridlyHistoricalAuditHazardType(record),
+    record?.hazardLabel,
+    record?.label,
+    record?.title,
+    record?.headline,
+    record?.description,
+    record?.detail,
+    record?.subtitle,
+    record?.raw?.hazardLabel,
+    record?.raw?.title,
+    record?.raw?.description,
+    record?.raw?.detail,
+    record?.source?.hazardLabel,
+    record?.source?.title,
+    record?.source?.description,
+    record?.source?.detail
+  ].filter(Boolean).join(" ");
+}
+
+function gridlyHistoricalIntelligenceSpecificHazardLabel(record = {}) {
+  const subtype = typeof resolveOtherHazardSubtypeFromRecord === "function" ? resolveOtherHazardSubtypeFromRecord(record) : "";
+  const candidates = [
+    subtype,
+    gridlyHistoricalAuditHazardType(record),
+    typeof gridlyNormalizeHazardType === "function" ? gridlyNormalizeHazardType({ type: gridlyHistoricalAuditHazardType(record) }) : ""
+  ];
+  for (const candidate of candidates) {
+    const label = GRIDLY_HISTORICAL_SPECIFIC_HAZARD_LABELS[gridlyHistoricalIntelligenceNormalizeHazardToken(candidate)];
+    if (label) return label;
+  }
+
+  const text = gridlyHistoricalIntelligenceHazardText(record).toLowerCase();
+  const keywordMatches = [
+    [/\b(?:livestock|cattle|cows?)\b/, "Livestock on Road"],
+    [/\b(?:downed|fallen)\s+(?:power\s+)?line\b|\bpower\s+line\b/, "Downed Power Line"],
+    [/\bdebris\b/, "Debris on Road"],
+    [/\b(?:disabled|stalled)\s+vehicle\b/, "Disabled Vehicle"],
+    [/\bemergency\b|\bfirst\s+responders?\b/, "Emergency Activity"],
+    [/\b(?:road\s*work|roadwork|construction|work\s+zone)\b/, "Road Work"],
+    [/\b(?:road\s+closed|closure|closed\s+road)\b/, "Road Closed"],
+    [/\b(?:flooding|flood|high\s+water|water\s+on\s+(?:the\s+)?road)\b/, "Flooding"],
+    [/\b(?:crash|wreck|collision)\b/, "Crash Reported"]
+  ];
+  for (const [pattern, label] of keywordMatches) {
+    if (pattern.test(text)) return label;
+  }
+  return "";
+}
+
+function gridlyHistoricalIntelligenceIsGenericOtherHazardLabel(value = "") {
+  return /^(?:other\s+hazard(?:\s+cleared)?|road\s+hazard(?:\s+cleared)?|hazard(?:\s+cleared)?)$/i.test(String(value || "").trim());
+}
+
 function gridlyHistoricalIntelligenceHazardLabel(record = {}) {
+  const specificLabel = gridlyHistoricalIntelligenceSpecificHazardLabel(record);
+  if (specificLabel) return specificLabel;
   const raw = gridlyHistoricalAuditHazardType(record);
   const normalized = typeof gridlyNormalizeHazardType === "function" ? gridlyNormalizeHazardType({ type: raw }) : raw;
   const copy = HAZARD_TYPES?.[normalized] || HAZARD_TYPES?.[raw] || null;
-  return safeDisplayText(copy?.label || raw, "road hazard").toLowerCase();
+  const label = safeDisplayText(copy?.label || raw, "");
+  return gridlyHistoricalIntelligenceIsGenericOtherHazardLabel(label) ? "" : label;
+}
+
+function gridlyHistoricalIntelligenceRecordsContainClearedGenericHazard(records = []) {
+  return (Array.isArray(records) ? records : []).some((record) => {
+    const rawType = gridlyHistoricalAuditHazardType(record);
+    const rawText = `${rawType} ${record?.title || ""} ${record?.headline || ""} ${record?.description || ""} ${record?.detail || ""}`;
+    return /\bother\s+hazard\s+cleared\b/i.test(rawText)
+      || (/\bother\s+hazard\b/i.test(rawText) && /\bcleared\b/i.test(rawText));
+  });
+}
+
+function gridlyHistoricalIntelligenceHazardPatternTitle(label = "") {
+  const normalized = safeDisplayText(label, "");
+  if (!normalized) return "Recurring Road Issue";
+  if (normalized === "Livestock on Road") return "Recurring Livestock Reports";
+  if (normalized === "Road Closed") return "Recurring Road Closure Reports";
+  if (normalized === "Crash Reported") return "Recurring Crash Reports";
+  if (normalized === "Road Work") return "Recurring Road Work Reports";
+  if (normalized === "Flooding") return "Recurring Flooding Reports";
+  return `Recurring ${normalized} Reports`;
 }
 
 function gridlyHistoricalIntelligenceGroupRecords(records = [], keyBuilder = () => "") {
@@ -32557,13 +32685,30 @@ function gridlyHistoricalIntelligenceBuildFinding({ category, records, locationL
   const sourceRecordIds = usableRecords.map((record, index) => gridlyHistoricalIntelligenceRecordId(record, index)).filter(Boolean);
   const peakWindowLabel = gridlyHistoricalIntelligencePeakWindowLabel(usableRecords);
   const communityMemberEstimate = gridlyHistoricalIntelligenceCommunityMemberEstimate(usableRecords);
+  const displayHazardLabel = safeDisplayText(hazardLabel, "")
+    || usableRecords.map((record) => gridlyHistoricalIntelligenceHazardLabel(record)).find(Boolean)
+    || "";
+  const genericClearedHazard = category === "recurring_hazard" && !displayHazardLabel && gridlyHistoricalIntelligenceRecordsContainClearedGenericHazard(usableRecords);
+  const genericRoadIssue = category === "recurring_hazard" && !displayHazardLabel;
+  const presentationTitle = category === "recurring_hazard"
+    ? (displayHazardLabel ? gridlyHistoricalIntelligenceHazardPatternTitle(displayHazardLabel) : (genericClearedHazard ? "Recurring road issue previously cleared" : "Recurring Road Issue"))
+    : getGridlyIntelligencePreviewLanguage(category).title;
+  const presentationCategoryLabel = category === "recurring_hazard" ? "Road pattern" : getGridlyIntelligencePreviewLanguage(category).category;
+  const presentationLocationLabel = category === "recurring_hazard"
+    ? (displayHazardLabel
+      ? [displayHazardLabel, safeDisplayText(locationLabel, "")].filter(Boolean).join(" · ")
+      : (safeDisplayText(locationLabel, "") || safeDisplayText(referenceRoad, "") || (genericClearedHazard ? "Drivers previously reported this road issue" : "Community-reported road issue")))
+    : safeDisplayText(locationLabel, "");
   return {
     category,
-    title: getGridlyIntelligencePreviewLanguage(category).title,
-    categoryLabel: getGridlyIntelligencePreviewLanguage(category).category,
+    title: presentationTitle,
+    categoryLabel: presentationCategoryLabel,
     locationLabel: safeDisplayText(locationLabel, ""),
     nearbyLocationLabel: safeDisplayText(locationLabel, ""),
-    hazardLabel: safeDisplayText(hazardLabel, ""),
+    presentationLocationLabel,
+    hazardLabel: displayHazardLabel,
+    genericRoadIssue,
+    genericClearedHazard,
     count,
     averageDurationMinutes,
     confirmationCount,
