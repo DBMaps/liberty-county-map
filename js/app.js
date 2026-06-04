@@ -32317,16 +32317,88 @@ function gridlyHistoricalIntelligenceTitleCaseLocation(value = "") {
     .replace(/\b(Mc)([a-z])/g, (_, prefix, letter) => `${prefix}${letter.toUpperCase()}`);
 }
 
-function gridlyHistoricalIntelligenceDisplayLocation(finding = {}) {
-  if (finding.presentationLocationLabel) {
-    return String(finding.presentationLocationLabel || "")
-      .split(" · ")
-      .map((part) => GRIDLY_HISTORICAL_SPECIFIC_HAZARD_LABELS[gridlyHistoricalIntelligenceNormalizeHazardToken(part)] || gridlyHistoricalIntelligenceTitleCaseLocation(part))
-      .filter(Boolean)
-      .join(" · ") || "Location details unavailable";
+const GRIDLY_HISTORICAL_LOCATION_FALLBACK_LABEL = "Location not specified";
+
+function gridlyHistoricalIntelligenceCleanLocationCandidate(value = "") {
+  const text = safeDisplayText(value, "").replace(/\s+/g, " ").trim();
+  if (!text) return "";
+  if (gridlyHistoricalIntelligenceIsGenericOtherHazardLabel(text)) return "";
+  if (/^(?:road\s+pattern|road\s+issue|recurring\s+road\s+issue|community-reported\s+road\s+issue|drivers\s+previously\s+reported\s+this\s+road\s+issue|other\s+hazard\s+cleared|hazard\s+cleared|this\s+area|local\s+area|nearby\s+area|area|unknown\s+road|roadway|local\s+roadway|location\s+(?:details\s+)?unavailable|location\s+unknown|location\s+not\s+specified)$/i.test(text)) return "";
+  return text;
+}
+
+function gridlyHistoricalIntelligenceReadPath(source = {}, path = "") {
+  if (!source || typeof source !== "object" || !path) return undefined;
+  return path.split(".").reduce((current, key) => {
+    if (current == null || typeof current !== "object") return undefined;
+    return current[key];
+  }, source);
+}
+
+function gridlyHistoricalIntelligenceLocationFromPaths(source = {}, paths = [], specificity = "specific") {
+  for (const path of paths) {
+    const cleaned = gridlyHistoricalIntelligenceCleanLocationCandidate(gridlyHistoricalIntelligenceReadPath(source, path));
+    if (cleaned) return { label: cleaned, sourceField: path, specificity };
   }
-  const label = finding.locationLabel || finding.nearbyLocationLabel || finding.referenceRoad || "Location details unavailable";
-  return gridlyHistoricalIntelligenceTitleCaseLocation(label) || "Location details unavailable";
+  return null;
+}
+
+function gridlyHistoricalIntelligenceRecordLocationContext(record = {}) {
+  const exactPaths = [
+    "presentationLocationLabel", "locationLabel", "displayLocation", "resolvedLocationLabel", "localizedLocation", "localizedSpot", "locationName", "locationPhrase", "knownLocation",
+    "raw.presentationLocationLabel", "raw.locationLabel", "raw.displayLocation", "raw.resolvedLocationLabel", "raw.localizedLocation", "raw.localizedSpot", "raw.locationName", "raw.locationPhrase", "raw.knownLocation",
+    "source.presentationLocationLabel", "source.locationLabel", "source.displayLocation", "source.resolvedLocationLabel", "source.localizedLocation", "source.localizedSpot", "source.locationName", "source.locationPhrase", "source.knownLocation",
+    "original.presentationLocationLabel", "original.locationLabel", "original.displayLocation", "original.resolvedLocationLabel", "original.localizedLocation", "original.localizedSpot", "original.locationName", "original.locationPhrase", "original.knownLocation"
+  ];
+  const roadPaths = [
+    "referenceRoad", "reference_road", "roadName", "road", "resolvedRoadName", "primaryRoad", "routeName", "crossingName", "crossingLabel", "crossing", "intersection", "crossStreet", "cross_street", "nearestRoad", "nearestRoadName", "nearest_road", "street", "address",
+    "raw.referenceRoad", "raw.reference_road", "raw.roadName", "raw.road", "raw.resolvedRoadName", "raw.primaryRoad", "raw.routeName", "raw.crossingName", "raw.crossingLabel", "raw.crossing", "raw.intersection", "raw.crossStreet", "raw.cross_street", "raw.nearestRoad", "raw.nearestRoadName", "raw.nearest_road", "raw.street", "raw.address",
+    "source.referenceRoad", "source.reference_road", "source.roadName", "source.road", "source.resolvedRoadName", "source.primaryRoad", "source.routeName", "source.crossingName", "source.crossingLabel", "source.crossing", "source.intersection", "source.crossStreet", "source.cross_street", "source.nearestRoad", "source.nearestRoadName", "source.nearest_road", "source.street", "source.address",
+    "original.referenceRoad", "original.reference_road", "original.roadName", "original.road", "original.resolvedRoadName", "original.primaryRoad", "original.routeName", "original.crossingName", "original.crossingLabel", "original.crossing", "original.intersection", "original.crossStreet", "original.cross_street", "original.nearestRoad", "original.nearestRoadName", "original.nearest_road", "original.street", "original.address"
+  ];
+  const localityPaths = [
+    "locality", "town", "city", "place", "area",
+    "raw.locality", "raw.town", "raw.city", "raw.place", "raw.area",
+    "source.locality", "source.town", "source.city", "source.place", "source.area",
+    "original.locality", "original.town", "original.city", "original.place", "original.area"
+  ];
+  return gridlyHistoricalIntelligenceLocationFromPaths(record, exactPaths, "specific")
+    || gridlyHistoricalIntelligenceLocationFromPaths(record, roadPaths, "specific")
+    || gridlyHistoricalIntelligenceLocationFromPaths(record, localityPaths, "locality")
+    || null;
+}
+
+function gridlyHistoricalIntelligenceBestLocationContext(finding = {}) {
+  const findingContext = gridlyHistoricalIntelligenceRecordLocationContext(finding);
+  if (findingContext) return findingContext;
+  const recordContexts = (Array.isArray(finding.sourceRecords) ? finding.sourceRecords : [])
+    .map((record) => gridlyHistoricalIntelligenceRecordLocationContext(record))
+    .filter(Boolean);
+  return recordContexts.find((context) => context.specificity === "specific") || recordContexts[0] || null;
+}
+
+function gridlyHistoricalIntelligenceFormatLocationLine(locationContext = null, hazardLabel = "") {
+  const cleanedLocation = gridlyHistoricalIntelligenceCleanLocationCandidate(locationContext?.label || "");
+  const cleanedHazard = safeDisplayText(hazardLabel, "");
+  if (!cleanedLocation) return GRIDLY_HISTORICAL_LOCATION_FALLBACK_LABEL;
+  const alreadyFormattedPresentation = locationContext?.sourceField === "presentationLocationLabel" && (
+    /\b(?:near|on|at|between)\b/i.test(cleanedLocation)
+    || (cleanedHazard && cleanedLocation.toLowerCase().includes(cleanedHazard.toLowerCase()))
+  );
+  if (alreadyFormattedPresentation) return cleanedLocation;
+  const titledLocation = gridlyHistoricalIntelligenceTitleCaseLocation(cleanedLocation);
+  const hasLeadingPreposition = /^(?:near|on|at|between)\b/i.test(titledLocation);
+  const alreadyContextual = hasLeadingPreposition || (!cleanedHazard && /\s&\s|\sand\s/i.test(titledLocation));
+  const locationPhrase = alreadyContextual ? titledLocation : `Near ${titledLocation}`;
+  const hazardLocationPhrase = /^(?:near|on|at|between)\b/i.test(locationPhrase) ? `${locationPhrase.charAt(0).toLowerCase()}${locationPhrase.slice(1)}` : locationPhrase;
+  return cleanedHazard ? `${cleanedHazard} ${hazardLocationPhrase}` : locationPhrase;
+}
+
+function gridlyHistoricalIntelligenceDisplayLocation(finding = {}) {
+  return gridlyHistoricalIntelligenceFormatLocationLine(
+    gridlyHistoricalIntelligenceBestLocationContext(finding),
+    finding.hazardLabel
+  );
 }
 
 
@@ -32694,11 +32766,17 @@ function gridlyHistoricalIntelligenceBuildFinding({ category, records, locationL
     ? (displayHazardLabel ? gridlyHistoricalIntelligenceHazardPatternTitle(displayHazardLabel) : (genericClearedHazard ? "Recurring road issue previously cleared" : "Recurring Road Issue"))
     : getGridlyIntelligencePreviewLanguage(category).title;
   const presentationCategoryLabel = category === "recurring_hazard" ? "Road pattern" : getGridlyIntelligencePreviewLanguage(category).category;
-  const presentationLocationLabel = category === "recurring_hazard"
-    ? (displayHazardLabel
-      ? [displayHazardLabel, safeDisplayText(locationLabel, "")].filter(Boolean).join(" · ")
-      : (safeDisplayText(locationLabel, "") || safeDisplayText(referenceRoad, "") || (genericClearedHazard ? "Drivers previously reported this road issue" : "Community-reported road issue")))
-    : safeDisplayText(locationLabel, "");
+  const explicitLocationContext = gridlyHistoricalIntelligenceBestLocationContext({
+    presentationLocationLabel: safeDisplayText(locationLabel, ""),
+    locationLabel: safeDisplayText(locationLabel, ""),
+    referenceRoad,
+    sourceRecords: usableRecords
+  });
+  const presentationLocationLabel = gridlyHistoricalIntelligenceFormatLocationLine(
+    explicitLocationContext,
+    category === "recurring_hazard" ? displayHazardLabel : ""
+  );
+  const lacksSpecificLocationContext = !explicitLocationContext || explicitLocationContext.specificity !== "specific";
   return {
     category,
     title: presentationTitle,
@@ -32706,6 +32784,10 @@ function gridlyHistoricalIntelligenceBuildFinding({ category, records, locationL
     locationLabel: safeDisplayText(locationLabel, ""),
     nearbyLocationLabel: safeDisplayText(locationLabel, ""),
     presentationLocationLabel,
+    presentationLocationSource: explicitLocationContext?.sourceField || "fallback",
+    presentationLocationSpecificity: explicitLocationContext?.specificity || "none",
+    lacksSpecificLocationContext,
+    sourceRecords: usableRecords,
     hazardLabel: displayHazardLabel,
     genericRoadIssue,
     genericClearedHazard,
@@ -41135,6 +41217,9 @@ function gridlyLanguageConsistencyDetectIssues(surface = {}) {
     if (/\bactive hazards reported\b/i.test(text) || /\bmultiple\s+mobility\s+impacts\b/i.test(lower)) {
       push("genericHazardLanguage", "low", text, "Prefer the popup model's specific event + location + count + freshness hierarchy when data is available.");
     }
+    if (/historical/i.test(surface.label) && /\b(?:other\s+hazard\s+cleared|road\s+pattern|this\s+area|location\s+details\s+unavailable)\b/i.test(text)) {
+      push("historicalGenericLocationLanguage", "medium", text, "Historical rows should use road/crossing/intersection/place context, or 'Location not specified' only as the true last resort.");
+    }
   });
   return findings;
 }
@@ -41163,6 +41248,14 @@ function gridlyLanguageConsistencyAudit() {
   const mobileAwareness = typeof getGridlyMobileAwarenessPanelSummary === "function" ? getGridlyMobileAwarenessPanelSummary() : null;
   const awarenessSummary = typeof buildGridlyCommunityAwarenessIntelligenceSummary === "function" ? buildGridlyCommunityAwarenessIntelligenceSummary() : null;
   const displaySummary = typeof summarizeGridlyAwarenessIntelligenceForDisplay === "function" && awarenessSummary ? summarizeGridlyAwarenessIntelligenceForDisplay(awarenessSummary) : null;
+  const historicalRows = typeof gridlyBuildHistoricalIntelligenceFindings === "function"
+    ? (gridlyBuildHistoricalIntelligenceFindings().dedupedRankedFindings || []).slice(0, 12).map((finding, index) => ({
+      index,
+      selector: "gridlyBuildHistoricalIntelligenceFindings().dedupedRankedFindings",
+      source: "model",
+      text: gridlyLanguageConsistencyNormalizeText([finding.title, typeof gridlyHistoricalIntelligenceDisplayLocation === "function" ? gridlyHistoricalIntelligenceDisplayLocation(finding) : finding.locationLabel, typeof gridlyHistoricalIntelligenceSummaryLine === "function" ? gridlyHistoricalIntelligenceSummaryLine(finding) : ""].filter(Boolean).join(" / "))
+    }))
+    : [];
   const surfaces = [
     gridlyLanguageConsistencyReadSurface("top awareness/header headline", "#gridlyV2TopStatusPrimary", { fallbackText: displaySummary?.headline || awarenessSummary?.awarenessStatus || "", fallbackSource: "awareness_display_model" }),
     gridlyLanguageConsistencyReadSurface("top awareness/header subline", "#gridlyV2TopStatusSecondary, #gridlyTopAwarenessMicroline", { fallbackText: displaySummary?.subline || awarenessSummary?.awarenessStatusReason || "", fallbackSource: "awareness_display_model" }),
@@ -41171,6 +41264,12 @@ function gridlyLanguageConsistencyAudit() {
     gridlyLanguageConsistencyReadSurface("alert panel header", "[data-gridly-alerts-panel-heading='true'], #alertsList h2, #alertsList h3, #roadHazardsList h2, #roadHazardsList h3", { fallbackText: "", includeEmpty: false }),
     gridlyLanguageConsistencyReadSurface("alert card titles", "[data-gridly-alert-row='true'] strong, .gridly-alert-row strong, .alert-item strong", { limit: 12 }),
     gridlyLanguageConsistencyReadSurface("alert card subtitles/summaries", "[data-gridly-alert-row='true'] small, [data-gridly-alert-row='true'] [data-gridly-alert-summary], .gridly-alert-row small, .alert-item small", { limit: 18 }),
+    {
+      label: "historical intelligence rows",
+      selector: ".gridly-historical-intelligence-row summary / gridlyBuildHistoricalIntelligenceFindings()",
+      count: historicalRows.length,
+      samples: historicalRows
+    },
     {
       label: "hazard popup model",
       selector: "gridlyHazardPopupAudit()/buildGridlyHazardPopupConsumerModel",
@@ -60440,6 +60539,30 @@ function gridlyHistoricalIntelligenceExperienceAudit() {
   const recurringFloodingFindings = dedupedRankedFindings.filter((finding) => finding.category === "recurring_flooding_location");
   const blockedCrossingFindings = dedupedRankedFindings.filter((finding) => finding.category === "most_blocked_crossing");
   const communityHotspotFindings = dedupedRankedFindings.filter((finding) => finding.category === "community_confirmed_hotspot");
+  const historicalLocationRows = dedupedRankedFindings.map((finding, index) => {
+    const locationContext = typeof gridlyHistoricalIntelligenceBestLocationContext === "function" ? gridlyHistoricalIntelligenceBestLocationContext(finding) : null;
+    const visibleLocation = typeof gridlyHistoricalIntelligenceDisplayLocation === "function" ? gridlyHistoricalIntelligenceDisplayLocation(finding) : safeDisplayText(finding.locationLabel || finding.referenceRoad || "", GRIDLY_HISTORICAL_LOCATION_FALLBACK_LABEL);
+    const lacksSpecificLocationContext = !locationContext || locationContext.specificity !== "specific" || visibleLocation === GRIDLY_HISTORICAL_LOCATION_FALLBACK_LABEL;
+    return {
+      row: index + 1,
+      title: safeDisplayText(finding.title || "Historical Pattern", "Historical Pattern"),
+      category: finding.category || "",
+      visibleLocation,
+      locationSourceField: locationContext?.sourceField || "fallback",
+      locationSpecificity: locationContext?.specificity || "none",
+      lacksSpecificLocationContext
+    };
+  });
+  const missingSpecificLocationRows = historicalLocationRows.filter((row) => row.lacksSpecificLocationContext);
+  const historicalMissingLocationAudit = {
+    rowCount: historicalLocationRows.length,
+    missingSpecificLocationCount: missingSpecificLocationRows.length,
+    missingSpecificLocationExamples: missingSpecificLocationRows.slice(0, 8),
+    visibleLocationExamples: historicalLocationRows.slice(0, 8),
+    fallbackLabel: GRIDLY_HISTORICAL_LOCATION_FALLBACK_LABEL,
+    priorityOrder: ["presentationLocationLabel", "locationLabel", "displayLocation", "referenceRoad", "roadName", "crossingName", "crossingLabel", "intersection", "nearestRoad", "street", "address", "locality/town/city", "raw/source/original nested location fields"],
+    genericLocationSuppression: ["Other Hazard Cleared", "Road pattern", "Road issue", "This area", "Location details unavailable"]
+  };
   const historySurfaceDetected = Boolean(
     safeDocument?.getElementById("gridlyHistoryDockButton")
     || safeDocument?.querySelector?.("#gridlyPortraitV2 .gridly-v2-bottom-dock [data-v2-sheet='history']")
@@ -60476,11 +60599,11 @@ function gridlyHistoricalIntelligenceExperienceAudit() {
     { signal: "crossing recurrence", status: crossingGroups.repeated > 0 ? "AVAILABLE" : "DERIVABLE_WHEN_DATA_EXISTS", sourceFields: ["crossingEvents[].crossingId", "crossingName"], currentValue: crossingGroups.repeated, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Currently generates Frequently Blocked Crossing findings." }
   ];
   const currentListInputs = [
-    { row: "Historical Intelligence list", fieldsUsed: ["dedupedRankedFindings", "categoryLabel", "title", "locationLabel", "peakWindowLabel", "averageDurationMinutes", "communityMemberEstimate", "count", "latestAt"], source: "buildGridlyHistoricalIntelligenceSheetHtml() from gridlyBuildHistoricalIntelligenceFindings()", derivedFields: ["summary line", "Most reported", "Typical delay", "Usually clears", "formatted last reported"], placeholderFields: ["Not Enough History Yet empty state"], seededOrDemoFields: seededDataDetected ? ["depends on local history record source"] : [] },
+    { row: "Historical Intelligence list", fieldsUsed: ["dedupedRankedFindings", "categoryLabel", "title", "presentationLocationLabel", "locationLabel", "displayLocation", "referenceRoad", "roadName", "crossingName", "intersection", "nearestRoad", "street", "address", "peakWindowLabel", "averageDurationMinutes", "communityMemberEstimate", "count", "latestAt"], source: "buildGridlyHistoricalIntelligenceSheetHtml() from gridlyBuildHistoricalIntelligenceFindings()", derivedFields: ["summary line", "Most reported", "Typical delay", "Usually clears", "formatted last reported"], placeholderFields: ["Not Enough History Yet empty state"], seededOrDemoFields: seededDataDetected ? ["depends on local history record source"] : [] },
     { row: "Recurring Flooding Location", fieldsUsed: ["hazardEvents", "hazardType", "roadName", "count", "averageDurationMinutes", "latestAt"], source: "hazard history filtered by flood/high water/water and grouped by road", derivedFields: ["recurring_flooding_location", "Usually clears", "community report count", "Last reported"], placeholderFields: [], seededOrDemoFields: seededDataDetected ? ["hazardEvents seed/demo records"] : [] },
     { row: "Frequently Blocked Crossing", fieldsUsed: ["crossingEvents", "crossingId", "crossingName", "count", "durationMinutes", "latestAt"], source: "crossing history grouped by crossing location key", derivedFields: ["most_blocked_crossing", "Most reported", "Typical delay", "community report count", "Last reported"], placeholderFields: [], seededOrDemoFields: seededDataDetected ? ["crossingEvents seed/demo records"] : [] },
     { row: "Community Hotspot", fieldsUsed: ["confirmationCount", "confirmations", "roadName/crossingName", "count", "latestAt"], source: "confirmed crossing/hazard events grouped by road or crossing", derivedFields: ["community_confirmed_hotspot", "communityMemberEstimate", "confirmationCount"], placeholderFields: [], seededOrDemoFields: seededDataDetected ? ["confirmation seed/demo fields"] : [] },
-    { row: "Historical hazard summaries", fieldsUsed: ["hazardType", "roadName", "referenceRoad", "clearedAt", "durationMinutes", "confirmationCount", "latestAt"], source: "recurring_hazard, repeat_construction_zone, high_delay_corridor finding builders", derivedFields: ["hazardLabel", "averageDurationMinutes", "peakWindowLabel", "groupingKey"], placeholderFields: ["Location details unavailable fallback when no location label exists"], seededOrDemoFields: seededDataDetected ? ["hazardEvents seed/demo records"] : [] }
+    { row: "Historical hazard summaries", fieldsUsed: ["hazardType", "roadName", "referenceRoad", "clearedAt", "durationMinutes", "confirmationCount", "latestAt"], source: "recurring_hazard, repeat_construction_zone, high_delay_corridor finding builders", derivedFields: ["hazardLabel", "averageDurationMinutes", "peakWindowLabel", "groupingKey"], placeholderFields: ["Location not specified fallback only when no road/crossing/intersection/place context exists"], seededOrDemoFields: seededDataDetected ? ["hazardEvents seed/demo records"] : [] }
   ];
   const driverValueSignals = {
     high: availableSignals.filter((item) => item.driverValue === "HIGH").map((item) => item.signal),
@@ -60496,6 +60619,7 @@ function gridlyHistoricalIntelligenceExperienceAudit() {
   if (!historySurfaceDetected) findings.push({ severity: "high", area: "system", message: "Historical Intelligence surface was not detected by known selectors or builders." });
   if (!combinedEvents.length) findings.push({ severity: "medium", area: "data", message: "Historical storage is ready but currently empty in this runtime." });
   if (dedupedRankedFindings.length) findings.push({ severity: "info", area: "list", message: `${dedupedRankedFindings.length} compact historical row finding(s) can be generated now.` });
+  findings.push({ severity: missingSpecificLocationRows.length ? "medium" : "positive", area: "location context", message: `${missingSpecificLocationRows.length} of ${historicalLocationRows.length} historical row(s) lack specific road/crossing/intersection/place context.`, evidence: missingSpecificLocationRows.slice(0, 6) });
   if (seededDataDetected) findings.push({ severity: "info", area: "data", message: "Seed/demo/sample-like historical records detected; acceptable for audit but should be labeled before production decisions." });
   findings.push({ severity: "medium", area: "list emphasis", message: "Compact rows now put pattern, exact location, peak window, and typical impact before expanded supporting copy." });
   findings.push({ severity: "info", area: "list emphasis", message: "Expanded row details preserve location, typical delay/clear time when available, community report/member support, and last reported date." });
@@ -60513,6 +60637,7 @@ function gridlyHistoricalIntelligenceExperienceAudit() {
     historicalSystemDetected: historySurfaceDetected,
     availableSignals,
     currentListInputs,
+    historicalMissingLocationAudit,
     driverValueSignals,
     intelligenceAssetSignals,
     seededDataDetected,
@@ -60539,13 +60664,14 @@ function gridlyHistoricalIntelligenceExperienceAudit() {
       communityHotspotFindingCount: communityHotspotFindings.length,
       timestampedEventCount: timestamps.length,
       durationEventCount: durationEvents.length,
-      routeImpactEventCount: routeImpactEvents.length
+      routeImpactEventCount: routeImpactEvents.length,
+      missingSpecificLocationRowCount: missingSpecificLocationRows.length
     },
     readinessCategories: readiness.categories || [],
     readinessDiagnostics: readiness.diagnostics || {},
     listCritique: {
       usersLikelyCareAbout: ["Where is it?", "When does it usually happen?", "How bad is it?", "How many reports support it?", "How recent is the pattern?", "Is this live or historical?"],
-      currentlyEmphasized: ["pattern title", "exact location", "Most reported window when available", "Typical delay/Usually clears", "community report or member support", "last reported in expanded details"],
+      currentlyEmphasized: ["pattern title", "specific location", "Most reported window when available", "Typical delay/Usually clears", "community report or member support", "last reported in expanded details"],
       shouldProbablyEmphasize: ["location", "peak time window", "typical delay or clear time", "recurrence/report count", "last reported", "trend direction when enough months exist"]
     },
     v248_1PresentationReady: Boolean(historySurfaceDetected && typeof gridlyBuildHistoricalIntelligenceFindings === "function" && !snapshot.storageReadError)
