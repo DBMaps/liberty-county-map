@@ -27200,6 +27200,23 @@ function isGridlyLightweightActiveItem(item = {}) {
   return state === "active";
 }
 
+function getGridlyTopAwarenessLifecycleStage(detailOrItem = {}) {
+  const directClassification = detailOrItem?.lifecycleClassification || null;
+  if (directClassification?.lifecycleStage) return String(directClassification.lifecycleStage || "").toLowerCase();
+  const item = detailOrItem?.item && typeof detailOrItem.item === "object" ? detailOrItem.item : detailOrItem;
+  if (typeof gridlyClassifyHazardLifecycle === "function" && item && typeof item === "object") {
+    try {
+      const classification = gridlyClassifyHazardLifecycle(item);
+      if (classification?.lifecycleStage) return String(classification.lifecycleStage || "").toLowerCase();
+    } catch (_error) {}
+  }
+  return "unknown";
+}
+
+function isGridlyTopAwarenessNonExpiredDetail(detailOrItem = {}) {
+  return getGridlyTopAwarenessLifecycleStage(detailOrItem) !== "expired_candidate";
+}
+
 function getGridlyLightweightSafeDisplayText(value) {
   return safeDisplayText(value, "")
     .replace(/[\r\n\t]+/g, " ")
@@ -28931,15 +28948,22 @@ function buildGridlyTopAwarenessDedupedMobilityCount(activeItemDetails = [], cou
   const seen = new Map();
   activeItemDetails.forEach((detail, index) => {
     const key = getGridlyTopAwarenessIncidentStableKey(detail);
-    const meaningful = isGridlyTopAwarenessMeaningfulMobilityDetail(detail);
+    const lifecycleStage = getGridlyTopAwarenessLifecycleStage(detail);
+    const nonExpired = isGridlyTopAwarenessNonExpiredDetail(detail);
+    const meaningful = nonExpired && isGridlyTopAwarenessMeaningfulMobilityDetail(detail);
     const sample = {
       key,
       sourceKind: detail?.sourceKind || "activeItem",
       sourceIndex: Number(detail?.sourceIndex ?? index),
       resolvedCategory: detail?.resolvedCategory || "unknown",
       resolvedLocationLabel: safeDisplayText(detail?.resolvedLocationLabel, ""),
-      reusedAlertText: safeDisplayText(detail?.reusedAlertText, "")
+      reusedAlertText: safeDisplayText(detail?.reusedAlertText, ""),
+      lifecycleStage
     };
+    if (!nonExpired) {
+      suppressed.push({ ...sample, reason: "expired_candidate_not_alert_eligible" });
+      return;
+    }
     if (!meaningful) {
       suppressed.push({ ...sample, reason: "not_user_meaningful_active_mobility" });
       return;
@@ -29046,9 +29070,9 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
       reusedAlertText: alertSummary.value || detail.locationReusedAlertText || ""
     };
   });
-  const topAwarenessEligibleDetails = activeItemDetails.filter((detail) => detail.lifecycleClassification?.lifecycleStage !== "expired_candidate");
+  const topAwarenessEligibleDetails = activeItemDetails.filter(isGridlyTopAwarenessNonExpiredDetail);
   const topAwarenessMeaningfulDetails = topAwarenessEligibleDetails.filter(isGridlyTopAwarenessMeaningfulMobilityDetail);
-  const topAwarenessCategoryDetails = topAwarenessMeaningfulDetails.length ? topAwarenessMeaningfulDetails : (topAwarenessEligibleDetails.length ? topAwarenessEligibleDetails : activeItemDetails);
+  const topAwarenessCategoryDetails = topAwarenessMeaningfulDetails.length ? topAwarenessMeaningfulDetails : topAwarenessEligibleDetails;
   const categoryCounts = topAwarenessCategoryDetails.reduce((acc, detail) => {
     const category = detail.resolvedCategory || "unknown";
     acc[category] = (acc[category] || 0) + 1;
@@ -29059,7 +29083,7 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
     .map(([category]) => category)
     .slice(0, 6);
   const topCategory = activeCategories[0] || null;
-  const priorityOrderedDetails = (topAwarenessMeaningfulDetails.length ? topAwarenessMeaningfulDetails : activeItemDetails).slice().sort((a, b) => Number(b.priorityScore || 0) - Number(a.priorityScore || 0));
+  const priorityOrderedDetails = (topAwarenessMeaningfulDetails.length ? topAwarenessMeaningfulDetails : topAwarenessEligibleDetails).slice().sort((a, b) => Number(b.priorityScore || 0) - Number(a.priorityScore || 0));
   const selectedActiveDetail = priorityOrderedDetails[0] || null;
   const lifecycleSuppressedDetails = activeItemDetails
     .filter((detail) => detail.lifecycleClassification?.lifecycleStage === "expired_candidate" || Number(detail.lifecyclePriorityAdjustment || 0) < 0)
@@ -29082,7 +29106,7 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
   const topAwarenessAlertCount = Array.isArray(options?.alerts)
     ? options.alerts.length
     : (Array.isArray(typeof window !== "undefined" ? window.__gridlyLatestAlertsForRender : null) ? window.__gridlyLatestAlertsForRender.length : 0);
-  const topAwarenessCountAudit = buildGridlyTopAwarenessDedupedMobilityCount(activeItemDetails, {
+  const topAwarenessCountAudit = buildGridlyTopAwarenessDedupedMobilityCount(topAwarenessEligibleDetails, {
     rawActiveAwarenessCount: activeAwarenessCount,
     activeHazardCount,
     activeReportCount,
@@ -29182,6 +29206,12 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
     topAwarenessProximityThresholdsMiles: GRIDLY_ACTIVE_AWARENESS_PROXIMITY_THRESHOLDS_MILES.map((entry) => ({ ...entry })),
     topAwarenessProximityMaxScore: GRIDLY_ACTIVE_AWARENESS_PROXIMITY_MAX_SCORE,
     topAwarenessSelectedProximity: selectedActiveDetail?.userProximityModel || null,
+    topAwarenessSelectionTruthSource: selectedActiveDetail ? "non_expired_active_awareness_detail" : "none",
+    topAwarenessSelectionEligibilityReason: selectedActiveDetail
+      ? "Selected from lifecycle non-expired active awareness details; expired_candidate details are audit-only suppression samples and cannot be promoted."
+      : "No lifecycle non-expired active awareness detail was available for top-awareness promotion.",
+    topAwarenessEligibleDetailCount: topAwarenessEligibleDetails.length,
+    topAwarenessMeaningfulEligibleDetailCount: topAwarenessMeaningfulDetails.length,
     topAwarenessProximityRankingReason: userLocationAwarenessAnchor
       ? "User-location proximity adds a bounded modifier after severity/source scoring; the maximum boost is lower than a major severity gap so proximity cannot dominate critical/high differences."
       : "No valid user location was available, so proximity did not modify awareness ranking.",
@@ -31413,7 +31443,9 @@ function gridlyResolveSpecificCrossingLocationForNarrative(options = {}, snapsho
   if (typeof getGridlySpecificCrossingLocation !== "function") return null;
   const records = [];
   const addRecord = (record) => {
-    if (record && typeof record === "object" && !records.includes(record)) records.push(record);
+    if (!record || typeof record !== "object" || records.includes(record)) return;
+    if (!isGridlyLightweightActiveItem(record) || !isGridlyTopAwarenessNonExpiredDetail(record)) return;
+    records.push(record);
   };
   addRecord(options?.activeReport);
   addRecord(options?.activeHazard);
@@ -31477,8 +31509,17 @@ function buildGridlyNarrativePromotionPrototype(options = {}) {
   const visibleAlertCandidates = gridlyV230VisibleAlertTextCandidates();
   const allCandidates = gridlyV2291UniqueTexts([...(context.candidates || []).map((candidate) => candidate.narrative), ...optionCandidates.map((candidate) => candidate.narrative), ...visibleAlertCandidates.map((candidate) => candidate.narrative)])
     .map((narrative) => visibleAlertCandidates.find((candidate) => candidate.narrative === narrative) || optionCandidates.find((candidate) => candidate.narrative === narrative) || (context.candidates || []).find((candidate) => candidate.narrative === narrative) || { narrative, source: "unknown", sourceType: "unknown" });
+  const activeTruthSourcePattern = /^(?:visible_alert_card|alert|active_awareness|active_awareness_sample|active_hazard|active_report)$/i;
+  const activeTruthCandidates = allCandidates.filter((candidate) => activeTruthSourcePattern.test(String(candidate?.sourceType || "")) && gridlyV229NarrativeHasCondition(candidate?.narrative || ""));
+  const promotionCandidates = activeTruthCandidates.length ? activeTruthCandidates : allCandidates;
+  const stalePresentationCandidatesSuppressed = activeTruthCandidates.length
+    ? allCandidates
+      .filter((candidate) => !activeTruthCandidates.includes(candidate) && /awareness_summary|community_pulse|destination_context|derived_awareness|read_only_derived_candidate/i.test(`${candidate?.sourceType || ""} ${candidate?.source || ""}`))
+      .map((candidate) => ({ narrative: candidate.narrative, source: candidate.source, sourceType: candidate.sourceType }))
+      .slice(0, 12)
+    : [];
   const directRoadFieldCandidates = gridlyV232CollectDirectRoadFieldCandidates(options, context.snapshot || {});
-  const scoredCandidates = allCandidates.map((candidate) => {
+  const scoredCandidates = promotionCandidates.map((candidate) => {
     const score = gridlyV2291ScoreNarrative(candidate.narrative, context);
     const roadNames = gridlyV230ExtractRoadReferences(candidate.narrative);
     const matchingProximityScore = Math.max(0, ...optionCandidates
@@ -31501,7 +31542,7 @@ function buildGridlyNarrativePromotionPrototype(options = {}) {
     || gridlyV2291ConditionLabelFromText(selectedCandidate?.narrative || "", context?.snapshot?.activeAwareness?.resolvedCategory || context?.snapshot?.activeAwareness?.topCategory || "");
   const standardizedCondition = gridlyV232ResolveNarrativeCondition(selectedRawCondition);
   const selectedCondition = standardizedCondition.label;
-  const roadSelection = gridlyV232SelectRoadBySourcePriority({ visibleAlertCandidates, allCandidates, directRoadFieldCandidates });
+  const roadSelection = gridlyV232SelectRoadBySourcePriority({ visibleAlertCandidates, allCandidates: promotionCandidates, directRoadFieldCandidates });
   const selectedRoad = roadSelection.selectedRoad || "";
   const specificCrossingLocation = activeConditionPresent && gridlyV238IsBlockedCrossingCondition(selectedCondition)
     ? gridlyResolveSpecificCrossingLocationForNarrative(options, context.snapshot || {}, selectedRoad)
@@ -31528,6 +31569,9 @@ function buildGridlyNarrativePromotionPrototype(options = {}) {
     selectedRoad: activeConditionPresent ? (specificCrossingLocation?.primaryRoad || selectedRoad) : "",
     selectedAwarenessArea,
     promotedNarrative,
+    promotionTruthSource: activeTruthCandidates.length ? "active_alert_or_active_awareness_candidate" : "fallback_existing_narrative_candidate",
+    promotionTruthCandidateCount: activeTruthCandidates.length,
+    stalePresentationCandidatesSuppressed,
     specificCrossingLocation: specificCrossingLocation ? {
       headlineLocation: specificCrossingLocation.headlineLocation,
       locationLineLabel: specificCrossingLocation.locationLineLabel,
