@@ -52875,15 +52875,14 @@ function getGridlyAwarenessBriefActiveState({ intel = {}, pulseModel = {} } = {}
 }
 
 function getGridlyQuietAwarenessBriefCopy() {
-  const town = getGridlyAwarenessBriefTownLabel();
   return {
     state: "quiet",
     greeting: getGridlyAwarenessGreetingText(),
-    primary: "Community Conditions Normal",
-    secondary: `No major mobility issues reported across ${town}`,
+    primary: "Community activity is quiet",
+    secondary: "No recent reports nearby · map remains live",
     microline: "",
     microlineVisible: false,
-    selectedHeadline: "Community Conditions Normal",
+    selectedHeadline: "Community activity is quiet",
     selectedSource: "calm_community_summary",
     selectedLocationIntelligence: null,
     fallbackReason: "specific_incident_headlines_suppressed"
@@ -52918,7 +52917,7 @@ function buildGridlyAwarenessBriefCopy({ intel = {}, existingAlertWording = {}, 
       state: safeActiveCount >= 6 ? "high" : "moderate",
       greeting: getGridlyAwarenessGreetingText(),
       primary: calmPrimary,
-      secondary: `${pluralizeGridlyMobilityReports(safeActiveCount)} across ${town}`,
+      secondary: `${pluralizeGridlyMobilityReports(safeActiveCount)} · map markers show exact spots`,
       microline: "",
       microlineVisible: false,
       selectedHeadline: calmPrimary,
@@ -52987,6 +52986,8 @@ function refreshPortraitV2LocalizedIntelligence() {
     }
     const awarenessPrimary = safeDisplayText(awarenessBrief.primary, "No major mobility issues reported nearby.");
     const awarenessSecondary = safeDisplayText(awarenessBrief.secondary, "Community activity is quiet.");
+    const awarenessCardEl = topPrimaryEl?.closest?.(".gridly-v2-awareness-brief-card") || topSecondaryEl?.closest?.(".gridly-v2-awareness-brief-card");
+    if (awarenessCardEl) awarenessCardEl.dataset.awarenessState = awarenessBrief.state || "quiet";
     const greetingEl = document.getElementById("gridlyV2AwarenessGreeting");
     setGridlyTopPanelTextIfChanged(greetingEl, awarenessBrief.greeting, "refreshPortraitV2LocalizedIntelligence", "gridlyV2AwarenessGreeting");
     logTopPanelWrite("refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusPrimary", awarenessPrimary);
