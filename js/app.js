@@ -21335,9 +21335,9 @@ function getGridlyAwarenessIntelligenceStatus({ awarenessAreaName = "this area",
   const hazardCount = activeHazardsInArea.length;
   const reportCount = activeReportsInArea.length;
   const crossingCount = Array.isArray(crossingsInArea) ? crossingsInArea.length : Number(crossingsInArea || 0);
-  if (hazardCount > 0 && reportCount > 0) return "Multiple mobility impacts reported";
-  if (hazardCount > 0) return `Active hazards reported in ${awarenessAreaName}`;
-  if (reportCount > 0) return `Active crossing reports in ${awarenessAreaName}`;
+  if (hazardCount > 0 && reportCount > 0) return "Community activity reported nearby";
+  if (hazardCount > 0) return `Hazard reported in ${awarenessAreaName}`;
+  if (reportCount > 0) return `Community report in ${awarenessAreaName}`;
   if (selectedArea?.countyWide || selectedArea?.fallback) return crossingCount > 0 ? "No active countywide issues reported" : "Countywide awareness active";
   return crossingCount > 0 ? "No active local issues reported" : "No active local issues reported";
 }
@@ -21359,7 +21359,7 @@ function buildGridlyCommunityAwarenessIntelligenceSummary(options = {}) {
       activeHazardsInArea: [],
       activeReportsInArea: [],
       activityLevel: "Quiet",
-      awarenessStatus: "No active mobility issues reported",
+      awarenessStatus: "No active local issues reported",
       lastUpdated: new Date().toISOString(),
       sourceBreakdown: {},
       warnings,
@@ -21438,8 +21438,8 @@ function summarizeGridlyAwarenessIntelligenceForDisplay(summary = {}) {
   }
 
   const issueParts = [];
-  if (hazardCount > 0) issueParts.push(pluralizeGridlyCommunityReports(hazardCount, "active hazard", "active hazards"));
-  if (reportCount > 0) issueParts.push(pluralizeGridlyCommunityReports(reportCount, "active crossing report", "active crossing reports"));
+  if (hazardCount > 0) issueParts.push(pluralizeGridlyCommunityReports(hazardCount, "hazard", "hazards"));
+  if (reportCount > 0) issueParts.push(pluralizeGridlyCommunityReports(reportCount, "report", "reports"));
   return {
     headline: `${areaName} awareness: ${activityLevel}`,
     subline: `${status} • ${crossingsPhrase} • ${issueParts.join(" • ")}`
@@ -26387,7 +26387,7 @@ function isGridlyLightweightReusableAlertSummary(value = "") {
   const text = normalizeGridlyLightweightAlertSummaryText(value);
   if (!text || text.length < 5 || text.length > 140) return false;
   if (/^(active|reported|watch|live|cleared|route relevant|location pending|nearby|just now)$/i.test(text)) return false;
-  if (/^(road hazard|hazard|alert|mobility report|active report)(?:\s+reported|\s+visible)?$/i.test(text)) return false;
+  if (/^(road hazard|hazard|alert|mobility\s+report|active report)(?:\s+reported|\s+visible)?$/i.test(text)) return false;
   if (/\b(?:report active|reported|visible)\s+nearby$/i.test(text)) return false;
   if (/^(?:no active|local movement looks quiet|community pulse is quiet|town moving normally)/i.test(text)) return false;
   if (/^(?:near|on|at|between|along|from|over|under)\b/i.test(text) && !/\b(?:flood|high water|closure|closed|debris|crash|wreck|collision|rail|crossing|work|construction|ice|disabled|stalled|hazard|report)\b/i.test(text)) return false;
@@ -26406,7 +26406,10 @@ function buildGridlyLightweightSummaryFromResolvedDetail(detail = {}) {
   const locationLabel = normalizeGridlyLightweightLocationLabelText(detail.resolvedLocationLabel);
   if (!category || !locationLabel) return { value: "", source: "" };
   const preposition = /^(?:near|on|at|between|along|from|over|under)\b/i.test(locationLabel) ? "" : "on ";
-  return { value: `${category} ${preposition}${locationLabel}`, source: "lightweightActiveAwareness.resolvedCategory+resolvedLocationLabel" };
+  const value = isGridlyRailOrCrossingCategory(detail.resolvedCategory)
+    ? `Train blocking crossing ${preposition}${locationLabel}`
+    : `${category} ${preposition}${locationLabel}`;
+  return { value, source: "lightweightActiveAwareness.resolvedCategory+resolvedLocationLabel" };
 }
 
 function isGridlyRailOrCrossingCategory(category = "") {
@@ -26672,6 +26675,7 @@ function buildGridlyHeaderCandidateFromCategoryLocation(category = "", locationL
   const normalizedLocation = normalizeGridlyLightweightLocationLabelText(locationLabel);
   if (!normalizedCategory || !normalizedLocation) return "";
   const preposition = /^(?:near|on|at|between|along|from|over|under)\b/i.test(normalizedLocation) ? "" : "on ";
+  if (isGridlyRailOrCrossingCategory(category)) return `Train blocking crossing ${preposition}${normalizedLocation}`;
   return `${normalizedCategory} ${preposition}${normalizedLocation}`;
 }
 
@@ -28019,7 +28023,7 @@ function getGridlyCommunityPulseCategoryLabel(category = "activity") {
   if (/construction|utility|work/.test(normalized)) return "road work";
   if (/closure|closed/.test(normalized)) return "closure reports";
   if (/debris|tree|obstruction/.test(normalized)) return "road debris";
-  return "mobility reports";
+  return "community reports";
 }
 
 function getGridlyCommunityPulseTypeSummary(selected = []) {
@@ -28027,7 +28031,7 @@ function getGridlyCommunityPulseTypeSummary(selected = []) {
     .map((item) => getGridlyCommunityPulseCategoryLabel(item?.category || item?.incident?.type || item?.incident?.report_type))
     .filter(Boolean);
   const unique = Array.from(new Set(labels));
-  if (!unique.length) return "mobility reports";
+  if (!unique.length) return "community reports";
   if (unique.length === 1) return unique[0];
   return `${unique[0]} and ${unique[1]}`;
 }
@@ -28059,7 +28063,7 @@ function getGridlyCommunityPulseSignalLabel(signalType = "mobility") {
     crash: "crash reports",
     road_work: "road work",
     debris: "road debris",
-    mobility: "mobility reports"
+    mobility: "community reports"
   };
   return labels[signalType] || labels.mobility;
 }
@@ -28249,7 +28253,7 @@ function buildGridlyCommunityPulseSubline(context = {}) {
   const templates = [
     { id: "subline_watchful", text: pressure === "light" ? "No major mobility slowdowns nearby" : "Local signals remain active but contained" },
     { id: "subline_corridors", text: activeCorridorCount > 1 ? `${formatGridlyCommunityCount(activeCorridorCount, "active corridor")} under light watch` : `Watching ${formatGridlyCommunityPulsePlace(corridor)}` },
-    { id: "subline_signals", text: signalLabels.length > 1 ? `${signalLabels.slice(0, 2).join(" + ")} blending into travel pressure` : `${signalLabels[0] || "mobility reports"} under local watch` }
+    { id: "subline_signals", text: signalLabels.length > 1 ? `${signalLabels.slice(0, 2).join(" + ")} blending into travel pressure` : `${signalLabels[0] || "community reports"} under local watch` }
   ];
   const seed = Number(context.dominantCorridorScore || 0) + activeCorridorCount + signalLabels.length;
   const selected = selectGridlyCommunityPulseTemplate(templates, seed, gridlyCommunityPulseTemplateMemory.lastSublineTemplate);
@@ -29180,8 +29184,8 @@ function gridlyV2291ConditionLabelFromText(text = "", fallback = "") {
   if (/crash|collision|wreck|accident/.test(normalized)) return "Crash / Wreck";
   if (/debris|tree down|obstruction|object/.test(normalized)) return "Debris in Road";
   if (/disabled|stalled/.test(normalized)) return "Disabled vehicle";
+  if (/rail|train|crossing|blocked/.test(normalized)) return "Train blocking crossing";
   if (/traffic|backup|congestion|delay/.test(normalized)) return "Traffic Backup";
-  if (/rail|train|crossing|blocked/.test(normalized)) return "Rail crossing issue";
   return getGridlyLightweightTitleCaseCategory(fallback) || (gridlyV229NarrativeHasCondition(value) ? "Active condition" : "");
 }
 
@@ -29278,7 +29282,7 @@ function gridlyV2291BuildNarrativeAuditCandidates(options = {}) {
     normalized.push({ narrative: `${strongestCondition} on ${strongestRoadReference}`, source: "readOnly.condition+roadCandidate", sourceType: "read_only_derived_candidate", derived: true });
   }
   if (strongestCondition && strongestRoadReference && area.name) {
-    normalized.push({ narrative: `${strongestCondition} affecting ${strongestRoadReference} in ${area.name}`, source: "readOnly.condition+road+awarenessAreaCandidate", sourceType: "read_only_derived_candidate", derived: true });
+    normalized.push({ narrative: gridlyV238FormatNarrativePromotionCopy(strongestCondition, strongestRoadReference, area.name, "impact"), source: "readOnly.condition+road+awarenessAreaCandidate", sourceType: "read_only_derived_candidate", derived: true });
   }
 
   return { candidates: normalized, sourceState, snapshot, awarenessAreaName: area.name, awarenessAreaSource: area.source, strongestCondition, roadNamesFound: roads, strongestRoadReference };
@@ -29449,7 +29453,7 @@ function gridlyKnowBeforeYouGoStressAudit(options = {}) {
   const narrativeAudit = gridlyAwarenessNarrativeAudit(options);
   const pulseActiveAudit = gridlyCommunityPulseActiveAudit(options);
   const destinationImpactAudit = gridlyDestinationImpactIntelligenceAudit(options);
-  const stressTerms = ["road closures", "flooding", "construction", "rail delays", "multiple reports"];
+  const stressTerms = ["road closures", "flooding", "construction", "blocked crossings", "multiple reports"];
   const combinedText = [conditionAudit.visibleConditionSummary, narrativeAudit.narrativeText, ...conditionAudit.findings, ...narrativeAudit.findings, ...pulseActiveAudit.findings, ...destinationImpactAudit.findings].join(" ");
   const supportsConditionAwareness = Boolean(conditionAudit.explainsWhat || narrativeAudit.explainsConditions);
   const supportsImpactAwareness = Boolean(conditionAudit.explainsImpact || narrativeAudit.impactContextPresent || pulseActiveAudit.supportsImpactNarratives || destinationImpactAudit.destinationImpactNarrativeAvailable);
@@ -29458,7 +29462,7 @@ function gridlyKnowBeforeYouGoStressAudit(options = {}) {
     if (term === "road closures") return /closure|closed|blocked|road/i.test(combinedText);
     if (term === "flooding") return /flood|water/i.test(combinedText);
     if (term === "construction") return /construction|work zone|workzone/i.test(combinedText);
-    if (term === "rail delays") return /rail|train|crossing|delay/i.test(combinedText);
+    if (term === "blocked crossings") return /rail|train|crossing|blocked|delay/i.test(combinedText);
     if (term === "multiple reports") return /multiple|reports|signals|activity|hazards/i.test(combinedText) || narrativeAudit.combinesMultipleSignals;
     return false;
   });
@@ -29497,7 +29501,7 @@ const GRIDLY_V232_IMPACT_CONDITION_MATCHERS = [
   { matcher: /construction|road\s*work|work\s*zone|utility\s*work|maintenance/i, label: "Construction", reason: "Construction is a validated V231 impact condition." },
   { matcher: /flood|standing\s*water|high\s*water/i, label: "Flooding", reason: "Flooding is a validated V231 impact condition." },
   { matcher: /road\s*closure|road\s*closed|closure|closed/i, label: "Road closure", reason: "Road closure is a validated V231 impact condition." },
-  { matcher: /rail|train|crossing|blocked/i, label: "Rail delay", reason: "Rail delay is a validated V231 impact condition." }
+  { matcher: /rail|train|crossing|blocked/i, label: "Train blocking crossing", reason: "Blocked crossing is a validated impact condition." }
 ];
 
 const GRIDLY_V232_OBSERVATION_CONDITION_MATCHERS = [
@@ -29515,8 +29519,8 @@ function gridlyV232ResolveNarrativeCondition(value = "") {
     return {
       label: impactMatch.label,
       conditionType: "impact",
-      selectedPattern: "<condition> affecting <road> in <area>",
-      fallbackPattern: "<condition> affecting travel in <area>",
+      selectedPattern: impactMatch.label === "Train blocking crossing" ? "Train blocking crossing on <road> in <area>" : "<condition> affecting <road> in <area>",
+      fallbackPattern: impactMatch.label === "Train blocking crossing" ? "Blocked crossing reported in <area>" : "<condition> affecting travel in <area>",
       patternReason: impactMatch.reason
     };
   }
@@ -29539,6 +29543,30 @@ function gridlyV232ResolveNarrativeCondition(value = "") {
   };
 }
 
+function gridlyV238IsBlockedCrossingCondition(condition = "") {
+  return /rail|train|crossing|blocked/i.test(gridlyV229NormalizeNarrativeText(condition));
+}
+
+function gridlyV238FormatNarrativePromotionCopy(condition = "", road = "", area = "", conditionType = "") {
+  const selectedCondition = gridlyV229NormalizeNarrativeText(condition);
+  const selectedRoad = gridlyV229NormalizeNarrativeText(road);
+  const selectedArea = gridlyV229NormalizeNarrativeText(area);
+  const areaSuffix = selectedArea ? ` in ${selectedArea}` : "";
+  if (gridlyV238IsBlockedCrossingCondition(selectedCondition)) {
+    return selectedRoad
+      ? `Train blocking crossing on ${selectedRoad}${areaSuffix}`
+      : `Blocked crossing reported${areaSuffix}`;
+  }
+  if (conditionType === "impact") {
+    return selectedRoad
+      ? `${selectedCondition} affecting ${selectedRoad}${areaSuffix}`
+      : `${selectedCondition} affecting travel${areaSuffix}`;
+  }
+  return selectedRoad
+    ? `${selectedCondition} reported on ${selectedRoad}${areaSuffix}`
+    : `${selectedCondition} reported${areaSuffix}`;
+}
+
 function gridlyV230NormalizeConditionLabel(value = "") {
   return gridlyV232ResolveNarrativeCondition(value).label;
 }
@@ -29546,7 +29574,7 @@ function gridlyV230NormalizeConditionLabel(value = "") {
 function gridlyV230NormalizeRoadReference(value = "") {
   let road = gridlyV229NormalizeNarrativeText(value)
     .replace(/^[,;:.\s]+|[,;:.\s]+$/g, "")
-    .replace(/\b(?:reported nearby|active mobility report|mobility report|affecting|travel|nearby)$/ig, "")
+    .replace(/\b(?:reported nearby|active\s+mobility\s+report|mobility\s+report|affecting|travel|nearby)$/ig, "")
     .trim();
   if (!road) return "";
   road = road.replace(/\bFarm[\s\u2010-\u2015-]*to[\s\u2010-\u2015-]*Market\s+(?:Road\s+)?(\d+)\b/i, "FM $1");
@@ -29563,7 +29591,7 @@ function gridlyV230NormalizeRoadReference(value = "") {
   road = normalizeRoadDisplayCase(road);
   const genericRoadLabel = /^(?:road\s*work\s*reported\s*nearby|active\s*mobility\s*report|reported\s*nearby|road|street|highway|travel)$/i.test(road);
   if (genericRoadLabel) return "";
-  if (/\b(?:reported nearby|active mobility report|mobility report)\b/i.test(road)) return "";
+  if (/\b(?:reported nearby|active\s+mobility\s+report|mobility\s+report)\b/i.test(road)) return "";
   const roadReference = road.match(/\b(?:FM|RM|RR|CR|US|TX|SH|IH|I-|Loop|Spur)\s*\d+\b/i)?.[0] || "";
   return roadReference ? normalizeRoadDisplayCase(roadReference) : "";
 }
@@ -29804,15 +29832,7 @@ function buildGridlyNarrativePromotionPrototype(options = {}) {
   const fallbackUsed = Boolean(activeConditionPresent && selectedCondition && !selectedRoad);
   let promotedNarrative = "";
   if (activeConditionPresent && selectedCondition) {
-    if (conditionType === "impact") {
-      promotedNarrative = selectedRoad
-        ? `${selectedCondition} affecting ${selectedRoad} in ${selectedAwarenessArea}`
-        : `${selectedCondition} affecting travel in ${selectedAwarenessArea}`;
-    } else {
-      promotedNarrative = selectedRoad
-        ? `${selectedCondition} reported on ${selectedRoad} in ${selectedAwarenessArea}`
-        : `${selectedCondition} reported in ${selectedAwarenessArea}`;
-    }
+    promotedNarrative = gridlyV238FormatNarrativePromotionCopy(selectedCondition, selectedRoad, selectedAwarenessArea, conditionType);
   }
   return {
     activeConditionPresent,
@@ -29942,14 +29962,14 @@ const GRIDLY_V234_MULTI_CONDITION_FIXTURES = [
     sourceNarrative: "Disabled vehicle reported on FM 1960 near Dayton"
   },
   {
-    category: "Rail Delay",
-    condition: "Rail delay",
-    sourceCondition: "rail delay",
+    category: "Blocked Crossing",
+    condition: "Train blocking crossing",
+    sourceCondition: "blocked crossing",
     road: "FM 1960",
     area: "Dayton",
     impactStrength: "high",
-    expectedPattern: "<condition> affecting <road> in <area>",
-    sourceNarrative: "Rail crossing delay reported on FM 1960 near Dayton"
+    expectedPattern: "Train blocking crossing on <road> in <area>",
+    sourceNarrative: "Blocked crossing reported on FM 1960 near Dayton"
   },
   {
     category: "Debris",
@@ -30116,7 +30136,7 @@ function gridlyMultiConditionNarrativeAudit() {
     },
     findings: [
       "All eight major mobility condition categories generated narratives through the live V232 promotion prototype path rather than static string-only validation.",
-      "Impact conditions consistently select the affecting pattern for construction, flooding, road closure, and rail delay.",
+      "Impact conditions consistently select consumer-friendly road-or-crossing patterns for construction, flooding, road closure, and blocked crossings.",
       "Observation conditions consistently select the reported on pattern for crash/wreck, disabled vehicle, debris, and general hazard.",
       "Each generated narrative includes what happened, the roadway context, and the awareness area in a short phrase suitable for three-second comprehension.",
       "No ownership, routing, Route Watch, destination, Community Pulse, alert generation, hazard generation, map rendering, or Supabase behavior is modified by this audit."
@@ -30177,14 +30197,14 @@ function gridlyNarrativeLanguageValidationAudit() {
       rationale: "Disabled vehicles are often localized shoulder or lane events, making reported on more precise than affecting."
     },
     {
-      category: "Rail Delay",
-      condition: "Rail delay",
+      category: "Blocked Crossing",
+      condition: "Train blocking crossing",
       road: "FM 1960",
       area: "Dayton",
-      recommendedPattern: "<condition> affecting <road> in <area>",
+      recommendedPattern: "Train blocking crossing on <road> in <area>",
       pattern: "affectingRoadInArea",
       impactStrength: "high",
-      rationale: "Rail delays directly affect crossing movement, so affecting reads naturally and helps drivers decide before leaving."
+      rationale: "Blocked-crossing language gives drivers crossing impact without operations-dashboard wording."
     },
     {
       category: "Debris",
@@ -30235,14 +30255,14 @@ function gridlyNarrativeLanguageValidationAudit() {
       .map((entry) => entry.narrative),
     weakestNarratives: narrativeExamples
       .filter((entry) => entry.category === "General Hazard" || entry.category === "Disabled Vehicle")
-      .map((entry) => ({ narrative: entry.narrative, reason: entry.category === "General Hazard" ? "Broad condition label gives less detail than specific hazards." : "Useful and natural, but typically less decision-critical than closure, flooding, rail delay, or construction." })),
+      .map((entry) => ({ narrative: entry.narrative, reason: entry.category === "General Hazard" ? "Broad condition label gives less detail than specific hazards." : "Useful and natural, but typically less decision-critical than closure, flooding, blocked crossings, or construction." })),
     recommendedPatternByCategory: narrativeExamples.reduce((patterns, entry) => {
       patterns[entry.category] = entry.recommendedPattern;
       return patterns;
     }, {}),
     findings: [
       "Awareness-first narrative language can be adopted as the standard communication model across the major Gridly mobility condition categories.",
-      "The affecting pattern is strongest for conditions with inherent route or crossing impact: construction, flooding, road closure, and rail delay.",
+      "The affecting pattern is strongest for conditions with inherent route or crossing impact: construction, flooding, road closure, and blocked crossings.",
       "The reported on pattern reads better for point observations or uncertain impact conditions: crash/wreck, disabled vehicle, debris, and general hazard.",
       "Road-plus-awareness-area wording consistently improves location clarity and supports the Know Before You Go mission without changing UI, ownership, routing, destination, Community Pulse, alert, or hazard behavior."
     ]
@@ -31256,7 +31276,7 @@ function formatGridlyTopAwarenessActivityLevel(activityLevel = "") {
 function isGridlyTopAwarenessPulseHeadlineMeaningful(pulseHeadline = "") {
   const headline = safeDisplayText(pulseHeadline, "");
   if (!headline) return false;
-  return !/^(routes currently clear|community pulse is quiet|no active mobility reports nearby|light activity across nearby corridors|town moving normally|no major disruptions nearby)$/i.test(headline);
+  return !/^(routes currently clear|community pulse is quiet|no active community reports nearby|light activity across nearby corridors|town moving normally|no major disruptions nearby)$/i.test(headline);
 }
 
 function buildGridlyTopAwarenessMicroline({
@@ -31282,13 +31302,13 @@ function buildGridlyTopAwarenessMicroline({
   const suppressedReasons = [];
 
   if (reportCount > 0) {
-    countParts.push(`${reportCount} active mobility ${reportCount === 1 ? "report" : "reports"}`);
+    countParts.push(`${reportCount} active community ${reportCount === 1 ? "report" : "reports"}`);
     sourceFields.push("activeReportCount");
   } else if (hazardCount > 0 && !topAlreadyHazardAware) {
     countParts.push(`${hazardCount} ${hazardCount === 1 ? "hazard" : "hazards"} nearby`);
     sourceFields.push("activeHazardCount");
   } else if (hazardCount > 0) {
-    countParts.push(`${hazardCount} active mobility ${hazardCount === 1 ? "report" : "reports"}`);
+    countParts.push(`${hazardCount} active community ${hazardCount === 1 ? "report" : "reports"}`);
     sourceFields.push("activeHazardCount");
     suppressedReasons.push("hazard wording generalized to avoid duplicating top status");
   }
@@ -31513,7 +31533,7 @@ function classifyGridlyTopAwarenessPulseField(fieldName, value, context = {}) {
       weakSignal: count <= 0,
       strongSignal: count > 0,
       rationale: count > 0
-        ? "Active mobility report count is a concrete community-sourced volume signal."
+        ? "Active community report count is a concrete community-sourced volume signal."
         : "No active reports means the count is only a quiet-state support signal."
     };
   }
@@ -31712,8 +31732,8 @@ window.gridlyTopAwarenessIntegrationAudit = function gridlyTopAwarenessIntegrati
     const exactInformationShouldSurvive = [
       "Keep the active alert/status headline and its impact/freshness line as the primary Portrait V2 top-awareness content.",
       activeReportCount > 0
-        ? "Merge the active mobility report count as a compact community-volume signal."
-        : "Do not promote a zero active mobility report count except as quiet-state support.",
+        ? "Merge the active community report count as a compact community-volume signal."
+        : "Do not promote a zero active community report count except as quiet-state support.",
       pulseFieldClassifications.activityLevel.strongSignal
         ? "Merge the community activity/pressure level when it is building or elevated."
         : "Do not promote quiet/light activity level as primary top-awareness copy.",
@@ -38501,7 +38521,7 @@ function gridlyLanguageConsistencyDetectIssues(surface = {}) {
         push("alertTitleTooLong", "medium", text, "Use popup-style title length: short event label first, then move location/freshness into subtitle or metadata lines.");
       }
     }
-    if (/\bactive hazards reported\b/i.test(text) || /\bmultiple mobility impacts\b/i.test(lower)) {
+    if (/\bactive hazards reported\b/i.test(text) || /\bmultiple\s+mobility\s+impacts\b/i.test(lower)) {
       push("genericHazardLanguage", "low", text, "Prefer the popup model's specific event + location + count + freshness hierarchy when data is available.");
     }
   });
@@ -51083,7 +51103,7 @@ function pluralizeGridlyCommunityReports(count = 0, singular = "community report
 }
 
 function pluralizeGridlyMobilityReports(count = 0) {
-  return pluralizeGridlyCommunityReports(count, "active mobility report", "active mobility reports");
+  return pluralizeGridlyCommunityReports(count, "active community report", "active community reports");
 }
 
 function getGridlyAwarenessCommunityCount(intel = {}, activeAwareness = {}) {
@@ -57361,7 +57381,7 @@ function gridlyBetaReadinessAudit() {
     {
       rank: 2,
       priority: "Historical intelligence",
-      reasoning: "Event history can turn repeated rail delays, recurring road hazards, and typical durations into useful beta guidance without adding new external systems."
+      reasoning: "Event history can turn repeated blocked crossings, recurring road hazards, and typical durations into useful beta guidance without adding new external systems."
     },
     {
       rank: 3,
