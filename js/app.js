@@ -49585,6 +49585,124 @@ function gridlySettingsListExperienceAudit() {
   const nodeExists = (selector) => Boolean(hasDocument && document.querySelector(selector));
   const compactSettingsSections = hasDocument ? Array.from(document.querySelectorAll("[data-gridly-settings-list-experience] details.settings-list-section, #settingsModal details.settings-list-section")) : [];
   const compactSectionLabels = compactSettingsSections.map((section) => String(section.querySelector(".settings-list-title")?.textContent || section.querySelector("summary")?.textContent || "").trim()).filter(Boolean);
+  const buildSettingsSheetAlignmentAudit = () => {
+    const issues = [];
+    const recommendations = [];
+    if (!hasDocument) {
+      return {
+        historyLikeSheetDetected: false,
+        compactRailsAligned: false,
+        headerAligned: false,
+        scrollContainmentOk: false,
+        bottomDockOverlapDetected: false,
+        expandableRowsDetected: false,
+        expandedContentIndented: false,
+        actionBindingsPreserved: false,
+        issues: ["document_unavailable"],
+        recommendations: ["Run this audit in a browser after opening the Settings sheet from the bottom dock."]
+      };
+    }
+    const v2Sheet = document.getElementById("gridlyPortraitV2Sheet");
+    const sheetBody = document.getElementById("gridlyPortraitV2SheetBody");
+    const activeSheetName = String(v2Sheet?.dataset?.activeSheet || "");
+    const settingsSheet = document.querySelector("[data-gridly-settings-v2]");
+    const settingsHost = settingsSheet?.closest?.("#gridlyPortraitV2Sheet") || document.getElementById("settingsModal") || settingsSheet;
+    const header = settingsHost?.querySelector?.("header, .settings-modal-head") || v2Sheet?.querySelector?.("header") || document.querySelector(".settings-modal-head");
+    const dock = document.querySelector("#gridlyPortraitV2 .gridly-v2-bottom-dock, .mobile-floating-action-dock");
+    const rows = Array.from((settingsSheet || document).querySelectorAll?.("details.settings-list-section") || []);
+    const summaries = rows.map((row) => row.querySelector("summary.settings-list-summary")).filter(Boolean);
+    const details = rows.map((row) => row.querySelector(".settings-list-detail")).filter(Boolean);
+    const v2ActionSelectors = [
+      '[data-v2-action="route-edit-home-open"]',
+      '[data-v2-action="route-edit-work-open"]',
+      '[data-v2-action="route-manage-places-open"]',
+      '[data-v2-action="settings-replay-setup"]',
+      '[data-v2-action="settings-feedback-placeholder"]'
+    ];
+    const legacyActionSelectors = ["#settingsEditHomeBtn", "#settingsEditWorkBtn", "#settingsManageSavedPlacesBtn", "#settingsReplaySetupBtn", "#settingsFeedbackBtn"];
+    const fieldSelectors = [
+      '[data-v2-settings-field="personalization.preferredName"], #settingsPreferredNameInput',
+      '[data-v2-settings-field="notifications.routeAlerts"], #settingsRouteAlertsToggle',
+      '[data-v2-settings-field="notifications.railAlerts"], #settingsRailAlertsToggle',
+      '[data-v2-settings-field="notifications.hazardAlerts"], #settingsHazardAlertsToggle',
+      '[data-v2-settings-field="notifications.communityAlerts"], #settingsCommunityAlertsToggle',
+      '[data-v2-settings-field="display.mapStyle"], #settingsMapStyleSelect',
+      '[data-v2-settings-field="display.theme"], #settingsThemeSelect',
+      '[data-v2-settings-field="display.textSize"], #settingsTextSizeSelect'
+    ];
+    const actionBindingsPreserved = v2ActionSelectors.every((selector) => Boolean(document.querySelector(selector)))
+      && fieldSelectors.every((selector) => Boolean(document.querySelector(selector)))
+      && legacyActionSelectors.slice(0, 3).every((selector) => Boolean(document.querySelector(selector)) || Boolean(settingsSheet));
+    const hostRect = settingsHost?.getBoundingClientRect?.();
+    const headerRect = header?.getBoundingClientRect?.();
+    const closeButton = settingsHost?.querySelector?.("#gridlyPortraitV2SheetClose, .settings-modal-close, [aria-label='Close panel'], [aria-label='Close Settings']") || null;
+    const dockRect = dock?.getBoundingClientRect?.();
+    const closeRect = closeButton?.getBoundingClientRect?.();
+    const firstSummaryRect = summaries[0]?.getBoundingClientRect?.();
+    const firstDetailRect = details[0]?.getBoundingClientRect?.();
+    const hostStyle = settingsHost ? getComputedStyle(settingsHost) : null;
+    const bodyStyle = sheetBody ? getComputedStyle(sheetBody) : null;
+    const historyLikeSheetDetected = Boolean(settingsSheet && settingsHost?.id === "gridlyPortraitV2Sheet" && rows.length >= 7 && settingsHost.classList.contains("gridly-v2-sheet"));
+    const compactRailsAligned = Boolean(settingsHost && (
+      (hostRect && hostRect.width > 0 && Math.abs(hostRect.left - 12) <= 4 && Math.abs((window.innerWidth - hostRect.right) - 12) <= 4)
+      || (hostStyle && hostStyle.position === "fixed" && (hostStyle.left === "12px" || hostStyle.right === "12px"))
+    ));
+    const headerAligned = Boolean(header && settingsHost && (
+      (headerRect && hostRect && headerRect.width > 0 && Math.abs(headerRect.left - hostRect.left) <= 14 && Math.abs(headerRect.right - hostRect.right) <= 14)
+      || activeSheetName === "settings"
+    ));
+    const scrollContainmentOk = Boolean(sheetBody && bodyStyle && ["auto", "scroll"].includes(bodyStyle.overflowY) && settingsHost && hostStyle?.overflow === "hidden");
+    const bottomDockOverlapDetected = Boolean(hostRect && dockRect && hostRect.width > 0 && dockRect.width > 0 && hostRect.bottom > dockRect.top - 4);
+    const expandableRowsDetected = rows.length >= 7 && summaries.length >= 7;
+    const collapsedRowHeightCompact = summaries.every((summary) => {
+      const rect = summary.getBoundingClientRect?.();
+      return !rect || rect.height === 0 || rect.height <= 86;
+    });
+    const detailSpacingAligned = details.every((detail) => {
+      const style = getComputedStyle(detail);
+      return parseFloat(style.paddingLeft || "0") >= 10 && parseFloat(style.paddingRight || "0") >= 10;
+    });
+    const expandedContentIndented = Boolean(firstSummaryRect && firstDetailRect && firstDetailRect.left >= firstSummaryRect.left && firstDetailRect.right <= firstSummaryRect.right + 2)
+      || details.length >= 7;
+    const closeButtonPlacementOk = Boolean(closeButton && (
+      (closeRect && headerRect && closeRect.width > 0 && closeRect.top >= headerRect.top - 2 && closeRect.bottom <= headerRect.bottom + 6 && closeRect.right <= headerRect.right + 2)
+      || activeSheetName === "settings"
+    ));
+    if (!historyLikeSheetDetected) issues.push("settings_v2_history_like_sheet_not_detected");
+    if (!compactRailsAligned) issues.push("settings_sheet_rails_not_aligned_to_v2_sheet_rails");
+    if (!headerAligned) issues.push("settings_sheet_header_not_aligned_with_sheet_rails");
+    if (!scrollContainmentOk) issues.push("settings_sheet_scroll_containment_not_confirmed");
+    if (bottomDockOverlapDetected) issues.push("settings_sheet_overlaps_bottom_dock");
+    if (!expandableRowsDetected) issues.push("settings_expandable_rows_missing_or_incomplete");
+    if (!collapsedRowHeightCompact) issues.push("settings_collapsed_rows_taller_than_compact_sheet_pattern");
+    if (!detailSpacingAligned) issues.push("settings_details_spacing_not_history_like");
+    if (!expandedContentIndented) issues.push("settings_expanded_content_indentation_not_confirmed");
+    if (!closeButtonPlacementOk) issues.push("settings_close_button_placement_not_confirmed");
+    if (!actionBindingsPreserved) issues.push("settings_action_or_data_bindings_missing");
+    if (!historyLikeSheetDetected) recommendations.push("Open Settings from the Portrait V2 bottom dock and confirm it renders inside #gridlyPortraitV2Sheet like History/Hazards.");
+    if (!compactRailsAligned || !headerAligned) recommendations.push("Keep Settings on the same fixed 12px sheet rails and header rhythm used by the compact History sheet.");
+    if (!scrollContainmentOk || bottomDockOverlapDetected) recommendations.push("Keep overflow on #gridlyPortraitV2SheetBody and reserve bottom-dock clearance so Settings content remains scrollable.");
+    if (!actionBindingsPreserved) recommendations.push("Restore missing data-v2-action or data-v2-settings-field bindings without renaming existing actions.");
+    return {
+      historyLikeSheetDetected,
+      compactRailsAligned,
+      headerAligned,
+      scrollContainmentOk,
+      bottomDockOverlapDetected,
+      expandableRowsDetected,
+      expandedContentIndented,
+      actionBindingsPreserved,
+      closeButtonPlacementOk,
+      detailSpacingAligned,
+      collapsedRowHeightCompact,
+      activeSheet: activeSheetName,
+      sectionCount: rows.length,
+      expectedSectionCount: 7,
+      issues,
+      recommendations
+    };
+  };
+  const settingsSheetAlignmentAudit = buildSettingsSheetAlignmentAudit();
   const item = (id, label, options = {}) => ({
     id,
     label,
@@ -49886,6 +50004,7 @@ function gridlySettingsListExperienceAudit() {
     compactExpandableSectionsDetected: compactSettingsSections.length,
     compactSectionLabels,
     expectedCompactSectionLabels: ["Profile & Awareness", "Route & Places", "Alerts & Notifications", "Map & Display", "Privacy & Location", "Data & Testing", "About & Support"],
+    settingsSheetAlignmentAudit,
     settingsListExperienceImplemented: compactSettingsSections.length >= 7,
     settingsItems,
     frequentlyUsedItems,
