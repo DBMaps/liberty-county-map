@@ -16766,12 +16766,12 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-c
 }
 
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments {
-  top: 158px;
+  top: 164px;
   padding: 3px;
   gap: 3px;
-  border-color: rgba(164, 201, 243, 0.13);
-  background: rgba(6, 14, 24, 0.42);
-  box-shadow: 0 5px 12px rgba(2, 8, 18, 0.18);
+  border-color: rgba(164, 201, 243, 0.1);
+  background: rgba(6, 14, 24, 0.36);
+  box-shadow: 0 5px 12px rgba(2, 8, 18, 0.14);
 }
 
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button {
@@ -16782,9 +16782,9 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button {
 }
 
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button.is-active {
-  background: rgba(96, 165, 250, 0.18);
-  color: rgba(239, 248, 255, 0.92);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  background: rgba(96, 165, 250, 0.17);
+  color: rgba(239, 248, 255, 0.94);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
@@ -16840,6 +16840,6 @@ body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV
 }
 
 body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 .gridly-v2-segments {
-  background: rgba(6, 14, 24, 0.42);
-  box-shadow: 0 5px 12px rgba(2, 8, 18, 0.18);
+  background: rgba(6, 14, 24, 0.36);
+  box-shadow: 0 5px 12px rgba(2, 8, 18, 0.14);
 }
