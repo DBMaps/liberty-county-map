@@ -14762,8 +14762,8 @@ function openAlertsSurfaceFromDock() {
       const collectRailLabelValues = (obj, paths = []) => paths.map(path => readPathValue(obj, path)).filter(value => cleanDisplayValue(text(value)));
       const GRIDLY_LOCAL_CROSSING_CONTEXT = {
         "762790L": {
-          secondaryLabel: "Waco",
-          displayName: "US 90 and Waco"
+          secondaryLabel: "Waco Street",
+          displayName: "US 90 & Waco Street"
         }
       };
       const resolveRailCrossingPair = (alert = {}) => {
@@ -28379,10 +28379,67 @@ function isGridlyConsumerCrossingLocationTokenUseful(value = "", primaryRoad = "
   return true;
 }
 
+function getGridlyCrossingSpecificityId(record = {}) {
+  return String(
+    record?.crossingId || record?.crossing_id || record?.crossingID || record?.crossing_id_raw ||
+    record?.raw?.crossingId || record?.raw?.crossing_id || record?.raw?.crossingID ||
+    record?.source?.crossingId || record?.source?.crossing_id || record?.source?.crossingID ||
+    record?.latestReport?.crossingId || record?.latestReport?.crossing_id ||
+    record?.latestReport?.raw?.crossingId || record?.latestReport?.raw?.crossing_id ||
+    record?.metadata?.crossingId || record?.metadata?.crossing_id || record?.crossingMetadata?.crossingId ||
+    ""
+  ).trim();
+}
+
+function getGridlyCrossingRecordId(crossingRecord = {}) {
+  const props = crossingRecord?.props || crossingRecord?.properties || {};
+  return String(crossingRecord?.id || crossingRecord?.crossingId || crossingRecord?.crossing_id || props?.crossingid || props?.crossing_id || props?.crossing || "").trim();
+}
+
+function getGridlyCrossingSpecificityCoordinates(record = {}) {
+  const numberAt = (obj, paths = []) => {
+    for (const path of paths) {
+      const value = readGridlyCrossingSpecificityPath(obj, path);
+      const numeric = Number(value);
+      if (Number.isFinite(numeric)) return numeric;
+    }
+    return null;
+  };
+  const lat = numberAt(record, [
+    "lat", "latitude", "rawLat", "raw.lat", "raw.latitude", "source.lat", "source.latitude",
+    "latestReport.lat", "latestReport.latitude", "latestReport.raw.lat", "latestReport.raw.latitude",
+    "metadata.lat", "metadata.latitude", "crossingMetadata.lat", "crossingMetadata.latitude"
+  ]);
+  const lng = numberAt(record, [
+    "lng", "lon", "longitude", "rawLng", "raw.lng", "raw.lon", "raw.longitude", "source.lng", "source.lon", "source.longitude",
+    "latestReport.lng", "latestReport.lon", "latestReport.longitude", "latestReport.raw.lng", "latestReport.raw.lon", "latestReport.raw.longitude",
+    "metadata.lng", "metadata.lon", "metadata.longitude", "crossingMetadata.lng", "crossingMetadata.lon", "crossingMetadata.longitude"
+  ]);
+  return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
+}
+
 function getGridlyCrossingRecordForSpecificLocation(record = {}) {
-  const crossingId = String(record?.crossingId || record?.crossing_id || record?.raw?.crossingId || record?.raw?.crossing_id || record?.source?.crossingId || record?.source?.crossing_id || record?.latestReport?.crossingId || record?.latestReport?.crossing_id || "").trim();
-  if (!crossingId || !Array.isArray(crossings)) return null;
-  return crossings.find((crossing) => String(crossing?.id || crossing?.crossingId || crossing?.crossing_id || crossing?.props?.crossingid || crossing?.properties?.crossingid || "").trim() === crossingId) || null;
+  if (!Array.isArray(crossings)) return null;
+  const crossingId = getGridlyCrossingSpecificityId(record);
+  if (crossingId) {
+    const direct = crossings.find((crossing) => getGridlyCrossingRecordId(crossing) === crossingId);
+    if (direct) return direct;
+  }
+  const coords = getGridlyCrossingSpecificityCoordinates(record);
+  if (!coords) return null;
+  const distanceBetween = (aLat, aLng, bLat, bLng) => {
+    if (typeof getDistanceMiles === "function") return getDistanceMiles(aLat, aLng, bLat, bLng);
+    const toRad = (degrees) => degrees * Math.PI / 180;
+    const dLat = toRad(bLat - aLat);
+    const dLng = toRad(bLng - aLng);
+    const h = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(aLat)) * Math.cos(toRad(bLat)) * Math.sin(dLng / 2) ** 2;
+    return 3958.8 * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+  };
+  const nearest = crossings
+    .map((crossing) => ({ crossing, distance: distanceBetween(coords.lat, coords.lng, Number(crossing?.lat), Number(crossing?.lng)) }))
+    .filter((entry) => Number.isFinite(entry.distance))
+    .sort((a, b) => a.distance - b.distance)[0];
+  return nearest && nearest.distance <= 0.08 ? nearest.crossing : null;
 }
 
 function readGridlyCrossingSpecificityPath(record = {}, path = "") {
@@ -28411,7 +28468,7 @@ function splitGridlyCrossingCompositeLocation(value = "") {
 function getGridlySpecificCrossingLocation(record = {}, options = {}) {
   const crossingRecord = getGridlyCrossingRecordForSpecificLocation(record);
   const props = crossingRecord?.props || crossingRecord?.properties || {};
-  const crossingId = String(record?.crossingId || record?.crossing_id || record?.raw?.crossingId || record?.raw?.crossing_id || record?.source?.crossingId || record?.source?.crossing_id || "").trim();
+  const crossingId = getGridlyCrossingSpecificityId(record) || getGridlyCrossingRecordId(crossingRecord);
   const localContext = {
     "762790L": { secondaryLabel: "Waco Street", displayName: "US 90 & Waco Street" }
   }[crossingId] || null;
@@ -28449,9 +28506,9 @@ function getGridlySpecificCrossingLocation(record = {}, options = {}) {
   const references = [
     ...getGridlyCrossingSpecificityTextValues(record, referencePaths),
     ...crossingRecordReferences,
+    localContext?.secondaryLabel,
     ...parsedCrossingParts.slice(primaryRoad ? 0 : 1),
-    ...crossingNameCandidates,
-    localContext?.secondaryLabel
+    ...crossingNameCandidates
   ].map(gridlyCleanConsumerCrossingLocationToken)
     .filter((value) => isGridlyConsumerCrossingLocationTokenUseful(value, primaryRoad))
     .filter((value, index, arr) => arr.findIndex((candidate) => gridlyCrossingLocationCompareToken(candidate) === gridlyCrossingLocationCompareToken(value)) === index);
@@ -31213,6 +31270,38 @@ function gridlyV232SelectRoadBySourcePriority({ visibleAlertCandidates = [], all
   };
 }
 
+function gridlyResolveSpecificCrossingLocationForNarrative(options = {}, snapshot = {}, selectedRoad = "") {
+  if (typeof getGridlySpecificCrossingLocation !== "function") return null;
+  const records = [];
+  const addRecord = (record) => {
+    if (record && typeof record === "object" && !records.includes(record)) records.push(record);
+  };
+  addRecord(options?.activeReport);
+  addRecord(options?.activeHazard);
+  (Array.isArray(options?.activeReports) ? options.activeReports : []).forEach(addRecord);
+  (Array.isArray(options?.activeHazards) ? options.activeHazards : []).forEach(addRecord);
+  (Array.isArray(snapshot?.communityAwarenessSummary?.activeReportsInArea) ? snapshot.communityAwarenessSummary.activeReportsInArea : []).forEach(addRecord);
+  (Array.isArray(snapshot?.communityAwarenessSummary?.activeHazardsInArea) ? snapshot.communityAwarenessSummary.activeHazardsInArea : []).forEach(addRecord);
+  (Array.isArray(typeof activeReports !== "undefined" ? activeReports : null) ? activeReports : []).forEach(addRecord);
+  (Array.isArray(typeof activeHazards !== "undefined" ? activeHazards : null) ? activeHazards : []).forEach(addRecord);
+  (Array.isArray(typeof window !== "undefined" ? window.__gridlyLatestAlertsForRender : null) ? window.__gridlyLatestAlertsForRender : []).forEach(addRecord);
+  const selectedRoadToken = gridlyCrossingLocationCompareToken(selectedRoad);
+  for (const record of records) {
+    const categoryText = [
+      record?.category, record?.type, record?.hazardType, record?.hazard_type, record?.reportType, record?.report_type,
+      record?.title, record?.headline, record?.resolvedHeadline, record?.localizedSummary, record?.crossingId, record?.crossing_id,
+      record?.crossingName, record?.crossingRoad
+    ].map((value) => String(value || "")).join(" ");
+    const crossingRelated = (typeof isGridlyAlertRailOrCrossingRelated === "function" && isGridlyAlertRailOrCrossingRelated(record)) || /rail|train|crossing|blocked_crossing|rail_blockage/i.test(categoryText);
+    if (!crossingRelated) continue;
+    const specificLocation = getGridlySpecificCrossingLocation(record);
+    if (!specificLocation?.headlineLocation || ["none", "fallback_context"].includes(String(specificLocation.specificity || ""))) continue;
+    if (selectedRoadToken && specificLocation.primaryRoad && gridlyCrossingLocationCompareToken(specificLocation.primaryRoad) !== selectedRoadToken) continue;
+    return { ...specificLocation, record };
+  }
+  return null;
+}
+
 function buildGridlyNarrativePromotionPrototype(options = {}) {
   const intel = options?.intel || {};
   const pulseModel = options?.pulseModel || {};
@@ -31263,27 +31352,43 @@ function buildGridlyNarrativePromotionPrototype(options = {}) {
   const selectedCondition = standardizedCondition.label;
   const roadSelection = gridlyV232SelectRoadBySourcePriority({ visibleAlertCandidates, allCandidates, directRoadFieldCandidates });
   const selectedRoad = roadSelection.selectedRoad || "";
+  const specificCrossingLocation = activeConditionPresent && gridlyV238IsBlockedCrossingCondition(selectedCondition)
+    ? gridlyResolveSpecificCrossingLocationForNarrative(options, context.snapshot || {}, selectedRoad)
+    : null;
+  const narrativeRoad = specificCrossingLocation?.headlineLocation || selectedRoad;
   const conditionType = activeConditionPresent && selectedCondition ? standardizedCondition.conditionType : "";
   const selectedPattern = activeConditionPresent && selectedCondition
-    ? (selectedRoad ? standardizedCondition.selectedPattern : standardizedCondition.fallbackPattern)
+    ? (specificCrossingLocation?.headlineLocation
+      ? "Train blocking crossing on <road> at <cross-street>"
+      : (selectedRoad ? standardizedCondition.selectedPattern : standardizedCondition.fallbackPattern))
     : "";
-  const fallbackUsed = Boolean(activeConditionPresent && selectedCondition && !selectedRoad);
+  const fallbackUsed = Boolean(activeConditionPresent && selectedCondition && !narrativeRoad);
   let promotedNarrative = "";
   if (activeConditionPresent && selectedCondition) {
-    promotedNarrative = gridlyV238FormatNarrativePromotionCopy(selectedCondition, selectedRoad, selectedAwarenessArea, conditionType);
+    promotedNarrative = specificCrossingLocation?.headlineLocation
+      ? `Train blocking crossing on ${specificCrossingLocation.headlineLocation}`
+      : gridlyV238FormatNarrativePromotionCopy(selectedCondition, selectedRoad, selectedAwarenessArea, conditionType);
   }
   return {
     activeConditionPresent,
     selectedCondition: activeConditionPresent ? selectedCondition : "",
     conditionType,
     selectedPattern,
-    selectedRoad: activeConditionPresent ? selectedRoad : "",
+    selectedRoad: activeConditionPresent ? (specificCrossingLocation?.primaryRoad || selectedRoad) : "",
     selectedAwarenessArea,
     promotedNarrative,
+    specificCrossingLocation: specificCrossingLocation ? {
+      headlineLocation: specificCrossingLocation.headlineLocation,
+      locationLineLabel: specificCrossingLocation.locationLineLabel,
+      primaryRoad: specificCrossingLocation.primaryRoad,
+      referenceRoad: specificCrossingLocation.referenceRoad,
+      specificity: specificCrossingLocation.specificity,
+      source: specificCrossingLocation.source
+    } : null,
     fallbackUsed,
     patternReason: activeConditionPresent && selectedCondition ? standardizedCondition.patternReason : "No active condition was available for narrative promotion.",
-    sourceUsed: promotedNarrative ? (selectedRoad ? roadSelection.selectedRoadSource : (selectedCandidate?.source && selectedCandidate.source !== "readOnly.condition+road+awarenessAreaCandidate" ? selectedCandidate.source : "fallback_travel_wording")) : "none",
-    selectedRoadSource: activeConditionPresent && selectedRoad ? roadSelection.selectedRoadSource : "fallback_travel_wording_no_road",
+    sourceUsed: promotedNarrative ? (specificCrossingLocation?.source ? `crossing_specificity:${specificCrossingLocation.source}` : (selectedRoad ? roadSelection.selectedRoadSource : (selectedCandidate?.source && selectedCandidate.source !== "readOnly.condition+road+awarenessAreaCandidate" ? selectedCandidate.source : "fallback_travel_wording"))) : "none",
+    selectedRoadSource: activeConditionPresent && (specificCrossingLocation?.primaryRoad || selectedRoad) ? (specificCrossingLocation?.source ? `crossing_specificity:${specificCrossingLocation.source}` : roadSelection.selectedRoadSource) : "fallback_travel_wording_no_road",
     roadCandidateSources: roadSelection.roadCandidateSources,
     visibleAlertTextSamples: roadSelection.visibleAlertTextSamples,
     extractedRoadCandidates: roadSelection.extractedRoadCandidates,
@@ -31302,6 +31407,7 @@ function gridlyNarrativePromotionPrototypeAudit(options = {}) {
     selectedRoad: audit.selectedRoad,
     selectedAwarenessArea: audit.selectedAwarenessArea,
     promotedNarrative: audit.promotedNarrative,
+    specificCrossingLocation: audit.specificCrossingLocation || null,
     fallbackUsed: audit.fallbackUsed,
     patternReason: audit.patternReason,
     sourceUsed: audit.sourceUsed,
