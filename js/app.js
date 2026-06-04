@@ -26160,7 +26160,7 @@ function renderCrossings(reason = "unspecified", options = {}) {
         ${markerMinutes ? `<span class="gridly-marker-minutes">${markerMinutes}</span>` : ""}
       </div>`,
       iconSize: [72, 44],
-      iconAnchor: [24, 22]
+      iconAnchor: [8, 8]
     });
 
     const marker = L.marker([crossing.lat, crossing.lng], { icon, incidentId: `rail-${crossing.id}`, crossingId: String(crossing.id) })
