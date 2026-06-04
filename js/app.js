@@ -5929,6 +5929,15 @@ let gridlyAlertAreaFilterState = {
   filteredOutRecords: [],
   lastUpdatedAt: null
 };
+let gridlyCrossingAreaFilterState = {
+  applied: false,
+  selectedMode: "unknown",
+  selectedLabel: "",
+  filteredOutRecords: [],
+  activeInSelectedArea: [],
+  activeOutsideSelectedArea: [],
+  lastUpdatedAt: null
+};
 let unifiedIncidentLayer;
 let userLocation = null;
 let userMarker = null;
@@ -17426,6 +17435,9 @@ function syncGridlyAwarenessAreaSurfacesImmediately(reason = "awareness-area-cha
   if (typeof refreshPortraitV2LocalizedIntelligence === "function" && options?.refreshPortrait !== false) {
     refreshPortraitV2LocalizedIntelligence();
   }
+  if (typeof renderUnifiedIncidents === "function" && options?.refreshMapMarkers !== false) {
+    renderUnifiedIncidents(`awareness-area-sync:${reason}`);
+  }
 
   gridlyAwarenessAreaImmediateSyncState = {
     lastReason: reason,
@@ -21377,6 +21389,70 @@ function gridlyFilterAlertRecordsBySelectedAwarenessArea(records = [], source = 
   return filtered;
 }
 
+function isGridlyCrossingReportRecord(record = {}) {
+  if (!record || typeof record !== "object") return false;
+  if (record?.crossingId || record?.crossing_id || record?.crossing_id_text || record?.crossingName || record?.crossing_name) return true;
+  const reportKind = String(record?.reportKind || record?.report_kind || record?.kind || "").toLowerCase();
+  const typeText = String(record?.type || record?.report_type || record?.category || record?.raw?.type || record?.raw?.report_type || "").toLowerCase();
+  const text = [reportKind, typeText, record?.title, record?.headline, record?.detail, record?.description, record?.raw?.title, record?.raw?.detail].filter(Boolean).join(" ").toLowerCase();
+  if (reportKind === "hazard" || reportKind === "road" || typeText === "other_hazard" || typeText === "hazard_cleared") return false;
+  return /\b(?:rail|train|crossing|blocked)\b/.test(text);
+}
+
+function gridlyCrossingAreaFilterRecordSummary(record = {}, source = "crossingReport") {
+  return {
+    ...gridlyAlertAreaFilterRecordSummary(record, source),
+    crossingId: record?.crossingId || record?.crossing_id || record?.raw?.crossingId || record?.raw?.crossing_id || null,
+    crossingName: record?.crossingName || record?.crossing_name || record?.crossing || record?.raw?.crossingName || record?.raw?.crossing_name || "",
+    lifecycleState: typeof getIncidentLifecycleState === "function" ? getIncidentLifecycleState(record) : (record?.status || "unknown")
+  };
+}
+
+function gridlyGetCrossingReportAreaFilter(records = [], source = "activeReports") {
+  const filter = gridlyGetSelectedAlertAreaFilter();
+  const crossingReports = gridlyDiagnosticArray(records).filter(isGridlyCrossingReportRecord);
+  const nowIso = new Date().toISOString();
+  const inSelectedArea = [];
+  const outsideSelectedArea = [];
+
+  crossingReports.forEach((record) => {
+    let inArea = filter.mode === "county";
+    if (filter.mode !== "county") {
+      try { inArea = isGridlyRecordInAwarenessArea(record, filter.area); } catch (_error) { inArea = false; }
+    }
+    (inArea ? inSelectedArea : outsideSelectedArea).push(record);
+  });
+
+  const filteredOutRecords = outsideSelectedArea.map((record) => gridlyCrossingAreaFilterRecordSummary(record, source));
+  gridlyCrossingAreaFilterState = {
+    applied: true,
+    selectedMode: filter.mode,
+    selectedLabel: filter.label,
+    filteredOutRecords,
+    activeInSelectedArea: inSelectedArea.map((record) => gridlyCrossingAreaFilterRecordSummary(record, source)),
+    activeOutsideSelectedArea: filteredOutRecords,
+    lastUpdatedAt: nowIso
+  };
+
+  return {
+    applied: true,
+    selectedMode: filter.mode,
+    selectedLabel: filter.label,
+    selectedArea: filter.area,
+    crossingReports,
+    inSelectedArea,
+    outsideSelectedArea,
+    filteredRecords: inSelectedArea,
+    filteredOutRecords,
+    filteredOutCount: filteredOutRecords.length,
+    pass: true
+  };
+}
+
+function gridlyFilterCrossingReportsBySelectedAwarenessArea(records = [], source = "activeReports") {
+  return gridlyGetCrossingReportAreaFilter(records, source).filteredRecords;
+}
+
 function gridlyFilterAlertCorridorsBySelectedAwarenessArea(corridors = []) {
   const filter = gridlyGetSelectedAlertAreaFilter();
   const safeCorridors = gridlyDiagnosticArray(corridors);
@@ -21494,6 +21570,9 @@ function buildGridlyCommunityAwarenessIntelligenceSummary(options = {}) {
 
   const activeHazardsInArea = activeHazardItems.filter((record) => filterAreaRecord(record, "activeHazards"));
   const activeReportsInArea = activeReportItems.filter((record) => filterAreaRecord(record, "activeReports"));
+  const crossingAreaFilter = typeof gridlyGetCrossingReportAreaFilter === "function"
+    ? gridlyGetCrossingReportAreaFilter(activeReportItems, "communityAwarenessSummary.activeReports")
+    : { applied: false, pass: true, filteredOutCount: 0, filteredOutRecords: [], inSelectedArea: activeReportsInArea.filter(isGridlyCrossingReportRecord), outsideSelectedArea: [] };
   const communityActivityCount = Number(options?.communityActivityCount ?? 0) || 0;
   const activityLevel = getGridlyAwarenessIntelligenceActivityLevel({ activeHazardsInArea, activeReportsInArea });
   const awarenessAreaName = selectedArea.label || selectedArea.storageValue || "Liberty County";
@@ -21509,6 +21588,12 @@ function buildGridlyCommunityAwarenessIntelligenceSummary(options = {}) {
     crossingsInArea,
     activeHazardsInArea,
     activeReportsInArea,
+    crossingAreaFilterApplied: Boolean(crossingAreaFilter.applied),
+    crossingAreaFilterPass: Boolean(crossingAreaFilter.pass),
+    crossingAreaFilteredOutCount: Number(crossingAreaFilter.filteredOutCount || 0),
+    crossingAreaFilteredOutRecords: crossingAreaFilter.filteredOutRecords || [],
+    activeCrossingReportsInSelectedArea: crossingAreaFilter.inSelectedArea || [],
+    activeCrossingReportsOutsideSelectedArea: crossingAreaFilter.outsideSelectedArea || [],
     activityLevel,
     awarenessStatus,
     awarenessStatusReason,
@@ -23800,6 +23885,24 @@ async function gridlyClearedHazardPersistenceAudit(options = {}) {
   const alertAreaFilteredOutRecords = gridlyDiagnosticArray(gridlyAlertAreaFilterState?.filteredOutRecords);
   const selectedAwarenessAreaMode = gridlyAlertAreaFilterState?.selectedMode || (currentAwarenessAreaRaw?.countyWide || currentAwarenessAreaRaw?.fallback ? "county" : "town");
   const selectedAwarenessAreaLabel = gridlyAlertAreaFilterState?.selectedLabel || currentAwarenessAreaRaw?.label || GRIDLY_COUNTY_WIDE_AWARENESS_LABEL;
+  const activeCrossingReportRecords = safeActiveReports.filter((record) => isGridlyCrossingReportRecord(record) && (typeof getIncidentLifecycleState !== "function" || getIncidentLifecycleState(record) === "active"));
+  const crossingAreaFilter = typeof gridlyGetCrossingReportAreaFilter === "function"
+    ? gridlyGetCrossingReportAreaFilter(activeCrossingReportRecords, "clearedHazardPersistenceAudit.activeReports")
+    : { applied: false, inSelectedArea: activeCrossingReportRecords, outsideSelectedArea: [], filteredOutRecords: [], filteredOutCount: 0 };
+  const crossingOutsideContributionRecords = gridlyDiagnosticArray(crossingAreaFilter.outsideSelectedArea).map((record) => gridlyCrossingAreaFilterRecordSummary(record, "activeReportsOutsideSelectedArea")).map((summary, index) => {
+    const record = crossingAreaFilter.outsideSelectedArea[index];
+    return {
+      ...summary,
+      appearsInUnifiedIncidents: appears(record, "unifiedIncidents", unifiedIncidents),
+      appearsInAlerts: appears(record, "alerts", alertRecords),
+      appearsOnMap: appears(record, "markers", renderedMarkers),
+      contributesToTopAwareness: Boolean(gridlyCommunityPulseAuditState?.activeAwareness?.activeAwarenessSamples?.some?.((sample) => sample?.sourceKind === "activeReport" && (sample?.resolvedLocationLabel === summary.area || sample?.reusedAlertText === summary.title))),
+      contributesToAwarenessCard: Boolean(gridlyCommunityPulseAuditState?.communityAwarenessSummary?.activeReportsInArea?.some?.((item) => gridlyClearedHazardPersistenceId(item) === gridlyClearedHazardPersistenceId(record)))
+    };
+  });
+  const crossingAreaFilteredOutRecords = crossingOutsideContributionRecords.length ? crossingOutsideContributionRecords : gridlyDiagnosticArray(crossingAreaFilter.filteredOutRecords);
+  const crossingAreaFilterApplied = Boolean(crossingAreaFilter.applied);
+  const crossingAreaFilterPass = crossingAreaFilterApplied && crossingOutsideContributionRecords.every((record) => !record.appearsInUnifiedIncidents && !record.appearsInAlerts && !record.appearsOnMap && !record.contributesToTopAwareness && !record.contributesToAwarenessCard);
   const clearedRehydrationGuardPass = safeRecentlyCleared.every((clear) => !appears(clear, "activeHazards", safeActiveHazards) && !appears(clear, "unifiedIncidents", unifiedIncidents) && !appears(clear, "alerts", alertRecords) && !appears(clear, "markers", renderedMarkers));
   const alertAreaFilterPass = alertAreaFilterApplied && awarenessAreaMismatchRecords.length === 0;
 
@@ -23825,6 +23928,12 @@ async function gridlyClearedHazardPersistenceAudit(options = {}) {
     alertAreaFilterApplied,
     alertAreaFilteredOutCount: alertAreaFilteredOutRecords.length,
     alertAreaFilteredOutRecords,
+    crossingAreaFilterApplied,
+    crossingAreaFilterPass,
+    crossingAreaFilteredOutCount: crossingAreaFilteredOutRecords.length,
+    crossingAreaFilteredOutRecords,
+    activeCrossingReportsInSelectedArea: gridlyDiagnosticArray(crossingAreaFilter.inSelectedArea).map((record) => gridlyCrossingAreaFilterRecordSummary(record, "activeReportsInSelectedArea")),
+    activeCrossingReportsOutsideSelectedArea: crossingAreaFilteredOutRecords,
     selectedAwarenessAreaMode,
     selectedAwarenessAreaLabel,
     clearedRehydrationGuardPass,
@@ -27987,7 +28096,11 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
   const hazardItems = Array.isArray(options?.activeHazards)
     ? options.activeHazards
     : (Array.isArray(typeof activeHazards !== "undefined" ? activeHazards : null) ? activeHazards : []);
-  const activeReportItems = reportItems.slice(0, sourceLimit).filter(isGridlyLightweightActiveItem);
+  const rawActiveReportItems = reportItems.slice(0, sourceLimit).filter(isGridlyLightweightActiveItem);
+  const crossingAreaFilter = typeof gridlyGetCrossingReportAreaFilter === "function"
+    ? gridlyGetCrossingReportAreaFilter(rawActiveReportItems, "lightweightActiveAwareness.activeReports")
+    : { applied: false, pass: true, filteredOutCount: 0, filteredOutRecords: [], inSelectedArea: rawActiveReportItems, outsideSelectedArea: [], selectedMode: "unknown", selectedLabel: "" };
+  const activeReportItems = rawActiveReportItems.filter((report) => !isGridlyCrossingReportRecord(report) || crossingAreaFilter.inSelectedArea.includes(report));
   const activeHazardItems = hazardItems.slice(0, sourceLimit).filter(isGridlyLightweightActiveItem);
   const seen = new Set();
   const activeItems = [];
@@ -28161,6 +28274,12 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
     topAwarenessCountFallbackReason: topAwarenessCountAudit.fallbackReason,
     activeHazardCount,
     activeReportCount,
+    crossingAreaFilterApplied: Boolean(crossingAreaFilter.applied),
+    crossingAreaFilterPass: Boolean(crossingAreaFilter.pass),
+    crossingAreaFilteredOutCount: Number(crossingAreaFilter.filteredOutCount || 0),
+    crossingAreaFilteredOutRecords: crossingAreaFilter.filteredOutRecords || [],
+    activeCrossingReportsInSelectedArea: Number(crossingAreaFilter.inSelectedArea?.length || 0),
+    activeCrossingReportsOutsideSelectedArea: Number(crossingAreaFilter.outsideSelectedArea?.length || 0),
     renderedMarkerCount,
     activeCategories,
     topCategory,
@@ -29111,6 +29230,12 @@ function getGridlyV227AwarenessSnapshot(options = {}) {
     activeAwareness,
     communityAwarenessSummary,
     mobileSummary,
+    crossingAreaFilterApplied: Boolean(activeAwareness?.crossingAreaFilterApplied || communityAwarenessSummary?.crossingAreaFilterApplied),
+    crossingAreaFilterPass: Boolean((activeAwareness?.crossingAreaFilterPass ?? true) && (communityAwarenessSummary?.crossingAreaFilterPass ?? true)),
+    crossingAreaFilteredOutCount: Number(activeAwareness?.crossingAreaFilteredOutCount ?? communityAwarenessSummary?.crossingAreaFilteredOutCount ?? 0),
+    crossingAreaFilteredOutRecords: activeAwareness?.crossingAreaFilteredOutRecords || communityAwarenessSummary?.crossingAreaFilteredOutRecords || [],
+    activeCrossingReportsInSelectedArea: activeAwareness?.activeCrossingReportsInSelectedArea ?? communityAwarenessSummary?.activeCrossingReportsInSelectedArea ?? 0,
+    activeCrossingReportsOutsideSelectedArea: activeAwareness?.activeCrossingReportsOutsideSelectedArea ?? communityAwarenessSummary?.activeCrossingReportsOutsideSelectedArea ?? 0,
     visibleText: { topPrimary, topSecondary, topMicroline, pulseHeadline, pulseSubline, commandCard },
     visibility: {
       topStatusPrimaryVisible: getGridlyV227Visibility("gridlyV2TopStatusPrimary"),
@@ -38770,7 +38895,15 @@ exposeGridlyAuditHelper("gridlyAuditPerformanceReview", gridlyAuditPerformanceRe
 
 
 function getUnifiedIncidents() {
-  const railIncidents = getConsolidatedIncidents().map((incident) => {
+  const railIncidentSource = getConsolidatedIncidents();
+  const railAreaFilter = typeof gridlyGetCrossingReportAreaFilter === "function"
+    ? gridlyGetCrossingReportAreaFilter(railIncidentSource.map((incident) => incident.latestReport).filter(Boolean), "unifiedIncidents.rail")
+    : null;
+  const railReportsInSelectedArea = new Set((railAreaFilter?.inSelectedArea || []).filter(Boolean));
+  const filteredRailIncidentSource = railAreaFilter?.applied
+    ? railIncidentSource.filter((incident) => railReportsInSelectedArea.has(incident.latestReport))
+    : railIncidentSource;
+  const railIncidents = filteredRailIncidentSource.map((incident) => {
     const latest = incident.latestReport;
     return normalizeUnifiedIncident({
       id: `rail-${incident.crossingId}`,
