@@ -5918,6 +5918,17 @@ let crossings = [];
 let activeReports = [];
 let activeHazards = [];
 let recentlyClearedRoadHazards = [];
+let gridlyClearedHazardRehydrationGuardState = {
+  suppressedRecords: [],
+  lastUpdatedAt: null
+};
+let gridlyAlertAreaFilterState = {
+  applied: false,
+  selectedMode: "unknown",
+  selectedLabel: "",
+  filteredOutRecords: [],
+  lastUpdatedAt: null
+};
 let unifiedIncidentLayer;
 let userLocation = null;
 let userMarker = null;
@@ -21311,6 +21322,102 @@ function isGridlyRecordInAwarenessArea(record = {}, area = getGridlySelectedAwar
   return getDistanceMiles(area.lat, area.lng, coords.lat, coords.lng) <= radiusMiles;
 }
 
+function gridlyGetSelectedAlertAreaFilter() {
+  const area = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  const countyMode = !area || area.countyWide === true || area.fallback === true;
+  return {
+    area,
+    applied: true,
+    mode: countyMode ? "county" : "town",
+    label: area?.label || GRIDLY_COUNTY_WIDE_AWARENESS_LABEL
+  };
+}
+
+function gridlyAlertAreaFilterRecordSummary(record = {}, source = "alert") {
+  const coords = typeof getGridlyAwarenessIntelligenceRecordCoordinate === "function"
+    ? getGridlyAwarenessIntelligenceRecordCoordinate(record)
+    : gridlyCoordinateFromRecord(record);
+  return {
+    source,
+    id: record?.id || record?.report_id || record?.reportId || record?.incidentId || null,
+    type: record?.type || record?.report_type || record?.category || null,
+    title: record?.title || record?.localizedSummary || record?.description || "",
+    area: record?.area || record?.city || record?.town || record?.locationName || record?.raw?.area || record?.raw?.city || "",
+    coordinate: coords ? { lat: Number(coords.lat), lng: Number(coords.lng) } : null
+  };
+}
+
+function gridlyFilterAlertRecordsBySelectedAwarenessArea(records = [], source = "alerts") {
+  const filter = gridlyGetSelectedAlertAreaFilter();
+  const safeRecords = gridlyDiagnosticArray(records);
+  if (filter.mode === "county") {
+    gridlyAlertAreaFilterState = {
+      applied: true,
+      selectedMode: filter.mode,
+      selectedLabel: filter.label,
+      filteredOutRecords: [],
+      lastUpdatedAt: new Date().toISOString()
+    };
+    return safeRecords;
+  }
+  const filteredOutRecords = [];
+  const filtered = safeRecords.filter((record) => {
+    let inArea = false;
+    try { inArea = isGridlyRecordInAwarenessArea(record, filter.area); } catch (_error) { inArea = false; }
+    if (!inArea) filteredOutRecords.push(gridlyAlertAreaFilterRecordSummary(record, source));
+    return inArea;
+  });
+  gridlyAlertAreaFilterState = {
+    applied: true,
+    selectedMode: filter.mode,
+    selectedLabel: filter.label,
+    filteredOutRecords,
+    lastUpdatedAt: new Date().toISOString()
+  };
+  return filtered;
+}
+
+function gridlyFilterAlertCorridorsBySelectedAwarenessArea(corridors = []) {
+  const filter = gridlyGetSelectedAlertAreaFilter();
+  const safeCorridors = gridlyDiagnosticArray(corridors);
+  if (filter.mode === "county") {
+    gridlyAlertAreaFilterState = {
+      applied: true,
+      selectedMode: filter.mode,
+      selectedLabel: filter.label,
+      filteredOutRecords: [],
+      lastUpdatedAt: new Date().toISOString()
+    };
+    return safeCorridors;
+  }
+  const filteredOutRecords = [];
+  const filteredCorridors = safeCorridors
+    .map((corridor) => {
+      const items = gridlyDiagnosticArray(corridor?.items);
+      const keptItems = items.filter((item) => {
+        const record = item?.incident || item?.raw || item;
+        let inArea = false;
+        try { inArea = isGridlyRecordInAwarenessArea(record, filter.area); } catch (_error) { inArea = false; }
+        if (!inArea) filteredOutRecords.push(gridlyAlertAreaFilterRecordSummary(record, "alertCorridor"));
+        return inArea;
+      });
+      return {
+        ...corridor,
+        items: keptItems,
+        routeImpactCount: keptItems.filter((item) => item?.routeRelevant).length
+      };
+    })
+    .filter((corridor) => gridlyDiagnosticArray(corridor?.items).length > 0);
+  gridlyAlertAreaFilterState = {
+    applied: true,
+    selectedMode: filter.mode,
+    selectedLabel: filter.label,
+    filteredOutRecords,
+    lastUpdatedAt: new Date().toISOString()
+  };
+  return filteredCorridors;
+}
+
 function getGridlyAwarenessIntelligenceActivityLevel({ activeHazardsInArea = [], activeReportsInArea = [] } = {}) {
   const hazardCount = activeHazardsInArea.length;
   const reportCount = activeReportsInArea.length;
@@ -23647,18 +23754,18 @@ async function gridlyClearedHazardPersistenceAudit(options = {}) {
     if (firstRecord) addSuspicious(firstRecord, "duplicateHazardGroups", "duplicate_hazard_ids", "Same hazard cluster/source appears under multiple IDs, source IDs, or surfaces.");
   });
 
-  const awarenessAreaMismatchRecords = safeActiveHazards.filter((record) => {
+  const awarenessAreaMismatchRecords = alertRecords.filter((record) => {
     if (!currentAwarenessAreaRaw || currentAwarenessAreaRaw.countyWide || currentAwarenessAreaRaw.fallback) return false;
     try { return !isGridlyRecordInAwarenessArea(record, currentAwarenessAreaRaw); } catch (_error) { return false; }
-  }).map((record) => gridlyClearedHazardPersistenceRecordSummary(record, "activeHazards", {
-    appearsInActiveHazards: true,
+  }).map((record) => gridlyClearedHazardPersistenceRecordSummary(record, "renderedAlerts", {
+    appearsInActiveHazards: appears(record, "activeHazards", safeActiveHazards),
     appearsInUnifiedIncidents: appears(record, "unifiedIncidents", unifiedIncidents),
-    appearsInAlerts: appears(record, "alerts", alertRecords),
+    appearsInAlerts: true,
     appearsOnMap: appears(record, "markers", renderedMarkers),
     appearsInStorage: appears(record, "storage", storageRecords),
     appearsInSupabaseInventory: appears(record, "supabase", supabaseRecords)
   }, nowMs, currentAwarenessAreaRaw));
-  awarenessAreaMismatchRecords.forEach((record) => addSuspicious(record, "activeHazards", "awareness_mismatch", "Active hazard is outside the selected awareness area."));
+  awarenessAreaMismatchRecords.forEach((record) => addSuspicious(record, "renderedAlerts", "awareness_mismatch", "Rendered alert is outside the selected awareness area."));
 
   storageRecords.filter((record) => gridlyClearedHazardPersistenceStatus(record, nowMs) !== "cleared" && coordinateMatch(record, safeRecentlyCleared)).forEach((record) => {
     addSuspicious(record, record.__gridlyStorageSource || "storage", "storage_revive_risk", "Browser storage contains an active-looking hazard matching a recently cleared hazard.");
@@ -23682,6 +23789,19 @@ async function gridlyClearedHazardPersistenceAudit(options = {}) {
     suspiciousStorageRecords: suspicious.filter((record) => record.appearsInStorage).length
   };
   const recentClearIndex = typeof gridlyBuildRecentRoadClearIndex === "function" ? gridlyBuildRecentRoadClearIndex([...safeActiveHazards, ...safeRecentlyCleared, ...supabaseRecords], nowMs) : new Map();
+  const runtimeSuppressedRecords = gridlyDiagnosticArray(gridlyClearedHazardRehydrationGuardState?.suppressedRecords);
+  const rehydrationSuppressedRecords = runtimeSuppressedRecords.length
+    ? runtimeSuppressedRecords
+    : safeActiveHazards.map((hazard) => {
+      const clear = gridlyFindRecentClearForRoadHazard(hazard, [...safeActiveHazards, ...safeRecentlyCleared, ...supabaseRecords], recentClearIndex, nowMs);
+      return clear ? gridlySummarizeRehydrationSuppression(hazard, clear, "audit", nowMs) : null;
+    }).filter(Boolean);
+  const alertAreaFilterApplied = true;
+  const alertAreaFilteredOutRecords = gridlyDiagnosticArray(gridlyAlertAreaFilterState?.filteredOutRecords);
+  const selectedAwarenessAreaMode = gridlyAlertAreaFilterState?.selectedMode || (currentAwarenessAreaRaw?.countyWide || currentAwarenessAreaRaw?.fallback ? "county" : "town");
+  const selectedAwarenessAreaLabel = gridlyAlertAreaFilterState?.selectedLabel || currentAwarenessAreaRaw?.label || GRIDLY_COUNTY_WIDE_AWARENESS_LABEL;
+  const clearedRehydrationGuardPass = safeRecentlyCleared.every((clear) => !appears(clear, "activeHazards", safeActiveHazards) && !appears(clear, "unifiedIncidents", unifiedIncidents) && !appears(clear, "alerts", alertRecords) && !appears(clear, "markers", renderedMarkers));
+  const alertAreaFilterPass = alertAreaFilterApplied && awarenessAreaMismatchRecords.length === 0;
 
   const audit = {
     version: GRIDLY_CLEARED_HAZARD_PERSISTENCE_AUDIT_VERSION,
@@ -23700,6 +23820,15 @@ async function gridlyClearedHazardPersistenceAudit(options = {}) {
     lifecycleBreakdown,
     storageBreakdown,
     awarenessAreaMismatchRecords,
+    rehydrationSuppressedCount: rehydrationSuppressedRecords.length,
+    rehydrationSuppressedRecords,
+    alertAreaFilterApplied,
+    alertAreaFilteredOutCount: alertAreaFilteredOutRecords.length,
+    alertAreaFilteredOutRecords,
+    selectedAwarenessAreaMode,
+    selectedAwarenessAreaLabel,
+    clearedRehydrationGuardPass,
+    alertAreaFilterPass,
     recentlyClearedIndex: {
       count: recentClearIndex?.size || 0,
       keys: recentClearIndex?.size ? [...recentClearIndex.keys()].slice(0, 40) : []
@@ -35902,6 +36031,12 @@ function gridlyRoadHazardLifecycleMatchKeys(hazard = {}) {
   const incidentKey = gridlyRoadHazardIncidentKey(hazard);
   if (incidentKey) keys.add(incidentKey);
 
+  const sourceReportId = String(hazard?.sourceReportId || hazard?.source_report_id || hazard?.reportId || hazard?.report_id || hazard?.raw?.id || hazard?.raw?.report_id || hazard?.latestReport?.id || "").trim();
+  if (sourceReportId) keys.add(`sourcereport:${sourceReportId.toLowerCase()}`);
+
+  const id = String(hazard?.id || hazard?.raw?.id || "").trim();
+  if (id) keys.add(`id:${id.toLowerCase()}`);
+
   const hazardType = gridlyRoadHazardLifecycleMatchType(hazard);
   const explicitRoadCluster = String(hazard?.roadClusterKey || hazard?.road_cluster_key || hazard?.clusterKey || hazard?.cluster_key || "").trim();
   if (explicitRoadCluster) keys.add(`roadcluster:${explicitRoadCluster.toLowerCase()}`);
@@ -35990,7 +36125,6 @@ function gridlyIsRecentlyClearedRoadHazardRecord(hazard = {}, nowMs = Date.now()
 function gridlyBuildRecentRoadClearIndex(hazards = activeHazards, nowMs = Date.now()) {
   return gridlyDiagnosticArray(hazards).reduce((acc, hazard) => {
     if (!gridlyIsRecentlyClearedRoadHazardRecord(hazard, nowMs)) return acc;
-    if (gridlyRoadClearSupersededByNewerActive(hazard, hazards)) return acc;
     const hazardTime = gridlyRoadClusterReportTimeMs(hazard);
     gridlyRoadHazardLifecycleMatchKeys(hazard).forEach((key) => {
       const previous = acc.get(key);
@@ -36001,16 +36135,58 @@ function gridlyBuildRecentRoadClearIndex(hazards = activeHazards, nowMs = Date.n
   }, new Map());
 }
 
-function gridlyRoadHazardSuppressedByRecentClear(hazard = {}, recentClearIndex = gridlyBuildRecentRoadClearIndex(), nowMs = Date.now()) {
-  if (!hazard || gridlyIsRoadClearedHazardRecord(hazard)) return false;
+function gridlyRoadHazardClearMatchReason(hazard = {}, clear = {}) {
+  const hazardKeys = new Set(gridlyRoadHazardLifecycleMatchKeys(hazard));
+  const matchedKey = gridlyRoadHazardLifecycleMatchKeys(clear).find((key) => hazardKeys.has(key));
+  if (matchedKey) return matchedKey;
+  const hazardType = gridlyRoadHazardLifecycleMatchType(hazard);
+  const clearType = gridlyRoadHazardLifecycleMatchType(clear);
+  const hazardRoad = normalizeGridlyAwarenessAreaLookupText(gridlyRoadClusterRoadName(hazard));
+  const clearRoad = normalizeGridlyAwarenessAreaLookupText(gridlyRoadClusterRoadName(clear));
   const hazardTime = gridlyRoadClusterReportTimeMs(hazard);
-  const clear = gridlyRoadHazardLifecycleMatchKeys(hazard)
-    .map((key) => recentClearIndex.get(key))
-    .filter(Boolean)
-    .sort((a, b) => gridlyRoadClusterReportTimeMs(b) - gridlyRoadClusterReportTimeMs(a))[0] || null;
-  if (!clear) return false;
   const clearTime = gridlyRoadClusterReportTimeMs(clear);
-  return Number.isFinite(clearTime) && clearTime > 0 && Number.isFinite(hazardTime) && hazardTime > 0 && clearTime > hazardTime && gridlyIsRecentlyClearedRoadHazardRecord(clear, nowMs);
+  const proximityMs = Math.abs(Number(clearTime || 0) - Number(hazardTime || 0));
+  if (hazardType === clearType && hazardRoad && clearRoad && hazardRoad === clearRoad && Number.isFinite(proximityMs) && proximityMs <= 12 * 60 * 60 * 1000) {
+    return `roadtypeproximity:${hazardType}:${hazardRoad}`;
+  }
+  return "";
+}
+
+function gridlyFindRecentClearForRoadHazard(hazard = {}, hazards = activeHazards, recentClearIndex = gridlyBuildRecentRoadClearIndex(hazards), nowMs = Date.now()) {
+  if (!hazard || gridlyIsRoadClearedHazardRecord(hazard)) return null;
+  const directClear = gridlyRoadHazardLifecycleMatchKeys(hazard)
+    .map((key) => recentClearIndex.get(key))
+    .filter((clear) => clear && gridlyIsRecentlyClearedRoadHazardRecord(clear, nowMs))
+    .sort((a, b) => gridlyRoadClusterReportTimeMs(b) - gridlyRoadClusterReportTimeMs(a))[0] || null;
+  if (directClear) return directClear;
+  return gridlyDiagnosticArray(hazards)
+    .filter((clear) => gridlyIsRecentlyClearedRoadHazardRecord(clear, nowMs) && gridlyRoadHazardClearMatchReason(hazard, clear))
+    .sort((a, b) => gridlyRoadClusterReportTimeMs(b) - gridlyRoadClusterReportTimeMs(a))[0] || null;
+}
+
+function gridlySummarizeRehydrationSuppression(hazard = {}, clear = {}, source = "activeHazards", nowMs = Date.now()) {
+  const hazardCoord = gridlyCoordinateFromRecord(hazard);
+  const clearCoord = gridlyCoordinateFromRecord(clear);
+  return {
+    source,
+    id: hazard?.id || hazard?.report_id || hazard?.reportId || null,
+    sourceReportId: hazard?.sourceReportId || hazard?.source_report_id || hazard?.reportId || hazard?.report_id || hazard?.raw?.id || null,
+    type: hazard?.type || hazard?.report_type || null,
+    matchedClearId: clear?.id || clear?.report_id || clear?.reportId || null,
+    matchedClearType: clear?.clearedHazardType || clear?.hazardType || clear?.type || clear?.report_type || null,
+    matchReason: gridlyRoadHazardClearMatchReason(hazard, clear),
+    hazardCreatedAt: hazard?.submittedAt || hazard?.created_at || hazard?.createdAt || null,
+    clearCreatedAt: clear?.submittedAt || clear?.created_at || clear?.createdAt || null,
+    hazardAgeMinutes: gridlyRoadClusterReportAgeMinutes(hazard, nowMs),
+    clearAgeMinutes: gridlyRoadClusterReportAgeMinutes(clear, nowMs),
+    hazardCoordinate: hazardCoord ? { lat: Number(hazardCoord.lat), lng: Number(hazardCoord.lng) } : null,
+    clearCoordinate: clearCoord ? { lat: Number(clearCoord.lat), lng: Number(clearCoord.lng) } : null,
+    roadName: gridlyRoadClusterRoadName(hazard)
+  };
+}
+
+function gridlyRoadHazardSuppressedByRecentClear(hazard = {}, recentClearIndex = gridlyBuildRecentRoadClearIndex(), nowMs = Date.now(), sourceHazards = activeHazards) {
+  return Boolean(gridlyFindRecentClearForRoadHazard(hazard, sourceHazards, recentClearIndex, nowMs));
 }
 
 function gridlyHasRecentlyClearedLifecycleState(hazard = {}, nowMs = Date.now()) {
@@ -36028,21 +36204,31 @@ function gridlyIsActiveRoadHazardIncidentSource(hazard = {}, sourceHazards = act
     if (resolved?.lifecycleState && !["ACTIVE", "NEEDS_CONFIRMATION", "CONFIRMED"].includes(resolved.lifecycleState)) return false;
   }
   if (typeof gridlyRoadHazardLatestLifecycleState === "function" && gridlyRoadHazardLatestLifecycleState(hazard, sourceHazards) === "cleared") return false;
-  return !gridlyRoadHazardSuppressedByRecentClear(hazard, recentClearIndex, nowMs);
+  return !gridlyRoadHazardSuppressedByRecentClear(hazard, recentClearIndex, nowMs, sourceHazards);
 }
 
 function gridlyFilterRecentlyClearedRoadHazardsForVisibility(hazards = activeHazards, nowMs = Date.now()) {
   const sourceHazards = gridlyDiagnosticArray(hazards);
-  return sourceHazards.filter((hazard) => {
-    if (!gridlyIsRecentlyClearedRoadHazardRecord(hazard, nowMs)) return false;
-    return !gridlyRoadClearSupersededByNewerActive(hazard, sourceHazards);
-  });
+  return sourceHazards.filter((hazard) => gridlyIsRecentlyClearedRoadHazardRecord(hazard, nowMs));
 }
 
 function gridlyFilterRoadHazardsByLatestLifecycle(hazards = activeHazards, nowMs = Date.now()) {
   const sourceHazards = gridlyDiagnosticArray(hazards);
   const recentClearIndex = gridlyBuildRecentRoadClearIndex(sourceHazards, nowMs);
-  return sourceHazards.filter((hazard) => gridlyIsActiveRoadHazardIncidentSource(hazard, sourceHazards, recentClearIndex, nowMs));
+  const suppressedRecords = [];
+  const active = sourceHazards.filter((hazard) => {
+    const matchingClear = gridlyFindRecentClearForRoadHazard(hazard, sourceHazards, recentClearIndex, nowMs);
+    if (matchingClear && !gridlyIsRoadClearedHazardRecord(hazard)) {
+      suppressedRecords.push(gridlySummarizeRehydrationSuppression(hazard, matchingClear, "gridlyFilterRoadHazardsByLatestLifecycle", nowMs));
+      return false;
+    }
+    return gridlyIsActiveRoadHazardIncidentSource(hazard, sourceHazards, recentClearIndex, nowMs);
+  });
+  gridlyClearedHazardRehydrationGuardState = {
+    suppressedRecords,
+    lastUpdatedAt: new Date(nowMs).toISOString()
+  };
+  return active;
 }
 
 function gridlyBuildRoadHazardIncidentsFromReports(hazards = activeHazards, options = {}) {
@@ -51827,7 +52013,7 @@ function renderAlerts() {
     return;
   }
   const consequenceIntel = timeSection("intelligence_calculations", () => buildCommuteConsequenceIntelligence({ limit: 10 }));
-  const corridors = consequenceIntel.corridorClusters || [];
+  const corridors = gridlyFilterAlertCorridorsBySelectedAwarenessArea(consequenceIntel.corridorClusters || []);
   if (!corridors.length) {
     timeSection("text_content_updates", () => {
       els.alertsList.innerHTML = `<div class="alert-item corridor-command-status"><strong>Community Awareness</strong><p>No active alerts right now.</p></div>`;
@@ -51845,9 +52031,13 @@ function renderAlerts() {
   }
 
   const primaryCorridor = corridors[0] || null;
-  const routeImpacted = timeSection("map_route_dependent_checks", () => Number(consequenceIntel.routeImpactIncidentCount || 0) > 0);
+  const filteredRouteImpactCount = corridors.reduce((sum, corridor) => sum + Number(corridor?.routeImpactCount || 0), 0);
+  const routeImpacted = timeSection("map_route_dependent_checks", () => filteredRouteImpactCount > 0);
+  const filteredTopItem = primaryCorridor?.items?.[0] || null;
+  const filteredTopStatus = filteredTopItem?.localizedSummary || primaryCorridor?.label || consequenceIntel.topStatus || "No major mobility issues reported nearby";
+  const filteredTopDetail = filteredTopItem?.localizedSummary || consequenceIntel.topStatusLocalizedDetail || "Based on community reports.";
   const sections = [];
-  sections.push(`<article class="alert-item intelligence-row high corridor-command-status"><div class="alert-row-main"><span class="alert-severity-chip">Community Awareness</span><strong>${sanitizeText(normalizeGridlyUserFacingRoadText(standardizeGridlyAlertHeadline(routeImpacted ? "Route Watch impacted" : (consequenceIntel.topStatus || "No major mobility issues reported nearby"))))}</strong><span class="alert-row-time">live</span></div><p class="alert-row-subline">${sanitizeText(normalizeGridlyUserFacingRoadText(consequenceIntel.topStatusLocalizedDetail || "Based on community reports."))}</p></article>`);
+  sections.push(`<article class="alert-item intelligence-row high corridor-command-status"><div class="alert-row-main"><span class="alert-severity-chip">Community Awareness</span><strong>${sanitizeText(normalizeGridlyUserFacingRoadText(standardizeGridlyAlertHeadline(routeImpacted ? "Route Watch impacted" : filteredTopStatus)))}</strong><span class="alert-row-time">live</span></div><p class="alert-row-subline">${sanitizeText(normalizeGridlyUserFacingRoadText(filteredTopDetail))}</p></article>`);
 
   timeSection("alert_corridor_grouping_logic", () => {
     corridors.slice(0, 3).forEach((corridor, idx) => {
@@ -55077,13 +55267,14 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           raw: raw || item || null
         };
       });
-    const normalizedAlertItems = normalizedAlertItemsFromIntel.map((alert) => {
+    const normalizedAlertItemsBeforeAreaFilter = normalizedAlertItemsFromIntel.map((alert) => {
       const subtype = resolveOtherHazardSubtypeFromRecord(alert);
       const subtypeTitle = subtype ? buildSpecificAlertTitle({ ...alert, category: "other_hazard", subtype, hazardSubtype: subtype }) : "";
       return applyRoadSnapshotFallback(subtype ? { ...alert, category: "other_hazard", subtype, hazardSubtype: subtype, title: subtypeTitle || alert.title, resolvedHeadline: subtypeTitle || alert.resolvedHeadline } : alert);
     });
-    const activeIncidentCount = normalizedAlertItems.length || incidents.length;
-    const hasFallbackSignals = activeHazardSourceCount > 0 || unifiedIncidentSourceCount > 0;
+    const normalizedAlertItems = gridlyFilterAlertRecordsBySelectedAwarenessArea(normalizedAlertItemsBeforeAreaFilter, "alertsSurfaceSnapshot");
+    const activeIncidentCount = normalizedAlertItems.length || (gridlyGetSelectedAlertAreaFilter().mode === "county" ? incidents.length : normalizedAlertItems.length);
+    const hasFallbackSignals = gridlyGetSelectedAlertAreaFilter().mode === "county" && (activeHazardSourceCount > 0 || unifiedIncidentSourceCount > 0);
     const nearbySummary = unifiedIntel.nearbySummary;
     const routeImpactSummary = unifiedIntel.routeImpactSummary;
     const readinessSummary = prefs.enabled
