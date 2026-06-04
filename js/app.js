@@ -23598,6 +23598,17 @@ function gridlyClearedHazardPersistenceRenderedAlertRows() {
       if (!rawId && !matchedCache && !dataset.gridlyAlertTitle && !dataset.gridlyAlertSummary) return;
       const lat = Number(dataset.gridlyAlertLat);
       const lng = Number(dataset.gridlyAlertLng);
+      const rects = typeof node?.getClientRects === "function" ? node.getClientRects() : [];
+      const computedStyle = typeof window !== "undefined" && typeof window.getComputedStyle === "function" ? window.getComputedStyle(node) : null;
+      const visibleInDom = Boolean(
+        node?.isConnected !== false
+        && !node?.hidden
+        && dataset.gridlyAuditHidden !== "true"
+        && computedStyle?.display !== "none"
+        && computedStyle?.visibility !== "hidden"
+        && computedStyle?.opacity !== "0"
+        && (!rects || rects.length > 0 || Number(node?.offsetHeight || 0) > 0 || Number(node?.offsetWidth || 0) > 0)
+      );
       domRows.push({
         ...(matchedCache || {}),
         id: rawId || gridlyClearedHazardPersistenceId(matchedCache) || `dom-alert-${index}`,
@@ -23612,7 +23623,9 @@ function gridlyClearedHazardPersistenceRenderedAlertRows() {
         lat: Number.isFinite(lat) ? lat : matchedCache?.lat,
         lng: Number.isFinite(lng) ? lng : (matchedCache?.lng ?? matchedCache?.lon),
         crossingId: dataset.gridlyAlertCrossingId || matchedCache?.crossingId || matchedCache?.crossing_id || "",
-        hazardType: dataset.gridlyAlertHazardType || matchedCache?.hazardType || matchedCache?.type || matchedCache?.category || ""
+        hazardType: dataset.gridlyAlertHazardType || matchedCache?.hazardType || matchedCache?.type || matchedCache?.category || "",
+        visibleInAlertPanelDom: visibleInDom,
+        domAuditIndex: index
       });
     });
   }
@@ -23659,6 +23672,61 @@ function gridlyExplainAlertAwarenessSurvival(record = {}, currentArea = null) {
   return {
     renderedSurface,
     whyItSurvivedFiltering: `Rendered ${renderedSurface} row did not match selected awareness area ${selectedLabel}; source filtering failed or the DOM/cache row was stale.`
+  };
+}
+
+function gridlyClearedHazardPersistenceRecordAuditKey(record = {}) {
+  const id = String(gridlyClearedHazardPersistenceId(record) || "").trim();
+  if (id) return `id:${id}`;
+  const sourceReportId = String(gridlyClearedHazardPersistenceSourceReportId(record) || "").trim();
+  if (sourceReportId) return `sourceReportId:${sourceReportId}`;
+  const coord = gridlyClearedHazardPersistenceCoord(record);
+  if (coord) return `coord:${coord.lat.toFixed(5)}:${coord.lng.toFixed(5)}`;
+  const title = String(record?.title || record?.headline || record?.resolvedHeadline || record?.detail || "").trim().toLowerCase();
+  return title ? `title:${title}` : "";
+}
+
+function gridlyClearedHazardPersistenceRecordsMatch(left = {}, right = {}) {
+  const leftKey = gridlyClearedHazardPersistenceRecordAuditKey(left);
+  const rightKey = gridlyClearedHazardPersistenceRecordAuditKey(right);
+  if (leftKey && rightKey && leftKey === rightKey) return true;
+  const leftTitle = String(left?.title || left?.headline || left?.resolvedHeadline || "").trim().toLowerCase();
+  const rightTitle = String(right?.title || right?.headline || right?.resolvedHeadline || "").trim().toLowerCase();
+  if (leftTitle && rightTitle && leftTitle === rightTitle) return true;
+  const leftCoord = gridlyClearedHazardPersistenceCoord(left);
+  const rightCoord = gridlyClearedHazardPersistenceCoord(right);
+  return Boolean(leftCoord && rightCoord && Math.abs(leftCoord.lat - rightCoord.lat) <= 0.00015 && Math.abs(leftCoord.lng - rightCoord.lng) <= 0.00015);
+}
+
+function gridlyClearedHazardPersistenceVisibleDomAlertRows(renderedAlerts = {}) {
+  return gridlyClearedHazardPersistenceSafeArray(renderedAlerts.domRows).filter((record) => record?.visibleInAlertPanelDom !== false);
+}
+
+function gridlyClassifyAwarenessAreaMismatchRecord(record = {}, renderedAlerts = {}, membership = {}) {
+  const visibleDomRows = gridlyClearedHazardPersistenceVisibleDomAlertRows(renderedAlerts);
+  const source = record?.source || "renderedAlerts";
+  const renderedSurface = record?.renderedSurface || (source === "rendered_alert_dom" ? "alert_panel_dom" : "alert_cache");
+  const currentlyVisibleInAlertPanelDom = renderedSurface === "alert_panel_dom"
+    ? record?.visibleInAlertPanelDom !== false
+    : visibleDomRows.some((domRecord) => gridlyClearedHazardPersistenceRecordsMatch(record, domRecord));
+  const presentInUnifiedIncidents = Boolean(membership.appearsInUnifiedIncidents);
+  const presentInActiveHazards = Boolean(membership.appearsInActiveHazards);
+  const presentOnMap = Boolean(membership.appearsOnMap);
+  const presentOnlyInStaleCache = renderedSurface === "alert_cache" && !currentlyVisibleInAlertPanelDom && !presentInUnifiedIncidents && !presentInActiveHazards && !presentOnMap;
+  const presentOnlyInDiagnosticSourceInventory = !currentlyVisibleInAlertPanelDom && !presentInUnifiedIncidents && !presentInActiveHazards && !presentOnMap && (Boolean(membership.appearsInStorage) || Boolean(membership.appearsInSupabaseInventory));
+  const presentInUnifiedIncidentsButFilteredBeforeRendering = presentInUnifiedIncidents && !currentlyVisibleInAlertPanelDom && !presentOnMap;
+  let auditClassification = "visible_mismatch";
+  if (presentOnlyInStaleCache) auditClassification = "stale_cache";
+  else if (presentOnlyInDiagnosticSourceInventory) auditClassification = "diagnostic_source_inventory";
+  else if (presentInUnifiedIncidentsButFilteredBeforeRendering) auditClassification = "unified_incident_filtered_before_rendering";
+  else if (!currentlyVisibleInAlertPanelDom) auditClassification = "stale_diagnostic";
+  return {
+    currentlyVisibleInAlertPanelDom,
+    presentOnlyInStaleCache,
+    presentOnlyInDiagnosticSourceInventory,
+    presentInUnifiedIncidentsButFilteredBeforeRendering,
+    contributesToCurrentSelectedAreaAlertUi: currentlyVisibleInAlertPanelDom,
+    auditClassification
   };
 }
 
@@ -23888,19 +23956,26 @@ async function gridlyClearedHazardPersistenceAudit(options = {}) {
   const awarenessAreaMismatchRecords = alertRecords.filter((record) => {
     if (!currentAwarenessAreaRaw || currentAwarenessAreaRaw.countyWide || currentAwarenessAreaRaw.fallback) return false;
     try { return !isGridlyRecordInAwarenessArea(record, currentAwarenessAreaRaw); } catch (_error) { return false; }
-  }).map((record) => ({
-    ...gridlyClearedHazardPersistenceRecordSummary(record, "renderedAlerts", {
+  }).map((record) => {
+    const source = record?.source === "rendered_alert_dom" ? "renderedAlertDom" : "renderedAlertCache";
+    const membership = {
       appearsInActiveHazards: appears(record, "activeHazards", safeActiveHazards),
       appearsInUnifiedIncidents: appears(record, "unifiedIncidents", unifiedIncidents),
       appearsInAlerts: true,
       appearsOnMap: appears(record, "markers", renderedMarkers),
       appearsInStorage: appears(record, "storage", storageRecords),
       appearsInSupabaseInventory: appears(record, "supabase", supabaseRecords)
-    }, nowMs, currentAwarenessAreaRaw),
-    crossingId: record?.crossingId || record?.crossing_id || record?.raw?.crossingId || record?.raw?.crossing_id || null,
-    ...gridlyExplainAlertAwarenessSurvival(record, currentAwarenessAreaRaw)
-  }));
-  awarenessAreaMismatchRecords.forEach((record) => addSuspicious(record, "renderedAlerts", "awareness_mismatch", "Rendered alert is outside the selected awareness area."));
+    };
+    return {
+      ...gridlyClearedHazardPersistenceRecordSummary(record, source, membership, nowMs, currentAwarenessAreaRaw),
+      crossingId: record?.crossingId || record?.crossing_id || record?.raw?.crossingId || record?.raw?.crossing_id || null,
+      ...gridlyExplainAlertAwarenessSurvival(record, currentAwarenessAreaRaw),
+      ...gridlyClassifyAwarenessAreaMismatchRecord(record, renderedAlerts, membership)
+    };
+  });
+  const visibleMismatchRecords = awarenessAreaMismatchRecords.filter((record) => record.contributesToCurrentSelectedAreaAlertUi);
+  const staleDiagnosticRecords = awarenessAreaMismatchRecords.filter((record) => !record.contributesToCurrentSelectedAreaAlertUi);
+  visibleMismatchRecords.forEach((record) => addSuspicious(record, record.source || "renderedAlerts", "awareness_mismatch", "Visible alert is outside the selected awareness area."));
 
   storageRecords.filter((record) => gridlyClearedHazardPersistenceStatus(record, nowMs) !== "cleared" && coordinateMatch(record, safeRecentlyCleared)).forEach((record) => {
     addSuspicious(record, record.__gridlyStorageSource || "storage", "storage_revive_risk", "Browser storage contains an active-looking hazard matching a recently cleared hazard.");
@@ -23931,6 +24006,20 @@ async function gridlyClearedHazardPersistenceAudit(options = {}) {
       const clear = gridlyFindRecentClearForRoadHazard(hazard, [...safeActiveHazards, ...safeRecentlyCleared, ...supabaseRecords], recentClearIndex, nowMs);
       return clear ? gridlySummarizeRehydrationSuppression(hazard, clear, "audit", nowMs) : null;
     }).filter(Boolean);
+  const suppressedButStillStoredRecords = rehydrationSuppressedRecords.map((record) => {
+    const appearsInAlertCache = renderedAlerts.cacheRows.some((row) => gridlyClearedHazardPersistenceRecordsMatch(record, row));
+    const appearsInVisibleAlertPanelDom = gridlyClearedHazardPersistenceVisibleDomAlertRows(renderedAlerts).some((row) => gridlyClearedHazardPersistenceRecordsMatch(record, row));
+    const appearsOnMap = appears(record, "markers", renderedMarkers);
+    return {
+      ...record,
+      appearsInStorage: appears(record, "storage", storageRecords),
+      appearsInSupabaseInventory: appears(record, "supabase", supabaseRecords),
+      appearsInAlertCache,
+      appearsInVisibleAlertPanelDom,
+      appearsOnMap,
+      rendersAsActiveAlertOrMarker: Boolean(appearsInVisibleAlertPanelDom || appearsOnMap)
+    };
+  }).filter((record) => record.appearsInStorage || record.appearsInSupabaseInventory || record.appearsInAlertCache || record.appearsInVisibleAlertPanelDom || record.appearsOnMap);
   const alertAreaFilterApplied = true;
   const alertAreaFilteredOutRecords = gridlyDiagnosticArray(gridlyAlertAreaFilterState?.filteredOutRecords);
   const selectedAwarenessAreaMode = gridlyAlertAreaFilterState?.selectedMode || (currentAwarenessAreaRaw?.countyWide || currentAwarenessAreaRaw?.fallback ? "county" : "town");
@@ -23953,8 +24042,8 @@ async function gridlyClearedHazardPersistenceAudit(options = {}) {
   const crossingAreaFilteredOutRecords = crossingOutsideContributionRecords.length ? crossingOutsideContributionRecords : gridlyDiagnosticArray(crossingAreaFilter.filteredOutRecords);
   const crossingAreaFilterApplied = Boolean(crossingAreaFilter.applied);
   const crossingAreaFilterPass = crossingAreaFilterApplied && crossingOutsideContributionRecords.every((record) => !record.appearsInUnifiedIncidents && !record.appearsInAlerts && !record.appearsOnMap && !record.contributesToTopAwareness && !record.contributesToAwarenessCard);
-  const clearedRehydrationGuardPass = safeRecentlyCleared.every((clear) => !appears(clear, "activeHazards", safeActiveHazards) && !appears(clear, "unifiedIncidents", unifiedIncidents) && !appears(clear, "alerts", alertRecords) && !appears(clear, "markers", renderedMarkers));
-  const alertAreaFilterPass = alertAreaFilterApplied && awarenessAreaMismatchRecords.length === 0;
+  const clearedRehydrationGuardPass = clearedButStillActive.length === 0 && suppressedButStillStoredRecords.every((record) => !record.rendersAsActiveAlertOrMarker);
+  const alertAreaFilterPass = alertAreaFilterApplied && visibleMismatchRecords.length === 0;
 
   const audit = {
     version: GRIDLY_CLEARED_HAZARD_PERSISTENCE_AUDIT_VERSION,
@@ -23973,8 +24062,11 @@ async function gridlyClearedHazardPersistenceAudit(options = {}) {
     lifecycleBreakdown,
     storageBreakdown,
     awarenessAreaMismatchRecords,
+    visibleMismatchRecords,
+    staleDiagnosticRecords,
     rehydrationSuppressedCount: rehydrationSuppressedRecords.length,
     rehydrationSuppressedRecords,
+    suppressedButStillStoredRecords,
     alertAreaFilterApplied,
     alertAreaFilteredOutCount: alertAreaFilteredOutRecords.length,
     alertAreaFilteredOutRecords,
