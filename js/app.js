@@ -14423,12 +14423,17 @@ function openAlertsSurfaceFromDock() {
     );
     let title = resolvedHeadline ? upperText(resolvedHeadline) : "";
 
-    const railHeadlineIsGeneric = /^RAIL\s+CROSSING\s+BLOCKED$/.test(title);
-    const shouldBuildRailTitle = isRail && (!title || railHeadlineIsGeneric);
+    const specificCrossingLocation = isRail && typeof getGridlySpecificCrossingLocation === "function"
+      ? getGridlySpecificCrossingLocation(alertObject)
+      : null;
+    const railHeadlineIsGeneric = /^RAIL\s+CROSSING\s+BLOCKED$/.test(title) || isGridlyGenericCrossingAlertText(title);
+    const shouldBuildRailTitle = isRail && (!title || railHeadlineIsGeneric || (specificCrossingLocation?.headlineLocation && specificCrossingLocation.specificity !== "fallback_context"));
 
     if (shouldBuildRailTitle) {
       const roadParts = String(bestRoad || "").split("&").map((part) => normalizeToken(part)).filter(Boolean);
-      if (roadParts.length >= 2) {
+      if (specificCrossingLocation?.headlineLocation && specificCrossingLocation.specificity !== "fallback_context") {
+        title = `TRAIN BLOCKING CROSSING ON ${upperText(specificCrossingLocation.headlineLocation)}`;
+      } else if (roadParts.length >= 2) {
         title = `TRAIN BLOCKING ${upperText(roadParts[0])} AT ${upperText(roadParts[1])}`;
       } else if (context.crossing && bestNear) {
         title = `TRAIN BLOCKING ${upperText(context.crossing)} AT ${upperText(bestNear)}`;
@@ -28310,11 +28315,193 @@ function buildGridlyRoadHazardTxDotStyleCandidate(alert = {}) {
 
 function buildGridlyCrossingAlertCandidate(alert = {}) {
   if (!alert || typeof alert !== "object" || !isGridlyAlertRailOrCrossingRelated(alert)) return { text: "", source: "" };
+  const specificLocation = typeof getGridlySpecificCrossingLocation === "function" ? getGridlySpecificCrossingLocation(alert) : null;
   const text = getGridlyAlertFirstTextValue(alert, ["resolvedHeadline", "finalHeadline", "localizedSummary", "summary", "title", "raw.resolvedHeadline", "raw.finalHeadline", "raw.localizedSummary", "raw.summary", "raw.title"]);
-  if (text) return { text, source: "crossing.alreadyRenderedCleanAlertText" };
-  const road = getGridlyAlertFirstTextValue(alert, ["roadName", "primaryRoad", "crossingRoad", "raw.roadName", "raw.primaryRoad", "raw.crossingRoad"]);
-  const crossing = getGridlyAlertFirstTextValue(alert, ["crossingName", "nearestRoadName", "nearestRoad", "referenceRoadA", "raw.crossingName", "raw.nearestRoadName", "raw.nearestRoad", "raw.referenceRoadA"]);
-  return { text: road && crossing ? `Crossing blocked at ${road} and ${crossing}` : (road ? `Crossing blocked at ${road}` : "Rail crossing blocked"), source: "crossing.locationFields" };
+  if (specificLocation?.headlineLocation && specificLocation.specificity !== "fallback_context") {
+    return {
+      text: `Train blocking crossing on ${specificLocation.headlineLocation}`,
+      source: `crossing.specificLocation.${specificLocation.source || "fields"}`,
+      location: specificLocation
+    };
+  }
+  if (text && !isGridlyGenericCrossingAlertText(text)) return { text, source: "crossing.alreadyRenderedCleanAlertText", location: specificLocation || null };
+  const road = specificLocation?.primaryRoad || getGridlyAlertFirstTextValue(alert, ["roadName", "primaryRoad", "crossingRoad", "raw.roadName", "raw.primaryRoad", "raw.crossingRoad"]);
+  const crossing = specificLocation?.referenceRoad || specificLocation?.crossingName || getGridlyAlertFirstTextValue(alert, ["crossingName", "nearestRoadName", "nearestRoad", "referenceRoadA", "raw.crossingName", "raw.nearestRoadName", "raw.nearestRoad", "raw.referenceRoadA"]);
+  return {
+    text: road && crossing ? `Train blocking crossing on ${road} at ${crossing}` : (road ? `Train blocking crossing on ${road}` : "Rail crossing blocked"),
+    source: specificLocation?.source ? `crossing.locationFields.${specificLocation.source}` : "crossing.locationFields",
+    location: specificLocation || null
+  };
+}
+
+
+function gridlyCleanConsumerCrossingLocationToken(value = "") {
+  const raw = String(value ?? "").replace(/\s+/g, " ").trim();
+  if (!raw) return "";
+  let label = raw
+    .replace(/^\s*(?:at|near|on)\s+/i, "")
+    .replace(/\s+Rail Update$/i, "")
+    .replace(/^✅\s*/, "")
+    .replace(/\s+Cleared$/i, "")
+    .replace(/\b(?:FRA|DOT)\s*(?:ID|number|#)?\s*[:#]?\s*\w+\b/ig, "")
+    .replace(/\b(?:crossing\s*)?(?:inventory|identifier|id)\s*[:#]?\s*\w+\b/ig, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!label) return "";
+  if (typeof normalizeGridlyUserFacingRoadText === "function") label = normalizeGridlyUserFacingRoadText(label);
+  if (typeof normalizeGridlyLightweightLocationLabelText === "function") label = normalizeGridlyLightweightLocationLabelText(label);
+  if (typeof gridlyNormalizeAnalyticsRoadLabel === "function") {
+    const normalized = gridlyNormalizeAnalyticsRoadLabel(label);
+    if (normalized) label = normalized;
+  }
+  return label.replace(/\s+/g, " ").trim();
+}
+
+function gridlyCrossingLocationCompareToken(value = "") {
+  return gridlyCleanConsumerCrossingLocationToken(value)
+    .toLowerCase()
+    .replace(/\b(?:crossing|railroad|rail|rr|road|rd|street|st|avenue|ave|drive|dr|lane|ln|boulevard|blvd|highway|hwy|route)\b/g, " ")
+    .replace(/\b(?:u\s*s|us|state highway|sh|tx|farm to market|fm|county road|cr)\b/g, " ")
+    .replace(/^0+(\d)/g, "$1")
+    .replace(/[^a-z0-9]+/g, "")
+    .trim();
+}
+
+function isGridlyConsumerCrossingLocationTokenUseful(value = "", primaryRoad = "") {
+  const label = gridlyCleanConsumerCrossingLocationToken(value);
+  if (!label) return false;
+  if (/^(?:this crossing|this area|liberty county|dayton area|unknown|undefined|null|live incident|nearby|local crossing|rail crossing|railroad crossing|crossing blocked|blocked crossing|train blocking crossing)$/i.test(label)) return false;
+  if (/\b(?:FRA|DOT|inventory|identifier)\b/i.test(label)) return false;
+  if (/\b\d{6,}[A-Z]?\b/i.test(label)) return false;
+  const normalized = gridlyCrossingLocationCompareToken(label);
+  if (!normalized) return false;
+  if (primaryRoad && normalized === gridlyCrossingLocationCompareToken(primaryRoad)) return false;
+  return true;
+}
+
+function getGridlyCrossingRecordForSpecificLocation(record = {}) {
+  const crossingId = String(record?.crossingId || record?.crossing_id || record?.raw?.crossingId || record?.raw?.crossing_id || record?.source?.crossingId || record?.source?.crossing_id || record?.latestReport?.crossingId || record?.latestReport?.crossing_id || "").trim();
+  if (!crossingId || !Array.isArray(crossings)) return null;
+  return crossings.find((crossing) => String(crossing?.id || crossing?.crossingId || crossing?.crossing_id || crossing?.props?.crossingid || crossing?.properties?.crossingid || "").trim() === crossingId) || null;
+}
+
+function readGridlyCrossingSpecificityPath(record = {}, path = "") {
+  if (!record || typeof record !== "object" || !path) return undefined;
+  return String(path).split(".").reduce((current, key) => current?.[key], record);
+}
+
+function getGridlyCrossingSpecificityTextValues(record = {}, paths = []) {
+  const values = [];
+  (Array.isArray(paths) ? paths : []).forEach((path) => {
+    const value = readGridlyCrossingSpecificityPath(record, path);
+    if (typeof value === "string" || typeof value === "number") values.push(value);
+  });
+  return values;
+}
+
+function splitGridlyCrossingCompositeLocation(value = "") {
+  const label = gridlyCleanConsumerCrossingLocationToken(value);
+  if (!label) return [];
+  return label
+    .split(/\s*(?:&|\/|\band\b|\bat\b)\s*/i)
+    .map((part) => gridlyCleanConsumerCrossingLocationToken(part))
+    .filter(Boolean);
+}
+
+function getGridlySpecificCrossingLocation(record = {}, options = {}) {
+  const crossingRecord = getGridlyCrossingRecordForSpecificLocation(record);
+  const props = crossingRecord?.props || crossingRecord?.properties || {};
+  const crossingId = String(record?.crossingId || record?.crossing_id || record?.raw?.crossingId || record?.raw?.crossing_id || record?.source?.crossingId || record?.source?.crossing_id || "").trim();
+  const localContext = {
+    "762790L": { secondaryLabel: "Waco Street", displayName: "US 90 & Waco Street" }
+  }[crossingId] || null;
+  const roadPaths = [
+    "roadName", "primaryRoad", "resolvedRoadName", "displayRoadName", "corridor", "route", "road", "road_name", "street_name",
+    "raw.roadName", "raw.primaryRoad", "raw.resolvedRoadName", "raw.corridor", "raw.route", "raw.road", "raw.road_name",
+    "source.roadName", "source.primaryRoad", "source.resolvedRoadName", "source.corridor", "source.route", "source.road", "source.road_name",
+    "latestReport.roadName", "latestReport.primaryRoad", "latestReport.corridor", "latestReport.route", "latestReport.road", "latestReport.road_name"
+  ];
+  const crossingNamePaths = [
+    "crossingName", "crossing_name", "crossingRoad", "crossingLabel", "resolvedCrossingName", "locationLabel", "locationName",
+    "raw.crossingName", "raw.crossing_name", "raw.crossingRoad", "raw.crossingLabel", "raw.resolvedCrossingName", "raw.locationLabel", "raw.locationName",
+    "source.crossingName", "source.crossing_name", "source.crossingRoad", "source.crossingLabel", "source.resolvedCrossingName", "source.locationLabel", "source.locationName",
+    "latestReport.crossingName", "latestReport.crossing_name", "latestReport.crossingRoad", "latestReport.crossingLabel", "latestReport.resolvedCrossingName"
+  ];
+  const referencePaths = [
+    "crossStreet", "crossStreetA", "crossStreet1", "fromStreet", "referenceRoad", "referenceRoadA", "nearestCrossStreet", "nearbyCrossStreet", "intersectingRoad", "crossingMetadata.crossStreet", "metadata.crossStreet",
+    "raw.crossStreet", "raw.crossStreetA", "raw.crossStreet1", "raw.fromStreet", "raw.referenceRoad", "raw.referenceRoadA", "raw.nearestCrossStreet", "raw.nearbyCrossStreet", "raw.intersectingRoad", "raw.crossingMetadata.crossStreet", "raw.metadata.crossStreet",
+    "source.crossStreet", "source.crossStreetA", "source.crossStreet1", "source.fromStreet", "source.referenceRoad", "source.referenceRoadA", "source.nearestCrossStreet", "source.nearbyCrossStreet", "source.intersectingRoad",
+    "latestReport.crossStreet", "latestReport.crossStreetA", "latestReport.crossStreet1", "latestReport.fromStreet", "latestReport.referenceRoad", "latestReport.referenceRoadA", "latestReport.nearestCrossStreet", "latestReport.nearbyCrossStreet"
+  ];
+  const crossingRecordRoads = [crossingRecord?.roadName, crossingRecord?.road, crossingRecord?.road_name, crossingRecord?.street_name, props.roadName, props.road, props.road_name, props.roadwayname, props.highwayname];
+  const crossingRecordReferences = [crossingRecord?.crossStreet, crossingRecord?.cross_street, crossingRecord?.street, props.crossStreet, props.cross_street, props.crossstreet, props.street];
+  const crossingRecordNames = [crossingRecord?.name, crossingRecord?.crossingName, crossingRecord?.crossingRoad, crossingRecord?.originalName, props.crossingname, props.crossing_name];
+  const roadCandidates = [
+    ...getGridlyCrossingSpecificityTextValues(record, roadPaths),
+    ...crossingRecordRoads
+  ].map(gridlyCleanConsumerCrossingLocationToken).filter((value) => isGridlyConsumerCrossingLocationTokenUseful(value));
+  const crossingNameCandidates = [
+    ...getGridlyCrossingSpecificityTextValues(record, crossingNamePaths),
+    ...crossingRecordNames
+  ].map(gridlyCleanConsumerCrossingLocationToken).filter((value) => isGridlyConsumerCrossingLocationTokenUseful(value));
+  const parsedCrossingParts = crossingNameCandidates.flatMap(splitGridlyCrossingCompositeLocation);
+  const primaryRoad = roadCandidates.find(Boolean) || parsedCrossingParts.find((value) => isGridlyConsumerCrossingLocationTokenUseful(value)) || "";
+  const references = [
+    ...getGridlyCrossingSpecificityTextValues(record, referencePaths),
+    ...crossingRecordReferences,
+    ...parsedCrossingParts.slice(primaryRoad ? 0 : 1),
+    ...crossingNameCandidates,
+    localContext?.secondaryLabel
+  ].map(gridlyCleanConsumerCrossingLocationToken)
+    .filter((value) => isGridlyConsumerCrossingLocationTokenUseful(value, primaryRoad))
+    .filter((value, index, arr) => arr.findIndex((candidate) => gridlyCrossingLocationCompareToken(candidate) === gridlyCrossingLocationCompareToken(value)) === index);
+  const crossingName = crossingNameCandidates.find((value) => isGridlyConsumerCrossingLocationTokenUseful(value, primaryRoad)) || "";
+  const referenceRoad = references[0] || "";
+  const useAmpersand = options.style === "intersection";
+  if (primaryRoad && referenceRoad) {
+    return {
+      label: useAmpersand ? `${primaryRoad} & ${referenceRoad}` : `${primaryRoad} at ${referenceRoad}`,
+      headlineLocation: `${primaryRoad} at ${referenceRoad}`,
+      locationLineLabel: `${primaryRoad} & ${referenceRoad}`,
+      primaryRoad,
+      referenceRoad,
+      crossingName,
+      specificity: "road_plus_intersecting_road",
+      source: referenceRoad === localContext?.secondaryLabel ? "local_crossing_context" : "crossing_reference_fields"
+    };
+  }
+  if (primaryRoad && crossingName) {
+    return {
+      label: `${primaryRoad} at ${crossingName}`,
+      headlineLocation: `${primaryRoad} at ${crossingName}`,
+      locationLineLabel: `${primaryRoad} & ${crossingName}`,
+      primaryRoad,
+      referenceRoad: "",
+      crossingName,
+      specificity: "road_plus_crossing_name",
+      source: "crossing_name_fields"
+    };
+  }
+  const fallback = primaryRoad || crossingName || "";
+  return {
+    label: fallback,
+    headlineLocation: fallback,
+    locationLineLabel: fallback,
+    primaryRoad,
+    referenceRoad: "",
+    crossingName,
+    specificity: fallback ? "fallback_context" : "none",
+    source: fallback ? "crossing_fallback_fields" : "none"
+  };
+}
+
+function isGridlyGenericCrossingAlertText(value = "") {
+  const text = normalizeGridlyLightweightAlertSummaryText(value).toLowerCase();
+  if (!text) return true;
+  if (/^(?:rail crossing blocked|crossing blocked|blocked crossing|train blocking crossing|crossing blocked nearby)$/i.test(text)) return true;
+  if (/^train blocking crossing on\s+(?:us|sh|tx|fm|cr|county road|highway|hwy)\s*-?\d+\s+in\s+[^,]+$/i.test(text)) return true;
+  if (/^reported at\s+(?:.+\s+)?crossing$/i.test(text)) return true;
+  return false;
 }
 
 function getGridlyAlertsPanelHeadingSeverityScore(alert = {}) {
@@ -39452,26 +39639,40 @@ function getUnifiedIncidents() {
     : railIncidentSource;
   const railIncidents = filteredRailIncidentSource.map((incident) => {
     const latest = incident.latestReport;
+    const specificLocation = typeof getGridlySpecificCrossingLocation === "function"
+      ? getGridlySpecificCrossingLocation({ ...latest, crossingId: incident.crossingId, crossing_id: incident.crossingId, crossingName: incident.crossingName })
+      : null;
+    const headlineLocation = specificLocation?.headlineLocation || incident.crossingName;
+    const locationLineLabel = specificLocation?.locationLineLabel || incident.crossingName;
+    const isActive = getIncidentLifecycleState(latest) === "active";
     return normalizeUnifiedIncident({
       id: `rail-${incident.crossingId}`,
       type: mapRailReportType(latest.type),
       source: "community",
       severity: latest.severity === "moderate" ? "medium" : latest.severity || "medium",
-      status: getIncidentLifecycleState(latest) === "active" ? "active" : "cleared",
-      title:
-        getIncidentLifecycleState(latest) === "active"
-          ? `${incident.crossingName} Rail Update`
-          : `✅ ${incident.crossingName} Cleared`,
+      status: isActive ? "active" : "cleared",
+      title: isActive
+        ? `Train blocking crossing on ${headlineLocation}`
+        : `✅ ${locationLineLabel} Cleared`,
       description: latest.detail,
+      crossingName: incident.crossingName,
+      crossingLabel: locationLineLabel,
+      resolvedCrossingName: locationLineLabel,
+      roadName: specificLocation?.primaryRoad || latest.roadName || latest.road || "",
+      primaryRoad: specificLocation?.primaryRoad || latest.primaryRoad || latest.roadName || "",
+      referenceRoad: specificLocation?.referenceRoad || latest.referenceRoad || latest.crossStreet || "",
+      crossStreet: specificLocation?.referenceRoad || latest.crossStreet || latest.nearbyCrossStreet || "",
+      locationLabel: locationLineLabel,
       lat: latest.lat ?? latest.latitude ?? latest.rawLat,
       lng: latest.lng ?? latest.lon ?? latest.longitude ?? latest.rawLng,
-      area: incident.crossingName,
+      area: locationLineLabel,
       created_at: latest.submittedAt,
       confidence: latest.confidence,
       reports_count: incident.count,
       age_minutes: latest.minutesAgo,
       report_type: latest.type,
-      crossing_id: incident.crossingId
+      crossing_id: incident.crossingId,
+      crossingId: incident.crossingId
     });
   });
 
@@ -39732,6 +39933,8 @@ function getGridlyCrossingPopupTitle(incident = {}) {
 }
 
 function resolveGridlyCrossingPopupLocationLabel(incident = {}) {
+  const specificLocation = typeof getGridlySpecificCrossingLocation === "function" ? getGridlySpecificCrossingLocation(incident, { style: "intersection" }) : null;
+  if (specificLocation?.locationLineLabel && specificLocation.specificity !== "none") return specificLocation.locationLineLabel;
   const candidates = [
     incident?.crossingName, incident?.crossing_name, incident?.crossingRoad, incident?.crossingLabel, incident?.resolvedCrossingName,
     incident?.area, incident?.location_name, incident?.locationName, incident?.name, incident?.title,
@@ -39812,7 +40015,10 @@ function stripGridlyAlertCardLocationFromTitle(value = "") {
 }
 
 function normalizeGridlyAlertCardTitleCandidate(alert = {}, fallbackTitle = "") {
-  if (isGridlyAlertCardCrossingRelated(alert)) return "Crossing Blocked";
+  if (isGridlyAlertCardCrossingRelated(alert)) {
+    const crossingTypeText = [alert?.report_type, alert?.reportType, alert?.type, alert?.eventType, alert?.title, alert?.headline, alert?.resolvedHeadline].map((value) => String(value || "")).join(" ");
+    return /\b(?:train|rail_delay|delay|delayed|blocked|blocking)\b/i.test(crossingTypeText) ? "Train Blocking Crossing" : "Crossing Blocked";
+  }
   const subtype = typeof resolveOtherHazardSubtypeFromRecord === "function" ? resolveOtherHazardSubtypeFromRecord(alert) : "";
   if (subtype && typeof getOtherHazardSubtypeLabel === "function") return getOtherHazardSubtypeLabel(subtype);
   const popupTitle = typeof getGridlyHazardConsumerTitle === "function" ? getGridlyHazardConsumerTitle({
@@ -39840,6 +40046,10 @@ function normalizeGridlyAlertCardTitleCandidate(alert = {}, fallbackTitle = "") 
 
 function normalizeGridlyAlertCardLocationLabel(alert = {}) {
   const isCrossing = isGridlyAlertCardCrossingRelated(alert);
+  if (isCrossing && typeof getGridlySpecificCrossingLocation === "function") {
+    const specificLocation = getGridlySpecificCrossingLocation(alert, { style: "intersection" });
+    if (specificLocation?.locationLineLabel && specificLocation.specificity !== "none") return specificLocation.locationLineLabel;
+  }
   const popupRoad = typeof resolveGridlyHazardPopupRoadLabel === "function" ? resolveGridlyHazardPopupRoadLabel({
     ...alert,
     road_name: alert?.road_name || alert?.roadName || alert?.primaryRoad || alert?.corridor || alert?.route,
@@ -39851,7 +40061,7 @@ function normalizeGridlyAlertCardLocationLabel(alert = {}) {
     .map((value) => normalizeGridlyLightweightLocationLabelText(normalizeGridlyUserFacingRoadText(value)))
     .filter((value) => value && !/^(this area|liberty county|dayton area|unknown|undefined|null)$/i.test(value));
   const first = candidates.find((value, index) => candidates.findIndex((candidate) => candidate.toLowerCase() === value.toLowerCase()) === index) || "this area";
-  return isCrossing && first && !/crossing/i.test(first) ? `${first} Crossing` : first;
+  return first;
 }
 
 function buildGridlyAlertCardConsumerModel(alert = {}, options = {}) {
