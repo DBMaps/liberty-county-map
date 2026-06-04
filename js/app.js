@@ -39205,7 +39205,7 @@ function getUnifiedIncidentIcon(incident){
   return m[incident.type]||"❗";
 }
 
-const GRIDLY_HAZARD_POPUP_TECHNICAL_METADATA_PATTERN = /\b(?:other_hazard|emergency_response_activity|community_report|future_source|gridly\s+structured|gridly_structured|source\s*:|source\s+tag|source\s+tags|internal\s+(?:category|subtype|source)|report_type|hazard_subtype|confidence\s*(?:score|:|\d+%|percentage)|\d+\s*%)\b/i;
+const GRIDLY_HAZARD_POPUP_TECHNICAL_METADATA_PATTERN = /\b(?:other_hazard|emergency_response_activity|community_report|future_source|gridly\s+structured|gridly_structured|source\s*:|source\s+tag|source\s+tags|internal\s+(?:category|subtype|source)|report_type|hazard_subtype|risk\s*score|auto[-\s]*(?:expires|expiration)|expires\s+after|confidence\s*(?:score|:|\d+%|percentage)|\d+\s*%)\b/i;
 let lastGridlyHazardPopupConsumerState = null;
 let lastGridlyCrossingPopupConsumerState = null;
 
@@ -39322,6 +39322,7 @@ function resolveGridlyCrossingPopupLocationLabel(incident = {}) {
 }
 
 function getGridlyCrossingPopupReportCount(incident = {}) {
+  if (incident?.hasActiveReport === false || incident?.active === false) return 0;
   return getGridlyHazardPopupReportCount(incident);
 }
 
@@ -39337,7 +39338,7 @@ function buildGridlyCrossingPopupConsumerModel(incident = {}) {
   const locationLabel = resolveGridlyCrossingPopupLocationLabel(incident);
   const locationLine = normalizeGridlyUserFacingRoadText(`Reported at ${locationLabel}`);
   const reportCount = getGridlyCrossingPopupReportCount(incident);
-  const reportCountLine = `${reportCount} active report${reportCount === 1 ? "" : "s"}`;
+  const reportCountLine = reportCount > 0 ? `${reportCount} active report${reportCount === 1 ? "" : "s"}` : "No active reports";
   const freshnessLine = formatGridlyHazardPopupFreshnessLine(incident);
   const confidenceLine = getGridlyCrossingPopupConfidenceLine(incident, reportCount);
   const visibleText = [title, locationLine, freshnessLine, reportCountLine, confidenceLine].join(" ");
@@ -39460,9 +39461,9 @@ function buildUnifiedIncidentPopup(incident){
       <span data-gridly-crossing-popup-field="confidenceLine">${sanitizeText(model.confidenceLine)}</span>
     `;
     if (!isActive) {
-      return `<div class="gridly-popup" data-gridly-crossing-popup="consumer">${popupLines}</div>`;
+      return `<div class="gridly-popup" data-gridly-crossing-popup="consumer" data-gridly-crossing-popup-system="unified">${popupLines}</div>`;
     }
-    return `<div class="gridly-popup" data-gridly-crossing-popup="consumer">${popupLines}<div class="popup-report-grid"><button class="popup-report-btn warning" type="button" data-unified-action="confirm" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Confirm Still Active</button><button class="popup-report-btn blue" type="button" data-unified-action="cleared" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Mark Cleared</button><button class="popup-report-btn neutral" type="button" data-unified-action="view-area" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">View Area</button></div></div>`;
+    return `<div class="gridly-popup" data-gridly-crossing-popup="consumer" data-gridly-crossing-popup-system="unified">${popupLines}<div class="popup-report-grid"><button class="popup-report-btn warning" type="button" data-unified-action="confirm" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Confirm Still Active</button><button class="popup-report-btn blue" type="button" data-unified-action="cleared" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Mark Cleared</button><button class="popup-report-btn neutral" type="button" data-unified-action="view-area" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">View Area</button></div></div>`;
   }
 
   const model = buildGridlyHazardPopupConsumerModel(incident);
@@ -39515,16 +39516,27 @@ function gridlyHazardPopupAudit() {
 exposeGridlyAuditHelper("gridlyHazardPopupAudit", gridlyHazardPopupAudit);
 
 function gridlyCrossingPopupConsumerAudit() {
-  const popup = typeof document !== "undefined" ? document.querySelector("#map .leaflet-popup-content [data-gridly-crossing-popup='consumer'], [data-gridly-crossing-popup='consumer']") : null;
-  const readField = (field) => popup?.querySelector?.(`[data-gridly-crossing-popup-field='${field}']`)?.textContent?.trim() || "";
-  const domModel = popup ? {
-    title: readField("title"),
-    locationLine: readField("locationLine"),
-    freshnessLine: readField("freshnessLine"),
-    reportCountLine: readField("reportCountLine"),
-    confidenceLine: readField("confidenceLine")
-  } : null;
-  const model = domModel || lastGridlyCrossingPopupConsumerState || buildGridlyCrossingPopupConsumerModel({
+  const readPopupModel = (popup, fallbackSystem) => {
+    const readField = (field) => popup?.querySelector?.(`[data-gridly-crossing-popup-field='${field}']`)?.textContent?.trim() || "";
+    const model = {
+      title: readField("title"),
+      locationLine: readField("locationLine"),
+      freshnessLine: readField("freshnessLine"),
+      reportCountLine: readField("reportCountLine"),
+      confidenceLine: readField("confidenceLine")
+    };
+    return {
+      system: popup?.dataset?.gridlyCrossingPopupSystem || fallbackSystem || "unknown",
+      ...model,
+      visibleText: [model.title, model.locationLine, model.freshnessLine, model.reportCountLine, model.confidenceLine, popup?.textContent || ""].join(" ")
+    };
+  };
+
+  const domPopups = typeof document !== "undefined"
+    ? Array.from(document.querySelectorAll("#map .leaflet-popup-content [data-gridly-crossing-popup='consumer'], [data-gridly-crossing-popup='consumer']"))
+    : [];
+  const domSystems = domPopups.map((popup) => readPopupModel(popup));
+  const unifiedModel = buildGridlyCrossingPopupConsumerModel({
     id: "rail-audit-crossing",
     type: "rail_blocked",
     report_type: "blocked",
@@ -39535,16 +39547,56 @@ function gridlyCrossingPopupConsumerAudit() {
     age_minutes: 0,
     confidence: "community"
   });
-  const visibleText = [model.title, model.locationLine, model.freshnessLine, model.reportCountLine, model.confidenceLine, popup?.textContent || ""].join(" ");
-  const technicalMetadataDetected = GRIDLY_HAZARD_POPUP_TECHNICAL_METADATA_PATTERN.test(visibleText);
+  const leafletModel = buildGridlyLeafletCrossingPopupConsumerModel(
+    { id: "audit-crossing", name: "Louisiana Street", railroad: "Railroad", risk: 50, lat: 30.057, lng: -94.795 },
+    { title: "Blocked", type: "blocked", minutesAgo: 20 }
+  );
+  const previousCrossingPopupConsumerState = lastGridlyCrossingPopupConsumerState;
+  const leafletHtml = typeof buildPopup === "function"
+    ? buildPopup({ id: "audit-crossing", name: "Louisiana Street", railroad: "Railroad", risk: 50, lat: 30.057, lng: -94.795 }, { title: "Blocked", type: "blocked", minutesAgo: 20 })
+    : "";
+  lastGridlyCrossingPopupConsumerState = previousCrossingPopupConsumerState;
+  const fallbackSystems = [
+    {
+      system: "unified",
+      ...unifiedModel,
+      visibleText: [unifiedModel.title, unifiedModel.locationLine, unifiedModel.freshnessLine, unifiedModel.reportCountLine, unifiedModel.confidenceLine].join(" ")
+    },
+    {
+      system: "leaflet",
+      ...leafletModel,
+      visibleText: [leafletModel.title, leafletModel.locationLine, leafletModel.freshnessLine, leafletModel.reportCountLine, leafletModel.confidenceLine, leafletHtml.replace(/<[^>]+>/g, " ")].join(" ")
+    }
+  ];
+  const systemsByName = new Map();
+  fallbackSystems.forEach((sample) => systemsByName.set(sample.system, sample));
+  domSystems.forEach((sample) => systemsByName.set(sample.system, sample));
+  const systems = Array.from(systemsByName.values()).map((sample) => {
+    const technicalMetadataDetected = GRIDLY_HAZARD_POPUP_TECHNICAL_METADATA_PATTERN.test(sample.visibleText || "");
+    const consumerFriendlyPass = Boolean(sample.title && sample.locationLine && sample.freshnessLine && sample.reportCountLine && sample.confidenceLine && !technicalMetadataDetected);
+    return {
+      system: sample.system,
+      title: sample.title,
+      locationLine: sample.locationLine,
+      freshnessLine: sample.freshnessLine,
+      reportCountLine: sample.reportCountLine,
+      confidenceLine: sample.confidenceLine,
+      technicalMetadataDetected,
+      consumerFriendlyPass
+    };
+  });
+  const primary = systems.find((sample) => sample.system === "leaflet") || systems[0] || {};
+  const technicalMetadataDetected = systems.some((sample) => sample.technicalMetadataDetected);
+  const consumerFriendlyPass = Boolean(systems.length && systems.every((sample) => sample.consumerFriendlyPass));
   return {
-    title: model.title,
-    locationLine: model.locationLine,
-    freshnessLine: model.freshnessLine,
-    reportCountLine: model.reportCountLine,
-    confidenceLine: model.confidenceLine,
+    title: primary.title || "",
+    locationLine: primary.locationLine || "",
+    freshnessLine: primary.freshnessLine || "",
+    reportCountLine: primary.reportCountLine || "",
+    confidenceLine: primary.confidenceLine || "",
     technicalMetadataDetected,
-    consumerFriendlyPass: Boolean(model.title && model.locationLine && model.freshnessLine && model.reportCountLine && model.confidenceLine && !technicalMetadataDetected)
+    consumerFriendlyPass,
+    systems
   };
 }
 exposeGridlyAuditHelper("gridlyCrossingPopupConsumerAudit", gridlyCrossingPopupConsumerAudit);
@@ -39732,7 +39784,7 @@ function gridlyLanguageConsistencyReadSurface(label, selector, options = {}) {
 function gridlyLanguageConsistencyDetectIssues(surface = {}) {
   const findings = [];
   const samples = Array.isArray(surface.samples) ? surface.samples : [];
-  const rawInternalPattern = /\b(?:other_hazard|community_report|future_source|status_source|gridly_structured|gridly\s+structured|source\s+tag|source\s+tags|report_type|hazard_subtype)\b/i;
+  const rawInternalPattern = /\b(?:other_hazard|community_report|future_source|status_source|gridly_structured|gridly\s+structured|source\s+tag|source\s+tags|report_type|hazard_subtype|risk\s*score|auto[-\s]*(?:expires|expiration)|expires\s+after)\b/i;
   const onRoadInRoadPattern = /\bon\s+([^•,;]+?)\s+in\s+([^•,;]+?)(?:$|[•,;.])/i;
   const duplicateNearPattern = /\b(?:near|on|at)\s+(.{3,60}?)\s+(?:near|on|at|in)\s+\1\b/i;
   samples.forEach((sample) => {
@@ -42232,44 +42284,48 @@ function wirePopupReportButtons(popupRoot) {
   }
 }
 
-function buildPopup(crossing, report) {
+function buildGridlyLeafletCrossingPopupConsumerModel(crossing = {}, report = null) {
   const lifecycleState = getIncidentLifecycleState(report);
-  const status = report
-    ? lifecycleState === "recently_cleared" || lifecycleState === "cleared"
-      ? "Recently cleared"
-      : report.title
-    : "No active report";
+  const isCleared = lifecycleState === "recently_cleared" || lifecycleState === "cleared" || report?.type === "cleared";
+  const hasActiveReport = Boolean(report && !isCleared);
+  const reportCount = hasActiveReport ? getReportCountForCrossing(crossing.id) : 0;
+  return buildGridlyCrossingPopupConsumerModel({
+    id: `rail-${crossing.id || "crossing"}`,
+    type: isCleared ? "rail_cleared" : (report?.type === "heavy" ? "rail_delay" : "rail_blocked"),
+    report_type: isCleared ? "cleared" : (report?.type || "blocked"),
+    status: isCleared || !report ? "cleared" : "active",
+    crossingName: crossing.name,
+    crossing_name: crossing.name,
+    area: crossing.name,
+    railroad: crossing.railroad,
+    reports_count: reportCount,
+    age_minutes: Number.isFinite(Number(report?.minutesAgo)) ? Number(report.minutesAgo) : 0,
+    confidence: reportCount >= 2 ? "confirmed" : "community",
+    hasActiveReport,
+    active: hasActiveReport,
+    latestReport: report || null
+  });
+}
 
-  const freshness = report ? `${report.minutesAgo} min ago` : "No recent report";
-  const trustCount = getReportCountForCrossing(crossing.id);
-
-  const trustLabel = getDriverConfirmationLabel(trustCount);
-  const confidenceLabel = getCrossingConfidenceLabel(report, trustCount);
-  const trustFreshness = report
-    ? `Last confirmed ${report.minutesAgo} min ago`
-    : "Needs confirmation";
-  const reportState = getReportStateLabel(report);
-  const routeImpact = getRouteImpactSummary(report, crossing);
+function buildPopup(crossing, report) {
+  const model = buildGridlyLeafletCrossingPopupConsumerModel(crossing, report);
+  lastGridlyCrossingPopupConsumerState = model;
+  const reportType = report?.type || "heavy";
+  const incidentId = `rail-${crossing.id || ""}`;
+  const lat = Number(crossing?.lat);
+  const lng = Number(crossing?.lng);
 
   return `
-    <div class="gridly-popup">
-      <strong>${sanitizeText(crossing.name)}</strong>
-      <span>${sanitizeText(crossing.railroad)}</span><br />
-      <span>Status: ${sanitizeText(status)}</span><br />
-      <span>Freshness: ${sanitizeText(freshness)}</span><br />
-      <span>Driver confirmations: ${sanitizeText(trustLabel)}</span><br />
-      <span>${sanitizeText(trustFreshness)}</span><br />
-      <span>How sure this is current: ${sanitizeText(confidenceLabel)}</span><br />
-      <span>${sanitizeText(reportState)}</span><br />
-      <span>What this means for your drive: ${sanitizeText(routeImpact)}</span><br />
-      <span>Auto-expires after ${REPORT_EXPIRATION_MINUTES} min</span><br />
-      <span>Risk Score: ${crossing.risk}/100</span>
+    <div class="gridly-popup" data-gridly-crossing-popup="consumer" data-gridly-crossing-popup-system="leaflet">
+      <strong data-gridly-crossing-popup-field="title">${sanitizeText(model.title)}</strong>
+      <span data-gridly-crossing-popup-field="locationLine">${sanitizeText(model.locationLine)}</span><br />
+      <span data-gridly-crossing-popup-field="freshnessLine">${sanitizeText(model.freshnessLine)}</span> • <span data-gridly-crossing-popup-field="reportCountLine">${sanitizeText(model.reportCountLine)}</span><br />
+      <span data-gridly-crossing-popup-field="confidenceLine">${sanitizeText(model.confidenceLine)}</span>
 
       <div class="popup-report-grid">
-        <button class="popup-report-btn danger" type="button" data-crossing-id="${sanitizeText(crossing.id)}" data-report-type="blocked">Blocked</button>
-        <button class="popup-report-btn warning" type="button" data-crossing-id="${sanitizeText(crossing.id)}" data-report-type="heavy">Delay</button>
-        <button class="popup-report-btn blue" type="button" data-crossing-id="${sanitizeText(crossing.id)}" data-report-type="cleared">Cleared</button>
-        <button class="popup-report-btn neutral" type="button" data-crossing-id="${sanitizeText(crossing.id)}" data-report-type="other">Other</button>
+        <button class="popup-report-btn warning" type="button" data-unified-action="confirm" data-incident-id="${sanitizeText(incidentId)}" data-incident-category="rail" data-report-type="${sanitizeText(reportType)}" data-crossing-id="${sanitizeText(crossing.id)}" data-lat="${sanitizeText(String(lat))}" data-lng="${sanitizeText(String(lng))}">Confirm Still Active</button>
+        <button class="popup-report-btn blue" type="button" data-unified-action="cleared" data-incident-id="${sanitizeText(incidentId)}" data-incident-category="rail" data-report-type="${sanitizeText(reportType)}" data-crossing-id="${sanitizeText(crossing.id)}" data-lat="${sanitizeText(String(lat))}" data-lng="${sanitizeText(String(lng))}">Mark Cleared</button>
+        <button class="popup-report-btn neutral" type="button" data-unified-action="view-area" data-lat="${sanitizeText(String(lat))}" data-lng="${sanitizeText(String(lng))}">View Area</button>
       </div>
     </div>
   `;
