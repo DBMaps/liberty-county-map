@@ -22659,6 +22659,7 @@ function refreshGridlyUserLocationAwarenessContext(source = "user_location_contr
   renderUserLocationDot();
   updateNearestContext();
   if (typeof scheduleRenderCrossings === "function") scheduleRenderCrossings(source);
+  if (typeof renderGridlyCommunityPulse === "function") renderGridlyCommunityPulse({ reason: source, userLocationRefresh: true });
   if (typeof refreshPortraitV2LocalizedIntelligence === "function") refreshPortraitV2LocalizedIntelligence();
 }
 
@@ -28731,6 +28732,69 @@ function getGridlyAlertsPanelAuditSnapshot(options = {}) {
   };
 }
 
+
+const GRIDLY_ACTIVE_AWARENESS_PROXIMITY_THRESHOLDS_MILES = [
+  { band: "very_near_user", maxMiles: 0.5, score: 18, label: "very near user" },
+  { band: "near_user", maxMiles: 1.5, score: 12, label: "near user" },
+  { band: "local_user_area", maxMiles: 3, score: 6, label: "within local user area" },
+  { band: "extended_user_area", maxMiles: 5, score: 3, label: "within extended user area" }
+];
+const GRIDLY_ACTIVE_AWARENESS_PROXIMITY_MAX_SCORE = 18;
+
+function getGridlyActiveAwarenessUserLocationAnchor(options = {}) {
+  const candidates = [
+    options?.userLocation,
+    options?.currentLocation,
+    typeof userLocation !== "undefined" ? userLocation : null,
+    typeof window !== "undefined" ? window.gridlyUserLocation : null,
+    typeof window !== "undefined" ? window.__gridlyUserLocation : null,
+    typeof window !== "undefined" ? window.gridlyCurrentLocation : null,
+    typeof window !== "undefined" ? window.__gridlyCurrentLocation : null
+  ];
+  for (const candidate of candidates) {
+    const coords = typeof getValidGridlyUserLocationCoordinates === "function"
+      ? getValidGridlyUserLocationCoordinates(candidate)
+      : getGridlyIncidentCoordinate(candidate || {});
+    if (coords) return { ...coords, source: "user_location_awareness_dot" };
+  }
+  return null;
+}
+
+function getGridlyActiveAwarenessRecordCoordinate(record = {}) {
+  if (typeof getGridlyAwarenessIntelligenceRecordCoordinate === "function") {
+    const awarenessCoordinate = getGridlyAwarenessIntelligenceRecordCoordinate(record);
+    if (awarenessCoordinate) return awarenessCoordinate;
+  }
+  const directCoordinate = typeof getGridlyIncidentCoordinate === "function" ? getGridlyIncidentCoordinate(record) : null;
+  return directCoordinate ? { ...directCoordinate, source: "record_coordinates" } : null;
+}
+
+function buildGridlyActiveAwarenessProximityModel(record = {}, userAnchor = null) {
+  if (!userAnchor) {
+    return { enabled: false, score: 0, band: "unavailable", distanceMiles: null, coordinateSource: "none", reason: "no_valid_user_location" };
+  }
+  const recordCoordinate = getGridlyActiveAwarenessRecordCoordinate(record);
+  if (!recordCoordinate) {
+    return { enabled: true, score: 0, band: "missing_incident_coordinate", distanceMiles: null, coordinateSource: "missing", reason: "incident_coordinate_unavailable" };
+  }
+  const distance = getDistanceMiles(userAnchor.lat, userAnchor.lng, recordCoordinate.lat, recordCoordinate.lng);
+  if (!Number.isFinite(Number(distance))) {
+    return { enabled: true, score: 0, band: "invalid_distance", distanceMiles: null, coordinateSource: recordCoordinate.source || "record_coordinates", reason: "distance_unavailable" };
+  }
+  const distanceMiles = Number(distance);
+  const threshold = GRIDLY_ACTIVE_AWARENESS_PROXIMITY_THRESHOLDS_MILES.find((entry) => distanceMiles <= entry.maxMiles);
+  const score = threshold ? Math.min(GRIDLY_ACTIVE_AWARENESS_PROXIMITY_MAX_SCORE, Number(threshold.score || 0)) : 0;
+  return {
+    enabled: true,
+    score,
+    band: threshold?.band || "far_from_user",
+    label: threshold?.label || "far from user",
+    distanceMiles: Number(distanceMiles.toFixed(2)),
+    coordinateSource: recordCoordinate.source || "record_coordinates",
+    reason: threshold ? `within_${threshold.maxMiles}_miles_of_user` : "outside_user_proximity_boost_radius"
+  };
+}
+
 function getGridlyLightweightActivePriorityScore(detail = {}, index = 0) {
   const item = detail?.item || {};
   const explicitPriority = Number(item?.priorityScore ?? item?.priority_score ?? item?.priority ?? item?.raw?.priorityScore ?? item?.raw?.priority_score ?? item?.raw?.priority);
@@ -28891,6 +28955,7 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
   const activeHazardItems = hazardItems.slice(0, sourceLimit).filter(isGridlyLightweightActiveItem);
   const seen = new Set();
   const activeItems = [];
+  const userLocationAwarenessAnchor = getGridlyActiveAwarenessUserLocationAnchor(options);
   [
     ...activeHazardItems.map((item, index) => ({ item, index, prefix: "hazard" })),
     ...activeReportItems.map((item, index) => ({ item, index, prefix: "report" }))
@@ -28912,11 +28977,15 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
     const lifecyclePriorityAdjustment = lifecycleClassification?.lifecycleStage === "expired_candidate"
       ? -1000
       : (lifecycleClassification?.lifecycleStage === "aging" ? -18 : 0);
+    const userProximityModel = buildGridlyActiveAwarenessProximityModel(item, userLocationAwarenessAnchor);
+    const userProximityScore = Number(userProximityModel?.score || 0);
     return {
       ...detail,
-      priorityScore: basePriorityScore + lifecyclePriorityAdjustment,
+      priorityScore: basePriorityScore + lifecyclePriorityAdjustment + userProximityScore,
       basePriorityScore,
       lifecyclePriorityAdjustment,
+      userProximityScore,
+      userProximityModel,
       lifecycleClassification,
       lifecycleInfluencedTopAwareness: Boolean(lifecyclePriorityAdjustment),
       activeSourceTruthLayers: getGridlyActiveAwarenessTruthLayers(item, detail),
@@ -29000,7 +29069,11 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
       lifecycleStage: detail.lifecycleClassification?.lifecycleStage || "unknown",
       lifecycleAgeMinutes: detail.lifecycleClassification?.lifecycleAgeMinutes ?? null,
       lifecycleRecommendedAction: detail.lifecycleClassification?.lifecycleRecommendedAction || "",
-      lifecyclePriorityAdjustment: Number(detail.lifecyclePriorityAdjustment || 0)
+      lifecyclePriorityAdjustment: Number(detail.lifecyclePriorityAdjustment || 0),
+      userProximityScore: Number(detail.userProximityScore || 0),
+      userProximityBand: detail.userProximityModel?.band || "unavailable",
+      userProximityDistanceMiles: detail.userProximityModel?.distanceMiles ?? null,
+      userProximityReason: detail.userProximityModel?.reason || ""
     };
   });
   let headline = "Community Conditions Normal";
@@ -29041,7 +29114,10 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
       resolvedLocationLabel: selectedActiveDetail?.resolvedLocationLabel || "",
       lightweightLocationSourcesUsed: selectedActiveDetail?.lightweightLocationSourcesUsed || [],
       activeAwarenessCount,
-      sourceLimit
+      sourceLimit,
+      userProximityEnabled: Boolean(userLocationAwarenessAnchor),
+      selectedUserProximityBand: selectedActiveDetail?.userProximityModel?.band || "unavailable",
+      selectedUserProximityDistanceMiles: selectedActiveDetail?.userProximityModel?.distanceMiles ?? null
     });
   }
   return {
@@ -29049,6 +29125,14 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
     version: GRIDLY_COMMUNITY_ACTIVE_AWARENESS_VERSION,
     runtimeMode: "lightweight_only",
     activeAwarenessCount,
+    topAwarenessUserProximityEnabled: Boolean(userLocationAwarenessAnchor),
+    topAwarenessUserLocationAnchor: userLocationAwarenessAnchor ? { lat: userLocationAwarenessAnchor.lat, lng: userLocationAwarenessAnchor.lng, source: userLocationAwarenessAnchor.source } : null,
+    topAwarenessProximityThresholdsMiles: GRIDLY_ACTIVE_AWARENESS_PROXIMITY_THRESHOLDS_MILES.map((entry) => ({ ...entry })),
+    topAwarenessProximityMaxScore: GRIDLY_ACTIVE_AWARENESS_PROXIMITY_MAX_SCORE,
+    topAwarenessSelectedProximity: selectedActiveDetail?.userProximityModel || null,
+    topAwarenessProximityRankingReason: userLocationAwarenessAnchor
+      ? "User-location proximity adds a bounded modifier after severity/source scoring; the maximum boost is lower than a major severity gap so proximity cannot dominate critical/high differences."
+      : "No valid user location was available, so proximity did not modify awareness ranking.",
     topAwarenessCountSource: topAwarenessCountAudit.source,
     topAwarenessDisplayedCount: topAwarenessDedupedMobilityCount,
     topAwarenessRawActiveAwarenessCount: topAwarenessCountAudit.rawActiveAwarenessCount,
@@ -29106,7 +29190,10 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
       lifecycleRecommendedAction: detail.lifecycleClassification?.lifecycleRecommendedAction || "",
       basePriorityScore: Number(detail.basePriorityScore || 0),
       priorityScore: Number(detail.priorityScore || 0),
-      lifecyclePriorityAdjustment: Number(detail.lifecyclePriorityAdjustment || 0)
+      lifecyclePriorityAdjustment: Number(detail.lifecyclePriorityAdjustment || 0),
+      userProximityScore: Number(detail.userProximityScore || 0),
+      userProximityBand: detail.userProximityModel?.band || "unavailable",
+      userProximityDistanceMiles: detail.userProximityModel?.distanceMiles ?? null
     })),
     dataSourceSummary,
     crossingRuntimeUsed: false,
@@ -31317,15 +31404,20 @@ function buildGridlyNarrativePromotionPrototype(options = {}) {
   const selectedAwarenessArea = gridlyV229NormalizeNarrativeText(options?.awarenessAreaName || area.name || getGridlyAwarenessBriefTownLabel());
   const optionActiveAwareness = options?.activeAwareness || {};
   const optionCandidates = [];
-  const addOptionCandidate = (narrative, source, sourceType = "active_awareness") => {
+  const addOptionCandidate = (narrative, source, sourceType = "active_awareness", metadata = {}) => {
     const text = gridlyV229NormalizeNarrativeText(narrative);
     if (!text) return;
-    optionCandidates.push({ narrative: text, source, sourceType, derived: false });
+    optionCandidates.push({ narrative: text, source, sourceType, derived: false, ...metadata });
   };
   (Array.isArray(optionActiveAwareness?.activeAwarenessSamples) ? optionActiveAwareness.activeAwarenessSamples : []).forEach((sample, index) => {
-    addOptionCandidate(sample?.reusedAlertText, `options.activeAwareness.activeAwarenessSamples.${index}.reusedAlertText`, "active_awareness_sample");
-    addOptionCandidate(sample?.headline || sample?.title || sample?.description || sample?.summary || sample?.detail || sample?.message, `options.activeAwareness.activeAwarenessSamples.${index}.narrative`, "active_awareness_sample");
-    addOptionCandidate(buildGridlyLightweightSummaryFromResolvedDetail({ resolvedCategory: sample?.resolvedCategory, resolvedLocationLabel: sample?.resolvedLocationLabel }).value, `options.activeAwareness.activeAwarenessSamples.${index}.resolvedCategory+resolvedLocationLabel`, "active_awareness_sample");
+    const proximityMetadata = {
+      userProximityScore: Number(sample?.userProximityScore || 0),
+      userProximityBand: sample?.userProximityBand || "unavailable",
+      userProximityDistanceMiles: sample?.userProximityDistanceMiles ?? null
+    };
+    addOptionCandidate(sample?.reusedAlertText, `options.activeAwareness.activeAwarenessSamples.${index}.reusedAlertText`, "active_awareness_sample", proximityMetadata);
+    addOptionCandidate(sample?.headline || sample?.title || sample?.description || sample?.summary || sample?.detail || sample?.message, `options.activeAwareness.activeAwarenessSamples.${index}.narrative`, "active_awareness_sample", proximityMetadata);
+    addOptionCandidate(buildGridlyLightweightSummaryFromResolvedDetail({ resolvedCategory: sample?.resolvedCategory, resolvedLocationLabel: sample?.resolvedLocationLabel }).value, `options.activeAwareness.activeAwarenessSamples.${index}.resolvedCategory+resolvedLocationLabel`, "active_awareness_sample", proximityMetadata);
   });
   addOptionCandidate(optionActiveAwareness?.headline, "options.activeAwareness.headline");
   addOptionCandidate(optionActiveAwareness?.reusedAlertText, optionActiveAwareness?.reusedAlertSource || "options.activeAwareness.reusedAlertText");
@@ -31337,13 +31429,20 @@ function buildGridlyNarrativePromotionPrototype(options = {}) {
   const scoredCandidates = allCandidates.map((candidate) => {
     const score = gridlyV2291ScoreNarrative(candidate.narrative, context);
     const roadNames = gridlyV230ExtractRoadReferences(candidate.narrative);
+    const matchingProximityScore = Math.max(0, ...optionCandidates
+      .filter((entry) => entry.narrative === candidate.narrative)
+      .map((entry) => Number(entry.userProximityScore || 0))
+      .filter((value) => Number.isFinite(value)));
+    const proximityNarrativeBoost = Math.min(12, matchingProximityScore);
     return {
       ...candidate,
       ...score,
       roadNames,
-      v230Score: Number(score.specificityScore || 0) + (roadNames.length ? 18 : 0) + (candidate.derived ? -1 : 0)
+      userProximityScore: matchingProximityScore,
+      proximityNarrativeBoost,
+      v230Score: Number(score.specificityScore || 0) + (roadNames.length ? 18 : 0) + proximityNarrativeBoost + (candidate.derived ? -1 : 0)
     };
-  }).sort((a, b) => b.v230Score - a.v230Score || b.narrative.length - a.narrative.length);
+  }).sort((a, b) => b.v230Score - a.v230Score || b.userProximityScore - a.userProximityScore || b.narrative.length - a.narrative.length);
   const selectedCandidate = scoredCandidates.find((candidate) => candidate.conditionLabel || candidate.roadNames.length) || scoredCandidates[0] || null;
   const selectedRawCondition = selectedCandidate?.conditionLabel
     || context.strongestCondition
@@ -31388,6 +31487,8 @@ function buildGridlyNarrativePromotionPrototype(options = {}) {
     fallbackUsed,
     patternReason: activeConditionPresent && selectedCondition ? standardizedCondition.patternReason : "No active condition was available for narrative promotion.",
     sourceUsed: promotedNarrative ? (specificCrossingLocation?.source ? `crossing_specificity:${specificCrossingLocation.source}` : (selectedRoad ? roadSelection.selectedRoadSource : (selectedCandidate?.source && selectedCandidate.source !== "readOnly.condition+road+awarenessAreaCandidate" ? selectedCandidate.source : "fallback_travel_wording"))) : "none",
+    selectedNarrativeUserProximityScore: Number(selectedCandidate?.userProximityScore || 0),
+    selectedNarrativeProximityBoost: Number(selectedCandidate?.proximityNarrativeBoost || 0),
     selectedRoadSource: activeConditionPresent && (specificCrossingLocation?.primaryRoad || selectedRoad) ? (specificCrossingLocation?.source ? `crossing_specificity:${specificCrossingLocation.source}` : roadSelection.selectedRoadSource) : "fallback_travel_wording_no_road",
     roadCandidateSources: roadSelection.roadCandidateSources,
     visibleAlertTextSamples: roadSelection.visibleAlertTextSamples,
