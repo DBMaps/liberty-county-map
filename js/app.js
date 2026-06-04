@@ -32309,21 +32309,36 @@ function gridlyHistoricalIntelligenceTitleCaseLocation(value = "") {
   return String(value || "")
     .trim()
     .toLowerCase()
-    .replace(/\b[a-z0-9]+\b/g, (word) => {
+    .replace(/\b[a-z0-9]+\b/g, (word, offset) => {
       const upper = word.toUpperCase();
       if (preservedAbbreviations.has(upper) || /^\d+[a-z]?$/.test(word)) return upper;
+      if (offset > 0 && /^(?:at|and)$/.test(word)) return word;
       return word.charAt(0).toUpperCase() + word.slice(1);
     })
     .replace(/\b(Mc)([a-z])/g, (_, prefix, letter) => `${prefix}${letter.toUpperCase()}`);
 }
 
 const GRIDLY_HISTORICAL_LOCATION_FALLBACK_LABEL = "Location not specified";
+const GRIDLY_HISTORICAL_SOURCE_ROAD_LOCATION_PATHS = Object.freeze([
+  "roadName", "road_name", "referenceRoad", "reference_road", "nearestRoad", "nearest_road",
+  "resolvedRoadName", "resolved_road_name", "displayRoad", "display_road",
+  "locationLabel", "location_label", "displayLocation", "display_location",
+  "crossingName", "crossing_name", "crossingLabel", "crossing_label",
+  "intersection", "street", "address"
+]);
+const GRIDLY_HISTORICAL_SOURCE_ROAD_LOCATION_NESTS = Object.freeze(["", "raw", "source", "original", "metadata", "properties"]);
+const GRIDLY_HISTORICAL_TEXT_FALLBACK_LOCATION_PATHS = Object.freeze(["title", "description", "summary", "headline", "detail"]);
+const GRIDLY_HISTORICAL_WEAK_LOCATION_TITLE_PATTERN = /^(?:flooding(?:\s+cleared)?|livestock\s+on\s+road|other\s+hazard(?:\s+cleared)?|road\s+hazard(?:\s+cleared)?|hazard(?:\s+cleared)?|road\s+pattern|road\s+issue|recurring\s+road\s+issue|community-reported\s+road\s+issue|drivers\s+previously\s+reported\s+this\s+road\s+issue|this\s+area|local\s+area|nearby\s+area|area|unknown\s+road|roadway|local\s+roadway|location\s+(?:details\s+)?unavailable|location\s+unknown|location\s+not\s+specified)$/i;
+
+function gridlyHistoricalIntelligenceIsWeakLocationTitle(value = "") {
+  return GRIDLY_HISTORICAL_WEAK_LOCATION_TITLE_PATTERN.test(String(value || "").replace(/\s+/g, " ").trim());
+}
 
 function gridlyHistoricalIntelligenceCleanLocationCandidate(value = "") {
   const text = safeDisplayText(value, "").replace(/\s+/g, " ").trim();
   if (!text) return "";
   if (gridlyHistoricalIntelligenceIsGenericOtherHazardLabel(text)) return "";
-  if (/^(?:road\s+pattern|road\s+issue|recurring\s+road\s+issue|community-reported\s+road\s+issue|drivers\s+previously\s+reported\s+this\s+road\s+issue|other\s+hazard\s+cleared|hazard\s+cleared|this\s+area|local\s+area|nearby\s+area|area|unknown\s+road|roadway|local\s+roadway|location\s+(?:details\s+)?unavailable|location\s+unknown|location\s+not\s+specified)$/i.test(text)) return "";
+  if (gridlyHistoricalIntelligenceIsWeakLocationTitle(text)) return "";
   return text;
 }
 
@@ -32341,6 +32356,77 @@ function gridlyHistoricalIntelligenceLocationFromPaths(source = {}, paths = [], 
     if (cleaned) return { label: cleaned, sourceField: path, specificity };
   }
   return null;
+}
+
+function gridlyHistoricalIntelligenceBuildNestedPaths(paths = []) {
+  const output = [];
+  GRIDLY_HISTORICAL_SOURCE_ROAD_LOCATION_NESTS.forEach((nest) => {
+    paths.forEach((path) => output.push(nest ? `${nest}.${path}` : path));
+  });
+  return output;
+}
+
+function gridlyHistoricalIntelligenceExtractLocationFromText(value = "") {
+  const text = safeDisplayText(value, "").replace(/\s+/g, " ").trim();
+  if (!text) return "";
+  const patterns = [
+    /\b((?:US|FM|CR|SH|TX|IH|I)\s*[-#]?\s*\d+[A-Za-z]?(?:\s+(?:at|&|and)\s+[A-Z][A-Za-z0-9.' -]+(?:Street|St|Road|Rd|Avenue|Ave|Drive|Dr|Lane|Ln|Boulevard|Blvd|Way|Court|Ct))?)/i,
+    /\b([A-Z][A-Za-z0-9.' -]+(?:Street|St|Road|Rd|Avenue|Ave|Drive|Dr|Lane|Ln|Boulevard|Blvd|Way|Court|Ct)\s+(?:&|and|at)\s+[A-Z][A-Za-z0-9.' -]+(?:Street|St|Road|Rd|Avenue|Ave|Drive|Dr|Lane|Ln|Boulevard|Blvd|Way|Court|Ct))\b/i,
+    /\b(?:near|on|at)\s+([A-Z0-9][A-Za-z0-9.' -]+(?:Street|St|Road|Rd|Avenue|Ave|Drive|Dr|Lane|Ln|Boulevard|Blvd|Way|Court|Ct|FM\s*\d+|CR\s*\d+|US\s*\d+))\b/i
+  ];
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    const cleaned = gridlyHistoricalIntelligenceCleanLocationCandidate(match?.[1] || "");
+    if (cleaned) return cleaned;
+  }
+  return "";
+}
+
+function gridlyHistoricalIntelligenceSourceReportLocationCandidates(record = {}) {
+  const directPaths = gridlyHistoricalIntelligenceBuildNestedPaths(GRIDLY_HISTORICAL_SOURCE_ROAD_LOCATION_PATHS);
+  const candidates = [];
+  directPaths.forEach((path) => {
+    const label = gridlyHistoricalIntelligenceCleanLocationCandidate(gridlyHistoricalIntelligenceReadPath(record, path));
+    if (label) candidates.push({ label, sourceField: path, specificity: "specific", sourceType: "source_report_field" });
+  });
+  const fallbackPaths = gridlyHistoricalIntelligenceBuildNestedPaths(GRIDLY_HISTORICAL_TEXT_FALLBACK_LOCATION_PATHS);
+  fallbackPaths.forEach((path) => {
+    const label = gridlyHistoricalIntelligenceExtractLocationFromText(gridlyHistoricalIntelligenceReadPath(record, path));
+    if (label) candidates.push({ label, sourceField: path, specificity: "specific", sourceType: "text_fallback_extraction" });
+  });
+  return candidates;
+}
+
+function gridlyHistoricalIntelligenceMostCommonSourceLocationContext(records = []) {
+  const counts = new Map();
+  (Array.isArray(records) ? records : []).forEach((record, recordIndex) => {
+    gridlyHistoricalIntelligenceSourceReportLocationCandidates(record).forEach((candidate) => {
+      const normalized = gridlyHistoricalIntelligenceNormalizeLocationToken(candidate.label);
+      if (!normalized) return;
+      if (!counts.has(normalized)) {
+        counts.set(normalized, {
+          label: candidate.label,
+          sourceField: candidate.sourceField,
+          specificity: candidate.specificity || "specific",
+          sourceType: candidate.sourceType || "source_report_field",
+          count: 0,
+          recordIndexes: []
+        });
+      }
+      const entry = counts.get(normalized);
+      entry.count += 1;
+      entry.recordIndexes.push(recordIndex);
+      if (String(candidate.sourceType) === "source_report_field" && String(entry.sourceType) !== "source_report_field") {
+        entry.label = candidate.label;
+        entry.sourceField = candidate.sourceField;
+        entry.sourceType = candidate.sourceType;
+      }
+    });
+  });
+  return Array.from(counts.values()).sort((a, b) => {
+    const sourcePriority = Number(b.sourceType === "source_report_field") - Number(a.sourceType === "source_report_field");
+    return Number(b.count) - Number(a.count) || sourcePriority || String(a.label).localeCompare(String(b.label));
+  })[0] || null;
 }
 
 function gridlyHistoricalIntelligenceRecordLocationContext(record = {}) {
@@ -32369,6 +32455,8 @@ function gridlyHistoricalIntelligenceRecordLocationContext(record = {}) {
 }
 
 function gridlyHistoricalIntelligenceBestLocationContext(finding = {}) {
+  const sourceReportContext = gridlyHistoricalIntelligenceMostCommonSourceLocationContext(finding.sourceRecords);
+  if (sourceReportContext) return sourceReportContext;
   const findingContext = gridlyHistoricalIntelligenceRecordLocationContext(finding);
   if (findingContext) return findingContext;
   const recordContexts = (Array.isArray(finding.sourceRecords) ? finding.sourceRecords : [])
@@ -33145,8 +33233,8 @@ function buildGridlyHistoricalIntelligenceSheetHtml(options = {}) {
     const language = getGridlyIntelligencePreviewLanguage(finding.category);
     const title = sanitizeText(finding.title || language.title || "Historical Pattern");
     const category = sanitizeText(finding.categoryLabel || language.category || "Hotspot");
-    const location = sanitizeText(gridlyHistoricalIntelligenceDisplayLocation(finding));
     const rowTitle = sanitizeText(gridlyHistoricalIntelligenceRowLocationTitle(finding));
+    const location = rowTitle;
     const patternSubtitle = sanitizeText(gridlyHistoricalIntelligencePatternSubtitle(finding));
     const summary = sanitizeText(gridlyHistoricalIntelligenceSummaryLine(finding));
     const supportingCopy = sanitizeText(gridlyHistoricalIntelligenceSupportingCopy(finding));
@@ -33165,6 +33253,84 @@ function buildGridlyHistoricalIntelligenceSheetHtml(options = {}) {
   }).join("");
   return `<div class="gridly-historical-intelligence-sheet"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local patterns from cleared community reports</p><div class="gridly-historical-intelligence-list">${rows}</div></div>`;
 }
+
+function gridlyHistoricalIntelligenceFinalRenderAudit(options = {}) {
+  const state = buildGridlyIntelligencePreviewCardModel(options);
+  const findings = Array.isArray(state.dedupedRankedFindings) ? state.dedupedRankedFindings : (Array.isArray(state.rankedFindings) ? state.rankedFindings : []);
+  const html = buildGridlyHistoricalIntelligenceSheetHtml(options);
+  const sourceRows = [];
+  if (typeof document !== "undefined") {
+    const liveRows = Array.from(document.querySelectorAll(".gridly-historical-intelligence-row"));
+    if (liveRows.length) {
+      liveRows.forEach((row, index) => {
+        sourceRows.push({
+          index,
+          source: "dom",
+          title: safeDisplayText(row.querySelector("summary strong")?.textContent || "", ""),
+          detailLocation: safeDisplayText(row.querySelector(".gridly-historical-intelligence-detail-title em")?.textContent || "", ""),
+          expandable: row.tagName === "DETAILS",
+          open: Boolean(row.open)
+        });
+      });
+    } else {
+      const template = document.createElement("template");
+      template.innerHTML = html;
+      Array.from(template.content.querySelectorAll(".gridly-historical-intelligence-row")).forEach((row, index) => {
+        sourceRows.push({
+          index,
+          source: "rendered_model",
+          title: safeDisplayText(row.querySelector("summary strong")?.textContent || "", ""),
+          detailLocation: safeDisplayText(row.querySelector(".gridly-historical-intelligence-detail-title em")?.textContent || "", ""),
+          expandable: row.tagName === "DETAILS",
+          open: Boolean(row.open)
+        });
+      });
+    }
+  } else {
+    const rowMatches = Array.from(String(html || "").matchAll(/<details class="gridly-historical-intelligence-row"[\s\S]*?<summary[\s\S]*?<strong>([\s\S]*?)<\/strong>[\s\S]*?<em>([\s\S]*?)<\/em>[\s\S]*?<\/details>/g));
+    rowMatches.forEach((match, index) => sourceRows.push({ index, source: "rendered_html", title: safeDisplayText(match[1]?.replace(/<[^>]+>/g, " ") || "", ""), detailLocation: safeDisplayText(match[2]?.replace(/<[^>]+>/g, " ") || "", ""), expandable: true, open: false }));
+  }
+  const sourceContexts = findings.map((finding) => gridlyHistoricalIntelligenceMostCommonSourceLocationContext(finding.sourceRecords));
+  const sourceRoadFieldExamples = findings.map((finding, index) => {
+    const context = sourceContexts[index];
+    if (!context) return null;
+    return {
+      row: index + 1,
+      field: context.sourceField,
+      value: context.label,
+      count: context.count,
+      sourceType: context.sourceType
+    };
+  }).filter(Boolean).slice(0, 8);
+  const renderedRows = sourceRows.map((row, index) => {
+    const context = sourceContexts[index] || null;
+    const title = safeDisplayText(row.title, GRIDLY_HISTORICAL_LOCATION_FALLBACK_LABEL);
+    const weakTitle = !title || title === GRIDLY_HISTORICAL_LOCATION_FALLBACK_LABEL || gridlyHistoricalIntelligenceIsWeakLocationTitle(title);
+    return {
+      row: index + 1,
+      finalTitle: title || GRIDLY_HISTORICAL_LOCATION_FALLBACK_LABEL,
+      detailLocation: row.detailLocation || "",
+      source: row.source,
+      sourceRoadField: context?.sourceField || "",
+      sourceRoadValue: context?.label || "",
+      sourceReportLocationResolved: Boolean(context),
+      weakTitle,
+      expandable: Boolean(row.expandable)
+    };
+  });
+  const weakRows = renderedRows.filter((row) => row.weakTitle);
+  return {
+    rowCount: renderedRows.length,
+    sourceReportLocationResolvedCount: renderedRows.filter((row) => row.sourceReportLocationResolved).length,
+    weakTitleCount: weakRows.length,
+    weakTitleExamples: weakRows.slice(0, 8),
+    finalRenderedExamples: renderedRows.slice(0, 8),
+    sourceRoadFieldExamples
+  };
+}
+
+window.gridlyHistoricalIntelligenceFinalRenderAudit = gridlyHistoricalIntelligenceFinalRenderAudit;
+exposeGridlyAuditHelper("gridlyHistoricalIntelligenceFinalRenderAudit", gridlyHistoricalIntelligenceFinalRenderAudit);
 
 function renderGridlyIntelligencePreviewCard(options = {}) {
   const chip = document.getElementById("gridlyIntelligencePreviewCard");
@@ -60590,6 +60756,14 @@ function gridlyHistoricalIntelligenceExperienceAudit() {
     };
   });
   const missingSpecificLocationRows = historicalLocationRows.filter((row) => row.lacksSpecificLocationContext);
+  const historicalFinalRenderAudit = typeof gridlyHistoricalIntelligenceFinalRenderAudit === "function" ? gridlyHistoricalIntelligenceFinalRenderAudit() : {
+    rowCount: 0,
+    sourceReportLocationResolvedCount: 0,
+    weakTitleCount: 0,
+    weakTitleExamples: [],
+    finalRenderedExamples: [],
+    sourceRoadFieldExamples: []
+  };
   const historicalMissingLocationAudit = {
     rowCount: historicalLocationRows.length,
     missingSpecificLocationCount: missingSpecificLocationRows.length,
@@ -60674,6 +60848,7 @@ function gridlyHistoricalIntelligenceExperienceAudit() {
     availableSignals,
     currentListInputs,
     historicalMissingLocationAudit,
+    historicalFinalRenderAudit,
     driverValueSignals,
     intelligenceAssetSignals,
     seededDataDetected,
@@ -60701,7 +60876,9 @@ function gridlyHistoricalIntelligenceExperienceAudit() {
       timestampedEventCount: timestamps.length,
       durationEventCount: durationEvents.length,
       routeImpactEventCount: routeImpactEvents.length,
-      missingSpecificLocationRowCount: missingSpecificLocationRows.length
+      missingSpecificLocationRowCount: missingSpecificLocationRows.length,
+      weakFinalRenderedTitleCount: historicalFinalRenderAudit.weakTitleCount,
+      sourceReportLocationResolvedRowCount: historicalFinalRenderAudit.sourceReportLocationResolvedCount
     },
     readinessCategories: readiness.categories || [],
     readinessDiagnostics: readiness.diagnostics || {},
