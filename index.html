@@ -745,80 +745,137 @@
         <h2 id="settingsModalTitle">Settings</h2>
         <button type="button" class="gridly-surface-close settings-modal-close" id="closeSettingsModalBtn" aria-label="Close Settings">×</button>
       </div>
-      <p class="settings-modal-subtitle">Manage saved route anchors and device preferences. Settings are stored locally on this device.</p>
-      <section class="settings-modal-section" id="settingsSavedPlacesSection">
-        <h3>Route Watch Settings</h3>
-        <div class="settings-place-grid" aria-label="Route Watch saved places">
-          <article class="settings-place-card settings-place-card-anchor">
-            <span class="settings-place-label">HOME</span>
-            <strong id="settingsHomeValue">Not saved</strong>
-            <small id="settingsHomeMeta">Save Home to enable Route Watch context.</small>
-            <small class="settings-clean-note">Shown only on this device.</small>
-            <button type="button" class="secondary-btn compact-btn settings-place-action" id="settingsEditHomeBtn">Edit Home</button>
-          </article>
-          <article class="settings-place-card settings-place-card-anchor">
-            <span class="settings-place-label">WORK</span>
-            <strong id="settingsWorkValue">Not saved</strong>
-            <small id="settingsWorkMeta">Save Work to enable Route Watch context.</small>
-            <small class="settings-clean-note">Shown only on this device.</small>
-            <button type="button" class="secondary-btn compact-btn settings-place-action" id="settingsEditWorkBtn">Edit Work</button>
-          </article>
-          <article class="settings-place-card settings-place-card-wide settings-saved-places-card">
-            <span class="settings-place-label">Saved Places</span>
-            <button type="button" class="secondary-btn compact-btn settings-place-action" id="settingsManageSavedPlacesBtn">Manage Saved Places</button>
-          </article>
-        </div>
-        <div class="settings-saved-places-list" id="settingsSavedPlacesList" aria-live="polite" hidden></div>
-      </section>
-      <section class="settings-modal-section" id="settingsAlertPreferencesSection">
-        <h3>Notification Preferences</h3>
-        <p>Preference storage only. Gridly will not schedule or deliver notifications from these toggles.</p>
-        <div class="settings-toggle-grid">
-          <label class="settings-toggle-row"><input type="checkbox" id="settingsRouteAlertsToggle"><span>Route Watch Alerts</span></label>
-          <label class="settings-toggle-row"><input type="checkbox" id="settingsRailAlertsToggle"><span>Rail Crossing Alerts</span></label>
-          <label class="settings-toggle-row"><input type="checkbox" id="settingsHazardAlertsToggle"><span>Road Hazard Alerts</span></label>
-          <label class="settings-toggle-row"><input type="checkbox" id="settingsCommunityAlertsToggle"><span>Community Activity Alerts</span></label>
-        </div>
-      </section>
-      <section class="settings-modal-section" id="settingsDisplayPreferencesSection">
-        <h3>Display Preferences</h3>
-        <div class="settings-select-grid">
-          <label><span>Preferred Name <em class="settings-field-badge">Optional</em></span>
-            <input id="settingsPreferredNameInput" type="text" maxlength="32" autocomplete="given-name" placeholder="Denise, Joe, Mom, Dispatcher">
-          </label>
-          <label>Map Style
-            <select id="settingsMapStyleSelect">
-              <option value="standard">Standard</option>
-              <option value="dark">Dark</option>
-              <option value="satellite">Satellite</option>
-            </select>
-          </label>
-          <label><span>Theme <em class="settings-field-badge">Saved preference</em></span>
-            <select id="settingsThemeSelect">
-              <option value="system">System</option>
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
-            </select>
-          </label>
-          <label><span>Text Size <em class="settings-field-badge">Saved preference</em></span>
-            <select id="settingsTextSizeSelect">
-              <option value="standard">Standard</option>
-              <option value="large">Large</option>
-              <option value="compact">Compact</option>
-            </select>
-          </label>
-        </div>
-        <p class="settings-placeholder-note" id="settingsPreferredNamePlaceholder">Preferred Name stays on this device and only personalizes your Gridly experience.</p>
-        <p class="settings-placeholder-note" id="settingsThemePlaceholder">Theme applies a basic light, dark, or system visual treatment.</p>
-        <p class="settings-placeholder-note" id="settingsTextSizePlaceholder">Text Size adjusts app typography density immediately.</p>
-      </section>
-      <section class="settings-modal-section" id="settingsAboutSection" data-gridly-about>
-        <h3>About Gridly</h3>
-        <p><strong>Gridly V198</strong><br><span id="settingsBuildValue">Build 1710</span></p>
-        <button type="button" class="secondary-btn compact-btn" id="settingsReplaySetupBtn">Replay Setup</button>
-        <button type="button" class="secondary-btn compact-btn" id="settingsFeedbackBtn">Send Feedback</button>
-        <p class="settings-placeholder-note" id="settingsFeedbackStatus" aria-live="polite">Feedback entry point is a placeholder for this phase.</p>
-      </section>
+      <p class="settings-modal-subtitle">Summary first. Expand a section when you need to change a saved preference.</p>
+      <div class="settings-list-experience" data-gridly-settings-list-experience="true">
+        <details class="settings-modal-section settings-list-section" id="settingsProfileAwarenessSection">
+          <summary class="settings-list-summary">
+            <span class="settings-list-title">Profile &amp; Awareness</span>
+            <span class="settings-list-meta">Liberty County Awareness · Profile details</span>
+          </summary>
+          <div class="settings-list-detail">
+            <p class="settings-placeholder-note">Awareness follows the current Liberty County experience. Profile details stay on this device.</p>
+            <div class="settings-select-grid">
+              <label><span>Preferred Name <em class="settings-field-badge">Optional</em></span>
+                <input id="settingsPreferredNameInput" type="text" maxlength="32" autocomplete="given-name" placeholder="Denise, Joe, Mom, Dispatcher">
+              </label>
+            </div>
+            <p class="settings-placeholder-note" id="settingsPreferredNamePlaceholder">Preferred Name stays on this device and only personalizes your Gridly experience.</p>
+          </div>
+        </details>
+
+        <details class="settings-modal-section settings-list-section" id="settingsSavedPlacesSection">
+          <summary class="settings-list-summary">
+            <span class="settings-list-title">Route &amp; Places</span>
+            <span class="settings-list-meta">Home/Work · Route Watch</span>
+          </summary>
+          <div class="settings-list-detail">
+            <div class="settings-place-grid" aria-label="Route Watch saved places">
+              <article class="settings-place-card settings-place-card-anchor">
+                <span class="settings-place-label">HOME</span>
+                <strong id="settingsHomeValue">Not saved</strong>
+                <small id="settingsHomeMeta">Save Home to enable Route Watch context.</small>
+                <small class="settings-clean-note">Shown only on this device.</small>
+                <button type="button" class="secondary-btn compact-btn settings-place-action" id="settingsEditHomeBtn">Edit Home</button>
+              </article>
+              <article class="settings-place-card settings-place-card-anchor">
+                <span class="settings-place-label">WORK</span>
+                <strong id="settingsWorkValue">Not saved</strong>
+                <small id="settingsWorkMeta">Save Work to enable Route Watch context.</small>
+                <small class="settings-clean-note">Shown only on this device.</small>
+                <button type="button" class="secondary-btn compact-btn settings-place-action" id="settingsEditWorkBtn">Edit Work</button>
+              </article>
+              <article class="settings-place-card settings-place-card-wide settings-saved-places-card">
+                <span class="settings-place-label">Saved Places</span>
+                <button type="button" class="secondary-btn compact-btn settings-place-action" id="settingsManageSavedPlacesBtn">Manage Saved Places</button>
+              </article>
+            </div>
+            <div class="settings-saved-places-list" id="settingsSavedPlacesList" aria-live="polite" hidden></div>
+          </div>
+        </details>
+
+        <details class="settings-modal-section settings-list-section" id="settingsAlertPreferencesSection">
+          <summary class="settings-list-summary">
+            <span class="settings-list-title">Alerts &amp; Notifications</span>
+            <span class="settings-list-meta">Local alerts · Preferences</span>
+          </summary>
+          <div class="settings-list-detail">
+            <p>Preference storage only. Gridly will not schedule or deliver notifications from these toggles.</p>
+            <div class="settings-toggle-grid">
+              <label class="settings-toggle-row"><input type="checkbox" id="settingsRouteAlertsToggle"><span>Route Watch Alerts</span></label>
+              <label class="settings-toggle-row"><input type="checkbox" id="settingsRailAlertsToggle"><span>Rail Crossing Alerts</span></label>
+              <label class="settings-toggle-row"><input type="checkbox" id="settingsHazardAlertsToggle"><span>Road Hazard Alerts</span></label>
+              <label class="settings-toggle-row"><input type="checkbox" id="settingsCommunityAlertsToggle"><span>Community Activity Alerts</span></label>
+            </div>
+          </div>
+        </details>
+
+        <details class="settings-modal-section settings-list-section" id="settingsDisplayPreferencesSection">
+          <summary class="settings-list-summary">
+            <span class="settings-list-title">Map &amp; Display</span>
+            <span class="settings-list-meta">Map style · Display preferences</span>
+          </summary>
+          <div class="settings-list-detail">
+            <div class="settings-select-grid">
+              <label>Map Style
+                <select id="settingsMapStyleSelect">
+                  <option value="standard">Standard</option>
+                  <option value="dark">Dark</option>
+                  <option value="satellite">Satellite</option>
+                </select>
+              </label>
+              <label><span>Theme <em class="settings-field-badge">Saved preference</em></span>
+                <select id="settingsThemeSelect">
+                  <option value="system">System</option>
+                  <option value="light">Light</option>
+                  <option value="dark">Dark</option>
+                </select>
+              </label>
+              <label><span>Text Size <em class="settings-field-badge">Saved preference</em></span>
+                <select id="settingsTextSizeSelect">
+                  <option value="standard">Standard</option>
+                  <option value="large">Large</option>
+                  <option value="compact">Compact</option>
+                </select>
+              </label>
+            </div>
+            <p class="settings-placeholder-note" id="settingsThemePlaceholder">Theme applies a basic light, dark, or system visual treatment.</p>
+            <p class="settings-placeholder-note" id="settingsTextSizePlaceholder">Text Size adjusts app typography density immediately.</p>
+          </div>
+        </details>
+
+        <details class="settings-modal-section settings-list-section" id="settingsPrivacyLocationSection">
+          <summary class="settings-list-summary">
+            <span class="settings-list-title">Privacy &amp; Location</span>
+            <span class="settings-list-meta">Location only when requested</span>
+          </summary>
+          <div class="settings-list-detail">
+            <p class="settings-placeholder-note">Location is used only when requested. Gridly does not request location when Settings opens.</p>
+          </div>
+        </details>
+
+        <details class="settings-modal-section settings-list-section" id="settingsDataTestingSection">
+          <summary class="settings-list-summary">
+            <span class="settings-list-title">Data &amp; Testing</span>
+            <span class="settings-list-meta">History data · Test tools</span>
+          </summary>
+          <div class="settings-list-detail">
+            <p class="settings-placeholder-note">No cleanup or test tools are available in Settings for this phase. Historical data is not changed from this panel.</p>
+          </div>
+        </details>
+
+        <details class="settings-modal-section settings-list-section" id="settingsAboutSection" data-gridly-about>
+          <summary class="settings-list-summary">
+            <span class="settings-list-title">About &amp; Support</span>
+            <span class="settings-list-meta">Version · Help</span>
+          </summary>
+          <div class="settings-list-detail">
+            <p><strong>Gridly V198</strong><br><span id="settingsBuildValue">Build 1710</span></p>
+            <button type="button" class="secondary-btn compact-btn" id="settingsReplaySetupBtn">Replay Setup</button>
+            <button type="button" class="secondary-btn compact-btn" id="settingsFeedbackBtn">Send Feedback</button>
+            <p class="settings-placeholder-note" id="settingsFeedbackStatus" aria-live="polite">Feedback entry point is a placeholder for this phase.</p>
+          </div>
+        </details>
+      </div>
       <p class="settings-save-status" id="settingsSaveStatus" aria-live="polite"></p>
     </div>
   </div>

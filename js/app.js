@@ -49583,6 +49583,8 @@ function gridlySettingsListExperienceAudit() {
     return String(node?.textContent || "").trim();
   };
   const nodeExists = (selector) => Boolean(hasDocument && document.querySelector(selector));
+  const compactSettingsSections = hasDocument ? Array.from(document.querySelectorAll("[data-gridly-settings-list-experience] details.settings-list-section, #settingsModal details.settings-list-section")) : [];
+  const compactSectionLabels = compactSettingsSections.map((section) => String(section.querySelector(".settings-list-title")?.textContent || section.querySelector("summary")?.textContent || "").trim()).filter(Boolean);
   const item = (id, label, options = {}) => ({
     id,
     label,
@@ -49829,7 +49831,7 @@ function gridlySettingsListExperienceAudit() {
       group: "Profile & Awareness",
       immediatelyVisible: ["Preferred Name set/not set"],
       expandOnly: ["Preferred Name input", "privacy/local-only note"],
-      rationale: "Profile is setup-only; Awareness Area is not currently present in Settings and should not be invented in V249.0."
+      rationale: "Profile is setup-only; Awareness Area is not currently present in Settings and should not be invented in V249.1."
     },
     {
       group: "Alerts & Notifications",
@@ -49850,7 +49852,7 @@ function gridlySettingsListExperienceAudit() {
       rationale: "Route anchors are the most important settings, but current card metadata and buttons can be detail content."
     },
     {
-      group: "Support & About",
+      group: "About & Support",
       immediatelyVisible: ["version/build summary"],
       expandOnly: ["Replay Setup", "Send Feedback placeholder", "feedback status"],
       rationale: "About/support actions are rare and should not compete with operational controls in portrait."
@@ -49875,12 +49877,16 @@ function gridlySettingsListExperienceAudit() {
   const visibleControlCount = settingsItems.filter((entry) => entry.visibleImmediatelyToday).length;
   return {
     available: true,
-    auditVersion: "V249.0",
+    auditVersion: "V249.1",
     generatedAt,
     settingsDetected: Boolean(hasDocument ? (document.getElementById("settingsModal") || document.querySelector(".gridly-settings-sheet") || document.querySelector("[data-gridly-settings-v2]")) : settings),
     totalSettingsItems: settingsItems.length,
     visibleControlCount,
     sections,
+    compactExpandableSectionsDetected: compactSettingsSections.length,
+    compactSectionLabels,
+    expectedCompactSectionLabels: ["Profile & Awareness", "Route & Places", "Alerts & Notifications", "Map & Display", "Privacy & Location", "Data & Testing", "About & Support"],
+    settingsListExperienceImplemented: compactSettingsSections.length >= 7,
     settingsItems,
     frequentlyUsedItems,
     setupOnlyItems,
@@ -49888,6 +49894,7 @@ function gridlySettingsListExperienceAudit() {
     groupingRecommendations,
     clutterFindings,
     expandableListReady: true,
+    expandableListImplemented: compactSettingsSections.length >= 7,
     expandableListReadinessNotes: [
       "Every current item can be represented as a collapsed label/value row with its existing control retained in expanded detail.",
       "Route/place cards, notification toggles, display selects, and About actions do not require behavior changes to move into expandable rows.",
@@ -58680,37 +58687,63 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const checked = (value) => value ? " checked" : "";
     const selected = (value, target) => value === target ? " selected" : "";
     return `
-      <div class="gridly-v2-list gridly-settings-sheet" data-gridly-settings-v2="true">
+      <div class="gridly-v2-list gridly-settings-sheet settings-list-experience" data-gridly-settings-v2="true" data-gridly-settings-list-experience="true">
         <p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p>
-        <section class="settings-modal-section">
-          <h3>Route Watch Settings</h3>
-          <div class="settings-place-grid">
-            <article class="settings-place-card settings-place-card-anchor"><span class="settings-place-label">HOME</span><strong>${escapeV2SettingsText(home.label)}</strong><small>${escapeV2SettingsText(home.meta)}</small><button class="gridly-v2-tile settings-place-action" data-v2-action="route-edit-home-open" type="button">Edit Home</button></article>
-            <article class="settings-place-card settings-place-card-anchor"><span class="settings-place-label">WORK</span><strong>${escapeV2SettingsText(work.label)}</strong><small>${escapeV2SettingsText(work.meta)}</small><button class="gridly-v2-tile settings-place-action" data-v2-action="route-edit-work-open" type="button">Edit Work</button></article>
-            <article class="settings-place-card settings-place-card-wide settings-saved-places-card"><span class="settings-place-label">Saved Places</span><button class="gridly-v2-tile settings-place-action" data-v2-action="route-manage-places-open" type="button">Manage Saved Places</button></article>
+        <details class="settings-modal-section settings-list-section">
+          <summary class="settings-list-summary"><span class="settings-list-title">Profile &amp; Awareness</span><span class="settings-list-meta">Liberty County Awareness · Profile details</span></summary>
+          <div class="settings-list-detail">
+            <p class="settings-placeholder-note">Awareness follows the current Liberty County experience. Profile details stay on this device.</p>
+            <div class="settings-select-grid">
+              <label>Preferred Name<input data-v2-settings-field="personalization.preferredName" type="text" maxlength="32" autocomplete="given-name" placeholder="Denise, Joe, Mom, Dispatcher" value="${escapeV2SettingsText(settings.personalization?.preferredName || "")}"></label>
+            </div>
+            <p class="settings-placeholder-note">Preferred Name stays on this device and only personalizes your Gridly experience.</p>
           </div>
-        </section>
-        <section class="settings-modal-section">
-          <h3>Notification Preferences</h3>
-          <p>Preference storage only. No notification delivery is enabled.</p>
-          <div class="settings-toggle-grid">
-            <label class="settings-toggle-row"><input type="checkbox" data-v2-settings-field="notifications.routeAlerts"${checked(settings.notifications.routeAlerts)}><span>Route Watch Alerts</span></label>
-            <label class="settings-toggle-row"><input type="checkbox" data-v2-settings-field="notifications.railAlerts"${checked(settings.notifications.railAlerts)}><span>Rail Crossing Alerts</span></label>
-            <label class="settings-toggle-row"><input type="checkbox" data-v2-settings-field="notifications.hazardAlerts"${checked(settings.notifications.hazardAlerts)}><span>Road Hazard Alerts</span></label>
-            <label class="settings-toggle-row"><input type="checkbox" data-v2-settings-field="notifications.communityAlerts"${checked(settings.notifications.communityAlerts)}><span>Community Activity Alerts</span></label>
+        </details>
+        <details class="settings-modal-section settings-list-section">
+          <summary class="settings-list-summary"><span class="settings-list-title">Route &amp; Places</span><span class="settings-list-meta">Home/Work · Route Watch</span></summary>
+          <div class="settings-list-detail">
+            <div class="settings-place-grid">
+              <article class="settings-place-card settings-place-card-anchor"><span class="settings-place-label">HOME</span><strong>${escapeV2SettingsText(home.label)}</strong><small>${escapeV2SettingsText(home.meta)}</small><small class="settings-clean-note">Shown only on this device.</small><button class="gridly-v2-tile settings-place-action" data-v2-action="route-edit-home-open" type="button">Edit Home</button></article>
+              <article class="settings-place-card settings-place-card-anchor"><span class="settings-place-label">WORK</span><strong>${escapeV2SettingsText(work.label)}</strong><small>${escapeV2SettingsText(work.meta)}</small><small class="settings-clean-note">Shown only on this device.</small><button class="gridly-v2-tile settings-place-action" data-v2-action="route-edit-work-open" type="button">Edit Work</button></article>
+              <article class="settings-place-card settings-place-card-wide settings-saved-places-card"><span class="settings-place-label">Saved Places</span><button class="gridly-v2-tile settings-place-action" data-v2-action="route-manage-places-open" type="button">Manage Saved Places</button></article>
+            </div>
           </div>
-        </section>
-        <section class="settings-modal-section">
-          <h3>Display Preferences</h3>
-          <div class="settings-select-grid">
-            <label>Preferred Name<input data-v2-settings-field="personalization.preferredName" type="text" maxlength="32" autocomplete="given-name" placeholder="Denise, Joe, Mom, Dispatcher" value="${escapeV2SettingsText(settings.personalization?.preferredName || "")}"></label>
-            <label>Map Style<select data-v2-settings-field="display.mapStyle"><option value="standard"${selected(settings.display.mapStyle, "standard")}>Standard</option><option value="dark"${selected(settings.display.mapStyle, "dark")}>Dark</option><option value="satellite"${selected(settings.display.mapStyle, "satellite")}>Satellite</option></select></label>
-            <label>Theme<select data-v2-settings-field="display.theme"><option value="system"${selected(settings.display.theme, "system")}>System</option><option value="light"${selected(settings.display.theme, "light")}>Light</option><option value="dark"${selected(settings.display.theme, "dark")}>Dark</option></select></label>
-            <label>Text Size<select data-v2-settings-field="display.textSize"><option value="standard"${selected(settings.display.textSize, "standard")}>Standard</option><option value="large"${selected(settings.display.textSize, "large")}>Large</option><option value="compact"${selected(settings.display.textSize, "compact")}>Compact</option></select></label>
+        </details>
+        <details class="settings-modal-section settings-list-section">
+          <summary class="settings-list-summary"><span class="settings-list-title">Alerts &amp; Notifications</span><span class="settings-list-meta">Local alerts · Preferences</span></summary>
+          <div class="settings-list-detail">
+            <p>Preference storage only. No notification delivery is enabled.</p>
+            <div class="settings-toggle-grid">
+              <label class="settings-toggle-row"><input type="checkbox" data-v2-settings-field="notifications.routeAlerts"${checked(settings.notifications.routeAlerts)}><span>Route Watch Alerts</span></label>
+              <label class="settings-toggle-row"><input type="checkbox" data-v2-settings-field="notifications.railAlerts"${checked(settings.notifications.railAlerts)}><span>Rail Crossing Alerts</span></label>
+              <label class="settings-toggle-row"><input type="checkbox" data-v2-settings-field="notifications.hazardAlerts"${checked(settings.notifications.hazardAlerts)}><span>Road Hazard Alerts</span></label>
+              <label class="settings-toggle-row"><input type="checkbox" data-v2-settings-field="notifications.communityAlerts"${checked(settings.notifications.communityAlerts)}><span>Community Activity Alerts</span></label>
+            </div>
           </div>
-          <p class="settings-placeholder-note">Preferred Name, Theme, and Text Size apply immediately and are saved locally on this device.</p>
-        </section>
-        <section class="settings-modal-section" data-gridly-about><h3>About Gridly</h3><p><strong>${GRIDLY_APP_VERSION_LABEL}</strong><br>${GRIDLY_APP_BUILD_LABEL}</p><button class="gridly-v2-tile" data-v2-action="settings-replay-setup" type="button">Replay Setup</button><button class="gridly-v2-tile" data-v2-action="settings-feedback-placeholder" type="button">Send Feedback</button><p class="settings-placeholder-note" data-v2-settings-status>Settings saved locally.</p></section>
+        </details>
+        <details class="settings-modal-section settings-list-section">
+          <summary class="settings-list-summary"><span class="settings-list-title">Map &amp; Display</span><span class="settings-list-meta">Map style · Display preferences</span></summary>
+          <div class="settings-list-detail">
+            <div class="settings-select-grid">
+              <label>Map Style<select data-v2-settings-field="display.mapStyle"><option value="standard"${selected(settings.display.mapStyle, "standard")}>Standard</option><option value="dark"${selected(settings.display.mapStyle, "dark")}>Dark</option><option value="satellite"${selected(settings.display.mapStyle, "satellite")}>Satellite</option></select></label>
+              <label>Theme<select data-v2-settings-field="display.theme"><option value="system"${selected(settings.display.theme, "system")}>System</option><option value="light"${selected(settings.display.theme, "light")}>Light</option><option value="dark"${selected(settings.display.theme, "dark")}>Dark</option></select></label>
+              <label>Text Size<select data-v2-settings-field="display.textSize"><option value="standard"${selected(settings.display.textSize, "standard")}>Standard</option><option value="large"${selected(settings.display.textSize, "large")}>Large</option><option value="compact"${selected(settings.display.textSize, "compact")}>Compact</option></select></label>
+            </div>
+            <p class="settings-placeholder-note">Theme and Text Size apply immediately and are saved locally on this device.</p>
+          </div>
+        </details>
+        <details class="settings-modal-section settings-list-section">
+          <summary class="settings-list-summary"><span class="settings-list-title">Privacy &amp; Location</span><span class="settings-list-meta">Location only when requested</span></summary>
+          <div class="settings-list-detail"><p class="settings-placeholder-note">Location is used only when requested. Gridly does not request location when Settings opens.</p></div>
+        </details>
+        <details class="settings-modal-section settings-list-section">
+          <summary class="settings-list-summary"><span class="settings-list-title">Data &amp; Testing</span><span class="settings-list-meta">History data · Test tools</span></summary>
+          <div class="settings-list-detail"><p class="settings-placeholder-note">No cleanup or test tools are available in Settings for this phase. Historical data is not changed from this panel.</p></div>
+        </details>
+        <details class="settings-modal-section settings-list-section" data-gridly-about>
+          <summary class="settings-list-summary"><span class="settings-list-title">About &amp; Support</span><span class="settings-list-meta">Version · Help</span></summary>
+          <div class="settings-list-detail"><p><strong>${GRIDLY_APP_VERSION_LABEL}</strong><br>${GRIDLY_APP_BUILD_LABEL}</p><button class="gridly-v2-tile" data-v2-action="settings-replay-setup" type="button">Replay Setup</button><button class="gridly-v2-tile" data-v2-action="settings-feedback-placeholder" type="button">Send Feedback</button><p class="settings-placeholder-note" data-v2-settings-status>Settings saved locally.</p></div>
+        </details>
       </div>`;
   }
 
