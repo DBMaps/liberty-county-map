@@ -20943,8 +20943,7 @@ function requestGridlyWelcomeLocation() {
       const lat = Number(position?.coords?.latitude);
       const lng = Number(position?.coords?.longitude);
       if (Number.isFinite(lat) && Number.isFinite(lng)) {
-        userLocation = { lat, lng };
-        renderUserLocationDot();
+        setGridlyUserLocation({ lat, lng }, { source: "welcome_onboarding" });
         updateNearestContext();
         els.gridlyWelcomeLocationStatus.textContent = "Location enabled. Gridly can now highlight nearby reports.";
         return;
@@ -22658,18 +22657,55 @@ function updateNearestContext() {
   }
 }
 
+function getValidGridlyUserLocationCoordinates(candidate = userLocation) {
+  const lat = Number(candidate?.lat ?? candidate?.latitude ?? candidate?.coords?.latitude);
+  const lng = Number(candidate?.lng ?? candidate?.longitude ?? candidate?.coords?.longitude);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  return { lat, lng };
+}
+
+function setGridlyUserLocation(candidate) {
+  const coords = getValidGridlyUserLocationCoordinates(candidate);
+  if (!coords) return false;
+  userLocation = { lat: coords.lat, lng: coords.lng };
+  renderUserLocationDot();
+  return true;
+}
+
 function renderUserLocationDot() {
-  if (!map || !userLocation) return;
-  if (userMarker) map.removeLayer(userMarker);
-  userMarker = L.circleMarker([userLocation.lat, userLocation.lng], {
-    radius: 10,
-    color: "#56a8ff",
-    fillColor: "#2f86ff",
-    fillOpacity: 0.96,
-    weight: 3
-  })
-    .bindPopup("You are here")
-    .addTo(map);
+  if (!map) return;
+  const coords = getValidGridlyUserLocationCoordinates(userLocation);
+  if (!coords) {
+    if (userMarker) {
+      map.removeLayer(userMarker);
+      userMarker = null;
+    }
+    return;
+  }
+
+  const markerLatLng = [coords.lat, coords.lng];
+  if (userMarker) {
+    if (!map.hasLayer(userMarker)) userMarker.addTo(map);
+    userMarker.setLatLng(markerLatLng);
+    return;
+  }
+
+  userMarker = L.marker(markerLatLng, {
+    interactive: false,
+    keyboard: false,
+    bubblingMouseEvents: false,
+    zIndexOffset: 8,
+    icon: L.divIcon({
+      className: "gridly-user-location-awareness-dot",
+      iconSize: [30, 30],
+      iconAnchor: [15, 15],
+      html: '<span class="gridly-user-location-awareness-dot__ring"></span><span class="gridly-user-location-awareness-dot__core"></span>'
+    })
+  });
+  userMarker.options.gridlyLayerType = "user_location_layer";
+  userMarker.options.gridlyOwner = "user location ownership";
+  userMarker.options.gridlySourceName = "user location awareness dot";
+  userMarker.addTo(map);
 }
 
 async function loadCrossings() {
@@ -40969,6 +41005,7 @@ window.submitHazardNearMe = function (hazardType) {
         if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
           throw new Error("invalid_geolocation_coordinates");
         }
+        setGridlyUserLocation({ lat, lng }, { source: "hazard_use_my_location" });
 
         const snapped = await snapHazardToRoad(lat, lng, { source: "use_my_location" });
         if (snapped.invalid) {
