@@ -17388,6 +17388,25 @@ function getGridlyDestinationRouteImpactSupportCopy({ routeFound = false, quiet 
   return "Review active reports before you leave";
 }
 
+function getGridlyDestinationRouteImpactCompactIntroCopy(level = "none") {
+  const normalizedLevel = String(level || "none").toLowerCase();
+  if (normalizedLevel === "high") return "Travel delays possible ahead";
+  if (normalizedLevel === "moderate" || normalizedLevel === "low") return "Conditions may affect travel";
+  return "Travel looks normal right now";
+}
+
+function getGridlyDestinationRouteImpactCompactReasonCopy({ impactLevel = "none", reason = "", proximityLabel = "" } = {}) {
+  const normalizedLevel = String(impactLevel || "none").toLowerCase();
+  const normalizedReason = normalizeGridlyUserFacingRoadText(reason || getGridlyDestinationRouteImpactCopy(normalizedLevel));
+  const normalizedProximity = normalizeGridlyUserFacingRoadText(proximityLabel);
+  if (normalizedLevel === "none") return "No active hazards reported near this route";
+  const conciseReason = normalizedReason
+    .replace(/\s+near this route\b/i, "")
+    .replace(/\s+along this route\b/i, "")
+    .trim() || "Active hazard reported";
+  return [conciseReason, normalizedProximity].filter((line) => String(line || "").trim()).join(" ");
+}
+
 function getGridlyDestinationRouteImpactCardText() {
   const preview = window.GridlyDestinationRoutePreview && typeof window.GridlyDestinationRoutePreview === "object"
     ? window.GridlyDestinationRoutePreview
@@ -17400,14 +17419,14 @@ function getGridlyDestinationRouteImpactCardText() {
       : null;
     const impactLevel = audit?.impactLevel || "none";
     const reason = audit?.primaryImpactReason || getGridlyDestinationRouteImpactCopy(impactLevel);
-    const locationLine = String(audit?.primaryImpactLocation || "").trim();
     const proximityLine = String(audit?.primaryImpactProximityLabel || "").trim();
-    return normalizeGridlyUserFacingRoadText([
-      getGridlyDestinationRouteImpactIntroCopy(impactLevel),
-      reason,
-      locationLine,
-      proximityLine
-    ].filter((line) => String(line || "").trim()).join("\n"));
+    return [
+      getGridlyDestinationRouteImpactCompactIntroCopy(impactLevel),
+      getGridlyDestinationRouteImpactCompactReasonCopy({ impactLevel, reason, proximityLabel: proximityLine })
+    ]
+      .map((line) => normalizeGridlyUserFacingRoadText(line))
+      .filter((line) => String(line || "").trim())
+      .join("\n");
   } catch (_) {
     return "";
   }
@@ -17555,7 +17574,7 @@ function renderGridlyDestinationImpactPane() {
   GRIDLY_DESTINATION_IMPACT_PANE_STATE.impactLevel = model.impactLevel;
   GRIDLY_DESTINATION_IMPACT_PANE_STATE.displayedReasons = [...model.reasons];
 
-  if (paneEls.severity) paneEls.severity.textContent = normalizeGridlyUserFacingRoadText(model.travelStatusLabel || getGridlyDestinationRouteTravelStatusLabel(model.impactLevel));
+  if (paneEls.severity) paneEls.severity.textContent = normalizeGridlyUserFacingRoadText(getGridlyDestinationRouteImpactIntroCopy(model.impactLevel) || model.travelStatusLabel || getGridlyDestinationRouteTravelStatusLabel(model.impactLevel));
   if (paneEls.confidence) paneEls.confidence.textContent = normalizeGridlyUserFacingRoadText(model.supportLabel || "Live reports checked");
   if (paneEls.summary) paneEls.summary.textContent = normalizeGridlyUserFacingRoadText(model.summary || "No active hazards reported near this route");
   if (paneEls.reasons) {
