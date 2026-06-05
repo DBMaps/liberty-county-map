@@ -55738,23 +55738,101 @@ function buildGridlyPortraitSharedLocalizedIntelligenceSnapshot({ pulseModel = n
         trendMessage: "",
         portraitSharedModelReuseApplied: true
       };
+
+  const isCategoryOnlyPrimary = (value = "") => {
+    const text = safeDisplayText(value, "").replace(/^[^A-Za-z0-9]+/, "").trim();
+    return /^(?:Debris in Road|Debris|Road Hazard|Local road impact)$/i.test(text);
+  };
+  const isLocationSpecificPrimary = (value = "") => {
+    const text = normalizeGridlyLightweightAlertSummaryText(value);
+    if (!text || isCategoryOnlyPrimary(text) || isGridlyCategoryOnlyTopAwarenessHeadline(text)) return false;
+    const location = getGridlyLightweightLocationFromHeadline(text) || text;
+    return hasGridlyTopAwarenessUsableLocationIntelligence(location);
+  };
+  const localizedPrimaryCandidates = [];
+  const addLocalizedPrimaryCandidate = (value, source) => {
+    const text = normalizeGridlyLightweightAlertSummaryText(value);
+    if (isLocationSpecificPrimary(text)) localizedPrimaryCandidates.push({ text, source });
+  };
+
+  if (!quiet && isCategoryOnlyPrimary(primary)) {
+    let localizedIntel = null;
+    if (typeof buildUnifiedLocalizedCommuteIntelligence === "function") {
+      localizedIntel = buildUnifiedLocalizedCommuteIntelligence({ limit: 6 }) || null;
+      const localizedItems = Array.isArray(localizedIntel?.items) ? localizedIntel.items : [];
+      addLocalizedPrimaryCandidate(localizedItems[0]?.localizedSummary, "localizedIntelligenceSummaries.0");
+      addLocalizedPrimaryCandidate(localizedIntel?.topStatus, "topStatusPrimaryIncident");
+      const activeLocationLabel = normalizeGridlyLightweightLocationLabelText(normalizedActiveAwareness.resolvedLocationLabel || normalizedActiveAwareness.topAwarenessSelectedLocationIntelligence?.label || "").toLowerCase();
+      const matchingLocalizedItem = localizedItems.find((item) => {
+        const summary = normalizeGridlyLightweightAlertSummaryText(item?.localizedSummary || "").toLowerCase();
+        return activeLocationLabel && summary.includes(activeLocationLabel);
+      });
+      addLocalizedPrimaryCandidate(matchingLocalizedItem?.localizedSummary, "matchingLocalizedActiveDetail.localizedSummary");
+    }
+    addLocalizedPrimaryCandidate(v1381CrossingClassificationDebug?.lastClassifiedIncidentLabel, "lastClassifiedIncidentLabel");
+    const selectedDetail = {
+      resolvedCategory: normalizedActiveAwareness.resolvedCategory || normalizedActiveAwareness.topCategory || primary,
+      resolvedLocationLabel: normalizedActiveAwareness.resolvedLocationLabel || normalizedActiveAwareness.topAwarenessSelectedLocationIntelligence?.label || "",
+      item: Array.isArray(normalizedActiveAwareness.activeAwarenessSamples) ? normalizedActiveAwareness.activeAwarenessSamples[0] : null
+    };
+    addLocalizedPrimaryCandidate(resolveGridlyLocalizedIntelligenceHeadlineForActiveDetail(selectedDetail), "matchingLocalizedActiveDetail");
+    addLocalizedPrimaryCandidate(
+      buildGridlyConsumerTopAwarenessLocationHeadline(selectedDetail.resolvedCategory, selectedDetail.resolvedLocationLabel)
+        .replace(/^Debris reported near\b/, "Debris Reported near"),
+      "matchingLocalizedActiveDetail.resolvedCategory+resolvedLocationLabel"
+    );
+  }
+
+  const finalAwarenessPrimary = localizedPrimaryCandidates[0]?.text || primary;
+  const finalNormalizedActiveAwareness = finalAwarenessPrimary === primary
+    ? normalizedActiveAwareness
+    : {
+        ...normalizedActiveAwareness,
+        headline: finalAwarenessPrimary,
+        topAwarenessCategoryOnlyFinalGuardApplied: true,
+        topAwarenessCategoryOnlyFinalGuardSource: localizedPrimaryCandidates[0]?.source || ""
+      };
+  const finalNormalizedPulseModel = finalAwarenessPrimary === primary
+    ? normalizedPulseModel
+    : {
+        ...normalizedPulseModel,
+        renderedPulseHeadline: finalAwarenessPrimary,
+        activeAwareness: finalNormalizedActiveAwareness
+      };
+  const finalAwarenessBrief = finalAwarenessPrimary === primary
+    ? awarenessBrief
+    : {
+        ...awarenessBrief,
+        primary: finalAwarenessPrimary,
+        selectedHeadline: finalAwarenessPrimary,
+        selectedSource: localizedPrimaryCandidates[0]?.source || awarenessBrief.selectedSource
+      };
+  const finalIntel = finalAwarenessPrimary === primary
+    ? intel
+    : {
+        ...intel,
+        topStatus: finalAwarenessPrimary,
+        commuteImpactHeadline: finalAwarenessPrimary,
+        consequencePrimaryMessage: finalAwarenessPrimary
+      };
+
   return {
-    intel,
-    pulseModel: normalizedPulseModel,
-    awarenessBrief,
-    awarenessPrimary: primary,
+    intel: finalIntel,
+    pulseModel: finalNormalizedPulseModel,
+    awarenessBrief: finalAwarenessBrief,
+    awarenessPrimary: finalAwarenessPrimary,
     awarenessSecondary: secondary,
     existingAlertWording: {
       available: !quiet,
-      text: primary,
-      source: awarenessBrief.selectedSource,
-      activeAwareness: normalizedActiveAwareness,
-      activeCategory: normalizedActiveAwareness.resolvedCategory || normalizedActiveAwareness.topCategory || "",
-      activeLocationLabel: normalizedActiveAwareness.resolvedLocationLabel || ""
+      text: finalAwarenessPrimary,
+      source: finalAwarenessBrief.selectedSource,
+      activeAwareness: finalNormalizedActiveAwareness,
+      activeCategory: finalNormalizedActiveAwareness.resolvedCategory || finalNormalizedActiveAwareness.topCategory || "",
+      activeLocationLabel: finalNormalizedActiveAwareness.resolvedLocationLabel || ""
     },
     communityAwarenessSummary,
     quiet,
-    activeAwareness: normalizedActiveAwareness
+    activeAwareness: finalNormalizedActiveAwareness
   };
 }
 
