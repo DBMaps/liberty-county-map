@@ -55589,7 +55589,11 @@ function refreshPortraitV2LocalizedIntelligence() {
       quietFastPathBlockers: counts.quietTopAwarenessFastPathBlockers || counts.quietFastPathBlockers || []
     };
   });
-  timeGridlyAuditSection(sections, "preview_card_render", () => renderGridlyIntelligencePreviewCard({ reason: "refreshPortraitV2LocalizedIntelligence", model: textModel.pulseModel }));
+  if (quietAwarenessState) {
+    counts.previewCardRenderSkippedForQuietState = 1;
+  } else {
+    timeGridlyAuditSection(sections, "preview_card_render", () => renderGridlyIntelligencePreviewCard({ reason: "refreshPortraitV2LocalizedIntelligence", model: textModel.pulseModel }));
+  }
   timeGridlyAuditSection(sections, "top_strip_owner_diagnostic", () => logTopStripOwnershipDiagnostic("refreshPortraitV2LocalizedIntelligence"));
   recordPortraitIntelligenceBreakdown("refreshPortraitV2LocalizedIntelligence", functionStartedAt, sections, {
     counts,
