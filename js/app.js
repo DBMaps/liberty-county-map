@@ -60308,8 +60308,29 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     return html;
   }
 
+  function buildReportHazardSurfaceHtml() {
+    const primaryOptionsHtml = V2_REPORT_HAZARD_OPTIONS.map((option) =>
+      `<button class="gridly-v2-tile gridly-v2-report-action" data-v2-action="report-select-hazard" data-hazard-type="${option.type}" type="button"><span>${option.label}</span></button>`
+    ).join("");
+    const otherSubtypeOptionsHtml = OTHER_HAZARD_SUBTYPE_OPTIONS.map((option) =>
+      `<button class="gridly-v2-tile gridly-v2-other-hazard-subtype-action" data-v2-action="report-select-other-hazard-subtype" data-other-hazard-subtype="${option.value}" type="button">○ ${option.label}</button>`
+    ).join("");
+    return `<div class="gridly-v2-report-picker" data-v2-report-hazard-picker>
+      <p class="gridly-v2-sheet-copy gridly-v2-report-prompt"><strong>Select Hazard Type</strong></p>
+      <div class="gridly-v2-tiles gridly-v2-report-tiles">${primaryOptionsHtml}</div>
+      <details class="gridly-v2-other-hazard-subtypes settings-list-section" data-v2-other-hazard-subtypes hidden>
+        <summary class="settings-list-summary gridly-v2-other-hazard-summary"><span class="settings-list-title">Other Hazard</span><span class="settings-list-meta">Choose subtype</span></summary>
+        <div class="gridly-v2-list settings-list-detail gridly-v2-other-hazard-subtype-list">
+          <p class="gridly-v2-sheet-copy"><strong>Tell us what kind of hazard</strong></p>
+          ${otherSubtypeOptionsHtml}
+        </div>
+      </details>
+      <div class="gridly-v2-list gridly-v2-report-ctas"><p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p><button class="primary-btn" data-v2-action="report-use-location" type="button">Use My Location</button><button class="secondary-btn" data-v2-action="report-tap-map" type="button">Tap Map Location</button></div>
+    </div>`;
+  }
+
   const sheetTemplates = {
-    report: { title: "Report Hazard", html: `<div class="gridly-v2-tiles gridly-v2-report-tiles">${V2_REPORT_HAZARD_OPTIONS.map((option)=>`<button class="gridly-v2-tile gridly-v2-report-action" data-v2-action="report-select-hazard" data-hazard-type="${option.type}" type="button"><span>${option.label}</span></button>`).join("")}</div><div class="gridly-v2-list gridly-v2-other-hazard-subtypes" data-v2-other-hazard-subtypes hidden><p class="gridly-v2-sheet-copy"><strong>Select Hazard Type</strong></p>${OTHER_HAZARD_SUBTYPE_OPTIONS.map((option)=>`<button class="gridly-v2-tile gridly-v2-other-hazard-subtype-action" data-v2-action="report-select-other-hazard-subtype" data-other-hazard-subtype="${option.value}" type="button">○ ${option.label}</button>`).join("")}</div><div class="gridly-v2-list gridly-v2-report-ctas"><p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p><button class="primary-btn" data-v2-action="report-use-location" type="button">Use My Location</button><button class="secondary-btn" data-v2-action="report-tap-map" type="button">Tap Map Location</button></div>` },
+    report: { title: "Report Hazard", html: buildReportHazardSurfaceHtml },
     route: { title: "Route Setup", html: buildRouteSurfaceHtml },
     alerts: { title: "Commute Command", html: buildAlertsSurfaceHtml },
     settings: { title: "Settings", html: buildSettingsSurfaceHtml },
@@ -60482,6 +60503,15 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const body = document.getElementById("gridlyPortraitV2SheetBody");
     const template = templateOverride || sheetTemplates[sheetName];
     if (!sheet || !backdrop || !title || !body || !template) return false;
+    if (sheetName === "report" && !templateOverride && !reportingState?.placementModeActive) {
+      selectedV2HazardType = "";
+      selectedQuickHazardType = null;
+      pendingHazardPlacement = null;
+      selectedOtherHazardSubtype = "";
+      if (typeof reportingState === "object" && reportingState?.selectedHazardType) {
+        updateReportingState({ selectedHazardType: null, lastReportMessage: "" });
+      }
+    }
     if (settingsActive) suppressLegacySettingsSurfaceForPortraitV2Settings();
     const settingsAlreadyOpen = settingsActive
       && activeSheet === "settings"
@@ -60591,7 +60621,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         : "No route preview available.";
     return {
       reportHazardSelected,
-      reportReason: reportHazardSelected ? "" : (selectedV2HazardType === "other_hazard" ? "Select Hazard Type for Other Hazard." : "Choose a hazard to enable placement actions."),
+      reportReason: reportHazardSelected ? "" : (selectedV2HazardType === "other_hazard" ? "Tell us what kind of hazard" : "Choose a hazard to enable placement actions."),
       routeReady,
       hasHome,
       hasWork,
@@ -61101,14 +61131,18 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           updateReportingState({
             selectedHazardType: selectedV2HazardType,
             activeReportEntryPoint: "portrait_v2_sheet",
-            lastReportMessage: selectedV2HazardType === "other_hazard" ? "Select Hazard Type for Other Hazard." : ""
+            lastReportMessage: selectedV2HazardType === "other_hazard" ? "Tell us what kind of hazard" : ""
           });
         }
         document.querySelectorAll("#gridlyPortraitV2SheetBody .gridly-v2-report-action").forEach((button) => {
           button.classList.toggle("is-selected", (button.dataset.hazardType || "") === selectedV2HazardType);
         });
         const subtypePanel = document.querySelector("#gridlyPortraitV2SheetBody [data-v2-other-hazard-subtypes]");
-        if (subtypePanel) subtypePanel.hidden = selectedV2HazardType !== "other_hazard";
+        if (subtypePanel) {
+          const showSubtypePanel = selectedV2HazardType === "other_hazard";
+          subtypePanel.hidden = !showSubtypePanel;
+          subtypePanel.open = showSubtypePanel;
+        }
         document.querySelectorAll("#gridlyPortraitV2SheetBody [data-other-hazard-subtype]").forEach((button) => {
           button.classList.toggle("is-selected", false);
           button.setAttribute("aria-pressed", "false");
@@ -61450,7 +61484,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       });
     }
     const subtypePanel = body.querySelector("[data-v2-other-hazard-subtypes]");
-    if (subtypePanel) subtypePanel.hidden = seededType !== "other_hazard";
+    if (subtypePanel) {
+      const showSubtypePanel = seededType === "other_hazard" && Boolean(normalizeOtherHazardSubtype(selectedOtherHazardSubtype));
+      subtypePanel.hidden = !showSubtypePanel;
+      subtypePanel.open = showSubtypePanel;
+    }
     const seededSubtype = normalizeOtherHazardSubtype(selectedOtherHazardSubtype);
     body.querySelectorAll("[data-other-hazard-subtype]").forEach((button) => {
       const isSelected = Boolean(seededSubtype && button.dataset.otherHazardSubtype === seededSubtype);
