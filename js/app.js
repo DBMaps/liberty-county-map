@@ -17906,13 +17906,30 @@ function normalizeGridlyMobileAwarenessPanelSummary(summary = {}) {
   };
 }
 
+function getGridlyAwarenessSummaryAreaIdentity(summary = {}) {
+  return normalizeGridlyAwarenessAreaLookupText(summary?.awarenessAreaName || summary?.areaName || summary?.selectedAwarenessArea?.label || summary?.selectedAwarenessArea?.storageValue || "");
+}
+
+function getGridlyCurrentSelectedAwarenessAreaIdentity() {
+  const selectedArea = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  return normalizeGridlyAwarenessAreaLookupText(selectedArea?.label || selectedArea?.storageValue || selectedArea?.key || "");
+}
+
+function isGridlyCachedAwarenessSummaryForCurrentArea(summary = {}) {
+  const cachedIdentity = getGridlyAwarenessSummaryAreaIdentity(summary);
+  const currentIdentity = getGridlyCurrentSelectedAwarenessAreaIdentity();
+  if (!cachedIdentity || !currentIdentity) return true;
+  return cachedIdentity === currentIdentity;
+}
+
 function getGridlyMobileAwarenessPanelSummary(options = {}) {
   const providedSummary = options?.summary || options?.communityAwarenessSummary || null;
   const cachedSummary = providedSummary
     || gridlyCommunityPulseAuditState?.communityAwarenessSummary
     || window.gridlyTopAwarenessMicrolineState?.communityAwarenessSummary
     || null;
-  const shouldUseCachedSnapshot = Boolean(providedSummary || options?.preferCached === true || options?.allowBuild === false);
+  const cacheMatchesSelectedArea = providedSummary ? true : isGridlyCachedAwarenessSummaryForCurrentArea(cachedSummary || {});
+  const shouldUseCachedSnapshot = Boolean((providedSummary || options?.preferCached === true || options?.allowBuild === false) && cacheMatchesSelectedArea);
   const summary = shouldUseCachedSnapshot
     ? (cachedSummary || {})
     : (typeof buildGridlyCommunityAwarenessIntelligenceSummary === "function"
@@ -17979,47 +17996,133 @@ let gridlyAwarenessAreaImmediateSyncState = {
   communityPulseSynced: false
 };
 
+function invalidateGridlyPortraitAwarenessSnapshotsForAreaChange(area = null, reason = "awareness-area-change") {
+  const areaName = safeDisplayText(area?.label || area?.storageValue, "");
+  if (window.gridlyTopAwarenessMicrolineState && typeof window.gridlyTopAwarenessMicrolineState === "object") {
+    window.gridlyTopAwarenessMicrolineState = {
+      ...window.gridlyTopAwarenessMicrolineState,
+      communityAwarenessSummary: null,
+      activeReportCount: 0,
+      activeHazardCount: 0,
+      activeAwarenessCount: 0,
+      activityLevel: "invalidated",
+      invalidatedForAwarenessAreaChange: true,
+      invalidatedAwarenessAreaName: areaName,
+      invalidatedReason: reason
+    };
+  }
+  if (gridlyCommunityPulseAuditState && typeof gridlyCommunityPulseAuditState === "object") {
+    gridlyCommunityPulseAuditState = {
+      ...gridlyCommunityPulseAuditState,
+      renderedPulseHeadline: "",
+      renderedPulseSubline: "",
+      activeAwareness: null,
+      communityAwarenessSummary: null,
+      selectedCommunityCount: 0,
+      mobilityPressureCategory: "invalidated",
+      invalidatedForAwarenessAreaChange: true,
+      invalidatedAwarenessAreaName: areaName,
+      invalidatedReason: reason
+    };
+  }
+}
+
+function readGridlyPortraitAwarenessSurfaceDomState() {
+  const readText = (selector) => safeDisplayText(document.querySelector(selector)?.textContent, "");
+  const panel = document.getElementById("gridlyPortraitLocationAwarenessPanel");
+  const panelVisible = Boolean(panel && !panel.hidden && panel.getAttribute("hidden") === null);
+  return {
+    topPrimary: readText("#gridlyV2TopStatusPrimary"),
+    topSecondary: readText("#gridlyV2TopStatusSecondary"),
+    panelVisible,
+    panelTitle: safeDisplayText(panel?.querySelector?.('[data-v2-location-awareness="title"]')?.textContent, ""),
+    panelStatus: safeDisplayText(panel?.querySelector?.('[data-v2-location-awareness="status"]')?.textContent, ""),
+    panelMeta: safeDisplayText(panel?.querySelector?.('[data-v2-location-awareness="meta"]')?.textContent, ""),
+    panelAreaName: safeDisplayText(panel?.dataset?.awarenessAreaName, ""),
+    panelOwner: safeDisplayText(panel?.dataset?.bottomSurfaceOwner, "")
+  };
+}
+
+function verifyGridlyPortraitAwarenessSurfaceSync({ textModel = {}, awarenessAreaName = "" } = {}) {
+  const domState = readGridlyPortraitAwarenessSurfaceDomState();
+  const expectedPrimary = safeDisplayText(textModel?.awarenessPrimary, "");
+  const expectedSecondary = safeDisplayText(textModel?.awarenessSecondary, "");
+  const expectedArea = safeDisplayText(awarenessAreaName || textModel?.communityAwarenessSummary?.awarenessAreaName, "");
+  const topSynced = Boolean(expectedPrimary && domState.topPrimary === expectedPrimary && (!expectedSecondary || domState.topSecondary === expectedSecondary));
+  const panelSynced = Boolean(
+    domState.panelVisible
+    && domState.panelOwner === "location-awareness"
+    && (!expectedArea || domState.panelAreaName === expectedArea)
+    && domState.panelTitle
+    && (!expectedPrimary || domState.panelTitle === expectedPrimary || domState.panelTitle === `${expectedArea} Awareness`)
+  );
+  return { topSynced, panelSynced, domState, expectedPrimary, expectedSecondary, expectedArea };
+}
+
 function syncGridlyAwarenessAreaSurfacesImmediately(reason = "awareness-area-change", options = {}) {
   const syncStartedAt = typeof performance !== "undefined" && typeof performance.now === "function" ? performance.now() : Date.now();
   const summary = typeof buildGridlyCommunityAwarenessIntelligenceSummary === "function"
     ? buildGridlyCommunityAwarenessIntelligenceSummary(options?.summaryOptions || {})
     : null;
   const awarenessAreaName = safeDisplayText(summary?.awarenessAreaName, "Liberty County");
+  const scopedPulseOptions = {
+    ...(options?.pulseOptions || {}),
+    ...(options?.summaryOptions || {}),
+    activeReports: Array.isArray(summary?.activeReportsInArea) ? summary.activeReportsInArea : options?.pulseOptions?.activeReports,
+    activeHazards: Array.isArray(summary?.activeHazardsInArea) ? summary.activeHazardsInArea : options?.pulseOptions?.activeHazards,
+    communityActivityCount: (Array.isArray(summary?.activeReportsInArea) ? summary.activeReportsInArea.length : 0) + (Array.isArray(summary?.activeHazardsInArea) ? summary.activeHazardsInArea.length : 0),
+    communityActivitySource: "awareness_area_immediate_sync.area_scoped_active_items",
+    reason
+  };
 
   if (typeof syncMobileDestinationCommandCard === "function") {
     syncMobileDestinationCommandCard();
   }
 
-  const communityPulseState = typeof renderGridlyCommunityPulse === "function"
-    ? renderGridlyCommunityPulse({ ...(options?.pulseOptions || {}), reason })
-    : null;
+  const communityPulseState = typeof refreshGridlyCommunityPulseSharedModel === "function"
+    ? refreshGridlyCommunityPulseSharedModel({ ...scopedPulseOptions, topAwarenessMicrolineReadOnly: true })
+    : (typeof renderGridlyCommunityPulse === "function" ? renderGridlyCommunityPulse(scopedPulseOptions) : null);
 
+  let portraitRefreshResult = null;
   if (typeof refreshPortraitV2LocalizedIntelligence === "function" && options?.refreshPortrait !== false) {
-    refreshPortraitV2LocalizedIntelligence();
+    portraitRefreshResult = refreshPortraitV2LocalizedIntelligence({
+      pulseModel: communityPulseState,
+      communityAwarenessSummary: summary
+    });
   }
   if (typeof renderUnifiedIncidents === "function" && options?.refreshMapMarkers !== false) {
     renderUnifiedIncidents(`awareness-area-sync:${reason}`);
   }
 
+  const surfaceSync = verifyGridlyPortraitAwarenessSurfaceSync({
+    textModel: portraitRefreshResult?.textModel,
+    awarenessAreaName
+  });
+
   gridlyAwarenessAreaImmediateSyncState = {
     lastReason: reason,
     lastSyncedAt: new Date().toISOString(),
     awarenessAreaName,
-    panelSynced: true,
-    communityPulseSynced: Boolean(communityPulseState),
+    topAwarenessSynced: Boolean(surfaceSync.topSynced),
+    panelSynced: Boolean(surfaceSync.panelSynced),
+    communityPulseSynced: Boolean(communityPulseState && isGridlyCachedAwarenessSummaryForCurrentArea(communityPulseState.communityAwarenessSummary || summary || {})),
     durationMs: Number((((typeof performance !== "undefined" && typeof performance.now === "function") ? performance.now() : Date.now()) - syncStartedAt).toFixed(2)),
     crossingsInArea: Array.isArray(summary?.crossingsInArea) ? summary.crossingsInArea.length : 0,
     activeHazardsInArea: Array.isArray(summary?.activeHazardsInArea) ? summary.activeHazardsInArea.length : 0,
     activeReportsInArea: Array.isArray(summary?.activeReportsInArea) ? summary.activeReportsInArea.length : 0,
-    pulseVisible: Boolean(communityPulseState?.pulseVisible)
+    pulseVisible: Boolean(communityPulseState?.pulseVisible),
+    surfaceDomState: surfaceSync.domState,
+    expectedTopAwarenessPrimary: surfaceSync.expectedPrimary,
+    expectedTopAwarenessSecondary: surfaceSync.expectedSecondary
   };
 
   if (typeof recordGridlyActiveLocationLifecycleEvent === "function") {
     recordGridlyActiveLocationLifecycleEvent("syncGridlyAwarenessAreaSurfacesImmediately", {
       reason,
       awarenessAreaName,
-      panelSynced: true,
-      communityPulseSynced: Boolean(communityPulseState),
+      topAwarenessSynced: Boolean(surfaceSync.topSynced),
+      panelSynced: Boolean(surfaceSync.panelSynced),
+      communityPulseSynced: Boolean(gridlyAwarenessAreaImmediateSyncState.communityPulseSynced),
       durationMs: gridlyAwarenessAreaImmediateSyncState.durationMs
     });
   }
@@ -18027,6 +18130,7 @@ function syncGridlyAwarenessAreaSurfacesImmediately(reason = "awareness-area-cha
   return {
     summary,
     communityPulseState,
+    portraitRefreshResult,
     syncState: { ...gridlyAwarenessAreaImmediateSyncState }
   };
 }
@@ -20919,6 +21023,7 @@ function saveGridlyHomeTownPreference(town, options = {}) {
   applyGridlyHomeTownAwarenessContext({ source: syncSource, fitMap: true });
   scheduleRenderCrossings?.("awareness-area-change", { force: true });
   updateMobileWatchHeader?.();
+  invalidateGridlyPortraitAwarenessSnapshotsForAreaChange?.(area, `awareness-area-change:${syncSource}`);
   if (options?.syncSurfaces !== false) {
     syncGridlyAwarenessAreaSurfacesImmediately?.(`awareness-area-change:${syncSource}`, { summaryOptions: { awarenessArea: area } });
   }
@@ -21023,6 +21128,7 @@ function installGridlyAwarenessAreaTestHelpers() {
     if (typeof renderGridlyWelcomeHomeTownSelection === "function") renderGridlyWelcomeHomeTownSelection();
     if (typeof updateGeoFilterStatus === "function") updateGeoFilterStatus(getVisibleCrossingsForFilter?.("test-awareness-area-switcher") || []);
     updateMobileWatchHeader?.();
+    invalidateGridlyPortraitAwarenessSnapshotsForAreaChange?.(area, "test-awareness-area-switcher");
     const immediateSync = syncGridlyAwarenessAreaSurfacesImmediately?.("test-awareness-area-switcher", { summaryOptions: { awarenessArea: area } });
 
     const settings = getGridlySettingsPreferences();
@@ -55359,26 +55465,36 @@ function buildGridlyQuietLocalizedCommuteIntelligenceFastPathPayload() {
 }
 
 
-function buildGridlyPortraitSharedLocalizedIntelligenceSnapshot({ pulseModel = null, quietFastPathStatus = null } = {}) {
+function buildGridlyPortraitSharedLocalizedIntelligenceSnapshot({ pulseModel = null, quietFastPathStatus = null, communityAwarenessSummary: providedCommunityAwarenessSummary = null } = {}) {
   const sharedPulseModel = pulseModel && typeof pulseModel === "object"
     ? pulseModel
     : (gridlyCommunityPulseAuditState && typeof gridlyCommunityPulseAuditState === "object" ? gridlyCommunityPulseAuditState : {});
   const activeAwareness = sharedPulseModel?.activeAwareness && typeof sharedPulseModel.activeAwareness === "object"
     ? sharedPulseModel.activeAwareness
     : {};
-  const latestAlerts = typeof window !== "undefined" && Array.isArray(window.__gridlyLatestAlertsForRender)
+  const communityAwarenessSummary = providedCommunityAwarenessSummary
+    || sharedPulseModel?.communityAwarenessSummary
+    || (isGridlyCachedAwarenessSummaryForCurrentArea(window.gridlyTopAwarenessMicrolineState?.communityAwarenessSummary || {}) ? window.gridlyTopAwarenessMicrolineState?.communityAwarenessSummary : null)
+    || null;
+  const summaryHasAreaScopedLists = Array.isArray(communityAwarenessSummary?.activeReportsInArea) || Array.isArray(communityAwarenessSummary?.activeHazardsInArea);
+  const summaryActiveReportCount = Array.isArray(communityAwarenessSummary?.activeReportsInArea) ? communityAwarenessSummary.activeReportsInArea.length : null;
+  const summaryActiveHazardCount = Array.isArray(communityAwarenessSummary?.activeHazardsInArea) ? communityAwarenessSummary.activeHazardsInArea.length : null;
+  const latestAlerts = !summaryHasAreaScopedLists && typeof window !== "undefined" && Array.isArray(window.__gridlyLatestAlertsForRender)
     ? window.__gridlyLatestAlertsForRender
     : [];
-  const activeReportCount = Math.max(0, Number(activeAwareness.activeReportCount ?? quietFastPathStatus?.activeReportCount ?? (Array.isArray(activeReports) ? activeReports.filter((report) => report && !report.expired).length : 0)) || 0);
-  const activeHazardCount = Math.max(0, Number(activeAwareness.activeHazardCount ?? quietFastPathStatus?.activeHazardCount ?? (Array.isArray(activeHazards) ? activeHazards.filter((hazard) => hazard && !hazard.expired && String(hazard.type || hazard.report_type || "").toLowerCase() !== "hazard_cleared").length : 0)) || 0);
-  const activeAwarenessCount = Math.max(
-    0,
-    Number(activeAwareness.activeAwarenessCount || 0),
-    Number(activeAwareness.topAwarenessDedupedMobilityCount || 0),
-    Number(activeAwareness.topAwarenessDisplayedCount || 0),
-    latestAlerts.length,
-    activeReportCount + activeHazardCount
-  );
+  const activeReportCount = Math.max(0, Number(summaryActiveReportCount ?? activeAwareness.activeReportCount ?? quietFastPathStatus?.activeReportCount ?? (Array.isArray(activeReports) ? activeReports.filter((report) => report && !report.expired).length : 0)) || 0);
+  const activeHazardCount = Math.max(0, Number(summaryActiveHazardCount ?? activeAwareness.activeHazardCount ?? quietFastPathStatus?.activeHazardCount ?? (Array.isArray(activeHazards) ? activeHazards.filter((hazard) => hazard && !hazard.expired && String(hazard.type || hazard.report_type || "").toLowerCase() !== "hazard_cleared").length : 0)) || 0);
+  const areaScopedActiveCount = summaryHasAreaScopedLists ? activeReportCount + activeHazardCount : null;
+  const activeAwarenessCount = summaryHasAreaScopedLists
+    ? areaScopedActiveCount
+    : Math.max(
+      0,
+      Number(activeAwareness.activeAwarenessCount || 0),
+      Number(activeAwareness.topAwarenessDedupedMobilityCount || 0),
+      Number(activeAwareness.topAwarenessDisplayedCount || 0),
+      latestAlerts.length,
+      activeReportCount + activeHazardCount
+    );
   const quiet = activeAwarenessCount <= 0;
   const primary = quiet
     ? "Community activity is quiet"
@@ -55386,9 +55502,6 @@ function buildGridlyPortraitSharedLocalizedIntelligenceSnapshot({ pulseModel = n
   const secondary = quiet
     ? "No recent reports nearby · map remains live"
     : safeDisplayText(activeAwareness.subline || sharedPulseModel.renderedPulseSubline, `${pluralizeGridlyMobilityReports(activeAwarenessCount)} · map markers show exact spots`);
-  const communityAwarenessSummary = sharedPulseModel?.communityAwarenessSummary
-    || window.gridlyTopAwarenessMicrolineState?.communityAwarenessSummary
-    || null;
   const normalizedActiveAwareness = {
     ...activeAwareness,
     loaded: activeAwareness.loaded !== false,
@@ -55931,7 +56044,7 @@ function refreshGridlyPortraitLocationAwarenessPanel({ awarenessBrief = {}, puls
   return { quiet, areaName, title, status, meta, activeCount, routeContext };
 }
 
-function refreshPortraitV2LocalizedIntelligence() {
+function refreshPortraitV2LocalizedIntelligence(options = {}) {
   recordGridlyBackgroundFunctionCall("refreshPortraitV2LocalizedIntelligence");
   const functionStartedAt = performance.now();
   const sections = {};
@@ -55953,7 +56066,7 @@ function refreshPortraitV2LocalizedIntelligence() {
   counts.crossingCount = Array.isArray(crossings) ? crossings.length : 0;
   if (!topPrimaryEl && !topSecondaryEl) {
     recordPortraitIntelligenceBreakdown("refreshPortraitV2LocalizedIntelligence", functionStartedAt, sections, { counts, cacheReuseApplied: true, unchangedDomWriteSkipped: 0 });
-    return;
+    return null;
   }
 
   const quietFastPathPreflight = timeGridlyAuditSection(sections, "quiet_fast_path_preflight", () => getGridlyQuietTopAwarenessFastPathStatus());
@@ -55966,9 +56079,11 @@ function refreshPortraitV2LocalizedIntelligence() {
   counts.quietFastPathExpensiveSnapshotSkipped = quietFastPathPreflight.expensiveSnapshotSkipped ? 1 : 0;
   counts.quietFastPathUnifiedIncidentScanSkipped = quietFastPathPreflight.unifiedIncidentScanSkipped ? 1 : 0;
 
+  const sourcePulseModel = options?.pulseModel && typeof options.pulseModel === "object" ? options.pulseModel : gridlyCommunityPulseAuditState;
   const textModel = timeGridlyAuditSection(sections, "shared_active_awareness_reuse", () => buildGridlyPortraitSharedLocalizedIntelligenceSnapshot({
-    pulseModel: gridlyCommunityPulseAuditState,
-    quietFastPathStatus: quietFastPathPreflight
+    pulseModel: sourcePulseModel,
+    quietFastPathStatus: quietFastPathPreflight,
+    communityAwarenessSummary: options?.communityAwarenessSummary || sourcePulseModel?.communityAwarenessSummary || null
   }));
   const intel = textModel.intel || {};
   const activeAwareness = textModel.pulseModel?.activeAwareness || textModel.activeAwareness || {};
@@ -56031,6 +56146,7 @@ function refreshPortraitV2LocalizedIntelligence() {
     cacheReuseApplied: auditState.cacheReuseApplied,
     unchangedDomWriteSkipped: auditState.unchangedDomWriteSkipped
   });
+  return { textModel, counts, cacheReuseApplied: auditState.cacheReuseApplied, unchangedDomWriteSkipped: auditState.unchangedDomWriteSkipped };
 }
 function renderRoadHazards() {
   if (!els.roadHazardsList) return;
