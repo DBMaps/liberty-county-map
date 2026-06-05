@@ -55547,6 +55547,62 @@ function buildGridlyAwarenessBriefCopy({ intel = {}, existingAlertWording = {}, 
 }
 
 
+
+function ensureGridlyPortraitLocationAwarenessPanel() {
+  const shell = document.getElementById("gridlyPortraitV2");
+  if (!shell) return null;
+  let panel = document.getElementById("gridlyPortraitLocationAwarenessPanel");
+  if (panel) return panel;
+  panel = document.createElement("section");
+  panel.id = "gridlyPortraitLocationAwarenessPanel";
+  panel.className = "gridly-v2-location-awareness-panel";
+  panel.setAttribute("aria-label", "Location Awareness");
+  panel.setAttribute("data-gridly-portrait-owned", "true");
+  panel.setAttribute("data-gridly-awareness-owner", "portrait-v2");
+  panel.innerHTML = `
+    <div class="gridly-v2-location-awareness-kicker">Location Awareness</div>
+    <strong class="gridly-v2-location-awareness-title" data-v2-location-awareness="title">Liberty County Awareness</strong>
+    <p class="gridly-v2-location-awareness-status" data-v2-location-awareness="status">Community activity is quiet</p>
+    <p class="gridly-v2-location-awareness-meta" data-v2-location-awareness="meta">No recent reports nearby · map remains live</p>
+  `;
+  const dock = shell.querySelector(".gridly-v2-bottom-dock");
+  if (dock?.parentNode) dock.parentNode.insertBefore(panel, dock);
+  else shell.appendChild(panel);
+  return panel;
+}
+
+function refreshGridlyPortraitLocationAwarenessPanel({ awarenessBrief = {}, pulseModel = {}, awarenessPrimary = "", awarenessSecondary = "" } = {}) {
+  const panel = ensureGridlyPortraitLocationAwarenessPanel();
+  if (!panel) return null;
+  const summary = typeof getGridlyMobileAwarenessPanelSummary === "function" ? getGridlyMobileAwarenessPanelSummary() : {};
+  const activeAwareness = pulseModel?.activeAwareness || {};
+  const quiet = String(awarenessBrief?.state || "quiet") === "quiet";
+  const areaName = safeDisplayText(summary?.areaName || summary?.awarenessAreaName, "Liberty County");
+  const title = quiet
+    ? `${areaName} Awareness`
+    : safeDisplayText(awarenessPrimary || pulseModel?.renderedPulseHeadline || summary?.panelTitle, `${areaName} Awareness`);
+  const status = quiet
+    ? safeDisplayText(awarenessPrimary || summary?.status, "Community activity is quiet")
+    : safeDisplayText(awarenessSecondary || pulseModel?.renderedPulseSubline || summary?.status, "Community reports are active nearby");
+  const activeCountRaw = Number(activeAwareness?.activeAwarenessCount ?? summary?.activeIssueCount ?? 0);
+  const activeCount = Number.isFinite(activeCountRaw) ? activeCountRaw : 0;
+  const meta = quiet
+    ? safeDisplayText(awarenessSecondary || summary?.crossingsLine, "No recent reports nearby · map remains live")
+    : safeDisplayText(summary?.crossingsLine || pluralizeGridlyMobilityReports(activeCount), "Map markers show exact spots");
+  const titleEl = panel.querySelector('[data-v2-location-awareness="title"]');
+  const statusEl = panel.querySelector('[data-v2-location-awareness="status"]');
+  const metaEl = panel.querySelector('[data-v2-location-awareness="meta"]');
+  setGridlyTopPanelTextIfChanged(titleEl, title, "refreshGridlyPortraitLocationAwarenessPanel", "gridlyPortraitLocationAwarenessTitle");
+  setGridlyTopPanelTextIfChanged(statusEl, status, "refreshGridlyPortraitLocationAwarenessPanel", "gridlyPortraitLocationAwarenessStatus");
+  setGridlyTopPanelTextIfChanged(metaEl, meta, "refreshGridlyPortraitLocationAwarenessPanel", "gridlyPortraitLocationAwarenessMeta");
+  panel.dataset.awarenessState = quiet ? "quiet" : "active";
+  panel.dataset.awarenessAreaName = areaName;
+  panel.dataset.activeAwarenessCount = String(Math.max(0, activeCount || 0));
+  panel.hidden = false;
+  panel.removeAttribute("hidden");
+  return { quiet, areaName, title, status, meta, activeCount };
+}
+
 function refreshPortraitV2LocalizedIntelligence() {
   recordGridlyBackgroundFunctionCall("refreshPortraitV2LocalizedIntelligence");
   const functionStartedAt = performance.now();
@@ -55651,6 +55707,7 @@ function refreshPortraitV2LocalizedIntelligence() {
     setGridlyTopPanelTextIfChanged(greetingEl, textModel.awarenessBrief.greeting, "refreshPortraitV2LocalizedIntelligence", "gridlyV2AwarenessGreeting");
     setGridlyTopPanelTextIfChanged(topPrimaryEl, textModel.awarenessPrimary, "refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusPrimary");
     setGridlyTopPanelTextIfChanged(topSecondaryEl, textModel.awarenessSecondary, "refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusSecondary");
+    refreshGridlyPortraitLocationAwarenessPanel(textModel);
     if (topMicrolineEl) {
       setGridlyTopPanelTextIfChanged(topMicrolineEl, textModel.awarenessBrief.microlineVisible ? textModel.awarenessBrief.microline : "", "refreshPortraitV2LocalizedIntelligence", "gridlyTopAwarenessMicroline");
       setGridlyHiddenIfChangedForAudit(topMicrolineEl, !textModel.awarenessBrief.microlineVisible, sections, auditState);
