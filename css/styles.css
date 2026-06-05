@@ -17580,3 +17580,53 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
   top: calc(var(--gridly-v2-filter-strip-bottom) + 16px);
   right: var(--gridly-v2-command-right);
 }
+
+/* V212.2 — persistent intelligence card hierarchy stabilization. */
+body[data-layout-mode="portrait"] .gridly-v2-awareness-brief-card {
+  top: 54px;
+  display: grid;
+  align-content: center;
+  gap: 5px;
+  min-height: 78px;
+  max-height: 92px;
+  padding: 12px 14px;
+  border-radius: 17px;
+  overflow: hidden;
+}
+
+body[data-layout-mode="portrait"] .gridly-v2-awareness-brief-card strong {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  color: #f8fbff;
+  font-size: clamp(17px, 4.9vw, 21px);
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  font-weight: 800;
+}
+
+body[data-layout-mode="portrait"] .gridly-v2-awareness-brief-card > span {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: rgba(210, 225, 241, 0.82);
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-top-awareness-microline,
+body[data-layout-mode="portrait"] .gridly-v2-top-awareness-microline {
+  display: none !important;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 {
+  --gridly-v2-filter-strip-top: calc(152px + env(safe-area-inset-top, 0px));
+  --gridly-v2-filter-strip-bottom: calc(198px + env(safe-area-inset-top, 0px));
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
+  top: calc(var(--gridly-v2-filter-strip-bottom) + 14px);
+}

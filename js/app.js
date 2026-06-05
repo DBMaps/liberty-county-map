@@ -56621,11 +56621,10 @@ function refreshPortraitV2LocalizedIntelligence(options = {}) {
   const auditState = { cacheReuseApplied: true, unchangedDomWriteSkipped: 0 };
 
   const { topPrimaryEl, topSecondaryEl, topMicrolineEl } = timeGridlyAuditSection(sections, "source_collection.dom_queries", () => {
-    const topSecondary = document.getElementById("gridlyV2TopStatusSecondary");
     return {
       topPrimaryEl: document.getElementById("gridlyV2TopStatusPrimary"),
-      topSecondaryEl: topSecondary,
-      topMicrolineEl: ensureGridlyTopAwarenessMicrolineElement(topSecondary)
+      topSecondaryEl: document.getElementById("gridlyV2TopStatusSecondary"),
+      topMicrolineEl: document.getElementById("gridlyV2TopAwarenessMicroline")
     };
   });
   counts.activeReportCount = Array.isArray(activeReports) ? activeReports.length : 0;
