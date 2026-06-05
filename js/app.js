@@ -49798,7 +49798,7 @@ const GRIDLY_SETTINGS_DEFAULTS = Object.freeze({
   display: Object.freeze({
     mapStyle: "standard",
     theme: "system",
-    textSize: "standard"
+    textSize: "large"
   }),
   personalization: Object.freeze({
     preferredName: ""
@@ -61569,7 +61569,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           if (path === "notifications.communityAlerts") next.notifications.communityAlerts = Boolean(value);
           if (path === "display.mapStyle") next.display.mapStyle = String(value || "standard");
           if (path === "display.theme") next.display.theme = String(value || "system");
-          if (path === "display.textSize") next.display.textSize = String(value || "standard");
+          if (path === "display.textSize") next.display.textSize = String(value || GRIDLY_SETTINGS_DEFAULTS.display.textSize);
           if (path === "personalization.preferredName") next.personalization.preferredName = String(value || "");
         });
         try {
