@@ -10842,6 +10842,11 @@ const gridlyPortraitIntelligenceBreakdownAuditState = {
   renderAlerts: { totalMs: 0, sections: {}, at: 0 },
   updateDailyHabitStatus: { totalMs: 0, sections: {}, at: 0 }
 };
+const gridlyUpdateDailyHabitStatusFastPathState = {
+  lastPortraitSignature: "",
+  lastSkippedAt: 0
+};
+
 const gridlyCommuteIntelligenceAuditState = {
   totalMs: 0,
   derivedFieldGenerationTrace: { totals: {}, perIncident: [], slowestStep: null, repeatedWork: [] },
@@ -51930,15 +51935,90 @@ function logTopStripOwnershipDiagnostic(sourceFunction) {
   }
 }
 
+function getGridlyUpdateDailyHabitStatusActiveItemCount(items = []) {
+  return (Array.isArray(items) ? items : []).filter((item) => {
+    if (!item) return false;
+    if (item.expired === true) return false;
+    const status = String(item.status || item.lifecycleState || item.type || item.report_type || "").toLowerCase();
+    return status !== "cleared" && status !== "hazard_cleared" && status !== "inactive" && status !== "expired";
+  }).length;
+}
+
+function getGridlyUpdateDailyHabitStatusTopAwarenessText() {
+  const readText = (id) => safeDisplayText(document.getElementById(id)?.textContent, "");
+  return {
+    primary: readText("gridlyV2TopStatusPrimary"),
+    secondary: readText("gridlyV2TopStatusSecondary")
+  };
+}
+
+function buildGridlyUpdateDailyHabitStatusPortraitSignature(unifiedIncidents = []) {
+  const activeUnifiedIncidents = (Array.isArray(unifiedIncidents) ? unifiedIncidents : [])
+    .filter((incident) => String(incident?.status || "").toLowerCase() === "active");
+  const activeUnifiedState = activeUnifiedIncidents
+    .map((incident) => [
+      String(incident?.id || incident?.incident_id || incident?.crossingId || incident?.crossing_id || ""),
+      String(incident?.status || ""),
+      String(incident?.severity || incident?.priority || incident?.impact || "")
+    ].join(":"))
+    .sort()
+    .join("|");
+  const awarenessArea = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  const topAwarenessText = getGridlyUpdateDailyHabitStatusTopAwarenessText();
+  const topAwarenessModel = typeof window !== "undefined" && window.gridlyTopAwarenessMicrolineState
+    ? window.gridlyTopAwarenessMicrolineState
+    : {};
+  const signatureParts = {
+    unifiedIncidentCount: (Array.isArray(unifiedIncidents) ? unifiedIncidents : []).length,
+    activeUnifiedIncidentCount: activeUnifiedIncidents.length,
+    activeUnifiedState,
+    activeHazardCount: getGridlyUpdateDailyHabitStatusActiveItemCount(typeof activeHazards !== "undefined" ? activeHazards : []),
+    activeReportCount: getGridlyUpdateDailyHabitStatusActiveItemCount(typeof activeReports !== "undefined" ? activeReports : []),
+    routeWatchActive: Boolean((typeof routeWatchActivated !== "undefined" && routeWatchActivated) || (typeof window !== "undefined" && window.__gridlyRouteWatchActive)),
+    awarenessAreaKey: safeDisplayText(awarenessArea?.key || awarenessArea?.storageValue, ""),
+    awarenessAreaName: safeDisplayText(awarenessArea?.label || awarenessArea?.name || awarenessArea?.storageValue, ""),
+    topPrimaryText: topAwarenessText.primary,
+    topSecondaryText: topAwarenessText.secondary,
+    topModelText: safeDisplayText(topAwarenessModel?.text, ""),
+    topModelVisible: Boolean(topAwarenessModel?.visible),
+    topModelSelectedHeadline: safeDisplayText(topAwarenessModel?.selectedHeadline || topAwarenessModel?.pulseHeadline, "")
+  };
+  return JSON.stringify(signatureParts);
+}
+
+function shouldUseGridlyUpdateDailyHabitStatusPortraitFastPath(signature = "") {
+  return Boolean(
+    typeof isPortraitMode === "function"
+    && isPortraitMode()
+    && signature
+    && gridlyUpdateDailyHabitStatusFastPathState.lastPortraitSignature === signature
+  );
+}
+
 function updateDailyHabitStatus() {
   recordGridlyBackgroundFunctionCall("updateDailyHabitStatus");
   const functionStartedAt = performance.now();
   const sections = {};
   const timeSection = makeGridlySectionTimer(sections);
+  const portraitModeActive = typeof isPortraitMode === "function" && isPortraitMode();
+  let unifiedIncidentsSnapshot = null;
+  let portraitFastPathSignature = "";
+  if (portraitModeActive) {
+    unifiedIncidentsSnapshot = getUnifiedIncidents();
+    portraitFastPathSignature = buildGridlyUpdateDailyHabitStatusPortraitSignature(unifiedIncidentsSnapshot);
+    if (shouldUseGridlyUpdateDailyHabitStatusPortraitFastPath(portraitFastPathSignature)) {
+      gridlyUpdateDailyHabitStatusFastPathState.lastSkippedAt = Date.now();
+      recordPortraitIntelligenceBreakdown("updateDailyHabitStatus", functionStartedAt, sections, {
+        portraitUnchangedFastPathSkipped: true
+      });
+      return;
+    }
+  }
 
   const localizedIntel = timeSection("intelligence_calculations", () => buildUnifiedLocalizedCommuteIntelligence({ limit: 6 }));
   const { unifiedActive, railActive, activeIssues, highIssues, moderateIssues, activeCount, confirmationCount } = timeSection("array_filtering_sorting", () => {
-    const unifiedActiveItems = getUnifiedIncidents().filter((incident) => incident.status === "active");
+    unifiedIncidentsSnapshot = unifiedIncidentsSnapshot || getUnifiedIncidents();
+    const unifiedActiveItems = unifiedIncidentsSnapshot.filter((incident) => incident.status === "active");
     const railActiveItems = unifiedActiveItems.filter((incident) => incident.type.startsWith("rail_"));
     const activeIssueItems = railActiveItems;
     const highIssueItems = activeIssueItems.filter((report) => report.severity === "high");
@@ -51950,7 +52030,7 @@ function updateDailyHabitStatus() {
       highIssues: highIssueItems,
       moderateIssues: moderateIssueItems,
       activeCount: activeIssueItems.length,
-      confirmationCount: getUnifiedIncidents().reduce((sum, i) => sum + i.reports_count, 0)
+      confirmationCount: unifiedIncidentsSnapshot.reduce((sum, i) => sum + i.reports_count, 0)
     };
   });
 
@@ -51999,6 +52079,9 @@ function updateDailyHabitStatus() {
   void unifiedActive;
   void railActive;
   void activeCount;
+  if (portraitModeActive) {
+    gridlyUpdateDailyHabitStatusFastPathState.lastPortraitSignature = portraitFastPathSignature;
+  }
   recordPortraitIntelligenceBreakdown("updateDailyHabitStatus", functionStartedAt, sections);
 }
 
@@ -56391,6 +56474,11 @@ function refreshPortraitV2LocalizedIntelligence(options = {}) {
   timeGridlyAuditSection(sections, "preview_card_render_skipped", () => {
     // Portrait refresh intentionally skips the desktop preview card renderer.
   });
+  if (typeof isPortraitMode === "function" && isPortraitMode() && typeof buildGridlyUpdateDailyHabitStatusPortraitSignature === "function") {
+    gridlyUpdateDailyHabitStatusFastPathState.lastPortraitSignature = buildGridlyUpdateDailyHabitStatusPortraitSignature(
+      typeof getUnifiedIncidents === "function" ? getUnifiedIncidents() : []
+    );
+  }
   timeGridlyAuditSection(sections, "top_strip_owner_diagnostic", () => logTopStripOwnershipDiagnostic("refreshPortraitV2LocalizedIntelligence"));
   recordPortraitIntelligenceBreakdown("refreshPortraitV2LocalizedIntelligence", functionStartedAt, sections, {
     counts,
