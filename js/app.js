@@ -40027,8 +40027,16 @@ function gridlyInferCardinalRoadDirection(bearing) {
   return null;
 }
 
-const GRIDLY_DIRECTIONAL_PROVENANCE_AUDIT_VERSION = "V252.0";
+const GRIDLY_DIRECTIONAL_PROVENANCE_AUDIT_VERSION = "V252.1";
 const GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDORS = ["US 90", "TX 146", "TX 321", "FM 1960", "FM 1409"];
+
+const GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDOR_PATTERNS = {
+  "US 90": /\b(us\s*90|us-90|u\.?s\.?\s*highway\s*90|united\s+states\s+highway\s+90|highway\s+90)\b/i,
+  "TX 146": /\b(tx\s*146|tx-146|sh\s*146|state\s+highway\s+146|highway\s+146)\b/i,
+  "TX 321": /\b(tx\s*321|tx-321|sh\s*321|state\s+highway\s+321|highway\s+321)\b/i,
+  "FM 1960": /\b(fm\s*1960|fm-1960|farm\s*-?\s*to\s*-?\s*market(?:\s+road)?\s*1960|farm-to-market\s+road\s*1960)\b/i,
+  "FM 1409": /\b(fm\s*1409|fm-1409|farm\s*-?\s*to\s*-?\s*market(?:\s+road)?\s*1409|farm-to-market\s+road\s*1409)\b/i
+};
 const GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDOR_DEFAULTS = {
   "US 90": { orientation: "east-west", directions: ["EB", "WB"], authoritative: true },
   "TX 146": { orientation: "north-south", directions: ["NB", "SB"], authoritative: false },
@@ -40253,11 +40261,90 @@ function gridlyDirectionalProvenanceIncrement(counts, key) {
   counts[normalized] = (counts[normalized] || 0) + 1;
 }
 
+function gridlyDirectionalProvenanceFeatureText(feature = {}) {
+  if (typeof gridlyRoadwayAuditFeatureText === "function") return gridlyRoadwayAuditFeatureText(feature);
+  const props = feature?.properties || {};
+  return [
+    props.name,
+    props.ref,
+    props.highway,
+    props.route,
+    props.route_name,
+    props.routeName,
+    props.alt_name,
+    props.official_name,
+    props["tiger:name_base"],
+    props["tiger:name_base_1"],
+    props["tiger:name_base_2"],
+    props["tiger:name_base_3"],
+    props["@id"]
+  ].map((value) => String(value || "").trim()).filter(Boolean).join(" | ").toLowerCase();
+}
+
+function gridlyDirectionalProvenanceFeatureMatchesCorridor(feature = {}, corridor = "") {
+  if (typeof gridlyRoadwayAuditMatchesCorridor === "function") {
+    if (corridor === "US 90" && gridlyRoadwayAuditMatchesCorridor(feature, "us90")) return true;
+    if (corridor === "TX 146" && gridlyRoadwayAuditMatchesCorridor(feature, "tx146")) return true;
+  }
+  const pattern = GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDOR_PATTERNS[corridor];
+  return Boolean(pattern && pattern.test(gridlyDirectionalProvenanceFeatureText(feature)));
+}
+
+function gridlyDirectionalProvenanceAxisFromBearing(bearing) {
+  const value = Number(bearing);
+  if (!Number.isFinite(value)) return null;
+  const normalized = ((value % 360) + 360) % 360;
+  return (normalized >= 45 && normalized < 135) || (normalized >= 225 && normalized < 315) ? "EW" : "NS";
+}
+
+function gridlyDirectionalProvenancePredominantAxis(axisCounts = {}) {
+  const ew = Number(axisCounts.EW || 0);
+  const ns = Number(axisCounts.NS || 0);
+  const total = ew + ns;
+  if (!total) return "mixed";
+  const minorityShare = Math.min(ew, ns) / total;
+  if (minorityShare >= 0.25) return "mixed";
+  return ew > ns ? "EW" : "NS";
+}
+
+function gridlyDirectionalProvenanceGeometryInventory() {
+  const loadedFeatures = roadwayDatasetLoaded && Array.isArray(roadwaySegmentFeatures) ? roadwaySegmentFeatures : [];
+  return GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDORS.reduce((inventory, corridor) => {
+    const corridorFeatures = loadedFeatures.filter((feature) => gridlyDirectionalProvenanceFeatureMatchesCorridor(feature, corridor));
+    const axisCounts = { EW: 0, NS: 0 };
+    let geometrySegments = 0;
+    corridorFeatures.forEach((feature) => {
+      const segments = typeof flattenRoadGeometrySegments === "function" ? flattenRoadGeometrySegments(feature?.geometry) : [];
+      geometrySegments += segments.length;
+      segments.forEach((segment) => {
+        const bearing = typeof gridlyRoadBearingDegrees === "function"
+          ? gridlyRoadBearingDegrees(segment.startLat, segment.startLng, segment.endLat, segment.endLng)
+          : null;
+        const axis = gridlyDirectionalProvenanceAxisFromBearing(bearing);
+        if (axis) axisCounts[axis] += 1;
+      });
+    });
+    inventory[corridor] = {
+      found: corridorFeatures.length > 0,
+      geometryCapable: geometrySegments > 0,
+      roadwayFeatures: corridorFeatures.length,
+      geometrySegments,
+      predominantAxis: gridlyDirectionalProvenancePredominantAxis(axisCounts),
+      axisSegmentBreakdown: axisCounts
+    };
+    return inventory;
+  }, {});
+}
+
 function gridlyDirectionalProvenanceAudit(options = {}) {
   const records = gridlyDirectionalProvenanceRecords(options);
   const maxRecords = Number.isFinite(Number(options.maxRecords)) ? Math.max(0, Number(options.maxRecords)) : records.length;
   const evaluatedRecords = records.slice(0, maxRecords);
   const corridorBreakdown = {};
+  const corridorRuntimeCoverage = GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDORS.reduce((coverage, corridor) => {
+    coverage[corridor] = 0;
+    return coverage;
+  }, {});
   const directionSourceBreakdown = {};
   const fallbackReasonBreakdown = {};
   const sampleRecords = [];
@@ -40273,6 +40360,9 @@ function gridlyDirectionalProvenanceAudit(options = {}) {
     else lowConfidence += 1;
     if (provenance.suppressed) suppressed += 1;
     gridlyDirectionalProvenanceIncrement(corridorBreakdown, provenance.corridor || "out_of_scope_or_unknown");
+    if (provenance.corridor && Object.prototype.hasOwnProperty.call(corridorRuntimeCoverage, provenance.corridor)) {
+      corridorRuntimeCoverage[provenance.corridor] += 1;
+    }
     gridlyDirectionalProvenanceIncrement(directionSourceBreakdown, provenance.directionSource);
     gridlyDirectionalProvenanceIncrement(fallbackReasonBreakdown, provenance.fallbackReason || "none");
     const sampleLimit = Number.isFinite(Number(options.sampleLimit)) ? Math.max(0, Number(options.sampleLimit)) : 8;
@@ -40284,16 +40374,23 @@ function gridlyDirectionalProvenanceAudit(options = {}) {
     }
   });
 
+  const geometryInventory = gridlyDirectionalProvenanceGeometryInventory();
+  const corridorsWithoutRuntimeCoverage = GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDORS.filter((corridor) => !corridorRuntimeCoverage[corridor]);
+
   return {
     available: true,
     version: GRIDLY_DIRECTIONAL_PROVENANCE_AUDIT_VERSION,
     auditOnly: true,
     rendersDirectionalUi: false,
+    runtimeEvaluated: evaluatedRecords.length,
     totalEvaluated: evaluatedRecords.length,
     highConfidence,
     mediumConfidence,
     lowConfidence,
     suppressed,
+    geometryInventory,
+    corridorRuntimeCoverage,
+    corridorsWithoutRuntimeCoverage,
     corridorBreakdown,
     directionSourceBreakdown,
     fallbackReasonBreakdown,
