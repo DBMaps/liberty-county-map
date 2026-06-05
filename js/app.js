@@ -40029,6 +40029,7 @@ function gridlyInferCardinalRoadDirection(bearing) {
 
 const GRIDLY_DIRECTIONAL_PROVENANCE_AUDIT_VERSION = "V253";
 const GRIDLY_DIRECTIONAL_PROVENANCE_READINESS_VALIDATION_VERSION = "V253.1";
+const GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDOR_PURITY_AUDIT_VERSION = "V253.2";
 const GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDORS = ["US 90", "TX 146", "TX 321", "FM 1960", "FM 1409"];
 
 const GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDOR_PATTERNS = {
@@ -40876,6 +40877,271 @@ function gridlyDirectionalProvenanceReadinessValidation(directionalReadiness = {
   };
 }
 
+
+function gridlyDirectionalProvenancePropertyValues(feature = {}, fields = []) {
+  const props = feature?.properties || {};
+  return fields
+    .map((field) => props[field])
+    .flatMap((value) => Array.isArray(value) ? value : String(value == null ? "" : value).split(/\s*;\s*/))
+    .map((value) => String(value || "").trim())
+    .filter(Boolean);
+}
+
+function gridlyDirectionalProvenanceUniqueValues(values = [], limit = 12) {
+  return Array.from(new Set(values.map((value) => String(value || "").trim()).filter(Boolean))).slice(0, limit);
+}
+
+function gridlyDirectionalProvenanceRouteRefsFromText(value = "") {
+  const text = String(value || "");
+  const found = new Set();
+  const addMatches = (pattern, formatter) => {
+    let match;
+    const regex = new RegExp(pattern.source, pattern.flags.includes("g") ? pattern.flags : `${pattern.flags}g`);
+    while ((match = regex.exec(text)) !== null) {
+      const number = Number(match[1]);
+      if (Number.isFinite(number)) found.add(formatter(number));
+    }
+  };
+  addMatches(/\b(?:i|ih|interstate)\s*-?\s*(\d{1,3})\b/gi, (number) => `I-${number}`);
+  addMatches(/\b(?:us|u\.?s\.?|united\s+states(?:\s+highway)?)\s*-?\s*(\d{1,3})\b/gi, (number) => `US ${number}`);
+  addMatches(/\b(?:tx|sh|state\s+(?:hwy|highway)|highway)\s*-?\s*(\d{1,4})\b/gi, (number) => `TX ${number}`);
+  addMatches(/\b(?:fm|farm\s*-?\s*to\s*-?\s*market(?:\s+road)?)\s*-?\s*(\d{1,4})\b/gi, (number) => `FM ${number}`);
+  addMatches(/\b(?:ga|georgia)\s*(?:hwy|highway)?\s*-?\s*(\d{1,4})\b/gi, (number) => `GA Hwy ${number}`);
+  addMatches(/\b(?:mt|montana)\s*(?:hwy|highway)?\s*-?\s*(\d{1,4})\b/gi, (number) => `MT ${number}`);
+  addMatches(/\b(?:fl|florida)\s*(?:hwy|highway)?\s*-?\s*(\d{1,4})\b/gi, (number) => `FL Hwy ${number}`);
+  addMatches(/\b(?:la|louisiana)\s*(?:hwy|highway)?\s*-?\s*(\d{1,4})\b/gi, (number) => `LA Hwy ${number}`);
+  addMatches(/\b(?:ok|oklahoma)\s*(?:hwy|highway)?\s*-?\s*(\d{1,4})\b/gi, (number) => `OK Hwy ${number}`);
+  addMatches(/\b(?:ar|arkansas)\s*(?:hwy|highway)?\s*-?\s*(\d{1,4})\b/gi, (number) => `AR Hwy ${number}`);
+  return Array.from(found);
+}
+
+function gridlyDirectionalProvenanceFeatureOrigin(feature = {}, corridor = "", featureIndex = 0) {
+  const props = feature?.properties || {};
+  const nameFields = ["name", "official_name", "route_name", "routeName", "tiger:name_base"];
+  const refFields = ["ref", "route", "highway"];
+  const aliasFields = ["alt_name", "tiger:name_base_1", "tiger:name_base_2", "tiger:name_base_3"];
+  const sourceNames = gridlyDirectionalProvenancePropertyValues(feature, nameFields);
+  const sourceRefs = gridlyDirectionalProvenancePropertyValues(feature, refFields);
+  const sourceAliases = gridlyDirectionalProvenancePropertyValues(feature, aliasFields);
+  const text = [sourceRefs, sourceNames, sourceAliases].flat().join(" | ");
+  const canonicalCorridors = gridlyDirectionalProvenanceCanonicalCorridorsFromText(text);
+  const routeReferences = gridlyDirectionalProvenanceRouteRefsFromText(text);
+  const fallbackLabel = gridlyDirectionalProvenanceFallbackMajorRoadLabel(feature);
+  const normalizedCorridor = normalizeCorridorBaseLabel(corridor);
+  const normalizedFallback = normalizeCorridorBaseLabel(fallbackLabel);
+  const matchedBy = [];
+  if (canonicalCorridors.some((candidate) => normalizeCorridorBaseLabel(candidate) === normalizedCorridor)) matchedBy.push("canonical_route_reference_or_name");
+  if (routeReferences.some((candidate) => normalizeCorridorBaseLabel(candidate) === normalizedCorridor)) matchedBy.push("state_route_reference_or_name");
+  if (normalizedFallback && normalizedFallback === normalizedCorridor) matchedBy.push("fallback_major_road_label");
+  if (gridlyDirectionalProvenanceFeatureMatchesCorridor(feature, corridor)) matchedBy.push("legacy_seed_corridor_pattern");
+  const segments = typeof flattenRoadGeometrySegments === "function" ? flattenRoadGeometrySegments(feature?.geometry) : [];
+  return {
+    featureId: gridlyDirectionalProvenanceFeatureAuditId(feature, featureIndex),
+    sourceNames: gridlyDirectionalProvenanceUniqueValues(sourceNames, 8),
+    sourceRefs: gridlyDirectionalProvenanceUniqueValues(sourceRefs, 8),
+    sourceAliases: gridlyDirectionalProvenanceUniqueValues(sourceAliases, 8),
+    routeReferences: gridlyDirectionalProvenanceUniqueValues(routeReferences, 12),
+    matchedBy: gridlyDirectionalProvenanceUniqueValues(matchedBy, 8),
+    insideCounty: gridlyDirectionalProvenanceFeatureInsideCounty(feature),
+    geometrySegments: segments.length,
+    highwayClass: gridlyDirectionalProvenanceFeatureHighwayClass(feature) || null,
+    sampleText: gridlyDirectionalProvenanceFeatureText(feature).slice(0, 220)
+  };
+}
+
+function gridlyDirectionalProvenanceCorridorOriginProfile(corridor = "", corridorFeatureMap = null) {
+  const loadedFeatures = roadwayDatasetLoaded && Array.isArray(roadwaySegmentFeatures) ? roadwaySegmentFeatures : [];
+  const features = gridlyDirectionalProvenanceFeaturesForCorridor(corridor);
+  const sourceFeatures = features.map((feature) => {
+    const index = loadedFeatures.indexOf(feature);
+    return gridlyDirectionalProvenanceFeatureOrigin(feature, corridor, index >= 0 ? index : 0);
+  });
+  const featureIds = new Set(sourceFeatures.map((feature) => feature.featureId));
+  const sourceRefs = gridlyDirectionalProvenanceUniqueValues(sourceFeatures.flatMap((feature) => feature.sourceRefs), 20);
+  const sourceNames = gridlyDirectionalProvenanceUniqueValues(sourceFeatures.flatMap((feature) => feature.sourceNames), 20);
+  const sourceAliases = gridlyDirectionalProvenanceUniqueValues(sourceFeatures.flatMap((feature) => feature.sourceAliases), 20);
+  const sourceRoadwayReferences = gridlyDirectionalProvenanceUniqueValues(sourceFeatures.flatMap((feature) => feature.routeReferences), 20);
+  const normalizationPath = gridlyDirectionalProvenanceUniqueValues(sourceFeatures.flatMap((feature) => feature.matchedBy), 10);
+  const insideCountyFeatures = sourceFeatures.filter((feature) => feature.insideCounty).length;
+  const outsideCountyFeatures = sourceFeatures.length - insideCountyFeatures;
+  const overlapRelationships = [];
+  if (corridorFeatureMap instanceof Map && featureIds.size) {
+    corridorFeatureMap.forEach((otherIds, otherCorridor) => {
+      if (!otherCorridor || normalizeCorridorBaseLabel(otherCorridor) === normalizeCorridorBaseLabel(corridor)) return;
+      let overlapFeatureCount = 0;
+      featureIds.forEach((id) => { if (otherIds.has(id)) overlapFeatureCount += 1; });
+      if (!overlapFeatureCount) return;
+      const smaller = Math.min(featureIds.size, otherIds.size) || 1;
+      overlapRelationships.push({
+        corridor: otherCorridor,
+        overlapFeatureCount,
+        overlapShareOfSmallerSet: Number((overlapFeatureCount / smaller).toFixed(3))
+      });
+    });
+  }
+  overlapRelationships.sort((a, b) => b.overlapFeatureCount - a.overlapFeatureCount || String(a.corridor).localeCompare(String(b.corridor)));
+  return {
+    corridor,
+    sourceFeatures: sourceFeatures.length,
+    geometryCount: sourceFeatures.length,
+    geometrySegments: sourceFeatures.reduce((sum, feature) => sum + Number(feature.geometrySegments || 0), 0),
+    insideCountyFeatures,
+    outsideCountyFeatures,
+    sourceRefs,
+    sourceNames,
+    sourceAliases,
+    sourceRoadwayReferences,
+    normalizationPath,
+    overlapRelationships: overlapRelationships.slice(0, 10),
+    sampleFeatures: sourceFeatures.slice(0, 6)
+  };
+}
+
+function gridlyDirectionalProvenanceLikelyNonTexasCorridor(corridor = "", origin = {}) {
+  const label = normalizeCorridorBaseLabel(corridor);
+  const refs = [label, ...(origin.sourceRoadwayReferences || []), ...(origin.sourceRefs || []), ...(origin.sourceNames || []), ...(origin.sourceAliases || [])].join(" | ");
+  if (/\b(?:GA|MT|FL|LA|OK|AR)\s*(?:Hwy|Highway)?\s*\d+\b/i.test(refs)) return true;
+  if (/^I-95$/i.test(label) || /^US 17$/i.test(label)) return true;
+  if (/^(?:I-|US )\d+$/i.test(label) && !gridlyDirectionalProvenanceExpectedLibertyCorridor(label) && origin.insideCountyFeatures === 0) return true;
+  return false;
+}
+
+function gridlyDirectionalProvenancePurityOriginClassification(corridor = "", origin = {}, readinessEntry = null, readinessValidation = {}) {
+  const expected = gridlyDirectionalProvenanceExpectedLibertyCorridor(corridor);
+  const hasGeometry = Number(origin.sourceFeatures || 0) > 0;
+  const hasInsideGeometry = Number(origin.insideCountyFeatures || 0) > 0;
+  const nonTexas = gridlyDirectionalProvenanceLikelyNonTexasCorridor(corridor, origin);
+  const normalizationArtifact = (origin.normalizationPath || []).includes("canonical_route_reference_or_name") && !expected && !hasInsideGeometry;
+  const aliasArtifact = Array.isArray(readinessValidation?.aliasCandidates) && readinessValidation.aliasCandidates.some((candidate) => (candidate.corridors || []).includes(corridor));
+  if (nonTexas) return "potential_non_texas_reference_contamination";
+  if (!hasGeometry && readinessEntry) return "readiness_scoring_without_matching_geometry";
+  if (normalizationArtifact) return "route_reference_normalization_artifact";
+  if (aliasArtifact) return "alias_or_shared_geometry_artifact";
+  if ((origin.normalizationPath || []).includes("fallback_major_road_label") && !expected) return "major_road_name_fallback_artifact";
+  if (hasGeometry && !hasInsideGeometry && !expected) return "outside_county_geometry_artifact";
+  if (hasGeometry && hasInsideGeometry && !expected) return "unexpected_local_geometry_requires_review";
+  return expected ? "expected_liberty_county_corridor" : "unclassified_suspicious_corridor";
+}
+
+function gridlyDirectionalProvenanceCorridorPurityAudit(directionalReadiness = {}, detectedMajorCorridors = [], readinessValidation = {}) {
+  const readinessEntries = Array.isArray(directionalReadiness?.countywide) ? directionalReadiness.countywide : [];
+  const loadedFeatures = roadwayDatasetLoaded && Array.isArray(roadwaySegmentFeatures) ? roadwaySegmentFeatures : [];
+  const candidateCorridors = new Set();
+  const suspiciousLabels = [
+    "US 17",
+    "I-95",
+    "GA Hwy 196",
+    "MT 223",
+    "Leroy Coffer Highway",
+    "General Screven Way",
+    "Blountstown Highway",
+    "Veterans Parkway"
+  ];
+  detectedMajorCorridors.forEach((entry) => { if (entry?.corridor) candidateCorridors.add(entry.corridor); });
+  readinessEntries.forEach((entry) => { if (entry?.corridor) candidateCorridors.add(entry.corridor); });
+  (readinessValidation?.suspiciousCorridors || []).forEach((entry) => { if (entry?.corridor) candidateCorridors.add(entry.corridor); });
+  suspiciousLabels.forEach((corridor) => candidateCorridors.add(corridor));
+
+  const corridorFeatureMap = new Map();
+  candidateCorridors.forEach((corridor) => {
+    const ids = new Set();
+    gridlyDirectionalProvenanceFeaturesForCorridor(corridor).forEach((feature) => {
+      const index = loadedFeatures.indexOf(feature);
+      ids.add(gridlyDirectionalProvenanceFeatureAuditId(feature, index >= 0 ? index : ids.size));
+    });
+    corridorFeatureMap.set(corridor, ids);
+  });
+
+  const readinessByCorridor = new Map(readinessEntries.map((entry) => [entry.corridor, entry]));
+  const origins = Array.from(candidateCorridors).map((corridor) => {
+    const origin = gridlyDirectionalProvenanceCorridorOriginProfile(corridor, corridorFeatureMap);
+    const readinessEntry = readinessByCorridor.get(corridor) || null;
+    const originClassification = gridlyDirectionalProvenancePurityOriginClassification(corridor, origin, readinessEntry, readinessValidation);
+    return {
+      ...origin,
+      readinessScore: readinessEntry?.readinessScore ?? null,
+      readinessConfidence: readinessEntry?.readinessConfidence ?? null,
+      readinessStatus: readinessEntry?.readinessStatus ?? null,
+      originClassification,
+      readinessIntegrity: {
+        receivedReadinessScore: Boolean(readinessEntry),
+        duplicateGeometry: (origin.overlapRelationships || []).some((relationship) => Number(relationship.overlapShareOfSmallerSet || 0) >= 0.5),
+        aliasContamination: Array.isArray(readinessValidation?.aliasCandidates) && readinessValidation.aliasCandidates.some((candidate) => (candidate.corridors || []).includes(corridor)),
+        normalizationContamination: /normalization|non_texas|contamination/i.test(originClassification)
+      }
+    };
+  });
+
+  const suspiciousCorridorOrigins = origins.filter((origin) => {
+    if (gridlyDirectionalProvenanceExpectedLibertyCorridor(origin.corridor)) return false;
+    if (gridlyDirectionalProvenanceLikelyNonTexasCorridor(origin.corridor, origin)) return true;
+    if (/artifact|contamination|suspicious|unexpected|unclassified/i.test(origin.originClassification)) return true;
+    return false;
+  }).sort((a, b) => Number(b.readinessScore || 0) - Number(a.readinessScore || 0) || Number(b.sourceFeatures || 0) - Number(a.sourceFeatures || 0) || String(a.corridor).localeCompare(String(b.corridor)));
+
+  const nonTexasCorridors = suspiciousCorridorOrigins.filter((origin) => gridlyDirectionalProvenanceLikelyNonTexasCorridor(origin.corridor, origin)).map((origin) => ({
+    corridor: origin.corridor,
+    sourceFeatures: origin.sourceFeatures,
+    insideCountyFeatures: origin.insideCountyFeatures,
+    sourceRoadwayReferences: origin.sourceRoadwayReferences,
+    sourceRefs: origin.sourceRefs,
+    sourceNames: origin.sourceNames,
+    sourceAliases: origin.sourceAliases,
+    readinessScore: origin.readinessScore,
+    reason: origin.originClassification
+  }));
+  const likelyNormalizationArtifacts = suspiciousCorridorOrigins.filter((origin) => origin.readinessIntegrity.normalizationContamination || (origin.normalizationPath || []).includes("canonical_route_reference_or_name")).map((origin) => ({
+    corridor: origin.corridor,
+    normalizationPath: origin.normalizationPath,
+    sourceFeatures: origin.sourceFeatures,
+    sourceRoadwayReferences: origin.sourceRoadwayReferences,
+    readinessScore: origin.readinessScore,
+    reason: origin.originClassification
+  }));
+  const likelyAliasArtifacts = suspiciousCorridorOrigins.filter((origin) => origin.readinessIntegrity.aliasContamination || (origin.overlapRelationships || []).some((relationship) => Number(relationship.overlapShareOfSmallerSet || 0) >= 0.5)).map((origin) => ({
+    corridor: origin.corridor,
+    sourceFeatures: origin.sourceFeatures,
+    overlapRelationships: origin.overlapRelationships,
+    readinessScore: origin.readinessScore,
+    reason: origin.originClassification
+  }));
+  const likelyGeometryArtifacts = suspiciousCorridorOrigins.filter((origin) => origin.sourceFeatures > 0 && origin.insideCountyFeatures === 0).map((origin) => ({
+    corridor: origin.corridor,
+    sourceFeatures: origin.sourceFeatures,
+    geometrySegments: origin.geometrySegments,
+    insideCountyFeatures: origin.insideCountyFeatures,
+    outsideCountyFeatures: origin.outsideCountyFeatures,
+    sampleFeatures: origin.sampleFeatures,
+    reason: origin.originClassification
+  }));
+  return {
+    available: true,
+    version: GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDOR_PURITY_AUDIT_VERSION,
+    auditOnly: true,
+    rendersDirectionalUi: false,
+    topSuspiciousCorridors: suspiciousCorridorOrigins.slice(0, 12).map((origin) => ({
+      corridor: origin.corridor,
+      readinessScore: origin.readinessScore,
+      sourceFeatures: origin.sourceFeatures,
+      insideCountyFeatures: origin.insideCountyFeatures,
+      originClassification: origin.originClassification
+    })),
+    suspiciousCorridorOrigins,
+    nonTexasCorridors,
+    likelyNormalizationArtifacts,
+    likelyAliasArtifacts,
+    likelyGeometryArtifacts,
+    puritySummary: {
+      passed: suspiciousCorridorOrigins.length === 0,
+      suspiciousCount: suspiciousCorridorOrigins.length,
+      nonTexasCount: nonTexasCorridors.length,
+      normalizationArtifactCount: likelyNormalizationArtifacts.length,
+      aliasArtifactCount: likelyAliasArtifacts.length,
+      geometryArtifactCount: likelyGeometryArtifacts.length
+    }
+  };
+}
+
 function gridlyDirectionalProvenanceAreaCorridorInventory(records = [], scopedRecords = []) {
   const loadedFeatures = roadwayDatasetLoaded && Array.isArray(roadwaySegmentFeatures) ? roadwaySegmentFeatures : [];
   const areas = Array.isArray(GRIDLY_AWARENESS_AREA_DEFINITIONS)
@@ -41185,6 +41451,7 @@ function gridlyDirectionalProvenanceAudit(options = {}) {
     areaCorridorInventory,
     directionalReadiness,
     readinessValidation,
+    corridorPurityAudit: gridlyDirectionalProvenanceCorridorPurityAudit(directionalReadiness, detectedMajorCorridors, readinessValidation),
     readinessSummary: directionalReadiness.readinessSummary,
     geometryInventory: countywideGeometryInventory,
     globalCorridorRuntimeCoverage: globalEvaluation.corridorRuntimeCoverage,
