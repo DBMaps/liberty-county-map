@@ -23329,12 +23329,15 @@ function refreshReportHazardViews(source = "unspecified") {
       fn();
       childDurations[name] = Number((performance.now() - start).toFixed(2));
     };
+    const refreshLayoutModeIsDesktop = evaluateLayoutMode() === "desktop";
+    if (!refreshLayoutModeIsDesktop) {
+      timeRefreshChild("refreshGridlyCommunityPulseSharedModel", () => refreshGridlyCommunityPulseSharedModel({ reason: source, topAwarenessMicrolineReadOnly: true }));
+    }
     timeRefreshChild("refreshPortraitV2LocalizedIntelligence", () => refreshPortraitV2LocalizedIntelligence());
     gridlyRefreshAuditState.renderCounts.renderUnifiedIncidents += 1;
     timeRefreshChild("renderUnifiedIncidents", () => renderUnifiedIncidents());
     gridlyRefreshAuditState.renderCounts.scheduleRenderCrossings += 1;
     timeRefreshChild("scheduleRenderCrossings", () => scheduleRenderCrossings("state-change"));
-    const refreshLayoutModeIsDesktop = evaluateLayoutMode() === "desktop";
     if (refreshLayoutModeIsDesktop) {
       gridlyRefreshAuditState.renderCounts.renderAlerts += 1;
       timeRefreshChild("renderAlerts", () => renderAlerts());
@@ -23348,8 +23351,6 @@ function refreshReportHazardViews(source = "unspecified") {
       timeRefreshChild("updateGrowthWidgets", () => updateGrowthWidgets());
       timeRefreshChild("renderGridlyCommunityPulse", () => renderGridlyCommunityPulse({ reason: source }));
       timeRefreshChild("renderGridlyIntelligencePreviewCard", () => renderGridlyIntelligencePreviewCard({ reason: source }));
-    } else {
-      timeRefreshChild("refreshGridlyCommunityPulseSharedModel", () => refreshGridlyCommunityPulseSharedModel({ reason: source, topAwarenessMicrolineReadOnly: true }));
     }
     timeRefreshChild("updateDailyHabitStatus", () => updateDailyHabitStatus());
     timeRefreshChild("updateMobileAlertsMirror", () => updateMobileAlertsMirror());
@@ -55336,6 +55337,120 @@ function buildGridlyQuietLocalizedCommuteIntelligenceFastPathPayload() {
   };
 }
 
+
+function buildGridlyPortraitSharedLocalizedIntelligenceSnapshot({ pulseModel = null, quietFastPathStatus = null } = {}) {
+  const sharedPulseModel = pulseModel && typeof pulseModel === "object"
+    ? pulseModel
+    : (gridlyCommunityPulseAuditState && typeof gridlyCommunityPulseAuditState === "object" ? gridlyCommunityPulseAuditState : {});
+  const activeAwareness = sharedPulseModel?.activeAwareness && typeof sharedPulseModel.activeAwareness === "object"
+    ? sharedPulseModel.activeAwareness
+    : {};
+  const latestAlerts = typeof window !== "undefined" && Array.isArray(window.__gridlyLatestAlertsForRender)
+    ? window.__gridlyLatestAlertsForRender
+    : [];
+  const activeReportCount = Math.max(0, Number(activeAwareness.activeReportCount ?? quietFastPathStatus?.activeReportCount ?? (Array.isArray(activeReports) ? activeReports.filter((report) => report && !report.expired).length : 0)) || 0);
+  const activeHazardCount = Math.max(0, Number(activeAwareness.activeHazardCount ?? quietFastPathStatus?.activeHazardCount ?? (Array.isArray(activeHazards) ? activeHazards.filter((hazard) => hazard && !hazard.expired && String(hazard.type || hazard.report_type || "").toLowerCase() !== "hazard_cleared").length : 0)) || 0);
+  const activeAwarenessCount = Math.max(
+    0,
+    Number(activeAwareness.activeAwarenessCount || 0),
+    Number(activeAwareness.topAwarenessDedupedMobilityCount || 0),
+    Number(activeAwareness.topAwarenessDisplayedCount || 0),
+    latestAlerts.length,
+    activeReportCount + activeHazardCount
+  );
+  const quiet = activeAwarenessCount <= 0;
+  const primary = quiet
+    ? "Community activity is quiet"
+    : safeDisplayText(activeAwareness.headline || sharedPulseModel.renderedPulseHeadline, "Community Activity Nearby");
+  const secondary = quiet
+    ? "No recent reports nearby · map remains live"
+    : safeDisplayText(activeAwareness.subline || sharedPulseModel.renderedPulseSubline, `${pluralizeGridlyMobilityReports(activeAwarenessCount)} · map markers show exact spots`);
+  const communityAwarenessSummary = sharedPulseModel?.communityAwarenessSummary
+    || window.gridlyTopAwarenessMicrolineState?.communityAwarenessSummary
+    || null;
+  const normalizedActiveAwareness = {
+    ...activeAwareness,
+    loaded: activeAwareness.loaded !== false,
+    activeAwarenessCount,
+    activeReportCount,
+    activeHazardCount,
+    topAwarenessDedupedMobilityCount: Number(activeAwareness.topAwarenessDedupedMobilityCount ?? activeAwarenessCount) || activeAwarenessCount,
+    topAwarenessDisplayedCount: Number(activeAwareness.topAwarenessDisplayedCount ?? activeAwarenessCount) || activeAwarenessCount,
+    activityLevel: quiet ? "quiet" : (activeAwareness.activityLevel || sharedPulseModel.mobilityPressureCategory || "active"),
+    headline: primary,
+    subline: secondary
+  };
+  const normalizedPulseModel = {
+    ...sharedPulseModel,
+    awarenessMode: sharedPulseModel.awarenessMode || "community",
+    pulseVisible: false,
+    renderedPulseHeadline: primary,
+    renderedPulseSubline: secondary,
+    mobilityPressureCategory: quiet ? "quiet" : (sharedPulseModel.mobilityPressureCategory || activeAwareness.activityLevel || "active"),
+    activeAwareness: normalizedActiveAwareness,
+    communityAwarenessSummary,
+    portraitSharedModelReuseApplied: true
+  };
+  const awarenessBrief = quiet
+    ? getGridlyQuietAwarenessBriefCopy()
+    : {
+        state: activeAwarenessCount >= 6 ? "high" : "moderate",
+        greeting: getGridlyAwarenessGreetingText(),
+        primary,
+        secondary,
+        microline: "",
+        microlineVisible: false,
+        selectedHeadline: primary,
+        selectedSource: activeAwareness.topAwarenessHeadlineSource || sharedPulseModel.selectedHeadlineTemplate || "shared_active_awareness",
+        selectedLocationIntelligence: activeAwareness.topAwarenessSelectedLocationIntelligence || null,
+        fallbackReason: activeAwareness.topAwarenessFallbackReason || "shared_active_awareness_reuse"
+      };
+  const intel = quiet
+    ? buildGridlyQuietLocalizedCommuteIntelligenceFastPathPayload()
+    : {
+        items: latestAlerts.slice(0, 6),
+        corridorClusters: [],
+        sourceCorridorClusters: [],
+        topStatus: primary,
+        commuteImpactHeadline: primary,
+        topStatusLocalizedDetail: secondary,
+        nearbySummary: secondary,
+        routeImpactSummary: "Route context reused from current map state.",
+        hasActiveAlerts: true,
+        activeLocalizedAlertCount: activeAwarenessCount,
+        routeImpactIncidentCount: 0,
+        commuteConsequenceTier: "active",
+        routeConsequenceSeverity: "unknown",
+        rerouteReadinessDetected: false,
+        consequenceTrendState: "active",
+        consequencePrimaryMessage: primary,
+        consequenceSecondaryMessage: secondary,
+        consequenceIncidentCount: activeAwarenessCount,
+        routeImpactEtaEstimate: 0,
+        topIncidentFreshnessText: "just now",
+        trendMessage: "",
+        portraitSharedModelReuseApplied: true
+      };
+  return {
+    intel,
+    pulseModel: normalizedPulseModel,
+    awarenessBrief,
+    awarenessPrimary: primary,
+    awarenessSecondary: secondary,
+    existingAlertWording: {
+      available: !quiet,
+      text: primary,
+      source: awarenessBrief.selectedSource,
+      activeAwareness: normalizedActiveAwareness,
+      activeCategory: normalizedActiveAwareness.resolvedCategory || normalizedActiveAwareness.topCategory || "",
+      activeLocationLabel: normalizedActiveAwareness.resolvedLocationLabel || ""
+    },
+    communityAwarenessSummary,
+    quiet,
+    activeAwareness: normalizedActiveAwareness
+  };
+}
+
 function formatPortraitTopStripImpactLabel(tier = "") {
   const normalizedTier = String(tier || "").toLowerCase();
   if (normalizedTier === "severe" || normalizedTier === "heavy") return "High impact";
@@ -55594,20 +55709,40 @@ function getGridlyPortraitLocationAwarenessRouteContext() {
     ? normalizeGridlySearchResult(searchState?.selectedDestination)
     : searchState?.selectedDestination;
   const selectedLabel = safeDisplayText(typeof getSelectedDestinationLabel === "function" ? getSelectedDestinationLabel() : "", "");
+  const routeLabelParts = typeof buildRouteWatchLabelParts === "function" ? buildRouteWatchLabelParts() : {};
+  const savedSelectedPlace = typeof getSelectedPlace === "function" ? getSelectedPlace() : null;
+  const savedDestinationLabel = safeDisplayText(
+    routeLabelParts?.activeLabel
+      || routeLabelParts?.destination
+      || (savedSelectedPlace && savedSelectedPlace.id !== "home" ? (savedSelectedPlace.name || savedSelectedPlace.label) : ""),
+    ""
+  );
   const preview = typeof getGridlyDestinationRoutePreviewState === "function"
     ? getGridlyDestinationRoutePreviewState()
     : (window.GridlyDestinationRoutePreview || {});
   const routeIsMonitoring = Boolean(routeWatchActivated || window.__gridlyRouteWatchActive);
   const routePreviewActive = Boolean(preview?.active || ["loading", "ready"].includes(String(preview?.status || "")));
-  const hasRouteContext = Boolean(selectedDestination || selectedLabel || routeIsMonitoring || routePreviewActive);
+  const routeWatchConfigured = Boolean(routeLabelParts?.configured || (routeLabelParts?.hasHome && routeLabelParts?.hasDestination));
+  const selectDestinationLabel = safeDisplayText(
+    document.getElementById("routeWatchDestinationSelect")?.selectedOptions?.[0]?.textContent
+      || document.getElementById("mobileRouteQuickDestination")?.selectedOptions?.[0]?.textContent,
+    ""
+  );
+  const label = selectedLabel
+    || savedDestinationLabel
+    || (routePreviewActive ? safeDisplayText(preview?.destination?.title || preview?.destination?.displayName || preview?.destination?.name || preview?.destination?.address, "") : "")
+    || (routeIsMonitoring ? "Saved destination" : routeWatchConfigured ? safeDisplayText(selectDestinationLabel, "Saved destination") : routePreviewActive ? "Route preview" : "");
+  const hasRouteContext = Boolean(selectedDestination || selectedLabel || savedDestinationLabel || routeIsMonitoring || routePreviewActive || routeWatchConfigured);
+  const priorMobileButtonText = (selectedLabel || savedDestinationLabel || routeIsMonitoring || routePreviewActive || routeWatchConfigured) ? "Change" : "Choose Route";
   return {
     hasRouteContext,
-    selectedLabel,
+    selectedLabel: selectedLabel || savedDestinationLabel,
     routeIsMonitoring,
     routePreviewActive,
+    routeWatchConfigured,
     previewStatus: preview?.status || "",
-    buttonText: selectedLabel ? "Change route" : "Choose route",
-    label: selectedLabel || (routeIsMonitoring ? "Saved destination" : routePreviewActive ? "Route preview" : "")
+    buttonText: priorMobileButtonText,
+    label
   };
 }
 
@@ -55679,7 +55814,7 @@ function refreshPortraitV2LocalizedIntelligence() {
   const functionStartedAt = performance.now();
   const sections = {};
   const counts = {};
-  const auditState = { cacheReuseApplied: false, unchangedDomWriteSkipped: 0 };
+  const auditState = { cacheReuseApplied: true, unchangedDomWriteSkipped: 0 };
 
   const { topPrimaryEl, topSecondaryEl, topMicrolineEl } = timeGridlyAuditSection(sections, "source_collection.dom_queries", () => {
     const topSecondary = document.getElementById("gridlyV2TopStatusSecondary");
@@ -55695,9 +55830,10 @@ function refreshPortraitV2LocalizedIntelligence() {
   counts.activeUnexpiredHazardCount = Array.isArray(activeHazards) ? activeHazards.filter((hazard) => hazard && !hazard.expired && String(hazard.type || hazard.report_type || "").toLowerCase() !== "hazard_cleared").length : 0;
   counts.crossingCount = Array.isArray(crossings) ? crossings.length : 0;
   if (!topPrimaryEl && !topSecondaryEl) {
-    recordPortraitIntelligenceBreakdown("refreshPortraitV2LocalizedIntelligence", functionStartedAt, sections, { counts, cacheReuseApplied: false, unchangedDomWriteSkipped: 0 });
+    recordPortraitIntelligenceBreakdown("refreshPortraitV2LocalizedIntelligence", functionStartedAt, sections, { counts, cacheReuseApplied: true, unchangedDomWriteSkipped: 0 });
     return;
   }
+
   const quietFastPathPreflight = timeGridlyAuditSection(sections, "quiet_fast_path_preflight", () => getGridlyQuietTopAwarenessFastPathStatus());
   counts.quietFastPathPreflightEligible = quietFastPathPreflight.eligible ? 1 : 0;
   counts.quietFastPathBlockers = quietFastPathPreflight.blockers;
@@ -55707,69 +55843,24 @@ function refreshPortraitV2LocalizedIntelligence() {
   counts.quietFastPathPreflightActiveReportCount = quietFastPathPreflight.activeReportCount;
   counts.quietFastPathExpensiveSnapshotSkipped = quietFastPathPreflight.expensiveSnapshotSkipped ? 1 : 0;
   counts.quietFastPathUnifiedIncidentScanSkipped = quietFastPathPreflight.unifiedIncidentScanSkipped ? 1 : 0;
-  const cacheHitsBefore = Number(gridlyIntelligenceCacheAuditState.hits || 0);
-  let quietLocalizedBuildSkipped = false;
-  const intel = quietFastPathPreflight.eligible
-    ? timeGridlyAuditSection(sections, "localized_intelligence_build.quiet_fast_path_payload", () => {
-      quietLocalizedBuildSkipped = true;
-      return buildGridlyQuietLocalizedCommuteIntelligenceFastPathPayload();
-    })
-    : timeGridlyAuditSection(sections, "localized_intelligence_build", () => buildUnifiedLocalizedCommuteIntelligence({ limit: 6 }));
-  auditState.cacheReuseApplied = quietLocalizedBuildSkipped || Number(gridlyIntelligenceCacheAuditState.hits || 0) > cacheHitsBefore;
-  counts.quietLocalizedIntelligenceBuildSkipped = quietLocalizedBuildSkipped ? 1 : 0;
+
+  const textModel = timeGridlyAuditSection(sections, "shared_active_awareness_reuse", () => buildGridlyPortraitSharedLocalizedIntelligenceSnapshot({
+    pulseModel: gridlyCommunityPulseAuditState,
+    quietFastPathStatus: quietFastPathPreflight
+  }));
+  const intel = textModel.intel || {};
+  const activeAwareness = textModel.pulseModel?.activeAwareness || textModel.activeAwareness || {};
+  const quietAwarenessState = textModel.awarenessBrief.state === "quiet";
+  counts.quietLocalizedIntelligenceBuildSkipped = 1;
   counts.localizedIntelligenceItemCount = Number(intel?.activeLocalizedAlertCount || 0);
-  counts.corridorClusterCount = Array.isArray(intel?.sourceCorridorClusters) ? intel.sourceCorridorClusters.length : 0;
-  timeGridlyAuditSection(sections, "corridor_cluster_handling", () => {
-    counts.activeCorridorClusterCount = (Array.isArray(intel?.sourceCorridorClusters) ? intel.sourceCorridorClusters : [])
-      .filter((cluster) => Number(cluster?.routeImpactCount || cluster?.disruptionDensity || 0) > 0).length;
-  });
-  const textModel = timeGridlyAuditSection(sections, "top_awareness_text_selection", () => {
-    const existingAlertWording = intel.hasActiveAlerts && typeof resolveGridlyExistingAlertWording === "function"
-      ? timeGridlyAuditSection(sections, "reports_loop.existing_alert_wording", () => resolveGridlyExistingAlertWording({ limit: 6 }))
-      : { available: false, text: "" };
-    const activeCategory = existingAlertWording?.activeCategory || existingAlertWording?.activeAwareness?.resolvedCategory || existingAlertWording?.activeAwareness?.topCategory || "";
-    const activeLocationLabel = existingAlertWording?.activeLocationLabel || existingAlertWording?.activeAwareness?.resolvedLocationLabel || "";
-    const activeFallbackCandidate = buildGridlyHeaderCandidateFromCategoryLocation(activeCategory, activeLocationLabel) || existingAlertWording?.activeAwareness?.headline || "";
-    const rawPrimaryFallback = safeDisplayText(intel.topStatus, safeDisplayText(intel.commuteImpactHeadline, "No major mobility issues reported nearby"));
-    const railFallbackRejectReason = getGridlyHeaderRailTextRejectionReason(rawPrimaryFallback, activeCategory);
-    const guardedPrimaryFallback = railFallbackRejectReason
-      ? safeDisplayText(activeFallbackCandidate, "No major mobility issues reported nearby")
-      : rawPrimaryFallback;
-    const mobilityLanguagePrimaryCandidate = intel.topStatusSelectionAudit?.mobilityLanguageAccepted
-      ? safeDisplayText(intel.topStatusSelectionAudit.mobilityLanguageHeadline, "")
-      : "";
-    const travelConsequencePrimaryCandidate = intel.topStatusSelectionAudit?.travelConsequenceAccepted
-      ? safeDisplayText(intel.topStatusSelectionAudit.travelConsequenceHeadline, "")
-      : "";
-    const corridorAwarePrimaryCandidate = intel.topStatusSelectionAudit?.corridorAwareCandidateAccepted
-      ? safeDisplayText(intel.topStatusSelectionAudit.corridorAwareHeadline, "")
-      : "";
-    void guardedPrimaryFallback;
-    void mobilityLanguagePrimaryCandidate;
-    void travelConsequencePrimaryCandidate;
-    void corridorAwarePrimaryCandidate;
-    const quietFastPathStatus = getGridlyQuietTopAwarenessFastPathStatus(intel);
-    const quietFastPathEligible = quietFastPathStatus.eligible;
-    counts.quietTopAwarenessFastPathApplied = quietFastPathEligible ? 1 : 0;
-    counts.quietTopAwarenessFastPathBlockers = quietFastPathStatus.blockers;
-    counts.quietTopAwarenessFastPathActiveAlertCount = quietFastPathStatus.activeAlertCount;
-    counts.quietTopAwarenessFastPathActiveHazardCount = quietFastPathStatus.activeHazardCount;
-    const pulseModel = quietFastPathEligible
-      ? buildGridlyQuietTopAwarenessPulseModel()
-      : timeGridlyAuditSection(sections, "reports_hazards_loop.community_pulse_model", () => buildGridlyCommunityPulseModel({ topAwarenessMicrolineReadOnly: true }));
-    const awarenessBrief = quietFastPathEligible
-      ? getGridlyQuietAwarenessBriefCopy()
-      : buildGridlyAwarenessBriefCopy({ intel, existingAlertWording, pulseModel });
-    if (awarenessBrief.state === "quiet") {
-      pulseModel.pulseVisible = false;
-      pulseModel.renderedPulseHeadline = "Community activity is quiet";
-      pulseModel.renderedPulseSubline = "No major mobility issues reported nearby.";
-      pulseModel.pulseSuppressedReason = "quiet awareness brief active-state counts are clear";
-    }
-    const awarenessPrimary = safeDisplayText(awarenessBrief.primary, "No major mobility issues reported nearby.");
-    const awarenessSecondary = safeDisplayText(awarenessBrief.secondary, "Community activity is quiet.");
-    return { existingAlertWording, pulseModel, awarenessBrief, awarenessPrimary, awarenessSecondary };
-  });
+  counts.corridorClusterCount = 0;
+  counts.activeCorridorClusterCount = 0;
+  counts.previewCardRenderSkippedForPortraitSharedModel = 1;
+  counts.desktopCommunityPulseDomRenderSkipped = 1;
+  counts.historicalPreviewModelBuildSkipped = 1;
+  counts.commutePreviewBuilderSkipped = 1;
+  counts.sharedActiveAwarenessReuseApplied = 1;
+
   timeGridlyAuditSection(sections, "dom_write_preparation", () => {
     const awarenessCardEl = topPrimaryEl?.closest?.(".gridly-v2-awareness-brief-card") || topSecondaryEl?.closest?.(".gridly-v2-awareness-brief-card");
     setGridlyDatasetIfChangedForAudit(awarenessCardEl, "awarenessState", textModel.awarenessBrief.state || "quiet", sections, auditState);
@@ -55783,36 +55874,35 @@ function refreshPortraitV2LocalizedIntelligence() {
       setGridlyTopPanelTextIfChanged(topMicrolineEl, textModel.awarenessBrief.microlineVisible ? textModel.awarenessBrief.microline : "", "refreshPortraitV2LocalizedIntelligence", "gridlyTopAwarenessMicroline");
       setGridlyHiddenIfChangedForAudit(topMicrolineEl, !textModel.awarenessBrief.microlineVisible, sections, auditState);
       setGridlyDatasetIfChangedForAudit(topMicrolineEl, "gridlyMicrolineVisible", textModel.awarenessBrief.microlineVisible ? "true" : "false", sections, auditState);
-      setGridlyDatasetIfChangedForAudit(topMicrolineEl, "gridlyMicrolineSourceFields", "freshness,communityActivity", sections, auditState);
+      setGridlyDatasetIfChangedForAudit(topMicrolineEl, "gridlyMicrolineSourceFields", "sharedActiveAwareness,unifiedIncidentState,mapMarkers", sections, auditState);
       setGridlyDatasetIfChangedForAudit(topMicrolineEl, "gridlyMicrolineSuppressedReason", "", sections, auditState);
     }
     auditState.unchangedDomWriteSkipped += Math.max(0, Number(gridlyBackgroundLoopAuditState.repeatedSameValueWrites || 0) - beforeSkipped);
   });
-  const activeAwareness = textModel.pulseModel.activeAwareness || {};
-  const quietAwarenessState = textModel.awarenessBrief.state === "quiet";
+
   timeGridlyAuditSection(sections, "dom_writes", () => {
     window.gridlyTopAwarenessMicrolineState = {
       text: textModel.awarenessBrief.microline,
       visible: textModel.awarenessBrief.microlineVisible,
       state: textModel.awarenessBrief.state,
       selectedHeadline: textModel.awarenessPrimary,
-      selectedSource: textModel.awarenessBrief.selectedSource || textModel.existingAlertWording?.source || activeAwareness.topAwarenessHeadlineSource || "",
+      selectedSource: textModel.awarenessBrief.selectedSource || textModel.existingAlertWording?.source || activeAwareness.topAwarenessHeadlineSource || "shared_active_awareness",
       selectedLocationIntelligence: textModel.awarenessBrief.selectedLocationIntelligence || activeAwareness.topAwarenessSelectedLocationIntelligence || null,
       fallbackReason: textModel.awarenessBrief.fallbackReason || activeAwareness.topAwarenessFallbackReason || "",
       pulseHeadline: textModel.pulseModel.renderedPulseHeadline || activeAwareness.headline || "",
       activeReportCount: quietAwarenessState ? 0 : getGridlyAwarenessCommunityCount(intel, activeAwareness),
       activeHazardCount: quietAwarenessState ? 0 : (activeAwareness.activeHazardCount ?? 0),
-      activityLevel: quietAwarenessState ? "quiet" : (textModel.pulseModel.mobilityPressureCategory || activeAwareness.activityLevel || "quiet"),
-      quietTopAwarenessFastPathApplied: Boolean(counts.quietTopAwarenessFastPathApplied),
-      quietLocalizedIntelligenceBuildSkipped: Boolean(counts.quietLocalizedIntelligenceBuildSkipped),
-      quietFastPathBlockers: counts.quietTopAwarenessFastPathBlockers || counts.quietFastPathBlockers || []
+      activityLevel: quietAwarenessState ? "quiet" : (textModel.pulseModel.mobilityPressureCategory || activeAwareness.activityLevel || "active"),
+      communityAwarenessSummary: textModel.communityAwarenessSummary || null,
+      quietTopAwarenessFastPathApplied: false,
+      quietLocalizedIntelligenceBuildSkipped: true,
+      portraitSharedModelReuseApplied: true,
+      quietFastPathBlockers: counts.quietFastPathBlockers || []
     };
   });
-  if (quietAwarenessState) {
-    counts.previewCardRenderSkippedForQuietState = 1;
-  } else {
-    timeGridlyAuditSection(sections, "preview_card_render", () => renderGridlyIntelligencePreviewCard({ reason: "refreshPortraitV2LocalizedIntelligence", model: textModel.pulseModel }));
-  }
+  timeGridlyAuditSection(sections, "preview_card_render_skipped", () => {
+    // Portrait refresh intentionally skips the desktop preview card renderer.
+  });
   timeGridlyAuditSection(sections, "top_strip_owner_diagnostic", () => logTopStripOwnershipDiagnostic("refreshPortraitV2LocalizedIntelligence"));
   recordPortraitIntelligenceBreakdown("refreshPortraitV2LocalizedIntelligence", functionStartedAt, sections, {
     counts,
