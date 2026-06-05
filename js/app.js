@@ -17526,12 +17526,14 @@ function getGridlyDestinationRouteTravelStatusLabel(level = "none") {
   return GRIDLY_DESTINATION_ROUTE_TRAVEL_STATUS_LABELS[String(level || "none").toLowerCase()] || GRIDLY_DESTINATION_ROUTE_TRAVEL_STATUS_LABELS.none;
 }
 
+const GRIDLY_DESTINATION_ROUTE_QUIET_STATUS_COPY = "No active hazards reported along this route.";
+
 function getGridlyDestinationRouteImpactCopy(level = "none") {
   const normalizedLevel = String(level || "none").toLowerCase();
   if (normalizedLevel === "high") return "A blocked crossing may delay this trip";
   if (normalizedLevel === "moderate") return "Road closure reported near this route";
   if (normalizedLevel === "low") return "Construction activity reported near this route";
-  return "No active hazards reported near this route";
+  return GRIDLY_DESTINATION_ROUTE_QUIET_STATUS_COPY;
 }
 
 function getGridlyDestinationRouteImpactIntroCopy(level = "none") {
@@ -17543,7 +17545,8 @@ function getGridlyDestinationRouteImpactIntroCopy(level = "none") {
 }
 
 function getGridlyDestinationRouteImpactSupportCopy({ routeFound = false, quiet = false, impactLevel = "none" } = {}) {
-  if (!routeFound || quiet || String(impactLevel || "none").toLowerCase() === "none") {
+  if (!routeFound || quiet) return GRIDLY_DESTINATION_ROUTE_QUIET_STATUS_COPY;
+  if (String(impactLevel || "none").toLowerCase() === "none") {
     return "No major issues reported along this route";
   }
   return "Review active reports before you leave";
@@ -17560,7 +17563,7 @@ function getGridlyDestinationRouteImpactCompactReasonCopy({ impactLevel = "none"
   const normalizedLevel = String(impactLevel || "none").toLowerCase();
   const normalizedReason = normalizeGridlyUserFacingRoadText(reason || getGridlyDestinationRouteImpactCopy(normalizedLevel));
   const normalizedProximity = normalizeGridlyUserFacingRoadText(proximityLabel);
-  if (normalizedLevel === "none") return "No active hazards reported near this route";
+  if (normalizedLevel === "none") return GRIDLY_DESTINATION_ROUTE_QUIET_STATUS_COPY;
   const conciseReason = normalizedReason
     .replace(/\s+near this route\b/i, "")
     .replace(/\s+along this route\b/i, "")
@@ -17722,7 +17725,7 @@ function getGridlyDestinationImpactPaneReasonModel() {
     travelStatusLabel,
     supportLabel,
     headline: normalizeGridlyUserFacingRoadText(getGridlyDestinationRouteImpactIntroCopy(impactLevel) || travelStatusLabel || getGridlyDestinationRouteTravelStatusLabel(impactLevel)),
-    summary: normalizeGridlyUserFacingRoadText(routeFound ? (audit?.primaryImpactReason || getGridlyDestinationRouteImpactCopy(impactLevel)) : "No active hazards reported near this route"),
+    summary: normalizeGridlyUserFacingRoadText(routeFound ? (audit?.primaryImpactReason || getGridlyDestinationRouteImpactCopy(impactLevel)) : GRIDLY_DESTINATION_ROUTE_QUIET_STATUS_COPY),
     primaryImpactLocation: normalizeGridlyUserFacingRoadText(primaryImpactLocation),
     primaryImpactProximityLabel: normalizeGridlyUserFacingRoadText(primaryImpactProximityLabel),
     reasons: detailReasons.slice(0, 6).map((reason) => normalizeGridlyUserFacingRoadText(reason)),
@@ -17740,10 +17743,13 @@ function renderGridlyDestinationImpactPane() {
 
   if (paneEls.title) paneEls.title.textContent = normalizeGridlyUserFacingRoadText(model.headline || model.travelStatusLabel || "Travel looks normal right now");
   if (paneEls.subtitle) paneEls.subtitle.textContent = normalizeGridlyUserFacingRoadText(model.confidenceLabel || "Live reports checked");
-  if (paneEls.severity) paneEls.severity.textContent = normalizeGridlyUserFacingRoadText(model.supportLabel || "No major issues reported along this route");
-  if (paneEls.confidence) paneEls.confidence.textContent = normalizeGridlyUserFacingRoadText(`${model.impactLabel || "None"} impact`);
+  if (paneEls.severity) paneEls.severity.textContent = normalizeGridlyUserFacingRoadText(model.supportLabel || GRIDLY_DESTINATION_ROUTE_QUIET_STATUS_COPY);
+  if (paneEls.confidence) {
+    paneEls.confidence.textContent = normalizeGridlyUserFacingRoadText(`${model.impactLabel || "None"} impact`);
+    paneEls.confidence.hidden = Boolean(model.quiet);
+  }
   if (paneEls.summary) {
-    paneEls.summary.textContent = normalizeGridlyUserFacingRoadText(model.summary || "No active hazards reported near this route");
+    paneEls.summary.textContent = normalizeGridlyUserFacingRoadText(model.summary || GRIDLY_DESTINATION_ROUTE_QUIET_STATUS_COPY);
     paneEls.summary.hidden = Boolean(model.quiet);
   }
   if (paneEls.reasons) {
