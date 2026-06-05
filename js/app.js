@@ -19650,6 +19650,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   initVisualViewportHeightVar();
   initGridlyAwarenessPanelDockContract();
   hydrateElements();
+  syncAuthoritativeLayoutMode();
+  const startupLayoutModeIsDesktop = evaluateLayoutMode() === "desktop";
   gridlyHealthCheck();
   setManualFallbackDefaultState();
   ensureSeededMovementIntelligence();
@@ -19680,8 +19682,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadCrossings();
   await loadRoadwayDataset();
   await loadSharedReports("initial_bootstrap");
-  renderGridlyCommunityPulse({ reason: "initial_bootstrap" });
-  renderGridlyIntelligencePreviewCard({ reason: "initial_bootstrap" });
+  if (startupLayoutModeIsDesktop && evaluateLayoutMode() === "desktop") {
+    renderGridlyCommunityPulse({ reason: "initial_bootstrap" });
+    renderGridlyIntelligencePreviewCard({ reason: "initial_bootstrap" });
+  }
 
   setInterval(() => loadSharedReports("interval_live_refresh"), LIVE_REFRESH_MS);
 });
@@ -21828,7 +21832,7 @@ function initMap() {
   centerMapOnUserIfAllowed();
   highlightNearestCrossingOnFirstLoad();
   installMapLayoutResizeSafety();
-  if (typeof renderUnifiedIncidents === "function") renderUnifiedIncidents("auto-map-init");
+  if (evaluateLayoutMode() === "desktop" && typeof renderUnifiedIncidents === "function") renderUnifiedIncidents("auto-map-init");
 }
 
 function getGridlyHomeTownCrossings(homeTownAnchor = getGridlyHomeTownAwarenessAnchor()) {
@@ -23054,9 +23058,11 @@ async function loadCrossings() {
     populateCrossingSelect();
     applyGridlyHomeTownAwarenessContext({ source: "crossings_loaded", fitMap: true });
     scheduleRenderCrossings("state-change", { force: true });
-    updateRouteIntelligence();
-    updateTrustStats();
-    updateGrowthWidgets();
+    if (evaluateLayoutMode() === "desktop") {
+      updateRouteIntelligence();
+      updateTrustStats();
+      updateGrowthWidgets();
+    }
     updateDailyHabitStatus();
     updateLastUpdated();
 
@@ -23068,7 +23074,7 @@ async function loadCrossings() {
       `${crossings.length} curated public crossings loaded for Gridly launch mode. Tap a marker to report road issues.`
     );
 
-    if (typeof renderUnifiedIncidents === "function") renderUnifiedIncidents("auto-crossings-loaded");
+    if (evaluateLayoutMode() === "desktop" && typeof renderUnifiedIncidents === "function") renderUnifiedIncidents("auto-crossings-loaded");
   } catch (error) {
     crossingLoadFailed = true;
     console.error("Gridly crossing load failed:", error);
@@ -23308,28 +23314,31 @@ function refreshReportHazardViews(source = "unspecified") {
       childDurations[name] = Number((performance.now() - start).toFixed(2));
     };
     timeRefreshChild("refreshPortraitV2LocalizedIntelligence", () => refreshPortraitV2LocalizedIntelligence());
-    gridlyRefreshAuditState.renderCounts.renderAlerts += 1;
-    timeRefreshChild("renderAlerts", () => renderAlerts());
-    gridlyRefreshAuditState.renderCounts.renderRoadHazards += 1;
-    timeRefreshChild("renderRoadHazards", () => renderRoadHazards());
-    gridlyRefreshAuditState.renderCounts.renderTrendingCrossings += 1;
-    timeRefreshChild("renderTrendingCrossings", () => renderTrendingCrossings());
-    gridlyRefreshAuditState.renderCounts.renderUnifiedIncidents += 1;
-    timeRefreshChild("renderUnifiedIncidents", () => renderUnifiedIncidents());
-    gridlyRefreshAuditState.renderCounts.scheduleRenderCrossings += 1;
-    timeRefreshChild("scheduleRenderCrossings", () => scheduleRenderCrossings("state-change"));
-    gridlyRefreshAuditState.renderCounts.updateRouteIntelligence += 1;
-    timeRefreshChild("updateRouteIntelligence", () => updateRouteIntelligence());
-    timeRefreshChild("updateTrustStats", () => updateTrustStats());
-    timeRefreshChild("updateGrowthWidgets", () => updateGrowthWidgets());
+    const refreshLayoutModeIsDesktop = evaluateLayoutMode() === "desktop";
+    if (refreshLayoutModeIsDesktop) {
+      gridlyRefreshAuditState.renderCounts.renderAlerts += 1;
+      timeRefreshChild("renderAlerts", () => renderAlerts());
+      gridlyRefreshAuditState.renderCounts.renderRoadHazards += 1;
+      timeRefreshChild("renderRoadHazards", () => renderRoadHazards());
+      gridlyRefreshAuditState.renderCounts.renderTrendingCrossings += 1;
+      timeRefreshChild("renderTrendingCrossings", () => renderTrendingCrossings());
+      gridlyRefreshAuditState.renderCounts.renderUnifiedIncidents += 1;
+      timeRefreshChild("renderUnifiedIncidents", () => renderUnifiedIncidents());
+      gridlyRefreshAuditState.renderCounts.scheduleRenderCrossings += 1;
+      timeRefreshChild("scheduleRenderCrossings", () => scheduleRenderCrossings("state-change"));
+      gridlyRefreshAuditState.renderCounts.updateRouteIntelligence += 1;
+      timeRefreshChild("updateRouteIntelligence", () => updateRouteIntelligence());
+      timeRefreshChild("updateTrustStats", () => updateTrustStats());
+      timeRefreshChild("updateGrowthWidgets", () => updateGrowthWidgets());
+      timeRefreshChild("renderGridlyCommunityPulse", () => renderGridlyCommunityPulse({ reason: source }));
+      timeRefreshChild("renderGridlyIntelligencePreviewCard", () => renderGridlyIntelligencePreviewCard({ reason: source }));
+    }
     timeRefreshChild("updateDailyHabitStatus", () => updateDailyHabitStatus());
     timeRefreshChild("updateMobileAlertsMirror", () => updateMobileAlertsMirror());
     timeRefreshChild("evaluateSmartAlertsBanner", () => evaluateSmartAlertsBanner());
     timeRefreshChild("updateLastUpdated", () => updateLastUpdated());
     timeRefreshChild("recomputeMovementIntelligence", () => recomputeMovementIntelligence());
     timeRefreshChild("updateCorridorSummaryCards", () => updateCorridorSummaryCards());
-    timeRefreshChild("renderGridlyCommunityPulse", () => renderGridlyCommunityPulse({ reason: source }));
-    timeRefreshChild("renderGridlyIntelligencePreviewCard", () => renderGridlyIntelligencePreviewCard({ reason: source }));
     const childDurationTotal = Object.values(childDurations).reduce((total, duration) => total + (Number.isFinite(duration) ? duration : 0), 0);
     const refreshDuration = Number(childDurationTotal.toFixed(2));
     gridlyRefreshAuditState.lastRefreshDuration = refreshDuration;
@@ -26545,10 +26554,14 @@ async function loadSharedReports(reason = "manual") {
       recentlyClearedRoadHazardCount: recentlyClearedRoadHazards.length,
       activeReportCount: activeReports.length
     });
-    if (typeof renderUnifiedIncidents === "function") {
+    if (evaluateLayoutMode() === "desktop" && typeof renderUnifiedIncidents === "function") {
       renderUnifiedIncidents("auto-active-hazards-populated");
-      setTimeout(() => renderUnifiedIncidents("auto-active-hazards-populated-250"), 250);
-      setTimeout(() => renderUnifiedIncidents("auto-active-hazards-populated-1000"), 1000);
+      setTimeout(() => {
+        if (evaluateLayoutMode() === "desktop") renderUnifiedIncidents("auto-active-hazards-populated-250");
+      }, 250);
+      setTimeout(() => {
+        if (evaluateLayoutMode() === "desktop") renderUnifiedIncidents("auto-active-hazards-populated-1000");
+      }, 1000);
     }
     ensureUnifiedIncidentLayerOnMap();
     updateCrossingPipelineAudit(`loadSharedReports:${reason}`);
@@ -26556,12 +26569,18 @@ async function loadSharedReports(reason = "manual") {
     pushGridlyReflowTrace("post-submit refresh", "start", { source: `loadSharedReports:${reason}` });
     refreshReportHazardViews(`loadSharedReports:${reason}`);
     scheduleHazardMarkerAutoRender(`loadSharedReports:${reason}`);
-    if (typeof renderUnifiedIncidents === "function") {
+    if (evaluateLayoutMode() === "desktop" && typeof renderUnifiedIncidents === "function") {
       renderUnifiedIncidents("auto-shared-reports-loaded");
       renderUnifiedIncidents("auto-hazards-refreshed");
-      setTimeout(() => renderUnifiedIncidents("auto-shared-reports-loaded-250"), 250);
-      setTimeout(() => renderUnifiedIncidents("auto-shared-reports-loaded-1000"), 1000);
-      setTimeout(() => renderUnifiedIncidents("auto-shared-reports-loaded-2000"), 2000);
+      setTimeout(() => {
+        if (evaluateLayoutMode() === "desktop") renderUnifiedIncidents("auto-shared-reports-loaded-250");
+      }, 250);
+      setTimeout(() => {
+        if (evaluateLayoutMode() === "desktop") renderUnifiedIncidents("auto-shared-reports-loaded-1000");
+      }, 1000);
+      setTimeout(() => {
+        if (evaluateLayoutMode() === "desktop") renderUnifiedIncidents("auto-shared-reports-loaded-2000");
+      }, 2000);
     }
     pushGridlyReflowTrace("post-submit refresh", "end", { source: `loadSharedReports:${reason}` });
 
@@ -37970,7 +37989,9 @@ function renderUnifiedIncidents(reason = "auto") {
       renderedMarkerCount: typeof unifiedIncidentLayer?.getLayers === "function" ? unifiedIncidentLayer.getLayers().length : 0
     }
   };
-  renderGridlyCommunityPulse({ reason: `renderUnifiedIncidents:${reason}` });
+  if (evaluateLayoutMode() === "desktop") {
+    renderGridlyCommunityPulse({ reason: `renderUnifiedIncidents:${reason}` });
+  }
 }
 
 function renderUnifiedIncidentMarkers() {
