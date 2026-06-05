@@ -17642,6 +17642,8 @@ function getGridlyDestinationImpactPaneElements() {
     reasons: document.getElementById("gridlyDestinationImpactPaneReasons"),
     quietNote: document.getElementById("gridlyDestinationImpactPaneQuietNote"),
     why: document.getElementById("gridlyDestinationImpactPaneWhy"),
+    title: document.getElementById("gridlyDestinationImpactPaneTitle"),
+    subtitle: document.getElementById("gridlyDestinationImpactPaneSubtitle"),
     severity: document.getElementById("gridlyDestinationImpactPaneSeverity"),
     confidence: document.getElementById("gridlyDestinationImpactPaneConfidence"),
     trigger: document.getElementById("mobileDestinationCommandImpact")
@@ -17719,6 +17721,7 @@ function getGridlyDestinationImpactPaneReasonModel() {
     confidenceLabel,
     travelStatusLabel,
     supportLabel,
+    headline: normalizeGridlyUserFacingRoadText(getGridlyDestinationRouteImpactIntroCopy(impactLevel) || travelStatusLabel || getGridlyDestinationRouteTravelStatusLabel(impactLevel)),
     summary: normalizeGridlyUserFacingRoadText(routeFound ? (audit?.primaryImpactReason || getGridlyDestinationRouteImpactCopy(impactLevel)) : "No active hazards reported near this route"),
     primaryImpactLocation: normalizeGridlyUserFacingRoadText(primaryImpactLocation),
     primaryImpactProximityLabel: normalizeGridlyUserFacingRoadText(primaryImpactProximityLabel),
@@ -17735,9 +17738,14 @@ function renderGridlyDestinationImpactPane() {
   GRIDLY_DESTINATION_IMPACT_PANE_STATE.impactLevel = model.impactLevel;
   GRIDLY_DESTINATION_IMPACT_PANE_STATE.displayedReasons = [...model.reasons];
 
-  if (paneEls.severity) paneEls.severity.textContent = normalizeGridlyUserFacingRoadText(getGridlyDestinationRouteImpactIntroCopy(model.impactLevel) || model.travelStatusLabel || getGridlyDestinationRouteTravelStatusLabel(model.impactLevel));
-  if (paneEls.confidence) paneEls.confidence.textContent = normalizeGridlyUserFacingRoadText(model.supportLabel || "Live reports checked");
-  if (paneEls.summary) paneEls.summary.textContent = normalizeGridlyUserFacingRoadText(model.summary || "No active hazards reported near this route");
+  if (paneEls.title) paneEls.title.textContent = normalizeGridlyUserFacingRoadText(model.headline || model.travelStatusLabel || "Travel looks normal right now");
+  if (paneEls.subtitle) paneEls.subtitle.textContent = normalizeGridlyUserFacingRoadText(model.confidenceLabel || "Live reports checked");
+  if (paneEls.severity) paneEls.severity.textContent = normalizeGridlyUserFacingRoadText(model.supportLabel || "No major issues reported along this route");
+  if (paneEls.confidence) paneEls.confidence.textContent = normalizeGridlyUserFacingRoadText(`${model.impactLabel || "None"} impact`);
+  if (paneEls.summary) {
+    paneEls.summary.textContent = normalizeGridlyUserFacingRoadText(model.summary || "No active hazards reported near this route");
+    paneEls.summary.hidden = Boolean(model.quiet);
+  }
   if (paneEls.reasons) {
     paneEls.reasons.innerHTML = "";
     model.reasons.forEach((reason) => {
@@ -20323,6 +20331,8 @@ function hydrateElements() {
     "gridlyDestinationImpactPaneBackdrop",
     "gridlyDestinationImpactPaneClose",
     "gridlyDestinationImpactPaneDone",
+    "gridlyDestinationImpactPaneTitle",
+    "gridlyDestinationImpactPaneSubtitle",
     "gridlyDestinationImpactPaneSummary",
     "gridlyDestinationImpactPaneSeverity",
     "gridlyDestinationImpactPaneConfidence",
