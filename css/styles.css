@@ -17778,3 +17778,104 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
     white-space: nowrap !important;
   }
 }
+
+/* V250.8D — compact persistent shell visual correction. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command:is(.is-awareness-panel, .is-destination-panel):not([hidden]):not(.is-command-card-suppressed),
+  body.gridly-text-large[data-layout-mode="portrait"] .map-card > .mobile-destination-command:is(.is-awareness-panel, .is-destination-panel):not([hidden]):not(.is-command-card-suppressed) {
+    top: max(
+      calc(env(safe-area-inset-top, 0px) + 10px),
+      var(--gridly-awareness-panel-top, calc(100dvh - var(--gridly-awareness-dock-footprint, 118px) - var(--gridly-awareness-panel-dock-gap, 10px) - 90px))
+    ) !important;
+    grid-template-columns: minmax(0, 1fr) 78px !important;
+    gap: 8px !important;
+    min-height: 0 !important;
+    max-height: min(104px, calc(var(--gridly-awareness-panel-available-height, 100dvh) - env(safe-area-inset-top, 0px) - 10px)) !important;
+    padding: 8px 8px 8px 11px !important;
+    border-radius: 17px !important;
+    overflow: hidden !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command:is(.is-awareness-panel, .is-destination-panel) .mobile-destination-command-copy {
+    grid-template-rows: none !important;
+    grid-auto-rows: auto !important;
+    align-content: center !important;
+    gap: 2px !important;
+    overflow: hidden !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command:is(.is-awareness-panel, .is-destination-panel) .mobile-awareness-panel-kicker {
+    min-height: 0 !important;
+    line-height: 1 !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command.is-destination-panel .mobile-awareness-panel-kicker {
+    display: none !important;
+    min-height: 0 !important;
+    visibility: hidden !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command:is(.is-awareness-panel, .is-destination-panel) strong {
+    font-size: 0.9rem !important;
+    line-height: 1.08 !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command:is(.is-awareness-panel, .is-destination-panel) #mobileDestinationCommandMeta {
+    min-height: 0 !important;
+    font-size: 0.7rem !important;
+    line-height: 1.16 !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command:is(.is-awareness-panel, .is-destination-panel) .mobile-awareness-panel-crossings,
+  body[data-layout-mode="portrait"] .mobile-destination-command:is(.is-awareness-panel, .is-destination-panel) .mobile-awareness-panel-issues,
+  body[data-layout-mode="portrait"] .mobile-destination-command:is(.is-awareness-panel, .is-destination-panel) .destination-route-impact-line,
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command:is(.is-awareness-panel, .is-destination-panel) .destination-route-impact-line:empty {
+    min-height: 0 !important;
+    font-size: 0.69rem !important;
+    line-height: 1.16 !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command:is(.is-awareness-panel, .is-destination-panel) .mobile-awareness-panel-crossings[hidden],
+  body[data-layout-mode="portrait"] .mobile-destination-command:is(.is-awareness-panel, .is-destination-panel) .mobile-awareness-panel-issues[hidden],
+  body[data-layout-mode="portrait"] .mobile-destination-command:is(.is-awareness-panel, .is-destination-panel) .destination-route-impact-line:empty {
+    display: none !important;
+    min-height: 0 !important;
+    visibility: hidden !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command:is(.is-awareness-panel, .is-destination-panel) .compact-btn {
+    width: 78px !important;
+    min-width: 78px !important;
+    max-width: 78px !important;
+    min-height: 32px !important;
+    height: 32px !important;
+    padding: 6px 9px !important;
+    font-size: 0.7rem !important;
+  }
+}
+
+.gridly-destination-impact-significance {
+  grid-template-columns: minmax(12rem, 1fr) !important;
+  align-items: start;
+}
+
+.gridly-destination-impact-significance strong {
+  grid-row: auto !important;
+  overflow-wrap: break-word !important;
+  word-break: normal !important;
+  hyphens: none !important;
+  white-space: normal !important;
+}
+
+.gridly-destination-impact-significance em {
+  grid-column: 1 !important;
+  grid-row: auto !important;
+  justify-self: start;
+  white-space: normal !important;
+}
+
+@media (max-width: 420px) {
+  .gridly-destination-impact-significance {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
