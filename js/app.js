@@ -10826,7 +10826,8 @@ function scheduleGridlyAlertLocationSync(reason = "alert_row_render") {
 
 const GRIDLY_REFRESH_BREAKDOWN_LOG_LIMIT = 12;
 const gridlyPortraitIntelligenceBreakdownAuditState = {
-  refreshPortraitV2LocalizedIntelligence: { totalMs: 0, sections: {}, at: 0 },
+  refreshPortraitV2LocalizedIntelligence: { totalMs: 0, sections: {}, at: 0, counts: {}, cacheReuseApplied: false, unchangedDomWriteSkipped: 0 },
+  renderGridlyIntelligencePreviewCard: { totalMs: 0, sections: {}, at: 0, counts: {}, cacheReuseApplied: false, unchangedDomWriteSkipped: 0 },
   renderAlerts: { totalMs: 0, sections: {}, at: 0 },
   updateDailyHabitStatus: { totalMs: 0, sections: {}, at: 0 }
 };
@@ -11459,21 +11460,77 @@ function makeGridlySectionTimer(sections) {
   };
 }
 
-function recordPortraitIntelligenceBreakdown(functionName, startedAt, sections) {
+function recordPortraitIntelligenceBreakdown(functionName, startedAt, sections, details = {}) {
   gridlyPortraitIntelligenceBreakdownAuditState[functionName] = {
     totalMs: performance.now() - startedAt,
     sections,
+    counts: details.counts || {},
+    cacheReuseApplied: Boolean(details.cacheReuseApplied),
+    unchangedDomWriteSkipped: Number(details.unchangedDomWriteSkipped || 0),
     at: Date.now()
   };
 }
 
+function timeGridlyAuditSection(sections, name, fn) {
+  const started = performance.now();
+  const result = fn();
+  sections[name] = (sections[name] || 0) + (performance.now() - started);
+  return result;
+}
+
+function setGridlyElementTextIfChangedForAudit(element, value, sections, auditState = {}) {
+  if (!element) return false;
+  const serializedValue = typeof value === "string" ? value : (value == null ? "" : String(value));
+  if (element.textContent === serializedValue) {
+    auditState.unchangedDomWriteSkipped = Number(auditState.unchangedDomWriteSkipped || 0) + 1;
+    return false;
+  }
+  timeGridlyAuditSection(sections, "dom_writes", () => { element.textContent = serializedValue; });
+  return true;
+}
+
+function setGridlyAttributeIfChangedForAudit(element, attributeName, value, sections, auditState = {}) {
+  if (!element) return false;
+  const serializedValue = typeof value === "string" ? value : (value == null ? "" : String(value));
+  if (element.getAttribute(attributeName) === serializedValue) {
+    auditState.unchangedDomWriteSkipped = Number(auditState.unchangedDomWriteSkipped || 0) + 1;
+    return false;
+  }
+  timeGridlyAuditSection(sections, "dom_writes", () => { element.setAttribute(attributeName, serializedValue); });
+  return true;
+}
+
+function setGridlyDatasetIfChangedForAudit(element, key, value, sections, auditState = {}) {
+  if (!element?.dataset) return false;
+  const serializedValue = typeof value === "string" ? value : (value == null ? "" : String(value));
+  if (element.dataset[key] === serializedValue) {
+    auditState.unchangedDomWriteSkipped = Number(auditState.unchangedDomWriteSkipped || 0) + 1;
+    return false;
+  }
+  timeGridlyAuditSection(sections, "dom_writes", () => { element.dataset[key] = serializedValue; });
+  return true;
+}
+
+function setGridlyHiddenIfChangedForAudit(element, hidden, sections, auditState = {}) {
+  if (!element) return false;
+  const nextHidden = Boolean(hidden);
+  if (element.hidden === nextHidden) {
+    auditState.unchangedDomWriteSkipped = Number(auditState.unchangedDomWriteSkipped || 0) + 1;
+    return false;
+  }
+  timeGridlyAuditSection(sections, "dom_writes", () => { element.hidden = nextHidden; });
+  return true;
+}
+
 const gridlyPortraitIntelligenceBreakdownAudit = function gridlyPortraitIntelligenceBreakdownAudit() {
   const refreshPortraitV2LocalizedIntelligence = { ...gridlyPortraitIntelligenceBreakdownAuditState.refreshPortraitV2LocalizedIntelligence };
+  const renderGridlyIntelligencePreviewCard = { ...gridlyPortraitIntelligenceBreakdownAuditState.renderGridlyIntelligencePreviewCard };
   const renderAlerts = { ...gridlyPortraitIntelligenceBreakdownAuditState.renderAlerts };
   const updateDailyHabitStatus = { ...gridlyPortraitIntelligenceBreakdownAuditState.updateDailyHabitStatus };
 
   const sectionEntries = [
     ...Object.entries(refreshPortraitV2LocalizedIntelligence.sections || {}).map(([name, durationMs]) => ({ fn: 'refreshPortraitV2LocalizedIntelligence', name, durationMs })),
+    ...Object.entries(renderGridlyIntelligencePreviewCard.sections || {}).map(([name, durationMs]) => ({ fn: 'renderGridlyIntelligencePreviewCard', name, durationMs })),
     ...Object.entries(renderAlerts.sections || {}).map(([name, durationMs]) => ({ fn: 'renderAlerts', name, durationMs })),
     ...Object.entries(updateDailyHabitStatus.sections || {}).map(([name, durationMs]) => ({ fn: 'updateDailyHabitStatus', name, durationMs }))
   ].filter((entry) => Number.isFinite(entry.durationMs));
@@ -11482,6 +11539,7 @@ const gridlyPortraitIntelligenceBreakdownAudit = function gridlyPortraitIntellig
 
   return {
     refreshPortraitV2LocalizedIntelligence,
+    renderGridlyIntelligencePreviewCard,
     renderAlerts,
     updateDailyHabitStatus,
     ...snapshotGridlyIntelligenceCacheAudit(),
@@ -11978,6 +12036,17 @@ const gridlyRefreshBreakdownAudit = function gridlyRefreshBreakdownAudit() {
   const slowestChildEntry = sortedChildEntries[0] || null;
   const slowestChild = slowestChildEntry ? { name: slowestChildEntry[0], durationMs: slowestChildEntry[1] } : null;
   const refreshDurationMs = gridlyRefreshAuditState.lastRefreshDuration || 0;
+  const portraitLocalizedIntelligenceBreakdown = { ...(gridlyPortraitIntelligenceBreakdownAuditState.refreshPortraitV2LocalizedIntelligence || {}) };
+  const intelligencePreviewCardBreakdown = { ...(gridlyPortraitIntelligenceBreakdownAuditState.renderGridlyIntelligencePreviewCard || {}) };
+  const cacheSnapshot = snapshotGridlyIntelligenceCacheAudit();
+  const cacheReuseApplied = Boolean(
+    portraitLocalizedIntelligenceBreakdown.cacheReuseApplied
+    || intelligencePreviewCardBreakdown.cacheReuseApplied
+    || Number(cacheSnapshot.cacheHits || 0) > 0
+  );
+  const unchangedDomWriteSkipped = Number(portraitLocalizedIntelligenceBreakdown.unchangedDomWriteSkipped || 0)
+    + Number(intelligencePreviewCardBreakdown.unchangedDomWriteSkipped || 0)
+    + Number(gridlyBackgroundLoopAuditState.repeatedSameValueWrites || 0);
   const unifiedIncidents = getUnifiedIncidents();
   const renderedMarkerCount = typeof unifiedIncidentLayer?.getLayers === "function"
     ? unifiedIncidentLayer.getLayers().length
@@ -11992,12 +12061,26 @@ const gridlyRefreshBreakdownAudit = function gridlyRefreshBreakdownAudit() {
     slowestRefreshChild: slowestChild,
     sortedRefreshChildren: sortedChildEntries.map(([name, durationMs]) => ({ name, durationMs })),
     refreshDurationExplainedByChildrenMs: Number(sortedChildEntries.reduce((total, [, duration]) => total + duration, 0).toFixed(2)),
-    ...snapshotGridlyIntelligenceCacheAudit(),
+    portraitLocalizedIntelligenceBreakdown,
+    intelligencePreviewCardBreakdown,
+    cacheReuseApplied,
+    unchangedDomWriteSkipped,
+    ...cacheSnapshot,
     recentRefreshes: [...(gridlyRefreshAuditState.recentRefreshes || [])],
     recommendedTargets: [
       "Instrument and isolate the slowest child call first.",
       "Check child-level item counts against duration spikes.",
       "Verify route intelligence active/idle state impact on refresh cost."
+    ],
+    hotspotRecommendations: [
+      cacheReuseApplied
+        ? "Cycle cache reuse is active for repeated intelligence/preview builds; investigate remaining slow sections in the nested breakdowns."
+        : "No cache reuse was observed in the latest refresh; verify repeated calls use equivalent cache keys.",
+      unchangedDomWriteSkipped > 0
+        ? "Unchanged DOM writes are being skipped; remaining DOM cost should come from real content changes or owner diagnostics."
+        : "No unchanged DOM writes were skipped; compare current text/dataset output with previous render signatures.",
+      "If localized_intelligence_build remains high, use commuteModelNestedSections and reports_hazards_loop timings to target repeated incident scans without changing filtering.",
+      "If historical_intelligence_build remains high, inspect historical_records_loop.* timings and cache reuse between the nested and standalone preview render."
     ],
     itemCounts: {
       alertCount: Array.isArray(activeReports) ? activeReports.length : 0,
@@ -33252,74 +33335,94 @@ function gridlyDeduplicateHistoricalIntelligenceFindings(rankedFindings = []) {
   };
 }
 
-function gridlyBuildHistoricalIntelligenceFindings() {
-  const snapshot = gridlyReadHistoricalIntelligenceStorageSnapshot();
+function gridlyBuildHistoricalIntelligenceFindings(options = {}) {
+  const sections = options?.breakdownSections && typeof options.breakdownSections === "object" ? options.breakdownSections : null;
+  const counts = options?.breakdownCounts && typeof options.breakdownCounts === "object" ? options.breakdownCounts : null;
+  const timeHistoricalSection = (name, fn) => sections ? timeGridlyAuditSection(sections, name, fn) : fn();
+  const snapshot = timeHistoricalSection("historical_intelligence_build.storage_read", () => gridlyReadHistoricalIntelligenceStorageSnapshot());
   const crossingEvents = Array.isArray(snapshot.state?.crossingEvents) ? snapshot.state.crossingEvents : [];
   const hazardEvents = Array.isArray(snapshot.state?.hazardEvents) ? snapshot.state.hazardEvents : [];
+  if (counts) {
+    counts.historicalCrossingRecordCount = crossingEvents.length;
+    counts.historicalHazardRecordCount = hazardEvents.length;
+    counts.historicalRecordLoopCount = crossingEvents.length + hazardEvents.length;
+  }
   const findings = [];
 
-  const crossingGroups = gridlyHistoricalIntelligenceGroupRecords(crossingEvents, (record) => gridlyHistoricalAuditLocationKey(record, "crossing"));
-  crossingGroups.forEach((records) => {
-    if (records.length < 2) return;
-    const sample = records[0] || {};
-    findings.push(gridlyHistoricalIntelligenceBuildFinding({
-      category: "most_blocked_crossing",
-      records,
-      locationLabel: gridlyHistoricalAuditCrossing(sample) || sample.crossingName || sample.crossingId || "Crossing location unavailable",
-      baseScore: 35
-    }));
+  timeHistoricalSection("historical_records_loop.crossing_groups", () => {
+    const crossingGroups = gridlyHistoricalIntelligenceGroupRecords(crossingEvents, (record) => gridlyHistoricalAuditLocationKey(record, "crossing"));
+    crossingGroups.forEach((records) => {
+      if (records.length < 2) return;
+      const sample = records[0] || {};
+      findings.push(gridlyHistoricalIntelligenceBuildFinding({
+        category: "most_blocked_crossing",
+        records,
+        locationLabel: gridlyHistoricalAuditCrossing(sample) || sample.crossingName || sample.crossingId || "Crossing location unavailable",
+        baseScore: 35
+      }));
+    });
   });
 
-  const floodEvents = hazardEvents.filter((record) => /flood|high_water|high water|water/.test(gridlyHistoricalAuditHazardType(record).toLowerCase()));
-  const floodGroups = gridlyHistoricalIntelligenceGroupRecords(floodEvents, (record) => gridlyHistoricalAuditRoad(record));
-  floodGroups.forEach((records) => {
-    if (records.length < 2) return;
-    findings.push(gridlyHistoricalIntelligenceBuildFinding({ category: "recurring_flooding_location", records, locationLabel: gridlyHistoricalAuditRoad(records[0]), baseScore: 45 }));
+  timeHistoricalSection("historical_records_loop.flood_groups", () => {
+    const floodEvents = hazardEvents.filter((record) => /flood|high_water|high water|water/.test(gridlyHistoricalAuditHazardType(record).toLowerCase()));
+    const floodGroups = gridlyHistoricalIntelligenceGroupRecords(floodEvents, (record) => gridlyHistoricalAuditRoad(record));
+    floodGroups.forEach((records) => {
+      if (records.length < 2) return;
+      findings.push(gridlyHistoricalIntelligenceBuildFinding({ category: "recurring_flooding_location", records, locationLabel: gridlyHistoricalAuditRoad(records[0]), baseScore: 45 }));
+    });
   });
 
-  const constructionEvents = hazardEvents.filter((record) => /construction|roadwork|road_work|work_zone|work zone|lane_closure|closure/.test(gridlyHistoricalAuditHazardType(record).toLowerCase()));
-  const constructionGroups = gridlyHistoricalIntelligenceGroupRecords(constructionEvents, (record) => gridlyHistoricalAuditRoad(record));
-  constructionGroups.forEach((records) => {
-    if (records.length < 2) return;
-    findings.push(gridlyHistoricalIntelligenceBuildFinding({ category: "repeat_construction_zone", records, locationLabel: gridlyHistoricalAuditRoad(records[0]), baseScore: 30 }));
+  timeHistoricalSection("historical_records_loop.construction_groups", () => {
+    const constructionEvents = hazardEvents.filter((record) => /construction|roadwork|road_work|work_zone|work zone|lane_closure|closure/.test(gridlyHistoricalAuditHazardType(record).toLowerCase()));
+    const constructionGroups = gridlyHistoricalIntelligenceGroupRecords(constructionEvents, (record) => gridlyHistoricalAuditRoad(record));
+    constructionGroups.forEach((records) => {
+      if (records.length < 2) return;
+      findings.push(gridlyHistoricalIntelligenceBuildFinding({ category: "repeat_construction_zone", records, locationLabel: gridlyHistoricalAuditRoad(records[0]), baseScore: 30 }));
+    });
   });
 
-  const hazardGroups = gridlyHistoricalIntelligenceGroupRecords(hazardEvents, (record) => gridlyHistoricalAuditLocationKey(record, "hazard"));
-  hazardGroups.forEach((records) => {
-    if (records.length < 2) return;
-    const sample = records[0] || {};
-    findings.push(gridlyHistoricalIntelligenceBuildFinding({
-      category: "recurring_hazard",
-      records,
-      locationLabel: gridlyHistoricalAuditRoad(sample),
-      hazardLabel: gridlyHistoricalIntelligenceHazardLabel(sample),
-      baseScore: 20
-    }));
+  timeHistoricalSection("historical_records_loop.hazard_groups", () => {
+    const hazardGroups = gridlyHistoricalIntelligenceGroupRecords(hazardEvents, (record) => gridlyHistoricalAuditLocationKey(record, "hazard"));
+    hazardGroups.forEach((records) => {
+      if (records.length < 2) return;
+      const sample = records[0] || {};
+      findings.push(gridlyHistoricalIntelligenceBuildFinding({
+        category: "recurring_hazard",
+        records,
+        locationLabel: gridlyHistoricalAuditRoad(sample),
+        hazardLabel: gridlyHistoricalIntelligenceHazardLabel(sample),
+        baseScore: 20
+      }));
+    });
   });
 
-  const durationEvents = [...crossingEvents, ...hazardEvents].filter((record) => Boolean(gridlyHistoricalAuditRoad(record)) && gridlyHistoricalIntelligenceHasClearTime(record) && Number.isFinite(Number(gridlyHistoricalAuditDuration(record))));
-  const durationGroups = gridlyHistoricalIntelligenceGroupRecords(durationEvents, (record) => gridlyHistoricalAuditRoad(record));
-  durationGroups.forEach((records) => {
-    if (records.length < 2) return;
-    const averageDurationMinutes = gridlyHistoricalIntelligenceAverageDuration(records);
-    if (!averageDurationMinutes) return;
-    const finding = gridlyHistoricalIntelligenceBuildFinding({ category: "high_delay_corridor", records, locationLabel: gridlyHistoricalAuditRoad(records[0]), baseScore: 25 });
-    findings.push({ ...finding, significanceScore: finding.significanceScore + Math.min(30, Math.round(averageDurationMinutes / 2)) });
+  timeHistoricalSection("historical_records_loop.duration_groups", () => {
+    const durationEvents = [...crossingEvents, ...hazardEvents].filter((record) => Boolean(gridlyHistoricalAuditRoad(record)) && gridlyHistoricalIntelligenceHasClearTime(record) && Number.isFinite(Number(gridlyHistoricalAuditDuration(record))));
+    const durationGroups = gridlyHistoricalIntelligenceGroupRecords(durationEvents, (record) => gridlyHistoricalAuditRoad(record));
+    durationGroups.forEach((records) => {
+      if (records.length < 2) return;
+      const averageDurationMinutes = gridlyHistoricalIntelligenceAverageDuration(records);
+      if (!averageDurationMinutes) return;
+      const finding = gridlyHistoricalIntelligenceBuildFinding({ category: "high_delay_corridor", records, locationLabel: gridlyHistoricalAuditRoad(records[0]), baseScore: 25 });
+      findings.push({ ...finding, significanceScore: finding.significanceScore + Math.min(30, Math.round(averageDurationMinutes / 2)) });
+    });
   });
 
-  const confirmedEvents = [...crossingEvents, ...hazardEvents].filter((record) => gridlyHistoricalIntelligenceConfirmationCount(record) > 0);
-  const confirmedGroups = gridlyHistoricalIntelligenceGroupRecords(confirmedEvents, (record) => gridlyHistoricalAuditRoad(record) || gridlyHistoricalAuditLocationKey(record, record?.crossingId || record?.crossing_id ? "crossing" : "hazard"));
-  confirmedGroups.forEach((records) => {
-    const confirmationCount = records.reduce((sum, record) => sum + gridlyHistoricalIntelligenceConfirmationCount(record), 0);
-    if (records.length < 2 && confirmationCount < 2) return;
-    findings.push(gridlyHistoricalIntelligenceBuildFinding({ category: "community_confirmed_hotspot", records, locationLabel: gridlyHistoricalAuditRoad(records[0]) || gridlyHistoricalAuditCrossing(records[0]), baseScore: 15 }));
+  timeHistoricalSection("historical_records_loop.confirmed_groups", () => {
+    const confirmedEvents = [...crossingEvents, ...hazardEvents].filter((record) => gridlyHistoricalIntelligenceConfirmationCount(record) > 0);
+    const confirmedGroups = gridlyHistoricalIntelligenceGroupRecords(confirmedEvents, (record) => gridlyHistoricalAuditRoad(record) || gridlyHistoricalAuditLocationKey(record, record?.crossingId || record?.crossing_id ? "crossing" : "hazard"));
+    confirmedGroups.forEach((records) => {
+      const confirmationCount = records.reduce((sum, record) => sum + gridlyHistoricalIntelligenceConfirmationCount(record), 0);
+      if (records.length < 2 && confirmationCount < 2) return;
+      findings.push(gridlyHistoricalIntelligenceBuildFinding({ category: "community_confirmed_hotspot", records, locationLabel: gridlyHistoricalAuditRoad(records[0]) || gridlyHistoricalAuditCrossing(records[0]), baseScore: 15 }));
+    });
   });
 
-  const rankedFindings = findings
+  const rankedFindings = timeHistoricalSection("finding_data_build.rank_findings", () => findings
     .filter((finding) => finding.count > 0 && Number.isFinite(Number(finding.significanceScore)))
     .sort((a, b) => Number(b.significanceScore) - Number(a.significanceScore) || Number(b.count) - Number(a.count) || String(a.title).localeCompare(String(b.title)))
-    .map((finding, index) => ({ ...finding, rank: index + 1 }));
-  const dedupe = gridlyDeduplicateHistoricalIntelligenceFindings(rankedFindings);
+    .map((finding, index) => ({ ...finding, rank: index + 1 })));
+  const dedupe = timeHistoricalSection("finding_data_build.dedupe_findings", () => gridlyDeduplicateHistoricalIntelligenceFindings(rankedFindings));
   const dedupedRankedFindings = dedupe.dedupedRankedFindings;
 
   return {
@@ -33379,7 +33482,11 @@ function formatGridlyHistoricalIntelligenceDuration(minutes) {
 }
 
 function buildGridlyIntelligencePreviewCardModel(options = {}) {
-  const historical = gridlyBuildHistoricalIntelligenceFindings(options);
+  const historical = gridlyBuildHistoricalIntelligenceFindings({
+    ...options,
+    breakdownSections: options?.breakdownSections,
+    breakdownCounts: options?.breakdownCounts
+  });
   const strongest = historical.strongestFinding;
   const selectedCategory = strongest?.category || "no_history";
   const dedupedRankedFindings = Array.isArray(historical.dedupedRankedFindings) ? historical.dedupedRankedFindings : [];
@@ -33564,35 +33671,97 @@ function gridlyHistoricalIntelligenceFinalRenderAudit(options = {}) {
 window.gridlyHistoricalIntelligenceFinalRenderAudit = gridlyHistoricalIntelligenceFinalRenderAudit;
 exposeGridlyAuditHelper("gridlyHistoricalIntelligenceFinalRenderAudit", gridlyHistoricalIntelligenceFinalRenderAudit);
 
+
+const gridlyIntelligencePreviewCardMemoState = {
+  storageKey: "",
+  rawSnapshot: null,
+  model: null,
+  reuseCount: 0,
+  missCount: 0
+};
+
+function buildGridlyIntelligencePreviewCardModelMemoized(options = {}, sections = {}, counts = {}) {
+  const storageKey = typeof GRIDLY_EVENT_HISTORY_STORAGE_KEY !== "undefined" ? GRIDLY_EVENT_HISTORY_STORAGE_KEY : "gridly_event_history_v1";
+  const rawSnapshot = timeGridlyAuditSection(sections, "cache_memoization_path.storage_signature", () => gridlySafeLocalStorageGet(storageKey) || "");
+  if (gridlyIntelligencePreviewCardMemoState.storageKey === storageKey
+    && gridlyIntelligencePreviewCardMemoState.rawSnapshot === rawSnapshot
+    && gridlyIntelligencePreviewCardMemoState.model) {
+    gridlyIntelligencePreviewCardMemoState.reuseCount += 1;
+    counts.previewModelMemoReuseCount = Number(counts.previewModelMemoReuseCount || 0) + 1;
+    return {
+      ...gridlyIntelligencePreviewCardMemoState.model,
+      previewModelMemoized: true,
+      previewModelMemoReuseCount: gridlyIntelligencePreviewCardMemoState.reuseCount
+    };
+  }
+  gridlyIntelligencePreviewCardMemoState.missCount += 1;
+  counts.previewModelMemoMissCount = Number(counts.previewModelMemoMissCount || 0) + 1;
+  const model = buildGridlyIntelligencePreviewCardModel({
+    ...options,
+    breakdownSections: sections,
+    breakdownCounts: counts
+  });
+  gridlyIntelligencePreviewCardMemoState.storageKey = storageKey;
+  gridlyIntelligencePreviewCardMemoState.rawSnapshot = rawSnapshot;
+  gridlyIntelligencePreviewCardMemoState.model = model;
+  return model;
+}
+
 function renderGridlyIntelligencePreviewCard(options = {}) {
-  const chip = document.getElementById("gridlyIntelligencePreviewCard");
-  const dockButton = document.getElementById("gridlyHistoryDockButton") || document.querySelector("#gridlyPortraitV2 .gridly-v2-bottom-dock [data-v2-sheet='history']");
-  const mode = document.getElementById("gridlyIntelligencePreviewMode");
-  const category = document.getElementById("gridlyIntelligencePreviewCategory");
-  const title = document.getElementById("gridlyIntelligencePreviewTitle");
-  const description = document.getElementById("gridlyIntelligencePreviewDescription");
-  const support = document.getElementById("gridlyIntelligencePreviewSupport");
-  const model = {
-    ...buildGridlyIntelligencePreviewCardModel(options),
+  const functionStartedAt = performance.now();
+  const sections = {};
+  const counts = {};
+  const auditState = { cacheReuseApplied: false, unchangedDomWriteSkipped: 0 };
+  const domRefs = timeGridlyAuditSection(sections, "finding_data_build.dom_queries", () => ({
+    chip: document.getElementById("gridlyIntelligencePreviewCard"),
+    dockButton: document.getElementById("gridlyHistoryDockButton") || document.querySelector("#gridlyPortraitV2 .gridly-v2-bottom-dock [data-v2-sheet='history']"),
+    mode: document.getElementById("gridlyIntelligencePreviewMode"),
+    category: document.getElementById("gridlyIntelligencePreviewCategory"),
+    title: document.getElementById("gridlyIntelligencePreviewTitle"),
+    description: document.getElementById("gridlyIntelligencePreviewDescription"),
+    support: document.getElementById("gridlyIntelligencePreviewSupport")
+  }));
+  const { chip, dockButton, mode, category, title, description, support } = domRefs;
+  const cachePayload = {
+    cycleId: Number(gridlyRefreshCycleCache?.cycleId || 0),
+    historicalStorageKey: typeof GRIDLY_HISTORICAL_INTELLIGENCE_STORAGE_KEY !== "undefined" ? GRIDLY_HISTORICAL_INTELLIGENCE_STORAGE_KEY : "gridlyHistoricalIntelligence"
+  };
+  let modelFromResolver = false;
+  const baseModel = timeGridlyAuditSection(sections, "finding_data_build.model_cache_lookup", () => getGridlyRefreshCycleCachedValue("buildGridlyIntelligencePreviewCardModel", cachePayload, () => {
+    modelFromResolver = true;
+    return timeGridlyAuditSection(sections, "historical_intelligence_build", () => buildGridlyIntelligencePreviewCardModelMemoized(options, sections, counts));
+  }));
+  auditState.cacheReuseApplied = !modelFromResolver || Number(counts.previewModelMemoReuseCount || 0) > 0;
+  const model = timeGridlyAuditSection(sections, "preview_card_html_build", () => ({
+    ...baseModel,
     cardAvailable: Boolean(dockButton),
     chipRendered: false,
     historyChipRemoved: !chip,
     historyDockButtonRendered: Boolean(dockButton),
     renderingLocation: "#gridlyPortraitV2 .gridly-v2-bottom-dock [data-v2-sheet='history']"
-  };
-  if (chip) chip.hidden = true;
+  }));
+  counts.findingCount = Number(model.findingCount || 0);
+  counts.rawFindingCount = Number(model.rawFindingCount || 0);
+  counts.dedupedFindingCount = Number(model.dedupedFindingCount || 0);
+  counts.historicalRecordCount = Number(model.supportingData?.historicalRecordCount || counts.historicalRecordLoopCount || 0);
+  if (chip) setGridlyHiddenIfChangedForAudit(chip, true, sections, auditState);
   if (dockButton) {
-    dockButton.dataset.gridlyPreviewMode = "false";
-    dockButton.dataset.gridlySelectedCategory = model.selectedCategory;
-    dockButton.dataset.gridlyFallbackMode = model.fallbackMode ? "true" : "false";
-    dockButton.setAttribute("aria-label", `Open historical intelligence, ${model.findingCount} ${model.findingCount === 1 ? "finding" : "findings"}`);
+    setGridlyDatasetIfChangedForAudit(dockButton, "gridlyPreviewMode", "false", sections, auditState);
+    setGridlyDatasetIfChangedForAudit(dockButton, "gridlySelectedCategory", model.selectedCategory, sections, auditState);
+    setGridlyDatasetIfChangedForAudit(dockButton, "gridlyFallbackMode", model.fallbackMode ? "true" : "false", sections, auditState);
+    setGridlyAttributeIfChangedForAudit(dockButton, "aria-label", `Open historical intelligence, ${model.findingCount} ${model.findingCount === 1 ? "finding" : "findings"}`, sections, auditState);
   }
-  if (mode) mode.textContent = "History";
-  if (category) category.textContent = "Local patterns";
-  if (title) title.textContent = "History";
-  if (description) description.textContent = "Local patterns";
-  if (support) support.textContent = String(model.findingCount || 0);
+  setGridlyElementTextIfChangedForAudit(mode, "History", sections, auditState);
+  setGridlyElementTextIfChangedForAudit(category, "Local patterns", sections, auditState);
+  setGridlyElementTextIfChangedForAudit(title, "History", sections, auditState);
+  setGridlyElementTextIfChangedForAudit(description, "Local patterns", sections, auditState);
+  setGridlyElementTextIfChangedForAudit(support, String(model.findingCount || 0), sections, auditState);
   window.gridlyIntelligencePreviewCardState = model;
+  recordPortraitIntelligenceBreakdown("renderGridlyIntelligencePreviewCard", functionStartedAt, sections, {
+    counts,
+    cacheReuseApplied: auditState.cacheReuseApplied,
+    unchangedDomWriteSkipped: auditState.unchangedDomWriteSkipped
+  });
   return model;
 }
 
@@ -55182,9 +55351,10 @@ function refreshPortraitV2LocalizedIntelligence() {
   recordGridlyBackgroundFunctionCall("refreshPortraitV2LocalizedIntelligence");
   const functionStartedAt = performance.now();
   const sections = {};
-  const timeSection = makeGridlySectionTimer(sections);
+  const counts = {};
+  const auditState = { cacheReuseApplied: false, unchangedDomWriteSkipped: 0 };
 
-  const { topPrimaryEl, topSecondaryEl, topMicrolineEl } = timeSection("dom_queries", () => {
+  const { topPrimaryEl, topSecondaryEl, topMicrolineEl } = timeGridlyAuditSection(sections, "source_collection.dom_queries", () => {
     const topSecondary = document.getElementById("gridlyV2TopStatusSecondary");
     return {
       topPrimaryEl: document.getElementById("gridlyV2TopStatusPrimary"),
@@ -55192,14 +55362,25 @@ function refreshPortraitV2LocalizedIntelligence() {
       topMicrolineEl: ensureGridlyTopAwarenessMicrolineElement(topSecondary)
     };
   });
+  counts.activeReportCount = Array.isArray(activeReports) ? activeReports.length : 0;
+  counts.activeHazardCount = Array.isArray(activeHazards) ? activeHazards.length : 0;
+  counts.crossingCount = Array.isArray(crossings) ? crossings.length : 0;
   if (!topPrimaryEl && !topSecondaryEl) {
-    recordPortraitIntelligenceBreakdown("refreshPortraitV2LocalizedIntelligence", functionStartedAt, sections);
+    recordPortraitIntelligenceBreakdown("refreshPortraitV2LocalizedIntelligence", functionStartedAt, sections, { counts, cacheReuseApplied: false, unchangedDomWriteSkipped: 0 });
     return;
   }
-  const intel = timeSection("intelligence_calculations", () => buildUnifiedLocalizedCommuteIntelligence({ limit: 6 }));
-  timeSection("text_content_updates", () => {
+  const cacheHitsBefore = Number(gridlyIntelligenceCacheAuditState.hits || 0);
+  const intel = timeGridlyAuditSection(sections, "localized_intelligence_build", () => buildUnifiedLocalizedCommuteIntelligence({ limit: 6 }));
+  auditState.cacheReuseApplied = Number(gridlyIntelligenceCacheAuditState.hits || 0) > cacheHitsBefore;
+  counts.localizedIntelligenceItemCount = Number(intel?.activeLocalizedAlertCount || 0);
+  counts.corridorClusterCount = Array.isArray(intel?.sourceCorridorClusters) ? intel.sourceCorridorClusters.length : 0;
+  timeGridlyAuditSection(sections, "corridor_cluster_handling", () => {
+    counts.activeCorridorClusterCount = (Array.isArray(intel?.sourceCorridorClusters) ? intel.sourceCorridorClusters : [])
+      .filter((cluster) => Number(cluster?.routeImpactCount || cluster?.disruptionDensity || 0) > 0).length;
+  });
+  const textModel = timeGridlyAuditSection(sections, "top_awareness_text_selection", () => {
     const existingAlertWording = intel.hasActiveAlerts && typeof resolveGridlyExistingAlertWording === "function"
-      ? resolveGridlyExistingAlertWording({ limit: 6 })
+      ? timeGridlyAuditSection(sections, "reports_loop.existing_alert_wording", () => resolveGridlyExistingAlertWording({ limit: 6 }))
       : { available: false, text: "" };
     const activeCategory = existingAlertWording?.activeCategory || existingAlertWording?.activeAwareness?.resolvedCategory || existingAlertWording?.activeAwareness?.topCategory || "";
     const activeLocationLabel = existingAlertWording?.activeLocationLabel || existingAlertWording?.activeAwareness?.resolvedLocationLabel || "";
@@ -55222,7 +55403,7 @@ function refreshPortraitV2LocalizedIntelligence() {
     void mobilityLanguagePrimaryCandidate;
     void travelConsequencePrimaryCandidate;
     void corridorAwarePrimaryCandidate;
-    const pulseModel = buildGridlyCommunityPulseModel({ topAwarenessMicrolineReadOnly: true });
+    const pulseModel = timeGridlyAuditSection(sections, "reports_hazards_loop.community_pulse_model", () => buildGridlyCommunityPulseModel({ topAwarenessMicrolineReadOnly: true }));
     const awarenessBrief = buildGridlyAwarenessBriefCopy({ intel, existingAlertWording, pulseModel });
     if (awarenessBrief.state === "quiet") {
       pulseModel.pulseVisible = false;
@@ -55232,40 +55413,50 @@ function refreshPortraitV2LocalizedIntelligence() {
     }
     const awarenessPrimary = safeDisplayText(awarenessBrief.primary, "No major mobility issues reported nearby.");
     const awarenessSecondary = safeDisplayText(awarenessBrief.secondary, "Community activity is quiet.");
+    return { existingAlertWording, pulseModel, awarenessBrief, awarenessPrimary, awarenessSecondary };
+  });
+  timeGridlyAuditSection(sections, "dom_write_preparation", () => {
     const awarenessCardEl = topPrimaryEl?.closest?.(".gridly-v2-awareness-brief-card") || topSecondaryEl?.closest?.(".gridly-v2-awareness-brief-card");
-    if (awarenessCardEl) awarenessCardEl.dataset.awarenessState = awarenessBrief.state || "quiet";
+    setGridlyDatasetIfChangedForAudit(awarenessCardEl, "awarenessState", textModel.awarenessBrief.state || "quiet", sections, auditState);
     const greetingEl = document.getElementById("gridlyV2AwarenessGreeting");
-    setGridlyTopPanelTextIfChanged(greetingEl, awarenessBrief.greeting, "refreshPortraitV2LocalizedIntelligence", "gridlyV2AwarenessGreeting");
-    setGridlyTopPanelTextIfChanged(topPrimaryEl, awarenessPrimary, "refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusPrimary");
-    setGridlyTopPanelTextIfChanged(topSecondaryEl, awarenessSecondary, "refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusSecondary");
+    const beforeSkipped = Number(gridlyBackgroundLoopAuditState.repeatedSameValueWrites || 0);
+    setGridlyTopPanelTextIfChanged(greetingEl, textModel.awarenessBrief.greeting, "refreshPortraitV2LocalizedIntelligence", "gridlyV2AwarenessGreeting");
+    setGridlyTopPanelTextIfChanged(topPrimaryEl, textModel.awarenessPrimary, "refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusPrimary");
+    setGridlyTopPanelTextIfChanged(topSecondaryEl, textModel.awarenessSecondary, "refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusSecondary");
     if (topMicrolineEl) {
-      setGridlyTopPanelTextIfChanged(topMicrolineEl, awarenessBrief.microlineVisible ? awarenessBrief.microline : "", "refreshPortraitV2LocalizedIntelligence", "gridlyTopAwarenessMicroline");
-      topMicrolineEl.hidden = !awarenessBrief.microlineVisible;
-      topMicrolineEl.dataset.gridlyMicrolineVisible = awarenessBrief.microlineVisible ? "true" : "false";
-      topMicrolineEl.dataset.gridlyMicrolineSourceFields = "freshness,communityActivity";
-      topMicrolineEl.dataset.gridlyMicrolineSuppressedReason = "";
+      setGridlyTopPanelTextIfChanged(topMicrolineEl, textModel.awarenessBrief.microlineVisible ? textModel.awarenessBrief.microline : "", "refreshPortraitV2LocalizedIntelligence", "gridlyTopAwarenessMicroline");
+      setGridlyHiddenIfChangedForAudit(topMicrolineEl, !textModel.awarenessBrief.microlineVisible, sections, auditState);
+      setGridlyDatasetIfChangedForAudit(topMicrolineEl, "gridlyMicrolineVisible", textModel.awarenessBrief.microlineVisible ? "true" : "false", sections, auditState);
+      setGridlyDatasetIfChangedForAudit(topMicrolineEl, "gridlyMicrolineSourceFields", "freshness,communityActivity", sections, auditState);
+      setGridlyDatasetIfChangedForAudit(topMicrolineEl, "gridlyMicrolineSuppressedReason", "", sections, auditState);
     }
-    const activeAwareness = pulseModel.activeAwareness || {};
-    const quietAwarenessState = awarenessBrief.state === "quiet";
+    auditState.unchangedDomWriteSkipped += Math.max(0, Number(gridlyBackgroundLoopAuditState.repeatedSameValueWrites || 0) - beforeSkipped);
+  });
+  const activeAwareness = textModel.pulseModel.activeAwareness || {};
+  const quietAwarenessState = textModel.awarenessBrief.state === "quiet";
+  timeGridlyAuditSection(sections, "dom_writes", () => {
     window.gridlyTopAwarenessMicrolineState = {
-      text: awarenessBrief.microline,
-      visible: awarenessBrief.microlineVisible,
-      state: awarenessBrief.state,
-      selectedHeadline: awarenessPrimary,
-      selectedSource: awarenessBrief.selectedSource || existingAlertWording?.source || activeAwareness.topAwarenessHeadlineSource || "",
-      selectedLocationIntelligence: awarenessBrief.selectedLocationIntelligence || activeAwareness.topAwarenessSelectedLocationIntelligence || null,
-      fallbackReason: awarenessBrief.fallbackReason || activeAwareness.topAwarenessFallbackReason || "",
-      pulseHeadline: pulseModel.renderedPulseHeadline || activeAwareness.headline || "",
+      text: textModel.awarenessBrief.microline,
+      visible: textModel.awarenessBrief.microlineVisible,
+      state: textModel.awarenessBrief.state,
+      selectedHeadline: textModel.awarenessPrimary,
+      selectedSource: textModel.awarenessBrief.selectedSource || textModel.existingAlertWording?.source || activeAwareness.topAwarenessHeadlineSource || "",
+      selectedLocationIntelligence: textModel.awarenessBrief.selectedLocationIntelligence || activeAwareness.topAwarenessSelectedLocationIntelligence || null,
+      fallbackReason: textModel.awarenessBrief.fallbackReason || activeAwareness.topAwarenessFallbackReason || "",
+      pulseHeadline: textModel.pulseModel.renderedPulseHeadline || activeAwareness.headline || "",
       activeReportCount: quietAwarenessState ? 0 : getGridlyAwarenessCommunityCount(intel, activeAwareness),
       activeHazardCount: quietAwarenessState ? 0 : (activeAwareness.activeHazardCount ?? 0),
-      activityLevel: quietAwarenessState ? "quiet" : (pulseModel.mobilityPressureCategory || activeAwareness.activityLevel || "quiet")
+      activityLevel: quietAwarenessState ? "quiet" : (textModel.pulseModel.mobilityPressureCategory || activeAwareness.activityLevel || "quiet")
     };
-    renderGridlyIntelligencePreviewCard({ reason: "refreshPortraitV2LocalizedIntelligence", model: pulseModel });
-    logTopStripOwnershipDiagnostic("refreshPortraitV2LocalizedIntelligence");
   });
-  recordPortraitIntelligenceBreakdown("refreshPortraitV2LocalizedIntelligence", functionStartedAt, sections);
+  timeGridlyAuditSection(sections, "preview_card_render", () => renderGridlyIntelligencePreviewCard({ reason: "refreshPortraitV2LocalizedIntelligence", model: textModel.pulseModel }));
+  timeGridlyAuditSection(sections, "top_strip_owner_diagnostic", () => logTopStripOwnershipDiagnostic("refreshPortraitV2LocalizedIntelligence"));
+  recordPortraitIntelligenceBreakdown("refreshPortraitV2LocalizedIntelligence", functionStartedAt, sections, {
+    counts,
+    cacheReuseApplied: auditState.cacheReuseApplied,
+    unchangedDomWriteSkipped: auditState.unchangedDomWriteSkipped
+  });
 }
-
 function renderRoadHazards() {
   if (!els.roadHazardsList) return;
   const hazards = getRoadHazardSurfaceIncidents(3);
