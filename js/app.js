@@ -17891,8 +17891,17 @@ function formatGridlyAwarenessAreaContextLabel(label = "") {
   return safeDisplayText(withoutAwarenessSuffix, normalizedLabel || "Liberty County");
 }
 
+function getGridlyContextLabelText(label = "") {
+  return safeDisplayText(label, "").toUpperCase();
+}
+
 function getGridlyLocationAwarenessCardKicker(areaName = "") {
-  return `Location Awareness · ${formatGridlyAwarenessAreaContextLabel(areaName)}`;
+  return `LOCATION AWARENESS • ${getGridlyContextLabelText(formatGridlyAwarenessAreaContextLabel(areaName))}`;
+}
+
+function getGridlyRouteContextTitle(destinationLabel = "") {
+  const destination = getGridlyContextLabelText(destinationLabel);
+  return destination ? `ROUTE TO ${destination}` : "ROUTE SELECTED";
 }
 
 function normalizeGridlyMobileAwarenessPanelSummary(summary = {}) {
@@ -18212,7 +18221,7 @@ function syncMobileDestinationCommandCard() {
   } else {
     const impactText = selectedLabel ? getGridlyDestinationRouteImpactCardText() : "";
     safeText("mobileAwarenessPanelKicker", "Route");
-    safeText("mobileDestinationCommandTitle", selectedLabel || (routeIsMonitoring ? "Destination selected" : "Destination"));
+    safeText("mobileDestinationCommandTitle", selectedLabel ? getGridlyRouteContextTitle(selectedLabel) : (routeIsMonitoring ? getGridlyRouteContextTitle("") : "Destination"));
     safeText(
       "mobileDestinationCommandMeta",
       selectedLabel
@@ -56436,7 +56445,7 @@ function ensureGridlyPortraitLocationAwarenessPanel() {
   panel.setAttribute("data-gridly-portrait-owned", "true");
   panel.setAttribute("data-gridly-awareness-owner", "portrait-v2");
   panel.innerHTML = `
-    <div class="gridly-v2-location-awareness-kicker" data-v2-location-awareness="kicker">Location Awareness · Liberty County</div>
+    <div class="gridly-v2-location-awareness-kicker" data-v2-location-awareness="kicker">LOCATION AWARENESS • LIBERTY COUNTY</div>
     <strong class="gridly-v2-location-awareness-title" data-v2-location-awareness="title">Liberty County Awareness</strong>
     <p class="gridly-v2-location-awareness-status" data-v2-location-awareness="status">Community activity is quiet</p>
     <p class="gridly-v2-location-awareness-meta" data-v2-location-awareness="meta">No recent reports nearby · map remains live</p>
