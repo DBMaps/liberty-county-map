@@ -17879,30 +17879,46 @@ window.gridlyDestinationImpactPaneAudit = function gridlyDestinationImpactPaneAu
   };
 };
 
-function getGridlyMobileAwarenessPanelSummary() {
-  const summary = typeof buildGridlyCommunityAwarenessIntelligenceSummary === "function"
-    ? buildGridlyCommunityAwarenessIntelligenceSummary()
-    : {};
-  const areaName = safeDisplayText(summary.awarenessAreaName, "Liberty County");
-  const crossingsCount = Array.isArray(summary.crossingsInArea) ? summary.crossingsInArea.length : Number(summary.crossingsInArea || 0);
-  const hazardCount = Array.isArray(summary.activeHazardsInArea) ? summary.activeHazardsInArea.length : Number(summary.activeHazardsInArea || 0);
-  const reportCount = Array.isArray(summary.activeReportsInArea) ? summary.activeReportsInArea.length : Number(summary.activeReportsInArea || 0);
+function normalizeGridlyMobileAwarenessPanelSummary(summary = {}) {
+  const safeSummary = summary || {};
+  const areaName = safeDisplayText(safeSummary.awarenessAreaName || safeSummary.areaName, "Liberty County");
+  const crossingsCount = Array.isArray(safeSummary.crossingsInArea) ? safeSummary.crossingsInArea.length : Number(safeSummary.crossingsInArea || safeSummary.crossingsCount || 0);
+  const hazardCount = Array.isArray(safeSummary.activeHazardsInArea) ? safeSummary.activeHazardsInArea.length : Number(safeSummary.activeHazardsInArea || safeSummary.hazardCount || 0);
+  const reportCount = Array.isArray(safeSummary.activeReportsInArea) ? safeSummary.activeReportsInArea.length : Number(safeSummary.activeReportsInArea || safeSummary.reportCount || 0);
   const activeIssueCount = hazardCount + reportCount;
-  const selectedArea = summary.selectedAwarenessArea || {};
+  const selectedArea = safeSummary.selectedAwarenessArea || {};
   const countyMode = Boolean(selectedArea.countyWide || selectedArea.fallback || normalizeGridlyAwarenessAreaLookupText(areaName) === "liberty county");
   const quietStatus = countyMode ? "No active countywide issues reported" : "No active local issues reported";
   const activeStatus = hazardCount > 0
     ? "Active hazards reported nearby"
     : "Active reports posted nearby";
   return {
-    ...summary,
+    ...safeSummary,
     areaName,
-    panelTitle: `${areaName} Awareness`,
-    status: activeIssueCount > 0 ? activeStatus : quietStatus,
-    crossingsLine: `${crossingsCount} crossing${crossingsCount === 1 ? "" : "s"} watched · ${hazardCount} hazard${hazardCount === 1 ? "" : "s"} · ${reportCount} report${reportCount === 1 ? "" : "s"}`,
+    panelTitle: safeDisplayText(safeSummary.panelTitle, `${areaName} Awareness`),
+    status: safeDisplayText(safeSummary.status || safeSummary.awarenessStatus, activeIssueCount > 0 ? activeStatus : quietStatus),
+    crossingsLine: safeDisplayText(
+      safeSummary.crossingsLine,
+      `${crossingsCount} crossing${crossingsCount === 1 ? "" : "s"} watched · ${hazardCount} hazard${hazardCount === 1 ? "" : "s"} · ${reportCount} report${reportCount === 1 ? "" : "s"}`
+    ),
     activeIssueCount,
-    activeIssuesLine: ""
+    activeIssuesLine: safeDisplayText(safeSummary.activeIssuesLine, "")
   };
+}
+
+function getGridlyMobileAwarenessPanelSummary(options = {}) {
+  const providedSummary = options?.summary || options?.communityAwarenessSummary || null;
+  const cachedSummary = providedSummary
+    || gridlyCommunityPulseAuditState?.communityAwarenessSummary
+    || window.gridlyTopAwarenessMicrolineState?.communityAwarenessSummary
+    || null;
+  const shouldUseCachedSnapshot = Boolean(providedSummary || options?.preferCached === true || options?.allowBuild === false);
+  const summary = shouldUseCachedSnapshot
+    ? (cachedSummary || {})
+    : (typeof buildGridlyCommunityAwarenessIntelligenceSummary === "function"
+      ? buildGridlyCommunityAwarenessIntelligenceSummary(options?.summaryOptions || {})
+      : {});
+  return normalizeGridlyMobileAwarenessPanelSummary(summary);
 }
 
 function shouldShowGridlyMobileAwarenessPanel(summary = null) {
@@ -55564,6 +55580,7 @@ function ensureGridlyPortraitLocationAwarenessPanel() {
     <strong class="gridly-v2-location-awareness-title" data-v2-location-awareness="title">Liberty County Awareness</strong>
     <p class="gridly-v2-location-awareness-status" data-v2-location-awareness="status">Community activity is quiet</p>
     <p class="gridly-v2-location-awareness-meta" data-v2-location-awareness="meta">No recent reports nearby · map remains live</p>
+    <button type="button" class="gridly-v2-location-awareness-route" data-v2-location-awareness="routeAction" hidden>Route</button>
   `;
   const dock = shell.querySelector(".gridly-v2-bottom-dock");
   if (dock?.parentNode) dock.parentNode.insertBefore(panel, dock);
@@ -55571,10 +55588,53 @@ function ensureGridlyPortraitLocationAwarenessPanel() {
   return panel;
 }
 
-function refreshGridlyPortraitLocationAwarenessPanel({ awarenessBrief = {}, pulseModel = {}, awarenessPrimary = "", awarenessSecondary = "" } = {}) {
+function getGridlyPortraitLocationAwarenessRouteContext() {
+  const searchState = typeof ensureGridlySearchState === "function" ? ensureGridlySearchState() : null;
+  const selectedDestination = typeof normalizeGridlySearchResult === "function"
+    ? normalizeGridlySearchResult(searchState?.selectedDestination)
+    : searchState?.selectedDestination;
+  const selectedLabel = safeDisplayText(typeof getSelectedDestinationLabel === "function" ? getSelectedDestinationLabel() : "", "");
+  const preview = typeof getGridlyDestinationRoutePreviewState === "function"
+    ? getGridlyDestinationRoutePreviewState()
+    : (window.GridlyDestinationRoutePreview || {});
+  const routeIsMonitoring = Boolean(routeWatchActivated || window.__gridlyRouteWatchActive);
+  const routePreviewActive = Boolean(preview?.active || ["loading", "ready"].includes(String(preview?.status || "")));
+  const hasRouteContext = Boolean(selectedDestination || selectedLabel || routeIsMonitoring || routePreviewActive);
+  return {
+    hasRouteContext,
+    selectedLabel,
+    routeIsMonitoring,
+    routePreviewActive,
+    previewStatus: preview?.status || "",
+    buttonText: selectedLabel ? "Change route" : "Choose route",
+    label: selectedLabel || (routeIsMonitoring ? "Saved destination" : routePreviewActive ? "Route preview" : "")
+  };
+}
+
+function bindGridlyPortraitLocationAwarenessRouteAction(button) {
+  if (!button || button.dataset.gridlyRouteActionBound === "true") return;
+  button.addEventListener("click", (event) => {
+    routeLauncherSource = "portrait-location-awareness-panel";
+    event?.preventDefault?.();
+    event?.stopPropagation?.();
+    if (typeof openGridlyDestinationSearchSurface === "function") {
+      openGridlyDestinationSearchSurface({ source: "portraitLocationAwarenessPanel" });
+    }
+  });
+  button.dataset.gridlyRouteActionBound = "true";
+}
+
+function refreshGridlyPortraitLocationAwarenessPanel({ awarenessBrief = {}, pulseModel = {}, awarenessPrimary = "", awarenessSecondary = "", communityAwarenessSummary = null } = {}) {
   const panel = ensureGridlyPortraitLocationAwarenessPanel();
   if (!panel) return null;
-  const summary = typeof getGridlyMobileAwarenessPanelSummary === "function" ? getGridlyMobileAwarenessPanelSummary() : {};
+  const sharedSummary = communityAwarenessSummary
+    || pulseModel?.communityAwarenessSummary
+    || gridlyCommunityPulseAuditState?.communityAwarenessSummary
+    || window.gridlyTopAwarenessMicrolineState?.communityAwarenessSummary
+    || null;
+  const summary = typeof getGridlyMobileAwarenessPanelSummary === "function"
+    ? getGridlyMobileAwarenessPanelSummary({ summary: sharedSummary, allowBuild: false })
+    : normalizeGridlyMobileAwarenessPanelSummary(sharedSummary || {});
   const activeAwareness = pulseModel?.activeAwareness || {};
   const quiet = String(awarenessBrief?.state || "quiet") === "quiet";
   const areaName = safeDisplayText(summary?.areaName || summary?.awarenessAreaName, "Liberty County");
@@ -55589,18 +55649,29 @@ function refreshGridlyPortraitLocationAwarenessPanel({ awarenessBrief = {}, puls
   const meta = quiet
     ? safeDisplayText(awarenessSecondary || summary?.crossingsLine, "No recent reports nearby · map remains live")
     : safeDisplayText(summary?.crossingsLine || pluralizeGridlyMobilityReports(activeCount), "Map markers show exact spots");
+  const routeContext = getGridlyPortraitLocationAwarenessRouteContext();
+  const routeActionEl = panel.querySelector('[data-v2-location-awareness="routeAction"]');
+  const routeContextSuffix = routeContext.hasRouteContext && routeContext.label ? ` · Route: ${routeContext.label}` : "";
   const titleEl = panel.querySelector('[data-v2-location-awareness="title"]');
   const statusEl = panel.querySelector('[data-v2-location-awareness="status"]');
   const metaEl = panel.querySelector('[data-v2-location-awareness="meta"]');
   setGridlyTopPanelTextIfChanged(titleEl, title, "refreshGridlyPortraitLocationAwarenessPanel", "gridlyPortraitLocationAwarenessTitle");
   setGridlyTopPanelTextIfChanged(statusEl, status, "refreshGridlyPortraitLocationAwarenessPanel", "gridlyPortraitLocationAwarenessStatus");
-  setGridlyTopPanelTextIfChanged(metaEl, meta, "refreshGridlyPortraitLocationAwarenessPanel", "gridlyPortraitLocationAwarenessMeta");
+  setGridlyTopPanelTextIfChanged(metaEl, `${meta}${routeContextSuffix}`, "refreshGridlyPortraitLocationAwarenessPanel", "gridlyPortraitLocationAwarenessMeta");
+  if (routeActionEl) {
+    bindGridlyPortraitLocationAwarenessRouteAction(routeActionEl);
+    routeActionEl.hidden = !routeContext.hasRouteContext;
+    routeActionEl.toggleAttribute("hidden", !routeContext.hasRouteContext);
+    routeActionEl.textContent = routeContext.buttonText;
+    routeActionEl.setAttribute("aria-label", routeContext.label ? `${routeContext.buttonText}: ${routeContext.label}` : routeContext.buttonText);
+  }
   panel.dataset.awarenessState = quiet ? "quiet" : "active";
   panel.dataset.awarenessAreaName = areaName;
   panel.dataset.activeAwarenessCount = String(Math.max(0, activeCount || 0));
+  panel.dataset.routeContext = routeContext.hasRouteContext ? "true" : "false";
   panel.hidden = false;
   panel.removeAttribute("hidden");
-  return { quiet, areaName, title, status, meta, activeCount };
+  return { quiet, areaName, title, status, meta, activeCount, routeContext };
 }
 
 function refreshPortraitV2LocalizedIntelligence() {
