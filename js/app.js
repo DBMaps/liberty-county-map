@@ -18165,7 +18165,7 @@ window.gridlyAwarenessAreaImmediateSyncDebug = function gridlyAwarenessAreaImmed
   return { ...gridlyAwarenessAreaImmediateSyncState };
 };
 
-function syncMobileDestinationCommandCard() {
+function syncMobileDestinationCommandCard(options = {}) {
   const cardRenderStartedAt = getGridlyDestinationPerfNow();
   const routeIsMonitoring = Boolean(routeWatchActivated || window.__gridlyRouteWatchActive);
   const selectedLabel = getSelectedDestinationLabel();
@@ -18181,7 +18181,7 @@ function syncMobileDestinationCommandCard() {
         routeImpactText
       ].filter((line) => String(line || "").trim()).join("\n")
     : destinationSupportText;
-  const awarenessSummary = getGridlyMobileAwarenessPanelSummary();
+  const awarenessSummary = getGridlyMobileAwarenessPanelSummary(options?.communityAwarenessSummary ? { summary: options.communityAwarenessSummary } : {});
   const visibilityState = getGridlyMobileCommandCardVisibilityState(awarenessSummary);
   const popupInteractionActive = visibilityState.popupInteractionActive;
   const awarenessPanelMode = Boolean(visibilityState.awarenessPanelMode);
@@ -56582,44 +56582,21 @@ function refreshGridlyPortraitLocationAwarenessPanel({ awarenessBrief = {}, puls
     : safeDisplayText(summary?.crossingsLine || pluralizeGridlyMobilityReports(activeCount), "Map markers show exact spots");
   const routeContext = getGridlyPortraitLocationAwarenessRouteContext();
   const routeActionEl = panel.querySelector('[data-v2-location-awareness="routeAction"]');
-  if (routeContext.routeOrDestinationBottomSurfaceOwner) {
-    if (routeActionEl) {
-      routeActionEl.hidden = true;
-      routeActionEl.toggleAttribute("hidden", true);
-    }
-    panel.dataset.awarenessState = quiet ? "quiet" : "active";
-    panel.dataset.awarenessAreaName = areaName;
-    panel.dataset.activeAwarenessCount = String(Math.max(0, activeCount || 0));
-    panel.dataset.routeContext = routeContext.hasRouteContext ? "true" : "false";
-    panel.dataset.bottomSurfaceOwner = "route-card";
-    panel.hidden = true;
-    panel.setAttribute("hidden", "");
-    return { quiet, areaName, title, status, meta, activeCount, routeContext, collapsedForRouteCard: true };
+  if (typeof syncMobileDestinationCommandCard === "function") {
+    syncMobileDestinationCommandCard({ communityAwarenessSummary: sharedSummary });
   }
-  const routeContextSuffix = "";
-  const kickerEl = panel.querySelector('[data-v2-location-awareness="kicker"]');
-  const titleEl = panel.querySelector('[data-v2-location-awareness="title"]');
-  const statusEl = panel.querySelector('[data-v2-location-awareness="status"]');
-  const metaEl = panel.querySelector('[data-v2-location-awareness="meta"]');
-  setGridlyTopPanelTextIfChanged(kickerEl, getGridlyLocationAwarenessCardKicker(areaName), "refreshGridlyPortraitLocationAwarenessPanel", "gridlyPortraitLocationAwarenessKicker");
-  setGridlyTopPanelTextIfChanged(titleEl, title, "refreshGridlyPortraitLocationAwarenessPanel", "gridlyPortraitLocationAwarenessTitle");
-  setGridlyTopPanelTextIfChanged(statusEl, status, "refreshGridlyPortraitLocationAwarenessPanel", "gridlyPortraitLocationAwarenessStatus");
-  setGridlyTopPanelTextIfChanged(metaEl, `${meta}${routeContextSuffix}`, "refreshGridlyPortraitLocationAwarenessPanel", "gridlyPortraitLocationAwarenessMeta");
   if (routeActionEl) {
-    bindGridlyPortraitLocationAwarenessRouteAction(routeActionEl);
-    routeActionEl.hidden = !routeContext.hasRouteContext;
-    routeActionEl.toggleAttribute("hidden", !routeContext.hasRouteContext);
-    routeActionEl.textContent = routeContext.buttonText;
-    routeActionEl.setAttribute("aria-label", routeContext.label ? `${routeContext.buttonText}: ${routeContext.label}` : routeContext.buttonText);
+    routeActionEl.hidden = true;
+    routeActionEl.toggleAttribute("hidden", true);
   }
   panel.dataset.awarenessState = quiet ? "quiet" : "active";
   panel.dataset.awarenessAreaName = areaName;
   panel.dataset.activeAwarenessCount = String(Math.max(0, activeCount || 0));
   panel.dataset.routeContext = routeContext.hasRouteContext ? "true" : "false";
-  panel.dataset.bottomSurfaceOwner = "location-awareness";
-  panel.hidden = false;
-  panel.removeAttribute("hidden");
-  return { quiet, areaName, title, status, meta, activeCount, routeContext };
+  panel.dataset.bottomSurfaceOwner = "mobile-destination-command";
+  panel.hidden = true;
+  panel.setAttribute("hidden", "");
+  return { quiet, areaName, title, status, meta, activeCount, routeContext, collapsedForCommandCard: true };
 }
 
 function refreshPortraitV2LocalizedIntelligence(options = {}) {
