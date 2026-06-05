@@ -19878,7 +19878,7 @@ function initVisualViewportHeightVar() {
 
 function initGridlyAwarenessPanelDockContract() {
   const root = document.documentElement;
-  const panelSelector = ".map-card > .mobile-destination-command.is-awareness-panel";
+  const panelSelector = ".map-card > .mobile-destination-command:is(.is-awareness-panel, .is-destination-panel):not([hidden]):not(.is-command-card-suppressed)";
   const dockSelector = "#gridlyPortraitV2 .gridly-v2-bottom-dock";
   const gapPixels = 10;
   let scheduled = false;
