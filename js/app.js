@@ -55202,6 +55202,33 @@ function buildUnifiedLocalizedCommuteIntelligence({ limit = 6 } = {}) {
   return buildCommuteConsequenceIntelligence({ limit });
 }
 
+function buildGridlyQuietLocalizedCommuteIntelligenceFastPathPayload() {
+  return {
+    items: [],
+    corridorClusters: [],
+    sourceCorridorClusters: [],
+    topStatus: "Community activity is quiet",
+    commuteImpactHeadline: "No major mobility issues reported nearby",
+    topStatusLocalizedDetail: "No recent reports nearby · map remains live",
+    nearbySummary: "No recent reports nearby · map remains live",
+    routeImpactSummary: "No active route impacts detected.",
+    hasActiveAlerts: false,
+    activeLocalizedAlertCount: 0,
+    routeImpactIncidentCount: 0,
+    commuteConsequenceTier: "none",
+    routeConsequenceSeverity: "none",
+    rerouteReadinessDetected: false,
+    consequenceTrendState: "quiet",
+    consequencePrimaryMessage: "No major mobility issues reported nearby",
+    consequenceSecondaryMessage: "Community activity is quiet.",
+    consequenceIncidentCount: 0,
+    routeImpactEtaEstimate: 0,
+    topIncidentFreshnessText: "",
+    trendMessage: "",
+    quietLocalizedIntelligenceFastPathApplied: true
+  };
+}
+
 function formatPortraitTopStripImpactLabel(tier = "") {
   const normalizedTier = String(tier || "").toLowerCase();
   if (normalizedTier === "severe" || normalizedTier === "heavy") return "High impact";
@@ -55290,37 +55317,47 @@ function getGridlyAwarenessBriefActiveState({ intel = {}, pulseModel = {} } = {}
 }
 
 
-function isGridlyQuietTopAwarenessFastPathEligible(intel = {}) {
-  const localizedSummariesEmpty = !Array.isArray(intel?.items) || intel.items.length === 0;
-  const corridorSummariesEmpty = (!Array.isArray(intel?.corridorClusters) || intel.corridorClusters.length === 0)
-    && (!Array.isArray(intel?.sourceCorridorClusters) || intel.sourceCorridorClusters.length === 0);
+function getGridlyQuietTopAwarenessFastPathStatus(intel = null) {
+  const safeIntel = intel && typeof intel === "object" ? intel : null;
   const latestAlerts = typeof window !== "undefined" && Array.isArray(window.__gridlyLatestAlertsForRender)
     ? window.__gridlyLatestAlertsForRender
     : [];
-  const alertsSnapshot = typeof window !== "undefined" && typeof window.getAlertsSurfaceSnapshot === "function"
-    ? window.getAlertsSurfaceSnapshot()
-    : null;
-  const activeAlertCount = Math.max(
-    0,
-    Number(intel?.activeLocalizedAlertCount || 0),
-    Number(alertsSnapshot?.activeIncidentCount || alertsSnapshot?.count || 0),
-    latestAlerts.length,
-    Array.isArray(activeReports) ? activeReports.length : 0
-  );
-  const activeHazardCount = Math.max(
-    0,
-    Number(alertsSnapshot?.activeHazardSourceCount || 0),
-    Array.isArray(activeHazards) ? activeHazards.length : 0
-  );
-  const activeIncidentCount = typeof getUnifiedIncidents === "function"
-    ? Math.max(0, Number(getUnifiedIncidents()?.length || 0))
+  const activeReportCount = Array.isArray(activeReports)
+    ? activeReports.filter((report) => report && !report.expired).length
     : 0;
-  return activeAlertCount === 0
-    && activeHazardCount === 0
-    && activeIncidentCount === 0
-    && localizedSummariesEmpty
-    && corridorSummariesEmpty
-    && !intel?.hasActiveAlerts;
+  const activeHazardCount = Array.isArray(activeHazards)
+    ? activeHazards.filter((hazard) => hazard && !hazard.expired && String(hazard.type || hazard.report_type || "").toLowerCase() !== "hazard_cleared").length
+    : 0;
+  const activeLocalizedAlertCount = Math.max(0, Number(safeIntel?.activeLocalizedAlertCount || 0));
+  const localizedSummaryCount = Array.isArray(safeIntel?.items) ? safeIntel.items.length : 0;
+  const corridorClusterCount = Math.max(
+    Array.isArray(safeIntel?.corridorClusters) ? safeIntel.corridorClusters.length : 0,
+    Array.isArray(safeIntel?.sourceCorridorClusters) ? safeIntel.sourceCorridorClusters.length : 0
+  );
+  const activeAlertCount = Math.max(0, activeLocalizedAlertCount, latestAlerts.length, activeReportCount);
+  const blockers = [];
+  if (activeAlertCount > 0) blockers.push("active_alerts_present");
+  if (activeHazardCount > 0) blockers.push("active_hazards_present");
+  if (localizedSummaryCount > 0) blockers.push("localized_summaries_present");
+  if (corridorClusterCount > 0) blockers.push("corridor_clusters_present");
+  if (safeIntel?.hasActiveAlerts) blockers.push("intel_has_active_alerts");
+  return {
+    eligible: blockers.length === 0,
+    blockers,
+    activeAlertCount,
+    activeHazardCount,
+    activeReportCount,
+    latestAlertCount: latestAlerts.length,
+    activeLocalizedAlertCount,
+    localizedSummaryCount,
+    corridorClusterCount,
+    expensiveSnapshotSkipped: true,
+    unifiedIncidentScanSkipped: true
+  };
+}
+
+function isGridlyQuietTopAwarenessFastPathEligible(intel = {}) {
+  return getGridlyQuietTopAwarenessFastPathStatus(intel).eligible;
 }
 
 function buildGridlyQuietTopAwarenessPulseModel() {
@@ -55435,15 +55472,33 @@ function refreshPortraitV2LocalizedIntelligence() {
     };
   });
   counts.activeReportCount = Array.isArray(activeReports) ? activeReports.length : 0;
+  counts.activeUnexpiredReportCount = Array.isArray(activeReports) ? activeReports.filter((report) => report && !report.expired).length : 0;
   counts.activeHazardCount = Array.isArray(activeHazards) ? activeHazards.length : 0;
+  counts.activeUnexpiredHazardCount = Array.isArray(activeHazards) ? activeHazards.filter((hazard) => hazard && !hazard.expired && String(hazard.type || hazard.report_type || "").toLowerCase() !== "hazard_cleared").length : 0;
   counts.crossingCount = Array.isArray(crossings) ? crossings.length : 0;
   if (!topPrimaryEl && !topSecondaryEl) {
     recordPortraitIntelligenceBreakdown("refreshPortraitV2LocalizedIntelligence", functionStartedAt, sections, { counts, cacheReuseApplied: false, unchangedDomWriteSkipped: 0 });
     return;
   }
+  const quietFastPathPreflight = timeGridlyAuditSection(sections, "quiet_fast_path_preflight", () => getGridlyQuietTopAwarenessFastPathStatus());
+  counts.quietFastPathPreflightEligible = quietFastPathPreflight.eligible ? 1 : 0;
+  counts.quietFastPathBlockers = quietFastPathPreflight.blockers;
+  counts.quietFastPathPreflightActiveAlertCount = quietFastPathPreflight.activeAlertCount;
+  counts.quietFastPathPreflightActiveHazardCount = quietFastPathPreflight.activeHazardCount;
+  counts.quietFastPathPreflightLatestAlertCount = quietFastPathPreflight.latestAlertCount;
+  counts.quietFastPathPreflightActiveReportCount = quietFastPathPreflight.activeReportCount;
+  counts.quietFastPathExpensiveSnapshotSkipped = quietFastPathPreflight.expensiveSnapshotSkipped ? 1 : 0;
+  counts.quietFastPathUnifiedIncidentScanSkipped = quietFastPathPreflight.unifiedIncidentScanSkipped ? 1 : 0;
   const cacheHitsBefore = Number(gridlyIntelligenceCacheAuditState.hits || 0);
-  const intel = timeGridlyAuditSection(sections, "localized_intelligence_build", () => buildUnifiedLocalizedCommuteIntelligence({ limit: 6 }));
-  auditState.cacheReuseApplied = Number(gridlyIntelligenceCacheAuditState.hits || 0) > cacheHitsBefore;
+  let quietLocalizedBuildSkipped = false;
+  const intel = quietFastPathPreflight.eligible
+    ? timeGridlyAuditSection(sections, "localized_intelligence_build.quiet_fast_path_payload", () => {
+      quietLocalizedBuildSkipped = true;
+      return buildGridlyQuietLocalizedCommuteIntelligenceFastPathPayload();
+    })
+    : timeGridlyAuditSection(sections, "localized_intelligence_build", () => buildUnifiedLocalizedCommuteIntelligence({ limit: 6 }));
+  auditState.cacheReuseApplied = quietLocalizedBuildSkipped || Number(gridlyIntelligenceCacheAuditState.hits || 0) > cacheHitsBefore;
+  counts.quietLocalizedIntelligenceBuildSkipped = quietLocalizedBuildSkipped ? 1 : 0;
   counts.localizedIntelligenceItemCount = Number(intel?.activeLocalizedAlertCount || 0);
   counts.corridorClusterCount = Array.isArray(intel?.sourceCorridorClusters) ? intel.sourceCorridorClusters.length : 0;
   timeGridlyAuditSection(sections, "corridor_cluster_handling", () => {
@@ -55475,8 +55530,12 @@ function refreshPortraitV2LocalizedIntelligence() {
     void mobilityLanguagePrimaryCandidate;
     void travelConsequencePrimaryCandidate;
     void corridorAwarePrimaryCandidate;
-    const quietFastPathEligible = isGridlyQuietTopAwarenessFastPathEligible(intel);
+    const quietFastPathStatus = getGridlyQuietTopAwarenessFastPathStatus(intel);
+    const quietFastPathEligible = quietFastPathStatus.eligible;
     counts.quietTopAwarenessFastPathApplied = quietFastPathEligible ? 1 : 0;
+    counts.quietTopAwarenessFastPathBlockers = quietFastPathStatus.blockers;
+    counts.quietTopAwarenessFastPathActiveAlertCount = quietFastPathStatus.activeAlertCount;
+    counts.quietTopAwarenessFastPathActiveHazardCount = quietFastPathStatus.activeHazardCount;
     const pulseModel = quietFastPathEligible
       ? buildGridlyQuietTopAwarenessPulseModel()
       : timeGridlyAuditSection(sections, "reports_hazards_loop.community_pulse_model", () => buildGridlyCommunityPulseModel({ topAwarenessMicrolineReadOnly: true }));
@@ -55524,7 +55583,10 @@ function refreshPortraitV2LocalizedIntelligence() {
       pulseHeadline: textModel.pulseModel.renderedPulseHeadline || activeAwareness.headline || "",
       activeReportCount: quietAwarenessState ? 0 : getGridlyAwarenessCommunityCount(intel, activeAwareness),
       activeHazardCount: quietAwarenessState ? 0 : (activeAwareness.activeHazardCount ?? 0),
-      activityLevel: quietAwarenessState ? "quiet" : (textModel.pulseModel.mobilityPressureCategory || activeAwareness.activityLevel || "quiet")
+      activityLevel: quietAwarenessState ? "quiet" : (textModel.pulseModel.mobilityPressureCategory || activeAwareness.activityLevel || "quiet"),
+      quietTopAwarenessFastPathApplied: Boolean(counts.quietTopAwarenessFastPathApplied),
+      quietLocalizedIntelligenceBuildSkipped: Boolean(counts.quietLocalizedIntelligenceBuildSkipped),
+      quietFastPathBlockers: counts.quietTopAwarenessFastPathBlockers || counts.quietFastPathBlockers || []
     };
   });
   timeGridlyAuditSection(sections, "preview_card_render", () => renderGridlyIntelligencePreviewCard({ reason: "refreshPortraitV2LocalizedIntelligence", model: textModel.pulseModel }));
