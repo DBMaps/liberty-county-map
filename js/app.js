@@ -11458,7 +11458,7 @@ function snapshotGridlyIntelligenceCacheAudit() {
 }
 
 function finalizeNearbyPairResult(state) {
-  if (!state || typeof state !== "object") return {};
+  if (!state || typeof state !== "object") return state;
   return { ...state };
 }
 
@@ -52577,7 +52577,11 @@ function buildRoadHazardDisplay(incident, resolvedLookup = null) {
   const hasUsefulRoadName = locationContext.primary && !/liberty county/i.test(locationContext.primary);
 
   let title = "Other Hazard";
-  if (category === "flooding" && hasUsefulRoadName) title = `Flooding near ${locationContext.phrasing}`;
+  if (category === "debris" && hasUsefulRoadName) {
+    title = locationContext.secondary
+      ? `Debris on ${locationContext.primary} near ${locationContext.secondary}`
+      : `Debris reported near ${locationContext.phrasing}`;
+  } else if (category === "flooding" && hasUsefulRoadName) title = `Flooding near ${locationContext.phrasing}`;
   else if (hasUsefulRoadName) title = `${hazardType} near ${locationContext.phrasing}`;
   else if (hazardType !== "Other Hazard") title = hazardType;
   title = standardizeGridlyAlertHeadline(title);
@@ -55789,6 +55793,37 @@ function getGridlyPortraitLocationAwarenessRouteContext() {
     || document.getElementById("gridlyMobileRouteQuickPanel")?.classList?.contains?.("visible")
     || document.getElementById("gridlySearchShell")?.classList?.contains?.("visible")
   );
+  const isVisibleBottomSurface = (element) => {
+    if (!(element instanceof HTMLElement)) return false;
+    if (element.hidden || element.getAttribute("aria-hidden") === "true") return false;
+    const style = window.getComputedStyle(element);
+    if (style.display === "none" || style.visibility === "hidden" || Number(style.opacity || "1") <= 0) return false;
+    const rect = element.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0;
+  };
+  const commandCard = document.getElementById("mobileDestinationCommandTitle")?.closest?.(".mobile-destination-command")
+    || document.querySelector(".mobile-destination-command");
+  const commandCardOwnsRouteSurface = Boolean(
+    isVisibleBottomSurface(commandCard)
+    && !commandCard.classList.contains("is-awareness-panel")
+    && !commandCard.classList.contains("is-command-card-suppressed")
+  );
+  const routeQuickPanelOwnsSurface = isVisibleBottomSurface(document.getElementById("gridlyMobileRouteQuickPanel"));
+  const searchShellOwnsSurface = isVisibleBottomSurface(document.getElementById("gridlySearchShell"));
+  const commandVisibilityState = typeof getGridlyMobileCommandCardVisibilityState === "function"
+    ? getGridlyMobileCommandCardVisibilityState()
+    : null;
+  const stateReportsRouteOwner = Boolean(
+    commandVisibilityState?.visible
+    && !commandVisibilityState?.awarenessPanelMode
+    && ["route", "destination", "route-preview", "destination-panel"].includes(String(commandVisibilityState?.owner || ""))
+  );
+  const routeOrDestinationBottomSurfaceOwner = Boolean(
+    commandCardOwnsRouteSurface
+    || routeQuickPanelOwnsSurface
+    || searchShellOwnsSurface
+    || stateReportsRouteOwner
+  );
   const selectDestinationLabel = safeDisplayText(
     document.getElementById("routeWatchDestinationSelect")?.selectedOptions?.[0]?.textContent
       || document.getElementById("mobileRouteQuickDestination")?.selectedOptions?.[0]?.textContent,
@@ -55807,6 +55842,11 @@ function getGridlyPortraitLocationAwarenessRouteContext() {
     routePreviewActive,
     routeWatchConfigured,
     explicitDestinationPanelOpen,
+    routeOrDestinationBottomSurfaceOwner,
+    commandCardOwnsRouteSurface,
+    routeQuickPanelOwnsSurface,
+    searchShellOwnsSurface,
+    stateReportsRouteOwner,
     previewStatus: preview?.status || "",
     buttonText: priorMobileButtonText,
     label
@@ -55853,7 +55893,7 @@ function refreshGridlyPortraitLocationAwarenessPanel({ awarenessBrief = {}, puls
     : safeDisplayText(summary?.crossingsLine || pluralizeGridlyMobilityReports(activeCount), "Map markers show exact spots");
   const routeContext = getGridlyPortraitLocationAwarenessRouteContext();
   const routeActionEl = panel.querySelector('[data-v2-location-awareness="routeAction"]');
-  if (routeContext.hasRouteContext) {
+  if (routeContext.routeOrDestinationBottomSurfaceOwner) {
     if (routeActionEl) {
       routeActionEl.hidden = true;
       routeActionEl.toggleAttribute("hidden", true);
@@ -55861,7 +55901,7 @@ function refreshGridlyPortraitLocationAwarenessPanel({ awarenessBrief = {}, puls
     panel.dataset.awarenessState = quiet ? "quiet" : "active";
     panel.dataset.awarenessAreaName = areaName;
     panel.dataset.activeAwarenessCount = String(Math.max(0, activeCount || 0));
-    panel.dataset.routeContext = "true";
+    panel.dataset.routeContext = routeContext.hasRouteContext ? "true" : "false";
     panel.dataset.bottomSurfaceOwner = "route-card";
     panel.hidden = true;
     panel.setAttribute("hidden", "");
@@ -55884,7 +55924,7 @@ function refreshGridlyPortraitLocationAwarenessPanel({ awarenessBrief = {}, puls
   panel.dataset.awarenessState = quiet ? "quiet" : "active";
   panel.dataset.awarenessAreaName = areaName;
   panel.dataset.activeAwarenessCount = String(Math.max(0, activeCount || 0));
-  panel.dataset.routeContext = "false";
+  panel.dataset.routeContext = routeContext.hasRouteContext ? "true" : "false";
   panel.dataset.bottomSurfaceOwner = "location-awareness";
   panel.hidden = false;
   panel.removeAttribute("hidden");
