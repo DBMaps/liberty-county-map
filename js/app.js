@@ -49813,6 +49813,25 @@ const GRIDLY_SETTINGS_MAP_STYLE_LABELS = {
 
 const GRIDLY_SETTINGS_VALID_THEMES = new Set(["system", "light", "dark"]);
 const GRIDLY_SETTINGS_VALID_TEXT_SIZES = new Set(["standard", "large", "compact", "extra-large"]);
+const GRIDLY_SETTINGS_TEXT_SIZE_ALIASES = Object.freeze({
+  small: "compact",
+  compact: "compact",
+  medium: "standard",
+  default: "standard",
+  normal: "standard",
+  standard: "standard",
+  large: "large",
+  "extra-large": "extra-large",
+  extra_large: "extra-large",
+  xlarge: "extra-large",
+  xl: "extra-large"
+});
+const GRIDLY_SETTINGS_TEXT_SIZE_SCALES = Object.freeze({
+  compact: 0.92,
+  standard: 1,
+  large: 1.15,
+  "extra-large": 1.28
+});
 let gridlyLastSettingsAction = "";
 
 function gridlyStorageAvailable() {
@@ -49846,9 +49865,9 @@ function normalizeGridlySettings(raw = null) {
   if (GRIDLY_SETTINGS_MAP_STYLE_LABELS[normalizedStyle]) base.display.mapStyle = normalizedStyle;
   const normalizedTheme = String(display.theme || "").trim().toLowerCase();
   if (GRIDLY_SETTINGS_VALID_THEMES.has(normalizedTheme)) base.display.theme = normalizedTheme;
-  const normalizedTextSize = String(display.textSize || "").trim().toLowerCase();
-  if (normalizedTextSize === "extra-large") base.display.textSize = "large";
-  else if (GRIDLY_SETTINGS_VALID_TEXT_SIZES.has(normalizedTextSize)) base.display.textSize = normalizedTextSize;
+  const normalizedTextSize = String(display.textSize || display.fontSize || "").trim().toLowerCase();
+  const aliasedTextSize = GRIDLY_SETTINGS_TEXT_SIZE_ALIASES[normalizedTextSize] || normalizedTextSize;
+  if (GRIDLY_SETTINGS_VALID_TEXT_SIZES.has(aliasedTextSize)) base.display.textSize = aliasedTextSize;
   base.personalization.preferredName = normalizeGridlyPreferredName(personalization.preferredName);
   const resolvedAwarenessArea = resolveGridlyAwarenessArea(community.awarenessArea || community.homeTown);
   base.community.homeTown = resolvedAwarenessArea?.storageValue || "";
@@ -49895,16 +49914,21 @@ function applyGridlySettingsDisplayPreferences(display = {}, source = "settings"
   const root = typeof document !== "undefined" ? document.documentElement : null;
   const themeClass = `gridly-theme-${normalized.theme}`;
   const textSizeClass = `gridly-text-${normalized.textSize}`;
+  const textScale = GRIDLY_SETTINGS_TEXT_SIZE_SCALES[normalized.textSize] || 1;
   if (body) {
     ["gridly-theme-system", "gridly-theme-light", "gridly-theme-dark"].forEach((className) => body.classList.remove(className));
     ["gridly-text-standard", "gridly-text-large", "gridly-text-compact", "gridly-text-extra-large"].forEach((className) => body.classList.remove(className));
     body.classList.add(themeClass, textSizeClass);
     body.dataset.gridlyTheme = normalized.theme;
     body.dataset.gridlyTextSize = normalized.textSize;
+    body.style.setProperty("--gridly-app-font-scale", String(textScale));
+    body.style.setProperty("--gridly-settings-text-scale", String(textScale));
   }
   if (root) {
     root.dataset.gridlyTheme = normalized.theme;
     root.dataset.gridlyTextSize = normalized.textSize;
+    root.style.setProperty("--gridly-app-font-scale", String(textScale));
+    root.style.setProperty("--gridly-settings-text-scale", String(textScale));
   }
   try {
     localStorage.setItem(MAP_STYLE_STORAGE_KEY, layerName);

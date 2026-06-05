@@ -1,4 +1,8 @@
 :root {
+  --gridly-app-font-scale: 1;
+  --gridly-settings-text-scale: var(--gridly-app-font-scale);
+  --gridly-settings-density-scale: 1;
+  font-size: calc(16px * var(--gridly-app-font-scale));
   --bg: #050505;
   --bg-elev: #08090b;
   --bg-panel: #0d0f12;
@@ -14767,16 +14771,20 @@ body.gridly-theme-system {
   }
 }
 
-body.gridly-text-standard { --gridly-settings-text-scale: 1; --gridly-settings-density-scale: 1; }
-body.gridly-text-large { --gridly-settings-text-scale: 1.1; --gridly-settings-density-scale: 1.04; }
-body.gridly-text-compact { --gridly-settings-text-scale: 0.92; --gridly-settings-density-scale: 0.92; }
+:root[data-gridly-text-size="standard"],
+body.gridly-text-standard { --gridly-app-font-scale: 1; --gridly-settings-text-scale: 1; --gridly-settings-density-scale: 1; }
 
-body.gridly-text-large :is(.settings-modal-card, .gridly-settings-sheet, #gridlyPortraitV2, .mobile-alerts-panel, .route-setup-modal-card, .gridly-welcome-sheet) {
-  font-size: calc(1rem * var(--gridly-settings-text-scale));
-}
+:root[data-gridly-text-size="large"],
+body.gridly-text-large { --gridly-app-font-scale: 1.15; --gridly-settings-text-scale: 1.15; --gridly-settings-density-scale: 1.04; }
 
-body.gridly-text-compact :is(.settings-modal-card, .gridly-settings-sheet, #gridlyPortraitV2, .mobile-alerts-panel, .route-setup-modal-card, .gridly-welcome-sheet) {
-  font-size: calc(1rem * var(--gridly-settings-text-scale));
+:root[data-gridly-text-size="compact"],
+body.gridly-text-compact { --gridly-app-font-scale: 0.92; --gridly-settings-text-scale: 0.92; --gridly-settings-density-scale: 0.92; }
+
+:root[data-gridly-text-size="extra-large"],
+body.gridly-text-extra-large { --gridly-app-font-scale: 1.28; --gridly-settings-text-scale: 1.28; --gridly-settings-density-scale: 1.08; }
+
+body:is(.gridly-text-large, .gridly-text-compact, .gridly-text-extra-large) :is(.settings-modal-card, .gridly-settings-sheet, #gridlyPortraitV2, .mobile-alerts-panel, .route-setup-modal-card, .gridly-welcome-sheet) {
+  font-size: 1rem;
 }
 
 .settings-toggle-grid {
