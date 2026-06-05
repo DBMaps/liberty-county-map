@@ -17365,3 +17365,31 @@ body.gridly-theme-light[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPo
 .gridly-v2-location-awareness-route[hidden] {
   display: none !important;
 }
+
+/* V250.4 — Settings awareness area chooser */
+.settings-awareness-area-chooser {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.settings-awareness-area-chooser[hidden] {
+  display: none !important;
+}
+
+.settings-awareness-area-option.is-selected {
+  border-color: rgba(67, 230, 160, 0.72);
+  background: linear-gradient(180deg, rgba(67, 230, 160, 0.26), rgba(142, 239, 255, 0.12));
+  color: #ffffff;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-awareness-area-chooser {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-awareness-area-chooser[hidden] {
+  display: none !important;
+}

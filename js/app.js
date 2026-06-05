@@ -20178,6 +20178,10 @@ function hydrateElements() {
     "settingsHomeMeta",
     "settingsWorkValue",
     "settingsWorkMeta",
+    "settingsAwarenessAreaValue",
+    "settingsAwarenessAreaMeta",
+    "settingsAwarenessAreaChooser",
+    "settingsChangeAwarenessAreaBtn",
     "settingsSavedPlacesList",
     "settingsManageSavedPlacesBtn",
     "settingsEditHomeBtn",
@@ -49988,6 +49992,72 @@ function describeGridlySettingsPlace(place, fallbackLabel) {
   };
 }
 
+function getGridlySettingsAwarenessAreaDisplay() {
+  const area = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  if (!area) {
+    return {
+      label: "Not selected",
+      meta: "Choose the community-watch area Gridly should follow.",
+      storageValue: ""
+    };
+  }
+  return {
+    label: area.label || area.storageValue || "Liberty County",
+    meta: area.countyWide ? "Watching all of Liberty County." : "Community-watch area for local awareness.",
+    storageValue: area.storageValue || ""
+  };
+}
+
+function escapeGridlySettingsAttribute(value = "") {
+  return String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char]));
+}
+
+function buildGridlySettingsAwarenessOptionsHtml(selectedValue = "") {
+  const areas = Array.isArray(GRIDLY_AWARENESS_AREA_DEFINITIONS) ? GRIDLY_AWARENESS_AREA_DEFINITIONS : [];
+  return areas.map((area) => {
+    const storageValue = area?.storageValue || "";
+    const label = area?.label || storageValue || "Awareness Area";
+    const selected = storageValue === selectedValue;
+    return `<button class="secondary-btn compact-btn settings-awareness-area-option${selected ? " is-selected" : ""}" type="button" data-gridly-settings-awareness-option="${escapeGridlySettingsAttribute(storageValue)}" data-v2-action="settings-select-awareness-area" data-gridly-awareness-area="${escapeGridlySettingsAttribute(storageValue)}" aria-pressed="${selected ? "true" : "false"}">${escapeGridlySettingsAttribute(label)}</button>`;
+  }).join("");
+}
+
+function renderGridlySettingsAwarenessControl() {
+  const display = getGridlySettingsAwarenessAreaDisplay();
+  safeText("settingsAwarenessAreaValue", display.label);
+  safeText("settingsAwarenessAreaMeta", display.meta);
+  document.querySelectorAll("[data-gridly-settings-awareness-current]").forEach((node) => { node.textContent = display.label; });
+  document.querySelectorAll("[data-gridly-settings-awareness-meta]").forEach((node) => { node.textContent = display.meta; });
+  document.querySelectorAll("[data-gridly-settings-awareness-options]").forEach((container) => {
+    container.innerHTML = buildGridlySettingsAwarenessOptionsHtml(display.storageValue);
+  });
+}
+
+function setGridlySettingsAwarenessChooserOpen(open, root = null) {
+  const scope = root || (typeof document !== "undefined" ? document : null);
+  if (!scope) return;
+  scope.querySelectorAll?.("[data-gridly-settings-awareness-options], #settingsAwarenessAreaChooser")?.forEach((chooser) => {
+    chooser.hidden = !open;
+  });
+  scope.querySelectorAll?.('[data-v2-action="settings-change-awareness-area"], #settingsChangeAwarenessAreaBtn')?.forEach((button) => {
+    button.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+}
+
+function selectGridlySettingsAwarenessArea(value = "", source = "settings_awareness_area") {
+  const saved = typeof saveGridlyHomeTownPreference === "function" ? saveGridlyHomeTownPreference(value, { source }) : "";
+  if (!saved) {
+    safeText("settingsSaveStatus", "Awareness Area could not be saved on this device.");
+    document.querySelectorAll("[data-v2-settings-status]").forEach((node) => { node.textContent = "Awareness Area could not be saved on this device."; });
+    return false;
+  }
+  renderGridlySettingsAwarenessControl();
+  setGridlySettingsAwarenessChooserOpen(false);
+  safeText("settingsSaveStatus", "Awareness Area saved on this device.");
+  document.querySelectorAll("[data-v2-settings-status]").forEach((node) => { node.textContent = "Awareness Area saved on this device."; });
+  return true;
+}
+
 function renderGridlySettingsSavedPlaces() {
   const state = getSavedPlacesState();
   const home = describeGridlySettingsPlace(state.home, "Home");
@@ -50004,6 +50074,7 @@ function renderGridlySettingsSavedPlaces() {
 
 function renderGridlySettingsPanel(settings = getGridlySettingsPreferences()) {
   const normalized = normalizeGridlySettings(settings);
+  renderGridlySettingsAwarenessControl();
   renderGridlySettingsSavedPlaces();
   if (els.settingsRouteAlertsToggle) els.settingsRouteAlertsToggle.checked = Boolean(normalized.notifications.routeAlerts);
   if (els.settingsRailAlertsToggle) els.settingsRailAlertsToggle.checked = Boolean(normalized.notifications.railAlerts);
@@ -50285,10 +50356,12 @@ function gridlySettingsListExperienceAudit() {
       '[data-v2-action="route-edit-home-open"]',
       '[data-v2-action="route-edit-work-open"]',
       '[data-v2-action="route-manage-places-open"]',
+      '[data-v2-action="settings-change-awareness-area"]',
+      '[data-v2-action="settings-select-awareness-area"]',
       '[data-v2-action="settings-replay-setup"]',
       '[data-v2-action="settings-feedback-placeholder"]'
     ];
-    const legacyActionSelectors = ["#settingsEditHomeBtn", "#settingsEditWorkBtn", "#settingsManageSavedPlacesBtn", "#settingsReplaySetupBtn", "#settingsFeedbackBtn"];
+    const legacyActionSelectors = ["#settingsEditHomeBtn", "#settingsEditWorkBtn", "#settingsManageSavedPlacesBtn", "#settingsChangeAwarenessAreaBtn", "#settingsReplaySetupBtn", "#settingsFeedbackBtn"];
     const fieldSelectors = [
       '[data-v2-settings-field="personalization.preferredName"], #settingsPreferredNameInput',
       '[data-v2-settings-field="notifications.routeAlerts"], #settingsRouteAlertsToggle',
@@ -50677,7 +50750,7 @@ function gridlySettingsListExperienceAudit() {
       label: "Not Detected In Current Settings",
       detected: false,
       currentVisibleItems: [],
-      hiddenLabels: ["Awareness Area", "Location permission control", "Report settings", "Route logic tuning", "Testing tools", "Supabase sync controls"],
+      hiddenLabels: ["Location permission control", "Report settings", "Route logic tuning", "Testing tools", "Supabase sync controls"],
       actions: [],
       toggles: [],
       buttons: [],
@@ -50694,9 +50767,9 @@ function gridlySettingsListExperienceAudit() {
   const groupingRecommendations = [
     {
       group: "Profile & Awareness",
-      immediatelyVisible: ["Preferred Name set/not set"],
-      expandOnly: ["Preferred Name input", "privacy/local-only note"],
-      rationale: "Profile is setup-only; Awareness Area is not currently present in Settings and should not be invented in V249.1."
+      immediatelyVisible: ["Current Awareness Area", "Preferred Name set/not set"],
+      expandOnly: ["Change Awareness Area action", "Preferred Name input", "privacy/local-only note"],
+      rationale: "Profile is setup-only; Awareness Area now reuses existing home-town preference persistence so users can find it in Settings."
     },
     {
       group: "Alerts & Notifications",
@@ -50737,7 +50810,7 @@ function gridlySettingsListExperienceAudit() {
     "About Gridly exposes build metadata and two rare/support buttons at the same visual level as daily settings.",
     "Send Feedback is currently a placeholder acknowledgement, making it a low-value always-visible action.",
     "Saved Places dynamic list is already hidden-capable, which is a strong signal for expandable-list readiness.",
-    "Current Settings has no detected Awareness Area, Location permission, Report settings, Route logic tuning, Testing tools, or Supabase controls to migrate."
+    "Current Settings now exposes Awareness Area controls; Location permission, Report settings, Route logic tuning, Testing tools, and Supabase controls remain out of Settings."
   ];
   const visibleControlCount = settingsItems.filter((entry) => entry.visibleImmediatelyToday).length;
   return {
@@ -50767,6 +50840,7 @@ function gridlySettingsListExperienceAudit() {
       "V249.1 should keep Route Watch, awareness filtering, Supabase, hazard lifecycle, and popup consumer models unchanged."
     ],
     immediatelyVisibleRecommendation: [
+      "Current Awareness Area",
       "Home saved/not-saved state",
       "Work saved/not-saved state",
       "Saved Places count/manage summary",
@@ -50779,6 +50853,7 @@ function gridlySettingsListExperienceAudit() {
       "full Home/Work meta and local-only notes",
       "Edit Home / Edit Work / Manage Saved Places buttons",
       "all notification toggles",
+      "Change Awareness Area action",
       "Preferred Name input and privacy note",
       "Theme select and explanatory copy",
       "Replay Setup",
@@ -50826,6 +50901,21 @@ function bindGridlySettingsPreferences() {
     els.settingsManageSavedPlacesBtn.dataset.gridlySettingsBound = "1";
     els.settingsManageSavedPlacesBtn.addEventListener("click", () => {
       openGridlySettingsSavedPlaceAction("manage_saved_places", "manage", "legacy_settings");
+    });
+  }
+  if (els.settingsChangeAwarenessAreaBtn && els.settingsChangeAwarenessAreaBtn.dataset.gridlySettingsBound !== "1") {
+    els.settingsChangeAwarenessAreaBtn.dataset.gridlySettingsBound = "1";
+    els.settingsChangeAwarenessAreaBtn.addEventListener("click", () => {
+      const isOpen = els.settingsAwarenessAreaChooser ? !els.settingsAwarenessAreaChooser.hidden : false;
+      setGridlySettingsAwarenessChooserOpen(!isOpen, els.settingsModal || document);
+    });
+  }
+  if (els.settingsAwarenessAreaChooser && els.settingsAwarenessAreaChooser.dataset.gridlySettingsBound !== "1") {
+    els.settingsAwarenessAreaChooser.dataset.gridlySettingsBound = "1";
+    els.settingsAwarenessAreaChooser.addEventListener("click", (event) => {
+      const target = event.target instanceof Element ? event.target.closest("[data-gridly-settings-awareness-option]") : null;
+      if (!target || !els.settingsAwarenessAreaChooser.contains(target)) return;
+      selectGridlySettingsAwarenessArea(target.dataset.gridlySettingsAwarenessOption || "", "legacy_settings_awareness_area");
     });
   }
   if (els.settingsFeedbackBtn && els.settingsFeedbackBtn.dataset.gridlySettingsBound !== "1") {
@@ -60241,6 +60331,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         : { label: "Not saved", meta: `Save ${fallback} in Manage Saved Places.` });
     const home = describe(places.home, "Home");
     const work = describe(places.work, "Work");
+    const awareness = typeof getGridlySettingsAwarenessAreaDisplay === "function" ? getGridlySettingsAwarenessAreaDisplay() : { label: "Not selected", meta: "Choose the community-watch area Gridly should follow.", storageValue: "" };
     const checked = (value) => value ? " checked" : "";
     const selected = (value, target) => value === target ? " selected" : "";
     const html = `
@@ -60249,7 +60340,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         <details class="settings-modal-section settings-list-section">
           <summary class="settings-list-summary"><span class="settings-list-title">Profile &amp; Awareness</span><span class="settings-list-meta">Liberty County Awareness · Profile details</span></summary>
           <div class="settings-list-detail">
-            <p class="settings-placeholder-note">Awareness follows the current Liberty County experience. Profile details stay on this device.</p>
+            <p class="settings-placeholder-note">Awareness follows your selected community-watch area. Profile details stay on this device.</p>
+            <div class="settings-place-grid" aria-label="Awareness Area settings">
+              <article class="settings-place-card settings-place-card-wide settings-awareness-area-card"><span class="settings-place-label">Awareness Area</span><strong data-gridly-settings-awareness-current>${escapeV2SettingsText(awareness.label)}</strong><small data-gridly-settings-awareness-meta>${escapeV2SettingsText(awareness.meta)}</small><button class="gridly-v2-tile settings-place-action" data-v2-action="settings-change-awareness-area" type="button" aria-expanded="false">Change Awareness Area</button></article>
+            </div>
+            <div class="settings-awareness-area-chooser" data-gridly-settings-awareness-options aria-label="Choose an awareness area" hidden>${typeof buildGridlySettingsAwarenessOptionsHtml === "function" ? buildGridlySettingsAwarenessOptionsHtml(awareness.storageValue) : ""}</div>
             <div class="settings-select-grid">
               <label>Preferred Name<input data-v2-settings-field="personalization.preferredName" type="text" maxlength="32" autocomplete="given-name" placeholder="Denise, Joe, Mom, Dispatcher" value="${escapeV2SettingsText(settings.personalization?.preferredName || "")}"></label>
             </div>
@@ -61332,6 +61427,14 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       "settings-alert-preferences": () => triggerV2DockAdapter("settings-open"),
       "settings-route-preferences": () => triggerV2DockAdapter("settings-open"),
       "settings-app-preferences": () => triggerV2DockAdapter("settings-open"),
+      "settings-change-awareness-area": () => {
+        const body = document.getElementById("gridlyPortraitV2SheetBody");
+        const chooser = body?.querySelector?.("[data-gridly-settings-awareness-options]");
+        setGridlySettingsAwarenessChooserOpen(Boolean(chooser?.hidden), body || document);
+      },
+      "settings-select-awareness-area": () => {
+        selectGridlySettingsAwarenessArea(payload.awarenessArea || "", "portrait_v2_settings_awareness_area");
+      },
       "settings-replay-setup": () => openGridlyWelcomeOnboarding({ source: "portrait_v2_settings_replay" }),
       "settings-feedback-placeholder": () => setConfirmation("Feedback entry point is a placeholder for this phase.", "success"),
       "report-cancel": () => closePortraitV2Sheet(),
@@ -61368,6 +61471,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         "route-edit-home-open",
         "route-edit-work-open",
         "route-manage-places-open",
+        "settings-change-awareness-area",
+        "settings-select-awareness-area",
         "settings-replay-setup"
       ].includes(canonicalAction);
       const shouldKeepSheetOpen = canonicalAction === "report-select-hazard" || canonicalAction === "report-select-other-hazard-subtype";
@@ -61413,7 +61518,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         triggerV2DockAdapter(action, {
           hazardType: actionEl.dataset.hazardType || "",
           otherHazardSubtype: actionEl.dataset.otherHazardSubtype || "",
-          layerName: actionEl.dataset.layerName || ""
+          layerName: actionEl.dataset.layerName || "",
+          awarenessArea: actionEl.dataset.gridlyAwarenessArea || actionEl.dataset.gridlySettingsAwarenessOption || ""
         });
       });
       body.dataset.v2DelegatedClickBound = "1";
