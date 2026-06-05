@@ -40027,6 +40027,286 @@ function gridlyInferCardinalRoadDirection(bearing) {
   return null;
 }
 
+const GRIDLY_DIRECTIONAL_PROVENANCE_AUDIT_VERSION = "V252.0";
+const GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDORS = ["US 90", "TX 146", "TX 321", "FM 1960", "FM 1409"];
+const GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDOR_DEFAULTS = {
+  "US 90": { orientation: "east-west", directions: ["EB", "WB"], authoritative: true },
+  "TX 146": { orientation: "north-south", directions: ["NB", "SB"], authoritative: false },
+  "TX 321": { orientation: "north-south", directions: ["NB", "SB"], authoritative: false },
+  "FM 1960": { orientation: "east-west", directions: ["EB", "WB"], authoritative: true },
+  "FM 1409": { orientation: "north-south", directions: ["NB", "SB"], authoritative: true }
+};
+
+function gridlyCreateEmptyDirectionalProvenance(overrides = {}) {
+  return {
+    directionSource: "none",
+    cardinalDirection: null,
+    bearing: null,
+    confidence: "low",
+    corridor: null,
+    corridorDefaultUsed: false,
+    dividedRoadRisk: false,
+    fallbackReason: "insufficient_confidence",
+    suppressed: true,
+    ...overrides
+  };
+}
+
+function gridlyNormalizeDirectionalConfidence(value) {
+  const normalized = String(value || "").toLowerCase();
+  if (normalized === "high" || normalized === "medium") return normalized;
+  return "low";
+}
+
+function gridlyDirectionalProvenanceRoundBearing(value) {
+  const bearing = Number(value);
+  return Number.isFinite(bearing) ? gridlyRoadwayAuditRound(((bearing % 360) + 360) % 360, 1) : null;
+}
+
+function gridlyDirectionalProvenanceOfficialDirection(record = {}) {
+  const candidates = [
+    record?.direction,
+    record?.travelDirection,
+    record?.travel_direction,
+    record?.officialDirection,
+    record?.official_direction,
+    record?.laneDirection,
+    record?.lane_direction,
+    record?.routeImpact,
+    record?.route_impact,
+    record?.raw?.direction,
+    record?.raw?.travelDirection,
+    record?.raw?.travel_direction,
+    record?.raw?.officialDirection,
+    record?.raw?.official_direction,
+    record?.source?.direction,
+    record?.source?.travelDirection,
+    record?.source?.travel_direction,
+    record?.latestReport?.direction,
+    record?.latestReport?.travelDirection,
+    record?.latestReport?.travel_direction
+  ];
+  const joined = candidates.map((value) => String(value || "").trim()).filter(Boolean).join(" ").toLowerCase();
+  if (!joined || /\b(both|all directions|bidirectional|two-way|all lanes)\b/.test(joined)) return null;
+  if (/\b(northbound|north bound|nb)\b/.test(joined)) return "NB";
+  if (/\b(southbound|south bound|sb)\b/.test(joined)) return "SB";
+  if (/\b(eastbound|east bound|eb)\b/.test(joined)) return "EB";
+  if (/\b(westbound|west bound|wb)\b/.test(joined)) return "WB";
+  return null;
+}
+
+function gridlyDirectionalProvenanceCorridorFromValue(value = "") {
+  const normalized = normalizeCorridorBaseLabel(String(value || "").replace(/\s+Corridor$/i, ""));
+  if (!normalized) return null;
+  return GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDORS.find((corridor) => {
+    const corridorPattern = corridor.replace(/\s+/, "\\s*");
+    return normalized === corridor || new RegExp(`\\b${corridorPattern}\\b`, "i").test(normalized);
+  }) || null;
+}
+
+function gridlyDirectionalProvenanceCorridor(record = {}, selectedSegment = null) {
+  const candidates = [
+    selectedSegment?.roadName,
+    record?.selectedRoadName,
+    record?.roadName,
+    record?.road_name,
+    record?.primaryRoad,
+    record?.parsedPrimaryRoad,
+    record?.routeNameDisplay,
+    record?.routeName,
+    record?.nearestRoad,
+    record?.nearestRoadName,
+    record?.corridor,
+    record?.raw?.roadName,
+    record?.raw?.primaryRoad,
+    record?.raw?.routeNameDisplay,
+    record?.source?.roadName,
+    record?.latestReport?.roadName,
+    typeof inferCorridorLabel === "function" ? inferCorridorLabel(record) : ""
+  ];
+  for (const value of candidates) {
+    const corridor = gridlyDirectionalProvenanceCorridorFromValue(value);
+    if (corridor) return corridor;
+  }
+  return null;
+}
+
+function gridlyDirectionalProvenanceFallbackReason({ hasGeometry, selectedSegment, dividedRoadRisk, ambiguousParallelSegments, confidence, cardinalDirection, corridor, corridorDefaultUsed, officialDirection }) {
+  if (dividedRoadRisk) return "divided_road_risk";
+  if (ambiguousParallelSegments) return "ambiguous_parallel_segments";
+  if (!hasGeometry && !selectedSegment) return "no_geometry";
+  if (hasGeometry && !selectedSegment) return "no_valid_segment";
+  if (corridorDefaultUsed && corridor && !officialDirection && (corridor === "TX 146" || corridor === "TX 321")) return "mixed_orientation_corridor";
+  if (!cardinalDirection || confidence === "low") return "insufficient_confidence";
+  return null;
+}
+
+function gridlyBuildDirectionalProvenance(record = {}, options = {}) {
+  const coordinate = gridlyCoordinateFromRecord(options.coordinate)
+    || gridlyCoordinateFromRecord(record?.finalPlacementCoordinate)
+    || gridlyCoordinateFromRecord(record?.representativeCoordinate)
+    || gridlyCoordinateFromRecord(record?.rawTapCoordinate || record?.reportCaptureCoordinate)
+    || gridlyCoordinateFromRecord(record);
+  const geometryDecision = options.geometryDecision || (coordinate && typeof gridlyGeometryAwarePlacementDecision === "function"
+    ? gridlyGeometryAwarePlacementDecision(coordinate, { maxDistanceMeters: options.maxDistanceMeters || 75, limit: options.limit || 16 })
+    : null);
+  const selectedSegment = options.selectedSegment
+    || geometryDecision?.selectedSegment
+    || record?.geometryAwarePlacement?.selectedSegment
+    || record?.selectedRoadwaySegment
+    || null;
+  const corridor = gridlyDirectionalProvenanceCorridor(record, selectedSegment);
+  const corridorDefault = corridor ? GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDOR_DEFAULTS[corridor] || null : null;
+  const bearing = gridlyDirectionalProvenanceRoundBearing(
+    selectedSegment?.bearing
+    ?? record?.selectedSegmentBearing
+    ?? record?.segmentBearing
+    ?? record?.segment_bearing
+    ?? record?.bearing
+    ?? record?.geometry?.bearing
+    ?? null
+  );
+  const segmentDirection = gridlyInferCardinalRoadDirection(bearing);
+  const officialDirection = gridlyDirectionalProvenanceOfficialDirection(record);
+  const sameRoadParallelCount = Number(geometryDecision?.oppositeSideCandidateCount ?? geometryDecision?.sameRoadParallelCandidates?.length ?? record?.oppositeSideCandidateCount ?? 0);
+  const candidateGap = Number(geometryDecision?.candidateDistanceGapMeters ?? record?.candidateDistanceGapMeters);
+  const dividedRoadRisk = Boolean(options.dividedRoadRisk || geometryDecision?.dividedRoadRisk || record?.dividedRoadRisk || record?.geometryAwarePlacement?.dividedRoadRisk);
+  const ambiguousParallelSegments = Boolean(
+    sameRoadParallelCount > 0
+    && (!Number.isFinite(candidateGap) || candidateGap <= 5 || dividedRoadRisk)
+  );
+  const hasGeometry = Boolean(geometryDecision?.candidateCount || selectedSegment || bearing !== null || roadwayDatasetLoaded);
+  const selectedSideConfidence = gridlyNormalizeDirectionalConfidence(geometryDecision?.selectedSideConfidence || record?.selectedSideConfidence || record?.directionConfidence);
+  let confidence = "low";
+  let directionSource = "none";
+  let cardinalDirection = null;
+  let corridorDefaultUsed = false;
+
+  if (bearing !== null && segmentDirection) {
+    directionSource = "segment_bearing";
+    cardinalDirection = segmentDirection;
+    confidence = dividedRoadRisk || ambiguousParallelSegments
+      ? "low"
+      : (selectedSideConfidence === "high" ? "high" : selectedSideConfidence === "medium" ? "medium" : "medium");
+  } else if (officialDirection) {
+    directionSource = "official_direction";
+    cardinalDirection = officialDirection;
+    confidence = dividedRoadRisk || ambiguousParallelSegments ? "low" : "medium";
+    if (corridorDefault) corridorDefaultUsed = true;
+  } else if (corridorDefault) {
+    directionSource = "corridor_default";
+    corridorDefaultUsed = true;
+    confidence = "low";
+    cardinalDirection = null;
+  }
+
+  if (corridorDefault && directionSource !== "corridor_default") corridorDefaultUsed = true;
+  if ((corridor === "TX 146" || corridor === "TX 321") && directionSource === "corridor_default") {
+    confidence = "low";
+    cardinalDirection = null;
+  }
+  if (confidence === "low" || dividedRoadRisk || ambiguousParallelSegments) cardinalDirection = null;
+
+  const fallbackReason = gridlyDirectionalProvenanceFallbackReason({
+    hasGeometry,
+    selectedSegment,
+    dividedRoadRisk,
+    ambiguousParallelSegments,
+    confidence,
+    cardinalDirection,
+    corridor,
+    corridorDefaultUsed,
+    officialDirection
+  });
+
+  return gridlyCreateEmptyDirectionalProvenance({
+    directionSource,
+    cardinalDirection,
+    bearing,
+    confidence,
+    corridor,
+    corridorDefaultUsed,
+    dividedRoadRisk,
+    fallbackReason,
+    suppressed: confidence === "low" || !cardinalDirection,
+    selectedSegmentId: selectedSegment?.segmentId || null,
+    selectedSegmentDistanceMeters: selectedSegment?.distanceFromTapMeters ?? record?.selectedSegmentDistanceMeters ?? null,
+    selectedSideConfidence,
+    ambiguousParallelSegments,
+    evaluatedCoordinate: coordinate
+  });
+}
+
+function gridlyDirectionalProvenanceRecords(options = {}) {
+  const supplied = Array.isArray(options.records) ? options.records : null;
+  const unified = supplied || (typeof getUnifiedIncidents === "function" ? getUnifiedIncidents() : []);
+  const fallback = !supplied && (!Array.isArray(unified) || !unified.length) && Array.isArray(activeHazards) ? activeHazards : [];
+  const records = Array.isArray(unified) && unified.length ? unified : fallback;
+  return (Array.isArray(records) ? records : []).filter((record) => {
+    const text = `${record?.id || ""} ${record?.type || ""} ${record?.report_type || ""} ${record?.category || ""} ${record?.roadName || ""} ${record?.primaryRoad || ""}`.toLowerCase();
+    return /road|hazard|crash|closure|flood|traffic|debris|disabled|txdot/.test(text) || gridlyCoordinateFromRecord(record);
+  });
+}
+
+function gridlyDirectionalProvenanceIncrement(counts, key) {
+  const normalized = key == null || key === "" ? "none" : String(key);
+  counts[normalized] = (counts[normalized] || 0) + 1;
+}
+
+function gridlyDirectionalProvenanceAudit(options = {}) {
+  const records = gridlyDirectionalProvenanceRecords(options);
+  const maxRecords = Number.isFinite(Number(options.maxRecords)) ? Math.max(0, Number(options.maxRecords)) : records.length;
+  const evaluatedRecords = records.slice(0, maxRecords);
+  const corridorBreakdown = {};
+  const directionSourceBreakdown = {};
+  const fallbackReasonBreakdown = {};
+  const sampleRecords = [];
+  let highConfidence = 0;
+  let mediumConfidence = 0;
+  let lowConfidence = 0;
+  let suppressed = 0;
+
+  evaluatedRecords.forEach((record, index) => {
+    const provenance = gridlyBuildDirectionalProvenance(record, options);
+    if (provenance.confidence === "high") highConfidence += 1;
+    else if (provenance.confidence === "medium") mediumConfidence += 1;
+    else lowConfidence += 1;
+    if (provenance.suppressed) suppressed += 1;
+    gridlyDirectionalProvenanceIncrement(corridorBreakdown, provenance.corridor || "out_of_scope_or_unknown");
+    gridlyDirectionalProvenanceIncrement(directionSourceBreakdown, provenance.directionSource);
+    gridlyDirectionalProvenanceIncrement(fallbackReasonBreakdown, provenance.fallbackReason || "none");
+    const sampleLimit = Number.isFinite(Number(options.sampleLimit)) ? Math.max(0, Number(options.sampleLimit)) : 8;
+    if (sampleRecords.length < sampleLimit) {
+      sampleRecords.push({
+        recordId: String(record?.id || record?.report_id || record?.reportId || `record_${index}`),
+        provenance
+      });
+    }
+  });
+
+  return {
+    available: true,
+    version: GRIDLY_DIRECTIONAL_PROVENANCE_AUDIT_VERSION,
+    auditOnly: true,
+    rendersDirectionalUi: false,
+    totalEvaluated: evaluatedRecords.length,
+    highConfidence,
+    mediumConfidence,
+    lowConfidence,
+    suppressed,
+    corridorBreakdown,
+    directionSourceBreakdown,
+    fallbackReasonBreakdown,
+    sampleRecords
+  };
+}
+
+if (typeof window !== "undefined") {
+  window.gridlyBuildDirectionalProvenance = gridlyBuildDirectionalProvenance;
+  window.gridlyDirectionalProvenanceAudit = gridlyDirectionalProvenanceAudit;
+}
+exposeGridlyAuditHelper("gridlyDirectionalProvenanceAudit", gridlyDirectionalProvenanceAudit);
+
 function gridlyDirectionalRoadNameFromFeature(feature = {}) {
   const props = feature?.properties || {};
   const candidates = [props.name, props.ref, props.highway]
