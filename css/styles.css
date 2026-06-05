@@ -17304,3 +17304,35 @@ body.gridly-theme-light[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPo
 #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .gridly-settings-sheet {
   contain: layout paint;
 }
+
+/* V227.1 — portrait Location Awareness route action restore. */
+.gridly-v2-location-awareness-panel:has(.gridly-v2-location-awareness-route:not([hidden])) {
+  pointer-events: auto;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 10px;
+}
+.gridly-v2-location-awareness-panel:has(.gridly-v2-location-awareness-route:not([hidden])) .gridly-v2-location-awareness-kicker,
+.gridly-v2-location-awareness-panel:has(.gridly-v2-location-awareness-route:not([hidden])) .gridly-v2-location-awareness-title,
+.gridly-v2-location-awareness-panel:has(.gridly-v2-location-awareness-route:not([hidden])) .gridly-v2-location-awareness-status,
+.gridly-v2-location-awareness-panel:has(.gridly-v2-location-awareness-route:not([hidden])) .gridly-v2-location-awareness-meta {
+  grid-column: 1;
+}
+.gridly-v2-location-awareness-route {
+  align-self: center;
+  grid-column: 2;
+  grid-row: 1 / span 4;
+  border: 1px solid rgba(125, 211, 252, .38);
+  border-radius: 999px;
+  background: rgba(14, 165, 233, .18);
+  color: #e0f7ff;
+  cursor: pointer;
+  font: inherit;
+  font-size: .72rem;
+  font-weight: 800;
+  padding: 7px 10px;
+  pointer-events: auto;
+  white-space: nowrap;
+}
+.gridly-v2-location-awareness-route[hidden] {
+  display: none !important;
+}
