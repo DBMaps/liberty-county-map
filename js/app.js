@@ -18075,6 +18075,7 @@ function syncGridlyAwarenessAreaSurfacesImmediately(reason = "awareness-area-cha
     ...(options?.summaryOptions || {}),
     activeReports: Array.isArray(summary?.activeReportsInArea) ? summary.activeReportsInArea : options?.pulseOptions?.activeReports,
     activeHazards: Array.isArray(summary?.activeHazardsInArea) ? summary.activeHazardsInArea : options?.pulseOptions?.activeHazards,
+    communityAwarenessSummary: summary,
     communityActivityCount: (Array.isArray(summary?.activeReportsInArea) ? summary.activeReportsInArea.length : 0) + (Array.isArray(summary?.activeHazardsInArea) ? summary.activeHazardsInArea.length : 0),
     communityActivitySource: "awareness_area_immediate_sync.area_scoped_active_items",
     reason
@@ -30383,11 +30384,19 @@ function buildGridlyCommunityPulseModel(options = {}) {
   const dataset = buildCommunityPresenceDataset(options);
   const activeAwareness = buildGridlyLightweightActiveAwareness(options);
   const selectedCommunityCount = Number(dataset.selectedCommunityCount || 0);
-  const communityAwarenessSummary = buildGridlyCommunityAwarenessIntelligenceSummary({
-    ...options,
-    communityActivityCount: selectedCommunityCount,
-    communityActivitySource: "community_presence_dataset.selectedCommunityCount"
-  });
+  const providedCommunityAwarenessSummary = options?.communityAwarenessSummary && typeof options.communityAwarenessSummary === "object"
+    ? options.communityAwarenessSummary
+    : null;
+  const providedSummaryMatchesSelectedArea = providedCommunityAwarenessSummary
+    ? isGridlyCachedAwarenessSummaryForCurrentArea(providedCommunityAwarenessSummary)
+    : false;
+  const communityAwarenessSummary = providedSummaryMatchesSelectedArea
+    ? providedCommunityAwarenessSummary
+    : buildGridlyCommunityAwarenessIntelligenceSummary({
+      ...options,
+      communityActivityCount: selectedCommunityCount,
+      communityActivitySource: "community_presence_dataset.selectedCommunityCount"
+    });
   const communityPhraseCount = Number(dataset.communityPhraseCount || 0);
   const corridorPriority = scoreGridlyDominantCorridor(dataset);
   const dominantCorridor = corridorPriority.dominantCorridor || dataset.dominantCorridor || null;
@@ -30489,6 +30498,38 @@ function buildGridlyCommunityPulseModel(options = {}) {
   };
 }
 
+function syncGridlyCommunityPulseCopyFromModel(model = {}, options = {}) {
+  if (typeof document === "undefined" || !model || typeof model !== "object") return false;
+  const headline = document.getElementById("gridlyCommunityPulseHeadline");
+  const subline = document.getElementById("gridlyCommunityPulseSubline");
+  if (!headline && !subline) return false;
+
+  const summaryHasAreaName = Boolean(safeDisplayText(model.communityAwarenessSummary?.awarenessAreaName, ""));
+  const summaryDisplay = summaryHasAreaName && typeof summarizeGridlyAwarenessIntelligenceForDisplay === "function"
+    ? summarizeGridlyAwarenessIntelligenceForDisplay(model.communityAwarenessSummary || {})
+    : {};
+  const renderedPulseHeadlineText = safeDisplayText(
+    summaryDisplay.headline || model.renderedPulseHeadline,
+    "Community activity is quiet"
+  );
+  const renderedPulseSublineText = safeDisplayText(
+    summaryDisplay.subline || model.renderedPulseSubline,
+    "No major disruptions nearby"
+  );
+  if (headline) headline.textContent = renderedPulseHeadlineText;
+  if (subline) subline.textContent = renderedPulseSublineText;
+
+  const surface = document.getElementById("gridlyCommunityPulseSurface");
+  if (surface) {
+    const areaName = safeDisplayText(model.communityAwarenessSummary?.awarenessAreaName, "");
+    if (areaName) surface.dataset.awarenessAreaName = areaName;
+    surface.dataset.gridlyPulseCopyAreaSynced = "true";
+    surface.dataset.gridlyPulseCopySyncReason = safeDisplayText(options?.reason, "community-pulse-model-sync");
+  }
+
+  return true;
+}
+
 function renderGridlyCommunityPulse(options = {}) {
   // Recovery baseline guard: rendering the pulse must consume the lightweight
   // Community Presence model only. Do not run source joins inside pulse render.
@@ -30532,10 +30573,13 @@ function renderGridlyCommunityPulse(options = {}) {
   surface.dataset.awarenessMode = model.awarenessMode;
   surface.dataset.gridlyPulseVisible = model.pulseVisible ? "true" : "false";
   surface.dataset.gridlyPulseRenderTarget = GRIDLY_COMMUNITY_PULSE_RENDER_TARGET;
-  const renderedPulseHeadlineText = safeDisplayText(model.renderedPulseHeadline, "Community activity is quiet");
-  const renderedPulseSublineText = safeDisplayText(model.renderedPulseSubline, "No major disruptions nearby");
-  if (headline) headline.textContent = renderedPulseHeadlineText;
-  if (subline) subline.textContent = renderedPulseSublineText;
+  const communityPulseCopySynced = syncGridlyCommunityPulseCopyFromModel(model, { reason: options?.reason || "renderGridlyCommunityPulse" });
+  const renderedPulseHeadlineText = safeDisplayText(headline?.textContent || model.renderedPulseHeadline, "Community activity is quiet");
+  const renderedPulseSublineText = safeDisplayText(subline?.textContent || model.renderedPulseSubline, "No major disruptions nearby");
+  if (!communityPulseCopySynced) {
+    if (headline) headline.textContent = renderedPulseHeadlineText;
+    if (subline) subline.textContent = renderedPulseSublineText;
+  }
 
   gridlyCommunityPulseAuditState = {
     ...model,
@@ -30583,10 +30627,12 @@ function refreshGridlyCommunityPulseSharedModel(options = {}) {
       repetitionAvoidanceApplied: false
     };
   }
+  const communityPulseCopySynced = syncGridlyCommunityPulseCopyFromModel(model, { reason: options?.reason || "refreshGridlyCommunityPulseSharedModel" });
   gridlyCommunityPulseAuditState = {
     ...model,
     pulseVisible: false,
-    pulseSuppressedReason: model.pulseSuppressedReason || "desktop pulse DOM gated; shared portrait model refreshed"
+    pulseSuppressedReason: model.pulseSuppressedReason || "desktop pulse DOM gated; shared portrait model refreshed",
+    communityPulseCopySynced
   };
   recordGridlyActiveLocationLifecycleEvent("refreshGridlyCommunityPulseSharedModel", {
     reason: options?.reason || "unspecified",
