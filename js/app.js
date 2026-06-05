@@ -27909,15 +27909,32 @@ function getGridlyLightweightTitleCaseCategory(category = "") {
   return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
+function getGridlyConsumerTopAwarenessConditionLabel(category = "") {
+  const label = getGridlyLightweightTitleCaseCategory(category);
+  if (/^Debris in Road$/i.test(label)) return "Debris";
+  if (/^Crash \/ Wreck$/i.test(label)) return "Crash";
+  return label;
+}
+
+function buildGridlyConsumerTopAwarenessLocationHeadline(category = "", locationLabel = "") {
+  const condition = getGridlyConsumerTopAwarenessConditionLabel(category);
+  const location = normalizeGridlyLightweightLocationLabelText(locationLabel);
+  if (!condition || !location) return "";
+  if (isGridlyRailOrCrossingCategory(category)) {
+    const preposition = /^(?:near|on|at|between|along|from|over|under)\b/i.test(location) ? "" : "on ";
+    return `Train blocking crossing ${preposition}${location}`;
+  }
+  if (/^(?:on|at|between|along|from|over|under)\b/i.test(location)) return `${condition} ${location}`;
+  if (/^near\b/i.test(location)) return `${condition} reported ${location}`;
+  if (/\b(?:near|at|between)\b/i.test(location)) return `${condition} on ${location}`;
+  return `${condition} reported near ${location}`;
+}
+
 function buildGridlyLightweightSummaryFromResolvedDetail(detail = {}) {
-  const category = getGridlyLightweightTitleCaseCategory(detail.resolvedCategory);
-  const locationLabel = normalizeGridlyLightweightLocationLabelText(detail.resolvedLocationLabel);
-  if (!category || !locationLabel) return { value: "", source: "" };
-  const preposition = /^(?:near|on|at|between|along|from|over|under)\b/i.test(locationLabel) ? "" : "on ";
-  const value = isGridlyRailOrCrossingCategory(detail.resolvedCategory)
-    ? `Train blocking crossing ${preposition}${locationLabel}`
-    : `${category} ${preposition}${locationLabel}`;
-  return { value, source: "lightweightActiveAwareness.resolvedCategory+resolvedLocationLabel" };
+  const value = buildGridlyConsumerTopAwarenessLocationHeadline(detail.resolvedCategory, detail.resolvedLocationLabel);
+  return value
+    ? { value, source: "lightweightActiveAwareness.resolvedCategory+resolvedLocationLabel" }
+    : { value: "", source: "" };
 }
 
 function isGridlyRailOrCrossingCategory(category = "") {
@@ -55620,6 +55637,43 @@ function buildGridlyQuietTopAwarenessPulseModel() {
   };
 }
 
+function isGridlyCategoryOnlyTopAwarenessHeadline(value = "") {
+  const text = safeDisplayText(value, "");
+  if (!text) return true;
+  return /^(?:Debris in Road|Debris|Crash|Crash \/ Wreck|Flooding|Road closure|Construction|Hazard|Disabled vehicle|Community Activity Nearby)$/i.test(text);
+}
+
+function buildGridlyLocationFirstTopAwarenessHeadline(activeAwareness = {}, narrativePromotion = {}) {
+  const candidates = [];
+  const addCandidate = (text, source = "activeAwareness") => {
+    const headline = normalizeGridlyLightweightAlertSummaryText(text);
+    if (!headline || isGridlyCategoryOnlyTopAwarenessHeadline(headline)) return;
+    const location = getGridlyLightweightLocationFromHeadline(headline);
+    if (!hasGridlyTopAwarenessUsableLocationIntelligence(location || headline)) return;
+    candidates.push({ headline, source });
+  };
+
+  addCandidate(activeAwareness?.headline, "activeAwareness.headline");
+  addCandidate(activeAwareness?.reusedAlertText, activeAwareness?.reusedAlertSource || "activeAwareness.reusedAlertText");
+  (Array.isArray(activeAwareness?.activeAwarenessSamples) ? activeAwareness.activeAwarenessSamples : []).forEach((sample, index) => {
+    addCandidate(sample?.reusedAlertText, sample?.reusedAlertSource || `activeAwareness.samples.${index}.reusedAlertText`);
+    addCandidate(sample?.headline || sample?.title || sample?.summary || sample?.description, `activeAwareness.samples.${index}.headline`);
+    addCandidate(
+      buildGridlyConsumerTopAwarenessLocationHeadline(sample?.resolvedCategory, sample?.resolvedLocationLabel),
+      `activeAwareness.samples.${index}.resolvedCategory+resolvedLocationLabel`
+    );
+  });
+  addCandidate(
+    buildGridlyConsumerTopAwarenessLocationHeadline(
+      activeAwareness?.resolvedCategory || activeAwareness?.topCategory || narrativePromotion?.selectedCondition,
+      activeAwareness?.resolvedLocationLabel || activeAwareness?.topAwarenessSelectedLocationIntelligence?.label || narrativePromotion?.selectedRoad
+    ),
+    "activeAwareness.resolvedCategory+resolvedLocationLabel"
+  );
+
+  return candidates[0] || null;
+}
+
 function getGridlyQuietAwarenessBriefCopy() {
   return {
     state: "quiet",
@@ -55658,7 +55712,12 @@ function buildGridlyAwarenessBriefCopy({ intel = {}, existingAlertWording = {}, 
     const safeActiveCount = activeCount > 0 ? activeCount : 1;
     const narrativePromotion = buildGridlyNarrativePromotionPrototype({ intel, pulseModel, activeAwareness, awarenessAreaName: town });
     const promotedPrimary = safeDisplayText(narrativePromotion.promotedNarrative, "");
-    const calmPrimary = promotedPrimary || "Community Activity Nearby";
+    const locationFirstHeadline = buildGridlyLocationFirstTopAwarenessHeadline(activeAwareness, narrativePromotion);
+    const shouldReplacePromotedPrimary = isGridlyCategoryOnlyTopAwarenessHeadline(promotedPrimary)
+      || !hasGridlyTopAwarenessUsableLocationIntelligence(getGridlyLightweightLocationFromHeadline(promotedPrimary) || promotedPrimary);
+    const calmPrimary = locationFirstHeadline?.headline && (!promotedPrimary || shouldReplacePromotedPrimary)
+      ? locationFirstHeadline.headline
+      : (promotedPrimary || "Community Activity Nearby");
     return {
       state: safeActiveCount >= 6 ? "high" : "moderate",
       greeting: getGridlyAwarenessGreetingText(),
@@ -55667,7 +55726,9 @@ function buildGridlyAwarenessBriefCopy({ intel = {}, existingAlertWording = {}, 
       microline: "",
       microlineVisible: false,
       selectedHeadline: calmPrimary,
-      selectedSource: promotedPrimary ? (narrativePromotion.sourceUsed || "narrative_promotion_prototype") : "calm_community_summary",
+      selectedSource: calmPrimary === locationFirstHeadline?.headline
+        ? (locationFirstHeadline.source || "location_first_active_awareness")
+        : (promotedPrimary ? (narrativePromotion.sourceUsed || "narrative_promotion_prototype") : "calm_community_summary"),
       selectedLocationIntelligence: activeAwareness?.topAwarenessSelectedLocationIntelligence || null,
       fallbackReason: promotedPrimary ? (narrativePromotion.fallbackUsed ? "road_reference_unavailable_travel_fallback" : "") : "specific_incident_headlines_suppressed",
       narrativePromotion
@@ -55723,6 +55784,11 @@ function getGridlyPortraitLocationAwarenessRouteContext() {
   const routeIsMonitoring = Boolean(routeWatchActivated || window.__gridlyRouteWatchActive);
   const routePreviewActive = Boolean(preview?.active || ["loading", "ready"].includes(String(preview?.status || "")));
   const routeWatchConfigured = Boolean(routeLabelParts?.configured || (routeLabelParts?.hasHome && routeLabelParts?.hasDestination));
+  const explicitDestinationPanelOpen = Boolean(
+    document.body?.classList?.contains?.("route-quick-panel-open")
+    || document.getElementById("gridlyMobileRouteQuickPanel")?.classList?.contains?.("visible")
+    || document.getElementById("gridlySearchShell")?.classList?.contains?.("visible")
+  );
   const selectDestinationLabel = safeDisplayText(
     document.getElementById("routeWatchDestinationSelect")?.selectedOptions?.[0]?.textContent
       || document.getElementById("mobileRouteQuickDestination")?.selectedOptions?.[0]?.textContent,
@@ -55732,7 +55798,7 @@ function getGridlyPortraitLocationAwarenessRouteContext() {
     || savedDestinationLabel
     || (routePreviewActive ? safeDisplayText(preview?.destination?.title || preview?.destination?.displayName || preview?.destination?.name || preview?.destination?.address, "") : "")
     || (routeIsMonitoring ? "Saved destination" : routeWatchConfigured ? safeDisplayText(selectDestinationLabel, "Saved destination") : routePreviewActive ? "Route preview" : "");
-  const hasRouteContext = Boolean(selectedDestination || selectedLabel || savedDestinationLabel || routeIsMonitoring || routePreviewActive || routeWatchConfigured);
+  const hasRouteContext = Boolean(selectedDestination || selectedLabel || savedDestinationLabel || routeIsMonitoring || routePreviewActive || explicitDestinationPanelOpen);
   const priorMobileButtonText = (selectedLabel || savedDestinationLabel || routeIsMonitoring || routePreviewActive || routeWatchConfigured) ? "Change" : "Choose Route";
   return {
     hasRouteContext,
@@ -55740,6 +55806,7 @@ function getGridlyPortraitLocationAwarenessRouteContext() {
     routeIsMonitoring,
     routePreviewActive,
     routeWatchConfigured,
+    explicitDestinationPanelOpen,
     previewStatus: preview?.status || "",
     buttonText: priorMobileButtonText,
     label
@@ -55786,7 +55853,21 @@ function refreshGridlyPortraitLocationAwarenessPanel({ awarenessBrief = {}, puls
     : safeDisplayText(summary?.crossingsLine || pluralizeGridlyMobilityReports(activeCount), "Map markers show exact spots");
   const routeContext = getGridlyPortraitLocationAwarenessRouteContext();
   const routeActionEl = panel.querySelector('[data-v2-location-awareness="routeAction"]');
-  const routeContextSuffix = routeContext.hasRouteContext && routeContext.label ? ` · Route: ${routeContext.label}` : "";
+  if (routeContext.hasRouteContext) {
+    if (routeActionEl) {
+      routeActionEl.hidden = true;
+      routeActionEl.toggleAttribute("hidden", true);
+    }
+    panel.dataset.awarenessState = quiet ? "quiet" : "active";
+    panel.dataset.awarenessAreaName = areaName;
+    panel.dataset.activeAwarenessCount = String(Math.max(0, activeCount || 0));
+    panel.dataset.routeContext = "true";
+    panel.dataset.bottomSurfaceOwner = "route-card";
+    panel.hidden = true;
+    panel.setAttribute("hidden", "");
+    return { quiet, areaName, title, status, meta, activeCount, routeContext, collapsedForRouteCard: true };
+  }
+  const routeContextSuffix = "";
   const titleEl = panel.querySelector('[data-v2-location-awareness="title"]');
   const statusEl = panel.querySelector('[data-v2-location-awareness="status"]');
   const metaEl = panel.querySelector('[data-v2-location-awareness="meta"]');
@@ -55803,7 +55884,8 @@ function refreshGridlyPortraitLocationAwarenessPanel({ awarenessBrief = {}, puls
   panel.dataset.awarenessState = quiet ? "quiet" : "active";
   panel.dataset.awarenessAreaName = areaName;
   panel.dataset.activeAwarenessCount = String(Math.max(0, activeCount || 0));
-  panel.dataset.routeContext = routeContext.hasRouteContext ? "true" : "false";
+  panel.dataset.routeContext = "false";
+  panel.dataset.bottomSurfaceOwner = "location-awareness";
   panel.hidden = false;
   panel.removeAttribute("hidden");
   return { quiet, areaName, title, status, meta, activeCount, routeContext };
