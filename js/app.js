@@ -40028,6 +40028,7 @@ function gridlyInferCardinalRoadDirection(bearing) {
 }
 
 const GRIDLY_DIRECTIONAL_PROVENANCE_AUDIT_VERSION = "V253";
+const GRIDLY_DIRECTIONAL_PROVENANCE_READINESS_VALIDATION_VERSION = "V253.1";
 const GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDORS = ["US 90", "TX 146", "TX 321", "FM 1960", "FM 1409"];
 
 const GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDOR_PATTERNS = {
@@ -40639,6 +40640,242 @@ function gridlyDirectionalProvenanceDirectionalReadiness(detectedMajorCorridors 
   };
 }
 
+function gridlyDirectionalProvenanceFeatureAuditId(feature = {}, featureIndex = 0) {
+  const props = feature?.properties || {};
+  return String(props["@id"] || props.id || props.osm_id || props.way_id || props.gid || `feature_${featureIndex}`);
+}
+
+function gridlyDirectionalProvenanceFeatureInsideCounty(feature = {}) {
+  const segments = typeof flattenRoadGeometrySegments === "function" ? flattenRoadGeometrySegments(feature?.geometry) : [];
+  if (!segments.length) return false;
+  return segments.some((segment) => {
+    const midpoint = {
+      lat: (Number(segment.startLat) + Number(segment.endLat)) / 2,
+      lng: (Number(segment.startLng) + Number(segment.endLng)) / 2
+    };
+    return isGridlyCoordinateInsideLibertyCountyBounds({ lat: segment.startLat, lng: segment.startLng })
+      || isGridlyCoordinateInsideLibertyCountyBounds({ lat: segment.endLat, lng: segment.endLng })
+      || isGridlyCoordinateInsideLibertyCountyBounds(midpoint);
+  });
+}
+
+function gridlyDirectionalProvenanceReadinessAliasGroup(corridor = "") {
+  const label = normalizeCorridorBaseLabel(String(corridor || ""));
+  const lower = label.toLowerCase();
+  if (/^(?:us 59|i-69)\b/i.test(label) || /\beastex\s+freeway\b/i.test(label)) return "us59_i69_eastex";
+  if (/^us 90\b/i.test(label) || /\bcrosby\s+freeway\b/i.test(lower)) return "us90";
+  return label || "unknown";
+}
+
+function gridlyDirectionalProvenanceExpectedLibertyCorridor(corridor = "") {
+  const label = normalizeCorridorBaseLabel(String(corridor || ""));
+  if (!label) return false;
+  if (GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDORS.includes(label)) return true;
+  if (/^(?:US 59|I-69|TX 99|TX 105|FM 1008|FM 1010|FM 1409|FM 1410|FM 1413|FM 160|FM 163|FM 1725|FM 1909|FM 1960|FM 2025|FM 2090|FM 223|FM 2518|FM 2610|FM 2684|FM 2797|FM 2830|FM 3361|FM 563|FM 686|FM 770|FM 787|FM 834)\b/i.test(label)) return true;
+  if (/\beastex\s+freeway\b/i.test(label)) return true;
+  return false;
+}
+
+function gridlyDirectionalProvenanceValidationFeatureProfile(corridor = "") {
+  const loadedFeatures = roadwayDatasetLoaded && Array.isArray(roadwaySegmentFeatures) ? roadwaySegmentFeatures : [];
+  const features = gridlyDirectionalProvenanceFeaturesForCorridor(corridor);
+  const featureIds = new Set();
+  let insideCountyFeatures = 0;
+  let outsideCountyFeatures = 0;
+  let frontageFeatures = 0;
+  let multiRefFeatures = 0;
+  let nonTexasRefFeatures = 0;
+  const textSamples = [];
+  features.forEach((feature) => {
+    const featureIndex = loadedFeatures.indexOf(feature);
+    featureIds.add(gridlyDirectionalProvenanceFeatureAuditId(feature, featureIndex >= 0 ? featureIndex : featureIds.size));
+    if (gridlyDirectionalProvenanceFeatureInsideCounty(feature)) insideCountyFeatures += 1;
+    else outsideCountyFeatures += 1;
+    const text = gridlyDirectionalProvenanceFeatureText(feature);
+    if (/\bfrontage\b/i.test(text)) frontageFeatures += 1;
+    if (/;|\|/.test(text) && /\b(?:i|us|u\.?s\.?|tx|sh|state\s+(?:hwy|highway)|fm)\s*-?\s*\d+/i.test(text)) multiRefFeatures += 1;
+    if (/\b(?:ga|la|ok|ar)\s*-?\s*\d+\b/i.test(text)) nonTexasRefFeatures += 1;
+    if (textSamples.length < 3 && text) textSamples.push(text.slice(0, 160));
+  });
+  return {
+    featureCount: features.length,
+    featureIds,
+    insideCountyFeatures,
+    outsideCountyFeatures,
+    insideCountyShare: features.length ? insideCountyFeatures / features.length : 0,
+    frontageFeatures,
+    multiRefFeatures,
+    nonTexasRefFeatures,
+    textSamples
+  };
+}
+
+function gridlyDirectionalProvenanceReadinessValidation(directionalReadiness = {}, detectedMajorCorridors = []) {
+  const readinessEntries = Array.isArray(directionalReadiness?.countywide) ? directionalReadiness.countywide : [];
+  const duplicateCorridors = [];
+  const aliasCandidates = [];
+  const suspiciousCorridors = [];
+  const normalizationIssues = [];
+  const entryCounts = new Map();
+  const profiles = new Map();
+  const getProfile = (corridor) => {
+    const key = String(corridor || "");
+    if (!profiles.has(key)) profiles.set(key, gridlyDirectionalProvenanceValidationFeatureProfile(key));
+    return profiles.get(key);
+  };
+
+  readinessEntries.forEach((entry, index) => {
+    const key = normalizeCorridorBaseLabel(entry?.corridor || "");
+    if (!key) return;
+    if (!entryCounts.has(key)) entryCounts.set(key, []);
+    entryCounts.get(key).push(index);
+  });
+  entryCounts.forEach((indexes, corridor) => {
+    if (indexes.length > 1) {
+      duplicateCorridors.push({
+        corridor,
+        duplicateCount: indexes.length,
+        readinessIndexes: indexes,
+        reason: "same_normalized_corridor_has_multiple_readiness_records"
+      });
+    }
+  });
+
+  const aliasGroups = new Map();
+  readinessEntries.forEach((entry) => {
+    const group = gridlyDirectionalProvenanceReadinessAliasGroup(entry?.corridor || "");
+    if (!aliasGroups.has(group)) aliasGroups.set(group, []);
+    aliasGroups.get(group).push(entry);
+  });
+  aliasGroups.forEach((entries, group) => {
+    const uniqueCorridors = Array.from(new Set(entries.map((entry) => entry?.corridor).filter(Boolean)));
+    if (uniqueCorridors.length > 1) {
+      aliasCandidates.push({
+        aliasGroup: group,
+        corridors: uniqueCorridors,
+        relationship: "known_or_likely_alias_family",
+        reason: "multiple_readiness_candidates_share_a_known_corridor_alias_family"
+      });
+    }
+  });
+
+  for (let i = 0; i < readinessEntries.length; i += 1) {
+    for (let j = i + 1; j < readinessEntries.length; j += 1) {
+      const a = readinessEntries[i];
+      const b = readinessEntries[j];
+      const aProfile = getProfile(a?.corridor);
+      const bProfile = getProfile(b?.corridor);
+      const smaller = Math.min(aProfile.featureIds.size, bProfile.featureIds.size);
+      if (!smaller) continue;
+      let overlap = 0;
+      aProfile.featureIds.forEach((id) => { if (bProfile.featureIds.has(id)) overlap += 1; });
+      const overlapShare = overlap / smaller;
+      if (overlapShare >= 0.5 && normalizeCorridorBaseLabel(a?.corridor) !== normalizeCorridorBaseLabel(b?.corridor)) {
+        aliasCandidates.push({
+          corridors: [a.corridor, b.corridor],
+          relationship: "shared_geometry_overlap",
+          overlapFeatureCount: overlap,
+          overlapShare: Number(overlapShare.toFixed(3)),
+          reason: "readiness_candidates_share_a_majority_of_the_smaller_feature_set"
+        });
+      }
+    }
+  }
+
+  readinessEntries.forEach((entry) => {
+    const corridor = entry?.corridor || "";
+    const profile = getProfile(corridor);
+    const expected = gridlyDirectionalProvenanceExpectedLibertyCorridor(corridor);
+    const malformed = !/^(?:I-\d+|US \d+|TX \d+|FM \d+|[A-Z0-9][A-Za-z0-9 .'-]+)$/i.test(String(corridor || ""));
+    const reasons = [];
+    if (!expected && profile.featureCount > 0 && profile.insideCountyFeatures === 0) reasons.push("outside_expected_liberty_county_inventory_and_no_in_county_geometry_support");
+    if (profile.featureCount > 0 && profile.insideCountyShare < 0.2 && !expected) reasons.push("extremely_low_liberty_county_geometry_support");
+    if (malformed) reasons.push("malformed_corridor_label");
+    if (profile.nonTexasRefFeatures > 0 && profile.insideCountyFeatures === 0) reasons.push("non_texas_route_reference_detected_in_supporting_geometry");
+    if (reasons.length) {
+      suspiciousCorridors.push({
+        corridor,
+        readinessScore: entry.readinessScore,
+        readinessConfidence: entry.readinessConfidence,
+        readinessStatus: entry.readinessStatus,
+        tier: entry.tier,
+        geometrySegments: Number(entry.geometrySegments || 0),
+        roadwayFeatures: Number(entry.roadwayFeatures || 0),
+        insideCountyFeatures: profile.insideCountyFeatures,
+        outsideCountyFeatures: profile.outsideCountyFeatures,
+        reasons,
+        sampleEvidence: profile.textSamples
+      });
+    }
+    if (/^(?:US|TX|FM)\s*-?\d+/i.test(String(corridor || "")) && normalizeCorridorBaseLabel(corridor) !== corridor) {
+      normalizationIssues.push({
+        corridor,
+        normalized: normalizeCorridorBaseLabel(corridor),
+        issue: "readiness_corridor_label_not_in_canonical_spacing_or_case"
+      });
+    }
+    if (profile.nonTexasRefFeatures > 0) {
+      normalizationIssues.push({
+        corridor,
+        issue: "supporting_geometry_contains_non_texas_route_references",
+        affectedFeatureCount: profile.nonTexasRefFeatures,
+        sampleEvidence: profile.textSamples
+      });
+    }
+    if (profile.frontageFeatures > 0 && !/\bfrontage\b/i.test(corridor)) {
+      normalizationIssues.push({
+        corridor,
+        issue: "frontage_road_features_contribute_to_non_frontage_corridor_candidate",
+        affectedFeatureCount: profile.frontageFeatures
+      });
+    }
+    if (profile.multiRefFeatures > 0 && /^(?:US 59|I-69)$/i.test(corridor)) {
+      normalizationIssues.push({
+        corridor,
+        issue: "multi_ref_us59_i69_features_require_alias_review_not_score_inflation",
+        affectedFeatureCount: profile.multiRefFeatures
+      });
+    }
+  });
+
+  const suspiciousSet = new Set(suspiciousCorridors.map((item) => item.corridor));
+  const duplicateSet = new Set(duplicateCorridors.map((item) => item.corridor));
+  const aliasCorridorSet = new Set();
+  aliasCandidates.forEach((candidate) => (candidate.corridors || []).forEach((corridor) => aliasCorridorSet.add(corridor)));
+  const topReadinessCandidates = readinessEntries
+    .slice()
+    .sort((a, b) => Number(b.readinessScore || 0) - Number(a.readinessScore || 0) || String(a.corridor || "").localeCompare(String(b.corridor || "")))
+    .slice(0, 12)
+    .map((entry) => ({
+      corridor: entry.corridor,
+      readinessScore: entry.readinessScore,
+      readinessConfidence: entry.readinessConfidence,
+      readinessStatus: entry.readinessStatus,
+      validationStatus: duplicateSet.has(normalizeCorridorBaseLabel(entry.corridor))
+        ? "duplicate"
+        : (suspiciousSet.has(entry.corridor) ? "suspicious" : (aliasCorridorSet.has(entry.corridor) ? "aliasReview" : "validated"))
+    }));
+  const warningCount = aliasCandidates.length + suspiciousCorridors.length + normalizationIssues.length;
+  const errorCount = duplicateCorridors.length;
+  return {
+    available: true,
+    version: GRIDLY_DIRECTIONAL_PROVENANCE_READINESS_VALIDATION_VERSION,
+    auditOnly: true,
+    evaluatedReadinessCandidates: readinessEntries.length,
+    detectedCorridorCount: Array.isArray(detectedMajorCorridors) ? detectedMajorCorridors.length : 0,
+    topReadinessCandidates,
+    duplicateCorridors,
+    aliasCandidates,
+    suspiciousCorridors,
+    normalizationIssues,
+    validationSummary: {
+      passed: warningCount === 0 && errorCount === 0,
+      warnings: warningCount,
+      errors: errorCount
+    }
+  };
+}
+
 function gridlyDirectionalProvenanceAreaCorridorInventory(records = [], scopedRecords = []) {
   const loadedFeatures = roadwayDatasetLoaded && Array.isArray(roadwaySegmentFeatures) ? roadwaySegmentFeatures : [];
   const areas = Array.isArray(GRIDLY_AWARENESS_AREA_DEFINITIONS)
@@ -40920,6 +41157,7 @@ function gridlyDirectionalProvenanceAudit(options = {}) {
   };
   const areaCorridorInventory = gridlyDirectionalProvenanceAreaCorridorInventory(evaluatedRecords, scopedEvaluatedRecords);
   const directionalReadiness = gridlyDirectionalProvenanceDirectionalReadiness(detectedMajorCorridors, globalEvaluation.corridorRuntimeCoverage);
+  const readinessValidation = gridlyDirectionalProvenanceReadinessValidation(directionalReadiness, detectedMajorCorridors);
 
   return {
     available: true,
@@ -40946,6 +41184,7 @@ function gridlyDirectionalProvenanceAudit(options = {}) {
     countywideGeometryInventory,
     areaCorridorInventory,
     directionalReadiness,
+    readinessValidation,
     readinessSummary: directionalReadiness.readinessSummary,
     geometryInventory: countywideGeometryInventory,
     globalCorridorRuntimeCoverage: globalEvaluation.corridorRuntimeCoverage,
