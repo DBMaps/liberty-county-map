@@ -55289,6 +55289,78 @@ function getGridlyAwarenessBriefActiveState({ intel = {}, pulseModel = {} } = {}
   };
 }
 
+
+function isGridlyQuietTopAwarenessFastPathEligible(intel = {}) {
+  const localizedSummariesEmpty = !Array.isArray(intel?.items) || intel.items.length === 0;
+  const corridorSummariesEmpty = (!Array.isArray(intel?.corridorClusters) || intel.corridorClusters.length === 0)
+    && (!Array.isArray(intel?.sourceCorridorClusters) || intel.sourceCorridorClusters.length === 0);
+  const latestAlerts = typeof window !== "undefined" && Array.isArray(window.__gridlyLatestAlertsForRender)
+    ? window.__gridlyLatestAlertsForRender
+    : [];
+  const alertsSnapshot = typeof window !== "undefined" && typeof window.getAlertsSurfaceSnapshot === "function"
+    ? window.getAlertsSurfaceSnapshot()
+    : null;
+  const activeAlertCount = Math.max(
+    0,
+    Number(intel?.activeLocalizedAlertCount || 0),
+    Number(alertsSnapshot?.activeIncidentCount || alertsSnapshot?.count || 0),
+    latestAlerts.length,
+    Array.isArray(activeReports) ? activeReports.length : 0
+  );
+  const activeHazardCount = Math.max(
+    0,
+    Number(alertsSnapshot?.activeHazardSourceCount || 0),
+    Array.isArray(activeHazards) ? activeHazards.length : 0
+  );
+  const activeIncidentCount = typeof getUnifiedIncidents === "function"
+    ? Math.max(0, Number(getUnifiedIncidents()?.length || 0))
+    : 0;
+  return activeAlertCount === 0
+    && activeHazardCount === 0
+    && activeIncidentCount === 0
+    && localizedSummariesEmpty
+    && corridorSummariesEmpty
+    && !intel?.hasActiveAlerts;
+}
+
+function buildGridlyQuietTopAwarenessPulseModel() {
+  return {
+    awarenessMode: "community",
+    pulseVisible: false,
+    renderedPulseHeadline: "Community activity is quiet",
+    renderedPulseSubline: "No major mobility issues reported nearby.",
+    dominantCorridor: null,
+    selectedCommunityCount: 0,
+    communityPhraseCount: 0,
+    pulseRenderTarget: typeof GRIDLY_COMMUNITY_PULSE_RENDER_TARGET !== "undefined" ? GRIDLY_COMMUNITY_PULSE_RENDER_TARGET : "",
+    pulseSuppressedReason: "quiet awareness brief active-state counts are clear",
+    corridorIncidentCounts: {},
+    highestPresenceScore: 0,
+    selectedHeadlineTemplate: "headline_quiet",
+    selectedSublineTemplate: "subline_quiet",
+    dominantCorridorScore: 0,
+    mobilityPressureCategory: "quiet",
+    blendedSignalTypes: [],
+    activeAwareness: {
+      loaded: true,
+      activeAwarenessCount: 0,
+      activeReportCount: 0,
+      activeHazardCount: 0,
+      topAwarenessDedupedMobilityCount: 0,
+      topAwarenessDisplayedCount: 0,
+      activityLevel: "quiet"
+    },
+    communityAwarenessSummary: null,
+    pulseSummaryReuseApplied: false,
+    pulseSummarySource: "",
+    pulseSummaryText: "",
+    phraseGenerationMode: "quiet_fast_path",
+    repetitionAvoidanceApplied: false,
+    corridorPriorityBreakdown: [],
+    quietTopAwarenessFastPathApplied: true
+  };
+}
+
 function getGridlyQuietAwarenessBriefCopy() {
   return {
     state: "quiet",
@@ -55403,8 +55475,14 @@ function refreshPortraitV2LocalizedIntelligence() {
     void mobilityLanguagePrimaryCandidate;
     void travelConsequencePrimaryCandidate;
     void corridorAwarePrimaryCandidate;
-    const pulseModel = timeGridlyAuditSection(sections, "reports_hazards_loop.community_pulse_model", () => buildGridlyCommunityPulseModel({ topAwarenessMicrolineReadOnly: true }));
-    const awarenessBrief = buildGridlyAwarenessBriefCopy({ intel, existingAlertWording, pulseModel });
+    const quietFastPathEligible = isGridlyQuietTopAwarenessFastPathEligible(intel);
+    counts.quietTopAwarenessFastPathApplied = quietFastPathEligible ? 1 : 0;
+    const pulseModel = quietFastPathEligible
+      ? buildGridlyQuietTopAwarenessPulseModel()
+      : timeGridlyAuditSection(sections, "reports_hazards_loop.community_pulse_model", () => buildGridlyCommunityPulseModel({ topAwarenessMicrolineReadOnly: true }));
+    const awarenessBrief = quietFastPathEligible
+      ? getGridlyQuietAwarenessBriefCopy()
+      : buildGridlyAwarenessBriefCopy({ intel, existingAlertWording, pulseModel });
     if (awarenessBrief.state === "quiet") {
       pulseModel.pulseVisible = false;
       pulseModel.renderedPulseHeadline = "Community activity is quiet";
