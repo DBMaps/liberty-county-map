@@ -17884,6 +17884,16 @@ window.gridlyDestinationImpactPaneAudit = function gridlyDestinationImpactPaneAu
   };
 };
 
+function formatGridlyAwarenessAreaContextLabel(label = "") {
+  const normalizedLabel = safeDisplayText(label, "Liberty County");
+  const withoutAwarenessSuffix = normalizedLabel.replace(/\s+awareness\s*$/i, "").trim();
+  return safeDisplayText(withoutAwarenessSuffix, normalizedLabel || "Liberty County");
+}
+
+function getGridlyLocationAwarenessCardKicker(areaName = "") {
+  return `Location Awareness · ${formatGridlyAwarenessAreaContextLabel(areaName)}`;
+}
+
 function normalizeGridlyMobileAwarenessPanelSummary(summary = {}) {
   const safeSummary = summary || {};
   const areaName = safeDisplayText(safeSummary.awarenessAreaName || safeSummary.areaName, "Liberty County");
@@ -18189,7 +18199,7 @@ function syncMobileDestinationCommandCard() {
     document.getElementById("mobileAwarenessPanelIssues")?.toggleAttribute("hidden", true);
     safeText("mobileDestinationCommandImpact", "");
   } else if (awarenessPanelMode) {
-    safeText("mobileAwarenessPanelKicker", "Awareness Area");
+    safeText("mobileAwarenessPanelKicker", getGridlyLocationAwarenessCardKicker(awarenessSummary.areaName || awarenessSummary.awarenessAreaName));
     safeText("mobileDestinationCommandTitle", awarenessSummary.panelTitle);
     safeText("mobileDestinationCommandMeta", awarenessSummary.status);
     safeText("mobileAwarenessPanelCrossings", awarenessSummary.crossingsLine);
@@ -18197,7 +18207,7 @@ function syncMobileDestinationCommandCard() {
     document.getElementById("mobileAwarenessPanelCrossings")?.toggleAttribute("hidden", false);
     document.getElementById("mobileAwarenessPanelIssues")?.toggleAttribute("hidden", true);
     safeText("mobileDestinationCommandImpact", "");
-    safeText("mobileDestinationCommandBtn", "Route");
+    safeText("mobileDestinationCommandBtn", "Search");
   } else {
     const impactText = selectedLabel ? getGridlyDestinationRouteImpactCardText() : "";
     safeText("mobileAwarenessPanelKicker", "Route");
@@ -56396,7 +56406,7 @@ function ensureGridlyPortraitLocationAwarenessPanel() {
   panel.setAttribute("data-gridly-portrait-owned", "true");
   panel.setAttribute("data-gridly-awareness-owner", "portrait-v2");
   panel.innerHTML = `
-    <div class="gridly-v2-location-awareness-kicker">Location Awareness</div>
+    <div class="gridly-v2-location-awareness-kicker" data-v2-location-awareness="kicker">Location Awareness · Liberty County</div>
     <strong class="gridly-v2-location-awareness-title" data-v2-location-awareness="title">Liberty County Awareness</strong>
     <p class="gridly-v2-location-awareness-status" data-v2-location-awareness="status">Community activity is quiet</p>
     <p class="gridly-v2-location-awareness-meta" data-v2-location-awareness="meta">No recent reports nearby · map remains live</p>
@@ -56474,7 +56484,7 @@ function getGridlyPortraitLocationAwarenessRouteContext() {
     || (routePreviewActive ? safeDisplayText(preview?.destination?.title || preview?.destination?.displayName || preview?.destination?.name || preview?.destination?.address, "") : "")
     || (routeIsMonitoring ? "Saved destination" : routeWatchConfigured ? safeDisplayText(selectDestinationLabel, "Saved destination") : routePreviewActive ? "Route preview" : "");
   const hasRouteContext = Boolean(selectedDestination || selectedLabel || savedDestinationLabel || routeIsMonitoring || routePreviewActive || explicitDestinationPanelOpen);
-  const priorMobileButtonText = (selectedLabel || savedDestinationLabel || routeIsMonitoring || routePreviewActive || routeWatchConfigured) ? "Change" : "Choose Route";
+  const priorMobileButtonText = "Search";
   return {
     hasRouteContext,
     selectedLabel: selectedLabel || savedDestinationLabel,
@@ -56548,9 +56558,11 @@ function refreshGridlyPortraitLocationAwarenessPanel({ awarenessBrief = {}, puls
     return { quiet, areaName, title, status, meta, activeCount, routeContext, collapsedForRouteCard: true };
   }
   const routeContextSuffix = "";
+  const kickerEl = panel.querySelector('[data-v2-location-awareness="kicker"]');
   const titleEl = panel.querySelector('[data-v2-location-awareness="title"]');
   const statusEl = panel.querySelector('[data-v2-location-awareness="status"]');
   const metaEl = panel.querySelector('[data-v2-location-awareness="meta"]');
+  setGridlyTopPanelTextIfChanged(kickerEl, getGridlyLocationAwarenessCardKicker(areaName), "refreshGridlyPortraitLocationAwarenessPanel", "gridlyPortraitLocationAwarenessKicker");
   setGridlyTopPanelTextIfChanged(titleEl, title, "refreshGridlyPortraitLocationAwarenessPanel", "gridlyPortraitLocationAwarenessTitle");
   setGridlyTopPanelTextIfChanged(statusEl, status, "refreshGridlyPortraitLocationAwarenessPanel", "gridlyPortraitLocationAwarenessStatus");
   setGridlyTopPanelTextIfChanged(metaEl, `${meta}${routeContextSuffix}`, "refreshGridlyPortraitLocationAwarenessPanel", "gridlyPortraitLocationAwarenessMeta");
