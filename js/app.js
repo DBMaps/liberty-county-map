@@ -53662,6 +53662,17 @@ function getRoadPriorityWeight(incident = {}) {
   return 20;
 }
 
+function isGridlyLocationSpecificTopAwarenessHeadline(value = "") {
+  const text = safeDisplayText(value, "");
+  if (!text) return false;
+  if (/\bLocal\s+(?:road|crossing|corridor|impact)s?\b/i.test(text)) return false;
+  if (/^(?:Debris in Road|Road Hazard|Other Hazard|Traffic Backup|Disabled Vehicle|Ice)$/i.test(text)) return false;
+  return /\b(?:on|near|at|between)\b/i.test(text) && (
+    /\b(?:US|TX|FM|SH|CR|I-)\s*-?\d+\b/i.test(text)
+    || /\b(?:Road|Rd|Street|St|Avenue|Ave|Drive|Dr|Lane|Ln|Boulevard|Blvd|Highway|Hwy|Parkway|Pkwy|Way|Court|Ct|Circle|Cir)\b/i.test(text)
+  );
+}
+
 function buildCommunityConsequenceLabel(incident = {}, fallback = "Traffic slowing") {
   const helperName = "buildCommunityConsequenceLabel";
   const helperAuditCycleId = Number(gridlyCommuteIntelligenceAuditState.auditCycleId || 0);
@@ -53687,6 +53698,12 @@ function buildCommunityConsequenceLabel(incident = {}, fallback = "Traffic slowi
   const road = recordSection("corridor_location_inference", () => recordCall("normalizeCorridorBaseLabel+inferCorridorLabel", () => normalizeCorridorBaseLabel(inferCorridorLabel(incident).replace(/ Corridor$/, ""))));
   const type = recordSection("input_normalization", () => String(incident?.report_type || incident?.type || "").toLowerCase());
   const direction = recordSection("type_status_mapping", () => recordCall("inferDirectionalPhrase", () => inferDirectionalPhrase(incident)));
+  const roadHazardHeadline = recordSection("crossing_road_name_lookup", () => recordCall("buildRoadHazardDisplay", () => {
+    if (isCrossingDisruptionIncident(incident)) return "";
+    const display = getCachedRoadNameLookup(incident, "buildRoadHazardDisplay", (resolvedLookup) => buildRoadHazardDisplay(incident, resolvedLookup));
+    return isGridlyLocationSpecificTopAwarenessHeadline(display?.title) ? display.title : "";
+  }));
+  if (roadHazardHeadline) return finalizeAudit(recordSection("string_template_construction", () => roadHazardHeadline), { path: "road_hazard_location_first" });
   const localSpot = recordSection("crossing_road_name_lookup", () => recordCall("buildLocalizedLocationPhrase", () => getCachedRoadNameLookup(incident, "buildLocalizedLocationPhrase", (resolvedLookup) => buildLocalizedLocationPhrase(incident, resolvedLookup))));
   if (towns.length >= 2) return finalizeAudit(recordSection("string_template_construction", () => `Traffic slowing between ${towns[0]} and ${towns[1]}`), { path: "town_pair" });
   if (/blocked|crossing_blocked/.test(type) && /US 90/i.test(road)) return finalizeAudit(recordSection("string_template_construction", () => `Train blocking ${localSpot}${direction ? ` · ${direction} backups` : ""}`), { path: "blocked_us90" });
@@ -53748,7 +53765,35 @@ function normalizeCorridorBaseLabel(label = "") {
   return normalized;
 }
 
+function resolveGridlyTopAwarenessExplicitRoadLabel(incident = {}) {
+  const sourceCandidates = [
+    incident?.primaryRoad, incident?.parsedPrimaryRoad, incident?.roadName, incident?.road_name,
+    incident?.resolvedRoadName, incident?.displayRoadName, incident?.selectedRoadName,
+    incident?.routeNameDisplay, incident?.routeName, incident?.street_name, incident?.nearest_road,
+    incident?.nearestRoad, incident?.nearestRoadName, incident?.route, incident?.highway,
+    incident?.raw?.primaryRoad, incident?.raw?.parsedPrimaryRoad, incident?.raw?.roadName, incident?.raw?.road_name,
+    incident?.raw?.resolvedRoadName, incident?.raw?.displayRoadName, incident?.raw?.selectedRoadName,
+    incident?.raw?.routeNameDisplay, incident?.raw?.routeName, incident?.raw?.street_name, incident?.raw?.nearest_road,
+    incident?.raw?.nearestRoad, incident?.raw?.nearestRoadName, incident?.raw?.route, incident?.raw?.highway,
+    incident?.source?.primaryRoad, incident?.source?.parsedPrimaryRoad, incident?.source?.roadName, incident?.source?.road_name,
+    incident?.source?.resolvedRoadName, incident?.source?.displayRoadName, incident?.source?.selectedRoadName,
+    incident?.source?.routeNameDisplay, incident?.source?.routeName, incident?.source?.street_name, incident?.source?.nearest_road,
+    incident?.source?.nearestRoad, incident?.source?.nearestRoadName, incident?.source?.route, incident?.source?.highway,
+    incident?.latestReport?.primaryRoad, incident?.latestReport?.parsedPrimaryRoad, incident?.latestReport?.roadName, incident?.latestReport?.road_name,
+    incident?.latestReport?.resolvedRoadName, incident?.latestReport?.displayRoadName, incident?.latestReport?.selectedRoadName,
+    incident?.latestReport?.routeNameDisplay, incident?.latestReport?.routeName, incident?.latestReport?.street_name, incident?.latestReport?.nearest_road,
+    incident?.latestReport?.nearestRoad, incident?.latestReport?.nearestRoadName, incident?.latestReport?.route, incident?.latestReport?.highway
+  ];
+  for (const value of sourceCandidates) {
+    const candidate = normalizeCorridorBaseLabel(normalizeRoadShorthand(getGridlyTopStatusDiagnosticText(value)));
+    if (candidate && isResolvableRoadNameCandidate(candidate)) return candidate;
+  }
+  return "";
+}
+
 function inferCorridorLabel(incident = {}) {
+  const explicitRoad = resolveGridlyTopAwarenessExplicitRoadLabel(incident);
+  if (explicitRoad) return `${explicitRoad} Corridor`;
   const text = `${incident?.title || ""} ${incident?.description || ""} ${incident?.area || ""}`;
   const normalizedText = normalizeCorridorBaseLabel(text);
   const match = normalizedText.match(/\b(US\s*\d+|TX\s*\d+|FM\s*\d+)\b/i);
@@ -53895,7 +53940,8 @@ function resolveIncidentDirectionConfidence(incident = {}) {
 }
 
 function buildLocalizedLocationPhrase(incident = {}, resolvedLookup = null) {
-  const road = normalizeCorridorBaseLabel(inferCorridorLabel(incident).replace(/ Corridor$/, ""));
+  const inferredRoad = normalizeCorridorBaseLabel(inferCorridorLabel(incident).replace(/ Corridor$/, ""));
+  const road = /^Local\s+(?:road|crossing)\s+impact$/i.test(inferredRoad) ? "" : inferredRoad;
   const lookup = resolvedLookup || getSharedResolvedRoadLookup(incident);
   const rail = { crossingName: lookup.crossingName, nearbyName: lookup.nearbyName };
   const crossingName = String(rail?.crossingName || "").replace(/\s+crossing$/i, "").trim();
