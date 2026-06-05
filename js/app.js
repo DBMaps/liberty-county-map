@@ -40027,7 +40027,7 @@ function gridlyInferCardinalRoadDirection(bearing) {
   return null;
 }
 
-const GRIDLY_DIRECTIONAL_PROVENANCE_AUDIT_VERSION = "V252.4";
+const GRIDLY_DIRECTIONAL_PROVENANCE_AUDIT_VERSION = "V252.5";
 const GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDORS = ["US 90", "TX 146", "TX 321", "FM 1960", "FM 1409"];
 
 const GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDOR_PATTERNS = {
@@ -40587,6 +40587,62 @@ function gridlyDirectionalProvenanceGeometryInventory() {
   }, {});
 }
 
+function gridlyDirectionalProvenanceCountywideDetectedCorridors() {
+  const loadedFeatures = roadwayDatasetLoaded && Array.isArray(roadwaySegmentFeatures) ? roadwaySegmentFeatures : [];
+  const corridorStats = new Map();
+  loadedFeatures.forEach((feature) => {
+    const corridors = gridlyDirectionalProvenanceCorridorsFromFeature(feature);
+    if (!corridors.length) return;
+    const segments = typeof flattenRoadGeometrySegments === "function" ? flattenRoadGeometrySegments(feature?.geometry) : [];
+    corridors.forEach((corridor) => {
+      if (!corridorStats.has(corridor)) {
+        corridorStats.set(corridor, {
+          corridor,
+          tier: gridlyDirectionalProvenanceCorridorTier(corridor),
+          roadwayFeatures: 0,
+          geometrySegments: 0,
+          predominantAxis: "mixed",
+          geometryCapable: false,
+          axisSegmentBreakdown: { EW: 0, NS: 0 }
+        });
+      }
+      const stats = corridorStats.get(corridor);
+      stats.roadwayFeatures += 1;
+      stats.geometrySegments += segments.length;
+      segments.forEach((segment) => {
+        const bearing = typeof gridlyRoadBearingDegrees === "function"
+          ? gridlyRoadBearingDegrees(segment.startLat, segment.startLng, segment.endLat, segment.endLng)
+          : null;
+        const axis = gridlyDirectionalProvenanceAxisFromBearing(bearing);
+        if (axis) stats.axisSegmentBreakdown[axis] += 1;
+      });
+    });
+  });
+  return Array.from(corridorStats.values())
+    .map((stats) => ({
+      ...stats,
+      tier: gridlyDirectionalProvenanceCorridorTier(stats.corridor, stats),
+      geometryCapable: stats.geometrySegments > 0,
+      predominantAxis: gridlyDirectionalProvenancePredominantAxis(stats.axisSegmentBreakdown)
+    }))
+    .sort((a, b) => b.geometrySegments - a.geometrySegments || b.roadwayFeatures - a.roadwayFeatures || a.corridor.localeCompare(b.corridor));
+}
+
+function gridlyDirectionalProvenanceTierBreakdownValidation(tierBreakdown = {}, corridorCount = 0) {
+  const tierTotal = Number(tierBreakdown.primary || 0) + Number(tierBreakdown.secondary || 0) + Number(tierBreakdown.local || 0);
+  const expectedCount = Number(corridorCount || 0);
+  if (tierTotal === expectedCount) {
+    return {
+      passed: true,
+      reason: "tier_breakdown_total_matches_countywide_corridor_count"
+    };
+  }
+  return {
+    passed: false,
+    reason: `tier_breakdown_total_${tierTotal}_does_not_match_countywide_corridor_count_${expectedCount}`
+  };
+}
+
 function gridlyDirectionalProvenanceAwarenessContext() {
   const selectedFilter = typeof activeGeoFilter !== "undefined" && activeGeoFilter ? activeGeoFilter : null;
   let filter = null;
@@ -40704,10 +40760,17 @@ function gridlyDirectionalProvenanceAudit(options = {}) {
   const globalEvaluation = gridlyDirectionalProvenanceEvaluateAuditRecords(evaluatedRecords, options, sampleLimit);
   const scopedEvaluation = gridlyDirectionalProvenanceEvaluateAuditRecords(scopedEvaluatedRecords, options, sampleLimit);
   const geometryInventory = gridlyDirectionalProvenanceGeometryInventory();
+  const detectedMajorCorridors = gridlyDirectionalProvenanceCountywideDetectedCorridors();
+  const countywideTierBreakdown = gridlyDirectionalProvenanceTierBreakdown(detectedMajorCorridors);
   const countywideGeometryInventory = {
     scope: "countywide",
+    corridorCount: detectedMajorCorridors.length,
+    tierBreakdown: countywideTierBreakdown,
+    tierBreakdownValidation: gridlyDirectionalProvenanceTierBreakdownValidation(countywideTierBreakdown, detectedMajorCorridors.length),
+    detectedMajorCorridors,
     corridors: geometryInventory,
-    tierBreakdown: gridlyDirectionalProvenanceTierBreakdown(Object.values(geometryInventory))
+    directionalSeedGeometryInventory: geometryInventory,
+    directionalSeedTierBreakdown: gridlyDirectionalProvenanceTierBreakdown(Object.values(geometryInventory))
   };
   const areaCorridorInventory = gridlyDirectionalProvenanceAreaCorridorInventory(evaluatedRecords, scopedEvaluatedRecords);
 
