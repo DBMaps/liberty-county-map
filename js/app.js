@@ -40027,7 +40027,7 @@ function gridlyInferCardinalRoadDirection(bearing) {
   return null;
 }
 
-const GRIDLY_DIRECTIONAL_PROVENANCE_AUDIT_VERSION = "V252.1";
+const GRIDLY_DIRECTIONAL_PROVENANCE_AUDIT_VERSION = "V252.2";
 const GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDORS = ["US 90", "TX 146", "TX 321", "FM 1960", "FM 1409"];
 
 const GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDOR_PATTERNS = {
@@ -40336,15 +40336,70 @@ function gridlyDirectionalProvenanceGeometryInventory() {
   }, {});
 }
 
-function gridlyDirectionalProvenanceAudit(options = {}) {
-  const records = gridlyDirectionalProvenanceRecords(options);
-  const maxRecords = Number.isFinite(Number(options.maxRecords)) ? Math.max(0, Number(options.maxRecords)) : records.length;
-  const evaluatedRecords = records.slice(0, maxRecords);
-  const corridorBreakdown = {};
-  const corridorRuntimeCoverage = GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDORS.reduce((coverage, corridor) => {
+function gridlyDirectionalProvenanceAwarenessContext() {
+  const selectedFilter = typeof activeGeoFilter !== "undefined" && activeGeoFilter ? activeGeoFilter : null;
+  let filter = null;
+  try {
+    filter = typeof gridlyGetSelectedAlertAreaFilter === "function" ? gridlyGetSelectedAlertAreaFilter() : null;
+  } catch (_error) {
+    filter = null;
+  }
+  let selectedArea = filter?.area || null;
+  if (!selectedArea) {
+    try {
+      selectedArea = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+    } catch (_error) {
+      selectedArea = null;
+    }
+  }
+  const debugArea = selectedArea && typeof getGridlyAwarenessAreaDebugOption === "function"
+    ? getGridlyAwarenessAreaDebugOption(selectedArea)
+    : (selectedArea ? {
+      key: selectedArea.key || null,
+      label: selectedArea.label || selectedArea.storageValue || "",
+      storageValue: selectedArea.storageValue || selectedArea.label || "",
+      radiusMiles: selectedArea.radiusMiles ?? null,
+      countyWide: selectedArea.countyWide === true,
+      fallback: selectedArea.fallback === true,
+      source: selectedArea.source || ""
+    } : null);
+  const isCountyMode = Boolean(
+    filter?.mode === "county"
+    || !selectedArea
+    || selectedArea?.countyWide === true
+    || selectedArea?.fallback === true
+  );
+  return {
+    selectedAwarenessArea: debugArea,
+    selectedAwarenessAreaKey: selectedArea?.key || debugArea?.key || null,
+    selectedFilter: selectedFilter || filter?.mode || null,
+    isCountyMode,
+    source: filter ? "gridlyGetSelectedAlertAreaFilter" : (selectedArea ? "getGridlySelectedAwarenessArea" : "unavailable")
+  };
+}
+
+function gridlyDirectionalProvenanceRecordInAwarenessScope(record = {}, awarenessContext = {}) {
+  if (awarenessContext.isCountyMode) return true;
+  const key = awarenessContext.selectedAwarenessAreaKey;
+  const area = key && GRIDLY_AWARENESS_AREA_BY_KEY ? GRIDLY_AWARENESS_AREA_BY_KEY[key] : null;
+  if (!area) return false;
+  try {
+    return typeof isGridlyRecordInAwarenessArea === "function" ? isGridlyRecordInAwarenessArea(record, area) : true;
+  } catch (_error) {
+    return false;
+  }
+}
+
+function gridlyDirectionalProvenanceEmptyCorridorCoverage() {
+  return GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDORS.reduce((coverage, corridor) => {
     coverage[corridor] = 0;
     return coverage;
   }, {});
+}
+
+function gridlyDirectionalProvenanceEvaluateAuditRecords(records = [], options = {}, sampleLimit = 8) {
+  const corridorBreakdown = {};
+  const corridorRuntimeCoverage = gridlyDirectionalProvenanceEmptyCorridorCoverage();
   const directionSourceBreakdown = {};
   const fallbackReasonBreakdown = {};
   const sampleRecords = [];
@@ -40353,7 +40408,7 @@ function gridlyDirectionalProvenanceAudit(options = {}) {
   let lowConfidence = 0;
   let suppressed = 0;
 
-  evaluatedRecords.forEach((record, index) => {
+  records.forEach((record, index) => {
     const provenance = gridlyBuildDirectionalProvenance(record, options);
     if (provenance.confidence === "high") highConfidence += 1;
     else if (provenance.confidence === "medium") mediumConfidence += 1;
@@ -40365,7 +40420,6 @@ function gridlyDirectionalProvenanceAudit(options = {}) {
     }
     gridlyDirectionalProvenanceIncrement(directionSourceBreakdown, provenance.directionSource);
     gridlyDirectionalProvenanceIncrement(fallbackReasonBreakdown, provenance.fallbackReason || "none");
-    const sampleLimit = Number.isFinite(Number(options.sampleLimit)) ? Math.max(0, Number(options.sampleLimit)) : 8;
     if (sampleRecords.length < sampleLimit) {
       sampleRecords.push({
         recordId: String(record?.id || record?.report_id || record?.reportId || `record_${index}`),
@@ -40374,27 +40428,77 @@ function gridlyDirectionalProvenanceAudit(options = {}) {
     }
   });
 
+  return {
+    runtimeEvaluated: records.length,
+    highConfidence,
+    mediumConfidence,
+    lowConfidence,
+    suppressed,
+    corridorRuntimeCoverage,
+    corridorsWithoutRuntimeCoverage: GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDORS.filter((corridor) => !corridorRuntimeCoverage[corridor]),
+    corridorBreakdown,
+    directionSourceBreakdown,
+    fallbackReasonBreakdown,
+    sampleRecords
+  };
+}
+
+function gridlyDirectionalProvenanceAudit(options = {}) {
+  const records = gridlyDirectionalProvenanceRecords(options);
+  const maxRecords = Number.isFinite(Number(options.maxRecords)) ? Math.max(0, Number(options.maxRecords)) : records.length;
+  const evaluatedRecords = records.slice(0, maxRecords);
+  const sampleLimit = Number.isFinite(Number(options.sampleLimit)) ? Math.max(0, Number(options.sampleLimit)) : 8;
+  const awarenessContext = gridlyDirectionalProvenanceAwarenessContext();
+  const scopedEvaluatedRecords = evaluatedRecords.filter((record) => gridlyDirectionalProvenanceRecordInAwarenessScope(record, awarenessContext));
+  const globalEvaluation = gridlyDirectionalProvenanceEvaluateAuditRecords(evaluatedRecords, options, sampleLimit);
+  const scopedEvaluation = gridlyDirectionalProvenanceEvaluateAuditRecords(scopedEvaluatedRecords, options, sampleLimit);
   const geometryInventory = gridlyDirectionalProvenanceGeometryInventory();
-  const corridorsWithoutRuntimeCoverage = GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDORS.filter((corridor) => !corridorRuntimeCoverage[corridor]);
+  const countywideGeometryInventory = {
+    scope: "countywide",
+    corridors: geometryInventory
+  };
 
   return {
     available: true,
     version: GRIDLY_DIRECTIONAL_PROVENANCE_AUDIT_VERSION,
     auditOnly: true,
     rendersDirectionalUi: false,
-    runtimeEvaluated: evaluatedRecords.length,
-    totalEvaluated: evaluatedRecords.length,
-    highConfidence,
-    mediumConfidence,
-    lowConfidence,
-    suppressed,
-    geometryInventory,
-    corridorRuntimeCoverage,
-    corridorsWithoutRuntimeCoverage,
-    corridorBreakdown,
-    directionSourceBreakdown,
-    fallbackReasonBreakdown,
-    sampleRecords
+    awarenessContext,
+    globalRuntimeEvaluated: globalEvaluation.runtimeEvaluated,
+    scopedRuntimeEvaluated: scopedEvaluation.runtimeEvaluated,
+    totalEvaluated: globalEvaluation.runtimeEvaluated,
+    runtimeEvaluated: globalEvaluation.runtimeEvaluated,
+    globalHighConfidence: globalEvaluation.highConfidence,
+    globalMediumConfidence: globalEvaluation.mediumConfidence,
+    globalLowConfidence: globalEvaluation.lowConfidence,
+    globalSuppressed: globalEvaluation.suppressed,
+    scopedHighConfidence: scopedEvaluation.highConfidence,
+    scopedMediumConfidence: scopedEvaluation.mediumConfidence,
+    scopedLowConfidence: scopedEvaluation.lowConfidence,
+    scopedSuppressed: scopedEvaluation.suppressed,
+    highConfidence: globalEvaluation.highConfidence,
+    mediumConfidence: globalEvaluation.mediumConfidence,
+    lowConfidence: globalEvaluation.lowConfidence,
+    suppressed: globalEvaluation.suppressed,
+    countywideGeometryInventory,
+    geometryInventory: countywideGeometryInventory,
+    globalCorridorRuntimeCoverage: globalEvaluation.corridorRuntimeCoverage,
+    scopedCorridorRuntimeCoverage: scopedEvaluation.corridorRuntimeCoverage,
+    corridorRuntimeCoverage: globalEvaluation.corridorRuntimeCoverage,
+    corridorsWithoutRuntimeCoverage: globalEvaluation.corridorsWithoutRuntimeCoverage,
+    corridorsWithoutScopedRuntimeCoverage: scopedEvaluation.corridorsWithoutRuntimeCoverage,
+    globalCorridorBreakdown: globalEvaluation.corridorBreakdown,
+    scopedCorridorBreakdown: scopedEvaluation.corridorBreakdown,
+    corridorBreakdown: globalEvaluation.corridorBreakdown,
+    globalDirectionSourceBreakdown: globalEvaluation.directionSourceBreakdown,
+    scopedDirectionSourceBreakdown: scopedEvaluation.directionSourceBreakdown,
+    directionSourceBreakdown: globalEvaluation.directionSourceBreakdown,
+    globalFallbackReasonBreakdown: globalEvaluation.fallbackReasonBreakdown,
+    scopedFallbackReasonBreakdown: scopedEvaluation.fallbackReasonBreakdown,
+    fallbackReasonBreakdown: globalEvaluation.fallbackReasonBreakdown,
+    globalSampleRecords: globalEvaluation.sampleRecords,
+    scopedSampleRecords: scopedEvaluation.sampleRecords,
+    sampleRecords: globalEvaluation.sampleRecords
   };
 }
 
