@@ -27948,6 +27948,82 @@ function getGridlyTopAwarenessHeadlineLocationIntelligence(text = "", detail = {
   return classifyGridlyTopAwarenessLocationIntelligence(detail);
 }
 
+function getGridlyActiveDetailIdentitySet(detail = {}) {
+  const item = detail?.item && typeof detail.item === "object" ? detail.item : detail;
+  const raw = item?.raw && typeof item.raw === "object" ? item.raw : null;
+  return [
+    item?.id, item?.reportId, item?.report_id, item?.key, item?.crossingId, item?.crossing_id,
+    raw?.id, raw?.reportId, raw?.report_id, raw?.key, raw?.crossingId, raw?.crossing_id
+  ].map((value) => safeDisplayText(value, "")).filter(Boolean);
+}
+
+function doGridlyActiveDetailsReferToSameIncident(detail = {}, incident = {}) {
+  if (!detail || !incident || typeof incident !== "object") return false;
+  const item = detail?.item && typeof detail.item === "object" ? detail.item : detail;
+  if (incident === item || incident?.raw === item || incident?.source === item) return true;
+  const detailIds = getGridlyActiveDetailIdentitySet(detail);
+  const incidentIds = getGridlyActiveDetailIdentitySet(incident);
+  if (detailIds.length && incidentIds.some((id) => detailIds.includes(id))) return true;
+  const itemCoords = typeof getGridlyIncidentCoordinate === "function" ? getGridlyIncidentCoordinate(item) : null;
+  const incidentCoords = typeof getGridlyIncidentCoordinate === "function" ? getGridlyIncidentCoordinate(incident) : null;
+  if (!itemCoords || !incidentCoords) return false;
+  const sameSpot = Math.abs(Number(itemCoords.lat) - Number(incidentCoords.lat)) < 0.0002
+    && Math.abs(Number(itemCoords.lng) - Number(incidentCoords.lng)) < 0.0002;
+  if (!sameSpot) return false;
+  const detailCategory = normalizeGridlyLightweightCategoryValue(detail?.resolvedCategory || item?.report_type || item?.type || item?.category || "");
+  const incidentCategory = normalizeGridlyLightweightCategoryValue(incident?.report_type || incident?.type || incident?.category || incident?.raw?.report_type || incident?.raw?.type || "");
+  return !detailCategory || !incidentCategory || detailCategory === incidentCategory;
+}
+
+function resolveGridlyLocalizedIntelligenceHeadlineForActiveDetail(detail = {}, knownLocationIntelligence = null) {
+  const locationIntelligence = knownLocationIntelligence || classifyGridlyTopAwarenessLocationIntelligence(detail);
+  if (!detail || typeof detail !== "object" || !locationIntelligence?.usable) return "";
+  const candidates = [];
+  const addCandidate = (text, source = "localizedIntelligence") => {
+    const headline = normalizeGridlyLightweightAlertSummaryText(text);
+    if (!headline || isGridlyCategoryOnlyTopAwarenessHeadline(headline)) return;
+    const locationText = getGridlyLightweightLocationFromHeadline(headline) || headline;
+    if (!hasGridlyTopAwarenessUsableLocationIntelligence(locationText)) return;
+    candidates.push({ headline, source });
+  };
+
+  const item = detail?.item && typeof detail.item === "object" ? detail.item : detail;
+  [
+    item?.localizedSummary,
+    item?.resolvedHeadline,
+    item?.finalHeadline,
+    item?.segmentHeadline,
+    item?.title,
+    item?.raw?.localizedSummary,
+    item?.raw?.resolvedHeadline,
+    item?.raw?.finalHeadline,
+    item?.raw?.segmentHeadline,
+    item?.raw?.title
+  ].forEach((value) => addCandidate(value, "selectedActiveDetail.localizedFields"));
+
+  if (typeof buildUnifiedLocalizedCommuteIntelligence === "function") {
+    const localizedIntel = buildUnifiedLocalizedCommuteIntelligence({ limit: 6 }) || {};
+    const localizedItems = Array.isArray(localizedIntel.items) ? localizedIntel.items : [];
+    const normalizedLocationLabel = normalizeGridlyLightweightLocationLabelText(locationIntelligence.label || "").toLowerCase();
+    const matchingLocalizedItem = localizedItems.find((intelItem) => doGridlyActiveDetailsReferToSameIncident(detail, intelItem?.incident || intelItem))
+      || localizedItems.find((intelItem) => {
+        const summary = normalizeGridlyLightweightAlertSummaryText(intelItem?.localizedSummary || "").toLowerCase();
+        return normalizedLocationLabel && summary.includes(normalizedLocationLabel);
+      });
+    addCandidate(matchingLocalizedItem?.localizedSummary, "buildUnifiedLocalizedCommuteIntelligence.items.localizedSummary");
+    if (matchingLocalizedItem && localizedItems[0] === matchingLocalizedItem) {
+      addCandidate(localizedIntel.topStatus, "buildUnifiedLocalizedCommuteIntelligence.topStatus");
+    }
+  }
+
+  if (typeof buildRoadHazardDisplay === "function" && !isGridlyRailOrCrossingCategory(detail?.resolvedCategory || item?.report_type || item?.type || "")) {
+    const roadHazardDisplay = buildRoadHazardDisplay(item);
+    addCandidate(roadHazardDisplay?.title, "buildRoadHazardDisplay.title");
+  }
+
+  return candidates[0]?.headline || "";
+}
+
 function buildGridlyTopAwarenessSpecificHeadlineSelection(detail = {}) {
   const empty = {
     headline: "",
@@ -27962,6 +28038,18 @@ function buildGridlyTopAwarenessSpecificHeadlineSelection(detail = {}) {
     const text = normalizeGridlyLightweightAlertSummaryText(headline);
     if (!text) return;
     const locationIntelligence = getGridlyTopAwarenessHeadlineLocationIntelligence(text, detail);
+    if (isGridlyCategoryOnlyTopAwarenessHeadline(text) && locationIntelligence?.usable) {
+      const localizedHeadline = resolveGridlyLocalizedIntelligenceHeadlineForActiveDetail(detail, locationIntelligence);
+      if (localizedHeadline) {
+        candidates.push({
+          headline: localizedHeadline,
+          source: `${source || "lightweightActiveAwareness.headline"}+localizedIntelligenceLabel`,
+          type: "localized_intelligence_location_headline",
+          locationIntelligence
+        });
+        return;
+      }
+    }
     candidates.push({ headline: text, source, type, locationIntelligence });
   };
   if (typeof buildGridlyRoadHazardTxDotStyleCandidate === "function") {
@@ -55840,7 +55928,7 @@ function buildGridlyQuietTopAwarenessPulseModel() {
 }
 
 function isGridlyCategoryOnlyTopAwarenessHeadline(value = "") {
-  const text = safeDisplayText(value, "");
+  const text = safeDisplayText(value, "").replace(/^[^A-Za-z0-9]+/, "").trim();
   if (!text) return true;
   return /^(?:Debris in Road|Debris|Road Hazard|Local road impact|Crash|Crash \/ Wreck|Flooding|Road closure|Construction|Hazard|Disabled vehicle|Community Activity Nearby)$/i.test(text);
 }
