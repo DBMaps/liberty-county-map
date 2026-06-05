@@ -64,7 +64,10 @@
 
   <div id="gridlySearchShell" class="gridly-search-shell" hidden data-search-ui="dormant">
     <div class="gridly-search-card">
-      <label class="gridly-search-label" for="gridlyAddressSearchInput">Search destination</label>
+      <div class="gridly-search-header">
+        <label class="gridly-search-label" for="gridlyAddressSearchInput">Search destination</label>
+        <button id="gridlySearchCloseBtn" class="gridly-search-close-btn" type="button" aria-label="Close destination search">×</button>
+      </div>
       <div class="gridly-search-input-row">
         <input
           id="gridlyAddressSearchInput"
