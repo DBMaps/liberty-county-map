@@ -40027,7 +40027,7 @@ function gridlyInferCardinalRoadDirection(bearing) {
   return null;
 }
 
-const GRIDLY_DIRECTIONAL_PROVENANCE_AUDIT_VERSION = "V252.2";
+const GRIDLY_DIRECTIONAL_PROVENANCE_AUDIT_VERSION = "V252.3";
 const GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDORS = ["US 90", "TX 146", "TX 321", "FM 1960", "FM 1409"];
 
 const GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDOR_PATTERNS = {
@@ -40307,6 +40307,216 @@ function gridlyDirectionalProvenancePredominantAxis(axisCounts = {}) {
   return ew > ns ? "EW" : "NS";
 }
 
+const GRIDLY_DIRECTIONAL_PROVENANCE_MAJOR_HIGHWAY_CLASSES = new Set(["motorway", "trunk", "primary", "secondary"]);
+
+function gridlyDirectionalProvenanceCanonicalCorridorsFromText(value = "") {
+  const text = String(value || "");
+  if (!text.trim()) return [];
+  const found = new Set();
+  const addMatches = (pattern, formatter) => {
+    let match;
+    const regex = new RegExp(pattern.source, pattern.flags.includes("g") ? pattern.flags : `${pattern.flags}g`);
+    while ((match = regex.exec(text)) !== null) {
+      const number = Number(match[1]);
+      if (Number.isFinite(number)) found.add(formatter(number));
+    }
+  };
+  addMatches(/\b(?:i|ih|interstate)\s*-?\s*(\d{1,3})\b/gi, (number) => `I-${number}`);
+  addMatches(/\b(?:us|u\.?s\.?|united\s+states(?:\s+highway)?)\s*-?\s*(\d{1,3})\b/gi, (number) => `US ${number}`);
+  addMatches(/\b(?:tx|sh|state\s+(?:hwy|highway)|highway)\s*-?\s*(\d{1,4})\b/gi, (number) => `TX ${number}`);
+  addMatches(/\b(?:fm|farm\s*-?\s*to\s*-?\s*market(?:\s+road)?)\s*-?\s*(\d{1,4})\b/gi, (number) => `FM ${number}`);
+  Array.from(found).forEach((corridor) => {
+    const match = corridor.match(/^(?:US |I-)(\d+)$/);
+    if (match) found.delete(`TX ${match[1]}`);
+  });
+  return Array.from(found);
+}
+
+function gridlyDirectionalProvenanceFeatureHighwayClass(feature = {}) {
+  const props = feature?.properties || {};
+  return String(props.highway || props.road_class || props.class || "").toLowerCase().trim();
+}
+
+function gridlyDirectionalProvenanceFallbackMajorRoadLabel(feature = {}) {
+  const props = feature?.properties || {};
+  const highwayClass = gridlyDirectionalProvenanceFeatureHighwayClass(feature);
+  if (!GRIDLY_DIRECTIONAL_PROVENANCE_MAJOR_HIGHWAY_CLASSES.has(highwayClass)) return null;
+  const label = normalizeCorridorBaseLabel(props.name || props.official_name || props.alt_name || props.route_name || props.routeName || "");
+  if (!label || /^(road|unnamed road|unknown)$/i.test(label)) return null;
+  return label;
+}
+
+function gridlyDirectionalProvenanceCorridorsFromFeature(feature = {}) {
+  const props = feature?.properties || {};
+  const text = [
+    props.ref,
+    props.name,
+    props.official_name,
+    props.alt_name,
+    props.route,
+    props.route_name,
+    props.routeName,
+    props["tiger:name_base"],
+    props["tiger:name_base_1"],
+    props["tiger:name_base_2"],
+    props["tiger:name_base_3"]
+  ].map((value) => String(value || "").trim()).filter(Boolean).join(" | ");
+  const corridors = gridlyDirectionalProvenanceCanonicalCorridorsFromText(text);
+  const fallback = corridors.length ? null : gridlyDirectionalProvenanceFallbackMajorRoadLabel(feature);
+  if (fallback) corridors.push(fallback);
+  return corridors;
+}
+
+function gridlyDirectionalProvenanceCorridorFromRecordAuditText(record = {}) {
+  const candidates = [
+    record?.selectedRoadName,
+    record?.roadName,
+    record?.road_name,
+    record?.primaryRoad,
+    record?.parsedPrimaryRoad,
+    record?.routeNameDisplay,
+    record?.routeName,
+    record?.nearestRoad,
+    record?.nearestRoadName,
+    record?.corridor,
+    record?.highway,
+    record?.raw?.roadName,
+    record?.raw?.primaryRoad,
+    record?.raw?.routeNameDisplay,
+    record?.raw?.routeName,
+    record?.raw?.highway,
+    record?.source?.roadName,
+    record?.source?.primaryRoad,
+    record?.source?.routeName,
+    record?.source?.highway,
+    record?.latestReport?.roadName,
+    record?.latestReport?.primaryRoad,
+    record?.latestReport?.routeName,
+    record?.latestReport?.highway,
+    typeof inferCorridorLabel === "function" ? inferCorridorLabel(record) : ""
+  ];
+  for (const value of candidates) {
+    const knownCorridor = gridlyDirectionalProvenanceCorridorFromValue(value);
+    if (knownCorridor) return knownCorridor;
+    const [detectedCorridor] = gridlyDirectionalProvenanceCanonicalCorridorsFromText(value);
+    if (detectedCorridor) return detectedCorridor;
+  }
+  return null;
+}
+
+function gridlyDirectionalProvenanceAreaInventoryKey(area = {}) {
+  if (area?.key === "liberty-county") return "county";
+  return area?.key || normalizeGridlyAwarenessAreaLookupText(area?.label || area?.storageValue || "").replace(/\s+/g, "-") || "unknown";
+}
+
+function gridlyDirectionalProvenanceSegmentInAwarenessArea(segment = {}, area = {}) {
+  if (!area) return false;
+  const midpoint = {
+    lat: (Number(segment.startLat) + Number(segment.endLat)) / 2,
+    lng: (Number(segment.startLng) + Number(segment.endLng)) / 2
+  };
+  if (![segment.startLat, segment.startLng, segment.endLat, segment.endLng, midpoint.lat, midpoint.lng].every(Number.isFinite)) return false;
+  if (area.countyWide || area.fallback) {
+    return isGridlyCoordinateInsideLibertyCountyBounds({ lat: segment.startLat, lng: segment.startLng })
+      || isGridlyCoordinateInsideLibertyCountyBounds({ lat: segment.endLat, lng: segment.endLng })
+      || isGridlyCoordinateInsideLibertyCountyBounds(midpoint);
+  }
+  if (!Number.isFinite(Number(area.lat)) || !Number.isFinite(Number(area.lng))) return false;
+  const radiusMiles = Number(area.radiusMiles) || DEFAULT_NEARBY_RADIUS_MILES;
+  const distanceMiles = typeof distancePointToSegmentMiles === "function"
+    ? distancePointToSegmentMiles(area.lat, area.lng, segment.startLat, segment.startLng, segment.endLat, segment.endLng)
+    : Math.min(
+      getDistanceMiles(area.lat, area.lng, segment.startLat, segment.startLng),
+      getDistanceMiles(area.lat, area.lng, segment.endLat, segment.endLng),
+      getDistanceMiles(area.lat, area.lng, midpoint.lat, midpoint.lng)
+    );
+  return Number.isFinite(distanceMiles) && distanceMiles <= radiusMiles;
+}
+
+function gridlyDirectionalProvenanceAreaRuntimeCoverage(area = {}, records = [], currentScopedRecords = []) {
+  const areaRecords = area?.countyWide || area?.fallback
+    ? records.filter((record) => gridlyDirectionalProvenanceRecordInAwarenessScope(record, { isCountyMode: true }))
+    : records.filter((record) => {
+      try { return typeof isGridlyRecordInAwarenessArea === "function" ? isGridlyRecordInAwarenessArea(record, area) : false; } catch (_error) { return false; }
+    });
+  const currentScopeRecords = area?.countyWide || area?.fallback
+    ? currentScopedRecords
+    : currentScopedRecords.filter((record) => {
+      try { return typeof isGridlyRecordInAwarenessArea === "function" ? isGridlyRecordInAwarenessArea(record, area) : false; } catch (_error) { return false; }
+    });
+  const corridorCoverageCounts = {};
+  areaRecords.forEach((record) => {
+    const corridor = gridlyDirectionalProvenanceCorridorFromRecordAuditText(record) || "out_of_scope_or_unknown";
+    gridlyDirectionalProvenanceIncrement(corridorCoverageCounts, corridor);
+  });
+  return {
+    runtimeEvaluatedRecords: records.length,
+    scopedEvaluatedRecords: areaRecords.length,
+    selectedScopedEvaluatedRecords: currentScopeRecords.length,
+    corridorCoverageCounts
+  };
+}
+
+function gridlyDirectionalProvenanceAreaCorridorInventory(records = [], scopedRecords = []) {
+  const loadedFeatures = roadwayDatasetLoaded && Array.isArray(roadwaySegmentFeatures) ? roadwaySegmentFeatures : [];
+  const areas = Array.isArray(GRIDLY_AWARENESS_AREA_DEFINITIONS)
+    ? GRIDLY_AWARENESS_AREA_DEFINITIONS.filter((area) => area && area.key !== "other")
+    : [];
+  return areas.reduce((inventory, area) => {
+    const corridorStats = new Map();
+    loadedFeatures.forEach((feature) => {
+      const corridors = gridlyDirectionalProvenanceCorridorsFromFeature(feature);
+      if (!corridors.length) return;
+      const segments = typeof flattenRoadGeometrySegments === "function" ? flattenRoadGeometrySegments(feature?.geometry) : [];
+      const areaSegments = segments.filter((segment) => gridlyDirectionalProvenanceSegmentInAwarenessArea(segment, area));
+      if (!areaSegments.length) return;
+      corridors.forEach((corridor) => {
+        if (!corridorStats.has(corridor)) {
+          corridorStats.set(corridor, {
+            corridor,
+            roadwayFeatures: 0,
+            geometrySegments: 0,
+            predominantAxis: "mixed",
+            geometryCapable: false,
+            axisSegmentBreakdown: { EW: 0, NS: 0 }
+          });
+        }
+        const stats = corridorStats.get(corridor);
+        stats.roadwayFeatures += 1;
+        stats.geometrySegments += areaSegments.length;
+        areaSegments.forEach((segment) => {
+          const bearing = typeof gridlyRoadBearingDegrees === "function"
+            ? gridlyRoadBearingDegrees(segment.startLat, segment.startLng, segment.endLat, segment.endLng)
+            : null;
+          const axis = gridlyDirectionalProvenanceAxisFromBearing(bearing);
+          if (axis) stats.axisSegmentBreakdown[axis] += 1;
+        });
+      });
+    });
+    const runtimeCoverage = gridlyDirectionalProvenanceAreaRuntimeCoverage(area, records, scopedRecords);
+    const detectedMajorCorridors = Array.from(corridorStats.values())
+      .map((stats) => ({
+        ...stats,
+        geometryCapable: stats.geometrySegments > 0,
+        predominantAxis: gridlyDirectionalProvenancePredominantAxis(stats.axisSegmentBreakdown)
+      }))
+      .sort((a, b) => b.geometrySegments - a.geometrySegments || b.roadwayFeatures - a.roadwayFeatures || a.corridor.localeCompare(b.corridor));
+    runtimeCoverage.corridorsWithoutRuntimeSamples = detectedMajorCorridors
+      .map((entry) => entry.corridor)
+      .filter((corridor) => !runtimeCoverage.corridorCoverageCounts[corridor]);
+    inventory[gridlyDirectionalProvenanceAreaInventoryKey(area)] = {
+      areaKey: area.key || null,
+      label: area.label || area.storageValue || "Awareness Area",
+      source: area.source || "",
+      detectedMajorCorridors,
+      geometryCapableCorridors: detectedMajorCorridors.filter((entry) => entry.geometryCapable),
+      runtimeCoverage,
+      corridorCount: detectedMajorCorridors.length
+    };
+    return inventory;
+  }, {});
+}
+
 function gridlyDirectionalProvenanceGeometryInventory() {
   const loadedFeatures = roadwayDatasetLoaded && Array.isArray(roadwaySegmentFeatures) ? roadwaySegmentFeatures : [];
   return GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDORS.reduce((inventory, corridor) => {
@@ -40457,6 +40667,7 @@ function gridlyDirectionalProvenanceAudit(options = {}) {
     scope: "countywide",
     corridors: geometryInventory
   };
+  const areaCorridorInventory = gridlyDirectionalProvenanceAreaCorridorInventory(evaluatedRecords, scopedEvaluatedRecords);
 
   return {
     available: true,
@@ -40481,6 +40692,7 @@ function gridlyDirectionalProvenanceAudit(options = {}) {
     lowConfidence: globalEvaluation.lowConfidence,
     suppressed: globalEvaluation.suppressed,
     countywideGeometryInventory,
+    areaCorridorInventory,
     geometryInventory: countywideGeometryInventory,
     globalCorridorRuntimeCoverage: globalEvaluation.corridorRuntimeCoverage,
     scopedCorridorRuntimeCoverage: scopedEvaluation.corridorRuntimeCoverage,
