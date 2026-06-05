@@ -50013,7 +50013,7 @@ function escapeGridlySettingsAttribute(value = "") {
 }
 
 function buildGridlySettingsAwarenessOptionsHtml(selectedValue = "") {
-  const areas = Array.isArray(GRIDLY_AWARENESS_AREA_DEFINITIONS) ? GRIDLY_AWARENESS_AREA_DEFINITIONS : [];
+  const areas = Array.isArray(GRIDLY_AWARENESS_AREA_DEFINITIONS) ? GRIDLY_AWARENESS_AREA_DEFINITIONS.filter((area) => area?.key !== "other") : [];
   return areas.map((area) => {
     const storageValue = area?.storageValue || "";
     const label = area?.label || storageValue || "Awareness Area";
