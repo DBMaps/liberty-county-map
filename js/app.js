@@ -21832,7 +21832,7 @@ function initMap() {
   centerMapOnUserIfAllowed();
   highlightNearestCrossingOnFirstLoad();
   installMapLayoutResizeSafety();
-  if (evaluateLayoutMode() === "desktop" && typeof renderUnifiedIncidents === "function") renderUnifiedIncidents("auto-map-init");
+  if (typeof renderUnifiedIncidents === "function") renderUnifiedIncidents("auto-map-init");
 }
 
 function getGridlyHomeTownCrossings(homeTownAnchor = getGridlyHomeTownAwarenessAnchor()) {
@@ -23074,7 +23074,7 @@ async function loadCrossings() {
       `${crossings.length} curated public crossings loaded for Gridly launch mode. Tap a marker to report road issues.`
     );
 
-    if (evaluateLayoutMode() === "desktop" && typeof renderUnifiedIncidents === "function") renderUnifiedIncidents("auto-crossings-loaded");
+    if (typeof renderUnifiedIncidents === "function") renderUnifiedIncidents("auto-crossings-loaded");
   } catch (error) {
     crossingLoadFailed = true;
     console.error("Gridly crossing load failed:", error);
@@ -23314,6 +23314,10 @@ function refreshReportHazardViews(source = "unspecified") {
       childDurations[name] = Number((performance.now() - start).toFixed(2));
     };
     timeRefreshChild("refreshPortraitV2LocalizedIntelligence", () => refreshPortraitV2LocalizedIntelligence());
+    gridlyRefreshAuditState.renderCounts.renderUnifiedIncidents += 1;
+    timeRefreshChild("renderUnifiedIncidents", () => renderUnifiedIncidents());
+    gridlyRefreshAuditState.renderCounts.scheduleRenderCrossings += 1;
+    timeRefreshChild("scheduleRenderCrossings", () => scheduleRenderCrossings("state-change"));
     const refreshLayoutModeIsDesktop = evaluateLayoutMode() === "desktop";
     if (refreshLayoutModeIsDesktop) {
       gridlyRefreshAuditState.renderCounts.renderAlerts += 1;
@@ -23322,16 +23326,14 @@ function refreshReportHazardViews(source = "unspecified") {
       timeRefreshChild("renderRoadHazards", () => renderRoadHazards());
       gridlyRefreshAuditState.renderCounts.renderTrendingCrossings += 1;
       timeRefreshChild("renderTrendingCrossings", () => renderTrendingCrossings());
-      gridlyRefreshAuditState.renderCounts.renderUnifiedIncidents += 1;
-      timeRefreshChild("renderUnifiedIncidents", () => renderUnifiedIncidents());
-      gridlyRefreshAuditState.renderCounts.scheduleRenderCrossings += 1;
-      timeRefreshChild("scheduleRenderCrossings", () => scheduleRenderCrossings("state-change"));
       gridlyRefreshAuditState.renderCounts.updateRouteIntelligence += 1;
       timeRefreshChild("updateRouteIntelligence", () => updateRouteIntelligence());
       timeRefreshChild("updateTrustStats", () => updateTrustStats());
       timeRefreshChild("updateGrowthWidgets", () => updateGrowthWidgets());
       timeRefreshChild("renderGridlyCommunityPulse", () => renderGridlyCommunityPulse({ reason: source }));
       timeRefreshChild("renderGridlyIntelligencePreviewCard", () => renderGridlyIntelligencePreviewCard({ reason: source }));
+    } else {
+      timeRefreshChild("refreshGridlyCommunityPulseSharedModel", () => refreshGridlyCommunityPulseSharedModel({ reason: source, topAwarenessMicrolineReadOnly: true }));
     }
     timeRefreshChild("updateDailyHabitStatus", () => updateDailyHabitStatus());
     timeRefreshChild("updateMobileAlertsMirror", () => updateMobileAlertsMirror());
@@ -26554,14 +26556,16 @@ async function loadSharedReports(reason = "manual") {
       recentlyClearedRoadHazardCount: recentlyClearedRoadHazards.length,
       activeReportCount: activeReports.length
     });
-    if (evaluateLayoutMode() === "desktop" && typeof renderUnifiedIncidents === "function") {
+    if (typeof renderUnifiedIncidents === "function") {
       renderUnifiedIncidents("auto-active-hazards-populated");
-      setTimeout(() => {
-        if (evaluateLayoutMode() === "desktop") renderUnifiedIncidents("auto-active-hazards-populated-250");
-      }, 250);
-      setTimeout(() => {
-        if (evaluateLayoutMode() === "desktop") renderUnifiedIncidents("auto-active-hazards-populated-1000");
-      }, 1000);
+      if (evaluateLayoutMode() === "desktop") {
+        setTimeout(() => {
+          if (evaluateLayoutMode() === "desktop") renderUnifiedIncidents("auto-active-hazards-populated-250");
+        }, 250);
+        setTimeout(() => {
+          if (evaluateLayoutMode() === "desktop") renderUnifiedIncidents("auto-active-hazards-populated-1000");
+        }, 1000);
+      }
     }
     ensureUnifiedIncidentLayerOnMap();
     updateCrossingPipelineAudit(`loadSharedReports:${reason}`);
@@ -26569,18 +26573,20 @@ async function loadSharedReports(reason = "manual") {
     pushGridlyReflowTrace("post-submit refresh", "start", { source: `loadSharedReports:${reason}` });
     refreshReportHazardViews(`loadSharedReports:${reason}`);
     scheduleHazardMarkerAutoRender(`loadSharedReports:${reason}`);
-    if (evaluateLayoutMode() === "desktop" && typeof renderUnifiedIncidents === "function") {
+    if (typeof renderUnifiedIncidents === "function") {
       renderUnifiedIncidents("auto-shared-reports-loaded");
       renderUnifiedIncidents("auto-hazards-refreshed");
-      setTimeout(() => {
-        if (evaluateLayoutMode() === "desktop") renderUnifiedIncidents("auto-shared-reports-loaded-250");
-      }, 250);
-      setTimeout(() => {
-        if (evaluateLayoutMode() === "desktop") renderUnifiedIncidents("auto-shared-reports-loaded-1000");
-      }, 1000);
-      setTimeout(() => {
-        if (evaluateLayoutMode() === "desktop") renderUnifiedIncidents("auto-shared-reports-loaded-2000");
-      }, 2000);
+      if (evaluateLayoutMode() === "desktop") {
+        setTimeout(() => {
+          if (evaluateLayoutMode() === "desktop") renderUnifiedIncidents("auto-shared-reports-loaded-250");
+        }, 250);
+        setTimeout(() => {
+          if (evaluateLayoutMode() === "desktop") renderUnifiedIncidents("auto-shared-reports-loaded-1000");
+        }, 1000);
+        setTimeout(() => {
+          if (evaluateLayoutMode() === "desktop") renderUnifiedIncidents("auto-shared-reports-loaded-2000");
+        }, 2000);
+      }
     }
     pushGridlyReflowTrace("post-submit refresh", "end", { source: `loadSharedReports:${reason}` });
 
@@ -30268,6 +30274,51 @@ function renderGridlyCommunityPulse(options = {}) {
   recordGridlyActiveLocationLifecycleEvent("renderGridlyCommunityPulse", {
     reason: options?.reason || "unspecified",
     pulseVisible: Boolean(gridlyCommunityPulseAuditState.pulseVisible),
+    renderedPulseHeadline: gridlyCommunityPulseAuditState.renderedPulseHeadline || "",
+    renderedPulseSubline: gridlyCommunityPulseAuditState.renderedPulseSubline || "",
+    resolvedLocationLabel: gridlyCommunityPulseAuditState.activeAwareness?.resolvedLocationLabel || "",
+    resolvedCategory: gridlyCommunityPulseAuditState.activeAwareness?.resolvedCategory || null
+  });
+  return gridlyCommunityPulseAuditState;
+}
+
+function refreshGridlyCommunityPulseSharedModel(options = {}) {
+  let model;
+  try {
+    model = buildGridlyCommunityPulseModel(options);
+  } catch (error) {
+    model = {
+      awarenessMode: "community",
+      pulseVisible: false,
+      renderedPulseHeadline: "",
+      renderedPulseSubline: "",
+      dominantCorridor: null,
+      selectedCommunityCount: 0,
+      communityPhraseCount: 0,
+      pulseRenderTarget: GRIDLY_COMMUNITY_PULSE_RENDER_TARGET,
+      pulseSuppressedReason: `shared model refresh error: ${error?.message || "unknown error"}`,
+      selectedHeadlineTemplate: "shared_model_error",
+      selectedSublineTemplate: "shared_model_error",
+      dominantCorridorScore: 0,
+      mobilityPressureCategory: "quiet",
+      blendedSignalTypes: [],
+      activeAwareness: null,
+      communityAwarenessSummary: null,
+      pulseSummaryReuseApplied: false,
+      pulseSummarySource: "",
+      pulseSummaryText: "",
+      phraseGenerationMode: "shared_model_error",
+      repetitionAvoidanceApplied: false
+    };
+  }
+  gridlyCommunityPulseAuditState = {
+    ...model,
+    pulseVisible: false,
+    pulseSuppressedReason: model.pulseSuppressedReason || "desktop pulse DOM gated; shared portrait model refreshed"
+  };
+  recordGridlyActiveLocationLifecycleEvent("refreshGridlyCommunityPulseSharedModel", {
+    reason: options?.reason || "unspecified",
+    pulseVisible: false,
     renderedPulseHeadline: gridlyCommunityPulseAuditState.renderedPulseHeadline || "",
     renderedPulseSubline: gridlyCommunityPulseAuditState.renderedPulseSubline || "",
     resolvedLocationLabel: gridlyCommunityPulseAuditState.activeAwareness?.resolvedLocationLabel || "",
