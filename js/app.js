@@ -37978,24 +37978,55 @@ function getFilterFitPadding() {
   return isMobile ? { paddingTopLeft: [20, 112], paddingBottomRight: [20, 148] } : { paddingTopLeft: [24, 48], paddingBottomRight: [24, 96] };
 }
 
+function getGridlyFilterViewportMaxZoom(filterKey = activeGeoFilter) {
+  const isMobile = window.matchMedia && window.matchMedia("(max-width: 768px)").matches;
+  if (filterKey === "county") return GRIDLY_COUNTY_STARTUP_ZOOM;
+  if (filterKey === "town") return GRIDLY_TOWN_STARTUP_ZOOM;
+  if (filterKey === "active-delays") return isMobile ? 14 : 13;
+  if (filterKey === "all") return isMobile ? 12 : 11;
+  return isMobile ? 16 : 15;
+}
+
+function getActiveDelayCrossingsForViewport() {
+  if (!Array.isArray(crossings) || !crossings.length) return [];
+  return crossings.filter((crossing) => {
+    const report = getLatestReportForCrossing(crossing.id);
+    return getIncidentLifecycleState(report) === "active";
+  });
+}
+
 function fitMapToCrossingsForActiveFilter(visibleCrossings = []) {
   if (!map) return;
-  if (!Array.isArray(visibleCrossings) || !visibleCrossings.length) return;
 
-  const latLngs = visibleCrossings
-    .map((crossing) => [Number(crossing.lat), Number(crossing.lng)])
-    .filter(([lat, lng]) => Number.isFinite(lat) && Number.isFinite(lng));
+  let targetBounds = null;
+  let targetCrossings = Array.isArray(visibleCrossings) ? visibleCrossings : [];
 
-  if (!latLngs.length) return;
+  if (activeGeoFilter === "county" && typeof getGridlyLibertyCountyBounds === "function") {
+    targetBounds = getGridlyLibertyCountyBounds();
+  } else if (activeGeoFilter === "active-delays") {
+    targetCrossings = getActiveDelayCrossingsForViewport();
+    if (!targetCrossings.length) return;
+  }
 
-  const bounds = L.latLngBounds(latLngs);
-  if (!bounds.isValid()) return;
+  if (!targetBounds) {
+    if (!targetCrossings.length) return;
 
-  map.fitBounds(bounds, {
+    const latLngs = targetCrossings
+      .map((crossing) => [Number(crossing.lat), Number(crossing.lng)])
+      .filter(([lat, lng]) => Number.isFinite(lat) && Number.isFinite(lng));
+
+    if (!latLngs.length) return;
+
+    targetBounds = L.latLngBounds(latLngs);
+  }
+
+  if (!targetBounds?.isValid?.()) return;
+
+  map.fitBounds(targetBounds, {
     ...getFilterFitPadding(),
     animate: true,
     duration: 0.55,
-    maxZoom: window.matchMedia && window.matchMedia("(max-width: 768px)").matches ? 16 : 15
+    maxZoom: getGridlyFilterViewportMaxZoom(activeGeoFilter)
   });
 
   highlightNearestCrossingOnFirstLoad();
@@ -45818,6 +45849,7 @@ function bindEvents() {
     document.querySelectorAll(".geo-filter-pill").forEach((pill) => {
       pill.classList.toggle("selected", pill === matchingPill);
     });
+    syncGridlyGeoFilterPillSelectionForTest?.();
 
     if (activeGeoFilter === selectedFilter) {
       pushCrossingAuditCall("filter-skip", reason, { selectedFilter, skip: "same-filter" });
@@ -45825,6 +45857,7 @@ function bindEvents() {
     }
 
     activeGeoFilter = selectedFilter;
+    syncGridlyGeoFilterPillSelectionForTest?.();
     crossingRenderFilterVersion += 1;
     renderGridlyAwarenessMapIdentity(`filter-change:${reason}`);
     scheduleRenderCrossings(`filter-change:${reason}`, { force: true });
