@@ -16618,6 +16618,7 @@ const gridlySearchUiRefs = {
   shell: null,
   input: null,
   clearBtn: null,
+  closeBtn: null,
   results: null
 };
 
@@ -19634,11 +19635,13 @@ function initGridlySearchUI() {
   const shell = document.getElementById("gridlySearchShell");
   const input = document.getElementById("gridlyAddressSearchInput");
   const clearBtn = document.getElementById("gridlySearchClearBtn");
+  const closeBtn = document.getElementById("gridlySearchCloseBtn");
   const results = document.getElementById("gridlySearchResults");
 
   gridlySearchUiRefs.shell = shell || null;
   gridlySearchUiRefs.input = input || null;
   gridlySearchUiRefs.clearBtn = clearBtn || null;
+  gridlySearchUiRefs.closeBtn = closeBtn || null;
   gridlySearchUiRefs.results = results || null;
 
   if (shell) {
@@ -19659,6 +19662,15 @@ function initGridlySearchUI() {
       clearGridlySearchResults();
     });
     clearBtn.dataset.gridlySearchClearBound = "true";
+  }
+
+  if (closeBtn && !closeBtn.dataset.gridlySearchCloseBound) {
+    closeBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      closeGridlyDestinationSearchSurface({ source: "destination_search_close" });
+    });
+    closeBtn.dataset.gridlySearchCloseBound = "true";
   }
 
   if (input && !input.dataset.gridlySearchInputBound) {
@@ -19708,6 +19720,7 @@ function initGridlySearchUI() {
     hasSearchShell: Boolean(shell),
     hasSearchInput: Boolean(input),
     hasSearchClearButton: Boolean(clearBtn),
+    hasSearchCloseButton: Boolean(closeBtn),
     hasSearchResults: Boolean(results)
   };
 }
@@ -19733,6 +19746,20 @@ function openGridlyDestinationSearchSurface(options = {}) {
     return true;
   }
   return openSearch();
+}
+
+function closeGridlyDestinationSearchSurface(options = {}) {
+  if (gridlySearchUiState.pendingSearchTimer) {
+    clearTimeout(gridlySearchUiState.pendingSearchTimer);
+    gridlySearchUiState.pendingSearchTimer = null;
+  }
+  gridlySearchUiState.isSearching = false;
+  gridlySearchUiState.activeSearchRequestId += 1;
+  if (typeof closeGridlySurface === "function") {
+    closeGridlySurface("search", { source: options?.source || "destination_search_close" });
+    return true;
+  }
+  return hideGridlySearchShell({ source: options?.source || "destination_search_close", clear: false });
 }
 
 function hideGridlySearchShell(options = {}) {
@@ -47792,6 +47819,7 @@ window.setGridlyDestinationMarker = setGridlyDestinationMarker;
 window.clearGridlyDestinationMarker = clearGridlyDestinationMarker;
 window.showGridlySearchShell = showGridlySearchShell;
 window.hideGridlySearchShell = hideGridlySearchShell;
+window.closeGridlyDestinationSearchSurface = closeGridlyDestinationSearchSurface;
 window.clearGridlySearchResults = clearGridlySearchResults;
 window.gridlySearchDebug = function gridlySearchDebug() {
   const isVisibleEl = (el) => {
@@ -47808,6 +47836,7 @@ window.gridlySearchDebug = function gridlySearchDebug() {
   const zoomControl = document.querySelector("#map .leaflet-control-zoom");
   const results = gridlySearchUiRefs.results || document.getElementById("gridlySearchResults");
   const clearBtn = gridlySearchUiRefs.clearBtn || document.getElementById("gridlySearchClearBtn");
+  const closeBtn = gridlySearchUiRefs.closeBtn || document.getElementById("gridlySearchCloseBtn");
   const hasState = Boolean(state && typeof state === "object");
   const safeState = hasState ? state : {};
   const debug = {
@@ -47830,6 +47859,7 @@ window.gridlySearchDebug = function gridlySearchDebug() {
     hasSearchInput: Boolean(input),
     hasSearchResults: Boolean(results),
     hasSearchClearButton: Boolean(clearBtn),
+    hasSearchCloseButton: Boolean(closeBtn),
     hasDestinationAddBtn: Boolean(els.destinationAddBtn),
     destinationAddBtnBound: Boolean(els.destinationAddBtn?.dataset?.searchBound === "true"),
     hasChooseRouteButton: Boolean(els.mobileDestinationCommandBtn),
