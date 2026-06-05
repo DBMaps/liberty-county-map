@@ -40027,7 +40027,7 @@ function gridlyInferCardinalRoadDirection(bearing) {
   return null;
 }
 
-const GRIDLY_DIRECTIONAL_PROVENANCE_AUDIT_VERSION = "V252.5";
+const GRIDLY_DIRECTIONAL_PROVENANCE_AUDIT_VERSION = "V253";
 const GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDORS = ["US 90", "TX 146", "TX 321", "FM 1960", "FM 1409"];
 
 const GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDOR_PATTERNS = {
@@ -40493,6 +40493,152 @@ function gridlyDirectionalProvenanceTierBreakdown(corridors = []) {
   }, gridlyDirectionalProvenanceEmptyTierBreakdown());
 }
 
+function gridlyDirectionalProvenanceFeaturesForCorridor(corridor = "") {
+  const label = normalizeCorridorBaseLabel(String(corridor || ""));
+  const loadedFeatures = roadwayDatasetLoaded && Array.isArray(roadwaySegmentFeatures) ? roadwaySegmentFeatures : [];
+  if (!label || !loadedFeatures.length) return [];
+  return loadedFeatures.filter((feature) => {
+    if (gridlyDirectionalProvenanceFeatureMatchesCorridor(feature, label)) return true;
+    return gridlyDirectionalProvenanceCorridorsFromFeature(feature).some((candidate) => normalizeCorridorBaseLabel(candidate) === label);
+  });
+}
+
+function gridlyDirectionalProvenanceReadinessBucket(score = 0, tier = "local") {
+  const value = Number(score) || 0;
+  if (tier === "local") {
+    if (value >= 80) return "conditional";
+    return value >= 55 ? "conditional" : "notReady";
+  }
+  if (value >= 80) return "ready";
+  if (value >= 55) return "conditional";
+  return "notReady";
+}
+
+function gridlyDirectionalProvenanceReadinessSummary(entries = []) {
+  return entries.reduce((summary, entry) => {
+    const status = entry?.readinessStatus === "ready" || entry?.readinessStatus === "conditional" || entry?.readinessStatus === "notReady"
+      ? entry.readinessStatus
+      : gridlyDirectionalProvenanceReadinessBucket(entry?.readinessScore, entry?.tier);
+    summary[status] += 1;
+    return summary;
+  }, { ready: 0, conditional: 0, notReady: 0 });
+}
+
+function gridlyDirectionalProvenanceReadinessGeometryQuality(stats = {}) {
+  const segments = Number(stats.geometrySegments || 0);
+  const features = Number(stats.roadwayFeatures || 0);
+  if (segments >= 120 && features >= 8) return { label: "high", score: 30 };
+  if (segments >= 50 && features >= 4) return { label: "medium", score: 23 };
+  if (segments >= 12 && features >= 2) return { label: "limited", score: 15 };
+  if (segments > 0) return { label: "sparse", score: 8 };
+  return { label: "none", score: 0 };
+}
+
+function gridlyDirectionalProvenanceReadinessBearingStability(axisCounts = {}, geometrySegments = 0) {
+  const ew = Number(axisCounts.EW || 0);
+  const ns = Number(axisCounts.NS || 0);
+  const total = ew + ns;
+  if (!total) return { label: "none", dominantShare: 0, score: 0 };
+  const dominantShare = Math.max(ew, ns) / total;
+  const usableSegments = Number(geometrySegments || 0);
+  if (dominantShare >= 0.88 && usableSegments >= 20) return { label: "high", dominantShare, score: 24 };
+  if (dominantShare >= 0.72 && usableSegments >= 10) return { label: "medium", dominantShare, score: 18 };
+  if (dominantShare >= 0.6) return { label: "mixed", dominantShare, score: 10 };
+  return { label: "highly_variable", dominantShare, score: 4 };
+}
+
+function gridlyDirectionalProvenanceReadinessCorridorConsistency(stats = {}, bearingAssessment = {}) {
+  const segments = Number(stats.geometrySegments || 0);
+  const features = Math.max(1, Number(stats.roadwayFeatures || 0));
+  const segmentsPerFeature = segments / features;
+  const axis = stats.predominantAxis || "mixed";
+  const dominantShare = Number(bearingAssessment.dominantShare || 0);
+  if (axis !== "mixed" && dominantShare >= 0.85 && segmentsPerFeature >= 4) return { label: "high", score: 20 };
+  if (axis !== "mixed" && dominantShare >= 0.7) return { label: "medium", score: 15 };
+  if (segments > 0 && dominantShare >= 0.55) return { label: "mixed", score: 8 };
+  return { label: "low", score: 2 };
+}
+
+function gridlyDirectionalProvenanceReadinessDividedRoadRisk(corridor = "", tier = "local", features = [], stats = {}, bearingAssessment = {}) {
+  let onewayFeatures = 0;
+  let separatedFeatures = 0;
+  let multilaneFeatures = 0;
+  features.forEach((feature) => {
+    const props = feature?.properties || {};
+    const oneway = String(props.oneway || "").toLowerCase().trim();
+    if (oneway === "yes" || oneway === "1" || oneway === "true") onewayFeatures += 1;
+    if (String(props["tiger:separated"] || props.separated || props.divided || "").toLowerCase().trim() === "yes") separatedFeatures += 1;
+    if (Number(props.lanes) >= 4 || props["lanes:forward"] || props["lanes:backward"]) multilaneFeatures += 1;
+  });
+  const segments = Number(stats.geometrySegments || 0);
+  const dominantShare = Number(bearingAssessment.dominantShare || 0);
+  const knownAmbiguousCorridor = /^(TX 146|TX 321)$/i.test(String(corridor || ""));
+  const dividedSignals = onewayFeatures + separatedFeatures + multilaneFeatures;
+  if (knownAmbiguousCorridor || (tier === "primary" && dividedSignals >= 4 && dominantShare < 0.86)) {
+    return { label: "high", score: 0, onewayFeatures, separatedFeatures, multilaneFeatures };
+  }
+  if ((tier === "primary" && dividedSignals > 0) || (segments >= 180 && dominantShare < 0.78)) {
+    return { label: "medium", score: 8, onewayFeatures, separatedFeatures, multilaneFeatures };
+  }
+  return { label: "low", score: 12, onewayFeatures, separatedFeatures, multilaneFeatures };
+}
+
+function gridlyDirectionalProvenanceReadinessRuntimeCoverage(corridor = "", runtimeCoverage = {}) {
+  const samples = Number(runtimeCoverage?.[corridor] || 0);
+  if (samples >= 5) return { label: "sufficient", samples, score: 14 };
+  if (samples > 0) return { label: "limited", samples, score: 8 };
+  return { label: "none", samples, score: 2 };
+}
+
+function gridlyDirectionalProvenanceReadinessConfidence(score = 0, geometryQuality = "none", bearingStability = "none", runtimeCoverage = "none") {
+  const value = Number(score) || 0;
+  if (value >= 80 && geometryQuality === "high" && bearingStability === "high") return "high";
+  if (value >= 55 && geometryQuality !== "none") return "medium";
+  return "low";
+}
+
+function gridlyDirectionalProvenanceDirectionalReadiness(detectedMajorCorridors = [], runtimeCoverage = {}) {
+  const countywide = detectedMajorCorridors.map((stats) => {
+    const tier = gridlyDirectionalProvenanceCorridorTier(stats.corridor, stats);
+    const features = gridlyDirectionalProvenanceFeaturesForCorridor(stats.corridor);
+    const geometry = gridlyDirectionalProvenanceReadinessGeometryQuality(stats);
+    const bearing = gridlyDirectionalProvenanceReadinessBearingStability(stats.axisSegmentBreakdown, stats.geometrySegments);
+    const consistency = gridlyDirectionalProvenanceReadinessCorridorConsistency(stats, bearing);
+    const dividedRisk = gridlyDirectionalProvenanceReadinessDividedRoadRisk(stats.corridor, tier, features, stats, bearing);
+    const runtime = gridlyDirectionalProvenanceReadinessRuntimeCoverage(stats.corridor, runtimeCoverage);
+    const tierPriorityScore = tier === "local" ? -8 : 0;
+    const readinessScore = Math.max(0, Math.min(100, Math.round(geometry.score + bearing.score + consistency.score + dividedRisk.score + runtime.score + tierPriorityScore)));
+    const readinessConfidence = gridlyDirectionalProvenanceReadinessConfidence(readinessScore, geometry.label, bearing.label, runtime.label);
+    const readinessStatus = gridlyDirectionalProvenanceReadinessBucket(readinessScore, tier);
+    return {
+      corridor: stats.corridor,
+      tier,
+      readinessScore,
+      readinessConfidence,
+      readinessStatus,
+      recommendedForDirectionalAwareness: tier !== "local" && readinessStatus === "ready" && readinessConfidence === "high" && dividedRisk.label !== "high",
+      geometryQuality: geometry.label,
+      bearingStability: bearing.label,
+      corridorConsistency: consistency.label,
+      dividedRoadRisk: dividedRisk.label,
+      runtimeCoverage: runtime.label,
+      runtimeSamples: runtime.samples,
+      predominantAxis: stats.predominantAxis || "mixed",
+      axisSegmentBreakdown: stats.axisSegmentBreakdown || { EW: 0, NS: 0 },
+      roadwayFeatures: Number(stats.roadwayFeatures || 0),
+      geometrySegments: Number(stats.geometrySegments || 0),
+      auditOnly: true
+    };
+  }).sort((a, b) => {
+    const tierRank = { primary: 0, secondary: 1, local: 2 };
+    return (tierRank[a.tier] ?? 3) - (tierRank[b.tier] ?? 3) || b.readinessScore - a.readinessScore || a.corridor.localeCompare(b.corridor);
+  });
+  return {
+    countywide,
+    readinessSummary: gridlyDirectionalProvenanceReadinessSummary(countywide)
+  };
+}
+
 function gridlyDirectionalProvenanceAreaCorridorInventory(records = [], scopedRecords = []) {
   const loadedFeatures = roadwayDatasetLoaded && Array.isArray(roadwaySegmentFeatures) ? roadwaySegmentFeatures : [];
   const areas = Array.isArray(GRIDLY_AWARENESS_AREA_DEFINITIONS)
@@ -40773,6 +40919,7 @@ function gridlyDirectionalProvenanceAudit(options = {}) {
     directionalSeedTierBreakdown: gridlyDirectionalProvenanceTierBreakdown(Object.values(geometryInventory))
   };
   const areaCorridorInventory = gridlyDirectionalProvenanceAreaCorridorInventory(evaluatedRecords, scopedEvaluatedRecords);
+  const directionalReadiness = gridlyDirectionalProvenanceDirectionalReadiness(detectedMajorCorridors, globalEvaluation.corridorRuntimeCoverage);
 
   return {
     available: true,
@@ -40798,6 +40945,8 @@ function gridlyDirectionalProvenanceAudit(options = {}) {
     suppressed: globalEvaluation.suppressed,
     countywideGeometryInventory,
     areaCorridorInventory,
+    directionalReadiness,
+    readinessSummary: directionalReadiness.readinessSummary,
     geometryInventory: countywideGeometryInventory,
     globalCorridorRuntimeCoverage: globalEvaluation.corridorRuntimeCoverage,
     scopedCorridorRuntimeCoverage: scopedEvaluation.corridorRuntimeCoverage,
