@@ -23275,7 +23275,6 @@ function shouldShowCrossingInLaunchMode(crossing) {
   return false;
 }
 function refreshReportHazardViews(source = "unspecified") {
-  const refreshStart = performance.now();
   const endRefreshHazardTrace = timeGridlyReflowTrace("refreshReportHazardViews", source);
   gridlyRefreshAuditState.totalRefreshCount += 1;
   gridlyRefreshAuditState.refreshSourceCounts[source] = (gridlyRefreshAuditState.refreshSourceCounts[source] || 0) + 1;
@@ -23284,12 +23283,21 @@ function refreshReportHazardViews(source = "unspecified") {
   gridlyRefreshCycleCache = createGridlyRefreshCycleCache();
   try {
     const childDurations = {};
-    const timeRefreshChild = (name, fn) => {
+    const timeRefreshChild = (name, fn, options = {}) => {
       const start = performance.now();
+      const startedAtEpoch = Date.now();
       fn();
-      childDurations[name] = Number((performance.now() - start).toFixed(2));
+      const measuredDuration = performance.now() - start;
+      const breakdownName = options?.portraitBreakdownName || "";
+      const breakdown = breakdownName ? gridlyPortraitIntelligenceBreakdownAuditState[breakdownName] : null;
+      const breakdownDuration = Number(breakdown?.totalMs);
+      const breakdownCapturedAt = Number(breakdown?.at || 0);
+      const duration = Number.isFinite(breakdownDuration) && breakdownCapturedAt >= startedAtEpoch
+        ? breakdownDuration
+        : measuredDuration;
+      childDurations[name] = Number(duration.toFixed(2));
     };
-    timeRefreshChild("refreshPortraitV2LocalizedIntelligence", () => refreshPortraitV2LocalizedIntelligence());
+    timeRefreshChild("refreshPortraitV2LocalizedIntelligence", () => refreshPortraitV2LocalizedIntelligence(), { portraitBreakdownName: "refreshPortraitV2LocalizedIntelligence" });
     gridlyRefreshAuditState.renderCounts.renderAlerts += 1;
     timeRefreshChild("renderAlerts", () => renderAlerts());
     gridlyRefreshAuditState.renderCounts.renderRoadHazards += 1;
@@ -23311,8 +23319,9 @@ function refreshReportHazardViews(source = "unspecified") {
     timeRefreshChild("recomputeMovementIntelligence", () => recomputeMovementIntelligence());
     timeRefreshChild("updateCorridorSummaryCards", () => updateCorridorSummaryCards());
     timeRefreshChild("renderGridlyCommunityPulse", () => renderGridlyCommunityPulse({ reason: source }));
-    timeRefreshChild("renderGridlyIntelligencePreviewCard", () => renderGridlyIntelligencePreviewCard({ reason: source }));
-    const refreshDuration = Number((performance.now() - refreshStart).toFixed(2));
+    timeRefreshChild("renderGridlyIntelligencePreviewCard", () => renderGridlyIntelligencePreviewCard({ reason: source }), { portraitBreakdownName: "renderGridlyIntelligencePreviewCard" });
+    const childDurationTotal = Object.values(childDurations).reduce((total, duration) => total + (Number.isFinite(duration) ? duration : 0), 0);
+    const refreshDuration = Number(childDurationTotal.toFixed(2));
     gridlyRefreshAuditState.lastRefreshDuration = refreshDuration;
     gridlyRefreshAuditState.lastChildDurations = childDurations;
     const unifiedIncidents = getUnifiedIncidents();
