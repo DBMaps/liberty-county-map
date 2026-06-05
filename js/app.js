@@ -27969,8 +27969,11 @@ function buildGridlyTopAwarenessSpecificHeadlineSelection(detail = {}) {
     const roadHazardLocation = roadHazard.referenceRoadA && roadHazard.referenceRoadB
       ? `${roadHazard.road} between ${roadHazard.referenceRoadA} and ${roadHazard.referenceRoadB}`
       : (roadHazard.nearestRoadName ? `${roadHazard.road} near ${roadHazard.nearestRoadName}` : roadHazard.road);
-    const resolvedRoadHazardSummary = roadHazard.hazard === "Other Hazard" && roadHazardLocation
+    const consumerRoadHazardSummary = roadHazardLocation
       ? buildGridlyLightweightSummaryFromResolvedDetail({ ...detail, resolvedLocationLabel: roadHazardLocation })
+      : { value: "", source: "" };
+    const resolvedRoadHazardSummary = consumerRoadHazardSummary.value
+      ? { value: consumerRoadHazardSummary.value, source: `${roadHazard.source || "roadHazard.txdotStyle"}+consumerLocationHeadline` }
       : { value: roadHazard.text, source: roadHazard.source };
     addCandidate(resolvedRoadHazardSummary.value, resolvedRoadHazardSummary.source || roadHazard.source || "roadHazard.txdotStyle", "road_hazard_location_headline");
   }
@@ -28019,6 +28022,10 @@ function getGridlyConsumerTopAwarenessConditionLabel(category = "") {
   const label = getGridlyLightweightTitleCaseCategory(category);
   if (/^Debris in Road$/i.test(label)) return "Debris";
   if (/^Crash \/ Wreck$/i.test(label)) return "Crash";
+  if (label && label !== "Unknown") return label;
+  const rawLabel = safeDisplayText(category, "");
+  if (/^(?:Debris in Road|Debris)$/i.test(rawLabel)) return "Debris";
+  if (/^(?:Road Hazard|Local road impact|Hazard)$/i.test(rawLabel)) return "Road hazard";
   return label;
 }
 
@@ -28041,6 +28048,27 @@ function buildGridlyLightweightSummaryFromResolvedDetail(detail = {}) {
   return value
     ? { value, source: "lightweightActiveAwareness.resolvedCategory+resolvedLocationLabel" }
     : { value: "", source: "" };
+}
+
+function buildGridlyCategoryOnlyTopAwarenessLocationReplacement(headline = "", detail = {}) {
+  const rawHeadline = safeDisplayText(headline, "");
+  if (!rawHeadline || !isGridlyCategoryOnlyTopAwarenessHeadline(rawHeadline) || !detail || typeof detail !== "object") return null;
+  const currentHeadline = normalizeGridlyLightweightAlertSummaryText(rawHeadline) || rawHeadline;
+  const locationIntelligence = classifyGridlyTopAwarenessLocationIntelligence(detail);
+  if (!locationIntelligence?.usable || !locationIntelligence.label) return null;
+  const replacementCategory = detail.resolvedCategory && detail.resolvedCategory !== "unknown"
+    ? detail.resolvedCategory
+    : (detail.rawCategoryValue || currentHeadline);
+  const replacement = buildGridlyConsumerTopAwarenessLocationHeadline(
+    replacementCategory,
+    locationIntelligence.label
+  );
+  if (!replacement || isGridlyCategoryOnlyTopAwarenessHeadline(replacement)) return null;
+  return {
+    headline: replacement,
+    source: "lightweightActiveAwareness.categoryOnlyHeadline+resolvedLocationLabel",
+    locationIntelligence
+  };
 }
 
 function isGridlyRailOrCrossingCategory(category = "") {
@@ -28624,18 +28652,21 @@ function buildGridlyRoadHazardTxDotStyleCandidate(alert = {}) {
   const refs = [];
   pushGridlyRoadHazardReferenceRoad(refs, getGridlyAlertFirstTextValue(alert, [
     "referenceRoadA",
+    "referenceRoad",
     "crossStreetA",
     "crossStreet1",
     "fromStreet",
     "startStreet",
     "parsedCrossRoad",
     "raw.referenceRoadA",
+    "raw.referenceRoad",
     "raw.crossStreetA",
     "raw.crossStreet1",
     "raw.fromStreet",
     "raw.startStreet",
     "raw.parsedCrossRoad",
     "source.referenceRoadA",
+    "source.referenceRoad",
     "source.crossStreetA",
     "source.crossStreet1",
     "source.fromStreet",
@@ -29493,6 +29524,13 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
     topAwarenessHeadlineSource = "lightweightActiveAwareness.dedupedMobilityCountFallback";
     topAwarenessFallbackReason = topAwarenessHeadlineSelection.fallbackReason || (topAwarenessLocationIntelligence.usable ? "specific_location_candidate_unavailable" : "multiple_deduped_mobility_issues_without_single_specific_location_headline");
   }
+  const categoryOnlyLocationReplacement = buildGridlyCategoryOnlyTopAwarenessLocationReplacement(headline, selectedActiveDetail || {});
+  const categoryOnlyLocationReplacementApplied = Boolean(categoryOnlyLocationReplacement?.headline);
+  if (categoryOnlyLocationReplacementApplied) {
+    headline = categoryOnlyLocationReplacement.headline;
+    topAwarenessHeadlineSource = categoryOnlyLocationReplacement.source;
+    topAwarenessFallbackReason = "";
+  }
   const subline = activeAwarenessCount > 0
     ? (topCorridorLabel ? `Community activity remains visible near ${topCorridorLabel}.` : "Active reports are limited nearby.")
     : "Community activity is quiet.";
@@ -29576,8 +29614,9 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
     lightweightSummaryReuseApplied,
     headline,
     topAwarenessHeadlineSource,
-    topAwarenessSpecificLocationApplied,
-    topAwarenessSelectedLocationIntelligence: topAwarenessLocationIntelligence,
+    topAwarenessSpecificLocationApplied: Boolean(topAwarenessSpecificLocationApplied || categoryOnlyLocationReplacementApplied),
+    topAwarenessCategoryOnlyLocationReplacementApplied: categoryOnlyLocationReplacementApplied,
+    topAwarenessSelectedLocationIntelligence: categoryOnlyLocationReplacement?.locationIntelligence || topAwarenessLocationIntelligence,
     topAwarenessFallbackReason,
     subline,
     lifecycleInfluencedTopAwareness,
@@ -55803,7 +55842,7 @@ function buildGridlyQuietTopAwarenessPulseModel() {
 function isGridlyCategoryOnlyTopAwarenessHeadline(value = "") {
   const text = safeDisplayText(value, "");
   if (!text) return true;
-  return /^(?:Debris in Road|Debris|Crash|Crash \/ Wreck|Flooding|Road closure|Construction|Hazard|Disabled vehicle|Community Activity Nearby)$/i.test(text);
+  return /^(?:Debris in Road|Debris|Road Hazard|Local road impact|Crash|Crash \/ Wreck|Flooding|Road closure|Construction|Hazard|Disabled vehicle|Community Activity Nearby)$/i.test(text);
 }
 
 function buildGridlyLocationFirstTopAwarenessHeadline(activeAwareness = {}, narrativePromotion = {}) {
