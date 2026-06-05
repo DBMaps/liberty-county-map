@@ -79,6 +79,17 @@ function recordGridlyBackgroundFunctionCall(functionName) {
   }
 }
 
+function isGridlyExplicitDebugModeEnabled() {
+  if (typeof window === "undefined") return false;
+  if (window.GRIDLY_DEBUG === true || window.GRIDLY_PERFORMANCE_DEBUG === true) return true;
+  try {
+    return window.localStorage?.getItem?.("gridlyDebugMode") === "true"
+      || window.localStorage?.getItem?.("gridlyPerformanceDebug") === "true";
+  } catch (error) {
+    return false;
+  }
+}
+
 function isGridlyTopPanelDebugEnabled() {
   return typeof window !== "undefined" && window.GRIDLY_DEBUG_TOP_PANEL === true;
 }
@@ -11460,9 +11471,17 @@ function makeGridlySectionTimer(sections) {
   };
 }
 
+function getGridlyAuditSectionDurationTotal(sections = {}) {
+  return Object.values(sections || {}).reduce((total, durationMs) => {
+    const safeDuration = Number(durationMs);
+    return total + (Number.isFinite(safeDuration) ? Math.max(0, safeDuration) : 0);
+  }, 0);
+}
+
 function recordPortraitIntelligenceBreakdown(functionName, startedAt, sections, details = {}) {
+  const sectionDurationTotal = getGridlyAuditSectionDurationTotal(sections);
   gridlyPortraitIntelligenceBreakdownAuditState[functionName] = {
-    totalMs: performance.now() - startedAt,
+    totalMs: Number((sectionDurationTotal > 0 ? sectionDurationTotal : performance.now() - startedAt).toFixed(3)),
     sections,
     counts: details.counts || {},
     cacheReuseApplied: Boolean(details.cacheReuseApplied),
@@ -23078,7 +23097,7 @@ async function loadRoadwayDataset() {
     roadwayDatasetLoaded = true;
   } catch (error) {
     roadwayDatasetLoadError = String(error?.message || error || "unknown_error");
-    console.warn("Unable to load local roadway dataset:", error);
+    if (isGridlyExplicitDebugModeEnabled()) console.warn("Unable to load local roadway dataset:", error);
   }
 }
 
@@ -23250,13 +23269,13 @@ async function loadCrossingReviewOverrides() {
     });
 
     if (!response.ok) {
-      console.warn("Crossing review override file not found. Falling back to raw FRA data.");
+      if (isGridlyExplicitDebugModeEnabled()) console.warn("Crossing review override file not found. Falling back to raw FRA data.");
       return {};
     }
 
     return await response.json();
   } catch (error) {
-    console.warn("Unable to load crossing review overrides:", error);
+    if (isGridlyExplicitDebugModeEnabled()) console.warn("Unable to load crossing review overrides:", error);
     return {};
   }
 }
@@ -23283,21 +23302,12 @@ function refreshReportHazardViews(source = "unspecified") {
   gridlyRefreshCycleCache = createGridlyRefreshCycleCache();
   try {
     const childDurations = {};
-    const timeRefreshChild = (name, fn, options = {}) => {
+    const timeRefreshChild = (name, fn) => {
       const start = performance.now();
-      const startedAtEpoch = Date.now();
       fn();
-      const measuredDuration = performance.now() - start;
-      const breakdownName = options?.portraitBreakdownName || "";
-      const breakdown = breakdownName ? gridlyPortraitIntelligenceBreakdownAuditState[breakdownName] : null;
-      const breakdownDuration = Number(breakdown?.totalMs);
-      const breakdownCapturedAt = Number(breakdown?.at || 0);
-      const duration = Number.isFinite(breakdownDuration) && breakdownCapturedAt >= startedAtEpoch
-        ? breakdownDuration
-        : measuredDuration;
-      childDurations[name] = Number(duration.toFixed(2));
+      childDurations[name] = Number((performance.now() - start).toFixed(2));
     };
-    timeRefreshChild("refreshPortraitV2LocalizedIntelligence", () => refreshPortraitV2LocalizedIntelligence(), { portraitBreakdownName: "refreshPortraitV2LocalizedIntelligence" });
+    timeRefreshChild("refreshPortraitV2LocalizedIntelligence", () => refreshPortraitV2LocalizedIntelligence());
     gridlyRefreshAuditState.renderCounts.renderAlerts += 1;
     timeRefreshChild("renderAlerts", () => renderAlerts());
     gridlyRefreshAuditState.renderCounts.renderRoadHazards += 1;
@@ -23319,7 +23329,7 @@ function refreshReportHazardViews(source = "unspecified") {
     timeRefreshChild("recomputeMovementIntelligence", () => recomputeMovementIntelligence());
     timeRefreshChild("updateCorridorSummaryCards", () => updateCorridorSummaryCards());
     timeRefreshChild("renderGridlyCommunityPulse", () => renderGridlyCommunityPulse({ reason: source }));
-    timeRefreshChild("renderGridlyIntelligencePreviewCard", () => renderGridlyIntelligencePreviewCard({ reason: source }), { portraitBreakdownName: "renderGridlyIntelligencePreviewCard" });
+    timeRefreshChild("renderGridlyIntelligencePreviewCard", () => renderGridlyIntelligencePreviewCard({ reason: source }));
     const childDurationTotal = Object.values(childDurations).reduce((total, duration) => total + (Number.isFinite(duration) ? duration : 0), 0);
     const refreshDuration = Number(childDurationTotal.toFixed(2));
     gridlyRefreshAuditState.lastRefreshDuration = refreshDuration;
@@ -56432,10 +56442,12 @@ function safeText(id, value) {
 function gridlyHealthCheck() {
   const ids = [...document.querySelectorAll("[id]")].map((node) => node.id);
   const dupes = ids.filter((id, index) => ids.indexOf(id) !== index);
-  if (dupes.length) console.warn("[Gridly health] Duplicate IDs:", [...new Set(dupes)]);
-  ["map", "dashboardSection", "reportSection", "alertsSection"].forEach((id) => {
-    if (!document.getElementById(id)) console.warn(`[Gridly health] Missing required element #${id}`);
-  });
+  if (isGridlyExplicitDebugModeEnabled()) {
+    if (dupes.length) console.warn("[Gridly health] Duplicate IDs:", [...new Set(dupes)]);
+    ["map", "dashboardSection", "reportSection", "alertsSection"].forEach((id) => {
+      if (!document.getElementById(id)) console.warn(`[Gridly health] Missing required element #${id}`);
+    });
+  }
 }
 window.gridlyHealthCheck = gridlyHealthCheck;
 
@@ -57820,7 +57832,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
 
   function logDailyPanelAction(stage, details = {}) {
-    console.info(`${DAILY_PANEL_LOG_PREFIX} ${stage}`, details);
+    if (isGridlyExplicitDebugModeEnabled()) console.info(`${DAILY_PANEL_LOG_PREFIX} ${stage}`, details);
   }
   function collectMobileSurfaceDiagnostics() {
     const readSurfaceState = (selector) => {
@@ -59287,7 +59299,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
 `;
     }
 
-    console.log("[Alerts HTML ACTIVE PATH V155]", {
+    if (isGridlyExplicitDebugModeEnabled()) console.log("[Alerts HTML ACTIVE PATH V155]", {
       alertsLength: rawAlerts.length,
       groupedLength: dedupedAlerts.length,
       renderedCards: visibleAlerts.length,
