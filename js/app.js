@@ -17921,25 +17921,31 @@ function getGridlyRouteContextTitle(destinationLabel = "") {
 function normalizeGridlyMobileAwarenessPanelSummary(summary = {}) {
   const safeSummary = summary || {};
   const areaName = safeDisplayText(safeSummary.awarenessAreaName || safeSummary.areaName, "Liberty County");
-  const crossingsCount = Array.isArray(safeSummary.crossingsInArea) ? safeSummary.crossingsInArea.length : Number(safeSummary.crossingsInArea || safeSummary.crossingsCount || 0);
-  const hazardCount = Array.isArray(safeSummary.activeHazardsInArea) ? safeSummary.activeHazardsInArea.length : Number(safeSummary.activeHazardsInArea || safeSummary.hazardCount || 0);
-  const reportCount = Array.isArray(safeSummary.activeReportsInArea) ? safeSummary.activeReportsInArea.length : Number(safeSummary.activeReportsInArea || safeSummary.reportCount || 0);
+  const safeCount = (primaryValue, fallbackValue = 0) => {
+    const rawCount = Array.isArray(primaryValue) ? primaryValue.length : Number(primaryValue ?? fallbackValue ?? 0);
+    return Number.isFinite(rawCount) ? Math.max(0, rawCount) : 0;
+  };
+  const crossingsCount = safeCount(safeSummary.crossingsInArea, safeSummary.crossingsCount);
+  const hazardCount = safeCount(safeSummary.activeHazardsInArea, safeSummary.hazardCount);
+  const reportCount = safeCount(safeSummary.activeReportsInArea, safeSummary.reportCount);
   const activeIssueCount = hazardCount + reportCount;
+  const quietState = activeIssueCount === 0;
   const selectedArea = safeSummary.selectedAwarenessArea || {};
   const countyMode = Boolean(selectedArea.countyWide || selectedArea.fallback || normalizeGridlyAwarenessAreaLookupText(areaName) === "liberty county");
-  const quietStatus = countyMode ? "No active countywide issues reported" : "No active local issues reported";
+  const quietStatus = countyMode ? "No active local issues reported countywide" : `No active local issues reported in ${areaName}`;
   const activeStatus = hazardCount > 0
     ? "Active hazards reported nearby"
     : "Active reports posted nearby";
+  const quietCrossingsLine = `${crossingsCount} crossing${crossingsCount === 1 ? "" : "s"} watched in ${areaName} · 0 active hazards · 0 active reports`;
+  const activeCrossingsLine = `${crossingsCount} crossing${crossingsCount === 1 ? "" : "s"} watched · ${hazardCount} active hazard${hazardCount === 1 ? "" : "s"} · ${reportCount} active report${reportCount === 1 ? "" : "s"}`;
   return {
     ...safeSummary,
     areaName,
     panelTitle: safeDisplayText(safeSummary.panelTitle, `${areaName} Awareness`),
-    status: safeDisplayText(safeSummary.status || safeSummary.awarenessStatus, activeIssueCount > 0 ? activeStatus : quietStatus),
-    crossingsLine: safeDisplayText(
-      safeSummary.crossingsLine,
-      `${crossingsCount} crossing${crossingsCount === 1 ? "" : "s"} watched · ${hazardCount} hazard${hazardCount === 1 ? "" : "s"} · ${reportCount} report${reportCount === 1 ? "" : "s"}`
-    ),
+    status: quietState ? quietStatus : safeDisplayText(safeSummary.status || safeSummary.awarenessStatus, activeStatus),
+    crossingsLine: quietState
+      ? quietCrossingsLine
+      : safeDisplayText(safeSummary.crossingsLine, activeCrossingsLine),
     activeIssueCount,
     activeIssuesLine: safeDisplayText(safeSummary.activeIssuesLine, "")
   };
