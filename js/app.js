@@ -13170,6 +13170,14 @@ const REPORT_CONFIRMATION_READ_MS = REPORT_SUCCESS_HOLD_MS;
 const REPORT_CONFIRMATION_FADE_MS = REPORT_SUCCESS_FADE_MS;
 let reportConfirmationDismissTimer = null;
 let reportConfirmationFadeTimer = null;
+let portraitV2ConfirmationMirrorTimer = null;
+const portraitV2ConfirmationMirrorState = {
+  activeUntil: 0,
+  message: "",
+  type: "",
+  previousPrimary: "",
+  previousSecondary: ""
+};
 let reportSuccessLifecycleTimer = null;
 let reportButtonResetTimer = null;
 let lastReportSuccessStartedAt = 0;
@@ -13186,6 +13194,60 @@ let lastPopupReportingCompletedAt = 0;
 let liveReportingDrawerWasOpenBeforePopup = false;
 let liveReportingDrawerSuppressedAt = 0;
 let liveReportingDrawerRestoredAt = 0;
+
+function isGridlyElementVisiblyReadable(el) {
+  if (!(el instanceof HTMLElement) || el.hidden) return false;
+  const style = window.getComputedStyle?.(el);
+  if (!style || style.display === "none" || style.visibility === "hidden" || Number(style.opacity || "1") === 0) return false;
+  const rect = el.getBoundingClientRect?.();
+  return Boolean(rect && rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.right > 0 && rect.top < window.innerHeight && rect.left < window.innerWidth);
+}
+
+function isPortraitV2ConfirmationMirrorActive() {
+  return Boolean(portraitV2ConfirmationMirrorState.activeUntil && Date.now() < portraitV2ConfirmationMirrorState.activeUntil);
+}
+
+function shouldMirrorReportConfirmationToPortraitV2(message, type) {
+  if (!message || type !== "success") return false;
+  if (typeof isPortraitMode === "function" ? !isPortraitMode() : document.body?.dataset?.layoutMode !== "portrait") return false;
+  const statusSurface = document.querySelector("#gridlyPortraitV2 .gridly-v2-status-pill");
+  if (!isGridlyElementVisiblyReadable(statusSurface)) return false;
+  return !isGridlyElementVisiblyReadable(els.reportConfirmation || document.getElementById("reportConfirmation"));
+}
+
+function mirrorReportConfirmationToPortraitV2(message, type = "success", options = {}) {
+  if (!shouldMirrorReportConfirmationToPortraitV2(message, type)) return false;
+  const primary = document.getElementById("gridlyV2TopStatusPrimary");
+  const secondary = document.getElementById("gridlyV2TopStatusSecondary");
+  if (!primary && !secondary) return false;
+
+  const durationMs = Math.max(1200, Number(options?.durationMs || REPORT_CONFIRMATION_READ_MS));
+  if (portraitV2ConfirmationMirrorTimer) clearTimeout(portraitV2ConfirmationMirrorTimer);
+
+  portraitV2ConfirmationMirrorState.activeUntil = Date.now() + durationMs;
+  portraitV2ConfirmationMirrorState.message = String(message || "");
+  portraitV2ConfirmationMirrorState.type = String(type || "success");
+  portraitV2ConfirmationMirrorState.previousPrimary = primary?.textContent || portraitV2ConfirmationMirrorState.previousPrimary || "";
+  portraitV2ConfirmationMirrorState.previousSecondary = secondary?.textContent || portraitV2ConfirmationMirrorState.previousSecondary || "";
+
+  setGridlyTopPanelTextIfChanged(primary, message, "mirrorReportConfirmationToPortraitV2", "gridlyV2TopStatusPrimary");
+  if (secondary) {
+    setGridlyTopPanelTextIfChanged(secondary, "Community update accepted.", "mirrorReportConfirmationToPortraitV2", "gridlyV2TopStatusSecondary");
+  }
+
+  portraitV2ConfirmationMirrorTimer = setTimeout(() => {
+    portraitV2ConfirmationMirrorState.activeUntil = 0;
+    portraitV2ConfirmationMirrorState.message = "";
+    portraitV2ConfirmationMirrorState.type = "";
+    if (typeof refreshPortraitV2LocalizedIntelligence === "function") {
+      refreshPortraitV2LocalizedIntelligence({ source: "report_confirmation_mirror_release" });
+      return;
+    }
+    setGridlyTopPanelTextIfChanged(primary, portraitV2ConfirmationMirrorState.previousPrimary, "mirrorReportConfirmationToPortraitV2:restore", "gridlyV2TopStatusPrimary");
+    setGridlyTopPanelTextIfChanged(secondary, portraitV2ConfirmationMirrorState.previousSecondary, "mirrorReportConfirmationToPortraitV2:restore", "gridlyV2TopStatusSecondary");
+  }, durationMs);
+  return true;
+}
 
 function setLiveReportingDrawerSuppression(active) {
   const drawer = els.reportSection || document.getElementById("reportSection");
@@ -58983,8 +59045,11 @@ function refreshPortraitV2LocalizedIntelligence(options = {}) {
     const greetingEl = document.getElementById("gridlyV2AwarenessGreeting");
     const beforeSkipped = Number(gridlyBackgroundLoopAuditState.repeatedSameValueWrites || 0);
     setGridlyTopPanelTextIfChanged(greetingEl, textModel.awarenessBrief.greeting, "refreshPortraitV2LocalizedIntelligence", "gridlyV2AwarenessGreeting");
-    setGridlyTopPanelTextIfChanged(topPrimaryEl, textModel.awarenessPrimary, "refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusPrimary");
-    setGridlyTopPanelTextIfChanged(topSecondaryEl, textModel.awarenessSecondary, "refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusSecondary");
+    const reportConfirmationMirrorActive = isPortraitV2ConfirmationMirrorActive();
+    if (!reportConfirmationMirrorActive) {
+      setGridlyTopPanelTextIfChanged(topPrimaryEl, textModel.awarenessPrimary, "refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusPrimary");
+      setGridlyTopPanelTextIfChanged(topSecondaryEl, textModel.awarenessSecondary, "refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusSecondary");
+    }
     refreshGridlyPortraitLocationAwarenessPanel(textModel);
     syncGridlyCommunityPulseCopyFromModel(textModel.pulseModel, { reason: "active-state-evidence-ownership" });
     const evidenceOwnership = textModel.activeStateEvidenceOwnership || textModel.pulseModel?.activeStateEvidenceOwnership || {};
@@ -59826,6 +59891,7 @@ function setConfirmation(message, type = "success", options = {}) {
     lastReportError: type === "error" ? message || "" : ""
   });
   if (popupReportingLifecycleActive && reportingState.submissionInProgress && type === "success") return;
+  mirrorReportConfirmationToPortraitV2(message, type, { durationMs, persist });
   if (!els.reportConfirmation) return;
 
   if (reportConfirmationDismissTimer) clearTimeout(reportConfirmationDismissTimer);
