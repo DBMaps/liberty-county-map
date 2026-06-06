@@ -44272,6 +44272,21 @@ function gridlyTrustResolutionVisibilityAudit(options = {}) {
     return expected.some((copy) => userFacingCopy.includes(copy));
   }).length + (syntheticSummary?.conflictDetected && conflictCopyDetected ? 1 : 0);
   const latestClearOverridesBlocked = summaries.filter((summary) => summary.latestClearOverridesBlocked).length;
+  const visibleAlertsConflictCards = (() => {
+    const renderedCards = typeof document !== "undefined"
+      ? [...document.querySelectorAll('[data-gridly-alert-row="true"], .alert-item')].filter((node) => {
+        const text = String(node?.textContent || "");
+        const type = node?.getAttribute?.("data-gridly-alert-hazard-type") || "";
+        const visible = typeof isVisible === "function" ? isVisible(node) : true;
+        return visible && (type === "rail_trust_conflict" || /Reports Disagree|Conflicting community reports/i.test(text));
+      }).length
+      : 0;
+    if (renderedCards > 0) return renderedCards;
+    const visibleRecords = typeof getGridlyCrossingEvidenceConflictAlertRecords === "function"
+      ? dedupeGridlyCrossingConflictPresentationAlerts(gridlyFilterAlertRecordsBySelectedAwarenessArea(getGridlyCrossingEvidenceConflictAlertRecords(6), "trustResolutionVisibilityAudit"))
+      : [];
+    return visibleRecords.filter(isGridlyCrossingConflictPresentationRecord).length;
+  })();
   const blockedEvidenceCount = summaries.reduce((sum, summary) => sum + summary.blockedEvidenceCount, 0);
   const clearEvidenceCount = summaries.reduce((sum, summary) => sum + summary.clearEvidenceCount, 0);
   const existingPopupActionsPresent = /Report Blocked/.test(samplePopupHtml)
@@ -44287,6 +44302,7 @@ function gridlyTrustResolutionVisibilityAudit(options = {}) {
     syntheticConflictSample: syntheticSummary,
     conflictDetected,
     conflictSurfaced,
+    visibleAlertsConflictCards,
     latestClearOverridesBlocked,
     blockedEvidenceCount,
     clearEvidenceCount,
@@ -59619,6 +59635,108 @@ function getGridlyCrossingEvidenceConflictDetailLine(summary = {}) {
   return normalizeGridlyUserFacingRoadText(`${crossingName}: ${evidenceLine} · ${trustLine}`);
 }
 
+function getGridlyCrossingEvidenceInventoryRecord(summary = {}, latestReport = {}) {
+  const lookupRecord = {
+    crossingId: summary?.crossingId || latestReport?.crossingId || latestReport?.crossing_id || "",
+    crossing_id: summary?.crossingId || latestReport?.crossing_id || latestReport?.crossingId || "",
+    crossingName: summary?.crossingName || latestReport?.crossingName || latestReport?.crossing_name || latestReport?.locationName || "",
+    crossing: summary?.crossingName || latestReport?.crossing || latestReport?.crossingName || "",
+    name: summary?.crossingName || latestReport?.crossingName || latestReport?.crossing_name || ""
+  };
+  if (typeof getGridlyAwarenessIntelligenceCrossing === "function") {
+    const awarenessCrossing = getGridlyAwarenessIntelligenceCrossing(lookupRecord);
+    if (awarenessCrossing) return awarenessCrossing;
+  }
+  const crossingId = String(lookupRecord.crossingId || lookupRecord.crossing_id || "").trim();
+  if (crossingId && Array.isArray(crossings)) {
+    const crossing = crossings.find((item) => String(item?.id || item?.crossingId || item?.crossing_id || item?.props?.crossing_id || item?.props?.crossingid || "").trim() === crossingId);
+    if (crossing) return crossing;
+  }
+  const crossingName = normalizeGridlyAwarenessAreaLookupText(lookupRecord.crossingName || lookupRecord.crossing || lookupRecord.name || "");
+  if (crossingName && Array.isArray(crossings)) {
+    return crossings.find((item) => normalizeGridlyAwarenessAreaLookupText(item?.name || item?.roadName || item?.road || item?.props?.name || item?.props?.road_name || "") === crossingName) || null;
+  }
+  return null;
+}
+
+function getGridlyCrossingEvidenceLocationMetadata(summary = {}, latestReport = {}) {
+  const inventory = getGridlyCrossingEvidenceInventoryRecord(summary, latestReport) || {};
+  const reportRaw = latestReport?.raw || latestReport?.source || {};
+  const summaryRaw = summary?.raw || {};
+  const locationLabel = pickFirstNonEmptyText([
+    latestReport?.locationLabel,
+    latestReport?.resolvedLocationLabel,
+    latestReport?.locationName,
+    latestReport?.knownLocation,
+    latestReport?.location,
+    reportRaw?.locationLabel,
+    reportRaw?.locationName,
+    summary?.locationLabel,
+    summary?.locationName,
+    summary?.crossingName,
+    inventory?.name,
+    inventory?.roadName,
+    inventory?.road,
+    inventory?.props?.name,
+    inventory?.props?.road_name
+  ]);
+  const directCoordinate = getGridlyIncidentCoordinate(latestReport) || getGridlyIncidentCoordinate(reportRaw) || getGridlyIncidentCoordinate(summaryRaw) || null;
+  const inventoryCoordinate = getGridlyIncidentCoordinate(inventory);
+  const coords = directCoordinate || inventoryCoordinate || getGridlyIncidentCoordinate(summary) || null;
+  const city = pickFirstNonEmptyText([
+    latestReport?.city,
+    latestReport?.town,
+    latestReport?.area,
+    latestReport?.awarenessArea,
+    reportRaw?.city,
+    reportRaw?.town,
+    reportRaw?.area,
+    inventory?.city,
+    inventory?.town,
+    summary?.city,
+    summary?.town,
+    summary?.area
+  ]);
+  const town = pickFirstNonEmptyText([
+    latestReport?.town,
+    latestReport?.city,
+    reportRaw?.town,
+    reportRaw?.city,
+    inventory?.town,
+    inventory?.city,
+    summary?.town,
+    summary?.city
+  ]);
+  const area = pickFirstNonEmptyText([
+    latestReport?.area,
+    latestReport?.awarenessArea,
+    latestReport?.awareness_area,
+    latestReport?.city,
+    latestReport?.town,
+    reportRaw?.area,
+    reportRaw?.awarenessArea,
+    reportRaw?.awareness_area,
+    reportRaw?.city,
+    reportRaw?.town,
+    inventory?.area,
+    inventory?.city,
+    inventory?.town,
+    summary?.area,
+    summary?.city,
+    summary?.town
+  ]);
+  return {
+    lat: coords ? coords.lat : null,
+    lng: coords ? coords.lng : null,
+    area,
+    city,
+    town,
+    locationLabel,
+    locationName: locationLabel,
+    crossingInventory: inventory && Object.keys(inventory).length ? inventory : null
+  };
+}
+
 function getGridlyCrossingConflictPresentationKey(record = {}) {
   const summary = record?.crossingEvidenceSummary || record?.raw?.crossingEvidenceSummary || record || {};
   const crossingId = pickFirstNonEmptyText([
@@ -59685,6 +59803,13 @@ function dedupeGridlyCrossingConflictSummariesByIncident(summaries = []) {
 
 function buildGridlyCrossingEvidenceAlertRecord(summary = {}, index = 0) {
   if (!summary?.conflictDetected) return null;
+  const locationMetadata = getGridlyCrossingEvidenceLocationMetadata(summary, summary.latestReport || summary.representativeReport || {});
+  const locationLabel = locationMetadata.locationLabel || summary.locationLabel || summary.locationName || summary.crossingName || "Rail crossing";
+  const lat = Number.isFinite(Number(locationMetadata.lat)) ? Number(locationMetadata.lat) : (Number.isFinite(Number(summary.lat)) ? Number(summary.lat) : null);
+  const lng = Number.isFinite(Number(locationMetadata.lng)) ? Number(locationMetadata.lng) : (Number.isFinite(Number(summary.lng)) ? Number(summary.lng) : null);
+  const area = locationMetadata.area || summary.area || locationMetadata.city || summary.city || locationMetadata.town || summary.town || "";
+  const city = locationMetadata.city || summary.city || locationMetadata.town || summary.town || area;
+  const town = locationMetadata.town || summary.town || city || area;
   return {
     id: `rail-trust-conflict-${summary.key || summary.crossingId || index}`,
     title: "Reports Disagree",
@@ -59697,14 +59822,34 @@ function buildGridlyCrossingEvidenceAlertRecord(summary = {}, index = 0) {
     reportKind: "crossing",
     crossingId: summary.crossingId || "",
     crossingName: summary.crossingName || "Rail crossing",
-    locationName: summary.crossingName || "Rail crossing",
+    locationName: locationLabel,
+    locationLabel,
+    location: locationLabel,
+    lat,
+    lng,
+    area,
+    city,
+    town,
+    awarenessArea: area,
     minutesText: "live",
     evidenceCountLine: getGridlyCrossingEvidenceDisplayCountLine(summary),
     trustLine: getGridlyCrossingEvidenceAlertTrustLine(summary),
     crossingEvidenceSummary: summary,
     priorityScore: 100000 - index,
     priorityReasonCopy: "Conflicting rail crossing reports need confirmation",
-    raw: { crossingEvidenceSummary: summary }
+    raw: {
+      crossingEvidenceSummary: summary,
+      crossingId: summary.crossingId || "",
+      crossingName: summary.crossingName || "Rail crossing",
+      locationName: locationLabel,
+      locationLabel,
+      lat,
+      lng,
+      area,
+      city,
+      town,
+      awarenessArea: area
+    }
   };
 }
 
@@ -59780,6 +59925,11 @@ function buildGridlyCrossingEvidenceSummaries(reports = activeReports) {
     const latestClearOverridesBlocked = latestState === "cleared" && blockedEvidenceCount > clearEvidenceCount;
     const activeLatestWithClearEvidence = latestState === "active" && clearEvidenceCount > 0;
     const conflictDetected = Boolean(latestClearOverridesBlocked || activeLatestWithClearEvidence || (blockedEvidenceCount > 0 && clearEvidenceCount > 0));
+    const locationMetadata = getGridlyCrossingEvidenceLocationMetadata({
+      key: group.key,
+      crossingId: group.crossingId,
+      crossingName: group.crossingName
+    }, latestReport || {});
     const summary = {
       key: group.key,
       crossingId: group.crossingId,
@@ -59787,6 +59937,16 @@ function buildGridlyCrossingEvidenceSummaries(reports = activeReports) {
       latestState,
       latestReportType: latestReport?.type || latestReport?.report_type || "",
       latestMinutesAgo: Number.isFinite(Number(latestReport?.minutesAgo)) ? Number(latestReport.minutesAgo) : null,
+      latestReport,
+      representativeReport: latestReport,
+      lat: locationMetadata.lat,
+      lng: locationMetadata.lng,
+      area: locationMetadata.area,
+      city: locationMetadata.city,
+      town: locationMetadata.town,
+      locationLabel: locationMetadata.locationLabel,
+      locationName: locationMetadata.locationName || locationMetadata.locationLabel,
+      crossingInventory: locationMetadata.crossingInventory,
       blockedEvidenceCount,
       clearEvidenceCount,
       totalEvidenceCount: sorted.length,
