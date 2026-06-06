@@ -59619,6 +59619,70 @@ function getGridlyCrossingEvidenceConflictDetailLine(summary = {}) {
   return normalizeGridlyUserFacingRoadText(`${crossingName}: ${evidenceLine} · ${trustLine}`);
 }
 
+function getGridlyCrossingConflictPresentationKey(record = {}) {
+  const summary = record?.crossingEvidenceSummary || record?.raw?.crossingEvidenceSummary || record || {};
+  const crossingId = pickFirstNonEmptyText([
+    record?.crossingId,
+    record?.crossing_id,
+    record?.raw?.crossingId,
+    record?.raw?.crossing_id,
+    summary?.crossingId,
+    summary?.crossing_id
+  ]);
+  if (crossingId) return `crossing-id:${String(crossingId).trim()}`;
+
+  const crossingName = pickFirstNonEmptyText([
+    record?.crossingName,
+    record?.crossingRoad,
+    record?.locationName,
+    record?.location,
+    record?.raw?.crossingName,
+    record?.raw?.locationName,
+    summary?.crossingName,
+    summary?.locationName
+  ]);
+  const normalizedName = normalizeCrossingName(crossingName);
+  if (normalizedName) return `crossing-name:${normalizedName}`;
+
+  const summaryKey = pickFirstNonEmptyText([summary?.key, record?.key, record?.id]);
+  return summaryKey ? `crossing-key:${String(summaryKey).trim().toLowerCase()}` : "";
+}
+
+function isGridlyCrossingConflictPresentationRecord(record = {}) {
+  return Boolean(
+    record?.type === "rail_trust_conflict" ||
+    record?.category === "rail_trust_conflict" ||
+    record?.crossingEvidenceSummary?.conflictDetected ||
+    record?.raw?.crossingEvidenceSummary?.conflictDetected
+  );
+}
+
+function dedupeGridlyCrossingConflictPresentationAlerts(alerts = []) {
+  const seenConflictKeys = new Set();
+  const sourceAlerts = Array.isArray(alerts) ? alerts : [];
+  return sourceAlerts.filter((alert) => {
+    if (!isGridlyCrossingConflictPresentationRecord(alert)) return true;
+    const key = getGridlyCrossingConflictPresentationKey(alert);
+    if (!key) return true;
+    if (seenConflictKeys.has(key)) return false;
+    seenConflictKeys.add(key);
+    return true;
+  });
+}
+
+function dedupeGridlyCrossingConflictSummariesByIncident(summaries = []) {
+  const seenConflictKeys = new Set();
+  const sourceSummaries = Array.isArray(summaries) ? summaries : [];
+  return sourceSummaries.filter((summary) => {
+    if (!summary?.conflictDetected) return true;
+    const key = getGridlyCrossingConflictPresentationKey({ crossingEvidenceSummary: summary });
+    if (!key) return true;
+    if (seenConflictKeys.has(key)) return false;
+    seenConflictKeys.add(key);
+    return true;
+  });
+}
+
 function buildGridlyCrossingEvidenceAlertRecord(summary = {}, index = 0) {
   if (!summary?.conflictDetected) return null;
   return {
@@ -59648,13 +59712,13 @@ function getGridlyCrossingEvidenceConflictAlertRecords(limit = 3) {
   const summaries = typeof buildGridlyCrossingEvidenceSummaries === "function"
     ? buildGridlyCrossingEvidenceSummaries()
     : [];
-  return summaries
+  return dedupeGridlyCrossingConflictSummariesByIncident(summaries
     .filter((summary) => summary?.conflictDetected)
     .sort((a, b) => {
       const latestClearDelta = Number(Boolean(b.latestClearOverridesBlocked)) - Number(Boolean(a.latestClearOverridesBlocked));
       if (latestClearDelta !== 0) return latestClearDelta;
       return Number(b.totalEvidenceCount || 0) - Number(a.totalEvidenceCount || 0);
-    })
+    }))
     .slice(0, limit)
     .map((summary, index) => buildGridlyCrossingEvidenceAlertRecord(summary, index))
     .filter(Boolean);
@@ -63040,11 +63104,12 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const conflictAlertItems = typeof getGridlyCrossingEvidenceConflictAlertRecords === "function"
       ? getGridlyCrossingEvidenceConflictAlertRecords(3)
       : [];
-    const normalizedAlertItems = gridlyFilterAlertRecordsBySelectedAwarenessArea([
-      ...conflictAlertItems,
-      ...normalizedAlertItemsBeforeAreaFilter
-    ], "alertsSurfaceSnapshot")
-      .sort(compareGridlyIncidentPriorityModels);
+    const normalizedAlertItems = dedupeGridlyCrossingConflictPresentationAlerts(
+      gridlyFilterAlertRecordsBySelectedAwarenessArea([
+        ...conflictAlertItems,
+        ...normalizedAlertItemsBeforeAreaFilter
+      ], "alertsSurfaceSnapshot")
+    ).sort(compareGridlyIncidentPriorityModels);
     const activeIncidentCount = normalizedAlertItems.length || (gridlyGetSelectedAlertAreaFilter().mode === "county" ? incidents.length : normalizedAlertItems.length);
     const hasFallbackSignals = gridlyGetSelectedAlertAreaFilter().mode === "county" && (activeHazardSourceCount > 0 || unifiedIncidentSourceCount > 0);
     const nearbySummary = unifiedIntel.nearbySummary;
@@ -63090,9 +63155,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const snapshotAlerts = Array.isArray(snapshot.alerts)
       ? snapshot.alerts
       : [];
-    const rawAlerts = typeof gridlyFilterAlertRecordsBySelectedAwarenessArea === "function"
-      ? gridlyFilterAlertRecordsBySelectedAwarenessArea(snapshotAlerts, "buildAlertsSurfaceHtml")
-      : snapshotAlerts;
+    const rawAlerts = dedupeGridlyCrossingConflictPresentationAlerts(
+      typeof gridlyFilterAlertRecordsBySelectedAwarenessArea === "function"
+        ? gridlyFilterAlertRecordsBySelectedAwarenessArea(snapshotAlerts, "buildAlertsSurfaceHtml")
+        : snapshotAlerts
+    );
 
     const hasActiveAlerts =
       snapshot.hasActiveAlerts === true ||
