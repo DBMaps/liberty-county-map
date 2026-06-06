@@ -17879,3 +17879,72 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
     grid-template-columns: minmax(0, 1fr) !important;
   }
 }
+
+/* GRIDLY V254.4 — Awareness Primary Surface Hierarchy */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card {
+    display: grid;
+    align-content: center;
+    gap: 6px;
+    min-height: 82px;
+    max-height: 96px;
+    padding: 12px 14px 11px;
+    border-radius: 18px;
+    border-color: rgba(176, 218, 255, 0.4);
+    background:
+      radial-gradient(circle at 14% 0%, rgba(125, 211, 252, 0.18), transparent 38%),
+      linear-gradient(160deg, rgba(10, 24, 42, 0.94), rgba(5, 12, 22, 0.91));
+    box-shadow:
+      0 14px 28px rgba(1, 8, 18, 0.38),
+      0 0 0 1px rgba(219, 242, 255, 0.04),
+      inset 0 1px 0 rgba(235, 248, 255, 0.12);
+    overflow: hidden;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill strong {
+    display: -webkit-box;
+    max-width: 100%;
+    overflow: hidden;
+    color: rgba(249, 252, 255, 0.99);
+    font-size: clamp(1rem, 4.45vw, 1.16rem);
+    font-weight: 820;
+    letter-spacing: -0.028em;
+    line-height: 1.08;
+    text-wrap: balance;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill span {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    margin-top: 0;
+    overflow: hidden;
+    color: rgba(218, 234, 249, 0.88);
+    font-size: 0.73rem;
+    font-weight: 610;
+    letter-spacing: 0.004em;
+    line-height: 1.24;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card[data-awareness-state="high"] {
+    border-color: rgba(251, 146, 60, 0.58);
+    background:
+      radial-gradient(circle at 14% 0%, rgba(251, 146, 60, 0.16), transparent 38%),
+      linear-gradient(160deg, rgba(33, 19, 13, 0.95), rgba(7, 13, 23, 0.92));
+    box-shadow:
+      0 14px 30px rgba(75, 23, 7, 0.32),
+      0 0 0 1px rgba(255, 237, 213, 0.05),
+      inset 0 1px 0 rgba(255, 237, 213, 0.13);
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card[data-awareness-state="moderate"] {
+    border-color: rgba(96, 165, 250, 0.5);
+    background:
+      radial-gradient(circle at 14% 0%, rgba(96, 165, 250, 0.18), transparent 38%),
+      linear-gradient(160deg, rgba(10, 24, 42, 0.94), rgba(5, 12, 22, 0.91));
+  }
+}
