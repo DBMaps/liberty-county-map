@@ -18032,26 +18032,26 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
   }
 }
 
-/* GRIDLY V254.7 — Control Rail Hierarchy */
+/* GRIDLY V254.7A — Control Rail Balance */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
     gap: 7px;
-    opacity: 0.94;
+    opacity: 0.96;
   }
 
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail button {
     min-width: 40px;
     min-height: 40px;
-    border-color: rgba(164, 201, 243, 0.18);
-    border-top-color: rgba(205, 231, 255, 0.22);
+    border-color: rgba(164, 201, 243, 0.22);
+    border-top-color: rgba(205, 231, 255, 0.26);
     background:
-      linear-gradient(180deg, rgba(5, 13, 24, 0.56), rgba(6, 15, 27, 0.68)),
-      radial-gradient(circle at 50% 0%, rgba(96, 165, 250, 0.035), transparent 58%);
-    color: rgba(226, 240, 253, 0.84);
+      linear-gradient(180deg, rgba(5, 13, 24, 0.62), rgba(6, 15, 27, 0.74)),
+      radial-gradient(circle at 50% 0%, rgba(96, 165, 250, 0.045), transparent 58%);
+    color: rgba(226, 240, 253, 0.88);
     box-shadow:
-      0 5px 12px rgba(0, 0, 0, 0.18),
-      0 0 0 1px rgba(5, 12, 22, 0.34),
-      inset 0 1px 0 rgba(255, 255, 255, 0.045);
+      0 5px 12px rgba(0, 0, 0, 0.22),
+      0 0 0 1px rgba(5, 12, 22, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.055);
   }
 
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail button:focus-visible {
@@ -18063,8 +18063,8 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail svg {
     width: 17px;
     height: 17px;
-    color: rgba(230, 243, 255, 0.88);
-    stroke-width: 2.12;
+    color: rgba(230, 243, 255, 0.91);
+    stroke-width: 2.16;
   }
 
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail [data-v2-control="layers"],
