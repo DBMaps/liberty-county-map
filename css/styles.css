@@ -17948,3 +17948,44 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
       linear-gradient(160deg, rgba(10, 24, 42, 0.94), rgba(5, 12, 22, 0.91));
   }
 }
+
+/* GRIDLY V254.5 — Filter Strip Hierarchy */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments {
+    padding: 4px;
+    gap: 4px;
+    border: 1px solid rgba(173, 213, 255, 0.18);
+    border-top-color: rgba(205, 231, 255, 0.22);
+    border-radius: 12px;
+    background:
+      linear-gradient(180deg, rgba(5, 13, 24, 0.72), rgba(7, 17, 31, 0.66)),
+      radial-gradient(circle at 50% 0%, rgba(96, 165, 250, 0.06), transparent 54%);
+    box-shadow:
+      0 8px 18px rgba(0, 0, 0, 0.22),
+      0 0 0 1px rgba(5, 12, 22, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button {
+    min-height: 29px;
+    padding: 6px 3px;
+    border: 1px solid rgba(188, 216, 244, 0.1);
+    background: rgba(255, 255, 255, 0.02);
+    color: rgba(214, 230, 246, 0.72);
+    font-size: 0.6rem;
+    font-weight: 650;
+    letter-spacing: 0.002em;
+    text-shadow: none;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button.is-active {
+    border-color: rgba(142, 202, 255, 0.44);
+    background:
+      linear-gradient(135deg, rgba(96, 165, 250, 0.2), rgba(48, 133, 255, 0.14)),
+      rgba(10, 30, 54, 0.62);
+    color: rgba(248, 252, 255, 0.92);
+    box-shadow:
+      0 4px 10px rgba(16, 83, 168, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+}
