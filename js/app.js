@@ -30580,12 +30580,13 @@ function syncGridlyCommunityPulseCopyFromModel(model = {}, options = {}) {
   const summaryDisplay = summaryHasAreaName && typeof summarizeGridlyAwarenessIntelligenceForDisplay === "function"
     ? summarizeGridlyAwarenessIntelligenceForDisplay(model.communityAwarenessSummary || {})
     : {};
+  const ownershipPulse = model?.activeStateEvidenceOwnership?.communityPulse || null;
   const renderedPulseHeadlineText = safeDisplayText(
-    summaryDisplay.headline || model.renderedPulseHeadline,
+    ownershipPulse?.headline || summaryDisplay.headline || model.renderedPulseHeadline,
     "Community activity is quiet"
   );
   const renderedPulseSublineText = safeDisplayText(
-    summaryDisplay.subline || model.renderedPulseSubline,
+    ownershipPulse?.subline || summaryDisplay.subline || model.renderedPulseSubline,
     "No major disruptions nearby"
   );
   if (headline) headline.textContent = renderedPulseHeadlineText;
@@ -30597,6 +30598,7 @@ function syncGridlyCommunityPulseCopyFromModel(model = {}, options = {}) {
     if (areaName) surface.dataset.awarenessAreaName = areaName;
     surface.dataset.gridlyPulseCopyAreaSynced = "true";
     surface.dataset.gridlyPulseCopySyncReason = safeDisplayText(options?.reason, "community-pulse-model-sync");
+    surface.dataset.gridlyPulseCopyOwner = ownershipPulse ? "where_it_is_happening" : "community-pulse-model";
   }
 
   return true;
@@ -57998,6 +58000,155 @@ function buildGridlyQuietLocalizedCommuteIntelligenceFastPathPayload() {
 }
 
 
+
+function formatGridlyActiveStateEvidenceAge(ageMinutes = null) {
+  const minutes = Number(ageMinutes);
+  if (!Number.isFinite(minutes)) return "freshness checking";
+  const rounded = Math.max(0, Math.round(minutes));
+  if (rounded < 1) return "just now";
+  if (rounded < 60) return `${rounded} min ago`;
+  const hours = Math.max(1, Math.round(rounded / 60));
+  return `${hours} hr${hours === 1 ? "" : "s"} ago`;
+}
+
+function getGridlyActiveStateEvidenceFreshestSample({ activeAwareness = {}, latestAlerts = [] } = {}) {
+  const awarenessSamples = Array.isArray(activeAwareness?.activeAwarenessSamples) ? activeAwareness.activeAwarenessSamples : [];
+  const sampleWithAge = awarenessSamples
+    .filter((sample) => Number.isFinite(Number(sample?.lifecycleAgeMinutes)))
+    .sort((a, b) => Number(a.lifecycleAgeMinutes) - Number(b.lifecycleAgeMinutes))[0] || null;
+  if (sampleWithAge) {
+    return {
+      ageMinutes: Number(sampleWithAge.lifecycleAgeMinutes),
+      ageText: formatGridlyActiveStateEvidenceAge(sampleWithAge.lifecycleAgeMinutes),
+      category: safeDisplayText(sampleWithAge.resolvedCategory, "community activity"),
+      location: safeDisplayText(sampleWithAge.resolvedLocationLabel, ""),
+      source: sampleWithAge.sourceKind || "activeAwarenessSamples.lifecycleAgeMinutes"
+    };
+  }
+
+  const latestAlert = Array.isArray(latestAlerts) ? latestAlerts[0] : null;
+  if (latestAlert) {
+    const ageText = safeDisplayText(latestAlert.minutesText || latestAlert.ageText || latestAlert.freshnessText, "just now");
+    return {
+      ageMinutes: Number.isFinite(Number(latestAlert.minutesAgo)) ? Number(latestAlert.minutesAgo) : null,
+      ageText,
+      category: safeDisplayText(latestAlert.type || latestAlert.report_type || latestAlert.category, "community activity"),
+      location: safeDisplayText(latestAlert.crossingName || latestAlert.location || latestAlert.locationLabel, ""),
+      source: "latestAlertsForRender"
+    };
+  }
+
+  const activeReportItems = Array.isArray(typeof activeReports !== "undefined" ? activeReports : null) ? activeReports : [];
+  const latestReport = activeReportItems.find((report) => report && !report.expired) || null;
+  if (latestReport) {
+    const ageMinutes = Number.isFinite(Number(latestReport.minutesAgo)) ? Number(latestReport.minutesAgo) : null;
+    return {
+      ageMinutes,
+      ageText: formatGridlyActiveStateEvidenceAge(ageMinutes),
+      category: safeDisplayText(latestReport.type || latestReport.report_type, "community activity"),
+      location: safeDisplayText(latestReport.crossingName || latestReport.location_name || latestReport.location, ""),
+      source: "activeReports.minutesAgo"
+    };
+  }
+
+  return null;
+}
+
+function buildGridlyActiveStateEvidenceOwnershipSnapshot({
+  quiet = true,
+  primary = "",
+  secondary = "",
+  activeAwareness = {},
+  pulseModel = {},
+  communityAwarenessSummary = null,
+  latestAlerts = [],
+  activeAwarenessCount = 0,
+  activeReportCount = 0,
+  activeHazardCount = 0
+} = {}) {
+  const safeActiveCount = Math.max(0, Number(activeAwarenessCount) || 0);
+  const safeReportCount = Math.max(0, Number(activeReportCount) || 0);
+  const safeHazardCount = Math.max(0, Number(activeHazardCount) || 0);
+  const areaName = safeDisplayText(
+    communityAwarenessSummary?.awarenessAreaName
+      || communityAwarenessSummary?.areaName
+      || pulseModel?.communityAwarenessSummary?.awarenessAreaName,
+    "Liberty County"
+  );
+  const locationLabel = safeDisplayText(
+    activeAwareness?.resolvedLocationLabel
+      || activeAwareness?.topAwarenessSelectedLocationIntelligence?.label
+      || activeAwareness?.activeAwarenessSamples?.[0]?.resolvedLocationLabel,
+    ""
+  );
+  const corridorLabel = safeDisplayText(activeAwareness?.topCorridorLabel || pulseModel?.dominantCorridor, "");
+  const whereLabel = locationLabel || corridorLabel || areaName;
+  const countText = pluralizeGridlyMobilityReports(safeActiveCount);
+  const elevatedReason = quiet
+    ? "No active local reports are elevated right now."
+    : `${countText} remain live in the current awareness area.`;
+  const freshestSample = quiet ? null : getGridlyActiveStateEvidenceFreshestSample({ activeAwareness, latestAlerts });
+  const freshestTitle = freshestSample?.ageText || (quiet ? "None active" : "Freshness checking");
+  const freshestReason = freshestSample
+    ? `${safeDisplayText(freshestSample.category, "Community activity")} ${freshestSample.location ? `near ${freshestSample.location}` : "is the freshest active signal"}.`
+    : (quiet ? "Live reports auto-expire so old information does not linger." : "Gridly is checking the active report timestamp already on this signal.");
+  const trustTitle = quiet
+    ? "Awaiting reports"
+    : (safeActiveCount >= 3 ? "Strong community signal" : safeActiveCount >= 2 ? "Building community signal" : "Single active signal");
+  const trustReason = quiet
+    ? "Community trust strengthens as drivers add fresh reports or confirmations."
+    : `${safeReportCount} report${safeReportCount === 1 ? "" : "s"} and ${safeHazardCount} hazard${safeHazardCount === 1 ? "" : "s"} support this active state.`;
+  const communityPulseHeadline = quiet ? `${areaName} awareness` : `${whereLabel} awareness`;
+  const communityPulseSubline = quiet
+    ? "No active local issues reported nearby."
+    : `${countText} in the current awareness area.`;
+
+  return {
+    version: "V254.15.active_state_evidence_ownership",
+    directionalIntelligencePaused: true,
+    ownershipApplied: true,
+    awarenessBrief: {
+      owns: ["what_happened", "why_gridly_elevated_it"],
+      primary: safeDisplayText(primary, quiet ? "Community activity is quiet" : "Community Activity Nearby"),
+      secondary: quiet ? safeDisplayText(secondary, "No recent reports nearby · map remains live") : elevatedReason,
+      whyElevated: elevatedReason,
+      source: activeAwareness?.topAwarenessHeadlineSource || pulseModel?.selectedHeadlineTemplate || "shared_active_awareness"
+    },
+    communityPulse: {
+      owns: ["where_it_is_happening"],
+      headline: communityPulseHeadline,
+      subline: communityPulseSubline,
+      whereLabel,
+      areaName,
+      locationLabel,
+      corridorLabel
+    },
+    freshestReport: {
+      owns: ["how_fresh_it_is"],
+      title: freshestTitle,
+      reason: freshestReason,
+      ageMinutes: freshestSample?.ageMinutes ?? null,
+      source: freshestSample?.source || "active_state_evidence"
+    },
+    communityTrust: {
+      owns: ["how_strong_the_community_signal_is"],
+      title: trustTitle,
+      reason: trustReason,
+      activeAwarenessCount: safeActiveCount,
+      activeReportCount: safeReportCount,
+      activeHazardCount: safeHazardCount,
+      truthLayers: Array.isArray(activeAwareness?.activeSourceTruthLayers) ? activeAwareness.activeSourceTruthLayers.slice(0, 6) : []
+    },
+    mobileAwarenessCard: {
+      owns: ["condensed_active_state_mirror", "why_elevated"],
+      title: safeDisplayText(primary, quiet ? "Community activity is quiet" : "Community Activity Nearby"),
+      status: quiet ? safeDisplayText(secondary, "No recent reports nearby · map remains live") : elevatedReason,
+      meta: quiet ? "Map remains live." : countText,
+      whyElevated: elevatedReason
+    }
+  };
+}
+
 function buildGridlyPortraitSharedLocalizedIntelligenceSnapshot({ pulseModel = null, quietFastPathStatus = null, communityAwarenessSummary: providedCommunityAwarenessSummary = null } = {}) {
   const sharedPulseModel = pulseModel && typeof pulseModel === "object"
     ? pulseModel
@@ -58175,24 +58326,59 @@ function buildGridlyPortraitSharedLocalizedIntelligenceSnapshot({ pulseModel = n
         commuteImpactHeadline: finalAwarenessPrimary,
         consequencePrimaryMessage: finalAwarenessPrimary
       };
+  const activeStateEvidenceOwnership = buildGridlyActiveStateEvidenceOwnershipSnapshot({
+    quiet,
+    primary: finalAwarenessPrimary,
+    secondary,
+    activeAwareness: finalNormalizedActiveAwareness,
+    pulseModel: finalNormalizedPulseModel,
+    communityAwarenessSummary,
+    latestAlerts,
+    activeAwarenessCount,
+    activeReportCount,
+    activeHazardCount
+  });
+  const ownedAwarenessSecondary = activeStateEvidenceOwnership.awarenessBrief.secondary || secondary;
+  const ownedAwarenessBrief = quiet
+    ? finalAwarenessBrief
+    : {
+        ...finalAwarenessBrief,
+        secondary: ownedAwarenessSecondary,
+        evidenceOwnership: activeStateEvidenceOwnership.awarenessBrief,
+        activeStateEvidenceOwnershipApplied: true
+      };
+  const ownedPulseModel = {
+    ...finalNormalizedPulseModel,
+    activeStateEvidenceOwnership,
+    activeStateEvidenceOwnershipApplied: true
+  };
+  const ownedIntel = {
+    ...finalIntel,
+    topStatusLocalizedDetail: ownedAwarenessSecondary,
+    nearbySummary: ownedAwarenessSecondary,
+    consequenceSecondaryMessage: ownedAwarenessSecondary,
+    activeStateEvidenceOwnershipApplied: true
+  };
 
   return {
-    intel: finalIntel,
-    pulseModel: finalNormalizedPulseModel,
-    awarenessBrief: finalAwarenessBrief,
+    intel: ownedIntel,
+    pulseModel: ownedPulseModel,
+    awarenessBrief: ownedAwarenessBrief,
     awarenessPrimary: finalAwarenessPrimary,
-    awarenessSecondary: secondary,
+    awarenessSecondary: ownedAwarenessSecondary,
     existingAlertWording: {
       available: !quiet,
       text: finalAwarenessPrimary,
-      source: finalAwarenessBrief.selectedSource,
+      source: ownedAwarenessBrief.selectedSource,
       activeAwareness: finalNormalizedActiveAwareness,
       activeCategory: finalNormalizedActiveAwareness.resolvedCategory || finalNormalizedActiveAwareness.topCategory || "",
       activeLocationLabel: finalNormalizedActiveAwareness.resolvedLocationLabel || ""
     },
     communityAwarenessSummary,
     quiet,
-    activeAwareness: finalNormalizedActiveAwareness
+    activeAwareness: finalNormalizedActiveAwareness,
+    activeStateEvidenceOwnership,
+    activeStateEvidenceOwnershipApplied: true
   };
 }
 
@@ -58604,17 +58790,27 @@ function refreshGridlyPortraitLocationAwarenessPanel({ awarenessBrief = {}, puls
   const activeAwareness = pulseModel?.activeAwareness || {};
   const quiet = String(awarenessBrief?.state || "quiet") === "quiet";
   const areaName = safeDisplayText(summary?.areaName || summary?.awarenessAreaName, "Liberty County");
-  const title = quiet
-    ? `${areaName} Awareness`
-    : safeDisplayText(awarenessPrimary || pulseModel?.renderedPulseHeadline || summary?.panelTitle, `${areaName} Awareness`);
-  const status = quiet
-    ? safeDisplayText(awarenessPrimary || summary?.status, "Community activity is quiet")
-    : safeDisplayText(awarenessSecondary || pulseModel?.renderedPulseSubline || summary?.status, "Community reports are active nearby");
+  const mobileOwnership = pulseModel?.activeStateEvidenceOwnership?.mobileAwarenessCard || awarenessBrief?.activeStateEvidenceOwnership?.mobileAwarenessCard || null;
+  const title = safeDisplayText(
+    mobileOwnership?.title,
+    quiet
+      ? `${areaName} Awareness`
+      : safeDisplayText(awarenessPrimary || pulseModel?.renderedPulseHeadline || summary?.panelTitle, `${areaName} Awareness`)
+  );
+  const status = safeDisplayText(
+    mobileOwnership?.status,
+    quiet
+      ? safeDisplayText(awarenessPrimary || summary?.status, "Community activity is quiet")
+      : safeDisplayText(awarenessSecondary || pulseModel?.renderedPulseSubline || summary?.status, "Community reports are active nearby")
+  );
   const activeCountRaw = Number(activeAwareness?.activeAwarenessCount ?? summary?.activeIssueCount ?? 0);
   const activeCount = Number.isFinite(activeCountRaw) ? activeCountRaw : 0;
-  const meta = quiet
-    ? safeDisplayText(awarenessSecondary || summary?.crossingsLine, "No recent reports nearby · map remains live")
-    : safeDisplayText(summary?.crossingsLine || pluralizeGridlyMobilityReports(activeCount), "Map markers show exact spots");
+  const meta = safeDisplayText(
+    mobileOwnership?.meta,
+    quiet
+      ? safeDisplayText(awarenessSecondary || summary?.crossingsLine, "No recent reports nearby · map remains live")
+      : safeDisplayText(summary?.crossingsLine || pluralizeGridlyMobilityReports(activeCount), "Map markers show exact spots")
+  );
   const routeContext = getGridlyPortraitLocationAwarenessRouteContext();
   const routeActionEl = panel.querySelector('[data-v2-location-awareness="routeAction"]');
   if (typeof syncMobileDestinationCommandCard === "function") {
@@ -58696,6 +58892,16 @@ function refreshPortraitV2LocalizedIntelligence(options = {}) {
     setGridlyTopPanelTextIfChanged(topPrimaryEl, textModel.awarenessPrimary, "refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusPrimary");
     setGridlyTopPanelTextIfChanged(topSecondaryEl, textModel.awarenessSecondary, "refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusSecondary");
     refreshGridlyPortraitLocationAwarenessPanel(textModel);
+    syncGridlyCommunityPulseCopyFromModel(textModel.pulseModel, { reason: "active-state-evidence-ownership" });
+    const evidenceOwnership = textModel.activeStateEvidenceOwnership || textModel.pulseModel?.activeStateEvidenceOwnership || {};
+    if (evidenceOwnership.communityTrust) {
+      safeText("communityTrust", evidenceOwnership.communityTrust.title);
+      safeText("communityTrustReason", evidenceOwnership.communityTrust.reason);
+    }
+    if (evidenceOwnership.freshestReport) {
+      safeText("freshestReport", evidenceOwnership.freshestReport.title);
+      safeText("freshestReportReason", evidenceOwnership.freshestReport.reason);
+    }
     if (topMicrolineEl) {
       setGridlyTopPanelTextIfChanged(topMicrolineEl, textModel.awarenessBrief.microlineVisible ? textModel.awarenessBrief.microline : "", "refreshPortraitV2LocalizedIntelligence", "gridlyTopAwarenessMicroline");
       setGridlyHiddenIfChangedForAudit(topMicrolineEl, !textModel.awarenessBrief.microlineVisible, sections, auditState);
@@ -58723,7 +58929,9 @@ function refreshPortraitV2LocalizedIntelligence(options = {}) {
       quietTopAwarenessFastPathApplied: false,
       quietLocalizedIntelligenceBuildSkipped: true,
       portraitSharedModelReuseApplied: true,
-      quietFastPathBlockers: counts.quietFastPathBlockers || []
+      quietFastPathBlockers: counts.quietFastPathBlockers || [],
+      activeStateEvidenceOwnership: textModel.activeStateEvidenceOwnership || textModel.pulseModel?.activeStateEvidenceOwnership || null,
+      activeStateEvidenceOwnershipApplied: Boolean(textModel.activeStateEvidenceOwnershipApplied || textModel.pulseModel?.activeStateEvidenceOwnershipApplied)
     };
   });
   timeGridlyAuditSection(sections, "preview_card_render_skipped", () => {
