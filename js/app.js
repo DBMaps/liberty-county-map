@@ -45186,7 +45186,7 @@ window.submitHazardNearMe = function (hazardType) {
           resetQuickHazardReportState();
           closeVisiblePortraitV2ReportSurfaceAfterSubmit();
           closeHazardPanel({ preserveLastReportMessage: true });
-          setConfirmation("Report accepted and shared.", "success");
+          setConfirmation(getParticipationAcknowledgementCopy("report"), "success");
           updateReportingState({
             locationLookupInProgress: false,
             submissionInProgress: false,
@@ -45212,7 +45212,7 @@ window.submitHazardNearMe = function (hazardType) {
             lastReportError: "",
             lastReportMessage: "Report added"
           });
-          setConfirmation("Report accepted and shared.", "success");
+          setConfirmation(getParticipationAcknowledgementCopy("report"), "success");
         }
       } catch (error) {
         const message = error?.message || "Hazard report was not submitted.";
@@ -46272,7 +46272,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
         runUnifiedReportSuccessLifecycle({
           flow: "hazard",
           successType: hazardType,
-          successMessage: "Report accepted and shared."
+          successMessage: getParticipationAcknowledgementCopy(getParticipationAcknowledgementKind(hazardType, confidence))
         });
         setSync("Hazard report shared");
 
@@ -46320,7 +46320,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
         lastReportMessage: "Report added"
       });
       if (!deferPostSubmitUiReset) selectedOtherHazardSubtype = "";
-      setConfirmation("Report accepted and shared.", "success");
+      setConfirmation(getParticipationAcknowledgementCopy(getParticipationAcknowledgementKind(hazardType, confidence)), "success");
       setSync("Hazard report shared");
       markSubmitStage("post_insert_completion_warning", { message });
       submitAudit.completedAt = Date.now();
@@ -46388,7 +46388,7 @@ window.clearHazard = async function (hazardType, lat, lng) {
       gridlyCaptureHazardHistoryEvent(localClearRows[0], { hazardType, sourceHazards: Array.isArray(activeHazards) ? activeHazards : [] });
     }
 
-    setConfirmation(`${copy.label} marked cleared.`, "success");
+    setConfirmation(getParticipationAcknowledgementCopy("clear", copy.label), "success");
     setSync("Hazard cleared");
 
     await runPostSubmitRefresh();
@@ -48424,7 +48424,7 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
     runUnifiedReportSuccessLifecycle({
       flow: "crossing",
       successType: reportType,
-      successMessage: `Report accepted: ${copy.label} at ${crossing.name}.`,
+      successMessage: getParticipationAcknowledgementCopy(getParticipationAcknowledgementKind(reportType, confidence), `${copy.label} at ${crossing.name}`),
       buttonEl,
       originalButtonText,
       onButtonReset: () => {
@@ -59725,10 +59725,41 @@ function flashButton(button, message) {
   }, 1300);
 }
 
+function getParticipationAcknowledgementCopy(kind, contextLabel = "") {
+  const label = String(contextLabel || "").trim();
+  const contextSuffix = label ? ` ${label}.` : "";
+  const acknowledgementKind = String(kind || "report").trim().toLowerCase();
+
+  if (acknowledgementKind === "confirm") {
+    return `Confirmed — your update helps nearby drivers know before they go.${contextSuffix}`;
+  }
+
+  if (acknowledgementKind === "clear") {
+    return `Clear shared — your update helps nearby drivers know this may be moving again.${contextSuffix}`;
+  }
+
+  return `Report shared — your update helps nearby drivers know before they go.${contextSuffix}`;
+}
+
+function getParticipationAcknowledgementKind(reportType = "", confidence = "") {
+  const normalizedType = String(reportType || "").trim().toLowerCase();
+  const normalizedConfidence = String(confidence || "").trim().toLowerCase();
+
+  if (normalizedType === "cleared" || normalizedType === "hazard_cleared" || normalizedConfidence.includes("cleared") || normalizedConfidence.includes("clear")) {
+    return "clear";
+  }
+
+  if (normalizedConfidence.includes("confirm") || normalizedConfidence.includes("still active") || normalizedConfidence.includes("still there")) {
+    return "confirm";
+  }
+
+  return "report";
+}
+
 function runUnifiedReportSuccessLifecycle({
   flow = "crossing",
   successType = "",
-  successMessage = "Report accepted and shared.",
+  successMessage = getParticipationAcknowledgementCopy("report"),
   buttonEl = null,
   originalButtonText = "",
   onButtonReset = null,
