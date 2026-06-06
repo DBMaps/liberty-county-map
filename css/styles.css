@@ -13356,6 +13356,25 @@ body[data-layout-mode="portrait"] #map{height:100vh;}
 .gridly-v2-location-awareness-panel{position:fixed;left:12px;right:12px;bottom:calc(92px + env(safe-area-inset-bottom,0px));z-index:9000;display:grid;gap:3px;padding:10px 12px;border:1px solid rgba(178,211,255,.2);border-radius:16px;background:linear-gradient(180deg,rgba(6,14,26,.78),rgba(4,10,20,.88));box-shadow:0 12px 28px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.08);backdrop-filter:blur(14px);color:#f2f8ff;pointer-events:none;max-height:104px;overflow:hidden}.gridly-v2-location-awareness-panel[hidden]{display:none!important;visibility:hidden!important;pointer-events:none!important}.gridly-v2-location-awareness-kicker{color:rgba(159,234,255,.9);font-size:.58rem;font-weight:820;letter-spacing:.075em;text-transform:uppercase}.gridly-v2-location-awareness-title{font-size:.88rem;line-height:1.14;letter-spacing:-.01em}.gridly-v2-location-awareness-status,.gridly-v2-location-awareness-meta{margin:0;color:rgba(222,236,250,.84);font-size:.72rem;line-height:1.25}.gridly-v2-location-awareness-meta{color:rgba(185,214,245,.76)}
 .gridly-v2-sheet-backdrop{position:fixed;inset:0;background:rgba(1,5,12,.45);z-index:9001}
 .gridly-v2-sheet{z-index:9002;bottom:82px;background:linear-gradient(180deg,rgba(7,15,28,.96),rgba(4,10,20,.98));border-radius:18px 18px 12px 12px;border:1px solid rgba(178,211,255,.24);max-height:65vh;overflow:auto;padding:12px}
+#gridlyPortraitV2Sheet[hidden],
+#gridlyPortraitV2Sheet.is-closed {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: translate3d(0, 100%, 0) !important;
+  translate: 0 100% !important;
+}
+#gridlyPortraitV2SheetBody[hidden],
+#gridlyPortraitV2Sheet.is-closed #gridlyPortraitV2SheetBody {
+  display: none !important;
+  contain: layout paint;
+}
+#gridlyPortraitV2SheetBackdrop[hidden],
+#gridlyPortraitV2SheetBackdrop.is-closed {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
 .gridly-v2-sheet header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.gridly-v2-sheet header h3{margin:0;color:#f3f8ff}
 #gridlyPortraitV2SheetClose{border:0;background:rgba(255,255,255,.1);color:#fff;border-radius:8px;padding:3px 8px}
 .gridly-v2-list,.gridly-v2-tiles{display:grid;gap:10px}.gridly-v2-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.gridly-v2-tile{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);color:#daebff;border-radius:12px;padding:12px 13px;font-size:12px}.gridly-v2-report-tiles{gap:10px}.gridly-v2-report-action{display:flex;align-items:center;justify-content:flex-start;background:rgba(181,219,255,.06);border:1px solid rgba(181,219,255,.2);box-shadow:none;padding:14px 12px}.gridly-v2-report-action span{font-size:14px;line-height:1.25;font-weight:650;letter-spacing:.01em;color:#f5f9ff}.gridly-v2-report-ctas{margin-top:2px;gap:9px}.gridly-v2-report-action.is-selected{background:rgba(90,178,255,.2);border-color:rgba(120,199,255,.78);box-shadow:inset 0 0 0 1px rgba(173,228,255,.45)}
