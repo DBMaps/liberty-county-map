@@ -58086,7 +58086,12 @@ function buildGridlyActiveStateEvidenceOwnershipSnapshot({
   const countText = pluralizeGridlyMobilityReports(safeActiveCount);
   const elevatedReason = quiet
     ? "No active local reports are elevated right now."
-    : `${countText} remain live in the current awareness area.`;
+    : buildGridlyAwarenessBriefSecondaryTrustExplanation({
+        activeCount: safeActiveCount,
+        activeAwareness,
+        intel: { items: latestAlerts },
+        pulseModel
+      });
   const freshestSample = quiet ? null : getGridlyActiveStateEvidenceFreshestSample({ activeAwareness, latestAlerts });
   const freshestTitle = freshestSample?.ageText || (quiet ? "None active" : "Freshness checking");
   const freshestReason = freshestSample
@@ -58603,6 +58608,95 @@ function getGridlyQuietAwarenessBriefCopy() {
   };
 }
 
+
+function getGridlyAwarenessBriefTrustRecord({ activeAwareness = {}, intel = {}, pulseModel = {} } = {}) {
+  const samples = Array.isArray(activeAwareness?.activeAwarenessSamples) ? activeAwareness.activeAwarenessSamples : [];
+  const intelItems = Array.isArray(intel?.items) ? intel.items : [];
+  const pulseItems = Array.isArray(pulseModel?.items) ? pulseModel.items : [];
+  return [
+    activeAwareness?.topAwarenessSelectedLocationIntelligence?.item,
+    activeAwareness?.topAwarenessSelectedLocationIntelligence,
+    activeAwareness?.selectedIncident,
+    activeAwareness?.selectedReport,
+    activeAwareness?.latestReport,
+    samples[0],
+    intelItems[0],
+    pulseItems[0],
+    activeAwareness
+  ].find((record) => record && typeof record === "object") || {};
+}
+
+function getGridlyAwarenessBriefTrustLine({ activeCount = 0, trustRecord = {} } = {}) {
+  const safeActiveCount = Math.max(0, Math.round(Number(activeCount) || 0));
+  const model = typeof getGridlyCommunityTrustPresentationModel === "function"
+    ? getGridlyCommunityTrustPresentationModel(trustRecord, { reportCount: safeActiveCount })
+    : null;
+  if (model?.recentlyCleared || model?.reportCountLine === "Recently cleared") return "Recently cleared";
+  if (model?.trustLine === "Community confirmed") return "Community confirmed";
+  if (model?.trustLine === "Awaiting additional reports") return "Awaiting additional reports";
+  return safeActiveCount >= 2 ? "Community confirmed" : "Awaiting additional reports";
+}
+
+function getGridlyAwarenessBriefFreshnessMinutes(record = {}) {
+  const candidates = [
+    record?.lifecycleAgeMinutes,
+    record?.age_minutes,
+    record?.ageMinutes,
+    record?.minutesAgo,
+    record?.updatedMinutesAgo,
+    record?.latestReport?.lifecycleAgeMinutes,
+    record?.latestReport?.age_minutes,
+    record?.latestReport?.ageMinutes,
+    record?.latestReport?.minutesAgo,
+    record?.item?.lifecycleAgeMinutes,
+    record?.item?.age_minutes,
+    record?.item?.ageMinutes,
+    record?.item?.minutesAgo
+  ];
+  const minutes = candidates.map((value) => Number(value)).find((value) => Number.isFinite(value) && value >= 0);
+  return Number.isFinite(minutes) ? Math.max(0, Math.round(minutes)) : null;
+}
+
+function hasGridlyAwarenessBriefUpdatedFreshnessEvidence(record = {}) {
+  return [
+    record?.updated_at,
+    record?.updatedAt,
+    record?.lastUpdatedAt,
+    record?.last_activity_at,
+    record?.lastActivityAt,
+    record?.updatedMinutesAgo,
+    record?.updatedText,
+    record?.latestReport?.updated_at,
+    record?.latestReport?.updatedAt,
+    record?.latestReport?.lastUpdatedAt,
+    record?.latestReport?.last_activity_at,
+    record?.latestReport?.lastActivityAt,
+    record?.item?.updated_at,
+    record?.item?.updatedAt,
+    record?.item?.lastUpdatedAt,
+    record?.item?.last_activity_at,
+    record?.item?.lastActivityAt
+  ].some((value) => value !== undefined && value !== null && String(value).trim() !== "");
+}
+
+function formatGridlyAwarenessBriefFreshnessLine(record = {}) {
+  const minutes = getGridlyAwarenessBriefFreshnessMinutes(record);
+  if (!Number.isFinite(minutes)) return "";
+  if (hasGridlyAwarenessBriefUpdatedFreshnessEvidence(record)) {
+    if (minutes <= 1) return "Updated just now";
+    return `Updated ${minutes} minutes ago`;
+  }
+  if (minutes <= 1) return "Last confirmed just now";
+  return `Last confirmed ${minutes} min ago`;
+}
+
+function buildGridlyAwarenessBriefSecondaryTrustExplanation({ activeCount = 0, activeAwareness = {}, intel = {}, pulseModel = {} } = {}) {
+  const trustRecord = getGridlyAwarenessBriefTrustRecord({ activeAwareness, intel, pulseModel });
+  const trustLine = getGridlyAwarenessBriefTrustLine({ activeCount, trustRecord });
+  const freshnessLine = trustLine === "Recently cleared" ? "" : formatGridlyAwarenessBriefFreshnessLine(trustRecord);
+  return [trustLine, freshnessLine, "map markers show exact spots"].filter(Boolean).join(" · ");
+}
+
 function buildGridlyAwarenessBriefCopy({ intel = {}, existingAlertWording = {}, pulseModel = {} } = {}) {
   const town = getGridlyAwarenessBriefTownLabel();
   const activeAwareness = pulseModel?.activeAwareness || existingAlertWording?.activeAwareness || {};
@@ -58636,7 +58730,7 @@ function buildGridlyAwarenessBriefCopy({ intel = {}, existingAlertWording = {}, 
       state: safeActiveCount >= 6 ? "high" : "moderate",
       greeting: getGridlyAwarenessGreetingText(),
       primary: calmPrimary,
-      secondary: `${pluralizeGridlyMobilityReports(safeActiveCount)} · map markers show exact spots`,
+      secondary: buildGridlyAwarenessBriefSecondaryTrustExplanation({ activeCount: safeActiveCount, activeAwareness, intel, pulseModel }),
       microline: "",
       microlineVisible: false,
       selectedHeadline: calmPrimary,
