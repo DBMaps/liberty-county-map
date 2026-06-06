@@ -18000,14 +18000,20 @@ function normalizeGridlyMobileAwarenessPanelSummary(summary = {}) {
     : "Active reports posted nearby";
   const quietCrossingsLine = `${crossingsCount} crossing${crossingsCount === 1 ? "" : "s"} watched in ${areaName} · 0 active hazards · 0 active reports`;
   const activeCrossingsLine = `${crossingsCount} crossing${crossingsCount === 1 ? "" : "s"} watched · ${hazardCount} active hazard${hazardCount === 1 ? "" : "s"} · ${reportCount} active report${reportCount === 1 ? "" : "s"}`;
+  const crossingTrustConflict = typeof buildGridlyCrossingEvidenceSummaries === "function"
+    ? buildGridlyCrossingEvidenceSummaries().find((summary) => summary.conflictDetected)
+    : null;
+  const trustAwareCrossingsLine = crossingTrustConflict
+    ? `${activeCrossingsLine} · ${crossingTrustConflict.conflictCopy || "Conflicting community reports"}`
+    : activeCrossingsLine;
   return {
     ...safeSummary,
     areaName,
     panelTitle: safeDisplayText(safeSummary.panelTitle, `${areaName} Awareness`),
     status: quietState ? quietStatus : safeDisplayText(safeSummary.status || safeSummary.awarenessStatus, activeStatus),
     crossingsLine: quietState
-      ? quietCrossingsLine
-      : safeDisplayText(safeSummary.crossingsLine, activeCrossingsLine),
+      ? (crossingTrustConflict ? `${quietCrossingsLine} · ${crossingTrustConflict.conflictCopy || "Conflicting community reports"}` : quietCrossingsLine)
+      : safeDisplayText(safeSummary.crossingsLine, trustAwareCrossingsLine),
     activeIssueCount,
     activeIssuesLine: safeDisplayText(safeSummary.activeIssuesLine, "")
   };
@@ -43436,8 +43442,11 @@ function getUnifiedIncidents() {
   const filteredRailIncidentSource = railAreaFilter?.applied
     ? railIncidentSource.filter((incident) => railReportsInSelectedArea.has(incident.latestReport))
     : railIncidentSource;
+  const railEvidenceSummaries = buildGridlyCrossingEvidenceSummaries();
+  const railEvidenceByKey = new Map(railEvidenceSummaries.map((summary) => [summary.key, summary]));
   const railIncidents = filteredRailIncidentSource.map((incident) => {
     const latest = incident.latestReport;
+    const crossingEvidenceSummary = railEvidenceByKey.get(incident.key) || getGridlyCrossingEvidenceSummary(incident.crossingId);
     const specificLocation = typeof getGridlySpecificCrossingLocation === "function"
       ? getGridlySpecificCrossingLocation({ ...latest, crossingId: incident.crossingId, crossing_id: incident.crossingId, crossingName: incident.crossingName })
       : null;
@@ -43471,7 +43480,13 @@ function getUnifiedIncidents() {
       age_minutes: latest.minutesAgo,
       report_type: latest.type,
       crossing_id: incident.crossingId,
-      crossingId: incident.crossingId
+      crossingId: incident.crossingId,
+      crossingEvidenceSummary,
+      clear_reports_count: crossingEvidenceSummary?.clearEvidenceCount || 0,
+      blocked_reports_count: crossingEvidenceSummary?.blockedEvidenceCount || 0,
+      localizedSummary: crossingEvidenceSummary?.conflictDetected
+        ? `${crossingEvidenceSummary.crossingName}: ${crossingEvidenceSummary.trustLine}`
+        : undefined
     });
   });
 
@@ -43713,6 +43728,27 @@ function getGridlyCommunityTrustPresentationModel(record = {}, options = {}) {
   const clearCount = Math.max(clearanceReported ? 1 : 0, Math.round(numericClearCount || 0));
   const activeReportsPresent = activeCount > 0 && !clearTypeReported && popupState !== "recently_cleared";
   const conflictDetected = activeReportsPresent && clearCount > 0;
+  const crossingEvidenceSummary = record?.crossingEvidenceSummary || options?.crossingEvidenceSummary || null;
+
+  if (crossingEvidenceSummary?.conflictDetected) {
+    return {
+      reportCountLine: crossingEvidenceSummary.evidenceCountLine || getGridlyCrossingEvidenceCountLine(crossingEvidenceSummary),
+      trustLine: crossingEvidenceSummary.trustLine || getGridlyCrossingEvidenceTrustLine(crossingEvidenceSummary),
+      clearanceReported: crossingEvidenceSummary.clearEvidenceCount > 0,
+      conflictDetected: true,
+      recentlyCleared: crossingEvidenceSummary.latestState === "cleared"
+    };
+  }
+
+  if (crossingEvidenceSummary?.latestState === "cleared" && crossingEvidenceSummary?.blockedEvidenceCount > 0) {
+    return {
+      reportCountLine: crossingEvidenceSummary.evidenceCountLine || getGridlyCrossingEvidenceCountLine(crossingEvidenceSummary),
+      trustLine: "Recently cleared after prior blocked reports",
+      clearanceReported: true,
+      conflictDetected: false,
+      recentlyCleared: true
+    };
+  }
 
   if (popupState === "no_report") {
     return {
@@ -44174,6 +44210,75 @@ function gridlyCrossingPopupConsumerAudit() {
   };
 }
 exposeGridlyAuditHelper("gridlyCrossingPopupConsumerAudit", gridlyCrossingPopupConsumerAudit);
+
+function gridlyTrustResolutionVisibilityAudit(options = {}) {
+  const summaries = buildGridlyCrossingEvidenceSummaries(Array.isArray(options?.reports) ? options.reports : activeReports);
+  const conflictSummaries = summaries.filter((summary) => summary.conflictDetected);
+  const copySamples = [];
+  conflictSummaries.slice(0, 6).forEach((summary) => {
+    copySamples.push(summary.conflictCopy, summary.evidenceCountLine, summary.trustLine);
+  });
+
+  const popupSampleCrossing = { id: "audit-crossing", name: "Louisiana Street", railroad: "Railroad", lat: 30.057, lng: -94.795 };
+  const sampleNow = Date.now();
+  const sampleReports = [
+    { id: "audit-blocked-1", crossingId: "audit-crossing", crossingName: "Louisiana Street", type: "blocked", submittedAt: new Date(sampleNow - 25 * 60000).toISOString(), minutesAgo: 25, severity: "high" },
+    { id: "audit-blocked-2", crossingId: "audit-crossing", crossingName: "Louisiana Street", type: "heavy", submittedAt: new Date(sampleNow - 15 * 60000).toISOString(), minutesAgo: 15, severity: "moderate" },
+    { id: "audit-clear-1", crossingId: "audit-crossing", crossingName: "Louisiana Street", type: "cleared", submittedAt: new Date(sampleNow - 2 * 60000).toISOString(), minutesAgo: 2, severity: "low" }
+  ];
+  const syntheticSummary = buildGridlyCrossingEvidenceSummaries(sampleReports)[0] || null;
+  const currentReports = activeReports;
+  const previousPopupState = lastGridlyCrossingPopupConsumerState;
+  let samplePopupHtml = "";
+  let activePopupHtml = "";
+  try {
+    activeReports = sampleReports;
+    samplePopupHtml = buildPopup(popupSampleCrossing, sampleReports[2]);
+    activePopupHtml = buildPopup(popupSampleCrossing, sampleReports[0]);
+  } finally {
+    activeReports = currentReports;
+    lastGridlyCrossingPopupConsumerState = previousPopupState;
+  }
+  copySamples.push(syntheticSummary?.conflictCopy, syntheticSummary?.evidenceCountLine, syntheticSummary?.trustLine, samplePopupHtml.replace(/<[^>]+>/g, " "));
+
+  const userFacingCopy = copySamples.filter(Boolean).join(" ");
+  const conflictCopyDetected = /Conflicting community reports|Most recent report says clear|Additional confirmation needed|Recently cleared after prior blocked reports|blocked reports? • \d+ clear reports?/i.test(userFacingCopy);
+  const technicalLanguageDetected = /latest-wins|lifecycle|resolver|non-expired|Supabase|schema|database|source metadata|report_type|directional/i.test(userFacingCopy);
+  const conflictDetected = conflictSummaries.length;
+  const conflictSurfaced = conflictSummaries.filter((summary) => {
+    const expected = [summary.conflictCopy, summary.evidenceCountLine, summary.trustLine].filter(Boolean);
+    return expected.some((copy) => userFacingCopy.includes(copy));
+  }).length + (syntheticSummary?.conflictDetected && conflictCopyDetected ? 1 : 0);
+  const latestClearOverridesBlocked = summaries.filter((summary) => summary.latestClearOverridesBlocked).length;
+  const blockedEvidenceCount = summaries.reduce((sum, summary) => sum + summary.blockedEvidenceCount, 0);
+  const clearEvidenceCount = summaries.reduce((sum, summary) => sum + summary.clearEvidenceCount, 0);
+  const existingPopupActionsPresent = /Report Blocked/.test(samplePopupHtml)
+    && /Report Delay/.test(samplePopupHtml)
+    && !/Confirm Still Active/.test(samplePopupHtml)
+    && !/Mark Cleared/.test(samplePopupHtml);
+  const activePopupActionsPresent = /Confirm Still Active/.test(activePopupHtml) && /Mark Cleared/.test(activePopupHtml);
+  const directionalDisplayIntroduced = /\b(?:northbound|southbound|eastbound|westbound|NB|SB|EB|WB)\b/.test(userFacingCopy);
+  return {
+    available: true,
+    version: "V256",
+    crossingEvidenceSummaries: summaries.slice(0, 6),
+    syntheticConflictSample: syntheticSummary,
+    conflictDetected,
+    conflictSurfaced,
+    latestClearOverridesBlocked,
+    blockedEvidenceCount,
+    clearEvidenceCount,
+    conflictCopyDetected,
+    technicalLanguageDetected,
+    consumerFriendlyPass: Boolean(conflictCopyDetected && !technicalLanguageDetected),
+    protectedSystemsPass: Boolean(existingPopupActionsPresent && activePopupActionsPresent && !directionalDisplayIntroduced),
+    existingPopupActionsPresent,
+    activePopupActionsPresent,
+    directionalDisplayIntroduced,
+    schemaChangeRequired: false
+  };
+}
+exposeGridlyAuditHelper("gridlyTrustResolutionVisibilityAudit", gridlyTrustResolutionVisibilityAudit);
 
 const GRIDLY_LANGUAGE_CONSISTENCY_AUDIT_VERSION = "V241";
 
@@ -46881,6 +46986,7 @@ function wirePopupReportButtons(popupRoot) {
 }
 
 function buildGridlyLeafletCrossingPopupConsumerModel(crossing = {}, report = null) {
+  const crossingEvidenceSummary = getGridlyCrossingEvidenceSummary(crossing?.id);
   const lifecycleState = getIncidentLifecycleState(report);
   const isRecentlyClearedReport = lifecycleState === "recently_cleared";
   const isClearedReport = lifecycleState === "recently_cleared" || lifecycleState === "cleared" || report?.type === "cleared";
@@ -46902,7 +47008,8 @@ function buildGridlyLeafletCrossingPopupConsumerModel(crossing = {}, report = nu
     confidence: reportCount >= 2 ? "confirmed" : "community",
     hasActiveReport,
     active: hasActiveReport,
-    latestReport: report || null
+    latestReport: report || null,
+    crossingEvidenceSummary
   });
 }
 
@@ -59208,6 +59315,13 @@ function renderAlerts() {
   const sections = [];
   sections.push(`<article class="alert-item intelligence-row high corridor-command-status"><div class="alert-row-main"><span class="alert-severity-chip">Community Awareness</span><strong>${sanitizeText(normalizeGridlyUserFacingRoadText(standardizeGridlyAlertHeadline(routeImpacted ? "Route Watch impacted" : filteredTopStatus)))}</strong><span class="alert-row-time">live</span></div><p class="alert-row-subline">${sanitizeText(normalizeGridlyUserFacingRoadText(filteredTopDetail))}</p></article>`);
 
+  const crossingTrustConflicts = timeSection("crossing_trust_visibility", () => buildGridlyCrossingEvidenceSummaries()
+    .filter((summary) => summary.conflictDetected)
+    .slice(0, 3));
+  crossingTrustConflicts.forEach((summary) => {
+    sections.push(`<article class="alert-item rail-trust-conflict"><strong>${sanitizeText(summary.conflictCopy || "Conflicting community reports")}</strong><p>${sanitizeText(normalizeGridlyUserFacingRoadText(`${summary.crossingName}: ${summary.evidenceCountLine} · ${summary.trustLine}`))}</p></article>`);
+  });
+
   timeSection("alert_corridor_grouping_logic", () => {
     corridors.slice(0, 3).forEach((corridor, idx) => {
       const count = corridor.items.length;
@@ -59371,6 +59485,90 @@ function getLatestReportForCrossing(crossingId) {
 
 function getLatestReportsByCrossing() {
   return [...getLatestReportStateByLocation().values()];
+}
+
+function getGridlyCrossingEvidenceReportKind(report = {}) {
+  const type = String(report?.type || report?.report_type || report?.reportType || "").trim().toLowerCase();
+  if (isClearedReportType(type)) return "clear";
+  if (["blocked", "heavy", "delay", "delayed", "rail_delay", "rail_blocked", "blocked_crossing", "rail_blockage", "rail_blockage_delay"].includes(type)) return "blocked";
+  const text = [report?.title, report?.description, report?.detail, report?.status].map((value) => String(value || "")).join(" ").toLowerCase();
+  if (/\b(?:clear|cleared|open|moving again)\b/.test(text)) return "clear";
+  if (/\b(?:blocked|blocking|heavy delay|train|stopped|closed)\b/.test(text)) return "blocked";
+  return "other";
+}
+
+function getGridlyCrossingEvidenceCountLine(summary = {}) {
+  const blockedCount = Math.max(0, Number(summary?.blockedEvidenceCount || 0));
+  const clearCount = Math.max(0, Number(summary?.clearEvidenceCount || 0));
+  return `${blockedCount} blocked report${blockedCount === 1 ? "" : "s"} • ${clearCount} clear report${clearCount === 1 ? "" : "s"}`;
+}
+
+function getGridlyCrossingEvidenceTrustLine(summary = {}) {
+  if (!summary?.conflictDetected) {
+    if (summary?.latestState === "cleared" && summary?.blockedEvidenceCount > 0) return "Recently cleared after prior blocked reports";
+    return "Community reports visible";
+  }
+  if (summary.latestState === "cleared") return "Conflicting community reports · Most recent report says clear";
+  return "Conflicting community reports · Additional confirmation needed";
+}
+
+function buildGridlyCrossingEvidenceSummaries(reports = activeReports) {
+  const grouped = new Map();
+  const sourceReports = Array.isArray(reports) ? reports : [];
+  sourceReports
+    .filter((report) => report && !report.expired)
+    .forEach((report) => {
+      const key = getReportLocationKey(report);
+      if (!key) return;
+      if (!grouped.has(key)) {
+        grouped.set(key, {
+          key,
+          crossingId: report.crossingId != null ? String(report.crossingId) : String(report.crossing_id || key),
+          crossingName: report.crossingName || report.crossing_name || report.crossing || report.locationName || "Rail crossing",
+          reports: []
+        });
+      }
+      grouped.get(key).reports.push(report);
+    });
+
+  return [...grouped.values()].map((group) => {
+    const sorted = [...group.reports].sort(compareReportsByRecency);
+    const latestReport = sorted[0] || null;
+    const blockedEvidence = sorted.filter((report) => getGridlyCrossingEvidenceReportKind(report) === "blocked");
+    const clearEvidence = sorted.filter((report) => getGridlyCrossingEvidenceReportKind(report) === "clear");
+    const latestKind = getGridlyCrossingEvidenceReportKind(latestReport);
+    const latestState = latestKind === "clear" ? "cleared" : (latestKind === "blocked" ? "active" : getIncidentLifecycleState(latestReport));
+    const blockedEvidenceCount = blockedEvidence.length;
+    const clearEvidenceCount = clearEvidence.length;
+    const latestClearOverridesBlocked = latestState === "cleared" && blockedEvidenceCount > clearEvidenceCount;
+    const activeLatestWithClearEvidence = latestState === "active" && clearEvidenceCount > 0;
+    const conflictDetected = Boolean(latestClearOverridesBlocked || activeLatestWithClearEvidence || (blockedEvidenceCount > 0 && clearEvidenceCount > 0));
+    const summary = {
+      key: group.key,
+      crossingId: group.crossingId,
+      crossingName: group.crossingName,
+      latestState,
+      latestReportType: latestReport?.type || latestReport?.report_type || "",
+      latestMinutesAgo: Number.isFinite(Number(latestReport?.minutesAgo)) ? Number(latestReport.minutesAgo) : null,
+      blockedEvidenceCount,
+      clearEvidenceCount,
+      totalEvidenceCount: sorted.length,
+      conflictDetected,
+      latestClearOverridesBlocked,
+      activeLatestWithClearEvidence
+    };
+    return {
+      ...summary,
+      evidenceCountLine: getGridlyCrossingEvidenceCountLine(summary),
+      trustLine: getGridlyCrossingEvidenceTrustLine(summary),
+      conflictCopy: conflictDetected ? "Conflicting community reports" : ""
+    };
+  });
+}
+
+function getGridlyCrossingEvidenceSummary(crossingId, reports = activeReports) {
+  const key = getReportLocationKey({ crossingId });
+  return buildGridlyCrossingEvidenceSummaries(reports).find((summary) => summary.key === key || String(summary.crossingId) === String(crossingId || "")) || null;
 }
 
 function getConsolidatedIncidents() {
