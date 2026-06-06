@@ -54590,7 +54590,11 @@ function updateGrowthWidgets() {
     alternateAvailable: Boolean(alternateRouteAvailable)
   });
   lastRouteRecommendationMessage = recommendationMessage;
-  if (confirmationCount >= 2) {
+  const crossingTrustConflict = getGridlyPrimaryCrossingTrustConflictSummary();
+  if (crossingTrustConflict?.conflictDetected) {
+    safeText("communityTrust", "Reports disagree");
+    safeText("communityTrustReason", getGridlyCrossingEvidenceConflictDetailLine(crossingTrustConflict));
+  } else if (confirmationCount >= 2) {
     safeText("communityTrust", `${freshnessTier} · Community confirmed`);
     safeText("communityTrustReason", `${confirmationCount} active reports live. Multiple drivers are reporting.`);
   } else if (confirmationCount > 0) {
@@ -58253,14 +58257,30 @@ function buildGridlyActiveStateEvidenceOwnershipSnapshot({
   const corridorLabel = safeDisplayText(activeAwareness?.topCorridorLabel || pulseModel?.dominantCorridor, "");
   const whereLabel = locationLabel || corridorLabel || areaName;
   const countText = pluralizeGridlyMobilityReports(safeActiveCount);
+  const conflictSummary = quiet ? null : getGridlyPrimaryCrossingTrustConflictSummary({
+    crossingId: activeAwareness?.crossingId
+      || activeAwareness?.crossing_id
+      || activeAwareness?.topAwarenessSelectedLocationIntelligence?.crossingId
+      || activeAwareness?.topAwarenessSelectedLocationIntelligence?.item?.crossingId
+      || activeAwareness?.activeAwarenessSamples?.[0]?.crossingId
+      || activeAwareness?.activeAwarenessSamples?.[0]?.crossing_id,
+    locationKey: activeAwareness?.key
+      || activeAwareness?.locationKey
+      || activeAwareness?.topAwarenessSelectedLocationIntelligence?.key
+      || activeAwareness?.topAwarenessSelectedLocationIntelligence?.item?.key
+      || ""
+  });
+  const conflictDetailLine = conflictSummary?.conflictDetected ? getGridlyCrossingEvidenceConflictDetailLine(conflictSummary) : "";
   const elevatedReason = quiet
     ? "No active local reports are elevated right now."
-    : buildGridlyAwarenessBriefSecondaryTrustExplanation({
-        activeCount: safeActiveCount,
-        activeAwareness,
-        intel: { items: latestAlerts },
-        pulseModel
-      });
+    : (conflictSummary?.conflictDetected
+      ? [conflictSummary.conflictCopy || "Conflicting community reports", conflictSummary.evidenceCountLine || getGridlyCrossingEvidenceCountLine(conflictSummary), conflictSummary.trustLine || getGridlyCrossingEvidenceTrustLine(conflictSummary)].filter(Boolean).join(" · ")
+      : buildGridlyAwarenessBriefSecondaryTrustExplanation({
+          activeCount: safeActiveCount,
+          activeAwareness,
+          intel: { items: latestAlerts },
+          pulseModel
+        }));
   const freshestSample = quiet ? null : getGridlyActiveStateEvidenceFreshestSample({ activeAwareness, latestAlerts });
   const freshestTitle = freshestSample?.ageText || (quiet ? "None active" : "Freshness checking");
   const freshestReason = freshestSample
@@ -58268,10 +58288,12 @@ function buildGridlyActiveStateEvidenceOwnershipSnapshot({
     : (quiet ? "Live reports auto-expire so old information does not linger." : "Gridly is checking the active report timestamp already on this signal.");
   const trustTitle = quiet
     ? "Awaiting reports"
-    : (safeActiveCount >= 3 ? "Strong community signal" : safeActiveCount >= 2 ? "Building community signal" : "Single active signal");
+    : (conflictSummary?.conflictDetected ? "Reports disagree" : safeActiveCount >= 3 ? "Strong community signal" : safeActiveCount >= 2 ? "Building community signal" : "Single active signal");
   const trustReason = quiet
     ? "Community trust strengthens as drivers add fresh reports or confirmations."
-    : `${safeReportCount} report${safeReportCount === 1 ? "" : "s"} and ${safeHazardCount} hazard${safeHazardCount === 1 ? "" : "s"} support this active state.`;
+    : (conflictSummary?.conflictDetected
+      ? (conflictDetailLine || `${safeReportCount} report${safeReportCount === 1 ? "" : "s"} include both blocked and clear evidence.`)
+      : `${safeReportCount} report${safeReportCount === 1 ? "" : "s"} and ${safeHazardCount} hazard${safeHazardCount === 1 ? "" : "s"} support this active state.`);
   const communityPulseHeadline = quiet ? `${areaName} awareness` : `${whereLabel} awareness`;
   const communityPulseSubline = quiet
     ? "No active local issues reported nearby."
@@ -58286,7 +58308,9 @@ function buildGridlyActiveStateEvidenceOwnershipSnapshot({
       primary: safeDisplayText(primary, quiet ? "Community activity is quiet" : "Community Activity Nearby"),
       secondary: quiet ? safeDisplayText(secondary, "No recent reports nearby · map remains live") : elevatedReason,
       whyElevated: elevatedReason,
-      source: activeAwareness?.topAwarenessHeadlineSource || pulseModel?.selectedHeadlineTemplate || "shared_active_awareness"
+      source: activeAwareness?.topAwarenessHeadlineSource || pulseModel?.selectedHeadlineTemplate || "shared_active_awareness",
+      conflictDetected: Boolean(conflictSummary?.conflictDetected),
+      conflictSummary: conflictSummary || null
     },
     communityPulse: {
       owns: ["where_it_is_happening"],
@@ -58311,14 +58335,18 @@ function buildGridlyActiveStateEvidenceOwnershipSnapshot({
       activeAwarenessCount: safeActiveCount,
       activeReportCount: safeReportCount,
       activeHazardCount: safeHazardCount,
-      truthLayers: Array.isArray(activeAwareness?.activeSourceTruthLayers) ? activeAwareness.activeSourceTruthLayers.slice(0, 6) : []
+      truthLayers: Array.isArray(activeAwareness?.activeSourceTruthLayers) ? activeAwareness.activeSourceTruthLayers.slice(0, 6) : [],
+      conflictDetected: Boolean(conflictSummary?.conflictDetected),
+      conflictSummary: conflictSummary || null
     },
     mobileAwarenessCard: {
       owns: ["condensed_active_state_mirror", "why_elevated"],
       title: safeDisplayText(primary, quiet ? "Community activity is quiet" : "Community Activity Nearby"),
       status: quiet ? safeDisplayText(secondary, "No recent reports nearby · map remains live") : elevatedReason,
-      meta: quiet ? "Map remains live." : countText,
-      whyElevated: elevatedReason
+      meta: quiet ? "Map remains live." : (conflictSummary?.conflictDetected ? (conflictSummary.evidenceCountLine || getGridlyCrossingEvidenceCountLine(conflictSummary)) : countText),
+      whyElevated: elevatedReason,
+      conflictDetected: Boolean(conflictSummary?.conflictDetected),
+      conflictSummary: conflictSummary || null
     }
   };
 }
@@ -58795,11 +58823,19 @@ function getGridlyAwarenessBriefTrustRecord({ activeAwareness = {}, intel = {}, 
   ].find((record) => record && typeof record === "object") || {};
 }
 
-function getGridlyAwarenessBriefTrustLine({ activeCount = 0, trustRecord = {} } = {}) {
+function getGridlyAwarenessBriefTrustLine({ activeCount = 0, trustRecord = {}, conflictSummary = null } = {}) {
   const safeActiveCount = Math.max(0, Math.round(Number(activeCount) || 0));
+  const scopedConflict = conflictSummary || getGridlyPrimaryCrossingTrustConflictSummary({
+    crossingId: trustRecord?.crossingId || trustRecord?.crossing_id || trustRecord?.raw?.crossingId || trustRecord?.raw?.crossing_id,
+    locationKey: trustRecord?.key || trustRecord?.locationKey || ""
+  });
+  if (scopedConflict?.conflictDetected) {
+    return scopedConflict.trustLine || getGridlyCrossingEvidenceTrustLine(scopedConflict);
+  }
   const model = typeof getGridlyCommunityTrustPresentationModel === "function"
     ? getGridlyCommunityTrustPresentationModel(trustRecord, { reportCount: safeActiveCount })
     : null;
+  if (model?.conflictDetected) return model.trustLine || "Community reports conflict · Conditions may have changed";
   if (model?.recentlyCleared || model?.reportCountLine === "Recently cleared") return "Recently cleared";
   if (model?.trustLine === "Community confirmed") return "Community confirmed";
   if (model?.trustLine === "Awaiting additional reports") return "Awaiting additional reports";
@@ -58861,7 +58897,19 @@ function formatGridlyAwarenessBriefFreshnessLine(record = {}) {
 
 function buildGridlyAwarenessBriefSecondaryTrustExplanation({ activeCount = 0, activeAwareness = {}, intel = {}, pulseModel = {} } = {}) {
   const trustRecord = getGridlyAwarenessBriefTrustRecord({ activeAwareness, intel, pulseModel });
-  const trustLine = getGridlyAwarenessBriefTrustLine({ activeCount, trustRecord });
+  const conflictSummary = getGridlyPrimaryCrossingTrustConflictSummary({
+    crossingId: trustRecord?.crossingId || trustRecord?.crossing_id || trustRecord?.raw?.crossingId || trustRecord?.raw?.crossing_id,
+    locationKey: trustRecord?.key || trustRecord?.locationKey || ""
+  });
+  const trustLine = getGridlyAwarenessBriefTrustLine({ activeCount, trustRecord, conflictSummary });
+  if (conflictSummary?.conflictDetected) {
+    return [
+      conflictSummary.conflictCopy || "Conflicting community reports",
+      conflictSummary.evidenceCountLine || getGridlyCrossingEvidenceCountLine(conflictSummary),
+      trustLine,
+      "map markers show exact spots"
+    ].filter(Boolean).join(" · ");
+  }
   const freshnessLine = trustLine === "Recently cleared" ? "" : formatGridlyAwarenessBriefFreshnessLine(trustRecord);
   return [trustLine, freshnessLine, "map markers show exact spots"].filter(Boolean).join(" · ");
 }
@@ -59310,16 +59358,21 @@ function renderAlerts() {
   const filteredRouteImpactCount = corridors.reduce((sum, corridor) => sum + Number(corridor?.routeImpactCount || 0), 0);
   const routeImpacted = timeSection("map_route_dependent_checks", () => filteredRouteImpactCount > 0);
   const filteredTopItem = primaryCorridor?.items?.[0] || null;
-  const filteredTopStatus = filteredTopItem?.localizedSummary || primaryCorridor?.label || consequenceIntel.topStatus || "No major mobility issues reported nearby";
-  const filteredTopDetail = filteredTopItem?.localizedSummary || consequenceIntel.topStatusLocalizedDetail || "Based on community reports.";
-  const sections = [];
-  sections.push(`<article class="alert-item intelligence-row high corridor-command-status"><div class="alert-row-main"><span class="alert-severity-chip">Community Awareness</span><strong>${sanitizeText(normalizeGridlyUserFacingRoadText(standardizeGridlyAlertHeadline(routeImpacted ? "Route Watch impacted" : filteredTopStatus)))}</strong><span class="alert-row-time">live</span></div><p class="alert-row-subline">${sanitizeText(normalizeGridlyUserFacingRoadText(filteredTopDetail))}</p></article>`);
-
   const crossingTrustConflicts = timeSection("crossing_trust_visibility", () => buildGridlyCrossingEvidenceSummaries()
     .filter((summary) => summary.conflictDetected)
     .slice(0, 3));
-  crossingTrustConflicts.forEach((summary) => {
-    sections.push(`<article class="alert-item rail-trust-conflict"><strong>${sanitizeText(summary.conflictCopy || "Conflicting community reports")}</strong><p>${sanitizeText(normalizeGridlyUserFacingRoadText(`${summary.crossingName}: ${summary.evidenceCountLine} · ${summary.trustLine}`))}</p></article>`);
+  const primaryTrustConflict = crossingTrustConflicts[0] || null;
+  const filteredTopStatus = primaryTrustConflict?.conflictDetected
+    ? (primaryTrustConflict.conflictCopy || "Conflicting community reports")
+    : (filteredTopItem?.localizedSummary || primaryCorridor?.label || consequenceIntel.topStatus || "No major mobility issues reported nearby");
+  const filteredTopDetail = primaryTrustConflict?.conflictDetected
+    ? getGridlyCrossingEvidenceConflictDetailLine(primaryTrustConflict)
+    : (filteredTopItem?.localizedSummary || consequenceIntel.topStatusLocalizedDetail || "Based on community reports.");
+  const sections = [];
+  sections.push(`<article class="alert-item intelligence-row high corridor-command-status ${primaryTrustConflict?.conflictDetected ? "rail-trust-conflict" : ""}"><div class="alert-row-main"><span class="alert-severity-chip">${primaryTrustConflict?.conflictDetected ? "Reports Disagree" : "Community Awareness"}</span><strong>${sanitizeText(normalizeGridlyUserFacingRoadText(standardizeGridlyAlertHeadline(routeImpacted && !primaryTrustConflict?.conflictDetected ? "Route Watch impacted" : filteredTopStatus)))}</strong><span class="alert-row-time">live</span></div><p class="alert-row-subline">${sanitizeText(normalizeGridlyUserFacingRoadText(filteredTopDetail))}</p></article>`);
+
+  crossingTrustConflicts.slice(1).forEach((summary) => {
+    sections.push(`<article class="alert-item rail-trust-conflict"><strong>${sanitizeText(summary.conflictCopy || "Conflicting community reports")}</strong><p>${sanitizeText(getGridlyCrossingEvidenceConflictDetailLine(summary))}</p></article>`);
   });
 
   timeSection("alert_corridor_grouping_logic", () => {
@@ -59406,6 +59459,12 @@ function updateMobileAlertsMirror() {
   if (!incidents.length) {
     els.mobileAlertsMirror.textContent =
       "Route conditions currently appear calm.";
+    return;
+  }
+
+  const conflictSummary = getGridlyPrimaryCrossingTrustConflictSummary();
+  if (conflictSummary?.conflictDetected) {
+    els.mobileAlertsMirror.textContent = `${conflictSummary.conflictCopy || "Conflicting community reports"}: ${getGridlyCrossingEvidenceConflictDetailLine(conflictSummary)}.`;
     return;
   }
 
@@ -59510,6 +59569,39 @@ function getGridlyCrossingEvidenceTrustLine(summary = {}) {
   }
   if (summary.latestState === "cleared") return "Conflicting community reports · Most recent report says clear";
   return "Conflicting community reports · Additional confirmation needed";
+}
+
+function getGridlyCrossingEvidenceConflictDetailLine(summary = {}) {
+  if (!summary?.conflictDetected) return "";
+  const crossingName = safeDisplayText(summary.crossingName, "Rail crossing");
+  const evidenceLine = summary.evidenceCountLine || getGridlyCrossingEvidenceCountLine(summary);
+  const trustLine = summary.trustLine || getGridlyCrossingEvidenceTrustLine(summary);
+  return normalizeGridlyUserFacingRoadText(`${crossingName}: ${evidenceLine} · ${trustLine}`);
+}
+
+function getGridlyPrimaryCrossingTrustConflictSummary({ crossingId = null, locationKey = "" } = {}) {
+  const summaries = typeof buildGridlyCrossingEvidenceSummaries === "function"
+    ? buildGridlyCrossingEvidenceSummaries()
+    : [];
+  const conflicts = summaries
+    .filter((summary) => summary?.conflictDetected)
+    .sort((a, b) => {
+      const latestClearDelta = Number(Boolean(b.latestClearOverridesBlocked)) - Number(Boolean(a.latestClearOverridesBlocked));
+      if (latestClearDelta !== 0) return latestClearDelta;
+      return Number(b.totalEvidenceCount || 0) - Number(a.totalEvidenceCount || 0);
+    });
+  if (!conflicts.length) return null;
+  const requestedCrossingId = crossingId != null && String(crossingId).trim() ? String(crossingId).trim() : "";
+  const requestedLocationKey = safeDisplayText(locationKey, "");
+  if (requestedCrossingId || requestedLocationKey) {
+    const matched = conflicts.find((summary) => {
+      const summaryCrossingId = summary?.crossingId != null ? String(summary.crossingId).trim() : "";
+      return (requestedCrossingId && summaryCrossingId === requestedCrossingId)
+        || (requestedLocationKey && summary?.key === requestedLocationKey);
+    });
+    if (matched) return matched;
+  }
+  return conflicts[0];
 }
 
 function buildGridlyCrossingEvidenceSummaries(reports = activeReports) {
