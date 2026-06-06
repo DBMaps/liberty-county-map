@@ -40031,14 +40031,40 @@ const GRIDLY_DIRECTIONAL_PROVENANCE_AUDIT_VERSION = "V253";
 const GRIDLY_DIRECTIONAL_PROVENANCE_READINESS_VALIDATION_VERSION = "V253.1";
 const GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDOR_PURITY_AUDIT_VERSION = "V253.2";
 const GRIDLY_DIRECTIONAL_PROVENANCE_COUNTY_GEOMETRY_CONTAINMENT_AUDIT_VERSION = "V253.4";
+const GRIDLY_DIRECTIONAL_PROVENANCE_PRIORITY_CORRIDOR_AUDIT_VERSION = "V253.5";
 const GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDORS = ["US 90", "TX 146", "TX 321", "FM 1960", "FM 1409"];
+const GRIDLY_DIRECTIONAL_PROVENANCE_COUNTYWIDE_PRIORITY_CORRIDORS = ["US 90", "TX 146", "TX 321", "FM 1960", "FM 1409"];
+const GRIDLY_DIRECTIONAL_PROVENANCE_COMMUNITY_CRITICAL_CORRIDORS = ["FM 1008", "FM 1011", "FM 563", "TX 105", "US 59", "I-69", "FM 2025", "FM 787"];
+const GRIDLY_DIRECTIONAL_PROVENANCE_PRIORITY_CORRIDOR_COMMUNITIES = {
+  "US 90": ["Liberty County countywide"],
+  "TX 146": ["Liberty County countywide"],
+  "TX 321": ["Liberty County countywide"],
+  "FM 1960": ["Liberty County countywide"],
+  "FM 1409": ["Liberty County countywide"],
+  "FM 1008": ["Kenefick"],
+  "FM 1011": ["Liberty County communities"],
+  "FM 563": ["Liberty County communities"],
+  "TX 105": ["Liberty County communities"],
+  "US 59": ["Cleveland area", "Liberty County communities"],
+  "I-69": ["Cleveland area", "Liberty County communities"],
+  "FM 2025": ["Cleveland area", "Liberty County communities"],
+  "FM 787": ["Liberty County communities"]
+};
 
 const GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDOR_PATTERNS = {
   "US 90": /\b(us\s*90|us-90|u\.?s\.?\s*highway\s*90|united\s+states\s+highway\s+90|highway\s+90)\b/i,
   "TX 146": /\b(tx\s*146|tx-146|sh\s*146|state\s+highway\s+146|highway\s+146)\b/i,
   "TX 321": /\b(tx\s*321|tx-321|sh\s*321|state\s+highway\s+321|highway\s+321)\b/i,
   "FM 1960": /\b(fm\s*1960|fm-1960|farm\s*-?\s*to\s*-?\s*market(?:\s+road)?\s*1960|farm-to-market\s+road\s*1960)\b/i,
-  "FM 1409": /\b(fm\s*1409|fm-1409|farm\s*-?\s*to\s*-?\s*market(?:\s+road)?\s*1409|farm-to-market\s+road\s*1409)\b/i
+  "FM 1409": /\b(fm\s*1409|fm-1409|farm\s*-?\s*to\s*-?\s*market(?:\s+road)?\s*1409|farm-to-market\s+road\s*1409)\b/i,
+  "FM 1008": /\b(fm\s*1008|fm-1008|farm\s*-?\s*to\s*-?\s*market(?:\s+road)?\s*1008|farm-to-market\s+road\s*1008)\b/i,
+  "FM 1011": /\b(fm\s*1011|fm-1011|farm\s*-?\s*to\s*-?\s*market(?:\s+road)?\s*1011|farm-to-market\s+road\s*1011)\b/i,
+  "FM 563": /\b(fm\s*563|fm-563|farm\s*-?\s*to\s*-?\s*market(?:\s+road)?\s*563|farm-to-market\s+road\s*563)\b/i,
+  "TX 105": /\b(tx\s*105|tx-105|sh\s*105|state\s+highway\s+105|highway\s+105)\b/i,
+  "US 59": /\b(us\s*59|us-59|u\.?s\.?\s*highway\s*59|united\s+states\s+highway\s+59|highway\s+59|eastex\s+freeway)\b/i,
+  "I-69": /\b(i\s*-?\s*69|ih\s*-?\s*69|interstate\s+69|eastex\s+freeway)\b/i,
+  "FM 2025": /\b(fm\s*2025|fm-2025|farm\s*-?\s*to\s*-?\s*market(?:\s+road)?\s*2025|farm-to-market\s+road\s*2025)\b/i,
+  "FM 787": /\b(fm\s*787|fm-787|farm\s*-?\s*to\s*-?\s*market(?:\s+road)?\s*787|farm-to-market\s+road\s*787)\b/i
 };
 const GRIDLY_DIRECTIONAL_PROVENANCE_CORRIDOR_DEFAULTS = {
   "US 90": { orientation: "east-west", directions: ["EB", "WB"], authoritative: true },
@@ -41807,6 +41833,105 @@ function gridlyDirectionalProvenanceEvaluateAuditRecords(records = [], options =
   };
 }
 
+
+function gridlyDirectionalProvenancePriorityCorridorStats(corridor = "", detectedMajorCorridors = []) {
+  const label = normalizeCorridorBaseLabel(String(corridor || ""));
+  const detected = (Array.isArray(detectedMajorCorridors) ? detectedMajorCorridors : [])
+    .find((entry) => normalizeCorridorBaseLabel(entry?.corridor || "") === label);
+  if (detected) return detected;
+  const features = gridlyDirectionalProvenanceFeaturesForCorridor(label, { countyContained: true });
+  const [derived] = gridlyDirectionalProvenanceBuildStatsFromFeatures(features, { source: "priority_corridor_safelist_audit" })
+    .filter((entry) => normalizeCorridorBaseLabel(entry?.corridor || "") === label);
+  return derived || {
+    corridor: label,
+    source: "priority_corridor_safelist_audit_missing_geometry",
+    tier: gridlyDirectionalProvenanceCorridorTier(label),
+    roadwayFeatures: 0,
+    geometrySegments: 0,
+    predominantAxis: "mixed",
+    geometryCapable: false,
+    axisSegmentBreakdown: { EW: 0, NS: 0 }
+  };
+}
+
+function gridlyDirectionalProvenancePriorityCorridorAudit(directionalReadiness = {}, detectedMajorCorridors = [], runtimeCoverage = {}) {
+  const readinessByCorridor = new Map((Array.isArray(directionalReadiness?.countywide) ? directionalReadiness.countywide : [])
+    .map((entry) => [normalizeCorridorBaseLabel(entry?.corridor || ""), entry]));
+  const detectedSet = new Set((Array.isArray(detectedMajorCorridors) ? detectedMajorCorridors : [])
+    .map((entry) => normalizeCorridorBaseLabel(entry?.corridor || ""))
+    .filter(Boolean));
+  const priorityLabels = Array.from(new Set([
+    ...GRIDLY_DIRECTIONAL_PROVENANCE_COUNTYWIDE_PRIORITY_CORRIDORS,
+    ...GRIDLY_DIRECTIONAL_PROVENANCE_COMMUNITY_CRITICAL_CORRIDORS
+  ].map((corridor) => normalizeCorridorBaseLabel(corridor)).filter(Boolean)));
+  const categoryForCorridor = (corridor) => GRIDLY_DIRECTIONAL_PROVENANCE_COUNTYWIDE_PRIORITY_CORRIDORS.includes(corridor)
+    ? "countywide"
+    : "communityCritical";
+  const buildEntry = (corridor) => {
+    const current = readinessByCorridor.get(corridor) || null;
+    const stats = gridlyDirectionalProvenancePriorityCorridorStats(corridor, detectedMajorCorridors);
+    const features = gridlyDirectionalProvenanceFeaturesForCorridor(corridor, { countyContained: true });
+    const readinessEntry = current || gridlyDirectionalProvenanceReadinessEntryForAudit(stats, runtimeCoverage, features);
+    const category = categoryForCorridor(corridor);
+    return {
+      corridor,
+      tier: readinessEntry.tier || gridlyDirectionalProvenanceCorridorTier(corridor, stats),
+      readinessScore: Number(readinessEntry.readinessScore || 0),
+      readinessStatus: readinessEntry.readinessStatus || gridlyDirectionalProvenanceReadinessBucket(readinessEntry.readinessScore, readinessEntry.tier),
+      priorityCorridor: true,
+      category,
+      countywidePriority: category === "countywide",
+      communityCritical: category === "communityCritical",
+      communities: GRIDLY_DIRECTIONAL_PROVENANCE_PRIORITY_CORRIDOR_COMMUNITIES[corridor] || [],
+      directionalDisplayAllowed: false,
+      includedInReadinessEvaluation: true,
+      currentlyInDirectionalReadiness: Boolean(current),
+      currentlyInCountyContainedInventory: detectedSet.has(corridor),
+      underEvaluation: true,
+      auditOnly: true,
+      governanceOnly: true
+    };
+  };
+  const priorityCorridors = priorityLabels.map(buildEntry);
+  const missingPriorityCorridors = priorityCorridors
+    .filter((entry) => !entry.currentlyInDirectionalReadiness || !entry.currentlyInCountyContainedInventory)
+    .map((entry) => ({
+      corridor: entry.corridor,
+      category: entry.category,
+      communities: entry.communities,
+      currentlyInDirectionalReadiness: entry.currentlyInDirectionalReadiness,
+      currentlyInCountyContainedInventory: entry.currentlyInCountyContainedInventory,
+      includedInReadinessEvaluation: entry.includedInReadinessEvaluation,
+      directionalDisplayAllowed: false,
+      reason: entry.currentlyInDirectionalReadiness
+        ? "priority_corridor_missing_from_county_contained_inventory"
+        : "priority_corridor_missing_from_current_directional_readiness_output"
+    }));
+  const summary = {
+    totalPriorityCorridors: priorityCorridors.length,
+    countywidePriorityCorridors: priorityCorridors.filter((entry) => entry.category === "countywide").length,
+    communityCriticalCorridors: priorityCorridors.filter((entry) => entry.category === "communityCritical").length,
+    readinessProtectedCorridors: priorityCorridors.filter((entry) => entry.includedInReadinessEvaluation).length,
+    ready: priorityCorridors.filter((entry) => entry.readinessStatus === "ready").length,
+    conditional: priorityCorridors.filter((entry) => entry.readinessStatus === "conditional").length,
+    notReady: priorityCorridors.filter((entry) => entry.readinessStatus === "notReady").length,
+    missingPriorityCorridors: missingPriorityCorridors.length,
+    directionalDisplayAllowed: 0,
+    auditOnly: true,
+    governanceOnly: true
+  };
+  return {
+    available: true,
+    version: GRIDLY_DIRECTIONAL_PROVENANCE_PRIORITY_CORRIDOR_AUDIT_VERSION,
+    priorityCorridors,
+    countywidePriorityCorridors: priorityCorridors.filter((entry) => entry.category === "countywide"),
+    communityCriticalCorridors: priorityCorridors.filter((entry) => entry.category === "communityCritical"),
+    readinessProtectedCorridors: priorityCorridors.filter((entry) => entry.includedInReadinessEvaluation),
+    missingPriorityCorridors,
+    summary
+  };
+}
+
 function gridlyDirectionalProvenanceAudit(options = {}) {
   const records = gridlyDirectionalProvenanceRecords(options);
   const maxRecords = Number.isFinite(Number(options.maxRecords)) ? Math.max(0, Number(options.maxRecords)) : records.length;
@@ -41851,6 +41976,11 @@ function gridlyDirectionalProvenanceAudit(options = {}) {
     readinessValidation,
     globalEvaluation.corridorRuntimeCoverage
   );
+  const priorityCorridorAudit = gridlyDirectionalProvenancePriorityCorridorAudit(
+    directionalReadiness,
+    detectedMajorCorridors,
+    globalEvaluation.corridorRuntimeCoverage
+  );
 
   return {
     available: true,
@@ -41879,6 +42009,7 @@ function gridlyDirectionalProvenanceAudit(options = {}) {
     directionalReadiness,
     readinessValidation,
     corridorPurityAudit: gridlyDirectionalProvenanceCorridorPurityAudit(directionalReadiness, detectedMajorCorridors, readinessValidation, { countyContained: true }),
+    priorityCorridorAudit,
     countyGeometryContainmentGuard,
     countyGeometryContainmentAudit,
     readinessSummary: directionalReadiness.readinessSummary,
