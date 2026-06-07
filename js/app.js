@@ -16069,8 +16069,13 @@ function syncRouteQuickPanelUiState() {
   if (typeof syncMobileDestinationCommandCard === "function") syncMobileDestinationCommandCard();
 }
 function getGridlyRouteExitSurfaceState() {
-  const routeIsActive = Boolean(routePreviewRendered || routePreviewLayerExists || window.__gridlyRoutePreviewLayer || savedRouteLayer?.getLayers?.().length || activeDestinationPlace || window.__gridlySelectedRouteId);
   const routeIsMonitoring = Boolean(routeWatchActivated || window.__gridlyRouteWatchActive);
+  const preview = typeof getGridlyDestinationRoutePreviewState === "function"
+    ? getGridlyDestinationRoutePreviewState()
+    : (window.GridlyDestinationRoutePreview || {});
+  const selectedLabel = typeof getSelectedDestinationLabel === "function" ? String(getSelectedDestinationLabel() || "").trim() : "";
+  const routePreviewActive = Boolean(preview?.active || ["loading", "ready"].includes(String(preview?.status || "")));
+  const routeIsActive = Boolean(routePreviewRendered || routePreviewLayerExists || routePreviewActive || routeIsMonitoring || window.__gridlyRoutePreviewLayer || savedRouteLayer?.getLayers?.().length || activeDestinationPlace || window.__gridlySelectedRouteId || selectedLabel);
   return { routeIsActive, routeIsMonitoring };
 }
 
