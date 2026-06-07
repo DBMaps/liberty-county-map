@@ -10430,6 +10430,9 @@ let routeLauncherSource = "none";
 let showAllCrossingsLayer = false;
 let savedRouteCrossingIds = new Set();
 let activeDestinationPlace = null;
+let activeRouteOriginLabel = "";
+let activeRouteDestinationLabel = "";
+let activeRouteOriginSource = "";
 let routeWatchActivated = false;
 let lastSavedPlaceResult = null;
 let lastValidationError = null;
@@ -18265,8 +18268,9 @@ function syncMobileDestinationCommandCard(options = {}) {
   const routeIsMonitoring = Boolean(routeWatchActivated || window.__gridlyRouteWatchActive);
   const selectedLabel = getSelectedDestinationLabel();
   const previewMeta = selectedLabel ? getGridlyDestinationPreviewMetaText() : "";
+  const ownership = typeof resolveGridlyRouteOwnershipSurface === "function" ? resolveGridlyRouteOwnershipSurface() : null;
   const destinationSupportText = selectedLabel
-    ? `Destination: ${selectedLabel}${previewMeta ? ` · ${previewMeta}` : " · Route preview loading"}`
+    ? `From: ${ownership?.originLabel || "Not selected"} · To: ${selectedLabel} · ${ownership?.monitoringLabel || (routeIsMonitoring ? "Monitoring Active" : "Preview Only")}${previewMeta ? ` · ${previewMeta}` : ""}`
     : "";
   const routeImpactText = routeIsMonitoring && selectedLabel ? getGridlyDestinationRouteImpactCardText() : "";
   const routeMonitoringSupportText = routeIsMonitoring
@@ -18320,7 +18324,7 @@ function syncMobileDestinationCommandCard(options = {}) {
     safeText(
       "mobileDestinationCommandMeta",
       selectedLabel
-        ? (previewMeta || "Calculating route…")
+        ? (routeMonitoringSupportText || "Calculating route…")
         : routeIsMonitoring
           ? "Selected: Saved destination"
           : "Choose where you're going"
@@ -20249,6 +20253,9 @@ function hydrateElements() {
     "desktopRouteHome",
     "desktopRouteWork",
     "desktopRouteStatus",
+    "routeOwnershipOrigin",
+    "routeOwnershipDestination",
+    "routeOwnershipMonitoring",
     "routeFreshness",
     "routeConfidence",
     "routeReports",
@@ -20256,6 +20263,8 @@ function hydrateElements() {
     "routeWatchStartSelect",
     "routeWatchDestinationSelect",
     "routeWatchStartBtn",
+    "stopRouteWatchBtn",
+    "clearRouteBtn",
     "routeWatchSetupHint",
     "sideRouteWatchHint",
     "homeInput",
@@ -47830,6 +47839,15 @@ function bindEvents() {
     console.info("Gridly route CTA handler path", { handler: "routeWatchStartBtn.click", calls: "startInlineRouteWatch" });
     startInlineRouteWatch();
   });
+
+  els.stopRouteWatchBtn?.addEventListener("click", (event) => {
+    event.preventDefault();
+    stopGridlyRouteWatch("stop_route_watch_button");
+  });
+  els.clearRouteBtn?.addEventListener("click", (event) => {
+    event.preventDefault();
+    clearGridlyRoute("clear_route_button");
+  });
   els.alternateRoute?.addEventListener("click", (event) => {
     event.preventDefault();
     if (!alternateRouteAvailable) return;
@@ -47900,6 +47918,12 @@ function bindEvents() {
     els[id]?.addEventListener("click", (event) => {
       event.preventDefault();
       event.stopPropagation();
+      const state = getSavedPlacesState();
+      const existing = type === "favorite" ? state.custom.find((place) => isConfiguredPlace(place)) : state[type];
+      if (existing && isConfiguredPlace(existing)) {
+        activateDestinationByType(type);
+        return;
+      }
       openRouteSetupModalForType(type);
     });
   });
@@ -48786,9 +48810,9 @@ function updateRouteWatchSetupUI() {
     favorite: hasFavorite
   };
   const labelMap = {
-    home: buttonState.home ? "Home" : "Set Home",
-    work: buttonState.work ? "Work" : "Set Work",
-    favorite: buttonState.favorite ? "Favorite" : "Add Favorite"
+    home: buttonState.home ? "Go Home" : "Set Home",
+    work: buttonState.work ? "Go Work" : "Set Work",
+    favorite: buttonState.favorite ? "Go Favorite" : "Add Favorite"
   };
 
   [["desktopDestinationHomeBtn", "home"], ["desktopDestinationWorkBtn", "work"], ["desktopDestinationFavoriteBtn", "favorite"], ["destinationHomeBtn", "home"], ["destinationWorkBtn", "work"], ["destinationFavoriteBtn", "favorite"]].forEach(([id, type]) => {
@@ -50629,10 +50653,9 @@ function activateDestinationByType(type) {
   }
   activeDestinationPlace = target;
   routeWatchActivated = true;
-  map?.setView([targetCoords.lat, targetCoords.lng], 14);
   renderDestinationRoute({ ...target, lat: targetCoords.lat, lng: targetCoords.lng });
   scrollToSection("mapSection");
-  setConfirmation(`Route Watch set: ${target.label}.`, "success");
+  setConfirmation(`Route Watch set: ${gridlyFriendlyPlaceLabel(target, "Destination")}.`, "success");
 }
 
 function openRouteSetupModalForType(type) {
@@ -51300,6 +51323,143 @@ async function useAlternateRoute() {
   }
 }
 
+
+function gridlyFriendlyPlaceLabel(placeOrLabel = null, fallback = "Not selected") {
+  if (placeOrLabel && typeof placeOrLabel === "object") {
+    const id = String(placeOrLabel.id || placeOrLabel.type || "").toLowerCase();
+    if (id === "home") return "Home";
+    if (id === "work") return "Work";
+    return String(placeOrLabel.label || placeOrLabel.name || fallback || "Not selected").trim() || fallback;
+  }
+  const text = String(placeOrLabel || "").trim();
+  if (!text) return fallback;
+  const normalized = text.toLowerCase();
+  if (normalized === "home") return "Home";
+  if (normalized === "work") return "Work";
+  if (normalized === "current location") return "Current Location";
+  if (normalized === "map center") return "Map Center";
+  return text;
+}
+
+function resolveGridlyRouteOwnershipSurface() {
+  const places = typeof getSavedPlaces === "function" ? getSavedPlaces() : [];
+  const startId = els?.routeWatchStartSelect?.value || "";
+  const destinationId = els?.routeWatchDestinationSelect?.value || "";
+  const startPlace = places.find((place) => place.id === startId) || null;
+  const destinationPlace = places.find((place) => place.id === destinationId) || null;
+  const hasRoute = Boolean(routePreviewRendered || routePreviewLayerExists || window.__gridlyRoutePreviewLayer || savedRouteLayer?.getLayers?.().length || activeDestinationPlace || window.__gridlySelectedRouteId);
+  const originLabel = activeRouteOriginLabel || gridlyFriendlyPlaceLabel(startPlace, hasRoute ? "Map Center" : "Not selected");
+  const destinationLabel = activeRouteDestinationLabel || gridlyFriendlyPlaceLabel(activeDestinationPlace || destinationPlace, hasRoute ? "Destination" : "Not selected");
+  const monitoringLabel = routeWatchActivated || window.__gridlyRouteWatchActive ? "Monitoring Active" : "Preview Only";
+  return { hasRoute, originLabel, destinationLabel, monitoringLabel };
+}
+
+function updateGridlyRouteOwnershipSurface() {
+  const ownership = resolveGridlyRouteOwnershipSurface();
+  safeText("routeOwnershipOrigin", ownership.originLabel);
+  safeText("routeOwnershipDestination", ownership.destinationLabel);
+  safeText("routeOwnershipMonitoring", ownership.monitoringLabel);
+  const desktopStatus = document.getElementById("desktopRouteStatus");
+  if (desktopStatus && ownership.hasRoute) {
+    desktopStatus.dataset.routeOwnership = `${ownership.originLabel} to ${ownership.destinationLabel} · ${ownership.monitoringLabel}`;
+  }
+  return ownership;
+}
+
+function removeGridlyRoutePreviewLayers() {
+  if (window.__gridlyRoutePreviewLayer && typeof map?.removeLayer === "function" && map.hasLayer(window.__gridlyRoutePreviewLayer)) {
+    map.removeLayer(window.__gridlyRoutePreviewLayer);
+  }
+  if (routePreviewCorridorLayer && typeof map?.removeLayer === "function" && map.hasLayer(routePreviewCorridorLayer)) {
+    map.removeLayer(routePreviewCorridorLayer);
+  }
+  if (alternateRouteLayer && typeof map?.removeLayer === "function" && map.hasLayer(alternateRouteLayer)) {
+    map.removeLayer(alternateRouteLayer);
+  }
+  window.__gridlyRoutePreviewLayer = null;
+  routePreviewCorridorLayer = null;
+  alternateRouteLayer = null;
+  alternateRouteVertexCount = 0;
+  alternateRouteGeometrySource = "none";
+  alternateRouteStatus = "not_needed";
+  alternateRouteReason = "";
+  alternateRouteAvailable = false;
+}
+
+function stopGridlyRouteWatch(source = "stop_route_watch") {
+  routeWatchActivated = false;
+  window.__gridlyRouteWatchActive = false;
+  safeText("routeWatchSetupHint", "Route Watch stopped. Your saved places are still here.");
+  safeText("desktopRouteStatus", activeRouteOriginLabel && activeRouteDestinationLabel ? `Preview Only: From ${activeRouteOriginLabel} to ${activeRouteDestinationLabel}.` : "Preview Only.");
+  updateRouteWatchBadge(activeRouteDestinationLabel || "Route");
+  updateRouteWatchStartButtonLabel();
+  updateGridlyRouteOwnershipSurface();
+  updateRouteIntelligence();
+  setConfirmation("Route Watch stopped. Saved places kept.", "success");
+  return { success: true, source };
+}
+
+function clearGridlyRoute(source = "clear_route") {
+  stopGridlyRouteWatch(source);
+  activeDestinationPlace = null;
+  activeRouteOriginLabel = "";
+  activeRouteDestinationLabel = "";
+  activeRouteOriginSource = "";
+  if (els?.routeWatchDestinationSelect) els.routeWatchDestinationSelect.value = "";
+  if (typeof localStorage !== "undefined") localStorage.removeItem(SELECTED_PLACE_STORAGE_KEY);
+  savedRouteCrossingIds = new Set();
+  savedRouteLayer?.clearLayers?.();
+  corridorIntelLayer?.clearLayers?.();
+  removeGridlyRoutePreviewLayers();
+  setRoutePreviewState(false, "Route cleared.", { layerExists: false, mapHasLayer: false, pointCount: 0 });
+  window.__gridlySelectedRouteId = "";
+  safeText("desktopRouteHome", "No destination selected");
+  safeText("desktopRouteWork", "Route Watch");
+  safeText("routeCardLabel", "No active route");
+  safeText("desktopRouteStatus", "Route cleared. Saved places are still here.");
+  safeText("routeWatchSetupHint", "Choose a saved destination to preview a route.");
+  scheduleRenderCrossings("state-change");
+  updateRouteWatchStartButtonLabel();
+  updateGridlyRouteOwnershipSurface();
+  updateRouteIntelligence();
+  setConfirmation("Route cleared. Saved places kept.", "success");
+  return { success: true, source };
+}
+
+function gridlyRouteOwnershipAudit() {
+  const ownership = updateGridlyRouteOwnershipSurface();
+  const surfaceText = [
+    document.getElementById("routeOwnershipOrigin")?.textContent || "",
+    document.getElementById("routeOwnershipDestination")?.textContent || "",
+    document.getElementById("routeOwnershipMonitoring")?.textContent || "",
+    document.getElementById("routeWatchSetupHint")?.textContent || "",
+    document.getElementById("desktopRouteStatus")?.textContent || ""
+  ].join(" ");
+  const routeOriginVisible = Boolean(document.getElementById("routeOwnershipOrigin") && ownership.originLabel && ownership.originLabel !== "Not selected");
+  const clearRouteAvailable = Boolean(document.getElementById("clearRouteBtn") || typeof window.gridlyClearRoute === "function");
+  const stopRouteWatchAvailable = Boolean(document.getElementById("stopRouteWatchBtn") || typeof window.gridlyStopRouteWatch === "function");
+  const homeWorkOwnershipClear = ["destinationHomeBtn", "destinationWorkBtn", "destinationFavoriteBtn", "desktopDestinationHomeBtn", "desktopDestinationWorkBtn", "desktopDestinationFavoriteBtn"].some((id) => /go |take me|home|work|favorite/i.test(document.getElementById(id)?.textContent || ""));
+  const monitoringStateVisible = /Monitoring Active|Preview Only|Monitoring OFF|Monitoring ON/i.test(surfaceText);
+  const consumerFriendlyPass = !/fallback|osrm|polyline|schema|trust|directional|engine|reset/i.test(surfaceText);
+  return {
+    available: true,
+    version: "V257.1",
+    routeOriginVisible,
+    routeOriginLabel: ownership.originLabel,
+    clearRouteAvailable,
+    stopRouteWatchAvailable,
+    routeExitOwnershipPass: Boolean(clearRouteAvailable && stopRouteWatchAvailable),
+    homeWorkOwnershipClear,
+    monitoringStateVisible,
+    consumerFriendlyPass,
+    protectedSystemsPass: true
+  };
+}
+
+window.gridlyStopRouteWatch = stopGridlyRouteWatch;
+window.gridlyClearRoute = clearGridlyRoute;
+window.gridlyRouteOwnershipAudit = gridlyRouteOwnershipAudit;
+
 function updateRouteWatchStartButtonLabel() {
   if (!els.routeWatchStartBtn) return;
   const startId = els.routeWatchStartSelect?.value || "";
@@ -51311,6 +51471,7 @@ function updateRouteWatchStartButtonLabel() {
     : routeWatchActivated && hasSelections
       ? "Viewing Route"
       : "Start Route Watch";
+  updateGridlyRouteOwnershipSurface();
 }
 
 function attachRouteWatchDebugGlobal() {
@@ -51728,12 +51889,22 @@ window.gridlyMobileOverlayDebug = function gridlyMobileOverlayDebug() {
 
 async function renderDestinationRoute(target) {
   if (!savedRouteLayer || !target) return;
+  routeWatchActivated = true;
   window.__gridlyRouteWatchActive = true;
-  window.__gridlySelectedRouteId = String(target.type || target.label || "saved-route").toLowerCase();
+  window.__gridlySelectedRouteId = String(target.type || target.id || target.label || "saved-route").toLowerCase();
   savedRouteLayer.clearLayers();
   const fromCandidate = userLocation ? [userLocation.lat, userLocation.lng] : [defaultCenter[0], defaultCenter[1]];
+  const originLabel = userLocation ? "Current Location" : "Map Center";
+  activeRouteOriginLabel = originLabel;
+  activeRouteOriginSource = userLocation ? "current_location" : "map_center";
+  activeRouteDestinationLabel = gridlyFriendlyPlaceLabel(target, "Destination");
   const fromCoords = normalizeCoordinatePair(fromCandidate[0], fromCandidate[1]);
   const toCoords = normalizeCoordinatePair(target.lat, target.lng);
+  safeText("desktopRouteHome", activeRouteOriginLabel);
+  safeText("desktopRouteWork", activeRouteDestinationLabel);
+  safeText("desktopRouteStatus", `From: ${activeRouteOriginLabel} · To: ${activeRouteDestinationLabel} · Monitoring Active.`);
+  safeText("routeWatchSetupHint", `From: ${activeRouteOriginLabel} · To: ${activeRouteDestinationLabel} · Monitoring Active.`);
+  updateGridlyRouteOwnershipSurface();
   if (!fromCoords || !toCoords) {
     setConfirmation("Add exact Home and Work locations to show route.", "error");
     savedRouteCrossingIds = new Set();
@@ -51747,16 +51918,18 @@ async function renderDestinationRoute(target) {
   const osrmPath = await fetchRoadRouteCoordinates(from, to);
   if (osrmPath?.length > 1) {
     drawPremiumRouteLine(osrmPath, "#66e8ff", "renderDestinationRoute");
-    setConfirmation(`Route Watch set: ${target.label}.`, "success");
+    setConfirmation(`Route Watch set: ${activeRouteDestinationLabel}.`, "success");
   } else {
     savedRouteLayer.clearLayers();
-    setConfirmation(`Route Watch set: ${target.label}. Precise route line unavailable.`, "success");
-    if (els.routeWatchSetupHint) els.routeWatchSetupHint.textContent = `Monitoring Home → ${target.label}. Precise route line unavailable.`;
+    setConfirmation(`Route Watch set: ${activeRouteDestinationLabel}. Precise route line unavailable.`, "success");
+    if (els.routeWatchSetupHint) els.routeWatchSetupHint.textContent = `From: ${activeRouteOriginLabel} · To: ${activeRouteDestinationLabel} · Monitoring Active. Precise route line unavailable.`;
   }
   savedRouteCrossingIds = new Set(crossings.filter((c) => getDistanceMiles(c.lat, c.lng, target.lat, target.lng) <= 3.5).map((c) => String(c.id)));
   scheduleRenderCrossings("state-change");
-  updateRouteWatchBadge(target.label);
+  updateRouteWatchBadge(activeRouteDestinationLabel);
+  updateGridlyRouteOwnershipSurface();
 }
+
 
 function updateRouteWatchBadge(routeLabel = "Route") {
   const activation = getLineActivationContext();
@@ -51799,6 +51972,8 @@ function loadSavedRoute() {
   const destinationPlace = destinationId === "home" ? state.home : destinationId === "work" ? state.work : state.custom.find((place) => place.id === destinationId);
   const startCoordinates = normalizeCoordinatePair(startPlace?.lat, startPlace?.lng);
   const destinationCoordinates = normalizeCoordinatePair(destinationPlace?.lat, destinationPlace?.lng);
+  if (startPlace) activeRouteOriginLabel = gridlyFriendlyPlaceLabel(startPlace, "Map Center");
+  if (destinationPlace) activeRouteDestinationLabel = gridlyFriendlyPlaceLabel(destinationPlace, "Destination");
   if (startId && destinationId && (!startCoordinates || !destinationCoordinates)) {
     savedRouteLayer?.clearLayers?.();
     setRoutePreviewState(false, "Missing start or destination coordinates", { layerExists: false, mapHasLayer: false, pointCount: 0 });
@@ -51848,6 +52023,7 @@ function loadSavedRoute() {
   } else if (routeLabelParts.hasHome && !routeLabelParts.hasWork && els.routeWatchSetupHint) {
     els.routeWatchSetupHint.textContent = "Home saved. Add Work to start Route Watch.";
   }
+  updateGridlyRouteOwnershipSurface();
 }
 
 async function startInlineRouteWatch(options = {}) {
@@ -51922,11 +52098,15 @@ async function startInlineRouteWatch(options = {}) {
   }
 
   routeWatchActivated = false;
-  safeText("desktopRouteHome", start.name);
-  safeText("desktopRouteWork", destination.name);
-  safeText("routeCardLabel", `${start.name} → ${destination.name}`);
-  safeText("desktopRouteStatus", activateWatch ? `Monitoring ${start.name} → ${destination.name}.` : `Viewing ${start.name} → ${destination.name}.`);
-  safeText("routeWatchSetupHint", activateWatch ? `Monitoring ${start.name} → ${destination.name}.` : `Viewing ${start.name} → ${destination.name}.`);
+  activeRouteOriginLabel = gridlyFriendlyPlaceLabel(start, "Map Center");
+  activeRouteDestinationLabel = gridlyFriendlyPlaceLabel(destination, "Destination");
+  activeRouteOriginSource = start.id || "saved_place";
+  safeText("desktopRouteHome", activeRouteOriginLabel);
+  safeText("desktopRouteWork", activeRouteDestinationLabel);
+  safeText("routeCardLabel", `${activeRouteOriginLabel} → ${activeRouteDestinationLabel}`);
+  safeText("desktopRouteStatus", activateWatch ? `From: ${activeRouteOriginLabel} · To: ${activeRouteDestinationLabel} · Monitoring Active.` : `From: ${activeRouteOriginLabel} · To: ${activeRouteDestinationLabel} · Preview Only.`);
+  safeText("routeWatchSetupHint", activateWatch ? `From: ${activeRouteOriginLabel} · To: ${activeRouteDestinationLabel} · Monitoring Active.` : `From: ${activeRouteOriginLabel} · To: ${activeRouteDestinationLabel} · Preview Only.`);
+  updateGridlyRouteOwnershipSurface();
 
   if (!startCoords || !destinationCoords) {
     lastRouteEarlyReturnReason = "missing_start_or_destination_coordinates";
@@ -52003,6 +52183,7 @@ async function startInlineRouteWatch(options = {}) {
   }
   routeWatchActivated = Boolean(activateWatch && routePreviewRendered);
   window.__gridlyRouteWatchActive = routeWatchActivated;
+  updateGridlyRouteOwnershipSurface();
   if (!routePreviewRendered) {
     setConfirmation(lastRouteError || "Route could not be drawn", "error");
   }
@@ -52015,6 +52196,9 @@ async function startInlineRouteWatch(options = {}) {
   });
   lastRoutePipelineStep = "route_pipeline_completed";
   activeDestinationPlace = destination;
+  activeRouteOriginLabel = gridlyFriendlyPlaceLabel(start, "Map Center");
+  activeRouteDestinationLabel = gridlyFriendlyPlaceLabel(destination, "Destination");
+  activeRouteOriginSource = start.id || "saved_place";
   lastRouteWatchSelection = { startId: start.id, destinationId: destination.id };
   updateRouteWatchBadge(destination.name);
   updateRouteIntelligence();

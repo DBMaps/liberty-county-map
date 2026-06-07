@@ -6472,6 +6472,36 @@ body.modal-open {
   margin-top: 10px;
 }
 
+
+.route-ownership-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 4px;
+}
+
+.route-ownership-summary span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid rgba(124, 231, 255, 0.22);
+  border-radius: 999px;
+  padding: 4px 8px;
+  background: rgba(7, 17, 28, 0.56);
+  color: #b7c9db;
+  font-size: 0.78rem;
+}
+
+.route-ownership-summary b {
+  color: #d9edf8;
+  font-weight: 700;
+}
+
+.route-ownership-summary em {
+  color: #f6fbff;
+  font-style: normal;
+}
+
 .route-watch-setup-hint {
   margin: 6px 0 0;
   font-size: 0.78rem;
