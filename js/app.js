@@ -54712,7 +54712,7 @@ function collectGridlySettingsFromUi() {
   });
 }
 
-const GRIDLY_FEEDBACK_FLOW_VERSION = "V259.1C";
+const GRIDLY_FEEDBACK_FLOW_VERSION = "V259.1D";
 const GRIDLY_FEEDBACK_EMAIL_RECIPIENT = "feedback@gridly.app";
 const GRIDLY_FEEDBACK_CATEGORIES = Object.freeze(["Bug", "Suggestion", "Map Issue", "Route Issue", "General Comment"]);
 
@@ -54726,33 +54726,16 @@ function getGridlyFeedbackFlowRoot(scope) {
   if (typeof document === "undefined") return null;
   if (scope instanceof Element && scope.matches?.("[data-gridly-feedback-flow]")) return scope;
   const activeSettingsSheet = getGridlyActivePortraitSettingsSheet();
+  if (activeSettingsSheet) return activeSettingsSheet.querySelector?.("[data-gridly-feedback-flow]") || null;
   return scope?.querySelector?.("[data-gridly-feedback-flow]")
-    || activeSettingsSheet?.querySelector?.("[data-gridly-feedback-flow]")
     || document.querySelector("[data-gridly-feedback-flow]");
 }
 
 function ensureGridlyFeedbackFlowInActiveSettingsSheet(scope) {
   if (typeof document === "undefined") return null;
   const activeSettingsSheet = getGridlyActivePortraitSettingsSheet();
-  const scopedRoot = scope?.querySelector?.("[data-gridly-feedback-flow]") || null;
-  const activeRoot = activeSettingsSheet?.querySelector?.("[data-gridly-feedback-flow]") || null;
-  if (activeRoot) return activeRoot;
-  if (!activeSettingsSheet) return scopedRoot || document.querySelector("[data-gridly-feedback-flow]");
-
-  const supportDetail = activeSettingsSheet.querySelector('[data-gridly-about] .settings-list-detail')
-    || activeSettingsSheet.querySelector('[data-v2-action="settings-feedback-open"]')?.closest?.(".settings-list-detail")
-    || activeSettingsSheet.querySelector(".gridly-settings-sheet")
-    || activeSettingsSheet.querySelector("#gridlyPortraitV2SheetBody")
-    || activeSettingsSheet;
-  const feedbackEntry = supportDetail.querySelector?.('[data-v2-action="settings-feedback-open"]')
-    || activeSettingsSheet.querySelector('[data-v2-action="settings-feedback-open"]');
-  const template = document.createElement("template");
-  template.innerHTML = buildGridlyFeedbackFlowHtml({ v2: true }).trim();
-  const fragment = template.content.cloneNode(true);
-  if (feedbackEntry?.parentNode === supportDetail) feedbackEntry.insertAdjacentElement("afterend", fragment.firstElementChild);
-  else supportDetail.appendChild(fragment.firstElementChild);
-  if (fragment.firstElementChild) supportDetail.appendChild(fragment.firstElementChild);
-  return activeSettingsSheet.querySelector("[data-gridly-feedback-flow]");
+  if (activeSettingsSheet) return activeSettingsSheet.querySelector?.("[data-gridly-feedback-flow]") || null;
+  return scope?.querySelector?.("[data-gridly-feedback-flow]") || document.querySelector("[data-gridly-feedback-flow]");
 }
 
 function setGridlyFeedbackAcknowledgementVisibility(status, visible) {
@@ -66659,7 +66642,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         "route-manage-places-open",
         "settings-change-awareness-area",
         "settings-select-awareness-area",
-        "settings-replay-setup"
+        "settings-replay-setup",
+        "settings-feedback-open",
+        "settings-feedback-prepare"
       ].includes(canonicalAction);
       const shouldKeepSheetOpen = canonicalAction === "report-select-hazard" || canonicalAction === "report-select-other-hazard-subtype";
       if (!shouldKeepSheetOpen && !actionManagesOwnSurface) closePortraitV2Sheet();
