@@ -16087,6 +16087,17 @@ function syncGridlyVisibleRouteExitControls() {
   ].filter(Boolean);
   const stopButtons = [document.getElementById("mobileCardStopRouteWatchBtn")].filter(Boolean);
 
+  const routeCards = new Set();
+  [...clearButtons, ...stopButtons].forEach((button) => {
+    const card = button.closest?.(".mobile-destination-command") || null;
+    if (card) routeCards.add(card);
+  });
+  routeCards.forEach((card) => {
+    const cardAllowsExitControl = !card.hidden && !card.classList.contains("is-awareness-panel");
+    card.classList.toggle("has-route-exit-actions", Boolean(routeIsActive && cardAllowsExitControl));
+    card.classList.toggle("is-route-monitoring", Boolean(routeIsMonitoring && cardAllowsExitControl));
+  });
+
   clearButtons.forEach((button) => {
     const card = button.closest?.(".mobile-destination-command") || null;
     const cardAllowsExitControl = !card || (!card.hidden && !card.classList.contains("is-awareness-panel"));
