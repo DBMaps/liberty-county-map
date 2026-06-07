@@ -18715,9 +18715,21 @@ function getGridlyCurrentLocationRouteCoordinate() {
   return getGridlyVisibleUserLocationDotCoordinate() || getGridlyCurrentLocationStateCoordinate();
 }
 
-const GRIDLY_DESTINATION_AUTO_LOCATION_TIMEOUT_MS = 4500;
+const GRIDLY_DESTINATION_AUTO_LOCATION_TIMEOUT_MS = 2500;
 let gridlyDestinationAutoLocationPromptAttempted = false;
 let gridlyDestinationAutoLocationRequestInFlight = null;
+const gridlyDestinationCurrentLocationOriginState = {
+  attemptedForDestinationSearch: false,
+  succeededForDestinationSearch: false,
+  failureReason: "",
+  permissionState: "",
+  coordinate: null,
+  lastAttemptedAt: null,
+  lastSucceededAt: null,
+  fallbackUsed: false,
+  fallbackSource: "",
+  fallbackReason: ""
+};
 
 async function getGridlyDestinationAutoLocationPermissionState() {
   if (typeof navigator === "undefined") return "navigator_unavailable";
@@ -18746,6 +18758,10 @@ function getGridlyDestinationAutoLocationErrorReason(error) {
 async function requestGridlyDestinationAutoCurrentLocation(options = {}) {
   const existingCoords = getGridlyCurrentLocationRouteCoordinate();
   if (existingCoords) {
+    gridlyDestinationCurrentLocationOriginState.succeededForDestinationSearch = true;
+    gridlyDestinationCurrentLocationOriginState.failureReason = "";
+    gridlyDestinationCurrentLocationOriginState.coordinate = existingCoords;
+    gridlyDestinationCurrentLocationOriginState.lastSucceededAt = Date.now();
     return { attempted: false, succeeded: true, fallbackReason: "", coords: existingCoords };
   }
 
@@ -18753,13 +18769,22 @@ async function requestGridlyDestinationAutoCurrentLocation(options = {}) {
 
   gridlyDestinationAutoLocationRequestInFlight = (async () => {
     const permissionState = await getGridlyDestinationAutoLocationPermissionState();
+    gridlyDestinationCurrentLocationOriginState.permissionState = permissionState || "unknown";
+    gridlyDestinationCurrentLocationOriginState.attemptedForDestinationSearch = true;
+    gridlyDestinationCurrentLocationOriginState.succeededForDestinationSearch = false;
+    gridlyDestinationCurrentLocationOriginState.failureReason = "";
+    gridlyDestinationCurrentLocationOriginState.coordinate = null;
+    gridlyDestinationCurrentLocationOriginState.lastAttemptedAt = Date.now();
     if (["navigator_unavailable", "geolocation_unavailable"].includes(permissionState)) {
+      gridlyDestinationCurrentLocationOriginState.failureReason = permissionState;
       return { attempted: true, succeeded: false, fallbackReason: permissionState };
     }
     if (permissionState === "denied") {
+      gridlyDestinationCurrentLocationOriginState.failureReason = "permission_denied";
       return { attempted: true, succeeded: false, fallbackReason: "permission_denied" };
     }
-    if (permissionState !== "granted" && gridlyDestinationAutoLocationPromptAttempted) {
+    if (permissionState !== "granted" && gridlyDestinationAutoLocationPromptAttempted && options?.allowPromptRetry !== true) {
+      gridlyDestinationCurrentLocationOriginState.failureReason = "auto_location_prompt_already_attempted";
       return { attempted: true, succeeded: false, fallbackReason: "auto_location_prompt_already_attempted" };
     }
 
@@ -18775,6 +18800,7 @@ async function requestGridlyDestinationAutoCurrentLocation(options = {}) {
       };
       const timeoutMs = Number(options?.timeoutMs || GRIDLY_DESTINATION_AUTO_LOCATION_TIMEOUT_MS);
       const timeoutId = window.setTimeout?.(() => {
+        gridlyDestinationCurrentLocationOriginState.failureReason = "timeout";
         finish({ attempted: true, succeeded: false, fallbackReason: "timeout" });
       }, timeoutMs + 250);
 
@@ -18784,10 +18810,16 @@ async function requestGridlyDestinationAutoCurrentLocation(options = {}) {
           if (timeoutId) window.clearTimeout?.(timeoutId);
           const coords = getValidGridlyUserLocationCoordinates(position);
           if (!coords) {
+            gridlyDestinationCurrentLocationOriginState.failureReason = "invalid_coordinates";
             finish({ attempted: true, succeeded: false, fallbackReason: "invalid_coordinates" });
             return;
           }
           gridlyCachedGeolocationPermissionStatus = "granted";
+          gridlyDestinationCurrentLocationOriginState.permissionState = "granted";
+          gridlyDestinationCurrentLocationOriginState.succeededForDestinationSearch = true;
+          gridlyDestinationCurrentLocationOriginState.failureReason = "";
+          gridlyDestinationCurrentLocationOriginState.coordinate = coords;
+          gridlyDestinationCurrentLocationOriginState.lastSucceededAt = Date.now();
           setGridlyUserLocation({ ...coords, suppressRouteOriginRefresh: true });
           updateNearestContext();
           finish({ attempted: true, succeeded: true, fallbackReason: "", coords });
@@ -18797,6 +18829,8 @@ async function requestGridlyDestinationAutoCurrentLocation(options = {}) {
           if (timeoutId) window.clearTimeout?.(timeoutId);
           const fallbackReason = getGridlyDestinationAutoLocationErrorReason(error);
           if (fallbackReason === "permission_denied") gridlyCachedGeolocationPermissionStatus = "denied";
+          gridlyDestinationCurrentLocationOriginState.permissionState = gridlyCachedGeolocationPermissionStatus || gridlyDestinationCurrentLocationOriginState.permissionState || "unknown";
+          gridlyDestinationCurrentLocationOriginState.failureReason = fallbackReason;
           finish({ attempted: true, succeeded: false, fallbackReason });
         },
         { enableHighAccuracy: true, timeout: timeoutMs, maximumAge: 60000 }
@@ -18989,9 +19023,12 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
     return preview;
   }
 
+  gridlyDestinationCurrentLocationOriginState.fallbackUsed = false;
+  gridlyDestinationCurrentLocationOriginState.fallbackSource = "";
+  gridlyDestinationCurrentLocationOriginState.fallbackReason = "";
   let autoLocationResult = { attempted: false, succeeded: false, fallbackReason: "" };
   if (!getGridlyCurrentLocationRouteCoordinate()) {
-    autoLocationResult = await requestGridlyDestinationAutoCurrentLocation({ timeoutMs: GRIDLY_DESTINATION_AUTO_LOCATION_TIMEOUT_MS });
+    autoLocationResult = await requestGridlyDestinationAutoCurrentLocation({ timeoutMs: GRIDLY_DESTINATION_AUTO_LOCATION_TIMEOUT_MS, allowPromptRetry: true });
     const latestAfterLocationAttempt = getGridlyDestinationRoutePreviewState();
     if (latestAfterLocationAttempt.requestId !== requestId) {
       addGridlyDestinationPerformanceNote("stale destination route preview ignored after auto location attempt");
@@ -19014,6 +19051,11 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
     preview.autoLocationFallbackUsed = false;
     preview.autoLocationFallbackReason = "";
   }
+  gridlyDestinationCurrentLocationOriginState.fallbackUsed = Boolean(origin && origin.source !== "current_location");
+  gridlyDestinationCurrentLocationOriginState.fallbackSource = gridlyDestinationCurrentLocationOriginState.fallbackUsed ? String(origin?.source || "") : "";
+  gridlyDestinationCurrentLocationOriginState.fallbackReason = gridlyDestinationCurrentLocationOriginState.fallbackUsed
+    ? (preview.autoLocationFallbackReason || origin?.fallbackReason || autoLocationResult.fallbackReason || "current_location_unavailable")
+    : "";
 
   if (!origin) {
     preview.status = "unavailable";
@@ -51926,6 +51968,81 @@ function gridlyBuildSavedDestinationOriginOwnershipAudit() {
 
 window.gridlySavedDestinationOriginOwnershipAudit = function gridlySavedDestinationOriginOwnershipAudit() {
   return gridlyBuildSavedDestinationOriginOwnershipAudit();
+};
+
+
+function gridlyBuildDestinationCurrentLocationOriginAudit() {
+  const findings = [];
+  const searchState = typeof ensureGridlySearchState === "function" ? ensureGridlySearchState() : null;
+  const selected = typeof normalizeGridlySearchResult === "function"
+    ? normalizeGridlySearchResult(searchState?.selectedDestination)
+    : searchState?.selectedDestination;
+  const preview = typeof getGridlyDestinationRoutePreviewState === "function"
+    ? getGridlyDestinationRoutePreviewState()
+    : (window.GridlyDestinationRoutePreview || {});
+  const destinationSearchActive = Boolean(selected || (preview?.active && preview?.destination));
+  const destination = preview?.destination || selected || null;
+  const origin = preview?.source || (destinationSearchActive && typeof getGridlyDestinationRouteOrigin === "function"
+    ? getGridlyDestinationRouteOrigin({ destination })
+    : null);
+  const currentLocationCoordinate = getGridlyCurrentLocationRouteCoordinate() || gridlyDestinationCurrentLocationOriginState.coordinate || null;
+  const currentLocationPermissionState = gridlyDestinationCurrentLocationOriginState.permissionState
+    || gridlyCachedGeolocationPermissionStatus
+    || (typeof gridlyGetLocationPermissionDiagnostic === "function" ? gridlyGetLocationPermissionDiagnostic() : "");
+  const destinationSearchOriginSource = String(origin?.source || "").trim();
+  const destinationSearchOriginLabel = formatGridlyRouteOriginLabel(origin?.label || "", destinationSearchOriginSource);
+  const fallbackUsed = Boolean(origin?.fallbackUsed || preview?.autoLocationFallbackUsed || gridlyDestinationCurrentLocationOriginState.fallbackUsed || (destinationSearchActive && destinationSearchOriginSource && destinationSearchOriginSource !== "current_location"));
+  const fallbackSource = fallbackUsed ? (destinationSearchOriginSource || gridlyDestinationCurrentLocationOriginState.fallbackSource || "") : "";
+  const fallbackReason = fallbackUsed
+    ? (preview?.autoLocationFallbackReason || gridlyDestinationCurrentLocationOriginState.fallbackReason || origin?.fallbackReason || gridlyDestinationCurrentLocationOriginState.failureReason || "current_location_unavailable")
+    : "";
+  const currentLocationAttemptedForDestinationSearch = Boolean(preview?.autoLocationAttempted || gridlyDestinationCurrentLocationOriginState.attemptedForDestinationSearch);
+  const currentLocationSucceededForDestinationSearch = Boolean(preview?.autoLocationSucceeded || gridlyDestinationCurrentLocationOriginState.succeededForDestinationSearch || destinationSearchOriginSource === "current_location");
+  const currentLocationFailureReason = currentLocationSucceededForDestinationSearch ? "" : (preview?.autoLocationFallbackReason || gridlyDestinationCurrentLocationOriginState.failureReason || "");
+  const canRetryCurrentLocation = Boolean(
+    typeof navigator !== "undefined"
+    && typeof navigator.geolocation !== "undefined"
+    && !["denied", "permission_denied", "navigator_unavailable", "geolocation_unavailable"].includes(String(currentLocationPermissionState || currentLocationFailureReason || "").toLowerCase())
+  );
+
+  if (destinationSearchActive && currentLocationSucceededForDestinationSearch && destinationSearchOriginSource !== "current_location") {
+    findings.push("Destination Search obtained Current Location but did not use it as the origin.");
+  }
+  if (destinationSearchActive && currentLocationCoordinate && destinationSearchOriginSource && destinationSearchOriginSource !== "current_location") {
+    findings.push("A Current Location coordinate is available, but Destination Search is using fallback origin.");
+  }
+  if (destinationSearchActive && fallbackUsed && !fallbackReason) findings.push("Fallback origin is in use without a visible fallback reason.");
+  if (destinationSearchActive && !currentLocationAttemptedForDestinationSearch && !currentLocationCoordinate && canRetryCurrentLocation) {
+    findings.push("Destination Search has not attempted Current Location before fallback.");
+  }
+
+  const consumerFriendlyPass = Boolean(
+    !findings.length
+    && (!destinationSearchActive || destinationSearchOriginSource === "current_location" || (fallbackUsed && fallbackReason))
+  );
+
+  return {
+    available: true,
+    version: "V257.8",
+    destinationSearchActive,
+    currentLocationPermissionState: String(currentLocationPermissionState || ""),
+    currentLocationAttemptedForDestinationSearch,
+    currentLocationSucceededForDestinationSearch,
+    currentLocationFailureReason: String(currentLocationFailureReason || ""),
+    currentLocationCoordinate: currentLocationCoordinate ? { ...currentLocationCoordinate } : null,
+    destinationSearchOriginSource,
+    destinationSearchOriginLabel,
+    fallbackUsed,
+    fallbackSource,
+    fallbackReason: String(fallbackReason || ""),
+    canRetryCurrentLocation,
+    consumerFriendlyPass,
+    findings
+  };
+}
+
+window.gridlyDestinationCurrentLocationOriginAudit = function gridlyDestinationCurrentLocationOriginAudit() {
+  return gridlyBuildDestinationCurrentLocationOriginAudit();
 };
 
 
