@@ -5841,7 +5841,9 @@ body.modal-open {
     padding: 8px 10px;
     border-radius: 12px;
   }
-  .desktop-route-watch-strip .secondary-btn { display: none; }
+  .desktop-route-watch-strip .secondary-btn:not(#stopRouteWatchBtn):not(#clearRouteBtn) { display: none; }
+  .desktop-route-watch-strip #stopRouteWatchBtn,
+  .desktop-route-watch-strip #clearRouteBtn { display: inline-flex; }
   .geo-filter-shell {
     overflow-x: auto;
     flex-wrap: nowrap;
