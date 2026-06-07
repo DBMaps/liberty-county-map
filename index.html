@@ -359,6 +359,11 @@
               <span class="route-watch-live-pill" id="routeWatchLivePill">Monitoring OFF</span>
             </div>
             <strong class="route-watch-status-line"><span id="desktopRouteHome">No destination selected</span><span class="route-watch-arrow" aria-hidden="true">→</span><span id="desktopRouteWork">Route Watch</span></strong>
+            <div class="route-ownership-summary" aria-label="Route details">
+              <span><b>From:</b> <em id="routeOwnershipOrigin">Not selected</em></span>
+              <span><b>To:</b> <em id="routeOwnershipDestination">Not selected</em></span>
+              <span><b>Status:</b> <em id="routeOwnershipMonitoring">Preview Only</em></span>
+            </div>
             <p id="desktopRouteStatus">Select a saved route to begin monitoring.</p>
             <p class="route-watch-setup-hint" id="routeWatchSetupHint">1. Add Home · 2. Add Work · 3. Start Route Watch</p>
             <div class="route-watch-metrics" aria-label="Route watch intelligence">
@@ -378,6 +383,8 @@
               <select id="routeWatchDestinationSelect"></select>
             </label>
             <button id="routeWatchStartBtn" class="primary-btn compact-btn route-watch-start-btn" type="button">Start Route Watch</button>
+            <button id="stopRouteWatchBtn" class="secondary-btn compact-btn" type="button">Stop Route Watch</button>
+            <button id="clearRouteBtn" class="secondary-btn compact-btn" type="button">Clear Route</button>
             <button id="desktopManageRouteBtn" class="secondary-btn compact-btn" type="button">Manage Places</button>
           </div>
         </article>
