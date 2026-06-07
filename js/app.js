@@ -55857,6 +55857,119 @@ function gridlyBuildFeedbackFlowAudit() {
   };
 }
 
+
+function gridlyBuildFeedbackSubmissionAudit() {
+  const findings = [];
+  const hasDocument = typeof document !== "undefined";
+  const activeSettingsSheet = hasDocument ? getGridlyActivePortraitSettingsSheet() : null;
+  const auditScope = activeSettingsSheet || (hasDocument ? document : null);
+  const feedbackFlowRoot = auditScope?.querySelector?.("[data-gridly-feedback-flow]") || (hasDocument ? document.querySelector("[data-gridly-feedback-flow]") : null);
+  const feedbackEntry = activeSettingsSheet?.querySelector?.('[data-v2-action="settings-feedback-open"]') || (hasDocument ? document.getElementById("settingsFeedbackBtn") : null);
+  const prepareButton = feedbackFlowRoot?.querySelector?.("[data-gridly-feedback-prepare]") || (hasDocument ? document.getElementById("settingsPrepareFeedbackEmailBtn") : null);
+  const messageField = feedbackFlowRoot?.querySelector?.("[data-gridly-feedback-message]") || (hasDocument ? document.getElementById("settingsFeedbackMessage") : null);
+  const categoryInputs = feedbackFlowRoot ? Array.from(feedbackFlowRoot.querySelectorAll("[data-gridly-feedback-category]")) : [];
+  const categoryLabels = categoryInputs.map((input) => String(input.value || "").trim()).filter(Boolean);
+  const acknowledgement = feedbackFlowRoot?.parentElement?.querySelector?.("[data-gridly-feedback-acknowledgement]") || (hasDocument ? document.getElementById("settingsFeedbackStatus") : null);
+  const feedbackFlowExists = Boolean(
+    feedbackFlowRoot
+    || feedbackEntry
+    || prepareButton
+    || (typeof buildGridlyFeedbackFlowHtml === "function" && typeof prepareGridlyFeedbackEmail === "function")
+  );
+  const emailFallbackAvailable = Boolean(
+    typeof buildGridlyFeedbackMailtoUrl === "function"
+    && typeof prepareGridlyFeedbackEmail === "function"
+    && GRIDLY_FEEDBACK_EMAIL_RECIPIENT
+  );
+  const supabaseAvailable = Boolean(
+    supabaseClient
+    || (typeof window !== "undefined" && window.supabase)
+    || (typeof SUPABASE_URL === "string" && SUPABASE_URL && typeof SUPABASE_PUBLIC_KEY === "string" && SUPABASE_PUBLIC_KEY)
+  );
+  const feedbackStorageDefined = false;
+  const feedbackAcknowledgementDefined = false;
+  const feedbackFailureHandlingDefined = false;
+  const directSubmissionAvailable = false;
+  const betaReady = false;
+  const currentDeliveryMethod = emailFallbackAvailable
+    ? `Email mailto fallback only (${GRIDLY_FEEDBACK_EMAIL_RECIPIENT}); the user must leave Gridly and send from an email app.`
+    : "No active feedback delivery method detected.";
+
+  if (feedbackFlowExists) findings.push("Current workflow: Settings → Send Feedback → Category → Message → Prepare Feedback Email → user sends from their email app.");
+  else findings.push("Current workflow could not be detected in the active DOM or feedback helpers.");
+  findings.push(directSubmissionAvailable ? "Direct in-app feedback submission is available today." : "Direct in-app feedback submission is not available today; no submit-to-backend path is wired.");
+  findings.push(supabaseAvailable ? "Supabase is configured for Gridly and suitable as the lightweight beta storage option if a dedicated feedback table and policies are defined later." : "Supabase is not available in this runtime, so direct submission would need another backend or email-only fallback.");
+  findings.push("No feedback storage table or client path is defined in code; this audit did not inspect or modify production Supabase data.");
+  findings.push("Minimal beta fields should be category, message, timestamp, awarenessArea, platform, and gridlyVersion.");
+  findings.push("Success acknowledgement should say: Feedback received. Thank you for helping improve Gridly.");
+  findings.push("Failure handling should say direct submission is unavailable right now and offer Prepare Feedback Email Instead.");
+  findings.push(emailFallbackAvailable ? "Email should remain as a fallback during beta because it already works and covers backend outages." : "Email fallback should be restored before relying on direct submission.");
+  findings.push("Privacy review is required before direct submission because message text and optional metadata may include location, awareness area, device/platform, and free-form personal details.");
+  findings.push("Direct submission is appropriate for beta only after storage, acknowledgement, failure handling, privacy copy, and email fallback are explicitly defined.");
+
+  return {
+    available: true,
+    version: "V260",
+    feedbackFlowExists,
+    currentDeliveryMethod,
+    supabaseAvailable,
+    feedbackStorageDefined,
+    feedbackAcknowledgementDefined,
+    feedbackFailureHandlingDefined,
+    emailFallbackAvailable,
+    privacyReviewRequired: true,
+    betaReady,
+    directSubmissionAvailable,
+    detectedCategoryLabels: categoryLabels,
+    messageFieldDetected: Boolean(messageField),
+    acknowledgementElementDetected: Boolean(acknowledgement),
+    recommendedDataModel: {
+      category: "string",
+      message: "string",
+      timestamp: "ISO timestamp",
+      awarenessArea: "string",
+      platform: "string",
+      gridlyVersion: "string"
+    },
+    recommendedUserExperience: {
+      flow: "Settings → Send Feedback → Submit Feedback",
+      success: "Feedback received. Thank you for helping improve Gridly.",
+      failure: "Unable to submit feedback right now. Try again later.",
+      fallbackAction: "Prepare Feedback Email Instead"
+    },
+    architectureOptions: [
+      {
+        option: "A",
+        name: "Supabase only",
+        pros: ["Fast in-app submission", "Centralized beta intake", "No email app required"],
+        cons: ["Needs table, insert policy, and privacy review", "No fallback during backend outage"],
+        complexity: "Medium",
+        betaReadinessValue: "Medium"
+      },
+      {
+        option: "B",
+        name: "Email only (current)",
+        pros: ["Already works", "No database changes", "Lowest implementation risk"],
+        cons: ["User leaves Gridly", "Requires email app send step", "Less beta-friendly"],
+        complexity: "Low",
+        betaReadinessValue: "Low"
+      },
+      {
+        option: "C",
+        name: "Supabase + email fallback",
+        pros: ["Best beta tester experience", "Keeps current backup path", "Graceful outage handling"],
+        cons: ["Requires small backend schema and fallback UX", "Requires privacy copy review"],
+        complexity: "Medium",
+        betaReadinessValue: "High"
+      }
+    ],
+    mergeRecommendation: "Merge audit-only helper. Do not implement direct submission until a feedback table, acknowledgement copy, failure state, privacy review, and email fallback behavior are approved.",
+    protectedSystemsModified: false,
+    supabaseModified: false,
+    findings
+  };
+}
+
 function gridlyBuildFeedbackExperienceAudit() {
   const findings = [];
   const hasDocument = typeof document !== "undefined";
@@ -55951,10 +56064,14 @@ window.gridlyFeedbackSystemAudit = function gridlyFeedbackSystemAudit() {
 window.gridlyFeedbackExperienceAudit = function gridlyFeedbackExperienceAudit() {
   return gridlyBuildFeedbackExperienceAudit();
 };
+window.gridlyFeedbackSubmissionAudit = function gridlyFeedbackSubmissionAudit() {
+  return gridlyBuildFeedbackSubmissionAudit();
+};
 if (typeof exposeGridlyAuditHelper === "function") {
   exposeGridlyAuditHelper("gridlyFeedbackFlowAudit", window.gridlyFeedbackFlowAudit);
   exposeGridlyAuditHelper("gridlyFeedbackSystemAudit", window.gridlyFeedbackSystemAudit);
   exposeGridlyAuditHelper("gridlyFeedbackExperienceAudit", window.gridlyFeedbackExperienceAudit);
+  exposeGridlyAuditHelper("gridlyFeedbackSubmissionAudit", window.gridlyFeedbackSubmissionAudit);
 }
 
 window.gridlySettingsAudit = function gridlySettingsAudit() {
