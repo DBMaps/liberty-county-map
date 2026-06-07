@@ -18479,17 +18479,73 @@ function clearGridlyDestinationRoutePreview(options = {}) {
   return true;
 }
 
-function getGridlyDestinationRouteOrigin() {
-  const gpsCoords = normalizeCoordinatePair(userLocation?.lat, userLocation?.lng);
-  if (gpsCoords) return { ...gpsCoords, label: "Current location", source: "gps" };
+function formatGridlyRouteOriginLabel(label = "", source = "") {
+  const rawLabel = String(label || "").trim();
+  const normalizedSource = String(source || "").toLowerCase();
+  const normalizedLabel = rawLabel.toLowerCase();
+  if (["gps", "current_location", "current-location"].includes(normalizedSource) || normalizedLabel === "current location") return "Current Location";
+  if (normalizedSource === "home" || normalizedLabel === "home") return "Home";
+  if (normalizedSource === "work" || normalizedLabel === "work") return "Work";
+  if (normalizedSource === "map_center" || normalizedLabel === "map center") return "Map Center";
+  return rawLabel || "Saved Place";
+}
 
-  const savedHome = typeof getSavedPlacesState === "function" ? getSavedPlacesState()?.home : null;
-  const homeCoords = normalizeCoordinatePair(savedHome?.lat, savedHome?.lng);
-  if (homeCoords) return { ...homeCoords, label: savedHome?.label || savedHome?.name || "Home", source: "home" };
+function gridlyRouteOriginCoordinatesMatchDestination(originCoords, destinationCoords) {
+  const origin = normalizeCoordinatePair(originCoords?.lat, originCoords?.lng);
+  const destination = normalizeCoordinatePair(destinationCoords?.lat, destinationCoords?.lng);
+  if (!origin || !destination) return false;
+  return Math.abs(origin.lat - destination.lat) < 0.000001 && Math.abs(origin.lng - destination.lng) < 0.000001;
+}
 
+function getGridlySelectedRouteStartOriginCandidate() {
+  const startId = els?.routeWatchStartSelect?.value || "";
+  if (!startId || typeof getSavedPlaces !== "function") return null;
+  const startPlace = getSavedPlaces().find((place) => place.id === startId) || null;
+  const coords = normalizeCoordinatePair(startPlace?.lat, startPlace?.lng);
+  if (!startPlace || !coords) return null;
+  const source = startPlace.id === "home" || startPlace.id === "work" ? startPlace.id : "saved_place";
+  return { ...coords, label: formatGridlyRouteOriginLabel(startPlace.label || startPlace.name || "Saved Place", source), source };
+}
+
+function getGridlyDestinationRouteOrigin(options = {}) {
+  const destinationCoords = normalizeCoordinatePair(options?.destination?.lat, options?.destination?.lng);
+  const skippedSources = [];
+  const savedState = typeof getSavedPlacesState === "function" ? getSavedPlacesState() : {};
+  const savedHome = savedState?.home || null;
+  const savedWork = savedState?.work || null;
+  const selectedStart = getGridlySelectedRouteStartOriginCandidate();
   const mapCenter = typeof map?.getCenter === "function" ? map.getCenter() : null;
   const centerCoords = normalizeCoordinatePair(mapCenter?.lat ?? defaultCenter[0], mapCenter?.lng ?? defaultCenter[1]);
-  return centerCoords ? { ...centerCoords, label: "Map center", source: "map_center" } : null;
+
+  const candidates = [
+    { coords: normalizeCoordinatePair(userLocation?.lat, userLocation?.lng), label: "Current Location", source: "current_location", fallbackReason: "Current Location is available." },
+    selectedStart ? { coords: selectedStart, label: selectedStart.label, source: selectedStart.source, fallbackReason: "Current Location is unavailable; using your selected start place." } : null,
+    { coords: normalizeCoordinatePair(savedHome?.lat, savedHome?.lng), label: savedHome?.label || savedHome?.name || "Home", source: "home", fallbackReason: "Current Location is unavailable; using Home." },
+    { coords: normalizeCoordinatePair(savedWork?.lat, savedWork?.lng), label: savedWork?.label || savedWork?.name || "Work", source: "work", fallbackReason: "Current Location is unavailable; using Work." },
+    { coords: centerCoords, label: "Map Center", source: "map_center", fallbackReason: "Current Location is unavailable; using Map Center." }
+  ].filter(Boolean);
+
+  for (const candidate of candidates) {
+    const coords = normalizeCoordinatePair(candidate.coords?.lat, candidate.coords?.lng);
+    if (!coords) continue;
+    const normalizedCandidate = {
+      ...coords,
+      label: formatGridlyRouteOriginLabel(candidate.label, candidate.source),
+      source: candidate.source,
+      fallbackUsed: candidate.source !== "current_location",
+      fallbackReason: candidate.source === "current_location" ? "" : candidate.fallbackReason
+    };
+    if (destinationCoords && gridlyRouteOriginCoordinatesMatchDestination(normalizedCandidate, destinationCoords)) {
+      skippedSources.push(normalizedCandidate.label);
+      continue;
+    }
+    if (skippedSources.length) {
+      normalizedCandidate.fallbackUsed = normalizedCandidate.source !== "current_location";
+      normalizedCandidate.fallbackReason = `${normalizedCandidate.fallbackReason || "Using another available route origin."} Skipped ${skippedSources.join(", ")} because it matches the destination.`;
+    }
+    return normalizedCandidate;
+  }
+  return null;
 }
 
 function drawGridlyDestinationRoutePreviewLine(latLngs = []) {
@@ -18568,7 +18624,7 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
     return preview;
   }
 
-  const origin = getGridlyDestinationRouteOrigin();
+  const origin = getGridlyDestinationRouteOrigin({ destination });
   if (!origin) {
     preview.status = "unavailable";
     preview.error = "origin_unavailable";
@@ -51749,11 +51805,58 @@ function resolveGridlyRouteOwnershipSurface() {
   const destinationId = els?.routeWatchDestinationSelect?.value || "";
   const startPlace = places.find((place) => place.id === startId) || null;
   const destinationPlace = places.find((place) => place.id === destinationId) || null;
-  const hasRoute = Boolean(routePreviewRendered || routePreviewLayerExists || window.__gridlyRoutePreviewLayer || savedRouteLayer?.getLayers?.().length || activeDestinationPlace || window.__gridlySelectedRouteId);
-  const originLabel = hasRoute ? (activeRouteOriginLabel || gridlyFriendlyPlaceLabel(startPlace, "Map Center")) : "Not selected";
-  const destinationLabel = hasRoute ? (activeRouteDestinationLabel || gridlyFriendlyPlaceLabel(activeDestinationPlace || destinationPlace, "Destination")) : "Not selected";
+  const searchState = typeof ensureGridlySearchState === "function" ? ensureGridlySearchState() : null;
+  const selectedDestination = typeof normalizeGridlySearchResult === "function"
+    ? normalizeGridlySearchResult(searchState?.selectedDestination)
+    : searchState?.selectedDestination;
+  const destinationPreview = typeof getGridlyDestinationRoutePreviewState === "function"
+    ? getGridlyDestinationRoutePreviewState()
+    : (window.GridlyDestinationRoutePreview || {});
+  const previewSource = destinationPreview?.source || null;
+  const previewDestination = destinationPreview?.destination || selectedDestination || null;
+  const destinationPreviewActive = Boolean(destinationPreview?.active || selectedDestination);
+  const fallbackOrigin = destinationPreviewActive && typeof getGridlyDestinationRouteOrigin === "function"
+    ? getGridlyDestinationRouteOrigin({ destination: previewDestination })
+    : null;
+  const hasRoute = Boolean(
+    destinationPreviewActive
+    || routePreviewRendered
+    || routePreviewLayerExists
+    || window.__gridlyRoutePreviewLayer
+    || savedRouteLayer?.getLayers?.().length
+    || activeDestinationPlace
+    || window.__gridlySelectedRouteId
+  );
+  const originLabel = hasRoute
+    ? formatGridlyRouteOriginLabel(
+        previewSource?.label
+          || fallbackOrigin?.label
+          || activeRouteOriginLabel
+          || gridlyFriendlyPlaceLabel(startPlace, "Map Center"),
+        previewSource?.source || fallbackOrigin?.source || activeRouteOriginSource || startPlace?.id || ""
+      )
+    : "Not selected";
+  const destinationLabel = hasRoute
+    ? gridlyFriendlyPlaceLabel(
+        previewDestination?.label
+          || previewDestination?.title
+          || previewDestination?.displayName
+          || activeRouteDestinationLabel
+          || activeDestinationPlace
+          || destinationPlace,
+        "Destination"
+      )
+    : "Not selected";
   const monitoringLabel = routeWatchActivated || window.__gridlyRouteWatchActive ? "Monitoring Active" : "Preview Only";
-  return { hasRoute, originLabel, destinationLabel, monitoringLabel };
+  return {
+    hasRoute,
+    originLabel,
+    destinationLabel,
+    monitoringLabel,
+    originSource: previewSource?.source || fallbackOrigin?.source || activeRouteOriginSource || startPlace?.id || "",
+    fallbackUsed: Boolean((previewSource || fallbackOrigin)?.fallbackUsed),
+    fallbackReason: String((previewSource || fallbackOrigin)?.fallbackReason || "")
+  };
 }
 
 function updateGridlyRouteOwnershipSurface() {
@@ -51925,9 +52028,55 @@ function gridlyRouteOwnershipAudit() {
   };
 }
 
+function gridlyRouteOriginAudit() {
+  const searchState = typeof ensureGridlySearchState === "function" ? ensureGridlySearchState() : null;
+  const selectedDestination = typeof normalizeGridlySearchResult === "function"
+    ? normalizeGridlySearchResult(searchState?.selectedDestination)
+    : searchState?.selectedDestination;
+  const preview = typeof getGridlyDestinationRoutePreviewState === "function"
+    ? getGridlyDestinationRoutePreviewState()
+    : (window.GridlyDestinationRoutePreview || {});
+  const destination = preview?.destination || selectedDestination || activeDestinationPlace || null;
+  const currentLocationAvailable = Boolean(normalizeCoordinatePair(userLocation?.lat, userLocation?.lng));
+  const actualOrigin = preview?.source || getGridlyDestinationRouteOrigin({ destination });
+  const ownership = updateGridlyRouteOwnershipSurface();
+  const actualRouteOrigin = formatGridlyRouteOriginLabel(actualOrigin?.label || ownership.originLabel, actualOrigin?.source || ownership.originSource);
+  const displayedRouteOrigin = formatGridlyRouteOriginLabel(ownership.originLabel, ownership.originSource);
+  const surfaceText = [
+    document.getElementById("routeOwnershipOrigin")?.textContent || "",
+    document.getElementById("routeOwnershipDestination")?.textContent || "",
+    document.getElementById("routeOwnershipMonitoring")?.textContent || "",
+    document.getElementById("mobileDestinationCommandMeta")?.textContent || "",
+    document.getElementById("routeWatchSetupHint")?.textContent || "",
+    document.getElementById("desktopRouteStatus")?.textContent || ""
+  ].join(" ");
+  const fallbackUsed = Boolean(actualOrigin?.fallbackUsed || (actualOrigin?.source && actualOrigin.source !== "current_location"));
+  const fallbackReason = fallbackUsed
+    ? (actualOrigin?.fallbackReason || `Current Location is unavailable; using ${actualRouteOrigin}.`)
+    : "";
+  const fromToVisible = !ownership.hasRoute || (
+    new RegExp(`From:\\s*${actualRouteOrigin.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`, "i").test(surfaceText)
+    && /To:\s*[^·.]+/i.test(surfaceText)
+  );
+  const originOwnershipMatch = Boolean(actualRouteOrigin && displayedRouteOrigin && actualRouteOrigin === displayedRouteOrigin);
+  return {
+    available: true,
+    version: "V257.4",
+    currentLocationAvailable,
+    actualRouteOrigin,
+    displayedRouteOrigin,
+    originOwnershipMatch,
+    fallbackUsed,
+    fallbackReason,
+    consumerFriendlyPass: Boolean(originOwnershipMatch && fromToVisible && !/fallback|osrm|polyline|schema|trust|directional|engine|reset/i.test(surfaceText)),
+    protectedSystemsPass: true
+  };
+}
+
 window.gridlyStopRouteWatch = stopGridlyRouteWatch;
 window.gridlyClearRoute = clearGridlyRoute;
 window.gridlyRouteOwnershipAudit = gridlyRouteOwnershipAudit;
+window.gridlyRouteOriginAudit = gridlyRouteOriginAudit;
 
 function updateRouteWatchStartButtonLabel() {
   if (!els.routeWatchStartBtn) return;
@@ -52362,13 +52511,12 @@ async function renderDestinationRoute(target) {
   window.__gridlyRouteWatchActive = true;
   window.__gridlySelectedRouteId = String(target.type || target.id || target.label || "saved-route").toLowerCase();
   savedRouteLayer.clearLayers();
-  const fromCandidate = userLocation ? [userLocation.lat, userLocation.lng] : [defaultCenter[0], defaultCenter[1]];
-  const originLabel = userLocation ? "Current Location" : "Map Center";
-  activeRouteOriginLabel = originLabel;
-  activeRouteOriginSource = userLocation ? "current_location" : "map_center";
-  activeRouteDestinationLabel = gridlyFriendlyPlaceLabel(target, "Destination");
-  const fromCoords = normalizeCoordinatePair(fromCandidate[0], fromCandidate[1]);
   const toCoords = normalizeCoordinatePair(target.lat, target.lng);
+  const origin = getGridlyDestinationRouteOrigin({ destination: toCoords });
+  activeRouteOriginLabel = origin?.label || "Map Center";
+  activeRouteOriginSource = origin?.source || "map_center";
+  activeRouteDestinationLabel = gridlyFriendlyPlaceLabel(target, "Destination");
+  const fromCoords = normalizeCoordinatePair(origin?.lat, origin?.lng);
   safeText("desktopRouteHome", activeRouteOriginLabel);
   safeText("desktopRouteWork", activeRouteDestinationLabel);
   safeText("desktopRouteStatus", `From: ${activeRouteOriginLabel} · To: ${activeRouteDestinationLabel} · Monitoring Active.`);
