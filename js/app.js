@@ -18731,6 +18731,23 @@ const gridlyDestinationCurrentLocationOriginState = {
   fallbackReason: ""
 };
 
+const gridlyDestinationLocationRecoveryState = {
+  version: "V257.8A",
+  fallbackRouteActive: false,
+  fallbackOriginSource: "",
+  destinationLabel: "",
+  currentLocationArrivedAfterFallback: false,
+  autoRefreshTriggered: false,
+  routeRebuiltFromCurrentLocation: false,
+  finalOriginSource: "",
+  pendingRefresh: false,
+  lastAutoRefreshReason: "",
+  lastFallbackCreatedAt: null,
+  lastCurrentLocationArrivedAt: null,
+  lastAutoRefreshTriggeredAt: null,
+  lastRouteRebuiltAt: null
+};
+
 async function getGridlyDestinationAutoLocationPermissionState() {
   if (typeof navigator === "undefined") return "navigator_unavailable";
   if (typeof navigator.geolocation === "undefined") return "geolocation_unavailable";
@@ -18874,6 +18891,113 @@ function gridlyCoordinatesNearlyMatch(a, b, maxMiles = 0.15) {
   return distanceMiles !== null && distanceMiles <= maxMiles;
 }
 
+function getGridlyDestinationLocationRecoveryDestinationLabel(destination = null, preview = null) {
+  return gridlyFriendlyPlaceLabel(
+    destination?.label
+      || destination?.title
+      || destination?.displayName
+      || destination?.address
+      || destination?.name
+      || preview?.destination?.label
+      || "Destination",
+    "Destination"
+  );
+}
+
+function isGridlyDestinationFallbackOrigin(origin = null) {
+  const originSource = String(origin?.source || "").toLowerCase();
+  return Boolean(originSource && originSource !== "current_location");
+}
+
+function getGridlyDestinationLocationRecoveryContext() {
+  const preview = typeof getGridlyDestinationRoutePreviewState === "function" ? getGridlyDestinationRoutePreviewState() : (window.GridlyDestinationRoutePreview || {});
+  const searchState = typeof ensureGridlySearchState === "function" ? ensureGridlySearchState() : null;
+  const selectedDestination = typeof normalizeGridlySearchResult === "function"
+    ? normalizeGridlySearchResult(searchState?.selectedDestination)
+    : searchState?.selectedDestination;
+  const destination = selectedDestination || preview?.destination || null;
+  const destinationSearchActive = Boolean(selectedDestination || preview?.destination || preview?.active);
+  const origin = preview?.source || null;
+  const fallbackOriginSource = isGridlyDestinationFallbackOrigin(origin) ? String(origin.source || "") : "";
+  const fallbackRouteActive = Boolean(
+    destinationSearchActive
+    && preview?.active
+    && fallbackOriginSource
+    && (origin?.fallbackUsed || preview?.autoLocationFallbackUsed || gridlyDestinationCurrentLocationOriginState.fallbackUsed || origin?.routeOriginPipeline === "v257_4_fallback")
+  );
+  return {
+    preview,
+    searchState,
+    selectedDestination,
+    destination,
+    destinationSearchActive,
+    origin,
+    fallbackRouteActive,
+    fallbackOriginSource,
+    destinationLabel: getGridlyDestinationLocationRecoveryDestinationLabel(destination, preview)
+  };
+}
+
+function recordGridlyDestinationLocationRecoveryPreviewState(origin = null, destination = null, preview = null, options = {}) {
+  const destinationLabel = getGridlyDestinationLocationRecoveryDestinationLabel(destination, preview);
+  const originSource = String(origin?.source || "");
+  const fallbackActive = Boolean(origin && isGridlyDestinationFallbackOrigin(origin) && (origin.fallbackUsed || origin.routeOriginPipeline === "v257_4_fallback" || preview?.autoLocationFallbackUsed));
+  gridlyDestinationLocationRecoveryState.destinationLabel = destinationLabel;
+  gridlyDestinationLocationRecoveryState.finalOriginSource = originSource;
+
+  if (fallbackActive) {
+    gridlyDestinationLocationRecoveryState.fallbackRouteActive = true;
+    gridlyDestinationLocationRecoveryState.fallbackOriginSource = originSource;
+    gridlyDestinationLocationRecoveryState.routeRebuiltFromCurrentLocation = false;
+    gridlyDestinationLocationRecoveryState.lastFallbackCreatedAt = Date.now();
+    return;
+  }
+
+  if (originSource === "current_location") {
+    gridlyDestinationLocationRecoveryState.fallbackRouteActive = false;
+    if (gridlyDestinationLocationRecoveryState.autoRefreshTriggered || options?.originRefresh === true) {
+      gridlyDestinationLocationRecoveryState.routeRebuiltFromCurrentLocation = true;
+      gridlyDestinationLocationRecoveryState.lastRouteRebuiltAt = Date.now();
+    }
+  }
+}
+
+function maybeTriggerGridlyDestinationLocationRecovery(reason = "current_location_updated") {
+  if (typeof buildGridlyDestinationRoutePreview !== "function") return false;
+  const currentLocationCoordinate = getGridlyCurrentLocationRouteCoordinate() || gridlyDestinationCurrentLocationOriginState.coordinate || null;
+  if (!currentLocationCoordinate) return false;
+
+  const context = getGridlyDestinationLocationRecoveryContext();
+  if (!context.destinationSearchActive || !context.fallbackRouteActive || !context.destination) return false;
+  if (gridlyDestinationLocationRecoveryState.pendingRefresh) return false;
+
+  gridlyDestinationLocationRecoveryState.currentLocationArrivedAfterFallback = true;
+  gridlyDestinationLocationRecoveryState.autoRefreshTriggered = true;
+  gridlyDestinationLocationRecoveryState.pendingRefresh = true;
+  gridlyDestinationLocationRecoveryState.lastAutoRefreshReason = reason;
+  gridlyDestinationLocationRecoveryState.lastCurrentLocationArrivedAt = Date.now();
+  gridlyDestinationLocationRecoveryState.lastAutoRefreshTriggeredAt = Date.now();
+  gridlyDestinationLocationRecoveryState.destinationLabel = context.destinationLabel;
+  gridlyDestinationLocationRecoveryState.fallbackOriginSource = context.fallbackOriginSource;
+
+  window.setTimeout?.(async () => {
+    try {
+      const refreshedPreview = await buildGridlyDestinationRoutePreview({ reason, originRefresh: true, locationRecovery: true });
+      const refreshedOriginSource = String(refreshedPreview?.source?.source || "");
+      gridlyDestinationLocationRecoveryState.finalOriginSource = refreshedOriginSource;
+      gridlyDestinationLocationRecoveryState.routeRebuiltFromCurrentLocation = refreshedOriginSource === "current_location";
+      if (gridlyDestinationLocationRecoveryState.routeRebuiltFromCurrentLocation) {
+        gridlyDestinationLocationRecoveryState.fallbackRouteActive = false;
+        gridlyDestinationLocationRecoveryState.lastRouteRebuiltAt = Date.now();
+      }
+    } finally {
+      gridlyDestinationLocationRecoveryState.pendingRefresh = false;
+    }
+  }, 0);
+
+  return true;
+}
+
 function scheduleGridlyDestinationRoutePreviewOriginRefresh(reason = "current_location_updated") {
   if (typeof buildGridlyDestinationRoutePreview !== "function") return false;
   const preview = typeof getGridlyDestinationRoutePreviewState === "function" ? getGridlyDestinationRoutePreviewState() : (window.GridlyDestinationRoutePreview || {});
@@ -18882,6 +19006,7 @@ function scheduleGridlyDestinationRoutePreviewOriginRefresh(reason = "current_lo
     ? normalizeGridlySearchResult(searchState?.selectedDestination)
     : searchState?.selectedDestination;
   if (!preview?.active && !selectedDestination) return false;
+  if (maybeTriggerGridlyDestinationLocationRecovery(reason)) return true;
   window.__gridlyDestinationRouteOriginRefreshReason = reason;
   window.setTimeout?.(() => buildGridlyDestinationRoutePreview({ reason, originRefresh: true }), 0);
   return true;
@@ -19056,6 +19181,7 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
   gridlyDestinationCurrentLocationOriginState.fallbackReason = gridlyDestinationCurrentLocationOriginState.fallbackUsed
     ? (preview.autoLocationFallbackReason || origin?.fallbackReason || autoLocationResult.fallbackReason || "current_location_unavailable")
     : "";
+  recordGridlyDestinationLocationRecoveryPreviewState(origin, destination, preview, options);
 
   if (!origin) {
     preview.status = "unavailable";
@@ -19150,6 +19276,7 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
   latestPreview.etaMinutes = routeData.etaMinutes;
   latestPreview.routeProvider = routeData.provider || "osrm";
   latestPreview.error = renderedLayer ? "" : "render_unavailable";
+  recordGridlyDestinationLocationRecoveryPreviewState(latestPreview.source, destination, latestPreview, options);
   gridlyDestinationPerformanceAuditState.routePreviewStatus = latestPreview.status;
   gridlyDestinationPerformanceAuditState.routeGeometryPointCount = Array.isArray(latestPreview.geometry) ? latestPreview.geometry.length : 0;
   if (!renderedLayer) addGridlyDestinationPerformanceNote(latestPreview.error);
@@ -23869,7 +23996,16 @@ function setGridlyUserLocation(candidate) {
   }
   renderUserLocationDot();
   if (typeof updateGridlyRouteOwnershipSurface === "function") updateGridlyRouteOwnershipSurface();
-  if (candidate?.suppressRouteOriginRefresh !== true) scheduleGridlyDestinationRoutePreviewOriginRefresh("current_location_updated");
+  const destinationLocationContext = typeof getGridlyDestinationLocationRecoveryContext === "function" ? getGridlyDestinationLocationRecoveryContext() : null;
+  if (destinationLocationContext?.destinationSearchActive) {
+    gridlyDestinationCurrentLocationOriginState.permissionState = gridlyDestinationCurrentLocationOriginState.permissionState || gridlyCachedGeolocationPermissionStatus || "granted";
+    gridlyDestinationCurrentLocationOriginState.succeededForDestinationSearch = true;
+    gridlyDestinationCurrentLocationOriginState.failureReason = "";
+    gridlyDestinationCurrentLocationOriginState.coordinate = { ...userLocation };
+    gridlyDestinationCurrentLocationOriginState.lastSucceededAt = Date.now();
+  }
+  const recoveryTriggered = maybeTriggerGridlyDestinationLocationRecovery("current_location_updated");
+  if (candidate?.suppressRouteOriginRefresh !== true && !recoveryTriggered) scheduleGridlyDestinationRoutePreviewOriginRefresh("current_location_updated");
   return true;
 }
 
@@ -52043,6 +52179,63 @@ function gridlyBuildDestinationCurrentLocationOriginAudit() {
 
 window.gridlyDestinationCurrentLocationOriginAudit = function gridlyDestinationCurrentLocationOriginAudit() {
   return gridlyBuildDestinationCurrentLocationOriginAudit();
+};
+
+function gridlyBuildDestinationLocationRecoveryAudit() {
+  const findings = [];
+  const context = typeof getGridlyDestinationLocationRecoveryContext === "function"
+    ? getGridlyDestinationLocationRecoveryContext()
+    : {};
+  const currentLocationCoordinate = getGridlyCurrentLocationRouteCoordinate() || gridlyDestinationCurrentLocationOriginState.coordinate || null;
+  const destinationSearchActive = Boolean(context.destinationSearchActive);
+  const fallbackRouteActive = Boolean(context.fallbackRouteActive || gridlyDestinationLocationRecoveryState.fallbackRouteActive);
+  const fallbackOriginSource = String(context.fallbackOriginSource || gridlyDestinationLocationRecoveryState.fallbackOriginSource || "");
+  const destinationLabel = String(context.destinationLabel || gridlyDestinationLocationRecoveryState.destinationLabel || "");
+  const finalOriginSource = String(context.origin?.source || gridlyDestinationLocationRecoveryState.finalOriginSource || "");
+  const currentLocationArrivedAfterFallback = Boolean(
+    gridlyDestinationLocationRecoveryState.currentLocationArrivedAfterFallback
+    || (destinationSearchActive && fallbackRouteActive && currentLocationCoordinate)
+  );
+  const autoRefreshTriggered = Boolean(gridlyDestinationLocationRecoveryState.autoRefreshTriggered);
+  const routeRebuiltFromCurrentLocation = Boolean(
+    gridlyDestinationLocationRecoveryState.routeRebuiltFromCurrentLocation
+    || (currentLocationArrivedAfterFallback && finalOriginSource === "current_location")
+  );
+
+  if (destinationSearchActive && fallbackRouteActive && currentLocationCoordinate && !autoRefreshTriggered) {
+    findings.push("Current Location is available after fallback, but automatic route refresh has not triggered.");
+  }
+  if (autoRefreshTriggered && !routeRebuiltFromCurrentLocation && !gridlyDestinationLocationRecoveryState.pendingRefresh) {
+    findings.push("Automatic recovery triggered, but the route has not rebuilt from Current Location.");
+  }
+  if (routeRebuiltFromCurrentLocation && finalOriginSource !== "current_location") {
+    findings.push("Recovery state says rebuilt, but final origin is not Current Location.");
+  }
+  if (destinationSearchActive && !destinationLabel) findings.push("Destination Search is active without a preserved destination label.");
+
+  const consumerFriendlyPass = Boolean(
+    !findings.length
+    && (!currentLocationArrivedAfterFallback || (autoRefreshTriggered && (routeRebuiltFromCurrentLocation || gridlyDestinationLocationRecoveryState.pendingRefresh)))
+  );
+
+  return {
+    available: true,
+    version: "V257.8A",
+    destinationSearchActive,
+    fallbackRouteActive,
+    fallbackOriginSource,
+    destinationLabel,
+    currentLocationArrivedAfterFallback,
+    autoRefreshTriggered,
+    routeRebuiltFromCurrentLocation,
+    finalOriginSource,
+    consumerFriendlyPass,
+    findings
+  };
+}
+
+window.gridlyDestinationLocationRecoveryAudit = function gridlyDestinationLocationRecoveryAudit() {
+  return gridlyBuildDestinationLocationRecoveryAudit();
 };
 
 
