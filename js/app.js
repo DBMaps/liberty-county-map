@@ -21315,6 +21315,9 @@ function hydrateElements() {
     "settingsBuildValue",
     "settingsReplaySetupBtn",
     "settingsFeedbackBtn",
+    "settingsFeedbackFlow",
+    "settingsFeedbackMessage",
+    "settingsPrepareFeedbackEmailBtn",
     "settingsFeedbackStatus",
     "settingsSaveStatus",
     "gridlyWelcomeOnboarding",
@@ -54709,6 +54712,121 @@ function collectGridlySettingsFromUi() {
   });
 }
 
+const GRIDLY_FEEDBACK_FLOW_VERSION = "V259.1";
+const GRIDLY_FEEDBACK_EMAIL_RECIPIENT = "feedback@gridly.app";
+const GRIDLY_FEEDBACK_CATEGORIES = Object.freeze(["Bug", "Suggestion", "Map Issue", "Route Issue", "General Comment"]);
+
+function getGridlyFeedbackFlowRoot(scope) {
+  if (typeof document === "undefined") return null;
+  if (scope instanceof Element && scope.matches?.("[data-gridly-feedback-flow]")) return scope;
+  return scope?.querySelector?.("[data-gridly-feedback-flow]") || document.querySelector("[data-gridly-feedback-flow]");
+}
+
+function openGridlyFeedbackFlow(scope) {
+  const root = getGridlyFeedbackFlowRoot(scope);
+  if (!root) return false;
+  root.hidden = false;
+  root.removeAttribute("hidden");
+  const opener = root.id ? document.querySelector(`[aria-controls="${root.id}"]`) : null;
+  if (opener) opener.setAttribute("aria-expanded", "true");
+  const firstCategory = root.querySelector("[data-gridly-feedback-category]");
+  const message = root.querySelector("[data-gridly-feedback-message]");
+  (firstCategory || message)?.focus?.();
+  return true;
+}
+
+function getGridlyFeedbackSelectedCategory(root) {
+  const selected = root?.querySelector?.("[data-gridly-feedback-category]:checked")?.value || "";
+  return GRIDLY_FEEDBACK_CATEGORIES.includes(selected) ? selected : "";
+}
+
+function getGridlyFeedbackAwarenessAreaLabel() {
+  try {
+    const display = typeof getGridlySettingsAwarenessAreaDisplay === "function" ? getGridlySettingsAwarenessAreaDisplay() : null;
+    return String(display?.label || display?.storageValue || gridlyUserProfile?.awarenessArea || gridlyUserProfile?.homeTown || "Not selected").trim() || "Not selected";
+  } catch (_error) {
+    return "Not selected";
+  }
+}
+
+function getGridlyFeedbackPlatformLabel() {
+  const nav = typeof navigator !== "undefined" ? navigator : null;
+  return String(nav?.userAgentData?.platform || nav?.platform || "Web browser").trim() || "Web browser";
+}
+
+function buildGridlyFeedbackEmailBody(category, message) {
+  const version = [typeof GRIDLY_APP_VERSION_LABEL === "string" ? GRIDLY_APP_VERSION_LABEL : "Gridly", typeof GRIDLY_APP_BUILD_LABEL === "string" ? GRIDLY_APP_BUILD_LABEL : ""].filter(Boolean).join(" · ");
+  return [
+    "Category:",
+    category,
+    "",
+    "Message:",
+    message,
+    "",
+    "Optional Metadata:",
+    `Gridly Version: ${version}`,
+    `Awareness Area: ${getGridlyFeedbackAwarenessAreaLabel()}`,
+    `Platform: ${getGridlyFeedbackPlatformLabel()}`,
+    `Timestamp: ${new Date().toISOString()}`
+  ].join("\n");
+}
+
+function buildGridlyFeedbackMailtoUrl(category, message) {
+  const subject = `Gridly Feedback — ${category}`;
+  const body = buildGridlyFeedbackEmailBody(category, message);
+  return `mailto:${encodeURIComponent(GRIDLY_FEEDBACK_EMAIL_RECIPIENT)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+function setGridlyFeedbackStatus(scope, message, isError = false) {
+  const status = scope?.querySelector?.("[data-gridly-feedback-acknowledgement]") || document.getElementById("settingsFeedbackStatus");
+  if (!status) return;
+  status.textContent = message;
+  status.dataset.gridlyFeedbackAcknowledgementVisible = isError ? "false" : "true";
+  status.dataset.gridlyFeedbackStatus = isError ? "needs_input" : "email_prepared";
+}
+
+function prepareGridlyFeedbackEmail(scope) {
+  const root = getGridlyFeedbackFlowRoot(scope);
+  if (!root) return false;
+  const category = getGridlyFeedbackSelectedCategory(root);
+  const messageField = root.querySelector("[data-gridly-feedback-message]");
+  const message = String(messageField?.value || "").trim();
+  if (!category) {
+    openGridlyFeedbackFlow(root);
+    setGridlyFeedbackStatus(root, "Choose a feedback category before preparing the email.", true);
+    root.querySelector("[data-gridly-feedback-category]")?.focus?.();
+    return false;
+  }
+  if (!message) {
+    openGridlyFeedbackFlow(root);
+    setGridlyFeedbackStatus(root, "Enter a short message before preparing the email.", true);
+    messageField?.focus?.();
+    return false;
+  }
+  const mailtoUrl = buildGridlyFeedbackMailtoUrl(category, message);
+  if (typeof window !== "undefined" && window.location) window.location.href = mailtoUrl;
+  setGridlyFeedbackStatus(root, "Feedback email prepared. Your email app will send the message once you choose Send.", false);
+  return true;
+}
+
+function buildGridlyFeedbackFlowHtml({ v2 = false } = {}) {
+  const actionAttr = v2 ? ' data-v2-action="settings-feedback-prepare"' : "";
+  const categoryName = v2 ? "gridlyFeedbackCategoryV2" : "gridlyFeedbackCategory";
+  return `
+    <section class="settings-feedback-flow" data-gridly-feedback-flow hidden aria-label="Feedback">
+      <h3>Feedback</h3>
+      <p class="settings-placeholder-note">Prepare a feedback email for Gridly. Nothing is sent until you choose Send in your email app.</p>
+      <fieldset class="settings-feedback-category" data-gridly-feedback-categories>
+        <legend>Category</legend>
+        ${GRIDLY_FEEDBACK_CATEGORIES.map((category) => `<label><input type="radio" name="${categoryName}" value="${escapeV2SettingsText(category)}" data-gridly-feedback-category required> ${escapeV2SettingsText(category)}</label>`).join("")}
+      </fieldset>
+      <label class="settings-feedback-message-label">Message</label>
+      <textarea data-gridly-feedback-message rows="5" maxlength="1200" placeholder="Tell us what happened or what would make Gridly clearer." required></textarea>
+      <button class="primary-btn compact-btn" type="button" data-gridly-feedback-prepare${actionAttr}>Prepare Feedback Email</button>
+    </section>
+    <p class="settings-placeholder-note" data-gridly-feedback-acknowledgement aria-live="polite">Choose Send Feedback to prepare an email to Gridly.</p>`;
+}
+
 function persistGridlySettingsFromUi(event) {
   try {
     const saved = saveGridlySettingsPreferences(collectGridlySettingsFromUi(), { applyDisplay: true, source: event?.target?.id || "settings_ui" });
@@ -54960,7 +55078,7 @@ function gridlySettingsListExperienceAudit() {
       '[data-v2-action="settings-change-awareness-area"]',
       '[data-v2-action="settings-select-awareness-area"]',
       '[data-v2-action="settings-replay-setup"]',
-      '[data-v2-action="settings-feedback-placeholder"]'
+      '[data-v2-action="settings-feedback-open"]'
     ];
     const legacyActionSelectors = ["#settingsEditHomeBtn", "#settingsEditWorkBtn", "#settingsManageSavedPlacesBtn", "#settingsChangeAwarenessAreaBtn", "#settingsReplaySetupBtn", "#settingsFeedbackBtn"];
     const fieldSelectors = [
@@ -55275,10 +55393,10 @@ function gridlySettingsListExperienceAudit() {
     }),
     item("send_feedback", "Send Feedback", {
       section: "About Gridly",
-      type: "button_placeholder",
-      currentValue: visibleText("#settingsFeedbackStatus") || "Feedback entry point is a placeholder for this phase.",
+      type: "button_email_handoff",
+      currentValue: visibleText("#settingsFeedbackStatus") || "Choose Send Feedback to prepare an email to Gridly.",
       recommendedCollapsedVisibility: "hidden_in_about_summary",
-      recommendedExpandedVisibility: "button_and_placeholder_status",
+      recommendedExpandedVisibility: "button_form_and_acknowledgement",
       frequency: "rare",
       lifecycle: "rare_support",
       actions: ["Send Feedback"],
@@ -55343,7 +55461,7 @@ function gridlySettingsListExperienceAudit() {
       recommendedGroup: "Support & About",
       collapsedRowCandidate: true,
       collapsedRowShouldShow: ["About Gridly", "version/build summary"],
-      expandedShouldShow: ["Replay Setup", "Send Feedback placeholder", "feedback status"],
+      expandedShouldShow: ["Replay Setup", "Send Feedback email flow", "feedback acknowledgement"],
       portraitUse: "low"
     },
     {
@@ -55393,7 +55511,7 @@ function gridlySettingsListExperienceAudit() {
     {
       group: "About & Support",
       immediatelyVisible: ["version/build summary"],
-      expandOnly: ["Replay Setup", "Send Feedback placeholder", "feedback status"],
+      expandOnly: ["Replay Setup", "Send Feedback email flow", "feedback acknowledgement"],
       rationale: "About/support actions are rare and should not compete with operational controls in portrait."
     },
     {
@@ -55409,7 +55527,7 @@ function gridlySettingsListExperienceAudit() {
     "Notification Preferences shows four toggles plus explanatory copy even though notification delivery is explicitly not enabled.",
     "Display Preferences mixes setup-only personalization with operational map/text density controls in one always-visible grid.",
     "About Gridly exposes build metadata and two rare/support buttons at the same visual level as daily settings.",
-    "Send Feedback is currently a placeholder acknowledgement, making it a low-value always-visible action.",
+    "Send Feedback now opens a lightweight email handoff flow without backend storage.",
     "Saved Places dynamic list is already hidden-capable, which is a strong signal for expandable-list readiness.",
     "Current Settings now exposes Awareness Area controls; Location permission, Report settings, Route logic tuning, Testing tools, and Supabase controls remain out of Settings."
   ];
@@ -55458,7 +55576,7 @@ function gridlySettingsListExperienceAudit() {
       "Preferred Name input and privacy note",
       "Theme select and explanatory copy",
       "Replay Setup",
-      "Send Feedback placeholder and status"
+      "Send Feedback email flow and status"
     ],
     settingsPanelAuditAvailable: Boolean(settingsPanelAuditSnapshot),
     settingsPanelAuditSnapshot,
@@ -55522,7 +55640,14 @@ function bindGridlySettingsPreferences() {
   if (els.settingsFeedbackBtn && els.settingsFeedbackBtn.dataset.gridlySettingsBound !== "1") {
     els.settingsFeedbackBtn.dataset.gridlySettingsBound = "1";
     els.settingsFeedbackBtn.addEventListener("click", () => {
-      safeText("settingsFeedbackStatus", "Feedback placeholder acknowledged. No message was sent.");
+      const opened = openGridlyFeedbackFlow(els.settingsModal || document);
+      if (opened) safeText("settingsFeedbackStatus", "Choose a category and message, then prepare an email to Gridly.");
+    });
+  }
+  if (els.settingsPrepareFeedbackEmailBtn && els.settingsPrepareFeedbackEmailBtn.dataset.gridlySettingsBound !== "1") {
+    els.settingsPrepareFeedbackEmailBtn.dataset.gridlySettingsBound = "1";
+    els.settingsPrepareFeedbackEmailBtn.addEventListener("click", () => {
+      prepareGridlyFeedbackEmail(els.settingsModal || document);
     });
   }
 }
@@ -55613,11 +55738,10 @@ function buildGridlySettingsAudit(section = "all") {
   };
 }
 
-function gridlyBuildFeedbackSystemAudit() {
+function gridlyBuildFeedbackFlowAudit() {
   const findings = [];
   const hasDocument = typeof document !== "undefined";
-  const textOf = (node) => String(node?.textContent || "").replace(/\s+/g, " ").trim();
-  const safeElementVisible = (node) => {
+  const visible = (node) => {
     if (!node || !hasDocument) return false;
     try {
       if (node.hidden || node.hasAttribute?.("hidden") || node.hasAttribute?.("inert")) return false;
@@ -55628,74 +55752,82 @@ function gridlyBuildFeedbackSystemAudit() {
       return true;
     }
   };
-  const legacyFeedbackButton = hasDocument ? document.getElementById("settingsFeedbackBtn") : null;
-  const legacyFeedbackStatus = hasDocument ? document.getElementById("settingsFeedbackStatus") : null;
-  const portraitFeedbackButton = hasDocument ? document.querySelector('[data-v2-action="settings-feedback-placeholder"]') : null;
-  const feedbackButton = legacyFeedbackButton || portraitFeedbackButton;
-  const feedbackEntryVisible = Boolean(feedbackButton && safeElementVisible(feedbackButton));
-  const portraitSettingsBody = hasDocument ? document.getElementById("gridlyPortraitV2SheetBody") : null;
-  const portraitDelegatedBound = Boolean(portraitSettingsBody?.dataset?.v2DelegatedClickBound === "1");
-  const legacyClickable = Boolean(legacyFeedbackButton && !legacyFeedbackButton.disabled && legacyFeedbackButton.dataset?.gridlySettingsBound === "1");
-  const portraitClickable = Boolean(portraitFeedbackButton && !portraitFeedbackButton.disabled && (portraitFeedbackButton.dataset?.gridlySettingsBound === "1" || portraitDelegatedBound));
-  const feedbackEntryClickable = Boolean(legacyClickable || portraitClickable);
-  const statusText = textOf(legacyFeedbackStatus);
-  const currentFeedbackBehavior = legacyFeedbackButton
-    ? "Settings > About & Support exposes Send Feedback. Tapping it updates the local status text to a placeholder acknowledgement and explicitly states that no message was sent."
-    : (portraitFeedbackButton
-      ? "Portrait V2 Settings exposes Send Feedback as a placeholder action that shows an in-app confirmation only; no message is collected or sent."
-      : "No active Settings feedback entry point was detected in the current DOM.");
-  const feedbackDestinationDefined = false;
-  const feedbackWorkflowDefined = false;
-  const acknowledgementProvided = Boolean(
-    /placeholder|acknowledged|no message was sent|entry point/i.test(statusText)
-    || legacyFeedbackButton
-    || portraitFeedbackButton
-  );
-  const implementationPartiallyPresent = Boolean(legacyFeedbackButton || portraitFeedbackButton || /feedback/i.test(statusText));
-  const ownershipModel = "Placeholder-only Settings/About support entry; no product, support, data, or routing owner is defined in-app.";
+  const text = (node) => String(node?.textContent || "").replace(/\s+/g, " ").trim();
+  const legacyEntry = hasDocument ? document.getElementById("settingsFeedbackBtn") : null;
+  const portraitEntry = hasDocument ? document.querySelector('[data-v2-action="settings-feedback-open"]') : null;
+  const flowRoots = hasDocument ? Array.from(document.querySelectorAll("[data-gridly-feedback-flow]")) : [];
+  const feedbackFlowRoot = flowRoots.find(visible) || flowRoots[0] || null;
+  const categories = feedbackFlowRoot ? Array.from(feedbackFlowRoot.querySelectorAll("[data-gridly-feedback-category]")) : [];
+  const categoryLabels = categories.map((input) => String(input.value || "").trim()).filter(Boolean);
+  const messageField = feedbackFlowRoot?.querySelector?.("[data-gridly-feedback-message]") || null;
+  const prepareButton = feedbackFlowRoot?.querySelector?.("[data-gridly-feedback-prepare]") || (hasDocument ? document.getElementById("settingsPrepareFeedbackEmailBtn") : null);
+  const acknowledgements = hasDocument ? Array.from(document.querySelectorAll("[data-gridly-feedback-acknowledgement], #settingsFeedbackStatus")) : [];
+  const acknowledgement = acknowledgements.find((node) => /Feedback email prepared\. Your email app will send the message once you choose Send\./i.test(text(node))) || acknowledgements.find(visible) || acknowledgements[0] || null;
+  const acknowledgementText = text(acknowledgement);
+  const feedbackEntryVisible = Boolean((legacyEntry && visible(legacyEntry)) || (portraitEntry && visible(portraitEntry)));
+  const feedbackFormAvailable = Boolean(feedbackFlowRoot);
+  const categoriesAvailable = GRIDLY_FEEDBACK_CATEGORIES.every((category) => categoryLabels.includes(category));
+  const categoryCount = categoryLabels.length;
+  const messageFieldAvailable = Boolean(messageField);
+  const emailPreparationAvailable = Boolean(prepareButton && typeof buildGridlyFeedbackMailtoUrl === "function" && typeof prepareGridlyFeedbackEmail === "function");
+  const acknowledgementVisible = Boolean(acknowledgement && /Feedback email prepared\. Your email app will send the message once you choose Send\./i.test(acknowledgementText));
+  const consumerFriendlyText = [text(feedbackFlowRoot), acknowledgementText].join(" ");
+  const exposesInternalDiagnostics = /Supabase|diagnostic|stack|trace|token|apikey|api key|internal/i.test(consumerFriendlyText);
+  const claimsReceived = /feedback received/i.test(consumerFriendlyText);
 
-  if (legacyFeedbackButton) findings.push("Location: legacy Settings modal > About & Support > Send Feedback.");
-  if (portraitFeedbackButton) findings.push("Location: portrait V2 Settings/About surface > Send Feedback placeholder action.");
-  if (!legacyFeedbackButton && !portraitFeedbackButton) findings.push("Send Feedback entry was not detected in the current document.");
-  if (feedbackEntryVisible && !feedbackEntryClickable) findings.push("Send Feedback is visible but the audit could not confirm an active click binding yet.");
-  findings.push("Tap behavior: placeholder-only acknowledgement; no feedback text is captured.");
-  findings.push("Destination: undefined; feedback is not sent to email, storage, Supabase, analytics, or a backend.");
-  findings.push("Workflow: undefined; no triage path exists for bugs, suggestions, map issues, route issues, or general comments.");
-  findings.push(acknowledgementProvided
-    ? "Acknowledgement: present as placeholder/status copy, but not as a receipt for submitted feedback."
-    : "Acknowledgement: no visible receipt or status copy detected.");
-  findings.push("Consumer friendliness: fails because users can tap Send Feedback without a clear destination, category choice, submission path, or received confirmation.");
-  findings.push(implementationPartiallyPresent
-    ? "Partial implementation: entry point and click placeholder exist; final collection is not implemented."
-    : "Partial implementation: none detected beyond audit support.");
-  findings.push(`Ownership model: ${ownershipModel}`);
+  if (legacyEntry) findings.push("Feedback entry is available from Settings > About & Support > Send Feedback.");
+  if (portraitEntry) findings.push("Feedback entry is available from the portrait Settings support surface.");
+  if (!feedbackEntryVisible) findings.push("Feedback entry is not currently visible; open Settings/About & Support before checking the visible entry state.");
+  if (feedbackFormAvailable) findings.push("Feedback form provides category selection, message entry, and mailto preparation without backend storage.");
+  else findings.push("Feedback form is not present in the current DOM.");
+  if (!categoriesAvailable) findings.push("Expected beta feedback categories are incomplete or unavailable.");
+  if (!messageFieldAvailable) findings.push("Feedback message field is unavailable.");
+  if (!emailPreparationAvailable) findings.push("Prepare Feedback Email action is unavailable.");
+  findings.push("Backend requirement: false; the flow uses email handoff only and does not create Supabase tables, analytics, accounts, or remote feedback storage.");
+  if (acknowledgementVisible) findings.push("Acknowledgement correctly says the email was prepared and that the email app sends only after the user chooses Send.");
+  else findings.push("Prepared-email acknowledgement is only visible after a user prepares the mailto email.");
+  if (claimsReceived) findings.push("Consumer copy issue: a visible acknowledgement claims feedback was received.");
+  if (exposesInternalDiagnostics) findings.push("Consumer copy issue: visible feedback flow text exposes internal diagnostics or implementation details.");
 
   const consumerFriendlyPass = Boolean(
     feedbackEntryVisible
-    && feedbackEntryClickable
-    && feedbackDestinationDefined
-    && feedbackWorkflowDefined
-    && acknowledgementProvided
+    && feedbackFormAvailable
+    && categoriesAvailable
+    && categoryCount === GRIDLY_FEEDBACK_CATEGORIES.length
+    && messageFieldAvailable
+    && emailPreparationAvailable
+    && !claimsReceived
+    && !exposesInternalDiagnostics
   );
 
   return {
     available: true,
-    version: "V259",
+    version: GRIDLY_FEEDBACK_FLOW_VERSION,
     feedbackEntryVisible,
-    feedbackEntryClickable,
-    currentFeedbackBehavior,
-    feedbackDestinationDefined,
-    feedbackWorkflowDefined,
-    acknowledgementProvided,
+    feedbackFormAvailable,
+    categoriesAvailable,
+    categoryCount,
+    messageFieldAvailable,
+    emailPreparationAvailable,
+    acknowledgementVisible,
+    backendRequired: false,
     consumerFriendlyPass,
     findings
   };
 }
 
+function gridlyBuildFeedbackSystemAudit() {
+  return gridlyBuildFeedbackFlowAudit();
+}
+
+window.gridlyFeedbackFlowAudit = function gridlyFeedbackFlowAudit() {
+  return gridlyBuildFeedbackFlowAudit();
+};
 window.gridlyFeedbackSystemAudit = function gridlyFeedbackSystemAudit() {
   return gridlyBuildFeedbackSystemAudit();
 };
 if (typeof exposeGridlyAuditHelper === "function") {
+  exposeGridlyAuditHelper("gridlyFeedbackFlowAudit", window.gridlyFeedbackFlowAudit);
   exposeGridlyAuditHelper("gridlyFeedbackSystemAudit", window.gridlyFeedbackSystemAudit);
 }
 
@@ -65391,7 +65523,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         </details>
         <details class="settings-modal-section settings-list-section" data-gridly-about>
           <summary class="settings-list-summary"><span class="settings-list-title">About &amp; Support</span><span class="settings-list-meta">Version · Help</span></summary>
-          <div class="settings-list-detail"><p><strong>${GRIDLY_APP_VERSION_LABEL}</strong><br>${GRIDLY_APP_BUILD_LABEL}</p><button class="gridly-v2-tile" data-v2-action="settings-replay-setup" type="button">Replay Setup</button><button class="gridly-v2-tile" data-v2-action="settings-feedback-placeholder" type="button">Send Feedback</button><p class="settings-placeholder-note" data-v2-settings-status>Settings saved locally.</p></div>
+          <div class="settings-list-detail"><p><strong>${GRIDLY_APP_VERSION_LABEL}</strong><br>${GRIDLY_APP_BUILD_LABEL}</p><button class="gridly-v2-tile" data-v2-action="settings-replay-setup" type="button">Replay Setup</button><button class="gridly-v2-tile" data-v2-action="settings-feedback-open" type="button">Send Feedback</button>${buildGridlyFeedbackFlowHtml({ v2: true })}</div>
         </details>
       </div>`;
     const buildDuration = Number((getGridlySettingsPerfNow() - buildStartedAt).toFixed(2));
@@ -66429,7 +66561,15 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         selectGridlySettingsAwarenessArea(payload.awarenessArea || "", "portrait_v2_settings_awareness_area");
       },
       "settings-replay-setup": () => openGridlyWelcomeOnboarding({ source: "portrait_v2_settings_replay" }),
-      "settings-feedback-placeholder": () => setConfirmation("Feedback entry point is a placeholder for this phase.", "success"),
+      "settings-feedback-open": () => {
+        const body = document.getElementById("gridlyPortraitV2SheetBody") || document;
+        openGridlyFeedbackFlow(body);
+        setConfirmation("Choose a category and message, then prepare an email to Gridly.", "success");
+      },
+      "settings-feedback-prepare": () => {
+        const body = document.getElementById("gridlyPortraitV2SheetBody") || document;
+        prepareGridlyFeedbackEmail(body);
+      },
       "report-cancel": () => closePortraitV2Sheet(),
       "close": () => closePortraitV2Sheet(),
       "layers-select": () => {
