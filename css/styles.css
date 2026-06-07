@@ -18300,3 +18300,66 @@ body[data-layout-mode="portrait"] .mobile-route-exit-control[hidden],
     display: none !important;
   }
 }
+
+/* V257.1 follow-up B — force active portrait route card actions into a separated footer row. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command.has-route-exit-actions:not([hidden]):not(.is-command-card-suppressed) {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto auto !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+    max-height: min(188px, calc(var(--gridly-awareness-panel-available-height, 100dvh) - env(safe-area-inset-top, 0px) - 10px)) !important;
+    padding: 10px 11px 11px !important;
+    overflow: visible !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command.has-route-exit-actions:not([hidden]):not(.is-command-card-suppressed) .mobile-destination-command-copy {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    padding-right: 0 !important;
+    overflow: hidden !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command.has-route-exit-actions:not([hidden]):not(.is-command-card-suppressed) .mobile-destination-command-actions {
+    grid-column: 1 / -1 !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    align-self: stretch !important;
+    justify-self: stretch !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin-top: 2px !important;
+    padding-top: 8px !important;
+    gap: 8px !important;
+    border-top: 1px solid rgba(148, 202, 255, 0.14) !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command.has-route-exit-actions.is-route-monitoring:not([hidden]):not(.is-command-card-suppressed) #mobileDestinationCommandBtn {
+    display: none !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command.has-route-exit-actions:not([hidden]):not(.is-command-card-suppressed) .mobile-destination-command-actions .compact-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    min-height: 44px !important;
+    height: auto !important;
+    padding: 10px 8px !important;
+    border-radius: 14px !important;
+    font-size: 0.76rem !important;
+    line-height: 1.1 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command.has-route-exit-actions:not([hidden]):not(.is-command-card-suppressed) .mobile-route-exit-control[hidden] {
+    display: none !important;
+  }
+}
