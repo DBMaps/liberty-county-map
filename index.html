@@ -904,7 +904,7 @@
             <button type="button" class="secondary-btn compact-btn" id="settingsFeedbackBtn" aria-expanded="false" aria-controls="settingsFeedbackFlow">Send Feedback</button>
             <section class="settings-feedback-flow" id="settingsFeedbackFlow" data-gridly-feedback-flow hidden aria-labelledby="settingsFeedbackTitle">
               <h3 id="settingsFeedbackTitle">Feedback</h3>
-              <p class="settings-placeholder-note settings-feedback-helper">Nothing is sent until you choose Send in your email app.</p>
+              <p class="settings-placeholder-note settings-feedback-helper">Submit feedback directly to Gridly, or use the email fallback if sending is unavailable.</p>
               <fieldset class="settings-feedback-category" data-gridly-feedback-categories>
                 <legend>Category</legend>
                 <div class="settings-feedback-category-grid" data-gridly-feedback-category-chips>
@@ -918,7 +918,10 @@
               <p class="settings-feedback-prompt">What would you like to tell us?</p>
               <label class="settings-feedback-message-label" for="settingsFeedbackMessage">Message</label>
               <textarea id="settingsFeedbackMessage" data-gridly-feedback-message rows="5" maxlength="1200" placeholder="Tell us what happened or what would make Gridly clearer." required></textarea>
-              <button type="button" class="primary-btn compact-btn" id="settingsPrepareFeedbackEmailBtn" data-gridly-feedback-prepare>Prepare Feedback Email</button>
+              <div class="settings-feedback-actions">
+                <button type="button" class="primary-btn compact-btn" id="settingsSubmitFeedbackBtn" data-gridly-feedback-submit>Submit Feedback</button>
+                <button type="button" class="secondary-btn compact-btn" id="settingsPrepareFeedbackEmailBtn" data-gridly-feedback-prepare>Prepare Feedback Email Instead</button>
+              </div>
             </section>
             <p class="settings-placeholder-note" id="settingsFeedbackStatus" data-gridly-feedback-acknowledgement aria-live="polite" hidden></p>
           </div>

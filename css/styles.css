@@ -1494,6 +1494,18 @@ body.route-setup-open #gridlyHazardLauncher {
   font: inherit;
 }
 .settings-feedback-flow textarea::placeholder { color: rgba(220, 232, 245, 0.54); }
+.settings-feedback-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.settings-feedback-actions .compact-btn {
+  flex: 1 1 180px;
+}
+.settings-feedback-actions .compact-btn[disabled] {
+  cursor: wait;
+  opacity: 0.72;
+}
 
 .settings-list-experience {
   display: grid;
