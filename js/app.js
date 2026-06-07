@@ -54818,7 +54818,7 @@ function buildGridlyFeedbackFlowHtml({ v2 = false } = {}) {
       <p class="settings-placeholder-note">Prepare a feedback email for Gridly. Nothing is sent until you choose Send in your email app.</p>
       <fieldset class="settings-feedback-category" data-gridly-feedback-categories>
         <legend>Category</legend>
-        ${GRIDLY_FEEDBACK_CATEGORIES.map((category) => `<label><input type="radio" name="${categoryName}" value="${escapeV2SettingsText(category)}" data-gridly-feedback-category required> ${escapeV2SettingsText(category)}</label>`).join("")}
+        ${GRIDLY_FEEDBACK_CATEGORIES.map((category) => `<label><input type="radio" name="${categoryName}" value="${escapeGridlySettingsAttribute(category)}" data-gridly-feedback-category required> ${escapeGridlySettingsAttribute(category)}</label>`).join("")}
       </fieldset>
       <label class="settings-feedback-message-label">Message</label>
       <textarea data-gridly-feedback-message rows="5" maxlength="1200" placeholder="Tell us what happened or what would make Gridly clearer." required></textarea>
