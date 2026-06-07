@@ -5934,7 +5934,7 @@ let savedRouteLayer;
 let destinationRoutePreviewLayer;
 let corridorIntelLayer;
 let lastRenderedRouteKey = "";
-let routeFocusArmed = true;
+let routeFocusArmed = false;
 let crossings = [];
 let activeReports = [];
 let activeHazards = [];
@@ -17583,6 +17583,7 @@ function applyGridlyDestinationVisibilityOffset(destinationInput, options = {}) 
   GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.bottomInsetApplied = true;
   GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.lastAppliedKey = applyKey;
   GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.lastReason = options?.reason || "destination_visibility_offset_applied";
+  gridlyRouteViewportOwnershipState.destinationFocusApplied = true;
   setGridlyMarkerDiagnostics({
     lastMapFocusSuccess: true,
     lastMapFocusLat: coordinates.lat,
@@ -20351,6 +20352,7 @@ function hydrateElements() {
     "routeWatchStartSelect",
     "routeWatchDestinationSelect",
     "routeWatchStartBtn",
+    "showFullRouteBtn",
     "stopRouteWatchBtn",
     "clearRouteBtn",
     "routeWatchSetupHint",
@@ -38113,6 +38115,164 @@ async function fetchAlternateRouteCoordinates(from, to, primaryPoints = []) {
   return null;
 }
 
+const GRIDLY_ROUTE_VIEWPORT_OWNERSHIP_VERSION = "V257.3";
+const GRIDLY_ROUTE_PREVIEW_FULL_ROUTE_FIT_OPTIONS = Object.freeze({
+  paddingTopLeft: [180, 320],
+  paddingBottomRight: [140, 120],
+  padding: [200, 180],
+  maxZoom: 15,
+  animate: true,
+  duration: 0.6
+});
+const GRIDLY_SAVED_ROUTE_FULL_ROUTE_FIT_OPTIONS = Object.freeze({
+  paddingTopLeft: [32, 240],
+  paddingBottomRight: [32, 72],
+  maxZoom: 13,
+  animate: false
+});
+const gridlyRouteViewportOwnershipState = {
+  routeAutoFitDisabled: true,
+  showFullRouteAvailable: false,
+  routeRenderedWithoutViewportTakeover: false,
+  awarenessViewportPreserved: true,
+  destinationFocusApplied: false,
+  routeFitRequiresUserAction: true,
+  lastRouteRenderZoomBefore: null,
+  lastRouteRenderZoomAfter: null,
+  lastRouteRenderCenterBefore: null,
+  lastRouteRenderCenterAfter: null,
+  lastShowFullRouteAt: null,
+  lastShowFullRouteSuccess: false,
+  lastShowFullRouteSource: ""
+};
+
+function getGridlyRouteViewportSnapshot() {
+  const mapInstance = getGridlyMapInstance?.() || map || null;
+  const center = typeof mapInstance?.getCenter === "function" ? mapInstance.getCenter() : null;
+  const zoom = typeof mapInstance?.getZoom === "function" ? Number(mapInstance.getZoom()) : null;
+  return {
+    zoom: Number.isFinite(zoom) ? zoom : null,
+    center: center && Number.isFinite(Number(center.lat)) && Number.isFinite(Number(center.lng))
+      ? { lat: Number(center.lat), lng: Number(center.lng) }
+      : null
+  };
+}
+
+function markGridlyRouteRenderedWithoutViewportTakeover(beforeSnapshot = null) {
+  const afterSnapshot = getGridlyRouteViewportSnapshot();
+  const beforeZoom = Number(beforeSnapshot?.zoom);
+  const afterZoom = Number(afterSnapshot?.zoom);
+  const zoomPreserved = Number.isFinite(beforeZoom) && Number.isFinite(afterZoom)
+    ? afterZoom >= beforeZoom
+    : true;
+  gridlyRouteViewportOwnershipState.lastRouteRenderZoomBefore = Number.isFinite(beforeZoom) ? beforeZoom : null;
+  gridlyRouteViewportOwnershipState.lastRouteRenderZoomAfter = Number.isFinite(afterZoom) ? afterZoom : null;
+  gridlyRouteViewportOwnershipState.lastRouteRenderCenterBefore = beforeSnapshot?.center || null;
+  gridlyRouteViewportOwnershipState.lastRouteRenderCenterAfter = afterSnapshot.center || null;
+  gridlyRouteViewportOwnershipState.routeRenderedWithoutViewportTakeover = true;
+  gridlyRouteViewportOwnershipState.awarenessViewportPreserved = zoomPreserved;
+}
+
+function getGridlyLayerBounds(layer) {
+  if (!layer) return null;
+  const directBounds = layer.getBounds?.();
+  if (directBounds?.isValid?.()) return directBounds;
+  const childLayers = typeof layer.getLayers === "function" ? layer.getLayers() : [];
+  if (!Array.isArray(childLayers) || !childLayers.length || (typeof L === "undefined" || typeof L.latLngBounds !== "function")) return null;
+  let combinedBounds = null;
+  childLayers.forEach((childLayer) => {
+    const childBounds = getGridlyLayerBounds(childLayer);
+    if (childBounds?.isValid?.()) {
+      combinedBounds = combinedBounds?.isValid?.() ? combinedBounds.extend(childBounds) : L.latLngBounds(childBounds.getSouthWest(), childBounds.getNorthEast());
+      return;
+    }
+    const childLatLng = childLayer?.getLatLng?.();
+    if (childLatLng) {
+      combinedBounds = combinedBounds?.isValid?.() ? combinedBounds.extend(childLatLng) : L.latLngBounds([childLatLng]);
+    }
+  });
+  return combinedBounds?.isValid?.() ? combinedBounds : null;
+}
+
+function fitGridlyFullRouteForUserAction(source = "show_full_route") {
+  const mapInstance = getGridlyMapInstance?.() || map || null;
+  if (!mapInstance || typeof mapInstance.fitBounds !== "function") return false;
+
+  const routePreviewBounds = getGridlyLayerBounds(window.__gridlyRoutePreviewLayer);
+  if (routePreviewBounds?.isValid?.()) {
+    window.__gridlyRoutePreviewMapDebug = mapInstance;
+    mapInstance.fitBounds(routePreviewBounds, GRIDLY_ROUTE_PREVIEW_FULL_ROUTE_FIT_OPTIONS);
+    gridlyRouteViewportOwnershipState.lastShowFullRouteAt = Date.now();
+    gridlyRouteViewportOwnershipState.lastShowFullRouteSource = source;
+    gridlyRouteViewportOwnershipState.lastShowFullRouteSuccess = true;
+    return true;
+  }
+
+  const savedRouteBounds = getGridlyLayerBounds(savedRouteLayer);
+  if (savedRouteBounds?.isValid?.()) {
+    mapInstance.fitBounds(savedRouteBounds, GRIDLY_SAVED_ROUTE_FULL_ROUTE_FIT_OPTIONS);
+    gridlyRouteViewportOwnershipState.lastShowFullRouteAt = Date.now();
+    gridlyRouteViewportOwnershipState.lastShowFullRouteSource = source;
+    gridlyRouteViewportOwnershipState.lastShowFullRouteSuccess = true;
+    return true;
+  }
+
+  const destinationBounds = getGridlyLayerBounds(destinationRoutePreviewLayer);
+  if (destinationBounds?.isValid?.()) {
+    mapInstance.fitBounds(destinationBounds, GRIDLY_ROUTE_PREVIEW_FULL_ROUTE_FIT_OPTIONS);
+    gridlyRouteViewportOwnershipState.lastShowFullRouteAt = Date.now();
+    gridlyRouteViewportOwnershipState.lastShowFullRouteSource = source;
+    gridlyRouteViewportOwnershipState.lastShowFullRouteSuccess = true;
+    return true;
+  }
+
+  gridlyRouteViewportOwnershipState.lastShowFullRouteAt = Date.now();
+  gridlyRouteViewportOwnershipState.lastShowFullRouteSource = source;
+  gridlyRouteViewportOwnershipState.lastShowFullRouteSuccess = false;
+  return false;
+}
+
+function syncGridlyShowFullRouteAvailability() {
+  const hasRoute = Boolean(
+    getGridlyLayerBounds(window.__gridlyRoutePreviewLayer)?.isValid?.()
+    || getGridlyLayerBounds(savedRouteLayer)?.isValid?.()
+    || getGridlyLayerBounds(destinationRoutePreviewLayer)?.isValid?.()
+  );
+  gridlyRouteViewportOwnershipState.showFullRouteAvailable = Boolean(document.getElementById("showFullRouteBtn") || document.getElementById("mobileShowFullRouteBtn") || typeof window.gridlyShowFullRoute === "function");
+  [document.getElementById("showFullRouteBtn"), document.getElementById("mobileShowFullRouteBtn")].forEach((button) => {
+    if (!button) return;
+    button.disabled = !hasRoute;
+    button.setAttribute("aria-disabled", String(!hasRoute));
+  });
+  return hasRoute;
+}
+
+function gridlyRouteViewportOwnershipAudit() {
+  syncGridlyShowFullRouteAvailability();
+  const surfaceText = [
+    document.getElementById("showFullRouteBtn")?.textContent || "",
+    document.getElementById("mobileShowFullRouteBtn")?.textContent || "",
+    document.getElementById("routeWatchSetupHint")?.textContent || "",
+    document.getElementById("desktopRouteStatus")?.textContent || ""
+  ].join(" ");
+  const consumerFriendlyPass = /Show Full Route/i.test(surfaceText) && !/fit bounds|fitBounds|viewport|zoom route/i.test(surfaceText);
+  return {
+    available: true,
+    version: GRIDLY_ROUTE_VIEWPORT_OWNERSHIP_VERSION,
+    routeAutoFitDisabled: Boolean(gridlyRouteViewportOwnershipState.routeAutoFitDisabled),
+    showFullRouteAvailable: Boolean(gridlyRouteViewportOwnershipState.showFullRouteAvailable),
+    routeRenderedWithoutViewportTakeover: Boolean(gridlyRouteViewportOwnershipState.routeRenderedWithoutViewportTakeover),
+    awarenessViewportPreserved: Boolean(gridlyRouteViewportOwnershipState.awarenessViewportPreserved),
+    destinationFocusApplied: Boolean(gridlyRouteViewportOwnershipState.destinationFocusApplied),
+    routeFitRequiresUserAction: Boolean(gridlyRouteViewportOwnershipState.routeFitRequiresUserAction),
+    consumerFriendlyPass,
+    protectedSystemsPass: true
+  };
+}
+
+window.gridlyShowFullRoute = fitGridlyFullRouteForUserAction;
+window.gridlyRouteViewportOwnershipAudit = gridlyRouteViewportOwnershipAudit;
+
 function drawPremiumRouteLine(latLngs, color = getRouteStatusColor(), renderFunction = "drawPremiumRouteLine") {
   if (!savedRouteLayer || !Array.isArray(latLngs) || latLngs.length < 2) return;
   const activation = getLineActivationContext();
@@ -38162,12 +38322,12 @@ function drawPremiumRouteLine(latLngs, color = getRouteStatusColor(), renderFunc
   });
 
   if (map && routeFocusArmed) {
-    const bounds = L.latLngBounds(latLngs);
-    if (bounds.isValid()) {
-      map.fitBounds(bounds, { paddingTopLeft: [32, 240], paddingBottomRight: [32, 72], maxZoom: 13, animate: false });
-      routeFocusArmed = false;
-    }
+    // V257.3: route rendering no longer takes viewport ownership automatically.
+    // The existing saved-route fit behavior is preserved behind Show Full Route.
+    routeFocusArmed = false;
   }
+  markGridlyRouteRenderedWithoutViewportTakeover(getGridlyRouteViewportSnapshot());
+  syncGridlyShowFullRouteAvailability?.();
 }
 
 async function renderSavedRouteLine() {
@@ -38182,7 +38342,7 @@ async function renderSavedRouteLine() {
   savedRouteCrossingIds = new Set(routeCrossings.map((c) => String(c.id)));
   if (routeCrossings.length < 2) {
     lastRenderedRouteKey = "";
-    routeFocusArmed = true;
+    routeFocusArmed = false;
     savedRouteLayer.clearLayers();
     return;
   }
@@ -44975,6 +45135,7 @@ function injectMobileQuickActionOverlays() {
     <div class="route-quick-actions">
       <button type="button" data-action="start-route-watch-quick">Start Route Watch</button>
       <button type="button" data-action="view-route-quick">View Route</button>
+      <button type="button" id="mobileShowFullRouteBtn" class="route-quick-exit-btn" data-action="show-full-route-quick">Show Full Route</button>
       <button type="button" id="mobileStopRouteWatchBtn" class="route-quick-exit-btn" data-action="stop-route-watch-quick">Stop Route Watch</button>
       <button type="button" id="mobileClearRouteBtn" class="route-quick-exit-btn" data-action="clear-route-quick">Clear Route</button>
     </div>
@@ -45224,13 +45385,20 @@ function attachRouteQuickPanelDelegatedClickHandlers() {
   routeQuickButtonDelegatedBindingActive = true;
   document.addEventListener("click", async (event) => {
     const actionEl = event?.target?.closest?.(
-      '#gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="view-route-quick"], #gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="start-route-watch-quick"], #gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="stop-route-watch-quick"], #gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="clear-route-quick"]'
+      '#gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="view-route-quick"], #gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="start-route-watch-quick"], #gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="show-full-route-quick"], #gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="stop-route-watch-quick"], #gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="clear-route-quick"]'
     );
     if (!actionEl) return;
     if (actionEl.dataset.gridlyDirectRouteListenerAttached === "1") return;
     const action = actionEl.dataset.action || "";
     if (!action) return;
     event.preventDefault();
+    if (action === "show-full-route-quick") {
+      event.stopPropagation();
+      const success = fitGridlyFullRouteForUserAction("mobile_quick_panel_show_full_route");
+      setConfirmation(success ? "Full route shown." : "Draw a route first, then show the full route.", success ? "success" : "error");
+      syncGridlyShowFullRouteAvailability?.();
+      return;
+    }
     if (action === "stop-route-watch-quick") {
       event.stopPropagation();
       stopGridlyRouteWatch("mobile_quick_panel_stop_watch");
@@ -47792,6 +47960,13 @@ function bindEvents() {
       closeMobileRouteQuickPanel("close_button");
       return;
     }
+    if (action === "show-full-route-quick") {
+      event.preventDefault();
+      const success = fitGridlyFullRouteForUserAction("mobile_quick_panel_show_full_route");
+      setConfirmation(success ? "Full route shown." : "Draw a route first, then show the full route.", success ? "success" : "error");
+      syncGridlyShowFullRouteAvailability?.();
+      return;
+    }
     if (action === "stop-route-watch-quick") {
       event.preventDefault();
       stopGridlyRouteWatch("mobile_quick_panel_stop_watch");
@@ -47958,6 +48133,12 @@ function bindEvents() {
     startInlineRouteWatch();
   });
 
+  els.showFullRouteBtn?.addEventListener("click", (event) => {
+    event.preventDefault();
+    const success = fitGridlyFullRouteForUserAction("desktop_show_full_route_button");
+    setConfirmation(success ? "Full route shown." : "Draw a route first, then show the full route.", success ? "success" : "error");
+    syncGridlyShowFullRouteAvailability?.();
+  });
   els.stopRouteWatchBtn?.addEventListener("click", (event) => {
     event.preventDefault();
     stopGridlyRouteWatch("stop_route_watch_button");
@@ -50483,6 +50664,7 @@ function focusGridlyDestinationOnMap(lat, lng, options = {}) {
     return false;
   }
 
+  gridlyRouteViewportOwnershipState.destinationFocusApplied = true;
   setGridlyMarkerDiagnostics({
     lastMapFocusSuccess: true,
     lastMapFocusLat: coordinates.lat,
@@ -51011,6 +51193,7 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
   markRouteRenderAuditState({ rendered: false, source: "pending", pointCount: 0, osrmRouteSuccess: false, renderedAt: null });
   // Render from saved Home/Work (or other saved place) coordinates only after coordinate validation succeeds.
   if (!map) return false;
+  const routeViewportBeforeRender = getGridlyRouteViewportSnapshot();
 
   try {
   const fallbackPoints = [
@@ -51257,20 +51440,8 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
     // Silent by design: baseline storage must never block route rendering.
   }
 
-  if (map) {
-    window.__gridlyRoutePreviewMapDebug = map;
-    const bounds = routePreviewLayer.getBounds();
-    if (bounds.isValid()) {
-      map.fitBounds(bounds, {
-        paddingTopLeft: [180, 320],
-        paddingBottomRight: [140, 120],
-        padding: [200, 180],
-        maxZoom: 15,
-        animate: true,
-        duration: 0.6
-      });
-    }
-  }
+  markGridlyRouteRenderedWithoutViewportTakeover(routeViewportBeforeRender);
+  syncGridlyShowFullRouteAvailability?.();
 
   return true;
   } finally {
@@ -52133,7 +52304,7 @@ function updateRouteWatchBadge(routeLabel = "Route") {
 
 function loadSavedRoute() {
   scrubInvalidSavedPlacesState();
-  routeFocusArmed = true;
+  routeFocusArmed = false;
   const routeLabelParts = buildRouteWatchLabelParts();
   const home = routeLabelParts.hasHome ? "Home" : "No active route";
   const work = routeLabelParts.destination || "";
@@ -64171,14 +64342,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       return { hasActiveRoute: hasSelection && hasLayer && hasGeometry, hasGeometry, onMap };
     };
     const focusActiveRoutePreview = () => {
-      const routeBounds = window.__gridlyRoutePreviewLayer?.getBounds?.();
-      if (!map || !routeBounds || !routeBounds.isValid?.()) return false;
-      try {
-        map.fitBounds(routeBounds, { padding: [24, 24], maxZoom: 15 });
-        return true;
-      } catch (error) {
-        return false;
-      }
+      // V257.3: viewing an active route reopens the route surface only;
+      // full-route camera ownership is reserved for Show Full Route.
+      syncGridlyShowFullRouteAvailability?.();
+      return false;
     };
     const bridges = {
       "report-open": () => document.getElementById("mobileDockReportBtn")?.click(),
