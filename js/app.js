@@ -18719,7 +18719,7 @@ function getGridlyCurrentLocationRouteCoordinate() {
   return getGridlyVisibleUserLocationDotCoordinate() || getGridlyCurrentLocationStateCoordinate();
 }
 
-const GRIDLY_DESTINATION_AUTO_LOCATION_TIMEOUT_MS = 2500;
+const GRIDLY_DESTINATION_AUTO_LOCATION_TIMEOUT_MS = 6000;
 const GRIDLY_DESTINATION_AUTO_LOCATION_GEO_OPTIONS = Object.freeze({
   enableHighAccuracy: true,
   maximumAge: 60000
