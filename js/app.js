@@ -54712,7 +54712,7 @@ function collectGridlySettingsFromUi() {
   });
 }
 
-const GRIDLY_FEEDBACK_FLOW_VERSION = "V259.1D";
+const GRIDLY_FEEDBACK_FLOW_VERSION = "V259.2";
 const GRIDLY_FEEDBACK_EMAIL_RECIPIENT = "feedback@gridly.app";
 const GRIDLY_FEEDBACK_CATEGORIES = Object.freeze(["Bug", "Suggestion", "Map Issue", "Route Issue", "General Comment"]);
 
@@ -54856,11 +54856,14 @@ function buildGridlyFeedbackFlowHtml({ v2 = false } = {}) {
   return `
     <section class="settings-feedback-flow" data-gridly-feedback-flow hidden aria-label="Feedback">
       <h3>Feedback</h3>
-      <p class="settings-placeholder-note">Prepare a feedback email for Gridly. Nothing is sent until you choose Send in your email app.</p>
+      <p class="settings-placeholder-note settings-feedback-helper">Nothing is sent until you choose Send in your email app.</p>
       <fieldset class="settings-feedback-category" data-gridly-feedback-categories>
         <legend>Category</legend>
-        ${GRIDLY_FEEDBACK_CATEGORIES.map((category) => `<label><input type="radio" name="${categoryName}" value="${escapeGridlySettingsAttribute(category)}" data-gridly-feedback-category required> ${escapeGridlySettingsAttribute(category)}</label>`).join("")}
+        <div class="settings-feedback-category-grid" data-gridly-feedback-category-chips>
+          ${GRIDLY_FEEDBACK_CATEGORIES.map((category, index) => `<label class="settings-feedback-chip"><input type="radio" name="${categoryName}" value="${escapeGridlySettingsAttribute(category)}" data-gridly-feedback-category${index === 0 ? " required" : ""}><span class="settings-feedback-chip-text">${escapeGridlySettingsAttribute(category)}</span></label>`).join("")}
+        </div>
       </fieldset>
+      <p class="settings-feedback-prompt">What would you like to tell us?</p>
       <label class="settings-feedback-message-label">Message</label>
       <textarea data-gridly-feedback-message rows="5" maxlength="1200" placeholder="Tell us what happened or what would make Gridly clearer." required></textarea>
       <button class="primary-btn compact-btn" type="button" data-gridly-feedback-prepare${actionAttr}>Prepare Feedback Email</button>
@@ -55853,6 +55856,86 @@ function gridlyBuildFeedbackFlowAudit() {
   };
 }
 
+function gridlyBuildFeedbackExperienceAudit() {
+  const findings = [];
+  const hasDocument = typeof document !== "undefined";
+  const visible = (node) => {
+    if (!node || !hasDocument) return false;
+    try {
+      if (node.hidden || node.hasAttribute?.("hidden") || node.hasAttribute?.("inert")) return false;
+      const style = typeof getComputedStyle === "function" ? getComputedStyle(node) : null;
+      if (style && (style.display === "none" || style.visibility === "hidden")) return false;
+      return true;
+    } catch (_error) {
+      return true;
+    }
+  };
+  const text = (node) => String(node?.textContent || "").replace(/\s+/g, " ").trim();
+  const activeSettingsSheet = hasDocument ? getGridlyActivePortraitSettingsSheet() : null;
+  const auditScope = activeSettingsSheet || (hasDocument ? document : null);
+  const feedbackFlowRoot = auditScope?.querySelector?.("[data-gridly-feedback-flow]") || null;
+  const categoryInputs = feedbackFlowRoot ? Array.from(feedbackFlowRoot.querySelectorAll("[data-gridly-feedback-category]")) : [];
+  const categoryLabels = categoryInputs.map((input) => String(input.value || "").trim()).filter(Boolean);
+  const chipWrap = feedbackFlowRoot?.querySelector?.("[data-gridly-feedback-category-chips]") || null;
+  const chipLabels = categoryInputs.map((input) => input.closest?.(".settings-feedback-chip")).filter(Boolean);
+  const messageField = feedbackFlowRoot?.querySelector?.("[data-gridly-feedback-message]") || null;
+  const prepareButton = feedbackFlowRoot?.querySelector?.("[data-gridly-feedback-prepare]") || (!activeSettingsSheet && hasDocument ? document.getElementById("settingsPrepareFeedbackEmailBtn") : null);
+  const helperCopy = feedbackFlowRoot?.querySelector?.(".settings-feedback-helper") || null;
+  const messagePrompt = feedbackFlowRoot?.querySelector?.(".settings-feedback-prompt") || null;
+
+  const categoriesRenderedAsChips = Boolean(
+    chipWrap
+    && chipLabels.length === GRIDLY_FEEDBACK_CATEGORIES.length
+    && GRIDLY_FEEDBACK_CATEGORIES.every((category) => categoryLabels.includes(category))
+  );
+  const categoryTouchTargetsConsumerFriendly = Boolean(chipLabels.length === GRIDLY_FEEDBACK_CATEGORIES.length && chipLabels.every((label) => {
+    try {
+      const style = typeof getComputedStyle === "function" ? getComputedStyle(label) : null;
+      const minHeight = parseFloat(style?.minHeight || "0");
+      const paddingY = parseFloat(style?.paddingTop || "0") + parseFloat(style?.paddingBottom || "0");
+      return label.classList.contains("settings-feedback-chip") && (minHeight >= 44 || paddingY >= 20);
+    } catch (_error) {
+      return label.classList.contains("settings-feedback-chip");
+    }
+  }));
+  const messageFieldVisible = Boolean(messageField && visible(messageField));
+  const prepareButtonVisible = Boolean(prepareButton && visible(prepareButton));
+  const visualHierarchyPass = Boolean(
+    feedbackFlowRoot
+    && /^Feedback$/i.test(text(feedbackFlowRoot.querySelector("h3")))
+    && /What would you like to tell us\?/i.test(text(messagePrompt))
+    && /Nothing is sent until you choose Send in your email app\./i.test(text(helperCopy))
+    && categoriesRenderedAsChips
+  );
+
+  if (!feedbackFlowRoot) findings.push("Feedback form is not present in the current DOM.");
+  if (!categoriesRenderedAsChips) findings.push("Feedback categories are not rendered as Gridly-style chips.");
+  if (!categoryTouchTargetsConsumerFriendly) findings.push("Feedback category chip touch targets are below the consumer-friendly target size.");
+  if (!messageFieldVisible) findings.push("Feedback message field is not visible.");
+  if (!prepareButtonVisible) findings.push("Prepare Feedback Email action is not visible.");
+  if (!visualHierarchyPass) findings.push("Feedback copy hierarchy does not match the V259.2 presentation requirements.");
+
+  const consumerFriendlyPass = Boolean(
+    categoriesRenderedAsChips
+    && categoryTouchTargetsConsumerFriendly
+    && messageFieldVisible
+    && prepareButtonVisible
+    && visualHierarchyPass
+  );
+
+  return {
+    available: true,
+    version: "V259.2",
+    categoriesRenderedAsChips,
+    categoryTouchTargetsConsumerFriendly,
+    messageFieldVisible,
+    prepareButtonVisible,
+    visualHierarchyPass,
+    consumerFriendlyPass,
+    findings
+  };
+}
+
 function gridlyBuildFeedbackSystemAudit() {
   return gridlyBuildFeedbackFlowAudit();
 }
@@ -55863,9 +55946,13 @@ window.gridlyFeedbackFlowAudit = function gridlyFeedbackFlowAudit() {
 window.gridlyFeedbackSystemAudit = function gridlyFeedbackSystemAudit() {
   return gridlyBuildFeedbackSystemAudit();
 };
+window.gridlyFeedbackExperienceAudit = function gridlyFeedbackExperienceAudit() {
+  return gridlyBuildFeedbackExperienceAudit();
+};
 if (typeof exposeGridlyAuditHelper === "function") {
   exposeGridlyAuditHelper("gridlyFeedbackFlowAudit", window.gridlyFeedbackFlowAudit);
   exposeGridlyAuditHelper("gridlyFeedbackSystemAudit", window.gridlyFeedbackSystemAudit);
+  exposeGridlyAuditHelper("gridlyFeedbackExperienceAudit", window.gridlyFeedbackExperienceAudit);
 }
 
 window.gridlySettingsAudit = function gridlySettingsAudit() {
