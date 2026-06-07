@@ -18228,6 +18228,12 @@ body[data-layout-mode="portrait"] .mobile-route-exit-control[hidden],
   width: 100%;
 }
 
+.gridly-destination-impact-show-full-route {
+  border-color: rgba(56, 189, 248, 0.5);
+  color: #e8fbff;
+  background: rgba(56, 189, 248, 0.14);
+}
+
 .gridly-destination-impact-clear-route {
   border-color: rgba(125, 211, 252, 0.32);
   color: #dff7ff;

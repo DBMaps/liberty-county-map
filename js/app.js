@@ -16083,6 +16083,7 @@ function syncGridlyVisibleRouteExitControls() {
   const { routeIsActive, routeIsMonitoring } = getGridlyRouteExitSurfaceState();
   const legacyActionBar = document.getElementById("mobileRouteActionBar");
   const routeCard = document.querySelector(".map-card > .mobile-destination-command") || null;
+  const routeDetailsShowFullRouteButton = document.getElementById("gridlyDestinationImpactShowFullRouteBtn");
   const routeDetailsClearButton = document.getElementById("gridlyDestinationImpactClearRouteBtn");
   const routeDetailsStopButton = document.getElementById("gridlyDestinationImpactStopWatchBtn");
 
@@ -16097,6 +16098,16 @@ function syncGridlyVisibleRouteExitControls() {
       button.disabled = true;
       button.setAttribute("aria-disabled", "true");
     });
+  }
+
+  const routeGeometryExists = typeof getGridlyFullRouteGeometryExists === "function"
+    ? getGridlyFullRouteGeometryExists()
+    : routeIsActive;
+
+  if (routeDetailsShowFullRouteButton) {
+    routeDetailsShowFullRouteButton.hidden = !routeGeometryExists;
+    routeDetailsShowFullRouteButton.disabled = !routeGeometryExists;
+    routeDetailsShowFullRouteButton.setAttribute("aria-disabled", routeDetailsShowFullRouteButton.disabled ? "true" : "false");
   }
 
   if (routeDetailsClearButton) {
@@ -16125,6 +16136,11 @@ function bindGridlyVisibleRouteExitControls() {
       handler();
     });
   };
+  bindButton("gridlyDestinationImpactShowFullRouteBtn", () => {
+    const success = fitGridlyFullRouteForUserAction("route_details_show_full_route");
+    setConfirmation(success ? "Full route shown." : "Draw a route first, then show the full route.", success ? "success" : "error");
+    syncGridlyShowFullRouteAvailability?.();
+  });
   bindButton("gridlyDestinationImpactClearRouteBtn", () => {
     closeGridlyDestinationImpactPane();
     clearGridlyRoute("route_details_clear_route");
@@ -17801,6 +17817,7 @@ function getGridlyDestinationImpactPaneElements() {
     backdrop: document.getElementById("gridlyDestinationImpactPaneBackdrop"),
     close: document.getElementById("gridlyDestinationImpactPaneClose"),
     done: document.getElementById("gridlyDestinationImpactPaneDone"),
+    showFullRoute: document.getElementById("gridlyDestinationImpactShowFullRouteBtn"),
     clearRoute: document.getElementById("gridlyDestinationImpactClearRouteBtn"),
     stopWatch: document.getElementById("gridlyDestinationImpactStopWatchBtn"),
     summary: document.getElementById("gridlyDestinationImpactPaneSummary"),
@@ -17937,6 +17954,7 @@ function openGridlyDestinationImpactPane() {
   paneEls.pane.setAttribute("aria-hidden", "false");
   paneEls.trigger?.setAttribute("aria-expanded", "true");
   GRIDLY_DESTINATION_IMPACT_PANE_STATE.paneOpen = true;
+  syncGridlyShowFullRouteAvailability?.();
   requestAnimationFrame(() => paneEls.close?.focus?.());
   return true;
 }
@@ -38232,24 +38250,57 @@ function fitGridlyFullRouteForUserAction(source = "show_full_route") {
   return false;
 }
 
-function syncGridlyShowFullRouteAvailability() {
-  const hasRoute = Boolean(
+function getGridlyFullRouteGeometryExists() {
+  return Boolean(
     getGridlyLayerBounds(window.__gridlyRoutePreviewLayer)?.isValid?.()
     || getGridlyLayerBounds(savedRouteLayer)?.isValid?.()
     || getGridlyLayerBounds(destinationRoutePreviewLayer)?.isValid?.()
   );
-  gridlyRouteViewportOwnershipState.showFullRouteAvailable = Boolean(document.getElementById("showFullRouteBtn") || document.getElementById("mobileShowFullRouteBtn") || typeof window.gridlyShowFullRoute === "function");
-  [document.getElementById("showFullRouteBtn"), document.getElementById("mobileShowFullRouteBtn")].forEach((button) => {
+}
+
+function isGridlyPortraitRouteDetailsShowFullRouteDiscoverable() {
+  const button = document.getElementById("gridlyDestinationImpactShowFullRouteBtn");
+  const pane = button?.closest?.("#gridlyDestinationImpactPane");
+  const actions = button?.closest?.(".gridly-destination-impact-actions");
+  if (!button || !pane || !actions || button.hidden || button.disabled || button.getAttribute("aria-disabled") === "true") return false;
+  if (pane.hidden || pane.getAttribute("aria-hidden") === "true") return false;
+  const isPortraitRouteSurface = document.body?.getAttribute("data-layout-mode") === "portrait"
+    || (typeof window !== "undefined" && typeof window.matchMedia === "function" && window.matchMedia("(max-width: 760px) and (orientation: portrait)").matches);
+  if (!isPortraitRouteSurface) return false;
+  const isRendered = (element) => {
+    const style = typeof window !== "undefined" && typeof window.getComputedStyle === "function" ? window.getComputedStyle(element) : null;
+    if (style && (style.display === "none" || style.visibility === "hidden" || Number(style.opacity || 1) <= 0 || style.pointerEvents === "none")) return false;
+    const rect = typeof element.getBoundingClientRect === "function" ? element.getBoundingClientRect() : null;
+    if (!rect || rect.width <= 0 || rect.height <= 0) return false;
+    const viewportWidth = window.visualViewport?.width || window.innerWidth || document.documentElement.clientWidth || 0;
+    const viewportHeight = window.visualViewport?.height || window.innerHeight || document.documentElement.clientHeight || 0;
+    return rect.bottom > 0 && rect.right > 0 && rect.top < viewportHeight && rect.left < viewportWidth;
+  };
+  return isRendered(pane) && isRendered(actions) && isRendered(button);
+}
+
+function syncGridlyShowFullRouteAvailability() {
+  const hasRoute = getGridlyFullRouteGeometryExists();
+  const buttons = [
+    document.getElementById("showFullRouteBtn"),
+    document.getElementById("mobileShowFullRouteBtn"),
+    document.getElementById("gridlyDestinationImpactShowFullRouteBtn")
+  ];
+  buttons.forEach((button) => {
     if (!button) return;
+    if (button.id === "gridlyDestinationImpactShowFullRouteBtn") button.hidden = !hasRoute;
     button.disabled = !hasRoute;
     button.setAttribute("aria-disabled", String(!hasRoute));
   });
+  gridlyRouteViewportOwnershipState.showFullRouteAvailable = Boolean(hasRoute && isGridlyPortraitRouteDetailsShowFullRouteDiscoverable());
   return hasRoute;
 }
 
 function gridlyRouteViewportOwnershipAudit() {
-  syncGridlyShowFullRouteAvailability();
+  const routeGeometryExists = syncGridlyShowFullRouteAvailability();
+  const routeDetailsShowFullRouteVisible = isGridlyPortraitRouteDetailsShowFullRouteDiscoverable();
   const surfaceText = [
+    document.getElementById("gridlyDestinationImpactShowFullRouteBtn")?.textContent || "",
     document.getElementById("showFullRouteBtn")?.textContent || "",
     document.getElementById("mobileShowFullRouteBtn")?.textContent || "",
     document.getElementById("routeWatchSetupHint")?.textContent || "",
@@ -38260,6 +38311,8 @@ function gridlyRouteViewportOwnershipAudit() {
     available: true,
     version: GRIDLY_ROUTE_VIEWPORT_OWNERSHIP_VERSION,
     routeAutoFitDisabled: Boolean(gridlyRouteViewportOwnershipState.routeAutoFitDisabled),
+    routeGeometryExists: Boolean(routeGeometryExists),
+    routeDetailsShowFullRouteVisible: Boolean(routeDetailsShowFullRouteVisible),
     showFullRouteAvailable: Boolean(gridlyRouteViewportOwnershipState.showFullRouteAvailable),
     routeRenderedWithoutViewportTakeover: Boolean(gridlyRouteViewportOwnershipState.routeRenderedWithoutViewportTakeover),
     awarenessViewportPreserved: Boolean(gridlyRouteViewportOwnershipState.awarenessViewportPreserved),
