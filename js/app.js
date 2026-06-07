@@ -18507,6 +18507,68 @@ function getGridlySelectedRouteStartOriginCandidate() {
   return { ...coords, label: formatGridlyRouteOriginLabel(startPlace.label || startPlace.name || "Saved Place", source), source };
 }
 
+function getGridlyCurrentLocationStateCoordinate() {
+  const candidates = [
+    typeof userLocation !== "undefined" ? userLocation : null,
+    typeof window !== "undefined" ? window.gridlyUserLocation : null,
+    typeof window !== "undefined" ? window.__gridlyUserLocation : null,
+    typeof window !== "undefined" ? window.gridlyCurrentLocation : null,
+    typeof window !== "undefined" ? window.__gridlyCurrentLocation : null
+  ];
+  for (const candidate of candidates) {
+    const coords = normalizeCoordinatePair(
+      candidate?.lat ?? candidate?.latitude ?? candidate?.coords?.latitude,
+      candidate?.lng ?? candidate?.lon ?? candidate?.longitude ?? candidate?.coords?.longitude
+    );
+    if (coords) return coords;
+  }
+  return null;
+}
+
+function getGridlyVisibleUserLocationDotCoordinate() {
+  if (!userMarker || !map) return null;
+  try {
+    if (typeof map.hasLayer === "function" && !map.hasLayer(userMarker)) return null;
+    const markerLatLng = typeof userMarker.getLatLng === "function" ? userMarker.getLatLng() : null;
+    return normalizeCoordinatePair(markerLatLng?.lat, markerLatLng?.lng);
+  } catch (_error) {
+    return null;
+  }
+}
+
+function getGridlyCurrentLocationRouteCoordinate() {
+  return getGridlyVisibleUserLocationDotCoordinate() || getGridlyCurrentLocationStateCoordinate();
+}
+
+function getGridlyCoordinateDistanceMiles(a, b) {
+  const first = normalizeCoordinatePair(a?.lat, a?.lng);
+  const second = normalizeCoordinatePair(b?.lat, b?.lng);
+  if (!first || !second) return null;
+  if (typeof getDistanceMiles === "function") return getDistanceMiles(first.lat, first.lng, second.lat, second.lng);
+  return null;
+}
+
+function getGridlyFirstRouteGeometryCoordinate(preview = getGridlyDestinationRoutePreviewState()) {
+  if (!Array.isArray(preview?.geometry) || !preview.geometry.length) return null;
+  if (typeof normalizeGridlyDestinationRoutePoint === "function") return normalizeGridlyDestinationRoutePoint(preview.geometry[0]);
+  const point = preview.geometry[0];
+  if (Array.isArray(point)) return normalizeCoordinatePair(point[0], point[1]);
+  return normalizeCoordinatePair(point?.lat ?? point?.latitude, point?.lng ?? point?.lon ?? point?.longitude);
+}
+
+function scheduleGridlyDestinationRoutePreviewOriginRefresh(reason = "current_location_updated") {
+  if (typeof buildGridlyDestinationRoutePreview !== "function") return false;
+  const preview = typeof getGridlyDestinationRoutePreviewState === "function" ? getGridlyDestinationRoutePreviewState() : (window.GridlyDestinationRoutePreview || {});
+  const searchState = typeof ensureGridlySearchState === "function" ? ensureGridlySearchState() : null;
+  const selectedDestination = typeof normalizeGridlySearchResult === "function"
+    ? normalizeGridlySearchResult(searchState?.selectedDestination)
+    : searchState?.selectedDestination;
+  if (!preview?.active && !selectedDestination) return false;
+  window.__gridlyDestinationRouteOriginRefreshReason = reason;
+  window.setTimeout?.(() => buildGridlyDestinationRoutePreview({ reason, originRefresh: true }), 0);
+  return true;
+}
+
 function getGridlyDestinationRouteOrigin(options = {}) {
   const destinationCoords = normalizeCoordinatePair(options?.destination?.lat, options?.destination?.lng);
   const skippedSources = [];
@@ -18517,8 +18579,9 @@ function getGridlyDestinationRouteOrigin(options = {}) {
   const mapCenter = typeof map?.getCenter === "function" ? map.getCenter() : null;
   const centerCoords = normalizeCoordinatePair(mapCenter?.lat ?? defaultCenter[0], mapCenter?.lng ?? defaultCenter[1]);
 
+  const currentLocationRouteCoords = getGridlyCurrentLocationRouteCoordinate();
   const candidates = [
-    { coords: normalizeCoordinatePair(userLocation?.lat, userLocation?.lng), label: "Current Location", source: "current_location", fallbackReason: "Current Location is available." },
+    { coords: currentLocationRouteCoords, label: "Current Location", source: "current_location", fallbackReason: "Current Location is available." },
     selectedStart ? { coords: selectedStart, label: selectedStart.label, source: selectedStart.source, fallbackReason: "Current Location is unavailable; using your selected start place." } : null,
     { coords: normalizeCoordinatePair(savedHome?.lat, savedHome?.lng), label: savedHome?.label || savedHome?.name || "Home", source: "home", fallbackReason: "Current Location is unavailable; using Home." },
     { coords: normalizeCoordinatePair(savedWork?.lat, savedWork?.lng), label: savedWork?.label || savedWork?.name || "Work", source: "work", fallbackReason: "Current Location is unavailable; using Work." },
@@ -23388,6 +23451,8 @@ function setGridlyUserLocation(candidate) {
     window.__gridlyCurrentLocation = { ...userLocation };
   }
   renderUserLocationDot();
+  if (typeof updateGridlyRouteOwnershipSurface === "function") updateGridlyRouteOwnershipSurface();
+  if (candidate?.suppressRouteOriginRefresh !== true) scheduleGridlyDestinationRoutePreviewOriginRefresh("current_location_updated");
   return true;
 }
 
@@ -52037,11 +52102,19 @@ function gridlyRouteOriginAudit() {
     ? getGridlyDestinationRoutePreviewState()
     : (window.GridlyDestinationRoutePreview || {});
   const destination = preview?.destination || selectedDestination || activeDestinationPlace || null;
-  const currentLocationAvailable = Boolean(normalizeCoordinatePair(userLocation?.lat, userLocation?.lng));
+  const currentLocationDotCoordinate = getGridlyVisibleUserLocationDotCoordinate();
+  const currentLocationStateCoordinate = getGridlyCurrentLocationStateCoordinate();
+  const currentLocationDotVisible = Boolean(currentLocationDotCoordinate);
+  const currentLocationStateAvailable = Boolean(currentLocationStateCoordinate);
+  const currentLocationAvailable = Boolean(currentLocationDotVisible || currentLocationStateAvailable);
   const actualOrigin = preview?.source || getGridlyDestinationRouteOrigin({ destination });
   const ownership = updateGridlyRouteOwnershipSurface();
   const actualRouteOrigin = formatGridlyRouteOriginLabel(actualOrigin?.label || ownership.originLabel, actualOrigin?.source || ownership.originSource);
   const displayedRouteOrigin = formatGridlyRouteOriginLabel(ownership.originLabel, ownership.originSource);
+  const actualRouteOriginCoordinate = normalizeCoordinatePair(actualOrigin?.lat, actualOrigin?.lng);
+  const routeGeometryOriginCoordinate = getGridlyFirstRouteGeometryCoordinate(preview);
+  const originGeometryDistanceMiles = getGridlyCoordinateDistanceMiles(actualRouteOriginCoordinate, routeGeometryOriginCoordinate);
+  const originGeometryMatch = originGeometryDistanceMiles === null ? false : originGeometryDistanceMiles <= 0.15;
   const surfaceText = [
     document.getElementById("routeOwnershipOrigin")?.textContent || "",
     document.getElementById("routeOwnershipDestination")?.textContent || "",
@@ -52063,8 +52136,16 @@ function gridlyRouteOriginAudit() {
     available: true,
     version: "V257.4",
     currentLocationAvailable,
+    currentLocationDotVisible,
+    currentLocationStateAvailable,
+    currentLocationDotCoordinate,
+    currentLocationStateCoordinate,
     actualRouteOrigin,
+    actualRouteOriginCoordinate,
+    routeGeometryOriginCoordinate,
+    originGeometryDistanceMiles,
     displayedRouteOrigin,
+    originGeometryMatch,
     originOwnershipMatch,
     fallbackUsed,
     fallbackReason,
