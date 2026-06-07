@@ -904,15 +904,18 @@
             <button type="button" class="secondary-btn compact-btn" id="settingsFeedbackBtn" aria-expanded="false" aria-controls="settingsFeedbackFlow">Send Feedback</button>
             <section class="settings-feedback-flow" id="settingsFeedbackFlow" data-gridly-feedback-flow hidden aria-labelledby="settingsFeedbackTitle">
               <h3 id="settingsFeedbackTitle">Feedback</h3>
-              <p class="settings-placeholder-note">Prepare a feedback email for Gridly. Nothing is sent until you choose Send in your email app.</p>
+              <p class="settings-placeholder-note settings-feedback-helper">Nothing is sent until you choose Send in your email app.</p>
               <fieldset class="settings-feedback-category" data-gridly-feedback-categories>
                 <legend>Category</legend>
-                <label><input type="radio" name="gridlyFeedbackCategory" value="Bug" data-gridly-feedback-category required> Bug</label>
-                <label><input type="radio" name="gridlyFeedbackCategory" value="Suggestion" data-gridly-feedback-category> Suggestion</label>
-                <label><input type="radio" name="gridlyFeedbackCategory" value="Map Issue" data-gridly-feedback-category> Map Issue</label>
-                <label><input type="radio" name="gridlyFeedbackCategory" value="Route Issue" data-gridly-feedback-category> Route Issue</label>
-                <label><input type="radio" name="gridlyFeedbackCategory" value="General Comment" data-gridly-feedback-category> General Comment</label>
+                <div class="settings-feedback-category-grid" data-gridly-feedback-category-chips>
+                  <label class="settings-feedback-chip"><input type="radio" name="gridlyFeedbackCategory" value="Bug" data-gridly-feedback-category required><span class="settings-feedback-chip-text">Bug</span></label>
+                  <label class="settings-feedback-chip"><input type="radio" name="gridlyFeedbackCategory" value="Suggestion" data-gridly-feedback-category><span class="settings-feedback-chip-text">Suggestion</span></label>
+                  <label class="settings-feedback-chip"><input type="radio" name="gridlyFeedbackCategory" value="Map Issue" data-gridly-feedback-category><span class="settings-feedback-chip-text">Map Issue</span></label>
+                  <label class="settings-feedback-chip"><input type="radio" name="gridlyFeedbackCategory" value="Route Issue" data-gridly-feedback-category><span class="settings-feedback-chip-text">Route Issue</span></label>
+                  <label class="settings-feedback-chip"><input type="radio" name="gridlyFeedbackCategory" value="General Comment" data-gridly-feedback-category><span class="settings-feedback-chip-text">General Comment</span></label>
+                </div>
               </fieldset>
+              <p class="settings-feedback-prompt">What would you like to tell us?</p>
               <label class="settings-feedback-message-label" for="settingsFeedbackMessage">Message</label>
               <textarea id="settingsFeedbackMessage" data-gridly-feedback-message rows="5" maxlength="1200" placeholder="Tell us what happened or what would make Gridly clearer." required></textarea>
               <button type="button" class="primary-btn compact-btn" id="settingsPrepareFeedbackEmailBtn" data-gridly-feedback-prepare>Prepare Feedback Email</button>
