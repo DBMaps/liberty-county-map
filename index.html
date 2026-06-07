@@ -901,8 +901,23 @@
           <div class="settings-list-detail">
             <p><strong>Gridly V198</strong><br><span id="settingsBuildValue">Build 1710</span></p>
             <button type="button" class="secondary-btn compact-btn" id="settingsReplaySetupBtn">Replay Setup</button>
-            <button type="button" class="secondary-btn compact-btn" id="settingsFeedbackBtn">Send Feedback</button>
-            <p class="settings-placeholder-note" id="settingsFeedbackStatus" aria-live="polite">Feedback entry point is a placeholder for this phase.</p>
+            <button type="button" class="secondary-btn compact-btn" id="settingsFeedbackBtn" aria-expanded="false" aria-controls="settingsFeedbackFlow">Send Feedback</button>
+            <section class="settings-feedback-flow" id="settingsFeedbackFlow" data-gridly-feedback-flow hidden aria-labelledby="settingsFeedbackTitle">
+              <h3 id="settingsFeedbackTitle">Feedback</h3>
+              <p class="settings-placeholder-note">Prepare a feedback email for Gridly. Nothing is sent until you choose Send in your email app.</p>
+              <fieldset class="settings-feedback-category" data-gridly-feedback-categories>
+                <legend>Category</legend>
+                <label><input type="radio" name="gridlyFeedbackCategory" value="Bug" data-gridly-feedback-category required> Bug</label>
+                <label><input type="radio" name="gridlyFeedbackCategory" value="Suggestion" data-gridly-feedback-category> Suggestion</label>
+                <label><input type="radio" name="gridlyFeedbackCategory" value="Map Issue" data-gridly-feedback-category> Map Issue</label>
+                <label><input type="radio" name="gridlyFeedbackCategory" value="Route Issue" data-gridly-feedback-category> Route Issue</label>
+                <label><input type="radio" name="gridlyFeedbackCategory" value="General Comment" data-gridly-feedback-category> General Comment</label>
+              </fieldset>
+              <label class="settings-feedback-message-label" for="settingsFeedbackMessage">Message</label>
+              <textarea id="settingsFeedbackMessage" data-gridly-feedback-message rows="5" maxlength="1200" placeholder="Tell us what happened or what would make Gridly clearer." required></textarea>
+              <button type="button" class="primary-btn compact-btn" id="settingsPrepareFeedbackEmailBtn" data-gridly-feedback-prepare>Prepare Feedback Email</button>
+            </section>
+            <p class="settings-placeholder-note" id="settingsFeedbackStatus" data-gridly-feedback-acknowledgement aria-live="polite">Choose Send Feedback to prepare an email to Gridly.</p>
           </div>
         </details>
       </div>
