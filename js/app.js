@@ -16053,18 +16053,72 @@ function syncRouteQuickPanelUiState() {
   const routeQuickPanelOpen = Boolean(panel?.classList?.contains("visible"));
   document.body?.classList.toggle("route-quick-panel-open", routeQuickPanelOpen);
   const routeIsActive = Boolean(routePreviewRendered || routePreviewLayerExists || window.__gridlyRoutePreviewLayer || savedRouteLayer?.getLayers?.().length || activeDestinationPlace || window.__gridlySelectedRouteId);
+  const routeIsMonitoring = Boolean(routeWatchActivated || window.__gridlyRouteWatchActive);
   const stopButton = document.getElementById("mobileStopRouteWatchBtn");
   const clearButton = document.getElementById("mobileClearRouteBtn");
   if (stopButton) {
-    stopButton.disabled = !routeIsActive && !(routeWatchActivated || window.__gridlyRouteWatchActive);
+    stopButton.hidden = !routeIsMonitoring;
+    stopButton.disabled = !routeIsMonitoring;
     stopButton.setAttribute("aria-disabled", stopButton.disabled ? "true" : "false");
   }
   if (clearButton) {
+    clearButton.hidden = !routeIsActive;
     clearButton.disabled = !routeIsActive;
     clearButton.setAttribute("aria-disabled", clearButton.disabled ? "true" : "false");
   }
   if (typeof syncMobileDestinationCommandCard === "function") syncMobileDestinationCommandCard();
 }
+function getGridlyRouteExitSurfaceState() {
+  const routeIsActive = Boolean(routePreviewRendered || routePreviewLayerExists || window.__gridlyRoutePreviewLayer || savedRouteLayer?.getLayers?.().length || activeDestinationPlace || window.__gridlySelectedRouteId);
+  const routeIsMonitoring = Boolean(routeWatchActivated || window.__gridlyRouteWatchActive);
+  return { routeIsActive, routeIsMonitoring };
+}
+
+function syncGridlyVisibleRouteExitControls() {
+  const { routeIsActive, routeIsMonitoring } = getGridlyRouteExitSurfaceState();
+  const clearButtons = [
+    document.getElementById("mobileCardClearRouteBtn"),
+    document.getElementById("gridlyDestinationImpactClearRouteBtn")
+  ].filter(Boolean);
+  const stopButtons = [document.getElementById("mobileCardStopRouteWatchBtn")].filter(Boolean);
+
+  clearButtons.forEach((button) => {
+    const card = button.closest?.(".mobile-destination-command") || null;
+    const cardAllowsExitControl = !card || (!card.hidden && !card.classList.contains("is-awareness-panel"));
+    const buttonVisible = Boolean(routeIsActive && cardAllowsExitControl);
+    button.hidden = !buttonVisible;
+    button.disabled = !buttonVisible;
+    button.setAttribute("aria-disabled", button.disabled ? "true" : "false");
+  });
+  stopButtons.forEach((button) => {
+    const card = button.closest?.(".mobile-destination-command") || null;
+    const cardAllowsExitControl = !card || (!card.hidden && !card.classList.contains("is-awareness-panel"));
+    const buttonVisible = Boolean(routeIsMonitoring && cardAllowsExitControl);
+    button.hidden = !buttonVisible;
+    button.disabled = !buttonVisible;
+    button.setAttribute("aria-disabled", button.disabled ? "true" : "false");
+  });
+}
+
+function bindGridlyVisibleRouteExitControls() {
+  const bindButton = (id, handler) => {
+    const button = document.getElementById(id);
+    if (!button || button.dataset.gridlyVisibleRouteExitBound === "1") return;
+    button.dataset.gridlyVisibleRouteExitBound = "1";
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      handler();
+    });
+  };
+  bindButton("mobileCardClearRouteBtn", () => clearGridlyRoute("mobile_active_route_card_clear"));
+  bindButton("mobileCardStopRouteWatchBtn", () => stopGridlyRouteWatch("mobile_active_route_card_stop_watch"));
+  bindButton("gridlyDestinationImpactClearRouteBtn", () => {
+    closeGridlyDestinationImpactPane();
+    clearGridlyRoute("route_details_clear_route");
+  });
+}
+
 function closeMobileRouteQuickPanel(reason = "") {
   const panel = document.getElementById("gridlyMobileRouteQuickPanel");
   if (!panel?.classList?.contains("visible")) return;
@@ -17730,6 +17784,7 @@ function getGridlyDestinationImpactPaneElements() {
     backdrop: document.getElementById("gridlyDestinationImpactPaneBackdrop"),
     close: document.getElementById("gridlyDestinationImpactPaneClose"),
     done: document.getElementById("gridlyDestinationImpactPaneDone"),
+    clearRoute: document.getElementById("gridlyDestinationImpactClearRouteBtn"),
     summary: document.getElementById("gridlyDestinationImpactPaneSummary"),
     reasons: document.getElementById("gridlyDestinationImpactPaneReasons"),
     quietNote: document.getElementById("gridlyDestinationImpactPaneQuietNote"),
@@ -17852,6 +17907,7 @@ function renderGridlyDestinationImpactPane() {
   if (paneEls.quietNote) paneEls.quietNote.hidden = !model.quiet;
   if (paneEls.why) paneEls.why.hidden = Boolean(model.quiet);
   if (paneEls.reasons) paneEls.reasons.hidden = Boolean(model.quiet);
+  syncGridlyVisibleRouteExitControls();
   return model;
 }
 
@@ -17904,6 +17960,7 @@ function bindGridlyDestinationImpactPane() {
       if (event.key === "Escape") closeGridlyDestinationImpactPane();
     });
   }
+  bindGridlyVisibleRouteExitControls();
 }
 
 function isGridlyDestinationImpactLineVisible(node) {
@@ -18354,6 +18411,8 @@ function syncMobileDestinationCommandCard(options = {}) {
     impactLine.setAttribute("aria-disabled", hasImpactText ? "false" : "true");
     impactLine.title = hasImpactText ? "Open route awareness details" : "";
   }
+  syncGridlyVisibleRouteExitControls();
+  bindGridlyVisibleRouteExitControls();
   if (GRIDLY_DESTINATION_IMPACT_PANE_STATE.paneOpen) renderGridlyDestinationImpactPane();
   setGridlyDestinationPerformanceTiming("renderMs", getGridlyDestinationPerfNow() - cardRenderStartedAt);
 }
@@ -20428,6 +20487,8 @@ function hydrateElements() {
     "mobileDockAlertsBtn",
     "mobileDockAreaBtn",
     "mobileDestinationCommandBtn",
+    "mobileCardStopRouteWatchBtn",
+    "mobileCardClearRouteBtn",
     "mobileDestinationCommandTitle",
     "mobileDestinationCommandMeta",
     "mobileAwarenessPanelKicker",
@@ -20438,6 +20499,7 @@ function hydrateElements() {
     "gridlyDestinationImpactPaneBackdrop",
     "gridlyDestinationImpactPaneClose",
     "gridlyDestinationImpactPaneDone",
+    "gridlyDestinationImpactClearRouteBtn",
     "gridlyDestinationImpactPaneTitle",
     "gridlyDestinationImpactPaneSubtitle",
     "gridlyDestinationImpactPaneSummary",
@@ -45145,13 +45207,25 @@ function attachRouteQuickPanelDelegatedClickHandlers() {
   routeQuickButtonDelegatedBindingActive = true;
   document.addEventListener("click", async (event) => {
     const actionEl = event?.target?.closest?.(
-      '#gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="view-route-quick"], #gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="start-route-watch-quick"]'
+      '#gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="view-route-quick"], #gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="start-route-watch-quick"], #gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="stop-route-watch-quick"], #gridlyMobileRouteQuickPanel .route-quick-actions button[data-action="clear-route-quick"]'
     );
     if (!actionEl) return;
     if (actionEl.dataset.gridlyDirectRouteListenerAttached === "1") return;
     const action = actionEl.dataset.action || "";
     if (!action) return;
     event.preventDefault();
+    if (action === "stop-route-watch-quick") {
+      event.stopPropagation();
+      stopGridlyRouteWatch("mobile_quick_panel_stop_watch");
+      syncRouteQuickPanelUiState();
+      return;
+    }
+    if (action === "clear-route-quick") {
+      event.stopPropagation();
+      clearGridlyRoute("mobile_quick_panel_clear_route");
+      closeMobileRouteQuickPanel("clear_route_success");
+      return;
+    }
     await handleRouteQuickPanelAction(action, event, actionEl);
   }, true);
 }
@@ -51476,6 +51550,38 @@ function clearGridlyRoute(source = "clear_route") {
   return { success: true, source };
 }
 
+function isGridlyVisibleRouteExitControlAvailable(node) {
+  if (!node || node.hidden || node.disabled || node.getAttribute("aria-disabled") === "true") return false;
+  const text = String(node.textContent || "").trim();
+  if (!text) return false;
+  const style = typeof window !== "undefined" && typeof window.getComputedStyle === "function" ? window.getComputedStyle(node) : null;
+  if (style) {
+    const hiddenByStyle = style.display === "none"
+      || style.visibility === "hidden"
+      || Number(style.opacity || 1) <= 0
+      || style.pointerEvents === "none";
+    if (hiddenByStyle) return false;
+  }
+  const rect = typeof node.getBoundingClientRect === "function" ? node.getBoundingClientRect() : null;
+  return Boolean(rect && rect.width > 0 && rect.height > 0);
+}
+
+function getGridlyVisibleRouteExitControlAuditResult() {
+  if (typeof syncGridlyVisibleRouteExitControls === "function") syncGridlyVisibleRouteExitControls();
+  const activeSurfaceSelectors = [
+    "#mobileCardClearRouteBtn",
+    "#mobileCardStopRouteWatchBtn",
+    "#gridlyDestinationImpactClearRouteBtn"
+  ];
+  const visibleControl = activeSurfaceSelectors
+    .map((selector) => document.querySelector(selector))
+    .find((node) => isGridlyVisibleRouteExitControlAvailable(node));
+  return {
+    visibleRouteExitControl: Boolean(visibleControl),
+    visibleRouteExitControlLabel: visibleControl ? String(visibleControl.textContent || "").trim() : ""
+  };
+}
+
 function gridlyRouteOwnershipAudit() {
   const ownership = updateGridlyRouteOwnershipSurface();
   const surfaceText = [
@@ -51486,8 +51592,9 @@ function gridlyRouteOwnershipAudit() {
     document.getElementById("desktopRouteStatus")?.textContent || ""
   ].join(" ");
   const routeOriginVisible = Boolean(document.getElementById("routeOwnershipOrigin") && ownership.originLabel && ownership.originLabel !== "Not selected");
-  const clearRouteAvailable = Boolean(document.getElementById("clearRouteBtn") || document.getElementById("mobileClearRouteBtn") || typeof window.gridlyClearRoute === "function");
-  const stopRouteWatchAvailable = Boolean(document.getElementById("stopRouteWatchBtn") || document.getElementById("mobileStopRouteWatchBtn") || typeof window.gridlyStopRouteWatch === "function");
+  const clearRouteAvailable = Boolean(document.getElementById("clearRouteBtn") || document.getElementById("mobileClearRouteBtn") || document.getElementById("mobileCardClearRouteBtn") || document.getElementById("gridlyDestinationImpactClearRouteBtn") || typeof window.gridlyClearRoute === "function");
+  const stopRouteWatchAvailable = Boolean(document.getElementById("stopRouteWatchBtn") || document.getElementById("mobileStopRouteWatchBtn") || document.getElementById("mobileCardStopRouteWatchBtn") || typeof window.gridlyStopRouteWatch === "function");
+  const visibleExitControl = getGridlyVisibleRouteExitControlAuditResult();
   const homeWorkOwnershipClear = ["destinationHomeBtn", "destinationWorkBtn", "destinationFavoriteBtn", "desktopDestinationHomeBtn", "desktopDestinationWorkBtn", "desktopDestinationFavoriteBtn"].some((id) => /go |take me|home|work|favorite/i.test(document.getElementById(id)?.textContent || ""));
   const monitoringStateVisible = /Monitoring Active|Preview Only|Monitoring OFF|Monitoring ON/i.test(surfaceText);
   const consumerFriendlyPass = !/fallback|osrm|polyline|schema|trust|directional|engine|reset/i.test(surfaceText);
@@ -51498,6 +51605,8 @@ function gridlyRouteOwnershipAudit() {
     routeOriginLabel: ownership.originLabel,
     clearRouteAvailable,
     stopRouteWatchAvailable,
+    visibleRouteExitControl: visibleExitControl.visibleRouteExitControl,
+    visibleRouteExitControlLabel: visibleExitControl.visibleRouteExitControlLabel,
     routeExitOwnershipPass: Boolean(clearRouteAvailable && stopRouteWatchAvailable),
     homeWorkOwnershipClear,
     monitoringStateVisible,

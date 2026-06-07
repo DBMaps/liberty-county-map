@@ -340,7 +340,11 @@
             <p class="mobile-awareness-panel-issues" id="mobileAwarenessPanelIssues" hidden></p>
             <p class="destination-route-impact-line" id="mobileDestinationCommandImpact" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="gridlyDestinationImpactPane" aria-expanded="false"></p>
           </div>
-          <button class="secondary-btn compact-btn" id="mobileDestinationCommandBtn" type="button">Choose Route</button>
+          <div class="mobile-destination-command-actions" aria-label="Route actions">
+            <button class="secondary-btn compact-btn" id="mobileDestinationCommandBtn" type="button">Choose Route</button>
+            <button class="secondary-btn compact-btn mobile-route-exit-control" id="mobileCardStopRouteWatchBtn" type="button" hidden>Stop Route Watch</button>
+            <button class="secondary-btn compact-btn mobile-route-exit-control" id="mobileCardClearRouteBtn" type="button" hidden>Clear Route</button>
+          </div>
         </article>
 
         <article class="mobile-live-command" aria-label="Live commute status">
@@ -666,7 +670,10 @@
         <ul id="gridlyDestinationImpactPaneReasons" class="gridly-destination-impact-reasons"></ul>
         <p id="gridlyDestinationImpactPaneQuietNote" class="gridly-destination-impact-quiet-note" hidden>New rail or community reports will appear here.</p>
       </section>
-      <button type="button" class="secondary-btn gridly-destination-impact-done" id="gridlyDestinationImpactPaneDone">Close</button>
+      <div class="gridly-destination-impact-actions">
+        <button type="button" class="secondary-btn gridly-destination-impact-done" id="gridlyDestinationImpactPaneDone">Close</button>
+        <button type="button" class="secondary-btn gridly-destination-impact-clear-route mobile-route-exit-control" id="gridlyDestinationImpactClearRouteBtn" hidden>Clear Route</button>
+      </div>
     </article>
   </section>
 
