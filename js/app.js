@@ -54712,7 +54712,7 @@ function collectGridlySettingsFromUi() {
   });
 }
 
-const GRIDLY_FEEDBACK_FLOW_VERSION = "V259.1";
+const GRIDLY_FEEDBACK_FLOW_VERSION = "V259.1B";
 const GRIDLY_FEEDBACK_EMAIL_RECIPIENT = "feedback@gridly.app";
 const GRIDLY_FEEDBACK_CATEGORIES = Object.freeze(["Bug", "Suggestion", "Map Issue", "Route Issue", "General Comment"]);
 
@@ -54722,15 +54722,40 @@ function getGridlyFeedbackFlowRoot(scope) {
   return scope?.querySelector?.("[data-gridly-feedback-flow]") || document.querySelector("[data-gridly-feedback-flow]");
 }
 
+function setGridlyFeedbackAcknowledgementVisibility(status, visible) {
+  if (!status) return;
+  status.hidden = !visible;
+  if (visible) status.removeAttribute("hidden");
+  else status.setAttribute("hidden", "");
+  status.dataset.gridlyFeedbackAcknowledgementVisible = visible ? "true" : "false";
+}
+
+function getGridlyFeedbackStatus(scope) {
+  if (typeof document === "undefined") return null;
+  return scope?.querySelector?.("[data-gridly-feedback-acknowledgement]") || document.getElementById("settingsFeedbackStatus");
+}
+
+function resetGridlyFeedbackStatusForEntry(scope) {
+  const status = getGridlyFeedbackStatus(scope);
+  if (!status) return;
+  status.textContent = "";
+  status.dataset.gridlyFeedbackStatus = "ready_to_prepare";
+  setGridlyFeedbackAcknowledgementVisibility(status, false);
+}
+
 function openGridlyFeedbackFlow(scope) {
   const root = getGridlyFeedbackFlowRoot(scope);
   if (!root) return false;
   root.hidden = false;
   root.removeAttribute("hidden");
-  const opener = root.id ? document.querySelector(`[aria-controls="${root.id}"]`) : null;
+  root.style.display = "";
+  root.setAttribute("data-gridly-feedback-entry-visible", "true");
+  resetGridlyFeedbackStatusForEntry(root.parentElement || scope || root);
+  const opener = root.id ? document.querySelector(`[aria-controls="${root.id}"]`) : root.parentElement?.querySelector?.('[data-v2-action="settings-feedback-open"]');
   if (opener) opener.setAttribute("aria-expanded", "true");
   const firstCategory = root.querySelector("[data-gridly-feedback-category]");
   const message = root.querySelector("[data-gridly-feedback-message]");
+  root.scrollIntoView?.({ block: "nearest", behavior: "smooth" });
   (firstCategory || message)?.focus?.();
   return true;
 }
@@ -54778,11 +54803,11 @@ function buildGridlyFeedbackMailtoUrl(category, message) {
 }
 
 function setGridlyFeedbackStatus(scope, message, isError = false) {
-  const status = scope?.querySelector?.("[data-gridly-feedback-acknowledgement]") || document.getElementById("settingsFeedbackStatus");
+  const status = getGridlyFeedbackStatus(scope);
   if (!status) return;
   status.textContent = message;
-  status.dataset.gridlyFeedbackAcknowledgementVisible = isError ? "false" : "true";
   status.dataset.gridlyFeedbackStatus = isError ? "needs_input" : "email_prepared";
+  setGridlyFeedbackAcknowledgementVisibility(status, true);
 }
 
 function prepareGridlyFeedbackEmail(scope) {
@@ -54824,7 +54849,7 @@ function buildGridlyFeedbackFlowHtml({ v2 = false } = {}) {
       <textarea data-gridly-feedback-message rows="5" maxlength="1200" placeholder="Tell us what happened or what would make Gridly clearer." required></textarea>
       <button class="primary-btn compact-btn" type="button" data-gridly-feedback-prepare${actionAttr}>Prepare Feedback Email</button>
     </section>
-    <p class="settings-placeholder-note" data-gridly-feedback-acknowledgement aria-live="polite">Choose Send Feedback to prepare an email to Gridly.</p>`;
+    <p class="settings-placeholder-note" data-gridly-feedback-acknowledgement aria-live="polite" hidden></p>`;
 }
 
 function persistGridlySettingsFromUi(event) {
@@ -55640,8 +55665,7 @@ function bindGridlySettingsPreferences() {
   if (els.settingsFeedbackBtn && els.settingsFeedbackBtn.dataset.gridlySettingsBound !== "1") {
     els.settingsFeedbackBtn.dataset.gridlySettingsBound = "1";
     els.settingsFeedbackBtn.addEventListener("click", () => {
-      const opened = openGridlyFeedbackFlow(els.settingsModal || document);
-      if (opened) safeText("settingsFeedbackStatus", "Choose a category and message, then prepare an email to Gridly.");
+      openGridlyFeedbackFlow(els.settingsModal || document);
     });
   }
   if (els.settingsPrepareFeedbackEmailBtn && els.settingsPrepareFeedbackEmailBtn.dataset.gridlySettingsBound !== "1") {
@@ -55762,10 +55786,10 @@ function gridlyBuildFeedbackFlowAudit() {
   const messageField = feedbackFlowRoot?.querySelector?.("[data-gridly-feedback-message]") || null;
   const prepareButton = feedbackFlowRoot?.querySelector?.("[data-gridly-feedback-prepare]") || (hasDocument ? document.getElementById("settingsPrepareFeedbackEmailBtn") : null);
   const acknowledgements = hasDocument ? Array.from(document.querySelectorAll("[data-gridly-feedback-acknowledgement], #settingsFeedbackStatus")) : [];
-  const acknowledgement = acknowledgements.find((node) => /Feedback email prepared\. Your email app will send the message once you choose Send\./i.test(text(node))) || acknowledgements.find(visible) || acknowledgements[0] || null;
+  const acknowledgement = acknowledgements.find((node) => visible(node) && /Feedback email prepared\. Your email app will send the message once you choose Send\./i.test(text(node))) || acknowledgements.find(visible) || acknowledgements[0] || null;
   const acknowledgementText = text(acknowledgement);
   const feedbackEntryVisible = Boolean((legacyEntry && visible(legacyEntry)) || (portraitEntry && visible(portraitEntry)));
-  const feedbackFormAvailable = Boolean(feedbackFlowRoot);
+  const feedbackFormAvailable = Boolean(feedbackFlowRoot && visible(feedbackFlowRoot));
   const categoriesAvailable = GRIDLY_FEEDBACK_CATEGORIES.every((category) => categoryLabels.includes(category));
   const categoryCount = categoryLabels.length;
   const messageFieldAvailable = Boolean(messageField);
@@ -66564,7 +66588,6 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       "settings-feedback-open": () => {
         const body = document.getElementById("gridlyPortraitV2SheetBody") || document;
         openGridlyFeedbackFlow(body);
-        setConfirmation("Choose a category and message, then prepare an email to Gridly.", "success");
       },
       "settings-feedback-prepare": () => {
         const body = document.getElementById("gridlyPortraitV2SheetBody") || document;
