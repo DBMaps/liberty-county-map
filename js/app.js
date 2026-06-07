@@ -55613,6 +55613,92 @@ function buildGridlySettingsAudit(section = "all") {
   };
 }
 
+function gridlyBuildFeedbackSystemAudit() {
+  const findings = [];
+  const hasDocument = typeof document !== "undefined";
+  const textOf = (node) => String(node?.textContent || "").replace(/\s+/g, " ").trim();
+  const safeElementVisible = (node) => {
+    if (!node || !hasDocument) return false;
+    try {
+      if (node.hidden || node.hasAttribute?.("hidden") || node.hasAttribute?.("inert")) return false;
+      const style = typeof getComputedStyle === "function" ? getComputedStyle(node) : null;
+      if (style && (style.display === "none" || style.visibility === "hidden")) return false;
+      return true;
+    } catch (_error) {
+      return true;
+    }
+  };
+  const legacyFeedbackButton = hasDocument ? document.getElementById("settingsFeedbackBtn") : null;
+  const legacyFeedbackStatus = hasDocument ? document.getElementById("settingsFeedbackStatus") : null;
+  const portraitFeedbackButton = hasDocument ? document.querySelector('[data-v2-action="settings-feedback-placeholder"]') : null;
+  const feedbackButton = legacyFeedbackButton || portraitFeedbackButton;
+  const feedbackEntryVisible = Boolean(feedbackButton && safeElementVisible(feedbackButton));
+  const portraitSettingsBody = hasDocument ? document.getElementById("gridlyPortraitV2SheetBody") : null;
+  const portraitDelegatedBound = Boolean(portraitSettingsBody?.dataset?.v2DelegatedClickBound === "1");
+  const legacyClickable = Boolean(legacyFeedbackButton && !legacyFeedbackButton.disabled && legacyFeedbackButton.dataset?.gridlySettingsBound === "1");
+  const portraitClickable = Boolean(portraitFeedbackButton && !portraitFeedbackButton.disabled && (portraitFeedbackButton.dataset?.gridlySettingsBound === "1" || portraitDelegatedBound));
+  const feedbackEntryClickable = Boolean(legacyClickable || portraitClickable);
+  const statusText = textOf(legacyFeedbackStatus);
+  const currentFeedbackBehavior = legacyFeedbackButton
+    ? "Settings > About & Support exposes Send Feedback. Tapping it updates the local status text to a placeholder acknowledgement and explicitly states that no message was sent."
+    : (portraitFeedbackButton
+      ? "Portrait V2 Settings exposes Send Feedback as a placeholder action that shows an in-app confirmation only; no message is collected or sent."
+      : "No active Settings feedback entry point was detected in the current DOM.");
+  const feedbackDestinationDefined = false;
+  const feedbackWorkflowDefined = false;
+  const acknowledgementProvided = Boolean(
+    /placeholder|acknowledged|no message was sent|entry point/i.test(statusText)
+    || legacyFeedbackButton
+    || portraitFeedbackButton
+  );
+  const implementationPartiallyPresent = Boolean(legacyFeedbackButton || portraitFeedbackButton || /feedback/i.test(statusText));
+  const ownershipModel = "Placeholder-only Settings/About support entry; no product, support, data, or routing owner is defined in-app.";
+
+  if (legacyFeedbackButton) findings.push("Location: legacy Settings modal > About & Support > Send Feedback.");
+  if (portraitFeedbackButton) findings.push("Location: portrait V2 Settings/About surface > Send Feedback placeholder action.");
+  if (!legacyFeedbackButton && !portraitFeedbackButton) findings.push("Send Feedback entry was not detected in the current document.");
+  if (feedbackEntryVisible && !feedbackEntryClickable) findings.push("Send Feedback is visible but the audit could not confirm an active click binding yet.");
+  findings.push("Tap behavior: placeholder-only acknowledgement; no feedback text is captured.");
+  findings.push("Destination: undefined; feedback is not sent to email, storage, Supabase, analytics, or a backend.");
+  findings.push("Workflow: undefined; no triage path exists for bugs, suggestions, map issues, route issues, or general comments.");
+  findings.push(acknowledgementProvided
+    ? "Acknowledgement: present as placeholder/status copy, but not as a receipt for submitted feedback."
+    : "Acknowledgement: no visible receipt or status copy detected.");
+  findings.push("Consumer friendliness: fails because users can tap Send Feedback without a clear destination, category choice, submission path, or received confirmation.");
+  findings.push(implementationPartiallyPresent
+    ? "Partial implementation: entry point and click placeholder exist; final collection is not implemented."
+    : "Partial implementation: none detected beyond audit support.");
+  findings.push(`Ownership model: ${ownershipModel}`);
+
+  const consumerFriendlyPass = Boolean(
+    feedbackEntryVisible
+    && feedbackEntryClickable
+    && feedbackDestinationDefined
+    && feedbackWorkflowDefined
+    && acknowledgementProvided
+  );
+
+  return {
+    available: true,
+    version: "V259",
+    feedbackEntryVisible,
+    feedbackEntryClickable,
+    currentFeedbackBehavior,
+    feedbackDestinationDefined,
+    feedbackWorkflowDefined,
+    acknowledgementProvided,
+    consumerFriendlyPass,
+    findings
+  };
+}
+
+window.gridlyFeedbackSystemAudit = function gridlyFeedbackSystemAudit() {
+  return gridlyBuildFeedbackSystemAudit();
+};
+if (typeof exposeGridlyAuditHelper === "function") {
+  exposeGridlyAuditHelper("gridlyFeedbackSystemAudit", window.gridlyFeedbackSystemAudit);
+}
+
 window.gridlySettingsAudit = function gridlySettingsAudit() {
   return buildGridlySettingsAudit("all");
 };
