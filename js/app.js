@@ -17642,7 +17642,11 @@ function getGridlyDestinationRoutePreviewState() {
     durationSeconds: null,
     geometry: [],
     routeProvider: "osrm",
-    error: ""
+    error: "",
+    autoLocationAttempted: false,
+    autoLocationSucceeded: false,
+    autoLocationFallbackUsed: false,
+    autoLocationFallbackReason: ""
   };
   if (existingState && typeof existingState === "object") {
     Object.keys(nextState).forEach((key) => {
@@ -18468,6 +18472,10 @@ function clearGridlyDestinationRoutePreview(options = {}) {
   preview.durationSeconds = null;
   preview.geometry = [];
   preview.error = "";
+  preview.autoLocationAttempted = false;
+  preview.autoLocationSucceeded = false;
+  preview.autoLocationFallbackUsed = false;
+  preview.autoLocationFallbackReason = "";
   try {
     destinationRoutePreviewLayer?.clearLayers?.();
   } catch (error) {
@@ -18538,6 +18546,100 @@ function getGridlyVisibleUserLocationDotCoordinate() {
 
 function getGridlyCurrentLocationRouteCoordinate() {
   return getGridlyVisibleUserLocationDotCoordinate() || getGridlyCurrentLocationStateCoordinate();
+}
+
+const GRIDLY_DESTINATION_AUTO_LOCATION_TIMEOUT_MS = 4500;
+let gridlyDestinationAutoLocationPromptAttempted = false;
+let gridlyDestinationAutoLocationRequestInFlight = null;
+
+async function getGridlyDestinationAutoLocationPermissionState() {
+  if (typeof navigator === "undefined") return "navigator_unavailable";
+  if (typeof navigator.geolocation === "undefined") return "geolocation_unavailable";
+  if (gridlyCachedGeolocationPermissionStatus) return gridlyCachedGeolocationPermissionStatus;
+  try {
+    if (navigator.permissions?.query) {
+      const status = await navigator.permissions.query({ name: "geolocation" });
+      gridlyCachedGeolocationPermissionStatus = status?.state || null;
+      return gridlyCachedGeolocationPermissionStatus || "unknown";
+    }
+  } catch (_error) {
+    gridlyCachedGeolocationPermissionStatus = null;
+  }
+  return "unknown";
+}
+
+function getGridlyDestinationAutoLocationErrorReason(error) {
+  const code = Number(error?.code);
+  if (code === 1) return "permission_denied";
+  if (code === 2) return "position_unavailable";
+  if (code === 3) return "timeout";
+  return String(error?.message || "location_unavailable").toLowerCase().replace(/[^a-z0-9_]+/g, "_") || "location_unavailable";
+}
+
+async function requestGridlyDestinationAutoCurrentLocation(options = {}) {
+  const existingCoords = getGridlyCurrentLocationRouteCoordinate();
+  if (existingCoords) {
+    return { attempted: false, succeeded: true, fallbackReason: "", coords: existingCoords };
+  }
+
+  if (gridlyDestinationAutoLocationRequestInFlight) return gridlyDestinationAutoLocationRequestInFlight;
+
+  gridlyDestinationAutoLocationRequestInFlight = (async () => {
+    const permissionState = await getGridlyDestinationAutoLocationPermissionState();
+    if (["navigator_unavailable", "geolocation_unavailable"].includes(permissionState)) {
+      return { attempted: true, succeeded: false, fallbackReason: permissionState };
+    }
+    if (permissionState === "denied") {
+      return { attempted: true, succeeded: false, fallbackReason: "permission_denied" };
+    }
+    if (permissionState !== "granted" && gridlyDestinationAutoLocationPromptAttempted) {
+      return { attempted: true, succeeded: false, fallbackReason: "auto_location_prompt_already_attempted" };
+    }
+
+    gridlyDestinationAutoLocationPromptAttempted = permissionState !== "granted" || gridlyDestinationAutoLocationPromptAttempted;
+    recordGridlyGeolocationRequest("destination_route_auto_current_location");
+
+    return new Promise((resolve) => {
+      let settled = false;
+      const finish = (result) => {
+        if (settled) return;
+        settled = true;
+        resolve(result);
+      };
+      const timeoutMs = Number(options?.timeoutMs || GRIDLY_DESTINATION_AUTO_LOCATION_TIMEOUT_MS);
+      const timeoutId = window.setTimeout?.(() => {
+        finish({ attempted: true, succeeded: false, fallbackReason: "timeout" });
+      }, timeoutMs + 250);
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          if (settled) return;
+          if (timeoutId) window.clearTimeout?.(timeoutId);
+          const coords = getValidGridlyUserLocationCoordinates(position);
+          if (!coords) {
+            finish({ attempted: true, succeeded: false, fallbackReason: "invalid_coordinates" });
+            return;
+          }
+          gridlyCachedGeolocationPermissionStatus = "granted";
+          setGridlyUserLocation({ ...coords, suppressRouteOriginRefresh: true });
+          updateNearestContext();
+          finish({ attempted: true, succeeded: true, fallbackReason: "", coords });
+        },
+        (error) => {
+          if (settled) return;
+          if (timeoutId) window.clearTimeout?.(timeoutId);
+          const fallbackReason = getGridlyDestinationAutoLocationErrorReason(error);
+          if (fallbackReason === "permission_denied") gridlyCachedGeolocationPermissionStatus = "denied";
+          finish({ attempted: true, succeeded: false, fallbackReason });
+        },
+        { enableHighAccuracy: true, timeout: timeoutMs, maximumAge: 60000 }
+      );
+    });
+  })().finally(() => {
+    gridlyDestinationAutoLocationRequestInFlight = null;
+  });
+
+  return gridlyDestinationAutoLocationRequestInFlight;
 }
 
 function getGridlyCoordinateDistanceMiles(a, b) {
@@ -18687,7 +18789,32 @@ async function buildGridlyDestinationRoutePreview(options = {}) {
     return preview;
   }
 
+  let autoLocationResult = { attempted: false, succeeded: false, fallbackReason: "" };
+  if (!getGridlyCurrentLocationRouteCoordinate()) {
+    autoLocationResult = await requestGridlyDestinationAutoCurrentLocation({ timeoutMs: GRIDLY_DESTINATION_AUTO_LOCATION_TIMEOUT_MS });
+    const latestAfterLocationAttempt = getGridlyDestinationRoutePreviewState();
+    if (latestAfterLocationAttempt.requestId !== requestId) {
+      addGridlyDestinationPerformanceNote("stale destination route preview ignored after auto location attempt");
+      return latestAfterLocationAttempt;
+    }
+  }
+
+  preview.autoLocationAttempted = Boolean(autoLocationResult.attempted);
+  preview.autoLocationSucceeded = Boolean(autoLocationResult.succeeded && getGridlyCurrentLocationRouteCoordinate());
+  preview.autoLocationFallbackUsed = Boolean(autoLocationResult.attempted && !preview.autoLocationSucceeded);
+  preview.autoLocationFallbackReason = preview.autoLocationFallbackUsed ? (autoLocationResult.fallbackReason || "location_unavailable") : "";
+
   const origin = getGridlyDestinationRouteOrigin({ destination });
+  if (origin && preview.autoLocationAttempted && origin.source !== "current_location") {
+    preview.autoLocationFallbackUsed = true;
+    preview.autoLocationFallbackReason = preview.autoLocationFallbackReason || origin.fallbackReason || `using_${origin.source || "fallback_origin"}`;
+  }
+  if (origin && origin.source === "current_location") {
+    preview.autoLocationSucceeded = Boolean(preview.autoLocationAttempted || autoLocationResult.succeeded);
+    preview.autoLocationFallbackUsed = false;
+    preview.autoLocationFallbackReason = "";
+  }
+
   if (!origin) {
     preview.status = "unavailable";
     preview.error = "origin_unavailable";
@@ -52149,6 +52276,10 @@ function gridlyRouteOriginAudit() {
     originOwnershipMatch,
     fallbackUsed,
     fallbackReason,
+    autoLocationAttempted: Boolean(preview?.autoLocationAttempted),
+    autoLocationSucceeded: Boolean(preview?.autoLocationSucceeded),
+    autoLocationFallbackUsed: Boolean(preview?.autoLocationFallbackUsed),
+    autoLocationFallbackReason: preview?.autoLocationFallbackReason || "",
     consumerFriendlyPass: Boolean(originOwnershipMatch && fromToVisible && !/fallback|osrm|polyline|schema|trust|directional|engine|reset/i.test(surfaceText)),
     protectedSystemsPass: true
   };
