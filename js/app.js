@@ -16052,6 +16052,17 @@ function syncRouteQuickPanelUiState() {
   const panel = document.getElementById("gridlyMobileRouteQuickPanel");
   const routeQuickPanelOpen = Boolean(panel?.classList?.contains("visible"));
   document.body?.classList.toggle("route-quick-panel-open", routeQuickPanelOpen);
+  const routeIsActive = Boolean(routePreviewRendered || routePreviewLayerExists || window.__gridlyRoutePreviewLayer || savedRouteLayer?.getLayers?.().length || activeDestinationPlace || window.__gridlySelectedRouteId);
+  const stopButton = document.getElementById("mobileStopRouteWatchBtn");
+  const clearButton = document.getElementById("mobileClearRouteBtn");
+  if (stopButton) {
+    stopButton.disabled = !routeIsActive && !(routeWatchActivated || window.__gridlyRouteWatchActive);
+    stopButton.setAttribute("aria-disabled", stopButton.disabled ? "true" : "false");
+  }
+  if (clearButton) {
+    clearButton.disabled = !routeIsActive;
+    clearButton.setAttribute("aria-disabled", clearButton.disabled ? "true" : "false");
+  }
   if (typeof syncMobileDestinationCommandCard === "function") syncMobileDestinationCommandCard();
 }
 function closeMobileRouteQuickPanel(reason = "") {
@@ -44885,6 +44896,8 @@ function injectMobileQuickActionOverlays() {
     <div class="route-quick-actions">
       <button type="button" data-action="start-route-watch-quick">Start Route Watch</button>
       <button type="button" data-action="view-route-quick">View Route</button>
+      <button type="button" id="mobileStopRouteWatchBtn" class="route-quick-exit-btn" data-action="stop-route-watch-quick">Stop Route Watch</button>
+      <button type="button" id="mobileClearRouteBtn" class="route-quick-exit-btn" data-action="clear-route-quick">Clear Route</button>
     </div>
     <button type="button" class="route-quick-manage-link" data-action="open-manage-places-quick">Manage Places</button>
   `;
@@ -44903,6 +44916,8 @@ function injectMobileQuickActionOverlays() {
     .route-quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}
     .route-quick-actions button{border:0;border-radius:10px;padding:8px 10px;font-weight:700;font-size:12px}
     .route-quick-actions button[data-action="start-route-watch-quick"]{background:linear-gradient(135deg,#0fb8ff,#4ee3ff);color:#041018}
+    .route-quick-actions .route-quick-exit-btn{background:rgba(255,255,255,.075);color:#e6f1ff;border:1px solid rgba(186,216,248,.18)}
+    .route-quick-actions button[data-action="clear-route-quick"]{color:#bfe2ff}
     .route-quick-manage-link{justify-self:end;border:0;background:transparent;color:#8ecfff;font-size:11px;font-weight:600;padding:2px 0}
     .gridly-hazard-panel{position:fixed;left:10px;right:10px;bottom:calc(84px + env(safe-area-inset-bottom,0px));max-height:min(73dvh,610px);border-radius:20px 20px 14px 14px;border:1px solid rgba(171,204,238,.2);background:linear-gradient(180deg, rgba(9,18,31,.95), rgba(6,12,22,.98));backdrop-filter:blur(18px) saturate(118%);-webkit-backdrop-filter:blur(18px) saturate(118%);box-shadow:0 -16px 36px rgba(0,0,0,.36),0 8px 24px rgba(2,8,16,.26)}
     body.gridly-v2-surface-containment[data-layout-mode="portrait"] #gridlyHazardPanel.gridly-hazard-panel.visible{position:fixed!important;top:auto!important;left:14px!important;right:14px!important;bottom:calc(124px + env(safe-area-inset-bottom,0px))!important;width:auto!important;max-width:none!important;height:auto!important;max-height:min(68dvh,560px)!important;display:grid!important;grid-template-rows:auto auto minmax(0,1fr) auto!important;overflow:hidden!important;padding:12px 12px 10px!important;border-radius:20px 20px 14px 14px!important;border:1px solid rgba(171,204,238,.2)!important;background:linear-gradient(180deg, rgba(9,18,31,.95), rgba(6,12,22,.98))!important;backdrop-filter:blur(18px) saturate(118%)!important;-webkit-backdrop-filter:blur(18px) saturate(118%)!important;box-shadow:0 -16px 36px rgba(0,0,0,.36),0 8px 24px rgba(2,8,16,.26)!important;z-index:10020!important}
@@ -47684,6 +47699,18 @@ function bindEvents() {
     if (action === "close-route-quick") {
       event.preventDefault();
       closeMobileRouteQuickPanel("close_button");
+      return;
+    }
+    if (action === "stop-route-watch-quick") {
+      event.preventDefault();
+      stopGridlyRouteWatch("mobile_quick_panel_stop_watch");
+      syncRouteQuickPanelUiState();
+      return;
+    }
+    if (action === "clear-route-quick") {
+      event.preventDefault();
+      clearGridlyRoute("mobile_quick_panel_clear_route");
+      closeMobileRouteQuickPanel("clear_route");
       return;
     }
     if (action === "open-manage-places-quick") {
@@ -51348,8 +51375,8 @@ function resolveGridlyRouteOwnershipSurface() {
   const startPlace = places.find((place) => place.id === startId) || null;
   const destinationPlace = places.find((place) => place.id === destinationId) || null;
   const hasRoute = Boolean(routePreviewRendered || routePreviewLayerExists || window.__gridlyRoutePreviewLayer || savedRouteLayer?.getLayers?.().length || activeDestinationPlace || window.__gridlySelectedRouteId);
-  const originLabel = activeRouteOriginLabel || gridlyFriendlyPlaceLabel(startPlace, hasRoute ? "Map Center" : "Not selected");
-  const destinationLabel = activeRouteDestinationLabel || gridlyFriendlyPlaceLabel(activeDestinationPlace || destinationPlace, hasRoute ? "Destination" : "Not selected");
+  const originLabel = hasRoute ? (activeRouteOriginLabel || gridlyFriendlyPlaceLabel(startPlace, "Map Center")) : "Not selected";
+  const destinationLabel = hasRoute ? (activeRouteDestinationLabel || gridlyFriendlyPlaceLabel(activeDestinationPlace || destinationPlace, "Destination")) : "Not selected";
   const monitoringLabel = routeWatchActivated || window.__gridlyRouteWatchActive ? "Monitoring Active" : "Preview Only";
   return { hasRoute, originLabel, destinationLabel, monitoringLabel };
 }
@@ -51394,6 +51421,7 @@ function stopGridlyRouteWatch(source = "stop_route_watch") {
   updateRouteWatchBadge(activeRouteDestinationLabel || "Route");
   updateRouteWatchStartButtonLabel();
   updateGridlyRouteOwnershipSurface();
+  syncRouteQuickPanelUiState();
   updateRouteIntelligence();
   setConfirmation("Route Watch stopped. Saved places kept.", "success");
   return { success: true, source };
@@ -51406,6 +51434,8 @@ function clearGridlyRoute(source = "clear_route") {
   activeRouteDestinationLabel = "";
   activeRouteOriginSource = "";
   if (els?.routeWatchDestinationSelect) els.routeWatchDestinationSelect.value = "";
+  const mobileRouteQuickDestination = document.getElementById("mobileRouteQuickDestination");
+  if (mobileRouteQuickDestination) mobileRouteQuickDestination.value = "";
   if (typeof localStorage !== "undefined") localStorage.removeItem(SELECTED_PLACE_STORAGE_KEY);
   savedRouteCrossingIds = new Set();
   savedRouteLayer?.clearLayers?.();
@@ -51421,6 +51451,7 @@ function clearGridlyRoute(source = "clear_route") {
   scheduleRenderCrossings("state-change");
   updateRouteWatchStartButtonLabel();
   updateGridlyRouteOwnershipSurface();
+  syncRouteQuickPanelUiState();
   updateRouteIntelligence();
   setConfirmation("Route cleared. Saved places kept.", "success");
   return { success: true, source };
@@ -51436,8 +51467,8 @@ function gridlyRouteOwnershipAudit() {
     document.getElementById("desktopRouteStatus")?.textContent || ""
   ].join(" ");
   const routeOriginVisible = Boolean(document.getElementById("routeOwnershipOrigin") && ownership.originLabel && ownership.originLabel !== "Not selected");
-  const clearRouteAvailable = Boolean(document.getElementById("clearRouteBtn") || typeof window.gridlyClearRoute === "function");
-  const stopRouteWatchAvailable = Boolean(document.getElementById("stopRouteWatchBtn") || typeof window.gridlyStopRouteWatch === "function");
+  const clearRouteAvailable = Boolean(document.getElementById("clearRouteBtn") || document.getElementById("mobileClearRouteBtn") || typeof window.gridlyClearRoute === "function");
+  const stopRouteWatchAvailable = Boolean(document.getElementById("stopRouteWatchBtn") || document.getElementById("mobileStopRouteWatchBtn") || typeof window.gridlyStopRouteWatch === "function");
   const homeWorkOwnershipClear = ["destinationHomeBtn", "destinationWorkBtn", "destinationFavoriteBtn", "desktopDestinationHomeBtn", "desktopDestinationWorkBtn", "desktopDestinationFavoriteBtn"].some((id) => /go |take me|home|work|favorite/i.test(document.getElementById(id)?.textContent || ""));
   const monitoringStateVisible = /Monitoring Active|Preview Only|Monitoring OFF|Monitoring ON/i.test(surfaceText);
   const consumerFriendlyPass = !/fallback|osrm|polyline|schema|trust|directional|engine|reset/i.test(surfaceText);
