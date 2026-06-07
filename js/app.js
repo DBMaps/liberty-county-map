@@ -50085,6 +50085,48 @@ function buildRouteWatchLabelParts() {
   };
 }
 
+function setDestinationChipGuidance(btn, primaryText = "", secondaryText = "") {
+  if (!btn) return;
+  btn.textContent = "";
+  const primary = document.createElement("span");
+  primary.className = "destination-chip-primary";
+  primary.textContent = primaryText;
+  btn.appendChild(primary);
+  if (secondaryText) {
+    const secondary = document.createElement("span");
+    secondary.className = "destination-chip-secondary";
+    secondary.textContent = secondaryText;
+    btn.appendChild(secondary);
+    btn.setAttribute("aria-label", `${primaryText}. ${secondaryText}`);
+  } else {
+    btn.removeAttribute("aria-label");
+  }
+}
+
+function buildSavedPlacesEmptyStateGuidance(state = getSavedPlacesState()) {
+  const homeSaved = isConfiguredPlace(state?.home);
+  const workSaved = isConfiguredPlace(state?.work);
+  const guidance = [];
+  if (!homeSaved) guidance.push({ type: "home", primary: "Home not saved yet", secondary: "Add Home in Manage Places" });
+  if (!workSaved) guidance.push({ type: "work", primary: "Work not saved yet", secondary: "Add Work in Manage Places" });
+  return guidance;
+}
+
+function updateDestinationEmptyStateGuidance(state = getSavedPlacesState()) {
+  const guidance = buildSavedPlacesEmptyStateGuidance(state);
+  if (!els.destinationEmptyNote) return guidance;
+  els.destinationEmptyNote.textContent = "";
+  els.destinationEmptyNote.hidden = guidance.length === 0;
+  guidance.forEach((entry) => {
+    const row = document.createElement("span");
+    row.className = "destination-empty-note-row";
+    row.dataset.savedPlaceType = entry.type;
+    row.textContent = `${entry.primary}. ${entry.secondary}.`;
+    els.destinationEmptyNote.appendChild(row);
+  });
+  return guidance;
+}
+
 function updateRouteWatchSetupUI() {
   const routeLabelParts = buildRouteWatchLabelParts();
   const savedPlacesState = getSavedPlacesState();
@@ -50095,18 +50137,26 @@ function updateRouteWatchSetupUI() {
     favorite: hasFavorite
   };
   const labelMap = {
-    home: buttonState.home ? "Go Home" : "Set Home",
-    work: buttonState.work ? "Go Work" : "Set Work",
-    favorite: buttonState.favorite ? "Go Favorite" : "Add Favorite"
+    home: buttonState.home
+      ? { primary: "Go Home", secondary: "" }
+      : { primary: "Home not saved yet", secondary: "Add Home in Manage Places" },
+    work: buttonState.work
+      ? { primary: "Go Work", secondary: "" }
+      : { primary: "Work not saved yet", secondary: "Add Work in Manage Places" },
+    favorite: buttonState.favorite
+      ? { primary: "Go Favorite", secondary: "" }
+      : { primary: "Add Favorite", secondary: "Manage Places" }
   };
 
   [["desktopDestinationHomeBtn", "home"], ["desktopDestinationWorkBtn", "work"], ["desktopDestinationFavoriteBtn", "favorite"], ["destinationHomeBtn", "home"], ["destinationWorkBtn", "work"], ["destinationFavoriteBtn", "favorite"]].forEach(([id, type]) => {
     const btn = els[id];
     if (!btn) return;
-    btn.textContent = labelMap[type];
+    setDestinationChipGuidance(btn, labelMap[type].primary, labelMap[type].secondary);
     btn.classList.toggle("is-pending", !buttonState[type]);
+    btn.classList.toggle("is-empty-guidance", (type === "home" || type === "work") && !buttonState[type]);
   });
 
+  updateDestinationEmptyStateGuidance(savedPlacesState);
   if (els.routeWatchSetupHint) els.routeWatchSetupHint.hidden = routeLabelParts.configured;
 }
 
@@ -51907,8 +51957,7 @@ function scrubInvalidSavedPlacesState() {
 
 function initDailyDestinationHero() {
   const state = getSavedPlacesState();
-  const hasAny = Boolean(state.home || state.work || state.custom.length || state.favorites.length);
-  if (els.destinationEmptyNote) els.destinationEmptyNote.hidden = hasAny;
+  updateDestinationEmptyStateGuidance(state);
   const copy = ["Check route before you go.", "Any delays today?", "Beat the backup.", "Know before you go."];
   safeText("destinationHabitCopy", copy[new Date().getDate() % copy.length]);
 }
@@ -52101,6 +52150,73 @@ function gridlyBuildSavedPlacesDestinationSearchAudit() {
 window.gridlySavedPlacesDestinationSearchAudit = function gridlySavedPlacesDestinationSearchAudit() {
   return gridlyBuildSavedPlacesDestinationSearchAudit();
 };
+
+function gridlySavedPlacesEmptyStateElementVisible(el) {
+  if (!(el instanceof HTMLElement) || el.hidden) return false;
+  const text = String(el.textContent || "").trim();
+  if (!text) return false;
+  const style = typeof getComputedStyle === "function" ? getComputedStyle(el) : null;
+  return !(style && (style.visibility === "hidden" || Number(style.opacity || "1") === 0));
+}
+
+function gridlyBuildSavedPlacesEmptyStateAudit() {
+  const findings = [];
+  const state = typeof getSavedPlacesState === "function" ? getSavedPlacesState() : normalizeSavedPlaces();
+  const homeSaved = isConfiguredPlace(state.home);
+  const workSaved = isConfiguredPlace(state.work);
+  const favoritesCount = [
+    ...(Array.isArray(state.custom) ? state.custom : []),
+    ...(Array.isArray(state.favorites) ? state.favorites : [])
+  ].filter((place) => isConfiguredPlace(place)).length;
+  const note = document.getElementById("destinationEmptyNote");
+  const homeBtn = document.getElementById("destinationHomeBtn");
+  const workBtn = document.getElementById("destinationWorkBtn");
+  const visibleText = [
+    note && gridlySavedPlacesEmptyStateElementVisible(note) ? note.textContent : "",
+    homeBtn && gridlySavedPlacesEmptyStateElementVisible(homeBtn) ? homeBtn.textContent : "",
+    workBtn && gridlySavedPlacesEmptyStateElementVisible(workBtn) ? workBtn.textContent : ""
+  ].join(" ");
+  const needsHomeGuidance = !homeSaved;
+  const needsWorkGuidance = !workSaved;
+  const homeGuidanceVisible = !needsHomeGuidance || /home not saved yet/i.test(visibleText);
+  const workGuidanceVisible = !needsWorkGuidance || /work not saved yet/i.test(visibleText);
+  const emptyStateGuidanceVisible = Boolean((needsHomeGuidance || needsWorkGuidance) ? (homeGuidanceVisible && workGuidanceVisible) : true);
+  const managePlacesAvailable = Boolean(
+    document.getElementById("desktopManageRouteBtn")
+    || document.getElementById("routeSetupModal")
+    || document.getElementById("destinationAddBtn")
+    || typeof openRouteSetupModal === "function"
+  );
+  const homeResults = typeof getGridlySavedPlaceDestinationSearchResults === "function" ? getGridlySavedPlaceDestinationSearchResults("home") : [];
+  const workResults = typeof getGridlySavedPlaceDestinationSearchResults === "function" ? getGridlySavedPlaceDestinationSearchResults("work") : [];
+  const unsavedHomeShownAsDestination = Boolean(!homeSaved && homeResults.some((result) => (result.savedPlaceType || result.raw?.savedPlaceType) === "home"));
+  const unsavedWorkShownAsDestination = Boolean(!workSaved && workResults.some((result) => (result.savedPlaceType || result.raw?.savedPlaceType) === "work"));
+
+  if (!emptyStateGuidanceVisible) findings.push("Missing Home/Work empty-state guidance in Destination Search.");
+  if (!managePlacesAvailable) findings.push("Manage Places entry point was not detected.");
+  if (unsavedHomeShownAsDestination) findings.push("Unsaved Home is appearing as a selectable destination.");
+  if (unsavedWorkShownAsDestination) findings.push("Unsaved Work is appearing as a selectable destination.");
+
+  const consumerFriendlyPass = Boolean(emptyStateGuidanceVisible && managePlacesAvailable && !unsavedHomeShownAsDestination && !unsavedWorkShownAsDestination && findings.length === 0);
+  return {
+    available: true,
+    version: "V258",
+    homeSaved,
+    workSaved,
+    favoritesCount,
+    emptyStateGuidanceVisible,
+    managePlacesAvailable,
+    unsavedHomeShownAsDestination,
+    unsavedWorkShownAsDestination,
+    consumerFriendlyPass,
+    findings
+  };
+}
+
+window.gridlySavedPlacesEmptyStateAudit = function gridlySavedPlacesEmptyStateAudit() {
+  return gridlyBuildSavedPlacesEmptyStateAudit();
+};
+
 function gridlyBuildSavedPlaceRouteClarityAudit() {
   const findings = [];
   const searchState = typeof ensureGridlySearchState === "function" ? ensureGridlySearchState() : null;

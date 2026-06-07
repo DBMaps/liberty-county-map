@@ -6005,10 +6005,24 @@ body.modal-open {
   padding: 9px 13px;
   font-size: 0.83rem;
 }
+.destination-chip-primary,
+.destination-chip-secondary {
+  display: block;
+  line-height: 1.15;
+}
+.destination-chip-secondary {
+  margin-top: 2px;
+  color: rgba(212, 230, 244, 0.78);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
 .destination-empty-note {
   margin: 0;
   color: #ffd480;
   font-size: 0.8rem;
+}
+.destination-empty-note-row {
+  display: block;
 }
 .desktop-destination-strip {
   padding: 12px 14px;
@@ -6513,6 +6527,9 @@ body.modal-open {
 .destination-chip.is-pending {
   opacity: 0.82;
   border-style: dashed;
+}
+.destination-chip.is-empty-guidance {
+  text-align: left;
 }
 
 @media (max-width: 1100px) {
