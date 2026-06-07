@@ -10240,6 +10240,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyAwarenessStoryAudit",
   "gridlyDestinationAwarenessAudit",
   "gridlyAppLocationReadinessAudit",
+  "gridlyStartupLocationTimingAudit",
   "gridlyKnowBeforeYouGoAudit",
   "gridlyActiveConditionIntelligenceAudit",
   "gridlyAwarenessNarrativeAudit",
@@ -10359,6 +10360,7 @@ function exposeAllGridlyAuditHelpers() {
     gridlyAwarenessStoryAudit: typeof gridlyAwarenessStoryAudit === "function" ? gridlyAwarenessStoryAudit : (typeof target?.gridlyAwarenessStoryAudit === "function" ? target.gridlyAwarenessStoryAudit : null),
     gridlyDestinationAwarenessAudit: typeof gridlyDestinationAwarenessAudit === "function" ? gridlyDestinationAwarenessAudit : (typeof target?.gridlyDestinationAwarenessAudit === "function" ? target.gridlyDestinationAwarenessAudit : null),
     gridlyAppLocationReadinessAudit: typeof target?.gridlyAppLocationReadinessAudit === "function" ? target.gridlyAppLocationReadinessAudit : null,
+    gridlyStartupLocationTimingAudit: typeof target?.gridlyStartupLocationTimingAudit === "function" ? target.gridlyStartupLocationTimingAudit : null,
     gridlyKnowBeforeYouGoAudit: typeof gridlyKnowBeforeYouGoAudit === "function" ? gridlyKnowBeforeYouGoAudit : (typeof target?.gridlyKnowBeforeYouGoAudit === "function" ? target.gridlyKnowBeforeYouGoAudit : null),
     gridlyActiveConditionIntelligenceAudit: typeof gridlyActiveConditionIntelligenceAudit === "function" ? gridlyActiveConditionIntelligenceAudit : (typeof target?.gridlyActiveConditionIntelligenceAudit === "function" ? target.gridlyActiveConditionIntelligenceAudit : null),
     gridlyAwarenessNarrativeAudit: typeof gridlyAwarenessNarrativeAudit === "function" ? gridlyAwarenessNarrativeAudit : (typeof target?.gridlyAwarenessNarrativeAudit === "function" ? target.gridlyAwarenessNarrativeAudit : null),
@@ -18718,7 +18720,12 @@ function getGridlyCurrentLocationRouteCoordinate() {
 }
 
 const GRIDLY_DESTINATION_AUTO_LOCATION_TIMEOUT_MS = 2500;
+const GRIDLY_DESTINATION_AUTO_LOCATION_GEO_OPTIONS = Object.freeze({
+  enableHighAccuracy: true,
+  maximumAge: 60000
+});
 const GRIDLY_APP_LOCATION_READINESS_VERSION = "V257.9";
+const GRIDLY_STARTUP_LOCATION_TIMING_AUDIT_VERSION = "V257.9A";
 const GRIDLY_APP_LOCATION_STARTUP_PROMPT_SESSION_KEY = "gridlyAppLocationReadinessStartupPromptAttemptedV257_9";
 let gridlyDestinationAutoLocationPromptAttempted = false;
 let gridlyDestinationAutoLocationRequestInFlight = null;
@@ -18729,7 +18736,18 @@ const gridlyAppLocationReadinessState = {
   lastLocationRefreshReason: "",
   lastLocationFailureReason: "",
   lastStartupAttemptedAt: null,
-  lastStartupSucceededAt: null
+  lastStartupSucceededAt: null,
+  startupTimeoutMs: GRIDLY_DESTINATION_AUTO_LOCATION_TIMEOUT_MS,
+  locationRequestStartedAt: null,
+  locationRequestEndedAt: null,
+  acquisitionDurationMs: 0,
+  timedOut: false,
+  enableHighAccuracy: GRIDLY_DESTINATION_AUTO_LOCATION_GEO_OPTIONS.enableHighAccuracy,
+  maximumAge: GRIDLY_DESTINATION_AUTO_LOCATION_GEO_OPTIONS.maximumAge,
+  lastSuccessfulLocationAt: null,
+  lastSuccessfulAcquisitionDurationMs: 0,
+  browserReportedErrorCode: "",
+  browserReportedErrorMessage: ""
 };
 const gridlyDestinationCurrentLocationOriginState = {
   attemptedForDestinationSearch: false,
@@ -18801,13 +18819,25 @@ function markGridlyAppLocationReadinessSessionPromptAttempted() {
   }
 }
 
+function formatGridlyStartupLocationTimingAuditTimestamp(value) {
+  const timestamp = Number(value);
+  if (!Number.isFinite(timestamp) || timestamp <= 0) return "";
+  try {
+    return new Date(timestamp).toISOString();
+  } catch (_error) {
+    return "";
+  }
+}
+
 function syncGridlyAppLocationReadinessSuccess(coords, reason = "startup_location_refresh") {
   const normalizedCoords = normalizeCoordinatePair(coords?.lat, coords?.lng) || getGridlyCurrentLocationRouteCoordinate();
   gridlyAppLocationReadinessState.startupLocationSucceeded = Boolean(normalizedCoords);
   gridlyAppLocationReadinessState.lastLocationRefreshReason = reason;
   gridlyAppLocationReadinessState.lastLocationFailureReason = "";
   if (normalizedCoords) {
-    gridlyAppLocationReadinessState.lastStartupSucceededAt = Date.now();
+    const succeededAt = Date.now();
+    gridlyAppLocationReadinessState.lastStartupSucceededAt = succeededAt;
+    gridlyAppLocationReadinessState.lastSuccessfulLocationAt = succeededAt;
     gridlyDestinationCurrentLocationOriginState.permissionState = gridlyDestinationCurrentLocationOriginState.permissionState || gridlyCachedGeolocationPermissionStatus || "granted";
     gridlyDestinationCurrentLocationOriginState.succeededForDestinationSearch = true;
     gridlyDestinationCurrentLocationOriginState.failureReason = "";
@@ -18932,6 +18962,7 @@ async function requestGridlyDestinationAutoCurrentLocation(options = {}) {
     recordGridlyGeolocationRequest("destination_route_auto_current_location");
 
     return new Promise((resolve) => {
+      const isStartupLocationReadinessRequest = String(options?.reason || "") === "startup_location_readiness";
       let settled = false;
       const finish = (result) => {
         if (settled) return;
@@ -18939,13 +18970,45 @@ async function requestGridlyDestinationAutoCurrentLocation(options = {}) {
         resolve(result);
       };
       const timeoutMs = Number(options?.timeoutMs || GRIDLY_DESTINATION_AUTO_LOCATION_TIMEOUT_MS);
+      const locationRequestStartedAt = Date.now();
+      const geolocationOptions = {
+        enableHighAccuracy: GRIDLY_DESTINATION_AUTO_LOCATION_GEO_OPTIONS.enableHighAccuracy,
+        timeout: timeoutMs,
+        maximumAge: GRIDLY_DESTINATION_AUTO_LOCATION_GEO_OPTIONS.maximumAge
+      };
+      if (isStartupLocationReadinessRequest) {
+        gridlyAppLocationReadinessState.startupTimeoutMs = timeoutMs;
+        gridlyAppLocationReadinessState.locationRequestStartedAt = locationRequestStartedAt;
+        gridlyAppLocationReadinessState.locationRequestEndedAt = null;
+        gridlyAppLocationReadinessState.acquisitionDurationMs = 0;
+        gridlyAppLocationReadinessState.timedOut = false;
+        gridlyAppLocationReadinessState.enableHighAccuracy = geolocationOptions.enableHighAccuracy;
+        gridlyAppLocationReadinessState.maximumAge = geolocationOptions.maximumAge;
+        gridlyAppLocationReadinessState.browserReportedErrorCode = "";
+        gridlyAppLocationReadinessState.browserReportedErrorMessage = "";
+      }
       const timeoutId = window.setTimeout?.(() => {
+        if (isStartupLocationReadinessRequest) {
+          const timeoutEndedAt = Date.now();
+          gridlyAppLocationReadinessState.locationRequestEndedAt = timeoutEndedAt;
+          gridlyAppLocationReadinessState.acquisitionDurationMs = Math.max(0, timeoutEndedAt - locationRequestStartedAt);
+          gridlyAppLocationReadinessState.timedOut = true;
+        }
         gridlyDestinationCurrentLocationOriginState.failureReason = "timeout";
         finish({ attempted: true, succeeded: false, fallbackReason: "timeout" });
       }, timeoutMs + 250);
 
       navigator.geolocation.getCurrentPosition(
         (position) => {
+          const locationRequestEndedAt = Date.now();
+          const acquisitionDurationMs = Math.max(0, locationRequestEndedAt - locationRequestStartedAt);
+          gridlyAppLocationReadinessState.lastSuccessfulLocationAt = locationRequestEndedAt;
+          gridlyAppLocationReadinessState.lastSuccessfulAcquisitionDurationMs = acquisitionDurationMs;
+          if (isStartupLocationReadinessRequest) {
+            gridlyAppLocationReadinessState.locationRequestEndedAt = locationRequestEndedAt;
+            gridlyAppLocationReadinessState.acquisitionDurationMs = acquisitionDurationMs;
+            if (!settled) gridlyAppLocationReadinessState.timedOut = false;
+          }
           if (settled) return;
           if (timeoutId) window.clearTimeout?.(timeoutId);
           const coords = getValidGridlyUserLocationCoordinates(position);
@@ -18965,6 +19028,17 @@ async function requestGridlyDestinationAutoCurrentLocation(options = {}) {
           finish({ attempted: true, succeeded: true, fallbackReason: "", coords });
         },
         (error) => {
+          const locationRequestEndedAt = Date.now();
+          const acquisitionDurationMs = Math.max(0, locationRequestEndedAt - locationRequestStartedAt);
+          const browserReportedErrorCode = error?.code ?? "";
+          const browserReportedErrorMessage = String(error?.message || "");
+          if (isStartupLocationReadinessRequest) {
+            gridlyAppLocationReadinessState.locationRequestEndedAt = locationRequestEndedAt;
+            gridlyAppLocationReadinessState.acquisitionDurationMs = acquisitionDurationMs;
+            gridlyAppLocationReadinessState.browserReportedErrorCode = browserReportedErrorCode === "" ? "" : String(browserReportedErrorCode);
+            gridlyAppLocationReadinessState.browserReportedErrorMessage = browserReportedErrorMessage;
+            gridlyAppLocationReadinessState.timedOut = Number(error?.code) === 3 || gridlyAppLocationReadinessState.timedOut;
+          }
           if (settled) return;
           if (timeoutId) window.clearTimeout?.(timeoutId);
           const fallbackReason = getGridlyDestinationAutoLocationErrorReason(error);
@@ -18973,7 +19047,7 @@ async function requestGridlyDestinationAutoCurrentLocation(options = {}) {
           gridlyDestinationCurrentLocationOriginState.failureReason = fallbackReason;
           finish({ attempted: true, succeeded: false, fallbackReason });
         },
-        { enableHighAccuracy: true, timeout: timeoutMs, maximumAge: 60000 }
+        geolocationOptions
       );
     });
   })().finally(() => {
@@ -52390,6 +52464,69 @@ window.gridlyAppLocationReadinessAudit = function gridlyAppLocationReadinessAudi
 };
 if (typeof exposeGridlyAuditHelper === "function") {
   exposeGridlyAuditHelper("gridlyAppLocationReadinessAudit", window.gridlyAppLocationReadinessAudit);
+}
+
+function gridlyBuildStartupLocationTimingAudit() {
+  const findings = [];
+  const now = Date.now();
+  const currentLocationCoordinate = getGridlyCurrentLocationRouteCoordinate()
+    || gridlyDestinationCurrentLocationOriginState.coordinate
+    || null;
+  const permissionState = gridlyDestinationCurrentLocationOriginState.permissionState
+    || gridlyCachedGeolocationPermissionStatus
+    || (typeof gridlyGetLocationPermissionDiagnostic === "function" ? gridlyGetLocationPermissionDiagnostic() : "");
+  const cachedLocationAvailable = Boolean(currentLocationCoordinate);
+  const lastSuccessfulLocationAt = gridlyAppLocationReadinessState.lastSuccessfulLocationAt
+    || gridlyDestinationCurrentLocationOriginState.lastSucceededAt
+    || gridlyAppLocationReadinessState.lastStartupSucceededAt
+    || null;
+  const cachedLocationAgeMs = cachedLocationAvailable && lastSuccessfulLocationAt
+    ? Math.max(0, now - Number(lastSuccessfulLocationAt))
+    : 0;
+  const startupTimeoutMs = Number(gridlyAppLocationReadinessState.startupTimeoutMs || GRIDLY_DESTINATION_AUTO_LOCATION_TIMEOUT_MS);
+  const acquisitionDurationMs = Number(gridlyAppLocationReadinessState.acquisitionDurationMs || 0);
+  const lastSuccessfulAcquisitionDurationMs = Number(gridlyAppLocationReadinessState.lastSuccessfulAcquisitionDurationMs || 0);
+  const maximumAge = Number(gridlyAppLocationReadinessState.maximumAge ?? GRIDLY_DESTINATION_AUTO_LOCATION_GEO_OPTIONS.maximumAge);
+
+  if (!gridlyAppLocationReadinessState.startupLocationAttempted) findings.push("Startup location readiness has not attempted acquisition yet.");
+  if (gridlyAppLocationReadinessState.enableHighAccuracy) findings.push("Startup location acquisition requests high accuracy.");
+  if (maximumAge > 0) findings.push(`Browser geolocation may reuse a cached position up to ${maximumAge} ms old.`);
+  if (!cachedLocationAvailable) findings.push("No app-level Current Location coordinate is cached right now.");
+  if (gridlyAppLocationReadinessState.timedOut) findings.push(`Startup acquisition timed out after ${startupTimeoutMs} ms before a usable startup coordinate was stored.`);
+  if (gridlyAppLocationReadinessState.timedOut && lastSuccessfulAcquisitionDurationMs > startupTimeoutMs) {
+    findings.push(`A successful acquisition took ${lastSuccessfulAcquisitionDurationMs} ms, which is longer than the startup timeout.`);
+  }
+  if (String(gridlyAppLocationReadinessState.browserReportedErrorCode || "") === "3") findings.push("Browser reported geolocation TIMEOUT (code 3).");
+  if (cachedLocationAvailable && cachedLocationAgeMs <= maximumAge) findings.push("Current cached location is within the configured browser maximumAge window.");
+
+  return {
+    available: true,
+    version: GRIDLY_STARTUP_LOCATION_TIMING_AUDIT_VERSION,
+    permissionState: String(permissionState || ""),
+    startupAttempted: Boolean(gridlyAppLocationReadinessState.startupLocationAttempted),
+    startupSucceeded: Boolean(gridlyAppLocationReadinessState.startupLocationSucceeded),
+    startupTimeoutMs,
+    locationRequestStartedAt: formatGridlyStartupLocationTimingAuditTimestamp(gridlyAppLocationReadinessState.locationRequestStartedAt),
+    locationRequestEndedAt: formatGridlyStartupLocationTimingAuditTimestamp(gridlyAppLocationReadinessState.locationRequestEndedAt),
+    acquisitionDurationMs,
+    timedOut: Boolean(gridlyAppLocationReadinessState.timedOut),
+    enableHighAccuracy: Boolean(gridlyAppLocationReadinessState.enableHighAccuracy),
+    maximumAge,
+    cachedLocationAvailable,
+    cachedLocationAgeMs,
+    lastSuccessfulLocationAt: formatGridlyStartupLocationTimingAuditTimestamp(lastSuccessfulLocationAt),
+    lastSuccessfulAcquisitionDurationMs,
+    browserReportedErrorCode: String(gridlyAppLocationReadinessState.browserReportedErrorCode || ""),
+    browserReportedErrorMessage: String(gridlyAppLocationReadinessState.browserReportedErrorMessage || ""),
+    findings
+  };
+}
+
+window.gridlyStartupLocationTimingAudit = function gridlyStartupLocationTimingAudit() {
+  return gridlyBuildStartupLocationTimingAudit();
+};
+if (typeof exposeGridlyAuditHelper === "function") {
+  exposeGridlyAuditHelper("gridlyStartupLocationTimingAudit", window.gridlyStartupLocationTimingAudit);
 }
 
 function gridlyBuildDestinationLocationRecoveryAudit() {
