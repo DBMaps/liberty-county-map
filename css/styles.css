@@ -18108,3 +18108,53 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
     color: rgba(220, 235, 250, 0.82);
   }
 }
+
+/* V255.7C: portrait participation acknowledgement has dedicated ownership; Awareness Brief remains top-panel owner. */
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-participation-ack {
+  position: fixed;
+  top: 142px;
+  left: 18px;
+  right: 18px;
+  z-index: 100150;
+  min-height: 34px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #9ed7bd;
+  font-size: 0.75rem;
+  font-weight: 760;
+  letter-spacing: 0.01em;
+  background: linear-gradient(180deg, rgba(26, 61, 48, 0.94), rgba(14, 42, 33, 0.9));
+  border: 1px solid rgba(111, 187, 151, 0.46);
+  box-shadow: 0 12px 28px rgba(3, 9, 18, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px) saturate(130%);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+  pointer-events: none;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 260ms ease, transform 260ms ease;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-participation-ack.info {
+  color: #9ed8ff;
+  background: linear-gradient(180deg, rgba(31, 68, 103, 0.94), rgba(13, 42, 72, 0.9));
+  border-color: rgba(126, 173, 214, 0.5);
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-participation-ack.error {
+  color: #ffb2bf;
+  background: linear-gradient(180deg, rgba(85, 32, 44, 0.94), rgba(62, 20, 31, 0.9));
+  border-color: rgba(255, 92, 122, 0.58);
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-participation-ack.is-fading {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-participation-ack[hidden] {
+  display: none !important;
+}
