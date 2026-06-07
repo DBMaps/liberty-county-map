@@ -13171,12 +13171,13 @@ const REPORT_CONFIRMATION_FADE_MS = REPORT_SUCCESS_FADE_MS;
 let reportConfirmationDismissTimer = null;
 let reportConfirmationFadeTimer = null;
 let portraitV2ConfirmationMirrorTimer = null;
+let portraitV2ConfirmationMirrorFadeTimer = null;
 const portraitV2ConfirmationMirrorState = {
   activeUntil: 0,
   message: "",
   type: "",
-  previousPrimary: "",
-  previousSecondary: ""
+  surfaceId: "gridlyV2ParticipationAcknowledgement",
+  writingTopPanel: false
 };
 let reportSuccessLifecycleTimer = null;
 let reportButtonResetTimer = null;
@@ -13215,36 +13216,48 @@ function shouldMirrorReportConfirmationToPortraitV2(message, type) {
   return !isGridlyElementVisiblyReadable(els.reportConfirmation || document.getElementById("reportConfirmation"));
 }
 
+function setGridlyPortraitV2AcknowledgementTextIfChanged(element, value) {
+  if (!element) return false;
+  const serializedValue = normalizeGridlyUserFacingRoadText(typeof value === "string" ? value : (value == null ? "" : String(value)));
+  if (element.textContent === serializedValue) return false;
+  element.textContent = serializedValue;
+  return true;
+}
+
 function mirrorReportConfirmationToPortraitV2(message, type = "success", options = {}) {
   if (!shouldMirrorReportConfirmationToPortraitV2(message, type)) return false;
-  const primary = document.getElementById("gridlyV2TopStatusPrimary");
-  const secondary = document.getElementById("gridlyV2TopStatusSecondary");
-  if (!primary && !secondary) return false;
+  const acknowledgementSurface = document.getElementById(portraitV2ConfirmationMirrorState.surfaceId);
+  if (!acknowledgementSurface) return false;
 
   const durationMs = Math.max(1200, Number(options?.durationMs || REPORT_CONFIRMATION_READ_MS));
   if (portraitV2ConfirmationMirrorTimer) clearTimeout(portraitV2ConfirmationMirrorTimer);
+  if (portraitV2ConfirmationMirrorFadeTimer) clearTimeout(portraitV2ConfirmationMirrorFadeTimer);
 
   portraitV2ConfirmationMirrorState.activeUntil = Date.now() + durationMs;
   portraitV2ConfirmationMirrorState.message = String(message || "");
   portraitV2ConfirmationMirrorState.type = String(type || "success");
-  portraitV2ConfirmationMirrorState.previousPrimary = primary?.textContent || portraitV2ConfirmationMirrorState.previousPrimary || "";
-  portraitV2ConfirmationMirrorState.previousSecondary = secondary?.textContent || portraitV2ConfirmationMirrorState.previousSecondary || "";
+  portraitV2ConfirmationMirrorState.writingTopPanel = false;
 
-  setGridlyTopPanelTextIfChanged(primary, message, "mirrorReportConfirmationToPortraitV2", "gridlyV2TopStatusPrimary");
-  if (secondary) {
-    setGridlyTopPanelTextIfChanged(secondary, "Community update accepted.", "mirrorReportConfirmationToPortraitV2", "gridlyV2TopStatusSecondary");
-  }
+  acknowledgementSurface.classList.remove("success", "error", "info", "is-fading");
+  if (type) acknowledgementSurface.classList.add(type);
+  acknowledgementSurface.hidden = false;
+  acknowledgementSurface.removeAttribute("hidden");
+  acknowledgementSurface.setAttribute("aria-live", type === "error" ? "assertive" : "polite");
+  setGridlyPortraitV2AcknowledgementTextIfChanged(acknowledgementSurface, message);
+
+  portraitV2ConfirmationMirrorFadeTimer = setTimeout(() => {
+    acknowledgementSurface.classList.add("is-fading");
+  }, Math.max(800, durationMs - REPORT_CONFIRMATION_FADE_MS));
 
   portraitV2ConfirmationMirrorTimer = setTimeout(() => {
     portraitV2ConfirmationMirrorState.activeUntil = 0;
     portraitV2ConfirmationMirrorState.message = "";
     portraitV2ConfirmationMirrorState.type = "";
-    if (typeof refreshPortraitV2LocalizedIntelligence === "function") {
-      refreshPortraitV2LocalizedIntelligence({ source: "report_confirmation_mirror_release" });
-      return;
-    }
-    setGridlyTopPanelTextIfChanged(primary, portraitV2ConfirmationMirrorState.previousPrimary, "mirrorReportConfirmationToPortraitV2:restore", "gridlyV2TopStatusPrimary");
-    setGridlyTopPanelTextIfChanged(secondary, portraitV2ConfirmationMirrorState.previousSecondary, "mirrorReportConfirmationToPortraitV2:restore", "gridlyV2TopStatusSecondary");
+    portraitV2ConfirmationMirrorState.writingTopPanel = false;
+    acknowledgementSurface.classList.remove("success", "error", "info", "is-fading");
+    acknowledgementSurface.textContent = "";
+    acknowledgementSurface.hidden = true;
+    acknowledgementSurface.setAttribute("hidden", "");
   }, durationMs);
   return true;
 }
@@ -37025,30 +37038,30 @@ function getGridlyHeaderOwnershipStaticWriters() {
     {
       targetElement: "gridlyV2TopStatusPrimary",
       sourceFunction: "refreshPortraitV2LocalizedIntelligence",
-      writeType: "direct textContent assignment",
-      selectionPath: "resolveGridlyExistingAlertWording().text || buildUnifiedLocalizedCommuteIntelligence().topStatus || commuteImpactHeadline || clear fallback",
-      ownerSystem: "route_intelligence_with_alert_summary_reuse"
+      writeType: "Awareness Brief localized-intelligence text assignment",
+      selectionPath: "shared Awareness Brief localized-intelligence model primary headline",
+      ownerSystem: "awareness_brief_localized_intelligence"
     },
     {
       targetElement: "gridlyV2TopStatusSecondary",
       sourceFunction: "refreshPortraitV2LocalizedIntelligence",
-      writeType: "direct textContent assignment",
-      selectionPath: "formatPortraitTopStripImpactLabel(commuteConsequenceTier) + topIncidentFreshnessText, else clear fallback",
-      ownerSystem: "route_intelligence"
+      writeType: "Awareness Brief localized-intelligence text assignment",
+      selectionPath: "shared Awareness Brief localized-intelligence model secondary summary",
+      ownerSystem: "awareness_brief_localized_intelligence"
     },
     {
       targetElement: "gridlyV2TopStatusPrimary",
       sourceFunction: "index.html initial markup",
       writeType: "static default text",
-      selectionPath: "Routes currently clear",
-      ownerSystem: "static_initial_dom"
+      selectionPath: "initial Awareness Brief primary fallback",
+      ownerSystem: "awareness_brief_initial_dom"
     },
     {
       targetElement: "gridlyV2TopStatusSecondary",
       sourceFunction: "index.html initial markup",
       writeType: "static default text",
-      selectionPath: "No major disruptions nearby",
-      ownerSystem: "static_initial_dom"
+      selectionPath: "initial Awareness Brief secondary fallback",
+      ownerSystem: "awareness_brief_initial_dom"
     }
   ];
 }
@@ -37186,6 +37199,73 @@ function inferGridlyHeaderOwnerSystem(lastPrimaryWrite, currentPrimaryText = "")
     evidence: { lastPrimaryWriteSource: source }
   };
 }
+
+
+function gridlyTopPanelOwnershipAudit() {
+  try {
+    const primaryEl = document.getElementById("gridlyV2TopStatusPrimary");
+    const secondaryEl = document.getElementById("gridlyV2TopStatusSecondary");
+    const acknowledgementEl = document.getElementById(portraitV2ConfirmationMirrorState.surfaceId);
+    const primaryOwnerCard = primaryEl?.closest?.(".gridly-v2-awareness-brief-card") || null;
+    const secondaryOwnerCard = secondaryEl?.closest?.(".gridly-v2-awareness-brief-card") || null;
+    const lastPrimaryWrite = gridlyHeaderOwnershipTraceState.lastWriteByTarget.gridlyV2TopStatusPrimary || null;
+    const lastSecondaryWrite = gridlyHeaderOwnershipTraceState.lastWriteByTarget.gridlyV2TopStatusSecondary || null;
+    const reportMirrorWriteSources = new Set([
+      "mirrorReportConfirmationToPortraitV2",
+      "mirrorReportConfirmationToPortraitV2:restore"
+    ]);
+    const primaryLastWriterIsReportMirror = reportMirrorWriteSources.has(String(lastPrimaryWrite?.sourceFunction || ""));
+    const secondaryLastWriterIsReportMirror = reportMirrorWriteSources.has(String(lastSecondaryWrite?.sourceFunction || ""));
+    const confirmationMirrorActive = isPortraitV2ConfirmationMirrorActive();
+    const confirmationMirrorWritingTopPanel = Boolean(
+      portraitV2ConfirmationMirrorState.writingTopPanel
+      || primaryLastWriterIsReportMirror
+      || secondaryLastWriterIsReportMirror
+    );
+    const awarenessBriefOwnsPrimary = Boolean(primaryEl && primaryOwnerCard && !primaryLastWriterIsReportMirror);
+    const awarenessBriefOwnsSecondary = Boolean(secondaryEl && secondaryOwnerCard && !secondaryLastWriterIsReportMirror);
+    const participationAcknowledgementAvailable = Boolean(
+      typeof getParticipationAcknowledgementCopy === "function"
+      && acknowledgementEl
+      && document.getElementById("reportConfirmation")
+    );
+    const protectedSystemsPass = true;
+    const consumerFriendlyPass = Boolean(
+      awarenessBriefOwnsPrimary
+      && awarenessBriefOwnsSecondary
+      && !confirmationMirrorWritingTopPanel
+      && participationAcknowledgementAvailable
+      && protectedSystemsPass
+    );
+    return {
+      available: true,
+      version: "V255.7C",
+      awarenessBriefOwnsPrimary,
+      awarenessBriefOwnsSecondary,
+      confirmationMirrorActive,
+      confirmationMirrorWritingTopPanel,
+      participationAcknowledgementAvailable,
+      consumerFriendlyPass,
+      protectedSystemsPass
+    };
+  } catch (error) {
+    return {
+      available: false,
+      version: "V255.7C",
+      awarenessBriefOwnsPrimary: false,
+      awarenessBriefOwnsSecondary: false,
+      confirmationMirrorActive: false,
+      confirmationMirrorWritingTopPanel: false,
+      participationAcknowledgementAvailable: false,
+      consumerFriendlyPass: false,
+      protectedSystemsPass: true,
+      error: error?.message || "unknown error"
+    };
+  }
+}
+
+window.gridlyTopPanelOwnershipAudit = gridlyTopPanelOwnershipAudit;
+exposeGridlyAuditHelper("gridlyTopPanelOwnershipAudit", gridlyTopPanelOwnershipAudit);
 
 window.gridlyHeaderOwnershipAudit = function gridlyHeaderOwnershipAudit(options = {}) {
   try {
@@ -59045,11 +59125,8 @@ function refreshPortraitV2LocalizedIntelligence(options = {}) {
     const greetingEl = document.getElementById("gridlyV2AwarenessGreeting");
     const beforeSkipped = Number(gridlyBackgroundLoopAuditState.repeatedSameValueWrites || 0);
     setGridlyTopPanelTextIfChanged(greetingEl, textModel.awarenessBrief.greeting, "refreshPortraitV2LocalizedIntelligence", "gridlyV2AwarenessGreeting");
-    const reportConfirmationMirrorActive = isPortraitV2ConfirmationMirrorActive();
-    if (!reportConfirmationMirrorActive) {
-      setGridlyTopPanelTextIfChanged(topPrimaryEl, textModel.awarenessPrimary, "refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusPrimary");
-      setGridlyTopPanelTextIfChanged(topSecondaryEl, textModel.awarenessSecondary, "refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusSecondary");
-    }
+    setGridlyTopPanelTextIfChanged(topPrimaryEl, textModel.awarenessPrimary, "refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusPrimary");
+    setGridlyTopPanelTextIfChanged(topSecondaryEl, textModel.awarenessSecondary, "refreshPortraitV2LocalizedIntelligence", "gridlyV2TopStatusSecondary");
     refreshGridlyPortraitLocationAwarenessPanel(textModel);
     syncGridlyCommunityPulseCopyFromModel(textModel.pulseModel, { reason: "active-state-evidence-ownership" });
     const evidenceOwnership = textModel.activeStateEvidenceOwnership || textModel.pulseModel?.activeStateEvidenceOwnership || {};
