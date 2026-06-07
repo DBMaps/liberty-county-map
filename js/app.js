@@ -16081,50 +16081,35 @@ function getGridlyRouteExitSurfaceState() {
 
 function syncGridlyVisibleRouteExitControls() {
   const { routeIsActive, routeIsMonitoring } = getGridlyRouteExitSurfaceState();
-  const actionBar = document.getElementById("mobileRouteActionBar");
-  const changeButton = document.getElementById("mobileRouteActionChangeBtn");
-  const clearButtons = [
-    document.getElementById("mobileCardClearRouteBtn"),
-    document.getElementById("gridlyDestinationImpactClearRouteBtn")
-  ].filter(Boolean);
-  const actionBarClearButton = document.getElementById("mobileCardClearRouteBtn");
-  const stopButtons = [document.getElementById("mobileCardStopRouteWatchBtn")].filter(Boolean);
+  const legacyActionBar = document.getElementById("mobileRouteActionBar");
   const routeCard = document.querySelector(".map-card > .mobile-destination-command") || null;
-  const cardAllowsExitControl = Boolean(routeCard && !routeCard.hidden && !routeCard.classList.contains("is-awareness-panel"));
-  const actionBarVisible = Boolean(routeIsActive && cardAllowsExitControl && actionBar);
+  const routeDetailsClearButton = document.getElementById("gridlyDestinationImpactClearRouteBtn");
+  const routeDetailsStopButton = document.getElementById("gridlyDestinationImpactStopWatchBtn");
 
-  routeCard?.classList.toggle("has-route-exit-actions", Boolean(actionBarVisible));
-  routeCard?.classList.toggle("is-route-monitoring", Boolean(actionBarVisible && routeIsMonitoring));
+  routeCard?.classList.remove("has-route-exit-actions", "is-route-monitoring");
 
-  if (actionBar) {
-    actionBar.hidden = !actionBarVisible;
-    actionBar.classList.toggle("is-route-monitoring", Boolean(actionBarVisible && routeIsMonitoring));
-    actionBar.classList.toggle("is-route-preview", Boolean(actionBarVisible && !routeIsMonitoring));
-    actionBar.setAttribute("aria-hidden", actionBarVisible ? "false" : "true");
+  if (legacyActionBar) {
+    legacyActionBar.hidden = true;
+    legacyActionBar.classList.remove("is-route-monitoring", "is-route-preview");
+    legacyActionBar.setAttribute("aria-hidden", "true");
+    legacyActionBar.querySelectorAll(".mobile-route-action-control").forEach((button) => {
+      button.hidden = true;
+      button.disabled = true;
+      button.setAttribute("aria-disabled", "true");
+    });
   }
 
-  if (changeButton) {
-    const buttonVisible = Boolean(actionBarVisible && !routeIsMonitoring);
-    changeButton.hidden = !buttonVisible;
-    changeButton.disabled = !buttonVisible;
-    changeButton.setAttribute("aria-disabled", changeButton.disabled ? "true" : "false");
+  if (routeDetailsClearButton) {
+    routeDetailsClearButton.hidden = !routeIsActive;
+    routeDetailsClearButton.disabled = !routeIsActive;
+    routeDetailsClearButton.setAttribute("aria-disabled", routeDetailsClearButton.disabled ? "true" : "false");
   }
 
-  clearButtons.forEach((button) => {
-    const isPaneControl = button.id === "gridlyDestinationImpactClearRouteBtn";
-    const buttonVisible = isPaneControl ? routeIsActive : Boolean(actionBarVisible);
-    button.hidden = !buttonVisible;
-    button.disabled = !buttonVisible;
-    button.setAttribute("aria-disabled", button.disabled ? "true" : "false");
-  });
-  if (actionBarClearButton) actionBarClearButton.hidden = !actionBarVisible;
-
-  stopButtons.forEach((button) => {
-    const buttonVisible = Boolean(actionBarVisible && routeIsMonitoring);
-    button.hidden = !buttonVisible;
-    button.disabled = !buttonVisible;
-    button.setAttribute("aria-disabled", button.disabled ? "true" : "false");
-  });
+  if (routeDetailsStopButton) {
+    routeDetailsStopButton.hidden = !routeIsMonitoring;
+    routeDetailsStopButton.disabled = !routeIsMonitoring;
+    routeDetailsStopButton.setAttribute("aria-disabled", routeDetailsStopButton.disabled ? "true" : "false");
+  }
 
   window.__gridlySyncAwarenessPanelDockContract?.();
 }
@@ -16140,12 +16125,13 @@ function bindGridlyVisibleRouteExitControls() {
       handler();
     });
   };
-  bindButton("mobileRouteActionChangeBtn", () => openGridlyDestinationSearchSurface({ source: "portraitRouteActionBarChange" }));
-  bindButton("mobileCardClearRouteBtn", () => clearGridlyRoute("mobile_route_action_bar_clear"));
-  bindButton("mobileCardStopRouteWatchBtn", () => stopGridlyRouteWatch("mobile_route_action_bar_stop_watch"));
   bindButton("gridlyDestinationImpactClearRouteBtn", () => {
     closeGridlyDestinationImpactPane();
     clearGridlyRoute("route_details_clear_route");
+  });
+  bindButton("gridlyDestinationImpactStopWatchBtn", () => {
+    closeGridlyDestinationImpactPane();
+    stopGridlyRouteWatch("route_details_stop_watch");
   });
 }
 
@@ -17815,6 +17801,7 @@ function getGridlyDestinationImpactPaneElements() {
     close: document.getElementById("gridlyDestinationImpactPaneClose"),
     done: document.getElementById("gridlyDestinationImpactPaneDone"),
     clearRoute: document.getElementById("gridlyDestinationImpactClearRouteBtn"),
+    stopWatch: document.getElementById("gridlyDestinationImpactStopWatchBtn"),
     summary: document.getElementById("gridlyDestinationImpactPaneSummary"),
     reasons: document.getElementById("gridlyDestinationImpactPaneReasons"),
     quietNote: document.getElementById("gridlyDestinationImpactPaneQuietNote"),
@@ -20079,7 +20066,6 @@ function initGridlyAwarenessPanelDockContract() {
   const root = document.documentElement;
   const panelSelector = ".map-card > .mobile-destination-command:is(.is-awareness-panel, .is-destination-panel):not([hidden]):not(.is-command-card-suppressed)";
   const dockSelector = "#gridlyPortraitV2 .gridly-v2-bottom-dock";
-  const routeActionBarSelector = "#mobileRouteActionBar:not([hidden])";
   const gapPixels = 10;
   let scheduled = false;
   let resizeObserver = null;
@@ -20151,8 +20137,7 @@ function initGridlyAwarenessPanelDockContract() {
 
     if (panelBox) {
       const containingBlock = getContainingBlockMeta(panelBox.element);
-      const routeActionBarBox = getElementBox(routeActionBarSelector);
-      const lowerSurfaceTop = routeActionBarBox?.rect?.top || dockBox.rect.top;
+      const lowerSurfaceTop = dockBox.rect.top;
       const desiredPanelBottom = lowerSurfaceTop - gapPixels;
       const desiredViewportTop = desiredPanelBottom - panelBox.rect.height;
       const safeViewportTop = Math.max(10, desiredViewportTop);
@@ -20182,7 +20167,6 @@ function initGridlyAwarenessPanelDockContract() {
     const panelStyle = panelBox?.style || null;
     const dockBox = getElementBox(dockSelector);
     const dockStyle = dockBox?.style || null;
-    const routeActionBarBox = getElementBox(routeActionBarSelector);
     const containingBlock = panelBox ? getContainingBlockMeta(panelBox.element) : null;
     const offsetParent = panelBox?.element?.offsetParent || null;
     const panelTop = panelRect ? Math.round(panelRect.top) : null;
@@ -20210,7 +20194,6 @@ function initGridlyAwarenessPanelDockContract() {
       computedGapVariable: root.style.getPropertyValue("--gridly-awareness-panel-dock-gap") || null,
       computedPanelTopVariable: root.style.getPropertyValue("--gridly-awareness-panel-top") || null,
       computedPanelTargetBottomVariable: root.style.getPropertyValue("--gridly-awareness-panel-target-bottom") || null,
-      routeActionBarRect: routeActionBarBox?.rect ? { top: Math.round(routeActionBarBox.rect.top), bottom: Math.round(routeActionBarBox.rect.bottom), height: Math.round(routeActionBarBox.rect.height) } : null,
       containingBlock: containingBlock ? {
         label: containingBlock.label,
         top: Math.round(containingBlock.rect.top),
@@ -20522,8 +20505,6 @@ function hydrateElements() {
     "mobileDockAlertsBtn",
     "mobileDockAreaBtn",
     "mobileDestinationCommandBtn",
-    "mobileCardStopRouteWatchBtn",
-    "mobileCardClearRouteBtn",
     "mobileDestinationCommandTitle",
     "mobileDestinationCommandMeta",
     "mobileAwarenessPanelKicker",
@@ -20535,6 +20516,7 @@ function hydrateElements() {
     "gridlyDestinationImpactPaneClose",
     "gridlyDestinationImpactPaneDone",
     "gridlyDestinationImpactClearRouteBtn",
+    "gridlyDestinationImpactStopWatchBtn",
     "gridlyDestinationImpactPaneTitle",
     "gridlyDestinationImpactPaneSubtitle",
     "gridlyDestinationImpactPaneSummary",
@@ -51587,8 +51569,9 @@ function clearGridlyRoute(source = "clear_route") {
 
 function isGridlyVisibleRouteExitControlAvailable(node) {
   if (!node || node.hidden || node.disabled || node.getAttribute("aria-disabled") === "true") return false;
-  const actionBar = node.closest?.("#mobileRouteActionBar.mobile-route-action-bar") || null;
-  if (!actionBar || actionBar.hidden || actionBar.getAttribute("aria-hidden") === "true") return false;
+  const routeDetailsPane = node.closest?.("#gridlyDestinationImpactPane.gridly-destination-impact-pane") || null;
+  const routeDetailsActions = node.closest?.(".gridly-destination-impact-actions") || null;
+  if (!routeDetailsPane || !routeDetailsActions || routeDetailsPane.hidden || routeDetailsPane.getAttribute("aria-hidden") === "true") return false;
   const text = String(node.textContent || "").trim();
   if (!text) return false;
   const isRendered = (element) => {
@@ -51606,22 +51589,15 @@ function isGridlyVisibleRouteExitControlAvailable(node) {
     const viewportHeight = window.visualViewport?.height || window.innerHeight || document.documentElement.clientHeight || 0;
     return rect.bottom > 0 && rect.right > 0 && rect.top < viewportHeight && rect.left < viewportWidth;
   };
-  if (!isRendered(actionBar) || !isRendered(node)) return false;
-  const nodeRect = node.getBoundingClientRect();
-  const barRect = actionBar.getBoundingClientRect();
-  const clippedByActionBar = nodeRect.left < barRect.left - 1
-    || nodeRect.right > barRect.right + 1
-    || nodeRect.top < barRect.top - 1
-    || nodeRect.bottom > barRect.bottom + 1;
-  return !clippedByActionBar;
+  return isRendered(routeDetailsPane) && isRendered(routeDetailsActions) && isRendered(node);
 }
+
 
 function getGridlyVisibleRouteExitControlAuditResult() {
   if (typeof syncGridlyVisibleRouteExitControls === "function") syncGridlyVisibleRouteExitControls();
   const activeSurfaceSelectors = [
-    "#mobileRouteActionChangeBtn",
-    "#mobileCardClearRouteBtn",
-    "#mobileCardStopRouteWatchBtn"
+    "#gridlyDestinationImpactClearRouteBtn",
+    "#gridlyDestinationImpactStopWatchBtn"
   ];
   const visibleControl = activeSurfaceSelectors
     .map((selector) => document.querySelector(selector))
@@ -51642,8 +51618,8 @@ function gridlyRouteOwnershipAudit() {
     document.getElementById("desktopRouteStatus")?.textContent || ""
   ].join(" ");
   const routeOriginVisible = Boolean(document.getElementById("routeOwnershipOrigin") && ownership.originLabel && ownership.originLabel !== "Not selected");
-  const clearRouteAvailable = Boolean(document.getElementById("clearRouteBtn") || document.getElementById("mobileClearRouteBtn") || document.getElementById("mobileCardClearRouteBtn") || document.getElementById("gridlyDestinationImpactClearRouteBtn") || typeof window.gridlyClearRoute === "function");
-  const stopRouteWatchAvailable = Boolean(document.getElementById("stopRouteWatchBtn") || document.getElementById("mobileStopRouteWatchBtn") || document.getElementById("mobileCardStopRouteWatchBtn") || typeof window.gridlyStopRouteWatch === "function");
+  const clearRouteAvailable = Boolean(document.getElementById("clearRouteBtn") || document.getElementById("mobileClearRouteBtn") || document.getElementById("gridlyDestinationImpactClearRouteBtn") || typeof window.gridlyClearRoute === "function");
+  const stopRouteWatchAvailable = Boolean(document.getElementById("stopRouteWatchBtn") || document.getElementById("mobileStopRouteWatchBtn") || document.getElementById("gridlyDestinationImpactStopWatchBtn") || typeof window.gridlyStopRouteWatch === "function");
   const visibleExitControl = getGridlyVisibleRouteExitControlAuditResult();
   const homeWorkOwnershipClear = ["destinationHomeBtn", "destinationWorkBtn", "destinationFavoriteBtn", "desktopDestinationHomeBtn", "desktopDestinationWorkBtn", "desktopDestinationFavoriteBtn"].some((id) => /go |take me|home|work|favorite/i.test(document.getElementById(id)?.textContent || ""));
   const monitoringStateVisible = /Monitoring Active|Preview Only|Monitoring OFF|Monitoring ON/i.test(surfaceText);
