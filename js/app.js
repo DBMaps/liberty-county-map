@@ -54713,7 +54713,7 @@ function collectGridlySettingsFromUi() {
 }
 
 const GRIDLY_FEEDBACK_FLOW_VERSION = "V259.2";
-const GRIDLY_FEEDBACK_EMAIL_RECIPIENT = "feedback@gridly.app";
+const GRIDLY_FEEDBACK_EMAIL_RECIPIENT = "dburns.mgmt@gmail.com";
 const GRIDLY_FEEDBACK_CATEGORIES = Object.freeze(["Bug", "Suggestion", "Map Issue", "Route Issue", "General Comment"]);
 
 function getGridlyActivePortraitSettingsSheet() {
@@ -55850,6 +55850,7 @@ function gridlyBuildFeedbackFlowAudit() {
     messageFieldAvailable,
     emailPreparationAvailable,
     acknowledgementVisible,
+    feedbackDestination: GRIDLY_FEEDBACK_EMAIL_RECIPIENT,
     backendRequired: false,
     consumerFriendlyPass,
     findings
@@ -55931,6 +55932,7 @@ function gridlyBuildFeedbackExperienceAudit() {
     messageFieldVisible,
     prepareButtonVisible,
     visualHierarchyPass,
+    feedbackDestination: GRIDLY_FEEDBACK_EMAIL_RECIPIENT,
     consumerFriendlyPass,
     findings
   };
