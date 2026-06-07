@@ -38148,6 +38148,20 @@ const GRIDLY_SAVED_ROUTE_FULL_ROUTE_FIT_OPTIONS = Object.freeze({
   maxZoom: 13,
   animate: false
 });
+const GRIDLY_ROUTE_PREVIEW_PORTRAIT_FULL_ROUTE_FIT_OPTIONS = Object.freeze({
+  paddingTopLeft: [28, 96],
+  paddingBottomRight: [28, 112],
+  padding: [28, 84],
+  maxZoom: 15,
+  animate: true,
+  duration: 0.45
+});
+const GRIDLY_SAVED_ROUTE_PORTRAIT_FULL_ROUTE_FIT_OPTIONS = Object.freeze({
+  paddingTopLeft: [28, 88],
+  paddingBottomRight: [28, 112],
+  maxZoom: 14,
+  animate: false
+});
 const gridlyRouteViewportOwnershipState = {
   routeAutoFitDisabled: true,
   showFullRouteAvailable: false,
@@ -38238,6 +38252,23 @@ function recordGridlyShowFullRouteResult(source, success, error = null) {
   gridlyRouteViewportOwnershipState.lastShowFullRouteError = getGridlyShowFullRouteErrorSummary(error);
 }
 
+function isGridlyPortraitShowFullRouteFitSurface() {
+  const viewportWidth = Number(window.visualViewport?.width || window.innerWidth || document.documentElement?.clientWidth || 0);
+  const viewportHeight = Number(window.visualViewport?.height || window.innerHeight || document.documentElement?.clientHeight || 0);
+  const portraitByLayout = document.body?.getAttribute("data-layout-mode") === "portrait" || (typeof isPortraitMode === "function" && isPortraitMode());
+  const portraitByViewport = viewportWidth > 0 && viewportHeight > 0 && viewportHeight >= viewportWidth;
+  const compactByWidth = viewportWidth > 0 && viewportWidth <= 760;
+  return Boolean(portraitByLayout || (portraitByViewport && compactByWidth));
+}
+
+function getGridlyShowFullRouteFitOptions(routeKind = "preview") {
+  const isPortraitFit = isGridlyPortraitShowFullRouteFitSurface();
+  if (routeKind === "saved") {
+    return isPortraitFit ? GRIDLY_SAVED_ROUTE_PORTRAIT_FULL_ROUTE_FIT_OPTIONS : GRIDLY_SAVED_ROUTE_FULL_ROUTE_FIT_OPTIONS;
+  }
+  return isPortraitFit ? GRIDLY_ROUTE_PREVIEW_PORTRAIT_FULL_ROUTE_FIT_OPTIONS : GRIDLY_ROUTE_PREVIEW_FULL_ROUTE_FIT_OPTIONS;
+}
+
 function fitGridlyRouteBounds(mapInstance, routeBounds, fitOptions) {
   mapInstance.fitBounds(routeBounds, cloneGridlyRouteFitBoundsOptions(fitOptions));
 }
@@ -38250,21 +38281,21 @@ function fitGridlyFullRouteForUserAction(source = "show_full_route") {
     const routePreviewBounds = getGridlyLayerBounds(window.__gridlyRoutePreviewLayer);
     if (routePreviewBounds?.isValid?.()) {
       window.__gridlyRoutePreviewMapDebug = mapInstance;
-      fitGridlyRouteBounds(mapInstance, routePreviewBounds, GRIDLY_ROUTE_PREVIEW_FULL_ROUTE_FIT_OPTIONS);
+      fitGridlyRouteBounds(mapInstance, routePreviewBounds, getGridlyShowFullRouteFitOptions("preview"));
       recordGridlyShowFullRouteResult(source, true);
       return true;
     }
 
     const savedRouteBounds = getGridlyLayerBounds(savedRouteLayer);
     if (savedRouteBounds?.isValid?.()) {
-      fitGridlyRouteBounds(mapInstance, savedRouteBounds, GRIDLY_SAVED_ROUTE_FULL_ROUTE_FIT_OPTIONS);
+      fitGridlyRouteBounds(mapInstance, savedRouteBounds, getGridlyShowFullRouteFitOptions("saved"));
       recordGridlyShowFullRouteResult(source, true);
       return true;
     }
 
     const destinationBounds = getGridlyLayerBounds(destinationRoutePreviewLayer);
     if (destinationBounds?.isValid?.()) {
-      fitGridlyRouteBounds(mapInstance, destinationBounds, GRIDLY_ROUTE_PREVIEW_FULL_ROUTE_FIT_OPTIONS);
+      fitGridlyRouteBounds(mapInstance, destinationBounds, getGridlyShowFullRouteFitOptions("preview"));
       recordGridlyShowFullRouteResult(source, true);
       return true;
     }
