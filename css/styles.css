@@ -18190,3 +18190,45 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-participation-ack
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-participation-ack[hidden] {
   display: none !important;
 }
+
+/* V257.1 — visible route exit controls on portrait active route surfaces. */
+body[data-layout-mode="portrait"] .mobile-destination-command-actions {
+  display: grid;
+  grid-auto-rows: minmax(34px, auto);
+  gap: 6px;
+  align-self: center;
+  justify-self: end;
+}
+
+body[data-layout-mode="portrait"] .mobile-destination-command-actions .compact-btn {
+  width: 104px;
+  min-width: 104px;
+  max-width: 104px;
+}
+
+body[data-layout-mode="portrait"] .mobile-destination-command-actions .mobile-route-exit-control {
+  border-color: rgba(186, 216, 248, 0.24);
+  color: #dff2ff;
+  background: rgba(255, 255, 255, 0.075);
+}
+
+body[data-layout-mode="portrait"] .mobile-route-exit-control[hidden],
+.gridly-destination-impact-actions .mobile-route-exit-control[hidden] {
+  display: none !important;
+}
+
+.gridly-destination-impact-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.gridly-destination-impact-actions .secondary-btn {
+  width: 100%;
+}
+
+.gridly-destination-impact-clear-route {
+  border-color: rgba(125, 211, 252, 0.32);
+  color: #dff7ff;
+}
