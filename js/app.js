@@ -38161,7 +38161,8 @@ const gridlyRouteViewportOwnershipState = {
   lastRouteRenderCenterAfter: null,
   lastShowFullRouteAt: null,
   lastShowFullRouteSuccess: false,
-  lastShowFullRouteSource: ""
+  lastShowFullRouteSource: "",
+  lastShowFullRouteError: null
 };
 
 function getGridlyRouteViewportSnapshot() {
@@ -38212,42 +38213,69 @@ function getGridlyLayerBounds(layer) {
   return combinedBounds?.isValid?.() ? combinedBounds : null;
 }
 
+function cloneGridlyRouteFitBoundsOptions(options = {}) {
+  const clonedOptions = { ...(options || {}) };
+  ["padding", "paddingTopLeft", "paddingBottomRight"].forEach((key) => {
+    if (Array.isArray(clonedOptions[key])) clonedOptions[key] = [...clonedOptions[key]];
+  });
+  return clonedOptions;
+}
+
+function getGridlyShowFullRouteErrorSummary(error) {
+  if (!error) return null;
+  const errorName = typeof error?.name === "string" && error.name ? error.name : "Error";
+  const errorMessage = typeof error?.message === "string" && error.message ? error.message : String(error);
+  return {
+    name: errorName,
+    message: errorMessage
+  };
+}
+
+function recordGridlyShowFullRouteResult(source, success, error = null) {
+  gridlyRouteViewportOwnershipState.lastShowFullRouteAt = Date.now();
+  gridlyRouteViewportOwnershipState.lastShowFullRouteSource = source;
+  gridlyRouteViewportOwnershipState.lastShowFullRouteSuccess = Boolean(success);
+  gridlyRouteViewportOwnershipState.lastShowFullRouteError = getGridlyShowFullRouteErrorSummary(error);
+}
+
+function fitGridlyRouteBounds(mapInstance, routeBounds, fitOptions) {
+  mapInstance.fitBounds(routeBounds, cloneGridlyRouteFitBoundsOptions(fitOptions));
+}
+
 function fitGridlyFullRouteForUserAction(source = "show_full_route") {
   const mapInstance = getGridlyMapInstance?.() || map || null;
   if (!mapInstance || typeof mapInstance.fitBounds !== "function") return false;
 
-  const routePreviewBounds = getGridlyLayerBounds(window.__gridlyRoutePreviewLayer);
-  if (routePreviewBounds?.isValid?.()) {
-    window.__gridlyRoutePreviewMapDebug = mapInstance;
-    mapInstance.fitBounds(routePreviewBounds, GRIDLY_ROUTE_PREVIEW_FULL_ROUTE_FIT_OPTIONS);
-    gridlyRouteViewportOwnershipState.lastShowFullRouteAt = Date.now();
-    gridlyRouteViewportOwnershipState.lastShowFullRouteSource = source;
-    gridlyRouteViewportOwnershipState.lastShowFullRouteSuccess = true;
-    return true;
-  }
+  try {
+    const routePreviewBounds = getGridlyLayerBounds(window.__gridlyRoutePreviewLayer);
+    if (routePreviewBounds?.isValid?.()) {
+      window.__gridlyRoutePreviewMapDebug = mapInstance;
+      fitGridlyRouteBounds(mapInstance, routePreviewBounds, GRIDLY_ROUTE_PREVIEW_FULL_ROUTE_FIT_OPTIONS);
+      recordGridlyShowFullRouteResult(source, true);
+      return true;
+    }
 
-  const savedRouteBounds = getGridlyLayerBounds(savedRouteLayer);
-  if (savedRouteBounds?.isValid?.()) {
-    mapInstance.fitBounds(savedRouteBounds, GRIDLY_SAVED_ROUTE_FULL_ROUTE_FIT_OPTIONS);
-    gridlyRouteViewportOwnershipState.lastShowFullRouteAt = Date.now();
-    gridlyRouteViewportOwnershipState.lastShowFullRouteSource = source;
-    gridlyRouteViewportOwnershipState.lastShowFullRouteSuccess = true;
-    return true;
-  }
+    const savedRouteBounds = getGridlyLayerBounds(savedRouteLayer);
+    if (savedRouteBounds?.isValid?.()) {
+      fitGridlyRouteBounds(mapInstance, savedRouteBounds, GRIDLY_SAVED_ROUTE_FULL_ROUTE_FIT_OPTIONS);
+      recordGridlyShowFullRouteResult(source, true);
+      return true;
+    }
 
-  const destinationBounds = getGridlyLayerBounds(destinationRoutePreviewLayer);
-  if (destinationBounds?.isValid?.()) {
-    mapInstance.fitBounds(destinationBounds, GRIDLY_ROUTE_PREVIEW_FULL_ROUTE_FIT_OPTIONS);
-    gridlyRouteViewportOwnershipState.lastShowFullRouteAt = Date.now();
-    gridlyRouteViewportOwnershipState.lastShowFullRouteSource = source;
-    gridlyRouteViewportOwnershipState.lastShowFullRouteSuccess = true;
-    return true;
-  }
+    const destinationBounds = getGridlyLayerBounds(destinationRoutePreviewLayer);
+    if (destinationBounds?.isValid?.()) {
+      fitGridlyRouteBounds(mapInstance, destinationBounds, GRIDLY_ROUTE_PREVIEW_FULL_ROUTE_FIT_OPTIONS);
+      recordGridlyShowFullRouteResult(source, true);
+      return true;
+    }
 
-  gridlyRouteViewportOwnershipState.lastShowFullRouteAt = Date.now();
-  gridlyRouteViewportOwnershipState.lastShowFullRouteSource = source;
-  gridlyRouteViewportOwnershipState.lastShowFullRouteSuccess = false;
-  return false;
+    recordGridlyShowFullRouteResult(source, false);
+    return false;
+  } catch (error) {
+    recordGridlyShowFullRouteResult(source, false, error);
+    console.warn("Gridly Show Full Route handler error", error);
+    return false;
+  }
 }
 
 function getGridlyFullRouteGeometryExists() {
@@ -38318,6 +38346,7 @@ function gridlyRouteViewportOwnershipAudit() {
     awarenessViewportPreserved: Boolean(gridlyRouteViewportOwnershipState.awarenessViewportPreserved),
     destinationFocusApplied: Boolean(gridlyRouteViewportOwnershipState.destinationFocusApplied),
     routeFitRequiresUserAction: Boolean(gridlyRouteViewportOwnershipState.routeFitRequiresUserAction),
+    showFullRouteHandlerError: gridlyRouteViewportOwnershipState.lastShowFullRouteError,
     consumerFriendlyPass,
     protectedSystemsPass: true
   };
