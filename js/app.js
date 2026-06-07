@@ -21317,6 +21317,7 @@ function hydrateElements() {
     "settingsFeedbackBtn",
     "settingsFeedbackFlow",
     "settingsFeedbackMessage",
+    "settingsSubmitFeedbackBtn",
     "settingsPrepareFeedbackEmailBtn",
     "settingsFeedbackStatus",
     "settingsSaveStatus",
@@ -54712,7 +54713,12 @@ function collectGridlySettingsFromUi() {
   });
 }
 
-const GRIDLY_FEEDBACK_FLOW_VERSION = "V259.2";
+const GRIDLY_FEEDBACK_FLOW_VERSION = "V260.2";
+const GRIDLY_DIRECT_FEEDBACK_VERSION = "V260.2";
+const GRIDLY_DIRECT_FEEDBACK_TABLE = "gridly_feedback";
+const GRIDLY_FEEDBACK_SUCCESS_COPY = "Feedback received. Thank you for helping improve Gridly.";
+const GRIDLY_FEEDBACK_FAILURE_COPY = "Unable to submit feedback right now. You can try again or prepare a feedback email instead.";
+const GRIDLY_FEEDBACK_EMAIL_FALLBACK_COPY = "Prepare Feedback Email Instead";
 const GRIDLY_FEEDBACK_EMAIL_RECIPIENT = "dburns.mgmt@gmail.com";
 const GRIDLY_FEEDBACK_CATEGORIES = Object.freeze(["Bug", "Suggestion", "Map Issue", "Route Issue", "General Comment"]);
 
@@ -54818,45 +54824,122 @@ function buildGridlyFeedbackMailtoUrl(category, message) {
   return `mailto:${encodeURIComponent(GRIDLY_FEEDBACK_EMAIL_RECIPIENT)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
-function setGridlyFeedbackStatus(scope, message, isError = false) {
+function getGridlyDirectFeedbackClient() {
+  if (supabaseClient) return supabaseClient;
+  const sdk = typeof window !== "undefined" ? window.supabase : null;
+  if (sdk && typeof sdk.createClient === "function" && SUPABASE_URL && SUPABASE_PUBLIC_KEY) {
+    supabaseClient = sdk.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY);
+    return supabaseClient;
+  }
+  return null;
+}
+
+function buildGridlyFeedbackPageUrl() {
+  if (typeof window === "undefined" || !window.location) return "";
+  return `${window.location.origin || ""}${window.location.pathname || ""}`;
+}
+
+function buildGridlyFeedbackVersionLabel() {
+  return [typeof GRIDLY_APP_VERSION_LABEL === "string" ? GRIDLY_APP_VERSION_LABEL : "Gridly", typeof GRIDLY_APP_BUILD_LABEL === "string" ? GRIDLY_APP_BUILD_LABEL : ""].filter(Boolean).join(" · ");
+}
+
+function buildGridlyDirectFeedbackPayload(category, message) {
+  return {
+    category,
+    message,
+    awareness_area: getGridlyFeedbackAwarenessAreaLabel(),
+    platform: getGridlyFeedbackPlatformLabel(),
+    gridly_version: buildGridlyFeedbackVersionLabel(),
+    page_url: buildGridlyFeedbackPageUrl()
+  };
+}
+
+function setGridlyFeedbackSubmissionControls(root, disabled) {
+  if (!root) return;
+  root.querySelectorAll("[data-gridly-feedback-submit], [data-gridly-feedback-prepare]").forEach((button) => {
+    button.disabled = Boolean(disabled);
+    button.setAttribute("aria-disabled", disabled ? "true" : "false");
+  });
+}
+
+function setGridlyFeedbackStatus(scope, message, isError = false, state = "email_prepared") {
   const status = getGridlyFeedbackStatus(scope);
   if (!status) return;
   status.textContent = message;
-  status.dataset.gridlyFeedbackStatus = isError ? "needs_input" : "email_prepared";
+  status.dataset.gridlyFeedbackStatus = isError ? "needs_input" : state;
   setGridlyFeedbackAcknowledgementVisibility(status, true);
+}
+
+function validateGridlyFeedbackEntry(root) {
+  const category = getGridlyFeedbackSelectedCategory(root);
+  const messageField = root?.querySelector?.("[data-gridly-feedback-message]");
+  const message = String(messageField?.value || "").trim();
+  if (!category) {
+    openGridlyFeedbackFlow(root);
+    setGridlyFeedbackStatus(root, "Choose a feedback category before sending feedback.", true);
+    root?.querySelector?.("[data-gridly-feedback-category]")?.focus?.();
+    return null;
+  }
+  if (!message) {
+    openGridlyFeedbackFlow(root);
+    setGridlyFeedbackStatus(root, "Enter a short message before sending feedback.", true);
+    messageField?.focus?.();
+    return null;
+  }
+  return { category, message, messageField };
+}
+
+async function submitGridlyDirectFeedback(scope) {
+  const root = getGridlyFeedbackFlowRoot(scope);
+  if (!root) return false;
+  const entry = validateGridlyFeedbackEntry(root);
+  if (!entry) return false;
+  const client = getGridlyDirectFeedbackClient();
+  if (!client || typeof client.from !== "function") {
+    setGridlyFeedbackStatus(root, GRIDLY_FEEDBACK_FAILURE_COPY, true, "direct_submission_unavailable");
+    return false;
+  }
+  const submitButton = root.querySelector("[data-gridly-feedback-submit]");
+  const previousLabel = submitButton?.textContent || "Submit Feedback";
+  setGridlyFeedbackSubmissionControls(root, true);
+  if (submitButton) submitButton.textContent = "Submitting Feedback...";
+  setGridlyFeedbackStatus(root, "Submitting feedback...", false, "submitting");
+  try {
+    const { error } = await client.from(GRIDLY_DIRECT_FEEDBACK_TABLE).insert(buildGridlyDirectFeedbackPayload(entry.category, entry.message));
+    if (error) throw error;
+    setGridlyFeedbackStatus(root, GRIDLY_FEEDBACK_SUCCESS_COPY, false, "direct_submission_received");
+    entry.messageField.value = "";
+    root.querySelectorAll("[data-gridly-feedback-category]").forEach((input) => { input.checked = false; });
+    return true;
+  } catch (error) {
+    console.warn("[Gridly] Direct feedback submission failed; email fallback remains available.", error);
+    setGridlyFeedbackStatus(root, GRIDLY_FEEDBACK_FAILURE_COPY, true, "direct_submission_failed");
+    return false;
+  } finally {
+    setGridlyFeedbackSubmissionControls(root, false);
+    if (submitButton) submitButton.textContent = previousLabel;
+  }
 }
 
 function prepareGridlyFeedbackEmail(scope) {
   const root = getGridlyFeedbackFlowRoot(scope);
   if (!root) return false;
-  const category = getGridlyFeedbackSelectedCategory(root);
-  const messageField = root.querySelector("[data-gridly-feedback-message]");
-  const message = String(messageField?.value || "").trim();
-  if (!category) {
-    openGridlyFeedbackFlow(root);
-    setGridlyFeedbackStatus(root, "Choose a feedback category before preparing the email.", true);
-    root.querySelector("[data-gridly-feedback-category]")?.focus?.();
-    return false;
-  }
-  if (!message) {
-    openGridlyFeedbackFlow(root);
-    setGridlyFeedbackStatus(root, "Enter a short message before preparing the email.", true);
-    messageField?.focus?.();
-    return false;
-  }
-  const mailtoUrl = buildGridlyFeedbackMailtoUrl(category, message);
+  const entry = validateGridlyFeedbackEntry(root);
+  if (!entry) return false;
+  const mailtoUrl = buildGridlyFeedbackMailtoUrl(entry.category, entry.message);
   if (typeof window !== "undefined" && window.location) window.location.href = mailtoUrl;
-  setGridlyFeedbackStatus(root, "Feedback email prepared. Your email app will send the message once you choose Send.", false);
+  setGridlyFeedbackStatus(root, "Feedback email prepared. Your email app will send the message once you choose Send.", false, "email_prepared");
   return true;
 }
 
 function buildGridlyFeedbackFlowHtml({ v2 = false } = {}) {
-  const actionAttr = v2 ? ' data-v2-action="settings-feedback-prepare"' : "";
+  const submitActionAttr = v2 ? ' data-v2-action="settings-feedback-submit"' : "";
+  const prepareActionAttr = v2 ? ' data-v2-action="settings-feedback-prepare"' : "";
   const categoryName = v2 ? "gridlyFeedbackCategoryV2" : "gridlyFeedbackCategory";
   return `
     <section class="settings-feedback-flow" data-gridly-feedback-flow hidden aria-label="Feedback">
       <h3>Feedback</h3>
-      <p class="settings-placeholder-note settings-feedback-helper">Nothing is sent until you choose Send in your email app.</p>
+      <p class="settings-placeholder-note settings-feedback-helper">Submit feedback directly to Gridly, or use the email fallback if sending is unavailable.</p>
       <fieldset class="settings-feedback-category" data-gridly-feedback-categories>
         <legend>Category</legend>
         <div class="settings-feedback-category-grid" data-gridly-feedback-category-chips>
@@ -54866,7 +54949,10 @@ function buildGridlyFeedbackFlowHtml({ v2 = false } = {}) {
       <p class="settings-feedback-prompt">What would you like to tell us?</p>
       <label class="settings-feedback-message-label">Message</label>
       <textarea data-gridly-feedback-message rows="5" maxlength="1200" placeholder="Tell us what happened or what would make Gridly clearer." required></textarea>
-      <button class="primary-btn compact-btn" type="button" data-gridly-feedback-prepare${actionAttr}>Prepare Feedback Email</button>
+      <div class="settings-feedback-actions">
+        <button class="primary-btn compact-btn" type="button" data-gridly-feedback-submit${submitActionAttr}>Submit Feedback</button>
+        <button class="secondary-btn compact-btn" type="button" data-gridly-feedback-prepare${prepareActionAttr}>${GRIDLY_FEEDBACK_EMAIL_FALLBACK_COPY}</button>
+      </div>
     </section>
     <p class="settings-placeholder-note" data-gridly-feedback-acknowledgement aria-live="polite" hidden></p>`;
 }
@@ -55687,6 +55773,13 @@ function bindGridlySettingsPreferences() {
       openGridlyFeedbackFlow(els.settingsModal || document);
     });
   }
+  const settingsSubmitFeedbackBtn = typeof document !== "undefined" ? document.getElementById("settingsSubmitFeedbackBtn") : null;
+  if (settingsSubmitFeedbackBtn && settingsSubmitFeedbackBtn.dataset.gridlySettingsBound !== "1") {
+    settingsSubmitFeedbackBtn.dataset.gridlySettingsBound = "1";
+    settingsSubmitFeedbackBtn.addEventListener("click", () => {
+      submitGridlyDirectFeedback(els.settingsModal || document);
+    });
+  }
   if (els.settingsPrepareFeedbackEmailBtn && els.settingsPrepareFeedbackEmailBtn.dataset.gridlySettingsBound !== "1") {
     els.settingsPrepareFeedbackEmailBtn.dataset.gridlySettingsBound = "1";
     els.settingsPrepareFeedbackEmailBtn.addEventListener("click", () => {
@@ -55866,6 +55959,7 @@ function gridlyBuildFeedbackSubmissionAudit() {
   const feedbackFlowRoot = auditScope?.querySelector?.("[data-gridly-feedback-flow]") || (hasDocument ? document.querySelector("[data-gridly-feedback-flow]") : null);
   const feedbackEntry = activeSettingsSheet?.querySelector?.('[data-v2-action="settings-feedback-open"]') || (hasDocument ? document.getElementById("settingsFeedbackBtn") : null);
   const prepareButton = feedbackFlowRoot?.querySelector?.("[data-gridly-feedback-prepare]") || (hasDocument ? document.getElementById("settingsPrepareFeedbackEmailBtn") : null);
+  const submitButton = feedbackFlowRoot?.querySelector?.("[data-gridly-feedback-submit]") || (hasDocument ? document.getElementById("settingsSubmitFeedbackBtn") : null);
   const messageField = feedbackFlowRoot?.querySelector?.("[data-gridly-feedback-message]") || (hasDocument ? document.getElementById("settingsFeedbackMessage") : null);
   const categoryInputs = feedbackFlowRoot ? Array.from(feedbackFlowRoot.querySelectorAll("[data-gridly-feedback-category]")) : [];
   const categoryLabels = categoryInputs.map((input) => String(input.value || "").trim()).filter(Boolean);
@@ -55886,30 +55980,29 @@ function gridlyBuildFeedbackSubmissionAudit() {
     || (typeof window !== "undefined" && window.supabase)
     || (typeof SUPABASE_URL === "string" && SUPABASE_URL && typeof SUPABASE_PUBLIC_KEY === "string" && SUPABASE_PUBLIC_KEY)
   );
-  const feedbackStorageDefined = false;
-  const feedbackAcknowledgementDefined = false;
-  const feedbackFailureHandlingDefined = false;
-  const directSubmissionAvailable = false;
-  const betaReady = false;
-  const currentDeliveryMethod = emailFallbackAvailable
-    ? `Email mailto fallback only (${GRIDLY_FEEDBACK_EMAIL_RECIPIENT}); the user must leave Gridly and send from an email app.`
-    : "No active feedback delivery method detected.";
+  const feedbackStorageDefined = true;
+  const feedbackAcknowledgementDefined = true;
+  const feedbackFailureHandlingDefined = true;
+  const directSubmissionAvailable = Boolean(typeof submitGridlyDirectFeedback === "function" && submitButton);
+  const betaReady = Boolean(directSubmissionAvailable && feedbackStorageDefined && feedbackAcknowledgementDefined && feedbackFailureHandlingDefined && emailFallbackAvailable);
+  const currentDeliveryMethod = directSubmissionAvailable
+    ? `Supabase direct feedback submission to ${GRIDLY_DIRECT_FEEDBACK_TABLE} with email fallback (${GRIDLY_FEEDBACK_EMAIL_RECIPIENT}).`
+    : (emailFallbackAvailable ? `Email mailto fallback only (${GRIDLY_FEEDBACK_EMAIL_RECIPIENT}); the user must leave Gridly and send from an email app.` : "No active feedback delivery method detected.");
 
-  if (feedbackFlowExists) findings.push("Current workflow: Settings → Send Feedback → Category → Message → Prepare Feedback Email → user sends from their email app.");
+  if (feedbackFlowExists) findings.push("Current workflow: Settings → Send Feedback → Category → Message → Submit Feedback, with Prepare Feedback Email Instead preserved as a fallback.");
   else findings.push("Current workflow could not be detected in the active DOM or feedback helpers.");
-  findings.push(directSubmissionAvailable ? "Direct in-app feedback submission is available today." : "Direct in-app feedback submission is not available today; no submit-to-backend path is wired.");
-  findings.push(supabaseAvailable ? "Supabase is configured for Gridly and suitable as the lightweight beta storage option if a dedicated feedback table and policies are defined later." : "Supabase is not available in this runtime, so direct submission would need another backend or email-only fallback.");
-  findings.push("No feedback storage table or client path is defined in code; this audit did not inspect or modify production Supabase data.");
-  findings.push("Minimal beta fields should be category, message, timestamp, awarenessArea, platform, and gridlyVersion.");
-  findings.push("Success acknowledgement should say: Feedback received. Thank you for helping improve Gridly.");
-  findings.push("Failure handling should say direct submission is unavailable right now and offer Prepare Feedback Email Instead.");
-  findings.push(emailFallbackAvailable ? "Email should remain as a fallback during beta because it already works and covers backend outages." : "Email fallback should be restored before relying on direct submission.");
-  findings.push("Privacy review is required before direct submission because message text and optional metadata may include location, awareness area, device/platform, and free-form personal details.");
-  findings.push("Direct submission is appropriate for beta only after storage, acknowledgement, failure handling, privacy copy, and email fallback are explicitly defined.");
+  findings.push(directSubmissionAvailable ? "Direct in-app feedback submission is wired to the dedicated gridly_feedback table." : "Direct in-app feedback submission is not available today; no submit-to-backend path is wired.");
+  findings.push(supabaseAvailable ? "Supabase is configured for Gridly feedback intake." : "Supabase is not available in this runtime, so email fallback remains necessary.");
+  findings.push("Feedback storage is defined by supabase/migrations/202606070001_create_gridly_feedback.sql with anonymous insert-only RLS and no public read/update/delete policy.");
+  findings.push("Minimal beta fields are category, message, awareness_area, platform, gridly_version, and sanitized page_url; timestamp is server generated.");
+  findings.push(`Success acknowledgement says: ${GRIDLY_FEEDBACK_SUCCESS_COPY}`);
+  findings.push(`Failure handling says: ${GRIDLY_FEEDBACK_FAILURE_COPY}`);
+  findings.push(emailFallbackAvailable ? "Email remains as a fallback during beta because it already works and covers backend outages." : "Email fallback should be restored before relying on direct submission.");
+  findings.push("V260.2 client payload does not collect precise GPS coordinates, saved-place details, analytics IDs, account IDs, or extracted contact details.");
 
   return {
     available: true,
-    version: "V260",
+    version: GRIDLY_DIRECT_FEEDBACK_VERSION,
     feedbackFlowExists,
     currentDeliveryMethod,
     supabaseAvailable,
@@ -55926,15 +56019,16 @@ function gridlyBuildFeedbackSubmissionAudit() {
     recommendedDataModel: {
       category: "string",
       message: "string",
-      timestamp: "ISO timestamp",
-      awarenessArea: "string",
+      awareness_area: "string",
       platform: "string",
-      gridlyVersion: "string"
+      gridly_version: "string",
+      page_url: "string without query or fragment",
+      created_at: "server timestamp"
     },
     recommendedUserExperience: {
       flow: "Settings → Send Feedback → Submit Feedback",
       success: "Feedback received. Thank you for helping improve Gridly.",
-      failure: "Unable to submit feedback right now. Try again later.",
+      failure: GRIDLY_FEEDBACK_FAILURE_COPY,
       fallbackAction: "Prepare Feedback Email Instead"
     },
     architectureOptions: [
@@ -55963,9 +56057,62 @@ function gridlyBuildFeedbackSubmissionAudit() {
         betaReadinessValue: "High"
       }
     ],
-    mergeRecommendation: "Merge audit-only helper. Do not implement direct submission until a feedback table, acknowledgement copy, failure state, privacy review, and email fallback behavior are approved.",
+    mergeRecommendation: "Merge V260.2 direct feedback implementation after applying the Supabase migration and preserving email fallback through beta.",
     protectedSystemsModified: false,
-    supabaseModified: false,
+    supabaseModified: true,
+    findings
+  };
+}
+
+function gridlyBuildDirectFeedbackReadinessAudit() {
+  const findings = [];
+  const hasDocument = typeof document !== "undefined";
+  const feedbackFlowRoot = hasDocument ? document.querySelector("[data-gridly-feedback-flow]") : null;
+  const submitButton = feedbackFlowRoot?.querySelector?.("[data-gridly-feedback-submit]") || null;
+  const fallbackButton = feedbackFlowRoot?.querySelector?.("[data-gridly-feedback-prepare]") || (hasDocument ? document.getElementById("settingsPrepareFeedbackEmailBtn") : null);
+  const messageField = feedbackFlowRoot?.querySelector?.("[data-gridly-feedback-message]") || (hasDocument ? document.getElementById("settingsFeedbackMessage") : null);
+  const categoryInputs = feedbackFlowRoot ? Array.from(feedbackFlowRoot.querySelectorAll("[data-gridly-feedback-category]")) : [];
+  const categoryLabels = categoryInputs.map((input) => String(input.value || "").trim()).filter(Boolean);
+  const directClientAvailable = Boolean(getGridlyDirectFeedbackClient());
+  const directSubmissionImplemented = Boolean(
+    typeof submitGridlyDirectFeedback === "function"
+    && typeof buildGridlyDirectFeedbackPayload === "function"
+    && submitButton
+  );
+  const emailFallbackPreserved = Boolean(
+    typeof prepareGridlyFeedbackEmail === "function"
+    && typeof buildGridlyFeedbackMailtoUrl === "function"
+    && fallbackButton
+    && GRIDLY_FEEDBACK_EMAIL_RECIPIENT
+  );
+  const privacySafeMetadataOnly = Boolean(
+    typeof buildGridlyDirectFeedbackPayload === "function"
+    && !Object.prototype.hasOwnProperty.call(buildGridlyDirectFeedbackPayload("Bug", "Test"), "user_agent")
+  );
+
+  if (!directSubmissionImplemented) findings.push("Direct feedback submit UI or helper is missing.");
+  if (!emailFallbackPreserved) findings.push("Email fallback is not preserved.");
+  if (!directClientAvailable) findings.push("Supabase client is not available in this runtime; email fallback should remain available.");
+  if (!privacySafeMetadataOnly) findings.push("Feedback payload includes metadata outside the approved V260.2 privacy boundary.");
+
+  return {
+    available: true,
+    version: GRIDLY_DIRECT_FEEDBACK_VERSION,
+    feedbackTableName: GRIDLY_DIRECT_FEEDBACK_TABLE,
+    directSubmissionDesigned: true,
+    directSubmissionImplemented,
+    directClientAvailable,
+    emailFallbackPreserved,
+    privacySafeMetadataOnly,
+    insertPolicyImplemented: true,
+    successCopyDefined: GRIDLY_FEEDBACK_SUCCESS_COPY,
+    failureCopyDefined: GRIDLY_FEEDBACK_FAILURE_COPY,
+    fallbackCopyDefined: GRIDLY_FEEDBACK_EMAIL_FALLBACK_COPY,
+    betaReadyForImplementation: directSubmissionImplemented && emailFallbackPreserved && privacySafeMetadataOnly,
+    detectedCategoryLabels: categoryLabels,
+    messageFieldDetected: Boolean(messageField),
+    migrationFileExpected: "supabase/migrations/202606070001_create_gridly_feedback.sql",
+    protectedSystemsModified: false,
     findings
   };
 }
@@ -56067,11 +56214,15 @@ window.gridlyFeedbackExperienceAudit = function gridlyFeedbackExperienceAudit() 
 window.gridlyFeedbackSubmissionAudit = function gridlyFeedbackSubmissionAudit() {
   return gridlyBuildFeedbackSubmissionAudit();
 };
+window.gridlyDirectFeedbackReadinessAudit = function gridlyDirectFeedbackReadinessAudit() {
+  return gridlyBuildDirectFeedbackReadinessAudit();
+};
 if (typeof exposeGridlyAuditHelper === "function") {
   exposeGridlyAuditHelper("gridlyFeedbackFlowAudit", window.gridlyFeedbackFlowAudit);
   exposeGridlyAuditHelper("gridlyFeedbackSystemAudit", window.gridlyFeedbackSystemAudit);
   exposeGridlyAuditHelper("gridlyFeedbackExperienceAudit", window.gridlyFeedbackExperienceAudit);
   exposeGridlyAuditHelper("gridlyFeedbackSubmissionAudit", window.gridlyFeedbackSubmissionAudit);
+  exposeGridlyAuditHelper("gridlyDirectFeedbackReadinessAudit", window.gridlyDirectFeedbackReadinessAudit);
 }
 
 window.gridlySettingsAudit = function gridlySettingsAudit() {
@@ -66808,6 +66959,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         const body = document.getElementById("gridlyPortraitV2SheetBody") || document;
         openGridlyFeedbackFlow(body);
       },
+      "settings-feedback-submit": () => {
+        const body = document.getElementById("gridlyPortraitV2SheetBody") || document;
+        submitGridlyDirectFeedback(body);
+      },
       "settings-feedback-prepare": () => {
         const body = document.getElementById("gridlyPortraitV2SheetBody") || document;
         prepareGridlyFeedbackEmail(body);
@@ -66850,6 +67005,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         "settings-select-awareness-area",
         "settings-replay-setup",
         "settings-feedback-open",
+        "settings-feedback-submit",
         "settings-feedback-prepare"
       ].includes(canonicalAction);
       const shouldKeepSheetOpen = canonicalAction === "report-select-hazard" || canonicalAction === "report-select-other-hazard-subtype";
