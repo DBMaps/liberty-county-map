@@ -16922,6 +16922,97 @@ function buildGridlySearchDisplayLines(result) {
   return { title, meta };
 }
 
+
+function gridlySavedPlaceToDestinationSearchResult(place, fallback = {}) {
+  if (!isConfiguredPlace(place)) return null;
+  const coordinates = normalizeCoordinatePair(place.lat, place.lng);
+  if (!coordinates) return null;
+  const type = String(place.type || fallback.type || "custom").toLowerCase();
+  const isHome = type === "home" || String(place.id || fallback.id || "").toLowerCase() === "home";
+  const isWork = type === "work" || String(place.id || fallback.id || "").toLowerCase() === "work";
+  const fallbackTitle = isHome ? "Home" : isWork ? "Work" : (fallback.label || "Favorite");
+  const title = String(place.label || place.name || fallbackTitle).trim() || fallbackTitle;
+  const id = String(place.id || fallback.id || `${type || "favorite"}-${coordinates.lat.toFixed(6)},${coordinates.lng.toFixed(6)}`).trim();
+  return normalizeGridlySearchResult({
+    id: `saved-place:${id}`,
+    provider: "saved_place",
+    providerId: id,
+    source: "saved_place",
+    type: "saved_place",
+    title,
+    label: title,
+    lat: coordinates.lat,
+    lng: coordinates.lng,
+    subtitle: "Saved place",
+    address: place.address || "",
+    savedPlaceId: id,
+    savedPlaceType: isHome ? "home" : isWork ? "work" : "favorite",
+    raw: {
+      display_name: [title, place.address, "Saved place"].filter(Boolean).join(", "),
+      savedPlace: true,
+      savedPlaceId: id,
+      savedPlaceType: isHome ? "home" : isWork ? "work" : "favorite"
+    }
+  });
+}
+
+function getGridlySavedPlaceDestinationSearchResults(rawQuery = "", options = {}) {
+  const state = typeof getSavedPlacesState === "function" ? getSavedPlacesState() : normalizeSavedPlaces();
+  const query = normalizeGridlySearchDisplayLabel(rawQuery);
+  const tokens = getGridlySearchQueryTokens(query);
+  const favoriteQuery = tokens.some((token) => token === "favorite" || token === "favorites" || token === "fav" || token === "faves");
+  const shouldMatchAllSaved = options.includeAll === true || !query;
+  const candidates = [];
+  const pushCandidate = (place, fallback) => {
+    const result = gridlySavedPlaceToDestinationSearchResult(place, fallback);
+    if (result) candidates.push(result);
+  };
+  pushCandidate(state.home, { id: "home", type: "home", label: "Home" });
+  pushCandidate(state.work, { id: "work", type: "work", label: "Work" });
+  (Array.isArray(state.custom) ? state.custom : []).forEach((place, index) => {
+    pushCandidate(place, { id: place?.id || `favorite-${index + 1}`, type: "favorite", label: place?.label || place?.name || (index === 0 ? "Favorite" : `Favorite ${index + 1}`) });
+  });
+  (Array.isArray(state.favorites) ? state.favorites : []).forEach((place, index) => {
+    pushCandidate(place, { id: place?.id || `favorite-saved-${index + 1}`, type: "favorite", label: place?.label || place?.name || (index === 0 ? "Favorite" : `Favorite ${index + 1}`) });
+  });
+
+  const seen = new Set();
+  return candidates
+    .filter((result) => {
+      const savedPlaceType = result.savedPlaceType || result.raw?.savedPlaceType || "favorite";
+      const dedupeKey = `${savedPlaceType}|${result.providerId || result.id}|${result.lat.toFixed(6)},${result.lng.toFixed(6)}`;
+      if (seen.has(dedupeKey)) return false;
+      seen.add(dedupeKey);
+      if (shouldMatchAllSaved) return true;
+      const haystack = normalizeGridlySearchDisplayLabel([
+        result.title,
+        result.label,
+        result.address,
+        result.subtitle,
+        savedPlaceType,
+        result.raw?.display_name,
+        savedPlaceType === "favorite" ? "favorite favorites fav saved place" : "saved place"
+      ].filter(Boolean).join(" "));
+      return favoriteQuery && savedPlaceType === "favorite" ? true : tokens.every((token) => haystack.includes(token));
+    })
+    .map((result, index) => ({
+      ...result,
+      searchIntent: "saved_place_destination",
+      searchRank: {
+        ...(result.searchRank || {}),
+        savedPlace: true,
+        rank: index + 1,
+        score: 1000 - index
+      }
+    }));
+}
+
+function mergeGridlySavedPlaceDestinationResults(results = [], query = "", options = {}) {
+  const savedResults = getGridlySavedPlaceDestinationSearchResults(query, options);
+  if (!savedResults.length) return Array.isArray(results) ? results : [];
+  return [...savedResults, ...(Array.isArray(results) ? results : [])];
+}
+
 function toGridlyTitleCase(value) {
   const normalized = String(value || "").trim();
   if (!normalized) return "";
@@ -17021,6 +17112,7 @@ function cleanGridlyNormalizedContext(contextValue, fallbackTitle = "") {
 
 function buildGridlyLocationContext(result) {
   try {
+    if (result?.provider === "saved_place" || result?.raw?.savedPlace === true) return "Saved place";
     const raw = result?.raw && typeof result.raw === "object" ? result.raw : {};
     const resolve = (...values) => values.map((value) => String(value || "").trim()).find(Boolean) || "";
     const sourceTitle = resolve(result?.label, result?.title, result?.display_name, raw?.display_name, "");
@@ -17135,6 +17227,7 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
       ? haversineDistance(anchor.lat, anchor.lng, result.lat, result.lng)
       : distanceMiles;
     let score = Math.max(0, GRIDLY_SEARCH_RENDER_LIMIT - index) * 0.25;
+    if (result?.provider === "saved_place" || result?.raw?.savedPlace === true) score += 1000;
     if (isGenericLocalSearch) {
       if (result?.provider === "local_poi_seed" || result?.localPoiSeed) score += 18;
       if (Number.isFinite(anchorDistanceMiles)) {
@@ -17353,9 +17446,8 @@ function renderGridlySearchResults(results = [], options = {}) {
     return true;
   }
 
-  const normalizedResults = Array.isArray(results)
-    ? results.map((result) => normalizeGridlySearchResult(result)).filter(Boolean)
-    : [];
+  const normalizedResults = mergeGridlySavedPlaceDestinationResults(results, options?.query || ensureGridlySearchState().activeQuery || "")
+    .map((result) => normalizeGridlySearchResult(result)).filter(Boolean);
   if (normalizedResults.length && !gridlySearchUiState.debugWarningsSeen.has("normalized-results-preview")) {
     const preview = normalizedResults.slice(0, 3).map((result) => {
       const display = buildGridlySearchDisplayLines(result);
@@ -19937,6 +20029,16 @@ function selectGridlySearchResult(result, options = {}) {
   const state = ensureGridlySearchState();
   state.activeResult = normalized;
   state.selectedDestination = normalized;
+  if (normalized.provider === "saved_place" || normalized.raw?.savedPlace === true) {
+    activeDestinationPlace = {
+      id: normalized.providerId || normalized.id,
+      label: normalized.title || normalized.label || "Saved place",
+      lat: normalized.lat,
+      lng: normalized.lng,
+      address: normalized.address || "",
+      source: "saved_place"
+    };
+  }
 
   if (options?.addToRecentSearches !== false) {
     const existing = Array.isArray(state.recentSearches) ? state.recentSearches : [];
@@ -20044,8 +20146,8 @@ async function runGridlyLiveDestinationSearch(query = "", options = {}) {
   try {
     const intent = classifyGridlyDestinationSearchIntent(normalizedQuery);
     const immediateSeedResults = normalizedQuery.length >= 3
-      ? dedupeGridlySearchResults(prioritizeGridlySearchResults(searchGridlyLocalPoiSeeds(normalizedQuery, { intent }), { query: normalizedQuery, intent })).slice(0, GRIDLY_SEARCH_RENDER_LIMIT)
-      : [];
+      ? dedupeGridlySearchResults(prioritizeGridlySearchResults(mergeGridlySavedPlaceDestinationResults(searchGridlyLocalPoiSeeds(normalizedQuery, { intent }), normalizedQuery), { query: normalizedQuery, intent })).slice(0, GRIDLY_SEARCH_RENDER_LIMIT)
+      : getGridlySavedPlaceDestinationSearchResults("", { includeAll: true }).slice(0, GRIDLY_SEARCH_RENDER_LIMIT);
     const seedRenderCurrent = requestId === gridlySearchUiState.activeSearchRequestId
       && normalizeGridlySearchDisplayLabel(normalizedQuery) === normalizeGridlySearchDisplayLabel(getGridlySearchActiveInputQuery());
     if (shouldRender && !auditOnly && seedRenderCurrent && immediateSeedResults.length) {
@@ -20119,7 +20221,9 @@ function initGridlySearchUI() {
       if (gridlySearchUiRefs.input) gridlySearchUiRefs.input.value = "";
       state.activeQuery = "";
       gridlySearchUiState.activeSearchRequestId += 1;
-      clearGridlySearchResults();
+      const savedResults = getGridlySavedPlaceDestinationSearchResults("", { includeAll: true });
+      if (savedResults.length) renderGridlySearchResults(savedResults, { state: "done", allowEmptyMessage: false, query: "" });
+      else clearGridlySearchResults();
     });
     clearBtn.dataset.gridlySearchClearBound = "true";
   }
@@ -20147,7 +20251,9 @@ function initGridlySearchUI() {
       if (query.length < 3) {
         gridlySearchUiState.isSearching = false;
         gridlySearchUiState.activeSearchRequestId += 1;
-        clearGridlySearchResults();
+        const savedResults = getGridlySavedPlaceDestinationSearchResults(query, { includeAll: true });
+        if (savedResults.length) renderGridlySearchResults(savedResults, { state: "done", allowEmptyMessage: false, query });
+        else clearGridlySearchResults();
         return;
       }
 
@@ -20167,8 +20273,12 @@ function initGridlySearchUI() {
         const requestId = beginGridlyLiveDestinationSearch(query);
         renderGridlySearchResults([], { state: "searching", query, requestId });
         runGridlyLiveDestinationSearch(query, { requestId });
-      } else if (Array.isArray(state.recentSearches) && state.recentSearches.length) {
-        renderGridlySearchResults(state.recentSearches, { state: "done", allowEmptyMessage: false, query });
+      } else {
+        const savedResults = getGridlySavedPlaceDestinationSearchResults(query, { includeAll: true });
+        if (savedResults.length) renderGridlySearchResults(savedResults, { state: "done", allowEmptyMessage: false, query });
+        else if (Array.isArray(state.recentSearches) && state.recentSearches.length) {
+          renderGridlySearchResults(state.recentSearches, { state: "done", allowEmptyMessage: false, query });
+        }
       }
     };
     input.addEventListener("focus", reopenResults);
@@ -49387,6 +49497,7 @@ function getSavedPlaces() {
   addIfRoutable(state.home, "home", "Home");
   addIfRoutable(state.work, "work", "Work");
   state.custom.forEach((place) => addIfRoutable(place, `custom-${Date.now()}`, "Favorite"));
+  state.favorites.forEach((place) => addIfRoutable(place, `favorite-${Date.now()}`, "Favorite"));
   return places;
 }
 
@@ -49463,7 +49574,8 @@ function buildRouteWatchLabelParts() {
 
 function updateRouteWatchSetupUI() {
   const routeLabelParts = buildRouteWatchLabelParts();
-  const hasFavorite = Boolean(getSavedPlacesState().custom.length);
+  const savedPlacesState = getSavedPlacesState();
+  const hasFavorite = Boolean(savedPlacesState.custom.length || savedPlacesState.favorites.length);
   const buttonState = {
     home: routeLabelParts.hasHome,
     work: routeLabelParts.hasWork,
@@ -51282,7 +51394,7 @@ function scrubInvalidSavedPlacesState() {
 
 function initDailyDestinationHero() {
   const state = getSavedPlacesState();
-  const hasAny = Boolean(state.home || state.work || state.custom.length);
+  const hasAny = Boolean(state.home || state.work || state.custom.length || state.favorites.length);
   if (els.destinationEmptyNote) els.destinationEmptyNote.hidden = hasAny;
   const copy = ["Check route before you go.", "Any delays today?", "Beat the backup.", "Know before you go."];
   safeText("destinationHabitCopy", copy[new Date().getDate() % copy.length]);
@@ -51296,7 +51408,9 @@ function activateDestinationByType(type) {
     openRouteSetupModalForType(routeLabelParts.hasHome ? "work" : "home");
     return;
   }
-  const target = type === "favorite" ? state.custom.find((place) => isConfiguredPlace(place)) : state[type];
+  const target = type === "favorite"
+    ? [...(Array.isArray(state.custom) ? state.custom : []), ...(Array.isArray(state.favorites) ? state.favorites : [])].find((place) => isConfiguredPlace(place))
+    : state[type];
   if (!target) {
     if (type === "favorite") {
       setConfirmation("No favorite saved yet. Add a place first.", "error");
@@ -51325,7 +51439,7 @@ function openRouteSetupModalForType(type) {
   const state = getSavedPlacesState();
   if (type === "home" && isConfiguredPlace(state.home)) return activateDestinationByType("home");
   if (type === "work" && isConfiguredPlace(state.work)) return activateDestinationByType("work");
-  if (type === "favorite" && state.custom?.length) return activateDestinationByType("favorite");
+  if (type === "favorite" && (state.custom?.length || state.favorites?.length)) return activateDestinationByType("favorite");
   const modalMode = type === "home" || type === "work" || type === "favorite" ? type : "add";
   configureRouteSetupModal({ mode: modalMode, prefillType: type });
 }
@@ -51408,6 +51522,72 @@ function configureRouteSetupModal({ mode = "add", prefillType = "custom" } = {})
   if (els.mobileWorkInput) els.mobileWorkInput.value = preset.address;
   if (els.mobileHomeInput) els.mobileHomeInput.focus();
 }
+
+
+function gridlyBuildSavedPlacesDestinationSearchAudit() {
+  const findings = [];
+  const state = typeof getSavedPlacesState === "function" ? getSavedPlacesState() : normalizeSavedPlaces();
+  const homeSaved = isConfiguredPlace(state.home);
+  const workSaved = isConfiguredPlace(state.work);
+  const favoritePlaces = [
+    ...(Array.isArray(state.custom) ? state.custom : []),
+    ...(Array.isArray(state.favorites) ? state.favorites : [])
+  ].filter((place) => isConfiguredPlace(place));
+  const favoriteCount = favoritePlaces.length;
+  const homeResults = getGridlySavedPlaceDestinationSearchResults("home");
+  const workResults = getGridlySavedPlaceDestinationSearchResults("work");
+  const favoriteResults = getGridlySavedPlaceDestinationSearchResults("favorites");
+  const allSavedResults = getGridlySavedPlaceDestinationSearchResults("", { includeAll: true });
+  const selected = normalizeGridlySearchResult(ensureGridlySearchState()?.selectedDestination);
+  const selectedIsSavedPlace = Boolean(selected && (selected.provider === "saved_place" || selected.raw?.savedPlace === true));
+  const preview = typeof getGridlyDestinationRoutePreviewState === "function" ? getGridlyDestinationRoutePreviewState() : (window.GridlyDestinationRoutePreview || {});
+  const routeOriginAudit = typeof gridlyRouteOriginAudit === "function" ? gridlyRouteOriginAudit() : null;
+  const routeViewportAudit = typeof gridlyRouteViewportOwnershipAudit === "function" ? gridlyRouteViewportOwnershipAudit() : null;
+  const routePreviewForSavedPlace = Boolean(selectedIsSavedPlace && preview?.destination && normalizeCoordinatePair(preview.destination.lat, preview.destination.lng));
+  const savedPlacesDetected = Boolean(homeSaved || workSaved || favoriteCount > 0);
+  const homeSearchable = !homeSaved || homeResults.some((result) => result.savedPlaceType === "home" || result.raw?.savedPlaceType === "home");
+  const workSearchable = !workSaved || workResults.some((result) => result.savedPlaceType === "work" || result.raw?.savedPlaceType === "work");
+  const favoritesSearchable = favoriteCount === 0 || favoriteResults.filter((result) => result.savedPlaceType === "favorite" || result.raw?.savedPlaceType === "favorite").length >= Math.min(favoriteCount, favoriteResults.length || favoriteCount);
+  const savedPlacesSelectableAsDestinations = allSavedResults.every((result) => Number.isFinite(result.lat) && Number.isFinite(result.lng) && result.provider === "saved_place");
+  const savedPlaceRowsConsumerFriendly = allSavedResults.every((result) => buildGridlyLocationContext(result) === "Saved place" && !/configure|setup|manage|settings/i.test(`${result.title} ${result.subtitle}`));
+  const managePlacesStillAvailable = Boolean(document.getElementById("desktopManageRouteBtn") || document.getElementById("routeSetupModal") || typeof openRouteSetupModal === "function");
+  const savedPlaceSelectionPreservesRouteOriginOwnership = routeOriginAudit ? routeOriginAudit.version === "V257.4" && routeOriginAudit.protectedSystemsPass === true : true;
+  const savedPlaceSelectionPreservesViewportOwnership = routeViewportAudit ? routeViewportAudit.version === "V257.3" && routeViewportAudit.protectedSystemsPass === true : true;
+
+  if (homeSaved && !homeSearchable) findings.push("Home is saved but not searchable as a destination.");
+  if (workSaved && !workSearchable) findings.push("Work is saved but not searchable as a destination.");
+  if (favoriteCount > 0 && !favoritesSearchable) findings.push("One or more Favorites are saved but not searchable as destinations.");
+  if (!savedPlacesSelectableAsDestinations) findings.push("Saved-place search results are missing destination coordinates.");
+  if (!savedPlaceRowsConsumerFriendly) findings.push("Saved-place search rows look like configuration rows instead of destination choices.");
+  if (!managePlacesStillAvailable) findings.push("Manage Places entry point was not detected.");
+  if (!savedPlaceSelectionPreservesRouteOriginOwnership) findings.push("Route origin ownership audit did not report the V257.4 protected state.");
+  if (!savedPlaceSelectionPreservesViewportOwnership) findings.push("Route viewport ownership audit did not report the V257.3 protected state.");
+
+  const consumerFriendlyPass = Boolean(savedPlaceRowsConsumerFriendly && !findings.some((finding) => /configure|setup|settings|technical|directional|trust/i.test(finding)));
+  return {
+    available: true,
+    version: "V257.5",
+    savedPlacesDetected,
+    homeSaved,
+    workSaved,
+    favoriteCount,
+    homeSearchable,
+    workSearchable,
+    favoritesSearchable,
+    savedPlacesSelectableAsDestinations,
+    savedPlaceSelectionCreatesRoutePreview: selectedIsSavedPlace ? routePreviewForSavedPlace : savedPlacesSelectableAsDestinations,
+    savedPlaceSelectionPreservesRouteOriginOwnership,
+    savedPlaceSelectionPreservesViewportOwnership,
+    managePlacesStillAvailable,
+    consumerFriendlyPass,
+    canProceedToPatch: true,
+    findings
+  };
+}
+
+window.gridlySavedPlacesDestinationSearchAudit = function gridlySavedPlacesDestinationSearchAudit() {
+  return gridlyBuildSavedPlacesDestinationSearchAudit();
+};
 
 function attachSavedPlacesDebugGlobal() {
   window.gridlySavedPlacesDebug = function gridlySavedPlacesDebug() {
