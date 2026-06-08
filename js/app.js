@@ -1079,6 +1079,7 @@ const HAZARD_CATEGORY_MAP = {
 };
 
 const GRIDLY_PRODUCTION_MARKER_BASE_PATH = "assets/markers/png/";
+const GRIDLY_PRODUCTION_MARKER_EXPECTED_MASTER_SIZE = 256;
 const GRIDLY_PRODUCTION_MARKER_ASSETS = Object.freeze([
   "construction-zone.png",
   "crash-on-road.png",
@@ -1129,6 +1130,7 @@ const GRIDLY_PRODUCTION_MARKER_LOAD_STATE = {
   loaded: new Set(),
   failed: new Set()
 };
+const GRIDLY_PRODUCTION_MARKER_DIMENSION_STATE = new Map();
 
 const GRIDLY_NORMALIZED_INCIDENT_CATEGORIES = new Set([
   "rail", "flooding", "ice", "debris", "crash", "construction", "road_closed",
@@ -29015,6 +29017,80 @@ function getGridlyProductionMarkerCategory(incident = {}, fallbackCategory = "ot
   return GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS[normalizedFallback] ? normalizedFallback : "other_hazard";
 }
 
+
+function getGridlyProductionMarkerRenderedImageDimensions(auditDocument, assetName = "") {
+  if (!auditDocument?.querySelectorAll || !assetName) return null;
+  const images = Array.from(auditDocument.querySelectorAll("img.gridly-production-marker-img"));
+  const match = images.find((img) => {
+    const markerAsset = String(img?.getAttribute?.("data-marker-asset") || "").trim();
+    const src = String(img?.currentSrc || img?.src || img?.getAttribute?.("src") || "");
+    return markerAsset === assetName || src.endsWith(`${GRIDLY_PRODUCTION_MARKER_BASE_PATH}${assetName}`) || src.endsWith(`/${GRIDLY_PRODUCTION_MARKER_BASE_PATH}${assetName}`);
+  });
+  if (!match) return null;
+  return {
+    naturalWidth: Number(match.naturalWidth || 0),
+    naturalHeight: Number(match.naturalHeight || 0),
+    source: "rendered-dom-img",
+    status: match.complete ? "loaded" : "loading"
+  };
+}
+
+function queueGridlyProductionMarkerDimensionProbe(assetName = "") {
+  const normalizedAsset = String(assetName || "").trim();
+  if (!normalizedAsset || GRIDLY_PRODUCTION_MARKER_DIMENSION_STATE.has(normalizedAsset)) return;
+  const assetPath = `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}${normalizedAsset}`;
+  const pendingState = { filename: normalizedAsset, naturalWidth: 0, naturalHeight: 0, status: "pending", source: "image-probe" };
+  GRIDLY_PRODUCTION_MARKER_DIMENSION_STATE.set(normalizedAsset, pendingState);
+  if (typeof Image !== "function") {
+    pendingState.status = "unavailable";
+    pendingState.source = "image-probe-unavailable";
+    return;
+  }
+
+  const probe = new Image();
+  pendingState.status = "loading";
+  probe.onload = () => {
+    GRIDLY_PRODUCTION_MARKER_DIMENSION_STATE.set(normalizedAsset, {
+      filename: normalizedAsset,
+      naturalWidth: Number(probe.naturalWidth || probe.width || 0),
+      naturalHeight: Number(probe.naturalHeight || probe.height || 0),
+      status: "loaded",
+      source: "image-probe"
+    });
+  };
+  probe.onerror = () => {
+    GRIDLY_PRODUCTION_MARKER_DIMENSION_STATE.set(normalizedAsset, {
+      filename: normalizedAsset,
+      naturalWidth: 0,
+      naturalHeight: 0,
+      status: "failed",
+      source: "image-probe"
+    });
+  };
+  probe.src = assetPath;
+}
+
+function buildGridlyProductionMarkerAssetDimensionAudit(auditDocument) {
+  const expectedSize = GRIDLY_PRODUCTION_MARKER_EXPECTED_MASTER_SIZE;
+  return GRIDLY_PRODUCTION_MARKER_ASSETS.map((filename) => {
+    queueGridlyProductionMarkerDimensionProbe(filename);
+    const renderedDimensions = getGridlyProductionMarkerRenderedImageDimensions(auditDocument, filename);
+    const probedDimensions = GRIDLY_PRODUCTION_MARKER_DIMENSION_STATE.get(filename) || {};
+    const naturalWidth = Number(renderedDimensions?.naturalWidth || probedDimensions.naturalWidth || 0);
+    const naturalHeight = Number(renderedDimensions?.naturalHeight || probedDimensions.naturalHeight || 0);
+    return {
+      filename,
+      assetPath: `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}${filename}`,
+      naturalWidth,
+      naturalHeight,
+      expectedSizePass: naturalWidth === expectedSize && naturalHeight === expectedSize,
+      expectedMasterSize: `${expectedSize}x${expectedSize}`,
+      status: renderedDimensions?.status || probedDimensions.status || "pending",
+      dimensionSource: renderedDimensions?.source || probedDimensions.source || "image-probe"
+    };
+  });
+}
+
 function getGridlyProductionMarkerAsset(category = "other_hazard") {
   const normalizedCategory = String(category || "").trim().toLowerCase().replace(/[\s-]+/g, "_");
   const assetName = GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS[normalizedCategory] || GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS.other_hazard;
@@ -29074,13 +29150,21 @@ function buildGridlyProductionMarkerAudit() {
   const unmappedAssets = GRIDLY_PRODUCTION_MARKER_ASSETS.filter((assetName) => !assetToCategories[assetName]);
   const renderedProductionMarkerCount = Number(auditDocument?.querySelectorAll?.("#map .gridly-production-marker-img")?.length || 0);
   const renderedProductionMarkerDomAudit = buildGridlyRenderedProductionMarkerDomAudit(auditDocument);
+  const assetDimensionAudit = buildGridlyProductionMarkerAssetDimensionAudit(auditDocument);
+  const assetDimensionFailures = assetDimensionAudit.filter((asset) => !asset.expectedSizePass);
+  const productionMarkerAssetDimensionPass = assetDimensionFailures.length === 0;
 
   return {
     summary: {
       renderingOwner: "renderUnifiedIncidents uses Leaflet L.divIcon inside unifiedIncidentLayer; popup/click behavior remains on the Leaflet marker instance.",
       hazardGeneration: "Hazards are normalized through getUnifiedIncidents/getHazardCategory, deduped, lifecycle-filtered by gridlyIncidentEligibleForMapMarker, then rendered into unifiedIncidentLayer.",
       clusteringBehavior: "No hazard MarkerClusterGroup ownership detected in this path; existing unifiedIncidentLayer layering is preserved.",
-      productionPngMarkersEnabled: true
+      productionPngMarkersEnabled: true,
+      productionPngExpectedMasterSize: `${GRIDLY_PRODUCTION_MARKER_EXPECTED_MASTER_SIZE}x${GRIDLY_PRODUCTION_MARKER_EXPECTED_MASTER_SIZE}`,
+      productionPngAssetDimensionPass: productionMarkerAssetDimensionPass,
+      visualRenderingMergeGate: productionMarkerAssetDimensionPass
+        ? "PASS: every production marker PNG master reports 256x256."
+        : "BLOCKED: do not merge additional visual rendering until every production marker PNG master reports 256x256."
     },
     categories: categoryAssetRows,
     missingMappings,
@@ -29088,6 +29172,9 @@ function buildGridlyProductionMarkerAudit() {
     assetLoadFailures,
     totalCategoriesMapped: categoryAssetRows.length,
     assetsAvailable: GRIDLY_PRODUCTION_MARKER_ASSETS.map((assetName) => `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}${assetName}`),
+    assetDimensionAudit,
+    assetDimensionFailures,
+    productionMarkerAssetDimensionPass,
     unmappedAssets,
     renderedProductionMarkerCount,
     renderedProductionMarkerDomAudit,
@@ -29174,6 +29261,7 @@ function buildGridlyRenderedProductionMarkerDomAudit(auditDocument) {
 }
 
 if (typeof window !== "undefined") {
+  GRIDLY_PRODUCTION_MARKER_ASSETS.forEach((assetName) => queueGridlyProductionMarkerDimensionProbe(assetName));
   window.gridlyMarkProductionMarkerAssetLoad = markGridlyProductionMarkerAssetLoad;
   window.gridlyProductionMarkerAudit = buildGridlyProductionMarkerAudit;
 }
