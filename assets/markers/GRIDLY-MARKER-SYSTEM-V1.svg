@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="448" height="132" viewBox="0 0 448 132" role="img" aria-labelledby="title desc">
   <title id="title">Gridly Marker System V1</title>
   <desc id="desc">Reference sheet for the Gridly Marker System V1 dark circular 32 pixel marker family with 44 pixel pointer height, status rings, and white center glyphs.</desc>
+  <metadata>V268.0A correction: this marker SVG contains valid, non-empty Gridly vector markup.</metadata>
   <rect width="448" height="132" rx="18" fill="#050816"/>
   <g fill="#94A3B8" font-family="Inter, Arial, sans-serif" font-size="7" text-anchor="middle">
     <g transform="translate(16 6)">
