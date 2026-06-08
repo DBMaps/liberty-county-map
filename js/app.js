@@ -54048,6 +54048,124 @@ window.gridlyRouteRemovalImpactInventory = function gridlyRouteRemovalImpactInve
   return gridlyBuildRouteRemovalImpactInventory();
 };
 
+function gridlyBuildBottomDockSimplificationAudit() {
+  const findings = [];
+  const primaryDock = document.querySelector("#gridlyPortraitV2 .gridly-v2-bottom-dock");
+  const dockButtons = primaryDock
+    ? Array.from(primaryDock.querySelectorAll("button")).filter((button) => button instanceof HTMLElement)
+    : [];
+  const hasDockAction = (name) => dockButtons.some((button) => {
+    const token = `${button.dataset?.v2Sheet || ""} ${button.dataset?.action || ""} ${button.dataset?.dockAction || ""} ${button.id || ""} ${button.textContent || ""}`.toLowerCase();
+    return token.includes(name);
+  });
+  const routeButton = dockButtons.find((button) => {
+    const token = `${button.dataset?.v2Sheet || ""} ${button.dataset?.sectionJump || ""} ${button.dataset?.mode || ""} ${button.textContent || ""}`.toLowerCase();
+    return /(^|\s)route(\s|$)|routes/.test(token);
+  }) || null;
+  const routeRemovalInventory = typeof gridlyBuildRouteRemovalImpactInventory === "function" ? gridlyBuildRouteRemovalImpactInventory() : null;
+  const activeRouteControls = [
+    "gridlyDestinationImpactShowFullRouteBtn",
+    "gridlyDestinationImpactClearRouteBtn",
+    "gridlyDestinationImpactManageRouteBtn",
+    "showFullRouteBtn",
+    "clearRouteBtn"
+  ].some((id) => Boolean(document.getElementById(id)));
+  const routeCreationStillAvailable = Boolean(
+    typeof getGridlyDestinationSearchResults === "function"
+    || typeof selectGridlyDestinationResult === "function"
+    || typeof setGridlyDestinationFromPlace === "function"
+    || document.getElementById("gridlyDestinationSearchInput")
+    || document.querySelector("[data-destination-route-preview], .destination-route-preview, #mobileDestinationCommandImpact")
+  );
+  const routeDetailsStillAvailable = Boolean(
+    document.getElementById("gridlyDestinationImpactPane")
+    && document.getElementById("gridlyDestinationImpactPaneTitle")
+    && activeRouteControls
+  );
+  const routeWatchStillAvailable = Boolean(
+    document.getElementById("routeWatchStartBtn")
+    || document.getElementById("desktopRouteWatchCard")
+    || document.querySelector(".desktop-route-watch-strip")
+    || document.getElementById("mobileQuickRouteBtn")
+    || document.querySelector("[data-v2-action='route-watch-open']")
+    || document.querySelector("[data-mobile-panel-jump='routes']")
+  );
+  const managePlacesStillAvailable = Boolean(
+    document.getElementById("desktopManageRouteBtn")
+    || document.getElementById("settingsManageSavedPlacesBtn")
+    || document.getElementById("routeSetupModal")
+    || document.querySelector("[data-v2-action='route-manage-places-open']")
+    || typeof openRouteSetupModal === "function"
+  );
+  const savedPlacesStillAvailable = Boolean(
+    document.getElementById("settingsSavedPlacesSection")
+    || document.getElementById("settingsSavedPlacesList")
+    || document.getElementById("mobileSavedDestinationSelect")
+    || typeof getSavedPlacesState === "function"
+  );
+  const routeButtonRemoved = Boolean(primaryDock && !routeButton && dockButtons.length === 4);
+  const reportButtonPresent = hasDockAction("report");
+  const alertsButtonPresent = hasDockAction("alert");
+  const historyButtonPresent = hasDockAction("history");
+  const settingsButtonPresent = hasDockAction("setting");
+  const dockLayoutBalanced = Boolean(primaryDock && dockButtons.length === 4 && reportButtonPresent && alertsButtonPresent && historyButtonPresent && settingsButtonPresent);
+
+  if (!primaryDock) findings.push("Primary Portrait V2 bottom dock was not detected.");
+  if (!routeButtonRemoved) findings.push("Route button or its old five-slot spacing is still present in the primary bottom dock.");
+  if (!dockLayoutBalanced) findings.push("Remaining bottom dock actions are not balanced as Report, Alerts, History, Settings.");
+  if (!routeCreationStillAvailable) findings.push("Destination Search route creation path was not detected.");
+  if (!routeDetailsStillAvailable) findings.push("Route Details or active-route controls were not detected.");
+  if (!routeWatchStillAvailable) findings.push("Route Watch access was not detected outside the removed dock button.");
+  if (!managePlacesStillAvailable) findings.push("Manage Places access was not detected outside the removed dock button.");
+  if (!savedPlacesStillAvailable) findings.push("Saved Places access was not detected outside the removed dock button.");
+  if (routeRemovalInventory?.routeButtonOwnsUniqueCapability) findings.push("Previous route-removal inventory unexpectedly reports unique Route-button capability ownership.");
+  if (Array.isArray(routeRemovalInventory?.inaccessibleAfterRemoval) && routeRemovalInventory.inaccessibleAfterRemoval.length > 0) findings.push("Previous route-removal inventory found capabilities that would be inaccessible after removal.");
+
+  const consumerFriendlyPass = Boolean(
+    routeButtonRemoved
+    && reportButtonPresent
+    && alertsButtonPresent
+    && historyButtonPresent
+    && settingsButtonPresent
+    && routeCreationStillAvailable
+    && routeDetailsStillAvailable
+    && routeWatchStillAvailable
+    && managePlacesStillAvailable
+    && savedPlacesStillAvailable
+    && !findings.length
+  );
+
+  return {
+    available: true,
+    version: "V263",
+    routeButtonRemoved,
+    reportButtonPresent,
+    alertsButtonPresent,
+    historyButtonPresent,
+    settingsButtonPresent,
+    routeButtonPresent: Boolean(routeButton),
+    routeCreationStillAvailable,
+    routeDetailsStillAvailable,
+    routeWatchStillAvailable,
+    managePlacesStillAvailable,
+    savedPlacesStillAvailable,
+    showFullRouteStillAvailable: Boolean(document.getElementById("gridlyDestinationImpactShowFullRouteBtn") || document.getElementById("showFullRouteBtn")),
+    clearRouteStillAvailable: Boolean(document.getElementById("gridlyDestinationImpactClearRouteBtn") || document.getElementById("clearRouteBtn")),
+    routeIntelligenceStillVisible: Boolean(document.getElementById("gridlyDestinationImpactPaneSummary") || document.getElementById("desktopRouteStatus") || document.getElementById("mobileDestinationCommandImpact")),
+    routeAwarenessStillVisible: Boolean(document.getElementById("gridlyDestinationImpactPane") || document.getElementById("gridlyV2TopStatusPrimary") || document.querySelector(".gridly-destination-impact-pane")),
+    dockButtonCount: dockButtons.length,
+    dockLayoutBalanced,
+    routeRemovalInventoryVersion: routeRemovalInventory?.version || null,
+    inaccessibleAfterRemoval: routeRemovalInventory?.inaccessibleAfterRemoval || [],
+    consumerFriendlyPass,
+    findings
+  };
+}
+
+window.gridlyBottomDockSimplificationAudit = function gridlyBottomDockSimplificationAudit() {
+  return gridlyBuildBottomDockSimplificationAudit();
+};
+
 function removeGridlyRoutePreviewLayers() {
   if (window.__gridlyRoutePreviewLayer && typeof map?.removeLayer === "function" && map.hasLayer(window.__gridlyRoutePreviewLayer)) {
     map.removeLayer(window.__gridlyRoutePreviewLayer);
