@@ -10147,6 +10147,169 @@ if (typeof exposeGridlyAuditHelper === "function") {
   exposeGridlyAuditHelper("gridlyBetaRouteBlockerClassificationAudit", gridlyBetaRouteBlockerClassificationAudit);
 }
 
+function gridlyRouteOriginFailureTriageAudit() {
+  const target = typeof window !== "undefined" ? window : globalThis;
+  const hasDocument = typeof document !== "undefined";
+  const findings = [];
+  const runAuditSafely = (name, ...args) => {
+    const fn = target?.[name];
+    if (typeof fn !== "function") {
+      return { available: false, result: null, error: "helper_unavailable" };
+    }
+    try {
+      const result = fn(...args);
+      return { available: Boolean(result && result.available !== false), result, error: "" };
+    } catch (error) {
+      const message = String(error?.message || error || "unknown error");
+      findings.push(`Supporting audit ${name} threw during V264.4 route-origin triage: ${message}`);
+      return { available: true, result: null, error: message };
+    }
+  };
+  const text = (id) => hasDocument ? String(document.getElementById(id)?.textContent || "").replace(/\s+/g, " ").trim() : "";
+  const present = (id) => hasDocument && Boolean(document.getElementById(id));
+  const routeGeometryAudit = typeof getGridlyActiveRouteCoordinatesForAudit === "function"
+    ? getGridlyActiveRouteCoordinatesForAudit()
+    : (typeof gridlyGetRouteGeometryDiagnostics === "function" ? gridlyGetRouteGeometryDiagnostics() : null);
+  const preview = typeof getGridlyDestinationRoutePreviewState === "function"
+    ? getGridlyDestinationRoutePreviewState()
+    : (target?.GridlyDestinationRoutePreview || null);
+  const ownership = typeof updateGridlyRouteOwnershipSurface === "function"
+    ? updateGridlyRouteOwnershipSurface()
+    : null;
+  const activeRoutePresent = Boolean(
+    routeGeometryAudit?.activeRoutePresent
+    || routeGeometryAudit?.routeGeometryAvailable
+    || routeGeometryAudit?.currentRouteAvailable
+    || preview?.activeRoutePresent
+    || preview?.routeGeometryAvailable
+    || preview?.layerExists
+    || ownership?.hasRoute
+  );
+
+  const routeOriginAudit = runAuditSafely("gridlyRouteOriginAudit");
+  const betaAudit = runAuditSafely("gridlyBetaReadinessReviewAudit");
+  const destinationSearchAudit = runAuditSafely("gridlyDestinationSearchShellAudit");
+  const currentLocationAudit = runAuditSafely("gridlyAppLocationReadinessAudit");
+  const destinationOriginAudit = runAuditSafely("gridlyDestinationCurrentLocationOriginAudit");
+  const routeOriginAuditAvailable = Boolean(routeOriginAudit.available);
+  const routeOriginAuditPass = Boolean(
+    routeOriginAuditAvailable
+    && routeOriginAudit.result
+    && routeOriginAudit.result?.originOwnershipMatch !== false
+    && routeOriginAudit.result?.consumerFriendlyPass !== false
+    && routeOriginAudit.result?.protectedSystemsPass !== false
+  );
+  const betaBlockers = Array.isArray(betaAudit.result?.betaBlockers) ? betaAudit.result.betaBlockers : [];
+  const routeOriginBetaBlockerReported = betaBlockers.some((blocker) => /route origin/i.test(String(blocker || "")));
+  const routeOriginRequiredInCurrentState = Boolean(activeRoutePresent);
+  const routeOriginMissingBecauseNoRoute = Boolean(!activeRoutePresent && !routeOriginAuditPass);
+  const routeOriginMissingBecauseFailure = Boolean(activeRoutePresent && !routeOriginAuditPass);
+  const routeOriginMissingBecauseAuditExpectation = Boolean(!activeRoutePresent && (routeOriginBetaBlockerReported || routeOriginMissingBecauseNoRoute));
+  const routeOriginReason = activeRoutePresent
+    ? (routeOriginAuditPass ? "route_origin_available_for_active_route" : "active_route_origin_audit_failed")
+    : (routeOriginAuditAvailable ? "no_active_route_origin_not_required" : "no_active_route_origin_audit_unavailable");
+
+  const destinationSearchReady = Boolean(
+    present("gridlySearchShell")
+    && present("gridlyAddressSearchInput")
+    && (!destinationSearchAudit.result || (destinationSearchAudit.result?.shellExists !== false && destinationSearchAudit.result?.inputExists !== false))
+  );
+  const currentLocationOriginReady = Boolean(
+    (!currentLocationAudit.result || currentLocationAudit.result?.manualLocationButtonStillAvailable !== false)
+    && (!currentLocationAudit.result || currentLocationAudit.result?.fallbackStillAvailable !== false)
+    && (!destinationOriginAudit.result || destinationOriginAudit.result?.consumerFriendlyPass !== false)
+  );
+  const routeDetailsReady = Boolean(present("showFullRouteBtn") || present("gridlyDestinationImpactPane"));
+  const walmartRouteRecoveryLikely = Boolean(
+    destinationSearchReady
+    && currentLocationOriginReady
+    && routeDetailsReady
+    && (routeOriginAuditPass || !activeRoutePresent)
+  );
+  const actualUserVisibleIssueDetected = Boolean(routeOriginMissingBecauseFailure);
+  const betaBlockerJustified = Boolean(actualUserVisibleIssueDetected);
+
+  let blockerClassification = "unknown";
+  if (!activeRoutePresent) {
+    blockerClassification = routeOriginBetaBlockerReported || routeOriginMissingBecauseAuditExpectation
+      ? "audit_expectation_mismatch"
+      : "no_active_route";
+  } else if (actualUserVisibleIssueDetected) {
+    blockerClassification = "route_origin_failure";
+  }
+
+  let recommendedAction = "Further Runtime Validation Needed";
+  if (blockerClassification === "audit_expectation_mismatch") recommendedAction = "Audit Classification Update Needed";
+  else if (blockerClassification === "no_active_route") recommendedAction = "No Patch Needed";
+  else if (blockerClassification === "route_origin_failure" || blockerClassification === "user_visible_failure") recommendedAction = "Route Origin Patch Needed";
+  else if (activeRoutePresent && routeOriginAuditPass) recommendedAction = "No Patch Needed";
+
+  const consumerFriendlyPass = Boolean(activeRoutePresent && routeOriginAuditPass && walmartRouteRecoveryLikely && !actualUserVisibleIssueDetected);
+
+  findings.push(activeRoutePresent ? "Active route state is present; Route Origin is required and should match the visible route ownership surface." : "No active route is present; Route Origin is not required until a route exists.");
+  findings.push(routeOriginAuditAvailable ? "Route Origin audit helper is available for active-route validation." : "Route Origin audit helper is unavailable in this runtime snapshot.");
+  findings.push(routeOriginAuditPass ? "Route Origin audit passes in the current runtime state." : "Route Origin audit does not pass in the current runtime state.");
+  if (routeOriginMissingBecauseNoRoute) findings.push("Route Origin is missing/failing because the current runtime has no active route, not because a visible route origin failed.");
+  if (routeOriginMissingBecauseFailure) findings.push("Route Origin is missing/failing while an active route exists; this should be treated as a genuine route-origin failure.");
+  if (routeOriginMissingBecauseAuditExpectation) findings.push("The blocker is caused by expecting Route Origin in a no-active-route state; this is an audit expectation mismatch.");
+  findings.push(walmartRouteRecoveryLikely ? "Destination Search, Current Location origin support, and Route Details controls appear available for a tester to validate Current Location → Walmart recovery." : "Current Location → Walmart recovery is not fully proven from this snapshot; runtime validation is needed.");
+  findings.push(actualUserVisibleIssueDetected ? "A normal beta tester could notice a Route Origin problem because an active route lacks valid origin behavior." : "No user-visible Route Origin issue is detected in the current no-active-route/idle snapshot.");
+  findings.push("Tester validation: create Current Location → Walmart, then rerun this audit and gridlyRouteOriginAudit() to compare active-route behavior against the no-route baseline.");
+
+  return {
+    available: true,
+    version: "V264.4",
+
+    activeRoutePresent,
+
+    routeOriginAuditAvailable,
+
+    routeOriginAuditPass,
+
+    routeOriginReason,
+
+    routeOriginRequiredInCurrentState,
+
+    routeOriginMissingBecauseNoRoute,
+
+    routeOriginMissingBecauseFailure,
+
+    routeOriginMissingBecauseAuditExpectation,
+
+    actualUserVisibleIssueDetected,
+
+    betaBlockerJustified,
+
+    blockerClassification,
+
+    recommendedAction,
+
+    consumerFriendlyPass,
+
+    findings,
+    diagnostics: {
+      routeOriginBetaBlockerReported,
+      destinationSearchReady,
+      currentLocationOriginReady,
+      routeDetailsReady,
+      walmartRouteRecoveryLikely,
+      betaBlockers,
+      routeOwnershipOriginText: text("routeOwnershipOrigin"),
+      routeOwnershipDestinationText: text("routeOwnershipDestination"),
+      routeOwnershipMonitoringText: text("routeOwnershipMonitoring"),
+      desktopRouteStatusText: text("desktopRouteStatus"),
+      routeWatchSetupHintText: text("routeWatchSetupHint"),
+      routeOriginAuditResult: routeOriginAudit.result || null,
+      routeGeometryAudit: routeGeometryAudit || null
+    }
+  };
+}
+
+window.gridlyRouteOriginFailureTriageAudit = gridlyRouteOriginFailureTriageAudit;
+if (typeof exposeGridlyAuditHelper === "function") {
+  exposeGridlyAuditHelper("gridlyRouteOriginFailureTriageAudit", gridlyRouteOriginFailureTriageAudit);
+}
+
 window.gridlyTravelTimeAudit = function gridlyTravelTimeAudit() {
   const places = gridlyGetSavedPlacesReadiness();
   const routeGeometry = gridlyGetRouteGeometryDiagnostics();
