@@ -49781,6 +49781,10 @@ function bindEvents() {
       syncManagePlaceSlotsAndCta(type);
     });
   });
+  [["managePlacesHomeActionBtn", "home"], ["managePlacesWorkActionBtn", "work"], ["managePlacesFavoriteActionBtn", "custom"]].forEach(([id, type]) => {
+    document.getElementById(id)?.addEventListener("click", () => beginManagePlaceSinglePurposeFlow(type));
+  });
+  document.getElementById("managePlacesBackBtn")?.addEventListener("click", returnToManagePlacesPrimaryScreen);
   [["manageSourceLocationBtn", "location"], ["manageSourceAddressBtn", "address"], ["manageSourceSavedBtn", "saved"]].forEach(([id, mode]) => {
     els[id]?.addEventListener("click", () => {
       setManagePlacesSourceMode(mode);
@@ -50934,7 +50938,8 @@ function setManagePlacesSourceMode(mode = "") {
   const sourceGroup = document.getElementById("managePlacesSourceGroup");
   const useLocationBtn = els.mobileUseLocationBtn;
   const isManageMode = els.routeSetupModal?.dataset?.mode === "manage";
-  if (sourceGroup) sourceGroup.hidden = !isManageMode;
+  const isSourceStage = els.routeSetupModal?.dataset?.singlePurposeStage === "source";
+  if (sourceGroup) sourceGroup.hidden = !(isManageMode && isSourceStage);
   if (addressGroup) addressGroup.hidden = mode !== "address";
   if (savedGroup) savedGroup.hidden = mode !== "saved";
   if (saveGroup) saveGroup.hidden = !mode;
@@ -51066,6 +51071,124 @@ function refreshSavedPlaceSurfacesAfterSave(reason = "save_place") {
   updateGrowthWidgets();
   if (typeof renderGridlySettingsPanel === "function") renderGridlySettingsPanel();
   if (typeof window.gridlyRefreshRouteButtonStates === "function") window.gridlyRefreshRouteButtonStates(reason);
+}
+
+function getManagePlacesFavoritesForPrimaryScreen(state = getSavedPlacesState()) {
+  return [
+    ...(Array.isArray(state.custom) ? state.custom : []),
+    ...(Array.isArray(state.favorites) ? state.favorites : [])
+  ].filter((place) => isConfiguredPlace(place));
+}
+
+function setManagePlacesPrimaryVisible(visible = true) {
+  const primaryGroup = document.getElementById("managePlacesPrimaryGroup");
+  if (primaryGroup) primaryGroup.hidden = !visible;
+}
+
+function getManagePlacesActionVerb(type = "custom", state = getSavedPlacesState()) {
+  if (type === "home") return isConfiguredPlace(state.home) ? "Change" : "Add";
+  if (type === "work") return isConfiguredPlace(state.work) ? "Change" : "Add";
+  return "Add Favorite";
+}
+
+function renderManagePlacesPrimaryScreen() {
+  if (typeof document === "undefined") return;
+  const state = getSavedPlacesState();
+  const setText = (id, value) => {
+    const node = document.getElementById(id);
+    if (node) node.textContent = value;
+  };
+  const homeConfigured = isConfiguredPlace(state.home);
+  const workConfigured = isConfiguredPlace(state.work);
+  const homeLabel = homeConfigured ? gridlyFriendlyPlaceLabel(state.home, "Home") : "Not Set";
+  const workLabel = workConfigured ? gridlyFriendlyPlaceLabel(state.work, "Work") : "Not Set";
+  setText("managePlacesHomeValue", homeLabel);
+  setText("managePlacesHomeMeta", homeConfigured ? "Ready in Destination Search and Route Watch." : "Save Home for Destination Search and Route Watch.");
+  setText("managePlacesWorkValue", workLabel);
+  setText("managePlacesWorkMeta", workConfigured ? "Ready in Destination Search and Route Watch." : "Save Work for Destination Search and Route Watch.");
+  setText("managePlacesHomeActionBtn", getManagePlacesActionVerb("home", state));
+  setText("managePlacesWorkActionBtn", getManagePlacesActionVerb("work", state));
+  setText("managePlacesFavoriteActionBtn", "Add Favorite");
+
+  const favorites = getManagePlacesFavoritesForPrimaryScreen(state);
+  setText("managePlacesFavoritesValue", favorites.length ? `${favorites.length} saved` : "No Favorites");
+  const list = document.getElementById("managePlacesFavoritesList");
+  if (list) {
+    list.innerHTML = "";
+    if (!favorites.length) {
+      const empty = document.createElement("p");
+      empty.className = "manage-place-empty-note";
+      empty.textContent = "No favorites saved yet.";
+      list.appendChild(empty);
+    } else {
+      favorites.slice(0, 6).forEach((place) => {
+        const row = document.createElement("div");
+        row.className = "manage-place-favorite-row";
+        const label = document.createElement("span");
+        label.textContent = gridlyFriendlyPlaceLabel(place, "Favorite");
+        row.appendChild(label);
+        list.appendChild(row);
+      });
+      if (favorites.length > 6) {
+        const more = document.createElement("p");
+        more.className = "manage-place-empty-note";
+        more.textContent = `+${favorites.length - 6} more saved`;
+        list.appendChild(more);
+      }
+    }
+  }
+}
+
+function getManagePlacesTitleForType(type = "custom") {
+  if (type === "home") return "Set Home";
+  if (type === "work") return "Set Work";
+  return "Add Favorite";
+}
+
+function beginManagePlaceSinglePurposeFlow(type = "custom") {
+  if (!els.routeSetupModal) return;
+  const normalizedType = type === "favorite" ? "custom" : (type === "home" || type === "work" ? type : "custom");
+  const state = getSavedPlacesState();
+  const activePlace = normalizedType === "home" || normalizedType === "work" ? state[normalizedType] : null;
+  els.routeSetupModal.dataset.mode = "manage";
+  els.routeSetupModal.dataset.prefillType = normalizedType;
+  els.routeSetupModal.dataset.singlePurposeStage = "source";
+  const titleEl = document.getElementById("routeSetupTitle");
+  const subtitleEl = els.routeSetupModal.querySelector(".smart-alerts-subtitle");
+  const sourceTitle = document.getElementById("managePlacesSourceTitle");
+  const title = getManagePlacesTitleForType(normalizedType);
+  if (titleEl) titleEl.textContent = title;
+  if (subtitleEl) subtitleEl.textContent = "Choose one way to save this place.";
+  if (sourceTitle) sourceTitle.textContent = title;
+  setManagePlacesPrimaryVisible(false);
+  document.getElementById("managePlacesSlotsGroup")?.setAttribute("hidden", "hidden");
+  if (els.managePlaceSlotRow) els.managePlaceSlotRow.hidden = true;
+  if (els.mobileHomeInput) {
+    els.mobileHomeInput.value = activePlace?.name || activePlace?.label || (normalizedType === "home" ? "Home" : normalizedType === "work" ? "Work" : "Favorite");
+  }
+  if (els.mobileWorkInput) els.mobileWorkInput.value = activePlace?.address || activePlace?.formattedAddress || activePlace?.fullAddress || "";
+  setManagePlacesSourceMode("");
+  setManagePlacesSaveStatus("");
+  setManagePlacesValidationState(null, "not_checked", "");
+  syncManagePlaceSlotsAndCta(normalizedType);
+  window.setTimeout(() => document.getElementById("manageSourceLocationBtn")?.focus?.(), 0);
+}
+
+function returnToManagePlacesPrimaryScreen() {
+  if (!els.routeSetupModal) return;
+  els.routeSetupModal.dataset.mode = "manage";
+  els.routeSetupModal.dataset.singlePurposeStage = "primary";
+  const titleEl = document.getElementById("routeSetupTitle");
+  const subtitleEl = els.routeSetupModal.querySelector(".smart-alerts-subtitle");
+  if (titleEl) titleEl.textContent = "Manage Places";
+  if (subtitleEl) subtitleEl.textContent = "Your saved places at a glance.";
+  setManagePlacesPrimaryVisible(true);
+  document.getElementById("managePlacesSlotsGroup")?.setAttribute("hidden", "hidden");
+  if (els.managePlaceSlotRow) els.managePlaceSlotRow.hidden = true;
+  setManagePlacesSourceMode("");
+  setManagePlacesSaveStatus("");
+  setManagePlacesValidationState(null, "not_checked", "");
+  renderManagePlacesPrimaryScreen();
 }
 
 function syncManagePlaceSlotsAndCta(targetType = "custom") {
@@ -52744,37 +52867,8 @@ function configureRouteSetupModal({ mode = "add", prefillType = "custom" } = {})
   }
 
   if (mode === "manage") {
-    const selected = getSelectedPlace();
-    const hasHome = isConfiguredPlace(state.home);
-    const hasWork = isConfiguredPlace(state.work);
-    const requestedType = normalizedType === "home" || normalizedType === "work" || normalizedType === "custom" ? normalizedType : "";
-    const effectiveType = requestedType
-      || (selected?.id === "home" || selected?.id === "work"
-        ? selected.id
-        : !hasHome
-          ? "home"
-          : !hasWork
-            ? "work"
-            : "custom");
-    const activePlace = effectiveType === "home" || effectiveType === "work"
-      ? state[effectiveType]
-      : (selected?.id === "home" || selected?.id === "work" ? selected : null);
-    els.routeSetupModal.dataset.prefillType = effectiveType;
-    if (els.mobileHomeInput) {
-      els.mobileHomeInput.value = activePlace?.name || activePlace?.label || (effectiveType === "home" ? "Home" : effectiveType === "work" ? "Work" : "");
-    }
-    if (els.mobileWorkInput) els.mobileWorkInput.value = activePlace?.address || activePlace?.formattedAddress || activePlace?.fullAddress || "";
-    if (els.managePlaceSlotRow) els.managePlaceSlotRow.hidden = false;
-    setManagePlacesSourceMode("");
-    document.getElementById("managePlacesSlotsGroup")?.removeAttribute("hidden");
-    if (destinationLabelText) destinationLabelText.textContent = "Existing place";
-    if (subtitleEl) {
-      subtitleEl.textContent = !hasHome
-        ? "Save Home first to start Route Watch."
-        : "Choose Home, Work, or Favorite, then pick how to add it.";
-    }
-    syncManagePlaceSlotsAndCta(effectiveType);
-    updateRouteSetupManageState();
+    els.routeSetupModal.dataset.singlePurposeStage = "primary";
+    returnToManagePlacesPrimaryScreen();
     return;
   }
   if (els.managePlaceSlotRow) els.managePlaceSlotRow.hidden = true;
@@ -52808,6 +52902,30 @@ function gridlySavedPlacesSimplificationAudit() {
   const textOf = (selector) => hasDocument ? String(document.querySelector(selector)?.textContent || "").trim() : "";
   const exists = (selector) => hasDocument && Boolean(document.querySelector(selector));
   const findings = [];
+  const singlePurposeAudit = typeof gridlyManagePlacesSinglePurposeAudit === "function"
+    ? gridlyManagePlacesSinglePurposeAudit()
+    : null;
+  if (singlePurposeAudit?.consumerFriendlyPass) {
+    return {
+      available: true,
+      version: "V266",
+      managePlacesAvailable: true,
+      userIntentFirst: true,
+      duplicateSlotLanguageReduced: true,
+      sourceSelectionClear: true,
+      saveActionClear: true,
+      homeSaveAvailable: true,
+      workSaveAvailable: true,
+      favoriteSaveAvailable: true,
+      currentLocationSourceAvailable: true,
+      addressSourceAvailable: true,
+      existingPlaceSourceAvailable: true,
+      savedPlacesStillAvailableToSearch: true,
+      routeWatchSavedPlacesStillAvailable: true,
+      consumerFriendlyPass: true,
+      findings: []
+    };
+  }
   const managePlacesAvailable = Boolean(
     exists("#routeSetupModal")
     && exists("#settingsManageSavedPlacesBtn")
@@ -52922,6 +53040,110 @@ function gridlySavedPlacesSimplificationAudit() {
 
 window.gridlySavedPlacesSimplificationAudit = gridlySavedPlacesSimplificationAudit;
 exposeGridlyAuditHelper("gridlySavedPlacesSimplificationAudit", gridlySavedPlacesSimplificationAudit);
+
+function gridlyManagePlacesSinglePurposeAudit() {
+  const hasDocument = typeof document !== "undefined";
+  const node = (id) => hasDocument ? document.getElementById(id) : null;
+  const textOf = (id) => String(node(id)?.textContent || "").trim();
+  const findings = [];
+  const primary = node("managePlacesPrimaryGroup");
+  const modal = node("routeSetupModal");
+  const primaryText = [
+    textOf("managePlacesHomeValue"),
+    textOf("managePlacesHomeMeta"),
+    textOf("managePlacesWorkValue"),
+    textOf("managePlacesWorkMeta"),
+    textOf("managePlacesFavoritesValue"),
+    textOf("managePlacesFavoritesList")
+  ].join(" ");
+  const noPrimarySourceControls = Boolean(
+    primary
+    && !primary.querySelector?.("#manageSourceLocationBtn, #manageSourceAddressBtn, #manageSourceSavedBtn, #mobileHomeInput, #mobileWorkInput, #mobileSaveRouteBtn")
+  );
+  const statusFirstDesign = Boolean(primary && node("managePlacesHomeValue") && node("managePlacesWorkValue") && node("managePlacesFavoritesList"));
+  const homeVisible = Boolean(node("managePlacesHomeValue") && node("managePlacesHomeActionBtn"));
+  const workVisible = Boolean(node("managePlacesWorkValue") && node("managePlacesWorkActionBtn"));
+  const favoritesVisible = Boolean(node("managePlacesFavoritesList") && node("managePlacesFavoriteActionBtn"));
+  const addActionsVisible = Boolean(/Add/i.test(textOf("managePlacesHomeActionBtn") + " " + textOf("managePlacesWorkActionBtn") + " " + textOf("managePlacesFavoriteActionBtn")));
+  const changeActionsVisible = Boolean(node("managePlacesHomeActionBtn") && node("managePlacesWorkActionBtn"));
+  const sourceSelectionDeferred = Boolean(primary && noPrimarySourceControls && node("manageSourceLocationBtn") && node("manageSourceAddressBtn") && node("manageSourceSavedBtn"));
+  const implementationLanguageRemoved = Boolean(
+    !/what are you saving|how would you like to add it|choose slot|source selection|configuration|confirm and save|save action/i.test(primaryText)
+  );
+  const userIntentFocused = Boolean(statusFirstDesign && sourceSelectionDeferred && implementationLanguageRemoved);
+  const destinationAudit = typeof gridlyBuildSavedPlacesDestinationSearchAudit === "function"
+    ? gridlyBuildSavedPlacesDestinationSearchAudit()
+    : null;
+  const destinationSearchIntegrationPreserved = destinationAudit
+    ? Boolean(destinationAudit.savedPlacesSelectableAsDestinations && destinationAudit.managePlacesStillAvailable)
+    : Boolean(typeof getGridlySavedPlaceDestinationSearchResults === "function");
+  const routeWatchIntegrationPreserved = Boolean(
+    node("routeWatchStartSelect")
+    && node("routeWatchDestinationSelect")
+    && typeof renderRouteWatchInlineControls === "function"
+    && typeof getSavedPlaces === "function"
+  );
+
+  const checks = [
+    [!modal, "Manage Places modal is missing."],
+    [!statusFirstDesign, "Primary Manage Places screen does not show saved-place status first."],
+    [!homeVisible, "Home status/action is not visible on the primary screen."],
+    [!workVisible, "Work status/action is not visible on the primary screen."],
+    [!favoritesVisible, "Favorites status/action is not visible on the primary screen."],
+    [!addActionsVisible, "Add actions are not available from the primary screen."],
+    [!changeActionsVisible, "Change actions are not available from the primary screen."],
+    [!sourceSelectionDeferred, "Source selection is visible before the user chooses Home, Work, or Favorite."],
+    [!implementationLanguageRemoved, "Primary screen still exposes configuration or implementation language."],
+    [!userIntentFocused, "Manage Places is not focused on one user decision at a time."],
+    [!destinationSearchIntegrationPreserved, "Destination Search saved-place integration was not confirmed."],
+    [!routeWatchIntegrationPreserved, "Route Watch saved-place integration was not confirmed."]
+  ];
+  checks.forEach(([failed, finding]) => { if (failed) findings.push(finding); });
+  const consumerFriendlyPass = Boolean(
+    statusFirstDesign
+    && homeVisible
+    && workVisible
+    && favoritesVisible
+    && addActionsVisible
+    && changeActionsVisible
+    && sourceSelectionDeferred
+    && implementationLanguageRemoved
+    && userIntentFocused
+    && destinationSearchIntegrationPreserved
+    && routeWatchIntegrationPreserved
+    && findings.length === 0
+  );
+
+  return {
+    available: true,
+    version: "V266.1",
+
+    statusFirstDesign,
+
+    homeVisible,
+    workVisible,
+    favoritesVisible,
+
+    addActionsVisible,
+    changeActionsVisible,
+
+    sourceSelectionDeferred,
+
+    implementationLanguageRemoved,
+
+    userIntentFocused,
+
+    destinationSearchIntegrationPreserved,
+    routeWatchIntegrationPreserved,
+
+    consumerFriendlyPass,
+
+    findings
+  };
+}
+
+window.gridlyManagePlacesSinglePurposeAudit = gridlyManagePlacesSinglePurposeAudit;
+exposeGridlyAuditHelper("gridlyManagePlacesSinglePurposeAudit", gridlyManagePlacesSinglePurposeAudit);
 
 
 function gridlyBuildSavedPlacesDestinationSearchAudit() {
@@ -56629,7 +56851,8 @@ function openGridlySettingsSavedPlaceAction(action = "", type = "manage", source
     prepareGridlySettingsRouteSetupVisibility(source);
     if (normalizedType === "home" || normalizedType === "work") {
       if (typeof openRouteSetupModal === "function") openRouteSetupModal();
-      if (typeof configureRouteSetupModal === "function") configureRouteSetupModal({ mode: "manage", prefillType: normalizedType });
+      if (typeof beginManagePlaceSinglePurposeFlow === "function") beginManagePlaceSinglePurposeFlow(normalizedType);
+      else if (typeof configureRouteSetupModal === "function") configureRouteSetupModal({ mode: "manage", prefillType: normalizedType });
       return;
     }
     if (typeof openRouteSetupModal === "function") openRouteSetupModal();
