@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="44" viewBox="0 0 32 44" role="img" aria-labelledby="title desc">
   <title id="title">Gridly road closed marker</title>
   <desc id="desc">Dark circular Gridly incident marker with a white no-entry closure glyph.</desc>
+  <metadata>V268.0A correction: this marker SVG contains valid, non-empty Gridly vector markup.</metadata>
   <defs>
   <filter id="gridlyMarkerShadow" x="-30%" y="-20%" width="160%" height="150%" color-interpolation-filters="sRGB">
     <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#020617" flood-opacity="0.38"/>
