@@ -16351,6 +16351,43 @@ body[data-layout-mode="portrait"] .mobile-destination-command .destination-route
   line-height: 1.45;
 }
 
+
+.gridly-current-route-details {
+  display: grid;
+  gap: 4px;
+  margin: -4px 0 14px;
+  border: 1px solid rgba(125, 211, 252, 0.2);
+  border-radius: 16px;
+  padding: 12px;
+  background: rgba(14, 116, 144, 0.14);
+}
+
+.gridly-current-route-details strong {
+  color: #f8fbff;
+  font-size: 1rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.gridly-current-route-details span {
+  color: rgba(219, 234, 254, 0.8);
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+
+body.gridly-theme-light .gridly-current-route-details {
+  border-color: rgba(27, 99, 132, 0.16);
+  background: rgba(14, 165, 233, 0.1);
+}
+
+body.gridly-theme-light .gridly-current-route-details strong {
+  color: #0d1b2a;
+}
+
+body.gridly-theme-light .gridly-current-route-details span {
+  color: #516473;
+}
+
 .gridly-destination-impact-body {
   display: grid;
   gap: 10px;
@@ -18384,6 +18421,12 @@ body[data-layout-mode="portrait"] .mobile-route-exit-control[hidden],
 .gridly-destination-impact-clear-route {
   border-color: rgba(125, 211, 252, 0.32);
   color: #dff7ff;
+  background: rgba(255, 255, 255, 0.075);
+}
+
+.gridly-destination-impact-manage-route {
+  border-color: rgba(186, 216, 248, 0.24);
+  color: #dff2ff;
   background: rgba(255, 255, 255, 0.075);
 }
 
