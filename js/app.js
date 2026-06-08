@@ -10222,6 +10222,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyRouteButtonSystemAudit",
   "gridlyRouteSetupButtonAudit",
   "gridlyRouteAuditGlobalsCheck",
+  "gridlyRouteWatchNamingEntryPointAudit",
   "gridlyPortraitV2LayerAudit",
   "gridlyPortraitContainmentAudit",
   "gridlyLegacySurfaceDependencyAudit",
@@ -10342,6 +10343,7 @@ function exposeAllGridlyAuditHelpers() {
     gridlyRouteButtonSystemAudit: typeof gridlyRouteButtonSystemAudit === "function" ? gridlyRouteButtonSystemAudit : null,
     gridlyRouteSetupButtonAudit: typeof gridlyRouteSetupButtonAudit === "function" ? gridlyRouteSetupButtonAudit : null,
     gridlyRouteAuditGlobalsCheck: typeof gridlyRouteAuditGlobalsCheck === "function" ? gridlyRouteAuditGlobalsCheck : null,
+    gridlyRouteWatchNamingEntryPointAudit: typeof gridlyRouteWatchNamingEntryPointAudit === "function" ? gridlyRouteWatchNamingEntryPointAudit : (typeof target?.gridlyRouteWatchNamingEntryPointAudit === "function" ? target.gridlyRouteWatchNamingEntryPointAudit : null),
     gridlyPortraitV2LayerAudit: typeof gridlyPortraitV2LayerAudit === "function" ? gridlyPortraitV2LayerAudit : null,
     gridlyPortraitContainmentAudit: typeof gridlyPortraitContainmentAudit === "function" ? gridlyPortraitContainmentAudit : null,
     gridlyLegacySurfaceDependencyAudit: typeof gridlyLegacySurfaceDependencyAudit === "function" ? gridlyLegacySurfaceDependencyAudit : null,
@@ -53778,6 +53780,97 @@ function gridlyBuildRouteWatchSeparationAudit() {
 window.gridlyRouteWatchSeparationAudit = function gridlyRouteWatchSeparationAudit() {
   return gridlyBuildRouteWatchSeparationAudit();
 };
+
+window.gridlyRouteWatchNamingEntryPointAudit = gridlyRouteWatchNamingEntryPointAudit;
+
+function gridlyGetAuditText(selector) {
+  const node = document.querySelector(selector);
+  return String(node?.textContent || "").replace(/\s+/g, " ").trim();
+}
+
+function gridlyBuildRouteWatchNamingEntryPointAudit() {
+  const currentRouteWatchName = gridlyGetAuditText(".desktop-route-watch-strip .route-watch-heading-row .eyebrow")
+    || gridlyGetAuditText("#setupCard .eyebrow")
+    || gridlyGetAuditText("#routeWatchStartBtn")
+    || "Route Watch";
+  const currentEntryPointLabel = gridlyGetAuditText('[data-v2-sheet="route"] em')
+    || gridlyGetAuditText("#mobileDockRouteBtn")
+    || gridlyGetAuditText('[data-section="routes"]')
+    || "Route";
+  const routeWatchNameLower = currentRouteWatchName.toLowerCase();
+  const entryPointLabelLower = currentEntryPointLabel.toLowerCase();
+  const routeWordInName = /\broute\b/.test(routeWatchNameLower);
+  const watchWordInName = /\bwatch\b|monitor/.test(routeWatchNameLower);
+  const routeWordInEntryPoint = /\b(routes?|routing)\b/.test(entryPointLabelLower);
+  const watchWordInEntryPoint = /\bwatch\b|monitor/.test(entryPointLabelLower);
+  const namingSupportsMonitoring = watchWordInName;
+  const namingSuggestsRouting = routeWordInName;
+  const entryPointSupportsMonitoring = watchWordInEntryPoint;
+  const entryPointSuggestsRouting = routeWordInEntryPoint;
+  const routingExpectationScore = Math.min(100, (routeWordInName ? 35 : 0) + (routeWordInEntryPoint ? 40 : 0) + (/manage|choose|start/.test(entryPointLabelLower) ? 10 : 0) + (watchWordInEntryPoint ? -15 : 0));
+  const monitoringExpectationScore = Math.min(100, (watchWordInName ? 45 : 0) + (watchWordInEntryPoint ? 35 : 0) + (/monitor/.test(routeWatchNameLower) ? 15 : 0) + (routeWordInEntryPoint && !watchWordInEntryPoint ? -20 : 0) + (routeWordInName ? 5 : 0));
+  const ownershipAlignmentScore = Math.max(0, Math.min(100, 55 + (namingSupportsMonitoring ? 15 : 0) + (entryPointSupportsMonitoring ? 20 : 0) - (entryPointSuggestsRouting && !entryPointSupportsMonitoring ? 25 : 0) - (namingSuggestsRouting ? 10 : 0)));
+  const consumerFriendlyPass = Boolean(
+    monitoringExpectationScore >= 75
+    && routingExpectationScore <= 35
+    && ownershipAlignmentScore >= 80
+    && namingSupportsMonitoring
+    && entryPointSupportsMonitoring
+    && !entryPointSuggestsRouting
+  );
+  const findings = [
+    {
+      question: "If a user sees Route Watch, do they think create a route or monitor a route?",
+      answer: watchWordInName ? "Mostly monitor a route, but the word Route still carries some create/manage-route expectation." : "Create or manage a route is more likely than monitoring.",
+      recommendation: "Keep Route Watch framed as a monitoring product and pair it with monitoring-specific support copy before future UI changes."
+    },
+    {
+      question: "With Current Location → Walmart active, would Route Watch manage that route or monitor future trips?",
+      answer: "A first-time tester is likely to expect Route Watch to manage or attach to the active route unless Current Route Details clearly owns the active route and Route Watch is described as monitoring.",
+      recommendation: "Preserve Destination Search as the active current-route owner; treat Route Watch as a secondary monitoring path for saved or recurring trips."
+    },
+    {
+      question: "Does the current entry point communicate monitoring or routing?",
+      answer: entryPointSupportsMonitoring ? "The entry point includes monitoring language." : "The current entry point reads as routing because the primary dock/route entry says Route.",
+      recommendation: "Future label/copy decisions should make the entry point promise watch/monitoring rather than route creation."
+    },
+    {
+      question: "Does the current naming reinforce Know Before You Go or Navigation?",
+      answer: "Route Watch partially reinforces Know Before You Go through Watch, but Route and Route/Routes entry points still lean toward navigation.",
+      recommendation: "Use monitoring, readiness, delay, and before-you-go language around Route Watch in a future UI-specific version."
+    },
+    {
+      question: "Would a first-time tester immediately understand Destination Search versus Route Watch?",
+      answer: consumerFriendlyPass ? "Yes, the current labels are clear enough without explanation." : "No. The current naming is directionally correct, but the entry point and route-management copy leave too much overlap with Destination Search.",
+      recommendation: "Do not mark consumer-friendly until Destination Search = Routing and Route Watch = Monitoring are understandable from labels alone."
+    }
+  ];
+
+  return {
+    available: true,
+    version: "V262.4",
+    auditOnly: true,
+    currentRouteWatchName,
+    currentEntryPointLabel,
+    routingExpectationScore,
+    monitoringExpectationScore,
+    firstTimeTesterInterpretation: "A first-time tester would read Route Watch as a feature that watches a route, but the surrounding Route/Routes entry points and manage-route language make it easy to expect route creation or active-route management too.",
+    likelyUserQuestion: "Do I use Route Watch to create or manage my Current Location → Walmart route, or is it only for monitoring saved trips before I leave?",
+    currentMentalModel: "Route Watch is visible as a route-related surface that can feel like setup, saved places, current-route management, and monitoring at the same time.",
+    recommendedMentalModel: "Destination Search routes me somewhere now; Route Watch monitors a saved or recurring trip so I know before I go.",
+    namingSupportsMonitoring,
+    namingSuggestsRouting,
+    entryPointSupportsMonitoring,
+    entryPointSuggestsRouting,
+    ownershipAlignmentScore,
+    consumerFriendlyPass,
+    findings
+  };
+}
+
+function gridlyRouteWatchNamingEntryPointAudit() {
+  return gridlyBuildRouteWatchNamingEntryPointAudit();
+}
 
 function removeGridlyRoutePreviewLayers() {
   if (window.__gridlyRoutePreviewLayer && typeof map?.removeLayer === "function" && map.hasLayer(window.__gridlyRoutePreviewLayer)) {
