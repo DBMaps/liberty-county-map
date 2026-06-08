@@ -22068,6 +22068,13 @@ function hydrateElements() {
     "managePlaceHomeBtn",
     "managePlaceWorkBtn",
     "managePlaceFavoriteBtn",
+    "managePlacesHomeActionBtn",
+    "managePlacesWorkActionBtn",
+    "managePlacesFavoriteActionBtn",
+    "manageSourceLocationBtn",
+    "manageSourceAddressBtn",
+    "manageSourceSavedBtn",
+    "managePlacesBackBtn",
     "mobileResetPlacesBtn",
     "mobileUseLocationBtn",
     "mobileUseMapCenterFallbackBtn",
@@ -49782,11 +49789,21 @@ function bindEvents() {
     });
   });
   [["managePlacesHomeActionBtn", "home"], ["managePlacesWorkActionBtn", "work"], ["managePlacesFavoriteActionBtn", "custom"]].forEach(([id, type]) => {
-    document.getElementById(id)?.addEventListener("click", () => beginManagePlaceSinglePurposeFlow(type));
+    const button = els[id] || document.getElementById(id);
+    if (!button) return;
+    button.dataset.focusedFlowEntryBound = "1";
+    button.addEventListener("click", () => beginManagePlaceSinglePurposeFlow(type));
   });
-  document.getElementById("managePlacesBackBtn")?.addEventListener("click", returnToManagePlacesPrimaryScreen);
+  const managePlacesBackBtn = els.managePlacesBackBtn || document.getElementById("managePlacesBackBtn");
+  if (managePlacesBackBtn) {
+    managePlacesBackBtn.dataset.backToManagePlacesBound = "1";
+    managePlacesBackBtn.addEventListener("click", returnToManagePlacesPrimaryScreen);
+  }
   [["manageSourceLocationBtn", "location"], ["manageSourceAddressBtn", "address"], ["manageSourceSavedBtn", "saved"]].forEach(([id, mode]) => {
-    els[id]?.addEventListener("click", () => {
+    const button = els[id] || document.getElementById(id);
+    if (!button) return;
+    button.dataset.sourceButtonBound = "1";
+    button.addEventListener("click", () => {
       setManagePlacesSourceMode(mode);
       setManagePlacesSaveStatus("");
       setManagePlacesValidationState(null, "not_checked", "");
@@ -53099,6 +53116,17 @@ function gridlyManagePlacesSinglePurposeAudit() {
     (isFocusedStage && isElementVisible(node("managePlacesSourceGroup")) && isElementVisible(node("manageSourceLocationBtn")) && isElementVisible(node("managePlacesBackBtn")))
     || (!isFocusedStage && typeof beginManagePlaceSinglePurposeFlow === "function" && node("managePlacesSourceGroup") && node("manageSourceLocationBtn") && node("managePlacesBackBtn"))
   );
+  const sourceButtonIds = ["manageSourceLocationBtn", "manageSourceAddressBtn", "manageSourceSavedBtn"];
+  const focusedEntryButtonIds = ["managePlacesHomeActionBtn", "managePlacesWorkActionBtn", "managePlacesFavoriteActionBtn"];
+  const sourceButtonsBound = sourceButtonIds.every((id) => node(id)?.dataset?.sourceButtonBound === "1");
+  const focusedEntryButtonsBound = focusedEntryButtonIds.every((id) => node(id)?.dataset?.focusedFlowEntryBound === "1");
+  const backToManagePlacesBound = Boolean(node("managePlacesBackBtn")?.dataset?.backToManagePlacesBound === "1");
+  const focusedFlowButtonsBound = Boolean(focusedEntryButtonsBound && sourceButtonsBound && backToManagePlacesBound);
+  const focusedFlowButtonsVisible = Boolean(
+    isElementVisible(node("managePlacesBackBtn"))
+    || sourceButtonIds.some((id) => isElementVisible(node(id)))
+  );
+  const focusedFlowVisibleButUnbound = Boolean(focusedFlowButtonsVisible && (!sourceButtonsBound || !backToManagePlacesBound));
   const implementationLanguageRemoved = Boolean(
     !/what are you saving|how would you like to add it|choose slot|source selection|configuration|confirm and save|save action/i.test(primaryText)
   );
@@ -53127,6 +53155,10 @@ function gridlyManagePlacesSinglePurposeAudit() {
     [!sourceSelectionDeferred, "Source selection is visible before the user chooses Home, Work, or Favorite."],
     [!primaryScreenSetupControlsHidden, `Setup controls are visible on the primary Manage Places screen: ${visibleSetupControlIds.join(", ") || "unknown"}.`],
     [!focusedFlowSetupControlsVisible, "Setup controls were not confirmed for the focused Set Home, Set Work, or Add Favorite flow."],
+    [!focusedEntryButtonsBound, "Home, Work, and Favorite focused-flow entry buttons are not all bound."],
+    [!sourceButtonsBound, "Focused-flow source buttons are not all bound."],
+    [!backToManagePlacesBound, "Back to Manage Places is not bound."],
+    [focusedFlowVisibleButUnbound, "Focused-flow buttons are visible but not bound."],
     [!implementationLanguageRemoved, "Primary screen still exposes configuration or implementation language."],
     [!userIntentFocused, "Manage Places is not focused on one user decision at a time."],
     [!destinationSearchIntegrationPreserved, "Destination Search saved-place integration was not confirmed."],
@@ -53143,6 +53175,8 @@ function gridlyManagePlacesSinglePurposeAudit() {
     && sourceSelectionDeferred
     && primaryScreenSetupControlsHidden
     && focusedFlowSetupControlsVisible
+    && focusedFlowButtonsBound
+    && !focusedFlowVisibleButUnbound
     && implementationLanguageRemoved
     && userIntentFocused
     && destinationSearchIntegrationPreserved
@@ -53152,7 +53186,7 @@ function gridlyManagePlacesSinglePurposeAudit() {
 
   return {
     available: true,
-    version: "V266.1A",
+    version: "V266.1B",
 
     statusFirstDesign,
 
@@ -53166,6 +53200,11 @@ function gridlyManagePlacesSinglePurposeAudit() {
     sourceSelectionDeferred,
     primaryScreenSetupControlsHidden,
     focusedFlowSetupControlsVisible,
+    focusedFlowButtonsBound,
+    backToManagePlacesBound,
+    sourceButtonsBound,
+    focusedEntryButtonsBound,
+    focusedFlowVisibleButUnbound,
     visibleSetupControlIds,
 
     implementationLanguageRemoved,
