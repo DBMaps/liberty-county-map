@@ -53045,6 +53045,15 @@ function gridlyManagePlacesSinglePurposeAudit() {
   const hasDocument = typeof document !== "undefined";
   const node = (id) => hasDocument ? document.getElementById(id) : null;
   const textOf = (id) => String(node(id)?.textContent || "").trim();
+  const isElementVisible = (element) => {
+    if (!hasDocument || !element) return false;
+    if (element.hidden || element.getAttribute?.("aria-hidden") === "true") return false;
+    const style = typeof window !== "undefined" && typeof window.getComputedStyle === "function"
+      ? window.getComputedStyle(element)
+      : null;
+    if (style && (style.display === "none" || style.visibility === "hidden" || style.opacity === "0" || style.pointerEvents === "none")) return false;
+    return Boolean(element.offsetParent || element.getClientRects?.().length || (style && style.position === "fixed"));
+  };
   const findings = [];
   const primary = node("managePlacesPrimaryGroup");
   const modal = node("routeSetupModal");
@@ -53067,6 +53076,29 @@ function gridlyManagePlacesSinglePurposeAudit() {
   const addActionsVisible = Boolean(/Add/i.test(textOf("managePlacesHomeActionBtn") + " " + textOf("managePlacesWorkActionBtn") + " " + textOf("managePlacesFavoriteActionBtn")));
   const changeActionsVisible = Boolean(node("managePlacesHomeActionBtn") && node("managePlacesWorkActionBtn"));
   const sourceSelectionDeferred = Boolean(primary && noPrimarySourceControls && node("manageSourceLocationBtn") && node("manageSourceAddressBtn") && node("manageSourceSavedBtn"));
+  const setupControlIds = [
+    "managePlacesSlotsGroup",
+    "managePlacesSourceGroup",
+    "managePlacesAddressGroup",
+    "managePlacesSavedGroup",
+    "managePlacesSaveGroup",
+    "managePlaceSlotRow",
+    "mobileHomeInput",
+    "mobileWorkInput",
+    "mobileSavedDestinationSelect",
+    "mobileSaveRouteBtn",
+    "mobileResetPlacesBtn",
+    "mobileUseLocationBtn",
+    "mobileUseMapCenterFallbackBtn"
+  ];
+  const visibleSetupControlIds = setupControlIds.filter((id) => isElementVisible(node(id)));
+  const isPrimaryStage = Boolean(primary && isElementVisible(primary) && modal?.dataset?.mode === "manage" && (modal?.dataset?.singlePurposeStage || "primary") === "primary");
+  const isFocusedStage = Boolean(modal?.dataset?.mode === "manage" && modal?.dataset?.singlePurposeStage === "source");
+  const primaryScreenSetupControlsHidden = Boolean(!isPrimaryStage || visibleSetupControlIds.length === 0);
+  const focusedFlowSetupControlsVisible = Boolean(
+    (isFocusedStage && isElementVisible(node("managePlacesSourceGroup")) && isElementVisible(node("manageSourceLocationBtn")) && isElementVisible(node("managePlacesBackBtn")))
+    || (!isFocusedStage && typeof beginManagePlaceSinglePurposeFlow === "function" && node("managePlacesSourceGroup") && node("manageSourceLocationBtn") && node("managePlacesBackBtn"))
+  );
   const implementationLanguageRemoved = Boolean(
     !/what are you saving|how would you like to add it|choose slot|source selection|configuration|confirm and save|save action/i.test(primaryText)
   );
@@ -53093,6 +53125,8 @@ function gridlyManagePlacesSinglePurposeAudit() {
     [!addActionsVisible, "Add actions are not available from the primary screen."],
     [!changeActionsVisible, "Change actions are not available from the primary screen."],
     [!sourceSelectionDeferred, "Source selection is visible before the user chooses Home, Work, or Favorite."],
+    [!primaryScreenSetupControlsHidden, `Setup controls are visible on the primary Manage Places screen: ${visibleSetupControlIds.join(", ") || "unknown"}.`],
+    [!focusedFlowSetupControlsVisible, "Setup controls were not confirmed for the focused Set Home, Set Work, or Add Favorite flow."],
     [!implementationLanguageRemoved, "Primary screen still exposes configuration or implementation language."],
     [!userIntentFocused, "Manage Places is not focused on one user decision at a time."],
     [!destinationSearchIntegrationPreserved, "Destination Search saved-place integration was not confirmed."],
@@ -53107,6 +53141,8 @@ function gridlyManagePlacesSinglePurposeAudit() {
     && addActionsVisible
     && changeActionsVisible
     && sourceSelectionDeferred
+    && primaryScreenSetupControlsHidden
+    && focusedFlowSetupControlsVisible
     && implementationLanguageRemoved
     && userIntentFocused
     && destinationSearchIntegrationPreserved
@@ -53116,7 +53152,7 @@ function gridlyManagePlacesSinglePurposeAudit() {
 
   return {
     available: true,
-    version: "V266.1",
+    version: "V266.1A",
 
     statusFirstDesign,
 
@@ -53128,6 +53164,9 @@ function gridlyManagePlacesSinglePurposeAudit() {
     changeActionsVisible,
 
     sourceSelectionDeferred,
+    primaryScreenSetupControlsHidden,
+    focusedFlowSetupControlsVisible,
+    visibleSetupControlIds,
 
     implementationLanguageRemoved,
 

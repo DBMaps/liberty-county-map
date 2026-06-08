@@ -18573,6 +18573,19 @@ body[data-layout-mode="portrait"] #mobileRouteActionBar {
   background: rgba(255, 255, 255, 0.075);
 }
 
+/* V266.1A — enforce hidden setup controls on Manage Places primary screen */
+.manage-places-group[hidden],
+.destination-chip-row[hidden],
+#managePlacesSaveGroup[hidden],
+#managePlacesSourceGroup[hidden],
+#managePlacesSlotsGroup[hidden],
+#managePlacesAddressGroup[hidden],
+#managePlacesSavedGroup[hidden] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
 /* V266.1 — Manage Places single-purpose status-first flow */
 .manage-places-primary {
   display: grid;
