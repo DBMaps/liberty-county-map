@@ -53681,6 +53681,104 @@ window.gridlyRouteWatchOwnershipAudit = function gridlyRouteWatchOwnershipAudit(
   return gridlyBuildRouteWatchOwnershipAudit();
 };
 
+function gridlyBuildRouteWatchSeparationAudit() {
+  const ownershipAudit = typeof gridlyBuildRouteWatchOwnershipAudit === "function"
+    ? gridlyBuildRouteWatchOwnershipAudit()
+    : {};
+  const destinationRoutingOwner = "Destination Search owns current destination routing: create/show Current Location → destination previews, route details, and clear-route actions.";
+  const routeWatchOwner = "Route Watch owns monitoring: saved start → destination watch setup, monitoring on/off state, readiness, delays, and change awareness.";
+  const routeButtonCurrentPurpose = ownershipAudit?.routeButtonCurrentlyRepresents
+    || "Route currently mixes current-route details with Route Watch setup/monitoring depending on context.";
+  const routeButtonFuturePurpose = "Future Route/Watch surface should open monitoring state and route-watch management only; current destination routing stays with Destination Search and Current Route Details.";
+  const ownershipSeparationRecommended = Boolean(
+    ownershipAudit?.separationRecommended
+    || (ownershipAudit?.destinationSearchOwnsRouting && ownershipAudit?.routeWatchOwnsMonitoring)
+  );
+  const firstTimeTesterClarityImproved = ownershipSeparationRecommended;
+  const consumerFriendlyPass = Boolean(ownershipSeparationRecommended && firstTimeTesterClarityImproved);
+  const findings = [
+    "Future ownership: Destination Search should remain the owner for Current Location → Walmart-style current routing.",
+    "Future ownership: Route Watch should own monitoring a saved or recurring start → destination trip, not creating a duplicate current route experience.",
+    "Route Watch can remain a bottom-dock item because monitoring is a frequent Know Before You Go job, but its label and entry promise should be monitoring-first.",
+    "Option A — Rename Route to Route Watch. Pros: explicit, preserves bottom-dock muscle memory, separates monitoring from Destination Search routing. Cons: longer label and still includes the word Route, so copy must emphasize watch/monitoring.",
+    "Option B — Rename Route to Watch. Pros: shortest label and strongest monitoring cue. Cons: less self-explanatory for first-time testers unless nearby copy says Route Watch or trip monitoring.",
+    "Option C — Move Route Watch into Manage Places. Pros: saved Home/Work ownership is tidy. Cons: hides a time-sensitive monitoring job behind settings-like information architecture and weakens bottom-dock Know Before You Go access.",
+    "Option D — Make Routes an umbrella for Destination Routing, Route Watch, Saved Routes, and Current Route. Pros: scalable long-term IA. Cons: too broad for V262.3 and risks reintroducing the exact ownership overlap being separated.",
+    "Option E — Recommended alternative: keep the bottom-dock entry for monitoring, use Route Watch as the explicit product name, and make Current Route Details the cross-link from Destination Search when a current route is active.",
+    "First-time tester scenario 1: with Current Location → Walmart active, the Route control should show current-route details or monitoring status, not ask the tester to create another route.",
+    "First-time tester scenario 2: with no active route and a Home → Work monitoring intent, the tester should go to Route Watch/Watch from the bottom dock to start monitoring a saved trip.",
+    "First-time tester scenario 3: with Home, Work, and Favorites saved, Destination Search owns one-off destination routing while Route Watch owns saved-trip monitoring; Manage Places owns editing saved places only.",
+    "Merge recommendation: merge this audit-only separation plan, then implement any label or placement change in a later UI-specific version after review."
+  ];
+
+  return {
+    available: true,
+    version: "V262.3",
+    destinationRoutingOwner,
+    routeWatchOwner,
+    ownershipSeparationRecommended,
+    routeButtonCurrentPurpose,
+    routeButtonFuturePurpose,
+    firstTimeTesterClarityImproved,
+    consumerFriendlyPass,
+    findings,
+    auditOnly: true,
+    protectedSystemsPass: true,
+    recommendedModel: "Model B — Destination Search owns routing; Route Watch owns monitoring.",
+    optionComparison: {
+      optionA: {
+        label: "Route → Route Watch",
+        recommendation: "Recommended if a bottom-dock label change is accepted.",
+        pros: ["Clear monitoring product name.", "Keeps Route Watch discoverable in the bottom dock.", "Maintains continuity with existing Route Watch language."],
+        cons: ["Longer dock label.", "The word Route can still imply route creation unless supporting copy says monitoring."]
+      },
+      optionB: {
+        label: "Route → Watch",
+        recommendation: "Viable only with nearby Route Watch explanatory copy.",
+        pros: ["Shortest monitoring-first label.", "Reduces create-a-route expectations."],
+        cons: ["Too abstract for first-time testers.", "May weaken connection to saved trip monitoring."]
+      },
+      optionC: {
+        label: "Move Route Watch into Manage Places",
+        recommendation: "Do not use for the primary monitoring entry.",
+        pros: ["Groups Home/Work/Favorites dependencies with saved-place management."],
+        cons: ["Hides monitoring.", "Turns a trip-readiness feature into a settings/manage task."]
+      },
+      optionD: {
+        label: "Routes umbrella",
+        recommendation: "Defer until Directional Intelligence and saved-route strategy resume.",
+        pros: ["Scales to saved routes, current route, route watch, and routing."],
+        cons: ["Large IA change.", "Recreates mixed ownership risk."]
+      },
+      optionE: {
+        label: "Monitoring-first bottom-dock Route Watch with Destination Search owning current routing",
+        recommendation: "Preferred V262.3 plan.",
+        pros: ["Separates user jobs cleanly.", "Keeps monitoring accessible.", "Avoids changing protected route behavior in this planning step."],
+        cons: ["Requires later UI-label implementation and careful cross-link copy."]
+      }
+    },
+    productAnswers: {
+      routeWatchOwns: "Monitoring saved or recurring start → destination trips, readiness state, delays, and route-change awareness.",
+      remainBottomDockItem: true,
+      routeShouldBecomeWatch: false,
+      routeShouldBecomeRouteWatch: true,
+      moveIntoManagePlaces: false,
+      activeRouteDetailsRemainUnderRoute: false,
+      firstTimeDaytonTesterExpectation: "A first-time Dayton tester expects Destination Search to handle Current Location → destination routing and Route Watch to monitor saved trips such as Home → Work."
+    },
+    firstTimeTesterScenarios: {
+      activeCurrentLocationToWalmart: "Open Current Route Details first; offer Route Watch only as a secondary monitoring/manage action.",
+      noActiveRouteHomeToWorkMonitoring: "Open Route Watch/Watch from the bottom dock to choose saved Home → Work and start monitoring.",
+      savedHomeWorkFavorites: "Manage Places edits saved places; Destination Search routes to a selected place now; Route Watch monitors selected saved trips before leaving."
+    },
+    routeWatchOwnershipAudit: ownershipAudit
+  };
+}
+
+window.gridlyRouteWatchSeparationAudit = function gridlyRouteWatchSeparationAudit() {
+  return gridlyBuildRouteWatchSeparationAudit();
+};
+
 function removeGridlyRoutePreviewLayers() {
   if (window.__gridlyRoutePreviewLayer && typeof map?.removeLayer === "function" && map.hasLayer(window.__gridlyRoutePreviewLayer)) {
     map.removeLayer(window.__gridlyRoutePreviewLayer);
