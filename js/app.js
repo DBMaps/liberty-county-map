@@ -49771,7 +49771,7 @@ function bindEvents() {
       const state = getSavedPlacesState();
       const activePlace = type === "home" || type === "work" ? state[type] : null;
       if (els.mobileHomeInput) {
-        els.mobileHomeInput.value = activePlace?.name || activePlace?.label || (type === "home" ? "Home" : type === "work" ? "Work" : "");
+        els.mobileHomeInput.value = activePlace?.name || activePlace?.label || (type === "home" ? "Home" : type === "work" ? "Work" : "Favorite");
         els.mobileHomeInput.focus();
       }
       if (els.mobileWorkInput) els.mobileWorkInput.value = activePlace?.address || "";
@@ -49791,6 +49791,10 @@ function bindEvents() {
       }
       if (mode === "address") {
         if (els.mobileWorkInput && els.mobileWorkInput.value.trim() === "Current location") els.mobileWorkInput.value = "";
+        const activeType = els.routeSetupModal?.dataset?.prefillType || "custom";
+        if (els.mobileHomeInput && !String(els.mobileHomeInput.value || "").trim()) {
+          els.mobileHomeInput.value = activeType === "home" ? "Home" : activeType === "work" ? "Work" : "Favorite";
+        }
         els.mobileWorkInput?.focus();
       }
       if (mode === "saved") els.mobileSavedDestinationSelect?.focus();
@@ -50934,7 +50938,7 @@ function setManagePlacesSourceMode(mode = "") {
   if (addressGroup) addressGroup.hidden = mode !== "address";
   if (savedGroup) savedGroup.hidden = mode !== "saved";
   if (saveGroup) saveGroup.hidden = !mode;
-  if (useLocationBtn) useLocationBtn.hidden = mode !== "location";
+  if (useLocationBtn) useLocationBtn.hidden = true;
   if (mode !== "address" && els.mobileUseMapCenterFallbackBtn) els.mobileUseMapCenterFallbackBtn.hidden = true;
   [["manageSourceLocationBtn", "location"], ["manageSourceAddressBtn", "address"], ["manageSourceSavedBtn", "saved"]].forEach(([id, value]) => {
     const btn = document.getElementById(id);
@@ -51066,7 +51070,7 @@ function refreshSavedPlaceSurfacesAfterSave(reason = "save_place") {
 
 function syncManagePlaceSlotsAndCta(targetType = "custom") {
   if (els.mobileSaveRouteBtn) {
-    els.mobileSaveRouteBtn.textContent = targetType === "home" ? "Save Home" : targetType === "work" ? "Save Work" : "Save Place";
+    els.mobileSaveRouteBtn.textContent = targetType === "home" ? "Save Home" : targetType === "work" ? "Save Work" : "Save Favorite";
   }
   [["managePlaceHomeBtn", "home"], ["managePlaceWorkBtn", "work"], ["managePlaceFavoriteBtn", "custom"]].forEach(([id, type]) => {
     const button = els[id];
@@ -51162,12 +51166,17 @@ async function saveRoute(source = "desktop", options = {}) {
 
   try {
 
+  if (isManageSave && !String(home || "").trim()) {
+    home = prefillType === "home" ? "Home" : prefillType === "work" ? "Work" : "Favorite";
+    if (els.mobileHomeInput) els.mobileHomeInput.value = home;
+  }
+
   if (isManageSave) {
     if (!["home", "work", "custom", "favorite"].includes(prefillType)) {
       return failSave("Choose Home, Work, or Favorite before saving.", "Choose slot", "missing_slot");
     }
     if (!["location", "address", "saved"].includes(manageSourceMode)) {
-      return failSave("Choose Current Location, Enter Address, or Choose Saved Place before saving.", "Choose source", "missing_source");
+      return failSave("Choose Use Current Location, Enter Address, or Choose Existing Place before saving.", "Choose source", "missing_source");
     }
   }
 
@@ -52727,8 +52736,8 @@ function configureRouteSetupModal({ mode = "add", prefillType = "custom" } = {})
   const destinationLabel = document.getElementById("savedPlacesSelectLabel") || els.mobileSavedDestinationSelect?.closest("label");
   const destinationLabelText = destinationLabel ? destinationLabel.childNodes[0] : null;
   if (titleEl) titleEl.textContent = mode === "manage" ? "Manage Places" : mode === "home" ? "Set Home" : mode === "work" ? "Set Work" : mode === "favorite" ? "Add Favorite" : "Add Place";
-  if (subtitleEl) subtitleEl.textContent = "Saved places stay on this device. Pick one destination for today.";
-  if (els.mobileSaveRouteBtn) els.mobileSaveRouteBtn.textContent = mode === "manage" ? "Save Place" : mode === "home" ? "Save Home" : mode === "work" ? "Save Work" : "Save Place";
+  if (subtitleEl) subtitleEl.textContent = mode === "manage" ? "Tell Gridly what you want to save, how to add it, then confirm." : "Saved places stay on this device. Pick one destination for today.";
+  if (els.mobileSaveRouteBtn) els.mobileSaveRouteBtn.textContent = mode === "manage" ? "Save Favorite" : mode === "home" ? "Save Home" : mode === "work" ? "Save Work" : "Save Place";
   if (destinationLabel) destinationLabel.hidden = false;
   if (els.mobileSavedDestinationSelect) {
     els.mobileSavedDestinationSelect.disabled = false;
@@ -52758,11 +52767,11 @@ function configureRouteSetupModal({ mode = "add", prefillType = "custom" } = {})
     if (els.managePlaceSlotRow) els.managePlaceSlotRow.hidden = false;
     setManagePlacesSourceMode("");
     document.getElementById("managePlacesSlotsGroup")?.removeAttribute("hidden");
-    if (destinationLabelText) destinationLabelText.textContent = "Saved places";
+    if (destinationLabelText) destinationLabelText.textContent = "Existing place";
     if (subtitleEl) {
       subtitleEl.textContent = !hasHome
         ? "Save Home first to start Route Watch."
-        : "Manage Home, Work, and Favorite places.";
+        : "Choose Home, Work, or Favorite, then pick how to add it.";
     }
     syncManagePlaceSlotsAndCta(effectiveType);
     updateRouteSetupManageState();
@@ -52792,6 +52801,127 @@ function configureRouteSetupModal({ mode = "add", prefillType = "custom" } = {})
   if (els.mobileWorkInput) els.mobileWorkInput.value = preset.address;
   if (els.mobileHomeInput) els.mobileHomeInput.focus();
 }
+
+
+function gridlySavedPlacesSimplificationAudit() {
+  const hasDocument = typeof document !== "undefined";
+  const textOf = (selector) => hasDocument ? String(document.querySelector(selector)?.textContent || "").trim() : "";
+  const exists = (selector) => hasDocument && Boolean(document.querySelector(selector));
+  const findings = [];
+  const managePlacesAvailable = Boolean(
+    exists("#routeSetupModal")
+    && exists("#settingsManageSavedPlacesBtn")
+    && exists("#managePlaceHomeBtn")
+    && exists("#managePlaceWorkBtn")
+    && exists("#managePlaceFavoriteBtn")
+  );
+  const slotQuestion = textOf("#managePlacesSlotsGroup .manage-places-group-label");
+  const sourceQuestion = textOf("#managePlacesSourceGroup .manage-places-group-label");
+  const saveQuestion = textOf("#managePlacesSaveGroup .manage-places-group-label");
+  const sourceCopy = [
+    textOf("#manageSourceLocationBtn"),
+    textOf("#manageSourceAddressBtn"),
+    textOf("#manageSourceSavedBtn")
+  ].join(" ");
+  const duplicateSlotLanguageReduced = Boolean(
+    !/step\s*1|choose\s+slot|add\s+source|step\s*3/i.test(`${slotQuestion} ${sourceQuestion} ${saveQuestion}`)
+    && !/choose\s+saved\s+place/i.test(sourceCopy)
+  );
+  const sourceSelectionClear = Boolean(
+    /how would you like to add it/i.test(sourceQuestion)
+    && /use current location/i.test(sourceCopy)
+    && /enter address/i.test(sourceCopy)
+    && /existing place/i.test(sourceCopy)
+  );
+  const saveActionClear = Boolean(
+    /confirm and save/i.test(saveQuestion)
+    && typeof syncManagePlaceSlotsAndCta === "function"
+    && exists("#mobileSaveRouteBtn")
+  );
+  const homeSaveAvailable = Boolean(exists("#managePlaceHomeBtn") && typeof saveRoute === "function");
+  const workSaveAvailable = Boolean(exists("#managePlaceWorkBtn") && typeof saveRoute === "function");
+  const favoriteSaveAvailable = Boolean(exists("#managePlaceFavoriteBtn") && typeof saveRoute === "function");
+  const destinationAudit = typeof gridlyBuildSavedPlacesDestinationSearchAudit === "function"
+    ? gridlyBuildSavedPlacesDestinationSearchAudit()
+    : null;
+  const savedPlacesStillAvailableToSearch = destinationAudit
+    ? Boolean(destinationAudit.savedPlacesSelectableAsDestinations && destinationAudit.managePlacesStillAvailable)
+    : Boolean(typeof getGridlySavedPlaceDestinationSearchResults === "function");
+  const routeWatchSavedPlacesStillAvailable = Boolean(
+    exists("#routeWatchStartSelect")
+    && exists("#routeWatchDestinationSelect")
+    && typeof renderRouteWatchInlineControls === "function"
+    && typeof getSavedPlaces === "function"
+  );
+
+  const checks = [
+    [!managePlacesAvailable, "Manage Places entry points or intent buttons are missing."],
+    [!/what are you saving/i.test(slotQuestion), "Manage Places does not start with the user-intent question."],
+    [!duplicateSlotLanguageReduced, "Implementation language such as slot/source steps or Choose Saved Place is still prominent."],
+    [!sourceSelectionClear, "Source selection is not clearly presented as Current Location, Address, or Existing Place."],
+    [!saveActionClear, "Save action is not clearly framed as Confirm and Save with a specific save button."],
+    [!homeSaveAvailable, "Home save path is unavailable."],
+    [!workSaveAvailable, "Work save path is unavailable."],
+    [!favoriteSaveAvailable, "Favorite save path is unavailable."],
+    [!exists("#manageSourceLocationBtn"), "Use Current Location source is unavailable."],
+    [!exists("#manageSourceAddressBtn"), "Enter Address source is unavailable."],
+    [!exists("#manageSourceSavedBtn"), "Existing Place source is unavailable."],
+    [!savedPlacesStillAvailableToSearch, "Saved places are not confirmed available to Destination Search."],
+    [!routeWatchSavedPlacesStillAvailable, "Route Watch saved-place selectors are not confirmed available."]
+  ];
+  checks.forEach(([failed, finding]) => { if (failed) findings.push(finding); });
+
+  const currentLocationSourceAvailable = exists("#manageSourceLocationBtn");
+  const addressSourceAvailable = exists("#manageSourceAddressBtn");
+  const existingPlaceSourceAvailable = exists("#manageSourceSavedBtn");
+  const userIntentFirst = Boolean(/what are you saving/i.test(slotQuestion));
+  const consumerFriendlyPass = Boolean(
+    managePlacesAvailable
+    && userIntentFirst
+    && duplicateSlotLanguageReduced
+    && sourceSelectionClear
+    && saveActionClear
+    && homeSaveAvailable
+    && workSaveAvailable
+    && favoriteSaveAvailable
+    && currentLocationSourceAvailable
+    && addressSourceAvailable
+    && existingPlaceSourceAvailable
+    && savedPlacesStillAvailableToSearch
+    && routeWatchSavedPlacesStillAvailable
+    && findings.length === 0
+  );
+
+  return {
+    available: true,
+    version: "V266",
+
+    managePlacesAvailable,
+
+    userIntentFirst,
+    duplicateSlotLanguageReduced,
+    sourceSelectionClear,
+    saveActionClear,
+
+    homeSaveAvailable,
+    workSaveAvailable,
+    favoriteSaveAvailable,
+
+    currentLocationSourceAvailable,
+    addressSourceAvailable,
+    existingPlaceSourceAvailable,
+
+    savedPlacesStillAvailableToSearch,
+    routeWatchSavedPlacesStillAvailable,
+
+    consumerFriendlyPass,
+
+    findings
+  };
+}
+
+window.gridlySavedPlacesSimplificationAudit = gridlySavedPlacesSimplificationAudit;
+exposeGridlyAuditHelper("gridlySavedPlacesSimplificationAudit", gridlySavedPlacesSimplificationAudit);
 
 
 function gridlyBuildSavedPlacesDestinationSearchAudit() {
