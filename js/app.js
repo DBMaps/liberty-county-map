@@ -28902,15 +28902,21 @@ function renderCrossings(reason = "unspecified", options = {}) {
       priorityRank: railHierarchyConfig.priorityRank
     });
 
+    const crossingMarkerCategory = hasActiveIssue ? "rail_blockage_delay" : "crossing_infrastructure";
+    const crossingMarkerAsset = getGridlyProductionMarkerAsset(crossingMarkerCategory);
+    markGridlyProductionMarkerAssetLoad(crossingMarkerAsset.assetName, "attempted");
+
     const icon = L.divIcon({
-      className: `gridly-rail-marker ${sanitizeText(railMarkerVisualClass)} ${sanitizeText(railVisualMetadata.className)}`,
-      html: `<div class="gridly-marker-wrap ${sanitizeText(railMarkerVisualClass)} ${sanitizeText(railVisualMetadata.className)}" data-visual-style="${sanitizeText(railMarkerStyle)}" ${railVisualMetadata.attributes} data-crossing-id="${sanitizeText(String(crossing.id))}">
-        <div class="gridly-marker ${markerStateClass} ${hasActiveIssue ? "alert" : ""} ${isCleared ? "cleared" : ""} ${isNearby ? "nearby" : ""} ${clusterCount > 1 ? "cluster-lead" : ""}" ${railVisualMetadata.attributes}>${markerLabel}</div>
+      className: `gridly-production-marker-icon gridly-crossing-production-marker-icon ${sanitizeText(railMarkerVisualClass)} ${sanitizeText(railVisualMetadata.className)}`,
+      html: `<div class="gridly-marker-wrap gridly-crossing-marker-wrap ${sanitizeText(railMarkerVisualClass)} ${sanitizeText(railVisualMetadata.className)}" data-visual-style="${sanitizeText(railMarkerStyle)}" ${railVisualMetadata.attributes} data-crossing-id="${sanitizeText(String(crossing.id))}" data-gridly-marker-owner="crossing_inventory">
+        <div class="gridly-crossing-marker has-production-marker ${markerStateClass} ${hasActiveIssue ? "alert" : ""} ${isCleared ? "cleared" : ""} ${isNearby ? "nearby" : ""} ${clusterCount > 1 ? "cluster-lead" : ""}" ${railVisualMetadata.attributes} data-category="${sanitizeText(crossingMarkerCategory)}" data-marker-category="${sanitizeText(crossingMarkerCategory)}" data-marker-asset="${sanitizeText(crossingMarkerAsset.assetPath)}" data-state="${sanitizeText(railVisualState)}" data-gridly-marker-owner="crossing_inventory" aria-label="${sanitizeText(hasActiveIssue ? "Train delay" : "Crossing infrastructure")}">
+          <img class="gridly-production-marker-img" src="${sanitizeText(crossingMarkerAsset.assetPath)}" alt="" aria-hidden="true" data-marker-asset="${sanitizeText(crossingMarkerAsset.assetName)}" onload="window.gridlyMarkProductionMarkerAssetLoad && window.gridlyMarkProductionMarkerAssetLoad(this.dataset.markerAsset, 'loaded')" onerror="window.gridlyMarkProductionMarkerAssetLoad && window.gridlyMarkProductionMarkerAssetLoad(this.dataset.markerAsset, 'failed')" />
+        </div>
         ${clusterCount > 1 ? `<span class="gridly-marker-cluster-badge">${clusterCount}</span>` : ""}
         ${markerMinutes ? `<span class="gridly-marker-minutes">${markerMinutes}</span>` : ""}
       </div>`,
-      iconSize: [72, 44],
-      iconAnchor: [8, 8]
+      iconSize: [GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE, GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE],
+      iconAnchor: [GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE / 2, GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE / 2]
     });
 
     const marker = L.marker([crossing.lat, crossing.lng], { icon, incidentId: `rail-${crossing.id}`, crossingId: String(crossing.id) })
@@ -29387,10 +29393,144 @@ function buildGridlyRenderedProductionMarkerDomAudit(auditDocument) {
   };
 }
 
+
+function gridlySummarizeMarkerDomNode(node) {
+  const computed = node && typeof getComputedStyle === "function" ? getComputedStyle(node) : null;
+  const rect = node?.getBoundingClientRect?.() || null;
+  const closestLeaflet = node?.closest?.(".leaflet-marker-icon") || node;
+  return {
+    className: String(node?.className || ""),
+    leafletClassName: String(closestLeaflet?.className || ""),
+    owner: node?.dataset?.gridlyMarkerOwner || node?.dataset?.gridlyMapOwner || node?.dataset?.visualOwner || node?.dataset?.gridlyOwner || "unknown",
+    category: node?.dataset?.markerCategory || node?.dataset?.category || "",
+    markerAsset: node?.dataset?.markerAsset || node?.querySelector?.("img.gridly-production-marker-img")?.getAttribute?.("src") || "",
+    visualState: node?.dataset?.gridlyVisualState || node?.dataset?.state || "",
+    display: computed?.display || null,
+    visibility: computed?.visibility || null,
+    opacity: computed?.opacity || null,
+    rect: rect ? {
+      width: Number(rect.width?.toFixed?.(2) ?? rect.width ?? 0),
+      height: Number(rect.height?.toFixed?.(2) ?? rect.height ?? 0),
+      left: Number(rect.left?.toFixed?.(2) ?? rect.left ?? 0),
+      top: Number(rect.top?.toFixed?.(2) ?? rect.top ?? 0)
+    } : null,
+    text: String(node?.textContent || "").trim().slice(0, 60)
+  };
+}
+
+function gridlyLayerMarkerOwnerFromLayer(layer) {
+  const icon = typeof layer?.getIcon === "function" ? layer.getIcon() : layer?.options?.icon;
+  const html = String(icon?.options?.html || "").toLowerCase();
+  const className = String(icon?.options?.className || layer?.options?.className || "").toLowerCase();
+  const incidentId = String(layer?.options?.incidentId || "").toLowerCase();
+  if (className.includes("gridly-crossing-production-marker-icon") || html.includes("data-gridly-marker-owner=\"crossing_inventory\"") || incidentId.startsWith("rail-")) return "crossing_inventory";
+  if (className.includes("gridly-production-marker-icon") || html.includes("gridly-hazard-marker") || layer?.options?.gridlyPlacementAudit) return "production_hazard";
+  if (className.includes("gridly-destination") || html.includes("gridly-destination")) return "destination";
+  if (layer?.options?.crossingId) return "crossing_inventory";
+  if (typeof layer?.getLatLng === "function" && typeof layer?.setIcon === "function") return "unclassified_leaflet_marker";
+  if (typeof layer?.getLatLng === "function" && typeof layer?.setStyle === "function") return "leaflet_circle_marker";
+  return "non_marker_or_unknown";
+}
+
+function gridlyBuildActiveLeafletMarkerOwnerAudit() {
+  const ownerCounts = {};
+  const samples = [];
+  const register = (layer, source = "map.eachLayer") => {
+    const looksMarker = Boolean(layer && (typeof layer.getLatLng === "function") && (typeof layer.setIcon === "function" || typeof layer.setStyle === "function" || layer?.options?.icon));
+    if (!looksMarker) return;
+    const owner = gridlyLayerMarkerOwnerFromLayer(layer);
+    ownerCounts[owner] = (ownerCounts[owner] || 0) + 1;
+    if (samples.length < 20) {
+      const latLng = layer.getLatLng?.();
+      const icon = typeof layer?.getIcon === "function" ? layer.getIcon() : layer?.options?.icon;
+      samples.push({
+        source,
+        owner,
+        className: String(icon?.options?.className || layer?.options?.className || ""),
+        incidentId: layer?.options?.incidentId || null,
+        crossingId: layer?.options?.crossingId || null,
+        lat: Number.isFinite(Number(latLng?.lat)) ? Number(Number(latLng.lat).toFixed(6)) : null,
+        lng: Number.isFinite(Number(latLng?.lng)) ? Number(Number(latLng.lng).toFixed(6)) : null
+      });
+    }
+  };
+  if (typeof map?.eachLayer === "function") map.eachLayer((layer) => register(layer));
+  return { ownerCounts, samples };
+}
+
+function gridlyBuildMarkerSystemAudit() {
+  const auditDocument = typeof document !== "undefined" ? document : null;
+  const query = (selector) => Array.from(auditDocument?.querySelectorAll?.(selector) || []);
+  const productionHazardNodes = query("#map .gridly-hazard-marker.has-production-marker");
+  const crossingInventoryNodes = query("#map .gridly-crossing-marker.has-production-marker");
+  const reportMarkerNodes = query("#map .gridly-report-marker, #map [data-gridly-marker-owner='report'], #map [data-gridly-map-owner='report']");
+  const alertMarkerNodes = query("#map .gridly-alert-marker, #map .gridly-alert-focused-marker, #map [data-gridly-marker-owner='alert'], #map [data-gridly-map-owner='alert']");
+  const legacyMarkerNodes = query("#map .gridly-marker:not(.has-production-marker), #map .gridly-rail-marker:not(.gridly-production-marker-icon), #map .leaflet-marker-icon:not(.gridly-production-marker-icon):not(.gridly-destination-signature-icon)");
+  const crossingAssetCounts = crossingInventoryNodes.reduce((acc, node) => {
+    const asset = node?.dataset?.markerAsset || node?.querySelector?.("img.gridly-production-marker-img")?.getAttribute?.("src") || "unknown";
+    acc[asset] = (acc[asset] || 0) + 1;
+    return acc;
+  }, {});
+  const crossingUsesProductionRailCrossing = crossingInventoryNodes.some((node) => String(node?.dataset?.markerAsset || node?.querySelector?.("img.gridly-production-marker-img")?.getAttribute?.("src") || "").includes("rail-crossing.png"));
+  const crossingUsesTrainDelayProductionMarker = crossingInventoryNodes.some((node) => String(node?.dataset?.markerAsset || node?.querySelector?.("img.gridly-production-marker-img")?.getAttribute?.("src") || "").includes("train-front.png"));
+  const layerInventory = typeof gridlyGetLayerInventory === "function" ? gridlyGetLayerInventory() : [];
+  const activeLeafletMarkerOwners = gridlyBuildActiveLeafletMarkerOwnerAudit();
+  const multipleMarkerSystemsActive = Boolean(
+    productionHazardNodes.length > 0
+    && crossingInventoryNodes.length > 0
+    && legacyMarkerNodes.some((node) => !node.closest?.(".gridly-crossing-marker-wrap"))
+  );
+  const redCircularCandidates = legacyMarkerNodes.filter((node) => /gridly-marker|circle|leaflet-interactive/.test(String(node.className || "")) && !node.querySelector?.("img.gridly-production-marker-img"));
+  return {
+    version: "V270.1",
+    goal: "Single coherent production marker family for Road Closed, Flooding, Train Delay, and Crossing Infrastructure.",
+    productionHazardMarkers: {
+      owner: "unifiedIncidentLayer / production_hazard",
+      count: productionHazardNodes.length,
+      usesProductionPng: productionHazardNodes.every((node) => Boolean(node.querySelector?.("img.gridly-production-marker-img"))),
+      samples: productionHazardNodes.slice(0, 8).map(gridlySummarizeMarkerDomNode)
+    },
+    crossingInventoryMarkers: {
+      owner: "crossingLayer / crossing_inventory",
+      count: crossingInventoryNodes.length,
+      crossingMarkersMapCount: crossingMarkers instanceof Map ? crossingMarkers.size : null,
+      usesProductionRailCrossingPng: crossingUsesProductionRailCrossing,
+      usesProductionTrainDelayPng: crossingUsesTrainDelayProductionMarker,
+      assetCounts: crossingAssetCounts,
+      samples: crossingInventoryNodes.slice(0, 8).map(gridlySummarizeMarkerDomNode)
+    },
+    reportMarkers: {
+      count: reportMarkerNodes.length,
+      samples: reportMarkerNodes.slice(0, 8).map(gridlySummarizeMarkerDomNode)
+    },
+    alertMarkers: {
+      count: alertMarkerNodes.length,
+      samples: alertMarkerNodes.slice(0, 8).map(gridlySummarizeMarkerDomNode)
+    },
+    legacyMarkerLayers: {
+      count: legacyMarkerNodes.length,
+      redCircularCandidateCount: redCircularCandidates.length,
+      redCircularCandidateSamples: redCircularCandidates.slice(0, 8).map(gridlySummarizeMarkerDomNode),
+      samples: legacyMarkerNodes.slice(0, 12).map(gridlySummarizeMarkerDomNode)
+    },
+    activeLeafletMarkerOwners,
+    layerInventory,
+    findings: {
+      redCircularMarkerLikelySource: redCircularCandidates.length
+        ? "Legacy .gridly-marker / non-production Leaflet marker DOM remains visible. Crossing inventory previously rendered this legacy circular node; production crossing icons now expose data-gridly-marker-owner='crossing_inventory'."
+        : "No visible legacy red circular marker candidate found in the current DOM sample.",
+      crossingInventoryOwnership: "crossingLayer owns crossing inventory markers and crossingMarkers stores the active Leaflet marker handles.",
+      crossingInventoryUsesProductionRailCrossingPng: crossingUsesProductionRailCrossing,
+      multipleMarkerSystemsActive
+    }
+  };
+}
+
 if (typeof window !== "undefined") {
   GRIDLY_PRODUCTION_MARKER_ASSETS.forEach((assetName) => queueGridlyProductionMarkerDimensionProbe(assetName));
   window.gridlyMarkProductionMarkerAssetLoad = markGridlyProductionMarkerAssetLoad;
   window.gridlyProductionMarkerAudit = buildGridlyProductionMarkerAudit;
+  window.gridlyMarkerSystemAudit = gridlyBuildMarkerSystemAudit;
 }
 
 function getRouteCandidateDedupeKey(report = {}, crossing = null) {

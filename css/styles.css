@@ -19096,3 +19096,64 @@ body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > .route-setu
 #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:not([data-state="cleared"]):not([data-state="expired"]):not([data-state="inactive"]):not(.gridly-freshness-stale):not(.gridly-freshness-unknown).gridly-freshness-aging {
   opacity: 1 !important;
 }
+
+/* V270.1 production marker family: crossing inventory now uses the same PNG marker shell as hazards. */
+#map .leaflet-marker-icon.gridly-crossing-production-marker-icon,
+#map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-production-marker-icon {
+  width: 64px !important;
+  height: 64px !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+#map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker,
+.gridly-crossing-marker.has-production-marker {
+  width: 64px !important;
+  height: 64px !important;
+  min-width: 64px !important;
+  min-height: 64px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  overflow: visible !important;
+  display: block !important;
+  position: relative !important;
+}
+
+#map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker .gridly-production-marker-img {
+  width: 64px !important;
+  height: 64px !important;
+  max-width: none !important;
+  max-height: none !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  object-fit: contain !important;
+  pointer-events: none !important;
+  position: relative !important;
+  z-index: 1 !important;
+  filter: drop-shadow(0 7px 12px rgba(0, 0, 0, 0.34));
+}
+
+#map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker.alert .gridly-production-marker-img,
+#map .leaflet-marker-icon.gridly-crossing-production-marker-icon.route-impacted .gridly-crossing-marker.has-production-marker .gridly-production-marker-img {
+  filter: drop-shadow(0 7px 12px rgba(0, 0, 0, 0.34)) drop-shadow(0 0 9px rgba(255, 78, 111, 0.38));
+}
+
+#map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-marker-wrap.gridly-crossing-marker-wrap {
+  width: 64px !important;
+  height: 64px !important;
+  position: relative !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+#map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-marker-cluster-badge,
+#map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-marker-minutes {
+  z-index: 3 !important;
+}
