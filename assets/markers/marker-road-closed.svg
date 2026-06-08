@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="44" viewBox="0 0 32 44" role="img" aria-labelledby="title desc">
   <title id="title">Gridly road closed marker</title>
-  <desc id="desc">Dark circular Gridly incident marker with a white no-entry closure glyph.</desc>
-  <metadata>V268.0A correction: this marker SVG contains valid, non-empty Gridly vector markup.</metadata>
+  <desc id="desc">Dark premium circular Gridly marker with active amber status ring and bold filled white road closed glyph.</desc>
+  <metadata>V268.0C marker visual language refinement: premium dark base, state-based status ring, and bold filled glyph.</metadata>
   <defs>
-  <filter id="gridlyMarkerShadow" x="-30%" y="-20%" width="160%" height="150%" color-interpolation-filters="sRGB">
-    <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#020617" flood-opacity="0.38"/>
-  </filter>
-  <linearGradient id="gridlyMarkerBase" x1="8" y1="3" x2="25" y2="33" gradientUnits="userSpaceOnUse">
-    <stop offset="0" stop-color="#1F2937"/>
-    <stop offset="1" stop-color="#070B12"/>
-  </linearGradient>
-</defs>
+    <filter id="gridlyMarkerShadow" x="-30%" y="-20%" width="160%" height="150%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#020617" flood-opacity="0.42"/>
+    </filter>
+    <linearGradient id="gridlyMarkerBase" x1="8" y1="3" x2="25" y2="33" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1F2937"/>
+      <stop offset="1" stop-color="#060A11"/>
+    </linearGradient>
+  </defs>
   <g filter="url(#gridlyMarkerShadow)">
-    <path d="M16 43.2L10.8 28.4H21.2L16 43.2Z" fill="url(#gridlyMarkerBase)"/>
+    <path d="M16 43.2L10.6 28.2H21.4L16 43.2Z" fill="url(#gridlyMarkerBase)"/>
     <circle cx="16" cy="16" r="15" fill="url(#gridlyMarkerBase)"/>
-    <circle cx="16" cy="16" r="14" fill="none" stroke="var(--gridly-marker-status, #EF4444)" stroke-width="2" opacity="0.96"/>
-    <circle cx="16" cy="16" r="10.8" fill="#111827" opacity="0.58"/>
+    <circle cx="16" cy="16" r="14" fill="none" stroke="#F59E0B" stroke-width="2.4" opacity="0.98"/>
+    <circle cx="16" cy="16" r="10.6" fill="#0B1220" opacity="0.72"/>
   </g>
-  <g fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.85">
-    <circle cx="16" cy="16" r="7.2"/>
-    <path d="M11.2 16H20.8"/>
-    <path d="M10.8 24H21.2"/>
+  <g aria-hidden="true">
+    <circle cx="16" cy="16" r="8.7" fill="#FFFFFF"/>
+    <rect x="10.2" y="13.9" width="11.6" height="4.2" rx="1.4" fill="#0B1220"/>
+    <rect x="10.2" y="25.1" width="11.6" height="2.2" rx="1.1" fill="#FFFFFF"/>
   </g>
 </svg>

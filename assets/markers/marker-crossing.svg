@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="44" viewBox="0 0 32 44" role="img" aria-labelledby="title desc">
   <title id="title">Gridly railroad crossing marker</title>
-  <desc id="desc">Dark circular Gridly infrastructure marker with a distinct white railroad crossing sign glyph.</desc>
-  <metadata>V268.0A correction: this marker SVG contains valid, non-empty Gridly vector markup.</metadata>
+  <desc id="desc">Neutral gray Gridly infrastructure marker with a bold railroad crossing glyph, distinct from active hazard incidents.</desc>
+  <metadata>V268.0C marker visual language refinement: premium dark base, state-based status ring, and bold filled glyph.</metadata>
   <defs>
-  <filter id="gridlyMarkerShadow" x="-30%" y="-20%" width="160%" height="150%" color-interpolation-filters="sRGB">
-    <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#020617" flood-opacity="0.38"/>
-  </filter>
-  <linearGradient id="gridlyMarkerBase" x1="8" y1="3" x2="25" y2="33" gradientUnits="userSpaceOnUse">
-    <stop offset="0" stop-color="#1F2937"/>
-    <stop offset="1" stop-color="#070B12"/>
-  </linearGradient>
-</defs>
+    <filter id="gridlyMarkerShadow" x="-30%" y="-20%" width="160%" height="150%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#020617" flood-opacity="0.42"/>
+    </filter>
+    <linearGradient id="gridlyMarkerBase" x1="8" y1="3" x2="25" y2="33" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1F2937"/>
+      <stop offset="1" stop-color="#060A11"/>
+    </linearGradient>
+  </defs>
   <g filter="url(#gridlyMarkerShadow)">
-    <path d="M16 43.2L10.8 28.4H21.2L16 43.2Z" fill="url(#gridlyMarkerBase)"/>
-    <circle cx="16" cy="16" r="15" fill="url(#gridlyMarkerBase)"/>
-    <circle cx="16" cy="16" r="14" fill="none" stroke="var(--gridly-marker-status, #2DD4BF)" stroke-width="2" opacity="0.96"/>
-    <circle cx="16" cy="16" r="10.8" fill="#111827" opacity="0.58"/>
+    <path d="M16 43.2L10.6 28.2H21.4L16 43.2Z" fill="#111827"/>
+    <circle cx="16" cy="16" r="15" fill="#111827"/>
+    <circle cx="16" cy="16" r="14" fill="none" stroke="#64748B" stroke-width="2.4" opacity="0.98"/>
+    <circle cx="16" cy="16" r="10.6" fill="#1F2937" opacity="0.78"/>
   </g>
-  <g fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.85">
-    <path d="M10 9.8L22 21.8"/>
-    <path d="M22 9.8L10 21.8"/>
-    <path d="M16 7.4V24.8"/>
-    <path d="M11.7 24.8H20.3"/>
-    <path d="M13.7 13.5H18.3"/>
-    <path d="M13.7 18.1H18.3"/>
+  <g aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 9.2L22 21.2M22 9.2L10 21.2" stroke="#F8FAFC" stroke-width="3"/>
+    <path d="M16 7.1V26.2" stroke="#CBD5E1" stroke-width="2.8"/>
+    <path d="M11.4 26.2H20.6" stroke="#CBD5E1" stroke-width="3"/>
+    <path d="M12.2 13.1H19.8M12.2 17.7H19.8" stroke="#CBD5E1" stroke-width="2.3"/>
+    <circle cx="16" cy="7.2" r="1.5" fill="#CBD5E1" stroke="none"/>
   </g>
 </svg>

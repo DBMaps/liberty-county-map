@@ -1,26 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="44" viewBox="0 0 32 44" role="img" aria-labelledby="title desc">
   <title id="title">Gridly flooding marker</title>
-  <desc id="desc">Dark circular Gridly incident marker with stacked white water waves.</desc>
-  <metadata>V268.0A correction: this marker SVG contains valid, non-empty Gridly vector markup.</metadata>
+  <desc id="desc">Dark premium circular Gridly marker with active amber status ring and bold filled white flooding glyph.</desc>
+  <metadata>V268.0C marker visual language refinement: premium dark base, state-based status ring, and bold filled glyph.</metadata>
   <defs>
-  <filter id="gridlyMarkerShadow" x="-30%" y="-20%" width="160%" height="150%" color-interpolation-filters="sRGB">
-    <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#020617" flood-opacity="0.38"/>
-  </filter>
-  <linearGradient id="gridlyMarkerBase" x1="8" y1="3" x2="25" y2="33" gradientUnits="userSpaceOnUse">
-    <stop offset="0" stop-color="#1F2937"/>
-    <stop offset="1" stop-color="#070B12"/>
-  </linearGradient>
-</defs>
+    <filter id="gridlyMarkerShadow" x="-30%" y="-20%" width="160%" height="150%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#020617" flood-opacity="0.42"/>
+    </filter>
+    <linearGradient id="gridlyMarkerBase" x1="8" y1="3" x2="25" y2="33" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1F2937"/>
+      <stop offset="1" stop-color="#060A11"/>
+    </linearGradient>
+  </defs>
   <g filter="url(#gridlyMarkerShadow)">
-    <path d="M16 43.2L10.8 28.4H21.2L16 43.2Z" fill="url(#gridlyMarkerBase)"/>
+    <path d="M16 43.2L10.6 28.2H21.4L16 43.2Z" fill="url(#gridlyMarkerBase)"/>
     <circle cx="16" cy="16" r="15" fill="url(#gridlyMarkerBase)"/>
-    <circle cx="16" cy="16" r="14" fill="none" stroke="var(--gridly-marker-status, #38BDF8)" stroke-width="2" opacity="0.96"/>
-    <circle cx="16" cy="16" r="10.8" fill="#111827" opacity="0.58"/>
+    <circle cx="16" cy="16" r="14" fill="none" stroke="#F59E0B" stroke-width="2.4" opacity="0.98"/>
+    <circle cx="16" cy="16" r="10.6" fill="#0B1220" opacity="0.72"/>
   </g>
-  <g fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.85">
-    <path d="M8.2 12.2C10.1 10.5 12 10.5 13.9 12.2C15.5 13.6 17.1 13.6 18.7 12.2C20.3 10.8 21.9 10.8 23.8 12.2"/>
-    <path d="M7.8 17C9.7 15.3 11.9 15.3 13.8 17C15.5 18.5 17.3 18.5 19 17C20.5 15.6 22.1 15.6 24.2 17"/>
-    <path d="M8.2 21.8C10.2 20.1 12.1 20.1 14 21.8C15.6 23.2 17.4 23.2 19 21.8C20.6 20.4 22.2 20.4 23.8 21.8"/>
+  <g aria-hidden="true" fill="#FFFFFF">
+    <path d="M7.8 12.8C10 10.6 12.5 10.6 14.7 12.8C16.1 14.1 17.6 14.1 19 12.8C20.8 11.1 22.8 11 24.4 12.4V16.4C22.4 14.8 20.6 14.8 19 16.3C16.8 18.3 14.4 18.3 12.2 16.3C10.7 14.9 9.3 14.9 7.8 16.2V12.8Z"/>
+    <path d="M7.8 19.3C10 17.1 12.5 17.1 14.7 19.3C16.1 20.6 17.6 20.6 19 19.3C20.8 17.6 22.8 17.5 24.4 18.9V23C22.4 21.3 20.6 21.3 19 22.8C16.8 24.8 14.4 24.8 12.2 22.8C10.7 21.4 9.3 21.4 7.8 22.7V19.3Z"/>
   </g>
 </svg>
