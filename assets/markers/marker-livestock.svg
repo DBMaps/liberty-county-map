@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="44" viewBox="0 0 32 44" role="img" aria-labelledby="title desc">
+  <title id="title">Gridly livestock marker</title>
+  <desc id="desc">Dark circular Gridly incident marker with a white cow silhouette glyph.</desc>
+  <defs>
+  <filter id="gridlyMarkerShadow" x="-30%" y="-20%" width="160%" height="150%" color-interpolation-filters="sRGB">
+    <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#020617" flood-opacity="0.38"/>
+  </filter>
+  <linearGradient id="gridlyMarkerBase" x1="8" y1="3" x2="25" y2="33" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#1F2937"/>
+    <stop offset="1" stop-color="#070B12"/>
+  </linearGradient>
+</defs>
+  <g filter="url(#gridlyMarkerShadow)">
+    <path d="M16 43.2L10.8 28.4H21.2L16 43.2Z" fill="url(#gridlyMarkerBase)"/>
+    <circle cx="16" cy="16" r="15" fill="url(#gridlyMarkerBase)"/>
+    <circle cx="16" cy="16" r="14" fill="none" stroke="var(--gridly-marker-status, #22C55E)" stroke-width="2" opacity="0.96"/>
+    <circle cx="16" cy="16" r="10.8" fill="#111827" opacity="0.58"/>
+  </g>
+  <g fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.85">
+    <path d="M9 17.2C9 14.7 11.1 12.7 13.8 12.7H19.5C22 12.7 23.3 14.2 23.3 16.4V20.1H20.9V17.8H12.5V20.1H10.1V18.4C9.4 18.1 9 17.7 9 17.2Z" fill="#FFFFFF" stroke="none"/>
+    <path d="M12.3 12.7L10.5 10.2"/>
+    <path d="M20.7 12.7L22.7 10.4"/>
+    <path d="M13.1 20.8V23.8"/>
+    <path d="M19.5 20.8V23.8"/>
+  </g>
+</svg>
