@@ -8617,6 +8617,34 @@ body.modal-open {
   animation: gridlyHazardBreath 2.1s ease-in-out infinite;
 }
 
+.gridly-hazard-marker.has-production-marker {
+  width: 46px;
+  height: 46px;
+  border: 0 !important;
+  background: transparent;
+  box-shadow: none !important;
+  overflow: visible;
+}
+
+.gridly-production-marker-img {
+  width: 46px;
+  height: 46px;
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 7px 12px rgba(0, 0, 0, 0.34));
+}
+
+.gridly-hazard-marker.has-production-marker.high .gridly-production-marker-img,
+.gridly-hazard-marker.has-production-marker.gridly-consequence-critical .gridly-production-marker-img {
+  filter: drop-shadow(0 7px 12px rgba(0, 0, 0, 0.34)) drop-shadow(0 0 9px rgba(255, 78, 111, 0.38));
+}
+
+.gridly-hazard-marker.has-production-marker small {
+  right: -5px;
+  bottom: -4px;
+}
+
 .gridly-hazard-marker.high {
   animation-duration: 1.5s;
 }
