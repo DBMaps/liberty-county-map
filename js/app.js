@@ -69234,8 +69234,227 @@ function gridlyBetaReadinessAudit() {
   };
 }
 
+function gridlyBetaReadinessReviewAudit() {
+  const target = typeof window !== "undefined" ? window : globalThis;
+  const hasDocument = typeof document !== "undefined";
+  const findings = [];
+  const reviewedAreas = [
+    "Feedback",
+    "Route Watch",
+    "Destination Search",
+    "Saved Places",
+    "Current Location",
+    "Reporting",
+    "Alerts",
+    "Awareness Brief",
+    "Community Pulse",
+    "Settings",
+    "Desktop",
+    "Onboarding",
+    "Safety Messaging"
+  ];
+  const runAuditSafely = (fn, ...args) => {
+    if (typeof fn !== "function") return null;
+    try {
+      return fn(...args);
+    } catch (error) {
+      findings.push(`Audit helper ${fn.name || "anonymous"} failed during V261 review: ${String(error?.message || error || "unknown error")}`);
+      return null;
+    }
+  };
+  const text = (node) => String(node?.textContent || "").replace(/\s+/g, " ").trim();
+  const visible = (node) => {
+    if (!node || !hasDocument) return false;
+    try {
+      if (node.hidden || node.hasAttribute?.("hidden") || node.hasAttribute?.("inert")) return false;
+      const style = typeof getComputedStyle === "function" ? getComputedStyle(node) : null;
+      if (style && (style.display === "none" || style.visibility === "hidden" || style.opacity === "0")) return false;
+      const rect = typeof node.getBoundingClientRect === "function" ? node.getBoundingClientRect() : null;
+      if (rect && rect.width === 0 && rect.height === 0 && node.offsetParent === null) return false;
+      return true;
+    } catch (_error) {
+      return true;
+    }
+  };
+  const elementPresent = (id) => hasDocument && Boolean(document.getElementById(id));
+  const selectorPresent = (selector) => hasDocument && Boolean(document.querySelector(selector));
+  const visibleSelectorPresent = (selector) => hasDocument && Array.from(document.querySelectorAll(selector)).some(visible);
+  const allVisible = (selector) => hasDocument ? Array.from(document.querySelectorAll(selector)).filter(visible) : [];
+  const helperAvailable = (name) => typeof target?.[name] === "function";
+
+  const feedbackSubmissionAudit = runAuditSafely(target?.gridlyFeedbackSubmissionAudit);
+  const feedbackExperienceAudit = runAuditSafely(target?.gridlyFeedbackExperienceAudit);
+  const routeAudit = runAuditSafely(target?.gridlyRouteWatchDisplayAudit);
+  const destinationSearchAudit = runAuditSafely(target?.gridlyDestinationSearchShellAudit);
+  const currentLocationAudit = runAuditSafely(target?.gridlyDestinationCurrentLocationOriginAudit);
+  const appLocationAudit = runAuditSafely(target?.gridlyAppLocationReadinessAudit);
+  const reportingAudit = runAuditSafely(target?.gridlyReportSubmissionAudit) || runAuditSafely(target?.gridlyReportingAudit);
+  const alertsAudit = runAuditSafely(target?.gridlyVisualConsistencyAudit);
+
+  const visibleDeadButtonCandidates = allVisible("button").filter((button) => {
+    const label = text(button) || button.getAttribute("aria-label") || button.id || "button";
+    const disabled = button.disabled || button.getAttribute("aria-disabled") === "true";
+    const explicitlyPlaceholder = /coming soon|coming later|not available|placeholder/i.test(label) || /coming soon|coming later|not available|placeholder/i.test(button.title || "");
+    if (explicitlyPlaceholder) return true;
+    if (!disabled) return false;
+    return !/route watch|alternate route|finish|current location/i.test(label);
+  });
+  const deadButtonCount = visibleDeadButtonCandidates.length;
+
+  const placeholderExperienceNodes = allVisible(".settings-placeholder-note, .muted, [data-placeholder], .desktop-business-note, p, strong, h2, h3").filter((node) => {
+    const copy = text(node);
+    if (!copy) return false;
+    if (/^No live corridor data yet$|^None yet$|^Loading$|^Checking$/i.test(copy)) return false;
+    return /coming soon|coming later|placeholder|not available in Settings|No cleanup or test tools are available/i.test(copy);
+  });
+  const placeholderExperienceCount = placeholderExperienceNodes.length;
+
+  const onboardingReady = Boolean(
+    elementPresent("gridlyWelcomeOnboarding")
+    && elementPresent("gridlyWelcomeNextBtn")
+    && elementPresent("gridlyWelcomeFinishBtn")
+    && hasDocument
+    && document.querySelectorAll("[data-gridly-welcome-step]").length >= 5
+    && typeof openGridlyWelcomeOnboarding === "function"
+  );
+  const onboardingTownChoicePresent = selectorPresent("[data-gridly-town='Dayton']");
+  const safetyStatementPresent = Boolean(
+    hasDocument
+    && /do not use while driving|pull over|emergency|911|not for emergencies|drive safely|while driving/i.test(text(document.body))
+  );
+  const desktopGatePresent = Boolean(
+    selectorPresent(".tactical-landscape-gate")
+    && selectorPresent(".desktop-left-rail")
+    && selectorPresent(".desktop-business-note[hidden]")
+  );
+  const feedbackFlowRoot = hasDocument ? document.querySelector("[data-gridly-feedback-flow]") : null;
+  const directFeedbackSubmitButton = feedbackFlowRoot?.querySelector?.("[data-gridly-feedback-submit]") || (hasDocument ? document.getElementById("settingsSubmitFeedbackBtn") : null);
+  const directFeedbackFallbackButton = feedbackFlowRoot?.querySelector?.("[data-gridly-feedback-prepare]") || (hasDocument ? document.getElementById("settingsPrepareFeedbackEmailBtn") : null);
+  const directSubmissionImplemented = Boolean(typeof submitGridlyDirectFeedback === "function" && typeof buildGridlyDirectFeedbackPayload === "function" && directFeedbackSubmitButton);
+  const emailFallbackPreserved = Boolean(typeof prepareGridlyFeedbackEmail === "function" && typeof buildGridlyFeedbackMailtoUrl === "function" && directFeedbackFallbackButton && GRIDLY_FEEDBACK_EMAIL_RECIPIENT);
+  const privacySafeMetadataOnly = Boolean(
+    typeof buildGridlyDirectFeedbackPayload === "function"
+    && !Object.prototype.hasOwnProperty.call(buildGridlyDirectFeedbackPayload("Bug", "Test"), "user_agent")
+  );
+  const directFeedbackReady = Boolean(
+    feedbackSubmissionAudit?.betaReady
+    && directSubmissionImplemented
+    && emailFallbackPreserved
+    && privacySafeMetadataOnly
+  );
+  const feedbackSystemReady = Boolean(
+    directFeedbackReady
+    && feedbackExperienceAudit?.consumerFriendlyPass !== false
+  );
+  const savedPlacesReady = Boolean(
+    elementPresent("settingsManageSavedPlacesBtn")
+    && elementPresent("settingsSavedPlacesList")
+    && elementPresent("routeWatchStartSelect")
+    && elementPresent("routeWatchDestinationSelect")
+  );
+  const destinationSearchReady = Boolean(
+    elementPresent("gridlySearchShell")
+    && elementPresent("gridlyAddressSearchInput")
+    && (helperAvailable("gridlyDestinationSearchShellAudit") || typeof openGridlyDestinationSearchSurface === "function")
+    && (!destinationSearchAudit || destinationSearchAudit?.searchShellPresent !== false)
+  );
+  const currentLocationReady = Boolean(
+    selectorPresent("[data-v2-control='use-location'], #mobileUseLocationBtn, #manageSourceLocationBtn")
+    && (appLocationAudit?.manualLocationButtonStillAvailable !== false)
+    && (currentLocationAudit?.consumerFriendlyPass !== false)
+  );
+  const routeExperienceReady = Boolean(
+    savedPlacesReady
+    && destinationSearchReady
+    && currentLocationReady
+    && elementPresent("routeWatchStartBtn")
+    && elementPresent("showFullRouteBtn")
+    && elementPresent("stopRouteWatchBtn")
+    && (routeAudit?.displayApplied !== false)
+  );
+  const reportingExperienceReady = Boolean(
+    elementPresent("manualReportBtn")
+    && elementPresent("mobileCrossingReportBtn")
+    && elementPresent("mobileHazardReportBtn")
+    && typeof createSharedHazardReport === "function"
+    && typeof loadSharedReports === "function"
+    && (!reportingAudit || reportingAudit?.consumerFriendlyPass !== false)
+  );
+  const awarenessExperienceReady = Boolean(
+    visibleSelectorPresent("#gridlyV2TopStatusPrimary, #delayRisk, #habitStatusHeadline")
+    && selectorPresent("#alertsList")
+    && selectorPresent("#gridlyCommunityPulseSurface")
+    && selectorPresent(".geo-filter-pill[data-geo-filter='nearby']")
+    && (alertsAudit?.betaPolishReady !== false)
+  );
+
+  if (deadButtonCount) findings.push(`${deadButtonCount} visible dead button candidate(s) detected: ${visibleDeadButtonCandidates.map((button) => text(button) || button.id || "button").slice(0, 5).join(", ")}.`);
+  else findings.push("No visible dead buttons were detected in the active DOM snapshot.");
+  if (placeholderExperienceCount) findings.push(`${placeholderExperienceCount} visible placeholder experience candidate(s) detected: ${placeholderExperienceNodes.map((node) => text(node)).slice(0, 4).join(" | ")}.`);
+  else findings.push("No visible placeholder experiences were detected in the active DOM snapshot.");
+  findings.push(directFeedbackReady ? "Send Feedback is wired for direct Supabase submission with the email fallback preserved." : "Send Feedback is not fully ready in this runtime; inspect gridlyFeedbackSubmissionAudit() and gridlyDirectFeedbackReadinessAudit().");
+  findings.push(onboardingReady ? `Onboarding is present with ${hasDocument ? document.querySelectorAll("[data-gridly-welcome-step]").length : 0} steps${onboardingTownChoicePresent ? " and a Dayton town choice" : ""}.` : "Onboarding is missing or not callable from the runtime.");
+  findings.push(safetyStatementPresent ? "A visible safety statement was detected." : "No explicit driving/emergency safety statement was detected; add safety copy before a controlled beta.");
+  findings.push(desktopGatePresent ? "Desktop surfaces are present and the future business portal is hidden/gated." : "Desktop gating could not be verified from the active DOM snapshot.");
+  findings.push(routeExperienceReady ? "Route Watch, destination search, saved places, and current-location entry points are present for beta testing." : "Route experience is not fully beta-ready; Route Watch depends on saved places, destination search, and current-location readiness.");
+  findings.push(awarenessExperienceReady ? "Awareness Brief, alerts, map filters, and Community Pulse surfaces are present." : "Awareness experience needs validation because one or more brief/alerts/pulse surfaces are missing or hidden.");
+  findings.push(reportingExperienceReady ? "Reporting surfaces and shared-report helpers are present." : "Reporting experience is not fully beta-ready in this runtime.");
+  findings.push("First-time Dayton tester path: onboarding can introduce Know Before You Go, choose Dayton as awareness area, optionally set Home/Work, then land on Awareness Brief with map, alerts, reporting, Route Watch, Settings, and Send Feedback available.");
+
+  const blockerChecks = [
+    [!feedbackSystemReady, "Feedback system is not fully beta-ready."],
+    [!onboardingReady, "Onboarding is not ready."],
+    [!safetyStatementPresent, "Explicit safety / emergency-use statement is missing."],
+    [!desktopGatePresent, "Desktop gate is not verified."],
+    [placeholderExperienceCount > 0, "Visible placeholder experiences remain."],
+    [deadButtonCount > 0, "Visible dead buttons remain."],
+    [!routeExperienceReady, "Route Watch / destination experience is not fully beta-ready."],
+    [!awarenessExperienceReady, "Awareness experience is not fully beta-ready."],
+    [!reportingExperienceReady, "Reporting experience is not fully beta-ready."],
+    [!directFeedbackReady, "Direct feedback is not fully ready."]
+  ];
+  const betaBlockers = blockerChecks.filter(([blocked]) => blocked).map(([, reason]) => reason);
+  const betaStrengths = [
+    directFeedbackReady ? "Direct feedback submission has a Supabase path and email fallback." : "Feedback architecture has dedicated audit helpers and fallback visibility.",
+    onboardingReady ? "First-run onboarding and Dayton awareness-area selection exist." : "Awareness-area onboarding copy exists in markup for review.",
+    savedPlacesReady ? "Saved Places ownership is visible in Settings and Route Watch selectors." : "Saved Places surfaces are partially present.",
+    reportingExperienceReady ? "Reporting supports crossing and road-hazard flows." : "Reporting entry points are present for review.",
+    awarenessExperienceReady ? "Awareness-first surfaces are prominent: brief, alerts, map filters, and Community Pulse." : "Awareness Brief and alerts are structurally present."
+  ];
+  const betaBlockerCount = betaBlockers.length;
+
+  return {
+    available: true,
+    version: "V261",
+    feedbackSystemReady,
+    onboardingReady,
+    safetyStatementPresent,
+    desktopGatePresent,
+    placeholderExperienceCount,
+    deadButtonCount,
+    routeExperienceReady,
+    awarenessExperienceReady,
+    reportingExperienceReady,
+    directFeedbackReady,
+    betaBlockerCount,
+    betaReady: betaBlockerCount === 0,
+    findings,
+    reviewedAreas,
+    betaBlockers,
+    betaStrengths,
+    firstTimeDaytonTesterExperience: "A first-time Dayton tester should see onboarding, choose Dayton as their awareness area, optionally save Home/Work, then use Awareness Brief first with Route Watch, reporting, alerts, map, Settings, and Send Feedback available.",
+    recommendedNextMilestone: betaBlockerCount === 0 ? "V261.1 controlled beta launch checklist and tester script." : "V261.1 beta blocker closure: safety statement, desktop gate verification, and any readiness gaps surfaced by this audit.",
+    mergeRecommendation: "Merge the V261 audit helper as audit-only instrumentation; do not treat betaReady as launch approval until findings are reviewed on real mobile and desktop devices.",
+    protectedSystemsModified: false,
+    directionalIntelligencePaused: true,
+    trustResolutionDraftOnly: true
+  };
+}
+
 window.gridlyBetaReadinessAudit = gridlyBetaReadinessAudit;
+window.gridlyBetaReadinessReviewAudit = gridlyBetaReadinessReviewAudit;
 exposeGridlyAuditHelper("gridlyBetaReadinessAudit", gridlyBetaReadinessAudit);
+exposeGridlyAuditHelper("gridlyBetaReadinessReviewAudit", gridlyBetaReadinessReviewAudit);
 
 window.gridlyVisualConsistencyAudit = function gridlyVisualConsistencyAudit() {
   try {
