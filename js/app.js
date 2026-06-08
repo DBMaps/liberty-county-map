@@ -1080,6 +1080,7 @@ const HAZARD_CATEGORY_MAP = {
 
 const GRIDLY_PRODUCTION_MARKER_BASE_PATH = "assets/markers/png/";
 const GRIDLY_PRODUCTION_MARKER_EXPECTED_MASTER_SIZE = 256;
+const GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE = 64;
 const GRIDLY_PRODUCTION_MARKER_ASSETS = Object.freeze([
   "construction-zone.png",
   "crash-on-road.png",
@@ -1110,9 +1111,11 @@ const GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS = Object.freeze({
   livestock_on_road: "livestock-on-road.png",
   other_hazard: "other-hazard.png",
   other: "other-hazard.png",
+  crossing_infrastructure: "rail-crossing.png",
   rail: "rail-crossing.png",
   rail_blockage_delay: "train-front.png",
-  rail_issue: "rail-crossing.png",
+  rail_crossing_infrastructure: "rail-crossing.png",
+  rail_issue: "other-hazard.png",
   road_closed: "road-closed.png",
   signal_outage: "traffic-signal-issue.png",
   standing_water: "water-over-road.png",
@@ -29006,13 +29009,17 @@ function getGridlyProductionMarkerCategory(incident = {}, fallbackCategory = "ot
   const subtype = normalizedFallback === "other_hazard" ? resolveOtherHazardSubtypeFromRecord(incident) : "";
   if (subtype && GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS[subtype]) return subtype;
 
+  const rawType = String(incident?.report_type || incident?.type || incident?.category || fallbackCategory || "").trim().toLowerCase().replace(/[\s-]+/g, "_");
+  const rawHazardCategory = getHazardCategory(rawType);
+  if (rawHazardCategory === "rail_blockage_delay") return "rail_blockage_delay";
+  if (rawType === "rail_crossing_infrastructure" || rawType === "crossing_infrastructure") return rawType;
+  if (GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS[rawType] && rawType !== "rail") return rawType;
+
   const normalizedVisualCategory = typeof normalizeGridlyIncidentCategory === "function"
     ? normalizeGridlyIncidentCategory(incident)
     : normalizedFallback;
+  if (normalizedVisualCategory === "rail" && normalizedFallback === "rail_blockage_delay") return "rail_blockage_delay";
   if (GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS[normalizedVisualCategory]) return normalizedVisualCategory;
-
-  const rawType = String(incident?.report_type || incident?.type || incident?.category || fallbackCategory || "").trim().toLowerCase().replace(/[\s-]+/g, "_");
-  if (GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS[rawType]) return rawType;
 
   return GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS[normalizedFallback] ? normalizedFallback : "other_hazard";
 }
@@ -29153,6 +29160,18 @@ function buildGridlyProductionMarkerAudit() {
   const assetDimensionAudit = buildGridlyProductionMarkerAssetDimensionAudit(auditDocument);
   const assetDimensionFailures = assetDimensionAudit.filter((asset) => !asset.expectedSizePass);
   const productionMarkerAssetDimensionPass = assetDimensionFailures.length === 0;
+  const productionMarkerDisplaySize = GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE;
+  const requiredAssetMappings = {
+    road_closed: `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}road-closed.png`,
+    flooding: `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}water-over-road.png`,
+    rail_blockage_delay: `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}train-front.png`
+  };
+  const railCrossingCategories = assetToCategories["rail-crossing.png"] || [];
+  const railCrossingReservedForInfrastructure = railCrossingCategories.every((category) => /crossing|infrastructure|^rail$/.test(category));
+  const activeProductionMarkerOpacityPass = !renderedProductionMarkerDomAudit.markerFound
+    || ["1", ""].includes(String(renderedProductionMarkerDomAudit.markerComputedOpacity || ""))
+    || ["cleared", "expired", "inactive"].includes(renderedProductionMarkerDomAudit.markerState)
+    || ["stale", "unknown"].includes(renderedProductionMarkerDomAudit.markerGridlyFreshness);
 
   return {
     summary: {
@@ -29161,6 +29180,7 @@ function buildGridlyProductionMarkerAudit() {
       clusteringBehavior: "No hazard MarkerClusterGroup ownership detected in this path; existing unifiedIncidentLayer layering is preserved.",
       productionPngMarkersEnabled: true,
       productionPngExpectedMasterSize: `${GRIDLY_PRODUCTION_MARKER_EXPECTED_MASTER_SIZE}x${GRIDLY_PRODUCTION_MARKER_EXPECTED_MASTER_SIZE}`,
+      productionMarkerDisplaySize: `${productionMarkerDisplaySize}x${productionMarkerDisplaySize}`,
       productionPngAssetDimensionPass: productionMarkerAssetDimensionPass,
       visualRenderingMergeGate: productionMarkerAssetDimensionPass
         ? "PASS: every production marker PNG master reports 256x256."
@@ -29172,6 +29192,11 @@ function buildGridlyProductionMarkerAudit() {
     assetLoadFailures,
     totalCategoriesMapped: categoryAssetRows.length,
     assetsAvailable: GRIDLY_PRODUCTION_MARKER_ASSETS.map((assetName) => `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}${assetName}`),
+    requiredAssetMappings,
+    railCrossingCategories,
+    railCrossingReservedForInfrastructure,
+    productionMarkerDisplaySize,
+    activeProductionMarkerOpacityPass,
     assetDimensionAudit,
     assetDimensionFailures,
     productionMarkerAssetDimensionPass,
@@ -29295,6 +29320,9 @@ function buildGridlyRenderedProductionMarkerDomAudit(auditDocument) {
     markerClassName: markerNode?.className || "",
     markerCategory: markerNode?.dataset?.markerCategory || "",
     markerAsset: markerNode?.dataset?.markerAsset || "",
+    markerState: markerNode?.dataset?.state || "",
+    markerFreshness: markerNode?.dataset?.freshness || "",
+    markerGridlyFreshness: markerNode?.dataset?.gridlyFreshness || "",
     markerComputedWidth: markerComputed?.width || null,
     markerComputedHeight: markerComputed?.height || null,
     markerComputedDisplay: markerComputed?.display || null,
@@ -40931,8 +40959,8 @@ function renderUnifiedIncidents(reason = "auto") {
           ${incident.reports_count > 1 ? `<b>${incident.reports_count}</b>` : ""}
         </div>
       `,
-      iconSize: [46, 46],
-      iconAnchor: [23, 23]
+      iconSize: [GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE, GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE],
+      iconAnchor: [GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE / 2, GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE / 2]
     });
     markGridlyProductionMarkerAssetLoad(productionMarkerAsset.assetName, "attempted");
 
@@ -48992,8 +49020,8 @@ function injectHazardStyles() {
     }
 
     #map .leaflet-marker-icon.gridly-production-marker-icon {
-      width: 46px !important;
-      height: 46px !important;
+      width: ${GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE}px !important;
+      height: ${GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE}px !important;
       border: 0 !important;
       background: transparent !important;
       box-shadow: none !important;
@@ -49002,10 +49030,10 @@ function injectHazardStyles() {
 
     #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker,
     .gridly-hazard-marker.has-production-marker {
-      width: 46px !important;
-      height: 46px !important;
-      min-width: 46px;
-      min-height: 46px;
+      width: ${GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE}px !important;
+      height: ${GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE}px !important;
+      min-width: ${GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE}px;
+      min-height: ${GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE}px;
       border: 0 !important;
       border-radius: 0 !important;
       background: transparent !important;
@@ -49017,8 +49045,8 @@ function injectHazardStyles() {
 
     #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker .gridly-production-marker-img,
     .gridly-production-marker-img {
-      width: 46px !important;
-      height: 46px !important;
+      width: ${GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE}px !important;
+      height: ${GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE}px !important;
       max-width: none !important;
       max-height: none !important;
       display: block !important;
@@ -49233,8 +49261,8 @@ function injectHazardStyles() {
     #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:is(.high, .moderate, .low, .route-relevant),
     #map .leaflet-marker-icon.gridly-production-marker-icon:is(.gridly-marker-hazard-critical, .gridly-marker-hazard-high, .gridly-marker-hazard-moderate, .gridly-marker-hazard-low) .gridly-hazard-marker.has-production-marker,
     #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:is(.confidence-high, .confidence-community, [data-gridly-impact-level], [data-gridly-consequence]) {
-      width: 46px !important;
-      height: 46px !important;
+      width: ${GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE}px !important;
+      height: ${GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE}px !important;
       border: 0 !important;
       border-radius: 0 !important;
       background: transparent !important;
@@ -49246,10 +49274,40 @@ function injectHazardStyles() {
     }
 
     #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker > :is(small, b) {
-      display: none !important;
-      visibility: hidden !important;
-      opacity: 0 !important;
+      display: inline-flex !important;
+      visibility: visible !important;
+      opacity: 0.94 !important;
       pointer-events: none !important;
+      position: absolute !important;
+      z-index: 3 !important;
+      min-width: 18px !important;
+      height: 18px !important;
+      padding: 0 5px !important;
+      align-items: center !important;
+      justify-content: center !important;
+      border-radius: 999px !important;
+      background: rgba(8, 16, 24, 0.92) !important;
+      border: 1px solid rgba(255, 255, 255, 0.72) !important;
+      color: #fff !important;
+      font-size: 9px !important;
+      line-height: 1 !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.34) !important;
+    }
+
+    #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker > small {
+      right: -7px !important;
+      bottom: -7px !important;
+    }
+
+    #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker > b {
+      right: -7px !important;
+      top: -7px !important;
+    }
+
+    #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:not([data-state="cleared"]):not([data-state="expired"]):not([data-state="inactive"]):not(.gridly-freshness-stale):not(.gridly-freshness-unknown),
+    #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:not([data-state="cleared"]):not([data-state="expired"]):not([data-state="inactive"]):not(.gridly-freshness-stale):not(.gridly-freshness-unknown).far-faded,
+    #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:not([data-state="cleared"]):not([data-state="expired"]):not([data-state="inactive"]):not(.gridly-freshness-stale):not(.gridly-freshness-unknown).gridly-freshness-aging {
+      opacity: 1 !important;
     }
     .gridly-hazard-launcher {
       position: fixed;

@@ -8618,8 +8618,8 @@ body.modal-open {
 }
 
 #map .leaflet-marker-icon.gridly-production-marker-icon {
-  width: 46px !important;
-  height: 46px !important;
+  width: 64px !important;
+  height: 64px !important;
   border: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
@@ -8628,10 +8628,10 @@ body.modal-open {
 
 #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker,
 .gridly-hazard-marker.has-production-marker {
-  width: 46px !important;
-  height: 46px !important;
-  min-width: 46px;
-  min-height: 46px;
+  width: 64px !important;
+  height: 64px !important;
+  min-width: 64px;
+  min-height: 64px;
   border: 0 !important;
   border-radius: 0 !important;
   background: transparent !important;
@@ -8643,8 +8643,8 @@ body.modal-open {
 
 #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker .gridly-production-marker-img,
 .gridly-production-marker-img {
-  width: 46px !important;
-  height: 46px !important;
+  width: 64px !important;
+  height: 64px !important;
   max-width: none !important;
   max-height: none !important;
   display: block !important;
@@ -19048,8 +19048,8 @@ body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > .route-setu
 #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:is(.high, .moderate, .low, .route-relevant),
 #map .leaflet-marker-icon.gridly-production-marker-icon:is(.gridly-marker-hazard-critical, .gridly-marker-hazard-high, .gridly-marker-hazard-moderate, .gridly-marker-hazard-low) .gridly-hazard-marker.has-production-marker,
 #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:is(.confidence-high, .confidence-community, [data-gridly-impact-level], [data-gridly-consequence]) {
-  width: 46px !important;
-  height: 46px !important;
+  width: 64px !important;
+  height: 64px !important;
   border: 0 !important;
   border-radius: 0 !important;
   background: transparent !important;
@@ -19061,8 +19061,38 @@ body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > .route-setu
 }
 
 #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker > :is(small, b) {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 0.94 !important;
   pointer-events: none !important;
+  position: absolute !important;
+  z-index: 3 !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  padding: 0 5px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 999px !important;
+  background: rgba(8, 16, 24, 0.92) !important;
+  border: 1px solid rgba(255, 255, 255, 0.72) !important;
+  color: #fff !important;
+  font-size: 9px !important;
+  line-height: 1 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.34) !important;
+}
+
+#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker > small {
+  right: -7px !important;
+  bottom: -7px !important;
+}
+
+#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker > b {
+  right: -7px !important;
+  top: -7px !important;
+}
+
+#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:not([data-state="cleared"]):not([data-state="expired"]):not([data-state="inactive"]):not(.gridly-freshness-stale):not(.gridly-freshness-unknown),
+#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:not([data-state="cleared"]):not([data-state="expired"]):not([data-state="inactive"]):not(.gridly-freshness-stale):not(.gridly-freshness-unknown).far-faded,
+#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:not([data-state="cleared"]):not([data-state="expired"]):not([data-state="inactive"]):not(.gridly-freshness-stale):not(.gridly-freshness-unknown).gridly-freshness-aging {
+  opacity: 1 !important;
 }
