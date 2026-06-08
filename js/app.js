@@ -53872,6 +53872,182 @@ function gridlyRouteWatchNamingEntryPointAudit() {
   return gridlyBuildRouteWatchNamingEntryPointAudit();
 }
 
+function gridlyBuildRouteRemovalImpactInventory() {
+  const capability = (name, owner, routeSurface, alternativePath, risk = "low", notes = "") => ({
+    capability: name,
+    owner,
+    currentlyAccessibleFromRoute: true,
+    routeSurface,
+    alternativeAccessExists: Boolean(alternativePath),
+    alternativeAccessPath: alternativePath,
+    inaccessibleIfRouteRemoved: !alternativePath,
+    risk,
+    notes
+  });
+
+  const destinationSearchPath = "Destination Search → choose/search Home, Work, Favorite, or destination → destination route preview / Current Route Details";
+  const routeDetailsPath = "Route Details / Destination Impact pane → current route summary and active-route actions";
+  const settingsPlacesPath = "Settings → Route & Places → Edit Home / Edit Work / Manage Saved Places";
+  const routeWatchPath = "Route Watch owner surfaces: dashboard Start Route Watch, desktop Route Watch strip, Route Details → Route Watch / Manage Route, and Settings route/place access";
+
+  const capabilities = [
+    capability(
+      "Create Route",
+      "Destination Search",
+      "Route button can open Route Quick Panel with Start/Destination selectors and View Route.",
+      destinationSearchPath,
+      "low",
+      "Current product direction places one-off route creation with Destination Search; Route is a duplicate setup shortcut."
+    ),
+    capability(
+      "Home routing",
+      "Destination Search",
+      "Route Quick Panel can select saved Home as a start or destination when saved.",
+      "Destination Search → Home chip/result; Dashboard Daily Destination → Home; saved Home remains editable in Settings.",
+      "low"
+    ),
+    capability(
+      "Work routing",
+      "Destination Search",
+      "Route Quick Panel can select saved Work as a start or destination when saved.",
+      "Destination Search → Work chip/result; Dashboard Daily Destination → Work; saved Work remains editable in Settings.",
+      "low"
+    ),
+    capability(
+      "Favorite routing",
+      "Destination Search",
+      "Route Quick Panel can select saved favorite destinations.",
+      "Destination Search → Favorite/saved-place result; Dashboard Daily Destination → Favorite; Settings → Manage Saved Places.",
+      "low"
+    ),
+    capability(
+      "Destination routing",
+      "Destination Search",
+      "Route button can expose a route setup panel, but arbitrary searched destinations are owned by destination search.",
+      destinationSearchPath,
+      "none"
+    ),
+    capability(
+      "Route Details",
+      "Route Details",
+      "When a destination route is active, the context-aware Route button opens Current Route Details first.",
+      routeDetailsPath + "; destination command impact line opens the same details pane.",
+      "low",
+      "Removal mostly affects a shortcut because active-route details have their own pane and destination-card entry."
+    ),
+    capability(
+      "Active Route management",
+      "Route Details / Active Route Experience",
+      "Route Quick Panel and active Route Details expose Show Full Route, Clear Route, and Stop Watch controls.",
+      routeDetailsPath,
+      "low"
+    ),
+    capability(
+      "Route Watch",
+      "Route Watch",
+      "Route button can open the Route Quick Panel and start monitoring from selected start/destination values.",
+      routeWatchPath,
+      "medium",
+      "Functional access remains duplicated, but removing the dock shortcut could reduce discoverability of monitoring until Settings/Route Details/Dashboard links are validated in a UI pass."
+    ),
+    capability(
+      "Stop Route Watch",
+      "Route Details / Route Watch",
+      "Route Quick Panel includes Stop Route Watch when monitoring is active.",
+      "Route Details → Stop Watch; desktop Route Watch strip → Stop Route Watch.",
+      "low"
+    ),
+    capability(
+      "Manage Places",
+      "Settings",
+      "Route Quick Panel includes a Manage Places link.",
+      settingsPlacesPath + "; Route Details → Route Watch / Manage Route also links back to route/place management.",
+      "low"
+    ),
+    capability(
+      "Saved Places",
+      "Settings / Destination Search",
+      "Route Quick Panel consumes saved places as start/destination options.",
+      "Settings → Route & Places → Manage Saved Places; Destination Search exposes saved Home, Work, and Favorites as route destinations.",
+      "low"
+    ),
+    capability(
+      "Route setup",
+      "Route Watch",
+      "Route Quick Panel provides Start and Destination selectors plus View Route / Start Route Watch.",
+      "Dashboard Start Route Watch; desktop Route Watch strip; Route Details → Route Watch / Manage Route; Settings place management for prerequisites.",
+      "medium",
+      "This is a duplicated setup surface, not a unique capability; risk is mainly that a familiar shortcut disappears."
+    ),
+    capability(
+      "Route intelligence",
+      "Active Route Experience / Route Watch",
+      "Route surfaces show readiness, reports, recommendation, freshness, and monitoring state.",
+      "Awareness Brief, Route Watch strip, destination route preview card, and Route Details context summary.",
+      "low"
+    ),
+    capability(
+      "Route awareness",
+      "Active Route Experience / Route Details",
+      "Route button can lead to details that explain current route context.",
+      "Destination command impact line → Route Details; Awareness Brief and map surfaces expose route-relevant report context.",
+      "low"
+    ),
+    capability(
+      "Show Full Route",
+      "Route Details / Active Route Experience",
+      "Route Quick Panel includes Show Full Route.",
+      "Route Details → Show Full Route; desktop Route Watch strip → Show Full Route.",
+      "low"
+    ),
+    capability(
+      "Clear Route",
+      "Route Details / Active Route Experience",
+      "Route Quick Panel includes Clear Route.",
+      "Route Details → Clear Route; desktop Route Watch strip → Clear Route.",
+      "low"
+    )
+  ];
+
+  const uniqueCapabilities = capabilities.filter((item) => item.inaccessibleIfRouteRemoved);
+  const duplicateCapabilities = capabilities.filter((item) => item.alternativeAccessExists);
+  const inaccessibleAfterRemoval = capabilities.filter((item) => item.inaccessibleIfRouteRemoved);
+  const lowRiskCapabilities = capabilities.filter((item) => item.risk === "none" || item.risk === "low");
+  const mediumRiskCapabilities = capabilities.filter((item) => item.risk === "medium");
+  const highRiskCapabilities = capabilities.filter((item) => item.risk === "high");
+  const removalRiskScore = Math.min(100, (mediumRiskCapabilities.length * 8) + (highRiskCapabilities.length * 25) + (inaccessibleAfterRemoval.length * 35));
+  const routeButtonOwnsUniqueCapability = uniqueCapabilities.length > 0;
+  const consumerFriendlyPass = Boolean(capabilities.length >= 16 && !routeButtonOwnsUniqueCapability && inaccessibleAfterRemoval.length === 0);
+
+  return {
+    available: true,
+    version: "V262.5",
+    auditOnly: true,
+    routeButtonOwnsUniqueCapability,
+    totalCapabilitiesReviewed: capabilities.length,
+    capabilities,
+    uniqueCapabilities,
+    duplicateCapabilities,
+    inaccessibleAfterRemoval,
+    lowRiskCapabilities,
+    mediumRiskCapabilities,
+    highRiskCapabilities,
+    removalRiskScore,
+    consumerFriendlyPass,
+    findings: [
+      "1. Capabilities that would become inaccessible if Route disappeared: none detected in this inventory; every reviewed Route-reachable capability has an alternate owner/path.",
+      "2. Route does not own a unique user job in the current product direction; Destination Search owns current route creation, Route Details owns active-route management, Route Watch owns monitoring, and Settings owns saved-place management.",
+      "3. Route is primarily duplicating access to capabilities owned elsewhere, especially current route details, route setup, saved-place selection, Route Watch monitoring, and active-route exit controls.",
+      `4. Overall removal risk is low-to-medium discoverability risk, not functional loss risk; score ${removalRiskScore}/100 because Route Watch and route setup lose a prominent shortcut even though alternate paths remain.`
+    ],
+    recommendation: "No Unique Capability Ownership Detected"
+  };
+}
+
+window.gridlyRouteRemovalImpactInventory = function gridlyRouteRemovalImpactInventory() {
+  return gridlyBuildRouteRemovalImpactInventory();
+};
+
 function removeGridlyRoutePreviewLayers() {
   if (window.__gridlyRoutePreviewLayer && typeof map?.removeLayer === "function" && map.hasLayer(window.__gridlyRoutePreviewLayer)) {
     map.removeLayer(window.__gridlyRoutePreviewLayer);
