@@ -29188,16 +29188,66 @@ function buildGridlyProductionMarkerAudit() {
 }
 
 function buildGridlyRenderedProductionMarkerDomAudit(auditDocument) {
-  const markerNode = auditDocument?.querySelector?.("#map .gridly-hazard-marker.has-production-marker") || null;
+  const doc = auditDocument || null;
+  const markerNodes = Array.from(doc?.querySelectorAll?.("#map .gridly-hazard-marker.has-production-marker") || []);
+  const roadClosedMarkerNodes = markerNodes.filter((node) => {
+    const category = String(node?.dataset?.markerCategory || node?.dataset?.category || "").toLowerCase();
+    const asset = String(node?.dataset?.markerAsset || "").toLowerCase();
+    return category === "road_closed" || category === "txdot_closure" || asset.includes("road-closed.png");
+  });
+  const markerNode = roadClosedMarkerNodes[0] || markerNodes[0] || null;
   const img = markerNode?.querySelector?.("img.gridly-production-marker-img") || null;
   const markerComputed = markerNode && typeof getComputedStyle === "function" ? getComputedStyle(markerNode) : null;
   const imgComputed = img && typeof getComputedStyle === "function" ? getComputedStyle(img) : null;
   const wrapper = markerNode?.closest?.(".leaflet-marker-icon") || null;
   const wrapperComputed = wrapper && typeof getComputedStyle === "function" ? getComputedStyle(wrapper) : null;
+  const markerRect = markerNode?.getBoundingClientRect?.() || null;
+  const imgRect = img?.getBoundingClientRect?.() || null;
+  const wrapperRect = wrapper?.getBoundingClientRect?.() || null;
+  const rectSummary = (rect) => rect ? {
+    x: Number(rect.x?.toFixed?.(2) ?? rect.x ?? 0),
+    y: Number(rect.y?.toFixed?.(2) ?? rect.y ?? 0),
+    width: Number(rect.width?.toFixed?.(2) ?? rect.width ?? 0),
+    height: Number(rect.height?.toFixed?.(2) ?? rect.height ?? 0),
+    top: Number(rect.top?.toFixed?.(2) ?? rect.top ?? 0),
+    left: Number(rect.left?.toFixed?.(2) ?? rect.left ?? 0),
+    bottom: Number(rect.bottom?.toFixed?.(2) ?? rect.bottom ?? 0),
+    right: Number(rect.right?.toFixed?.(2) ?? rect.right ?? 0)
+  } : null;
+  const isVisibleElement = (node) => {
+    if (!node || typeof getComputedStyle !== "function") return false;
+    const computed = getComputedStyle(node);
+    const rect = node.getBoundingClientRect?.();
+    return computed.display !== "none"
+      && computed.visibility !== "hidden"
+      && Number(computed.opacity || 1) !== 0
+      && (!rect || (rect.width > 0 && rect.height > 0));
+  };
+  const summarizeNode = (node) => {
+    const computed = node && typeof getComputedStyle === "function" ? getComputedStyle(node) : null;
+    const rect = node?.getBoundingClientRect?.() || null;
+    return {
+      tagName: node?.tagName || "",
+      className: node?.className || "",
+      id: node?.id || "",
+      text: String(node?.textContent || "").trim().slice(0, 80),
+      display: computed?.display || null,
+      visibility: computed?.visibility || null,
+      opacity: computed?.opacity || null,
+      background: computed?.backgroundColor || null,
+      border: computed?.border || null,
+      boxShadow: computed?.boxShadow || null,
+      zIndex: computed?.zIndex || null,
+      rect: rectSummary(rect),
+      visible: isVisibleElement(node)
+    };
+  };
   const legacyVisualSelectors = [
     ":scope > span",
     ":scope > i",
     ":scope > svg",
+    ":scope > small",
+    ":scope > b",
     ":scope > .gridly-marker",
     ":scope > .gridly-marker-wrap",
     ":scope > .gridly-marker-icon",
@@ -29214,8 +29264,33 @@ function buildGridlyRenderedProductionMarkerDomAudit(auditDocument) {
       })
     : [];
   const uniqueLegacyVisualElements = Array.from(new Set(legacyVisualElements));
+  const visibleLegacyVisualElements = uniqueLegacyVisualElements.filter(isVisibleElement);
+  const layerMarkers = typeof unifiedIncidentLayer?.getLayers === "function" ? unifiedIncidentLayer.getLayers() : [];
+  const layerRoadClosedMarkers = layerMarkers.filter((layer) => {
+    const icon = typeof layer?.getIcon === "function" ? layer.getIcon() : layer?.options?.icon;
+    const html = String(icon?.options?.html || "").toLowerCase();
+    const incidentId = String(layer?.options?.incidentId || "").toLowerCase();
+    return html.includes("road-closed.png") || html.includes('data-marker-category="road_closed"') || incidentId.includes("road_closed");
+  });
+  const wrapperSiblings = wrapper?.parentElement
+    ? Array.from(wrapper.parentElement.children).filter((node) => node !== wrapper && node.classList?.contains?.("leaflet-marker-icon"))
+    : [];
+  const duplicateDomBuckets = markerNodes.reduce((acc, node) => {
+    const key = node.dataset?.incidentId || node.dataset?.markerAsset || node.dataset?.markerCategory || "unknown";
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+  const duplicateDomBucketsWithMultiples = Object.entries(duplicateDomBuckets)
+    .filter(([, count]) => count > 1)
+    .map(([key, count]) => ({ key, count }));
+  const centerX = wrapperRect ? wrapperRect.left + (wrapperRect.width / 2) : null;
+  const centerY = wrapperRect ? wrapperRect.top + (wrapperRect.height / 2) : null;
+  const elementsAtMarkerCenter = Number.isFinite(centerX) && Number.isFinite(centerY) && typeof doc?.elementsFromPoint === "function"
+    ? doc.elementsFromPoint(centerX, centerY).slice(0, 10).map(summarizeNode)
+    : [];
 
   return {
+    auditFocus: roadClosedMarkerNodes.length ? "road_closed" : "first_production_marker",
     markerFound: Boolean(markerNode),
     markerClassName: markerNode?.className || "",
     markerCategory: markerNode?.dataset?.markerCategory || "",
@@ -29229,6 +29304,7 @@ function buildGridlyRenderedProductionMarkerDomAudit(auditDocument) {
     markerComputedBackground: markerComputed?.backgroundColor || null,
     markerComputedBorder: markerComputed?.border || null,
     markerComputedBoxShadow: markerComputed?.boxShadow || null,
+    markerRect: rectSummary(markerRect),
     leafletWrapperFound: Boolean(wrapper),
     leafletWrapperClassName: wrapper?.className || "",
     leafletWrapperComputedWidth: wrapperComputed?.width || null,
@@ -29237,6 +29313,11 @@ function buildGridlyRenderedProductionMarkerDomAudit(auditDocument) {
     leafletWrapperComputedVisibility: wrapperComputed?.visibility || null,
     leafletWrapperComputedOpacity: wrapperComputed?.opacity || null,
     leafletWrapperComputedOverflow: wrapperComputed?.overflow || null,
+    leafletWrapperZIndex: wrapperComputed?.zIndex || null,
+    leafletWrapperBackground: wrapperComputed?.backgroundColor || null,
+    leafletWrapperBorder: wrapperComputed?.border || null,
+    leafletWrapperBoxShadow: wrapperComputed?.boxShadow || null,
+    leafletWrapperRect: rectSummary(wrapperRect),
     renderedImgSrc: img?.currentSrc || img?.src || img?.getAttribute?.("src") || null,
     renderedImgNaturalWidth: Number(img?.naturalWidth || 0),
     renderedImgNaturalHeight: Number(img?.naturalHeight || 0),
@@ -29248,15 +29329,33 @@ function buildGridlyRenderedProductionMarkerDomAudit(auditDocument) {
     renderedImgComputedVisibility: imgComputed?.visibility || null,
     renderedImgComputedOpacity: imgComputed?.opacity || null,
     renderedImgComputedObjectFit: imgComputed?.objectFit || null,
+    renderedImgZIndex: imgComputed?.zIndex || null,
+    renderedImgPosition: imgComputed?.position || null,
+    renderedImgRect: rectSummary(imgRect),
     renderedImgComplete: Boolean(img?.complete),
-    legacyMarkerVisualElementsPresent: uniqueLegacyVisualElements.length > 0,
-    legacyMarkerVisualElementCount: uniqueLegacyVisualElements.length,
-    legacyMarkerVisualElementSummary: uniqueLegacyVisualElements.slice(0, 6).map((node) => ({
-      tagName: node.tagName,
-      className: node.className || "",
-      text: String(node.textContent || "").trim().slice(0, 40)
-    })),
-    outerHTMLSample: markerNode?.outerHTML ? markerNode.outerHTML.slice(0, 1600) : null
+    renderedImgVisible: isVisibleElement(img),
+    legacyMarkerVisualElementsPresent: visibleLegacyVisualElements.length > 0,
+    legacyMarkerDomElementsPresent: uniqueLegacyVisualElements.length > 0,
+    legacyMarkerDomElementCount: uniqueLegacyVisualElements.length,
+    legacyMarkerVisualElementCount: visibleLegacyVisualElements.length,
+    visibleLegacyMarkerVisualElementCount: visibleLegacyVisualElements.length,
+    legacyMarkerDomElementSummary: uniqueLegacyVisualElements.slice(0, 8).map(summarizeNode),
+    legacyMarkerVisualElementSummary: visibleLegacyVisualElements.slice(0, 8).map(summarizeNode),
+    productionMarkerDomCount: markerNodes.length,
+    roadClosedProductionMarkerDomCount: roadClosedMarkerNodes.length,
+    unifiedIncidentLayerMarkerCount: layerMarkers.length,
+    unifiedIncidentLayerRoadClosedMarkerCount: layerRoadClosedMarkers.length,
+    unifiedIncidentLayerAndDomCountAgree: layerMarkers.length === markerNodes.length,
+    roadClosedLayerAndDomCountAgree: layerRoadClosedMarkers.length === roadClosedMarkerNodes.length,
+    duplicateProductionMarkerDomBuckets: duplicateDomBucketsWithMultiples,
+    possibleOverlayLeafletMarkerSiblingCount: wrapperSiblings.length,
+    possibleOverlayLeafletMarkerSiblingSummary: wrapperSiblings.slice(0, 8).map(summarizeNode),
+    elementsAtMarkerCenter,
+    screenshotEvidenceTarget: wrapperRect ? {
+      instruction: "Capture a screenshot clipped to this rect, plus elementsAtMarkerCenter, to verify the PNG is the top visible pixels.",
+      clip: rectSummary(wrapperRect)
+    } : null,
+    outerHTMLSample: markerNode?.outerHTML ? markerNode.outerHTML.slice(0, 2000) : null
   };
 }
 
@@ -49128,6 +49227,29 @@ function injectHazardStyles() {
       font-size: 10px;
       font-weight: 950;
       border: 2px solid #fff;
+    }
+
+    #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker,
+    #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:is(.high, .moderate, .low, .route-relevant),
+    #map .leaflet-marker-icon.gridly-production-marker-icon:is(.gridly-marker-hazard-critical, .gridly-marker-hazard-high, .gridly-marker-hazard-moderate, .gridly-marker-hazard-low) .gridly-hazard-marker.has-production-marker,
+    #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:is(.confidence-high, .confidence-community, [data-gridly-impact-level], [data-gridly-consequence]) {
+      width: 46px !important;
+      height: 46px !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      outline: 0 !important;
+      overflow: visible !important;
+      display: block !important;
+      place-items: initial !important;
+    }
+
+    #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker > :is(small, b) {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
     }
     .gridly-hazard-launcher {
       position: fixed;

@@ -19043,3 +19043,26 @@ body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > .route-setu
   flex: 0 0 auto !important;
   overflow: visible !important;
 }
+
+#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker,
+#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:is(.high, .moderate, .low, .route-relevant),
+#map .leaflet-marker-icon.gridly-production-marker-icon:is(.gridly-marker-hazard-critical, .gridly-marker-hazard-high, .gridly-marker-hazard-moderate, .gridly-marker-hazard-low) .gridly-hazard-marker.has-production-marker,
+#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:is(.confidence-high, .confidence-community, [data-gridly-impact-level], [data-gridly-consequence]) {
+  width: 46px !important;
+  height: 46px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  overflow: visible !important;
+  display: block !important;
+  place-items: initial !important;
+}
+
+#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker > :is(small, b) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
