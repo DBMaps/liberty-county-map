@@ -53364,6 +53364,108 @@ function updateGridlyRouteOwnershipSurface() {
   return ownership;
 }
 
+function gridlyBuildRouteButtonOwnershipAudit() {
+  const findings = [];
+  const routePanel = document.getElementById("gridlyMobileRouteQuickPanel");
+  const routeQuickPanelInjected = Boolean(routePanel);
+  const routeQuickPanelVisible = Boolean(routePanel?.classList?.contains("visible"));
+  const routeQuickStartSelect = document.getElementById("mobileRouteQuickStart");
+  const routeQuickDestinationSelect = document.getElementById("mobileRouteQuickDestination");
+  const routeQuickStartWatchButton = routePanel?.querySelector?.('[data-action="start-route-watch-quick"]') || null;
+  const routeQuickViewRouteButton = routePanel?.querySelector?.('[data-action="view-route-quick"]') || null;
+  const routeQuickClearButton = routePanel?.querySelector?.('[data-action="clear-route-quick"]') || null;
+  const routeQuickStopButton = routePanel?.querySelector?.('[data-action="stop-route-watch-quick"]') || null;
+  const destinationPreview = typeof getGridlyDestinationRoutePreviewState === "function"
+    ? getGridlyDestinationRoutePreviewState()
+    : (window.GridlyDestinationRoutePreview || {});
+  const ownership = typeof resolveGridlyRouteOwnershipSurface === "function" ? resolveGridlyRouteOwnershipSurface() : {};
+  const routeGeometryAudit = typeof getGridlyActiveRouteCoordinatesForAudit === "function" ? getGridlyActiveRouteCoordinatesForAudit() : null;
+  const savedRouteLayerCount = Number(savedRouteLayer?.getLayers?.().length || 0);
+  const destinationPreviewLayerCount = Number(destinationRoutePreviewLayer?.getLayers?.().length || 0);
+  const routeWatchMonitoring = Boolean(routeWatchActivated || window.__gridlyRouteWatchActive);
+  const destinationRoutePreviewAvailable = Boolean(
+    destinationPreview?.active
+    || ["loading", "ready"].includes(String(destinationPreview?.status || ""))
+    || destinationPreviewLayerCount > 0
+    || (Array.isArray(destinationPreview?.geometry) && destinationPreview.geometry.length >= 2)
+  );
+  const routeWatchRouteAvailable = Boolean(
+    routeWatchMonitoring
+    || savedRouteLayerCount > 0
+    || routePreviewRendered
+    || routePreviewLayerExists
+    || window.__gridlyRoutePreviewLayer
+    || activeDestinationPlace
+    || window.__gridlySelectedRouteId
+  );
+  const activeRouteExists = Boolean(
+    ownership?.hasRoute
+    || destinationRoutePreviewAvailable
+    || routeWatchRouteAvailable
+    || routeGeometryAudit?.activeRoutePresent
+  );
+  const activeRouteType = destinationRoutePreviewAvailable
+    ? (routeWatchMonitoring ? "destination_route_preview_over_route_watch" : "destination_route_preview")
+    : routeWatchMonitoring
+      ? "route_watch_monitoring"
+      : routeWatchRouteAvailable
+        ? "route_watch_preview"
+        : "";
+  const routeButtonCurrentOwner = "Route button currently owns the mobile Route Quick Panel: start/destination selectors plus Route Watch setup/start, route preview, show-full-route, stop-watch, clear-route, and manage-places actions.";
+  const routeButtonConsumerExpectation = activeRouteExists
+    ? "With an active Current Location → destination route visible, a first-time tester expects Route to open current route details or a Routes hub, not ask them to create the same route again."
+    : "With no active route, a first-time tester can reasonably expect Route to help choose or start a route.";
+  const routeWatchSetupAvailable = Boolean(
+    document.getElementById("routeWatchStartBtn")
+    || document.getElementById("setupCard")
+    || document.getElementById("routeSetupModal")
+    || (routeQuickStartSelect && routeQuickDestinationSelect && routeQuickStartWatchButton)
+    || typeof openMobileRouteQuickPanel === "function"
+    || typeof openRouteSetupModal === "function"
+  );
+  const activeRouteDetailsAvailable = Boolean(
+    document.getElementById("gridlyDestinationImpactPane")
+    || document.getElementById("gridlyDestinationImpactPaneSummary")
+    || typeof openGridlyDestinationImpactPane === "function"
+  );
+  const routeButtonOpensSetupSurface = Boolean(
+    (routeQuickPanelInjected && routeQuickStartSelect && routeQuickDestinationSelect && routeQuickStartWatchButton)
+    || typeof openMobileRouteQuickPanel === "function"
+  );
+  const routeButtonIncludesDetailsActions = Boolean(routeQuickViewRouteButton || routeQuickClearButton || routeQuickStopButton);
+  const ownershipConflictDetected = Boolean(activeRouteExists && routeButtonOpensSetupSurface);
+
+  findings.push("Current Route button tap path opens the mobile Route Quick Panel via openMobileRouteQuickPanel()/openGridlyRouteDock(), not the destination impact/details pane directly.");
+  findings.push("Original ownership model: Route primarily meant Route Watch setup from saved start/destination places.");
+  findings.push("Current ownership model: Destination Search can independently create the primary visible route preview while Route still presents Route Watch setup controls.");
+  findings.push("Route Watch remains available, but it is no longer the only route experience once destination search, Walmart/Home/Work/Favorites routing, previews, clear route, and saved places exist.");
+  if (routeQuickPanelVisible) findings.push("Route Quick Panel is currently visible from the Route button path.");
+  if (routeButtonIncludesDetailsActions) findings.push("Route Quick Panel includes some active-route utility actions, but setup fields and Start Route Watch still frame the surface.");
+  if (destinationRoutePreviewAvailable) findings.push("Destination Search route preview is currently active, so consumer expectation shifts toward current route details.");
+  if (ownershipConflictDetected) findings.push("Ownership conflict: an active route exists while the Route button's first surface still asks for Start and Destination setup.");
+  if (!activeRouteDetailsAvailable) findings.push("No active route details surface was detected.");
+
+  const consumerFriendlyPass = Boolean(!ownershipConflictDetected && routeWatchSetupAvailable && (!activeRouteExists || activeRouteDetailsAvailable));
+  return {
+    available: true,
+    version: "V262",
+    activeRouteExists,
+    activeRouteType,
+    routeButtonCurrentOwner,
+    routeButtonConsumerExpectation,
+    routeWatchSetupAvailable,
+    destinationRoutePreviewAvailable,
+    activeRouteDetailsAvailable,
+    ownershipConflictDetected,
+    consumerFriendlyPass,
+    findings
+  };
+}
+
+window.gridlyRouteButtonOwnershipAudit = function gridlyRouteButtonOwnershipAudit() {
+  return gridlyBuildRouteButtonOwnershipAudit();
+};
+
 function removeGridlyRoutePreviewLayers() {
   if (window.__gridlyRoutePreviewLayer && typeof map?.removeLayer === "function" && map.hasLayer(window.__gridlyRoutePreviewLayer)) {
     map.removeLayer(window.__gridlyRoutePreviewLayer);
