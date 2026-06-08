@@ -691,25 +691,54 @@
         <button type="button" class="gridly-surface-close route-modal-close" id="closeRouteSetupModalBtn" aria-label="Close Save Route modal">×</button>
       </div>
       <h2 id="routeSetupTitle">Manage Places</h2>
-      <p class="smart-alerts-subtitle">Tell Gridly what you want to save, how to add it, then confirm.</p>
+      <p class="smart-alerts-subtitle">Your saved places at a glance.</p>
+      <section class="manage-places-primary" id="managePlacesPrimaryGroup" aria-label="Saved places status">
+        <article class="manage-place-status-card manage-place-status-card-home">
+          <div>
+            <p class="manage-place-status-label">Home</p>
+            <strong id="managePlacesHomeValue">Not Set</strong>
+            <small id="managePlacesHomeMeta">Save Home for Destination Search and Route Watch.</small>
+          </div>
+          <button class="secondary-btn compact-btn manage-place-primary-action" id="managePlacesHomeActionBtn" type="button" data-manage-place-action="home">Add</button>
+        </article>
+        <article class="manage-place-status-card manage-place-status-card-work">
+          <div>
+            <p class="manage-place-status-label">Work</p>
+            <strong id="managePlacesWorkValue">Not Set</strong>
+            <small id="managePlacesWorkMeta">Save Work for Destination Search and Route Watch.</small>
+          </div>
+          <button class="secondary-btn compact-btn manage-place-primary-action" id="managePlacesWorkActionBtn" type="button" data-manage-place-action="work">Add</button>
+        </article>
+        <section class="manage-place-status-card manage-place-status-card-favorites" aria-labelledby="managePlacesFavoritesTitle">
+          <div class="manage-place-favorites-head">
+            <div>
+              <p class="manage-place-status-label" id="managePlacesFavoritesTitle">Favorites</p>
+              <strong id="managePlacesFavoritesValue">No Favorites</strong>
+            </div>
+            <button class="secondary-btn compact-btn manage-place-primary-action" id="managePlacesFavoriteActionBtn" type="button" data-manage-place-action="custom">Add Favorite</button>
+          </div>
+          <div class="manage-place-favorites-list" id="managePlacesFavoritesList">
+            <p class="manage-place-empty-note">No favorites saved yet.</p>
+          </div>
+        </section>
+      </section>
       <div class="setup-grid route-setup-grid-mobile">
         <section class="manage-places-group" id="managePlacesSlotsGroup" hidden>
-          <p class="manage-places-group-label">What are you saving?</p>
-          <p class="manage-places-group-note">Start with the place you want Gridly to remember.</p>
           <div class="destination-chip-row" id="managePlaceSlotRow" hidden>
             <button class="secondary-btn destination-chip" id="managePlaceHomeBtn" type="button">Home</button>
             <button class="secondary-btn destination-chip" id="managePlaceWorkBtn" type="button">Work</button>
             <button class="secondary-btn destination-chip" id="managePlaceFavoriteBtn" type="button">Favorite</button>
           </div>
         </section>
-        <section class="manage-places-group" id="managePlacesSourceGroup" hidden>
-          <p class="manage-places-group-label">How would you like to add it?</p>
-          <p class="manage-places-group-note">Use where you are, type an address, or copy an existing place.</p>
+        <section class="manage-places-group manage-places-source-sheet" id="managePlacesSourceGroup" hidden>
+          <p class="manage-places-group-label" id="managePlacesSourceTitle">Set Place</p>
+          <p class="manage-places-group-note">Choose how you want to add this place.</p>
           <div class="destination-chip-row manage-source-row">
             <button class="secondary-btn destination-chip" id="manageSourceLocationBtn" type="button" data-source="location">Use Current Location</button>
             <button class="secondary-btn destination-chip" id="manageSourceAddressBtn" type="button" data-source="address">Enter Address</button>
             <button class="secondary-btn destination-chip" id="manageSourceSavedBtn" type="button" data-source="saved">Choose Existing Place</button>
           </div>
+          <button class="secondary-btn subtle-secondary-btn manage-places-back-btn" id="managePlacesBackBtn" type="button">Back to Manage Places</button>
         </section>
         <section class="manage-places-group" id="managePlacesAddressGroup" hidden>
           <label>
@@ -729,10 +758,10 @@
         </section>
       </div>
       <section class="manage-places-group" id="managePlacesSaveGroup" hidden>
-        <p class="manage-places-group-label">Confirm and Save</p>
+        <p class="manage-places-group-label">Save This Place</p>
         <div class="destination-chip-row manage-places-save-actions">
           <button id="mobileSaveRouteBtn" class="primary-btn" type="button">Save Place</button>
-          <button id="mobileResetPlacesBtn" class="secondary-btn subtle-secondary-btn" type="button">Reset</button>
+          <button id="mobileResetPlacesBtn" class="secondary-btn subtle-secondary-btn" type="button" hidden>Reset</button>
         </div>
         <p id="managePlacesSaveStatus" class="manage-places-save-status" role="status" aria-live="polite"></p>
         <button id="mobileUseLocationBtn" class="secondary-btn subtle-secondary-btn" type="button" hidden>Use Current Location</button>
