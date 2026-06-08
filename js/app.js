@@ -29073,6 +29073,7 @@ function buildGridlyProductionMarkerAudit() {
   const assetLoadFailures = Array.from(new Set([...GRIDLY_PRODUCTION_MARKER_LOAD_STATE.failed, ...domFailures]));
   const unmappedAssets = GRIDLY_PRODUCTION_MARKER_ASSETS.filter((assetName) => !assetToCategories[assetName]);
   const renderedProductionMarkerCount = Number(auditDocument?.querySelectorAll?.("#map .gridly-production-marker-img")?.length || 0);
+  const renderedProductionMarkerDomAudit = buildGridlyRenderedProductionMarkerDomAudit(auditDocument);
 
   return {
     summary: {
@@ -29089,12 +29090,86 @@ function buildGridlyProductionMarkerAudit() {
     assetsAvailable: GRIDLY_PRODUCTION_MARKER_ASSETS.map((assetName) => `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}${assetName}`),
     unmappedAssets,
     renderedProductionMarkerCount,
+    renderedProductionMarkerDomAudit,
     loadState: {
       attempted: Array.from(GRIDLY_PRODUCTION_MARKER_LOAD_STATE.attempted),
       loaded: Array.from(GRIDLY_PRODUCTION_MARKER_LOAD_STATE.loaded),
       failed: assetLoadFailures
     },
     lastMarkerAuditDebug
+  };
+}
+
+function buildGridlyRenderedProductionMarkerDomAudit(auditDocument) {
+  const markerNode = auditDocument?.querySelector?.("#map .gridly-hazard-marker.has-production-marker") || null;
+  const img = markerNode?.querySelector?.("img.gridly-production-marker-img") || null;
+  const markerComputed = markerNode && typeof getComputedStyle === "function" ? getComputedStyle(markerNode) : null;
+  const imgComputed = img && typeof getComputedStyle === "function" ? getComputedStyle(img) : null;
+  const wrapper = markerNode?.closest?.(".leaflet-marker-icon") || null;
+  const wrapperComputed = wrapper && typeof getComputedStyle === "function" ? getComputedStyle(wrapper) : null;
+  const legacyVisualSelectors = [
+    ":scope > span",
+    ":scope > i",
+    ":scope > svg",
+    ":scope > .gridly-marker",
+    ":scope > .gridly-marker-wrap",
+    ":scope > .gridly-marker-icon",
+    ":scope > .gridly-legacy-marker",
+    ":scope > [class*='crossing']"
+  ];
+  const legacyVisualElements = markerNode
+    ? legacyVisualSelectors.flatMap((selector) => {
+        try {
+          return Array.from(markerNode.querySelectorAll(selector));
+        } catch (error) {
+          return [];
+        }
+      })
+    : [];
+  const uniqueLegacyVisualElements = Array.from(new Set(legacyVisualElements));
+
+  return {
+    markerFound: Boolean(markerNode),
+    markerClassName: markerNode?.className || "",
+    markerCategory: markerNode?.dataset?.markerCategory || "",
+    markerAsset: markerNode?.dataset?.markerAsset || "",
+    markerComputedWidth: markerComputed?.width || null,
+    markerComputedHeight: markerComputed?.height || null,
+    markerComputedDisplay: markerComputed?.display || null,
+    markerComputedVisibility: markerComputed?.visibility || null,
+    markerComputedOpacity: markerComputed?.opacity || null,
+    markerComputedOverflow: markerComputed?.overflow || null,
+    markerComputedBackground: markerComputed?.backgroundColor || null,
+    markerComputedBorder: markerComputed?.border || null,
+    markerComputedBoxShadow: markerComputed?.boxShadow || null,
+    leafletWrapperFound: Boolean(wrapper),
+    leafletWrapperClassName: wrapper?.className || "",
+    leafletWrapperComputedWidth: wrapperComputed?.width || null,
+    leafletWrapperComputedHeight: wrapperComputed?.height || null,
+    leafletWrapperComputedDisplay: wrapperComputed?.display || null,
+    leafletWrapperComputedVisibility: wrapperComputed?.visibility || null,
+    leafletWrapperComputedOpacity: wrapperComputed?.opacity || null,
+    leafletWrapperComputedOverflow: wrapperComputed?.overflow || null,
+    renderedImgSrc: img?.currentSrc || img?.src || img?.getAttribute?.("src") || null,
+    renderedImgNaturalWidth: Number(img?.naturalWidth || 0),
+    renderedImgNaturalHeight: Number(img?.naturalHeight || 0),
+    renderedImgClientWidth: Number(img?.clientWidth || 0),
+    renderedImgClientHeight: Number(img?.clientHeight || 0),
+    renderedImgComputedWidth: imgComputed?.width || null,
+    renderedImgComputedHeight: imgComputed?.height || null,
+    renderedImgComputedDisplay: imgComputed?.display || null,
+    renderedImgComputedVisibility: imgComputed?.visibility || null,
+    renderedImgComputedOpacity: imgComputed?.opacity || null,
+    renderedImgComputedObjectFit: imgComputed?.objectFit || null,
+    renderedImgComplete: Boolean(img?.complete),
+    legacyMarkerVisualElementsPresent: uniqueLegacyVisualElements.length > 0,
+    legacyMarkerVisualElementCount: uniqueLegacyVisualElements.length,
+    legacyMarkerVisualElementSummary: uniqueLegacyVisualElements.slice(0, 6).map((node) => ({
+      tagName: node.tagName,
+      className: node.className || "",
+      text: String(node.textContent || "").trim().slice(0, 40)
+    })),
+    outerHTMLSample: markerNode?.outerHTML ? markerNode.outerHTML.slice(0, 1600) : null
   };
 }
 
@@ -40653,7 +40728,7 @@ function renderUnifiedIncidents(reason = "auto") {
     }
 
     const icon = L.divIcon({
-      className: `${markerVisualClassSafe} ${sanitizeText(hazardVisualMetadata.className)}`,
+      className: `gridly-production-marker-icon ${markerVisualClassSafe} ${sanitizeText(hazardVisualMetadata.className)}`,
       html: `
         <div class="gridly-hazard-marker has-production-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass} ${proximityClass} ${routeRelevanceClass} ${sanitizeText(markerVariantClass)} ${sanitizeText(productionMarkerClass)} ${sanitizeText(confidenceClass)} ${sanitizeText(hierarchyPriorityClass)} ${sanitizeText(consequenceClass)} ${sanitizeText(freshnessClass)} ${sanitizeText(confidenceVisualClass)} ${sanitizeText(hazardVisualMetadata.className)}${hazardVisualClassSegment}"
           data-category="${sanitizeText(category)}"
@@ -48729,22 +48804,55 @@ function injectHazardStyles() {
       animation: gridlyHazardPulse 2.2s infinite;
     }
 
-    .gridly-hazard-marker.has-production-marker {
-      width: 46px;
-      height: 46px;
-      border: 0;
-      background: transparent;
-      box-shadow: none;
-      overflow: visible;
+    #map .leaflet-marker-icon.gridly-production-marker-icon {
+      width: 46px !important;
+      height: 46px !important;
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      overflow: visible !important;
     }
 
-    .gridly-production-marker-img {
-      width: 46px;
-      height: 46px;
+    #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker,
+    .gridly-hazard-marker.has-production-marker {
+      width: 46px !important;
+      height: 46px !important;
+      min-width: 46px;
+      min-height: 46px;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      overflow: visible !important;
       display: block;
+      place-items: initial;
+    }
+
+    #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker .gridly-production-marker-img,
+    .gridly-production-marker-img {
+      width: 46px !important;
+      height: 46px !important;
+      max-width: none !important;
+      max-height: none !important;
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
       object-fit: contain;
       pointer-events: none;
+      position: relative;
+      z-index: 1;
       filter: drop-shadow(0 7px 12px rgba(0, 0, 0, 0.34));
+    }
+
+    #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:is(.high, .moderate, .low, .route-relevant),
+    #map .leaflet-marker-icon.gridly-production-marker-icon.gridly-marker-hazard-critical .gridly-hazard-marker.has-production-marker,
+    #map .leaflet-marker-icon.gridly-production-marker-icon.gridly-marker-hazard-high .gridly-hazard-marker.has-production-marker,
+    #map .leaflet-marker-icon.gridly-production-marker-icon.gridly-marker-hazard-moderate .gridly-hazard-marker.has-production-marker,
+    #map .leaflet-marker-icon.gridly-production-marker-icon.gridly-marker-hazard-low .gridly-hazard-marker.has-production-marker,
+    #map .leaflet-marker-icon.gridly-production-marker-icon [data-gridly-impact-level].gridly-hazard-marker.has-production-marker {
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
     }
 
     .gridly-hazard-marker.has-production-marker.high .gridly-production-marker-img,
