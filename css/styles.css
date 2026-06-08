@@ -8617,22 +8617,55 @@ body.modal-open {
   animation: gridlyHazardBreath 2.1s ease-in-out infinite;
 }
 
-.gridly-hazard-marker.has-production-marker {
-  width: 46px;
-  height: 46px;
+#map .leaflet-marker-icon.gridly-production-marker-icon {
+  width: 46px !important;
+  height: 46px !important;
   border: 0 !important;
-  background: transparent;
+  background: transparent !important;
   box-shadow: none !important;
-  overflow: visible;
+  overflow: visible !important;
 }
 
-.gridly-production-marker-img {
-  width: 46px;
-  height: 46px;
+#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker,
+.gridly-hazard-marker.has-production-marker {
+  width: 46px !important;
+  height: 46px !important;
+  min-width: 46px;
+  min-height: 46px;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
   display: block;
+  place-items: initial;
+}
+
+#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker .gridly-production-marker-img,
+.gridly-production-marker-img {
+  width: 46px !important;
+  height: 46px !important;
+  max-width: none !important;
+  max-height: none !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
   object-fit: contain;
   pointer-events: none;
+  position: relative;
+  z-index: 1;
   filter: drop-shadow(0 7px 12px rgba(0, 0, 0, 0.34));
+}
+
+#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:is(.high, .moderate, .low, .route-relevant),
+#map .leaflet-marker-icon.gridly-production-marker-icon.gridly-marker-hazard-critical .gridly-hazard-marker.has-production-marker,
+#map .leaflet-marker-icon.gridly-production-marker-icon.gridly-marker-hazard-high .gridly-hazard-marker.has-production-marker,
+#map .leaflet-marker-icon.gridly-production-marker-icon.gridly-marker-hazard-moderate .gridly-hazard-marker.has-production-marker,
+#map .leaflet-marker-icon.gridly-production-marker-icon.gridly-marker-hazard-low .gridly-hazard-marker.has-production-marker,
+#map .leaflet-marker-icon.gridly-production-marker-icon [data-gridly-impact-level].gridly-hazard-marker.has-production-marker {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 .gridly-hazard-marker.has-production-marker.high .gridly-production-marker-img,
