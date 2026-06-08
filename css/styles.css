@@ -18881,3 +18881,104 @@ body[data-layout-mode="portrait"] #mobileRouteActionBar {
     padding-right: 40px !important;
   }
 }
+
+/* V266.1D — Manage Places focused flow consistency fix (visual/layout only) */
+.route-setup-modal-card .route-setup-grid-mobile {
+  grid-template-columns: minmax(0, 1fr) !important;
+  justify-items: stretch !important;
+  align-items: stretch !important;
+  width: 100% !important;
+}
+
+.route-setup-modal-card #managePlacesSourceGroup,
+.route-setup-modal-card #managePlacesAddressGroup,
+.route-setup-modal-card #managePlacesSavedGroup {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  max-width: none !important;
+  justify-self: stretch !important;
+  align-self: stretch !important;
+  box-sizing: border-box !important;
+}
+
+.route-setup-modal-card #managePlacesSourceGroup,
+.route-setup-modal-card #managePlacesAddressGroup,
+.route-setup-modal-card #managePlacesSavedGroup,
+.route-setup-modal-card #managePlacesSaveGroup {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.route-setup-modal-card #managePlacesSourceGroup .manage-source-row {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  justify-items: stretch !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin-inline: auto !important;
+}
+
+.route-setup-modal-card #managePlacesSourceGroup .manage-source-row .destination-chip,
+.route-setup-modal-card #managePlacesBackBtn,
+.route-setup-modal-card #managePlacesAddressGroup label,
+.route-setup-modal-card #managePlacesAddressGroup input,
+.route-setup-modal-card #managePlacesSavedGroup label,
+.route-setup-modal-card #managePlacesSavedGroup select {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+}
+
+.route-setup-modal-card #managePlacesSaveGroup {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  max-width: none !important;
+  justify-self: stretch !important;
+  align-self: stretch !important;
+  box-sizing: border-box !important;
+}
+
+body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > #managePlacesSaveGroup {
+  position: static !important;
+  bottom: auto !important;
+  flex-shrink: 0 !important;
+  margin-top: 12px !important;
+}
+
+body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > #managePlacesSaveGroup .destination-chip-row,
+body[data-mobile-mode] #managePlacesSaveGroup .destination-chip-row {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  justify-items: stretch !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
+body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > #managePlacesSaveGroup .primary-btn,
+body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > #managePlacesSaveGroup #mobileResetPlacesBtn {
+  flex: none !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
+@media (max-width: 760px) {
+  .route-setup-modal-card[data-mode="manage"] .route-setup-grid-mobile,
+  .route-setup-modal-card[data-mode="manage"] #managePlacesSourceGroup,
+  .route-setup-modal-card[data-mode="manage"] #managePlacesAddressGroup,
+  .route-setup-modal-card[data-mode="manage"] #managePlacesSavedGroup,
+  .route-setup-modal-card[data-mode="manage"] #managePlacesSaveGroup {
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+}
+
+body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] {
+  overflow-y: auto !important;
+}
+
+body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > .route-setup-grid-mobile {
+  flex: 0 0 auto !important;
+  overflow: visible !important;
+}

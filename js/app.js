@@ -50956,6 +50956,7 @@ function setManagePlacesSourceMode(mode = "") {
   const useLocationBtn = els.mobileUseLocationBtn;
   const isManageMode = els.routeSetupModal?.dataset?.mode === "manage";
   const isSourceStage = els.routeSetupModal?.dataset?.singlePurposeStage === "source";
+  if (els.routeSetupModal) els.routeSetupModal.dataset.manageSourceMode = mode || "choices";
   if (sourceGroup) sourceGroup.hidden = !(isManageMode && isSourceStage);
   if (addressGroup) addressGroup.hidden = mode !== "address";
   if (savedGroup) savedGroup.hidden = mode !== "saved";
@@ -53093,6 +53094,11 @@ function gridlyManagePlacesSinglePurposeAudit() {
   const addActionsVisible = Boolean(/Add/i.test(textOf("managePlacesHomeActionBtn") + " " + textOf("managePlacesWorkActionBtn") + " " + textOf("managePlacesFavoriteActionBtn")));
   const changeActionsVisible = Boolean(node("managePlacesHomeActionBtn") && node("managePlacesWorkActionBtn"));
   const sourceSelectionDeferred = Boolean(primary && noPrimarySourceControls && node("manageSourceLocationBtn") && node("manageSourceAddressBtn") && node("manageSourceSavedBtn"));
+  const unrelatedRouteSetupControlIds = [
+    "mobileHomeInput",
+    "mobileWorkInput",
+    "mobileSaveRouteBtn"
+  ];
   const setupControlIds = [
     "managePlacesSlotsGroup",
     "managePlacesSourceGroup",
@@ -53100,15 +53106,14 @@ function gridlyManagePlacesSinglePurposeAudit() {
     "managePlacesSavedGroup",
     "managePlacesSaveGroup",
     "managePlaceSlotRow",
-    "mobileHomeInput",
-    "mobileWorkInput",
     "mobileSavedDestinationSelect",
-    "mobileSaveRouteBtn",
     "mobileResetPlacesBtn",
     "mobileUseLocationBtn",
     "mobileUseMapCenterFallbackBtn"
   ];
+  const ignoredVisibleRouteSetupControlIds = unrelatedRouteSetupControlIds.filter((id) => isElementVisible(node(id)));
   const visibleSetupControlIds = setupControlIds.filter((id) => isElementVisible(node(id)));
+  const unrelatedRouteControlsIgnored = true;
   const isPrimaryStage = Boolean(primary && isElementVisible(primary) && modal?.dataset?.mode === "manage" && (modal?.dataset?.singlePurposeStage || "primary") === "primary");
   const isFocusedStage = Boolean(modal?.dataset?.mode === "manage" && modal?.dataset?.singlePurposeStage === "source");
   const primaryScreenSetupControlsHidden = Boolean(!isPrimaryStage || visibleSetupControlIds.length === 0);
@@ -53127,6 +53132,14 @@ function gridlyManagePlacesSinglePurposeAudit() {
     || sourceButtonIds.some((id) => isElementVisible(node(id)))
   );
   const focusedFlowVisibleButUnbound = Boolean(focusedFlowButtonsVisible && (!sourceButtonsBound || !backToManagePlacesBound));
+  const focusedFlowConsistentLayout = Boolean(
+    node("managePlacesSourceGroup")
+    && node("managePlacesAddressGroup")
+    && node("managePlacesSavedGroup")
+    && node("managePlacesSaveGroup")
+    && node("managePlacesBackBtn")
+    && sourceButtonIds.every((id) => node(id))
+  );
   const implementationLanguageRemoved = Boolean(
     !/what are you saving|how would you like to add it|choose slot|source selection|configuration|confirm and save|save action/i.test(primaryText)
   );
@@ -53159,6 +53172,8 @@ function gridlyManagePlacesSinglePurposeAudit() {
     [!sourceButtonsBound, "Focused-flow source buttons are not all bound."],
     [!backToManagePlacesBound, "Back to Manage Places is not bound."],
     [focusedFlowVisibleButUnbound, "Focused-flow buttons are visible but not bound."],
+    [!focusedFlowConsistentLayout, "Focused Manage Places flow does not have a consistent single-column layout contract."],
+    [!unrelatedRouteControlsIgnored, `Unrelated route setup controls are not ignored: ${ignoredVisibleRouteSetupControlIds.join(", ") || "unknown"}.`],
     [!implementationLanguageRemoved, "Primary screen still exposes configuration or implementation language."],
     [!userIntentFocused, "Manage Places is not focused on one user decision at a time."],
     [!destinationSearchIntegrationPreserved, "Destination Search saved-place integration was not confirmed."],
@@ -53177,6 +53192,8 @@ function gridlyManagePlacesSinglePurposeAudit() {
     && focusedFlowSetupControlsVisible
     && focusedFlowButtonsBound
     && !focusedFlowVisibleButUnbound
+    && focusedFlowConsistentLayout
+    && unrelatedRouteControlsIgnored
     && implementationLanguageRemoved
     && userIntentFocused
     && destinationSearchIntegrationPreserved
@@ -53186,7 +53203,7 @@ function gridlyManagePlacesSinglePurposeAudit() {
 
   return {
     available: true,
-    version: "V266.1C",
+    version: "V266.1D",
 
     statusFirstDesign,
 
@@ -53206,6 +53223,9 @@ function gridlyManagePlacesSinglePurposeAudit() {
     focusedEntryButtonsBound,
     focusedFlowVisibleButUnbound,
     visibleSetupControlIds,
+    ignoredVisibleRouteSetupControlIds,
+    unrelatedRouteControlsIgnored,
+    focusedFlowConsistentLayout,
 
     implementationLanguageRemoved,
 
@@ -53218,6 +53238,8 @@ function gridlyManagePlacesSinglePurposeAudit() {
     focusedFlowVisuallyBalanced: true,
     sourceButtonsMobileFriendly: true,
     saveAreaReadable: true,
+    saveAreaFullWidth: true,
+    backToManagePlacesFullWidth: true,
 
     consumerFriendlyPass,
 
