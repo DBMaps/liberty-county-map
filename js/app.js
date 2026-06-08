@@ -53568,6 +53568,119 @@ window.gridlyRouteButtonOwnershipAudit = function gridlyRouteButtonOwnershipAudi
   return gridlyBuildRouteButtonOwnershipAudit();
 };
 
+function gridlyBuildRouteWatchOwnershipAudit() {
+  const routeButtonAudit = typeof gridlyBuildRouteButtonContextAudit === "function"
+    ? gridlyBuildRouteButtonContextAudit()
+    : {};
+  const destinationPreview = typeof getGridlyDestinationRoutePreviewState === "function"
+    ? getGridlyDestinationRoutePreviewState()
+    : (window.GridlyDestinationRoutePreview || {});
+  const destinationSearchOwnsRouting = Boolean(
+    typeof getGridlyDestinationRoutePreviewState === "function"
+    && typeof openGridlyDestinationImpactPane === "function"
+    && typeof clearGridlyDestinationRoutePreview === "function"
+  );
+  const routeWatchOwnsMonitoring = Boolean(
+    typeof startRouteWatch === "function"
+    || typeof stopGridlyRouteWatch === "function"
+    || document.getElementById("routeWatchStartBtn")
+    || document.getElementById("stopRouteWatchBtn")
+    || document.getElementById("routeOwnershipMonitoring")
+  );
+  const routeQuickPanel = document.getElementById("gridlyMobileRouteQuickPanel");
+  const routeWatchSetupCreatesRoute = Boolean(
+    document.getElementById("routeWatchStartBtn")
+    || routeQuickPanel?.querySelector?.('[data-action="start-route-watch-quick"]')
+    || document.getElementById("mobileRouteQuickStart")
+    || document.getElementById("mobileRouteQuickDestination")
+  );
+  const routeWatchMonitoringVisible = Boolean(
+    routeWatchActivated
+    || window.__gridlyRouteWatchActive
+    || /monitor/i.test(document.getElementById("routeOwnershipMonitoring")?.textContent || "")
+    || /route watch/i.test(document.getElementById("routeWatchSetupHint")?.textContent || "")
+  );
+  const destinationPreviewAvailable = Boolean(
+    destinationPreview?.active
+    || ["loading", "ready"].includes(String(destinationPreview?.status || ""))
+    || Number(destinationRoutePreviewLayer?.getLayers?.().length || 0) > 0
+    || (Array.isArray(destinationPreview?.geometry) && destinationPreview.geometry.length >= 2)
+  );
+  const routeButtonCurrentlyRepresents = destinationPreviewAvailable
+    ? "Current route details for an active Destination Search route, with Route Watch setup/manage available secondarily."
+    : "Route Watch setup / monitored-route creation when no Destination Search route is active.";
+  const firstTimeTesterExpectation = destinationPreviewAvailable
+    ? "If Current Location → Walmart is already active, tapping Route should show that current route first, not ask for another route."
+    : "If no route is active, tapping Route can reasonably help set up commute monitoring such as Home → Work.";
+  const routeWatchPrimaryPurpose = "Monitor a saved start → destination trip such as Home → Work, expose commute readiness, and keep watching for changes.";
+  const destinationRoutingPrimaryPurpose = "Create and show a current trip from Current Location to the searched destination such as Walmart, Home, Work, or Favorite.";
+  const ownershipOverlapDetected = Boolean(
+    destinationSearchOwnsRouting
+    && routeWatchOwnsMonitoring
+    && routeWatchSetupCreatesRoute
+    && (routeButtonAudit?.routeButtonOpensSetupWhenNoRoute || routeButtonAudit?.routeButtonOpensCurrentRouteWhenActive || routeButtonAudit?.routeButtonCurrentOwner)
+  );
+  const separationRecommended = Boolean(destinationSearchOwnsRouting && routeWatchOwnsMonitoring && ownershipOverlapDetected);
+  const consumerFriendlyPass = Boolean(destinationSearchOwnsRouting && routeWatchOwnsMonitoring && !ownershipOverlapDetected);
+
+  const findings = [
+    "Destination Search solves the user job: I know where I want to go now; show me the current route from Current Location to that destination.",
+    "Route Watch solves a different user job: I have a recurring or saved trip; monitor it for readiness, delays, and changes before I leave.",
+    "They are related but not the same job: Destination Search is current destination routing, while Route Watch is commute/trip monitoring.",
+    routeWatchSetupCreatesRoute
+      ? "Route Watch currently creates or updates a saved start → destination route as part of starting monitoring."
+      : "Route Watch route-creation controls were not detected in the current DOM snapshot.",
+    routeWatchOwnsMonitoring
+      ? "Route Watch owns monitoring language and stop/start monitoring controls."
+      : "Route Watch monitoring ownership was not fully detectable in this snapshot.",
+    destinationSearchOwnsRouting
+      ? "Destination Search already owns destination route preview, current route details, and clear-route behavior."
+      : "Destination Search routing ownership was not fully detectable in this snapshot.",
+    routeWatchOwnsMonitoring
+      ? "Route Watch is better described as monitoring than as the primary current-routing entry point."
+      : "Route Watch monitoring model needs review before ownership can be separated cleanly.",
+    ownershipOverlapDetected
+      ? "Ownership overlap is likely to create confusion because Route can mean current route details or Route Watch setup depending on context."
+      : "No actionable ownership overlap was detected in this snapshot.",
+    firstTimeTesterExpectation,
+    "Model A (Route owns Destination Routing + Route Watch) pro: one obvious Route entry. Con: repeats route creation and blurs current routing with monitoring.",
+    "Model B (Destination Search owns routing; Route Watch owns monitoring) pro: maps cleanly to user jobs and beta-tester expectations. Con: requires careful cross-links between current route details and monitoring setup.",
+    "Model C (Routes umbrella owns routing, Route Watch, saved routes, and details) pro: scalable taxonomy. Con: larger IA change and higher risk while Directional Intelligence remains paused.",
+    "Preferred model: Model B for now, with Destination Search as routing owner and Route Watch as monitoring owner.",
+    "Merge recommendation: merge audit-only instrumentation; do not rename, move, or change Route Watch behavior in this version."
+  ];
+
+  return {
+    available: true,
+    version: "V262.2",
+    destinationSearchOwnsRouting,
+    routeWatchOwnsMonitoring,
+    ownershipOverlapDetected,
+    routeButtonCurrentlyRepresents,
+    firstTimeTesterExpectation,
+    routeWatchPrimaryPurpose,
+    destinationRoutingPrimaryPurpose,
+    separationRecommended,
+    consumerFriendlyPass,
+    findings,
+    auditOnly: true,
+    protectedSystemsPass: true,
+    modelRecommendation: "Model B — Destination Search owns routing; Route Watch owns monitoring.",
+    firstTimeTesterScenarios: {
+      activeDestinationRoute: "Current Location → Walmart already active: Route should open Current Route Details first.",
+      noActiveRouteCommuteMonitoring: "No active route and user wants commute monitoring: Route Watch setup should allow Home → Work selection and monitoring start.",
+      homeWorkMonitoring: "Home → Work monitoring belongs to Route Watch monitoring ownership, not Destination Search current-destination routing."
+    },
+    routeWatchCreatesRoutes: routeWatchSetupCreatesRoute,
+    routeWatchMonitorsRoutes: Boolean(routeWatchOwnsMonitoring && routeWatchMonitoringVisible),
+    routeButtonContextAudit: routeButtonAudit
+  };
+}
+
+window.gridlyRouteWatchOwnershipAudit = function gridlyRouteWatchOwnershipAudit() {
+  return gridlyBuildRouteWatchOwnershipAudit();
+};
+
 function removeGridlyRoutePreviewLayers() {
   if (window.__gridlyRoutePreviewLayer && typeof map?.removeLayer === "function" && map.hasLayer(window.__gridlyRoutePreviewLayer)) {
     map.removeLayer(window.__gridlyRoutePreviewLayer);
