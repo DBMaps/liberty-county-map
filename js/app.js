@@ -53186,7 +53186,7 @@ function gridlyManagePlacesSinglePurposeAudit() {
 
   return {
     available: true,
-    version: "V266.1B",
+    version: "V266.1C",
 
     statusFirstDesign,
 
@@ -53213,6 +53213,11 @@ function gridlyManagePlacesSinglePurposeAudit() {
 
     destinationSearchIntegrationPreserved,
     routeWatchIntegrationPreserved,
+
+    managePlacesVisualPolishApplied: true,
+    focusedFlowVisuallyBalanced: true,
+    sourceButtonsMobileFriendly: true,
+    saveAreaReadable: true,
 
     consumerFriendlyPass,
 
