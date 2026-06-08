@@ -70557,6 +70557,9 @@ function gridlyBetaReadinessReviewAudit() {
   const routeClassificationRecommendedBetaBlockers = Array.isArray(routeBlockerClassificationAudit?.recommendedBetaBlockers)
     ? routeBlockerClassificationAudit.recommendedBetaBlockers
     : [];
+  const routeStateClassifications = Array.isArray(routeBlockerClassificationAudit?.classifications)
+    ? routeBlockerClassificationAudit.classifications
+    : [];
   const actualUserVisibleRouteIssueDetected = Boolean(routeBlockerClassificationAudit?.actualUserVisibleRouteIssueDetected);
   const nonUserFacingRouteStatesIgnored = Boolean(
     routeBlockerClassificationAvailable
@@ -70868,7 +70871,7 @@ function gridlyBetaReadinessReviewAudit() {
   findings.push(safetyStatementPresent ? "A visible safety statement was detected." : "No explicit driving/emergency safety statement was detected; add safety copy before a controlled beta.");
   findings.push(desktopGatePresent ? "Desktop surfaces are present and the future business portal is hidden/gated." : "Desktop gating could not be verified from the active DOM snapshot.");
   findings.push(routeExperienceReady ? "Route Watch, destination search, saved places, route ownership, route origin, and current-location readiness are present for beta testing." : `Route readiness has specific blocker(s): ${routeBlockers.join(" ") || "review supporting route audits."}`);
-  if (nonUserFacingRouteStatesIgnored) findings.push(`V264.3 route classification ignored non-user-facing route states as blockers: ${(routeDiagnostics.routeStateClassifications.length ? routeDiagnostics.routeStateClassifications : ["none_detected"]).join(", ")}.`);
+  if (nonUserFacingRouteStatesIgnored) findings.push(`V264.3 route classification ignored non-user-facing route states as blockers: ${(routeStateClassifications.length ? routeStateClassifications : ["none_detected"]).join(", ")}.`);
   if (!actualUserVisibleRouteIssueDetected) findings.push("V264.3 route classification detected no actual user-visible route issue; idle/no-route/closed/displayApplied false classification noise does not create a beta blocker.");
   if (routeDisplayAppliedFalseDueToCommuteDeltaUnavailable) findings.push("Route Watch displayApplied false was caused by commute_delta_unavailable and is not treated as a beta blocker by itself.");
   findings.push(awarenessExperienceReady ? "Awareness Brief, alerts, map filters, and Community Pulse surfaces are present; closed sheets are classified separately from missing surfaces." : `Awareness readiness has specific blocker(s): ${awarenessBlockers.join(" ") || "review supporting awareness audits."}`);
@@ -70918,7 +70921,7 @@ function gridlyBetaReadinessReviewAudit() {
     currentLocationReadinessPass,
     routeReadinessFalseNegative,
     routeClassificationAvailable: routeBlockerClassificationAvailable,
-    routeStateClassifications: Array.isArray(routeBlockerClassificationAudit?.classifications) ? routeBlockerClassificationAudit.classifications : [],
+    routeStateClassifications,
     nonUserFacingRouteStatesIgnored,
     actualUserVisibleRouteIssueDetected,
     recommendedRouteBetaBlockers: routeClassificationRecommendedBetaBlockers,
