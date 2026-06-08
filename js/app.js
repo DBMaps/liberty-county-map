@@ -70720,7 +70720,24 @@ function gridlyBetaReadinessReviewAudit() {
   const destinationOriginAudit = runAuditSafely(target?.gridlyDestinationCurrentLocationOriginAudit);
   const currentLocationAudit = runAuditSafely(target?.gridlyAppLocationReadinessAudit);
   const reportingAudit = runAuditSafely(target?.gridlyReportSubmissionAudit) || runAuditSafely(target?.gridlyReportingAudit);
-  const alertsAudit = runAuditSafely(target?.gridlyVisualConsistencyAudit);
+  const legacyVisualConsistencyAudit = runAuditSafely(target?.gridlyVisualConsistencyAudit);
+  const alertsVisualConsistencyBlockerAudit = runAuditSafely(target?.gridlyAlertsVisualConsistencyBlockerAudit);
+  const alertsVisualConsistencyAuditAvailable = Boolean(alertsVisualConsistencyBlockerAudit?.available === true);
+  const alertsVisualConsistencyBetaReady = Boolean(
+    alertsVisualConsistencyAuditAvailable
+    && alertsVisualConsistencyBlockerAudit?.blockerPresent === false
+    && alertsVisualConsistencyBlockerAudit?.consumerFriendlyPass === true
+  );
+  const alertsVisualConsistencyBlocksBeta = Boolean(
+    alertsVisualConsistencyAuditAvailable
+    && (
+      alertsVisualConsistencyBlockerAudit?.blockerPresent === true
+      || (
+        alertsVisualConsistencyBlockerAudit?.consumerFriendlyPass === false
+        && alertsVisualConsistencyBlockerAudit?.userVisibleIssueDetected === true
+      )
+    )
+  );
   const routeBlockerClassificationAudit = runAuditSafely(target?.gridlyBetaRouteBlockerClassificationAudit, { skipBetaReadiness: true });
   const routeBlockerClassificationAvailable = Boolean(routeBlockerClassificationAudit && routeBlockerClassificationAudit.available !== false);
   const routeClassificationRecommendedBetaBlockers = Array.isArray(routeBlockerClassificationAudit?.recommendedBetaBlockers)
@@ -70949,14 +70966,14 @@ function gridlyBetaReadinessReviewAudit() {
     && selectorPresent("#alertsList")
     && selectorPresent("#gridlyCommunityPulseSurface")
     && selectorPresent(".geo-filter-pill[data-geo-filter='nearby']")
-    && (alertsAudit?.betaPolishReady !== false)
+    && !alertsVisualConsistencyBlocksBeta
   );
   const awarenessExperienceReady = Boolean(
     awarenessBriefAvailable
     && alertsAvailable
     && communityPulseAvailable
     && selectorPresent(".geo-filter-pill[data-geo-filter='nearby']")
-    && (alertsAudit?.betaPolishReady !== false)
+    && !alertsVisualConsistencyBlocksBeta
   );
   const awarenessReadinessFalseNegative = Boolean(
     !oldAwarenessExperienceReady
@@ -71033,7 +71050,7 @@ function gridlyBetaReadinessReviewAudit() {
     [!alertsAvailable, "Alerts surface or helper is missing."],
     [!communityPulseAvailable, "Community Pulse surface is missing."],
     [!selectorPresent(".geo-filter-pill[data-geo-filter='nearby']"), "Nearby map filter is missing."],
-    [alertsAudit?.betaPolishReady === false, "Alerts visual consistency audit reports beta polish is not ready."]
+    [alertsVisualConsistencyBlocksBeta, "Alerts visual consistency audit reports beta polish is not ready."]
   ]);
 
   if (deadButtonCount) findings.push(`${deadButtonCount} visible dead button candidate(s) detected: ${visibleDeadButtonCandidates.map((button) => text(button) || button.id || "button").slice(0, 5).join(", ")}.`);
@@ -71048,6 +71065,7 @@ function gridlyBetaReadinessReviewAudit() {
   if (nonUserFacingRouteStatesIgnored) findings.push(`V264.3 route classification ignored non-user-facing route states as blockers: ${(routeStateClassifications.length ? routeStateClassifications : ["none_detected"]).join(", ")}.`);
   if (!actualUserVisibleRouteIssueDetected) findings.push("V264.3 route classification detected no actual user-visible route issue; idle/no-route/closed/displayApplied false classification noise does not create a beta blocker.");
   if (routeDisplayAppliedFalseDueToCommuteDeltaUnavailable) findings.push("Route Watch displayApplied false was caused by commute_delta_unavailable and is not treated as a beta blocker by itself.");
+  if (alertsVisualConsistencyBetaReady && legacyVisualConsistencyAudit?.betaPolishReady === false) findings.push("V265.2 alerts visual consistency classification uses the alert-specific V265.1 blocker audit as source of truth; unrelated legacy Settings or Route Watch visual-polish diagnostics are informational only.");
   findings.push(awarenessExperienceReady ? "Awareness Brief, alerts, map filters, and Community Pulse surfaces are present; closed sheets are classified separately from missing surfaces." : `Awareness readiness has specific blocker(s): ${awarenessBlockers.join(" ") || "review supporting awareness audits."}`);
   findings.push(reportingExperienceReady ? "Reporting surfaces and shared-report helpers are present." : "Reporting experience is not fully beta-ready in this runtime.");
   if (feedbackReadinessFalseNegative) findings.push("V261.1 corrected a feedback false negative caused by hidden Settings feedback state or already-successful direct submit evidence.");
@@ -71114,15 +71132,21 @@ function gridlyBetaReadinessReviewAudit() {
     alertsAvailable,
     alertsHiddenBecauseClosed,
     communityPulseAvailable,
-    awarenessReadinessFalseNegative
+    awarenessReadinessFalseNegative,
+    alertsVisualConsistencyAuditAvailable,
+    alertsVisualConsistencyBetaReady,
+    alertsVisualConsistencyBlocksBeta,
+    alertsVisualConsistencyBlockerAudit,
+    legacyVisualConsistencyDiagnostics: legacyVisualConsistencyAudit
   };
 
   return {
     available: true,
-    version: "V264.5",
+    version: "V265.2",
     falseNegativeCleanupApplied: true,
     routeClassificationPatchApplied: true,
     routeOriginClassificationPatchApplied: true,
+    alertsVisualConsistencyClassificationPatchApplied: true,
     feedbackSystemReady,
     onboardingReady,
     safetyStatementPresent,
@@ -71159,6 +71183,11 @@ function gridlyBetaReadinessReviewAudit() {
     alertsHiddenBecauseClosed,
     communityPulseAvailable,
     awarenessReadinessFalseNegative,
+    alertsVisualConsistencyAuditAvailable,
+    alertsVisualConsistencyBetaReady,
+    alertsVisualConsistencyBlocksBeta,
+    alertsVisualConsistencyBlockerAudit,
+    legacyVisualConsistencyDiagnostics: legacyVisualConsistencyAudit,
     feedbackDiagnostics,
     routeDiagnostics,
     awarenessDiagnostics,
