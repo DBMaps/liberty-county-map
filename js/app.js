@@ -9692,7 +9692,8 @@ window.gridlyRouteWatchDisplayAudit = function gridlyRouteWatchDisplayAudit() {
   });
 };
 
-function gridlyRouteWatchDisplayBlockerAudit() {
+function gridlyRouteWatchDisplayBlockerAudit(options = {}) {
+  const skipBetaReadiness = Boolean(options?.skipBetaReadiness);
   const target = typeof window !== "undefined" ? window : globalThis;
   const hasDocument = typeof document !== "undefined";
   const findings = [];
@@ -9751,7 +9752,7 @@ function gridlyRouteWatchDisplayBlockerAudit() {
   const statusLine = routeWatchSurface?.querySelector?.(".route-watch-status-line") || null;
   const ownershipSummary = routeWatchSurface?.querySelector?.(".route-ownership-summary") || null;
   const routeWatchDisplayAudit = runAuditSafely(target?.gridlyRouteWatchDisplayAudit);
-  const betaAudit = runAuditSafely(target?.gridlyBetaReadinessReviewAudit);
+  const betaAudit = skipBetaReadiness ? null : runAuditSafely(target?.gridlyBetaReadinessReviewAudit);
   const routeOwnershipAudit = runAuditSafely(target?.gridlyRouteOwnershipAudit);
   const routeOriginAudit = runAuditSafely(target?.gridlyRouteOriginAudit);
 
@@ -9870,7 +9871,8 @@ if (typeof exposeGridlyAuditHelper === "function") {
   exposeGridlyAuditHelper("gridlyRouteWatchDisplayBlockerAudit", gridlyRouteWatchDisplayBlockerAudit);
 }
 
-function gridlyBetaRouteBlockerClassificationAudit() {
+function gridlyBetaRouteBlockerClassificationAudit(options = {}) {
+  const skipBetaReadiness = Boolean(options?.skipBetaReadiness);
   const target = typeof window !== "undefined" ? window : globalThis;
   const hasDocument = typeof document !== "undefined";
   const findings = [];
@@ -9909,10 +9911,10 @@ function gridlyBetaRouteBlockerClassificationAudit() {
   const id = (name) => hasDocument ? document.getElementById(name) : null;
   const selectorPresent = (selector) => hasDocument && Boolean(document.querySelector(selector));
   const text = (node) => String(node?.textContent || "").replace(/\s+/g, " ").trim();
-  const betaAudit = runAuditSafely("gridlyBetaReadinessReviewAudit");
+  const betaAudit = skipBetaReadiness ? { available: false, failing: false, result: null, error: "skipped_for_nested_classification" } : runAuditSafely("gridlyBetaReadinessReviewAudit");
   const routeOriginAudit = runAuditSafely("gridlyRouteOriginAudit");
   const routeWatchDisplayAudit = runAuditSafely("gridlyRouteWatchDisplayAudit");
-  const routeWatchDisplayBlockerAudit = runAuditSafely("gridlyRouteWatchDisplayBlockerAudit");
+  const routeWatchDisplayBlockerAudit = runAuditSafely("gridlyRouteWatchDisplayBlockerAudit", { skipBetaReadiness: true });
   const routeOwnershipAudit = runAuditSafely("gridlyRouteOwnershipAudit");
   const destinationSearchAudit = runAuditSafely("gridlyDestinationSearchShellAudit");
   const destinationOriginAudit = runAuditSafely("gridlyDestinationCurrentLocationOriginAudit");
@@ -10010,9 +10012,20 @@ function gridlyBetaRouteBlockerClassificationAudit() {
     && routeWatchDisplayBlockerAudit.result?.routeWatchMonitoringVisible
     && (routeWatchDisplayBlockerAudit.result?.routeWatchDisplayApplied || routeWatchDisplayFunctional)
   );
+  const routeDisplayAppliedFalseDueToCommuteDeltaUnavailable = Boolean(
+    routeWatchDisplayAudit.result?.displayApplied === false
+    && /commute_delta_unavailable/i.test(String(routeWatchDisplayAudit.result?.displayReason || routeWatchDisplayAudit.result?.reason || routeWatchDisplayAudit.result?.fallbackReason || ""))
+  );
   const routeWatchFalsePositiveDetected = Boolean(
     displayOnlyAuditConflict
     || (routeWatchDisplayAudit.result?.displayApplied === false && routeWatchDisplayFunctional && routeWatchAccessible)
+    || (routeDisplayAppliedFalseDueToCommuteDeltaUnavailable && routeWatchAccessible)
+  );
+  const routeWatchDisplayNonBlocking = Boolean(
+    !routeWatchDisplayAvailable
+    || !routeWatchDisplayVisible
+    || routeWatchDisplayFunctional
+    || routeDisplayAppliedFalseDueToCommuteDeltaUnavailable
   );
   const actualUserVisibleRouteIssueDetected = Boolean(
     !destinationSearchAvailable
@@ -10021,7 +10034,7 @@ function gridlyBetaRouteBlockerClassificationAudit() {
     || !managePlacesAvailable
     || !savedPlacesRouteSelectorsAvailable
     || !currentLocationRouteAvailable
-    || (routeWatchDisplayAvailable && routeWatchDisplayVisible && !routeWatchDisplayFunctional)
+    || (routeWatchDisplayAvailable && routeWatchDisplayVisible && !routeWatchDisplayFunctional && !routeDisplayAppliedFalseDueToCommuteDeltaUnavailable)
     || routeOriginAuditFailing
     || routeOwnershipFailing
   );
@@ -10036,7 +10049,7 @@ function gridlyBetaRouteBlockerClassificationAudit() {
   if (!destinationSearchAvailable) recommendedBetaBlockers.push("Destination Search helper or shell/input is missing.");
   if (!routeDetailsAvailable) recommendedBetaBlockers.push("Route Details access is missing.");
   if (!routeWatchAccessible) recommendedBetaBlockers.push("Route Watch controls are missing.");
-  if (routeWatchDisplayAvailable && routeWatchDisplayVisible && !routeWatchDisplayFunctional) recommendedBetaBlockers.push("Route Watch display has a user-visible functional issue.");
+  if (routeWatchDisplayAvailable && routeWatchDisplayVisible && !routeWatchDisplayFunctional && !routeDisplayAppliedFalseDueToCommuteDeltaUnavailable) recommendedBetaBlockers.push("Route Watch display has a user-visible functional issue.");
   if (!managePlacesAvailable) recommendedBetaBlockers.push("Manage Places access is missing.");
   if (!savedPlacesRouteSelectorsAvailable) recommendedBetaBlockers.push("Saved Places route selectors are missing.");
   if (!currentLocationRouteAvailable) recommendedBetaBlockers.push("Current Location route origin controls are missing or failing.");
@@ -10054,7 +10067,7 @@ function gridlyBetaRouteBlockerClassificationAudit() {
     destinationSearchAvailable
     && routeDetailsAvailable
     && routeWatchAccessible
-    && routeWatchDisplayFunctional
+    && routeWatchDisplayNonBlocking
     && managePlacesAvailable
     && savedPlacesRouteSelectorsAvailable
     && currentLocationRouteAvailable
@@ -10067,6 +10080,8 @@ function gridlyBetaRouteBlockerClassificationAudit() {
   findings.push(routeWatchDisplayVisible ? "Route Watch display surface is visible in the current DOM snapshot." : "Route Watch display surface is closed or hidden in the current DOM snapshot; closed_state is not automatically a beta blocker.");
   findings.push(routeWatchDisplayFunctional ? "Route Watch display is functionally available: controls, readiness copy, monitoring copy, and metrics are present." : "Route Watch display functionality was not fully proven from this snapshot.");
   findings.push(routeOriginAuditAvailable ? "Route origin audit helper is available." : "Route origin audit helper is unavailable; audit_unavailable is separate from audit_failure.");
+  if (routeDisplayAppliedFalseDueToCommuteDeltaUnavailable) findings.push("Route Watch display audit returned displayApplied false because commute_delta_unavailable; V264.3 classifies that as non-blocking without a user-visible route failure.");
+  if (!actualUserVisibleRouteIssueDetected) findings.push("No actual user-visible route issue was detected; idle/no-route/closed states are diagnostic classifications only.");
   if (routeOriginAuditFailing) findings.push("Route origin audit is available but failing its ownership/consumer/protected-system checks.");
   if (routeWatchFalsePositiveDetected) findings.push("Route Watch display blocker classification conflict detected: the display is accessible/functional while a supporting audit classifies it as a real display issue.");
   if (unavailableAuditMisclassified) findings.push("Current Beta Readiness combines route origin audit_unavailable with audit_failure in one blocker string; V264.2 recommends separating them.");
@@ -10081,7 +10096,7 @@ function gridlyBetaRouteBlockerClassificationAudit() {
 
   return {
     available: true,
-    version: "V264.2",
+    version: "V264.3",
     activeRoutePresent,
     routeOriginAuditAvailable,
     routeOriginAuditFailing,
@@ -10094,6 +10109,8 @@ function gridlyBetaRouteBlockerClassificationAudit() {
     closedStateMisclassified,
     noRouteStateMisclassified,
     actualUserVisibleRouteIssueDetected,
+    nonUserFacingRouteStatesIgnored: Boolean(!actualUserVisibleRouteIssueDetected && routeStateClassifications.some((classification) => /no_active_route|idle_state|closed_state|audit_unavailable/.test(classification))),
+    routeDisplayAppliedFalseDueToCommuteDeltaUnavailable,
     recommendedBetaBlockerCount: uniqueRecommendedBetaBlockers.length,
     currentBetaBlockers,
     recommendedBetaBlockers: uniqueRecommendedBetaBlockers,
@@ -10106,6 +10123,7 @@ function gridlyBetaRouteBlockerClassificationAudit() {
       routeWatchAccessible,
       routeWatchReadinessVisible,
       routeWatchMonitoringVisible,
+      routeWatchDisplayNonBlocking,
       routeOriginAuditUnavailable,
       unavailableAuditMisclassified,
       destinationSearchAvailable,
@@ -10116,6 +10134,8 @@ function gridlyBetaRouteBlockerClassificationAudit() {
       routeOwnershipAuditAvailable: Boolean(routeOwnershipAudit.available),
       routeOwnershipAuditFailing: routeOwnershipFailing,
       routeWatchDisplayAuditDisplayApplied: Boolean(routeWatchDisplayAudit.result?.displayApplied),
+      routeWatchDisplayAuditDisplayReason: String(routeWatchDisplayAudit.result?.displayReason || routeWatchDisplayAudit.result?.reason || "unknown"),
+      routeDisplayAppliedFalseDueToCommuteDeltaUnavailable,
       routeWatchDisplayBlockerType: displayBlockerType || "unknown",
       routeWatchDisplayBlockerUserVisibleIssue: Boolean(routeWatchDisplayBlockerAudit.result?.userVisibleIssueDetected)
     }
@@ -70532,6 +70552,17 @@ function gridlyBetaReadinessReviewAudit() {
   const currentLocationAudit = runAuditSafely(target?.gridlyAppLocationReadinessAudit);
   const reportingAudit = runAuditSafely(target?.gridlyReportSubmissionAudit) || runAuditSafely(target?.gridlyReportingAudit);
   const alertsAudit = runAuditSafely(target?.gridlyVisualConsistencyAudit);
+  const routeBlockerClassificationAudit = runAuditSafely(target?.gridlyBetaRouteBlockerClassificationAudit, { skipBetaReadiness: true });
+  const routeBlockerClassificationAvailable = Boolean(routeBlockerClassificationAudit && routeBlockerClassificationAudit.available !== false);
+  const routeClassificationRecommendedBetaBlockers = Array.isArray(routeBlockerClassificationAudit?.recommendedBetaBlockers)
+    ? routeBlockerClassificationAudit.recommendedBetaBlockers
+    : [];
+  const actualUserVisibleRouteIssueDetected = Boolean(routeBlockerClassificationAudit?.actualUserVisibleRouteIssueDetected);
+  const nonUserFacingRouteStatesIgnored = Boolean(
+    routeBlockerClassificationAvailable
+    && !actualUserVisibleRouteIssueDetected
+    && routeClassificationRecommendedBetaBlockers.length === 0
+  );
 
   const visibleDeadButtonCandidates = allVisible("button").filter((button) => {
     const label = text(button) || button.getAttribute("aria-label") || button.id || "button";
@@ -70684,23 +70715,40 @@ function gridlyBetaReadinessReviewAudit() {
     && elementPresent("stopRouteWatchBtn")
     && (routeAudit?.displayApplied !== false)
   );
-  const routeReadinessFalseNegative = Boolean(
-    !oldRouteExperienceReady
-    && savedPlaceDestinationAuditPass
-    && destinationSearchAvailable
-    && currentLocationReadinessPass
-    && (destinationSearchHiddenBecauseClosed || routeOwnershipAuditPass || routeOriginAuditPass)
+  const routeDisplayAppliedFalseDueToCommuteDeltaUnavailable = Boolean(
+    routeAudit?.displayApplied === false
+    && /commute_delta_unavailable/i.test(String(routeAudit?.displayReason || routeAudit?.reason || routeAudit?.fallbackReason || ""))
   );
-  const routeExperienceReady = Boolean(
+  const routeCoreControlsAvailable = Boolean(
     savedPlaceDestinationAuditPass
     && destinationSearchAvailable
-    && currentLocationReadinessPass
-    && routeOwnershipAuditPass
-    && routeOriginAuditPass
     && elementPresent("routeWatchStartBtn")
     && elementPresent("showFullRouteBtn")
     && elementPresent("stopRouteWatchBtn")
-    && (routeAudit?.displayApplied !== false)
+  );
+  const routeAuditBackedReady = Boolean(
+    routeCoreControlsAvailable
+    && currentLocationReadinessPass
+    && routeOwnershipAuditPass
+    && routeOriginAuditPass
+    && (routeAudit?.displayApplied !== false || routeDisplayAppliedFalseDueToCommuteDeltaUnavailable)
+  );
+  const routeClassificationReady = Boolean(
+    routeCoreControlsAvailable
+    && nonUserFacingRouteStatesIgnored
+    && (routeBlockerClassificationAudit?.consumerFriendlyPass !== false)
+  );
+  const routeExperienceReady = Boolean(routeAuditBackedReady || routeClassificationReady);
+  const routeReadinessFalseNegative = Boolean(
+    !oldRouteExperienceReady
+    && routeExperienceReady
+    && (
+      destinationSearchHiddenBecauseClosed
+      || routeOwnershipAuditPass
+      || routeOriginAuditPass
+      || nonUserFacingRouteStatesIgnored
+      || routeDisplayAppliedFalseDueToCommuteDeltaUnavailable
+    )
   );
 
   const reportingExperienceReady = Boolean(
@@ -70755,17 +70803,53 @@ function gridlyBetaReadinessReviewAudit() {
     [Boolean(feedbackExperienceAudit?.consumerFriendlyPass === false && !feedbackReadinessFalseNegative && !feedbackFormHiddenBecauseClosed), "Feedback consumer-facing copy or controls failed the experience audit."]
   ]);
   const routeBlockers = [];
+  const routeOwnershipAuditBlocking = Boolean(
+    !routeOwnershipAuditPass
+    && (
+      !routeBlockerClassificationAvailable
+      || actualUserVisibleRouteIssueDetected
+      || /ownership/i.test(routeClassificationRecommendedBetaBlockers.join(" "))
+    )
+  );
+  const routeOriginAuditBlocking = Boolean(
+    !routeOriginAuditPass
+    && (
+      !routeBlockerClassificationAvailable
+      || Boolean(routeBlockerClassificationAudit?.routeOriginAuditFailing)
+      || /origin/i.test(routeClassificationRecommendedBetaBlockers.join(" "))
+    )
+  );
+  const currentLocationReadinessBlocking = Boolean(
+    !currentLocationReadinessPass
+    && (
+      !routeBlockerClassificationAvailable
+      || actualUserVisibleRouteIssueDetected
+      || /Current Location/i.test(routeClassificationRecommendedBetaBlockers.join(" "))
+    )
+  );
+  const routeWatchDisplayAuditBlocking = Boolean(
+    routeAudit?.displayApplied === false
+    && !routeDisplayAppliedFalseDueToCommuteDeltaUnavailable
+    && (
+      !routeBlockerClassificationAvailable
+      || actualUserVisibleRouteIssueDetected
+      || /display/i.test(routeClassificationRecommendedBetaBlockers.join(" "))
+    )
+  );
   addSpecificBlockers(routeBlockers, [
     [!destinationSearchAvailable, "Destination Search helper or shell/input is missing."],
-    [!routeOwnershipAuditPass, "Route ownership audit is unavailable or failing."],
-    [!routeOriginAuditPass, "Route origin audit is unavailable or failing."],
+    [routeOwnershipAuditBlocking, "Route ownership audit is failing."],
+    [routeOriginAuditBlocking, "Route origin audit is failing."],
     [!savedPlaceDestinationAuditPass, "Saved Places destination controls are missing."],
-    [!currentLocationReadinessPass, "Current Location readiness audit is unavailable or failing."],
+    [currentLocationReadinessBlocking, "Current Location route origin controls are missing or failing."],
     [!elementPresent("routeWatchStartBtn"), "Route Watch start button is missing."],
     [!elementPresent("showFullRouteBtn"), "Full Route button is missing."],
     [!elementPresent("stopRouteWatchBtn"), "Stop Route Watch button is missing."],
-    [routeAudit?.displayApplied === false, "Route Watch display audit reports display was not applied."]
+    [routeWatchDisplayAuditBlocking, "Route Watch display has a user-visible functional issue."]
   ]);
+  routeClassificationRecommendedBetaBlockers.forEach((blocker) => {
+    if (blocker && !routeBlockers.includes(blocker)) routeBlockers.push(blocker);
+  });
   const awarenessBlockers = [];
   addSpecificBlockers(awarenessBlockers, [
     [!awarenessBriefAvailable, "Awareness Brief surface is missing."],
@@ -70784,6 +70868,9 @@ function gridlyBetaReadinessReviewAudit() {
   findings.push(safetyStatementPresent ? "A visible safety statement was detected." : "No explicit driving/emergency safety statement was detected; add safety copy before a controlled beta.");
   findings.push(desktopGatePresent ? "Desktop surfaces are present and the future business portal is hidden/gated." : "Desktop gating could not be verified from the active DOM snapshot.");
   findings.push(routeExperienceReady ? "Route Watch, destination search, saved places, route ownership, route origin, and current-location readiness are present for beta testing." : `Route readiness has specific blocker(s): ${routeBlockers.join(" ") || "review supporting route audits."}`);
+  if (nonUserFacingRouteStatesIgnored) findings.push(`V264.3 route classification ignored non-user-facing route states as blockers: ${(routeDiagnostics.routeStateClassifications.length ? routeDiagnostics.routeStateClassifications : ["none_detected"]).join(", ")}.`);
+  if (!actualUserVisibleRouteIssueDetected) findings.push("V264.3 route classification detected no actual user-visible route issue; idle/no-route/closed/displayApplied false classification noise does not create a beta blocker.");
+  if (routeDisplayAppliedFalseDueToCommuteDeltaUnavailable) findings.push("Route Watch displayApplied false was caused by commute_delta_unavailable and is not treated as a beta blocker by itself.");
   findings.push(awarenessExperienceReady ? "Awareness Brief, alerts, map filters, and Community Pulse surfaces are present; closed sheets are classified separately from missing surfaces." : `Awareness readiness has specific blocker(s): ${awarenessBlockers.join(" ") || "review supporting awareness audits."}`);
   findings.push(reportingExperienceReady ? "Reporting surfaces and shared-report helpers are present." : "Reporting experience is not fully beta-ready in this runtime.");
   if (feedbackReadinessFalseNegative) findings.push("V261.1 corrected a feedback false negative caused by hidden Settings feedback state or already-successful direct submit evidence.");
@@ -70829,7 +70916,16 @@ function gridlyBetaReadinessReviewAudit() {
     routeOriginAuditPass,
     savedPlaceDestinationAuditPass,
     currentLocationReadinessPass,
-    routeReadinessFalseNegative
+    routeReadinessFalseNegative,
+    routeClassificationAvailable: routeBlockerClassificationAvailable,
+    routeStateClassifications: Array.isArray(routeBlockerClassificationAudit?.classifications) ? routeBlockerClassificationAudit.classifications : [],
+    nonUserFacingRouteStatesIgnored,
+    actualUserVisibleRouteIssueDetected,
+    recommendedRouteBetaBlockers: routeClassificationRecommendedBetaBlockers,
+    routeDisplayAppliedFalseDueToCommuteDeltaUnavailable,
+    routeDisplayAppliedFalseIgnored: Boolean(routeDisplayAppliedFalseDueToCommuteDeltaUnavailable && !actualUserVisibleRouteIssueDetected),
+    routeAuditBackedReady,
+    routeClassificationReady
   };
   const awarenessDiagnostics = {
     awarenessBriefAvailable,
@@ -70842,8 +70938,9 @@ function gridlyBetaReadinessReviewAudit() {
 
   return {
     available: true,
-    version: "V261.1",
+    version: "V264.3",
     falseNegativeCleanupApplied: true,
+    routeClassificationPatchApplied: true,
     feedbackSystemReady,
     onboardingReady,
     safetyStatementPresent,
@@ -70865,6 +70962,11 @@ function gridlyBetaReadinessReviewAudit() {
     savedPlaceDestinationAuditPass,
     currentLocationReadinessPass,
     routeReadinessFalseNegative,
+    routeStateClassifications: routeDiagnostics.routeStateClassifications,
+    nonUserFacingRouteStatesIgnored,
+    actualUserVisibleRouteIssueDetected,
+    recommendedRouteBetaBlockers: routeClassificationRecommendedBetaBlockers,
+    routeDisplayAppliedFalseDueToCommuteDeltaUnavailable,
     awarenessBriefAvailable,
     awarenessBriefHiddenBecauseSheetState,
     alertsAvailable,
