@@ -16784,6 +16784,7 @@ function syncGridlyVisibleRouteExitControls() {
   const routeDetailsShowFullRouteButton = document.getElementById("gridlyDestinationImpactShowFullRouteBtn");
   const routeDetailsClearButton = document.getElementById("gridlyDestinationImpactClearRouteBtn");
   const routeDetailsStopButton = document.getElementById("gridlyDestinationImpactStopWatchBtn");
+  const routeDetailsStartWatchButton = document.getElementById("gridlyDestinationImpactManageRouteBtn");
 
   routeCard?.classList.remove("has-route-exit-actions", "is-route-monitoring");
 
@@ -16820,7 +16821,30 @@ function syncGridlyVisibleRouteExitControls() {
     routeDetailsStopButton.setAttribute("aria-disabled", routeDetailsStopButton.disabled ? "true" : "false");
   }
 
+  if (routeDetailsStartWatchButton) {
+    routeDetailsStartWatchButton.textContent = "Start Route Watch";
+    routeDetailsStartWatchButton.dataset.gridlyRouteDetailsAction = "start-route-watch";
+    routeDetailsStartWatchButton.hidden = routeIsMonitoring;
+    routeDetailsStartWatchButton.disabled = routeIsMonitoring;
+    routeDetailsStartWatchButton.setAttribute("aria-disabled", routeDetailsStartWatchButton.disabled ? "true" : "false");
+  }
+
   window.__gridlySyncAwarenessPanelDockContract?.();
+}
+
+async function startGridlyRouteWatchFromRouteDetails() {
+  if (typeof startInlineRouteWatch !== "function") {
+    setConfirmation("Route Watch is not available yet.", "error");
+    return { success: false, reason: "start_inline_route_watch_unavailable" };
+  }
+  const result = await startInlineRouteWatch({ activateWatch: true, source: "route_details_start_watch" });
+  syncRouteQuickPanelUiState?.();
+  syncGridlyVisibleRouteExitControls?.();
+  if (result?.success) {
+    setConfirmation("Route Watch started.", "success");
+    renderGridlyDestinationImpactPane?.();
+  }
+  return result || { success: false, reason: "route_watch_start_returned_empty" };
 }
 
 function bindGridlyVisibleRouteExitControls() {
@@ -16848,8 +16872,7 @@ function bindGridlyVisibleRouteExitControls() {
     stopGridlyRouteWatch("route_details_stop_watch");
   });
   bindButton("gridlyDestinationImpactManageRouteBtn", () => {
-    closeGridlyDestinationImpactPane();
-    openMobileRouteQuickPanel();
+    startGridlyRouteWatchFromRouteDetails();
   });
 }
 
@@ -54628,7 +54651,7 @@ function gridlyBuildRouteButtonContextAudit() {
     consumerFriendlyPass,
     findings,
     routeButtonCurrentOwner: destinationRoutePreviewAvailable
-      ? "Route button opens Current Route Details first for active destination routes, with Route Watch / Manage Route available secondarily."
+      ? "Route button opens Current Route Details first for active destination routes, with Start Route Watch available directly when applicable."
       : "Route button opens the existing Route Watch setup surface when no active destination route is present.",
     routeButtonConsumerExpectation: activeRouteExists
       ? "With an active Current Location → destination route visible, Route opens current route details before setup controls."
@@ -54970,7 +54993,7 @@ function gridlyBuildRouteRemovalImpactInventory() {
   const destinationSearchPath = "Destination Search → choose/search Home, Work, Favorite, or destination → destination route preview / Current Route Details";
   const routeDetailsPath = "Route Details / Destination Impact pane → current route summary and active-route actions";
   const settingsPlacesPath = "Settings → Route & Places → Edit Home / Edit Work / Manage Saved Places";
-  const routeWatchPath = "Route Watch owner surfaces: dashboard Start Route Watch, desktop Route Watch strip, Route Details → Route Watch / Manage Route, and Settings route/place access";
+  const routeWatchPath = "Route Watch owner surfaces: dashboard Start Route Watch, desktop Route Watch strip, Route Details → Start Route Watch, and Settings route/place access";
 
   const capabilities = [
     capability(
@@ -55043,7 +55066,7 @@ function gridlyBuildRouteRemovalImpactInventory() {
       "Manage Places",
       "Settings",
       "Route Quick Panel includes a Manage Places link.",
-      settingsPlacesPath + "; Route Details → Route Watch / Manage Route also links back to route/place management.",
+      settingsPlacesPath,
       "low"
     ),
     capability(
@@ -55057,7 +55080,7 @@ function gridlyBuildRouteRemovalImpactInventory() {
       "Route setup",
       "Route Watch",
       "Route Quick Panel provides Start and Destination selectors plus View Route / Start Route Watch.",
-      "Dashboard Start Route Watch; desktop Route Watch strip; Route Details → Route Watch / Manage Route; Settings place management for prerequisites.",
+      "Dashboard Start Route Watch; desktop Route Watch strip; Route Details → Start Route Watch; Settings place management for prerequisites.",
       "medium",
       "This is a duplicated setup surface, not a unique capability; risk is mainly that a familiar shortcut disappears."
     ),
@@ -55247,6 +55270,88 @@ function gridlyBuildBottomDockSimplificationAudit() {
 window.gridlyBottomDockSimplificationAudit = function gridlyBottomDockSimplificationAudit() {
   return gridlyBuildBottomDockSimplificationAudit();
 };
+
+function gridlyRouteManageActionSimplificationAudit() {
+  const findings = [];
+  const routeDetailsButton = document.getElementById("gridlyDestinationImpactManageRouteBtn");
+  const routeManageActionLabel = String(routeDetailsButton?.textContent || "").trim();
+  const routeManageActionPresent = Boolean(routeDetailsButton && /Route Watch\s*\/\s*Manage Route/i.test(routeManageActionLabel));
+  const routeDetailsAction = String(routeDetailsButton?.dataset?.gridlyRouteDetailsAction || "").trim();
+  const routeQuickPanel = document.getElementById("gridlyMobileRouteQuickPanel");
+  const quickPanelActions = [
+    { label: "Start Route Watch", selector: '[data-action="start-route-watch-quick"]', duplicate: false },
+    { label: "View Route", selector: '[data-action="view-route-quick"]', duplicate: true },
+    { label: "Show Full Route", selector: '[data-action="show-full-route-quick"], #mobileShowFullRouteBtn', duplicate: true },
+    { label: "Stop Route Watch", selector: '[data-action="stop-route-watch-quick"], #mobileStopRouteWatchBtn', duplicate: true },
+    { label: "Clear Route", selector: '[data-action="clear-route-quick"], #mobileClearRouteBtn', duplicate: true },
+    { label: "Manage Places", selector: '[data-action="open-manage-places-quick"], .route-quick-manage-link', duplicate: true }
+  ];
+  const quickPanelActionLabels = quickPanelActions
+    .filter((action) => Boolean(routeQuickPanel?.querySelector?.(action.selector)) || !routeQuickPanel)
+    .map((action) => action.label);
+  const duplicateCapabilities = [
+    "View Route duplicates the active route details context.",
+    "Show Full Route is available on Route Details.",
+    "Clear Route is available on Route Details.",
+    "Manage Places is available in Settings / Manage Places.",
+    "Route creation belongs to Destination Search and saved place setup."
+  ];
+  const routeDetailsStartWatchDirect = Boolean(routeDetailsButton && routeDetailsAction === "start-route-watch" && /Start Route Watch/i.test(routeManageActionLabel));
+  const opensRouteQuickPanel = Boolean(routeManageActionPresent && !routeDetailsStartWatchDirect);
+  const startRouteWatchAvailableElsewhere = Boolean(
+    document.getElementById("routeWatchStartBtn")
+    || document.getElementById("mobileQuickRouteBtn")
+    || routeQuickPanel?.querySelector?.('[data-action="start-route-watch-quick"]')
+    || typeof window.gridlyStartInlineRouteWatch === "function"
+  );
+  const showFullRouteDuplicate = Boolean(document.getElementById("gridlyDestinationImpactShowFullRouteBtn") || document.getElementById("showFullRouteBtn") || document.getElementById("mobileShowFullRouteBtn"));
+  const clearRouteDuplicate = Boolean(document.getElementById("gridlyDestinationImpactClearRouteBtn") || document.getElementById("clearRouteBtn") || document.getElementById("mobileClearRouteBtn") || typeof clearGridlyRoute === "function");
+  const managePlacesDuplicate = Boolean(document.getElementById("settingsManageSavedPlacesBtn") || document.getElementById("routeSetupModal") || document.getElementById("desktopManageRouteBtn"));
+  const routeCreationDuplicate = Boolean(document.getElementById("gridlyAddressSearchInput") || document.getElementById("destinationHomeBtn") || document.getElementById("destinationWorkBtn") || document.querySelector?.("[data-destination-action], .destination-search, .destination-chip"));
+  const startRouteWatchUnique = Boolean(routeDetailsStartWatchDirect || routeManageActionPresent);
+  const uniqueCapabilitiesOwned = startRouteWatchUnique ? ["Start Route Watch"] : [];
+  const inaccessibleIfRemoved = [];
+  if (!startRouteWatchAvailableElsewhere && !routeDetailsStartWatchDirect) inaccessibleIfRemoved.push("Start Route Watch");
+  if (!managePlacesDuplicate) findings.push("Manage Places was not detected outside the route quick panel.");
+  if (!showFullRouteDuplicate) findings.push("Show Full Route was not detected outside the route quick panel.");
+  if (!clearRouteDuplicate) findings.push("Clear Route was not detected outside the route quick panel.");
+  if (!routeCreationDuplicate) findings.push("Destination Search route creation was not detected.");
+  if (routeManageActionPresent) findings.push("The original Route Watch / Manage Route label is still present and opens a duplicative route quick panel.");
+  if (opensRouteQuickPanel) findings.push("Route Details still routes users through the Route Quick Panel instead of a direct action.");
+  if (routeDetailsStartWatchDirect) findings.push("Route Details now surfaces the only potentially unique job as a direct Start Route Watch action.");
+  const consumerFriendlyPass = Boolean(
+    routeDetailsButton
+    && !routeManageActionPresent
+    && routeDetailsStartWatchDirect
+    && inaccessibleIfRemoved.length === 0
+    && managePlacesDuplicate
+    && showFullRouteDuplicate
+    && clearRouteDuplicate
+    && routeCreationDuplicate
+  );
+  return {
+    available: true,
+    version: "V267",
+    routeManageActionPresent,
+    routeManageActionLabel,
+    opensRouteQuickPanel,
+    routeQuickPanelActions: quickPanelActionLabels,
+    uniqueCapabilitiesOwned,
+    duplicateCapabilities,
+    inaccessibleIfRemoved,
+    startRouteWatchUnique,
+    managePlacesDuplicate,
+    showFullRouteDuplicate,
+    clearRouteDuplicate,
+    routeCreationDuplicate,
+    removalRiskScore: inaccessibleIfRemoved.length || (routeManageActionPresent && !routeDetailsStartWatchDirect) ? 1 : 0,
+    recommendedAction: consumerFriendlyPass ? "Replace With Start Route Watch" : (routeManageActionPresent ? "Replace With Start Route Watch" : "Further Review Needed"),
+    consumerFriendlyPass,
+    findings
+  };
+}
+
+window.gridlyRouteManageActionSimplificationAudit = gridlyRouteManageActionSimplificationAudit;
 
 function removeGridlyRoutePreviewLayers() {
   if (window.__gridlyRoutePreviewLayer && typeof map?.removeLayer === "function" && map.hasLayer(window.__gridlyRoutePreviewLayer)) {
