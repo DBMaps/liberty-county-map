@@ -10027,6 +10027,7 @@ function gridlyBetaRouteBlockerClassificationAudit(options = {}) {
     || routeWatchDisplayFunctional
     || routeDisplayAppliedFalseDueToCommuteDeltaUnavailable
   );
+  const routeOriginFailureBlocksBeta = Boolean(activeRoutePresent && routeOriginAuditFailing);
   const actualUserVisibleRouteIssueDetected = Boolean(
     !destinationSearchAvailable
     || !routeDetailsAvailable
@@ -10035,7 +10036,7 @@ function gridlyBetaRouteBlockerClassificationAudit(options = {}) {
     || !savedPlacesRouteSelectorsAvailable
     || !currentLocationRouteAvailable
     || (routeWatchDisplayAvailable && routeWatchDisplayVisible && !routeWatchDisplayFunctional && !routeDisplayAppliedFalseDueToCommuteDeltaUnavailable)
-    || routeOriginAuditFailing
+    || routeOriginFailureBlocksBeta
     || routeOwnershipFailing
   );
   if (actualUserVisibleRouteIssueDetected) routeStateClassifications.push("user_visible_failure");
@@ -10053,7 +10054,7 @@ function gridlyBetaRouteBlockerClassificationAudit(options = {}) {
   if (!managePlacesAvailable) recommendedBetaBlockers.push("Manage Places access is missing.");
   if (!savedPlacesRouteSelectorsAvailable) recommendedBetaBlockers.push("Saved Places route selectors are missing.");
   if (!currentLocationRouteAvailable) recommendedBetaBlockers.push("Current Location route origin controls are missing or failing.");
-  if (routeOriginAuditFailing) recommendedBetaBlockers.push("Route origin audit is failing.");
+  if (routeOriginFailureBlocksBeta) recommendedBetaBlockers.push("Route origin audit is failing.");
   if (routeOwnershipFailing) recommendedBetaBlockers.push("Route ownership audit is failing.");
   const uniqueRecommendedBetaBlockers = Array.from(new Set(recommendedBetaBlockers));
   const blockerClassificationAccurate = Boolean(
@@ -10082,7 +10083,8 @@ function gridlyBetaRouteBlockerClassificationAudit(options = {}) {
   findings.push(routeOriginAuditAvailable ? "Route origin audit helper is available." : "Route origin audit helper is unavailable; audit_unavailable is separate from audit_failure.");
   if (routeDisplayAppliedFalseDueToCommuteDeltaUnavailable) findings.push("Route Watch display audit returned displayApplied false because commute_delta_unavailable; V264.3 classifies that as non-blocking without a user-visible route failure.");
   if (!actualUserVisibleRouteIssueDetected) findings.push("No actual user-visible route issue was detected; idle/no-route/closed states are diagnostic classifications only.");
-  if (routeOriginAuditFailing) findings.push("Route origin audit is available but failing its ownership/consumer/protected-system checks.");
+  if (routeOriginFailureBlocksBeta) findings.push("Route origin audit is available but failing its ownership/consumer/protected-system checks while an active route exists.");
+  else if (!activeRoutePresent && routeOriginAuditFailing) findings.push("Route origin audit is failing in a no-active-route state; V264.5 classifies this as route_origin_not_required rather than a beta blocker.");
   if (routeWatchFalsePositiveDetected) findings.push("Route Watch display blocker classification conflict detected: the display is accessible/functional while a supporting audit classifies it as a real display issue.");
   if (unavailableAuditMisclassified) findings.push("Current Beta Readiness combines route origin audit_unavailable with audit_failure in one blocker string; V264.2 recommends separating them.");
   findings.push(consumerFriendlyPass ? "Consumer pass: a normal beta tester should be able to create a route, access Route Details, access Route Watch, and manage places without a route-related failure." : "Consumer pass is not proven because one or more route creation/details/watch/manage-place checks failed.");
@@ -10096,10 +10098,12 @@ function gridlyBetaRouteBlockerClassificationAudit(options = {}) {
 
   return {
     available: true,
-    version: "V264.3",
+    version: "V264.5",
     activeRoutePresent,
     routeOriginAuditAvailable,
     routeOriginAuditFailing,
+    routeOriginFailureBlocksBeta,
+    routeOriginNotRequiredInCurrentState: Boolean(!activeRoutePresent),
     routeWatchDisplayAvailable,
     routeWatchDisplayVisible,
     routeWatchDisplayFunctional,
@@ -10258,9 +10262,11 @@ function gridlyRouteOriginFailureTriageAudit() {
 
   return {
     available: true,
-    version: "V264.4",
+    version: "V264.5",
 
     activeRoutePresent,
+
+    routeOriginNotRequiredInCurrentState: Boolean(!activeRoutePresent),
 
     routeOriginAuditAvailable,
 
@@ -70845,13 +70851,17 @@ function gridlyBetaReadinessReviewAudit() {
     && (routeOwnershipAudit?.consumerFriendlyPass !== false)
     && (routeOwnershipAudit?.protectedSystemsPass !== false)
   );
-  const routeOriginAuditPass = Boolean(
+  const rawRouteOriginAuditPass = Boolean(
     routeOriginAudit
     && routeOriginAudit?.available !== false
     && (routeOriginAudit?.originOwnershipMatch !== false)
     && (routeOriginAudit?.consumerFriendlyPass !== false)
     && (routeOriginAudit?.protectedSystemsPass !== false)
   );
+  const activeRoutePresent = Boolean(routeBlockerClassificationAudit?.activeRoutePresent);
+  const routeOriginRequiredInCurrentState = Boolean(activeRoutePresent);
+  const routeOriginNotRequiredInCurrentState = Boolean(!routeOriginRequiredInCurrentState);
+  const routeOriginAuditPass = Boolean(rawRouteOriginAuditPass || routeOriginNotRequiredInCurrentState);
   const savedPlaceDestinationAuditPass = savedPlacesReady;
   const currentLocationReadinessPass = Boolean(
     currentLocationAudit
@@ -70978,10 +70988,11 @@ function gridlyBetaReadinessReviewAudit() {
     )
   );
   const routeOriginAuditBlocking = Boolean(
-    !routeOriginAuditPass
+    routeOriginRequiredInCurrentState
+    && !routeOriginAuditPass
     && (
       !routeBlockerClassificationAvailable
-      || Boolean(routeBlockerClassificationAudit?.routeOriginAuditFailing)
+      || Boolean(routeBlockerClassificationAudit?.routeOriginFailureBlocksBeta)
       || /origin/i.test(routeClassificationRecommendedBetaBlockers.join(" "))
     )
   );
@@ -71080,6 +71091,10 @@ function gridlyBetaReadinessReviewAudit() {
     destinationSearchHiddenBecauseClosed,
     routeOwnershipAuditPass,
     routeOriginAuditPass,
+    rawRouteOriginAuditPass,
+    activeRoutePresent,
+    routeOriginRequiredInCurrentState,
+    routeOriginNotRequiredInCurrentState,
     savedPlaceDestinationAuditPass,
     currentLocationReadinessPass,
     routeReadinessFalseNegative,
@@ -71104,9 +71119,10 @@ function gridlyBetaReadinessReviewAudit() {
 
   return {
     available: true,
-    version: "V264.3",
+    version: "V264.5",
     falseNegativeCleanupApplied: true,
     routeClassificationPatchApplied: true,
+    routeOriginClassificationPatchApplied: true,
     feedbackSystemReady,
     onboardingReady,
     safetyStatementPresent,
@@ -71125,6 +71141,10 @@ function gridlyBetaReadinessReviewAudit() {
     destinationSearchHiddenBecauseClosed,
     routeOwnershipAuditPass,
     routeOriginAuditPass,
+    rawRouteOriginAuditPass,
+    activeRoutePresent,
+    routeOriginRequiredInCurrentState,
+    routeOriginNotRequiredInCurrentState,
     savedPlaceDestinationAuditPass,
     currentLocationReadinessPass,
     routeReadinessFalseNegative,
