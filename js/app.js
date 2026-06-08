@@ -71182,6 +71182,179 @@ window.gridlyBetaReadinessReviewAudit = gridlyBetaReadinessReviewAudit;
 exposeGridlyAuditHelper("gridlyBetaReadinessAudit", gridlyBetaReadinessAudit);
 exposeGridlyAuditHelper("gridlyBetaReadinessReviewAudit", gridlyBetaReadinessReviewAudit);
 
+
+function gridlyAlertsVisualConsistencyBlockerAudit() {
+  const generatedAt = new Date().toISOString();
+  const findings = [];
+  const addFinding = (classification, severity, question, evidence, recommendedAction) => {
+    findings.push({ classification, severity, question, evidence, recommendedAction });
+  };
+  const normalize = (value = "") => String(value ?? "").replace(/\s+/g, " ").trim();
+  const safeArray = (value) => Array.isArray(value) ? value : [];
+  const safeDocument = typeof document !== "undefined" ? document : null;
+  const safeWindow = typeof window !== "undefined" ? window : globalThis;
+  const readStyle = (node) => {
+    if (!node || !safeWindow?.getComputedStyle) return null;
+    try { return safeWindow.getComputedStyle(node); } catch (error) { return null; }
+  };
+  const isVisible = (node) => {
+    if (!node || typeof node.getBoundingClientRect !== "function") return false;
+    const style = readStyle(node);
+    const rect = node.getBoundingClientRect();
+    return !node.hidden
+      && node.getAttribute?.("aria-hidden") !== "true"
+      && (!style || (style.display !== "none" && style.visibility !== "hidden" && style.opacity !== "0"))
+      && rect.width > 0
+      && rect.height > 0;
+  };
+  const readTextFrom = (node, selector) => normalize(node?.querySelector?.(selector)?.textContent || "");
+  const lineFingerprint = (text) => {
+    const clean = normalize(text).toLowerCase();
+    return {
+      hasRoadCue: /\b(?:near|at|on|between|tx|sh|us|fm|cr|road|rd|street|st|avenue|ave|crossing|county road)\b|\b\d{2,4}\b/i.test(clean),
+      hasFreshnessCue: /\b(?:just now|latest|updated|last checked|now|\d+\s*(?:m|min|minute|h|hr|hour)s?\s*ago|community reports?|active reports?)\b/i.test(clean),
+      hasTrustCue: /\b(?:community|verified|confirmed|matched|approximate|reported|based on|confidence)\b/i.test(clean),
+      hasTechnicalCue: /\b(?:risk_score|confidence_score|report_type|hazard_subtype|metadata|debug|raw|undefined|null|NaN)\b/i.test(clean)
+    };
+  };
+  const styleSignature = (node) => {
+    const style = readStyle(node);
+    if (!style) return null;
+    return {
+      padding: style.padding,
+      marginBottom: style.marginBottom,
+      border: style.border,
+      borderRadius: style.borderRadius,
+      background: style.backgroundColor || style.background,
+      display: style.display,
+      gap: style.gap || ""
+    };
+  };
+  const titleSignature = (node) => {
+    const titleNode = node?.querySelector?.(".gridly-alert-title, strong, .gridly-alert-headline, [data-gridly-alert-title]");
+    const style = readStyle(titleNode);
+    return {
+      text: normalize(titleNode?.textContent || node?.dataset?.gridlyAlertTitle || ""),
+      fontSize: style?.fontSize || "",
+      fontWeight: style?.fontWeight || "",
+      lineHeight: style?.lineHeight || "",
+      letterSpacing: style?.letterSpacing || ""
+    };
+  };
+  const alertNodeSnapshot = (() => {
+    if (!safeDocument || typeof getGridlyAuditAlertCardNodes !== "function") return { alertCardNodes: [], visibleAlertCards: [], activeAlertsSurface: null };
+    try { return getGridlyAuditAlertCardNodes(isVisible); } catch (error) { return { alertCardNodes: [], visibleAlertCards: [], activeAlertsSurface: null, error: String(error?.message || error || "") }; }
+  })();
+  const visibleRows = safeArray(alertNodeSnapshot.visibleAlertCards).filter((node) => !node?.hasAttribute?.("data-gridly-alert-expand"));
+  const alertCards = visibleRows.filter((node) => node?.getAttribute?.("data-gridly-alert-row") === "true" || node?.hasAttribute?.("data-gridly-alert-title"));
+  const supplementalRows = visibleRows.filter((node) => !alertCards.includes(node));
+  const cacheAlerts = safeArray(safeWindow?.__gridlyLatestAlertsForRender);
+  const modelSamples = alertCards.length
+    ? alertCards.map((node, index) => {
+      const subtitles = Array.from(node.querySelectorAll?.(".gridly-alert-subtitle, small, [data-gridly-alert-location-line], [data-gridly-alert-freshness], [data-gridly-alert-count-line]") || []).map((child) => normalize(child.textContent)).filter(Boolean);
+      return {
+        index,
+        source: "dom",
+        title: normalize(node?.dataset?.gridlyAlertTitle || readTextFrom(node, ".gridly-alert-title, strong, .gridly-alert-headline, [data-gridly-alert-title]")),
+        locationLine: normalize(node?.dataset?.gridlyAlertLocation || subtitles[0] || ""),
+        freshnessCountLine: normalize(subtitles[1] || node?.dataset?.gridlyAlertSummary || ""),
+        text: normalize(node.textContent || ""),
+        style: styleSignature(node),
+        titleStyle: titleSignature(node)
+      };
+    })
+    : cacheAlerts.slice(0, 8).map((alert, index) => {
+      const model = typeof buildGridlyAlertCardConsumerModel === "function" ? buildGridlyAlertCardConsumerModel(alert) : {};
+      const title = normalize(model.title || alert?.resolvedHeadline || alert?.headline || alert?.title || "");
+      const locationLine = normalize(model.locationLine || alert?.locationLine || alert?.location || alert?.roadName || alert?.corridor || "");
+      const freshnessCountLine = normalize(model.freshnessCountLine || alert?.minutesText || alert?.timeText || "");
+      return { index, source: "render-cache", title, locationLine, freshnessCountLine, text: normalize([title, locationLine, freshnessCountLine].join(" ")), style: null, titleStyle: null };
+    });
+
+  const cardsChecked = modelSamples.length;
+  const comparableCardCount = Math.max(alertCards.length, modelSamples.length);
+  const uniqueStyleCount = new Set(modelSamples.map((sample) => JSON.stringify(sample.style || {}))).size;
+  const uniqueTitleStyleCount = new Set(modelSamples.map((sample) => JSON.stringify({
+    fontSize: sample.titleStyle?.fontSize || "",
+    fontWeight: sample.titleStyle?.fontWeight || "",
+    lineHeight: sample.titleStyle?.lineHeight || ""
+  }))).size;
+  const inconsistentTitleSpacingOnly = new Set(modelSamples.map((sample) => sample.titleStyle?.letterSpacing || "")).size > 1;
+  const fingerprints = modelSamples.map((sample) => ({ ...lineFingerprint([sample.title, sample.locationLine, sample.freshnessCountLine].join(" ")), sample }));
+  const titlePatternPass = cardsChecked === 0 || modelSamples.every((sample) => sample.title && sample.title.length <= 72 && sample.title.split(/\s+/).length <= 10 && !lineFingerprint(sample.title).hasTechnicalCue);
+  const locationPatternPass = cardsChecked === 0 || modelSamples.every((sample) => sample.locationLine && lineFingerprint(sample.locationLine).hasRoadCue && !lineFingerprint(sample.locationLine).hasTechnicalCue);
+  const freshnessPatternPass = cardsChecked === 0 || modelSamples.every((sample) => sample.freshnessCountLine && lineFingerprint(sample.freshnessCountLine).hasFreshnessCue && !lineFingerprint(sample.freshnessCountLine).hasTechnicalCue);
+  const trustPatternPass = cardsChecked === 0 || fingerprints.every((fingerprint) => fingerprint.hasTrustCue || fingerprint.hasFreshnessCue);
+  const cardStylePass = comparableCardCount <= 1 || uniqueStyleCount <= 1;
+  const titleStylePass = comparableCardCount <= 1 || uniqueTitleStyleCount <= 1;
+  const spacingPass = comparableCardCount <= 1 || cardStylePass;
+  const hierarchyPass = Boolean(titleStylePass && titlePatternPass && locationPatternPass && freshnessPatternPass);
+  const interactionPass = supplementalRows.every((node) => {
+    const text = normalize(node.textContent || "");
+    const style = styleSignature(node) || {};
+    const isMoreRow = /^\+\s*\d+\s+more/i.test(text);
+    return !isMoreRow || (style.borderRadius || style.border || style.padding);
+  });
+  const technicalIssueDetected = fingerprints.some((fingerprint) => fingerprint.hasTechnicalCue);
+  const visualIssueDetected = Boolean(
+    cardsChecked > 0
+    && (!cardStylePass || !titleStylePass || !titlePatternPass || !locationPatternPass || !freshnessPatternPass || !trustPatternPass || !spacingPass || !hierarchyPass || !interactionPass || technicalIssueDetected)
+  );
+
+  if (!cardStylePass) addFinding("spacing", "medium", "Do alert cards visually match one another?", `Detected ${uniqueStyleCount} card style signatures across ${comparableCardCount} alert cards.`, "Presentation Cleanup Needed");
+  if (!titlePatternPass || !titleStylePass) addFinding("title_inconsistency", titleStylePass ? "medium" : "low", "Are titles using the same presentation model?", !titleStylePass ? `Title typography has ${uniqueTitleStyleCount} size/weight/line-height signatures.` : "One or more alert titles are missing, too long, or include technical copy.", "Presentation Cleanup Needed");
+  if (inconsistentTitleSpacingOnly && titleStylePass) addFinding("title_inconsistency", "info", "Are titles using the same presentation model?", "Only alert title letter-spacing varies; size, weight, and line-height are aligned, so this is not treated as a beta blocker.", "No Patch Needed");
+  if (!locationPatternPass) addFinding("location_inconsistency", "medium", "Are location lines using the same presentation model?", "One or more alert cards are missing a road/crossing/location cue in the location line.", "Copy Cleanup Needed");
+  if (!freshnessPatternPass) addFinding("freshness_inconsistency", "medium", "Are freshness/count lines using the same presentation model?", "One or more alert cards are missing a freshness or active-report count line.", "Copy Cleanup Needed");
+  if (!trustPatternPass) addFinding("trust_inconsistency", "low", "Are trust/confidence states presented consistently?", "Trust is conveyed through community/freshness wording rather than a separate confidence chip on every card.", "Presentation Cleanup Needed");
+  if (!interactionPass) addFinding("interaction_inconsistency", "medium", "Do expanded and collapsed alerts follow the same visual language?", "One or more supplemental/expanded alert rows lacks the same card treatment as alert rows.", "Interaction Cleanup Needed");
+  if (technicalIssueDetected) addFinding("copy_inconsistency", "high", "Would a beta tester notice visual inconsistency?", "Technical metadata was detected in alert-facing text.", "Copy Cleanup Needed");
+
+  const blockerFindings = findings.filter((finding) => ["medium", "high"].includes(finding.severity));
+  const blockerPresent = blockerFindings.length > 0;
+  const primaryClassification = blockerFindings.length > 1
+    ? "multiple"
+    : (blockerFindings[0]?.classification || (findings[0]?.classification || "unknown"));
+  const recommendedAction = blockerPresent
+    ? (blockerFindings[0]?.recommendedAction || "Presentation Cleanup Needed")
+    : "No Patch Needed";
+  const oldAudit = typeof safeWindow?.gridlyVisualConsistencyAudit === "function"
+    ? (() => { try { return safeWindow.gridlyVisualConsistencyAudit(); } catch (error) { return { auditError: String(error?.message || error || "") }; } })()
+    : null;
+  if (oldAudit?.betaPolishReady === false && !blockerPresent) {
+    addFinding("unknown", "info", "Why did Beta Readiness report an alerts blocker?", "The legacy gridlyVisualConsistencyAudit betaPolishReady flag also depends on non-alert settings/route-watch polish checks, so the betaBlocker can be a false positive for alerts visual consistency.", "No Patch Needed");
+  }
+  const consumerFriendlyPass = Boolean(cardsChecked === 0 || (!blockerPresent && cardStylePass && titleStylePass && titlePatternPass && locationPatternPass && freshnessPatternPass && spacingPass && hierarchyPass && interactionPass && !technicalIssueDetected));
+
+  return {
+    available: true,
+    version: "V265.1",
+    generatedAt,
+    blockerPresent,
+    alertCardsConsistent: Boolean(cardStylePass),
+    alertTitlesConsistent: Boolean(titleStylePass && titlePatternPass),
+    alertLocationFormattingConsistent: Boolean(locationPatternPass),
+    alertFreshnessFormattingConsistent: Boolean(freshnessPatternPass),
+    alertTrustFormattingConsistent: Boolean(trustPatternPass),
+    alertSpacingConsistent: Boolean(spacingPass),
+    alertVisualHierarchyConsistent: Boolean(hierarchyPass),
+    alertInteractionConsistent: Boolean(interactionPass),
+    userVisibleIssueDetected: Boolean(visualIssueDetected),
+    blockerReason: blockerPresent ? blockerFindings.map((finding) => finding.evidence).join(" ") : "",
+    recommendedAction,
+    consumerFriendlyPass,
+    classification: primaryClassification,
+    cardsChecked,
+    visibleAlertCardCount: alertCards.length,
+    supplementalAlertRowCount: supplementalRows.length,
+    legacyVisualConsistencyBetaPolishReady: oldAudit?.betaPolishReady,
+    findings
+  };
+}
+
+window.gridlyAlertsVisualConsistencyBlockerAudit = gridlyAlertsVisualConsistencyBlockerAudit;
+exposeGridlyAuditHelper("gridlyAlertsVisualConsistencyBlockerAudit", gridlyAlertsVisualConsistencyBlockerAudit);
+
 window.gridlyVisualConsistencyAudit = function gridlyVisualConsistencyAudit() {
   try {
   const isAuditVisible = (node) => {
