@@ -69258,7 +69258,7 @@ function gridlyBetaReadinessReviewAudit() {
     try {
       return fn(...args);
     } catch (error) {
-      findings.push(`Audit helper ${fn.name || "anonymous"} failed during V261 review: ${String(error?.message || error || "unknown error")}`);
+      findings.push(`Audit helper ${fn.name || "anonymous"} failed during V261.1 review: ${String(error?.message || error || "unknown error")}`);
       return null;
     }
   };
@@ -69276,6 +69276,7 @@ function gridlyBetaReadinessReviewAudit() {
       return true;
     }
   };
+  const hiddenBecauseClosed = (node) => Boolean(node && !visible(node));
   const elementPresent = (id) => hasDocument && Boolean(document.getElementById(id));
   const selectorPresent = (selector) => hasDocument && Boolean(document.querySelector(selector));
   const visibleSelectorPresent = (selector) => hasDocument && Array.from(document.querySelectorAll(selector)).some(visible);
@@ -69283,11 +69284,14 @@ function gridlyBetaReadinessReviewAudit() {
   const helperAvailable = (name) => typeof target?.[name] === "function";
 
   const feedbackSubmissionAudit = runAuditSafely(target?.gridlyFeedbackSubmissionAudit);
+  const directFeedbackReadinessAudit = runAuditSafely(target?.gridlyDirectFeedbackReadinessAudit);
   const feedbackExperienceAudit = runAuditSafely(target?.gridlyFeedbackExperienceAudit);
   const routeAudit = runAuditSafely(target?.gridlyRouteWatchDisplayAudit);
   const destinationSearchAudit = runAuditSafely(target?.gridlyDestinationSearchShellAudit);
-  const currentLocationAudit = runAuditSafely(target?.gridlyDestinationCurrentLocationOriginAudit);
-  const appLocationAudit = runAuditSafely(target?.gridlyAppLocationReadinessAudit);
+  const routeOwnershipAudit = runAuditSafely(target?.gridlyRouteOwnershipAudit);
+  const routeOriginAudit = runAuditSafely(target?.gridlyRouteOriginAudit);
+  const destinationOriginAudit = runAuditSafely(target?.gridlyDestinationCurrentLocationOriginAudit);
+  const currentLocationAudit = runAuditSafely(target?.gridlyAppLocationReadinessAudit);
   const reportingAudit = runAuditSafely(target?.gridlyReportSubmissionAudit) || runAuditSafely(target?.gridlyReportingAudit);
   const alertsAudit = runAuditSafely(target?.gridlyVisualConsistencyAudit);
 
@@ -69327,51 +69331,140 @@ function gridlyBetaReadinessReviewAudit() {
     && selectorPresent(".desktop-left-rail")
     && selectorPresent(".desktop-business-note[hidden]")
   );
+
   const feedbackFlowRoot = hasDocument ? document.querySelector("[data-gridly-feedback-flow]") : null;
+  const feedbackAcknowledgementNode = feedbackFlowRoot?.parentElement?.querySelector?.("[data-gridly-feedback-acknowledgement]") || (hasDocument ? document.getElementById("settingsFeedbackStatus") : null);
   const directFeedbackSubmitButton = feedbackFlowRoot?.querySelector?.("[data-gridly-feedback-submit]") || (hasDocument ? document.getElementById("settingsSubmitFeedbackBtn") : null);
   const directFeedbackFallbackButton = feedbackFlowRoot?.querySelector?.("[data-gridly-feedback-prepare]") || (hasDocument ? document.getElementById("settingsPrepareFeedbackEmailBtn") : null);
-  const directSubmissionImplemented = Boolean(typeof submitGridlyDirectFeedback === "function" && typeof buildGridlyDirectFeedbackPayload === "function" && directFeedbackSubmitButton);
-  const emailFallbackPreserved = Boolean(typeof prepareGridlyFeedbackEmail === "function" && typeof buildGridlyFeedbackMailtoUrl === "function" && directFeedbackFallbackButton && GRIDLY_FEEDBACK_EMAIL_RECIPIENT);
+  const feedbackFormHiddenBecauseClosed = Boolean(feedbackFlowRoot && !visible(feedbackFlowRoot));
+  const directSubmissionImplemented = Boolean(
+    typeof submitGridlyDirectFeedback === "function"
+    && typeof buildGridlyDirectFeedbackPayload === "function"
+    && directFeedbackSubmitButton
+    && (directFeedbackReadinessAudit?.directSubmissionImplemented !== false)
+  );
+  const feedbackFallbackAvailable = Boolean(
+    directFeedbackReadinessAudit?.emailFallbackPreserved
+    || feedbackSubmissionAudit?.emailFallbackAvailable
+    || (typeof prepareGridlyFeedbackEmail === "function" && typeof buildGridlyFeedbackMailtoUrl === "function" && directFeedbackFallbackButton && GRIDLY_FEEDBACK_EMAIL_RECIPIENT)
+  );
   const privacySafeMetadataOnly = Boolean(
-    typeof buildGridlyDirectFeedbackPayload === "function"
-    && !Object.prototype.hasOwnProperty.call(buildGridlyDirectFeedbackPayload("Bug", "Test"), "user_agent")
+    directFeedbackReadinessAudit?.privacySafeMetadataOnly
+    || (
+      typeof buildGridlyDirectFeedbackPayload === "function"
+      && !Object.prototype.hasOwnProperty.call(buildGridlyDirectFeedbackPayload("Bug", "Test"), "user_agent")
+    )
+  );
+  const lastFeedbackInsertSucceeded = Boolean(directFeedbackReadinessAudit?.lastInsertSucceeded);
+  const feedbackAcknowledgementVisible = Boolean(
+    directFeedbackReadinessAudit?.acknowledgementVisible
+    || feedbackSubmissionAudit?.acknowledgementVisible
+    || visible(feedbackAcknowledgementNode)
   );
   const directFeedbackReady = Boolean(
+    (feedbackSubmissionAudit?.betaReady || directFeedbackReadinessAudit?.betaReadyForImplementation || lastFeedbackInsertSucceeded)
+    && directSubmissionImplemented
+    && feedbackFallbackAvailable
+    && privacySafeMetadataOnly
+    && (!directFeedbackReadinessAudit?.insertAttempted || lastFeedbackInsertSucceeded || feedbackAcknowledgementVisible)
+  );
+  const oldFeedbackSystemReady = Boolean(
     feedbackSubmissionAudit?.betaReady
     && directSubmissionImplemented
-    && emailFallbackPreserved
+    && feedbackFallbackAvailable
     && privacySafeMetadataOnly
+    && feedbackExperienceAudit?.consumerFriendlyPass !== false
+  );
+  const feedbackReadinessFalseNegative = Boolean(
+    !oldFeedbackSystemReady
+    && directFeedbackReady
+    && (feedbackFormHiddenBecauseClosed || lastFeedbackInsertSucceeded || feedbackAcknowledgementVisible)
   );
   const feedbackSystemReady = Boolean(
     directFeedbackReady
-    && feedbackExperienceAudit?.consumerFriendlyPass !== false
+    && (feedbackExperienceAudit?.consumerFriendlyPass !== false || feedbackReadinessFalseNegative || feedbackFormHiddenBecauseClosed)
   );
+
   const savedPlacesReady = Boolean(
     elementPresent("settingsManageSavedPlacesBtn")
     && elementPresent("settingsSavedPlacesList")
     && elementPresent("routeWatchStartSelect")
     && elementPresent("routeWatchDestinationSelect")
   );
-  const destinationSearchReady = Boolean(
+  const destinationSearchShell = hasDocument ? document.getElementById("gridlySearchShell") : null;
+  const destinationSearchAvailable = Boolean(
+    elementPresent("gridlySearchShell")
+    && elementPresent("gridlyAddressSearchInput")
+    && (helperAvailable("gridlyDestinationSearchShellAudit") || typeof openGridlyDestinationSearchSurface === "function" || typeof showGridlySearchShell === "function")
+    && (!destinationSearchAudit || (destinationSearchAudit.shellExists !== false && destinationSearchAudit.inputExists !== false))
+  );
+  const destinationSearchHiddenBecauseClosed = Boolean(
+    destinationSearchAvailable
+    && destinationSearchShell
+    && (destinationSearchAudit?.shellHidden || destinationSearchAudit?.shellHasHiddenAttribute || hiddenBecauseClosed(destinationSearchShell))
+  );
+  const routeOwnershipAuditPass = Boolean(
+    routeOwnershipAudit
+    && routeOwnershipAudit?.available !== false
+    && (routeOwnershipAudit?.routeExitOwnershipPass !== false)
+    && (routeOwnershipAudit?.consumerFriendlyPass !== false)
+    && (routeOwnershipAudit?.protectedSystemsPass !== false)
+  );
+  const routeOriginAuditPass = Boolean(
+    routeOriginAudit
+    && routeOriginAudit?.available !== false
+    && (routeOriginAudit?.originOwnershipMatch !== false)
+    && (routeOriginAudit?.consumerFriendlyPass !== false)
+    && (routeOriginAudit?.protectedSystemsPass !== false)
+  );
+  const savedPlaceDestinationAuditPass = savedPlacesReady;
+  const currentLocationReadinessPass = Boolean(
+    currentLocationAudit
+    && destinationOriginAudit
+    && selectorPresent("[data-v2-control='use-location'], #mobileUseLocationBtn, #manageSourceLocationBtn")
+    && (currentLocationAudit?.manualLocationButtonStillAvailable !== false)
+    && (currentLocationAudit?.fallbackStillAvailable !== false)
+    && (destinationOriginAudit?.consumerFriendlyPass !== false)
+  );
+  const oldDestinationSearchReady = Boolean(
     elementPresent("gridlySearchShell")
     && elementPresent("gridlyAddressSearchInput")
     && (helperAvailable("gridlyDestinationSearchShellAudit") || typeof openGridlyDestinationSearchSurface === "function")
     && (!destinationSearchAudit || destinationSearchAudit?.searchShellPresent !== false)
   );
-  const currentLocationReady = Boolean(
+  const oldCurrentLocationReady = Boolean(
     selectorPresent("[data-v2-control='use-location'], #mobileUseLocationBtn, #manageSourceLocationBtn")
-    && (appLocationAudit?.manualLocationButtonStillAvailable !== false)
-    && (currentLocationAudit?.consumerFriendlyPass !== false)
+    && (currentLocationAudit?.manualLocationButtonStillAvailable !== false)
+    && (destinationOriginAudit?.consumerFriendlyPass !== false)
   );
-  const routeExperienceReady = Boolean(
+  const oldRouteExperienceReady = Boolean(
     savedPlacesReady
-    && destinationSearchReady
-    && currentLocationReady
+    && oldDestinationSearchReady
+    && oldCurrentLocationReady
     && elementPresent("routeWatchStartBtn")
     && elementPresent("showFullRouteBtn")
     && elementPresent("stopRouteWatchBtn")
     && (routeAudit?.displayApplied !== false)
   );
+  const routeReadinessFalseNegative = Boolean(
+    !oldRouteExperienceReady
+    && savedPlaceDestinationAuditPass
+    && destinationSearchAvailable
+    && currentLocationReadinessPass
+    && (destinationSearchHiddenBecauseClosed || routeOwnershipAuditPass || routeOriginAuditPass)
+  );
+  const routeExperienceReady = Boolean(
+    savedPlaceDestinationAuditPass
+    && destinationSearchAvailable
+    && currentLocationReadinessPass
+    && routeOwnershipAuditPass
+    && routeOriginAuditPass
+    && elementPresent("routeWatchStartBtn")
+    && elementPresent("showFullRouteBtn")
+    && elementPresent("stopRouteWatchBtn")
+    && (routeAudit?.displayApplied !== false)
+  );
+
   const reportingExperienceReady = Boolean(
     elementPresent("manualReportBtn")
     && elementPresent("mobileCrossingReportBtn")
@@ -69380,52 +69473,139 @@ function gridlyBetaReadinessReviewAudit() {
     && typeof loadSharedReports === "function"
     && (!reportingAudit || reportingAudit?.consumerFriendlyPass !== false)
   );
-  const awarenessExperienceReady = Boolean(
+
+  const awarenessBriefNode = hasDocument ? document.querySelector("#gridlyV2TopStatusPrimary, #delayRisk, #habitStatusHeadline") : null;
+  const alertsNode = hasDocument ? document.getElementById("alertsList") : null;
+  const communityPulseNode = hasDocument ? document.getElementById("gridlyCommunityPulseSurface") : null;
+  const awarenessBriefAvailable = Boolean(awarenessBriefNode);
+  const awarenessBriefHiddenBecauseSheetState = Boolean(awarenessBriefAvailable && !visibleSelectorPresent("#gridlyV2TopStatusPrimary, #delayRisk, #habitStatusHeadline"));
+  const alertsAvailable = Boolean(alertsNode && (typeof getAlertsSurfaceSnapshot === "function" || typeof renderUnifiedIncidents === "function" || alertsNode));
+  const alertsHiddenBecauseClosed = Boolean(alertsAvailable && hiddenBecauseClosed(alertsNode));
+  const communityPulseAvailable = Boolean(communityPulseNode);
+  const oldAwarenessExperienceReady = Boolean(
     visibleSelectorPresent("#gridlyV2TopStatusPrimary, #delayRisk, #habitStatusHeadline")
     && selectorPresent("#alertsList")
     && selectorPresent("#gridlyCommunityPulseSurface")
     && selectorPresent(".geo-filter-pill[data-geo-filter='nearby']")
     && (alertsAudit?.betaPolishReady !== false)
   );
+  const awarenessExperienceReady = Boolean(
+    awarenessBriefAvailable
+    && alertsAvailable
+    && communityPulseAvailable
+    && selectorPresent(".geo-filter-pill[data-geo-filter='nearby']")
+    && (alertsAudit?.betaPolishReady !== false)
+  );
+  const awarenessReadinessFalseNegative = Boolean(
+    !oldAwarenessExperienceReady
+    && awarenessExperienceReady
+    && (awarenessBriefHiddenBecauseSheetState || alertsHiddenBecauseClosed || hiddenBecauseClosed(communityPulseNode))
+  );
+
+  const addSpecificBlockers = (collection, checks) => {
+    checks.forEach(([blocked, reason]) => {
+      if (blocked) collection.push(reason);
+    });
+  };
+  const feedbackBlockers = [];
+  addSpecificBlockers(feedbackBlockers, [
+    [!directSubmissionImplemented, "Direct feedback submit helper or bound submit button is missing."],
+    [!feedbackFallbackAvailable, "Feedback email fallback is unavailable."],
+    [!privacySafeMetadataOnly, "Feedback payload privacy boundary is not verified."],
+    [Boolean(directFeedbackReadinessAudit?.insertAttempted && !lastFeedbackInsertSucceeded), "Direct feedback submit has not succeeded in this runtime."],
+    [Boolean(directFeedbackReadinessAudit?.insertAttempted && !feedbackAcknowledgementVisible), "Feedback acknowledgement is not visible after a submit attempt."],
+    [Boolean(feedbackExperienceAudit?.consumerFriendlyPass === false && !feedbackReadinessFalseNegative && !feedbackFormHiddenBecauseClosed), "Feedback consumer-facing copy or controls failed the experience audit."]
+  ]);
+  const routeBlockers = [];
+  addSpecificBlockers(routeBlockers, [
+    [!destinationSearchAvailable, "Destination Search helper or shell/input is missing."],
+    [!routeOwnershipAuditPass, "Route ownership audit is unavailable or failing."],
+    [!routeOriginAuditPass, "Route origin audit is unavailable or failing."],
+    [!savedPlaceDestinationAuditPass, "Saved Places destination controls are missing."],
+    [!currentLocationReadinessPass, "Current Location readiness audit is unavailable or failing."],
+    [!elementPresent("routeWatchStartBtn"), "Route Watch start button is missing."],
+    [!elementPresent("showFullRouteBtn"), "Full Route button is missing."],
+    [!elementPresent("stopRouteWatchBtn"), "Stop Route Watch button is missing."],
+    [routeAudit?.displayApplied === false, "Route Watch display audit reports display was not applied."]
+  ]);
+  const awarenessBlockers = [];
+  addSpecificBlockers(awarenessBlockers, [
+    [!awarenessBriefAvailable, "Awareness Brief surface is missing."],
+    [!alertsAvailable, "Alerts surface or helper is missing."],
+    [!communityPulseAvailable, "Community Pulse surface is missing."],
+    [!selectorPresent(".geo-filter-pill[data-geo-filter='nearby']"), "Nearby map filter is missing."],
+    [alertsAudit?.betaPolishReady === false, "Alerts visual consistency audit reports beta polish is not ready."]
+  ]);
 
   if (deadButtonCount) findings.push(`${deadButtonCount} visible dead button candidate(s) detected: ${visibleDeadButtonCandidates.map((button) => text(button) || button.id || "button").slice(0, 5).join(", ")}.`);
   else findings.push("No visible dead buttons were detected in the active DOM snapshot.");
   if (placeholderExperienceCount) findings.push(`${placeholderExperienceCount} visible placeholder experience candidate(s) detected: ${placeholderExperienceNodes.map((node) => text(node)).slice(0, 4).join(" | ")}.`);
   else findings.push("No visible placeholder experiences were detected in the active DOM snapshot.");
-  findings.push(directFeedbackReady ? "Send Feedback is wired for direct Supabase submission with the email fallback preserved." : "Send Feedback is not fully ready in this runtime; inspect gridlyFeedbackSubmissionAudit() and gridlyDirectFeedbackReadinessAudit().");
+  findings.push(feedbackSystemReady ? "Send Feedback is wired for direct submission, preserves the fallback, and is not failed solely because the Settings feedback sheet is closed." : `Feedback readiness has specific blocker(s): ${feedbackBlockers.join(" ") || "review supporting feedback audits."}`);
   findings.push(onboardingReady ? `Onboarding is present with ${hasDocument ? document.querySelectorAll("[data-gridly-welcome-step]").length : 0} steps${onboardingTownChoicePresent ? " and a Dayton town choice" : ""}.` : "Onboarding is missing or not callable from the runtime.");
   findings.push(safetyStatementPresent ? "A visible safety statement was detected." : "No explicit driving/emergency safety statement was detected; add safety copy before a controlled beta.");
   findings.push(desktopGatePresent ? "Desktop surfaces are present and the future business portal is hidden/gated." : "Desktop gating could not be verified from the active DOM snapshot.");
-  findings.push(routeExperienceReady ? "Route Watch, destination search, saved places, and current-location entry points are present for beta testing." : "Route experience is not fully beta-ready; Route Watch depends on saved places, destination search, and current-location readiness.");
-  findings.push(awarenessExperienceReady ? "Awareness Brief, alerts, map filters, and Community Pulse surfaces are present." : "Awareness experience needs validation because one or more brief/alerts/pulse surfaces are missing or hidden.");
+  findings.push(routeExperienceReady ? "Route Watch, destination search, saved places, route ownership, route origin, and current-location readiness are present for beta testing." : `Route readiness has specific blocker(s): ${routeBlockers.join(" ") || "review supporting route audits."}`);
+  findings.push(awarenessExperienceReady ? "Awareness Brief, alerts, map filters, and Community Pulse surfaces are present; closed sheets are classified separately from missing surfaces." : `Awareness readiness has specific blocker(s): ${awarenessBlockers.join(" ") || "review supporting awareness audits."}`);
   findings.push(reportingExperienceReady ? "Reporting surfaces and shared-report helpers are present." : "Reporting experience is not fully beta-ready in this runtime.");
+  if (feedbackReadinessFalseNegative) findings.push("V261.1 corrected a feedback false negative caused by hidden Settings feedback state or already-successful direct submit evidence.");
+  if (routeReadinessFalseNegative) findings.push("V261.1 corrected a route/destination false negative caused by closed destination search or supporting ownership/current-location audits being available.");
+  if (awarenessReadinessFalseNegative) findings.push("V261.1 corrected an awareness false negative caused by closed or inactive sheet state rather than missing awareness surfaces.");
   findings.push("First-time Dayton tester path: onboarding can introduce Know Before You Go, choose Dayton as awareness area, optionally set Home/Work, then land on Awareness Brief with map, alerts, reporting, Route Watch, Settings, and Send Feedback available.");
 
-  const blockerChecks = [
-    [!feedbackSystemReady, "Feedback system is not fully beta-ready."],
+  const betaBlockerCandidates = [];
+  addSpecificBlockers(betaBlockerCandidates, [
+    [!feedbackSystemReady, feedbackBlockers[0] || "Feedback readiness requires supporting audit review."],
     [!onboardingReady, "Onboarding is not ready."],
     [!safetyStatementPresent, "Explicit safety / emergency-use statement is missing."],
     [!desktopGatePresent, "Desktop gate is not verified."],
     [placeholderExperienceCount > 0, "Visible placeholder experiences remain."],
     [deadButtonCount > 0, "Visible dead buttons remain."],
-    [!routeExperienceReady, "Route Watch / destination experience is not fully beta-ready."],
-    [!awarenessExperienceReady, "Awareness experience is not fully beta-ready."],
-    [!reportingExperienceReady, "Reporting experience is not fully beta-ready."],
-    [!directFeedbackReady, "Direct feedback is not fully ready."]
-  ];
-  const betaBlockers = blockerChecks.filter(([blocked]) => blocked).map(([, reason]) => reason);
+    [!routeExperienceReady, routeBlockers[0] || "Route readiness requires supporting audit review."],
+    [!awarenessExperienceReady, awarenessBlockers[0] || "Awareness readiness requires supporting audit review."],
+    [!reportingExperienceReady, "Reporting experience is not fully beta-ready in this runtime."],
+    [!directFeedbackReady, feedbackBlockers[0] || "Direct feedback readiness requires supporting audit review."]
+  ]);
+  const betaBlockers = Array.from(new Set(betaBlockerCandidates));
   const betaStrengths = [
     directFeedbackReady ? "Direct feedback submission has a Supabase path and email fallback." : "Feedback architecture has dedicated audit helpers and fallback visibility.",
     onboardingReady ? "First-run onboarding and Dayton awareness-area selection exist." : "Awareness-area onboarding copy exists in markup for review.",
     savedPlacesReady ? "Saved Places ownership is visible in Settings and Route Watch selectors." : "Saved Places surfaces are partially present.",
     reportingExperienceReady ? "Reporting supports crossing and road-hazard flows." : "Reporting entry points are present for review.",
-    awarenessExperienceReady ? "Awareness-first surfaces are prominent: brief, alerts, map filters, and Community Pulse." : "Awareness Brief and alerts are structurally present."
+    awarenessExperienceReady ? "Awareness-first surfaces are structurally present: brief, alerts, map filters, and Community Pulse." : "Awareness Brief and alerts need specific readiness review."
   ];
   const betaBlockerCount = betaBlockers.length;
 
+  const feedbackDiagnostics = {
+    directFeedbackReady,
+    lastFeedbackInsertSucceeded,
+    feedbackAcknowledgementVisible,
+    feedbackFallbackAvailable,
+    feedbackReadinessFalseNegative,
+    feedbackFormHiddenBecauseClosed
+  };
+  const routeDiagnostics = {
+    destinationSearchAvailable,
+    destinationSearchHiddenBecauseClosed,
+    routeOwnershipAuditPass,
+    routeOriginAuditPass,
+    savedPlaceDestinationAuditPass,
+    currentLocationReadinessPass,
+    routeReadinessFalseNegative
+  };
+  const awarenessDiagnostics = {
+    awarenessBriefAvailable,
+    awarenessBriefHiddenBecauseSheetState,
+    alertsAvailable,
+    alertsHiddenBecauseClosed,
+    communityPulseAvailable,
+    awarenessReadinessFalseNegative
+  };
+
   return {
     available: true,
-    version: "V261",
+    version: "V261.1",
+    falseNegativeCleanupApplied: true,
     feedbackSystemReady,
     onboardingReady,
     safetyStatementPresent,
@@ -69436,6 +69616,26 @@ function gridlyBetaReadinessReviewAudit() {
     awarenessExperienceReady,
     reportingExperienceReady,
     directFeedbackReady,
+    lastFeedbackInsertSucceeded,
+    feedbackAcknowledgementVisible,
+    feedbackFallbackAvailable,
+    feedbackReadinessFalseNegative,
+    destinationSearchAvailable,
+    destinationSearchHiddenBecauseClosed,
+    routeOwnershipAuditPass,
+    routeOriginAuditPass,
+    savedPlaceDestinationAuditPass,
+    currentLocationReadinessPass,
+    routeReadinessFalseNegative,
+    awarenessBriefAvailable,
+    awarenessBriefHiddenBecauseSheetState,
+    alertsAvailable,
+    alertsHiddenBecauseClosed,
+    communityPulseAvailable,
+    awarenessReadinessFalseNegative,
+    feedbackDiagnostics,
+    routeDiagnostics,
+    awarenessDiagnostics,
     betaBlockerCount,
     betaReady: betaBlockerCount === 0,
     findings,
@@ -69443,8 +69643,8 @@ function gridlyBetaReadinessReviewAudit() {
     betaBlockers,
     betaStrengths,
     firstTimeDaytonTesterExperience: "A first-time Dayton tester should see onboarding, choose Dayton as their awareness area, optionally save Home/Work, then use Awareness Brief first with Route Watch, reporting, alerts, map, Settings, and Send Feedback available.",
-    recommendedNextMilestone: betaBlockerCount === 0 ? "V261.1 controlled beta launch checklist and tester script." : "V261.1 beta blocker closure: safety statement, desktop gate verification, and any readiness gaps surfaced by this audit.",
-    mergeRecommendation: "Merge the V261 audit helper as audit-only instrumentation; do not treat betaReady as launch approval until findings are reviewed on real mobile and desktop devices.",
+    recommendedNextMilestone: betaBlockerCount === 0 ? "V261.1 controlled beta launch checklist and tester script." : "V261.1 beta blocker closure: address only the specific actionable blockers returned by betaBlockers.",
+    mergeRecommendation: "Merge the V261.1 audit-only false-negative cleanup after runtime findings are reviewed on real mobile and desktop devices; do not treat hidden closed sheets as missing systems.",
     protectedSystemsModified: false,
     directionalIntelligencePaused: true,
     trustResolutionDraftOnly: true
