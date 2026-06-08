@@ -690,12 +690,12 @@
         <span class="eyebrow">Daily Route</span>
         <button type="button" class="gridly-surface-close route-modal-close" id="closeRouteSetupModalBtn" aria-label="Close Save Route modal">×</button>
       </div>
-      <h2 id="routeSetupTitle">Save places</h2>
-      <p class="smart-alerts-subtitle">Saved places stay on this device. Follow the quick flow below to set where Gridly should watch for you.</p>
+      <h2 id="routeSetupTitle">Manage Places</h2>
+      <p class="smart-alerts-subtitle">Tell Gridly what you want to save, how to add it, then confirm.</p>
       <div class="setup-grid route-setup-grid-mobile">
         <section class="manage-places-group" id="managePlacesSlotsGroup" hidden>
-          <p class="manage-places-group-label">Step 1 · Choose slot</p>
-          <p class="manage-places-group-note">Where should we save this?</p>
+          <p class="manage-places-group-label">What are you saving?</p>
+          <p class="manage-places-group-note">Start with the place you want Gridly to remember.</p>
           <div class="destination-chip-row" id="managePlaceSlotRow" hidden>
             <button class="secondary-btn destination-chip" id="managePlaceHomeBtn" type="button">Home</button>
             <button class="secondary-btn destination-chip" id="managePlaceWorkBtn" type="button">Work</button>
@@ -703,33 +703,33 @@
           </div>
         </section>
         <section class="manage-places-group" id="managePlacesSourceGroup" hidden>
-          <p class="manage-places-group-label">Step 2 · Add source</p>
-          <p class="manage-places-group-note">How would you like to add it?</p>
+          <p class="manage-places-group-label">How would you like to add it?</p>
+          <p class="manage-places-group-note">Use where you are, type an address, or copy an existing place.</p>
           <div class="destination-chip-row manage-source-row">
             <button class="secondary-btn destination-chip" id="manageSourceLocationBtn" type="button" data-source="location">Use Current Location</button>
             <button class="secondary-btn destination-chip" id="manageSourceAddressBtn" type="button" data-source="address">Enter Address</button>
-            <button class="secondary-btn destination-chip" id="manageSourceSavedBtn" type="button" data-source="saved">Choose Saved Place</button>
+            <button class="secondary-btn destination-chip" id="manageSourceSavedBtn" type="button" data-source="saved">Choose Existing Place</button>
           </div>
         </section>
         <section class="manage-places-group" id="managePlacesAddressGroup" hidden>
           <label>
-            Place name
-            <input id="mobileHomeInput" type="text" placeholder="Home, Work, or Favorite" autocomplete="off" />
+            Name
+            <input id="mobileHomeInput" type="text" placeholder="Optional nickname" autocomplete="off" />
           </label>
           <label>
-            Address
+            Address or place
             <input id="mobileWorkInput" type="text" placeholder="Enter address, city, or place" autocomplete="street-address" />
           </label>
         </section>
         <section class="manage-places-group" id="managePlacesSavedGroup" hidden>
           <label id="savedPlacesSelectLabel">
-            Saved places
+            Existing place
             <select id="mobileSavedDestinationSelect"></select>
           </label>
         </section>
       </div>
       <section class="manage-places-group" id="managePlacesSaveGroup" hidden>
-        <p class="manage-places-group-label">Step 3 · Save</p>
+        <p class="manage-places-group-label">Confirm and Save</p>
         <div class="destination-chip-row manage-places-save-actions">
           <button id="mobileSaveRouteBtn" class="primary-btn" type="button">Save Place</button>
           <button id="mobileResetPlacesBtn" class="secondary-btn subtle-secondary-btn" type="button">Reset</button>
