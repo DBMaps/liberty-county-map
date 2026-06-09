@@ -19216,6 +19216,62 @@ body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > .route-setu
   opacity: 1 !important;
 }
 
+
+/* GRIDLY V272: standard production hazard markers keep a fixed map footprint while compact PNG artwork is visually normalized. */
+#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker {
+  --gridly-production-marker-artwork-scale: 1;
+  transform: none !important;
+  animation: none !important;
+  filter: none !important;
+}
+
+#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:is(.route-relevant, [data-gridly-route-relevant="true"], [data-gridly-impact-level="critical"], [data-gridly-impact-level="high"], [data-gridly-impact-level="moderate"], [data-gridly-impact-level="low"]) {
+  transform: none !important;
+  animation: none !important;
+}
+
+#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker .gridly-production-marker-img {
+  object-fit: contain !important;
+  object-position: center center !important;
+  transform: scale(var(--gridly-production-marker-artwork-scale, 1)) !important;
+  transform-origin: center center !important;
+}
+
+#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker[data-marker-category="crash"] {
+  --gridly-production-marker-artwork-scale: 1.52;
+}
+
+#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker[data-marker-category="road_closed"] {
+  --gridly-production-marker-artwork-scale: 1.48;
+}
+
+#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:is([data-marker-category="flooding"], [data-marker-category="standing_water"], [data-marker-category="ice"]) {
+  --gridly-production-marker-artwork-scale: 1.4;
+}
+
+#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker[data-marker-category="debris"] {
+  --gridly-production-marker-artwork-scale: 1.73;
+}
+
+#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker[data-marker-category="traffic_backup"] {
+  --gridly-production-marker-artwork-scale: 1.9;
+}
+
+#map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker[data-marker-category="traffic_signal_issue"] {
+  --gridly-production-marker-artwork-scale: 1.83;
+}
+
+#map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="rail_blockage_delay"] {
+  --gridly-production-marker-artwork-scale: 1.26;
+}
+
+#map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker .gridly-production-marker-img {
+  object-fit: contain !important;
+  object-position: center center !important;
+  transform: scale(var(--gridly-production-marker-artwork-scale, 1)) !important;
+  transform-origin: center center !important;
+}
+
 /* GRIDLY V272 — desktop-only public beta gate. Portrait/mobile selectors intentionally untouched. */
 .gridly-desktop-gate {
   display: none;
