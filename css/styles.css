@@ -19199,6 +19199,7 @@ body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > .route-setu
 body[data-layout-mode="desktop"] {
   overflow: hidden;
   min-height: 100vh;
+  background: #00030c;
 }
 
 body[data-layout-mode="desktop"] > :not(.gridly-desktop-gate):not(script):not(style),
@@ -19236,7 +19237,7 @@ body[data-layout-mode="desktop"] .gridly-desktop-gate {
   width: 100vw;
   min-height: 100vh;
   padding: 0;
-  background: #03101c;
+  background: #00030c;
   color: #edf6ff;
 }
 
