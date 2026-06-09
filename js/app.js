@@ -49447,7 +49447,7 @@ function injectHazardStyles() {
       position: relative !important;
     }
 
-    /* V271.3: detach production-marker chips so PNG artwork stays clean and readable. */
+    /* V271.5: hide production-marker freshness chips; keep multi-report count badges visible. */
     #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker > :is(small, b) {
       display: inline-flex !important;
       visibility: visible !important;
@@ -49465,19 +49465,9 @@ function injectHazardStyles() {
     }
 
     #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker > small {
-      right: auto !important;
-      bottom: auto !important;
-      left: 52% !important;
-      top: calc(100% + 5px) !important;
-      min-width: 24px !important;
-      height: 17px !important;
-      padding: 0 6px !important;
-      transform: translateX(-50%) !important;
-      background: rgba(255, 255, 255, 0.94) !important;
-      border: 1px solid rgba(7, 18, 29, 0.18) !important;
-      box-shadow: 0 3px 8px rgba(7, 18, 29, 0.18) !important;
-      font-size: 9px !important;
-      font-weight: 900 !important;
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
     }
 
     #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker > b {
