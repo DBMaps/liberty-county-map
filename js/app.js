@@ -18638,6 +18638,27 @@ function getGridlyDestinationRouteImpactCompactIntroCopy(level = "none") {
   return "Travel looks normal right now";
 }
 
+function normalizeGridlyRouteImpactCopyToken(value = "") {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/\b(street|st)\b/g, "st")
+    .replace(/\b(road|rd)\b/g, "rd")
+    .replace(/\b(avenue|ave)\b/g, "ave")
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function stripGridlyRouteImpactNearPrefix(value = "") {
+  return String(value || "").replace(/^\s*near\s+/i, "").trim();
+}
+
+function gridlyRouteImpactReasonAlreadyIncludesProximity(reason = "", proximityLabel = "") {
+  const normalizedReason = normalizeGridlyRouteImpactCopyToken(reason);
+  const normalizedProximity = normalizeGridlyRouteImpactCopyToken(stripGridlyRouteImpactNearPrefix(proximityLabel));
+  return Boolean(normalizedReason && normalizedProximity && normalizedReason.includes(normalizedProximity));
+}
+
 function getGridlyDestinationRouteImpactCompactReasonCopy({ impactLevel = "none", reason = "", proximityLabel = "" } = {}) {
   const normalizedLevel = String(impactLevel || "none").toLowerCase();
   const normalizedReason = normalizeGridlyUserFacingRoadText(reason || getGridlyDestinationRouteImpactCopy(normalizedLevel));
@@ -18647,7 +18668,11 @@ function getGridlyDestinationRouteImpactCompactReasonCopy({ impactLevel = "none"
     .replace(/\s+near this route\b/i, "")
     .replace(/\s+along this route\b/i, "")
     .trim() || "Active hazard reported";
-  return [conciseReason, normalizedProximity].filter((line) => String(line || "").trim()).join(" ");
+  const copyParts = [conciseReason];
+  if (normalizedProximity && !gridlyRouteImpactReasonAlreadyIncludesProximity(conciseReason, normalizedProximity)) {
+    copyParts.push(normalizedProximity);
+  }
+  return copyParts.join(" ");
 }
 
 function getGridlyDestinationRouteImpactCardText() {
@@ -18773,7 +18798,7 @@ function getGridlyDestinationImpactPaneReasonModel() {
     reasons.push(`${pluralizeGridlyDestinationImpactReason(hazards, "active hazard")} reported near this route`);
   }
 
-  if (alerts > 0) {
+  if (alerts > 0 && hazards === 0) {
     reasons.push(`${pluralizeGridlyDestinationImpactReason(alerts, "hazard report")} nearby`);
   }
 
