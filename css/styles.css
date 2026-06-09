@@ -19692,3 +19692,161 @@ body.gridly-theme-light .settings-select-grid select option:hover {
     0 0 0 3px rgba(67, 230, 160, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
+
+/* GRIDLY V272.3 — Mobile viewport / map gesture stability fix.
+   Portrait-only containment keeps browser pinch/overscroll from resizing the app shell
+   while leaving Leaflet's own touch handlers in control of map pan and pinch zoom. */
+html {
+  min-height: 100%;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100%;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+}
+
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] {
+    width: 100%;
+    height: 100dvh;
+    min-height: 100dvh;
+    max-height: 100dvh;
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    overscroll-behavior: none;
+    background: #050b16;
+  }
+
+  @supports (height: 100svh) {
+    body[data-layout-mode="portrait"] {
+      height: 100svh;
+      min-height: 100svh;
+      max-height: 100svh;
+    }
+  }
+
+  body[data-layout-mode="portrait"] .app-shell {
+    width: 100% !important;
+    height: 100dvh;
+    min-height: 100dvh;
+    max-height: 100dvh;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  @supports (height: 100svh) {
+    body[data-layout-mode="portrait"] .app-shell {
+      height: 100svh;
+      min-height: 100svh;
+      max-height: 100svh;
+    }
+  }
+
+  body[data-layout-mode="portrait"] .dashboard,
+  body[data-layout-mode="portrait"] .command-center,
+  body[data-layout-mode="portrait"] .map-card,
+  body[data-layout-mode="portrait"] .map-frame {
+    width: 100% !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-height: 100dvh !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    overscroll-behavior: none;
+  }
+
+  @supports (height: 100svh) {
+    body[data-layout-mode="portrait"] .dashboard,
+    body[data-layout-mode="portrait"] .command-center,
+    body[data-layout-mode="portrait"] .map-card,
+    body[data-layout-mode="portrait"] .map-frame {
+      height: 100svh !important;
+      min-height: 100svh !important;
+      max-height: 100svh !important;
+    }
+  }
+
+  body[data-layout-mode="portrait"] #map,
+  body[data-layout-mode="portrait"] #map.leaflet-container {
+    width: 100% !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+    overflow: hidden !important;
+    overscroll-behavior: contain;
+    touch-action: none;
+    -ms-touch-action: none;
+  }
+
+  @supports (height: 100svh) {
+    body[data-layout-mode="portrait"] #map,
+    body[data-layout-mode="portrait"] #map.leaflet-container {
+      height: 100svh !important;
+      min-height: 100svh !important;
+      max-height: 100svh !important;
+    }
+  }
+
+  body[data-layout-mode="portrait"] #map .leaflet-pane,
+  body[data-layout-mode="portrait"] #map .leaflet-map-pane,
+  body[data-layout-mode="portrait"] #map .leaflet-tile-pane,
+  body[data-layout-mode="portrait"] #map .leaflet-overlay-pane,
+  body[data-layout-mode="portrait"] #map .leaflet-marker-pane,
+  body[data-layout-mode="portrait"] #map .leaflet-tile,
+  body[data-layout-mode="portrait"] #map canvas,
+  body[data-layout-mode="portrait"] #map svg {
+    touch-action: none;
+    -ms-touch-action: none;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 {
+    transform: none !important;
+    zoom: 1;
+    contain: none;
+    touch-action: none;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {
+    left: max(12px, env(safe-area-inset-left, 0px)) !important;
+    right: max(12px, env(safe-area-inset-right, 0px)) !important;
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+    width: auto !important;
+    max-width: none !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    z-index: 9503;
+    contain: layout paint;
+    touch-action: manipulation;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button {
+    min-width: 0;
+    min-height: 46px;
+    overflow: visible;
+    touch-action: manipulation;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-location-awareness-panel {
+    bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+    max-height: min(104px, calc(100svh - 196px - env(safe-area-inset-bottom, 0px)));
+    overflow: hidden;
+    contain: layout paint;
+    transform: translateZ(0);
+  }
+}
