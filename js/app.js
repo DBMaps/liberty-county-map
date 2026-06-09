@@ -57984,6 +57984,50 @@ function buildGridlyFeedbackFlowHtml({ v2 = false } = {}) {
     <p class="settings-placeholder-note" data-gridly-feedback-acknowledgement aria-live="polite" hidden></p>`;
 }
 
+function buildGridlyAboutGuidanceHtml() {
+  return `
+    <details class="settings-about-gridly-section">
+      <summary class="settings-about-gridly-summary">About Gridly</summary>
+      <div class="settings-about-gridly-content">
+        <article class="settings-about-gridly-block">
+          <p class="settings-about-gridly-kicker">Mission</p>
+          <h3>GRIDLY</h3>
+          <p class="settings-about-gridly-tagline">Know Before You Go</p>
+          <p>Gridly helps communities share awareness about blocked crossings, road hazards, flooding, closures, and changing travel conditions before they affect the day.</p>
+        </article>
+        <article class="settings-about-gridly-block">
+          <p class="settings-about-gridly-kicker">Community Commitment</p>
+          <h3>Our Commitment</h3>
+          <p>Gridly was built for residents, commuters, schools, businesses, and first responders.</p>
+          <p>A portion of future proceeds will be reinvested into the communities we serve.</p>
+          <p>Public safety partnerships remain a priority.</p>
+          <p>Dispatch and first responder use will always remain free.</p>
+        </article>
+        <article class="settings-about-gridly-block">
+          <p class="settings-about-gridly-kicker">Beta Notice</p>
+          <h3>Beta Notice</h3>
+          <p>Gridly is currently in beta.</p>
+          <p>Features, reports, and community activity may evolve as the platform continues to improve.</p>
+        </article>
+        <article class="settings-about-gridly-block">
+          <p class="settings-about-gridly-kicker">Important Safety Notice</p>
+          <h3>Important</h3>
+          <p>Gridly is a community awareness platform.</p>
+          <p>Gridly should not be used to report emergencies.</p>
+          <p>For emergencies, always call 911 or contact local emergency services.</p>
+          <p>Always use your own judgment and obey traffic laws.</p>
+        </article>
+        <article class="settings-about-gridly-block">
+          <p class="settings-about-gridly-kicker">How Gridly Works</p>
+          <h3>How Gridly Works</h3>
+          <p>Gridly uses community reports, confirmations, and recent observations to help people know before they go.</p>
+          <p>Community reports are awareness signals, not guarantees.</p>
+          <p>Conditions can change quickly.</p>
+        </article>
+      </div>
+    </details>`;
+}
+
 function persistGridlySettingsFromUi(event) {
   try {
     const saved = saveGridlySettingsPreferences(collectGridlySettingsFromUi(), { applyDisplay: true, source: event?.target?.id || "settings_ui" });
@@ -69004,7 +69048,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         </details>
         <details class="settings-modal-section settings-list-section" data-gridly-about>
           <summary class="settings-list-summary"><span class="settings-list-title">About &amp; Support</span><span class="settings-list-meta">Version · Help</span></summary>
-          <div class="settings-list-detail"><p><strong>${GRIDLY_APP_VERSION_LABEL}</strong><br>${GRIDLY_APP_BUILD_LABEL}</p><button class="gridly-v2-tile" data-v2-action="settings-replay-setup" type="button">Replay Setup</button><button class="gridly-v2-tile" data-v2-action="settings-feedback-open" type="button">Send Feedback</button>${buildGridlyFeedbackFlowHtml({ v2: true })}</div>
+          <div class="settings-list-detail"><p><strong>${GRIDLY_APP_VERSION_LABEL}</strong><br>${GRIDLY_APP_BUILD_LABEL}</p>${buildGridlyAboutGuidanceHtml()}<button class="gridly-v2-tile" data-v2-action="settings-replay-setup" type="button">Replay Setup</button><button class="gridly-v2-tile" data-v2-action="settings-feedback-open" type="button">Send Feedback</button>${buildGridlyFeedbackFlowHtml({ v2: true })}</div>
         </details>
       </div>`;
     const buildDuration = Number((getGridlySettingsPerfNow() - buildStartedAt).toFixed(2));
