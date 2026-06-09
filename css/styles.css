@@ -19158,15 +19158,13 @@ body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > .route-setu
   z-index: 3 !important;
 }
 
-/* V271 crossing visibility refinement: dim only inactive crossing infrastructure markers. */
+/* V271.1 crossing visibility refinement: dim inactive crossing infrastructure markers without shrinking them. */
 #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon,
 #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon .gridly-marker-wrap.gridly-crossing-marker-wrap,
 #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"],
 #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"] .gridly-production-marker-img {
-  width: 52px !important;
-  height: 52px !important;
-  min-width: 48px !important;
-  min-height: 48px !important;
+  width: 64px !important;
+  height: 64px !important;
 }
 
 #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"] .gridly-production-marker-img {
