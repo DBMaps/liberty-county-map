@@ -31397,12 +31397,23 @@ function gridlyCrossingLocationCompareToken(value = "") {
     .trim();
 }
 
+function isGridlyLowQualityCrossingLocationToken(value = "") {
+  const label = gridlyCleanConsumerCrossingLocationToken(value);
+  if (!label) return true;
+  const normalized = label.replace(/[^A-Za-z0-9]+/g, "").toUpperCase();
+  const allowedCompactRoad = /^(?:FM|CR|US|TX|SH|IH|I)\d+[A-Z]?$/.test(normalized);
+  const allowedStreetWord = /^(?:ST|RD|FM|CR|US|TX|SH|IH)$/.test(normalized);
+  if (!allowedCompactRoad && !allowedStreetWord && /^[A-Z]{1,2}$/.test(normalized)) return true;
+  return /^(?:TB|TBD|UNK|UNKNOWN|N\/A|NA)$/i.test(label);
+}
+
 function isGridlyConsumerCrossingLocationTokenUseful(value = "", primaryRoad = "") {
   const label = gridlyCleanConsumerCrossingLocationToken(value);
   if (!label) return false;
   if (/^(?:this crossing|this area|liberty county|dayton area|unknown|undefined|null|live incident|nearby|local crossing|rail crossing|railroad crossing|crossing blocked|blocked crossing|train blocking crossing)$/i.test(label)) return false;
   if (/\b(?:FRA|DOT|inventory|identifier)\b/i.test(label)) return false;
   if (/\b\d{6,}[A-Z]?\b/i.test(label)) return false;
+  if (isGridlyLowQualityCrossingLocationToken(label)) return false;
   const normalized = gridlyCrossingLocationCompareToken(label);
   if (!normalized) return false;
   if (primaryRoad && normalized === gridlyCrossingLocationCompareToken(primaryRoad)) return false;
@@ -31527,11 +31538,19 @@ function getGridlySpecificCrossingLocation(record = {}, options = {}) {
     ...getGridlyCrossingSpecificityTextValues(record, roadPaths),
     ...crossingRecordRoads
   ].map(gridlyCleanConsumerCrossingLocationToken).filter((value) => isGridlyConsumerCrossingLocationTokenUseful(value));
-  const crossingNameCandidates = [
+  const rawCrossingNameCandidates = [
     ...getGridlyCrossingSpecificityTextValues(record, crossingNamePaths),
     ...crossingRecordNames
-  ].map(gridlyCleanConsumerCrossingLocationToken).filter((value) => isGridlyConsumerCrossingLocationTokenUseful(value));
-  const parsedCrossingParts = crossingNameCandidates.flatMap(splitGridlyCrossingCompositeLocation);
+  ].map(gridlyCleanConsumerCrossingLocationToken).filter(Boolean);
+  const parsedCrossingParts = rawCrossingNameCandidates
+    .flatMap(splitGridlyCrossingCompositeLocation)
+    .filter((value) => isGridlyConsumerCrossingLocationTokenUseful(value));
+  const crossingNameCandidates = rawCrossingNameCandidates
+    .filter((value) => isGridlyConsumerCrossingLocationTokenUseful(value))
+    .filter((value) => {
+      const parts = splitGridlyCrossingCompositeLocation(value);
+      return !parts.some((part) => isGridlyLowQualityCrossingLocationToken(part)) || parts.every((part) => isGridlyConsumerCrossingLocationTokenUseful(part));
+    });
   const primaryRoad = roadCandidates.find(Boolean) || parsedCrossingParts.find((value) => isGridlyConsumerCrossingLocationTokenUseful(value)) || "";
   const references = [
     ...getGridlyCrossingSpecificityTextValues(record, referencePaths),
@@ -63067,6 +63086,14 @@ function buildCommuteConsequenceIntelligence({ limit = 6 } = {}) {
     limit: Number(limit || 0),
     routeWatchActivated: Boolean(routeWatchActivated),
     activeUnifiedCount: unifiedIncidentsBeforeBuildCount,
+    activeUnifiedLifecycleSignature: (Array.isArray(unifiedIncidentsForAudit) ? unifiedIncidentsForAudit : [])
+      .map((incident) => [
+        incident?.id || incident?.report_id || incident?.reportId || "",
+        incident?.status || incident?.state || "",
+        incident?.lifecycleState || incident?.lifecycle || "",
+        incident?.updated_at || incident?.updatedAt || incident?.created_at || incident?.createdAt || incident?.submittedAt || ""
+      ].join(":"))
+      .join("|"),
     activeReportCount: Array.isArray(activeReports) ? activeReports.length : 0
   };
   return getGridlyRefreshCycleCachedValue("buildCommuteConsequenceIntelligence", cachePayload, () => {
@@ -68438,13 +68465,14 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     }
     const incidents = getActiveUnifiedIncidents();
     const unifiedIncidents = Array.isArray(getUnifiedIncidents?.()) ? getUnifiedIncidents() : [];
-    const fallbackHazards = (Array.isArray(activeHazards) ? activeHazards : [])
-      .filter((hazard) => hazard && !hazard.expired && hazard.type !== "hazard_cleared");
+    const fallbackHazards = typeof gridlyFilterRoadHazardsByLatestLifecycle === "function"
+      ? gridlyFilterRoadHazardsByLatestLifecycle(activeHazards)
+      : (Array.isArray(activeHazards) ? activeHazards : []).filter((hazard) => (typeof gridlyIsActiveHazardRecord === "function" ? gridlyIsActiveHazardRecord(hazard) : (hazard && !hazard.expired && hazard.type !== "hazard_cleared")));
     const prefs = getSmartAlertsPreferences();
     const route = getRouteSurfaceSnapshot();
     const now = Date.now();
     const reports = [...(Array.isArray(activeReports) ? activeReports : []), ...fallbackHazards]
-      .filter((report) => report && !report.expired);
+      .filter((report) => report && !report.expired && (typeof getIncidentLifecycleState !== "function" || getIncidentLifecycleState(report, now) === "active"));
     const recentHazardCount = reports.filter((report) => {
       const submittedAt = new Date(report.submittedAt || 0).getTime();
       return Number.isFinite(submittedAt) && (now - submittedAt) <= 60 * 60 * 1000;
