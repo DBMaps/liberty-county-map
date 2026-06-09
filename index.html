@@ -813,11 +813,11 @@
       <div class="settings-list-experience" data-gridly-settings-list-experience="true">
         <details class="settings-modal-section settings-list-section" id="settingsProfileAwarenessSection">
           <summary class="settings-list-summary">
-            <span class="settings-list-title">Profile &amp; Awareness</span>
-            <span class="settings-list-meta">Liberty County Awareness · Profile details</span>
+            <span class="settings-list-title">My Area</span>
+            <span class="settings-list-meta">Awareness Area · Preferred Name</span>
           </summary>
           <div class="settings-list-detail">
-            <p class="settings-placeholder-note">Awareness follows your selected community-watch area. Profile details stay on this device.</p>
+            <p class="settings-placeholder-note">Choose where Gridly should focus local awareness for you. Profile details stay on this device.</p>
             <div class="settings-place-grid" aria-label="Awareness Area settings">
               <article class="settings-place-card settings-place-card-wide settings-awareness-area-card">
                 <span class="settings-place-label">Awareness Area</span>
@@ -838,8 +838,8 @@
 
         <details class="settings-modal-section settings-list-section" id="settingsSavedPlacesSection">
           <summary class="settings-list-summary">
-            <span class="settings-list-title">Route &amp; Places</span>
-            <span class="settings-list-meta">Home/Work · Route Watch</span>
+            <span class="settings-list-title">My Routes</span>
+            <span class="settings-list-meta">Home · Work · Saved Places</span>
           </summary>
           <div class="settings-list-detail">
             <div class="settings-place-grid" aria-label="Route Watch saved places">
@@ -868,8 +868,8 @@
 
         <details class="settings-modal-section settings-list-section" id="settingsAlertPreferencesSection">
           <summary class="settings-list-summary">
-            <span class="settings-list-title">Alerts &amp; Notifications</span>
-            <span class="settings-list-meta">Local alerts · Preferences</span>
+            <span class="settings-list-title">Preferences</span>
+            <span class="settings-list-meta">Alerts · Map · Display · Location</span>
           </summary>
           <div class="settings-list-detail">
             <p class="settings-placeholder-note settings-notification-notice">Notification delivery is currently in development. Your notification preferences will be saved and used when future notification features become available.</p>
@@ -879,61 +879,37 @@
               <label class="settings-toggle-row"><input type="checkbox" id="settingsHazardAlertsToggle"><span>Road Hazard Alerts</span></label>
               <label class="settings-toggle-row"><input type="checkbox" id="settingsCommunityAlertsToggle"><span>Community Activity Alerts</span></label>
             </div>
-          </div>
-        </details>
-
-        <details class="settings-modal-section settings-list-section" id="settingsDisplayPreferencesSection">
-          <summary class="settings-list-summary">
-            <span class="settings-list-title">Map &amp; Display</span>
-            <span class="settings-list-meta">Map style · Display preferences</span>
-          </summary>
-          <div class="settings-list-detail">
-            <div class="settings-select-grid">
-              <label>Map Style
-                <select id="settingsMapStyleSelect">
-                  <option value="standard">Standard</option>
-                  <option value="dark">Dark</option>
-                  <option value="satellite">Satellite</option>
-                </select>
-              </label>
-              <label><span>Theme <em class="settings-field-badge">Saved preference</em></span>
-                <select id="settingsThemeSelect">
-                  <option value="system">System</option>
-                  <option value="light">Light</option>
-                  <option value="dark">Dark</option>
-                </select>
-              </label>
-              <label><span>Text Size <em class="settings-field-badge">Saved preference</em></span>
-                <select id="settingsTextSizeSelect">
-                  <option value="compact">Small</option>
-                  <option value="standard">Medium</option>
-                  <option value="large" selected>Large</option>
-                  <option value="extra-large">Extra Large</option>
-                </select>
-              </label>
+            <div class="settings-preferences-block" id="settingsDisplayPreferencesSection">
+              <div class="settings-select-grid">
+                <label>Map Style
+                  <select id="settingsMapStyleSelect">
+                    <option value="standard">Standard</option>
+                    <option value="dark">Dark</option>
+                    <option value="satellite">Satellite</option>
+                  </select>
+                </label>
+                <label><span>Theme <em class="settings-field-badge">Saved preference</em></span>
+                  <select id="settingsThemeSelect">
+                    <option value="system">System</option>
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                  </select>
+                </label>
+                <label><span>Text Size <em class="settings-field-badge">Saved preference</em></span>
+                  <select id="settingsTextSizeSelect">
+                    <option value="compact">Small</option>
+                    <option value="standard">Medium</option>
+                    <option value="large" selected>Large</option>
+                    <option value="extra-large">Extra Large</option>
+                  </select>
+                </label>
+              </div>
+              <p class="settings-placeholder-note" id="settingsThemePlaceholder">Theme applies a basic light, dark, or system visual treatment.</p>
+              <p class="settings-placeholder-note" id="settingsTextSizePlaceholder">Text Size adjusts app typography density immediately.</p>
             </div>
-            <p class="settings-placeholder-note" id="settingsThemePlaceholder">Theme applies a basic light, dark, or system visual treatment.</p>
-            <p class="settings-placeholder-note" id="settingsTextSizePlaceholder">Text Size adjusts app typography density immediately.</p>
-          </div>
-        </details>
-
-        <details class="settings-modal-section settings-list-section" id="settingsPrivacyLocationSection">
-          <summary class="settings-list-summary">
-            <span class="settings-list-title">Privacy &amp; Location</span>
-            <span class="settings-list-meta">Location only when requested</span>
-          </summary>
-          <div class="settings-list-detail">
-            <p class="settings-placeholder-note">Location is used only when requested. Gridly does not request location when Settings opens.</p>
-          </div>
-        </details>
-
-        <details class="settings-modal-section settings-list-section" id="settingsDataTestingSection">
-          <summary class="settings-list-summary">
-            <span class="settings-list-title">Data &amp; Testing</span>
-            <span class="settings-list-meta">History data · Test tools</span>
-          </summary>
-          <div class="settings-list-detail">
-            <p class="settings-placeholder-note">No cleanup or test tools are available in Settings for this phase. Historical data is not changed from this panel.</p>
+            <div class="settings-preferences-block" id="settingsPrivacyLocationSection">
+              <p class="settings-placeholder-note">Location is used only when requested. Gridly does not request location when Settings opens.</p>
+            </div>
           </div>
         </details>
 
@@ -944,6 +920,7 @@
           </summary>
           <div class="settings-list-detail">
             <p><strong>Gridly V198</strong><br><span id="settingsBuildValue">Build 1710</span></p>
+            <p class="settings-placeholder-note" id="settingsDataTestingSection">No cleanup or test tools are available in Settings for this phase. Historical data is not changed from this panel.</p>
             <details class="settings-about-gridly-section" id="settingsAboutGridlySection">
               <summary class="settings-about-gridly-summary">About Gridly</summary>
               <div class="settings-about-gridly-content" aria-label="About Gridly details">
