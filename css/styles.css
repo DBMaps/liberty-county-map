@@ -19909,3 +19909,117 @@ body {
     right: var(--gridly-v2-command-right) !important;
   }
 }
+
+/* GRIDLY V272 — About Gridly supportive product guidance. */
+.settings-about-gridly-section {
+  border: 1px solid rgba(171, 204, 238, 0.16);
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.035);
+  overflow: hidden;
+}
+
+.settings-about-gridly-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-weight: 850;
+  letter-spacing: 0.01em;
+  list-style: none;
+  cursor: pointer;
+}
+
+.settings-about-gridly-summary::-webkit-details-marker {
+  display: none;
+}
+
+.settings-about-gridly-summary::after {
+  content: "";
+  width: 20px;
+  height: 20px;
+  border: 1px solid rgba(183, 220, 255, 0.18);
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.055);
+  background-image:
+    linear-gradient(rgba(230, 245, 255, 0.9), rgba(230, 245, 255, 0.9)),
+    linear-gradient(rgba(230, 245, 255, 0.9), rgba(230, 245, 255, 0.9));
+  background-position: center, center;
+  background-repeat: no-repeat;
+  background-size: 8px 2px, 2px 8px;
+  transition: background-size 0.18s ease;
+}
+
+.settings-about-gridly-section[open] .settings-about-gridly-summary::after {
+  background-size: 8px 2px, 2px 0;
+}
+
+.settings-about-gridly-content {
+  display: grid;
+  gap: 10px;
+  padding: 0 12px 12px;
+}
+
+.settings-about-gridly-block {
+  display: grid;
+  gap: 6px;
+  padding: 11px 12px;
+  border: 1px solid rgba(171, 204, 238, 0.12);
+  border-radius: 14px;
+  background: rgba(10, 22, 34, 0.46);
+}
+
+.settings-about-gridly-block h3,
+.settings-about-gridly-block p {
+  margin: 0;
+}
+
+.settings-about-gridly-block h3 {
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1.22;
+  letter-spacing: 0.01em;
+}
+
+.settings-about-gridly-block p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.48;
+}
+
+.settings-about-gridly-block .settings-about-gridly-kicker {
+  color: rgba(125, 211, 252, 0.88);
+  font-size: 0.73rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.settings-about-gridly-block .settings-about-gridly-tagline {
+  color: var(--text);
+  font-weight: 820;
+}
+
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] .settings-about-gridly-summary {
+    min-height: 48px;
+    padding: 11px 12px;
+    font-size: 0.94rem;
+  }
+
+  body[data-layout-mode="portrait"] .settings-about-gridly-content {
+    gap: 9px;
+  }
+
+  body[data-layout-mode="portrait"] .settings-about-gridly-block {
+    padding: 11px;
+  }
+
+  body[data-layout-mode="portrait"] .settings-about-gridly-block p {
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+}
