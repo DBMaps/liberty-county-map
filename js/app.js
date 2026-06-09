@@ -24182,8 +24182,8 @@ function buildGridlyCommunityAwarenessIntelligenceSummary(options = {}) {
 
   const sourceHazards = Array.isArray(options?.activeHazards) ? options.activeHazards : (Array.isArray(activeHazards) ? activeHazards : []);
   const sourceReports = Array.isArray(options?.activeReports) ? options.activeReports : (Array.isArray(activeReports) ? activeReports : []);
-  const activeHazardItems = sourceHazards.filter(isGridlyLightweightActiveItem);
-  const activeReportItems = sourceReports.filter(isGridlyLightweightActiveItem);
+  const activeHazardItems = getGridlyAwarenessLifecycleActiveHazards(sourceHazards);
+  const activeReportItems = getGridlyAwarenessLifecycleActiveReports(sourceReports);
   const crossingsInArea = getGridlyHomeTownCrossings(selectedArea);
   const missingCoordinateRecords = { activeHazards: 0, activeReports: 0 };
   const coordinateSourceCounts = { record_coordinates: 0, crossing_inventory: 0, missing: 0 };
@@ -29907,12 +29907,14 @@ function isGridlyCommunityPresenceActiveCandidate(candidate = {}) {
   const status = String(candidate?.status || candidate?.raw?.status || "").toLowerCase();
   const explicitLifecycle = String(candidate?.lifecycleState || candidate?.raw?.lifecycleState || "").toLowerCase();
   const reportType = String(candidate?.report_type || candidate?.reportType || candidate?.type || candidate?.raw?.report_type || candidate?.raw?.type || "").toLowerCase();
-  if (["cleared", "expired", "inactive"].includes(status) || ["cleared", "expired", "inactive"].includes(explicitLifecycle) || reportType === "hazard_cleared") return false;
-  if (status === "active" || explicitLifecycle === "active" || explicitLifecycle === "recently_cleared") return true;
+  if (["cleared", "recently_cleared", "expired", "inactive", "historical", "stale"].includes(status) || ["cleared", "recently_cleared", "expired", "inactive", "historical", "stale"].includes(explicitLifecycle) || isClearedReportType(reportType)) return false;
+  const lightweightLifecycleState = typeof getGridlyLightweightLifecycleState === "function" ? getGridlyLightweightLifecycleState(candidate?.raw || candidate) : "active";
+  if (["cleared", "recently_cleared", "expired", "inactive", "historical", "stale"].includes(lightweightLifecycleState)) return false;
+  if (status === "active" || explicitLifecycle === "active" || lightweightLifecycleState === "active") return true;
   if (typeof getIncidentLifecycleState === "function" && (candidate?.submittedAt || candidate?.raw?.submittedAt || candidate?.reportKind || candidate?.raw?.reportKind)) {
     const lifecycleState = String(getIncidentLifecycleState(candidate?.raw || candidate) || "").toLowerCase();
-    if (["cleared", "expired", "inactive"].includes(lifecycleState)) return false;
-    if (lifecycleState === "active" || lifecycleState === "recently_cleared") return true;
+    if (["cleared", "recently_cleared", "expired", "inactive", "historical", "stale"].includes(lifecycleState)) return false;
+    if (lifecycleState === "active") return true;
   }
   return true;
 }
@@ -29986,20 +29988,40 @@ function getGridlyCommunityPresenceCandidates(options = {}) {
 function getGridlyLightweightLifecycleState(item = {}) {
   if (!item || typeof item !== "object") return "inactive";
   if (item.expired) return "expired";
-  const type = String(item?.type || item?.report_type || item?.reportType || item?.raw?.type || item?.raw?.report_type || "").toLowerCase();
-  if (type === "hazard_cleared") return "cleared";
+  const explicitState = String(item?.status || item?.lifecycleState || item?.lifecycle || item?.state || item?.raw?.status || item?.raw?.lifecycleState || item?.raw?.lifecycle || item?.raw?.state || "").toLowerCase();
+  if (["cleared", "recently_cleared", "expired", "inactive", "historical", "stale"].includes(explicitState)) {
+    return explicitState;
+  }
+  const type = String(item?.type || item?.report_type || item?.reportType || item?.raw?.type || item?.raw?.report_type || item?.raw?.reportType || "").toLowerCase();
+  if (isClearedReportType(type)) return "cleared";
   if (typeof getIncidentLifecycleState === "function") {
     try {
       const state = String(getIncidentLifecycleState(item) || "").toLowerCase();
       if (state) return state;
     } catch (_error) {}
   }
-  return String(item?.status || item?.lifecycleState || item?.raw?.status || "active").toLowerCase() || "active";
+  return explicitState || "active";
 }
 
 function isGridlyLightweightActiveItem(item = {}) {
   const state = getGridlyLightweightLifecycleState(item);
   return state === "active";
+}
+
+function getGridlyAwarenessLifecycleActiveReports(reports = activeReports) {
+  const sourceReports = Array.isArray(reports) ? reports : [];
+  const latestReports = typeof getLatestReportStateByLocation === "function"
+    ? [...getLatestReportStateByLocation(sourceReports).values()]
+    : sourceReports;
+  return latestReports.filter((report) => getGridlyLightweightLifecycleState(report) === "active");
+}
+
+function getGridlyAwarenessLifecycleActiveHazards(hazards = activeHazards) {
+  const sourceHazards = Array.isArray(hazards) ? hazards : [];
+  const latestActiveHazards = typeof gridlyFilterRoadHazardsByLatestLifecycle === "function"
+    ? gridlyFilterRoadHazardsByLatestLifecycle(sourceHazards)
+    : sourceHazards;
+  return latestActiveHazards.filter((hazard) => getGridlyLightweightLifecycleState(hazard) === "active");
 }
 
 function getGridlyTopAwarenessLifecycleStage(detailOrItem = {}) {
@@ -31961,12 +31983,12 @@ function buildGridlyLightweightActiveAwareness(options = {}) {
   const hazardItems = Array.isArray(options?.activeHazards)
     ? options.activeHazards
     : (Array.isArray(typeof activeHazards !== "undefined" ? activeHazards : null) ? activeHazards : []);
-  const rawActiveReportItems = reportItems.slice(0, sourceLimit).filter(isGridlyLightweightActiveItem);
+  const rawActiveReportItems = getGridlyAwarenessLifecycleActiveReports(reportItems).slice(0, sourceLimit);
   const crossingAreaFilter = typeof gridlyGetCrossingReportAreaFilter === "function"
     ? gridlyGetCrossingReportAreaFilter(rawActiveReportItems, "lightweightActiveAwareness.activeReports")
     : { applied: false, pass: true, filteredOutCount: 0, filteredOutRecords: [], inSelectedArea: rawActiveReportItems, outsideSelectedArea: [], selectedMode: "unknown", selectedLabel: "" };
   const activeReportItems = rawActiveReportItems.filter((report) => !isGridlyCrossingReportRecord(report) || crossingAreaFilter.inSelectedArea.includes(report));
-  const activeHazardItems = hazardItems.slice(0, sourceLimit).filter(isGridlyLightweightActiveItem);
+  const activeHazardItems = getGridlyAwarenessLifecycleActiveHazards(hazardItems).slice(0, sourceLimit);
   const seen = new Set();
   const activeItems = [];
   const userLocationAwarenessAnchor = getGridlyActiveAwarenessUserLocationAnchor(options);
@@ -64122,8 +64144,8 @@ function buildGridlyPortraitSharedLocalizedIntelligenceSnapshot({ pulseModel = n
   const latestAlerts = !summaryHasAreaScopedLists && typeof window !== "undefined" && Array.isArray(window.__gridlyLatestAlertsForRender)
     ? window.__gridlyLatestAlertsForRender
     : [];
-  const activeReportCount = Math.max(0, Number(summaryActiveReportCount ?? activeAwareness.activeReportCount ?? quietFastPathStatus?.activeReportCount ?? (Array.isArray(activeReports) ? activeReports.filter((report) => report && !report.expired).length : 0)) || 0);
-  const activeHazardCount = Math.max(0, Number(summaryActiveHazardCount ?? activeAwareness.activeHazardCount ?? quietFastPathStatus?.activeHazardCount ?? (Array.isArray(activeHazards) ? activeHazards.filter((hazard) => hazard && !hazard.expired && String(hazard.type || hazard.report_type || "").toLowerCase() !== "hazard_cleared").length : 0)) || 0);
+  const activeReportCount = Math.max(0, Number(summaryActiveReportCount ?? activeAwareness.activeReportCount ?? quietFastPathStatus?.activeReportCount ?? (Array.isArray(activeReports) ? getGridlyAwarenessLifecycleActiveReports(activeReports).length : 0)) || 0);
+  const activeHazardCount = Math.max(0, Number(summaryActiveHazardCount ?? activeAwareness.activeHazardCount ?? quietFastPathStatus?.activeHazardCount ?? (Array.isArray(activeHazards) ? getGridlyAwarenessLifecycleActiveHazards(activeHazards).length : 0)) || 0);
   const areaScopedActiveCount = summaryHasAreaScopedLists ? activeReportCount + activeHazardCount : null;
   const activeAwarenessCount = summaryHasAreaScopedLists
     ? areaScopedActiveCount
@@ -64387,7 +64409,7 @@ function getGridlyAwarenessCommunityCount(intel = {}, activeAwareness = {}) {
     activeAwareness?.activeHazardCount,
     intel?.activeLocalizedAlertCount,
     Array.isArray(window.__gridlyLatestAlertsForRender) ? window.__gridlyLatestAlertsForRender.length : null,
-    Array.isArray(typeof activeReports !== "undefined" ? activeReports : null) ? activeReports.filter((report) => !report.expired).length : null
+    Array.isArray(typeof activeReports !== "undefined" ? activeReports : null) ? getGridlyAwarenessLifecycleActiveReports(activeReports).length : null
   ];
   return Math.max(0, ...candidates.map((value) => Number(value)).filter((value) => Number.isFinite(value)));
 }
@@ -64432,10 +64454,10 @@ function getGridlyQuietTopAwarenessFastPathStatus(intel = null) {
     ? window.__gridlyLatestAlertsForRender
     : [];
   const activeReportCount = Array.isArray(activeReports)
-    ? activeReports.filter((report) => report && !report.expired).length
+    ? getGridlyAwarenessLifecycleActiveReports(activeReports).length
     : 0;
   const activeHazardCount = Array.isArray(activeHazards)
-    ? activeHazards.filter((hazard) => hazard && !hazard.expired && String(hazard.type || hazard.report_type || "").toLowerCase() !== "hazard_cleared").length
+    ? getGridlyAwarenessLifecycleActiveHazards(activeHazards).length
     : 0;
   const activeLocalizedAlertCount = Math.max(0, Number(safeIntel?.activeLocalizedAlertCount || 0));
   const localizedSummaryCount = Array.isArray(safeIntel?.items) ? safeIntel.items.length : 0;
@@ -64890,9 +64912,9 @@ function refreshPortraitV2LocalizedIntelligence(options = {}) {
     };
   });
   counts.activeReportCount = Array.isArray(activeReports) ? activeReports.length : 0;
-  counts.activeUnexpiredReportCount = Array.isArray(activeReports) ? activeReports.filter((report) => report && !report.expired).length : 0;
+  counts.activeUnexpiredReportCount = Array.isArray(activeReports) ? getGridlyAwarenessLifecycleActiveReports(activeReports).length : 0;
   counts.activeHazardCount = Array.isArray(activeHazards) ? activeHazards.length : 0;
-  counts.activeUnexpiredHazardCount = Array.isArray(activeHazards) ? activeHazards.filter((hazard) => hazard && !hazard.expired && String(hazard.type || hazard.report_type || "").toLowerCase() !== "hazard_cleared").length : 0;
+  counts.activeUnexpiredHazardCount = Array.isArray(activeHazards) ? getGridlyAwarenessLifecycleActiveHazards(activeHazards).length : 0;
   counts.crossingCount = Array.isArray(crossings) ? crossings.length : 0;
   if (!topPrimaryEl && !topSecondaryEl) {
     recordPortraitIntelligenceBreakdown("refreshPortraitV2LocalizedIntelligence", functionStartedAt, sections, { counts, cacheReuseApplied: true, unchangedDomWriteSkipped: 0 });
@@ -65365,19 +65387,24 @@ function isClearedReportType(type) {
 }
 
 function isRecentlyCleared(report, now = Date.now()) {
-  if (!report || !isClearedReportType(report.type)) return false;
-  const submittedAtMs = new Date(report.submittedAt || 0).getTime();
+  if (!report) return false;
+  const reportType = report.type || report.report_type || report.reportType || report.raw?.type || report.raw?.report_type || report.status || report.lifecycleState || report.lifecycle;
+  if (!isClearedReportType(reportType)) return false;
+  const submittedAtMs = new Date(report.submittedAt || report.submitted_at || report.updated_at || report.updatedAt || report.created_at || report.createdAt || 0).getTime();
   if (!Number.isFinite(submittedAtMs) || submittedAtMs <= 0) return false;
   return now - submittedAtMs <= RECENTLY_CLEARED_WINDOW_MINUTES * 60000;
 }
 
 function getIncidentLifecycleState(report, now = Date.now()) {
   if (!report) return "inactive";
-  if (isClearedReportType(report.type)) {
-    return isRecentlyCleared(report, now) ? "recently_cleared" : "cleared";
+  const explicitState = String(report.status || report.lifecycleState || report.lifecycle || report.state || report.raw?.status || report.raw?.lifecycleState || report.raw?.lifecycle || report.raw?.state || "").trim().toLowerCase();
+  const reportType = report.type || report.report_type || report.reportType || report.raw?.type || report.raw?.report_type || report.raw?.reportType || explicitState;
+  if (isClearedReportType(reportType) || isClearedReportType(explicitState) || ["cleared", "recently_cleared", "historical", "stale"].includes(explicitState)) {
+    return isRecentlyCleared({ ...report, type: reportType }, now) ? "recently_cleared" : "cleared";
   }
-  if (report.expired) return "inactive";
-  if (isActiveReportType(report.type)) return "active";
+  if (report.expired || explicitState === "expired" || explicitState === "inactive") return "inactive";
+  if (explicitState === "active") return "active";
+  if (isActiveReportType(reportType)) return "active";
   return "inactive";
 }
 
