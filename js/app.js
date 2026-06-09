@@ -57299,6 +57299,17 @@ const GRIDLY_SETTINGS_TEXT_SIZE_SCALES = Object.freeze({
   large: 1.15,
   "extra-large": 1.28
 });
+
+const GRIDLY_SETTINGS_TEXT_SIZE_SEGMENT_OPTIONS = Object.freeze([
+  { value: "standard", label: "Standard" },
+  { value: "large", label: "Large" },
+  { value: "compact", label: "Compact" }
+]);
+
+function getGridlySettingsTextSizeSegmentValue(value = "") {
+  const normalized = normalizeGridlySettings({ display: { textSize: value } }).display.textSize;
+  return normalized === "extra-large" ? "large" : normalized;
+}
 let gridlyLastSettingsAction = "";
 
 function gridlyStorageAvailable() {
@@ -57501,6 +57512,36 @@ function getGridlySettingsAwarenessAreaDisplay() {
 
 function escapeGridlySettingsAttribute(value = "") {
   return String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char]));
+}
+
+
+function buildGridlySettingsTextSizeSegmentsHtml(selectedValue = "standard") {
+  const selectedSegment = getGridlySettingsTextSizeSegmentValue(selectedValue);
+  const normalized = normalizeGridlySettings({ display: { textSize: selectedValue } }).display.textSize;
+  return `
+    <div class="settings-text-size-control" role="radiogroup" aria-label="Text Size">
+      <input type="hidden" data-v2-settings-field="display.textSize" value="${escapeGridlySettingsAttribute(normalized)}">
+      <div class="settings-text-size-segments">
+        ${GRIDLY_SETTINGS_TEXT_SIZE_SEGMENT_OPTIONS.map((option) => {
+          const selected = option.value === selectedSegment;
+          return `<button class="settings-text-size-segment${selected ? " is-selected" : ""}" type="button" data-gridly-settings-text-size-option="${escapeGridlySettingsAttribute(option.value)}" role="radio" aria-checked="${selected ? "true" : "false"}">${escapeGridlySettingsAttribute(option.label)}</button>`;
+        }).join("")}
+      </div>
+    </div>`;
+}
+
+function syncGridlySettingsTextSizeSegments(root, selectedValue = "standard") {
+  if (!root) return;
+  const selectedSegment = getGridlySettingsTextSizeSegmentValue(selectedValue);
+  const normalized = normalizeGridlySettings({ display: { textSize: selectedValue } }).display.textSize;
+  root.querySelectorAll?.('[data-v2-settings-field="display.textSize"][type="hidden"]')?.forEach((input) => {
+    input.value = normalized;
+  });
+  root.querySelectorAll?.("[data-gridly-settings-text-size-option]")?.forEach((button) => {
+    const isSelected = button.dataset.gridlySettingsTextSizeOption === selectedSegment;
+    button.classList.toggle("is-selected", isSelected);
+    button.setAttribute("aria-checked", isSelected ? "true" : "false");
+  });
 }
 
 function buildGridlySettingsAwarenessOptionsHtml(selectedValue = "") {
@@ -68919,7 +68960,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
             <div class="settings-select-grid">
               <label>Map Style<select data-v2-settings-field="display.mapStyle"><option value="standard"${selected(settings.display.mapStyle, "standard")}>Standard</option><option value="dark"${selected(settings.display.mapStyle, "dark")}>Dark</option><option value="satellite"${selected(settings.display.mapStyle, "satellite")}>Satellite</option></select></label>
               <label>Theme<select data-v2-settings-field="display.theme"><option value="system"${selected(settings.display.theme, "system")}>System</option><option value="light"${selected(settings.display.theme, "light")}>Light</option><option value="dark"${selected(settings.display.theme, "dark")}>Dark</option></select></label>
-              <label>Text Size<select data-v2-settings-field="display.textSize"><option value="standard"${selected(settings.display.textSize, "standard")}>Standard</option><option value="large"${selected(settings.display.textSize, "large")}>Large</option><option value="compact"${selected(settings.display.textSize, "compact")}>Compact</option></select></label>
+              <label class="settings-text-size-label"><span>Text Size</span>${buildGridlySettingsTextSizeSegmentsHtml(settings.display.textSize)}</label>
             </div>
             <p class="settings-placeholder-note">Theme and Text Size apply immediately and are saved locally on this device.</p>
           </div>
@@ -70082,8 +70123,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     if (activeSheet === "settings" && !body.dataset.gridlyV2SettingsChangeBound) {
       gridlySettingsPerformanceTrace.settingsBindingRuns += 1;
       gridlySettingsPerformanceTrace.duplicateSettingsBindingDetected = gridlySettingsPerformanceTrace.settingsBindingRuns > 1;
-      const handleV2SettingsChange = (event) => {
-        const control = event.target instanceof Element ? event.target.closest("[data-v2-settings-field]") : null;
+      const saveV2SettingsFromControl = (control) => {
         if (!control || !body.contains(control)) return;
         const current = typeof getGridlySettingsPreferences === "function" ? getGridlySettingsPreferences() : normalizeGridlySettings();
         const next = normalizeGridlySettings(current);
@@ -70100,7 +70140,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           if (path === "personalization.preferredName") next.personalization.preferredName = String(value || "");
         });
         try {
-          saveGridlySettingsPreferences(next, { applyDisplay: true, source: control.dataset.v2SettingsField || "portrait_v2_settings" });
+          const saved = saveGridlySettingsPreferences(next, { applyDisplay: true, source: control.dataset.v2SettingsField || control.dataset.gridlySettingsTextSizeOption || "portrait_v2_settings" });
+          syncGridlySettingsTextSizeSegments(body, saved.display.textSize);
           const status = body.querySelector("[data-v2-settings-status]");
           if (status) status.textContent = "Settings saved locally.";
         } catch (error) {
@@ -70108,6 +70149,19 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           if (status) status.textContent = "Settings could not be saved on this device.";
         }
       };
+      const handleV2SettingsChange = (event) => {
+        const control = event.target instanceof Element ? event.target.closest("[data-v2-settings-field]") : null;
+        saveV2SettingsFromControl(control);
+      };
+      body.addEventListener("click", (event) => {
+        const option = event.target instanceof Element ? event.target.closest("[data-gridly-settings-text-size-option]") : null;
+        if (!option || !body.contains(option)) return;
+        const hidden = option.closest(".settings-text-size-control")?.querySelector('[data-v2-settings-field="display.textSize"]');
+        if (!hidden) return;
+        hidden.value = option.dataset.gridlySettingsTextSizeOption || GRIDLY_SETTINGS_DEFAULTS.display.textSize;
+        syncGridlySettingsTextSizeSegments(body, hidden.value);
+        saveV2SettingsFromControl(hidden);
+      });
       body.addEventListener("change", handleV2SettingsChange);
       body.addEventListener("input", (event) => {
         const control = event.target instanceof Element ? event.target.closest('[data-v2-settings-field="personalization.preferredName"]') : null;
