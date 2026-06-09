@@ -349,7 +349,10 @@
     "needsCheck": false,
     "localName": "Stilson Road",
     "notes": "",
-    "reviewedAt": "2026-04-29T16:37:40.531Z"
+    "reviewedAt": "2026-04-29T16:37:40.531Z",
+    "consumerPrimaryRoad": "US 90",
+    "consumerSecondaryRoad": "Stilson Road",
+    "consumerDisplayName": "US 90 & Stilson Road"
   },
   "450659H": {
     "visibility": "keep",
