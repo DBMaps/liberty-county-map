@@ -19861,7 +19861,7 @@ body {
   }
 }
 
-/* GRIDLY V272 — About Gridly supportive product guidance. */
+/* GRIDLY V272.4 — About Gridly nested accordion guidance. */
 .settings-about-gridly-section {
   border: 1px solid rgba(171, 204, 238, 0.16);
   border-radius: 15px;
@@ -19869,25 +19869,32 @@ body {
   overflow: hidden;
 }
 
-.settings-about-gridly-summary {
+.settings-about-gridly-summary,
+.settings-about-gridly-topic-summary {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 10px;
-  min-height: 46px;
-  padding: 10px 12px;
   color: var(--text);
   font-weight: 850;
   letter-spacing: 0.01em;
   list-style: none;
   cursor: pointer;
+  touch-action: manipulation;
 }
 
-.settings-about-gridly-summary::-webkit-details-marker {
+.settings-about-gridly-summary {
+  min-height: 46px;
+  padding: 10px 12px;
+}
+
+.settings-about-gridly-summary::-webkit-details-marker,
+.settings-about-gridly-topic-summary::-webkit-details-marker {
   display: none;
 }
 
-.settings-about-gridly-summary::after {
+.settings-about-gridly-summary::after,
+.settings-about-gridly-topic-summary::after {
   content: "";
   width: 20px;
   height: 20px;
@@ -19900,56 +19907,63 @@ body {
   background-position: center, center;
   background-repeat: no-repeat;
   background-size: 8px 2px, 2px 8px;
-  transition: background-size 0.18s ease;
+  transition: background-size 0.18s ease, opacity 0.18s ease;
 }
 
-.settings-about-gridly-section[open] .settings-about-gridly-summary::after {
+.settings-about-gridly-section[open] > .settings-about-gridly-summary::after,
+.settings-about-gridly-topic[open] > .settings-about-gridly-topic-summary::after {
   background-size: 8px 2px, 2px 0;
 }
 
 .settings-about-gridly-content {
   display: grid;
-  gap: 10px;
+  gap: 8px;
   padding: 0 12px 12px;
 }
 
-.settings-about-gridly-block {
-  display: grid;
-  gap: 6px;
-  padding: 11px 12px;
+.settings-about-gridly-topic {
   border: 1px solid rgba(171, 204, 238, 0.12);
   border-radius: 14px;
   background: rgba(10, 22, 34, 0.46);
+  overflow: hidden;
 }
 
-.settings-about-gridly-block h3,
-.settings-about-gridly-block p {
+.settings-about-gridly-topic[open] {
+  border-color: rgba(132, 199, 255, 0.22);
+  background: linear-gradient(180deg, rgba(93, 201, 255, 0.075), rgba(10, 22, 34, 0.48));
+}
+
+.settings-about-gridly-topic-summary {
+  min-height: 44px;
+  padding: 10px 11px;
+  font-size: 0.92rem;
+}
+
+.settings-about-gridly-topic-content {
+  display: grid;
+  gap: 6px;
+  padding: 0 12px 12px;
+}
+
+.settings-about-gridly-topic-content h3,
+.settings-about-gridly-topic-content p {
   margin: 0;
 }
 
-.settings-about-gridly-block h3 {
+.settings-about-gridly-topic-content h3 {
   color: var(--text);
   font-size: 1rem;
   line-height: 1.22;
   letter-spacing: 0.01em;
 }
 
-.settings-about-gridly-block p {
+.settings-about-gridly-topic-content p {
   color: var(--muted);
   font-size: 0.9rem;
   line-height: 1.48;
 }
 
-.settings-about-gridly-block .settings-about-gridly-kicker {
-  color: rgba(125, 211, 252, 0.88);
-  font-size: 0.73rem;
-  font-weight: 850;
-  letter-spacing: 0.08em;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-
-.settings-about-gridly-block .settings-about-gridly-tagline {
+.settings-about-gridly-topic-content .settings-about-gridly-tagline {
   color: var(--text);
   font-weight: 820;
 }
@@ -19962,14 +19976,20 @@ body {
   }
 
   body[data-layout-mode="portrait"] .settings-about-gridly-content {
-    gap: 9px;
+    gap: 8px;
   }
 
-  body[data-layout-mode="portrait"] .settings-about-gridly-block {
+  body[data-layout-mode="portrait"] .settings-about-gridly-topic-summary {
+    min-height: 46px;
     padding: 11px;
+    font-size: 0.93rem;
   }
 
-  body[data-layout-mode="portrait"] .settings-about-gridly-block p {
+  body[data-layout-mode="portrait"] .settings-about-gridly-topic-content {
+    padding: 0 11px 11px;
+  }
+
+  body[data-layout-mode="portrait"] .settings-about-gridly-topic-content p {
     font-size: 0.92rem;
     line-height: 1.5;
   }
