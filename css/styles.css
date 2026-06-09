@@ -19197,7 +19197,7 @@ body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > .route-setu
 }
 
 body[data-layout-mode="desktop"] {
-  overflow: auto;
+  overflow: hidden;
   min-height: 100vh;
 }
 
@@ -19232,27 +19232,16 @@ body[data-layout-mode="desktop"] .gridly-desktop-gate {
   z-index: 7000;
   display: grid;
   place-items: center;
-  overflow: auto;
+  overflow: hidden;
+  width: 100vw;
   min-height: 100vh;
-  padding: clamp(16px, 3vw, 40px);
-  background:
-    radial-gradient(circle at 13% 12%, rgba(57, 235, 174, 0.22), transparent 30%),
-    radial-gradient(circle at 86% 8%, rgba(67, 151, 255, 0.32), transparent 34%),
-    radial-gradient(circle at 76% 82%, rgba(255, 151, 67, 0.14), transparent 28%),
-    linear-gradient(145deg, #03101c 0%, #071827 46%, #041120 100%);
+  padding: 0;
+  background: #03101c;
   color: #edf6ff;
 }
 
 body[data-layout-mode="desktop"] .gridly-desktop-gate::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(rgba(255, 255, 255, 0.024) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
-  background-size: 34px 34px;
-  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.84), transparent 78%);
+  content: none;
 }
 
 body[data-layout-mode="desktop"] .gridly-desktop-gate-shell {
@@ -19260,26 +19249,25 @@ body[data-layout-mode="desktop"] .gridly-desktop-gate-shell {
   z-index: 1;
   display: grid;
   place-items: center;
-  width: min(1180px, 100%);
-  margin: auto;
-  border: 1px solid rgba(148, 204, 255, 0.22);
-  border-radius: clamp(20px, 2.8vw, 34px);
-  padding: clamp(10px, 1.8vw, 22px);
-  background:
-    linear-gradient(180deg, rgba(8, 23, 39, 0.82), rgba(4, 12, 23, 0.94)),
-    radial-gradient(circle at 55% 0%, rgba(82, 177, 255, 0.16), transparent 42%);
-  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(24px) saturate(128%);
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
 }
 
 body[data-layout-mode="desktop"] .gridly-desktop-gate-board-image {
   display: block;
-  width: 100%;
-  max-width: 100%;
-  height: auto;
-  max-height: calc(100vh - clamp(56px, 8vw, 124px));
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  max-height: none;
   object-fit: contain;
-  border-radius: clamp(14px, 2vw, 24px);
-  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.35);
+  border-radius: 0;
+  box-shadow: none;
 }
 
