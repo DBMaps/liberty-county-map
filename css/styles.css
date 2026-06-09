@@ -19971,6 +19971,58 @@ body {
   background: rgba(10, 22, 34, 0.46);
 }
 
+.settings-about-gridly-accordion-item {
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.settings-about-gridly-item-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 11px 12px;
+  color: rgba(125, 211, 252, 0.9);
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  list-style: none;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.settings-about-gridly-item-summary::-webkit-details-marker {
+  display: none;
+}
+
+.settings-about-gridly-item-summary::after {
+  content: "+";
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid rgba(183, 220, 255, 0.18);
+  border-radius: 999px;
+  color: rgba(230, 245, 255, 0.92);
+  background: rgba(255, 255, 255, 0.055);
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.settings-about-gridly-accordion-item[open] .settings-about-gridly-item-summary::after {
+  content: "−";
+}
+
+.settings-about-gridly-item-panel {
+  display: grid;
+  gap: 6px;
+  padding: 0 12px 12px;
+}
+
 .settings-about-gridly-block h3,
 .settings-about-gridly-block p {
   margin: 0;
@@ -20016,6 +20068,19 @@ body {
 
   body[data-layout-mode="portrait"] .settings-about-gridly-block {
     padding: 11px;
+  }
+
+  body[data-layout-mode="portrait"] .settings-about-gridly-accordion-item {
+    padding: 0;
+  }
+
+  body[data-layout-mode="portrait"] .settings-about-gridly-item-summary {
+    min-height: 46px;
+    padding: 11px;
+  }
+
+  body[data-layout-mode="portrait"] .settings-about-gridly-item-panel {
+    padding: 0 11px 11px;
   }
 
   body[data-layout-mode="portrait"] .settings-about-gridly-block p {
