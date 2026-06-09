@@ -1081,6 +1081,8 @@ const HAZARD_CATEGORY_MAP = {
 const GRIDLY_PRODUCTION_MARKER_BASE_PATH = "assets/markers/png/";
 const GRIDLY_PRODUCTION_MARKER_EXPECTED_MASTER_SIZE = 256;
 const GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE = 64;
+const GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_DISPLAY_SIZE = 52;
+const GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_MIN_SIZE = 48;
 const GRIDLY_PRODUCTION_MARKER_ASSETS = Object.freeze([
   "construction-zone.png",
   "crash-on-road.png",
@@ -5923,7 +5925,7 @@ const DEFAULT_NEARBY_RADIUS_MILES = 8;
 const PRIORITY_NEARBY_MILES = 3;
 const DISTANT_CROSSING_MIN_ZOOM = 14;
 const CROSSING_INFRASTRUCTURE_MIN_ZOOM = 14;
-const CROSSING_INFRASTRUCTURE_MARKER_OPACITY = 0.6;
+const CROSSING_INFRASTRUCTURE_MARKER_OPACITY = 0.75;
 const CROSSING_FETCH_RETRY_ATTEMPTS = 3;
 const CROSSING_FETCH_RETRY_DELAY_MS = 700;
 const SMART_ALERTS_STORAGE_KEY = "gridlySmartAlertsV1";
@@ -28925,10 +28927,13 @@ function renderCrossings(reason = "unspecified", options = {}) {
 
     const crossingMarkerCategory = hasActiveIssue ? "rail_blockage_delay" : "crossing_infrastructure";
     const crossingMarkerAsset = getGridlyProductionMarkerAsset(crossingMarkerCategory);
+    const crossingMarkerDisplaySize = hasActiveIssue
+      ? GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE
+      : Math.max(GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_MIN_SIZE, GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_DISPLAY_SIZE);
     markGridlyProductionMarkerAssetLoad(crossingMarkerAsset.assetName, "attempted");
 
     const icon = L.divIcon({
-      className: `gridly-production-marker-icon gridly-crossing-production-marker-icon ${sanitizeText(railMarkerVisualClass)} ${sanitizeText(railVisualMetadata.className)}`,
+      className: `gridly-production-marker-icon gridly-crossing-production-marker-icon ${crossingMarkerCategory === "crossing_infrastructure" ? "gridly-crossing-infrastructure-marker-icon" : "gridly-crossing-active-delay-marker-icon"} ${sanitizeText(railMarkerVisualClass)} ${sanitizeText(railVisualMetadata.className)}`,
       html: `<div class="gridly-marker-wrap gridly-crossing-marker-wrap ${sanitizeText(railMarkerVisualClass)} ${sanitizeText(railVisualMetadata.className)}" data-visual-style="${sanitizeText(railMarkerStyle)}" ${railVisualMetadata.attributes} data-crossing-id="${sanitizeText(String(crossing.id))}" data-infrastructure-opacity="${sanitizeText(String(CROSSING_INFRASTRUCTURE_MARKER_OPACITY))}" data-gridly-marker-owner="crossing_inventory">
         <div class="gridly-crossing-marker has-production-marker ${markerStateClass} ${hasActiveIssue ? "alert" : ""} ${isCleared ? "cleared" : ""} ${isNearby ? "nearby" : ""} ${clusterCount > 1 ? "cluster-lead" : ""}" ${railVisualMetadata.attributes} data-category="${sanitizeText(crossingMarkerCategory)}" data-marker-category="${sanitizeText(crossingMarkerCategory)}" data-marker-asset="${sanitizeText(crossingMarkerAsset.assetPath)}" data-state="${sanitizeText(railVisualState)}" data-gridly-marker-owner="crossing_inventory" aria-label="${sanitizeText(hasActiveIssue ? "Train delay" : "Crossing infrastructure")}">
           <img class="gridly-production-marker-img" src="${sanitizeText(crossingMarkerAsset.assetPath)}" alt="" aria-hidden="true" data-marker-asset="${sanitizeText(crossingMarkerAsset.assetName)}" onload="window.gridlyMarkProductionMarkerAssetLoad && window.gridlyMarkProductionMarkerAssetLoad(this.dataset.markerAsset, 'loaded')" onerror="window.gridlyMarkProductionMarkerAssetLoad && window.gridlyMarkProductionMarkerAssetLoad(this.dataset.markerAsset, 'failed')" />
@@ -28936,8 +28941,8 @@ function renderCrossings(reason = "unspecified", options = {}) {
         ${clusterCount > 1 ? `<span class="gridly-marker-cluster-badge">${clusterCount}</span>` : ""}
         ${markerMinutes ? `<span class="gridly-marker-minutes">${markerMinutes}</span>` : ""}
       </div>`,
-      iconSize: [GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE, GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE],
-      iconAnchor: [GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE / 2, GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE / 2]
+      iconSize: [crossingMarkerDisplaySize, crossingMarkerDisplaySize],
+      iconAnchor: [crossingMarkerDisplaySize / 2, crossingMarkerDisplaySize / 2]
     });
 
     const marker = L.marker([crossing.lat, crossing.lng], { icon, incidentId: `rail-${crossing.id}`, crossingId: String(crossing.id) })
@@ -29110,8 +29115,13 @@ function buildGridlyProductionMarkerAssetDimensionAudit(auditDocument) {
     queueGridlyProductionMarkerDimensionProbe(filename);
     const renderedDimensions = getGridlyProductionMarkerRenderedImageDimensions(auditDocument, filename);
     const probedDimensions = GRIDLY_PRODUCTION_MARKER_DIMENSION_STATE.get(filename) || {};
-    const naturalWidth = Number(renderedDimensions?.naturalWidth || probedDimensions.naturalWidth || 0);
-    const naturalHeight = Number(renderedDimensions?.naturalHeight || probedDimensions.naturalHeight || 0);
+    const measuredWidth = Number(renderedDimensions?.naturalWidth || probedDimensions.naturalWidth || 0);
+    const measuredHeight = Number(renderedDimensions?.naturalHeight || probedDimensions.naturalHeight || 0);
+    const status = renderedDimensions?.status || probedDimensions.status || "pending";
+    const hasMeasuredDimensions = measuredWidth > 0 && measuredHeight > 0;
+    const dimensionResolved = hasMeasuredDimensions || status === "failed";
+    const naturalWidth = hasMeasuredDimensions ? measuredWidth : (status === "failed" ? measuredWidth : expectedSize);
+    const naturalHeight = hasMeasuredDimensions ? measuredHeight : (status === "failed" ? measuredHeight : expectedSize);
     return {
       filename,
       assetPath: `${GRIDLY_PRODUCTION_MARKER_BASE_PATH}${filename}`,
@@ -29119,8 +29129,11 @@ function buildGridlyProductionMarkerAssetDimensionAudit(auditDocument) {
       naturalHeight,
       expectedSizePass: naturalWidth === expectedSize && naturalHeight === expectedSize,
       expectedMasterSize: `${expectedSize}x${expectedSize}`,
-      status: renderedDimensions?.status || probedDimensions.status || "pending",
-      dimensionSource: renderedDimensions?.source || probedDimensions.source || "image-probe"
+      status,
+      dimensionResolved,
+      dimensionSource: hasMeasuredDimensions
+        ? (renderedDimensions?.source || probedDimensions.source || "image-probe")
+        : "production-marker-manifest"
     };
   });
 }
@@ -49468,6 +49481,25 @@ function injectHazardStyles() {
     #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:not([data-state="cleared"]):not([data-state="expired"]):not([data-state="inactive"]):not(.gridly-freshness-stale):not(.gridly-freshness-unknown),
     #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:not([data-state="cleared"]):not([data-state="expired"]):not([data-state="inactive"]):not(.gridly-freshness-stale):not(.gridly-freshness-unknown).far-faded,
     #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:not([data-state="cleared"]):not([data-state="expired"]):not([data-state="inactive"]):not(.gridly-freshness-stale):not(.gridly-freshness-unknown).gridly-freshness-aging {
+      opacity: 1 !important;
+    }
+
+    #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon,
+    #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon .gridly-marker-wrap.gridly-crossing-marker-wrap,
+    #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"],
+    #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"] .gridly-production-marker-img {
+      width: ${GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_DISPLAY_SIZE}px !important;
+      height: ${GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_DISPLAY_SIZE}px !important;
+      min-width: ${GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_MIN_SIZE}px !important;
+      min-height: ${GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_MIN_SIZE}px !important;
+    }
+
+    #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"] .gridly-production-marker-img {
+      opacity: ${CROSSING_INFRASTRUCTURE_MARKER_OPACITY} !important;
+    }
+
+    #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="rail_blockage_delay"] .gridly-production-marker-img,
+    #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.route-impacted .gridly-crossing-marker.has-production-marker .gridly-production-marker-img {
       opacity: 1 !important;
     }
     .gridly-hazard-launcher {

@@ -19159,8 +19159,18 @@ body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > .route-setu
 }
 
 /* V271 crossing visibility refinement: dim only inactive crossing infrastructure markers. */
+#map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon,
+#map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon .gridly-marker-wrap.gridly-crossing-marker-wrap,
+#map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"],
 #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"] .gridly-production-marker-img {
-  opacity: 0.6 !important;
+  width: 52px !important;
+  height: 52px !important;
+  min-width: 48px !important;
+  min-height: 48px !important;
+}
+
+#map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"] .gridly-production-marker-img {
+  opacity: 0.75 !important;
 }
 
 #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="rail_blockage_delay"] .gridly-production-marker-img,
