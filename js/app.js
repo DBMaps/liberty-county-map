@@ -1081,8 +1081,7 @@ const HAZARD_CATEGORY_MAP = {
 const GRIDLY_PRODUCTION_MARKER_BASE_PATH = "assets/markers/png/";
 const GRIDLY_PRODUCTION_MARKER_EXPECTED_MASTER_SIZE = 256;
 const GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE = 64;
-const GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_DISPLAY_SIZE = 52;
-const GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_MIN_SIZE = 48;
+const GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_DISPLAY_SIZE = GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE;
 const GRIDLY_PRODUCTION_MARKER_ASSETS = Object.freeze([
   "construction-zone.png",
   "crash-on-road.png",
@@ -28929,7 +28928,7 @@ function renderCrossings(reason = "unspecified", options = {}) {
     const crossingMarkerAsset = getGridlyProductionMarkerAsset(crossingMarkerCategory);
     const crossingMarkerDisplaySize = hasActiveIssue
       ? GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE
-      : Math.max(GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_MIN_SIZE, GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_DISPLAY_SIZE);
+      : GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_DISPLAY_SIZE;
     markGridlyProductionMarkerAssetLoad(crossingMarkerAsset.assetName, "attempted");
 
     const icon = L.divIcon({
@@ -49490,8 +49489,6 @@ function injectHazardStyles() {
     #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"] .gridly-production-marker-img {
       width: ${GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_DISPLAY_SIZE}px !important;
       height: ${GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_DISPLAY_SIZE}px !important;
-      min-width: ${GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_MIN_SIZE}px !important;
-      min-height: ${GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_MIN_SIZE}px !important;
     }
 
     #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"] .gridly-production-marker-img {
