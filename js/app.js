@@ -20472,7 +20472,11 @@ function isGridlyDestinationRouteUsefulLocationLabel(value = "", primaryRoad = "
   if (!label) return false;
   const normalized = normalizeGridlyDestinationLocationToken(label);
   if (!normalized) return false;
-  if (primaryRoad && normalized === normalizeGridlyDestinationLocationToken(primaryRoad)) return false;
+  if (primaryRoad) {
+    const normalizedPrimaryRoad = normalizeGridlyDestinationLocationToken(primaryRoad);
+    if (normalized === normalizedPrimaryRoad) return false;
+    if (normalizedPrimaryRoad && normalizedPrimaryRoad.includes(normalized)) return false;
+  }
   if (/^(unknown|unknown road|active hazard|active alert|route intelligence|road closure|road closed|closure|construction|flooding|hazard|report|nearby|community report)$/i.test(label)) return false;
   if (/reported nearby|near your route|potential impact|active hazards reported/i.test(label)) return false;
   return true;
