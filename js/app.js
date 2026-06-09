@@ -31572,14 +31572,15 @@ function getGridlySpecificCrossingLocation(record = {}, options = {}) {
       return !parts.some((part) => isGridlyLowQualityCrossingLocationToken(part)) || parts.every((part) => isGridlyConsumerCrossingLocationTokenUseful(part));
     });
   const reviewedPrimaryRoad = gridlyCleanConsumerCrossingLocationToken(localContext?.primaryLabel);
+  const reviewedSecondaryRoad = gridlyCleanConsumerCrossingLocationToken(localContext?.secondaryLabel);
   const primaryRoad = (isGridlyConsumerCrossingLocationTokenUseful(reviewedPrimaryRoad) ? reviewedPrimaryRoad : "")
     || roadCandidates.find(Boolean)
     || parsedCrossingParts.find((value) => isGridlyConsumerCrossingLocationTokenUseful(value))
     || "";
   const references = [
+    reviewedSecondaryRoad,
     ...getGridlyCrossingSpecificityTextValues(record, referencePaths),
     ...crossingRecordReferences,
-    localContext?.secondaryLabel,
     ...parsedCrossingParts.slice(primaryRoad ? 0 : 1),
     ...crossingNameCandidates
   ].map(gridlyCleanConsumerCrossingLocationToken)
@@ -31597,7 +31598,7 @@ function getGridlySpecificCrossingLocation(record = {}, options = {}) {
       referenceRoad,
       crossingName,
       specificity: "road_plus_intersecting_road",
-      source: referenceRoad === localContext?.secondaryLabel ? "local_crossing_context" : "crossing_reference_fields"
+      source: gridlyCrossingLocationCompareToken(referenceRoad) === gridlyCrossingLocationCompareToken(reviewedSecondaryRoad) ? "local_crossing_context" : "crossing_reference_fields"
     };
   }
   if (primaryRoad && crossingName) {
