@@ -5910,6 +5910,23 @@ const LIBERTY_COUNTY_CITY_RULES = [
   { city: "Devers", patterns: ["devers"] }
 ];
 let crossingReviewOverrides = {};
+const GRIDLY_REVIEWED_CROSSING_LOCATION_CONTEXT = Object.freeze({
+  "762790L": {
+    primaryLabel: "US 90",
+    secondaryLabel: "Waco Street",
+    displayName: "US 90 & Waco Street"
+  }
+});
+
+function getGridlyReviewedCrossingLocationContext(crossingId = "", review = {}) {
+  const id = String(crossingId || "").trim();
+  const reviewed = (review && typeof review === "object") ? review : {};
+  const configured = id ? (GRIDLY_REVIEWED_CROSSING_LOCATION_CONTEXT[id] || {}) : {};
+  const primaryLabel = String(reviewed.consumerPrimaryRoad || reviewed.primaryRoad || reviewed.mainRoad || configured.primaryLabel || "").trim();
+  const secondaryLabel = String(reviewed.consumerSecondaryRoad || reviewed.secondaryRoad || reviewed.localName || configured.secondaryLabel || "").trim();
+  const displayName = String(reviewed.consumerDisplayName || reviewed.displayName || configured.displayName || (primaryLabel && secondaryLabel ? `${primaryLabel} & ${secondaryLabel}` : "")).trim();
+  return { primaryLabel, secondaryLabel, displayName };
+}
 let roadwaySegmentFeatures = [];
 let roadwayDatasetLoaded = false;
 let roadwayDatasetLoadError = null;
@@ -15654,11 +15671,9 @@ function openAlertsSurfaceFromDock() {
         return true;
       };
       const collectRailLabelValues = (obj, paths = []) => paths.map(path => readPathValue(obj, path)).filter(value => cleanDisplayValue(text(value)));
-      const GRIDLY_LOCAL_CROSSING_CONTEXT = {
-        "762790L": {
-          secondaryLabel: "Waco Street",
-          displayName: "US 90 & Waco Street"
-        }
+      const getLocalCrossingContext = (crossingId = "", crossingReview = {}) => {
+        if (typeof getGridlyReviewedCrossingLocationContext === "function") return getGridlyReviewedCrossingLocationContext(crossingId, crossingReview);
+        return {};
       };
       const resolveRailCrossingPair = (alert = {}) => {
         const enriched = chooseBestAlertLocationContext(alert).enriched || {};
@@ -15800,14 +15815,18 @@ function openAlertsSurfaceFromDock() {
           .flatMap(candidate => collectSecondaryCandidates(candidate.values, candidate.sourceFieldUsed, candidate.qualityRank))
           .sort((a, b) => (a.qualityRank - b.qualityRank) || (a.candidateOrder - b.candidateOrder))[0] || { value: "", sourceFieldUsed: "" };
         const resolvedSecondaryCrossingLabel = secondaryMatch.value;
-        const localCrossingContext = GRIDLY_LOCAL_CROSSING_CONTEXT[crossingId] || null;
+        const reviewContext = crossingRecord?.review || (crossingId ? crossingReviewOverrides?.[crossingId] : {}) || {};
+        const localCrossingContext = getLocalCrossingContext(crossingId, reviewContext);
+        const localPrimaryLabel = cleanDisplayValue(localCrossingContext?.primaryLabel);
         const localSecondaryLabel = cleanDisplayValue(localCrossingContext?.secondaryLabel);
         const localDisplayName = cleanDisplayValue(localCrossingContext?.displayName);
-        const localSecondaryIsDistinct = isDistinctCrossingPart(localSecondaryLabel, primaryRoad, [], { rejectRouteAlias: true });
-        const usedLocalContext = !resolvedSecondaryCrossingLabel && localSecondaryLabel && localSecondaryIsDistinct;
-        const resolvedSecondaryWithLocal = usedLocalContext ? localSecondaryLabel : resolvedSecondaryCrossingLabel;
-        const singleRoadCandidate = primaryRoad || firstDistinctCrossingPart || cleanDisplayValue(enriched.nearbyKnownLocation);
-        const primaryRoadValidity = isInvalidPrimaryRoadLabel(primaryRoad);
+        const localPrimaryIsValid = localPrimaryLabel && !isInvalidPrimaryRoadLabel(localPrimaryLabel).invalid;
+        const effectivePrimaryRoad = localPrimaryIsValid ? localPrimaryLabel : primaryRoad;
+        const localSecondaryIsDistinct = isDistinctCrossingPart(localSecondaryLabel, effectivePrimaryRoad, [], { rejectRouteAlias: true });
+        const usedReviewedContext = Boolean(localSecondaryLabel && localSecondaryIsDistinct && (localPrimaryIsValid || !resolvedSecondaryCrossingLabel));
+        const resolvedSecondaryWithLocal = usedReviewedContext ? localSecondaryLabel : resolvedSecondaryCrossingLabel;
+        const singleRoadCandidate = effectivePrimaryRoad || firstDistinctCrossingPart || cleanDisplayValue(enriched.nearbyKnownLocation);
+        const primaryRoadValidity = isInvalidPrimaryRoadLabel(effectivePrimaryRoad);
         const singleRoadValidity = isGenericAreaLikeLabel(singleRoadCandidate);
         const nearbyRoadCandidateRaw = firstDistinctCrossingPart;
         const nearbyReferenceRoadRaw = cleanDisplayValue(enriched.nearbyKnownLocation);
@@ -15827,13 +15846,13 @@ function openAlertsSurfaceFromDock() {
         let replacementSource = "primaryRoad";
         let rejectedLabel = "";
         let rejectionReason = "";
-        if (!primaryRoadValidity.invalid && primaryRoad && resolvedSecondaryWithLocal) {
-          finalHeadline = `Crossing blocked at ${primaryRoad} and ${resolvedSecondaryWithLocal}`;
+        if (!primaryRoadValidity.invalid && effectivePrimaryRoad && resolvedSecondaryWithLocal) {
+          finalHeadline = `Crossing blocked at ${effectivePrimaryRoad} and ${resolvedSecondaryWithLocal}`;
         } else if (!primaryRoadValidity.invalid && !singleRoadValidity.invalid && singleRoadCandidate) {
           finalHeadline = `Crossing blocked at ${singleRoadCandidate}`;
-        } else if (usedLocalContext && localDisplayName) {
+        } else if (usedReviewedContext && localDisplayName) {
           finalHeadline = `Crossing blocked at ${localDisplayName}`;
-          replacementSource = "localCrossingContextStreet";
+          replacementSource = "reviewedCrossingContext";
         } else if (nearbyRoadCandidate) {
           finalHeadline = `Crossing blocked near ${nearbyRoadCandidate}`;
           replacementSource = "nearbyRoadCandidate";
@@ -15858,10 +15877,10 @@ function openAlertsSurfaceFromDock() {
           rejectionReason = singleRoadValidity.reason;
         }
         const resolvedSecondaryForOutput = resolvedSecondaryWithLocal;
-        const sourceFieldUsedForOutput = usedLocalContext ? "localCrossingContext" : (secondaryMatch.sourceFieldUsed || "");
+        const sourceFieldUsedForOutput = usedReviewedContext ? "reviewedCrossingContext" : (secondaryMatch.sourceFieldUsed || "");
         const debugId = cleanDisplayValue(alert?.id || alert?.reportId || alert?.crossingId || alert?.crossing_id);
         return {
-          primaryRoad,
+          primaryRoad: effectivePrimaryRoad,
           secondaryCrossingLabel: resolvedSecondaryForOutput,
           resolvedSecondaryCrossingLabel: resolvedSecondaryForOutput,
           sourceFieldUsed: sourceFieldUsedForOutput,
@@ -31510,9 +31529,10 @@ function getGridlySpecificCrossingLocation(record = {}, options = {}) {
   const crossingRecord = getGridlyCrossingRecordForSpecificLocation(record);
   const props = crossingRecord?.props || crossingRecord?.properties || {};
   const crossingId = getGridlyCrossingSpecificityId(record) || getGridlyCrossingRecordId(crossingRecord);
-  const localContext = {
-    "762790L": { secondaryLabel: "Waco Street", displayName: "US 90 & Waco Street" }
-  }[crossingId] || null;
+  const reviewContext = crossingRecord?.review || (crossingId ? crossingReviewOverrides?.[crossingId] : {}) || {};
+  const localContext = typeof getGridlyReviewedCrossingLocationContext === "function"
+    ? getGridlyReviewedCrossingLocationContext(crossingId, reviewContext)
+    : {};
   const roadPaths = [
     "roadName", "primaryRoad", "resolvedRoadName", "displayRoadName", "corridor", "route", "road", "road_name", "street_name",
     "raw.roadName", "raw.primaryRoad", "raw.resolvedRoadName", "raw.corridor", "raw.route", "raw.road", "raw.road_name",
@@ -31551,7 +31571,11 @@ function getGridlySpecificCrossingLocation(record = {}, options = {}) {
       const parts = splitGridlyCrossingCompositeLocation(value);
       return !parts.some((part) => isGridlyLowQualityCrossingLocationToken(part)) || parts.every((part) => isGridlyConsumerCrossingLocationTokenUseful(part));
     });
-  const primaryRoad = roadCandidates.find(Boolean) || parsedCrossingParts.find((value) => isGridlyConsumerCrossingLocationTokenUseful(value)) || "";
+  const reviewedPrimaryRoad = gridlyCleanConsumerCrossingLocationToken(localContext?.primaryLabel);
+  const primaryRoad = (isGridlyConsumerCrossingLocationTokenUseful(reviewedPrimaryRoad) ? reviewedPrimaryRoad : "")
+    || roadCandidates.find(Boolean)
+    || parsedCrossingParts.find((value) => isGridlyConsumerCrossingLocationTokenUseful(value))
+    || "";
   const references = [
     ...getGridlyCrossingSpecificityTextValues(record, referencePaths),
     ...crossingRecordReferences,
