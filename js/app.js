@@ -55918,7 +55918,7 @@ function gridlyBuildRouteRemovalImpactInventory() {
 
   const destinationSearchPath = "Destination Search → choose/search Home, Work, Favorite, or destination → destination route preview / Current Route Details";
   const routeDetailsPath = "Route Details / Destination Impact pane → current route summary and active-route actions";
-  const settingsPlacesPath = "Settings → Route & Places → Edit Home / Edit Work / Manage Saved Places";
+  const settingsPlacesPath = "Settings → My Routes → Edit Home / Edit Work / Manage Saved Places";
   const routeWatchPath = "Route Watch owner surfaces: dashboard Start Route Watch, desktop Route Watch strip, Route Details → Start Route Watch, and Settings route/place access";
 
   const capabilities = [
@@ -55999,7 +55999,7 @@ function gridlyBuildRouteRemovalImpactInventory() {
       "Saved Places",
       "Settings / Destination Search",
       "Route Quick Panel consumes saved places as start/destination options.",
-      "Settings → Route & Places → Manage Saved Places; Destination Search exposes saved Home, Work, and Favorites as route destinations.",
+      "Settings → My Routes → Manage Saved Places; Destination Search exposes saved Home, Work, and Favorites as route destinations.",
       "low"
     ),
     capability(
@@ -58315,7 +58315,7 @@ function gridlySettingsListExperienceAudit() {
     const firstDetailRect = details[0]?.getBoundingClientRect?.();
     const hostStyle = settingsHost ? getComputedStyle(settingsHost) : null;
     const bodyStyle = sheetBody ? getComputedStyle(sheetBody) : null;
-    const historyLikeSheetDetected = Boolean(settingsSheet && settingsHost?.id === "gridlyPortraitV2Sheet" && rows.length >= 7 && settingsHost.classList.contains("gridly-v2-sheet"));
+    const historyLikeSheetDetected = Boolean(settingsSheet && settingsHost?.id === "gridlyPortraitV2Sheet" && rows.length >= 4 && settingsHost.classList.contains("gridly-v2-sheet"));
     const compactRailsAligned = Boolean(settingsHost && (
       (hostRect && hostRect.width > 0 && Math.abs(hostRect.left - 12) <= 4 && Math.abs((window.innerWidth - hostRect.right) - 12) <= 4)
       || (hostStyle && hostStyle.position === "fixed" && (hostStyle.left === "12px" || hostStyle.right === "12px"))
@@ -58328,7 +58328,7 @@ function gridlySettingsListExperienceAudit() {
     const duplicateSettingsBindingDetected = Boolean(gridlySettingsPerformanceTrace.duplicateSettingsBindingDetected || (sheetBody?.dataset?.gridlyV2SettingsChangeBound === "1" && gridlySettingsPerformanceTrace.settingsBindingRuns > 1));
     const slowInteractionSuspected = Boolean(gridlySettingsPerformanceTrace.slowInteractionSuspected || duplicateSettingsBindingDetected || visibleSettingsSheets.length > 1);
     const bottomDockOverlapDetected = Boolean(hostRect && dockRect && hostRect.width > 0 && dockRect.width > 0 && hostRect.bottom > dockRect.top - 4);
-    const expandableRowsDetected = rows.length >= 7 && summaries.length >= 7;
+    const expandableRowsDetected = rows.length >= 4 && summaries.length >= 4;
     const collapsedRowHeightCompact = summaries.every((summary) => {
       const rect = summary.getBoundingClientRect?.();
       return !rect || rect.height === 0 || rect.height <= 86;
@@ -58338,7 +58338,7 @@ function gridlySettingsListExperienceAudit() {
       return parseFloat(style.paddingLeft || "0") >= 10 && parseFloat(style.paddingRight || "0") >= 10;
     });
     const expandedContentIndented = Boolean(firstSummaryRect && firstDetailRect && firstDetailRect.left >= firstSummaryRect.left && firstDetailRect.right <= firstSummaryRect.right + 2)
-      || details.length >= 7;
+      || details.length >= 4;
     const closeButtonPlacementOk = Boolean(closeButton && (
       (closeRect && headerRect && closeRect.width > 0 && closeRect.top >= headerRect.top - 2 && closeRect.bottom <= headerRect.bottom + 6 && closeRect.right <= headerRect.right + 2)
       || activeSheetName === "settings"
@@ -58355,7 +58355,7 @@ function gridlySettingsListExperienceAudit() {
     const addSettingsAlignmentFailureReason = (check, selector, reason, measurements = {}) => {
       settingsAlignmentFailureReasons.push({ check, selector, reason, measurements });
     };
-    if (!historyLikeSheetDetected) addSettingsAlignmentFailureReason("historyLikeSheetDetected", "#gridlyPortraitV2Sheet [data-gridly-settings-v2]", "Settings content was not detected as an active V2 sheet with at least seven compact sections.", { activeSheetName, settingsSheetFound: Boolean(settingsSheet), settingsHostId: settingsHost?.id || null, settingsHostClasses: settingsHost ? Array.from(settingsHost.classList) : [], sectionCount: rows.length });
+    if (!historyLikeSheetDetected) addSettingsAlignmentFailureReason("historyLikeSheetDetected", "#gridlyPortraitV2Sheet [data-gridly-settings-v2]", "Settings content was not detected as an active V2 sheet with the four Settings V2 compact sections.", { activeSheetName, settingsSheetFound: Boolean(settingsSheet), settingsHostId: settingsHost?.id || null, settingsHostClasses: settingsHost ? Array.from(settingsHost.classList) : [], sectionCount: rows.length });
     if (!compactRailsAligned) addSettingsAlignmentFailureReason("compactRailsAligned", "#gridlyPortraitV2Sheet", "Sheet rails are not measuring near the expected 12px fixed portrait rails.", { hostRect: rectSnapshot(hostRect), viewportWidth: window.innerWidth, computedPosition: hostStyle?.position || null, computedLeft: hostStyle?.left || null, computedRight: hostStyle?.right || null });
     if (!headerAligned) addSettingsAlignmentFailureReason("headerAligned", "#gridlyPortraitV2Sheet header", "Header rectangle is not aligned with the sheet rail rectangle.", { hostRect: rectSnapshot(hostRect), headerRect: rectSnapshot(headerRect), activeSheetName });
     if (!scrollContainmentOk) addSettingsAlignmentFailureReason("scrollContainmentOk", "#gridlyPortraitV2SheetBody", "Expected scroll containment on the V2 sheet body with hidden overflow on the sheet host was not confirmed.", { sheetBodyFound: Boolean(sheetBody), bodyOverflowY: bodyStyle?.overflowY || null, hostOverflow: hostStyle?.overflow || null });
@@ -58625,7 +58625,7 @@ function gridlySettingsListExperienceAudit() {
       actions: ["Edit Home", "Edit Work", "Manage Saved Places"],
       toggles: [],
       buttons: ["Edit Home", "Edit Work", "Manage Saved Places"],
-      recommendedGroup: "Route & Places",
+      recommendedGroup: "My Routes",
       collapsedRowCandidate: true,
       collapsedRowShouldShow: ["Home saved state", "Work saved state", "Saved Places count"],
       expandedShouldShow: ["address/meta text", "local-only note", "edit/manage actions", "saved-place rows when present"],
@@ -58640,7 +58640,7 @@ function gridlySettingsListExperienceAudit() {
       actions: [],
       toggles: ["Route Watch Alerts", "Rail Crossing Alerts", "Road Hazard Alerts", "Community Activity Alerts"],
       buttons: [],
-      recommendedGroup: "Alerts & Notifications",
+      recommendedGroup: "Preferences",
       collapsedRowCandidate: true,
       collapsedRowShouldShow: ["Notification Preferences", "count of enabled stored preferences", "storage-only qualifier"],
       expandedShouldShow: ["all four toggles", "clear copy that delivery is not active"],
@@ -58655,7 +58655,7 @@ function gridlySettingsListExperienceAudit() {
       actions: [],
       toggles: [],
       buttons: [],
-      recommendedGroup: "Map & Display",
+      recommendedGroup: "Preferences",
       collapsedRowCandidate: true,
       collapsedRowShouldShow: ["Map Style", "Text Size", "Theme value if space allows"],
       expandedShouldShow: ["Preferred Name input", "Map Style select", "Theme select", "Text Size select", "local-save notes"],
@@ -58670,7 +58670,7 @@ function gridlySettingsListExperienceAudit() {
       actions: ["Replay Setup", "Send Feedback"],
       toggles: [],
       buttons: ["Replay Setup", "Send Feedback"],
-      recommendedGroup: "Support & About",
+      recommendedGroup: "About & Support",
       collapsedRowCandidate: true,
       collapsedRowShouldShow: ["About Gridly", "version/build summary"],
       expandedShouldShow: ["Replay Setup", "Send Feedback email flow", "feedback acknowledgement"],
@@ -58697,25 +58697,25 @@ function gridlySettingsListExperienceAudit() {
   const operationalItems = settingsItems.filter((entry) => entry.lifecycle.includes("operational")).map((entry) => entry.id);
   const groupingRecommendations = [
     {
-      group: "Profile & Awareness",
+      group: "My Area",
       immediatelyVisible: ["Current Awareness Area", "Preferred Name set/not set"],
       expandOnly: ["Change Awareness Area action", "Preferred Name input", "privacy/local-only note"],
       rationale: "Profile is setup-only; Awareness Area now reuses existing home-town preference persistence so users can find it in Settings."
     },
     {
-      group: "Alerts & Notifications",
+      group: "Preferences",
       immediatelyVisible: ["enabled stored preference count", "storage-only status"],
       expandOnly: ["Route Watch Alerts", "Rail Crossing Alerts", "Road Hazard Alerts", "Community Activity Alerts"],
       rationale: "Four always-visible toggles create height and imply delivery that is explicitly unavailable."
     },
     {
-      group: "Map & Display",
+      group: "Preferences",
       immediatelyVisible: ["Map Style current value", "Text Size current value"],
       expandOnly: ["Theme select", "Preferred Name input", "explanatory notes"],
       rationale: "Map Style and Text Size are operational; Theme and name are mostly setup preferences."
     },
     {
-      group: "Route & Places",
+      group: "My Routes",
       immediatelyVisible: ["Home saved/not saved", "Work saved/not saved", "Saved Places count"],
       expandOnly: ["full address/meta", "local-only notes", "Edit Home", "Edit Work", "Manage Saved Places"],
       rationale: "Route anchors are the most important settings, but current card metadata and buttons can be detail content."
@@ -58727,10 +58727,10 @@ function gridlySettingsListExperienceAudit() {
       rationale: "About/support actions are rare and should not compete with operational controls in portrait."
     },
     {
-      group: "Data & Testing",
+      group: "About & Support",
       immediatelyVisible: [],
       expandOnly: [],
-      rationale: "No Settings testing tools or Supabase sync controls were detected; protected data/sync systems should remain untouched."
+      rationale: "Data & Testing is no longer a top-level section; its informational note now lives in About & Support, and protected data/sync systems remain untouched."
     }
   ];
   const clutterFindings = [
@@ -58754,9 +58754,9 @@ function gridlySettingsListExperienceAudit() {
     sections,
     compactExpandableSectionsDetected: compactSettingsSections.length,
     compactSectionLabels,
-    expectedCompactSectionLabels: ["Profile & Awareness", "Route & Places", "Alerts & Notifications", "Map & Display", "Privacy & Location", "Data & Testing", "About & Support"],
+    expectedCompactSectionLabels: ["My Area", "My Routes", "Preferences", "About & Support"],
     settingsSheetAlignmentAudit,
-    settingsListExperienceImplemented: compactSettingsSections.length >= 7,
+    settingsListExperienceImplemented: compactSettingsSections.length >= 4,
     settingsItems,
     frequentlyUsedItems,
     setupOnlyItems,
@@ -58764,7 +58764,7 @@ function gridlySettingsListExperienceAudit() {
     groupingRecommendations,
     clutterFindings,
     expandableListReady: true,
-    expandableListImplemented: compactSettingsSections.length >= 7,
+    expandableListImplemented: compactSettingsSections.length >= 4,
     expandableListReadinessNotes: [
       "Every current item can be represented as a collapsed label/value row with its existing control retained in expanded detail.",
       "Route/place cards, notification toggles, display selects, and About actions do not require behavior changes to move into expandable rows.",
@@ -69002,9 +69002,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       <div class="gridly-v2-list gridly-settings-sheet settings-list-experience" data-gridly-settings-v2="true" data-gridly-settings-list-experience="true">
         <p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p>
         <details class="settings-modal-section settings-list-section">
-          <summary class="settings-list-summary"><span class="settings-list-title">Profile &amp; Awareness</span><span class="settings-list-meta">Liberty County Awareness · Profile details</span></summary>
+          <summary class="settings-list-summary"><span class="settings-list-title">My Area</span><span class="settings-list-meta">Awareness Area · Preferred Name</span></summary>
           <div class="settings-list-detail">
-            <p class="settings-placeholder-note">Awareness follows your selected community-watch area. Profile details stay on this device.</p>
+            <p class="settings-placeholder-note">Choose where Gridly should focus local awareness for you. Profile details stay on this device.</p>
             <div class="settings-place-grid" aria-label="Awareness Area settings">
               <article class="settings-place-card settings-place-card-wide settings-awareness-area-card"><span class="settings-place-label">Awareness Area</span><strong data-gridly-settings-awareness-current>${escapeV2SettingsText(awareness.label)}</strong><small data-gridly-settings-awareness-meta>${escapeV2SettingsText(awareness.meta)}</small><button class="gridly-v2-tile settings-place-action" data-v2-action="settings-change-awareness-area" type="button" aria-expanded="false">Change Awareness Area</button></article>
             </div>
@@ -69016,7 +69016,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           </div>
         </details>
         <details class="settings-modal-section settings-list-section">
-          <summary class="settings-list-summary"><span class="settings-list-title">Route &amp; Places</span><span class="settings-list-meta">Home/Work · Route Watch</span></summary>
+          <summary class="settings-list-summary"><span class="settings-list-title">My Routes</span><span class="settings-list-meta">Home · Work · Saved Places</span></summary>
           <div class="settings-list-detail">
             <div class="settings-place-grid">
               <article class="settings-place-card settings-place-card-anchor"><span class="settings-place-label">HOME</span><strong>${escapeV2SettingsText(home.label)}</strong><small>${escapeV2SettingsText(home.meta)}</small><small class="settings-clean-note">Shown only on this device.</small><button class="gridly-v2-tile settings-place-action" data-v2-action="route-edit-home-open" type="button">Edit Home</button></article>
@@ -69026,7 +69026,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           </div>
         </details>
         <details class="settings-modal-section settings-list-section">
-          <summary class="settings-list-summary"><span class="settings-list-title">Alerts &amp; Notifications</span><span class="settings-list-meta">Local alerts · Preferences</span></summary>
+          <summary class="settings-list-summary"><span class="settings-list-title">Preferences</span><span class="settings-list-meta">Alerts · Map · Display · Location</span></summary>
           <div class="settings-list-detail">
             <p class="settings-placeholder-note settings-notification-notice">Notification delivery is currently in development. Your notification preferences will be saved and used when future notification features become available.</p>
             <div class="settings-toggle-grid">
@@ -69035,30 +69035,18 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
               <label class="settings-toggle-row"><input type="checkbox" data-v2-settings-field="notifications.hazardAlerts"${checked(settings.notifications.hazardAlerts)}><span>Road Hazard Alerts</span></label>
               <label class="settings-toggle-row"><input type="checkbox" data-v2-settings-field="notifications.communityAlerts"${checked(settings.notifications.communityAlerts)}><span>Community Activity Alerts</span></label>
             </div>
-          </div>
-        </details>
-        <details class="settings-modal-section settings-list-section">
-          <summary class="settings-list-summary"><span class="settings-list-title">Map &amp; Display</span><span class="settings-list-meta">Map style · Display preferences</span></summary>
-          <div class="settings-list-detail">
             <div class="settings-select-grid">
               <label>Map Style<select data-v2-settings-field="display.mapStyle"><option value="standard"${selected(settings.display.mapStyle, "standard")}>Standard</option><option value="dark"${selected(settings.display.mapStyle, "dark")}>Dark</option><option value="satellite"${selected(settings.display.mapStyle, "satellite")}>Satellite</option></select></label>
               <label>Theme<select data-v2-settings-field="display.theme"><option value="system"${selected(settings.display.theme, "system")}>System</option><option value="light"${selected(settings.display.theme, "light")}>Light</option><option value="dark"${selected(settings.display.theme, "dark")}>Dark</option></select></label>
               <label class="settings-text-size-label"><span>Text Size</span>${buildGridlySettingsTextSizeSegmentsHtml(settings.display.textSize)}</label>
             </div>
             <p class="settings-placeholder-note">Theme and Text Size apply immediately and are saved locally on this device.</p>
+            <p class="settings-placeholder-note">Location is used only when requested. Gridly does not request location when Settings opens.</p>
           </div>
-        </details>
-        <details class="settings-modal-section settings-list-section">
-          <summary class="settings-list-summary"><span class="settings-list-title">Privacy &amp; Location</span><span class="settings-list-meta">Location only when requested</span></summary>
-          <div class="settings-list-detail"><p class="settings-placeholder-note">Location is used only when requested. Gridly does not request location when Settings opens.</p></div>
-        </details>
-        <details class="settings-modal-section settings-list-section">
-          <summary class="settings-list-summary"><span class="settings-list-title">Data &amp; Testing</span><span class="settings-list-meta">History data · Test tools</span></summary>
-          <div class="settings-list-detail"><p class="settings-placeholder-note">No cleanup or test tools are available in Settings for this phase. Historical data is not changed from this panel.</p></div>
         </details>
         <details class="settings-modal-section settings-list-section" data-gridly-about>
           <summary class="settings-list-summary"><span class="settings-list-title">About &amp; Support</span><span class="settings-list-meta">Version · Help</span></summary>
-          <div class="settings-list-detail"><p><strong>${GRIDLY_APP_VERSION_LABEL}</strong><br>${GRIDLY_APP_BUILD_LABEL}</p>${buildGridlyAboutGuidanceHtml()}<button class="gridly-v2-tile" data-v2-action="settings-replay-setup" type="button">Replay Setup</button><button class="gridly-v2-tile" data-v2-action="settings-feedback-open" type="button">Send Feedback</button>${buildGridlyFeedbackFlowHtml({ v2: true })}</div>
+          <div class="settings-list-detail"><p><strong>${GRIDLY_APP_VERSION_LABEL}</strong><br>${GRIDLY_APP_BUILD_LABEL}</p><p class="settings-placeholder-note">No cleanup or test tools are available in Settings for this phase. Historical data is not changed from this panel.</p>${buildGridlyAboutGuidanceHtml()}<button class="gridly-v2-tile" data-v2-action="settings-replay-setup" type="button">Replay Setup</button><button class="gridly-v2-tile" data-v2-action="settings-feedback-open" type="button">Send Feedback</button>${buildGridlyFeedbackFlowHtml({ v2: true })}</div>
         </details>
       </div>`;
     const buildDuration = Number((getGridlySettingsPerfNow() - buildStartedAt).toFixed(2));
