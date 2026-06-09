@@ -19162,9 +19162,15 @@ body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > .route-setu
   box-shadow: none !important;
 }
 
-#map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-marker-cluster-badge,
-#map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-marker-minutes {
+#map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-marker-cluster-badge {
   z-index: 3 !important;
+}
+
+/* V271.5A: crossing production markers keep freshness in popups/alerts, not on-map chips. */
+#map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-marker-minutes {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
 }
 
 /* V271.1 crossing visibility refinement: dim inactive crossing infrastructure markers without shrinking them. */

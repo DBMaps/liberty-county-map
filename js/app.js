@@ -28896,7 +28896,6 @@ function renderCrossings(reason = "unspecified", options = {}) {
     const markerLabel = getMarkerLabel(report, markerStateClass, lifecycleState);
     const clusterCount = smartClusterState.leadCounts.get(String(crossing.id)) || 0;
     if (smartClusterState.hiddenIds.has(String(crossing.id))) return;
-    const markerMinutes = hasActiveIssue && report?.minutesAgo <= REPORT_EXPIRATION_MINUTES ? `${report.minutesAgo}m ago` : "";
     const railMarkerStyle = isImpactedOnRoute
       ? "rail_route_impact"
       : markerStateClass === "state-blocked"
@@ -28938,7 +28937,6 @@ function renderCrossings(reason = "unspecified", options = {}) {
           <img class="gridly-production-marker-img" src="${sanitizeText(crossingMarkerAsset.assetPath)}" alt="" aria-hidden="true" data-marker-asset="${sanitizeText(crossingMarkerAsset.assetName)}" onload="window.gridlyMarkProductionMarkerAssetLoad && window.gridlyMarkProductionMarkerAssetLoad(this.dataset.markerAsset, 'loaded')" onerror="window.gridlyMarkProductionMarkerAssetLoad && window.gridlyMarkProductionMarkerAssetLoad(this.dataset.markerAsset, 'failed')" />
         </div>
         ${clusterCount > 1 ? `<span class="gridly-marker-cluster-badge">${clusterCount}</span>` : ""}
-        ${markerMinutes ? `<span class="gridly-marker-minutes">${markerMinutes}</span>` : ""}
       </div>`,
       iconSize: [crossingMarkerDisplaySize, crossingMarkerDisplaySize],
       iconAnchor: [crossingMarkerDisplaySize / 2, crossingMarkerDisplaySize / 2]
@@ -49507,6 +49505,12 @@ function injectHazardStyles() {
     #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="rail_blockage_delay"] .gridly-production-marker-img,
     #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.route-impacted .gridly-crossing-marker.has-production-marker .gridly-production-marker-img {
       opacity: 1 !important;
+    }
+    /* V271.5A: crossing production markers keep freshness in popups/alerts, not on-map chips. */
+    #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-marker-minutes {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
     }
     .gridly-hazard-launcher {
       position: fixed;
