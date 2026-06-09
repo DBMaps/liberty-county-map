@@ -57989,41 +57989,48 @@ function buildGridlyAboutGuidanceHtml() {
     <details class="settings-about-gridly-section">
       <summary class="settings-about-gridly-summary">About Gridly</summary>
       <div class="settings-about-gridly-content">
-        <article class="settings-about-gridly-block">
-          <p class="settings-about-gridly-kicker">Mission</p>
-          <h3>GRIDLY</h3>
-          <p class="settings-about-gridly-tagline">Know Before You Go</p>
-          <p>Gridly helps communities share awareness about blocked crossings, road hazards, flooding, closures, and changing travel conditions before they affect the day.</p>
-        </article>
-        <article class="settings-about-gridly-block">
-          <p class="settings-about-gridly-kicker">Community Commitment</p>
-          <h3>Our Commitment</h3>
-          <p>Gridly was built for residents, commuters, schools, businesses, and first responders.</p>
-          <p>A portion of future proceeds will be reinvested into the communities we serve.</p>
-          <p>Public safety partnerships remain a priority.</p>
-          <p>Dispatch and first responder use will always remain free.</p>
-        </article>
-        <article class="settings-about-gridly-block">
-          <p class="settings-about-gridly-kicker">Beta Notice</p>
-          <h3>Beta Notice</h3>
-          <p>Gridly is currently in beta.</p>
-          <p>Features, reports, and community activity may evolve as the platform continues to improve.</p>
-        </article>
-        <article class="settings-about-gridly-block">
-          <p class="settings-about-gridly-kicker">Important Safety Notice</p>
-          <h3>Important</h3>
-          <p>Gridly is a community awareness platform.</p>
-          <p>Gridly should not be used to report emergencies.</p>
-          <p>For emergencies, always call 911 or contact local emergency services.</p>
-          <p>Always use your own judgment and obey traffic laws.</p>
-        </article>
-        <article class="settings-about-gridly-block">
-          <p class="settings-about-gridly-kicker">How Gridly Works</p>
-          <h3>How Gridly Works</h3>
-          <p>Gridly uses community reports, confirmations, and recent observations to help people know before they go.</p>
-          <p>Community reports are awareness signals, not guarantees.</p>
-          <p>Conditions can change quickly.</p>
-        </article>
+        <details class="settings-about-gridly-topic">
+          <summary class="settings-about-gridly-topic-summary">Mission</summary>
+          <div class="settings-about-gridly-topic-content">
+            <h3>GRIDLY</h3>
+            <p class="settings-about-gridly-tagline">Know Before You Go</p>
+            <p>Gridly helps communities share awareness about blocked crossings, road hazards, flooding, closures, and changing travel conditions before they affect the day.</p>
+            <p>Community reports help people understand what is happening, where it is happening, and how conditions may be changing.</p>
+          </div>
+        </details>
+        <details class="settings-about-gridly-topic">
+          <summary class="settings-about-gridly-topic-summary">Community Commitment</summary>
+          <div class="settings-about-gridly-topic-content">
+            <p>Gridly was built for residents, commuters, schools, businesses, and first responders.</p>
+            <p>A portion of future proceeds will be reinvested into the communities we serve.</p>
+            <p>Public safety partnerships remain a priority.</p>
+            <p>Dispatch and first responder use will always remain free.</p>
+          </div>
+        </details>
+        <details class="settings-about-gridly-topic">
+          <summary class="settings-about-gridly-topic-summary">Beta Notice</summary>
+          <div class="settings-about-gridly-topic-content">
+            <p>Gridly is currently in beta.</p>
+            <p>Features, reports, and community activity may evolve as the platform continues to improve.</p>
+          </div>
+        </details>
+        <details class="settings-about-gridly-topic">
+          <summary class="settings-about-gridly-topic-summary">Important Safety Notice</summary>
+          <div class="settings-about-gridly-topic-content">
+            <p>Gridly is a community awareness platform.</p>
+            <p>Gridly should not be used to report emergencies.</p>
+            <p>For emergencies, always call 911 or contact local emergency services.</p>
+            <p>Always use your own judgment and obey traffic laws.</p>
+          </div>
+        </details>
+        <details class="settings-about-gridly-topic">
+          <summary class="settings-about-gridly-topic-summary">How Trust Works</summary>
+          <div class="settings-about-gridly-topic-content">
+            <p>Gridly uses community reports, confirmations, and recent observations to help people know before they go.</p>
+            <p>Community reports are awareness signals, not guarantees.</p>
+            <p>Conditions can change quickly.</p>
+          </div>
+        </details>
       </div>
     </details>`;
 }
