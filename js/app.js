@@ -5922,6 +5922,8 @@ const GRIDLY_APP_BUILD_LABEL = "Build 1710";
 const DEFAULT_NEARBY_RADIUS_MILES = 8;
 const PRIORITY_NEARBY_MILES = 3;
 const DISTANT_CROSSING_MIN_ZOOM = 14;
+const CROSSING_INFRASTRUCTURE_MIN_ZOOM = 14;
+const CROSSING_INFRASTRUCTURE_MARKER_OPACITY = 0.6;
 const CROSSING_FETCH_RETRY_ATTEMPTS = 3;
 const CROSSING_FETCH_RETRY_DELAY_MS = 700;
 const SMART_ALERTS_STORAGE_KEY = "gridlySmartAlertsV1";
@@ -28794,6 +28796,20 @@ function getDefaultRelevantCrossings() {
   highlightNearestCrossingOnFirstLoad();
 }
 
+function getCurrentCrossingInfrastructureZoom() {
+  const zoom = Number(map?.getZoom?.());
+  return Number.isFinite(zoom) ? zoom : CROSSING_INFRASTRUCTURE_MIN_ZOOM;
+}
+
+function shouldShowCrossingInfrastructureMarkers() {
+  return getCurrentCrossingInfrastructureZoom() >= CROSSING_INFRASTRUCTURE_MIN_ZOOM;
+}
+
+function isActiveTrainDelayCrossing(crossing) {
+  const report = getLatestReportForCrossing(crossing?.id);
+  return getIncidentLifecycleState(report) === "active";
+}
+
 function shouldShowDistantInactiveCrossing(crossing) {
   if (showAllCrossingsLayer) return true;
   if (!map) return false;
@@ -28824,10 +28840,15 @@ function renderCrossings(reason = "unspecified", options = {}) {
 
   const bounds = map?.getBounds?.();
   const defaultRelevantCrossingIds = new Set(getDefaultRelevantCrossings().map((item) => String(item.id)));
+  const showInfrastructureMarkers = shouldShowCrossingInfrastructureMarkers();
   const visibleCrossings = getVisibleCrossingsForFilter(`fit:${reason}`).filter((crossing) => {
+    const activeTrainDelay = isActiveTrainDelayCrossing(crossing);
     const inDefaultSet = defaultRelevantCrossingIds.has(String(crossing.id));
     const inView = bounds ? bounds.contains([crossing.lat, crossing.lng]) : true;
-    return (inDefaultSet || shouldShowDistantInactiveCrossing(crossing)) && inView;
+    if (!inView) return false;
+    if (activeTrainDelay) return inDefaultSet || activeGeoFilter === "active-delays" || shouldShowDistantInactiveCrossing(crossing);
+    if (!showInfrastructureMarkers) return false;
+    return inDefaultSet || shouldShowDistantInactiveCrossing(crossing);
   });
   const priorityAnchor = getGridlyAwarenessAnchor();
   const prioritizedVisibleCrossings = priorityAnchor
@@ -28908,7 +28929,7 @@ function renderCrossings(reason = "unspecified", options = {}) {
 
     const icon = L.divIcon({
       className: `gridly-production-marker-icon gridly-crossing-production-marker-icon ${sanitizeText(railMarkerVisualClass)} ${sanitizeText(railVisualMetadata.className)}`,
-      html: `<div class="gridly-marker-wrap gridly-crossing-marker-wrap ${sanitizeText(railMarkerVisualClass)} ${sanitizeText(railVisualMetadata.className)}" data-visual-style="${sanitizeText(railMarkerStyle)}" ${railVisualMetadata.attributes} data-crossing-id="${sanitizeText(String(crossing.id))}" data-gridly-marker-owner="crossing_inventory">
+      html: `<div class="gridly-marker-wrap gridly-crossing-marker-wrap ${sanitizeText(railMarkerVisualClass)} ${sanitizeText(railVisualMetadata.className)}" data-visual-style="${sanitizeText(railMarkerStyle)}" ${railVisualMetadata.attributes} data-crossing-id="${sanitizeText(String(crossing.id))}" data-infrastructure-opacity="${sanitizeText(String(CROSSING_INFRASTRUCTURE_MARKER_OPACITY))}" data-gridly-marker-owner="crossing_inventory">
         <div class="gridly-crossing-marker has-production-marker ${markerStateClass} ${hasActiveIssue ? "alert" : ""} ${isCleared ? "cleared" : ""} ${isNearby ? "nearby" : ""} ${clusterCount > 1 ? "cluster-lead" : ""}" ${railVisualMetadata.attributes} data-category="${sanitizeText(crossingMarkerCategory)}" data-marker-category="${sanitizeText(crossingMarkerCategory)}" data-marker-asset="${sanitizeText(crossingMarkerAsset.assetPath)}" data-state="${sanitizeText(railVisualState)}" data-gridly-marker-owner="crossing_inventory" aria-label="${sanitizeText(hasActiveIssue ? "Train delay" : "Crossing infrastructure")}">
           <img class="gridly-production-marker-img" src="${sanitizeText(crossingMarkerAsset.assetPath)}" alt="" aria-hidden="true" data-marker-asset="${sanitizeText(crossingMarkerAsset.assetName)}" onload="window.gridlyMarkProductionMarkerAssetLoad && window.gridlyMarkProductionMarkerAssetLoad(this.dataset.markerAsset, 'loaded')" onerror="window.gridlyMarkProductionMarkerAssetLoad && window.gridlyMarkProductionMarkerAssetLoad(this.dataset.markerAsset, 'failed')" />
         </div>

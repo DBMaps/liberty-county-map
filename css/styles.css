@@ -19157,3 +19157,13 @@ body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > .route-setu
 #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-marker-minutes {
   z-index: 3 !important;
 }
+
+/* V271 crossing visibility refinement: dim only inactive crossing infrastructure markers. */
+#map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"] .gridly-production-marker-img {
+  opacity: 0.6 !important;
+}
+
+#map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="rail_blockage_delay"] .gridly-production-marker-img,
+#map .leaflet-marker-icon.gridly-crossing-production-marker-icon.route-impacted .gridly-crossing-marker.has-production-marker .gridly-production-marker-img {
+  opacity: 1 !important;
+}
