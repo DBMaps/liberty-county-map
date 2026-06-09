@@ -19543,3 +19543,94 @@ body[data-layout-mode="desktop"] .gridly-desktop-gate-board-image {
     line-height: 1.3;
   }
 }
+
+/* GRIDLY V272.2A — Settings selector dark dropdown styling. */
+.settings-select-grid select,
+.gridly-settings-sheet .settings-select-grid select,
+#gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-select-grid select,
+body.gridly-theme-light .settings-select-grid select,
+body.gridly-theme-light .gridly-settings-sheet .settings-select-grid select {
+  min-height: 44px;
+  padding: 10px 40px 10px 13px;
+  border: 1px solid rgba(125, 211, 252, 0.42) !important;
+  border-radius: 13px !important;
+  color: #f4fbff !important;
+  background-color: rgba(3, 12, 24, 0.94) !important;
+  background-image:
+    linear-gradient(45deg, transparent 50%, rgba(142, 239, 255, 0.95) 50%),
+    linear-gradient(135deg, rgba(142, 239, 255, 0.95) 50%, transparent 50%),
+    linear-gradient(180deg, rgba(32, 85, 123, 0.52), rgba(5, 17, 31, 0.96));
+  background-position:
+    calc(100% - 22px) 50%,
+    calc(100% - 16px) 50%,
+    0 0;
+  background-size:
+    6px 6px,
+    6px 6px,
+    100% 100%;
+  background-repeat: no-repeat;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    0 10px 24px rgba(0, 0, 0, 0.18);
+  color-scheme: dark;
+  appearance: none;
+  -webkit-appearance: none;
+  font-weight: 780;
+  line-height: 1.35;
+}
+
+.settings-select-grid select:hover,
+.gridly-settings-sheet .settings-select-grid select:hover,
+#gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-select-grid select:hover,
+body.gridly-theme-light .settings-select-grid select:hover {
+  border-color: rgba(142, 239, 255, 0.62) !important;
+  background-color: rgba(5, 18, 34, 0.97) !important;
+}
+
+.settings-select-grid select:focus,
+.settings-select-grid select:focus-visible,
+.gridly-settings-sheet .settings-select-grid select:focus,
+.gridly-settings-sheet .settings-select-grid select:focus-visible,
+#gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-select-grid select:focus,
+#gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-select-grid select:focus-visible,
+body.gridly-theme-light .settings-select-grid select:focus,
+body.gridly-theme-light .settings-select-grid select:focus-visible {
+  border-color: rgba(67, 230, 160, 0.74) !important;
+  box-shadow:
+    0 0 0 3px rgba(67, 230, 160, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 12px 28px rgba(0, 0, 0, 0.24);
+  outline: none;
+}
+
+.settings-select-grid select option,
+.gridly-settings-sheet .settings-select-grid select option,
+#gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-select-grid select option,
+body.gridly-theme-light .settings-select-grid select option,
+body.gridly-theme-light .gridly-settings-sheet .settings-select-grid select option {
+  color: #f4fbff;
+  background-color: #061524;
+  font-weight: 720;
+}
+
+.settings-select-grid select option:checked,
+.settings-select-grid select option:hover,
+.gridly-settings-sheet .settings-select-grid select option:checked,
+.gridly-settings-sheet .settings-select-grid select option:hover,
+#gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-select-grid select option:checked,
+#gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-select-grid select option:hover,
+body.gridly-theme-light .settings-select-grid select option:checked,
+body.gridly-theme-light .settings-select-grid select option:hover {
+  color: #ffffff;
+  background-color: #0f344d;
+}
+
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] .settings-select-grid select,
+  body[data-layout-mode="portrait"] .gridly-settings-sheet .settings-select-grid select,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-select-grid select {
+    min-height: 46px;
+    font-size: 0.92rem !important;
+    line-height: 1.38 !important;
+  }
+}
