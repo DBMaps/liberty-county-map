@@ -19190,3 +19190,158 @@ body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > .route-setu
 #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.route-impacted .gridly-crossing-marker.has-production-marker .gridly-production-marker-img {
   opacity: 1 !important;
 }
+
+/* GRIDLY V272 — desktop-only public beta gate. Portrait/mobile selectors intentionally untouched. */
+.gridly-desktop-gate {
+  display: none;
+}
+
+body[data-layout-mode="desktop"] {
+  overflow: auto;
+  min-height: 100vh;
+}
+
+body[data-layout-mode="desktop"] .app-header,
+body[data-layout-mode="desktop"] .app-shell,
+body[data-layout-mode="desktop"] #gridlySearchShell {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+body[data-layout-mode="desktop"] .gridly-desktop-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 7000;
+  display: block;
+  overflow-y: auto;
+  padding: clamp(22px, 4vw, 56px);
+  background:
+    radial-gradient(circle at 15% 12%, rgba(67, 230, 160, 0.18), transparent 34%),
+    radial-gradient(circle at 85% 6%, rgba(91, 166, 255, 0.26), transparent 36%),
+    linear-gradient(145deg, #05101e 0%, #071426 48%, #0b2238 100%);
+  color: #edf6ff;
+}
+
+body[data-layout-mode="desktop"] .gridly-desktop-gate-card {
+  width: min(1040px, 100%);
+  margin: 0 auto;
+  border: 1px solid rgba(144, 190, 237, 0.26);
+  border-radius: 30px;
+  padding: clamp(24px, 3.8vw, 44px);
+  background: linear-gradient(180deg, rgba(7, 20, 38, 0.9), rgba(5, 13, 25, 0.94));
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.42);
+}
+
+body[data-layout-mode="desktop"] .gridly-desktop-gate-brand {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 2.4vw, 24px);
+  margin-bottom: 24px;
+}
+
+body[data-layout-mode="desktop"] .gridly-desktop-gate-brand img {
+  width: clamp(86px, 10vw, 132px);
+  height: auto;
+  flex: 0 0 auto;
+}
+
+body[data-layout-mode="desktop"] .gridly-desktop-gate-kicker {
+  margin: 0 0 4px;
+  color: #43e6a0;
+  font-size: 0.88rem;
+  font-weight: 900;
+  letter-spacing: 0.24em;
+}
+
+body[data-layout-mode="desktop"] .gridly-desktop-gate h1,
+body[data-layout-mode="desktop"] .gridly-desktop-gate h2,
+body[data-layout-mode="desktop"] .gridly-desktop-gate p {
+  margin-top: 0;
+}
+
+body[data-layout-mode="desktop"] .gridly-desktop-gate h1 {
+  margin-bottom: 0;
+  color: #ffffff;
+  font-size: clamp(2.4rem, 5vw, 4.6rem);
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+}
+
+body[data-layout-mode="desktop"] .gridly-desktop-gate-section {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 22px;
+  color: #cfdef0;
+  font-size: clamp(1rem, 1.4vw, 1.16rem);
+  line-height: 1.58;
+}
+
+body[data-layout-mode="desktop"] .gridly-desktop-gate-section p,
+body[data-layout-mode="desktop"] .gridly-desktop-gate-panel p {
+  margin-bottom: 0;
+}
+
+body[data-layout-mode="desktop"] .gridly-desktop-gate-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+body[data-layout-mode="desktop"] .gridly-desktop-gate-panel {
+  border: 1px solid rgba(144, 190, 237, 0.18);
+  border-radius: 22px;
+  padding: clamp(18px, 2.4vw, 24px);
+  background: rgba(8, 26, 45, 0.62);
+  color: #c8daec;
+  line-height: 1.52;
+}
+
+body[data-layout-mode="desktop"] .gridly-desktop-gate-panel h2 {
+  margin-bottom: 10px;
+  color: #f7fbff;
+  font-size: clamp(1.24rem, 1.9vw, 1.62rem);
+  letter-spacing: -0.03em;
+}
+
+body[data-layout-mode="desktop"] .gridly-desktop-gate-panel ul {
+  margin: 12px 0;
+  padding-left: 1.2rem;
+}
+
+body[data-layout-mode="desktop"] .gridly-desktop-gate-panel li {
+  margin: 6px 0;
+}
+
+body[data-layout-mode="desktop"] .gridly-desktop-gate-looking-ahead {
+  margin-bottom: 18px;
+}
+
+body[data-layout-mode="desktop"] .gridly-desktop-gate-looking-ahead ul {
+  columns: 2;
+}
+
+body[data-layout-mode="desktop"] .gridly-desktop-gate-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  border: 1px solid rgba(67, 230, 160, 0.42);
+  border-radius: 999px;
+  padding: 0 22px;
+  background: rgba(67, 230, 160, 0.14);
+  color: #dfffee;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+}
+
+@media (max-width: 900px) {
+  body[data-layout-mode="desktop"] .gridly-desktop-gate-grid {
+    grid-template-columns: 1fr;
+  }
+
+  body[data-layout-mode="desktop"] .gridly-desktop-gate-looking-ahead ul {
+    columns: 1;
+  }
+}
