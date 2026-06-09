@@ -68974,7 +68974,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         <details class="settings-modal-section settings-list-section">
           <summary class="settings-list-summary"><span class="settings-list-title">Alerts &amp; Notifications</span><span class="settings-list-meta">Local alerts · Preferences</span></summary>
           <div class="settings-list-detail">
-            <p>Preference storage only. No notification delivery is enabled.</p>
+            <p class="settings-placeholder-note settings-notification-notice">Notification delivery is currently in development. Your notification preferences will be saved and used when future notification features become available.</p>
             <div class="settings-toggle-grid">
               <label class="settings-toggle-row"><input type="checkbox" data-v2-settings-field="notifications.routeAlerts"${checked(settings.notifications.routeAlerts)}><span>Route Watch Alerts</span></label>
               <label class="settings-toggle-row"><input type="checkbox" data-v2-settings-field="notifications.railAlerts"${checked(settings.notifications.railAlerts)}><span>Rail Crossing Alerts</span></label>
