@@ -49444,8 +49444,10 @@ function injectHazardStyles() {
       overflow: visible !important;
       display: block !important;
       place-items: initial !important;
+      position: relative !important;
     }
 
+    /* V271.2: keep legacy freshness/count chips useful without letting their dark badge boxes sit behind PNG production markers. */
     #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker > :is(small, b) {
       display: inline-flex !important;
       visibility: visible !important;
@@ -49459,7 +49461,7 @@ function injectHazardStyles() {
       align-items: center !important;
       justify-content: center !important;
       border-radius: 999px !important;
-      background: rgba(8, 16, 24, 0.92) !important;
+      background: rgba(8, 16, 24, 0.88) !important;
       border: 1px solid rgba(255, 255, 255, 0.72) !important;
       color: #fff !important;
       font-size: 9px !important;
@@ -49468,13 +49470,26 @@ function injectHazardStyles() {
     }
 
     #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker > small {
-      right: -7px !important;
-      bottom: -7px !important;
+      right: auto !important;
+      bottom: auto !important;
+      left: 50% !important;
+      top: calc(100% + 3px) !important;
+      transform: translateX(-50%) !important;
     }
 
     #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker > b {
-      right: -7px !important;
-      top: -7px !important;
+      right: auto !important;
+      top: 50% !important;
+      left: calc(100% + 3px) !important;
+      transform: translateY(-50%) !important;
+    }
+
+    #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker[data-marker-category="rail_blockage_delay"] > :is(small, b),
+    #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker.marker-asset-rail_blockage_delay > :is(small, b) {
+      background: rgba(255, 255, 255, 0.94) !important;
+      border-color: rgba(8, 16, 24, 0.28) !important;
+      color: #07121d !important;
+      box-shadow: 0 1px 5px rgba(0, 0, 0, 0.22) !important;
     }
 
     #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker:not([data-state="cleared"]):not([data-state="expired"]):not([data-state="inactive"]):not(.gridly-freshness-stale):not(.gridly-freshness-unknown),
