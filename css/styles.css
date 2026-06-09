@@ -19850,3 +19850,52 @@ body {
     transform: translateZ(0);
   }
 }
+
+/* GRIDLY V272.3A — Portrait Mobile safe-area restoration.
+   V272.3 intentionally pins the portrait shell to the visual viewport for map gesture
+   stability; keep that containment, but restore a safe top chrome offset for the
+   fixed Portrait V2 header stack on every phone browser. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 {
+    --gridly-v2-safe-area-top: env(safe-area-inset-top, 0px);
+    --gridly-v2-top-fallback-gap: 12px;
+    --gridly-v2-header-top: max(var(--gridly-v2-top-fallback-gap), calc(var(--gridly-v2-safe-area-top) + 8px));
+    --gridly-v2-command-left: calc(10px + env(safe-area-inset-left, 0px));
+    --gridly-v2-command-right: calc(10px + env(safe-area-inset-right, 0px));
+    --gridly-v2-awareness-card-top: calc(var(--gridly-v2-header-top) + 46px);
+    --gridly-v2-filter-strip-top: calc(var(--gridly-v2-header-top) + 148px);
+    --gridly-v2-filter-strip-bottom: calc(var(--gridly-v2-header-top) + 194px);
+    --gridly-v2-top-shield-height: calc(var(--gridly-v2-filter-strip-bottom) + 10px);
+  }
+
+  body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 {
+    --gridly-v2-top-shield-height: calc(var(--gridly-v2-filter-strip-bottom) + 10px);
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar,
+  body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 .gridly-v2-topbar {
+    top: var(--gridly-v2-header-top) !important;
+    left: var(--gridly-v2-command-left) !important;
+    right: var(--gridly-v2-command-right) !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card,
+  body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 .gridly-v2-status-pill {
+    top: var(--gridly-v2-awareness-card-top) !important;
+    left: var(--gridly-v2-command-left) !important;
+    right: var(--gridly-v2-command-right) !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments,
+  body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 .gridly-v2-segments {
+    top: var(--gridly-v2-filter-strip-top) !important;
+    left: var(--gridly-v2-command-left) !important;
+    right: var(--gridly-v2-command-right) !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
+    top: calc(var(--gridly-v2-filter-strip-bottom) + 16px) !important;
+    right: var(--gridly-v2-command-right) !important;
+  }
+}
