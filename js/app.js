@@ -11036,6 +11036,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyRoadContextAvailabilityAudit",
   "gridlyAwarenessAreaContextAudit",
   "gridlyIdealNarrativeReadinessAudit",
+  "gridlyPwaInfrastructureAudit",
   "gridlyHazardCategoryReviewAudit",
   "gridlyHistoricalClosePathFramework",
   "gridlyHistoricalClosePathSimulation",
@@ -11157,6 +11158,7 @@ function exposeAllGridlyAuditHelpers() {
     gridlyRoadContextAvailabilityAudit: typeof gridlyRoadContextAvailabilityAudit === "function" ? gridlyRoadContextAvailabilityAudit : (typeof target?.gridlyRoadContextAvailabilityAudit === "function" ? target.gridlyRoadContextAvailabilityAudit : null),
     gridlyAwarenessAreaContextAudit: typeof gridlyAwarenessAreaContextAudit === "function" ? gridlyAwarenessAreaContextAudit : (typeof target?.gridlyAwarenessAreaContextAudit === "function" ? target.gridlyAwarenessAreaContextAudit : null),
     gridlyIdealNarrativeReadinessAudit: typeof gridlyIdealNarrativeReadinessAudit === "function" ? gridlyIdealNarrativeReadinessAudit : (typeof target?.gridlyIdealNarrativeReadinessAudit === "function" ? target.gridlyIdealNarrativeReadinessAudit : null),
+    gridlyPwaInfrastructureAudit: typeof target?.gridlyPwaInfrastructureAudit === "function" ? target.gridlyPwaInfrastructureAudit : null,
     gridlyHistoricalClosePathFramework: typeof gridlyHistoricalClosePathFramework === "function" ? gridlyHistoricalClosePathFramework : (typeof target?.gridlyHistoricalClosePathFramework === "function" ? target.gridlyHistoricalClosePathFramework : null),
     loadSharedReports: typeof loadSharedReports === "function" ? loadSharedReports : null
   };
@@ -73176,6 +73178,96 @@ window.gridlyVisualConsistencyAudit = function gridlyVisualConsistencyAudit() {
   }
 };
 
+
+window.gridlyPwaInfrastructureAudit = function gridlyPwaInfrastructureAudit() {
+  const manifestLinks = Array.from(document.querySelectorAll('link[rel~="manifest"]'));
+  const themeColorTags = Array.from(document.querySelectorAll('meta[name="theme-color"]'));
+  const appleMetaTags = Array.from(document.querySelectorAll('meta[name^="apple-mobile-web-app"]'));
+  const mobileMetaTags = Array.from(document.querySelectorAll('meta[name="mobile-web-app-capable"]'));
+  const iconLinks = Array.from(document.querySelectorAll('link[rel~="icon"], link[rel="apple-touch-icon"]'));
+  const scriptSrcs = Array.from(document.scripts || []).map((script) => String(script.getAttribute("src") || ""));
+  const serviceWorkerRegistrationReferenced = scriptSrcs.some((src) => /service-worker|sw\.js|pwa/i.test(src));
+  const installPromptSupportPresent = Boolean(
+    window.__gridlyBeforeInstallPrompt
+    || window.deferredPrompt
+    || document.body?.dataset.gridlyInstallPromptReady === "true"
+  );
+  const standaloneModeDetected = Boolean(
+    window.matchMedia?.("(display-mode: standalone)")?.matches
+    || window.navigator?.standalone === true
+  );
+  const iconCandidates = [
+    { path: "assets/gridly-logo-primary.png", size: "1536x1024", candidateUse: "brand source / square export crop required" },
+    { path: "assets/icon-512.png", size: "512x512", candidateUse: "existing 512 app icon" },
+    { path: "assets/icon-192.png", size: "192x192", candidateUse: "existing 192 app icon" },
+    { path: "assets/icon-180.png", size: "180x180", candidateUse: "existing Apple touch icon" },
+    { path: "assets/favicon-32.png", size: "32x32", candidateUse: "favicon only" }
+  ];
+  const manifestPresent = manifestLinks.length > 0;
+  const serviceWorkerPresent = Boolean(serviceWorkerRegistrationReferenced || window.__gridlyServiceWorkerRegistered);
+  const themeColorPresent = themeColorTags.length > 0;
+  const appleMetaPresent = appleMetaTags.length > 0;
+  const mobileMetaPresent = mobileMetaTags.length > 0;
+  const iconCandidatesFound = iconCandidates.length > 0 && iconLinks.length > 0;
+  const githubPagesCompatible = Boolean(
+    !manifestPresent
+    && !serviceWorkerPresent
+    && iconCandidatesFound
+    && iconLinks.every((link) => !String(link.getAttribute("href") || "").startsWith("/"))
+  );
+  const capacitorCompatible = Boolean(
+    document.querySelector('meta[name="viewport"]')
+    && !serviceWorkerPresent
+    && !manifestPresent
+  );
+
+  return {
+    available: true,
+    manifestPresent,
+    serviceWorkerPresent,
+    installPromptSupportPresent,
+    themeColorPresent,
+    appleMetaPresent,
+    mobileMetaPresent,
+    iconCandidatesFound,
+    githubPagesCompatible,
+    capacitorCompatible,
+    recommendedNextStep: "Create the V275 PWA foundation in order: manifest, square icon exports, GitHub Pages-safe service worker, registration, then install UX validation.",
+    auditOnly: true,
+    noFunctionalBehaviorChanges: true,
+    manifestLinks: manifestLinks.map((link) => link.getAttribute("href") || ""),
+    themeColorValues: themeColorTags.map((tag) => tag.getAttribute("content") || ""),
+    appleMetaNames: appleMetaTags.map((tag) => tag.getAttribute("name") || ""),
+    mobileMetaNames: mobileMetaTags.map((tag) => tag.getAttribute("name") || ""),
+    iconLinks: iconLinks.map((link) => ({
+      rel: link.getAttribute("rel") || "",
+      sizes: link.getAttribute("sizes") || "",
+      href: link.getAttribute("href") || ""
+    })),
+    iconCandidates,
+    standaloneModeDetected,
+    githubPagesRisks: [
+      "No manifest exists yet, so start_url and scope still need repository-subpath validation.",
+      "No service worker exists yet, so cache URLs must avoid root-absolute paths unless deployment is domain-root.",
+      "Existing CSS, JavaScript, and icon references are relative and are compatible with GitHub Pages subpaths."
+    ],
+    capacitorRisks: [
+      "Remote CDN Leaflet dependencies must remain reachable or be vendored before fully offline native packaging.",
+      "Live map/data dependencies require network permissions and graceful offline handling in native shells.",
+      "Current web architecture is static-file compatible and does not block Capacitor packaging."
+    ],
+    missingRequirements: [
+      "manifest.json",
+      "service worker file",
+      "service worker registration",
+      "mobile-web-app-capable meta tag",
+      "beforeinstallprompt handling",
+      "standalone mode UX handling",
+      "1024x1024 app icon export"
+    ]
+  };
+};
+
 window.gridlyCountyStorageReadinessAudit = function gridlyCountyStorageReadinessAudit() {
   const activeCountyId = gridlyGetActiveCountyId();
   const activeCountyConfig = gridlyGetActiveCountyConfig();
@@ -73233,6 +73325,7 @@ window.gridlyCountyStorageReadinessAudit = function gridlyCountyStorageReadiness
   };
 };
 
+exposeGridlyAuditHelper("gridlyPwaInfrastructureAudit", window.gridlyPwaInfrastructureAudit);
 exposeGridlyAuditHelper("gridlyCountyStorageReadinessAudit", window.gridlyCountyStorageReadinessAudit);
 exposeGridlyAuditHelper("gridlyAuditRegistryDebug", gridlyAuditRegistryDebug);
 exposeGridlyAuditHelper("gridlyVisualRegressionAudit", window.gridlyVisualRegressionAudit);
