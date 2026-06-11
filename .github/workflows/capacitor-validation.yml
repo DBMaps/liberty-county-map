@@ -44,13 +44,18 @@ jobs:
           mkdir -p android/gradle/wrapper
           cp "$tmpdir/gradle/wrapper/gradle-wrapper.jar" android/gradle/wrapper/gradle-wrapper.jar
 
-      - name: Populate Capacitor web output directory
+      - name: Create CI webDir and mirror Android public assets
         run: |
           rm -rf www android/app/src/main/assets/public
           mkdir -p www android/app/src/main/assets/public
+
           cp index.html manifest.json service-worker.js www/
           cp -R css js assets data www/
+
           cp -R www/. android/app/src/main/assets/public/
+
+          test -f www/index.html
+          test -f android/app/src/main/assets/public/index.html
 
       - name: Run Capacitor doctor
         run: |
