@@ -73724,10 +73724,10 @@ window.gridlyNativeBuildReadinessAudit = function gridlyNativeBuildReadinessAudi
     && capacitorConfig.bundledWebRuntime === false
   );
   const syncSnapshotsMatchConfig = true;
-  const packageValidationPassed = true;
-  const doctorValidationPassed = true;
-  const iosSyncValidated = true;
-  const androidSyncValidated = true;
+  const packageValidationPassed = false;
+  const doctorValidationPassed = false;
+  const iosSyncValidated = false;
+  const androidSyncValidated = false;
   const capacitorConfigured = Boolean(
     configMatchesExpected
     && foundationAudit?.capacitorConfigured !== false
@@ -73745,7 +73745,7 @@ window.gridlyNativeBuildReadinessAudit = function gridlyNativeBuildReadinessAudi
     && syncSnapshotsMatchConfig
   );
   const majorBlockers = [];
-  if (!capacitorConfigured) majorBlockers.push("Capacitor config does not match V276.2 expected values.");
+  if (!capacitorConfigured) majorBlockers.push("Capacitor config does not match V276.3 expected values.");
   if (!packageValidationPassed) majorBlockers.push("npm package validation did not pass.");
   if (!doctorValidationPassed) majorBlockers.push("Capacitor doctor validation did not pass.");
   if (!iosSyncValidated) majorBlockers.push("iOS Capacitor sync was not validated.");
@@ -73781,7 +73781,7 @@ window.gridlyNativeBuildReadinessAudit = function gridlyNativeBuildReadinessAudi
     iosConfigSnapshot: "ios/App/App/capacitor.config.json",
     androidConfigSnapshot: "android/capacitor.config.json",
     syncSnapshotsMatchConfig,
-    validationScope: "V276.2 native build validation only; no workflow, UI, feature, reporting, Route Watch, Awareness, Community Pulse, Supabase, plugin, notification, background-location, or county changes."
+    validationScope: "V276.3 external native build validation only; npm registry 403 blocked package install, doctor, and sync validation; no workflow, UI, feature, reporting, Route Watch, Awareness, Community Pulse, Supabase, plugin, notification, background-location, or county changes."
   };
 };
 
