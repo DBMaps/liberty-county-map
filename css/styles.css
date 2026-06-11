@@ -20088,3 +20088,57 @@ body {
     line-height: 1.5;
   }
 }
+
+
+/* GRIDLY V275.2 — Conservative PWA install entry point inside Settings/About. */
+.settings-pwa-install-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  border-radius: 14px;
+  background: rgba(10, 22, 34, 0.48);
+}
+
+.settings-pwa-install-card[hidden] {
+  display: none !important;
+}
+
+.settings-pwa-install-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.settings-pwa-install-copy strong {
+  color: var(--text);
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+.settings-pwa-install-copy p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+
+.settings-pwa-install-status:empty {
+  display: none;
+}
+
+.settings-pwa-install-button[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 520px) {
+  .settings-pwa-install-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .settings-pwa-install-button {
+    justify-self: start;
+  }
+}
