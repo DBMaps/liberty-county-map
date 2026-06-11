@@ -162,6 +162,8 @@ function gridlyRenderPwaInstallUx() {
       status.textContent = "Installed";
     } else if (state.iosInstructionSupported && !state.beforeInstallPromptCaptured) {
       status.textContent = "Tap Share, then Add to Home Screen.";
+    } else if (gridlyPwaInstallReadinessState.installPromptOutcome === "dismissed") {
+      status.textContent = "You can install Gridly later from this screen.";
     } else if (gridlyPwaInstallReadinessState.installPromptOutcome) {
       status.textContent = `Install prompt ${gridlyPwaInstallReadinessState.installPromptOutcome}.`;
     } else {
