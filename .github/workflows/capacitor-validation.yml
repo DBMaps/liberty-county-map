@@ -44,15 +44,39 @@ jobs:
           mkdir -p android/gradle/wrapper
           cp "$tmpdir/gradle/wrapper/gradle-wrapper.jar" android/gradle/wrapper/gradle-wrapper.jar
 
-      - name: Populate Android public web assets
+      - name: Populate Capacitor web output directory
         run: |
-          rm -rf android/app/src/main/assets/public
-          mkdir -p android/app/src/main/assets/public
-          cp index.html manifest.json service-worker.js android/app/src/main/assets/public/
-          cp -R css js assets android/app/src/main/assets/public/
+          rm -rf www android/app/src/main/assets/public
+          mkdir -p www android/app/src/main/assets/public
+          cp index.html manifest.json service-worker.js www/
+          cp -R css js assets data www/
+          cp -R www/. android/app/src/main/assets/public/
 
       - name: Run Capacitor doctor
-        run: npx cap doctor
+        run: |
+          set +e
+          doctor_output="$(npx cap doctor 2>&1)"
+          doctor_status=$?
+          set -e
+
+          printf '%s\n' "$doctor_output"
+
+          unexpected_errors="$(printf '%s\n' "$doctor_output" | sed -n '/\[error\]/p' | grep -v 'Xcode is not installed' || true)"
+
+          if [ -n "$unexpected_errors" ]; then
+            printf '%s\n' "Unexpected Capacitor doctor error(s):"
+            printf '%s\n' "$unexpected_errors"
+            exit 1
+          fi
+
+          if [ "$doctor_status" -ne 0 ]; then
+            if printf '%s\n' "$doctor_output" | grep -q 'Xcode is not installed'; then
+              printf '%s\n' "Ignoring expected Linux CI Xcode warning; iOS validation belongs in a macOS workflow."
+              exit 0
+            fi
+
+            exit "$doctor_status"
+          fi
 
       - name: Sync Android Capacitor project
         run: npx cap sync android
@@ -72,15 +96,47 @@ jobs:
         run: |
           node <<'NODE'
           const fs = require('fs');
-          const config = JSON.parse(fs.readFileSync('capacitor.config.json', 'utf8'));
-          const requiredFields = ['appId', 'appName', 'webDir'];
-          const missingFields = requiredFields.filter((field) => !config[field]);
+          const path = require('path');
+          const configFiles = [
+            'capacitor.config.json',
+            'android/capacitor.config.json',
+            'ios/App/App/capacitor.config.json',
+          ];
+          const invalidWebDirs = new Set(['', '.', '..', '../', './']);
+          const configs = configFiles.map((file) => ({
+            file,
+            config: JSON.parse(fs.readFileSync(file, 'utf8')),
+          }));
 
-          if (missingFields.length > 0) {
-            throw new Error(`capacitor.config.json is missing required field(s): ${missingFields.join(', ')}`);
+          for (const { file, config } of configs) {
+            const requiredFields = ['appId', 'appName', 'webDir'];
+            const missingFields = requiredFields.filter((field) => !config[field]);
+
+            if (missingFields.length > 0) {
+              throw new Error(`${file} is missing required field(s): ${missingFields.join(', ')}`);
+            }
+
+            if (invalidWebDirs.has(config.webDir)) {
+              throw new Error(`${file} has invalid Capacitor webDir value: ${JSON.stringify(config.webDir)}`);
+            }
+
+            if (config.webDir !== 'www') {
+              throw new Error(`${file} must use Gridly's dedicated Capacitor webDir: www`);
+            }
+
+            if (!fs.existsSync(path.join(config.webDir, 'index.html'))) {
+              throw new Error(`${config.webDir}/index.html must exist before Capacitor validation.`);
+            }
           }
 
-          console.log('capacitor.config.json is valid JSON and includes required Capacitor fields.');
+          const rootConfig = JSON.stringify(configs[0].config);
+          for (const { file, config } of configs.slice(1)) {
+            if (JSON.stringify(config) !== rootConfig) {
+              throw new Error(`${file} does not match capacitor.config.json`);
+            }
+          }
+
+          console.log('Capacitor root config and Android/iOS snapshots are valid and aligned.');
           NODE
 
       - name: Validate manifest.json
