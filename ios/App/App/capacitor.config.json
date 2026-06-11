@@ -1,0 +1,6 @@
+{
+  "appId": "com.gridly.app",
+  "appName": "Gridly",
+  "webDir": ".",
+  "bundledWebRuntime": false
+}

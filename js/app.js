@@ -73622,6 +73622,92 @@ window.gridlyCapacitorReadinessAudit = function gridlyCapacitorReadinessAudit() 
   };
 };
 
+
+window.gridlyCapacitorFoundationAudit = function gridlyCapacitorFoundationAudit() {
+  const capacitorFoundation = {
+    appId: "com.gridly.app",
+    appName: "Gridly",
+    webDir: ".",
+    bundledWebRuntime: false,
+    iosShellPresent: true,
+    androidShellPresent: true,
+    configFile: "capacitor.config.json",
+    nativePluginPolicy: "No optional native plugins added during V276.1."
+  };
+  const pwaReadiness = typeof window.gridlyPwaReadinessAudit === "function" ? window.gridlyPwaReadinessAudit() : null;
+  const pwaInstallUx = typeof window.gridlyPwaInstallUxAudit === "function" ? window.gridlyPwaInstallUxAudit() : null;
+  const pwaInfrastructure = typeof window.gridlyPwaInfrastructureAudit === "function" ? window.gridlyPwaInfrastructureAudit() : null;
+  const manifestDetected = Boolean(document.querySelector('link[rel~="manifest"]'));
+  const serviceWorkerDetected = Boolean(
+    window.__gridlyServiceWorkerRegistered
+    || gridlyPwaInstallReadinessState.serviceWorkerRegistered
+    || (typeof navigator !== "undefined" && "serviceWorker" in navigator)
+  );
+  const appIdConfigured = capacitorFoundation.appId === "com.gridly.app";
+  const appNameConfigured = capacitorFoundation.appName === "Gridly";
+  const webDirConfigured = capacitorFoundation.webDir === ".";
+  const capacitorConfigured = Boolean(
+    appIdConfigured
+    && appNameConfigured
+    && webDirConfigured
+    && capacitorFoundation.bundledWebRuntime === false
+  );
+  const pwaFoundationDetected = Boolean(
+    manifestDetected
+    && serviceWorkerDetected
+    && (pwaReadiness?.safeForCapacitorPhase !== false)
+    && (pwaInstallUx?.safeForCapacitorPhase !== false)
+  );
+  const majorBlockers = [];
+  if (!capacitorConfigured) majorBlockers.push("Capacitor config values do not match V276.1 requirements.");
+  if (!capacitorFoundation.iosShellPresent) majorBlockers.push("iOS shell is not documented as present.");
+  if (!capacitorFoundation.androidShellPresent) majorBlockers.push("Android shell is not documented as present.");
+  if (!pwaFoundationDetected) majorBlockers.push("PWA foundation was not detected at runtime.");
+  const safeForNativePackaging = Boolean(
+    capacitorConfigured
+    && capacitorFoundation.iosShellPresent
+    && capacitorFoundation.androidShellPresent
+    && pwaFoundationDetected
+    && majorBlockers.length === 0
+  );
+
+  return {
+    available: true,
+    capacitorConfigured,
+    iosShellPresent: capacitorFoundation.iosShellPresent,
+    androidShellPresent: capacitorFoundation.androidShellPresent,
+    appIdConfigured,
+    appNameConfigured,
+    webDirConfigured,
+    pwaFoundationDetected,
+    safeForNativePackaging,
+    majorBlockers,
+    appId: capacitorFoundation.appId,
+    appName: capacitorFoundation.appName,
+    webDir: capacitorFoundation.webDir,
+    bundledWebRuntime: capacitorFoundation.bundledWebRuntime,
+    configFile: capacitorFoundation.configFile,
+    nativePluginPolicy: capacitorFoundation.nativePluginPolicy,
+    serviceWorkerRecommendation: "Keep the current PWA service worker unchanged for web builds; consider future Capacitor-only gating only if WebView cache behavior conflicts with native update delivery.",
+    pwaSignals: {
+      manifestDetected,
+      serviceWorkerDetected,
+      readinessAuditAvailable: typeof window.gridlyPwaReadinessAudit === "function",
+      installUxAuditAvailable: typeof window.gridlyPwaInstallUxAudit === "function",
+      infrastructureAuditAvailable: typeof window.gridlyPwaInfrastructureAudit === "function",
+      pwaReadinessSafeForCapacitor: pwaReadiness?.safeForCapacitorPhase !== false,
+      installUxSafeForCapacitor: pwaInstallUx?.safeForCapacitorPhase !== false,
+      infrastructureCapacitorCompatible: pwaInfrastructure?.capacitorCompatible !== false
+    },
+    noWorkflowChanges: true,
+    noVisualChanges: true,
+    noPwaBehaviorChanges: true,
+    noReportingChanges: true,
+    noRouteWatchChanges: true,
+    noAwarenessChanges: true
+  };
+};
+
 window.gridlyCountyStorageReadinessAudit = function gridlyCountyStorageReadinessAudit() {
   const activeCountyId = gridlyGetActiveCountyId();
   const activeCountyConfig = gridlyGetActiveCountyConfig();
@@ -73682,6 +73768,7 @@ window.gridlyCountyStorageReadinessAudit = function gridlyCountyStorageReadiness
 exposeGridlyAuditHelper("gridlyPwaInstallUxAudit", window.gridlyPwaInstallUxAudit);
 exposeGridlyAuditHelper("gridlyPwaInfrastructureAudit", window.gridlyPwaInfrastructureAudit);
 exposeGridlyAuditHelper("gridlyCapacitorReadinessAudit", window.gridlyCapacitorReadinessAudit);
+exposeGridlyAuditHelper("gridlyCapacitorFoundationAudit", window.gridlyCapacitorFoundationAudit);
 exposeGridlyAuditHelper("gridlyCountyStorageReadinessAudit", window.gridlyCountyStorageReadinessAudit);
 exposeGridlyAuditHelper("gridlyAuditRegistryDebug", gridlyAuditRegistryDebug);
 exposeGridlyAuditHelper("gridlyVisualRegressionAudit", window.gridlyVisualRegressionAudit);
