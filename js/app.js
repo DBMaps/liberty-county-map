@@ -73883,6 +73883,42 @@ window.gridlyAppStoreReadinessAudit = function gridlyAppStoreReadinessAudit() {
   };
 };
 
+window.gridlyAppDistributionAssetAudit = function gridlyAppDistributionAssetAudit() {
+  const legal = {
+    privacyPolicyDrafted: true,
+    termsDrafted: true,
+    reportingDisclaimerDrafted: true
+  };
+  const branding = {
+    appIconStrategyDrafted: true,
+    splashStrategyDrafted: true
+  };
+  const storeAssets = {
+    descriptionDrafted: true,
+    screenshotPlanDrafted: true
+  };
+  const packageReady = Boolean(
+    legal.privacyPolicyDrafted
+    && legal.termsDrafted
+    && legal.reportingDisclaimerDrafted
+    && branding.appIconStrategyDrafted
+    && branding.splashStrategyDrafted
+    && storeAssets.descriptionDrafted
+    && storeAssets.screenshotPlanDrafted
+  );
+
+  return {
+    available: true,
+    version: "V277.1",
+    auditName: "App Distribution Asset Package",
+    legal,
+    branding,
+    storeAssets,
+    packageReady,
+    nextRecommendedMilestone: "V277.2 — Store Asset Production"
+  };
+};
+
 window.gridlyCountyStorageReadinessAudit = function gridlyCountyStorageReadinessAudit() {
   const activeCountyId = gridlyGetActiveCountyId();
   const activeCountyConfig = gridlyGetActiveCountyConfig();
@@ -73946,6 +73982,7 @@ exposeGridlyAuditHelper("gridlyCapacitorReadinessAudit", window.gridlyCapacitorR
 exposeGridlyAuditHelper("gridlyCapacitorFoundationAudit", window.gridlyCapacitorFoundationAudit);
 exposeGridlyAuditHelper("gridlyNativeBuildReadinessAudit", window.gridlyNativeBuildReadinessAudit);
 exposeGridlyAuditHelper("gridlyAppStoreReadinessAudit", window.gridlyAppStoreReadinessAudit);
+exposeGridlyAuditHelper("gridlyAppDistributionAssetAudit", window.gridlyAppDistributionAssetAudit);
 exposeGridlyAuditHelper("gridlyCountyStorageReadinessAudit", window.gridlyCountyStorageReadinessAudit);
 exposeGridlyAuditHelper("gridlyAuditRegistryDebug", gridlyAuditRegistryDebug);
 exposeGridlyAuditHelper("gridlyVisualRegressionAudit", window.gridlyVisualRegressionAudit);
