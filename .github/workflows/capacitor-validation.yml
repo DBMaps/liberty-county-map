@@ -1,0 +1,76 @@
+name: Capacitor Validation
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  capacitor-validation:
+    name: Validate Capacitor foundation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install npm dependencies
+        run: npm install
+
+      - name: Run Capacitor doctor
+        run: npx cap doctor
+
+      - name: Sync Android Capacitor project
+        run: npx cap sync android
+
+      - name: Check app JavaScript syntax
+        run: node --check js/app.js
+
+      - name: Check service worker syntax when present
+        run: |
+          if [ -f service-worker.js ]; then
+            node --check service-worker.js
+          else
+            echo "service-worker.js not found; skipping syntax check."
+          fi
+
+      - name: Validate capacitor.config.json
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const config = JSON.parse(fs.readFileSync('capacitor.config.json', 'utf8'));
+          const requiredFields = ['appId', 'appName', 'webDir'];
+          const missingFields = requiredFields.filter((field) => !config[field]);
+
+          if (missingFields.length > 0) {
+            throw new Error(`capacitor.config.json is missing required field(s): ${missingFields.join(', ')}`);
+          }
+
+          console.log('capacitor.config.json is valid JSON and includes required Capacitor fields.');
+          NODE
+
+      - name: Validate manifest.json
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const manifest = JSON.parse(fs.readFileSync('manifest.json', 'utf8'));
+          const requiredFields = ['name', 'short_name', 'display', 'start_url', 'icons'];
+          const missingFields = requiredFields.filter((field) => !manifest[field]);
+
+          if (missingFields.length > 0) {
+            throw new Error(`manifest.json is missing required field(s): ${missingFields.join(', ')}`);
+          }
+
+          if (!Array.isArray(manifest.icons) || manifest.icons.length === 0) {
+            throw new Error('manifest.json must include at least one icon.');
+          }
+
+          console.log('manifest.json is valid JSON and includes required PWA manifest fields.');
+          NODE
+
+      - name: Note future iOS validation
+        run: echo "iOS Capacitor sync is deferred to a future macOS workflow because iOS validation typically requires macOS, Xcode, and CocoaPods."
