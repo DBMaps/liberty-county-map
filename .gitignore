@@ -2,3 +2,10 @@ js/gridly.local.js
 *.local.js
 .env
 .env.local
+
+# Capacitor generated web output; CI recreates this from source web files.
+/www/
+
+# Capacitor Android web asset mirror; keep only the placeholder directory marker.
+/android/app/src/main/assets/public/*
+!/android/app/src/main/assets/public/.gitkeep
