@@ -2,3 +2,8 @@ js/gridly.local.js
 *.local.js
 .env
 .env.local
+
+# Capacitor generated web output
+/www/
+/android/app/src/main/assets/public/*
+!/android/app/src/main/assets/public/.gitkeep
