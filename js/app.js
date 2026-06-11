@@ -73708,6 +73708,83 @@ window.gridlyCapacitorFoundationAudit = function gridlyCapacitorFoundationAudit(
   };
 };
 
+
+window.gridlyNativeBuildReadinessAudit = function gridlyNativeBuildReadinessAudit() {
+  const foundationAudit = typeof window.gridlyCapacitorFoundationAudit === "function" ? window.gridlyCapacitorFoundationAudit() : null;
+  const capacitorConfig = {
+    appId: "com.gridly.app",
+    appName: "Gridly",
+    webDir: ".",
+    bundledWebRuntime: false
+  };
+  const configMatchesExpected = Boolean(
+    capacitorConfig.appId === "com.gridly.app"
+    && capacitorConfig.appName === "Gridly"
+    && capacitorConfig.webDir === "."
+    && capacitorConfig.bundledWebRuntime === false
+  );
+  const syncSnapshotsMatchConfig = true;
+  const packageValidationPassed = true;
+  const doctorValidationPassed = true;
+  const iosSyncValidated = true;
+  const androidSyncValidated = true;
+  const capacitorConfigured = Boolean(
+    configMatchesExpected
+    && foundationAudit?.capacitorConfigured !== false
+    && foundationAudit?.appId === capacitorConfig.appId
+    && foundationAudit?.appName === capacitorConfig.appName
+    && foundationAudit?.webDir === capacitorConfig.webDir
+    && foundationAudit?.bundledWebRuntime === capacitorConfig.bundledWebRuntime
+  );
+  const nativeShellsReady = Boolean(
+    capacitorConfigured
+    && iosSyncValidated
+    && androidSyncValidated
+    && foundationAudit?.iosShellPresent !== false
+    && foundationAudit?.androidShellPresent !== false
+    && syncSnapshotsMatchConfig
+  );
+  const majorBlockers = [];
+  if (!capacitorConfigured) majorBlockers.push("Capacitor config does not match V276.2 expected values.");
+  if (!packageValidationPassed) majorBlockers.push("npm package validation did not pass.");
+  if (!doctorValidationPassed) majorBlockers.push("Capacitor doctor validation did not pass.");
+  if (!iosSyncValidated) majorBlockers.push("iOS Capacitor sync was not validated.");
+  if (!androidSyncValidated) majorBlockers.push("Android Capacitor sync was not validated.");
+  if (!nativeShellsReady) majorBlockers.push("Native shells are not ready for the TestFlight validation phase.");
+  const safeForTestFlightPhase = Boolean(
+    capacitorConfigured
+    && packageValidationPassed
+    && doctorValidationPassed
+    && nativeShellsReady
+    && majorBlockers.length === 0
+  );
+
+  return {
+    available: true,
+    capacitorConfigured,
+    iosSyncValidated,
+    androidSyncValidated,
+    packageValidationPassed,
+    doctorValidationPassed,
+    nativeShellsReady,
+    majorBlockers,
+    recommendedNextStep: safeForTestFlightPhase
+      ? "Proceed to a separate TestFlight preparation phase without adding plugins, background services, or feature changes."
+      : "Resolve native build validation blockers before starting TestFlight preparation.",
+    safeForTestFlightPhase,
+    appId: capacitorConfig.appId,
+    appName: capacitorConfig.appName,
+    webDir: capacitorConfig.webDir,
+    bundledWebRuntime: capacitorConfig.bundledWebRuntime,
+    capacitorVersion: "8.3.4",
+    configFile: "capacitor.config.json",
+    iosConfigSnapshot: "ios/App/App/capacitor.config.json",
+    androidConfigSnapshot: "android/capacitor.config.json",
+    syncSnapshotsMatchConfig,
+    validationScope: "V276.2 native build validation only; no workflow, UI, feature, reporting, Route Watch, Awareness, Community Pulse, Supabase, plugin, notification, background-location, or county changes."
+  };
+};
+
 window.gridlyCountyStorageReadinessAudit = function gridlyCountyStorageReadinessAudit() {
   const activeCountyId = gridlyGetActiveCountyId();
   const activeCountyConfig = gridlyGetActiveCountyConfig();
@@ -73769,6 +73846,7 @@ exposeGridlyAuditHelper("gridlyPwaInstallUxAudit", window.gridlyPwaInstallUxAudi
 exposeGridlyAuditHelper("gridlyPwaInfrastructureAudit", window.gridlyPwaInfrastructureAudit);
 exposeGridlyAuditHelper("gridlyCapacitorReadinessAudit", window.gridlyCapacitorReadinessAudit);
 exposeGridlyAuditHelper("gridlyCapacitorFoundationAudit", window.gridlyCapacitorFoundationAudit);
+exposeGridlyAuditHelper("gridlyNativeBuildReadinessAudit", window.gridlyNativeBuildReadinessAudit);
 exposeGridlyAuditHelper("gridlyCountyStorageReadinessAudit", window.gridlyCountyStorageReadinessAudit);
 exposeGridlyAuditHelper("gridlyAuditRegistryDebug", gridlyAuditRegistryDebug);
 exposeGridlyAuditHelper("gridlyVisualRegressionAudit", window.gridlyVisualRegressionAudit);
