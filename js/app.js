@@ -11296,6 +11296,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyIdealNarrativeReadinessAudit",
   "gridlyPwaInfrastructureAudit",
   "gridlyAppStoreReadinessAudit",
+  "gridlyStoreAssetProductionAudit",
   "gridlyHazardCategoryReviewAudit",
   "gridlyHistoricalClosePathFramework",
   "gridlyHistoricalClosePathSimulation",
@@ -11419,6 +11420,7 @@ function exposeAllGridlyAuditHelpers() {
     gridlyIdealNarrativeReadinessAudit: typeof gridlyIdealNarrativeReadinessAudit === "function" ? gridlyIdealNarrativeReadinessAudit : (typeof target?.gridlyIdealNarrativeReadinessAudit === "function" ? target.gridlyIdealNarrativeReadinessAudit : null),
     gridlyPwaInfrastructureAudit: typeof target?.gridlyPwaInfrastructureAudit === "function" ? target.gridlyPwaInfrastructureAudit : null,
     gridlyAppStoreReadinessAudit: typeof target?.gridlyAppStoreReadinessAudit === "function" ? target.gridlyAppStoreReadinessAudit : null,
+    gridlyStoreAssetProductionAudit: typeof target?.gridlyStoreAssetProductionAudit === "function" ? target.gridlyStoreAssetProductionAudit : null,
     gridlyHistoricalClosePathFramework: typeof gridlyHistoricalClosePathFramework === "function" ? gridlyHistoricalClosePathFramework : (typeof target?.gridlyHistoricalClosePathFramework === "function" ? target.gridlyHistoricalClosePathFramework : null),
     loadSharedReports: typeof loadSharedReports === "function" ? loadSharedReports : null
   };
@@ -73919,6 +73921,37 @@ window.gridlyAppDistributionAssetAudit = function gridlyAppDistributionAssetAudi
   };
 };
 
+window.gridlyStoreAssetProductionAudit = function gridlyStoreAssetProductionAudit() {
+  const documentation = {
+    storeProductionPlanReady: true,
+    appleChecklistReady: true,
+    googleChecklistReady: true,
+    screenshotWorkflowReady: true,
+    metadataPackageReady: true,
+    testFlightChecklistReady: true,
+    closedTestingChecklistReady: true
+  };
+  const assetProductionReady = Boolean(
+    documentation.storeProductionPlanReady
+    && documentation.appleChecklistReady
+    && documentation.googleChecklistReady
+    && documentation.screenshotWorkflowReady
+    && documentation.metadataPackageReady
+    && documentation.testFlightChecklistReady
+    && documentation.closedTestingChecklistReady
+  );
+
+  return {
+    available: true,
+    version: "V277.2",
+    auditName: "Store Asset Production Plan",
+    documentation,
+    binaryAssetsCreated: false,
+    assetProductionReady,
+    nextRecommendedMilestone: "V277.3 — Asset Creation & Capture"
+  };
+};
+
 window.gridlyCountyStorageReadinessAudit = function gridlyCountyStorageReadinessAudit() {
   const activeCountyId = gridlyGetActiveCountyId();
   const activeCountyConfig = gridlyGetActiveCountyConfig();
@@ -73983,6 +74016,7 @@ exposeGridlyAuditHelper("gridlyCapacitorFoundationAudit", window.gridlyCapacitor
 exposeGridlyAuditHelper("gridlyNativeBuildReadinessAudit", window.gridlyNativeBuildReadinessAudit);
 exposeGridlyAuditHelper("gridlyAppStoreReadinessAudit", window.gridlyAppStoreReadinessAudit);
 exposeGridlyAuditHelper("gridlyAppDistributionAssetAudit", window.gridlyAppDistributionAssetAudit);
+exposeGridlyAuditHelper("gridlyStoreAssetProductionAudit", window.gridlyStoreAssetProductionAudit);
 exposeGridlyAuditHelper("gridlyCountyStorageReadinessAudit", window.gridlyCountyStorageReadinessAudit);
 exposeGridlyAuditHelper("gridlyAuditRegistryDebug", gridlyAuditRegistryDebug);
 exposeGridlyAuditHelper("gridlyVisualRegressionAudit", window.gridlyVisualRegressionAudit);
