@@ -1,0 +1,29 @@
+{
+  "brand": "Gridly",
+  "phase": "V275.1 PWA Foundation Text-Only Recovery",
+  "binaryPolicy": "No PNG files are created, copied, modified, or added in this recovery.",
+  "currentExistingExports": [
+    {
+      "path": "assets/icon-192.png",
+      "size": "192x192",
+      "status": "existing-production-asset-referenced-directly"
+    },
+    {
+      "path": "assets/icon-512.png",
+      "size": "512x512",
+      "status": "existing-production-asset-referenced-directly"
+    }
+  ],
+  "futureExports": [
+    {
+      "path": "assets/icons/icon-1024.png",
+      "size": "1024x1024",
+      "status": "planned-store-export-for-future-binary-safe-phase"
+    }
+  ],
+  "notes": [
+    "No redesigned branding was introduced.",
+    "The existing assets/icon-512.png file is referenced as the maskable placeholder until a dedicated safe-zone export is available.",
+    "The assets/icons directory intentionally contains only text documentation in V275.1."
+  ]
+}

@@ -81,6 +81,112 @@ if (typeof window !== "undefined") {
   window.gridlyBuildCountyStorageKey = gridlyBuildCountyStorageKey;
 }
 
+const gridlyPwaInstallReadinessState = {
+  beforeInstallPromptEvent: null,
+  installPromptSupportReady: false,
+  serviceWorkerRegistration: null,
+  serviceWorkerRegistered: false,
+  serviceWorkerRegistrationError: null
+};
+
+function gridlyIsStandaloneMode() {
+  if (typeof window === "undefined") return false;
+  const navigatorStandalone = window.navigator && window.navigator.standalone === true;
+  const displayModeStandalone = typeof window.matchMedia === "function"
+    && window.matchMedia("(display-mode: standalone)").matches;
+  return Boolean(navigatorStandalone || displayModeStandalone);
+}
+
+function gridlyReadMetaContent(selector) {
+  if (typeof document === "undefined") return "";
+  const element = document.querySelector(selector);
+  return element ? String(element.getAttribute("content") || "").trim() : "";
+}
+
+function gridlyReadLinkHref(selector) {
+  if (typeof document === "undefined") return "";
+  const element = document.querySelector(selector);
+  return element ? String(element.getAttribute("href") || "").trim() : "";
+}
+
+function gridlyIsGithubPagesCompatiblePath(path) {
+  return Boolean(path) && !path.startsWith("/") && !path.startsWith("http://") && !path.startsWith("https://");
+}
+
+function gridlyGetPwaReadinessAudit() {
+  const manifestHref = gridlyReadLinkHref('link[rel="manifest"]');
+  const themeColor = gridlyReadMetaContent('meta[name="theme-color"]');
+  const appleCapable = gridlyReadMetaContent('meta[name="apple-mobile-web-app-capable"]');
+  const mobileCapable = gridlyReadMetaContent('meta[name="mobile-web-app-capable"]');
+  const icon192 = gridlyReadLinkHref('link[rel="icon"][sizes="192x192"]');
+  const icon512 = gridlyReadLinkHref('link[rel="icon"][sizes="512x512"]');
+  const manifestDetected = Boolean(manifestHref);
+  const serviceWorkerDetected = typeof navigator !== "undefined" && "serviceWorker" in navigator;
+  const themeColorPresent = Boolean(themeColor);
+  const appleMetaPresent = appleCapable.toLowerCase() === "yes";
+  const mobileMetaPresent = mobileCapable.toLowerCase() === "yes";
+  const iconSetDetected = Boolean(icon192 && icon512);
+  const githubPagesCompatible = gridlyIsGithubPagesCompatiblePath(manifestHref)
+    && gridlyIsGithubPagesCompatiblePath("./service-worker.js")
+    && gridlyIsGithubPagesCompatiblePath("./assets/icon-192.png")
+    && gridlyIsGithubPagesCompatiblePath("./assets/icon-512.png");
+  const safeForCapacitorPhase = Boolean(
+    manifestDetected
+    && serviceWorkerDetected
+    && themeColorPresent
+    && appleMetaPresent
+    && mobileMetaPresent
+    && iconSetDetected
+    && githubPagesCompatible
+  );
+
+  return {
+    available: true,
+    manifestDetected,
+    serviceWorkerDetected,
+    serviceWorkerRegistered: Boolean(gridlyPwaInstallReadinessState.serviceWorkerRegistered),
+    installPromptSupportReady: Boolean(gridlyPwaInstallReadinessState.installPromptSupportReady),
+    themeColorPresent,
+    appleMetaPresent,
+    mobileMetaPresent,
+    iconSetDetected,
+    standaloneSupported: typeof window !== "undefined" && typeof window.matchMedia === "function",
+    githubPagesCompatible,
+    safeForCapacitorPhase
+  };
+}
+
+if (typeof window !== "undefined") {
+  window.gridlyPwaInstallReadinessState = gridlyPwaInstallReadinessState;
+  window.gridlyIsStandaloneMode = gridlyIsStandaloneMode;
+  window.gridlyPwaReadinessAudit = gridlyGetPwaReadinessAudit;
+
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    gridlyPwaInstallReadinessState.beforeInstallPromptEvent = event;
+    gridlyPwaInstallReadinessState.installPromptSupportReady = true;
+  });
+
+  window.addEventListener("appinstalled", () => {
+    gridlyPwaInstallReadinessState.beforeInstallPromptEvent = null;
+    gridlyPwaInstallReadinessState.installPromptSupportReady = false;
+  });
+
+  window.addEventListener("load", () => {
+    if (!("serviceWorker" in navigator)) return;
+    navigator.serviceWorker.register("./service-worker.js", { scope: "./" })
+      .then((registration) => {
+        gridlyPwaInstallReadinessState.serviceWorkerRegistration = registration;
+        gridlyPwaInstallReadinessState.serviceWorkerRegistered = true;
+        gridlyPwaInstallReadinessState.serviceWorkerRegistrationError = null;
+      })
+      .catch((error) => {
+        gridlyPwaInstallReadinessState.serviceWorkerRegistration = null;
+        gridlyPwaInstallReadinessState.serviceWorkerRegistered = false;
+        gridlyPwaInstallReadinessState.serviceWorkerRegistrationError = error ? String(error.message || error) : "Service worker registration failed";
+      });
+  });
+}
 
 const gridlyBackgroundLoopAuditState = {
   topPanelWriteCount: 0,
