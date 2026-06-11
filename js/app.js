@@ -86,7 +86,12 @@ const gridlyPwaInstallReadinessState = {
   installPromptSupportReady: false,
   serviceWorkerRegistration: null,
   serviceWorkerRegistered: false,
-  serviceWorkerRegistrationError: null
+  serviceWorkerRegistrationError: null,
+  installPromptOutcome: null,
+  installPromptUserChoice: null,
+  installPromptLastError: null,
+  userInitiatedPromptCount: 0,
+  autoPromptPrevented: true
 };
 
 function gridlyIsStandaloneMode() {
@@ -95,6 +100,142 @@ function gridlyIsStandaloneMode() {
   const displayModeStandalone = typeof window.matchMedia === "function"
     && window.matchMedia("(display-mode: standalone)").matches;
   return Boolean(navigatorStandalone || displayModeStandalone);
+}
+
+function gridlyIsLikelyIosSafari() {
+  if (typeof window === "undefined" || typeof navigator === "undefined") return false;
+  const userAgent = String(navigator.userAgent || "");
+  const vendor = String(navigator.vendor || "");
+  const platform = String(navigator.platform || "");
+  const hasTouchMac = platform === "MacIntel" && Number(navigator.maxTouchPoints || 0) > 1;
+  const isiOS = /iPad|iPhone|iPod/i.test(userAgent) || hasTouchMac;
+  const isSafari = /Safari/i.test(userAgent) && /Apple/i.test(vendor) && !/CriOS|FxiOS|EdgiOS|OPiOS|DuckDuckGo/i.test(userAgent);
+  return Boolean(isiOS && isSafari);
+}
+
+function gridlyGetPwaInstallUxElements() {
+  if (typeof document === "undefined") return { cards: [], buttons: [], statuses: [] };
+  return {
+    cards: Array.from(document.querySelectorAll("[data-gridly-pwa-install-card]")),
+    buttons: Array.from(document.querySelectorAll("[data-gridly-pwa-install-button]")),
+    statuses: Array.from(document.querySelectorAll("[data-gridly-pwa-install-status]"))
+  };
+}
+
+function gridlyGetPwaInstallUxState() {
+  const pwaReadinessAvailable = typeof window !== "undefined" && typeof window.gridlyPwaReadinessAudit === "function";
+  const installStateAvailable = typeof window !== "undefined" && Boolean(window.gridlyPwaInstallReadinessState);
+  const standaloneDetected = gridlyIsStandaloneMode();
+  const beforeInstallPromptCaptured = Boolean(gridlyPwaInstallReadinessState.beforeInstallPromptEvent);
+  const iosInstructionSupported = gridlyIsLikelyIosSafari();
+  const shouldShow = Boolean(pwaReadinessAvailable && installStateAvailable && !standaloneDetected && (beforeInstallPromptCaptured || iosInstructionSupported));
+  const canPrompt = Boolean(shouldShow && beforeInstallPromptCaptured);
+  return {
+    pwaReadinessAvailable,
+    installStateAvailable,
+    standaloneDetected,
+    beforeInstallPromptCaptured,
+    iosInstructionSupported,
+    shouldShow,
+    canPrompt
+  };
+}
+
+function gridlyRenderPwaInstallUx() {
+  if (typeof document === "undefined") return;
+  const state = gridlyGetPwaInstallUxState();
+  const { cards, buttons, statuses } = gridlyGetPwaInstallUxElements();
+  cards.forEach((card) => {
+    card.hidden = !state.shouldShow && !state.standaloneDetected;
+    card.dataset.gridlyPwaInstallVisible = state.shouldShow ? "true" : "false";
+    card.dataset.gridlyPwaInstallMode = state.standaloneDetected ? "standalone" : (state.beforeInstallPromptCaptured ? "prompt" : (state.iosInstructionSupported ? "ios" : "unsupported"));
+  });
+  buttons.forEach((button) => {
+    const showPromptButton = state.shouldShow && state.canPrompt;
+    button.hidden = !showPromptButton;
+    button.disabled = !showPromptButton;
+    button.textContent = state.standaloneDetected ? "Installed" : "Install";
+    button.setAttribute("aria-disabled", button.disabled ? "true" : "false");
+  });
+  statuses.forEach((status) => {
+    if (state.standaloneDetected) {
+      status.textContent = "Installed";
+    } else if (state.iosInstructionSupported && !state.beforeInstallPromptCaptured) {
+      status.textContent = "Tap Share, then Add to Home Screen.";
+    } else if (gridlyPwaInstallReadinessState.installPromptOutcome) {
+      status.textContent = `Install prompt ${gridlyPwaInstallReadinessState.installPromptOutcome}.`;
+    } else {
+      status.textContent = state.canPrompt ? "Install opens only after you tap the button." : "Install is unavailable in this browser.";
+    }
+  });
+}
+
+async function gridlyHandlePwaInstallButtonClick(event) {
+  event?.preventDefault?.();
+  const state = gridlyGetPwaInstallUxState();
+  if (!state.canPrompt || !gridlyPwaInstallReadinessState.beforeInstallPromptEvent) {
+    gridlyRenderPwaInstallUx();
+    return null;
+  }
+  const promptEvent = gridlyPwaInstallReadinessState.beforeInstallPromptEvent;
+  gridlyPwaInstallReadinessState.userInitiatedPromptCount += 1;
+  gridlyPwaInstallReadinessState.installPromptLastError = null;
+  try {
+    const promptResult = promptEvent.prompt();
+    if (promptResult && typeof promptResult.then === "function") await promptResult;
+    const choice = promptEvent.userChoice && typeof promptEvent.userChoice.then === "function" ? await promptEvent.userChoice : null;
+    gridlyPwaInstallReadinessState.installPromptUserChoice = choice || null;
+    gridlyPwaInstallReadinessState.installPromptOutcome = choice?.outcome || "prompted";
+  } catch (error) {
+    gridlyPwaInstallReadinessState.installPromptLastError = error ? String(error.message || error) : "Install prompt failed";
+    gridlyPwaInstallReadinessState.installPromptOutcome = "error";
+  } finally {
+    gridlyPwaInstallReadinessState.beforeInstallPromptEvent = null;
+    gridlyPwaInstallReadinessState.installPromptSupportReady = false;
+    gridlyRenderPwaInstallUx();
+  }
+  return gridlyPwaInstallReadinessState.installPromptOutcome;
+}
+
+function gridlyBindPwaInstallUx(root = document) {
+  if (!root?.querySelectorAll) return;
+  root.querySelectorAll("[data-gridly-pwa-install-button]").forEach((button) => {
+    if (button.dataset.v2Action) return;
+    if (button.dataset.gridlyPwaInstallBound === "1") return;
+    button.dataset.gridlyPwaInstallBound = "1";
+    button.addEventListener("click", gridlyHandlePwaInstallButtonClick);
+  });
+  gridlyRenderPwaInstallUx();
+}
+
+function gridlyPwaInstallUxAudit() {
+  const state = gridlyGetPwaInstallUxState();
+  const { cards, buttons } = gridlyGetPwaInstallUxElements();
+  const visible = (element) => {
+    if (!element || element.hidden) return false;
+    if (typeof window === "undefined" || typeof window.getComputedStyle !== "function") return true;
+    const style = window.getComputedStyle(element);
+    return Boolean(style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity || 1) !== 0);
+  };
+  const installButtonVisible = buttons.some(visible);
+  return {
+    available: true,
+    pwaReadinessAvailable: state.pwaReadinessAvailable,
+    installStateAvailable: state.installStateAvailable,
+    installButtonFound: buttons.length > 0,
+    installButtonVisible,
+    installButtonDisabled: buttons.some((button) => button.disabled || button.getAttribute("aria-disabled") === "true"),
+    standaloneDetected: state.standaloneDetected,
+    beforeInstallPromptCaptured: state.beforeInstallPromptCaptured,
+    iosInstructionSupported: state.iosInstructionSupported,
+    autoPromptPrevented: gridlyPwaInstallReadinessState.autoPromptPrevented === true,
+    safeUserInitiatedPromptOnly: gridlyPwaInstallReadinessState.autoPromptPrevented === true && gridlyPwaInstallReadinessState.userInitiatedPromptCount >= 0,
+    noWorkflowChanges: true,
+    safeForCapacitorPhase: true,
+    installCardsFound: cards.length,
+    installCardVisible: cards.some(visible),
+    promptOutcome: gridlyPwaInstallReadinessState.installPromptOutcome || null
+  };
 }
 
 function gridlyReadMetaContent(selector) {
@@ -160,16 +301,25 @@ if (typeof window !== "undefined") {
   window.gridlyPwaInstallReadinessState = gridlyPwaInstallReadinessState;
   window.gridlyIsStandaloneMode = gridlyIsStandaloneMode;
   window.gridlyPwaReadinessAudit = gridlyGetPwaReadinessAudit;
+  window.gridlyPwaInstallUxAudit = gridlyPwaInstallUxAudit;
 
   window.addEventListener("beforeinstallprompt", (event) => {
     event.preventDefault();
     gridlyPwaInstallReadinessState.beforeInstallPromptEvent = event;
     gridlyPwaInstallReadinessState.installPromptSupportReady = true;
+    gridlyPwaInstallReadinessState.autoPromptPrevented = true;
+    gridlyRenderPwaInstallUx();
   });
 
   window.addEventListener("appinstalled", () => {
     gridlyPwaInstallReadinessState.beforeInstallPromptEvent = null;
     gridlyPwaInstallReadinessState.installPromptSupportReady = false;
+    gridlyPwaInstallReadinessState.installPromptOutcome = "installed";
+    gridlyRenderPwaInstallUx();
+  });
+
+  window.addEventListener("DOMContentLoaded", () => {
+    gridlyBindPwaInstallUx(document);
   });
 
   window.addEventListener("load", () => {
@@ -22329,6 +22479,7 @@ function hydrateElements() {
     "settingsTextSizeSelect",
     "settingsPreferredNameInput",
     "settingsBuildValue",
+    "settingsPwaInstallBtn",
     "settingsReplaySetupBtn",
     "settingsFeedbackBtn",
     "settingsFeedbackFlow",
@@ -58196,6 +58347,20 @@ function buildGridlyFeedbackFlowHtml({ v2 = false } = {}) {
     <p class="settings-placeholder-note" data-gridly-feedback-acknowledgement aria-live="polite" hidden></p>`;
 }
 
+function buildGridlyPwaInstallCardHtml({ v2 = false } = {}) {
+  const buttonClass = v2 ? "gridly-v2-tile settings-pwa-install-button" : "primary-btn compact-btn settings-pwa-install-button";
+  const buttonAttrs = v2 ? ' data-v2-action="settings-pwa-install"' : ' id="settingsPwaInstallBtn"';
+  return `
+    <section class="settings-pwa-install-card" data-gridly-pwa-install-card hidden aria-label="Install Gridly">
+      <div class="settings-pwa-install-copy">
+        <strong>Install Gridly</strong>
+        <p>Add Gridly to your phone’s home screen for quick access.</p>
+        <p class="settings-placeholder-note settings-pwa-install-status" data-gridly-pwa-install-status aria-live="polite"></p>
+      </div>
+      <button class="${buttonClass}" type="button"${buttonAttrs} data-gridly-pwa-install-button>Install</button>
+    </section>`;
+}
+
 function buildGridlyAboutGuidanceHtml() {
   return `
     <details class="settings-about-gridly-section">
@@ -69258,7 +69423,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         </details>
         <details class="settings-modal-section settings-list-section" data-gridly-about>
           <summary class="settings-list-summary"><span class="settings-list-title">About &amp; Support</span><span class="settings-list-meta">Version · Help</span></summary>
-          <div class="settings-list-detail"><p><strong>${GRIDLY_APP_VERSION_LABEL}</strong><br>${GRIDLY_APP_BUILD_LABEL}</p><p class="settings-placeholder-note">No cleanup or test tools are available in Settings for this phase. Historical data is not changed from this panel.</p>${buildGridlyAboutGuidanceHtml()}<button class="gridly-v2-tile" data-v2-action="settings-replay-setup" type="button">Replay Setup</button><button class="gridly-v2-tile" data-v2-action="settings-feedback-open" type="button">Send Feedback</button>${buildGridlyFeedbackFlowHtml({ v2: true })}</div>
+          <div class="settings-list-detail"><p><strong>${GRIDLY_APP_VERSION_LABEL}</strong><br>${GRIDLY_APP_BUILD_LABEL}</p><p class="settings-placeholder-note">No cleanup or test tools are available in Settings for this phase. Historical data is not changed from this panel.</p>${buildGridlyPwaInstallCardHtml({ v2: true })}${buildGridlyAboutGuidanceHtml()}<button class="gridly-v2-tile" data-v2-action="settings-replay-setup" type="button">Replay Setup</button><button class="gridly-v2-tile" data-v2-action="settings-feedback-open" type="button">Send Feedback</button>${buildGridlyFeedbackFlowHtml({ v2: true })}</div>
         </details>
       </div>`;
     const buildDuration = Number((getGridlySettingsPerfNow() - buildStartedAt).toFixed(2));
@@ -69488,6 +69653,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     activeSheet = sheetName;
     title.textContent = template.title || "";
     body.innerHTML = templateHtml || "";
+    gridlyBindPwaInstallUx(body);
     body.hidden = false;
     body.style.display = "";
     applyGridlySettingsSheetRuntimeAlignment(sheet, body, sheetName);
@@ -70300,6 +70466,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         const body = document.getElementById("gridlyPortraitV2SheetBody") || document;
         openGridlyFeedbackFlow(body);
       },
+      "settings-pwa-install": () => gridlyHandlePwaInstallButtonClick(),
       "settings-feedback-submit": () => {
         const body = document.getElementById("gridlyPortraitV2SheetBody") || document;
         submitGridlyDirectFeedback(body);
@@ -73431,6 +73598,7 @@ window.gridlyCountyStorageReadinessAudit = function gridlyCountyStorageReadiness
   };
 };
 
+exposeGridlyAuditHelper("gridlyPwaInstallUxAudit", window.gridlyPwaInstallUxAudit);
 exposeGridlyAuditHelper("gridlyPwaInfrastructureAudit", window.gridlyPwaInfrastructureAudit);
 exposeGridlyAuditHelper("gridlyCountyStorageReadinessAudit", window.gridlyCountyStorageReadinessAudit);
 exposeGridlyAuditHelper("gridlyAuditRegistryDebug", gridlyAuditRegistryDebug);
