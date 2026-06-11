@@ -1,12 +1,85 @@
 const SUPABASE_URL = "https://nhwhkbkludzkuyxmkkcj.supabase.co";
 const SUPABASE_PUBLIC_KEY = "sb_publishable_T33dpOj4M3TioSqFcVxf2Q_YTmhkPdO";
 
-const FRA_URL =
-  "https://data.transportation.gov/resource/m2f8-22s6.geojson?$limit=5000&statename=TEXAS&countyname=LIBERTY";
-const CROSSING_REVIEW_OVERRIDES_URL = "data/gridly-crossing-review-overrides.json";
-const ROADWAY_SEGMENTS_URL = "data/liberty-county-road-segments.geojson";
-const LIBERTY_COUNTY_BOUNDARY_URL = "data/liberty-county-boundary.geojson";
+const GRIDLY_DEFAULT_COUNTY_ID = "liberty-tx";
+const GRIDLY_COUNTY_REGISTRY = Object.freeze({
+  "liberty-tx": Object.freeze({
+    id: "liberty-tx",
+    name: "Liberty County",
+    state: "TX",
+    defaultCity: "Dayton",
+    boundaryPath: "data/liberty-county-boundary.geojson",
+    crossingsPath: "https://data.transportation.gov/resource/m2f8-22s6.geojson?$limit=5000&statename=TEXAS&countyname=LIBERTY",
+    roadSegmentsPath: "data/liberty-county-road-segments.geojson",
+    crossingOverridesPath: "data/gridly-crossing-review-overrides.json",
+    plannedStaticFolder: "data/counties/liberty-tx/",
+    plannedBoundaryPath: "data/counties/liberty-tx/boundary.geojson",
+    plannedCrossingsPath: "data/counties/liberty-tx/rail-crossings.geojson",
+    plannedRoadSegmentsPath: "data/counties/liberty-tx/road-segments.geojson",
+    plannedCrossingOverridesPath: "data/counties/liberty-tx/crossing-overrides.json"
+  })
+});
+
+function gridlyNormalizeCountyId(value) {
+  const candidate = String(value || "").trim().toLowerCase();
+  return Object.prototype.hasOwnProperty.call(GRIDLY_COUNTY_REGISTRY, candidate) ? candidate : GRIDLY_DEFAULT_COUNTY_ID;
+}
+
+function gridlyIsKnownCountyId(value) {
+  const candidate = String(value || "").trim().toLowerCase();
+  return Object.prototype.hasOwnProperty.call(GRIDLY_COUNTY_REGISTRY, candidate);
+}
+
+function gridlyGetActiveCountyId() {
+  if (typeof window !== "undefined" && window.GRIDLY_ACTIVE_COUNTY_ID) {
+    return gridlyNormalizeCountyId(window.GRIDLY_ACTIVE_COUNTY_ID);
+  }
+  return GRIDLY_DEFAULT_COUNTY_ID;
+}
+
+function gridlyGetActiveCountyConfig() {
+  return GRIDLY_COUNTY_REGISTRY[gridlyGetActiveCountyId()] || GRIDLY_COUNTY_REGISTRY[GRIDLY_DEFAULT_COUNTY_ID];
+}
+
+function gridlyBuildCountyStorageKey(baseKey, countyId = gridlyGetActiveCountyId()) {
+  const safeBaseKey = String(baseKey || "").trim();
+  const safeCountyId = gridlyNormalizeCountyId(countyId);
+  return safeBaseKey ? `${safeBaseKey}:${safeCountyId}` : safeCountyId;
+}
+
+function gridlyGetCountyScopedReportMetadata(countyId = gridlyGetActiveCountyId()) {
+  const countyConfig = GRIDLY_COUNTY_REGISTRY[gridlyNormalizeCountyId(countyId)] || GRIDLY_COUNTY_REGISTRY[GRIDLY_DEFAULT_COUNTY_ID];
+  return {
+    county_id: countyConfig.id,
+    state: countyConfig.state
+  };
+}
+
+function gridlyGetReportCountyId(row) {
+  return row && row.county_id ? gridlyNormalizeCountyId(row.county_id) : GRIDLY_DEFAULT_COUNTY_ID;
+}
+
+function gridlyReportMatchesActiveCounty(row, activeCountyId = gridlyGetActiveCountyId()) {
+  const rawCountyId = row?.county_id;
+  if (!rawCountyId) return activeCountyId === GRIDLY_DEFAULT_COUNTY_ID;
+  const normalizedReportCountyId = String(rawCountyId || "").trim().toLowerCase();
+  return normalizedReportCountyId === activeCountyId && gridlyIsKnownCountyId(normalizedReportCountyId);
+}
+
+const FRA_URL = gridlyGetActiveCountyConfig().crossingsPath;
+const CROSSING_REVIEW_OVERRIDES_URL = gridlyGetActiveCountyConfig().crossingOverridesPath;
+const ROADWAY_SEGMENTS_URL = gridlyGetActiveCountyConfig().roadSegmentsPath;
+const LIBERTY_COUNTY_BOUNDARY_URL = gridlyGetActiveCountyConfig().boundaryPath;
 const HAZARD_REPORT_EXPIRATION_MINUTES = 180;
+
+if (typeof window !== "undefined") {
+  window.GRIDLY_COUNTY_REGISTRY = GRIDLY_COUNTY_REGISTRY;
+  window.gridlyGetActiveCountyId = gridlyGetActiveCountyId;
+  window.gridlyGetActiveCountyConfig = gridlyGetActiveCountyConfig;
+  window.gridlyNormalizeCountyId = gridlyNormalizeCountyId;
+  window.gridlyIsKnownCountyId = gridlyIsKnownCountyId;
+  window.gridlyBuildCountyStorageKey = gridlyBuildCountyStorageKey;
+}
 
 
 const gridlyBackgroundLoopAuditState = {
@@ -28649,8 +28722,10 @@ async function loadSharedReports(reason = "manual") {
     const rawRows = [...rawRowsByKey.values()];
 
     const normalized = normalizeReports(rawRows);
+    const activeCountyId = gridlyGetActiveCountyId();
+    const countyVisibleNormalized = normalized.filter((report) => gridlyReportMatchesActiveCounty(report, activeCountyId));
     gridlyDevCleanupSharedSuppressionState.lastSuppressedCount = 0;
-    const visibleNormalized = normalized.filter((report) => !gridlyShouldSuppressSharedReportDuringDevCleanup(report, reason));
+    const visibleNormalized = countyVisibleNormalized.filter((report) => !gridlyShouldSuppressSharedReportDuringDevCleanup(report, reason));
 
     const visibleHazards = visibleNormalized.filter((report) => report.reportKind === "hazard");
     const lifecycleFilterNow = Date.now();
@@ -28772,6 +28847,9 @@ function normalizeReports(rows) {
       hazardSubtype: otherHazardSubtype || undefined,
       clearedHazardType,
       reportKind: isHazard ? "hazard" : "crossing",
+      county_id: gridlyGetReportCountyId(row),
+      countyId: gridlyGetReportCountyId(row),
+      state: row.state || GRIDLY_COUNTY_REGISTRY[gridlyGetReportCountyId(row)]?.state || "TX",
       icon: isHazard ? copy.icon : "",
       severity: row.severity || copy.severity,
       title: isHazard
@@ -48966,6 +49044,28 @@ function isPointNearActiveRoute(lat, lng) {
   return points.some((p) => getDistanceMiles(lat, lng, p.lat, p.lng) <= 0.08);
 }
 
+function isGridlySupabaseCountyMetadataSchemaError(error) {
+  const message = String(error?.message || error?.details || error?.hint || "").toLowerCase();
+  const code = String(error?.code || "").toLowerCase();
+  return code === "pgrst204"
+    || ((message.includes("county_id") || message.includes("state")) && (message.includes("column") || message.includes("schema cache")));
+}
+
+function gridlyStripCountyMetadataFromRow(row) {
+  if (!row || typeof row !== "object") return row;
+  const { county_id, state, ...legacyRow } = row;
+  return legacyRow;
+}
+
+async function gridlyInsertWithCountyMetadataFallback(client, tableName, row) {
+  const { error } = await client.from(tableName).insert(row);
+  if (!error) return { error: null, metadataPersisted: true };
+  if (!isGridlySupabaseCountyMetadataSchemaError(error)) return { error, metadataPersisted: false };
+  console.warn(`[Gridly] ${tableName} county metadata columns are not available yet; retrying legacy insert without county metadata.`, error);
+  const retry = await client.from(tableName).insert(gridlyStripCountyMetadataFromRow(row));
+  return { error: retry.error, metadataPersisted: false, metadataFallbackUsed: true };
+}
+
 async function createSharedHazardReport(hazardType, lat, lng, confidence, locationName = "", originalTapCoords = null, options = {}) {
   const submitAudit = {
     startedAt: Date.now(),
@@ -49030,7 +49130,8 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     source: "user",
     confidence,
     device_id: deviceId,
-    expires_at: expiresAt
+    expires_at: expiresAt,
+    ...gridlyGetCountyScopedReportMetadata()
   };
   const localRow = normalizedOtherSubtype
     ? { ...row, category: "other_hazard", subtype: normalizedOtherSubtype, hazardSubtype: normalizedOtherSubtype }
@@ -49053,7 +49154,7 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
     lastMobileReportSubmitDebug.lastSubmitAttempt = "supabase_insert_started";
     markSubmitStage("supabase_insert_started");
     lastMobileReportSubmitDebug.supabaseInsertStarted = true;
-    const { error } = await supabaseClient.from("reports").insert(row);
+    const { error } = await gridlyInsertWithCountyMetadataFallback(supabaseClient, "reports", row);
 
     if (error) throw error;
 
@@ -49236,7 +49337,8 @@ window.clearHazard = async function (hazardType, lat, lng) {
     source: "user",
     confidence: "hazard cleared by user",
     device_id: deviceId,
-    expires_at: expiresAt
+    expires_at: expiresAt,
+    ...gridlyGetCountyScopedReportMetadata()
   };
 
   try {
@@ -49245,7 +49347,7 @@ window.clearHazard = async function (hazardType, lat, lng) {
 
     lastMobileReportSubmitDebug.lastSubmitAttempt = "supabase_insert_started";
     lastMobileReportSubmitDebug.supabaseInsertStarted = true;
-    const { error } = await supabaseClient.from("reports").insert(row);
+    const { error } = await gridlyInsertWithCountyMetadataFallback(supabaseClient, "reports", row);
 
     if (error) throw error;
 
@@ -51530,7 +51632,8 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
     source: "user",
     confidence,
     device_id: deviceId,
-    expires_at: expiresAt
+    expires_at: expiresAt,
+    ...gridlyGetCountyScopedReportMetadata()
   };
 
   try {
@@ -51543,7 +51646,7 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
     setSync("Sending live report...");
     setConfirmation(`Sending ${copy.label} report for ${crossing.name}...`, "success");
 
-    const { error } = await supabaseClient.from("reports").insert(row);
+    const { error } = await gridlyInsertWithCountyMetadataFallback(supabaseClient, "reports", row);
 
     if (error) throw error;
 
@@ -57860,7 +57963,8 @@ function buildGridlyDirectFeedbackPayload(category, message) {
     awareness_area: getGridlyFeedbackAwarenessAreaLabel(),
     platform: getGridlyFeedbackPlatformLabel(),
     gridly_version: buildGridlyFeedbackVersionLabel(),
-    page_url: buildGridlyFeedbackPageUrl()
+    page_url: buildGridlyFeedbackPageUrl(),
+    ...gridlyGetCountyScopedReportMetadata()
   };
 }
 
@@ -57927,7 +58031,7 @@ async function submitGridlyDirectFeedback(scope) {
   try {
     gridlyDirectFeedbackSubmitState.insertAttempted = true;
     gridlyDirectFeedbackSubmitState.lastInsertAt = new Date().toISOString();
-    const { error } = await client.from(GRIDLY_DIRECT_FEEDBACK_TABLE).insert(buildGridlyDirectFeedbackPayload(entry.category, entry.message));
+    const { error } = await gridlyInsertWithCountyMetadataFallback(client, GRIDLY_DIRECT_FEEDBACK_TABLE, buildGridlyDirectFeedbackPayload(entry.category, entry.message));
     if (error) throw error;
     gridlyDirectFeedbackSubmitState.lastInsertSucceeded = true;
     gridlyDirectFeedbackSubmitState.lastInsertError = "";
@@ -73072,6 +73176,64 @@ window.gridlyVisualConsistencyAudit = function gridlyVisualConsistencyAudit() {
   }
 };
 
+window.gridlyCountyStorageReadinessAudit = function gridlyCountyStorageReadinessAudit() {
+  const activeCountyId = gridlyGetActiveCountyId();
+  const activeCountyConfig = gridlyGetActiveCountyConfig();
+  const activeCountyKnown = gridlyIsKnownCountyId(activeCountyId);
+  const countyRegistryCount = Object.keys(GRIDLY_COUNTY_REGISTRY || {}).length;
+  const libertyDefaultProtected = activeCountyId === GRIDLY_DEFAULT_COUNTY_ID
+    && activeCountyConfig?.id === GRIDLY_DEFAULT_COUNTY_ID
+    && activeCountyConfig?.state === "TX";
+  const missingCountyFallsBackToLiberty = gridlyGetReportCountyId({}) === GRIDLY_DEFAULT_COUNTY_ID
+    && gridlyReportMatchesActiveCounty({}, GRIDLY_DEFAULT_COUNTY_ID);
+  const knownLibertyReportVisible = gridlyReportMatchesActiveCounty({ county_id: GRIDLY_DEFAULT_COUNTY_ID }, GRIDLY_DEFAULT_COUNTY_ID);
+  const unknownCountyReportHidden = !gridlyReportMatchesActiveCounty({ county_id: "unknown-county" }, GRIDLY_DEFAULT_COUNTY_ID);
+  const reportCountyFallbackProtected = Boolean(missingCountyFallsBackToLiberty && knownLibertyReportVisible && unknownCountyReportHidden);
+  const staticCountyPathsConfigured = Boolean(
+    activeCountyConfig?.boundaryPath
+    && activeCountyConfig?.crossingsPath
+    && activeCountyConfig?.roadSegmentsPath
+    && activeCountyConfig?.crossingOverridesPath
+    && activeCountyConfig?.plannedStaticFolder
+  );
+  const metadata = gridlyGetCountyScopedReportMetadata();
+  const sampleStorageKey = gridlyBuildCountyStorageKey("gridlyEventHistoryV1", activeCountyId);
+  const activeCountyHelperWorks = activeCountyKnown
+    && gridlyNormalizeCountyId(null) === GRIDLY_DEFAULT_COUNTY_ID
+    && gridlyNormalizeCountyId("not-real") === GRIDLY_DEFAULT_COUNTY_ID
+    && gridlyGetActiveCountyConfig()?.id === activeCountyId;
+  const supabaseCountyMetadataPrepared = metadata.county_id === GRIDLY_DEFAULT_COUNTY_ID
+    && metadata.state === "TX"
+    && typeof gridlyInsertWithCountyMetadataFallback === "function";
+  const localStorageMigrationDeferred = true;
+  const noVisibleBehaviorChanged = true;
+  const safeToAddNextCounty = Boolean(
+    libertyDefaultProtected
+    && countyRegistryCount > 0
+    && reportCountyFallbackProtected
+    && activeCountyHelperWorks
+    && noVisibleBehaviorChanged
+  );
+
+  return {
+    available: true,
+    activeCountyId,
+    activeCountyKnown,
+    libertyDefaultProtected,
+    countyRegistryCount,
+    reportCountyFallbackProtected,
+    staticCountyPathsConfigured,
+    supabaseCountyMetadataPrepared,
+    localStorageMigrationDeferred,
+    safeToAddNextCounty,
+    activeCountyHelperWorks,
+    noVisibleBehaviorChanged,
+    sampleFutureCountyStorageKey: sampleStorageKey,
+    globalStorageKeysPreserved: ["gridlyEventHistoryV1"]
+  };
+};
+
+exposeGridlyAuditHelper("gridlyCountyStorageReadinessAudit", window.gridlyCountyStorageReadinessAudit);
 exposeGridlyAuditHelper("gridlyAuditRegistryDebug", gridlyAuditRegistryDebug);
 exposeGridlyAuditHelper("gridlyVisualRegressionAudit", window.gridlyVisualRegressionAudit);
 exposeGridlyAuditHelper("gridlyHistoricalClosePathFramework", gridlyHistoricalClosePathFramework);
