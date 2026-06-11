@@ -73543,6 +73543,85 @@ window.gridlyPwaInfrastructureAudit = function gridlyPwaInfrastructureAudit() {
   };
 };
 
+
+window.gridlyCapacitorReadinessAudit = function gridlyCapacitorReadinessAudit() {
+  const manifestDetected = Boolean(document.querySelector('link[rel~="manifest"]'));
+  const pwaReadiness = typeof window.gridlyPwaReadinessAudit === "function" ? window.gridlyPwaReadinessAudit() : null;
+  const pwaInstallUx = typeof window.gridlyPwaInstallUxAudit === "function" ? window.gridlyPwaInstallUxAudit() : null;
+  const serviceWorkerDetected = Boolean(
+    window.__gridlyServiceWorkerRegistered
+    || gridlyPwaInstallReadinessState.serviceWorkerRegistered
+    || (typeof navigator !== "undefined" && "serviceWorker" in navigator)
+  );
+  const externalDependencies = [
+    { name: "Leaflet CSS", source: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css", status: "risky", recommendation: "Vendor before offline-focused native packaging." },
+    { name: "Leaflet JS", source: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js", status: "risky", recommendation: "Vendor before offline-focused native packaging." },
+    { name: "Supabase JS", source: "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2", status: "risky", recommendation: "Vendor or bundle before production app-store packaging." },
+    { name: "Supabase project API", source: SUPABASE_URL, status: "safe", recommendation: "Keep HTTPS/network availability handling." },
+    { name: "OpenStreetMap tiles", source: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", status: "risky", recommendation: "Confirm tile policy and native fallback/caching strategy." },
+    { name: "CARTO tile layers", source: "https://{s}.basemaps.cartocdn.com", status: "risky", recommendation: "Confirm native usage terms and offline fallback." },
+    { name: "Esri World Imagery tiles", source: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer", status: "risky", recommendation: "Confirm native usage terms and fallback behavior." },
+    { name: "OSRM route and nearest APIs", source: "https://router.project-osrm.org", status: "risky", recommendation: "Use a production routing provider or own service before scale." },
+    { name: "OpenStreetMap Nominatim", source: "https://nominatim.openstreetmap.org", status: "risky", recommendation: "Use a compliant production geocoder before scale." },
+    { name: "FRA / transportation.gov rail crossings", source: gridlyGetActiveCountyConfig().crossingsPath, status: "safe", recommendation: "Cache static county extracts where possible." },
+    { name: "TxDOT DriveTexas optional feed", source: "https://api.drivetexas.org/api/conditions.geojson", status: "safe", recommendation: "Requires API key configuration and graceful unavailable state." },
+    { name: "Local app assets and GeoJSON", source: "assets/ and data/", status: "safe", recommendation: "Include in Capacitor webDir output." }
+  ];
+  const permissionInventory = {
+    geolocation: { used: typeof navigator !== "undefined" && "geolocation" in navigator, currentUse: "Foreground getCurrentPosition for current-location route/report flows.", nativeConcern: "Requires iOS NSLocationWhenInUseUsageDescription and Android ACCESS_FINE_LOCATION/ACCESS_COARSE_LOCATION when replaced with Capacitor plugin." },
+    camera: { used: false, currentUse: "No camera API detected." },
+    notifications: { used: false, currentUse: "Preference UI and notification architecture exist, but no Notification API permission request or push delivery is active." },
+    backgroundLocation: { used: false, currentUse: "No background location runtime detected." },
+    share: { used: typeof navigator !== "undefined" && "share" in navigator, currentUse: "Web Share API for sharing Gridly links when supported." }
+  };
+  const storageInventory = {
+    localStorage: { used: true, concern: "Works in WebView, but should be migrated carefully for critical data if native persistence semantics are required." },
+    sessionStorage: { used: true, concern: "Used only for session prompt guarding; acceptable for Capacitor." },
+    supabasePersistence: { used: true, concern: "Network-backed reports and realtime channels require connectivity and auth/key policy review." },
+    countyAwareStorage: { used: true, defaultCounty: gridlyGetActiveCountyId(), concern: "County helpers exist; future county migrations should avoid splitting existing Liberty user keys unexpectedly." },
+    indexedDb: { used: false, concern: "No current IndexedDB dependency detected." }
+  };
+  const majorBlockers = [];
+  const pwaFoundationDetected = Boolean(
+    manifestDetected
+    && serviceWorkerDetected
+    && pwaReadiness?.safeForCapacitorPhase
+    && pwaInstallUx?.safeForCapacitorPhase
+  );
+  const capacitorCompatible = Boolean(
+    document.querySelector('meta[name="viewport"]')
+    && manifestDetected
+    && serviceWorkerDetected
+    && majorBlockers.length === 0
+  );
+
+  return {
+    available: true,
+    pwaFoundationDetected,
+    manifestDetected,
+    serviceWorkerDetected,
+    externalDependenciesReviewed: externalDependencies.length > 0,
+    permissionInventoryComplete: true,
+    storageAuditComplete: true,
+    capacitorCompatible,
+    majorBlockers,
+    recommendedNextStep: "Begin a separate Capacitor foundation phase: install Capacitor packages, define webDir, add iOS/Android shells, then validate native geolocation and network-dependent map/data paths.",
+    safeToBeginCapacitorPhase: Boolean(capacitorCompatible && majorBlockers.length === 0),
+    auditOnly: true,
+    noBehaviorChanges: true,
+    externalDependencies,
+    permissionInventory,
+    storageInventory,
+    serviceWorkerRecommendation: "Keep for PWA web builds; consider gating or unregistering inside Capacitor if WebView cache behavior conflicts with native update strategy.",
+    pwaCompatibility: {
+      readinessAuditAvailable: typeof window.gridlyPwaReadinessAudit === "function",
+      installUxAuditAvailable: typeof window.gridlyPwaInstallUxAudit === "function",
+      pwaReadinessSafeForCapacitor: Boolean(pwaReadiness?.safeForCapacitorPhase),
+      installUxSafeForCapacitor: Boolean(pwaInstallUx?.safeForCapacitorPhase)
+    }
+  };
+};
+
 window.gridlyCountyStorageReadinessAudit = function gridlyCountyStorageReadinessAudit() {
   const activeCountyId = gridlyGetActiveCountyId();
   const activeCountyConfig = gridlyGetActiveCountyConfig();
@@ -73602,6 +73681,7 @@ window.gridlyCountyStorageReadinessAudit = function gridlyCountyStorageReadiness
 
 exposeGridlyAuditHelper("gridlyPwaInstallUxAudit", window.gridlyPwaInstallUxAudit);
 exposeGridlyAuditHelper("gridlyPwaInfrastructureAudit", window.gridlyPwaInfrastructureAudit);
+exposeGridlyAuditHelper("gridlyCapacitorReadinessAudit", window.gridlyCapacitorReadinessAudit);
 exposeGridlyAuditHelper("gridlyCountyStorageReadinessAudit", window.gridlyCountyStorageReadinessAudit);
 exposeGridlyAuditHelper("gridlyAuditRegistryDebug", gridlyAuditRegistryDebug);
 exposeGridlyAuditHelper("gridlyVisualRegressionAudit", window.gridlyVisualRegressionAudit);
