@@ -44,6 +44,13 @@ jobs:
           mkdir -p android/gradle/wrapper
           cp "$tmpdir/gradle/wrapper/gradle-wrapper.jar" android/gradle/wrapper/gradle-wrapper.jar
 
+      - name: Populate Android public web assets
+        run: |
+          rm -rf android/app/src/main/assets/public
+          mkdir -p android/app/src/main/assets/public
+          cp index.html manifest.json service-worker.js android/app/src/main/assets/public/
+          cp -R css js assets android/app/src/main/assets/public/
+
       - name: Run Capacitor doctor
         run: npx cap doctor
 
