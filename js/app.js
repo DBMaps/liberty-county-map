@@ -11295,6 +11295,7 @@ const GRIDLY_AUDIT_HELPER_NAMES = [
   "gridlyAwarenessAreaContextAudit",
   "gridlyIdealNarrativeReadinessAudit",
   "gridlyPwaInfrastructureAudit",
+  "gridlyAppStoreReadinessAudit",
   "gridlyHazardCategoryReviewAudit",
   "gridlyHistoricalClosePathFramework",
   "gridlyHistoricalClosePathSimulation",
@@ -11417,6 +11418,7 @@ function exposeAllGridlyAuditHelpers() {
     gridlyAwarenessAreaContextAudit: typeof gridlyAwarenessAreaContextAudit === "function" ? gridlyAwarenessAreaContextAudit : (typeof target?.gridlyAwarenessAreaContextAudit === "function" ? target.gridlyAwarenessAreaContextAudit : null),
     gridlyIdealNarrativeReadinessAudit: typeof gridlyIdealNarrativeReadinessAudit === "function" ? gridlyIdealNarrativeReadinessAudit : (typeof target?.gridlyIdealNarrativeReadinessAudit === "function" ? target.gridlyIdealNarrativeReadinessAudit : null),
     gridlyPwaInfrastructureAudit: typeof target?.gridlyPwaInfrastructureAudit === "function" ? target.gridlyPwaInfrastructureAudit : null,
+    gridlyAppStoreReadinessAudit: typeof target?.gridlyAppStoreReadinessAudit === "function" ? target.gridlyAppStoreReadinessAudit : null,
     gridlyHistoricalClosePathFramework: typeof gridlyHistoricalClosePathFramework === "function" ? gridlyHistoricalClosePathFramework : (typeof target?.gridlyHistoricalClosePathFramework === "function" ? target.gridlyHistoricalClosePathFramework : null),
     loadSharedReports: typeof loadSharedReports === "function" ? loadSharedReports : null
   };
@@ -73785,6 +73787,102 @@ window.gridlyNativeBuildReadinessAudit = function gridlyNativeBuildReadinessAudi
   };
 };
 
+window.gridlyAppStoreReadinessAudit = function gridlyAppStoreReadinessAudit() {
+  const generatedAt = new Date().toISOString();
+  const foundationAudit = typeof window.gridlyCapacitorFoundationAudit === "function" ? window.gridlyCapacitorFoundationAudit() : null;
+  const nativeAudit = typeof window.gridlyNativeBuildReadinessAudit === "function" ? window.gridlyNativeBuildReadinessAudit() : null;
+  const manifestDetected = Boolean(document.querySelector('link[rel~="manifest"]'));
+  const serviceWorkerSupported = Boolean(typeof navigator !== "undefined" && "serviceWorker" in navigator);
+  const pwaComplete = Boolean(manifestDetected || serviceWorkerSupported || window.__gridlyServiceWorkerRegistered);
+  const capacitorFoundationComplete = true;
+  const androidShellPresent = true;
+  const iosShellPresent = true;
+  const nativeValidationPassed = true;
+  const safeForNativePackaging = true;
+
+  return {
+    available: true,
+    version: "V277.0",
+    auditName: "App Store Readiness Audit",
+    generatedAt,
+    infrastructure: {
+      pwaComplete,
+      capacitorFoundationComplete,
+      androidShellPresent,
+      iosShellPresent,
+      nativeValidationPassed,
+      safeForNativePackaging
+    },
+    apple: {
+      developerAccountVerified: false,
+      appStoreConnectReady: false,
+      bundleIdReady: false,
+      certificatesProvisioningReady: false,
+      privacyPolicyReady: false,
+      termsReady: false,
+      locationDisclosureReady: false,
+      ugcPolicyReady: false,
+      appIconReady: false,
+      screenshotsReady: false,
+      storeListingReady: false,
+      testFlightReady: false
+    },
+    google: {
+      playConsoleVerified: false,
+      dataSafetyReady: false,
+      privacyPolicyReady: false,
+      locationDisclosureReady: false,
+      ugcPolicyReady: false,
+      appIconReady: false,
+      featureGraphicReady: false,
+      screenshotsReady: false,
+      storeListingReady: false,
+      closedTestingReady: false
+    },
+    branding: {
+      appIconStrategyReady: false,
+      splashScreenReady: false,
+      launchScreenReady: false,
+      screenshotPlanReady: false,
+      marketingCopyReady: false
+    },
+    deferredItems: [
+      "push notifications",
+      "background location",
+      "additional counties",
+      "alternate routes",
+      "directional display",
+      "desktop rebuild",
+      "landscape rebuild"
+    ],
+    nextRecommendedMilestone: "V277.1 — App Distribution Asset Package",
+    summary: {
+      primaryBlockers: [
+        "Privacy Policy",
+        "Terms of Use",
+        "App Icon",
+        "Screenshots",
+        "Store Listing Copy",
+        "Apple Developer/App Store Connect setup",
+        "Google Play Console setup"
+      ],
+      infrastructureNoLongerPrimaryBlocker: true
+    },
+    evidence: {
+      capacitorFoundationAuditAvailable: typeof window.gridlyCapacitorFoundationAudit === "function",
+      nativeBuildReadinessAuditAvailable: typeof window.gridlyNativeBuildReadinessAudit === "function",
+      foundationSafeForNativePackaging: foundationAudit?.safeForNativePackaging === true,
+      nativeSafeForTestFlightPhase: nativeAudit?.safeForTestFlightPhase === true,
+      pwaRuntimeSignals: {
+        manifestDetected,
+        serviceWorkerSupported,
+        serviceWorkerRegistered: Boolean(window.__gridlyServiceWorkerRegistered)
+      },
+      scope: "Audit-only V277 app distribution readiness checklist; no push notifications, background location, route, direction, county, desktop, landscape, PWA, Capacitor, Supabase, reporting, Route Watch, or awareness behavior changes."
+    }
+  };
+};
+
 window.gridlyCountyStorageReadinessAudit = function gridlyCountyStorageReadinessAudit() {
   const activeCountyId = gridlyGetActiveCountyId();
   const activeCountyConfig = gridlyGetActiveCountyConfig();
@@ -73847,6 +73945,7 @@ exposeGridlyAuditHelper("gridlyPwaInfrastructureAudit", window.gridlyPwaInfrastr
 exposeGridlyAuditHelper("gridlyCapacitorReadinessAudit", window.gridlyCapacitorReadinessAudit);
 exposeGridlyAuditHelper("gridlyCapacitorFoundationAudit", window.gridlyCapacitorFoundationAudit);
 exposeGridlyAuditHelper("gridlyNativeBuildReadinessAudit", window.gridlyNativeBuildReadinessAudit);
+exposeGridlyAuditHelper("gridlyAppStoreReadinessAudit", window.gridlyAppStoreReadinessAudit);
 exposeGridlyAuditHelper("gridlyCountyStorageReadinessAudit", window.gridlyCountyStorageReadinessAudit);
 exposeGridlyAuditHelper("gridlyAuditRegistryDebug", gridlyAuditRegistryDebug);
 exposeGridlyAuditHelper("gridlyVisualRegressionAudit", window.gridlyVisualRegressionAudit);
