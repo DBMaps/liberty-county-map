@@ -14298,10 +14298,10 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand {
   margin-right: 0;
 }
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand img {
-  width: clamp(114px, 33vw, 150px);
+  width: clamp(132px, 36vw, 170px);
   height: auto;
   max-width: 100%;
-  max-height: 26px;
+  max-height: 30px;
   display: block;
   object-fit: contain;
   object-position: left center;
@@ -14328,8 +14328,8 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {
 }
 @media (max-width: 380px) {
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand img {
-    width: clamp(104px, 31vw, 128px);
-    max-height: 24px;
+    width: clamp(120px, 35vw, 146px);
+    max-height: 28px;
   }
 }
 
