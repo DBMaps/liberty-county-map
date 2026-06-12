@@ -70872,7 +70872,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const brandRestraintMaintained = Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-topbar") && document.querySelector("#gridlyPortraitV2 .gridly-v2-status-pill"));
     const iconBrandRelationshipAligned = iconSystemReferenceAligned && v133BrandFoundationApplied;
     const compactResponsiveBrandVariantApplied = Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-brand img"));
-    const faviconValidated = Boolean(document.querySelector('link[rel="icon"][sizes="32x32"][href="assets/favicon-32.png"]'));
+    const faviconValidated = Boolean(document.querySelector('link[rel="icon"][sizes="32x32"][href="assets/store/icons/gridly-icon-master-1024.png"]'));
     const appIconsValidated = ["180x180","192x192","512x512"].every((size)=>Boolean(document.querySelector(`link[sizes="${size}"]`)));
     const temporaryBrandLayersRemoved = !document.querySelector("#gridlyPortraitV2 .gridly-v2-mark") && !document.querySelector("#gridlyPortraitV2 .gridly-v2-wordmark");
     const v1331RealBrandAssetsIntegrated = v133BrandFoundationApplied && temporaryBrandLayersRemoved;
