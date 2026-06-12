@@ -15539,7 +15539,7 @@ body.gridly-theme-light .settings-place-card .gridly-v2-tile.settings-place-acti
   filter: blur(14px);
 }
 .gridly-welcome-brand img {
-  width: clamp(204px, 62vw, 270px);
+  width: clamp(132px, 42vw, 170px);
   max-width: 100%;
   height: auto;
   display: block;
@@ -15918,7 +15918,7 @@ body.gridly-theme-light .settings-place-card .gridly-v2-tile.settings-place-acti
   .gridly-welcome-overlay { padding: 10px; }
   .gridly-welcome-sheet { border-radius: 24px; padding: 16px; }
   .gridly-welcome-header { gap: 12px; margin-bottom: 18px; padding: 2px 38px 14px; }
-  .gridly-welcome-brand img { width: clamp(198px, 64vw, 240px); }
+  .gridly-welcome-brand img { width: clamp(120px, 38vw, 148px); }
   .gridly-welcome-brand-promise { font-size: clamp(1.04rem, 4.2vw, 1.18rem); }
   .gridly-welcome-signal { max-width: 100%; padding-inline: 10px; font-size: 0.72rem; letter-spacing: 0.055em; }
   .gridly-welcome-skip { right: 0; min-height: 34px; padding-inline: 8px; font-size: 0.78rem; }
