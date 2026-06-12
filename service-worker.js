@@ -1,14 +1,20 @@
-const GRIDLY_PWA_CACHE_NAME = "gridly-pwa-shell-v275-1";
+const GRIDLY_PWA_CACHE_NAME = "gridly-pwa-shell-v278-1b";
 const GRIDLY_PWA_SHELL_URLS = [
   "./",
   "./index.html",
-  "./css/styles.css?v=128",
-  "./js/app.js?v=1710",
+  "./css/styles.css?v=129",
+  "./js/app.js?v=1711",
   "./js/gridlyTxdotService.js?v=1710",
   "./manifest.json",
+  "./assets/favicon-32.png",
+  "./assets/icon-180.png",
   "./assets/icon-192.png",
   "./assets/icon-512.png",
-  "./assets/gridly-logo-primary.png"
+  "./assets/store/icons/gridly-icon-master-1024.png",
+  "./assets/store/branding/Logos/gridly-logo-horizontal.png",
+  "./assets/store/branding/Logos/gridly-logo-vertical.png",
+  "./assets/store/branding/Splash/gridly-splash-portrait.png",
+  "./assets/store/branding/Splash/gridly-splash-landscape.png"
 ];
 
 self.addEventListener("install", (event) => {

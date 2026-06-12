@@ -70878,7 +70878,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const v1331RealBrandAssetsIntegrated = v133BrandFoundationApplied && temporaryBrandLayersRemoved;
     const brandProductionIntegrationComplete = v1331RealBrandAssetsIntegrated && compactResponsiveBrandVariantApplied && faviconValidated && appIconsValidated;
 
-    const v1332UltraCompactHeaderApplied = Boolean(document.querySelector('#gridlyPortraitV2 .gridly-v2-brand img[src="assets/gridly-header-ultra-compact-fixed.png"]'));
+    const v1332UltraCompactHeaderApplied = Boolean(document.querySelector('#gridlyPortraitV2 .gridly-v2-brand img[src="assets/store/branding/Logos/gridly-logo-horizontal.png"]'));
     const headerBrandFitmentComplete = v1332UltraCompactHeaderApplied && Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-topbar") && document.querySelector("#gridlyPortraitV2 .gridly-v2-watch span"));
     const compactLogoOpticsBalanced = v1332UltraCompactHeaderApplied && Boolean(document.querySelector("#gridlyPortraitV2 .gridly-v2-brand img"));
     const mapFirstBrandRestraintMaintained = mapDominancePreserved && brandRestraintMaintained;
@@ -73478,7 +73478,9 @@ window.gridlyPwaInfrastructureAudit = function gridlyPwaInfrastructureAudit() {
     || window.navigator?.standalone === true
   );
   const iconCandidates = [
-    { path: "assets/gridly-logo-primary.png", size: "1536x1024", candidateUse: "brand source / square export crop required" },
+    { path: "assets/store/icons/gridly-icon-master-1024.png", size: "1024x1024", candidateUse: "approved production icon source" },
+    { path: "assets/store/branding/Logos/gridly-logo-horizontal.png", size: "2000x600", candidateUse: "approved horizontal brand logo" },
+    { path: "assets/store/branding/Logos/gridly-logo-vertical.png", size: "1200x1600", candidateUse: "approved onboarding brand logo" },
     { path: "assets/icon-512.png", size: "512x512", candidateUse: "existing 512 app icon" },
     { path: "assets/icon-192.png", size: "192x192", candidateUse: "existing 192 app icon" },
     { path: "assets/icon-180.png", size: "180x180", candidateUse: "existing Apple touch icon" },
