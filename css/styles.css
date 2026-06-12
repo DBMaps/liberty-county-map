@@ -20303,3 +20303,44 @@ body[data-layout-mode="portrait"] #map .leaflet-control-zoom a {
   color: var(--gridly-text) !important;
   border-color: rgba(0, 245, 240, 0.22) !important;
 }
+
+/* V282.1 — Portrait V2 dock icon family refinement */
+.gridly-v2-sr-label {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button {
+    position: relative;
+    min-height: 46px;
+    padding: 5px 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock .dock-icon {
+    width: min(48px, calc((100vw - 62px) / 4));
+    height: 38px;
+    padding: 0;
+    border-radius: 13px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock .dock-icon img {
+    width: 34px;
+    height: 34px;
+    max-width: 86%;
+    max-height: 86%;
+    object-fit: contain;
+    object-position: center;
+  }
+}
