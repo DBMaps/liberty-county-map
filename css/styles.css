@@ -20350,3 +20350,38 @@ body[data-layout-mode="portrait"] #map .leaflet-control-zoom a {
     object-position: center;
   }
 }
+
+/* V282.2 — Portrait V2 dock button border refinement */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button {
+    box-sizing: border-box;
+    border: 1px solid rgba(0, 245, 240, 0.22);
+    border-radius: 15px;
+    background:
+      linear-gradient(150deg, rgba(0, 245, 240, 0.08), rgba(247, 251, 255, 0.025) 42%, rgba(6, 17, 31, 0.54)),
+      rgba(247, 251, 255, 0.025);
+    box-shadow:
+      inset 0 1px 0 rgba(247, 251, 255, 0.08),
+      0 8px 18px rgba(0, 0, 0, 0.2);
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock .dock-icon,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button.is-active .dock-icon,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button:focus-visible .dock-icon {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button.is-active,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button:focus-visible {
+    border-color: rgba(0, 245, 240, 0.52);
+    background:
+      linear-gradient(150deg, rgba(0, 245, 240, 0.18), rgba(247, 251, 255, 0.045) 46%, rgba(6, 17, 31, 0.72)),
+      rgba(0, 245, 240, 0.06);
+    box-shadow:
+      0 0 20px rgba(0, 245, 240, 0.16),
+      inset 0 1px 0 rgba(247, 251, 255, 0.12);
+  }
+}
