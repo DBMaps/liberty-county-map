@@ -20808,6 +20808,131 @@ function gridlyBuildDestinationVsRouteWatchGeometryObservationAudit() {
   };
 }
 
+function gridlyClassifyActiveRouteContextDestinationType(destination = {}, fallbackLabel = "") {
+  const text = `${destination?.type || ""} ${destination?.id || ""} ${destination?.slot || ""} ${destination?.label || ""} ${destination?.name || ""} ${destination?.title || ""} ${fallbackLabel || ""}`.toLowerCase();
+  if (/\bhome\b/.test(text)) return "home";
+  if (/\bwork\b/.test(text)) return "work";
+  if (/saved|favorite|place/.test(text)) return "saved_place";
+  if (text.trim()) return "searched_destination";
+  return "none";
+}
+
+function gridlyBuildActiveRouteContextModel() {
+  return {
+    routeContextAvailable: "boolean; true only when an observable active or recently cleared route context can be described",
+    routeContextType: ["no_active_route", "searched_destination_route", "saved_destination_route", "home_destination_route", "work_destination_route", "route_watch_monitored_route", "cleared_route"],
+    routeSource: ["none", "search_destination", "saved_destination", "home_destination", "work_destination", "route_watch", "cleared"],
+    destinationType: ["none", "searched_destination", "saved_place", "home", "work"],
+    destinationLabel: "string; display label only, never a write target",
+    hasGeometry: "boolean; geometry is observable context only",
+    geometrySource: ["none", "destination_route_preview", "route_watch_preview", "shared_route_helper", "cleared"],
+    vertexCount: "number; read-only count of observable vertices",
+    routePreviewAvailable: "boolean; read-only route preview/layer availability",
+    monitoringActive: "boolean; Route Watch monitoring state remains separate from route creation",
+    relevanceObserved: "boolean; whether relevance/audit paths have observed the context",
+    routeWatchEligible: "boolean; descriptive only, does not promote or activate Route Watch",
+    ownershipNotes: "string[]; explains detected ownership boundaries and drift"
+  };
+}
+
+function gridlyBuildCurrentDetectedActiveRouteContext() {
+  const preview = window.GridlyDestinationRoutePreview && typeof window.GridlyDestinationRoutePreview === "object" ? window.GridlyDestinationRoutePreview : {};
+  const searchState = window.GridlySearchState && typeof window.GridlySearchState === "object" ? window.GridlySearchState : {};
+  const selectedDestination = preview?.destination || searchState?.selectedDestination || activeDestinationPlace || {};
+  const routeWatchActive = Boolean(routeWatchActivated || window.__gridlyRouteWatchActive);
+  const destinationGeometryCount = Array.isArray(preview?.geometry) ? preview.geometry.length : 0;
+  const destinationLayerVertexCount = typeof gridlyCountRouteLayerVertices === "function" ? gridlyCountRouteLayerVertices(destinationRoutePreviewLayer) : 0;
+  const destinationVertexCount = Math.max(destinationGeometryCount, destinationLayerVertexCount);
+  const routeWatchRouteLatLngs = typeof getRoutePolylineLatLngs === "function" ? getRoutePolylineLatLngs() : [];
+  const routeWatchLayerVertexCount = typeof gridlyCountRouteLayerVertices === "function" ? Math.max(gridlyCountRouteLayerVertices(window.__gridlyRoutePreviewLayer), gridlyCountRouteLayerVertices(routePreviewCorridorLayer)) : 0;
+  const routeWatchVertexCount = Math.max(Array.isArray(routeWatchRouteLatLngs) ? routeWatchRouteLatLngs.length : 0, routeWatchLayerVertexCount, Number(routePreviewPolylinePointCount || 0), Number(lastRouteGeometryPointCount || 0));
+  const destinationPreviewActive = Boolean(preview?.active || preview?.status === "ready" || destinationVertexCount >= 2 || selectedDestination?.label || selectedDestination?.title || selectedDestination?.name);
+  const destinationLabel = String(preview?.destination?.label || preview?.destination?.name || preview?.destination?.title || selectedDestination?.label || selectedDestination?.name || selectedDestination?.title || activeRouteDestinationLabel || "").trim();
+  const destinationType = gridlyClassifyActiveRouteContextDestinationType(selectedDestination, destinationLabel);
+  let routeContextType = "no_active_route";
+  let routeSource = "none";
+  if (routeWatchActive) {
+    routeContextType = "route_watch_monitored_route";
+    routeSource = "route_watch";
+  } else if (destinationPreviewActive) {
+    if (destinationType === "home") {
+      routeContextType = "home_destination_route";
+      routeSource = "home_destination";
+    } else if (destinationType === "work") {
+      routeContextType = "work_destination_route";
+      routeSource = "work_destination";
+    } else if (destinationType === "saved_place") {
+      routeContextType = "saved_destination_route";
+      routeSource = "saved_destination";
+    } else {
+      routeContextType = "searched_destination_route";
+      routeSource = "search_destination";
+    }
+  } else if (lastRenderedRouteKey || routePreviewRendered || routePreviewLayerExists || preview?.status === "cleared") {
+    routeContextType = "cleared_route";
+    routeSource = "cleared";
+  }
+  const hasDestinationGeometry = destinationVertexCount >= 2;
+  const hasRouteWatchGeometry = routeWatchVertexCount >= 2;
+  const hasGeometry = routeWatchActive ? hasRouteWatchGeometry : hasDestinationGeometry;
+  const vertexCount = routeWatchActive ? routeWatchVertexCount : destinationVertexCount;
+  return {
+    routeContextAvailable: routeContextType !== "no_active_route",
+    routeContextType,
+    routeSource,
+    destinationType,
+    destinationLabel: destinationLabel || (routeWatchActive ? activeRouteDestinationLabel || "Route Watch destination" : ""),
+    hasGeometry,
+    geometrySource: routeWatchActive && hasRouteWatchGeometry ? "route_watch_preview" : hasDestinationGeometry ? "destination_route_preview" : routeContextType === "cleared_route" ? "cleared" : "none",
+    vertexCount,
+    routePreviewAvailable: Boolean(preview?.active || preview?.status === "ready" || routePreviewRendered || destinationVertexCount >= 2 || routeWatchVertexCount >= 2),
+    monitoringActive: routeWatchActive,
+    relevanceObserved: Boolean(window.gridlyRouteWatchGeometryRuntimeShadowAudit?.().evaluatedCandidates),
+    routeWatchEligible: Boolean(destinationType === "home" || destinationType === "work" || destinationType === "saved_place" || routeWatchActive),
+    ownershipNotes: [
+      "Active route context is read-only and descriptive.",
+      "Destination route geometry is classified as observable route context, not Route Watch ownership.",
+      "Route Watch monitoring remains separate from route creation and destination preview.",
+      "Audit observation may read geometry counts without changing recommendations, relevance, routing, UI, or storage."
+    ]
+  };
+}
+
+function gridlyBuildActiveRouteContextArchitectureAudit() {
+  return {
+    available: true,
+    auditOnly: true,
+    productionBehaviorChanged: false,
+    activeRouteContextModel: gridlyBuildActiveRouteContextModel(),
+    currentDetectedRouteContext: gridlyBuildCurrentDetectedActiveRouteContext(),
+    supportedRouteContextTypes: ["no_active_route", "searched_destination_route", "saved_destination_route", "home_destination_route", "work_destination_route", "route_watch_monitored_route", "cleared_route"],
+    destinationRoutesObservable: true,
+    savedRoutesObservable: true,
+    routeWatchMonitoringSeparate: true,
+    geometryObservationAllowed: true,
+    productionScoringAllowed: false,
+    ownershipDriftReducedBy: [
+      "names active destination-route geometry as observable route context",
+      "keeps Search Destination as route entry point",
+      "keeps Route Watch as monitoring/readiness owner",
+      "allows audits to observe active route geometry without production scoring or recommendations"
+    ],
+    remainingOwnershipDrift: [
+      "production code still has separate destination-preview and Route Watch route layers",
+      "Route Watch relevance still evaluates its existing active route path only",
+      "no shared production active-route owner is introduced in V302",
+      "monitoring handoff for destination routes remains unresolved"
+    ],
+    recommendedImplementationSequence: [
+      "V303 A: implement a read-only active route context audit bridge",
+      "Keep the bridge diagnostic-only and return safeForProductionWiring false",
+      "Only after bridge validation, consider shadow observation of active route context geometry",
+      "Plan Route Watch monitoring alignment separately after ownership and observation audits stabilize"
+    ],
+    safeForProductionWiring: false
+  };
+}
+
 
 function gridlyBuildRouteWatchFunctionalReadinessAudit() {
   const safeNumber = (value, fallback = 0) => {
@@ -21171,6 +21296,10 @@ function gridlyBuildRouteWatchOwnershipRefactorAudit() {
     safeForProductionWiring: false
   };
 }
+
+window.gridlyActiveRouteContextArchitectureAudit = function gridlyActiveRouteContextArchitectureAudit() {
+  return gridlyBuildActiveRouteContextArchitectureAudit();
+};
 
 window.gridlyRouteWatchFunctionalReadinessAudit = function gridlyRouteWatchFunctionalReadinessAudit() {
   return gridlyBuildRouteWatchFunctionalReadinessAudit();
