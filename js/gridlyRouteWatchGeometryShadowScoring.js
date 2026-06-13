@@ -140,15 +140,25 @@
         midpointRelevant: fixture.expectedMidpointRelevant,
         geometryRelevant: fixture.expectedGeometryRelevant,
         confidenceBand: fixture.expectedConfidenceBand,
-        disagreementReason: fixture.expectedDisagreementReason
+        disagreementReason: fixture.expectedDisagreementReason,
+        fallbackReason: fixture.expectedFallbackReason
       },
       expectationMatches: {
         midpoint: midpoint.relevant === fixture.expectedMidpointRelevant,
         geometry: geometryRelevant === fixture.expectedGeometryRelevant,
         confidenceBand: band === fixture.expectedConfidenceBand,
-        disagreementReason: reason === fixture.expectedDisagreementReason
+        disagreementReason: reason === fixture.expectedDisagreementReason,
+        fallbackReason: fallbackReason(fixture, midpoint, geometryRelevant, band) === fixture.expectedFallbackReason
       }
     };
+  }
+
+  function countBy(results, fieldName) {
+    return results.reduce((counts, result) => {
+      const key = result[fieldName] || "unspecified";
+      counts[key] = (counts[key] || 0) + 1;
+      return counts;
+    }, {});
   }
 
   function summarize(results) {
@@ -161,6 +171,8 @@
 
     return {
       totalFixtures: total,
+      fixtureCountByCorridor: countBy(results, "corridor"),
+      fixtureCountByScenarioType: countBy(results, "caseType"),
       midpointMatches: results.filter((result) => result.expectationMatches.midpoint).length,
       geometryMatches: results.filter((result) => result.expectationMatches.geometry).length,
       midpointFalsePositiveCandidates: midpointFalsePositiveCandidates.length,
@@ -168,8 +180,22 @@
       geometrySupportedCandidates: geometrySupportedCandidates.length,
       geometryRejectedCandidates: geometryRejectedCandidates.length,
       ambiguousCandidates: ambiguousCandidates.length,
+      confidenceBandDistribution: countBy(results, "confidenceBand"),
+      disagreementReasons: countBy(results, "disagreementReason"),
       safeForProductionWiring: false
     };
+  }
+
+  function requiredExpectationFailures(fixtures) {
+    return fixtures.flatMap((fixture) => {
+      const missing = [];
+      if (typeof fixture?.expectedMidpointRelevant !== "boolean") missing.push("expectedMidpointRelevant");
+      if (typeof fixture?.expectedGeometryRelevant !== "boolean") missing.push("expectedGeometryRelevant");
+      if (typeof fixture?.expectedConfidenceBand !== "string" || !fixture.expectedConfidenceBand) missing.push("expectedConfidenceBand");
+      if (typeof fixture?.expectedDisagreementReason !== "string" || !fixture.expectedDisagreementReason) missing.push("expectedDisagreementReason");
+      if (typeof fixture?.expectedFallbackReason !== "string" || !fixture.expectedFallbackReason) missing.push("expectedFallbackReason");
+      return missing.length ? [{ id: fixture?.id || "unknown-fixture", missing }] : [];
+    });
   }
 
   function buildAuditReport(fixturesPayloadOrFixtures = globalScope.gridlyRouteWatchGeometryShadowFixtures, options = {}) {
@@ -188,11 +214,13 @@
       return !result.expectationMatches.midpoint
         || !result.expectationMatches.geometry
         || !result.expectationMatches.confidenceBand
-        || !result.expectationMatches.disagreementReason;
+        || !result.expectationMatches.disagreementReason
+        || !result.expectationMatches.fallbackReason;
     });
+    const fixtureExpectationFailures = requiredExpectationFailures(fixtures);
 
     return {
-      audit: "V294 Route Watch Geometry Shadow Scoring Fixtures",
+      audit: "V295 Route Watch Geometry Shadow Scoring Fixture Expansion",
       scope: "fixture_backed_shadow_scoring_no_production_behavior_change",
       generatedAt: new Date().toISOString(),
       model: {
@@ -206,8 +234,9 @@
       },
       summary: summarize(results),
       validation: {
-        passed: validationFailures.length === 0,
-        failureCount: validationFailures.length,
+        passed: validationFailures.length === 0 && fixtureExpectationFailures.length === 0,
+        failureCount: validationFailures.length + fixtureExpectationFailures.length,
+        fixtureExpectationFailures,
         failures: validationFailures.map((result) => ({
           id: result.id,
           expectationMatches: result.expectationMatches,
@@ -216,7 +245,8 @@
             midpointRelevant: result.currentMidpointRelevance.relevant,
             geometryRelevant: result.geometryOverlapRelevance.relevant,
             confidenceBand: result.confidenceBand,
-            disagreementReason: result.disagreementReason
+            disagreementReason: result.disagreementReason,
+            fallbackReason: result.fallbackReason
           }
         }))
       },

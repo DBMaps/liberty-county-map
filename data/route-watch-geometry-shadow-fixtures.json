@@ -1,6 +1,6 @@
 {
-  "version": "V294",
-  "description": "Audit-only Route Watch geometry shadow scoring fixtures. Coordinates are synthetic Liberty County-style LineStrings and are not production incident data.",
+  "version": "V295",
+  "description": "Expanded audit-only Route Watch geometry shadow scoring fixtures. Coordinates are synthetic Liberty County-style LineStrings and are not production incident data.",
   "defaultOptions": {
     "midpointThresholdMiles": 0.8,
     "overlapToleranceMeters": 60,
@@ -18,8 +18,41 @@
       "expectedGeometryRelevant": true,
       "expectedConfidenceBand": "high",
       "expectedDisagreementReason": "none",
-      "routeGeometry": { "type": "LineString", "coordinates": [[-95.000, 30.000], [-94.980, 30.000], [-94.960, 30.000]] },
-      "eventGeometry": { "type": "LineString", "coordinates": [[-94.982, 30.000], [-94.980, 30.000], [-94.978, 30.000]] }
+      "routeGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -95.0,
+            30.0
+          ],
+          [
+            -94.98,
+            30.0
+          ],
+          [
+            -94.96,
+            30.0
+          ]
+        ]
+      },
+      "eventGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.982,
+            30.0
+          ],
+          [
+            -94.98,
+            30.0
+          ],
+          [
+            -94.978,
+            30.0
+          ]
+        ]
+      },
+      "expectedFallbackReason": "geometry_shadow_supported_current_midpoint_preserved"
     },
     {
       "id": "midpoint-false-positive",
@@ -31,8 +64,41 @@
       "expectedGeometryRelevant": false,
       "expectedConfidenceBand": "not_relevant",
       "expectedDisagreementReason": "midpoint_false_positive_candidate",
-      "routeGeometry": { "type": "LineString", "coordinates": [[-95.000, 30.000], [-94.980, 30.000], [-94.960, 30.000]] },
-      "eventGeometry": { "type": "LineString", "coordinates": [[-94.982, 30.004], [-94.980, 30.004], [-94.978, 30.004]] }
+      "routeGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -95.0,
+            30.0
+          ],
+          [
+            -94.98,
+            30.0
+          ],
+          [
+            -94.96,
+            30.0
+          ]
+        ]
+      },
+      "eventGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.982,
+            30.004
+          ],
+          [
+            -94.98,
+            30.004
+          ],
+          [
+            -94.978,
+            30.004
+          ]
+        ]
+      },
+      "expectedFallbackReason": "shadow_disagreement_current_midpoint_preserved"
     },
     {
       "id": "midpoint-false-negative",
@@ -44,8 +110,37 @@
       "expectedGeometryRelevant": true,
       "expectedConfidenceBand": "high",
       "expectedDisagreementReason": "midpoint_false_negative_candidate",
-      "routeGeometry": { "type": "LineString", "coordinates": [[-95.000, 30.000], [-94.960, 30.000]] },
-      "eventGeometry": { "type": "LineString", "coordinates": [[-94.982, 30.000], [-94.980, 30.000], [-94.978, 30.000]] }
+      "routeGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -95.0,
+            30.0
+          ],
+          [
+            -94.96,
+            30.0
+          ]
+        ]
+      },
+      "eventGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.982,
+            30.0
+          ],
+          [
+            -94.98,
+            30.0
+          ],
+          [
+            -94.978,
+            30.0
+          ]
+        ]
+      },
+      "expectedFallbackReason": "shadow_disagreement_current_midpoint_preserved"
     },
     {
       "id": "geometry-overlap-true-positive",
@@ -57,8 +152,49 @@
       "expectedGeometryRelevant": true,
       "expectedConfidenceBand": "high",
       "expectedDisagreementReason": "none",
-      "routeGeometry": { "type": "LineString", "coordinates": [[-95.010, 30.010], [-94.990, 30.010], [-94.970, 30.010], [-94.950, 30.010]] },
-      "eventGeometry": { "type": "LineString", "coordinates": [[-94.992, 30.010], [-94.990, 30.010], [-94.970, 30.010], [-94.968, 30.010]] }
+      "routeGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -95.01,
+            30.01
+          ],
+          [
+            -94.99,
+            30.01
+          ],
+          [
+            -94.97,
+            30.01
+          ],
+          [
+            -94.95,
+            30.01
+          ]
+        ]
+      },
+      "eventGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.992,
+            30.01
+          ],
+          [
+            -94.99,
+            30.01
+          ],
+          [
+            -94.97,
+            30.01
+          ],
+          [
+            -94.968,
+            30.01
+          ]
+        ]
+      },
+      "expectedFallbackReason": "geometry_shadow_supported_current_midpoint_preserved"
     },
     {
       "id": "geometry-overlap-true-negative",
@@ -70,8 +206,41 @@
       "expectedGeometryRelevant": false,
       "expectedConfidenceBand": "not_relevant",
       "expectedDisagreementReason": "none",
-      "routeGeometry": { "type": "LineString", "coordinates": [[-95.020, 30.020], [-95.000, 30.020], [-94.980, 30.020]] },
-      "eventGeometry": { "type": "LineString", "coordinates": [[-95.010, 30.040], [-95.000, 30.040], [-94.990, 30.040]] }
+      "routeGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -95.02,
+            30.02
+          ],
+          [
+            -95.0,
+            30.02
+          ],
+          [
+            -94.98,
+            30.02
+          ]
+        ]
+      },
+      "eventGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -95.01,
+            30.04
+          ],
+          [
+            -95.0,
+            30.04
+          ],
+          [
+            -94.99,
+            30.04
+          ]
+        ]
+      },
+      "expectedFallbackReason": "geometry_shadow_rejected_current_midpoint_preserved"
     },
     {
       "id": "sparse-route-geometry-miss",
@@ -84,8 +253,37 @@
       "expectedGeometryRelevant": false,
       "expectedConfidenceBand": "ambiguous",
       "expectedDisagreementReason": "sparse_route_geometry_miss",
-      "routeGeometry": { "type": "LineString", "coordinates": [[-95.000, 30.000], [-94.960, 30.000]] },
-      "eventGeometry": { "type": "LineString", "coordinates": [[-94.982, 30.018], [-94.980, 30.020], [-94.978, 30.018]] }
+      "routeGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -95.0,
+            30.0
+          ],
+          [
+            -94.96,
+            30.0
+          ]
+        ]
+      },
+      "eventGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.982,
+            30.018
+          ],
+          [
+            -94.98,
+            30.02
+          ],
+          [
+            -94.978,
+            30.018
+          ]
+        ]
+      },
+      "expectedFallbackReason": "route_geometry_sparse_current_midpoint_preserved"
     },
     {
       "id": "nearby-parallel-road-non-overlap",
@@ -97,8 +295,41 @@
       "expectedGeometryRelevant": false,
       "expectedConfidenceBand": "not_relevant",
       "expectedDisagreementReason": "nearby_parallel_non_overlap",
-      "routeGeometry": { "type": "LineString", "coordinates": [[-95.000, 30.000], [-94.980, 30.000], [-94.960, 30.000]] },
-      "eventGeometry": { "type": "LineString", "coordinates": [[-94.990, 30.002], [-94.980, 30.002], [-94.970, 30.002]] }
+      "routeGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -95.0,
+            30.0
+          ],
+          [
+            -94.98,
+            30.0
+          ],
+          [
+            -94.96,
+            30.0
+          ]
+        ]
+      },
+      "eventGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.99,
+            30.002
+          ],
+          [
+            -94.98,
+            30.002
+          ],
+          [
+            -94.97,
+            30.002
+          ]
+        ]
+      },
+      "expectedFallbackReason": "shadow_disagreement_current_midpoint_preserved"
     },
     {
       "id": "intersection-adjacent-ambiguity",
@@ -110,8 +341,41 @@
       "expectedGeometryRelevant": false,
       "expectedConfidenceBand": "ambiguous",
       "expectedDisagreementReason": "intersection_adjacent_ambiguity",
-      "routeGeometry": { "type": "LineString", "coordinates": [[-95.000, 30.000], [-94.980, 30.000], [-94.960, 30.000]] },
-      "eventGeometry": { "type": "LineString", "coordinates": [[-94.980, 29.997], [-94.980, 30.000], [-94.980, 30.003]] }
+      "routeGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -95.0,
+            30.0
+          ],
+          [
+            -94.98,
+            30.0
+          ],
+          [
+            -94.96,
+            30.0
+          ]
+        ]
+      },
+      "eventGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.98,
+            29.997
+          ],
+          [
+            -94.98,
+            30.0
+          ],
+          [
+            -94.98,
+            30.003
+          ]
+        ]
+      },
+      "expectedFallbackReason": "intersection_adjacent_shadow_review_current_midpoint_preserved"
     },
     {
       "id": "tx-146-shared-alignment-case",
@@ -124,8 +388,41 @@
       "expectedGeometryRelevant": true,
       "expectedConfidenceBand": "ambiguous",
       "expectedDisagreementReason": "shared_alignment_review",
-      "routeGeometry": { "type": "LineString", "coordinates": [[-94.820, 30.060], [-94.800, 30.060], [-94.780, 30.060]] },
-      "eventGeometry": { "type": "LineString", "coordinates": [[-94.812, 30.060], [-94.800, 30.060], [-94.788, 30.060]] }
+      "routeGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.82,
+            30.06
+          ],
+          [
+            -94.8,
+            30.06
+          ],
+          [
+            -94.78,
+            30.06
+          ]
+        ]
+      },
+      "eventGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.812,
+            30.06
+          ],
+          [
+            -94.8,
+            30.06
+          ],
+          [
+            -94.788,
+            30.06
+          ]
+        ]
+      },
+      "expectedFallbackReason": "shared_alignment_shadow_review_current_midpoint_preserved"
     },
     {
       "id": "tx-321-shared-alignment-case",
@@ -138,8 +435,523 @@
       "expectedGeometryRelevant": false,
       "expectedConfidenceBand": "ambiguous",
       "expectedDisagreementReason": "shared_alignment_review",
-      "routeGeometry": { "type": "LineString", "coordinates": [[-94.900, 30.050], [-94.880, 30.050], [-94.860, 30.050]] },
-      "eventGeometry": { "type": "LineString", "coordinates": [[-94.881, 30.050], [-94.880, 30.050], [-94.878, 30.055], [-94.876, 30.060]] }
+      "routeGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9,
+            30.05
+          ],
+          [
+            -94.88,
+            30.05
+          ],
+          [
+            -94.86,
+            30.05
+          ]
+        ]
+      },
+      "eventGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.881,
+            30.05
+          ],
+          [
+            -94.88,
+            30.05
+          ],
+          [
+            -94.878,
+            30.055
+          ],
+          [
+            -94.876,
+            30.06
+          ]
+        ]
+      },
+      "expectedFallbackReason": "shared_alignment_shadow_review_current_midpoint_preserved"
+    },
+    {
+      "id": "tx-146-frontage-parallel-non-overlap",
+      "caseType": "nearby_parallel_frontage_road_non_overlap",
+      "corridor": "TX 146",
+      "description": "A TX 146 frontage-style parallel line stays close enough for midpoint relevance but outside the overlap tolerance.",
+      "routeName": "TX 146 frontage road",
+      "expectedMidpointRelevant": true,
+      "expectedGeometryRelevant": false,
+      "expectedConfidenceBand": "not_relevant",
+      "expectedDisagreementReason": "midpoint_false_positive_candidate",
+      "routeGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.82,
+            30.06
+          ],
+          [
+            -94.8,
+            30.06
+          ],
+          [
+            -94.78,
+            30.06
+          ]
+        ]
+      },
+      "eventGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.812,
+            30.062
+          ],
+          [
+            -94.8,
+            30.062
+          ],
+          [
+            -94.788,
+            30.062
+          ]
+        ]
+      },
+      "expectedFallbackReason": "shadow_disagreement_current_midpoint_preserved"
+    },
+    {
+      "id": "tx-146-intersection-adjacent-crossing",
+      "caseType": "intersection_adjacent_ambiguity",
+      "corridor": "TX 146",
+      "description": "A cross-street touches TX 146 at a route vertex and remains shadow-ambiguous rather than suppressive.",
+      "routeName": "cross street at TX 146",
+      "expectedMidpointRelevant": true,
+      "expectedGeometryRelevant": false,
+      "expectedConfidenceBand": "ambiguous",
+      "expectedDisagreementReason": "intersection_adjacent_ambiguity",
+      "routeGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.82,
+            30.06
+          ],
+          [
+            -94.8,
+            30.06
+          ],
+          [
+            -94.78,
+            30.06
+          ]
+        ]
+      },
+      "eventGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8,
+            30.057
+          ],
+          [
+            -94.8,
+            30.06
+          ],
+          [
+            -94.8,
+            30.063
+          ]
+        ]
+      },
+      "expectedFallbackReason": "intersection_adjacent_shadow_review_current_midpoint_preserved"
+    },
+    {
+      "id": "tx-321-shared-alignment-supported",
+      "caseType": "tx_321_shared_alignment_case",
+      "corridor": "TX 321",
+      "description": "A longer TX 321 shared alignment has geometry support but remains ambiguous for shadow-only review.",
+      "routeName": "TX 321 shared alignment",
+      "sharedAlignment": true,
+      "expectedMidpointRelevant": true,
+      "expectedGeometryRelevant": true,
+      "expectedConfidenceBand": "ambiguous",
+      "expectedDisagreementReason": "shared_alignment_review",
+      "routeGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9,
+            30.05
+          ],
+          [
+            -94.88,
+            30.05
+          ],
+          [
+            -94.86,
+            30.05
+          ]
+        ]
+      },
+      "eventGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.892,
+            30.05
+          ],
+          [
+            -94.88,
+            30.05
+          ],
+          [
+            -94.868,
+            30.05
+          ]
+        ]
+      },
+      "expectedFallbackReason": "shared_alignment_shadow_review_current_midpoint_preserved"
+    },
+    {
+      "id": "tx-321-parallel-local-road",
+      "caseType": "nearby_parallel_road_non_overlap",
+      "corridor": "TX 321",
+      "description": "A local parallel road near TX 321 should be visible as a midpoint false-positive candidate in shadow scoring.",
+      "routeName": "parallel local road near TX 321",
+      "expectedMidpointRelevant": true,
+      "expectedGeometryRelevant": false,
+      "expectedConfidenceBand": "not_relevant",
+      "expectedDisagreementReason": "nearby_parallel_non_overlap",
+      "routeGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9,
+            30.05
+          ],
+          [
+            -94.88,
+            30.05
+          ],
+          [
+            -94.86,
+            30.05
+          ]
+        ]
+      },
+      "eventGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.892,
+            30.052
+          ],
+          [
+            -94.88,
+            30.052
+          ],
+          [
+            -94.868,
+            30.052
+          ]
+        ]
+      },
+      "expectedFallbackReason": "shadow_disagreement_current_midpoint_preserved"
+    },
+    {
+      "id": "us-90-overlap-threshold-low-review",
+      "caseType": "ambiguous_overlap_threshold_case",
+      "corridor": "US 90",
+      "description": "A US 90 line partly follows the corridor but drops below geometry relevance, preserving the midpoint result for review.",
+      "routeName": "US 90 partial overlap",
+      "expectedMidpointRelevant": true,
+      "expectedGeometryRelevant": false,
+      "expectedConfidenceBand": "low",
+      "expectedDisagreementReason": "midpoint_false_positive_candidate",
+      "routeGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -95.0,
+            30.0
+          ],
+          [
+            -94.98,
+            30.0
+          ],
+          [
+            -94.96,
+            30.0
+          ]
+        ]
+      },
+      "eventGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.99,
+            30.0
+          ],
+          [
+            -94.985,
+            30.0
+          ],
+          [
+            -94.98,
+            30.004
+          ],
+          [
+            -94.975,
+            30.008
+          ]
+        ]
+      },
+      "expectedFallbackReason": "shadow_disagreement_current_midpoint_preserved"
+    },
+    {
+      "id": "us-59-i69-geometry-supported",
+      "caseType": "geometry_overlap_true_positive",
+      "corridor": "US 59 / I-69",
+      "description": "A US 59 / I-69 retained line follows the watched route with strong geometry support.",
+      "routeName": "US 59 / I-69",
+      "expectedMidpointRelevant": true,
+      "expectedGeometryRelevant": true,
+      "expectedConfidenceBand": "high",
+      "expectedDisagreementReason": "none",
+      "routeGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.78,
+            30.03
+          ],
+          [
+            -94.76,
+            30.03
+          ],
+          [
+            -94.74,
+            30.03
+          ],
+          [
+            -94.72,
+            30.03
+          ]
+        ]
+      },
+      "eventGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.762,
+            30.03
+          ],
+          [
+            -94.76,
+            30.03
+          ],
+          [
+            -94.74,
+            30.03
+          ],
+          [
+            -94.738,
+            30.03
+          ]
+        ]
+      },
+      "expectedFallbackReason": "geometry_shadow_supported_current_midpoint_preserved"
+    },
+    {
+      "id": "us-59-i69-frontage-non-overlap",
+      "caseType": "nearby_parallel_frontage_road_non_overlap",
+      "corridor": "US 59 / I-69",
+      "description": "A US 59 / I-69 frontage road is midpoint-near but outside geometry tolerance.",
+      "routeName": "US 59 / I-69 frontage road",
+      "expectedMidpointRelevant": true,
+      "expectedGeometryRelevant": false,
+      "expectedConfidenceBand": "not_relevant",
+      "expectedDisagreementReason": "midpoint_false_positive_candidate",
+      "routeGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.78,
+            30.03
+          ],
+          [
+            -94.76,
+            30.03
+          ],
+          [
+            -94.74,
+            30.03
+          ]
+        ]
+      },
+      "eventGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.772,
+            30.032
+          ],
+          [
+            -94.76,
+            30.032
+          ],
+          [
+            -94.748,
+            30.032
+          ]
+        ]
+      },
+      "expectedFallbackReason": "shadow_disagreement_current_midpoint_preserved"
+    },
+    {
+      "id": "fm-1960-medium-confidence-edge",
+      "caseType": "confidence_band_edge_case",
+      "corridor": "FM 1960",
+      "description": "A FM 1960 sample clears geometry relevance with a medium confidence band near the overlap/confidence edge.",
+      "routeName": "FM 1960",
+      "expectedMidpointRelevant": true,
+      "expectedGeometryRelevant": true,
+      "expectedConfidenceBand": "medium",
+      "expectedDisagreementReason": "none",
+      "routeGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -95.0,
+            30.0
+          ],
+          [
+            -94.99,
+            30.0
+          ],
+          [
+            -94.98,
+            30.0
+          ],
+          [
+            -94.97,
+            30.0
+          ]
+        ]
+      },
+      "eventGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.995,
+            30.0
+          ],
+          [
+            -94.99,
+            30.0
+          ],
+          [
+            -94.986,
+            30.002
+          ],
+          [
+            -94.982,
+            30.004
+          ]
+        ]
+      },
+      "expectedFallbackReason": "geometry_shadow_supported_current_midpoint_preserved"
+    },
+    {
+      "id": "fm-1409-sparse-local-detour-miss",
+      "caseType": "sparse_route_geometry_miss",
+      "corridor": "FM 1409",
+      "description": "Sparse FM 1409 route geometry misses a local detour-style curve and remains ambiguous in shadow reporting.",
+      "routeName": "FM 1409 sparse sample",
+      "routeGeometryQuality": "sparse",
+      "expectedMidpointRelevant": false,
+      "expectedGeometryRelevant": false,
+      "expectedConfidenceBand": "ambiguous",
+      "expectedDisagreementReason": "sparse_route_geometry_miss",
+      "routeGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -95.01,
+            30.01
+          ],
+          [
+            -94.95,
+            30.01
+          ]
+        ]
+      },
+      "eventGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.992,
+            30.024
+          ],
+          [
+            -94.98,
+            30.026
+          ],
+          [
+            -94.968,
+            30.024
+          ]
+        ]
+      },
+      "expectedFallbackReason": "route_geometry_sparse_current_midpoint_preserved"
+    },
+    {
+      "id": "fm-1409-low-overlap-review",
+      "caseType": "ambiguous_overlap_threshold_case",
+      "corridor": "FM 1409",
+      "description": "A long FM 1409-adjacent event has a small initial overlap, producing a low confidence-band review case.",
+      "routeName": "FM 1409 partial overlap",
+      "expectedMidpointRelevant": false,
+      "expectedGeometryRelevant": false,
+      "expectedConfidenceBand": "low",
+      "expectedDisagreementReason": "low_overlap_review",
+      "routeGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -95.01,
+            30.01
+          ],
+          [
+            -94.95,
+            30.01
+          ]
+        ]
+      },
+      "eventGeometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -95.0,
+            30.01
+          ],
+          [
+            -94.992,
+            30.01
+          ],
+          [
+            -94.988,
+            30.03
+          ],
+          [
+            -94.984,
+            30.05
+          ]
+        ]
+      },
+      "expectedFallbackReason": "geometry_shadow_supported_current_midpoint_preserved"
     }
   ]
 }
