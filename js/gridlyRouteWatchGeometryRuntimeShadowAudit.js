@@ -196,8 +196,11 @@
       fallbackReason,
       overlapPercentage
     });
+    const routeOwnership = safeString(input.routeOwnership || input.routeOwnershipState || input.routeSource, "saved_route_watch_route");
     const candidate = {
       routeIdentifier: routeIdentifier(input),
+      routeOwnership,
+      routeSource: routeOwnership,
       incidentIdentifier: incidentIdentifier(incident),
       midpointRelevanceResult: Boolean(input.midpointRelevant),
       geometryRelevanceResult: Boolean(geometryRelevant),
@@ -224,11 +227,13 @@
     const overlapDistribution = {};
     const disagreementReasons = {};
     const corridorBreakdown = {};
+    const routeOwnershipBreakdown = {};
 
     candidates.forEach((candidate) => {
       increment(confidenceBandDistribution, candidate.confidenceBand);
       increment(overlapDistribution, bucketOverlap(candidate.overlapPercentage));
       increment(disagreementReasons, candidate.disagreementReason);
+      increment(routeOwnershipBreakdown, candidate.routeOwnership || "saved_route_watch_route");
       const corridor = safeString(candidate.corridor, "unspecified");
       if (!corridorBreakdown[corridor]) {
         corridorBreakdown[corridor] = { evaluatedCandidates: 0, midpointMatches: 0, geometryMatches: 0, midpointOnlyMatches: 0, geometryOnlyMatches: 0, disagreementCount: 0 };
@@ -266,6 +271,13 @@
       overlapDistribution,
       disagreementReasons,
       corridorBreakdown,
+      routeOwnershipBreakdown,
+      observationScope: {
+        recordsSavedRouteWatchCandidates: routeOwnershipBreakdown.saved_route_watch_route > 0 || candidates.length > 0,
+        recordsSearchedDestinationCandidates: Boolean(routeOwnershipBreakdown.searched_destination_route),
+        defaultRouteOwnership: "saved_route_watch_route",
+        destinationRoutesAreSeparateUnlessExplicitlyRecorded: true
+      },
       performance: {
         scoringCount,
         averageScoringTimeMs: Number(averageScoringTimeMs.toFixed(3)),

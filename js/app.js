@@ -20701,10 +20701,13 @@ function gridlyBuildDestinationVsRouteWatchGeometryObservationAudit() {
   const destinationRouteVertexCount = Math.max(destinationGeometryCount, destinationLayerVertexCount);
   const routeWatchRouteLatLngs = typeof getRoutePolylineLatLngs === "function" ? getRoutePolylineLatLngs() : [];
   const routeWatchLayerVertexCount = gridlyCountRouteLayerVertices(window.__gridlyRoutePreviewLayer);
+  const routeWatchGroupVertexCount = gridlyCountRouteLayerVertices(routePreviewCorridorLayer);
   const routeWatchSnapshot = typeof getGridlyAuditRouteRenderSnapshot === "function" ? getGridlyAuditRouteRenderSnapshot() : {};
+  const routeWatchActive = Boolean(routeWatchActivated || window.__gridlyRouteWatchActive);
   const routeWatchVertexCount = Math.max(
     Array.isArray(routeWatchRouteLatLngs) ? routeWatchRouteLatLngs.length : 0,
     routeWatchLayerVertexCount,
+    routeWatchGroupVertexCount,
     Number(routeWatchSnapshot?.routeGeometryPointCount || 0),
     Number(routePreviewPolylinePointCount || 0),
     Number(lastRouteGeometryPointCount || 0)
@@ -20720,11 +20723,17 @@ function gridlyBuildDestinationVsRouteWatchGeometryObservationAudit() {
   const routeWatchHasGeometry = routeWatchVertexCount >= 2;
   const v296Available = typeof window.gridlyRecordRouteWatchGeometryRuntimeShadowCandidate === "function"
     && typeof window.gridlyRouteWatchGeometryRuntimeShadowAudit === "function";
-  const observationGapDetected = Boolean(destinationRouteHasGeometry && !destinationRouteObservedByV296);
+  const destinationRouteActive = Boolean(preview.active || preview.status === "ready");
+  const routeOwnershipState = routeWatchActive
+    ? "saved_route_watch_route"
+    : destinationRouteActive
+      ? "searched_destination_route"
+      : "no_active_route";
+  const observationGapDetected = Boolean(destinationRouteHasGeometry && !routeWatchActive && !destinationRouteObservedByV296);
   const observationGapReason = observationGapDetected
-    ? "destination_route_preview_owns_geometry_but_v296_records_only_route_watch_relevance_candidates"
-    : routeWatchHasGeometry && !routeWatchObservedByV296
-      ? "route_watch_geometry_present_but_no_v296_relevance_candidates_have_run_yet"
+    ? "searched_destination_route_is_separate_from_saved_route_watch_observation"
+    : routeWatchHasGeometry && routeWatchActive && !routeWatchObservedByV296
+      ? "saved_route_watch_geometry_present_but_no_v296_relevance_candidates_have_run_yet"
       : "no_runtime_observation_gap_detected";
   return {
     available: true,
@@ -20737,6 +20746,9 @@ function gridlyBuildDestinationVsRouteWatchGeometryObservationAudit() {
     sharedRelevanceHelpersDetected: false,
     destinationRouteHasGeometry,
     destinationRouteVertexCount,
+    routeWatchActive,
+    destinationRouteActive,
+    routeOwnershipState,
     routeWatchHasGeometry,
     routeWatchVertexCount,
     destinationRouteObservedByV296,
@@ -20758,7 +20770,7 @@ function gridlyBuildDestinationVsRouteWatchGeometryObservationAudit() {
         layerOwnsRenderedRoute: Boolean(destinationRoutePreviewLayer && preview.routeLayer === destinationRoutePreviewLayer)
       },
       savedHomeWorkRouteWatchRoute: {
-        active: Boolean(routeWatchActivated || window.__gridlyRouteWatchActive),
+        active: routeWatchActive,
         selectedRouteId: window.__gridlySelectedRouteId || "",
         originLabel: activeRouteOriginLabel || "",
         destinationLabel: activeRouteDestinationLabel || "",
@@ -20767,8 +20779,8 @@ function gridlyBuildDestinationVsRouteWatchGeometryObservationAudit() {
         vertexCount: routeWatchVertexCount
       },
       activeRoutePreviewLayerState: {
-        routeWatchLayerPresent: Boolean(window.__gridlyRoutePreviewLayer),
-        routeWatchLayerVertexCount,
+        routeWatchLayerPresent: Boolean(window.__gridlyRoutePreviewLayer || routePreviewCorridorLayer),
+        routeWatchLayerVertexCount: Math.max(routeWatchLayerVertexCount, routeWatchGroupVertexCount),
         destinationLayerPresent: Boolean(destinationRoutePreviewLayer),
         destinationLayerVertexCount,
         layersAreSeparate: Boolean(destinationRoutePreviewLayer && destinationRoutePreviewLayer !== savedRouteLayer && destinationRoutePreviewLayer !== window.__gridlyRoutePreviewLayer)
@@ -20878,15 +20890,43 @@ function gridlyBuildRouteWatchFunctionalReadinessAudit() {
   const routeWatchFunctional = Boolean(routeWatchActive && startCoordinates && destinationCoordinates && routeWatchGeometryReady);
   const routeWatchOsrmAttempted = Boolean(osrmRequestStarted || routeRequestTriggered || lastRouteRequest || lastOsrmRequestUrl || lastRouteAttempt?.osrmCallStarted);
   const routePreviewRequested = Boolean(routeRequestTriggered || lastRouteRequest || lastRouteAttempt || routePreviewReason !== "Route preview has not been requested.");
+  const destinationOnlyRouteActive = Boolean(destinationRouteFunctional && destinationRouteIntentionallySeparate && !routeWatchActive);
+  const savedSelectionsValid = Boolean(startCoordinates && destinationCoordinates);
+  const savedRouteMissingDestination = Boolean(startCoordinates && !destinationCoordinates);
+  const routeCleared = Boolean(!routeWatchActive && !destinationRoutePreviewRequested && routePreviewReason === "Route cleared.");
+  const activeRouteOwnershipState = routeWatchActive
+    ? "saved_route_watch_route"
+    : destinationOnlyRouteActive
+      ? "searched_destination_route"
+      : routeCleared
+        ? "route_cleared"
+        : savedRouteMissingDestination
+          ? "missing_destination"
+          : "no_active_route";
   const observedCandidateCount = safeNumber(v296Audit?.evaluatedCandidates || v296Candidates.length);
-  const routeWatchObservedByV296 = observedCandidateCount > 0;
-  const observationReady = Boolean(routeWatchFunctional && routeWatchObservedByV296);
+  const routeWatchObservedByV296 = v296Candidates.length > 0
+    ? v296Candidates.some((candidate) => {
+        const ownership = String(candidate?.routeOwnership || candidate?.routeSource || "saved_route_watch_route");
+        const identifier = String(candidate?.routeIdentifier || candidate?.routeName || "");
+        return ownership !== "searched_destination_route" && !/destination|search|preview|walmart/i.test(identifier);
+      })
+    : observedCandidateCount > 0 && !destinationRouteObservedByV296;
+  const observationReady = Boolean(routeWatchFunctional && routeWatchPolylineVertexCount > 0 && routeWatchObservedByV296);
 
   let blockingReason = "none";
   let recommendedNextAction = "proceed_to_runtime_observation";
-  if (!routeWatchActive) {
-    blockingReason = "route_watch_not_active";
+  if (destinationOnlyRouteActive) {
+    blockingReason = "searched_destination_route_is_separate_from_saved_route_watch";
+    recommendedNextAction = "separate_destination_observation";
+  } else if (!routeWatchActive && savedRouteMissingDestination) {
+    blockingReason = "missing_saved_route_watch_destination";
+    recommendedNextAction = "select_saved_route_watch_destination";
+  } else if (!routeWatchActive && savedSelectionsValid && routePreviewRequested) {
+    blockingReason = "saved_route_watch_activation_attempt_did_not_remain_active";
     recommendedNextAction = "fix_route_watch_activation";
+  } else if (!routeWatchActive) {
+    blockingReason = routeCleared ? "route_cleared" : "no_active_saved_route_watch";
+    recommendedNextAction = savedSelectionsValid ? "start_saved_route_watch" : "select_saved_route_watch_start_and_destination";
   } else if (routeWatchOsrmAttempted && !osrmRouteSuccess && routeWatchPolylineVertexCount < 2) {
     blockingReason = osrmFailureReason || "osrm_route_generation_failed";
     recommendedNextAction = "fix_osrm_route_generation";
@@ -20915,6 +20955,9 @@ function gridlyBuildRouteWatchFunctionalReadinessAudit() {
       startCoordinatesPresent: Boolean(startCoordinates),
       destinationCoordinatesPresent: Boolean(destinationCoordinates),
       routeWatchActive,
+      activeRouteOwnershipState,
+      savedSelectionsValid,
+      routeCleared,
       routePreviewRequested,
       osrmRequestAttempted: routeWatchOsrmAttempted,
       osrmRouteSuccess: Boolean(osrmRouteSuccess),
@@ -20944,11 +20987,13 @@ function gridlyBuildRouteWatchFunctionalReadinessAudit() {
       destinationRoutePreviewRendered,
       destinationRouteTreatedAsRouteWatch,
       destinationRouteIntentionallySeparate,
+      destinationOnlyRouteActive,
       destinationRouteStatus: preview.status || "idle",
       destinationRouteError: preview.error || ""
     },
     routeWatchFunctional,
     routeWatchGeometryReady,
+    v300Recommendation: observationReady ? "proceed_to_geometry_runtime_observation" : recommendedNextAction,
     destinationRouteFunctional,
     destinationRouteGeometryReady,
     observationReady,
@@ -40960,7 +41005,8 @@ function recordGridlyRouteWatchGeometryRuntimeShadowCandidate(incident = {}, rou
       routeId: targetWindow.__gridlySelectedRouteId || lastRenderedRouteKey || "",
       routeOriginLabel: activeRouteOriginLabel || "",
       routeDestinationLabel: activeRouteDestinationLabel || "",
-      routeName: activeRouteSource || routeGeometrySource || "active-route"
+      routeName: activeRouteSource || routeGeometrySource || "active-route",
+      routeOwnership: "saved_route_watch_route"
     });
   } catch (_error) {
     return null;
@@ -57284,11 +57330,35 @@ function attachRouteWatchDebugGlobal() {
       routePreviewRendered,
       mapHasRoutePreviewLayer,
       routePreviewReason,
-      routePreviewLayerOnMap: Boolean(map && savedRouteLayer && typeof map.hasLayer === "function" && map.hasLayer(savedRouteLayer) && routePreviewPolylinePointCount >= 2),
+      routePreviewLayerOnMap: Boolean(
+        routePreviewPolylinePointCount >= 2
+        && map
+        && typeof map.hasLayer === "function"
+        && (map.hasLayer(window.__gridlyRoutePreviewLayer) || map.hasLayer(routePreviewCorridorLayer) || map.hasLayer(savedRouteLayer))
+      ),
       routePreviewPolylinePointCount,
       routePolylineVertexCount: routePreviewPolylinePointCount,
       routeGeometrySource,
       osrmRouteSuccess,
+      routeOwnershipState: Boolean(routeWatchActivated || window.__gridlyRouteWatchActive)
+        ? "saved_route_watch_route"
+        : getGridlyDestinationRoutePreviewState?.()?.active || getGridlyDestinationRoutePreviewState?.()?.status === "ready"
+          ? "searched_destination_route"
+          : routePreviewReason === "Route cleared."
+            ? "route_cleared"
+            : "no_active_route",
+      searchedDestinationRoute: (() => {
+        const preview = getGridlyDestinationRoutePreviewState?.() || {};
+        const destinationPointCount = Array.isArray(preview.geometry) ? preview.geometry.length : 0;
+        const destinationLayerPointCount = gridlyCountRouteLayerVertices(destinationRoutePreviewLayer);
+        return {
+          active: Boolean(preview.active),
+          status: preview.status || "idle",
+          routeProvider: preview.routeProvider || "",
+          routePolylineVertexCount: Math.max(destinationPointCount, destinationLayerPointCount),
+          separateFromSavedRouteWatch: Boolean(destinationRoutePreviewLayer && destinationRoutePreviewLayer !== savedRouteLayer && destinationRoutePreviewLayer !== window.__gridlyRoutePreviewLayer)
+        };
+      })(),
       lastRoutePreviewError,
       routeHazardScore: Number.isFinite(Number(routeHazard?.score)) ? Number(routeHazard.score) : 0,
       routeHazardLevel: routeHazard?.level || "clear",
@@ -57353,7 +57423,12 @@ function attachRouteWatchDebugGlobal() {
         routePreviewRendered: Boolean(routePreviewRendered),
         mapHasRoutePreviewLayer: Boolean(mapHasRoutePreviewLayer),
         routePreviewReason: routePreviewReason || "unknown",
-        routePreviewLayerOnMap: Boolean(map && savedRouteLayer && typeof map.hasLayer === "function" && map.hasLayer(savedRouteLayer)),
+        routePreviewLayerOnMap: Boolean(
+          Number(routePreviewPolylinePointCount || 0) >= 2
+          && map
+          && typeof map.hasLayer === "function"
+          && (map.hasLayer(window.__gridlyRoutePreviewLayer) || map.hasLayer(routePreviewCorridorLayer) || map.hasLayer(savedRouteLayer))
+        ),
         routePreviewPolylinePointCount: Number.isFinite(Number(routePreviewPolylinePointCount)) ? Number(routePreviewPolylinePointCount) : 0,
         routePolylineVertexCount: Number.isFinite(Number(routePreviewPolylinePointCount)) ? Number(routePreviewPolylinePointCount) : 0,
         routeGeometrySource: routeGeometrySource || "fallback",
