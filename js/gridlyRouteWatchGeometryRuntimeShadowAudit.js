@@ -1,8 +1,9 @@
 (function initGridlyRouteWatchGeometryRuntimeShadowAudit(globalScope) {
   if (!globalScope || typeof globalScope !== "object") return;
 
-  const VERSION = "V296-route-watch-geometry-runtime-shadow-audit";
+  const VERSION = "V307-active-route-context-geometry-relevance-shadow-scoring";
   const DEFAULT_OPTIONS = {
+    midpointThresholdMiles: 0.8,
     overlapToleranceMeters: 60,
     overlapThreshold: 0.25,
     confidenceThreshold: 0.55,
@@ -10,142 +11,6 @@
     mobilePeakMsBudget: 16,
     totalOverheadMsBudget: 120
   };
-
-  const state = {
-    version: VERSION,
-    candidates: [],
-    performance: {
-      scoringCount: 0,
-      totalScoringTimeMs: 0,
-      peakScoringTimeMs: 0,
-      totalAuditOverheadMs: 0
-    }
-  };
-
-  function nowMs() {
-    return typeof globalScope.performance?.now === "function" ? globalScope.performance.now() : Date.now();
-  }
-
-  function toNumber(value) {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : null;
-  }
-
-  function safeString(value, fallback = "") {
-    return typeof value === "string" && value.trim() ? value.trim() : fallback;
-  }
-
-  function normalizePair(pair) {
-    if (!Array.isArray(pair) || pair.length < 2) return null;
-    const lng = toNumber(pair[0]);
-    const lat = toNumber(pair[1]);
-    return Number.isFinite(lng) && Number.isFinite(lat) ? [lng, lat] : null;
-  }
-
-  function normalizeLineString(geometry) {
-    if (!geometry || typeof geometry !== "object") return [];
-    if (geometry.type === "LineString") {
-      return Array.isArray(geometry.coordinates) ? geometry.coordinates.map(normalizePair).filter(Boolean) : [];
-    }
-    if (geometry.type === "MultiLineString" && Array.isArray(geometry.coordinates)) {
-      return geometry.coordinates.flatMap((line) => Array.isArray(line) ? line.map(normalizePair).filter(Boolean) : []);
-    }
-    return [];
-  }
-
-  function readIncidentGeometry(incident = {}) {
-    const candidates = [
-      incident?.retainedGeometry,
-      incident?.txdotGeometry,
-      incident?.sourceGeometry,
-      incident?.rawGeometry,
-      incident?.__geometry,
-      incident?.geometry,
-      incident?.raw?.geometry,
-      incident?.source?.geometry,
-      incident?.properties?.geometry
-    ];
-    for (const candidate of candidates) {
-      const coordinates = normalizeLineString(candidate);
-      if (coordinates.length >= 2) return { geometry: candidate, coordinates, source: "retained_line_geometry" };
-    }
-    return { geometry: null, coordinates: [], source: "no_retained_line_geometry" };
-  }
-
-  function routeLatLngsToGeometry(routeLatLngs = []) {
-    const coordinates = (Array.isArray(routeLatLngs) ? routeLatLngs : [])
-      .map((point) => {
-        const lat = toNumber(point?.lat ?? point?.latitude);
-        const lng = toNumber(point?.lng ?? point?.lon ?? point?.longitude);
-        return Number.isFinite(lat) && Number.isFinite(lng) ? [lng, lat] : null;
-      })
-      .filter(Boolean);
-    return { type: "LineString", coordinates };
-  }
-
-  function fallbackOverlapScore(retainedEvent, routeGeometry, options = {}) {
-    const prototype = globalScope.gridlyTxdotGeometryRetentionPrototype;
-    if (prototype && typeof prototype.scoreRouteOverlap === "function") {
-      return prototype.scoreRouteOverlap(retainedEvent, routeGeometry, { toleranceMeters: options.overlapToleranceMeters });
-    }
-    return {
-      overlapDistanceMeters: 0,
-      overlapPercentage: 0,
-      confidence: 0,
-      reason: "V290 geometry scorer unavailable in runtime shadow audit."
-    };
-  }
-
-  function confidenceBand(overlap, geometryRelevant, geometrySource) {
-    if (geometrySource !== "retained_line_geometry") return "unavailable";
-    const percentage = Number(overlap?.overlapPercentage || 0);
-    if (geometryRelevant && percentage >= 0.5) return "high";
-    if (geometryRelevant) return "medium";
-    if (percentage >= 0.1) return "low";
-    return "not_relevant";
-  }
-
-  function buildFallbackReason({ routeGeometry, incidentGeometry, geometryRelevant, midpointRelevant, band }) {
-    if (!Array.isArray(routeGeometry?.coordinates) || routeGeometry.coordinates.length < 2) return "route_geometry_unavailable_current_midpoint_preserved";
-    if (!Array.isArray(incidentGeometry?.coordinates) || incidentGeometry.coordinates.length < 2) return "retained_incident_geometry_unavailable_current_midpoint_preserved";
-    if (midpointRelevant !== geometryRelevant) return "shadow_disagreement_current_midpoint_preserved";
-    if (band === "not_relevant") return "geometry_shadow_rejected_current_midpoint_preserved";
-    if (band === "low") return "low_overlap_shadow_review_current_midpoint_preserved";
-    return "geometry_shadow_supported_current_midpoint_preserved";
-  }
-
-  function buildDisagreementReason({ midpointRelevant, geometryRelevant, fallbackReason, overlapPercentage }) {
-    if (fallbackReason.startsWith("retained_incident_geometry_unavailable")) return "geometry_unavailable";
-    if (fallbackReason.startsWith("route_geometry_unavailable")) return "route_geometry_unavailable";
-    if (midpointRelevant && !geometryRelevant) return overlapPercentage > 0 ? "insufficient_overlap_or_confidence" : "midpoint_only_no_geometry_overlap";
-    if (!midpointRelevant && geometryRelevant) return "geometry_only_overlap_candidate";
-    return "none";
-  }
-
-  function bucketOverlap(percentage) {
-    const value = Number(percentage || 0);
-    if (value <= 0) return "0%";
-    if (value < 0.1) return "0-10%";
-    if (value < 0.25) return "10-25%";
-    if (value < 0.5) return "25-50%";
-    if (value < 0.75) return "50-75%";
-    return "75-100%";
-  }
-
-  function increment(counts, key) {
-    const safeKey = safeString(key, "unspecified");
-    counts[safeKey] = (counts[safeKey] || 0) + 1;
-  }
-
-  function readActiveRouteContext(input = {}) {
-    if (input.activeRouteContext && typeof input.activeRouteContext === "object") return input.activeRouteContext;
-    try {
-      return typeof globalScope.gridlyGetActiveRouteContext === "function" ? globalScope.gridlyGetActiveRouteContext() : null;
-    } catch (_error) {
-      return null;
-    }
-  }
-
   const ACTIVE_ROUTE_CONTEXT_SHADOW_TYPES = new Set([
     "searched_destination_route",
     "saved_destination_route",
@@ -153,7 +18,30 @@
     "work_destination_route",
     "route_watch_monitored_route"
   ]);
+  const state = { version: VERSION, candidates: [], performance: { scoringCount: 0, totalScoringTimeMs: 0, peakScoringTimeMs: 0, totalAuditOverheadMs: 0 }, exclusionReasons: {} };
 
+  function nowMs() { return typeof globalScope.performance?.now === "function" ? globalScope.performance.now() : Date.now(); }
+  function toNumber(value) { const parsed = Number(value); return Number.isFinite(parsed) ? parsed : null; }
+  function safeString(value, fallback = "") { return typeof value === "string" && value.trim() ? value.trim() : fallback; }
+  function increment(counts, key) { const safeKey = safeString(key, "unspecified"); counts[safeKey] = (counts[safeKey] || 0) + 1; }
+  function normalizePair(pair) {
+    if (Array.isArray(pair) && pair.length >= 2) { const lng = toNumber(pair[0]); const lat = toNumber(pair[1]); return Number.isFinite(lng) && Number.isFinite(lat) ? [lng, lat] : null; }
+    if (pair && typeof pair === "object") { const lat = toNumber(pair.lat ?? pair.latitude); const lng = toNumber(pair.lng ?? pair.lon ?? pair.longitude); return Number.isFinite(lng) && Number.isFinite(lat) ? [lng, lat] : null; }
+    return null;
+  }
+  function normalizeLineString(geometry) {
+    if (!geometry || typeof geometry !== "object") return [];
+    if (geometry.type === "LineString") return Array.isArray(geometry.coordinates) ? geometry.coordinates.map(normalizePair).filter(Boolean) : [];
+    if (geometry.type === "MultiLineString" && Array.isArray(geometry.coordinates)) return geometry.coordinates.flatMap((line) => Array.isArray(line) ? line.map(normalizePair).filter(Boolean) : []);
+    if (Array.isArray(geometry.coordinates)) return geometry.coordinates.map(normalizePair).filter(Boolean);
+    if (Array.isArray(geometry.geometry)) return geometry.geometry.map(normalizePair).filter(Boolean);
+    if (Array.isArray(geometry.routeLatLngs)) return geometry.routeLatLngs.map(normalizePair).filter(Boolean);
+    if (Array.isArray(geometry)) return geometry.map(normalizePair).filter(Boolean);
+    return [];
+  }
+  function asLineString(coordinates) { return { type: "LineString", coordinates: (Array.isArray(coordinates) ? coordinates : []).map(normalizePair).filter(Boolean) }; }
+  function routeLatLngsToGeometry(routeLatLngs = []) { return asLineString(routeLatLngs); }
+  function readActiveRouteContext(input = {}) { if (input.activeRouteContext && typeof input.activeRouteContext === "object") return input.activeRouteContext; try { return typeof globalScope.gridlyGetActiveRouteContext === "function" ? globalScope.gridlyGetActiveRouteContext() : null; } catch (_error) { return null; } }
   function activeRouteContextCandidateReason(activeRouteContext = null) {
     if (!activeRouteContext || typeof activeRouteContext !== "object") return "active_route_context_unavailable";
     const contextType = safeString(activeRouteContext.routeContextType, "no_active_route");
@@ -164,233 +52,45 @@
     if (!activeRouteContext.routeWatchEligible) return "route_context_not_route_watch_eligible";
     return "active_route_context_candidate_recorded";
   }
-
-  function buildActiveRouteContextShadowCandidate(activeRouteContext = null) {
-    const reason = activeRouteContextCandidateReason(activeRouteContext);
-    if (reason !== "active_route_context_candidate_recorded") return null;
-    return {
-      routeOwnership: safeString(activeRouteContext.routeContextType, "unknown"),
-      routeSource: safeString(activeRouteContext.routeSource, "unknown"),
-      destinationType: safeString(activeRouteContext.destinationType, "unknown"),
-      destinationLabel: safeString(activeRouteContext.destinationLabel, ""),
-      geometrySource: safeString(activeRouteContext.geometrySource, "unknown"),
-      vertexCount: Number(activeRouteContext.vertexCount || 0),
-      routePreviewAvailable: Boolean(activeRouteContext.routePreviewAvailable),
-      monitoringActive: Boolean(activeRouteContext.monitoringActive),
-      relevanceObserved: Boolean(activeRouteContext.relevanceObserved),
-      candidateSource: "active_route_context",
-      productionBehaviorChanged: false,
-      auditOnly: true,
-      productionDecisionUsed: false
-    };
+  function readActiveRouteGeometry(activeRouteContext = null, input = {}) {
+    const candidates = [input.routeGeometry, input.routeLatLngs, activeRouteContext?.routeGeometry, activeRouteContext?.geometry, activeRouteContext?.coordinates, activeRouteContext?.routeLatLngs, globalScope.GridlyDestinationRoutePreview?.geometry, globalScope.__gridlyActiveRouteContextGeometry];
+    for (const candidate of candidates) { const coordinates = normalizeLineString(candidate); if (coordinates.length >= 2) return { geometry: asLineString(coordinates), coordinates, source: candidate === input.routeLatLngs ? "input_route_lat_lngs" : safeString(activeRouteContext?.geometrySource, "active_route_context_geometry") }; }
+    return { geometry: null, coordinates: [], source: "active_route_geometry_unavailable" };
   }
-
-  function ownershipFromActiveRouteContext(activeRouteContext = null, fallback = "saved_route_watch_route") {
-    const contextType = safeString(activeRouteContext?.routeContextType, "");
-    if (contextType === "route_watch_monitored_route") return "route_watch_monitored_route";
-    if (contextType === "searched_destination_route") return "searched_destination_route";
-    if (contextType === "saved_destination_route") return "saved_destination_route";
-    if (contextType === "home_destination_route") return "home_destination_route";
-    if (contextType === "work_destination_route") return "work_destination_route";
-    if (contextType === "cleared_route") return "route_cleared";
-    return safeString(fallback, "no_active_route");
+  function readIncidentGeometry(incident = {}) {
+    const coordinate = normalizePair([incident?.lng ?? incident?.lon ?? incident?.longitude, incident?.lat ?? incident?.latitude]);
+    const candidates = [incident?.retainedGeometry, incident?.txdotGeometry, incident?.sourceGeometry, incident?.rawGeometry, incident?.__geometry, incident?.geometry, incident?.raw?.geometry, incident?.source?.geometry, incident?.properties?.geometry];
+    for (const candidate of candidates) { const coordinates = normalizeLineString(candidate); if (coordinates.length >= 2) return { geometry: asLineString(coordinates), coordinates, source: "retained_line_geometry" }; }
+    if (coordinate) return { geometry: { type: "Point", coordinates: coordinate }, coordinates: [coordinate], source: "point_geometry" };
+    return { geometry: null, coordinates: [], source: "invalid_coordinates" };
   }
-
-  function routeIdentifier(input = {}) {
-    return safeString(input.routeId)
-      || safeString(globalScope.__gridlySelectedRouteId)
-      || [safeString(input.routeOriginLabel), safeString(input.routeDestinationLabel)].filter(Boolean).join(" -> ")
-      || safeString(input.routeName)
-      || "active-route";
+  function incidentIdentifier(incident = {}) { return safeString(incident.id) || safeString(incident.incidentId) || safeString(incident.GLOBALID) || safeString(incident.globalId) || safeString(incident.crossingId) || "unknown-incident"; }
+  function incidentType(incident = {}) { return safeString(incident.type) || safeString(incident.reportType) || safeString(incident.hazardType) || safeString(incident.category) || "unknown"; }
+  function incidentStatus(incident = {}) { return safeString(incident.lifecycleState) || safeString(incident.status) || safeString(incident.state) || "active"; }
+  function isActiveIncident(incident = {}) { const status = incidentStatus(incident).toLowerCase(); return status === "active" || status === "open" || status === "confirmed" || status === "blocked" || status === "heavy"; }
+  function corridorIdentifier(incident = {}, input = {}) { return safeString(incident.routeNameDisplay) || safeString(incident.routeName) || safeString(incident.roadName) || safeString(incident.roadway) || safeString(incident.area) || safeString(input.routeName) || "unspecified"; }
+  function ownershipFromActiveRouteContext(activeRouteContext = null, fallback = "saved_route_watch_route") { const contextType = safeString(activeRouteContext?.routeContextType, ""); return ACTIVE_ROUTE_CONTEXT_SHADOW_TYPES.has(contextType) ? contextType : safeString(fallback, "no_active_route"); }
+  function distanceMeters(a, b) { if (!Array.isArray(a) || !Array.isArray(b)) return Infinity; const R = 6371008.8; const r = (v) => Number(v) * Math.PI / 180; const dLat = r(b[1]) - r(a[1]); const dLng = r(b[0]) - r(a[0]); const h = Math.sin(dLat / 2) ** 2 + Math.cos(r(a[1])) * Math.cos(r(b[1])) * Math.sin(dLng / 2) ** 2; return 2 * R * Math.asin(Math.min(1, Math.sqrt(h))); }
+  function midpointRelevance(incidentGeometry, routeGeometry, options = {}) { const point = incidentGeometry.coordinates[Math.floor(incidentGeometry.coordinates.length / 2)] || null; const minMiles = (routeGeometry.coordinates || []).reduce((min, vertex) => Math.min(min, distanceMeters(point, vertex) / 1609.344), Infinity); const threshold = Number(options.midpointThresholdMiles || DEFAULT_OPTIONS.midpointThresholdMiles); return { relevant: Number.isFinite(minMiles) && minMiles <= threshold, minVertexDistanceMiles: Number.isFinite(minMiles) ? Number(minMiles.toFixed(3)) : null, thresholdMiles: threshold }; }
+  function fallbackOverlapScore(retainedEvent, routeGeometry, options = {}) { const prototype = globalScope.gridlyTxdotGeometryRetentionPrototype; if (prototype && typeof prototype.scoreRouteOverlap === "function") return prototype.scoreRouteOverlap(retainedEvent, routeGeometry, { toleranceMeters: options.overlapToleranceMeters }); const anyClose = retainedEvent.coordinates?.some((p) => routeGeometry.coordinates?.some((v) => distanceMeters(p, v) <= (options.overlapToleranceMeters || 60))); return { overlapDistanceMeters: anyClose ? 1 : 0, overlapPercentage: anyClose ? 1 : 0, confidence: anyClose ? 0.75 : 0, reason: "lightweight_vertex_distance_fallback" }; }
+  function confidenceBand(overlap, geometryRelevant, geometrySource) { if (geometrySource === "invalid_coordinates") return "unavailable"; const percentage = Number(overlap?.overlapPercentage || 0); if (geometryRelevant && percentage >= 0.5) return "high"; if (geometryRelevant) return "medium"; if (percentage >= 0.1) return "low"; return "not_relevant"; }
+  function buildFallbackReason({ routeGeometry, incidentGeometry, geometryRelevant, midpointRelevant, band }) { if (!Array.isArray(routeGeometry?.coordinates) || routeGeometry.coordinates.length < 2) return "active_route_geometry_unavailable_zero_scoring"; if (!Array.isArray(incidentGeometry?.coordinates) || incidentGeometry.coordinates.length < 1) return "incident_geometry_unavailable_excluded"; if (midpointRelevant !== geometryRelevant) return "shadow_disagreement_current_production_preserved"; if (band === "not_relevant") return "geometry_shadow_rejected_current_production_preserved"; if (band === "low") return "low_overlap_shadow_review_current_production_preserved"; return "geometry_shadow_supported_current_production_preserved"; }
+  function buildDisagreementReason({ midpointRelevant, geometryRelevant, fallbackReason, overlapPercentage }) { if (fallbackReason.includes("unavailable")) return fallbackReason; if (midpointRelevant && !geometryRelevant) return overlapPercentage > 0 ? "insufficient_overlap_or_confidence" : "midpoint_only_no_geometry_overlap"; if (!midpointRelevant && geometryRelevant) return "geometry_only_overlap_candidate"; return "none"; }
+  function bucketOverlap(percentage) { const value = Number(percentage || 0); if (value <= 0) return "0%"; if (value < 0.1) return "0-10%"; if (value < 0.25) return "10-25%"; if (value < 0.5) return "25-50%"; if (value < 0.75) return "50-75%"; return "75-100%"; }
+  function buildActiveRouteContextShadowCandidate(activeRouteContext = null) { const reason = activeRouteContextCandidateReason(activeRouteContext); if (reason !== "active_route_context_candidate_recorded") return null; return { routeOwnership: safeString(activeRouteContext.routeContextType, "unknown"), routeSource: safeString(activeRouteContext.routeSource, "unknown"), destinationType: safeString(activeRouteContext.destinationType, "unknown"), destinationLabel: safeString(activeRouteContext.destinationLabel, ""), geometrySource: safeString(activeRouteContext.geometrySource, "unknown"), vertexCount: Number(activeRouteContext.vertexCount || 0), candidateSource: "active_route_context", productionBehaviorChanged: false, auditOnly: true, productionDecisionUsed: false }; }
+  function scoreCandidate(input = {}) {
+    const auditStartedAt = nowMs(); const options = { ...DEFAULT_OPTIONS, ...(input.options || {}) }; const incident = input.incident && typeof input.incident === "object" ? input.incident : {}; const activeRouteContext = readActiveRouteContext(input); const activeRouteGeometry = readActiveRouteGeometry(activeRouteContext, input); const routeGeometry = activeRouteGeometry.geometry || routeLatLngsToGeometry(input.routeLatLngs); const incidentGeometry = readIncidentGeometry(incident); const scoringStartedAt = nowMs(); const midpoint = typeof input.midpointRelevant === "boolean" ? { relevant: input.midpointRelevant } : midpointRelevance(incidentGeometry, routeGeometry, options); const overlap = fallbackOverlapScore({ id: incidentIdentifier(incident), coordinates: incidentGeometry.coordinates, routeReferences: { routeName: corridorIdentifier(incident, input) } }, routeGeometry, options); const overlapPercentage = Number(overlap?.overlapPercentage || 0); const geometryConfidence = Number(overlap?.confidence || 0); const geometryRelevant = activeRouteGeometry.coordinates.length >= 2 && incidentGeometry.coordinates.length >= 1 && overlapPercentage >= options.overlapThreshold && geometryConfidence >= options.confidenceThreshold; const scoringTimeMs = Math.max(0, nowMs() - scoringStartedAt); const band = confidenceBand(overlap, geometryRelevant, incidentGeometry.source); const fallbackReason = buildFallbackReason({ routeGeometry, incidentGeometry, geometryRelevant, midpointRelevant: Boolean(midpoint.relevant), band }); const disagreementReason = buildDisagreementReason({ midpointRelevant: Boolean(midpoint.relevant), geometryRelevant, fallbackReason, overlapPercentage });
+    const candidate = { routeOwnership: ownershipFromActiveRouteContext(activeRouteContext, input.routeOwnership || input.routeOwnershipState || input.routeSource || "saved_route_watch_route"), destinationLabel: safeString(activeRouteContext?.destinationLabel || input.routeDestinationLabel, ""), incidentId: incidentIdentifier(incident), incidentType: incidentType(incident), incidentStatus: incidentStatus(incident), incidentLocation: { lat: toNumber(incident.lat ?? incident.latitude), lng: toNumber(incident.lng ?? incident.lon ?? incident.longitude), corridor: corridorIdentifier(incident, input) }, midpointRelevant: Boolean(midpoint.relevant), geometryRelevant: Boolean(geometryRelevant), overlapPercent: Number((overlapPercentage * 100).toFixed(1)), confidenceBand: band, fallbackReason, disagreementReason, productionDecisionUsed: false, routeIdentifier: safeString(input.routeId, "active-route"), activeRouteContextType: safeString(activeRouteContext?.routeContextType, "unknown"), activeRouteHasGeometry: activeRouteGeometry.coordinates.length >= 2, activeRouteVertexCount: activeRouteGeometry.coordinates.length, incidentIdentifier: incidentIdentifier(incident), midpointRelevanceResult: Boolean(midpoint.relevant), geometryRelevanceResult: Boolean(geometryRelevant), overlapPercentage: Number(overlapPercentage.toFixed(3)), corridor: corridorIdentifier(incident, input), scoringTimeMs: Number(scoringTimeMs.toFixed(3)), auditOnly: true };
+    state.candidates.push(candidate); state.performance.scoringCount += 1; state.performance.totalScoringTimeMs += scoringTimeMs; state.performance.peakScoringTimeMs = Math.max(state.performance.peakScoringTimeMs, scoringTimeMs); state.performance.totalAuditOverheadMs += Math.max(0, nowMs() - auditStartedAt); return candidate;
   }
-
-  function incidentIdentifier(incident = {}) {
-    return safeString(incident?.id)
-      || safeString(incident?.incidentId)
-      || safeString(incident?.GLOBALID)
-      || safeString(incident?.globalId)
-      || safeString(incident?.crossingId)
-      || "unknown-incident";
+  function readActiveIncidents(input = {}) { const source = Array.isArray(input.incidents) ? input.incidents : Array.isArray(input.activeIncidents) ? input.activeIncidents : Array.isArray(globalScope.__gridlyRouteWatchGeometryRuntimeShadowIncidents) ? globalScope.__gridlyRouteWatchGeometryRuntimeShadowIncidents : []; return source; }
+  function scoreActiveRouteContextIncidents(input = {}) { const activeRouteContext = readActiveRouteContext(input); const routeReason = activeRouteContextCandidateReason(activeRouteContext); const routeGeometry = readActiveRouteGeometry(activeRouteContext, input); if (routeReason !== "active_route_context_candidate_recorded" || routeGeometry.coordinates.length < 2) { increment(state.exclusionReasons, routeReason === "active_route_context_candidate_recorded" ? "active_route_geometry_unavailable_zero_scoring" : routeReason); return []; } return readActiveIncidents(input).flatMap((incident) => { if (!isActiveIncident(incident)) { increment(state.exclusionReasons, "inactive_or_cleared_incident_excluded"); return []; } const incidentGeometry = readIncidentGeometry(incident); if (incidentGeometry.source === "invalid_coordinates") { increment(state.exclusionReasons, "invalid_coordinates_excluded"); return []; } return [scoreCandidate({ ...input, incident, routeGeometry: routeGeometry.geometry, activeRouteContext })]; }); }
+  function summarize(input = {}) { if (input && (Array.isArray(input.incidents) || Array.isArray(input.activeIncidents) || input.routeGeometry || input.routeLatLngs)) scoreActiveRouteContextIncidents(input); const activeRouteContext = readActiveRouteContext(input); const activeRouteContextCandidate = buildActiveRouteContextShadowCandidate(activeRouteContext); const candidates = activeRouteContextCandidate ? state.candidates.concat(activeRouteContextCandidate) : state.candidates.slice(); const scoredCandidates = candidates.filter((candidate) => candidate.candidateSource !== "active_route_context"); const confidenceBandDistribution = {}; const overlapDistribution = {}; const disagreementReasons = {}; const routeOwnershipBreakdown = {}; candidates.forEach((candidate) => increment(routeOwnershipBreakdown, candidate.routeOwnership || "saved_route_watch_route")); scoredCandidates.forEach((candidate) => { increment(confidenceBandDistribution, candidate.confidenceBand); increment(overlapDistribution, bucketOverlap(candidate.overlapPercentage)); increment(disagreementReasons, candidate.disagreementReason); }); const scoringCount = Number(state.performance.scoringCount || 0); const averageScoringTimeMs = scoringCount > 0 ? state.performance.totalScoringTimeMs / scoringCount : 0; const peakScoringTimeMs = Number(state.performance.peakScoringTimeMs || 0); const totalAuditOverheadMs = Number(state.performance.totalAuditOverheadMs || 0); const mobileSafe = averageScoringTimeMs <= DEFAULT_OPTIONS.mobileAverageMsBudget && peakScoringTimeMs <= DEFAULT_OPTIONS.mobilePeakMsBudget; const performanceSafe = mobileSafe && totalAuditOverheadMs <= DEFAULT_OPTIONS.totalOverheadMsBudget; const activeRouteContextReason = activeRouteContextCandidateReason(activeRouteContext); const activeIncidentCandidates = readActiveIncidents(input).filter(isActiveIncident).length;
+    return { available: true, auditOnly: true, shadowModeOnly: true, productionBehaviorChanged: false, safeForProductionWiring: false, version: VERSION, evaluatedCandidates: scoredCandidates.length, activeRouteContextCandidateRecorded: Boolean(activeRouteContextCandidate), activeIncidentCandidates, scoredIncidentCandidates: scoredCandidates.length, midpointMatches: scoredCandidates.filter((c) => c.midpointRelevant).length, geometryMatches: scoredCandidates.filter((c) => c.geometryRelevant).length, midpointOnlyMatches: scoredCandidates.filter((c) => c.midpointRelevant && !c.geometryRelevant).length, geometryOnlyMatches: scoredCandidates.filter((c) => !c.midpointRelevant && c.geometryRelevant).length, disagreementCount: scoredCandidates.filter((c) => c.midpointRelevant !== c.geometryRelevant).length, confidenceBandDistribution, overlapDistribution, disagreementReasons, routeOwnershipBreakdown, zeroScoringReasons: { ...state.exclusionReasons, ...(activeIncidentCandidates === 0 ? { no_active_incidents: 1 } : {}) }, activeRouteContext, observationScope: { activeRouteContextCandidateRecorded: Boolean(activeRouteContextCandidate), activeRouteContextCandidateReason: activeRouteContextReason, activeRouteContextType: safeString(activeRouteContext?.routeContextType, "unknown"), activeRouteHasGeometry: Boolean(activeRouteContext?.hasGeometry), activeRouteVertexCount: Number(activeRouteContext?.vertexCount || 0) }, performance: { scoringCount, averageScoringTimeMs: Number(averageScoringTimeMs.toFixed(3)), peakScoringTimeMs: Number(peakScoringTimeMs.toFixed(3)), totalAuditOverheadMs: Number(totalAuditOverheadMs.toFixed(3)), mobileSafe, performanceSafe }, scoringCount, averageScoringTimeMs: Number(averageScoringTimeMs.toFixed(3)), peakScoringTimeMs: Number(peakScoringTimeMs.toFixed(3)), totalAuditOverheadMs: Number(totalAuditOverheadMs.toFixed(3)), mobileSafe, performanceSafe, safetyVerification: { noUiChanges: true, noRouteWatchOutputChanges: true, noAlertChanges: true, noPopupChanges: true, noMarkerChanges: true, noAwarenessChanges: true, noSupabaseWrites: true, noNotificationBehavior: true }, candidates };
   }
-
-  function corridorIdentifier(incident = {}, input = {}) {
-    return safeString(incident?.routeNameDisplay)
-      || safeString(incident?.routeName)
-      || safeString(incident?.roadName)
-      || safeString(incident?.roadway)
-      || safeString(incident?.area)
-      || safeString(input.routeName)
-      || "unspecified";
-  }
-
-  function recordCandidate(input = {}) {
-    const auditStartedAt = nowMs();
-    const options = { ...DEFAULT_OPTIONS, ...(input.options || {}) };
-    const incident = input.incident && typeof input.incident === "object" ? input.incident : {};
-    const activeRouteContext = readActiveRouteContext(input);
-    const routeGeometry = routeLatLngsToGeometry(input.routeLatLngs);
-    const incidentGeometry = readIncidentGeometry(incident);
-    const scoringStartedAt = nowMs();
-    const overlap = fallbackOverlapScore({
-      id: incidentIdentifier(incident),
-      coordinates: incidentGeometry.coordinates,
-      routeReferences: { routeName: corridorIdentifier(incident, input) }
-    }, routeGeometry, options);
-    const overlapPercentage = Number(overlap?.overlapPercentage || 0);
-    const geometryConfidence = Number(overlap?.confidence || 0);
-    const geometryRelevant = incidentGeometry.coordinates.length >= 2
-      && overlapPercentage >= options.overlapThreshold
-      && geometryConfidence >= options.confidenceThreshold;
-    const scoringTimeMs = Math.max(0, nowMs() - scoringStartedAt);
-    const band = confidenceBand(overlap, geometryRelevant, incidentGeometry.source);
-    const fallbackReason = buildFallbackReason({
-      routeGeometry,
-      incidentGeometry,
-      geometryRelevant,
-      midpointRelevant: Boolean(input.midpointRelevant),
-      band
-    });
-    const disagreementReason = buildDisagreementReason({
-      midpointRelevant: Boolean(input.midpointRelevant),
-      geometryRelevant,
-      fallbackReason,
-      overlapPercentage
-    });
-    const routeOwnership = ownershipFromActiveRouteContext(activeRouteContext, input.routeOwnership || input.routeOwnershipState || input.routeSource || "saved_route_watch_route");
-    const candidate = {
-      routeIdentifier: routeIdentifier(input),
-      routeOwnership,
-      routeSource: safeString(activeRouteContext?.routeSource, routeOwnership),
-      activeRouteContextType: safeString(activeRouteContext?.routeContextType, "unknown"),
-      activeRouteHasGeometry: Boolean(activeRouteContext?.hasGeometry),
-      activeRouteVertexCount: Number(activeRouteContext?.vertexCount || 0),
-      incidentIdentifier: incidentIdentifier(incident),
-      midpointRelevanceResult: Boolean(input.midpointRelevant),
-      geometryRelevanceResult: Boolean(geometryRelevant),
-      confidenceBand: band,
-      overlapPercentage: Number(overlapPercentage.toFixed(3)),
-      fallbackReason,
-      disagreementReason,
-      corridor: corridorIdentifier(incident, input),
-      scoringTimeMs: Number(scoringTimeMs.toFixed(3)),
-      auditOnly: true,
-      productionDecisionUsed: false
-    };
-    state.candidates.push(candidate);
-    state.performance.scoringCount += 1;
-    state.performance.totalScoringTimeMs += scoringTimeMs;
-    state.performance.peakScoringTimeMs = Math.max(state.performance.peakScoringTimeMs, scoringTimeMs);
-    state.performance.totalAuditOverheadMs += Math.max(0, nowMs() - auditStartedAt);
-    return candidate;
-  }
-
-  function summarize() {
-    const activeRouteContext = readActiveRouteContext();
-    const activeRouteContextCandidate = buildActiveRouteContextShadowCandidate(activeRouteContext);
-    const candidates = activeRouteContextCandidate ? state.candidates.concat(activeRouteContextCandidate) : state.candidates.slice();
-    const scoredCandidates = candidates.filter((candidate) => candidate.candidateSource !== "active_route_context");
-    const confidenceBandDistribution = {};
-    const overlapDistribution = {};
-    const disagreementReasons = {};
-    const corridorBreakdown = {};
-    const routeOwnershipBreakdown = {};
-    const activeRouteContextReason = activeRouteContextCandidateReason(activeRouteContext);
-
-    candidates.forEach((candidate) => {
-      increment(routeOwnershipBreakdown, candidate.routeOwnership || "saved_route_watch_route");
-    });
-
-    scoredCandidates.forEach((candidate) => {
-      increment(confidenceBandDistribution, candidate.confidenceBand);
-      increment(overlapDistribution, bucketOverlap(candidate.overlapPercentage));
-      increment(disagreementReasons, candidate.disagreementReason);
-      const corridor = safeString(candidate.corridor, "unspecified");
-      if (!corridorBreakdown[corridor]) {
-        corridorBreakdown[corridor] = { evaluatedCandidates: 0, midpointMatches: 0, geometryMatches: 0, midpointOnlyMatches: 0, geometryOnlyMatches: 0, disagreementCount: 0 };
-      }
-      const row = corridorBreakdown[corridor];
-      row.evaluatedCandidates += 1;
-      if (candidate.midpointRelevanceResult) row.midpointMatches += 1;
-      if (candidate.geometryRelevanceResult) row.geometryMatches += 1;
-      if (candidate.midpointRelevanceResult && !candidate.geometryRelevanceResult) row.midpointOnlyMatches += 1;
-      if (!candidate.midpointRelevanceResult && candidate.geometryRelevanceResult) row.geometryOnlyMatches += 1;
-      if (candidate.midpointRelevanceResult !== candidate.geometryRelevanceResult) row.disagreementCount += 1;
-    });
-
-    const scoringCount = Number(state.performance.scoringCount || 0);
-    const averageScoringTimeMs = scoringCount > 0 ? state.performance.totalScoringTimeMs / scoringCount : 0;
-    const peakScoringTimeMs = Number(state.performance.peakScoringTimeMs || 0);
-    const totalAuditOverheadMs = Number(state.performance.totalAuditOverheadMs || 0);
-    const mobileSafe = averageScoringTimeMs <= DEFAULT_OPTIONS.mobileAverageMsBudget && peakScoringTimeMs <= DEFAULT_OPTIONS.mobilePeakMsBudget;
-    const performanceSafe = mobileSafe && totalAuditOverheadMs <= DEFAULT_OPTIONS.totalOverheadMsBudget;
-
-    return {
-      available: true,
-      auditOnly: true,
-      shadowModeOnly: true,
-      productionBehaviorChanged: false,
-      safeForProductionWiring: false,
-      version: VERSION,
-      evaluatedCandidates: scoredCandidates.length,
-      midpointMatches: scoredCandidates.filter((candidate) => candidate.midpointRelevanceResult).length,
-      geometryMatches: scoredCandidates.filter((candidate) => candidate.geometryRelevanceResult).length,
-      midpointOnlyMatches: scoredCandidates.filter((candidate) => candidate.midpointRelevanceResult && !candidate.geometryRelevanceResult).length,
-      geometryOnlyMatches: scoredCandidates.filter((candidate) => !candidate.midpointRelevanceResult && candidate.geometryRelevanceResult).length,
-      disagreementCount: scoredCandidates.filter((candidate) => candidate.midpointRelevanceResult !== candidate.geometryRelevanceResult).length,
-      confidenceBandDistribution,
-      overlapDistribution,
-      disagreementReasons,
-      corridorBreakdown,
-      routeOwnershipBreakdown,
-      activeRouteContext,
-      observationScope: {
-        recordsSavedRouteWatchCandidates: Boolean(routeOwnershipBreakdown.route_watch_monitored_route || routeOwnershipBreakdown.saved_route_watch_route || routeOwnershipBreakdown.saved_destination_route || routeOwnershipBreakdown.home_destination_route || routeOwnershipBreakdown.work_destination_route),
-        recordsSearchedDestinationCandidates: Boolean(routeOwnershipBreakdown.searched_destination_route),
-        recordsSavedDestinationCandidates: Boolean(routeOwnershipBreakdown.saved_destination_route),
-        recordsHomeDestinationCandidates: Boolean(routeOwnershipBreakdown.home_destination_route),
-        recordsWorkDestinationCandidates: Boolean(routeOwnershipBreakdown.work_destination_route),
-        recordsRouteWatchMonitoredRoutes: Boolean(routeOwnershipBreakdown.route_watch_monitored_route),
-        activeRouteContextCandidateRecorded: Boolean(activeRouteContextCandidate),
-        activeRouteContextCandidateReason: activeRouteContextReason,
-        activeRouteContextType: safeString(activeRouteContext?.routeContextType, "unknown"),
-        activeRouteHasGeometry: Boolean(activeRouteContext?.hasGeometry),
-        activeRouteVertexCount: Number(activeRouteContext?.vertexCount || 0),
-        defaultRouteOwnership: "getActiveRouteContext",
-        destinationRoutesAreSeparateUnlessExplicitlyRecorded: true
-      },
-      performance: {
-        scoringCount,
-        averageScoringTimeMs: Number(averageScoringTimeMs.toFixed(3)),
-        peakScoringTimeMs: Number(peakScoringTimeMs.toFixed(3)),
-        totalAuditOverheadMs: Number(totalAuditOverheadMs.toFixed(3)),
-        mobileSafe,
-        performanceSafe
-      },
-      mobileSafe,
-      performanceSafe,
-      safetyVerification: {
-        noUiChanges: true,
-        noRouteWatchOutputChanges: true,
-        noAlertChanges: true,
-        noPopupChanges: true,
-        noMarkerChanges: true,
-        noAwarenessChanges: true,
-        noSupabaseWrites: true,
-        noNotificationBehavior: true
-      },
-      candidates
-    };
-  }
-
   globalScope.gridlyRouteWatchGeometryRuntimeShadowState = state;
-  globalScope.gridlyRecordRouteWatchGeometryRuntimeShadowCandidate = recordCandidate;
+  globalScope.gridlyRecordRouteWatchGeometryRuntimeShadowCandidate = scoreCandidate;
+  globalScope.gridlyScoreActiveRouteContextGeometryShadow = scoreActiveRouteContextIncidents;
   globalScope.gridlyRouteWatchGeometryRuntimeShadowAudit = summarize;
-  globalScope.gridlyResetRouteWatchGeometryRuntimeShadowAudit = function gridlyResetRouteWatchGeometryRuntimeShadowAudit() {
-    state.candidates = [];
-    state.performance.scoringCount = 0;
-    state.performance.totalScoringTimeMs = 0;
-    state.performance.peakScoringTimeMs = 0;
-    state.performance.totalAuditOverheadMs = 0;
-    return summarize();
-  };
+  globalScope.gridlyResetRouteWatchGeometryRuntimeShadowAudit = function gridlyResetRouteWatchGeometryRuntimeShadowAudit() { state.candidates = []; state.performance.scoringCount = 0; state.performance.totalScoringTimeMs = 0; state.performance.peakScoringTimeMs = 0; state.performance.totalAuditOverheadMs = 0; state.exclusionReasons = {}; return summarize(); };
 })(typeof window !== "undefined" ? window : globalThis);
