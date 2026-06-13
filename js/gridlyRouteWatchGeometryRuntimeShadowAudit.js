@@ -137,6 +137,26 @@
     counts[safeKey] = (counts[safeKey] || 0) + 1;
   }
 
+  function readActiveRouteContext(input = {}) {
+    if (input.activeRouteContext && typeof input.activeRouteContext === "object") return input.activeRouteContext;
+    try {
+      return typeof globalScope.gridlyGetActiveRouteContext === "function" ? globalScope.gridlyGetActiveRouteContext() : null;
+    } catch (_error) {
+      return null;
+    }
+  }
+
+  function ownershipFromActiveRouteContext(activeRouteContext = null, fallback = "saved_route_watch_route") {
+    const contextType = safeString(activeRouteContext?.routeContextType, "");
+    if (contextType === "route_watch_monitored_route") return "route_watch_monitored_route";
+    if (contextType === "searched_destination_route") return "searched_destination_route";
+    if (contextType === "saved_destination_route") return "saved_destination_route";
+    if (contextType === "home_destination_route") return "home_destination_route";
+    if (contextType === "work_destination_route") return "work_destination_route";
+    if (contextType === "cleared_route") return "route_cleared";
+    return safeString(fallback, "no_active_route");
+  }
+
   function routeIdentifier(input = {}) {
     return safeString(input.routeId)
       || safeString(globalScope.__gridlySelectedRouteId)
@@ -168,6 +188,7 @@
     const auditStartedAt = nowMs();
     const options = { ...DEFAULT_OPTIONS, ...(input.options || {}) };
     const incident = input.incident && typeof input.incident === "object" ? input.incident : {};
+    const activeRouteContext = readActiveRouteContext(input);
     const routeGeometry = routeLatLngsToGeometry(input.routeLatLngs);
     const incidentGeometry = readIncidentGeometry(incident);
     const scoringStartedAt = nowMs();
@@ -196,11 +217,14 @@
       fallbackReason,
       overlapPercentage
     });
-    const routeOwnership = safeString(input.routeOwnership || input.routeOwnershipState || input.routeSource, "saved_route_watch_route");
+    const routeOwnership = ownershipFromActiveRouteContext(activeRouteContext, input.routeOwnership || input.routeOwnershipState || input.routeSource || "saved_route_watch_route");
     const candidate = {
       routeIdentifier: routeIdentifier(input),
       routeOwnership,
-      routeSource: routeOwnership,
+      routeSource: safeString(activeRouteContext?.routeSource, routeOwnership),
+      activeRouteContextType: safeString(activeRouteContext?.routeContextType, "unknown"),
+      activeRouteHasGeometry: Boolean(activeRouteContext?.hasGeometry),
+      activeRouteVertexCount: Number(activeRouteContext?.vertexCount || 0),
       incidentIdentifier: incidentIdentifier(incident),
       midpointRelevanceResult: Boolean(input.midpointRelevant),
       geometryRelevanceResult: Boolean(geometryRelevant),
@@ -228,6 +252,7 @@
     const disagreementReasons = {};
     const corridorBreakdown = {};
     const routeOwnershipBreakdown = {};
+    const activeRouteContext = readActiveRouteContext();
 
     candidates.forEach((candidate) => {
       increment(confidenceBandDistribution, candidate.confidenceBand);
@@ -272,10 +297,16 @@
       disagreementReasons,
       corridorBreakdown,
       routeOwnershipBreakdown,
+      activeRouteContext,
       observationScope: {
-        recordsSavedRouteWatchCandidates: routeOwnershipBreakdown.saved_route_watch_route > 0 || candidates.length > 0,
+        recordsSavedRouteWatchCandidates: Boolean(routeOwnershipBreakdown.route_watch_monitored_route || routeOwnershipBreakdown.saved_route_watch_route || routeOwnershipBreakdown.saved_destination_route || routeOwnershipBreakdown.home_destination_route || routeOwnershipBreakdown.work_destination_route),
         recordsSearchedDestinationCandidates: Boolean(routeOwnershipBreakdown.searched_destination_route),
-        defaultRouteOwnership: "saved_route_watch_route",
+        recordsSavedDestinationCandidates: Boolean(routeOwnershipBreakdown.saved_destination_route || routeOwnershipBreakdown.home_destination_route || routeOwnershipBreakdown.work_destination_route),
+        recordsRouteWatchMonitoredRoutes: Boolean(routeOwnershipBreakdown.route_watch_monitored_route),
+        activeRouteContextType: safeString(activeRouteContext?.routeContextType, "unknown"),
+        activeRouteHasGeometry: Boolean(activeRouteContext?.hasGeometry),
+        activeRouteVertexCount: Number(activeRouteContext?.vertexCount || 0),
+        defaultRouteOwnership: "getActiveRouteContext",
         destinationRoutesAreSeparateUnlessExplicitlyRecorded: true
       },
       performance: {
