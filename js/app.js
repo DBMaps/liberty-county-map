@@ -20820,7 +20820,7 @@ function gridlyClassifyActiveRouteContextDestinationType(destination = {}, fallb
 function gridlyBuildActiveRouteContextModel() {
   return {
     routeContextAvailable: "boolean; true only when an observable active or recently cleared route context can be described",
-    routeContextType: ["no_active_route", "searched_destination_route", "saved_destination_route", "home_destination_route", "work_destination_route", "route_watch_monitored_route", "cleared_route"],
+    routeContextType: [...GRIDLY_ACTIVE_ROUTE_CONTEXT_TYPES],
     routeSource: ["none", "search_destination", "saved_destination", "home_destination", "work_destination", "route_watch", "cleared"],
     destinationType: ["none", "searched_destination", "saved_place", "home", "work"],
     destinationLabel: "string; display label only, never a write target",
@@ -20834,6 +20834,8 @@ function gridlyBuildActiveRouteContextModel() {
     ownershipNotes: "string[]; explains detected ownership boundaries and drift"
   };
 }
+
+const GRIDLY_ACTIVE_ROUTE_CONTEXT_TYPES = Object.freeze(["no_active_route", "searched_destination_route", "saved_destination_route", "home_destination_route", "work_destination_route", "route_watch_monitored_route", "cleared_route"]);
 
 function gridlyBuildCurrentDetectedActiveRouteContext() {
   const preview = window.GridlyDestinationRoutePreview && typeof window.GridlyDestinationRoutePreview === "object" ? window.GridlyDestinationRoutePreview : {};
@@ -20898,6 +20900,50 @@ function gridlyBuildCurrentDetectedActiveRouteContext() {
   };
 }
 
+function getActiveRouteContext() {
+  const detectedContext = gridlyBuildCurrentDetectedActiveRouteContext();
+  const normalizedContext = {
+    available: true,
+    readOnly: true,
+    productionBehaviorChanged: false,
+
+    routeContextAvailable: Boolean(detectedContext.routeContextAvailable),
+    routeContextType: GRIDLY_ACTIVE_ROUTE_CONTEXT_TYPES.includes(detectedContext.routeContextType) ? detectedContext.routeContextType : "no_active_route",
+    routeSource: String(detectedContext.routeSource || "none"),
+    destinationType: String(detectedContext.destinationType || "none"),
+    destinationLabel: String(detectedContext.destinationLabel || ""),
+
+    hasGeometry: Boolean(detectedContext.hasGeometry),
+    geometrySource: String(detectedContext.geometrySource || "none"),
+    vertexCount: Number.isFinite(Number(detectedContext.vertexCount)) ? Number(detectedContext.vertexCount) : 0,
+
+    routePreviewAvailable: Boolean(detectedContext.routePreviewAvailable),
+    monitoringActive: Boolean(detectedContext.monitoringActive),
+    relevanceObserved: Boolean(detectedContext.relevanceObserved),
+    routeWatchEligible: Boolean(detectedContext.routeWatchEligible),
+
+    ownershipNotes: Object.freeze(Array.isArray(detectedContext.ownershipNotes) ? [...detectedContext.ownershipNotes] : []),
+    safeForProductionWiring: false
+  };
+  return Object.freeze(normalizedContext);
+}
+
+function gridlyActiveRouteContextProviderAudit() {
+  const providerAvailable = typeof getActiveRouteContext === "function";
+  const currentContext = providerAvailable ? getActiveRouteContext() : null;
+  return {
+    available: true,
+    auditOnly: true,
+    providerAvailable,
+    providerReadOnly: Boolean(currentContext?.readOnly === true && Object.isFrozen(currentContext)),
+    supportedContextTypes: [...GRIDLY_ACTIVE_ROUTE_CONTEXT_TYPES],
+    currentContext,
+    mutationDetected: false,
+    productionBehaviorChanged: false,
+    safeForProductionWiring: false
+  };
+}
+
 function gridlyBuildActiveRouteContextArchitectureAudit() {
   return {
     available: true,
@@ -20905,7 +20951,7 @@ function gridlyBuildActiveRouteContextArchitectureAudit() {
     productionBehaviorChanged: false,
     activeRouteContextModel: gridlyBuildActiveRouteContextModel(),
     currentDetectedRouteContext: gridlyBuildCurrentDetectedActiveRouteContext(),
-    supportedRouteContextTypes: ["no_active_route", "searched_destination_route", "saved_destination_route", "home_destination_route", "work_destination_route", "route_watch_monitored_route", "cleared_route"],
+    supportedRouteContextTypes: [...GRIDLY_ACTIVE_ROUTE_CONTEXT_TYPES],
     destinationRoutesObservable: true,
     savedRoutesObservable: true,
     routeWatchMonitoringSeparate: true,
@@ -21382,6 +21428,12 @@ window.gridlyActiveRouteContextArchitectureAudit = function gridlyActiveRouteCon
 window.gridlyActiveRouteContextImplementationPlan = function gridlyActiveRouteContextImplementationPlan() {
   return gridlyBuildActiveRouteContextImplementationPlan();
 };
+
+window.gridlyGetActiveRouteContext = function gridlyGetActiveRouteContext() {
+  return getActiveRouteContext();
+};
+
+window.gridlyActiveRouteContextProviderAudit = gridlyActiveRouteContextProviderAudit;
 
 window.gridlyRouteWatchFunctionalReadinessAudit = function gridlyRouteWatchFunctionalReadinessAudit() {
   return gridlyBuildRouteWatchFunctionalReadinessAudit();
