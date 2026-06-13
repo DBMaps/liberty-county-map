@@ -121,7 +121,7 @@ report = globalThis.gridlyRouteWatchGeometryRuntimeShadowAudit({ options: { runt
 const routeDetailsElapsedMs = Date.now() - routeDetailsStartedAt;
 validations.push({
   name: "Route Details candidates present return promptly",
-  passed: report.routeDetailsIncidentCount === 4 && report.activeIncidentCandidates === 4 && routeDetailsElapsedMs < 250 && report.safeForProductionWiring === false && report.productionBehaviorChanged === false && report.shadowModeOnly === true
+  passed: report.routeDetailsIncidentCount === 4 && report.activeIncidentCandidates === 4 && report.scoringSkipped === true && report.scoringSkipReason === "scoring_temporarily_disabled_for_runtime_safety" && report.scoredIncidentCandidates === 0 && routeDetailsElapsedMs < 250 && report.safeForProductionWiring === false && report.productionBehaviorChanged === false && report.shadowModeOnly === true
 });
 globalThis.gridlyGetDestinationRouteActiveIncidentCandidates = originalRouteDetailsSource;
 activeRouteContext.routeGeometry = routeGeometry;
