@@ -94,3 +94,46 @@ const requiredCounts = report.evaluatedCandidates === candidates.length
 if (!requiredBooleans.every(Boolean) || !requiredCounts) {
   process.exitCode = 1;
 }
+
+
+globalThis.gridlyResetRouteWatchGeometryRuntimeShadowAudit?.();
+globalThis.gridlyGetActiveRouteContext = () => ({
+  routeContextAvailable: true,
+  routeContextType: "saved_destination_route",
+  routeSource: "saved_destination",
+  destinationType: "saved_destination",
+  destinationLabel: "Marshall's",
+  hasGeometry: true,
+  geometrySource: "route_preview",
+  vertexCount: 1704,
+  routePreviewAvailable: true,
+  monitoringActive: false,
+  relevanceObserved: false,
+  routeWatchEligible: true
+});
+
+const activeContextReport = globalThis.gridlyRouteWatchGeometryRuntimeShadowAudit();
+console.log(JSON.stringify({
+  activeRouteContextCandidateRecorded: activeContextReport.observationScope?.activeRouteContextCandidateRecorded,
+  activeRouteContextCandidateReason: activeContextReport.observationScope?.activeRouteContextCandidateReason,
+  candidateCount: activeContextReport.candidates?.length,
+  evaluatedCandidates: activeContextReport.evaluatedCandidates,
+  safeForProductionWiring: activeContextReport.safeForProductionWiring
+}, null, 2));
+
+const activeContextAssertions = [
+  activeContextReport.activeRouteContext?.hasGeometry === true,
+  activeContextReport.activeRouteContext?.vertexCount > 0,
+  activeContextReport.observationScope?.activeRouteContextCandidateRecorded === true,
+  activeContextReport.observationScope?.recordsSavedDestinationCandidates === true,
+  activeContextReport.candidates?.length > 0,
+  activeContextReport.evaluatedCandidates === 0,
+  activeContextReport.performance?.scoringCount === 0,
+  activeContextReport.safeForProductionWiring === false,
+  activeContextReport.candidates?.[0]?.candidateSource === "active_route_context",
+  activeContextReport.candidates?.[0]?.productionBehaviorChanged === false
+];
+
+if (!activeContextAssertions.every(Boolean)) {
+  process.exitCode = 1;
+}

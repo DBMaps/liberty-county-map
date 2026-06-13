@@ -146,6 +146,45 @@
     }
   }
 
+  const ACTIVE_ROUTE_CONTEXT_SHADOW_TYPES = new Set([
+    "searched_destination_route",
+    "saved_destination_route",
+    "home_destination_route",
+    "work_destination_route",
+    "route_watch_monitored_route"
+  ]);
+
+  function activeRouteContextCandidateReason(activeRouteContext = null) {
+    if (!activeRouteContext || typeof activeRouteContext !== "object") return "active_route_context_unavailable";
+    const contextType = safeString(activeRouteContext.routeContextType, "no_active_route");
+    if (!activeRouteContext.routeContextAvailable) return "route_context_not_available";
+    if (!ACTIVE_ROUTE_CONTEXT_SHADOW_TYPES.has(contextType)) return `unsupported_context_type_${contextType}`;
+    if (!activeRouteContext.hasGeometry) return "route_context_geometry_unavailable";
+    if (Number(activeRouteContext.vertexCount || 0) <= 0) return "route_context_vertex_count_unavailable";
+    if (!activeRouteContext.routeWatchEligible) return "route_context_not_route_watch_eligible";
+    return "active_route_context_candidate_recorded";
+  }
+
+  function buildActiveRouteContextShadowCandidate(activeRouteContext = null) {
+    const reason = activeRouteContextCandidateReason(activeRouteContext);
+    if (reason !== "active_route_context_candidate_recorded") return null;
+    return {
+      routeOwnership: safeString(activeRouteContext.routeContextType, "unknown"),
+      routeSource: safeString(activeRouteContext.routeSource, "unknown"),
+      destinationType: safeString(activeRouteContext.destinationType, "unknown"),
+      destinationLabel: safeString(activeRouteContext.destinationLabel, ""),
+      geometrySource: safeString(activeRouteContext.geometrySource, "unknown"),
+      vertexCount: Number(activeRouteContext.vertexCount || 0),
+      routePreviewAvailable: Boolean(activeRouteContext.routePreviewAvailable),
+      monitoringActive: Boolean(activeRouteContext.monitoringActive),
+      relevanceObserved: Boolean(activeRouteContext.relevanceObserved),
+      candidateSource: "active_route_context",
+      productionBehaviorChanged: false,
+      auditOnly: true,
+      productionDecisionUsed: false
+    };
+  }
+
   function ownershipFromActiveRouteContext(activeRouteContext = null, fallback = "saved_route_watch_route") {
     const contextType = safeString(activeRouteContext?.routeContextType, "");
     if (contextType === "route_watch_monitored_route") return "route_watch_monitored_route";
@@ -246,19 +285,25 @@
   }
 
   function summarize() {
-    const candidates = state.candidates.slice();
+    const activeRouteContext = readActiveRouteContext();
+    const activeRouteContextCandidate = buildActiveRouteContextShadowCandidate(activeRouteContext);
+    const candidates = activeRouteContextCandidate ? state.candidates.concat(activeRouteContextCandidate) : state.candidates.slice();
+    const scoredCandidates = candidates.filter((candidate) => candidate.candidateSource !== "active_route_context");
     const confidenceBandDistribution = {};
     const overlapDistribution = {};
     const disagreementReasons = {};
     const corridorBreakdown = {};
     const routeOwnershipBreakdown = {};
-    const activeRouteContext = readActiveRouteContext();
+    const activeRouteContextReason = activeRouteContextCandidateReason(activeRouteContext);
 
     candidates.forEach((candidate) => {
+      increment(routeOwnershipBreakdown, candidate.routeOwnership || "saved_route_watch_route");
+    });
+
+    scoredCandidates.forEach((candidate) => {
       increment(confidenceBandDistribution, candidate.confidenceBand);
       increment(overlapDistribution, bucketOverlap(candidate.overlapPercentage));
       increment(disagreementReasons, candidate.disagreementReason);
-      increment(routeOwnershipBreakdown, candidate.routeOwnership || "saved_route_watch_route");
       const corridor = safeString(candidate.corridor, "unspecified");
       if (!corridorBreakdown[corridor]) {
         corridorBreakdown[corridor] = { evaluatedCandidates: 0, midpointMatches: 0, geometryMatches: 0, midpointOnlyMatches: 0, geometryOnlyMatches: 0, disagreementCount: 0 };
@@ -286,12 +331,12 @@
       productionBehaviorChanged: false,
       safeForProductionWiring: false,
       version: VERSION,
-      evaluatedCandidates: candidates.length,
-      midpointMatches: candidates.filter((candidate) => candidate.midpointRelevanceResult).length,
-      geometryMatches: candidates.filter((candidate) => candidate.geometryRelevanceResult).length,
-      midpointOnlyMatches: candidates.filter((candidate) => candidate.midpointRelevanceResult && !candidate.geometryRelevanceResult).length,
-      geometryOnlyMatches: candidates.filter((candidate) => !candidate.midpointRelevanceResult && candidate.geometryRelevanceResult).length,
-      disagreementCount: candidates.filter((candidate) => candidate.midpointRelevanceResult !== candidate.geometryRelevanceResult).length,
+      evaluatedCandidates: scoredCandidates.length,
+      midpointMatches: scoredCandidates.filter((candidate) => candidate.midpointRelevanceResult).length,
+      geometryMatches: scoredCandidates.filter((candidate) => candidate.geometryRelevanceResult).length,
+      midpointOnlyMatches: scoredCandidates.filter((candidate) => candidate.midpointRelevanceResult && !candidate.geometryRelevanceResult).length,
+      geometryOnlyMatches: scoredCandidates.filter((candidate) => !candidate.midpointRelevanceResult && candidate.geometryRelevanceResult).length,
+      disagreementCount: scoredCandidates.filter((candidate) => candidate.midpointRelevanceResult !== candidate.geometryRelevanceResult).length,
       confidenceBandDistribution,
       overlapDistribution,
       disagreementReasons,
@@ -301,8 +346,12 @@
       observationScope: {
         recordsSavedRouteWatchCandidates: Boolean(routeOwnershipBreakdown.route_watch_monitored_route || routeOwnershipBreakdown.saved_route_watch_route || routeOwnershipBreakdown.saved_destination_route || routeOwnershipBreakdown.home_destination_route || routeOwnershipBreakdown.work_destination_route),
         recordsSearchedDestinationCandidates: Boolean(routeOwnershipBreakdown.searched_destination_route),
-        recordsSavedDestinationCandidates: Boolean(routeOwnershipBreakdown.saved_destination_route || routeOwnershipBreakdown.home_destination_route || routeOwnershipBreakdown.work_destination_route),
+        recordsSavedDestinationCandidates: Boolean(routeOwnershipBreakdown.saved_destination_route),
+        recordsHomeDestinationCandidates: Boolean(routeOwnershipBreakdown.home_destination_route),
+        recordsWorkDestinationCandidates: Boolean(routeOwnershipBreakdown.work_destination_route),
         recordsRouteWatchMonitoredRoutes: Boolean(routeOwnershipBreakdown.route_watch_monitored_route),
+        activeRouteContextCandidateRecorded: Boolean(activeRouteContextCandidate),
+        activeRouteContextCandidateReason: activeRouteContextReason,
         activeRouteContextType: safeString(activeRouteContext?.routeContextType, "unknown"),
         activeRouteHasGeometry: Boolean(activeRouteContext?.hasGeometry),
         activeRouteVertexCount: Number(activeRouteContext?.vertexCount || 0),
