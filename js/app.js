@@ -22199,6 +22199,31 @@ window.gridlyDestinationRouteIntelligenceDebug = function gridlyDestinationRoute
   };
 };
 
+window.gridlyGetDestinationRouteActiveIncidentCandidates = function gridlyGetDestinationRouteActiveIncidentCandidates() {
+  const intelligence = typeof window.gridlyDestinationRouteIntelligenceAudit === "function"
+    ? window.gridlyDestinationRouteIntelligenceAudit()
+    : buildEmptyGridlyDestinationRouteIntelligenceAudit();
+  const matchedHazards = Array.isArray(intelligence?.matchedHazards) ? intelligence.matchedHazards : [];
+  const matchedAlerts = Array.isArray(intelligence?.matchedAlerts) ? intelligence.matchedAlerts : [];
+  const matchedReports = Array.isArray(intelligence?.matchedReports) ? intelligence.matchedReports : [];
+  return {
+    sourceName: "gridlyDestinationRouteIntelligenceAudit.matchedHazards+matchedAlerts+matchedReports",
+    routeFound: Boolean(intelligence?.routeFound),
+    corridorWidthFeet: Number(intelligence?.corridorWidthFeet || GRIDLY_DESTINATION_ROUTE_INTELLIGENCE_CORRIDOR_FEET),
+    routeDetailsIncidentCount: matchedHazards.length + matchedAlerts.length + matchedReports.length,
+    counts: {
+      matchedHazards: matchedHazards.length,
+      matchedAlerts: matchedAlerts.length,
+      matchedReports: matchedReports.length
+    },
+    incidents: [
+      ...matchedHazards.map((incident) => ({ ...incident, __gridlyRouteDetailsSourceGroup: "matchedHazards" })),
+      ...matchedAlerts.map((incident) => ({ ...incident, __gridlyRouteDetailsSourceGroup: "matchedAlerts" })),
+      ...matchedReports.map((incident) => ({ ...incident, __gridlyRouteDetailsSourceGroup: "matchedReports" }))
+    ]
+  };
+};
+
 function getGridlyDestinationRouteImpactInspectionText(item = {}) {
   return [
     item?.type,
