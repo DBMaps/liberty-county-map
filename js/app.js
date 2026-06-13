@@ -69586,7 +69586,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       bodyStyleProps.forEach((prop) => { body.style[prop] = ""; });
       return;
     }
-    const dockClearance = "max(84px, calc(var(--gridly-portrait-dock-h, 76px) + 10px + env(safe-area-inset-bottom, 0px)))";
+    const dockClearance = "var(--gridly-v2-sheet-dock-clearance, max(86px, calc(var(--gridly-portrait-dock-h, 76px) + 10px + env(safe-area-inset-bottom, 0px))))";
     sheet.style.left = "12px";
     sheet.style.right = "12px";
     sheet.style.bottom = dockClearance;

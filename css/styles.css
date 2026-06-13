@@ -20385,3 +20385,35 @@ body[data-layout-mode="portrait"] #map .leaflet-control-zoom a {
       inset 0 1px 0 rgba(247, 251, 255, 0.12);
   }
 }
+
+/* V282.3 — Portrait V2 sheet height regression audit after dock icon/border refinements. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 {
+    --gridly-v2-sheet-dock-clearance: calc(86px + env(safe-area-inset-bottom, 0px));
+    --gridly-v2-sheet-viewport-gap: calc(14px + env(safe-area-inset-top, 0px));
+    --gridly-v2-sheet-min-height: min(42dvh, 340px);
+    --gridly-v2-sheet-usable-max-height: min(76dvh, calc(100dvh - var(--gridly-v2-sheet-dock-clearance) - var(--gridly-v2-sheet-viewport-gap)));
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-sheet {
+    bottom: var(--gridly-v2-sheet-dock-clearance);
+    max-height: var(--gridly-v2-sheet-usable-max-height);
+    min-height: var(--gridly-v2-sheet-min-height);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-sheet header {
+    flex: 0 0 auto;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2SheetBody {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    -webkit-overflow-scrolling: touch;
+  }
+}
