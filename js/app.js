@@ -40656,19 +40656,47 @@ function getRerouteFoundation(routeHazard = {}) {
   };
 }
 
+function recordGridlyRouteWatchGeometryRuntimeShadowCandidate(incident = {}, routeLatLngs = [], midpointRelevant = false) {
+  try {
+    const targetWindow = typeof window !== "undefined" ? window : null;
+    if (typeof targetWindow?.gridlyRecordRouteWatchGeometryRuntimeShadowCandidate !== "function") return null;
+    return targetWindow.gridlyRecordRouteWatchGeometryRuntimeShadowCandidate({
+      incident,
+      routeLatLngs,
+      midpointRelevant: Boolean(midpointRelevant),
+      routeId: targetWindow.__gridlySelectedRouteId || lastRenderedRouteKey || "",
+      routeOriginLabel: activeRouteOriginLabel || "",
+      routeDestinationLabel: activeRouteDestinationLabel || "",
+      routeName: activeRouteSource || routeGeometrySource || "active-route"
+    });
+  } catch (_error) {
+    return null;
+  }
+}
+
 function isIncidentRouteRelevant(incident = {}, routeHazard = null) {
   if (!routeWatchActivated) return false;
   const routeLatLngs = getRoutePolylineLatLngs();
   if (routeLatLngs.length < 2) return false;
   const nearbyReports = Array.isArray(routeHazard?.nearbyReports) ? routeHazard.nearbyReports : getRouteHazardAssessment().nearbyReports;
   const nearbyCrossingIds = new Set(nearbyReports.map((report) => String(report.crossingId || "")));
-  if (incident?.crossingId && nearbyCrossingIds.has(String(incident.crossingId))) return true;
+  let midpointRelevant = false;
+  if (incident?.crossingId && nearbyCrossingIds.has(String(incident.crossingId))) {
+    midpointRelevant = true;
+    recordGridlyRouteWatchGeometryRuntimeShadowCandidate(incident, routeLatLngs, midpointRelevant);
+    return midpointRelevant;
+  }
   const incidentLat = Number(incident?.lat);
   const incidentLng = Number(incident?.lng);
-  if (!Number.isFinite(incidentLat) || !Number.isFinite(incidentLng)) return false;
+  if (!Number.isFinite(incidentLat) || !Number.isFinite(incidentLng)) {
+    recordGridlyRouteWatchGeometryRuntimeShadowCandidate(incident, routeLatLngs, midpointRelevant);
+    return false;
+  }
   const thresholdMiles = 0.8;
   const minDistance = routeLatLngs.reduce((minDist, pt) => Math.min(minDist, getDistanceMiles(incidentLat, incidentLng, pt.lat, pt.lng)), Number.POSITIVE_INFINITY);
-  return Number.isFinite(minDistance) && minDistance <= thresholdMiles;
+  midpointRelevant = Number.isFinite(minDistance) && minDistance <= thresholdMiles;
+  recordGridlyRouteWatchGeometryRuntimeShadowCandidate(incident, routeLatLngs, midpointRelevant);
+  return midpointRelevant;
 }
 
 function getRouteStatusColor() {
