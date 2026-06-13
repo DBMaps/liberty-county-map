@@ -20934,6 +20934,84 @@ function gridlyBuildActiveRouteContextArchitectureAudit() {
 }
 
 
+function gridlyBuildActiveRouteContextImplementationPlan() {
+  const recommendedImplementation = {
+    option: "A",
+    name: "Introduce a shared read-only getter: getActiveRouteContext()",
+    firstStep: "Add a provider that returns the existing V302 Active Route Context snapshot without subscribing consumers, mutating state, changing route selection, or becoming authoritative for production behavior.",
+    reason: "A read-only getter is the smallest production-safe bridge because it centralizes route-state reads while keeping every existing writer, route generator, renderer, scorer, alert path, and UI surface unchanged.",
+    rejectedOptions: [
+      { option: "B", name: "Publish a shared runtime snapshot", reason: "Higher lifecycle risk because a published snapshot implies refresh timing, cache invalidation, and subscriber semantics." },
+      { option: "C", name: "Publish route ownership state only", reason: "Too narrow because future Route Watch, intelligence, and geometry observation consumers need context type, source, destination class, and geometry availability." }
+    ],
+    planningOnly: true,
+    safeForProductionWiring: false
+  };
+  const currentConsumers = [
+    { system: "Route Watch", currentSourceOfTruth: "routeWatchActivated, __gridlyRouteWatchActive, selected saved-place controls, route preview layer state, activeRouteOriginLabel, activeRouteDestinationLabel, and route relevance helpers", futureSourceOfTruth: "getActiveRouteContext() for read-only route context; Route Watch keeps activation and monitoring writes", migrationRisk: "medium" },
+    { system: "Route Watch Debug", currentSourceOfTruth: "ad hoc debug reads from Route Watch flags, DOM controls, route preview layers, and last route attempt fields", futureSourceOfTruth: "getActiveRouteContext() snapshot plus existing debug-only Route Watch diagnostics", migrationRisk: "low" },
+    { system: "Functional Readiness", currentSourceOfTruth: "gridlyBuildRouteWatchFunctionalReadinessAudit reads Route Watch flags, destination preview state, saved places, OSRM state, layers, and V296 audit state independently", futureSourceOfTruth: "getActiveRouteContext() as the shared route-state descriptor while retaining readiness-specific checks", migrationRisk: "low" },
+    { system: "Geometry Runtime Shadow Audit", currentSourceOfTruth: "gridlyRouteWatchGeometryRuntimeShadowAudit candidate records and Route Watch geometry/relevance runtime fields", futureSourceOfTruth: "getActiveRouteContext() for candidate route classification before any future geometry observation", migrationRisk: "medium" },
+    { system: "Destination Ownership Audit", currentSourceOfTruth: "gridlyBuildRouteWatchDestinationOwnershipAudit compares destination preview state, saved places, Route Watch activation, shared geometry helpers, and separate layers", futureSourceOfTruth: "getActiveRouteContext() for the route context classification and ownership boundary", migrationRisk: "low" },
+    { system: "Route Intelligence", currentSourceOfTruth: "destination route intelligence and Route Watch relevance helpers infer active paths separately", futureSourceOfTruth: "getActiveRouteContext() to identify the active route before intelligence reads geometry or relevance state", migrationRisk: "medium" },
+    { system: "Route Recommendations", currentSourceOfTruth: "awareness and route copy infer route state from Route Watch monitoring, destination preview state, and recommendation-specific status", futureSourceOfTruth: "getActiveRouteContext() for route context only; recommendation rules remain separate", migrationRisk: "medium" },
+    { system: "Alternate Route Logic", currentSourceOfTruth: "route generation/preview exploration state with no shared active-route owner", futureSourceOfTruth: "getActiveRouteContext() for baseline active route identity before alternate candidates are compared", migrationRisk: "medium" },
+    { system: "Route Monitoring", currentSourceOfTruth: "Route Watch activation state, saved selected route, labels, durations, hazard assessment, and relevance helpers", futureSourceOfTruth: "getActiveRouteContext() for monitored route identity while Route Watch keeps monitoring lifecycle ownership", migrationRisk: "medium_high" }
+  ];
+  const futureConsumers = [
+    { system: "Future geometry observation", futureSourceOfTruth: "getActiveRouteContext() route identity and geometry availability before audit-only observation", migrationRisk: "medium" },
+    { system: "Future destination-to-monitoring handoff audit", futureSourceOfTruth: "getActiveRouteContext() routeContextType and routeSource", migrationRisk: "medium" },
+    { system: "Future shared route ownership diagnostics", futureSourceOfTruth: "getActiveRouteContext() and ownership notes", migrationRisk: "low" }
+  ];
+  const migrationSequence = [
+    { phase: 1, name: "Shared route context provider", implementation: "Create a read-only getActiveRouteContext() wrapper around the V302 context snapshot; no consumers switched yet.", productionBehaviorChanged: false },
+    { phase: 2, name: "Debug consumers", implementation: "Point Route Watch debug and developer helpers at the getter for display-only context labels.", productionBehaviorChanged: false },
+    { phase: 3, name: "Audit consumers", implementation: "Move Functional Readiness and Destination Ownership Audit classification reads to the getter while preserving their existing checks.", productionBehaviorChanged: false },
+    { phase: 4, name: "Monitoring consumers", implementation: "Let Route Watch monitoring diagnostics read the getter for identity only; activation, relevance, alerts, and lifecycle remain unchanged.", productionBehaviorChanged: false },
+    { phase: 5, name: "Future geometry observation consumers", implementation: "Use the getter to classify audit-only geometry observation candidates before any production scoring or alert relevance work is considered.", productionBehaviorChanged: false }
+  ];
+  return {
+    available: true,
+    planningOnly: true,
+    productionBehaviorChanged: false,
+    recommendedImplementation,
+    currentConsumers,
+    futureConsumers,
+    migrationSequence,
+    implementationRisk: {
+      overall: "low",
+      reason: "The first step only centralizes read access and does not wire consumers, subscriptions, writers, routing, scoring, alerts, UI, Supabase, awareness, or directional display.",
+      riskiestFuturePhase: "Phase 4 monitoring consumers, because Route Watch lifecycle code must not treat descriptive context as activation authority."
+    },
+    benefits: [
+      "Gives Route Watch, route intelligence, recommendations, and audits a shared vocabulary for active route state.",
+      "Reduces independent route-state inference without changing behavior.",
+      "Creates a safe V304 implementation target with clear non-goals.",
+      "Prepares future geometry observation to classify routes before reading geometry."
+    ],
+    blockers: [
+      "Do not use the context provider as a production writer or activation authority.",
+      "Do not subscribe UI, recommendations, alerts, or scoring directly in the first implementation step.",
+      "Keep destination route generation and Route Watch monitoring lifecycle separate until later migrations are explicitly approved."
+    ],
+    unchanged: [
+      "route generation",
+      "Route Watch behavior",
+      "destination routing",
+      "recommendations",
+      "geometry scoring",
+      "alerts",
+      "UI",
+      "Supabase",
+      "awareness",
+      "directional display"
+    ],
+    v304Recommendation: "A) Implement shared Active Route Context provider",
+    safeForProductionWiring: false
+  };
+}
+
+
 function gridlyBuildRouteWatchFunctionalReadinessAudit() {
   const safeNumber = (value, fallback = 0) => {
     const number = Number(value);
@@ -21299,6 +21377,10 @@ function gridlyBuildRouteWatchOwnershipRefactorAudit() {
 
 window.gridlyActiveRouteContextArchitectureAudit = function gridlyActiveRouteContextArchitectureAudit() {
   return gridlyBuildActiveRouteContextArchitectureAudit();
+};
+
+window.gridlyActiveRouteContextImplementationPlan = function gridlyActiveRouteContextImplementationPlan() {
+  return gridlyBuildActiveRouteContextImplementationPlan();
 };
 
 window.gridlyRouteWatchFunctionalReadinessAudit = function gridlyRouteWatchFunctionalReadinessAudit() {
