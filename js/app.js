@@ -20723,12 +20723,15 @@ function gridlyBuildDestinationVsRouteWatchGeometryObservationAudit() {
   const routeWatchHasGeometry = routeWatchVertexCount >= 2;
   const v296Available = typeof window.gridlyRecordRouteWatchGeometryRuntimeShadowCandidate === "function"
     && typeof window.gridlyRouteWatchGeometryRuntimeShadowAudit === "function";
+  const activeRouteContext = typeof getActiveRouteContext === "function" ? getActiveRouteContext() : null;
   const destinationRouteActive = Boolean(preview.active || preview.status === "ready");
-  const routeOwnershipState = routeWatchActive
-    ? "saved_route_watch_route"
-    : destinationRouteActive
-      ? "searched_destination_route"
-      : "no_active_route";
+  const routeOwnershipState = activeRouteContext?.routeContextAvailable
+    ? gridlyRouteWatchOwnershipFromActiveContext(activeRouteContext)
+    : routeWatchActive
+      ? "route_watch_monitored_route"
+      : destinationRouteActive
+        ? "searched_destination_route"
+        : "no_active_route";
   const observationGapDetected = Boolean(destinationRouteHasGeometry && !routeWatchActive && !destinationRouteObservedByV296);
   const observationGapReason = observationGapDetected
     ? "searched_destination_route_is_separate_from_saved_route_watch_observation"
@@ -20748,6 +20751,8 @@ function gridlyBuildDestinationVsRouteWatchGeometryObservationAudit() {
     destinationRouteVertexCount,
     routeWatchActive,
     destinationRouteActive,
+    activeRouteContext,
+    sharedOwnershipSource: "getActiveRouteContext",
     routeOwnershipState,
     routeWatchHasGeometry,
     routeWatchVertexCount,
@@ -21093,7 +21098,8 @@ function gridlyBuildRouteWatchFunctionalReadinessAudit() {
   const destinationCoordinates = normalizeCoordinatePair(selectedDestination?.lat, selectedDestination?.lng)
     || normalizeCoordinatePair(lastRouteAttempt?.destinationCoords?.lat, lastRouteAttempt?.destinationCoords?.lng)
     || null;
-  const routeWatchActive = Boolean(routeWatchActivated || window.__gridlyRouteWatchActive);
+  const activeRouteContext = typeof getActiveRouteContext === "function" ? getActiveRouteContext() : null;
+  const routeWatchActive = Boolean(activeRouteContext?.monitoringActive || routeWatchActivated || window.__gridlyRouteWatchActive);
   const routePreviewLayerOnMap = Boolean(layerOnMap(window.__gridlyRoutePreviewLayer) || layerOnMap(routePreviewCorridorLayer));
   const routePreviewLayerExistsAudit = Boolean(window.__gridlyRoutePreviewLayer || routePreviewCorridorLayer || routePreviewLayerExists);
   const routePreviewRenderedAudit = Boolean(routePreviewRendered || routeWatchPolylineVertexCount >= 2 || routePreviewLayerOnMap);
@@ -21143,15 +21149,17 @@ function gridlyBuildRouteWatchFunctionalReadinessAudit() {
   const savedSelectionsValid = Boolean(startCoordinates && destinationCoordinates);
   const savedRouteMissingDestination = Boolean(startCoordinates && !destinationCoordinates);
   const routeCleared = Boolean(!routeWatchActive && !destinationRoutePreviewRequested && routePreviewReason === "Route cleared.");
-  const activeRouteOwnershipState = routeWatchActive
-    ? "saved_route_watch_route"
-    : destinationOnlyRouteActive
-      ? "searched_destination_route"
-      : routeCleared
-        ? "route_cleared"
-        : savedRouteMissingDestination
-          ? "missing_destination"
-          : "no_active_route";
+  const activeRouteOwnershipState = activeRouteContext?.routeContextAvailable
+    ? gridlyRouteWatchOwnershipFromActiveContext(activeRouteContext)
+    : routeWatchActive
+      ? "route_watch_monitored_route"
+      : destinationOnlyRouteActive
+        ? "searched_destination_route"
+        : routeCleared
+          ? "route_cleared"
+          : savedRouteMissingDestination
+            ? "missing_destination"
+            : "no_active_route";
   const observedCandidateCount = safeNumber(v296Audit?.evaluatedCandidates || v296Candidates.length);
   const routeWatchObservedByV296 = v296Candidates.length > 0
     ? v296Candidates.some((candidate) => {
@@ -21198,6 +21206,8 @@ function gridlyBuildRouteWatchFunctionalReadinessAudit() {
     auditOnly: true,
     productionBehaviorChanged: false,
     conservativeRule: "Do not recommend more geometry scoring work unless route geometry is present and Route Watch is functional.",
+    activeRouteContext,
+    sharedOwnershipSource: "getActiveRouteContext",
     savedRouteWatchPath: {
       selectedStart: selectedStart ? { id: selectedStart.id || "", name: selectedStart.name || "" } : { id: selectedStartId, name: lastRouteAttempt?.selectedStart || "" },
       selectedDestination: selectedDestination ? { id: selectedDestination.id || "", name: selectedDestination.name || "" } : { id: selectedDestinationId, name: lastRouteAttempt?.selectedDestination || "" },
@@ -41435,19 +41445,32 @@ function getRerouteFoundation(routeHazard = {}) {
   };
 }
 
+function gridlyRouteWatchOwnershipFromActiveContext(activeRouteContext = null) {
+  const contextType = String(activeRouteContext?.routeContextType || "");
+  if (contextType === "route_watch_monitored_route") return "route_watch_monitored_route";
+  if (contextType === "searched_destination_route") return "searched_destination_route";
+  if (contextType === "saved_destination_route") return "saved_destination_route";
+  if (contextType === "home_destination_route") return "home_destination_route";
+  if (contextType === "work_destination_route") return "work_destination_route";
+  if (contextType === "cleared_route") return "route_cleared";
+  return "no_active_route";
+}
+
 function recordGridlyRouteWatchGeometryRuntimeShadowCandidate(incident = {}, routeLatLngs = [], midpointRelevant = false) {
   try {
     const targetWindow = typeof window !== "undefined" ? window : null;
     if (typeof targetWindow?.gridlyRecordRouteWatchGeometryRuntimeShadowCandidate !== "function") return null;
+    const activeRouteContext = typeof getActiveRouteContext === "function" ? getActiveRouteContext() : null;
     return targetWindow.gridlyRecordRouteWatchGeometryRuntimeShadowCandidate({
       incident,
       routeLatLngs,
       midpointRelevant: Boolean(midpointRelevant),
       routeId: targetWindow.__gridlySelectedRouteId || lastRenderedRouteKey || "",
       routeOriginLabel: activeRouteOriginLabel || "",
-      routeDestinationLabel: activeRouteDestinationLabel || "",
-      routeName: activeRouteSource || routeGeometrySource || "active-route",
-      routeOwnership: "saved_route_watch_route"
+      routeDestinationLabel: activeRouteContext?.destinationLabel || activeRouteDestinationLabel || "",
+      routeName: activeRouteContext?.routeSource || activeRouteSource || routeGeometrySource || "active-route",
+      routeOwnership: gridlyRouteWatchOwnershipFromActiveContext(activeRouteContext),
+      activeRouteContext
     });
   } catch (_error) {
     return null;
@@ -57702,6 +57725,7 @@ function attachRouteWatchDebugGlobal() {
   // Keep debug helpers available for field triage without reintroducing verbose console noise.
   window.gridlyRouteWatchDebug = function gridlyRouteWatchDebug() {
     try {
+      const activeRouteContext = typeof getActiveRouteContext === "function" ? getActiveRouteContext() : null;
       const places = Array.isArray(getSavedPlaces?.()) ? getSavedPlaces() : [];
       const startId = els?.routeWatchStartSelect?.value || "";
       const destinationId = els?.routeWatchDestinationSelect?.value || "";
@@ -57781,13 +57805,11 @@ function attachRouteWatchDebugGlobal() {
       routePolylineVertexCount: routePreviewPolylinePointCount,
       routeGeometrySource,
       osrmRouteSuccess,
-      routeOwnershipState: Boolean(routeWatchActivated || window.__gridlyRouteWatchActive)
-        ? "saved_route_watch_route"
-        : getGridlyDestinationRoutePreviewState?.()?.active || getGridlyDestinationRoutePreviewState?.()?.status === "ready"
-          ? "searched_destination_route"
-          : routePreviewReason === "Route cleared."
-            ? "route_cleared"
-            : "no_active_route",
+      activeRouteContext,
+      sharedOwnershipSource: "getActiveRouteContext",
+      routeOwnershipState: activeRouteContext?.routeContextAvailable
+        ? gridlyRouteWatchOwnershipFromActiveContext(activeRouteContext)
+        : "no_active_route",
       searchedDestinationRoute: (() => {
         const preview = getGridlyDestinationRoutePreviewState?.() || {};
         const destinationPointCount = Array.isArray(preview.geometry) ? preview.geometry.length : 0;
