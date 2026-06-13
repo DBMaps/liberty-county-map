@@ -21098,6 +21098,80 @@ function gridlyBuildRouteWatchDestinationOwnershipAudit() {
   };
 }
 
+
+function gridlyBuildRouteWatchOwnershipRefactorAudit() {
+  const currentOwnershipModel = "fragmented_destination_route_and_route_watch_ownership";
+  const futureOwnershipModel = "unified_destination_based_route_watch_ownership";
+  const ownershipDomains = [
+    { domain: "destination selection", currentOwner: "Search Destination plus Saved Places selectors", desiredOwner: "Destination Intent", migrationRisk: "medium" },
+    { domain: "destination search", currentOwner: "Search Destination", desiredOwner: "Destination Intent", migrationRisk: "low" },
+    { domain: "Home", currentOwner: "Saved Places persistence plus Search Destination surfacing plus Route Watch saved selector", desiredOwner: "Destination Intent with Saved Places as storage", migrationRisk: "medium" },
+    { domain: "Work", currentOwner: "Saved Places persistence plus Search Destination surfacing plus Route Watch saved selector", desiredOwner: "Destination Intent with Saved Places as storage", migrationRisk: "medium" },
+    { domain: "saved places", currentOwner: "Saved Places persistence and Search Destination routing inputs", desiredOwner: "Destination Inputs owned by Destination Intent", migrationRisk: "medium" },
+    { domain: "searched destinations", currentOwner: "Search Destination", desiredOwner: "Destination Intent", migrationRisk: "low" },
+    { domain: "route preview generation", currentOwner: "Search Destination preview path and Route Watch saved-route path", desiredOwner: "Route Generation", migrationRisk: "high" },
+    { domain: "route geometry retention", currentOwner: "Destination preview state, saved route state, and audit-only geometry shadow state", desiredOwner: "Route Geometry Observation", migrationRisk: "high" },
+    { domain: "route monitoring", currentOwner: "Route Watch activation and monitoring state", desiredOwner: "Route Watch Monitoring", migrationRisk: "medium" },
+    { domain: "route relevance", currentOwner: "Route Watch relevance helpers", desiredOwner: "Route Intelligence", migrationRisk: "medium" },
+    { domain: "route intelligence", currentOwner: "Route relevance and destination intelligence are adjacent but separate", desiredOwner: "Route Intelligence", migrationRisk: "medium" },
+    { domain: "route recommendations", currentOwner: "Destination and route-watch surfaces can independently communicate route state", desiredOwner: "Awareness Surfaces reading Route Intelligence", migrationRisk: "medium" },
+    { domain: "alternate routes", currentOwner: "Route generation/preview exploration without unified Route Watch ownership", desiredOwner: "Route Generation with Route Intelligence observation", migrationRisk: "medium" },
+    { domain: "Route Watch UI ownership", currentOwner: "Route Watch surfaces and display/blocker audits", desiredOwner: "Awareness Surfaces reflecting destination route state", migrationRisk: "medium" },
+    { domain: "Route Watch activation ownership", currentOwner: "Route Watch activation flow separate from destination selection", desiredOwner: "Route Watch Monitoring begins from generated destination route state", migrationRisk: "high" }
+  ];
+  const duplicatedOwnership = [
+    { area: "route preview generation", owners: ["Search Destination", "Route Watch"], risk: "high" },
+    { area: "Home/Work route intent", owners: ["Saved Places", "Search Destination", "Route Watch activation"], risk: "medium" }
+  ];
+  const fragmentedOwnership = [
+    { area: "route geometry lifecycle", fragments: ["fetch", "preview render", "Route Watch retention", "shadow observation"], risk: "high" },
+    { area: "route state communication", fragments: ["destination panel", "Route Watch UI", "awareness surfaces"], risk: "medium" }
+  ];
+  const orphanOwnership = [
+    { area: "destination route geometry as Route Watch observation", reason: "Generated destination geometry is not yet the authoritative Route Watch geometry owner.", risk: "high" },
+    { area: "searched destination monitoring handoff", reason: "Search Destination can create route intent before Route Watch monitoring owns it.", risk: "medium" }
+  ];
+  const migrationRisk = {
+    overall: "medium_high",
+    lowRisk: ownershipDomains.filter((domain) => domain.migrationRisk === "low").length,
+    mediumRisk: ownershipDomains.filter((domain) => domain.migrationRisk === "medium").length,
+    highRisk: ownershipDomains.filter((domain) => domain.migrationRisk === "high").length,
+    reason: "Planning is safe, but implementation would touch route activation, geometry retention, and monitoring ownership boundaries."
+  };
+  const recommendedRefactorSequence = [
+    { phase: 1, name: "Ownership alignment", implementation: false, goal: "Name Destination Intent as the product owner and document Route Generation, Route Watch Monitoring, Route Intelligence, and Awareness Surfaces as downstream owners." },
+    { phase: 2, name: "Observation alignment", implementation: false, goal: "Align audits so destination-created route state can be observed without changing production routing." },
+    { phase: 3, name: "Monitoring alignment", implementation: false, goal: "Design the handoff from generated destination route to Route Watch monitoring." },
+    { phase: 4, name: "Geometry observation alignment", implementation: false, goal: "Design audit-only geometry observation that follows the destination route lifecycle." },
+    { phase: 5, name: "Future production consideration", implementation: false, goal: "Only after evidence and approval, consider production wiring separately." }
+  ];
+
+  return {
+    available: true,
+    auditOnly: true,
+    productionBehaviorChanged: false,
+
+    currentOwnershipModel,
+    futureOwnershipModel,
+
+    ownershipDomains,
+    ownershipDriftCount: duplicatedOwnership.length + fragmentedOwnership.length + orphanOwnership.length,
+
+    duplicatedOwnership,
+    fragmentedOwnership,
+    orphanOwnership,
+
+    migrationRisk,
+
+    productModelAligned: true,
+    technicalModelAligned: false,
+
+    recommendedRefactorSequence,
+
+    safeForProductionWiring: false
+  };
+}
+
 window.gridlyRouteWatchFunctionalReadinessAudit = function gridlyRouteWatchFunctionalReadinessAudit() {
   return gridlyBuildRouteWatchFunctionalReadinessAudit();
 };
@@ -21108,6 +21182,10 @@ window.gridlyDestinationVsRouteWatchGeometryObservationAudit = function gridlyDe
 
 window.gridlyRouteWatchDestinationOwnershipAudit = function gridlyRouteWatchDestinationOwnershipAudit() {
   return gridlyBuildRouteWatchDestinationOwnershipAudit();
+};
+
+window.gridlyRouteWatchOwnershipRefactorAudit = function gridlyRouteWatchOwnershipRefactorAudit() {
+  return gridlyBuildRouteWatchOwnershipRefactorAudit();
 };
 
 window.gridlyDestinationPerformanceAudit = function gridlyDestinationPerformanceAudit() {
