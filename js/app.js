@@ -21002,12 +21002,112 @@ function gridlyBuildRouteWatchFunctionalReadinessAudit() {
   };
 }
 
+function gridlyBuildRouteWatchDestinationOwnershipAudit() {
+  const preview = getGridlyDestinationRoutePreviewState();
+  const savedPlacesState = typeof getSavedPlacesState === "function"
+    ? getSavedPlacesState()
+    : (typeof normalizeSavedPlaces === "function" ? normalizeSavedPlaces() : { home: null, work: null, custom: [], favorites: [] });
+  const routableSavedPlaces = typeof getSavedPlaces === "function" ? getSavedPlaces() : [];
+  const destinationRouteAudit = gridlyBuildDestinationVsRouteWatchGeometryObservationAudit();
+  const readinessAudit = gridlyBuildRouteWatchFunctionalReadinessAudit();
+  const destinationRouteActive = Boolean(readinessAudit.searchedDestinationRoutePath?.destinationRoutePreviewRequested || preview.active || preview.status === "ready");
+  const routeWatchActive = Boolean(routeWatchActivated || window.__gridlyRouteWatchActive);
+  const destinationSearchOwnsRouting = Boolean(typeof buildGridlyDestinationRoutePreview === "function" && typeof drawGridlyDestinationRoutePreviewLine === "function");
+  const routeWatchOwnsMonitoring = Boolean(typeof startInlineRouteWatch === "function" && typeof getRouteHazardAssessment === "function" && typeof isIncidentRouteRelevant === "function");
+  const separateRoutePreviewLayers = Boolean(
+    destinationRoutePreviewLayer
+    && destinationRoutePreviewLayer !== savedRouteLayer
+    && destinationRoutePreviewLayer !== window.__gridlyRoutePreviewLayer
+  );
+  const sharedGeometryProvider = Boolean(typeof fetchRoadRoutePreviewData === "function");
+  const ownershipOverlapDetected = Boolean(destinationSearchOwnsRouting && routeWatchOwnsMonitoring && sharedGeometryProvider);
+  const ownershipDriftDetected = Boolean(ownershipOverlapDetected && separateRoutePreviewLayers);
+  const classifySelection = (label, place = null, options = {}) => ({
+    label,
+    configured: options.searched ? true : Boolean(place && isConfiguredPlace(place)),
+    userFacingWorkflow: "Search Destination selection starts destination routing and can lead into Route Watch monitoring.",
+    createsRouteWatchRoute: Boolean(routeWatchActive && (options.savedPlace || options.homeWorkSelector)),
+    createsDestinationRoute: Boolean(destinationRouteActive || options.searched),
+    createsBoth: Boolean((routeWatchActive && (options.savedPlace || options.homeWorkSelector)) && (destinationRouteActive || options.searched)),
+    createsNeither: false,
+    technicalClassification: (routeWatchActive && (options.savedPlace || options.homeWorkSelector))
+      ? "saved_route_watch_route"
+      : "searched_destination_route"
+  });
+
+  const productOwnershipModel = "one_destination_based_route_watch_experience";
+  const technicalOwnershipModel = {
+    destinationRouteOwnership: "Destination Search owns route request/preview for Home, Work, saved places, and searched destinations.",
+    routeWatchOwnership: "Route Watch owns activation state, saved-place selector monitoring, route relevance, and monitoring copy.",
+    routePreviewOwnership: separateRoutePreviewLayers
+      ? "Fragmented: Destination Search and Route Watch keep separate preview layers while sharing route geometry fetch capability."
+      : "Shared route preview ownership was not proven in this snapshot.",
+    geometryOwnership: sharedGeometryProvider
+      ? "Shared OSRM/fetchRoadRoutePreviewData provider with separate destination and Route Watch retention/rendering paths."
+      : "Geometry provider ownership unavailable in this snapshot.",
+    relevanceOwnership: "Route Watch owns incident relevance/monitoring; destination preview does not own production relevance scoring.",
+    routeMonitoringOwnership: "Route Watch owns monitoring after a route is active.",
+    savedPlaceOwnership: "Saved Places owns Home, Work, custom, and favorite place persistence; Destination Search surfaces them as routable destinations."
+  };
+
+  return {
+    available: true,
+    auditOnly: true,
+    productionBehaviorChanged: false,
+
+    productOwnershipModel,
+    technicalOwnershipModel,
+
+    destinationSearchOwnsRouting,
+    routeWatchOwnsMonitoring,
+    ownershipOverlapDetected,
+    ownershipDriftDetected,
+
+    homeDestinationClassification: classifySelection("Home", savedPlacesState.home, { savedPlace: true, homeWorkSelector: true }),
+    workDestinationClassification: classifySelection("Work", savedPlacesState.work, { savedPlace: true, homeWorkSelector: true }),
+    savedPlaceClassification: classifySelection("Marshall's / Walmart saved place", routableSavedPlaces.find((place) => !/home|work/i.test(String(place.id || ""))) || null, { savedPlace: true }),
+    searchedDestinationClassification: classifySelection("Marshall's / Walmart searched destination", null, { searched: true }),
+
+    geometryOwnership: technicalOwnershipModel.geometryOwnership,
+    routePreviewOwnership: technicalOwnershipModel.routePreviewOwnership,
+    relevanceOwnership: technicalOwnershipModel.relevanceOwnership,
+
+    specificAnswers: {
+      homeFromSearchDestinationCreates: routeWatchActive ? "both" : "destination_route",
+      workFromSearchDestinationCreates: routeWatchActive ? "both" : "destination_route",
+      marshallsFromSearchDestinationCreates: routeWatchActive && destinationRouteActive ? "both" : "destination_route",
+      walmartFromSearchDestinationCreates: routeWatchActive && destinationRouteActive ? "both" : "destination_route",
+      routeWatchHasSeparateActivationFlow: true,
+      userPerceivesDistinction: false,
+      codePerceivesDistinction: ownershipDriftDetected
+    },
+
+    userExperienceConclusion: "The current product experience treats Home, Work, saved places, searched destinations, route preview, and Route Watch as one destination-based routing workflow.",
+    technicalConclusion: "Implementation still preserves separate destination-route and saved Route Watch ownership paths for preview layers, activation state, monitoring, and relevance observation.",
+
+    recommendedOwnershipModel: ownershipDriftDetected
+      ? "V301 Route Watch Ownership Refactor: align technical ownership around destination-based Route Watch while keeping geometry scoring audit-only."
+      : "V301 Geometry Observation Alignment: extend audit-only observation if runtime confirms a single destination-based Route Watch path.",
+
+    supportingAuditState: {
+      destinationRouteAudit,
+      readinessAudit
+    },
+
+    safeForProductionWiring: false
+  };
+}
+
 window.gridlyRouteWatchFunctionalReadinessAudit = function gridlyRouteWatchFunctionalReadinessAudit() {
   return gridlyBuildRouteWatchFunctionalReadinessAudit();
 };
 
 window.gridlyDestinationVsRouteWatchGeometryObservationAudit = function gridlyDestinationVsRouteWatchGeometryObservationAudit() {
   return gridlyBuildDestinationVsRouteWatchGeometryObservationAudit();
+};
+
+window.gridlyRouteWatchDestinationOwnershipAudit = function gridlyRouteWatchDestinationOwnershipAudit() {
+  return gridlyBuildRouteWatchDestinationOwnershipAudit();
 };
 
 window.gridlyDestinationPerformanceAudit = function gridlyDestinationPerformanceAudit() {
