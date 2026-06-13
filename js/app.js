@@ -20672,6 +20672,134 @@ window.gridlyDestinationRoutePreviewDebug = function gridlyDestinationRoutePrevi
   };
 };
 
+function gridlyCountRouteLayerVertices(layer) {
+  const countLatLngs = (value) => {
+    if (!Array.isArray(value)) return 0;
+    return value.reduce((count, item) => {
+      if (Array.isArray(item)) return count + countLatLngs(item);
+      const lat = Number(item?.lat ?? item?.[0]);
+      const lng = Number(item?.lng ?? item?.[1]);
+      return count + (Number.isFinite(lat) && Number.isFinite(lng) ? 1 : 0);
+    }, 0);
+  };
+  if (!layer) return 0;
+  try {
+    if (typeof layer.getLatLngs === "function") return countLatLngs(layer.getLatLngs());
+    if (typeof layer.getLayers === "function") {
+      return layer.getLayers().reduce((count, childLayer) => count + gridlyCountRouteLayerVertices(childLayer), 0);
+    }
+  } catch (_error) {
+    return 0;
+  }
+  return 0;
+}
+
+function gridlyBuildDestinationVsRouteWatchGeometryObservationAudit() {
+  const preview = getGridlyDestinationRoutePreviewState();
+  const destinationGeometryCount = Array.isArray(preview.geometry) ? preview.geometry.length : 0;
+  const destinationLayerVertexCount = gridlyCountRouteLayerVertices(destinationRoutePreviewLayer);
+  const destinationRouteVertexCount = Math.max(destinationGeometryCount, destinationLayerVertexCount);
+  const routeWatchRouteLatLngs = typeof getRoutePolylineLatLngs === "function" ? getRoutePolylineLatLngs() : [];
+  const routeWatchLayerVertexCount = gridlyCountRouteLayerVertices(window.__gridlyRoutePreviewLayer);
+  const routeWatchSnapshot = typeof getGridlyAuditRouteRenderSnapshot === "function" ? getGridlyAuditRouteRenderSnapshot() : {};
+  const routeWatchVertexCount = Math.max(
+    Array.isArray(routeWatchRouteLatLngs) ? routeWatchRouteLatLngs.length : 0,
+    routeWatchLayerVertexCount,
+    Number(routeWatchSnapshot?.routeGeometryPointCount || 0),
+    Number(routePreviewPolylinePointCount || 0),
+    Number(lastRouteGeometryPointCount || 0)
+  );
+  const v296Audit = typeof window.gridlyRouteWatchGeometryRuntimeShadowAudit === "function"
+    ? window.gridlyRouteWatchGeometryRuntimeShadowAudit()
+    : null;
+  const v296Candidates = Array.isArray(v296Audit?.candidates) ? v296Audit.candidates : [];
+  const destinationLabel = String(preview.destination?.label || preview.destination?.name || preview.destination?.displayName || "");
+  const destinationRouteObservedByV296 = v296Candidates.some((candidate) => /destination|search|preview|walmart/i.test(String(candidate?.routeIdentifier || candidate?.routeName || "")));
+  const routeWatchObservedByV296 = Boolean(v296Audit && Number(v296Audit.evaluatedCandidates || 0) > 0 && !destinationRouteObservedByV296);
+  const destinationRouteHasGeometry = destinationRouteVertexCount >= 2;
+  const routeWatchHasGeometry = routeWatchVertexCount >= 2;
+  const v296Available = typeof window.gridlyRecordRouteWatchGeometryRuntimeShadowCandidate === "function"
+    && typeof window.gridlyRouteWatchGeometryRuntimeShadowAudit === "function";
+  const observationGapDetected = Boolean(destinationRouteHasGeometry && !destinationRouteObservedByV296);
+  const observationGapReason = observationGapDetected
+    ? "destination_route_preview_owns_geometry_but_v296_records_only_route_watch_relevance_candidates"
+    : routeWatchHasGeometry && !routeWatchObservedByV296
+      ? "route_watch_geometry_present_but_no_v296_relevance_candidates_have_run_yet"
+      : "no_runtime_observation_gap_detected";
+  return {
+    available: true,
+    auditOnly: true,
+    productionBehaviorChanged: false,
+    safeForProductionWiring: false,
+    routeWatchPathDetected: Boolean(typeof startInlineRouteWatch === "function" && typeof renderRoutePreviewLine === "function" && typeof getRouteHazardAssessment === "function" && typeof isIncidentRouteRelevant === "function"),
+    destinationRoutePathDetected: Boolean(typeof buildGridlyDestinationRoutePreview === "function" && typeof drawGridlyDestinationRoutePreviewLine === "function" && destinationRoutePreviewLayer !== savedRouteLayer),
+    sharedGeometryHelpersDetected: Boolean(typeof fetchRoadRoutePreviewData === "function" && typeof getGridlyAuditRouteRenderSnapshot === "function"),
+    sharedRelevanceHelpersDetected: false,
+    destinationRouteHasGeometry,
+    destinationRouteVertexCount,
+    routeWatchHasGeometry,
+    routeWatchVertexCount,
+    destinationRouteObservedByV296,
+    routeWatchObservedByV296,
+    observationGapDetected,
+    observationGapReason,
+    recommendedObservationArchitecture: "Keep Route Watch and destination route observation separate in V298; optionally extend audit-only V296-style observation to destination routes with a distinct recorder and schema, but do not wire production scoring or merge user-facing behavior.",
+    checks: {
+      searchedDestinationRoute: {
+        active: Boolean(preview.active),
+        ready: preview.status === "ready",
+        status: preview.status,
+        walmartStyleDestinationDetected: /walmart/i.test(destinationLabel),
+        destinationLabel,
+        routeProvider: preview.routeProvider || "",
+        hasGeometry: destinationRouteHasGeometry,
+        vertexCount: destinationRouteVertexCount,
+        layerPresent: Boolean(destinationRoutePreviewLayer),
+        layerOwnsRenderedRoute: Boolean(destinationRoutePreviewLayer && preview.routeLayer === destinationRoutePreviewLayer)
+      },
+      savedHomeWorkRouteWatchRoute: {
+        active: Boolean(routeWatchActivated || window.__gridlyRouteWatchActive),
+        selectedRouteId: window.__gridlySelectedRouteId || "",
+        originLabel: activeRouteOriginLabel || "",
+        destinationLabel: activeRouteDestinationLabel || "",
+        homeToWorkSelectorState: /home/i.test(String(activeRouteOriginLabel || "")) && /work/i.test(String(activeRouteDestinationLabel || "")),
+        hasGeometry: routeWatchHasGeometry,
+        vertexCount: routeWatchVertexCount
+      },
+      activeRoutePreviewLayerState: {
+        routeWatchLayerPresent: Boolean(window.__gridlyRoutePreviewLayer),
+        routeWatchLayerVertexCount,
+        destinationLayerPresent: Boolean(destinationRoutePreviewLayer),
+        destinationLayerVertexCount,
+        layersAreSeparate: Boolean(destinationRoutePreviewLayer && destinationRoutePreviewLayer !== savedRouteLayer && destinationRoutePreviewLayer !== window.__gridlyRoutePreviewLayer)
+      },
+      osrmSuccessFallbackState: {
+        routeWatchOsrmSuccess: Boolean(osrmRouteSuccess),
+        routeWatchGeometrySource: routeGeometrySource || "fallback",
+        destinationProvider: preview.routeProvider || "",
+        destinationOsrmSuccess: Boolean(preview.status === "ready" && preview.routeProvider === "osrm" && destinationRouteHasGeometry)
+      },
+      routePolylineAvailability: {
+        routeWatchPolylineAvailable: routeWatchHasGeometry,
+        routeWatchPolylineVertexCount: routeWatchVertexCount,
+        destinationPolylineAvailable: destinationRouteHasGeometry,
+        destinationPolylineVertexCount: destinationRouteVertexCount
+      },
+      v296ObservationScope: {
+        helperAvailable: v296Available,
+        evaluatedCandidates: Number(v296Audit?.evaluatedCandidates || 0),
+        observesRouteWatchRelevancePath: routeWatchObservedByV296 || v296Available,
+        observesDestinationPreviewPath: destinationRouteObservedByV296,
+        onlyObservesOnePath: Boolean(v296Available && !destinationRouteObservedByV296)
+      }
+    }
+  };
+}
+
+window.gridlyDestinationVsRouteWatchGeometryObservationAudit = function gridlyDestinationVsRouteWatchGeometryObservationAudit() {
+  return gridlyBuildDestinationVsRouteWatchGeometryObservationAudit();
+};
+
 window.gridlyDestinationPerformanceAudit = function gridlyDestinationPerformanceAudit() {
   return buildGridlyDestinationPerformanceAuditReport();
 };
