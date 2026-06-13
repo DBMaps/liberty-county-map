@@ -1,7 +1,8 @@
 (function initGridlyRouteWatchGeometryRuntimeShadowAudit(globalScope) {
   if (!globalScope || typeof globalScope !== "object") return;
 
-  const VERSION = "V308-shadow-scoring-incident-source-alignment";
+  const VERSION = "V308.2-force-shadow-audit-fast-return";
+  const RUNTIME_SAFETY_SKIP_REASON = "scoring_temporarily_disabled_for_runtime_safety";
   const DEFAULT_OPTIONS = {
     midpointThresholdMiles: 0.8,
     overlapToleranceMeters: 60,
@@ -52,6 +53,77 @@
     const last = normalized.length - 1;
     for (let index = 0; index < cap; index += 1) sampled.push(normalized[Math.round((index * last) / (cap - 1))]);
     return sampled;
+  }
+
+  function buildBrowserSafeValidationGuidance() {
+    return {
+      routeDetailsCommand: "window.gridlyGetDestinationRouteActiveIncidentCandidates?.()",
+      auditCommand: "window.gridlyRouteWatchGeometryRuntimeShadowAudit?.()",
+      expectedWhenRouteDetailsCandidatesPresent: {
+        scoringSkipped: true,
+        scoringSkipReason: RUNTIME_SAFETY_SKIP_REASON,
+        productionBehaviorChanged: false,
+        safeForProductionWiring: false
+      },
+      note: "Run Route Details candidate lookup first, then run the runtime shadow audit. The audit should return immediately and must not attempt overlap scoring while Route Details candidates are present."
+    };
+  }
+  function countRouteDetailsIncidents(activeIncidentSource = {}) {
+    const explicitCount = Number(activeIncidentSource.routeDetailsIncidentCount);
+    if (Number.isFinite(explicitCount)) return explicitCount;
+    return Array.isArray(activeIncidentSource.incidents) ? activeIncidentSource.incidents.filter(isActiveIncident).length : 0;
+  }
+  function isRouteDetailsIncidentSource(activeIncidentSource = {}) {
+    return Boolean(activeIncidentSource && activeIncidentSource.sourceName && activeIncidentSource.sourceName !== "none" && Number.isFinite(Number(activeIncidentSource.routeDetailsIncidentCount)));
+  }
+  function buildFastReturnAuditPayload(input = {}, activeIncidentSource = null, startedAt = nowMs(), skipReason = RUNTIME_SAFETY_SKIP_REASON) {
+    const source = activeIncidentSource || readActiveIncidentSource(input);
+    const activeRouteContext = readActiveRouteContext(input);
+    const activeRouteContextCandidate = buildActiveRouteContextShadowCandidate(activeRouteContext);
+    const activeIncidents = (source.incidents || []).filter(isActiveIncident);
+    const activeIncidentCandidates = activeIncidents.length;
+    const routeDetailsIncidentCount = countRouteDetailsIncidents(source);
+    const candidates = activeRouteContextCandidate ? [activeRouteContextCandidate] : [];
+    return {
+      available: true,
+      auditOnly: true,
+      shadowModeOnly: true,
+      productionBehaviorChanged: false,
+      safeForProductionWiring: false,
+      incidentSourceUsed: safeString(source.sourceName, "none"),
+      routeDetailsIncidentSourceDetected: Boolean(source.sourceName && source.sourceName !== "none"),
+      routeDetailsIncidentCount,
+      activeIncidentCandidates,
+      activeIncidentCandidateIds: activeIncidents.map(incidentIdentifier),
+      scoringSkipped: true,
+      scoringSkipReason: skipReason,
+      evaluatedCandidates: 0,
+      scoredIncidentCandidates: 0,
+      scoringCount: 0,
+      productionDecisionUsed: false,
+      activeRouteContextCandidateRecorded: Boolean(activeRouteContextCandidate),
+      zeroScoringReasons: activeIncidentCandidates === 0 && routeDetailsIncidentCount === 0 ? { no_active_incidents: 1 } : {},
+      excludedIncidentCandidates: [],
+      excludedIncidentReasons: {},
+      version: VERSION,
+      activeRouteContext,
+      observationScope: {
+        activeRouteContextCandidateRecorded: Boolean(activeRouteContextCandidate),
+        activeRouteContextCandidateReason: activeRouteContextCandidateReason(activeRouteContext),
+        activeRouteContextType: safeString(activeRouteContext?.routeContextType, "unknown"),
+        activeRouteHasGeometry: Boolean(activeRouteContext?.hasGeometry),
+        activeRouteVertexCount: Number(activeRouteContext?.vertexCount || 0)
+      },
+      performance: { scoringCount: 0, averageScoringTimeMs: 0, peakScoringTimeMs: 0, totalAuditOverheadMs: Number(Math.max(0, nowMs() - startedAt).toFixed(3)), mobileSafe: true, performanceSafe: true },
+      averageScoringTimeMs: 0,
+      peakScoringTimeMs: 0,
+      totalAuditOverheadMs: Number(Math.max(0, nowMs() - startedAt).toFixed(3)),
+      mobileSafe: true,
+      performanceSafe: true,
+      safetyVerification: { noUiChanges: true, noRouteWatchOutputChanges: true, noAlertChanges: true, noPopupChanges: true, noMarkerChanges: true, noAwarenessChanges: true, noSupabaseWrites: true, noNotificationBehavior: true },
+      browserSafeValidationGuidance: buildBrowserSafeValidationGuidance(),
+      candidates
+    };
   }
   function buildSkippedCandidate(input = {}, reason, details = {}) {
     const incident = input.incident && typeof input.incident === "object" ? input.incident : {};
@@ -116,8 +188,8 @@
   function readActiveIncidents(input = {}) { return readActiveIncidentSource(input).incidents || []; }
   function recordExcludedIncident(incident, reason) { const key = `${incidentIdentifier(incident)}:${reason}`; if (state.excludedIncidentKeys.has(key)) return; state.excludedIncidentKeys.add(key); increment(state.exclusionReasons, reason); state.excludedIncidentCandidates.push({ incidentId: incidentIdentifier(incident), incidentType: incidentType(incident), reason }); }
   function scoreActiveRouteContextIncidents(input = {}) { const options = { ...DEFAULT_OPTIONS, ...(input.options || {}) }; const auditDeadlineMs = nowMs() + Number(options.runtimeBudgetMs || DEFAULT_OPTIONS.runtimeBudgetMs); const activeRouteContext = readActiveRouteContext(input); const routeReason = activeRouteContextCandidateReason(activeRouteContext); const routeGeometry = readActiveRouteGeometry(activeRouteContext, input); if (routeReason !== "active_route_context_candidate_recorded" || routeGeometry.coordinates.length < 2) { increment(state.exclusionReasons, routeReason === "active_route_context_candidate_recorded" ? "active_route_geometry_unavailable_zero_scoring" : routeReason); return []; } return readActiveIncidents(input).flatMap((incident, index) => { const key = incidentIdentifier(incident); if (index >= Number(options.maxIncidentCandidates || DEFAULT_OPTIONS.maxIncidentCandidates)) { recordExcludedIncident(incident, "scoring_skipped_candidate_cap"); const skipped = buildSkippedCandidate({ ...input, incident, activeRouteContext }, "scoring_skipped_candidate_cap", { activeRouteHasGeometry: true, activeRouteVertexCount: Math.min(routeGeometry.coordinates.length, Number(options.maxRouteVerticesSampled || DEFAULT_OPTIONS.maxRouteVerticesSampled)) }); state.candidates.push(skipped); return [skipped]; } if (nowMs() >= auditDeadlineMs) { const skipped = buildSkippedCandidate({ ...input, incident, activeRouteContext }, "scoring_skipped_runtime_budget", { activeRouteHasGeometry: true, activeRouteVertexCount: routeGeometry.coordinates.length }); state.candidates.push(skipped); return [skipped]; } if (!incident || typeof incident !== "object") { recordExcludedIncident(incident, "scoring_skipped_invalid_candidate"); const skipped = buildSkippedCandidate({ ...input, incident: {}, activeRouteContext }, "scoring_skipped_invalid_candidate", { activeRouteHasGeometry: true, activeRouteVertexCount: routeGeometry.coordinates.length }); state.candidates.push(skipped); return [skipped]; } if (!isActiveIncident(incident)) { recordExcludedIncident(incident, "inactive_or_cleared_incident_excluded"); return []; } const incidentGeometry = readIncidentGeometry(incident); if (incidentGeometry.source === "invalid_coordinates") { recordExcludedIncident(incident, "invalid_coordinates_excluded"); const skipped = buildSkippedCandidate({ ...input, incident, activeRouteContext }, "scoring_skipped_geometry_unavailable", { activeRouteHasGeometry: true, activeRouteVertexCount: routeGeometry.coordinates.length }); state.candidates.push(skipped); return [skipped]; } if (state.scoredIncidentKeys.has(key)) return []; state.scoredIncidentKeys.add(key); return [scoreCandidate({ ...input, incident, routeGeometry: routeGeometry.geometry, activeRouteContext, auditDeadlineMs, options })]; }); }
-  function summarize(input = {}) { const activeIncidentSource = readActiveIncidentSource(input); const auditInput = Array.isArray(input.incidents) || Array.isArray(input.activeIncidents) ? input : { ...input, activeIncidents: activeIncidentSource.incidents }; scoreActiveRouteContextIncidents(auditInput); const activeRouteContext = readActiveRouteContext(input); const activeRouteContextCandidate = buildActiveRouteContextShadowCandidate(activeRouteContext); const candidates = activeRouteContextCandidate ? state.candidates.concat(activeRouteContextCandidate) : state.candidates.slice(); const scoredCandidates = candidates.filter((candidate) => candidate.candidateSource !== "active_route_context"); const confidenceBandDistribution = {}; const overlapDistribution = {}; const disagreementReasons = {}; const routeOwnershipBreakdown = {}; candidates.forEach((candidate) => increment(routeOwnershipBreakdown, candidate.routeOwnership || "saved_route_watch_route")); scoredCandidates.forEach((candidate) => { increment(confidenceBandDistribution, candidate.confidenceBand); increment(overlapDistribution, bucketOverlap(candidate.overlapPercentage)); increment(disagreementReasons, candidate.disagreementReason); }); const scoringCount = Number(state.performance.scoringCount || 0); const averageScoringTimeMs = scoringCount > 0 ? state.performance.totalScoringTimeMs / scoringCount : 0; const peakScoringTimeMs = Number(state.performance.peakScoringTimeMs || 0); const totalAuditOverheadMs = Number(state.performance.totalAuditOverheadMs || 0); const mobileSafe = averageScoringTimeMs <= DEFAULT_OPTIONS.mobileAverageMsBudget && peakScoringTimeMs <= DEFAULT_OPTIONS.mobilePeakMsBudget; const performanceSafe = mobileSafe && totalAuditOverheadMs <= DEFAULT_OPTIONS.totalOverheadMsBudget; const activeRouteContextReason = activeRouteContextCandidateReason(activeRouteContext); const activeIncidents = (activeIncidentSource.incidents || []).filter(isActiveIncident); const activeIncidentCandidates = activeIncidents.length; const activeIncidentCandidateIds = activeIncidents.map(incidentIdentifier); const routeDetailsIncidentCount = Number.isFinite(Number(activeIncidentSource.routeDetailsIncidentCount)) ? Number(activeIncidentSource.routeDetailsIncidentCount) : activeIncidentCandidates;
-    return { available: true, auditOnly: true, shadowModeOnly: true, productionBehaviorChanged: false, safeForProductionWiring: false, incidentSourceUsed: safeString(activeIncidentSource.sourceName, "none"), routeDetailsIncidentSourceDetected: activeIncidentSource.sourceName && activeIncidentSource.sourceName !== "none", routeDetailsIncidentCount, activeIncidentCandidateIds, excludedIncidentCandidates: state.excludedIncidentCandidates.slice(), excludedIncidentReasons: { ...state.exclusionReasons }, version: VERSION, evaluatedCandidates: scoredCandidates.length, activeRouteContextCandidateRecorded: Boolean(activeRouteContextCandidate), activeIncidentCandidates, scoredIncidentCandidates: scoredCandidates.length, midpointMatches: scoredCandidates.filter((c) => c.midpointRelevant).length, geometryMatches: scoredCandidates.filter((c) => c.geometryRelevant).length, midpointOnlyMatches: scoredCandidates.filter((c) => c.midpointRelevant && !c.geometryRelevant).length, geometryOnlyMatches: scoredCandidates.filter((c) => !c.midpointRelevant && c.geometryRelevant).length, disagreementCount: scoredCandidates.filter((c) => c.midpointRelevant !== c.geometryRelevant).length, confidenceBandDistribution, overlapDistribution, disagreementReasons, routeOwnershipBreakdown, zeroScoringReasons: { ...state.exclusionReasons, ...(activeIncidentCandidates === 0 && routeDetailsIncidentCount === 0 ? { no_active_incidents: 1 } : {}) }, activeRouteContext, observationScope: { activeRouteContextCandidateRecorded: Boolean(activeRouteContextCandidate), activeRouteContextCandidateReason: activeRouteContextReason, activeRouteContextType: safeString(activeRouteContext?.routeContextType, "unknown"), activeRouteHasGeometry: Boolean(activeRouteContext?.hasGeometry), activeRouteVertexCount: Number(activeRouteContext?.vertexCount || 0) }, performance: { scoringCount, averageScoringTimeMs: Number(averageScoringTimeMs.toFixed(3)), peakScoringTimeMs: Number(peakScoringTimeMs.toFixed(3)), totalAuditOverheadMs: Number(totalAuditOverheadMs.toFixed(3)), mobileSafe, performanceSafe }, scoringCount, averageScoringTimeMs: Number(averageScoringTimeMs.toFixed(3)), peakScoringTimeMs: Number(peakScoringTimeMs.toFixed(3)), totalAuditOverheadMs: Number(totalAuditOverheadMs.toFixed(3)), mobileSafe, performanceSafe, safetyVerification: { noUiChanges: true, noRouteWatchOutputChanges: true, noAlertChanges: true, noPopupChanges: true, noMarkerChanges: true, noAwarenessChanges: true, noSupabaseWrites: true, noNotificationBehavior: true }, candidates };
+  function summarize(input = {}) { const auditStartedAt = nowMs(); const options = { ...DEFAULT_OPTIONS, ...(input.options || {}) }; const emergencyDeadlineMs = auditStartedAt + Math.max(1, Number(options.runtimeBudgetMs || DEFAULT_OPTIONS.runtimeBudgetMs)); const activeIncidentSource = readActiveIncidentSource(input); if (nowMs() >= emergencyDeadlineMs) return buildFastReturnAuditPayload(input, activeIncidentSource, auditStartedAt, "audit_emergency_timeout_before_scoring"); if (isRouteDetailsIncidentSource(activeIncidentSource) && countRouteDetailsIncidents(activeIncidentSource) > 0) return buildFastReturnAuditPayload(input, activeIncidentSource, auditStartedAt, RUNTIME_SAFETY_SKIP_REASON); const auditInput = Array.isArray(input.incidents) || Array.isArray(input.activeIncidents) ? input : { ...input, activeIncidents: activeIncidentSource.incidents, auditDeadlineMs: emergencyDeadlineMs }; scoreActiveRouteContextIncidents(auditInput); const activeRouteContext = readActiveRouteContext(input); const activeRouteContextCandidate = buildActiveRouteContextShadowCandidate(activeRouteContext); const candidates = activeRouteContextCandidate ? state.candidates.concat(activeRouteContextCandidate) : state.candidates.slice(); const scoredCandidates = candidates.filter((candidate) => candidate.candidateSource !== "active_route_context"); const confidenceBandDistribution = {}; const overlapDistribution = {}; const disagreementReasons = {}; const routeOwnershipBreakdown = {}; candidates.forEach((candidate) => increment(routeOwnershipBreakdown, candidate.routeOwnership || "saved_route_watch_route")); scoredCandidates.forEach((candidate) => { increment(confidenceBandDistribution, candidate.confidenceBand); increment(overlapDistribution, bucketOverlap(candidate.overlapPercentage)); increment(disagreementReasons, candidate.disagreementReason); }); const scoringCount = Number(state.performance.scoringCount || 0); const averageScoringTimeMs = scoringCount > 0 ? state.performance.totalScoringTimeMs / scoringCount : 0; const peakScoringTimeMs = Number(state.performance.peakScoringTimeMs || 0); const totalAuditOverheadMs = Number(state.performance.totalAuditOverheadMs || 0); const mobileSafe = averageScoringTimeMs <= DEFAULT_OPTIONS.mobileAverageMsBudget && peakScoringTimeMs <= DEFAULT_OPTIONS.mobilePeakMsBudget; const performanceSafe = mobileSafe && totalAuditOverheadMs <= DEFAULT_OPTIONS.totalOverheadMsBudget; const activeRouteContextReason = activeRouteContextCandidateReason(activeRouteContext); const activeIncidents = (activeIncidentSource.incidents || []).filter(isActiveIncident); const activeIncidentCandidates = activeIncidents.length; const activeIncidentCandidateIds = activeIncidents.map(incidentIdentifier); const routeDetailsIncidentCount = Number.isFinite(Number(activeIncidentSource.routeDetailsIncidentCount)) ? Number(activeIncidentSource.routeDetailsIncidentCount) : activeIncidentCandidates;
+    return { available: true, auditOnly: true, shadowModeOnly: true, productionBehaviorChanged: false, safeForProductionWiring: false, incidentSourceUsed: safeString(activeIncidentSource.sourceName, "none"), routeDetailsIncidentSourceDetected: activeIncidentSource.sourceName && activeIncidentSource.sourceName !== "none", routeDetailsIncidentCount, activeIncidentCandidateIds, excludedIncidentCandidates: state.excludedIncidentCandidates.slice(), excludedIncidentReasons: { ...state.exclusionReasons }, version: VERSION, evaluatedCandidates: scoredCandidates.length, activeRouteContextCandidateRecorded: Boolean(activeRouteContextCandidate), activeIncidentCandidates, scoredIncidentCandidates: scoredCandidates.length, midpointMatches: scoredCandidates.filter((c) => c.midpointRelevant).length, geometryMatches: scoredCandidates.filter((c) => c.geometryRelevant).length, midpointOnlyMatches: scoredCandidates.filter((c) => c.midpointRelevant && !c.geometryRelevant).length, geometryOnlyMatches: scoredCandidates.filter((c) => !c.midpointRelevant && c.geometryRelevant).length, disagreementCount: scoredCandidates.filter((c) => c.midpointRelevant !== c.geometryRelevant).length, confidenceBandDistribution, overlapDistribution, disagreementReasons, routeOwnershipBreakdown, zeroScoringReasons: { ...state.exclusionReasons, ...(activeIncidentCandidates === 0 && routeDetailsIncidentCount === 0 ? { no_active_incidents: 1 } : {}) }, activeRouteContext, observationScope: { activeRouteContextCandidateRecorded: Boolean(activeRouteContextCandidate), activeRouteContextCandidateReason: activeRouteContextReason, activeRouteContextType: safeString(activeRouteContext?.routeContextType, "unknown"), activeRouteHasGeometry: Boolean(activeRouteContext?.hasGeometry), activeRouteVertexCount: Number(activeRouteContext?.vertexCount || 0) }, performance: { scoringCount, averageScoringTimeMs: Number(averageScoringTimeMs.toFixed(3)), peakScoringTimeMs: Number(peakScoringTimeMs.toFixed(3)), totalAuditOverheadMs: Number(totalAuditOverheadMs.toFixed(3)), mobileSafe, performanceSafe }, scoringCount, averageScoringTimeMs: Number(averageScoringTimeMs.toFixed(3)), peakScoringTimeMs: Number(peakScoringTimeMs.toFixed(3)), totalAuditOverheadMs: Number(totalAuditOverheadMs.toFixed(3)), mobileSafe, performanceSafe, safetyVerification: { noUiChanges: true, noRouteWatchOutputChanges: true, noAlertChanges: true, noPopupChanges: true, noMarkerChanges: true, noAwarenessChanges: true, noSupabaseWrites: true, noNotificationBehavior: true }, browserSafeValidationGuidance: buildBrowserSafeValidationGuidance(), scoringSkipped: false, scoringSkipReason: null, candidates };
   }
   globalScope.gridlyRouteWatchGeometryRuntimeShadowState = state;
   globalScope.gridlyRecordRouteWatchGeometryRuntimeShadowCandidate = scoreCandidate;
