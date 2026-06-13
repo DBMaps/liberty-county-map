@@ -20796,6 +20796,171 @@ function gridlyBuildDestinationVsRouteWatchGeometryObservationAudit() {
   };
 }
 
+
+function gridlyBuildRouteWatchFunctionalReadinessAudit() {
+  const safeNumber = (value, fallback = 0) => {
+    const number = Number(value);
+    return Number.isFinite(number) ? number : fallback;
+  };
+  const layerOnMap = (layer) => {
+    try {
+      return Boolean(map && layer && typeof map.hasLayer === "function" && map.hasLayer(layer));
+    } catch (_error) {
+      return false;
+    }
+  };
+  const routeWatchRouteLatLngs = typeof getRoutePolylineLatLngs === "function" ? getRoutePolylineLatLngs() : [];
+  const routeWatchLayerVertexCount = gridlyCountRouteLayerVertices(window.__gridlyRoutePreviewLayer);
+  const routeWatchGroupVertexCount = gridlyCountRouteLayerVertices(routePreviewCorridorLayer);
+  const routeWatchSnapshot = typeof getGridlyAuditRouteRenderSnapshot === "function" ? getGridlyAuditRouteRenderSnapshot() : {};
+  const routeWatchPolylineVertexCount = Math.max(
+    Array.isArray(routeWatchRouteLatLngs) ? routeWatchRouteLatLngs.length : 0,
+    routeWatchLayerVertexCount,
+    routeWatchGroupVertexCount,
+    safeNumber(routeWatchSnapshot?.routeGeometryPointCount),
+    safeNumber(routePreviewPolylinePointCount),
+    safeNumber(lastRouteGeometryPointCount)
+  );
+  const places = typeof getSavedPlaces === "function" ? getSavedPlaces() : [];
+  const selectedStartId = els?.routeWatchStartSelect?.value || lastRouteWatchSelection?.startId || "";
+  const selectedDestinationId = els?.routeWatchDestinationSelect?.value || lastRouteWatchSelection?.destinationId || "";
+  const selectedStart = places.find((place) => place.id === selectedStartId) || null;
+  const selectedDestination = places.find((place) => place.id === selectedDestinationId) || null;
+  const startCoordinates = normalizeCoordinatePair(selectedStart?.lat, selectedStart?.lng)
+    || normalizeCoordinatePair(lastRouteAttempt?.startCoords?.lat, lastRouteAttempt?.startCoords?.lng)
+    || null;
+  const destinationCoordinates = normalizeCoordinatePair(selectedDestination?.lat, selectedDestination?.lng)
+    || normalizeCoordinatePair(lastRouteAttempt?.destinationCoords?.lat, lastRouteAttempt?.destinationCoords?.lng)
+    || null;
+  const routeWatchActive = Boolean(routeWatchActivated || window.__gridlyRouteWatchActive);
+  const routePreviewLayerOnMap = Boolean(layerOnMap(window.__gridlyRoutePreviewLayer) || layerOnMap(routePreviewCorridorLayer));
+  const routePreviewLayerExistsAudit = Boolean(window.__gridlyRoutePreviewLayer || routePreviewCorridorLayer || routePreviewLayerExists);
+  const routePreviewRenderedAudit = Boolean(routePreviewRendered || routeWatchPolylineVertexCount >= 2 || routePreviewLayerOnMap);
+  const routeWatchGeometryReady = Boolean(routeWatchPolylineVertexCount >= 2 && routePreviewLayerExistsAudit && routePreviewRenderedAudit);
+  const fallbackRouteUsed = String(routeGeometrySource || "").toLowerCase() === "fallback" || Boolean(!osrmRouteSuccess && routeWatchPolylineVertexCount >= 2);
+  const osrmFailureReason = osrmRouteSuccess ? "" : (lastRouteError || lastRoutePreviewError || lastRouteEarlyReturnReason || routePreviewReason || "osrm_route_not_successful");
+  const routeRelevanceNested = gridlyCommuteIntelligenceAuditState?.routeRelevanceNestedSections || {};
+  const routeRelevanceExecuted = Boolean(
+    safeNumber(routeRelevanceNested.isIncidentRouteRelevant_loop) > 0
+    || safeNumber(routeRelevanceNested.getRoutePolylineLatLngs) > 0
+    || safeNumber(routeRelevanceNested.getRouteHazardAssessment) > 0
+  );
+  const v296Audit = typeof window.gridlyRouteWatchGeometryRuntimeShadowAudit === "function"
+    ? window.gridlyRouteWatchGeometryRuntimeShadowAudit()
+    : null;
+  const v296Candidates = Array.isArray(v296Audit?.candidates) ? v296Audit.candidates : [];
+  const preview = getGridlyDestinationRoutePreviewState();
+  const destinationGeometryCount = Array.isArray(preview.geometry) ? preview.geometry.length : 0;
+  const destinationLayerVertexCount = gridlyCountRouteLayerVertices(destinationRoutePreviewLayer);
+  const destinationRouteVertexCount = Math.max(destinationGeometryCount, destinationLayerVertexCount, safeNumber(gridlyDestinationPerformanceAuditState.routeGeometryPointCount));
+  const searchedDestination = preview.destination || normalizeGridlySearchResult(ensureGridlySearchState()?.selectedDestination) || null;
+  const searchedDestinationCoordinates = normalizeCoordinatePair(searchedDestination?.lat, searchedDestination?.lng);
+  const destinationRoutePreviewRequested = Boolean(preview.active || preview.status && preview.status !== "idle" || gridlyDestinationPerformanceAuditState.routePreviewRequestStartedAt);
+  const destinationRouteLayerExists = Boolean(destinationRoutePreviewLayer || preview.routeLayer);
+  const destinationRouteLayerOnMap = Boolean(layerOnMap(destinationRoutePreviewLayer) || layerOnMap(preview.routeLayer));
+  const destinationRoutePreviewRendered = Boolean(preview.status === "ready" && destinationRouteVertexCount >= 2 && destinationRouteLayerExists);
+  const destinationRouteGeometryReady = Boolean(destinationRouteVertexCount >= 2 && destinationRoutePreviewRendered);
+  const destinationRouteTreatedAsRouteWatch = Boolean(
+    routeWatchActive
+    && searchedDestinationCoordinates
+    && destinationCoordinates
+    && Math.abs(Number(searchedDestinationCoordinates.lat) - Number(destinationCoordinates.lat)) < 0.00001
+    && Math.abs(Number(searchedDestinationCoordinates.lng) - Number(destinationCoordinates.lng)) < 0.00001
+  );
+  const destinationRouteIntentionallySeparate = Boolean(
+    typeof buildGridlyDestinationRoutePreview === "function"
+    && typeof startInlineRouteWatch === "function"
+    && destinationRoutePreviewLayer
+    && destinationRoutePreviewLayer !== savedRouteLayer
+    && destinationRoutePreviewLayer !== window.__gridlyRoutePreviewLayer
+  );
+  const destinationRouteFunctional = Boolean(destinationRoutePreviewRequested && searchedDestinationCoordinates && destinationRouteGeometryReady);
+  const routeWatchFunctional = Boolean(routeWatchActive && startCoordinates && destinationCoordinates && routeWatchGeometryReady);
+  const routeWatchOsrmAttempted = Boolean(osrmRequestStarted || routeRequestTriggered || lastRouteRequest || lastOsrmRequestUrl || lastRouteAttempt?.osrmCallStarted);
+  const routePreviewRequested = Boolean(routeRequestTriggered || lastRouteRequest || lastRouteAttempt || routePreviewReason !== "Route preview has not been requested.");
+  const observedCandidateCount = safeNumber(v296Audit?.evaluatedCandidates || v296Candidates.length);
+  const routeWatchObservedByV296 = observedCandidateCount > 0;
+  const observationReady = Boolean(routeWatchFunctional && routeWatchObservedByV296);
+
+  let blockingReason = "none";
+  let recommendedNextAction = "proceed_to_runtime_observation";
+  if (!routeWatchActive) {
+    blockingReason = "route_watch_not_active";
+    recommendedNextAction = "fix_route_watch_activation";
+  } else if (routeWatchOsrmAttempted && !osrmRouteSuccess && routeWatchPolylineVertexCount < 2) {
+    blockingReason = osrmFailureReason || "osrm_route_generation_failed";
+    recommendedNextAction = "fix_osrm_route_generation";
+  } else if (routeWatchActive && routeWatchPolylineVertexCount < 2) {
+    blockingReason = "route_watch_geometry_not_retained";
+    recommendedNextAction = "fix_route_geometry_retention";
+  } else if (!routePreviewLayerExistsAudit || !routePreviewLayerOnMap || !routePreviewRenderedAudit) {
+    blockingReason = "route_preview_not_rendered_or_not_on_map";
+    recommendedNextAction = "fix_route_preview_rendering";
+  } else if (destinationRouteGeometryReady && !destinationRouteTreatedAsRouteWatch && destinationRouteIntentionallySeparate && !routeWatchObservedByV296) {
+    blockingReason = "destination_route_geometry_is_separate_from_route_watch_observation";
+    recommendedNextAction = "separate_destination_observation";
+  } else if (!routeWatchObservedByV296) {
+    blockingReason = "runtime_route_relevance_observation_not_yet_executed";
+    recommendedNextAction = "proceed_to_runtime_observation";
+  }
+
+  return {
+    available: true,
+    auditOnly: true,
+    productionBehaviorChanged: false,
+    conservativeRule: "Do not recommend more geometry scoring work unless route geometry is present and Route Watch is functional.",
+    savedRouteWatchPath: {
+      selectedStart: selectedStart ? { id: selectedStart.id || "", name: selectedStart.name || "" } : { id: selectedStartId, name: lastRouteAttempt?.selectedStart || "" },
+      selectedDestination: selectedDestination ? { id: selectedDestination.id || "", name: selectedDestination.name || "" } : { id: selectedDestinationId, name: lastRouteAttempt?.selectedDestination || "" },
+      startCoordinatesPresent: Boolean(startCoordinates),
+      destinationCoordinatesPresent: Boolean(destinationCoordinates),
+      routeWatchActive,
+      routePreviewRequested,
+      osrmRequestAttempted: routeWatchOsrmAttempted,
+      osrmRouteSuccess: Boolean(osrmRouteSuccess),
+      osrmFailureReason,
+      fallbackRouteUsed,
+      routeGeometrySource: routeGeometrySource || "fallback",
+      routePolylineVertexCount: routeWatchPolylineVertexCount,
+      routePreviewLayerExists: routePreviewLayerExistsAudit,
+      routePreviewLayerOnMap,
+      routePreviewRendered: routePreviewRenderedAudit,
+      activeRouteSource,
+      monitoredRouteDuration: monitoredRouteDurationSeconds,
+      routeRelevanceExecuted,
+      v296RuntimeShadowObservedCandidates: observedCandidateCount,
+      lastRouteAttempt: lastRouteAttempt ? { ...lastRouteAttempt } : null
+    },
+    searchedDestinationRoutePath: {
+      lastSearchedDestination: searchedDestination ? {
+        label: searchedDestination.label || searchedDestination.name || searchedDestination.displayName || searchedDestination.title || "Destination",
+        id: searchedDestination.id || null
+      } : null,
+      searchedDestinationCoordinatesPresent: Boolean(searchedDestinationCoordinates),
+      destinationRoutePreviewRequested,
+      destinationRouteGeometrySource: preview.routeProvider || (destinationRouteVertexCount >= 2 ? "unknown" : "none"),
+      destinationRouteVertexCount,
+      destinationRoutePreviewLayerExists: destinationRouteLayerExists,
+      destinationRoutePreviewRendered,
+      destinationRouteTreatedAsRouteWatch,
+      destinationRouteIntentionallySeparate,
+      destinationRouteStatus: preview.status || "idle",
+      destinationRouteError: preview.error || ""
+    },
+    routeWatchFunctional,
+    routeWatchGeometryReady,
+    destinationRouteFunctional,
+    destinationRouteGeometryReady,
+    observationReady,
+    blockingReason,
+    recommendedNextAction
+  };
+}
+
+window.gridlyRouteWatchFunctionalReadinessAudit = function gridlyRouteWatchFunctionalReadinessAudit() {
+  return gridlyBuildRouteWatchFunctionalReadinessAudit();
+};
+
 window.gridlyDestinationVsRouteWatchGeometryObservationAudit = function gridlyDestinationVsRouteWatchGeometryObservationAudit() {
   return gridlyBuildDestinationVsRouteWatchGeometryObservationAudit();
 };
