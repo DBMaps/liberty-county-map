@@ -20883,6 +20883,12 @@ function gridlyBuildCurrentDetectedActiveRouteContext() {
   const hasRouteWatchGeometry = routeWatchVertexCount >= 2;
   const hasGeometry = routeWatchActive ? hasRouteWatchGeometry : hasDestinationGeometry;
   const vertexCount = routeWatchActive ? routeWatchVertexCount : destinationVertexCount;
+  const activeRouteGeometry = routeWatchActive && Array.isArray(routeWatchRouteLatLngs) && routeWatchRouteLatLngs.length >= 2
+    ? routeWatchRouteLatLngs.map((point) => ({ lat: Number(point.lat), lng: Number(point.lng) })).filter((point) => Number.isFinite(point.lat) && Number.isFinite(point.lng))
+    : Array.isArray(preview?.geometry)
+      ? preview.geometry.map((point) => ({ lat: Number(point.lat ?? point.latitude), lng: Number(point.lng ?? point.lon ?? point.longitude) })).filter((point) => Number.isFinite(point.lat) && Number.isFinite(point.lng))
+      : [];
+  window.__gridlyActiveRouteContextGeometry = activeRouteGeometry;
   return {
     routeContextAvailable: routeContextType !== "no_active_route",
     routeContextType,
@@ -20892,6 +20898,7 @@ function gridlyBuildCurrentDetectedActiveRouteContext() {
     hasGeometry,
     geometrySource: routeWatchActive && hasRouteWatchGeometry ? "route_watch_preview" : hasDestinationGeometry ? "destination_route_preview" : routeContextType === "cleared_route" ? "cleared" : "none",
     vertexCount,
+    routeGeometry: Object.freeze(activeRouteGeometry.map((point) => Object.freeze({ lat: point.lat, lng: point.lng }))),
     routePreviewAvailable: Boolean(preview?.active || preview?.status === "ready" || routePreviewRendered || destinationVertexCount >= 2 || routeWatchVertexCount >= 2),
     monitoringActive: routeWatchActive,
     relevanceObserved: Boolean(window.gridlyRouteWatchGeometryRuntimeShadowAudit?.().evaluatedCandidates),
@@ -20921,6 +20928,7 @@ function getActiveRouteContext() {
     hasGeometry: Boolean(detectedContext.hasGeometry),
     geometrySource: String(detectedContext.geometrySource || "none"),
     vertexCount: Number.isFinite(Number(detectedContext.vertexCount)) ? Number(detectedContext.vertexCount) : 0,
+    routeGeometry: Object.freeze(Array.isArray(detectedContext.routeGeometry) ? detectedContext.routeGeometry.map((point) => Object.freeze({ lat: Number(point.lat), lng: Number(point.lng) })).filter((point) => Number.isFinite(point.lat) && Number.isFinite(point.lng)) : []),
 
     routePreviewAvailable: Boolean(detectedContext.routePreviewAvailable),
     monitoringActive: Boolean(detectedContext.monitoringActive),
