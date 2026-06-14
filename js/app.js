@@ -16017,14 +16017,39 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
     const b = normalizeCompare(right);
     return Boolean(a && b && (a === b || a.includes(b) || b.includes(a)));
   };
+  const allowed = /^(?:road closed|crash|flooding|construction|disabled vehicle|downed power line|livestock|emergency response|traffic backup(?: \/ heavy delay)?|other hazard)$/i;
+  const normalizeIncidentType = (value = "") => safeText(value).toLowerCase().replace(/[\s-]+/g, "_");
+  const sourceIncidentFor = (record = {}) => record?.gridlyShadowSourceIncident || record?.raw?.gridlyShadowSourceIncident || {};
+  const incidentTypeFor = (record = {}) => {
+    const sourceIncident = sourceIncidentFor(record);
+    return safeText(record?.incidentType || record?.type || record?.report_type || record?.reportType || record?.hazardType || record?.category
+      || sourceIncident?.incidentType || sourceIncident?.type || sourceIncident?.report_type || sourceIncident?.reportType || sourceIncident?.hazardType || sourceIncident?.category
+      || sourceIncident?.latestReport?.incidentType || sourceIncident?.latestReport?.type || sourceIncident?.latestReport?.report_type || "unknown");
+  };
+  const roadHazardIncidentTypes = new Set(["road_closed", "construction", "traffic_backup", "crash", "flooding", "disabled_vehicle", "downed_power_line", "livestock", "emergency_response", "other_hazard", "other hazard"]);
+  const crossingIncidentTypes = new Set(["blocked_crossing", "crossing_blocked", "crossing_clear", "rail", "rail_incident", "rail_issue", "rail_blockage", "rail_blockage_delay"]);
+  const roadHazardTitleByType = {
+    road_closed: "Road Closed",
+    construction: "Construction",
+    traffic_backup: "Traffic Backup / Heavy Delay",
+    crash: "Crash",
+    flooding: "Flooding",
+    disabled_vehicle: "Disabled Vehicle",
+    downed_power_line: "Downed Power Line",
+    livestock: "Livestock",
+    emergency_response: "Emergency Response",
+    other_hazard: "Other Hazard"
+  };
   const titleHazard = (record = {}) => {
+    const normalizedIncidentType = normalizeIncidentType(incidentTypeFor(record));
+    if (roadHazardTitleByType[normalizedIncidentType]) return roadHazardTitleByType[normalizedIncidentType];
     const label = typeof getGridlyRoadHazardLabel === "function" ? getGridlyRoadHazardLabel(record) : safeText(record?.type || record?.report_type || "Other Hazard");
     if (/crash|wreck/i.test(label)) return "Crash";
     if (/road closed|closure/i.test(label)) return "Road Closed";
     if (/disabled/i.test(label)) return "Disabled Vehicle";
+    if (/traffic backup|heavy delay|traffic delay|congestion/i.test(label)) return "Traffic Backup / Heavy Delay";
     return label.replace(/\b\w/g, (match) => match.toUpperCase());
   };
-  const allowed = /^(?:road closed|crash|flooding|construction|disabled vehicle|downed power line|livestock|emergency response|other hazard)$/i;
   const coordsFor = (record = {}) => {
     const lat = Number(record?.lat ?? record?.latitude ?? record?.rawLat ?? record?.raw?.lat ?? record?.raw?.latitude ?? record?.coordinates?.lat);
     const lng = Number(record?.lng ?? record?.lon ?? record?.longitude ?? record?.rawLng ?? record?.raw?.lng ?? record?.raw?.lon ?? record?.raw?.longitude ?? record?.coordinates?.lng ?? record?.coordinates?.lon);
@@ -16056,17 +16081,23 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
     const values = available ? base : [0, 0, 0, 0];
     return { clarity: values[0], localUsefulness: values[1], travelerUsefulness: values[2], awarenessValue: values[3], total: values.reduce((sum, value) => sum + value, 0) };
   };
-  const isRoadHazardCandidate = (record = {}) => {
-    if (!record || typeof record !== "object") return false;
-    if (isGridlyAlertRailOrCrossingRelated(record)) return false;
-    const id = safeText(record?.id || record?.incidentId || record?.reportId || record?.key || record?.raw?.id);
-    if (/^rail-/i.test(id)) return false;
-    const crossingId = safeText(record?.crossingId || record?.crossing_id || record?.raw?.crossingId || record?.raw?.crossing_id);
-    const kind = safeText(record?.reportKind || record?.raw?.reportKind).toLowerCase();
-    const type = safeText(record?.report_type || record?.type || record?.raw?.report_type || record?.raw?.type).toLowerCase();
-    if (crossingId || kind === "crossing" || /^rail_/.test(type) || /crossing/.test(type)) return false;
-    return allowed.test(titleHazard(record));
+  const classifyShadowSourceRow = (record = {}, index = 0, stage = "source filtering") => {
+    const sourceIncident = sourceIncidentFor(record);
+    const sourceRowType = sourceIncident?.latestReport ? "generatedRoadIncidents.latestReport" : (record?.gridlyShadowSourceIncident ? "generatedRoadIncidents" : safeText(record?.sourceType || record?.source || record?.provider || "record"));
+    const sourceIncidentType = incidentTypeFor(record);
+    const normalizedIncidentType = normalizeIncidentType(sourceIncidentType);
+    const id = safeText(record?.id || record?.incidentId || record?.reportId || record?.key || record?.raw?.id || sourceIncident?.key || sourceIncident?.id || `road-hazard-${index}`);
+    const crossingId = safeText(record?.crossingId || record?.crossing_id || record?.raw?.crossingId || record?.raw?.crossing_id || sourceIncident?.crossingId || sourceIncident?.crossing_id);
+    const kind = safeText(record?.reportKind || record?.report_kind || record?.raw?.reportKind || sourceIncident?.reportKind || sourceIncident?.report_kind).toLowerCase();
+    const rawType = safeText(record?.report_type || record?.type || record?.raw?.report_type || record?.raw?.type || sourceIncident?.report_type || sourceIncident?.type).toLowerCase();
+    const explicitRoadHazard = roadHazardIncidentTypes.has(normalizedIncidentType) || allowed.test(titleHazard(record));
+    const explicitCrossing = crossingIncidentTypes.has(normalizedIncidentType) || /^rail-/i.test(id) || Boolean(crossingId) || kind === "crossing" || kind === "rail" || /^rail_/.test(rawType) || /crossing/.test(rawType);
+    const broadCrossingMatch = !explicitRoadHazard && typeof isGridlyAlertRailOrCrossingRelated === "function" && isGridlyAlertRailOrCrossingRelated(record);
+    const retained = Boolean(record && typeof record === "object" && explicitRoadHazard && !explicitCrossing && !broadCrossingMatch);
+    const exclusionReason = retained ? "retained_road_hazard" : (!record || typeof record !== "object" ? "invalid_record" : (explicitCrossing ? "explicit_crossing_or_rail_metadata" : (broadCrossingMatch ? "rail_or_crossing_text_match" : "unsupported_road_hazard_type")));
+    return { retained, sourceRowType, sourceIncidentType, normalizedIncidentType, exclusionReason, exclusionStage: stage };
   };
+  const isRoadHazardCandidate = (record = {}) => classifyShadowSourceRow(record).retained;
   const callArray = (fn) => {
     try {
       const value = fn?.();
@@ -16109,8 +16140,11 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
   ];
   const selectedSource = sourceCandidates.find((source) => source.rows.some(isRoadHazardCandidate)) || sourceCandidates[0];
   const recordsBeforeFiltering = selectedSource.rows;
-  const excludedCrossingRows = recordsBeforeFiltering.filter((record) => record && typeof record === "object" && isGridlyAlertRailOrCrossingRelated(record)).length;
-  const filteredRecords = recordsBeforeFiltering.filter(isRoadHazardCandidate);
+  const filterDiagnostics = recordsBeforeFiltering.map((record, index) => ({ ...classifyShadowSourceRow(record, index), incidentId: incidentId(record, index) }));
+  const retainedRoadHazardRows = filterDiagnostics.filter((entry) => entry.retained);
+  const excludedCrossingDiagnostics = filterDiagnostics.filter((entry) => !entry.retained);
+  const excludedCrossingRows = excludedCrossingDiagnostics.length;
+  const filteredRecords = recordsBeforeFiltering.filter((record, index) => filterDiagnostics[index]?.retained);
   const unique = [];
   const seen = new Set();
   filteredRecords.forEach((record, index) => {
@@ -16190,7 +16224,12 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
     sourceCounts,
     roadHazardRowsBeforeFiltering: recordsBeforeFiltering.length,
     roadHazardRowsAfterFiltering: rows.length,
+    filteredRoadHazardRows: rows.length,
     excludedCrossingRows,
+    excludedCrossingReasons: excludedCrossingDiagnostics.map(({ incidentId, sourceRowType, sourceIncidentType, exclusionReason, exclusionStage }) => ({ incidentId, sourceRowType, sourceIncidentType, exclusionReason, exclusionStage })),
+    retainedRoadHazardRows: retainedRoadHazardRows.map(({ incidentId, sourceRowType, sourceIncidentType, exclusionStage }) => ({ incidentId, sourceRowType, sourceIncidentType, exclusionStage })),
+    retainedIncidentTypes: [...new Set(retainedRoadHazardRows.map((entry) => entry.sourceIncidentType).filter(Boolean))],
+    excludedIncidentTypes: [...new Set(excludedCrossingDiagnostics.map((entry) => entry.sourceIncidentType).filter(Boolean))],
     emptySourceWarning,
     activeRoadHazardCount: rows.length,
     rows,
