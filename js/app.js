@@ -13722,7 +13722,7 @@ function openCrossingPopupFromMarkerInteraction(marker, crossing, source = "clic
     const mapRect = mapEl?.getBoundingClientRect?.();
     const safeTopY = Math.max(16, Math.round((bounds?.top || mapRect?.top || 0) - (mapRect?.top || 0)));
     const safeBottomY = Math.max(safeTopY + 80, Math.round((bounds?.bottom || (mapRect?.bottom || viewportHeight)) - (mapRect?.top || 0)));
-    const preferredY = Math.round(viewportHeight * 0.55);
+    const preferredY = Math.round(viewportHeight * 0.62);
     const lowerTargetY = safeTopY + estimatedPopupSize.height + 12;
     const upperTargetY = safeBottomY - 28;
     const desiredY = lowerTargetY <= upperTargetY
