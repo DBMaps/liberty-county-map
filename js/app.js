@@ -42774,6 +42774,64 @@ function gridlyIncidentEligibleForMapMarker(incident = {}) {
   return true;
 }
 
+function gridlyGetBlockedCrossingMarkerOwnershipKey(record = {}) {
+  const crossingId = record?.crossingId ?? record?.crossing_id;
+  if (crossingId === undefined || crossingId === null || !String(crossingId).trim()) return null;
+  const normalizedCrossingId = String(crossingId).trim();
+  const reportId = record?.reportId ?? record?.report_id ?? record?.id;
+  if (reportId !== undefined && reportId !== null && String(reportId).trim()) {
+    return `crossing:${normalizedCrossingId}:report:${String(reportId).trim()}`;
+  }
+  const type = String(record?.report_type || record?.type || "rail_blockage_delay").trim().toLowerCase() || "rail_blockage_delay";
+  return `crossing:${normalizedCrossingId}:type:${type}`;
+}
+
+function gridlyIsUnifiedRailCrossingIncident(incident = {}) {
+  const id = String(incident?.id || "").trim().toLowerCase();
+  const type = String(incident?.report_type || incident?.type || "").trim().toLowerCase();
+  const category = typeof getHazardCategory === "function" ? getHazardCategory(incident?.report_type || incident?.type || "") : "";
+  return id.startsWith("rail-") || category === "rail_blockage_delay" || ["blocked", "heavy", "delayed", "delay", "rail_delay", "rail_blocked"].includes(type);
+}
+
+function gridlyGetCrossingLayerBlockedMarkerOwnershipKeys() {
+  const keys = new Set();
+  if (!(crossingMarkers instanceof Map)) return keys;
+  crossingMarkers.forEach((marker, crossingId) => {
+    if (!marker) return;
+    const report = typeof getLatestReportForCrossing === "function" ? getLatestReportForCrossing(crossingId) : null;
+    const state = typeof getIncidentLifecycleState === "function" ? getIncidentLifecycleState(report) : "";
+    if (state !== "active") return;
+    const exactKey = gridlyGetBlockedCrossingMarkerOwnershipKey({
+      crossingId,
+      reportId: report?.id || report?.report_id || "",
+      report_type: report?.type || "rail_blockage_delay"
+    });
+    if (exactKey) keys.add(exactKey);
+    const fallbackKey = gridlyGetBlockedCrossingMarkerOwnershipKey({ crossingId, report_type: report?.type || "rail_blockage_delay" });
+    if (fallbackKey) keys.add(fallbackKey);
+  });
+  return keys;
+}
+
+function gridlyGetUnifiedBlockedCrossingMarkerSuppression(incident = {}, crossingLayerOwnershipKeys = new Set()) {
+  if (!gridlyIsUnifiedRailCrossingIncident(incident)) return { suppress: false, reason: "not_rail_crossing_incident" };
+  const exactKey = gridlyGetBlockedCrossingMarkerOwnershipKey(incident);
+  const crossingId = incident?.crossingId ?? incident?.crossing_id;
+  const fallbackKey = crossingId !== undefined && crossingId !== null
+    ? gridlyGetBlockedCrossingMarkerOwnershipKey({ crossingId, report_type: incident?.report_type || incident?.type || "rail_blockage_delay" })
+    : null;
+  if ((exactKey && crossingLayerOwnershipKeys.has(exactKey)) || (fallbackKey && crossingLayerOwnershipKeys.has(fallbackKey))) {
+    return {
+      suppress: true,
+      reason: "crossingLayer_owns_blocked_crossing_marker",
+      visualOwner: "crossingLayer",
+      dataStillAvailableInUnifiedIncidents: true,
+      ownershipKey: exactKey || fallbackKey
+    };
+  }
+  return { suppress: false, reason: "no_crossingLayer_marker_for_report", ownershipKey: exactKey || fallbackKey };
+}
+
 function renderUnifiedIncidents(reason = "auto") {
   const endRenderUnifiedTrace = timeGridlyReflowTrace("renderUnifiedIncidents");
   if (!ensureUnifiedIncidentLayerOnMap()) return;
@@ -42796,7 +42854,7 @@ function renderUnifiedIncidents(reason = "auto") {
   const fallbackCoordinateCount = fallbackHazards.filter(hasFiniteCoordinates).length;
   const shouldUseFallbackHazards = primaryCoordinateCount === 0 && fallbackCoordinateCount > 0;
   const incidents = shouldUseFallbackHazards ? fallbackHazards : primaryIncidents;
-  const markerRenderSkipReasons = { missing_lat_lng: 0, invalid_lat_lng: 0, filtered_out: 0, cleared_or_recently_cleared: 0, missing_marker_layer: 0, render_exception: 0 };
+  const markerRenderSkipReasons = { missing_lat_lng: 0, invalid_lat_lng: 0, filtered_out: 0, cleared_or_recently_cleared: 0, duplicate_unified_blocked_crossing_marker: 0, missing_marker_layer: 0, render_exception: 0 };
   const markerSourceUsed = shouldUseFallbackHazards ? "activeHazards_fallback" : "unifiedIncidents";
   const sourceCounts = {
     primaryCount: primaryIncidents.length,
@@ -42822,10 +42880,29 @@ function renderUnifiedIncidents(reason = "auto") {
     dedupedMap.set(renderKey, choosePreferredIncidentCandidate(dedupedMap.get(renderKey), incident, routeHazard));
   });
   const dedupedIncidents = [...dedupedMap.values()];
+  const crossingLayerOwnershipKeys = gridlyGetCrossingLayerBlockedMarkerOwnershipKeys();
+  const suppressedUnifiedIncidentMarkers = [];
   const markerEligibleIncidents = dedupedIncidents.filter((incident) => {
     const eligible = gridlyIncidentEligibleForMapMarker(incident);
-    if (!eligible) markerRenderSkipReasons.cleared_or_recently_cleared += 1;
-    return eligible;
+    if (!eligible) {
+      markerRenderSkipReasons.cleared_or_recently_cleared += 1;
+      return false;
+    }
+    const suppression = gridlyGetUnifiedBlockedCrossingMarkerSuppression(incident, crossingLayerOwnershipKeys);
+    if (suppression.suppress) {
+      markerRenderSkipReasons.duplicate_unified_blocked_crossing_marker += 1;
+      suppressedUnifiedIncidentMarkers.push({
+        incidentId: incident?.id || incident?.report_id || incident?.key || null,
+        crossingId: incident?.crossingId || incident?.crossing_id || null,
+        reportId: incident?.reportId || incident?.report_id || null,
+        ownershipKey: suppression.ownershipKey || null,
+        suppressionReason: suppression.reason,
+        visualOwner: suppression.visualOwner,
+        dataStillAvailableInUnifiedIncidents: suppression.dataStillAvailableInUnifiedIncidents
+      });
+      return false;
+    }
+    return true;
   });
 
   const markersByCategory = {};
@@ -42997,6 +43074,14 @@ function renderUnifiedIncidents(reason = "auto") {
     uniqueIncidentRenderCount: markerEligibleIncidents.length,
     markerEligibleIncidentCount: markerEligibleIncidents.length,
     markerSuppressedClearedOrRecentlyClearedCount: markerRenderSkipReasons.cleared_or_recently_cleared,
+    suppressedUnifiedIncidentMarkerCount: suppressedUnifiedIncidentMarkers.length,
+    suppressedUnifiedIncidentMarkers,
+    blockedCrossingMarkerOwnership: {
+      visualOwner: "crossingLayer",
+      suppressionReason: "crossingLayer_owns_blocked_crossing_marker",
+      dataStillAvailableInUnifiedIncidents: true,
+      crossingLayerOwnershipKeyCount: crossingLayerOwnershipKeys.size
+    },
     duplicateIncidentCount,
     duplicateKeysPreview: duplicateEntries.slice(0, 8).map(([key, count]) => `${key}×${count}`),
     activeRenderedCount: markerEligibleIncidents.filter((item) => String(item?.status || "").toLowerCase() !== "cleared").length,
@@ -43111,19 +43196,33 @@ function gridlyBuildBlockedCrossingMarkerAudit() {
     acc[key].push(record);
     return acc;
   }, {});
+  const suppressedUnifiedIncidentMarkers = Array.isArray(lastMarkerAuditDebug?.suppressedUnifiedIncidentMarkers)
+    ? lastMarkerAuditDebug.suppressedUnifiedIncidentMarkers
+    : [];
+  const suppressedUnifiedIncidentMarkerCount = suppressedUnifiedIncidentMarkers.length;
+  const hasCrossingLayerMarker = markerRecords.some((record) => record.owningLayer === "crossingLayer");
+  const hasUnifiedIncidentLayerMarker = markerRecords.some((record) => record.owningLayer === "unifiedIncidentLayer");
+
   return {
-    version: "V310.3",
+    version: "V310.4",
     generatedAt: new Date().toISOString(),
-    classification: markerRecords.some((record) => record.owningLayer === "crossingLayer") && markerRecords.some((record) => record.owningLayer === "unifiedIncidentLayer")
+    classification: hasCrossingLayerMarker && hasUnifiedIncidentLayerMarker
       ? "two_marker_systems_rendering_simultaneously"
-      : "single_or_unconfirmed_marker_system",
+      : (suppressedUnifiedIncidentMarkerCount > 0 ? "ownership_arbitrated_to_crossingLayer" : "single_or_unconfirmed_marker_system"),
     markerCount: markerRecords.length,
+    suppressedUnifiedIncidentMarkerCount,
+    suppressionReason: suppressedUnifiedIncidentMarkerCount > 0 ? "crossingLayer_owns_blocked_crossing_marker" : null,
+    visualOwner: hasCrossingLayerMarker ? "crossingLayer" : null,
+    dataStillAvailableInUnifiedIncidents: typeof getUnifiedIncidents === "function"
+      ? getUnifiedIncidents().some((incident) => gridlyIsUnifiedRailCrossingIncident(incident))
+      : null,
+    suppressedUnifiedIncidentMarkers,
     recordsByCrossing,
     markerRecords,
     notes: [
       "Audit-only helper; does not mutate Leaflet layers or marker render conditions.",
       "crossingLayer records come from renderCrossings and crossingMarkers.",
-      "unifiedIncidentLayer records come from rail incidents generated by getUnifiedIncidents."
+      "unified rail/crossing data remains in getUnifiedIncidents; renderUnifiedIncidents suppresses only duplicate Leaflet markers already owned by crossingLayer."
     ]
   };
 }
@@ -48065,6 +48164,8 @@ function getUnifiedIncidents() {
       reports_count: incident.count,
       age_minutes: latest.minutesAgo,
       report_type: latest.type,
+      report_id: latest.id || latest.report_id || "",
+      reportId: latest.id || latest.report_id || "",
       crossing_id: incident.crossingId,
       crossingId: incident.crossingId
     });
