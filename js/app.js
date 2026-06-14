@@ -64213,6 +64213,184 @@ function findGridlyAlertMarker(coords, options = {}) {
 }
 
 
+
+function gridlyPrimaryCorridorSelectionAudit(options = {}) {
+  const now = new Date().toISOString();
+  const safeText = (value = "") => String(value ?? "").replace(/\s+/g, " ").trim();
+  const round = (value, precision = 1) => Number.isFinite(Number(value)) ? Number(Number(value).toFixed(precision)) : null;
+  const toMeters = (miles) => Number.isFinite(Number(miles)) ? Number(Number(miles) * 1609.344) : null;
+  const normalizeRoad = (value = "") => {
+    const shorthand = typeof normalizeRoadShorthand === "function" ? normalizeRoadShorthand(value) : value;
+    const normalized = typeof normalizeCorridorBaseLabel === "function" ? normalizeCorridorBaseLabel(shorthand) : shorthand;
+    return typeof normalizeGridlyRoadHazardRoadComponent === "function" ? (normalizeGridlyRoadHazardRoadComponent(normalized) || safeText(normalized)) : safeText(normalized);
+  };
+  const roadKey = (value = "") => typeof normalizeRoadComparison === "function"
+    ? normalizeRoadComparison(normalizeRoad(value))
+    : normalizeRoad(value).toLowerCase().replace(/[^a-z0-9]/g, "");
+  const sameRoad = (left = "", right = "") => {
+    const a = roadKey(left);
+    const b = roadKey(right);
+    return Boolean(a && b && (a === b || a.includes(b) || b.includes(a)));
+  };
+  const readPath = (item = {}, path = "") => String(path).split(".").reduce((current, key) => current?.[key], item);
+  const firstText = (item = {}, paths = []) => {
+    for (const path of paths) {
+      const value = safeText(readPath(item, path));
+      if (value && !/^(?:unknown|unknown road|local roadway|nearby|n\/a|null|undefined)$/i.test(value)) return value;
+    }
+    return "";
+  };
+  const incidentKey = (item = {}, fallback = "") => safeText(
+    item?.incidentId || item?.incident_id || item?.id || item?.reportId || item?.report_id || item?.uuid || item?.key ||
+    item?.raw?.incidentId || item?.raw?.incident_id || item?.raw?.id || item?.raw?.reportId || item?.raw?.report_id || fallback
+  );
+  const hazardTypeFor = (item = {}, node = null) => safeText(
+    node?.dataset?.gridlyAlertHazardType || item?.hazardType || item?.type || item?.category || item?.reportType || item?.report_type || item?.raw?.hazardType || item?.raw?.type || item?.raw?.category || "unknown"
+  );
+  const isCrossingType = (type = "", item = {}, node = null) => /rail|crossing|train/i.test(`${type} ${node?.dataset?.gridlyAlertCrossingId || ""} ${item?.crossingId || item?.crossing_id || item?.raw?.crossingId || item?.raw?.crossing_id || ""}`);
+  const coordsFrom = (item = {}, node = null) => normalizeCoordinatePair(
+    node?.dataset?.gridlyAlertLat ?? item?.lat ?? item?.latitude ?? item?.rawLat ?? item?.raw?.lat ?? item?.source?.lat,
+    node?.dataset?.gridlyAlertLng ?? item?.lng ?? item?.lon ?? item?.longitude ?? item?.rawLng ?? item?.raw?.lng ?? item?.raw?.lon ?? item?.source?.lng ?? item?.source?.lon
+  );
+  const titleFrom = (item = {}, node = null) => safeText(node?.dataset?.gridlyAlertTitle || item?.title || item?.headline || item?.resolvedHeadline || item?.finalHeadline || item?.localizedSummary || item?.name || "");
+  const locationFrom = (item = {}, node = null) => safeText(
+    node?.dataset?.gridlyAlertLocation || item?.locationDescription || item?.sourceLocationDescription || item?.locationLabel || item?.locationName || item?.location || item?.roadName || item?.nearestRoad || item?.knownLocation || item?.raw?.locationDescription || item?.raw?.locationName || item?.raw?.location || item?.raw?.roadName || ""
+  );
+  const parseRoadFromText = (text = "") => {
+    const parsed = typeof parseGridlyRoadHazardRoadsFromText === "function" ? parseGridlyRoadHazardRoadsFromText(text) : null;
+    if (parsed?.road) return normalizeRoad(parsed.road);
+    const match = safeText(text).match(/\b(?:on|along)\s+(.+?)(?:\s+(?:near|at|between|from|to)\b|\s*[•·-]|$|[.,;:])/i);
+    return match?.[1] ? normalizeRoad(match[1]) : "";
+  };
+  const selectedPrimaryRoadFrom = (item = {}, node = null) => normalizeRoad(firstText(item, [
+    "primaryRoad", "parsedPrimaryRoad", "roadName", "resolvedRoadName", "displayRoadName", "selectedRoadName", "corridor", "route", "road",
+    "raw.primaryRoad", "raw.parsedPrimaryRoad", "raw.roadName", "raw.resolvedRoadName", "raw.displayRoadName", "raw.selectedRoadName", "raw.corridor", "raw.route",
+    "source.primaryRoad", "source.parsedPrimaryRoad", "source.roadName", "source.resolvedRoadName", "source.displayRoadName", "source.selectedRoadName", "source.corridor", "source.route"
+  ]) || parseRoadFromText(`${titleFrom(item, node)} ${locationFrom(item, node)}`));
+  const selectedReferenceRoadFrom = (item = {}, node = null) => normalizeRoad(firstText(item, [
+    "referenceRoadName", "referenceRoad", "referenceRoadA", "secondaryRoad", "nearestRoadName", "nearestRoad", "nearestCrossStreet", "nearbyCrossStreet", "nearbyRoad", "crossStreet", "knownLocation", "locationName",
+    "raw.referenceRoadName", "raw.referenceRoad", "raw.referenceRoadA", "raw.secondaryRoad", "raw.nearestRoadName", "raw.nearestRoad", "raw.nearbyCrossStreet", "raw.crossStreet", "raw.knownLocation", "raw.locationName",
+    "source.referenceRoadName", "source.referenceRoad", "source.referenceRoadA", "source.secondaryRoad", "source.nearestRoadName", "source.nearestRoad", "source.nearbyCrossStreet", "source.crossStreet", "source.knownLocation", "source.locationName"
+  ]));
+  const majorCorridors = ["US 90", "TX 321", "TX 146", "FM 1960", "FM 1409", "FM 1008"];
+  const candidateDistanceMiles = (lat, lng, wantedName = "") => {
+    if (!roadwayDatasetLoaded || !Array.isArray(roadwaySegmentFeatures) || !roadwaySegmentFeatures.length) return null;
+    let best = null;
+    for (const feature of roadwaySegmentFeatures) {
+      const props = feature?.properties || {};
+      const names = [props?.name, props?.ref, props?.highway].map((value) => normalizeRoad(value)).filter(Boolean);
+      if (wantedName && !names.some((name) => sameRoad(name, wantedName))) continue;
+      for (const segment of flattenRoadGeometrySegments(feature?.geometry)) {
+        const distance = distancePointToSegmentMiles(lat, lng, segment.startLat, segment.startLng, segment.endLat, segment.endLng);
+        if (!Number.isFinite(distance)) continue;
+        if (best === null || distance < best) best = distance;
+      }
+    }
+    return best;
+  };
+  const visibleAlertNodes = typeof document !== "undefined"
+    ? Array.from(document.querySelectorAll(".gridly-alerts-active [data-gridly-alert-row='true'], .gridly-alerts-active [data-gridly-alert-id], #gridlyPortraitV2SheetBody [data-gridly-alert-row='true']"))
+        .filter((node) => node?.dataset?.gridlyAlertExpand !== "true" && node?.dataset?.gridlyAlertHidden !== "true" && node.offsetParent !== null)
+    : [];
+  const latestAlerts = Array.isArray(window.__gridlyLatestAlertsForRender) ? window.__gridlyLatestAlertsForRender : (Array.isArray(window.getAlertsSurfaceSnapshot?.()?.alerts) ? window.getAlertsSurfaceSnapshot().alerts : []);
+  const byId = new Map(latestAlerts.map((alert, index) => [incidentKey(alert, `alert-${index}`), alert]));
+  const alertRows = visibleAlertNodes.length
+    ? visibleAlertNodes.map((node, index) => {
+      const key = safeText(node.dataset?.gridlyAlertId || node.dataset?.incidentId || node.dataset?.id || `visible-alert-${index}`);
+      return { node, item: byId.get(key) || latestAlerts[index] || {}, key };
+    })
+    : latestAlerts.map((item, index) => ({ node: null, item, key: incidentKey(item, `snapshot-alert-${index}`) }));
+  const roadRows = alertRows.filter(({ item, node }) => !isCrossingType(hazardTypeFor(item, node), item, node));
+  const rows = roadRows.map(({ item, node, key }, index) => {
+    const coords = coordsFrom(item, node);
+    const selectedPrimaryRoad = selectedPrimaryRoadFrom(item, node);
+    const selectedReferenceRoad = selectedReferenceRoadFrom(item, node);
+    const nearestRoadName = coords && typeof resolveNearestRoadName === "function" ? normalizeRoad(resolveNearestRoadName(coords.lat, coords.lng)) : "";
+    const nearbyCandidates = coords && typeof collectNearbyRoadCandidates === "function" ? collectNearbyRoadCandidates(coords.lat, coords.lng, 1.2, 24) : [];
+    const candidateMap = new Map();
+    nearbyCandidates.forEach((entry) => {
+      const name = normalizeRoad(entry?.roadName);
+      const meters = toMeters(entry?.distanceMiles);
+      if (!name || !Number.isFinite(meters)) return;
+      const key = roadKey(name);
+      const existing = candidateMap.get(key);
+      if (!existing || meters < existing.distanceMeters) candidateMap.set(key, { roadName: name, distanceMeters: round(meters, 1), source: "nearbyRoadCandidates" });
+    });
+    majorCorridors.forEach((name) => {
+      if (!coords) return;
+      const meters = toMeters(candidateDistanceMiles(coords.lat, coords.lng, name));
+      if (!Number.isFinite(meters)) return;
+      const key = roadKey(name);
+      const existing = candidateMap.get(key);
+      if (!existing || meters < existing.distanceMeters) candidateMap.set(key, { roadName: name, distanceMeters: round(meters, 1), source: "majorCorridorScan" });
+    });
+    const allCandidateCorridorsSortedByDistance = Array.from(candidateMap.values()).sort((a, b) => Number(a.distanceMeters) - Number(b.distanceMeters));
+    const likely = allCandidateCorridorsSortedByDistance[0] || null;
+    const nearestMajorCorridor = allCandidateCorridorsSortedByDistance.find((entry) => majorCorridors.some((name) => sameRoad(name, entry.roadName))) || null;
+    const distanceFor = (name = "") => allCandidateCorridorsSortedByDistance.find((entry) => sameRoad(entry.roadName, name))?.distanceMeters ?? null;
+    const likelyPrimaryRoad = likely?.roadName || "";
+    const likelyPrimaryRoadDistanceMeters = likely?.distanceMeters ?? null;
+    const selectedReferenceDistanceMeters = selectedReferenceRoad ? distanceFor(selectedReferenceRoad) : null;
+    const selectedPrimaryDistanceMeters = selectedPrimaryRoad ? distanceFor(selectedPrimaryRoad) : null;
+    const meaningfulDistance = 60;
+    const selectedDiffers = Boolean(selectedPrimaryRoad && likelyPrimaryRoad && !sameRoad(selectedPrimaryRoad, likelyPrimaryRoad));
+    const selectedRoadMismatchSuspected = Boolean(selectedDiffers && (!Number.isFinite(selectedPrimaryDistanceMeters) || (Number.isFinite(likelyPrimaryRoadDistanceMeters) && selectedPrimaryDistanceMeters > likelyPrimaryRoadDistanceMeters + meaningfulDistance)));
+    const us90OverReferenceSuspected = Boolean(selectedReferenceRoad && sameRoad(selectedReferenceRoad, "US 90") && likelyPrimaryRoad && !sameRoad(likelyPrimaryRoad, "US 90") && Number.isFinite(likelyPrimaryRoadDistanceMeters));
+    const reason = !coords
+      ? "Missing coordinates; cannot compare corridor distances."
+      : !allCandidateCorridorsSortedByDistance.length
+        ? "No roadway/corridor distance evidence available from loaded metadata."
+        : us90OverReferenceSuspected
+          ? `Selected reference road is US 90, but ${likelyPrimaryRoad} is the nearest candidate corridor by distance.`
+          : selectedRoadMismatchSuspected
+            ? `Selected primary road differs from nearest candidate ${likelyPrimaryRoad} by more than ${meaningfulDistance} meters or lacks matching distance evidence.`
+            : `Nearest candidate corridor is ${likelyPrimaryRoad}; no US 90 over-reference or selected-road mismatch suspected.`;
+    return {
+      hazardType: hazardTypeFor(item, node),
+      alertTitle: titleFrom(item, node),
+      alertLocationText: locationFrom(item, node),
+      incidentId: incidentKey(item, key || `road-hazard-${index}`),
+      lat: coords?.lat ?? null,
+      lng: coords?.lng ?? null,
+      selectedPrimaryRoad,
+      selectedReferenceRoad,
+      nearestRoadName,
+      nearestMajorCorridor: nearestMajorCorridor?.roadName || "",
+      likelyPrimaryRoad,
+      likelyPrimaryRoadDistanceMeters,
+      selectedReferenceDistanceMeters,
+      distanceToUS90Meters: distanceFor("US 90"),
+      distanceToTX321Meters: distanceFor("TX 321"),
+      distanceToTX146Meters: distanceFor("TX 146"),
+      distanceToFM1960Meters: distanceFor("FM 1960"),
+      distanceToFM1409Meters: distanceFor("FM 1409"),
+      distanceToFM1008Meters: distanceFor("FM 1008"),
+      allCandidateCorridorsSortedByDistance,
+      us90OverReferenceSuspected,
+      selectedRoadMismatchSuspected,
+      reason
+    };
+  });
+  return {
+    available: true,
+    policyVersion: "V315",
+    productionBehaviorChanged: false,
+    generatedAt: now,
+    roadHazardsChecked: rows.length,
+    us90OverReferenceSuspectedCount: rows.filter((row) => row.us90OverReferenceSuspected).length,
+    selectedRoadMismatchSuspectedCount: rows.filter((row) => row.selectedRoadMismatchSuspected).length,
+    missingCoordinateCount: rows.filter((row) => row.lat === null || row.lng === null).length,
+    missingCorridorEvidenceCount: rows.filter((row) => !row.allCandidateCorridorsSortedByDistance.length).length,
+    crossingsExcluded: true,
+    auditOnly: true,
+    meaningfulMismatchThresholdMeters: 60,
+    rows,
+    notes: ["Audit-only: reads visible/latest road alerts and loaded roadway metadata; it does not mutate alert wording, marker placement, V313 policy, crossings, Route Watch, or direction display.", "Distance evidence is diagnostic only and must not be promoted into Tier 1 wording without a later production policy change."]
+  };
+}
+
+if (typeof window !== "undefined") window.gridlyPrimaryCorridorSelectionAudit = gridlyPrimaryCorridorSelectionAudit;
+
 function gridlyAlertMarkerIntegrityAudit(options = {}) {
   const now = new Date().toISOString();
   const safeText = (value = "") => String(value ?? "").trim();
