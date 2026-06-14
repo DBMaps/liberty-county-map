@@ -16119,11 +16119,11 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
     const values = available ? base : [0, 0, 0, 0];
     return { clarity: values[0], localUsefulness: values[1], travelerUsefulness: values[2], awarenessValue: values[3], total: values.reduce((sum, value) => sum + value, 0) };
   };
-  const explicitIntersectionSource = (source = "") => /(?:^|\.)(?:intersection|crossStreet|crossStreetA|crossStreet1|fromStreet|startStreet|nearestCrossStreet|nearbyCrossStreet)(?:$|\.)/i.test(source);
+  const explicitIntersectionSource = (source = "") => /(?:^|\.)(?:intersection|crossStreet|crossStreetA|crossStreet1|fromStreet|startStreet)(?:$|\.)/i.test(source);
   const proximityOnlyReferenceSource = (source = "") => /(?:nearest|nearby|location|coordinate\.resolveNearestRoadName|coordinate\.resolveNearbyRoadPair|txdotCandidate)/i.test(source) && !explicitIntersectionSource(source);
   const tierLabelForCandidate = (candidateKey = "") => ({
-    candidateA: "Tier 1 — True intersection",
-    candidateB: "Tier 2 — Crossing reference",
+    candidateA: "Tier 1 — Verified intersection",
+    candidateB: "Tier 2 — Crossing landmark",
     candidateC: "Tier 3 — Community-distance reference",
     candidateD: "Tier 4 — Nearest-road fallback"
   }[candidateKey] || "Tier 4 — Nearest-road fallback");
@@ -16253,17 +16253,18 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
     const current = currentText(record) || productionCandidate.text || (primary ? `${hazard} on ${primary}` : hazard);
     const candidateA = primary && referenceRoad ? `${hazard} on ${primary} at ${referenceRoad}` : "";
     const candidateB = primary && crossingCandidate ? `${hazard} on ${primary} near the ${crossingCandidate} crossing` : "";
-    const distanceText = community.community && Number.isFinite(community.distance) ? `${community.distance} miles ${community.direction} of ${community.community}` : "";
+    const distanceText = typeof formatGridlyV313RoadHazardDistanceMiles === "function" && community.community && Number.isFinite(community.distance) && community.direction
+      ? `${formatGridlyV313RoadHazardDistanceMiles(community.distance)} ${community.direction} of ${community.community}`
+      : (community.community && Number.isFinite(community.distance) && community.direction ? `${community.distance} miles ${community.direction} of ${community.community}` : "");
     const candidateC = primary && distanceText ? `${hazard} on ${primary} ${distanceText}` : "";
     const candidateD = primary ? (referenceRoad ? `${hazard} on ${primary} near ${referenceRoad}` : `${hazard} on ${primary}`) : current;
+    const majorCorridor = typeof isGridlyV313MajorRoadHazardCorridor === "function" && isGridlyV313MajorRoadHazardCorridor(primary);
     const candidates = {
       candidateA: { strategy: "True Intersection", phrase: candidateA, score: scoreCandidate("trueIntersection", Boolean(candidateA)) },
       candidateB: { strategy: "Crossing Reference", phrase: candidateB, score: scoreCandidate("crossingReference", Boolean(candidateB)) },
       candidateC: { strategy: "Community Distance", phrase: candidateC, score: scoreCandidate("communityDistance", Boolean(candidateC)) },
       candidateD: { strategy: "Nearest-Road Fallback", phrase: candidateD, score: scoreCandidate("nearestRoadFallback", Boolean(candidateD)) }
     };
-    const selectedHierarchyTier = candidateA ? "Tier 1 — True intersection" : (candidateB ? "Tier 2 — Crossing reference" : (candidateC ? "Tier 3 — Community-distance reference" : "Tier 4 — Nearest-road fallback"));
-    const recommendedCandidate = candidateA ? "candidateA" : (candidateB ? "candidateB" : (candidateC ? "candidateC" : "candidateD"));
     const referenceRoadAppearsProximityOnly = Boolean(referenceRoad && proximityOnlyReferenceSource(referenceSource));
     const tier1Evidence = [];
     if (explicitIntersectionSource(referenceSource)) tier1Evidence.push(`explicit intersection-like source: ${referenceSource}`);
@@ -16276,7 +16277,9 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
         ? `Reference road came from proximity-style source ${referenceSource}; no explicit or geometry-confirmed intersection evidence was found.`
         : "Reference road is present, but the audit found no explicit cross-street field, reviewed crossing landmark, tight-distance metric, or geometry-confirmed intersection evidence.")
       : "";
-    const proposedSaferCandidate = tier1Supported && candidateA ? "candidateA" : (candidateB ? "candidateB" : (candidateC ? "candidateC" : "candidateD"));
+    const recommendedCandidate = tier1Supported && candidateA ? "candidateA" : (candidateB ? "candidateB" : (majorCorridor && candidateC ? "candidateC" : "candidateD"));
+    const selectedHierarchyTier = tierLabelForCandidate(recommendedCandidate);
+    const proposedSaferCandidate = recommendedCandidate;
     const proposedSaferTier = tierLabelForCandidate(proposedSaferCandidate);
     const communityDistanceMayBeSafer = Boolean(candidateA && !tier1Supported && candidateC);
     const confidence = candidateA ? (tier1Supported ? "medium" : "low") : (candidateB || candidateC ? "low-medium" : "low");
@@ -16322,7 +16325,7 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
       railOrCrossingEvidenceDiagnostic: productionRailReason || (crossingCandidate ? `rail_or_crossing evidence not attached; crossing candidate came from ${referenceSource}.` : "rail_or_crossing evidence not attached because no explicit crossing landmark candidate was selected."),
       recommendedCandidate,
       proposedSaferCandidate,
-      reasoning: `${selectedHierarchyTier} is the highest available shadow candidate; live text is intentionally unchanged. ${tier1RiskReason || "Tier 1 has explicit support when selected."}`
+      reasoning: `${selectedHierarchyTier} is the V313 production-policy selection for this road-hazard row. ${tier1RiskReason || "Tier 1 has explicit support when selected."}`
     };
   });
   const aggregateFindings = {
@@ -16331,6 +16334,10 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
     communityDistanceWording: rows.filter((row) => row.recommendedCandidate === "candidateC").length,
     nearestRoadFallback: rows.filter((row) => row.recommendedCandidate === "candidateD").length
   };
+  const tier1UnsupportedPromotedCount = rows.filter((row) => row.recommendedCandidate === "candidateA" && !row.tier1Supported).length;
+  const proximityOnlyIntersectionWordingCount = rows.filter((row) => row.recommendedCandidate === "candidateA" && row.referenceRoadAppearsProximityOnly).length;
+  const majorCorridorCommunityDistanceCount = rows.filter((row) => row.recommendedCandidate === "candidateC" && row.primaryRoad && typeof isGridlyV313MajorRoadHazardCorridor === "function" && isGridlyV313MajorRoadHazardCorridor(row.primaryRoad)).length;
+  const localRoadNearestFallbackCount = rows.filter((row) => row.recommendedCandidate === "candidateD" && row.primaryRoad && !(typeof isGridlyV313MajorRoadHazardCorridor === "function" && isGridlyV313MajorRoadHazardCorridor(row.primaryRoad))).length;
   const wacoSawmillDiagnostics = rows.filter((row) => sameRoad(row.primaryRoad, "US 90")
     && [row.referenceRoad, row.crossingCandidate, row.currentProductionWording].some((value) => /waco/i.test(value))
     && [row.referenceRoad, row.currentProductionWording, row.candidates.candidateD.phrase].some((value) => /sawmill/i.test(value)))
@@ -16340,8 +16347,9 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
     ? "Active app road hazards were detected, but the shadow audit produced no road-hazard rows after source filtering."
     : "";
   const audit = {
-    auditVersion: "V312.2-road-hazard-location-tier-scoring-review",
-    noProductionTextChanges: true,
+    auditVersion: "V313-road-hazard-location-production-policy",
+    productionPolicyVersion: "V313",
+    noProductionTextChanges: false,
     scope: "active road hazards only; crossings excluded",
     sourceUsed: selectedSource.name,
     sourceCounts,
@@ -16349,6 +16357,12 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
     roadHazardRowsAfterFiltering: rows.length,
     filteredRoadHazardRows: rows.length,
     excludedCrossingRows,
+    tier1UnsupportedPromotedCount,
+    proximityOnlyIntersectionWordingCount,
+    majorCorridorCommunityDistanceCount,
+    localRoadNearestFallbackCount,
+    crossingsExcluded: true,
+    noCrossingNamingChanges: true,
     excludedCrossingReasons: excludedCrossingDiagnostics.map(({ incidentId, sourceRowType, sourceIncidentType, exclusionReason, exclusionStage }) => ({ incidentId, sourceRowType, sourceIncidentType, exclusionReason, exclusionStage })),
     retainedRoadHazardRows: retainedRoadHazardRows.map(({ incidentId, sourceRowType, sourceIncidentType, exclusionStage }) => ({ incidentId, sourceRowType, sourceIncidentType, exclusionStage })),
     retainedIncidentTypes: [...new Set(retainedRoadHazardRows.map((entry) => entry.sourceIncidentType).filter(Boolean))],
@@ -17213,13 +17227,20 @@ function openAlertsSurfaceFromDock() {
           || (primaryRoad && referenceRoadB && normalizeRoadLabel(primaryRoad) === normalizeRoadLabel(referenceRoadB))
           || (referenceRoadA && referenceRoadB && normalizeRoadLabel(referenceRoadA) === normalizeRoadLabel(referenceRoadB))
         );
+        const communityDistance = typeof resolveGridlyV313RoadHazardCommunityDistance === "function"
+          ? resolveGridlyV313RoadHazardCommunityDistance({ lat, lng })
+          : { text: "" };
+        const majorCorridor = typeof isGridlyV313MajorRoadHazardCorridor === "function" && isGridlyV313MajorRoadHazardCorridor(primaryRoad);
         let selectedTier = "tier4";
         let finalHeadline = "";
         if (primaryRoad && referenceRoadA && referenceRoadB) {
-          selectedTier = "tier1";
+          selectedTier = "tier4";
           finalHeadline = `${eventLabel} on ${primaryRoad} between ${referenceRoadA} and ${referenceRoadB}`;
+        } else if (primaryRoad && majorCorridor && communityDistance.text) {
+          selectedTier = "tier3";
+          finalHeadline = `${eventLabel} on ${primaryRoad} ${communityDistance.text}`;
         } else if (primaryRoad && referenceRoadA) {
-          selectedTier = "tier2";
+          selectedTier = "tier4";
           finalHeadline = `${eventLabel} on ${primaryRoad} near ${referenceRoadA}`;
         } else if (primaryRoad) {
           selectedTier = "tier4";
@@ -33411,6 +33432,39 @@ function isGridlyBroadHighwayReference(value = "") {
   return /^(?:US|SH|TX|I-|IH|FM|Loop|Spur)\s*-?\d+/i.test(normalizeRoadDisplayCase(value));
 }
 
+function isGridlyV313MajorRoadHazardCorridor(value = "") {
+  const road = normalizeRoadDisplayCase(value).replace(/\s+/g, " ").trim();
+  return /^(?:US\s*-?\s*(?:90|59)|FM\s*-?\s*(?:1960|1409)|(?:TX|SH|State Highway)\s*-?\s*321)\b/i.test(road);
+}
+
+function formatGridlyV313RoadHazardDistanceMiles(distance = null) {
+  const miles = Number(distance);
+  if (!Number.isFinite(miles) || miles < 0) return "";
+  if (miles < 0.15) return "less than 1 mile";
+  const rounded = miles < 10 ? Math.max(1, Math.round(miles)) : Math.round(miles);
+  return `${rounded} ${rounded === 1 ? "mile" : "miles"}`;
+}
+
+function resolveGridlyV313RoadHazardCommunityDistance(coords = {}) {
+  const lat = Number(coords?.lat);
+  const lng = Number(coords?.lng);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng) || typeof haversineDistance !== "function") return { community: "", distance: null, direction: "", text: "" };
+  const areas = Array.isArray(GRIDLY_AWARENESS_AREA_DEFINITIONS) ? GRIDLY_AWARENESS_AREA_DEFINITIONS : [];
+  const ranked = areas.map((area) => {
+    const areaLat = Number(area?.lat);
+    const areaLng = Number(area?.lng);
+    const distance = Number.isFinite(areaLat) && Number.isFinite(areaLng) ? haversineDistance(lat, lng, areaLat, areaLng) : Infinity;
+    return { label: String(area?.label || "").trim(), lat: areaLat, lng: areaLng, distance };
+  }).filter((area) => area.label && Number.isFinite(area.distance)).sort((a, b) => a.distance - b.distance);
+  const best = ranked[0] || null;
+  if (!best) return { community: "", distance: null, direction: "", text: "" };
+  const latDelta = lat - best.lat;
+  const lngDelta = lng - best.lng;
+  const direction = Math.abs(latDelta) >= Math.abs(lngDelta) ? (latDelta >= 0 ? "north" : "south") : (lngDelta >= 0 ? "east" : "west");
+  const distanceText = formatGridlyV313RoadHazardDistanceMiles(best.distance);
+  return { community: best.label, distance: Number(best.distance.toFixed(1)), direction, text: distanceText && direction ? `${distanceText} ${direction} of ${best.label}` : "" };
+}
+
 function areGridlyRoadHazardRoadsEquivalent(left = "", right = "") {
   const a = normalizeRoadComparison(left);
   const b = normalizeRoadComparison(right);
@@ -33449,10 +33503,14 @@ function parseGridlyRoadHazardRoadsFromText(value = "") {
 }
 
 function buildGridlyRoadHazardTxDotStyleCandidate(alert = {}) {
-  const empty = { text: "", source: "", hazard: "", road: "", referenceRoadA: "", referenceRoadB: "", nearestRoadName: "" };
+  const empty = { text: "", source: "", hazard: "", road: "", referenceRoadA: "", referenceRoadB: "", nearestRoadName: "", productionPolicyVersion: "V313", selectedTier: "" };
   if (!alert || typeof alert !== "object") return empty;
   if (isGridlyAlertRailOrCrossingRelated(alert)) return { ...empty, source: "rail_or_crossing" };
   const hazard = getGridlyRoadHazardLabel(alert);
+  const coords = {
+    lat: Number(alert?.lat ?? alert?.latitude ?? alert?.rawLat ?? alert?.raw?.lat ?? alert?.raw?.latitude ?? alert?.coordinates?.lat),
+    lng: Number(alert?.lng ?? alert?.lon ?? alert?.longitude ?? alert?.rawLng ?? alert?.raw?.lng ?? alert?.raw?.lon ?? alert?.raw?.longitude ?? alert?.coordinates?.lng ?? alert?.coordinates?.lon)
+  };
   const renderedText = getGridlyAlertFirstTextValue(alert, [
     "resolvedHeadline",
     "finalHeadline",
@@ -33574,16 +33632,32 @@ function buildGridlyRoadHazardTxDotStyleCandidate(alert = {}) {
   const referenceRoadA = refs[0]?.road || "";
   const referenceRoadB = refs[1]?.road || "";
   const nearestRoadName = (refs.find((entry) => !entry.broad) || refs[0])?.road || "";
+  const explicitIntersectionSources = refs.filter((entry) => /(?:^|\.)(?:intersection|crossStreet|crossStreetA|crossStreet1|fromStreet|startStreet)(?:$|\.)/i.test(entry.source || ""));
+  const tier1ReferenceRoad = explicitIntersectionSources[0]?.road || "";
+  const communityDistance = typeof resolveGridlyV313RoadHazardCommunityDistance === "function"
+    ? resolveGridlyV313RoadHazardCommunityDistance(coords)
+    : { text: "", community: "", distance: null, direction: "" };
+  const majorCorridor = typeof isGridlyV313MajorRoadHazardCorridor === "function" && isGridlyV313MajorRoadHazardCorridor(road);
   let text = `${hazard} on ${road}`;
   let source = "roadHazard.primaryRoad";
-  if (referenceRoadA && referenceRoadB) {
+  let selectedTier = "tier4_nearest_road_fallback";
+  if (tier1ReferenceRoad) {
+    text = `${hazard} on ${road} at ${tier1ReferenceRoad}`;
+    source = "roadHazard.V313.verifiedIntersection";
+    selectedTier = "tier1_verified_intersection";
+  } else if (referenceRoadA && referenceRoadB) {
     text = `${hazard} on ${road} between ${referenceRoadA} and ${referenceRoadB}`;
-    source = "roadHazard.primaryRoad+referenceRoadA+referenceRoadB";
+    source = "roadHazard.V313.betweenReferences";
+    selectedTier = "tier4_nearest_road_fallback";
+  } else if (majorCorridor && communityDistance.text) {
+    text = `${hazard} on ${road} ${communityDistance.text}`;
+    source = "roadHazard.V313.majorCorridorCommunityDistance";
+    selectedTier = "tier3_community_distance";
   } else if (nearestRoadName) {
     text = `${hazard} on ${road} near ${nearestRoadName}`;
-    source = refs.find((entry) => entry.road === nearestRoadName)?.source === "nearestRoadName" ? "roadHazard.primaryRoad+nearestRoadName" : "roadHazard.primaryRoad+referenceRoad";
+    source = refs.find((entry) => entry.road === nearestRoadName)?.source === "nearestRoadName" ? "roadHazard.V313.primaryRoad+nearestRoadName" : "roadHazard.V313.primaryRoad+referenceRoad";
   }
-  return { text: normalizeGridlyLightweightAlertSummaryText(text), source, hazard, road, referenceRoadA, referenceRoadB, nearestRoadName };
+  return { text: normalizeGridlyLightweightAlertSummaryText(text), source, hazard, road, referenceRoadA, referenceRoadB, nearestRoadName, productionPolicyVersion: "V313", selectedTier, communityDistance };
 }
 
 function buildGridlyCrossingAlertCandidate(alert = {}) {
