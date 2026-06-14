@@ -16026,7 +16026,7 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
       || sourceIncident?.incidentType || sourceIncident?.type || sourceIncident?.report_type || sourceIncident?.reportType || sourceIncident?.hazardType || sourceIncident?.category
       || sourceIncident?.latestReport?.incidentType || sourceIncident?.latestReport?.type || sourceIncident?.latestReport?.report_type || "unknown");
   };
-  const roadHazardIncidentTypes = new Set(["road_closed", "construction", "traffic_backup", "crash", "flooding", "disabled_vehicle", "downed_power_line", "livestock", "emergency_response", "other_hazard", "other hazard"]);
+  const roadHazardIncidentTypes = new Set(["road_closed", "closure", "construction", "traffic_backup", "crash", "flooding", "disabled_vehicle", "downed_power_line", "livestock", "emergency_response", "other_hazard", "other hazard"]);
   const crossingIncidentTypes = new Set(["blocked_crossing", "crossing_blocked", "crossing_clear", "rail", "rail_incident", "rail_issue", "rail_blockage", "rail_blockage_delay"]);
   const roadHazardTitleByType = {
     road_closed: "Road Closed",
@@ -16086,15 +16086,15 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
     const sourceRowType = sourceIncident?.latestReport ? "generatedRoadIncidents.latestReport" : (record?.gridlyShadowSourceIncident ? "generatedRoadIncidents" : safeText(record?.sourceType || record?.source || record?.provider || "record"));
     const sourceIncidentType = incidentTypeFor(record);
     const normalizedIncidentType = normalizeIncidentType(sourceIncidentType);
-    const id = safeText(record?.id || record?.incidentId || record?.reportId || record?.key || record?.raw?.id || sourceIncident?.key || sourceIncident?.id || `road-hazard-${index}`);
-    const crossingId = safeText(record?.crossingId || record?.crossing_id || record?.raw?.crossingId || record?.raw?.crossing_id || sourceIncident?.crossingId || sourceIncident?.crossing_id);
-    const kind = safeText(record?.reportKind || record?.report_kind || record?.raw?.reportKind || sourceIncident?.reportKind || sourceIncident?.report_kind).toLowerCase();
-    const rawType = safeText(record?.report_type || record?.type || record?.raw?.report_type || record?.raw?.type || sourceIncident?.report_type || sourceIncident?.type).toLowerCase();
+    const kind = normalizeIncidentType(record?.reportKind || record?.report_kind || record?.raw?.reportKind || sourceIncident?.reportKind || sourceIncident?.report_kind);
+    const rawType = normalizeIncidentType(record?.report_type || record?.type || record?.raw?.report_type || record?.raw?.type || sourceIncident?.report_type || sourceIncident?.type);
     const explicitRoadHazard = roadHazardIncidentTypes.has(normalizedIncidentType) || allowed.test(titleHazard(record));
-    const explicitCrossing = crossingIncidentTypes.has(normalizedIncidentType) || /^rail-/i.test(id) || Boolean(crossingId) || kind === "crossing" || kind === "rail" || /^rail_/.test(rawType) || /crossing/.test(rawType);
+    const actualCrossingType = crossingIncidentTypes.has(normalizedIncidentType) || /(?:^|_)(?:rail|crossing|blocking|clear)(?:_|$)/.test(normalizedIncidentType);
+    const actualCrossingKind = /^(?:crossing|rail|blocking|clear)$/.test(kind) || /(?:^|_)(?:rail|crossing|blocking|clear)(?:_|$)/.test(rawType);
+    const explicitCrossing = !explicitRoadHazard && (actualCrossingType || actualCrossingKind);
     const broadCrossingMatch = !explicitRoadHazard && typeof isGridlyAlertRailOrCrossingRelated === "function" && isGridlyAlertRailOrCrossingRelated(record);
     const retained = Boolean(record && typeof record === "object" && explicitRoadHazard && !explicitCrossing && !broadCrossingMatch);
-    const exclusionReason = retained ? "retained_road_hazard" : (!record || typeof record !== "object" ? "invalid_record" : (explicitCrossing ? "explicit_crossing_or_rail_metadata" : (broadCrossingMatch ? "rail_or_crossing_text_match" : "unsupported_road_hazard_type")));
+    const exclusionReason = retained ? "retained_road_hazard" : (!record || typeof record !== "object" ? "invalid_record" : (explicitCrossing ? "actual_crossing_or_rail_type" : (broadCrossingMatch ? "rail_or_crossing_text_match" : "unsupported_road_hazard_type")));
     return { retained, sourceRowType, sourceIncidentType, normalizedIncidentType, exclusionReason, exclusionStage: stage };
   };
   const isRoadHazardCandidate = (record = {}) => classifyShadowSourceRow(record).retained;
