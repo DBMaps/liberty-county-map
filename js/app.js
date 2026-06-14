@@ -15759,7 +15759,7 @@ window.gridlyReferenceRoadResolverAudit = function gridlyReferenceRoadResolverAu
       referenceRoadB,
       referenceOrigins: distinctRefs.map((entry) => ({ field: entry.field, value: entry.value, path: entry.path, origin: entry.origin })),
       rawReferenceCandidates: rawRefs.map((entry) => ({ field: entry.field, value: safeText(entry.value), path: entry.path || "", origin: inferOrigin(entry.path, sourceName, record) })),
-      resolverOutput: { text: resolverCandidate?.text || "", source: resolverCandidate?.source || "", road: resolverCandidate?.road || "", nearestRoadName: resolverCandidate?.nearestRoadName || "", referenceRoadA: resolverCandidate?.referenceRoadA || "", referenceRoadB: resolverCandidate?.referenceRoadB || "" },
+      resolverOutput: { text: resolverCandidate?.text || "", source: resolverCandidate?.source || "", road: resolverCandidate?.road || "", nearestRoadName: resolverCandidate?.nearestRoadName || "", referenceRoadA: resolverCandidate?.referenceRoadA || "", referenceRoadB: resolverCandidate?.referenceRoadB || "", selectedPrimaryCorridor: resolverCandidate?.selectedPrimaryCorridor || "", selectedPrimaryCorridorDistance: resolverCandidate?.selectedPrimaryCorridorDistance ?? null, corridorOwnershipWinner: resolverCandidate?.corridorOwnershipWinner || "", legacyReferenceRejected: Boolean(resolverCandidate?.legacyReferenceRejected) },
       resolverSucceeded,
       resolverReferenceRoad,
       resolverReturnedPrimaryRoadOnly,
@@ -16225,7 +16225,10 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
     const primaryField = firstInspectedValue(inspectedPrimaryFields);
     const parsedPrimary = parsedTexts.find((entry) => entry.parsed?.road)?.parsed?.road || "";
     let primarySource = primaryField.value ? primaryField.path : (productionCandidateUsable && productionCandidate.road ? `txdotCandidate.${productionCandidate.source || "road"}` : (parsedPrimary ? "renderedText.parse" : "missing"));
-    let primary = normalizeRoad(primaryField.value || (productionCandidateUsable ? productionCandidate.road : "") || parsedPrimary);
+    const selectedPrimaryCorridor = productionCandidateUsable ? safeText(productionCandidate.selectedPrimaryCorridor || productionCandidate.corridorOwnershipWinner || "") : "";
+    const selectedPrimaryCorridorDistance = productionCandidateUsable && Number.isFinite(Number(productionCandidate.selectedPrimaryCorridorDistance)) ? Number(productionCandidate.selectedPrimaryCorridorDistance) : null;
+    let primary = normalizeRoad(selectedPrimaryCorridor || primaryField.value || (productionCandidateUsable ? productionCandidate.road : "") || parsedPrimary);
+    if (selectedPrimaryCorridor) primarySource = productionCandidate.corridorOwnershipSource || "closest_validated_primary_corridor";
     const coordinateRoadLookup = coordinateRoadLookupFor(coords, primary);
     if (!primary && coordinateRoadLookup.primaryRoad) {
       primary = coordinateRoadLookup.primaryRoad;
@@ -16290,6 +16293,11 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
       currentProductionWording: current,
       candidates,
       primaryRoad: primary,
+      selectedPrimaryCorridor,
+      selectedPrimaryCorridorDistance,
+      corridorOwnershipWinner: productionCandidateUsable ? safeText(productionCandidate.corridorOwnershipWinner || selectedPrimaryCorridor || primary) : primary,
+      legacyReferenceRejected: Boolean(productionCandidateUsable && productionCandidate.legacyReferenceRejected),
+      legacyReferenceRejectedRoad: productionCandidateUsable ? safeText(productionCandidate.legacyReferenceRejectedRoad || "") : "",
       referenceRoad,
       crossingCandidate,
       communityCandidate: community.community,
@@ -33507,10 +33515,10 @@ function buildGridlyRoadHazardTxDotStyleCandidate(alert = {}) {
   if (!alert || typeof alert !== "object") return empty;
   if (isGridlyAlertRailOrCrossingRelated(alert)) return { ...empty, source: "rail_or_crossing" };
   const hazard = getGridlyRoadHazardLabel(alert);
-  const coords = {
-    lat: Number(alert?.lat ?? alert?.latitude ?? alert?.rawLat ?? alert?.raw?.lat ?? alert?.raw?.latitude ?? alert?.coordinates?.lat),
-    lng: Number(alert?.lng ?? alert?.lon ?? alert?.longitude ?? alert?.rawLng ?? alert?.raw?.lng ?? alert?.raw?.lon ?? alert?.raw?.longitude ?? alert?.coordinates?.lng ?? alert?.coordinates?.lon)
-  };
+  const coords = normalizeCoordinatePair(
+    alert?.lat ?? alert?.latitude ?? alert?.rawLat ?? alert?.raw?.lat ?? alert?.raw?.latitude ?? alert?.coordinates?.lat,
+    alert?.lng ?? alert?.lon ?? alert?.longitude ?? alert?.rawLng ?? alert?.raw?.lng ?? alert?.raw?.lon ?? alert?.raw?.longitude ?? alert?.coordinates?.lng ?? alert?.coordinates?.lon
+  );
   const renderedText = getGridlyAlertFirstTextValue(alert, [
     "resolvedHeadline",
     "finalHeadline",
@@ -33532,7 +33540,7 @@ function buildGridlyRoadHazardTxDotStyleCandidate(alert = {}) {
     "source.title"
   ]);
   const parsedRendered = parseGridlyRoadHazardRoadsFromText(renderedText);
-  const road = normalizeGridlyRoadHazardRoadComponent(getGridlyAlertFirstTextValue(alert, [
+  const fieldRoad = normalizeGridlyRoadHazardRoadComponent(getGridlyAlertFirstTextValue(alert, [
     "primaryRoad",
     "parsedPrimaryRoad",
     "roadName",
@@ -33556,7 +33564,10 @@ function buildGridlyRoadHazardTxDotStyleCandidate(alert = {}) {
     "source.corridor",
     "source.route"
   ]) || parsedRendered.road);
+  const corridorEvidence = coords ? gridlyRoadHazardPrimaryCorridorEvidence(coords.lat, coords.lng) : { selectedPrimaryCorridor: "", selectedPrimaryCorridorDistance: null, source: "missing_coordinates", candidates: [] };
+  const road = corridorEvidence.selectedPrimaryCorridor || fieldRoad;
   if (!road) return { ...empty, source: "missing_road", hazard };
+  const legacyReferenceRejected = Boolean(fieldRoad && corridorEvidence.selectedPrimaryCorridor && !areGridlyRoadHazardRoadsEquivalent(fieldRoad, corridorEvidence.selectedPrimaryCorridor));
 
   const refs = [];
   pushGridlyRoadHazardReferenceRoad(refs, getGridlyAlertFirstTextValue(alert, [
@@ -33628,6 +33639,11 @@ function buildGridlyRoadHazardTxDotStyleCandidate(alert = {}) {
   } else if (!refs.length && parsedRendered.referenceRoadA) {
     pushGridlyRoadHazardReferenceRoad(refs, parsedRendered.referenceRoadA, road, "renderedNear.referenceRoadA");
   }
+  if (legacyReferenceRejected) {
+    for (let index = refs.length - 1; index >= 0; index -= 1) {
+      if (areGridlyRoadHazardRoadsEquivalent(refs[index]?.road, fieldRoad)) refs.splice(index, 1);
+    }
+  }
 
   const referenceRoadA = refs[0]?.road || "";
   const referenceRoadB = refs[1]?.road || "";
@@ -33657,7 +33673,24 @@ function buildGridlyRoadHazardTxDotStyleCandidate(alert = {}) {
     text = `${hazard} on ${road} near ${nearestRoadName}`;
     source = refs.find((entry) => entry.road === nearestRoadName)?.source === "nearestRoadName" ? "roadHazard.V313.primaryRoad+nearestRoadName" : "roadHazard.V313.primaryRoad+referenceRoad";
   }
-  return { text: normalizeGridlyLightweightAlertSummaryText(text), source, hazard, road, referenceRoadA, referenceRoadB, nearestRoadName, productionPolicyVersion: "V313", selectedTier, communityDistance };
+  return {
+    text: normalizeGridlyLightweightAlertSummaryText(text),
+    source,
+    hazard,
+    road,
+    referenceRoadA,
+    referenceRoadB,
+    nearestRoadName,
+    productionPolicyVersion: "V316",
+    selectedTier,
+    communityDistance,
+    selectedPrimaryCorridor: corridorEvidence.selectedPrimaryCorridor || "",
+    selectedPrimaryCorridorDistance: corridorEvidence.selectedPrimaryCorridorDistance,
+    corridorOwnershipWinner: corridorEvidence.selectedPrimaryCorridor || road,
+    legacyReferenceRejected,
+    legacyReferenceRejectedRoad: legacyReferenceRejected ? fieldRoad : "",
+    corridorOwnershipSource: corridorEvidence.source || ""
+  };
 }
 
 function buildGridlyCrossingAlertCandidate(alert = {}) {
@@ -63609,6 +63642,34 @@ function collectNearbyRoadCandidates(lat, lng, maxDistanceMiles = 0.45, maxCandi
     .slice(0, Math.max(2, maxCandidates));
 }
 
+function gridlyRoadHazardPrimaryCorridorEvidence(lat, lng, options = {}) {
+  const coords = normalizeCoordinatePair(lat, lng);
+  const maxDistanceMiles = Number.isFinite(Number(options?.maxDistanceMiles)) ? Number(options.maxDistanceMiles) : 3;
+  const maxCandidates = Number.isFinite(Number(options?.maxCandidates)) ? Number(options.maxCandidates) : 24;
+  if (!coords || typeof collectNearbyRoadCandidates !== "function") {
+    return { selectedPrimaryCorridor: "", selectedPrimaryCorridorDistance: null, candidates: [], source: "missing_coordinates" };
+  }
+  const normalize = (value = "") => normalizeGridlyRoadHazardRoadComponent(value) || normalizeRoadDisplayCase(value);
+  const candidates = collectNearbyRoadCandidates(coords.lat, coords.lng, maxDistanceMiles, maxCandidates)
+    .map((entry) => ({
+      road: normalize(entry?.roadName),
+      distanceMiles: Number(entry?.distanceMiles),
+      distanceMeters: Number.isFinite(Number(entry?.distanceMiles)) ? Number((Number(entry.distanceMiles) * 1609.344).toFixed(1)) : null,
+      source: "roadway_dataset"
+    }))
+    .filter((entry) => entry.road && Number.isFinite(entry.distanceMiles) && entry.distanceMiles <= maxDistanceMiles)
+    .sort((a, b) => a.distanceMiles - b.distanceMiles);
+  const primaryCorridorCandidates = candidates.filter((entry) => isGridlyBroadHighwayReference(entry.road));
+  const selected = primaryCorridorCandidates[0] || null;
+  return {
+    selectedPrimaryCorridor: selected?.road || "",
+    selectedPrimaryCorridorDistance: selected?.distanceMeters ?? null,
+    selectedPrimaryCorridorDistanceMiles: selected ? Number(selected.distanceMiles.toFixed(4)) : null,
+    candidates,
+    source: selected ? "closest_validated_primary_corridor" : (roadwayDatasetLoaded ? "no_validated_primary_corridor_within_radius" : "roadway_dataset_unavailable")
+  };
+}
+
 function buildNearbyPairResolutionIndexKey(lat, lng, primaryRoad = "") {
   const coords = normalizeCoordinatePair(lat, lng);
   if (!coords) return "";
@@ -64325,7 +64386,7 @@ function gridlyPrimaryCorridorSelectionAudit(options = {}) {
       if (!existing || meters < existing.distanceMeters) candidateMap.set(key, { roadName: name, distanceMeters: round(meters, 1), source: "majorCorridorScan" });
     });
     const allCandidateCorridorsSortedByDistance = Array.from(candidateMap.values()).sort((a, b) => Number(a.distanceMeters) - Number(b.distanceMeters));
-    const likely = allCandidateCorridorsSortedByDistance[0] || null;
+    const likely = allCandidateCorridorsSortedByDistance.find((entry) => isGridlyBroadHighwayReference(entry.roadName)) || allCandidateCorridorsSortedByDistance[0] || null;
     const nearestMajorCorridor = allCandidateCorridorsSortedByDistance.find((entry) => majorCorridors.some((name) => sameRoad(name, entry.roadName))) || null;
     const distanceFor = (name = "") => allCandidateCorridorsSortedByDistance.find((entry) => sameRoad(entry.roadName, name))?.distanceMeters ?? null;
     const likelyPrimaryRoad = likely?.roadName || "";
@@ -64358,6 +64419,10 @@ function gridlyPrimaryCorridorSelectionAudit(options = {}) {
       nearestMajorCorridor: nearestMajorCorridor?.roadName || "",
       likelyPrimaryRoad,
       likelyPrimaryRoadDistanceMeters,
+      selectedPrimaryCorridor: likelyPrimaryRoad,
+      selectedPrimaryCorridorDistance: likelyPrimaryRoadDistanceMeters,
+      corridorOwnershipWinner: likelyPrimaryRoad || selectedPrimaryRoad,
+      legacyReferenceRejected: Boolean((selectedPrimaryRoad && likelyPrimaryRoad && !sameRoad(selectedPrimaryRoad, likelyPrimaryRoad)) || us90OverReferenceSuspected),
       selectedReferenceDistanceMeters,
       distanceToUS90Meters: distanceFor("US 90"),
       distanceToTX321Meters: distanceFor("TX 321"),
@@ -64373,8 +64438,8 @@ function gridlyPrimaryCorridorSelectionAudit(options = {}) {
   });
   return {
     available: true,
-    policyVersion: "V315",
-    productionBehaviorChanged: false,
+    policyVersion: "V316",
+    productionBehaviorChanged: true,
     generatedAt: now,
     roadHazardsChecked: rows.length,
     us90OverReferenceSuspectedCount: rows.filter((row) => row.us90OverReferenceSuspected).length,
