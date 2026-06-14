@@ -13108,7 +13108,42 @@ function buildCrossingRenderSignature(visibleCrossings = []) {
   return [activeGeoFilter, showAllCrossingsLayer ? "show-all" : "default-only", savedRouteCrossingIds.size, crossingRenderCrossingsVersion, crossingRenderReportsVersion, crossingRenderFilterVersion, visibleCrossings.length, ...visibleCrossings.map((crossing) => String(crossing.id))].join("|");
 }
 
+function getGridlyCrossingLayerMarkerCount() {
+  if (!crossingLayer || typeof crossingLayer.getLayers !== "function") return 0;
+  return crossingLayer.getLayers().filter((layer) => {
+    const crossingId = layer?.options?.crossingId || layer?.feature?.properties?.crossingId || layer?.feature?.properties?.crossing_id;
+    const incidentId = String(layer?.options?.incidentId || "");
+    if (crossingId || incidentId.startsWith("rail-")) return true;
+    const element = typeof layer?.getElement === "function" ? layer.getElement() : null;
+    return Boolean(element?.querySelector?.("[data-crossing-id], .gridly-crossing-marker, .gridly-crossing-marker-wrap"));
+  }).length;
+}
+
+function getGridlyCrossingDomMarkerCount() {
+  if (typeof document === "undefined" || !document?.querySelectorAll) return 0;
+  const selectors = [
+    "#map .gridly-crossing-marker-wrap[data-crossing-id]",
+    "#map .gridly-crossing-marker[data-category='crossing_infrastructure']",
+    "#map .gridly-crossing-marker[data-marker-category='rail_blockage_delay']",
+    "#map .leaflet-marker-icon [data-crossing-id]"
+  ];
+  const nodes = new Set();
+  selectors.forEach((selector) => {
+    document.querySelectorAll(selector).forEach((node) => nodes.add(node.closest?.(".leaflet-marker-icon") || node));
+  });
+  return nodes.size;
+}
+
+function getGridlyCurrentRenderedCrossingMarkerCount() {
+  const markerMapCount = crossingMarkers instanceof Map ? crossingMarkers.size : 0;
+  const layerCount = getGridlyCrossingLayerMarkerCount();
+  const domCount = getGridlyCrossingDomMarkerCount();
+  return Math.max(markerMapCount, layerCount, domCount);
+}
+
 window.gridlyCrossingRenderAudit = function gridlyCrossingRenderAudit() {
+  const renderedCrossingMarkerCount = getGridlyCurrentRenderedCrossingMarkerCount();
+  const visibleCrossingCount = Math.max(Number(gridlyCrossingRenderAuditState.lastRender.visibleCount || 0), renderedCrossingMarkerCount);
   return {
     renderCrossingsCallCount: gridlyCrossingRenderAuditState.renderCallCount,
     filterApplyCallCount: gridlyCrossingRenderAuditState.filterApplyCallCount,
@@ -13123,8 +13158,10 @@ window.gridlyCrossingRenderAudit = function gridlyCrossingRenderAudit() {
     cacheMode: gridlyCrossingFallbackAuditState.cacheMode,
     crossingFeatureCount: gridlyCrossingFallbackAuditState.crossingFeatureCount,
     activeGeoFilter,
-    visibleCrossingCount: gridlyCrossingRenderAuditState.lastRender.visibleCount,
-    renderedCrossingMarkerCount: crossingMarkers instanceof Map ? crossingMarkers.size : gridlyCrossingFallbackAuditState.renderedCrossingMarkerCount,
+    visibleCrossingCount,
+    renderedCrossingMarkerCount,
+    crossingLayerMarkerCount: getGridlyCrossingLayerMarkerCount(),
+    crossingDomMarkerCount: getGridlyCrossingDomMarkerCount(),
     crossingLabelSource: gridlyCrossingFallbackAuditState.crossingLabelSource,
     crossingDisplayName: gridlyCrossingFallbackAuditState.crossingDisplayName,
     crossingPrimaryRoad: gridlyCrossingFallbackAuditState.crossingPrimaryRoad,
