@@ -72,6 +72,25 @@ const LOCAL_CROSSINGS_URL = gridlyGetActiveCountyConfig().localCrossingsPath || 
 const CROSSING_REVIEW_OVERRIDES_URL = gridlyGetActiveCountyConfig().crossingOverridesPath;
 const ROADWAY_SEGMENTS_URL = gridlyGetActiveCountyConfig().roadSegmentsPath;
 const LIBERTY_COUNTY_BOUNDARY_URL = gridlyGetActiveCountyConfig().boundaryPath;
+const gridlyCrossingFallbackAuditState = {
+  localCrossingPath: LOCAL_CROSSINGS_URL || null,
+  remoteFraFetchFailed: false,
+  remoteFraFetchFailureReason: null,
+  localCrossingFallbackUsed: false,
+  localCrossingFallbackReachable: false,
+  localCrossingFeatureCount: 0,
+  normalizedCrossingCount: 0,
+  renderedCrossingMarkerCount: 0,
+  lastFetchSource: null,
+  lastUpdatedAt: null
+};
+
+function recordGridlyCrossingFallbackAudit(event, details = {}) {
+  Object.assign(gridlyCrossingFallbackAuditState, details, { lastUpdatedAt: new Date().toISOString() });
+  if (typeof console !== "undefined") {
+    console.info(`[GridlyCrossings] ${event}`, { ...gridlyCrossingFallbackAuditState });
+  }
+}
 const HAZARD_REPORT_EXPIRATION_MINUTES = 180;
 
 if (typeof window !== "undefined") {
@@ -81,6 +100,7 @@ if (typeof window !== "undefined") {
   window.gridlyNormalizeCountyId = gridlyNormalizeCountyId;
   window.gridlyIsKnownCountyId = gridlyIsKnownCountyId;
   window.gridlyBuildCountyStorageKey = gridlyBuildCountyStorageKey;
+  window.gridlyCrossingFallbackAuditState = gridlyCrossingFallbackAuditState;
 }
 
 const gridlyPwaInstallReadinessState = {
@@ -13063,7 +13083,10 @@ window.gridlyCrossingRenderAudit = function gridlyCrossingRenderAudit() {
     filterApplyCallCount: gridlyCrossingRenderAuditState.filterApplyCallCount,
     lastCalls: [...gridlyCrossingRenderAuditState.lastCalls],
     activeGeoFilter,
-    visibleCrossingCount: gridlyCrossingRenderAuditState.lastRender.visibleCount
+    visibleCrossingCount: gridlyCrossingRenderAuditState.lastRender.visibleCount,
+    renderedCrossingMarkerCount: crossingMarkers instanceof Map ? crossingMarkers.size : gridlyCrossingFallbackAuditState.renderedCrossingMarkerCount,
+    crossingLayerPresent: Boolean(crossingLayer),
+    crossingLayerMapAttached: Boolean(crossingLayer && map && map.hasLayer?.(crossingLayer))
   };
 };
 
@@ -26263,6 +26286,12 @@ async function loadCrossings() {
     const response = await fetchFraCrossingsWithRetry();
 
     const data = await response.json();
+    const crossingFeatureCount = Array.isArray(data?.features) ? data.features.length : 0;
+    const crossingDataSource = response?.gridlyCrossingSource || "remote_fra";
+    recordGridlyCrossingFallbackAudit("localCrossingFeatureCount", {
+      localCrossingFeatureCount: crossingDataSource === "local_fallback" ? crossingFeatureCount : gridlyCrossingFallbackAuditState.localCrossingFeatureCount,
+      lastFetchSource: crossingDataSource
+    });
 
     const rawCrossings = (data.features || [])
       .filter((feature) => {
@@ -26288,6 +26317,8 @@ async function loadCrossings() {
           props.roadwayname ||
           props.highwayname ||
           props.road ||
+          props.road_name ||
+          props.name ||
           props.crossingname ||
           "Railroad Crossing";
 
@@ -26321,12 +26352,17 @@ async function loadCrossings() {
           regionKey,
           risk: calculateBaseRisk(props, index),
           review: override,
+          source: crossingDataSource,
           props
         };
       });
 
     crossings = rawCrossings.filter((crossing) => {
       return shouldShowCrossingInLaunchMode(crossing);
+    });
+    recordGridlyCrossingFallbackAudit("normalizedCrossingCount", {
+      normalizedCrossingCount: crossings.length,
+      lastFetchSource: crossingDataSource
     });
 
     crossingRenderCrossingsVersion += 1;
@@ -26482,12 +26518,13 @@ async function fetchFraCrossingsWithRetry() {
 
   for (let attempt = 1; attempt <= CROSSING_FETCH_RETRY_ATTEMPTS; attempt += 1) {
     try {
-      const response = await fetch(FRA_URL);
+      const response = await fetch(FRA_URL, { cache: "no-store" });
 
       if (!response.ok) {
         throw new Error(`FRA feed returned ${response.status}`);
       }
 
+      response.gridlyCrossingSource = "remote_fra";
       return response;
     } catch (error) {
       lastError = error;
@@ -26503,6 +26540,10 @@ async function fetchFraCrossingsWithRetry() {
 
   if (LOCAL_CROSSINGS_URL) {
     try {
+      recordGridlyCrossingFallbackAudit("remoteFraFetchFailed", {
+        remoteFraFetchFailed: true,
+        remoteFraFetchFailureReason: String(lastError?.message || lastError || "unknown_error")
+      });
       console.warn("FRA crossing fetch failed. Loading local crossing fallback...", lastError);
       const fallbackResponse = await fetch(LOCAL_CROSSINGS_URL, { cache: "no-store" });
 
@@ -26510,6 +26551,12 @@ async function fetchFraCrossingsWithRetry() {
         throw new Error(`Local crossing fallback returned ${fallbackResponse.status}`);
       }
 
+      fallbackResponse.gridlyCrossingSource = "local_fallback";
+      recordGridlyCrossingFallbackAudit("localCrossingFallbackUsed", {
+        localCrossingFallbackUsed: true,
+        localCrossingFallbackReachable: true,
+        lastFetchSource: "local_fallback"
+      });
       return fallbackResponse;
     } catch (fallbackError) {
       throw new Error(`FRA crossing fetch failed and local fallback failed: ${fallbackError?.message || fallbackError}`);
@@ -26584,6 +26631,8 @@ function shouldShowCrossingInLaunchMode(crossing) {
   if (visibility === "hide") return false;
 
   if (visibility === "keep") return true;
+
+  if (String(crossing.source || "") === "local_fallback") return true;
 
   if (localName.length > 0) return true;
 
@@ -29722,6 +29771,9 @@ window.gridlyCrossingPipelineAudit = function gridlyCrossingPipelineAudit() {
   updateCrossingPipelineAudit("manual_window_call");
   return {
     ...gridlyCrossingPipelineAuditState,
+    ...gridlyCrossingFallbackAuditState,
+    crossingsLoadedCount: Array.isArray(crossings) ? crossings.length : 0,
+    crossingCoordinatesValidCount: Array.isArray(crossings) ? crossings.filter((crossing) => Number.isFinite(Number(crossing?.lat)) && Number.isFinite(Number(crossing?.lng))).length : 0,
     droppedCrossingReports: [...gridlyCrossingPipelineAuditState.droppedCrossingReports]
   };
 };
@@ -30068,7 +30120,13 @@ function scheduleRenderCrossings(reason = "unspecified", options = {}) {
 }
 
 function renderCrossings(reason = "unspecified", options = {}) {
-  if (!crossingLayer || !crossings.length) return;
+  if (!crossingLayer || !crossings.length) {
+    gridlyCrossingRenderAuditState.renderCallCount += 1;
+    const renderedCrossingMarkerCount = crossingMarkers instanceof Map ? crossingMarkers.size : 0;
+    recordGridlyCrossingFallbackAudit("renderedCrossingMarkerCount", { renderedCrossingMarkerCount });
+    pushCrossingAuditCall("render-skipped", reason, { crossingLayerPresent: Boolean(crossingLayer), crossingCount: Array.isArray(crossings) ? crossings.length : 0, renderedCrossingMarkerCount });
+    return;
+  }
   renderSavedRouteLine();
 
   const bounds = map?.getBounds?.();
@@ -30238,6 +30296,11 @@ function renderCrossings(reason = "unspecified", options = {}) {
 
     crossingMarkers.set(String(crossing.id), marker);
   });
+
+  recordGridlyCrossingFallbackAudit("renderedCrossingMarkerCount", {
+    renderedCrossingMarkerCount: crossingMarkers.size
+  });
+  pushCrossingAuditCall("markers-added", reason, { renderedCrossingMarkerCount: crossingMarkers.size });
 
   highlightNearestCrossingOnFirstLoad();
 }
