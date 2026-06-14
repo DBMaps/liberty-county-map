@@ -13492,13 +13492,16 @@ function getGridlyCrossingPopupContainmentBounds(mapRef = map) {
     bottom: viewportTop + viewportHeight
   };
   const pad = 8;
+  const bottomRegionRect = document.querySelector("#gridlyPortraitV2 .gridly-v2-bottom-region")?.getBoundingClientRect?.();
+  const portraitBottomLimit = bottomRegionRect && bottomRegionRect.top > 0 ? bottomRegionRect.top - pad : Infinity;
   return {
     left: Math.max(mapRect.left, viewportRect.left) + pad,
     right: Math.min(mapRect.right, viewportRect.right) - pad,
     top: Math.max(mapRect.top, viewportRect.top) + pad,
-    bottom: Math.min(mapRect.bottom, viewportRect.bottom) - pad,
+    bottom: Math.min(mapRect.bottom, viewportRect.bottom, portraitBottomLimit) - pad,
     mapRect: { left: mapRect.left, right: mapRect.right, top: mapRect.top, bottom: mapRect.bottom, width: mapRect.width, height: mapRect.height },
     viewportRect,
+    bottomRegionRect: bottomRegionRect ? { top: bottomRegionRect.top, bottom: bottomRegionRect.bottom, height: bottomRegionRect.height } : null,
     pad
   };
 }
@@ -13534,8 +13537,6 @@ function enforceGridlyCrossingPopupContainment(marker, session, reason = "post-o
   const mapRef = session?.mapRef || map;
   if (isGridlyMobileCrossingPopupViewport(mapRef)) {
     invalidateGridlyCrossingPopupMapSize(mapRef, `${reason}-mobile-containment`);
-    gridlyPopupClippedAfterOpen = false;
-    return false;
   }
   const bounds = getGridlyCrossingPopupContainmentBounds(mapRef);
   const popupRect = popupEl?.getBoundingClientRect?.();
