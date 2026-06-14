@@ -13514,6 +13514,62 @@ function getGridlyCrossingPopupContainmentBounds(mapRef = map) {
   };
 }
 
+
+function getGridlyMobilePortraitUsableMapCenter(mapRef = map) {
+  const mapEl = typeof mapRef?.getContainer === "function" ? mapRef.getContainer() : document.getElementById("map");
+  const mapRect = mapEl?.getBoundingClientRect?.();
+  const viewport = typeof mapRef?.getSize === "function" ? mapRef.getSize() : null;
+  const viewportHeight = Number(viewport?.y || window.visualViewport?.height || window.innerHeight || document.documentElement?.clientHeight || 0);
+  const fallbackY = Math.round(viewportHeight * 0.62);
+  if (!mapRect || !Number.isFinite(mapRect.top) || !Number.isFinite(mapRect.bottom) || mapRect.height <= 0) {
+    return { measured: false, centerY: fallbackY, fallbackY, reason: "missing-map-rect" };
+  }
+
+  const visibleRect = (selector) => {
+    const element = document.querySelector(selector);
+    if (!element || element.hidden) return null;
+    const rect = element.getBoundingClientRect?.();
+    if (!rect || rect.width <= 0 || rect.height <= 0) return null;
+    if (rect.bottom <= 0 || rect.top >= (window.visualViewport?.height || window.innerHeight || 0)) return null;
+    return rect;
+  };
+
+  const topRects = [
+    visibleRect("#gridlyPortraitV2 .gridly-v2-topbar"),
+    visibleRect("#gridlyPortraitV2 .gridly-v2-status-pill"),
+    visibleRect("#gridlyPortraitV2 .gridly-v2-segments")
+  ].filter(Boolean);
+  const bottomRect = visibleRect("#gridlyPortraitBottomRegion") || visibleRect("#gridlyPortraitV2 .gridly-v2-bottom-region");
+  if (!topRects.length || !bottomRect) {
+    return {
+      measured: false,
+      centerY: fallbackY,
+      fallbackY,
+      reason: !topRects.length ? "missing-top-rects" : "missing-bottom-rect"
+    };
+  }
+
+  const pad = 8;
+  const usableTop = Math.max(mapRect.top, ...topRects.map((rect) => rect.bottom)) + pad;
+  const usableBottom = Math.min(mapRect.bottom, bottomRect.top) - pad;
+  if (!Number.isFinite(usableTop) || !Number.isFinite(usableBottom) || usableBottom - usableTop < 80) {
+    return { measured: false, centerY: fallbackY, fallbackY, reason: "invalid-usable-area", usableTop, usableBottom };
+  }
+
+  return {
+    measured: true,
+    centerY: Math.round(((usableTop + usableBottom) / 2) - mapRect.top),
+    fallbackY,
+    reason: "measured-usable-area",
+    usableTop: Math.round(usableTop),
+    usableBottom: Math.round(usableBottom),
+    topBoundary: Math.round(Math.max(...topRects.map((rect) => rect.bottom))),
+    bottomBoundary: Math.round(bottomRect.top),
+    mapTop: Math.round(mapRect.top),
+    mapBottom: Math.round(mapRect.bottom)
+  };
+}
+
 function getGridlyCrossingPopupContainmentPan(popupRect, bounds) {
   if (!popupRect || !bounds) return { clipped: false, panX: 0, panY: 0 };
   let panX = 0;
@@ -13722,7 +13778,8 @@ function openCrossingPopupFromMarkerInteraction(marker, crossing, source = "clic
     const mapRect = mapEl?.getBoundingClientRect?.();
     const safeTopY = Math.max(16, Math.round((bounds?.top || mapRect?.top || 0) - (mapRect?.top || 0)));
     const safeBottomY = Math.max(safeTopY + 80, Math.round((bounds?.bottom || (mapRect?.bottom || viewportHeight)) - (mapRect?.top || 0)));
-    const preferredY = Math.round(viewportHeight * 0.62);
+    const usableCenter = getGridlyMobilePortraitUsableMapCenter(mapRef);
+    const preferredY = usableCenter.measured ? usableCenter.centerY : Math.round(viewportHeight * 0.62);
     const lowerTargetY = safeTopY + estimatedPopupSize.height + 12;
     const upperTargetY = safeBottomY - 28;
     const desiredY = lowerTargetY <= upperTargetY
@@ -13740,6 +13797,7 @@ function openCrossingPopupFromMarkerInteraction(marker, crossing, source = "clic
       safeTopY,
       safeBottomY,
       preferredY,
+      usableCenter,
       desiredY,
       panY: mobilePanY,
       containmentBounds: bounds
