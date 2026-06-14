@@ -4457,8 +4457,8 @@ function gridlyGetVisualSignatureRouteStyle(kind = "core") {
     halo: {
       pane: "routePane",
       color: "#d9f8ff",
-      weight: 24,
-      opacity: 0.18,
+      weight: 18,
+      opacity: 0.12,
       lineCap: "round",
       lineJoin: "round",
       interactive: false,
@@ -4467,8 +4467,8 @@ function gridlyGetVisualSignatureRouteStyle(kind = "core") {
     shoulder: {
       pane: "routePane",
       color: "#1b6f9f",
-      weight: 15,
-      opacity: 0.54,
+      weight: 11,
+      opacity: 0.44,
       lineCap: "round",
       lineJoin: "round",
       interactive: false,
@@ -4477,8 +4477,8 @@ function gridlyGetVisualSignatureRouteStyle(kind = "core") {
     core: {
       pane: "routePane",
       color: "#7ce7ff",
-      weight: 8,
-      opacity: 0.96,
+      weight: 6,
+      opacity: 0.88,
       lineCap: "round",
       lineJoin: "round",
       className: "gridly-route-signature-core"
@@ -4502,12 +4502,12 @@ function gridlyCreateRouteEndpointMarker(point, kind = "destination") {
   const isDestination = kind === "destination";
   return L.circleMarker(point, {
     pane: "routePane",
-    radius: isDestination ? 8 : 5,
-    color: isDestination ? "#f8fdff" : "rgba(215, 241, 255, 0.82)",
-    weight: isDestination ? 3 : 2,
-    fillColor: isDestination ? "#06324f" : "#0e5f87",
-    fillOpacity: isDestination ? 0.96 : 0.82,
-    opacity: isDestination ? 0.98 : 0.78,
+    radius: isDestination ? 7 : 4,
+    color: isDestination ? "rgba(178, 244, 255, 0.88)" : "rgba(57, 214, 210, 0.82)",
+    weight: isDestination ? 2 : 2,
+    fillColor: isDestination ? "#0b3854" : "#20d6cd",
+    fillOpacity: isDestination ? 0.42 : 0.78,
+    opacity: isDestination ? 0.84 : 0.72,
     interactive: false,
     className: `gridly-route-endpoint gridly-route-endpoint-${sanitizeText(kind)}`
   });
@@ -20804,8 +20804,8 @@ function drawGridlyDestinationRoutePreviewLine(latLngs = []) {
   const halo = leaflet.polyline(latLngs, {
     pane: "routePane",
     color: "#e8fbff",
-    weight: 24,
-    opacity: 0.18,
+    weight: 18,
+    opacity: 0.12,
     lineCap: "round",
     lineJoin: "round",
     interactive: false,
@@ -20814,8 +20814,8 @@ function drawGridlyDestinationRoutePreviewLine(latLngs = []) {
   const shoulder = leaflet.polyline(latLngs, {
     pane: "routePane",
     color: "#0b5f92",
-    weight: 15,
-    opacity: 0.62,
+    weight: 11,
+    opacity: 0.46,
     lineCap: "round",
     lineJoin: "round",
     interactive: false,
@@ -20824,8 +20824,8 @@ function drawGridlyDestinationRoutePreviewLine(latLngs = []) {
   const core = leaflet.polyline(latLngs, {
     pane: "routePane",
     color: "#8ff1ff",
-    weight: 8,
-    opacity: 0.98,
+    weight: 6,
+    opacity: 0.9,
     lineCap: "round",
     lineJoin: "round",
     interactive: false,
@@ -25339,7 +25339,7 @@ function initMap() {
   L.control.zoom({ position: "bottomright" }).addTo(map);
 
   map.createPane("routePane");
-  map.getPane("routePane").style.zIndex = 700;
+  map.getPane("routePane").style.zIndex = 620;
   map.getPane("routePane").style.pointerEvents = "none";
   map.createPane("satLabelsPane");
   map.getPane("satLabelsPane").style.zIndex = 640;
@@ -42397,8 +42397,8 @@ function drawPremiumRouteLine(latLngs, color = getRouteStatusColor(), renderFunc
   const glow = L.polyline(latLngs, {
     pane: "routePane",
     color: "#3cf2ff",
-    weight: 10,
-    opacity: 0.18,
+    weight: 8,
+    opacity: 0.12,
     lineJoin: "round",
     lineCap: "round",
     interactive: false
@@ -42407,8 +42407,8 @@ function drawPremiumRouteLine(latLngs, color = getRouteStatusColor(), renderFunc
   const core = L.polyline(latLngs, {
     pane: "routePane",
     color,
-    weight: 4,
-    opacity: 0.88,
+    weight: 3.5,
+    opacity: 0.8,
     lineJoin: "round",
     lineCap: "round",
     interactive: false
@@ -42417,8 +42417,8 @@ function drawPremiumRouteLine(latLngs, color = getRouteStatusColor(), renderFunc
   const accent = L.polyline(latLngs, {
     pane: "routePane",
     color: "#9efaff",
-    weight: 2,
-    opacity: 0.68,
+    weight: 1.5,
+    opacity: 0.56,
     lineJoin: "round",
     lineCap: "round",
     interactive: false
@@ -55361,15 +55361,15 @@ function setGridlyDestinationMarker(result, options = {}) {
     const destinationTitle = String(normalized.title || normalized.address || "Selected destination");
     const destinationIcon = window.L.divIcon({
       className: "gridly-destination-signature-icon",
-      html: `<div class="gridly-destination-signature-marker" data-gridly-map-owner="destination" data-gridly-visual-state="destination_selected" data-gridly-selected="true" aria-hidden="true"><span class="gridly-destination-ring"></span><span class="gridly-destination-core"></span><span class="gridly-destination-stem"></span></div>`,
-      iconSize: [48, 48],
-      iconAnchor: [24, 24],
-      popupAnchor: [0, -26]
+      html: `<div class="gridly-destination-signature-marker" data-gridly-map-owner="destination" data-gridly-visual-state="destination_selected" data-gridly-selected="true" aria-hidden="true"><span class="gridly-destination-ring"></span><span class="gridly-destination-core"></span></div>`,
+      iconSize: [32, 32],
+      iconAnchor: [16, 16],
+      popupAnchor: [0, -18]
     });
     marker = window.L.marker([coordinates.lat, coordinates.lng], {
       title: destinationTitle,
       icon: destinationIcon,
-      zIndexOffset: 620
+      zIndexOffset: 120
     });
     marker.addTo(mapInstance);
     if (options?.tooltip !== false && typeof marker.bindTooltip === "function") {
