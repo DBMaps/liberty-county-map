@@ -13317,6 +13317,45 @@ let gridlyPopupInterferenceEventSeen = false;
 let gridlyPopupDeferredCrossingRenderReason = "";
 let gridlyRouteWatchAllClickedDuringPopupTap = false;
 
+
+function isGridlyMobileCrossingPopupViewport(mapRef = map) {
+  const mapSize = typeof mapRef?.getSize === "function" ? mapRef.getSize() : null;
+  const width = Number(mapSize?.x || window.visualViewport?.width || window.innerWidth || document.documentElement?.clientWidth || 0);
+  const height = Number(mapSize?.y || window.visualViewport?.height || window.innerHeight || document.documentElement?.clientHeight || 0);
+  const layoutMode = document.body?.getAttribute?.("data-layout-mode") || document.documentElement?.getAttribute?.("data-layout-mode") || "";
+  return Boolean(width > 0 && (width <= 768 || /portrait|mobile/i.test(layoutMode) || height > width));
+}
+
+function invalidateGridlyCrossingPopupMapSize(mapRef = map, reason = "crossing-popup") {
+  if (!mapRef || typeof mapRef.invalidateSize !== "function") return false;
+  requestAnimationFrame(() => {
+    try {
+      mapRef.invalidateSize({ pan: false, animate: false });
+    } catch (_) {
+      mapRef.invalidateSize(false);
+    }
+  });
+  gridlyPopupViewportBounds = {
+    ...(gridlyPopupViewportBounds || {}),
+    lastInvalidateSizeReason: reason,
+    lastInvalidateSizeAt: Date.now()
+  };
+  return true;
+}
+
+function getGridlyCrossingPopupOptions(mapRef = map) {
+  const mobile = isGridlyMobileCrossingPopupViewport(mapRef);
+  return {
+    maxWidth: 350,
+    autoPan: !mobile,
+    autoPanPaddingTopLeft: L.point(18, 18),
+    autoPanPaddingBottomRight: L.point(18, mobile ? 120 : 48),
+    keepInView: false,
+    closeButton: true,
+    className: "gridly-crossing-popup"
+  };
+}
+
 function cancelPendingCrossingPopup(reason = "") {
   const session = window.__gridlyPopupPanSession;
   if (!session) return;
@@ -13410,6 +13449,11 @@ function getGridlyCrossingPopupContainmentPan(popupRect, bounds) {
 function enforceGridlyCrossingPopupContainment(marker, session, reason = "post-open", retryCount = 0) {
   const popupEl = marker?.getPopup?.()?.getElement?.();
   const mapRef = session?.mapRef || map;
+  if (isGridlyMobileCrossingPopupViewport(mapRef)) {
+    invalidateGridlyCrossingPopupMapSize(mapRef, `${reason}-mobile-containment`);
+    gridlyPopupClippedAfterOpen = false;
+    return false;
+  }
   const bounds = getGridlyCrossingPopupContainmentBounds(mapRef);
   const popupRect = popupEl?.getBoundingClientRect?.();
   if (!popupEl || !popupRect || !bounds) {
@@ -13484,7 +13528,9 @@ function finalizeOpenCrossingPopup(marker, token, reason = "unknown") {
   gridlyPopupLastOpenCallAt = Date.now();
   gridlyPopupLastOpenMethod = "marker.openPopup";
   gridlyPopupEarlyReturnReason = "";
+  invalidateGridlyCrossingPopupMapSize(session.mapRef || map, `${reason}-before-open`);
   marker.openPopup();
+  invalidateGridlyCrossingPopupMapSize(session.mapRef || map, `${reason}-after-open`);
 
   const verifyOpen = () => {
     const activeSession = window.__gridlyPopupPanSession;
@@ -13541,6 +13587,7 @@ function openCrossingPopupFromMarkerInteraction(marker, crossing, source = "clic
   window.__gridlyPopupPanSession = session;
   setGridlyCrossingPopupSessionClass(true);
   if (typeof syncMobileDestinationCommandCard === "function") syncMobileDestinationCommandCard();
+  invalidateGridlyCrossingPopupMapSize(mapRef, `${source}-session-start`);
   mapRef?.closePopup?.();
 
   if (!mapRef || typeof mapRef.latLngToContainerPoint !== "function" || typeof mapRef.panBy !== "function") {
@@ -13575,6 +13622,18 @@ function openCrossingPopupFromMarkerInteraction(marker, crossing, source = "clic
   gridlyPopupLastMarkerScreenPoint = { x: Math.round(markerPoint.x), y: Math.round(markerPoint.y) };
   gridlyPopupLastSafeTargetPoint = { x: safeTargetX, y: safeTargetY };
   gridlyPopupViewportBounds = { width: viewportWidth, height: viewportHeight, safeInsets };
+
+  if (isGridlyMobileCrossingPopupViewport(mapRef)) {
+    window.__gridlyLastPopupAutoPanApplied = false;
+    gridlyPopupCameraPanApplied = false;
+    gridlyPopupAnchorMode = "mobile-no-camera-pan";
+    gridlyPopupViewportBounds = { ...(gridlyPopupViewportBounds || {}), mobileAutoPanDisabled: true };
+    requestAnimationFrame(() => {
+      gridlyLastPopupTimerFiredAt = Date.now();
+      finalizeOpenCrossingPopup(marker, token, `${source}-mobile-no-pan-immediate`);
+    });
+    return true;
+  }
 
   const openDelay = shouldAutoPan ? 320 : 0;
   gridlyLastPopupScheduledDelay = openDelay;
@@ -30370,12 +30429,7 @@ function renderCrossings(reason = "unspecified", options = {}) {
     });
 
     const marker = L.marker([crossing.lat, crossing.lng], { icon, incidentId: `rail-${crossing.id}`, crossingId: String(crossing.id) })
-      .bindPopup(buildPopup(crossing, report), {
-        maxWidth: 350,
-        autoPan: false,
-        closeButton: true,
-        className: "gridly-crossing-popup"
-      })
+      .bindPopup(buildPopup(crossing, report), getGridlyCrossingPopupOptions(map))
       .addTo(crossingLayer);
 
     if (!marker.__gridlyCrossingClickBound) {
@@ -30404,6 +30458,8 @@ function renderCrossings(reason = "unspecified", options = {}) {
       gridlyPopupReopenReady = true;
       document.body?.classList.add("gridly-crossing-popup-visible");
       if (typeof syncMobileDestinationCommandCard === "function") syncMobileDestinationCommandCard();
+      invalidateGridlyCrossingPopupMapSize(map, "popupopen");
+      window.setTimeout(() => invalidateGridlyCrossingPopupMapSize(map, "popupopen-settled"), 120);
       const popupEl = marker.getPopup()?.getElement?.();
       if (popupEl) wirePopupReportButtons(popupEl);
     });
