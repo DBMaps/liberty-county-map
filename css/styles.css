@@ -20531,3 +20531,85 @@ body[data-layout-mode="portrait"] #map .leaflet-control-zoom a {
     max-height: min(42svh, 324px);
   }
 }
+
+/* V310 route visual hierarchy: awareness markers stay dominant over route context. */
+#map .leaflet-pane.leaflet-routePane-pane {
+  z-index: 620 !important;
+}
+
+#map .leaflet-pane.leaflet-routePane-pane path.gridly-destination-route-hero-halo,
+#map .leaflet-pane.leaflet-routePane-pane path.gridly-route-signature-halo {
+  stroke-opacity: 0.14 !important;
+  filter: drop-shadow(0 5px 9px rgba(1, 8, 18, 0.24));
+}
+
+#map .leaflet-pane.leaflet-routePane-pane path.gridly-destination-route-hero-shoulder,
+#map .leaflet-pane.leaflet-routePane-pane path.gridly-route-signature-shoulder {
+  stroke-opacity: 0.48 !important;
+  filter: drop-shadow(0 4px 8px rgba(2, 14, 26, 0.22));
+}
+
+#map .leaflet-pane.leaflet-routePane-pane path.gridly-destination-route-hero-core,
+#map .leaflet-pane.leaflet-routePane-pane path.gridly-route-signature-core {
+  stroke-opacity: 0.88 !important;
+  filter: drop-shadow(0 3px 7px rgba(0, 54, 88, 0.26));
+}
+
+#map .gridly-route-endpoint {
+  filter: drop-shadow(0 3px 7px rgba(0, 9, 18, 0.22));
+}
+
+#map .gridly-route-endpoint-destination {
+  filter: drop-shadow(0 4px 8px rgba(0, 13, 24, 0.24));
+}
+
+#map .leaflet-marker-icon.gridly-destination-signature-icon,
+#map .gridly-route-endpoint-destination {
+  z-index: 625 !important;
+}
+
+.gridly-destination-signature-marker {
+  width: 32px;
+  height: 32px;
+  transform: none;
+  display: grid;
+  place-items: center;
+  filter: drop-shadow(0 5px 9px rgba(0, 9, 18, 0.24));
+}
+
+.gridly-destination-signature-marker::before {
+  inset: 6px;
+  background: rgba(6, 34, 52, 0.34);
+  border: 2px solid rgba(152, 235, 249, 0.86);
+  box-shadow: inset 0 0 0 1px rgba(235, 252, 255, 0.22), 0 0 0 2px rgba(5, 23, 38, 0.18);
+}
+
+.gridly-destination-signature-marker::after {
+  inset: 13px;
+  background: #baf7ff;
+  border: 0;
+  box-shadow: 0 0 0 1px rgba(4, 42, 66, 0.58);
+}
+
+.gridly-destination-signature-marker span.gridly-destination-ring {
+  inset: 3px;
+  border: 1px solid rgba(184, 244, 255, 0.46);
+  background: transparent;
+}
+
+.gridly-destination-signature-marker span.gridly-destination-core {
+  left: 13px;
+  top: 13px;
+  width: 6px;
+  height: 6px;
+  background: #d8fbff;
+  box-shadow: 0 0 0 1px rgba(4, 42, 66, 0.58);
+}
+
+.gridly-destination-signature-marker span.gridly-destination-stem {
+  display: none;
+}
+
+#map .gridly-destination-signature-marker[data-gridly-selected="true"] {
+  transform: none;
+}
