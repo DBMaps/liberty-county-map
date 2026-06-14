@@ -1501,6 +1501,38 @@ const GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS = Object.freeze({
   txdot_other: "other-hazard.png",
   utility_work: "downed-power-line.png"
 });
+
+const GRIDLY_PRODUCTION_MARKER_TIP_ANCHOR_RATIOS = Object.freeze({
+  "construction-zone.png": 244 / 256,
+  "crash-on-road.png": 193 / 256,
+  "debris-in-road.png": 200 / 256,
+  "disabled-vehicle.png": 244 / 256,
+  "downed-power-line.png": 244 / 256,
+  "emergency-response.png": 244 / 256,
+  "livestock-on-road.png": 244 / 256,
+  "other-hazard.png": 242 / 256,
+  "rail-crossing.png": 1053 / 1536,
+  "road-closed.png": 192 / 256,
+  "traffic-backup-heavy-delay.png": 192 / 256,
+  "traffic-signal-issue.png": 194 / 256,
+  "train-front.png": 205 / 256,
+  "water-over-road.png": 204 / 256
+});
+
+function getGridlyProductionMarkerAnchor(categoryOrAsset = "", displaySize = GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE) {
+  const assetName = String(GRIDLY_PRODUCTION_MARKER_CATEGORY_ASSETS[categoryOrAsset] || categoryOrAsset || "").split("/").pop();
+  const safeSize = Number.isFinite(Number(displaySize)) && Number(displaySize) > 0
+    ? Number(displaySize)
+    : GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE;
+  const tipRatio = GRIDLY_PRODUCTION_MARKER_TIP_ANCHOR_RATIOS[assetName] || 0.5;
+  return [safeSize / 2, Math.round(safeSize * tipRatio * 100) / 100];
+}
+
+function getGridlyProductionMarkerPopupAnchor(categoryOrAsset = "", displaySize = GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE) {
+  const anchor = getGridlyProductionMarkerAnchor(categoryOrAsset, displaySize);
+  return [0, -Math.round(anchor[1] * 100) / 100];
+}
+
 const GRIDLY_PRODUCTION_MARKER_LOAD_STATE = {
   attempted: new Set(),
   loaded: new Set(),
@@ -30608,18 +30640,21 @@ function renderCrossings(reason = "unspecified", options = {}) {
     const crossingMarkerDisplaySize = hasActiveIssue
       ? GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE
       : GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_DISPLAY_SIZE;
+    const crossingMarkerAnchor = getGridlyProductionMarkerAnchor(crossingMarkerCategory, crossingMarkerDisplaySize);
+    const crossingMarkerPopupAnchor = getGridlyProductionMarkerPopupAnchor(crossingMarkerCategory, crossingMarkerDisplaySize);
     markGridlyProductionMarkerAssetLoad(crossingMarkerAsset.assetName, "attempted");
 
     const icon = L.divIcon({
       className: `gridly-production-marker-icon gridly-crossing-production-marker-icon ${crossingMarkerCategory === "crossing_infrastructure" ? "gridly-crossing-infrastructure-marker-icon" : "gridly-crossing-active-delay-marker-icon"} ${sanitizeText(railMarkerVisualClass)} ${sanitizeText(railVisualMetadata.className)}`,
-      html: `<div class="gridly-marker-wrap gridly-crossing-marker-wrap ${sanitizeText(railMarkerVisualClass)} ${sanitizeText(railVisualMetadata.className)}" data-visual-style="${sanitizeText(railMarkerStyle)}" ${railVisualMetadata.attributes} data-crossing-id="${sanitizeText(String(crossing.id))}" data-infrastructure-opacity="${sanitizeText(String(CROSSING_INFRASTRUCTURE_MARKER_OPACITY))}" data-gridly-marker-owner="crossing_inventory">
+      html: `<div class="gridly-marker-wrap gridly-crossing-marker-wrap ${sanitizeText(railMarkerVisualClass)} ${sanitizeText(railVisualMetadata.className)}" style="--gridly-production-marker-anchor-x:${sanitizeText(String(crossingMarkerAnchor[0]))}px; --gridly-production-marker-anchor-y:${sanitizeText(String(crossingMarkerAnchor[1]))}px;" data-visual-style="${sanitizeText(railMarkerStyle)}" ${railVisualMetadata.attributes} data-crossing-id="${sanitizeText(String(crossing.id))}" data-infrastructure-opacity="${sanitizeText(String(CROSSING_INFRASTRUCTURE_MARKER_OPACITY))}" data-gridly-marker-owner="crossing_inventory">
         <div class="gridly-crossing-marker has-production-marker ${markerStateClass} ${hasActiveIssue ? "alert" : ""} ${isCleared ? "cleared" : ""} ${isNearby ? "nearby" : ""} ${clusterCount > 1 ? "cluster-lead" : ""}" ${railVisualMetadata.attributes} data-category="${sanitizeText(crossingMarkerCategory)}" data-marker-category="${sanitizeText(crossingMarkerCategory)}" data-marker-asset="${sanitizeText(crossingMarkerAsset.assetPath)}" data-state="${sanitizeText(railVisualState)}" data-gridly-marker-owner="crossing_inventory" aria-label="${sanitizeText(hasActiveIssue ? "Train delay" : "Crossing infrastructure")}">
           <img class="gridly-production-marker-img" src="${sanitizeText(crossingMarkerAsset.assetPath)}" alt="" aria-hidden="true" data-marker-asset="${sanitizeText(crossingMarkerAsset.assetName)}" onload="window.gridlyMarkProductionMarkerAssetLoad && window.gridlyMarkProductionMarkerAssetLoad(this.dataset.markerAsset, 'loaded')" onerror="window.gridlyMarkProductionMarkerAssetLoad && window.gridlyMarkProductionMarkerAssetLoad(this.dataset.markerAsset, 'failed')" />
         </div>
         ${clusterCount > 1 ? `<span class="gridly-marker-cluster-badge">${clusterCount}</span>` : ""}
       </div>`,
       iconSize: [crossingMarkerDisplaySize, crossingMarkerDisplaySize],
-      iconAnchor: [crossingMarkerDisplaySize / 2, crossingMarkerDisplaySize / 2]
+      iconAnchor: crossingMarkerAnchor,
+      popupAnchor: crossingMarkerPopupAnchor
     });
 
     const marker = L.marker([crossing.lat, crossing.lng], { icon, incidentId: `rail-${crossing.id}`, crossingId: String(crossing.id) })
@@ -42877,6 +42912,8 @@ function renderUnifiedIncidents(reason = "auto") {
     const category = getHazardCategory(incident.report_type || incident.type || "other_hazard");
     const productionMarkerCategory = getGridlyProductionMarkerCategory(incident, category);
     const productionMarkerAsset = getGridlyProductionMarkerAsset(productionMarkerCategory);
+    const productionMarkerAnchor = getGridlyProductionMarkerAnchor(productionMarkerCategory, GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE);
+    const productionMarkerPopupAnchor = getGridlyProductionMarkerPopupAnchor(productionMarkerCategory, GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE);
     const markerVariantClass = `marker-${category}`;
     const productionMarkerClass = `marker-asset-${productionMarkerCategory}`;
     const confidenceClass = String(incident.confidence || "").toLowerCase().includes("community") ? "confidence-community" : "confidence-high";
@@ -42897,6 +42934,7 @@ function renderUnifiedIncidents(reason = "auto") {
       className: `gridly-production-marker-icon ${markerVisualClassSafe} ${sanitizeText(hazardVisualMetadata.className)}`,
       html: `
         <div class="gridly-hazard-marker has-production-marker ${sanitizeText(getMapSeverityClass(incident))} ${ageClass} ${proximityClass} ${routeRelevanceClass} ${sanitizeText(markerVariantClass)} ${sanitizeText(productionMarkerClass)} ${sanitizeText(confidenceClass)} ${sanitizeText(hierarchyPriorityClass)} ${sanitizeText(consequenceClass)} ${sanitizeText(freshnessClass)} ${sanitizeText(confidenceVisualClass)} ${sanitizeText(hazardVisualMetadata.className)}${hazardVisualClassSegment}"
+          style="--gridly-production-marker-anchor-x:${sanitizeText(String(productionMarkerAnchor[0]))}px; --gridly-production-marker-anchor-y:${sanitizeText(String(productionMarkerAnchor[1]))}px;"
           data-category="${sanitizeText(category)}"
           data-marker-category="${sanitizeText(productionMarkerCategory)}"
           data-marker-asset="${sanitizeText(productionMarkerAsset.assetPath)}"
@@ -42911,7 +42949,8 @@ function renderUnifiedIncidents(reason = "auto") {
         </div>
       `,
       iconSize: [GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE, GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE],
-      iconAnchor: [GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE / 2, GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE / 2]
+      iconAnchor: productionMarkerAnchor,
+      popupAnchor: productionMarkerPopupAnchor
     });
     markGridlyProductionMarkerAssetLoad(productionMarkerAsset.assetName, "attempted");
 
@@ -51378,7 +51417,7 @@ function injectHazardStyles() {
       object-fit: contain !important;
       object-position: center center !important;
       transform: scale(var(--gridly-production-marker-artwork-scale, 1)) !important;
-      transform-origin: center center !important;
+      transform-origin: var(--gridly-production-marker-anchor-x, 50%) var(--gridly-production-marker-anchor-y, 80%) !important;
     }
 
     #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker[data-marker-category="crash"] {
@@ -51413,7 +51452,7 @@ function injectHazardStyles() {
       object-fit: contain !important;
       object-position: center center !important;
       transform: scale(var(--gridly-production-marker-artwork-scale, 1)) !important;
-      transform-origin: center center !important;
+      transform-origin: var(--gridly-production-marker-anchor-x, 50%) var(--gridly-production-marker-anchor-y, 80%) !important;
     }
     .gridly-hazard-launcher {
       position: fixed;
