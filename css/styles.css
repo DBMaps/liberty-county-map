@@ -20427,3 +20427,26 @@ body[data-layout-mode="portrait"] #map .leaflet-control-zoom a {
     -webkit-overflow-scrolling: touch;
   }
 }
+
+/* V282.4 — Portrait bottom-edge map bleed guard.
+   DOM/layout audit: the Portrait V2 shell is fixed over a full-viewport Leaflet map;
+   the dock intentionally floats above the visual viewport bottom, so unshielded map
+   tiles can show through the dock's transparent safe-area gap and rounded lower edge. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2::after {
+    content: "";
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: calc(34px + env(safe-area-inset-bottom, 0px));
+    z-index: 9502;
+    pointer-events: none;
+    background:
+      linear-gradient(180deg, rgba(2, 8, 18, 0), rgba(2, 8, 18, 0.96) 36%, #020812 100%);
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {
+    z-index: 9503;
+  }
+}
