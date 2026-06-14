@@ -13326,6 +13326,14 @@ function isGridlyMobileCrossingPopupViewport(mapRef = map) {
   return Boolean(width > 0 && (width <= 768 || /portrait|mobile/i.test(layoutMode) || height > width));
 }
 
+function isGridlyMobilePortraitCrossingPopupViewport(mapRef = map) {
+  const mapSize = typeof mapRef?.getSize === "function" ? mapRef.getSize() : null;
+  const width = Number(mapSize?.x || window.visualViewport?.width || window.innerWidth || document.documentElement?.clientWidth || 0);
+  const height = Number(mapSize?.y || window.visualViewport?.height || window.innerHeight || document.documentElement?.clientHeight || 0);
+  const layoutMode = document.body?.getAttribute?.("data-layout-mode") || document.documentElement?.getAttribute?.("data-layout-mode") || "";
+  return Boolean(width > 0 && height > 0 && height >= width && (width <= 768 || /portrait/i.test(layoutMode)));
+}
+
 function invalidateGridlyCrossingPopupMapSize(mapRef = map, reason = "crossing-popup") {
   if (!mapRef || typeof mapRef.invalidateSize !== "function") return false;
   requestAnimationFrame(() => {
@@ -13708,15 +13716,52 @@ function openCrossingPopupFromMarkerInteraction(marker, crossing, source = "clic
   gridlyPopupLastSafeTargetPoint = { x: safeTargetX, y: safeTargetY };
   gridlyPopupViewportBounds = { width: viewportWidth, height: viewportHeight, safeInsets };
 
-  if (isGridlyMobileCrossingPopupViewport(mapRef)) {
-    window.__gridlyLastPopupAutoPanApplied = false;
-    gridlyPopupCameraPanApplied = false;
-    gridlyPopupAnchorMode = "mobile-no-camera-pan";
-    gridlyPopupViewportBounds = { ...(gridlyPopupViewportBounds || {}), mobileAutoPanDisabled: true };
-    requestAnimationFrame(() => {
+  if (isGridlyMobilePortraitCrossingPopupViewport(mapRef)) {
+    const bounds = getGridlyCrossingPopupContainmentBounds(mapRef);
+    const mapEl = typeof mapRef.getContainer === "function" ? mapRef.getContainer() : document.getElementById("map");
+    const mapRect = mapEl?.getBoundingClientRect?.();
+    const safeTopY = Math.max(16, Math.round((bounds?.top || mapRect?.top || 0) - (mapRect?.top || 0)));
+    const safeBottomY = Math.max(safeTopY + 80, Math.round((bounds?.bottom || (mapRect?.bottom || viewportHeight)) - (mapRect?.top || 0)));
+    const preferredY = Math.round(viewportHeight * 0.55);
+    const lowerTargetY = safeTopY + estimatedPopupSize.height + 12;
+    const upperTargetY = safeBottomY - 28;
+    const desiredY = lowerTargetY <= upperTargetY
+      ? Math.max(lowerTargetY, Math.min(upperTargetY, preferredY))
+      : Math.max(safeTopY + 80, Math.min(upperTargetY, preferredY));
+    const mobilePanY = Math.round(markerPoint.y - desiredY);
+    const shouldMobilePan = Math.abs(mobilePanY) > 4;
+    window.__gridlyLastPopupAutoPanApplied = shouldMobilePan;
+    gridlyPopupCameraPanApplied = shouldMobilePan;
+    gridlyPopupAnchorMode = "mobile-portrait-safe-vertical-zone";
+    gridlyPopupLastSafeTargetPoint = { x: Math.round(markerPoint.x), y: desiredY };
+    gridlyPopupViewportBounds = {
+      ...(gridlyPopupViewportBounds || {}),
+      mobilePortraitSafeZone: true,
+      safeTopY,
+      safeBottomY,
+      preferredY,
+      desiredY,
+      panY: mobilePanY,
+      containmentBounds: bounds
+    };
+
+    const openMobilePopup = (finalizeReason) => {
       gridlyLastPopupTimerFiredAt = Date.now();
-      finalizeOpenCrossingPopup(marker, token, `${source}-mobile-no-pan-immediate`);
-    });
+      finalizeOpenCrossingPopup(marker, token, `${source}-${finalizeReason}`);
+    };
+
+    if (!shouldMobilePan) {
+      requestAnimationFrame(() => openMobilePopup("mobile-safe-zone-immediate"));
+      return true;
+    }
+
+    gridlyLastPopupPanStartedAt = Date.now();
+    gridlyLastPopupScheduledDelay = 260;
+    if (typeof mapRef.once === "function") {
+      mapRef.once("moveend", () => openMobilePopup("mobile-safe-zone-moveend"));
+    }
+    session.openTimer = setTimeout(() => openMobilePopup("mobile-safe-zone-fallback"), gridlyLastPopupScheduledDelay);
+    mapRef.panBy([0, mobilePanY], { animate: true, duration: 0.2 });
     return true;
   }
 
