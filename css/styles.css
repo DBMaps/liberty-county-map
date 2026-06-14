@@ -20433,6 +20433,38 @@ body[data-layout-mode="portrait"] #map .leaflet-control-zoom a {
    the dock intentionally floats above the visual viewport bottom, so unshielded map
    tiles can show through the dock's transparent safe-area gap and rounded lower edge. */
 @media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #map .leaflet-bottom.leaflet-right {
+    right: max(10px, env(safe-area-inset-right, 0px)) !important;
+    bottom: calc(var(--gridly-portrait-dock-h, 78px) + 24px + env(safe-area-inset-bottom, 0px)) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    gap: 8px !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    pointer-events: none !important;
+  }
+
+  body[data-layout-mode="portrait"] #map .leaflet-bottom.leaflet-right .leaflet-control {
+    pointer-events: auto !important;
+  }
+
+  body[data-layout-mode="portrait"] #map .leaflet-bottom.leaflet-right .leaflet-control-layers,
+  body[data-layout-mode="portrait"] #map .leaflet-bottom.leaflet-right .leaflet-control-layers-expanded,
+  body[data-layout-mode="portrait"] #map .leaflet-bottom.leaflet-right .leaflet-control-attribution {
+    margin: 0 !important;
+    background: linear-gradient(165deg, rgba(6, 17, 31, 0.92), rgba(2, 8, 18, 0.96)) !important;
+    border-color: rgba(0, 245, 240, 0.22) !important;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.34), 0 0 18px rgba(0, 245, 240, 0.08) !important;
+  }
+
   body[data-layout-mode="portrait"] #gridlyPortraitV2::after {
     content: "";
     position: fixed;
