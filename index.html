@@ -1192,7 +1192,26 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/gridly.local.js"></script>
+  <script>
+    (function loadGridlyLocalOverrides() {
+      var enabled = false;
+      try {
+        var params = new URLSearchParams(window.location.search || "");
+        enabled = window.GRIDLY_ENABLE_LOCAL_OVERRIDES === true
+          || params.get("gridlyLocal") === "true"
+          || localStorage.getItem("gridlyLocal") === "true";
+      } catch (error) {
+        enabled = window.GRIDLY_ENABLE_LOCAL_OVERRIDES === true;
+      }
+      if (!enabled) return;
+      var script = document.createElement("script");
+      script.src = "js/gridly.local.js";
+      script.async = false;
+      script.setAttribute("data-gridly-local", "true");
+      script.onerror = function () { script.remove(); };
+      document.head.appendChild(script);
+    })();
+  </script>
   <script src="js/gridlyTxdotService.js?v=1710"></script>
   <script src="js/gridlyTxdotGeometryRetentionPrototype.js?v=296"></script>
   <script src="js/gridlyRouteWatchGeometryRuntimeShadowAudit.js?v=3083"></script>
