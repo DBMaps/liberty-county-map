@@ -64212,6 +64212,139 @@ function findGridlyAlertMarker(coords, options = {}) {
   }) || null;
 }
 
+
+function gridlyAlertMarkerIntegrityAudit(options = {}) {
+  const now = new Date().toISOString();
+  const safeText = (value = "") => String(value ?? "").trim();
+  const num = (value) => {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+  const round = (value, precision = 1) => Number.isFinite(Number(value)) ? Number(Number(value).toFixed(precision)) : null;
+  const incidentKey = (item = {}, fallback = "") => safeText(
+    item?.incidentId || item?.incident_id || item?.id || item?.reportId || item?.report_id || item?.uuid || item?.key ||
+    item?.raw?.incidentId || item?.raw?.incident_id || item?.raw?.id || item?.raw?.reportId || item?.raw?.report_id || fallback
+  );
+  const alertTypeFor = (item = {}, node = null) => safeText(
+    node?.dataset?.gridlyAlertHazardType || item?.hazardType || item?.type || item?.category || item?.reportType || item?.report_type || item?.raw?.hazardType || item?.raw?.type || item?.raw?.category || "unknown"
+  );
+  const isCrossingType = (type = "", item = {}, node = null) => /rail|crossing|train/i.test(`${type} ${node?.dataset?.gridlyAlertCrossingId || ""} ${item?.crossingId || item?.crossing_id || item?.raw?.crossingId || item?.raw?.crossing_id || ""}`);
+  const locationFrom = (item = {}, node = null) => safeText(
+    node?.dataset?.gridlyAlertLocation || item?.locationDescription || item?.sourceLocationDescription || item?.locationLabel || item?.locationName || item?.location || item?.roadName || item?.nearestRoad || item?.knownLocation || item?.raw?.locationDescription || item?.raw?.locationName || item?.raw?.location || item?.raw?.roadName || ""
+  );
+  const sourceLocationFrom = (item = {}) => safeText(
+    item?.sourceLocationDescription || item?.raw?.sourceLocationDescription || item?.raw?.locationDescription || item?.raw?.location || item?.source?.locationDescription || item?.source?.location || item?.locationSource || item?.reusedAlertSource || ""
+  );
+  const roadNameFrom = (item = {}) => safeText(item?.roadName || item?.primaryRoad || item?.nearestRoad || item?.raw?.roadName || item?.raw?.primaryRoad || item?.raw?.nearestRoad || item?.source?.roadName || "");
+  const referenceRoadFrom = (item = {}) => safeText(item?.referenceRoadName || item?.referenceRoad || item?.secondaryRoad || item?.raw?.referenceRoadName || item?.raw?.referenceRoad || item?.source?.referenceRoadName || "");
+  const coordsFrom = (item = {}, node = null) => normalizeCoordinatePair(
+    node?.dataset?.gridlyAlertLat ?? item?.lat ?? item?.latitude ?? item?.rawLat ?? item?.raw?.lat ?? item?.source?.lat,
+    node?.dataset?.gridlyAlertLng ?? item?.lng ?? item?.lon ?? item?.longitude ?? item?.rawLng ?? item?.raw?.lng ?? item?.raw?.lon ?? item?.source?.lng ?? item?.source?.lon
+  );
+  const visibleAlertNodes = typeof document !== "undefined"
+    ? Array.from(document.querySelectorAll(".gridly-alerts-active [data-gridly-alert-row='true'], .gridly-alerts-active [data-gridly-alert-id], #gridlyPortraitV2SheetBody [data-gridly-alert-row='true']"))
+        .filter((node) => node?.dataset?.gridlyAlertExpand !== "true" && node?.dataset?.gridlyAlertHidden !== "true" && node.offsetParent !== null)
+    : [];
+  const latestAlerts = Array.isArray(window.__gridlyLatestAlertsForRender) ? window.__gridlyLatestAlertsForRender : (Array.isArray(window.getAlertsSurfaceSnapshot?.()?.alerts) ? window.getAlertsSurfaceSnapshot().alerts : []);
+  const byId = new Map(latestAlerts.map((alert, index) => [incidentKey(alert, `alert-${index}`), alert]));
+  const alertRows = visibleAlertNodes.length
+    ? visibleAlertNodes.map((node, index) => {
+      const key = safeText(node.dataset?.gridlyAlertId || node.dataset?.incidentId || node.dataset?.id || `visible-alert-${index}`);
+      return { node, item: byId.get(key) || latestAlerts[index] || {}, key };
+    })
+    : latestAlerts.map((item, index) => ({ node: null, item, key: incidentKey(item, `snapshot-alert-${index}`) }));
+  const unifiedMarkers = typeof unifiedIncidentLayer?.getLayers === "function" ? unifiedIncidentLayer.getLayers() : [];
+  const crossingMarkerList = crossingMarkers instanceof Map ? Array.from(crossingMarkers.values()) : [];
+  const allMarkers = [...unifiedMarkers, ...crossingMarkerList];
+  const markerRecord = (marker) => {
+    const latLng = marker?.getLatLng?.();
+    const opts = marker?.options || {};
+    return {
+      marker: marker,
+      incidentId: safeText(opts.incidentId || opts.crossingId || opts.id || ""),
+      lat: num(latLng?.lat),
+      lng: num(latLng?.lng),
+      markerRoadName: safeText(opts.roadName || opts.primaryRoad || opts.gridlyPlacementAudit?.roadName || opts.gridlyPlacementAudit?.referenceRoadName || ""),
+      source: opts.crossingId ? "crossingMarkers" : "unifiedIncidentLayer"
+    };
+  };
+  const markerRecords = allMarkers.map(markerRecord);
+  const locationGroups = new Map();
+  alertRows.forEach(({ item, node }, index) => {
+    const location = locationFrom(item, node).toLowerCase();
+    const coords = coordsFrom(item, node);
+    if (!location) return;
+    const group = locationGroups.get(location) || { locationText: location, rows: [] };
+    group.rows.push({ index, lat: coords?.lat ?? null, lng: coords?.lng ?? null, key: incidentKey(item, node?.dataset?.gridlyAlertId || `alert-${index}`) });
+    locationGroups.set(location, group);
+  });
+  const duplicateGroups = new Map([...locationGroups.values()].filter((group) => new Set(group.rows.map((row) => `${round(row.lat, 5)},${round(row.lng, 5)}`)).size > 1).map((group) => [group.locationText, group]));
+  const rows = alertRows.map(({ item, node, key }, index) => {
+    const alertIncidentId = incidentKey(item, key || `alert-${index}`);
+    const coords = coordsFrom(item, node);
+    const alertType = alertTypeFor(item, node);
+    const crossingExcluded = isCrossingType(alertType, item, node);
+    const marker = coords ? findGridlyAlertMarker(coords, { incidentId: alertIncidentId, tolerance: Number(options.tolerance || 0.00035) }) : (alertIncidentId ? markerRecords.find((record) => record.incidentId === alertIncidentId)?.marker : null);
+    const markerInfo = marker ? markerRecord(marker) : null;
+    const distanceMeters = coords && markerInfo?.lat !== null && markerInfo?.lng !== null && typeof haversineDistance === "function"
+      ? haversineDistance(coords.lat, coords.lng, markerInfo.lat, markerInfo.lng) * 1609.344
+      : null;
+    const locationDescription = locationFrom(item, node);
+    const duplicateLocationTextGroup = duplicateGroups.get(locationDescription.toLowerCase()) || null;
+    const containsSharedReportLeak = /shared report/i.test(locationDescription);
+    const missingCoordinate = !coords;
+    const missingMarker = !marker;
+    const largeDistance = !crossingExcluded && Number.isFinite(distanceMeters) && distanceMeters > 150;
+    const reviewDistance = !crossingExcluded && Number.isFinite(distanceMeters) && distanceMeters > 75;
+    const likelyMismatch = Boolean(containsSharedReportLeak || missingCoordinate || missingMarker || largeDistance || (!crossingExcluded && duplicateLocationTextGroup));
+    return {
+      alertTitle: safeText(node?.dataset?.gridlyAlertTitle || item?.title || item?.headline || item?.name || ""),
+      alertLocationText: locationDescription,
+      alertIncidentId,
+      alertType,
+      alertLat: coords?.lat ?? null,
+      alertLng: coords?.lng ?? null,
+      markerFound: Boolean(marker),
+      markerLat: markerInfo?.lat ?? null,
+      markerLng: markerInfo?.lng ?? null,
+      distanceBetweenAlertAndMarkerMeters: round(distanceMeters, 1),
+      locationDescription,
+      sourceLocationDescription: sourceLocationFrom(item),
+      markerRoadName: markerInfo?.markerRoadName || "",
+      referenceRoadName: referenceRoadFrom(item) || roadNameFrom(item),
+      containsSharedReportLeak,
+      duplicateLocationTextGroup,
+      likelyMismatch,
+      reviewDistanceMismatch: reviewDistance,
+      crossingExcludedFromMismatchScoring: crossingExcluded,
+      markerSource: markerInfo?.source || "not_found"
+    };
+  });
+  return {
+    available: true,
+    policyVersion: "V314",
+    productionBehaviorChanged: false,
+    generatedAt: now,
+    alertsChecked: rows.length,
+    markersChecked: markerRecords.length,
+    matchedAlertMarkerPairs: rows.filter((row) => row.markerFound).length,
+    missingMarkerCount: rows.filter((row) => !row.markerFound).length,
+    missingCoordinateCount: rows.filter((row) => row.alertLat === null || row.alertLng === null).length,
+    largeDistanceMismatchCount: rows.filter((row) => !row.crossingExcludedFromMismatchScoring && Number(row.distanceBetweenAlertAndMarkerMeters) > 150).length,
+    duplicateLocationTextCount: rows.filter((row) => row.duplicateLocationTextGroup).length,
+    sharedReportLeakCount: rows.filter((row) => row.containsSharedReportLeak).length,
+    likelyIntegrityIssueCount: rows.filter((row) => row.likelyMismatch).length,
+    crossingsExcluded: rows.filter((row) => row.crossingExcludedFromMismatchScoring).length,
+    distanceReviewThresholdMeters: 75,
+    distanceLikelyMismatchThresholdMeters: 150,
+    alertMarkerRows: rows,
+    markerInventory: markerRecords.map(({ marker, ...record }) => record),
+    notes: ["Audit-only: reads DOM alert rows, latest alert snapshot, unified incident markers, and crossing marker handles without mutating production state.", "Crossing alerts are inventoried but excluded from road-hazard distance mismatch scoring."]
+  };
+}
+
+if (typeof window !== "undefined") window.gridlyAlertMarkerIntegrityAudit = gridlyAlertMarkerIntegrityAudit;
+
 function focusGridlyAlertIncident(focus = {}) {
   const coords = normalizeCoordinatePair(focus?.lat, focus?.lng);
   const incidentId = String(focus?.incidentId || focus?.id || "").trim();
