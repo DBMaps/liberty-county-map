@@ -66657,9 +66657,10 @@ function ensureGridlyPortraitLocationAwarenessPanel() {
     <p class="gridly-v2-location-awareness-meta" data-v2-location-awareness="meta">No recent reports nearby · map remains live</p>
     <button type="button" class="gridly-v2-location-awareness-route" data-v2-location-awareness="routeAction" hidden>Route</button>
   `;
-  const dock = shell.querySelector(".gridly-v2-bottom-dock");
+  const bottomRegion = document.getElementById("gridlyPortraitBottomRegion") || shell;
+  const dock = bottomRegion.querySelector(".gridly-v2-bottom-dock") || shell.querySelector(".gridly-v2-bottom-dock");
   if (dock?.parentNode) dock.parentNode.insertBefore(panel, dock);
-  else shell.appendChild(panel);
+  else bottomRegion.appendChild(panel);
   return panel;
 }
 
