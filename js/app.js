@@ -4498,18 +4498,24 @@ function gridlyGetVisualSignatureRouteStyle(kind = "core") {
 }
 
 function gridlyCreateRouteEndpointMarker(point, kind = "destination") {
-  if (!Array.isArray(point) || point.length < 2 || !window.L?.circleMarker) return null;
+  if (!Array.isArray(point) || point.length < 2 || !window.L?.marker || !window.L?.divIcon) return null;
   const isDestination = kind === "destination";
-  return L.circleMarker(point, {
+  const endpointSize = isDestination ? 18 : 12;
+  const endpointAnchor = endpointSize / 2;
+  const endpointLabel = sanitizeText(kind);
+  const endpointIcon = window.L.divIcon({
+    className: `gridly-route-endpoint-icon gridly-route-endpoint-icon-${endpointLabel}`,
+    html: `<span class="gridly-route-endpoint gridly-route-endpoint-${endpointLabel}" aria-hidden="true"></span>`,
+    iconSize: [endpointSize, endpointSize],
+    iconAnchor: [endpointAnchor, endpointAnchor],
+    popupAnchor: [0, -endpointAnchor]
+  });
+  return window.L.marker(point, {
     pane: "routePane",
-    radius: isDestination ? 7 : 4,
-    color: isDestination ? "rgba(178, 244, 255, 0.88)" : "rgba(57, 214, 210, 0.82)",
-    weight: isDestination ? 2 : 2,
-    fillColor: isDestination ? "#0b3854" : "#20d6cd",
-    fillOpacity: isDestination ? 0.42 : 0.78,
-    opacity: isDestination ? 0.84 : 0.72,
+    icon: endpointIcon,
     interactive: false,
-    className: `gridly-route-endpoint gridly-route-endpoint-${sanitizeText(kind)}`
+    keyboard: false,
+    zIndexOffset: isDestination ? 5 : 4
   });
 }
 

@@ -20555,11 +20555,27 @@ body[data-layout-mode="portrait"] #map .leaflet-control-zoom a {
   filter: drop-shadow(0 3px 7px rgba(0, 54, 88, 0.26));
 }
 
+#map .leaflet-marker-icon.gridly-route-endpoint-icon {
+  background: transparent;
+  border: 0;
+  pointer-events: none;
+}
+
 #map .gridly-route-endpoint {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  border: 2px solid rgba(57, 214, 210, 0.82);
+  background: rgba(32, 214, 205, 0.78);
+  box-sizing: border-box;
   filter: drop-shadow(0 3px 7px rgba(0, 9, 18, 0.22));
 }
 
 #map .gridly-route-endpoint-destination {
+  border-color: rgba(178, 244, 255, 0.88);
+  background: rgba(11, 56, 84, 0.42);
+  box-shadow: inset 0 0 0 3px rgba(186, 247, 255, 0.12);
   filter: drop-shadow(0 4px 8px rgba(0, 13, 24, 0.24));
 }
 
