@@ -16056,18 +16056,68 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
     const values = available ? base : [0, 0, 0, 0];
     return { clarity: values[0], localUsefulness: values[1], travelerUsefulness: values[2], awarenessValue: values[3], total: values.reduce((sum, value) => sum + value, 0) };
   };
-  const records = (Array.isArray(options.hazards) ? options.hazards : [])
-    .concat(Array.isArray(activeHazards) ? activeHazards : [])
-    .concat(Array.isArray(window.__gridlyLatestAlertsForRender) ? window.__gridlyLatestAlertsForRender : [])
-    .filter((record) => record && typeof record === "object" && !isGridlyAlertRailOrCrossingRelated(record));
+  const isRoadHazardCandidate = (record = {}) => {
+    if (!record || typeof record !== "object") return false;
+    if (isGridlyAlertRailOrCrossingRelated(record)) return false;
+    const id = safeText(record?.id || record?.incidentId || record?.reportId || record?.key || record?.raw?.id);
+    if (/^rail-/i.test(id)) return false;
+    const crossingId = safeText(record?.crossingId || record?.crossing_id || record?.raw?.crossingId || record?.raw?.crossing_id);
+    const kind = safeText(record?.reportKind || record?.raw?.reportKind).toLowerCase();
+    const type = safeText(record?.report_type || record?.type || record?.raw?.report_type || record?.raw?.type).toLowerCase();
+    if (crossingId || kind === "crossing" || /^rail_/.test(type) || /crossing/.test(type)) return false;
+    return allowed.test(titleHazard(record));
+  };
+  const callArray = (fn) => {
+    try {
+      const value = fn?.();
+      return Array.isArray(value) ? value : [];
+    } catch (error) {
+      return [];
+    }
+  };
+  const generatedRoadIncidents = typeof getLiveHazardIncidents === "function" ? callArray(getLiveHazardIncidents) : [];
+  const generatedRoadIncidentRows = generatedRoadIncidents
+    .map((incident) => ({ ...(incident?.latestReport || {}), gridlyShadowSourceIncident: incident, id: `road-${incident?.key || incidentId(incident?.latestReport || incident, 0)}` }))
+    .filter((record) => record && typeof record === "object");
+  const unifiedIncidents = typeof getUnifiedIncidents === "function" ? callArray(getUnifiedIncidents) : [];
+  const unifiedRoadHazardRows = unifiedIncidents.filter((incident) => {
+    const status = safeText(incident?.status).toLowerCase();
+    const id = safeText(incident?.id);
+    return status === "active" && /^road-/i.test(id) && isRoadHazardCandidate(incident);
+  });
+  const activeHazardRows = (typeof gridlyFilterRoadHazardsByLatestLifecycle === "function"
+    ? gridlyFilterRoadHazardsByLatestLifecycle(Array.isArray(activeHazards) ? activeHazards : [], Date.now())
+    : (Array.isArray(activeHazards) ? activeHazards.filter((hazard) => !hazard?.expired && safeText(hazard?.type).toLowerCase() !== "hazard_cleared") : []))
+    .filter((record) => record && typeof record === "object");
+  const optionRows = Array.isArray(options.hazards) ? options.hazards.filter((record) => record && typeof record === "object") : [];
+  const alertRows = Array.isArray(window.__gridlyLatestAlertsForRender) ? window.__gridlyLatestAlertsForRender.filter((record) => record && typeof record === "object") : [];
+  const sourceCounts = {
+    optionHazards: optionRows.length,
+    generatedRoadIncidents: generatedRoadIncidents.length,
+    generatedRoadIncidentRows: generatedRoadIncidentRows.length,
+    unifiedIncidents: unifiedIncidents.length,
+    unifiedActiveRoadHazards: unifiedRoadHazardRows.length,
+    activeHazards: Array.isArray(activeHazards) ? activeHazards.length : 0,
+    activeHazardRows: activeHazardRows.length,
+    latestAlertRows: alertRows.length
+  };
+  const sourceCandidates = [
+    { name: optionRows.length ? "options.hazards" : "generatedRoadIncidents", rows: optionRows.length ? optionRows : generatedRoadIncidentRows },
+    { name: "unifiedActiveRoadHazards", rows: unifiedRoadHazardRows },
+    { name: "activeHazards", rows: activeHazardRows },
+    { name: "latestAlerts", rows: alertRows }
+  ];
+  const selectedSource = sourceCandidates.find((source) => source.rows.some(isRoadHazardCandidate)) || sourceCandidates[0];
+  const recordsBeforeFiltering = selectedSource.rows;
+  const excludedCrossingRows = recordsBeforeFiltering.filter((record) => record && typeof record === "object" && isGridlyAlertRailOrCrossingRelated(record)).length;
+  const filteredRecords = recordsBeforeFiltering.filter(isRoadHazardCandidate);
   const unique = [];
   const seen = new Set();
-  records.forEach((record, index) => {
+  filteredRecords.forEach((record, index) => {
     const key = incidentId(record, index);
     if (seen.has(key)) return;
     seen.add(key);
-    const hazard = titleHazard(record);
-    if (allowed.test(hazard)) unique.push(record);
+    unique.push(record);
   });
   const rows = unique.map((record, index) => {
     const coords = coordsFor(record);
@@ -16128,10 +16178,20 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
     && [row.referenceRoad, row.crossingCandidate, row.currentProductionWording].some((value) => /waco/i.test(value))
     && [row.referenceRoad, row.currentProductionWording, row.candidates.candidateD.phrase].some((value) => /sawmill/i.test(value)))
     .map((row) => ({ incidentId: row.incidentId, currentWording: row.currentProductionWording, candidateWording: row.candidates[row.recommendedCandidate].phrase, recommendedWording: row.candidates[row.recommendedCandidate].phrase, liveTextChanged: false }));
+  const activeAppHazardCount = Math.max(sourceCounts.generatedRoadIncidents, sourceCounts.unifiedActiveRoadHazards, sourceCounts.activeHazardRows);
+  const emptySourceWarning = activeAppHazardCount > 0 && rows.length === 0
+    ? "Active app road hazards were detected, but the shadow audit produced no road-hazard rows after source filtering."
+    : "";
   const audit = {
-    auditVersion: "V312.1-road-hazard-location-shadow-mode",
+    auditVersion: "V312.1A-road-hazard-location-shadow-source-coverage",
     noProductionTextChanges: true,
     scope: "active road hazards only; crossings excluded",
+    sourceUsed: selectedSource.name,
+    sourceCounts,
+    roadHazardRowsBeforeFiltering: recordsBeforeFiltering.length,
+    roadHazardRowsAfterFiltering: rows.length,
+    excludedCrossingRows,
+    emptySourceWarning,
     activeRoadHazardCount: rows.length,
     rows,
     wacoSawmillDiagnostics,
