@@ -1452,7 +1452,8 @@ const HAZARD_CATEGORY_MAP = {
 const GRIDLY_PRODUCTION_MARKER_BASE_PATH = "assets/markers/png/";
 const GRIDLY_PRODUCTION_MARKER_EXPECTED_MASTER_SIZE = 256;
 const GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE = 64;
-const GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_DISPLAY_SIZE = GRIDLY_PRODUCTION_MARKER_DISPLAY_SIZE;
+const GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_DISPLAY_SIZE = 72;
+const GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_MOBILE_PORTRAIT_DISPLAY_SIZE = 76;
 const GRIDLY_PRODUCTION_MARKER_ASSETS = Object.freeze([
   "construction-zone.png",
   "crash-on-road.png",
@@ -6325,7 +6326,7 @@ const DEFAULT_NEARBY_RADIUS_MILES = 8;
 const PRIORITY_NEARBY_MILES = 3;
 const DISTANT_CROSSING_MIN_ZOOM = 14;
 const CROSSING_INFRASTRUCTURE_MIN_ZOOM = 14;
-const CROSSING_INFRASTRUCTURE_MARKER_OPACITY = 0.75;
+const CROSSING_INFRASTRUCTURE_MARKER_OPACITY = 0.82;
 const CROSSING_FETCH_RETRY_ATTEMPTS = 3;
 const CROSSING_FETCH_RETRY_DELAY_MS = 700;
 const SMART_ALERTS_STORAGE_KEY = "gridlySmartAlertsV1";
@@ -51082,6 +51083,16 @@ function injectHazardStyles() {
 
     #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"] .gridly-production-marker-img {
       opacity: ${CROSSING_INFRASTRUCTURE_MARKER_OPACITY} !important;
+    }
+
+    @media (max-width: 640px) and (orientation: portrait) {
+      #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon,
+      #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon .gridly-marker-wrap.gridly-crossing-marker-wrap,
+      #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"],
+      #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"] .gridly-production-marker-img {
+        width: ${GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_MOBILE_PORTRAIT_DISPLAY_SIZE}px !important;
+        height: ${GRIDLY_CROSSING_INFRASTRUCTURE_MARKER_MOBILE_PORTRAIT_DISPLAY_SIZE}px !important;
+      }
     }
 
     #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="rail_blockage_delay"] .gridly-production-marker-img,
