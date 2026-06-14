@@ -10,6 +10,7 @@ const GRIDLY_COUNTY_REGISTRY = Object.freeze({
     defaultCity: "Dayton",
     boundaryPath: "data/liberty-county-boundary.geojson",
     crossingsPath: "https://data.transportation.gov/resource/m2f8-22s6.geojson?$limit=5000&statename=TEXAS&countyname=LIBERTY",
+    localCrossingsPath: "data/liberty-county-rail-crossings.geojson",
     roadSegmentsPath: "data/liberty-county-road-segments.geojson",
     crossingOverridesPath: "data/gridly-crossing-review-overrides.json",
     plannedStaticFolder: "data/counties/liberty-tx/",
@@ -67,6 +68,7 @@ function gridlyReportMatchesActiveCounty(row, activeCountyId = gridlyGetActiveCo
 }
 
 const FRA_URL = gridlyGetActiveCountyConfig().crossingsPath;
+const LOCAL_CROSSINGS_URL = gridlyGetActiveCountyConfig().localCrossingsPath || gridlyGetActiveCountyConfig().plannedCrossingsPath;
 const CROSSING_REVIEW_OVERRIDES_URL = gridlyGetActiveCountyConfig().crossingOverridesPath;
 const ROADWAY_SEGMENTS_URL = gridlyGetActiveCountyConfig().roadSegmentsPath;
 const LIBERTY_COUNTY_BOUNDARY_URL = gridlyGetActiveCountyConfig().boundaryPath;
@@ -26496,6 +26498,21 @@ async function fetchFraCrossingsWithRetry() {
         );
         await wait(CROSSING_FETCH_RETRY_DELAY_MS * attempt);
       }
+    }
+  }
+
+  if (LOCAL_CROSSINGS_URL) {
+    try {
+      console.warn("FRA crossing fetch failed. Loading local crossing fallback...", lastError);
+      const fallbackResponse = await fetch(LOCAL_CROSSINGS_URL, { cache: "no-store" });
+
+      if (!fallbackResponse.ok) {
+        throw new Error(`Local crossing fallback returned ${fallbackResponse.status}`);
+      }
+
+      return fallbackResponse;
+    } catch (fallbackError) {
+      throw new Error(`FRA crossing fetch failed and local fallback failed: ${fallbackError?.message || fallbackError}`);
     }
   }
 
