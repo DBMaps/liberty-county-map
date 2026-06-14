@@ -20465,6 +20465,20 @@ body[data-layout-mode="portrait"] #map .leaflet-control-zoom a {
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.34), 0 0 18px rgba(0, 245, 240, 0.08) !important;
   }
 
+  body[data-layout-mode="portrait"] #gridlyPortraitV2::after {
+    content: "";
+    position: fixed;
+    z-index: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: calc(var(--gridly-portrait-dock-h, 78px) + 28px + env(safe-area-inset-bottom, 0px));
+    border-radius: 0 0 24px 24px;
+    pointer-events: none;
+    background: linear-gradient(180deg, #06101b 0%, #06101b 44%, #020812 100%);
+    box-shadow: 0 -14px 30px rgba(0, 0, 0, 0.3);
+  }
+
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {
     z-index: 9503;
     isolation: isolate;
@@ -20475,13 +20489,13 @@ body[data-layout-mode="portrait"] #map .leaflet-control-zoom a {
     content: "";
     position: absolute;
     z-index: -1;
-    left: -10px;
-    right: -10px;
-    top: -12px;
-    bottom: calc(-14px - env(safe-area-inset-bottom, 0px));
-    border-radius: 22px 22px 0 0;
+    left: calc(-10px - env(safe-area-inset-left, 0px));
+    right: calc(-10px - env(safe-area-inset-right, 0px));
+    top: -14px;
+    bottom: calc(-18px - env(safe-area-inset-bottom, 0px));
+    border-radius: 24px;
     pointer-events: none;
-    background: linear-gradient(180deg, #06111f 0%, #020812 100%);
+    background: linear-gradient(180deg, #06101b 0%, #020812 100%);
     box-shadow: 0 -12px 26px rgba(0, 0, 0, 0.28);
   }
 
