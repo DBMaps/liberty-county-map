@@ -16153,19 +16153,49 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
     seen.add(key);
     unique.push(record);
   });
+  const inspectPathSet = (record = {}, groups = [], paths = []) => groups.flatMap(({ label, value }) => paths.map((path) => ({ source: label, path: label ? `${label}.${path}` : path, value: safeText(readPath(value, path)) }))).filter((entry) => entry.value);
+  const firstInspectedValue = (inspected = []) => inspected.find((entry) => entry.value && !/^(?:unknown|unknown road|local roadway|nearby|n\/a|null|undefined)$/i.test(entry.value)) || { path: "", value: "", source: "" };
   const rows = unique.map((record, index) => {
     const coords = coordsFor(record);
-    const parsedCurrent = typeof parseGridlyRoadHazardRoadsFromText === "function" ? parseGridlyRoadHazardRoadsFromText(currentText(record)) : {};
+    const sourceIncident = sourceIncidentFor(record);
+    const latestReport = sourceIncident?.latestReport || record?.latestReport || {};
+    const rawFieldGroups = [
+      { label: "record", value: record },
+      { label: "generatedRoadIncidents", value: sourceIncident },
+      { label: "generatedRoadIncidents.latestReport", value: latestReport },
+      { label: "unifiedIncident", value: record?.unifiedIncident || record?.sourceIncident || {} }
+    ].filter((group, groupIndex, groups) => group.value && typeof group.value === "object" && groups.findIndex((candidate) => candidate.value === group.value) === groupIndex);
+    const textPaths = ["resolvedHeadline", "finalHeadline", "segmentHeadline", "localizedSummary", "summary", "title", "description", "detail", "text", "locationLabel", "resolvedLocationLabel", "raw.resolvedHeadline", "raw.finalHeadline", "raw.title", "source.resolvedHeadline", "source.finalHeadline", "source.title"];
+    const inspectedTextFields = inspectPathSet(record, rawFieldGroups, textPaths);
+    const parsedTexts = inspectedTextFields.map((entry) => ({ ...entry, parsed: typeof parseGridlyRoadHazardRoadsFromText === "function" ? parseGridlyRoadHazardRoadsFromText(entry.value) : {} }));
+    const parsedCurrent = parsedTexts.find((entry) => entry.parsed?.road || entry.parsed?.referenceRoadA || entry.parsed?.referenceRoadB)?.parsed || {};
     const productionCandidate = typeof buildGridlyRoadHazardTxDotStyleCandidate === "function" ? buildGridlyRoadHazardTxDotStyleCandidate(record) : {};
-    const primary = normalizeRoad(firstPath(record, ["primaryRoad", "parsedPrimaryRoad", "roadName", "corridorLabel", "displayRoadName", "corridor", "route", "raw.primaryRoad", "raw.roadName", "source.primaryRoad", "source.roadName"]).value || productionCandidate.road || parsedCurrent.road);
-    const refs = [
-      firstPath(record, ["intersection", "crossStreet", "referenceRoad", "referenceRoadA", "nearestCrossStreet", "nearbyCrossStreet", "crossingRoad", "nearestRoadName", "nearestRoad", "knownLocation", "locationName", "raw.referenceRoad", "raw.nearestRoad", "source.referenceRoad", "source.nearestRoad"]).value,
-      productionCandidate.referenceRoadA,
-      productionCandidate.nearestRoadName,
-      parsedCurrent.referenceRoadA
-    ].map(normalizeRoad).filter((value) => value && !sameRoad(value, primary));
-    const referenceRoad = [...new Set(refs.map((value) => value.toLowerCase()))].map((lower) => refs.find((value) => value.toLowerCase() === lower))[0] || "";
-    const crossingCandidate = referenceRoad;
+    const productionCandidateUsable = productionCandidate?.source !== "rail_or_crossing";
+    const productionRailReason = productionCandidate?.source === "rail_or_crossing" ? "buildGridlyRoadHazardTxDotStyleCandidate classified this retained road hazard as rail_or_crossing via broad text/field matching; shadow audit ignores that source unless a crossing landmark is selected." : "";
+    const primaryPaths = ["primaryRoad", "parsedPrimaryRoad", "roadName", "resolvedRoadName", "corridorLabel", "displayRoadName", "corridor", "route", "road", "highway", "raw.primaryRoad", "raw.parsedPrimaryRoad", "raw.roadName", "raw.resolvedRoadName", "raw.corridorLabel", "raw.displayRoadName", "raw.corridor", "raw.route", "source.primaryRoad", "source.parsedPrimaryRoad", "source.roadName", "source.resolvedRoadName", "source.corridorLabel", "source.displayRoadName", "source.corridor", "source.route"];
+    const referencePaths = ["intersection", "crossStreet", "crossStreetA", "crossStreet1", "fromStreet", "startStreet", "referenceRoad", "referenceRoadA", "nearestCrossStreet", "nearbyCrossStreet", "crossingRoad", "nearestRoadName", "nearestRoad", "nearbyRoad", "knownLocation", "locationName", "location", "raw.referenceRoad", "raw.referenceRoadA", "raw.crossStreet", "raw.crossStreetA", "raw.nearestRoadName", "raw.nearestRoad", "raw.nearbyCrossStreet", "raw.locationName", "source.referenceRoad", "source.referenceRoadA", "source.crossStreet", "source.crossStreetA", "source.nearestRoadName", "source.nearestRoad", "source.nearbyCrossStreet", "source.locationName"];
+    const inspectedPrimaryFields = inspectPathSet(record, rawFieldGroups, primaryPaths);
+    const inspectedReferenceFields = inspectPathSet(record, rawFieldGroups, referencePaths);
+    const primaryField = firstInspectedValue(inspectedPrimaryFields);
+    const parsedPrimary = parsedTexts.find((entry) => entry.parsed?.road)?.parsed?.road || "";
+    const primarySource = primaryField.value ? primaryField.path : (productionCandidateUsable && productionCandidate.road ? `txdotCandidate.${productionCandidate.source || "road"}` : (parsedPrimary ? "renderedText.parse" : "missing"));
+    const primary = normalizeRoad(primaryField.value || (productionCandidateUsable ? productionCandidate.road : "") || parsedPrimary);
+    const referenceEntries = [
+      ...inspectedReferenceFields.map((entry) => ({ source: entry.path, value: entry.value })),
+      ...(productionCandidateUsable ? [
+        { source: `txdotCandidate.${productionCandidate.source || "referenceRoadA"}.referenceRoadA`, value: productionCandidate.referenceRoadA },
+        { source: `txdotCandidate.${productionCandidate.source || "nearestRoadName"}.nearestRoadName`, value: productionCandidate.nearestRoadName }
+      ] : []),
+      ...parsedTexts.flatMap((entry) => [
+        { source: `${entry.path}.parsed.referenceRoadA`, value: entry.parsed?.referenceRoadA },
+        { source: `${entry.path}.parsed.referenceRoadB`, value: entry.parsed?.referenceRoadB }
+      ])
+    ].map((entry) => ({ source: entry.source, value: normalizeRoad(entry.value) })).filter((entry) => entry.value && !sameRoad(entry.value, primary));
+    const refs = [];
+    referenceEntries.forEach((entry) => { if (!refs.some((existing) => sameRoad(existing.value, entry.value))) refs.push(entry); });
+    const referenceRoad = refs[0]?.value || "";
+    const referenceSource = refs[0]?.source || "missing";
+    const crossingCandidate = /crossing/i.test(referenceSource) ? referenceRoad : "";
     const community = nearestCommunity(coords);
     const hazard = titleHazard(record);
     const current = currentText(record) || productionCandidate.text || (primary ? `${hazard} on ${primary}` : hazard);
@@ -16197,7 +16227,21 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
       directionCandidate: community.direction,
       selectedHierarchyTier,
       confidence,
-      evidenceUsed: [productionCandidate.source, parsedCurrent.referenceRoadA ? "current_text_parse" : "", referenceRoad ? "reference_or_nearest_road_fields" : "", community.community ? "awareness_area_anchor_distance" : ""].filter(Boolean),
+      evidenceUsed: [productionCandidateUsable ? productionCandidate.source : "", parsedCurrent.referenceRoadA ? "text_parse" : "", referenceRoad ? "reference_or_nearest_road_fields" : "", crossingCandidate ? "crossing_landmark_candidate" : "", community.community ? "awareness_area_anchor_distance" : ""].filter(Boolean),
+      primaryRoadSource: primarySource,
+      referenceRoadSource: referenceSource,
+      rawFieldsInspected: {
+        primaryRoad: inspectedPrimaryFields,
+        referenceRoad: inspectedReferenceFields,
+        text: inspectedTextFields
+      },
+      missingCandidateReasons: {
+        primaryRoad: primary ? "" : "No usable primary road found in record, generatedRoadIncidents, latestReport, unified incident, TxDOT-style candidate, or parsed text sources.",
+        referenceRoad: referenceRoad ? "" : "No distinct reference/nearby/cross-street candidate found after excluding duplicates of primaryRoad.",
+        crossingCandidate: crossingCandidate ? "" : (referenceRoad ? `Reference came from ${referenceSource}, not an explicit crossing landmark source.` : "No reference road was available to evaluate as a crossing landmark."),
+        communityDistance: community.community ? "" : "No awareness-area anchor distance could be computed from coordinates."
+      },
+      railOrCrossingEvidenceDiagnostic: productionRailReason || (crossingCandidate ? `rail_or_crossing evidence not attached; crossing candidate came from ${referenceSource}.` : "rail_or_crossing evidence not attached because no explicit crossing landmark candidate was selected."),
       recommendedCandidate,
       reasoning: `${selectedHierarchyTier} is the highest available shadow candidate; live text is intentionally unchanged.`
     };
@@ -16235,7 +16279,7 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
     rows,
     wacoSawmillDiagnostics,
     aggregateFindings,
-    fieldGuide: ["incidentId", "incidentType", "coordinates", "primaryRoad", "referenceRoad", "crossingCandidate", "communityCandidate", "distanceCandidate", "directionCandidate", "selectedHierarchyTier", "confidence", "evidenceUsed", "recommendedCandidate", "reasoning"]
+    fieldGuide: ["incidentId", "incidentType", "coordinates", "primaryRoad", "primaryRoadSource", "referenceRoad", "referenceRoadSource", "crossingCandidate", "communityCandidate", "distanceCandidate", "directionCandidate", "rawFieldsInspected", "missingCandidateReasons", "railOrCrossingEvidenceDiagnostic", "selectedHierarchyTier", "confidence", "evidenceUsed", "recommendedCandidate", "reasoning"]
   };
   console.info("gridlyRoadHazardLocationShadowAudit", audit);
   return audit;
