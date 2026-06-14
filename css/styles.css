@@ -19266,7 +19266,7 @@ body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > .route-setu
   object-fit: contain !important;
   object-position: center center !important;
   transform: scale(var(--gridly-production-marker-artwork-scale, 1)) !important;
-  transform-origin: center center !important;
+  transform-origin: var(--gridly-production-marker-anchor-x, 50%) var(--gridly-production-marker-anchor-y, 80%) !important;
 }
 
 #map .leaflet-marker-icon.gridly-production-marker-icon .gridly-hazard-marker.has-production-marker[data-marker-category="crash"] {
@@ -19301,7 +19301,7 @@ body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > .route-setu
   object-fit: contain !important;
   object-position: center center !important;
   transform: scale(var(--gridly-production-marker-artwork-scale, 1)) !important;
-  transform-origin: center center !important;
+  transform-origin: var(--gridly-production-marker-anchor-x, 50%) var(--gridly-production-marker-anchor-y, 80%) !important;
 }
 
 /* GRIDLY V272 — desktop-only public beta gate. Portrait/mobile selectors intentionally untouched. */
