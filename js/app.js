@@ -72,7 +72,19 @@ const LOCAL_CROSSINGS_URL = gridlyGetActiveCountyConfig().localCrossingsPath || 
 const CROSSING_REVIEW_OVERRIDES_URL = gridlyGetActiveCountyConfig().crossingOverridesPath;
 const ROADWAY_SEGMENTS_URL = gridlyGetActiveCountyConfig().roadSegmentsPath;
 const LIBERTY_COUNTY_BOUNDARY_URL = gridlyGetActiveCountyConfig().boundaryPath;
+const GRIDLY_REMOTE_CROSSING_FETCH_OPTIONS = Object.freeze({});
+const GRIDLY_LOCAL_CROSSING_FETCH_OPTIONS = Object.freeze({ cache: "no-store" });
+
 const gridlyCrossingFallbackAuditState = {
+  remoteUrlUsed: FRA_URL || null,
+  remoteAttempted: false,
+  remoteFetchSucceeded: false,
+  remoteFetchFailedReason: null,
+  fallbackUsed: false,
+  sourceUsed: null,
+  fetchMode: "cors-default",
+  cacheMode: "default",
+  crossingFeatureCount: 0,
   localCrossingPath: LOCAL_CROSSINGS_URL || null,
   remoteFraFetchFailed: false,
   remoteFraFetchFailureReason: null,
@@ -13101,6 +13113,15 @@ window.gridlyCrossingRenderAudit = function gridlyCrossingRenderAudit() {
     renderCrossingsCallCount: gridlyCrossingRenderAuditState.renderCallCount,
     filterApplyCallCount: gridlyCrossingRenderAuditState.filterApplyCallCount,
     lastCalls: [...gridlyCrossingRenderAuditState.lastCalls],
+    remoteUrlUsed: gridlyCrossingFallbackAuditState.remoteUrlUsed,
+    remoteAttempted: gridlyCrossingFallbackAuditState.remoteAttempted,
+    remoteFetchSucceeded: gridlyCrossingFallbackAuditState.remoteFetchSucceeded,
+    remoteFetchFailedReason: gridlyCrossingFallbackAuditState.remoteFetchFailedReason,
+    fallbackUsed: gridlyCrossingFallbackAuditState.fallbackUsed,
+    sourceUsed: gridlyCrossingFallbackAuditState.sourceUsed,
+    fetchMode: gridlyCrossingFallbackAuditState.fetchMode,
+    cacheMode: gridlyCrossingFallbackAuditState.cacheMode,
+    crossingFeatureCount: gridlyCrossingFallbackAuditState.crossingFeatureCount,
     activeGeoFilter,
     visibleCrossingCount: gridlyCrossingRenderAuditState.lastRender.visibleCount,
     renderedCrossingMarkerCount: crossingMarkers instanceof Map ? crossingMarkers.size : gridlyCrossingFallbackAuditState.renderedCrossingMarkerCount,
@@ -26314,8 +26335,10 @@ async function loadCrossings() {
     const crossingFeatureCount = Array.isArray(data?.features) ? data.features.length : 0;
     const crossingDataSource = response?.gridlyCrossingSource || "remote_fra";
     recordGridlyCrossingFallbackAudit("localCrossingFeatureCount", {
+      crossingFeatureCount,
       localCrossingFeatureCount: crossingDataSource === "local_fallback" ? crossingFeatureCount : gridlyCrossingFallbackAuditState.localCrossingFeatureCount,
-      lastFetchSource: crossingDataSource
+      lastFetchSource: crossingDataSource,
+      sourceUsed: crossingDataSource
     });
 
     const rawCrossings = (data.features || [])
@@ -26397,6 +26420,7 @@ async function loadCrossings() {
     recordGridlyCrossingFallbackAudit("normalizedCrossingCount", {
       normalizedCrossingCount: crossings.length,
       lastFetchSource: crossingDataSource,
+      sourceUsed: crossingDataSource,
       crossingLabelSource: reviewedLabelSample.labelSource || null,
       crossingDisplayName: reviewedLabelSample.displayName || reviewedLabelSample.name || null,
       crossingPrimaryRoad: reviewedLabelSample.primaryRoad || null,
@@ -26558,21 +26582,44 @@ async function fetchFraCrossingsWithRetry() {
 
   for (let attempt = 1; attempt <= CROSSING_FETCH_RETRY_ATTEMPTS; attempt += 1) {
     try {
-      const response = await fetch(FRA_URL, { cache: "no-store" });
+      recordGridlyCrossingFallbackAudit("remoteFraFetchAttempt", {
+        remoteUrlUsed: FRA_URL,
+        remoteAttempted: true,
+        remoteFetchSucceeded: false,
+        remoteFetchFailedReason: null,
+        fetchMode: "cors-default",
+        cacheMode: "default",
+        sourceUsed: null
+      });
+      const response = await fetch(FRA_URL, GRIDLY_REMOTE_CROSSING_FETCH_OPTIONS);
 
       if (!response.ok) {
         throw new Error(`FRA feed returned ${response.status}`);
       }
 
       response.gridlyCrossingSource = "remote_fra";
+      recordGridlyCrossingFallbackAudit("remoteFraFetchSucceeded", {
+        remoteUrlUsed: FRA_URL,
+        remoteAttempted: true,
+        remoteFetchSucceeded: true,
+        remoteFetchFailedReason: null,
+        fallbackUsed: false,
+        localCrossingFallbackUsed: false,
+        sourceUsed: "remote_fra",
+        lastFetchSource: "remote_fra",
+        fetchMode: "cors-default",
+        cacheMode: "default"
+      });
       return response;
     } catch (error) {
       lastError = error;
       if (attempt < CROSSING_FETCH_RETRY_ATTEMPTS) {
-        console.warn(
-          `FRA crossing fetch attempt ${attempt} failed. Retrying...`,
-          error
-        );
+        if (isGridlyExplicitDebugModeEnabled()) {
+          console.info(
+            `FRA crossing fetch attempt ${attempt} failed. Retrying...`,
+            error
+          );
+        }
         await wait(CROSSING_FETCH_RETRY_DELAY_MS * attempt);
       }
     }
@@ -26582,10 +26629,12 @@ async function fetchFraCrossingsWithRetry() {
     try {
       recordGridlyCrossingFallbackAudit("remoteFraFetchFailed", {
         remoteFraFetchFailed: true,
-        remoteFraFetchFailureReason: String(lastError?.message || lastError || "unknown_error")
+        remoteFraFetchFailureReason: String(lastError?.message || lastError || "unknown_error"),
+        remoteFetchFailedReason: String(lastError?.message || lastError || "unknown_error"),
+        remoteFetchSucceeded: false
       });
-      console.warn("FRA crossing fetch failed. Loading local crossing fallback...", lastError);
-      const fallbackResponse = await fetch(LOCAL_CROSSINGS_URL, { cache: "no-store" });
+      if (isGridlyExplicitDebugModeEnabled()) console.info("FRA crossing fetch failed. Loading local crossing fallback...", lastError);
+      const fallbackResponse = await fetch(LOCAL_CROSSINGS_URL, GRIDLY_LOCAL_CROSSING_FETCH_OPTIONS);
 
       if (!fallbackResponse.ok) {
         throw new Error(`Local crossing fallback returned ${fallbackResponse.status}`);
@@ -26595,7 +26644,11 @@ async function fetchFraCrossingsWithRetry() {
       recordGridlyCrossingFallbackAudit("localCrossingFallbackUsed", {
         localCrossingFallbackUsed: true,
         localCrossingFallbackReachable: true,
-        lastFetchSource: "local_fallback"
+        fallbackUsed: true,
+        sourceUsed: "local_fallback",
+        lastFetchSource: "local_fallback",
+        cacheMode: "no-store",
+        fetchMode: "cors-default"
       });
       return fallbackResponse;
     } catch (fallbackError) {
