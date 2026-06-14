@@ -19219,17 +19219,27 @@ body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > .route-setu
   opacity: 0 !important;
 }
 
-/* V271.1 crossing visibility refinement: dim inactive crossing infrastructure markers without shrinking them. */
+/* V276.2 crossing visibility refinement: keep inactive crossing infrastructure markers readable without changing the marker family. */
 #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon,
 #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon .gridly-marker-wrap.gridly-crossing-marker-wrap,
 #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"],
 #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"] .gridly-production-marker-img {
-  width: 64px !important;
-  height: 64px !important;
+  width: 72px !important;
+  height: 72px !important;
 }
 
 #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"] .gridly-production-marker-img {
-  opacity: 0.75 !important;
+  opacity: 0.82 !important;
+}
+
+@media (max-width: 640px) and (orientation: portrait) {
+  #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon,
+  #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon .gridly-marker-wrap.gridly-crossing-marker-wrap,
+  #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"],
+  #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"] .gridly-production-marker-img {
+    width: 76px !important;
+    height: 76px !important;
+  }
 }
 
 #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="rail_blockage_delay"] .gridly-production-marker-img,
