@@ -20465,17 +20465,16 @@ body[data-layout-mode="portrait"] #map .leaflet-control-zoom a {
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.34), 0 0 18px rgba(0, 245, 240, 0.08) !important;
   }
 
-  body[data-layout-mode="portrait"] #gridlyPortraitV2::after {
+  body[data-layout-mode="portrait"].gridly-v2-surface-containment::after {
     content: "";
     position: fixed;
     left: 0;
     right: 0;
     bottom: 0;
-    height: calc(34px + env(safe-area-inset-bottom, 0px));
+    height: calc(18px + env(safe-area-inset-bottom, 0px));
     z-index: 9502;
     pointer-events: none;
-    background:
-      linear-gradient(180deg, rgba(2, 8, 18, 0), rgba(2, 8, 18, 0.96) 36%, #020812 100%);
+    background: linear-gradient(180deg, rgba(2, 8, 18, 0.9), #020812 100%);
   }
 
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {
