@@ -15999,6 +15999,149 @@ window.gridlyReferenceRoadEvidenceAudit = function gridlyReferenceRoadEvidenceAu
   return audit;
 };
 
+window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationShadowAudit(options = {}) {
+  const safeText = (value) => String(value ?? "").replace(/\s+/g, " ").trim();
+  const readPath = (item = {}, path = "") => String(path).split(".").reduce((current, key) => current?.[key], item);
+  const firstPath = (item = {}, paths = []) => {
+    for (const path of paths) {
+      const value = safeText(readPath(item, path));
+      if (value && !/^(?:unknown|unknown road|local roadway|nearby|n\/a|null|undefined)$/i.test(value)) return { path, value };
+    }
+    return { path: "", value: "" };
+  };
+  const normalizeCompare = (value = "") => safeText(value).toLowerCase()
+    .replace(/\b(?:united states|u\.s\.|us highway|highway|state highway|farm to market|county road|road|rd|street|st|avenue|ave|drive|dr|lane|ln|fm|cr|tx|sh|us)\b/g, "")
+    .replace(/[^a-z0-9]/g, "");
+  const sameRoad = (left = "", right = "") => {
+    const a = normalizeCompare(left);
+    const b = normalizeCompare(right);
+    return Boolean(a && b && (a === b || a.includes(b) || b.includes(a)));
+  };
+  const titleHazard = (record = {}) => {
+    const label = typeof getGridlyRoadHazardLabel === "function" ? getGridlyRoadHazardLabel(record) : safeText(record?.type || record?.report_type || "Other Hazard");
+    if (/crash|wreck/i.test(label)) return "Crash";
+    if (/road closed|closure/i.test(label)) return "Road Closed";
+    if (/disabled/i.test(label)) return "Disabled Vehicle";
+    return label.replace(/\b\w/g, (match) => match.toUpperCase());
+  };
+  const allowed = /^(?:road closed|crash|flooding|construction|disabled vehicle|downed power line|livestock|emergency response|other hazard)$/i;
+  const coordsFor = (record = {}) => {
+    const lat = Number(record?.lat ?? record?.latitude ?? record?.rawLat ?? record?.raw?.lat ?? record?.raw?.latitude ?? record?.coordinates?.lat);
+    const lng = Number(record?.lng ?? record?.lon ?? record?.longitude ?? record?.rawLng ?? record?.raw?.lng ?? record?.raw?.lon ?? record?.raw?.longitude ?? record?.coordinates?.lng ?? record?.coordinates?.lon);
+    return { lat: Number.isFinite(lat) ? lat : null, lng: Number.isFinite(lng) ? lng : null };
+  };
+  const incidentId = (record = {}, index = 0) => safeText(record?.id || record?.incidentId || record?.reportId || record?.uuid || record?.key || `road-hazard-${index}`);
+  const currentText = (record = {}) => firstPath(record, ["resolvedHeadline", "finalHeadline", "segmentHeadline", "localizedSummary", "summary", "title", "description", "detail", "raw.resolvedHeadline", "raw.finalHeadline", "raw.title", "source.resolvedHeadline", "source.finalHeadline", "source.title"]).value;
+  const normalizeRoad = (value = "") => typeof normalizeGridlyRoadHazardRoadComponent === "function" ? (normalizeGridlyRoadHazardRoadComponent(value) || safeText(value)) : safeText(value);
+  const directionFrom = (from = {}, to = {}) => {
+    if (!Number.isFinite(from.lat) || !Number.isFinite(from.lng) || !Number.isFinite(to.lat) || !Number.isFinite(to.lng)) return "";
+    const latDelta = Number(from.lat) - Number(to.lat);
+    const lngDelta = Number(from.lng) - Number(to.lng);
+    if (Math.abs(latDelta) >= Math.abs(lngDelta)) return latDelta >= 0 ? "north" : "south";
+    return lngDelta >= 0 ? "east" : "west";
+  };
+  const nearestCommunity = (coords = {}) => {
+    const areas = Array.isArray(GRIDLY_AWARENESS_AREA_DEFINITIONS) ? GRIDLY_AWARENESS_AREA_DEFINITIONS : [];
+    const ranked = areas.map((area) => {
+      const distance = Number.isFinite(coords.lat) && Number.isFinite(coords.lng) && typeof haversineDistance === "function"
+        ? haversineDistance(coords.lat, coords.lng, Number(area.lat), Number(area.lng)) : Infinity;
+      return { label: area.label, lat: Number(area.lat), lng: Number(area.lng), distance };
+    }).filter((area) => area.label && Number.isFinite(area.distance)).sort((a, b) => a.distance - b.distance);
+    const best = ranked[0] || null;
+    if (!best) return { community: "", distance: null, direction: "" };
+    return { community: best.label, distance: Number(best.distance.toFixed(1)), direction: directionFrom(coords, best) };
+  };
+  const scoreCandidate = (tier, available) => {
+    const base = { trueIntersection: [5, 5, 4, 4], crossingReference: [4, 5, 4, 4], communityDistance: [3, 3, 5, 4], nearestRoadFallback: [3, 3, 3, 3] }[tier] || [0, 0, 0, 0];
+    const values = available ? base : [0, 0, 0, 0];
+    return { clarity: values[0], localUsefulness: values[1], travelerUsefulness: values[2], awarenessValue: values[3], total: values.reduce((sum, value) => sum + value, 0) };
+  };
+  const records = (Array.isArray(options.hazards) ? options.hazards : [])
+    .concat(Array.isArray(activeHazards) ? activeHazards : [])
+    .concat(Array.isArray(window.__gridlyLatestAlertsForRender) ? window.__gridlyLatestAlertsForRender : [])
+    .filter((record) => record && typeof record === "object" && !isGridlyAlertRailOrCrossingRelated(record));
+  const unique = [];
+  const seen = new Set();
+  records.forEach((record, index) => {
+    const key = incidentId(record, index);
+    if (seen.has(key)) return;
+    seen.add(key);
+    const hazard = titleHazard(record);
+    if (allowed.test(hazard)) unique.push(record);
+  });
+  const rows = unique.map((record, index) => {
+    const coords = coordsFor(record);
+    const parsedCurrent = typeof parseGridlyRoadHazardRoadsFromText === "function" ? parseGridlyRoadHazardRoadsFromText(currentText(record)) : {};
+    const productionCandidate = typeof buildGridlyRoadHazardTxDotStyleCandidate === "function" ? buildGridlyRoadHazardTxDotStyleCandidate(record) : {};
+    const primary = normalizeRoad(firstPath(record, ["primaryRoad", "parsedPrimaryRoad", "roadName", "corridorLabel", "displayRoadName", "corridor", "route", "raw.primaryRoad", "raw.roadName", "source.primaryRoad", "source.roadName"]).value || productionCandidate.road || parsedCurrent.road);
+    const refs = [
+      firstPath(record, ["intersection", "crossStreet", "referenceRoad", "referenceRoadA", "nearestCrossStreet", "nearbyCrossStreet", "crossingRoad", "nearestRoadName", "nearestRoad", "knownLocation", "locationName", "raw.referenceRoad", "raw.nearestRoad", "source.referenceRoad", "source.nearestRoad"]).value,
+      productionCandidate.referenceRoadA,
+      productionCandidate.nearestRoadName,
+      parsedCurrent.referenceRoadA
+    ].map(normalizeRoad).filter((value) => value && !sameRoad(value, primary));
+    const referenceRoad = [...new Set(refs.map((value) => value.toLowerCase()))].map((lower) => refs.find((value) => value.toLowerCase() === lower))[0] || "";
+    const crossingCandidate = referenceRoad;
+    const community = nearestCommunity(coords);
+    const hazard = titleHazard(record);
+    const current = currentText(record) || productionCandidate.text || (primary ? `${hazard} on ${primary}` : hazard);
+    const candidateA = primary && referenceRoad ? `${hazard} on ${primary} at ${referenceRoad}` : "";
+    const candidateB = primary && crossingCandidate ? `${hazard} on ${primary} near the ${crossingCandidate} crossing` : "";
+    const distanceText = community.community && Number.isFinite(community.distance) ? `${community.distance} miles ${community.direction} of ${community.community}` : "";
+    const candidateC = primary && distanceText ? `${hazard} on ${primary} ${distanceText}` : "";
+    const candidateD = primary ? (referenceRoad ? `${hazard} on ${primary} near ${referenceRoad}` : `${hazard} on ${primary}`) : current;
+    const candidates = {
+      candidateA: { strategy: "True Intersection", phrase: candidateA, score: scoreCandidate("trueIntersection", Boolean(candidateA)) },
+      candidateB: { strategy: "Crossing Reference", phrase: candidateB, score: scoreCandidate("crossingReference", Boolean(candidateB)) },
+      candidateC: { strategy: "Community Distance", phrase: candidateC, score: scoreCandidate("communityDistance", Boolean(candidateC)) },
+      candidateD: { strategy: "Nearest-Road Fallback", phrase: candidateD, score: scoreCandidate("nearestRoadFallback", Boolean(candidateD)) }
+    };
+    const selectedHierarchyTier = candidateA ? "Tier 1 — True intersection" : (candidateB ? "Tier 2 — Crossing reference" : (candidateC ? "Tier 3 — Community-distance reference" : "Tier 4 — Nearest-road fallback"));
+    const recommendedCandidate = candidateA ? "candidateA" : (candidateB ? "candidateB" : (candidateC ? "candidateC" : "candidateD"));
+    const confidence = candidateA ? "medium" : (candidateB || candidateC ? "low-medium" : "low");
+    return {
+      incidentId: incidentId(record, index),
+      incidentType: hazard,
+      coordinates: coords,
+      currentProductionWording: current,
+      candidates,
+      primaryRoad: primary,
+      referenceRoad,
+      crossingCandidate,
+      communityCandidate: community.community,
+      distanceCandidate: Number.isFinite(community.distance) ? community.distance : null,
+      directionCandidate: community.direction,
+      selectedHierarchyTier,
+      confidence,
+      evidenceUsed: [productionCandidate.source, parsedCurrent.referenceRoadA ? "current_text_parse" : "", referenceRoad ? "reference_or_nearest_road_fields" : "", community.community ? "awareness_area_anchor_distance" : ""].filter(Boolean),
+      recommendedCandidate,
+      reasoning: `${selectedHierarchyTier} is the highest available shadow candidate; live text is intentionally unchanged.`
+    };
+  });
+  const aggregateFindings = {
+    intersectionWording: rows.filter((row) => row.recommendedCandidate === "candidateA").length,
+    crossingWording: rows.filter((row) => row.recommendedCandidate === "candidateB").length,
+    communityDistanceWording: rows.filter((row) => row.recommendedCandidate === "candidateC").length,
+    nearestRoadFallback: rows.filter((row) => row.recommendedCandidate === "candidateD").length
+  };
+  const wacoSawmillDiagnostics = rows.filter((row) => sameRoad(row.primaryRoad, "US 90")
+    && [row.referenceRoad, row.crossingCandidate, row.currentProductionWording].some((value) => /waco/i.test(value))
+    && [row.referenceRoad, row.currentProductionWording, row.candidates.candidateD.phrase].some((value) => /sawmill/i.test(value)))
+    .map((row) => ({ incidentId: row.incidentId, currentWording: row.currentProductionWording, candidateWording: row.candidates[row.recommendedCandidate].phrase, recommendedWording: row.candidates[row.recommendedCandidate].phrase, liveTextChanged: false }));
+  const audit = {
+    auditVersion: "V312.1-road-hazard-location-shadow-mode",
+    noProductionTextChanges: true,
+    scope: "active road hazards only; crossings excluded",
+    activeRoadHazardCount: rows.length,
+    rows,
+    wacoSawmillDiagnostics,
+    aggregateFindings,
+    fieldGuide: ["incidentId", "incidentType", "coordinates", "primaryRoad", "referenceRoad", "crossingCandidate", "communityCandidate", "distanceCandidate", "directionCandidate", "selectedHierarchyTier", "confidence", "evidenceUsed", "recommendedCandidate", "reasoning"]
+  };
+  console.info("gridlyRoadHazardLocationShadowAudit", audit);
+  return audit;
+};
+
 function openAlertsSurfaceFromDock() {
 
   const bindAlertsPanelClick = () => {
