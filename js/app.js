@@ -16058,6 +16058,44 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
   const incidentId = (record = {}, index = 0) => safeText(record?.id || record?.incidentId || record?.reportId || record?.uuid || record?.key || `road-hazard-${index}`);
   const currentText = (record = {}) => firstPath(record, ["resolvedHeadline", "finalHeadline", "segmentHeadline", "localizedSummary", "summary", "title", "description", "detail", "raw.resolvedHeadline", "raw.finalHeadline", "raw.title", "source.resolvedHeadline", "source.finalHeadline", "source.title"]).value;
   const normalizeRoad = (value = "") => typeof normalizeGridlyRoadHazardRoadComponent === "function" ? (normalizeGridlyRoadHazardRoadComponent(value) || safeText(value)) : safeText(value);
+  const coordinateRoadLookupFor = (coords = {}, primaryRoad = "") => {
+    const lat = Number(coords?.lat);
+    const lng = Number(coords?.lng);
+    const evidence = [];
+    const result = { primaryRoad: "", referenceRoads: [], evidence };
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return result;
+    const addReference = (value = "", source = "") => {
+      const normalized = normalizeRoad(value);
+      if (!normalized || sameRoad(normalized, result.primaryRoad || primaryRoad)) return;
+      if (result.referenceRoads.some((entry) => sameRoad(entry.value, normalized))) return;
+      result.referenceRoads.push({ value: normalized, source });
+    };
+    if (typeof resolveNearestRoadName === "function") {
+      const resolved = safeText(resolveNearestRoadName(lat, lng));
+      const debug = resolveNearestRoadName.lastDebug || {};
+      evidence.push({ source: "coordinate.resolveNearestRoadName", path: "resolveNearestRoadName(lat,lng)", value: resolved, lat, lng });
+      (Array.isArray(debug?.pairedRoadSamples) ? debug.pairedRoadSamples : []).slice(0, 6).forEach((sample, index) => {
+        evidence.push({ source: "coordinate.resolveNearestRoadName", path: `resolveNearestRoadName.lastDebug.pairedRoadSamples[${index}]`, value: safeText(sample), lat, lng });
+      });
+      safeText(resolved).split(/\s*&\s*/).forEach((part, index) => {
+        const normalized = normalizeRoad(part);
+        if (!normalized) return;
+        if (!result.primaryRoad && !primaryRoad && index === 0) result.primaryRoad = normalized;
+        else addReference(normalized, "coordinate.resolveNearestRoadName");
+      });
+      if (!result.primaryRoad && resolved && !primaryRoad) result.primaryRoad = normalizeRoad(resolved);
+    }
+    if (typeof resolveNearbyRoadPair === "function") {
+      const pair = resolveNearbyRoadPair(lat, lng, primaryRoad || result.primaryRoad);
+      evidence.push({ source: "coordinate.resolveNearbyRoadPair", path: "resolveNearbyRoadPair(lat,lng,primaryRoad)", value: pair?.used ? `${pair.roadA} & ${pair.roadB}` : (pair?.rejectedReason || ""), lat, lng });
+      (Array.isArray(pair?.samples) ? pair.samples : []).slice(0, 6).forEach((sample, index) => {
+        evidence.push({ source: "coordinate.resolveNearbyRoadPair", path: `resolveNearbyRoadPair.samples[${index}]`, value: safeText(sample), lat, lng });
+      });
+      if (!result.primaryRoad && !primaryRoad && pair?.roadA) result.primaryRoad = normalizeRoad(pair.roadA);
+      addReference(pair?.roadB, "coordinate.resolveNearbyRoadPair");
+    }
+    return result;
+  };
   const directionFrom = (from = {}, to = {}) => {
     if (!Number.isFinite(from.lat) || !Number.isFinite(from.lng) || !Number.isFinite(to.lat) || !Number.isFinite(to.lng)) return "";
     const latDelta = Number(from.lat) - Number(to.lat);
@@ -16178,8 +16216,13 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
     const inspectedReferenceFields = inspectPathSet(record, rawFieldGroups, referencePaths);
     const primaryField = firstInspectedValue(inspectedPrimaryFields);
     const parsedPrimary = parsedTexts.find((entry) => entry.parsed?.road)?.parsed?.road || "";
-    const primarySource = primaryField.value ? primaryField.path : (productionCandidateUsable && productionCandidate.road ? `txdotCandidate.${productionCandidate.source || "road"}` : (parsedPrimary ? "renderedText.parse" : "missing"));
-    const primary = normalizeRoad(primaryField.value || (productionCandidateUsable ? productionCandidate.road : "") || parsedPrimary);
+    let primarySource = primaryField.value ? primaryField.path : (productionCandidateUsable && productionCandidate.road ? `txdotCandidate.${productionCandidate.source || "road"}` : (parsedPrimary ? "renderedText.parse" : "missing"));
+    let primary = normalizeRoad(primaryField.value || (productionCandidateUsable ? productionCandidate.road : "") || parsedPrimary);
+    const coordinateRoadLookup = coordinateRoadLookupFor(coords, primary);
+    if (!primary && coordinateRoadLookup.primaryRoad) {
+      primary = coordinateRoadLookup.primaryRoad;
+      primarySource = "coordinate.resolveNearestRoadName";
+    }
     const referenceEntries = [
       ...inspectedReferenceFields.map((entry) => ({ source: entry.path, value: entry.value })),
       ...(productionCandidateUsable ? [
@@ -16189,7 +16232,8 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
       ...parsedTexts.flatMap((entry) => [
         { source: `${entry.path}.parsed.referenceRoadA`, value: entry.parsed?.referenceRoadA },
         { source: `${entry.path}.parsed.referenceRoadB`, value: entry.parsed?.referenceRoadB }
-      ])
+      ]),
+      ...coordinateRoadLookup.referenceRoads.map((entry) => ({ source: entry.source, value: entry.value }))
     ].map((entry) => ({ source: entry.source, value: normalizeRoad(entry.value) })).filter((entry) => entry.value && !sameRoad(entry.value, primary));
     const refs = [];
     referenceEntries.forEach((entry) => { if (!refs.some((existing) => sameRoad(existing.value, entry.value))) refs.push(entry); });
@@ -16227,12 +16271,13 @@ window.gridlyRoadHazardLocationShadowAudit = function gridlyRoadHazardLocationSh
       directionCandidate: community.direction,
       selectedHierarchyTier,
       confidence,
-      evidenceUsed: [productionCandidateUsable ? productionCandidate.source : "", parsedCurrent.referenceRoadA ? "text_parse" : "", referenceRoad ? "reference_or_nearest_road_fields" : "", crossingCandidate ? "crossing_landmark_candidate" : "", community.community ? "awareness_area_anchor_distance" : ""].filter(Boolean),
+      evidenceUsed: [productionCandidateUsable ? productionCandidate.source : "", coordinateRoadLookup.primaryRoad || coordinateRoadLookup.referenceRoads.length ? "coordinate_road_lookup" : "", parsedCurrent.referenceRoadA ? "text_parse" : "", referenceRoad ? "reference_or_nearest_road_fields" : "", crossingCandidate ? "crossing_landmark_candidate" : "", community.community ? "awareness_area_anchor_distance" : ""].filter(Boolean),
       primaryRoadSource: primarySource,
       referenceRoadSource: referenceSource,
       rawFieldsInspected: {
         primaryRoad: inspectedPrimaryFields,
         referenceRoad: inspectedReferenceFields,
+        coordinateRoadLookup: coordinateRoadLookup.evidence,
         text: inspectedTextFields
       },
       missingCandidateReasons: {
