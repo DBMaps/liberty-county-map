@@ -13343,6 +13343,89 @@ function invalidateGridlyCrossingPopupMapSize(mapRef = map, reason = "crossing-p
   return true;
 }
 
+function readGridlyCrossingPopupMapMetrics(mapRef = map, reason = "crossing-popup-audit") {
+  const mapEl = typeof mapRef?.getContainer === "function" ? mapRef.getContainer() : document.getElementById("map");
+  const rect = mapEl?.getBoundingClientRect?.();
+  const size = typeof mapRef?.getSize === "function" ? mapRef.getSize() : null;
+  const panes = mapRef?._panes || {};
+  const readTransform = (node) => node ? (node.style?.transform || getComputedStyle(node).transform || "") : "";
+  const metrics = {
+    reason,
+    at: Date.now(),
+    mapClientHeight: Number(mapEl?.clientHeight || 0),
+    mapClientWidth: Number(mapEl?.clientWidth || 0),
+    mapRect: rect ? {
+      width: Math.round(rect.width),
+      height: Math.round(rect.height),
+      top: Math.round(rect.top),
+      bottom: Math.round(rect.bottom)
+    } : null,
+    leafletSize: size ? { x: Number(size.x || 0), y: Number(size.y || 0) } : null,
+    tilePaneTransform: readTransform(panes.tilePane || document.querySelector("#map .leaflet-tile-pane")),
+    markerPaneTransform: readTransform(panes.markerPane || document.querySelector("#map .leaflet-marker-pane")),
+    popupPaneTransform: readTransform(panes.popupPane || document.querySelector("#map .leaflet-popup-pane")),
+    destinationCommandVisible: Boolean(document.querySelector("body[data-layout-mode='portrait'] .mobile-destination-command:not([hidden])")),
+    crossingPopupVisibleClass: Boolean(document.body?.classList.contains("gridly-crossing-popup-visible"))
+  };
+  window.__gridlyLastCrossingPopupMapMetrics = metrics;
+  if (window.__GRIDLY_CROSSING_POPUP_AUDIT === true) console.debug("[Gridly] crossing popup map metrics", metrics);
+  return metrics;
+}
+
+function redrawGridlyCrossingPopupTileLayers(mapRef = map) {
+  if (!mapRef || typeof mapRef.eachLayer !== "function") return 0;
+  let redrawn = 0;
+  mapRef.eachLayer((layer) => {
+    if (!layer || typeof layer.redraw !== "function") return;
+    if (typeof layer.getTileUrl !== "function" && !layer._url) return;
+    try {
+      layer.redraw();
+      redrawn += 1;
+    } catch (error) {
+      console.debug("[Gridly] crossing popup tile redraw skipped", error);
+    }
+  });
+  return redrawn;
+}
+
+function repairGridlyCrossingPopupMapCoverage(mapRef = map, reason = "crossing-popup-coverage") {
+  const before = readGridlyCrossingPopupMapMetrics(mapRef, `${reason}-before`);
+  if (!mapRef || typeof mapRef.invalidateSize !== "function") return false;
+  const mapHeight = Number(before.mapClientHeight || before.mapRect?.height || 0);
+  const leafletHeight = Number(before.leafletSize?.y || 0);
+  const heightMismatch = mapHeight > 0 && Math.abs(mapHeight - leafletHeight) > 1;
+  try {
+    mapRef.invalidateSize({ pan: false, animate: false, debounceMoveend: false });
+  } catch (_) {
+    mapRef.invalidateSize(false);
+  }
+  const redrawn = redrawGridlyCrossingPopupTileLayers(mapRef);
+  const after = readGridlyCrossingPopupMapMetrics(mapRef, `${reason}-after`);
+  gridlyPopupViewportBounds = {
+    ...(gridlyPopupViewportBounds || {}),
+    coverageRepair: {
+      reason,
+      at: Date.now(),
+      heightMismatch,
+      before,
+      after,
+      redrawnTileLayers: redrawn
+    }
+  };
+  return true;
+}
+
+function scheduleGridlyCrossingPopupMapCoverageRepair(mapRef = map, reason = "crossing-popup-coverage") {
+  if (!mapRef) return false;
+  readGridlyCrossingPopupMapMetrics(mapRef, `${reason}-scheduled`);
+  [0, 80, 180, 360].forEach((delay) => {
+    window.setTimeout(() => {
+      requestAnimationFrame(() => repairGridlyCrossingPopupMapCoverage(mapRef, `${reason}-${delay}ms`));
+    }, delay);
+  });
+  return true;
+}
+
 function getGridlyCrossingPopupOptions(mapRef = map) {
   const mobile = isGridlyMobileCrossingPopupViewport(mapRef);
   return {
@@ -13499,6 +13582,7 @@ function completeVerifiedCrossingPopupOpen(marker, session, reason) {
   gridlyPopupEarlyReturnReason = "";
   gridlyPopupLastFailureReason = reason === "fallback" ? "" : gridlyPopupLastFailureReason;
   requestAnimationFrame(() => enforceGridlyCrossingPopupContainment(marker, session, reason, 0));
+  scheduleGridlyCrossingPopupMapCoverageRepair(session.mapRef || map, `${reason}-verified-open`);
   window.__gridlyPopupPanSession = null;
   setGridlyCrossingPopupSessionClass(false);
   return true;
@@ -30455,11 +30539,15 @@ function renderCrossings(reason = "unspecified", options = {}) {
 
     marker.on("popupopen", () => {
       console.log("Crossing popup opened", String(crossing.id));
+      readGridlyCrossingPopupMapMetrics(map, "popupopen-before-class");
       gridlyPopupReopenReady = true;
       document.body?.classList.add("gridly-crossing-popup-visible");
+      readGridlyCrossingPopupMapMetrics(map, "popupopen-after-class");
       if (typeof syncMobileDestinationCommandCard === "function") syncMobileDestinationCommandCard();
+      readGridlyCrossingPopupMapMetrics(map, "popupopen-after-destination-sync");
       invalidateGridlyCrossingPopupMapSize(map, "popupopen");
       window.setTimeout(() => invalidateGridlyCrossingPopupMapSize(map, "popupopen-settled"), 120);
+      scheduleGridlyCrossingPopupMapCoverageRepair(map, "popupopen");
       const popupEl = marker.getPopup()?.getElement?.();
       if (popupEl) wirePopupReportButtons(popupEl);
     });
