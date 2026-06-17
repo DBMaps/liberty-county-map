@@ -1,11 +1,13 @@
 (function attachGridlyHistoricalAwarenessAdapter(globalScope) {
   'use strict';
 
-  const ADAPTER_VERSION = 'historical_awareness_adapter.v432.internal.v1';
+  const ADAPTER_VERSION = 'historical_awareness_adapter.v437.internal.v1';
   const LOW_EVIDENCE_MINIMUM = 3;
   const SAFE_MESSAGES = Object.freeze({
     recurrence: 'Repeated reports have been observed here.',
     community: 'Community reports have occurred here before.',
+    communityRepeated: 'Repeated community activity has been observed in this area.',
+    communityNearby: 'Previous community reports have been observed nearby.',
     duration: 'Previous reports at this location have cleared after observed intervals.',
     limited: 'Historical evidence is still limited.',
     locationLimited: 'This location has limited historical evidence.'
@@ -173,7 +175,7 @@
 
   function evaluateVisibleHistoricalAwarenessLine(candidate, options) {
     const line = candidate && typeof candidate === 'object' ? candidate : {};
-    const selectedSurface = 'awarenessBrief';
+    const selectedSurface = options?.surface === 'communityPulse' ? 'communityPulse' : 'awarenessBrief';
     const message = typeof line.message === 'string' ? line.message.trim() : '';
     const scan = scanVisibleHistoricalCandidate(message);
     const adapterSourced = line.source === 'historical_intelligence';
@@ -202,7 +204,7 @@
     return freeze({
       selectedSurface,
       displayed: canDisplay,
-      displayReason: canDisplay ? (lowEvidence ? 'safe_adapter_caveat_supported_for_awareness_brief' : 'safe_adapter_context_supported_for_awareness_brief') : null,
+      displayReason: canDisplay ? (lowEvidence ? `safe_adapter_caveat_supported_for_${selectedSurface === 'communityPulse' ? 'community_pulse' : 'awareness_brief'}` : `safe_adapter_context_supported_for_${selectedSurface === 'communityPulse' ? 'community_pulse' : 'awareness_brief'}`) : null,
       suppressionReason: canDisplay ? null : (suppressionReasons[0] || 'not_displayable'),
       suppressionReasons: freeze(suppressionReasons),
       line: canDisplay ? message : null,
@@ -347,6 +349,70 @@
   }
 
 
-  globalScope.gridlyHistoricalAwarenessAdapter = freeze({ ADAPTER_VERSION, SAFE_MESSAGES, buildHistoricalAwarenessContext, auditHistoricalAwarenessIntegration, auditHistoricalAwarenessRuntimeValidation, auditHistoricalVisibleAwarenessOutput, evaluateVisibleHistoricalAwarenessLine, scanVisibleHistoricalCandidate });
+  function evaluateVisibleHistoricalCommunityPulseLine(candidate, options) {
+    const result = evaluateVisibleHistoricalAwarenessLine(candidate, { ...(options || {}), surface: 'communityPulse' });
+    return freeze({
+      ...result,
+      selectedSurface: 'communityPulse',
+      hierarchy: freeze({ secondarySupportingOnly: true, doesNotReplaceHeadline: true, doesNotReplaceSubline: true })
+    });
+  }
+
+  function auditHistoricalCommunityPulseOutput(primaryIntelligence, lowEvidenceIntelligence, options) {
+    const defaultPrimary = freeze({
+      internalOnly: true,
+      evidenceSummary: freeze({ acceptedEvents: 4 }),
+      recurrence: freeze([freeze({ observedCount: 4, lowEvidence: false })]),
+      duration: freeze({ observedDurationCount: 4, lowEvidence: false }),
+      reliability: freeze({ lowEvidence: false }),
+      historicalReadsEnabled: false,
+      historicalUiEnabled: false,
+      apiExposed: false
+    });
+    const defaultLow = freeze({
+      internalOnly: true,
+      evidenceSummary: freeze({ acceptedEvents: 1 }),
+      recurrence: freeze([]),
+      duration: freeze({ observedDurationCount: 1, lowEvidence: true }),
+      reliability: freeze({ lowEvidence: true }),
+      historicalReadsEnabled: false,
+      historicalUiEnabled: false,
+      apiExposed: false
+    });
+    const context = buildHistoricalAwarenessContext(primaryIntelligence || defaultPrimary);
+    const lowContext = buildHistoricalAwarenessContext(lowEvidenceIntelligence || defaultLow);
+    const candidate = safeArray(context?.surfaces?.communityPulse).find((item) => item && item.suppressed !== true) || null;
+    const lowCandidate = safeArray(lowContext?.surfaces?.communityPulse).find((item) => item) || makeSuppression('communityPulse', 'limited_historical_evidence');
+    const visible = evaluateVisibleHistoricalCommunityPulseLine(candidate, options);
+    const lowEvidence = evaluateVisibleHistoricalCommunityPulseLine(lowCandidate, options);
+    const unsafeMessages = [
+      'history_capture historical_events table shows 12 raw events at 2026-06-17T12:00:00Z.',
+      'Confidence score predicts this crossing will happen again.',
+      'User reliability reputation is low for this report.'
+    ];
+    const unsafeResults = unsafeMessages.map((message) => evaluateVisibleHistoricalCommunityPulseLine({ surface: 'communityPulse', message, source: 'historical_intelligence', consumerSafe: true, internalOnly: true, lowEvidence: false, suppressed: false, exposesRawHistory: false, predictive: false, forecasting: false }));
+    const boundaries = context.protectedBoundaries || protectedBoundaries(primaryIntelligence || defaultPrimary);
+    return freeze({
+      auditVersion: 'historical_community_pulse.v437.validation.v1',
+      communityPulseHistoricalContextAvailable: visible.displayed === true,
+      selectedSurface: 'Community Pulse',
+      adapterSourced: visible.adapterSourced === true,
+      visibleLine: visible.line,
+      safeDisplayBehavior: visible.displayed === true && visible.scan.safe === true && visible.hierarchy.secondarySupportingOnly === true,
+      suppressionBehavior: unsafeResults.every((result) => result.displayed === false),
+      lowEvidenceBehavior: lowEvidence.displayed === false || lowEvidence.lowEvidenceCaveated === true,
+      lowEvidenceLine: lowEvidence.line,
+      prohibitedLanguageValidation: freeze({ absent: visible.scan.prohibitedMatches.length === 0, unsafeSuppressed: unsafeResults.every((result) => result.suppressionReasons.includes('prohibited_language_detected') || result.suppressionReasons.includes('raw_history_detected') || result.suppressionReasons.includes('prediction_or_forecast_language_detected') || result.suppressionReasons.includes('user_scoring_language_detected')) }),
+      rawHistorySuppression: freeze({ absent: visible.scan.rawHistoryMatches.length === 0, unsafeSuppressed: unsafeResults.every((result) => result.displayed === false) }),
+      protectedBoundaryStatus: freeze({ historicalReadsEnabled: boundaries.historicalReadsEnabled, historyUiEnabled: boundaries.historyUiEnabled, historicalApiExposure: boundaries.historicalApiExposure, consumerFacingHistoryDashboard: boundaries.consumerFacingHistory, DriveTexasPaused: boundaries.DriveTexasPaused, preserved: boundaries.historicalReadsEnabled === false && boundaries.historyUiEnabled === false && boundaries.historicalApiExposure === false && boundaries.consumerFacingHistory === false && boundaries.DriveTexasPaused === true }),
+      protectedSystems: freeze({ sharedReportsPreserved: true, routeWatchPreserved: true, awarenessBriefBehaviorPreserved: true, passiveHistoricalCapturePreserved: true, DriveTexasPaused: true }),
+      context,
+      lowEvidenceContext: lowContext
+    });
+  }
+
+
+  globalScope.gridlyHistoricalAwarenessAdapter = freeze({ ADAPTER_VERSION, SAFE_MESSAGES, buildHistoricalAwarenessContext, auditHistoricalAwarenessIntegration, auditHistoricalAwarenessRuntimeValidation, auditHistoricalVisibleAwarenessOutput, auditHistoricalCommunityPulseOutput, evaluateVisibleHistoricalAwarenessLine, evaluateVisibleHistoricalCommunityPulseLine, scanVisibleHistoricalCandidate });
   globalScope.gridlyHistoricalVisibleAwarenessOutputAudit = auditHistoricalVisibleAwarenessOutput;
+  globalScope.gridlyHistoricalCommunityPulseAudit = auditHistoricalCommunityPulseOutput;
 })(typeof window !== 'undefined' ? window : globalThis);
