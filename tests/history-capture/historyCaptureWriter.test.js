@@ -49,13 +49,25 @@ require('../../js/history-capture/historyCaptureWriter.js');
     metadata: Object.freeze({ passive: true })
   });
   const inserts = [];
+  const schemaCalls = [];
+  const fromCalls = [];
   const storageClient = {
-    from(table) {
-      assert.strictEqual(table, 'history_capture.historical_events');
+    from() {
+      throw new Error('writer must not use default-schema from() for history_capture');
+    },
+    schema(schemaName) {
+      schemaCalls.push(schemaName);
+      assert.strictEqual(schemaName, 'history_capture');
       return {
-        async insert(row) {
-          inserts.push(row);
-          return { data: null, error: null };
+        from(table) {
+          fromCalls.push(table);
+          assert.strictEqual(table, 'historical_events');
+          return {
+            async insert(row) {
+              inserts.push(row);
+              return { data: null, error: null };
+            }
+          };
         }
       };
     }
@@ -70,6 +82,8 @@ require('../../js/history-capture/historyCaptureWriter.js');
   assert.strictEqual(successResult.ok, true);
   assert.strictEqual(successResult.noop, false);
   assert.strictEqual(successResult.reason, 'passive_history_capture_write_accepted');
+  assert.deepStrictEqual(schemaCalls, ['history_capture']);
+  assert.deepStrictEqual(fromCalls, ['historical_events']);
   assert.strictEqual(inserts.length, 1);
 
   const duplicateResult = await api.writePhase1AEnvelope(envelope, {
@@ -90,15 +104,21 @@ require('../../js/history-capture/historyCaptureWriter.js');
     writerEnabled: true,
     idempotencyKey: 'phase1a:test-failure',
     storageClient: {
-      from() {
+      schema(schemaName) {
+        assert.strictEqual(schemaName, 'history_capture');
         return {
-          async insert() {
-            const error = new Error('sidecar storage failure');
-            error.code = 'PGRST106';
-            error.details = 'schema not exposed';
-            error.hint = 'Check exposed schemas';
-            error.status = 404;
-            throw error;
+          from(table) {
+            assert.strictEqual(table, 'historical_events');
+            return {
+              async insert() {
+                const error = new Error('sidecar storage failure');
+                error.code = 'PGRST106';
+                error.details = 'schema not exposed';
+                error.hint = 'Check exposed schemas';
+                error.status = 404;
+                throw error;
+              }
+            };
           }
         };
       }

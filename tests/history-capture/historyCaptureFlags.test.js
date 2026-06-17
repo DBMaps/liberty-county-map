@@ -10,12 +10,14 @@ assert.deepStrictEqual(defaults, {
   writesEnabled: false,
   productionHooksInstalled: false,
   historicalReadsExposed: false,
-  uiExposed: false
+  uiExposed: false,
+  canaryMode: false
 });
 assert.notStrictEqual(defaults, api.DEFAULT_FLAGS, 'flags are returned as a defensive clone');
 
 defaults.captureEnabled = true;
 assert.strictEqual(api.getHistoryCaptureFlags().captureEnabled, false, 'capture remains disabled by default');
 assert.strictEqual(api.getHistoryCaptureFlags().writesEnabled, false, 'writes remain disabled by default');
+assert.strictEqual(api.getHistoryCaptureFlags().canaryMode, false, 'canary remains inactive by default');
 
 console.log('historyCaptureFlags.test.js passed');
