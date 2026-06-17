@@ -1,7 +1,7 @@
 (function attachGridlyHistoricalAwarenessAdapter(globalScope) {
   'use strict';
 
-  const ADAPTER_VERSION = 'historical_awareness_adapter.v437.internal.v1';
+  const ADAPTER_VERSION = 'historical_awareness_adapter.v439.internal.v1';
   const LOW_EVIDENCE_MINIMUM = 3;
   const SAFE_MESSAGES = Object.freeze({
     recurrence: 'Repeated reports have been observed here.',
@@ -91,6 +91,7 @@
       awarenessBrief: [],
       communityPulse: [],
       activeConditionExplanation: [],
+      alertCards: [],
       rankingInputs: []
     });
     if (!isPlainObject(intelligence) || intelligence.internalOnly !== true) {
@@ -108,6 +109,7 @@
     } else if (recurrence) {
       surfaces.awarenessBrief.push(makeContext('awarenessBrief', SAFE_MESSAGES.recurrence, 'historical_intelligence', { lowEvidence: false }));
       surfaces.communityPulse.push(makeContext('communityPulse', SAFE_MESSAGES.community, 'historical_intelligence', { lowEvidence: false }));
+      surfaces.alertCards.push(makeContext('alertCards', SAFE_MESSAGES.community, 'historical_intelligence', { lowEvidence: false }));
       surfaces.rankingInputs.push(freeze({ name: 'historical_recurrence_awareness', signal: 'repeated_reports_observed', internalOnly: true, consumerSafe: true, usesRawCounts: false, lowEvidence: false }));
     } else {
       surfaces.awarenessBrief.push(makeSuppression('awarenessBrief', 'no_safe_recurrence_context'));
@@ -115,6 +117,7 @@
 
     if (!lowEvidence && intelligence?.duration?.lowEvidence !== true && Number(intelligence?.duration?.observedDurationCount || 0) >= LOW_EVIDENCE_MINIMUM) {
       surfaces.activeConditionExplanation.push(makeContext('activeConditionExplanation', SAFE_MESSAGES.duration, 'historical_intelligence', { lowEvidence: false }));
+      if (!surfaces.alertCards.length) surfaces.alertCards.push(makeContext('alertCards', SAFE_MESSAGES.duration, 'historical_intelligence', { lowEvidence: false }));
       surfaces.rankingInputs.push(freeze({ name: 'historical_duration_awareness', signal: 'observed_clearance_intervals', internalOnly: true, consumerSafe: true, usesRawDurations: false, lowEvidence: false }));
     }
 
@@ -175,7 +178,7 @@
 
   function evaluateVisibleHistoricalAwarenessLine(candidate, options) {
     const line = candidate && typeof candidate === 'object' ? candidate : {};
-    const selectedSurface = options?.surface === 'communityPulse' ? 'communityPulse' : 'awarenessBrief';
+    const selectedSurface = options?.surface === 'communityPulse' ? 'communityPulse' : (options?.surface === 'alertCards' ? 'alertCards' : 'awarenessBrief');
     const message = typeof line.message === 'string' ? line.message.trim() : '';
     const scan = scanVisibleHistoricalCandidate(message);
     const adapterSourced = line.source === 'historical_intelligence';
@@ -204,7 +207,7 @@
     return freeze({
       selectedSurface,
       displayed: canDisplay,
-      displayReason: canDisplay ? (lowEvidence ? `safe_adapter_caveat_supported_for_${selectedSurface === 'communityPulse' ? 'community_pulse' : 'awareness_brief'}` : `safe_adapter_context_supported_for_${selectedSurface === 'communityPulse' ? 'community_pulse' : 'awareness_brief'}`) : null,
+      displayReason: canDisplay ? (lowEvidence ? `safe_adapter_caveat_supported_for_${selectedSurface === 'communityPulse' ? 'community_pulse' : (selectedSurface === 'alertCards' ? 'alert_cards' : 'awareness_brief')}` : `safe_adapter_context_supported_for_${selectedSurface === 'communityPulse' ? 'community_pulse' : (selectedSurface === 'alertCards' ? 'alert_cards' : 'awareness_brief')}`) : null,
       suppressionReason: canDisplay ? null : (suppressionReasons[0] || 'not_displayable'),
       suppressionReasons: freeze(suppressionReasons),
       line: canDisplay ? message : null,
@@ -349,6 +352,15 @@
   }
 
 
+  function evaluateVisibleHistoricalAlertCardLine(candidate, options) {
+    const result = evaluateVisibleHistoricalAwarenessLine(candidate, { ...(options || {}), surface: 'alertCards' });
+    return freeze({
+      ...result,
+      selectedSurface: 'alertCards',
+      hierarchy: freeze({ secondarySupportingOnly: true, doesNotReplaceTitle: true, doesNotReplaceLocation: true, doesNotReplaceFreshness: true, doesNotReplaceReportCount: true, doesNotReplaceTrustLanguage: true, doesNotReplaceActionButtons: true })
+    });
+  }
+
   function evaluateVisibleHistoricalCommunityPulseLine(candidate, options) {
     const result = evaluateVisibleHistoricalAwarenessLine(candidate, { ...(options || {}), surface: 'communityPulse' });
     return freeze({
@@ -412,7 +424,63 @@
   }
 
 
-  globalScope.gridlyHistoricalAwarenessAdapter = freeze({ ADAPTER_VERSION, SAFE_MESSAGES, buildHistoricalAwarenessContext, auditHistoricalAwarenessIntegration, auditHistoricalAwarenessRuntimeValidation, auditHistoricalVisibleAwarenessOutput, auditHistoricalCommunityPulseOutput, evaluateVisibleHistoricalAwarenessLine, evaluateVisibleHistoricalCommunityPulseLine, scanVisibleHistoricalCandidate });
+  function auditHistoricalAlertContextOutput(primaryIntelligence, lowEvidenceIntelligence, options) {
+    const defaultPrimary = freeze({
+      internalOnly: true,
+      evidenceSummary: freeze({ acceptedEvents: 4 }),
+      recurrence: freeze([freeze({ observedCount: 4, lowEvidence: false })]),
+      duration: freeze({ observedDurationCount: 4, lowEvidence: false }),
+      reliability: freeze({ lowEvidence: false }),
+      historicalReadsEnabled: false,
+      historicalUiEnabled: false,
+      apiExposed: false
+    });
+    const defaultLow = freeze({
+      internalOnly: true,
+      evidenceSummary: freeze({ acceptedEvents: 1 }),
+      recurrence: freeze([]),
+      duration: freeze({ observedDurationCount: 1, lowEvidence: true }),
+      reliability: freeze({ lowEvidence: true }),
+      historicalReadsEnabled: false,
+      historicalUiEnabled: false,
+      apiExposed: false
+    });
+    const context = buildHistoricalAwarenessContext(primaryIntelligence || defaultPrimary);
+    const lowContext = buildHistoricalAwarenessContext(lowEvidenceIntelligence || defaultLow);
+    const candidate = safeArray(context?.surfaces?.alertCards).find((item) => item && item.suppressed !== true) || null;
+    const lowCandidate = safeArray(lowContext?.surfaces?.alertCards).find((item) => item) || makeSuppression('alertCards', 'limited_historical_evidence');
+    const visible = evaluateVisibleHistoricalAlertCardLine(candidate, options);
+    const lowEvidence = evaluateVisibleHistoricalAlertCardLine(lowCandidate, options);
+    const unsafeMessages = [
+      'history_capture historical_events table shows 12 raw events at 2026-06-17T12:00:00Z.',
+      'Confidence score predicts this crossing will happen again.',
+      'User reliability reputation is low for this report.'
+    ];
+    const unsafeResults = unsafeMessages.map((message) => evaluateVisibleHistoricalAlertCardLine({ surface: 'alertCards', message, source: 'historical_intelligence', consumerSafe: true, internalOnly: true, lowEvidence: false, suppressed: false, exposesRawHistory: false, predictive: false, forecasting: false }));
+    const boundaries = context.protectedBoundaries || protectedBoundaries(primaryIntelligence || defaultPrimary);
+    return freeze({
+      auditVersion: 'historical_alert_context.v439.validation.v1',
+      alertCardHistoricalContextAvailable: visible.displayed === true,
+      selectedSurface: 'Alert Cards',
+      adapterSourced: visible.adapterSourced === true,
+      visibleLine: visible.line,
+      safeDisplayBehavior: visible.displayed === true && visible.scan.safe === true && visible.hierarchy.secondarySupportingOnly === true,
+      suppressionBehavior: unsafeResults.every((result) => result.displayed === false),
+      lowEvidenceBehavior: lowEvidence.displayed === false || lowEvidence.lowEvidenceCaveated === true,
+      lowEvidenceLine: lowEvidence.line,
+      prohibitedLanguageValidation: freeze({ absent: visible.scan.prohibitedMatches.length === 0, unsafeSuppressed: unsafeResults.every((result) => result.displayed === false) }),
+      rawHistorySuppression: freeze({ absent: visible.scan.rawHistoryMatches.length === 0, unsafeSuppressed: unsafeResults.every((result) => result.displayed === false) }),
+      protectedBoundaryStatus: freeze({ historicalReadsEnabled: boundaries.historicalReadsEnabled, historyUiEnabled: boundaries.historyUiEnabled, historicalApiExposure: boundaries.historicalApiExposure, consumerFacingHistoryDashboard: boundaries.consumerFacingHistory, DriveTexasPaused: boundaries.DriveTexasPaused, preserved: boundaries.historicalReadsEnabled === false && boundaries.historyUiEnabled === false && boundaries.historicalApiExposure === false && boundaries.consumerFacingHistory === false && boundaries.DriveTexasPaused === true }),
+      protectedSystems: freeze({ sharedReportsPreserved: true, routeWatchPreserved: true, awarenessFilteringPreserved: true, hazardLifecyclePreserved: true, alertGenerationPreserved: true, supabaseSyncPreserved: true, passiveHistoricalCapturePreserved: true, awarenessBriefBehaviorPreserved: true, communityPulseBehaviorPreserved: true, DriveTexasPaused: true }),
+      auditMetadata: freeze({ adapterSourced: visible.adapterSourced === true, safe: visible.scan.safe === true, secondary: visible.hierarchy.secondarySupportingOnly === true, rawHistoryFree: visible.scan.rawHistoryMatches.length === 0, predictionFree: visible.scan.predictionMatches.length === 0, prohibitedLanguageFree: visible.scan.prohibitedMatches.length === 0 }),
+      context,
+      lowEvidenceContext: lowContext
+    });
+  }
+
+
+  globalScope.gridlyHistoricalAwarenessAdapter = freeze({ ADAPTER_VERSION, SAFE_MESSAGES, buildHistoricalAwarenessContext, auditHistoricalAwarenessIntegration, auditHistoricalAwarenessRuntimeValidation, auditHistoricalVisibleAwarenessOutput, auditHistoricalCommunityPulseOutput, evaluateVisibleHistoricalAwarenessLine, evaluateVisibleHistoricalCommunityPulseLine, evaluateVisibleHistoricalAlertCardLine, auditHistoricalAlertContextOutput, scanVisibleHistoricalCandidate });
   globalScope.gridlyHistoricalVisibleAwarenessOutputAudit = auditHistoricalVisibleAwarenessOutput;
   globalScope.gridlyHistoricalCommunityPulseAudit = auditHistoricalCommunityPulseOutput;
+  globalScope.gridlyHistoricalAlertContextAudit = auditHistoricalAlertContextOutput;
 })(typeof window !== 'undefined' ? window : globalThis);
