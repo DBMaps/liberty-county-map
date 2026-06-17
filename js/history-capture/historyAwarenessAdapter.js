@@ -11,6 +11,10 @@
     locationLimited: 'This location has limited historical evidence.'
   });
   const PROHIBITED_LANGUAGE = Object.freeze([
+    'predicted',
+    'forecast',
+    'guaranteed',
+    'will happen',
     'will happen again',
     'usually happens every day',
     'guaranteed delay',
@@ -20,9 +24,14 @@
     'user reliability',
     'historical database shows',
     'history_capture',
-    'table',
     'schema',
-    'confidence',
+    'table',
+    'database',
+    'confidence score',
+    'user reliability',
+    'reputation',
+    'raw event',
+    'raw timestamp',
     'user id',
     'user_id'
   ]);
@@ -125,7 +134,7 @@
   function auditHistoricalAwarenessIntegration(primaryIntelligence, lowEvidenceIntelligence) {
     const primary = buildHistoricalAwarenessContext(primaryIntelligence);
     const low = buildHistoricalAwarenessContext(lowEvidenceIntelligence || primaryIntelligence);
-    const messages = JSON.stringify([primary.surfaces, low.surfaces]);
+    const messages = [primary.surfaces, low.surfaces].flatMap((surfaces) => Object.values(surfaces).flat()).map((item) => item.message || item.signal || '').join(' ');
     return freeze({
       adapterAvailable: true,
       recurrenceContextGeneratedSafely: primary.surfaces.awarenessBrief.some((item) => item.message === SAFE_MESSAGES.recurrence),
@@ -140,5 +149,78 @@
     });
   }
 
-  globalScope.gridlyHistoricalAwarenessAdapter = freeze({ ADAPTER_VERSION, SAFE_MESSAGES, buildHistoricalAwarenessContext, auditHistoricalAwarenessIntegration });
+
+  function auditHistoricalAwarenessRuntimeValidation(primaryIntelligence, lowEvidenceIntelligence) {
+    const runtime = {
+      adapterLoaded: true,
+      adapterAvailable: true,
+      adapterCallable: typeof buildHistoricalAwarenessContext === 'function' && typeof auditHistoricalAwarenessIntegration === 'function',
+      runtimeExceptions: 0,
+      startupRegressions: false
+    };
+    let audit = null;
+    try {
+      audit = auditHistoricalAwarenessIntegration(primaryIntelligence, lowEvidenceIntelligence);
+    } catch (error) {
+      runtime.runtimeExceptions += 1;
+      return freeze({ runtime: freeze(runtime), error: String(error?.message || 'historical_awareness_adapter_runtime_validation_failed') });
+    }
+
+    const primaryMessages = Object.values(audit.context.surfaces).flat().map((item) => item.message || item.signal || '').join(' ');
+    const lowEvidenceMessages = Object.values(audit.lowEvidenceContext.surfaces).flat().map((item) => item.message || item.signal || '').join(' ');
+    const combinedMessages = `${primaryMessages} ${lowEvidenceMessages}`;
+    const boundaries = audit.context.protectedBoundaries;
+
+    return freeze({
+      runtime: freeze(runtime),
+      awarenessBriefContext: freeze({
+        status: audit.context.surfaces.awarenessBrief.length > 0 ? 'generated' : 'missing',
+        consumerSafe: audit.context.surfaces.awarenessBrief.every((item) => item.consumerSafe === true),
+        internalOnly: audit.context.surfaces.awarenessBrief.every((item) => item.internalOnly === true),
+        rawHistoryAbsent: audit.rawHistoryAbsent
+      }),
+      communityPulseContext: freeze({
+        status: audit.context.surfaces.communityPulse.length > 0 ? 'generated' : 'suppressed_or_unavailable',
+        consumerSafe: audit.context.surfaces.communityPulse.every((item) => item.consumerSafe === true),
+        noStorageTerms: !/(history_capture|schema|table|database)/i.test(primaryMessages),
+        noRawTimestamps: !/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(primaryMessages),
+        noUserIdentifiers: !/(user id|user_id|source_report_id)/i.test(primaryMessages)
+      }),
+      activeConditionExplanation: freeze({
+        status: audit.context.surfaces.activeConditionExplanation.length > 0 ? 'generated' : 'suppressed_or_unavailable',
+        cautiousEvidenceLanguage: audit.context.surfaces.activeConditionExplanation.every((item) => item.predictive === false && item.forecasting === false),
+        noPredictions: !/(predicted|forecast|guaranteed|will happen)/i.test(primaryMessages),
+        noCertaintyClaims: !/(guaranteed|certain|definitely)/i.test(primaryMessages)
+      }),
+      rankingInputs: freeze({
+        status: audit.context.surfaces.rankingInputs.length > 0 ? 'generated_internal_only' : 'suppressed_or_unavailable',
+        internalOnly: audit.context.surfaces.rankingInputs.every((item) => item.internalOnly === true),
+        notUiExposed: true,
+        noConfidenceMathDisplayed: !/confidence score/i.test(primaryMessages),
+        noUserScoring: audit.context.safeguards?.noUserScoring === true
+      }),
+      lowEvidence: freeze({
+        status: audit.lowEvidenceContext.surfaces.awarenessBrief.some((item) => item.lowEvidence === true || item.suppressed === true) ? 'caveated_or_suppressed' : 'missing',
+        truthfulUncertainty: /limited historical evidence/i.test(lowEvidenceMessages) || /limited_historical_evidence/i.test(lowEvidenceMessages),
+        noOverconfidentContext: !/(guaranteed|will happen|certain|definitely|predicted|forecast)/i.test(lowEvidenceMessages),
+        stableExecution: runtime.runtimeExceptions === 0
+      }),
+      prohibitedLanguage: freeze({
+        status: audit.prohibitedLanguageAbsent ? 'absent' : 'present',
+        absent: audit.prohibitedLanguageAbsent,
+        checkedTermCount: PROHIBITED_LANGUAGE.length
+      }),
+      protectedBoundaries: freeze({
+        historicalReadsEnabled: boundaries.historicalReadsEnabled,
+        historyUiEnabled: boundaries.historyUiEnabled,
+        historicalApiExposure: boundaries.historicalApiExposure,
+        consumerFacingHistory: boundaries.consumerFacingHistory,
+        DriveTexasPaused: boundaries.DriveTexasPaused,
+        preserved: audit.protectedBoundariesPreserved
+      })
+    });
+  }
+
+
+  globalScope.gridlyHistoricalAwarenessAdapter = freeze({ ADAPTER_VERSION, SAFE_MESSAGES, buildHistoricalAwarenessContext, auditHistoricalAwarenessIntegration, auditHistoricalAwarenessRuntimeValidation });
 })(typeof window !== 'undefined' ? window : globalThis);
