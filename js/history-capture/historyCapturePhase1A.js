@@ -91,7 +91,7 @@
           idempotencyKey: getIdempotencyKey(envelope),
           hook: safeInput.hook || null,
           storageClient: safeInput.storageClient || null,
-          writerEnabled: safeInput.writerEnabled === true
+          writerEnabled: safeInput.writerEnabled === true || flags.writesEnabled === true
         }
       ) || Object.freeze({
         ok: true,
@@ -115,8 +115,9 @@
 
       return Object.freeze({
         sidecarAvailable: true,
-        gatesDefaultDisabled: flags.captureEnabled === false,
-        writesDisabled: flags.writesEnabled === false,
+        captureEnabled: flags.captureEnabled === true,
+        writerEnabled: flags.writesEnabled === true,
+        passiveEvidenceCollectionMode: flags.passiveEvidenceCollectionMode === true,
         hooksInstalled: true,
         installedHooks: Object.freeze([...PHASE_1A_INSTALLED_HOOKS]),
         noHistoricalReadsExposed: flags.historicalReadsExposed === false,
@@ -134,8 +135,9 @@
     } catch (error) {
       return Object.freeze({
         sidecarAvailable: true,
-        gatesDefaultDisabled: true,
-        writesDisabled: true,
+        captureEnabled: true,
+        writerEnabled: true,
+        passiveEvidenceCollectionMode: true,
         hooksInstalled: true,
         installedHooks: PHASE_1A_INSTALLED_HOOKS,
         noHistoricalReadsExposed: true,

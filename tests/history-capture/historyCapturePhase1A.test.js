@@ -31,18 +31,30 @@ assert.strictEqual(globalThis.createSharedReport, beforeCreateSharedReport, 'coo
 assert.strictEqual(globalThis.createSharedHazardReport, beforeCreateSharedHazardReport, 'coordinator does not install createSharedHazardReport hooks');
 assert.strictEqual(globalThis.loadSharedReports, beforeLoadSharedReports, 'coordinator does not install read hooks');
 
-api.capturePhase1AEvent({ eventType: 'report_created', report: { id: 'abc' } }).then((captureResult) => {
-  assert.deepStrictEqual(captureResult, {
-    ok: true,
-    noop: true,
-    reason: 'passive_history_capture_sidecar_disabled'
-  });
+const fakeStorageClient = {
+  schema(schemaName) {
+    assert.strictEqual(schemaName, 'history_capture');
+    return {
+      from(tableName) {
+        assert.strictEqual(tableName, 'historical_events');
+        return { insert: async () => ({ error: null }) };
+      }
+    };
+  }
+};
+
+api.capturePhase1AEvent({ eventType: 'report_created', report: { id: 'abc' }, storageClient: fakeStorageClient }).then((captureResult) => {
+  assert.strictEqual(captureResult.ok, true);
+  assert.strictEqual(captureResult.noop, false);
+  assert.strictEqual(captureResult.writesEnabled, true);
+  assert.strictEqual(captureResult.reason, 'passive_history_capture_write_accepted');
 
   const audit = api.auditSidecar();
   assert.deepStrictEqual(audit, {
     sidecarAvailable: true,
-    gatesDefaultDisabled: true,
-    writesDisabled: true,
+    captureEnabled: true,
+    writerEnabled: true,
+    passiveEvidenceCollectionMode: true,
     hooksInstalled: true,
     installedHooks: [
       'crossing.report_created',
