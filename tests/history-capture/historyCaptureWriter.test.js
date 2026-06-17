@@ -15,6 +15,13 @@ require('../../js/history-capture/historyCaptureWriter.js');
   const api = globalThis.gridlyPassiveHistoryCaptureWriter;
   assert.strictEqual(api.getWriterState().writesEnabled, false);
   assert.strictEqual(api.getWriterState().lastWriteAttempted, false);
+  assert.deepStrictEqual(api.getWriterDiagnostic(), {
+    available: true,
+    lastFailureAt: null,
+    canaryStopReason: null,
+    safeForFixAnalysis: true
+  });
+  assert.deepStrictEqual(api.getLastFailureDiagnostic(), api.getWriterDiagnostic());
 
   const disabledResult = await api.writePhase1AEnvelope({ any: 'payload' });
   assert.deepStrictEqual(disabledResult, {
