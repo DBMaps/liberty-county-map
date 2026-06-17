@@ -2,11 +2,12 @@
   'use strict';
 
   const DEFAULT_FLAGS = Object.freeze({
-    captureEnabled: false,
-    writesEnabled: false,
-    productionHooksInstalled: false,
+    captureEnabled: true,
+    writesEnabled: true,
+    productionHooksInstalled: true,
     historicalReadsExposed: false,
-    uiExposed: false
+    uiExposed: false,
+    passiveEvidenceCollectionMode: true
   });
 
   function cloneDefaultFlags() {
@@ -15,41 +16,33 @@
       writesEnabled: DEFAULT_FLAGS.writesEnabled,
       productionHooksInstalled: DEFAULT_FLAGS.productionHooksInstalled,
       historicalReadsExposed: DEFAULT_FLAGS.historicalReadsExposed,
-      uiExposed: DEFAULT_FLAGS.uiExposed
+      uiExposed: DEFAULT_FLAGS.uiExposed,
+      passiveEvidenceCollectionMode: DEFAULT_FLAGS.passiveEvidenceCollectionMode
     };
   }
 
   const canaryFlags = {
-    active: false,
-    captureEnabled: false,
-    writesEnabled: false
+    active: false
   };
 
   function getHistoryCaptureFlags() {
     return {
       ...cloneDefaultFlags(),
-      captureEnabled: canaryFlags.captureEnabled === true,
-      writesEnabled: canaryFlags.writesEnabled === true,
       canaryMode: canaryFlags.active === true
     };
   }
 
   function enableHistoricalCanaryFlags() {
     canaryFlags.active = true;
-    canaryFlags.captureEnabled = true;
-    canaryFlags.writesEnabled = true;
     return getHistoryCaptureFlags();
   }
 
   function disableHistoricalCanaryWriter() {
-    canaryFlags.writesEnabled = false;
-    if (canaryFlags.captureEnabled !== true) canaryFlags.active = false;
+    canaryFlags.active = false;
     return getHistoryCaptureFlags();
   }
 
   function disableHistoricalCanaryFlags() {
-    canaryFlags.writesEnabled = false;
-    canaryFlags.captureEnabled = false;
     canaryFlags.active = false;
     return getHistoryCaptureFlags();
   }
