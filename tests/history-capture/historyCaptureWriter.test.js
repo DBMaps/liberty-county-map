@@ -84,16 +84,35 @@ require('../../js/history-capture/historyCaptureWriter.js');
     idempotencyKey: 'phase1a:test-failure',
     storageClient: {
       from() {
-        return { async insert() { throw new Error('sidecar storage failure'); } };
+        return {
+          async insert() {
+            const error = new Error('sidecar storage failure');
+            error.code = 'PGRST106';
+            error.details = 'schema not exposed';
+            error.hint = 'Check exposed schemas';
+            error.status = 404;
+            throw error;
+          }
+        };
       }
     }
   });
-  assert.deepStrictEqual(failureResult, {
-    ok: true,
-    noop: true,
-    writesEnabled: true,
-    reason: 'passive_history_capture_sidecar_writer_fail_open'
-  });
+  assert.strictEqual(failureResult.ok, true);
+  assert.strictEqual(failureResult.noop, true);
+  assert.strictEqual(failureResult.writesEnabled, true);
+  assert.strictEqual(failureResult.reason, 'passive_history_capture_sidecar_writer_fail_open');
+  assert.strictEqual(failureResult.writerDiagnostic.available, true);
+  assert.strictEqual(failureResult.writerDiagnostic.writerStage, 'write_attempt');
+  assert.strictEqual(failureResult.writerDiagnostic.storageStage, 'historical_events_insert');
+  assert.strictEqual(failureResult.writerDiagnostic.errorMessage, 'sidecar storage failure');
+  assert.strictEqual(failureResult.writerDiagnostic.errorCode, 'PGRST106');
+  assert.strictEqual(failureResult.writerDiagnostic.errorDetails, 'schema not exposed');
+  assert.strictEqual(failureResult.writerDiagnostic.errorHint, 'Check exposed schemas');
+  assert.strictEqual(failureResult.writerDiagnostic.errorStatus, '404');
+  assert.strictEqual(failureResult.writerDiagnostic.exceptionName, 'Error');
+  assert.strictEqual(failureResult.writerDiagnostic.canaryStopReason, 'writer_error');
+  assert.strictEqual(failureResult.writerDiagnostic.safeForFixAnalysis, true);
+  assert.deepStrictEqual(api.getLastFailureDiagnostic(), failureResult.writerDiagnostic);
 
   const monitoring = globalThis.gridlyPassiveHistoryCaptureMonitoring.getHistoryCaptureMonitoringState();
   assert.ok(monitoring.captureAttemptCount >= 5);
