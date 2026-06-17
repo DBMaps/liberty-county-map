@@ -17,11 +17,56 @@
     duplicateSuppressionCount: 0,
     writeFailureCount: 0,
     writeSuccessCount: 0,
-    malformedCount: 0
+    malformedCount: 0,
+    lastFailureDiagnostic: null
   };
 
   function freezeResult(result) {
     try { return Object.freeze(result); } catch (error) { return result; }
+  }
+
+  function safeDiagnosticValue(value) {
+    if (typeof value === 'string') return value.slice(0, 1200);
+    if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+    return null;
+  }
+
+  function buildFailureDiagnostic(error, stages = {}) {
+    const diagnostic = {
+      available: true,
+      lastFailureAt: new Date().toISOString(),
+      writerStage: safeDiagnosticValue(stages.writerStage) || 'writePhase1AEnvelope',
+      storageStage: safeDiagnosticValue(stages.storageStage) || 'storage_insert',
+      errorMessage: safeDiagnosticValue(error?.message) || safeDiagnosticValue(error) || 'unknown writer failure',
+      errorCode: safeDiagnosticValue(error?.code),
+      errorDetails: safeDiagnosticValue(error?.details),
+      errorHint: safeDiagnosticValue(error?.hint),
+      errorStatus: safeDiagnosticValue(error?.status),
+      exceptionName: safeDiagnosticValue(error?.name),
+      exceptionStack: safeDiagnosticValue(error?.stack),
+      canaryStopReason: 'writer_error',
+      safeForFixAnalysis: true
+    };
+    return freezeResult(diagnostic);
+  }
+
+  function clearFailureDiagnostic() {
+    writerState.lastFailureDiagnostic = null;
+  }
+
+  function getWriterDiagnostic() {
+    return writerState.lastFailureDiagnostic
+      ? freezeResult({ ...writerState.lastFailureDiagnostic })
+      : freezeResult({
+        available: true,
+        lastFailureAt: null,
+        canaryStopReason: null,
+        safeForFixAnalysis: true
+      });
+  }
+
+  function getLastFailureDiagnostic() {
+    return getWriterDiagnostic();
   }
 
   function recordMonitoring(eventType, detail) {
@@ -118,6 +163,7 @@
         writerState.lastWriteResult = 'malformed';
         writerState.lastReason = MALFORMED_REASON;
         writerState.malformedCount += 1;
+        clearFailureDiagnostic();
         recordMonitoring('malformed_payload', { reason: MALFORMED_REASON });
         return freezeResult({ ok: true, noop: true, writesEnabled: true, reason: MALFORMED_REASON });
       }
@@ -131,6 +177,7 @@
         writerState.lastWriteResult = 'malformed';
         writerState.lastReason = MALFORMED_REASON;
         writerState.malformedCount += 1;
+        clearFailureDiagnostic();
         recordMonitoring('malformed_payload', { reason: 'missing_idempotency_key' });
         return freezeResult({ ok: true, noop: true, writesEnabled: true, reason: MALFORMED_REASON });
       }
@@ -149,6 +196,7 @@
       if (!storageClient) throw new Error('history capture storage client unavailable');
 
       writerState.lastWriteAttempted = true;
+      clearFailureDiagnostic();
       const insertResult = await storageClient
         .from('history_capture.historical_events')
         .insert(buildRow(envelope, idempotencyKey, options));
@@ -158,19 +206,40 @@
       writerState.lastWriteResult = 'success';
       writerState.lastReason = WRITE_SUCCESS_REASON;
       writerState.writeSuccessCount += 1;
+      clearFailureDiagnostic();
       recordMonitoring('write_success', { idempotencyKey });
       return freezeResult({ ok: true, noop: false, writesEnabled: true, idempotencyKey, reason: WRITE_SUCCESS_REASON });
     } catch (error) {
       writerState.lastWriteResult = 'fail_open';
       writerState.lastReason = WRITE_FAILURE_REASON;
       writerState.writeFailureCount += 1;
-      recordMonitoring('write_failure', { reason: WRITE_FAILURE_REASON });
-      return freezeResult({ ok: true, noop: true, writesEnabled: writerState.writesEnabled === true, reason: WRITER_FAIL_OPEN_REASON });
+      const failureDiagnostic = buildFailureDiagnostic(error, {
+        writerStage: writerState.lastWriteAttempted ? 'write_attempt' : 'pre_write',
+        storageStage: writerState.lastWriteAttempted ? 'historical_events_insert' : 'storage_client_resolution'
+      });
+      writerState.lastFailureDiagnostic = failureDiagnostic;
+      recordMonitoring('write_failure', {
+        reason: WRITE_FAILURE_REASON,
+        writerStage: failureDiagnostic.writerStage,
+        storageStage: failureDiagnostic.storageStage,
+        errorCode: failureDiagnostic.errorCode,
+        errorStatus: failureDiagnostic.errorStatus,
+        exceptionName: failureDiagnostic.exceptionName
+      });
+      return freezeResult({
+        ok: true,
+        noop: true,
+        writesEnabled: writerState.writesEnabled === true,
+        reason: WRITER_FAIL_OPEN_REASON,
+        writerDiagnostic: failureDiagnostic
+      });
     }
   }
 
   const api = Object.freeze({
     getWriterState,
+    getWriterDiagnostic,
+    getLastFailureDiagnostic,
     writePhase1AEnvelope
   });
 

@@ -19,12 +19,46 @@
     };
   }
 
+  const canaryFlags = {
+    active: false,
+    captureEnabled: false,
+    writesEnabled: false
+  };
+
   function getHistoryCaptureFlags() {
-    return cloneDefaultFlags();
+    return {
+      ...cloneDefaultFlags(),
+      captureEnabled: canaryFlags.captureEnabled === true,
+      writesEnabled: canaryFlags.writesEnabled === true,
+      canaryMode: canaryFlags.active === true
+    };
+  }
+
+  function enableHistoricalCanaryFlags() {
+    canaryFlags.active = true;
+    canaryFlags.captureEnabled = true;
+    canaryFlags.writesEnabled = true;
+    return getHistoryCaptureFlags();
+  }
+
+  function disableHistoricalCanaryWriter() {
+    canaryFlags.writesEnabled = false;
+    if (canaryFlags.captureEnabled !== true) canaryFlags.active = false;
+    return getHistoryCaptureFlags();
+  }
+
+  function disableHistoricalCanaryFlags() {
+    canaryFlags.writesEnabled = false;
+    canaryFlags.captureEnabled = false;
+    canaryFlags.active = false;
+    return getHistoryCaptureFlags();
   }
 
   const api = Object.freeze({
     DEFAULT_FLAGS,
+    disableHistoricalCanaryFlags,
+    disableHistoricalCanaryWriter,
+    enableHistoricalCanaryFlags,
     getHistoryCaptureFlags
   });
 
