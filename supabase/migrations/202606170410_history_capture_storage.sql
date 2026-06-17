@@ -17,7 +17,7 @@ create table if not exists history_capture.historical_events (
   envelope jsonb not null,
   payload jsonb not null default '{}'::jsonb,
   metadata jsonb not null default '{}'::jsonb,
-  retained_until timestamptz generated always as (received_at + interval '18 months') stored
+  retained_until timestamptz not null default (now() + interval '18 months')
 );
 
 create table if not exists history_capture.writer_monitoring_events (
