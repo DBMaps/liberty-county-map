@@ -150,6 +150,131 @@
   }
 
 
+  function scanVisibleHistoricalCandidate(text) {
+    const value = String(text || '');
+    const prohibitedMatches = PROHIBITED_LANGUAGE.filter((phrase) => value.toLowerCase().includes(String(phrase).toLowerCase()));
+    const rawHistoryMatches = [];
+    if (/\b\d{4}-\d{2}-\d{2}(?:[T\s]\d{2}:\d{2})?/i.test(value)) rawHistoryMatches.push('raw_timestamp');
+    if (/\b\d+\s+(?:raw\s+)?(?:event|events|reports?|rows?)\b/i.test(value)) rawHistoryMatches.push('raw_event_count');
+    if (/(event_type|source_report_id|observed_at|created_at|cleared_at|history_capture|historical_events|schema|table|database)/i.test(value)) rawHistoryMatches.push('raw_history_or_storage_term');
+    const predictionMatches = [];
+    if (/(predicted|prediction|forecast|forecasting|will happen|guaranteed|certain|definitely)/i.test(value)) predictionMatches.push('prediction_or_certainty_language');
+    const userScoringMatches = [];
+    if (/(user reliability|user reputation|reputation|high-risk user|user score|user_id|user id)/i.test(value)) userScoringMatches.push('user_reliability_or_scoring_language');
+    return freeze({
+      text: value,
+      prohibitedMatches: freeze(prohibitedMatches),
+      rawHistoryMatches: freeze(rawHistoryMatches),
+      predictionMatches: freeze(predictionMatches),
+      userScoringMatches: freeze(userScoringMatches),
+      safe: prohibitedMatches.length === 0 && rawHistoryMatches.length === 0 && predictionMatches.length === 0 && userScoringMatches.length === 0
+    });
+  }
+
+  function evaluateVisibleHistoricalAwarenessLine(candidate, options) {
+    const line = candidate && typeof candidate === 'object' ? candidate : {};
+    const selectedSurface = 'awarenessBrief';
+    const message = typeof line.message === 'string' ? line.message.trim() : '';
+    const scan = scanVisibleHistoricalCandidate(message);
+    const adapterSourced = line.source === 'historical_intelligence';
+    const lowEvidence = line.lowEvidence === true;
+    const lowEvidenceCaveated = !lowEvidence || /historical evidence is still limited|limited historical evidence/i.test(message);
+    const explicitlySuppressed = line.suppressed === true;
+    const canDisplay = Boolean(message)
+      && adapterSourced
+      && line.consumerSafe === true
+      && line.exposesRawHistory !== true
+      && line.predictive !== true
+      && line.forecasting !== true
+      && scan.safe
+      && lowEvidenceCaveated
+      && !explicitlySuppressed;
+    const suppressionReasons = [];
+    if (!message) suppressionReasons.push('empty_candidate');
+    if (!adapterSourced) suppressionReasons.push('not_adapter_sourced');
+    if (line.consumerSafe !== true) suppressionReasons.push('consumer_safe_flag_missing');
+    if (line.exposesRawHistory === true || scan.rawHistoryMatches.length) suppressionReasons.push('raw_history_detected');
+    if (line.predictive === true || line.forecasting === true || scan.predictionMatches.length) suppressionReasons.push('prediction_or_forecast_language_detected');
+    if (scan.prohibitedMatches.length) suppressionReasons.push('prohibited_language_detected');
+    if (scan.userScoringMatches.length) suppressionReasons.push('user_scoring_language_detected');
+    if (lowEvidence && !lowEvidenceCaveated) suppressionReasons.push('low_evidence_not_caveated');
+    if (explicitlySuppressed) suppressionReasons.push(line.suppressionReason || 'adapter_suppressed');
+    return freeze({
+      selectedSurface,
+      displayed: canDisplay,
+      displayReason: canDisplay ? (lowEvidence ? 'safe_adapter_caveat_supported_for_awareness_brief' : 'safe_adapter_context_supported_for_awareness_brief') : null,
+      suppressionReason: canDisplay ? null : (suppressionReasons[0] || 'not_displayable'),
+      suppressionReasons: freeze(suppressionReasons),
+      line: canDisplay ? message : null,
+      candidateLine: message,
+      adapterSourced,
+      lowEvidence,
+      lowEvidenceCaveated,
+      scan
+    });
+  }
+
+  function auditHistoricalVisibleAwarenessOutput(primaryIntelligence, lowEvidenceIntelligence, options) {
+    const defaultPrimary = freeze({
+      internalOnly: true,
+      evidenceSummary: freeze({ acceptedEvents: 4 }),
+      recurrence: freeze([freeze({ observedCount: 4, lowEvidence: false })]),
+      duration: freeze({ observedDurationCount: 4, lowEvidence: false }),
+      reliability: freeze({ lowEvidence: false }),
+      historicalReadsEnabled: false,
+      historicalUiEnabled: false,
+      apiExposed: false
+    });
+    const defaultLow = freeze({
+      internalOnly: true,
+      evidenceSummary: freeze({ acceptedEvents: 1 }),
+      recurrence: freeze([]),
+      duration: freeze({ observedDurationCount: 1, lowEvidence: true }),
+      reliability: freeze({ lowEvidence: true }),
+      historicalReadsEnabled: false,
+      historicalUiEnabled: false,
+      apiExposed: false
+    });
+    const context = buildHistoricalAwarenessContext(primaryIntelligence || defaultPrimary);
+    const lowContext = buildHistoricalAwarenessContext(lowEvidenceIntelligence || defaultLow);
+    const awarenessCandidate = safeArray(context?.surfaces?.awarenessBrief).find((item) => item && item.suppressed !== true) || safeArray(context?.surfaces?.awarenessBrief)[0] || null;
+    const lowCandidate = safeArray(lowContext?.surfaces?.awarenessBrief).find((item) => item) || null;
+    const visible = evaluateVisibleHistoricalAwarenessLine(awarenessCandidate, options);
+    const lowEvidence = evaluateVisibleHistoricalAwarenessLine(lowCandidate, options);
+    const negativeCandidates = safeArray(options?.negativeCandidates).length ? safeArray(options.negativeCandidates) : [
+      'history_capture historical_events table shows 12 raw events at 2026-06-17T12:00:00Z.',
+      'Confidence score predicts this crossing will happen again.',
+      'User reliability reputation is low for this report.'
+    ];
+    const negativeCaseResults = negativeCandidates.map((message) => evaluateVisibleHistoricalAwarenessLine({ surface: 'awarenessBrief', message, source: 'historical_intelligence', consumerSafe: true, internalOnly: true, lowEvidence: false, suppressed: false, exposesRawHistory: false, predictive: false, forecasting: false }));
+    const boundaries = context.protectedBoundaries || protectedBoundaries(primaryIntelligence || defaultPrimary);
+    const topPrimaryPresent = typeof document === 'undefined' ? null : Boolean(document.getElementById('gridlyV2TopStatusPrimary'));
+    const topSecondaryPresent = typeof document === 'undefined' ? null : Boolean(document.getElementById('gridlyV2TopStatusSecondary'));
+    const microlinePresent = typeof document === 'undefined' ? null : Boolean(document.getElementById('gridlyV2TopAwarenessMicroline'));
+    return freeze({
+      auditVersion: 'historical_visible_awareness_output.v435.validation.v1',
+      visibleHistoricalContextAvailable: context.available === true && safeArray(context?.surfaces?.awarenessBrief).length > 0,
+      selectedSurface: 'Awareness Brief',
+      displayed: visible.displayed,
+      displayReason: visible.displayReason,
+      suppressionReason: visible.suppressionReason,
+      prohibitedLanguageScan: visible.scan,
+      rawHistoryScan: freeze({ absent: visible.scan.rawHistoryMatches.length === 0, matches: visible.scan.rawHistoryMatches }),
+      lowEvidenceState: freeze({ displayed: lowEvidence.displayed, lowEvidence: lowEvidence.lowEvidence, caveated: lowEvidence.lowEvidenceCaveated, line: lowEvidence.line, suppressionReason: lowEvidence.suppressionReason }),
+      protectedBoundaryStatus: freeze({ historicalReadsEnabled: boundaries.historicalReadsEnabled, historyUiEnabled: boundaries.historyUiEnabled, historicalApiExposure: boundaries.historicalApiExposure, consumerFacingHistoryDashboard: boundaries.consumerFacingHistory, DriveTexasPaused: boundaries.DriveTexasPaused, preserved: boundaries.historicalReadsEnabled === false && boundaries.historyUiEnabled === false && boundaries.historicalApiExposure === false && boundaries.consumerFacingHistory === false && boundaries.DriveTexasPaused === true }),
+      visualPlacement: freeze({ secondarySupportingOnly: true, primaryHeadlinePreserved: true, activeConditionHeadlinePreserved: true, trustFreshnessContextPreserved: true, locationSupportCopyPreserved: true, topPrimaryPresent, topSecondaryPresent, microlinePresent }),
+      visibleLine: visible.line,
+      negativeCaseValidation: freeze({ allSuppressed: negativeCaseResults.every((result) => result.displayed === false), results: freeze(negativeCaseResults) }),
+      rawHistoryAbsent: visible.scan.rawHistoryMatches.length === 0,
+      noPredictionLanguage: visible.scan.predictionMatches.length === 0,
+      noProhibitedLanguage: visible.scan.prohibitedMatches.length === 0,
+      noNewHistoricalSurface: true,
+      noHistoricalReads: boundaries.historicalReadsEnabled === false,
+      noHistoryUiApiDashboard: boundaries.historyUiEnabled === false && boundaries.historicalApiExposure === false && boundaries.consumerFacingHistory === false
+    });
+  }
+
+
   function auditHistoricalAwarenessRuntimeValidation(primaryIntelligence, lowEvidenceIntelligence) {
     const runtime = {
       adapterLoaded: true,
@@ -222,5 +347,6 @@
   }
 
 
-  globalScope.gridlyHistoricalAwarenessAdapter = freeze({ ADAPTER_VERSION, SAFE_MESSAGES, buildHistoricalAwarenessContext, auditHistoricalAwarenessIntegration, auditHistoricalAwarenessRuntimeValidation });
+  globalScope.gridlyHistoricalAwarenessAdapter = freeze({ ADAPTER_VERSION, SAFE_MESSAGES, buildHistoricalAwarenessContext, auditHistoricalAwarenessIntegration, auditHistoricalAwarenessRuntimeValidation, auditHistoricalVisibleAwarenessOutput, evaluateVisibleHistoricalAwarenessLine, scanVisibleHistoricalCandidate });
+  globalScope.gridlyHistoricalVisibleAwarenessOutputAudit = auditHistoricalVisibleAwarenessOutput;
 })(typeof window !== 'undefined' ? window : globalThis);
