@@ -1,20 +1,44 @@
 (function attachGridlyHistoricalAwarenessAdapter(globalScope) {
   'use strict';
 
-  const ADAPTER_VERSION = 'historical_awareness_adapter.v439.internal.v1';
+  const ADAPTER_VERSION = 'historical_awareness_adapter.v454.internal.v1';
+  const LANGUAGE_AUDIT_VERSION = 'historical_awareness_language.v454.validation.v1';
   const LOW_EVIDENCE_MINIMUM = 3;
+  const HISTORICAL_LANGUAGE_CATALOG = freeze({
+    HISTORICAL_PRESENCE: 'Community reports have occurred here before.',
+    RECURRENCE_AWARENESS: 'Repeated reports have been observed here.',
+    RECURRENCE_AWARENESS_ALT: 'Recurring reports have been observed here.',
+    HISTORICAL_CONTEXT_SUPPORT: 'Historical evidence is still limited.',
+    HISTORICAL_RESOLUTION_AWARENESS: 'Previous reports at this location have cleared after observed intervals.'
+  });
   const SAFE_MESSAGES = Object.freeze({
-    recurrence: 'Repeated reports have been observed here.',
-    community: 'Community reports have occurred here before.',
-    communityRepeated: 'Repeated community activity has been observed in this area.',
-    communityNearby: 'Previous community reports have been observed nearby.',
-    duration: 'Previous reports at this location have cleared after observed intervals.',
-    limited: 'Historical evidence is still limited.',
-    locationLimited: 'This location has limited historical evidence.'
+    recurrence: HISTORICAL_LANGUAGE_CATALOG.RECURRENCE_AWARENESS,
+    community: HISTORICAL_LANGUAGE_CATALOG.HISTORICAL_PRESENCE,
+    communityRepeated: HISTORICAL_LANGUAGE_CATALOG.RECURRENCE_AWARENESS_ALT,
+    communityNearby: HISTORICAL_LANGUAGE_CATALOG.HISTORICAL_PRESENCE,
+    duration: HISTORICAL_LANGUAGE_CATALOG.HISTORICAL_RESOLUTION_AWARENESS,
+    limited: HISTORICAL_LANGUAGE_CATALOG.HISTORICAL_CONTEXT_SUPPORT,
+    locationLimited: HISTORICAL_LANGUAGE_CATALOG.HISTORICAL_CONTEXT_SUPPORT
+  });
+  const APPROVED_HISTORICAL_PHRASES = freeze(Object.values(HISTORICAL_LANGUAGE_CATALOG));
+  const TRANSLATION_CATEGORY_TO_CATALOG_KEY = freeze({
+    HistoricalPresence: 'HISTORICAL_PRESENCE',
+    historicalPresence: 'HISTORICAL_PRESENCE',
+    historical_presence: 'HISTORICAL_PRESENCE',
+    RecurrenceAwareness: 'RECURRENCE_AWARENESS',
+    recurrenceAwareness: 'RECURRENCE_AWARENESS',
+    recurrence_awareness: 'RECURRENCE_AWARENESS',
+    HistoricalResolutionAwareness: 'HISTORICAL_RESOLUTION_AWARENESS',
+    historicalResolutionAwareness: 'HISTORICAL_RESOLUTION_AWARENESS',
+    historical_resolution_awareness: 'HISTORICAL_RESOLUTION_AWARENESS',
+    HistoricalContextSupport: 'HISTORICAL_CONTEXT_SUPPORT',
+    historicalContextSupport: 'HISTORICAL_CONTEXT_SUPPORT',
+    historical_context_support: 'HISTORICAL_CONTEXT_SUPPORT'
   });
   const PROHIBITED_LANGUAGE = Object.freeze([
     'predicted',
     'forecast',
+    'forecasts',
     'guaranteed',
     'will happen',
     'will happen again',
@@ -30,6 +54,11 @@
     'table',
     'database',
     'confidence score',
+    'confidence percentage',
+    'reliability score',
+    'clearance estimate',
+    'clearance estimates',
+    'time window',
     'user reliability',
     'reputation',
     'raw event',
@@ -53,6 +82,83 @@
   function hasProhibitedLanguage(text) {
     const normalized = String(text || '').toLowerCase();
     return PROHIBITED_LANGUAGE.some((phrase) => normalized.includes(phrase));
+  }
+
+
+  function normalizeTranslationCategory(category) {
+    return String(category || '').replace(/[\s-]+/g, '_');
+  }
+
+  function translateHistoricalFindingToApprovedPhrase(finding) {
+    const candidate = isPlainObject(finding) ? finding : {};
+    const categoryKey = TRANSLATION_CATEGORY_TO_CATALOG_KEY[candidate.category] || TRANSLATION_CATEGORY_TO_CATALOG_KEY[normalizeTranslationCategory(candidate.category)] || null;
+    const phrase = categoryKey ? HISTORICAL_LANGUAGE_CATALOG[categoryKey] : null;
+    return freeze({
+      category: candidate.category || null,
+      approvedPhrase: phrase || null,
+      suppressedPhrase: phrase ? null : String(candidate.phrase || candidate.message || candidate.category || ''),
+      suppressionReason: phrase ? null : 'unsupported_historical_language_category'
+    });
+  }
+
+  function scanHistoricalLanguageSafety(phrase, options) {
+    const text = String(phrase || '');
+    const lower = text.toLowerCase();
+    const prohibitedLanguage = hasProhibitedLanguage(text)
+      || /\b\d+\s*(?:%|percent|reports?|events?|rows?|minutes?|hours?)\b/i.test(text)
+      || /\b\d{1,2}:\d{2}\b|\b\d{4}-\d{2}-\d{2}\b/i.test(text);
+    const predictionRisk = /(predict|forecast|will\s+|guaranteed|certain|definitely|estimate)/i.test(text) || options?.predictionRisk === true;
+    const routeDecisionRisk = /(take|avoid|use|reroute|route recommendation|navigation|best route|go around)/i.test(lower) || options?.routeDecisionRisk === true;
+    const lowEvidenceState = options?.lowEvidence === true ? 'low_evidence' : 'sufficient_evidence';
+    const lowEvidenceAllowed = !options?.lowEvidence || text === HISTORICAL_LANGUAGE_CATALOG.HISTORICAL_CONTEXT_SUPPORT;
+    const approved = APPROVED_HISTORICAL_PHRASES.includes(text);
+    const surfaceEligible = ['Awareness Brief', 'Community Pulse', 'Alert Cards', 'awarenessBrief', 'communityPulse', 'alertCards'].includes(options?.surface || 'Awareness Brief');
+    const reasons = [];
+    if (!approved) reasons.push('phrase_not_in_approved_catalog');
+    if (!lowEvidenceAllowed) reasons.push('low_evidence_requires_limited_evidence_caveat');
+    if (prohibitedLanguage) reasons.push('prohibited_language_detected');
+    if (predictionRisk) reasons.push('prediction_risk_detected');
+    if (routeDecisionRisk) reasons.push('route_decision_risk_detected');
+    if (!surfaceEligible) reasons.push('surface_not_eligible');
+    return freeze({
+      approvedPhrase: approved ? text : null,
+      suppressedPhrase: reasons.length ? text : null,
+      suppressionReason: reasons[0] || null,
+      suppressionReasons: freeze(reasons),
+      predictionRisk,
+      routeDecisionRisk,
+      surfaceEligibility: surfaceEligible && reasons.length === 0,
+      lowEvidenceState,
+      protectedBoundaryStatus: protectedBoundaryStatus(),
+      displayable: reasons.length === 0
+    });
+  }
+
+  function protectedBoundaryStatus() {
+    return freeze({ historicalReadsEnabled: false, historyUiEnabled: false, historicalApiExposure: false, consumerFacingHistoryDashboard: false, DriveTexasPaused: true, preserved: true });
+  }
+
+  function runHistoricalLanguagePipeline(finding, options) {
+    const translated = translateHistoricalFindingToApprovedPhrase(finding);
+    if (!translated.approvedPhrase) {
+      return freeze({ ...scanHistoricalLanguageSafety(translated.suppressedPhrase, options), approvedPhrase: null, suppressedPhrase: translated.suppressedPhrase, suppressionReason: translated.suppressionReason });
+    }
+    return scanHistoricalLanguageSafety(translated.approvedPhrase, options);
+  }
+
+  function auditHistoricalLanguage(finding, options) {
+    const result = runHistoricalLanguagePipeline(finding || { category: 'RecurrenceAwareness' }, options || { surface: 'Awareness Brief' });
+    return freeze({
+      auditVersion: LANGUAGE_AUDIT_VERSION,
+      approvedPhrase: result.displayable ? result.approvedPhrase : null,
+      suppressedPhrase: result.displayable ? null : result.suppressedPhrase,
+      suppressionReason: result.suppressionReason,
+      predictionRisk: result.predictionRisk,
+      routeDecisionRisk: result.routeDecisionRisk,
+      surfaceEligibility: result.surfaceEligibility,
+      lowEvidenceState: result.lowEvidenceState,
+      protectedBoundaryStatus: result.protectedBoundaryStatus
+    });
   }
 
   function makeContext(surface, message, source, options) {
@@ -185,7 +291,9 @@
     const lowEvidence = line.lowEvidence === true;
     const lowEvidenceCaveated = !lowEvidence || /historical evidence is still limited|limited historical evidence/i.test(message);
     const explicitlySuppressed = line.suppressed === true;
+    const catalogSafe = APPROVED_HISTORICAL_PHRASES.includes(message);
     const canDisplay = Boolean(message)
+      && catalogSafe
       && adapterSourced
       && line.consumerSafe === true
       && line.exposesRawHistory !== true
@@ -196,6 +304,7 @@
       && !explicitlySuppressed;
     const suppressionReasons = [];
     if (!message) suppressionReasons.push('empty_candidate');
+    if (message && !catalogSafe) suppressionReasons.push('phrase_not_in_approved_catalog');
     if (!adapterSourced) suppressionReasons.push('not_adapter_sourced');
     if (line.consumerSafe !== true) suppressionReasons.push('consumer_safe_flag_missing');
     if (line.exposesRawHistory === true || scan.rawHistoryMatches.length) suppressionReasons.push('raw_history_detected');
@@ -331,7 +440,7 @@
       }),
       lowEvidence: freeze({
         status: audit.lowEvidenceContext.surfaces.awarenessBrief.some((item) => item.lowEvidence === true || item.suppressed === true) ? 'caveated_or_suppressed' : 'missing',
-        truthfulUncertainty: /limited historical evidence/i.test(lowEvidenceMessages) || /limited_historical_evidence/i.test(lowEvidenceMessages),
+        truthfulUncertainty: /historical evidence is still limited/i.test(lowEvidenceMessages) || /limited historical evidence/i.test(lowEvidenceMessages) || /limited_historical_evidence/i.test(lowEvidenceMessages),
         noOverconfidentContext: !/(guaranteed|will happen|certain|definitely|predicted|forecast)/i.test(lowEvidenceMessages),
         stableExecution: runtime.runtimeExceptions === 0
       }),
@@ -479,8 +588,9 @@
   }
 
 
-  globalScope.gridlyHistoricalAwarenessAdapter = freeze({ ADAPTER_VERSION, SAFE_MESSAGES, buildHistoricalAwarenessContext, auditHistoricalAwarenessIntegration, auditHistoricalAwarenessRuntimeValidation, auditHistoricalVisibleAwarenessOutput, auditHistoricalCommunityPulseOutput, evaluateVisibleHistoricalAwarenessLine, evaluateVisibleHistoricalCommunityPulseLine, evaluateVisibleHistoricalAlertCardLine, auditHistoricalAlertContextOutput, scanVisibleHistoricalCandidate });
+  globalScope.gridlyHistoricalAwarenessAdapter = freeze({ ADAPTER_VERSION, LANGUAGE_AUDIT_VERSION, HISTORICAL_LANGUAGE_CATALOG, APPROVED_HISTORICAL_PHRASES, translateHistoricalFindingToApprovedPhrase, runHistoricalLanguagePipeline, auditHistoricalLanguage, SAFE_MESSAGES, buildHistoricalAwarenessContext, auditHistoricalAwarenessIntegration, auditHistoricalAwarenessRuntimeValidation, auditHistoricalVisibleAwarenessOutput, auditHistoricalCommunityPulseOutput, evaluateVisibleHistoricalAwarenessLine, evaluateVisibleHistoricalCommunityPulseLine, evaluateVisibleHistoricalAlertCardLine, auditHistoricalAlertContextOutput, scanVisibleHistoricalCandidate });
   globalScope.gridlyHistoricalVisibleAwarenessOutputAudit = auditHistoricalVisibleAwarenessOutput;
+  globalScope.gridlyHistoricalLanguageAudit = auditHistoricalLanguage;
   globalScope.gridlyHistoricalCommunityPulseAudit = auditHistoricalCommunityPulseOutput;
   globalScope.gridlyHistoricalAlertContextAudit = auditHistoricalAlertContextOutput;
 })(typeof window !== 'undefined' ? window : globalThis);
