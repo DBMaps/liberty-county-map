@@ -122,11 +122,24 @@
 
   function getStorageClient(options) {
     try {
-      if (options?.storageClient && typeof options.storageClient.from === 'function') return options.storageClient;
+      if (options?.storageClient && typeof options.storageClient === 'object') return options.storageClient;
       return null;
     } catch (error) {
       return null;
     }
+  }
+
+  function getHistoricalEventsTable(storageClient) {
+    if (!storageClient || typeof storageClient.schema !== 'function') {
+      throw new Error('history capture schema-scoped storage client unavailable');
+    }
+
+    const historySchemaClient = storageClient.schema('history_capture');
+    if (!historySchemaClient || typeof historySchemaClient.from !== 'function') {
+      throw new Error('history capture historical_events table client unavailable');
+    }
+
+    return historySchemaClient.from('historical_events');
   }
 
   function buildRow(envelope, idempotencyKey, options) {
@@ -197,8 +210,7 @@
 
       writerState.lastWriteAttempted = true;
       clearFailureDiagnostic();
-      const insertResult = await storageClient
-        .from('history_capture.historical_events')
+      const insertResult = await getHistoricalEventsTable(storageClient)
         .insert(buildRow(envelope, idempotencyKey, options));
 
       if (insertResult?.error) throw insertResult.error;
