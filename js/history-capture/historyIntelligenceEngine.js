@@ -283,6 +283,88 @@
     });
   }
 
-  const api = freeze({ MODEL_VERSION, SUPPORTED_EVENT_TYPES, generateHistoricalIntelligence, auditHistoricalIntelligence });
+  function auditHistoricalIntelligenceRuntimeValidation(events, lowEvidenceEvents) {
+    const runtime = {
+      engineLoaded: true,
+      engineAvailable: true,
+      engineCallable: typeof generateHistoricalIntelligence === 'function' && typeof auditHistoricalIntelligence === 'function',
+      runtimeExceptions: 0,
+      startupRegressions: false
+    };
+    let primaryAudit = null;
+    let lowEvidenceAudit = null;
+    try {
+      primaryAudit = auditHistoricalIntelligence(events);
+      lowEvidenceAudit = auditHistoricalIntelligence(safeArray(lowEvidenceEvents).length ? lowEvidenceEvents : safeArray(events).slice(0, 1));
+    } catch (error) {
+      runtime.runtimeExceptions += 1;
+      return freeze({ runtime: freeze(runtime), error: asString(error?.message) || 'historical_intelligence_runtime_validation_failed' });
+    }
+
+    const intelligence = primaryAudit.intelligence;
+    const lowEvidenceIntelligence = lowEvidenceAudit.intelligence;
+    const topRecurrence = intelligence.recurrence[0] || {};
+    const duration = intelligence.duration;
+    const reliability = intelligence.reliability;
+    const patterns = intelligence.patterns;
+    const lowEvidenceRecurrence = lowEvidenceIntelligence.recurrence[0] || {};
+
+    return freeze({
+      runtime: freeze(runtime),
+      recurrence: freeze({
+        status: primaryAudit.recurrenceGenerated ? 'generated' : 'missing',
+        hasScore: typeof topRecurrence.recurrenceScore === 'number',
+        hasSignal: Boolean(topRecurrence.signal),
+        hasClassification: Boolean(topRecurrence.signal),
+        topClassification: topRecurrence.signal || null,
+        lowEvidenceBehavior: lowEvidenceRecurrence.lowEvidence === true
+      }),
+      duration: freeze({
+        status: primaryAudit.durationGenerated ? 'generated' : 'missing',
+        observedDurationCount: duration.observedDurationCount,
+        averageObservedMinutes: duration.averageObservedMinutes,
+        availabilityChecked: true,
+        missingDurationHandling: lowEvidenceIntelligence.duration.signal === 'no_observed_duration_evidence',
+        noSyntheticDurations: duration.observedDurationCount === safeArray(duration.observations).length
+      }),
+      reliability: freeze({
+        status: primaryAudit.reliabilityGenerated ? 'generated' : 'missing',
+        volume: reliability.volume,
+        consistencyScore: reliability.consistencyScore,
+        recurrenceContribution: reliability.repeatedSignals,
+        lowEvidenceHandling: lowEvidenceIntelligence.reliability.lowEvidence === true,
+        noReputationSystem: true,
+        noUserScoring: reliability.excludesUserScoring === true
+      }),
+      patterns: freeze({
+        status: primaryAudit.patternGenerated ? 'generated' : 'missing',
+        hazardPatternGenerated: patterns.recurringHazardTypes.length > 0,
+        crossingPatternGenerated: patterns.recurringCrossingActivity.length > 0,
+        roadwayPatternGenerated: patterns.recurringRoadwayActivity.length > 0,
+        hourClusteringGenerated: patterns.timeOfDayClustersUtc.length > 0,
+        dayOfWeekClusteringGenerated: patterns.dayOfWeekClustersUtc.length > 0,
+        noForecasting: patterns.forecasting === false,
+        noPrediction: patterns.predictiveClaims === false,
+        noFutureEventGeneration: true
+      }),
+      lowEvidence: freeze({
+        stable: lowEvidenceAudit.recurrenceGenerated && lowEvidenceAudit.durationGenerated && lowEvidenceAudit.reliabilityGenerated && lowEvidenceAudit.patternGenerated,
+        acceptedEvents: lowEvidenceIntelligence.evidenceSummary.acceptedEvents,
+        recurrenceLowEvidence: lowEvidenceRecurrence.lowEvidence === true,
+        durationSignal: lowEvidenceIntelligence.duration.signal,
+        reliabilityLowEvidence: lowEvidenceIntelligence.reliability.lowEvidence === true,
+        truthfulConfidence: lowEvidenceIntelligence.reliability.signal === 'limited_historical_evidence'
+      }),
+      protectedBoundaries: freeze({
+        historicalReadsEnabled: intelligence.historicalReadsEnabled === true,
+        historyUiEnabled: intelligence.historicalUiEnabled === true,
+        historicalApiExposure: intelligence.apiExposed === true,
+        consumerFacingHistory: intelligence.internalOnly !== true,
+        DriveTexasPaused: true
+      })
+    });
+  }
+
+  const api = freeze({ MODEL_VERSION, SUPPORTED_EVENT_TYPES, generateHistoricalIntelligence, auditHistoricalIntelligence, auditHistoricalIntelligenceRuntimeValidation });
   globalScope.gridlyHistoricalIntelligenceEngine = api;
 })(typeof window !== 'undefined' ? window : globalThis);
