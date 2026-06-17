@@ -5,6 +5,12 @@
     'report_created',
     'report_cleared'
   ]);
+  const PHASE_1A_INSTALLED_HOOKS = Object.freeze([
+    'crossing.report_created',
+    'crossing.report_cleared',
+    'road_hazard.report_created',
+    'road_hazard.report_cleared'
+  ]);
 
   function readFlags() {
     try {
@@ -46,6 +52,55 @@
     }
   }
 
+  async function capturePhase1AEvent(eventInput) {
+    try {
+      const flags = readFlags();
+      if (flags.captureEnabled !== true) {
+        return Object.freeze({
+          ok: true,
+          noop: true,
+          reason: 'passive_history_capture_sidecar_disabled'
+        });
+      }
+
+      const safeInput = eventInput && typeof eventInput === 'object' ? eventInput : {};
+      const eventType = typeof safeInput.eventType === 'string' ? safeInput.eventType : '';
+      if (!PHASE_1A_EVENT_TYPES.includes(eventType)) {
+        return Object.freeze({
+          ok: true,
+          noop: true,
+          reason: 'passive_history_capture_unsupported_event_type'
+        });
+      }
+
+      const envelope = buildEnvelope(eventType, safeInput.report || {}, {
+        observedAt: typeof safeInput.observedAt === 'string' ? safeInput.observedAt : new Date().toISOString()
+      });
+      if (!envelope) {
+        return Object.freeze({
+          ok: true,
+          noop: true,
+          reason: 'passive_history_capture_envelope_unavailable'
+        });
+      }
+
+      return await globalScope.gridlyPassiveHistoryCaptureWriter?.writePhase1AEnvelope?.(
+        envelope,
+        { idempotencyKey: getIdempotencyKey(envelope), hook: safeInput.hook || null }
+      ) || Object.freeze({
+        ok: true,
+        noop: true,
+        reason: 'passive_history_capture_writer_unavailable'
+      });
+    } catch (error) {
+      return Object.freeze({
+        ok: true,
+        noop: true,
+        reason: 'passive_history_capture_fail_open'
+      });
+    }
+  }
+
   function auditSidecar() {
     try {
       globalScope.gridlyPassiveHistoryCaptureMonitoring?.recordHistoryCaptureAudit?.();
@@ -56,34 +111,38 @@
         sidecarAvailable: true,
         gatesDefaultDisabled: flags.captureEnabled === false,
         writesDisabled: flags.writesEnabled === false,
-        noProductionHooksInstalled: flags.productionHooksInstalled === false,
+        hooksInstalled: true,
+        installedHooks: Object.freeze([...PHASE_1A_INSTALLED_HOOKS]),
         noHistoricalReadsExposed: flags.historicalReadsExposed === false,
         noUiExposed: flags.uiExposed === false,
         supportedEventTypesPhase1AOnly: Array.isArray(envelopeTypes)
           && envelopeTypes.length === PHASE_1A_EVENT_TYPES.length
           && PHASE_1A_EVENT_TYPES.every((eventType) => envelopeTypes.includes(eventType)),
         supportedEventTypes: Object.freeze([...envelopeTypes]),
-        runtimeIntegrated: false
+        runtimeIntegrated: true
       });
     } catch (error) {
       return Object.freeze({
         sidecarAvailable: true,
         gatesDefaultDisabled: true,
         writesDisabled: true,
-        noProductionHooksInstalled: true,
+        hooksInstalled: true,
+        installedHooks: PHASE_1A_INSTALLED_HOOKS,
         noHistoricalReadsExposed: true,
         noUiExposed: true,
         supportedEventTypesPhase1AOnly: true,
         supportedEventTypes: PHASE_1A_EVENT_TYPES,
-        runtimeIntegrated: false
+        runtimeIntegrated: true
       });
     }
   }
 
   const api = Object.freeze({
     PHASE_1A_EVENT_TYPES,
+    PHASE_1A_INSTALLED_HOOKS,
     auditSidecar,
     buildEnvelope,
+    capturePhase1AEvent,
     getIdempotencyKey
   });
 
