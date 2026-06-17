@@ -1,0 +1,6 @@
+# Supabase local/API configuration tracked for Gridly schema exposure governance.
+# V425 exposes only the approved schemas required by the PostgREST API.
+
+[api]
+schemas = ["public", "graphql_public", "history_capture"]
+extra_search_path = ["public", "extensions"]
