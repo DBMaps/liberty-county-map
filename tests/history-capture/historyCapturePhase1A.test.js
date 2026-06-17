@@ -54,7 +54,11 @@ api.capturePhase1AEvent({ eventType: 'report_created', report: { id: 'abc' } }).
     noUiExposed: true,
     supportedEventTypesPhase1AOnly: true,
     supportedEventTypes: ['report_created', 'report_cleared'],
-    runtimeIntegrated: true
+    runtimeIntegrated: true,
+    storageArtifactsPresent: true,
+    writerImplemented: true,
+    monitoringImplemented: true,
+    rollbackArtifactsPresent: true
   });
   assert.strictEqual(Object.isFrozen(audit), true, 'audit output is frozen');
 

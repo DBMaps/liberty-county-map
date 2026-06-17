@@ -56,6 +56,7 @@
     try {
       const flags = readFlags();
       if (flags.captureEnabled !== true) {
+        globalScope.gridlyPassiveHistoryCaptureMonitoring?.recordHistoryCaptureWriterEvent?.('disabled_capture', { reason: 'passive_history_capture_sidecar_disabled' });
         return Object.freeze({
           ok: true,
           noop: true,
@@ -119,7 +120,11 @@
           && envelopeTypes.length === PHASE_1A_EVENT_TYPES.length
           && PHASE_1A_EVENT_TYPES.every((eventType) => envelopeTypes.includes(eventType)),
         supportedEventTypes: Object.freeze([...envelopeTypes]),
-        runtimeIntegrated: true
+        runtimeIntegrated: true,
+        storageArtifactsPresent: true,
+        writerImplemented: Boolean(globalScope.gridlyPassiveHistoryCaptureWriter?.writePhase1AEnvelope),
+        monitoringImplemented: Boolean(globalScope.gridlyPassiveHistoryCaptureMonitoring?.recordHistoryCaptureWriterEvent),
+        rollbackArtifactsPresent: true
       });
     } catch (error) {
       return Object.freeze({
@@ -132,7 +137,11 @@
         noUiExposed: true,
         supportedEventTypesPhase1AOnly: true,
         supportedEventTypes: PHASE_1A_EVENT_TYPES,
-        runtimeIntegrated: true
+        runtimeIntegrated: true,
+        storageArtifactsPresent: true,
+        writerImplemented: Boolean(globalScope.gridlyPassiveHistoryCaptureWriter?.writePhase1AEnvelope),
+        monitoringImplemented: Boolean(globalScope.gridlyPassiveHistoryCaptureMonitoring?.recordHistoryCaptureWriterEvent),
+        rollbackArtifactsPresent: true
       });
     }
   }
