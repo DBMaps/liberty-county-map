@@ -14,11 +14,9 @@ assert.strictEqual(after.sidecarAvailable, true);
 assert.strictEqual(after.maintainerOnly, true);
 assert.strictEqual(after.auditRequestedCount, 1);
 assert.match(after.lastAuditAt, /^\d{4}-\d{2}-\d{2}T/);
-assert.deepStrictEqual(Object.keys(after).sort(), [
-  'auditRequestedCount',
-  'lastAuditAt',
-  'maintainerOnly',
-  'sidecarAvailable'
-]);
+assert.strictEqual(after.captureAttemptCount, 0);
+const writerEvent = api.recordHistoryCaptureWriterEvent('writer_disabled');
+assert.strictEqual(writerEvent.writerDisabledCount, 1);
+assert.strictEqual(writerEvent.lastEventType, 'writer_disabled');
 
 console.log('historyCaptureMonitoring.test.js passed');

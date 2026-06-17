@@ -1,4 +1,6 @@
 const assert = require('assert');
+require('../../js/history-capture/historyCaptureMonitoring.js');
+require('../../js/history-capture/historyCaptureIdempotency.js');
 require('../../js/history-capture/historyCaptureWriter.js');
 
 (async () => {
@@ -11,20 +13,96 @@ require('../../js/history-capture/historyCaptureWriter.js');
   });
 
   const api = globalThis.gridlyPassiveHistoryCaptureWriter;
-  assert.deepStrictEqual(api.getWriterState(), {
-    writesEnabled: false,
-    lastWriteAttempted: false,
-    lastWriteResult: 'noop'
-  });
+  assert.strictEqual(api.getWriterState().writesEnabled, false);
+  assert.strictEqual(api.getWriterState().lastWriteAttempted, false);
 
-  const result = await api.writePhase1AEnvelope({ any: 'payload' });
-  assert.deepStrictEqual(result, {
+  const disabledResult = await api.writePhase1AEnvelope({ any: 'payload' });
+  assert.deepStrictEqual(disabledResult, {
     ok: true,
     noop: true,
     writesEnabled: false,
     reason: 'passive_history_capture_sidecar_writer_disabled'
   });
-  assert.strictEqual(supabaseCalls, 0, 'writer performs no Supabase calls');
+  assert.strictEqual(supabaseCalls, 0, 'writer performs no global Supabase calls while disabled');
+
+  const malformedResult = await api.writePhase1AEnvelope({ any: 'payload' }, { writerEnabled: true });
+  assert.deepStrictEqual(malformedResult, {
+    ok: true,
+    noop: true,
+    writesEnabled: true,
+    reason: 'passive_history_capture_malformed_envelope'
+  });
+
+  const envelope = Object.freeze({
+    schemaVersion: 'history_capture.phase_1a.v1',
+    phase: '1A',
+    eventType: 'report_created',
+    observedAt: '2026-06-17T00:00:00.000Z',
+    report: Object.freeze({ id: 'writer-test-1', reportType: 'crossing' }),
+    metadata: Object.freeze({ passive: true })
+  });
+  const inserts = [];
+  const storageClient = {
+    from(table) {
+      assert.strictEqual(table, 'history_capture.historical_events');
+      return {
+        async insert(row) {
+          inserts.push(row);
+          return { data: null, error: null };
+        }
+      };
+    }
+  };
+
+  const successResult = await api.writePhase1AEnvelope(envelope, {
+    writerEnabled: true,
+    storageClient,
+    idempotencyKey: 'phase1a:test-success',
+    hook: 'crossing.report_created'
+  });
+  assert.strictEqual(successResult.ok, true);
+  assert.strictEqual(successResult.noop, false);
+  assert.strictEqual(successResult.reason, 'passive_history_capture_write_accepted');
+  assert.strictEqual(inserts.length, 1);
+
+  const duplicateResult = await api.writePhase1AEnvelope(envelope, {
+    writerEnabled: true,
+    storageClient,
+    idempotencyKey: 'phase1a:test-success'
+  });
+  assert.deepStrictEqual(duplicateResult, {
+    ok: true,
+    noop: true,
+    writesEnabled: true,
+    duplicate: true,
+    reason: 'passive_history_capture_duplicate_suppressed'
+  });
+  assert.strictEqual(inserts.length, 1, 'duplicate key does not write twice');
+
+  const failureResult = await api.writePhase1AEnvelope({ ...envelope, report: { id: 'writer-test-2' } }, {
+    writerEnabled: true,
+    idempotencyKey: 'phase1a:test-failure',
+    storageClient: {
+      from() {
+        return { async insert() { throw new Error('sidecar storage failure'); } };
+      }
+    }
+  });
+  assert.deepStrictEqual(failureResult, {
+    ok: true,
+    noop: true,
+    writesEnabled: true,
+    reason: 'passive_history_capture_sidecar_writer_fail_open'
+  });
+
+  const monitoring = globalThis.gridlyPassiveHistoryCaptureMonitoring.getHistoryCaptureMonitoringState();
+  assert.ok(monitoring.captureAttemptCount >= 5);
+  assert.ok(monitoring.writerDisabledCount >= 1);
+  assert.ok(monitoring.malformedPayloadCount >= 1);
+  assert.ok(monitoring.duplicateSuppressionCount >= 1);
+  assert.ok(monitoring.writeFailureCount >= 1);
+  assert.ok(monitoring.writeSuccessCount >= 1);
+
   delete globalThis.supabase;
   console.log('historyCaptureWriter.test.js passed');
 })().catch((error) => {

@@ -9,6 +9,12 @@ require('../../js/history-capture/historyCapturePhase1A.js');
 const api = globalThis.gridlyPassiveHistoryCapturePhase1A;
 assert.ok(api, 'Phase 1A coordinator API is available');
 assert.deepStrictEqual(api.PHASE_1A_EVENT_TYPES, ['report_created', 'report_cleared']);
+assert.deepStrictEqual(api.PHASE_1A_INSTALLED_HOOKS, [
+  'crossing.report_created',
+  'crossing.report_cleared',
+  'road_hazard.report_created',
+  'road_hazard.report_cleared'
+]);
 assert.strictEqual(globalThis.gridlyPassiveHistoryCaptureSidecarAudit, api.auditSidecar);
 
 const beforeCreateSharedReport = globalThis.createSharedReport;
@@ -25,18 +31,39 @@ assert.strictEqual(globalThis.createSharedReport, beforeCreateSharedReport, 'coo
 assert.strictEqual(globalThis.createSharedHazardReport, beforeCreateSharedHazardReport, 'coordinator does not install createSharedHazardReport hooks');
 assert.strictEqual(globalThis.loadSharedReports, beforeLoadSharedReports, 'coordinator does not install read hooks');
 
-const audit = api.auditSidecar();
-assert.deepStrictEqual(audit, {
-  sidecarAvailable: true,
-  gatesDefaultDisabled: true,
-  writesDisabled: true,
-  noProductionHooksInstalled: true,
-  noHistoricalReadsExposed: true,
-  noUiExposed: true,
-  supportedEventTypesPhase1AOnly: true,
-  supportedEventTypes: ['report_created', 'report_cleared'],
-  runtimeIntegrated: false
-});
-assert.strictEqual(Object.isFrozen(audit), true, 'audit output is frozen');
+api.capturePhase1AEvent({ eventType: 'report_created', report: { id: 'abc' } }).then((captureResult) => {
+  assert.deepStrictEqual(captureResult, {
+    ok: true,
+    noop: true,
+    reason: 'passive_history_capture_sidecar_disabled'
+  });
 
-console.log('historyCapturePhase1A.test.js passed');
+  const audit = api.auditSidecar();
+  assert.deepStrictEqual(audit, {
+    sidecarAvailable: true,
+    gatesDefaultDisabled: true,
+    writesDisabled: true,
+    hooksInstalled: true,
+    installedHooks: [
+      'crossing.report_created',
+      'crossing.report_cleared',
+      'road_hazard.report_created',
+      'road_hazard.report_cleared'
+    ],
+    noHistoricalReadsExposed: true,
+    noUiExposed: true,
+    supportedEventTypesPhase1AOnly: true,
+    supportedEventTypes: ['report_created', 'report_cleared'],
+    runtimeIntegrated: true,
+    storageArtifactsPresent: true,
+    writerImplemented: true,
+    monitoringImplemented: true,
+    rollbackArtifactsPresent: true
+  });
+  assert.strictEqual(Object.isFrozen(audit), true, 'audit output is frozen');
+
+  console.log('historyCapturePhase1A.test.js passed');
+}).catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
