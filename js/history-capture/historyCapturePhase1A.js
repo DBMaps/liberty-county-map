@@ -87,7 +87,12 @@
 
       return await globalScope.gridlyPassiveHistoryCaptureWriter?.writePhase1AEnvelope?.(
         envelope,
-        { idempotencyKey: getIdempotencyKey(envelope), hook: safeInput.hook || null }
+        {
+          idempotencyKey: getIdempotencyKey(envelope),
+          hook: safeInput.hook || null,
+          storageClient: safeInput.storageClient || null,
+          writerEnabled: safeInput.writerEnabled === true
+        }
       ) || Object.freeze({
         ok: true,
         noop: true,
