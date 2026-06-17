@@ -54,10 +54,19 @@
     writerState.lastFailureDiagnostic = null;
   }
 
-  function getLastFailureDiagnostic() {
+  function getWriterDiagnostic() {
     return writerState.lastFailureDiagnostic
       ? freezeResult({ ...writerState.lastFailureDiagnostic })
-      : freezeResult({ available: false, safeForFixAnalysis: true });
+      : freezeResult({
+        available: true,
+        lastFailureAt: null,
+        canaryStopReason: null,
+        safeForFixAnalysis: true
+      });
+  }
+
+  function getLastFailureDiagnostic() {
+    return getWriterDiagnostic();
   }
 
   function recordMonitoring(eventType, detail) {
@@ -229,6 +238,7 @@
 
   const api = Object.freeze({
     getWriterState,
+    getWriterDiagnostic,
     getLastFailureDiagnostic,
     writePhase1AEnvelope
   });
