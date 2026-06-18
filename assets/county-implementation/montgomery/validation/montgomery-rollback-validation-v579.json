@@ -1,0 +1,91 @@
+{
+  "artifactVersion": "V579",
+  "artifactType": "montgomery-rollback-validation",
+  "county": {
+    "name": "Montgomery County",
+    "state": "Texas",
+    "geoid": "48339"
+  },
+  "validationMode": "documentation_only_no_runtime_execution",
+  "inputReferences": {
+    "boundary": "assets/county-implementation/montgomery/boundary/montgomery-county-boundary.geojson",
+    "registry": "assets/county-implementation/montgomery/registry/montgomery-county-registry-artifact.json",
+    "packageManifest": "assets/county-implementation/montgomery/manifests/montgomery-package-manifest.json",
+    "fixtureSuite": "assets/county-implementation/montgomery/containment/montgomery-containment-fixture-suite-v578.json",
+    "containmentValidation": "assets/county-implementation/montgomery/validation/montgomery-containment-validation-v578.json",
+    "rollbackProcedure": "assets/county-implementation/montgomery/rollback/montgomery-rollback-procedure-v579.json"
+  },
+  "checks": [
+    {
+      "id": "V579-VAL-001",
+      "check": "rollback procedure exists",
+      "status": "pass",
+      "evidence": "assets/county-implementation/montgomery/rollback/montgomery-rollback-procedure-v579.json",
+      "note": "Procedure artifact created for documentation-only readiness."
+    },
+    {
+      "id": "V579-VAL-002",
+      "check": "rollback sequence completeness",
+      "status": "pass",
+      "evidence": "6 rollback sequence steps documented",
+      "note": "Sequence includes freeze, package review, dependency verification, protected-system verification, evidence documentation, and communication."
+    },
+    {
+      "id": "V579-VAL-003",
+      "check": "verification steps present",
+      "status": "pass",
+      "evidence": "9 rollback verification steps documented",
+      "note": "Verification steps cover artifacts, dependencies, protected systems, and activation state."
+    },
+    {
+      "id": "V579-VAL-004",
+      "check": "containment dependencies present",
+      "status": "pass",
+      "evidence": [
+        "assets/county-implementation/montgomery/containment/montgomery-containment-fixture-suite-v578.json",
+        "assets/county-implementation/montgomery/validation/montgomery-containment-validation-v578.json"
+      ],
+      "note": "V578 containment fixture and validation references are present."
+    },
+    {
+      "id": "V579-VAL-005",
+      "check": "boundary dependencies present",
+      "status": "pass",
+      "evidence": "assets/county-implementation/montgomery/boundary/montgomery-county-boundary.geojson",
+      "note": "V576 boundary reference is present."
+    },
+    {
+      "id": "V579-VAL-006",
+      "check": "registry dependencies present",
+      "status": "observation",
+      "evidence": "assets/county-implementation/montgomery/registry/montgomery-county-registry-artifact.json",
+      "note": "Expected V577 registry artifact path is referenced; file is not present in this workspace."
+    },
+    {
+      "id": "V579-VAL-007",
+      "check": "package manifest dependencies present",
+      "status": "observation",
+      "evidence": "assets/county-implementation/montgomery/manifests/montgomery-package-manifest.json",
+      "note": "Expected V577 package manifest path is referenced; file is not present in this workspace."
+    },
+    {
+      "id": "V579-VAL-008",
+      "check": "protected-system safeguards present",
+      "status": "pass",
+      "evidence": "protectedSystemSafeguards",
+      "note": "Safeguards explicitly preserve runtime, code, Supabase, registry, activation, Liberty boundary, historical, DriveTexas, and Transportation Intelligence state."
+    }
+  ],
+  "protectedSystemsVerification": {
+    "applicationRuntimeBehavior": "unchanged",
+    "applicationCode": "unchanged",
+    "supabase": "unchanged",
+    "productionRegistryRecords": "unchanged",
+    "montgomeryActivationState": "not_activated",
+    "libertyBoundaryData": "unchanged",
+    "historicalSystems": "unchanged",
+    "driveTexas": "unchanged",
+    "transportationIntelligence": "unchanged"
+  },
+  "validationStatus": "complete_with_observations"
+}
