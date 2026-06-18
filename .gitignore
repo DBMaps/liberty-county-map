@@ -9,3 +9,5 @@ js/gridly.local.js
 # Capacitor Android web asset mirror; keep only the placeholder directory marker.
 /android/app/src/main/assets/public/*
 !/android/app/src/main/assets/public/.gitkeep
+# Montgomery TIGER source files
+assets/county-sources/montgomery/census-tiger-2025/
