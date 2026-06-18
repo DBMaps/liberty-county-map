@@ -1,0 +1,59 @@
+{
+  "artifactVersion": "V587",
+  "countyId": "montgomery-tx",
+  "findings": [
+    {
+      "id": "V587-FINDING-001",
+      "area": "Registry Recognition",
+      "severity": "none",
+      "finding": "Montgomery is recognized by runtime only as a disabled staged county.",
+      "launchDecisionImpact": "Supports moving to decision packaging; does not authorize activation."
+    },
+    {
+      "id": "V587-FINDING-002",
+      "area": "Runtime Gate Enforcement",
+      "severity": "none",
+      "finding": "The runtime gate remains false and activation/override attempts are blocked by normalization and operational-state checks.",
+      "launchDecisionImpact": "Supports a future V588 review of whether activation gates should remain closed or be separately authorized."
+    },
+    {
+      "id": "V587-FINDING-003",
+      "area": "County Containment",
+      "severity": "none",
+      "finding": "Cross-county contamination is blocked for Montgomery-to-Liberty, Montgomery self-context while disabled, and unknown county rows.",
+      "launchDecisionImpact": "Containment evidence is sufficient for launch-decision package preparation."
+    },
+    {
+      "id": "V587-FINDING-004",
+      "area": "Liberty Baseline Preservation",
+      "severity": "none",
+      "finding": "Liberty remains the operational default and selectable production county with data/-scoped runtime assets.",
+      "launchDecisionImpact": "No Liberty regression blocks V588 packaging."
+    },
+    {
+      "id": "V587-FINDING-005",
+      "area": "Protected-System Preservation",
+      "severity": "observation",
+      "finding": "V587 preserves Supabase, migration, historical, DriveTexas, and Transportation Intelligence boundaries.",
+      "launchDecisionImpact": "Protected systems remain outside Montgomery activation scope for V588 unless separately authorized."
+    }
+  ],
+  "observations": [
+    "V587 is an evidence-collection milestone only.",
+    "Montgomery remains not activated, not onboarded, not selectable, and not production enabled.",
+    "V588 may package the launch decision, but V587 does not make the launch decision itself."
+  ],
+  "risks": [
+    {
+      "risk": "Future work could unintentionally change GRIDLY_MONTGOMERY_RUNTIME_GATE or runtime status fields.",
+      "mitigation": "Keep V584/V585/V587 runtime tests and protected-boundary audits in the launch-decision checklist."
+    }
+  ],
+  "unresolvedItems": [
+    "No launch authorization has been granted.",
+    "No Montgomery production assets have been promoted into data/.",
+    "No Supabase or migration work has been authorized for Montgomery."
+  ],
+  "finalDetermination": "OBSERVATION COMPLETE WITH OBSERVATIONS",
+  "canProceedToV588LaunchDecisionPackage": true
+}
