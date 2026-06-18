@@ -1,0 +1,80 @@
+{
+  "artifactVersion": "V578",
+  "artifactType": "montgomery-containment-validation",
+  "county": {
+    "name": "Montgomery County",
+    "state": "Texas",
+    "geoid": "48339"
+  },
+  "validationMode": "documentation_only_no_runtime_execution",
+  "inputReferences": {
+    "boundary": "assets/county-implementation/montgomery/boundary/montgomery-county-boundary.geojson",
+    "registry": "assets/county-implementation/montgomery/registry/montgomery-county-registry-artifact.json",
+    "packageManifest": "assets/county-implementation/montgomery/manifests/montgomery-package-manifest.json",
+    "fixtureSuite": "assets/county-implementation/montgomery/containment/montgomery-containment-fixture-suite-v578.json"
+  },
+  "checks": [
+    {
+      "id": "V578-VAL-001",
+      "check": "boundary reference present",
+      "status": "pass",
+      "evidence": "assets/county-implementation/montgomery/boundary/montgomery-county-boundary.geojson"
+    },
+    {
+      "id": "V578-VAL-002",
+      "check": "registry reference present",
+      "status": "observation",
+      "evidence": "assets/county-implementation/montgomery/registry/montgomery-county-registry-artifact.json",
+      "note": "Expected V577 registry artifact path is referenced for dependency tracking; file was not present in this workspace during V578 packaging."
+    },
+    {
+      "id": "V578-VAL-003",
+      "check": "package manifest reference present",
+      "status": "observation",
+      "evidence": "assets/county-implementation/montgomery/manifests/montgomery-package-manifest.json",
+      "note": "Expected V577 package manifest path is referenced for dependency tracking; file was not present in this workspace during V578 packaging."
+    },
+    {
+      "id": "V578-VAL-004",
+      "check": "fixture completeness",
+      "status": "pass",
+      "evidence": "11 required fixture scenarios documented with expected outcomes only."
+    },
+    {
+      "id": "V578-VAL-005",
+      "check": "Montgomery ownership assignment",
+      "status": "pass",
+      "evidence": "Fixtures assign Montgomery-owned assets to Montgomery package scope only."
+    },
+    {
+      "id": "V578-VAL-006",
+      "check": "Liberty isolation expectations",
+      "status": "pass",
+      "evidence": "Fixtures require Liberty-only assets and Liberty boundary data to remain excluded and unmodified."
+    },
+    {
+      "id": "V578-VAL-007",
+      "check": "unknown-county fail-closed expectations",
+      "status": "pass",
+      "evidence": "Unknown county fixture expects fail-closed exclusion until explicit county ownership exists."
+    },
+    {
+      "id": "V578-VAL-008",
+      "check": "out-of-county exclusion expectations",
+      "status": "pass",
+      "evidence": "Out-of-county fixture expects exclusion from Montgomery ownership and no Liberty mutation."
+    }
+  ],
+  "protectedSystemsVerification": {
+    "applicationRuntimeBehavior": "unchanged",
+    "applicationCode": "unchanged",
+    "supabase": "unchanged",
+    "productionRegistryRecords": "unchanged",
+    "montgomeryActivationState": "not_activated",
+    "libertyBoundaryData": "unchanged",
+    "historicalSystems": "unchanged",
+    "driveTexas": "unchanged",
+    "transportationIntelligence": "unchanged"
+  },
+  "validationStatus": "complete_with_observations"
+}
