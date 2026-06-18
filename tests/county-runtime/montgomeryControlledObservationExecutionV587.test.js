@@ -19,22 +19,22 @@ const liberty = api.GRIDLY_COUNTY_REGISTRY['liberty-tx'];
 
 assert.ok(montgomery, 'Montgomery registry entry exists');
 assert.strictEqual(api.gridlyIsKnownCountyId('montgomery-tx'), true, 'Montgomery is recognized by runtime');
-assert.strictEqual(api.gridlyIsCountyOperational('montgomery-tx'), false, 'Montgomery remains non-operational');
-assert.strictEqual(montgomery.operational, false, 'Montgomery operational flag remains false');
-assert.strictEqual(montgomery.productionEnabled, false, 'Montgomery production flag remains false');
-assert.strictEqual(montgomery.selectable, false, 'Montgomery selectable flag remains false');
-assert.strictEqual(api.GRIDLY_MONTGOMERY_RUNTIME_GATE, false, 'Montgomery runtime gate remains false');
-assert.strictEqual(montgomery.runtimeGateEnabled, false, 'Montgomery registry remains bound to the false runtime gate');
-assert.strictEqual(montgomery.productionActivationBlocked, true, 'Montgomery production activation remains blocked');
+assert.strictEqual(api.gridlyIsCountyOperational('montgomery-tx'), true, 'Montgomery is operational');
+assert.strictEqual(montgomery.operational, true, 'Montgomery operational flag is true');
+assert.strictEqual(montgomery.productionEnabled, true, 'Montgomery production flag is true');
+assert.strictEqual(montgomery.selectable, true, 'Montgomery selectable flag is true');
+assert.strictEqual(api.GRIDLY_MONTGOMERY_RUNTIME_GATE, true, 'Montgomery runtime gate is enabled');
+assert.strictEqual(montgomery.runtimeGateEnabled, true, 'Montgomery registry remains bound to the true runtime gate');
+assert.strictEqual(montgomery.productionActivationBlocked, false, 'Montgomery production activation block is removed');
 
-assert.strictEqual(api.gridlyNormalizeCountyId('montgomery-tx'), 'liberty-tx', 'Montgomery activation through normalization is blocked');
-assert.strictEqual(loadRuntime({ GRIDLY_ACTIVE_COUNTY_ID: 'montgomery-tx' }).gridlyGetActiveCountyId(), 'liberty-tx', 'Montgomery active-county override is blocked');
+assert.strictEqual(api.gridlyNormalizeCountyId('montgomery-tx'), 'montgomery-tx', 'Montgomery activation through normalization is enabled');
+assert.strictEqual(loadRuntime({ GRIDLY_ACTIVE_COUNTY_ID: 'montgomery-tx' }).gridlyGetActiveCountyId(), 'montgomery-tx', 'Montgomery active-county override is enabled');
 assert.strictEqual(loadRuntime({ GRIDLY_ACTIVE_COUNTY_ID: 'unknown-tx' }).gridlyGetActiveCountyId(), 'liberty-tx', 'Unknown active-county override fails closed to Liberty');
-assert.strictEqual(api.gridlyGetCountyScopedReportMetadata('montgomery-tx').county_id, 'liberty-tx', 'Montgomery-scoped metadata request remains Liberty-scoped while disabled');
+assert.strictEqual(api.gridlyGetCountyScopedReportMetadata('montgomery-tx').county_id, 'montgomery-tx', 'Montgomery-scoped metadata request is Montgomery-scoped');
 
 assert.strictEqual(api.gridlyValidateCountyContainment({ county_id: 'liberty-tx' }, 'liberty-tx').allowed, true, 'Liberty ownership is preserved');
 assert.strictEqual(api.gridlyValidateCountyContainment({ county_id: 'montgomery-tx' }, 'liberty-tx').allowed, false, 'Montgomery-to-Liberty contamination is blocked');
-assert.strictEqual(api.gridlyValidateCountyContainment({ county_id: 'montgomery-tx' }, 'montgomery-tx').allowed, false, 'Montgomery self-context remains blocked while disabled');
+assert.strictEqual(api.gridlyValidateCountyContainment({ county_id: 'montgomery-tx' }, 'montgomery-tx').allowed, true, 'Montgomery self-context is allowed');
 assert.strictEqual(api.gridlyValidateCountyContainment({ county_id: 'unknown-tx' }, 'liberty-tx').allowed, false, 'Unknown county rows fail closed');
 assert.strictEqual(api.gridlyReportMatchesActiveCounty({ county_id: 'montgomery-tx' }, 'liberty-tx'), false, 'Montgomery reports are not visible in Liberty context');
 

@@ -1,5 +1,5 @@
 {
-  "artifact_version": "V577",
+  "artifact_version": "V590",
   "artifact_type": "County Registry Implementation Artifact",
   "county_name": "Montgomery",
   "county_type": "County",
@@ -9,24 +9,36 @@
   "geoid": "48339",
   "geoidfq": "0500000US48339",
   "namelsad": "Montgomery County",
-  "implementation_status": "Implementation Artifact Development",
-  "activation_status": "Not Activated",
-  "production_status": "Not Approved",
+  "implementation_status": "Operational",
+  "activation_status": "Activation-ready",
+  "production_status": "Production Enabled",
   "boundary_artifact_reference": "assets/county-implementation/montgomery/boundary/montgomery-county-boundary.geojson",
   "boundary_validation_reference": "assets/county-implementation/montgomery/validation/montgomery-boundary-validation-v576.json",
   "boundary_provenance_reference": "assets/county-implementation/montgomery/evidence/montgomery-boundary-source-provenance-v576.json",
   "package_manifest_reference": "assets/county-implementation/montgomery/manifests/montgomery-package-manifest.json",
-  "containment_status": "Containment validation not yet performed",
-  "rollback_status": "Rollback validation not yet performed",
-  "activation_readiness_status": "Not ready for activation; implementation artifacts only",
+  "containment_status": "Activation containment validated",
+  "rollback_status": "Activation rollback package validated",
+  "activation_readiness_status": "Technically activation-ready",
   "created_from": "V576 \u2014 Montgomery Boundary Implementation Package",
   "created_for": "V577 \u2014 Montgomery Registry & Package Manifest Package",
-  "runtime_behavior_modified": false,
-  "production_registry_record_created": false,
-  "activation_enabled": false,
+  "runtime_behavior_modified": true,
+  "production_registry_record_created": true,
+  "activation_enabled": true,
   "notes": [
-    "Implementation identity artifact only; not a production registry record.",
-    "Does not activate, onboard, or create runtime references for Montgomery County.",
-    "Authoritative boundary reference is the V576 Montgomery boundary implementation package."
-  ]
+    "V590 promotes Montgomery from disabled staged to operational while preserving county identity, GEOID, containment metadata, rollback references, and protected boundaries."
+  ],
+  "runtime_registry_state": {
+    "stage": "operational",
+    "operational": true,
+    "productionEnabled": true,
+    "selectable": true,
+    "productionActivationBlocked": false,
+    "runtimeGateEnabled": true
+  },
+  "production_asset_path_decision": {
+    "chosen_boundary_path": "assets/county-implementation/montgomery/boundary/montgomery-county-boundary.geojson",
+    "rationale": "Use the accepted Montgomery package path directly for activation to avoid duplicating county assets into data/ and to keep rollback limited to registry/gate reversal.",
+    "rollback_impact": "Rollback only restores activation booleans and leaves inert package assets in place.",
+    "future_county_implication": "Future counties can activate from package-scoped accepted assets once validation proves runtime loading and containment."
+  }
 }
