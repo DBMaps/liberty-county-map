@@ -1,0 +1,65 @@
+{
+  "artifactVersion": "V588",
+  "countyId": "montgomery-tx",
+  "milestone": "Montgomery Launch Decision Evidence",
+  "evidenceScope": "Decision-package evidence only; no activation, onboarding, production behavior change, Supabase change, migration, data/ asset placement, historical activation, DriveTexas activation, or Transportation Intelligence activation.",
+  "sourceEvidence": {
+    "validationProgram": "V500-V507 confirmed Montgomery county suitability, containment suitability, and governance basis for later planning.",
+    "planningProgram": "V552-V561 completed implementation planning and classified Montgomery as implementation ready with observations while not implemented, not activated, and not production approved.",
+    "referenceStack": "V566-V570 supplied boundary, registry, containment, rollback, and activation reference packages without changing runtime behavior.",
+    "implementationProgram": "V574-V583 produced and reviewed implementation artifacts, readiness evidence, and launch-readiness program artifacts without activation.",
+    "runtimeIntegration": "V584 added disabled staged runtime recognition and preserved Liberty as the only operational production county.",
+    "stagedRuntimeValidation": "V585 validated disabled staged runtime behavior, gate enforcement, containment, and Liberty baseline preservation.",
+    "controlledObservationPreparation": "V586 defined observation success criteria, failure thresholds, and readiness evidence.",
+    "controlledObservationExecution": "V587 executed observation and found registry recognition, gate enforcement, containment, Liberty baseline, and protected-system preservation passing."
+  },
+  "artifactEvidence": [
+    "assets/county-implementation/montgomery/boundary/montgomery-county-boundary.geojson",
+    "assets/county-implementation/montgomery/registry/montgomery-county-registry-artifact.json",
+    "assets/county-implementation/montgomery/manifests/montgomery-package-manifest.json",
+    "assets/county-implementation/montgomery/containment/montgomery-containment-fixture-suite-v578.json",
+    "assets/county-implementation/montgomery/rollback/montgomery-rollback-procedure-v579.json",
+    "assets/county-implementation/montgomery/activation/montgomery-activation-readiness-packet-v580.json",
+    "assets/county-implementation/montgomery/validation/montgomery-implementation-completion-review-v581.json",
+    "assets/county-implementation/montgomery/validation/montgomery-end-to-end-readiness-assessment-v582.json",
+    "assets/county-implementation/montgomery/launch/montgomery-launch-readiness-program-v583.json",
+    "assets/county-implementation/montgomery/observation/montgomery-controlled-observation-plan-v586.json",
+    "assets/county-implementation/montgomery/observation/montgomery-controlled-observation-report-v587.json"
+  ],
+  "runtimeEvidence": {
+    "montgomeryRuntimeRecognitionExists": true,
+    "runtimeStagingExists": true,
+    "gateEnforcementPasses": true,
+    "containmentEnforcementPasses": true,
+    "libertyBaselinePreserved": true,
+    "operational": false,
+    "productionEnabled": false,
+    "selectable": false,
+    "GRIDLY_MONTGOMERY_RUNTIME_GATE": false
+  },
+  "protectedBoundaryEvidence": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "historicalApiExposure": false,
+    "consumerFacingHistoryDashboard": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false,
+    "supabaseChanges": false,
+    "migrationExecution": false
+  },
+  "testEvidence": {
+    "requiredTesting": [
+      "Run all Montgomery runtime tests.",
+      "Run all V584-V587 audits.",
+      "Validate protected boundaries.",
+      "Validate all V576-V588 artifacts parse successfully."
+    ],
+    "recordedAtCommitTime": true
+  },
+  "directRecommendation": "RECOMMEND PROCEEDING TO ACTIVATION REVIEW",
+  "finalDetermination": "LAUNCH DECISION COMPLETE WITH OBSERVATIONS",
+  "canProceedToV589ActivationReview": true,
+  "requiredFinalStatement": "Can Montgomery proceed to V589 Activation Review? YES"
+}
